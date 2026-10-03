@@ -34,6 +34,17 @@ const { open, go, overflow, shot, state, redraw } = require('./helper');
     ok((await overflow(page)) === '', mode + ' team card fits');
     await shot(page, 'card-' + mode + '-team');
     await page.click('[data-t="card-close"]'); ok(await n('.cards .win') === 0, mode + ' Close shuts it');
+    // gamepad: A on a name opens the pop-up, B closes it, and the highlight is back on the name
+    if (mode === 'tv') {
+      await go(page, 'titles'); await page.waitForTimeout(150);
+      await page.focus('[data-t="title-card"]');
+      const mark = await page.evaluate(() => document.activeElement.dataset.id);
+      await page.evaluate(() => window.EWF_DEBUG.pad('a')); await page.waitForSelector('.cards .win');
+      ok(await n('.cards .win') === 1, 'gamepad A on a name opens its pop-up');
+      await page.evaluate(() => window.EWF_DEBUG.pad('b')); await page.waitForTimeout(150);
+      const back = await page.evaluate(() => ({ t: document.activeElement.dataset.t, id: document.activeElement.dataset.id }));
+      ok(await n('.cards .win') === 0 && back.t === 'title-card' && back.id === mark, 'gamepad B closes it and the highlight returns to the name: ' + JSON.stringify(back) + ' wanted ' + mark);
+    }
     // a stack four deep: Back steps out in the right order
     const ids = await state(page, S => { const L = S.w.filter(w => w.promo === S.player && !w.nw); return { a: L[0].id, b: L[1].id, tid: S.teams.find(t => t.promo === S.player).id, pid: S.player, title: S.promos[S.player].titles[0].id }; });
     await page.evaluate(i => { const u = window.EWF_DEBUG.ui; u.cards.length = 0; u.cards.push({ k: 'w', id: i.a }, { k: 'team', id: i.tid }, { k: 'title', pid: i.pid, id: i.title }, { k: 'w', id: i.b }); window.EWF_DEBUG.render(); }, ids);
