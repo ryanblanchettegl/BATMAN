@@ -4,7 +4,7 @@ The hand-over from the build thread, written 2 October 2026 at version 0.11. Wor
 
 **`NEXT.md` is the work queue.** It turns the tasks below into ordered steps for an unattended run. Start there.
 
-**`IDEAS.md` is the build thread's list:** the next 100 ideas and refinements, in five batches, chosen to stay clear of `NEXT.md`.
+**`IDEAS.md` is shelved.** Ryan scrapped the "next 100 ideas" direction on 3 October. None of them were built. The work is now fine-tuning the engine, the game loop, its logic and its rewards, one step at a time.
 
 Two more lists sit beside this one, both finished:
 
@@ -54,6 +54,7 @@ Two more lists sit beside this one, both finished:
 | The week's tasks | The Office desk lists every task for the week (commentators not assigned, sponsor offers waiting, and so on). Anything that should be filled in is filled in, or waved off, before a show is booked or the week ends. |
 | Stars, not percentages | How good a match, a promo or an angle was is shown as a star rating out of five, in quarter steps. Never as a percentage. Targets about a match are worded and checked in stars too. (The show's own score is still a percentage; Ryan has not said to change it.) |
 | How a show is laid out | The game follows the old rules of the booking office and tells the player what they are: open hot, peaks and valleys, the biggest match on last with time to work, mix the finishes, send them home happy or wanting more. Where a match sits changes how it lands. |
+| Direction | The "next 100 ideas" are scrapped. The work goes back to fine-tuning the engine, the game loop, its logic and how it rewards the player. Depth comes from making what is there play well, not from adding a hundred features. |
 | One step at a time | From 3 October (evening): one step, shown to Ryan, then wait for his go-ahead before the next. No batches run side by side. |
 | Relationships | Relationships are the centre of the game. Every decision ripples through how wrestlers feel about each other, about the booker and about the crowd. People remember what you did, the way they do in a Telltale game, and a notification bar says what changed after an action. |
 | The broadcast | The Gorilla Position becomes an active phase: live events stop the show and the player makes the call (`docs/plans/gorilla-position.md`). |
