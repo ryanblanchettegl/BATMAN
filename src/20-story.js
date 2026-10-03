@@ -42,7 +42,7 @@ var FEUDLETS=[
     from.splice(1,1);if(to.length<2)to.push(ally.id);
     var tm=teamOf(S,ally);if(tm&&tm.m.indexOf(lead.id)>=0){c.P.titles.forEach(function(tt){if(tt.tag&&tt.holders.indexOf(lead.id)>=0&&tt.holders.indexOf(ally.id)>=0){tt.holders=[];tt.since=S.week;news(S,'title','The '+c.P.name+' '+tt.name+' are vacated after the champions split.');}});dissolveTeam(S,tm);}
     if(ally.align===lead.align)turn(S,ally,'turned on '+lead.name);
-    c.f.twist='betray';c.mark(ally);heatUp(S,c.f,15,ally.name+' turned on '+lead.name);award(S,'ACH_BETRAYAL');
+    c.f.twist='betray';c.mark(ally);heatUp(S,c.f,15,ally.name+' turned on '+lead.name);memBetray(S,ally,lead);award(S,'ACH_BETRAYAL');
     return angle('Betrayal',lead.name+' turns around to find '+ally.name+' standing there. '+ally.name+' strikes first. The one person '+lead.name+' trusted has switched sides.',0.8*(lead.ovr+ally.ovr)/2+12);}},
   {id:'injury',head:'Attack',acts:[3],w:6,twist:true,ok:function(c){return !!c.h&&c.f.kind!=='dream'&&!c.left[c.o.id]&&!c.left[c.h.id];},run:function(c){
     c.o.away=c.S.week+1;c.f.twist='injury';heatUp(c.S,c.f,12,c.h.name+' put '+c.o.name+' through a table');

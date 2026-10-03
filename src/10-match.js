@@ -426,7 +426,7 @@ function afterBell(S,P,show,m,sides,win,winners,losers,fin,runin,feud,t,OV,seg){
       P.titles.forEach(function(tt){if(tt.tag&&tt.holders.indexOf(att.id)>=0){tt.holders=[];tt.since=S.week;news(S,'title','The '+P.name+' '+tt.name+' are vacated after the champions split.');}});
       dissolveTeam(S,tm);
       if(att.align==='F')turn(S,att,'turned on '+vic.name);else if(vic.align==='H')turn(S,vic,'betrayed by '+att.name);
-      startFeud(S,P,vic,att,55,att.name+' turned on partner '+vic.name,{force:true});
+      startFeud(S,P,vic,att,55,att.name+' turned on partner '+vic.name,{force:true});memBetray(S,att,vic);
       seg.notes.push('After the loss, '+att.name+' turns on '+vic.name+'. The team is finished.');
       award(S,'ACH_BETRAYAL');return;
     }

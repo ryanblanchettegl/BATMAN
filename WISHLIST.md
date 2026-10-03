@@ -57,7 +57,7 @@ Things that would make the game deeper. Each one adds a system, a choice or a me
 - [x] **32. Stable roles.** Leader, enforcer, mouthpiece, young gun, workhorse. A stable has unity. A member with no role or no wins is a split waiting to happen. *M. Builds on stables in `src/60-rpg.js`.*
 - [x] **33. Debuts with a build.** Run teaser vignettes for weeks before a debut. A hyped debut starts hot. An over-hyped one that flops costs more than no hype. *S.*
 - [x] **34. The on-screen boss.** A general manager character who makes matches and feuds with a rebel. Used well it explains the booking. Used too much it overshadows the wrestlers, and the fans say so. *M.*
-- [ ] **35. The game remembers.** Who betrayed whom, who has never beaten whom, who has never met. "First time ever" and "they have history" become bonuses, report lines and news. *M.*
+- [x] **35. The game remembers.** Who betrayed whom, who has never beaten whom, who has never met. "First time ever" and "they have history" become bonuses, report lines and news. *M.*
 - [x] **36. Cliffhangers.** End a show on an open question and the next show opens to a bigger audience. Leave three open at once and the crowd stops caring. *S. (TASKS 3, each show feeds the next)*
 
 ## D. The locker room

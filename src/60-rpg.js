@@ -214,7 +214,7 @@ ANGX.push(function(S,P,show,ctx,h){
   return [8,function(){
     var lead=S.w[st.leader],weakIds=E.stableWeak(S,st).map(function(x){return x.id;}).filter(function(id){return outs.indexOf(id)>=0;}),out=S.w[(weakIds.length?weakIds:outs).sort(function(a,b){return S.w[a].mom-S.w[b].mom;})[0]];
     h.mark(lead,out);leaveStable(S,out);if(out.align==='H')turn(S,out,'thrown out of '+st.name);
-    var f=startFeud(S,P,out,lead,50,lead.name+' threw '+out.name+' out of '+st.name,{force:true});if(f)f.twist='expelled';st.tension=3;
+    var f=startFeud(S,P,out,lead,50,lead.name+' threw '+out.name+' out of '+st.name,{force:true});if(f)f.twist='expelled';memBetray(S,lead,out);st.tension=3;
     return angle('Betrayal',lead.name+' blames '+out.name+' for everything going wrong in '+st.name+'. The rest of the group turns on '+out.name+' and leaves them lying in the ring.',0.8*(lead.ovr+out.ovr)/2+10);
   }];
 });

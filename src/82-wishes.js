@@ -794,3 +794,42 @@ CRX.push(function(ctx){
   return best?{d:1,x:best.name+' work as one unit and the crowd sees it'}:null;
 });
 function stableWeak2(S,st){return E.stableWeak(S,st).length;}
+
+/* ---------- 35. The game remembers: betrayals, first meetings, droughts and history (S.mem) ---------- */
+function memBetray(S,att,vic){var M=S.mem||(S.mem={bet:{}});M.bet[rkey(att.id,vic.id)]={att:att.id,vic:vic.id,w:S.week};}
+function memOf(S,a,b){
+  var hh=S.h2h&&S.h2h[rkey(a.id,b.id)],bt=S.mem&&S.mem.bet&&S.mem.bet[rkey(a.id,b.id)];
+  var n=hh?hh.n:0,wa=hh?(a.id<b.id?hh.a:hh.b):0,wb=hh?(a.id<b.id?hh.b:hh.a):0;
+  return {n:n,wa:wa,wb:wb,last:hh?hh.w:null,bet:bt&&S.week-bt.w<104?bt:null,
+    drought:n>=3&&(wa===0||wb===0)?(wa===0?a:b):null};
+}
+CRX.push(function(ctx){
+  if(!ctx.isPl||ctx.S.cal||ctx.m.mt!=='1v1')return null;
+  var a=ctx.all[0],b=ctx.all[1],o=memOf(ctx.S,a,b),d=0,x=null;
+  if(o.bet){d+=2;x=S_name(ctx.S,o.bet.vic)+' has not forgotten what '+S_name(ctx.S,o.bet.att)+' did';}
+  else if(o.n===0&&(a.ovr+b.ovr)/2>=60&&(ctx.i>=ctx.n-2||ctx.t)){d+=1.5;x='The first time these two have ever met';}
+  else if(o.drought){d+=1.2;x=o.drought.name+' has never beaten '+(o.drought===a?b:a).name;}
+  else if(o.n>=4&&ctx.S.week-(o.last|0)>=6){d+=0.8;x='These two have a history';}
+  return d?{d:d,x:x}:null;
+});
+function S_name(S,id){return S.w[id]?S.w[id].name:'Someone';}
+POST.push(function(ctx){
+  var S=ctx.S,r=ctx.res;if(!ctx.isPl||S.cal||ctx.m.mt!=='1v1'||r.win<0)return;
+  var a=ctx.all[0],b=ctx.all[1],o=memOf(S,a,b),w=r.winners[0],l=r.losers[0];
+  // the h2h record was updated before this hook, so n counts the match just played
+  if(o.n===1&&(a.ovr+b.ovr)/2>=60&&(ctx.i>=ctx.n-2||ctx.t))r.seg.notes.push('Their first meeting. '+w.name+' wins it.');
+  // a drought ends: the winner had lost every earlier meeting
+  var hw=S.h2h[rkey(a.id,b.id)],winsW=w.id===Math.min(a.id,b.id)?hw.a:hw.b;
+  if(o.n>=4&&winsW===1){w.mom=clamp(w.mom+2,-10,10);addOvr(ctx.P,w,1);r.seg.notes.push(w.name+' has finally beaten '+l.name+', at the '+(o.n)+'th attempt.');news(S,'story',w.name+' finally beat '+l.name+' after '+(o.n-1)+' defeats.');}
+});
+/* what the booker knows about a pair, for the editor */
+E.pairMemory=function(S,aId,bId){
+  var a=S.w[aId],b=S.w[bId];if(!a||!b)return '';
+  var o=memOf(S,a,b),L=[];
+  if(o.n===0)L.push('They have never met.');
+  else L.push('They have met '+o.n+' '+(o.n===1?'time':'times')+': '+a.name+' '+o.wa+', '+b.name+' '+o.wb+'.');
+  if(o.drought)L.push(o.drought.name+' has never beaten '+(o.drought===a?b:a).name+'.');
+  if(o.bet)L.push(S_name(S,o.bet.att)+' turned on '+S_name(S,o.bet.vic)+' in '+E.cal(o.bet.w).label+'.');
+  return L.join(' ');
+};
+E.memBetray=memBetray;

@@ -52,6 +52,7 @@ export function Editor(p: { m: Match; i: number }) {
     {E.STIPNOTE[m.stip] && <p class="muted wide">{E.STIPNOTE[m.stip]}</p>}
     <Field label="Intensity"><Sel id={'m' + i + '-int'} t="int" d={{ i }} value={m.int || 'normal'} onChange={v => setMatch(i, 'int', v)} options={Object.keys(E.INTN).map(k => [k, E.INTN[k].n + (INT_NOTE[k] || '')] as Opt)} /></Field>
     <Field label="Length"><Sel id={'m' + i + '-len'} t="len" d={{ i }} value={m.len} onChange={v => setMatch(i, 'len', v)} options={[['S', 'Short'], ['M', 'Medium'], ['L', 'Long']]} /></Field>
+    {m.mt === '1v1' && m.sides[0][0] != null && m.sides[1][0] != null && <p class="muted wide">{E.pairMemory(S, m.sides[0][0], m.sides[1][0])}</p>}
     {od && od.chem != null && <p class="muted wide">Ring chemistry between them: {od.chem >= 2.2 ? <span class="good">great</span> : (od.chem <= -2.2 ? <span class="bad">poor</span> : 'ordinary')}.</p>}
   </div>;
 }

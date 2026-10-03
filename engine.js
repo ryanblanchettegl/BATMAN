@@ -897,7 +897,7 @@ function afterBell(S,P,show,m,sides,win,winners,losers,fin,runin,feud,t,OV,seg){
       P.titles.forEach(function(tt){if(tt.tag&&tt.holders.indexOf(att.id)>=0){tt.holders=[];tt.since=S.week;news(S,'title','The '+P.name+' '+tt.name+' are vacated after the champions split.');}});
       dissolveTeam(S,tm);
       if(att.align==='F')turn(S,att,'turned on '+vic.name);else if(vic.align==='H')turn(S,vic,'betrayed by '+att.name);
-      startFeud(S,P,vic,att,55,att.name+' turned on partner '+vic.name,{force:true});
+      startFeud(S,P,vic,att,55,att.name+' turned on partner '+vic.name,{force:true});memBetray(S,att,vic);
       seg.notes.push('After the loss, '+att.name+' turns on '+vic.name+'. The team is finished.');
       award(S,'ACH_BETRAYAL');return;
     }
@@ -973,7 +973,7 @@ var FEUDLETS=[
     from.splice(1,1);if(to.length<2)to.push(ally.id);
     var tm=teamOf(S,ally);if(tm&&tm.m.indexOf(lead.id)>=0){c.P.titles.forEach(function(tt){if(tt.tag&&tt.holders.indexOf(lead.id)>=0&&tt.holders.indexOf(ally.id)>=0){tt.holders=[];tt.since=S.week;news(S,'title','The '+c.P.name+' '+tt.name+' are vacated after the champions split.');}});dissolveTeam(S,tm);}
     if(ally.align===lead.align)turn(S,ally,'turned on '+lead.name);
-    c.f.twist='betray';c.mark(ally);heatUp(S,c.f,15,ally.name+' turned on '+lead.name);award(S,'ACH_BETRAYAL');
+    c.f.twist='betray';c.mark(ally);heatUp(S,c.f,15,ally.name+' turned on '+lead.name);memBetray(S,ally,lead);award(S,'ACH_BETRAYAL');
     return angle('Betrayal',lead.name+' turns around to find '+ally.name+' standing there. '+ally.name+' strikes first. The one person '+lead.name+' trusted has switched sides.',0.8*(lead.ovr+ally.ovr)/2+12);}},
   {id:'injury',head:'Attack',acts:[3],w:6,twist:true,ok:function(c){return !!c.h&&c.f.kind!=='dream'&&!c.left[c.o.id]&&!c.left[c.h.id];},run:function(c){
     c.o.away=c.S.week+1;c.f.twist='injury';heatUp(c.S,c.f,12,c.h.name+' put '+c.o.name+' through a table');
@@ -1737,7 +1737,7 @@ ANGX.push(function(S,P,show,ctx,h){
   return [8,function(){
     var lead=S.w[st.leader],weakIds=E.stableWeak(S,st).map(function(x){return x.id;}).filter(function(id){return outs.indexOf(id)>=0;}),out=S.w[(weakIds.length?weakIds:outs).sort(function(a,b){return S.w[a].mom-S.w[b].mom;})[0]];
     h.mark(lead,out);leaveStable(S,out);if(out.align==='H')turn(S,out,'thrown out of '+st.name);
-    var f=startFeud(S,P,out,lead,50,lead.name+' threw '+out.name+' out of '+st.name,{force:true});if(f)f.twist='expelled';st.tension=3;
+    var f=startFeud(S,P,out,lead,50,lead.name+' threw '+out.name+' out of '+st.name,{force:true});if(f)f.twist='expelled';memBetray(S,lead,out);st.tension=3;
     return angle('Betrayal',lead.name+' blames '+out.name+' for everything going wrong in '+st.name+'. The rest of the group turns on '+out.name+' and leaves them lying in the ring.',0.8*(lead.ovr+out.ovr)/2+10);
   }];
 });
@@ -4380,6 +4380,45 @@ CRX.push(function(ctx){
   return best?{d:1,x:best.name+' work as one unit and the crowd sees it'}:null;
 });
 function stableWeak2(S,st){return E.stableWeak(S,st).length;}
+
+/* ---------- 35. The game remembers: betrayals, first meetings, droughts and history (S.mem) ---------- */
+function memBetray(S,att,vic){var M=S.mem||(S.mem={bet:{}});M.bet[rkey(att.id,vic.id)]={att:att.id,vic:vic.id,w:S.week};}
+function memOf(S,a,b){
+  var hh=S.h2h&&S.h2h[rkey(a.id,b.id)],bt=S.mem&&S.mem.bet&&S.mem.bet[rkey(a.id,b.id)];
+  var n=hh?hh.n:0,wa=hh?(a.id<b.id?hh.a:hh.b):0,wb=hh?(a.id<b.id?hh.b:hh.a):0;
+  return {n:n,wa:wa,wb:wb,last:hh?hh.w:null,bet:bt&&S.week-bt.w<104?bt:null,
+    drought:n>=3&&(wa===0||wb===0)?(wa===0?a:b):null};
+}
+CRX.push(function(ctx){
+  if(!ctx.isPl||ctx.S.cal||ctx.m.mt!=='1v1')return null;
+  var a=ctx.all[0],b=ctx.all[1],o=memOf(ctx.S,a,b),d=0,x=null;
+  if(o.bet){d+=2;x=S_name(ctx.S,o.bet.vic)+' has not forgotten what '+S_name(ctx.S,o.bet.att)+' did';}
+  else if(o.n===0&&(a.ovr+b.ovr)/2>=60&&(ctx.i>=ctx.n-2||ctx.t)){d+=1.5;x='The first time these two have ever met';}
+  else if(o.drought){d+=1.2;x=o.drought.name+' has never beaten '+(o.drought===a?b:a).name;}
+  else if(o.n>=4&&ctx.S.week-(o.last|0)>=6){d+=0.8;x='These two have a history';}
+  return d?{d:d,x:x}:null;
+});
+function S_name(S,id){return S.w[id]?S.w[id].name:'Someone';}
+POST.push(function(ctx){
+  var S=ctx.S,r=ctx.res;if(!ctx.isPl||S.cal||ctx.m.mt!=='1v1'||r.win<0)return;
+  var a=ctx.all[0],b=ctx.all[1],o=memOf(S,a,b),w=r.winners[0],l=r.losers[0];
+  // the h2h record was updated before this hook, so n counts the match just played
+  if(o.n===1&&(a.ovr+b.ovr)/2>=60&&(ctx.i>=ctx.n-2||ctx.t))r.seg.notes.push('Their first meeting. '+w.name+' wins it.');
+  // a drought ends: the winner had lost every earlier meeting
+  var hw=S.h2h[rkey(a.id,b.id)],winsW=w.id===Math.min(a.id,b.id)?hw.a:hw.b;
+  if(o.n>=4&&winsW===1){w.mom=clamp(w.mom+2,-10,10);addOvr(ctx.P,w,1);r.seg.notes.push(w.name+' has finally beaten '+l.name+', at the '+(o.n)+'th attempt.');news(S,'story',w.name+' finally beat '+l.name+' after '+(o.n-1)+' defeats.');}
+});
+/* what the booker knows about a pair, for the editor */
+E.pairMemory=function(S,aId,bId){
+  var a=S.w[aId],b=S.w[bId];if(!a||!b)return '';
+  var o=memOf(S,a,b),L=[];
+  if(o.n===0)L.push('They have never met.');
+  else L.push('They have met '+o.n+' '+(o.n===1?'time':'times')+': '+a.name+' '+o.wa+', '+b.name+' '+o.wb+'.');
+  if(o.drought)L.push(o.drought.name+' has never beaten '+(o.drought===a?b:a).name+'.');
+  if(o.bet)L.push(S_name(S,o.bet.att)+' turned on '+S_name(S,o.bet.vic)+' in '+E.cal(o.bet.w).label+'.');
+  return L.join(' ');
+};
+E.memBetray=memBetray;
 
 /* ===== 83-moments.js ===== */
 /* ---------- moments from wrestling history ----------
