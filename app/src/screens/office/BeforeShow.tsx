@@ -72,11 +72,14 @@ export function BeforeShow() {
   const S = G.S, B = E.backstage(S), st = office();
   const room = st.pl ? B.places.find((p: any) => p.id === st.pl) : null;
   const blocked = !room ? '' : (B.ap <= 0 ? 'You are out of action points this week.' : (room.used ? 'You have already spent time here this week.' : ''));
+  if (B.ap > 0) st.rooms = false;
+  const fold = B.ap <= 0 && !st.rooms && !room;
   useFocusAfter();
   return <Panel title="Before the show" cls="pre mb3">
     <NextShow />
     <p class="mt2">Action points this week: <span class="pips" role="img" aria-label={B.ap + ' of ' + B.max}>{Array.from({ length: B.max }, (_, i) => i < B.ap ? <span class="gold">{'◆'}</span> : <span class="muted">{'◇'}</span>)}</span> <span class="num">{B.ap} of {B.max}</span>
       {S.court && S.court.length ? <span class="warn"> {'·'} {S.court.length} in court</span> : null}</p>
+    {fold ? <div class="row mt1"><span class="muted">The rooms are closed until next week.</span><Btn kind="sm" t="rooms-show" onClick={() => view(() => { st.rooms = true; })}>Show the rooms</Btn></div> : <>
     <RoomMap places={B.places} open={room ? room.id : null} />
     <div class="roomdet" aria-live="polite">
       {!room ? <Empty>Pick a room. Each visit costs one action point, and you can visit each room once a week.</Empty> : <>
@@ -85,7 +88,7 @@ export function BeforeShow() {
         {blocked ? <p class="bad mt1">{blocked}</p> : null}
         {room.id === 'court' ? <Court blocked={blocked} /> : <RoomActs room={room} blocked={blocked} />}
       </>}
-    </div>
+    </div></>}
     {B.log && B.log.length ? <div class="aplog">
       <p class="eyebrow">What you have done this week</p>
       <ul class="list">{B.log.map((l: any) => <li class="col"><span><b>{l.place}</b> {'·'} {l.act}{l.who && l.who.length ? ' (' + l.who.join(', ') + ')' : ''}</span><span class={l.ok ? 'good' : 'bad'}><Txt>{l.msg}</Txt></span></li>)}</ul>
