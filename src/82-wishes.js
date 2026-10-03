@@ -60,3 +60,17 @@ CRX.push(function(ctx){
   return who?{d:clamp(h/40,0.5,2),x:'The crowd loves to hate '+who.name}:null;
 });
 WEEKX.push(function(S){S.w.forEach(function(w){if(w.mh)w.mh=w.mh>1?w.mh*0.96:0;});});   // a manager's heat cools if they stay quiet
+
+/* botches and saves: rarely a risky move goes wrong, and a veteran in the match can cover for it */
+POST.push(function(ctx){
+  var S=ctx.S;if(S.cal)return;var risk=0.012*(STIP[ctx.stip]?STIP[ctx.stip].inj:1)*(ctx.mins>=14?1.2:1);
+  if(!chance(S,risk))return;
+  var seg=ctx.res.seg,mover=pick(S,ctx.all),vets=ctx.all.filter(function(w){return w!==mover&&w.age>=33;}).sort(function(a,b){return (b.cons||60)-(a.cons||60);}),vet=vets[0];
+  var move=pick(S,['a top-rope move','a bump on the floor','a springboard','a suplex','a dive over the top']);
+  if(vet&&chance(S,clamp(0.45+((vet.cons||60)-60)/150,0.3,0.85))){
+    seg.notes.push(mover.name+' slipped on '+move+', and '+vet.name+' covered it so smoothly that most of the crowd never noticed.');vet.morale=clamp(vet.morale+2,0,100);mover.morale=clamp(mover.morale+1,0,100);
+  }else{
+    seg.ov=clamp(seg.ov-5,5,99);seg.notes.push(mover.name+' botched '+move+(vet?' and even '+vet.name+' could not cover it.':'. Nobody in the ring could cover it.')+' The crowd noticed.');
+    mover.morale=clamp(mover.morale-3,0,100);
+  }
+});
