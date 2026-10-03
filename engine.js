@@ -20,7 +20,7 @@ var STIP = {
 var FIN = {clean:{r:0,wg:1,lg:1},flash:{r:-1,wg:0.7,lg:0.5},cheap:{r:-1,wg:0.6,lg:0.4},interf:{r:-1,wg:0.5,lg:0.25},foiled:{r:1,wg:1.1,lg:0.8},dq:{r:-5,wg:0.2,lg:0.1},co:{r:-6,wg:0.3,lg:0.2},draw:{r:-3,wg:0,lg:0}};
 var LEN = {S:6,M:12,L:20};
 var PRODF=[0.4,0.7,1,1.45,2.1],PRODN=['Bare bones','Basic','Standard','Slick','State of the art'];
-var RISKN=['Family','Mainstream','Edgy','Extreme'],RISK_STIP=[0.5,1,1.3,1.6],RISK_INJ=[0.8,1,1.15,1.35],RISK_SP=[1.25,1,0.8,0.5];
+var RISKN=['Family','Mainstream','Edgy','Extreme'],RISK_STIP=[0.5,1,1.3,1.6],RISK_INJ=[0.8,1,1.15,1.35];
 var TIXN=['Low','Standard','High','Premium'],TIX_P=[0.75,1,1.25,1.6],TIX_D=[1.18,1,0.86,0.68];
 var ADVN=['None','Local','Regional','Saturation'],ADV_H=[0,0.06,0.12,0.18],ADV_C=[0,0.006,0.015,0.03];
 var SLOTN=['Late night','Early evening','Prime time'],SLOT_V=[0.55,0.8,1],SLOT_MAX=[6,7,8],SLOT_REQ=[0,40,60],SLOT_RISK=[3,3,2];
