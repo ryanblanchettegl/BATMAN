@@ -2174,12 +2174,12 @@ function yearEnd(S){
   var P=S.promos[S.player],yr=cal(S.week).year,Y=S.year||{},L=[],all=S.w.filter(function(w){return w.promo!=='FA';}),mine=rosterOf(S,P.id);
   var by=function(arr,f){return arr.slice().sort(function(a,b){return f(b)-f(a);})[0];};
   var woy=by(all,function(w){return w.yp||0;}),mwoy=by(mine,function(w){return w.yp||0;}),imp=by(mine,function(w){return w.ovr-(w.oy==null?w.ovr:w.oy);});
-  if(woy&&woy.yp){L.push({k:'Wrestler of the year',v:woy.name+' ('+S.promos[woy.promo].name+')'});mile(S,woy,'award','Wrestler of the year, '+yr);}
-  if(mwoy&&mwoy.yp){L.push({k:P.name+' wrestler of the year',v:mwoy.name});addOvr(P,mwoy,1);mwoy.morale=clamp(mwoy.morale+5,0,100);}
+  if(woy&&woy.yp){L.push({k:'Wrestler of the year',v:woy.name+' ('+S.promos[woy.promo].name+')',w:woy.id});mile(S,woy,'award','Wrestler of the year, '+yr);}
+  if(mwoy&&mwoy.yp){L.push({k:P.name+' wrestler of the year',v:mwoy.name,w:mwoy.id});addOvr(P,mwoy,1);mwoy.morale=clamp(mwoy.morale+5,0,100);}
   if(Y.match)L.push({k:'Match of the year',v:Y.match.l+', '+Y.match.ov+'% at '+Y.match.show});
   if(Y.feud)L.push({k:'Feud of the year',v:Y.feud.l});
   if(Y.show)L.push({k:'Show of the year',v:Y.show.n+', '+Y.show.r+'%'});
-  if(imp&&imp.ovr-imp.oy>=2)L.push({k:'Most improved',v:imp.name+' (+'+Math.round(imp.ovr-imp.oy)+' overness)'});
+  if(imp&&imp.ovr-imp.oy>=2)L.push({k:'Most improved',v:imp.name+' (+'+Math.round(imp.ovr-imp.oy)+' overness)',w:imp.id});
   var tm=by(S.teams.filter(function(t){return t.promo===P.id;}),function(t){return t.exp;});if(tm)L.push({k:'Tag team of the year',v:S.w[tm.m[0]].name+' & '+S.w[tm.m[1]].name});
   var pr=by(S.order.map(function(id){return S.promos[id];}),function(p){return p.image-(p.imgY==null?p.image0:p.imgY);});if(pr)L.push({k:'Promotion of the year',v:pr.name});
   S.awards.unshift({year:yr,list:L});
@@ -5591,6 +5591,34 @@ WEEKX.push(function(S){
 E.criticList=function(S){
   var C=S.critic||{last:{},prev:{}},list=criticRank(S);
   return {name:C.name||CRITIC,rows:list.map(function(w,i){var was=C.prev?C.prev[w.id]:null;return {w:w,rank:i+1,score:Math.round(criticScore(w)),move:was?was-(i+1):null,mine:w.promo===S.player};})};
+};
+
+/* ---------- 75. Awards night: each wrestler who wins an award gives a short speech, gains morale, and may ask for more money (engine half, the ceremony screen is TASKS 7) ---------- */
+function speechFor(S,w,k){
+  var good=w.mic>=72,poor=w.mic<=45;
+  if(poor)return pick(S,['“Uh. Thank you. That is all I have.”','“I am not good at this part. Thank you.”','“Somebody else should have this. Thanks anyway.”']);
+  if(w.align==='H')return good?pick(S,['“I would like to thank nobody. I did this myself, and you all know it.”','“This will look better on my shelf than on yours. Do not take it personally.”','“You called me the villain. I call it ‘the one who wins’.”']):pick(S,['“Thanks. I earned it. Next.”','“About time.”']);
+  return good?pick(S,['“To the people in the seats: you did this. Every night you stood up, I found one more gear.”','“I could not have done it without the people in this room, and I mean all of them.”','“I got into this for the first night I heard that noise. Thank you for the noise.”']):pick(S,['“Thank you to the fans. You made this possible.”','“I am grateful to everyone who helped me.”']);
+}
+WEEKX.push(function(S){
+  var c=cal(S.week);if(S.cal||!(c.month===11&&c.wom===4)||!S.awards[0])return;
+  var A=S.awards[0],P=S.promos[S.player];if(A.done)return;A.done=true;
+  var asked={};
+  A.list.forEach(function(x){
+    if(x.w==null||!S.w[x.w])return;var w=S.w[x.w];x.sp=w.name+': '+speechFor(S,w,x.k);
+    if(w.promo!==P.id)return;
+    w.morale=clamp(w.morale+(x.k==='Wrestler of the year'?8:5),0,100);
+    if(!asked[w.id]&&chance(S,0.55)&&!w.nw){asked[w.id]=1;
+      var raise=Math.round(w.wage*1.2/50)*50,bonus=w.wage*8;
+      pushEv(S,{type:'awardraise',w:w.id,text:w.name+' won “'+x.k+'” and thinks the pay should show it. They are asking for a 20% raise, to '+money(raise)+' a week.',
+        raise:raise,bonus:bonus,choices:['Pay the raise: '+money(raise)+' a week','A one-off bonus of '+money(bonus)+' instead','Say no']});
+    }
+  });
+});
+EVR.awardraise=function(S,ev,choice,P,w){
+  if(choice===0){w.wage=ev.raise;w.morale=clamp(w.morale+6,0,100);return w.name+' is paid '+money(w.wage)+' a week.';}
+  if(choice===1){if(P.cash<ev.bonus)return 'You cannot cover the bonus right now. '+w.name+' will remember that.';P.cash-=ev.bonus;w.morale=clamp(w.morale+3,0,100);return w.name+' takes the bonus and the point is made.';}
+  w.morale=clamp(w.morale-8,0,100);return w.name+' says nothing. They hold on to the trophy a little tighter.';
 };
 
 /* ===== 89-regions.js ===== */

@@ -55,7 +55,7 @@ function Awards() {
   return <Panel title="Year-end awards">
     {L.length ? L.map((y: any) => <>
       <p class="eyebrow mt2">{y.year}</p>
-      <ul class="list">{y.list.map((x: any) => <Row v={<span class="gold">{x.v}</span>}>{x.k}</Row>)}</ul>
+      <ul class="list">{y.list.map((x: any) => <><Row v={<span class="gold">{x.v}</span>}>{x.k}</Row>{x.sp ? <li class="col"><span class="muted">{x.sp}</span></li> : null}</>)}</ul>
     </>) : <Empty>The awards are handed out in the last week of December. Keep your best wrestlers on the card until then.</Empty>}
   </Panel>;
 }

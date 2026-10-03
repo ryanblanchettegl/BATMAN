@@ -133,12 +133,12 @@ function yearEnd(S){
   var P=S.promos[S.player],yr=cal(S.week).year,Y=S.year||{},L=[],all=S.w.filter(function(w){return w.promo!=='FA';}),mine=rosterOf(S,P.id);
   var by=function(arr,f){return arr.slice().sort(function(a,b){return f(b)-f(a);})[0];};
   var woy=by(all,function(w){return w.yp||0;}),mwoy=by(mine,function(w){return w.yp||0;}),imp=by(mine,function(w){return w.ovr-(w.oy==null?w.ovr:w.oy);});
-  if(woy&&woy.yp){L.push({k:'Wrestler of the year',v:woy.name+' ('+S.promos[woy.promo].name+')'});mile(S,woy,'award','Wrestler of the year, '+yr);}
-  if(mwoy&&mwoy.yp){L.push({k:P.name+' wrestler of the year',v:mwoy.name});addOvr(P,mwoy,1);mwoy.morale=clamp(mwoy.morale+5,0,100);}
+  if(woy&&woy.yp){L.push({k:'Wrestler of the year',v:woy.name+' ('+S.promos[woy.promo].name+')',w:woy.id});mile(S,woy,'award','Wrestler of the year, '+yr);}
+  if(mwoy&&mwoy.yp){L.push({k:P.name+' wrestler of the year',v:mwoy.name,w:mwoy.id});addOvr(P,mwoy,1);mwoy.morale=clamp(mwoy.morale+5,0,100);}
   if(Y.match)L.push({k:'Match of the year',v:Y.match.l+', '+Y.match.ov+'% at '+Y.match.show});
   if(Y.feud)L.push({k:'Feud of the year',v:Y.feud.l});
   if(Y.show)L.push({k:'Show of the year',v:Y.show.n+', '+Y.show.r+'%'});
-  if(imp&&imp.ovr-imp.oy>=2)L.push({k:'Most improved',v:imp.name+' (+'+Math.round(imp.ovr-imp.oy)+' overness)'});
+  if(imp&&imp.ovr-imp.oy>=2)L.push({k:'Most improved',v:imp.name+' (+'+Math.round(imp.ovr-imp.oy)+' overness)',w:imp.id});
   var tm=by(S.teams.filter(function(t){return t.promo===P.id;}),function(t){return t.exp;});if(tm)L.push({k:'Tag team of the year',v:S.w[tm.m[0]].name+' & '+S.w[tm.m[1]].name});
   var pr=by(S.order.map(function(id){return S.promos[id];}),function(p){return p.image-(p.imgY==null?p.image0:p.imgY);});if(pr)L.push({k:'Promotion of the year',v:pr.name});
   S.awards.unshift({year:yr,list:L});

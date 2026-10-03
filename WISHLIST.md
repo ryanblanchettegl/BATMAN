@@ -109,7 +109,7 @@ Things that would make the game deeper. Each one adds a system, a choice or a me
 - [x] **72. Followers.** Each wrestler has a following that grows with big moments. A clip can spread, bringing casual fans and merchandise. *S.*
 - [x] **73. Speaking out.** A released wrestler gives an interview. It can hurt morale, reveal a rival's plans, or settle a score. *S.*
 - [x] **74. Guest stars.** An actor, athlete or singer made up by the game does a one-night spot. Casuals tune in, diehards groan, and the match itself is a risk. *S.*
-- [ ] **75. Awards night.** A yearly ceremony screen with categories and short speeches. Winners gain morale and ask for more money. *M. (TASKS 7)*
+- [x] **75. Awards night.** A yearly ceremony screen with categories and short speeches. Winners gain morale and ask for more money. *M. (TASKS 7)*
 - [x] **76. Hall of fame night.** The hall of fame exists. Add an induction on the flagship weekend with a speech and a lift for the crowd. *S.*
 - [x] **77. Trouble in public.** A star makes the wrong kind of news. Suspend, bury, or stand by them. Keep it light and vague. *M. (ask Ryan about tone)*
 - [x] **78. Home-town heroes.** A wrestler in their home city gets a pop. Beating them there costs. A home-town title win lifts the city. *S. Needs a home city per wrestler in the universe file.*
