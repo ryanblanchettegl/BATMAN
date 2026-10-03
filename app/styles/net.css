@@ -1,0 +1,15 @@
+/* Styles only the Net section needs. Shared pieces live in base.css. */
+.sheet-head{font-size:1.7em;line-height:1.05;color:var(--yellow);text-transform:none;margin:2px 0 6px;text-wrap:balance}
+.sheet-lines{margin:4px 0 0;padding-left:2ch;display:flex;flex-direction:column;gap:3px}
+.sheet-lines li::marker{color:var(--dcyan)}
+.sheet-show{padding:6px 0;border-bottom:1px dotted var(--dcyan)}
+.sheet-show:first-child{padding-top:0}
+.feed{list-style:none;margin:0;padding:0;display:flex;flex-direction:column}
+.feed .fp{padding:8px 0;border-bottom:1px dotted var(--dcyan);border-left:.5ch solid var(--dcyan);padding-left:1.5ch;margin-bottom:6px}
+.feed .fp:last-child{border-bottom:0;margin-bottom:0}
+.feed .fp.wrestler{border-left-color:var(--yellow)}
+.feed .fp.press{border-left-color:var(--white)}
+.feed .fp.company{border-left-color:var(--green)}
+.feed .fp.fan{border-left-color:var(--dcyan)}
+.feed .ft{color:var(--white);margin:2px 0}
+.post .votes{white-space:nowrap}

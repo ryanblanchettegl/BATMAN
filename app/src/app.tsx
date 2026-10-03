@@ -14,13 +14,14 @@ import * as office from './screens/office';
 import * as booking from './screens/booking';
 import * as roster from './screens/roster';
 import * as stories from './screens/stories';
+import * as net from './screens/net';
 import * as manage from './screens/manage';
 import * as company from './screens/company';
 
 type Page = () => ComponentChildren;
 type ModalView = (p: { m: Modal }) => ComponentChildren;
-const PAGES: Record<string, Page> = { ...office.pages, ...booking.pages, ...roster.pages, ...stories.pages, ...manage.pages, ...company.pages };
-const MODALS: Record<string, ModalView> = { ...start.modals, ...office.modals, ...booking.modals, ...roster.modals, ...stories.modals, ...manage.modals, ...company.modals };
+const PAGES: Record<string, Page> = { ...office.pages, ...booking.pages, ...roster.pages, ...stories.pages, ...net.pages, ...manage.pages, ...company.pages };
+const MODALS: Record<string, ModalView> = { ...start.modals, ...office.modals, ...booking.modals, ...roster.modals, ...stories.modals, ...net.modals, ...manage.modals, ...company.modals };
 
 /** The open pop-up. `{kind:'info', title, body}` shows any content; other kinds are registered by the sections. */
 function ModalHost() {

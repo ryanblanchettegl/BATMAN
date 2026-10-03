@@ -3,7 +3,7 @@
    Run:          NODE_PATH=/opt/npm-tools/node_modules node app/tests/stories.js */
 const { open, go, overflow, shot, state, redraw } = require('./helper');
 const FILE = process.env.EWF_OUT || 'index';
-const PAGES = ['storylines', 'history', 'net'];
+const PAGES = ['storylines', 'history', 'boards'];
 const fails = [];
 function check(mode, label, ok, detail) { console.log(mode.padEnd(6), ok ? 'ok  ' : 'FAIL', label + (detail ? ': ' + detail : '')); if (!ok) fails.push(mode + ' ' + label); }
 async function fits(page, mode, label) { const o = await overflow(page); check(mode, label + ' fits the screen', o === '', o); }
@@ -75,7 +75,7 @@ async function history(page, mode) {
   await fits(page, mode, 'history');
 }
 async function net(page, mode) {
-  await go(page, 'net');
+  await go(page, 'boards');
   const want = await state(page, S => ({ threads: S.net.threads.length, posts: S.net.threads.reduce((a, t) => a + t.posts.length, 0), mood: Math.round(S.net.mood), sub: S.net.threads[0] ? S.net.threads[0].sub : '', user: S.net.threads[0] ? S.net.threads[0].posts[0].u : '' }));
   check(mode, 'every thread and post is on the board', want.threads > 0 && await count(page, '.post') === want.posts && await count(page, '.panel') === want.threads + 1, want.threads + ' threads, ' + want.posts + ' posts');
   check(mode, 'posts show who wrote them', await page.$eval('.post .u', e => e.innerText) === '<' + want.user + '>');
@@ -92,7 +92,7 @@ async function net(page, mode) {
     check(mode, 'storylines page before any show', await page.$eval('h1', e => e.innerText) === 'STORYLINES' && await count(page, '.panel') >= 3);
     await go(page, 'history');
     check(mode, 'history before any show', /Run a show on Booking and the book opens/.test(await text(page)) && /Champion when you arrived/.test(await text(page)));
-    await go(page, 'net');
+    await go(page, 'boards');
     check(mode, 'the net before any show', await count(page, '.post') === await state(page, S => S.net.threads.reduce((a, t) => a + t.posts.length, 0)) && (await count(page, '.post') > 0 || /Nobody has posted yet/.test(await text(page))));
 
     await advance(page, 8);

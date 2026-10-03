@@ -342,12 +342,16 @@ html[data-screen="tv"]{--fs:clamp(22px,1.9vw,84px)}
 :is(html[data-screen="tablet"],html[data-screen="phone"]) .btn{padding:.44em 1.5ch;margin-bottom:.55em}
 :is(html[data-screen="tablet"],html[data-screen="phone"]) .menu button{padding:.5em 1.4ch}
 :is(html[data-screen="tablet"],html[data-screen="phone"]) .menu .f1{padding:.3em 1ch}
-/* phone: the six sections and Help are a grid of four, so none of them is ever scrolled out of sight */
+/* Help and Music travel together at the right-hand end of the menu */
+.menu .tools{display:flex;align-items:center}
+/* phone: the seven sections are a grid of four, so none of them is ever scrolled out of sight. Help and Music share the top right cell. */
 html[data-screen="phone"] .menu{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));overflow:visible;padding:0}
 html[data-screen="phone"] .menu button{font-size:1em;padding:.5em 0;text-align:center}
 html[data-screen="phone"] .menu .f1{margin:.25em .6ch;padding:.25em 0}
 /* Music keeps the top right corner; the other buttons flow around it */
-html[data-screen="phone"] .menu .f1.mus{grid-column:4;grid-row:1}
+html[data-screen="phone"] .menu .tools{grid-column:4;grid-row:1;justify-content:stretch}
+html[data-screen="phone"] .menu .tools .f1{flex:1;margin:.25em .3ch;text-align:center}
+html[data-screen="phone"] .menu:not(.startmenu) .mus .mw{display:none}
 html[data-screen="phone"] .menu .sp{display:none}
 /* the start menu has five buttons: three on the first row, Help and Music sharing the second, so no row is left with one */
 html[data-screen="phone"] .menu.startmenu{grid-template-columns:repeat(3,minmax(0,1fr))}

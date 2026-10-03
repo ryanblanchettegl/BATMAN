@@ -11,7 +11,7 @@ import { SFX } from '../sfx';
     Jukebox for any click on an element marked data-jk="open", so this button needs no handler of its own. */
 // Back on a remote or gamepad closes the Jukebox first
 onBack(() => { const c = document.querySelector('.jk [data-jk="close"]') as HTMLElement | null; if (!c) return false; c.click(); return true; });
-export function MusicBtn() { return <button type="button" class="f1 mus" data-t="music" data-jk="open" aria-label="Music jukebox">{'♫'} Music</button>; }
+export function MusicBtn() { return <button type="button" class="f1 mus" data-t="music" data-jk="open" aria-label="Music jukebox">{'♫'}<span class="mw"> Music</span></button>; }
 
 /** Manage: sponsor offers waiting, plus one if the house style still has to be set. */
 function manageBadge(): number { const S = G.S; return (S.sponsors.length < 3 ? S.spOffers.length : 0) + (S.owner.pending ? 1 : 0); }
@@ -25,8 +25,7 @@ export function MenuBar() {
       return <button type="button" data-t="tab" data-v={s.id} aria-current={cur === s ? 'page' : undefined} onClick={() => go(s.id)}><u>{s.n.charAt(0)}</u>{s.n.slice(1)}{badge ? <span class="badge"> ({badge})</span> : null}</button>;
     })}
     <span class="ttl">{P.name} {'·'} {E.cal(S.week).label}</span>
-    <button type="button" class="f1" data-t="help" onClick={() => openModal({ kind: 'help' })}>Help</button>
-    <MusicBtn />
+    <span class="tools"><button type="button" class="f1" data-t="help" onClick={() => openModal({ kind: 'help' })}>Help</button><MusicBtn /></span>
   </nav>;
 }
 

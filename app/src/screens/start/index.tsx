@@ -266,11 +266,13 @@ export function Setup() {
 function Help() {
   return <Window title="Help" ok="Got it">
     <p><b>The job.</b> Book the shows, answer the inbox, close the week. Shows that beat what the crowd expects raise your popularity.</p>
+    <p class="mt1"><b>Booking.</b> A show is matches, promos and angles. You pick who is in each. The odds decide the matches unless you spend booking power.</p>
     <ul class="list mt1">
       <li><span><b>Office.</b> The desk and your career. It opens on what needs doing before the show.</span></li>
       <li><span><b>Booking.</b> Build the card. Spend booking power to call a finish.</span></li>
       <li><span><b>Roster.</b> Wrestlers, the locker room, titles and free agents.</span></li>
-      <li><span><b>Stories.</b> Rivalries, history and what the fans say.</span></li>
+      <li><span><b>Stories.</b> Rivalries and history.</span></li>
+      <li><span><b>Net.</b> The dirt sheet, the feed and the fan boards.</span></li>
       <li><span><b>Manage.</b> Every choice: operations, house rules, deals.</span></li>
       <li><span><b>Company.</b> Information only: overview, finances, the world.</span></li>
     </ul>

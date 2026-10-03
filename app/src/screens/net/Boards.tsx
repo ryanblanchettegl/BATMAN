@@ -1,4 +1,4 @@
-/* The Net: the fan message board. Its mood nudges ticket demand, and the threads react to your shows. Read-only. */
+/* The boards: the fan message board. Its mood nudges ticket demand, and the threads react to your shows. Read-only. */
 import { E } from '../../engine';
 import { G, me, plural } from '../../store';
 import { Head, Panel, Meter, Empty, Txt, Name } from '../../kit';
@@ -9,18 +9,21 @@ function moodNote(mood: number): string {
   return 'They have turned on the product. Ticket demand is down a little.';
 }
 
+/** Up and down votes for a post: steady for the same post, kinder to posts that liked the show. */
+function votes(t: any, x: any, i: number): string { let h = 0; const k = t.w + ':' + x.u + ':' + i; for (let q = 0; q < k.length; q++) h = (h * 31 + k.charCodeAt(q)) % 997; const v = 4 + (h % 60) + (x.s > 0 ? 25 : (x.s < 0 ? -8 : 0)); return (v >= 0 ? '+' : '') + v; }
+
 function Thread(p: { t: any }) {
   const t = p.t;
   return <Panel cls="mb2" title={t.sub}>
     <p class="eyebrow">{E.cal(t.w).label} {'·'} {t.posts.length} {plural(t.posts.length, 'post')}</p>
-    {t.posts.map((x: any) => <p class="post"><span class="u">{'<' + x.u + '>'}</span> <Txt>{x.t}</Txt></p>)}
+    {t.posts.map((x: any, i: number) => <p class="post"><span class="u">{'<' + x.u + '>'}</span> <Txt>{x.t}</Txt> <span class="muted num votes">{votes(t, x, i)}</span></p>)}
   </Panel>;
 }
 
-export function Net() {
+export function Boards() {
   const S = G.S, P = me(), N = S.net || { mood: 60, threads: [] };
   return <>
-    <Head eyebrow={'alt.wrestling.' + P.name.toLowerCase().replace(/[^a-z0-9]/g, '')} title="The Net" />
+    <Head eyebrow={'alt.wrestling.' + P.name.toLowerCase().replace(/[^a-z0-9]/g, '')} title="The boards" />
     <Panel cls="mb3">
       <p>Mood of the board <Meter v={N.mood} kind={N.mood < 40 ? 'hot' : 'cool'} /> <span class="num">{Math.round(N.mood)}</span> <span class="muted">{moodNote(N.mood)}</span></p>
       {(() => { const C = E.criticList(S); return C.rows.length ? <>

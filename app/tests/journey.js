@@ -1,7 +1,7 @@
 /* A whole-game run on the combined build: five weeks by real clicks, every page visited, on four screen modes. */
 const { open, go, overflow, shot, flash } = require('./helper');
 const FILE = process.env.EWF_OUT || 'index';
-const PAGES = ['desk', 'career', 'booking', 'roster', 'locker', 'titles', 'market', 'storylines', 'history', 'net', 'manage', 'house', 'deals', 'overview', 'finances', 'world'];
+const PAGES = ['desk', 'career', 'booking', 'roster', 'locker', 'titles', 'market', 'storylines', 'history', 'sheet', 'feed', 'boards', 'manage', 'house', 'deals', 'overview', 'finances', 'world'];
 async function run(mode, weeks) {
   const { browser, page, errs } = await open({ mode, file: FILE, promo: process.env.PROMO || 'pdw' }), bad = [];
   const fit = async where => { const o = await overflow(page); if (o) bad.push(where + ': ' + o); };
@@ -26,7 +26,7 @@ async function run(mode, weeks) {
     if (!(await has('[data-t="endweek"]:not([disabled])'))) { bad.push('week ' + w + ' could not be closed: ' + (await page.$eval('.main', e => e.innerText.slice(0, 200).replace(/\n/g, ' ')))); break; }
     await page.click('[data-t="endweek"]');
     if (await has('.win')) { await fit('week closed w' + w); await page.keyboard.press('Escape'); }
-    if (w === 1) for (const p of PAGES) { await go(page, p); await fit(p); if (['desk', 'roster', 'manage', 'house', 'deals', 'overview', 'finances', 'storylines', 'net', 'world', 'career', 'locker'].includes(p) && (mode === 'desk' || mode === 'phone' || mode === 'tv')) await shot(page, 'j-' + mode + '-' + p); if (p === 'roster') { await page.click('tbody tr.pick'); await fit('profile'); await shot(page, 'j-' + mode + '-profile'); await page.keyboard.press('Escape'); } }
+    if (w === 1) for (const p of PAGES) { await go(page, p); await fit(p); if (['desk', 'roster', 'manage', 'house', 'deals', 'overview', 'finances', 'storylines', 'sheet', 'boards', 'world', 'career', 'locker'].includes(p) && (mode === 'desk' || mode === 'phone' || mode === 'tv')) await shot(page, 'j-' + mode + '-' + p); if (p === 'roster') { await page.click('tbody tr.pick'); await fit('profile'); await shot(page, 'j-' + mode + '-profile'); await page.keyboard.press('Escape'); } }
   }
   const before = await page.evaluate(() => { const S = window.EWF_DEBUG.state(); return S.week + '/' + S.promos[S.player].cash; });
   await page.reload();
