@@ -1,7 +1,7 @@
 const { open, go, overflow, shot, state, redraw } = require('./helper');
 (async () => {
   let bad = 0; const ok = (c, m) => { console.log(c ? 'ok  ' : 'FAIL', m); if (!c) bad++; };
-  for (const mode of (process.env.MODES || 'desk,phone,tv').split(',')) {
+  for (const mode of (process.env.MODES || 'desk,phone,tablet,tv').split(',')) {
     const { browser, page, errs } = await open({ mode, promo: 'pdw' });
     const n = sel => page.$$eval(sel, L => L.length), title = () => page.$eval('.cards .wt span', e => e.textContent).catch(() => '');
     // titles page: a title name opens its history
@@ -34,6 +34,21 @@ const { open, go, overflow, shot, state, redraw } = require('./helper');
     ok((await overflow(page)) === '', mode + ' team card fits');
     await shot(page, 'card-' + mode + '-team');
     await page.click('[data-t="card-close"]'); ok(await n('.cards .win') === 0, mode + ' Close shuts it');
+    // a stack four deep: Back steps out in the right order
+    const ids = await state(page, S => { const L = S.w.filter(w => w.promo === S.player && !w.nw); return { a: L[0].id, b: L[1].id, tid: S.teams.find(t => t.promo === S.player).id, pid: S.player, title: S.promos[S.player].titles[0].id }; });
+    await page.evaluate(i => { const u = window.EWF_DEBUG.ui; u.cards.length = 0; u.cards.push({ k: 'w', id: i.a }, { k: 'team', id: i.tid }, { k: 'title', pid: i.pid, id: i.title }, { k: 'w', id: i.b }); window.EWF_DEBUG.render(); }, ids);
+    await page.waitForSelector('.cards .win');
+    const depth = () => page.evaluate(() => window.EWF_DEBUG.ui.cards.map(c => c.k).join(','));
+    ok(await depth() === 'w,team,title,w', mode + ' stack four deep: ' + await depth());
+    ok((await overflow(page)) === '', mode + ' four-deep stack fits');
+    for (const want of ['w,team,title', 'w,team', 'w']) { await page.click('[data-t="card-back"]'); await page.waitForTimeout(60); ok(await depth() === want, mode + ' Back leaves ' + want + ': ' + await depth()); }
+    await page.click('[data-t="card-close"]');
+    // a retired wrestler still has a card
+    await state(page, (S, id) => { S.w[id].rt = true; }, ids.b);
+    await page.evaluate(id => { window.EWF_DEBUG.ui.cards.length = 0; window.EWF_DEBUG.ui.cards.push({ k: 'w', id }); window.EWF_DEBUG.render(); }, ids.b);
+    await page.waitForSelector('.cards .win');
+    ok(await n('.cards canvas.pt') >= 1 && (await overflow(page)) === '', mode + ' a retired wrestler\'s card opens and fits: ' + await title());
+    await page.click('[data-t="card-close"]');
     // own wrestler: Full profile goes to the roster page with them open
     await go(page, 'desk'); const own = await state(page, S => S.w.find(w => w.promo === S.player && !w.nw).id);
     await page.evaluate(id => { window.EWF_DEBUG.ui.cards.push({ k: 'w', id }); window.EWF_DEBUG.render(); }, own);
