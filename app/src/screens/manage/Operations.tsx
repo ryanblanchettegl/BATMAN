@@ -174,7 +174,7 @@ export function Operations() {
     <Head eyebrow={P.name} title="Operations" />
     <div class="cols">
       <div class="stack"><Broadcast /><Settings from={0} to={3} /></div>
-      <div class="stack"><Settings from={3} to={7} /><Merch /><School /><Tours /><Universe /></div>
+      <div class="stack"><Settings from={3} to={7} /><Merch /><School /><Tours /><Budgets /><Universe /></div>
     </div>
   </>;
 }
@@ -205,6 +205,17 @@ function Tape() {
       <Btn kind="sm" t="tape-sell" disabled={t.n < 8} onClick={sell}>Sell it: {cash(t.sellFor)}</Btn>
     </div>
     <p class="muted mt1">Licensing pays a lump sum and halves your own streaming income for 26 weeks. Selling pays more and clears the library for good.</p>
+  </Panel>;
+}
+
+/** Monthly budgets for four departments. A limit is set against what you spend now; a warning comes when a month runs over. */
+function Budgets() {
+  const S = G.S, L = E.budgets(S);
+  const set = (k: string, v: string) => act(() => { const r = E.setBudget(S, k, +v); say(r.text, { err: !r.ok }); });
+  return <Panel title="Budgets">
+    <ul class="list">{L.map((b: any) => <li class="col"><span><b>{b.n}</b> <span class={b.over ? 'bad' : 'muted'}>{'·'} {cash(b.month)} in four weeks{b.limit != null ? ' of ' + cash(b.limit) + (b.over ? ': over' : '') : ''}</span></span>
+      <Sel id={'bud-' + b.id} t="bud" d={{ k: b.id }} value={b.limit == null ? '' : 'x'} onChange={v => v !== 'x' && set(b.id, v)} options={[['', 'No limit'], ...(b.limit != null ? [['x', 'Limit set: ' + cash(b.limit)]] : []), ['0.9', 'Set to 90% of what you spend now'], ['1', 'Set to 100% of it'], ['1.1', 'Set to 110% of it'], ['1.25', 'Set to 125% of it']] as any} /></li>)}</ul>
+    <p class="muted mt1">A limit is set against what a department costs now. The news says when a month runs over.</p>
   </Panel>;
 }
 

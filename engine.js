@@ -5454,6 +5454,39 @@ WEEKX.push(function(S){
   });
 });
 
+/* ---------- 58. Department budgets: a monthly limit for talent, production, travel and promotion, with a warning when one runs over (P.bud) ---------- */
+var DEPT={
+  talent:{n:'Talent',get:function(r){return r.wages;}},
+  prod:{n:'Production',get:function(r){return r.prod;}},
+  travel:{n:'Travel',get:function(r){return r.trv||0;}},
+  promo:{n:'Promotion',get:function(r){return r.adv||0;}}
+};
+function deptSpent(P,k,weeks){var h=P.hist.slice(-weeks),t=0;h.forEach(function(r){t+=DEPT[k].get(r);});return t;}
+E.DEPT=Object.keys(DEPT).map(function(k){return {id:k,n:DEPT[k].n};});
+E.budgets=function(S){
+  var P=S.promos[S.player],B=P.bud||{};
+  return Object.keys(DEPT).map(function(k){
+    var run=Math.round(deptSpent(P,k,4)/Math.max(1,Math.min(4,P.hist.length))*4),lim=B[k]==null?null:B[k];
+    return {id:k,n:DEPT[k].n,month:Math.round(deptSpent(P,k,4)),run:run,limit:lim,over:lim!=null&&deptSpent(P,k,4)>lim,pct:lim?Math.round(deptSpent(P,k,4)/lim*100):null};
+  });
+};
+E.setBudget=function(S,k,mult){
+  var P=S.promos[S.player];if(!DEPT[k])return {ok:false,text:'Pick a department.'};
+  var b=E.budgets(S).filter(function(x){return x.id===k;})[0];
+  P.bud=P.bud||{};
+  if(!mult){P.bud[k]=null;return {ok:true,text:b.n+' has no monthly limit.'};}
+  if(!b.run)return {ok:false,text:b.n+' costs nothing at the moment, so there is nothing to limit.'};
+  P.bud[k]=Math.round(b.run*mult/1000)*1000;
+  return {ok:true,text:b.n+' is limited to '+money(P.bud[k])+' a month.'};
+};
+WEEKX.push(function(S){
+  if(S.cal)return;var P=S.promos[S.player];if(!P.bud||P.hist.length<4)return;
+  var m=Math.floor(S.week/4);P.budWarn=P.budWarn||{};
+  E.budgets(S).forEach(function(b){
+    if(b.over&&P.budWarn[b.id]!==m){P.budWarn[b.id]=m;news(S,'money',b.n+' is over budget: '+money(b.month)+' in the last four weeks against '+money(b.limit)+'.');}
+  });
+});
+
 /* ===== 89-regions.js ===== */
 /* ---------- regions: where the world likes what ---------- */
 
