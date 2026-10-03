@@ -47,7 +47,7 @@ Small jobs, each one commit. None of them needs a decision from Ryan. Read `CLAU
 - [x] **27.** Put the count of unanswered items in the Inbox panel title, and list unanswered items first.
 - [x] **28.** "Needs attention" on the desk: add sponsor offers waiting, a house style that has to be set, and action points still unspent when only one show is left. Give each row a button that goes to the right page.
 - [x] **29.** Office news on the desk: show your own company's news first, then one line for the biggest story elsewhere.
-- [ ] **30.** The figures in the status bar (`StatusBar` in `app/src/shell/Frame.tsx`) should be buttons that open the Company overview.
+- [x] **30.** The figures in the status bar (`StatusBar` in `app/src/shell/Frame.tsx`) should be buttons that open the Company overview.
 - [ ] **31.** Menu badges: Manage shows a count when sponsor offers are new or the house style is waiting; Roster shows the number of contracts ending within four weeks.
 - [ ] **32.** On a phone the start menu puts Help alone on a second row. Lay the five buttons out so no row has a single item.
 - [ ] **33.** Select promotion: show the model's name on each row, and on a desk put the detail panel beside the list so it is visible without scrolling.
