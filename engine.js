@@ -3496,6 +3496,12 @@ E.validateUniverse=function(pkg,fileList){
   (pkg.contracts||[]).forEach(function(c,i){var at='contracts['+i+']';ref(W,c.worker_id,at,'worker_id');ref(PR,c.promotion_id,at,'promotion_id');
     if((c.contract_type||'exclusive')==='exclusive'){if(excl[c.worker_id])err(at,c.worker_id+' has two exclusive contracts');excl[c.worker_id]=c.promotion_id;}
     var w=W[c.worker_id];if(w&&(!w.roles||w.roles.indexOf('wrestler')>=0))byPromo[c.promotion_id]=(byPromo[c.promotion_id]||0)+1;});
+  var PRO={};(pkg.promotions||[]).forEach(function(p){PRO[p.id]=p;});
+  // a gender-locked model (joshi) cannot sign or crown the other gender; say so where the data says otherwise
+  (pkg.contracts||[]).forEach(function(c,i){var pr=PRO[c.promotion_id],w=W[c.worker_id],MD=pr&&MODELS[pr.model];
+    if(MD&&MD.gender&&w&&(!w.roles||w.roles.indexOf('wrestler')>=0)&&w.gender!==MD.gender)warn('contracts['+i+']',w.ring_name+' is under contract to '+pr.name+', which runs as '+MD.n+' and signs only '+(MD.gender==='F'?'women':'men')+'; the game will not sign others like them');});
+  (pkg.titles||[]).forEach(function(t,i){var pr=PRO[t.promotion_id],MD=pr&&MODELS[pr.model];
+    if(MD&&MD.gender&&t.gender!==MD.gender)warn('titles['+i+'] '+t.id,t.name+' is a '+(t.gender==='F'?"women's":"men's")+' title in a '+MD.n+' promotion');});
   (pkg.shows||[]).forEach(function(s,i){ref(PR,s.promotion_id,'shows['+i+'] '+s.id,'promotion_id');});
   (pkg.titles||[]).forEach(function(t,i){var at='titles['+i+'] '+t.id;ref(PR,t.promotion_id,at,'promotion_id');
     (t.holder_ids||[]).forEach(function(h){if(ref(W,h,at,'holder')&&excl[h]!==t.promotion_id)warn(at,h+' holds this title but is not under contract to '+t.promotion_id+'; title vacated');});

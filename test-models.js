@@ -37,5 +37,12 @@ const R = {};
   const r = E.sign(S, w.id, E.ask(S, w) * 1.2, 48);
   ok('ttt', 'underdog: a castoff signs with chip set', r.ok && w.chip >= S.week, r.msg);
 }
+{ // the package check warns about the other gender in a gender-locked promotion
+  const pkg = JSON.parse(fs.readFileSync('universes/public_domain.json', 'utf8')), man = pkg.workers.find(w => w.gender === 'M' && (!w.roles || w.roles.includes('wrestler')));
+  const c = pkg.contracts.find(c => c.worker_id === man.id); c.promotion_id = 'kjp';
+  const t = pkg.titles.find(t => t.promotion_id === 'kjp'); t.gender = 'M';
+  const v = E.validateUniverse(pkg), w = v.warnings.map(x => x.msg).join(' | ');
+  ok('kjp', 'a man and a men\'s title in the joshi promotion draw warnings', /signs only women/.test(w) && /men's title in a Joshi/.test(w), w.slice(0, 160));
+}
 if (fails.length) { console.log('FAILED: ' + fails.length); process.exit(1); }
 console.log('test-models: all passed');

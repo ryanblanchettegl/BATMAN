@@ -36,7 +36,7 @@ Small jobs, each one commit. None of them needs a decision from Ryan. Read `CLAU
 - [x] **19.** Browser test: play three weeks, reload the page, press Continue, and compare week, cash and roster size with before the reload.
 - [x] **20.** Old-save test: build a save without `model`, `apLog`, `jw` or `cards`, load it in the browser, play one week, expect no errors.
 - [x] **21.** Determinism test: the same promotion and seed played twice for 20 weeks headless must produce identical state.
-- [ ] **22.** `E.validateUniverse` should warn when a promotion with a gender-locked model has wrestlers or titles of the other gender. Add the warning and a test.
+- [x] **22.** `E.validateUniverse` should warn when a promotion with a gender-locked model has wrestlers or titles of the other gender. Add the warning and a test.
 - [ ] **23.** Gamepad test in `cards.js`: A on a name opens the pop-up, B closes it, and the highlight returns to the name.
 - [ ] **24.** Overflow sweep: every page on desk, phone, tablet and TV at week 30 of a headless-advanced game. Nothing may scroll sideways.
 
