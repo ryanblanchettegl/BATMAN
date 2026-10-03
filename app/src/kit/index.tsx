@@ -84,13 +84,15 @@ export function TeamName(p: { t: any }) {
 
 /* Names inside sentences the engine wrote (news, reports, the inbox): find every wrestler, title and named team and make
    each one selectable. The lookup is rebuilt when the world changes size or the week turns. */
+/** Single-word names that are also ordinary English words. They are not linked when one stands at the start of a sentence, where it may be just a word. */
+const WORDLIKE = /^(set|paris|atlas|nemesis|mark|will|rose|hope|faith|grace|joy|dawn|king|queen|prince|baron|duke|earl|major|cash|hunter|bishop|storm|stone|hawk|wolf|fox|bear|lion|tiger|rocky|jack|bill|ray|sage|ash|blake|chase|cole|dean|drake|frank|lance|miles|rich|skip|tag)$/i;
 let lk: { key: string; re: RegExp | null; map: Record<string, Card> } = { key: '', re: null, map: {} };
 function lookup() {
   const S = G.S; if (!S) return lk;
   const key = S.seed + ':' + S.week + ':' + S.w.length + ':' + S.teams.length;
   if (lk.key === key) return lk;
   const map: Record<string, Card> = {};
-  S.w.forEach((w: W) => { if (w.name && w.name.length >= 3) map[w.name] = { k: 'w', id: w.id }; });
+  S.w.forEach((w: W) => { if (w.name && w.name.length >= 4) map[w.name] = { k: 'w', id: w.id }; });
   S.order.forEach((pid: string) => S.promos[pid].titles.forEach((t: any) => { if (!map[t.name]) map[t.name] = { k: 'title', pid, id: t.id }; }));
   S.teams.forEach((t: any) => { if (t.name && !map[t.name]) map[t.name] = { k: 'team', id: t.id }; });
   S.order.forEach((pid: string) => { const P = S.promos[pid]; [P.name, P.full].forEach(n => { if (n && n.length >= 3 && !map[n]) map[n] = { k: 'promo', id: pid }; }); });
@@ -107,6 +109,7 @@ export function Txt(p: { children: string | null | undefined }) {
   const out: ComponentChildren[] = []; let last = 0, m: RegExpExecArray | null; L.re.lastIndex = 0;
   while ((m = L.re.exec(text))) {
     const c = L.map[m[1]]; if (!c) continue;
+    if (c.k === 'w' && WORDLIKE.test(m[1]) && (m.index === 0 || /[.!?]\s+$/.test(text.slice(0, m.index)))) continue;
     if (m.index > last) out.push(text.slice(last, m.index));
     const w = c.k === 'w' ? G.S.w[c.id as number] : null;
     out.push(<button type="button" class={'lnk' + (w ? (w.align === 'F' ? ' face' : ' heel') : (c.k === 'title' ? ' gold' : ''))} data-t={c.k === 'w' ? 'who' : c.k + '-card'} data-id={c.id} onClick={e => { e.stopPropagation(); openCard(c); }}>{m[1]}</button>);
