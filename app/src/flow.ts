@@ -1,6 +1,6 @@
 /* Things more than one section needs: starting and ending a game, ending the week, opening a show report. */
 import { E } from './engine';
-import { G, ui, pref, save, loadSave, clearSave, resetUi, redraw, setUniverse, slice, openModal, say } from './store';
+import { G, ui, pref, save, loadSave, clearSave, resetUi, redraw, setUniverse, slice, openModal, closeModal, say } from './store';
 import { go } from './nav';
 
 /** View state of the Booking section. Office reads it to link to a report. */
@@ -15,6 +15,19 @@ export function startGame(pid: string | null, opts: { name: string; diff: string
   setUniverse(pref.uni || 'public_domain');
   G.S = E.newGame(pid, seed(), opts);
   resetUi(); save(); redraw(); window.scrollTo(0, 0);
+}
+/** The weekly challenge: the same world and seed for everyone this week, twelve weeks to run. */
+export function isoWeekId(d: Date): string {
+  const t = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate())), day = t.getUTCDay() || 7;
+  t.setUTCDate(t.getUTCDate() + 4 - day);
+  const y = t.getUTCFullYear(), w = Math.ceil(((t.getTime() - Date.UTC(y, 0, 1)) / 86400000 + 1) / 7);
+  return y + '-W' + (w < 10 ? '0' : '') + w;
+}
+export function startChallenge() {
+  setUniverse('public_domain');
+  const S = E.challengeStart(isoWeekId(new Date()));
+  if (!S) return;
+  G.S = S; closeModal(); resetUi(); save(); redraw(); window.scrollTo(0, 0);
 }
 /** Fired bookers take a job elsewhere and keep their level and skills. */
 export function takeJob(pid: string, terms?: string[]) {

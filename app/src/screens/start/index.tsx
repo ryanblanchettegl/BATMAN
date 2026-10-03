@@ -5,7 +5,7 @@ import { E } from '../../engine';
 import { G, ui, pref, Modal, VER, UNIS, saveUnis, savePrefs, setUniverse, builtInUniverse, loadSave, cash, view, redraw, openModal, plural, slice } from '../../store';
 import { HOT, pageName } from '../../nav';
 import { autoScreen, skipBoot, onKey } from '../../input';
-import { startGame, continueGame, loadSaveText } from '../../flow';
+import { startGame, continueGame, loadSaveText, startChallenge, isoWeekId } from '../../flow';
 import { Btn, Panel, Head, Sel, Field, TextBox, Window, Data, dataAttrs } from '../../kit';
 import { MusicBtn } from '../../shell/Frame';
 import { ModelCard } from '../../shared/model';
@@ -53,11 +53,27 @@ function StartMenu() {
   </nav>;
 }
 
+/* ---------- the weekly challenge: this week's world, and a way to check a friend's code ---------- */
+function ChallengeBody() {
+  const I = E.challengeInfo(isoWeekId(new Date())), st = slice<{ code: string; msg: string; ok: boolean }>('chalcode', () => ({ code: '', msg: '', ok: true }));
+  const check = (v: string) => view(() => { st.code = v; const r = v.trim() ? E.challengeRead(v) : null; st.msg = r ? r.text : ''; st.ok = !r || r.ok; });
+  if (!I) return <p class="bad">The challenge could not be set up.</p>;
+  return <>
+    <p>This week ({I.id}) everyone gets the same world: <b>{I.name}</b>, the same shows, the same roster. You have <b>{I.weeks} weeks</b>. Your score comes from how your shows beat expectations, how popular the company becomes, how the cash goes and the feuds you finish.</p>
+    <p class="muted mt1">When the twelve weeks are up you get a short code to copy and share. Anyone can paste it below to see the score. No server, no sign-in.</p>
+    <div class="row mt2"><Btn kind="go" t="chal-play" onClick={startChallenge}>Play this week{'’'}s challenge</Btn></div>
+    <p class="eyebrow mt3">Check a code</p>
+    <TextBox id="chal-code" t="chal-code" label="Challenge code" placeholder="EWF-2026W40-CC-S5" value={st.code} onInput={check} />
+    {st.msg ? <p class={st.ok ? 'good mt1' : 'bad mt1'}>{st.msg}</p> : null}
+  </>;
+}
+
 /* ---------- title card ---------- */
 export function Title() {
   const sv = loadSave(), items: MenuItem[] = [];
   if (sv) items.push({ t: 'continue', pick: continueGame, label: <><span class="ab">CONTINUE</span><span class="st">{sv.booker.name} at {sv.promos[sv.player].name} {'·'} week {sv.week}</span></> });
   items.push({ t: 'scr', d: { v: 'select' }, pick: () => toScreen('select'), label: <><span class="ab">NEW GAME</span><span class="st">Pick a promotion or create your own</span></> });
+  items.push({ t: 'challenge', pick: () => openModal({ kind: 'info', title: 'The weekly challenge', body: () => <ChallengeBody /> }), label: <><span class="ab">WEEKLY CHALLENGE</span><span class="st">Twelve weeks, the same world for everyone, one score</span></> });
   items.push({ t: 'workshop', pick: () => openModal({ kind: 'info', title: 'Workshop', body: () => <><p><b>The Workshop is not open yet.</b></p><p class="muted mt1">Coming in a later version.</p></> }), label: <><span class="ab">WORKSHOP</span><span class="st">Coming soon</span></> });
   items.push({ t: 'options', pick: () => openModal({ kind: 'options' }), label: <><span class="ab">OPTIONS</span><span class="st">Sound, text size, screen</span></> });
   return <div class="crt"><StartMenu /><div class="start">

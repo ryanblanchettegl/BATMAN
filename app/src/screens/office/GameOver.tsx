@@ -2,6 +2,7 @@
 import { E } from '../../engine';
 import { G, me, slice, view } from '../../store';
 import { takeJob, abandonGame } from '../../flow';
+import { copyText } from '../start';
 import { clearSave } from '../../store';
 import { clearToasts } from '../../shell/Frame';
 import { Head, Panel, Btn, KV, CheckLine } from '../../kit';
@@ -24,7 +25,26 @@ export function LegacyPanel(p: { final?: boolean }) {
   </Panel>;
 }
 
+/** The twelve weeks are up: the score, a code to share, and the way back. */
+function ChallengeDone() {
+  const S = G.S, C = S.chal, P = me(), cp = slice<{ msg: string }>('chalcopy', () => ({ msg: '' }));
+  const fresh = () => { clearToasts(); abandonGame(); };
+  return <>
+    <Head eyebrow={'Challenge ' + C.id} title="Challenge complete" />
+    <Panel>
+      <p>Twelve weeks with {P.name} are done.</p>
+      <p class="big mt2"><span class="num">{C.score}</span> <span class="muted">points</span></p>
+      <p class="mt2">Your code: <b class="num" id="chal-final">{C.code}</b></p>
+      <div class="row mt2"><Btn kind="sm" t="chal-copy" onClick={() => copyText(C.code, 'chal-final', () => view(() => { cp.msg = 'Copied.'; }))}>Copy the code</Btn><span class="muted">{cp.msg}</span></div>
+      <p class="muted mt2">Share the code. A friend can paste it on the title card under Weekly challenge to check the score.</p>
+      <div class="row mt3"><Btn kind="go" t="newgame-yes" onClick={fresh}>Back to the menu</Btn></div>
+    </Panel>
+    <LegacyPanel />
+  </>;
+}
+
 export function GameOver() {
+  if (G.S.over.why === 'challenge') return <ChallengeDone />;
   const S = G.S, P = me(), fired = S.over.why === 'fired', st = S.stats;
   // achievement pop-ups belong to the game that just ended
   const jt = slice<{ t: string[] }>('jobterms', () => ({ t: [] })), ck = E.jobTermsCheck(S, jt.t);
