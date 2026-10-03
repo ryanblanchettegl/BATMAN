@@ -3853,6 +3853,12 @@ WEEKX.push(function(S){
   news(S,'you','The year in careers: '+L.map(function(x){return S.w[x.id].name+' '+word[x.to];}).join('; ')+'.');
 });
 
+/* wear and tear in one word: fresh, sore, banged up, running on fumes. Combines condition and the worst body zone */
+E.bodyWord=function(S,id){
+  var w=S.w[id];if(!w)return null;var worst=Math.max(maxZone(w),100-w.cond),word=worst<25?'fresh':(worst<45?'sore':(worst<65?'banged up':'running on fumes'));
+  return {word:word,v:Math.round(worst),bad:worst>=45};
+};
+
 /* ===== 83-moments.js ===== */
 /* ---------- moments from wrestling history ----------
    Situations modelled on famous nights, under invented names. Each is an inbox event with three or four choices, an attempt where luck
