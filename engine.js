@@ -2869,8 +2869,8 @@ var MODELS={
   corporate:{n:'Corporate giant',ph:'a corporate giant',vals:'overness, charisma and star quality',wq:0.34,own:'the board',
     d:'Publicly traded. A family audience, entertainment before sport, and a board that reads the accounts before the reviews.',
     good:['Star quality and charisma lift every match','Television and sponsors pay more here than anywhere','Fewer injuries: the house style is safe'],
-    bad:['Hardcore matches upset the audience and the sponsors','The product can never go past Mainstream','Great wrestlers nobody cares about get lost, and then released'],
-    mix:{tv:1.25,gate:0.95,merch:1.2,sp:1.4},riskMax:1,inj:0.9,turn:1.6,ownShow:0.5,
+    bad:['Hardcore matches upset the audience and the sponsors','The product can never go past Mainstream','Great wrestlers nobody cares about get lost, and then released','The shareholders take a dividend of any surplus above a reserve'],
+    mix:{tv:1.25,gate:0.95,merch:1.2,sp:1.4},riskMax:1,inj:0.9,turn:1.6,ownShow:0.5,div:[1.3,0.5],
     cr:function(ctx){var d=0,sq=mAvg(ctx.all,'sq'),ch=mAvg(ctx.all,'cha');
       d+=mNote(ctx,clamp((sq-70)*0.07,-2,2.5),sq>=70?'Star presence: this audience buys names':'Nobody in there looks like a star to this audience');
       if(ctx.stip==='hardcore')d+=mNote(ctx,-3,'Too violent for a family audience');
@@ -3016,6 +3016,9 @@ NEWX.push(function(S){
 /* every week: the popularity ceiling; every fourth week: the owner's monthly verdict, and rival companies trim and restock by fit */
 WEEKX.push(function(S){
   S.order.forEach(function(pid){var P=S.promos[pid],M=modelOf(P);if(M.cap&&P.image>M.cap)P.image=M.cap;});
+  // a company run for its shareholders pays out most of what piles up beyond a healthy reserve, once a month
+  if(cal(S.week).wom===4)S.order.forEach(function(pid){var P=S.promos[pid],M=modelOf(P);if(!M.div)return;var ex=P.cash-(P.cash0||P.cash)*M.div[0];
+    if(ex>0){var dv=Math.round(ex*M.div[1]/10000)*10000;P.cash-=dv;if(pid===S.player)news(S,'money','The shareholders took a dividend of '+money(dv)+' from the month\'s surplus.');}});
   var PL=S.promos[S.player],MP=modelOf(PL);
   if(cal(S.week).wom===4&&MP.month){var v=MP.month(S,PL);if(v){if(S.owner&&!S.owner.me)S.owner.trust=clamp(S.owner.trust+v.d,0,100);news(S,'you',v.x);}}
   S.order.forEach(function(pid,ix){
