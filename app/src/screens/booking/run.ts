@@ -20,7 +20,8 @@ export function onCard(skip?: number): Record<number, 1> {
   G.S.card.forEach((m: Match, k: number) => { if (k !== skip) m.sides.forEach((s: any[]) => s.forEach(id => { if (id != null) o[id] = 1; })); });
   return o;
 }
-export const suggest = () => act(() => { const b = book(); G.S.card = E.suggest(G.S); b.edit = -1; b.tried = false; });
+/** A suggested card comes with one promo or angle pencilled in, when none is booked yet. The writers keep the rest. */
+export const suggest = () => act(() => { const b = book(); G.S.card = E.suggest(G.S); if (!E.segInfo(G.S).booked) E.segSuggest(G.S, 1); b.edit = -1; b.tried = false; });
 /** The assistant books this show the way you usually would. */
 export const asstBook = () => act(() => { const b = book(); E.assistantBook(G.S); b.edit = -1; b.tried = false; });
 /** Fast mode: the assistant books and runs every small show left this week, then stops at the big event. */

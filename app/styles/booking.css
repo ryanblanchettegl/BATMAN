@@ -16,3 +16,7 @@
 /* show report */
 .rating{gap:24px;align-items:flex-end}
 .rating p{flex:1 1 260px}
+/* a promo or an angle on the run sheet: the same row as a match, with a word where the number goes */
+.seg.sg{border-style:dashed}
+.seg.sg .no{font-size:1em;color:var(--mag);padding-top:8px}
+.seg.sg.bad{border-color:var(--red)}

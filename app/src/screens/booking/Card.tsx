@@ -6,6 +6,7 @@ import { book } from '../../flow';
 import { Head, Panel, Btn, Name, brandName } from '../../kit';
 import { Editor } from './Editor';
 import { Side } from './Side';
+import { OpenRow, SegRows, SegBar, bookSeg, segFree } from './Segments';
 import { Match, onCard, sideText, suggest, addMatch, clearCard, toggleEdit, moveMatch, removeMatch, run, asstBook, asstRun } from './run';
 
 const DOT = ' · ';
@@ -78,6 +79,7 @@ export function Card() {
         {!show.big && <Btn t="asst" onClick={asstBook}>Book it my way</Btn>}
         {!show.big && !pre && <Btn t="asstrun" onClick={asstRun}>Assistant runs the small shows</Btn>}
         <Btn t="add" onClick={addMatch}>Add a match</Btn>
+        <Btn t="seg-new" disabled={!segFree()} onClick={bookSeg}>Add a promo or angle</Btn>
         {n > 0 && <Btn t="clear" onClick={clearCard}>Clear</Btn>}
         {!pre && <Btn kind="go" t="run" onClick={() => run('run')}>Run the show</Btn>}
       </div>
@@ -87,9 +89,10 @@ export function Card() {
     {n > 0 && v.warnings.length > 0 && <div class="flash">{v.warnings.map((w: string, k: number) => <>{k ? <br /> : null}{w}</>)}</div>}
     <div class="cols">
       <div class="stack">
-        {n ? <div class="sheet">{S.card.map((m: Match, i: number) => <MatchRow m={m} i={i} n={n} />)}</div>
-          : <Panel><p><b>The card is empty.</b> Add matches one at a time, or start from a suggested card and change what you like.</p>
-            <p class="muted mt1">You choose who wrestles. The odds decide who wins, unless you spend booking power to call a finish. Finishes, interviews and run-ins come from the storylines in play.</p></Panel>}
+        <div class="sheet"><OpenRow />{n ? S.card.map((m: Match, i: number) => <><SegRows i={i} n={n} /><MatchRow m={m} i={i} n={n} /></>) : <SegRows i={0} n={1} />}</div>
+        {n ? null : <Panel><p><b>The card is empty.</b> Add matches one at a time, or start from a suggested card and change what you like.</p>
+            <p class="muted mt1">You choose who wrestles. The odds decide who wins, unless you spend booking power to call a finish. The promos and angles between the matches are yours to book too, or leave them to the writers.</p></Panel>}
+        <SegBar />
       </div>
       <div class="stack"><Side on={on} /></div>
     </div>

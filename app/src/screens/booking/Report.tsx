@@ -35,7 +35,7 @@ function Next(p: { r: any }) {
 function Angle(p: { s: any }) {
   const s = p.s, q = s.rub;
   return <div class="angle">
-    <p><Tag>{s.head}</Tag> <Txt>{s.text}</Txt>{q ? <><br /><span class="muted">Delivery {q.d} {'·'} Content {q.c} {'·'} Character {q.ch} {'·'} Crowd {q.cr} out of 10</span></> : null}</p>
+    <p><Tag>{s.head}</Tag> <Txt>{s.text}</Txt>{s.booked ? <span class="muted" data-t="seg-booked"> (you booked this)</span> : null}{q ? <><br /><span class="muted">Delivery {q.d} {'·'} Content {q.c} {'·'} Character {q.ch} {'·'} Crowd {q.cr} out of 10</span></> : null}</p>
     <span class="num">{s.ov}% <b class="gold">{grade(s.ov)}</b></span>
   </div>;
 }

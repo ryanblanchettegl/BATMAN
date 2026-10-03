@@ -33,14 +33,20 @@ function runShow(S,P,show,card){
   }
   var ctx={pool:pool,inP:inP,angled:{},left:{},extra:[]},slots={};
   if(isPl){var idx=[];for(i=0;i<n;i++)idx.push(i);for(i=idx.length-1;i>0;i--){var j=Math.floor(rnd(S)*(i+1)),tmp=idx[i];idx[i]=idx[j];idx[j]=tmp;}
-    var na=big?2:P.angles;if(S.mystery&&S.mystery.promo===P.id&&S.mystery.left<=0)na=Math.max(na,1);
+    // promos and angles the player booked take slots; the writers fill what is left (src/93-segments.js)
+    var bk=segBooked(S,show,n),na=Math.max(0,(big?2:P.angles)-bk.count);if(S.mystery&&S.mystery.promo===P.id&&S.mystery.left<=0)na=Math.max(na,1);
     for(k=0;k<na&&k<idx.length;k++)slots[idx[k]]=1;}
+  var angleDone=function(a,nang){rep.en=Math.min(100,(rep.en==null?100:rep.en)+14);ANGDONE.forEach(function(fn){fn(S,P,a,Object.keys(ctx.angled).slice(nang));});var o={p:P.ann[0].split(' ')[0],c:P.ann[1].split(' ')[0]};a.bc=[{t:'note',x:a.text},{t:'col',x:fill(sayPick(S,REACT[a.head]||['Well, how about that.']),o)}];rep.segs.push(a);};
   if(isPl){var pp=planPromo(S,P,show,ctx);if(pp)rep.segs.push(pp);}
   for(i=0;i<n;i++){
+    if(isPl&&bk.at[i])bk.at[i].forEach(function(x){
+      ctx.left={};for(var q=i;q<n;q++)flat(card[q].sides).forEach(function(id){ctx.left[id]=1;});
+      var ng=Object.keys(ctx.angled).length,ba=runSeg(S,P,show,ctx,x.sg,x.slot);if(ba)angleDone(ba,ng);
+    });
     if(slots[i]){
       ctx.left={};for(k=i;k<n;k++)flat(card[k].sides).forEach(function(id){ctx.left[id]=1;});
       var nang=Object.keys(ctx.angled).length,a=genAngle(S,P,show,ctx);
-      if(a){rep.en=Math.min(100,(rep.en==null?100:rep.en)+14);ANGDONE.forEach(function(fn){fn(S,P,a,Object.keys(ctx.angled).slice(nang));});var o={p:P.ann[0].split(' ')[0],c:P.ann[1].split(' ')[0]};a.bc=[{t:'note',x:a.text},{t:'col',x:fill(sayPick(S,REACT[a.head]||['Well, how about that.']),o)}];rep.segs.push(a);}
+      if(a)angleDone(a,nang);
     }
     rep.segs.push(doMatch(S,P,show,card[i],i,n,rep,used));
   }
