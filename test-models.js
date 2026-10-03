@@ -56,5 +56,12 @@ const R = {};
   }
   ok('kjp', 'twelve wrestlers still fill a card of at least three matches', min >= 3, 'smallest card ' + min + ' over ' + shows + ' shows');
 }
+{ // a contract can say how long someone has been with the company
+  const pkg = JSON.parse(fs.readFileSync('universes/public_domain.json', 'utf8')), c = pkg.contracts.find(c => c.promotion_id === 'lta');
+  c.tenure_weeks = 130; E.useUniverse(pkg);
+  const S = E.newGame('lta', 3, { name: 'R' }), w = S.w.find(x => x.name === pkg.workers.find(y => y.id === c.worker_id).ring_name);
+  ok('lta', 'tenure_weeks on a contract reaches the wrestler (w.jw)', w && E.tenure(S, w.id) === 130, 'tenure ' + (w && E.tenure(S, w.id)));
+  E.useUniverse(JSON.parse(fs.readFileSync('universes/public_domain.json', 'utf8')));
+}
 if (fails.length) { console.log('FAILED: ' + fails.length); process.exit(1); }
 console.log('test-models: all passed');

@@ -42,7 +42,7 @@ Ids are lowercase slugs: 2 to 40 letters, digits or underscores.
   - `spectacle`: lucha spectacle. Multi-man matches and sponsors on every turnbuckle.
   - `tradition`: lucha tradition. Trios, family names and a top spot earned over years.
   - `joshi`: an all-women company. It signs only women (`gender` F). If a promotion with this model has men or men's titles in the package, the loader warns, and the game will not sign men for it.
-- **Contract**: `monthly_salary` or `per_show_fee`, `weeks_left` and `push_level` are optional; the game rolls them when missing.
+- **Contract**: `monthly_salary` or `per_show_fee`, `weeks_left`, `tenure_weeks` (how long they have been with the promotion; the lucha tradition company rewards it) and `push_level` are optional; the game rolls them when missing.
 - **Event rules**: `no_turning_back`, `betrayal`, `gimmick_free`, `all_titles`.
 - `manifest.free_agents`: how many unsigned newcomers the game generates at the start (0 to 120).
 - `names`: `first_m`, `first_f`, `last` lists used for generated rookies.
