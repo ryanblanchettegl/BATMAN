@@ -5078,6 +5078,43 @@ E.legacy=function(S){
   return {score:score,parts:parts,timeline:tl,made:made,best:R.matches.slice(0,5),weeks:S.week};
 };
 
+/* ---------- 98. The record book: sortable records across every promotion ---------- */
+POST.push(function(ctx){
+  if(ctx.S.cal||ctx.m.mt==='br')return;var OV=ctx.res.OV;
+  ctx.all.forEach(function(w){w.sov=(w.sov||0)+OV;w.nov=(w.nov|0)+1;if(w.ws>(w.bws|0))w.bws=w.ws;});
+});
+SHOWX.push(function(S,P,show,rep){
+  if(S.cal||P.id!==S.player||!S.rec)return;var G=S.rec.gates||(S.rec.gates=[]);
+  G.push({v:rep.att,n:rep.name,w:S.week});G.sort(function(a,b){return b.v-a.v;});if(G.length>10)G.length=10;
+});
+var RECK=[
+  {id:'reigns',n:'Most title reigns',unit:'reigns'},
+  {id:'longest',n:'Longest reign',unit:'weeks'},
+  {id:'defs',n:'Most defences in one reign',unit:'defences'},
+  {id:'grade',n:'Best average match grade',unit:'%'},
+  {id:'run',n:'Longest winning run',unit:'wins'},
+  {id:'wins',n:'Most wins',unit:'wins'},
+  {id:'gates',n:'Biggest gates',unit:'people'}
+];
+E.RECK=RECK;
+E.records=function(S,k,asc){
+  var rows=[],cnt={};
+  function wr(id){return S.w[+id]||null;}
+  if(k==='reigns'||k==='longest'||k==='defs'){
+    S.order.forEach(function(pid){S.promos[pid].titles.forEach(function(t){(t.hist||[]).forEach(function(h){
+      var ids=String(h.ids||'').split(',').filter(Boolean);if(!ids.length)return;var len=(h.to||S.week)-Math.max(1,h.from);
+      if(k==='reigns')ids.forEach(function(id){cnt[id]=(cnt[id]||0)+1;});
+      else rows.push({ids:ids,v:k==='longest'?len:(h.defs|0),note:t.name});
+    });});});
+    if(k==='reigns')Object.keys(cnt).forEach(function(id){rows.push({ids:[id],v:cnt[id],note:''});});
+  }else if(k==='grade'){S.w.forEach(function(w){if((w.nov|0)>=10)rows.push({ids:[w.id],v:Math.round(w.sov/w.nov*10)/10,note:w.nov+' matches'});});}
+  else if(k==='run'){S.w.forEach(function(w){if((w.bws|0)>=3)rows.push({ids:[w.id],v:w.bws,note:''});});}
+  else if(k==='wins'){S.w.forEach(function(w){if((w.wins|0)>=5)rows.push({ids:[w.id],v:w.wins,note:w.losses+' losses'});});}
+  else if(k==='gates'){((S.rec&&S.rec.gates)||[]).forEach(function(g){rows.push({ids:[],v:g.v,note:g.n+', '+E.cal(g.w).label});});}
+  rows.sort(function(a,b){return asc?a.v-b.v:b.v-a.v;});
+  return rows.slice(0,10).map(function(r){return {w:r.ids.map(wr).filter(Boolean),v:r.v,note:r.note};});
+};
+
 /* ===== 86-room.js ===== */
 /* ---------- the locker room as a group of people: cliques, creative control ---------- */
 

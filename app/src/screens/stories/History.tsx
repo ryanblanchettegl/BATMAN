@@ -1,8 +1,8 @@
 /* History: season chronicles, the record book, year-end awards, the hall of fame and every title's line of champions. Read-only. */
 import { ComponentChildren } from 'preact';
 import { E } from '../../engine';
-import { G, me, openModal } from '../../store';
-import { Head, Panel, Empty, stars, Txt, Btn, grade } from '../../kit';
+import { G, me, openModal, slice, view } from '../../store';
+import { Head, Panel, Empty, stars, Txt, Btn, grade, Name } from '../../kit';
 
 const wk = (w: number): string => E.cal(Math.max(1, w)).label;
 /** One line of a list: what it is on the left, the figure on the right. */
@@ -85,12 +85,24 @@ function TitleLine(p: { t: any }) {
   </Panel>;
 }
 
+/** Records from every company: pick a record and which way to sort. Every name opens its card. */
+function Records() {
+  const S = G.S, st = slice<{ k: string; asc: boolean }>('records', () => ({ k: 'reigns', asc: false })), rec = E.RECK.filter((r: any) => r.id === st.k)[0] || E.RECK[0];
+  const L = E.records(S, rec.id, st.asc);
+  return <Panel title="Records">
+    <div class="row opts">{E.RECK.map((r: any) => <Btn kind="sm" on={r.id === rec.id} t="rec" d={{ v: r.id }} onClick={() => view(() => { st.k = r.id; })}>{r.n}</Btn>)}
+      <Btn kind="sm" t="rec-sort" onClick={() => view(() => { st.asc = !st.asc; })}>{st.asc ? 'Lowest first' : 'Highest first'}</Btn></div>
+    {L.length ? <ul class="list mt1">{L.map((r: any, i: number) => <li><span><span class="num">{i + 1}.</span> {r.w.length ? r.w.map((w: any, j: number) => <>{j ? ' & ' : ''}<Name w={w} /></>) : null}{r.note ? <span class="muted">{r.w.length ? ' · ' : ''}{r.note}</span> : null}</span><span class="num gold">{r.v.toLocaleString('en-US')} <span class="muted">{rec.unit}</span></span></li>)}</ul>
+      : <Empty>Nothing in this record yet. It fills as the shows go on.</Empty>}
+  </Panel>;
+}
+
 export function History() {
   const P = me();
   return <>
     <Head eyebrow={P.name} title="History" />
     <div class="cols">
-      <div class="stack"><Chronicles /><MatchOfYear /><RecordBook /><Awards /><HallOfFame /></div>
+      <div class="stack"><Chronicles /><MatchOfYear /><RecordBook /><Records /><Awards /><HallOfFame /></div>
       <div class="stack">{P.titles.map((t: any) => <TitleLine t={t} />)}</div>
     </div>
   </>;
