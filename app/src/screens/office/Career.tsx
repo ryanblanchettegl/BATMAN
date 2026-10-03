@@ -65,13 +65,23 @@ function MilestoneWall() {
   </Panel>;
 }
 
+/** What your booking has earned you a name for. */
+function Reputation() {
+  const S = G.S, L = E.bookerRep(S);
+  return <Panel title="Your reputation">
+    <ul class="list">{L.map((r: any) => <li class="col"><span><b class={r.has ? 'gold' : 'muted'}>{r.n}</b> <span class="muted">{r.has ? '· since ' + E.cal(r.since).label : '· ' + r.progress + ' of ' + r.need}</span><br /><span class="muted">{r.earn}</span></span>
+      {r.has ? <span><span class="good">{r.edge}</span><br /><span class="bad">{r.cost}</span></span> : null}</li>)}</ul>
+    <p class="muted mt1">A name is earned by how you book, and lost if you stop. Each one has an edge and a price. Rival owners and the board notice.</p>
+  </Panel>;
+}
+
 export function Career() {
   const S = G.S, P = me();
   return <>
     <Head eyebrow={S.booker.name + ', ' + role() + ' of ' + P.name} title="Career" />
     <div class="cols">
       <div class="stack"><You /><YourWord /></div>
-      <div class="stack"><Saga /><MilestoneWall /></div>
+      <div class="stack"><Reputation /><Saga /><MilestoneWall /></div>
     </div>
     <Achievements />
   </>;

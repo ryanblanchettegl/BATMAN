@@ -131,7 +131,7 @@ Situations modelled on famous nights, each under an original name with invented 
 
 ## I. Your career
 
-- [ ] **89. A reputation as a booker.** Traits earned by how you book: star maker, hot-shot booker, friend of the workhorse, keeper of titles. Each gives a small edge and a small cost, and rivals and wrestlers mention it. *M. Builds on `E.career`, `src/65-you.js`.*
+- [x] **89. A reputation as a booker.** Traits earned by how you book: star maker, hot-shot booker, friend of the workhorse, keeper of titles. Each gives a small edge and a small cost, and rivals and wrestlers mention it. *M. Builds on `E.career`, `src/65-you.js`.*
 - [x] **90. Job offers with terms.** Offers exist. Add terms to bargain over: budget, creative freedom, one signing of your choice. *S. Builds on `E.jobOffers`.*
 - [x] **91. The milestone wall.** A long list of firsts with dates: first sell-out, first top-grade match, hundredth show, first champion you built from nothing. Shown on Career, with a pop-up when one lands. *S. (TASKS 7)*
 - [ ] **92. Legacy.** When you are fired or step down: a timeline of the career, the stars you made, your best matches, and a score to beat next time. *M.*
