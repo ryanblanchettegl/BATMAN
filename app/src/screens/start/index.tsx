@@ -43,7 +43,7 @@ onKey(e => {
 });
 const toScreen = (scr: 'title' | 'select') => view(() => { ui.scr = scr; ui.mi = 0; ui.setup = null; window.scrollTo(0, 0); });
 function StartMenu() {
-  return <nav class="menu" aria-label="Menu">
+  return <nav class="menu startmenu" aria-label="Menu">
     <button type="button" data-t="scr" data-v="title" onClick={() => toScreen('title')}><u>T</u>itle</button>
     <button type="button" data-t="scr" data-v="select" onClick={() => toScreen('select')}><u>F</u>ederations</button>
     <button type="button" data-t="options" onClick={() => openModal({ kind: 'options' })}><u>O</u>ptions</button>

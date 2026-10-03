@@ -348,6 +348,9 @@ html[data-screen="phone"] .menu .f1{margin:.25em .6ch;padding:.25em 0}
 /* Music keeps the top right corner; the other buttons flow around it */
 html[data-screen="phone"] .menu .f1.mus{grid-column:4;grid-row:1}
 html[data-screen="phone"] .menu .sp{display:none}
+/* the start menu has five buttons: three on the first row, Help and Music sharing the second, so no row is left with one */
+html[data-screen="phone"] .menu.startmenu{grid-template-columns:repeat(3,minmax(0,1fr))}
+html[data-screen="phone"] .menu.startmenu .f1.mus{grid-column:span 2;grid-row:auto}
 :is(html[data-screen="tablet"],html[data-screen="phone"]) :is(select,input[type=text],input[type=search],input[type=number]){min-height:2.2em}
 :is(html[data-screen="tablet"],html[data-screen="phone"]) tr.pick td{padding-block:.34em}
 :is(html[data-screen="tablet"],html[data-screen="phone"]) .status{padding-block:.3em}
