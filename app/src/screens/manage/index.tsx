@@ -3,6 +3,7 @@
 import { ComponentChildren } from 'preact';
 import { Modal } from '../../store';
 import { Operations, House, Deals, ExportWindow } from './Operations';
+import { ShowsWindow, BeltsWindow } from './Create';
 
 export const pages: Record<string, () => ComponentChildren> = { manage: Operations, house: House, deals: Deals };
-export const modals: Record<string, (p: { m: Modal }) => ComponentChildren> = { 'export': ExportWindow };
+export const modals: Record<string, (p: { m: Modal }) => ComponentChildren> = { 'export': ExportWindow, makeshows: ShowsWindow, makebelts: BeltsWindow };

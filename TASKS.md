@@ -37,6 +37,7 @@ Two more lists sit beside this one:
 | Roster | Figures still honoured in living traditions were swapped out of the default universe. |
 | Names | Company models and storylines follow how real companies and angles worked, but every name in the game is invented or public domain. No real promotion, wrestler, stable or event names in game content. Real-world rosters stay out of this repository. |
 | Publishing | Two threads publish to the same live page. Whoever publishes merges the other's changes first. |
+| Growing a company | A company adds titles and shows every year. So belts and weekly shows can be created inside a running game, not only in the World Editor, and rival companies add their own once a year. |
 | World Editor | The creation suite is its own page called **World Editor** on the title screen. A player builds a world from scratch (companies, shows, belts, wrestlers) and uploads it to the Workshop. This is the main next item. |
 
 ## Tasks
@@ -57,6 +58,18 @@ Code: `src/86-editor.js` (the `E.ed*` functions; no screen code), `app/src/scree
 - [ ] Bulk tools: duplicate a wrestler, move several at once, sort the list by name or company.
 - [ ] A creator for each thing on its own from the title screen, if Ryan wants shortcuts (show creator, belt creator) beyond the tabs.
 - [ ] Try the remote and gamepad on real hardware.
+
+### 0b. Shows and belts made during a game
+Code: `src/87-create.js` (`E.makeShow`, `E.dropShow`, `E.makeTitle`, `E.dropTitle`, `E.renameShow`, `E.renameTitle`, `E.makeInfo`), `app/src/screens/manage/Create.tsx`. Tests: `node test-create.js` and `app/tests/create.js`.
+
+- [x] Manage, Operations has a **Shows and belts** panel. It opens a window for weekly shows and a window for belts. The Titles page has a button for the belts window too.
+- [x] **Create a belt:** name, division, singles or tag, level. It costs money, starts vacant with little prestige, and the roster size limits how many belts a company can carry. Rename and retire (two presses; refused with a reason while a feud, promise, tournament or story depends on the belt).
+- [x] **Add a weekly show:** an attempt with the network (popularity, shows already on the air, current run). Needs twelve wrestlers per show and a launch fee. Starts as a small show, and grows a little each year the company is doing well. Up to three weekly shows. Rename and cancel.
+- [x] **Rivals** add a belt or a show in the first week of each January when their roster and popularity support it, and drop a show when broke or short of people. The news reports it.
+- [x] Measured over 32 weeks on three seeds: an extra show moved weekly profit between -$100K and +$214K and popularity by 0 to +1.6. It is a real choice, not free money.
+- [ ] Big events (the monthly pay-per-view) cannot be added or renamed in a game yet. That belongs with the year planner in task 6.
+- [ ] A new show or belt cannot be given to one brand of a brand split.
+- [ ] Rivals do not retire belts.
 
 ### 1. Finish the pop-ups (small)
 Feature list items 10 and 11. Code: `app/src/shared/cards.tsx`, `Name`, `TitleName`, `TeamName` and `Txt` in `app/src/kit/index.tsx`, the card stack in `app/src/store.ts`.

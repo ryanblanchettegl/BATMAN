@@ -1,7 +1,7 @@
 /* The Titles page: who holds what, the running tournament, and the contenders for each singles title. */
 import { ComponentChildren } from 'preact';
 import { E, W } from '../../engine';
-import { G, me, act, say, plural } from '../../store';
+import { G, me, act, say, plural, openModal } from '../../store';
 import { Head, Panel, Btn, Tag, Name, Meter, Empty, brandName, TitleName } from '../../kit';
 
 /** Names joined the way a card reads: "A & B". */
@@ -64,6 +64,7 @@ export function Titles() {
   const S = G.S, P = me(), busy = !!E.tournActive(S);
   return <>
     <Head eyebrow={P.name} title="Titles" />
+    <div class="row mb2"><Btn kind="sm" t="make-belts" onClick={() => openModal({ kind: 'makebelts' })}>Create or retire a belt</Btn></div>
     <div class="tw"><table>
       <thead><tr><th>Title</th>{P.brands && <th>Brand</th>}<th>Champion</th><th class="r">Reign</th><th class="r">Defences</th><th>Prestige</th><th class="r">Last defended</th></tr></thead>
       <tbody>{P.titles.map((t: any) => <tr>

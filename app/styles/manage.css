@@ -2,3 +2,5 @@
 .export-text{display:block;width:100%}
 /* the trade form is one column, so a remote can step through the selects with up and down */
 .tradeform{display:grid;grid-template-columns:minmax(0,40ch);gap:10px;margin-top:4px}
+/* form labels inside a grey window: the cyan used on the blue page cannot be read there */
+.win label.f{color:var(--blue)}

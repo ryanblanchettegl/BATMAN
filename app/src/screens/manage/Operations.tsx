@@ -7,6 +7,7 @@ import { copyText } from '../start';
 import { HouseStyle } from './HouseStyle';
 import { RivalsPanel } from './Rivals';
 import { useKeepFocus } from './focus';
+import { ShowsBelts } from './Create';
 
 /** A multiplier as a signed percentage: 1.1 is +10%. */
 const pct = (x: number) => (x >= 1 ? '+' : '−') + Math.abs(Math.round((x - 1) * 100)) + '%';
@@ -189,7 +190,7 @@ export function Operations() {
   return <>
     <Head eyebrow={P.name} title="Operations" />
     <div class="cols">
-      <div class="stack"><Broadcast /><Settings from={0} to={3} /></div>
+      <div class="stack"><Broadcast /><ShowsBelts /><Settings from={0} to={3} /></div>
       <div class="stack"><Settings from={3} to={7} /><Desk /><Merch /><School /><Tours /><Budgets /><Universe /></div>
     </div>
   </>;
