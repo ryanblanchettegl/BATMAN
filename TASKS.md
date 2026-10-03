@@ -6,8 +6,8 @@ The hand-over from the build thread, written 2 October 2026 at version 0.11. Wor
 
 Two more lists sit beside this one, both finished:
 
-- `TWEAKS.md`: 100 small jobs, one commit each, none needing a decision. Good for an unattended run. Start there.
-- `WISHLIST.md`: 100 ideas that make the game deeper. Bigger than a tweak, smaller than a task. Some are marked as part of a task below, and some need Ryan's say first.
+- `TWEAKS.md`: 100 small jobs, one commit each. All done.
+- `WISHLIST.md`: 100 ideas that make the game deeper. 97 done; the three left have plans in `docs/plans/` and are steps in `NEXT.md`.
 
 ## Where things stand
 
