@@ -10,10 +10,8 @@
     "test": "node test-uni.js universes/public_domain.json 60",
     "start": "node build.js && electron ."
   },
-  "devDependencies": {
-    "electron": "^33.0.0"
-  },
-  "dependencies": {
+  "optionalDependencies": {
+    "electron": "^33.0.0",
     "steamworks.js": "^0.4.0"
   }
 }
