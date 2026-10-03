@@ -125,6 +125,8 @@ export function padPress(k: string) {
   if (k === 'a') { activate(document.activeElement, true); return; }
   if (k === 'b') { goBack(); return; }
   if (k === 'start') { if (ui.modal && ui.modal.kind === 'options') closeModal(); else openModal({ kind: 'options' }); return; }
+  if (k === 'x') { if (ui.modal && ui.modal.kind === 'help') closeModal(); else openModal({ kind: 'help' }); return; }
+  if (k === 'y') { const open = document.querySelector('.jk [data-jk="close"]') as HTMLElement | null, btn = document.querySelector('[data-jk="open"]') as HTMLElement | null; if (open) open.click(); else if (btn) btn.click(); return; }
   if (k === 'sel') { if (ui.modal && ui.modal.kind === 'help') closeModal(); else openModal({ kind: 'help' }); return; }
   if ((k === 'lb' || k === 'rb') && G.S && !ui.modal && !G.S.over && !book().live) {
     let i = SECTIONS.indexOf(sectionOf(ui.page)); i = (i + (k === 'rb' ? 1 : SECTIONS.length - 1)) % SECTIONS.length; go(SECTIONS[i].id);
@@ -136,7 +138,7 @@ function padPoll() {
   for (const g of gps) if (g && g.connected) { gp = g; break; }
   if (gp) {
     const now = Date.now(), b = (n: number) => !!(gp!.buttons[n] && gp!.buttons[n].pressed), ax = gp.axes || [];
-    const st: Record<string, boolean> = { a: b(0), b: b(1), lb: b(4), rb: b(5), sel: b(8), start: b(9), up: b(12) || ax[1] < -0.6, down: b(13) || ax[1] > 0.6, left: b(14) || ax[0] < -0.6, right: b(15) || ax[0] > 0.6 };
+    const st: Record<string, boolean> = { a: b(0), b: b(1), x: b(2), y: b(3), lb: b(4), rb: b(5), sel: b(8), start: b(9), up: b(12) || ax[1] < -0.6, down: b(13) || ax[1] > 0.6, left: b(14) || ax[0] < -0.6, right: b(15) || ax[0] > 0.6 };
     Object.keys(st).forEach(k => {
       const move = k === 'up' || k === 'down' || k === 'left' || k === 'right';
       if (st[k] && (!PAD.prev[k] || (move && now - PAD.t[k] > (PAD.rep[k] ? 120 : 400)))) { PAD.rep[k] = !!PAD.prev[k]; PAD.t[k] = now; padPress(k); }

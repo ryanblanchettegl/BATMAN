@@ -61,6 +61,15 @@ const { open, go, overflow, shot, state, redraw } = require('./helper');
       const back = await page.evaluate(() => ({ t: document.activeElement.dataset.t, id: document.activeElement.dataset.id }));
       ok(await n('.cards .win') === 0 && back.t === 'title-card' && back.id === mark, 'gamepad B closes it and the highlight returns to the name: ' + JSON.stringify(back) + ' wanted ' + mark);
     }
+    // gamepad X opens Help, Y opens the Jukebox
+    if (mode === 'tv') {
+      await page.evaluate(() => window.EWF_DEBUG.pad('x')); await page.waitForTimeout(100);
+      ok(await page.evaluate(() => /help/i.test((document.querySelector('.win .wt span') || {}).textContent || '')), 'gamepad X opens Help');
+      await page.evaluate(() => window.EWF_DEBUG.pad('b')); await page.waitForTimeout(100);
+      await page.evaluate(() => window.EWF_DEBUG.pad('y')); await page.waitForTimeout(150);
+      ok(await n('.jk') >= 1, 'gamepad Y opens the Jukebox');
+      await page.evaluate(() => window.EWF_DEBUG.pad('y')); await page.waitForTimeout(100);
+    }
     // a stack four deep: Back steps out in the right order
     const ids = await state(page, S => { const L = S.w.filter(w => w.promo === S.player && !w.nw); return { a: L[0].id, b: L[1].id, tid: S.teams.find(t => t.promo === S.player).id, pid: S.player, title: S.promos[S.player].titles[0].id }; });
     await page.evaluate(i => { const u = window.EWF_DEBUG.ui; u.cards.length = 0; u.cards.push({ k: 'w', id: i.a }, { k: 'team', id: i.tid }, { k: 'title', pid: i.pid, id: i.title }, { k: 'w', id: i.b }); window.EWF_DEBUG.render(); }, ids);

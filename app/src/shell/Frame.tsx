@@ -48,7 +48,7 @@ export function StatusBar() {
     {stat('bp', 'BP', S.bp)}{stat('ap', 'AP', S.ap == null ? 0 : S.ap)}{stat('cash', 'Cash', cash(P.cash))}{stat('pop', 'Pop', P.image.toFixed(1))}
     {!S.owner.me && stat('owner', 'Owner', Math.round(S.owner.trust), 'opt')}
     <span class="sp" />
-    {NAV.pad ? <><span class="opt"><b>A</b> select</span><span class="opt"><b>B</b> back</span><span class="opt"><b>LB RB</b> sections</span></> : (NAV.on ? <><span class="opt"><b>OK</b> select</span><span class="opt"><b>Back</b> back</span></> : null)}
+    {NAV.pad ? <><span class="opt"><b>A</b> select</span><span class="opt"><b>B</b> back</span><span class="opt"><b>LB RB</b> sections</span><span class="opt"><b>X</b> help</span><span class="opt"><b>Y</b> music</span></> : (NAV.on ? <><span class="opt"><b>OK</b> select</span><span class="opt"><b>Back</b> back</span></> : null)}
     <button type="button" data-t="options" onClick={() => openModal({ kind: 'options' })}>[Options]</button>
   </footer>;
 }
