@@ -333,7 +333,7 @@ function doMatch(S,P,show,m,i,n,rep,used){
     var L=w.rr||(w.rr=[]);L.unshift({w:S.week,r:mine?'W':'L',v:foe.slice(0,40),ov:OV});if(L.length>5)L.length=5;
   });
   // injuries, growth, tag experience
-  var injm=RISK_INJ[P.risk]/RISK_INJ[P.risk0]*(isPl?dif(S).inj:1)*(modelOf(P).inj||1);
+  var injm=RISK_INJ[P.risk]/RISK_INJ[P.risk0]*(isPl?dif(S).inj:1)*(modelOf(P).inj||1)*(isPl&&hasRule(S,'testing')?0.88:1);
   all.forEach(function(w,ix){
     var osafe=avg(all.filter(function(o){return o!==w;}).map(function(o){return o.safe;}));
     if(!S.cal&&chance(S,0.006*STIP[stip].inj*injm*(1+(mins-12)/40)*(w.cond<45?1.8:1)*(m.hurt===w.id?5:1)*(1.6-w.dur*0.012)*(1.5-osafe/100)*hurtRisk(S,P,w,m))){

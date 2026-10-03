@@ -20,6 +20,7 @@ var HOUSE={
   iron:{n:'Iron schedule',d:'House shows between every taping. The crew lives on the road.',plus:'Gate money rises by a tenth.',minus:'Bodies recover more slowly and stress creeps up.'},
   kayfabe:{n:'Kayfabe is sacred',d:'Heroes and villains never travel together. Nobody breaks character in public.',plus:'Feuds heat up faster.',minus:'Living the gimmick adds stress, and tempers flare into more disputes.'},
   curfew:{n:'Curfew and dress code',d:'In by midnight, collared shirt on the plane.',plus:'Stress falls faster and there are fewer disputes.',minus:'Your biggest egos resent it.'},
+  testing:{n:'Fitness checks',d:'Everyone is checked by the medical staff before every show.',plus:'Injuries are a little rarer.',minus:'Wrestlers resent the queue and the paperwork.'},
   bonus:{n:'Win bonuses',d:'The winner’s purse is bigger than the loser’s.',plus:'Everybody works harder to win.',minus:'It costs a slice of every gate, and losing stings more.'}
 };
 function hasRule(S,k){return !!(S&&!S.cal&&S.house&&S.house.on.indexOf(k)>=0);}
@@ -29,12 +30,23 @@ function ruleMorale(S,w){
   var d=0;if(!S.house||!S.house.on.length)return 0;
   if(hasRule(S,'youth')&&w.age>=35)d-=4;
   if(hasRule(S,'senior')){if(w.age>=33)d+=4;else if(w.age<=25)d-=3;}
+  if(hasRule(S,'testing'))d-=1;
   if(hasRule(S,'curfew')){d-=1;if(w.role==='diva'||w.role==='toxic'||w.ex>=4)d-=4;}
   return d;
 }
+/* each company model has a view on the house rules: +1 approves, -1 frowns. The owner's trust follows once a month. */
+var HOUSE_VIEW={corporate:{clean:1,curfew:1,testing:1,iron:-1,open:-1},workrate:{def4:1,ranked:1,bonus:1,kayfabe:-1},purist:{clean:1,ranked:1,testing:1,curfew:1,kayfabe:-1},
+  underdog:{open:1,iron:1,bonus:-1},startup:{iron:1,open:1,curfew:-1},outlaw:{curfew:-1,clean:-1,kayfabe:1,testing:-1},spectacle:{kayfabe:1,open:1,youth:1,clean:-1},
+  tradition:{senior:1,kayfabe:1,ranked:1,clean:1,youth:-1},joshi:{testing:1,youth:1,def4:1,iron:-1}};
+function houseView(P,k){var v=HOUSE_VIEW[P.model||'classic'];return v&&v[k]||0;}
+WEEKX.push(function(S){
+  if(S.owner&&S.owner.me||cal(S.week).wom!==4||!S.house)return;var P=S.promos[S.player],d=0,likes=[],frowns=[];
+  S.house.on.forEach(function(k){var v=houseView(P,k);d+=0.6*v;if(v>0)likes.push(HOUSE[k].n);else if(v<0)frowns.push(HOUSE[k].n);});
+  if(d){S.owner.trust=clamp(S.owner.trust+d,0,100);news(S,'you',S.owner.name+(d>0?' approves of ':' is not happy about ')+(d>0?likes:frowns).join(' and ')+' under '+modelOf(P).ph+'.');}
+});
 E.HOUSE=HOUSE;
 E.houseInfo=function(S){bsInit(S);var H=S.house,wait=Math.max(0,(H.wk==null?-99:H.wk)+4-S.week);
-  return {slots:houseSlots(S),on:H.on.slice(),wait:wait,rules:Object.keys(HOUSE).map(function(k){var r=HOUSE[k];return {id:k,n:r.n,d:r.d,plus:r.plus,minus:r.minus,on:H.on.indexOf(k)>=0,clash:r.x&&H.on.indexOf(r.x)>=0?HOUSE[r.x].n:null};})};};
+  return {slots:houseSlots(S),on:H.on.slice(),wait:wait,rules:Object.keys(HOUSE).map(function(k){var r=HOUSE[k];return {id:k,view:houseView(S.promos[S.player],k),n:r.n,d:r.d,plus:r.plus,minus:r.minus,on:H.on.indexOf(k)>=0,clash:r.x&&H.on.indexOf(r.x)>=0?HOUSE[r.x].n:null};})};};
 E.setHouse=function(S,k){
   bsInit(S);var H=S.house,i=H.on.indexOf(k),r=HOUSE[k];if(!r)return null;
   if(i>=0){H.on.splice(i,1);H.wk=S.week;news(S,'you','You scrapped a house rule: '+r.n+'.');return {ok:true,msg:r.n+' is scrapped. The locker room needs four weeks to settle before a new rule can take its place.'};}

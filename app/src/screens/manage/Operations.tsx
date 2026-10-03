@@ -67,7 +67,7 @@ export function HousePanel() {
   return <Panel title="House rules">
     <p><b>{H.on.length} of {H.slots}</b> slots in use.{H.wait ? <span class="bad"> The room needs {H.wait} more {plural(H.wait, 'week')} before a new rule.</span> : null} <span class="muted">A third slot opens at booker level 4, and another when you own the company.</span></p>
     <ul class="list">{H.rules.map((r: any) => <li>
-      <span><b>{r.n}</b>{r.on ? <> <Tag kind="gold">In force</Tag></> : null}<br /><span class="muted">{r.d}</span><br /><span class="good">+ {r.plus}</span><br /><span class="bad">− {r.minus}</span></span>
+      <span><b>{r.n}</b>{r.on ? <> <Tag kind="gold">In force</Tag></> : null}{r.view > 0 ? <> <Tag kind="good">Company approves</Tag></> : (r.view < 0 ? <> <Tag kind="bad">Company frowns</Tag></> : null)}<br /><span class="muted">{r.d}</span><br /><span class="good">+ {r.plus}</span><br /><span class="bad">− {r.minus}</span></span>
       <Btn kind="sm" on={r.on} t="house" d={{ k: r.id }} disabled={!r.on && (H.on.length >= H.slots || !!r.clash || !!H.wait)} onClick={() => toggle(r.id)}>{r.on ? 'Scrap it' : 'Adopt'}</Btn>
     </li>)}</ul>
   </Panel>;

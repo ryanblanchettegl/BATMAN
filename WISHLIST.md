@@ -68,7 +68,7 @@ Things that would make the game deeper. Each one adds a system, a choice or a me
 - [ ] **40. Contract clauses.** Dates per month, a merchandise share, paid travel, a no-cut promise, outside dates, a title promise. Talks go back and forth two or three times. *L. Builds on `E.ask`, `E.sign`, `E.renew`.*
 - [x] **41. Ask the room.** Before a signing, find out who is glad and who is angry about it. *S. (TASKS 10)*
 - [x] **42. A court with a memory.** The wrestlers' court exists. Add a record of verdicts, harsher results for repeat offenders, and a judge chosen from the veterans. *S. Builds on `E.court`.*
-- [ ] **43. House rules that bite.** Dress code, curfew, testing. Each trades morale against incidents, and each model has a view. *S. Check `E.RULES` first.*
+- [x] **43. House rules that bite.** Dress code, curfew, testing. Each trades morale against incidents, and each model has a view. *S. Check `E.RULES` first.*
 - [ ] **44. The road.** A heavy schedule tires people. Travel partners become friends or come to blows. A bus or a charter is a spend that helps. *M.*
 - [ ] **45. Holdouts.** A star who earns less than a peer sits at home. Pay up, make a promise, or call the bluff. *M.*
 - [ ] **46. Road agents.** Assign an agent to a match. A good one lifts young wrestlers and lowers risk. One agent covers two matches a night. *M. Needs wish 11.*
