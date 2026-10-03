@@ -2,7 +2,9 @@
 
 The hand-over from the build thread, written 2 October 2026 at version 0.11. Work top to bottom unless Ryan says otherwise. Read `CLAUDE.md` first for how the project works, and `docs/feature-list.md` for the full wording of each feature.
 
-Two more lists sit beside this one:
+**`NEXT.md` is the work queue.** It turns the tasks below into ordered steps for an unattended run. Start there.
+
+Two more lists sit beside this one, both finished:
 
 - `TWEAKS.md`: 100 small jobs, one commit each, none needing a decision. Good for an unattended run. Start there.
 - `WISHLIST.md`: 100 ideas that make the game deeper. Bigger than a tweak, smaller than a task. Some are marked as part of a task below, and some need Ryan's say first.

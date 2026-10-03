@@ -1,6 +1,6 @@
 # EWF 9000: working notes for Claude Code
 
-Elite Wrestling Federation 9000 is a text-based wrestling booking sim for Steam, drawn as a 1990s PC program. The owner is Ryan. `TASKS.md` is the task list and holds his decisions; `TWEAKS.md` is 100 small jobs and `WISHLIST.md` is 100 depth ideas, each with its own "how to work this list"; `docs/feature-list.md` is the full feature wording; `docs/design.md` is the design document; `app/DEV.md` says how screens are written.
+Elite Wrestling Federation 9000 is a text-based wrestling booking sim for Steam, drawn as a 1990s PC program. The owner is Ryan. `NEXT.md` is the work queue: ordered steps for the next unattended run. `TASKS.md` is the task list and holds his decisions; `TWEAKS.md` is 100 small jobs and `WISHLIST.md` is 100 depth ideas, each with its own "how to work this list"; `docs/feature-list.md` is the full feature wording; `docs/design.md` is the design document; `app/DEV.md` says how screens are written.
 
 ## Commands
 
