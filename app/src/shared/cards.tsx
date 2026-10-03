@@ -75,6 +75,7 @@ function TeamCard(p: { id: number }) {
       <div><small>Promotion</small><span><PromoName id={t.promo} /></span></div>
       <div><small>Experience together</small><span><Meter v={t.exp} kind="cool" /> <b class="num">{Math.round(t.exp)}</b></span></div>
       <div><small>Chemistry</small><span class={chem >= 2 ? 'good' : (chem <= -2 ? 'bad' : undefined)}>{chem >= 2 ? 'They click' : (chem <= -2 ? 'They get in each other’s way' : 'Workable')}</span></div>
+      <div><small>Team finisher</small><span>{t.fin ? E.teamFinisher(S, t) : <span class="muted">Not yet. At 60 experience they earn one.</span>}</span></div>
       <div><small>Record together</small><span class="num">{(t.w | 0) + ' wins, ' + (t.l | 0) + ' losses'}</span></div>
       <div><small>Form</small><span>{t.ls >= 2 ? 'Lost ' + t.ls + ' in a row' : 'Steady'}</span></div>
     </div>

@@ -40,7 +40,7 @@ Things that would make the game deeper. Each one adds a system, a choice or a me
 - [x] **18. Referees.** Three or four named referees with a skill score. A weak one can miss a call, which becomes a story. A good one lifts the main event. *S.*
 - [ ] **19. The commentary desk.** A play-by-play voice and a colour voice, signed like anyone else, with chemistry between them. They change the broadcast score and how well stories get across. *M.*
 - [x] **20. Managers who meddle.** Managers exist. Add interference attempts at ringside, heat that belongs to the manager, and the manager turning on the client. *S. Builds on `E.setManager`, `E.mouthpieces`.*
-- [ ] **21. Teams grow together.** A team gains experience as a unit, earns a team finisher at a threshold, and keeps a record of wins and losses as a team. *M. Finishes the open box in TASKS 1.*
+- [x] **21. Teams grow together.** A team gains experience as a unit, earns a team finisher at a threshold, and keeps a record of wins and losses as a team. *M. Finishes the open box in TASKS 1.*
 - [x] **22. Botches and saves.** Rarely, a risky move goes wrong. A veteran in the match can attempt to cover for it. The report says what happened in one line. *S.*
 - [x] **23. Match of the year, live.** A running top ten of the year's best matches across every promotion, on the History page, with a pop-up for each. *S. (TASKS 7)*
 - [ ] **24. Styles clash and blend.** A grid of style against style. Some pairs are magic and some are dull. The player finds out by booking them, and the card then lists "works well with" and "avoid". *M. Builds on `E.STYLES`, `E.chem`.*

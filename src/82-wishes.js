@@ -549,3 +549,35 @@ E.STIPNOTE={
   mask:'Everyone in it must wear a mask. Needs a hot feud. The loser is unmasked for good.',
   hair:'Needs a hot feud. The loser is shaved and cannot wager again for 20 weeks.'
 };
+
+/* ---------- 21. Teams grow together: a team finisher once they have 60 experience (tm.fin) ---------- */
+var TFIN=['the Pincer','the Last Orders','the Double Drop','the Closing Time','the Tight Squeeze','the Hammer and Anvil','the Final Notice','the Crossroads','the Twin Bells','the Short Fuse','the Slingshot Special','the Open Door','the Second Opinion','the Long Goodbye','the Rush Hour','the Sandwich'];
+function teamSides(S,ctx){
+  if(ctx.m.mt!=='tag')return [];
+  return ctx.sides.map(function(s){var tm=(s[0].team!=null&&s[0].team===s[1].team)?teamOf(S,s[0]):null;return tm&&tm.fin?tm:null;});
+}
+function teamFin(S,winners){if(winners.length!==2||winners[0].team==null||winners[0].team!==winners[1].team)return null;var tm=teamOf(S,winners[0]);return tm&&tm.fin?tm.fin:null;}
+MQX.push(function(ctx){
+  var n=teamSides(ctx.S,ctx).filter(function(t){return t;}).length;
+  return n?{d:Math.min(1.6,0.8*n),x:'A team finisher the crowd knows'}:null;
+});
+POST.push(function(ctx){
+  var S=ctx.S;if(S.cal||ctx.m.mt!=='tag')return;
+  ctx.sides.forEach(function(s){
+    var tm=(s[0].team!=null&&s[0].team===s[1].team)?teamOf(S,s[0]):null;
+    if(!tm||tm.fin||tm.exp<60)return;
+    tm.fin=TFIN[hash('tfin'+tm.id+s[0].name)%TFIN.length];
+    if(tm.promo===S.player){
+      news(S,'story',s[0].name+' and '+s[1].name+' now have a team finisher: '+tm.fin+'.');
+      if(ctx.isPl)ctx.res.seg.notes.push(s[0].name+' and '+s[1].name+' have worked together long enough to have a finisher of their own: '+tm.fin+'.');
+    }
+  });
+});
+E.teamFinisher=function(S,t){return t&&t.fin?t.fin:null;};
+WEEKX.push(function(S){
+  S.teams.forEach(function(tm){
+    if(tm.fin||tm.exp<60||!S.w[tm.m[0]]||!S.w[tm.m[1]])return;
+    tm.fin=TFIN[hash('tfin'+tm.id+S.w[tm.m[0]].name)%TFIN.length];
+    if(tm.promo===S.player)news(S,'story',S.w[tm.m[0]].name+' and '+S.w[tm.m[1]].name+' now have a team finisher: '+tm.fin+'.');
+  });
+});
