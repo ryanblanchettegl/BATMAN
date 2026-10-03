@@ -412,7 +412,7 @@ const EVENTS = [
   ['Bastille', null], ['Twelve Labours', null], ['The Odyssey', null], ["All Hallows' Eve", null], ['Gunpowder Plot', null], ['Ragnarok', 'all_titles']
 ];
 
-const pkg = { manifest: { id: 'public_domain', name: 'The Public Domain Universe', author: 'EWF 9000', version: '1.2', schema_version: 1, fictional: true, start_year: 2026, start_month: 10, free_agents: 36,
+const pkg = { manifest: { id: 'public_domain', name: 'The EWF World', author: 'EWF 9000', version: '1.2', schema_version: 1, fictional: true, start_year: 2026, start_month: 10, free_agents: 36,
   description: 'Nine promotions built from history, myth and fiction published before 1929, reimagined as a modern wrestling world. Each is run a different way.' },
   promotions: [], shows: [], titles: [], workers: [], contracts: [], teams: [], relationships: [],
   events: EVENTS.map((e, i) => (e[1] ? { month: i + 1, name: e[0], rule: e[1] } : { month: i + 1, name: e[0] })),

@@ -26,7 +26,7 @@ Browser tests need Playwright with Chromium. Build first, then run from the repo
 NODE_PATH=<dir containing playwright> node app/tests/<name>.js
 ```
 
-`<name>` is one of `start`, `office`, `booking`, `roster`, `stories`, `company`, `cards`, `journey`, `linker`, `save`, `sweep`, `challenge`, `scenarios`, `editor`, `create`. `journey.js` takes `MODES=desk,phone,tablet,tv` and `WEEKS=5`. Each test prints its failures and exits non-zero if any. They are slow (one to five minutes each); run the ones for the section you touched, then `journey.js`.
+`<name>` is one of `start`, `office`, `booking`, `roster`, `stories`, `company`, `cards`, `journey`, `linker`, `save`, `sweep`, `challenge`, `scenarios`, `editor`, `create`, `leaveout`. `journey.js` takes `MODES=desk,phone,tablet,tv` and `WEEKS=5`. Each test prints its failures and exits non-zero if any. They are slow (one to five minutes each); run the ones for the section you touched, then `journey.js`.
 
 ## How the code is laid out
 

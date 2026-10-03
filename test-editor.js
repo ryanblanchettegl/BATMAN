@@ -86,6 +86,17 @@ ok('a copy has its own name and id', C.manifest.name === 'My copy' && C.manifest
 ok('a copy of the built-in world passes the check', E.edCheck(C).ok);
 C.workers[0].ring_name = 'Changed'; ok('changing the copy leaves the original alone', builtIn.workers[0].ring_name !== 'Changed');
 
+/* 7. the same world with companies left out: a player who wants only two */
+{ const ids = builtIn.promotions.map(p => p.id), keep = ['pdw', 'ttt'], out = ids.filter(x => keep.indexOf(x) < 0);
+  const fa = E.edWithout(builtIn, out, false), gone = E.edWithout(builtIn, out, true);
+  ok('leaving companies out keeps the ones you want', fa.promotions.map(p => p.id).join() === keep.join() && gone.promotions.length === 2);
+  ok('their wrestlers become free agents', fa.workers.length === builtIn.workers.length && E.edInfo(fa).free > 250, E.edInfo(fa).free + ' free agents');
+  ok('or leave the world too', gone.workers.length < 200 && E.edInfo(gone).free === E.edInfo(builtIn).free, gone.workers.length + ' people left');
+  ok('nothing points at anyone who left', gone.relationships.every(r => gone.workers.some(w => w.id === r.a) && gone.workers.some(w => w.id === r.b)) && gone.contracts.every(c => keep.indexOf(c.promotion_id) >= 0));
+  ok('the original world is untouched', builtIn.promotions.length === ids.length);
+  ok('both smaller worlds pass the check', E.edCheck(fa).ok && E.edCheck(gone).ok, E.edCheck(fa).lines.concat(E.edCheck(gone).lines).filter(l => l.lvl === 'error').map(l => l.msg).join(' | '));
+  [fa, gone].forEach((w, i) => { const r = play(w, 'ttt', 12); ok('twelve weeks in a two-company world (' + (i ? 'wrestlers gone' : 'free agents') + ')', r.errs === 0 && !r.nan && r.shows > 0, 'errs ' + r.errs + ', shows ' + r.shows); }); }
+
 E.useUniverse(builtIn);
 if (fails.length) { console.log('FAILED: ' + fails.length); process.exit(1); }
 console.log('test-editor: all passed');

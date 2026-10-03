@@ -12,7 +12,7 @@ export function openReport(i: number) { go('booking'); const b = book(); b.repor
 
 const seed = () => (Date.now() % 2000000000) | 0;
 export function startGame(pid: string | null, opts: { name: string; diff: string; fed: any | null; dpart?: any; iron?: boolean }) {
-  setUniverse(pref.uni || 'public_domain');
+  setUniverse(pref.uni || 'public_domain', true);   // keeps any companies the player left out
   G.S = E.newGame(pid, seed(), opts);
   resetUi(); save(); redraw(); window.scrollTo(0, 0);
 }

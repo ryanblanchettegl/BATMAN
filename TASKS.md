@@ -41,6 +41,17 @@ Two more lists sit beside this one, both finished:
 | Roster | Figures still honoured in living traditions were swapped out of the default universe. |
 | Names | Company models and storylines follow how real companies and angles worked, but every name in the game is invented or public domain. No real promotion, wrestler, stable or event names in game content. Real-world rosters stay out of this repository. |
 | Publishing | Two threads publish to the same live page. Whoever publishes merges the other's changes first. |
+| Four kinds of fan | Build it in phase 4, with the living-world work (`docs/proposals/four-kinds-of-fan.md`). |
+| Trouble in public | Build it, and make it gritty: failed tests, arrests, lawsuits, named plainly (`docs/proposals/trouble-in-public.md`). |
+| Owner mode | It will be complex. Build it later, after release. |
+| Portraits | Keep the code-drawn faces. |
+| Pictures in shared worlds | Yes. The game itself stays image-free. A world shared on the Workshop may carry its own portrait and belt pictures, and code-drawn faces fill any gaps. |
+| The built-in world | It is called **The EWF World**. |
+| Launch | A full release on Steam after phases 3, 4 and 5. Not early access. |
+| Smaller worlds | A player can leave companies out at the start of a game, down to two, and chooses whether their wrestlers become free agents or leave the world too. |
+| Booking | Booking a show means booking matches, promos and angles. The player picks all three. |
+| Net | Net is its own section at the top of the screen: the dirt sheet, a feed of short posts, and boards with threads. All under invented names. That makes seven sections. |
+| The week's tasks | The Office desk lists every task for the week (commentators not assigned, sponsor offers waiting, and so on). Anything that should be filled in is filled in, or waved off, before a show is booked or the week ends. |
 | Growing a company | A company adds titles and shows every year. So belts and weekly shows can be created inside a running game, not only in the World Editor, and rival companies add their own once a year. |
 | World Editor | The creation suite is its own page called **World Editor** on the title screen. A player builds a world from scratch (companies, shows, belts, wrestlers) and uploads it to the Workshop. This is the main next item. |
 
@@ -174,8 +185,8 @@ From the table in `docs/feature-list.md`. Check each against the engine first; s
 ### 12. Not tested or not decided
 - [ ] The Steam wrapper in `desktop/` has never been run.
 - [ ] TV and gamepad input were tested with simulated keys only, never on hardware.
-- [ ] Portraits are drawn by code from eight numbers. Ryan's brief mentioned layered images passed as Base64; ask before changing.
-- [ ] Open question for Ryan: should the default product carry the name "World History Wrestling"?
+- [x] Portraits: Ryan decided to keep the code-drawn faces.
+- [x] The built-in world is named The EWF World (Ryan's decision).
 
 ## After each task
 

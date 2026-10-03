@@ -92,7 +92,7 @@ All of these live in the engine and are already built and tested.
 | Company | Broadcast slot, production, risk, tickets, advertising, sponsors, training camp, house rules, finances |
 | World | Rival promotions, fed against fed, trades, power rankings, the Net, news |
 | Long game | Title histories, record book, awards, hall of fame, career logs, clocks, achievements |
-| Data | Universe packages (schema v1), import, export, validation, the Public Domain Universe |
+| Data | Universe packages (schema v1), import, export, validation, the built-in EWF World |
 
 Still to build: see `TASKS.md` and `docs/feature-list.md`.
 

@@ -1,4 +1,4 @@
-// Four more promotions for the Public Domain Universe. Same shape as the PROMOS entries in build-public-domain.js,
+// Four more promotions for the built-in world (The EWF World). Same shape as the PROMOS entries in build-public-domain.js,
 // without the money fields (the builder adds those).
 // Row: Name | Gender | Side (F face, H heel, T tweener) | Style | Age | Overness | Work rate | Charisma | Promo | Finisher | extras
 // Ring names are plain ASCII, like the rest of the roster. mgr= must be the last extra on a line.

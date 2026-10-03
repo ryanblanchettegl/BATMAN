@@ -131,6 +131,28 @@ E.edRename=function(pkg,table,id,name){
   return nid;
 };
 
+/** The same world without some companies, for a player who wants a smaller game. Their wrestlers become
+    free agents, or leave the world too when `gone` is true. The package passed in is left alone. */
+E.edWithout=function(pkg,ids,gone){
+  var c=edShape(JSON.parse(JSON.stringify(pkg)));
+  (ids||[]).forEach(function(id){
+    if(!edFind(c,'promotions',id))return;
+    var home=E.edInfo(c).home,staff=c.workers.filter(function(w){return home[w.id]===id;}).map(function(w){return w.id;});
+    E.edRemove(c,'promotions',id);
+    if(gone){
+      var out={};staff.forEach(function(wid){out[wid]=1;});
+      c.workers=c.workers.filter(function(w){return !out[w.id];});
+      c.workers.forEach(function(w){if(w.manager_id&&out[w.manager_id])delete w.manager_id;});
+      c.contracts=c.contracts.filter(function(x){return !out[x.worker_id];});
+      c.titles.forEach(function(t){if(t.holder_ids)t.holder_ids=t.holder_ids.filter(function(h){return !out[h];});});
+      c.teams.forEach(function(t){t.member_ids=(t.member_ids||[]).filter(function(m){return !out[m];});if(t.leader_id&&out[t.leader_id])delete t.leader_id;});
+      c.teams=c.teams.filter(function(t){return (t.member_ids||[]).length>=2;});
+      c.relationships=c.relationships.filter(function(r){return !out[r.a]&&!out[r.b];});
+    }
+  });
+  return c;
+};
+
 /** Fill a company with unknowns so a new world is playable at once. The same seed makes the same people. */
 E.edFill=function(pkg,pid,n,seed){
   edShape(pkg);var p=edFind(pkg,'promotions',pid);if(!p)return [];

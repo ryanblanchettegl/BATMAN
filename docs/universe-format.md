@@ -1,6 +1,6 @@
 # Universe packages (schema version 1)
 
-Every roster the game plays is a universe package. The built-in Public Domain Universe is one; so is anything a player imports from the title screen.
+Every roster the game plays is a universe package. The built-in world (The EWF World, made of public-domain figures) is one; so is anything a player imports from the title screen.
 
 This build reads the **packed form**: one JSON file holding a manifest and eight tables. The folder form described in the architecture doc (one file per table plus a `graphics/` folder) carries the same data and is what the desktop/Workshop build will read.
 

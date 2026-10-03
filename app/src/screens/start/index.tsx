@@ -2,7 +2,7 @@
 import { ComponentChildren } from 'preact';
 import { useEffect, useRef } from 'preact/hooks';
 import { E } from '../../engine';
-import { G, ui, pref, Modal, VER, UNIS, saveUnis, savePrefs, setUniverse, builtInUniverse, loadSave, cash, view, redraw, openModal, plural, slice } from '../../store';
+import { G, ui, pref, Modal, VER, UNIS, saveUnis, savePrefs, setUniverse, builtInUniverse, basePackage, cut, loadSave, cash, view, redraw, openModal, plural, slice } from '../../store';
 import { HOT, pageName } from '../../nav';
 import { autoScreen, skipBoot, onKey } from '../../input';
 import { startGame, continueGame, loadSaveText, startChallenge, startScenario, isoWeekId } from '../../flow';
@@ -129,13 +129,39 @@ export function Select() {
           options={[['public_domain', builtInUniverse().manifest.name + ' (built in)'], ...ids.map(id => [id, UNIS[id].manifest.name + ' (yours)'] as [string, string])]} />
         <Btn t="uni-import" onClick={() => file.current && file.current.click()}>Import a universe file</Btn>
         <Btn t="uni-editor" onClick={() => toScreen('editor')}>World Editor</Btn>
+        <Btn t="uni-cut" onClick={() => openModal({ kind: 'unicut' })}>Choose the companies in this game</Btn>
         {cur !== 'public_domain' && <Btn t="uni-remove" onClick={() => view(() => { delete UNIS[pref.uni]; saveUnis(); setUniverse('public_domain'); ui.mi = 0; })}>Remove this one</Btn>}
         <input type="file" id="uni-file" ref={file} accept=".json,application/json" hidden onChange={onFile} />
       </div>
       <p class="muted mt2">{info.desc} {info.workers} workers, {info.promotions.length} promotions. Starts in {info.start}.{info.author ? ' By ' + info.author + '.' : ''}</p>
+      {cut.out.length ? <p class="hl mt1" data-t="uni-cut-note">{info.promotions.length} of {basePackage().promotions.length} companies are in this game. {cut.gone ? 'The wrestlers of the others have left the world.' : 'The wrestlers of the others are free agents.'}</p> : null}
       <p class="muted mt1">Every roster is a universe package: a file anyone can make in the World Editor and share. The built-in one is made of history, myth and fiction published before 1929.</p>
     </Panel>
   </div><div class="status"><span class="opt">Arrows: move</span><span class="opt">Enter: select</span><span>Esc: back</span></div></div>;
+}
+
+/* ---------- leave companies out of a new game ---------- */
+function CutWindow() {
+  const base = basePackage(), all: any[] = base.promotions, st = slice<{ msg: string }>('unicut', () => ({ msg: '' })), kept = all.length - cut.out.length;
+  const apply = (out: string[], gone: boolean) => view(() => {
+    const was = { out: cut.out.slice(), gone: cut.gone }; cut.out = out; cut.gone = gone;
+    const v = setUniverse(pref.uni || 'public_domain', true);
+    if (cut.out.length !== out.length) { cut.out = was.out; cut.gone = was.gone; setUniverse(pref.uni || 'public_domain', true); st.msg = 'That would leave a world the game cannot play' + (v && v.errors && v.errors[0] ? ': ' + v.errors[0].msg : '') + '.'; }
+    else st.msg = '';
+    ui.mi = 0; ui.setup = null;
+  });
+  const toggle = (id: string) => { const isOut = cut.out.indexOf(id) >= 0; if (!isOut && kept <= 2) { view(() => { st.msg = 'A game needs at least two companies.'; }); return; } apply(isOut ? cut.out.filter(x => x !== id) : cut.out.concat([id]), cut.gone); };
+  return <Window title="Companies in this game" wide ok="Done">
+    <p>Leave out the companies you do not want. A game needs at least two. <b>{kept} of {all.length}</b> are in.</p>
+    {st.msg ? <p class="bad mt1" role="status" data-t="cut-msg">{st.msg}</p> : null}
+    <ul class="list mt1">{all.map(p => { const isOut = cut.out.indexOf(p.id) >= 0; return <li key={p.id}>
+      <span><b>{p.name}</b>{p.full_name ? ' - ' + p.full_name : ''} <span class="muted">{'·'} Popularity {p.popularity}</span></span>
+      <Btn kind="sm" on={!isOut} t="cut-toggle" d={{ v: p.id }} onClick={() => toggle(p.id)}>{isOut ? 'Left out' : 'In the game'}</Btn></li>; })}</ul>
+    <p class="eyebrow mt2">The wrestlers of a company you leave out</p>
+    <div class="row opts"><Btn kind="sm" on={!cut.gone} t="cut-gone" d={{ v: 0 }} onClick={() => apply(cut.out, false)}>Become free agents</Btn><Btn kind="sm" on={cut.gone} t="cut-gone" d={{ v: 1 }} onClick={() => apply(cut.out, true)}>Leave the world too</Btn></div>
+    <p class="muted mt1">{cut.gone ? 'They are gone with their company. The world is smaller.' : 'Any company can sign them. A small world gets a very deep pool of free agents.'}</p>
+    {cut.out.length ? <div class="row mt2"><Btn kind="sm" t="cut-reset" onClick={() => apply([], false)}>Put every company back</Btn></div> : null}
+  </Window>;
 }
 
 /* ---------- first day, or create a federation ---------- */
@@ -314,4 +340,4 @@ function UniReport(p: { m: Modal }) {
     {copy && <textarea id="modal-text" class="sr" readOnly value={p.m.text} />}
   </Window>;
 }
-export const modals: Record<string, (p: { m: Modal }) => ComponentChildren> = { help: Help, glossary: Glossary, options: Options, unireport: UniReport };
+export const modals: Record<string, (p: { m: Modal }) => ComponentChildren> = { help: Help, glossary: Glossary, options: Options, unireport: UniReport, unicut: CutWindow };

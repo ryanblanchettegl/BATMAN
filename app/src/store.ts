@@ -30,9 +30,17 @@ export function clearSave() { try { localStorage.removeItem(KEY); } catch (e) { 
 export const UNIS: Record<string, any> = (() => { try { return JSON.parse(localStorage.getItem(UKEY) || '{}') || {}; } catch (e) { return {}; } })();
 export function saveUnis(): boolean { try { localStorage.setItem(UKEY, JSON.stringify(UNIS)); return true; } catch (e) { return false; } }
 export function builtInUniverse(): any { return (globalThis as any).GP_UNIVERSE; }
-/** Make a universe the one new games start from. Returns the validation report. Falls back to the built-in one if it does not load. */
-export function setUniverse(id: string): any {
-  let pkg = id !== 'public_domain' && UNIS[id] ? UNIS[id] : builtInUniverse(), v = E.useUniverse(pkg);
+/** Companies the player has left out of the next new game, and whether their wrestlers leave the world too.
+    It lasts until another universe is chosen or a game is started and abandoned. */
+export const cut: { out: string[]; gone: boolean } = { out: [], gone: false };
+/** The universe as stored, before any companies are left out. */
+export function basePackage(id?: string): any { const u = id || pref.uni; return u && u !== 'public_domain' && UNIS[u] ? UNIS[u] : builtInUniverse(); }
+/** Make a universe the one new games start from. Returns the validation report. Falls back to the built-in one if it does not load. `keepCut` keeps the companies left out. */
+export function setUniverse(id: string, keepCut?: boolean): any {
+  if (!keepCut) { cut.out = []; cut.gone = false; }
+  let pkg = id !== 'public_domain' && UNIS[id] ? UNIS[id] : builtInUniverse();
+  let v = E.useUniverse(cut.out.length ? E.edWithout(pkg, cut.out, cut.gone) : pkg);
+  if (!v.ok && cut.out.length) { cut.out = []; cut.gone = false; v = E.useUniverse(pkg); }
   if (!v.ok) { v = E.useUniverse(builtInUniverse()); id = 'public_domain'; }
   pref.uni = id; savePrefs();
   return v;

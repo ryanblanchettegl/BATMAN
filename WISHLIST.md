@@ -146,3 +146,4 @@ Situations modelled on famous nights, each under an original name with invented 
 - [x] **98. The record book.** Sortable records: most reigns, longest reign, best average match grade, biggest gates, longest winning run. Every name opens its pop-up. *M.*
 - [x] **99. The universe editor.** Edit promotions and wrestlers inside the game, with problems explained in plain words. *L. Builds on `E.validateUniverse`. Ryan decided: it is the World Editor, TASKS 0.*
 - [x] **100. The weekly challenge.** A dated seed: the same world for everyone, twelve weeks, one score. No server. The score is a short code the player can copy and share. *M.*
+- [x] **101. Leave companies out.** At the start of a game, choose which companies are in the world, down to two. Their wrestlers become free agents or leave too, the player's choice. *S. Ryan's wish, 3 October. Built: `E.edWithout`, the "Choose the companies in this game" window on the Federations screen, `app/tests/leaveout.js`.*
