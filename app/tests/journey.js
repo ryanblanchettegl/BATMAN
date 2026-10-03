@@ -3,7 +3,7 @@ const { open, go, overflow, shot, flash } = require('./helper');
 const FILE = process.env.EWF_OUT || 'index';
 const PAGES = ['desk', 'career', 'booking', 'roster', 'locker', 'titles', 'market', 'storylines', 'history', 'net', 'manage', 'house', 'deals', 'overview', 'finances', 'world'];
 async function run(mode, weeks) {
-  const { browser, page, errs } = await open({ mode, file: FILE }), bad = [];
+  const { browser, page, errs } = await open({ mode, file: FILE, promo: process.env.PROMO || 'pdw' }), bad = [];
   const fit = async where => { const o = await overflow(page); if (o) bad.push(where + ': ' + o); };
   const has = sel => page.$(sel);
   const click = async sel => { const e = await page.$(sel); if (e) { await e.click(); return true; } return false; };
