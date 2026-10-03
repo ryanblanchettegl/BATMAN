@@ -51,3 +51,35 @@ E.bookerRep=function(S){
   return Object.keys(BTRAIT).map(function(k){var T=BTRAIT[k],v=repMetric(S,k);
     return {id:k,n:T.n,has:!!R[k],since:R[k]||null,earn:T.earn,edge:T.edge,cost:T.cost,progress:k==='hot'?Math.round(v*10)/10:v,need:BNEED[k]};});
 };
+
+/* ---------- 92. Legacy: a timeline of the career, the stars you made, your best matches, and a score to beat ---------- */
+E.legacy=function(S){
+  var P=S.promos[S.player],st=S.stats,R=S.rec||{matches:[],shows:[]},A=S.awards||[];
+  var made=S.w.filter(function(w){return w.promo===P.id&&!w.nw&&w.o0!=null&&w.ovr-w.o0>=6;}).map(function(w){return {w:w,from:Math.round(w.o0),to:Math.round(w.ovr),gain:Math.round(w.ovr-w.o0)};}).sort(function(a,b){return b.gain-a.gain;}).slice(0,5);
+  var hof=(S.hof||[]).length,achN=Object.keys(S.ach||{}).filter(function(k){return !/^MS_/.test(k);}).length,traits=Object.keys(S.reps||{}).length;
+  var parts=[
+    {n:'Shows run',v:Math.min(60,Math.round(st.shows*0.5))},
+    {n:'Best show',v:Math.max(0,Math.min(30,Math.round(st.bestShow-70)))},
+    {n:'Best match',v:Math.max(0,Math.min(30,Math.round(st.bestMatch-70)))},
+    {n:'Popularity gained',v:Math.max(0,Math.min(90,Math.round((P.image-P.image0)*3)))},
+    {n:'Feuds finished',v:Math.min(30,st.feudsDone*2)},
+    {n:'Stars made',v:Math.min(60,made.length*8)},
+    {n:'Achievements',v:Math.round(achN*1.5)},
+    {n:'Reputation',v:traits*8},
+    {n:'Hall of fame',v:hof*5},
+    {n:'Awards years',v:Math.min(40,A.length*5)}
+  ];
+  if(S.over&&S.over.why==='fired')parts.push({n:'Fired',v:-10});
+  var score=0;parts.forEach(function(p){score+=p.v;});
+  var tl=[{w:1,label:'Took over '+P.name+'.'}];
+  if(R.shows[0])tl.push({w:R.shows[0].w,label:'Best show: '+R.shows[0].n+', '+R.shows[0].r+'%.'});
+  if(R.matches[0])tl.push({w:R.matches[0].w,label:'Best match: '+R.matches[0].l+', '+R.matches[0].ov+'%.'});
+  if(R.gate)tl.push({w:R.gate.w,label:'Biggest crowd: '+R.gate.v.toLocaleString('en-US')+' at '+R.gate.n+'.'});
+  A.slice(0,4).forEach(function(a){var w0=a.list[0];tl.push({w:(a.week||0),year:a.year,label:'The '+a.year+' awards: '+(w0?w0.k+', '+w0.v+'.':'')});});
+  Object.keys(S.ach||{}).filter(function(k){return !/^MS_/.test(k);}).sort(function(a,b){return S.ach[a]-S.ach[b];}).slice(0,10).forEach(function(k){
+    var a=ACH.filter(function(x){return x.id===k;})[0];if(a)tl.push({w:S.ach[k],label:'Achievement: '+a.name});});
+  if(S.over)tl.push({w:S.over.week,label:S.over.why==='fired'?'Let go by '+S.owner.name+'.':'The money ran out.'});
+  tl.sort(function(a,b){return (a.w||0)-(b.w||0);});
+  tl.forEach(function(e){if(e.w)e.when=E.cal(e.w).label;});
+  return {score:score,parts:parts,timeline:tl,made:made,best:R.matches.slice(0,5),weeks:S.week};
+};

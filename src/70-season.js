@@ -141,7 +141,7 @@ function yearEnd(S){
   if(imp&&imp.ovr-imp.oy>=2)L.push({k:'Most improved',v:imp.name+' (+'+Math.round(imp.ovr-imp.oy)+' overness)',w:imp.id});
   var tm=by(S.teams.filter(function(t){return t.promo===P.id;}),function(t){return t.exp;});if(tm)L.push({k:'Tag team of the year',v:S.w[tm.m[0]].name+' & '+S.w[tm.m[1]].name});
   var pr=by(S.order.map(function(id){return S.promos[id];}),function(p){return p.image-(p.imgY==null?p.image0:p.imgY);});if(pr)L.push({k:'Promotion of the year',v:pr.name});
-  S.awards.unshift({year:yr,list:L});
+  S.awards.unshift({year:yr,list:L,week:S.week});
   news(S,'world','The '+yr+' awards are in. '+(woy?woy.name+' is wrestler of the year.':''));
   S.inbox.push({id:S.nid++,type:'awards',text:'The '+yr+' year-end awards: '+L.map(function(x){return x.k+': '+x.v;}).join('. ')+'.',done:true,result:null});
   S.w.forEach(function(w){w.yp=0;w.oy=w.ovr;});S.order.forEach(function(id){S.promos[id].imgY=S.promos[id].image;});S.year={};S.hofDue=true;

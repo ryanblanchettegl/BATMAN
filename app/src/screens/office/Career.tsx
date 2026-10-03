@@ -2,6 +2,7 @@
 import { E } from '../../engine';
 import { G, me, act, plural } from '../../store';
 import { Head, Panel, Btn, Tag, Meter } from '../../kit';
+import { LegacyPanel } from './GameOver';
 
 const role = () => G.S.owner.me ? 'owner and booker' : 'booker';
 
@@ -81,7 +82,7 @@ export function Career() {
     <Head eyebrow={S.booker.name + ', ' + role() + ' of ' + P.name} title="Career" />
     <div class="cols">
       <div class="stack"><You /><YourWord /></div>
-      <div class="stack"><Reputation /><Saga /><MilestoneWall /></div>
+      <div class="stack"><Reputation /><Saga /><MilestoneWall /><LegacyPanel /></div>
     </div>
     <Achievements />
   </>;

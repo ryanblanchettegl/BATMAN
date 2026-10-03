@@ -6,6 +6,24 @@ import { clearSave } from '../../store';
 import { clearToasts } from '../../shell/Frame';
 import { Head, Panel, Btn, KV, CheckLine } from '../../kit';
 
+/** The score for a finished career, kept in this browser so the next one has something to beat. */
+function bestSoFar(score: number, name: string): number {
+  let best = 0;
+  try { best = +(localStorage.getItem('ewf9000-legacy') || '0') || 0; if (score > best) localStorage.setItem('ewf9000-legacy', String(score)); } catch (e) { /* no storage: no record */ }
+  return best;
+}
+export function LegacyPanel(p: { final?: boolean }) {
+  const S = G.S, L = E.legacy(S), prev = p.final ? bestSoFar(L.score, S.booker.name) : 0;
+  return <Panel title={p.final ? 'Your legacy' : 'Your legacy so far'}>
+    <p class="big"><span class="num">{L.score}</span> <span class="muted">points{p.final ? (L.score > prev ? '. A new best.' : '. Your best is ' + prev + '.') : ''}</span></p>
+    <ul class="list">{L.parts.filter((x: any) => x.v).map((x: any) => <li><span>{x.n}</span><span class={'num ' + (x.v < 0 ? 'bad' : 'muted')}>{x.v > 0 ? '+' : ''}{x.v}</span></li>)}</ul>
+    {L.made.length ? <><p class="eyebrow mt2">Stars you made</p><ul class="list">{L.made.map((m: any) => <li><span>{m.w.name}</span><span class="num good">{m.from} to {m.to}</span></li>)}</ul></> : null}
+    {L.best.length ? <><p class="eyebrow mt2">Your best matches</p><ul class="list">{L.best.map((m: any) => <li><span>{m.l}</span><span class="muted num">{m.ov}% {'·'} {m.show}</span></li>)}</ul></> : null}
+    <p class="eyebrow mt2">The career</p>
+    <ul class="list">{L.timeline.map((e: any) => <li class="col"><span class="muted">{e.when || e.year || ''}</span><span>{e.label}</span></li>)}</ul>
+  </Panel>;
+}
+
 export function GameOver() {
   const S = G.S, P = me(), fired = S.over.why === 'fired', st = S.stats;
   // achievement pop-ups belong to the game that just ended
@@ -31,5 +49,6 @@ export function GameOver() {
       </div>}
       <div class="row mt3"><Btn kind="go" t="newgame-yes" onClick={fresh}>Start a new game</Btn></div>
     </Panel>
+    <LegacyPanel final />
   </>;
 }
