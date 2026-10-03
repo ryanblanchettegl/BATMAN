@@ -1,11 +1,11 @@
 # EWF 9000: working notes for Claude Code
 
-Elite Wrestling Federation 9000 is a text-based wrestling booking sim for Steam, drawn as a 1990s PC program. The owner is Ryan. `TASKS.md` is the task list and holds his decisions; `docs/feature-list.md` is the full feature wording; `docs/design.md` is the design document; `app/DEV.md` says how screens are written.
+Elite Wrestling Federation 9000 is a text-based wrestling booking sim for Steam, drawn as a 1990s PC program. The owner is Ryan. `TASKS.md` is the task list and holds his decisions; `TWEAKS.md` is 100 small jobs and `WISHLIST.md` is 100 depth ideas, each with its own "how to work this list"; `docs/feature-list.md` is the full feature wording; `docs/design.md` is the design document; `app/DEV.md` says how screens are written.
 
 ## Commands
 
 ```
-npm install                                         # once; installs the build tools in app/
+cd app && npm ci && cd ..                           # once; installs the build tools. Skip `npm install` at the root: it pulls Electron for the Steam wrapper
 node build.js                                       # src/*.js -> engine.js, app/ -> dist/index.html and dist/gorilla-position.html
 cd app && node_modules/.bin/tsc --noEmit -p .       # type-check the interface
 node test-uni.js universes/public_domain.json 60    # headless: 60 weeks of every promotion. Want errs 0 and NaN 0.
