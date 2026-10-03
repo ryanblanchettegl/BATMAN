@@ -163,7 +163,7 @@ function addWrestler(S,d,promo,brand){
 }
 E.newGame=function(playerId,seed,opts){
   opts=opts||{};
-  var S={v:4,rs:(seed|0)||7,seed:seed,week:1,player:playerId,diff:DIFF[opts.diff]?opts.diff:'normal',dpart:opts.dpart&&typeof opts.dpart==='object'?{money:clamp(+opts.dpart.money|0,0,2),inj:clamp(+opts.dpart.inj|0,0,2),ego:clamp(+opts.dpart.ego|0,0,2),rival:clamp(+opts.dpart.rival|0,0,2)}:null,mode:'booker',w:[],promos:{},order:[],teams:[],feuds:[],mystery:null,news:[],inbox:[],quests:[],ach:{},toasts:[],
+  var S={v:4,rs:(seed|0)||7,seed:seed,week:1,player:playerId,diff:DIFF[opts.diff]?opts.diff:'normal',iron:!!opts.iron,dpart:opts.dpart&&typeof opts.dpart==='object'?{money:clamp(+opts.dpart.money|0,0,2),inj:clamp(+opts.dpart.inj|0,0,2),ego:clamp(+opts.dpart.ego|0,0,2),rival:clamp(+opts.dpart.rival|0,0,2)}:null,mode:'booker',w:[],promos:{},order:[],teams:[],feuds:[],mystery:null,news:[],inbox:[],quests:[],ach:{},toasts:[],
     stats:{shows:0,matches:0,run:0,feudsDone:0,bestMatch:0,bestShow:0},said:[],h2h:{},trust:60,ledger:[],sponsors:[],spOffers:[],slotAsk:-99,hype:0,rateMod:0,reports:[],queue:[],qi:0,card:[],over:null,nid:1,recent:{},fin:null};
   var cur={promo:'FA',brand:null},byName={};
   CAL0={y:DB.startYear,m:DB.startMonth};

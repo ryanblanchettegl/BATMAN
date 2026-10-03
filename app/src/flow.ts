@@ -11,14 +11,14 @@ export function repFor(sh: any): number { const S = G.S; for (let i = 0; i < S.r
 export function openReport(i: number) { go('booking'); const b = book(); b.report = i; b.live = null; redraw(); }
 
 const seed = () => (Date.now() % 2000000000) | 0;
-export function startGame(pid: string | null, opts: { name: string; diff: string; fed: any | null; dpart?: any }) {
+export function startGame(pid: string | null, opts: { name: string; diff: string; fed: any | null; dpart?: any; iron?: boolean }) {
   setUniverse(pref.uni || 'public_domain');
   G.S = E.newGame(pid, seed(), opts);
   resetUi(); save(); redraw(); window.scrollTo(0, 0);
 }
 /** Fired bookers take a job elsewhere and keep their level and skills. */
 export function takeJob(pid: string, terms?: string[]) {
-  const S = G.S, bk = S.booker; G.S = E.newGame(pid, seed(), { name: bk.name, booker: bk, diff: S.diff });
+  const S = G.S, bk = S.booker; G.S = E.newGame(pid, seed(), { name: bk.name, booker: bk, diff: S.diff, iron: S.iron, dpart: S.dpart });
   const msg = terms && terms.length ? E.applyJobTerms(G.S, terms) : null;
   resetUi(); if (msg) say(msg, { err: /did not like/.test(msg) }); save(); redraw(); window.scrollTo(0, 0);
 }

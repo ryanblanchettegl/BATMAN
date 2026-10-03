@@ -2,6 +2,7 @@
 import { E } from '../../engine';
 import { G, me, slice, view } from '../../store';
 import { takeJob, abandonGame } from '../../flow';
+import { clearSave } from '../../store';
 import { clearToasts } from '../../shell/Frame';
 import { Head, Panel, Btn, KV, CheckLine } from '../../kit';
 
@@ -9,6 +10,8 @@ export function GameOver() {
   const S = G.S, P = me(), fired = S.over.why === 'fired', st = S.stats;
   // achievement pop-ups belong to the game that just ended
   const jt = slice<{ t: string[] }>('jobterms', () => ({ t: [] })), ck = E.jobTermsCheck(S, jt.t);
+  // an iron man game that ends in bankruptcy is over for good: its save is erased so Continue cannot bring it back
+  if (S.iron && !fired) clearSave();
   const job = (pid: string) => { clearToasts(); takeJob(pid, jt.t.slice()); jt.t = []; };
   const fresh = () => { clearToasts(); abandonGame(); };
   return <>

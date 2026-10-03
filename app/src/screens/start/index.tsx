@@ -139,13 +139,16 @@ function DiffPanel() {
   const s = ui.setup!, dp = s.dpart || { money: 1, inj: 1, ego: 1, rival: 1 }, W = ['Easier', 'As set', 'Harder'];
   return <Panel cls="mb4" title="Difficulty">
     <PickRow k="diff" table={E.DIFF} cur={s.diff || 'normal'} label="How hard a job is it?" set={v => { s.diff = v; }} />
+    <p class="eyebrow">Iron man mode</p>
+    <div class="row opts"><Btn kind="sm" on={!s.iron} t="iron" d={{ v: 0 }} onClick={() => view(() => { s.iron = false; })}>Off</Btn><Btn kind="sm" on={!!s.iron} t="iron" d={{ v: 1 }} onClick={() => view(() => { s.iron = true; })}>On</Btn></div>
+    <p class="muted mt1 mb2">{s.iron ? 'One save, written after every action. You cannot copy it out, paste another in, or load it again once you are fired or broke.' : 'Off: the usual way to play. You can move a save between devices.'}</p>
     <p class="eyebrow">Fine tune (optional)</p>
     {Object.keys(E.DPART).map((k: string) => <div class="row opts" key={k}><span class="muted" style={{ minWidth: '18ch' }}>{E.DPART[k]}</span>{W.map((w, i) => <Btn kind="sm" on={dp[k] === i} t="dpart" d={{ k, v: i }} onClick={() => view(() => { s.dpart = Object.assign({ money: 1, inj: 1, ego: 1, rival: 1 }, s.dpart || {}); s.dpart[k] = i; })}>{w}</Btn>)}</div>)}
   </Panel>;
 }
 function Begin(p: { label: string; block?: string }) {
   const s = ui.setup!;
-  const go = () => startGame(s.pid === 'OWN' ? null : s.pid, { name: s.name, diff: s.diff, fed: s.pid === 'OWN' ? s.fed : null, dpart: s.dpart || null });
+  const go = () => startGame(s.pid === 'OWN' ? null : s.pid, { name: s.name, diff: s.diff, fed: s.pid === 'OWN' ? s.fed : null, dpart: s.dpart || null, iron: !!s.iron });
   return <div class="row"><label class="row">Your name <TextBox id="bname" value={s.name} max={24} placeholder="The Booker" width="24ch" onInput={v => { s.name = v; }} /></label>
     <Btn kind="go" t="begin" disabled={!!p.block} onClick={go}>{p.label}</Btn><Btn t="unpick" onClick={() => view(() => { ui.setup = null; ui.scr = 'select'; })}>Back</Btn></div>;
 }
@@ -230,6 +233,7 @@ function Help() {
 /** Move a game between devices as text: copy it here, paste it there. */
 function SaveText() {
   const sv = slice<{ mode: string; text: string; msg: string }>('savetext', () => ({ mode: '', text: '', msg: '' })), S = G.S;
+  if (S && S.iron) return <p class="muted mt2">Iron man game: the save cannot be copied out or replaced.</p>;
   const open = (m: string) => view(() => { sv.mode = sv.mode === m ? '' : m; sv.msg = ''; sv.text = m === 'copy' && S ? JSON.stringify(S) : ''; });
   return <div class="mt2">
     <div class="row">{S ? <Btn kind="sm" t="save-copy" on={sv.mode === 'copy'} onClick={() => { open('copy'); copyText(JSON.stringify(S), 'save-text', () => view(() => { sv.msg = 'Copied. Paste it into the same window on your other device.'; })); }}>Copy my save</Btn> : null}
