@@ -83,6 +83,16 @@ var ACH = [
   {id:'ACH_OUTLAW_CEIL',name:'Top of the Gutter',desc:'Take the outlaw company to the most popularity its crowd allows.'},
   {id:'ACH_TRAD_VET',name:'Old Hand, New Crown',desc:'Crown a ten-year veteran as champion in the traditional company.'},
   {id:'ACH_JOSHI_MERCH',name:'The Longest Table',desc:'Out-sell a bigger company in merchandise for a week with the all-women company.'},
+  {id:'MS_SELLOUT',ms:true,name:'First sell-out',desc:'Fill a building to the rafters.'},
+  {id:'MS_TOPMATCH',ms:true,name:'First top-grade match',desc:'Book a match rated 90% or better.'},
+  {id:'MS_SHOW80',ms:true,name:'First show of 80% or more',desc:'Run a show rated 80% or better.'},
+  {id:'MS_TITLECHANGE',ms:true,name:'First title change',desc:'See a belt change hands on your show.'},
+  {id:'MS_CROWN',ms:true,name:'First champion crowned',desc:'Crown a champion for a vacant title.'},
+  {id:'MS_BUILT',ms:true,name:'A champion built from nothing',desc:'Make a champion of someone who arrived as an unknown.'},
+  {id:'MS_FEUD',ms:true,name:'First feud finished',desc:'Settle a rivalry.'},
+  {id:'MS_SPONSOR',ms:true,name:'First sponsor signed',desc:'Put a sponsor on the show.'},
+  {id:'MS_50',ms:true,name:'Fiftieth show',desc:'Run fifty shows.'},
+  {id:'MS_100',ms:true,name:'Hundredth show',desc:'Run one hundred shows.'},
   {id:'ACH_BOARD_4',name:'Beating the Board',desc:'Beat the corporate board\u2019s plan four months running.'}
 ];
 

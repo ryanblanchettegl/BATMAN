@@ -47,14 +47,21 @@ function Saga() {
 }
 
 function Achievements() {
-  const S = G.S, got = Object.keys(S.ach).length;
+  const S = G.S, got = Object.keys(S.ach).length, A = E.ACH.filter((a: any) => !a.ms);
   return <>
-    <h2 class="mt4 mb2">Achievements {'·'} {got} of {E.ACH.length}</h2>
-    <div class="ach">{E.ACH.map((a: any) => {
+    <h2 class="mt4 mb2">Achievements {'·'} {got} of {A.length}</h2>
+    <div class="ach">{A.map((a: any) => {
       const g = S.ach[a.id], hide = a.hidden && !g;
       return <div class={g ? 'got' : undefined}><b>{hide ? 'Hidden' : a.name}</b><span>{hide ? 'Keep playing to find this one.' : a.desc}</span>{g ? <><br /><span class="muted">Unlocked {E.cal(g).label}</span></> : null}</div>;
     })}</div>
   </>;
+}
+
+function MilestoneWall() {
+  const L: any[] = E.milestones(G.S), got = L.filter(m => m.w).length;
+  return <Panel title={'Milestone wall · ' + got + ' of ' + L.length}>
+    <ul class="list">{L.map(m => <li><span><b>{m.name}</b><br /><span class="muted">{m.desc}</span></span><span class={m.w ? 'good' : 'muted'}>{m.w ? E.cal(m.w).label : 'Not yet'}</span></li>)}</ul>
+  </Panel>;
 }
 
 export function Career() {
@@ -63,7 +70,7 @@ export function Career() {
     <Head eyebrow={S.booker.name + ', ' + role() + ' of ' + P.name} title="Career" />
     <div class="cols">
       <div class="stack"><You /><YourWord /></div>
-      <div class="stack"><Saga /></div>
+      <div class="stack"><Saga /><MilestoneWall /></div>
     </div>
     <Achievements />
   </>;

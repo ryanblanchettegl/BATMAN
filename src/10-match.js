@@ -320,7 +320,7 @@ function doMatch(S,P,show,m,i,n,rep,used){
     if(win>=0&&win!==champSide&&fin!=='dq'&&fin!=='co'){
       var had=t.holders.length;
       t.holders.forEach(function(id){S.w[id].lt={n:t.name,id:t.id,w:S.week};});
-      t.holders=m.sides[win].slice();t.since=S.week;t.defs=0;seg.change=true;
+      t.holders=m.sides[win].slice();t.since=S.week;t.defs=0;seg.change=true;seg.crown=!had;
       winners.forEach(function(w){w.mom=clamp(w.mom+2,-10,10);w.morale=clamp(w.morale+6,0,100);w.lt=null;});
       news(S,'title',names(winners)+(had?' won the ':' won the vacant ')+P.name+' '+t.name+'.');
       seg.notes.push('New champion'+(t.tag?'s':'')+': '+names(winners)+'.');

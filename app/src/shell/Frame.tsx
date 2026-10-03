@@ -49,7 +49,7 @@ function MP_ON() { return document.documentElement.getAttribute('data-music') !=
 export function StatusBar() {
   const S = G.S, P = me(), a = toastNow();
   if (a) return <footer class="status toast" role="status" data-t="toast" onClick={() => { clearTimeout(timer); nextToast(); }}>
-    <span><b>Achievement unlocked</b></span><span class="tn">{a.name}</span><span class="opt td">{a.desc}</span><span class="sp" />{queue.length > 1 && <span class="opt">+{queue.length - 1} more</span>}
+    <span><b>{a.ms ? 'Milestone' : 'Achievement unlocked'}</b></span><span class="tn">{a.name}</span><span class="opt td">{a.desc}</span><span class="sp" />{queue.length > 1 && <span class="opt">+{queue.length - 1} more</span>}
   </footer>;
   return <footer class="status">
     {stat('bp', 'BP', S.bp)}{stat('ap', 'AP', S.ap == null ? 0 : S.ap)}{stat('cash', 'Cash', cash(P.cash))}{stat('pop', 'Pop', P.image.toFixed(1))}
@@ -77,7 +77,7 @@ function nextToast() { timer = null; queue.shift(); if (queue.length) timer = se
 export function drainToasts() {
   const S = G.S; if (!S || !S.toasts.length) return;
   let added = false;
-  while (S.toasts.length) { const id = S.toasts.shift(); if (!E.ACH.some((a: any) => a.id === id)) continue; PLATFORM.unlock(id); queue.push(id); added = true; }
+  while (S.toasts.length) { const id = S.toasts.shift(); if (!E.ACH.some((a: any) => a.id === id)) continue; { const a = E.ACH.find((q: any) => q.id === id); if (!a.ms) PLATFORM.unlock(id); } queue.push(id); added = true; }
   if (!added) return;
   SFX.ach();
   while (queue.length > 4) queue.splice(1, 1);

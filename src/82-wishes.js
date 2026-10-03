@@ -250,3 +250,19 @@ POST.push(function(ctx){
   var champ=r.win>=0&&seg.change?r.winners.filter(function(w){return atHome(ctx,w);})[0]:null;
   if(champ){ctx.P.image=clamp(ctx.P.image+0.15,5,100);seg.notes.push(champ.name+' wins the title in '+champ.town+'. The whole city is celebrating.');if(ctx.isPl)news(ctx.S,'story',champ.name+' won the title in their home town of '+champ.town+'.');}
 });
+
+/* the milestone wall: a list of firsts with dates. Each one lands as a pop-up and is listed on Career */
+function msAward(S,id){if(S.cal||(S.firsts&&S.firsts[id]))return;(S.firsts||(S.firsts={}))[id]=S.week;S.toasts.push(id);}
+SHOWX.push(function(S,P,show,rep){
+  if(P.id!==S.player||S.cal)return;var ms=rep.segs.filter(function(s){return s.k==='match';});
+  if(rep.sellout)msAward(S,'MS_SELLOUT');if(rep.rating>=80)msAward(S,'MS_SHOW80');
+  if(ms.some(function(s){return s.ov>=90;}))msAward(S,'MS_TOPMATCH');
+  if(ms.some(function(s){return s.change;}))msAward(S,'MS_TITLECHANGE');
+  if(ms.some(function(s){return s.crown;}))msAward(S,'MS_CROWN');
+  ms.forEach(function(s){if(!s.change||!s.wids)return;s.wids.forEach(function(id){var w=S.w[id];if(w&&w.o0!=null&&w.o0<=35&&w.promo===S.player)msAward(S,'MS_BUILT');});});
+  if(S.stats.shows>=50)msAward(S,'MS_50');if(S.stats.shows>=100)msAward(S,'MS_100');
+});
+WEEKX.push(function(S){
+  if(S.stats&&S.stats.feudsDone>=1)msAward(S,'MS_FEUD');if(S.sponsors&&S.sponsors.length)msAward(S,'MS_SPONSOR');
+});
+E.milestones=function(S){return E.ACH.filter(function(a){return a.ms;}).map(function(a){return {id:a.id,name:a.name,desc:a.desc,w:(S.firsts&&S.firsts[a.id])||null};});};

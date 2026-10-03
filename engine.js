@@ -87,6 +87,16 @@ var ACH = [
   {id:'ACH_OUTLAW_CEIL',name:'Top of the Gutter',desc:'Take the outlaw company to the most popularity its crowd allows.'},
   {id:'ACH_TRAD_VET',name:'Old Hand, New Crown',desc:'Crown a ten-year veteran as champion in the traditional company.'},
   {id:'ACH_JOSHI_MERCH',name:'The Longest Table',desc:'Out-sell a bigger company in merchandise for a week with the all-women company.'},
+  {id:'MS_SELLOUT',ms:true,name:'First sell-out',desc:'Fill a building to the rafters.'},
+  {id:'MS_TOPMATCH',ms:true,name:'First top-grade match',desc:'Book a match rated 90% or better.'},
+  {id:'MS_SHOW80',ms:true,name:'First show of 80% or more',desc:'Run a show rated 80% or better.'},
+  {id:'MS_TITLECHANGE',ms:true,name:'First title change',desc:'See a belt change hands on your show.'},
+  {id:'MS_CROWN',ms:true,name:'First champion crowned',desc:'Crown a champion for a vacant title.'},
+  {id:'MS_BUILT',ms:true,name:'A champion built from nothing',desc:'Make a champion of someone who arrived as an unknown.'},
+  {id:'MS_FEUD',ms:true,name:'First feud finished',desc:'Settle a rivalry.'},
+  {id:'MS_SPONSOR',ms:true,name:'First sponsor signed',desc:'Put a sponsor on the show.'},
+  {id:'MS_50',ms:true,name:'Fiftieth show',desc:'Run fifty shows.'},
+  {id:'MS_100',ms:true,name:'Hundredth show',desc:'Run one hundred shows.'},
   {id:'ACH_BOARD_4',name:'Beating the Board',desc:'Beat the corporate board\u2019s plan four months running.'}
 ];
 
@@ -769,7 +779,7 @@ function doMatch(S,P,show,m,i,n,rep,used){
     if(win>=0&&win!==champSide&&fin!=='dq'&&fin!=='co'){
       var had=t.holders.length;
       t.holders.forEach(function(id){S.w[id].lt={n:t.name,id:t.id,w:S.week};});
-      t.holders=m.sides[win].slice();t.since=S.week;t.defs=0;seg.change=true;
+      t.holders=m.sides[win].slice();t.since=S.week;t.defs=0;seg.change=true;seg.crown=!had;
       winners.forEach(function(w){w.mom=clamp(w.mom+2,-10,10);w.morale=clamp(w.morale+6,0,100);w.lt=null;});
       news(S,'title',names(winners)+(had?' won the ':' won the vacant ')+P.name+' '+t.name+'.');
       seg.notes.push('New champion'+(t.tag?'s':'')+': '+names(winners)+'.');
@@ -3798,6 +3808,22 @@ POST.push(function(ctx){
   var champ=r.win>=0&&seg.change?r.winners.filter(function(w){return atHome(ctx,w);})[0]:null;
   if(champ){ctx.P.image=clamp(ctx.P.image+0.15,5,100);seg.notes.push(champ.name+' wins the title in '+champ.town+'. The whole city is celebrating.');if(ctx.isPl)news(ctx.S,'story',champ.name+' won the title in their home town of '+champ.town+'.');}
 });
+
+/* the milestone wall: a list of firsts with dates. Each one lands as a pop-up and is listed on Career */
+function msAward(S,id){if(S.cal||(S.firsts&&S.firsts[id]))return;(S.firsts||(S.firsts={}))[id]=S.week;S.toasts.push(id);}
+SHOWX.push(function(S,P,show,rep){
+  if(P.id!==S.player||S.cal)return;var ms=rep.segs.filter(function(s){return s.k==='match';});
+  if(rep.sellout)msAward(S,'MS_SELLOUT');if(rep.rating>=80)msAward(S,'MS_SHOW80');
+  if(ms.some(function(s){return s.ov>=90;}))msAward(S,'MS_TOPMATCH');
+  if(ms.some(function(s){return s.change;}))msAward(S,'MS_TITLECHANGE');
+  if(ms.some(function(s){return s.crown;}))msAward(S,'MS_CROWN');
+  ms.forEach(function(s){if(!s.change||!s.wids)return;s.wids.forEach(function(id){var w=S.w[id];if(w&&w.o0!=null&&w.o0<=35&&w.promo===S.player)msAward(S,'MS_BUILT');});});
+  if(S.stats.shows>=50)msAward(S,'MS_50');if(S.stats.shows>=100)msAward(S,'MS_100');
+});
+WEEKX.push(function(S){
+  if(S.stats&&S.stats.feudsDone>=1)msAward(S,'MS_FEUD');if(S.sponsors&&S.sponsors.length)msAward(S,'MS_SPONSOR');
+});
+E.milestones=function(S){return E.ACH.filter(function(a){return a.ms;}).map(function(a){return {id:a.id,name:a.name,desc:a.desc,w:(S.firsts&&S.firsts[a.id])||null};});};
 
 /* ===== 85-universe.js ===== */
 /* ---------- universe packages: every roster, built-in or community-made, loads through this ----------
