@@ -13,6 +13,16 @@ function actNote(f: any): string {
   return '';
 }
 
+/** One line on what would heat a feud up next. */
+function heatStep(f: any): string {
+  const S = G.S, a = E.feudAct(f), cold = S.week - f.last;
+  if (cold >= 3) return 'It has gone cold for ' + cold + ' weeks. Put both on the next show, in a segment or a match.';
+  if (a === 1) return 'Book a promo or an ambush with both on the show.';
+  if (a === 2) return f.heat < 45 ? 'A brawl or an attack will get it past 45 heat.' : 'A contract signing or a brawl should take it to 60 heat.';
+  if (a === 3) return 'Raise the stakes or book a betrayal. That is the twist this feud needs.';
+  return f.finale ? 'Book the match at the big event. Heat peaks there.' : 'Make the match official, then book it on a big event.';
+}
+
 function FeudCard(p: { f: any }) {
   const S = G.S, P = me(), f = p.f, a = E.feudAct(f);
   const t = f.title ? P.titles.find((x: any) => x.id === f.title) : null;
@@ -31,6 +41,7 @@ function FeudCard(p: { f: any }) {
     </div>
     {f.stakes ? <p class="good">Stakes: {f.stakes}</p> : null}
     <p class="muted">{actNote(f)}</p>
+    <p>Next: {heatStep(f)}</p>
     <div class="log">{f.log.slice(-6).map((l: any) => <span>Wk {l.w} <Txt>{l.t}</Txt></span>)}</div>
   </Panel>;
 }
