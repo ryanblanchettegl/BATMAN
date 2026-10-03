@@ -116,3 +116,18 @@ POST.push(function(ctx){
     else if(seg.ov>=72){w.mom=clamp(w.mom+2,-10,10);addOvr(ctx.P,w,0.6*hy);seg.notes.push(w.name+' arrives hot. The weeks of teasers paid off.');if(ctx.isPl)news(S,'story',w.name+' made a hot debut.');}
   });
 });
+
+/* cliffhangers: a main event that settles nothing leaves a question open and the next show opens to a bigger crowd. Three open at once and the crowd stops caring */
+PREX.push(function(S,P,show){
+  var L=(S.open||[]).filter(function(o){return S.week-o.w<=2&&!o.used;});S.carryNote=null;if(!L.length)return;
+  var n=L.length;S.hype=(S.hype||0)+(n<=2?0.04*n:-0.04);
+  S.carryNote=n<=2?(n===1?'Last time out left a question hanging. The crowd came back to hear the answer.':'Two questions are hanging. The crowd came back curious.'):'There are '+n+' questions hanging at once. The crowd has stopped caring about any of them.';
+  L.forEach(function(o){o.used=1;});
+});
+SHOWX.push(function(S,P,show,rep){
+  if(P.id!==S.player)return;var ms=rep.segs.filter(function(s){return s.k==='match';}),main=ms[ms.length-1];
+  if(S.carryNote){rep.carry=S.carryNote;if(rep.sheet)rep.sheet.lines.unshift(S.carryNote);S.carryNote=null;}
+  var open=S.open||(S.open=[]);S.open=open.filter(function(o){return S.week-o.w<=2;});
+  if(main&&(main.fin==='dq'||main.fin==='co'||main.fin==='draw'||main.fin==='interf')&&S.open.length<6)S.open.push({w:S.week,t:main.label});
+});
+E.openThreads=function(S){return (S.open||[]).filter(function(o){return S.week-o.w<=2&&!o.used;}).map(function(o){return {w:o.w,t:o.t};});};
