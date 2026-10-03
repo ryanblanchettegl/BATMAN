@@ -5,7 +5,7 @@ Elite Wrestling Federation 9000 is a text-based wrestling booking sim for Steam,
 ## Commands
 
 ```
-npm install                                         # once; installs the build tools in app/
+cd app && npm ci && cd ..                           # once; installs the build tools. Skip `npm install` at the root: it pulls Electron for the Steam wrapper
 node build.js                                       # src/*.js -> engine.js, app/ -> dist/index.html and dist/gorilla-position.html
 cd app && node_modules/.bin/tsc --noEmit -p .       # type-check the interface
 node test-uni.js universes/public_domain.json 60    # headless: 60 weeks of every promotion. Want errs 0 and NaN 0.

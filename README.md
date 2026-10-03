@@ -23,7 +23,7 @@ Open `dist/index.html` in any browser. It is one self-contained file: no server,
 
 ## Build and test
 
-    npm install            # installs the interface's build tools (in app/)
+    cd app && npm ci && cd ..   # installs the interface's build tools
     node build.js          # joins src/*.js into engine.js, bundles app/, writes dist/
     node test-uni.js universes/public_domain.json 60    # plays 60 weeks of every promotion with no interface
     NODE_PATH=<where playwright lives> node app/tests/journey.js    # plays real weeks in a browser on four screen sizes
