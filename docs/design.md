@@ -18,17 +18,18 @@ Elite Wrestling Federation 9000 is a wrestling booking sim in the Extreme Warfar
 
 Start flow: Boot, Title, Select promotion, First day (or Create a federation).
 
-Five sections, each with a row of page buttons. Nothing lives outside this map.
+Six sections, each with a row of page buttons. Nothing lives outside this map.
 
 | Section | Pages | What you do there |
 |---|---|---|
-| Office | The desk, Backstage, Career | See the week, answer the inbox, spend action points, read your own record |
+| Office | The desk, Career | The hub. Opens on "Before the show": the next show, Book the next show, action points and the backstage rooms. Then the inbox, the week, what needs attention, clocks and news |
 | Booking | Card, Broadcast, Report | Build the card, make the calls, watch it, read the fallout |
-| Roster | Roster, Locker room, Titles, Market | Everything about talent: who you have, how they feel, what they hold, who you could sign |
+| Roster | Roster, Locker room, Titles, Free agents | Everything about talent: who you have, how they feel, what they hold, who you could sign |
 | Stories | Storylines, History, The Net | What your booking set in motion, what it added up to, what the fans say |
-| Company | Front office, Finances, World | Settings and house rules, money, rivals |
+| Manage | Operations, House, Deals | Every choice about the company: slot and settings, house style and rules, sponsors, rivals and trades |
+| Company | Overview, Finances, World | Information only: cash, popularity and booking power, how the company is run, the money, the world |
 
-Pop-up windows (one at a time): help, options, scouting report, clock detail, week closed, universe import and export, the headset call, create a wrestler.
+Pop-up windows: help, options, scouting report, clock detail, week closed, universe import and export, the headset call, create a wrestler, the Jukebox. Profile pop-ups (wrestler, tag team, title history) open from any name and stack; Back steps out one at a time.
 
 A wrestler profile is a panel with four pages: Overview, Contract, Locker room, Scouting and career.
 
@@ -42,7 +43,7 @@ Four ways in, all first-class. Every control must work with each.
 |---|---|---|---|
 | Mouse | Click | Close button, Esc | Click |
 | Touch | Tap (targets 44px or taller) | Close button | Tap |
-| Keyboard | Tab and Enter, hotkeys | Esc | O B R S C |
+| Keyboard | Tab and Enter, hotkeys | Esc | O B R S M C |
 | Remote or gamepad | Arrows or D-pad, OK or A | Back or B | LB and RB |
 
 - Focus never disappears. After any action it stays where it was, or moves to the obvious next control.
@@ -93,7 +94,7 @@ All of these live in the engine and are already built and tested.
 | Long game | Title histories, record book, awards, hall of fame, career logs, clocks, achievements |
 | Data | Universe packages (schema v1), import, export, validation, the Public Domain Universe |
 
-Still to build (The Next 31, batches 10 to 12): storyline templates and the angle builder, media sentiment and a podcast, match layouts and road agents, the territory map, development tree, eras, legends archive, almanac, bookers' league, waiver wire, Territory Run, booker classes, career mode.
+Still to build: see `TASKS.md` and `docs/feature-list.md`.
 
 ## 8. Architecture
 
