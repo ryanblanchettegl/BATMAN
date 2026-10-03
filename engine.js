@@ -483,7 +483,7 @@ function workOf(w,stip,mins){
   var comfort=6+w.stam*0.25;if(mins>comfort)v-=(mins-comfort)*0.9;
   return v;
 }
-function chem(S,a,b){var k0=rkey(a,b),x=S.chemX&&S.chemX[k0],bd=S.bond&&S.bond[k0]?clamp(S.bond[k0]*0.3,-3,3):0;if(x!=null)return x+bd;var k=S.seed+':'+k0;return (h01('c'+k)+h01('d'+k)-1)*6+bd;}
+function chem(S,a,b){var k0=rkey(a,b),x=S.chemX&&S.chemX[k0],bd=S.bond&&S.bond[k0]?clamp(S.bond[k0]*0.3,-3,3):0;if(x!=null)return x+bd;var k=S.seed+':'+k0;return (h01('c'+k)+h01('d'+k)-1)*6+bd+styleBlend(S.w[a],S.w[b]);}
 function addOvr(P,w,d){var cap=ovrCap(P,w);if(d>0&&w.ovr>=cap)d*=0.2;w.ovr=clamp(w.ovr+d,1,100);}
 function fill(t,o){return t.replace(/\{(\w+)\}/g,function(_,k){return o[k]!=null?o[k]:'';});}
 
@@ -4165,6 +4165,31 @@ WEEKX.push(function(S){
     if(tm.promo===S.player)news(S,'story',S.w[tm.m[0]].name+' and '+S.w[tm.m[1]].name+' now have a team finisher: '+tm.fin+'.');
   });
 });
+
+/* ---------- 24. Styles clash and blend: a grid of style against style (added to ring chemistry) ---------- */
+var SGRID={BB:1,BT:-1.5,BH:-0.5,BP:0.5,BA:0,BS:1.5,BE:-0.5,TT:1.5,TH:1.5,TP:0.5,TA:1,TS:-0.5,TE:-1,HH:1,HP:2,HA:0.5,HS:-1,HE:0.5,PP:-2,PA:0,PS:0.5,PE:-0.5,AA:0.5,AS:0.5,AE:0.5,SS:1.5,SE:-1.5,EE:-0.5};
+function styleKey(x,y){return x<=y?x+y:y+x;}
+function styleBlend(a,b){if(!a||!b)return 0;var k=styleKey('BTHPASE'.indexOf(a.style)<=-1?'A':a.style,'BTHPASE'.indexOf(b.style)<=-1?'A':b.style);return SGRID[k]||0;}
+/* every match remembers which style met which; the booker only learns what a pair is like by seeing it twice */
+POST.push(function(ctx){
+  var S=ctx.S;if(S.cal||!ctx.isPl||ctx.m.mt==='br')return;
+  var seen=S.sty||(S.sty={}),done={};
+  for(var x=0;x<ctx.sides.length;x++)for(var y=x+1;y<ctx.sides.length;y++)ctx.sides[x].forEach(function(p){ctx.sides[y].forEach(function(o){
+    var k=styleKey(p.style,o.style);if(done[k])return;done[k]=1;seen[k]=(seen[k]||0)+1;
+    if(seen[k]===2&&Math.abs(SGRID[k]||0)>=1.5)ctx.res.seg.notes.push('The booker has seen it twice now: '+E.STYLE_NAME[p.style].toLowerCase()+' against '+E.STYLE_NAME[o.style].toLowerCase()+' '+((SGRID[k]||0)>0?'works well.':'does not mesh.'));
+  });});
+});
+E.styleBlend=styleBlend;
+E.STYLE_GRID=SGRID;
+/* what the booker has learned about this wrestler's style: which others it works well and badly with */
+E.styleLessons=function(S,w){
+  var seen=S.sty||{},good=[],bad=[];
+  Object.keys(E.STYLE_NAME).forEach(function(o){
+    var k=styleKey(w.style,o),g=SGRID[k]||0;if((seen[k]||0)<2)return;
+    if(g>=1.5)good.push(E.STYLE_NAME[o]);else if(g<=-1.5)bad.push(E.STYLE_NAME[o]);
+  });
+  return {good:good,bad:bad};
+};
 
 /* ===== 83-moments.js ===== */
 /* ---------- moments from wrestling history ----------

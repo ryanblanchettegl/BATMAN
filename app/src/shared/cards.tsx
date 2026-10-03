@@ -48,6 +48,8 @@ function WrestlerCard(p: { id: number }) {
       {w.fol >= 5 ? <li><span>Following</span><span class="r num">{(Math.round(w.fol * 250 / 100) * 100).toLocaleString('en-US')}</span></li> : null}
       {w.cphrase ? <li class="col"><span>Catchphrase</span><span class="r">{w.cphrase.t} <span class={w.cphrase.n < 15 ? 'good' : (w.cphrase.n < 30 ? 'muted' : 'bad')}>({w.cphrase.n < 15 ? 'fresh' : (w.cphrase.n < 30 ? 'wearing thin' : 'worn out')})</span></span></li> : null}
       {tm ? <li><span>Tag team</span><span class="r"><TeamName t={tm} /></span></li> : null}
+      {(() => { const L = E.styleLessons(S, w); return L.good.length ? <li><span>Style works well with</span><span class="r">{L.good.join(', ')}</span></li> : null; })()}
+      {(() => { const L = E.styleLessons(S, w); return L.bad.length ? <li><span>Style does not mesh with</span><span class="r">{L.bad.join(', ')}</span></li> : null; })()}
       {rel && rel.good.length ? <li><span>Gets on with</span><span class="r">{list(rel.good.slice(0, 4).map((x: W) => <Name w={x} />))}</span></li> : null}
       {rel && rel.bad.length ? <li><span>Does not get on with</span><span class="r">{list(rel.bad.slice(0, 4).map((x: W) => <Name w={x} />))}</span></li> : null}
       {w.rr && w.rr.length ? <li class="col"><span>Last {w.rr.length} {plural(w.rr.length, 'result')}</span><span class="r">{w.rr.map((x: any) => <div><b class={x.r === 'W' ? 'good' : 'bad'}>{x.r}</b> <span class="muted">vs {x.v} {'·'} {x.ov}%</span></div>)}</span></li> : null}

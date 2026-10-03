@@ -43,7 +43,7 @@ Things that would make the game deeper. Each one adds a system, a choice or a me
 - [x] **21. Teams grow together.** A team gains experience as a unit, earns a team finisher at a threshold, and keeps a record of wins and losses as a team. *M. Finishes the open box in TASKS 1.*
 - [x] **22. Botches and saves.** Rarely, a risky move goes wrong. A veteran in the match can attempt to cover for it. The report says what happened in one line. *S.*
 - [x] **23. Match of the year, live.** A running top ten of the year's best matches across every promotion, on the History page, with a pop-up for each. *S. (TASKS 7)*
-- [ ] **24. Styles clash and blend.** A grid of style against style. Some pairs are magic and some are dull. The player finds out by booking them, and the card then lists "works well with" and "avoid". *M. Builds on `E.STYLES`, `E.chem`.*
+- [x] **24. Styles clash and blend.** A grid of style against style. Some pairs are magic and some are dull. The player finds out by booking them, and the card then lists "works well with" and "avoid". *M. Builds on `E.STYLES`, `E.chem`.*
 
 ## C. Telling stories
 
