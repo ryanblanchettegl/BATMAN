@@ -12,6 +12,11 @@ const FACES = {
   'Long John Silver': '7,8,9,9,5,1,30,36', 'Napoleon Bonaparte': '3,3,0,0,5,8,16,45', 'Genghis Khan': '7,4,2,8,1,9,36,54', 'Leonardo da Vinci': '2,9,5,9,6,3,20,64',
   'Captain Nemo': '0,4,4,2,8,0,46,54', 'Jean Valjean': '5,1,4,2,3,1,24,64', 'Inspector Javert': '1,3,6,0,5,3,18,45', 'The Count of Monte Cristo': '0,4,2,1,8,0,12,54',
   'Mark Antony': '1,7,0,0,0,8,30,45', 'Guinevere': '0,9,0,0,4,2,12,9', 'Irene Adler': '4,7,0,0,7,7,14,45', 'Lady Macbeth': '8,9,0,0,5,2,8,18',
+  // the top three of each newer promotion, drawn from the historical record or the original stories
+  'Arsene Lupin': '4,4,0,1,4,0,14,54', 'Professor Challenger': '9,7,4,0,3,1,22,54', 'Ayesha': '0,9,0,0,4,2,14,54',
+  'Quetzalcoatl': '2,9,4,0,7,5,58,54', 'Tezcatlipoca': '5,9,0,0,5,5,62,54', 'Huitzilopochtli': '9,5,0,0,3,1,58,91',
+  'Simon Bolivar': '6,7,6,0,4,8,36,54', 'Pancho Villa': '3,3,0,9,6,1,48,54', 'Hernan Cortes': '6,3,4,2,8,8,22,36',
+  'Oichi': '4,9,0,0,1,4,12,54', 'Kaguya-hime': '0,9,0,0,7,7,6,54', 'Tamamo-no-Mae': '8,9,0,0,1,2,10,18',
   'Joan of Arc': '0,2,0,0,7,0,14,36', 'Zeus': '5,9,5,9,3,8,24,73', 'Achilles': '1,9,0,0,5,0,26,9', 'Odin': '5,9,5,9,8,3,14,64', 'Thor': '9,9,4,9,3,1,14,18'
 };
 // Row: Name | Gender | Side (F face, H heel, T tweener) | Style | Age | Overness | Work rate | Charisma | Promo | Finisher | extras

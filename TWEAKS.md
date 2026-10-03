@@ -129,7 +129,7 @@ Each of these has a target. Use `test-uni.js` or a copy of it with several seeds
 
 ## H. Content
 
-- [ ] **95.** Hand-pick portraits (`FACES` in `tools/build-public-domain.js`) for the top three names of each of the four newer promotions, from the historical record or the original stories.
+- [x] **95.** Hand-pick portraits (`FACES` in `tools/build-public-domain.js`) for the top three names of each of the four newer promotions, from the historical record or the original stories.
 - [ ] **96.** Commentary for four-way and six-man matches: add lines to the grammar in `src/10-match.js` so they do not read like singles matches.
 - [ ] **97.** Two or three commentary or crowd lines per model (an outlaw crowd, a sport-first crowd, a family crowd), used when the model's bonus or penalty fires.
 - [ ] **98.** Read every promotion blurb, owner line and event name for anything that only made sense in a 1997 setting, now that the game starts in the present day.
