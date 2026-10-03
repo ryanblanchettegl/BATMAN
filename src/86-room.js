@@ -242,3 +242,20 @@ WEEKX.push(function(S){
     return true;
   });
 });
+
+/* ---------- 48. Ticket prices: the game suggests a price from the next show's demand and the building (engine half; per-building tiers belong to TASKS 4) ---------- */
+E.ticketAdvice=function(S){
+  var P=S.promos[S.player],show=S.queue&&S.queue[S.qi];if(!show)show=weekShows(S,P)[0];if(!show)return null;
+  var d=demand(P,show,1),cap=capFor(d),mx=mixOf(P),rows=[];
+  for(var l=0;l<TIX_P.length;l++){
+    var att=Math.min(cap,d*TIX_D[l]),fill=att/cap;
+    // empty seats flatten the crowd, which costs ratings later, so the count of lost crowd energy is charged against the gate
+    var en=clamp((TIX_D[l]-1)*9,-2,2),gate=att*ticket(P,show)*TIX_P[l]*mx.gate*(1-Math.max(0,-en)*0.04);
+    rows.push({lvl:l,name:TIXN[l],att:Math.round(att),cap:cap,fill:Math.round(fill*100),gate:Math.round(gate)});
+  }
+  var best=0;rows.forEach(function(r,i){if(r.gate>rows[best].gate)best=i;});
+  var cur=P.tix,gain=rows[best].gate-rows[cur].gate;
+  return {rows:rows,best:best,cur:cur,gain:gain,
+    text:best===cur?'The current price is the best one for '+show.name+': '+rows[cur].fill+'% of '+cap.toLocaleString('en-US')+' seats filled.'
+      :'For '+show.name+', '+TIXN[best].toLowerCase()+' prices would bring in about '+money(gain)+' more and leave '+rows[best].fill+'% of '+cap.toLocaleString('en-US')+' seats filled.'};
+};

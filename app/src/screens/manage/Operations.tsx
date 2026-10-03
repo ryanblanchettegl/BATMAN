@@ -73,7 +73,7 @@ function Settings(p: { from: number; to: number }) {
   const all = [
     <Panel title="Production values"><OptRow k="prodLvl" cur={P.prodLvl} names={E.PRODN} notes={prod} /></Panel>,
     <Panel title="Risk level"><OptRow k="risk" cur={P.risk} names={E.RISKN} notes={risk} min={C.riskMin} max={C.riskMax} why={C.riskMin > 0 || C.riskMax < 3 ? (ph.charAt(0).toUpperCase() + ph.slice(1)) + ' can only run ' + E.RISKN.slice(C.riskMin, C.riskMax + 1).join(' or ') + '.' : undefined} /></Panel>,
-    <Panel title="Ticket prices"><OptRow k="tix" cur={P.tix} names={E.TIXN} notes={tix} /></Panel>,
+    <Panel title="Ticket prices"><OptRow k="tix" cur={P.tix} names={E.TIXN} notes={tix} why={(E.ticketAdvice(S) || { text: undefined }).text} /></Panel>,
     <Panel title="Advertising"><OptRow k="adv" cur={P.adv} names={E.ADVN} notes={adv} /></Panel>,
     <Panel title="Training camp"><OptRow k="camp" cur={P.camp || 0} names={ci.names} notes={camp} /></Panel>,
     <Panel title="Medical staff"><OptRow k="med" cur={P.med || 0} names={md.names} notes={med} /></Panel>,
