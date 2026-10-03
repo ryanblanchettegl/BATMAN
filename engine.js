@@ -744,6 +744,11 @@ function doMatch(S,P,show,m,i,n,rep,used){
       if(isPl)award(S,had?'ACH_TITLE_CHANGE':'ACH_CROWN');
     }else{t.defs++;if(win>=0&&champSide>=0)seg.notes.push(names(sides[champSide])+' retain'+(sides[champSide].length>1?'':'s')+'.');}
   }
+  // each wrestler keeps their last five results for the profile pop-up
+  if(!S.cal&&!br&&win>=0)all.forEach(function(w){
+    var mine=winners.indexOf(w)>=0,own=sides.filter(function(sd){return sd.indexOf(w)>=0;})[0]||[],foe=all.filter(function(o){return own.indexOf(o)<0;}).map(function(o){return o.name;}).join(' & ');
+    var L=w.rr||(w.rr=[]);L.unshift({w:S.week,r:mine?'W':'L',v:foe.slice(0,40),ov:OV});if(L.length>5)L.length=5;
+  });
   // injuries, growth, tag experience
   var injm=RISK_INJ[P.risk]/RISK_INJ[P.risk0]*(isPl?dif(S).inj:1)*(modelOf(P).inj||1);
   all.forEach(function(w,ix){

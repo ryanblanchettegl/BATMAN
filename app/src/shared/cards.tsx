@@ -5,6 +5,7 @@ import { E, W } from '../engine';
 import { G, ui, me, Card, openCard, popCard, closeCards, cash, full, plural, openModal } from '../store';
 import { go } from '../nav';
 import { rs } from '../screens/roster/state';
+import { sendScout } from '../screens/roster/Profile';
 import { Window, Btn, Tag, Name, Side, Meter, Portrait, BeltArt, TitleName, TeamName, PromoName, Empty, champOf, teamName } from '../kit';
 
 const promoName = (pid: string) => pid === 'FA' ? 'Free agent' : (G.S.promos[pid] ? G.S.promos[pid].name : pid);
@@ -37,15 +38,18 @@ function WrestlerCard(p: { id: number }) {
       {ts.length ? <li><span>Titles</span><span class="r">{list(ts.map(x => <TitleName pid={x.pid} t={x.t} />))}</span></li> : null}
       {cr.reigns.length ? <li><span>Title reigns</span><span class="r num">{cr.reigns.length}</span></li> : null}
       {fs.length ? <li><span>Feud</span><span class="r">{list(fs.slice(0, 2).map((f: any) => { const o = S.w[(f.a.indexOf(w.id) >= 0 ? f.b : f.a)[0]]; return <>with <Name w={o} /> <span class="muted">({E.feudStage(f).toLowerCase()})</span></>; }))}</span></li> : null}
+      {(() => { const st = (S.stables || []).filter((x: any) => x.m.indexOf(w.id) >= 0)[0]; return st ? <li><span>Stable</span><span class="r"><b>{st.name}</b>{st.leader === w.id ? ' (leader)' : ''} <span class="muted">with {list(st.m.filter((id: number) => id !== w.id).map((id: number) => <Name w={S.w[id]} />))}</span></span></li> : null; })()}
       {tm ? <li><span>Tag team</span><span class="r"><TeamName t={tm} /></span></li> : null}
       {rel && rel.good.length ? <li><span>Gets on with</span><span class="r">{list(rel.good.slice(0, 4).map((x: W) => <Name w={x} />))}</span></li> : null}
       {rel && rel.bad.length ? <li><span>Does not get on with</span><span class="r">{list(rel.bad.slice(0, 4).map((x: W) => <Name w={x} />))}</span></li> : null}
+      {w.rr && w.rr.length ? <li class="col"><span>Last {w.rr.length} {plural(w.rr.length, 'result')}</span><span class="r">{w.rr.map((x: any) => <div><b class={x.r === 'W' ? 'good' : 'bad'}>{x.r}</b> <span class="muted">vs {x.v} {'·'} {x.ov}%</span></div>)}</span></li> : null}
       {yr ? <li><span>This year</span><span class="r num">{yr.m} {plural(yr.m, 'match', 'matches')}, {yr.w}{'–'}{yr.l}{yr.best ? ', best ' + yr.best + '%' : ''}</span></li> : null}
       <li><span>Contract</span><span class="r">{w.rt ? 'Retired' : fa ? <>Free agent, asking about <b class="num">{cash(E.ask(S, w))}</b> a week</> : mine ? <><b class="num">{full(w.wage)}</b> a week, {weeksText(Math.max(0, w.con))} left</> : <>With {promoName(w.promo)}{w.con <= 12 ? ', ' + weeksText(Math.max(0, w.con)) + ' left' : ''}</>}</span></li>
       {fit && !w.rt ? <li><span>For your company</span><span class={'r ' + (fit.v >= 1 ? 'good' : (fit.v <= -2 ? 'bad' : ''))}>{fit.n}</span></li> : null}
     </ul>
     <div class="row mt2">
       {mine ? <Btn kind="sm" t="card-full" onClick={full_}>Full profile</Btn> : null}
+      {!mine && !w.rt && !w.nw ? <Btn kind="sm" t="card-scout" onClick={() => sendScout(w.id)}>{w.sc ? 'Scouting report' : 'Send a scout (' + full(E.scoutInfo(S).cost) + ')'}</Btn> : null}
       {!mine && !w.rt && (fa || w.con <= 12) ? <Btn kind="sm" t="card-market" onClick={() => { closeCards(); go('market'); }}>Go to Free agents</Btn> : null}
     </div>
   </>;
