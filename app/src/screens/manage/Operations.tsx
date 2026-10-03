@@ -49,6 +49,8 @@ function Settings(p: { from: number; to: number }) {
   const adv = E.ADVN.map((n: string, i: number) => i ? cash(C.adCost[i]) + ' a week. Lifts ticket demand and big-event buys by about ' + [0, 6, 12, 18][i] + '%.' : 'No spend. The card has to sell itself.');
   const camp = ci.names.map((n: string, i: number) => i ? cash(ci.costs[i]) + ' a week. ' + ci.caps[i] + ' places. Wrestlers in camp improve ' + ['', 'steadily', 'faster', 'fastest'][i] + '. ' + ci.n + ' there now.' : 'No camp. Nobody can be sent away to train.');
   const med = md.names.map((n: string, i: number) => i ? cash(md.costs[i]) + ' a week. Bodies recover faster, injuries are ' + [0, 8, 18, 28][i] + '% shorter and a little rarer.' : 'Nobody at ringside. Wear heals at its own pace.');
+  const tv = E.travelInfo(S);
+  const trv = tv.names.map((n: string, i: number) => i ? cash(tv.costs[i]) + ' a week. The road wears the roster ' + [0, 30, 60][i] + '% less and fights in the car are ' + [0, 'half as likely', 'rare'][i] + '.' : 'Free. A long week tires people, and a tired roster works worse and gets hurt more.');
   const ph: string = E.modelOf(S).ph;
   const all = [
     <Panel title="Production values"><OptRow k="prodLvl" cur={P.prodLvl} names={E.PRODN} notes={prod} /></Panel>,
@@ -56,7 +58,8 @@ function Settings(p: { from: number; to: number }) {
     <Panel title="Ticket prices"><OptRow k="tix" cur={P.tix} names={E.TIXN} notes={tix} /></Panel>,
     <Panel title="Advertising"><OptRow k="adv" cur={P.adv} names={E.ADVN} notes={adv} /></Panel>,
     <Panel title="Training camp"><OptRow k="camp" cur={P.camp || 0} names={ci.names} notes={camp} /></Panel>,
-    <Panel title="Medical staff"><OptRow k="med" cur={P.med || 0} names={md.names} notes={med} /></Panel>
+    <Panel title="Medical staff"><OptRow k="med" cur={P.med || 0} names={md.names} notes={med} /></Panel>,
+    <Panel title="Travel"><OptRow k="trv" cur={P.trv || 0} names={tv.names} notes={trv} /></Panel>
   ];
   return <>{all.slice(p.from, p.to)}</>;
 }
@@ -126,7 +129,7 @@ export function Operations() {
     <Head eyebrow={P.name} title="Operations" />
     <div class="cols">
       <div class="stack"><Broadcast /><Settings from={0} to={3} /></div>
-      <div class="stack"><Settings from={3} to={6} /><Universe /></div>
+      <div class="stack"><Settings from={3} to={7} /><Universe /></div>
     </div>
   </>;
 }

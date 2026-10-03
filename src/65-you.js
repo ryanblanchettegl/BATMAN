@@ -211,7 +211,7 @@ E.setCreed=function(S,c){
 /* as a booker you have to talk the owner into company changes, and stay inside the wage budget */
 E.budget=function(S){var P=S.promos[S.player];return S.owner.me?Infinity:Math.round(S.owner.wage0*(1.12+Math.max(0,P.image-P.image0)*0.02)/1000)*1000;};
 E.lobbyOdds=function(S,k,v){
-  var P=S.promos[S.player],o=S.owner,up=v>P[k],costly=(k==='prodLvl'||k==='adv'||k==='camp'||k==='med')?up:(k==='tix'?!up:false);
+  var P=S.promos[S.player],o=S.owner,up=v>P[k],costly=(k==='prodLvl'||k==='adv'||k==='camp'||k==='med'||k==='trv')?up:(k==='tix'?!up:false);
   return mkCheck(8,[{n:'Owner’s trust '+Math.round(o.trust),v:o.trust>=75?2:(o.trust>=55?1:(o.trust<35?-1:0))},{n:costly?'It costs the owner money':'It saves or makes money',v:costly?-1:(k==='risk'?0:1)}].concat(skillMods(S,'talk')));
 };
 E.lobby=function(S,k,v){

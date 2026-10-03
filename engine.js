@@ -1232,9 +1232,9 @@ function joinCompany(S,w,P,wage,weeks){
 }
 function settle(S,P){
   var mine=P.id===S.player,sp=0;if(mine)S.sponsors.forEach(function(x){sp+=x.pay;});
-  var adv=Math.round(ADV_C[P.adv]*P.inc0),camp=campCost(P),med=medCost(P);
-  var L=P.led,merch=merchWeek(S,P),wages=wagesWeek(S,P),inc=L.tv+L.gate+L.ppv+L.bonus+merch+sp,over=P.fixed+P.varRate*(inc-sp),exp=wages+L.prod+over+adv+camp+med;
-  var row={w:S.week,spons:sp,adv:adv,camp:camp,med:med,tv:Math.round(L.tv),gate:Math.round(L.gate),ppv:Math.round(L.ppv),bonus:Math.round(L.bonus),merch:Math.round(merch),wages:Math.round(wages),prod:Math.round(L.prod),over:Math.round(over),inc:Math.round(inc),exp:Math.round(exp),net:Math.round(inc-exp),image:r1(P.image)};
+  var adv=Math.round(ADV_C[P.adv]*P.inc0),camp=campCost(P),med=medCost(P),trv=travelCost(P);
+  var L=P.led,merch=merchWeek(S,P),wages=wagesWeek(S,P),inc=L.tv+L.gate+L.ppv+L.bonus+merch+sp,over=P.fixed+P.varRate*(inc-sp),exp=wages+L.prod+over+adv+camp+med+trv;
+  var row={w:S.week,spons:sp,adv:adv,camp:camp,med:med,trv:trv,tv:Math.round(L.tv),gate:Math.round(L.gate),ppv:Math.round(L.ppv),bonus:Math.round(L.bonus),merch:Math.round(merch),wages:Math.round(wages),prod:Math.round(L.prod),over:Math.round(over),inc:Math.round(inc),exp:Math.round(exp),net:Math.round(inc-exp),image:r1(P.image)};
   P.cash+=row.net;row.cash=Math.round(P.cash);P.hist.push(row);if(P.hist.length>60)P.hist.shift();
   P.led={tv:0,gate:0,ppv:0,bonus:0,prod:0};
   return row;
@@ -1438,7 +1438,7 @@ WEEKX.push(function(S){
   if(P.slot>0&&(P.image<SLOT_REQ[P.slot]-5||P.risk>SLOT_RISK[P.slot])){P.slot--;news(S,'money','The network moved '+P.name+' down to '+SLOTN[P.slot].toLowerCase()+'.');}
 });
 E.setCompany=function(S,k,v){
-  var P=S.promos[S.player],max={prodLvl:4,risk:3,tix:3,adv:3,camp:3,med:3}[k];if(max==null||!S.owner.me)return;
+  var P=S.promos[S.player],max={prodLvl:4,risk:3,tix:3,adv:3,camp:3,med:3,trv:2}[k];if(max==null||!S.owner.me)return;
   P[k]=clamp(Math.round(v),0,max);if(k==='risk'){var rr=riskRange(P);P.risk=clamp(P.risk,rr[0],rr[1]);}
 };
 E.sponsorOk=function(S,o){var P=S.promos[S.player];return S.sponsors.length<spMax(P)&&!(o.type==='risk'&&P.risk>o.val)&&!(o.type==='image'&&P.image<o.val);};
@@ -1967,7 +1967,7 @@ E.setCreed=function(S,c){
 /* as a booker you have to talk the owner into company changes, and stay inside the wage budget */
 E.budget=function(S){var P=S.promos[S.player];return S.owner.me?Infinity:Math.round(S.owner.wage0*(1.12+Math.max(0,P.image-P.image0)*0.02)/1000)*1000;};
 E.lobbyOdds=function(S,k,v){
-  var P=S.promos[S.player],o=S.owner,up=v>P[k],costly=(k==='prodLvl'||k==='adv'||k==='camp'||k==='med')?up:(k==='tix'?!up:false);
+  var P=S.promos[S.player],o=S.owner,up=v>P[k],costly=(k==='prodLvl'||k==='adv'||k==='camp'||k==='med'||k==='trv')?up:(k==='tix'?!up:false);
   return mkCheck(8,[{n:'Owner’s trust '+Math.round(o.trust),v:o.trust>=75?2:(o.trust>=55?1:(o.trust<35?-1:0))},{n:costly?'It costs the owner money':'It saves or makes money',v:costly?-1:(k==='risk'?0:1)}].concat(skillMods(S,'talk')));
 };
 E.lobby=function(S,k,v){
@@ -2448,7 +2448,7 @@ CRX.push(function(ctx){
   var rk=ctx.P.risk>=2?1:0;return {d:(gim?(ctx.feud&&ctx.feud.heat>=40?5:3):2)+rk,x:gim?'They left everything in there':'Stiff, reckless and loud'};
 });
 MQX.push(function(ctx){var it=ctx.m.int;return it==='brutal'?{d:1.5,x:null}:(it==='safe'?{d:-1,x:null}:null);});
-function hurtRisk(S,P,w,m){var it=INTN[m.int]||INTN.normal;return it.i*MED_I[P.med||0]*(1+Math.max(0,maxZone(w)-50)/40)*(w.hurt===S.week?3:1)*(m.note==='steal'?1.5:(m.note==='safe'?0.55:(m.note==='long'?1.15:(m.note==='short'?0.85:1))));}
+function hurtRisk(S,P,w,m){var it=INTN[m.int]||INTN.normal;return it.i*MED_I[P.med||0]*(1+Math.max(0,maxZone(w)-50)/40)*(w.hurt===S.week?3:1)*(1+Math.max(0,(w.rd||0)-60)/80)*(m.note==='steal'?1.5:(m.note==='safe'?0.55:(m.note==='long'?1.15:(m.note==='short'?0.85:1))));}
 function hurtZone(S,w){var z=zonesOf(w),ks=['n','s','b','k'],tot=0,x;ks.forEach(function(k){tot+=10+z[k];});x=rnd(S)*tot;for(var i=0;i<4;i++){x-=10+z[ks[i]];if(x<=0)return ks[i];}return 'b';}
 var OWNZ={H:'k',P:'b',B:'s',T:'n',S:'s',A:'b',E:'k'},OPPZ={T:'s',P:'b',S:'n',H:'n',B:'b',A:'s',E:'k'};
 POST.push(function(ctx){
@@ -5059,6 +5059,51 @@ POST.push(function(ctx){
   ctx.sides.forEach(function(s,k){if(k===m.call)return;s.forEach(function(w){if(w.cc){w.morale=clamp(w.morale-5,0,100);S.trust=clamp(S.trust-1,0,100);r.seg.notes.push(w.name+' has creative control, and you overrode it. They remember.');}});});
 });
 E.controlWord=function(w){return w.cc?'Can refuse to lose. Calling a loss on them costs 2 more booking power and a little trust.':null;};
+
+/* ---------- 44. The road: wear from the schedule (w.rd), travel partners, and a bus or a charter (P.trv) ---------- */
+var TRVN=['Vans and cars','Tour bus','Charter flights'],TRV_C=[0,0.004,0.011],TRV_R=[0,0.3,0.6];
+function travelCost(P){return Math.round(TRV_C[P.trv||0]*P.inc0);}
+E.TRVN=TRVN;E.TRV_C=TRV_C;
+E.travelInfo=function(S){var P=S.promos[S.player];return {lvl:P.trv||0,names:TRVN,costs:TRV_C.map(function(c){return Math.round(c*P.inc0);}),cost:travelCost(P)};};
+E.roadWord=function(w){var v=w.rd||0;return v>=80?'Wrecked':(v>=60?'Worn down':(v>=35?'Tired':'Fresh'));};
+WEEKX.push(function(S){
+  if(S.cal)return;
+  var P=S.promos[S.player],R=rosterOf(S,P.id).filter(function(w){return !w.nw;}),cut=1-TRV_R[P.trv||0];
+  R.forEach(function(w){
+    var worked=w.wk===S.week,n=worked?(w.wkW===S.week?w.wkN||1:1):0;
+    w.rd=clamp((w.rd||0)+(worked?(5+(n-1)*3)*cut:-9-(w.rest===S.week?6:0)),0,100);
+  });
+  // cars: the people who worked this week are shuffled into groups of three on the road
+  var on=R.filter(function(w){return w.wk===S.week&&w.inj<=0;}).sort(function(a,b){return hash('car'+S.week+a.id)-hash('car'+S.week+b.id);});
+  var fric=[0.02,0.01,0.004][P.trv||0],B=S.bond||(S.bond={});
+  for(var i=0;i+1<on.length;i+=3){
+    var grp=on.slice(i,i+3);
+    for(var a=0;a<grp.length;a++)for(var b=a+1;b<grp.length;b++){
+      var x=grp[a],y=grp[b],k=rkey(x.id,y.id),v=B[k]||0;
+      B[k]=clamp(v+(relOf(S,x.id,y.id)<0?-0.3:0.25),-8,8);
+      var p=fric*(1+Math.max(0,-v)*0.4)*(1+((x.stress||0)+(y.stress||0))/150);
+      if(S.week-(S.carAt||-99)>=10&&chance(S,p)&&!S.inbox.some(function(e){return e.type==='carfight'&&!e.done;})){
+        S.carAt=S.week;
+        pushEv(S,{type:'carfight',w:x.id,o:y.id,text:x.name+' and '+y.name+' came to blows on the road after a long week. Word is already out.',
+          choices:['Turn it into a feud','Make them shake hands','Fine them both'],checks:{1:mkCheck(7,[trustMod(S),{n:'They are tired of the road',v:((x.rd||0)+(y.rd||0))/2>=60?-1:0}].concat(skillMods(S,'talk')))}});
+      }
+    }
+  }
+});
+EVR.carfight=function(S,ev,choice,P,w){
+  var o=S.w[ev.o],k=rkey(w.id,o.id);S.bond=S.bond||{};
+  if(choice===0){var f=startFeud(S,P,w,o,40,w.name+' and '+o.name+' fought on the road',{force:true});w.mom=clamp(w.mom+1,-10,10);o.mom=clamp(o.mom+1,-10,10);return f?'You turned it into a story. '+w.name+' against '+o.name+' is on.':'There was already a story between them, and the fight fed it.';}
+  if(choice===1){
+    var r=rollCheck(S,ev.checks[1]);ev.roll=r;
+    if(r.ok){S.bond[k]=Math.min(8,(S.bond[k]||0)+2);return rollText(r)+'They shake hands and mean it, mostly.';}
+    S.bond[k]=Math.max(-8,(S.bond[k]||0)-1.5);w.morale=clamp(w.morale-3,0,100);o.morale=clamp(o.morale-3,0,100);return rollText(r)+'They shake hands for the cameras and go back to glaring.';
+  }
+  w.morale=clamp(w.morale-5,0,100);o.morale=clamp(o.morale-5,0,100);P.cash-=5000;S.bond[k]=Math.max(-8,(S.bond[k]||0)-0.5);return 'You fined them both. Nobody argued, and nobody forgot.';
+};
+MQX.push(function(ctx){
+  if(!ctx.isPl||ctx.S.cal)return null;var v=avg(ctx.all.map(function(w){return w.rd||0;}));
+  return v>=65?{d:-(v-60)/12,x:'Worn out from the road'}:null;
+});
 
 /* ===== 90-api.js ===== */
 /* ---------- roster moves ---------- */

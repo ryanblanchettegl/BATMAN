@@ -28,7 +28,7 @@ WEEKX.push(function(S){
   if(P.slot>0&&(P.image<SLOT_REQ[P.slot]-5||P.risk>SLOT_RISK[P.slot])){P.slot--;news(S,'money','The network moved '+P.name+' down to '+SLOTN[P.slot].toLowerCase()+'.');}
 });
 E.setCompany=function(S,k,v){
-  var P=S.promos[S.player],max={prodLvl:4,risk:3,tix:3,adv:3,camp:3,med:3}[k];if(max==null||!S.owner.me)return;
+  var P=S.promos[S.player],max={prodLvl:4,risk:3,tix:3,adv:3,camp:3,med:3,trv:2}[k];if(max==null||!S.owner.me)return;
   P[k]=clamp(Math.round(v),0,max);if(k==='risk'){var rr=riskRange(P);P.risk=clamp(P.risk,rr[0],rr[1]);}
 };
 E.sponsorOk=function(S,o){var P=S.promos[S.player];return S.sponsors.length<spMax(P)&&!(o.type==='risk'&&P.risk>o.val)&&!(o.type==='image'&&P.image<o.val);};

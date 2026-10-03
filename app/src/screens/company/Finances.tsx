@@ -25,7 +25,7 @@ function Ledger() {
   const f = G.S.fin;
   if (!f) return <Panel><Empty>The books open after your first week. Close the week to see them.</Empty></Panel>;
   const inc = [{ n: 'TV money', v: f.tv }, { n: 'Tickets', v: f.gate }, { n: 'Big event buys', v: f.ppv }, { n: 'Merchandise', v: f.merch }, { n: 'Sponsors', v: f.spons || 0 }, { n: 'Bonuses', v: f.bonus }];
-  const out = [{ n: 'Wages', v: f.wages }, { n: 'Production', v: f.prod }, { n: 'Advertising', v: f.adv || 0 }, { n: 'Training camp', v: f.camp || 0 }, { n: 'Medical staff', v: f.med || 0 }, { n: 'Overheads', v: f.over }];
+  const out = [{ n: 'Wages', v: f.wages }, { n: 'Production', v: f.prod }, { n: 'Advertising', v: f.adv || 0 }, { n: 'Training camp', v: f.camp || 0 }, { n: 'Medical staff', v: f.med || 0 }, { n: 'Travel', v: f.trv || 0 }, { n: 'Overheads', v: f.over }];
   return <div class="cols ledger">
     <Panel title={'Week ' + f.w + ' income'}>
       <ul class="list">

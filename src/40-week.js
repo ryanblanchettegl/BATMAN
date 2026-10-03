@@ -20,9 +20,9 @@ function joinCompany(S,w,P,wage,weeks){
 }
 function settle(S,P){
   var mine=P.id===S.player,sp=0;if(mine)S.sponsors.forEach(function(x){sp+=x.pay;});
-  var adv=Math.round(ADV_C[P.adv]*P.inc0),camp=campCost(P),med=medCost(P);
-  var L=P.led,merch=merchWeek(S,P),wages=wagesWeek(S,P),inc=L.tv+L.gate+L.ppv+L.bonus+merch+sp,over=P.fixed+P.varRate*(inc-sp),exp=wages+L.prod+over+adv+camp+med;
-  var row={w:S.week,spons:sp,adv:adv,camp:camp,med:med,tv:Math.round(L.tv),gate:Math.round(L.gate),ppv:Math.round(L.ppv),bonus:Math.round(L.bonus),merch:Math.round(merch),wages:Math.round(wages),prod:Math.round(L.prod),over:Math.round(over),inc:Math.round(inc),exp:Math.round(exp),net:Math.round(inc-exp),image:r1(P.image)};
+  var adv=Math.round(ADV_C[P.adv]*P.inc0),camp=campCost(P),med=medCost(P),trv=travelCost(P);
+  var L=P.led,merch=merchWeek(S,P),wages=wagesWeek(S,P),inc=L.tv+L.gate+L.ppv+L.bonus+merch+sp,over=P.fixed+P.varRate*(inc-sp),exp=wages+L.prod+over+adv+camp+med+trv;
+  var row={w:S.week,spons:sp,adv:adv,camp:camp,med:med,trv:trv,tv:Math.round(L.tv),gate:Math.round(L.gate),ppv:Math.round(L.ppv),bonus:Math.round(L.bonus),merch:Math.round(merch),wages:Math.round(wages),prod:Math.round(L.prod),over:Math.round(over),inc:Math.round(inc),exp:Math.round(exp),net:Math.round(inc-exp),image:r1(P.image)};
   P.cash+=row.net;row.cash=Math.round(P.cash);P.hist.push(row);if(P.hist.length>60)P.hist.shift();
   P.led={tv:0,gate:0,ppv:0,bonus:0,prod:0};
   return row;

@@ -109,3 +109,48 @@ POST.push(function(ctx){
   ctx.sides.forEach(function(s,k){if(k===m.call)return;s.forEach(function(w){if(w.cc){w.morale=clamp(w.morale-5,0,100);S.trust=clamp(S.trust-1,0,100);r.seg.notes.push(w.name+' has creative control, and you overrode it. They remember.');}});});
 });
 E.controlWord=function(w){return w.cc?'Can refuse to lose. Calling a loss on them costs 2 more booking power and a little trust.':null;};
+
+/* ---------- 44. The road: wear from the schedule (w.rd), travel partners, and a bus or a charter (P.trv) ---------- */
+var TRVN=['Vans and cars','Tour bus','Charter flights'],TRV_C=[0,0.004,0.011],TRV_R=[0,0.3,0.6];
+function travelCost(P){return Math.round(TRV_C[P.trv||0]*P.inc0);}
+E.TRVN=TRVN;E.TRV_C=TRV_C;
+E.travelInfo=function(S){var P=S.promos[S.player];return {lvl:P.trv||0,names:TRVN,costs:TRV_C.map(function(c){return Math.round(c*P.inc0);}),cost:travelCost(P)};};
+E.roadWord=function(w){var v=w.rd||0;return v>=80?'Wrecked':(v>=60?'Worn down':(v>=35?'Tired':'Fresh'));};
+WEEKX.push(function(S){
+  if(S.cal)return;
+  var P=S.promos[S.player],R=rosterOf(S,P.id).filter(function(w){return !w.nw;}),cut=1-TRV_R[P.trv||0];
+  R.forEach(function(w){
+    var worked=w.wk===S.week,n=worked?(w.wkW===S.week?w.wkN||1:1):0;
+    w.rd=clamp((w.rd||0)+(worked?(5+(n-1)*3)*cut:-9-(w.rest===S.week?6:0)),0,100);
+  });
+  // cars: the people who worked this week are shuffled into groups of three on the road
+  var on=R.filter(function(w){return w.wk===S.week&&w.inj<=0;}).sort(function(a,b){return hash('car'+S.week+a.id)-hash('car'+S.week+b.id);});
+  var fric=[0.02,0.01,0.004][P.trv||0],B=S.bond||(S.bond={});
+  for(var i=0;i+1<on.length;i+=3){
+    var grp=on.slice(i,i+3);
+    for(var a=0;a<grp.length;a++)for(var b=a+1;b<grp.length;b++){
+      var x=grp[a],y=grp[b],k=rkey(x.id,y.id),v=B[k]||0;
+      B[k]=clamp(v+(relOf(S,x.id,y.id)<0?-0.3:0.25),-8,8);
+      var p=fric*(1+Math.max(0,-v)*0.4)*(1+((x.stress||0)+(y.stress||0))/150);
+      if(S.week-(S.carAt||-99)>=10&&chance(S,p)&&!S.inbox.some(function(e){return e.type==='carfight'&&!e.done;})){
+        S.carAt=S.week;
+        pushEv(S,{type:'carfight',w:x.id,o:y.id,text:x.name+' and '+y.name+' came to blows on the road after a long week. Word is already out.',
+          choices:['Turn it into a feud','Make them shake hands','Fine them both'],checks:{1:mkCheck(7,[trustMod(S),{n:'They are tired of the road',v:((x.rd||0)+(y.rd||0))/2>=60?-1:0}].concat(skillMods(S,'talk')))}});
+      }
+    }
+  }
+});
+EVR.carfight=function(S,ev,choice,P,w){
+  var o=S.w[ev.o],k=rkey(w.id,o.id);S.bond=S.bond||{};
+  if(choice===0){var f=startFeud(S,P,w,o,40,w.name+' and '+o.name+' fought on the road',{force:true});w.mom=clamp(w.mom+1,-10,10);o.mom=clamp(o.mom+1,-10,10);return f?'You turned it into a story. '+w.name+' against '+o.name+' is on.':'There was already a story between them, and the fight fed it.';}
+  if(choice===1){
+    var r=rollCheck(S,ev.checks[1]);ev.roll=r;
+    if(r.ok){S.bond[k]=Math.min(8,(S.bond[k]||0)+2);return rollText(r)+'They shake hands and mean it, mostly.';}
+    S.bond[k]=Math.max(-8,(S.bond[k]||0)-1.5);w.morale=clamp(w.morale-3,0,100);o.morale=clamp(o.morale-3,0,100);return rollText(r)+'They shake hands for the cameras and go back to glaring.';
+  }
+  w.morale=clamp(w.morale-5,0,100);o.morale=clamp(o.morale-5,0,100);P.cash-=5000;S.bond[k]=Math.max(-8,(S.bond[k]||0)-0.5);return 'You fined them both. Nobody argued, and nobody forgot.';
+};
+MQX.push(function(ctx){
+  if(!ctx.isPl||ctx.S.cal)return null;var v=avg(ctx.all.map(function(w){return w.rd||0;}));
+  return v>=65?{d:-(v-60)/12,x:'Worn out from the road'}:null;
+});
