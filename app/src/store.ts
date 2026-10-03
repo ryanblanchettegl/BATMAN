@@ -82,11 +82,12 @@ export const hooks: { sound?: (k: string) => void } = {};
 const snd = (k: string) => { if (hooks.sound) hooks.sound(k); };
 export function say(text: string | null | undefined, opt?: { err?: boolean }) { if (text) { ui.flash = { text, err: !!(opt && opt.err) }; if (opt) snd(opt.err ? 'fail' : 'win'); } }
 
+let saveWarned = false;
 /** Run something the player did: clears the last message, runs it, saves, redraws. Use for every click that touches the game. */
 export function act<T>(fn: () => T): T {
   ui.flash = null;
   const r = fn();
-  if (G.S) save();
+  if (G.S && !save() && !saveWarned) { saveWarned = true; ui.flash = { text: 'Your browser would not store the save, so this game will be lost when you close the page. You can keep playing.', err: true }; }
   redraw();
   return r;
 }
