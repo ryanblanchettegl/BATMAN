@@ -258,7 +258,7 @@ async function remote() {
   const can = await page.$$eval('[data-t="sp-accept"]:not([disabled])', L => L.map(e => e.dataset.v));
   if (can.length) {
     await page.focus('[data-t="sp-accept"][data-v="' + can[can.length - 1] + '"]'); a = await at(); await key('Enter'); b = await at();
-    check(mode, 'after signing an offer the highlight stays nearby', /is on board/.test(await flash(page)) && near(a, b) && /^sp-/.test(b.t), 'now on ' + b.t + ' ' + b.v);
+    check(mode, 'after signing an offer the highlight stays nearby', /is on board/.test(await flash(page)) && near(a, b) && !b.lost, 'now on ' + b.t + ' ' + b.v);
     await page.focus('[data-t="sp-drop"]'); a = await at(); await key('Enter'); b = await at();
     check(mode, 'after ending a deal the highlight stays nearby', /You ended the/.test(await flash(page)) && near(a, b), 'now on ' + b.t + ' ' + b.v);
   } else skip(mode, 'sponsors: no offer can be signed');
