@@ -63,5 +63,14 @@ const R = {};
   ok('lta', 'tenure_weeks on a contract reaches the wrestler (w.jw)', w && E.tenure(S, w.id) === 130, 'tenure ' + (w && E.tenure(S, w.id)));
   E.useUniverse(JSON.parse(fs.readFileSync('universes/public_domain.json', 'utf8')));
 }
+{ // multi-man matches on a brand's show use only that brand's wrestlers
+  let bad = 0, n = 0;
+  for (const id of ['lta', 'ldd']) {
+    const S = E.newGame(id, 3, { name: 'R' }), P = S.promos[id]; P.brands = [{ id: 'a', name: 'A' }, { id: 'b', name: 'B' }];
+    E.rosterOf(S, id).forEach((w, i) => { w.brand = i % 2 ? 'a' : 'b'; });
+    for (const b of ['a', 'b']) { S.queue[0].brand = b; S.qi = 0; for (let k = 0; k < 5; k++) E.suggest(S).forEach(m => [].concat(...m.sides).forEach(wid => { n++; if (S.w[wid].promo === id && S.w[wid].brand !== b) bad++; })); }
+  }
+  ok('lta', 'multi-man matches respect brand splits', bad === 0, bad + ' wrong of ' + n);
+}
 if (fails.length) { console.log('FAILED: ' + fails.length); process.exit(1); }
 console.log('test-models: all passed');
