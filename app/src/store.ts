@@ -5,11 +5,11 @@ export const KEY = 'ewf9000-save-4', UKEY = 'ewf9000-universes', PKEY = 'gorilla
 export const VER = '0.11';
 
 /* ---------- preferences ---------- */
-export interface Prefs { snd: boolean; type: boolean; crt: boolean; boot: boolean; screen: 'auto' | 'desk' | 'tablet' | 'tv'; zoom: number; uni: string }
+export interface Prefs { snd: boolean; type: boolean; crt: boolean; boot: boolean; screen: 'auto' | 'desk' | 'tablet' | 'tv'; zoom: number; speed: number; uni: string }
 function readPrefs(): Prefs {
   let o: any = {};
   try { o = JSON.parse(localStorage.getItem(PKEY) || '{}') || {}; } catch (e) { /* storage can be blocked */ }
-  return { snd: o.snd !== false, type: o.type !== false, crt: o.crt !== false, boot: o.boot !== false, screen: o.screen || 'auto', zoom: +o.zoom || 1, uni: o.uni || 'public_domain' };
+  return { snd: o.snd !== false, type: o.type !== false, crt: o.crt !== false, boot: o.boot !== false, screen: o.screen || 'auto', zoom: +o.zoom || 1, speed: +o.speed || 1, uni: o.uni || 'public_domain' };
 }
 export const pref: Prefs = readPrefs();
 export function savePrefs() { try { localStorage.setItem(PKEY, JSON.stringify(pref)); } catch (e) { /* ignore */ } }

@@ -94,11 +94,11 @@ export const typer = {
   active(): boolean { return timer != null; },
   /** Show the whole line now. */
   finish() { if (timer == null) return; clearInterval(timer); timer = null; const f = whenDone; whenDone = null; if (f) f(); },
-  /** Type `len` characters, three at a time. Returns the function that abandons this line (for an effect's cleanup). */
+  /** Type `len` characters, three at a time (the Broadcast speed option scales that). Returns the function that abandons this line (for an effect's cleanup). */
   start(len: number, show: (n: number) => void, done: () => void): () => void {
     typer.finish();
     let i = 0; whenDone = done;
-    const mine = timer = setInterval(() => { i += 3; if (i >= len) { typer.finish(); return; } show(i); if (i % 9 === 0) SFX.tick(); }, 18);
+    const mine = timer = setInterval(() => { i += 3 * (pref.speed || 1); if (i >= len) { typer.finish(); return; } show(Math.floor(i)); if (i % 9 === 0) SFX.tick(); }, 18);
     return () => { if (timer === mine) { clearInterval(mine); timer = null; whenDone = null; } };
   }
 };
