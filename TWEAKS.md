@@ -19,7 +19,7 @@ Small jobs, each one commit. None of them needs a decision from Ryan. Read `CLAU
 - [x] **5.** `E.lobby` refusal reads "cannot run a edgy product". Fix the article and capitalise the level name.
 - [x] **6.** Rewrite the Help window (`Help` in `app/src/screens/start/index.tsx`): six sections, what Manage and Company are for, attempts, pop-ups from names, company models. Keep it to one screen on a phone.
 - [x] **7.** The boot screen's version line should read from `VER` in `app/src/store.ts`.
-- [ ] **8.** `docs/universe-format.md`: document the `model` field on promotions, list the model ids, and say what a gender-locked model does to a roster.
+- [x] **8.** `docs/universe-format.md`: document the `model` field on promotions, list the model ids, and say what a gender-locked model does to a roster.
 - [ ] **9.** Replace `docs/next-round.md` with a short pointer to `TASKS.md`, `TWEAKS.md` and `WISHLIST.md`. It describes a plan that no longer exists.
 - [ ] **10.** Add scripts to the root `package.json`: `check` (build, type-check, 20-week sim) and `test:browser` (every file in `app/tests`). Document them in `CLAUDE.md`.
 - [ ] **11.** Add `.github/workflows/ci.yml`: on push, `cd app && npm ci`, `node build.js`, type-check, 20-week sim. No browser tests in CI yet.
