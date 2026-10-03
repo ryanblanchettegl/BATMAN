@@ -208,6 +208,17 @@ function Tape() {
   </Panel>;
 }
 
+/** Licensing deals: toys, cards and a game. They pay once a year and want stars on long contracts. */
+function Licensing() {
+  const S = G.S, L = E.licensing(S);
+  const run = (fn: () => any) => act(() => { const r = fn(); say(r.text, { err: !r.ok }); showResult('Licensing', r.text, !r.ok); });
+  return <Panel title="Licensing">
+    <ul class="list">{L.map((x: any) => <li class="col"><span><b>{x.n}</b> <span class="muted">{'·'} {x.partner}</span><br /><span class="muted">{x.d}</span><br />
+      <span class="muted">{!x.open ? 'Opens at popularity ' + x.need + '.' : (x.signed ? 'Signed. Next payment in ' + x.next + ' ' + plural(x.next, 'week') + ', about ' + cash(x.pay) + '. Wants ' + x.stars + ' stars on long contracts (you have ' + x.have + ').' : 'Pays about ' + cash(x.pay) + ' a year. Wants ' + x.stars + ' stars on long contracts (you have ' + x.have + ').')}</span></span>
+      <span class="row opts">{x.signed ? <Btn kind="sm" t="lic-drop" d={{ k: x.id }} onClick={() => run(() => E.dropLicense(S, x.id))}>End the deal</Btn> : <Btn kind="sm" t="lic-sign" d={{ k: x.id }} disabled={!x.open} onClick={() => run(() => E.signLicense(S, x.id))}>Sign</Btn>}</span></li>)}</ul>
+  </Panel>;
+}
+
 /** Borrowing and selling a share. A loan is paid back over a year with interest. An investor takes part of every profit and has views. */
 function Money() {
   const S = G.S, F = E.finance(S), inv = E.investorOffer(S);
@@ -240,7 +251,7 @@ export function Deals() {
   return <>
     <Head eyebrow={P.name} title="Deals" />
     <div class="cols">
-      <div class="stack"><Sponsors /><Offers /><Tape /><Money /></div>
+      <div class="stack"><Sponsors /><Offers /><Tape /><Licensing /><Money /></div>
       <RivalsPanel />
     </div>
   </>;

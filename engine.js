@@ -5419,6 +5419,41 @@ EVR.investor=function(S,ev,choice,P){
 };
 E.LOANT=LOANT;
 
+/* ---------- 56. Licensing: toys, trading cards and a video game (P.lic), paid once a year, wanting stars on long contracts ---------- */
+var LICK={
+  toys:{n:'Toys',partner:'Tinplate Toys',need:40,stars:3,pay:0.4,d:'Figures and playsets. The easiest to land.'},
+  cards:{n:'Trading cards',partner:'Pocket Press',need:50,stars:4,pay:0.6,d:'Cards of your roster, a new set every year.'},
+  game:{n:'Video game',partner:'Brightline Games',need:65,stars:5,pay:1.5,d:'A game with your roster on the box. The big one.'}
+};
+function licStars(S,P){return rosterOf(S,P.id).filter(function(w){return !w.nw&&!w.rt&&w.ovr>=Math.max(55,P.image-10)&&w.con>=26;});}
+E.LICK=LICK;
+E.licensing=function(S){
+  var P=S.promos[S.player],st=licStars(S,P);
+  return Object.keys(LICK).map(function(k){var L=LICK[k],cur=P.lic&&P.lic[k];
+    return {id:k,n:L.n,partner:L.partner,d:L.d,open:P.image>=L.need,need:L.need,stars:L.stars,have:st.length,
+      signed:!!cur,since:cur?cur.since:null,next:cur?cur.next-S.week:null,last:cur?cur.last:0,pay:Math.round(P.inc0*L.pay*Math.min(1.3,0.7+st.length*0.1))};});
+};
+E.signLicense=function(S,k){
+  var P=S.promos[S.player],L=LICK[k],i=E.licensing(S).filter(function(x){return x.id===k;})[0];
+  if(!L)return {ok:false,text:'Pick a deal.'};if(!i.open)return {ok:false,text:L.partner+' will not call until your popularity reaches '+L.need+'.'};
+  if(i.signed)return {ok:false,text:'That deal is already signed.'};
+  if(i.have<L.stars)return {ok:false,text:L.partner+' wants '+L.stars+' stars on contracts of at least 26 weeks. You have '+i.have+'.'};
+  (P.lic||(P.lic={}))[k]={since:S.week,next:S.week+52,miss:0,last:0};
+  news(S,'money',L.partner+' signed a licensing deal with '+P.name+': '+L.n.toLowerCase()+'.');
+  return {ok:true,text:L.partner+' signs on for '+L.n.toLowerCase()+'. They pay once a year, about '+money(i.pay)+', and they want '+L.stars+' stars on long contracts for as long as the deal runs.'};
+};
+E.dropLicense=function(S,k){var P=S.promos[S.player];if(!P.lic||!P.lic[k])return {ok:false,text:'There is no such deal.'};delete P.lic[k];return {ok:true,text:'The '+LICK[k].n.toLowerCase()+' deal is ended.'};};
+WEEKX.push(function(S){
+  if(S.cal)return;var P=S.promos[S.player];if(!P.lic)return;
+  Object.keys(P.lic).forEach(function(k){
+    var c=P.lic[k],L=LICK[k];if(S.week<c.next)return;
+    var st=licStars(S,P),full=Math.round(P.inc0*L.pay*Math.min(1.3,0.7+st.length*0.1)),ok=st.length>=L.stars,pay=ok?full:Math.round(full*0.5);
+    P.led.bonus+=pay;c.last=pay;c.next=S.week+52;
+    if(ok){c.miss=0;news(S,'money',L.partner+' paid '+money(pay)+' for the year.');}
+    else{c.miss++;news(S,'money',L.partner+' paid half ('+money(pay)+'): not enough stars on long contracts.'+(c.miss>=2?' They are ending the deal.':''));if(c.miss>=2)delete P.lic[k];}
+  });
+});
+
 /* ===== 89-regions.js ===== */
 /* ---------- regions: where the world likes what ---------- */
 
