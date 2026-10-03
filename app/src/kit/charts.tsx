@@ -27,10 +27,12 @@ export function Pie(p: { parts: { n: string; v: number }[]; title?: string }) {
   </div>;
 }
 /** A column chart. Negative values hang below the line in red. */
-export function ColChart(p: { vals: number[]; labels?: (string | number)[]; title?: string }) {
+export function ColChart(p: { vals: number[]; labels?: (string | number)[]; title?: string; line?: number }) {
   const vals = p.vals, H = 6, out: ComponentChildren[] = []; let max = 1, neg = false;
   vals.forEach(v => { if (Math.abs(v) > max) max = Math.abs(v); if (v < 0) neg = true; });
-  for (let r = H; r >= 1; r--) { out.push(vals.map(v => { const h = v / max * H; return [h >= r ? <span class="good">{'██'}</span> : (h >= r - 0.5 ? <span class="good">{'▄▄'}</span> : '  '), ' ']; }), '\n'); }
+  if (p.line != null && p.line > max) max = p.line;
+  const rl = p.line != null && p.line > 0 ? Math.max(1, Math.round(p.line / max * H)) : 0;
+  for (let r = H; r >= 1; r--) { out.push(vals.map(v => { const h = v / max * H; return [h >= r ? <span class="good">{'██'}</span> : (h >= r - 0.5 ? <span class="good">{'▄▄'}</span> : (r === rl ? <span class="plan">{'──'}</span> : '  ')), r === rl ? <span class="plan">{'─'}</span> : ' ']; }), '\n'); }
   out.push('─'.repeat(Math.max(0, vals.length * 3 - 1)), '\n');
   if (neg) for (let r = 1; r <= 3; r++) { out.push(vals.map(v => { const h = -v / max * H; return [h >= r ? <span class="bad">{'██'}</span> : (h >= r - 0.5 ? <span class="bad">{'▀▀'}</span> : '  '), ' ']; }), '\n'); }
   if (p.labels) out.push(p.labels.map(l => (String(l) + '  ').slice(0, 2) + ' ').join(''));

@@ -8,13 +8,15 @@ function Line(p: { k: string; v: number; neg?: boolean }) { return <li><span>{p.
 
 /** Weekly net income as columns. A phone shows twelve weeks so the columns stay readable; the type shrinks to fit the panel. */
 function NetChart(p: { H: any[] }) {
+  const P = me();
   const H = p.H.slice(screenMode() === 'phone' ? -12 : -24), n = H.length;
   let best = H[0], worst = H[0];
   H.forEach(x => { if (x.net > best.net) best = x; if (x.net < worst.net) worst = x; });
   const labels = H.map((x, i) => n <= 12 || i % 4 === 0 || i === n - 1 ? String(x.w).slice(-2) : '');
   const size = 'min(1em,calc((min(100vw,59em) - 4.8em) / ' + (n * 3 * 0.62).toFixed(1) + '))';
   return <Panel cls="mb3" title="Weekly net">
-    <div style={{ fontSize: size }}><ColChart vals={H.map(x => x.net)} labels={labels} title={'Weekly net income for the last ' + n + ' weeks'} /></div>
+    <div style={{ fontSize: size }}><ColChart vals={H.map(x => x.net)} labels={labels} line={P.net} title={'Weekly net income for the last ' + n + ' weeks'} /></div>
+    <p class="muted">Top of the chart: <b class="num">{full(Math.max(best.net, P.net > 0 ? P.net : 0, 1))}</b>. {worst.net < 0 ? <>Bottom: <b class="num bad">{full(worst.net)}</b>. </> : null}<span class="plan">{'──'}</span> is the owner{'’'}s plan, <b class="num">{full(P.net)}</b> a week.</p>
     <p class="muted">One column a week, by week number. Best: <b class="num">{full(best.net)}</b> in week {best.w}.{worst.net < 0 ? <> Worst: <span class="num bad">{full(worst.net)}</span> in week {worst.w}.</> : null}</p>
   </Panel>;
 }
