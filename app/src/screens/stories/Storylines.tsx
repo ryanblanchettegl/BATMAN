@@ -78,6 +78,10 @@ export function StablePanel() {
       <span><b>{s.name}</b><br />{s.m.map((id: number, i: number) => <>{i ? ', ' : ''}<Name w={S.w[id]} />{id === s.leader ? <span class="muted"> (leader)</span> : null}</>)}</span>
       <span class="row"><Meter v={Math.min(100, s.tension * 10)} kind="hot" /><span class="muted">tension</span></span>
     </li>)}</ul>
+    {L.map((s: any) => <>
+      <p class="eyebrow mt2">{s.name} {'·'} unity {E.stableUnity(S, s)}</p>
+      <ul class="list">{E.stableRoles(S, s).map((r: any) => <li class="col"><span><Name w={r.w} /> <span class={r.role ? 'muted' : 'bad'}>{'·'} {r.name}</span></span><span class="muted">{r.note}</span></li>)}</ul>
+    </>)}
     <p class="muted mt2">Stablemates run in for each other. Losses raise the tension, and at the top of the meter somebody gets thrown out.</p>
   </Panel>;
 }

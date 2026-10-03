@@ -742,3 +742,55 @@ POST.push(function(ctx){
   r.seg.notes.push('An upset in the '+T.name+': '+w.name+' beat '+l.name+', who was seeded much higher.');
   if(S.promos[S.player].id===T.promo)startFeud(S,S.promos[T.promo],l,w,35,l.name+' wants to settle the score after the '+T.name+' upset',{force:true});
 });
+
+/* ---------- 32. Stable roles: leader, enforcer, mouthpiece, young gun, workhorse; unity (st.unity) ---------- */
+var SROLE_N={leader:'Leader',enforcer:'Enforcer',mouth:'Mouthpiece',young:'Young gun',horse:'Workhorse'};
+var SROLE_D={enforcer:'Brings the muscle. Needs real fighting skill.',mouth:'Does the talking. Needs a good voice.',young:'The future of the group. Young with room to grow.',horse:'Carries the match. Needs stamina and technique.'};
+function srFit(role,w){
+  if(role==='enforcer')return Math.max(w.brawl,w.hc==null?w.brawl:w.hc)-(w.style==='P'||w.style==='B'?0:8);
+  if(role==='mouth')return w.mic;
+  if(role==='young')return w.age<=27&&w.pot>=62?w.pot+(27-w.age)*2:0;
+  if(role==='horse')return (w.stam+w.tech)/2;
+  return 0;
+}
+/* hand out the roles: the leader first, then each role goes to the best fit among the rest; a member nobody needs has no role */
+function stableRoles(S,st){
+  var roles={},left=st.m.filter(function(id){return id!==st.leader&&S.w[id];});roles[st.leader]='leader';
+  var order=['mouth','enforcer','young','horse'],need={mouth:60,enforcer:62,young:62,horse:60};
+  order.forEach(function(r){
+    var best=null,bs=0;left.forEach(function(id){var f=srFit(r,S.w[id]);if(f>bs){bs=f;best=id;}});
+    if(best!=null&&bs>=need[r]){roles[best]=r;left=left.filter(function(id){return id!==best;});}
+  });
+  return roles;
+}
+E.stableRoles=function(S,st){
+  var roles=stableRoles(S,st);
+  return st.m.filter(function(id){return S.w[id];}).map(function(id){var r=roles[id]||null;return {w:S.w[id],role:r,name:r?SROLE_N[r]:'No role',note:r&&SROLE_D[r]||'Nobody needs what they do. Unless that changes, they will be the first out.'};});
+};
+E.stableUnity=function(S,st){return Math.round(st.unity==null?60:st.unity);};
+E.stableWeak=function(S,st){
+  var roles=stableRoles(S,st);
+  return st.m.filter(function(id){var w=S.w[id];return w&&id!==st.leader&&(!roles[id]||(w.rr&&w.rr.length>=4&&w.rr.every(function(x){return x.r==='L';})));}).map(function(id){return S.w[id];});
+};
+WEEKX.push(function(S){
+  (S.stables||[]).forEach(function(st){
+    var roles=stableRoles(S,st),d=0,weak=[];
+    st.m.forEach(function(id){
+      var w=S.w[id];if(!w)return;
+      var noWins=w.rr&&w.rr.length>=4&&w.rr.every(function(x){return x.r==='L';});
+      if(id!==st.leader&&!roles[id]){d-=1.5;weak.push(w);}
+      if(noWins){d-=1;if(weak.indexOf(w)<0)weak.push(w);}
+    });
+    if(!weak.length)d+=1.2;
+    st.unity=clamp((st.unity==null?60:st.unity)+d,0,100);
+    if(weak.length)st.tension=(st.tension||0)+0.3*weak.length;
+    if(st.promo===S.player&&weak.length&&st.unity<40&&S.week%6===0)news(S,'story',st.name+' are coming apart: '+weak[0].name+' has no place in the group and no wins. Somebody is going to be thrown out.');
+  });
+});
+/* a group that works as a unit lifts the matches its members are in */
+CRX.push(function(ctx){
+  if(!ctx.S.stables||ctx.S.cal)return null;var best=null;
+  ctx.all.forEach(function(w){var st=stableOf(ctx.S,w);if(st&&(st.unity==null?60:st.unity)>=72&&stableWeak2(ctx.S,st)===0&&(!best||st.unity>best.unity))best=st;});
+  return best?{d:1,x:best.name+' work as one unit and the crowd sees it'}:null;
+});
+function stableWeak2(S,st){return E.stableWeak(S,st).length;}
