@@ -87,6 +87,7 @@ async function section(mode) {
   const stipName = await page.$eval('#m0-stip', e => e.options[e.selectedIndex].text);
   ok(await state(page, S => S.card[0].stip) === stip && (await txt(page, seg(0) + ' .meta')).includes(stipName), mode + ': stipulation');
   await check('stipulation');
+  await state(page, S => { S.card.forEach((m, i) => { if (i) delete m.call; }); });   // a suggested card may already hold a call; this check is about the one made here
   await page.selectOption('#m0-call', '0');
   ok(await state(page, S => S.card[0].call) === 0 && /Your call: .* wins \(\d BP\)/.test(await txt(page, seg(0) + ' .meta')), mode + ': called finish');
   ok(/committed on this card/.test(await txt(page, '.head')), mode + ': booking power committed');
@@ -125,7 +126,7 @@ async function section(mode) {
   await check('remove a match');
 
   /* ---- the side panel ---- */
-  for (const t of [['promo', 'Opening promo'], ['feuds', 'Storylines in play'], ['targets', 'Promises and targets'], ['advice', 'The office says']]) {
+  for (const t of [['promo', 'Opening promo'], ['feuds', 'Storylines in play'], ['targets', 'Promises and targets'], ['advice', 'Running order']]) {
     await page.click('[data-t="bk"][data-v="' + t[0] + '"]');
     ok(await txt(page, '.cols > .stack:last-child .panel h2') === t[1], mode + ': side tab ' + t[0]);
     ok(await page.$eval('[data-t="bk"][data-v="' + t[0] + '"]', e => e.getAttribute('aria-pressed')) === 'true', mode + ': tab pressed');

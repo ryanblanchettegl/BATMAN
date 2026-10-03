@@ -24,7 +24,7 @@ WEEKX.push(function(S){
   var rd=C.filter(function(w){return w.dv&&w.dv.n>=6&&(w.dvHold==null||S.week>=w.dvHold)&&(workRate(w)>=(w.cw0||999)+5||w.mic>=(w.cm0||999)+8||w.dv.n>=16);}).sort(function(a,b){return b.ovr-a.ovr;});
   if(rd.length){
     var w=rd[0];
-    pushEv(S,{type:'callup',w:w.id,text:w.name+' has been on the camp show for '+w.dv.n+' weeks and has outgrown it. '+(w.dv.best>=70?'Their best match there was rated '+w.dv.best+'%. ':'')+'The crowd at the camp show knows the name.',
+    pushEv(S,{type:'callup',w:w.id,text:w.name+' has been on the camp show for '+w.dv.n+' weeks and has outgrown it. '+(w.dv.best>=70?'Their best match there was '+starG(w.dv.best)+'. ':'')+'The crowd at the camp show knows the name.',
       choices:['Call them up now, with a debut','Another month in camp','Release them']});
   }
 });

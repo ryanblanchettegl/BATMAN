@@ -73,7 +73,7 @@ E.legacy=function(S){
   var score=0;parts.forEach(function(p){score+=p.v;});
   var tl=[{w:1,label:'Took over '+P.name+'.'}];
   if(R.shows[0])tl.push({w:R.shows[0].w,label:'Best show: '+R.shows[0].n+', '+R.shows[0].r+'%.'});
-  if(R.matches[0])tl.push({w:R.matches[0].w,label:'Best match: '+R.matches[0].l+', '+R.matches[0].ov+'%.'});
+  if(R.matches[0])tl.push({w:R.matches[0].w,label:'Best match: '+R.matches[0].l+', '+starG(R.matches[0].ov)+'.'});
   if(R.gate)tl.push({w:R.gate.w,label:'Biggest crowd: '+R.gate.v.toLocaleString('en-US')+' at '+R.gate.n+'.'});
   A.slice(0,4).forEach(function(a){var w0=a.list[0];tl.push({w:(a.week||0),year:a.year,label:'The '+a.year+' awards: '+(w0?w0.k+', '+w0.v+'.':'')});});
   Object.keys(S.ach||{}).filter(function(k){return !/^MS_/.test(k);}).sort(function(a,b){return S.ach[a]-S.ach[b];}).slice(0,10).forEach(function(k){

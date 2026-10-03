@@ -266,7 +266,7 @@ export function Setup() {
 function Help() {
   return <Window title="Help" ok="Got it">
     <p><b>The job.</b> Book the shows, answer the inbox, close the week. Shows that beat what the crowd expects raise your popularity.</p>
-    <p class="mt1"><b>Booking.</b> A show is matches, promos and angles. You pick who is in each. The odds decide the matches unless you spend booking power.</p>
+    <p class="mt1"><b>Booking.</b> A show is matches, promos and angles. You pick who is in each. The odds decide the matches unless you spend booking power. Where a match sits matters: open with something quick, keep two long matches apart, and put the biggest match on last. The Running order notes beside the card read your card against those rules. Matches and segments are rated in stars, up to five.</p>
     <ul class="list mt1">
       <li><span><b>Office.</b> The desk and your career. It opens on what needs doing before the show.</span></li>
       <li><span><b>Booking.</b> Build the card. Spend booking power to call a finish.</span></li>

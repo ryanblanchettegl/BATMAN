@@ -5,7 +5,7 @@ import { takeJob, abandonGame } from '../../flow';
 import { copyText } from '../start';
 import { clearSave } from '../../store';
 import { clearToasts } from '../../shell/Frame';
-import { Head, Panel, Btn, KV, CheckLine } from '../../kit';
+import { Head, Panel, Btn, KV, CheckLine, stars } from '../../kit';
 
 /** The score for a finished career, kept in this browser so the next one has something to beat. */
 function bestSoFar(score: number, name: string): number {
@@ -19,7 +19,7 @@ export function LegacyPanel(p: { final?: boolean }) {
     <p class="big"><span class="num">{L.score}</span> <span class="muted">points{p.final ? (L.score > prev ? '. A new best.' : '. Your best is ' + prev + '.') : ''}</span></p>
     <ul class="list">{L.parts.filter((x: any) => x.v).map((x: any) => <li><span>{x.n}</span><span class={'num ' + (x.v < 0 ? 'bad' : 'muted')}>{x.v > 0 ? '+' : ''}{x.v}</span></li>)}</ul>
     {L.made.length ? <><p class="eyebrow mt2">Stars you made</p><ul class="list">{L.made.map((m: any) => <li><span>{m.w.name}</span><span class="num good">{m.from} to {m.to}</span></li>)}</ul></> : null}
-    {L.best.length ? <><p class="eyebrow mt2">Your best matches</p><ul class="list">{L.best.map((m: any) => <li><span>{m.l}</span><span class="muted num">{m.ov}% {'·'} {m.show}</span></li>)}</ul></> : null}
+    {L.best.length ? <><p class="eyebrow mt2">Your best matches</p><ul class="list">{L.best.map((m: any) => <li><span>{m.l}</span><span class="muted">{stars(m.ov)} {'·'} {m.show}</span></li>)}</ul></> : null}
     <p class="eyebrow mt2">The career</p>
     <ul class="list">{L.timeline.map((e: any) => <li class="col"><span class="muted">{e.when || e.year || ''}</span><span>{e.label}</span></li>)}</ul>
   </Panel>;
@@ -74,7 +74,7 @@ export function GameOver() {
     <Panel>
       <p>{fired ? S.owner.name + ' has lost faith in your booking and let you go from ' + P.name + '.' : P.name + ' ran out of money after six straight weeks in the red.'}</p>
       <div class="kv mt3 mb2">
-        <KV label="Booker level">{S.booker.lvl}</KV><KV label="Shows run">{st.shows}</KV><KV label="Best show">{st.bestShow}%</KV><KV label="Best match">{st.bestMatch}%</KV><KV label="Feuds finished">{st.feudsDone}</KV>
+        <KV label="Booker level">{S.booker.lvl}</KV><KV label="Shows run">{st.shows}</KV><KV label="Best show">{st.bestShow}%</KV><KV label="Best match">{stars(st.bestMatch)}</KV><KV label="Feuds finished">{st.feudsDone}</KV>
       </div>
       {fired && <div class="mt3">
         <h2 class="mb1">Somebody is always hiring</h2>

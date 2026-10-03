@@ -135,7 +135,7 @@ function yearEnd(S){
   var woy=by(all,function(w){return w.yp||0;}),mwoy=by(mine,function(w){return w.yp||0;}),imp=by(mine,function(w){return w.ovr-(w.oy==null?w.ovr:w.oy);});
   if(woy&&woy.yp){L.push({k:'Wrestler of the year',v:woy.name+' ('+S.promos[woy.promo].name+')',w:woy.id});mile(S,woy,'award','Wrestler of the year, '+yr);}
   if(mwoy&&mwoy.yp){L.push({k:P.name+' wrestler of the year',v:mwoy.name,w:mwoy.id});addOvr(P,mwoy,1);mwoy.morale=clamp(mwoy.morale+5,0,100);}
-  if(Y.match)L.push({k:'Match of the year',v:Y.match.l+', '+Y.match.ov+'% at '+Y.match.show});
+  if(Y.match)L.push({k:'Match of the year',v:Y.match.l+', '+starG(Y.match.ov)+' at '+Y.match.show});
   if(Y.feud)L.push({k:'Feud of the year',v:Y.feud.l});
   if(Y.show)L.push({k:'Show of the year',v:Y.show.n+', '+Y.show.r+'%'});
   if(imp&&imp.ovr-imp.oy>=2)L.push({k:'Most improved',v:imp.name+' (+'+Math.round(imp.ovr-imp.oy)+' overness)',w:imp.id});

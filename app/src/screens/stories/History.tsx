@@ -22,12 +22,12 @@ function Chronicles() {
 function MatchOfYear() {
   const L: any[] = E.matchOfYear(G.S);
   const open = (m: any) => openModal({ kind: 'info', title: m.l, body: () => <>
-    <p><b>{m.ov}%</b> {stars(m.ov)} <b class="gold">{grade(m.ov)}</b></p>
+    <p class="gold">{stars(m.ov)}</p>
     <p class="mt1">{m.promoName} {'·'} {m.show} {'·'} {wk(m.w)}</p>
     <p>{m.mt}{m.stip ? ' · ' + m.stip : ''}{m.mins ? ' · ' + m.mins + ' min' : ''}{m.title ? ' · ' + m.title : ''}</p>
     <p class="mt1">{m.win ? 'Winner: ' + m.win : 'No winner'}</p></> });
   return <Panel title="Match of the year, so far">
-    {L.length ? <ol class="rank">{L.map((m, i) => <li key={m.w + m.l}><Btn kind="sm" t="moty" d={{ v: i }} onClick={() => open(m)}>Details</Btn> <b class="num">{m.ov}%</b> <Txt>{m.l}</Txt><br /><span class="muted">{m.promoName}, {m.show}, {wk(m.w)}</span></li>)}</ol>
+    {L.length ? <ol class="rank">{L.map((m, i) => <li key={m.w + m.l}><Btn kind="sm" t="moty" d={{ v: i }} onClick={() => open(m)}>Details</Btn> <b class="gold">{stars(m.ov)}</b> <Txt>{m.l}</Txt><br /><span class="muted">{m.promoName}, {m.show}, {wk(m.w)}</span></li>)}</ol>
       : <Empty>No matches yet this year. Run a show and the list starts.</Empty>}
   </Panel>;
 }
@@ -38,7 +38,7 @@ function RecordBook() {
   return <Panel title="Record book">
     <p class="eyebrow">Best matches</p>
     <ul class="list">{M.slice(0, 10).map((m: any) =>
-      <Row v={stars(m.ov)}><b class="num">{m.ov}%</b> {m.l}<br /><span class="muted">{m.show}, {wk(m.w)}</span></Row>)}</ul>
+      <Row v={stars(m.ov)}>{m.l}<br /><span class="muted">{m.show}, {wk(m.w)}</span></Row>)}</ul>
     <p class="eyebrow mt3">Best shows</p>
     <ul class="list">{(R.shows || []).map((s: any) => <Row v={s.r + '%'}>{s.n}<br /><span class="muted">{wk(s.w)}</span></Row>)}</ul>
     <p class="eyebrow mt3">High-water marks</p>

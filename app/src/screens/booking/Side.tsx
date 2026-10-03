@@ -5,6 +5,7 @@ import { book } from '../../flow';
 import { QuestList } from '../../shared/week';
 import { Panel, Tabs, Sel, Field, Tag, Name, Meter, CheckLine, Empty, Opt } from '../../kit';
 import { pickSide, setPlan } from './run';
+import { Shape } from './Shape';
 
 type OnCard = Record<number, 1>;
 
@@ -64,7 +65,7 @@ export function Side(p: { on: OnCard }) {
     {k === 'promo' ? <Promo />
       : k === 'feuds' ? <Panel title="Storylines in play"><Feuds on={p.on} /><p class="muted mt2">Rivals who are both on the show get promos, brawls and run-ins. A hot feud ends with a win at a big event or in a gimmick match.</p></Panel>
       : k === 'targets' ? <Panel title="Promises and targets"><QuestList /></Panel>
-      : <Panel title="The office says"><Advice /></Panel>}
+      : <><Panel title="Running order"><Shape /></Panel><Panel title="The office says"><Advice /></Panel></>}
     <TournOwed on={p.on} />
   </>;
 }

@@ -2,7 +2,7 @@
    matches: what kind, who is in it, and where on the show it goes. A slot left alone goes to the writers. */
 import { E } from '../../engine';
 import { G, Modal, act, say, view, slice, openModal, closeModal } from '../../store';
-import { Btn, Panel, Window, Sel, Field, Name, Opt } from '../../kit';
+import { Btn, Panel, Window, Sel, Field, Name, Opt, stars } from '../../kit';
 import { pickSide, sideText } from './run';
 
 interface Draft { slot: number; k: string; who: (number | null)[]; pos: number }
@@ -42,7 +42,7 @@ export function SegRows(p: { i: number; n: number }) {
     <div class="no" aria-hidden="true">{E.SEGK[x.k].t === 'promo' ? 'MIC' : 'ANG'}</div>
     <div class="body"><div class="line1">
       <div><div class="who">{x.why ? <span class="bad">{x.why}</span> : x.who.map((id: number, q: number) => <>{q ? ', ' : null}<Name w={S.w[id]} /></>)}</div>
-        <div class="meta">{kindWord(x.k)}: {E.SEGK[x.k].n}{x.look ? <> {'·'} should score about <b class="num">{x.look.mid}%</b></> : null}</div></div>
+        <div class="meta">{kindWord(x.k)}: {E.SEGK[x.k].n}{x.look ? <> {'·'} should be about <b class="gold">{stars(x.look.mid)}</b></> : null}</div></div>
       <div class="row"><Btn kind="sm" t="seg-edit" d={{ v: x.slot }} onClick={() => openSeg(x.slot)}>Change</Btn>
         <Btn kind="sm" t="seg-rm" d={{ v: x.slot }} onClick={() => act(() => { const r = E.setSeg(S, x.slot, null); say(r.msg); })}>Back to the writers</Btn></div>
     </div></div>
@@ -87,7 +87,7 @@ export function SegWindow(_p: { m: Modal }) {
         options={[['', !ready ? 'Pick the one before first' : (ids.length ? 'Pick someone' : 'Nobody fits')] as Opt].concat(ids.map(id => [id, wlabel(id)] as Opt))} onChange={v => setWho(i, v)} /></Field>;
     })}</div>
     {look ? (look.ok ? <>
-      <p class="mt2" data-t="seg-look">It should score about <b class="num">{look.mid}%</b> <span class="muted">(between {look.lo} and {look.hi} on the night)</span>.</p>
+      <p class="mt2" data-t="seg-look">It should be about <b class="gold">{stars(look.mid)}</b> <span class="muted">(between {stars(look.lo)} and {stars(look.hi)} on the night)</span>.</p>
       {look.notes.length ? <p class="muted">{look.notes.map((x: any, q: number) => <span key={q} class={x[0] > 0 ? 'good' : 'bad'}>{q ? ' · ' : ''}{x[0] > 0 ? '▲' : '▼'} {x[1]}</span>)}</p> : null}
     </> : <p class="bad mt2" data-t="seg-look">{look.why}</p>)
       : <p class="muted mt2">Pick who is in it and the game tells you what to expect.</p>}

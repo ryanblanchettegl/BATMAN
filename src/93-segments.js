@@ -166,7 +166,7 @@ E.setSeg=function(S,slot,sg){
   var clean={k:sg.k,who:(sg.who||[]).slice(0,SEGK[sg.k]?SEGK[sg.k].roles.length:0).map(function(x){return +x;}),pos:Math.max(0,sg.pos|0)},why=segWhy(S,clean,slot);
   if(why)return {ok:false,msg:why};
   L[slot]=clean;var lk=segLook(S,clean,slot);
-  return {ok:true,msg:'Booked: '+segLabel(S,clean)+'. It should score about '+lk.mid+'%.'};
+  return {ok:true,msg:'Booked: '+segLabel(S,clean)+'. It should be about '+starG(lk.mid)+'.'};
 };
 /** Fill the empty slots with sensible segments: the hottest feud first, then a champion who needs a challenger, then the best talker.
     `max` limits how many are filled, so a suggested card can pencil in one and leave the rest to the writers. */

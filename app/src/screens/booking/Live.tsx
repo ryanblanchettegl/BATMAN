@@ -59,21 +59,21 @@ function SignOff(p: { r: any; ms: any[] }) {
       <KV label="Attendance"><Crowd r={r} /></KV>
       <KV label="TV viewers">{(r.viewers / 1e6).toFixed(2)}M</KV>
       {r.big ? <KV label="Buys">{r.buys.toLocaleString('en-US')}</KV> : null}
-      <KV label="Best match">{Math.max(...p.ms.map(s => s.ov))}%</KV>
+      <KV label="Best match">{stars(Math.max(...p.ms.map(s => s.ov)))}</KV>
     </div>
     <Line r={r} tk="close" b={{ t: 'pbp', x: 'For ' + r.ann[1] + ' and everyone at ' + me().name + ', I am ' + r.ann[0] + '. Good night from ' + cityOf(r) + '!' }} />
   </>;
 }
 function Result(p: { s: any }) {
   const s = p.s;
-  if (s.k !== 'match') return <div class="result"><p>Segment rating: <span class="gold">{s.ov}%</span> <Meter v={s.ov} kind="au" /></p></div>;
-  const score = (label: string, v: number, kind?: 'hot' | 'cool' | 'au') => <div class={kind === 'au' ? 'ov' : undefined}><span>{label}</span><span><Meter v={v} kind={kind} /> {v}%</span></div>;
+  if (s.k !== 'match') return <div class="result"><p>The segment: <span class="gold">{stars(s.ov)}</span></p></div>;
+  const score = (label: string, v: number, kind?: 'hot' | 'cool' | 'au') => <div class={kind === 'au' ? 'ov' : undefined}><span>{label}</span><span><Meter v={v} kind={kind} /></span></div>;
   return <>
     {s.change ? <BeltArt name={s.title} /> : null}
     <div class="result">
-      <p><b>{s.win ? 'Winner: ' + s.win : 'Draw'}</b> {'·'} <span class="gold">{s.ov}% {stars(s.ov)}</span></p>
+      <p><b>{s.win ? 'Winner: ' + s.win : 'Draw'}</b> {'·'} <span class="gold">{stars(s.ov)}</span></p>
       <OddsLine s={s} />
-      <div class="scores">{score('Match quality', s.mq)}{score('Crowd reaction', s.cr, 'hot')}{score('Worker effort', s.eff, 'cool')}{score('Overall', s.ov, 'au')}</div>
+      <div class="scores">{score('The work', s.mq)}{score('The crowd', s.cr, 'hot')}{score('Effort', s.eff, 'cool')}<div class="ov"><span>Overall</span><span class="gold">{stars(s.ov)}</span></div></div>
       <FxList s={s} max={5} />
     </div>
   </>;

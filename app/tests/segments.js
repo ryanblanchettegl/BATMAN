@@ -26,7 +26,7 @@ async function run(mode) {
     await page.selectOption('#seg-who-0', { index: 1 });
     ok(mode, 'the second pick opens once the first is made', !(await page.$eval('#seg-who-1', e => e.disabled)));
     await page.selectOption('#seg-who-1', { index: 1 });
-    ok(mode, 'the window says what to expect', /should score about \d+%/.test(await txt(page, '[data-t="seg-look"]')), await txt(page, '[data-t="seg-look"]'));
+    ok(mode, 'the window says what to expect', /should be about ★/.test(await txt(page, '[data-t="seg-look"]')), await txt(page, '[data-t="seg-look"]'));
     await page.selectOption('#seg-pos', { index: 2 });
     await page.click('[data-t="seg-save"]');
     ok(mode, 'booking it says what was booked', /Booked: .* calls out /.test(await flash(page)), await flash(page));

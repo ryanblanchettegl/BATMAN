@@ -4,7 +4,7 @@
 function starsOf(ov){return (Math.round(ov/20*4)/4).toFixed(2).replace(/0$/,'').replace(/\.$/,'');}
 function boardTouch(S,ms,posts,used){
   // any post that names a match gets its stars
-  posts.forEach(function(p){ms.forEach(function(s){if(s.label&&p.t.indexOf(s.label)>=0&&!/stars\)/.test(p.t)){p.t+=' ('+starsOf(s.ov)+' stars)';}});});
+  posts.forEach(function(p){ms.forEach(function(s){if(s.label&&p.t.indexOf(s.label)>=0&&!/★[¼½¾]?\)$/.test(p.t)){p.t+=' ('+starG(s.ov)+')';}});});
   // somebody always disagrees
   if(posts.length>=2&&chance(S,0.75)){
     var tg=posts[0],kind=tg.s>0?pick(S,['old','heel','stats']):pick(S,['casual','under']);
@@ -13,7 +13,7 @@ function boardTouch(S,ms,posts,used){
   }
   return posts;
 }
-E.starsOf=starsOf;
+E.starsOf=starsOf;E.stars=starG;E.starQ=starQ;
 /* the critic */
 var CRITIC='Mortimer Vane';
 function criticScore(w){return (w.cs==null?50:w.cs)*0.6+w.ovr*0.4;}

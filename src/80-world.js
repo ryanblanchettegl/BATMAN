@@ -61,7 +61,7 @@ POST.push(function(ctx){
   r.winners.forEach(function(w){ystat(S,w)[1]++;if(w.ws===10)mile(S,w,'streak','Reached ten wins in a row');});
   if(ctx.m.mt!=='br')r.losers.forEach(function(w){ystat(S,w)[2]++;});
   if(r.seg.change&&ctx.t)r.winners.forEach(function(w){ystat(S,w)[6]++;mile(S,w,'title','Won the '+P.name+' '+ctx.t.name+' at '+ctx.show.name);});
-  if(ctx.isPl&&r.OV>=97&&ctx.m.mt!=='br')ctx.all.forEach(function(w){mile(S,w,'match','A '+r.OV+'% match at '+ctx.show.name);});
+  if(ctx.isPl&&starQ(r.OV)>=20&&ctx.m.mt!=='br')ctx.all.forEach(function(w){mile(S,w,'match','A five-star match at '+ctx.show.name);});
 });
 E.career=function(S,id){
   var w=S.w[id];if(!w)return null;var Y=w.ys||{},reigns=[];
@@ -187,7 +187,7 @@ function planPromo(S,P,show,ctx){
     var cs=ctx.pool.filter(function(x){return x.id!==w.id&&x.g===w.g&&Math.abs(x.ovr-w.ovr)<=10&&!feudOf(S,w.id,x.id)&&(w.team==null||x.team!==w.team);});
     if(cs.length){var tg=pick(S,cs);if(startFeud(S,P,tg,w,30,w.name+' took an unscripted shot at '+tg.name))extra=' An unscripted remark about '+tg.name+' has started something.';}
   }
-  if(ov>=80)gainXp(S,3);if(ov>=85)award(S,'ACH_PROMO');
+  if(ov>=80)gainXp(S,3);if(starQ(ov)>=17)award(S,'ACH_PROMO');
   var seg=angle(kind==='interview'?'Opening promo':'Opening '+PKIND[kind].n.toLowerCase(),text+extra,ov);
   seg.rub={d:D,c:pp.C,ch:pp.Ch,cr:pp.Cr};seg.roll=r;seg.who=w.name;if(pp.f&&pl.topic==='rival')seg.feud=pp.f.id;
   seg.bc=[{t:'note',x:text+extra},{t:'note',x:rollText(r)+'Delivery '+D+', content '+pp.C+', character '+pp.Ch+', crowd '+pp.Cr+' out of 10.'},{t:'col',x:ov>=80?'That is how you open a show.':(ov>=60?'A solid start to the night.':'Well. We have a long show ahead of us to make up for that.')}];
@@ -324,9 +324,9 @@ function netPosts(S,P,show,rep){
   var best=ms.slice().sort(function(a,b){return b.ov-a.ov;})[0],worst=ms.slice().sort(function(a,b){return a.ov-b.ov;})[0],main=ms[ms.length-1];
   var mw=main.wi&&main.wi.length?S.w[main.wi[0]]:null,cheap=ms.filter(function(s){return s.fin==='cheap'||s.fin==='interf';}).length,nonf=ms.filter(function(s){return s.fin==='dq'||s.fin==='co'||s.fin==='draw';}).length,clean=ms.filter(function(s){return s.fin==='clean';}).length;
   function add(kind,s,t){out.push({k:kind,s:s,t:t});}
-  if(best.ov>=rep.exp+10)add('smark',1,pick(S,[best.label+' was a clinic. I had the work at '+best.mq+'%.',best.label+'. Bookmark it. '+best.ov+'% and worth every point.','Go out of your way to see '+best.label+'. Best thing this company has done in a while.']));
+  if(best.ov>=rep.exp+10)add('smark',1,pick(S,[best.label+' was a clinic. I had the work at '+starG(best.mq)+'.',best.label+'. Bookmark it. '+starG(best.ov)+' and it earned every one.','Go out of your way to see '+best.label+'. Best thing this company has done in a while.']));
   else if(best.ov<rep.exp+2)add('smark',-1,pick(S,['Not one match tonight worth watching twice. '+best.label+' was the best of it and that is being generous.','Nothing on that card stood out. '+best.label+' was fine, I suppose.','A show with no peak. Even '+best.label+' never got out of second gear.']));
-  if(worst!==best&&worst.ov<rep.rating-12)add('smark',-1,pick(S,['Whoever laid out '+worst.label+' owes me '+worst.mins+' minutes of my life back.',worst.label+' at '+worst.ov+'%. Somebody in that office thought that was a good idea.']));
+  if(worst!==best&&worst.ov<rep.rating-12)add('smark',-1,pick(S,['Whoever laid out '+worst.label+' owes me '+worst.mins+' minutes of my life back.',worst.label+', '+starG(worst.ov)+'. Somebody in that office thought that was a good idea.']));
   ms.forEach(function(s){
     if(s.change)add('casual',1,pick(S,['NEW CHAMPION!!! '+s.win+' did it! I am still shaking.',s.win+' with the '+s.title+'. I did not think they would pull the trigger.']));
     if(s.win&&s.wi&&!s.called&&s.sidesN.length===2){var k=s.sidesN.indexOf(s.win);if(k>=0&&s.odds[k]<=25)add('stats',1,s.win+' had a '+s.odds[k]+'% chance going in by my numbers. My numbers are in the bin.');}
@@ -381,7 +381,7 @@ var SAGA={
   reign:{n:'Find your champion',g:function(){return 'Have your champions make four successful title defences.';},need:function(){return 4;},v:function(S,c){return c.cnt.defs;}},
   star:{n:'Make a star',g:function(){return 'Raise one wrestler five points of overness.';},need:function(){return 5;},v:function(S,c){var P=S.promos[S.player],m=0;rosterOf(S,P.id).forEach(function(w){if(w.sg!=null&&w.ovr-w.sg>m)m=w.ovr-w.sg;});return Math.floor(m);}},
   feud:{n:'The rivalry',g:function(){return 'Settle two feuds in the ring.';},need:function(){return 2;},v:function(S,c){return S.stats.feudsDone-c.b.feuds;}},
-  match:{n:'Match of the season',g:function(S,c){return 'Put on a match rated '+c.b.thr+'% or better.';},need:function(){return 1;},v:function(S,c){return c.cnt.m;}},
+  match:{n:'Match of the season',g:function(S,c){return 'Put on a match of '+starG(c.b.thr)+' or better.';},need:function(){return 1;},v:function(S,c){return c.cnt.m;}},
   blood:{n:'New blood',g:function(){return 'Crown two new champions.';},need:function(){return 2;},v:function(S,c){return c.cnt.changes;}},
   roll:{n:'On a roll',g:function(){return 'Beat the crowd’s expectations on six shows.';},need:function(){return 6;},v:function(S,c){return c.cnt.beat;}},
   house:{n:'Full house',g:function(){return 'Sell out three shows.';},need:function(){return 3;},v:function(S,c){return c.cnt.sell;}},
@@ -420,7 +420,7 @@ function chronicle(S){
   L.push('Season '+G.n+' ran from '+cal(G.start).label+' to '+cal(S.week).label+'. '+S.booker.name+' ran '+(S.stats.shows-G.b.shows)+' shows.');
   var top=P.titles.filter(function(t){return !t.tag;}).sort(function(a,b){return b.lvl-a.lvl;})[0];
   if(top){var ch=(top.hist||[]).filter(function(h){return h.from>=G.start;}).length;L.push('The '+top.name+' changed hands '+ch+' time'+(ch===1?'':'s')+'. '+(top.holders.length?S.w[top.holders[0]].name+' ended the season as champion.':'It ended the season vacant.'));}
-  var bm=(S.rec.matches||[]).filter(function(m){return m.w>=G.start;})[0];if(bm)L.push('The match people will remember: '+bm.l+', '+bm.ov+'% at '+bm.show+'.');
+  var bm=(S.rec.matches||[]).filter(function(m){return m.w>=G.start;})[0];if(bm)L.push('The match people will remember: '+bm.l+', '+starG(bm.ov)+' at '+bm.show+'.');
   var fd=S.stats.feudsDone-G.b.feuds;L.push(fd?fd+' feud'+(fd===1?' was':'s were')+' settled in the ring.':'Not one feud reached a proper ending.');
   var di=P.image-G.b.image;L.push('Popularity went from '+G.b.image.toFixed(1)+' to '+P.image.toFixed(1)+(di>=1?', a season of growth.':(di<=-1?', a season of decline.':', holding steady.'))+' The bank balance moved by '+money(P.cash-G.b.cash)+'.');
   G.ch.forEach(function(c,i){L.push('Chapter '+(i+1)+', “'+SAGA[c.k].n+'”: '+(c.done?'done in '+cal(c.week).label+'.':'missed.'));});
@@ -433,7 +433,7 @@ function chronicle(S){
 POST.push(function(ctx){
   var S=ctx.S,G=S.saga,r=ctx.res;if(!G||!ctx.isPl)return;var c=G.ch[G.i];if(!c||c.done!=null)return;
   if(ctx.t&&r.seg.change)c.cnt.changes++;else if(ctx.t&&ctx.champSide>=0&&r.win===ctx.champSide)c.cnt.defs++;
-  if(r.OV>=c.b.thr)c.cnt.m++;
+  if(starMeets(r.OV,c.b.thr))c.cnt.m++;
 });
 SHOWX.push(function(S,P,show,rep){
   var G=S.saga;if(!G||P.id!==S.player||S.cal)return;var c=G.ch[G.i];if(!c||c.done!=null)return;

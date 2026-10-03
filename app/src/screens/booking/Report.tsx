@@ -3,7 +3,8 @@ import { E } from '../../engine';
 import { G, cash } from '../../store';
 import { weekDone, pending } from '../../nav';
 import { endWeek } from '../../flow';
-import { Head, Panel, Btn, Tag, KV, stars, grade, Txt } from '../../kit';
+import { Head, Panel, Btn, Tag, KV, stars, grade, Txt, Meter } from '../../kit';
+import { roleOf } from './Shape';
 import { preNote, replay, closeReport } from './run';
 
 /** How the show did against what the crowd expected. */
@@ -37,23 +38,23 @@ function Angle(p: { s: any }) {
   const s = p.s, q = s.rub;
   return <div class="angle">
     <p><Tag>{s.head}</Tag> <Txt>{s.text}</Txt>{s.booked ? <span class="muted" data-t="seg-booked"> (you booked this)</span> : null}{q ? <><br /><span class="muted">Delivery {q.d} {'·'} Content {q.c} {'·'} Character {q.ch} {'·'} Crowd {q.cr} out of 10</span></> : null}</p>
-    <span class="num">{s.ov}% <b class="gold">{grade(s.ov)}</b></span>
+    <span class="gold" data-t="seg-stars">{stars(s.ov)}</span>
   </div>;
 }
-function MatchSeg(p: { s: any; no: number; main: boolean }) {
+function MatchSeg(p: { s: any; no: number; main: boolean; role: string }) {
   const s = p.s, meta = [s.mt, s.mins + ' min']; if (s.stip) meta.push(s.stip);
   if (s.ref) meta.push('Referee ' + s.ref);
-  const score = (label: string, v: number, ov?: boolean) => <div class={ov ? 'ov' : undefined}><span>{label}</span><span class="num">{v}%</span></div>;
+  const score = (label: string, v: number, kind?: 'hot' | 'cool') => <div><span>{label}</span><span><Meter v={v} kind={kind} /></span></div>;
   return <div class={'seg' + (p.main ? ' me' : '')}>
     <div class="no" aria-hidden="true">{p.no}</div>
     <div class="body">
       <div class="line1">
-        <div><div class="who"><Txt>{s.label}</Txt></div><div class="meta">{(p.main ? 'Main event · ' : '') + meta.join(' · ')}{s.title ? <> {'·'} <span class="gold">{s.title}</span></> : null}</div></div>
-        <div class="gold">{s.ov}% {stars(s.ov)} <b>{grade(s.ov)}</b></div>
+        <div><div class="who"><Txt>{s.label}</Txt></div><div class="meta">{(p.role ? p.role + ' · ' : '') + meta.join(' · ')}{s.title ? <> {'·'} <span class="gold">{s.title}</span></> : null}</div></div>
+        <div class="gold" data-t="match-stars">{stars(s.ov)}</div>
       </div>
       <OddsLine s={s} />
       <div class="pbp">{s.lines.map((x: string) => <><Txt>{x}</Txt><br /></>)}<b><Txt>{s.finish}</Txt></b></div>
-      <div class="scores">{score('Match quality', s.mq)}{score('Crowd reaction', s.cr)}{score('Worker effort', s.eff)}{score('Overall', s.ov, true)}</div>
+      <div class="scores">{score('The work', s.mq)}{score('The crowd', s.cr, 'hot')}{score('Effort', s.eff, 'cool')}<div class="ov"><span>Overall</span><span class="gold">{stars(s.ov)}</span></div></div>
       <FxList s={s} max={8} />
       {s.notes.map((x: string) => <p class="note"><span>{x}</span></p>)}
     </div>
@@ -91,7 +92,7 @@ export function Report(p: { r: any }) {
     <div class="sheet">
       {(r.prep || []).map((l: any) => <div class="angle"><p><Tag>Before the show</Tag> <b>{l.place}:</b> <span class={l.ok ? undefined : 'bad'}><Txt>{l.msg}</Txt></span></p></div>)}
       {pre ? <div class="angle"><p><Tag>Before the show</Tag> {pre}</p></div> : null}
-      {r.segs.map((s: any) => s.k === 'angle' ? <Angle s={s} /> : <MatchSeg s={s} no={++no} main={no === nMatch} />)}
+      {r.segs.map((s: any) => s.k === 'angle' ? <Angle s={s} /> : <MatchSeg s={s} no={++no} main={no === nMatch} role={roleOf(no - 1, nMatch)} />)}
     </div>
     <Next r={r} />
   </>;

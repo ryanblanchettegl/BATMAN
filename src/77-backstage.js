@@ -290,13 +290,13 @@ POST.push(function(ctx){
     r.winners.forEach(function(w){w.wonWk=S.week;});
     if(hasRule(S,'bonus'))r.losers.forEach(function(w){w.morale=clamp(w.morale-0.6,0,100);});
     if(hasRule(S,'youth'))ctx.all.forEach(function(w){if(w.age<=26&&workRate(w)<w.pot)w.xp+=0.035;});
-    if(ctx.isMain)S.quests.slice().forEach(function(q){if(q.type==='netvow'&&r.OV>=q.target){dropQuest(S,q);ctx.P.led.bonus+=q.bonus;S.clocks.net.v=0;news(S,'money','You kept your promise to the network: a '+r.OV+'% main event. They send a bonus of '+money(q.bonus)+'.');r.seg.notes.push('The network got the main event you promised.');}});
+    if(ctx.isMain)S.quests.slice().forEach(function(q){if(q.type==='netvow'&&starMeets(r.OV,q.target)){dropQuest(S,q);ctx.P.led.bonus+=q.bonus;S.clocks.net.v=0;news(S,'money','You kept your promise to the network: a '+starG(r.OV)+' main event. They send a bonus of '+money(q.bonus)+'.');r.seg.notes.push('The network got the main event you promised.');}});
   }
   if(!c)return;
   if(c.fin)r.seg.finish=c.fin;
   if(c.ko&&S.w[c.ko]){var w=S.w[c.ko];if(w.inj<=0){w.inj=1;w.iz=w.iz||'n';news(S,'injury',w.name+' ('+ctx.P.name+') was hurt at '+ctx.show.name+' and will miss a week.');}}
   if(c.note){r.seg.notes.unshift(c.note);if(r.seg.bc)r.seg.bc.splice(Math.min(2,r.seg.bc.length),0,{t:'note',x:c.note});}
-  if(ctx.isPl&&r.OV>=80)award(S,'ACH_CHAOS');
+  if(ctx.isPl&&starQ(r.OV)>=16)award(S,'ACH_CHAOS');
 });
 
 /* --- clocks: slow pressure you can watch build --- */
@@ -366,7 +366,7 @@ EVR.mutiny=function(S,ev,choice,P){
 EVR.netmeet=function(S,ev,choice,P){
   var down=function(){if(P.slot>0){P.slot--;return 'Your show moves to '+SLOTN[P.slot].toLowerCase()+'.';}P.tvRate=Math.round(P.tvRate*0.93);return 'There is no worse slot to give you, so they cut the rights fee instead.';};
   if(choice===0){var sh=P.shows[0],tg=Math.round(clamp(expected(P,sh)+4,40,95)),bonus=Math.round(P.inc0*0.05/1000)*1000;
-    S.quests.push({id:S.nid++,type:'netvow',due:S.week+3,target:tg,bonus:bonus,text:'Promise to the network: a main event of '+tg+'% or better by '+cal(S.week+3).label});return 'You give your word: a main event of '+tg+'% or better within three weeks.';}
+    S.quests.push({id:S.nid++,type:'netvow',due:S.week+3,target:tg,bonus:bonus,text:'Promise to the network: a main event of '+starG(tg)+' or better by '+cal(S.week+3).label});return 'You give your word: a main event of '+starG(tg)+' or better within three weeks.';}
   if(choice===1){S.clocks.net.v=0;return 'You take the hit. '+down();}
   var r=rollCheck(S,ev.checks[2]);ev.roll=r;
   if(r.ok){S.clocks.net.v=0;return rollText(r)+'You remind them what your show does for their Thursday. They back off.';}

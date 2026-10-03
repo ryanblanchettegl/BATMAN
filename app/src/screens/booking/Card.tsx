@@ -4,6 +4,7 @@ import { E } from '../../engine';
 import { G, me } from '../../store';
 import { book } from '../../flow';
 import { GateNote } from '../../shared/week';
+import { roleOf } from './Shape';
 import { Head, Panel, Btn, Name, brandName } from '../../kit';
 import { Editor } from './Editor';
 import { Side } from './Side';
@@ -34,7 +35,7 @@ function MatchRow(p: { m: Match; i: number; n: number }) {
   const m = p.m, i = p.i, n = p.n, P = me(), open = book().edit === i;
   const t = m.title ? P.titles.find((x: any) => x.id === m.title) : null;
   // each part is a keyed span: rows trade places without keys, and Preact needs the parts to keep one shape while they do
-  const meta: [string, ComponentChildren][] = [['mt', (i === n - 1 ? 'Main event' + DOT : '') + E.MT[m.mt].n], ['len', LEN[m.len]]];
+  const meta: [string, ComponentChildren][] = [['mt', (roleOf(i, n) ? roleOf(i, n) + DOT : '') + E.MT[m.mt].n], ['len', LEN[m.len]]];
   if (m.stip !== 'std') meta.push(['stip', E.STIP[m.stip].n]);
   if (m.int && m.int !== 'normal') meta.push(['int', <span class={m.int === 'brutal' ? 'bad' : 'good'}>{E.INTN[m.int].n}</span>]);
   if (t) meta.push(['title', <span class="gold">{t.name}</span>]);

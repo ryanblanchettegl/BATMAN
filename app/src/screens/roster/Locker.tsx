@@ -1,7 +1,7 @@
 /* The Locker room page: the mood of the room, who plays which part in it, who is under strain and who is hurt. */
 import { E, W } from '../../engine';
 import { G, me, act, say, plural } from '../../store';
-import { Panel, Btn, Meter, Pie, Empty } from '../../kit';
+import { Panel, Btn, Meter, Pie, Empty, stars } from '../../kit';
 import { rs, selected, pick } from './state';
 import { RosterHead } from './Roster';
 import { Profile } from './Profile';
@@ -40,7 +40,7 @@ export function Locker() {
         </Panel>
         <Panel title="The camp show">
           {(() => { const D = E.devShow(S); return D.n ? <>
-            <ul class="list">{D.rows.map((r: any) => <li class="col"><span><Who id={r.w.id} /> <span class="muted">{'·'} {r.matches} {plural(r.matches, 'match', 'matches')}, best {r.best}%, ring {r.gain >= 0 ? '+' : '−'}{Math.abs(r.gain)}, promos {r.micGain >= 0 ? '+' : '−'}{Math.abs(r.micGain)}</span></span><span class="muted">{r.last}</span></li>)}</ul>
+            <ul class="list">{D.rows.map((r: any) => <li class="col"><span><Who id={r.w.id} /> <span class="muted">{'·'} {r.matches} {plural(r.matches, 'match', 'matches')}, best {stars(r.best)}, ring {r.gain >= 0 ? '+' : '−'}{Math.abs(r.gain)}, promos {r.micGain >= 0 ? '+' : '−'}{Math.abs(r.micGain)}</span></span><span class="muted">{r.last}</span></li>)}</ul>
             <p class="muted mt2">A small show runs by itself every week with the people in camp. It speeds up their learning. When one has outgrown it, you will be asked about a call-up.</p>
           </> : <Empty>Nobody is in camp. Send two or more prospects from their profile and the camp puts on its own show.</Empty>; })()}
         </Panel>

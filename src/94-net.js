@@ -34,7 +34,7 @@ SHOWX.push(function(S,P,show,rep){
   if(ml&&h01(key+'L')<0.6)netStarPost(S,ml,netPickH(NET_LOSE,key+'l'),key+'l');
   ms.forEach(function(s,i){if(s!==main&&s.change&&s.wi&&s.wi.length){var cw=S.w[s.wi[0]];if(cw)netStarPost(S,cw,netPickH(NET_NEW,key+'c'+i),key+'c'+i);}});
   netPost(S,'c',netHandle(P.name),P.full||P.name,(rep.att?rep.att.toLocaleString('en-US')+' of you in the building':'A full night')+' for '+rep.name+'. '+(rep.sellout?'A sell-out. ':'')+'Thank you.',netLikes(P.image*P.image*2,key+'co'));
-  netPost(S,'p',netHandle(S.columnist||'The Ringside Wire'),S.columnist||'The Ringside Wire',best.label+' at '+rep.name+': '+starsOf(best.ov)+' stars. The show came in at '+rep.rating+'%'+(d>=3?', better than expected.':(d<=-3?', short of what the crowd expected.':'.')),netLikes(900,key+'pr'));
+  netPost(S,'p',netHandle(S.columnist||'The Ringside Wire'),S.columnist||'The Ringside Wire',best.label+' at '+rep.name+': '+starG(best.ov)+'. The show came in at '+rep.rating+'%'+(d>=3?', better than expected.':(d<=-3?', short of what the crowd expected.':'.')),netLikes(900,key+'pr'));
   var fan=FANS[Math.floor(h01(key+'f')*FANS.length)%FANS.length][0],word=d>=4?'great':(d<=-4?'bad':'solid');
   netPost(S,'f','@'+fan,fan,fill(netPickH(NET_FAN,key+'ft'),{best:best.label,win:main.win||'nobody',lose:ml?ml.name:'the other side',show:rep.name,word:word}),netLikes(120,key+'fl'));
 });
@@ -73,7 +73,7 @@ function netRumours(S,wk){
 function netSheet(S,wk){
   var P=S.promos[S.player],news=S.news.filter(function(x){return x.w===wk;}),reps=S.reports.filter(function(r){return r.week===wk&&r.promo===P.id;}).reverse();
   var yours=reps.map(function(r){return {show:r.name,rating:r.rating,exp:r.exp==null?null:Math.round(r.exp*10)/10,big:!!r.big,lines:r.sheet&&r.sheet.lines?r.sheet.lines.slice(0,5):[]};});
-  var best=null;reps.forEach(function(r){r.segs.forEach(function(s){if(s.k==='match'&&(!best||s.ov>best.ov))best={label:s.label,ov:s.ov,show:r.name,stars:starsOf(s.ov)};});});
+  var best=null;reps.forEach(function(r){r.segs.forEach(function(s){if(s.k==='match'&&(!best||s.ov>best.ov))best={label:s.label,ov:s.ov,show:r.name,stars:starG(s.ov)};});});
   var lead=null,d=reps.length?avg(reps.map(function(r){return r.rating-(r.exp==null?r.rating:r.exp);})):0,tn=news.filter(function(x){return x.k==='title';})[0];
   if(tn)lead={head:'Gold changes hands',text:tn.t};
   else if(reps.length&&d>=5)lead={head:'A big week for '+P.name,text:'The shows beat what the crowd expected by '+d.toFixed(1)+' points. People are talking.'};

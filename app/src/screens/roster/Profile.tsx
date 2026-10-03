@@ -2,7 +2,7 @@
 import { useEffect } from 'preact/hooks';
 import { E, W } from '../../engine';
 import { G, ui, me, Modal, act, view, say, full, openModal, plural } from '../../store';
-import { Btn, Panel, Tabs, Sel, Tag, Side, Meter, Stat, CheckLine, Empty, RangeBar, Portrait, Window, Opt, champOf, brandName } from '../../kit';
+import { Btn, Panel, Tabs, Sel, Tag, Side, Meter, Stat, CheckLine, Empty, RangeBar, Portrait, Window, Opt, champOf, brandName, stars } from '../../kit';
 import { rs, pick, ProfilePage } from './state';
 import { LockerBlock } from './LockerBlock';
 
@@ -40,7 +40,7 @@ function CareerBlock(p: { cr: any }) {
     <div><p class="eyebrow">Career, year by year</p>
       {cr.years.length ? <div class="tw"><table>
         <thead><tr><th>Year</th><th class="r">Matches</th><th class="r">W</th><th class="r">L</th><th class="r">D</th><th class="r">Best</th><th class="r">Main events</th><th class="r">Titles</th></tr></thead>
-        <tbody>{cr.years.map((y: any) => <tr><td class="num">{y.y}</td><td class="r num">{y.m}</td><td class="r num">{y.w}</td><td class="r num">{y.l}</td><td class="r num">{y.d}</td><td class="r num">{y.best}%</td><td class="r num">{y.main}</td><td class="r num">{y.titles}</td></tr>)}</tbody>
+        <tbody>{cr.years.map((y: any) => <tr><td class="num">{y.y}</td><td class="r num">{y.m}</td><td class="r num">{y.w}</td><td class="r num">{y.l}</td><td class="r num">{y.d}</td><td class="r">{y.best ? stars(y.best) : ''}</td><td class="r num">{y.main}</td><td class="r num">{y.titles}</td></tr>)}</tbody>
       </table></div> : <Empty>No matches yet. Put them on a card on Booking.</Empty>}
     </div>
     <div><p class="eyebrow">Milestones</p>

@@ -4,7 +4,7 @@ Work for Claude Code, in order. `TWEAKS.md` and `WISHLIST.md` are finished; this
 
 **How to work this list**
 
-- Start from `origin/main`. It holds everything: the overnight work, the World Editor (version 0.12), shows and belts made during a game (0.13), and booked promos and angles, the Net section and this week's tasks (0.14). If your branch started before 0.14, merge `origin/main` into it first: the menu has seven sections now, The Net page moved out of Stories, and the desk's alerts became tasks. Work on your own branch and push it after every job.
+- Start from `origin/main`. It holds everything: the overnight work, the World Editor (version 0.12), shows and belts made during a game (0.13), booked promos and angles, the Net section and this week's tasks (0.14), and the running order rules with stars instead of percentages (0.15: read rule 8a in `CLAUDE.md` and `src/92-shape.js` before touching booking). If your branch started before 0.14, merge `origin/main` into it first: the menu has seven sections now, The Net page moved out of Stories, and the desk's alerts became tasks. Work on your own branch and push it after every job.
 - Go top to bottom. Jobs are in the order Ryan cares about. A job's steps are in build order. Tick a box in the commit that finishes it.
 - One step, one or a few commits. After each step: `node build.js`, the type-check, the headless test for what you touched, and the browser test for the section. After each job: `npm run check`, every `test-*.js`, `npm run test:browser`.
 - Engine first. Each new system goes in its own `src/NN-name.js` with `E.` functions and a headless `test-name.js` that plays it for 60 weeks with errs 0 and NaN 0. Then the screen.

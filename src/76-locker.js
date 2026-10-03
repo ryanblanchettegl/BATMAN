@@ -143,7 +143,7 @@ POST.push(function(ctx){
       if(w.cond<35)stressAdd(S,w,4);
     });
   });
-  if(mine&&m.int==='brutal'&&ctx.stip!=='std'&&r.OV>=90)award(S,'ACH_BRUTAL');
+  if(mine&&m.int==='brutal'&&ctx.stip!=='std'&&starQ(r.OV)>=18)award(S,'ACH_BRUTAL');
   if(r.win<0)return;
   if(ctx.t&&r.seg.change)r.winners.forEach(function(w){if(ctx.t.lvl>=3)w.hadTop=true;stressAdd(S,w,-15);});
   else if(ctx.isMain||ctx.big)r.winners.forEach(function(w){stressAdd(S,w,-4);});

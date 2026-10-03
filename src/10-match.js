@@ -389,7 +389,7 @@ function doMatch(S,P,show,m,i,n,rep,used){
   ctx.res={win:win,winners:winners,losers:losers,fin:fin,OV:OV,MQ:MQ,CR:CR,seg:seg,upset:upset,endedStreak:endedStreak,pre:pre};
   if(isPl){
     S.stats.matches++;if(OV>S.stats.bestMatch)S.stats.bestMatch=OV;
-    if(OV>=90)award(S,'ACH_MATCH_90');if(OV>=97)award(S,'ACH_MATCH_97');
+    if(starQ(OV)>=18)award(S,'ACH_MATCH_90');if(starQ(OV)>=20)award(S,'ACH_MATCH_97');
     if(win>=0&&lAvg-wAvg>=20&&fin!=='dq'&&fin!=='co')award(S,'ACH_UPSET');
     if(endedStreak)award(S,'ACH_STREAK_END');
     matchQuests(S,P,show,m,sides,win,t,OV,isMain,seg);

@@ -3,9 +3,9 @@ function dirtSheet(S,P,show,rep,pool){
   var ms=rep.segs.filter(function(s){return s.k==='match';}),L=[],d=rep.rating-rep.exp,i;
   L.push(d>=4?show.name+' beat every expectation. This is a company on a roll.':(d>=0.5?'A good night. '+show.name+' gave the crowd a little more than they came for.':(d>-0.5?show.name+' was exactly the show people expected. No more, no less.':(d>-4?'A flat night. '+show.name+' came up short of what this audience expects.':show.name+' was a miss. People were leaving before the main event ended.'))));
   var best=ms.slice().sort(function(a,b){return b.ov-a.ov;})[0],worst=ms.slice().sort(function(a,b){return a.ov-b.ov;})[0],main=ms[ms.length-1];
-  if(best)L.push('Match of the night: '+best.label+' at '+best.ov+'%'+(best.fx.filter(function(f){return f.s>0;})[0]?'. '+best.fx.filter(function(f){return f.s>0;})[0].x+'.':'.'));
-  if(worst&&worst!==best&&worst.ov<rep.rating-10){var why=worst.fx.filter(function(f){return f.s<0;})[0];L.push('Low point: '+worst.label+' at '+worst.ov+'%'+(why?'. '+why.x+'.':'.'));}
-  if(main&&main!==best)L.push(main.ov>=rep.rating+4?'The main event delivered at '+main.ov+'%.':(main.ov<rep.rating-3?'The main event ('+main.ov+'%) did not close the show the way it needed to.':'The main event did its job.'));
+  if(best)L.push('Match of the night: '+best.label+', '+starG(best.ov)+(best.fx.filter(function(f){return f.s>0;})[0]?'. '+best.fx.filter(function(f){return f.s>0;})[0].x+'.':'.'));
+  if(worst&&worst!==best&&worst.ov<rep.rating-10){var why=worst.fx.filter(function(f){return f.s<0;})[0];L.push('Low point: '+worst.label+', '+starG(worst.ov)+(why?'. '+why.x+'.':'.'));}
+  if(main&&main!==best)L.push(main.ov>=rep.rating+4?'The main event delivered: '+starG(main.ov)+'.':(main.ov<rep.rating-3?'The main event ('+starG(main.ov)+') did not close the show the way it needed to.':'The main event did its job.'));
   var nf=ms.filter(function(s){return s.fin==='dq'||s.fin==='co'||s.fin==='draw';}).length;if(nf>=2)L.push(nf+' matches without a real finish is too many for one night.');
   var flat=ms.filter(function(s){return s.fx.some(function(f){return /^Nobody to/.test(f.x);});}).length;if(flat>=2)L.push(flat+' matches had nobody to cheer against. Mix your faces and heels.');
   var seen={};rep.segs.forEach(function(s){(s.ids||[]).forEach(function(id){seen[id]=1;});if(s.feud)seen['f'+s.feud]=1;});
@@ -81,7 +81,7 @@ function runShow(S,P,show,card){
     rep.quest=rep.quest||[];
     S.quests.slice().forEach(function(q){
       if(q.type==='sponsor'&&big){if(rep.rating>=q.target){P.led.bonus+=q.bonus;rep.quest.push('Sponsor target hit: +$'+q.bonus.toLocaleString('en-US')+'.');award(S,'ACH_QUEST');}else rep.quest.push('Sponsor target missed ('+q.target+'% needed).');dropQuest(S,q);}
-      if(q.type==='network'&&q.show===show.id){if(q.hit){P.led.bonus+=q.bonus;rep.quest.push('Network target hit: +$'+q.bonus.toLocaleString('en-US')+'.');award(S,'ACH_QUEST');}else rep.quest.push('Network target missed ('+q.target+'% main event needed).');dropQuest(S,q);}
+      if(q.type==='network'&&q.show===show.id){if(q.hit){P.led.bonus+=q.bonus;rep.quest.push('Network target hit: +$'+q.bonus.toLocaleString('en-US')+'.');award(S,'ACH_QUEST');}else rep.quest.push('Network target missed (a '+starG(q.target)+' main event was needed).');dropQuest(S,q);}
     });
     rep.sheet=dirtSheet(S,P,show,rep,inP);
     S.reports.unshift(rep);if(S.reports.length>8)S.reports.length=8;
@@ -96,7 +96,7 @@ function matchQuests(S,P,show,m,sides,win,t,OV,isMain,seg){
   S.quests.slice().forEach(function(q){
     if(q.type==='shot'&&t&&t.id===q.title&&ids.indexOf(q.w)>=0){S.w[q.w].morale=clamp(S.w[q.w].morale+6,0,100);seg.notes.push('Promise kept: '+S.w[q.w].name+' got the title shot.');award(S,'ACH_PROMISE');keptPromise(S,q,true);dropQuest(S,q);}
     else if(q.type==='win'&&win>=0&&m.sides[win].indexOf(q.w)>=0){S.w[q.w].morale=clamp(S.w[q.w].morale+6,0,100);seg.notes.push('Promise kept: '+S.w[q.w].name+' got the win.');award(S,'ACH_PROMISE');keptPromise(S,q,true);dropQuest(S,q);}
-    else if(q.type==='network'&&isMain&&q.show===show.id){q.hit=OV>=q.target;}
+    else if(q.type==='network'&&isMain&&q.show===show.id){q.hit=starMeets(OV,q.target);}
     else if(q.type==='dream'&&show.big&&ids.indexOf(q.a)>=0&&ids.indexOf(q.b)>=0){P.led.bonus+=q.bonus;P.image=clamp(P.image+0.6,5,100);seg.notes.push('The dream match delivered: +$'+q.bonus.toLocaleString('en-US')+' in extra buys.');award(S,'ACH_QUEST');dropQuest(S,q);}
   });
 }

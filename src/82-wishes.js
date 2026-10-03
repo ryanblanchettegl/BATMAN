@@ -256,7 +256,7 @@ function msAward(S,id){if(S.cal||(S.firsts&&S.firsts[id]))return;(S.firsts||(S.f
 SHOWX.push(function(S,P,show,rep){
   if(P.id!==S.player||S.cal)return;var ms=rep.segs.filter(function(s){return s.k==='match';});
   if(rep.sellout)msAward(S,'MS_SELLOUT');if(rep.rating>=80)msAward(S,'MS_SHOW80');
-  if(ms.some(function(s){return s.ov>=90;}))msAward(S,'MS_TOPMATCH');
+  if(ms.some(function(s){return starQ(s.ov)>=18;}))msAward(S,'MS_TOPMATCH');
   if(ms.some(function(s){return s.change;}))msAward(S,'MS_TITLECHANGE');
   if(ms.some(function(s){return s.crown;}))msAward(S,'MS_CROWN');
   ms.forEach(function(s){if(!s.change||!s.wids)return;s.wids.forEach(function(id){var w=S.w[id];if(w&&w.o0!=null&&w.o0<=35&&w.promo===S.player)msAward(S,'MS_BUILT');});});

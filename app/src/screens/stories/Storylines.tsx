@@ -122,7 +122,7 @@ function LongPlan() {
   const st = slice<{ a: string; b: string }>('longplan', () => ({ a: '', b: '' }));
   const R = S.w.filter((w: any) => w.promo === P.id && !w.nw && w.inj <= 0).sort((x: any, y: any) => y.ovr - x.ovr);
   const opts = (skip: string) => [['', 'Pick a wrestler'], ...R.filter((w: any) => String(w.id) !== skip).map((w: any) => [w.id, w.name + ' · ' + Math.round(w.ovr)] as [number | string, string])] as any;
-  const set = () => act(() => { const r = E.setLongPlan(S, +st.a, +st.b, null); say(r.text, { err: !r.ok }); showResult('The long plan', r.text, !r.ok); });
+  const set = () => act(() => { const r = E.setLongPlan(S, +st.a, +st.b, null); if (r.ok) { st.a = ''; st.b = ''; } say(r.text, { err: !r.ok }); showResult('The long plan', r.text, !r.ok); });
   const drop = () => act(() => { const r = E.clearLongPlan(S); say(r.text); showResult('The long plan', r.text); });
   return <Panel title="The long plan">
     {!wk ? <Empty>There is no flagship show in sight.</Empty> : <>

@@ -23,6 +23,12 @@ var STIP = {
 };
 var FIN = {clean:{r:0,wg:1,lg:1},flash:{r:-1,wg:0.7,lg:0.5},cheap:{r:-1,wg:0.6,lg:0.4},interf:{r:-1,wg:0.5,lg:0.25},foiled:{r:1,wg:1.1,lg:0.8},dq:{r:-5,wg:0.2,lg:0.1},co:{r:-6,wg:0.3,lg:0.2},draw:{r:-3,wg:0,lg:0}};
 var LEN = {S:6,M:12,L:20};
+/* How good a match or a segment was is shown to the player as stars, in quarter steps, never as a percentage.
+   starQ is the score in quarter stars (20 = five stars). Anything the player is told to reach is checked in quarter
+   stars too, so what they see and what counts always agree. */
+function starQ(ov){return Math.round(ov/5);}
+function starG(ov){var q=Math.max(1,starQ(ov)),s='',k;for(k=0;k<Math.floor(q/4);k++)s+='★';return s+['','¼','½','¾'][q%4];}
+function starMeets(ov,target){return starQ(ov)>=starQ(target);}
 var PRODF=[0.4,0.7,1,1.45,2.1],PRODN=['Bare bones','Basic','Standard','Slick','State of the art'];
 var RISKN=['Family','Mainstream','Edgy','Extreme'],RISK_STIP=[0.5,1,1.3,1.6],RISK_INJ=[0.8,1,1.15,1.35];
 var TIXN=['Low','Standard','High','Premium'],TIX_P=[0.75,1,1.25,1.6],TIX_D=[1.18,1,0.86,0.68];
@@ -33,8 +39,8 @@ var ACH = [
   {id:'ACH_FIRST_BELL',name:'Opening Bell',desc:'Run your first show.'},
   {id:'ACH_SHOW_80',name:'Solid Outing',desc:'Run a show rated 80% or better.'},
   {id:'ACH_SHOW_90',name:'Blowaway Show',desc:'Run a show rated 90% or better.'},
-  {id:'ACH_MATCH_90',name:'Match of the Year Candidate',desc:'Book a match rated 90% or better.'},
-  {id:'ACH_MATCH_97',name:'Five Stars',desc:'Book a match rated 97% or better.'},
+  {id:'ACH_MATCH_90',name:'Match of the Year Candidate',desc:'Book a match of ★★★★½ or better.'},
+  {id:'ACH_MATCH_97',name:'Five Stars',desc:'Book a five-star match.'},
   {id:'ACH_TITLE_CHANGE',name:'And New!',desc:'Book a title change.'},
   {id:'ACH_CROWN',name:'Filling the Vacancy',desc:'Crown a champion for a vacant title.'},
   {id:'ACH_FEUD_HOT',name:'Blood Feud',desc:'Get a feud to 90 heat.'},
@@ -69,15 +75,15 @@ var ACH = [
   {id:'ACH_HOF',name:'Immortal',desc:'Induct someone into the hall of fame.'},
   {id:'ACH_GRAD',name:'Graduate',desc:'Call up a wrestler who improved in training camp.'},
   {id:'ACH_REFORM',name:'Clear the Air',desc:'Talk a diva or a toxic influence round.'},
-  {id:'ACH_BRUTAL',name:'Left It All in There',desc:'Run a brutal gimmick match rated 90% or better.'},
+  {id:'ACH_BRUTAL',name:'Left It All in There',desc:'Run a brutal gimmick match of ★★★★½ or better.'},
   {id:'ACH_MENTOR',name:'Passing It On',desc:'Put a young wrestler under a mentor.'},
   {id:'ACH_HOUSE',name:'My House, My Rules',desc:'Fill every house rule slot.'},
   {id:'ACH_COURT',name:'Order in the Court',desc:'Give five fair verdicts in wrestlers’ court.'},
-  {id:'ACH_CHAOS',name:'The Show Must Go On',desc:'Get a match of 80% or better out of mid-match chaos.'},
+  {id:'ACH_CHAOS',name:'The Show Must Go On',desc:'Get a match of ★★★★ or better out of mid-match chaos.'},
   {id:'ACH_BREAKOUT',name:'A Star Is Born',desc:'Fill the breakout clock for a young wrestler.'},
   {id:'ACH_FED',name:'Under New Management',desc:'Start your own federation.'},
   {id:'ACH_CREATE',name:'Diamond in the Rough',desc:'Create and sign a wrestler of your own.'},
-  {id:'ACH_PROMO',name:'Pipe Bomb',desc:'Plan an opening promo that scores 85% or better.'},
+  {id:'ACH_PROMO',name:'Pipe Bomb',desc:'Plan an opening promo of ★★★★¼ or better.'},
   {id:'ACH_TRADE',name:'Deal Maker',desc:'Complete a talent trade with a rival promotion.'},
   {id:'ACH_SUPERSHOW',name:'Forbidden Door',desc:'Run a supershow with a rival promotion.'},
   {id:'ACH_WAR',name:'Turf War',desc:'Win a war against an invading promotion.'},
@@ -92,7 +98,7 @@ var ACH = [
   {id:'ACH_TRAD_VET',name:'Old Hand, New Crown',desc:'Crown a ten-year veteran as champion in the traditional company.'},
   {id:'ACH_JOSHI_MERCH',name:'The Longest Table',desc:'Out-sell a bigger company in merchandise for a week with the all-women company.'},
   {id:'MS_SELLOUT',ms:true,name:'First sell-out',desc:'Fill a building to the rafters.'},
-  {id:'MS_TOPMATCH',ms:true,name:'First top-grade match',desc:'Book a match rated 90% or better.'},
+  {id:'MS_TOPMATCH',ms:true,name:'First top-grade match',desc:'Book a match of ★★★★½ or better.'},
   {id:'MS_SHOW80',ms:true,name:'First show of 80% or more',desc:'Run a show rated 80% or better.'},
   {id:'MS_TITLECHANGE',ms:true,name:'First title change',desc:'See a belt change hands on your show.'},
   {id:'MS_CROWN',ms:true,name:'First champion crowned',desc:'Crown a champion for a vacant title.'},
@@ -432,6 +438,7 @@ function autoBook(S,P,show){
     while(card.length>n){var lo=card.filter(function(m){return !m.title&&m._p<45;}).sort(function(a,b){return a._p-b._p;})[0];if(!lo)break;card.splice(card.indexOf(lo),1);}
   }});
   card.sort(function(a,b){return a._p-b._p;});
+  shapeAuto(S,P,card);   // the running order: a quick opener first, no two of a kind together (src/92-shape.js)
   // calls cost booking power: drop the ones the player cannot afford, last asked first
   if(isPl){var g2=0;while(g2++<8&&cardCost(S,card)>S.bp){var pm=card.filter(function(m){return m._q&&m.call!=null;})[0];if(!pm)break;delete pm.call;}}
   card.forEach(function(m){delete m._p;delete m._q;m.win=-2;});
@@ -865,7 +872,7 @@ function doMatch(S,P,show,m,i,n,rep,used){
   ctx.res={win:win,winners:winners,losers:losers,fin:fin,OV:OV,MQ:MQ,CR:CR,seg:seg,upset:upset,endedStreak:endedStreak,pre:pre};
   if(isPl){
     S.stats.matches++;if(OV>S.stats.bestMatch)S.stats.bestMatch=OV;
-    if(OV>=90)award(S,'ACH_MATCH_90');if(OV>=97)award(S,'ACH_MATCH_97');
+    if(starQ(OV)>=18)award(S,'ACH_MATCH_90');if(starQ(OV)>=20)award(S,'ACH_MATCH_97');
     if(win>=0&&lAvg-wAvg>=20&&fin!=='dq'&&fin!=='co')award(S,'ACH_UPSET');
     if(endedStreak)award(S,'ACH_STREAK_END');
     matchQuests(S,P,show,m,sides,win,t,OV,isMain,seg);
@@ -1117,9 +1124,9 @@ function dirtSheet(S,P,show,rep,pool){
   var ms=rep.segs.filter(function(s){return s.k==='match';}),L=[],d=rep.rating-rep.exp,i;
   L.push(d>=4?show.name+' beat every expectation. This is a company on a roll.':(d>=0.5?'A good night. '+show.name+' gave the crowd a little more than they came for.':(d>-0.5?show.name+' was exactly the show people expected. No more, no less.':(d>-4?'A flat night. '+show.name+' came up short of what this audience expects.':show.name+' was a miss. People were leaving before the main event ended.'))));
   var best=ms.slice().sort(function(a,b){return b.ov-a.ov;})[0],worst=ms.slice().sort(function(a,b){return a.ov-b.ov;})[0],main=ms[ms.length-1];
-  if(best)L.push('Match of the night: '+best.label+' at '+best.ov+'%'+(best.fx.filter(function(f){return f.s>0;})[0]?'. '+best.fx.filter(function(f){return f.s>0;})[0].x+'.':'.'));
-  if(worst&&worst!==best&&worst.ov<rep.rating-10){var why=worst.fx.filter(function(f){return f.s<0;})[0];L.push('Low point: '+worst.label+' at '+worst.ov+'%'+(why?'. '+why.x+'.':'.'));}
-  if(main&&main!==best)L.push(main.ov>=rep.rating+4?'The main event delivered at '+main.ov+'%.':(main.ov<rep.rating-3?'The main event ('+main.ov+'%) did not close the show the way it needed to.':'The main event did its job.'));
+  if(best)L.push('Match of the night: '+best.label+', '+starG(best.ov)+(best.fx.filter(function(f){return f.s>0;})[0]?'. '+best.fx.filter(function(f){return f.s>0;})[0].x+'.':'.'));
+  if(worst&&worst!==best&&worst.ov<rep.rating-10){var why=worst.fx.filter(function(f){return f.s<0;})[0];L.push('Low point: '+worst.label+', '+starG(worst.ov)+(why?'. '+why.x+'.':'.'));}
+  if(main&&main!==best)L.push(main.ov>=rep.rating+4?'The main event delivered: '+starG(main.ov)+'.':(main.ov<rep.rating-3?'The main event ('+starG(main.ov)+') did not close the show the way it needed to.':'The main event did its job.'));
   var nf=ms.filter(function(s){return s.fin==='dq'||s.fin==='co'||s.fin==='draw';}).length;if(nf>=2)L.push(nf+' matches without a real finish is too many for one night.');
   var flat=ms.filter(function(s){return s.fx.some(function(f){return /^Nobody to/.test(f.x);});}).length;if(flat>=2)L.push(flat+' matches had nobody to cheer against. Mix your faces and heels.');
   var seen={};rep.segs.forEach(function(s){(s.ids||[]).forEach(function(id){seen[id]=1;});if(s.feud)seen['f'+s.feud]=1;});
@@ -1195,7 +1202,7 @@ function runShow(S,P,show,card){
     rep.quest=rep.quest||[];
     S.quests.slice().forEach(function(q){
       if(q.type==='sponsor'&&big){if(rep.rating>=q.target){P.led.bonus+=q.bonus;rep.quest.push('Sponsor target hit: +$'+q.bonus.toLocaleString('en-US')+'.');award(S,'ACH_QUEST');}else rep.quest.push('Sponsor target missed ('+q.target+'% needed).');dropQuest(S,q);}
-      if(q.type==='network'&&q.show===show.id){if(q.hit){P.led.bonus+=q.bonus;rep.quest.push('Network target hit: +$'+q.bonus.toLocaleString('en-US')+'.');award(S,'ACH_QUEST');}else rep.quest.push('Network target missed ('+q.target+'% main event needed).');dropQuest(S,q);}
+      if(q.type==='network'&&q.show===show.id){if(q.hit){P.led.bonus+=q.bonus;rep.quest.push('Network target hit: +$'+q.bonus.toLocaleString('en-US')+'.');award(S,'ACH_QUEST');}else rep.quest.push('Network target missed (a '+starG(q.target)+' main event was needed).');dropQuest(S,q);}
     });
     rep.sheet=dirtSheet(S,P,show,rep,inP);
     S.reports.unshift(rep);if(S.reports.length>8)S.reports.length=8;
@@ -1210,7 +1217,7 @@ function matchQuests(S,P,show,m,sides,win,t,OV,isMain,seg){
   S.quests.slice().forEach(function(q){
     if(q.type==='shot'&&t&&t.id===q.title&&ids.indexOf(q.w)>=0){S.w[q.w].morale=clamp(S.w[q.w].morale+6,0,100);seg.notes.push('Promise kept: '+S.w[q.w].name+' got the title shot.');award(S,'ACH_PROMISE');keptPromise(S,q,true);dropQuest(S,q);}
     else if(q.type==='win'&&win>=0&&m.sides[win].indexOf(q.w)>=0){S.w[q.w].morale=clamp(S.w[q.w].morale+6,0,100);seg.notes.push('Promise kept: '+S.w[q.w].name+' got the win.');award(S,'ACH_PROMISE');keptPromise(S,q,true);dropQuest(S,q);}
-    else if(q.type==='network'&&isMain&&q.show===show.id){q.hit=OV>=q.target;}
+    else if(q.type==='network'&&isMain&&q.show===show.id){q.hit=starMeets(OV,q.target);}
     else if(q.type==='dream'&&show.big&&ids.indexOf(q.a)>=0&&ids.indexOf(q.b)>=0){P.led.bonus+=q.bonus;P.image=clamp(P.image+0.6,5,100);seg.notes.push('The dream match delivered: +$'+q.bonus.toLocaleString('en-US')+' in extra buys.');award(S,'ACH_QUEST');dropQuest(S,q);}
   });
 }
@@ -1361,8 +1368,8 @@ var EV={
   network:function(S,P){
     if(S.quests.some(function(q){return q.type==='network';}))return null;
     var sh=pick(S,P.shows),target=Math.round((P.mainB[sh.id]||75)+4),bonus=Math.round(P.inc0*0.04/1000)*1000;
-    S.quests.push({id:S.nid++,type:'network',show:sh.id,target:target,bonus:bonus,due:S.week,text:'Network: main event of '+sh.name+' rated '+target+'% or better this week ('+money(bonus)+')'});
-    return {type:'network',text:'The network wants a big main event on '+sh.name+' this week. '+target+'% or better pays a '+money(bonus)+' bonus.'};
+    S.quests.push({id:S.nid++,type:'network',show:sh.id,target:target,bonus:bonus,due:S.week,text:'Network: a main event of '+starG(target)+' or better on '+sh.name+' this week ('+money(bonus)+')'});
+    return {type:'network',text:'The network wants a big main event on '+sh.name+' this week. '+starG(target)+' or better pays a '+money(bonus)+' bonus.'};
   },
   sponsor:function(S,P){
     if(cal(S.week).wom!==4||S.quests.some(function(q){return q.type==='sponsor';}))return null;
@@ -2187,7 +2194,7 @@ function yearEnd(S){
   var woy=by(all,function(w){return w.yp||0;}),mwoy=by(mine,function(w){return w.yp||0;}),imp=by(mine,function(w){return w.ovr-(w.oy==null?w.ovr:w.oy);});
   if(woy&&woy.yp){L.push({k:'Wrestler of the year',v:woy.name+' ('+S.promos[woy.promo].name+')',w:woy.id});mile(S,woy,'award','Wrestler of the year, '+yr);}
   if(mwoy&&mwoy.yp){L.push({k:P.name+' wrestler of the year',v:mwoy.name,w:mwoy.id});addOvr(P,mwoy,1);mwoy.morale=clamp(mwoy.morale+5,0,100);}
-  if(Y.match)L.push({k:'Match of the year',v:Y.match.l+', '+Y.match.ov+'% at '+Y.match.show});
+  if(Y.match)L.push({k:'Match of the year',v:Y.match.l+', '+starG(Y.match.ov)+' at '+Y.match.show});
   if(Y.feud)L.push({k:'Feud of the year',v:Y.feud.l});
   if(Y.show)L.push({k:'Show of the year',v:Y.show.n+', '+Y.show.r+'%'});
   if(imp&&imp.ovr-imp.oy>=2)L.push({k:'Most improved',v:imp.name+' (+'+Math.round(imp.ovr-imp.oy)+' overness)',w:imp.id});
@@ -2489,7 +2496,7 @@ POST.push(function(ctx){
       if(w.cond<35)stressAdd(S,w,4);
     });
   });
-  if(mine&&m.int==='brutal'&&ctx.stip!=='std'&&r.OV>=90)award(S,'ACH_BRUTAL');
+  if(mine&&m.int==='brutal'&&ctx.stip!=='std'&&starQ(r.OV)>=18)award(S,'ACH_BRUTAL');
   if(r.win<0)return;
   if(ctx.t&&r.seg.change)r.winners.forEach(function(w){if(ctx.t.lvl>=3)w.hadTop=true;stressAdd(S,w,-15);});
   else if(ctx.isMain||ctx.big)r.winners.forEach(function(w){stressAdd(S,w,-4);});
@@ -2862,13 +2869,13 @@ POST.push(function(ctx){
     r.winners.forEach(function(w){w.wonWk=S.week;});
     if(hasRule(S,'bonus'))r.losers.forEach(function(w){w.morale=clamp(w.morale-0.6,0,100);});
     if(hasRule(S,'youth'))ctx.all.forEach(function(w){if(w.age<=26&&workRate(w)<w.pot)w.xp+=0.035;});
-    if(ctx.isMain)S.quests.slice().forEach(function(q){if(q.type==='netvow'&&r.OV>=q.target){dropQuest(S,q);ctx.P.led.bonus+=q.bonus;S.clocks.net.v=0;news(S,'money','You kept your promise to the network: a '+r.OV+'% main event. They send a bonus of '+money(q.bonus)+'.');r.seg.notes.push('The network got the main event you promised.');}});
+    if(ctx.isMain)S.quests.slice().forEach(function(q){if(q.type==='netvow'&&starMeets(r.OV,q.target)){dropQuest(S,q);ctx.P.led.bonus+=q.bonus;S.clocks.net.v=0;news(S,'money','You kept your promise to the network: a '+starG(r.OV)+' main event. They send a bonus of '+money(q.bonus)+'.');r.seg.notes.push('The network got the main event you promised.');}});
   }
   if(!c)return;
   if(c.fin)r.seg.finish=c.fin;
   if(c.ko&&S.w[c.ko]){var w=S.w[c.ko];if(w.inj<=0){w.inj=1;w.iz=w.iz||'n';news(S,'injury',w.name+' ('+ctx.P.name+') was hurt at '+ctx.show.name+' and will miss a week.');}}
   if(c.note){r.seg.notes.unshift(c.note);if(r.seg.bc)r.seg.bc.splice(Math.min(2,r.seg.bc.length),0,{t:'note',x:c.note});}
-  if(ctx.isPl&&r.OV>=80)award(S,'ACH_CHAOS');
+  if(ctx.isPl&&starQ(r.OV)>=16)award(S,'ACH_CHAOS');
 });
 
 /* --- clocks: slow pressure you can watch build --- */
@@ -2938,7 +2945,7 @@ EVR.mutiny=function(S,ev,choice,P){
 EVR.netmeet=function(S,ev,choice,P){
   var down=function(){if(P.slot>0){P.slot--;return 'Your show moves to '+SLOTN[P.slot].toLowerCase()+'.';}P.tvRate=Math.round(P.tvRate*0.93);return 'There is no worse slot to give you, so they cut the rights fee instead.';};
   if(choice===0){var sh=P.shows[0],tg=Math.round(clamp(expected(P,sh)+4,40,95)),bonus=Math.round(P.inc0*0.05/1000)*1000;
-    S.quests.push({id:S.nid++,type:'netvow',due:S.week+3,target:tg,bonus:bonus,text:'Promise to the network: a main event of '+tg+'% or better by '+cal(S.week+3).label});return 'You give your word: a main event of '+tg+'% or better within three weeks.';}
+    S.quests.push({id:S.nid++,type:'netvow',due:S.week+3,target:tg,bonus:bonus,text:'Promise to the network: a main event of '+starG(tg)+' or better by '+cal(S.week+3).label});return 'You give your word: a main event of '+starG(tg)+' or better within three weeks.';}
   if(choice===1){S.clocks.net.v=0;return 'You take the hit. '+down();}
   var r=rollCheck(S,ev.checks[2]);ev.roll=r;
   if(r.ok){S.clocks.net.v=0;return rollText(r)+'You remind them what your show does for their Thursday. They back off.';}
@@ -3271,7 +3278,7 @@ POST.push(function(ctx){
   r.winners.forEach(function(w){ystat(S,w)[1]++;if(w.ws===10)mile(S,w,'streak','Reached ten wins in a row');});
   if(ctx.m.mt!=='br')r.losers.forEach(function(w){ystat(S,w)[2]++;});
   if(r.seg.change&&ctx.t)r.winners.forEach(function(w){ystat(S,w)[6]++;mile(S,w,'title','Won the '+P.name+' '+ctx.t.name+' at '+ctx.show.name);});
-  if(ctx.isPl&&r.OV>=97&&ctx.m.mt!=='br')ctx.all.forEach(function(w){mile(S,w,'match','A '+r.OV+'% match at '+ctx.show.name);});
+  if(ctx.isPl&&starQ(r.OV)>=20&&ctx.m.mt!=='br')ctx.all.forEach(function(w){mile(S,w,'match','A five-star match at '+ctx.show.name);});
 });
 E.career=function(S,id){
   var w=S.w[id];if(!w)return null;var Y=w.ys||{},reigns=[];
@@ -3397,7 +3404,7 @@ function planPromo(S,P,show,ctx){
     var cs=ctx.pool.filter(function(x){return x.id!==w.id&&x.g===w.g&&Math.abs(x.ovr-w.ovr)<=10&&!feudOf(S,w.id,x.id)&&(w.team==null||x.team!==w.team);});
     if(cs.length){var tg=pick(S,cs);if(startFeud(S,P,tg,w,30,w.name+' took an unscripted shot at '+tg.name))extra=' An unscripted remark about '+tg.name+' has started something.';}
   }
-  if(ov>=80)gainXp(S,3);if(ov>=85)award(S,'ACH_PROMO');
+  if(ov>=80)gainXp(S,3);if(starQ(ov)>=17)award(S,'ACH_PROMO');
   var seg=angle(kind==='interview'?'Opening promo':'Opening '+PKIND[kind].n.toLowerCase(),text+extra,ov);
   seg.rub={d:D,c:pp.C,ch:pp.Ch,cr:pp.Cr};seg.roll=r;seg.who=w.name;if(pp.f&&pl.topic==='rival')seg.feud=pp.f.id;
   seg.bc=[{t:'note',x:text+extra},{t:'note',x:rollText(r)+'Delivery '+D+', content '+pp.C+', character '+pp.Ch+', crowd '+pp.Cr+' out of 10.'},{t:'col',x:ov>=80?'That is how you open a show.':(ov>=60?'A solid start to the night.':'Well. We have a long show ahead of us to make up for that.')}];
@@ -3534,9 +3541,9 @@ function netPosts(S,P,show,rep){
   var best=ms.slice().sort(function(a,b){return b.ov-a.ov;})[0],worst=ms.slice().sort(function(a,b){return a.ov-b.ov;})[0],main=ms[ms.length-1];
   var mw=main.wi&&main.wi.length?S.w[main.wi[0]]:null,cheap=ms.filter(function(s){return s.fin==='cheap'||s.fin==='interf';}).length,nonf=ms.filter(function(s){return s.fin==='dq'||s.fin==='co'||s.fin==='draw';}).length,clean=ms.filter(function(s){return s.fin==='clean';}).length;
   function add(kind,s,t){out.push({k:kind,s:s,t:t});}
-  if(best.ov>=rep.exp+10)add('smark',1,pick(S,[best.label+' was a clinic. I had the work at '+best.mq+'%.',best.label+'. Bookmark it. '+best.ov+'% and worth every point.','Go out of your way to see '+best.label+'. Best thing this company has done in a while.']));
+  if(best.ov>=rep.exp+10)add('smark',1,pick(S,[best.label+' was a clinic. I had the work at '+starG(best.mq)+'.',best.label+'. Bookmark it. '+starG(best.ov)+' and it earned every one.','Go out of your way to see '+best.label+'. Best thing this company has done in a while.']));
   else if(best.ov<rep.exp+2)add('smark',-1,pick(S,['Not one match tonight worth watching twice. '+best.label+' was the best of it and that is being generous.','Nothing on that card stood out. '+best.label+' was fine, I suppose.','A show with no peak. Even '+best.label+' never got out of second gear.']));
-  if(worst!==best&&worst.ov<rep.rating-12)add('smark',-1,pick(S,['Whoever laid out '+worst.label+' owes me '+worst.mins+' minutes of my life back.',worst.label+' at '+worst.ov+'%. Somebody in that office thought that was a good idea.']));
+  if(worst!==best&&worst.ov<rep.rating-12)add('smark',-1,pick(S,['Whoever laid out '+worst.label+' owes me '+worst.mins+' minutes of my life back.',worst.label+', '+starG(worst.ov)+'. Somebody in that office thought that was a good idea.']));
   ms.forEach(function(s){
     if(s.change)add('casual',1,pick(S,['NEW CHAMPION!!! '+s.win+' did it! I am still shaking.',s.win+' with the '+s.title+'. I did not think they would pull the trigger.']));
     if(s.win&&s.wi&&!s.called&&s.sidesN.length===2){var k=s.sidesN.indexOf(s.win);if(k>=0&&s.odds[k]<=25)add('stats',1,s.win+' had a '+s.odds[k]+'% chance going in by my numbers. My numbers are in the bin.');}
@@ -3591,7 +3598,7 @@ var SAGA={
   reign:{n:'Find your champion',g:function(){return 'Have your champions make four successful title defences.';},need:function(){return 4;},v:function(S,c){return c.cnt.defs;}},
   star:{n:'Make a star',g:function(){return 'Raise one wrestler five points of overness.';},need:function(){return 5;},v:function(S,c){var P=S.promos[S.player],m=0;rosterOf(S,P.id).forEach(function(w){if(w.sg!=null&&w.ovr-w.sg>m)m=w.ovr-w.sg;});return Math.floor(m);}},
   feud:{n:'The rivalry',g:function(){return 'Settle two feuds in the ring.';},need:function(){return 2;},v:function(S,c){return S.stats.feudsDone-c.b.feuds;}},
-  match:{n:'Match of the season',g:function(S,c){return 'Put on a match rated '+c.b.thr+'% or better.';},need:function(){return 1;},v:function(S,c){return c.cnt.m;}},
+  match:{n:'Match of the season',g:function(S,c){return 'Put on a match of '+starG(c.b.thr)+' or better.';},need:function(){return 1;},v:function(S,c){return c.cnt.m;}},
   blood:{n:'New blood',g:function(){return 'Crown two new champions.';},need:function(){return 2;},v:function(S,c){return c.cnt.changes;}},
   roll:{n:'On a roll',g:function(){return 'Beat the crowd’s expectations on six shows.';},need:function(){return 6;},v:function(S,c){return c.cnt.beat;}},
   house:{n:'Full house',g:function(){return 'Sell out three shows.';},need:function(){return 3;},v:function(S,c){return c.cnt.sell;}},
@@ -3630,7 +3637,7 @@ function chronicle(S){
   L.push('Season '+G.n+' ran from '+cal(G.start).label+' to '+cal(S.week).label+'. '+S.booker.name+' ran '+(S.stats.shows-G.b.shows)+' shows.');
   var top=P.titles.filter(function(t){return !t.tag;}).sort(function(a,b){return b.lvl-a.lvl;})[0];
   if(top){var ch=(top.hist||[]).filter(function(h){return h.from>=G.start;}).length;L.push('The '+top.name+' changed hands '+ch+' time'+(ch===1?'':'s')+'. '+(top.holders.length?S.w[top.holders[0]].name+' ended the season as champion.':'It ended the season vacant.'));}
-  var bm=(S.rec.matches||[]).filter(function(m){return m.w>=G.start;})[0];if(bm)L.push('The match people will remember: '+bm.l+', '+bm.ov+'% at '+bm.show+'.');
+  var bm=(S.rec.matches||[]).filter(function(m){return m.w>=G.start;})[0];if(bm)L.push('The match people will remember: '+bm.l+', '+starG(bm.ov)+' at '+bm.show+'.');
   var fd=S.stats.feudsDone-G.b.feuds;L.push(fd?fd+' feud'+(fd===1?' was':'s were')+' settled in the ring.':'Not one feud reached a proper ending.');
   var di=P.image-G.b.image;L.push('Popularity went from '+G.b.image.toFixed(1)+' to '+P.image.toFixed(1)+(di>=1?', a season of growth.':(di<=-1?', a season of decline.':', holding steady.'))+' The bank balance moved by '+money(P.cash-G.b.cash)+'.');
   G.ch.forEach(function(c,i){L.push('Chapter '+(i+1)+', “'+SAGA[c.k].n+'”: '+(c.done?'done in '+cal(c.week).label+'.':'missed.'));});
@@ -3643,7 +3650,7 @@ function chronicle(S){
 POST.push(function(ctx){
   var S=ctx.S,G=S.saga,r=ctx.res;if(!G||!ctx.isPl)return;var c=G.ch[G.i];if(!c||c.done!=null)return;
   if(ctx.t&&r.seg.change)c.cnt.changes++;else if(ctx.t&&ctx.champSide>=0&&r.win===ctx.champSide)c.cnt.defs++;
-  if(r.OV>=c.b.thr)c.cnt.m++;
+  if(starMeets(r.OV,c.b.thr))c.cnt.m++;
 });
 SHOWX.push(function(S,P,show,rep){
   var G=S.saga;if(!G||P.id!==S.player||S.cal)return;var c=G.ch[G.i];if(!c||c.done!=null)return;
@@ -3915,7 +3922,7 @@ function msAward(S,id){if(S.cal||(S.firsts&&S.firsts[id]))return;(S.firsts||(S.f
 SHOWX.push(function(S,P,show,rep){
   if(P.id!==S.player||S.cal)return;var ms=rep.segs.filter(function(s){return s.k==='match';});
   if(rep.sellout)msAward(S,'MS_SELLOUT');if(rep.rating>=80)msAward(S,'MS_SHOW80');
-  if(ms.some(function(s){return s.ov>=90;}))msAward(S,'MS_TOPMATCH');
+  if(ms.some(function(s){return starQ(s.ov)>=18;}))msAward(S,'MS_TOPMATCH');
   if(ms.some(function(s){return s.change;}))msAward(S,'MS_TITLECHANGE');
   if(ms.some(function(s){return s.crown;}))msAward(S,'MS_CROWN');
   ms.forEach(function(s){if(!s.change||!s.wids)return;s.wids.forEach(function(id){var w=S.w[id];if(w&&w.o0!=null&&w.o0<=35&&w.promo===S.player)msAward(S,'MS_BUILT');});});
@@ -5395,7 +5402,7 @@ E.legacy=function(S){
   var score=0;parts.forEach(function(p){score+=p.v;});
   var tl=[{w:1,label:'Took over '+P.name+'.'}];
   if(R.shows[0])tl.push({w:R.shows[0].w,label:'Best show: '+R.shows[0].n+', '+R.shows[0].r+'%.'});
-  if(R.matches[0])tl.push({w:R.matches[0].w,label:'Best match: '+R.matches[0].l+', '+R.matches[0].ov+'%.'});
+  if(R.matches[0])tl.push({w:R.matches[0].w,label:'Best match: '+R.matches[0].l+', '+starG(R.matches[0].ov)+'.'});
   if(R.gate)tl.push({w:R.gate.w,label:'Biggest crowd: '+R.gate.v.toLocaleString('en-US')+' at '+R.gate.n+'.'});
   A.slice(0,4).forEach(function(a){var w0=a.list[0];tl.push({w:(a.week||0),year:a.year,label:'The '+a.year+' awards: '+(w0?w0.k+', '+w0.v+'.':'')});});
   Object.keys(S.ach||{}).filter(function(k){return !/^MS_/.test(k);}).sort(function(a,b){return S.ach[a]-S.ach[b];}).slice(0,10).forEach(function(k){
@@ -6044,7 +6051,7 @@ WEEKX.push(function(S){
   var rd=C.filter(function(w){return w.dv&&w.dv.n>=6&&(w.dvHold==null||S.week>=w.dvHold)&&(workRate(w)>=(w.cw0||999)+5||w.mic>=(w.cm0||999)+8||w.dv.n>=16);}).sort(function(a,b){return b.ovr-a.ovr;});
   if(rd.length){
     var w=rd[0];
-    pushEv(S,{type:'callup',w:w.id,text:w.name+' has been on the camp show for '+w.dv.n+' weeks and has outgrown it. '+(w.dv.best>=70?'Their best match there was rated '+w.dv.best+'%. ':'')+'The crowd at the camp show knows the name.',
+    pushEv(S,{type:'callup',w:w.id,text:w.name+' has been on the camp show for '+w.dv.n+' weeks and has outgrown it. '+(w.dv.best>=70?'Their best match there was '+starG(w.dv.best)+'. ':'')+'The crowd at the camp show knows the name.',
       choices:['Call them up now, with a debut','Another month in camp','Release them']});
   }
 });
@@ -6364,7 +6371,7 @@ WEEKX.push(function(S){
 function starsOf(ov){return (Math.round(ov/20*4)/4).toFixed(2).replace(/0$/,'').replace(/\.$/,'');}
 function boardTouch(S,ms,posts,used){
   // any post that names a match gets its stars
-  posts.forEach(function(p){ms.forEach(function(s){if(s.label&&p.t.indexOf(s.label)>=0&&!/stars\)/.test(p.t)){p.t+=' ('+starsOf(s.ov)+' stars)';}});});
+  posts.forEach(function(p){ms.forEach(function(s){if(s.label&&p.t.indexOf(s.label)>=0&&!/★[¼½¾]?\)$/.test(p.t)){p.t+=' ('+starG(s.ov)+')';}});});
   // somebody always disagrees
   if(posts.length>=2&&chance(S,0.75)){
     var tg=posts[0],kind=tg.s>0?pick(S,['old','heel','stats']):pick(S,['casual','under']);
@@ -6373,7 +6380,7 @@ function boardTouch(S,ms,posts,used){
   }
   return posts;
 }
-E.starsOf=starsOf;
+E.starsOf=starsOf;E.stars=starG;E.starQ=starQ;
 /* the critic */
 var CRITIC='Mortimer Vane';
 function criticScore(w){return (w.cs==null?50:w.cs)*0.6+w.ovr*0.4;}
@@ -6889,6 +6896,142 @@ WEEKX.push(function(S){
   if(S.week>=C.weeks){C.done=true;C.res=SCN[C.id].check(S);C.res.figures=SCN[C.id].figures(S);S.over={why:'scenario',week:S.week};}
 });
 
+/* ===== 92-shape.js ===== */
+/* ---------- The shape of a show ----------
+   How a card is laid out matters as much as what is on it. These are the old rules of the booking office, each one a
+   small push on the crowd that the report names in plain words:
+     1. Open hot. The first match sets the mood, and the next two feel it.
+     2. Peaks and valleys. Not two of the same thing back to back; a promo or an angle lets the crowd breathe.
+     3. The biggest match goes on last (the biggest names, the top title, the hottest feud), with time to work, and
+        not straight after a war.
+     4. Mix the finishes. The third dirty finish of a night means nothing, and a clean sweep for one side kills the room.
+     5. Send them home happy from a big event; leave them wanting more on weekly television.
+   Every company's shows follow the same rules, the rivals' and the sample shows that set expectations included, and the
+   automatic card (autoBook) lays its cards out by them. So a well-shaped card is what the crowd expects, and the player
+   gains by shaping better and loses by ignoring it.
+   The show rating already weighs position: the main event counts three times, the match before it twice, the opener
+   one and a half times (src/30-show.js). E.shape() tells the player all of this before the show. */
+var SH_HOT=70,SH_SLOW=58;
+function shIds(m){return flat(m.sides).filter(function(id){return id!=null;});}
+/** What the running order cares about in one match of a card. Null when the match is not filled in yet. */
+function shFacts(S,P,m){
+  var ids=shIds(m),ws=ids.map(function(id){return S.w[id];}).filter(function(w){return !!w;});
+  if(ws.length<2||ws.length!==flat(m.sides).length)return null;
+  var t=m.title?titleById(P,m.title):null,heat=0,x,y,f;
+  for(x=0;x<ws.length;x++)for(y=x+1;y<ws.length;y++){f=feudOf(S,ws[x].id,ws[y].id);if(f&&f.heat>heat)heat=f.heat;}
+  var star=avg(ws.map(function(w){return w.ovr;})),top=shTopLvl(P);
+  // how big a match is: the names in it, the title on the line, the heat of the feud
+  return {pace:avg(ws.map(function(w){return (w.speed+w.stam)/2;})),star:star,len:m.len||'M',mt:m.mt,stip:m.stip&&m.stip!=='std'?m.stip:null,
+    lvl:t?t.lvl:0,heat:heat,size:star+(t?(t.lvl>=top&&!t.tag?5:1.5):0)+Math.min(5,heat/15)};
+}
+/** How an opener reads: 1 hot, -1 too long, -2 too slow, 0 fine. */
+function shOpener(f){return f.len==='L'?-1:(f.pace>=SH_HOT?1:(f.pace<SH_SLOW?-2:0));}
+function shTopLvl(P){var l=0;P.titles.forEach(function(t){if(!t.tag&&t.lvl>l)l=t.lvl;});return l;}
+var SH_MT={tag:'tag matches','6man':'six-man tags','4way':'four-way matches',br:'battle royals'};
+function shPrev(rep){for(var k=rep.segs.length-1;k>=0;k--)if(rep.segs[k].k==='match')return rep.segs[k];return null;}
+function shBreak(rep){var l=rep.segs[rep.segs.length-1];return !!l&&l.k!=='match';}
+
+/* every match remembers what the running order needs to know about it */
+POST.push(function(ctx){var f=shFacts(ctx.S,ctx.P,ctx.m);if(f)ctx.res.seg.sh={pace:Math.round(f.pace),size:Math.round(f.size*10)/10,len:f.len,mt:f.mt,i:ctx.i};});
+
+/* 1. the opener, and the mood it leaves behind */
+CRX.push(function(ctx){
+  if(ctx.n<3)return null;var f=shFacts(ctx.S,ctx.P,ctx.m);if(!f)return null;
+  if(ctx.i===0){var o=shOpener(f);return o>0?{d:1.5,x:'A fast opener woke the building up'}:(o===-1?{d:-2,x:'A long opener: the crowd was not ready to sit through it'}:(o===-2?{d:-1.5,x:'A slow opener: the building took a while to wake up'}:null));}
+  if(ctx.i>2||ctx.isMain||!ctx.rep)return null;
+  var op=ctx.rep.segs.filter(function(s){return s.k==='match';})[0];if(!op||!op.sh)return null;
+  var tone=shOpener({len:op.sh.len,pace:op.sh.pace})+(op.fin==='dq'||op.fin==='co'||op.fin==='draw'?-1:0)+(op.wi&&op.wi.length&&ctx.S.w[op.wi[0]]&&ctx.S.w[op.wi[0]].align==='F'&&op.fin!=='dq'&&op.fin!=='co'?0.5:0);
+  return tone>=1?{d:1,x:'The opener had them up'}:(tone<=-1?{d:-1,x:'Still flat after the opener'}:null);
+});
+/* 2. peaks and valleys: the same thing twice in a row, with nothing in between */
+CRX.push(function(ctx){
+  if(ctx.i===0||!ctx.rep||shBreak(ctx.rep))return null;var p=shPrev(ctx.rep);if(!p||!p.sh)return null;
+  if((ctx.m.len||'M')==='L'&&p.sh.len==='L'&&!ctx.isMain)return {d:-2,x:'Two long matches back to back'};
+  if(ctx.m.mt!=='1v1'&&ctx.m.mt===p.sh.mt)return {d:-1.5,x:'Two '+(SH_MT[ctx.m.mt]||'matches of the same kind')+' in a row'};
+  return null;
+});
+/* 3. the main event: the biggest match of the night, given time, and not straight after a war */
+CRX.push(function(ctx){
+  if(!ctx.isMain||ctx.n<3||!ctx.rep)return null;var f=shFacts(ctx.S,ctx.P,ctx.m);if(!f)return null;
+  var ms=ctx.rep.segs.filter(function(s){return s.k==='match'&&s.sh;}),big=0;ms.forEach(function(s){if(s.sh.size>big)big=s.sh.size;});
+  if(big>f.size+3)return {d:-2.5,x:'The biggest match of the night was not on last'};
+  if(f.len==='S')return {d:-2,x:'Too short to feel like a main event'};
+  var p=shPrev(ctx.rep);
+  if(p&&!shBreak(ctx.rep)&&p.ov>=85&&p.mins>=12)return {d:-1.5,x:'It had to follow a great match with no break'};
+  if(shBreak(ctx.rep)&&ms.some(function(s){return s.ov>=80;}))return {d:0.8,x:'The crowd caught its breath before the main event'};
+  return null;
+});
+/* 4 and 5. finishes across the night, and how the show ends */
+FINX.push(function(ctx,fin,winners,losers,win){
+  var rep=ctx.rep;if(!rep||ctx.n<3)return null;var sh=rep.shf||(rep.shf={dirty:0,f:0,h:0});
+  var dirty=fin==='cheap'||fin==='interf'||fin==='dq'||fin==='co',heel=win>=0&&winners.length&&winners[0].align==='H',face=win>=0&&winners.length&&winners[0].align==='F',out=null;
+  if(dirty)sh.dirty++;
+  if(dirty&&sh.dirty>=3)out={d:-2,x:'Another dirty finish: by now it meant nothing'};
+  else if(ctx.isMain){
+    if(heel&&sh.h>=3&&!sh.f)out={d:-2,x:'The heels won all night. Nobody had anything to cheer'};
+    else if(face&&sh.f>=4&&!sh.h)out={d:-1,x:'The faces won everything. Nobody was ever in danger'};
+    else if(ctx.big&&face&&!dirty)out={d:1,x:'The crowd went home happy'};
+    else if(!ctx.big&&ctx.feud&&(heel||fin==='interf')&&fin!=='dq'&&fin!=='co'){
+      if(ctx.isPl)ctx.S.hype=(ctx.S.hype||0)+0.03;
+      out={d:0.5,x:'A cliffhanger: they will be back next week to see it answered'};
+    }
+  }
+  if(heel)sh.h++;else if(face)sh.f++;
+  return out;
+});
+
+/** Lay an automatic card out by the rules: the biggest match closes, the best opener the undercard has goes on first,
+    and no two long matches or two multi-person matches of the same kind sit together. Uses no random numbers. */
+function shapeAuto(S,P,card){
+  var n=card.length;if(n<4)return;
+  var best=-1,bs=-99,i,F=card.map(function(m){return shFacts(S,P,m);}),bg=n-1;
+  if(F[n-1]){for(i=0;i<n-1;i++)if(F[i]&&F[i].size>F[bg].size)bg=i;// the names in the main event also sell the tickets (runShow), so a match only moves up if its names are close to as big
+    if(bg!==n-1&&F[bg].size>F[n-1].size+3&&F[bg].star>=F[n-1].star-3){var mv=card.splice(bg,1)[0],was=card[card.length-1];card.push(mv);if(was.len==='L'&&!was.title)was.len='M';mv.len='L';}}
+  best=-1;
+  for(i=0;i<n-2;i++){var m=card[i],f=shFacts(S,P,m);if(!f||m.title||m._q||m.stip&&m.stip!=='std')continue;var sc=(f.len==='L'?-20:0)+f.pace+(m.mt==='1v1'?2:0);if(sc>bs){bs=sc;best=i;}}
+  if(best>0){var op=card.splice(best,1)[0];card.unshift(op);}
+  if(card[0].len==='L'&&!card[0].title)card[0].len='M';
+  var k,t;
+  for(i=1;i<n-2;i++)if(card[i].mt!=='1v1'&&card[i].mt===card[i-1].mt){for(k=i+1;k<n-2;k++)if(card[k].mt!==card[i].mt){t=card[i];card[i]=card[k];card[k]=t;break;}}
+  // a shorter match goes between two long ones (the last two may both be long: that is the top of the card)
+  for(i=n-2;i>=2;i--)if(card[i].len==='L'&&card[i-1].len==='L'){for(k=i-2;k>=1;k--)if(card[k].len!=='L'){t=card.splice(k,1)[0];card.splice(i-1,0,t);break;}}
+}
+
+/** For the booking screen: what each spot on the card is for, and how this card reads against the rules. */
+E.shape=function(S,card){
+  var P=S.promos[S.player],show=S.queue[S.qi],n=card.length,F=card.map(function(m){return shFacts(S,P,m);}),notes=[],roles=[];
+  var add=function(s,t){notes.push({s:s,t:t});};
+  for(var i=0;i<n;i++)roles.push(n<3?'':(i===n-1?'Main event':(i===0?'Opener':(i===n-2&&n>=4?'Semi-main':''))));
+  if(!show||n<3)return {roles:roles,notes:notes,ready:false};
+  var seg={};(S.segs||[]).forEach(function(x){if(x)seg[Math.max(0,Math.min(x.pos,n-1))]=1;});
+  if(F[0]){var o=shOpener(F[0]);add(o>0?1:(o<0?-1:0),o>0?'A fast opener. It will wake the building up, and the next two matches gain from it.':(o===-1?'The opener is a long match. Open with something short and quick, and save the long ones for later.':(o===-2?'The opener is slow. Put your quickest workers on first.':'The opener is fine. A quicker pair would start the show hotter.')));}
+  for(i=1;i<n;i++){
+    if(!F[i]||!F[i-1]||seg[i])continue;
+    if(F[i].len==='L'&&F[i-1].len==='L'&&i!==n-1)add(-1,'Matches '+i+' and '+(i+1)+' are both long. Put a short match, a promo or an angle between them.');
+    else if(F[i].mt!=='1v1'&&F[i].mt===F[i-1].mt)add(-1,'Matches '+i+' and '+(i+1)+' are the same kind. Split them up.');
+  }
+  if(card.filter(function(m){return m.stip&&m.stip!=='std';}).length>=2&&show.rule!=='gimmick_free'&&!modelOf(P).gimFree)add(-1,'More than one gimmick match. The second one loses its punch.');
+  var M=F[n-1];
+  if(M){
+    var big=0,bi=-1;F.forEach(function(f,k){if(f&&k<n-1&&f.size>big){big=f.size;bi=k;}});
+    if(big>M.size+3)add(-1,'Match '+(bi+1)+' is a bigger match than the main event. The biggest match goes on last: the biggest names, the top title, the hottest feud.');else add(1,'The biggest match is on last.');
+    if(M.len==='S')add(-1,'The main event is short. Give it time.');
+    if(seg[n-1])add(1,'A promo or an angle sits before the main event. The crowd gets a breather.');
+    else if(F[n-2]&&F[n-2].len==='L')add(0,'A long match runs straight into the main event. If it is a great one, the main event has to follow it with no break.');
+  }
+  return {roles:roles,notes:notes,ready:F.every(function(f){return !!f;})};
+};
+/** The rules, for the guide window. */
+E.SHAPE_GUIDE=[
+  {n:'Open hot',d:'The first match sets the mood for the night. Put quick workers on first and keep it short. A fast opener lifts itself and the next two matches. A long or slow one drags them down.'},
+  {n:'Peaks and valleys',d:'A crowd cannot shout all night. Do not put two long matches, or two matches of the same kind, back to back. A promo or an angle between two big matches gives everybody a breather.'},
+  {n:'The biggest match goes on last',d:'The main event is what they paid for: the biggest names, the top title, or the hottest feud. It counts three times in the show’s rating, the match before it counts twice, and the opener one and a half times. If a bigger match runs earlier, the main event suffers.'},
+  {n:'Give the main event time',d:'A short main event does not feel like one. And do not make it follow a war: if the match before it is a great one, put a promo or an angle in between.'},
+  {n:'One gimmick match a night',d:'A cage or a ladder is special once. The second gimmick match of the night falls flat.'},
+  {n:'Mix the finishes',d:'A clean win means something. The third dirty finish in one night means nothing. If the heels win everything, or the faces do, the room goes quiet.'},
+  {n:'Send them home happy, or wanting more',d:'A big event should end with the crowd on its feet: a face winning clean. Weekly television can end on a cliffhanger. A heel getting the better of a feud in the last match brings more people back next week.'}
+];
+
 /* ===== 93-segments.js ===== */
 /* Promos and angles the player books, beside the matches. A show has a few segment slots (P.angles on weekly TV,
    two at a big event). A slot the player leaves alone is filled by the writers on the night, as before (genAngle).
@@ -7058,7 +7201,7 @@ E.setSeg=function(S,slot,sg){
   var clean={k:sg.k,who:(sg.who||[]).slice(0,SEGK[sg.k]?SEGK[sg.k].roles.length:0).map(function(x){return +x;}),pos:Math.max(0,sg.pos|0)},why=segWhy(S,clean,slot);
   if(why)return {ok:false,msg:why};
   L[slot]=clean;var lk=segLook(S,clean,slot);
-  return {ok:true,msg:'Booked: '+segLabel(S,clean)+'. It should score about '+lk.mid+'%.'};
+  return {ok:true,msg:'Booked: '+segLabel(S,clean)+'. It should be about '+starG(lk.mid)+'.'};
 };
 /** Fill the empty slots with sensible segments: the hottest feud first, then a champion who needs a challenger, then the best talker.
     `max` limits how many are filled, so a suggested card can pencil in one and leave the rest to the writers. */
@@ -7132,7 +7275,7 @@ SHOWX.push(function(S,P,show,rep){
   if(ml&&h01(key+'L')<0.6)netStarPost(S,ml,netPickH(NET_LOSE,key+'l'),key+'l');
   ms.forEach(function(s,i){if(s!==main&&s.change&&s.wi&&s.wi.length){var cw=S.w[s.wi[0]];if(cw)netStarPost(S,cw,netPickH(NET_NEW,key+'c'+i),key+'c'+i);}});
   netPost(S,'c',netHandle(P.name),P.full||P.name,(rep.att?rep.att.toLocaleString('en-US')+' of you in the building':'A full night')+' for '+rep.name+'. '+(rep.sellout?'A sell-out. ':'')+'Thank you.',netLikes(P.image*P.image*2,key+'co'));
-  netPost(S,'p',netHandle(S.columnist||'The Ringside Wire'),S.columnist||'The Ringside Wire',best.label+' at '+rep.name+': '+starsOf(best.ov)+' stars. The show came in at '+rep.rating+'%'+(d>=3?', better than expected.':(d<=-3?', short of what the crowd expected.':'.')),netLikes(900,key+'pr'));
+  netPost(S,'p',netHandle(S.columnist||'The Ringside Wire'),S.columnist||'The Ringside Wire',best.label+' at '+rep.name+': '+starG(best.ov)+'. The show came in at '+rep.rating+'%'+(d>=3?', better than expected.':(d<=-3?', short of what the crowd expected.':'.')),netLikes(900,key+'pr'));
   var fan=FANS[Math.floor(h01(key+'f')*FANS.length)%FANS.length][0],word=d>=4?'great':(d<=-4?'bad':'solid');
   netPost(S,'f','@'+fan,fan,fill(netPickH(NET_FAN,key+'ft'),{best:best.label,win:main.win||'nobody',lose:ml?ml.name:'the other side',show:rep.name,word:word}),netLikes(120,key+'fl'));
 });
@@ -7171,7 +7314,7 @@ function netRumours(S,wk){
 function netSheet(S,wk){
   var P=S.promos[S.player],news=S.news.filter(function(x){return x.w===wk;}),reps=S.reports.filter(function(r){return r.week===wk&&r.promo===P.id;}).reverse();
   var yours=reps.map(function(r){return {show:r.name,rating:r.rating,exp:r.exp==null?null:Math.round(r.exp*10)/10,big:!!r.big,lines:r.sheet&&r.sheet.lines?r.sheet.lines.slice(0,5):[]};});
-  var best=null;reps.forEach(function(r){r.segs.forEach(function(s){if(s.k==='match'&&(!best||s.ov>best.ov))best={label:s.label,ov:s.ov,show:r.name,stars:starsOf(s.ov)};});});
+  var best=null;reps.forEach(function(r){r.segs.forEach(function(s){if(s.k==='match'&&(!best||s.ov>best.ov))best={label:s.label,ov:s.ov,show:r.name,stars:starG(s.ov)};});});
   var lead=null,d=reps.length?avg(reps.map(function(r){return r.rating-(r.exp==null?r.rating:r.exp);})):0,tn=news.filter(function(x){return x.k==='title';})[0];
   if(tn)lead={head:'Gold changes hands',text:tn.t};
   else if(reps.length&&d>=5)lead={head:'A big week for '+P.name,text:'The shows beat what the crowd expected by '+d.toFixed(1)+' points. People are talking.'};

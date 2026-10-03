@@ -18,6 +18,7 @@ node test-editor.js                                 # the World Editor's engine 
 node test-create.js                                 # shows and belts made during a game, and what rivals add each year
 node test-segments.js                               # promos and angles the player books beside the matches
 node test-tasks.js                                  # this week's tasks, and how they hold a show and the week
+node test-shape.js                                  # the running order rules, and stars instead of percentages
 node tools/build-public-domain.js                   # rebuild universes/public_domain.json after editing rosters
 python3 tools/build-font.py                         # rebuild app/fonts/ewf-blocks.woff2 (needs fonttools, brotli)
 ```
@@ -28,7 +29,7 @@ Browser tests need Playwright with Chromium. Build first, then run from the repo
 NODE_PATH=<dir containing playwright> node app/tests/<name>.js
 ```
 
-`<name>` is one of `start`, `office`, `booking`, `roster`, `stories`, `company`, `cards`, `journey`, `linker`, `save`, `sweep`, `challenge`, `scenarios`, `editor`, `create`, `leaveout`, `segments`, `net`, `tasks`. `journey.js` takes `MODES=desk,phone,tablet,tv` and `WEEKS=5`. Each test prints its failures and exits non-zero if any. They are slow (one to five minutes each); run the ones for the section you touched, then `journey.js`.
+`<name>` is one of `start`, `office`, `booking`, `roster`, `stories`, `company`, `cards`, `journey`, `linker`, `save`, `sweep`, `challenge`, `scenarios`, `editor`, `create`, `leaveout`, `segments`, `net`, `tasks`, `shape`. `journey.js` takes `MODES=desk,phone,tablet,tv` and `WEEKS=5`. Each test prints its failures and exits non-zero if any. They are slow (one to five minutes each); run the ones for the section you touched, then `journey.js`.
 
 ## How the code is laid out
 
@@ -37,6 +38,7 @@ NODE_PATH=<dir containing playwright> node app/tests/<name>.js
 - `app/src/`: the interface in Preact and TypeScript. `store.ts` holds the game and view state, `nav.ts` the screen map, `input.ts` screen modes and remote or gamepad focus, `kit/` the building blocks, `screens/<section>/` one folder per section, `shared/` pieces used by more than one section.
 - `src/86-editor.js` and `app/src/screens/editor/`: the World Editor, opened from the title screen. It edits a universe package (plain JSON kept with the player's other worlds), never a running game. Every change goes through an `E.ed*` function so it can be tested headless.
 - `src/87-create.js` and `app/src/screens/manage/Create.tsx`: belts and weekly shows made during a game. A new show scales the company's overheads the way `calibrateCosts()` did for the shows it started with, and copies the main show's crowd expectations.
+- `src/92-shape.js` and `app/src/screens/booking/Shape.tsx`: the running order. Where a match sits on the card changes how it lands (opener, back-to-back, main event, finishes across the night). `E.shape(S, card)` reads a card before the show; `shapeAuto()` lays out automatic cards by the same rules.
 - `src/93-segments.js` and `app/src/screens/booking/Segments.tsx`: promos and angles the player books on the run sheet. A slot left alone goes to the writers (`genAngle`).
 - `src/94-net.js` and `app/src/screens/net/`: the Net section (dirt sheet, the feed, the boards). It reads the game and never uses `rnd(S)`; lines are picked with `h01()`, so a post can never change how a game plays out.
 - `src/95-tasks.js` and `app/src/screens/office/Tasks.tsx`: this week's tasks on the desk. The engine lists them and answers `E.taskGate(S, 'book' | 'show' | 'week')`; the screens do the stopping, so headless games never wait. A new thing the player should fill in each week gets a task: push a function onto `TASKX`.
@@ -54,6 +56,7 @@ NODE_PATH=<dir containing playwright> node app/tests/<name>.js
 6. **Seven sections:** Office (the desk, Career), Booking, Roster (Roster, Locker room, Titles, Free agents), Stories (Storylines, History), Net (Dirt sheet, The feed, The boards), Manage (Operations, House, Deals), Company (Overview, Finances, World). Net is information only, like Company. Manage holds every choice; Company is information only; the desk opens on "Before the show".
 7. **Readable first.** Ryan's design goal is the pull of "one more turn" with screens that are easy to read and quick to act on. Every action shows its result at once. Prefer a pop-up or a short note to another panel.
 8. **Plain writing in the game and in docs.** Short sentences, no jargon, no em dashes in new text.
+8a. **Stars, not percentages.** How good a match, promo or angle was is shown as stars (`stars()` in the kit, `starG()` in the engine), never as a number. A target about a match is worded in stars and checked with `starMeets()`. Chances stay percentages (rule 4). The show's own score is still a percentage.
 8b. **Money:** short form (`cash()`, `$1.2M`) in tables and lists; full form (`full()`, `$1,200,000`) for a single headline figure.
 9. **Saves:** the save is `S` under the key `ewf9000-save-4`. A change that breaks old saves needs a version bump and a migration.
 10. **Commits:** small, with a message that says what changed for the player. Tick the boxes in `TASKS.md` in the same commit.

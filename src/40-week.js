@@ -138,8 +138,8 @@ var EV={
   network:function(S,P){
     if(S.quests.some(function(q){return q.type==='network';}))return null;
     var sh=pick(S,P.shows),target=Math.round((P.mainB[sh.id]||75)+4),bonus=Math.round(P.inc0*0.04/1000)*1000;
-    S.quests.push({id:S.nid++,type:'network',show:sh.id,target:target,bonus:bonus,due:S.week,text:'Network: main event of '+sh.name+' rated '+target+'% or better this week ('+money(bonus)+')'});
-    return {type:'network',text:'The network wants a big main event on '+sh.name+' this week. '+target+'% or better pays a '+money(bonus)+' bonus.'};
+    S.quests.push({id:S.nid++,type:'network',show:sh.id,target:target,bonus:bonus,due:S.week,text:'Network: a main event of '+starG(target)+' or better on '+sh.name+' this week ('+money(bonus)+')'});
+    return {type:'network',text:'The network wants a big main event on '+sh.name+' this week. '+starG(target)+' or better pays a '+money(bonus)+' bonus.'};
   },
   sponsor:function(S,P){
     if(cal(S.week).wom!==4||S.quests.some(function(q){return q.type==='sponsor';}))return null;

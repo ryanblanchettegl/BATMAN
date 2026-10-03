@@ -9,6 +9,7 @@ One hundred ideas and refinements, built by the build thread in five batches of 
 - **Engine first.** Each batch has one new engine file and one headless test. Use the hook lists (`WEEKX`, `SHOWX`, `POST`, `NEWX`, `MQX`, `CRX`, `EFX`) before editing core files. New fields on `S`, a wrestler or a promotion need a default when missing, so old saves load.
 - **Do not make pages longer.** Ryan wants screens that are easy to read and quick to act on. A new thing shows up as one line, a button, or a row in a list that is already there, and opens a window (`openModal`, a `Window` from the kit) or a pop-up card for the detail. New windows go in new files inside your batch's folders. Keep edits to existing page files to a line or two.
 - **Say what happened.** Every action shows its result at once (`say()` or a line in the window). Every system the player cannot see is not done.
+- **Version 0.15:** how good a match or a segment was is always shown as stars (`stars()` in the kit, `starG()` in the engine), never a percentage or a letter grade. The running order (`src/92-shape.js`) names each spot on the card and its rules; build on it, do not add a second set of placement rules.
 - **Since this list was written (version 0.14):** promos and angles are booked on the run sheet (`src/93-segments.js`), Net is its own section, and the desk has **This week's tasks** (`src/95-tasks.js`). Anything the player should fill in or answer goes on that list through the `TASKX` hook, with a button that goes to it. Do not add a panel or an alert for it.
 - Stay inside your batch's files. Do not edit `TASKS.md`, `NEXT.md`, `CLAUDE.md`, `build.js`, `app/src/screens/editor/`, `app/src/screens/booking/Card.tsx`, `Editor.tsx` or `app/src/screens/manage/Operations.tsx`. Only batch D edits `store.ts`, `input.ts`, `flow.ts`, `app.tsx`, `shell/` and `screens/start/`. Put styles in your section's existing CSS file.
 - One idea, one commit. Tick its box here in the same commit, in your batch's section only. Commit sources only: never `git add` `dist/` or `engine.js`.
@@ -133,7 +134,7 @@ Engine: `src/96-ideas-world.js`. Screens: `app/src/screens/company/World.tsx`, `
 - [ ] **E9. Attendance records.** Each company's record gates, kept for the world. Breaking one is news.
 - [ ] **E10. More voices.** Sixty new commentary lines keyed to styles, finishes, stakes and history between the two.
 - [ ] **E11. After the show.** Two wrestlers say a line each after the show, reflecting how they feel about how they were booked.
-- [ ] **E12. Grades by place on the card.** Your openers, mid-card and main events: average grade for each over eight weeks, so you can see where shows sag.
+- [ ] **E12. Stars by place on the card.** Your openers, mid-card and main events: average star rating for each over eight weeks, so you can see where shows sag. Use the spot names from `src/92-shape.js`.
 - [ ] **E13. The world calendar.** What every company runs this month and next, in one list.
 - [ ] **E14. The going rate.** Wages for each level of the card drift with how hard companies are competing. World shows this year's rate against last.
 - [ ] **E15. Where are they now.** Retired and released names from your company: what they are doing today.

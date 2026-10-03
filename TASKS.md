@@ -52,6 +52,8 @@ Two more lists sit beside this one, both finished:
 | Booking | Booking a show means booking matches, promos and angles. The player picks all three. |
 | Net | Net is its own section at the top of the screen: the dirt sheet, a feed of short posts, and boards with threads. All under invented names. That makes seven sections. |
 | The week's tasks | The Office desk lists every task for the week (commentators not assigned, sponsor offers waiting, and so on). Anything that should be filled in is filled in, or waved off, before a show is booked or the week ends. |
+| Stars, not percentages | How good a match, a promo or an angle was is shown as a star rating out of five, in quarter steps. Never as a percentage. Targets about a match are worded and checked in stars too. (The show's own score is still a percentage; Ryan has not said to change it.) |
+| How a show is laid out | The game follows the old rules of the booking office and tells the player what they are: open hot, peaks and valleys, the biggest match on last with time to work, mix the finishes, send them home happy or wanting more. Where a match sits changes how it lands. |
 | Growing a company | A company adds titles and shows every year. So belts and weekly shows can be created inside a running game, not only in the World Editor, and rival companies add their own once a year. |
 | World Editor | The creation suite is its own page called **World Editor** on the title screen. A player builds a world from scratch (companies, shows, belts, wrestlers) and uploads it to the Workshop. This is the main next item. |
 
@@ -104,6 +106,22 @@ Code: `src/87-create.js` (`E.makeShow`, `E.dropShow`, `E.makeTitle`, `E.dropTitl
 - [x] A show cannot be booked or run, and the week cannot end, while a task is open. A task is done by doing it or by **Not this week** (back next week if still open). The inbox and the house style cannot wait.
 - [x] Options has "This week's tasks come first: On / Off" for players who want reminders only.
 - [ ] More tasks as systems land: arena pick, TV deal renewals, the year planner, an unbooked promo slot.
+
+### 0d. The running order, and stars (version 0.15)
+
+Ryan: "look up the philosophy of booking a wrestling show, the importance of the opening match, main event and so on, and incorporate it. Also I do not want to see a percentage on how good the match was, just a star rating."
+
+**The running order.** Code: `src/92-shape.js`, `app/src/screens/booking/Shape.tsx`. Tests: `node test-shape.js`, `app/tests/shape.js`.
+- [x] Seven rules, each a small push on the crowd that the report names in plain words: open hot (and the next two matches feel it); peaks and valleys (not two long matches or two of a kind back to back, unless a promo or angle sits between); the biggest match goes on last (names, top title, hottest feud); give the main event time and do not make it follow a great match with no break; one gimmick match a night; mix the finishes (the third dirty finish means nothing, a clean sweep for one side kills the room); a big event ends with a face winning clean, weekly television can end on a cliffhanger that brings more people next week.
+- [x] Every spot on the card is named on the run sheet and in the report: Opener, Semi-main, Main event.
+- [x] **Running order** notes beside the card read the card against the rules before the show, with a "How a show should flow" window that spells them out, including that the main event counts three times in the rating, the semi-main twice and the opener one and a half times.
+- [x] Suggested cards and rival cards are laid out by the same rules, so a well-shaped card is what the crowd expects. Measured over 60 weeks for all nine companies: rating minus expectation moved by less than 0.7 either way.
+- [ ] Title changes are not counted yet (two in one night should mean less). The second match as the place to teach a rookie is idea A16.
+
+**Stars.**
+- [x] Matches, promos and angles show a star rating and nothing else: the report, the broadcast, History, the dirt sheet, the boards, wrestler cards, the season review, the end-of-game page. The work, the crowd and effort are bars with no number.
+- [x] Network targets, promises, season goals and achievements about a match are worded in stars and checked in quarter stars, so "★★★★½ or better" is met by any match that shows ★★★★½.
+- [ ] The show's own score, and what the crowd expects, are still percentages.
 
 ### 1. Finish the pop-ups (small)
 Feature list items 10 and 11. Code: `app/src/shared/cards.tsx`, `Name`, `TitleName`, `TeamName` and `Txt` in `app/src/kit/index.tsx`, the card stack in `app/src/store.ts`.

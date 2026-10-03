@@ -19,6 +19,12 @@ var STIP = {
 };
 var FIN = {clean:{r:0,wg:1,lg:1},flash:{r:-1,wg:0.7,lg:0.5},cheap:{r:-1,wg:0.6,lg:0.4},interf:{r:-1,wg:0.5,lg:0.25},foiled:{r:1,wg:1.1,lg:0.8},dq:{r:-5,wg:0.2,lg:0.1},co:{r:-6,wg:0.3,lg:0.2},draw:{r:-3,wg:0,lg:0}};
 var LEN = {S:6,M:12,L:20};
+/* How good a match or a segment was is shown to the player as stars, in quarter steps, never as a percentage.
+   starQ is the score in quarter stars (20 = five stars). Anything the player is told to reach is checked in quarter
+   stars too, so what they see and what counts always agree. */
+function starQ(ov){return Math.round(ov/5);}
+function starG(ov){var q=Math.max(1,starQ(ov)),s='',k;for(k=0;k<Math.floor(q/4);k++)s+='★';return s+['','¼','½','¾'][q%4];}
+function starMeets(ov,target){return starQ(ov)>=starQ(target);}
 var PRODF=[0.4,0.7,1,1.45,2.1],PRODN=['Bare bones','Basic','Standard','Slick','State of the art'];
 var RISKN=['Family','Mainstream','Edgy','Extreme'],RISK_STIP=[0.5,1,1.3,1.6],RISK_INJ=[0.8,1,1.15,1.35];
 var TIXN=['Low','Standard','High','Premium'],TIX_P=[0.75,1,1.25,1.6],TIX_D=[1.18,1,0.86,0.68];
@@ -29,8 +35,8 @@ var ACH = [
   {id:'ACH_FIRST_BELL',name:'Opening Bell',desc:'Run your first show.'},
   {id:'ACH_SHOW_80',name:'Solid Outing',desc:'Run a show rated 80% or better.'},
   {id:'ACH_SHOW_90',name:'Blowaway Show',desc:'Run a show rated 90% or better.'},
-  {id:'ACH_MATCH_90',name:'Match of the Year Candidate',desc:'Book a match rated 90% or better.'},
-  {id:'ACH_MATCH_97',name:'Five Stars',desc:'Book a match rated 97% or better.'},
+  {id:'ACH_MATCH_90',name:'Match of the Year Candidate',desc:'Book a match of ★★★★½ or better.'},
+  {id:'ACH_MATCH_97',name:'Five Stars',desc:'Book a five-star match.'},
   {id:'ACH_TITLE_CHANGE',name:'And New!',desc:'Book a title change.'},
   {id:'ACH_CROWN',name:'Filling the Vacancy',desc:'Crown a champion for a vacant title.'},
   {id:'ACH_FEUD_HOT',name:'Blood Feud',desc:'Get a feud to 90 heat.'},
@@ -65,15 +71,15 @@ var ACH = [
   {id:'ACH_HOF',name:'Immortal',desc:'Induct someone into the hall of fame.'},
   {id:'ACH_GRAD',name:'Graduate',desc:'Call up a wrestler who improved in training camp.'},
   {id:'ACH_REFORM',name:'Clear the Air',desc:'Talk a diva or a toxic influence round.'},
-  {id:'ACH_BRUTAL',name:'Left It All in There',desc:'Run a brutal gimmick match rated 90% or better.'},
+  {id:'ACH_BRUTAL',name:'Left It All in There',desc:'Run a brutal gimmick match of ★★★★½ or better.'},
   {id:'ACH_MENTOR',name:'Passing It On',desc:'Put a young wrestler under a mentor.'},
   {id:'ACH_HOUSE',name:'My House, My Rules',desc:'Fill every house rule slot.'},
   {id:'ACH_COURT',name:'Order in the Court',desc:'Give five fair verdicts in wrestlers’ court.'},
-  {id:'ACH_CHAOS',name:'The Show Must Go On',desc:'Get a match of 80% or better out of mid-match chaos.'},
+  {id:'ACH_CHAOS',name:'The Show Must Go On',desc:'Get a match of ★★★★ or better out of mid-match chaos.'},
   {id:'ACH_BREAKOUT',name:'A Star Is Born',desc:'Fill the breakout clock for a young wrestler.'},
   {id:'ACH_FED',name:'Under New Management',desc:'Start your own federation.'},
   {id:'ACH_CREATE',name:'Diamond in the Rough',desc:'Create and sign a wrestler of your own.'},
-  {id:'ACH_PROMO',name:'Pipe Bomb',desc:'Plan an opening promo that scores 85% or better.'},
+  {id:'ACH_PROMO',name:'Pipe Bomb',desc:'Plan an opening promo of ★★★★¼ or better.'},
   {id:'ACH_TRADE',name:'Deal Maker',desc:'Complete a talent trade with a rival promotion.'},
   {id:'ACH_SUPERSHOW',name:'Forbidden Door',desc:'Run a supershow with a rival promotion.'},
   {id:'ACH_WAR',name:'Turf War',desc:'Win a war against an invading promotion.'},
@@ -88,7 +94,7 @@ var ACH = [
   {id:'ACH_TRAD_VET',name:'Old Hand, New Crown',desc:'Crown a ten-year veteran as champion in the traditional company.'},
   {id:'ACH_JOSHI_MERCH',name:'The Longest Table',desc:'Out-sell a bigger company in merchandise for a week with the all-women company.'},
   {id:'MS_SELLOUT',ms:true,name:'First sell-out',desc:'Fill a building to the rafters.'},
-  {id:'MS_TOPMATCH',ms:true,name:'First top-grade match',desc:'Book a match rated 90% or better.'},
+  {id:'MS_TOPMATCH',ms:true,name:'First top-grade match',desc:'Book a match of ★★★★½ or better.'},
   {id:'MS_SHOW80',ms:true,name:'First show of 80% or more',desc:'Run a show rated 80% or better.'},
   {id:'MS_TITLECHANGE',ms:true,name:'First title change',desc:'See a belt change hands on your show.'},
   {id:'MS_CROWN',ms:true,name:'First champion crowned',desc:'Crown a champion for a vacant title.'},
@@ -428,6 +434,7 @@ function autoBook(S,P,show){
     while(card.length>n){var lo=card.filter(function(m){return !m.title&&m._p<45;}).sort(function(a,b){return a._p-b._p;})[0];if(!lo)break;card.splice(card.indexOf(lo),1);}
   }});
   card.sort(function(a,b){return a._p-b._p;});
+  shapeAuto(S,P,card);   // the running order: a quick opener first, no two of a kind together (src/92-shape.js)
   // calls cost booking power: drop the ones the player cannot afford, last asked first
   if(isPl){var g2=0;while(g2++<8&&cardCost(S,card)>S.bp){var pm=card.filter(function(m){return m._q&&m.call!=null;})[0];if(!pm)break;delete pm.call;}}
   card.forEach(function(m){delete m._p;delete m._q;m.win=-2;});
