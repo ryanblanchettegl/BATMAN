@@ -26,10 +26,18 @@ export function Tabs(p: { label: string; items: TabItem[]; value: string; onPick
 }
 export type Opt = [string | number, string];
 /** A drop-down. `options` are [value, label] pairs; `groups` adds labelled groups after them. */
+let jump = { buf: '', at: 0 };
+/** In a long list, typing letters jumps to the first name that starts with them. Needed where the browser's own jump is not reached (remote, gamepad, on-screen keyboard). */
+function typeAhead(e: KeyboardEvent) {
+  const el = e.currentTarget as HTMLSelectElement;
+  if (el.options.length <= 20 || e.key.length !== 1 || e.ctrlKey || e.metaKey || e.altKey || e.key === ' ') return;
+  const now = Date.now(); jump.buf = (now - jump.at > 900 ? '' : jump.buf) + e.key.toLowerCase(); jump.at = now;
+  for (let i = 0; i < el.options.length; i++) if (el.options[i].text.toLowerCase().indexOf(jump.buf) === 0) { e.preventDefault(); el.selectedIndex = i; el.dispatchEvent(new Event('change', { bubbles: true })); return; }
+}
 export function Sel(p: { id?: string; value: string | number | null | undefined; options: Opt[]; groups?: { label: string; options: Opt[] }[]; onChange: (v: string) => void; label?: string; t?: string; d?: Data; disabled?: boolean }) {
   const cur = p.value == null ? '' : String(p.value);
   const opt = (o: Opt) => <option value={String(o[0])} selected={String(o[0]) === cur}>{o[1]}</option>;
-  return <select id={p.id} aria-label={p.label} disabled={p.disabled} onChange={e => p.onChange((e.currentTarget as HTMLSelectElement).value)} {...dataAttrs(p.t, p.d)}>
+  return <select id={p.id} aria-label={p.label} disabled={p.disabled} onKeyDown={typeAhead} onChange={e => p.onChange((e.currentTarget as HTMLSelectElement).value)} {...dataAttrs(p.t, p.d)}>
     {p.options.map(opt)}
     {(p.groups || []).filter(g => g.options.length).map(g => <optgroup label={g.label}>{g.options.map(opt)}</optgroup>)}
   </select>;
