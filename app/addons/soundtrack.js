@@ -5,7 +5,8 @@ var AC = null;
 /* ---------- soundtrack: a small rock band synthesised in the browser, sequenced like a MIDI file ---------- */
 var MKEY = 'gorilla-position-music';
 var MP = (function () { var o = {}; try { o = JSON.parse(localStorage.getItem(MKEY) || '{}') || {}; } catch (e) {} return { on: o.on !== false, vol: o.vol != null ? +o.vol : 0.6, off: o.off || {}, cur: o.cur || '', shuf: !!o.shuf }; })();
-function saveMus() { try { localStorage.setItem(MKEY, JSON.stringify(MP)); } catch (e) {} }
+function musMark() { try { document.documentElement.setAttribute('data-music', MP.on ? 'on' : 'off'); } catch (e) {} }
+function saveMus() { try { localStorage.setItem(MKEY, JSON.stringify(MP)); } catch (e) {} musMark(); }
 var STD_S = '....x.......x...', H8 = 'x.x.x.x.x.x.x.x.';
 var TRACKS = [
   { id: 'main', n: 'Main Event', d: 'Driving hard rock', bpm: 144, root: 40, sc: 'min', form: 'AABBAABBCCBB', sec: {
@@ -164,6 +165,6 @@ function jkBoot() {
     e.stopPropagation();
   }, true);
 }
-jkBoot();
+jkBoot(); musMark();
 window.EWF_MUSIC = { tracks: TRACKS, state: MUS, start: musStart, stop: musStop, setup: musSetup, ctx: function () { return AC; } };
 })();
