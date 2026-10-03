@@ -33,7 +33,7 @@ Small jobs, each one commit. None of them needs a decision from Ryan. Read `CLAU
 - [x] **16.** Unit-test the name linker (`Txt` in `app/src/kit/index.tsx`) through the browser: names with a full stop, a comma, an apostrophe; a short name inside a longer word must not link; a title name; a named tag team.
 - [x] **17.** `app/tests/cards.js`: add a tablet pass, a stack four deep with Back in the right order, and a retired wrestler's card.
 - [x] **18.** Run `app/tests/journey.js` once as the all-women company (`kjp`) and once as the lucha spectacle (`ldd`), not only the default promotion. Add a `PROMO` env variable.
-- [ ] **19.** Browser test: play three weeks, reload the page, press Continue, and compare week, cash and roster size with before the reload.
+- [x] **19.** Browser test: play three weeks, reload the page, press Continue, and compare week, cash and roster size with before the reload.
 - [ ] **20.** Old-save test: build a save without `model`, `apLog`, `jw` or `cards`, load it in the browser, play one week, expect no errors.
 - [ ] **21.** Determinism test: the same promotion and seed played twice for 20 weeks headless must produce identical state.
 - [ ] **22.** `E.validateUniverse` should warn when a promotion with a gender-locked model has wrestlers or titles of the other gender. Add the warning and a test.
