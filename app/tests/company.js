@@ -6,7 +6,7 @@ const { open, go, overflow, shot, flash, state, redraw } = require('./helper');
 const FILE = process.env.EWF_OUT || 'index';
 const PAGES = ['manage', 'house', 'deals', 'overview', 'finances', 'world'];
 /** Company is for reading: apart from the page buttons, none of its pages may offer a control. */
-async function readOnly(page, mode) { for (const p of ['overview', 'finances', 'world']) { await go(page, p); const n = await count(page, 'main button:not([data-t="page"]):not(.lnk), main select, main input'); check(mode, p + ' offers no choices', n === 0, n + ' controls'); } }
+async function readOnly(page, mode) { for (const p of ['overview', 'finances', 'world']) { await go(page, p); const n = await count(page, 'main button:not([data-t="page"]):not([data-t="newsf"]):not(.lnk), main select, main input'); check(mode, p + ' offers no choices', n === 0, n + ' controls'); } }
 const fails = [];
 function check(mode, label, ok, detail) { console.log(mode.padEnd(6), ok ? 'ok  ' : 'FAIL', label + (detail ? ': ' + detail : '')); if (!ok) fails.push(mode + ' ' + label); }
 /** Nothing may stick out sideways after any step. */

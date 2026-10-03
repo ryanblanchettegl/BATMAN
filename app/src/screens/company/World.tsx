@@ -1,8 +1,8 @@
 /* World: every promotion ranked by popularity with where you stand with each, the news wire and the power ten. Read-only:
    supershows, wars and trades are proposed on Manage. */
 import { E } from '../../engine';
-import { G, cash } from '../../store';
-import { Head, Panel, Tag, Meter, Empty, Txt, Name, PromoName } from '../../kit';
+import { G, cash, slice, view } from '../../store';
+import { Head, Panel, Tag, Meter, Empty, Txt, Name, PromoName, Btn } from '../../kit';
 
 function Promotions() {
   const S = G.S, ids = S.order.slice().sort((a: string, b: string) => S.promos[b].image - S.promos[a].image);
@@ -24,11 +24,20 @@ function Promotions() {
   </table></div>;
 }
 
-/** The newest `n` lines of the news wire. */
-export function NewsList(p: { n: number }) {
-  const S = G.S;
-  if (!S.news.length) return <Empty>No news yet.</Empty>;
-  return <ul class="list news">{S.news.slice(0, p.n).map((x: any) => <li><span class="num muted">Wk {x.w}</span><span><Txt>{x.t}</Txt></span></li>)}</ul>;
+const FILTERS: [string, string, string[] | null][] = [['all', 'All', null], ['title', 'Titles', ['title']], ['sign', 'Signings', ['contract']], ['story', 'Stories', ['story']], ['money', 'Money', ['money']]];
+function wire() { return slice<{ f: string }>('wire', () => ({ f: 'all' })); }
+/** The newest `n` lines of the news wire, optionally only one kind. */
+export function NewsList(p: { n: number; kinds?: string[] | null }) {
+  const S = G.S, L = p.kinds ? S.news.filter((x: any) => p.kinds!.indexOf(x.k) >= 0) : S.news;
+  if (!L.length) return <Empty>{p.kinds ? 'Nothing of that kind yet.' : 'No news yet.'}</Empty>;
+  return <ul class="list news">{L.slice(0, p.n).map((x: any) => <li><span class="num muted">Wk {x.w}</span><span><Txt>{x.t}</Txt></span></li>)}</ul>;
+}
+function NewsWire() {
+  const st = wire(), cur = FILTERS.find(f => f[0] === st.f) || FILTERS[0];
+  return <Panel title="News wire">
+    <div class="row opts mb2">{FILTERS.map(f => <Btn kind="sm" on={f[0] === cur[0]} t="newsf" d={{ v: f[0] }} onClick={() => view(() => { st.f = f[0]; })}>{f[1]}</Btn>)}</div>
+    <NewsList n={60} kinds={cur[2]} />
+  </Panel>;
 }
 
 function PowerTen() {
@@ -54,7 +63,7 @@ export function World() {
     <Promotions />
     <Arrangement />
     <div class="cols wire">
-      <Panel title="News wire"><NewsList n={60} /></Panel>
+      <NewsWire />
       <PowerTen />
     </div>
   </>;
