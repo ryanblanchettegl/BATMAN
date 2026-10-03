@@ -355,3 +355,26 @@ EVR.lastwin=function(S,ev,choice,P,w){
 };
 PREX.push(function(S,P,show,card){if(S.cal)return;if(card.some(function(m){return [].concat.apply([],m.sides).some(function(id){var w=S.w[id];return w&&w.fw&&w.retiring>S.week;});}))S.hype=(S.hype||0)+0.04;});
 CRX.push(function(ctx){var f=ctx.all.filter(function(w){return w.fw&&w.retiring>ctx.S.week;})[0];return f?{d:1.4,x:'Everyone came to say goodbye to '+f.name}:null;});
+
+/* the crowd has a night: one pool of energy across the show. Hot matches back to back tire it, a talking segment lets it breathe */
+CRX.push(function(ctx){
+  var rep=ctx.rep;if(!rep)return null;var en=rep.en==null?100:rep.en;
+  if(en>=88)return null;
+  var d=clamp((en-72)/28,-1.4,0.6);if(Math.abs(d)<0.3)return null;
+  return {d:d,x:d>0?'The crowd is fresh and ready':(en<40?'The crowd is spent after what it has already seen':'The crowd is starting to tire')};
+});
+POST.push(function(ctx){
+  var rep=ctx.rep;if(!rep)return;var en=rep.en==null?100:rep.en,cr=ctx.res.CR;
+  rep.en=clamp(en-(12+(cr-50)*0.35)+6,0,100);
+});
+/* for the booking screen: a text line of the crowd's energy across a card, from the names on it */
+E.energyLine=function(S,card){
+  var en=100,out=[];
+  card.forEach(function(m){
+    var ids=[].concat.apply([],m.sides).filter(function(id){return id!=null&&S.w[id];}),o=ids.length?avg(ids.map(function(id){return S.w[id].ovr;})):50,cr=clamp(35+o*0.6,20,95);
+    out.push(Math.round(en));en=clamp(en-(12+(cr-50)*0.35)+6,0,100);
+  });
+  out.push(Math.round(en));
+  var low=out.some(function(v,i){return i>=2&&v<45;});
+  return {steps:out,text:'Crowd energy: '+out.join(' → '),warn:low?'The crowd will be spent before the end. Put a talking segment or an easy match in the middle.':null};
+};

@@ -40,7 +40,7 @@ function runShow(S,P,show,card){
     if(slots[i]){
       ctx.left={};for(k=i;k<n;k++)flat(card[k].sides).forEach(function(id){ctx.left[id]=1;});
       var nang=Object.keys(ctx.angled).length,a=genAngle(S,P,show,ctx);
-      if(a){ANGDONE.forEach(function(fn){fn(S,P,a,Object.keys(ctx.angled).slice(nang));});var o={p:P.ann[0].split(' ')[0],c:P.ann[1].split(' ')[0]};a.bc=[{t:'note',x:a.text},{t:'col',x:fill(sayPick(S,REACT[a.head]||['Well, how about that.']),o)}];rep.segs.push(a);}
+      if(a){rep.en=Math.min(100,(rep.en==null?100:rep.en)+14);ANGDONE.forEach(function(fn){fn(S,P,a,Object.keys(ctx.angled).slice(nang));});var o={p:P.ann[0].split(' ')[0],c:P.ann[1].split(' ')[0]};a.bc=[{t:'note',x:a.text},{t:'col',x:fill(sayPick(S,REACT[a.head]||['Well, how about that.']),o)}];rep.segs.push(a);}
     }
     rep.segs.push(doMatch(S,P,show,card[i],i,n,rep,used));
   }
