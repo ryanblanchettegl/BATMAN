@@ -121,7 +121,7 @@ Situations modelled on famous nights, each under an original name with invented 
 - [x] **79. The champion who is leaving.** The contract ends the night of the big show and the champion will not lose in that city. Trust them, change the finish behind their back, strip the title, or pay to keep them.
 - [x] **80. The belt on the wrong show.** A departing champion turns up on a rival's broadcast with your title. Sue, laugh it off, or crown a new champion in a hurry.
 - [x] **81. The live microphone.** A wrestler with real grievances goes off script on live television. Cut the feed, let it run, or fine them after. Letting it run can make a star.
-- [ ] **82. The curtain call.** Friends on opposite sides of a story hug in the ring at a farewell. Someone has to be punished, and the only one you can afford to punish is your next big thing.
+- [x] **82. The curtain call.** Friends on opposite sides of a story hug in the ring at a farewell. Someone has to be punished, and the only one you can afford to punish is your next big thing.
 - [ ] **83. The title handed over.** A group with clout wants the title passed to their friend without a real match. Agree and the title's prestige collapses. Refuse and they turn on you.
 - [ ] **84. The surprise arrival.** A rival's biggest star is free tonight and willing to walk onto your show unannounced. It costs a fortune and your locker room is watching.
 - [ ] **85. Giving away their result.** Your show is live and theirs is taped. Announce their result on air to spoil it. It can send your viewers over to watch.
