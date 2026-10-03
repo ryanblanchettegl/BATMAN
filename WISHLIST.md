@@ -81,7 +81,7 @@ Things that would make the game deeper. Each one adds a system, a choice or a me
 - [x] **50. The tape library.** Every show joins a back catalogue with a value. The library earns streaming money and can be licensed out or sold in a crisis. *M. (TASKS 5)*
 - [x] **51. A developmental show.** A small weekly show that runs by itself, with a short report on each prospect and a call-up moment. *M. Builds on `E.callUp`, `E.sendCamp`.*
 - [x] **52. The wrestling school.** Take students for a fee. One in several becomes a prospect. The trainer's quality decides how good. *M. (TASKS 10)*
-- [ ] **53. Loans and investors.** A bank loan with interest, or an investor who takes a share and has opinions about the product. *M.*
+- [x] **53. Loans and investors.** A bank loan with interest, or an investor who takes a share and has opinions about the product. *M.*
 - [x] **54. Medical staff.** Pay for a doctor and trainers. Injuries are fewer and shorter, and wear (wish 3) recovers faster. *S. Builds on `E.medInfo`.*
 - [ ] **55. Tours abroad.** Two or three weeks overseas: big gates, a tired roster, and a following in a new region. *M. Builds on `E.zones`.*
 - [ ] **56. Licensing.** Toys, a video game, trading cards. They unlock as popularity grows, pay once a year, and want stars on long contracts. *M.*

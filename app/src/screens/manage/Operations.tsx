@@ -196,13 +196,39 @@ function Tape() {
   </Panel>;
 }
 
+/** Borrowing and selling a share. A loan is paid back over a year with interest. An investor takes part of every profit and has views. */
+function Money() {
+  const S = G.S, F = E.finance(S), inv = E.investorOffer(S);
+  const run = (fn: () => any, title: string) => act(() => { const r = fn(); say(r.text, { err: !r.ok }); showResult(title, r.text, !r.ok); });
+  return <Panel title="Loans and investors">
+    {!F.owner ? <p class="muted">Only an owner can borrow for the company or sell a share of it.</p> : <>
+      {F.loan ? <>
+        <p>You owe <b class="num">{cash(F.loan.bal)}</b> of {cash(F.loan.amt)}. Payments: <b class="num">{cash(F.loan.weekly)}</b> a week.</p>
+        <div class="row opts mt1"><Btn kind="sm" t="loan-repay" onClick={() => run(() => E.repayLoan(S), 'The bank')}>Pay it off: {cash(F.loan.bal)}</Btn></div>
+      </> : <>
+        <p class="muted">A bank loan comes back over a year, with interest. One at a time.</p>
+        <div class="row opts mt1">{E.loanOffers(S).map((o: any) => <Btn kind="sm" t="loan" d={{ k: o.id }} onClick={() => run(() => E.takeLoan(S, o.id), 'The bank')}>{o.n}: {cash(o.amt)}</Btn>)}</div>
+        <p class="muted mt1">Weekly payments: {E.loanOffers(S).map((o: any) => cash(o.weekly)).join(', ')}.</p>
+      </>}
+      <p class="eyebrow mt2">Investor</p>
+      {F.inv ? <>
+        <p>An investor owns <b class="num">{Math.round(F.inv.share * 100)}%</b> of every profit. They {F.inv.want}: {F.inv.d} <span class={F.inv.ok ? 'good' : 'bad'}>{F.inv.ok ? 'You are giving them that.' : 'You are not.'}</span> Patience {F.inv.trust} of 100.</p>
+        <div class="row opts mt1"><Btn kind="sm" t="inv-buyout" onClick={() => run(() => E.buyOutInvestor(S), 'The investor')}>Buy them out: {cash(F.inv.buyout)}</Btn></div>
+      </> : <>
+        <p class="muted">An investor puts in {cash(inv.amt)} now and takes {Math.round(inv.share * 100)}% of every profit for good, unless you buy them out. They will have opinions about the product.</p>
+        <div class="row opts mt1"><Btn kind="sm" t="inv-sell" onClick={() => run(() => E.sellShare(S), 'The investor')}>Take the money</Btn></div>
+      </>}
+    </>}
+  </Panel>;
+}
+
 export function Deals() {
   const P = me();
   useKeepFocus();
   return <>
     <Head eyebrow={P.name} title="Deals" />
     <div class="cols">
-      <div class="stack"><Sponsors /><Offers /><Tape /></div>
+      <div class="stack"><Sponsors /><Offers /><Tape /><Money /></div>
       <RivalsPanel />
     </div>
   </>;
