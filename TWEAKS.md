@@ -110,7 +110,7 @@ Small jobs, each one commit. None of them needs a decision from Ryan. Read `CLAU
 - [x] **81.** `mainG` in `src/78-models.js` counts the roster on every call. Cache it for the week.
 - [x] **82.** The name linker should skip names that are ordinary English words when they stand alone at the start of a sentence, and any name under four letters.
 - [x] **83.** The model's multi-man match in `autoBook` must respect brand splits on TV shows. Check with a promotion that has brands and fix if it mixes them.
-- [ ] **84.** Time a new game with nine promotions (the calibration step runs sample shows for each). Keep it under one second on a desktop; say how long it takes on a throttled phone profile.
+- [x] **84.** Time a new game with nine promotions (the calibration step runs sample shows for each). Keep it under one second on a desktop; say how long it takes on a throttled phone profile.
 
 ## G. Balance
 
