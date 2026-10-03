@@ -340,6 +340,14 @@ function autoBook(S,P,show){
     var TT=S.tourn,tb=0,last=TT.fmt==='ko'&&TT.pend.length===1;
     TT.pend.forEach(function(p){if(tb>=(big?4:2))return;var a=S.w[p[0]],b=S.w[p[1]];if(!free(a)||!free(b))return;single(a,b,{len:last?'L':'M'},last?95:65);tb++;});
   }
+  // what the owner asked for this month: a match that helps it along, with the finish called if the booking power allows
+  if(isPl)S.quests.forEach(function(q){
+    if(!/^o_/.test(q.type))return;var w=S.w[q.w];if(!w||!free(w))return;
+    if(q.type==='o_belt'){var t=titles.filter(function(x){return x.id===q.title;})[0];if(!t||!t.holders.length||t.holders.indexOf(w.id)>=0)return;var ch=S.w[t.holders[0]];if(!ch||!free(ch))return;
+      take({mt:'1v1',sides:[[w.id],[ch.id]],win:-2,call:0,title:t.id,stip:'std',len:'M'},75);card[card.length-1]._q=1;return;}
+    var o=opp(w,35);if(!o)return;
+    take({mt:'1v1',sides:[[w.id],[o.id]],win:-2,call:0,title:null,stip:'std',len:'M'},60);card[card.length-1]._q=1;
+  });
   // visitors from another promotion get a home opponent each
   guests.slice(0,big?3:2).forEach(function(g){
     var best=null,bd=99;pool.forEach(function(o){if(!free(o)||o.g!==g.g||holdLvl(P,o.id)>=3)return;var rk=S.recent[P.id+':'+rkey(o.id,g.id)],d=Math.abs(o.ovr-g.ovr)+rnd(S)*6+(rk&&S.week-rk<5?14:0);if(d<bd){bd=d;best=o;}});
@@ -383,7 +391,9 @@ function autoBook(S,P,show){
     while(card.length>n){var lo=card.filter(function(m){return !m.title&&m._p<45;}).sort(function(a,b){return a._p-b._p;})[0];if(!lo)break;card.splice(card.indexOf(lo),1);}
   }});
   card.sort(function(a,b){return a._p-b._p;});
-  card.forEach(function(m){delete m._p;m.win=-2;});
+  // calls cost booking power: drop the ones the player cannot afford, last asked first
+  if(isPl){var g2=0;while(g2++<8&&cardCost(S,card)>S.bp){var pm=card.filter(function(m){return m._q&&m.call!=null;})[0];if(!pm)break;delete pm.call;}}
+  card.forEach(function(m){delete m._p;delete m._q;m.win=-2;});
   return card;
 }
 
