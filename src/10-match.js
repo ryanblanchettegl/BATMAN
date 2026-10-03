@@ -400,7 +400,7 @@ function settleFeud(S,P,show,feud,winners,losers,isPl){
   if(isPl){S.stats.feudsDone++;award(S,'ACH_BLOWOFF');if(S.stats.feudsDone>=5)award(S,'ACH_FEUDS_5');}
   return msg;
 }
-function vacateFor(S,P,w,why){P.titles.forEach(function(t){if(t.holders.indexOf(w.id)>=0){t.holders=[];t.since=S.week;news(S,'title','The '+P.name+' '+t.name+' '+(t.tag?'are':'is')+' vacated ('+w.name+': '+why+').');}});}
+function vacateFor(S,P,w,why,quiet){P.titles.forEach(function(t){if(t.holders.indexOf(w.id)>=0){t.holders=[];t.since=S.week;if(!quiet)news(S,'title','The '+P.name+' '+t.name+' '+(t.tag?'are':'is')+' vacated ('+w.name+': '+why+').');}});}
 
 function afterBell(S,P,show,m,sides,win,winners,losers,fin,runin,feud,t,OV,seg){
   if(runin){

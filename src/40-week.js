@@ -5,9 +5,9 @@ function weekShows(S,P){
   return out;
 }
 function startWeek(S){var P=S.promos[S.player];S.queue=weekShows(S,P);S.qi=0;S.card=[];grantBP(S);S.inbox=S.inbox.filter(function(e){return !e.done;});genEvents(S);}
-function leaveCompany(S,w,why){
+function leaveCompany(S,w,why,quiet){
   var P=S.promos[w.promo];if(!P)return;
-  vacateFor(S,P,w,why);var tm=teamOf(S,w);if(tm)dissolveTeam(S,tm);leaveStable(S,w);w.mgr=null;S.w.forEach(function(x){if(x.mgr===w.id)x.mgr=null;});
+  vacateFor(S,P,w,why,quiet);var tm=teamOf(S,w);if(tm)dissolveTeam(S,tm);leaveStable(S,w);w.mgr=null;S.w.forEach(function(x){if(x.mgr===w.id)x.mgr=null;});
   S.feuds.forEach(function(f){if(!f.res&&(f.a.indexOf(w.id)>=0||f.b.indexOf(w.id)>=0)){f.res=true;f.dead=true;f.end=S.week;}});
   if(S.mystery&&S.mystery.v===w.id)S.mystery=null;
   S.quests=S.quests.filter(function(q){return q.w!==w.id&&q.a!==w.id&&q.b!==w.id;});
@@ -48,7 +48,7 @@ E.endWeek=function(S){
     if(w.con<=0){
       if(mine){news(S,'contract',w.name+'’s contract ran out. They are now a free agent.');leaveCompany(S,w,'contract expired');w.promo='FA';w.brand=null;}
       else if(chance(S,0.8)){w.con=ri(S,48,110);w.wage=wageFor(w.ovr,P);}
-      else{news(S,'contract',w.name+' has left '+P.name+' and is a free agent.');leaveCompany(S,w,'left the company');w.cut={w:S.week,from:P.id,img:P.image};w.promo='FA';w.brand=null;}
+      else{var held=P.titles.filter(function(t){return t.holders.indexOf(w.id)>=0;});news(S,'contract',w.name+' has left '+P.name+' and is a free agent.'+(held.length?' The '+held.map(function(t){return t.name;}).join(' and the ')+' '+(held.length>1||held[0].tag?'are':'is')+' vacated.':''));leaveCompany(S,w,'left the company',held.length>0);w.cut={w:S.week,from:P.id,img:P.image};w.promo='FA';w.brand=null;}
     }
   });
   // feuds cool off if you leave them alone
