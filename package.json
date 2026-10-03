@@ -6,9 +6,11 @@
   "scripts": {
     "postinstall": "cd app && npm install",
     "build": "node build.js",
-    "check": "cd app && node_modules/.bin/tsc --noEmit -p .",
+    "check": "node build.js && cd app && node_modules/.bin/tsc --noEmit -p . && cd .. && node test-uni.js universes/public_domain.json 20",
     "test": "node test-uni.js universes/public_domain.json 60",
-    "start": "node build.js && electron ."
+    "start": "node build.js && electron .",
+    "typecheck": "cd app && node_modules/.bin/tsc --noEmit -p .",
+    "test:browser": "node tools/browser-tests.js"
   },
   "optionalDependencies": {
     "electron": "^33.0.0",

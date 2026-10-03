@@ -9,6 +9,11 @@ cd app && npm ci && cd ..                           # once; installs the build t
 node build.js                                       # src/*.js -> engine.js, app/ -> dist/index.html and dist/gorilla-position.html
 cd app && node_modules/.bin/tsc --noEmit -p .       # type-check the interface
 node test-uni.js universes/public_domain.json 60    # headless: 60 weeks of every promotion. Want errs 0 and NaN 0.
+npm run check                                       # build, type-check and a 20-week sim in one go
+npm run test:browser                                # every file in app/tests, one after another (needs NODE_PATH as below)
+node test-models.js                                 # 60 weeks as each company model; checks what makes it that model
+node test-wording.js                                # no dice wording anywhere in 60 weeks of text
+node test-determinism.js                            # same seed twice gives identical state
 node tools/build-public-domain.js                   # rebuild universes/public_domain.json after editing rosters
 python3 tools/build-font.py                         # rebuild app/fonts/ewf-blocks.woff2 (needs fonttools, brotli)
 ```
@@ -19,7 +24,7 @@ Browser tests need Playwright with Chromium. Build first, then run from the repo
 NODE_PATH=<dir containing playwright> node app/tests/<name>.js
 ```
 
-`<name>` is one of `start`, `office`, `booking`, `roster`, `stories`, `company`, `cards`, `journey`. `journey.js` takes `MODES=desk,phone,tablet,tv` and `WEEKS=5`. Each test prints its failures and exits non-zero if any. They are slow (one to five minutes each); run the ones for the section you touched, then `journey.js`.
+`<name>` is one of `start`, `office`, `booking`, `roster`, `stories`, `company`, `cards`, `journey`, `linker`, `save`, `sweep`. `journey.js` takes `MODES=desk,phone,tablet,tv` and `WEEKS=5`. Each test prints its failures and exits non-zero if any. They are slow (one to five minutes each); run the ones for the section you touched, then `journey.js`.
 
 ## How the code is laid out
 
