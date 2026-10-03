@@ -7,4 +7,3 @@ export type W = any;
 export type Promo = any;
 export type GameState = any;
 export interface Check { target: number; mods: { n: string; v: number }[]; mod: number; p: number }
-export interface Roll { d: [number, number]; mod: number; target: number; total: number; ok: boolean }

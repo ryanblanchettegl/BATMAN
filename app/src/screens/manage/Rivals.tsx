@@ -15,7 +15,7 @@ function Arrangement() {
 
 function RivalRow(p: { id: string; busy: boolean }) {
   const S = G.S, id = p.id, R = S.promos[id], r = Math.round(R.rel || 0), why = E.xfCan(S, id);
-  const propose = (kind: string) => act(() => { const x = E.xfPropose(S, id, kind); say(x.msg, { err: !x.ok, roll: x.roll }); });
+  const propose = (kind: string) => act(() => { const x = E.xfPropose(S, id, kind); say(x.msg, { err: !x.ok }); });
   const odds = (kind: string) => Math.round(E.xfOdds(S, id, kind).p * 100) + '%';
   return <li>
     <span><b>{R.name}</b> <span class="muted">relations</span> <span class={r >= 20 ? 'good' : (r <= -20 ? 'bad' : 'muted')}>{(r > 0 ? '+' : '') + r}</span>
@@ -39,7 +39,7 @@ function TradeDesk() {
   const ck = give !== '' && theirs !== '' ? E.tradeOdds(S, +give, +theirs) : null;
   const opt = (w: any): Opt => [w.id, w.name + ' · ' + Math.round(w.ovr)];
   const pick = (k: 'pid' | 'theirs' | 'mine') => (v: string) => view(() => { T[k] = v; if (k === 'pid') T.theirs = ''; });
-  const propose = () => act(() => { const r = E.trade(S, +give, +theirs); say(r.msg, { err: !r.ok, roll: r.roll }); if (r.ok) st.trade = noTrade(); });
+  const propose = () => act(() => { const r = E.trade(S, +give, +theirs); say(r.msg, { err: !r.ok }); if (r.ok) st.trade = noTrade(); });
   return <>
     <p class="eyebrow mt3">Talent trade</p>
     <div class="tradeform">

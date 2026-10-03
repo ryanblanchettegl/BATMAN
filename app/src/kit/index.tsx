@@ -1,7 +1,7 @@
 /* The building blocks. A screen is built only from these plus plain layout classes
    (row, cols, stack, list, kv, tw: see styles/kit.css). */
 import { ComponentChildren } from 'preact';
-import { Check, Roll, W } from '../engine';
+import { Check, W } from '../engine';
 import { G, openCard, Card } from '../store';
 
 export type Data = Record<string, string | number | null | undefined>;
@@ -116,8 +116,6 @@ export function Gauge(p: { frac: number }) {
 export function Stat(p: { label: string; v: number; kind?: 'hot' | 'cool' | 'au' }) { return <div><small>{p.label}</small><span>{Math.round(p.v)} <Meter v={p.v} kind={p.kind} /></span></div>; }
 /** Label and any value: one cell of a `.kv` grid. */
 export function KV(p: { label: string; children: ComponentChildren }) { return <div><small>{p.label}</small><span>{p.children}</span></div>; }
-/** Kept so older call sites compile: attempts are described in words, so nothing is drawn. */
-export function Dice(_p: { roll?: Roll | null }) { return null; }
 /** One line that explains an attempt before the player commits to it: the chance, then what helps and what hurts. */
 export function CheckLine(p: { label?: string; ck: Check }) {
   const ck = p.ck, up = ck.mods.filter(x => x.v > 0).map(x => x.n), dn = ck.mods.filter(x => x.v < 0).map(x => x.n);

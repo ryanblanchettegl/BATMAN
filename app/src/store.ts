@@ -1,5 +1,5 @@
 /* One store: the game state (owned by the engine), the view state (owned by the interface), preferences and saving. */
-import { E, GameState, Roll } from './engine';
+import { E, GameState } from './engine';
 
 export const KEY = 'ewf9000-save-4', UKEY = 'ewf9000-universes', PKEY = 'gorilla-position-prefs';
 export const VER = '0.11';
@@ -37,7 +37,7 @@ export function setUniverse(id: string): any {
 }
 
 /* ---------- view state ---------- */
-export interface Flash { text: string; err?: boolean; roll?: Roll | null }
+export interface Flash { text: string; err?: boolean }
 export interface Modal { kind: string; [k: string]: any }
 /** A profile pop-up: a wrestler (`id` is their number), a tag team (its id) or a title (`pid` promotion, `id` title id). */
 export interface Card { k: 'w' | 'team' | 'title'; id: number | string; pid?: string }
@@ -75,7 +75,7 @@ export function onRedraw(fn: () => void) { draw = fn; }
 export function redraw() { draw(); }
 
 /** Show a one-line result above the page. */
-export function say(text: string | null | undefined, opt?: { err?: boolean; roll?: Roll | null }) { if (text) ui.flash = { text, err: !!(opt && opt.err), roll: opt && opt.roll }; }
+export function say(text: string | null | undefined, opt?: { err?: boolean }) { if (text) ui.flash = { text, err: !!(opt && opt.err) }; }
 
 /** Run something the player did: clears the last message, runs it, saves, redraws. Use for every click that touches the game. */
 export function act<T>(fn: () => T): T {

@@ -4,7 +4,7 @@ import { G, ui, me, cash, view, openModal, PLATFORM, redraw, onReset } from '../
 import { SECTIONS, sectionOf, go, weekDone, pending } from '../nav';
 import { NAV, onBack } from '../input';
 import { abandonGame } from '../flow';
-import { Btn, Dice, Tabs } from '../kit';
+import { Btn, Tabs } from '../kit';
 import { SFX } from '../sfx';
 
 /** The Music button, at the right-hand end of the top bar. The soundtrack add-on (app/addons/soundtrack.js) opens its
@@ -52,7 +52,7 @@ export function FlashBar() {
   return <>
     {ui.confirm === 'new' && <div class="flash err"><div class="row"><span>Start over? Your current game will be erased.</span>
       <Btn kind="danger" t="newgame-yes" onClick={abandonGame}>Yes, new game</Btn><Btn t="cancel" onClick={() => view(() => { ui.confirm = null; })}>Keep playing</Btn></div></div>}
-    {ui.flash && <div class={'flash' + (ui.flash.err ? ' err' : '')} role="status"><Dice roll={ui.flash.roll} />{ui.flash.text}</div>}
+    {ui.flash && <div class={'flash' + (ui.flash.err ? ' err' : '')} role="status">{ui.flash.text}</div>}
   </>;
 }
 

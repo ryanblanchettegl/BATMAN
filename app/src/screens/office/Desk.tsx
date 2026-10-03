@@ -5,7 +5,7 @@ import { useLayoutEffect } from 'preact/hooks';
 import { E, W } from '../../engine';
 import { G, ui, me, act, openModal, plural } from '../../store';
 import { go, weekDone } from '../../nav';
-import { Head, Panel, Btn, Name, Dice, CheckLine, Empty, Dial, dataAttrs, Txt } from '../../kit';
+import { Head, Panel, Btn, Name, CheckLine, Empty, Dial, dataAttrs, Txt } from '../../kit';
 import { ScheduleList, QuestList } from '../../shared/week';
 import { BeforeShow } from './BeforeShow';
 import { office, focusAfter, useFocusAfter } from './util';
@@ -34,7 +34,7 @@ function Inbox() {
   });
   return <ul class="list">{S.inbox.map((e: any) => <li key={e.id}>
     <span><Txt>{e.text}</Txt>
-      {e.result ? <><br /><Dice roll={e.roll} /><span class={e.roll ? (e.roll.ok ? 'good' : 'bad') : 'muted'}><Txt>{e.result}</Txt></span></> : null}
+      {e.result ? <><br /><span class={e.roll ? (e.roll.ok ? 'good' : 'bad') : 'muted'}><Txt>{e.result}</Txt></span></> : null}
       {!e.done && e.checks ? Object.keys(e.checks).map(k => <CheckLine label={e.choices[k]} ck={e.checks[k]} />) : null}
     </span>
     {!e.done && <span class="row">{e.choices.map((c: string, i: number) => <Btn kind="sm" t="ev" d={{ id: e.id, c: i }} onClick={() => answer(e.id, i)}>{c}</Btn>)}</span>}

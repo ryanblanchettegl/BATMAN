@@ -40,7 +40,7 @@ function Moves(p: { w: W }) {
       {(ms.length > 0 || w.ment != null) && <label class="row">Mentor <Sel id={'ment-' + id} t="ment" d={{ id }} value={w.ment == null ? '' : w.ment}
         options={[['', 'Nobody'] as Opt].concat(mentors.map(m => [m.id, m.name] as Opt))}
         onChange={v => act(() => say(E.setMentor(S, id, v === '' ? null : +v)))} /></label>}
-      {wo && <Btn kind="sm" t="word" d={{ id }} onClick={() => act(() => { const r = E.haveWord(S, id); if (r) say(r.msg, { err: !r.ok, roll: r.roll }); })}>Have a word</Btn>}
+      {wo && <Btn kind="sm" t="word" d={{ id }} onClick={() => act(() => { const r = E.haveWord(S, id); if (r) say(r.msg, { err: !r.ok }); })}>Have a word</Btn>}
     </div>
     {wo && <CheckLine label="Have a word" ck={wo} />}
   </>;

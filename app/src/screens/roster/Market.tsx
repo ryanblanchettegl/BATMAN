@@ -17,7 +17,7 @@ function CreatePanel() {
 /** The row that opens under a wrestler while you are making them an offer. */
 function OfferRow(p: { w: W; ask: number }) {
   const S = G.S, st = rs(), w = p.w;
-  const send = () => act(() => { const r = E.sign(S, w.id, +st.wage || 0, +st.weeks || 48); say(r.msg, { err: !r.ok, roll: r.roll }); st.offer = null; });
+  const send = () => act(() => { const r = E.sign(S, w.id, +st.wage || 0, +st.weeks || 48); say(r.msg, { err: !r.ok }); st.offer = null; });
   return <tr class="offer-row"><td colSpan={12}><div class="row offer">
     {/* the kit text box has no min or step, and the wage moves in fifties */}
     <label class="row">Weekly wage <input type="number" id="offer-wage" class="wage" data-t="offer-wage" min={0} step={50} value={st.wage} onInput={e => { st.wage = (e.currentTarget as HTMLInputElement).value; }} /></label>

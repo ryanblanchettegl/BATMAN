@@ -41,7 +41,7 @@ function RoomActs(p: { room: any; blocked: string }) {
   const first = st.a != null ? S.w[st.a] : null;
   const spend = (id: string) => act(() => {
     const r = E.apDo(S, p.room.id, id, { a: st.a, b: st.b });
-    say(r.msg, { err: !r.ok, roll: r.roll });
+    say(r.msg, { err: !r.ok });
     focusAfter(TO_MAP);
   });
   return <ul class="list">{p.room.acts.map((a: any) => <li class="col">

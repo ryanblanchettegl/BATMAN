@@ -229,7 +229,6 @@ select{max-width:100%}
 .ascii.belt{color:var(--yellow);font-size:min(1em,calc((100vw - 76px) / 26))}
 @media (max-width:860px){.ln.ent{margin-left:0}}
 
-.dice{color:var(--yellow)}
 
 /* ---------- concept-art pass: boot screen, title card, list menus, office gauges, monitor effect ---------- */
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}

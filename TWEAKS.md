@@ -12,7 +12,7 @@ Small jobs, each one commit. None of them needs a decision from Ryan. Read `CLAU
 
 ## A. Clean-up
 
-- [ ] **1.** Remove the dead `Dice` component (`app/src/kit/index.tsx`), its call sites, the `.dice` rule in `app/styles/base.css`, and the unused `roll` option of `say()` in `app/src/store.ts`.
+- [x] **1.** Remove the dead `Dice` component (`app/src/kit/index.tsx`), its call sites, the `.dice` rule in `app/styles/base.css`, and the unused `roll` option of `say()` in `app/src/store.ts`.
 - [ ] **2.** `RISK_SP` in `src/00-core.js` is defined and never used. Remove it.
 - [ ] **3.** Root `package.json`: move `electron` and `steamworks.js` to `optionalDependencies`, so a plain `npm install` cannot fail the build in a cloud session.
 - [ ] **4.** Give every model in `src/78-models.js` a short phrase for sentences (for example "a diehards' company", "a sport-first company"). Use it where the game now says "For a wrestling for the diehards company" (`app/src/screens/roster/Profile.tsx`, `app/src/shared/cards.tsx`, the risk note in `app/src/screens/manage/Operations.tsx`, `E.lobby` in `src/65-you.js`).

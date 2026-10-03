@@ -81,7 +81,7 @@ export function run(a: 'run' | 'pre' | 'chaos', c?: number) {
     if (r.errors) return cant();
     if (S.pre && S.pre.result) notes()[S.pre.key] = S.pre.result;
     b.report = 0; b.live = { s: -1, b: 0 }; b.edit = -1; b.tried = false;
-    if (chNote) say('Your call: ' + chNote, { roll: S.chs && S.chs.roll });
+    if (chNote) say('Your call: ' + chNote);
     top0(); SFX.fanfare();
   });
 }
