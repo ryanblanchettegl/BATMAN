@@ -116,6 +116,8 @@ function PickRow(p: { k: string; table: Record<string, any>; cur: string; label:
     <div class="row opts">{Object.keys(p.table).map(id => <Btn kind="sm" on={id === p.cur} t="setup-set" d={{ k: p.k, v: id }} onClick={() => view(() => p.set(id))}>{p.table[id].n}</Btn>)}</div>
     <p class="muted mt1 mb2">{p.table[p.cur].d || ''}</p></>;
 }
+/** The long explanation lives behind a button so the first-day screen stays short. */
+function HowBtn(p: { body: () => any }) { return <div class="row mb4"><Btn t="how" onClick={() => openModal({ kind: 'info', title: 'How it works', body: p.body })}>How it works</Btn></div>; }
 function DiffPanel() { const s = ui.setup!; return <Panel cls="mb4" title="Difficulty"><PickRow k="diff" table={E.DIFF} cur={s.diff || 'normal'} label="How hard a job is it?" set={v => { s.diff = v; }} /></Panel>; }
 function Begin(p: { label: string }) {
   const s = ui.setup!;
@@ -148,7 +150,7 @@ function FedSetup() {
       <PickRow k="pledge" table={E.PLEDGE} cur={f.pledge} label="What do you promise the locker room?" set={v => { f.pledge = v; }} />
     </Panel>
     <DiffPanel />
-    <Panel cls="mb4" title="How it works"><p>You are owner and booker from day one. Nobody grants you booking power and nobody can fire you, but the money is yours to lose.</p><p class="mt1">Every title starts vacant. Run a tournament from the Titles page to crown your first champion.</p></Panel>
+    <HowBtn body={() => <><p>You are owner and booker from day one. Nobody grants you booking power and nobody can fire you, but the money is yours to lose.</p><p class="mt1">Every title starts vacant. Run a tournament from the Titles page to crown your first champion.</p></>} />
     <Begin label="Open the doors" />
   </div><div class="status"><span>Name your federation and open the doors</span></div></div>;
 }
@@ -165,11 +167,11 @@ export function Setup() {
       <p class="mt1">The locker room was promised: <b>{E.PLEDGE[o.pledge].n}.</b> {E.PLEDGE[o.pledge].d}</p>
     </Panel>
     <Panel cls="mb4" title="How this company is run"><ModelCard id={d.model} /></Panel>
-    <Panel cls="mb4" title="How it works">
+    <HowBtn body={() => <>
       <p>You set the card. Every match has odds, and the odds decide the winner on the night.</p>
       <p class="mt1">Each week {o.name} grants you <b>booking power</b>. Spend it to call a finish: 1 point for the favourite, 2 for an underdog, 3 for a long shot, and 1 more to change a title.</p>
       <p class="mt1">Good shows and met directives raise the owner{'’'}s trust, which raises your allowance. Lose that trust and you are out. Earn enough of it and the company is yours.</p>
-    </Panel>
+    </>} />
     <DiffPanel />
     <Begin label="Take the job" />
   </div><div class="status"><span>Enter a name and take the job</span></div></div>;
