@@ -15,7 +15,7 @@ Small jobs, each one commit. None of them needs a decision from Ryan. Read `CLAU
 - [x] **1.** Remove the dead `Dice` component (`app/src/kit/index.tsx`), its call sites, the `.dice` rule in `app/styles/base.css`, and the unused `roll` option of `say()` in `app/src/store.ts`.
 - [x] **2.** `RISK_SP` in `src/00-core.js` is defined and never used. Remove it.
 - [x] **3.** Root `package.json`: move `electron` and `steamworks.js` to `optionalDependencies`, so a plain `npm install` cannot fail the build in a cloud session.
-- [ ] **4.** Give every model in `src/78-models.js` a short phrase for sentences (for example "a diehards' company", "a sport-first company"). Use it where the game now says "For a wrestling for the diehards company" (`app/src/screens/roster/Profile.tsx`, `app/src/shared/cards.tsx`, the risk note in `app/src/screens/manage/Operations.tsx`, `E.lobby` in `src/65-you.js`).
+- [x] **4.** Give every model in `src/78-models.js` a short phrase for sentences (for example "a diehards' company", "a sport-first company"). Use it where the game now says "For a wrestling for the diehards company" (`app/src/screens/roster/Profile.tsx`, `app/src/shared/cards.tsx`, the risk note in `app/src/screens/manage/Operations.tsx`, `E.lobby` in `src/65-you.js`).
 - [ ] **5.** `E.lobby` refusal reads "cannot run a edgy product". Fix the article and capitalise the level name.
 - [ ] **6.** Rewrite the Help window (`Help` in `app/src/screens/start/index.tsx`): six sections, what Manage and Company are for, attempts, pop-ups from names, company models. Keep it to one screen on a phone.
 - [ ] **7.** The boot screen's version line should read from `VER` in `app/src/store.ts`.

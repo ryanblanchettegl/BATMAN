@@ -49,9 +49,10 @@ function Settings(p: { from: number; to: number }) {
   const adv = E.ADVN.map((n: string, i: number) => i ? cash(C.adCost[i]) + ' a week. Lifts ticket demand and big-event buys by about ' + [0, 6, 12, 18][i] + '%.' : 'No spend. The card has to sell itself.');
   const camp = ci.names.map((n: string, i: number) => i ? cash(ci.costs[i]) + ' a week. ' + ci.caps[i] + ' places. Wrestlers in camp improve ' + ['', 'steadily', 'faster', 'fastest'][i] + '. ' + ci.n + ' there now.' : 'No camp. Nobody can be sent away to train.');
   const med = md.names.map((n: string, i: number) => i ? cash(md.costs[i]) + ' a week. Bodies recover faster, injuries are ' + [0, 8, 18, 28][i] + '% shorter and a little rarer.' : 'Nobody at ringside. Wear heals at its own pace.');
+  const ph: string = E.modelOf(S).ph;
   const all = [
     <Panel title="Production values"><OptRow k="prodLvl" cur={P.prodLvl} names={E.PRODN} notes={prod} /></Panel>,
-    <Panel title="Risk level"><OptRow k="risk" cur={P.risk} names={E.RISKN} notes={risk} min={C.riskMin} max={C.riskMax} why={C.riskMin > 0 || C.riskMax < 3 ? 'A ' + E.modelOf(S).n.toLowerCase() + ' company can only run ' + E.RISKN.slice(C.riskMin, C.riskMax + 1).join(' or ') + '.' : undefined} /></Panel>,
+    <Panel title="Risk level"><OptRow k="risk" cur={P.risk} names={E.RISKN} notes={risk} min={C.riskMin} max={C.riskMax} why={C.riskMin > 0 || C.riskMax < 3 ? (ph.charAt(0).toUpperCase() + ph.slice(1)) + ' can only run ' + E.RISKN.slice(C.riskMin, C.riskMax + 1).join(' or ') + '.' : undefined} /></Panel>,
     <Panel title="Ticket prices"><OptRow k="tix" cur={P.tix} names={E.TIXN} notes={tix} /></Panel>,
     <Panel title="Advertising"><OptRow k="adv" cur={P.adv} names={E.ADVN} notes={adv} /></Panel>,
     <Panel title="Training camp"><OptRow k="camp" cur={P.camp || 0} names={ci.names} notes={camp} /></Panel>,

@@ -59,7 +59,7 @@ function Overview(p: { w: W }) {
       <Stat label="Stamina" v={w.stam} /><Stat label="Charisma" v={w.cha} kind="au" /><Stat label="Promo" v={w.mic} kind="au" /><Stat label="Condition" v={w.cond} kind="cool" /><Stat label="Morale" v={w.morale} kind="cool" />
     </div>
     <p>Finisher: <b>the {w.fin || 'finish'}</b> {'·'} Gimmick: <b>{gimName(w.gim)}</b> <Meter v={fit} kind="au" /> <span class="num">{fit}% fit</span></p>
-    {cf ? <p>For a {E.modelOf(S).n.toLowerCase()} company: <b class={cf.v >= 1 ? 'good' : (cf.v <= -2 ? 'bad' : undefined)}>{cf.n}</b></p> : null}
+    {cf ? <p>For {E.modelOf(S).ph}: <b class={cf.v >= 1 ? 'good' : (cf.v <= -2 ? 'bad' : undefined)}>{cf.n}</b></p> : null}
     {w.tr && w.tr.length ? <p>Traits: {w.tr.map((t: string) => <><Tag kind="good">{E.TRAITS[t].n}</Tag> </>)}</p> : null}
     {w.arc && w.arc.t === 'flop' ? <p class="bad">The crowd is rejecting the current act until {E.cal(w.arc.until).label}.</p> : null}
     {w.notice ? <p class="bad">Has given notice and leaves after {E.cal(w.notice).label}.</p> : null}

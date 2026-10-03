@@ -1713,6 +1713,7 @@ var SKILLS={
   motivator:{n:'Motivator',max:5,d:'More effort in the ring and steadier morale.'},
   clout:{n:'Clout',max:3,d:'One more point of booking power every week.'}
 };
+function cap1(t){return t.charAt(0).toUpperCase()+t.slice(1);}
 function xpNeed(l){return 80+50*l;}
 function gainXp(S,n){
   var b=S.booker;if(!b||S.cal)return;b.xp+=Math.round(n);
@@ -1906,7 +1907,7 @@ E.lobbyOdds=function(S,k,v){
 };
 E.lobby=function(S,k,v){
   var o=S.owner,rr=riskRange(S.promos[S.player]);
-  if(k==='risk'&&(v<rr[0]||v>rr[1]))return {ok:false,msg:'A '+modelOf(S.promos[S.player]).n.toLowerCase()+' company cannot run a '+RISKN[v].toLowerCase()+' product.'};
+  if(k==='risk'&&(v<rr[0]||v>rr[1]))return {ok:false,msg:cap1(modelOf(S.promos[S.player]).ph)+' cannot run '+(/^[AEIOU]/.test(RISKN[v])?'an ':'a ')+RISKN[v]+' product.'};
   if(o.lobby[k]&&S.week-o.lobby[k]<4)return {ok:false,msg:o.name+' has heard enough about that for now. Bring it up again after '+cal(o.lobby[k]+4).label+'.'};
   var r=rollCheck(S,E.lobbyOdds(S,k,v));o.lobby[k]=S.week;
   if(r.ok){S.promos[S.player][k]=v;return {ok:true,msg:rollText(r)+o.name+' agrees.'};}
@@ -2830,9 +2831,9 @@ function mainG(S,P){var m=0,f=0;S.w.forEach(function(w){if(w.promo===P.id&&!w.nw
 function mNote(ctx,d,text){if(text&&Math.abs(d)>=1)ctx.fx.push({s:d>=0?1:-1,x:text});return d;}
 
 var MODELS={
-  classic:{n:'Independent',d:'No house system. The crowd takes each show as it comes.',good:[],bad:[],mix:{}},
+  classic:{n:'Independent',ph:'an independent company',d:'No house system. The crowd takes each show as it comes.',good:[],bad:[],mix:{}},
 
-  corporate:{n:'Corporate giant',wq:0.34,own:'the board',
+  corporate:{n:'Corporate giant',ph:'a corporate giant',wq:0.34,own:'the board',
     d:'Publicly traded. A family audience, entertainment before sport, and a board that reads the accounts before the reviews.',
     good:['Star quality and charisma lift every match','Television and sponsors pay more here than anywhere','Fewer injuries: the house style is safe'],
     bad:['Hardcore matches upset the audience and the sponsors','The product can never go past Mainstream','Great wrestlers nobody cares about get lost, and then released'],
@@ -2848,7 +2849,7 @@ var MODELS={
     month:function(S,P){var H=P.hist.slice(-4),net=0;H.forEach(function(h){net+=h.net;});var tgt=4*P.net,d=clamp((net-tgt)/Math.max(1,Math.abs(tgt))*2,-3,3);
       return {d:r1(d),x:'The board reviewed the month: '+money(net)+' against a plan of '+money(tgt)+'.'};}},
 
-  workrate:{n:'Wrestling for the diehards',wq:0.62,own:'the founder',
+  workrate:{n:'Wrestling for the diehards',ph:'a diehards’ company',wq:0.62,own:'the founder',
     d:'Founded by a fan for the fans who rate matches. The work comes first, the crowd knows the difference, and the internet is always watching.',
     good:['Great matches lift the crowd as well as the rating','Two elite workers together are an event','Gimmick matches that settle a feud go over big'],
     bad:['A bad match gets booed, whoever is in it','Fan mood online moves ticket sales twice as much','Wages run high: the best workers know their value'],
@@ -2861,7 +2862,7 @@ var MODELS={
     fit:function(w){return 0.45*w.ovr+0.45*workRate(w)+0.1*w.stam;},
     show:function(S,P,show,rep){return rep.segs.some(function(s){return s.k==='match'&&s.mq>=88;})?{d:0.5,x:'The founder is a fan first: one of those matches made the night.'}:null;}},
 
-  purist:{n:'Sport first',wq:0.68,own:'the committee',
+  purist:{n:'Sport first',ph:'a sport-first company',wq:0.68,own:'the committee',
     d:'Wrestling presented as a sport. Stamina, fighting spirit and clean results; the roster is judged on its matches, not its television time.',
     good:['Stamina and long matches are rewarded','Tournament matches mean more','Great matches lift locker-room morale; time off television does not hurt it'],
     bad:['Entertainers and comedy are rejected','Gimmick matches and cheap finishes cost you','Little television money: the gate is the business'],
@@ -2880,7 +2881,7 @@ var MODELS={
     show:function(S,P,show,rep){var ms=rep.segs.filter(function(s){return s.k==='match';}),cl=ms.filter(function(s){return s.fin==='clean';}).length/Math.max(1,ms.length),main=ms[ms.length-1];
       if(main&&(main.fin==='dq'||main.fin==='co'))return {d:-0.5,x:'The committee does not accept a main event without a result.'};return cl>=0.7?{d:0.3,x:'The committee approved of the clean results.'}:null;}},
 
-  underdog:{n:'Resilient underdog',wq:0.52,own:'the promoter',
+  underdog:{n:'Resilient underdog',ph:'an underdog company',wq:0.52,own:'the promoter',
     d:'A small budget and a long memory. It builds divisions the big companies ignore and turns their castoffs back into stars.',
     good:['Matches for secondary and division titles draw extra interest','Wrestlers released by a bigger company arrive cheap and motivated','Division titles gain prestige faster'],
     bad:['Thin margins: one bad month shows','Stars you build get poached','Low production values to start'],
@@ -2891,7 +2892,7 @@ var MODELS={
     push:function(w,P,S){return (w.chip>=S.week?3:0)+0.05*(workRate(w)-70);},
     fit:function(w,P,S){return 0.6*w.ovr+0.25*workRate(w)+0.15*w.cha+(w.cut&&S.week-w.cut.w<52?6:0);}},
 
-  startup:{n:'New money',wq:0.5,own:'the backer',
+  startup:{n:'New money',ph:'a new-money company',wq:0.5,own:'the backer',
     d:'A brand-new company with a blank cheque and a clock. Stars cost a fortune, the rest of the roster is unknowns, and it loses money until it lands real television.',
     good:['Big names will sign for a company this size, at a price','A marquee name in the main event lifts the crowd','Television is worth more here than anywhere once the slot improves'],
     bad:['It loses money every week it stays in a late-night slot','Popularity leaks away while there is no better TV deal','A main event without a star falls flat'],
@@ -2904,7 +2905,7 @@ var MODELS={
       if(P.slot>(P.slotSeen==null?P.slot0:P.slotSeen)){P.slotSeen=P.slot;P.image=clamp(P.image+1.5,5,100);return {d:6,x:'A better television slot is exactly what this company was built to land. The buzz is back.'};}
       P.slotSeen=P.slot;if(P.slot===0&&S.week>12){P.image=clamp(P.image-0.4,5,100);return {d:-1.5,x:'Still in a late-night slot. The backer is losing patience and the buzz is fading.'};}return null;}},
 
-  outlaw:{n:'Outlaw',wq:0.4,own:'the promoter',
+  outlaw:{n:'Outlaw',ph:'an outlaw company',wq:0.4,own:'the promoter',
     d:'A cult following and no rules. Weapons, blood and personality; technique is beside the point. Cheap to run, and it will never be mainstream.',
     good:['Toughness and charisma are the work rate here','Gimmick matches hit harder, and you can run as many as you like','Tiny production costs; the gate and the merchandise table pay the bills'],
     bad:['Popularity has a ceiling','Sponsors and networks pay little','A plain wrestling match bores this crowd'],
@@ -2916,7 +2917,7 @@ var MODELS={
     fit:function(w){return 0.4*w.ovr+0.3*w.hc+0.3*w.cha;},
     card:function(h){var k=0;h.card.forEach(function(m){if(m.mt==='1v1'&&m.stip==='std'&&k<3&&(m._p>=90||h.chance(0.3))){m.stip=h.pick(['hardcore','hardcore','cage','ladder']);k++;}});}},
 
-  spectacle:{n:'Lucha spectacle',wq:0.42,own:'the showman',
+  spectacle:{n:'Lucha spectacle',ph:'a lucha spectacle company',wq:0.42,own:'the showman',
     d:'Commercial, colourful and chaotic. Multi-man matches, soap-opera feuds, a sponsor on every turnbuckle and a door always open to crossover shows.',
     good:['Multi-man matches are the house style','Feuds heat up faster','Sponsors pay far more, and rivals say yes to supershows more easily'],
     bad:['A plain undercard singles match feels flat','High flying means more injuries','The product cannot go past Edgy without losing the sponsors'],
@@ -2929,7 +2930,7 @@ var MODELS={
     fit:function(w){return 0.45*w.ovr+0.3*w.cha+0.25*w.speed;},
     card:function(h){h.multi(h.chance(0.5)?'6man':'4way');}},
 
-  tradition:{n:'Lucha tradition',wq:0.55,own:'the council',
+  tradition:{n:'Lucha tradition',ph:'a lucha tradition company',wq:0.55,own:'the council',
     d:'The oldest way of doing things. Clean wrestling, teams and trios, family names, and a top spot that has to be earned over years.',
     good:['Tag and trios matches are the tradition','Clean finishes are rewarded','Long-serving wrestlers lift the top of the card and stay loyal'],
     bad:['Pushing anyone with under a year in the company costs you','A newcomer taking a title angers the veterans','Gimmick matches and cheap finishes go down badly'],
@@ -2948,7 +2949,7 @@ var MODELS={
     card:function(h){h.multi('6man');},
     show:function(S,P,show,rep){return rep.segs.some(function(s){return s.k==='match'&&s.newcomer;})?{d:-2,x:'The council does not hand titles to newcomers.'}:null;}},
 
-  joshi:{n:'Joshi',wq:0.62,own:'the founder',gender:'F',
+  joshi:{n:'Joshi',ph:'a joshi company',wq:0.62,own:'the founder',gender:'F',
     d:'An all-women company. Blistering pace, stiff strikes and loyal factions; the money comes from the merchandise table, not the network.',
     good:['Speed and conditioning are rewarded','Faction against faction lifts the crowd','Merchandise pays double: the stars you build are the business'],
     bad:['Only women can be signed','The stiff style means more injuries','Television money is half what it is elsewhere'],
@@ -3011,7 +3012,7 @@ function modelJoin(S,w,P){
 
 /* what the screens show */
 E.MODELS=MODELS;E.chem=function(S,a,b){return chem(S,a,b);};
-E.modelOf=function(S,pid){var P=S.promos[pid||S.player],M=modelOf(P),rr=riskRange(P),mx=mixOf(P);return {id:P.model||'classic',n:M.n,d:M.d,good:M.good,bad:M.bad,own:M.own||'the owner',mix:mx,riskMin:rr[0],riskMax:rr[1],spMax:spMax(P),cap:M.cap||null,gender:M.gender||null};};
+E.modelOf=function(S,pid){var P=S.promos[pid||S.player],M=modelOf(P),rr=riskRange(P),mx=mixOf(P);return {id:P.model||'classic',n:M.n,ph:M.ph,d:M.d,good:M.good,bad:M.bad,own:M.own||'the owner',mix:mx,riskMin:rr[0],riskMax:rr[1],spMax:spMax(P),cap:M.cap||null,gender:M.gender||null};};
 E.modelList=function(){return Object.keys(MODELS).map(function(k){var M=MODELS[k];return {id:k,n:M.n,d:M.d,good:M.good,bad:M.bad};});};
 /* how well a wrestler suits the player's company: the fit score set against their overness */
 var fitMed={k:'',v:0};

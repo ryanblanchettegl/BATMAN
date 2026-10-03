@@ -22,6 +22,7 @@ var SKILLS={
   motivator:{n:'Motivator',max:5,d:'More effort in the ring and steadier morale.'},
   clout:{n:'Clout',max:3,d:'One more point of booking power every week.'}
 };
+function cap1(t){return t.charAt(0).toUpperCase()+t.slice(1);}
 function xpNeed(l){return 80+50*l;}
 function gainXp(S,n){
   var b=S.booker;if(!b||S.cal)return;b.xp+=Math.round(n);
@@ -215,7 +216,7 @@ E.lobbyOdds=function(S,k,v){
 };
 E.lobby=function(S,k,v){
   var o=S.owner,rr=riskRange(S.promos[S.player]);
-  if(k==='risk'&&(v<rr[0]||v>rr[1]))return {ok:false,msg:'A '+modelOf(S.promos[S.player]).n.toLowerCase()+' company cannot run a '+RISKN[v].toLowerCase()+' product.'};
+  if(k==='risk'&&(v<rr[0]||v>rr[1]))return {ok:false,msg:cap1(modelOf(S.promos[S.player]).ph)+' cannot run '+(/^[AEIOU]/.test(RISKN[v])?'an ':'a ')+RISKN[v]+' product.'};
   if(o.lobby[k]&&S.week-o.lobby[k]<4)return {ok:false,msg:o.name+' has heard enough about that for now. Bring it up again after '+cal(o.lobby[k]+4).label+'.'};
   var r=rollCheck(S,E.lobbyOdds(S,k,v));o.lobby[k]=S.week;
   if(r.ok){S.promos[S.player][k]=v;return {ok:true,msg:rollText(r)+o.name+' agrees.'};}
