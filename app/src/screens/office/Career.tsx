@@ -9,7 +9,7 @@ function You() {
   const S = G.S, b = S.booker, o = S.owner, P = me(), need = E.xpNeed(b.lvl), style = E.STYLES[o.style];
   return <Panel title="You">
     <p><b>{b.name}</b>, {role()} of {P.name}</p>
-    <p class="muted">Difficulty: {(E.DIFF[S.diff] || E.DIFF.normal).n}</p>
+    <p class="muted">Difficulty: {(E.DIFF[S.diff] || E.DIFF.normal).n}{E.diffSummary(S) ? ' (' + E.diffSummary(S) + ')' : ''}</p>
     <p>Level <b>{b.lvl}</b> <Meter v={b.xp / need * 100} kind="au" /> <span class="num muted">{b.xp}/{need} XP</span>{b.pts ? <> {'·'} <span class="mark">{b.pts} {plural(b.pts, 'skill point')}</span></> : null}</p>
     <p>Booking power <b class="gold">{S.bp}</b> <span class="muted">(+{S.bpGrant} a week, holds up to {S.bpGrant * 2})</span></p>
     {o.me ? <p class="good">The company is yours. House style: {style.n}.</p>

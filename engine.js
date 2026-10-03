@@ -163,7 +163,7 @@ function addWrestler(S,d,promo,brand){
 }
 E.newGame=function(playerId,seed,opts){
   opts=opts||{};
-  var S={v:4,rs:(seed|0)||7,seed:seed,week:1,player:playerId,diff:DIFF[opts.diff]?opts.diff:'normal',mode:'booker',w:[],promos:{},order:[],teams:[],feuds:[],mystery:null,news:[],inbox:[],quests:[],ach:{},toasts:[],
+  var S={v:4,rs:(seed|0)||7,seed:seed,week:1,player:playerId,diff:DIFF[opts.diff]?opts.diff:'normal',dpart:opts.dpart&&typeof opts.dpart==='object'?{money:clamp(+opts.dpart.money|0,0,2),inj:clamp(+opts.dpart.inj|0,0,2),ego:clamp(+opts.dpart.ego|0,0,2),rival:clamp(+opts.dpart.rival|0,0,2)}:null,mode:'booker',w:[],promos:{},order:[],teams:[],feuds:[],mystery:null,news:[],inbox:[],quests:[],ach:{},toasts:[],
     stats:{shows:0,matches:0,run:0,feudsDone:0,bestMatch:0,bestShow:0},said:[],h2h:{},trust:60,ledger:[],sponsors:[],spOffers:[],slotAsk:-99,hype:0,rateMod:0,reports:[],queue:[],qi:0,card:[],over:null,nid:1,recent:{},fin:null};
   var cur={promo:'FA',brand:null},byName={};
   CAL0={y:DB.startYear,m:DB.startMonth};
@@ -2853,7 +2853,7 @@ function tickClocks(S){
   // raid
   var top=R.slice().sort(function(a,b){return b.ovr-a.ovr;}).slice(0,8).filter(function(w){return (w.con<=16||w.morale<50)&&!hasQuest(S,w.id)&&w.inj<=0;});
   var rv=S.order.filter(function(id){return id!==P.id&&S.promos[id].image>=P.image-15;}).sort(function(a,b){return S.promos[b].image-S.promos[a].image;});
-  if(top.length&&rv.length)bump('raid',1+(hasRule(S,'open')&&S.week%2===0?1:0),top[0].name+(top[0].con<=16?' is nearly out of contract':' is unhappy')+', and rivals know it');
+  if(top.length&&rv.length)bump('raid',(S.dpart&&S.dpart.rival===0&&S.week%2?0:1)+(S.dpart&&S.dpart.rival===2?1:0)+(hasRule(S,'open')&&S.week%2===0?1:0),top[0].name+(top[0].con<=16?' is nearly out of contract':' is unhappy')+', and rivals know it');
   else bump('raid',-1,'Your stars are tied down and content');
   if(C.raid.v>=CLOCKS.raid.segs&&top.length&&rv.length){C.raid.v=1;var tw=top[0],RV=S.promos[rv[0]],raise=Math.round(tw.wage*1.3/50)*50;tw.off=S.week+10;
     pushEv(S,{type:'offer',w:tw.id,rival:rv[0],raise:raise,text:RV.name+' have been circling for weeks. Now they have made '+tw.name+' an offer.',choices:['Match it: '+money(raise)+' a week, new 48-week deal','Appeal to loyalty','Let them go']});}
@@ -3165,7 +3165,14 @@ var DIFF={
   hard:{n:'Main eventer',d:'The crowd expects more, money is tighter and the owner has less patience.',bp:-1,exp:1.5,over:0.03,inj:1.15,fire:7,mor:-2},
   brutal:{n:'Legend',d:'Thin margins, a demanding crowd and an owner who fires fast.',bp:-2,exp:3,over:0.06,inj:1.3,fire:13,mor:-4}
 };
-function dif(S){return DIFF[S.diff]||DIFF.normal;}
+/* difficulty by part: money, injuries, egos and rival aggression can each be set a step easier (0) or harder (2) than the chosen level (1) */
+var DPART_N={money:'Money',inj:'Injuries',ego:'Egos',rival:'Rival aggression'};
+function dif(S){
+  var d=DIFF[S.diff]||DIFF.normal,p=S.dpart;if(!p)return d;
+  return {n:d.n,d:d.d,bp:d.bp,exp:d.exp,fire:d.fire,over:d.over+(p.money-1)*0.03,inj:d.inj*[0.8,1,1.25][p.inj],mor:d.mor+(1-p.ego)*3};
+}
+E.DPART=DPART_N;
+E.diffSummary=function(S){var p=S.dpart;if(!p)return null;var w=['easier','as set','harder'];return Object.keys(DPART_N).filter(function(k){return p[k]!==1;}).map(function(k){return DPART_N[k].toLowerCase()+' '+w[p[k]];}).join(', ')||null;};
 NEWX.push(function(S){var P=S.promos[S.player],d=dif(S);P.expB=d.exp;P.fixed=Math.max(0,P.fixed+Math.round(P.inc0*d.over));});
 WEEKX.push(function(S){if(S.week>=49&&(S.diff==='hard'||S.diff==='brutal'))award(S,'ACH_HARD');});
 E.DIFF=DIFF;

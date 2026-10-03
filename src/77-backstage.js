@@ -326,7 +326,7 @@ function tickClocks(S){
   // raid
   var top=R.slice().sort(function(a,b){return b.ovr-a.ovr;}).slice(0,8).filter(function(w){return (w.con<=16||w.morale<50)&&!hasQuest(S,w.id)&&w.inj<=0;});
   var rv=S.order.filter(function(id){return id!==P.id&&S.promos[id].image>=P.image-15;}).sort(function(a,b){return S.promos[b].image-S.promos[a].image;});
-  if(top.length&&rv.length)bump('raid',1+(hasRule(S,'open')&&S.week%2===0?1:0),top[0].name+(top[0].con<=16?' is nearly out of contract':' is unhappy')+', and rivals know it');
+  if(top.length&&rv.length)bump('raid',(S.dpart&&S.dpart.rival===0&&S.week%2?0:1)+(S.dpart&&S.dpart.rival===2?1:0)+(hasRule(S,'open')&&S.week%2===0?1:0),top[0].name+(top[0].con<=16?' is nearly out of contract':' is unhappy')+', and rivals know it');
   else bump('raid',-1,'Your stars are tied down and content');
   if(C.raid.v>=CLOCKS.raid.segs&&top.length&&rv.length){C.raid.v=1;var tw=top[0],RV=S.promos[rv[0]],raise=Math.round(tw.wage*1.3/50)*50;tw.off=S.week+10;
     pushEv(S,{type:'offer',w:tw.id,rival:rv[0],raise:raise,text:RV.name+' have been circling for weeks. Now they have made '+tw.name+' an offer.',choices:['Match it: '+money(raise)+' a week, new 48-week deal','Appeal to loyalty','Let them go']});}

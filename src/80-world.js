@@ -5,7 +5,14 @@ var DIFF={
   hard:{n:'Main eventer',d:'The crowd expects more, money is tighter and the owner has less patience.',bp:-1,exp:1.5,over:0.03,inj:1.15,fire:7,mor:-2},
   brutal:{n:'Legend',d:'Thin margins, a demanding crowd and an owner who fires fast.',bp:-2,exp:3,over:0.06,inj:1.3,fire:13,mor:-4}
 };
-function dif(S){return DIFF[S.diff]||DIFF.normal;}
+/* difficulty by part: money, injuries, egos and rival aggression can each be set a step easier (0) or harder (2) than the chosen level (1) */
+var DPART_N={money:'Money',inj:'Injuries',ego:'Egos',rival:'Rival aggression'};
+function dif(S){
+  var d=DIFF[S.diff]||DIFF.normal,p=S.dpart;if(!p)return d;
+  return {n:d.n,d:d.d,bp:d.bp,exp:d.exp,fire:d.fire,over:d.over+(p.money-1)*0.03,inj:d.inj*[0.8,1,1.25][p.inj],mor:d.mor+(1-p.ego)*3};
+}
+E.DPART=DPART_N;
+E.diffSummary=function(S){var p=S.dpart;if(!p)return null;var w=['easier','as set','harder'];return Object.keys(DPART_N).filter(function(k){return p[k]!==1;}).map(function(k){return DPART_N[k].toLowerCase()+' '+w[p[k]];}).join(', ')||null;};
 NEWX.push(function(S){var P=S.promos[S.player],d=dif(S);P.expB=d.exp;P.fixed=Math.max(0,P.fixed+Math.round(P.inc0*d.over));});
 WEEKX.push(function(S){if(S.week>=49&&(S.diff==='hard'||S.diff==='brutal'))award(S,'ACH_HARD');});
 E.DIFF=DIFF;

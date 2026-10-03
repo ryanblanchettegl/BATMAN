@@ -135,10 +135,17 @@ function Glossary(p: { m: Modal }) {
 /** A word that opens the glossary at its entry. */
 function Term(p: { id: string; children: any }) { return <button type="button" class="lnk" data-t="term" data-id={p.id} onClick={() => openModal({ kind: 'glossary', term: p.id })}>{p.children}</button>; }
 function HowBtn(p: { body: () => any }) { return <div class="row mb4"><Btn t="how" onClick={() => openModal({ kind: 'info', title: 'How it works', body: p.body })}>How it works</Btn></div>; }
-function DiffPanel() { const s = ui.setup!; return <Panel cls="mb4" title="Difficulty"><PickRow k="diff" table={E.DIFF} cur={s.diff || 'normal'} label="How hard a job is it?" set={v => { s.diff = v; }} /></Panel>; }
+function DiffPanel() {
+  const s = ui.setup!, dp = s.dpart || { money: 1, inj: 1, ego: 1, rival: 1 }, W = ['Easier', 'As set', 'Harder'];
+  return <Panel cls="mb4" title="Difficulty">
+    <PickRow k="diff" table={E.DIFF} cur={s.diff || 'normal'} label="How hard a job is it?" set={v => { s.diff = v; }} />
+    <p class="eyebrow">Fine tune (optional)</p>
+    {Object.keys(E.DPART).map((k: string) => <div class="row opts" key={k}><span class="muted" style={{ minWidth: '18ch' }}>{E.DPART[k]}</span>{W.map((w, i) => <Btn kind="sm" on={dp[k] === i} t="dpart" d={{ k, v: i }} onClick={() => view(() => { s.dpart = Object.assign({ money: 1, inj: 1, ego: 1, rival: 1 }, s.dpart || {}); s.dpart[k] = i; })}>{w}</Btn>)}</div>)}
+  </Panel>;
+}
 function Begin(p: { label: string; block?: string }) {
   const s = ui.setup!;
-  const go = () => startGame(s.pid === 'OWN' ? null : s.pid, { name: s.name, diff: s.diff, fed: s.pid === 'OWN' ? s.fed : null });
+  const go = () => startGame(s.pid === 'OWN' ? null : s.pid, { name: s.name, diff: s.diff, fed: s.pid === 'OWN' ? s.fed : null, dpart: s.dpart || null });
   return <div class="row"><label class="row">Your name <TextBox id="bname" value={s.name} max={24} placeholder="The Booker" width="24ch" onInput={v => { s.name = v; }} /></label>
     <Btn kind="go" t="begin" disabled={!!p.block} onClick={go}>{p.label}</Btn><Btn t="unpick" onClick={() => view(() => { ui.setup = null; ui.scr = 'select'; })}>Back</Btn></div>;
 }

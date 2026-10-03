@@ -11,7 +11,7 @@ export function repFor(sh: any): number { const S = G.S; for (let i = 0; i < S.r
 export function openReport(i: number) { go('booking'); const b = book(); b.report = i; b.live = null; redraw(); }
 
 const seed = () => (Date.now() % 2000000000) | 0;
-export function startGame(pid: string | null, opts: { name: string; diff: string; fed: any | null }) {
+export function startGame(pid: string | null, opts: { name: string; diff: string; fed: any | null; dpart?: any }) {
   setUniverse(pref.uni || 'public_domain');
   G.S = E.newGame(pid, seed(), opts);
   resetUi(); save(); redraw(); window.scrollTo(0, 0);
