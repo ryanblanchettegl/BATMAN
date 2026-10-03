@@ -1,0 +1,18 @@
+name: ci
+on: push
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Install the interface build tools
+        run: cd app && npm ci
+      - name: Build
+        run: node build.js
+      - name: Type-check
+        run: cd app && node_modules/.bin/tsc --noEmit -p .
+      - name: Simulate 20 weeks of every promotion
+        run: node test-uni.js universes/public_domain.json 20
