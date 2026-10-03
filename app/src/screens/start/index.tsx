@@ -178,9 +178,18 @@ export function Setup() {
 /* ---------- windows: help, options, the universe import report ---------- */
 function Help() {
   return <Window title="Help" ok="Got it">
-    <p><b>The job.</b> Each week you book the shows on the Booking page, deal with the Office inbox, then close the week. Shows that beat what the crowd expects raise your popularity.</p>
-    <p class="mt1"><b>Who wins.</b> The odds decide, from momentum, overness and the story so far. Spend booking power (BP) to call a finish yourself. The owner grants BP each week.</p>
-    <p class="mt1"><b>The long game.</b> Keep the locker room content, the bodies healthy and the owner on side. Earn enough trust and the company becomes yours.</p>
+    <p><b>The job.</b> Book the shows, answer the inbox, close the week. Shows that beat what the crowd expects raise your popularity.</p>
+    <ul class="list mt1">
+      <li><span><b>Office.</b> The desk and your career. It opens on what needs doing before the show.</span></li>
+      <li><span><b>Booking.</b> Build the card. Spend booking power to call a finish.</span></li>
+      <li><span><b>Roster.</b> Wrestlers, the locker room, titles and free agents.</span></li>
+      <li><span><b>Stories.</b> Rivalries, history and what the fans say.</span></li>
+      <li><span><b>Manage.</b> Every choice: operations, house rules, deals.</span></li>
+      <li><span><b>Company.</b> Information only: overview, finances, the world.</span></li>
+    </ul>
+    <p class="mt1"><b>Attempts.</b> Some actions may fail. Each one shows its chance, what helps and what hurts.</p>
+    <p class="mt1"><b>Names.</b> Select any name or title to open a pop-up. Back steps out, Close shuts them all.</p>
+    <p class="mt1"><b>Your company.</b> Each company runs on a model that changes what its crowd rewards and where its money comes from. Read it on the Company overview.</p>
     <p class="eyebrow mt2">Keys</p>
     <div class="keys">{Object.keys(HOT).map(k => <span><b>{k.toUpperCase()}</b> {pageName(HOT[k])}</span>)}<span><b>Enter</b> next line of a show</span><span><b>Esc</b> skip or close</span><span><b>F1</b> this window</span><span><b>F2</b> options</span></div>
     <p class="eyebrow mt2">Remote or gamepad</p>
