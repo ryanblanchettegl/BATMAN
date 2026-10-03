@@ -3,6 +3,7 @@ import { ComponentChildren } from 'preact';
 import { E } from '../../engine';
 import { G, me } from '../../store';
 import { book } from '../../flow';
+import { GateNote } from '../../shared/week';
 import { Head, Panel, Btn, Name, brandName } from '../../kit';
 import { Editor } from './Editor';
 import { Side } from './Side';
@@ -38,7 +39,7 @@ function MatchRow(p: { m: Match; i: number; n: number }) {
   if (m.int && m.int !== 'normal') meta.push(['int', <span class={m.int === 'brutal' ? 'bad' : 'good'}>{E.INTN[m.int].n}</span>]);
   if (t) meta.push(['title', <span class="gold">{t.name}</span>]);
   meta.push(['odds', odds(m, i, n)]);
-  return <div class={'seg' + (i === n - 1 ? ' me' : '')}>
+  return <div class={'seg' + (i === n - 1 ? ' me' : '')} data-m={i}>
     <div class="no" aria-hidden="true">{i + 1}</div>
     <div class="body">
       <div class="line1">
@@ -84,6 +85,7 @@ export function Card() {
         {!pre && <Btn kind="go" t="run" onClick={() => run('run')}>Run the show</Btn>}
       </div>
     </Head>
+    <GateNote />
     {pre && <PreShow pre={pre} />}
     {b.tried && v.errors.length > 0 && <div class="flash err"><b>Fix before the show can run</b><ul>{v.errors.map((e: string) => <li>{e}</li>)}</ul></div>}
     {n > 0 && v.warnings.length > 0 && <div class="flash">{v.warnings.map((w: string, k: number) => <>{k ? <br /> : null}{w}</>)}</div>}

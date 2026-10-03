@@ -87,6 +87,8 @@ export function run(a: 'run' | 'pre' | 'chaos', c?: number) {
   act(() => {
     const S = G.S, b = book(); let chNote: string | null = null;
     const cant = () => { b.tried = true; say('The show can’t run yet. See the list below.', { err: true }); };
+    // this week's tasks on the desk come first
+    if (a === 'run') { const g = E.taskGate(S, 'show'); if (!g.ok) { say('The show cannot run yet. ' + g.left.length + ' ' + (g.left.length === 1 ? 'task is' : 'tasks are') + ' still on your desk.', { err: true }); top0(); return; } }
     if (a === 'pre') { E.resolvePre(S, S.card, c); b.edit = -1; }
     if (a === 'chaos') { chNote = E.resolveChaos(S, S.card, c); ui.modal = null; }
     if (E.validate(S, S.card).errors.length) return cant();

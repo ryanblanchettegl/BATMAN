@@ -4,7 +4,7 @@ Work for Claude Code, in order. `TWEAKS.md` and `WISHLIST.md` are finished; this
 
 **How to work this list**
 
-- Start from `origin/main`. It holds everything: the overnight work, the World Editor (version 0.12) and shows and belts made during a game (0.13). Work on your own branch and push it after every job.
+- Start from `origin/main`. It holds everything: the overnight work, the World Editor (version 0.12), shows and belts made during a game (0.13), and booked promos and angles, the Net section and this week's tasks (0.14). If your branch started before 0.14, merge `origin/main` into it first: the menu has seven sections now, The Net page moved out of Stories, and the desk's alerts became tasks. Work on your own branch and push it after every job.
 - Go top to bottom. Jobs are in the order Ryan cares about. A job's steps are in build order. Tick a box in the commit that finishes it.
 - One step, one or a few commits. After each step: `node build.js`, the type-check, the headless test for what you touched, and the browser test for the section. After each job: `npm run check`, every `test-*.js`, `npm run test:browser`.
 - Engine first. Each new system goes in its own `src/NN-name.js` with `E.` functions and a headless `test-name.js` that plays it for 60 weeks with errs 0 and NaN 0. Then the screen.
@@ -86,7 +86,7 @@ Ryan's decisions: it replaces the card editor; card size follows show length (1 
 Build it beside the old screen. Add a switch in Options, "New booking screen", off until step 5.9. `journey.js` must pass with the switch off after every step, and with it on from step 5.4.
 
 - [ ] **5.1 Show length.** Every show has hours: weekly shows 1 or 2 (from their size), big events 3. `E.cardShape(S)` returns how many matches and promos tonight's show takes. Old cards still validate.
-- [ ] **5.2 Promos are segments.** A card holds matches and promos in order. A promo has people and a kind (the kinds from wish 27 in `src/80-world.js`). `genAngle` and `planPromo` in `src/20-story.js` become suggestions the player can accept, change or replace. The suggested card (`E.suggest`) fills promos too.
+- [x] **5.2 Promos are segments.** Built in 0.14: `src/93-segments.js`, `app/src/screens/booking/Segments.tsx`. Build on it, do not replace it. What is left: a contract signing kind, and the opening promo as an ordinary slot once 5.1 gives shows a length.
 - [ ] **5.3 Time.** Each segment has minutes. The show has a total. `E.cardTime(S, card)` returns each segment's ideal length and what too short or too long costs it.
 - [ ] **5.4 The screen.** Slot cards in running order: tap a slot to fill it (people, match type or promo kind, finish), with suggested picks first. One time bar across the top split by segment. Each split moves with plus and minus buttons as well as by dragging. Quick-fill buttons: "Suggest the whole card", "Suggest the rest".
 - [ ] **5.5 What the screen tells you.** Crowd heat for tonight, the storyline beat due (job 4), who is tired or hurt, and booking power left. No more than one line each.
@@ -123,8 +123,8 @@ Build it beside the old screen. Add a switch in Options, "New booking screen", o
 
 ## Job 9. The dirt sheet (task 8)
 
-- [ ] **9.1 One page a week.** Stories, a new "Dirt sheet" page in place of the per-show sheet: the lead story, a section per company, rumours marked sure, likely or thin, business news, match of the week, what is coming next week, and a short review of the player's booking.
-- [ ] **9.2 Rumours can be wrong.** A thin rumour is false about half the time. Acting on one is the player's risk.
+- [x] **9.1 One page a week.** Built in 0.14 as Net, Dirt sheet (`src/94-net.js`, `app/src/screens/net/Sheet.tsx`). Net code never calls `rnd(S)`; keep it that way.
+- [ ] **9.2 Rumours can be wrong.** (`netRumours` in `src/94-net.js` only prints true ones today.) A thin rumour is false about half the time. Acting on one is the player's risk.
 - [ ] **9.3 The rest.** Rival backstage drama, "on this day" from the save's own history, and a scrum after each big event where one answer is the player's to choose.
 
 ## Job 10. The indie scene (task 9)

@@ -2,7 +2,7 @@
 import { ComponentChildren } from 'preact';
 import { useEffect, useRef } from 'preact/hooks';
 import { E } from '../../engine';
-import { G, ui, pref, Modal, VER, UNIS, saveUnis, savePrefs, setUniverse, builtInUniverse, basePackage, cut, loadSave, cash, view, redraw, openModal, plural, slice } from '../../store';
+import { G, ui, pref, Modal, VER, UNIS, saveUnis, savePrefs, setUniverse, builtInUniverse, basePackage, cut, loadSave, cash, view, redraw, openModal, plural, slice, act } from '../../store';
 import { HOT, pageName } from '../../nav';
 import { autoScreen, skipBoot, onKey } from '../../input';
 import { startGame, continueGame, loadSaveText, startChallenge, startScenario, isoWeekId } from '../../flow';
@@ -321,6 +321,8 @@ function Options() {
       {choice('motion', 'Reduce motion', 'Stops the typewriter text and the blinking cursor. Auto follows your device setting.', [['auto', 'Auto'], ['reduce', 'On'], ['full', 'Off']])}
       {choice('zoom', 'Text size', 'Scales everything on screen.', [[0.85, 'Small'], [1, 'Normal'], [1.2, 'Large'], [1.45, 'Largest']])}
     </ul>
+    {S ? <ul class="list"><li><span><b>Tasks come first</b><br /><span class="muted">This week{'’'}s tasks on the desk must be done, or left for another week, before a show runs. Off makes them reminders only. Kept with this game.</span></span>
+      <Btn kind="sm" on={!S.gateOff} t="gate" onClick={() => act(() => { E.setGate(S, !!S.gateOff); })}>{S.gateOff ? 'Off' : 'On'}</Btn></li></ul> : null}
     <div class="row mt2"><Btn kind="sm" t="fullscreen" onClick={fs}>Full screen on or off</Btn></div>
     <SaveText />
     {S && <div class="row mt2"><Btn kind="danger" t="newgame" onClick={() => view(() => { ui.confirm = 'new'; ui.modal = null; window.scrollTo(0, 0); })}>Start a new game</Btn><span class="muted">Asks before erasing anything.</span></div>}

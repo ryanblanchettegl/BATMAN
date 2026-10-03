@@ -38,6 +38,8 @@ async function open(opts) {
     await page.fill('#bname', opts.name || 'Ryan');
     await page.click('[data-t="begin"]');
     await page.waitForSelector('main.main');
+    // this week's tasks do not hold up the tests unless one asks for that (opts.gate)
+    if (!opts.gate) await page.evaluate(() => { window.GP.setGate(window.EWF_DEBUG.state(), false); window.EWF_DEBUG.render(); });
   }
   return { browser, page, errs, mode };
 }

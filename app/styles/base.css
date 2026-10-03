@@ -23,7 +23,8 @@ b{font-weight:400;color:var(--white)}
 
 /* screen */
 .crt{max-width:59em;margin:0 auto;background:var(--blue);min-height:100%;display:flex;flex-direction:column}
-.menu .ttl{color:var(--k);padding:1px 1ch;text-transform:uppercase;align-self:center;margin-left:auto}
+.menu .ttl{color:var(--k);padding:1px 1ch;text-transform:uppercase;align-self:center;margin-left:auto;flex:0 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis}
+.menu:not(.startmenu){flex-wrap:nowrap}
 .menu{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--grey);color:var(--k);display:flex;flex-wrap:wrap;white-space:nowrap;padding:0 1ch}
 @media (max-width:860px){.menu{flex-wrap:nowrap;overflow-x:auto}}
 .menu button{all:unset;box-sizing:border-box;cursor:pointer;padding:1px 1ch;color:var(--k)}
@@ -379,7 +380,7 @@ html[data-screen="tv"] .status{bottom:2.5vh}
 html[data-screen="tv"]::before,html[data-screen="tv"]::after{content:'';position:fixed;left:0;right:0;height:2.5vh;background:var(--k);z-index:7}
 html[data-screen="tv"]::before{top:0} html[data-screen="tv"]::after{bottom:0}
 html[data-screen="tv"] .btn{padding:.12em 1.5ch;margin-bottom:.45em}
-html[data-screen="tv"] .menu button{padding:.2em 1.6ch}
+html[data-screen="tv"] .menu button{padding:.2em 1.1ch}
 html.nav :is(button,select,input,tr.pick){scroll-margin:5.5em 1em 4.5em}
 html.nav :is(button,select,input,tr.pick):focus{outline:.16em solid var(--yellow);outline-offset:.08em}
 html.nav .btn:focus,html.nav .subnav .btn:focus{background:var(--white);color:var(--k)}

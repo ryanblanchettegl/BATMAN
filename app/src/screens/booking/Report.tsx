@@ -28,7 +28,8 @@ function Next(p: { r: any }) {
   const again = r.venue ? <Btn kind="sm" t="replay" onClick={replay}>Replay the broadcast</Btn> : null;
   if (r.week !== S.week) return <div class="row mt3"><Btn t="closeReport" onClick={closeReport}>Back</Btn>{again}</div>;
   // the same row as the shared EndWeekBtn, with the replay button on the end of it
-  if (weekDone()) return <div class="row mt3"><Btn kind="go" t="endweek" disabled={!!n} onClick={endWeek}>End the week</Btn>{n ? <span class="muted">Answer your inbox first.</span> : null}{again}</div>;
+  const g = E.taskGate(S, 'week');
+  if (weekDone()) return <div class="row mt3"><Btn kind="go" t="endweek" disabled={!!n || !g.ok} onClick={endWeek}>End the week</Btn>{n ? <span class="muted">Answer your inbox first.</span> : (g.ok ? null : <span class="muted">Finish this week{'’'}s tasks on the desk first.</span>)}{again}</div>;
   return <div class="row mt3"><Btn kind="go" t="closeReport" onClick={closeReport}>Book {S.queue[S.qi].name}</Btn>{again}</div>;
 }
 

@@ -61,7 +61,7 @@ async function section(mode) {
   const { browser, page, errs } = await open({ mode, file: FILE });
   const steps = [];
   const check = async name => { const o = await overflow(page); ok(o === '', mode + ' / ' + name + ': ' + o); ok(!errs.length, mode + ' / ' + name + ': ' + errs.join(' | ')); steps.push(name); };
-  const seg = i => '.sheet .seg:nth-child(' + (i + 1) + ')';
+  const seg = i => '.sheet .seg[data-m="' + i + '"]';   // a match row; promos and angles sit between them
 
   /* ---- the card builder ---- */
   await go(page, 'booking');
@@ -71,7 +71,7 @@ async function section(mode) {
   ok(/The card is empty/.test(await txt(page, '.cols')), mode + ': empty card text');
   await check('empty card');
   await page.click('[data-t="suggest"]');
-  const n = await count(page, '.sheet .seg');
+  const n = await count(page, '.sheet .seg:not(.sg)');   // matches only: promos and angles are .seg.sg
   ok(n >= 3 && n === await state(page, S => S.card.length), mode + ': suggested card');
   ok(await plant(page), mode + ': could not plant a headset call');
   await check('suggest a card');
@@ -90,7 +90,7 @@ async function section(mode) {
   await page.selectOption('#m0-call', '0');
   ok(await state(page, S => S.card[0].call) === 0 && /Your call: .* wins \(\d BP\)/.test(await txt(page, seg(0) + ' .meta')), mode + ': called finish');
   ok(/committed on this card/.test(await txt(page, '.head')), mode + ': booking power committed');
-  ok(await state(page, S => GP.cardCost(S, S.card) <= S.bp), mode + ': the call should be affordable');
+  ok(await state(page, S => GP.cardCost(S, S.card) <= S.bp), mode + ': the call should be affordable: ' + await state(page, S => GP.cardCost(S, S.card) + ' of ' + S.bp + ' BP, ' + S.card.map(m => m.call).join(',')));
   ok(await page.$eval('#m0-call', e => e.value) === '0', mode + ': the select should show the call');
   await check('called finish');
   if (mode === 'desk') await shot(page, 'booking-desk-editor', true);
@@ -107,7 +107,7 @@ async function section(mode) {
   ok(await page.$eval('[data-t="up"][data-v="0"]', e => e.disabled) && await page.$eval('[data-t="down"][data-v="' + (n - 1) + '"]', e => e.disabled), mode + ': end buttons disabled');
   await check('move up');
   await page.click('[data-t="add"]');
-  ok(await count(page, '.sheet .seg') === n + 1 && await has(page, '#m' + n + '-type') && /Unfinished/.test(await txt(page, seg(n) + ' .meta')), mode + ': add a match');
+  ok(await count(page, '.sheet .seg[data-m]') === n + 1 && await has(page, '#m' + n + '-type') && /Unfinished/.test(await txt(page, seg(n) + ' .meta')), mode + ': add a match');
   await page.selectOption('#m' + n + '-type', 'tag');
   ok(await count(page, seg(n) + ' [data-t="slot"]') === 4, mode + ': a tag match has four slots');
   if (await has(page, '#m' + n + '-t0')) {
@@ -121,7 +121,7 @@ async function section(mode) {
   ok(/can’t run yet/.test(await flash(page)) && /Fix before the show can run/.test(await txt(page, '.flash.err:not([role])')), mode + ': an unfinished card should not run');
   await check('validation');
   await page.click('[data-t="rm"][data-v="' + n + '"]');
-  ok(await count(page, '.sheet .seg') === n && !(await has(page, '.editor')), mode + ': remove a match');
+  ok(await count(page, '.sheet .seg[data-m]') === n && !(await has(page, '.editor')), mode + ': remove a match');
   await check('remove a match');
 
   /* ---- the side panel ---- */
@@ -244,11 +244,11 @@ async function tv() {
   ok(await focusT() === 'suggest', 'tv: the highlight should start on Suggest a card, not ' + await focusT());
   await key('Enter');
   ok(await count(page, '.sheet .seg') >= 3, 'tv: Enter should suggest a card');
-  for (let k = 0; k < 6 && await focusT() !== 'run'; k++) await key('ArrowRight');
-  ok(await focusT() === 'run', 'tv: arrows should reach Run the show');
-  await key('ArrowDown'); ok(/^(edit|up|down|rm|bk)$/.test(await focusT()), 'tv: down should move into the page, not to ' + await focusT());
-  await key('ArrowUp'); ok(/^(suggest|add|clear|run)$/.test(await focusT()), 'tv: up should come back to the top row, not ' + await focusT());
-  for (let k = 0; k < 6 && await focusT() !== 'run'; k++) await key('ArrowRight');
+  for (let k = 0; k < 8 && await focusT() !== 'run'; k++) await key('ArrowRight');
+  ok(await focusT() === 'run', 'tv: arrows should reach Run the show, not stop at ' + await focusT());
+  await key('ArrowDown'); ok(/^(edit|up|down|rm|bk|promo-open|seg-edit|seg-rm)$/.test(await focusT()), 'tv: down should move into the page, not to ' + await focusT());
+  await key('ArrowUp'); ok(/^(suggest|add|seg-new|clear|run|asst|asstrun)$/.test(await focusT()), 'tv: up should come back to the top row, not ' + await focusT());
+  for (let k = 0; k < 8 && await focusT() !== 'run'; k++) await key('ArrowRight');
   ok(await focusT() === 'run', 'tv: arrows should reach Run the show again');
   ok(await overflow(page) === '', 'tv card: ' + await overflow(page));
   await shot(page, 'booking-tv-card');

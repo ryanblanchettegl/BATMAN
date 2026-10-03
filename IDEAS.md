@@ -9,13 +9,14 @@ One hundred ideas and refinements, built by the build thread in five batches of 
 - **Engine first.** Each batch has one new engine file and one headless test. Use the hook lists (`WEEKX`, `SHOWX`, `POST`, `NEWX`, `MQX`, `CRX`, `EFX`) before editing core files. New fields on `S`, a wrestler or a promotion need a default when missing, so old saves load.
 - **Do not make pages longer.** Ryan wants screens that are easy to read and quick to act on. A new thing shows up as one line, a button, or a row in a list that is already there, and opens a window (`openModal`, a `Window` from the kit) or a pop-up card for the detail. New windows go in new files inside your batch's folders. Keep edits to existing page files to a line or two.
 - **Say what happened.** Every action shows its result at once (`say()` or a line in the window). Every system the player cannot see is not done.
+- **Since this list was written (version 0.14):** promos and angles are booked on the run sheet (`src/93-segments.js`), Net is its own section, and the desk has **This week's tasks** (`src/95-tasks.js`). Anything the player should fill in or answer goes on that list through the `TASKX` hook, with a button that goes to it. Do not add a panel or an alert for it.
 - Stay inside your batch's files. Do not edit `TASKS.md`, `NEXT.md`, `CLAUDE.md`, `build.js`, `app/src/screens/editor/`, `app/src/screens/booking/Card.tsx`, `Editor.tsx` or `app/src/screens/manage/Operations.tsx`. Only batch D edits `store.ts`, `input.ts`, `flow.ts`, `app.tsx`, `shell/` and `screens/start/`. Put styles in your section's existing CSS file.
 - One idea, one commit. Tick its box here in the same commit, in your batch's section only. Commit sources only: never `git add` `dist/` or `engine.js`.
 - Tests: your headless test must exercise every idea in the batch and play 60 weeks as three companies with errs 0 and NaN 0. Your browser test opens every new window on desk and phone and checks nothing overflows.
 
 ## A. Wrestlers and the roster
 
-Engine: `src/95-ideas-people.js`. Screens: `app/src/screens/roster/`, `app/src/shared/cards.tsx`. Tests: `test-ideas-a.js`, `app/tests/ideas-a.js`.
+Engine: `src/96-ideas-people.js`. Screens: `app/src/screens/roster/`, `app/src/shared/cards.tsx`. Tests: `test-ideas-a.js`, `app/tests/ideas-a.js`.
 
 - [ ] **A1. Named injuries.** An injury has a body part and a name: a tweaked knee, a separated shoulder, a concussion. A part hurt twice becomes a weak spot that is hurt more easily. The card and the medical note say it in words.
 - [ ] **A2. Depth chart.** A window from Roster: each division as a ladder from main event to opening match, faces on one side and heels on the other, with gaps flagged in words ("no heel in the upper mid-card").
@@ -41,11 +42,11 @@ Engine: `src/95-ideas-people.js`. Screens: `app/src/screens/roster/`, `app/src/s
 
 ## B. Stories, fans and the press
 
-Engine: `src/95-ideas-stories.js`. Screens: `app/src/screens/stories/`. Tests: `test-ideas-b.js`, `app/tests/ideas-b.js`.
+Engine: `src/96-ideas-stories.js`. Screens: `app/src/screens/stories/` and `app/src/screens/net/` (the Net section: Dirt sheet, The feed, The boards; engine in `src/94-net.js`, which never calls `rnd(S)`; keep fan and press flavour that way). Tests: `test-ideas-b.js`, `app/tests/ideas-b.js`.
 
 - [ ] **B1. Feud recap.** Each feud keeps a short timeline: how it began, every match and angle, who is ahead. It opens from any feud.
 - [ ] **B2. Feud forecast.** For each live feud, one line on where it is heading: "ready for a big finish in two weeks if tonight goes well", "cooling: nothing has happened for three weeks".
-- [ ] **B3. Fan mail.** Three short letters a month on the Net page, from different kinds of fan, each about something that happened on your shows.
+- [ ] **B3. Fan mail.** Three short letters a month in the Net section (a window from The feed), from different kinds of fan, each about something that happened on your shows.
 - [ ] **B4. The monthly fan poll.** Fans vote on a question: best match, who deserves a title shot, who should turn. The result is a booking hint, and following it pleases them.
 - [ ] **B5. Predictions.** Before a big event the fan board predicts each winner. Surprising them with a result that makes sense lifts interest. A swerve for its own sake annoys them.
 - [ ] **B6. What they are talking about.** The top three topics among fans this week, one line each, with a name to tap.
@@ -67,7 +68,7 @@ Engine: `src/95-ideas-stories.js`. Screens: `app/src/screens/stories/`. Tests: `
 
 ## C. Money and the company
 
-Engine: `src/95-ideas-money.js`. Screens: `app/src/screens/company/Finances.tsx`, `Overview.tsx`, and new windows under `app/src/screens/manage/` (not `Operations.tsx`). Tests: `test-ideas-c.js`, `app/tests/ideas-c.js`.
+Engine: `src/96-ideas-money.js`. Screens: `app/src/screens/company/Finances.tsx`, `Overview.tsx`, and new windows under `app/src/screens/manage/` (not `Operations.tsx`). Tests: `test-ideas-c.js`, `app/tests/ideas-c.js`.
 
 - [ ] **C1. The week in one line.** Finances opens with one sentence: what you made or lost this week and the biggest reason it changed.
 - [ ] **C2. Profit by show.** Each weekly show and the big events: money in, money out, and profit over its last eight runs, as a text chart.
@@ -93,7 +94,7 @@ Engine: `src/95-ideas-money.js`. Screens: `app/src/screens/company/Finances.tsx`
 
 ## D. The desk, your career and ease of use
 
-Engine: `src/95-ideas-desk.js`. Screens: `app/src/screens/office/`, `app/src/shell/`, `app/src/screens/start/` (Options and Help only), and the shared files this batch alone may edit. Tests: `test-ideas-d.js`, `app/tests/ideas-d.js`.
+Engine: `src/96-ideas-desk.js`. Screens: `app/src/screens/office/`, `app/src/shell/`, `app/src/screens/start/` (Options and Help only), and the shared files this batch alone may edit. Tests: `test-ideas-d.js`, `app/tests/ideas-d.js`.
 
 - [ ] **D1. The week that was.** After End week: one window with money, popularity, the biggest story, injuries and who is unhappy. One button closes it, and Options can turn it off.
 - [ ] **D2. Find anything.** A search box on the menu bar and the `/` key: wrestlers, belts, teams, companies and pages. Enter opens the top result.
@@ -119,7 +120,7 @@ Engine: `src/95-ideas-desk.js`. Screens: `app/src/screens/office/`, `app/src/she
 
 ## E. The world, rivals and the show
 
-Engine: `src/95-ideas-world.js`. Screens: `app/src/screens/company/World.tsx`, `app/src/screens/manage/Rivals.tsx`, `app/src/screens/booking/Report.tsx`, `Live.tsx`. Tests: `test-ideas-e.js`, `app/tests/ideas-e.js`.
+Engine: `src/96-ideas-world.js`. Screens: `app/src/screens/company/World.tsx`, `app/src/screens/manage/Rivals.tsx`, `app/src/screens/booking/Report.tsx`, `Live.tsx`. Tests: `test-ideas-e.js`, `app/tests/ideas-e.js`.
 
 - [ ] **E1. Rival results.** World shows each rival's last show in one line: the grade, the main event, and anything that changed.
 - [ ] **E2. Act on a release.** When a rival lets go of someone worth having, the inbox item carries a "Make an offer" button.

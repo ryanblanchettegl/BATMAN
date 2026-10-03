@@ -12,3 +12,6 @@
 .roomdet h3{color:var(--yellow);text-transform:uppercase;letter-spacing:.08em}
 .aplog{margin-top:12px;padding-top:8px;border-top:1px dashed var(--grey)}
 .aplog .list li.col{gap:0}
+/* this week's tasks, inside the Before the show box */
+.tasks{margin-top:12px;padding-top:10px;border-top:1px dashed var(--grey)}
+.tasks .task.done .tag,.tasks .task.waved .tag{opacity:.8}

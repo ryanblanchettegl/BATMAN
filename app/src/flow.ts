@@ -53,7 +53,7 @@ export function abandonGame() { clearSave(); G.S = null; resetUi({ scr: 'select'
 
 /** Close the week, go back to the desk and show the week-closed window. */
 export function endWeek() {
-  const S = G.S; if (S.inbox.some((e: any) => !e.done) || S.qi < S.queue.length) return;
+  const S = G.S; if (S.inbox.some((e: any) => !e.done) || S.qi < S.queue.length || !E.taskGate(S, 'week').ok) return;
   ui.flash = null;
   // before the week turns: what the booker did with action points, and everyone's overness, to find the movers
   const did = (E.backstage(S).log || []).map((l: any) => ({ place: l.place, act: l.act, ok: l.ok, msg: l.msg })), before: Record<number, number> = {};

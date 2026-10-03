@@ -34,7 +34,7 @@ async function run(mode) {
   ok(await count('.gp') === 0 && await count('.gauge') === 0, 'no gauges on the desk: they are on Company');
   ok((await page.$$eval('.panel > h2', L => L[0].textContent)) === 'Before the show' && await count('.pre [data-t="book-next"]') === 1, 'the desk opens on Before the show, with the booking button');
   ok(await count('.onews li') >= 1, 'office news has a memo');
-  for (const t of ['Before the show', 'Inbox', 'This week', 'Promises and targets', 'Needs attention', 'Clocks', 'Office news']) ok((await page.$$eval('.panel > h2', L => L.map(e => e.textContent))).includes(t), 'panel: ' + t);
+  for (const t of ['Before the show', 'Inbox', 'This week', 'Promises and targets', 'Worth knowing', 'Clocks', 'Office news']) ok((await page.$$eval('.panel > h2', L => L.map(e => e.textContent))).includes(t), 'panel: ' + t);
   ok(await count('[data-t="book-show"]') === 1 && await count('[data-t="endweek"]') === 0, 'a show to book, no end-week button yet');
   await step('desk', 'desk');
   await page.click('[data-t="book-next"]'); ok(await page.evaluate(() => window.EWF_DEBUG.ui.page) === 'booking', 'Book the next show opens Booking'); await go(page, 'desk');
@@ -169,7 +169,7 @@ async function remote() {
   for (const id of ['desk', 'career']) { await go(page, id); await settle(); const o = await overflow(page); ok(o === '', 'tv ' + id + ': ' + o); }
   await go(page, 'desk'); await settle();
   ok(await focus() === 'book-next', 'the desk starts on Book the next show: ' + await focus());
-  await key('ArrowDown'); ok(/^bs-room:/.test(await focus()), 'down from the button reaches the rooms: ' + await focus());
+  await key('ArrowDown'); ok(/^task-go:/.test(await focus()), 'down from the button reaches this week’s tasks: ' + await focus());
   await page.focus('[data-t="bs-room"][data-v="office"]'); await key('ArrowRight'); await key('ArrowRight'); ok(await focus() === 'bs-room:trainer', 'arrows walk the map: ' + await focus());
   await key('Enter'); ok(await page.$$eval('.room.on', L => L.length) === 1 && await focus() === 'bs-room:trainer', 'OK opens the room and the highlight stays');
   await page.click('[data-t="bs-room"][data-v="gym"]'); await page.click('[data-t="bs-room"][data-v="trainer"]');   // whatever the arrows did, the trainer's room is open now

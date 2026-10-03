@@ -74,6 +74,8 @@ function navMove(dir: string): boolean {
     if (!atEnd && !cb) { window.scrollBy(0, (dir === 'down' ? 1 : -1) * vh * 0.4); return true; }
     best = pickFrom(L.filter(e => barOf(e) === (dir === 'up' ? 1 : 2)));
   }
+  // a row of buttons that has wrapped onto a second line: left and right carry on along it
+  if (!best && !vert) { const sib = L.filter(e => e.parentElement === cur.parentElement), nx = sib[sib.indexOf(cur) + (dir === 'right' ? 1 : -1)]; if (nx) best = nx; }
   if (!best) return true;
   const bq = best.getBoundingClientRect();
   if (!barOf(best) && ((dir === 'down' && bq.top > vh * 1.6) || (dir === 'up' && bq.bottom < -vh * 0.6))) { window.scrollBy(0, (dir === 'down' ? 1 : -1) * vh * 0.5); return true; }

@@ -18,14 +18,15 @@ Elite Wrestling Federation 9000 is a wrestling booking sim in the Extreme Warfar
 
 Start flow: Boot, Title, Select promotion, First day (or Create a federation).
 
-Six sections, each with a row of page buttons. Nothing lives outside this map.
+Seven sections, each with a row of page buttons. Nothing lives outside this map.
 
 | Section | Pages | What you do there |
 |---|---|---|
-| Office | The desk, Career | The hub. Opens on "Before the show": the next show, Book the next show, action points and the backstage rooms. Then the inbox, the week, what needs attention, clocks and news |
-| Booking | Card, Broadcast, Report | Build the card, make the calls, watch it, read the fallout |
+| Office | The desk, Career | The hub. Opens on "Before the show": the next show, Book the next show, this week's tasks, action points and the backstage rooms. Then the inbox, the week, what is worth knowing, clocks and news. A show cannot be booked and a week cannot end while a task is open; each task is done or left for another week |
+| Booking | Card, Broadcast, Report | Build the card: matches, promos and angles on one run sheet. Make the calls, watch it, read the fallout |
 | Roster | Roster, Locker room, Titles, Free agents | Everything about talent: who you have, how they feel, what they hold, who you could sign |
-| Stories | Storylines, History, The Net | What your booking set in motion, what it added up to, what the fans say |
+| Stories | Storylines, History | What your booking set in motion and what it added up to |
+| Net | Dirt sheet, The feed, The boards | Information only: the weekly sheet on every company, short posts from wrestlers, fans and the press, and the fan boards. All names invented |
 | Manage | Operations, House, Deals | Every choice about the company: slot and settings, house style and rules, sponsors, rivals and trades |
 | Company | Overview, Finances, World | Information only: cash, popularity and booking power, how the company is run, the money, the world |
 

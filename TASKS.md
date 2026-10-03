@@ -13,7 +13,7 @@ Two more lists sit beside this one, both finished:
 
 ## Where things stand
 
-- **Built and tested:** the engine, the rebuilt interface (six sections), nine company models, the nine-promotion public-domain universe set in the present day, attempts instead of dice wording, action notes on the desk, the Music button, Free agents with a Fit column.
+- **Built and tested:** the engine, the rebuilt interface (seven sections), nine company models, the nine-promotion public-domain universe set in the present day, attempts instead of dice wording, action notes on the desk, the Music button, Free agents with a Fit column.
 - **Built, not fully tested:** click-anywhere pop-ups (task 1).
 - **The live page** (a Claude artifact Ryan plays from) is one step behind this repository: it does not have the pop-ups yet.
 - **Sims:** all nine promotions ran 80 weeks headless with no errors and no bad numbers.
@@ -86,6 +86,25 @@ Code: `src/87-create.js` (`E.makeShow`, `E.dropShow`, `E.makeTitle`, `E.dropTitl
 - [ ] A new show or belt cannot be given to one brand of a brand split.
 - [ ] Rivals do not retire belts.
 
+### 0c. Ryan's play notes of 3 October (version 0.14)
+
+**Promos and angles are booked.** Code: `src/93-segments.js`, `app/src/screens/booking/Segments.tsx`. Tests: `node test-segments.js`, `app/tests/segments.js`.
+- [x] The run sheet holds the opening promo, the matches, and the promos and angles between them. A weekly show has two slots, a big event two.
+- [x] Nine kinds: interview, call-out, war of words, title challenge, face-off (promos); ambush, brawl, save, turn (angles). The player picks the kind, who is in it and where it goes. The window says what it should score and what helps or hurts.
+- [x] A slot left alone goes to the writers, as before. Suggest fills the slots too. The report marks the ones the player booked.
+- [ ] Segment length, contract signings and the rest of the promo kinds come with the time bar in task 3.
+
+**Net is its own section.** Code: `src/94-net.js`, `app/src/screens/net/`. Test: `app/tests/net.js`.
+- [x] Seventh section in the top menu, between Stories and Manage: **Dirt sheet** (one issue a week: lead story, your shows, match of the week, a part per company, business, rumours marked sure, likely or thin, next week, a review of the booking; the last four issues are kept), **The feed** (short posts from wrestlers, the company, the press and fans after every show), **The boards** (the fan boards, moved from Stories).
+- [x] It never touches the game's random stream, so it cannot change a result.
+- [ ] Rumours that turn out wrong, rival backstage drama, "on this day", and the scrum after a big event (task 8, `NEXT.md` job 9).
+
+**This week's tasks on the desk.** Code: `src/95-tasks.js`, `app/src/screens/office/Tasks.tsx`. Tests: `node test-tasks.js`, `app/tests/tasks.js`.
+- [x] The desk lists every task for the week under Book the next show: house style to set, inbox to answer, empty commentary chairs, sponsor offers with a free slot, vacant titles, contracts about to end. Each has a button that goes to it. Action points and promises due are listed as worth doing.
+- [x] A show cannot be booked or run, and the week cannot end, while a task is open. A task is done by doing it or by **Not this week** (back next week if still open). The inbox and the house style cannot wait.
+- [x] Options has "This week's tasks come first: On / Off" for players who want reminders only.
+- [ ] More tasks as systems land: arena pick, TV deal renewals, the year planner, an unbooked promo slot.
+
 ### 1. Finish the pop-ups (small)
 Feature list items 10 and 11. Code: `app/src/shared/cards.tsx`, `Name`, `TitleName`, `TeamName` and `Txt` in `app/src/kit/index.tsx`, the card stack in `app/src/store.ts`.
 
@@ -110,7 +129,7 @@ Feature list item 6. Replaces `app/src/screens/booking/` card editing; the engin
 
 - [ ] Shows have a length: 1, 2 or 3 hours, or pay-per-view. The length sets the card: 3+3, 4+4 or 5+5 matches and promos.
 - [ ] Slot cards for matches and promos, and one time bar the player drags to split the show. Each segment shows its ideal length; too short or too long costs it.
-- [ ] Promos as booked segments: pick the people and a kind (interview, challenge, brawl, contract signing, and so on). Today angles are generated automatically (`genAngle`) and only the opening promo is planned (`planPromo`); both need to become player choices with suggestions.
+- [x] Promos and angles as booked segments: pick the people and a kind (see 0c). Still to do here: contract signings and segment length.
 - [ ] Suggested picks and quick-fill buttons. Booking power to call finishes carries over unchanged.
 - [ ] The show plays out segment by segment with points popping up, a grade per segment, and a grade for the show. Keep the work score and the crowd score separate and visible (they already exist as `mq` and `cr`).
 - [ ] Crowd heat shown while booking; creative energy as a resource the booking team generates.
@@ -154,7 +173,7 @@ Feature list items 5 and 7.
 ### 8. All-federation dirt sheet and dynamic events
 Feature list item 9.
 
-- [ ] A dirt sheet page: lead story, a section per federation, rumours with a reliability level, business news, match of the week, next week, and a review of the player's booking. Today there is a per-show dirt sheet (`src/30-show.js`) and a fan board.
+- [x] A dirt sheet page: lead story, a section per federation, rumours with a reliability level, business news, match of the week, next week, and a review of the player's booking. It lives in the Net section (see 0c).
 - [ ] Rival backstage drama, "on this day", media scrums after big events.
 - [ ] Dynamic events of four kinds, on top of the inbox events in `src/40-week.js`.
 - [ ] History-moment events under original names: the player is put in a famous situation and makes the call. Examples of patterns: a champion is leaving and will not lose the title on the way out; a wrestler shows up on a rival's show with your belt; a live microphone goes off script; a faction's contract talks collapse the night before the big event.

@@ -7,6 +7,7 @@ import { Panel, Btn, Sel, Opt, Tag, CheckLine, Empty, brandName, dataAttrs, Txt,
 import { EndWeekBtn } from '../../shared/week';
 import { office, focusAfter, useFocusAfter, TO_MAP } from './util';
 import { Court } from './Court';
+import { Tasks } from './Tasks';
 
 const ROOMART: Record<string, string[]> = {
   office: ['╔═══╗', '║ $ ║', '╚═╩═╝'], court: [' ─┬─ ', '╱ │ ╲', '▔▔┴▔▔'], trainer: ['┌───┐', '│ + │', '└───┘'], gym: ['╔═╤═╗', '╟─┼─╢', '╚═╧═╝'],
@@ -57,7 +58,7 @@ function RoomActs(p: { room: any; blocked: string }) {
 
 /** The show that is next, and the one button that takes you to book it. Once every show has run, the button ends the week. */
 function NextShow() {
-  const S = G.S, sh = S.queue[S.qi], nb = E.nextBig(S), left = S.queue.length - S.qi;
+  const S = G.S, sh = S.queue[S.qi], nb = E.nextBig(S), left = S.queue.length - S.qi, gate = E.taskGate(S, 'book');
   if (weekDone()) return <div class="nextshow">
     <p>Every show this week has run.</p>
     <EndWeekBtn />
@@ -65,7 +66,8 @@ function NextShow() {
   return <div class="nextshow">
     <p><span class="eyebrow">Next show</span><br /><b class="ns">{sh.name}</b> {sh.big ? <Tag kind="gold">Big event</Tag> : <Tag>TV</Tag>}{sh.brand ? <> <Tag>{brandName(me(), sh.brand)}</Tag></> : null}
       <br /><span class="muted">{left > 1 ? left + ' shows left this week. ' : ''}{sh.big ? '' : <>Next big event: {nb.name}, {nb.week === S.week ? 'this week' : 'week ' + nb.week}.</>}</span></p>
-    <div class="row"><Btn kind="go" t="book-next" d={{ home: '' }} onClick={() => go('booking')}>Book the next show</Btn></div>
+    <div class="row"><Btn kind="go" t="book-next" d={{ home: '' }} disabled={!gate.ok} onClick={() => go('booking')}>Book the next show</Btn>
+      {gate.ok ? null : <span class="muted" data-t="book-wait">Finish this week{'’'}s tasks first: {gate.left.length} to do.</span>}</div>
   </div>;
 }
 
@@ -78,6 +80,7 @@ export function BeforeShow() {
   useFocusAfter();
   return <Panel title="Before the show" cls="pre mb3">
     <NextShow />
+    <Tasks />
     <p class="mt2">Action points this week: <span class="pips" role="img" aria-label={B.ap + ' of ' + B.max}>{Array.from({ length: B.max }, (_, i) => i < B.ap ? <span class="gold">{'◆'}</span> : <span class="muted">{'◇'}</span>)}</span> <span class="num">{B.ap} of {B.max}</span>
       {S.court && S.court.length ? <span class="warn"> {'·'} {S.court.length} in court</span> : null}</p>
     {fold ? <div class="row mt1"><span class="muted">The rooms are closed until next week.</span><Btn kind="sm" t="rooms-show" onClick={() => view(() => { st.rooms = true; })}>Show the rooms</Btn></div> : <>
