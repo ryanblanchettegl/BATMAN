@@ -72,5 +72,11 @@ const R = {};
   }
   ok('lta', 'multi-man matches respect brand splits', bad === 0, bad + ' wrong of ' + n);
 }
+/* The fit label judges skills, not popularity: a company's biggest stars are not all a bad fit for it. */
+E.universe().promotions.forEach(p => {
+  const S = E.newGame(p.id, 3, { name: 'R' }), top = S.w.filter(w => w.promo === p.id && !w.nw).sort((a, b) => b.ovr - a.ovr).slice(0, 5);
+  const wrong = top.filter(w => E.fit(S, w.id).n === 'Wrong for this company').length;
+  ok(p.id, 'the top five stars are not mostly marked wrong for the company', wrong <= 2, wrong + ' of 5');
+});
 if (fails.length) { console.log('FAILED: ' + fails.length); process.exit(1); }
 console.log('test-models: all passed');

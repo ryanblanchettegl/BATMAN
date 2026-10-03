@@ -3810,12 +3810,17 @@ E.modelOf=function(S,pid){var P=S.promos[pid||S.player],M=modelOf(P),rr=riskRang
 E.modelList=function(){return Object.keys(MODELS).map(function(k){var M=MODELS[k];return {id:k,n:M.n,d:M.d,good:M.good,bad:M.bad};});};
 /* how well a wrestler suits the player's company: the fit score set against their overness */
 var fitMed={k:'',v:0};
+// How well a wrestler's strengths match what the model values, whatever their level:
+// the skills the model counts (popularity taken out), set against the wrestler's own all-round average.
+function fitShape(M,w,P,S){var o=w.ovr;w.ovr=0;var f0=M.fit(w,P,S);w.ovr=100;var f1=M.fit(w,P,S);w.ovr=o;var a=clamp((f1-f0)/100,0,0.9);
+  return f0/(1-a)-(w.brawl+w.tech+w.speed+w.stam+w.mic+w.cha+w.hc+w.sq+w.cons)/9;}
 E.fit=function(S,id){var w=S.w[id],P=S.promos[S.player],M=modelOf(P);if(!w||!M.fit)return null;var f=M.fit(w,P,S);if(f<-100)return {v:-99,n:'Cannot work here'};
-  // judged against the typical member of your own roster, so a star is not marked down just for being a star
-  var R=rosterOf(S,P.id).filter(function(x){return !x.nw;}),k=S.seed+':'+S.week+':'+P.id+':'+R.length;
-  if(fitMed.k!==k){var a=R.map(function(x){return M.fit(x,P,S)-x.ovr;}).sort(function(x,y){return x-y;});fitMed={k:k,v:a.length?a[Math.floor(a.length/2)]:0};}
-  var d=f-w.ovr-fitMed.v;
-  return {v:Math.round(d),n:d>=5?'Made for this company':(d>=2?'A good fit':(d>-2?'Fits well enough':(d>-5?'An awkward fit':'Wrong for this company')))};};
+  // judged against the typical member of your own roster. Popularity and overall level are left out: they have their own columns,
+  // and neither a star nor an unknown is a worse fit for being one
+  var R=rosterOf(S,P.id).filter(function(x){return !x.nw&&M.fit(x,P,S)>-100;}),k=S.seed+':'+S.week+':'+P.id+':'+R.length;
+  if(fitMed.k!==k){var a=R.map(function(x){return fitShape(M,x,P,S);}).sort(function(x,y){return x-y;});fitMed={k:k,v:a.length?a[Math.floor(a.length/2)]:0};}
+  var d=fitShape(M,w,P,S)-fitMed.v;
+  return {v:Math.round(d),n:d>=8?'Made for this company':(d>=3?'A good fit':(d>-3?'Fits well enough':(d>-8?'An awkward fit':'Wrong for this company')))};};
 
 /* ===== 80-world.js ===== */
 /* ---------- difficulty ---------- */
