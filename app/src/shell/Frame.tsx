@@ -13,11 +13,15 @@ import { SFX } from '../sfx';
 onBack(() => { const c = document.querySelector('.jk [data-jk="close"]') as HTMLElement | null; if (!c) return false; c.click(); return true; });
 export function MusicBtn() { return <button type="button" class="f1 mus" data-t="music" data-jk="open" aria-label="Music jukebox">{'♫'} Music</button>; }
 
+/** Manage: sponsor offers waiting, plus one if the house style still has to be set. */
+function manageBadge(): number { const S = G.S; return (S.sponsors.length < 3 ? S.spOffers.length : 0) + (S.owner.pending ? 1 : 0); }
+/** Roster: contracts of your wrestlers that end within four weeks. */
+function endingSoon(): number { const S = G.S; return S.w.filter((w: any) => w.promo === S.player && !w.nw && w.con <= 4).length; }
 export function MenuBar() {
   const S = G.S, P = me(), cur = sectionOf(ui.page), n = pending();
   return <nav class="menu" aria-label="Sections">
     {SECTIONS.map(s => {
-      const badge = s.id === 'office' && n ? n : (s.id === 'booking' && !weekDone() ? S.queue.length - S.qi : 0);
+      const badge = s.id === 'office' && n ? n : (s.id === 'booking' && !weekDone() ? S.queue.length - S.qi : (s.id === 'manage' ? manageBadge() : (s.id === 'roster' ? endingSoon() : 0)));
       return <button type="button" data-t="tab" data-v={s.id} aria-current={cur === s ? 'page' : undefined} onClick={() => go(s.id)}><u>{s.n.charAt(0)}</u>{s.n.slice(1)}{badge ? <span class="badge"> ({badge})</span> : null}</button>;
     })}
     <span class="ttl">{P.name} {'·'} {E.cal(S.week).label}</span>
