@@ -293,3 +293,19 @@ E.bodyWord=function(S,id){
   var w=S.w[id];if(!w)return null;var worst=Math.max(maxZone(w),100-w.cond),word=worst<25?'fresh':(worst<45?'sore':(worst<65?'banged up':'running on fumes'));
   return {word:word,v:Math.round(worst),bad:worst>=45};
 };
+
+/* finishers: a finisher nobody kicks out of lifts the crowd. A booked kick-out (m.kick) spends that protection and makes the match */
+CRX.push(function(ctx){
+  var d=0,who=null;ctx.all.forEach(function(w){if((w.fp||0)>=2&&w.fin){d+=Math.min(0.8,w.fp*0.16);who=who||w;}});
+  var k=ctx.m.kick&&who;d=Math.min(1.2,d);if(k)d+=1.2;
+  return who?{d:d,x:k?'The crowd gasps as '+who.name+'’s '+(who.fin||'finish')+' is kicked out of':'Everyone knows '+who.name+'’s '+(who.fin||'finish')+' ends it'}:null;
+});
+POST.push(function(ctx){
+  var r=ctx.res,S=ctx.S;if(S.cal||r.win<0)return;
+  r.winners.forEach(function(w){
+    if(ctx.m.kick&&(w.fp||0)>=2){w.fp=Math.max(0,w.fp-2);ctx.res.seg.notes.push(w.name+'’s finisher was kicked out of. Its protection drops to '+w.fp+'.');}
+    else if(r.fin==='clean'&&w.fin)w.fp=Math.min(5,(w.fp||0)+1);
+  });
+  r.losers.forEach(function(w){if(w.fp)w.fp=Math.max(0,w.fp-0.5);});
+});
+E.finisherWord=function(w){var f=w.fp||0;return f>=4?'unbeaten':(f>=2?'strong':(f>=1?'building':'untested'));};

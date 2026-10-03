@@ -25,7 +25,7 @@ function WrestlerCard(p: { id: number }) {
       <div>
         <p><Side w={w} /> {w.rt ? <Tag>Retired</Tag> : null}{ts.map(x => <> <Tag kind="gold">Champion</Tag></>).slice(0, 1)}</p>
         <p><b>{w.promo === 'FA' ? 'Free agent' : <PromoName id={w.promo} />}</b> {'·'} Age {w.age} {'·'} {E.STYLE_NAME[w.style] || ''}</p>
-        <p class="muted">Finisher: the {w.fin || 'finish'}</p>
+        <p class="muted">Finisher: the {w.fin || 'finish'} ({E.finisherWord(w)})</p>
       </div>
     </div>
     <div class="kv mt2">
