@@ -1,0 +1,76 @@
+/* The frame around every page: one grey menu bar, the row of page buttons, the message line, one grey status bar. */
+import { E } from '../engine';
+import { G, ui, me, cash, view, openModal, PLATFORM, redraw, onReset } from '../store';
+import { SECTIONS, sectionOf, go, weekDone, pending } from '../nav';
+import { NAV, onBack } from '../input';
+import { abandonGame } from '../flow';
+import { Btn, Dice, Tabs } from '../kit';
+import { SFX } from '../sfx';
+
+/** The Music button, at the right-hand end of the top bar. The soundtrack add-on (app/addons/soundtrack.js) opens its
+    Jukebox for any click on an element marked data-jk="open", so this button needs no handler of its own. */
+// Back on a remote or gamepad closes the Jukebox first
+onBack(() => { const c = document.querySelector('.jk [data-jk="close"]') as HTMLElement | null; if (!c) return false; c.click(); return true; });
+export function MusicBtn() { return <button type="button" class="f1 mus" data-t="music" data-jk="open" aria-label="Music jukebox">{'♫'} Music</button>; }
+
+export function MenuBar() {
+  const S = G.S, P = me(), cur = sectionOf(ui.page), n = pending();
+  return <nav class="menu" aria-label="Sections">
+    {SECTIONS.map(s => {
+      const badge = s.id === 'office' && n ? n : (s.id === 'booking' && !weekDone() ? S.queue.length - S.qi : 0);
+      return <button type="button" data-t="tab" data-v={s.id} aria-current={cur === s ? 'page' : undefined} onClick={() => go(s.id)}><u>{s.n.charAt(0)}</u>{s.n.slice(1)}{badge ? <span class="badge"> ({badge})</span> : null}</button>;
+    })}
+    <span class="ttl">{P.name} {'·'} {E.cal(S.week).label}</span>
+    <button type="button" class="f1" data-t="help" onClick={() => openModal({ kind: 'help' })}>Help</button>
+    <MusicBtn />
+  </nav>;
+}
+
+/** The page buttons of the current section. Sections with one page show nothing. */
+export function SubNav() {
+  const sec = sectionOf(ui.page);
+  if (sec.pages.length < 2) return null;
+  return <Tabs label={sec.n + ' pages'} value={ui.page} onPick={go} items={sec.pages.map(p => ({ id: p[0], t: 'page', d: { v: p[0] }, label: p[1] }))} />;
+}
+
+export function StatusBar() {
+  const S = G.S, P = me(), a = toastNow();
+  if (a) return <footer class="status toast" role="status" data-t="toast" onClick={() => { clearTimeout(timer); nextToast(); }}>
+    <span><b>Achievement unlocked</b></span><span class="tn">{a.name}</span><span class="opt td">{a.desc}</span><span class="sp" />{queue.length > 1 && <span class="opt">+{queue.length - 1} more</span>}
+  </footer>;
+  return <footer class="status">
+    <span><b>BP</b> {S.bp}</span><span><b>AP</b> {S.ap == null ? 0 : S.ap}</span><span><b>Cash</b> {cash(P.cash)}</span><span><b>Pop</b> {P.image.toFixed(1)}</span>
+    {!S.owner.me && <span class="opt"><b>Owner</b> {Math.round(S.owner.trust)}</span>}
+    <span class="sp" />
+    {NAV.pad ? <><span class="opt"><b>A</b> select</span><span class="opt"><b>B</b> back</span><span class="opt"><b>LB RB</b> sections</span></> : (NAV.on ? <><span class="opt"><b>OK</b> select</span><span class="opt"><b>Back</b> back</span></> : null)}
+    <button type="button" data-t="options" onClick={() => openModal({ kind: 'options' })}>[Options]</button>
+  </footer>;
+}
+
+/** The one-line result of the last thing the player did, and the "start over?" bar. */
+export function FlashBar() {
+  return <>
+    {ui.confirm === 'new' && <div class="flash err"><div class="row"><span>Start over? Your current game will be erased.</span>
+      <Btn kind="danger" t="newgame-yes" onClick={abandonGame}>Yes, new game</Btn><Btn t="cancel" onClick={() => view(() => { ui.confirm = null; })}>Keep playing</Btn></div></div>}
+    {ui.flash && <div class={'flash' + (ui.flash.err ? ' err' : '')} role="status"><Dice roll={ui.flash.roll} />{ui.flash.text}</div>}
+  </>;
+}
+
+/* Achievements: the engine queues ids in S.toasts. Each one takes over the status bar for a few seconds, one at a time,
+   so nothing ever covers the page. */
+const queue: string[] = []; let timer: any = null;
+function nextToast() { timer = null; queue.shift(); if (queue.length) timer = setTimeout(nextToast, 4200); redraw(); }
+export function drainToasts() {
+  const S = G.S; if (!S || !S.toasts.length) return;
+  let added = false;
+  while (S.toasts.length) { const id = S.toasts.shift(); if (!E.ACH.some((a: any) => a.id === id)) continue; PLATFORM.unlock(id); queue.push(id); added = true; }
+  if (!added) return;
+  SFX.ach();
+  while (queue.length > 4) queue.splice(1, 1);
+  if (!timer) timer = setTimeout(nextToast, 4200);
+  redraw();
+}
+export function clearToasts() { queue.length = 0; if (timer) { clearTimeout(timer); timer = null; } }
+onReset(clearToasts);
+/** The achievement being announced, if any. */
+export function toastNow(): any { return queue.length ? E.ACH.find((q: any) => q.id === queue[0]) : null; }

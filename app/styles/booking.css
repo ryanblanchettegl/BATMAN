@@ -1,0 +1,18 @@
+/* Styles only the Booking screens need. Shared pieces live in base.css. */
+/* card builder */
+.editor .wide{grid-column:1/-1}
+.flash ul{margin:6px 0 0;padding-left:18px}
+.promo{display:flex;flex-direction:column;gap:8px}
+/* the headset call */
+.stack.calls{gap:6px}
+/* the broadcast */
+.vs .row{gap:6px}
+/* the newest line types itself out; the rest of it already holds its place */
+.ln .untyped{visibility:hidden}
+.live .keys-hint{display:none;margin-left:auto;color:var(--dcyan)}
+@media (min-width:861px){html[data-screen="desk"] .live .keys-hint{display:inline}}
+/* on a narrow screen a score's meter drops under its label: no blank line between the two */
+.result .scores div{gap:0 2ch}
+/* show report */
+.rating{gap:24px;align-items:flex-end}
+.rating p{flex:1 1 260px}

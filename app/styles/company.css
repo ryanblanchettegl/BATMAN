@@ -1,0 +1,18 @@
+/* Styles only the Company screens need. Shared pieces live in base.css. */
+/* .kv paints every value white; on Finances a negative balance still has to read as red */
+.money .kv span.bad{color:var(--red)}
+/* the two ledgers on Finances sit side by side as equals */
+.cols.ledger{grid-template-columns:repeat(2,minmax(0,1fr))}
+@media (max-width:860px){.cols.ledger{grid-template-columns:minmax(0,1fr)}}
+/* a ledger line is a short label and a figure: keep them on one line at any type width */
+.ledger .list li{flex-wrap:nowrap}
+.ledger .list li > span:first-child{flex:1 1 auto}
+/* World, one column: the power ten comes before sixty lines of news, not after */
+@media (max-width:860px){.cols.wire > :last-child{order:-1}}
+/* the three gauges on the overview: side by side at a desk, stacked on a phone */
+.gauges{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px 2ch;margin-bottom:24px}
+@media (max-width:860px){.gauges{grid-template-columns:minmax(0,1fr)}}
+/* a setting and its level: the level sits on the right */
+.setup .list li{flex-wrap:nowrap}
+.setup .list li > span:first-child{flex:1 1 auto}
+.setup .list li > span.r{text-align:right;flex:0 1 auto}

@@ -1,0 +1,20 @@
+/* Styles only the Roster screens need. Shared pieces live in base.css. */
+/* the profile panel: portrait and name take the row, Close sits at the right and drops below on a phone */
+.prof .who{flex:1 1 30ch}
+.prof .subnav{margin:10px 0 0}
+.prof h2{overflow-wrap:anywhere}
+.prof .tag{white-space:normal}
+@media (max-width:640px){.prof .kv{grid-template-columns:repeat(2,minmax(0,1fr))}}
+/* roster table: a champion's gold tag does not fold the row in two */
+tr.pick .tag{white-space:nowrap}
+/* market: a row stays one line tall; the offer under it keeps to the visible part of a table that scrolls sideways */
+.mkt td > .btn{white-space:nowrap}
+.mkt .offer-row > td{background:var(--grey);color:var(--k)}
+.mkt .offer-row .muted{color:#004848}
+.mkt{container-type:inline-size}
+.mkt .offer{position:sticky;left:1ch;width:min(100%,calc(100vw - 6ch - 8px));width:min(100%,calc(100cqw - 2ch));white-space:normal;padding:6px 0 2px}
+input.wage{width:12ch}
+/* creator: a refusal in the window's status line */
+.caw-err{color:#a00000}
+/* titles: a contenders box never asks for more room than the page has */
+.conts{grid-template-columns:repeat(auto-fill,minmax(min(32ch,100%),1fr))}

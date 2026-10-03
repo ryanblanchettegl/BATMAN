@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Create a Wrestler - Edit Face</title>
+<style>
+html,body{height:100%}
+body{margin:0;background:#0b1410;display:grid;place-items:center;padding:16px;box-sizing:border-box;font-size:21px}
+/* Create-a-Wrestler window: a Windows 95 style dialog. Every bevel is CSS borders; there are no images. */
+.caw{--face:#c0c0c0;--hi:#ffffff;--lite:#dfdfdf;--lo:#808080;--dk:#0a0a0a;--navy:#000080;--neon:#39ff14;
+  font-family:Tahoma,"MS Sans Serif","Segoe UI",Verdana,Arial,sans-serif;font-weight:700;font-size:.76em;line-height:1.15;color:#000;text-transform:none;letter-spacing:0;width:min(54em,100%)}
+.caw *{box-sizing:border-box}
+.caw :where(button,select,input){font:inherit;color:inherit}
+.caw-win{width:100%;background:var(--face);padding:3px;
+  border:2px solid;border-color:var(--hi) var(--dk) var(--dk) var(--hi);
+  box-shadow:inset 2px 2px 0 var(--lite),inset -2px -2px 0 var(--lo),8px 8px 0 rgba(0,0,0,.45)}
+.caw-title{display:flex;align-items:center;justify-content:space-between;gap:8px;background:var(--navy);color:#fff;padding:3px 3px 3px 8px;font-size:1.15em;letter-spacing:.05em;text-transform:uppercase}
+.caw-title span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.caw-x{flex:none;width:1.5em;height:1.4em;padding:0;display:grid;place-items:center;background:var(--face);color:#000;font-size:.9em;line-height:1;cursor:pointer;
+  border:2px solid;border-color:var(--hi) var(--dk) var(--dk) var(--hi);box-shadow:inset -1px -1px 0 var(--lo)}
+.caw-x:active,.caw-btn:active,.caw-cat:active{border-color:var(--dk) var(--hi) var(--hi) var(--dk);box-shadow:inset 1px 1px 0 var(--lo)}
+.caw-body{display:grid;grid-template-columns:minmax(0,11fr) minmax(0,13fr);gap:8px;padding:8px 5px 5px;align-items:stretch}
+
+/* left: the sunken menu panel */
+.caw-left{display:flex;flex-direction:column;gap:3px;min-width:0;padding:4px;background:var(--face);
+  border:2px solid;border-color:var(--lo) var(--hi) var(--hi) var(--lo);box-shadow:inset 1px 1px 0 var(--dk)}
+.caw-cat{display:flex;align-items:center;justify-content:space-between;gap:8px;width:100%;text-align:left;padding:3px 8px;font-size:1.5em;font-weight:700;letter-spacing:.03em;text-transform:uppercase;background:var(--face);cursor:pointer;
+  border:2px solid;border-color:var(--hi) var(--lo) var(--lo) var(--hi)}
+.caw-cat.on{border-color:var(--hi);outline:1px solid var(--dk);outline-offset:-4px}
+.caw-cat.on .lbl{background:var(--neon);box-shadow:0 0 0 3px var(--neon),0 0 12px 3px var(--neon);color:#062b00}
+.caw-led{flex:none;width:.8em;height:.8em;background:var(--neon);border:1px solid #0b6a00;box-shadow:0 0 6px 2px var(--neon),inset 2px 2px 0 rgba(255,255,255,.7)}
+.caw-tree{list-style:none;margin:0 0 2px 22px;padding:0;border-left:2px solid var(--dk)}
+.caw-tree li{position:relative;padding-left:20px}
+.caw-tree li::before{content:'';position:absolute;left:0;top:50%;width:14px;border-top:2px solid var(--dk)}
+.caw-tree li:last-child{background:linear-gradient(var(--face),var(--face)) left bottom/2px 50% no-repeat;margin-left:-2px;padding-left:22px}
+.caw-tree li:last-child::before{left:2px}
+.caw-tree button{all:unset;box-sizing:border-box;cursor:pointer;font-size:1.45em;font-weight:700;letter-spacing:.03em;text-transform:uppercase;padding:0 4px;line-height:1.2}
+.caw-tree button:hover,.caw-tree button:focus-visible{outline:1px dotted var(--dk)}
+.caw-tree button.on{background:var(--navy);color:#fff}
+.caw-scroll{display:flex;align-items:stretch;height:1.25em;margin:2px 0 2px 2.75em}
+.caw-arr{flex:none;width:2em;padding:0;display:grid;place-items:center;font-size:.62em;line-height:1;background:var(--face);cursor:pointer;border:2px solid;border-color:var(--hi) var(--dk) var(--dk) var(--hi)}
+.caw-track{position:relative;flex:1;min-width:0;background:repeating-conic-gradient(var(--hi) 0 25%,var(--face) 0 50%) 0 0/2px 2px}
+.caw-thumb{position:absolute;top:0;bottom:0;left:0;width:22%;background:var(--face);border:2px solid;border-color:var(--hi) var(--dk) var(--dk) var(--hi)}
+.caw-ctl{display:grid;grid-template-columns:auto minmax(0,1fr);gap:4px 8px;align-items:center;margin:1px 0 2px}
+.caw-sliders{display:flex;flex-direction:column;gap:6px;grid-row:span 2}
+.caw-slider{display:flex;align-items:center;gap:5px}
+.caw-ico{width:1em;text-align:center;font-size:.9em;line-height:1}
+.caw-range{-webkit-appearance:none;appearance:none;width:6em;height:1.1em;margin:0;background:transparent;cursor:pointer}
+.caw-range::-webkit-slider-runnable-track{height:8px;background:linear-gradient(90deg,#2a3cd0,#18a058 50%,#d02a2a);border:2px solid;border-color:var(--lo) var(--hi) var(--hi) var(--lo)}
+.caw-range::-moz-range-track{height:6px;background:linear-gradient(90deg,#2a3cd0,#18a058 50%,#d02a2a);border:2px solid;border-color:var(--lo) var(--hi) var(--hi) var(--lo)}
+.caw-range::-webkit-slider-thumb{-webkit-appearance:none;width:9px;height:18px;margin-top:-7px;background:var(--face);border:2px solid;border-color:var(--hi) var(--dk) var(--dk) var(--hi)}
+.caw-range::-moz-range-thumb{width:6px;height:15px;border-radius:0;background:var(--face);border:2px solid;border-color:var(--hi) var(--dk) var(--dk) var(--hi)}
+.caw-pages{display:flex;justify-content:space-between;gap:1px;font-size:.95em;font-weight:400;padding:0 2px}
+.caw-pages button{all:unset;cursor:pointer;min-width:1.1em;text-align:center;padding:0 1px}
+.caw-pages button:hover{text-decoration:underline}
+.caw-pages button.on{background:var(--navy);color:#fff}
+.caw-pages button.cur{text-decoration:underline}
+.caw-btn{min-width:0;padding:3px 8px;font-size:.98em;font-weight:400;text-transform:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;background:var(--face);cursor:pointer;
+  border:2px solid;border-color:var(--lo) var(--hi) var(--hi) var(--lo);box-shadow:inset 1px 1px 0 var(--dk),0 0 0 1px var(--dk)}
+.caw-btn.up{border-color:var(--hi) var(--dk) var(--dk) var(--hi);box-shadow:inset -1px -1px 0 var(--lo)}
+.caw-btn[disabled]{color:var(--lo);text-shadow:1px 1px 0 var(--hi);cursor:not-allowed}
+.caw-split{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,3fr);gap:6px;align-items:center}
+.caw-split .caw-cat{border-color:transparent;padding-left:6px}
+.caw-fields{display:grid;grid-template-columns:auto minmax(0,1fr);gap:4px 8px;align-items:center;padding:4px 6px 6px;font-weight:400;font-size:.98em}
+.caw-fields select,.caw-fields input{width:100%;min-width:0;background:#fff;color:#000;padding:1px 4px;border-radius:0;border:2px solid;border-color:var(--lo) var(--hi) var(--hi) var(--lo);box-shadow:inset 1px 1px 0 var(--dk)}
+.caw-fields p{grid-column:1/-1;margin:0}
+
+/* right: the portrait viewport */
+.caw-view{min-width:0;padding:3px;background:var(--face);border:2px solid;border-color:var(--lo) var(--hi) var(--hi) var(--lo);box-shadow:inset 1px 1px 0 var(--dk);display:flex}
+.caw-screen{position:relative;flex:1;aspect-ratio:1;max-width:100%;align-self:center;background:#07110e;border:3px solid var(--neon);box-shadow:0 0 10px var(--neon),inset 0 0 14px rgba(57,255,20,.35);overflow:hidden}
+.caw-screen canvas{display:block;width:100%;height:100%;background:#0b1a17;image-rendering:crisp-edges;image-rendering:pixelated}
+.caw-screen::after{content:'';position:absolute;inset:0;pointer-events:none;
+  background:repeating-linear-gradient(to bottom,rgba(0,0,0,.22) 0,rgba(0,0,0,.22) 1px,transparent 1px,transparent 3px),radial-gradient(ellipse at center,transparent 55%,rgba(0,0,0,.35) 100%)}
+.caw-foot{display:flex;flex-wrap:wrap;gap:6px 8px;align-items:center;margin:0 5px 4px;padding:4px 8px;font-weight:400;font-size:.95em;border:2px solid;border-color:var(--lo) var(--hi) var(--hi) var(--lo)}
+.caw-foot .sp{flex:1}
+.caw :focus-visible{outline:2px dotted #000;outline-offset:1px}
+@media (max-width:640px){
+  .caw{font-size:.7em}
+  .caw-body{grid-template-columns:minmax(0,1fr)}
+  .caw-view{order:-1}
+  .caw-screen{max-width:16em;margin:0 auto}
+  .caw-scroll{margin-left:1.4em}
+  .caw-range{width:5em}
+}
+</style>
+</head>
+<body>
+<div class="caw">
+  <div class="caw-win" role="dialog" aria-label="Create a wrestler: edit face">
+    <div class="caw-title"><span>CREATE A WRESTLER - EDIT FACE</span><button class="caw-x" type="button" aria-label="Close">&#10005;</button></div>
+    <div class="caw-body">
+
+      <!-- LEFT PANEL: the menu -->
+      <div class="caw-left">
+        <button class="caw-cat" type="button"><span class="lbl">HEAD</span></button>
+        <button class="caw-cat on" type="button" aria-expanded="true"><span class="lbl">FACE</span><i class="caw-led" aria-hidden="true"></i></button>
+        <ul class="caw-tree">
+          <li><button type="button">HAIR</button></li>
+          <li><button type="button">FACIAL HAIR</button></li>
+          <li><button type="button">MUSTACHE</button></li>
+          <li><button type="button">EYES</button></li>
+          <li><button type="button">NOSE</button></li>
+        </ul>
+        <div class="caw-scroll" aria-hidden="true">
+          <button class="caw-arr" type="button" tabindex="-1">&#9668;</button>
+          <div class="caw-track"><i class="caw-thumb"></i></div>
+          <button class="caw-arr" type="button" tabindex="-1">&#9658;</button>
+        </div>
+        <div class="caw-ctl">
+          <div class="caw-sliders">
+            <label class="caw-slider"><span class="caw-ico" aria-hidden="true">&#9788;</span><input class="caw-range" type="range" min="0" max="100" value="25" aria-label="Skin tone"></label>
+            <label class="caw-slider"><span class="caw-ico" aria-hidden="true">&#9998;</span><input class="caw-range" type="range" min="0" max="100" value="45" aria-label="Hair colour"></label>
+          </div>
+          <div class="caw-pages" role="group" aria-label="Style number">
+            <button type="button">1</button><button type="button">2</button><button type="button" class="on">3</button><button type="button">4</button><button type="button">5</button><button type="button">6</button><button type="button">7</button><button type="button">8</button><button type="button">9</button><button type="button">10</button>
+          </div>
+          <button class="caw-btn" type="button">APPLY MUSTACHE 3</button>
+        </div>
+        <div class="caw-split">
+          <button class="caw-cat" type="button"><span class="lbl">BODY</span></button>
+          <button class="caw-btn" type="button">ADD HAIR: Long Ponytail</button>
+        </div>
+        <button class="caw-cat" type="button"><span class="lbl">GEAR</span></button>
+        <button class="caw-cat" type="button"><span class="lbl">SKILLS</span></button>
+      </div>
+
+      <!-- RIGHT PANEL: the portrait viewport -->
+      <div class="caw-view">
+        <div class="caw-screen">
+          <canvas id="portraitCanvas" width="96" height="96" aria-label="Portrait preview"></canvas>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+</body>
+</html>

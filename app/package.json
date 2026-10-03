@@ -1,0 +1,17 @@
+{
+  "name": "ewf-9000-app",
+  "private": true,
+  "version": "0.10.0",
+  "scripts": {
+    "build": "node ../build.js",
+    "check": "tsc --noEmit -p ."
+  },
+  "dependencies": {
+    "preact": "^10.24.0"
+  },
+  "devDependencies": {
+    "@fontsource/vt323": "^5.3.0",
+    "esbuild": "^0.24.0",
+    "typescript": "^5.6.0"
+  }
+}

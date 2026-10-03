@@ -1,0 +1,19 @@
+{
+  "name": "ewf-9000",
+  "version": "0.11.0",
+  "description": "Elite Wrestling Federation 9000: a wrestling booking sim",
+  "main": "desktop/main.js",
+  "scripts": {
+    "postinstall": "cd app && npm install",
+    "build": "node build.js",
+    "check": "cd app && node_modules/.bin/tsc --noEmit -p .",
+    "test": "node test-uni.js universes/public_domain.json 60",
+    "start": "node build.js && electron ."
+  },
+  "devDependencies": {
+    "electron": "^33.0.0"
+  },
+  "dependencies": {
+    "steamworks.js": "^0.4.0"
+  }
+}
