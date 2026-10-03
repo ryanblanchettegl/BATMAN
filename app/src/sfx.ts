@@ -8,7 +8,7 @@ export function tone(f: number, d: number, type?: OscillatorType, vol?: number, 
   try {
     const ac = ctx(), o = ac.createOscillator(), g = ac.createGain(), t = ac.currentTime + (when || 0);
     o.type = type || 'square'; o.frequency.value = f; o.connect(g); g.connect(ac.destination);
-    g.gain.setValueAtTime(vol || 0.04, t); g.gain.exponentialRampToValueAtTime(0.0001, t + d); o.start(t); o.stop(t + d + 0.03);
+    g.gain.setValueAtTime((vol || 0.04) * (pref.fxvol || 1), t); g.gain.exponentialRampToValueAtTime(0.0001, t + d); o.start(t); o.stop(t + d + 0.03);
   } catch (e) { /* no audio is fine */ }
 }
 function crowdNoise(vol: number, d: number) {
@@ -17,7 +17,7 @@ function crowdNoise(vol: number, d: number) {
     const ac = ctx(), n = Math.floor(ac.sampleRate * d), buf = ac.createBuffer(1, n, ac.sampleRate), ch = buf.getChannelData(0);
     for (let i = 0; i < n; i++) ch[i] = (Math.random() * 2 - 1) * Math.sin(Math.PI * i / n);
     const src = ac.createBufferSource(), g = ac.createGain(), flt = ac.createBiquadFilter();
-    flt.type = 'bandpass'; flt.frequency.value = 900; g.gain.value = vol; src.buffer = buf; src.connect(flt); flt.connect(g); g.connect(ac.destination); src.start();
+    flt.type = 'bandpass'; flt.frequency.value = 900; g.gain.value = vol * (pref.fxvol || 1); src.buffer = buf; src.connect(flt); flt.connect(g); g.connect(ac.destination); src.start();
   } catch (e) { /* no audio is fine */ }
 }
 export const SFX = {

@@ -5,11 +5,11 @@ export const KEY = 'ewf9000-save-4', UKEY = 'ewf9000-universes', PKEY = 'gorilla
 export const VER = '0.11';
 
 /* ---------- preferences ---------- */
-export interface Prefs { snd: boolean; type: boolean; crt: boolean; boot: boolean; screen: 'auto' | 'desk' | 'tablet' | 'tv'; zoom: number; speed: number; motion: 'auto' | 'reduce' | 'full'; uni: string }
+export interface Prefs { snd: boolean; type: boolean; crt: boolean; boot: boolean; screen: 'auto' | 'desk' | 'tablet' | 'tv'; zoom: number; speed: number; motion: 'auto' | 'reduce' | 'full'; fxvol: number; uni: string }
 function readPrefs(): Prefs {
   let o: any = {};
   try { o = JSON.parse(localStorage.getItem(PKEY) || '{}') || {}; } catch (e) { /* storage can be blocked */ }
-  return { snd: o.snd !== false, type: o.type !== false, crt: o.crt !== false, boot: o.boot !== false, screen: o.screen || 'auto', zoom: +o.zoom || 1, speed: +o.speed || 1, motion: o.motion === 'reduce' || o.motion === 'full' ? o.motion : 'auto', uni: o.uni || 'public_domain' };
+  return { snd: o.snd !== false, type: o.type !== false, crt: o.crt !== false, boot: o.boot !== false, screen: o.screen || 'auto', zoom: +o.zoom || 1, speed: +o.speed || 1, fxvol: +o.fxvol || 1, motion: o.motion === 'reduce' || o.motion === 'full' ? o.motion : 'auto', uni: o.uni || 'public_domain' };
 }
 export const pref: Prefs = readPrefs();
 /** Reduced motion: switched on in Options, or by the system when Options says Auto. Stops the typewriter and the blinking cursor. */

@@ -167,5 +167,7 @@ function jkBoot() {
   }, true);
 }
 jkBoot(); musMark();
+// the interface's Options window reads and sets the music level through this
+window.EWF_MUSIC = { vol: function () { return MP.vol; }, setVol: function (v) { jkAct('vol', v); } };
 window.EWF_MUSIC = { tracks: TRACKS, state: MUS, start: musStart, stop: musStop, setup: musSetup, ctx: function () { return AC; } };
 })();
