@@ -876,7 +876,16 @@ function startFeud(S,P,a,b,heat,why,opts){
   return f;
 }
 function heatUp(S,f,amt,txt){if(amt>0)amt*=modelOf(S.promos[f.promo]).heat||1;if(amt>0&&S.booker&&f.promo===S.player)amt*=(1+0.06*S.booker.sk.creative)*houseHeat(S);f.heat=clamp(f.heat+amt,0,100);f.last=S.week;if(txt){f.log.push({w:S.week,t:txt});if(f.log.length>16)f.log.shift();}if(f.heat>=90&&f.promo===S.player)award(S,'ACH_FEUD_HOT');}
-function turn(S,w,why){w.align=w.align==='F'?'H':'F';w.tw=S.week;mile(S,w,'turn','Turned '+(w.align==='F'?'face':'heel')+(why?': '+why:''));news(S,'story',w.name+' turns '+(w.align==='F'?'face':'heel')+(why?' — '+why:'')+'.');if(w.promo===S.player)award(S,'ACH_TURN');}
+function turn(S,w,why){
+  // a turn that was teased in the last two weeks lands harder; a wrestler who already turned inside the last year lands softer, and the fans say so
+  var built=w.la!=null&&S.week-w.la<=2,tired=w.tw!=null&&S.week-w.tw<52,note='';
+  if(!S.cal){
+    if(tired){w.mom=clamp(w.mom-1,-10,10);note=' The fans have seen '+w.name+' change sides before and groan.';}
+    else if(built){w.mom=clamp(w.mom+3,-10,10);w.ovr=clamp(w.ovr+0.6,1,100);note=' It was built over the last two weeks and the crowd bought it.';}
+    else note=' It came out of nowhere. The crowd is not sure what to make of it.';
+  }
+  w.align=w.align==='F'?'H':'F';w.tw=S.week;mile(S,w,'turn','Turned '+(w.align==='F'?'face':'heel')+(why?': '+why:'')+(tired?' (too soon after the last turn)':(built?' (well built)':'')));
+  news(S,'story',w.name+' turns '+(w.align==='F'?'face':'heel')+(why?' — '+why:'')+'.'+note);if(w.promo===S.player)award(S,'ACH_TURN');}
 function holdLvl(P,id){var l=0;P.titles.forEach(function(t){if(t.holders.indexOf(id)>=0&&t.lvl>l)l=t.lvl;});return l;}
 function titleById(P,id){for(var i=0;i<P.titles.length;i++)if(P.titles[i].id===id)return P.titles[i];return null;}
 function rkey(a,b){return a<b?a+'-'+b:b+'-'+a;}
