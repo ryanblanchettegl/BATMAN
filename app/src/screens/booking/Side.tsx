@@ -36,7 +36,7 @@ function Promo() {
 /** Rivalries in your company, hottest first. With `on`, each says whether both sides are booked tonight. */
 export function Feuds(p: { on?: OnCard }) {
   const S = G.S, fs = E.activeFeuds(S).filter((f: any) => f.promo === S.player).sort((a: any, b: any) => b.heat - a.heat);
-  if (!fs.length) return <Empty>No rivalries yet. They start on their own once you run shows.</Empty>;
+  if (!fs.length) return <Empty>No rivalries yet. They start on their own once you run shows, or put two wrestlers with a grudge on the same card.</Empty>;
   return <ul class="list">{fs.map((f: any) => {
     const ids: number[] = f.a.concat(f.b), booked = p.on ? ids.filter(id => p.on![id]).length : -1, out = ids.filter(id => S.w[id].inj > 0).length;
     const meta = E.feudStage(f) + (f.kind === 'dream' ? ' · dream match' : '') + (out ? ' · injury' : '') + (booked >= 0 ? ' · ' + (booked === ids.length ? 'all booked tonight' : (booked ? 'partly booked tonight' : 'not booked tonight')) : '');

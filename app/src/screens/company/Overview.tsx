@@ -66,7 +66,7 @@ function Rules() {
   const H = E.houseInfo(G.S), on = H.rules.filter((r: any) => r.on);
   return <Panel title="House rules in force">
     {on.length ? <ul class="list">{on.map((r: any) => <li class="col"><span><b>{r.n}</b></span><span class="good">+ {r.plus}</span><span class="bad">− {r.minus}</span></li>)}</ul>
-      : <Empty>No house rules in force.</Empty>}
+      : <Empty>No house rules in force. Adopt one on Manage, under House.</Empty>}
     <p class="muted mt2">{on.length} of {H.slots} {plural(H.slots, 'slot')} in use.</p>
   </Panel>;
 }
@@ -76,7 +76,7 @@ function Sponsors() {
   return <Panel title="Sponsors">
     {S.sponsors.length ? <ul class="list">{S.sponsors.map((x: any) => <li class="col">
       <span><b>{x.name}</b> {'·'} {cash(x.pay)} a week {'·'} {x.weeks} {plural(x.weeks, 'week')} left</span><span class="muted">Condition: {x.text}</span>
-    </li>)}</ul> : <Empty>No sponsors signed.</Empty>}
+    </li>)}</ul> : <Empty>No sponsors signed. New offers arrive on Manage, under Deals, every four weeks.</Empty>}
     {S.sponsors.length ? <p class="muted mt2">{cash(pay)} a week in all.</p> : null}
   </Panel>;
 }

@@ -46,7 +46,7 @@ function Contenders(p: { t: any; busy: boolean }) {
   const start = (fmt: string) => act(() => { const r = E.startTourn(S, t.id, fmt); if (r) say(r, { err: !/is set/.test(r) }); });
   return <Panel title={t.name}>
     {L.length ? <ol class="rank">{L.map(w => <li><Name w={w} /> <span class="muted num">{Math.round(w.ovr)} {'·'} {Math.round(w.pts || 0)} pts</span>{w.shot === t.id ? <> <Tag kind="gold">Earned a shot</Tag></> : null}</li>)}</ol>
-      : <Empty>Nobody is in line.</Empty>}
+      : <Empty>Nobody is in line. Wins on your shows earn ranking points.</Empty>}
     <div class="row mt2">
       <Btn kind="sm" t="tourn" d={{ k: t.id, v: 'ko' }} disabled={!!ko} onClick={() => start('ko')}>Knockout (8)</Btn>
       <Btn kind="sm" t="tourn" d={{ k: t.id, v: 'rr' }} disabled={!!rr} onClick={() => start('rr')}>League (6)</Btn>

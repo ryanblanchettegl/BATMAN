@@ -51,7 +51,7 @@ const NEWSH: Record<string, string> = { title: 'Title Change', injury: 'Injury R
 /** The newest `n` news items, dated like memos. */
 function OfficeNews(p: { n: number }) {
   const S = G.S, seen: Record<number, number> = {};
-  if (!S.news.length) return <Empty>No news yet.</Empty>;
+  if (!S.news.length) return <Empty>No news yet. Run a show and the wire starts.</Empty>;
   // your own company first, then the one most recent story from elsewhere
   const own = S.news.filter((x: any) => x.k !== 'world').slice(0, p.n - 1), away = S.news.filter((x: any) => x.k === 'world')[0];
   const list = own.concat(away ? [away] : []);

@@ -20,6 +20,6 @@ export function EndWeekBtn() {
 }
 export function QuestList() {
   const S = G.S;
-  if (!S.quests.length) return <Empty>Nothing promised. Wrestlers and the network will ask soon enough.</Empty>;
+  if (!S.quests.length) return <Empty>Nothing promised yet. Wrestlers and the network will ask soon enough; answer them from the inbox on the desk.</Empty>;
   return <ul class="list">{S.quests.map((q: any) => { const left = q.due - S.week; return <li><span><Txt>{q.text}</Txt></span><Tag kind={left <= 0 ? 'warn' : undefined}>{left <= 0 ? 'This week' : left + ' wk left'}</Tag></li>; })}</ul>;
 }

@@ -79,7 +79,7 @@ function Sponsors() {
     {S.sponsors.length ? <ul class="list">{S.sponsors.map((x: any, i: number) => <li>
       <span><b>{x.name}</b> {'·'} {cash(x.pay)} a week {'·'} {x.weeks} weeks left<br /><span class="muted">Condition: {x.text}</span></span>
       <Btn kind="sm" t="sp-drop" d={{ v: i }} onClick={() => act(() => say(E.dropSponsor(S, i)))}>End deal</Btn>
-    </li>)}</ul> : <Empty>No sponsors signed. You can carry three.</Empty>}
+    </li>)}</ul> : <Empty>No sponsors signed. You can carry three. Take an offer from the list below.</Empty>}
   </Panel>;
 }
 function Offers() {

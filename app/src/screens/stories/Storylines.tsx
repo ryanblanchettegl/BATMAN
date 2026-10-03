@@ -66,7 +66,7 @@ function Streaks() {
     {L.length ? <>
       <ul class="list">{L.map((w: any) => <li><span><Name w={w} /></span><span class="num">{w.ws} straight</span></li>)}</ul>
       <p class="muted mt2">A streak of six or more draws a bigger reaction. Whoever ends it gets the rub.</p>
-    </> : <Empty>Nobody has won four in a row.</Empty>}
+    </> : <Empty>Nobody has won four in a row. Keep a hot wrestler on the card and call their wins.</Empty>}
   </Panel>;
 }
 
@@ -89,7 +89,7 @@ function Teams() {
     {L.length ? <>
       <ul class="list">{L.map((t: any) => <li><span>{teamName(t)}</span><span class="row"><Meter v={t.exp} /><span class="num">{t.exp}</span></span></li>)}</ul>
       <p class="muted mt2">Experience improves tag matches. Losing teams with little experience can fall apart.</p>
-    </> : <Empty>No regular teams.</Empty>}
+    </> : <Empty>No regular teams. They form from tag matches and team-up angles on your shows.</Empty>}
   </Panel>;
 }
 

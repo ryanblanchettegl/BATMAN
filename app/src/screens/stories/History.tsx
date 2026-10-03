@@ -14,13 +14,13 @@ function Chronicles() {
     {L.length ? L.map((c: any) => <>
       <p class="eyebrow mt2">Season {c.n}: {c.title}</p>
       {c.lines.map((x: string) => <p class="mt1"><Txt>{x}</Txt></p>)}
-    </>) : <Empty>The first chronicle is written when season one ends, 48 weeks in.</Empty>}
+    </>) : <Empty>The first chronicle is written when season one ends, 48 weeks in. Keep booking shows until then.</Empty>}
   </Panel>;
 }
 
 function RecordBook() {
   const R = G.S.rec || {}, M = R.matches || [];
-  if (!M.length) return <Panel title="Record book"><Empty>Run a show and the book opens.</Empty></Panel>;
+  if (!M.length) return <Panel title="Record book"><Empty>Run a show on Booking and the book opens.</Empty></Panel>;
   return <Panel title="Record book">
     <p class="eyebrow">Best matches</p>
     <ul class="list">{M.slice(0, 10).map((m: any) =>
@@ -42,7 +42,7 @@ function Awards() {
     {L.length ? L.map((y: any) => <>
       <p class="eyebrow mt2">{y.year}</p>
       <ul class="list">{y.list.map((x: any) => <Row v={<span class="gold">{x.v}</span>}>{x.k}</Row>)}</ul>
-    </>) : <Empty>The awards are handed out in the last week of December.</Empty>}
+    </>) : <Empty>The awards are handed out in the last week of December. Keep your best wrestlers on the card until then.</Empty>}
   </Panel>;
 }
 
@@ -67,7 +67,7 @@ function TitleLine(p: { t: any }) {
         </Row>;
       })}</ul>
       {H.length > 8 ? <p class="muted">{H.length - 8} earlier reigns.</p> : null}
-    </> : <Empty>Nobody has held it yet.</Empty>}
+    </> : <Empty>Nobody has held it yet. Book a match for the title and the winner is crowned.</Empty>}
   </Panel>;
 }
 

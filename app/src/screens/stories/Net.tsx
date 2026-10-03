@@ -25,6 +25,6 @@ export function Net() {
       <p>Mood of the board <Meter v={N.mood} kind={N.mood < 40 ? 'hot' : 'cool'} /> <span class="num">{Math.round(N.mood)}</span> <span class="muted">{moodNote(N.mood)}</span></p>
     </Panel>
     {N.threads.length ? N.threads.map((t: any) => <Thread t={t} />)
-      : <Panel><Empty>Nobody has posted yet. Run a show and they will have opinions.</Empty></Panel>}
+      : <Panel><Empty>Nobody has posted yet. Run a show on Booking and they will have opinions.</Empty></Panel>}
   </>;
 }

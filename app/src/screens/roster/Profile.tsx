@@ -41,7 +41,7 @@ function CareerBlock(p: { cr: any }) {
       {cr.years.length ? <div class="tw"><table>
         <thead><tr><th>Year</th><th class="r">Matches</th><th class="r">W</th><th class="r">L</th><th class="r">D</th><th class="r">Best</th><th class="r">Main events</th><th class="r">Titles</th></tr></thead>
         <tbody>{cr.years.map((y: any) => <tr><td class="num">{y.y}</td><td class="r num">{y.m}</td><td class="r num">{y.w}</td><td class="r num">{y.l}</td><td class="r num">{y.d}</td><td class="r num">{y.best}%</td><td class="r num">{y.main}</td><td class="r num">{y.titles}</td></tr>)}</tbody>
-      </table></div> : <Empty>No matches yet.</Empty>}
+      </table></div> : <Empty>No matches yet. Put them on a card on Booking.</Empty>}
     </div>
     <div><p class="eyebrow">Milestones</p>
       {cr.log.length ? <div class="log">{cr.log.slice(0, 8).map((l: any) => <span>{E.cal(l.w).label}{'  '}{l.t}</span>)}</div> : <Empty>Nothing of note yet.</Empty>}
