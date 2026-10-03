@@ -244,7 +244,9 @@ async function remote() {
   // scrapping it switches every house button off: the highlight moves to the nearest live control, not to the top of the page
   await key('Enter');
   let b = await at();
-  check(mode, 'after a scrap the highlight stays nearby', /is scrapped/.test(await flash(page)) && near(a, b), 'now on ' + (b.t || b.id) + ' ' + b.k + ', scrolled ' + a.y + ' -> ' + b.y);
+  // the house page is taller than a screen; when the only live controls left are the page tabs at the top, the nearest one is as close as it gets
+  const onlyTabs = await page.evaluate(() => [].every.call(document.querySelectorAll('main button:not([disabled]),main select:not([disabled]),main input:not([disabled])'), e => e.dataset.t === 'page'));
+  check(mode, 'after a scrap the highlight stays nearby', /is scrapped/.test(await flash(page)) && (near(a, b) || (onlyTabs && b.t === 'page' && !b.lost)), 'now on ' + (b.t || b.id) + ' ' + b.k + ', scrolled ' + a.y + ' -> ' + b.y);
   // signing the last offer that can be signed removes its button
   await fits(page, mode, 'house by remote');
   await visit('deals');
