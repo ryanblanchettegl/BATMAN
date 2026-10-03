@@ -54,6 +54,7 @@ function runShow(S,P,show,card){
   if(isPl)S.rateMod=0;
   if(S.cal)return rep;
   var exp=expected(P,show);
+  if(isPl&&rep.venue){var bar=barCity(S,rep.venue);if(bar){exp+=bar.d;rep.barNote=bar.note;}}
   var qf=clamp(1+(P.trend||0)/60,0.85,1.15)*(SLOT_V[P.slot]/SLOT_V[P.slot0])*(1+0.03*(P.prodLvl-P.prod0));
   rep.exp=r1(exp);
   var mx=mixOf(P);

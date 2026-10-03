@@ -99,7 +99,7 @@ Things that would make the game deeper. Each one adds a system, a choice or a me
 - [ ] **65. Title histories of the world.** Every title in every promotion keeps its full line of champions, open from any title pop-up. Partner promotions can unify titles. *M.*
 - [ ] **66. Invasions.** A cross-promotion story where a rival's wrestlers appear on your shows. Both sides must agree the winners. Done badly, one side looks weak for a year. *L. Builds on `E.sagaInfo` and the cross-promotion code in `src/80-world.js`.*
 - [ ] **67. The rookie class.** Each year a class of new wrestlers arrives by region, with a scouting report and a "class of" list to look back on. This also fixes the free-agent pool running dry. *M. Builds on `E.scout`.*
-- [ ] **68. The bar moves.** When a rival has a great night in a city you share, your next show there has more to live up to. The news says so. *S.*
+- [x] **68. The bar moves.** When a rival has a great night in a city you share, your next show there has more to live up to. The news says so. *S.*
 
 ## G. Fans, press and culture
 

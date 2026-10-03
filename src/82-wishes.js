@@ -174,3 +174,18 @@ WEEKX.push(function(S){
   S.annual={year:c.year,src:src,net:net,plan:plan,draw:S.ybest&&S.ybest.draw||null,match:mt?mt.v:null,sign:sign?{name:sign.name,wage:sign.wage,id:sign.id}:null,letter:letter};S.annualNew=true;S.ybest={};
 });
 E.annualReport=function(S){return S.annual||null;};
+
+/* the bar moves: when a rival has a great night in a city you share, your next show there has more to live up to */
+SHOWX.push(function(S,P,show,rep){
+  if(S.cal||P.id===S.player||rep.exp==null||rep.rating<rep.exp+4)return;
+  var mine=S.promos[S.player].cities||[],theirs=P.cities||[];if(!theirs.length)return;
+  var city=theirs[hash('bar'+S.seed+P.id+S.week)%theirs.length];if(mine.indexOf(city)<0)return;
+  (S.bar||(S.bar={}))[city]={w:S.week,d:Math.min(3,(rep.rating-rep.exp)/3),by:P.name,r:rep.rating};
+  news(S,'world',P.name+' had a great night in '+city+' ('+rep.rating+'%). Anyone who follows them there has more to live up to.');
+});
+function barCity(S,venue){
+  var B=S.bar;if(!B)return null;
+  for(var c in B){if(venue.indexOf(c)===0&&S.week-B[c].w<=4){var b=B[c];delete B[c];return {d:b.d,note:b.by+' had a great night in '+c+' recently. The crowd expected more from this show.'};}}
+  return null;
+}
+SHOWX.push(function(S,P,show,rep){if(P.id===S.player&&rep.barNote&&rep.sheet)rep.sheet.lines.unshift(rep.barNote);});
