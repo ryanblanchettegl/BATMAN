@@ -58,7 +58,7 @@ Small jobs, each one commit. None of them needs a decision from Ryan. Read `CLAU
 - [x] **38.** World: add each promotion's model name to the table.
 - [x] **39.** A promotion pop-up: a fourth card kind in `app/src/shared/cards.tsx` showing the model, popularity, champions, last show and your relations. Promotion names in tables and in linked text open it.
 - [x] **40.** World news: filter buttons for All, Titles, Signings, Stories and Money.
-- [ ] **41.** Roster table: a Fit column that sorts, and a "Point to prove" tag while `chip` is active.
+- [x] **41.** Roster table: a Fit column that sorts, and a "Point to prove" tag while `chip` is active.
 - [ ] **42.** Free agents: sort by fit, show "Released by X, N weeks ago" from `w.cut`, and a filter for "would sign with us".
 - [ ] **43.** Profile overview: show time with the company, and one line saying which stats this company values (from the model).
 - [ ] **44.** Titles page: an arrow showing whether each title's prestige rose or fell over the last four weeks, and a "Start a tournament" button on a vacant singles title.

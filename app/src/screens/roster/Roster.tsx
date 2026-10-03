@@ -35,6 +35,7 @@ function Th(p: { k: string; label: string; r?: boolean }) {
 function Status(p: { w: W; champ: boolean }) {
   const w = p.w;
   return <>
+    {w.chip >= G.S.week ? <><Tag kind="good">Point to prove</Tag> </> : null}
     {w.camp ? <><Tag kind="warn">Camp</Tag> </> : null}
     {w.inj > 0 ? <><Tag kind="bad">Out {w.inj} wk</Tag> </> : null}
     {p.champ ? <><Tag kind="gold">Champion</Tag> </> : null}
@@ -50,7 +51,8 @@ export function Roster() {
   const S = G.S, P = me(), st = rs(), f = st.rf, q = f.q.toLowerCase(), sel = selected();
   const R: W[] = E.rosterOf(S, P.id), push = E.pushMap(S, P.id);
   const L = R.filter(w => (f.brand === 'all' || w.brand === f.brand) && (f.g === 'all' || w.g === f.g) && (f.al === 'all' || w.align === f.al) && (!q || w.name.toLowerCase().indexOf(q) >= 0));
-  const k = st.rs.k, d = st.rs.d, val = (w: W) => k === 'name' ? w.name : (k === 'work' ? E.workRate(w) : w[k]);
+  const fits: Record<number, any> = {}; R.forEach(w => { fits[w.id] = w.nw ? null : E.fit(S, w.id); });
+  const k = st.rs.k, d = st.rs.d, val = (w: W) => k === 'name' ? w.name : (k === 'work' ? E.workRate(w) : (k === 'fit' ? (fits[w.id] ? fits[w.id].v : -999) : w[k]));
   L.sort((a, b) => { const x = val(a), y = val(b); return (x < y ? -1 : x > y ? 1 : 0) * d || b.ovr - a.ovr; });
   return <>
     <RosterHead title="Roster" />
@@ -58,7 +60,7 @@ export function Roster() {
     <Filters shown={L.length} of={R.length} />
     <div class="tw"><table>
       <thead><tr>
-        <Th k="name" label="Name" />{P.brands && <Th k="brand" label="Brand" />}<Th k="align" label="Side" /><th>Push</th>
+        <Th k="name" label="Name" />{P.brands && <Th k="brand" label="Brand" />}<Th k="align" label="Side" /><th>Push</th><Th k="fit" label="Fit" />
         <Th k="age" label="Age" r /><Th k="ovr" label="Over" r /><Th k="work" label="Work" r /><Th k="mic" label="Promo" r /><Th k="mom" label="Mom." r /><Th k="cond" label="Cond." r /><Th k="morale" label="Morale" r /><Th k="wage" label="Wage/wk" r /><Th k="con" label="Weeks" r />
         <th>Status</th>
       </tr></thead>
@@ -66,13 +68,13 @@ export function Roster() {
         {L.map(w => <tr key={w.id} class={'pick' + (sel && sel.id === w.id ? ' on' : '')} data-home={!sel && st.last === w.id ? '' : undefined} onClick={() => pick(w.id)} {...dataAttrs('sel', { id: w.id })}>
           <td><span class="nm">{w.name}</span></td>
           {P.brands && <td>{brandName(P, w.brand)}</td>}
-          <td><Side w={w} /></td><td>{push[w.id]}</td>
+          <td><Side w={w} /></td><td>{push[w.id]}</td><td>{fits[w.id] ? <span class={fits[w.id].v >= 1 ? 'good' : (fits[w.id].v <= -2 ? 'bad' : undefined)}>{fits[w.id].n}</span> : <span class="muted">—</span>}</td>
           <td class="r num">{w.age}</td><td class="r num">{Math.round(w.ovr)}</td><td class="r num">{E.workRate(w)}</td><td class="r num">{w.mic}</td>
           <td class="r num">{(w.mom > 0 ? '+' : '') + Math.round(w.mom)}</td><td class="r num">{Math.round(w.cond)}</td><td class="r num">{Math.round(w.morale)}</td>
           <td class="r num">{cash(w.wage)}</td><td class="r num">{Math.max(0, w.con)}</td>
           <td><Status w={w} champ={champOf(P, w.id).length > 0} /></td>
         </tr>)}
-        {!L.length && <tr><td colSpan={14} class="muted">Nobody matches those filters.</td></tr>}
+        {!L.length && <tr><td colSpan={15} class="muted">Nobody matches those filters.</td></tr>}
       </tbody>
     </table></div>
   </>;
