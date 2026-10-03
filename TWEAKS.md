@@ -84,7 +84,7 @@ Small jobs, each one commit. None of them needs a decision from Ryan. Read `CLAU
 - [x] **61.** Linked names on phone and tablet need a taller tap area without changing how the text looks.
 - [x] **62.** Wrestler pickers with more than twenty options: let the player type to jump to a name.
 - [x] **63.** After a pop-up closes, the highlight should return to the name that opened it, on every input. Add the check to `cards.js` for mouse and keyboard.
-- [ ] **64.** Steam Deck size (1280 by 800 with a gamepad): confirm which screen mode `autoScreen` picks and that text is readable; adjust the rule if it picks desk with small type.
+- [x] **64.** Steam Deck size (1280 by 800 with a gamepad): confirm which screen mode `autoScreen` picks and that text is readable; adjust the rule if it picks desk with small type.
 
 ## E. Sound and feel
 

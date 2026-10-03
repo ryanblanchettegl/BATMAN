@@ -11,6 +11,8 @@ export function autoScreen(): 'desk' | 'tablet' | 'tv' | 'phone' {
   try { coarse = window.matchMedia('(pointer: coarse)').matches; } catch (e) { /* ignore */ }
   if (/SmartTV|SMART-TV|Tizen|Web0S|webOS|\bAFT[A-Z]|GoogleTV|Android TV|BRAVIA|HbbTV|CrKey|Roku|Xbox|PlayStation|\bTV\b/i.test(ua)) return 'tv';
   if (w <= 640) return 'phone';
+  // Steam Deck: 1280 by 800 on a 7 inch screen. Desk type is too small there, so it gets the tablet size.
+  if (/Steam ?Deck|SteamOS/i.test(ua) || (w <= 1366 && window.innerHeight <= 800 && NAV.pad)) return 'tablet';
   return coarse ? 'tablet' : 'desk';
 }
 export function screenMode() { return pref.screen && pref.screen !== 'auto' ? pref.screen : autoScreen(); }
