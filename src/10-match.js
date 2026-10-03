@@ -12,7 +12,7 @@ function workOf(w,stip,mins){
   var comfort=6+w.stam*0.25;if(mins>comfort)v-=(mins-comfort)*0.9;
   return v;
 }
-function chem(S,a,b){var x=S.chemX&&S.chemX[rkey(a,b)];if(x!=null)return x;var k=S.seed+':'+rkey(a,b);return (h01('c'+k)+h01('d'+k)-1)*6;}
+function chem(S,a,b){var k0=rkey(a,b),x=S.chemX&&S.chemX[k0],bd=S.bond&&S.bond[k0]?clamp(S.bond[k0]*0.3,-3,3):0;if(x!=null)return x+bd;var k=S.seed+':'+k0;return (h01('c'+k)+h01('d'+k)-1)*6+bd;}
 function addOvr(P,w,d){var cap=ovrCap(P,w);if(d>0&&w.ovr>=cap)d*=0.2;w.ovr=clamp(w.ovr+d,1,100);}
 function fill(t,o){return t.replace(/\{(\w+)\}/g,function(_,k){return o[k]!=null?o[k]:'';});}
 

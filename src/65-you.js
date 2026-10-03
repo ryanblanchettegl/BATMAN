@@ -225,7 +225,7 @@ E.lobby=function(S,k,v){
 E.jobOffers=function(S){var cur=S.promos[S.player].image;var L=S.order.filter(function(id){return id!==S.player&&S.promos[id].image<cur;});if(!L.length)L=S.order.filter(function(id){return id!==S.player;});return L;};
 
 /* relationships: who clicks in the ring and who does not */
-function relOf(S,a,b){return S.rel?S.rel[rkey(a,b)]||0:0;}
+function relOf(S,a,b){var r=S.rel?S.rel[rkey(a,b)]||0:0;if(!r&&S.bond){var bd=S.bond[rkey(a,b)]||0;r=bd>=3?1:(bd<=-3?-1:0);}return r;}   // the bond score only speaks once it is strong
 MQX.push(function(ctx){
   var S=ctx.S,d=0,lab=null;
   ctx.sides.forEach(function(s,k){
