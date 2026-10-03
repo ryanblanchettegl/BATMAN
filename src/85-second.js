@@ -27,7 +27,7 @@ E.staff=function(S){return rosterOf(S,S.player).filter(function(w){return w.srol
 /* the effects */
 CRX.push(function(ctx){
   if(!ctx.isPl)return null;var S=ctx.S,d=0,x=null;
-  if(staffOf(S,'agent').length&&ctx.all.some(function(w){return w.age<=28;})){d+=0.5;x='The road agent keeps the young wrestlers on script';}
+  if(staffOf(S,'agent').length&&!ctx.m.agent&&ctx.all.some(function(w){return w.age<=28;})){d+=0.5;x='The road agent keeps the young wrestlers on script';}
   if(staffOf(S,'commentator').length){d+=0.3;x=x||'The commentary team sells the story';}
   var boss=staffOf(S,'boss')[0];if(boss){d+=0.4-(S.bossUse>5?0.8:0);x=x||(boss.name+' is on screen again');}
   return d?{d:d,x:x}:null;
@@ -83,3 +83,20 @@ EVR.rebel=function(S,ev,choice,P,w){
   w.morale=clamp(w.morale-3,0,100);return 'The feud fades. Nobody got the ending they wanted.';
 };
 E.rebelInfo=function(S){var R=S.rebel;if(!R||!S.w[R.w])return null;var bs=staffOf(S,'boss')[0];return {w:S.w[R.w],boss:bs||null,heat:Math.round(R.heat),weeks:S.week-R.since};};
+
+/* ---------- 46. Road agents: give a match to an agent (m.agent); one agent covers two matches a night ---------- */
+function agentOf(S,m){var a=m&&m.agent!=null?S.w[m.agent]:null;return a&&a.nw&&a.srole==='agent'&&a.promo===S.player?a:null;}
+function agentQ(a){return clamp((SROLES.agent.skill(a)-50)/40,0.2,1.2);}
+function agentRisk(S,m){var a=agentOf(S,m);return a?1-0.25*agentQ(a):1;}
+E.agents=function(S){return staffOf(S,'agent').map(function(w){return {id:w.id,name:w.name,skill:Math.round(SROLES.agent.skill(w))};});};
+E.setAgent=function(S,i,id){var m=S.card&&S.card[i];if(!m)return false;if(id==null||id===''||!S.w[id])delete m.agent;else m.agent=+id;return true;};
+MQX.push(function(ctx){
+  if(!ctx.isPl||ctx.S.cal)return null;var a=agentOf(ctx.S,ctx.m);if(!a)return null;
+  var young=ctx.all.some(function(w){return w.age<=28;});
+  return {d:Math.round((0.6+agentQ(a)*1.2+(young?0.5:0))*10)/10,x:a.name+', the road agent, kept the match tight'};
+});
+POST.push(function(ctx){
+  if(!ctx.isPl||ctx.S.cal)return;var a=agentOf(ctx.S,ctx.m);if(!a)return;
+  var n=0;ctx.all.forEach(function(w){if(w.age<=26&&workRate(w)<w.pot){w.xp+=0.08;n++;}});
+  if(n&&ctx.res.OV>=75)ctx.res.seg.notes.push(a.name+' talked the young ones through it afterwards.');
+});

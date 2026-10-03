@@ -46,6 +46,7 @@ export function Editor(p: { m: Match; i: number }) {
       options={[['', 'Let the story decide'], ...Object.keys(E.HOWS).filter(k => !(['cheap', 'dq', 'co'].includes(k) && E.hasRule(S, 'clean'))).map(k => [k, E.HOWS[k].n] as Opt)]} /></Field>
     {m.how && <p class="muted wide">{E.finishPrice(m.how)}</p>}
     {E.hasBoss(S) && <Field label="Made by the boss"><Sel id={'m' + i + '-boss'} t="boss" d={{ i }} value={m.boss ? '1' : ''} onChange={v => setMatch(i, 'boss', v)} options={[['', 'No'], ['1', 'Yes: it reads well if a story explains it']]} /></Field>}
+    {E.agents(S).length > 0 && <Field label="Road agent"><Sel id={'m' + i + '-agent'} t="agent" d={{ i }} value={m.agent == null ? '' : m.agent} onChange={v => setMatch(i, 'agent', v)} options={[['', 'No agent'], ...E.agents(S).map((a: any) => [a.id, a.name + ' · skill ' + a.skill + (S.card.filter((x: any) => x.agent === a.id).length >= 2 && m.agent !== a.id ? ' · covering two' : '')] as Opt)]} /></Field>}
     <Field label="Title on the line"><Sel id={'m' + i + '-title'} t="title" d={{ i }} value={m.title} onChange={v => setMatch(i, 'title', v)}
       options={[['', 'No title'], ...titles.map((t: any) => [t.id, t.name + (t.holders.length ? '' : ' (vacant)')] as Opt)]} /></Field>
     <Field label="Stipulation"><Sel id={'m' + i + '-stip'} t="stip" d={{ i }} value={m.stip} onChange={v => setMatch(i, 'stip', v)} options={Object.keys(E.STIP).map(k => [k, E.STIP[k].n] as Opt)} /></Field>

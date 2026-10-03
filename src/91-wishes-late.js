@@ -45,8 +45,9 @@ E.applyJobTerms=function(S,terms){
 (function(){
   var was=E.validate;
   E.validate=function(S,card){
-    var v=was(S,card);
+    var v=was(S,card),cover={};
     card.forEach(function(m,i){
+      if(m.agent!=null){cover[m.agent]=(cover[m.agent]||0)+1;if(cover[m.agent]===3)v.errors.push((S.w[m.agent]?S.w[m.agent].name:'The agent')+' can only cover two matches a night.');}
       if(m.stip!=='mask'&&m.stip!=='hair')return;
       var ws=[].concat.apply([],m.sides).filter(function(id){return id!=null&&S.w[id];}).map(function(id){return S.w[id];});
       if(m.stip==='mask'&&ws.some(function(w){return masked(w)!==1;}))v.errors.push('Match '+(i+1)+': a mask match needs everyone in it to wear a mask.');
@@ -59,7 +60,15 @@ E.applyJobTerms=function(S,terms){
 /* the suggested card for the flagship puts the planned match in the main event */
 (function(){
   var was=E.suggest;
-  E.suggest=function(S){
+  function agents(S,card){
+    var ag=E.agents(S).sort(function(x,y){return y.skill-x.skill;});if(!ag.length)return card;
+    // the main event and the matches with the most young wrestlers get the agents, two each
+    var score=card.map(function(m,i){var ws=[].concat.apply([],m.sides).map(function(id){return S.w[id];}).filter(Boolean);return {i:i,v:(i===card.length-1?3:0)+ws.filter(function(w){return w.age<=26;}).length};}).sort(function(x,y){return y.v-x.v;});
+    var k=0;ag.forEach(function(a){for(var n=0;n<2&&k<score.length&&score[k].v>0;n++,k++)card[score[k].i].agent=a.id;});
+    return card;
+  }
+  E.suggest=function(S){return agents(S,suggestPlan(S));};
+  function suggestPlan(S){
     var card=was(S),lp=S.lp,show=S.queue&&S.queue[S.qi];
     if(!lp||!show||!show.big||!show.flag||S.cal||!card.length)return card;
     var a=S.w[lp.a],b=S.w[lp.b];if(!a||!b||a.inj>0||b.inj>0||a.away>=S.week||b.away>=S.week||a.rest===S.week||b.rest===S.week)return card;
@@ -68,5 +77,5 @@ E.applyJobTerms=function(S,terms){
     var mm={mt:'1v1',sides:[[lp.a],[lp.b]],stip:'std',len:'L',title:tt&&tt.holders.length&&(tt.holders.indexOf(lp.a)>=0||tt.holders.indexOf(lp.b)>=0)?lp.title:null};
     while(rest.length>=SLOT_MAX[S.promos[S.player].slot]+(show.big?3:0)&&rest.length>3)rest.shift();
     rest.push(mm);return rest;
-  };
+  }
 })();

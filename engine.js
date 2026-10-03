@@ -2448,7 +2448,7 @@ CRX.push(function(ctx){
   var rk=ctx.P.risk>=2?1:0;return {d:(gim?(ctx.feud&&ctx.feud.heat>=40?5:3):2)+rk,x:gim?'They left everything in there':'Stiff, reckless and loud'};
 });
 MQX.push(function(ctx){var it=ctx.m.int;return it==='brutal'?{d:1.5,x:null}:(it==='safe'?{d:-1,x:null}:null);});
-function hurtRisk(S,P,w,m){var it=INTN[m.int]||INTN.normal;return it.i*MED_I[P.med||0]*(1+Math.max(0,maxZone(w)-50)/40)*(w.hurt===S.week?3:1)*(1+Math.max(0,(w.rd||0)-60)/80)*(m.note==='steal'?1.5:(m.note==='safe'?0.55:(m.note==='long'?1.15:(m.note==='short'?0.85:1))));}
+function hurtRisk(S,P,w,m){var it=INTN[m.int]||INTN.normal;return it.i*MED_I[P.med||0]*(1+Math.max(0,maxZone(w)-50)/40)*(w.hurt===S.week?3:1)*(1+Math.max(0,(w.rd||0)-60)/80)*agentRisk(S,m)*(m.note==='steal'?1.5:(m.note==='safe'?0.55:(m.note==='long'?1.15:(m.note==='short'?0.85:1))));}
 function hurtZone(S,w){var z=zonesOf(w),ks=['n','s','b','k'],tot=0,x;ks.forEach(function(k){tot+=10+z[k];});x=rnd(S)*tot;for(var i=0;i<4;i++){x-=10+z[ks[i]];if(x<=0)return ks[i];}return 'b';}
 var OWNZ={H:'k',P:'b',B:'s',T:'n',S:'s',A:'b',E:'k'},OPPZ={T:'s',P:'b',S:'n',H:'n',B:'b',A:'s',E:'k'};
 POST.push(function(ctx){
@@ -4686,7 +4686,7 @@ E.staff=function(S){return rosterOf(S,S.player).filter(function(w){return w.srol
 /* the effects */
 CRX.push(function(ctx){
   if(!ctx.isPl)return null;var S=ctx.S,d=0,x=null;
-  if(staffOf(S,'agent').length&&ctx.all.some(function(w){return w.age<=28;})){d+=0.5;x='The road agent keeps the young wrestlers on script';}
+  if(staffOf(S,'agent').length&&!ctx.m.agent&&ctx.all.some(function(w){return w.age<=28;})){d+=0.5;x='The road agent keeps the young wrestlers on script';}
   if(staffOf(S,'commentator').length){d+=0.3;x=x||'The commentary team sells the story';}
   var boss=staffOf(S,'boss')[0];if(boss){d+=0.4-(S.bossUse>5?0.8:0);x=x||(boss.name+' is on screen again');}
   return d?{d:d,x:x}:null;
@@ -4742,6 +4742,23 @@ EVR.rebel=function(S,ev,choice,P,w){
   w.morale=clamp(w.morale-3,0,100);return 'The feud fades. Nobody got the ending they wanted.';
 };
 E.rebelInfo=function(S){var R=S.rebel;if(!R||!S.w[R.w])return null;var bs=staffOf(S,'boss')[0];return {w:S.w[R.w],boss:bs||null,heat:Math.round(R.heat),weeks:S.week-R.since};};
+
+/* ---------- 46. Road agents: give a match to an agent (m.agent); one agent covers two matches a night ---------- */
+function agentOf(S,m){var a=m&&m.agent!=null?S.w[m.agent]:null;return a&&a.nw&&a.srole==='agent'&&a.promo===S.player?a:null;}
+function agentQ(a){return clamp((SROLES.agent.skill(a)-50)/40,0.2,1.2);}
+function agentRisk(S,m){var a=agentOf(S,m);return a?1-0.25*agentQ(a):1;}
+E.agents=function(S){return staffOf(S,'agent').map(function(w){return {id:w.id,name:w.name,skill:Math.round(SROLES.agent.skill(w))};});};
+E.setAgent=function(S,i,id){var m=S.card&&S.card[i];if(!m)return false;if(id==null||id===''||!S.w[id])delete m.agent;else m.agent=+id;return true;};
+MQX.push(function(ctx){
+  if(!ctx.isPl||ctx.S.cal)return null;var a=agentOf(ctx.S,ctx.m);if(!a)return null;
+  var young=ctx.all.some(function(w){return w.age<=28;});
+  return {d:Math.round((0.6+agentQ(a)*1.2+(young?0.5:0))*10)/10,x:a.name+', the road agent, kept the match tight'};
+});
+POST.push(function(ctx){
+  if(!ctx.isPl||ctx.S.cal)return;var a=agentOf(ctx.S,ctx.m);if(!a)return;
+  var n=0;ctx.all.forEach(function(w){if(w.age<=26&&workRate(w)<w.pot){w.xp+=0.08;n++;}});
+  if(n&&ctx.res.OV>=75)ctx.res.seg.notes.push(a.name+' talked the young ones through it afterwards.');
+});
 
 /* ===== 85-universe.js ===== */
 /* ---------- universe packages: every roster, built-in or community-made, loads through this ----------
@@ -5242,8 +5259,9 @@ E.applyJobTerms=function(S,terms){
 (function(){
   var was=E.validate;
   E.validate=function(S,card){
-    var v=was(S,card);
+    var v=was(S,card),cover={};
     card.forEach(function(m,i){
+      if(m.agent!=null){cover[m.agent]=(cover[m.agent]||0)+1;if(cover[m.agent]===3)v.errors.push((S.w[m.agent]?S.w[m.agent].name:'The agent')+' can only cover two matches a night.');}
       if(m.stip!=='mask'&&m.stip!=='hair')return;
       var ws=[].concat.apply([],m.sides).filter(function(id){return id!=null&&S.w[id];}).map(function(id){return S.w[id];});
       if(m.stip==='mask'&&ws.some(function(w){return masked(w)!==1;}))v.errors.push('Match '+(i+1)+': a mask match needs everyone in it to wear a mask.');
@@ -5256,7 +5274,15 @@ E.applyJobTerms=function(S,terms){
 /* the suggested card for the flagship puts the planned match in the main event */
 (function(){
   var was=E.suggest;
-  E.suggest=function(S){
+  function agents(S,card){
+    var ag=E.agents(S).sort(function(x,y){return y.skill-x.skill;});if(!ag.length)return card;
+    // the main event and the matches with the most young wrestlers get the agents, two each
+    var score=card.map(function(m,i){var ws=[].concat.apply([],m.sides).map(function(id){return S.w[id];}).filter(Boolean);return {i:i,v:(i===card.length-1?3:0)+ws.filter(function(w){return w.age<=26;}).length};}).sort(function(x,y){return y.v-x.v;});
+    var k=0;ag.forEach(function(a){for(var n=0;n<2&&k<score.length&&score[k].v>0;n++,k++)card[score[k].i].agent=a.id;});
+    return card;
+  }
+  E.suggest=function(S){return agents(S,suggestPlan(S));};
+  function suggestPlan(S){
     var card=was(S),lp=S.lp,show=S.queue&&S.queue[S.qi];
     if(!lp||!show||!show.big||!show.flag||S.cal||!card.length)return card;
     var a=S.w[lp.a],b=S.w[lp.b];if(!a||!b||a.inj>0||b.inj>0||a.away>=S.week||b.away>=S.week||a.rest===S.week||b.rest===S.week)return card;
@@ -5265,7 +5291,7 @@ E.applyJobTerms=function(S,terms){
     var mm={mt:'1v1',sides:[[lp.a],[lp.b]],stip:'std',len:'L',title:tt&&tt.holders.length&&(tt.holders.indexOf(lp.a)>=0||tt.holders.indexOf(lp.b)>=0)?lp.title:null};
     while(rest.length>=SLOT_MAX[S.promos[S.player].slot]+(show.big?3:0)&&rest.length>3)rest.shift();
     rest.push(mm);return rest;
-  };
+  }
 })();
 
 root.GP=E;
