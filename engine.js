@@ -165,6 +165,14 @@ function addWrestler(S,d,promo,brand){
   var fp=FINISH[d.style]||FINISH.A;w.fin=d.fin||fp[hash(d.name+'f')%fp.length];w.ent=hash(d.name+'e')%ENTR.F.length;
   S.w.push(w);return w;
 }
+function buildPromo(S,d,byName){
+    var P={id:d.id,name:d.name,blurb:d.blurb,cash:d.cash,cash0:d.cash,image:d.image,image0:d.image,wq:d.wq,angles:d.angles,style:(d.owner&&d.owner.style)||'stars',staff:d.staff||{agent:'The road agent',writer:'The head writer'},wageMult:d.wageMult,tvRate:d.tvRate,prod:d.prod,net:d.net,flagship:d.flagship,
+      prodLvl:d.prodLvl==null?2:d.prodLvl,prod0:d.prodLvl==null?2:d.prodLvl,risk:d.risk==null?1:d.risk,risk0:d.risk==null?1:d.risk,tix:1,adv:0,slot:d.slot==null?1:d.slot,slot0:d.slot==null?1:d.slot,camp:d.image>=60?2:1,med:d.image>=80?3:(d.image>=60?2:(d.image>=45?1:0)),starB:{},ann:(d.announcers||['The play-by-play man','The colour man']).slice(),cities:(d.cities||['the city']).slice(),brands:d.brands?JSON.parse(JSON.stringify(d.brands)):null,shows:JSON.parse(JSON.stringify(d.shows)),titles:[],hist:[],led:{tv:0,gate:0,ppv:0,bonus:0,prod:0},base:{},mainB:{},trend:0,neg:0,fixed:0,varRate:0,last:null};
+    d.titles.forEach(function(t){P.titles.push({id:t.id,name:t.name,brand:t.brand||null,g:t.g,lvl:t.lvl,tag:!!t.tag,holders:t.holders.map(function(n){return byName[n];}).filter(function(x){return x!==undefined;}),prestige:t.lvl===3?85:(t.lvl===2?68:52),since:1,last:1,defs:0});});
+    if(d.full)P.full=d.full;if(d.owner)P.owner=d.owner;if(d.media)P.media=d.media;if(d.model&&MODELS[d.model]&&d.model!=='classic')P.model=d.model;S.promos[P.id]=P;S.order.push(P.id);if(d.draft)draftRoster(S,P,d);
+    (d.teams||[]).forEach(function(tm){var a=byName[tm[0]],b=byName[tm[1]];if(a===undefined||b===undefined||S.w[a].promo!==P.id||S.w[b].promo!==P.id)return;var t=formTeam(S,P,S.w[a],S.w[b],tm[2]!=null?clamp(tm[2],0,100):35+Math.round(h01(tm[0]+tm[1])*50));if(tm[3])t.chem=clamp(tm[3],-10,10);if(tm[4])t.name=tm[4];});
+  return P;
+}
 E.newGame=function(playerId,seed,opts){
   opts=opts||{};
   var S={v:4,rs:(seed|0)||7,seed:seed,week:1,player:playerId,diff:DIFF[opts.diff]?opts.diff:'normal',iron:!!opts.iron,dpart:opts.dpart&&typeof opts.dpart==='object'?{money:clamp(+opts.dpart.money|0,0,2),inj:clamp(+opts.dpart.inj|0,0,2),ego:clamp(+opts.dpart.ego|0,0,2),rival:clamp(+opts.dpart.rival|0,0,2)}:null,mode:'booker',w:[],promos:{},order:[],teams:[],feuds:[],mystery:null,news:[],inbox:[],quests:[],ach:{},toasts:[],
@@ -192,12 +200,7 @@ E.newGame=function(playerId,seed,opts){
   }
   var defs=DB.promotions.slice();
   if(opts.fed){var fd=mkFedDef(opts.fed,clean(opts.name,24)||'The Booker');defs.push(fd);S.custom=fd;S.player=playerId=fd.id;}
-  defs.forEach(function(d){
-    var P={id:d.id,name:d.name,blurb:d.blurb,cash:d.cash,cash0:d.cash,image:d.image,image0:d.image,wq:d.wq,angles:d.angles,style:(d.owner&&d.owner.style)||'stars',staff:d.staff||{agent:'The road agent',writer:'The head writer'},wageMult:d.wageMult,tvRate:d.tvRate,prod:d.prod,net:d.net,flagship:d.flagship,
-      prodLvl:d.prodLvl==null?2:d.prodLvl,prod0:d.prodLvl==null?2:d.prodLvl,risk:d.risk==null?1:d.risk,risk0:d.risk==null?1:d.risk,tix:1,adv:0,slot:d.slot==null?1:d.slot,slot0:d.slot==null?1:d.slot,camp:d.image>=60?2:1,med:d.image>=80?3:(d.image>=60?2:(d.image>=45?1:0)),starB:{},ann:(d.announcers||['The play-by-play man','The colour man']).slice(),cities:(d.cities||['the city']).slice(),brands:d.brands?JSON.parse(JSON.stringify(d.brands)):null,shows:JSON.parse(JSON.stringify(d.shows)),titles:[],hist:[],led:{tv:0,gate:0,ppv:0,bonus:0,prod:0},base:{},mainB:{},trend:0,neg:0,fixed:0,varRate:0,last:null};
-    d.titles.forEach(function(t){P.titles.push({id:t.id,name:t.name,brand:t.brand||null,g:t.g,lvl:t.lvl,tag:!!t.tag,holders:t.holders.map(function(n){return byName[n];}).filter(function(x){return x!==undefined;}),prestige:t.lvl===3?85:(t.lvl===2?68:52),since:1,last:1,defs:0});});
-    if(d.full)P.full=d.full;if(d.owner)P.owner=d.owner;if(d.media)P.media=d.media;if(d.model&&MODELS[d.model]&&d.model!=='classic')P.model=d.model;S.promos[P.id]=P;S.order.push(P.id);if(d.draft)draftRoster(S,P,d);
-    (d.teams||[]).forEach(function(tm){var a=byName[tm[0]],b=byName[tm[1]];if(a===undefined||b===undefined||S.w[a].promo!==P.id||S.w[b].promo!==P.id)return;var t=formTeam(S,P,S.w[a],S.w[b],tm[2]!=null?clamp(tm[2],0,100):35+Math.round(h01(tm[0]+tm[1])*50));if(tm[3])t.chem=clamp(tm[3],-10,10);if(tm[4])t.name=tm[4];});
+  defs.forEach(function(d){buildPromo(S,d,byName);
   });
   S.w.forEach(function(w){if(w.promo!=='FA'&&!S.promos[w.promo]){w.promo='FA';w.brand=null;}if(w.promo!=='FA'){w.wage=wageFor(w.ovr,S.promos[w.promo]);w.con=ri(S,14,140);}});
   preset.forEach(function(x){if(x[0].promo==='FA')return;if(x[1].wage)x[0].wage=x[1].wage;if(x[1].con)x[0].con=x[1].con;if(x[1].tw!=null)x[0].jw=S.week-x[1].tw;});
@@ -235,20 +238,22 @@ function baselineIncome(S,P){
 function calibrate(S){
   // 1) what an average, competently booked card scores for each show (the audience's expectation)
   var C=JSON.parse(JSON.stringify(S));C.cal=true;C.player=null;
-  S.order.forEach(function(pid){
-    var P=C.promos[pid],RP=S.promos[pid];
-    P.shows.concat([{id:'big',big:true,name:'x'}]).forEach(function(sh){
-      var rs=[],mains=[],stars=[];
-      for(var k=0;k<4;k++){var rep=runShow(C,P,sh,autoBook(C,P,sh));rs.push(rep.rating);mains.push(rep.mainOv);stars.push(rep.mainStar);restAll(C,pid);}
-      RP.base[sh.id]=r1(avg(rs));RP.mainB[sh.id]=r1(avg(mains));RP.starB[sh.id]=r1(avg(stars));
-    });
-  });
+  S.order.forEach(function(pid){calibrateShows(S,C,pid);});
   // 2) overheads sized so an on-expectation promotion clears its target weekly margin
-  S.order.forEach(function(pid){
-    var P=S.promos[pid],inc=baselineIncome(S,P);
-    var over=Math.max(0,inc-wagesWeek(S,P)-P.prod*P.shows.length-P.prod-P.net-CAMP_C[P.camp||0]*inc-MED_C[P.med||0]*inc);
-    P.fixed=Math.round(over*0.4);P.varRate=over*0.6/inc;P.inc0=inc;
+  S.order.forEach(function(pid){calibrateCosts(S,pid);});
+}
+function calibrateShows(S,C,pid){
+  var P=C.promos[pid],RP=S.promos[pid];
+  P.shows.concat([{id:'big',big:true,name:'x'}]).forEach(function(sh){
+    var rs=[],mains=[],stars=[];
+    for(var k=0;k<4;k++){var rep=runShow(C,P,sh,autoBook(C,P,sh));rs.push(rep.rating);mains.push(rep.mainOv);stars.push(rep.mainStar);restAll(C,pid);}
+    RP.base[sh.id]=r1(avg(rs));RP.mainB[sh.id]=r1(avg(mains));RP.starB[sh.id]=r1(avg(stars));
   });
+}
+function calibrateCosts(S,pid){
+  var P=S.promos[pid],inc=baselineIncome(S,P);
+  var over=Math.max(0,inc-wagesWeek(S,P)-P.prod*P.shows.length-P.prod-P.net-CAMP_C[P.camp||0]*inc-MED_C[P.med||0]*inc);
+  P.fixed=Math.round(over*0.4);P.varRate=over*0.6/inc;P.inc0=inc;
 }
 function restAll(S,pid){S.w.forEach(function(w){if(w.promo===pid){w.cond=100;w.inj=0;}});}
 function expected(P,show){var b=show.big?P.base.big:(P.base[show.id]||P.base.big);return b+0.6*(P.image-P.image0)+(P.expB||0)+(P.expA||0);}
@@ -5814,6 +5819,36 @@ WEEKX.push(function(S){
   });
 });
 
+/* ===== 88-newco.js ===== */
+/* ---------- 63. New companies appear: a backer starts a company and signs free agents; sometimes it grows out of an indie ---------- */
+var NC_A=['Harbor','Lantern','Copperfield','Greywater','Stonebridge','Ember','Northgate','Silverline','Oakhurst','Redwing','Halcyon','Marlowe','Briar','Ironvale'];
+var NC_B=['Wrestling Alliance','Championship Wrestling','Pro Wrestling','Wrestling Company','All-Star Wrestling','Wrestling Syndicate'];
+var NC_SHOW=['Thursday Night Brawl','The Harbor Hour','Lantern Live','Main Street Showdown','Saturday Slam','The Late Card'];
+var NC_TITLE=['Heavyweight Title','Crown Title','Championship','Grand Title'];
+function newCompany(S){
+  if(S.order.length>=12||!S.db||!S.db.indie)return null;
+  var I=S.db.indie,used={},used2={};S.order.forEach(function(id){used[S.promos[id].name]=1;});Object.keys(S.promos).forEach(function(id){used2[id]=1;});
+  var a,t=0,full,short;do{a=pick(S,NC_A);full=a+' '+pick(S,NC_B);short=a.slice(0,3).toUpperCase();t++;}while((used[short]||full===null)&&t<30);
+  if(used[short])short=short.slice(0,2)+String.fromCharCode(65+ri(S,0,25));
+  var id='nc'+S.nid++,backer=pick(S,I.firstM.concat(I.firstF))+' '+pick(S,I.last),indie=chance(S,0.4);
+  var models=Object.keys(MODELS).filter(function(k){return k!=='classic'&&k!=='joshi';}),model=chance(S,0.35)?'classic':pick(S,models);
+  var f={name:full,short:short,show:pick(S,NC_SHOW),title:pick(S,NC_TITLE),size:chance(S,0.7)?'regional':'national',region:pick(S,Object.keys(FED_REGION)),model:model,style:'merit',roots:'tradition',pledge:'chance',women:model!=='joshi'?chance(S,0.7):true};
+  var d=mkFedDef(f,backer);
+  d.id=id;d.mine=false;d.owner={name:backer,style:pick(S,Object.keys(STYLES)),roots:'tradition',pledge:'chance'};
+  d.shows=[{id:id+'_1',name:f.show,mult:1}];d.titles.forEach(function(x,i){x.id=id+'_t'+i;});
+  d.draft.n=indie?16:12;
+  var P=buildPromo(S,d,{});
+  var C=JSON.parse(JSON.stringify(S));C.cal=true;C.player=null;calibrateShows(S,C,id);calibrateCosts(S,id);
+  P.size0=rosterOf(S,id).length;P.rel=0;P.born=S.week;
+  news(S,'world',(indie?'A well-known indie circuit has grown up: ':'A new company is on the air: ')+full+' ('+short+'), backed by '+backer+', has signed '+P.size0+' free agents.');
+  return P;
+}
+E.newCompany=function(S){return newCompany(S);};
+WEEKX.push(function(S){
+  if(S.cal||S.week<78||S.week%26||S.order.length>=12||!chance(S,0.3))return;
+  newCompany(S);
+});
+
 /* ===== 89-board.js ===== */
 /* ---------- the fan board grows up: stars, replies, and a critic's list ---------- */
 
@@ -6062,7 +6097,7 @@ function retireCompany(S,pid,buyerId){
 WEEKX.push(function(S){
   if(S.cal||S.week%4||S.order.length<=4)return;
   S.order.forEach(function(pid){
-    var P=S.promos[pid];if(pid===S.player||P.dead||P.cash>=0||(P.neg||0)<16||P.image>=45||!chance(S,0.2))return;
+    var P=S.promos[pid];if(pid===S.player||P.dead||P.cash>=0||(P.neg||0)<20||P.image>=45||!chance(S,0.1))return;
     var rich=S.order.filter(function(id){return id!==pid&&id!==S.player&&S.promos[id].cash>S.promos[id].inc0*10&&S.promos[id].image>P.image;}).sort(function(a,b){return S.promos[b].cash-S.promos[a].cash;})[0];
     retireCompany(S,pid,rich&&chance(S,0.55)?rich:null);
   });

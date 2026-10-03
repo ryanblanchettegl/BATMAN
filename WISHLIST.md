@@ -94,7 +94,7 @@ Things that would make the game deeper. Each one adds a system, a choice or a me
 - [x] **60. Raids.** A rival makes a run at your star as the contract runs down. Match it, beat it, appeal to loyalty, or let them go. *M.*
 - [x] **61. Working agreements.** A formal partnership: talent exchange, a title recognised by both, a joint show. Agreements can sour. *M. Builds on `E.xfPropose`, `E.trade`.*
 - [x] **62. Rivals can die.** A broke rival folds or is bought. Its roster floods the free agents, and its titles and tape library go up for sale. *M.*
-- [ ] **63. New companies appear.** Every few years a backer starts a company and signs free agents. Sometimes it grows out of an indie. *M. (TASKS 9)*
+- [x] **63. New companies appear.** Every few years a backer starts a company and signs free agents. Sometimes it grows out of an indie. *M. (TASKS 9)*
 - [x] **64. Regional tastes.** Each region likes a kind of wrestling: work rate, brawling, spectacle. The wrong product draws less there. *M. Builds on `E.zones`.*
 - [x] **65. Title histories of the world.** Every title in every promotion keeps its full line of champions, open from any title pop-up. Partner promotions can unify titles. *M.*
 - [ ] **66. Invasions.** A cross-promotion story where a rival's wrestlers appear on your shows. Both sides must agree the winners. Done badly, one side looks weak for a year. *L. Builds on `E.sagaInfo` and the cross-promotion code in `src/80-world.js`.*

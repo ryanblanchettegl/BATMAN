@@ -161,6 +161,14 @@ function addWrestler(S,d,promo,brand){
   var fp=FINISH[d.style]||FINISH.A;w.fin=d.fin||fp[hash(d.name+'f')%fp.length];w.ent=hash(d.name+'e')%ENTR.F.length;
   S.w.push(w);return w;
 }
+function buildPromo(S,d,byName){
+    var P={id:d.id,name:d.name,blurb:d.blurb,cash:d.cash,cash0:d.cash,image:d.image,image0:d.image,wq:d.wq,angles:d.angles,style:(d.owner&&d.owner.style)||'stars',staff:d.staff||{agent:'The road agent',writer:'The head writer'},wageMult:d.wageMult,tvRate:d.tvRate,prod:d.prod,net:d.net,flagship:d.flagship,
+      prodLvl:d.prodLvl==null?2:d.prodLvl,prod0:d.prodLvl==null?2:d.prodLvl,risk:d.risk==null?1:d.risk,risk0:d.risk==null?1:d.risk,tix:1,adv:0,slot:d.slot==null?1:d.slot,slot0:d.slot==null?1:d.slot,camp:d.image>=60?2:1,med:d.image>=80?3:(d.image>=60?2:(d.image>=45?1:0)),starB:{},ann:(d.announcers||['The play-by-play man','The colour man']).slice(),cities:(d.cities||['the city']).slice(),brands:d.brands?JSON.parse(JSON.stringify(d.brands)):null,shows:JSON.parse(JSON.stringify(d.shows)),titles:[],hist:[],led:{tv:0,gate:0,ppv:0,bonus:0,prod:0},base:{},mainB:{},trend:0,neg:0,fixed:0,varRate:0,last:null};
+    d.titles.forEach(function(t){P.titles.push({id:t.id,name:t.name,brand:t.brand||null,g:t.g,lvl:t.lvl,tag:!!t.tag,holders:t.holders.map(function(n){return byName[n];}).filter(function(x){return x!==undefined;}),prestige:t.lvl===3?85:(t.lvl===2?68:52),since:1,last:1,defs:0});});
+    if(d.full)P.full=d.full;if(d.owner)P.owner=d.owner;if(d.media)P.media=d.media;if(d.model&&MODELS[d.model]&&d.model!=='classic')P.model=d.model;S.promos[P.id]=P;S.order.push(P.id);if(d.draft)draftRoster(S,P,d);
+    (d.teams||[]).forEach(function(tm){var a=byName[tm[0]],b=byName[tm[1]];if(a===undefined||b===undefined||S.w[a].promo!==P.id||S.w[b].promo!==P.id)return;var t=formTeam(S,P,S.w[a],S.w[b],tm[2]!=null?clamp(tm[2],0,100):35+Math.round(h01(tm[0]+tm[1])*50));if(tm[3])t.chem=clamp(tm[3],-10,10);if(tm[4])t.name=tm[4];});
+  return P;
+}
 E.newGame=function(playerId,seed,opts){
   opts=opts||{};
   var S={v:4,rs:(seed|0)||7,seed:seed,week:1,player:playerId,diff:DIFF[opts.diff]?opts.diff:'normal',iron:!!opts.iron,dpart:opts.dpart&&typeof opts.dpart==='object'?{money:clamp(+opts.dpart.money|0,0,2),inj:clamp(+opts.dpart.inj|0,0,2),ego:clamp(+opts.dpart.ego|0,0,2),rival:clamp(+opts.dpart.rival|0,0,2)}:null,mode:'booker',w:[],promos:{},order:[],teams:[],feuds:[],mystery:null,news:[],inbox:[],quests:[],ach:{},toasts:[],
@@ -188,12 +196,7 @@ E.newGame=function(playerId,seed,opts){
   }
   var defs=DB.promotions.slice();
   if(opts.fed){var fd=mkFedDef(opts.fed,clean(opts.name,24)||'The Booker');defs.push(fd);S.custom=fd;S.player=playerId=fd.id;}
-  defs.forEach(function(d){
-    var P={id:d.id,name:d.name,blurb:d.blurb,cash:d.cash,cash0:d.cash,image:d.image,image0:d.image,wq:d.wq,angles:d.angles,style:(d.owner&&d.owner.style)||'stars',staff:d.staff||{agent:'The road agent',writer:'The head writer'},wageMult:d.wageMult,tvRate:d.tvRate,prod:d.prod,net:d.net,flagship:d.flagship,
-      prodLvl:d.prodLvl==null?2:d.prodLvl,prod0:d.prodLvl==null?2:d.prodLvl,risk:d.risk==null?1:d.risk,risk0:d.risk==null?1:d.risk,tix:1,adv:0,slot:d.slot==null?1:d.slot,slot0:d.slot==null?1:d.slot,camp:d.image>=60?2:1,med:d.image>=80?3:(d.image>=60?2:(d.image>=45?1:0)),starB:{},ann:(d.announcers||['The play-by-play man','The colour man']).slice(),cities:(d.cities||['the city']).slice(),brands:d.brands?JSON.parse(JSON.stringify(d.brands)):null,shows:JSON.parse(JSON.stringify(d.shows)),titles:[],hist:[],led:{tv:0,gate:0,ppv:0,bonus:0,prod:0},base:{},mainB:{},trend:0,neg:0,fixed:0,varRate:0,last:null};
-    d.titles.forEach(function(t){P.titles.push({id:t.id,name:t.name,brand:t.brand||null,g:t.g,lvl:t.lvl,tag:!!t.tag,holders:t.holders.map(function(n){return byName[n];}).filter(function(x){return x!==undefined;}),prestige:t.lvl===3?85:(t.lvl===2?68:52),since:1,last:1,defs:0});});
-    if(d.full)P.full=d.full;if(d.owner)P.owner=d.owner;if(d.media)P.media=d.media;if(d.model&&MODELS[d.model]&&d.model!=='classic')P.model=d.model;S.promos[P.id]=P;S.order.push(P.id);if(d.draft)draftRoster(S,P,d);
-    (d.teams||[]).forEach(function(tm){var a=byName[tm[0]],b=byName[tm[1]];if(a===undefined||b===undefined||S.w[a].promo!==P.id||S.w[b].promo!==P.id)return;var t=formTeam(S,P,S.w[a],S.w[b],tm[2]!=null?clamp(tm[2],0,100):35+Math.round(h01(tm[0]+tm[1])*50));if(tm[3])t.chem=clamp(tm[3],-10,10);if(tm[4])t.name=tm[4];});
+  defs.forEach(function(d){buildPromo(S,d,byName);
   });
   S.w.forEach(function(w){if(w.promo!=='FA'&&!S.promos[w.promo]){w.promo='FA';w.brand=null;}if(w.promo!=='FA'){w.wage=wageFor(w.ovr,S.promos[w.promo]);w.con=ri(S,14,140);}});
   preset.forEach(function(x){if(x[0].promo==='FA')return;if(x[1].wage)x[0].wage=x[1].wage;if(x[1].con)x[0].con=x[1].con;if(x[1].tw!=null)x[0].jw=S.week-x[1].tw;});
@@ -231,20 +234,22 @@ function baselineIncome(S,P){
 function calibrate(S){
   // 1) what an average, competently booked card scores for each show (the audience's expectation)
   var C=JSON.parse(JSON.stringify(S));C.cal=true;C.player=null;
-  S.order.forEach(function(pid){
-    var P=C.promos[pid],RP=S.promos[pid];
-    P.shows.concat([{id:'big',big:true,name:'x'}]).forEach(function(sh){
-      var rs=[],mains=[],stars=[];
-      for(var k=0;k<4;k++){var rep=runShow(C,P,sh,autoBook(C,P,sh));rs.push(rep.rating);mains.push(rep.mainOv);stars.push(rep.mainStar);restAll(C,pid);}
-      RP.base[sh.id]=r1(avg(rs));RP.mainB[sh.id]=r1(avg(mains));RP.starB[sh.id]=r1(avg(stars));
-    });
-  });
+  S.order.forEach(function(pid){calibrateShows(S,C,pid);});
   // 2) overheads sized so an on-expectation promotion clears its target weekly margin
-  S.order.forEach(function(pid){
-    var P=S.promos[pid],inc=baselineIncome(S,P);
-    var over=Math.max(0,inc-wagesWeek(S,P)-P.prod*P.shows.length-P.prod-P.net-CAMP_C[P.camp||0]*inc-MED_C[P.med||0]*inc);
-    P.fixed=Math.round(over*0.4);P.varRate=over*0.6/inc;P.inc0=inc;
+  S.order.forEach(function(pid){calibrateCosts(S,pid);});
+}
+function calibrateShows(S,C,pid){
+  var P=C.promos[pid],RP=S.promos[pid];
+  P.shows.concat([{id:'big',big:true,name:'x'}]).forEach(function(sh){
+    var rs=[],mains=[],stars=[];
+    for(var k=0;k<4;k++){var rep=runShow(C,P,sh,autoBook(C,P,sh));rs.push(rep.rating);mains.push(rep.mainOv);stars.push(rep.mainStar);restAll(C,pid);}
+    RP.base[sh.id]=r1(avg(rs));RP.mainB[sh.id]=r1(avg(mains));RP.starB[sh.id]=r1(avg(stars));
   });
+}
+function calibrateCosts(S,pid){
+  var P=S.promos[pid],inc=baselineIncome(S,P);
+  var over=Math.max(0,inc-wagesWeek(S,P)-P.prod*P.shows.length-P.prod-P.net-CAMP_C[P.camp||0]*inc-MED_C[P.med||0]*inc);
+  P.fixed=Math.round(over*0.4);P.varRate=over*0.6/inc;P.inc0=inc;
 }
 function restAll(S,pid){S.w.forEach(function(w){if(w.promo===pid){w.cond=100;w.inj=0;}});}
 function expected(P,show){var b=show.big?P.base.big:(P.base[show.id]||P.base.big);return b+0.6*(P.image-P.image0)+(P.expB||0)+(P.expA||0);}

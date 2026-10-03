@@ -171,7 +171,7 @@ function retireCompany(S,pid,buyerId){
 WEEKX.push(function(S){
   if(S.cal||S.week%4||S.order.length<=4)return;
   S.order.forEach(function(pid){
-    var P=S.promos[pid];if(pid===S.player||P.dead||P.cash>=0||(P.neg||0)<16||P.image>=45||!chance(S,0.2))return;
+    var P=S.promos[pid];if(pid===S.player||P.dead||P.cash>=0||(P.neg||0)<20||P.image>=45||!chance(S,0.1))return;
     var rich=S.order.filter(function(id){return id!==pid&&id!==S.player&&S.promos[id].cash>S.promos[id].inc0*10&&S.promos[id].image>P.image;}).sort(function(a,b){return S.promos[b].cash-S.promos[a].cash;})[0];
     retireCompany(S,pid,rich&&chance(S,0.55)?rich:null);
   });
