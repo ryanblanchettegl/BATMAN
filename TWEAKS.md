@@ -38,7 +38,7 @@ Small jobs, each one commit. None of them needs a decision from Ryan. Read `CLAU
 - [x] **21.** Determinism test: the same promotion and seed played twice for 20 weeks headless must produce identical state.
 - [x] **22.** `E.validateUniverse` should warn when a promotion with a gender-locked model has wrestlers or titles of the other gender. Add the warning and a test.
 - [x] **23.** Gamepad test in `cards.js`: A on a name opens the pop-up, B closes it, and the highlight returns to the name.
-- [ ] **24.** Overflow sweep: every page on desk, phone, tablet and TV at week 30 of a headless-advanced game. Nothing may scroll sideways.
+- [x] **24.** Overflow sweep: every page on desk, phone, tablet and TV at week 30 of a headless-advanced game. Nothing may scroll sideways.
 
 ## C. Reading and layout
 
