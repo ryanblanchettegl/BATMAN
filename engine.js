@@ -2684,10 +2684,14 @@ function mkCase(S){
   var ev=wit.map(function(w){var rel=w.role==='leader'?0.88:(w.role==='gate'||w.role==='mentor'?0.78:(w.role==='toxic'?0.25:0.66)),says=chance(S,rel)?right:(right==='a'?'b':'a');return {w:w.id,side:says};});
   return {id:S.nid++,a:a.id,b:b.id,k:k[0],wk:S.week,right:right,ev:ev,text:fill(k[1],{a:a.name,b:b.name})};
 }
-E.court=function(S){bsInit(S);return S.court.map(function(c){return {id:c.id,a:c.a,b:c.b,text:c.text,age:S.week-c.wk,left:Math.max(0,3-(S.week-c.wk)),ev:c.ev.map(function(e){var w=S.w[e.w];return {w:e.w,name:w.name,role:w.role?ROLE[w.role].n:null,backs:S.w[c[e.side]].name};}),ring:S.w[c.a].g===S.w[c.b].g,leader:rosterOf(S,S.player).some(function(w){return w.role==='leader'&&w.inj<=0;})};});};
+E.court=function(S){bsInit(S);return S.court.map(function(c){return {id:c.id,a:c.a,b:c.b,text:c.text,age:S.week-c.wk,left:Math.max(0,3-(S.week-c.wk)),ev:c.ev.map(function(e){var w=S.w[e.w];return {w:e.w,name:w.name,role:w.role?ROLE[w.role].n:null,backs:S.w[c[e.side]].name};}),ring:S.w[c.a].g===S.w[c.b].g,leader:rosterOf(S,S.player).some(function(w){return !w.nw&&w.inj<=0&&w.id!==c.a&&w.id!==c.b&&(w.role==='leader'||(w.age>=35&&w.morale>=50));})};});};
+E.courtLog=function(S){return (S.verdicts||[]).slice(0,6).map(function(v){return {w:v.w,win:v.win,lose:v.lose,fair:v.fair,judge:v.judge,rep:v.rep,n:v.n};});};
 function courtApply(S,c,side,byYou){
   var win=S.w[c[side]],lose=S.w[c[side==='a'?'b':'a']],fair=side===c.right;
   win.morale=clamp(win.morale+5,0,100);stressAdd(S,win,-8);lose.morale=clamp(lose.morale-5,0,100);stressAdd(S,lose,8);
+  // the court remembers: a wrestler found against again and again is dealt with harder, and every verdict is kept
+  lose.cl=(lose.cl||0)+1;var rep=lose.cl>=2;if(rep){lose.morale=clamp(lose.morale-Math.min(9,3*(lose.cl-1)),0,100);stressAdd(S,lose,Math.min(10,4*(lose.cl-1)));}
+  (S.verdicts||(S.verdicts=[])).unshift({w:S.week,win:win.id,lose:lose.id,fair:fair,judge:byYou?null:(S.lastJudge||null),rep:rep,n:lose.cl});if(S.verdicts.length>20)S.verdicts.length=20;S.lastJudge=null;
   if(byYou){win.you=clamp((win.you||0)+1,-1,1);
     if(fair){S.trust=clamp(S.trust+2,0,100);S.courtFair=(S.courtFair||0)+1;if(S.courtFair>=5)award(S,'ACH_COURT');}
     else{S.trust=clamp(S.trust-3,0,100);stressAdd(S,lose,8);lose.you=clamp((lose.you||0)-1,-1,1);S.rel[rkey(win.id,lose.id)]=-1;}}
@@ -2706,8 +2710,11 @@ E.courtRule=function(S,cid,v){
 };
 E.courtDelegate=function(S,cid){
   var c=S.court.filter(function(x){return x.id===cid;})[0];if(!c)return {ok:false,msg:'That case is closed.'};
-  var ld=rosterOf(S,S.player).filter(function(w){return w.role==='leader'&&w.inj<=0;})[0];if(!ld)return {ok:false,msg:'You have no locker-room leader to hand it to.'};
-  var side=chance(S,0.75)?c.right:(c.right==='a'?'b':'a');courtApply(S,c,side,false);S.court=S.court.filter(function(x){return x!==c;});
+  var inCase=function(w){return w.id===c.a||w.id===c.b;},R0=rosterOf(S,S.player).filter(function(w){return !w.nw&&w.inj<=0&&!inCase(w);});
+  // the judge is a leader if there is one, otherwise the most senior veteran in good spirits
+  var ld=R0.filter(function(w){return w.role==='leader';})[0]||R0.filter(function(w){return w.age>=35&&w.morale>=50;}).sort(function(x,y){return y.age-x.age;})[0];
+  if(!ld)return {ok:false,msg:'You have no leader or veteran to hand it to.'};
+  S.lastJudge=ld.id;var side=chance(S,0.75)?c.right:(c.right==='a'?'b':'a');courtApply(S,c,side,false);S.court=S.court.filter(function(x){return x!==c;});
   news(S,'story','Wrestlers’ court: '+ld.name+' heard '+S.w[c.a].name+' against '+S.w[c.b].name+' and found for '+S.w[c[side]].name+'.');
   return {ok:true,msg:ld.name+' hears the case and finds for '+S.w[c[side]].name+'. It costs you nothing and earns you nothing.'};
 };

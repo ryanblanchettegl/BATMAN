@@ -23,11 +23,13 @@ export function Court(p: { blocked: string }) {
             <Btn kind="sm" t="bs-court" d={{ id: c.id, v: 1 }} disabled={off} onClick={() => rule(c.id, 1)}>Find for {B.name}</Btn>
             {c.ring && <Btn kind="sm" t="bs-court" d={{ id: c.id, v: 2 }} disabled={off} onClick={() => rule(c.id, 2)}>Settle it in the ring</Btn>}
             <Btn kind="sm" t="bs-court" d={{ id: c.id, v: 3 }} disabled={off} onClick={() => rule(c.id, 3)}>Dismiss</Btn>
-            {c.leader && <Btn kind="sm" t="bs-deleg" d={{ id: c.id }} onClick={() => hand(c.id)}>Let a locker-room leader hear it (free)</Btn>}
+            {c.leader && <Btn kind="sm" t="bs-deleg" d={{ id: c.id }} onClick={() => hand(c.id)}>Let a leader or veteran hear it (free)</Btn>}
           </span>
         </li>;
       })}
     </ul>
+    {E.courtLog(S).length ? <div class="mt2"><p class="eyebrow">Past verdicts</p><ul class="list">{E.courtLog(S).map((v: any) => <li><span>Week {v.w}: <Txt>{S.w[v.win].name + ' over ' + S.w[v.lose].name}</Txt>{v.judge != null && S.w[v.judge] ? <span class="muted"> (heard by {S.w[v.judge].name})</span> : null}</span>
+      <span>{v.fair ? <span class="good">fair</span> : <span class="bad">disputed</span>}{v.rep ? <> <Tag kind="bad">{S.w[v.lose].name.split(' ')[0]}: {v.n} lost, dealt with harder</Tag></> : null}</span></li>)}</ul></div> : null}
     <p class="muted mt1">A fair verdict builds locker-room trust; a wrong one costs it. Leaders and veterans are reliable witnesses. A toxic influence usually is not.</p>
   </>;
 }
