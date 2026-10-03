@@ -44,7 +44,7 @@ Small jobs, each one commit. None of them needs a decision from Ryan. Read `CLAU
 
 - [x] **25.** The desk's Clocks panel is tall and mostly empty in week 1. Show moving clocks in full and fold the idle ones into one line ("Four clocks are quiet") that opens them.
 - [x] **26.** When no action points are left, shrink the room map on the desk to one line with a "Show the rooms" button.
-- [ ] **27.** Put the count of unanswered items in the Inbox panel title, and list unanswered items first.
+- [x] **27.** Put the count of unanswered items in the Inbox panel title, and list unanswered items first.
 - [ ] **28.** "Needs attention" on the desk: add sponsor offers waiting, a house style that has to be set, and action points still unspent when only one show is left. Give each row a button that goes to the right page.
 - [ ] **29.** Office news on the desk: show your own company's news first, then one line for the biggest story elsewhere.
 - [ ] **30.** The figures in the status bar (`StatusBar` in `app/src/shell/Frame.tsx`) should be buttons that open the Company overview.
