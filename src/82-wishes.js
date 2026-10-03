@@ -341,3 +341,17 @@ POST.push(function(ctx){
 WEEKX.push(function(S){if(S.bond)Object.keys(S.bond).forEach(function(k){S.bond[k]*=0.985;if(Math.abs(S.bond[k])<0.05)delete S.bond[k];});});
 E.bond=function(S,a,b){return S.bond?S.bond[rkey(a,b)]||0:0;};
 E.bondWord=function(S,a,b){var v=E.bond(S,a,b);return v>=6?'inseparable':(v>=3?'close':(v<=-6?'bitter enemies':(v<=-3?'at odds':'neutral')));};
+
+/* the last year: a veteran can announce a final year. The farewell tour lifts gates, and the last match gives one rising star the honour of the final win */
+EVR.finalyear=function(S,ev,choice,P,w){
+  if(choice===0){w.retiring=S.week+48;w.fw=true;w.morale=clamp(w.morale+10,0,100);news(S,'story',w.name+' has announced a final year. The farewell tour starts now.');return w.name+' will wrestle for one more year, and every crowd will know it. Expect fuller buildings when they are on the card, and a last match to decide.';}
+  w.morale=clamp(w.morale+2,0,100);return w.name+' will retire after '+cal(w.retiring).label+'. A short goodbye, then.';
+};
+EVR.lastwin=function(S,ev,choice,P,w){
+  var id=ev.c[choice],h=S.w[id];if(!h)return 'The last match goes ahead without a ceremony.';
+  addOvr(P,h,3);h.mom=clamp(h.mom+5,-10,10);h.morale=clamp(h.morale+10,0,100);w.morale=clamp(w.morale+5,0,100);mile(S,h,'honour','Got the final win over '+w.name+' in their last match');
+  news(S,'story',h.name+' got the final win over '+w.name+' in their last match. The crowd gave '+w.name+' a standing ovation.');
+  return h.name+' pins '+w.name+' in the last match of a long career. The building stands for both of them.';
+};
+PREX.push(function(S,P,show,card){if(S.cal)return;if(card.some(function(m){return [].concat.apply([],m.sides).some(function(id){var w=S.w[id];return w&&w.fw&&w.retiring>S.week;});}))S.hype=(S.hype||0)+0.04;});
+CRX.push(function(ctx){var f=ctx.all.filter(function(w){return w.fw&&w.retiring>ctx.S.week;})[0];return f?{d:1.4,x:'Everyone came to say goodbye to '+f.name}:null;});

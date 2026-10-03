@@ -18,13 +18,19 @@ function birthday(S,w){
   w.pot=Math.max(workRate(w),w.pot-2);
   if(w.promo===S.player&&!w.slow){w.slow=true;news(S,'story',w.name+' is '+w.age+' and starting to slow down.');mile(S,w,'age','Began to slow down at '+w.age);}
   if(w.age>=w.cl+1&&!w.retiring&&(workRate(w)<52||w.age>=w.cl+4||chance(S,0.3))){
-    if(w.promo===S.player){w.retiring=S.week+8;news(S,'contract',w.name+' has told you this is the end. They will retire after '+cal(w.retiring).label+'.');S.inbox.push({id:S.nid++,type:'retiring',w:w.id,text:w.name+', '+w.age+', has decided to retire after '+cal(w.retiring).label+'. Eight weeks to book a farewell.',done:true,result:null});}
+    if(w.promo===S.player){w.retiring=S.week+8;news(S,'contract',w.name+' has told you this is the end. They will retire after '+cal(w.retiring).label+'.');pushEv(S,{type:'finalyear',w:w.id,text:w.name+', '+w.age+', has decided to retire. They would like a farewell tour: one last year, with the building full of people who came to say goodbye. Or a short goodbye after eight weeks.',choices:['A final year: a farewell tour','Eight weeks, then a short goodbye']});}
     else retire(S,w);
   }
 }
 WEEKX.push(function(S){
   S.w.forEach(function(w){
     if(w.inj>0)w.yi=(w.yi||0)+1;
+    if(w.retiring&&S.week>=w.retiring&&w.fw&&!w.fwDone&&w.promo===S.player){
+      // a farewell tour ends with a last match, and the booker chooses who gets the honour of the final win
+      var heirs=rosterOf(S,S.player).filter(function(x){return !x.nw&&x.id!==w.id&&x.g===w.g&&x.inj<=0&&x.age<=32;}).sort(function(a,b){return (b.pot+b.ovr)-(a.pot+a.ovr);}).slice(0,3);
+      w.fwDone=true;w.retiring=S.week+1;
+      if(heirs.length){pushEv(S,{type:'lastwin',w:w.id,c:heirs.map(function(x){return x.id;}),text:w.name+'’s last match is tonight. Who gets the honour of the final win over them?',choices:heirs.map(function(x){return x.name;})});return;}
+    }
     if(w.retiring&&S.week>=w.retiring){var P=S.promos[w.promo];if(P){rosterOf(S,P.id).forEach(function(x){x.morale=clamp(x.morale+2,0,100);});P.image=clamp(P.image+(w.ovr>=P.image?0.3:0.1),5,100);}retire(S,w,'a farewell the locker room will remember');}
     if((S.week+w.bw)%48===0)birthday(S,w);
     // in rival companies, young talent with star quality rises whether you are watching or not

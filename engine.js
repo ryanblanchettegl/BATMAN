@@ -2242,13 +2242,19 @@ function birthday(S,w){
   w.pot=Math.max(workRate(w),w.pot-2);
   if(w.promo===S.player&&!w.slow){w.slow=true;news(S,'story',w.name+' is '+w.age+' and starting to slow down.');mile(S,w,'age','Began to slow down at '+w.age);}
   if(w.age>=w.cl+1&&!w.retiring&&(workRate(w)<52||w.age>=w.cl+4||chance(S,0.3))){
-    if(w.promo===S.player){w.retiring=S.week+8;news(S,'contract',w.name+' has told you this is the end. They will retire after '+cal(w.retiring).label+'.');S.inbox.push({id:S.nid++,type:'retiring',w:w.id,text:w.name+', '+w.age+', has decided to retire after '+cal(w.retiring).label+'. Eight weeks to book a farewell.',done:true,result:null});}
+    if(w.promo===S.player){w.retiring=S.week+8;news(S,'contract',w.name+' has told you this is the end. They will retire after '+cal(w.retiring).label+'.');pushEv(S,{type:'finalyear',w:w.id,text:w.name+', '+w.age+', has decided to retire. They would like a farewell tour: one last year, with the building full of people who came to say goodbye. Or a short goodbye after eight weeks.',choices:['A final year: a farewell tour','Eight weeks, then a short goodbye']});}
     else retire(S,w);
   }
 }
 WEEKX.push(function(S){
   S.w.forEach(function(w){
     if(w.inj>0)w.yi=(w.yi||0)+1;
+    if(w.retiring&&S.week>=w.retiring&&w.fw&&!w.fwDone&&w.promo===S.player){
+      // a farewell tour ends with a last match, and the booker chooses who gets the honour of the final win
+      var heirs=rosterOf(S,S.player).filter(function(x){return !x.nw&&x.id!==w.id&&x.g===w.g&&x.inj<=0&&x.age<=32;}).sort(function(a,b){return (b.pot+b.ovr)-(a.pot+a.ovr);}).slice(0,3);
+      w.fwDone=true;w.retiring=S.week+1;
+      if(heirs.length){pushEv(S,{type:'lastwin',w:w.id,c:heirs.map(function(x){return x.id;}),text:w.name+'’s last match is tonight. Who gets the honour of the final win over them?',choices:heirs.map(function(x){return x.name;})});return;}
+    }
     if(w.retiring&&S.week>=w.retiring){var P=S.promos[w.promo];if(P){rosterOf(S,P.id).forEach(function(x){x.morale=clamp(x.morale+2,0,100);});P.image=clamp(P.image+(w.ovr>=P.image?0.3:0.1),5,100);}retire(S,w,'a farewell the locker room will remember');}
     if((S.week+w.bw)%48===0)birthday(S,w);
     // in rival companies, young talent with star quality rises whether you are watching or not
@@ -3906,6 +3912,20 @@ POST.push(function(ctx){
 WEEKX.push(function(S){if(S.bond)Object.keys(S.bond).forEach(function(k){S.bond[k]*=0.985;if(Math.abs(S.bond[k])<0.05)delete S.bond[k];});});
 E.bond=function(S,a,b){return S.bond?S.bond[rkey(a,b)]||0:0;};
 E.bondWord=function(S,a,b){var v=E.bond(S,a,b);return v>=6?'inseparable':(v>=3?'close':(v<=-6?'bitter enemies':(v<=-3?'at odds':'neutral')));};
+
+/* the last year: a veteran can announce a final year. The farewell tour lifts gates, and the last match gives one rising star the honour of the final win */
+EVR.finalyear=function(S,ev,choice,P,w){
+  if(choice===0){w.retiring=S.week+48;w.fw=true;w.morale=clamp(w.morale+10,0,100);news(S,'story',w.name+' has announced a final year. The farewell tour starts now.');return w.name+' will wrestle for one more year, and every crowd will know it. Expect fuller buildings when they are on the card, and a last match to decide.';}
+  w.morale=clamp(w.morale+2,0,100);return w.name+' will retire after '+cal(w.retiring).label+'. A short goodbye, then.';
+};
+EVR.lastwin=function(S,ev,choice,P,w){
+  var id=ev.c[choice],h=S.w[id];if(!h)return 'The last match goes ahead without a ceremony.';
+  addOvr(P,h,3);h.mom=clamp(h.mom+5,-10,10);h.morale=clamp(h.morale+10,0,100);w.morale=clamp(w.morale+5,0,100);mile(S,h,'honour','Got the final win over '+w.name+' in their last match');
+  news(S,'story',h.name+' got the final win over '+w.name+' in their last match. The crowd gave '+w.name+' a standing ovation.');
+  return h.name+' pins '+w.name+' in the last match of a long career. The building stands for both of them.';
+};
+PREX.push(function(S,P,show,card){if(S.cal)return;if(card.some(function(m){return [].concat.apply([],m.sides).some(function(id){var w=S.w[id];return w&&w.fw&&w.retiring>S.week;});}))S.hype=(S.hype||0)+0.04;});
+CRX.push(function(ctx){var f=ctx.all.filter(function(w){return w.fw&&w.retiring>ctx.S.week;})[0];return f?{d:1.4,x:'Everyone came to say goodbye to '+f.name}:null;});
 
 /* ===== 83-moments.js ===== */
 /* ---------- moments from wrestling history ----------

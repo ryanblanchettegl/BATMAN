@@ -26,7 +26,7 @@ Things that would make the game deeper. Each one adds a system, a choice or a me
 - [x] **7. Life outside the ring.** A wedding, a new baby, a move across the country, a film part, a book. Each is an inbox event with a real choice: time off, a lighter schedule, or work it into a story. *M. (TASKS 8)*
 - [x] **8. Booking makes friends and enemies.** Pairs who travel together, who made each other look good, or who refused to lose to each other, build a score. That score feeds chemistry and backstage incidents. *M. Builds on `E.chem`, `E.relations`.*
 - [x] **9. Who trained whom.** Store the trainer of every wrestler the player develops. The card lists trainer and students. Students pick up a little of the trainer's style. Add a "family tree" pop-up drawn in text. *S. Builds on `E.setMentor`, `E.mentorsFor`.*
-- [ ] **10. The last year.** A veteran announces a final year. The farewell tour lifts gates, the last match is a draw, and the player chooses who gets the honour of the final win. *M.*
+- [x] **10. The last year.** A veteran announces a final year. The farewell tour lifts gates, the last match is a draw, and the player chooses who gets the honour of the final win. *M.*
 - [ ] **11. Second careers.** A retired wrestler can stay as a road agent, trainer, commentator, manager or on-screen boss. Each role uses one of their old skills. *M. Leads into wishes 19, 34 and 46.*
 - [x] **12. Comebacks.** A wrestler back from injury gets a returning pop that fades over four weeks. Bringing them back early is an attempt with a chance of re-injury. *S. Builds on `E.workHurt`.*
 
