@@ -6,6 +6,14 @@ import { co, noTrade } from './state';
 
 const others = (): string[] => { const S = G.S; return S.order.filter((id: string) => id !== S.player); };
 
+/** The working agreement: who with, what it gives, when the next joint show is, and a way out. */
+function Agreement() {
+  const S = G.S, A = E.agreement(S);
+  if (!A) return null;
+  return <p class="note mb1"><span>Working agreement with {A.with.name}: easier trades, top titles recognised by both, a joint supershow in {A.next} {A.next === 1 ? 'week' : 'weeks'}. Relations {A.rel}{A.trouble ? '. Trouble: ' + A.trouble : ''}.</span>
+    <Btn kind="sm" t="agree-end" onClick={() => act(() => { const r = E.agreeEnd(S); say(r.text); })}>End it</Btn></p>;
+}
+
 /** A supershow or a war already running: who with, until when, the series score and who is visiting. */
 function Arrangement() {
   const S = G.S, x = E.xfState(S);
@@ -23,6 +31,7 @@ function RivalRow(p: { id: string; busy: boolean }) {
     <span class="row">
       <Btn kind="sm" t="xf" d={{ k: id, v: 'super' }} disabled={!!why} onClick={() => propose('super')}>Supershow {odds('super')}</Btn>
       <Btn kind="sm" t="xf" d={{ k: id, v: 'war' }} disabled={!!why} onClick={() => propose('war')}>Start a war {odds('war')}</Btn>
+      <Btn kind="sm" t="agree" d={{ k: id }} disabled={!!E.agreeCan(S, id)} onClick={() => act(() => { const x = E.agreePropose(S, id); say(x.text, { err: !x.ok }); })}>Partner {Math.round(E.agreeOdds(S, id).p * 100)}%</Btn>
     </span>
   </li>;
 }
@@ -59,6 +68,7 @@ function TradeDesk() {
 export function RivalsPanel() {
   const busy = !!E.xfState(G.S);
   return <Panel cls="mb3" title="Rival promotions">
+    <Agreement />
     <Arrangement />
     <ul class="list">{others().map(id => <RivalRow id={id} busy={busy} />)}</ul>
     <p class="muted mt2">{Object.keys(E.TEMPER).map((k: string) => E.TEMPER[k].n + ': ' + E.TEMPER[k].d).join(' ')}</p>

@@ -69,3 +69,57 @@ WEEKX.push(function(S){
   else L=chance(S,0.15)?nm+' of '+RV.name+' has still not said a word in public about anyone.':null;
   if(L&&(S.week-(S.talkAt||-99)>=3)){S.talkAt=S.week;news(S,'world',L);}
 });
+
+/* ---------- 61. Working agreements: a formal partnership with one rival (S.agree) that can sour ---------- */
+/* terms: trades are easier (exchange), top titles are recognised by both (title), and a joint supershow every twelve weeks (show) */
+E.agreeOdds=function(S,pid){
+  var P=S.promos[S.player],RV=S.promos[pid];if(!RV||pid===P.id)return null;
+  return mkCheck(9,[relMod(RV),gapMod(P,RV),temperMod(RV,'show')].concat(skillMods(S,'talk')));
+};
+E.agreeCan=function(S,pid){
+  var P=S.promos[S.player],RV=S.promos[pid];
+  if(S.agree)return 'You already have a working agreement with '+S.promos[S.agree.with].name+'.';
+  if((RV.rel||0)<30)return RV.name+' does not know you well enough yet. Relations must reach 30.';
+  if(RV.image-P.image>25)return RV.name+' is too big to sit down with you yet.';
+  if(RV.agAsk&&S.week-RV.agAsk<8)return RV.name+' will not take another meeting until '+cal(RV.agAsk+8).label+'.';
+  return null;
+};
+E.agreePropose=function(S,pid){
+  var why=E.agreeCan(S,pid);if(why)return {ok:false,text:why};
+  var RV=S.promos[pid],r=rollCheck(S,E.agreeOdds(S,pid));RV.agAsk=S.week;
+  if(!r.ok){RV.rel=clamp((RV.rel||0)-3,-100,100);return {ok:false,text:rollText(r)+RV.name+' wants to think about it.'};}
+  S.agree={with:pid,since:S.week,next:S.week+12,trouble:0};
+  news(S,'world',S.promos[S.player].name+' and '+RV.name+' signed a working agreement.');
+  return {ok:true,text:rollText(r)+'You and '+RV.name+' are partners. Trades are easier, your top titles are recognised by both, and a joint supershow runs every twelve weeks.'};
+};
+E.agreeEnd=function(S){var A=S.agree;if(!A)return {ok:false,text:'There is no agreement.'};var RV=S.promos[A.with];RV.rel=clamp((RV.rel||0)-10,-100,100);S.agree=null;news(S,'world',S.promos[S.player].name+' ended the working agreement with '+RV.name+'.');return {ok:true,text:'The agreement is over. '+RV.name+' is not pleased.'};};
+E.agreement=function(S){
+  var A=S.agree;if(!A)return null;var RV=S.promos[A.with];
+  return {with:RV,rel:Math.round(RV.rel||0),since:A.since,next:Math.max(0,A.next-S.week),trouble:A.trouble};
+};
+WEEKX.push(function(S){
+  var A=S.agree;if(S.cal||!A)return;
+  var P=S.promos[S.player],RV=S.promos[A.with];
+  // a recognised title lifts both companies' top titles a little
+  [P,RV].forEach(function(Q){var t=Q.titles.filter(function(x){return !x.tag&&x.lvl>=3;})[0];if(t&&t.prestige<90)t.prestige=Math.min(90,t.prestige+0.15);});
+  // the joint show
+  if(S.week>=A.next&&!E.xfState(S)&&!E.xfCan(S,A.with)){A.next=S.week+12;startXf(S,A.with,'super');news(S,'world','The joint supershow with '+RV.name+' is on, as agreed.');}
+  // partners fall out over time: the incident is more likely with a raider
+  var p=({raider:0.05,gentleman:0.01,hermit:0.02,showman:0.03})[E.temperOf(S,A.with).key]||0.02;
+  if(chance(S,p)&&!S.inbox.some(function(e){return e.type==='agreetrouble'&&!e.done;})){
+    var o=RV.owner&&RV.owner.name?RV.owner.name:'Their owner',cost=Math.round(P.inc0*0.3);
+    A.trouble++;pushEv(S,{type:'agreetrouble',text:o+' of '+RV.name+' is angry: one of their stars was sent home early from your show and no one told them. The agreement is at risk.',
+      choices:['Send a gift and an apology: '+money(cost),'Say it was a mistake (an attempt)','End the agreement'],cost:cost,checks:{1:mkCheck(7,[relMod(RV),trustMod(S)].concat(skillMods(S,'talk')))}});
+  }
+  if((RV.rel||0)<0&&A.trouble>=2){S.agree=null;news(S,'world','The working agreement with '+RV.name+' collapsed.');}
+});
+EVR.agreetrouble=function(S,ev,choice,P){
+  var A=S.agree;if(!A)return 'The agreement is already over.';var RV=S.promos[A.with];
+  if(choice===0){if(P.cash<ev.cost){RV.rel=clamp((RV.rel||0)-6,-100,100);return 'You cannot afford the gift. '+RV.name+' takes that badly.';}P.cash-=ev.cost;RV.rel=clamp((RV.rel||0)+12,-100,100);A.trouble=Math.max(0,A.trouble-1);return 'The gift and the apology work. '+RV.name+' is back on side.';}
+  if(choice===1){var r=rollCheck(S,ev.checks[1]);ev.roll=r;if(r.ok){RV.rel=clamp((RV.rel||0)+4,-100,100);return rollText(r)+RV.name+' accepts the explanation.';}RV.rel=clamp((RV.rel||0)-12,-100,100);return rollText(r)+RV.name+' does not believe it. Relations take a hit.';}
+  return E.agreeEnd(S).text;
+};
+CRX.push(function(ctx){
+  var A=ctx.S.agree;if(!A||!ctx.isPl||!ctx.t||ctx.t.lvl<3||ctx.S.cal)return null;
+  return {d:1,x:'The title is recognised by both companies'};
+});

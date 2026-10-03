@@ -188,6 +188,7 @@ function temperKey(P){var t=temperOf(P);return Object.keys(TEMPER).filter(functi
 function temperMod(RV,kind){var t=temperOf(RV),v=t[kind]||0;return {n:RV.owner&&RV.owner.name?RV.owner.name+', a '+t.n.toLowerCase():'Their owner, a '+t.n.toLowerCase(),v:v};}
 E.TEMPER=TEMPER;
 E.temperOf=function(S,pid){var P=S.promos[pid];if(!P)return null;var t=temperOf(P);return {key:temperKey(P),n:t.n,d:t.d,owner:P.owner?P.owner.name:null};};
+function agreeTradeMod(S,RV){return S.agree&&S.agree.with===RV.id?{n:'Your working agreement: talent moves easily between you',v:2}:null;}
 function gapMod(P,RV){return {n:'Your popularity against theirs',v:P.image>=RV.image?1:(RV.image-P.image>30?-3:(RV.image-P.image>15?-2:-1))};}
 E.xfOdds=function(S,pid,kind){
   var P=S.promos[S.player],RV=S.promos[pid];if(!RV||pid===P.id)return null;
@@ -269,7 +270,7 @@ E.tradeList=function(S,pid){var RV=S.promos[pid];return rosterOf(S,pid).filter(f
 E.tradeOdds=function(S,mine,theirs){
   var a=S.w[mine],b=S.w[theirs];if(!a||!b||a.promo!==S.player||b.promo===S.player||b.promo==='FA')return null;
   var RV=S.promos[b.promo];
-  return mkCheck(8,[{n:'What they get against what they give up',v:clamp(Math.round((tradeVal(a)-tradeVal(b))/3),-5,4)},relMod(RV),temperMod(RV,'trade')].concat(skillMods(S,'talk')));
+  return mkCheck(8,[{n:'What they get against what they give up',v:clamp(Math.round((tradeVal(a)-tradeVal(b))/3),-5,4)},relMod(RV),temperMod(RV,'trade'),agreeTradeMod(S,RV)].concat(skillMods(S,'talk')));
 };
 E.trade=function(S,mine,theirs){
   var a=S.w[mine],b=S.w[theirs],P=S.promos[S.player],ck=E.tradeOdds(S,mine,theirs);if(!ck)return {ok:false,msg:'Pick one of yours and one of theirs.'};
