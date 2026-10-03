@@ -2,7 +2,7 @@
    export), House (house style and house rules) and Deals (sponsors, rivals, trades). What the choices add up to is read on Company. */
 import { E } from '../../engine';
 import { G, me, Modal, act, say, cash, plural, openModal, redraw } from '../../store';
-import { Head, Panel, Btn, Tag, Empty, Window } from '../../kit';
+import { Head, Panel, Btn, Tag, Empty, Window, showResult } from '../../kit';
 import { copyText } from '../start';
 import { HouseStyle } from './HouseStyle';
 import { RivalsPanel } from './Rivals';
@@ -16,7 +16,7 @@ function OptRow(p: { k: string; cur: number; names: string[]; notes: string[]; m
   const S = G.S, own = S.owner.me, last = p.names.length - 1;
   const set = (i: number) => act(() => {
     if (own) E.setCompany(S, p.k, i);
-    else if (i !== p.cur) { const r = E.lobby(S, p.k, i); say(r.msg, { err: !r.ok }); }
+    else if (i !== p.cur) { const r = E.lobby(S, p.k, i); say(r.msg, { err: !r.ok }); showResult('Asking ' + S.owner.name, r.msg, !r.ok); }
   });
   const up = !own && p.cur < last ? E.lobbyOdds(S, p.k, p.cur + 1) : null, dn = !own && p.cur > 0 ? E.lobbyOdds(S, p.k, p.cur - 1) : null;
   return <>

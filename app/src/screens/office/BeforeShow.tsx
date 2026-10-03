@@ -3,7 +3,7 @@
 import { E, W } from '../../engine';
 import { G, ui, me, act, say, view, plural } from '../../store';
 import { go, weekDone } from '../../nav';
-import { Panel, Btn, Sel, Opt, Tag, CheckLine, Empty, brandName, dataAttrs, Txt } from '../../kit';
+import { Panel, Btn, Sel, Opt, Tag, CheckLine, Empty, brandName, dataAttrs, Txt, showResult } from '../../kit';
 import { EndWeekBtn } from '../../shared/week';
 import { office, focusAfter, useFocusAfter, TO_MAP } from './util';
 import { Court } from './Court';
@@ -42,6 +42,7 @@ function RoomActs(p: { room: any; blocked: string }) {
   const spend = (id: string) => act(() => {
     const r = E.apDo(S, p.room.id, id, { a: st.a, b: st.b });
     say(r.msg, { err: !r.ok });
+    showResult(p.room.n, r.msg, !r.ok);
     focusAfter(TO_MAP);
   });
   return <ul class="list">{p.room.acts.map((a: any) => <li class="col">

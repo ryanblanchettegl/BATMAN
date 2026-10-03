@@ -2,7 +2,7 @@
    (row, cols, stack, list, kv, tw: see styles/kit.css). */
 import { ComponentChildren } from 'preact';
 import { Check, W } from '../engine';
-import { G, openCard, Card } from '../store';
+import { G, openCard, openModal, Card } from '../store';
 
 export type Data = Record<string, string | number | null | undefined>;
 /** `t` becomes data-t (the stable name tests and tools use); `d` becomes data-v, data-id and so on. */
@@ -123,6 +123,8 @@ export function Stat(p: { label: string; v: number; kind?: 'hot' | 'cool' | 'au'
 /** Label and any value: one cell of a `.kv` grid. */
 export function KV(p: { label: string; children: ComponentChildren }) { return <div><small>{p.label}</small><span>{p.children}</span></div>; }
 /** One line that explains an attempt before the player commits to it: the chance, then what helps and what hurts. */
+/** A small pop-up that says what just happened, for actions whose result would otherwise only be a line above the page. */
+export function showResult(title: string, text: string, err?: boolean) { openModal({ kind: 'info', title, body: () => <p class={err ? 'bad' : 'good'}><Txt>{text}</Txt></p> }); }
 /** A word for a chance: long shot, even, likely or near certain. */
 export function chanceWord(p: number): [string, string] { return p < 0.3 ? ['a long shot', 'bad'] : (p < 0.55 ? ['about even', 'hl'] : (p < 0.85 ? ['likely', 'good'] : ['near certain', 'good'])); }
 export function CheckLine(p: { label?: string; ck: Check }) {

@@ -13,7 +13,12 @@ function check(mode, label, ok, detail) { console.log(mode.padEnd(6), ok ? 'ok  
 async function fits(page, mode, label) { const o = await overflow(page); check(mode, label + ' fits the screen', o === '', o); }
 /** Achievement pop-ups sit over the top right corner for six seconds; wait them out before clicking there. */
 async function calm(page) { await page.waitForFunction(() => { const S = window.EWF_DEBUG.state(); return !document.querySelector('.status.toast') && !(S && S.toasts.length); }, null, { timeout: 20000 }); }
-async function click(page, sel) { await calm(page); await page.click(sel); }
+async function click(page, sel) {
+  await calm(page);
+  // asking the owner now also opens a small result pop-up; close it before the next click
+  const w = await page.$('.win'); if (w && /asking/i.test(await w.innerText())) { await page.keyboard.press('Escape'); await page.waitForTimeout(60); }
+  await page.click(sel);
+}
 /** Play `n` weeks through the engine: answer the inbox with the first choice, run the suggested cards, close the week. */
 async function advance(page, n) {
   await state(page, (S, n) => { for (let w = 0; w < n && !S.over; w++) { S.inbox.filter(e => !e.done).forEach(e => GP.resolveEvent(S, e.id, 0)); if (S.owner.pending) GP.setCreed(S, { style: 'merit', roots: 'tradition', pledge: 'stable' }); while (S.qi < S.queue.length) { const card = GP.suggest(S); const pr = GP.preShow(S, card); if (pr) GP.resolvePre(S, card, 0); const ch = GP.chaos(S, card); if (ch) GP.resolveChaos(S, card, 0); GP.runPlayerShow(S, card); } GP.endWeek(S); } }, n);

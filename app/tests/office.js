@@ -1,6 +1,8 @@
 /* Browser run of the Office section: the desk (Before the show, the backstage rooms, the inbox), Career, the clock and week-closed windows, game over.
    Build:  EWF_OUT=next-office EWF_DEV=1 node build.js
    Run:    NODE_PATH=/opt/npm-tools/node_modules node app/tests/office.js            (MODES=desk,phone,tablet,tv,remote picks the passes; the default is desk,phone,remote) */
+/** A backstage action now also opens a small result pop-up; close it so the test can carry on. */
+const bsdo = async (page, sel, o) => { await page.click(sel, o); if (await page.$('.win')) { await page.keyboard.press('Escape'); await page.waitForTimeout(60); } };
 const { open, go, overflow, shot, flash, state, redraw } = require('./helper');
 
 const MODES = (process.env.MODES || 'desk,phone,remote').split(',');
@@ -54,20 +56,20 @@ async function run(mode) {
   await step('rooms', 'rooms');
   await page.click('[data-t="bs-room"][data-v="trainer"]');
   ok(await count('.room.on') === 1 && await count('#bs-a') === 1 && await count('#bs-b') === 0, 'trainer room open with one wrestler picker');
-  await page.click('[data-t="bs-do"][data-v="treat"]');           // nobody picked: the engine refuses and nothing is spent
+  await bsdo(page, '[data-t="bs-do"][data-v="treat"]');           // nobody picked: the engine refuses and nothing is spent
   ok(/Pick a wrestler first/.test(await flash(page)) && await ap() === max, 'no wrestler picked: no point spent');
   await page.selectOption('#bs-a', { index: 1 });
-  await page.click('[data-t="bs-do"][data-v="treat"]');
+  await bsdo(page, '[data-t="bs-do"][data-v="treat"]');
   ok(await ap() === max - 1 && /treatment/.test(await flash(page)), 'trainer visit costs one point: ' + await flash(page));
   ok(await page.$eval('[data-t="bs-do"][data-v="treat"]', e => e.disabled) && await count('.room.used') === 1 && /already spent time here/.test(await txt('.roomdet')), 'trainer room is used up for the week');
-  await page.click('[data-t="bs-do"][data-v="treat"]', { force: true }); ok(await ap() === max - 1, 'a used room spends nothing');
+  await bsdo(page, '[data-t="bs-do"][data-v="treat"]', { force: true }); ok(await ap() === max - 1, 'a used room spends nothing');
   await step('trainer visit', 'trainer');
 
   /* ---- backstage: the gym needs two different wrestlers ---- */
   await page.click('[data-t="bs-room"][data-v="gym"]');
   ok(await count('#bs-a') === 1 && await count('#bs-b') === 1, 'gym has two pickers');
   await page.selectOption('#bs-b', { index: 1 });               // the same wrestler twice
-  await page.click('[data-t="bs-do"][data-v="drill"]');
+  await bsdo(page, '[data-t="bs-do"][data-v="drill"]');
   ok(/Pick two different wrestlers/.test(await flash(page)) && await ap() === max - 1, 'same wrestler twice: no point spent');
   await step('gym refused');
 
@@ -87,11 +89,11 @@ async function run(mode) {
   await step('court done');
 
   /* ---- spend the last point, then nothing more can be spent ---- */
-  await page.click('[data-t="bs-room"][data-v="truck"]'); await page.click('[data-t="bs-do"][data-v="hype"]');
+  await page.click('[data-t="bs-room"][data-v="truck"]'); await bsdo(page, '[data-t="bs-do"][data-v="hype"]');
   ok(await ap() === 0 && /0 of 3/.test(await txt('.panel')), 'last point spent in the truck');
   await page.click('[data-t="bs-room"][data-v="catering"]');
   ok(/out of action points/.test(await txt('.roomdet')) && await page.$$eval('[data-t="bs-do"]', L => L.length === 2 && L.every(b => b.disabled)), 'out of points: every action is off');
-  await page.click('[data-t="bs-do"][data-v="pep"]', { force: true }); ok(await ap() === 0 && await state(page, S => !S.pep), 'nothing spent at zero');
+  await bsdo(page, '[data-t="bs-do"][data-v="pep"]', { force: true }); ok(await ap() === 0 && await state(page, S => !S.pep), 'nothing spent at zero');
   await step('out of points', 'spent');
 
   /* ---- career: skills only when there is a point to spend ---- */
@@ -172,6 +174,8 @@ async function remote() {
   await key('Enter'); ok(await page.$$eval('.room.on', L => L.length) === 1 && await focus() === 'bs-room:trainer', 'OK opens the room and the highlight stays');
   await page.click('[data-t="bs-room"][data-v="gym"]'); await page.click('[data-t="bs-room"][data-v="trainer"]');   // whatever the arrows did, the trainer's room is open now
   await page.selectOption('#bs-a', { index: 1 }); await press('[data-t="bs-do"]');
+  ok(await focus() === 'modal-close', 'the result pop-up takes the highlight: ' + await focus());
+  await key('Escape'); await settle();
   ok(await state(page, S => S.ap) === 2 && await focus() === 'bs-room:trainer', 'after spending, the highlight is back on the map: ' + await focus());
   await state(page, plantCase); await redraw(page); await press('[data-t="bs-room"][data-v="court"]'); await press('[data-t="bs-court"][data-v="3"]');
   ok(await state(page, S => S.court.length) === 0 && await focus() === 'bs-room:court', 'after a ruling, the highlight is back on the map: ' + await focus());
