@@ -33,6 +33,11 @@ export function Locker() {
               <span>{ids.length ? ids.map(id => <><Who id={id} /> </>) : <span class="muted">Nobody</span>}</span></li>;
           })}</ul>
         </Panel>
+        <Panel title="Cliques">
+          {E.cliques(S).length ? <ul class="list">{E.cliques(S).map((c: any) => <li class="col"><span><b>{c.name}</b>{c.power ? <span class="muted"> · a star among them</span> : null}</span>
+            <span>{c.m.map((w: W) => <><Who id={w.id} /> </>)}</span></li>)}</ul> : <Empty>Nobody is running in a pack. Friends form from good matches and long road trips.</Empty>}
+          <p class="muted mt2">A group with a star in it will ask for favours together. Say yes, say no, or break them up.</p>
+        </Panel>
         {E.staff(S).length ? <Panel title="Second careers">
           <ul class="list">{E.staff(S).map((s: any) => <li class="col"><span><Who id={s.id} /> <b>{s.role}</b><br /><span class="muted">{s.d}</span></span></li>)}</ul>
         </Panel> : null}
