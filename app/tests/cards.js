@@ -34,6 +34,15 @@ const { open, go, overflow, shot, state, redraw } = require('./helper');
     ok((await overflow(page)) === '', mode + ' team card fits');
     await shot(page, 'card-' + mode + '-team');
     await page.click('[data-t="card-close"]'); ok(await n('.cards .win') === 0, mode + ' Close shuts it');
+    // Tab stays inside a pop-up: from the last control it wraps to the first and never reaches the page behind
+    if (mode === 'desk') {
+      await go(page, 'titles'); await page.waitForTimeout(100);
+      await page.click('[data-t="title-card"]'); await page.waitForSelector('.cards .win');
+      let stayed = true; for (let k = 0; k < 14; k++) { await page.keyboard.press('Tab'); if (!(await page.evaluate(() => !!document.activeElement.closest('.cards .win')))) stayed = false; }
+      ok(stayed, 'Tab cycles inside the pop-up');
+      await page.keyboard.press('Shift+Tab'); ok(await page.evaluate(() => !!document.activeElement.closest('.cards .win')), 'Shift+Tab stays inside too');
+      await page.click('[data-t="card-close"]');
+    }
     // a promotion's name opens its pop-up
     await go(page, 'world'); await page.waitForTimeout(100);
     ok(await n('[data-t="promo-card"]') >= 5, mode + ' promotion names in the World table are links (' + await n('[data-t="promo-card"]') + ')');

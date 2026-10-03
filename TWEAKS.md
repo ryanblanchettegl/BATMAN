@@ -78,7 +78,7 @@ Small jobs, each one commit. None of them needs a decision from Ryan. Read `CLAU
 ## D. Input
 
 - [x] **57.** On a TV every linked name is now a stop for the arrow keys. Count the presses from the top of the desk to the first inbox answer before and after, and make arrow movement prefer buttons and rows over names when both lie the same way (`navMove` in `app/src/input.ts`).
-- [ ] **58.** Tab inside a pop-up should cycle within it and never reach the page behind (`app/src/kit/window.tsx`).
+- [x] **58.** Tab inside a pop-up should cycle within it and never reach the page behind (`app/src/kit/window.tsx`).
 - [ ] **59.** Gamepad: Y opens the Jukebox, X opens Help. Show both in the status bar hints.
 - [ ] **60.** Long tables on a remote: channel up and down (and Page Up and Page Down) move ten rows.
 - [ ] **61.** Linked names on phone and tablet need a taller tap area without changing how the text looks.
