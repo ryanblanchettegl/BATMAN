@@ -37,3 +37,26 @@ POST.push(function(ctx){
   if(ctx.feud)heatUp(ctx.S,ctx.feud,4,r.n+' missed '+what);
   if(ctx.isPl)news(ctx.S,'story',r.n+' missed '+what+' at '+ctx.show.name+'. The talk is of nothing else.');
 });
+
+/* managers meddle: ringside interference, heat that belongs to the manager, and the manager turning on a client who keeps losing */
+POST.push(function(ctx){
+  var S=ctx.S,r=ctx.res;if(S.cal||!ctx.isPl)return;
+  ctx.all.forEach(function(w){
+    if(w.mgr==null)return;var mg=S.w[w.mgr];if(!mg||mg.promo!==w.promo||mg.rt)return;
+    var won=r.winners.indexOf(w)>=0,fin=r.fin;
+    // the manager turns on a client who keeps losing, once they have made enough enemies of their own
+    if(!won&&r.win>=0&&w.ws<=-3&&(mg.mh||0)>=30&&chance(S,0.2)){
+      w.mgr=null;w.morale=clamp(w.morale-6,0,100);if(mg.align===w.align)turn(S,mg,'walked out on '+w.name);
+      r.seg.notes.push(mg.name+' has seen enough, shoves '+w.name+' and walks to the back.');news(S,'story',mg.name+' has walked out on '+w.name+' after the losing streak.');return;}
+    if(fin==='interf'||fin==='foiled'||!chance(S,0.1))return;
+    var good=chance(S,clamp(0.45+(mg.mic-60)/200,0.2,0.75));
+    if(good){mg.mh=clamp((mg.mh||0)+6,0,100);r.seg.notes.push(mg.name+' distracts the referee at ringside and '+w.name+' gets the edge.');if(ctx.feud)heatUp(S,ctx.feud,3,mg.name+' interfered for '+w.name);r.seg.ov=clamp(r.seg.ov+1,5,99);}
+    else{mg.mh=clamp((mg.mh||0)+2,0,100);r.seg.notes.push(mg.name+' tries to interfere and is thrown out by the referee.');r.seg.ov=clamp(r.seg.ov+0.5,5,99);}
+  });
+});
+/* a manager the crowd hates is worth a little to the show */
+CRX.push(function(ctx){
+  var h=0,who=null;ctx.all.forEach(function(w){if(w.mgr!=null){var mg=ctx.S.w[w.mgr];if(mg&&(mg.mh||0)>=30&&mg.promo===w.promo){h=Math.max(h,mg.mh);who=mg;}}});
+  return who?{d:clamp(h/40,0.5,2),x:'The crowd loves to hate '+who.name}:null;
+});
+WEEKX.push(function(S){S.w.forEach(function(w){if(w.mh)w.mh=w.mh>1?w.mh*0.96:0;});});   // a manager's heat cools if they stay quiet
