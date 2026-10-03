@@ -69,7 +69,7 @@ Small jobs, each one commit. None of them needs a decision from Ryan. Read `CLAU
 - [x] **49.** Broadcast: a "Skip to the result" button for each match, and a speed setting (slow, normal, fast) in Options.
 - [x] **50.** Wrestler pop-up: add the last five results and stable membership, and a "Send a scout" button for wrestlers who are not yours.
 - [x] **51.** Week-closed window: list what you did with your action points and the biggest riser and faller on your roster.
-- [ ] **52.** The attempt line (`CheckLine` in `app/src/kit/index.tsx`): add a word for the chance (long shot, even, likely, near certain) and colour it.
+- [x] **52.** The attempt line (`CheckLine` in `app/src/kit/index.tsx`): add a word for the chance (long shot, even, likely, near certain) and colour it.
 - [ ] **53.** Results of backstage actions and of lobbying the owner should open a small pop-up as well as the line above the page. The design goal is that every action shows its reaction at once.
 - [ ] **54.** Check the contrast of muted text (`--dcyan` on blue). Where it carries information the player needs, use a brighter colour from the palette.
 - [ ] **55.** Every empty state should say what to do next ("No sponsors signed. New offers arrive on Manage, under Deals, every four weeks.").

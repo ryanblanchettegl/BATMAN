@@ -123,9 +123,11 @@ export function Stat(p: { label: string; v: number; kind?: 'hot' | 'cool' | 'au'
 /** Label and any value: one cell of a `.kv` grid. */
 export function KV(p: { label: string; children: ComponentChildren }) { return <div><small>{p.label}</small><span>{p.children}</span></div>; }
 /** One line that explains an attempt before the player commits to it: the chance, then what helps and what hurts. */
+/** A word for a chance: long shot, even, likely or near certain. */
+export function chanceWord(p: number): [string, string] { return p < 0.3 ? ['a long shot', 'bad'] : (p < 0.55 ? ['about even', 'hl'] : (p < 0.85 ? ['likely', 'good'] : ['near certain', 'good'])); }
 export function CheckLine(p: { label?: string; ck: Check }) {
-  const ck = p.ck, up = ck.mods.filter(x => x.v > 0).map(x => x.n), dn = ck.mods.filter(x => x.v < 0).map(x => x.n);
-  return <p class="muted">{p.label ? p.label + ': ' : ''}an attempt with a <b>{Math.round(ck.p * 100)}%</b> chance
+  const ck = p.ck, cw = chanceWord(ck.p), up = ck.mods.filter(x => x.v > 0).map(x => x.n), dn = ck.mods.filter(x => x.v < 0).map(x => x.n);
+  return <p class="muted">{p.label ? p.label + ': ' : ''}an attempt with a <b>{Math.round(ck.p * 100)}%</b> chance, <b class={cw[1]}>{cw[0]}</b>
     {up.length ? <> {'·'} <span class="good">{'▲'} {up.join(', ')}</span></> : null}{dn.length ? <> {'·'} <span class="bad">{'▼'} {dn.join(', ')}</span></> : null}</p>;
 }
 export function Empty(p: { children: ComponentChildren }) { return <p class="empty">{p.children}</p>; }
