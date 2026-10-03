@@ -38,6 +38,8 @@ async function run(mode) {
   await page.click('[data-t="book-next"]'); ok(await page.evaluate(() => window.EWF_DEBUG.ui.page) === 'booking', 'Book the next show opens Booking'); await go(page, 'desk');
 
   /* ---- a clock window: open, read, close with the button; open again, close with Esc ---- */
+  ok(await count('[data-t="clocks-quiet"]') === 1 || await count('[data-t="clock"]') === 6, 'quiet clocks fold into one button');
+  if (await count('[data-t="clocks-quiet"]')) await page.click('[data-t="clocks-quiet"]');
   ok(await count('[data-t="clock"]') === 6, 'six clocks');
   await page.click('[data-t="clock"][data-k="mutiny"]'); await page.waitForSelector('.win');
   ok(/Mutiny/.test(await txt('.win .wt')) && /0 of 6 segments filled/.test(await txt('.win .wb')) && await count('.win .dial') === 1, 'clock window content');
@@ -178,6 +180,7 @@ async function remote() {
   ok(await focus() === 'book-next', 'the desk starts on Book the next show, not on an answer: ' + await focus());
   let left = await page.$$eval('[data-t="ev"]', L => L.length); ok(left > 0, 'tv: an inbox event to answer');
   while (left > 0) { await press('[data-t="ev"]'); left = await page.$$eval('[data-t="ev"]', L => L.length); ok(/^(ev|book-next|endweek)$/.test(await focus()), 'after an answer the highlight moves on: ' + await focus()); }
+  if (!(await page.$('[data-t="clock"][data-k="hot"]'))) await press('[data-t="clocks-quiet"]');
   await press('[data-t="clock"][data-k="hot"]'); ok(await focus() === 'modal-close', 'clock window takes the highlight: ' + await focus());
   await key('Backspace'); ok(await page.$$eval('.win', L => L.length) === 0 && await focus() === 'clock', 'Back closes it and the highlight returns to the clock: ' + await focus());
   ok(errs.length === 0, 'console errors: ' + errs.join(' | '));

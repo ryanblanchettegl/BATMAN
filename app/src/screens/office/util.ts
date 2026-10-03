@@ -5,8 +5,8 @@ import { NAV } from '../../input';
 
 /** Before the show: the room that is open (`pl`) and the wrestlers picked in its drop-downs (`a`, `b`).
     The desk: the clock whose window is open (`clock`), so the highlight can go back to it. */
-export interface OfficeState { pl: string | null; a: number | null; b: number | null; clock: string | null }
-export function office(): OfficeState { return slice<OfficeState>('office', () => ({ pl: null, a: null, b: null, clock: null })); }
+export interface OfficeState { pl: string | null; a: number | null; b: number | null; clock: string | null; quiet: boolean; rooms: boolean }
+export function office(): OfficeState { return slice<OfficeState>('office', () => ({ pl: null, a: null, b: null, clock: null, quiet: false, rooms: false })); }
 
 /** Before the show: when the control just used is switched off or removed, the highlight goes back to the open room on the map. */
 export const TO_MAP = ['.room.on', '.room'];

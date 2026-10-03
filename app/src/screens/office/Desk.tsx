@@ -3,7 +3,7 @@
 import { ComponentChildren } from 'preact';
 import { useLayoutEffect } from 'preact/hooks';
 import { E, W } from '../../engine';
-import { G, ui, me, act, openModal, plural } from '../../store';
+import { G, ui, me, act, openModal, plural, view } from '../../store';
 import { go, weekDone } from '../../nav';
 import { Head, Panel, Btn, Name, CheckLine, Empty, Dial, dataAttrs, Txt } from '../../kit';
 import { ScheduleList, QuestList } from '../../shared/week';
@@ -58,13 +58,16 @@ function Clocks() {
   // On a remote, closing a window sends the highlight to the page's data-home control. Keep that on the clock that was
   // opened for the one draw after its window closes, so Back lands where the player was.
   useLayoutEffect(() => { if (st.clock && !ui.modal) st.clock = null; });
+  const idle = C.filter(c => !c.why && !c.v), moving = C.filter(c => !(!c.why && !c.v)), words = ['No', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine'];
+  const show = st.quiet ? C : moving;
   return <Panel title="Clocks">
-    <div class="clocks">{C.map(c =>
+    <div class="clocks">{show.map(c =>
       <button type="button" class="clock" aria-label={c.n + ': ' + c.v + ' of ' + c.segs + '. ' + (c.why || '')} data-home={st.clock === c.id ? '' : undefined} {...dataAttrs('clock', { k: c.id })}
         onClick={() => { ui.flash = null; st.clock = c.id; openModal({ kind: 'clock', k: c.id }); }}>
         <Dial v={c.v} n={c.segs} bad={c.bad} />
         <span><b>{c.n}</b> <span class={'num ' + (c.bad ? (c.v >= c.segs - 2 ? 'bad' : 'muted') : 'good')}>{c.v}/{c.segs}</span><br /><span class="muted">{c.why || 'Nothing moving'}</span></span>
       </button>)}</div>
+    {idle.length ? <div class="row mt1"><Btn kind="sm" t="clocks-quiet" onClick={() => view(() => { st.quiet = !st.quiet; })}>{st.quiet ? 'Hide the quiet clocks' : (words[idle.length] || idle.length) + ' ' + plural(idle.length, 'clock') + ' ' + (idle.length === 1 ? 'is' : 'are') + ' quiet'}</Btn></div> : null}
     <p class="muted mt1">Red clocks are trouble building. Green clocks pay out when they fill. Select one to see what moves it.</p>
   </Panel>;
 }
