@@ -370,7 +370,7 @@ WEEKX.push(function(S){
     if(a.promo!==P.id||b.promo!==P.id){S.court=S.court.filter(function(x){return x!==c;});return;}
     if(S.week-c.wk>=3){stressAdd(S,a,10);stressAdd(S,b,10);S.rel[rkey(a.id,b.id)]=-1;S.trust=clamp(S.trust-2,0,100);S.court=S.court.filter(function(x){return x!==c;});news(S,'story','Nobody heard '+a.name+'’s complaint against '+b.name+'. It has turned into a grudge.');}
   });
-  if(S.court.length<2&&chance(S,0.15+(hasRule(S,'kayfabe')?0.08:0)-(hasRule(S,'curfew')?0.07:0)+(R.some(function(w){return w.role==='toxic';})?0.06:0))){var c=mkCase(S);if(c){S.court.push(c);news(S,'story','A case for wrestlers’ court: '+c.text);}}
+  if(S.court.length<2&&chance(S,0.15+(hasRule(S,'kayfabe')?0.08:0)-(hasRule(S,'curfew')?0.07:0)+(R.some(function(w){return w.role==='toxic';})?0.06:0)+(R.some(function(w){return w.role==='leader'&&w.morale>=50;})?0:0.07))){var c=mkCase(S);if(c){S.court.push(c);news(S,'story','A case for wrestlers’ court: '+c.text);}}
   tickClocks(S);
   S.ap=apMax(S);S.apUsed={};S.apLog=[];
 });

@@ -24,6 +24,7 @@ export function Locker() {
           <Pie title="Morale across the roster" parts={[{ n: 'Content (70+)', v: L.happy }, { n: 'Getting by', v: L.ok }, { n: 'Unhappy (under 45)', v: L.unhappy }]} />
           <p class="mt2">{L.mood > 0 ? 'Your leaders are steadying the room: everybody’s morale settles ' + L.mood + ' higher.'
             : (L.mood < 0 ? <span class="bad">Something is dragging the room down: everybody{'’'}s morale settles {-L.mood} lower.</span> : 'Nobody is pulling the room up or down.')}</p>
+          {!(L.roles.leader || []).length ? <p class="bad mt1">Nobody is keeping order. Scuffles and cases for the wrestlers{'’'} court are more likely until a veteran steps up.</p> : null}
         </Panel>
         <Panel title="Who is who">
           <ul class="list">{Object.keys(E.ROLE).map(k => {
