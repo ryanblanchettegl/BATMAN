@@ -34,6 +34,13 @@ const { open, go, overflow, shot, state, redraw } = require('./helper');
     ok((await overflow(page)) === '', mode + ' team card fits');
     await shot(page, 'card-' + mode + '-team');
     await page.click('[data-t="card-close"]'); ok(await n('.cards .win') === 0, mode + ' Close shuts it');
+    // a promotion's name opens its pop-up
+    await go(page, 'world'); await page.waitForTimeout(100);
+    ok(await n('[data-t="promo-card"]') >= 5, mode + ' promotion names in the World table are links (' + await n('[data-t="promo-card"]') + ')');
+    await page.click('[data-t="promo-card"]'); await page.waitForSelector('.cards .win');
+    ok(/Champions/i.test(await page.$eval(".cards .wb", e => e.innerText)) && /Model/i.test(await page.$eval('.cards .wb', e => e.innerText)), mode + ' promotion card: ' + await title());
+    ok((await overflow(page)) === '', mode + ' promotion card fits');
+    await page.click('[data-t="card-close"]');
     // gamepad: A on a name opens the pop-up, B closes it, and the highlight is back on the name
     if (mode === 'tv') {
       await go(page, 'titles'); await page.waitForTimeout(150);

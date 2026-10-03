@@ -56,7 +56,7 @@ Small jobs, each one commit. None of them needs a decision from Ryan. Read `CLAU
 - [x] **36.** Company overview: add a one-row bar showing where last week's income came from (television, gate, big events, merchandise, sponsors), with the model's multipliers named beneath it.
 - [x] **37.** Finances: label the low and high values on the weekly chart and draw the owner's weekly plan (`P.net`) as a line on it.
 - [x] **38.** World: add each promotion's model name to the table.
-- [ ] **39.** A promotion pop-up: a fourth card kind in `app/src/shared/cards.tsx` showing the model, popularity, champions, last show and your relations. Promotion names in tables and in linked text open it.
+- [x] **39.** A promotion pop-up: a fourth card kind in `app/src/shared/cards.tsx` showing the model, popularity, champions, last show and your relations. Promotion names in tables and in linked text open it.
 - [ ] **40.** World news: filter buttons for All, Titles, Signings, Stories and Money.
 - [ ] **41.** Roster table: a Fit column that sorts, and a "Point to prove" tag while `chip` is active.
 - [ ] **42.** Free agents: sort by fit, show "Released by X, N weeks ago" from `w.cut`, and a filter for "would sign with us".

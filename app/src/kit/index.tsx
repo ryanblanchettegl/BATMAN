@@ -64,6 +64,11 @@ export function Name(p: { w: W; plain?: boolean }) {
 export function TitleName(p: { pid: string; t: any }) {
   return <button type="button" class="lnk gold" data-t="title-card" data-id={p.t.id} onClick={e => { e.stopPropagation(); openCard({ k: 'title', pid: p.pid, id: p.t.id }); }}>{p.t.name}</button>;
 }
+/** A promotion's name. Selecting it opens the promotion's pop-up. */
+export function PromoName(p: { id: string; text?: string }) {
+  const P = G.S.promos[p.id]; if (!P) return <>{p.text || p.id}</>;
+  return <button type="button" class="lnk" data-t="promo-card" data-id={p.id} onClick={e => { e.stopPropagation(); openCard({ k: 'promo', id: p.id }); }}>{p.text || P.name}</button>;
+}
 /** A tag team's name (or "A & B"). Selecting it opens the team's pop-up. */
 export function TeamName(p: { t: any }) {
   return <button type="button" class="lnk" data-t="team-card" data-id={p.t.id} onClick={e => { e.stopPropagation(); openCard({ k: 'team', id: p.t.id }); }}>{p.t.name || teamName(p.t)}</button>;
@@ -80,6 +85,7 @@ function lookup() {
   S.w.forEach((w: W) => { if (w.name && w.name.length >= 3) map[w.name] = { k: 'w', id: w.id }; });
   S.order.forEach((pid: string) => S.promos[pid].titles.forEach((t: any) => { if (!map[t.name]) map[t.name] = { k: 'title', pid, id: t.id }; }));
   S.teams.forEach((t: any) => { if (t.name && !map[t.name]) map[t.name] = { k: 'team', id: t.id }; });
+  S.order.forEach((pid: string) => { const P = S.promos[pid]; [P.name, P.full].forEach(n => { if (n && n.length >= 3 && !map[n]) map[n] = { k: 'promo', id: pid }; }); });
   const names = Object.keys(map).sort((a, b) => b.length - a.length).map(n => n.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
   let re: RegExp | null = null;
   try { re = names.length ? new RegExp('(?<![A-Za-z0-9])(' + names.join('|') + ')(?![A-Za-z0-9])', 'g') : null; } catch (e) { re = null; }

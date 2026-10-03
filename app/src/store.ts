@@ -40,7 +40,7 @@ export function setUniverse(id: string): any {
 export interface Flash { text: string; err?: boolean }
 export interface Modal { kind: string; [k: string]: any }
 /** A profile pop-up: a wrestler (`id` is their number), a tag team (its id) or a title (`pid` promotion, `id` title id). */
-export interface Card { k: 'w' | 'team' | 'title'; id: number | string; pid?: string }
+export interface Card { k: 'w' | 'team' | 'title' | 'promo'; id: number | string; pid?: string }
 export interface Ui {
   boot: { step: number } | null;
   /** start screens: 'title' or 'select'. `setup` is set while the First day or Create a federation screen is open. */

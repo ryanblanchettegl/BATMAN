@@ -2,7 +2,7 @@
    supershows, wars and trades are proposed on Manage. */
 import { E } from '../../engine';
 import { G, cash } from '../../store';
-import { Head, Panel, Tag, Meter, Empty, Txt, Name } from '../../kit';
+import { Head, Panel, Tag, Meter, Empty, Txt, Name, PromoName } from '../../kit';
 
 function Promotions() {
   const S = G.S, ids = S.order.slice().sort((a: string, b: string) => S.promos[b].image - S.promos[a].image);
@@ -11,7 +11,7 @@ function Promotions() {
     <tbody>{ids.map((id: string) => {
       const P = S.promos[id], rel = Math.round(P.rel || 0), top = P.titles.filter((t: any) => !t.tag).sort((a: any, b: any) => (b.lvl - a.lvl) || (a.g === 'M' ? -1 : 1))[0];
       return <tr class={id === S.player ? 'on' : undefined}>
-        <td><span class="nm">{P.name}</span>{id === S.player ? <> <Tag>You</Tag></> : null}</td>
+        <td><span class="nm"><PromoName id={id} /></span>{id === S.player ? <> <Tag>You</Tag></> : null}</td>
         <td class="muted">{E.modelOf(S, id).n}</td>
         <td><Meter v={P.image} /> <span class="num">{P.image.toFixed(1)}</span></td>
         <td class={'r num ' + (id === S.player ? 'muted' : (rel >= 20 ? 'good' : (rel <= -20 ? 'bad' : 'muted')))}>{id === S.player ? '—' : (rel > 0 ? '+' : '') + rel}</td>

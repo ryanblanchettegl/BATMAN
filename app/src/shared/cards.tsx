@@ -5,7 +5,7 @@ import { E, W } from '../engine';
 import { G, ui, me, Card, openCard, popCard, closeCards, cash, full, plural, openModal } from '../store';
 import { go } from '../nav';
 import { rs } from '../screens/roster/state';
-import { Window, Btn, Tag, Name, Side, Meter, Portrait, BeltArt, TitleName, TeamName, Empty, champOf, teamName } from '../kit';
+import { Window, Btn, Tag, Name, Side, Meter, Portrait, BeltArt, TitleName, TeamName, PromoName, Empty, champOf, teamName } from '../kit';
 
 const promoName = (pid: string) => pid === 'FA' ? 'Free agent' : (G.S.promos[pid] ? G.S.promos[pid].name : pid);
 /** Every title in the world this wrestler holds, with the promotion that owns it. */
@@ -23,7 +23,7 @@ function WrestlerCard(p: { id: number }) {
       <Portrait w={w} />
       <div>
         <p><Side w={w} /> {w.rt ? <Tag>Retired</Tag> : null}{ts.map(x => <> <Tag kind="gold">Champion</Tag></>).slice(0, 1)}</p>
-        <p><b>{promoName(w.promo)}</b> {'·'} Age {w.age} {'·'} {E.STYLE_NAME[w.style] || ''}</p>
+        <p><b>{w.promo === 'FA' ? 'Free agent' : <PromoName id={w.promo} />}</b> {'·'} Age {w.age} {'·'} {E.STYLE_NAME[w.style] || ''}</p>
         <p class="muted">Finisher: the {w.fin || 'finish'}</p>
       </div>
     </div>
@@ -60,7 +60,7 @@ function TeamCard(p: { id: number }) {
   return <>
     <div class="row top gap2">{[a, b].map(w => <div class="row top nowrap"><Portrait w={w} /><div><p><Name w={w} /></p><p class="muted">Age {w.age} {'·'} {E.STYLE_NAME[w.style] || ''}</p><p class="num">Popularity {Math.round(w.ovr)}</p></div></div>)}</div>
     <div class="kv mt2">
-      <div><small>Promotion</small><span>{promoName(t.promo)}</span></div>
+      <div><small>Promotion</small><span><PromoName id={t.promo} /></span></div>
       <div><small>Experience together</small><span><Meter v={t.exp} kind="cool" /> <b class="num">{Math.round(t.exp)}</b></span></div>
       <div><small>Chemistry</small><span class={chem >= 2 ? 'good' : (chem <= -2 ? 'bad' : undefined)}>{chem >= 2 ? 'They click' : (chem <= -2 ? 'They get in each other’s way' : 'Workable')}</span></div>
       <div><small>Record together</small><span class="num">{(t.w | 0) + ' wins, ' + (t.l | 0) + ' losses'}</span></div>
@@ -71,6 +71,25 @@ function TeamCard(p: { id: number }) {
       <li><span>Title reigns together</span><span class="r num">{reigns.length}</span></li>
       {reigns.slice(-3).reverse().map(r => <li><span><TitleName pid={r.pid} t={r.t} /></span><span class="r muted">{E.cal(Math.max(1, r.h.from)).label}{r.h.to ? ' to ' + E.cal(r.h.to).label : ' to now'}</span></li>)}
     </ul>
+  </>;
+}
+
+function PromoCard(p: { id: string }) {
+  const S = G.S, P = S.promos[p.id];
+  if (!P) return <Empty>This promotion is gone.</Empty>;
+  const M = E.modelOf(S, p.id), mine = p.id === S.player, rel = Math.round(P.rel || 0), roster = E.rosterOf(S, p.id).length;
+  return <>
+    <p><b>{P.full || P.name}</b> {mine ? <Tag>You</Tag> : null}</p>
+    {P.blurb ? <p class="muted">{P.blurb}</p> : null}
+    <div class="kv mt2">
+      <div><small>Model</small><span>{M.n}</span></div>
+      <div><small>Popularity</small><span><Meter v={P.image} /> <b class="num">{P.image.toFixed(1)}</b></span></div>
+      <div><small>Roster</small><span class="num">{roster}</span></div>
+      <div><small>Last show</small><span>{P.last ? <>{P.last.name} <b class="num">{P.last.rating}%</b></> : '—'}</span></div>
+      {mine ? null : <div><small>Relations with you</small><span class={'num ' + (rel >= 20 ? 'good' : (rel <= -20 ? 'bad' : ''))}>{(rel > 0 ? '+' : '') + rel}</span></div>}
+    </div>
+    <p class="eyebrow mt2">Champions</p>
+    <ul class="list">{P.titles.map((t: any) => <li><span><TitleName pid={p.id} t={t} /></span><span class="r">{t.holders.length ? list(t.holders.map((id: number) => <Name w={S.w[id]} />)) : <span class="muted">Vacant</span>}</span></li>)}</ul>
   </>;
 }
 
@@ -100,6 +119,7 @@ function TitleCard(p: { pid: string; id: string }) {
 function titleOf(c: Card): string {
   const S = G.S;
   if (c.k === 'w') return S.w[c.id as number] ? S.w[c.id as number].name : 'Wrestler';
+  if (c.k === 'promo') { const P = S.promos[c.id as string]; return P ? P.name : 'Promotion'; }
   if (c.k === 'team') { const t = S.teams.filter((x: any) => x.id === c.id)[0]; return t ? (t.name || teamName(t)) : 'Tag team'; }
   const P = S.promos[c.pid!], t = P && P.titles.filter((x: any) => x.id === c.id)[0]; return t ? t.name : 'Title';
 }
@@ -111,7 +131,7 @@ export function CardHost() {
   return <div class="cards" key={c.k + ':' + c.pid + ':' + c.id + ':' + n}>
     <Window title={titleOf(c)} onClose={closeCards} noOk hint={n > 1 ? 'Esc goes back' : 'Esc closes'}
       footer={<>{n > 1 ? <Btn t="card-back" onClick={popCard}>Back to {titleOf(ui.cards[n - 2])}</Btn> : null}<Btn kind="go" id="modal-ok" t="card-close" onClick={closeCards}>Close</Btn></>}>
-      {c.k === 'w' ? <WrestlerCard id={c.id as number} /> : c.k === 'team' ? <TeamCard id={c.id as number} /> : <TitleCard pid={c.pid!} id={c.id as string} />}
+      {c.k === 'w' ? <WrestlerCard id={c.id as number} /> : c.k === 'team' ? <TeamCard id={c.id as number} /> : c.k === 'promo' ? <PromoCard id={c.id as string} /> : <TitleCard pid={c.pid!} id={c.id as string} />}
     </Window>
   </div>;
 }
