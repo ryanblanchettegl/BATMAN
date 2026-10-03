@@ -81,7 +81,7 @@ Small jobs, each one commit. None of them needs a decision from Ryan. Read `CLAU
 - [x] **58.** Tab inside a pop-up should cycle within it and never reach the page behind (`app/src/kit/window.tsx`).
 - [x] **59.** Gamepad: Y opens the Jukebox, X opens Help. Show both in the status bar hints.
 - [x] **60.** Long tables on a remote: channel up and down (and Page Up and Page Down) move ten rows.
-- [ ] **61.** Linked names on phone and tablet need a taller tap area without changing how the text looks.
+- [x] **61.** Linked names on phone and tablet need a taller tap area without changing how the text looks.
 - [ ] **62.** Wrestler pickers with more than twenty options: let the player type to jump to a name.
 - [ ] **63.** After a pop-up closes, the highlight should return to the name that opened it, on every input. Add the check to `cards.js` for mouse and keyboard.
 - [ ] **64.** Steam Deck size (1280 by 800 with a gamepad): confirm which screen mode `autoScreen` picks and that text is readable; adjust the rule if it picks desk with small type.

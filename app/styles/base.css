@@ -428,3 +428,6 @@ html[data-screen="desk"] .selrow .det{position:sticky;top:3em;margin-top:10px}
 .incleg i{width:1ch;height:1ch;vertical-align:baseline}
 .incbar .s0,.incleg .s0{background:var(--cyan)}.incbar .s1,.incleg .s1{background:var(--yellow)}.incbar .s2,.incleg .s2{background:var(--red)}.incbar .s3,.incleg .s3{background:var(--green)}.incbar .s4,.incleg .s4{background:var(--white)}
 .plan{color:var(--yellow)}
+/* linked names on a phone or tablet: a taller tap area that does not change how the text looks */
+:is(html[data-screen="tablet"],html[data-screen="phone"]) .lnk{position:relative}
+:is(html[data-screen="tablet"],html[data-screen="phone"]) .lnk::after{content:'';position:absolute;inset:-.6em -.4ch}
