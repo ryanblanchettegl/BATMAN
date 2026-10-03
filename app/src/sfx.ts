@@ -22,6 +22,7 @@ function crowdNoise(vol: number, d: number) {
 }
 export const SFX = {
   bell() { tone(1568, 0.5, 'triangle', 0.09, 0); tone(1568, 0.5, 'triangle', 0.09, 0.22); tone(1568, 0.7, 'triangle', 0.09, 0.44); },
+  bellEnd() { tone(1568, 0.35, 'triangle', 0.09, 0); tone(1568, 0.35, 'triangle', 0.09, 0.18); },
   count() { tone(520, 0.09, 'square', 0.05, 0); tone(520, 0.09, 'square', 0.05, 0.38); tone(780, 0.16, 'square', 0.05, 0.76); },
   fanfare() { [523, 659, 784, 1047].forEach((f, i) => tone(f, 0.16, 'square', 0.04, i * 0.13)); tone(1047, 0.5, 'square', 0.04, 0.55); },
   ach() { tone(880, 0.1, 'square', 0.04, 0); tone(1320, 0.22, 'square', 0.04, 0.1); },

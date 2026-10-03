@@ -121,7 +121,7 @@ export function liveNext() {
     if (sg && L.b < bc.length) {
       L.b++; const nb = bc[L.b];
       if (nb && COUNT.test(nb.x)) SFX.count();
-      else if (!nb && sg.k === 'match') SFX.crowd(sg.cr);
+      else if (!nb && sg.k === 'match') { SFX.bellEnd(); SFX.crowd(sg.cr); }
       else if (nb && nb.t === 'pbp' && sg.k === 'match' && L.b === lead(sg) + 2) SFX.bell();
     }
     else { L.s++; L.b = r.segs[L.s] ? lead(r.segs[L.s]) : 0; }

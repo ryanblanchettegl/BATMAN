@@ -92,7 +92,7 @@ Small jobs, each one commit. None of them needs a decision from Ryan. Read `CLAU
 - [x] **66.** When the track changes, show its name in the status bar for three seconds.
 - [x] **67.** Sounds for opening and closing a pop-up and for an attempt that works or fails. They obey the Sound option.
 - [x] **68.** A "Reduce motion" option that turns off the typewriter and the blinking cursor, and follows the system setting by default.
-- [ ] **69.** A ring bell at the start and end of each match in the broadcast, if Sound is on.
+- [x] **69.** A ring bell at the start and end of each match in the broadcast, if Sound is on.
 - [ ] **70.** Separate volume levels for music and for effects in Options.
 
 ## F. Engine safety
