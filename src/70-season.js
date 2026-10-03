@@ -189,3 +189,17 @@ E.sendCamp=function(S,id,focus){
 E.callUp=function(S,id){var w=S.w[id];if(!w||!w.camp)return null;w.camp=false;w.deb=true;w.mom=clamp(w.mom+2,-10,10);w.lu=S.week;if(workRate(w)>(w.cw0||999)||w.mic>(w.cm0||999))award(S,'ACH_GRAD');return w.name+' is back on the active roster.';};
 WEEKX.push(function(S){var P=S.promos[S.player],L=rosterOf(S,P.id).filter(function(w){return w.camp;}),cap=CAMP_CAP[P.camp||0];while(L.length>cap){var w=L.pop();E.callUp(S,w.id);news(S,'story',w.name+' was sent back from camp: there is no longer room.');}});
 E.FOCUS=FOCUS;E.tournActive=tournActive;
+
+/* Housekeeping: retired wrestlers who never held a title do not need their year lines, recent results or long logs.
+   Keeps the save small in a long game (about 1.4 MB at week 300). Runs every 26 weeks. */
+WEEKX.push(function(S){
+  if(S.week%26!==0)return;
+  var champs={};S.order.forEach(function(pid){S.promos[pid].titles.forEach(function(t){(t.hist||[]).forEach(function(h){String(h.ids||'').split(',').forEach(function(id){champs[id]=1;});});t.holders.forEach(function(id){champs[id]=1;});});});
+  S.w.forEach(function(w){
+    if(!w.rt||champs[w.id])return;
+    delete w.rr;delete w.ys;delete w.bz;
+    if(w.log&&w.log.length>6)w.log=w.log.slice(0,1).concat(w.log.slice(-5));
+  });
+  // old head-to-head and recent-match keys nobody will read again
+  var keys=Object.keys(S.recent||{});if(keys.length>1500)keys.forEach(function(k){if(S.week-S.recent[k]>26)delete S.recent[k];});
+});
