@@ -55,6 +55,11 @@ function Contenders(p: { t: any; busy: boolean }) {
   </Panel>;
 }
 
+/** Which way a title's prestige has moved over the last four weeks. */
+function trend(t: any) {
+  const h: number[] = t.ph || [], d = h.length >= 5 ? t.prestige - h[h.length - 5] : 0;
+  return d >= 0.5 ? <span class="good" title="Up over four weeks">{'▲'}</span> : (d <= -0.5 ? <span class="bad" title="Down over four weeks">{'▼'}</span> : <span class="muted" title="Level over four weeks">{'■'}</span>);
+}
 export function Titles() {
   const S = G.S, P = me(), busy = !!E.tournActive(S);
   return <>
@@ -64,10 +69,10 @@ export function Titles() {
       <tbody>{P.titles.map((t: any) => <tr>
         <td><TitleName pid={P.id} t={t} /></td>
         {P.brands && <td>{brandName(P, t.brand)}</td>}
-        <td>{t.holders.length ? joined(t.holders.map((id: number) => <Name w={S.w[id]} />), ' & ') : <span class="mark">Vacant</span>}</td>
+        <td>{t.holders.length ? joined(t.holders.map((id: number) => <Name w={S.w[id]} />), ' & ') : <span class="mark">Vacant</span>}{!t.holders.length && !t.tag && !busy ? <> <Btn kind="sm" t="tourn-vacant" d={{ k: t.id }} disabled={!!E.tournOk(S, t.id, 'ko')} onClick={() => act(() => { const r = E.startTourn(S, t.id, 'ko'); if (r) say(r, { err: !/is set/.test(r) }); })}>Start a tournament</Btn></> : null}</td>
         <td class="r num">{t.holders.length ? (S.week - t.since) + ' wk' : '—'}</td>
         <td class="r num">{t.defs}</td>
-        <td><Meter v={t.prestige} kind="au" /> <span class="num">{Math.round(t.prestige)}</span></td>
+        <td><Meter v={t.prestige} kind="au" /> <span class="num">{Math.round(t.prestige)}</span> {trend(t)}</td>
         <td class="r num">{S.week - t.last === 0 ? 'This week' : (S.week - t.last) + ' wk ago'}</td>
       </tr>)}</tbody>
     </table></div>

@@ -1992,7 +1992,9 @@ CRX.push(function(ctx){
   ctx.sides.forEach(function(s){var st=stableOf(ctx.S,s[0]);if(st&&s.every(function(w){return stableOf(ctx.S,w)===st;}))d+=2;});
   return d?{d:d,x:'A stable fighting as a unit'}:null;
 });
-WEEKX.push(function(S){S.w.forEach(function(w){if(w.pts)w.pts=Math.round(w.pts*90)/100;});});
+WEEKX.push(function(S){S.w.forEach(function(w){if(w.pts)w.pts=Math.round(w.pts*90)/100;});
+  // a short prestige history for every title, so the Titles page can show which way it is moving
+  S.order.forEach(function(pid){S.promos[pid].titles.forEach(function(t){var h=t.ph||(t.ph=[]);h.push(Math.round(t.prestige*10)/10);if(h.length>8)h.shift();});});});
 CRX.push(function(ctx){
   var t=ctx.t;if(!t||t.tag||ctx.champSide<0||ctx.m.mt!=='1v1')return null;
   var ch=ctx.sides[ctx.champSide===0?1:0][0];
