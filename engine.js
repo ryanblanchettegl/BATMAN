@@ -2986,7 +2986,7 @@ var MODELS={
     d:'An all-women company. Blistering pace, stiff strikes and loyal factions; the money comes from the merchandise table, not the network.',
     good:['Speed and conditioning are rewarded','Faction against faction lifts the crowd','Merchandise pays double: the stars you build are the business'],
     bad:['Only women can be signed','The stiff style means more injuries','Television money is half what it is elsewhere'],
-    mix:{tv:0.5,gate:1.1,ppv:0.8,merch:2.1},riskMax:2,inj:1.3,
+    mix:{tv:0.5,gate:1.1,ppv:0.8,merch:1.35},riskMax:2,inj:1.3,
     mq:function(ctx){var d=0,p=(mAvg(ctx.all,'speed')+mAvg(ctx.all,'stam'))/2;d+=mNote(ctx,clamp((p-72)*0.07,-2,2.5),p>=72?'The pace this crowd expects':'Too slow for this crowd');
       if(ctx.m.len==='L'&&!ctx.isMain)d+=mNote(ctx,-1,'The pace dropped in a long undercard match');return {d:d,x:null};},
     cr:function(ctx){if(ctx.sides.length!==2)return null;var a=ctx.sides[0][0].stable,b=ctx.sides[1][0].stable;if(a==null||b==null)return null;
