@@ -51,7 +51,7 @@ async function frontOffice(page, mode) {
   check(mode, 'overview lists the seven settings', await count(page, '.setup li') === 7);
   await readOnly(page, mode);
   await go(page, 'manage');
-  check(mode, 'operations panels', await count(page, '.panel') === 10, await count(page, '.panel') + ' panels');
+  check(mode, 'operations panels', await count(page, '.panel') === 11, await count(page, '.panel') + ' panels');
 
   // a setting change: a booker has to ask the owner, and the answer is shown
   const before = await state(page, S => S.promos[S.player].adv);

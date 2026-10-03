@@ -57,6 +57,21 @@ function Merch() {
   </Panel>;
 }
 
+/** The wrestling school: open it, watch the class fill, see who graduates. */
+function School() {
+  const S = G.S, c = E.school(S);
+  const open = () => act(() => { const r = E.openSchool(S); say(r.text, { err: !r.ok }); showResult('The school', r.text, !r.ok); });
+  const shut = () => act(() => { const r = E.closeSchool(S); say(r.text); });
+  return <Panel title="Wrestling school">
+    {c.open ? <>
+      <div class="kv"><div><small>Students</small><span class="num">{c.students} of {c.cap}</span></div><div><small>Pays</small><span class="num">{cash(c.income)} a week</span></div><div><small>Next class</small><span class="num">{c.next} {plural(c.next, 'week')}</span></div></div>
+      <p class="muted mt1">So far {c.grads} students have graduated and {c.prospects} became prospects.</p>
+    </> : <p class="muted">Take students for a fee. Every twelve weeks a class graduates, and some of them are good enough to sign. Setup costs {cash(c.setup)}.</p>}
+    <p class="muted mt1">{c.trainer ? <>Trainer: <Name w={c.trainer} />.</> : 'No trainer on staff.'} The teaching is {c.qualityWord}: about {c.chance}% of a class becomes a prospect. A retired wrestler working as a trainer, or a bigger training camp, makes it better.</p>
+    <div class="row opts mt1">{c.open ? <Btn kind="sm" t="school-close" onClick={shut}>Close the school</Btn> : <Btn kind="sm" t="school-open" onClick={open}>Open the school: {cash(c.setup)}</Btn>}</div>
+  </Panel>;
+}
+
 /** The six dials: production, risk, tickets, advertising, training camp, medical staff. The page shows them as two columns of three. */
 function Settings(p: { from: number; to: number }) {
   const S = G.S, P = me(), C = E.company(S), md = E.medInfo(S), ci = E.campInfo(S);
@@ -147,7 +162,7 @@ export function Operations() {
     <Head eyebrow={P.name} title="Operations" />
     <div class="cols">
       <div class="stack"><Broadcast /><Settings from={0} to={3} /></div>
-      <div class="stack"><Settings from={3} to={7} /><Merch /><Universe /></div>
+      <div class="stack"><Settings from={3} to={7} /><Merch /><School /><Universe /></div>
     </div>
   </>;
 }

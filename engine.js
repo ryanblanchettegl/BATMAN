@@ -5301,6 +5301,54 @@ E.devShow=function(S){
     rows:C.map(function(w){return {w:w,matches:(w.dv&&w.dv.n)|0,best:(w.dv&&w.dv.best)|0,last:(w.dv&&w.dv.last)||'No matches yet.',gain:Math.round(workRate(w)-(w.cw0||workRate(w))),micGain:Math.round(w.mic-(w.cm0||w.mic))};})};
 };
 
+/* ---------- 52. The wrestling school: students pay a fee, one in several becomes a prospect, the trainer decides how good (P.school) ---------- */
+function trainerQ(S,P){
+  var tr=staffOf(S,'trainer').sort(function(a,b){return workRate(b)-workRate(a);})[0];
+  return tr?{q:clamp((workRate(tr)-50)/40,0.1,1.2),who:tr}:{q:0.1+0.15*(P.camp||0),who:null};
+}
+function schoolCap(P){return 8+6*(P.camp||0);}
+function schoolFee(P){return Math.round(P.inc0*0.00018);}
+function schoolRun(P){return Math.round(P.inc0*0.0015);}
+E.school=function(S){
+  var P=S.promos[S.player],sc=P.school,tq=trainerQ(S,P);
+  return {open:!!sc,students:sc?sc.n:0,cap:schoolCap(P),fee:schoolFee(P),run:schoolRun(P),setup:Math.round(P.inc0*0.03),
+    quality:tq.q,qualityWord:tq.q>=0.8?'excellent':(tq.q>=0.5?'good':(tq.q>=0.3?'fair':'poor')),trainer:tq.who,
+    chance:Math.round((0.03+0.1*tq.q)*100),grads:sc?sc.grads:0,prospects:sc?sc.pros:0,next:sc?Math.max(0,sc.term-S.week):0,
+    income:sc?sc.n*schoolFee(P)-schoolRun(P):0};
+};
+E.openSchool=function(S){
+  var P=S.promos[S.player],i=E.school(S);
+  if(P.school)return {ok:false,text:'The school is already open.'};
+  if(P.cash<i.setup)return {ok:false,text:'Not enough cash to open a school ('+money(i.setup)+').'};
+  P.cash-=i.setup;P.school={since:S.week,n:Math.min(4,i.cap),term:S.week+12,grads:0,pros:0};
+  news(S,'story','You opened a wrestling school.');
+  return {ok:true,text:'The school is open. It cost '+money(i.setup)+'. Students pay '+money(i.fee)+' a week each, and a class graduates every twelve weeks.'};
+};
+E.closeSchool=function(S){var P=S.promos[S.player];if(!P.school)return {ok:false,text:'There is no school.'};P.school=null;news(S,'story','You closed the wrestling school.');return {ok:true,text:'The school is closed.'};};
+WEEKX.push(function(S){
+  if(S.cal)return;var P=S.promos[S.player],sc=P.school;if(!sc)return;
+  var cap=schoolCap(P),tq=trainerQ(S,P);
+  sc.n=Math.min(cap,sc.n+(chance(S,0.5+P.image/200)?2:1));   // word spreads, so the class fills
+  P.cash+=sc.n*schoolFee(P)-schoolRun(P);
+  if(S.week<sc.term)return;
+  // graduation day
+  var I=dbOf(S).indie,styles=['B','T','H','P','A','S','E'],made=[],have={};S.w.forEach(function(w){have[w.name]=1;});
+  var grads=sc.n,p=0.03+0.1*tq.q,mine=rosterOf(S,P.id).filter(function(x){return x.sch===P.id&&x.ovr<45;}).length;sc.grads+=grads;
+  for(var i=0;i<grads;i++){
+    if(!chance(S,p)||mine+made.length>=3)continue;
+    var g=chance(S,0.3)?'F':'M',nm,tries=0;
+    do{nm=pick(S,g==='F'?I.firstF:I.firstM)+' '+pick(S,I.last);}while(have[nm]&&tries++<40);
+    if(have[nm])continue;have[nm]=1;
+    var work=ri(S,40,58)+Math.round(tq.q*8),w=addWrestler(S,{name:nm,g:g,ovr:ri(S,8,22)+Math.round(tq.q*4),style:pick(S,styles),work:work,mic:ri(S,35,75),align:chance(S,0.5)?'F':'H',age:ri(S,19,25)},'FA',null);
+    w.pot=clamp(work+ri(S,10,22)+Math.round(tq.q*10),work,97);w.sq=clamp(ri(S,35,75),20,97);w.rk=cal(S.week).year;assignGim(w);mile(S,w,'debut','Graduated from the '+P.name+' school');
+    joinCompany(S,w,P,150,52);w.sch=P.id;
+    if(E.campInfo(S).n<E.campInfo(S).cap)E.sendCamp(S,w.id,'ring');
+    made.push(w);
+  }
+  sc.pros+=made.length;sc.n=Math.round(sc.n*0.3);sc.term=S.week+12;
+  news(S,'story','The school class graduated: '+grads+' students, '+(made.length?made.length+' signed as prospects ('+made.map(function(w){return w.name;}).join(', ')+')':'nobody good enough to sign')+'.');
+});
+
 /* ===== 90-api.js ===== */
 /* ---------- roster moves ---------- */
 E.ask=function(S,w){var P=S.promos[S.player],MD=modelOf(P),m=(w.promo==='FA'?1:1.3)*talkDiscount(S);if(w.promo!=='FA'&&S.promos[w.promo].image>P.image+10)m+=0.25;
