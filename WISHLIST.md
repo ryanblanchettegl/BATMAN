@@ -52,7 +52,7 @@ Things that would make the game deeper. Each one adds a system, a choice or a me
 - [ ] **27. Promo kinds.** Interview, challenge, brawl, contract signing, taped vignette, sit-down, celebration. Each uses different skills and fails in its own way. *M. (TASKS 3)*
 - [x] **28. Catchphrases.** A promo that lands can coin a catchphrase from a word list. It lifts pops and merchandise until it is overused. *S.*
 - [x] **29. Titles have prestige.** Prestige rises with good defences and credible reigns. It falls with quick changes and champions losing non-title matches. A prestigious title lifts every match it is in. *M. Check `E.showTitles` first.*
-- [ ] **30. Contender ladders.** A ranked top five per title, earned by wins. A challenger who earned the shot lifts the match. Jumping the queue costs most in the purist and tradition models. *M. Builds on `E.rankFor`.*
+- [x] **30. Contender ladders.** A ranked top five per title, earned by wins. A challenger who earned the shot lifts the match. Jumping the queue costs most in the purist and tradition models. *M. Builds on `E.rankFor`.*
 - [ ] **31. Brackets and leagues.** Tournaments exist. Add a bracket drawn in text, a round-robin league with a points table for the purist model, and upsets that become stories. *M. Builds on `E.startTourn`.*
 - [ ] **32. Stable roles.** Leader, enforcer, mouthpiece, young gun, workhorse. A stable has unity. A member with no role or no wins is a split waiting to happen. *M. Builds on stables in `src/60-rpg.js`.*
 - [x] **33. Debuts with a build.** Run teaser vignettes for weeks before a debut. A hyped debut starts hot. An over-hyped one that flops costs more than no hype. *S.*
