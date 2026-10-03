@@ -378,3 +378,50 @@ E.energyLine=function(S,card){
   var low=out.some(function(v,i){return i>=2&&v<45;});
   return {steps:out,text:'Crowd energy: '+out.join(' → '),warn:low?'The crowd will be spent before the end. Put a talking segment or an easy match in the middle.':null};
 };
+
+/* ---------- 14. Agent notes: one instruction per match (m.note) ---------- */
+var NOTES={
+  long:{n:'Go long',d:'Adds five minutes. Workers with stamina can use the time. Everyone tires, and a hurt is a little likelier.'},
+  short:{n:'Keep it short',d:'Cuts four minutes. Less wear and less risk, and less time to tell a story.'},
+  protect:{n:'Protect the loser',d:'The loser keeps their standing and their mood. The match plays flatter.'},
+  crowd:{n:'Work the crowd',d:'Play to the seats. The crowd gets louder if they have the charisma. The match itself is rougher.'},
+  steal:{n:'Steal the show',d:'Go for the match of the night. Skilled workers can do it. A hurt is half again as likely, and it flops if they lack the skill.'},
+  safe:{n:'Work safe',d:'A hurt is almost half as likely. The match is a little flatter.'}
+};
+function noteMins(m){return m&&m.note==='long'?5:(m&&m.note==='short'?-4:0);}
+function noteSkill(ctx){return avg(ctx.all.map(function(w){return workOf(w,ctx.stip,ctx.mins);}));}
+MQX.push(function(ctx){
+  var k=ctx.m.note;if(!k||!NOTES[k])return null;
+  if(k==='long'){var st=avg(ctx.all.map(function(w){return w.stam;}));return st>=55?{d:1,x:'Given room to build, and they had the stamina for it'}:{d:-1.5,x:'Told to go long without the stamina for it'};}
+  if(k==='short')return {d:-0.5,x:null};
+  if(k==='protect')return {d:-1.5,x:'The loser was held back to protect them'};
+  if(k==='crowd')return {d:-1,x:null};
+  if(k==='safe')return {d:-1.2,x:null};
+  if(k==='steal'){var sk=noteSkill(ctx);return sk>=72?{d:3.5,x:'They stole the show'}:(sk<=58?{d:-3.5,x:'They tried to steal the show and could not'}:null);}
+  return null;
+});
+CRX.push(function(ctx){
+  if(ctx.m.note!=='crowd')return null;
+  var ch=avg(ctx.all.map(function(w){return w.cha;}));
+  return ch>=62?{d:2.5,x:'They worked the crowd and the crowd answered'}:(ch<=48?{d:-2,x:'They worked the crowd and the crowd shrugged'}:{d:1,x:null});
+});
+POST.push(function(ctx){
+  var m=ctx.m,r=ctx.res;if(m.note!=='protect'||ctx.S.cal||r.win<0)return;
+  // give back what the loss cost them
+  r.losers.forEach(function(w){var F=FIN[r.fin]||FIN.clean;addOvr(ctx.P,w,0.4*clamp(1+(w.ovr-avg(r.winners.map(function(x){return x.ovr;})))/35,0.2,2.5)*F.lg*(ctx.big?1.3:1)*0.7);w.mom=clamp(w.mom+1,-10,10);w.morale=clamp(w.morale+1.5,0,100);});
+  if(ctx.isPl)r.seg.notes.push(names(r.losers)+(r.losers.length>1?' were':' was')+' protected in defeat.');
+});
+E.NOTES=NOTES;
+E.noteLabel=function(k){return NOTES[k]?NOTES[k].n:'No note';};
+E.setNote=function(S,i,k){var m=S.card&&S.card[i];if(!m)return false;if(!k||!NOTES[k]){delete m.note;return true;}m.note=k;return true;};
+/* the booker's read of a note for this match, for the editor's help line */
+E.noteHint=function(S,m,k){
+  if(!NOTES[k])return '';
+  var ids=[].concat.apply([],m.sides).filter(function(id){return id!=null&&S.w[id];}).map(function(id){return S.w[id];});
+  if(!ids.length)return NOTES[k].d;
+  var st=avg(ids.map(function(w){return w.stam;})),ch=avg(ids.map(function(w){return w.cha;})),sk=avg(ids.map(function(w){return workOf(w,m.stip||'std',12);}));
+  if(k==='long')return st>=55?'They have the stamina for it.':'They will tire. Better to keep it short.';
+  if(k==='crowd')return ch>=62?'They have the charisma to carry it.':(ch<=48?'The crowd will not follow them.':'It should help a little.');
+  if(k==='steal')return sk>=72?'They are good enough to try.':(sk<=58?'They are not good enough. It would flop.':'It could go either way.');
+  return NOTES[k].d;
+};

@@ -123,7 +123,7 @@ CRX.push(function(ctx){
   var rk=ctx.P.risk>=2?1:0;return {d:(gim?(ctx.feud&&ctx.feud.heat>=40?5:3):2)+rk,x:gim?'They left everything in there':'Stiff, reckless and loud'};
 });
 MQX.push(function(ctx){var it=ctx.m.int;return it==='brutal'?{d:1.5,x:null}:(it==='safe'?{d:-1,x:null}:null);});
-function hurtRisk(S,P,w,m){var it=INTN[m.int]||INTN.normal;return it.i*MED_I[P.med||0]*(1+Math.max(0,maxZone(w)-50)/40)*(w.hurt===S.week?3:1);}
+function hurtRisk(S,P,w,m){var it=INTN[m.int]||INTN.normal;return it.i*MED_I[P.med||0]*(1+Math.max(0,maxZone(w)-50)/40)*(w.hurt===S.week?3:1)*(m.note==='steal'?1.5:(m.note==='safe'?0.55:(m.note==='long'?1.15:(m.note==='short'?0.85:1))));}
 function hurtZone(S,w){var z=zonesOf(w),ks=['n','s','b','k'],tot=0,x;ks.forEach(function(k){tot+=10+z[k];});x=rnd(S)*tot;for(var i=0;i<4;i++){x-=10+z[ks[i]];if(x<=0)return ks[i];}return 'b';}
 var OWNZ={H:'k',P:'b',B:'s',T:'n',S:'s',A:'b',E:'k'},OPPZ={T:'s',P:'b',S:'n',H:'n',B:'b',A:'s',E:'k'};
 POST.push(function(ctx){

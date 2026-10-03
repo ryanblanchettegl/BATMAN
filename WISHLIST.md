@@ -33,7 +33,7 @@ Things that would make the game deeper. Each one adds a system, a choice or a me
 ## B. In the ring
 
 - [x] **13. The crowd has a night.** Crowd energy is one pool across the show. Two hot matches back to back tire it. A talking segment lets it breathe. The booking screen shows the predicted energy line in text. *M. (TASKS 3)*
-- [ ] **14. Agent notes.** One instruction per match: go long, keep it short, protect the loser, work the crowd, steal the show, work safe. Each trades quality against risk and the loser's standing. *M. (TASKS 3 for the screen)*
+- [x] **14. Agent notes.** One instruction per match: go long, keep it short, protect the loser, work the crowd, steal the show, work safe. Each trades quality against risk and the loser's standing. *M. (TASKS 3 for the screen)*
 - [ ] **15. Finishes have a price.** Clean, roll-up, count-out, disqualification, interference, time-limit draw. Each protects or hurts the people in it and heats or cools the feud. Too many unclean finishes in a month and the crowd turns sour. *M. Check `FINX` in `src/10-match.js` first.*
 - [ ] **16. A library of match types.** Ladder, cage, iron man, submission, lumberjack, mask against mask, hair against hair, tables. Each rewards its own skills, carries its own risk, and suits some models better than others. *M. Check `E.MT` first.*
 - [x] **17. Gimmick matches wear out.** Each match type draws a little less every time it is used inside a year, and recovers with rest. The booking screen says "fresh" or "overused". *S.*

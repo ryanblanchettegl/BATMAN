@@ -210,7 +210,7 @@ function winOdds(S,P,show,m,sides,t,champSide,feud,big,isMain){
 function doMatch(S,P,show,m,i,n,rep,used){
   var isPl=P.id===S.player&&!S.cal,big=!!show.big,isMain=i===n-1;
   var sides=m.sides.map(function(ids){return ids.map(function(id){return S.w[id];});}),all=flat(sides);
-  var stip=STIP[m.stip]?m.stip:'std',mins=(stip==='iron'?30:(LEN[m.len]||12))+(big?4:0)+(isMain?3:0);
+  var stip=STIP[m.stip]?m.stip:'std',mins=Math.max(4,(stip==='iron'?30:(LEN[m.len]||12))+(big?4:0)+(isMain?3:0)+noteMins(m));
   var t=m.title?titleById(P,m.title):null,champSide=-1;
   if(t&&!titleFits(t,m))t=null;
   if(t&&t.holders.length){m.sides.forEach(function(s,k){if(t.holders.every(function(h){return s.indexOf(h)>=0;}))champSide=k;});if(champSide<0)t=null;}

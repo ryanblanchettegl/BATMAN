@@ -1288,7 +1288,7 @@ function winOdds(S,P,show,m,sides,t,champSide,feud,big,isMain){
 function doMatch(S,P,show,m,i,n,rep,used){
   var isPl=P.id===S.player&&!S.cal,big=!!show.big,isMain=i===n-1;
   var sides=m.sides.map(function(ids){return ids.map(function(id){return S.w[id];});}),all=flat(sides);
-  var stip=STIP[m.stip]?m.stip:'std',mins=(stip==='iron'?30:(LEN[m.len]||12))+(big?4:0)+(isMain?3:0);
+  var stip=STIP[m.stip]?m.stip:'std',mins=Math.max(4,(stip==='iron'?30:(LEN[m.len]||12))+(big?4:0)+(isMain?3:0)+noteMins(m));
   var t=m.title?titleById(P,m.title):null,champSide=-1;
   if(t&&!titleFits(t,m))t=null;
   if(t&&t.holders.length){m.sides.forEach(function(s,k){if(t.holders.every(function(h){return s.indexOf(h)>=0;}))champSide=k;});if(champSide<0)t=null;}
@@ -3049,7 +3049,7 @@ CRX.push(function(ctx){
   var rk=ctx.P.risk>=2?1:0;return {d:(gim?(ctx.feud&&ctx.feud.heat>=40?5:3):2)+rk,x:gim?'They left everything in there':'Stiff, reckless and loud'};
 });
 MQX.push(function(ctx){var it=ctx.m.int;return it==='brutal'?{d:1.5,x:null}:(it==='safe'?{d:-1,x:null}:null);});
-function hurtRisk(S,P,w,m){var it=INTN[m.int]||INTN.normal;return it.i*MED_I[P.med||0]*(1+Math.max(0,maxZone(w)-50)/40)*(w.hurt===S.week?3:1);}
+function hurtRisk(S,P,w,m){var it=INTN[m.int]||INTN.normal;return it.i*MED_I[P.med||0]*(1+Math.max(0,maxZone(w)-50)/40)*(w.hurt===S.week?3:1)*(m.note==='steal'?1.5:(m.note==='safe'?0.55:(m.note==='long'?1.15:(m.note==='short'?0.85:1))));}
 function hurtZone(S,w){var z=zonesOf(w),ks=['n','s','b','k'],tot=0,x;ks.forEach(function(k){tot+=10+z[k];});x=rnd(S)*tot;for(var i=0;i<4;i++){x-=10+z[ks[i]];if(x<=0)return ks[i];}return 'b';}
 var OWNZ={H:'k',P:'b',B:'s',T:'n',S:'s',A:'b',E:'k'},OPPZ={T:'s',P:'b',S:'n',H:'n',B:'b',A:'s',E:'k'};
 POST.push(function(ctx){
@@ -4567,6 +4567,53 @@ E.energyLine=function(S,card){
   out.push(Math.round(en));
   var low=out.some(function(v,i){return i>=2&&v<45;});
   return {steps:out,text:'Crowd energy: '+out.join(' → '),warn:low?'The crowd will be spent before the end. Put a talking segment or an easy match in the middle.':null};
+};
+
+/* ---------- 14. Agent notes: one instruction per match (m.note) ---------- */
+var NOTES={
+  long:{n:'Go long',d:'Adds five minutes. Workers with stamina can use the time. Everyone tires, and a hurt is a little likelier.'},
+  short:{n:'Keep it short',d:'Cuts four minutes. Less wear and less risk, and less time to tell a story.'},
+  protect:{n:'Protect the loser',d:'The loser keeps their standing and their mood. The match plays flatter.'},
+  crowd:{n:'Work the crowd',d:'Play to the seats. The crowd gets louder if they have the charisma. The match itself is rougher.'},
+  steal:{n:'Steal the show',d:'Go for the match of the night. Skilled workers can do it. A hurt is half again as likely, and it flops if they lack the skill.'},
+  safe:{n:'Work safe',d:'A hurt is almost half as likely. The match is a little flatter.'}
+};
+function noteMins(m){return m&&m.note==='long'?5:(m&&m.note==='short'?-4:0);}
+function noteSkill(ctx){return avg(ctx.all.map(function(w){return workOf(w,ctx.stip,ctx.mins);}));}
+MQX.push(function(ctx){
+  var k=ctx.m.note;if(!k||!NOTES[k])return null;
+  if(k==='long'){var st=avg(ctx.all.map(function(w){return w.stam;}));return st>=55?{d:1,x:'Given room to build, and they had the stamina for it'}:{d:-1.5,x:'Told to go long without the stamina for it'};}
+  if(k==='short')return {d:-0.5,x:null};
+  if(k==='protect')return {d:-1.5,x:'The loser was held back to protect them'};
+  if(k==='crowd')return {d:-1,x:null};
+  if(k==='safe')return {d:-1.2,x:null};
+  if(k==='steal'){var sk=noteSkill(ctx);return sk>=72?{d:3.5,x:'They stole the show'}:(sk<=58?{d:-3.5,x:'They tried to steal the show and could not'}:null);}
+  return null;
+});
+CRX.push(function(ctx){
+  if(ctx.m.note!=='crowd')return null;
+  var ch=avg(ctx.all.map(function(w){return w.cha;}));
+  return ch>=62?{d:2.5,x:'They worked the crowd and the crowd answered'}:(ch<=48?{d:-2,x:'They worked the crowd and the crowd shrugged'}:{d:1,x:null});
+});
+POST.push(function(ctx){
+  var m=ctx.m,r=ctx.res;if(m.note!=='protect'||ctx.S.cal||r.win<0)return;
+  // give back what the loss cost them
+  r.losers.forEach(function(w){var F=FIN[r.fin]||FIN.clean;addOvr(ctx.P,w,0.4*clamp(1+(w.ovr-avg(r.winners.map(function(x){return x.ovr;})))/35,0.2,2.5)*F.lg*(ctx.big?1.3:1)*0.7);w.mom=clamp(w.mom+1,-10,10);w.morale=clamp(w.morale+1.5,0,100);});
+  if(ctx.isPl)r.seg.notes.push(names(r.losers)+(r.losers.length>1?' were':' was')+' protected in defeat.');
+});
+E.NOTES=NOTES;
+E.noteLabel=function(k){return NOTES[k]?NOTES[k].n:'No note';};
+E.setNote=function(S,i,k){var m=S.card&&S.card[i];if(!m)return false;if(!k||!NOTES[k]){delete m.note;return true;}m.note=k;return true;};
+/* the booker's read of a note for this match, for the editor's help line */
+E.noteHint=function(S,m,k){
+  if(!NOTES[k])return '';
+  var ids=[].concat.apply([],m.sides).filter(function(id){return id!=null&&S.w[id];}).map(function(id){return S.w[id];});
+  if(!ids.length)return NOTES[k].d;
+  var st=avg(ids.map(function(w){return w.stam;})),ch=avg(ids.map(function(w){return w.cha;})),sk=avg(ids.map(function(w){return workOf(w,m.stip||'std',12);}));
+  if(k==='long')return st>=55?'They have the stamina for it.':'They will tire. Better to keep it short.';
+  if(k==='crowd')return ch>=62?'They have the charisma to carry it.':(ch<=48?'The crowd will not follow them.':'It should help a little.');
+  if(k==='steal')return sk>=72?'They are good enough to try.':(sk<=58?'They are not good enough. It would flop.':'It could go either way.');
+  return NOTES[k].d;
 };
 
 /* ===== 83-moments.js ===== */
