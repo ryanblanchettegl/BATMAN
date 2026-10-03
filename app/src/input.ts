@@ -50,6 +50,7 @@ function navMove(dir: string): boolean {
   const scope = navScope(), L = focusables(scope), cur = document.activeElement as HTMLElement | null, vh = window.innerHeight, vert = dir === 'up' || dir === 'down';
   if (!L.length) return false;
   if (!cur || L.indexOf(cur) < 0) return navHome();
+  const curLnk = cur.classList.contains('lnk'), LNK_COST = vh * 0.18;
   const barOf = (e: HTMLElement) => e.closest('.menu') ? 1 : (e.closest('.status') ? 2 : 0), cb = barOf(cur), r = cur.getBoundingClientRect();
   const pickFrom = (pool: HTMLElement[]) => {
     let best: HTMLElement | null = null, bs = Infinity;
@@ -59,7 +60,8 @@ function navMove(dir: string): boolean {
       else if (dir === 'up') { if (q.bottom > r.top + 2) return; prim = r.top - q.bottom; sec = gap(r.left, r.right, q.left, q.right); }
       else if (dir === 'right') { if (q.left < r.right - 2) return; prim = q.left - r.right; sec = gap(r.top, r.bottom, q.top, q.bottom); }
       else { if (q.right > r.left + 2) return; prim = r.left - q.right; sec = gap(r.top, r.bottom, q.top, q.bottom); }
-      const sc = prim + sec * (vert ? 2.5 : 4); if (sc < bs) { bs = sc; best = e; }
+      // names inside text are stops too, but a button or a row that lies the same way comes first
+      const sc = prim + sec * (vert ? 2.5 : 4) + (e.classList.contains('lnk') && !curLnk ? LNK_COST : 0); if (sc < bs) { bs = sc; best = e; }
     });
     return best as HTMLElement | null;
   };
