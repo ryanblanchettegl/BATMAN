@@ -276,7 +276,7 @@ function turn(S,w,why){
     else if(built){w.mom=clamp(w.mom+3,-10,10);w.ovr=clamp(w.ovr+0.6,1,100);note=' It was built over the last two weeks and the crowd bought it.';}
     else note=' It came out of nowhere. The crowd is not sure what to make of it.';
   }
-  w.align=w.align==='F'?'H':'F';w.tw=S.week;mile(S,w,'turn','Turned '+(w.align==='F'?'face':'heel')+(why?': '+why:'')+(tired?' (too soon after the last turn)':(built?' (well built)':'')));
+  w.align=w.align==='F'?'H':'F';w.tw=S.week;w.gs=S.week;mile(S,w,'turn','Turned '+(w.align==='F'?'face':'heel')+(why?': '+why:'')+(tired?' (too soon after the last turn)':(built?' (well built)':'')));
   news(S,'story',w.name+' turns '+(w.align==='F'?'face':'heel')+(why?' — '+why:'')+'.'+note);if(w.promo===S.player)award(S,'ACH_TURN');}
 function holdLvl(P,id){var l=0;P.titles.forEach(function(t){if(t.holders.indexOf(id)>=0&&t.lvl>l)l=t.lvl;});return l;}
 function titleById(P,id){for(var i=0;i<P.titles.length;i++)if(P.titles[i].id===id)return P.titles[i];return null;}
@@ -3874,6 +3874,18 @@ POST.push(function(ctx){
   r.losers.forEach(function(w){if(w.fp)w.fp=Math.max(0,w.fp-0.5);});
 });
 E.finisherWord=function(w){var f=w.fp||0;return f>=4?'unbeaten':(f>=2?'strong':(f>=1?'building':'untested'));};
+
+/* gimmicks go stale: freshness climbs for the first twelve weeks, peaks, then fades. A repackage or a turn starts it over */
+function gimFresh(S,w){
+  var set=Math.max(w.gw==null?-1e4:w.gw,w.gs==null?-1e4:w.gs);if(set<-9e3)set=-26;   // a repackage (gw) or a turn (gs) starts it over
+  var t=S.week-set;
+  return Math.round(t<12?45+t*3.75:(t<30?90:Math.max(20,90-(t-30)*0.9)));
+}
+E.gimFresh=function(S,id){var w=S.w[id];return w?gimFresh(S,w):null;};
+CRX.push(function(ctx){
+  var d=0,up=null,down=null;ctx.all.forEach(function(w){var f=gimFresh(ctx.S,w);if(f>=85){d+=0.4;up=up||w;}else if(f<=35){d-=0.7;down=down||w;}});
+  d=clamp(d,-1.5,1);return d?{d:d,x:d>0?up.name+'’s act is at its freshest':down.name+'’s gimmick has gone stale'}:null;
+});
 
 /* ===== 83-moments.js ===== */
 /* ---------- moments from wrestling history ----------

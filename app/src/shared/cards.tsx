@@ -32,6 +32,7 @@ function WrestlerCard(p: { id: number }) {
       <div><small>Popularity</small><span><Meter v={w.ovr} kind="au" /> <b class="num">{Math.round(w.ovr)}</b></span></div>
       <div><small>Momentum</small><span class={mom >= 2 ? 'good' : (mom <= -2 ? 'bad' : undefined)}>{mom >= 2 ? '▲ Hot (+' + mom + ')' : (mom <= -2 ? '▼ Cold (' + mom + ')' : '■ Steady')}</span></div>
       <div><small>Mood</small><span>{mine ? <><Meter v={w.morale} kind="cool" /> <b class="num">{Math.round(w.morale)}</b></> : <span class="muted">Not yours to know</span>}</span></div>
+      {mine ? <div><small>Act freshness</small><span><Meter v={E.gimFresh(S, w.id)} kind="cool" /> <b class="num">{E.gimFresh(S, w.id)}</b></span></div> : null}
       {mine ? <div><small>Body</small><span class={E.bodyWord(S, w.id).bad ? 'bad' : 'good'}>{E.bodyWord(S, w.id).word}</span></div> : null}
       <div><small>Career</small><span class={E.phase(w).id === 'past' || E.phase(w).id === 'late' ? 'bad' : (E.phase(w).id === 'prime' ? 'good' : undefined)}>{E.phase(w).word}</span></div>
       <div><small>Record</small><span class="num">{w.wins}{'–'}{w.losses}{w.ws >= 2 ? ' · won ' + w.ws + ' straight' : (w.ws <= -2 ? ' · lost ' + (-w.ws) + ' straight' : '')}</span></div>
