@@ -131,3 +131,20 @@ SHOWX.push(function(S,P,show,rep){
   if(main&&(main.fin==='dq'||main.fin==='co'||main.fin==='draw'||main.fin==='interf')&&S.open.length<6)S.open.push({w:S.week,t:main.label});
 });
 E.openThreads=function(S){return (S.open||[]).filter(function(o){return S.week-o.w<=2&&!o.used;}).map(function(o){return {w:o.w,t:o.t};});};
+
+/* ask the room: before a signing, who is glad and who is angry about it */
+E.askRoom=function(S,id){
+  var w=S.w[id],P=S.promos[S.player];if(!w)return null;
+  var glad=[],angry=[];
+  rosterOf(S,P.id).forEach(function(x){
+    if(x.nw||x.id===id||x.inj>0)return;var c=chem(S,x.id,id),threat=x.g===w.g&&w.ovr>x.ovr+4&&w.ovr<x.ovr+28&&holdLvl(P,x.id)===0&&x.ovr>=P.image-12&&x.morale<75,champThreat=x.g===w.g&&holdLvl(P,x.id)>0&&w.ovr>x.ovr-4;
+    if(c>=2.2)glad.push({w:x,s:c,why:'they work well together'});
+    else if(c<=-2.2)angry.push({w:x,s:c,why:'they do not get on'});
+    else if(champThreat)angry.push({w:x,s:-9,why:'the title picture just got crowded'});
+    else if(threat)angry.push({w:x,s:-3,why:'they see a rival for the same spot'});
+  });
+  glad.sort(function(a,b){return b.s-a.s;});angry.sort(function(a,b){return a.s-b.s;});
+  var f=function(L){return L.slice(0,3).map(function(o){return o.w.name+' ('+o.why+')';}).join('; ');};
+  var text=w.name+': '+(glad.length?'glad to see them: '+f(glad)+'. ':'nobody is especially glad. ')+(angry.length?'Unhappy: '+f(angry)+'.':'Nobody has a problem with it.');
+  return {glad:glad.map(function(o){return o.w.id;}),angry:angry.map(function(o){return o.w.id;}),text:text};
+};

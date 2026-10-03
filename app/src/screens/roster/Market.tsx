@@ -2,7 +2,7 @@
 import { Fragment } from 'preact';
 import { E, W } from '../../engine';
 import { G, me, act, view, say, cash, full, openModal, plural, slice } from '../../store';
-import { Head, Panel, Btn, Sel, TextBox, Tag, Side } from '../../kit';
+import { Head, Panel, Btn, Sel, TextBox, Tag, Side, showResult } from '../../kit';
 import { rs } from './state';
 import { range, sendScout } from './Profile';
 
@@ -24,6 +24,7 @@ function OfferRow(p: { w: W; ask: number }) {
     <label class="row">Length <Sel id="offer-weeks" t="offer-weeks" value={st.weeks} options={[['48', '48 weeks'], ['96', '96 weeks']]} onChange={v => view(() => { st.weeks = v; })} /></label>
     <Btn kind="go" t="sign" d={{ id: w.id }} onClick={send}>Send offer</Btn>
     <span class="muted">They are asking about {full(p.ask)}. A lowball ends talks for a month.</span>
+    <Btn kind="sm" t="askroom" d={{ id: w.id }} onClick={() => showResult('Ask the room', E.askRoom(S, w.id).text)}>Ask the room</Btn>
     {!w.sc && <Btn kind="sm" t="scout" d={{ id: w.id }} onClick={() => sendScout(w.id)}>Scout first ({full(E.scoutInfo(S).cost)})</Btn>}
   </div></td></tr>;
 }
