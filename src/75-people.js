@@ -39,7 +39,8 @@ WEEKX.push(function(S){
 POST.push(function(ctx){ctx.all.forEach(function(w){w.ya=(w.ya||0)+1;});});
 function rookieClass(S,year){
   var I=dbOf(S).indie,styles=['B','T','H','P','A','S','E'],made=[],have={};S.w.forEach(function(w){have[w.name]=1;});
-  for(var i=0;i<22;i++){
+  // the class grows with the number of promotions, so the free agent pool does not drain in a big world
+  for(var i=0,nClass=Math.max(22,Math.round(8*S.order.length));i<nClass;i++){
     var g=i%3===2?'F':'M',nm,tries=0;
     do{nm=pick(S,g==='F'?I.firstF:I.firstM)+' '+pick(S,I.last);}while(have[nm]&&tries++<40);
     if(have[nm])continue;have[nm]=1;

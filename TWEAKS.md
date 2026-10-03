@@ -105,7 +105,7 @@ Small jobs, each one commit. None of them needs a decision from Ryan. Read `CLAU
 - [x] **76.** Shrink the all-women company to twelve wrestlers in a sim and confirm the suggested card still has three matches every week.
 - [x] **77.** A rival that has been out of cash for twelve weeks should cut costs (production level, then advertising) before it releases people, and say so in the news.
 - [x] **78.** When a rival's champion leaves at the end of a contract, the news should say the title is vacated in the same item.
-- [ ] **79.** Free agents in a sim fall to about ten by week 100. Scale the yearly rookie class with the number of promotions so the pool stays above thirty.
+- [x] **79.** Free agents in a sim fall to about ten by week 100. Scale the yearly rookie class with the number of promotions so the pool stays above thirty.
 - [ ] **80.** Let a universe package set time with the company: an optional `tenure_weeks` on a contract, read into `w.jw`.
 - [ ] **81.** `mainG` in `src/78-models.js` counts the roster on every call. Cache it for the week.
 - [ ] **82.** The name linker should skip names that are ordinary English words when they stand alone at the start of a sentence, and any name under four letters.
