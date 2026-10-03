@@ -52,7 +52,10 @@ const NEWSH: Record<string, string> = { title: 'Title Change', injury: 'Injury R
 function OfficeNews(p: { n: number }) {
   const S = G.S, seen: Record<number, number> = {};
   if (!S.news.length) return <Empty>No news yet.</Empty>;
-  return <ul class="onews">{S.news.slice(0, p.n).map((x: any) => {
+  // your own company first, then the one most recent story from elsewhere
+  const own = S.news.filter((x: any) => x.k !== 'world').slice(0, p.n - 1), away = S.news.filter((x: any) => x.k === 'world')[0];
+  const list = own.concat(away ? [away] : []);
+  return <ul class="onews">{list.map((x: any) => {
     const c = E.cal(x.w), k = seen[x.w] = (seen[x.w] || 0) + 1, day = (c.wom - 1) * 7 + Math.max(1, 8 - k);
     return <li><span class="d num">{c.month + 1}/{day}/{String(c.year).slice(-2)}</span><span class="h">{NEWSH[x.k] || 'Office Memo'}</span><span><Txt>{x.t}</Txt></span></li>;
   })}</ul>;
