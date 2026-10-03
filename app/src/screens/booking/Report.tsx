@@ -58,6 +58,13 @@ function MatchSeg(p: { s: any; no: number; main: boolean }) {
   </div>;
 }
 
+/** The few things that mattered most across the night: reasons that came up in the most matches, best and worst. */
+function whyLine(r: any): { up: string[]; down: string[] } {
+  const up: Record<string, number> = {}, down: Record<string, number> = {};
+  r.segs.forEach((s: any) => (s.fx || []).forEach((f: any, i: number) => { const m = f.s > 0 ? up : down; m[f.x] = (m[f.x] || 0) + 1 + (i === 0 ? 0.5 : 0); }));
+  const top = (m: Record<string, number>) => Object.keys(m).sort((a, b) => m[b] - m[a]).slice(0, 3);
+  return { up: top(up), down: top(down) };
+}
 export function Report(p: { r: any }) {
   const r = p.r, pre = preNote(r), nMatch = r.segs.filter((s: any) => s.k === 'match').length; let no = 0;
   return <>
@@ -67,6 +74,8 @@ export function Report(p: { r: any }) {
         <div><div class="eyebrow">Show rating</div><div class="big">{r.rating}% <span class="gold">{grade(r.rating)}</span></div></div>
         <p>{verdict(r)} ({r.exp}%). {Math.abs(r.dImage) < 0.05 ? 'Popularity unchanged.' : 'Popularity ' + (r.dImage > 0 ? 'up ' : 'down ') + Math.abs(r.dImage).toFixed(1) + '.'}</p>
       </div>
+      {(() => { const w = whyLine(r); return w.up.length || w.down.length ? <div class="why mt2"><p class="eyebrow">Why it scored</p>
+        {w.up.map(x => <p class="good">+ {x}</p>)}{w.down.map(x => <p class="bad">{'−'} {x}</p>)}</div> : null; })()}
       <div class="kv mt3">
         <KV label="Attendance"><Crowd r={r} /></KV><KV label="Gate">{cash(r.gate)}</KV>
         <KV label="TV viewers">{(r.viewers / 1e6).toFixed(2)}M</KV><KV label="TV money">{cash(r.tv)}</KV>
