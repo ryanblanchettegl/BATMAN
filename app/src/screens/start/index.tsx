@@ -119,15 +119,17 @@ function PickRow(p: { k: string; table: Record<string, any>; cur: string; label:
 /** The long explanation lives behind a button so the first-day screen stays short. */
 function HowBtn(p: { body: () => any }) { return <div class="row mb4"><Btn t="how" onClick={() => openModal({ kind: 'info', title: 'How it works', body: p.body })}>How it works</Btn></div>; }
 function DiffPanel() { const s = ui.setup!; return <Panel cls="mb4" title="Difficulty"><PickRow k="diff" table={E.DIFF} cur={s.diff || 'normal'} label="How hard a job is it?" set={v => { s.diff = v; }} /></Panel>; }
-function Begin(p: { label: string }) {
+function Begin(p: { label: string; block?: string }) {
   const s = ui.setup!;
   const go = () => startGame(s.pid === 'OWN' ? null : s.pid, { name: s.name, diff: s.diff, fed: s.pid === 'OWN' ? s.fed : null });
   return <div class="row"><label class="row">Your name <TextBox id="bname" value={s.name} max={24} placeholder="The Booker" width="24ch" onInput={v => { s.name = v; }} /></label>
-    <Btn kind="go" t="begin" onClick={go}>{p.label}</Btn><Btn t="unpick" onClick={() => view(() => { ui.setup = null; ui.scr = 'select'; })}>Back</Btn></div>;
+    <Btn kind="go" t="begin" disabled={!!p.block} onClick={go}>{p.label}</Btn><Btn t="unpick" onClick={() => view(() => { ui.setup = null; ui.scr = 'select'; })}>Back</Btn></div>;
 }
 function FedSetup() {
   const s = ui.setup!, f = s.fed, z = E.FED_SIZE[f.size];
-  const inp = (k: string, label: string, max: number, ph: string, w?: number) => <Field label={label}><TextBox id={'fed-' + k} value={f[k] || ''} max={max} placeholder={ph} width={(w || 30) + 'ch'} onInput={v => { f[k] = v; }} /></Field>;
+  const ini = String(f.short || '').trim().toUpperCase(), used = ini && E.universe().promotions.find((p: any) => String(p.id).toUpperCase() === ini || String(p.name).toUpperCase() === ini);
+  const taken = used ? 'The initials ' + ini + ' already belong to ' + (used.full || used.name) + '. Pick others.' : '';
+  const inp = (k: string, label: string, max: number, ph: string, w?: number) => <Field label={label}><TextBox id={'fed-' + k} value={f[k] || ''} max={max} placeholder={ph} width={(w || 30) + 'ch'} onInput={v => { f[k] = v; if (k === 'short') redraw(); }} /></Field>;
   return <div class="crt"><StartMenu /><div class="start">
     <Head eyebrow="Create a federation" title="Your name on the door" />
     <Panel cls="mb4" title="The name"><div class="editor plain">{inp('name', 'Full name', 40, 'Elite Wrestling Federation')}{inp('short', 'Initials (up to 6)', 6, 'EWF', 10)}{inp('show', 'Weekly TV show', 28, 'Friday Night Fury')}{inp('title', 'Top title', 28, 'World Title')}</div></Panel>
@@ -151,7 +153,8 @@ function FedSetup() {
     </Panel>
     <DiffPanel />
     <HowBtn body={() => <><p>You are owner and booker from day one. Nobody grants you booking power and nobody can fire you, but the money is yours to lose.</p><p class="mt1">Every title starts vacant. Run a tournament from the Titles page to crown your first champion.</p></>} />
-    <Begin label="Open the doors" />
+    {taken ? <p class="bad mb2">{taken}</p> : null}
+    <Begin label="Open the doors" block={taken} />
   </div><div class="status"><span>Name your federation and open the doors</span></div></div>;
 }
 export function Setup() {
