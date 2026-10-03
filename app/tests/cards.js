@@ -37,7 +37,7 @@ const { open, go, overflow, shot, state, redraw } = require('./helper');
     // Tab stays inside a pop-up: from the last control it wraps to the first and never reaches the page behind
     if (mode === 'desk') {
       await go(page, 'titles'); await page.waitForTimeout(100);
-      await page.click('[data-t="title-card"]'); await page.waitForSelector('.cards .win');
+      await page.click('[data-t="title-card"]'); await page.waitForSelector('.cards .win'); await page.waitForTimeout(150);
       let stayed = true; for (let k = 0; k < 14; k++) { await page.keyboard.press('Tab'); if (!(await page.evaluate(() => !!document.activeElement.closest('.cards .win')))) stayed = false; }
       ok(stayed, 'Tab cycles inside the pop-up');
       await page.keyboard.press('Shift+Tab'); ok(await page.evaluate(() => !!document.activeElement.closest('.cards .win')), 'Shift+Tab stays inside too');
@@ -50,6 +50,16 @@ const { open, go, overflow, shot, state, redraw } = require('./helper');
     ok(/Champions/i.test(await page.$eval(".cards .wb", e => e.innerText)) && /Model/i.test(await page.$eval('.cards .wb', e => e.innerText)), mode + ' promotion card: ' + await title());
     ok((await overflow(page)) === '', mode + ' promotion card fits');
     await page.click('[data-t="card-close"]');
+    // after a pop-up closes the highlight is back on the name that opened it: by mouse and by keyboard
+    if (mode === 'desk') {
+      await go(page, 'titles'); await page.waitForTimeout(150);
+      const id0 = await page.$eval('[data-t="title-card"]', e => e.dataset.id);
+      const backOn = () => page.evaluate(() => ({ t: document.activeElement.dataset.t, id: document.activeElement.dataset.id }));
+      await page.click('[data-t="title-card"]'); await page.waitForSelector('.cards .win'); await page.keyboard.press('Escape'); await page.waitForTimeout(100);
+      let b = await backOn(); ok(b.t === 'title-card' && b.id === id0, 'mouse: the highlight returns to the name: ' + JSON.stringify(b));
+      await page.focus('[data-t="title-card"]'); await page.keyboard.press('Enter'); await page.waitForSelector('.cards .win'); await page.keyboard.press('Escape'); await page.waitForTimeout(100);
+      b = await backOn(); ok(b.t === 'title-card' && b.id === id0, 'keyboard: the highlight returns to the name: ' + JSON.stringify(b));
+    }
     // gamepad: A on a name opens the pop-up, B closes it, and the highlight is back on the name
     if (mode === 'tv') {
       await go(page, 'titles'); await page.waitForTimeout(150);
