@@ -49,8 +49,8 @@ function Weeks(p: { H: any[] }) {
   return <div class="tw mt4"><table>
     <thead><tr><th>Week</th><th class="r">Income</th><th class="r">Costs</th><th class="r">Net</th><th class="r">Cash</th><th class="r">Popularity</th></tr></thead>
     <tbody>{p.H.slice().reverse().slice(0, 12).map(x => <tr>
-      <td class="num">{E.cal(x.w).label}</td><td class="r num">{full(x.inc)}</td><td class="r num">{full(x.exp)}</td>
-      <td class={'r num ' + (x.net < 0 ? 'bad' : 'good')}>{full(x.net)}</td><td class="r num">{full(x.cash)}</td><td class="r num">{x.image.toFixed(1)}</td>
+      <td class="num">{E.cal(x.w).label}</td><td class="r num">{cash(x.inc)}</td><td class="r num">{cash(x.exp)}</td>
+      <td class={'r num ' + (x.net < 0 ? 'bad' : 'good')}>{cash(x.net)}</td><td class="r num">{cash(x.cash)}</td><td class="r num">{x.image.toFixed(1)}</td>
     </tr>)}</tbody>
   </table></div>;
 }

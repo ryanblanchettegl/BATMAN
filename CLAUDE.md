@@ -45,6 +45,7 @@ NODE_PATH=<dir containing playwright> node app/tests/<name>.js
 6. **Six sections:** Office (the desk, Career), Booking, Roster (Roster, Locker room, Titles, Free agents), Stories, Manage (Operations, House, Deals), Company (Overview, Finances, World). Manage holds every choice; Company is information only; the desk opens on "Before the show".
 7. **Readable first.** Ryan's design goal is the pull of "one more turn" with screens that are easy to read and quick to act on. Every action shows its result at once. Prefer a pop-up or a short note to another panel.
 8. **Plain writing in the game and in docs.** Short sentences, no jargon, no em dashes in new text.
+8b. **Money:** short form (`cash()`, `$1.2M`) in tables and lists; full form (`full()`, `$1,200,000`) for a single headline figure.
 9. **Saves:** the save is `S` under the key `ewf9000-save-4`. A change that breaks old saves needs a version bump and a migration.
 10. **Commits:** small, with a message that says what changed for the player. Tick the boxes in `TASKS.md` in the same commit.
 
