@@ -1,7 +1,7 @@
 /* What the Booking page does: edits to the draft card, the run flow (validate, pre-show incident, the headset call,
    the show itself) and the position in the broadcast. Components call these; nothing here draws. */
 import { E } from '../../engine';
-import { G, ui, pref, act, view, say, slice } from '../../store';
+import { G, ui, pref, reduceMotion, act, view, say, slice } from '../../store';
 import { book } from '../../flow';
 import { SFX } from '../../sfx';
 
@@ -90,7 +90,7 @@ export function run(a: 'run' | 'pre' | 'chaos', c?: number) {
 let timer: any = null, whenDone: (() => void) | null = null;
 export const typer = {
   /** Off in Options, or the player has asked the system for less motion. */
-  wanted(): boolean { let rm = false; try { rm = window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) { /* ignore */ } return !!pref.type && !rm; },
+  wanted(): boolean { return !!pref.type && !reduceMotion(); },
   active(): boolean { return timer != null; },
   /** Show the whole line now. */
   finish() { if (timer == null) return; clearInterval(timer); timer = null; const f = whenDone; whenDone = null; if (f) f(); },

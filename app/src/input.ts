@@ -1,6 +1,6 @@
 /* Input that is not a mouse: keyboard shortcuts, a TV remote, a gamepad. Also the screen mode (desk, tablet, TV, phone).
    See docs/design.md, sections 4 and 5. */
-import { G, ui, pref, redraw, closeModal, openModal, popCard } from './store';
+import { G, ui, pref, reduceMotion, redraw, closeModal, openModal, popCard } from './store';
 import { HOT, SECTIONS, sectionOf, go } from './nav';
 import { book } from './flow';
 
@@ -19,7 +19,7 @@ export function screenMode() { return pref.screen && pref.screen !== 'auto' ? pr
 export function applyScreen() {
   const de = document.documentElement, m = screenMode();
   de.setAttribute('data-screen', m); de.style.setProperty('--zoom', String(pref.zoom || 1));
-  de.classList.toggle('crtfx', !!pref.crt);
+  de.classList.toggle('crtfx', !!pref.crt); de.classList.toggle('rm', reduceMotion());
   NAV.tv = m === 'tv'; NAV.on = NAV.tv || NAV.pad; de.classList.toggle('nav', NAV.on);
 }
 
