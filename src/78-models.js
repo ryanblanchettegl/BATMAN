@@ -145,6 +145,16 @@ var MODELS={
     push:function(w){return 0.1*(workRate(w)-75)+0.05*(w.cha-65);},
     fit:function(w){return w.g==='F'?0.45*w.ovr+0.4*workRate(w)+0.15*w.cha:-999;}}
 };
+/* what that company's crowd says when its model's bonus (first list) or penalty (second list) fires in a match */
+MODEL_CROWD.corporate=[['The family sections are on their feet, {p}. This is the night out they paid for.','Star power in the ring, and the cameras are loving it.'],['The suits upstairs will not enjoy that one, {p}.','Too rough for this family crowd. You can hear the parents.']];
+MODEL_CROWD.workrate=[['The purists are standing for this one, {p}. Real wrestling.','You can hear the old hands in the crowd nodding along.'],['This crowd knows its wrestling, and it is not impressed.','The diehards in the front row are shaking their heads.']];
+MODEL_CROWD.purist=[['Not a wasted move in there. The sport-first crowd loves it.','That is wrestling as it should be, {p}.'],['Too much show and not enough sport for this crowd.','The judges at ringside are scribbling notes, and none of them kind.']];
+MODEL_CROWD.underdog=[['The small crowd is making the noise of a big one, {p}.','This place loves a fighter nobody gave a chance.'],['Hard to sell the big moment in a building this size.','The cheap seats want more fight than that.']];
+MODEL_CROWD.startup=[['The new money is on show tonight and it is working, {p}.','Fresh faces, big names. The buzz is real.'],['Plenty of cheque, not much heart. The crowd feels it.','The people who paid for the big names expected more than that.']];
+MODEL_CROWD.outlaw=[['This outlaw crowd came for blood and it is getting its money’s worth.','Chairs, chaos, and a building that loves every second.'],['Nobody came to an outlaw show for a technical clinic. Boos in the cheap seats.','This crowd wants it nastier, {p}.']];
+MODEL_CROWD.spectacle=[['Masks, flips and a roar from the cheap seats. This is what they came for.','The whole building is on its feet and waving, {p}.'],['Too grounded for a lucha crowd. They want flying.','Where are the high spots? The crowd wants colour.']];
+MODEL_CROWD.tradition=[['Generations in the stands, and they know a classic when they see one.','The old rules, done right. The crowd respects it, {p}.'],['The elders of the crowd are not satisfied by that.','Tradition asks for more than that, and the crowd says so.']];
+MODEL_CROWD.joshi=[['Fierce, fast and fearless. The crowd is chanting for them.','The merchandise tables will sell out after that, {p}.'],['The fans expect more fire from this division.','Not the spark this crowd came for.']];
 function modelOf(P){return (P&&MODELS[P.model])||MODELS.classic;}
 function mixOf(P){var m=modelOf(P).mix||{};return {tv:m.tv||1,gate:m.gate||1,ppv:m.ppv||1,merch:m.merch||1,sp:m.sp||1};}
 function fitFor(S,P,w){var M=modelOf(P);return M.fit?M.fit(w,P,S):w.ovr;}
