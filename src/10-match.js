@@ -127,7 +127,7 @@ function memoryLines(S,P,x){
 }
 function callMatch(S,P,x){
   var bc=[],o=x.o,first=function(n){return String(n).split(' ')[0];};
-  o.p=first(P.ann[0]);o.c=first(P.ann[1]);o.mark=x.mins>=27?'twenty-five':'fifteen';
+  var dv=deskNames(S,P);o.p=first(dv?dv[0]:P.ann[0]);o.c=first(dv?dv[1]:P.ann[1]);o.mark=x.mins>=27?'twenty-five':'fifteen';
   function ring(t){bc.push({t:'ring',x:fill(t,o)});}
   function pbp(sym){bc.push({t:'pbp',x:say(S,sym,o)});}
   function col(sym){bc.push({t:'col',x:say(S,sym,o)});}

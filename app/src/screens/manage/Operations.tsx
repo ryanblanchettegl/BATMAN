@@ -39,6 +39,22 @@ function Broadcast() {
   </Panel>;
 }
 
+/** The commentary desk: two chairs, and the voices you can sign for them. */
+function Desk() {
+  const S = G.S, V = E.voices(S), st = slice<{ seat: string }>('desk', () => ({ seat: 'pbp' }));
+  const run = (fn: () => any) => act(() => { const r = fn(); say(r.text, { err: !r.ok }); showResult('The commentary desk', r.text, !r.ok); });
+  const chair = (k: string, label: string, v: any, skill: string) => <li class="col"><span><b>{label}</b> {v ? <><span>{v.name}</span> <span class="muted">{'·'} {skill} {v[k]} {'·'} {cash(v.wage)} a week</span></> : <span class="muted">Empty</span>}</span>
+    {v ? <span class="row opts"><Btn kind="sm" t="desk-drop" d={{ k }} onClick={() => run(() => E.dropVoice(S, k))}>Let go</Btn></span> : null}</li>;
+  return <Panel title="Commentary desk">
+    <ul class="list">{chair('pbp', 'Play-by-play', V.pbp, 'calling')}{chair('col', 'Colour', V.col, 'colour')}</ul>
+    {V.chem != null ? <p class="mt1">Together: <b class={V.chem >= 1.5 ? 'good' : (V.chem <= -1.5 ? 'bad' : undefined)}>{E.chemWord(V.chem)}</b>. The desk is worth about <b class="num">{V.q}</b>. A good desk lifts every match and helps stories get across.</p>
+      : <p class="muted mt1">Two voices that work well together lift every match and help stories get across. A weak desk drags them down.</p>}
+    <div class="row opts mt2"><span class="muted">Sign for the</span><Btn kind="sm" on={st.seat === 'pbp'} t="desk-seat" d={{ v: 'pbp' }} onClick={() => view(() => { st.seat = 'pbp'; })}>play-by-play chair</Btn><Btn kind="sm" on={st.seat === 'col'} t="desk-seat" d={{ v: 'col' }} onClick={() => view(() => { st.seat = 'col'; })}>colour chair</Btn></div>
+    <ul class="list mt1">{V.pool.slice().sort((a: any, b: any) => (b[st.seat] - a[st.seat])).slice(0, 6).map((v: any) => { const ch = st.seat === 'pbp' ? v.chemPbp : v.chemCol; return <li class="col"><span><b>{v.name}</b> <span class="muted">{'·'} {v.style} {'·'} calling {v.pbp}, colour {v.col} {'·'} {cash(v.wage)} a week{ch != null ? ' · ' + E.chemWord(ch).toLowerCase() + ' with your other voice' : ''}</span></span>
+      <span class="row opts"><Btn kind="sm" t="desk-hire" d={{ id: v.id }} onClick={() => run(() => E.hireVoice(S, v.id, st.seat))}>Sign</Btn></span></li>; })}</ul>
+  </Panel>;
+}
+
 /** Merchandise lines: commission a design for a wrestler, and watch the ones that are selling. */
 function Merch() {
   const S = G.S, P = me(), L = E.lineList(S), st = slice<{ w: string; k: string }>('merch', () => ({ w: '', k: 'shirt' }));
@@ -174,7 +190,7 @@ export function Operations() {
     <Head eyebrow={P.name} title="Operations" />
     <div class="cols">
       <div class="stack"><Broadcast /><Settings from={0} to={3} /></div>
-      <div class="stack"><Settings from={3} to={7} /><Merch /><School /><Tours /><Budgets /><Universe /></div>
+      <div class="stack"><Settings from={3} to={7} /><Desk /><Merch /><School /><Tours /><Budgets /><Universe /></div>
     </div>
   </>;
 }

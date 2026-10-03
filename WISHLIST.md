@@ -38,7 +38,7 @@ Things that would make the game deeper. Each one adds a system, a choice or a me
 - [x] **16. A library of match types.** Ladder, cage, iron man, submission, lumberjack, mask against mask, hair against hair, tables. Each rewards its own skills, carries its own risk, and suits some models better than others. *M. Check `E.MT` first.*
 - [x] **17. Gimmick matches wear out.** Each match type draws a little less every time it is used inside a year, and recovers with rest. The booking screen says "fresh" or "overused". *S.*
 - [x] **18. Referees.** Three or four named referees with a skill score. A weak one can miss a call, which becomes a story. A good one lifts the main event. *S.*
-- [ ] **19. The commentary desk.** A play-by-play voice and a colour voice, signed like anyone else, with chemistry between them. They change the broadcast score and how well stories get across. *M.*
+- [x] **19. The commentary desk.** A play-by-play voice and a colour voice, signed like anyone else, with chemistry between them. They change the broadcast score and how well stories get across. *M.*
 - [x] **20. Managers who meddle.** Managers exist. Add interference attempts at ringside, heat that belongs to the manager, and the manager turning on the client. *S. Builds on `E.setManager`, `E.mouthpieces`.*
 - [x] **21. Teams grow together.** A team gains experience as a unit, earns a team finisher at a threshold, and keeps a record of wins and losses as a team. *M. Finishes the open box in TASKS 1.*
 - [x] **22. Botches and saves.** Rarely, a risky move goes wrong. A veteran in the match can attempt to cover for it. The report says what happened in one line. *S.*

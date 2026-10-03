@@ -223,7 +223,7 @@ function ticket(P,show){return (15+P.image*0.85)*(show.big?1.6:1);}
 function buysK(P,show,hype){return 700*Math.pow(P.image/100,4)*hype*(show.flag?1.8:1);}
 function capFor(d){for(var i=0;i<CAPS.length;i++)if(CAPS[i]>=d)return CAPS[i];return CAPS[CAPS.length-1];}
 function merchWeek(S,P){var r=rosterOf(S,P.id).map(function(w){return w.ovr;}).sort(function(a,b){return b-a;}).slice(0,10);return 2.5e6*Math.pow(P.image/100,3)*Math.pow(avg(r)/100,2)*mixOf(P).merch*(1+catchBoost(S,P))+linesWeek(S,P);}
-function wagesWeek(S,P){var s=0;S.w.forEach(function(w){if(w.promo===P.id)s+=w.wage;});return s;}
+function wagesWeek(S,P){var s=0;S.w.forEach(function(w){if(w.promo===P.id)s+=w.wage;});return s+deskWage(S,P);}
 function baselineIncome(S,P){
   // what an on-expectation month brings in, per week (big events run a little hot: feuds peak there)
   var inc=merchWeek(S,P),mx=mixOf(P);
@@ -271,7 +271,7 @@ function startFeud(S,P,a,b,heat,why,opts){
   news(S,'story','New rivalry: '+a.name+' vs '+b.name+'.');
   return f;
 }
-function heatUp(S,f,amt,txt){if(amt>0)amt*=modelOf(S.promos[f.promo]).heat||1;if(amt>0&&S.booker&&f.promo===S.player)amt*=(1+0.06*S.booker.sk.creative)*houseHeat(S);f.heat=clamp(f.heat+amt,0,100);f.last=S.week;if(txt){f.log.push({w:S.week,t:txt});if(f.log.length>16)f.log.shift();}if(f.heat>=90&&f.promo===S.player)award(S,'ACH_FEUD_HOT');}
+function heatUp(S,f,amt,txt){if(amt>0)amt*=(modelOf(S.promos[f.promo]).heat||1)*deskHeat(S,f.promo);if(amt>0&&S.booker&&f.promo===S.player)amt*=(1+0.06*S.booker.sk.creative)*houseHeat(S);f.heat=clamp(f.heat+amt,0,100);f.last=S.week;if(txt){f.log.push({w:S.week,t:txt});if(f.log.length>16)f.log.shift();}if(f.heat>=90&&f.promo===S.player)award(S,'ACH_FEUD_HOT');}
 function turn(S,w,why){
   // a turn that was teased in the last two weeks lands harder; a wrestler who already turned inside the last year lands softer, and the fans say so
   var built=w.la!=null&&S.week-w.la<=2,tired=w.tw!=null&&S.week-w.tw<52,note='';
@@ -598,7 +598,7 @@ function memoryLines(S,P,x){
 }
 function callMatch(S,P,x){
   var bc=[],o=x.o,first=function(n){return String(n).split(' ')[0];};
-  o.p=first(P.ann[0]);o.c=first(P.ann[1]);o.mark=x.mins>=27?'twenty-five':'fifteen';
+  var dv=deskNames(S,P);o.p=first(dv?dv[0]:P.ann[0]);o.c=first(dv?dv[1]:P.ann[1]);o.mark=x.mins>=27?'twenty-five':'fifteen';
   function ring(t){bc.push({t:'ring',x:fill(t,o)});}
   function pbp(sym){bc.push({t:'pbp',x:say(S,sym,o)});}
   function col(sym){bc.push({t:'col',x:say(S,sym,o)});}
@@ -1137,7 +1137,7 @@ function runShow(S,P,show,card){
     var hype=clamp(1+(star-(P.starB[key]||star))/80+heat/500+ADV_H[P.adv]+(isPl&&S.hype?S.hype:0),0.8,1.4),dm=TIX_D[P.tix],d=demand(P,show,1)*(isPl?tourBoost(S,P)*tasteDraw(S,P,card,rep):1),cap=capFor(d);
     rep.hype=hype;rep.cap=cap;rep.att=Math.round(Math.min(cap,d*hype*dm));rep.sellout=rep.att>=cap;
     rep.energy=isPl?clamp((hype*dm-1)*9,-2,2):0;
-    if(isPl){rep.venue=venueFor(S,P,cap);rep.ann=P.ann.slice();S.hype=0;
+    if(isPl){rep.venue=venueFor(S,P,cap);rep.ann=(deskNames(S,P)||P.ann).slice();S.hype=0;
       rep.lineup=card.map(function(m){var t=m.title?titleById(P,m.title):null;return vsLabel(m.sides.map(function(ids){return ids.map(function(id){return S.w[id];});}))+(t?' — '+t.name:'');});}
   }
   var ctx={pool:pool,inP:inP,angled:{},left:{},extra:[]},slots={};
@@ -4577,13 +4577,13 @@ MOM.handed={
 MOM.arrival={
   make:function(S,P){
     var rv=S.order.filter(function(id){return id!==S.player;}).map(function(id){return S.promos[id];}).sort(function(a,b){return b.image-a.image;})[0];if(!rv)return null;
-    var star=rosterOf(S,rv.id).filter(function(w){return !w.nw&&holdLvl(rv,w.id)>0;}).sort(function(a,b){return b.ovr-a.ovr;})[0];if(!star||star.ovr<P.image)return null;var fee=Math.round(star.wage*10/1000)*1000+25000;
+    var star=rosterOf(S,rv.id).filter(function(w){return !w.nw&&holdLvl(rv,w.id)>0;}).sort(function(a,b){return b.ovr-a.ovr;})[0];if(!star||star.ovr<P.image)return null;var fee=Math.min(Math.round(star.wage*10/1000)*1000+25000,Math.max(25000,Math.round(Math.max(0,P.cash)*0.35/1000)*1000));   // never more than a third of what the company has
     return {w:star.id,rv:rv.id,fee:fee,text:rv.name+'’s biggest star, '+star.name+', has a free night and is willing to walk onto your show unannounced for '+money(fee)+'. Your locker room is watching what you do.',
       choices:['Pay '+money(fee)+' and spring it','Decline','Tease it on the air and decide later'],checks:{2:mkCheck(7,skillMods(S,'creative'))}};
   },
   res:function(S,ev,c,P,star){
     var RV=S.promos[ev.rv],r;
-    if(c===0){P.cash-=ev.fee;S.hype=(S.hype||0)+0.1;S.rateMod=(S.rateMod||0)+2;RV.rel=clamp((RV.rel||0)-8,-100,100);momMine(S).sort(function(a,b){return b.ovr-a.ovr;}).slice(0,5).forEach(function(x){x.morale=clamp(x.morale-2,0,100);});news(S,'story',star.name+' walked onto a '+P.name+' show unannounced.');return 'You pay '+money(ev.fee)+'. The building erupts. Your top names grumble about who is getting paid, and '+RV.name+' will remember this.';}
+    if(c===0){if(P.cash<ev.fee)return 'You cannot cover '+money(ev.fee)+' right now. The chance goes by.';P.cash-=ev.fee;S.hype=(S.hype||0)+0.1;S.rateMod=(S.rateMod||0)+2;RV.rel=clamp((RV.rel||0)-8,-100,100);momMine(S).sort(function(a,b){return b.ovr-a.ovr;}).slice(0,5).forEach(function(x){x.morale=clamp(x.morale-2,0,100);});news(S,'story',star.name+' walked onto a '+P.name+' show unannounced.');return 'You pay '+money(ev.fee)+'. The building erupts. Your top names grumble about who is getting paid, and '+RV.name+' will remember this.';}
     if(c===1){S.trust=clamp(S.trust+2,0,100);RV.rel=clamp((RV.rel||0)+3,-100,100);return 'You decline. Your own people notice that you backed them over a famous name.';}
     r=rollCheck(S,ev.checks[2]);ev.roll=r;if(r.ok){S.hype=(S.hype||0)+0.07;return rollText(r)+'The tease runs all week. The building is full of people wondering who is coming. You keep your money and your option.';}
     return rollText(r)+'The tease lands flat, and by the time you call, '+star.name+' has other plans.';
@@ -5441,6 +5441,68 @@ EVR.chant=function(S,ev,choice,P,w){
   var f=startFeud(S,P,w,lead,45,w.name+' answered the crowd’s call against '+lead.name,{force:true});return f?'The chant becomes a story: '+w.name+' against '+lead.name+'.':'They were already feuding, and the chant fed it.';
 };
 E.crowdCity=function(S,rep){var c=showCity(rep);return {city:c,diehard:diehard(S,c)};};
+
+/* ===== 87-desk.js ===== */
+/* ---------- 19. The commentary desk: a play-by-play voice and a colour voice, signed like anyone else, with chemistry between them (S.voices, P.desk) ---------- */
+var VSTYLE={hot:'Excitable',dry:'Dry',warm:'Warm'};
+function mkVoices(S,n){
+  var I=S.db&&S.db.indie;if(!I)return;S.voices=S.voices||[];var have={};S.voices.forEach(function(v){have[v.name]=1;});
+  for(var i=0;i<n;i++){
+    var g=chance(S,0.3)?'F':'M',nm,t=0;do{nm=pick(S,g==='F'?I.firstF:I.firstM)+' '+pick(S,I.last);}while(have[nm]&&t++<40);if(have[nm])continue;have[nm]=1;
+    var pbp=ri(S,35,88),col=ri(S,35,88);
+    S.voices.push({id:S.nid++,name:nm,g:g,pbp:pbp,col:col,style:pick(S,['hot','dry','warm']),wage:Math.round((300+(pbp+col)*6)/50)*50,hired:null,added:S.week});
+  }
+}
+NEWX.push(function(S){S.voices=[];mkVoices(S,8);});
+WEEKX.push(function(S){if(S.cal||S.week%52!==0)return;S.voices=(S.voices||[]).filter(function(v){return v.hired||S.week-v.added<156;});mkVoices(S,2);});
+function deskWage(S,P){
+  if(!P||P.id!==S.player||!P.desk)return 0;var t=0;['pbp','col'].forEach(function(k){var v=voiceOf(S,P.desk[k]);if(v)t+=v.wage;});return t;
+}
+function voiceOf(S,id){if(id==null)return null;for(var i=0;i<(S.voices||[]).length;i++)if(S.voices[i].id===id)return S.voices[i];return null;}
+/* two voices work well together when their styles pair (hot with dry, warm with anybody) and by the luck of a pair */
+function voiceChem(S,a,b){
+  if(!a||!b)return 0;var k=S.seed+':v'+Math.min(a.id,b.id)+'-'+Math.max(a.id,b.id),base=(h01('vc'+k)-0.5)*3;
+  var pair=(a.style==='hot'&&b.style==='dry')||(a.style==='dry'&&b.style==='hot')?1.2:(a.style===b.style?-0.8:0.2);
+  return Math.round(clamp(base+pair,-3,3)*10)/10;
+}
+function deskQ(S,P){
+  var d=P.desk||{},a=voiceOf(S,d.pbp),b=voiceOf(S,d.col);
+  var sa=a?a.pbp:35,sb=b?b.col:35,ch=a&&b?voiceChem(S,a,b):0;
+  return (sa+sb)/2+ch*5;
+}
+function deskHeat(S,pid){var P=S.promos[pid];if(!P||pid!==S.player||!P.desk)return 1;return 1+clamp((deskQ(S,P)-55)/250,-0.1,0.2);}
+CRX.push(function(ctx){
+  var P=ctx.P;if(!ctx.isPl||ctx.S.cal||!P.desk)return null;
+  var q=deskQ(ctx.S,P),d=clamp((q-55)/25,-0.5,1.6);
+  if(Math.abs(d)<0.3)return null;
+  return {d:d,x:d>0?'The commentary desk lifted it':'The commentary desk let it down'};
+});
+E.voices=function(S){
+  var P=S.promos[S.player],D=P.desk||{};if(!S.voices){S.voices=[];mkVoices(S,8);}
+  return {pool:(S.voices||[]).filter(function(v){return !v.hired;}).map(function(v){return {id:v.id,name:v.name,pbp:v.pbp,col:v.col,style:VSTYLE[v.style],wage:v.wage,
+      chemPbp:voiceOf(S,D.col)?voiceChem(S,v,voiceOf(S,D.col)):null,chemCol:voiceOf(S,D.pbp)?voiceChem(S,v,voiceOf(S,D.pbp)):null};}),
+    pbp:voiceOf(S,D.pbp),col:voiceOf(S,D.col),
+    chem:voiceOf(S,D.pbp)&&voiceOf(S,D.col)?voiceChem(S,voiceOf(S,D.pbp),voiceOf(S,D.col)):null,
+    q:Math.round(deskQ(S,P)),cost:deskWage(S,P)};
+};
+E.chemWord=function(v){return v==null?'':(v>=1.5?'They click':(v<=-1.5?'They talk over each other':'Workable'));};
+E.hireVoice=function(S,id,seat){
+  var P=S.promos[S.player],v=voiceOf(S,id);if(!v||v.hired)return {ok:false,text:'That voice is not available.'};
+  if(seat!=='pbp'&&seat!=='col')return {ok:false,text:'Pick a seat.'};
+  P.desk=P.desk||{pbp:null,col:null};
+  if(P.desk[seat]!=null)E.dropVoice(S,seat);
+  v.hired=P.id;P.desk[seat]=v.id;
+  return {ok:true,text:v.name+' takes the '+(seat==='pbp'?'play-by-play':'colour')+' chair at '+money(v.wage)+' a week.'};
+};
+E.dropVoice=function(S,seat){
+  var P=S.promos[S.player],D=P.desk;if(!D||D[seat]==null)return {ok:false,text:'Nobody is in that chair.'};
+  var v=voiceOf(S,D[seat]);if(v)v.hired=null;D[seat]=null;return {ok:true,text:'The chair is empty.'};
+};
+/* the names on the air: both chairs filled means they replace the announcers from the universe file */
+function deskNames(S,P){
+  if(!P||P.id!==S.player||!P.desk)return null;var a=voiceOf(S,P.desk.pbp),b=voiceOf(S,P.desk.col);
+  return a||b?[a?a.name:P.ann[0],b?b.name:P.ann[1]]:null;
+}
 
 /* ===== 87-develop.js ===== */
 /* ---------- the development side: the camp's weekly show, and (later) the wrestling school ---------- */

@@ -124,13 +124,13 @@ MOM.handed={
 MOM.arrival={
   make:function(S,P){
     var rv=S.order.filter(function(id){return id!==S.player;}).map(function(id){return S.promos[id];}).sort(function(a,b){return b.image-a.image;})[0];if(!rv)return null;
-    var star=rosterOf(S,rv.id).filter(function(w){return !w.nw&&holdLvl(rv,w.id)>0;}).sort(function(a,b){return b.ovr-a.ovr;})[0];if(!star||star.ovr<P.image)return null;var fee=Math.round(star.wage*10/1000)*1000+25000;
+    var star=rosterOf(S,rv.id).filter(function(w){return !w.nw&&holdLvl(rv,w.id)>0;}).sort(function(a,b){return b.ovr-a.ovr;})[0];if(!star||star.ovr<P.image)return null;var fee=Math.min(Math.round(star.wage*10/1000)*1000+25000,Math.max(25000,Math.round(Math.max(0,P.cash)*0.35/1000)*1000));   // never more than a third of what the company has
     return {w:star.id,rv:rv.id,fee:fee,text:rv.name+'’s biggest star, '+star.name+', has a free night and is willing to walk onto your show unannounced for '+money(fee)+'. Your locker room is watching what you do.',
       choices:['Pay '+money(fee)+' and spring it','Decline','Tease it on the air and decide later'],checks:{2:mkCheck(7,skillMods(S,'creative'))}};
   },
   res:function(S,ev,c,P,star){
     var RV=S.promos[ev.rv],r;
-    if(c===0){P.cash-=ev.fee;S.hype=(S.hype||0)+0.1;S.rateMod=(S.rateMod||0)+2;RV.rel=clamp((RV.rel||0)-8,-100,100);momMine(S).sort(function(a,b){return b.ovr-a.ovr;}).slice(0,5).forEach(function(x){x.morale=clamp(x.morale-2,0,100);});news(S,'story',star.name+' walked onto a '+P.name+' show unannounced.');return 'You pay '+money(ev.fee)+'. The building erupts. Your top names grumble about who is getting paid, and '+RV.name+' will remember this.';}
+    if(c===0){if(P.cash<ev.fee)return 'You cannot cover '+money(ev.fee)+' right now. The chance goes by.';P.cash-=ev.fee;S.hype=(S.hype||0)+0.1;S.rateMod=(S.rateMod||0)+2;RV.rel=clamp((RV.rel||0)-8,-100,100);momMine(S).sort(function(a,b){return b.ovr-a.ovr;}).slice(0,5).forEach(function(x){x.morale=clamp(x.morale-2,0,100);});news(S,'story',star.name+' walked onto a '+P.name+' show unannounced.');return 'You pay '+money(ev.fee)+'. The building erupts. Your top names grumble about who is getting paid, and '+RV.name+' will remember this.';}
     if(c===1){S.trust=clamp(S.trust+2,0,100);RV.rel=clamp((RV.rel||0)+3,-100,100);return 'You decline. Your own people notice that you backed them over a famous name.';}
     r=rollCheck(S,ev.checks[2]);ev.roll=r;if(r.ok){S.hype=(S.hype||0)+0.07;return rollText(r)+'The tease runs all week. The building is full of people wondering who is coming. You keep your money and your option.';}
     return rollText(r)+'The tease lands flat, and by the time you call, '+star.name+' has other plans.';
