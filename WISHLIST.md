@@ -127,7 +127,7 @@ Situations modelled on famous nights, each under an original name with invented 
 - [x] **85. Giving away their result.** Your show is live and theirs is taped. Announce their result on air to spoil it. It can send your viewers over to watch.
 - [x] **86. The walkout.** Two wrestlers unhappy with their booking leave the building before a live show. Rebook in ten minutes, and decide what happens to them.
 - [x] **87. Not fit to perform.** Your main-event star arrives at the biggest show of the year in no state to wrestle. Send them out, swap the match, or tell the crowd the truth.
-- [ ] **88. The wrong hero.** The flagship crowd boos the hero you spent a year building and cheers the villain. Change the finish on the night, or hold your nerve.
+- [x] **88. The wrong hero.** The flagship crowd boos the hero you spent a year building and cheers the villain. Change the finish on the night, or hold your nerve.
 
 ## I. Your career
 
