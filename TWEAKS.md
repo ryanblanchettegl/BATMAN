@@ -118,7 +118,7 @@ Each of these has a target. Use `test-uni.js` or a copy of it with several seeds
 
 - [x] **85.** Underdog company: on autopilot over five seeds, owner trust stays above 35 at week 80. Today it falls to single figures and the booker is fired.
 - [x] **86.** Corporate giant: cash should no more than double in 80 weeks. Today it nearly quadruples.
-- [ ] **87.** Startup: in an early-evening slot the weekly result sits between minus $100K and plus $100K; prime time is clearly positive; late night bleeds.
+- [x] **87.** Startup: in an early-evening slot the weekly result sits between minus $100K and plus $100K; prime time is clearly positive; late night bleeds.
 - [ ] **88.** Outlaw: between 1.5 and 2.5 injuries per hundred matches.
 - [ ] **89.** Tradition: six-man matches should not push injuries above 1.5 per hundred, and no more than three retirements a year from a roster of 44.
 - [ ] **90.** All-women company: merchandise between 15% and 25% of income, and a rival-run version of it keeps at least 24 wrestlers after 100 weeks.
