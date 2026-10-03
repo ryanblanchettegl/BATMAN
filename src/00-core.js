@@ -78,7 +78,12 @@ var ACH = [
   {id:'ACH_HARD',name:'The Hard Way',desc:'Last a year on Main eventer or Legend difficulty.'},
   {id:'ACH_FIRED',name:'Future Endeavours',desc:'Get fired by the owner.',hidden:true},
   {id:'ACH_BOMB',name:'Go-Home Heat',desc:'Run a show rated under 40%.',hidden:true},
-  {id:'ACH_BROKE',name:'Folded',desc:'Go out of business.',hidden:true}
+  {id:'ACH_BROKE',name:'Folded',desc:'Go out of business.',hidden:true},
+  {id:'ACH_STARTUP_2Y',name:'Blank Cheque Survivor',desc:'Reach week 104 with the new-money company.'},
+  {id:'ACH_OUTLAW_CEIL',name:'Top of the Gutter',desc:'Take the outlaw company to the most popularity its crowd allows.'},
+  {id:'ACH_TRAD_VET',name:'Old Hand, New Crown',desc:'Crown a ten-year veteran as champion in the traditional company.'},
+  {id:'ACH_JOSHI_MERCH',name:'The Longest Table',desc:'Out-sell a bigger company in merchandise for a week with the all-women company.'},
+  {id:'ACH_BOARD_4',name:'Beating the Board',desc:'Beat the corporate board\u2019s plan four months running.'}
 ];
 
 /* Invented finishing moves, handed out by style. Add an eighth field to a roster row to name one yourself. */

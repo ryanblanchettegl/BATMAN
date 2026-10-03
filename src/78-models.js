@@ -31,6 +31,7 @@ var MODELS={
     fit:function(w){return 0.5*w.ovr+0.3*w.cha+0.2*w.sq;},
     show:function(S,P,show,rep){return rep.segs.some(function(s){return s.k==='match'&&s.stip==='Hardcore';})?{d:-1,x:'The board had calls from sponsors about the violence.'}:null;},
     month:function(S,P){var H=P.hist.slice(-4),net=0;H.forEach(function(h){net+=h.net;});var tgt=4*P.net,d=(net-tgt)/Math.max(1,Math.abs(tgt))*2;d=Math.abs(d)<0.5?0:(d>0?1:-1)*clamp(Math.abs(d),1,3);   // a good or bad month moves trust by one to three points
+      P.planRun=net>=tgt?(P.planRun||0)+1:0;if(P.planRun>=4)award(S,'ACH_BOARD_4');
       return {d:r1(d),x:'The board reviewed the month: '+money(net)+' against a plan of '+money(tgt)+'.'};}},
 
   workrate:{n:'Wrestling for the diehards',ph:'a diehards’ company',vals:'overness and work rate, with some stamina',wq:0.62,own:'the founder',
@@ -174,6 +175,14 @@ NEWX.push(function(S){
   S.order.forEach(function(pid){var P=S.promos[pid],rr=riskRange(P);P.risk=clamp(P.risk,rr[0],rr[1]);P.size0=rosterOf(S,pid).length;});
 });
 
+/* achievements that belong to one company model */
+WEEKX.push(function(S){
+  var P=S.promos[S.player],id=P.model||'classic';
+  if(id==='startup'&&S.week>=104&&!S.over)award(S,'ACH_STARTUP_2Y');
+  if(id==='outlaw'&&MODELS.outlaw.cap&&P.image>=MODELS.outlaw.cap-0.3)award(S,'ACH_OUTLAW_CEIL');
+  if(id==='joshi'&&S.week>8&&S.order.some(function(o){return o!==S.player&&S.promos[o].image>P.image&&(S.promos[o].mer||0)<(P.mer||0);}))award(S,'ACH_JOSHI_MERCH');
+});
+POST.push(function(ctx){var P=ctx.P,r=ctx.res;if(ctx.isPl&&P.model==='tradition'&&r.seg.change)r.winners.forEach(function(w){if(w.age>=33)award(ctx.S,'ACH_TRAD_VET');});});
 /* every week: the popularity ceiling; every fourth week: the owner's monthly verdict, and rival companies trim and restock by fit */
 WEEKX.push(function(S){
   S.order.forEach(function(pid){var P=S.promos[pid],M=modelOf(P);if(M.cap&&P.image>M.cap)P.image=M.cap;});

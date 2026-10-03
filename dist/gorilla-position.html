@@ -699,7 +699,12 @@ var ACH = [
   {id:'ACH_HARD',name:'The Hard Way',desc:'Last a year on Main eventer or Legend difficulty.'},
   {id:'ACH_FIRED',name:'Future Endeavours',desc:'Get fired by the owner.',hidden:true},
   {id:'ACH_BOMB',name:'Go-Home Heat',desc:'Run a show rated under 40%.',hidden:true},
-  {id:'ACH_BROKE',name:'Folded',desc:'Go out of business.',hidden:true}
+  {id:'ACH_BROKE',name:'Folded',desc:'Go out of business.',hidden:true},
+  {id:'ACH_STARTUP_2Y',name:'Blank Cheque Survivor',desc:'Reach week 104 with the new-money company.'},
+  {id:'ACH_OUTLAW_CEIL',name:'Top of the Gutter',desc:'Take the outlaw company to the most popularity its crowd allows.'},
+  {id:'ACH_TRAD_VET',name:'Old Hand, New Crown',desc:'Crown a ten-year veteran as champion in the traditional company.'},
+  {id:'ACH_JOSHI_MERCH',name:'The Longest Table',desc:'Out-sell a bigger company in merchandise for a week with the all-women company.'},
+  {id:'ACH_BOARD_4',name:'Beating the Board',desc:'Beat the corporate board\u2019s plan four months running.'}
 ];
 
 /* Invented finishing moves, handed out by style. Add an eighth field to a roster row to name one yourself. */
@@ -1819,7 +1824,7 @@ E.endWeek=function(S){
   if(S.over)return;
   var PL=S.promos[S.player];
   S.order.forEach(function(pid){if(pid===S.player)return;var P=S.promos[pid];weekShows(S,P).forEach(function(sh){var card=autoBook(S,P,sh);if(card.length>=3)runShow(S,P,sh,card);});});
-  S.order.forEach(function(pid){var P=S.promos[pid],row=settle(S,P);if(pid===S.player)S.fin=row;P.neg=P.cash<0?(P.neg||0)+1:0;});
+  S.order.forEach(function(pid){var P=S.promos[pid],row=settle(S,P);if(pid===S.player)S.fin=row;P.mer=row.merch;P.neg=P.cash<0?(P.neg||0)+1:0;});
   // roster upkeep
   var top={};S.order.forEach(function(pid){var o=rosterOf(S,pid).map(function(w){return w.ovr;}).sort(function(a,b){return b-a;});top[pid]=o[Math.floor(o.length/3)]||0;});
   S.w.forEach(function(w){
@@ -3506,6 +3511,7 @@ var MODELS={
     fit:function(w){return 0.5*w.ovr+0.3*w.cha+0.2*w.sq;},
     show:function(S,P,show,rep){return rep.segs.some(function(s){return s.k==='match'&&s.stip==='Hardcore';})?{d:-1,x:'The board had calls from sponsors about the violence.'}:null;},
     month:function(S,P){var H=P.hist.slice(-4),net=0;H.forEach(function(h){net+=h.net;});var tgt=4*P.net,d=(net-tgt)/Math.max(1,Math.abs(tgt))*2;d=Math.abs(d)<0.5?0:(d>0?1:-1)*clamp(Math.abs(d),1,3);   // a good or bad month moves trust by one to three points
+      P.planRun=net>=tgt?(P.planRun||0)+1:0;if(P.planRun>=4)award(S,'ACH_BOARD_4');
       return {d:r1(d),x:'The board reviewed the month: '+money(net)+' against a plan of '+money(tgt)+'.'};}},
 
   workrate:{n:'Wrestling for the diehards',ph:'a diehards’ company',vals:'overness and work rate, with some stamina',wq:0.62,own:'the founder',
@@ -3649,6 +3655,14 @@ NEWX.push(function(S){
   S.order.forEach(function(pid){var P=S.promos[pid],rr=riskRange(P);P.risk=clamp(P.risk,rr[0],rr[1]);P.size0=rosterOf(S,pid).length;});
 });
 
+/* achievements that belong to one company model */
+WEEKX.push(function(S){
+  var P=S.promos[S.player],id=P.model||'classic';
+  if(id==='startup'&&S.week>=104&&!S.over)award(S,'ACH_STARTUP_2Y');
+  if(id==='outlaw'&&MODELS.outlaw.cap&&P.image>=MODELS.outlaw.cap-0.3)award(S,'ACH_OUTLAW_CEIL');
+  if(id==='joshi'&&S.week>8&&S.order.some(function(o){return o!==S.player&&S.promos[o].image>P.image&&(S.promos[o].mer||0)<(P.mer||0);}))award(S,'ACH_JOSHI_MERCH');
+});
+POST.push(function(ctx){var P=ctx.P,r=ctx.res;if(ctx.isPl&&P.model==='tradition'&&r.seg.change)r.winners.forEach(function(w){if(w.age>=33)award(ctx.S,'ACH_TRAD_VET');});});
 /* every week: the popularity ceiling; every fourth week: the owner's monthly verdict, and rival companies trim and restock by fit */
 WEEKX.push(function(S){
   S.order.forEach(function(pid){var P=S.promos[pid],M=modelOf(P);if(M.cap&&P.image>M.cap)P.image=M.cap;});
