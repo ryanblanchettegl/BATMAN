@@ -129,6 +129,8 @@ export function CheckLine(p: { label?: string; ck: Check }) {
     {up.length ? <> {'·'} <span class="good">{'▲'} {up.join(', ')}</span></> : null}{dn.length ? <> {'·'} <span class="bad">{'▼'} {dn.join(', ')}</span></> : null}</p>;
 }
 export function Empty(p: { children: ComponentChildren }) { return <p class="empty">{p.children}</p>; }
+/** A letter grade for a rating out of 100: A+ from 90, down to F below 40. */
+export function grade(v: number): string { const G: [number, string][] = [[90, 'A+'], [85, 'A'], [80, 'A-'], [75, 'B+'], [70, 'B'], [65, 'B-'], [60, 'C+'], [55, 'C'], [50, 'C-'], [40, 'D']]; for (const g of G) if (v >= g[0]) return g[1]; return 'F'; }
 /** Match rating as stars, quarter steps. */
 export function stars(v: number): string { const q = Math.round(v / 20 * 4) / 4, f = Math.floor(q), r = q - f; return ('★'.repeat(f) + (r === 0.25 ? '¼' : r === 0.5 ? '½' : r === 0.75 ? '¾' : '')) || '¼'; }
 

@@ -63,7 +63,7 @@ Small jobs, each one commit. None of them needs a decision from Ryan. Read `CLAU
 - [x] **43.** Profile overview: show time with the company, and one line saying which stats this company values (from the model).
 - [x] **44.** Titles page: an arrow showing whether each title's prestige rose or fell over the last four weeks, and a "Start a tournament" button on a vacant singles title.
 - [x] **45.** Storylines: for each feud, one line saying what would heat it up next.
-- [ ] **46.** Show report: a letter grade (A+ to F) beside each match rating and the show rating. The feature list asks for grades; this is the first step.
+- [x] **46.** Show report: a letter grade (A+ to F) beside each match rating and the show rating. The feature list asks for grades; this is the first step.
 - [ ] **47.** Show report: a "Why it scored" line at the top with the three biggest pluses and minuses of the night.
 - [ ] **48.** In the plus-and-minus list of a match, tag the lines that come from the company model so the player learns the model.
 - [ ] **49.** Broadcast: a "Skip to the result" button for each match, and a speed setting (slow, normal, fast) in Options.

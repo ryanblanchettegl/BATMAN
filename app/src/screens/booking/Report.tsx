@@ -3,7 +3,7 @@ import { E } from '../../engine';
 import { G, cash } from '../../store';
 import { weekDone, pending } from '../../nav';
 import { endWeek } from '../../flow';
-import { Head, Panel, Btn, Tag, KV, stars, Txt } from '../../kit';
+import { Head, Panel, Btn, Tag, KV, stars, grade, Txt } from '../../kit';
 import { preNote, replay, closeReport } from './run';
 
 /** How the show did against what the crowd expected. */
@@ -36,7 +36,7 @@ function Angle(p: { s: any }) {
   const s = p.s, q = s.rub;
   return <div class="angle">
     <p><Tag>{s.head}</Tag> <Txt>{s.text}</Txt>{q ? <><br /><span class="muted">Delivery {q.d} {'·'} Content {q.c} {'·'} Character {q.ch} {'·'} Crowd {q.cr} out of 10</span></> : null}</p>
-    <span class="num">{s.ov}%</span>
+    <span class="num">{s.ov}% <b class="gold">{grade(s.ov)}</b></span>
   </div>;
 }
 function MatchSeg(p: { s: any; no: number; main: boolean }) {
@@ -47,7 +47,7 @@ function MatchSeg(p: { s: any; no: number; main: boolean }) {
     <div class="body">
       <div class="line1">
         <div><div class="who"><Txt>{s.label}</Txt></div><div class="meta">{(p.main ? 'Main event · ' : '') + meta.join(' · ')}{s.title ? <> {'·'} <span class="gold">{s.title}</span></> : null}</div></div>
-        <div class="gold">{s.ov}% {stars(s.ov)}</div>
+        <div class="gold">{s.ov}% {stars(s.ov)} <b>{grade(s.ov)}</b></div>
       </div>
       <OddsLine s={s} />
       <div class="pbp">{s.lines.map((x: string) => <><Txt>{x}</Txt><br /></>)}<b><Txt>{s.finish}</Txt></b></div>
@@ -64,7 +64,7 @@ export function Report(p: { r: any }) {
     <Head eyebrow={E.cal(r.week).label + ' · show report'} title={r.name} />
     <Panel cls="mb3">
       <div class="row rating">
-        <div><div class="eyebrow">Show rating</div><div class="big">{r.rating}%</div></div>
+        <div><div class="eyebrow">Show rating</div><div class="big">{r.rating}% <span class="gold">{grade(r.rating)}</span></div></div>
         <p>{verdict(r)} ({r.exp}%). {Math.abs(r.dImage) < 0.05 ? 'Popularity unchanged.' : 'Popularity ' + (r.dImage > 0 ? 'up ' : 'down ') + Math.abs(r.dImage).toFixed(1) + '.'}</p>
       </div>
       <div class="kv mt3">
