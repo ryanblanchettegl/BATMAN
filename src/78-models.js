@@ -173,6 +173,10 @@ WEEKX.push(function(S){
     var P=S.promos[pid],M=modelOf(P),R=rosterOf(S,pid).filter(function(w){return !w.nw;});
     if(M===MODELS.startup){if(P.slot<2&&P.image>=SLOT_REQ[P.slot+1]&&chance(S,0.2)){P.slot++;news(S,'money',P.name+' landed a better television slot: '+SLOTN[P.slot].toLowerCase()+'.');}M.month(S,P);}
     // a company that has run out of money sheds its biggest wage
+    if(P.cash<0&&P.neg>=12&&(P.prodLvl>0||P.adv>0)){
+      if(P.prodLvl>0){P.prodLvl--;news(S,'money',P.name+' cut production to '+PRODN[P.prodLvl].toLowerCase()+' after weeks in the red.');}
+      else{P.adv--;news(S,'money',P.name+' cut its advertising after weeks in the red.');}
+      P.neg=8;return;}
     if(P.cash<0&&chance(S,0.5)){var big=R.filter(function(w){return holdLvl(P,w.id)===0&&!inFeud(S,w.id);}).sort(function(a,b){return b.wage-a.wage;})[0];
       if(big){news(S,'contract',P.name+' can no longer afford '+big.name+', who is a free agent.');leaveCompany(S,big,'released');big.cut={w:S.week,from:pid,img:P.image};big.promo='FA';big.brand=null;return;}}
     if(!M.fit||R.length<Math.max(14,(P.size0||R.length)-3)||!chance(S,0.3*(M.turn||1)))return;

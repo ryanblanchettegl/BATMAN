@@ -31,7 +31,7 @@ E.endWeek=function(S){
   if(S.over)return;
   var PL=S.promos[S.player];
   S.order.forEach(function(pid){if(pid===S.player)return;var P=S.promos[pid];weekShows(S,P).forEach(function(sh){var card=autoBook(S,P,sh);if(card.length>=3)runShow(S,P,sh,card);});});
-  S.order.forEach(function(pid){var P=S.promos[pid],row=settle(S,P);if(pid===S.player){S.fin=row;P.neg=P.cash<0?P.neg+1:0;}});
+  S.order.forEach(function(pid){var P=S.promos[pid],row=settle(S,P);if(pid===S.player)S.fin=row;P.neg=P.cash<0?(P.neg||0)+1:0;});
   // roster upkeep
   var top={};S.order.forEach(function(pid){var o=rosterOf(S,pid).map(function(w){return w.ovr;}).sort(function(a,b){return b-a;});top[pid]=o[Math.floor(o.length/3)]||0;});
   S.w.forEach(function(w){
