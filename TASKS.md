@@ -4,6 +4,8 @@ The hand-over from the build thread, written 2 October 2026 at version 0.11. Wor
 
 **`NEXT.md` is the work queue.** It turns the tasks below into ordered steps for an unattended run. Start there.
 
+**`IDEAS.md` is the build thread's list:** the next 100 ideas and refinements, in five batches, chosen to stay clear of `NEXT.md`.
+
 Two more lists sit beside this one, both finished:
 
 - `TWEAKS.md`: 100 small jobs, one commit each. All done.
