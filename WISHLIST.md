@@ -124,7 +124,7 @@ Situations modelled on famous nights, each under an original name with invented 
 - [x] **82. The curtain call.** Friends on opposite sides of a story hug in the ring at a farewell. Someone has to be punished, and the only one you can afford to punish is your next big thing.
 - [x] **83. The title handed over.** A group with clout wants the title passed to their friend without a real match. Agree and the title's prestige collapses. Refuse and they turn on you.
 - [x] **84. The surprise arrival.** A rival's biggest star is free tonight and willing to walk onto your show unannounced. It costs a fortune and your locker room is watching.
-- [ ] **85. Giving away their result.** Your show is live and theirs is taped. Announce their result on air to spoil it. It can send your viewers over to watch.
+- [x] **85. Giving away their result.** Your show is live and theirs is taped. Announce their result on air to spoil it. It can send your viewers over to watch.
 - [ ] **86. The walkout.** Two wrestlers unhappy with their booking leave the building before a live show. Rebook in ten minutes, and decide what happens to them.
 - [ ] **87. Not fit to perform.** Your main-event star arrives at the biggest show of the year in no state to wrestle. Send them out, swap the match, or tell the crowd the truth.
 - [ ] **88. The wrong hero.** The flagship crowd boos the hero you spent a year building and cheers the villain. Change the finish on the night, or hold your nerve.
