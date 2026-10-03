@@ -2149,7 +2149,7 @@ function syncTitles(S){
     if(last&&last.to==null&&last.ids===cur){last.defs=t.defs;return;}
     if(last&&last.to==null){last.to=S.week;}
     if(cur)t.hist.push({ids:cur,h:t.holders.map(function(id){return S.w[id].name;}),from:S.week,to:null,show:S.week<=1?'Before your time':(P.last?P.last.name:''),defs:0});
-    if(t.hist.length>40)t.hist.shift();
+    if(t.hist.length>60)t.hist.shift();
   });});
 }
 NEWX.push(function(S){S.rec={matches:[],shows:[],gate:null,buys:null,streak:null};S.year={};S.awards=[];S.hof=[];S.w.forEach(function(w){w.oy=w.ovr;});syncTitles(S);});
@@ -5706,6 +5706,31 @@ E.buyLot=function(S,id){
   }
   (P.tape||(P.tape=[])).push({w:Math.max(1,S.week-30),n:l.name,r:70,v:l.value});
   news(S,'money','You bought '+l.name+'.');return {ok:true,text:'The library is yours. It is worth about '+money(l.value)+' and earns every week.'};
+};
+
+/* ---------- 65. Title histories of the world: partners can unify their top titles (the belt of one absorbs the other and the lineages join) ---------- */
+function topTitle(P,g){return P.titles.filter(function(t){return !t.tag&&t.g===g&&t.lvl>=3;}).sort(function(a,b){return b.prestige-a.prestige;})[0]||null;}
+E.unifyOptions=function(S){
+  var A=S.agree;if(!A)return [];var P=S.promos[S.player],RV=S.promos[A.with],out=[];
+  ['M','F'].forEach(function(g){
+    var m=topTitle(P,g),t=topTitle(RV,g);if(!m||!t||!m.holders.length)return;
+    var ck=mkCheck(9,[relMod(RV),temperMod(RV,'show'),{n:'A working agreement',v:1},{n:'Their belt against yours',v:t.prestige>m.prestige+10?-1:(m.prestige>t.prestige+10?1:0)}].concat(skillMods(S,'talk')));
+    out.push({g:g,mine:m,theirs:t,odds:Math.round(ck.p*100),ck:ck});
+  });
+  return out;
+};
+E.unify=function(S,g){
+  var o=E.unifyOptions(S).filter(function(x){return x.g===g;})[0];if(!o)return {ok:false,text:'There is nothing to unify.'};
+  var P=S.promos[S.player],RV=S.promos[S.agree.with],r=rollCheck(S,o.ck);
+  if(!r.ok){RV.rel=clamp((RV.rel||0)-6,-100,100);return {ok:false,text:rollText(r)+RV.name+' will not give up its belt.'};}
+  var m=o.mine,t=o.theirs;
+  // the lineages join, oldest first, with the other company's reigns marked
+  var merged=(t.hist||[]).map(function(h){var c=JSON.parse(JSON.stringify(h));c.show=(c.show?c.show+' · ':'')+RV.name;return c;}).concat(m.hist||[]).sort(function(a,b){return a.from-b.from;});
+  m.hist=merged.slice(-60);m.prestige=clamp(Math.max(m.prestige,t.prestige)+5,10,100);m.uni=(m.uni||[]).concat([RV.name]);
+  t.holders.forEach(function(id){if(S.w[id])S.w[id].lt={n:t.name,id:t.id,w:S.week};});
+  RV.titles=RV.titles.filter(function(x){return x!==t;});RV.rel=clamp((RV.rel||0)+5,-100,100);
+  news(S,'title','The '+m.name+' and the '+RV.name+' '+t.name+' are unified. '+names(m.holders.map(function(id){return S.w[id];}))+' is the champion of both.');
+  return {ok:true,text:rollText(r)+'The belts are unified. The '+m.name+' now carries both lines of champions, and its prestige is up. '+RV.name+' retires its title.'};
 };
 
 /* ===== 90-api.js ===== */

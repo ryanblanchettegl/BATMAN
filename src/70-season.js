@@ -108,7 +108,7 @@ function syncTitles(S){
     if(last&&last.to==null&&last.ids===cur){last.defs=t.defs;return;}
     if(last&&last.to==null){last.to=S.week;}
     if(cur)t.hist.push({ids:cur,h:t.holders.map(function(id){return S.w[id].name;}),from:S.week,to:null,show:S.week<=1?'Before your time':(P.last?P.last.name:''),defs:0});
-    if(t.hist.length>40)t.hist.shift();
+    if(t.hist.length>60)t.hist.shift();
   });});
 }
 NEWX.push(function(S){S.rec={matches:[],shows:[],gate:null,buys:null,streak:null};S.year={};S.awards=[];S.hof=[];S.w.forEach(function(w){w.oy=w.ovr;});syncTitles(S);});

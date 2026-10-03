@@ -96,7 +96,7 @@ Things that would make the game deeper. Each one adds a system, a choice or a me
 - [x] **62. Rivals can die.** A broke rival folds or is bought. Its roster floods the free agents, and its titles and tape library go up for sale. *M.*
 - [ ] **63. New companies appear.** Every few years a backer starts a company and signs free agents. Sometimes it grows out of an indie. *M. (TASKS 9)*
 - [x] **64. Regional tastes.** Each region likes a kind of wrestling: work rate, brawling, spectacle. The wrong product draws less there. *M. Builds on `E.zones`.*
-- [ ] **65. Title histories of the world.** Every title in every promotion keeps its full line of champions, open from any title pop-up. Partner promotions can unify titles. *M.*
+- [x] **65. Title histories of the world.** Every title in every promotion keeps its full line of champions, open from any title pop-up. Partner promotions can unify titles. *M.*
 - [ ] **66. Invasions.** A cross-promotion story where a rival's wrestlers appear on your shows. Both sides must agree the winners. Done badly, one side looks weak for a year. *L. Builds on `E.sagaInfo` and the cross-promotion code in `src/80-world.js`.*
 - [ ] **67. The rookie class.** Each year a class of new wrestlers arrives by region, with a scouting report and a "class of" list to look back on. This also fixes the free-agent pool running dry. *M. Builds on `E.scout`.*
 - [x] **68. The bar moves.** When a rival has a great night in a city you share, your next show there has more to live up to. The news says so. *S.*

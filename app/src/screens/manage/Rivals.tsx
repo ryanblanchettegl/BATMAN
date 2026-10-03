@@ -11,7 +11,8 @@ function Agreement() {
   const S = G.S, A = E.agreement(S);
   if (!A) return null;
   return <p class="note mb1"><span>Working agreement with {A.with.name}: easier trades, top titles recognised by both, a joint supershow in {A.next} {A.next === 1 ? 'week' : 'weeks'}. Relations {A.rel}{A.trouble ? '. Trouble: ' + A.trouble : ''}.</span>
-    <Btn kind="sm" t="agree-end" onClick={() => act(() => { const r = E.agreeEnd(S); say(r.text); })}>End it</Btn></p>;
+    <Btn kind="sm" t="agree-end" onClick={() => act(() => { const r = E.agreeEnd(S); say(r.text); })}>End it</Btn>
+    {E.unifyOptions(S).map((o: any) => <Btn kind="sm" t="unify" d={{ g: o.g }} onClick={() => act(() => { const r = E.unify(S, o.g); say(r.text, { err: !r.ok }); })}>Unify the {o.mine.name} with the {o.theirs.name} {o.odds}%</Btn>)}</p>;
 }
 
 /** A supershow or a war already running: who with, until when, the series score and who is visiting. */

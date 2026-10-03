@@ -2,7 +2,7 @@
    They stack: a name inside a pop-up opens another on top, Back steps out one at a time, and the close box shuts them all. */
 import { ComponentChildren } from 'preact';
 import { E, W } from '../engine';
-import { G, ui, me, Card, openCard, popCard, closeCards, cash, full, plural, openModal } from '../store';
+import { G, ui, me, Card, openCard, popCard, closeCards, cash, full, plural, openModal, slice, view } from '../store';
 import { go } from '../nav';
 import { rs } from '../screens/roster/state';
 import { sendScout } from '../screens/roster/Profile';
@@ -130,7 +130,7 @@ function PromoCard(p: { id: string }) {
 function TitleCard(p: { pid: string; id: string }) {
   const S = G.S, P = S.promos[p.pid], t = P && P.titles.filter((x: any) => x.id === p.id)[0];
   if (!t) return <Empty>This title has been retired.</Empty>;
-  const H: any[] = (t.hist || []).slice().reverse(), len = (h: any) => (h.to || S.week) - Math.max(1, h.from);
+  const all = slice<{ all: boolean }>('title-all', () => ({ all: false })), H: any[] = (t.hist || []).slice().reverse(), len = (h: any) => (h.to || S.week) - Math.max(1, h.from);
   let longest: any = null, most: any = null;
   (t.hist || []).forEach((h: any) => { if (!longest || len(h) > len(longest)) longest = h; if (!most || h.defs > most.defs) most = h; });
   const who = (h: any) => list(String(h.ids).split(',').filter(Boolean).map((id: string) => S.w[+id] ? <Name w={S.w[+id]} /> : null));
@@ -145,8 +145,9 @@ function TitleCard(p: { pid: string; id: string }) {
     {t.pw && t.pw.length ? <><p class="eyebrow mt2">Why the prestige moves</p><ul class="list">{E.prestigeWhy(t).map((x: any) => <li><span>{x.x}</span><span class={'r num ' + (x.d >= 0 ? 'good' : 'bad')}>{x.d >= 0 ? '+' : '−'}{Math.abs(x.d)}</span></li>)}</ul></> : null}
     {t.holders.length ? <p class="mt1 muted">Held since {E.cal(Math.max(1, t.since)).label}: {weeksText(S.week - Math.max(1, t.since))}, {t.defs} {plural(t.defs, 'defence')}.</p> : null}
     <p class="eyebrow mt2">Lineage</p>
-    {H.length ? <ul class="list">{H.slice(0, 12).map((h: any) => <li><span>{who(h)}</span><span class="r muted num">{h.from <= 1 ? 'Before your time' : E.cal(h.from).label}{h.to ? ' to ' + E.cal(h.to).label : ' to now'} {'·'} {weeksText(len(h))} {'·'} {h.defs} {plural(h.defs, 'defence')}</span></li>)}</ul> : <Empty>No champion has been crowned yet.</Empty>}
-    {H.length > 12 ? <p class="muted">And {H.length - 12} earlier {plural(H.length - 12, 'reign')}.</p> : null}
+    {H.length ? <ul class="list">{H.slice(0, all.all ? H.length : 12).map((h: any) => <li><span>{who(h)}</span><span class="r muted num">{h.from <= 1 ? 'Before your time' : E.cal(h.from).label}{h.to ? ' to ' + E.cal(h.to).label : ' to now'} {'·'} {weeksText(len(h))} {'·'} {h.defs} {plural(h.defs, 'defence')}</span></li>)}</ul> : <Empty>No champion has been crowned yet.</Empty>}
+    {H.length > 12 ? <p class="muted">{all.all ? 'All ' + H.length + ' reigns are listed.' : 'And ' + (H.length - 12) + ' earlier ' + plural(H.length - 12, 'reign') + '.'} <Btn kind="sm" t="reigns" onClick={() => view(() => { all.all = !all.all; })}>{all.all ? 'Show fewer' : 'Show all'}</Btn></p> : null}
+    {t.uni && t.uni.length ? <p class="muted">Unified with the title of {t.uni.join(', ')}.</p> : null}
     {longest && H.length > 1 ? <p class="mt1 muted">Longest reign: {who(longest)}, {weeksText(len(longest))}.{most && most.defs ? <> Most defences: {who(most)}, {most.defs}.</> : null}</p> : null}
   </>;
 }
