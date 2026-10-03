@@ -1,7 +1,7 @@
 /* A wrestler profile: one panel with four pages (Overview, Contract, Locker room, Scouting and career), and the scouting report window. */
 import { useEffect } from 'preact/hooks';
 import { E, W } from '../../engine';
-import { G, ui, me, Modal, act, view, say, full, openModal } from '../../store';
+import { G, ui, me, Modal, act, view, say, full, openModal, plural } from '../../store';
 import { Btn, Panel, Tabs, Sel, Tag, Side, Meter, Stat, CheckLine, Empty, RangeBar, Portrait, Window, Opt, champOf, brandName } from '../../kit';
 import { rs, pick, ProfilePage } from './state';
 import { LockerBlock } from './LockerBlock';
@@ -59,6 +59,8 @@ function Overview(p: { w: W }) {
       <Stat label="Stamina" v={w.stam} /><Stat label="Charisma" v={w.cha} kind="au" /><Stat label="Promo" v={w.mic} kind="au" /><Stat label="Condition" v={w.cond} kind="cool" /><Stat label="Morale" v={w.morale} kind="cool" />
     </div>
     <p>Finisher: <b>the {w.fin || 'finish'}</b> {'·'} Gimmick: <b>{gimName(w.gim)}</b> <Meter v={fit} kind="au" /> <span class="num">{fit}% fit</span></p>
+    {E.tenure(S, w.id) != null ? <p class="muted">With the company {E.tenure(S, w.id)} {plural(E.tenure(S, w.id), 'week')}.</p> : null}
+    <p class="muted">{E.modelOf(S).n} values {E.modelOf(S).vals}.</p>
     {cf ? <p>For {E.modelOf(S).ph}: <b class={cf.v >= 1 ? 'good' : (cf.v <= -2 ? 'bad' : undefined)}>{cf.n}</b></p> : null}
     {w.tr && w.tr.length ? <p>Traits: {w.tr.map((t: string) => <><Tag kind="good">{E.TRAITS[t].n}</Tag> </>)}</p> : null}
     {w.arc && w.arc.t === 'flop' ? <p class="bad">The crowd is rejecting the current act until {E.cal(w.arc.until).label}.</p> : null}
