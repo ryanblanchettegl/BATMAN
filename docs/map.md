@@ -1,0 +1,157 @@
+# EWF 9000: code map
+
+One entry per file in `src/`. Read this before the code. It is written by `node tools/make-map.js` from `docs/map-notes.json` (the words) and from the source (the `E.` names). When you add or change a file, edit its note in `docs/map-notes.json` and run the tool again. `node tools/make-map.js --check` says if anything is out of date.
+
+The files are joined in name order into one closure (`build.js` makes `engine.js`). A later file can use any function declared in an earlier one and wrap what an earlier file put on `E`. Systems plug in through the hook lists declared at the top of `src/10-match.js`: `MQX`/`CRX` (match quality and crowd, return `{d,x}`), `FINX` (finish), `EFX` (effort), `POST` (after a match), `SHOWX` (after a show), `WEEKX` (end of week), `NEWX` (new game), `PREX` (before a show), `ANGX`/`ANGDONE` (angles), `EVMAKE`/`EVR` (inbox events and their results).
+
+## src/
+
+- **`src/00-core.js`** (471 lines). The foundation: shared tables and helpers, seeded random, new-game world setup, the money model, feud helpers, the auto-booker and card checks.
+  - Hooks: none pushed; E.newGame runs NEWX
+  - State: S.w, S.promos, S.order, S.teams, S.feuds, S.news, S.quests, S.ach, S.stats, S.recent, S.db, w.ovr, w.age, w.pk, w.tw, P.base, P.mainB, P.starB, P.fixed
+  - Adds: `E.newGame`
+- **`src/10-match.js`** (462 lines). The match engine: scores each match, picks the winner and finish, updates titles, feuds, injuries and streaks, and writes the ringside commentary.
+  - Hooks: none pushed; declares every hook list; runs EFX, MQX, CRX, FINX, POST; reads MODEL_CROWD
+  - State: S.said, S.recent, S.h2h, S.stats.matches, w.rr, w.lt, w.iz, w.inj, w.ws, w.mom, w.deb, feud.matches, feud.res, team.exp, t.prestige, t.defs, t.holders
+- **`src/20-story.js`** (174 lines). The story director: picks the angle for each slot between matches, such as feud beats, call-outs, mystery attacks, returns, team-ups and turns.
+  - Hooks: none pushed; runs ANGX inside genAngle
+  - State: S.mystery, feud.beat, feud.stakes, feud.twist, feud.finale, feud.kind, w.away, w.ret, w.mom, S.teams (new team), feud.a and feud.b sides
+- **`src/30-show.js`** (102 lines). Runs one show from card to report: sells tickets, slots in angles, plays the matches, scores the night, books income, and settles promises and quests.
+  - Hooks: none pushed; runs ANGDONE and SHOWX
+  - State: S.reports, S.stats.shows, S.stats.run, S.hype, S.rateMod, S.quests, S.ledger, S.trust, P.led, P.image, P.trend, P.mainB, P.last, P.expA, w.la, w.pk2, w.pb2
+- **`src/40-week.js`** (198 lines). Runs the end of each week (rival shows, pay, contracts, feuds), then starts the next, and makes the office events the player answers.
+  - Hooks: None pushed. It runs WEEKX and EVMAKE and looks up EVR and QEND. No wrappers replaced.
+  - State: S.queue, S.qi, S.card, S.inbox, S.fin, S.over, P.hist, P.led, P.neg, P.mer, w.promo, w.con, w.wage, w.cn, w.off, w.cut, w.ret, w.rw, w.rwl, w.il
+  - Adds: `E.endWeek`, `E.resolveEvent`
+- **`src/50-company.js`** (52 lines). Business side of the company: sponsor offers and deals, the network TV slot, and the settings for production, risk, tickets and ads.
+  - Hooks: NEWX, WEEKX. No wrappers replaced.
+  - State: S.spOffers, S.sponsors, S.slotAsk, S.quests (prove), P.slot, P.image, P.prodLvl, P.risk, P.tix, P.adv, P.camp, P.med, P.trv
+  - Adds: `E.acceptSponsor`, `E.askSlot`, `E.company`, `E.dropSponsor`, `E.setCompany`, `E.slotOdds`, `E.sponsorOk`
+- **`src/55-preshow.js`** (62 lines). Rolls a pre-show surprise (late flight, tired wrestler, truck fault, protect a loser, walk-up crowd) and applies the choice the player makes.
+  - Hooks: EFX only (adds a match's m.eff boost or penalty to a wrestler's effort). No wrappers replaced.
+  - State: S.pre, S.hype, S.rateMod, P.cash, and on card matches m.eff, m.hurt, m.len, m.stip, m.ff, m.title
+  - Adds: `E.preShow`, `E.resolvePre`
+- **`src/60-rpg.js`** (236 lines). Shows the chance of each risky choice, then turns failures into new stories (grievance, flop). Also gimmicks, earned traits, stables and managers.
+  - Hooks: EVR (losing, offer, pitch, flop, counter), EVMAKE, WEEKX, POST, ANGX, SHOWX, CRX, EFX, MQX, NEWX. No wrappers.
+  - State: S.stables (id, promo, name, leader, m, formed, tension), P.rel, w.arc, w.notice, w.to, w.lock, w.gim, w.gw, w.gcd, w.tr, w.ct, w.stable, w.mgr
+  - Adds: `E.GIMS`, `E.TRAITS`, `E.gimFit`, `E.micOf`, `E.mouthpieces`, `E.odds`, `E.repackOdds`, `E.repackage`, `E.setManager`, `E.stableOf`
+- **`src/65-you.js`** (276 lines). The player as booker and the owner they answer to: skill levels, booking power, owner trust and house style, directives, takeover, ring chemistry and advice.
+  - Hooks: FINX, CRX, EFX, POST, SHOWX, WEEKX, NEWX, EVMAKE, MQX, EVR (handover, directive), SKILLMOD, QEND. No wrappers.
+  - State: S.booker, S.owner, S.creedScore, S.bp, S.bpGrant, S.rel, S.trust, S.stats.calls, S.mode, w.fav, P.style, P.base, P.starB
+  - Adds: `E.PLEDGE`, `E.ROOTS`, `E.SKILLS`, `E.STYLES`, `E.advice`, `E.bpGrant`, `E.budget`, `E.cardCost`, `E.jobOffers`, `E.lobby`, `E.lobbyOdds`, `E.matchOdds`, `E.relations`, `E.setCreed`, `E.spendPoint`, `E.xpNeed`
+- **`src/70-season.js`** (208 lines). Who earns title shots, plus tournaments, title histories, the record book, year-end awards, the hall of fame and the training camp.
+  - Hooks: POST, CRX, WEEKX, NEWX, SHOWX, EVMAKE, EVR.hof; replaces no wrappers
+  - State: S.tourn, S.rec, S.year, S.awards, S.hof, S.hofDue, P.imgY, P.titles[].ph/.hist, w.pts, w.yp, w.cp, w.shot, w.oy, w.hof, w.camp, w.focus, w.micx, w.stx
+  - Adds: `E.FOCUS`, `E.callUp`, `E.campInfo`, `E.power`, `E.rankFor`, `E.sendCamp`, `E.startTourn`, `E.tournActive`, `E.tournOk`
+- **`src/75-people.js`** (84 lines). People over the years: birthdays, decline and retirement, the yearly rookie class, and scouting reports that show hidden ratings as a range.
+  - Hooks: WEEKX, POST, NEWX; replaces no wrappers
+  - State: S.classes, S.scoutWeek, S.scoutN, P.size0, w.sc, w.ya, w.yi, w.slow, w.retiring, w.fwDone, w.rt, w.rtp, w.rk, w.reg, w.blue
+  - Adds: `E.HIDDEN`, `E.PHASE`, `E.intel`, `E.phaseOf`, `E.scout`, `E.scoutInfo`
+- **`src/76-locker.js`** (225 lines). The locker room: roles, the ego grid behind morale, stress and breakdowns, worn body zones, mentors, and who trained whom.
+  - Hooks: NEWX, EFX, CRX, MQX, POST, WEEKX x2, EVR.break; also adds TRAITS.grudge; replaces no wrappers
+  - State: w.role, w.bz, w.ml, w.stress, w.ex, w.pos, w.brk, w.away, w.hadTop, w.wk, w.wkW, w.wkN, w.hurt, w.rest, w.ment, w.mx, w.coach, w.cw, w.wordWeek, w.you
+  - Adds: `E.INTN`, `E.MEDN`, `E.ROLE`, `E.ZONES`, `E.ego`, `E.family`, `E.haveWord`, `E.lockerRoom`, `E.medInfo`, `E.mentorsFor`, `E.rest`, `E.setMentor`, `E.wordOdds`, `E.workHurt`, `E.workHurtOk`, `E.zones`
+- **`src/77-backstage.js`** (396 lines). Your week backstage: house rules, action points and places to spend them, wrestlers' court, mid-show chaos, and the clocks that track slow pressure.
+  - Hooks: NEWX, WEEKX x2, CRX x2, EFX, SHOWX, MQX, POST, PREX, EVR.mutiny, EVR.netmeet, QEND.netvow; no wrappers replaced
+  - State: S.house, S.ap, S.apUsed, S.apLog, S.court, S.clocks, S.mainLog, S.chs, S.pep, S.chemX, S.verdicts, S.courtFair, S.staleUntil, w.hy, w.cl, w.wonWk, w.off
+  - Adds: `E.CLOCKS`, `E.HOUSE`, `E.PLACES`, `E.apDo`, `E.backstage`, `E.chaos`, `E.clocks`, `E.court`, `E.courtDelegate`, `E.courtLog`, `E.courtRule`, `E.houseInfo`, `E.resolveChaos`, `E.setHouse`
+- **`src/78-models.js`** (240 lines). The nine company models: each one changes what its crowd rewards, how it makes money, who it pushes, hires and lets go, and how the owner judges you.
+  - Hooks: MQX, CRX, FINX, EFX, POST x2, NEWX, WEEKX x2, MODEL_CROWD; replaces no wrappers
+  - State: w.jw, w.chip, w.cut, P.slotSeen, P.planRun, P.nrel, P.size0
+  - Adds: `E.MODELS`, `E.chem`, `E.fit`, `E.modelList`, `E.modelOf`, `E.tenure`
+- **`src/80-world.js`** (448 lines). Difficulty, your own federation, created wrestlers, opening promos, deals and wars with rival companies, the fan board and the four-chapter season saga.
+  - Hooks: NEWX, WEEKX, POST, PREX, CRX, SHOWX, EVMAKE; sets EVR.invasion; replaces no wrappers
+  - State: S.xf, S.xfLast, S.net, S.saga, S.chron, S.plan, S.lastCreate, P.rel, P.xfAsk, P.tradeAsk, P.expB, w.log, w.ys, w.sg, w.cr
+  - Adds: `E.DELIV`, `E.DIFF`, `E.DPART`, `E.FED_REGION`, `E.FED_SIZE`, `E.PKIND`, `E.TEMPER`, `E.TOPIC`, `E.career`, `E.createInfo`, `E.createPreview`, `E.createWrestler`, `E.diffSummary`, `E.promoBrief`, `E.promoOdds`, `E.sagaInfo`, `E.setPlan`, `E.temperOf`, `E.trade`, `E.tradeList`, `E.tradeOdds`, `E.xfCan`, `E.xfOdds`, `E.xfPropose`, `E.xfState`
+- **`src/82-wishes.js`** (836 lines). A pile of small depth systems from the wish list: crowd effects, match notes, finishes, bonds, stable unity, title prestige, the long plan and the yearly report.
+  - Hooks: CRX, POST, WEEKX, SHOWX, PREX, MQX, FINX, ANGDONE, EVMAKE; sets EVR.guest, finalyear, lastwin; wraps EVR.hof
+  - State: S.moty, S.open, S.annual, S.bar, S.firsts, S.bond, S.fh, S.sty, S.lp, S.mem, S.hofNight, P.su, t.pw, tm.fin, st.unity, w.cphrase, w.mh, w.fp, w.fol, w.mk
+  - Adds: `E.HOWS`, `E.NOTES`, `E.STIPNOTE`, `E.STYLE_GRID`, `E.annualReport`, `E.askRoom`, `E.bodyWord`, `E.bond`, `E.bondWord`, `E.bracketLines`, `E.clearLongPlan`, `E.energyLine`, `E.finishMood`, `E.finishPrice`, `E.finisherWord`, `E.flagshipWeek`, `E.gimFresh`, `E.hasRule`, `E.longPlan`, `E.masked`, `E.matchOfYear`, `E.memBetray`, `E.milestones`, `E.noteHint`, `E.noteLabel`, `E.openThreads`, `E.pairMemory`, `E.phase`, `E.prestigeWhy`, `E.setLongPlan`, `E.setNote`, `E.stableRoles`, `E.stableUnity`, `E.stableWeak`, `E.stipFresh`, `E.styleBlend`, `E.styleLessons`, `E.teamFinisher`
+- **`src/83-moments.js`** (205 lines). Ten one-off inbox events modelled on famous nights in wrestling history, each with choices, an attempt and results that land weeks later.
+  - Hooks: WEEKX, EVMAKE; sets EVR.mom; replaces no wrappers
+  - State: S.after, S.momWeek, w.cut
+  - Adds: `E.momentForce`, `E.momentIds`
+- **`src/84-life.js`** (26 lines). Life outside the ring: a wedding, baby, move, film or book turns up as an inbox choice of time off, a lighter schedule or a story.
+  - Hooks: EVMAKE, WEEKX; sets EVR.life; replaces no wrappers
+  - State: S.lifeWeek, w.lgt
+- **`src/85-second.js`** (103 lines). What a retired wrestler does next: road agent, trainer, commentator, manager or on-screen boss, plus the boss's rebel feud and the road agent's matches.
+  - Hooks: CRX, MQX, POST, SHOWX, WEEKX; sets EVR.secondcareer, EVR.rebel; replaces no wrappers
+  - State: S.bossUse, S.bossWarn, S.rebel, S.rebelEnd, w.srole, match m.boss, m.agent
+  - Adds: `E.SROLES`, `E.agents`, `E.bossMakes`, `E.hasBoss`, `E.rebelInfo`, `E.setAgent`, `E.staff`
+- **`src/85-universe.js`** (203 lines). Checks and loads universe packages (rosters, promotions, titles) into a world, and writes the current world back out as a package.
+  - Hooks: NEWX; replaces no wrappers
+  - State: S.chemX, S.relT, S.rel, S.stables entries, w.mgr, w.push, w.pwa
+  - Adds: `E.RULES`, `E.SCHEMA_VERSION`, `E.attach`, `E.exportUniverse`, `E.universe`, `E.useUniverse`, `E.validateUniverse`
+- **`src/86-asst.js`** (67 lines). Learns how you book from your own shows, then books and runs the small shows for you in your style when you use fast mode.
+  - Hooks: SHOWX (learns from your shows), CRX (small-show penalty while it learns); no wrappers replaced
+  - State: S.asst (n, own, h, fav), S.asstRun, m.asst on card matches
+  - Adds: `E.assistant`, `E.assistantBook`, `E.assistantRun`
+- **`src/86-editor.js`** (194 lines). The World Editor tools: make, change, fill and check a universe package (plain JSON) without touching a running game.
+  - State: none (works on a universe package, not on S, P or w)
+  - Adds: `E.ED`, `E.edAddPromo`, `E.edAddRel`, `E.edAddShow`, `E.edAddTeam`, `E.edAddTitle`, `E.edAddWorker`, `E.edCheck`, `E.edContract`, `E.edCopy`, `E.edFill`, `E.edHome`, `E.edInfo`, `E.edNew`, `E.edRemove`, `E.edRename`, `E.edSign`
+- **`src/86-rep.js`** (123 lines). Your name as a booker: reputation traits earned by how you book, the career legacy score, and the record book across all companies.
+  - Hooks: SHOWX (rating history, biggest gates), WEEKX (earn or lose traits, edges and costs), CRX (hot and horse effects), POST (match grade and win run)
+  - State: S.reps, S.repS, S.rec.gates, w.sov, w.nov, w.bws
+  - Adds: `E.BTRAIT`, `E.RECK`, `E.bookerRep`, `E.legacy`, `E.records`
+- **`src/86-room.js`** (326 lines). The locker room as a group of people, plus money and road extras: cliques, creative control, road wear, holdouts, merch, tape library, crowd takeovers.
+  - Hooks: WEEKX, POST, SHOWX, MQX, CRX, EVR (clique, ccask, carfight, holdout, chant)
+  - State: S.cliqueAt, S.carAt, S.bond, w.held, w.heldBy, w.cc, w.ccUntil, w.ccAsk, w.rd, w.hold, w.hoAt, P.lines, P.tape, P.tapeW, P.tapeLic, P.tapeSold
+  - Adds: `E.LINEK`, `E.TRVN`, `E.TRV_C`, `E.cliques`, `E.commissionLine`, `E.controlWord`, `E.crowdCity`, `E.isDiehard`, `E.licenseTape`, `E.lineCost`, `E.lineList`, `E.lineSlots`, `E.lineWhy`, `E.roadWord`, `E.sellTape`, `E.tape`, `E.ticketAdvice`, `E.travelInfo`
+- **`src/87-create.js`** (184 lines). Lets a company add, rename and retire its own weekly shows and belts during a game, and has rival companies grow or shrink once a year.
+  - Hooks: WEEKX (show anniversary growth, yearly rival growth)
+  - State: S.showAsk, P.oldTitles, show.since, show.inc, title.born
+  - Adds: `E.MAKE_LVL`, `E.dropShow`, `E.dropTitle`, `E.makeInfo`, `E.makeShow`, `E.makeTitle`, `E.makeTitleLevels`, `E.makeTitleWhy`, `E.renameShow`, `E.renameTitle`
+- **`src/87-desk.js`** (61 lines). The commentary desk: a pool of play-by-play and colour voices you can hire, whose chemistry together lifts or hurts your show ratings.
+  - Hooks: NEWX (builds the voice pool), WEEKX (yearly refresh of the pool), CRX (desk quality effect on match rating)
+  - State: S.voices, P.desk (pbp, col)
+  - Adds: `E.chemWord`, `E.dropVoice`, `E.hireVoice`, `E.voices`
+- **`src/87-develop.js`** (90 lines). Development: a weekly camp show where campers work matches and improve, and a wrestling school whose classes graduate as prospects.
+  - Hooks: WEEKX (camp show, call-up ask, school classes), EVR (callup)
+  - State: w.dv, w.dvHold, w.micx, w.sch, w.rk, P.devRep, P.school
+  - Adds: `E.closeSchool`, `E.devShow`, `E.openSchool`, `E.school`
+- **`src/87-goals.js`** (80 lines). Career goals: each of your wrestlers chases one or two. Meeting one lifts them. A goal blocked for a year starts a clock and a talk.
+  - Hooks: POST (counts flagship main events), WEEKX (meet, pick and block goals), EVR (goalblocked)
+  - State: w.goals, w.gAt, w.mf, w.tourns, w.loy, S.goalAt, S.tourn.credited
+  - Adds: `E.goalsOf`
+- **`src/88-finance.js`** (137 lines). The money side of the company: loans and investors, yearly licensing deals, and monthly department budgets with warnings.
+  - Hooks: WEEKX x3 (investor mood, licence pay, budget warnings); EVR.investor; no wrappers
+  - State: P.loan, P.inv, P.lic, P.bud, P.budWarn
+  - Adds: `E.DEPT`, `E.LICK`, `E.LOANT`, `E.budgets`, `E.buyOutInvestor`, `E.dropLicense`, `E.finance`, `E.investorOffer`, `E.licensing`, `E.loanOffers`, `E.repayLoan`, `E.sellShare`, `E.setBudget`, `E.signLicense`, `E.takeLoan`
+- **`src/88-newco.js`** (29 lines). Now and then a new rival company starts up with a backer and free agents, sometimes growing out of an indie circuit.
+  - Hooks: WEEKX x1 (maybe starts a company every 26 weeks after week 78); no wrappers
+  - State: P.size0, P.rel, P.born (on each new company)
+  - Adds: `E.newCompany`
+- **`src/89-board.js`** (73 lines). Fan board and critic: posts give matches star ratings and draw replies, a critic ranks wrestlers, and awards night brings speeches and pay asks.
+  - Hooks: POST (critic score), WEEKX x2 (critic list, awards night), EVR.awardraise; no wrappers
+  - State: w.cs, w.csn, S.critic, S.awards[0].done, x.sp (speech on each award entry)
+  - Adds: `E.criticList`, `E.starsOf`
+- **`src/89-regions.js`** (235 lines). The wider world: regional tastes and tours, rival owner talk, working agreements, rivals that fold, title unification and the rookie class.
+  - Hooks: WEEKX x4 (tours, rival talk, agreements, folding rivals); CRX x2 (region taste, shared title); EVR.agreetrouble
+  - State: P.tour, P.tourEnd, P.fol, P.agAsk, P.dead, P.tape, S.agree, S.sale, S.talkAt, w.rd, w.cut, w.lt, t.uni
+  - Adds: `E.REGIONS`, `E.TASTEN`, `E.agreeCan`, `E.agreeEnd`, `E.agreeOdds`, `E.agreePropose`, `E.agreement`, `E.buyLot`, `E.classReport`, `E.classYears`, `E.forSale`, `E.homeRegion`, `E.startTour`, `E.tasteForecast`, `E.tourInfo`, `E.unify`, `E.unifyOptions`
+- **`src/90-api.js`** (54 lines). The calls the screens use for roster moves and the show: sign, release, renew, set brand, validate the card, suggest a card, run the show.
+  - Hooks: none (runs PREX hooks; defines base E.sign, E.release, E.canSign, E.suggest and E.validate that 91 wraps)
+  - State: w.ctr, w.lock, w.cn, S.card, S.qi, S.trust, S.apLog[].sh, rep.pre, rep.prep (on the show report)
+  - Adds: `E.ACH`, `E.ACTN`, `E.ADVN`, `E.MONTHS`, `E.MT`, `E.PRODN`, `E.RISKN`, `E.SLOTN`, `E.SLOT_MAX`, `E.STIP`, `E.STYLE_NAME`, `E.TIXN`, `E.activeFeuds`, `E.ask`, `E.autoBook`, `E.cal`, `E.canSign`, `E.eligible`, `E.expected`, `E.feudAct`, `E.feudLabel`, `E.feudOf`, `E.feudStage`, `E.feudsFor`, `E.holdLvl`, `E.isDev`, `E.market`, `E.money`, `E.nextBig`, `E.partnerOf`, `E.pushMap`, `E.release`, `E.renew`, `E.rosterOf`, `E.runPlayerShow`, `E.runShow`, `E.setBrand`, `E.showTitles`, `E.sign`, `E.signWhy`, `E.suggest`, `E.teamOf`, `E.validate`, `E.wageFor`, `E.weekShows`, `E.workRate`
+- **`src/91-wishes-late.js`** (82 lines). Wraps the player API with extras: release interviews, job offer terms, a free first signing, mask and hair match checks, and agents on the suggested card.
+  - Hooks: none pushed; wraps E.release, E.canSign, E.sign, E.validate and E.suggest
+  - State: S.freeSign, m.agent (on card matches)
+  - Adds: `E.JOB_TERMS`, `E.applyJobTerms`, `E.canSign`, `E.jobTermsCheck`, `E.release`, `E.sign`, `E.suggest`, `E.validate`
+- **`src/92-challenge.js`** (43 lines). The weekly challenge: a dated seed gives everyone the same world for twelve weeks, then a score and a short code to share.
+  - Hooks: SHOWX, WEEKX; wraps E.newGame
+  - State: S.chal (id, weeks, sum, done, image0, cash0, promo, score, code); sets S.over at the end
+  - Adds: `E.challengeCode`, `E.challengeInfo`, `E.challengeRead`, `E.challengeScore`, `E.challengeStart`, `E.newGame`
+- **`src/92-scenarios.js`** (39 lines). Scenarios: three set problems, save the company, a champion from the bottom and win the ratings war, each with a deadline and a result.
+  - Hooks: SHOWX, WEEKX; wraps E.newGame
+  - State: S.scn (id, weeks, done, o0, target, rival, me, rv, res); sets S.over at the end
+  - Adds: `E.SCENARIOS`, `E.newGame`, `E.scenarioStart`
+
+## Outside `src/`
+
+- **`app/src/`**: the interface in Preact and TypeScript. `store.ts` holds the game and view state (and `VER`), `nav.ts` the screen map, `input.ts` the screen modes and remote or gamepad focus, `flow.ts` starting, loading and ending a game, `kit/` the building blocks (`Panel`, `Btn`, `Sel`, `Name`, pop-ups), `shared/` pieces used by more than one section (the wrestler, team and title cards), `shell/` the frame around every page, `screens/<section>/` one folder per section (`office`, `booking`, `roster`, `stories`, `manage`, `company`, `start`, `editor`).
+- **`app/styles/`**: one CSS file per section plus `base.css`.
+- **`app/addons/`**: scripts appended to the page as they are (the soundtrack).
+- **`universes/public_domain.json`**: the default world, written by `tools/build-public-domain.js` with `tools/pd-extra.js`. Format: `docs/universe-format.md`.
+- **`test-*.js` in the root**: headless tests. `test-uni.js` plays 60 weeks of every company; `test-models.js`, `test-wording.js`, `test-determinism.js`, `test-moments.js`, `test-editor.js` and `test-create.js` check one area each.
+- **`app/tests/*.js`**: browser tests (Playwright). `npm run test:browser` runs them all.
+- **`tools/`**: `balance.js` (the balance table), `make-map.js` (this file), `browser-tests.js`, `build-public-domain.js`, `build-font.py`, `screenshots.js`.

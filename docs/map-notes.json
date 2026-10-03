@@ -1,0 +1,193 @@
+{
+ "src/00-core.js": {
+  "owns": "The foundation: shared tables and helpers, seeded random, new-game world setup, the money model, feud helpers, the auto-booker and card checks.",
+  "hooks": "none pushed; E.newGame runs NEWX",
+  "state": "S.w, S.promos, S.order, S.teams, S.feuds, S.news, S.quests, S.ach, S.stats, S.recent, S.db, w.ovr, w.age, w.pk, w.tw, P.base, P.mainB, P.starB, P.fixed"
+ },
+ "src/10-match.js": {
+  "owns": "The match engine: scores each match, picks the winner and finish, updates titles, feuds, injuries and streaks, and writes the ringside commentary.",
+  "hooks": "none pushed; declares every hook list; runs EFX, MQX, CRX, FINX, POST; reads MODEL_CROWD",
+  "state": "S.said, S.recent, S.h2h, S.stats.matches, w.rr, w.lt, w.iz, w.inj, w.ws, w.mom, w.deb, feud.matches, feud.res, team.exp, t.prestige, t.defs, t.holders"
+ },
+ "src/20-story.js": {
+  "owns": "The story director: picks the angle for each slot between matches, such as feud beats, call-outs, mystery attacks, returns, team-ups and turns.",
+  "hooks": "none pushed; runs ANGX inside genAngle",
+  "state": "S.mystery, feud.beat, feud.stakes, feud.twist, feud.finale, feud.kind, w.away, w.ret, w.mom, S.teams (new team), feud.a and feud.b sides"
+ },
+ "src/30-show.js": {
+  "owns": "Runs one show from card to report: sells tickets, slots in angles, plays the matches, scores the night, books income, and settles promises and quests.",
+  "hooks": "none pushed; runs ANGDONE and SHOWX",
+  "state": "S.reports, S.stats.shows, S.stats.run, S.hype, S.rateMod, S.quests, S.ledger, S.trust, P.led, P.image, P.trend, P.mainB, P.last, P.expA, w.la, w.pk2, w.pb2"
+ },
+ "src/40-week.js": {
+  "owns": "Runs the end of each week (rival shows, pay, contracts, feuds), then starts the next, and makes the office events the player answers.",
+  "hooks": "None pushed. It runs WEEKX and EVMAKE and looks up EVR and QEND. No wrappers replaced.",
+  "state": "S.queue, S.qi, S.card, S.inbox, S.fin, S.over, P.hist, P.led, P.neg, P.mer, w.promo, w.con, w.wage, w.cn, w.off, w.cut, w.ret, w.rw, w.rwl, w.il"
+ },
+ "src/50-company.js": {
+  "owns": "Business side of the company: sponsor offers and deals, the network TV slot, and the settings for production, risk, tickets and ads.",
+  "hooks": "NEWX, WEEKX. No wrappers replaced.",
+  "state": "S.spOffers, S.sponsors, S.slotAsk, S.quests (prove), P.slot, P.image, P.prodLvl, P.risk, P.tix, P.adv, P.camp, P.med, P.trv"
+ },
+ "src/55-preshow.js": {
+  "owns": "Rolls a pre-show surprise (late flight, tired wrestler, truck fault, protect a loser, walk-up crowd) and applies the choice the player makes.",
+  "hooks": "EFX only (adds a match's m.eff boost or penalty to a wrestler's effort). No wrappers replaced.",
+  "state": "S.pre, S.hype, S.rateMod, P.cash, and on card matches m.eff, m.hurt, m.len, m.stip, m.ff, m.title"
+ },
+ "src/60-rpg.js": {
+  "owns": "Shows the chance of each risky choice, then turns failures into new stories (grievance, flop). Also gimmicks, earned traits, stables and managers.",
+  "hooks": "EVR (losing, offer, pitch, flop, counter), EVMAKE, WEEKX, POST, ANGX, SHOWX, CRX, EFX, MQX, NEWX. No wrappers.",
+  "state": "S.stables (id, promo, name, leader, m, formed, tension), P.rel, w.arc, w.notice, w.to, w.lock, w.gim, w.gw, w.gcd, w.tr, w.ct, w.stable, w.mgr"
+ },
+ "src/65-you.js": {
+  "owns": "The player as booker and the owner they answer to: skill levels, booking power, owner trust and house style, directives, takeover, ring chemistry and advice.",
+  "hooks": "FINX, CRX, EFX, POST, SHOWX, WEEKX, NEWX, EVMAKE, MQX, EVR (handover, directive), SKILLMOD, QEND. No wrappers.",
+  "state": "S.booker, S.owner, S.creedScore, S.bp, S.bpGrant, S.rel, S.trust, S.stats.calls, S.mode, w.fav, P.style, P.base, P.starB"
+ },
+ "src/70-season.js": {
+  "owns": "Who earns title shots, plus tournaments, title histories, the record book, year-end awards, the hall of fame and the training camp.",
+  "hooks": "POST, CRX, WEEKX, NEWX, SHOWX, EVMAKE, EVR.hof; replaces no wrappers",
+  "state": "S.tourn, S.rec, S.year, S.awards, S.hof, S.hofDue, P.imgY, P.titles[].ph/.hist, w.pts, w.yp, w.cp, w.shot, w.oy, w.hof, w.camp, w.focus, w.micx, w.stx"
+ },
+ "src/75-people.js": {
+  "owns": "People over the years: birthdays, decline and retirement, the yearly rookie class, and scouting reports that show hidden ratings as a range.",
+  "hooks": "WEEKX, POST, NEWX; replaces no wrappers",
+  "state": "S.classes, S.scoutWeek, S.scoutN, P.size0, w.sc, w.ya, w.yi, w.slow, w.retiring, w.fwDone, w.rt, w.rtp, w.rk, w.reg, w.blue"
+ },
+ "src/76-locker.js": {
+  "owns": "The locker room: roles, the ego grid behind morale, stress and breakdowns, worn body zones, mentors, and who trained whom.",
+  "hooks": "NEWX, EFX, CRX, MQX, POST, WEEKX x2, EVR.break; also adds TRAITS.grudge; replaces no wrappers",
+  "state": "w.role, w.bz, w.ml, w.stress, w.ex, w.pos, w.brk, w.away, w.hadTop, w.wk, w.wkW, w.wkN, w.hurt, w.rest, w.ment, w.mx, w.coach, w.cw, w.wordWeek, w.you"
+ },
+ "src/77-backstage.js": {
+  "owns": "Your week backstage: house rules, action points and places to spend them, wrestlers' court, mid-show chaos, and the clocks that track slow pressure.",
+  "hooks": "NEWX, WEEKX x2, CRX x2, EFX, SHOWX, MQX, POST, PREX, EVR.mutiny, EVR.netmeet, QEND.netvow; no wrappers replaced",
+  "state": "S.house, S.ap, S.apUsed, S.apLog, S.court, S.clocks, S.mainLog, S.chs, S.pep, S.chemX, S.verdicts, S.courtFair, S.staleUntil, w.hy, w.cl, w.wonWk, w.off"
+ },
+ "src/78-models.js": {
+  "owns": "The nine company models: each one changes what its crowd rewards, how it makes money, who it pushes, hires and lets go, and how the owner judges you.",
+  "hooks": "MQX, CRX, FINX, EFX, POST x2, NEWX, WEEKX x2, MODEL_CROWD; replaces no wrappers",
+  "state": "w.jw, w.chip, w.cut, P.slotSeen, P.planRun, P.nrel, P.size0"
+ },
+ "src/80-world.js": {
+  "owns": "Difficulty, your own federation, created wrestlers, opening promos, deals and wars with rival companies, the fan board and the four-chapter season saga.",
+  "hooks": "NEWX, WEEKX, POST, PREX, CRX, SHOWX, EVMAKE; sets EVR.invasion; replaces no wrappers",
+  "state": "S.xf, S.xfLast, S.net, S.saga, S.chron, S.plan, S.lastCreate, P.rel, P.xfAsk, P.tradeAsk, P.expB, w.log, w.ys, w.sg, w.cr"
+ },
+ "src/82-wishes.js": {
+  "owns": "A pile of small depth systems from the wish list: crowd effects, match notes, finishes, bonds, stable unity, title prestige, the long plan and the yearly report.",
+  "hooks": "CRX, POST, WEEKX, SHOWX, PREX, MQX, FINX, ANGDONE, EVMAKE; sets EVR.guest, finalyear, lastwin; wraps EVR.hof",
+  "state": "S.moty, S.open, S.annual, S.bar, S.firsts, S.bond, S.fh, S.sty, S.lp, S.mem, S.hofNight, P.su, t.pw, tm.fin, st.unity, w.cphrase, w.mh, w.fp, w.fol, w.mk"
+ },
+ "src/83-moments.js": {
+  "owns": "Ten one-off inbox events modelled on famous nights in wrestling history, each with choices, an attempt and results that land weeks later.",
+  "hooks": "WEEKX, EVMAKE; sets EVR.mom; replaces no wrappers",
+  "state": "S.after, S.momWeek, w.cut"
+ },
+ "src/84-life.js": {
+  "owns": "Life outside the ring: a wedding, baby, move, film or book turns up as an inbox choice of time off, a lighter schedule or a story.",
+  "hooks": "EVMAKE, WEEKX; sets EVR.life; replaces no wrappers",
+  "state": "S.lifeWeek, w.lgt"
+ },
+ "src/85-second.js": {
+  "owns": "What a retired wrestler does next: road agent, trainer, commentator, manager or on-screen boss, plus the boss's rebel feud and the road agent's matches.",
+  "hooks": "CRX, MQX, POST, SHOWX, WEEKX; sets EVR.secondcareer, EVR.rebel; replaces no wrappers",
+  "state": "S.bossUse, S.bossWarn, S.rebel, S.rebelEnd, w.srole, match m.boss, m.agent"
+ },
+ "src/85-universe.js": {
+  "owns": "Checks and loads universe packages (rosters, promotions, titles) into a world, and writes the current world back out as a package.",
+  "hooks": "NEWX; replaces no wrappers",
+  "state": "S.chemX, S.relT, S.rel, S.stables entries, w.mgr, w.push, w.pwa"
+ },
+ "src/86-asst.js": {
+  "owns": "Learns how you book from your own shows, then books and runs the small shows for you in your style when you use fast mode.",
+  "hooks": "SHOWX (learns from your shows), CRX (small-show penalty while it learns); no wrappers replaced",
+  "state": "S.asst (n, own, h, fav), S.asstRun, m.asst on card matches"
+ },
+ "src/86-editor.js": {
+  "owns": "The World Editor tools: make, change, fill and check a universe package (plain JSON) without touching a running game.",
+  "hooks": "none",
+  "state": "none (works on a universe package, not on S, P or w)"
+ },
+ "src/86-rep.js": {
+  "owns": "Your name as a booker: reputation traits earned by how you book, the career legacy score, and the record book across all companies.",
+  "hooks": "SHOWX (rating history, biggest gates), WEEKX (earn or lose traits, edges and costs), CRX (hot and horse effects), POST (match grade and win run)",
+  "state": "S.reps, S.repS, S.rec.gates, w.sov, w.nov, w.bws"
+ },
+ "src/86-room.js": {
+  "owns": "The locker room as a group of people, plus money and road extras: cliques, creative control, road wear, holdouts, merch, tape library, crowd takeovers.",
+  "hooks": "WEEKX, POST, SHOWX, MQX, CRX, EVR (clique, ccask, carfight, holdout, chant)",
+  "state": "S.cliqueAt, S.carAt, S.bond, w.held, w.heldBy, w.cc, w.ccUntil, w.ccAsk, w.rd, w.hold, w.hoAt, P.lines, P.tape, P.tapeW, P.tapeLic, P.tapeSold"
+ },
+ "src/87-create.js": {
+  "owns": "Lets a company add, rename and retire its own weekly shows and belts during a game, and has rival companies grow or shrink once a year.",
+  "hooks": "WEEKX (show anniversary growth, yearly rival growth)",
+  "state": "S.showAsk, P.oldTitles, show.since, show.inc, title.born"
+ },
+ "src/87-desk.js": {
+  "owns": "The commentary desk: a pool of play-by-play and colour voices you can hire, whose chemistry together lifts or hurts your show ratings.",
+  "hooks": "NEWX (builds the voice pool), WEEKX (yearly refresh of the pool), CRX (desk quality effect on match rating)",
+  "state": "S.voices, P.desk (pbp, col)"
+ },
+ "src/87-develop.js": {
+  "owns": "Development: a weekly camp show where campers work matches and improve, and a wrestling school whose classes graduate as prospects.",
+  "hooks": "WEEKX (camp show, call-up ask, school classes), EVR (callup)",
+  "state": "w.dv, w.dvHold, w.micx, w.sch, w.rk, P.devRep, P.school"
+ },
+ "src/87-goals.js": {
+  "owns": "Career goals: each of your wrestlers chases one or two. Meeting one lifts them. A goal blocked for a year starts a clock and a talk.",
+  "hooks": "POST (counts flagship main events), WEEKX (meet, pick and block goals), EVR (goalblocked)",
+  "state": "w.goals, w.gAt, w.mf, w.tourns, w.loy, S.goalAt, S.tourn.credited"
+ },
+ "src/88-finance.js": {
+  "owns": "The money side of the company: loans and investors, yearly licensing deals, and monthly department budgets with warnings.",
+  "hooks": "WEEKX x3 (investor mood, licence pay, budget warnings); EVR.investor; no wrappers",
+  "state": "P.loan, P.inv, P.lic, P.bud, P.budWarn"
+ },
+ "src/88-newco.js": {
+  "owns": "Now and then a new rival company starts up with a backer and free agents, sometimes growing out of an indie circuit.",
+  "hooks": "WEEKX x1 (maybe starts a company every 26 weeks after week 78); no wrappers",
+  "state": "P.size0, P.rel, P.born (on each new company)"
+ },
+ "src/89-board.js": {
+  "owns": "Fan board and critic: posts give matches star ratings and draw replies, a critic ranks wrestlers, and awards night brings speeches and pay asks.",
+  "hooks": "POST (critic score), WEEKX x2 (critic list, awards night), EVR.awardraise; no wrappers",
+  "state": "w.cs, w.csn, S.critic, S.awards[0].done, x.sp (speech on each award entry)"
+ },
+ "src/89-regions.js": {
+  "owns": "The wider world: regional tastes and tours, rival owner talk, working agreements, rivals that fold, title unification and the rookie class.",
+  "hooks": "WEEKX x4 (tours, rival talk, agreements, folding rivals); CRX x2 (region taste, shared title); EVR.agreetrouble",
+  "state": "P.tour, P.tourEnd, P.fol, P.agAsk, P.dead, P.tape, S.agree, S.sale, S.talkAt, w.rd, w.cut, w.lt, t.uni"
+ },
+ "src/90-api.js": {
+  "owns": "The calls the screens use for roster moves and the show: sign, release, renew, set brand, validate the card, suggest a card, run the show.",
+  "hooks": "none (runs PREX hooks; defines base E.sign, E.release, E.canSign, E.suggest and E.validate that 91 wraps)",
+  "state": "w.ctr, w.lock, w.cn, S.card, S.qi, S.trust, S.apLog[].sh, rep.pre, rep.prep (on the show report)"
+ },
+ "src/91-wishes-late.js": {
+  "owns": "Wraps the player API with extras: release interviews, job offer terms, a free first signing, mask and hair match checks, and agents on the suggested card.",
+  "hooks": "none pushed; wraps E.release, E.canSign, E.sign, E.validate and E.suggest",
+  "state": "S.freeSign, m.agent (on card matches)"
+ },
+ "src/92-challenge.js": {
+  "owns": "The weekly challenge: a dated seed gives everyone the same world for twelve weeks, then a score and a short code to share.",
+  "hooks": "SHOWX, WEEKX; wraps E.newGame",
+  "state": "S.chal (id, weeks, sum, done, image0, cash0, promo, score, code); sets S.over at the end"
+ },
+ "src/92-scenarios.js": {
+  "owns": "Scenarios: three set problems, save the company, a champion from the bottom and win the ratings war, each with a deadline and a result.",
+  "hooks": "SHOWX, WEEKX; wraps E.newGame",
+  "state": "S.scn (id, weeks, done, o0, target, rival, me, rv, res); sets S.over at the end"
+ },
+ "_after": [
+  "## Outside `src/`",
+  "",
+  "- **`app/src/`**: the interface in Preact and TypeScript. `store.ts` holds the game and view state (and `VER`), `nav.ts` the screen map, `input.ts` the screen modes and remote or gamepad focus, `flow.ts` starting, loading and ending a game, `kit/` the building blocks (`Panel`, `Btn`, `Sel`, `Name`, pop-ups), `shared/` pieces used by more than one section (the wrestler, team and title cards), `shell/` the frame around every page, `screens/<section>/` one folder per section (`office`, `booking`, `roster`, `stories`, `manage`, `company`, `start`, `editor`).",
+  "- **`app/styles/`**: one CSS file per section plus `base.css`.",
+  "- **`app/addons/`**: scripts appended to the page as they are (the soundtrack).",
+  "- **`universes/public_domain.json`**: the default world, written by `tools/build-public-domain.js` with `tools/pd-extra.js`. Format: `docs/universe-format.md`.",
+  "- **`test-*.js` in the root**: headless tests. `test-uni.js` plays 60 weeks of every company; `test-models.js`, `test-wording.js`, `test-determinism.js`, `test-moments.js`, `test-editor.js` and `test-create.js` check one area each.",
+  "- **`app/tests/*.js`**: browser tests (Playwright). `npm run test:browser` runs them all.",
+  "- **`tools/`**: `balance.js` (the balance table), `make-map.js` (this file), `browser-tests.js`, `build-public-domain.js`, `build-font.py`, `screenshots.js`."
+ ]
+}

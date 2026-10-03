@@ -19,7 +19,7 @@ Work for Claude Code, in order. `TWEAKS.md` and `WISHLIST.md` are finished; this
 The overnight run built 97 wishes, and many of them are parts of the big tasks. `TASKS.md` still shows those tasks as untouched.
 
 - [ ] **0.1** Go through tasks 2 to 10 in `TASKS.md` box by box and check each against the code. Tick what is fully there. For a box that is partly there, leave it open and add one line saying what exists and where. Places to look: history moments in `src/83-moments.js` (task 8), career goals in `src/87-goals.js` (task 10), awards night in `src/89-board.js` and the yearly awards in `src/70-season.js` (task 7), ticket prices and the tape library in `src/86-room.js` (tasks 4 and 5), new companies in `src/88-newco.js` (task 9), rival owners in `src/80-world.js` and working agreements in `src/89-regions.js` (task 10), promo kinds in `src/80-world.js` and agent notes in `src/82-wishes.js` (task 3), the assistant in `src/86-asst.js` (fast mode in task 3).
-- [ ] **0.2** Write `docs/map.md`: one line per `src/*.js` file saying what it owns and which `E.` functions it adds. Future runs read this before the code.
+- [x] **0.2** Write `docs/map.md`: one line per `src/*.js` file saying what it owns and which `E.` functions it adds. Future runs read this before the code.
 - [x] **0.3** Add `tools/balance.js`: plays each company for 100 weeks on three seeds with suggested cards and prints one table: cash start and end, popularity start and end, rating minus expectation, owner trust, weeks survived, roster size, free agents left, save size. Commit its output as `docs/balance-0.13.txt`. Later jobs rerun it to see what they moved.
 
 ## Job 1. World Editor, round two (Ryan's main item)
