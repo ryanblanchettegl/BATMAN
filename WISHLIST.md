@@ -103,7 +103,7 @@ Things that would make the game deeper. Each one adds a system, a choice or a me
 
 ## G. Fans, press and culture
 
-- [ ] **69. Four kinds of fan.** Casuals, diehards, families and kids, each with their own view of your product. Every model weights them differently. Company shows four bars. *L. Changes crowd maths everywhere. (ask Ryan)*
+- [x] **69. Four kinds of fan.** Casuals, diehards, families and kids, each with their own view of your product. Every model weights them differently. Company shows four bars. *L. Changes crowd maths everywhere. (ask Ryan)*
 - [ ] **70. The crowd takes over.** A crowd that rejects the pushed star chants for someone else. It shows in the report and happens more in diehard cities. *M.*
 - [ ] **71. The fan board grows up.** Posts name matches, give them stars and argue with each other. One invented critic keeps a ratings list the wrestlers care about. *M. Builds on the net page.*
 - [ ] **72. Followers.** Each wrestler has a following that grows with big moments. A clip can spread, bringing casual fans and merchandise. *S.*
@@ -111,7 +111,7 @@ Things that would make the game deeper. Each one adds a system, a choice or a me
 - [ ] **74. Guest stars.** An actor, athlete or singer made up by the game does a one-night spot. Casuals tune in, diehards groan, and the match itself is a risk. *S.*
 - [ ] **75. Awards night.** A yearly ceremony screen with categories and short speeches. Winners gain morale and ask for more money. *M. (TASKS 7)*
 - [ ] **76. Hall of fame night.** The hall of fame exists. Add an induction on the flagship weekend with a speech and a lift for the crowd. *S.*
-- [ ] **77. Trouble in public.** A star makes the wrong kind of news. Suspend, bury, or stand by them. Keep it light and vague. *M. (ask Ryan about tone)*
+- [x] **77. Trouble in public.** A star makes the wrong kind of news. Suspend, bury, or stand by them. Keep it light and vague. *M. (ask Ryan about tone)*
 - [ ] **78. Home-town heroes.** A wrestler in their home city gets a pop. Beating them there costs. A home-town title win lifts the city. *S. Needs a home city per wrestler in the universe file.*
 
 ## H. Moments from wrestling history
@@ -135,7 +135,7 @@ Situations modelled on famous nights, each under an original name with invented 
 - [ ] **90. Job offers with terms.** Offers exist. Add terms to bargain over: budget, creative freedom, one signing of your choice. *S. Builds on `E.jobOffers`.*
 - [ ] **91. The milestone wall.** A long list of firsts with dates: first sell-out, first top-grade match, hundredth show, first champion you built from nothing. Shown on Career, with a pop-up when one lands. *S. (TASKS 7)*
 - [ ] **92. Legacy.** When you are fired or step down: a timeline of the career, the stars you made, your best matches, and a score to beat next time. *M.*
-- [ ] **93. Owner mode.** As owner, hire a booker for a second brand, set their goals, and sell or buy shares. *L. (ask Ryan)*
+- [x] **93. Owner mode.** As owner, hire a booker for a second brand, set their goals, and sell or buy shares. *L. (ask Ryan)*
 - [ ] **94. The assistant.** Train an assistant booker who learns your habits and can book the small shows your way. This is what fast mode uses. *M. (TASKS 3, fast mode)*
 
 ## J. Modes and tools
@@ -144,5 +144,5 @@ Situations modelled on famous nights, each under an original name with invented 
 - [ ] **96. Difficulty by part.** Separate settings for money, injuries, egos and rival aggression, chosen at the start and shown on Career. *S. Builds on `E.DIFF`.*
 - [ ] **97. One save, no going back.** A mode with a single save written every week. Marked on Career. *S.*
 - [ ] **98. The record book.** Sortable records: most reigns, longest reign, best average match grade, biggest gates, longest winning run. Every name opens its pop-up. *M.*
-- [ ] **99. The universe editor.** Edit promotions and wrestlers inside the game, with problems explained in plain words. *L. Builds on `E.validateUniverse`. (ask Ryan about scope)*
+- [x] **99. The universe editor.** Edit promotions and wrestlers inside the game, with problems explained in plain words. *L. Builds on `E.validateUniverse`. (ask Ryan about scope)*
 - [ ] **100. The weekly challenge.** A dated seed: the same world for everyone, twelve weeks, one score. No server. The score is a short code the player can copy and share. *M.*
