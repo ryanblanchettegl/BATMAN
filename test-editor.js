@@ -86,6 +86,125 @@ ok('a copy has its own name and id', C.manifest.name === 'My copy' && C.manifest
 ok('a copy of the built-in world passes the check', E.edCheck(C).ok);
 C.workers[0].ring_name = 'Changed'; ok('changing the copy leaves the original alone', builtIn.workers[0].ring_name !== 'Changed');
 
+/* 7. round two: lists, copies, several at once, undo, managers, crew, brands, lists, health, quick starts */
+const R = E.edNew('Round Two', 'Tester');
+let ra = E.edAddPromo(R, { name: 'RRA', full_name: 'Round A', popularity: 60, model: 'classic' });
+let rb = E.edAddPromo(R, { name: 'RRB', full_name: 'Round B', popularity: 30, model: 'underdog' });
+E.edFill(R, ra.id, 16, 21); E.edFill(R, rb.id, 10, 22); E.edMakeFree(R, 7, 23);
+const L1 = E.edList(R, {});
+ok('the list counts match', L1.total === R.workers.length && L1.matching === R.workers.length && L1.shown === Math.min(60, R.workers.length));
+ok('the default order is overness, highest first', L1.items.every((w, i) => i === 0 || L1.items[i - 1].ratings.overness >= w.ratings.overness));
+const L2 = E.edList(R, { fp: 'FA', sort: 'name' });
+ok('the free agent filter shows only unsigned people', L2.matching === 7 && L2.items.every(w => !E.edHome(R, w.id)), L2.matching + ' shown');
+ok('name order is A to Z', L2.items.every((w, i) => i === 0 || L2.items[i - 1].ring_name.toLowerCase() <= w.ring_name.toLowerCase()));
+const L3 = E.edList(R, { fp: ra.id, sort: 'age', limit: 5 });
+ok('age order is youngest first and the limit holds', L3.items.length === 5 && L3.shown === 5 && L3.matching === 16 && L3.items.every((w, i) => i === 0 || L3.items[i - 1].age <= w.age));
+ok('a search narrows the count', E.edList(R, { q: R.workers[0].ring_name.slice(0, 4) }).matching >= 1);
+ok('company order puts free agents last', (() => { const l = E.edList(R, { sort: 'company', limit: 200 }).items; return !E.edHome(R, l[l.length - 1].id); })());
+const fr = E.edMakeFree(R, 3, 5);
+ok('Make unknowns makes unsigned people with seven ratings', fr.length === 3 && fr.every(w => !E.edHome(R, w.id) && ['overness', 'brawling', 'technical', 'aerial', 'stamina', 'promo_skill', 'charisma'].every(k => typeof w.ratings[k] === 'number')), fr.map(w => w.ring_name).join(', '));
+const rn1 = E.edRandomName(R, 'M', 4), rn2 = E.edRandomName(R, 'M', 4);
+ok('a random name is a full name, the same for the same seed, and not taken', rn1 === rn2 && /\S+ \S+/.test(rn1) && !R.workers.some(w => w.ring_name === rn1), rn1);
+const rw = R.workers.find(w => E.edHome(R, w.id) === ra.id);
+const bef = JSON.stringify(rw.ratings);
+E.edSetRatings(R, rw.id, 'main_eventer', 3); const ovMain = rw.ratings.overness;
+E.edSetRatings(R, rw.id, 'jobber', 3); const ovJob = rw.ratings.overness;
+ok('"Set ratings for" main eventer is higher than opener', ovMain > ovJob + 15 && JSON.stringify(rw.ratings) !== bef, ovMain + ' against ' + ovJob);
+ok('setting ratings changes the push to match', E.edContract(R, rw.id).push_level === 'jobber');
+
+/* copies */
+const wn = R.workers.length; let w0 = R.workers.find(w => E.edHome(R, w.id) === ra.id);
+const wc = E.edDuplicate(R, 'workers', w0.id);
+ok('a copied wrestler has a new name and id and the same contract company', wc && wc.id !== w0.id && wc.ring_name !== w0.ring_name && E.edHome(R, wc.id) === ra.id && R.workers.length === wn + 1, wc && wc.ring_name);
+const bl = R.titles.find(t => t.promotion_id === ra.id); bl.holder_ids = [w0.id];
+const bc = E.edDuplicate(R, 'titles', bl.id);
+ok('a copied belt has no champion and its own id', bc && bc.holder_ids.length === 0 && bc.id !== bl.id && bc.name !== bl.name && bl.holder_ids.length === 1);
+const tm = E.edAddTeam(R, ra.id, 'tag'); tm.member_ids = [w0.id, R.workers[3].id];
+const tc = E.edDuplicate(R, 'teams', tm.id);
+ok('a copied team has no members', tc && tc.member_ids.length === 0 && tc.id !== tm.id && tm.member_ids.length === 2);
+const pc = E.edDuplicate(R, 'promotions', ra.id);
+ok('a copied company keeps its shows and belts, with no champions, and gets a roster of new unknowns', pc && pc.id !== ra.id && R.shows.filter(s => s.promotion_id === pc.id).length === R.shows.filter(s => s.promotion_id === ra.id).length && R.titles.filter(t => t.promotion_id === pc.id).every(t => !t.holder_ids.length) && R.contracts.filter(c => c.promotion_id === pc.id).length >= 8 && !R.contracts.some(c => c.promotion_id === pc.id && R.contracts.some(d => d !== c && d.worker_id === c.worker_id)), pc && pc.name + ' / ' + pc.id);
+ok('a copied company name fits the short-name limit', pc.name.length <= 12);
+ok('ids stay unique after copies', ['workers', 'titles', 'teams', 'shows', 'promotions'].every(t => new Set(R[t].map(r => r.id)).size === R[t].length));
+ok('the world with copies passes the check', E.edCheck(R).ok, E.edCheck(R).lines.filter(l => l.lvl === 'error').map(l => l.msg).join(' | '));
+ok('copying something that is not there gives nothing', E.edDuplicate(R, 'workers', 'nobody') === null);
+
+/* several at once */
+const pickIds = R.workers.filter(w => !E.edHome(R, w.id)).slice(0, 4).map(w => w.id);
+ok('sign all puts everyone on the roster', E.edSignMany(R, pickIds, rb.id, 'midcarder') === 4 && pickIds.every(id => E.edHome(R, id) === rb.id));
+ok('release all makes them free agents', E.edSignMany(R, pickIds, null) === 4 && pickIds.every(id => !E.edHome(R, id)));
+/* undo */
+const snap = E.edSnapshot(R), nB = R.workers.length, hid = R.titles.find(t => t.promotion_id === ra.id).holder_ids.slice();
+ok('delete all removes them', E.edRemoveMany(R, pickIds) === 4 && R.workers.length === nB - 4);
+const same = R; E.edRestore(R, snap); w0 = R.workers.find(w => w.id === w0.id); ra = R.promotions.find(p => p.id === ra.id); rb = R.promotions.find(p => p.id === rb.id);
+ok('undo puts everything back in the same object', same === R && R.workers.length === nB && pickIds.every(id => R.workers.some(w => w.id === id)) && JSON.stringify(R.titles.find(t => t.promotion_id === ra.id).holder_ids) === JSON.stringify(hid));
+const snap2 = E.edSnapshot(R); E.edRemove(R, 'promotions', rb.id); E.edRestore(R, snap2); w0 = R.workers.find(w => w.id === w0.id); ra = R.promotions.find(p => p.id === ra.id); rb = R.promotions.find(p => p.id === rb.id);
+ok('undo brings a deleted company back with its people and contracts', R.promotions.some(p => p.id === rb.id) && R.contracts.some(c => c.promotion_id === rb.id) && E.edCheck(R).ok);
+
+/* managers */
+const mg = R.workers.find(w => !E.edHome(R, w.id)); E.edSetRoles(R, mg.id, ['manager']);
+ok('the Manager job makes someone pickable', E.edManagers(R).some(m => m.id === mg.id));
+ok('a wrestler can be managed', E.edSetManager(R, w0.id, mg.id) && w0.manager_id === mg.id && E.edClients(R, mg.id).length === 1);
+ok('nobody manages themselves', !E.edSetManager(R, mg.id, mg.id));
+ok('the world with a manager passes the check', E.edCheck(R).ok, E.edCheck(R).lines.filter(l => l.lvl === 'error').map(l => l.msg).join(' | '));
+E.edSetRoles(R, mg.id, ['wrestler']);
+ok('taking the Manager job away unties the clients', !w0.manager_id && E.edManagers(R).length === 0);
+E.edSetManager(R, w0.id, null); ok('untying clears the field', w0.manager_id === undefined);
+
+/* announcers and staff */
+E.edSetCrew(ra, { pbp: ' Alfred North ', col: 'Bea Green', agent: 'Sam Road', writer: 'Pat Pen' });
+ok('crew is written', ra.announcers[0] === 'Alfred North' && ra.announcers[1] === 'Bea Green' && ra.staff.road_agent === 'Sam Road' && ra.staff.head_writer === 'Pat Pen');
+ok('the world with a crew passes the check', E.edCheck(R).ok);
+E.edSetCrew(ra, { pbp: '', col: '', agent: '', writer: '' });
+ok('clearing the crew removes the fields', ra.announcers === undefined && ra.staff === undefined);
+/* the game uses the crew */
+E.edSetCrew(ra, { pbp: 'Alfred North', col: 'Bea Green', agent: 'Sam Road', writer: 'Pat Pen' });
+E.useUniverse(R); const SG = E.newGame(ra.id, 5, { name: 'X' });
+ok('the game shows the announcers and staff the editor set', JSON.stringify(SG).indexOf('Alfred North') >= 0 && JSON.stringify(SG).indexOf('Sam Road') >= 0);
+
+/* brands */
+const b1 = E.edAddBrand(R, ra.id, 'Monday Brand'), b2 = E.edAddBrand(R, ra.id, 'Development', true);
+ok('two brands are added with ids', b1 && b2 && b1.id !== b2.id && b2.dev === true && E.edBrands(ra).length === 2);
+const sh = R.shows.find(s => s.promotion_id === ra.id), tl = R.titles.find(t => t.promotion_id === ra.id), ct = R.contracts.find(c => c.promotion_id === ra.id);
+sh.brand = b1.id; tl.brand = b1.id; ct.brand = b1.id;
+ok('a world with two brands passes the check', E.edCheck(R).ok, E.edCheck(R).lines.filter(l => l.lvl === 'error').map(l => l.msg).join(' | '));
+E.edRenameBrand(R, ra.id, b1.id, 'Monday Night'); ok('a brand can be renamed', E.edBrands(ra)[0].name === 'Monday Night');
+E.edRemoveBrand(R, ra.id, b2.id);
+ok('with one brand left the split is dropped and nothing points at it', ra.brands === undefined && !sh.brand && !tl.brand && !ct.brand);
+const b3 = E.edAddBrand(R, ra.id, 'One'), b4 = E.edAddBrand(R, ra.id, 'Two'); sh.brand = b3.id; ct.brand = b4.id;
+E.edRemoveBrand(R, ra.id, b3.id);
+ok('removing one of two brands clears the other too', !sh.brand && !ct.brand && !E.edBrands(ra).length);
+
+/* lists */
+ok('a list is trimmed, deduplicated and capped', JSON.stringify(E.edParseList(' a \n\nA\nb\r\nc ')) === '["a","b","c"]' && E.edParseList(new Array(60).fill(0).map((x, i) => 'n' + i).join('\n')).length === 40);
+E.edSetList(R, 'sponsors', 'Alpha Soap\nBeta Boots'); E.edSetList(R, 'columnists', 'A. Pen');
+ok('sponsors and columnists are stored', JSON.stringify(R.sponsors) === '["Alpha Soap","Beta Boots"]' && R.columnists.length === 1);
+E.edSetList(R, 'first_m', 'a1\na2\na3'); ok('names lists are stored under names', R.names.first_m.length === 3);
+ok('the world with short name lists still passes the check', E.edCheck(R).ok, E.edCheck(R).lines.filter(l => l.lvl === 'error').map(l => l.msg).join(' | '));
+E.edSetList(R, 'first_m', ''); E.edSetList(R, 'sponsors', ''); E.edSetList(R, 'columnists', '');
+ok('emptying a list removes the field', R.names === undefined && R.sponsors === undefined && R.columnists === undefined);
+const NM = E.ED_NEED; ok('the minimums match the game', NM.first_m === 8 && NM.first_f === 6 && NM.last === 8);
+E.edSetList(R, 'first_m', 'Aa\nBb\nCc\nDd\nEe\nFf\nGg\nHh'); E.edSetList(R, 'first_f', 'Ii\nJj\nKk\nLl\nMm\nNn'); E.edSetList(R, 'last', 'Oo\nPp\nQq\nRr\nSs\nTt\nUu\nVv');
+ok('lists that reach the minimums name the new people', E.edRandomName(R, 'M', 1).split(' ')[0].length === 2 && E.edRandomName(R, 'F', 1).split(' ')[1].length === 2);
+E.edSetList(R, 'first_m', ''); E.edSetList(R, 'first_f', ''); E.edSetList(R, 'last', '');
+
+/* health */
+const hh = E.edHealth(R, ra.id);
+ok('the health line says something for each company', hh.lines.length >= 1 && hh.lines.every(l => l.lvl && l.text));
+const weakW = E.edNew('Weak'); const wp = E.edAddPromo(weakW, { name: 'WK', popularity: 90 }); E.edFill(weakW, wp.id, 10, 3);
+weakW.workers.forEach(w => { w.ratings.overness = 20; });
+ok('a big company with a weak top is warned', !E.edHealth(weakW, wp.id).ok && /weak/i.test(E.edHealth(weakW, wp.id).lines[0].text));
+
+/* quick starts */
+['territory', 'nine'].forEach(kind => {
+  const Q = E.edQuick(kind, 'Quick ' + kind, 9), c = E.edCheck(Q);
+  ok('the ' + kind + ' quick start passes the check', c.ok && c.warnings === 0, c.lines.map(l => l.msg).join(' | '));
+  ok('the ' + kind + ' quick start has the right number of companies', Q.promotions.length === (kind === 'nine' ? 9 : 2));
+  ok('the ' + kind + ' quick start is the same for the same seed', JSON.stringify(Q) === JSON.stringify(E.edQuick(kind, 'Quick ' + kind, 9)));
+  Q.promotions.forEach(p => { const r = play(Q, p.id, 16); ok('sixteen weeks as ' + p.id + ' in the ' + kind + ' quick start', r.errs === 0 && !r.nan && r.shows > 0, 'errs ' + r.errs + ', shows ' + r.shows); });
+});
+ok('the territory has one big and one small company', (() => { const Q = E.edQuick('territory', 'Quick two', 9); return Math.abs(Q.promotions[0].popularity - Q.promotions[1].popularity) >= 20; })());
+
 E.useUniverse(builtIn);
 if (fails.length) { console.log('FAILED: ' + fails.length); process.exit(1); }
 console.log('test-editor: all passed');
