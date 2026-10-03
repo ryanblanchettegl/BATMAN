@@ -4,7 +4,7 @@ function phaseOf(w){return w.age<w.pk[0]?0:(w.age<=w.pk[1]?1:(w.age<w.cl?2:3));}
 var PHASE=['Still developing','In their prime','Past their peak','In steep decline'];
 function retire(S,w,why){
   if(w.promo!=='FA'){var P=S.promos[w.promo];leaveCompany(S,w,'retired');if(w.ovr>=50||w.promo===S.player)news(S,'contract',w.name+' ('+P.name+') has retired at '+w.age+(why?': '+why:'')+'.');}
-  mile(S,w,'retire','Retired at '+w.age);w.promo='FA';w.brand=null;w.rt=S.week;w.camp=false;w.retiring=null;
+  mile(S,w,'retire','Retired at '+w.age);w.rtp=w.promo!=='FA'?w.promo:null;w.promo='FA';w.brand=null;w.rt=S.week;w.camp=false;w.retiring=null;
 }
 function birthday(S,w){
   w.age++;var act=w.ya||0;w.ya=0;

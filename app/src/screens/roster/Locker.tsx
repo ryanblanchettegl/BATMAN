@@ -33,6 +33,9 @@ export function Locker() {
               <span>{ids.length ? ids.map(id => <><Who id={id} /> </>) : <span class="muted">Nobody</span>}</span></li>;
           })}</ul>
         </Panel>
+        {E.staff(S).length ? <Panel title="Second careers">
+          <ul class="list">{E.staff(S).map((s: any) => <li class="col"><span><Who id={s.id} /> <b>{s.role}</b><br /><span class="muted">{s.d}</span></span></li>)}</ul>
+        </Panel> : null}
       </div>
       <div class="stack">
         <Panel title="Under strain">
