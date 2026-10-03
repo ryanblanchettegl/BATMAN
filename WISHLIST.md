@@ -140,7 +140,7 @@ Situations modelled on famous nights, each under an original name with invented 
 
 ## J. Modes and tools
 
-- [ ] **95. Scenarios.** Start with a problem and a deadline: save a company in 26 weeks, make a world champion from the bottom of the roster, win a ratings war. Each ends with a result screen. *M.*
+- [x] **95. Scenarios.** Start with a problem and a deadline: save a company in 26 weeks, make a world champion from the bottom of the roster, win a ratings war. Each ends with a result screen. *M.*
 - [x] **96. Difficulty by part.** Separate settings for money, injuries, egos and rival aggression, chosen at the start and shown on Career. *S. Builds on `E.DIFF`.*
 - [x] **97. One save, no going back.** A mode with a single save written every week. Marked on Career. *S.*
 - [x] **98. The record book.** Sortable records: most reigns, longest reign, best average match grade, biggest gates, longest winning run. Every name opens its pop-up. *M.*

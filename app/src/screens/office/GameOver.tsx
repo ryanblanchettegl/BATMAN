@@ -43,8 +43,25 @@ function ChallengeDone() {
   </>;
 }
 
+/** A scenario is over: did you do it? */
+function ScenarioDone() {
+  const S = G.S, C = S.scn, R = C.res || { ok: false, text: '', figures: [] }, P = me();
+  const fresh = () => { clearToasts(); abandonGame(); };
+  return <>
+    <Head eyebrow={'Scenario: ' + (E.SCENARIOS.filter((s: any) => s.id === C.id)[0] || { n: '' }).n} title={R.ok ? 'You did it' : 'Not this time'} />
+    <Panel>
+      <p class={R.ok ? 'good' : 'bad'}>{R.text}</p>
+      <ul class="list mt2">{(R.figures || []).map((f: string) => <li><span>{f}</span></li>)}</ul>
+      <p class="muted mt2">{C.weeks} weeks with {P.name}.</p>
+      <div class="row mt3"><Btn kind="go" t="newgame-yes" onClick={fresh}>Back to the menu</Btn></div>
+    </Panel>
+    <LegacyPanel />
+  </>;
+}
+
 export function GameOver() {
   if (G.S.over.why === 'challenge') return <ChallengeDone />;
+  if (G.S.over.why === 'scenario') return <ScenarioDone />;
   const S = G.S, P = me(), fired = S.over.why === 'fired', st = S.stats;
   // achievement pop-ups belong to the game that just ended
   const jt = slice<{ t: string[] }>('jobterms', () => ({ t: [] })), ck = E.jobTermsCheck(S, jt.t);

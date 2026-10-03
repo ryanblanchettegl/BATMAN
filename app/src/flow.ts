@@ -29,6 +29,13 @@ export function startChallenge() {
   if (!S) return;
   G.S = S; closeModal(); resetUi(); save(); redraw(); window.scrollTo(0, 0);
 }
+/** A scenario: a problem and a deadline in a fixed company. */
+export function startScenario(id: string) {
+  setUniverse('public_domain');
+  const S = E.scenarioStart(id);
+  if (!S) return;
+  G.S = S; closeModal(); resetUi(); save(); redraw(); window.scrollTo(0, 0);
+}
 /** Fired bookers take a job elsewhere and keep their level and skills. */
 export function takeJob(pid: string, terms?: string[]) {
   const S = G.S, bk = S.booker; G.S = E.newGame(pid, seed(), { name: bk.name, booker: bk, diff: S.diff, iron: S.iron, dpart: S.dpart });

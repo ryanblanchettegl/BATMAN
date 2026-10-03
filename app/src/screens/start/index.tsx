@@ -5,7 +5,7 @@ import { E } from '../../engine';
 import { G, ui, pref, Modal, VER, UNIS, saveUnis, savePrefs, setUniverse, builtInUniverse, loadSave, cash, view, redraw, openModal, plural, slice } from '../../store';
 import { HOT, pageName } from '../../nav';
 import { autoScreen, skipBoot, onKey } from '../../input';
-import { startGame, continueGame, loadSaveText, startChallenge, isoWeekId } from '../../flow';
+import { startGame, continueGame, loadSaveText, startChallenge, startScenario, isoWeekId } from '../../flow';
 import { Btn, Panel, Head, Sel, Field, TextBox, Window, Data, dataAttrs } from '../../kit';
 import { MusicBtn } from '../../shell/Frame';
 import { ModelCard } from '../../shared/model';
@@ -68,11 +68,21 @@ function ChallengeBody() {
   </>;
 }
 
+/* ---------- scenarios: a problem and a deadline ---------- */
+function ScenarioBody() {
+  return <>
+    <p class="muted">Each scenario drops you into a company with a problem and a deadline. When the time is up you get a result.</p>
+    <ul class="list mt2">{E.SCENARIOS.map((s: any) => <li class="col"><span><b>{s.n}</b> <span class="muted">{'·'} {s.weeks} weeks</span><br /><span class="muted">{s.d}</span></span>
+      <span class="row opts"><Btn kind="sm" t="scn-play" d={{ v: s.id }} onClick={() => startScenario(s.id)}>Play</Btn></span></li>)}</ul>
+  </>;
+}
+
 /* ---------- title card ---------- */
 export function Title() {
   const sv = loadSave(), items: MenuItem[] = [];
   if (sv) items.push({ t: 'continue', pick: continueGame, label: <><span class="ab">CONTINUE</span><span class="st">{sv.booker.name} at {sv.promos[sv.player].name} {'·'} week {sv.week}</span></> });
   items.push({ t: 'scr', d: { v: 'select' }, pick: () => toScreen('select'), label: <><span class="ab">NEW GAME</span><span class="st">Pick a promotion or create your own</span></> });
+  items.push({ t: 'scenarios', pick: () => openModal({ kind: 'info', title: 'Scenarios', body: () => <ScenarioBody /> }), label: <><span class="ab">SCENARIOS</span><span class="st">A problem, a deadline, a result</span></> });
   items.push({ t: 'challenge', pick: () => openModal({ kind: 'info', title: 'The weekly challenge', body: () => <ChallengeBody /> }), label: <><span class="ab">WEEKLY CHALLENGE</span><span class="st">Twelve weeks, the same world for everyone, one score</span></> });
   items.push({ t: 'workshop', pick: () => openModal({ kind: 'info', title: 'Workshop', body: () => <><p><b>The Workshop is not open yet.</b></p><p class="muted mt1">Coming in a later version.</p></> }), label: <><span class="ab">WORKSHOP</span><span class="st">Coming soon</span></> });
   items.push({ t: 'options', pick: () => openModal({ kind: 'options' }), label: <><span class="ab">OPTIONS</span><span class="st">Sound, text size, screen</span></> });
