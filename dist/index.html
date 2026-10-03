@@ -6187,9 +6187,9 @@ WEEKX.push(function(S){
 /* each region has a taste, and the wrong product plays flat there */
 function tasteVal(taste,ws,stips){
   if(!ws.length)return 0;
-  if(taste==='brawl')return (avg(ws.map(function(w){return w.brawl;}))-55)/20+(stips.filter(function(s){return s==='hardcore'||s==='cage'||s==='tables';}).length?0.3:0);
-  if(taste==='work')return (avg(ws.map(workRate))-60)/20;
-  return (avg(ws.map(function(w){return w.sq;}))-55)/20+(stips.filter(function(s){return s==='ladder'||s==='mask'||s==='hair';}).length?0.3:0);
+  if(taste==='brawl')return (avg(ws.map(function(w){return w.brawl;}))-74)/10+(stips.filter(function(s){return s==='hardcore'||s==='cage'||s==='tables';}).length?0.3:0);
+  if(taste==='work')return (avg(ws.map(workRate))-74)/10;
+  return (avg(ws.map(function(w){return w.sq;}))-76)/10+(stips.filter(function(s){return s==='ladder'||s==='mask'||s==='hair';}).length?0.3:0);
 }
 /* the advertised card meets the region's taste: a smaller or bigger house */
 function tasteFit(S,P,card){
