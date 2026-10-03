@@ -1,7 +1,7 @@
 /* The Office pop-ups: the week-closed summary and the clock detail. Both are drawn from the live game state. */
 import { E } from '../../engine';
 import { G, me, Modal, full } from '../../store';
-import { Window, ColChart, Dial, Empty, Txt } from '../../kit';
+import { Window, ColChart, Dial, Empty, Txt, Name } from '../../kit';
 
 /** Opened by flow.endWeek() once the engine has closed the week: the money, the last ten weeks, the news, the new date. */
 export function WeekClosed(p: { m: Modal }) {
@@ -11,6 +11,11 @@ export function WeekClosed(p: { m: Modal }) {
       : <p>Cash in the bank: <b class="num">{full(P.cash)}</b>.</p>}
     {H.length > 0 && <ColChart vals={H.map(x => x.net)} labels={H.map(x => x.w)} title={'Weekly net, last ' + H.length + ' weeks'} />}
     {nw.length > 0 && <><p class="eyebrow mt1">This week</p><ul class="list">{nw.map(x => <li><span><Txt>{x.t}</Txt></span></li>)}</ul></>}
+    {p.m.did && p.m.did.length > 0 && <><p class="eyebrow mt1">Your action points</p><ul class="list">{p.m.did.map((l: any) => <li><span><b>{l.place}</b> {'·'} {l.act}: <span class={l.ok ? 'good' : 'bad'}><Txt>{l.msg}</Txt></span></span></li>)}</ul></>}
+    {(p.m.up || p.m.down) && <><p class="eyebrow mt1">Movers on your roster</p><ul class="list">
+      {p.m.up && S.w[p.m.up.id] ? <li><span>Biggest riser: <Name w={S.w[p.m.up.id]} /></span><span class="good num">+{p.m.up.d.toFixed(1)}</span></li> : null}
+      {p.m.down && S.w[p.m.down.id] ? <li><span>Biggest faller: <Name w={S.w[p.m.down.id]} /></span><span class="bad num">{p.m.down.d.toFixed(1)}</span></li> : null}
+    </ul></>}
     <p class="mt2">It is now <b>{E.cal(S.week).label}</b>.</p>
   </Window>;
 }

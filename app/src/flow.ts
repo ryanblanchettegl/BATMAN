@@ -25,8 +25,13 @@ export function abandonGame() { clearSave(); G.S = null; resetUi({ scr: 'select'
 export function endWeek() {
   const S = G.S; if (S.inbox.some((e: any) => !e.done) || S.qi < S.queue.length) return;
   ui.flash = null;
+  // before the week turns: what the booker did with action points, and everyone's overness, to find the movers
+  const did = (E.backstage(S).log || []).map((l: any) => ({ place: l.place, act: l.act, ok: l.ok, msg: l.msg })), before: Record<number, number> = {};
+  S.w.forEach((w: any) => { if (w.promo === S.player && !w.nw) before[w.id] = w.ovr; });
   E.endWeek(S);
+  const moves = S.w.filter((w: any) => before[w.id] != null && w.promo === S.player).map((w: any) => ({ id: w.id, d: w.ovr - before[w.id] }));
+  const up = moves.filter((m: any) => m.d >= 0.3).sort((a: any, b: any) => b.d - a.d)[0] || null, down = moves.filter((m: any) => m.d <= -0.3).sort((a: any, b: any) => a.d - b.d)[0] || null;
   const b = book(); b.report = null; b.live = null; b.edit = -1;
   save(); go('desk');
-  if (S.fin && !S.over) openModal({ kind: 'weekclosed' });
+  if (S.fin && !S.over) openModal({ kind: 'weekclosed', did, up, down });
 }
