@@ -71,7 +71,7 @@ Small jobs, each one commit. None of them needs a decision from Ryan. Read `CLAU
 - [x] **51.** Week-closed window: list what you did with your action points and the biggest riser and faller on your roster.
 - [x] **52.** The attempt line (`CheckLine` in `app/src/kit/index.tsx`): add a word for the chance (long shot, even, likely, near certain) and colour it.
 - [x] **53.** Results of backstage actions and of lobbying the owner should open a small pop-up as well as the line above the page. The design goal is that every action shows its reaction at once.
-- [ ] **54.** Check the contrast of muted text (`--dcyan` on blue). Where it carries information the player needs, use a brighter colour from the palette.
+- [x] **54.** Check the contrast of muted text (`--dcyan` on blue). Where it carries information the player needs, use a brighter colour from the palette.
 - [ ] **55.** Every empty state should say what to do next ("No sponsors signed. New offers arrive on Manage, under Deals, every four weeks.").
 - [ ] **56.** Money is written three ways (`$1.2M`, `$1,200,000`, `1200k`). Pick short form for tables and full form for single figures, and apply it everywhere.
 

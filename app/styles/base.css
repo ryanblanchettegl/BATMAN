@@ -171,7 +171,7 @@ tbody tr.on input,tbody tr.on select{color:var(--yellow)}
 .win .wt button:focus-visible{outline:2px solid var(--k)}
 .win .wb{padding:8px 1.5ch;overflow:auto;min-height:0}
 .win .wf{display:flex;flex-wrap:wrap;gap:8px 1ch;align-items:center;padding:6px 1.5ch 10px}
-.win b{color:var(--k)} .win .muted{color:#004848} .win .good{color:#005500} .win .bad{color:var(--dred)} .win .eyebrow{color:var(--blue)}
+.win b{color:var(--k)} .win .muted{color:#003c3c} .win .good{color:#004400} .win .bad{color:#770000} .win .eyebrow{color:var(--blue)}
 .win .list li{border-bottom-color:var(--dgrey)}
 .win .meter.au{color:var(--blue)} .win .meter i{color:var(--dgrey)}
 .win textarea{background:var(--k);color:var(--grey);border:0;font:inherit;resize:vertical}
