@@ -27,7 +27,7 @@ Small jobs, each one commit. None of them needs a decision from Ryan. Read `CLAU
 
 ## B. Tests
 
-- [ ] **13.** `test-uni.js` should exit non-zero when any promotion reports `errs` above 0 or `NaN` above 0, or when the game ends before the last week for a reason other than being fired.
+- [x] **13.** `test-uni.js` should exit non-zero when any promotion reports `errs` above 0 or `NaN` above 0, or when the game ends before the last week for a reason other than being fired.
 - [ ] **14.** New `test-models.js`: play 60 weeks as each model and assert what makes it that model. Outlaw: at least 30% of matches carry a stipulation. Spectacle: four-way or six-man matches on most shows. Tradition: six-man matches on most shows. Joshi: the roster is all women at the end. Corporate: risk level never above Mainstream. Underdog: a wrestler released by a bigger company arrives with `chip` set.
 - [ ] **15.** New wording test: during a 60-week sim collect every news line, inbox text and result, report line and backstage message; fail on "dice", "2d6", "rolled" or "roll" followed by a number.
 - [ ] **16.** Unit-test the name linker (`Txt` in `app/src/kit/index.tsx`) through the browser: names with a full stop, a comma, an apostrophe; a short name inside a longer word must not link; a title name; a named tag team.
