@@ -41,6 +41,7 @@ function Angle(p: { s: any }) {
 }
 function MatchSeg(p: { s: any; no: number; main: boolean }) {
   const s = p.s, meta = [s.mt, s.mins + ' min']; if (s.stip) meta.push(s.stip);
+  if (s.ref) meta.push('Referee ' + s.ref);
   const score = (label: string, v: number, ov?: boolean) => <div class={ov ? 'ov' : undefined}><span>{label}</span><span class="num">{v}%</span></div>;
   return <div class={'seg' + (p.main ? ' me' : '')}>
     <div class="no" aria-hidden="true">{p.no}</div>

@@ -21,3 +21,19 @@ CRX.push(function(ctx){
 POST.push(function(ctx){if(ctx.S.cal||!ctx.stip||ctx.stip==='std')return;var L=stipUseList(ctx.P,ctx.stip);L.push(ctx.S.week);while(L.length&&ctx.S.week-L[0]>=52)L.shift();});
 /* for the booking screen: how worn is a stipulation for the player's company */
 E.stipFresh=function(S,stip){var n=stipWorn(S,S.promos[S.player],stip);return {worn:n,word:n>=12?'overused':(n>=5?'getting stale':'fresh')};};
+
+/* referees: four named officials with a skill. A sharp one lifts the main event; a weak one can miss a call, and it becomes a story */
+var REFEREES=[{n:'Inspector Bucket',sk:82},{n:'Sergeant Cuff',sk:70},{n:'Mr. Pickwick',sk:56},{n:'Dogberry',sk:32}];
+function refFor(ctx){var h=(ctx.S.week*7+(ctx.show.id||'x').length*3+(ctx.isMain?0:1+ctx.m.sides.length))%REFEREES.length;return REFEREES[h];}
+CRX.push(function(ctx){
+  var r=refFor(ctx);if(!ctx.isMain||r.sk<75)return null;
+  return {d:1.2,x:r.n+' is the referee for the main event, and nothing gets past them'};
+});
+POST.push(function(ctx){
+  if(ctx.S.cal)return;var r=refFor(ctx),seg=ctx.res.seg;seg.ref=r.n;
+  if(r.sk>=45||!chance(ctx.S,0.14))return;
+  var what=pick(ctx.S,['a clear pin','a low blow','a tag','a rope break','a foreign object']);
+  seg.ov=clamp(seg.ov-3,5,99);seg.notes.push(r.n+' missed '+what+'. The crowd is furious.');
+  if(ctx.feud)heatUp(ctx.S,ctx.feud,4,r.n+' missed '+what);
+  if(ctx.isPl)news(ctx.S,'story',r.n+' missed '+what+' at '+ctx.show.name+'. The talk is of nothing else.');
+});
