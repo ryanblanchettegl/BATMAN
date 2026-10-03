@@ -87,11 +87,21 @@ export function StablePanel() {
       <span><b>{s.name}</b><br />{s.m.map((id: number, i: number) => <>{i ? ', ' : ''}<Name w={S.w[id]} />{id === s.leader ? <span class="muted"> (leader)</span> : null}</>)}</span>
       <span class="row"><Meter v={Math.min(100, s.tension * 10)} kind="hot" /><span class="muted">tension</span></span>
     </li>)}</ul>
+
+    <p class="muted mt2">Stablemates run in for each other. Losses raise the tension, and at the top of the meter somebody gets thrown out.</p>
+  </Panel>;
+}
+
+/** Who does what in each stable, and how well it holds together. */
+export function StableRoles() {
+  const S = G.S, L = (S.stables || []).filter((s: any) => s.promo === S.player);
+  if (!L.length) return null;
+  return <Panel title="Stable roles">
     {L.map((s: any) => <>
-      <p class="eyebrow mt2">{s.name} {'·'} unity {E.stableUnity(S, s)}</p>
+      <p class="eyebrow">{s.name} {'·'} unity {E.stableUnity(S, s)}</p>
       <ul class="list">{E.stableRoles(S, s).map((r: any) => <li class="col"><span><Name w={r.w} /> <span class={r.role ? 'muted' : 'bad'}>{'·'} {r.name}</span></span><span class="muted">{r.note}</span></li>)}</ul>
     </>)}
-    <p class="muted mt2">Stablemates run in for each other. Losses raise the tension, and at the top of the meter somebody gets thrown out.</p>
+    <p class="muted mt1">Every member needs a job. Somebody nobody needs, who is also losing, is the first to go.</p>
   </Panel>;
 }
 
@@ -145,7 +155,7 @@ export function Storylines() {
           : <Panel><Empty>No rivalries yet. Run a show or two: ambushes, challenges and betrayals start them.</Empty></Panel>}
         <Finished done={done} />
       </div>
-      <div class="stack"><LongPlan /><Rebel /><Streaks /><StablePanel /><Teams /></div>
+      <div class="stack"><LongPlan /><Rebel /><Streaks /><StablePanel /><StableRoles /><Teams /></div>
     </div>
   </>;
 }

@@ -320,7 +320,7 @@ function netPosts(S,P,show,rep){
   if(rep.sellout)add('under',1,'I was there. Could not hear myself think. Sold out and it sounded like it.');
   // five posts at most, one per poster, in a shuffled order
   for(var i=out.length-1;i>0;i--){var j=Math.floor(rnd(S)*(i+1)),t=out[i];out[i]=out[j];out[j]=t;}
-  return out.slice(0,5).map(function(p){return {u:fanFor(S,p.k,used),t:p.t,s:p.s};});
+  return boardTouch(S,ms,out.slice(0,5).map(function(p){return {u:fanFor(S,p.k,used),t:p.t,s:p.s};}),used);
 }
 NEWX.push(function(S){S.net={mood:60,threads:[]};});
 SHOWX.push(function(S,P,show,rep){
