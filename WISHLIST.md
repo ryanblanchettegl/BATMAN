@@ -119,7 +119,7 @@ Things that would make the game deeper. Each one adds a system, a choice or a me
 Situations modelled on famous nights, each under an original name with invented people. The player is put in the room and makes the call. Each is an inbox event with three or four choices, an attempt where luck matters, and results that last for months. *All (TASKS 8). Each is S once the first one has set the pattern.*
 
 - [x] **79. The champion who is leaving.** The contract ends the night of the big show and the champion will not lose in that city. Trust them, change the finish behind their back, strip the title, or pay to keep them.
-- [ ] **80. The belt on the wrong show.** A departing champion turns up on a rival's broadcast with your title. Sue, laugh it off, or crown a new champion in a hurry.
+- [x] **80. The belt on the wrong show.** A departing champion turns up on a rival's broadcast with your title. Sue, laugh it off, or crown a new champion in a hurry.
 - [ ] **81. The live microphone.** A wrestler with real grievances goes off script on live television. Cut the feed, let it run, or fine them after. Letting it run can make a star.
 - [ ] **82. The curtain call.** Friends on opposite sides of a story hug in the ring at a farewell. Someone has to be punished, and the only one you can afford to punish is your next big thing.
 - [ ] **83. The title handed over.** A group with clout wants the title passed to their friend without a real match. Agree and the title's prestige collapses. Refuse and they turn on you.
