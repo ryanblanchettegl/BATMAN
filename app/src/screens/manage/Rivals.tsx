@@ -14,11 +14,11 @@ function Arrangement() {
 }
 
 function RivalRow(p: { id: string; busy: boolean }) {
-  const S = G.S, id = p.id, R = S.promos[id], r = Math.round(R.rel || 0), why = E.xfCan(S, id);
+  const S = G.S, id = p.id, R = S.promos[id], r = Math.round(R.rel || 0), why = E.xfCan(S, id), tp = E.temperOf(S, id);
   const propose = (kind: string) => act(() => { const x = E.xfPropose(S, id, kind); say(x.msg, { err: !x.ok }); });
   const odds = (kind: string) => Math.round(E.xfOdds(S, id, kind).p * 100) + '%';
   return <li>
-    <span><b>{R.name}</b> <span class="muted">relations</span> <span class={r >= 20 ? 'good' : (r <= -20 ? 'bad' : 'muted')}>{(r > 0 ? '+' : '') + r}</span>
+    <span><b>{R.name}</b> {tp && tp.owner ? <span class="muted">({tp.owner}, {tp.n.toLowerCase()})</span> : null} <span class="muted">relations</span> <span class={r >= 20 ? 'good' : (r <= -20 ? 'bad' : 'muted')}>{(r > 0 ? '+' : '') + r}</span>
       {why && !p.busy ? <><br /><span class="muted">{why}</span></> : null}</span>
     <span class="row">
       <Btn kind="sm" t="xf" d={{ k: id, v: 'super' }} disabled={!!why} onClick={() => propose('super')}>Supershow {odds('super')}</Btn>
@@ -61,6 +61,7 @@ export function RivalsPanel() {
   return <Panel cls="mb3" title="Rival promotions">
     <Arrangement />
     <ul class="list">{others().map(id => <RivalRow id={id} busy={busy} />)}</ul>
+    <p class="muted mt2">{Object.keys(E.TEMPER).map((k: string) => E.TEMPER[k].n + ': ' + E.TEMPER[k].d).join(' ')}</p>
     <p class="muted mt2">A supershow lends you their stars for your next big event and lifts the gate. A war puts four of theirs on your shows for two months: win the series and your popularity rises at their expense. Signing a rival{'’'}s talent sours relations.</p>
     <TradeDesk />
   </Panel>;

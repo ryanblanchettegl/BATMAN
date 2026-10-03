@@ -3356,12 +3356,28 @@ function planPromo(S,P,show,ctx){
 function xf(S){return S.xf&&S.xf.until>=S.week?S.xf:null;}
 function isGuest(S,P,w,show){var x=S.xf;return !!x&&x.until>=S.week&&P.id===S.player&&w.promo===x.with&&x.guests.indexOf(w.id)>=0&&w.inj<=0&&(x.kind==='war'||!!show.big);}
 function relMod(RV){var r=RV.rel||0;return {n:'Relations with '+RV.name+(r>=20?' are good':(r<=-20?' are bad':' are neutral')),v:r>=50?2:(r>=20?1:(r<=-50?-2:(r<=-20?-1:0)))};}
+/* ---------- 59. Rival owners are people: raider, gentleman, hermit or showman decides how they trade, fight and talk ---------- */
+var TEMPER={
+  raider:{n:'Raider',d:'Takes what is not nailed down. Drives a hard bargain and raids contracts.',trade:-1,show:0,war:1},
+  gentleman:{n:'Gentleman',d:'Plays fair and keeps their word. Easy to deal with, rarely starts a fight.',trade:1,show:1,war:-1},
+  hermit:{n:'Hermit',d:'Keeps to themselves. Hard to reach, and it is hard to start a war with them.',trade:-1,show:-2,war:-2},
+  showman:{n:'Showman',d:'Lives for the spectacle. Loves a crossover show and a good fight.',trade:0,show:1,war:1}
+};
+function temperOf(P){
+  if(!P)return TEMPER.gentleman;if(P.temper&&TEMPER[P.temper])return TEMPER[P.temper];
+  var m=P.model,k=m==='outlaw'?'raider':(m==='tradition'?'gentleman':(m==='spectacle'?'showman':(m==='corporate'?'hermit':['raider','gentleman','hermit','showman'][hash('temper'+P.id)%4])));
+  return TEMPER[k];
+}
+function temperKey(P){var t=temperOf(P);return Object.keys(TEMPER).filter(function(k){return TEMPER[k]===t;})[0];}
+function temperMod(RV,kind){var t=temperOf(RV),v=t[kind]||0;return {n:RV.owner&&RV.owner.name?RV.owner.name+', a '+t.n.toLowerCase():'Their owner, a '+t.n.toLowerCase(),v:v};}
+E.TEMPER=TEMPER;
+E.temperOf=function(S,pid){var P=S.promos[pid];if(!P)return null;var t=temperOf(P);return {key:temperKey(P),n:t.n,d:t.d,owner:P.owner?P.owner.name:null};};
 function gapMod(P,RV){return {n:'Your popularity against theirs',v:P.image>=RV.image?1:(RV.image-P.image>30?-3:(RV.image-P.image>15?-2:-1))};}
 E.xfOdds=function(S,pid,kind){
   var P=S.promos[S.player],RV=S.promos[pid];if(!RV||pid===P.id)return null;
-  if(kind==='war'){var rm=relMod(RV);return mkCheck(7,[{n:rm.n,v:-rm.v},gapMod(P,RV)].concat(skillMods(S,'creative')));}
+  if(kind==='war'){var rm=relMod(RV);return mkCheck(7,[{n:rm.n,v:-rm.v},gapMod(P,RV),temperMod(RV,'war')].concat(skillMods(S,'creative')));}
   var xm=(modelOf(P).xf||0)+(modelOf(RV).xf||0);
-  return mkCheck(8,[relMod(RV),gapMod(P,RV)].concat(xm?[{n:'Crossover shows are the business of a lucha spectacle',v:Math.min(2,xm)}]:[]).concat(skillMods(S,'talk')));
+  return mkCheck(8,[relMod(RV),gapMod(P,RV),temperMod(RV,'show')].concat(xm?[{n:'Crossover shows are the business of a lucha spectacle',v:Math.min(2,xm)}]:[]).concat(skillMods(S,'talk')));
 };
 E.xfCan=function(S,pid){
   if(xf(S))return 'You already have an arrangement running with '+S.promos[S.xf.with].name+'.';
@@ -3437,7 +3453,7 @@ E.tradeList=function(S,pid){var RV=S.promos[pid];return rosterOf(S,pid).filter(f
 E.tradeOdds=function(S,mine,theirs){
   var a=S.w[mine],b=S.w[theirs];if(!a||!b||a.promo!==S.player||b.promo===S.player||b.promo==='FA')return null;
   var RV=S.promos[b.promo];
-  return mkCheck(8,[{n:'What they get against what they give up',v:clamp(Math.round((tradeVal(a)-tradeVal(b))/3),-5,4)},relMod(RV)].concat(skillMods(S,'talk')));
+  return mkCheck(8,[{n:'What they get against what they give up',v:clamp(Math.round((tradeVal(a)-tradeVal(b))/3),-5,4)},relMod(RV),temperMod(RV,'trade')].concat(skillMods(S,'talk')));
 };
 E.trade=function(S,mine,theirs){
   var a=S.w[mine],b=S.w[theirs],P=S.promos[S.player],ck=E.tradeOdds(S,mine,theirs);if(!ck)return {ok:false,msg:'Pick one of yours and one of theirs.'};
@@ -5546,6 +5562,18 @@ CRX.push(function(ctx){
   else if(t==='work'){var wk=avg(all.map(workRate));if(wk>=65){d=1.5;x='Fine wrestling for a region that counts the holds';}else if(wk<50){d=-1.5;x='Sloppy work in front of a region that notices';}}
   else{var sq=avg(all.map(function(w){return w.sq;}));if(sq>=65||ctx.stip==='ladder'){d=1.5;x='Spectacle, and this region came for spectacle';}else if(sq<=45){d=-1.5;x='Plain stuff for a region that wants spectacle';}}
   return d?{d:d,x:x}:null;
+});
+
+/* ---------- 59 (continued): what the rival owners say about you, by temperament ---------- */
+WEEKX.push(function(S){
+  if(S.cal||!chance(S,0.35))return;
+  var P=S.promos[S.player],pid=pick(S,S.order.filter(function(id){return id!==P.id;})),RV=S.promos[pid];if(!RV||!RV.owner)return;
+  var t=E.temperOf(S,pid),nm=RV.owner.name,up=P.image>RV.image,last=P.last&&P.last.rating>=75,L=null;
+  if(t.key==='raider')L=up?nm+' of '+RV.name+' said '+P.name+' has the best roster in the business and is "ripe for the picking".':(chance(S,0.5)?nm+' of '+RV.name+' told a reporter that '+P.name+' is "a company that has had its day".':null);
+  else if(t.key==='gentleman')L=(last||(RV.rel||0)>=20)?nm+' of '+RV.name+' tipped a hat to '+P.name+': "Good wrestling is good for all of us."':null;
+  else if(t.key==='showman')L=nm+' of '+RV.name+' dared '+P.name+' to put its best against '+RV.name+'’s on one stage, "and let the people decide".';
+  else L=chance(S,0.15)?nm+' of '+RV.name+' has still not said a word in public about anyone.':null;
+  if(L&&(S.week-(S.talkAt||-99)>=3)){S.talkAt=S.week;news(S,'world',L);}
 });
 
 /* ===== 90-api.js ===== */

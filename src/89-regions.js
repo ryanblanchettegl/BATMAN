@@ -57,3 +57,15 @@ CRX.push(function(ctx){
   else{var sq=avg(all.map(function(w){return w.sq;}));if(sq>=65||ctx.stip==='ladder'){d=1.5;x='Spectacle, and this region came for spectacle';}else if(sq<=45){d=-1.5;x='Plain stuff for a region that wants spectacle';}}
   return d?{d:d,x:x}:null;
 });
+
+/* ---------- 59 (continued): what the rival owners say about you, by temperament ---------- */
+WEEKX.push(function(S){
+  if(S.cal||!chance(S,0.35))return;
+  var P=S.promos[S.player],pid=pick(S,S.order.filter(function(id){return id!==P.id;})),RV=S.promos[pid];if(!RV||!RV.owner)return;
+  var t=E.temperOf(S,pid),nm=RV.owner.name,up=P.image>RV.image,last=P.last&&P.last.rating>=75,L=null;
+  if(t.key==='raider')L=up?nm+' of '+RV.name+' said '+P.name+' has the best roster in the business and is "ripe for the picking".':(chance(S,0.5)?nm+' of '+RV.name+' told a reporter that '+P.name+' is "a company that has had its day".':null);
+  else if(t.key==='gentleman')L=(last||(RV.rel||0)>=20)?nm+' of '+RV.name+' tipped a hat to '+P.name+': "Good wrestling is good for all of us."':null;
+  else if(t.key==='showman')L=nm+' of '+RV.name+' dared '+P.name+' to put its best against '+RV.name+'’s on one stage, "and let the people decide".';
+  else L=chance(S,0.15)?nm+' of '+RV.name+' has still not said a word in public about anyone.':null;
+  if(L&&(S.week-(S.talkAt||-99)>=3)){S.talkAt=S.week;news(S,'world',L);}
+});
