@@ -48,7 +48,7 @@ Feature list items 10 and 11. Code: `app/src/shared/cards.tsx`, `Name`, `TitleNa
 - [x] `app/tests/cards.js`, `office.js`, `roster.js`, `stories.js` pass.
 - [x] Run `app/tests/booking.js`, `start.js`, `company.js` and `journey.js` on this build and fix what they find. All pass. One TV check in `company.js` was too strict: after scrapping a house rule the only live controls left are the page tabs, so the highlight goes there.
 - [x] Team **record** on the tag team card (wins and losses are now stored on the team; older saves start at 0 and 0).
-- [ ] Still not built: wrestler **goals** on the card (needs task 10's career goals) and names in the live broadcast (typed out letter by letter, so not linked).
+- [ ] Still not built: names in the live broadcast (typed out letter by letter, so not linked). Wrestler goals on the card are done (wish 1).
 
 ### 2. Storylines from wrestling history
 The player spends booking power to start an epic storyline; smaller ones can start by themselves or be offered by the writer.

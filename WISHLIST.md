@@ -17,7 +17,7 @@ Things that would make the game deeper. Each one adds a system, a choice or a me
 
 ## A. Wrestlers as people
 
-- [ ] **1. Career goals.** Each wrestler has one or two goals: hold the top title, main-event the flagship, win a tournament, team with a hero, reach a wage. The pop-up card shows progress. Meeting a goal lifts morale and loyalty. A goal blocked for a year starts a clock. *M. Builds on `src/75-people.js` and the cards. (TASKS 10)*
+- [x] **1. Career goals.** Each wrestler has one or two goals: hold the top title, main-event the flagship, win a tournament, team with a hero, reach a wage. The pop-up card shows progress. Meeting a goal lifts morale and loyalty. A goal blocked for a year starts a clock. *M. Builds on `src/75-people.js` and the cards. (TASKS 10)*
 - [x] **2. Careers have a shape.** High flyers peak young and fade fast. Brawlers and talkers last. The card says "rising", "in his prime", "past her best" in words, and the yearly change is reported once a year in the inbox. *M. Check the yearly aging code in `src/75-people.js` first.*
 - [x] **3. Wear and tear.** A body score that hard matches and stipulations wear down and rest restores. A worn body works worse and gets hurt more. The player sees a word, not a number: fresh, sore, banged up, running on fumes. *M. Builds on `E.rest`, `E.workHurt`, `E.medInfo`.*
 - [x] **4. Finishers.** Every wrestler has a named finishing move, built from word lists by style. A finisher nobody kicks out of lifts the crowd. Booking kick-outs spends that protection. *M. Hooks: `MQX`, `CRX`.*
