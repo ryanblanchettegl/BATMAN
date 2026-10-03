@@ -3643,7 +3643,7 @@ ANGDONE.push(function(S,P,a,ids){
   a.text+=' '+w.name+' ends it with a line the crowd will not forget: '+ph;news(S,'story',w.name+' has a catchphrase now: '+ph);mile(S,w,'promo','Coined a catchphrase: '+ph);
 });
 function catchFresh(w){return w.cphrase?clamp(1-w.cphrase.n/40,0,1):0;}
-function catchBoost(S,P){var b=0;rosterOf(S,P.id).forEach(function(w){if(w.cphrase)b+=0.025*catchFresh(w);});return Math.min(0.12,b);}
+function catchBoost(S,P){var b=0;rosterOf(S,P.id).forEach(function(w){if(w.cphrase)b+=0.025*catchFresh(w);if(w.fol>20)b+=Math.min(0.02,w.fol/5000);});return Math.min(0.16,b);}
 CRX.push(function(ctx){
   var d=0,who=[];ctx.all.forEach(function(w){if(w.cphrase&&catchFresh(w)>0.15){d+=1.2*catchFresh(w);who.push(w.name);}});
   return who.length?{d:Math.min(2,d),x:'The crowd chants '+who[0]+'’s catchphrase with them'}:null;
@@ -3737,6 +3737,16 @@ function barCity(S,venue){
   return null;
 }
 SHOWX.push(function(S,P,show,rep){if(P.id===S.player&&rep.barNote&&rep.sheet)rep.sheet.lines.unshift(rep.barNote);});
+
+/* followers: every wrestler has a following that grows with big moments and fades without them. A clip can spread, bringing casual fans and merchandise */
+POST.push(function(ctx){
+  var S=ctx.S;if(S.cal)return;var r=ctx.res,big=ctx.big||ctx.show.big,gain=0,clip=false;
+  if(r.seg.change)gain+=8;if(r.upset)gain+=4;if(ctx.isMain&&big&&r.OV>=80)gain+=5;if(r.OV>=90){gain+=6;clip=true;}else if(r.OV>=80)gain+=1.5;
+  if(!gain&&!clip)return;
+  var shared=r.win>=0?r.winners:ctx.all;shared.forEach(function(w){w.fol=Math.min(400,(w.fol||0)+gain*(w.ovr>=70?0.8:1.2));});
+  if(clip&&ctx.isPl&&chance(S,0.3)){var star=shared.slice().sort(function(a,b){return b.ovr-a.ovr;})[0];star.fol=Math.min(400,(star.fol||0)+10);r.seg.notes.push('A clip of this match is spreading online. Casual fans are asking who '+star.name+' is.');news(S,'story','A clip of '+r.seg.label+' is everywhere. '+star.name+' has a lot of new followers.');}
+});
+WEEKX.push(function(S){S.w.forEach(function(w){if(w.fol)w.fol=w.fol>2?w.fol*0.985:0;});});
 
 /* ===== 85-universe.js ===== */
 /* ---------- universe packages: every roster, built-in or community-made, loads through this ----------
