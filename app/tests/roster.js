@@ -156,6 +156,7 @@ async function run(mode) {
     must(/is set/.test(await flash(page)) && await state(page, S => !!S.tourn && !S.tourn.done), 'tournament said: ' + await flash(page));
     must(await page.$eval('.panel.mb3 > h2', e => e.textContent) === await state(page, S => S.tourn.name), 'no tournament panel');
     must(await page.$$eval('[data-t="tourn"]:not([disabled])', L => L.length) === 0, 'a second tournament is still on offer');
+    if (fmt === 'ko') must(await page.$eval('.bracket', e => e.innerText.split('\n').length >= 15 && /[├┐┘]/.test(e.innerText)).catch(() => false), 'the knockout has no bracket drawn');
     await ok(t, 'tournament started', fmt === 'ko' ? 'knockout' : 'league');
   } else console.log(mode, 'skip tournament: none is offered');
 

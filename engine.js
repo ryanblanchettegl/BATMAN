@@ -2081,7 +2081,7 @@ E.startTourn=function(S,tid,fmt){
   var P=S.promos[S.player],t=titleById(P,tid),need=fmt==='rr'?6:8,ents=rankFor(S,P,t,need).map(function(w){return w.id;}),T;
   T=S.tourn={id:S.nid++,promo:P.id,title:t.id,fmt:fmt,name:t.name.replace(/ Titles?$/,'')+(fmt==='rr'?' League':' Tournament'),ents:ents,round:1,pend:[],res:[],pts:{},done:false,start:S.week};
   if(fmt==='rr'){for(var i=0;i<ents.length;i++){T.pts[ents[i]]=0;for(var j=i+1;j<ents.length;j++)T.pend.push([ents[i],ents[j]]);}}
-  else T.pend=koPairs(ents);
+  else{T.pend=koPairs(ents);T.br={1:koPairs(ents)};}
   news(S,'story','The '+T.name+' begins: '+ents.map(function(id){return S.w[id].name;}).join(', ')+'.');
   return 'The '+T.name+' is set. Book the listed matches on your shows; the suggested card includes them.';
 };
@@ -2092,7 +2092,9 @@ function tournAdvance(S,T){
   if(T.fmt==='rr'){champ=T.ents.slice().sort(function(a,b){return (T.pts[b]-T.pts[a])||(S.w[b].ovr-S.w[a].ovr);})[0];}
   else{
     var ws=T.res.filter(function(r){return r.round===T.round;}).map(function(r){return r.w;});
-    if(ws.length>1){T.round++;for(var i=0;i<ws.length;i+=2)T.pend.push([ws[i],ws[i+1]]);return;}
+    // winners are paired by their place in the bracket, not by the order the matches were run in
+    if(T.br&&T.br[T.round]){var prs=T.br[T.round],ow=[];prs.forEach(function(pr){var rr=T.res.filter(function(x){return x.round===T.round&&((x.a===pr[0]&&x.b===pr[1])||(x.a===pr[1]&&x.b===pr[0]));})[0];if(rr)ow.push(rr.w);});if(ow.length===prs.length)ws=ow;}
+    if(ws.length>1){T.round++;var nx=[];for(var i=0;i<ws.length;i+=2){T.pend.push([ws[i],ws[i+1]]);nx.push([ws[i],ws[i+1]]);}if(T.br)T.br[T.round]=nx;return;}
     champ=ws[0];
   }
   T.done=true;T.champ=champ;var w=S.w[champ];mile(S,w,'tourn','Won the '+T.name);w.mom=clamp(w.mom+3,-10,10);addOvr(P,w,1.5);
@@ -4286,6 +4288,45 @@ CRX.push(function(ctx){
   var ch=ctx.sides[ctx.champSide===0?1:0][0];if(ch.shot===t.id)return null;
   var rk=rankFor(ctx.S,ctx.P,t,5).map(function(w){return w.id;});
   return rk.indexOf(ch.id)<0?{d:-3,x:m==='purist'?'The purists want a title shot earned in the ring':'Tradition says you wait your turn for a title shot'}:null;
+});
+
+/* ---------- 31. Brackets and leagues: a bracket drawn in text, and upsets that turn into stories ---------- */
+/* the knockout as lines of text: three columns, names cut to twelve letters, with the winners carried across */
+E.bracketLines=function(S,T){
+  if(!T||T.fmt!=='ko')return [];
+  var W=12,rows=[],R1=T.br&&T.br[1]?T.br[1]:koPairs(T.ents),names=function(id){return id==null?'':S.w[id].name.slice(0,W);};
+  // who goes where in every round: from what has been played
+  var rounds=[[]];R1.forEach(function(p){rounds[0].push(p[0],p[1]);});
+  function winnerOf(r,a,b){var x=T.res.filter(function(q){return q.round===r&&((q.a===a&&q.b===b)||(q.a===b&&q.b===a));})[0];return x&&x.w>=0?x.w:null;}
+  for(var r=1;r<=3;r++){
+    var prev=rounds[r-1],nxt=[];
+    for(var i=0;i<prev.length;i+=2)nxt.push(prev[i]==null||prev[i+1]==null?null:winnerOf(r,prev[i],prev[i+1]));
+    rounds.push(nxt);
+  }
+  var H=15,grid=[];for(var y=0;y<H;y++)grid.push(new Array(58).join(' ').split(''));
+  function put(y,x,str){for(var k=0;k<str.length;k++)grid[y][x+k]=str[k];}
+  var rowOf=function(r,i){return r===0?2*i:(r===1?4*i+1:(r===2?8*i+3:7));};
+  for(var rr=0;rr<=3;rr++){
+    var x=rr*15;
+    rounds[rr].forEach(function(id,i){
+      var y=rowOf(rr,i);put(y,x,(id==null?'':names(id)).padEnd(W,' '));
+      if(rr<3){grid[y][x+W]='─';}
+      if(rr<3){var cx=x+W+1;grid[y][cx]=i%2===0?'┐':'┘';if(i%2===0){var yb=rowOf(rr,i+1);for(var q=y+1;q<yb;q++)grid[q][cx]='│';grid[(y+yb)/2][cx]='├';grid[(y+yb)/2][cx+1]='─';}}
+    });
+  }
+  grid.forEach(function(g){rows.push(g.join('').replace(/\s+$/,''));});
+  return rows;
+};
+POST.push(function(ctx){
+  var S=ctx.S,T=S.tourn,r=ctx.res;if(!T||!ctx.isPl||ctx.m.mt!=='1v1'||r.win<0||S.cal)return;
+  var last=T.res[T.res.length-1];if(!last||last.week!==S.week||last.bye)return;
+  var a=ctx.all[0].id,b=ctx.all[1].id;if(!((last.a===a&&last.b===b)||(last.a===b&&last.b===a)))return;
+  var w=r.winners[0],l=r.losers[0],sw=T.ents.indexOf(w.id),sl=T.ents.indexOf(l.id);
+  if(sw<0||sl<0||sw-sl<3||w.ovr>l.ovr-6)return;
+  w.mom=clamp(w.mom+2,-10,10);
+  news(S,'story','Upset in the '+T.name+': '+w.name+', the number '+(sw+1)+' seed, beat '+l.name+'.');
+  r.seg.notes.push('An upset in the '+T.name+': '+w.name+' beat '+l.name+', who was seeded much higher.');
+  if(S.promos[S.player].id===T.promo)startFeud(S,S.promos[T.promo],l,w,35,l.name+' wants to settle the score after the '+T.name+' upset',{force:true});
 });
 
 /* ===== 83-moments.js ===== */

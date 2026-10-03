@@ -703,3 +703,42 @@ CRX.push(function(ctx){
   var rk=rankFor(ctx.S,ctx.P,t,5).map(function(w){return w.id;});
   return rk.indexOf(ch.id)<0?{d:-3,x:m==='purist'?'The purists want a title shot earned in the ring':'Tradition says you wait your turn for a title shot'}:null;
 });
+
+/* ---------- 31. Brackets and leagues: a bracket drawn in text, and upsets that turn into stories ---------- */
+/* the knockout as lines of text: three columns, names cut to twelve letters, with the winners carried across */
+E.bracketLines=function(S,T){
+  if(!T||T.fmt!=='ko')return [];
+  var W=12,rows=[],R1=T.br&&T.br[1]?T.br[1]:koPairs(T.ents),names=function(id){return id==null?'':S.w[id].name.slice(0,W);};
+  // who goes where in every round: from what has been played
+  var rounds=[[]];R1.forEach(function(p){rounds[0].push(p[0],p[1]);});
+  function winnerOf(r,a,b){var x=T.res.filter(function(q){return q.round===r&&((q.a===a&&q.b===b)||(q.a===b&&q.b===a));})[0];return x&&x.w>=0?x.w:null;}
+  for(var r=1;r<=3;r++){
+    var prev=rounds[r-1],nxt=[];
+    for(var i=0;i<prev.length;i+=2)nxt.push(prev[i]==null||prev[i+1]==null?null:winnerOf(r,prev[i],prev[i+1]));
+    rounds.push(nxt);
+  }
+  var H=15,grid=[];for(var y=0;y<H;y++)grid.push(new Array(58).join(' ').split(''));
+  function put(y,x,str){for(var k=0;k<str.length;k++)grid[y][x+k]=str[k];}
+  var rowOf=function(r,i){return r===0?2*i:(r===1?4*i+1:(r===2?8*i+3:7));};
+  for(var rr=0;rr<=3;rr++){
+    var x=rr*15;
+    rounds[rr].forEach(function(id,i){
+      var y=rowOf(rr,i);put(y,x,(id==null?'':names(id)).padEnd(W,' '));
+      if(rr<3){grid[y][x+W]='─';}
+      if(rr<3){var cx=x+W+1;grid[y][cx]=i%2===0?'┐':'┘';if(i%2===0){var yb=rowOf(rr,i+1);for(var q=y+1;q<yb;q++)grid[q][cx]='│';grid[(y+yb)/2][cx]='├';grid[(y+yb)/2][cx+1]='─';}}
+    });
+  }
+  grid.forEach(function(g){rows.push(g.join('').replace(/\s+$/,''));});
+  return rows;
+};
+POST.push(function(ctx){
+  var S=ctx.S,T=S.tourn,r=ctx.res;if(!T||!ctx.isPl||ctx.m.mt!=='1v1'||r.win<0||S.cal)return;
+  var last=T.res[T.res.length-1];if(!last||last.week!==S.week||last.bye)return;
+  var a=ctx.all[0].id,b=ctx.all[1].id;if(!((last.a===a&&last.b===b)||(last.a===b&&last.b===a)))return;
+  var w=r.winners[0],l=r.losers[0],sw=T.ents.indexOf(w.id),sl=T.ents.indexOf(l.id);
+  if(sw<0||sl<0||sw-sl<3||w.ovr>l.ovr-6)return;
+  w.mom=clamp(w.mom+2,-10,10);
+  news(S,'story','Upset in the '+T.name+': '+w.name+', the number '+(sw+1)+' seed, beat '+l.name+'.');
+  r.seg.notes.push('An upset in the '+T.name+': '+w.name+' beat '+l.name+', who was seeded much higher.');
+  if(S.promos[S.player].id===T.promo)startFeud(S,S.promos[T.promo],l,w,35,l.name+' wants to settle the score after the '+T.name+' upset',{force:true});
+});

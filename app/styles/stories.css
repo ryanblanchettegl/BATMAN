@@ -1,1 +1,3 @@
 /* Styles only the Stories screens need. Shared pieces live in base.css. */
+/* the knockout bracket, drawn in text; it scrolls sideways inside its own box on a narrow screen */
+.bracket{overflow-x:auto;white-space:pre;margin:.5em 0;line-height:1;font-size:1em;padding:.3em;border:4px double var(--grey)}

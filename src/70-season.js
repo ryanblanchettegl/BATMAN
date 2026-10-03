@@ -51,7 +51,7 @@ E.startTourn=function(S,tid,fmt){
   var P=S.promos[S.player],t=titleById(P,tid),need=fmt==='rr'?6:8,ents=rankFor(S,P,t,need).map(function(w){return w.id;}),T;
   T=S.tourn={id:S.nid++,promo:P.id,title:t.id,fmt:fmt,name:t.name.replace(/ Titles?$/,'')+(fmt==='rr'?' League':' Tournament'),ents:ents,round:1,pend:[],res:[],pts:{},done:false,start:S.week};
   if(fmt==='rr'){for(var i=0;i<ents.length;i++){T.pts[ents[i]]=0;for(var j=i+1;j<ents.length;j++)T.pend.push([ents[i],ents[j]]);}}
-  else T.pend=koPairs(ents);
+  else{T.pend=koPairs(ents);T.br={1:koPairs(ents)};}
   news(S,'story','The '+T.name+' begins: '+ents.map(function(id){return S.w[id].name;}).join(', ')+'.');
   return 'The '+T.name+' is set. Book the listed matches on your shows; the suggested card includes them.';
 };
@@ -62,7 +62,9 @@ function tournAdvance(S,T){
   if(T.fmt==='rr'){champ=T.ents.slice().sort(function(a,b){return (T.pts[b]-T.pts[a])||(S.w[b].ovr-S.w[a].ovr);})[0];}
   else{
     var ws=T.res.filter(function(r){return r.round===T.round;}).map(function(r){return r.w;});
-    if(ws.length>1){T.round++;for(var i=0;i<ws.length;i+=2)T.pend.push([ws[i],ws[i+1]]);return;}
+    // winners are paired by their place in the bracket, not by the order the matches were run in
+    if(T.br&&T.br[T.round]){var prs=T.br[T.round],ow=[];prs.forEach(function(pr){var rr=T.res.filter(function(x){return x.round===T.round&&((x.a===pr[0]&&x.b===pr[1])||(x.a===pr[1]&&x.b===pr[0]));})[0];if(rr)ow.push(rr.w);});if(ow.length===prs.length)ws=ow;}
+    if(ws.length>1){T.round++;var nx=[];for(var i=0;i<ws.length;i+=2){T.pend.push([ws[i],ws[i+1]]);nx.push([ws[i],ws[i+1]]);}if(T.br)T.br[T.round]=nx;return;}
     champ=ws[0];
   }
   T.done=true;T.champ=champ;var w=S.w[champ];mile(S,w,'tourn','Won the '+T.name);w.mom=clamp(w.mom+3,-10,10);addOvr(P,w,1.5);

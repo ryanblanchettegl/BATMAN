@@ -32,7 +32,7 @@ function Tourn() {
       if (!done.length && !pn.length) continue;
       rounds.push(<><p class="eyebrow mt2">{RN[r]}</p><ul class="list">{done.map(res)}{pn.map(todo)}</ul></>);
     }
-    body = rounds;
+    body = <>{T.res.length || T.round > 1 || T.pend.length ? <div class="bracket" aria-label="The bracket">{E.bracketLines(S, T).join('\n')}</div> : null}{rounds}</>;
   }
   return <Panel cls="mb3" title={T.name}>
     {T.done ? <p class="good">Winner: <b>{S.w[T.champ].name}</b>.</p>
