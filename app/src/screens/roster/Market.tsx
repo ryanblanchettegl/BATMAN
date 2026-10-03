@@ -1,7 +1,7 @@
 /* The Free agents page (page id `market`): free agents and rivals' talent near the end of their deals, offers, and the way in to the creator. */
 import { Fragment } from 'preact';
 import { E, W } from '../../engine';
-import { G, me, act, view, say, cash, full, openModal, plural } from '../../store';
+import { G, me, act, view, say, cash, full, openModal, plural, slice } from '../../store';
 import { Head, Panel, Btn, Sel, TextBox, Tag, Side } from '../../kit';
 import { rs } from './state';
 import { range, sendScout } from './Profile';
@@ -28,9 +28,12 @@ function OfferRow(p: { w: W; ask: number }) {
   </div></td></tr>;
 }
 
+const SORTS: [string, string][] = [['ovr', 'Overness'], ['fit', 'Fit'], ['ask', 'Asking wage'], ['age', 'Youngest']];
 export function Market() {
-  const S = G.S, P = me(), st = rs(), q = st.mq.toLowerCase();
-  const L: W[] = E.market(S).filter((w: W) => !q || w.name.toLowerCase().indexOf(q) >= 0).sort((a: W, b: W) => b.ovr - a.ovr).slice(0, 120);
+  const S = G.S, P = me(), st = rs(), q = st.mq.toLowerCase(), mk = slice<{ sort: string; will: boolean }>('market', () => ({ sort: 'ovr', will: false }));
+  const fitV = (w: W) => { const f = E.fit(S, w.id); return f ? f.v : -999; };
+  const key: Record<string, (w: W) => number> = { ovr: w => -w.ovr, fit: w => -fitV(w), ask: w => E.ask(S, w), age: w => w.age };
+  const L: W[] = E.market(S).filter((w: W) => (!q || w.name.toLowerCase().indexOf(q) >= 0) && (!mk.will || (E.canSign(S, w) && !(w.lock > S.week)))).sort((a: W, b: W) => (key[mk.sort](a) - key[mk.sort](b)) || b.ovr - a.ovr).slice(0, 120);
   const toggle = (w: W, ask: number) => view(() => { if (st.offer === w.id) st.offer = null; else { st.offer = w.id; st.wage = String(ask); st.weeks = '48'; } });
   return <>
     <Head eyebrow={'Free agents and rivals’ talent with 12 weeks or less on their deals'} title="Free agents" />
@@ -40,6 +43,8 @@ export function Market() {
       <TextBox type="search" id="mq" t="mq" label="Search market" placeholder="Search by name" value={st.mq} onInput={v => view(() => { st.mq = v; })} />
       <span class="muted">{L.length} available</span>
     </div>
+    <div class="row opts mb2"><span class="muted">Sort by</span>{SORTS.map(o => <Btn kind="sm" on={mk.sort === o[0]} t="mksort" d={{ v: o[0] }} onClick={() => view(() => { mk.sort = o[0]; })}>{o[1]}</Btn>)}
+      <Btn kind="sm" on={mk.will} t="mkwill" onClick={() => view(() => { mk.will = !mk.will; })}>Would sign with us</Btn></div>
     <div class="tw mkt"><table>
       <thead><tr><th>Name</th><th>Status</th><th>Side</th><th>Style</th><th class="r">Age</th><th class="r">Over</th><th class="r">Work</th><th class="r">Promo</th><th class="r">Potential</th><th>Fit</th><th class="r">Asking/wk</th><th /></tr></thead>
       <tbody>
@@ -48,7 +53,7 @@ export function Market() {
           return <Fragment key={w.id}>
             <tr>
               <td><span class="nm">{w.name}</span></td>
-              <td>{w.promo === 'FA' ? 'Free agent' : S.promos[w.promo].name + ', ' + Math.max(0, w.con) + ' wk left'}</td>
+              <td>{w.promo === 'FA' ? (w.cut && S.promos[w.cut.from] ? 'Released by ' + S.promos[w.cut.from].name + ', ' + Math.max(1, S.week - w.cut.w) + ' ' + plural(Math.max(1, S.week - w.cut.w), 'week') + ' ago' : 'Free agent') : S.promos[w.promo].name + ', ' + Math.max(0, w.con) + ' wk left'}</td>
               <td><Side w={w} /></td>
               <td>{E.STYLE_NAME[w.style] || ''}{w.rk ? <> <Tag kind="gold">Rookie</Tag></> : null}</td>
               <td class="r num">{w.age}</td><td class="r num">{Math.round(w.ovr)}</td><td class="r num">{E.workRate(w)}</td><td class="r num">{w.mic}</td>
