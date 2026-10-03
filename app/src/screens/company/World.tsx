@@ -7,11 +7,12 @@ import { Head, Panel, Tag, Meter, Empty, Txt, Name } from '../../kit';
 function Promotions() {
   const S = G.S, ids = S.order.slice().sort((a: string, b: string) => S.promos[b].image - S.promos[a].image);
   return <div class="tw mb3"><table>
-    <thead><tr><th>Promotion</th><th>Popularity</th><th class="r">Relations</th><th class="r">Cash</th><th class="r">Roster</th><th>Top champion</th><th>Last show</th></tr></thead>
+    <thead><tr><th>Promotion</th><th>Model</th><th>Popularity</th><th class="r">Relations</th><th class="r">Cash</th><th class="r">Roster</th><th>Top champion</th><th>Last show</th></tr></thead>
     <tbody>{ids.map((id: string) => {
       const P = S.promos[id], rel = Math.round(P.rel || 0), top = P.titles.filter((t: any) => !t.tag).sort((a: any, b: any) => (b.lvl - a.lvl) || (a.g === 'M' ? -1 : 1))[0];
       return <tr class={id === S.player ? 'on' : undefined}>
         <td><span class="nm">{P.name}</span>{id === S.player ? <> <Tag>You</Tag></> : null}</td>
+        <td class="muted">{E.modelOf(S, id).n}</td>
         <td><Meter v={P.image} /> <span class="num">{P.image.toFixed(1)}</span></td>
         <td class={'r num ' + (id === S.player ? 'muted' : (rel >= 20 ? 'good' : (rel <= -20 ? 'bad' : 'muted')))}>{id === S.player ? '—' : (rel > 0 ? '+' : '') + rel}</td>
         <td class="r num">{cash(P.cash)}</td>
