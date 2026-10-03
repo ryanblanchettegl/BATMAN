@@ -3496,7 +3496,7 @@ var MODELS={
     push:function(w){return 0.12*(w.sq-65)+0.06*(w.cha-65);},
     fit:function(w){return 0.5*w.ovr+0.3*w.cha+0.2*w.sq;},
     show:function(S,P,show,rep){return rep.segs.some(function(s){return s.k==='match'&&s.stip==='Hardcore';})?{d:-1,x:'The board had calls from sponsors about the violence.'}:null;},
-    month:function(S,P){var H=P.hist.slice(-4),net=0;H.forEach(function(h){net+=h.net;});var tgt=4*P.net,d=clamp((net-tgt)/Math.max(1,Math.abs(tgt))*2,-3,3);
+    month:function(S,P){var H=P.hist.slice(-4),net=0;H.forEach(function(h){net+=h.net;});var tgt=4*P.net,d=(net-tgt)/Math.max(1,Math.abs(tgt))*2;d=Math.abs(d)<0.5?0:(d>0?1:-1)*clamp(Math.abs(d),1,3);   // a good or bad month moves trust by one to three points
       return {d:r1(d),x:'The board reviewed the month: '+money(net)+' against a plan of '+money(tgt)+'.'};}},
 
   workrate:{n:'Wrestling for the diehards',ph:'a diehards’ company',vals:'overness and work rate, with some stamina',wq:0.62,own:'the founder',
