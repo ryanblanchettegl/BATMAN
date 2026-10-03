@@ -50,7 +50,7 @@ Small jobs, each one commit. None of them needs a decision from Ryan. Read `CLAU
 - [x] **30.** The figures in the status bar (`StatusBar` in `app/src/shell/Frame.tsx`) should be buttons that open the Company overview.
 - [x] **31.** Menu badges: Manage shows a count when sponsor offers are new or the house style is waiting; Roster shows the number of contracts ending within four weeks.
 - [x] **32.** On a phone the start menu puts Help alone on a second row. Lay the five buttons out so no row has a single item.
-- [ ] **33.** Select promotion: show the model's name on each row, and on a desk put the detail panel beside the list so it is visible without scrolling.
+- [x] **33.** Select promotion: show the model's name on each row, and on a desk put the detail panel beside the list so it is visible without scrolling.
 - [ ] **34.** The first-day screen is four panels long. Keep the owner and the model; put "How it works" behind a button.
 - [ ] **35.** Create a federation: show the starting cash, popularity and roster size for the chosen size, and refuse initials already used by a promotion in the universe.
 - [ ] **36.** Company overview: add a one-row bar showing where last week's income came from (television, gate, big events, merchandise, sponsors), with the model's multipliers named beneath it.

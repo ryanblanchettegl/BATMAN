@@ -414,3 +414,8 @@ tbody tr.pick:hover .lnk,tbody tr.on .lnk{color:var(--k)}
 .cards .win .ascii.belt{color:#6a4a00;font-size:min(1em,calc((min(100vw,64ch) - 60px) / 30))}
 .row.top{align-items:flex-start} .row.nowrap{flex-wrap:nowrap} .row.gap2{gap:8px 2ch}
 html.nav .lnk:focus{outline:.16em solid var(--yellow);outline-offset:.08em}
+
+/* select promotion: on a desk the detail panel sits beside the list so it is visible without scrolling */
+html[data-screen="desk"] .selrow{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:0 3ch;align-items:start}
+html[data-screen="desk"] .selrow .dbox{margin-inline:0;max-width:none}
+html[data-screen="desk"] .selrow .det{position:sticky;top:3em;margin-top:10px}

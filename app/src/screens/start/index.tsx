@@ -86,16 +86,16 @@ function importUniverse(text: string, fname: string) {
 export function Select() {
   const info = E.universe(), ids = Object.keys(UNIS), cur = pref.uni && UNIS[pref.uni] ? pref.uni : 'public_domain', file = useRef<HTMLInputElement>(null);
   const items: (MenuItem & { promo?: any })[] = info.promotions.map((d: any) => ({ t: 'pick', d: { v: d.id }, promo: d, pick: () => pick(d.id),
-    label: <><span class="ab">{d.name}</span><span class="fn">{d.full ? '- ' + d.full : ''}</span><span class="st">Pop {d.image} {'·'} {cash(d.cash)} {'·'} {info.count[d.id] || 0} workers</span></> }));
+    label: <><span class="ab">{d.name}</span><span class="fn">{d.full ? '- ' + d.full : ''}</span><span class="st">{(E.MODELS[d.model] || E.MODELS.classic).n} {'·'} Pop {d.image} {'·'} {cash(d.cash)} {'·'} {info.count[d.id] || 0} workers</span></> }));
   items.push({ t: 'pick', d: { v: 'OWN' }, cls: 'new', pick: () => pick('OWN'), label: <span class="fn">CREATE NEW FEDERATION</span> });
   const d = (items[Math.max(0, Math.min(items.length - 1, ui.mi || 0))] || items[0]).promo;
   const onFile = (e: Event) => { const t = e.currentTarget as HTMLInputElement, fl = t.files && t.files[0]; if (!fl) return; const fr = new FileReader(); fr.onload = () => importUniverse(String(fr.result), fl.name); fr.onerror = () => openModal({ kind: 'info', title: 'Universe not loaded', body: () => <p class="bad">That file could not be read.</p> }); fr.readAsText(fl); t.value = ''; };
   return <div class="crt"><StartMenu /><div class="start">
-    <div class="dbox"><h1 class="dt">Select promotion</h1><MenuList items={items} /></div>
+    <div class="selrow"><div class="dbox"><h1 class="dt">Select promotion</h1><MenuList items={items} /></div>
     <Panel cls="det mb4" title={d ? d.name : 'New'} live>
       {d ? <><p><b>{d.full || d.name}.</b> {d.blurb}</p><p class="kv"><span>Popularity <b>{d.image}</b></span><span>Cash <b>{cash(d.cash)}</b></span><span>Roster <b>{info.count[d.id] || 0}</b></span><span>Weekly shows <b>{d.shows.length}</b></span><span>Owner <b>{d.owner.name}</b></span></p><div class="mt1"><span class="eyebrow">How it is run</span><ModelCard id={d.model} short /></div></>
         : <p><b>Create your own federation.</b> Name it, pick its size and house style, and start as owner and booker with a roster of unknowns and every title vacant.</p>}
-    </Panel>
+    </Panel></div>
     <Panel cls="mb3" title="Universe">
       <div class="row">
         <Sel id="uni-sel" label="Universe" value={cur} onChange={v => view(() => { setUniverse(v); ui.setup = null; ui.mi = 0; })}
