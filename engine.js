@@ -4079,5 +4079,28 @@ E.MT=MT;E.STIP=STIP;E.ACH=ACH;E.STYLE_NAME=STYLE_NAME;E.MONTHS=MONTHS;
   function P_img(S){return S.promos[S.player].image;}
 })();
 
+/* job offers with terms: ask for a bigger wage budget, more booking power, or one signing of your choice. Asking is an attempt, and a failed ask offends the new owner */
+var JOB_TERMS={budget:{n:'A bigger wage budget',d:'Twelve per cent more to spend on contracts.'},freedom:{n:'Creative freedom',d:'Four extra points of booking power to start with.'},signing:{n:'One signing of your choice',d:'The first free agent you sign needs no approval and ignores how big the company is.'}};
+E.JOB_TERMS=JOB_TERMS;
+function jobCheck(S,terms){var n=terms.length;return mkCheck(4+2*n,[{n:'Booker level '+S.booker.lvl,v:S.booker.lvl>=8?2:(S.booker.lvl>=4?1:0)}].concat(skillMods(S,'talk')));}
+E.jobTermsCheck=function(S,terms){return terms&&terms.length?jobCheck(S,terms):null;};
+E.applyJobTerms=function(S,terms){
+  terms=(terms||[]).filter(function(t){return JOB_TERMS[t];});if(!terms.length)return null;
+  var ck=jobCheck(S,terms),r=rollCheck(S,ck);
+  if(!r.ok){S.owner.trust=clamp(S.owner.trust-8,0,100);return S.owner.name+' did not like being asked for '+terms.map(function(t){return JOB_TERMS[t].n.toLowerCase();}).join(' and ')+' before you had done a day’s work. You start on the wrong foot.';}
+  var out=[];
+  terms.forEach(function(t){
+    if(t==='budget'){S.owner.wage0=Math.round(S.owner.wage0*1.12);out.push('a wage budget of '+money(E.budget(S))+' a week');}
+    else if(t==='freedom'){S.bp+=4;out.push('four extra points of booking power');}
+    else if(t==='signing'){S.freeSign=true;out.push('one signing of your choice (see Free agents)');}
+  });
+  return S.owner.name+' agrees to '+out.join(', ')+'.';
+};
+(function(){
+  var cs=E.canSign,sg=E.sign;
+  E.canSign=function(S,w){if(S.freeSign&&w.promo==='FA'&&!w.rt){var MD=modelOf(S.promos[S.player]);return !(MD.gender&&w.g!==MD.gender);}return cs(S,w);};
+  E.sign=function(S,id,wage,weeks){var was=S.freeSign,r=sg(S,id,wage,weeks);if(was&&r&&r.ok)S.freeSign=false;return r;};
+})();
+
 root.GP=E;
 })(typeof window !== 'undefined' ? window : globalThis);

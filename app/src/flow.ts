@@ -1,6 +1,6 @@
 /* Things more than one section needs: starting and ending a game, ending the week, opening a show report. */
 import { E } from './engine';
-import { G, ui, pref, save, loadSave, clearSave, resetUi, redraw, setUniverse, slice, openModal } from './store';
+import { G, ui, pref, save, loadSave, clearSave, resetUi, redraw, setUniverse, slice, openModal, say } from './store';
 import { go } from './nav';
 
 /** View state of the Booking section. Office reads it to link to a report. */
@@ -17,7 +17,11 @@ export function startGame(pid: string | null, opts: { name: string; diff: string
   resetUi(); save(); redraw(); window.scrollTo(0, 0);
 }
 /** Fired bookers take a job elsewhere and keep their level and skills. */
-export function takeJob(pid: string) { const S = G.S, bk = S.booker; G.S = E.newGame(pid, seed(), { name: bk.name, booker: bk, diff: S.diff }); resetUi(); save(); redraw(); window.scrollTo(0, 0); }
+export function takeJob(pid: string, terms?: string[]) {
+  const S = G.S, bk = S.booker; G.S = E.newGame(pid, seed(), { name: bk.name, booker: bk, diff: S.diff });
+  const msg = terms && terms.length ? E.applyJobTerms(G.S, terms) : null;
+  resetUi(); if (msg) say(msg, { err: /did not like/.test(msg) }); save(); redraw(); window.scrollTo(0, 0);
+}
 export function continueGame() { const sv = loadSave(); if (sv) { G.S = sv; resetUi(); E.attach(G.S); } redraw(); }
 /** Load a save pasted as text. Returns a message if it cannot be used, else null. */
 export function loadSaveText(text: string): string | null {
