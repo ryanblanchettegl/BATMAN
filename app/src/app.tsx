@@ -9,6 +9,7 @@ import { go } from './nav';
 import { CardHost } from './shared/cards';
 import * as start from './screens/start';
 import { copyText } from './screens/start';
+import { Editor } from './screens/editor';
 import * as office from './screens/office';
 import * as booking from './screens/booking';
 import * as roster from './screens/roster';
@@ -53,7 +54,7 @@ export function App() {
   useEffect(() => { afterDraw(); drainToasts(); });
   if (ui.boot) return <start.Boot />;
   const S = G.S;
-  if (!S) return <>{ui.setup ? <start.Setup /> : (ui.scr === 'select' ? <start.Select /> : <start.Title />)}<ModalHost /></>;
+  if (!S) return <>{ui.setup ? <start.Setup /> : (ui.scr === 'editor' ? <Editor /> : (ui.scr === 'select' ? <start.Select /> : <start.Title />))}<ModalHost /></>;
   const P = PAGES[ui.page] || PAGES.desk;
   return <>
     <div class="crt">

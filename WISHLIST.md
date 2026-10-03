@@ -144,5 +144,5 @@ Situations modelled on famous nights, each under an original name with invented 
 - [x] **96. Difficulty by part.** Separate settings for money, injuries, egos and rival aggression, chosen at the start and shown on Career. *S. Builds on `E.DIFF`.*
 - [x] **97. One save, no going back.** A mode with a single save written every week. Marked on Career. *S.*
 - [x] **98. The record book.** Sortable records: most reigns, longest reign, best average match grade, biggest gates, longest winning run. Every name opens its pop-up. *M.*
-- [x] **99. The universe editor.** Edit promotions and wrestlers inside the game, with problems explained in plain words. *L. Builds on `E.validateUniverse`. (ask Ryan about scope)*
+- [x] **99. The universe editor.** Edit promotions and wrestlers inside the game, with problems explained in plain words. *L. Builds on `E.validateUniverse`. Ryan decided: it is the World Editor, TASKS 0.*
 - [x] **100. The weekly challenge.** A dated seed: the same world for everyone, twelve weeks, one score. No server. The score is a short code the player can copy and share. *M.*

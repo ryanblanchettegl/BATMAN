@@ -1,0 +1,43 @@
+/* Styles only the World Editor needs. Shared pieces live in base.css. */
+.edpage{max-width:74em}
+.edtop .sp{flex:1}
+/* list on the left, the open record on the right; on a narrow screen the open record replaces the list */
+.edgrid{display:grid;grid-template-columns:minmax(18ch,26ch) minmax(0,1fr);gap:18px 2ch;align-items:start;margin-bottom:22px}
+.edcol-list,.edcol-form{min-width:0}
+.edback{display:none;margin-bottom:10px}
+.edlist{display:flex;flex-direction:column;gap:2px;max-height:34em;overflow-y:auto;border:1px solid var(--grey);padding:2px}
+.edrow{display:flex;flex-direction:column;align-items:flex-start;text-align:left;background:transparent;color:var(--grey);border:0;padding:1px 1ch;font:inherit;cursor:pointer;min-width:0}
+.edrow .nm{color:var(--white);overflow-wrap:anywhere}
+.edrow .st{color:var(--dcyan);font-size:.85em}
+.edrow.bad .st{color:var(--red)}
+.edrow:hover,.edrow:focus-visible{background:var(--dcyan);color:var(--k)}
+.edrow:hover .nm,.edrow:hover .st,.edrow:focus-visible .nm,.edrow:focus-visible .st{color:var(--k)}
+.edrow.on{background:var(--yellow)}
+.edrow.on .nm,.edrow.on .st{color:var(--k)}
+.edlist .muted{padding:0 1ch}
+/* ratings: a slider with its number */
+.edrates{display:grid;grid-template-columns:repeat(auto-fit,minmax(20ch,1fr));gap:10px 2ch}
+.edrate{display:flex;flex-direction:column;gap:2px;min-width:0}
+.edrate-top{display:flex;justify-content:space-between;align-items:center;gap:1ch;min-height:1.6em;color:var(--cyan);text-transform:uppercase}
+.edrate-top .btn{margin-bottom:0;text-transform:none}
+.edrate b{color:var(--yellow)}
+.edpage input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:1.1em;margin:0;background:transparent;cursor:pointer}
+.edpage input[type=range]::-webkit-slider-runnable-track{height:6px;background:var(--dcyan);border:1px solid var(--grey)}
+.edpage input[type=range]::-moz-range-track{height:6px;background:var(--dcyan);border:1px solid var(--grey)}
+.edpage input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:1ch;height:1em;margin-top:-.4em;background:var(--yellow);border:1px solid var(--k)}
+.edpage input[type=range]::-moz-range-thumb{width:1ch;height:1em;border-radius:0;background:var(--yellow);border:1px solid var(--k)}
+/* the portrait and its part steppers */
+.edface{display:flex;flex-wrap:wrap;gap:12px 2ch;align-items:flex-start;margin-bottom:10px}
+.edface canvas{width:8em;height:8em;image-rendering:pixelated;border:2px solid var(--grey);flex:none}
+.edparts{display:grid;grid-template-columns:repeat(auto-fit,minmax(24ch,1fr));gap:4px 2ch;flex:1;min-width:min(24ch,100%)}
+.edpart{display:flex;align-items:center;gap:1ch;min-width:0}
+.edpart span{flex:1;min-width:0;overflow-wrap:anywhere}
+.edpart small{color:var(--cyan);text-transform:uppercase}
+.edbelt{margin-bottom:10px;overflow-x:auto}
+.edpage .savebox{min-height:6em}
+@media (max-width:860px){
+  .edgrid{grid-template-columns:minmax(0,1fr)}
+  .edgrid.has-sel .edcol-list{display:none}
+  .edgrid.has-sel .edback{display:flex}
+  .edlist{max-height:22em}
+}

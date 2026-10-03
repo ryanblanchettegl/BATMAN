@@ -35,17 +35,18 @@ function MenuList(p: { items: MenuItem[] }) {
       onClick={it.pick} onMouseEnter={() => { if (ui.mi !== k) view(() => { ui.mi = k; }); }} onFocus={() => { if (ui.mi !== k) view(() => { ui.mi = k; }); }}>{it.label}</button>)}</div>;
 }
 onKey(e => {
-  if (G.S || ui.modal || ui.setup || ui.boot) return false;
+  if (G.S || ui.modal || ui.setup || ui.boot || ui.scr === 'editor') return false;
   const tag = (e.target as HTMLElement).tagName; if (tag === 'SELECT' || tag === 'INPUT') return false;
   if (e.key === 'ArrowDown' || e.key === 'ArrowUp') { const n = menuItems.length || 1; view(() => { ui.mi = ((ui.mi || 0) + (e.key === 'ArrowDown' ? 1 : n - 1)) % n; }); const el = document.querySelectorAll('.dmenu .mi')[ui.mi] as HTMLElement; if (el) el.focus(); return true; }
   if ((e.key === 'Enter' || e.key === ' ') && (tag !== 'BUTTON' || (e.target as HTMLElement).classList.contains('mi'))) { const it = menuItems[ui.mi]; if (it) { it.pick(); return true; } }
   return false;
 });
-const toScreen = (scr: 'title' | 'select') => view(() => { ui.scr = scr; ui.mi = 0; ui.setup = null; window.scrollTo(0, 0); });
-function StartMenu() {
+const toScreen = (scr: 'title' | 'select' | 'editor') => view(() => { ui.scr = scr; ui.mi = 0; ui.setup = null; window.scrollTo(0, 0); });
+export function StartMenu() {
   return <nav class="menu startmenu" aria-label="Menu">
     <button type="button" data-t="scr" data-v="title" onClick={() => toScreen('title')}><u>T</u>itle</button>
     <button type="button" data-t="scr" data-v="select" onClick={() => toScreen('select')}><u>F</u>ederations</button>
+    <button type="button" data-t="scr" data-v="editor" onClick={() => toScreen('editor')}><u>W</u>orld Editor</button>
     <button type="button" data-t="options" onClick={() => openModal({ kind: 'options' })}><u>O</u>ptions</button>
     <button type="button" data-t="help" onClick={() => openModal({ kind: 'help' })}><u>H</u>elp</button>
     <span class="sp" />
@@ -84,7 +85,7 @@ export function Title() {
   items.push({ t: 'scr', d: { v: 'select' }, pick: () => toScreen('select'), label: <><span class="ab">NEW GAME</span><span class="st">Pick a promotion or create your own</span></> });
   items.push({ t: 'scenarios', pick: () => openModal({ kind: 'info', title: 'Scenarios', body: () => <ScenarioBody /> }), label: <><span class="ab">SCENARIOS</span><span class="st">A problem, a deadline, a result</span></> });
   items.push({ t: 'challenge', pick: () => openModal({ kind: 'info', title: 'The weekly challenge', body: () => <ChallengeBody /> }), label: <><span class="ab">WEEKLY CHALLENGE</span><span class="st">Twelve weeks, the same world for everyone, one score</span></> });
-  items.push({ t: 'workshop', pick: () => openModal({ kind: 'info', title: 'Workshop', body: () => <><p><b>The Workshop is not open yet.</b></p><p class="muted mt1">Coming in a later version.</p></> }), label: <><span class="ab">WORKSHOP</span><span class="st">Coming soon</span></> });
+  items.push({ t: 'editor', pick: () => toScreen('editor'), label: <><span class="ab">WORLD EDITOR</span><span class="st">Build your own world: companies, shows, belts, wrestlers</span></> });
   items.push({ t: 'options', pick: () => openModal({ kind: 'options' }), label: <><span class="ab">OPTIONS</span><span class="st">Sound, text size, screen</span></> });
   return <div class="crt"><StartMenu /><div class="start">
     <h1 class="sr">Elite Wrestling Federation 9000</h1>
@@ -125,13 +126,14 @@ export function Select() {
     <Panel cls="mb3" title="Universe">
       <div class="row">
         <Sel id="uni-sel" label="Universe" value={cur} onChange={v => view(() => { setUniverse(v); ui.setup = null; ui.mi = 0; })}
-          options={[['public_domain', builtInUniverse().manifest.name + ' (built in)'], ...ids.map(id => [id, UNIS[id].manifest.name + ' (imported)'] as [string, string])]} />
+          options={[['public_domain', builtInUniverse().manifest.name + ' (built in)'], ...ids.map(id => [id, UNIS[id].manifest.name + ' (yours)'] as [string, string])]} />
         <Btn t="uni-import" onClick={() => file.current && file.current.click()}>Import a universe file</Btn>
+        <Btn t="uni-editor" onClick={() => toScreen('editor')}>World Editor</Btn>
         {cur !== 'public_domain' && <Btn t="uni-remove" onClick={() => view(() => { delete UNIS[pref.uni]; saveUnis(); setUniverse('public_domain'); ui.mi = 0; })}>Remove this one</Btn>}
         <input type="file" id="uni-file" ref={file} accept=".json,application/json" hidden onChange={onFile} />
       </div>
       <p class="muted mt2">{info.desc} {info.workers} workers, {info.promotions.length} promotions. Starts in {info.start}.{info.author ? ' By ' + info.author + '.' : ''}</p>
-      <p class="muted mt1">Every roster is a universe package: a JSON file anyone can write and share. The built-in one is made of history, myth and fiction published before 1929.</p>
+      <p class="muted mt1">Every roster is a universe package: a file anyone can make in the World Editor and share. The built-in one is made of history, myth and fiction published before 1929.</p>
     </Panel>
   </div><div class="status"><span class="opt">Arrows: move</span><span class="opt">Enter: select</span><span>Esc: back</span></div></div>;
 }
@@ -248,6 +250,7 @@ function Help() {
     </ul>
     <p class="mt1"><b>Attempts.</b> Some actions may fail. Each one shows its chance, what helps and what hurts.</p>
     <p class="mt1"><b>Names.</b> Select any name or title to open a pop-up. Back steps out, Close shuts them all.</p>
+    <p class="mt1"><b>World Editor.</b> On the title screen. Build your own world of companies, shows, belts and wrestlers, then play it or share it.</p>
     <p class="mt1"><b>Your company.</b> Each company runs on a model that changes what its crowd rewards and where its money comes from. Read it on the Company overview.</p>
     <p class="eyebrow mt2">Keys</p>
     <div class="keys">{Object.keys(HOT).map(k => <span><b>{k.toUpperCase()}</b> {pageName(HOT[k])}</span>)}<span><b>Enter</b> next line of a show</span><span><b>Esc</b> skip or close</span><span><b>F1</b> this window</span><span><b>F2</b> options</span></div>

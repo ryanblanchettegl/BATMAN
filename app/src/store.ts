@@ -2,7 +2,7 @@
 import { E, GameState } from './engine';
 
 export const KEY = 'ewf9000-save-4', UKEY = 'ewf9000-universes', PKEY = 'gorilla-position-prefs';
-export const VER = '0.11';
+export const VER = '0.12';
 
 /* ---------- preferences ---------- */
 export interface Prefs { snd: boolean; type: boolean; crt: boolean; boot: boolean; screen: 'auto' | 'desk' | 'tablet' | 'tv'; zoom: number; speed: number; motion: 'auto' | 'reduce' | 'full'; fxvol: number; uni: string }
@@ -46,7 +46,7 @@ export interface Card { k: 'w' | 'team' | 'title' | 'promo' | 'tree'; id: number
 export interface Ui {
   boot: { step: number } | null;
   /** start screens: 'title' or 'select'. `setup` is set while the First day or Create a federation screen is open. */
-  scr: 'title' | 'select';
+  scr: 'title' | 'select' | 'editor';
   setup: null | { pid: string; name: string; diff: string; fed: any; dpart?: any; iron?: boolean };
   /** highlighted row of the start menus */
   mi: number;

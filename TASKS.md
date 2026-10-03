@@ -37,8 +37,26 @@ Two more lists sit beside this one:
 | Roster | Figures still honoured in living traditions were swapped out of the default universe. |
 | Names | Company models and storylines follow how real companies and angles worked, but every name in the game is invented or public domain. No real promotion, wrestler, stable or event names in game content. Real-world rosters stay out of this repository. |
 | Publishing | Two threads publish to the same live page. Whoever publishes merges the other's changes first. |
+| World Editor | The creation suite is its own page called **World Editor** on the title screen. A player builds a world from scratch (companies, shows, belts, wrestlers) and uploads it to the Workshop. This is the main next item. |
 
 ## Tasks
+
+### 0. The World Editor (Ryan's main next item)
+Code: `src/86-editor.js` (the `E.ed*` functions; no screen code), `app/src/screens/editor/`, `app/styles/editor.css`. Tests: `node test-editor.js` and `app/tests/editor.js`.
+
+- [x] Its own page, opened from **World Editor** on the title screen and from the start menu bar.
+- [x] Start a world from scratch, from a copy of the built-in world, or from a world file. Worlds are kept on the device as they are changed.
+- [x] Tabs: World (name, author, start date, newcomers), Companies (name, popularity, model, owner, money, cities), Shows (weekly shows and the twelve big events), Belts (division, level, tag, champions), Wrestlers (details, ratings, portrait, contract), Teams (tag teams, stables, and ties between people).
+- [x] "Fill the roster with unknowns" makes a new company playable in one press.
+- [x] Check and share: every problem in plain words with a **Go to it** button, **Play this world**, copy the world as text, save it as a file.
+- [x] Hidden ids follow names, so a shared file reads cleanly.
+- [x] Works on desk, phone and TV layouts. Back steps out one level at a time.
+- [ ] **Workshop upload and subscribed worlds.** Written in `desktop/main.js` and `desktop/preload.js` (`gpSteam.workshopUpload`, `gpSteam.workshopWorlds`) from the steamworks.js documentation. Never run. Needs the Steam wrapper working first (task 12).
+- [ ] Pictures: a world cannot carry portrait or belt images yet. Portraits are drawn from the face settings. The folder form with `graphics/` is the Workshop build's job.
+- [ ] Not in the editor yet: brands, sponsors, columnists, announcers and staff names, the name lists for rookies, managers tied to wrestlers.
+- [ ] Bulk tools: duplicate a wrestler, move several at once, sort the list by name or company.
+- [ ] A creator for each thing on its own from the title screen, if Ryan wants shortcuts (show creator, belt creator) beyond the tabs.
+- [ ] Try the remote and gamepad on real hardware.
 
 ### 1. Finish the pop-ups (small)
 Feature list items 10 and 11. Code: `app/src/shared/cards.tsx`, `Name`, `TitleName`, `TeamName` and `Txt` in `app/src/kit/index.tsx`, the card stack in `app/src/store.ts`.

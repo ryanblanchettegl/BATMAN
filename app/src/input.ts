@@ -107,6 +107,7 @@ export function goBack(): boolean {
   if (!G.S) {
     if (ui.setup) { ui.setup = null; ui.scr = 'select'; redraw(); return true; }
     if (ui.scr === 'select') { ui.scr = 'title'; ui.mi = 0; redraw(); return true; }
+    if (ui.scr === 'editor') { for (const fn of backs) if (fn()) return true; }
     return false;
   }
   for (const fn of backs) if (fn()) return true;

@@ -1,6 +1,6 @@
 # Proposal: the universe editor (wish 99)
 
-**Status:** for Ryan to decide on scope. Not built.
+**Status:** decided on 3 October 2026. Ryan asked for the full editor as its own page called World Editor on the title screen, with Workshop upload. Built as `TASKS.md` task 0. The text below is kept for the record.
 
 ## The idea
 

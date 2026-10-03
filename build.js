@@ -10,7 +10,7 @@ if(fs.existsSync(path.join(appDir,'node_modules','esbuild'))){
   const esbuild=require(path.join(appDir,'node_modules','esbuild'));
   const out=esbuild.buildSync({entryPoints:[path.join(appDir,'src','main.tsx')],bundle:true,write:false,format:'iife',target:'es2019',minify:!process.env.EWF_DEV,jsx:'automatic',jsxImportSource:'preact',legalComments:'none',absWorkingDir:appDir,logLevel:'warning'});
   const js=out.outputFiles[0].text.replace(/<\/script/gi,'<\\/script');
-  const css=['base','caw','start','office','booking','roster','stories','manage','company'].map(f=>fs.readFileSync(path.join(appDir,'styles',f+'.css'),'utf8')).join('\n');
+  const css=['base','caw','start','editor','office','booking','roster','stories','manage','company'].map(f=>fs.readFileSync(path.join(appDir,'styles',f+'.css'),'utf8')).join('\n');
   // the one typeface is embedded, so the game fetches nothing at all (VT323, SIL Open Font License 1.1)
   const fontFile=path.join(appDir,'node_modules','@fontsource','vt323','files','vt323-latin-400-normal.woff2');
   const font=fs.existsSync(fontFile)?"@font-face{font-family:'VT323';font-style:normal;font-weight:400;font-display:swap;src:url(data:font/woff2;base64,"+fs.readFileSync(fontFile).toString('base64')+") format('woff2')}\n":'';

@@ -51,6 +51,10 @@ Ids are lowercase slugs: 2 to 40 letters, digits or underscores.
 
 `E.validateUniverse(pkg)` returns `{ ok, errors, warnings }`. Errors block loading; warnings do not. It checks, in order: the manifest and schema version; every record against its table (types, allowed values, unknown fields with a "did you mean"); references between tables; world rules (roster sizes, one exclusive deal each, title holders under contract); media paths.
 
+## Making one in the game
+
+The **World Editor** on the title screen builds a package without touching a file: companies, shows, belts, wrestlers, teams. Its Check and share tab runs the same validation and writes the package out as text or a file. Ids are made from names as you type.
+
 ## Tools
 
     node tools/build-public-domain.js          # rebuilds universes/public_domain.json from its row table
