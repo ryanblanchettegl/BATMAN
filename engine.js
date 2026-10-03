@@ -5639,6 +5639,53 @@ CRX.push(function(ctx){
   return {d:1,x:'The title is recognised by both companies'};
 });
 
+/* ---------- 62. Rivals can die: a broke rival folds or is bought; its roster floods the free agents, its titles and tape go on sale (S.sale) ---------- */
+function retireCompany(S,pid,buyerId){
+  var P=S.promos[pid],buyer=buyerId?S.promos[buyerId]:null,R=rosterOf(S,pid).filter(function(w){return !w.nw;}).sort(function(a,b){return b.ovr-a.ovr;});
+  // the biggest names go to the buyer, if there is one; everyone else is a free agent
+  var keep=buyer?Math.ceil(R.length*0.4):0;
+  R.forEach(function(w,i){
+    leaveCompany(S,w,buyer&&i<keep?'moved to '+buyer.name:'company folded',true);
+    if(buyer&&i<keep)joinCompany(S,w,buyer);
+    else{w.promo='FA';w.brand=null;w.cut={w:S.week,from:pid,img:P.image};}
+  });
+  rosterOf(S,pid).forEach(function(w){w.promo='FA';w.brand=null;});   // staff and anyone left
+  var tit=P.titles.filter(function(t){return !t.tag;}).sort(function(a,b){return b.prestige-a.prestige;});
+  if(buyer&&tit[0]){var c=JSON.parse(JSON.stringify(tit[0]));c.holders=[];c.since=S.week;c.id='x'+S.nid++;c.name=tit[0].name;buyer.titles.push(c);}
+  else tit.slice(0,2).forEach(function(t){(S.sale=S.sale||[]).push({id:S.nid++,kind:'title',from:pid,fromName:P.name,name:t.name,g:t.g,lvl:t.lvl,tag:!!t.tag,prestige:Math.round(t.prestige),price:Math.round(S.promos[S.player].inc0*0.6*Math.max(0.3,t.prestige/50)),until:S.week+12});});
+  var tv=Math.round(P.inc0*0.05*18);
+  if(!buyer)(S.sale=S.sale||[]).push({id:S.nid++,kind:'tape',from:pid,fromName:P.name,name:'The '+P.name+' library',value:tv,price:Math.round(tv*0.4),until:S.week+12});
+  S.feuds.forEach(function(f){if(!f.res&&f.promo===pid){f.res=true;f.dead=true;f.end=S.week;}});
+  S.order=S.order.filter(function(id){return id!==pid;});P.dead=S.week;
+  if(S.agree&&S.agree.with===pid)S.agree=null;
+  if(S.xf&&S.xf.with===pid)S.xf=null;
+  news(S,'world',buyer?buyer.name+' bought '+P.name+'. Its best names move over, and the rest are on the market.':P.name+' has folded. Its roster is on the market, and its titles and tapes are up for sale.');
+}
+WEEKX.push(function(S){
+  if(S.cal||S.week%4||S.order.length<=4)return;
+  S.order.forEach(function(pid){
+    var P=S.promos[pid];if(pid===S.player||P.dead||P.cash>=0||(P.neg||0)<16||P.image>=45||!chance(S,0.2))return;
+    var rich=S.order.filter(function(id){return id!==pid&&id!==S.player&&S.promos[id].cash>S.promos[id].inc0*10&&S.promos[id].image>P.image;}).sort(function(a,b){return S.promos[b].cash-S.promos[a].cash;})[0];
+    retireCompany(S,pid,rich&&chance(S,0.55)?rich:null);
+  });
+  S.sale=(S.sale||[]).filter(function(l){return S.week<=l.until;});
+});
+E.forSale=function(S){return (S.sale||[]).filter(function(l){return S.week<=l.until;}).map(function(l){return {id:l.id,kind:l.kind,name:l.name,from:l.fromName,price:l.price,left:l.until-S.week,note:l.kind==='title'?'A '+(l.g==='F'?'women’s ':'')+'title with prestige '+l.prestige+' and no champion.':'About '+money(l.value)+' of back catalogue.'};});};
+E.buyLot=function(S,id){
+  var P=S.promos[S.player],i=(S.sale||[]).findIndex(function(l){return l.id===id;}),l=S.sale[i];
+  if(!l||S.week>l.until)return {ok:false,text:'That lot is gone.'};
+  if(!S.owner.me)return {ok:false,text:'Only an owner can buy a company’s belongings.'};
+  if(P.cash<l.price)return {ok:false,text:'It costs '+money(l.price)+'.'};
+  P.cash-=l.price;S.sale.splice(i,1);
+  if(l.kind==='title'){
+    P.titles.push({id:'x'+S.nid++,name:l.name,brand:null,g:l.g,lvl:Math.min(l.lvl,2),tag:l.tag,holders:[],prestige:Math.round(l.prestige*0.7),defs:0,since:S.week,last:S.week,hist:[]});
+    news(S,'title','You bought the '+l.name+' from the ruins of '+l.fromName+'. It is vacant.');
+    return {ok:true,text:'The '+l.name+' is yours, and vacant. Crown a champion on your next show.'};
+  }
+  (P.tape||(P.tape=[])).push({w:Math.max(1,S.week-30),n:l.name,r:70,v:l.value});
+  news(S,'money','You bought '+l.name+'.');return {ok:true,text:'The library is yours. It is worth about '+money(l.value)+' and earns every week.'};
+};
+
 /* ===== 90-api.js ===== */
 /* ---------- roster moves ---------- */
 E.ask=function(S,w){var P=S.promos[S.player],MD=modelOf(P),m=(w.promo==='FA'?1:1.3)*talkDiscount(S);if(w.promo!=='FA'&&S.promos[w.promo].image>P.image+10)m+=0.25;

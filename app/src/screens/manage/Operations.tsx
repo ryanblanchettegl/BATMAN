@@ -230,6 +230,16 @@ function Licensing() {
   </Panel>;
 }
 
+/** What the companies that closed left behind. */
+function ForSale() {
+  const S = G.S, L = E.forSale(S);
+  if (!L.length) return null;
+  return <Panel title="For sale">
+    <ul class="list">{L.map((l: any) => <li class="col"><span><b>{l.name}</b> <span class="muted">{'·'} from {l.from}, {l.left} {plural(l.left, 'week')} left</span><br /><span class="muted">{l.note}</span></span>
+      <span class="row opts"><Btn kind="sm" t="lot" d={{ id: l.id }} onClick={() => act(() => { const r = E.buyLot(S, l.id); say(r.text, { err: !r.ok }); showResult('For sale', r.text, !r.ok); })}>Buy: {cash(l.price)}</Btn></span></li>)}</ul>
+  </Panel>;
+}
+
 /** Borrowing and selling a share. A loan is paid back over a year with interest. An investor takes part of every profit and has views. */
 function Money() {
   const S = G.S, F = E.finance(S), inv = E.investorOffer(S);
@@ -262,7 +272,7 @@ export function Deals() {
   return <>
     <Head eyebrow={P.name} title="Deals" />
     <div class="cols">
-      <div class="stack"><Sponsors /><Offers /><Tape /><Licensing /><Money /></div>
+      <div class="stack"><Sponsors /><Offers /><Tape /><Licensing /><Money /><ForSale /></div>
       <RivalsPanel />
     </div>
   </>;
