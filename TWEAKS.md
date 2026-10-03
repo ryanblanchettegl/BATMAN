@@ -100,7 +100,7 @@ Small jobs, each one commit. None of them needs a decision from Ryan. Read `CLAU
 - [x] **71.** A save is about 860 KB after 60 weeks, most of it wrestler records (`S.w`). Measure it at 300 weeks. Trim what nobody reads (year lines and logs of retired free agents with no title history, old `S.recent` keys) so it stays under 1.5 MB.
 - [x] **72.** If the browser refuses to store the save, tell the player once and keep playing.
 - [x] **73.** Options: "Copy my save" and "Paste a save", as text, so a player can move a game between devices.
-- [ ] **74.** An error screen: if a page throws while drawing, show the error, a "Copy the error" button and "Back to the desk" instead of a blank page.
+- [x] **74.** An error screen: if a page throws while drawing, show the error, a "Copy the error" button and "Back to the desk" instead of a blank page.
 - [ ] **75.** Add a sim invariant check: no wrestler on both sides of a feud, no wrestler twice in a match, every title holder under contract to that promotion. Run it every week in `test-uni.js`.
 - [ ] **76.** Shrink the all-women company to twelve wrestlers in a sim and confirm the suggested card still has three matches every week.
 - [ ] **77.** A rival that has been out of cash for twelve weeks should cut costs (production level, then advertising) before it releases people, and say so in the news.
