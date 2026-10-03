@@ -6,6 +6,12 @@ You are the booker. You build the card; every match has odds, and the odds decid
 
 **Status:** work in progress, version 0.11. Playable from start to finish; the feature list in `docs/` is still being built.
 
+![The desk, where every week starts](docs/screens/desk.png)
+
+![A show report: rating, dirt sheet and every match](docs/screens/report.png)
+
+(Made by `tools/screenshots.js`.)
+
 ## Play it
 
 Open `dist/index.html` in any browser. It is one self-contained file: no server, no downloads, no external assets.
