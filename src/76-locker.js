@@ -63,7 +63,7 @@ function egoLines(S,w){
   var i1=ex>=4?3:(ex>=2.4?5:8),sp=(w.la&&S.week-w.la<=2?1:0)+(idle>=i1*2?-2:(idle>=i1?-1:0));if(w.nw||w.camp||w.inj>0)sp=Math.max(0,sp);
   add('spot','Spotlight',sp,sp>0?'Got time on the microphone lately':(sp<0?'Off the shows for '+idle+' weeks':'On the shows often enough'));
   var cv=(P.image-P.image0>=3?1:(P.image-P.image0<=-3?-1:0))+(P.cash<0?-1:0);add('company','The company',cv,cv>0?'The company is growing':(cv<0?'The company is going the wrong way':'The company is steady'));
-  var t=S.trust==null?60:S.trust,yv=(t>=90?2:(t>=75?1:(t<20?-2:(t<40?-1:0))))+(w.you||0);add('you','You',yv,yv>0?'Trusts the booker':(yv<0?'Does not trust the booker':'No opinion of the booker yet'));
+  var t=S.trust==null?60:S.trust,yv=(t>=90?2:(t>=75?1:(t<20?-2:(t<40?-1:0))))+(w.you||0)+youLean(S,w);add('you','You',yv,yv>0?'Trusts the booker':(yv<0?'Does not trust the booker':'No opinion of the booker yet'));
   return L;
 }
 function egoSum(S,w){var s=0;egoLines(S,w).forEach(function(l){s+=l.v;});return s;}
@@ -97,10 +97,10 @@ EVR['break']=function(S,ev,choice,P,w){
   if(!w)return '';
   if(choice===0){
     var r=rollCheck(S,ev.checks[0]);ev.roll=r;
-    if(r.ok){w.stress=Math.max(0,w.stress-35);w.morale=clamp(w.morale+6,0,100);w.you=clamp((w.you||0)+1,-1,1);return rollText(r)+w.name+' talks it through and comes back in a better place.';}
+    if(r.ok){w.stress=Math.max(0,w.stress-35);w.morale=clamp(w.morale+6,0,100);w.you=clamp((w.you||0)+1,-1,1);youRemember(S,w,'heard','You sat down with them when they were at breaking point.',20);return rollText(r)+w.name+' talks it through and comes back in a better place.';}
     w.morale=clamp(w.morale-6,0,100);w.stress=Math.max(0,w.stress-10);return rollText(r)+w.name+' hears you out and is not convinced.';
   }
-  if(choice===1){w.stress=clamp(w.stress+5,0,100);w.morale=clamp(w.morale-5,0,100);S.trust=clamp(S.trust+2,0,100);w.you=clamp((w.you||0)-1,-1,1);return 'You fine '+w.name+'. The locker room notices that the rules apply to everyone.';}
+  if(choice===1){w.stress=clamp(w.stress+5,0,100);w.morale=clamp(w.morale-5,0,100);S.trust=clamp(S.trust+2,0,100);w.you=clamp((w.you||0)-1,-1,1);youRemember(S,w,'fined','You fined them when they were at breaking point.',-18);return 'You fine '+w.name+'. The locker room notices that the rules apply to everyone.';}
   w.stress=Math.max(0,w.stress-20);S.trust=clamp(S.trust-3,0,100);return 'You let it go. '+w.name+' calms down, and the others notice what you let slide.';
 };
 TRAITS.grudge={n:'Holds a grudge',d:'Stress builds faster. Works harder inside a feud.'};

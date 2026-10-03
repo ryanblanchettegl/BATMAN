@@ -36,3 +36,15 @@ WEEKX.push(function(S){
   var C=S.scn;if(S.cal||!C||C.done||S.over)return;
   if(S.week>=C.weeks){C.done=true;C.res=SCN[C.id].check(S);C.res.figures=SCN[C.id].figures(S);S.over={why:'scenario',week:S.week};}
 });
+/* a scenario that ends early, with the company broke or the booker fired, is a scenario lost: it gets the scenario's own ending */
+function scnCut(S){
+  var C=S.scn;if(!C||C.done||!S.over||S.over.why==='scenario')return;
+  var why=S.over.why;C.done=true;
+  C.res={ok:false,text:why==='fired'?'You were let go before the '+C.weeks+' weeks were up.':'The company ran out of money before the '+C.weeks+' weeks were up.',figures:SCN[C.id].figures(S)};
+  S.over={why:'scenario',week:S.over.week,cut:why};
+}
+(function(){
+  var ew=E.endWeek,rs=E.runPlayerShow;
+  E.endWeek=function(S){var r=ew.apply(this,arguments);scnCut(S);return r;};
+  E.runPlayerShow=function(S){var r=rs.apply(this,arguments);scnCut(S);return r;};
+})();

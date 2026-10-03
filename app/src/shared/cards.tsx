@@ -6,7 +6,7 @@ import { G, ui, me, Card, openCard, popCard, closeCards, cash, full, plural, ope
 import { go } from '../nav';
 import { rs } from '../screens/roster/state';
 import { sendScout } from '../screens/roster/Profile';
-import { Window, Btn, Tag, Name, Side, Meter, Portrait, BeltArt, TitleName, TeamName, PromoName, Empty, champOf, teamName, stars } from '../kit';
+import { Window, Btn, Tag, Name, Side, Meter, Portrait, BeltArt, TitleName, TeamName, PromoName, Empty, champOf, teamName, stars, Txt } from '../kit';
 
 const promoName = (pid: string) => pid === 'FA' ? 'Free agent' : (G.S.promos[pid] ? G.S.promos[pid].name : pid);
 /** Every title in the world this wrestler holds, with the promotion that owns it. */
@@ -56,6 +56,8 @@ function WrestlerCard(p: { id: number }) {
       {(() => { const L = E.styleLessons(S, w); return L.bad.length ? <li><span>Style does not mesh with</span><span class="r">{L.bad.join(', ')}</span></li> : null; })()}
       {rel && rel.good.length ? <li><span>Gets on with</span><span class="r">{list(rel.good.slice(0, 4).map((x: W) => <Name w={x} />))}</span></li> : null}
       {rel && rel.bad.length ? <li><span>Does not get on with</span><span class="r">{list(rel.bad.slice(0, 4).map((x: W) => <Name w={x} />))}</span></li> : null}
+      {rel && rel.notes.length ? <li class="col" data-t="rel-notes"><span>Remembers</span><span class="r">{rel.notes.map((x: any) => <div><Txt>{x.t}</Txt></div>)}</span></li> : null}
+      {rel && rel.you ? <li class="col" data-t="rel-you"><span>About you</span><span class="r"><div><b class={rel.you.v >= 30 ? 'good' : (rel.you.v <= -30 ? 'bad' : undefined)}>{rel.you.word}</b></div>{rel.you.mem.map((x: any) => <div class="muted">{x.t}</div>)}</span></li> : null}
       {w.rr && w.rr.length ? <li class="col"><span>Last {w.rr.length} {plural(w.rr.length, 'result')}</span><span class="r">{w.rr.map((x: any) => <div><b class={x.r === 'W' ? 'good' : 'bad'}>{x.r}</b> <span class="muted">vs {x.v} {'·'} {stars(x.ov)}</span></div>)}</span></li> : null}
       {yr ? <li><span>This year</span><span class="r num">{yr.m} {plural(yr.m, 'match', 'matches')}, {yr.w}{'–'}{yr.l}{yr.best ? ', best ' + stars(yr.best) : ''}</span></li> : null}
       <li><span>Contract</span><span class="r">{w.rt ? 'Retired' : fa ? <>Free agent, asking about <b class="num">{cash(E.ask(S, w))}</b> a week</> : mine ? <><b class="num">{full(w.wage)}</b> a week, {weeksText(Math.max(0, w.con))} left</> : <>With {promoName(w.promo)}{w.con <= 12 ? ', ' + weeksText(Math.max(0, w.con)) + ' left' : ''}</>}</span></li>

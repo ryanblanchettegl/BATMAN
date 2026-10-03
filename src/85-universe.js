@@ -163,7 +163,7 @@ NEWX.push(function(S){
     var lead=by[s.leader]&&ms.indexOf(by[s.leader])>=0?by[s.leader]:ms[0],st={id:S.nid++,promo:s.promo,name:s.name,leader:lead.id,m:ms.map(function(w){return w.id;}),formed:1,tension:0};S.stables.push(st);ms.forEach(function(w){w.stable=st.id;});});
   (DB.rels||[]).forEach(function(r){var a=by[r.a],b=by[r.b];if(!a||!b)return;var k=rkey(a.id,b.id);
     if(r.ring_chemistry!=null)(S.chemX||(S.chemX={}))[k]=clamp(r.ring_chemistry,-10,10)*0.6;
-    var s=r.strength!=null?r.strength:(r.type==='dislike'||r.type==='rivalry'?-50:50);if(Math.abs(s)>=25)S.rel[k]=s>0?1:-1;
+    var s=r.strength!=null?r.strength:(r.type==='dislike'||r.type==='rivalry'?-50:50);if(Math.abs(s)>=25)relSet(S,a.id,b.id,s>0?Math.max(REL_STRONG,s):Math.min(-REL_STRONG,s),r.type==='mentor'?{ra:40,rb:40}:null);
     (S.relT||(S.relT={}))[k]=r.type;});
 });
 /* write the world as it stands back out as a package */
@@ -195,7 +195,7 @@ E.exportUniverse=function(S,meta){
   });
   S.teams.forEach(function(t,i){if(!uid[t.m[0]]||!uid[t.m[1]]||!P0[t.promo])return;pkg.teams.push({id:'team_'+(i+1),name:t.name||S.w[t.m[0]].name+' & '+S.w[t.m[1]].name,kind:'tag',member_ids:[uid[t.m[0]],uid[t.m[1]]],experience:Math.round(t.exp),chemistry:t.chem||0,promotion_id:pid(t.promo)});});
   (S.stables||[]).forEach(function(s,i){var ms=s.m.map(function(m){return uid[m];}).filter(Boolean);if(ms.length>=3)pkg.teams.push({id:'stable_'+(i+1),name:s.name,kind:'stable',member_ids:ms,leader_id:uid[s.leader],promotion_id:pid(s.promo)});});
-  Object.keys(S.rel||{}).forEach(function(k){var p=k.split('-'),a=uid[+p[0]],b=uid[+p[1]];if(!a||!b||!S.rel[k])return;pkg.relationships.push({a:a,b:b,type:(S.relT&&S.relT[k])||(S.rel[k]>0?'friendship':'dislike'),strength:S.rel[k]>0?50:-50,ring_chemistry:Math.round(chem(S,+p[0],+p[1])/0.6)});});
+  Object.keys(rmAll(S)).forEach(function(k){var p=k.split('-'),a=uid[+p[0]],b=uid[+p[1]],e=S.rm[k];if(!a||!b||Math.abs(e.base)<REL_ON)return;pkg.relationships.push({a:a,b:b,type:(S.relT&&S.relT[k])||(e.base>0?'friendship':'dislike'),strength:Math.round(clamp(e.base,-100,100)),ring_chemistry:Math.round(chem(S,+p[0],+p[1])/0.6)});});
   return pkg;
 };
 E.SCHEMA_VERSION=SCHEMA_VERSION;

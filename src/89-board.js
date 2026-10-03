@@ -67,6 +67,6 @@ WEEKX.push(function(S){
 });
 EVR.awardraise=function(S,ev,choice,P,w){
   if(choice===0){w.wage=ev.raise;w.morale=clamp(w.morale+6,0,100);return w.name+' is paid '+money(w.wage)+' a week.';}
-  if(choice===1){if(P.cash<ev.bonus)return 'You cannot cover the bonus right now. '+w.name+' will remember that.';P.cash-=ev.bonus;w.morale=clamp(w.morale+3,0,100);return w.name+' takes the bonus and the point is made.';}
-  w.morale=clamp(w.morale-8,0,100);return w.name+' says nothing. They hold on to the trophy a little tighter.';
+  if(choice===1){if(P.cash<ev.bonus){youRemember(S,w,'nobonus','You promised a bonus you could not pay.',-12);return 'You cannot cover the bonus right now. '+w.name+' will remember that.';}P.cash-=ev.bonus;w.morale=clamp(w.morale+3,0,100);return w.name+' takes the bonus and the point is made.';}
+  w.morale=clamp(w.morale-8,0,100);youRemember(S,w,'noraise','They won an award and you gave them nothing for it.',-15);return w.name+' says nothing. They hold on to the trophy a little tighter.';
 };

@@ -322,25 +322,7 @@ CRX.push(function(ctx){
   d=clamp(d,-1.5,1);return d?{d:d,x:d>0?up.name+'’s act is at its freshest':down.name+'’s gimmick has gone stale'}:null;
 });
 
-/* booking makes friends and enemies: pairs build a score from what happens between them in the ring. It feeds chemistry, relations and backstage disputes */
-POST.push(function(ctx){
-  var S=ctx.S;if(S.cal||!ctx.isPl)return;var B=S.bond||(S.bond={}),r=ctx.res,all=ctx.all;
-  function add(a,b,d){var k=rkey(a.id,b.id);B[k]=clamp((B[k]||0)+d,-8,8);}
-  for(var i=0;i<all.length;i++)for(var j=i+1;j<all.length;j++){
-    var a=all[i],b=all[j],same=ctx.sides.some(function(s){return s.indexOf(a)>=0&&s.indexOf(b)>=0;});
-    if(same)add(a,b,0.4);                                   // partners who travel together grow close
-    else if(r.OV>=85)add(a,b,0.7);                          // made each other look good
-    else if(r.OV>=65)add(a,b,0.15);
-    else if(r.OV<50)add(a,b,-0.5);
-    if(!same&&r.win>=0){                  // a winner called again and again over the same person is a grudge
-      var ka=rkey(a.id,b.id),last=(S.bondLast||(S.bondLast={}))[ka],w=r.winners[0]&&r.winners[0].id;
-      if(last===w&&w!=null){add(a,b,-0.7);if(B[ka]<=-3&&!S.bondNote)S.bondNote=1;}S.bondLast[ka]=w;
-    }
-  }
-});
-WEEKX.push(function(S){if(S.bond)Object.keys(S.bond).forEach(function(k){S.bond[k]*=0.985;if(Math.abs(S.bond[k])<0.05)delete S.bond[k];});});
-E.bond=function(S,a,b){return S.bond?S.bond[rkey(a,b)]||0:0;};
-E.bondWord=function(S,a,b){var v=E.bond(S,a,b);return v>=6?'inseparable':(v>=3?'close':(v<=-6?'bitter enemies':(v<=-3?'at odds':'neutral')));};
+/* booking makes friends and enemies: that now lives in the relationship matrix (src/66-relations.js) */
 
 /* the last year: a veteran can announce a final year. The farewell tour lifts gates, and the last match gives one rising star the honour of the final win */
 EVR.finalyear=function(S,ev,choice,P,w){
@@ -796,7 +778,8 @@ CRX.push(function(ctx){
 function stableWeak2(S,st){return E.stableWeak(S,st).length;}
 
 /* ---------- 35. The game remembers: betrayals, first meetings, droughts and history (S.mem) ---------- */
-function memBetray(S,att,vic){var M=S.mem||(S.mem={bet:{}});M.bet[rkey(att.id,vic.id)]={att:att.id,vic:vic.id,w:S.week};}
+function memBetray(S,att,vic){var M=S.mem||(S.mem={bet:{}});M.bet[rkey(att.id,vic.id)]={att:att.id,vic:vic.id,w:S.week};
+  relBump(S,vic.id,att.id,{bond:-60,ra:-40},{k:'betray',by:att.id,keep:true,t:att.name+' turned on '+vic.name+'.'});}
 function memOf(S,a,b){
   var hh=S.h2h&&S.h2h[rkey(a.id,b.id)],bt=S.mem&&S.mem.bet&&S.mem.bet[rkey(a.id,b.id)];
   var n=hh?hh.n:0,wa=hh?(a.id<b.id?hh.a:hh.b):0,wb=hh?(a.id<b.id?hh.b:hh.a):0;

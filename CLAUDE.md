@@ -19,6 +19,7 @@ node test-create.js                                 # shows and belts made durin
 node test-segments.js                               # promos and angles the player books beside the matches
 node test-tasks.js                                  # this week's tasks, and how they hold a show and the week
 node test-shape.js                                  # the running order rules, and stars instead of percentages
+node test-relations.js                              # the relationship matrix, memories and the notification bar
 node tools/build-public-domain.js                   # rebuild universes/public_domain.json after editing rosters
 python3 tools/build-font.py                         # rebuild app/fonts/ewf-blocks.woff2 (needs fonttools, brotli)
 ```
@@ -29,11 +30,12 @@ Browser tests need Playwright with Chromium. Build first, then run from the repo
 NODE_PATH=<dir containing playwright> node app/tests/<name>.js
 ```
 
-`<name>` is one of `start`, `office`, `booking`, `roster`, `stories`, `company`, `cards`, `journey`, `linker`, `save`, `sweep`, `challenge`, `scenarios`, `editor`, `create`, `leaveout`, `segments`, `net`, `tasks`, `shape`. `journey.js` takes `MODES=desk,phone,tablet,tv` and `WEEKS=5`. Each test prints its failures and exits non-zero if any. They are slow (one to five minutes each); run the ones for the section you touched, then `journey.js`.
+`<name>` is one of `start`, `office`, `booking`, `roster`, `stories`, `company`, `cards`, `journey`, `linker`, `save`, `sweep`, `challenge`, `scenarios`, `editor`, `create`, `leaveout`, `segments`, `net`, `tasks`, `shape`, `relations`. `journey.js` takes `MODES=desk,phone,tablet,tv` and `WEEKS=5`. Each test prints its failures and exits non-zero if any. They are slow (one to five minutes each); run the ones for the section you touched, then `journey.js`.
 
 ## How the code is laid out
 
 - `src/*.js`: the simulation. Plain ES5 in one shared closure, concatenated in file-name order by `build.js`. No screen code. State `S` is plain JSON and is the save file. A seeded generator (`rnd(S)`) makes every game repeatable. Systems plug in through hook lists declared at the top of `src/10-match.js` (`MQX`, `CRX`, `FINX`, `EFX`, `POST`, `SHOWX`, `WEEKX`, `NEWX`, `PREX`, `TASKX`).
+- `src/66-relations.js`: the relationship matrix (`S.rm`) and what people remember (`S.rmY` for what they remember about the booker). It is the one place that says how two people feel about each other. Change it only through `relBump()` and `youRemember()`; read it with `relOf()`, `bondOf()`, `respOf()`, `jealOf()`. It never calls `rnd(S)`. `note(S, heading, line, kind)` puts a line on the notification bar. `docs/plans/gorilla-position.md` is the plan this belongs to.
 - `src/78-models.js`: the nine company models. Each is data plus small functions for match quality, crowd, finishes, pushes, hiring fit and the suggested card.
 - `app/src/`: the interface in Preact and TypeScript. `store.ts` holds the game and view state, `nav.ts` the screen map, `input.ts` screen modes and remote or gamepad focus, `kit/` the building blocks, `screens/<section>/` one folder per section, `shared/` pieces used by more than one section.
 - `src/86-editor.js` and `app/src/screens/editor/`: the World Editor, opened from the title screen. It edits a universe package (plain JSON kept with the player's other worlds), never a running game. Every change goes through an `E.ed*` function so it can be tested headless.
@@ -59,6 +61,8 @@ NODE_PATH=<dir containing playwright> node app/tests/<name>.js
 8a. **Stars, not percentages.** How good a match, promo or angle was is shown as stars (`stars()` in the kit, `starG()` in the engine), never as a number. A target about a match is worded in stars and checked with `starMeets()`. Chances stay percentages (rule 4). The show's own score is still a percentage.
 8b. **Money:** short form (`cash()`, `$1.2M`) in tables and lists; full form (`full()`, `$1,200,000`) for a single headline figure.
 9. **Saves:** the save is `S` under the key `ewf9000-save-4`. A change that breaks old saves needs a version bump and a migration.
+9a. **One step at a time.** Do one step, show Ryan the result, and wait for his go-ahead before the next. Do not run batches side by side.
+9b. **Relationships are the centre.** A new decision or event says what it does to the people involved through `relBump()` and `youRemember()`, so they remember it and the notification bar reports it.
 10. **Commits:** small, with a message that says what changed for the player. Tick the boxes in `TASKS.md` in the same commit.
 
 ## The live page

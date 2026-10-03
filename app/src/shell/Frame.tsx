@@ -47,6 +47,9 @@ window.addEventListener('ewf-track', (e: any) => {
 function MP_ON() { return document.documentElement.getAttribute('data-music') !== 'off'; }
 export function StatusBar() {
   const S = G.S, P = me(), a = toastNow();
+  if (a && a.note) return <footer class={'status toast note' + (a.k ? ' ' + a.k : '')} role="status" data-t="toast" data-v="note" onClick={() => { clearTimeout(timer); nextToast(); }}>
+    <span class="tn"><b>{a.h}</b></span><span class="td">{a.t}</span><span class="sp" />{queue.length > 1 && <span class="opt">+{queue.length - 1} more</span>}
+  </footer>;
   if (a) return <footer class="status toast" role="status" data-t="toast" onClick={() => { clearTimeout(timer); nextToast(); }}>
     <span><b>{a.ms ? 'Milestone' : 'Achievement unlocked'}</b></span><span class="tn">{a.name}</span><span class="opt td">{a.desc}</span><span class="sp" />{queue.length > 1 && <span class="opt">+{queue.length - 1} more</span>}
   </footer>;
@@ -69,16 +72,22 @@ export function FlashBar() {
   </>;
 }
 
-/* Achievements: the engine queues ids in S.toasts. Each one takes over the status bar for a few seconds, one at a time,
-   so nothing ever covers the page. */
-const queue: string[] = []; let timer: any = null;
+/* The notification bar. The engine queues things in S.toasts: an achievement id, or a note {h, t, k} about something
+   that changed because of what the player just did ("King Arthur will remember that"). Each one takes over the status
+   bar for a few seconds, one at a time, so nothing ever covers the page. */
+const queue: any[] = []; let timer: any = null;
 function nextToast() { timer = null; queue.shift(); if (queue.length) timer = setTimeout(nextToast, 4200); redraw(); }
 export function drainToasts() {
   const S = G.S; if (!S || !S.toasts.length) return;
   let added = false;
-  while (S.toasts.length) { const id = S.toasts.shift(); if (!E.ACH.some((a: any) => a.id === id)) continue; { const a = E.ACH.find((q: any) => q.id === id); if (!a.ms) PLATFORM.unlock(id); } queue.push(id); added = true; }
+  let ach = false;
+  while (S.toasts.length) {
+    const id = S.toasts.shift();
+    if (id && typeof id === 'object') { if (id.h) { queue.push({ note: true, h: String(id.h), t: String(id.t || ''), k: id.k === 'good' || id.k === 'bad' ? id.k : '' }); added = true; } continue; }
+    if (!E.ACH.some((a: any) => a.id === id)) continue; { const a = E.ACH.find((q: any) => q.id === id); if (!a.ms) PLATFORM.unlock(id); } queue.push(id); added = true; ach = true;
+  }
   if (!added) return;
-  SFX.ach();
+  if (ach) SFX.ach();
   while (queue.length > 4) queue.splice(1, 1);
   if (!timer) timer = setTimeout(nextToast, 4200);
   redraw();
@@ -86,4 +95,4 @@ export function drainToasts() {
 export function clearToasts() { queue.length = 0; if (timer) { clearTimeout(timer); timer = null; } }
 onReset(clearToasts);
 /** The achievement being announced, if any. */
-export function toastNow(): any { return queue.length ? E.ACH.find((q: any) => q.id === queue[0]) : null; }
+export function toastNow(): any { return !queue.length ? null : (typeof queue[0] === 'object' ? queue[0] : E.ACH.find((q: any) => q.id === queue[0])); }

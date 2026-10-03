@@ -190,7 +190,8 @@ function courtApply(S,c,side,byYou){
   (S.verdicts||(S.verdicts=[])).unshift({w:S.week,win:win.id,lose:lose.id,fair:fair,judge:byYou?null:(S.lastJudge||null),rep:rep,n:lose.cl});if(S.verdicts.length>20)S.verdicts.length=20;S.lastJudge=null;
   if(byYou){win.you=clamp((win.you||0)+1,-1,1);
     if(fair){S.trust=clamp(S.trust+2,0,100);S.courtFair=(S.courtFair||0)+1;if(S.courtFair>=5)award(S,'ACH_COURT');}
-    else{S.trust=clamp(S.trust-3,0,100);stressAdd(S,lose,8);lose.you=clamp((lose.you||0)-1,-1,1);S.rel[rkey(win.id,lose.id)]=-1;}}
+    else{S.trust=clamp(S.trust-3,0,100);stressAdd(S,lose,8);lose.you=clamp((lose.you||0)-1,-1,1);relBump(S,lose.id,win.id,{bond:-45,ra:-15},{k:'court',keep:true,t:'Wrestlers’ court found for '+win.name+' against '+lose.name+', and '+lose.name+' thinks it was fixed.'});}
+    youRemember(S,win,'court','You ruled for them in wrestlers’ court.',15);youRemember(S,lose,'court',fair?'You ruled against them in wrestlers’ court. It was fair, and it still stung.':'You ruled against them in wrestlers’ court, and they were in the right.',fair?-8:-25);}
   return fair;
 }
 E.courtRule=function(S,cid,v){
@@ -262,7 +263,8 @@ E.resolveChaos=function(S,card,c){
     else if(c===1){S.rateMod=(S.rateMod||0)-1.5;X.cr=1;res='The building sees a match the cameras miss.';X.note='This match did not make it to air.';}
     else{P.cash-=ch.cost;res='The generator kicks in after ninety seconds. That cost '+money(ch.cost)+'.';X.note='A short power failure, fixed fast.';}
   }else if(ch.type==='shoot'){
-    S.rel[rkey(w.id,o.id)]=-1;
+    relBump(S,w.id,o.id,{bond:-55,ra:-10,rb:-10},{k:'shoot',keep:true,t:w.name+' and '+o.name+' threw real punches in the middle of a match.'});
+    if(c===1){youRemember(S,w,'letfight','You let it turn into a real fight and did nothing.',-12);youRemember(S,o,'letfight','You let it turn into a real fight and did nothing.',-12);}
     if(c===0){m.nc=true;X.cr=1;X.x='It turned into a real fight and the locker room emptied';X.fin='The locker room pours out to pull them apart. No contest.';stressAdd(S,w,10);stressAdd(S,o,10);
       if(w.g===o.g)startFeud(S,P,w,o,30,'It got real between them');X.note='The match broke down into a real fight.';res='Twenty wrestlers pull them apart. There is no finish, but nobody will forget it.';}
     else if(c===1){X.cr=7;X.mq=-3;X.x='A real fight, and the crowd could tell';m.hurt=w.dur<=o.dur?w.id:o.id;[w,o].forEach(function(q){var z=zonesOf(q),hz=hurtZone(S,q);z[hz]=Math.min(100,z[hz]+8);stressAdd(S,q,6);});
@@ -275,6 +277,10 @@ E.resolveChaos=function(S,card,c){
     else{X.cr=4;X.x=o.name+' poured petrol on it';addOvr(P,o,1.2);o.la=S.week;if(S.net)S.net.mood=clamp(S.net.mood+3,0,100);X.note=o.name+' took the microphone and made it worse, on purpose.';res=o.name+' makes it much worse and loves every second.';
       if(S.sponsors.length&&chance(S,0.35)){var sp=pick(S,S.sponsors);P.led.bonus-=sp.pay;res+=' '+sp.name+' are not amused and withhold this week’s payment.';news(S,'money',sp.name+' withheld a payment after crowd trouble at '+S.queue[S.qi].name+'.');}}
   }else if(ch.type==='ko'){
+    if(c===0)youRemember(S,w,'safe','You stopped the match when they were hurt.',25);
+    else if(c===1)youRemember(S,w,'pushed','You sent them to the finish while they were hurt.',-20);
+    else if(r.ok){youRemember(S,o,'trusted','You trusted them to carry a hurt opponent through the match.',12);relBump(S,w.id,o.id,{bond:10,ra:15},{k:'carried',by:o.id,t:o.name+' carried a hurt '+w.name+' through a match and nobody in the building knew.'});}
+    else youRemember(S,w,'pushed','You kept the match going while they were hurt, and it fell apart.',-25);
     if(c===0){m.nc=true;X.ko=w.id;X.cr=-3;X.x='Stopped for a real injury';X.fin='The referee stops the match. '+w.name+' is helped to the back.';S.trust=clamp(S.trust+3,0,100);X.note='Stopped by the referee: '+w.name+' was hurt for real.';res='You stop it. '+w.name+' walks to the back with help. The locker room will remember that you made the safe call.';}
     else if(c===1){m.len='S';if(m.stip==='iron')m.stip='std';m.hurt=w.id;X.mq=-4;X.x='They went home early with somebody hurt';S.trust=clamp(S.trust-1,0,100);X.note=w.name+' was hurt and they went straight to the finish.';res='They go to the finish. '+w.name+' is on autopilot.';}
     else{if(r.ok){X.mq=-1;X.note=o.name+' carried an injured '+w.name+' through it.';res=o.name+' walks '+w.name+' through the rest of it. Nobody in the building knew.';o.morale=clamp(o.morale+2,0,100);}
@@ -387,7 +393,7 @@ WEEKX.push(function(S){
   S.court.slice().forEach(function(c){
     var a=S.w[c.a],b=S.w[c.b];
     if(a.promo!==P.id||b.promo!==P.id){S.court=S.court.filter(function(x){return x!==c;});return;}
-    if(S.week-c.wk>=3){stressAdd(S,a,10);stressAdd(S,b,10);S.rel[rkey(a.id,b.id)]=-1;S.trust=clamp(S.trust-2,0,100);S.court=S.court.filter(function(x){return x!==c;});news(S,'story','Nobody heard '+a.name+'’s complaint against '+b.name+'. It has turned into a grudge.');}
+    if(S.week-c.wk>=3){stressAdd(S,a,10);stressAdd(S,b,10);relBump(S,a.id,b.id,{bond:-45},{k:'unheard',keep:true,t:'Nobody heard '+a.name+'’s complaint against '+b.name+'. It turned into a grudge.'});youRemember(S,a,'unheard','You never heard their complaint.',-15);S.trust=clamp(S.trust-2,0,100);S.court=S.court.filter(function(x){return x!==c;});news(S,'story','Nobody heard '+a.name+'’s complaint against '+b.name+'. It has turned into a grudge.');}
   });
   if(S.court.length<2&&chance(S,0.15+(hasRule(S,'kayfabe')?0.08:0)-(hasRule(S,'curfew')?0.07:0)+(R.some(function(w){return w.role==='toxic';})?0.06:0)+(R.some(function(w){return w.role==='leader'&&w.morale>=50;})?0:0.07))){var c=mkCase(S);if(c){S.court.push(c);news(S,'story','A case for wrestlers’ court: '+c.text);}}
   tickClocks(S);

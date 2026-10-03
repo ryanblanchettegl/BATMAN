@@ -54,6 +54,12 @@ Two more lists sit beside this one, both finished:
 | The week's tasks | The Office desk lists every task for the week (commentators not assigned, sponsor offers waiting, and so on). Anything that should be filled in is filled in, or waved off, before a show is booked or the week ends. |
 | Stars, not percentages | How good a match, a promo or an angle was is shown as a star rating out of five, in quarter steps. Never as a percentage. Targets about a match are worded and checked in stars too. (The show's own score is still a percentage; Ryan has not said to change it.) |
 | How a show is laid out | The game follows the old rules of the booking office and tells the player what they are: open hot, peaks and valleys, the biggest match on last with time to work, mix the finishes, send them home happy or wanting more. Where a match sits changes how it lands. |
+| One step at a time | From 3 October (evening): one step, shown to Ryan, then wait for his go-ahead before the next. No batches run side by side. |
+| Relationships | Relationships are the centre of the game. Every decision ripples through how wrestlers feel about each other, about the booker and about the crowd. People remember what you did, the way they do in a Telltale game, and a notification bar says what changed after an action. |
+| The broadcast | The Gorilla Position becomes an active phase: live events stop the show and the player makes the call (`docs/plans/gorilla-position.md`). |
+| Promos | Promos get real depth: archetypes that must fit the wrestler, heat that opens a feud's next act, and a good promo that shifts the odds of that wrestler's match (step 4 of the same plan). |
+| The next-turn button | Like Civilization 6: one button at the bottom of the screen that always leads to the next big action (book the show, next show, end the week), with the things to do first stacked above it. Queued behind the live Gorilla Position steps. |
+| A deep character sheet | The roster grows to include referees, road agents, managers, legends, authority figures and commentators, as skills any person can have. Backstory and gimmick get real depth, with many options drawn from wrestling history, so players can build anyone they like with the creation tools. Researched from how the genre's deepest character creators do it. Work on this only after the current projects are done. |
 | Growing a company | A company adds titles and shows every year. So belts and weekly shows can be created inside a running game, not only in the World Editor, and rival companies add their own once a year. |
 | World Editor | The creation suite is its own page called **World Editor** on the title screen. A player builds a world from scratch (companies, shows, belts, wrestlers) and uploads it to the Workshop. This is the main next item. |
 
@@ -122,6 +128,13 @@ Ryan: "look up the philosophy of booking a wrestling show, the importance of the
 - [x] Matches, promos and angles show a star rating and nothing else: the report, the broadcast, History, the dirt sheet, the boards, wrestler cards, the season review, the end-of-game page. The work, the crowd and effort are bars with no number.
 - [x] Network targets, promises, season goals and achievements about a match are worded in stars and checked in quarter stars, so "★★★★½ or better" is met by any match that shows ★★★★½.
 - [ ] The show's own score, and what the crowd expects, are still percentages.
+
+### 0e. The live Gorilla Position, in steps (`docs/plans/gorilla-position.md`)
+
+- [x] **Step 1 (0.16): the relationship matrix, memories and the notification bar.** Code: `src/66-relations.js`. Tests: `node test-relations.js`, `app/tests/relations.js`. One entry per pair: a shared bond, respect each way, jealousy each way, and what they remember. A separate list of what each wrestler remembers about the booker. The old friend-or-enemy flags and bond scores are folded into it, and old saves convert on load. The status bar announces "X will remember that" and when two people become friends or enemies. The wrestler card lists what they remember and where the booker stands with them.
+- [ ] **Step 2: live events.** The show runs in steps and stops for a decision: the botch, the hot mic, the audible. `E.resolveLiveDecision`.
+- [ ] **Step 3: the broadcast screen** for those decisions. The old headset window goes.
+- [ ] **Step 4: promo depth.** Archetypes, heat by act, odds shifted by a good promo.
 
 ### 1. Finish the pop-ups (small)
 Feature list items 10 and 11. Code: `app/src/shared/cards.tsx`, `Name`, `TitleName`, `TeamName` and `Txt` in `app/src/kit/index.tsx`, the card stack in `app/src/store.ts`.

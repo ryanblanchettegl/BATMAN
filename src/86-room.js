@@ -46,13 +46,14 @@ EVR.clique=function(S,ev,choice,P,w){
   }
   r=rollCheck(S,ev.checks[2]);ev.roll=r;
   if(r.ok){
-    for(var i=0;i<mem.length;i++)for(var j=i+1;j<mem.length;j++){var k=rkey(mem[i].id,mem[j].id);if(S.rel&&S.rel[k]>0)S.rel[k]=0;if(S.bond&&S.bond[k]>0)S.bond[k]=0;}
+    for(var i=0;i<mem.length;i++)for(var j=i+1;j<mem.length;j++){var e0=relGet(S,mem[i].id,mem[j].id);if(e0&&e0.bond>0){e0.bond=0;e0.base=Math.min(e0.base,0);}}
+    mem.forEach(function(x){youRemember(S,x,'split','You broke up their group.',-10);});
     mem.forEach(function(x){x.morale=clamp(x.morale-3,0,100);});
     news(S,'story','The locker room is quieter. '+ev.cname+' has been broken up.');
     return rollText(r)+'You split them up on the card and in the dressing room. The group is gone. Nobody enjoyed it.';
   }
   mem.forEach(function(x){x.morale=clamp(x.morale-6,0,100);});
-  for(var a=0;a<mem.length;a++)for(var b=a+1;b<mem.length;b++){var kk=rkey(mem[a].id,mem[b].id);S.bond=S.bond||{};S.bond[kk]=Math.min(10,(S.bond[kk]||0)+2);}
+  for(var a=0;a<mem.length;a++)for(var b=a+1;b<mem.length;b++){relBump(S,mem[a].id,mem[b].id,{bond:20},null);}
   return rollText(r)+'It backfires. They are closer than ever, and angrier.';
 };
 /* if you push someone you promised to hold down, their friends notice */
@@ -106,7 +107,7 @@ EVR.ccask=function(S,ev,choice,P,w){
 };
 POST.push(function(ctx){
   var S=ctx.S,m=ctx.m,r=ctx.res;if(!ctx.isPl||S.cal||m.call==null||m.call<0||r.win<0)return;
-  ctx.sides.forEach(function(s,k){if(k===m.call)return;s.forEach(function(w){if(w.cc){w.morale=clamp(w.morale-5,0,100);S.trust=clamp(S.trust-1,0,100);r.seg.notes.push(w.name+' has creative control, and you overrode it. They remember.');}});});
+  ctx.sides.forEach(function(s,k){if(k===m.call)return;s.forEach(function(w){if(w.cc){w.morale=clamp(w.morale-5,0,100);S.trust=clamp(S.trust-1,0,100);youRemember(S,w,'overruled','You overrode their creative control.',-20);r.seg.notes.push(w.name+' has creative control, and you overrode it. They remember.');}});});
 });
 E.controlWord=function(w){return w.cc?'Can refuse to lose. Calling a loss on them costs 2 more booking power and a little trust.':null;};
 
@@ -125,12 +126,12 @@ WEEKX.push(function(S){
   });
   // cars: the people who worked this week are shuffled into groups of three on the road
   var on=R.filter(function(w){return w.wk===S.week&&w.inj<=0;}).sort(function(a,b){return hash('car'+S.week+a.id)-hash('car'+S.week+b.id);});
-  var fric=[0.02,0.01,0.004][P.trv||0],B=S.bond||(S.bond={});
+  var fric=[0.02,0.01,0.004][P.trv||0];
   for(var i=0;i+1<on.length;i+=3){
     var grp=on.slice(i,i+3);
     for(var a=0;a<grp.length;a++)for(var b=a+1;b<grp.length;b++){
-      var x=grp[a],y=grp[b],k=rkey(x.id,y.id),v=B[k]||0;
-      B[k]=clamp(v+(relOf(S,x.id,y.id)<0?-0.3:0.25),-8,8);
+      var x=grp[a],y=grp[b],v=bondOf(S,x.id,y.id)/10;
+      relBump(S,x.id,y.id,{bond:relOf(S,x.id,y.id)<0?-3:2.5},null);
       var p=fric*(1+Math.max(0,-v)*0.4)*(1+((x.stress||0)+(y.stress||0))/150);
       if(S.week-(S.carAt||-99)>=10&&chance(S,p)&&!S.inbox.some(function(e){return e.type==='carfight'&&!e.done;})){
         S.carAt=S.week;
@@ -141,14 +142,14 @@ WEEKX.push(function(S){
   }
 });
 EVR.carfight=function(S,ev,choice,P,w){
-  var o=S.w[ev.o],k=rkey(w.id,o.id);S.bond=S.bond||{};
+  var o=S.w[ev.o];
   if(choice===0){var f=startFeud(S,P,w,o,40,w.name+' and '+o.name+' fought on the road',{force:true});w.mom=clamp(w.mom+1,-10,10);o.mom=clamp(o.mom+1,-10,10);return f?'You turned it into a story. '+w.name+' against '+o.name+' is on.':'There was already a story between them, and the fight fed it.';}
   if(choice===1){
     var r=rollCheck(S,ev.checks[1]);ev.roll=r;
-    if(r.ok){S.bond[k]=Math.min(8,(S.bond[k]||0)+2);return rollText(r)+'They shake hands and mean it, mostly.';}
-    S.bond[k]=Math.max(-8,(S.bond[k]||0)-1.5);w.morale=clamp(w.morale-3,0,100);o.morale=clamp(o.morale-3,0,100);return rollText(r)+'They shake hands for the cameras and go back to glaring.';
+    if(r.ok){relBump(S,w.id,o.id,{bond:20},{k:'shook',t:w.name+' and '+o.name+' fought on the road, then shook hands and meant it.'});return rollText(r)+'They shake hands and mean it, mostly.';}
+    relBump(S,w.id,o.id,{bond:-15},{k:'carfight',t:w.name+' and '+o.name+' came to blows on the road.'});w.morale=clamp(w.morale-3,0,100);o.morale=clamp(o.morale-3,0,100);return rollText(r)+'They shake hands for the cameras and go back to glaring.';
   }
-  w.morale=clamp(w.morale-5,0,100);o.morale=clamp(o.morale-5,0,100);P.cash-=5000;S.bond[k]=Math.max(-8,(S.bond[k]||0)-0.5);return 'You fined them both. Nobody argued, and nobody forgot.';
+  w.morale=clamp(w.morale-5,0,100);o.morale=clamp(o.morale-5,0,100);P.cash-=5000;relBump(S,w.id,o.id,{bond:-5},{k:'carfight',t:w.name+' and '+o.name+' came to blows on the road, and were both fined for it.'});youRemember(S,w,'fined','You fined them for the fight on the road.',-8);youRemember(S,o,'fined','You fined them for the fight on the road.',-8);return 'You fined them both. Nobody argued, and nobody forgot.';
 };
 MQX.push(function(ctx){
   if(!ctx.isPl||ctx.S.cal)return null;var v=avg(ctx.all.map(function(w){return w.rd||0;}));

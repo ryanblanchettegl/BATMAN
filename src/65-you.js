@@ -33,7 +33,7 @@ function initYou(S,opts){
   S.booker={name:String(opts.name||'').trim().slice(0,24)||'The Booker',xp:0,lvl:1,pts:0,sk:{creative:0,talk:0,eye:0,motivator:0,clout:0}};
   if(opts.booker){S.booker.xp=opts.booker.xp;S.booker.lvl=opts.booker.lvl;S.booker.pts=opts.booker.pts;Object.keys(S.booker.sk).forEach(function(k){S.booker.sk[k]=opts.booker.sk[k]||0;});}
   S.owner={name:o.name,trust:55,me:false,style:o.style,roots:o.roots,pledge:o.pledge,lobby:{},asked:0,creedWeek:-99,wage0:wagesWeek(S,S.promos[S.player])};
-  S.creedScore=60;S.bp=0;S.rel={};S.stats.calls=0;
+  S.creedScore=60;S.bp=0;S.stats.calls=0;
   if(d.mine){S.owner.me=true;S.owner.name=S.booker.name;S.owner.creedWeek=1;S.mode='owner';}
 }
 SKILLMOD.push(function(S,kind){var b=S.booker;if(!b)return null;var l=kind==='creative'?b.sk.creative:b.sk.talk;return {n:(kind==='creative'?'Your creative skill':'Your negotiation skill'),v:l>=4?2:(l>=2?1:0)};});
@@ -138,8 +138,8 @@ NEWX.push(function(S){
     var L=rosterOf(S,pid);
     L.forEach(function(w){
       var c=L.filter(function(x){return x.id!==w.id&&x.g===w.g&&x.brand===w.brand;});if(!c.length)return;
-      if(chance(S,0.5)){var a=pick(S,c),k=rkey(w.id,a.id);if(S.rel[k]==null)S.rel[k]=1;}
-      if(chance(S,0.25)){var b=pick(S,c),k2=rkey(w.id,b.id);if(S.rel[k2]==null)S.rel[k2]=-1;}
+      if(chance(S,0.5)){var a=pick(S,c);if(!relGet(S,w.id,a.id))relSet(S,w.id,a.id,REL_STRONG);}
+      if(chance(S,0.25)){var b=pick(S,c);if(!relGet(S,w.id,b.id))relSet(S,w.id,b.id,-REL_STRONG);}
     });
   });
 });
@@ -224,8 +224,7 @@ E.lobby=function(S,k,v){
 };
 E.jobOffers=function(S){var cur=S.promos[S.player].image;var L=S.order.filter(function(id){return id!==S.player&&S.promos[id].image<cur;});if(!L.length)L=S.order.filter(function(id){return id!==S.player;});return L;};
 
-/* relationships: who clicks in the ring and who does not */
-function relOf(S,a,b){var r=S.rel?S.rel[rkey(a,b)]||0:0;if(!r&&S.bond){var bd=S.bond[rkey(a,b)]||0;r=bd>=3?1:(bd<=-3?-1:0);}return r;}   // the bond score only speaks once it is strong
+/* relationships: who clicks in the ring and who does not (relOf and the matrix behind it are in src/66-relations.js) */
 MQX.push(function(ctx){
   var S=ctx.S,d=0,lab=null;
   ctx.sides.forEach(function(s,k){
@@ -234,7 +233,6 @@ MQX.push(function(ctx){
   });
   return d?{d:clamp(d,-3,3),x:lab}:null;
 });
-E.relations=function(S,id){var w=S.w[id],good=[],bad=[];rosterOf(S,w.promo).forEach(function(x){if(x.id===w.id)return;var r=relOf(S,w.id,x.id);if(r>0)good.push(x);else if(r<0)bad.push(x);});return {good:good,bad:bad};};
 
 /* advisors: three voices look over your card before it runs */
 E.advice=function(S,card){
