@@ -1840,7 +1840,7 @@ E.endWeek=function(S){
   var top={};S.order.forEach(function(pid){var o=rosterOf(S,pid).map(function(w){return w.ovr;}).sort(function(a,b){return b-a;});top[pid]=o[Math.floor(o.length/3)]||0;});
   S.w.forEach(function(w){
     if(w.promo==='FA')return;var P=S.promos[w.promo],mine=w.promo===S.player;
-    if(w.inj>0){w.inj--;if(w.inj===0){w.ret=true;w.rw=S.week+1;if(mine)news(S,'injury',w.name+' is cleared to return.');}}
+    if(w.inj>0){w.inj--;w.il=(w.il||0)+1;if(w.inj===0){w.ret=true;w.rw=S.week+1;w.rwl=w.il;w.il=0;if(mine)news(S,'injury',w.name+' is cleared to return.');}}
     if(w.away&&w.away===S.week)w.ret=true;
     w.cond=Math.min(100,w.cond+14);
     w.mom+=w.mom>0?-Math.min(0.5,w.mom):Math.min(0.5,-w.mom);
@@ -4140,6 +4140,20 @@ E.sagaInfo=function(S){
   var G=S.saga;if(!G)return null;
   return {n:G.n,i:G.i,ch:G.plan.map(function(k,i){var c=G.ch[i],def=SAGA[k];return {name:def.n,goal:c?def.g(S,c):null,done:c?c.done:null,cur:i===G.i,v:c?Math.max(0,def.v(S,c)):0,need:c?def.need(S,c):0,due:c?c.due:null};})};
 };
+
+/* ===== 82-wishes.js ===== */
+/* ---------- small depth systems from WISHLIST.md ---------- */
+
+/* a wrestler back from a long injury gets a returning pop that fades over four weeks */
+CRX.push(function(ctx){
+  var d=0,names=[];
+  ctx.all.forEach(function(w){
+    if(!w.rw||w.rwl==null)return;var age=ctx.S.week-w.rw;
+    if(age<0||age>3||w.rwl<3)return;
+    d+=2.4*(1-age/4)*(w.ovr>=50?1:0.6);names.push(w.name);
+  });
+  return names.length?{d:d,x:names.join(' and ')+(names.length>1?' are':' is')+' back from injury and the crowd knows it'}:null;
+});
 
 /* ===== 85-universe.js ===== */
 /* ---------- universe packages: every roster, built-in or community-made, loads through this ----------

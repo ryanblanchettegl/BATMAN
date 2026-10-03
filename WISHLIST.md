@@ -28,7 +28,7 @@ Things that would make the game deeper. Each one adds a system, a choice or a me
 - [x] **9. Who trained whom.** Store the trainer of every wrestler the player develops. The card lists trainer and students. Students pick up a little of the trainer's style. Add a "family tree" pop-up drawn in text. *S. Builds on `E.setMentor`, `E.mentorsFor`.*
 - [ ] **10. The last year.** A veteran announces a final year. The farewell tour lifts gates, the last match is a draw, and the player chooses who gets the honour of the final win. *M.*
 - [ ] **11. Second careers.** A retired wrestler can stay as a road agent, trainer, commentator, manager or on-screen boss. Each role uses one of their old skills. *M. Leads into wishes 19, 34 and 46.*
-- [ ] **12. Comebacks.** A wrestler back from injury gets a returning pop that fades over four weeks. Bringing them back early is an attempt with a chance of re-injury. *S. Builds on `E.workHurt`.*
+- [x] **12. Comebacks.** A wrestler back from injury gets a returning pop that fades over four weeks. Bringing them back early is an attempt with a chance of re-injury. *S. Builds on `E.workHurt`.*
 
 ## B. In the ring
 

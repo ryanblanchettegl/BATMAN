@@ -36,7 +36,7 @@ E.endWeek=function(S){
   var top={};S.order.forEach(function(pid){var o=rosterOf(S,pid).map(function(w){return w.ovr;}).sort(function(a,b){return b-a;});top[pid]=o[Math.floor(o.length/3)]||0;});
   S.w.forEach(function(w){
     if(w.promo==='FA')return;var P=S.promos[w.promo],mine=w.promo===S.player;
-    if(w.inj>0){w.inj--;if(w.inj===0){w.ret=true;w.rw=S.week+1;if(mine)news(S,'injury',w.name+' is cleared to return.');}}
+    if(w.inj>0){w.inj--;w.il=(w.il||0)+1;if(w.inj===0){w.ret=true;w.rw=S.week+1;w.rwl=w.il;w.il=0;if(mine)news(S,'injury',w.name+' is cleared to return.');}}
     if(w.away&&w.away===S.week)w.ret=true;
     w.cond=Math.min(100,w.cond+14);
     w.mom+=w.mom>0?-Math.min(0.5,w.mom):Math.min(0.5,-w.mom);
