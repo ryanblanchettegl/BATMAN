@@ -86,6 +86,12 @@ const { open, go, overflow, shot, state, redraw } = require('./helper');
       await page.keyboard.press('PageDown'); ok(await at() === 10, 'Page Down moves ten rows: row ' + await at());
       await page.keyboard.press('PageUp'); ok(await at() === 0, 'Page Up moves back ten: row ' + await at());
     }
+    // the Options window draws without errors and its volume buttons work
+    if (mode === 'desk') {
+      await page.evaluate(() => { window.EWF_DEBUG.ui.modal = { kind: 'options' }; window.EWF_DEBUG.render(); }); await page.waitForSelector('.win'); await page.click('[data-t="musvol"][data-v="1"]');
+      ok(await page.evaluate(() => window.EWF_MUSIC_VOL.vol()) === 1, 'Options: music volume button sets the Jukebox level');
+      await page.keyboard.press('Escape'); await page.waitForTimeout(80);
+    }
     // gamepad X opens Help, Y opens the Jukebox
     if (mode === 'tv') {
       await page.evaluate(() => window.EWF_DEBUG.pad('x')); await page.waitForTimeout(100);
