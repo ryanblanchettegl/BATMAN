@@ -74,3 +74,12 @@ POST.push(function(ctx){
     mover.morale=clamp(mover.morale-3,0,100);
   }
 });
+
+/* match of the year, live: a running top ten of this calendar year's best matches across every promotion */
+SHOWX.push(function(S,P,show,rep){
+  var yr=cal(S.week).year,L=S.moty||(S.moty=[]);
+  rep.segs.forEach(function(s){if(s.k!=='match'||s.ov==null)return;
+    L.push({l:s.label,ov:s.ov,show:rep.name,promo:P.id,w:S.week,yr:yr,win:s.win||null,title:s.title||null,stip:s.stip||null,mt:s.mt||'',mins:s.mins||0,ids:(s.ids||[]).slice(0,8)});});
+  S.moty=L.filter(function(m){return m.yr===yr;}).sort(function(a,b){return b.ov-a.ov||a.w-b.w;}).slice(0,10);
+});
+E.matchOfYear=function(S){var yr=cal(S.week).year;return (S.moty||[]).filter(function(m){return m.yr===yr;}).map(function(m){return {l:m.l,ov:m.ov,show:m.show,promo:m.promo,promoName:S.promos[m.promo]?S.promos[m.promo].name:m.promo,w:m.w,win:m.win,title:m.title,stip:m.stip,mt:m.mt,mins:m.mins,ids:m.ids};});};

@@ -80,7 +80,7 @@ async function net(page, mode) {
     await go(page, 'storylines');
     check(mode, 'storylines page before any show', await page.$eval('h1', e => e.innerText) === 'STORYLINES' && await count(page, '.panel') >= 3);
     await go(page, 'history');
-    check(mode, 'history before any show', /Run a show and the book opens/.test(await text(page)) && /Champion when you arrived/.test(await text(page)));
+    check(mode, 'history before any show', /Run a show on Booking and the book opens/.test(await text(page)) && /Champion when you arrived/.test(await text(page)));
     await go(page, 'net');
     check(mode, 'the net before any show', await count(page, '.post') === await state(page, S => S.net.threads.reduce((a, t) => a + t.posts.length, 0)) && (await count(page, '.post') > 0 || /Nobody has posted yet/.test(await text(page))));
 

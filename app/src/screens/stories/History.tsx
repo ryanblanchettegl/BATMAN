@@ -1,8 +1,8 @@
 /* History: season chronicles, the record book, year-end awards, the hall of fame and every title's line of champions. Read-only. */
 import { ComponentChildren } from 'preact';
 import { E } from '../../engine';
-import { G, me } from '../../store';
-import { Head, Panel, Empty, stars, Txt } from '../../kit';
+import { G, me, openModal } from '../../store';
+import { Head, Panel, Empty, stars, Txt, Btn, grade } from '../../kit';
 
 const wk = (w: number): string => E.cal(Math.max(1, w)).label;
 /** One line of a list: what it is on the left, the figure on the right. */
@@ -15,6 +15,20 @@ function Chronicles() {
       <p class="eyebrow mt2">Season {c.n}: {c.title}</p>
       {c.lines.map((x: string) => <p class="mt1"><Txt>{x}</Txt></p>)}
     </>) : <Empty>The first chronicle is written when season one ends, 48 weeks in. Keep booking shows until then.</Empty>}
+  </Panel>;
+}
+
+/** The year's best matches across every promotion so far. Each opens a short card with the details. */
+function MatchOfYear() {
+  const L: any[] = E.matchOfYear(G.S);
+  const open = (m: any) => openModal({ kind: 'info', title: m.l, body: () => <>
+    <p><b>{m.ov}%</b> {stars(m.ov)} <b class="gold">{grade(m.ov)}</b></p>
+    <p class="mt1">{m.promoName} {'·'} {m.show} {'·'} {wk(m.w)}</p>
+    <p>{m.mt}{m.stip ? ' · ' + m.stip : ''}{m.mins ? ' · ' + m.mins + ' min' : ''}{m.title ? ' · ' + m.title : ''}</p>
+    <p class="mt1">{m.win ? 'Winner: ' + m.win : 'No winner'}</p></> });
+  return <Panel title="Match of the year, so far">
+    {L.length ? <ol class="rank">{L.map((m, i) => <li key={m.w + m.l}><Btn kind="sm" t="moty" d={{ v: i }} onClick={() => open(m)}>Details</Btn> <b class="num">{m.ov}%</b> <Txt>{m.l}</Txt><br /><span class="muted">{m.promoName}, {m.show}, {wk(m.w)}</span></li>)}</ol>
+      : <Empty>No matches yet this year. Run a show and the list starts.</Empty>}
   </Panel>;
 }
 
@@ -76,7 +90,7 @@ export function History() {
   return <>
     <Head eyebrow={P.name} title="History" />
     <div class="cols">
-      <div class="stack"><Chronicles /><RecordBook /><Awards /><HallOfFame /></div>
+      <div class="stack"><Chronicles /><MatchOfYear /><RecordBook /><Awards /><HallOfFame /></div>
       <div class="stack">{P.titles.map((t: any) => <TitleLine t={t} />)}</div>
     </div>
   </>;
