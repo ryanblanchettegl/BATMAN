@@ -2494,6 +2494,25 @@ E.haveWord=function(S,id){
   stressAdd(S,w,15);w.morale=clamp(w.morale-4,0,100);return {ok:false,roll:r,msg:rollText(r)+w.name+' does not take it well.'};
 };
 
+/* ---------- who trained whom: the trainer is remembered after the mentoring ends ---------- */
+WEEKX.push(function(S){
+  S.w.forEach(function(w){
+    if(w.ment==null||w.rt)return;var m=S.w[w.ment];if(!m)return;
+    if(w.coach==null)w.coach=m.id;
+    w.cw=(w.cw||0)+1;
+    // every quarter a student moves one point towards the trainer's way of working
+    if(w.cw%13===0)['brawl','tech','speed'].forEach(function(k){var d=m[k]-w[k];if(Math.abs(d)>=4)w[k]=clamp(w[k]+(d>0?1:-1),1,99);});
+    if(w.cw===52&&w.style!==m.style){var was=w.style;w.style=m.style;if(w.promo===S.player)news(S,'story',w.name+' has spent a year with '+m.name+' and has picked up their style of working.');mile(S,w,'train','Took on the style of '+m.name);}
+  });
+});
+/* the family tree of one wrestler: the line of trainers above, the students below */
+E.family=function(S,id){
+  var w=S.w[id];if(!w)return null;var up=[],seen={},c=w,g=0;seen[id]=1;
+  while(c.coach!=null&&!seen[c.coach]&&g++<6){c=S.w[c.coach];if(!c)break;seen[c.id]=1;up.push(c.id);}
+  function kids(x,depth){if(depth>3)return [];return S.w.filter(function(s){return s.coach===x&&s.id!==x;}).slice(0,12).map(function(s){return {id:s.id,kids:kids(s.id,depth+1)};});}
+  return {coach:w.coach!=null&&S.w[w.coach]?w.coach:null,up:up,students:S.w.filter(function(s){return s.coach===id;}).map(function(s){return s.id;}),tree:kids(id,1)};
+};
+
 /* ===== 77-backstage.js ===== */
 /* ---------- your week: house rules, action points and the backstage map, wrestlers' court, mid-match chaos, clocks ---------- */
 function bsInit(S){

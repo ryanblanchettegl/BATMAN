@@ -39,6 +39,7 @@ function WrestlerCard(p: { id: number }) {
       {cr.reigns.length ? <li><span>Title reigns</span><span class="r num">{cr.reigns.length}</span></li> : null}
       {fs.length ? <li><span>Feud</span><span class="r">{list(fs.slice(0, 2).map((f: any) => { const o = S.w[(f.a.indexOf(w.id) >= 0 ? f.b : f.a)[0]]; return <>with <Name w={o} /> <span class="muted">({E.feudStage(f).toLowerCase()})</span></>; }))}</span></li> : null}
       {(() => { const st = (S.stables || []).filter((x: any) => x.m.indexOf(w.id) >= 0)[0]; return st ? <li><span>Stable</span><span class="r"><b>{st.name}</b>{st.leader === w.id ? ' (leader)' : ''} <span class="muted">with {list(st.m.filter((id: number) => id !== w.id).map((id: number) => <Name w={S.w[id]} />))}</span></span></li> : null; })()}
+      {(() => { const F = E.family(S, w.id); return F && (F.coach != null || F.students.length) ? <li class="col"><span>Trainer and students</span><span class="r">{F.coach != null ? <>Trained by <Name w={S.w[F.coach]} /></> : null}{F.coach != null && F.students.length ? '. ' : ''}{F.students.length ? <>Students: {list(F.students.slice(0, 4).map((id: number) => <Name w={S.w[id]} />))}{F.students.length > 4 ? ' and ' + (F.students.length - 4) + ' more' : ''}</> : null} <Btn kind="sm" t="card-tree" onClick={() => openCard({ k: 'tree', id: w.id })}>Family tree</Btn></span></li> : null; })()}
       {tm ? <li><span>Tag team</span><span class="r"><TeamName t={tm} /></span></li> : null}
       {rel && rel.good.length ? <li><span>Gets on with</span><span class="r">{list(rel.good.slice(0, 4).map((x: W) => <Name w={x} />))}</span></li> : null}
       {rel && rel.bad.length ? <li><span>Does not get on with</span><span class="r">{list(rel.bad.slice(0, 4).map((x: W) => <Name w={x} />))}</span></li> : null}
@@ -75,6 +76,22 @@ function TeamCard(p: { id: number }) {
       <li><span>Title reigns together</span><span class="r num">{reigns.length}</span></li>
       {reigns.slice(-3).reverse().map(r => <li><span><TitleName pid={r.pid} t={r.t} /></span><span class="r muted">{E.cal(Math.max(1, r.h.from)).label}{r.h.to ? ' to ' + E.cal(r.h.to).label : ' to now'}</span></li>)}
     </ul>
+  </>;
+}
+
+/** The line of trainers above a wrestler and the students below, drawn in text. */
+function TreeCard(p: { id: number }) {
+  const S = G.S, F = E.family(S, p.id), w: W = S.w[p.id];
+  if (!F) return <Empty>Nobody here.</Empty>;
+  const chain: number[] = F.up.slice().reverse(), rows: ComponentChildren[] = [];
+  chain.forEach((id, i) => rows.push(<div>{'   '.repeat(i) + (i ? '└─ ' : '')}<Name w={S.w[id]} /></div>));
+  rows.push(<div>{'   '.repeat(chain.length) + (chain.length ? '└─ ' : '')}<b>{w.name}</b></div>);
+  const walk = (nodes: any[], pre: string) => nodes.forEach((n, i) => { const last = i === nodes.length - 1; rows.push(<div>{pre + (last ? '└─ ' : '├─ ')}<Name w={S.w[n.id]} /></div>); walk(n.kids, pre + (last ? '   ' : '│  ')); });
+  walk(F.tree, '   '.repeat(chain.length + 1));
+  return <>
+    {chain.length ? <p class="muted">Trained by {list(F.up.map((id: number) => <Name w={S.w[id]} />))}, back to the start of the line.</p> : <p class="muted">Nobody is known to have trained {w.name}.</p>}
+    <div class="ascii tree">{rows}</div>
+    {!F.students.length ? <p class="muted mt1">No students yet. Put a prospect with a mentor on the Locker room page.</p> : null}
   </>;
 }
 
@@ -123,6 +140,7 @@ function TitleCard(p: { pid: string; id: string }) {
 function titleOf(c: Card): string {
   const S = G.S;
   if (c.k === 'w') return S.w[c.id as number] ? S.w[c.id as number].name : 'Wrestler';
+  if (c.k === 'tree') return 'Family tree: ' + (S.w[c.id as number] ? S.w[c.id as number].name : '');
   if (c.k === 'promo') { const P = S.promos[c.id as string]; return P ? P.name : 'Promotion'; }
   if (c.k === 'team') { const t = S.teams.filter((x: any) => x.id === c.id)[0]; return t ? (t.name || teamName(t)) : 'Tag team'; }
   const P = S.promos[c.pid!], t = P && P.titles.filter((x: any) => x.id === c.id)[0]; return t ? t.name : 'Title';
@@ -135,7 +153,7 @@ export function CardHost() {
   return <div class="cards" key={c.k + ':' + c.pid + ':' + c.id + ':' + n}>
     <Window title={titleOf(c)} onClose={closeCards} noOk hint={n > 1 ? 'Esc goes back' : 'Esc closes'}
       footer={<>{n > 1 ? <Btn t="card-back" onClick={popCard}>Back to {titleOf(ui.cards[n - 2])}</Btn> : null}<Btn kind="go" id="modal-ok" t="card-close" onClick={closeCards}>Close</Btn></>}>
-      {c.k === 'w' ? <WrestlerCard id={c.id as number} /> : c.k === 'team' ? <TeamCard id={c.id as number} /> : c.k === 'promo' ? <PromoCard id={c.id as string} /> : <TitleCard pid={c.pid!} id={c.id as string} />}
+      {c.k === 'w' ? <WrestlerCard id={c.id as number} /> : c.k === 'team' ? <TeamCard id={c.id as number} /> : c.k === 'promo' ? <PromoCard id={c.id as string} /> : c.k === 'tree' ? <TreeCard id={c.id as number} /> : <TitleCard pid={c.pid!} id={c.id as string} />}
     </Window>
   </div>;
 }
