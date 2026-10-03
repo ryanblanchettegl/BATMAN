@@ -34,6 +34,13 @@ EVR.offer=function(S,ev,choice,P,w){
     w.notice=S.week+2;w.to=ev.rival;
     return rollText(r)+w.name+' gives notice and joins '+RV.name+' in two weeks. Until then they are yours to book: a clean loss on the way out will make whoever beats them.';
   }
+  if(choice===3){
+    var t=null;P.titles.forEach(function(x){if(!x.tag&&x.g===w.g&&x.holders.length&&x.holders.indexOf(w.id)<0&&(!x.brand||x.brand===w.brand)&&(!t||x.lvl>t.lvl))t=x;});
+    w.wage=ev.beat||Math.round(w.wage*1.45/50)*50;w.con=60;w.cn=false;w.morale=clamp(w.morale+12,0,100);
+    if(t)S.quests.push({id:S.nid++,type:'shot',w:w.id,title:t.id,due:S.week+8,text:'Promise: give '+w.name+' a '+t.name+' match by '+cal(S.week+8).label});
+    RV.rel=clamp((RV.rel||0)-4,-100,100);
+    return w.name+' stays at '+money(w.wage)+' a week on a 60-week deal'+(t?', with your word on a shot at the '+t.name+'.':'.')+' '+RV.name+' will not forget being outbid.';
+  }
   leaveCompany(S,w,'left for '+RV.name);joinCompany(S,w,RV);news(S,'contract',w.name+' has jumped to '+RV.name+'.');return w.name+' signs with '+RV.name+'.';
 };
 EVR.pitch=function(S,ev,choice,P,w){

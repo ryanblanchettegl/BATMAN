@@ -102,8 +102,9 @@ var EV={
   offer:function(S,P,R){
     var c=R.slice().sort(function(a,b){return b.ovr-a.ovr;}).slice(0,12).filter(function(w){return (w.con<=30||w.morale<55)&&!hasQuest(S,w.id)&&!(w.off>S.week);});if(!c.length)return null;
     var rv=S.order.filter(function(id){return id!==P.id&&S.promos[id].image>=P.image-25;}).sort(function(a,b){return S.promos[b].image-S.promos[a].image;});if(!rv.length)return null;
-    var w=pick(S,c),raise=Math.round(w.wage*1.25/50)*50;w.off=S.week+10;
-    return {type:'offer',w:w.id,rival:rv[0],raise:raise,text:S.promos[rv[0]].name+' has made '+w.name+' an offer.',choices:['Match it: '+money(raise)+' a week, new 48-week deal','Appeal to loyalty','Let them go']};
+    var w=pick(S,c),raise=Math.round(w.wage*1.25/50)*50,beat=Math.round(w.wage*1.45/50)*50,rid=rv.filter(function(id){return temperKey(S.promos[id])==='raider';})[0]||rv[0],RVP=S.promos[rid];w.off=S.week+10;
+    // a raider goes after the best; anyone else makes the offer when they can
+    return {type:'offer',w:w.id,rival:rid,raise:raise,beat:beat,text:(RVP.owner&&RVP.owner.name?RVP.owner.name+' of ':'')+RVP.name+' has made '+w.name+' an offer.',choices:['Match it: '+money(raise)+' a week, new 48-week deal','Appeal to loyalty','Let them go','Beat it: '+money(beat)+' a week and a title shot']};
   },
   team:function(S,P,R){
     var c=R.filter(function(w){return w.team==null&&!hasQuest(S,w.id)&&!inFeud(S,w.id);});
