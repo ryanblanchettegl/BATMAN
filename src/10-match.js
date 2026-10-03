@@ -217,7 +217,7 @@ function doMatch(S,P,show,m,i,n,rep,used){
   var feud=null,x,y,a,b,br=m.mt==='br';
   for(x=0;x<sides.length&&!feud;x++)for(y=x+1;y<sides.length&&!feud;y++)for(a=0;a<sides[x].length&&!feud;a++)for(b=0;b<sides[y].length&&!feud;b++)feud=feudOf(S,sides[x][a].id,sides[y][b].id);
   var fx=[],FX=function(good,text){fx.push({s:good?1:-1,x:text});};
-  var ctx={S:S,P:P,show:show,m:m,sides:sides,all:all,stip:stip,mins:mins,t:t,feud:feud,isMain:isMain,big:big,isPl:isPl,i:i,n:n,rep:rep,fx:fx,champSide:champSide};
+  var ctx={rep:rep,S:S,P:P,show:show,m:m,sides:sides,all:all,stip:stip,mins:mins,t:t,feud:feud,isMain:isMain,big:big,isPl:isPl,i:i,n:n,rep:rep,fx:fx,champSide:champSide};
   var pre={};all.forEach(function(w){pre[w.id]=w.ws;});
   // effort and performance
   var effs=[],perfs=[],bad=false;

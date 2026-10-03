@@ -3,6 +3,16 @@
 // or a character from fiction first published before 1929. Looks and acts come from the original sources.
 // Portraits for the marquee names: head, hair, facial hair, mustache, eyes, nose, skin tone 0-100, hair colour 0-100.
 // Everybody else gets a stable face derived from their name. Looks follow the original books and the historical record, not any film.
+// Where a few well-known figures come from, when the place is a city that some promotion in this universe plays.
+const HOME = {
+  'Julius Caesar': 'Rome', 'Mark Antony': 'Rome', 'Brutus': 'Rome', 'Pompey': 'Rome', 'Crassus': 'Rome', 'Cleopatra': 'Alexandria', 'Leonidas': 'Sparta', 'Achilles': 'Troy', 'Hector': 'Troy',
+  'Hercules': 'Thebes', 'Theseus': 'Athens', 'Socrates': 'Athens', 'Plato': 'Athens', 'Sherlock Holmes': 'London', 'Dr. John Watson': 'London', 'Professor Moriarty': 'London',
+  'Dracula': 'Whitby', 'Mina Harker': 'Whitby', 'The Monster': 'Ingolstadt', 'Abraham Lincoln': 'Springfield', 'Tom Sawyer': 'Hannibal', 'Huckleberry Finn': 'Hannibal',
+  'Robin Hood': 'Nottingham', 'King Arthur': 'Camelot', 'Sir Lancelot': 'Camelot', 'Juliet Capulet': 'Verona', 'Billy the Kid': 'Dodge City', 'Napoleon Bonaparte': 'Paris',
+  'Arsene Lupin': 'Paris', 'Jean Valjean': 'Paris', 'Inspector Javert': 'Paris', 'Ichabod Crane': 'Sleepy Hollow', 'Oichi': 'Kyoto', 'Hangaku Gozen': 'Kyoto',
+  'Simon Bolivar': 'Caracas', 'Pancho Villa': 'Mexico City', 'Benito Juarez': 'Mexico City', 'Hernan Cortes': 'Madrid', 'Quetzalcoatl': 'Tula', 'Tezcatlipoca': 'Tenochtitlan',
+  'Moctezuma II': 'Tenochtitlan', 'Atahualpa': 'Quito', 'Paul Bunyan': 'Bangor', 'Aladdin': 'Baghdad', 'Scheherazade': 'Baghdad', 'Ali Baba': 'Baghdad', 'Odin': 'Uppsala'
+};
 const FACES = {
   'King Arthur': '1,9,4,2,0,8,20,30', 'Abraham Lincoln': '2,3,3,0,8,3,22,54', 'Dracula': '6,4,0,0,5,5,4,54', 'Julius Caesar': '1,2,0,0,3,8,28,45',
   'Cleopatra': '0,9,0,0,4,2,44,54', 'Sherlock Holmes': '6,3,0,0,1,5,14,45', 'The Monster': '2,9,0,0,8,9,6,54', 'Sun Tzu': '3,4,2,8,1,7,30,54',
@@ -423,6 +433,7 @@ PROMOS.forEach(P => {
     const r = { brawling: clamp(ex.br != null ? +ex.br : W + st[0] + j('b'), 10, 99), technical: clamp(ex.te != null ? +ex.te : W + st[1] + j('t'), 10, 99), aerial: clamp(ex.fl != null ? +ex.fl : W + st[2] + j('s'), 10, 99), stamina: clamp(ex.st != null ? +ex.st : W + st[3] + j('m'), 15, 99), charisma: +cha, promo_skill: +mic, overness: +ovr };
     if (ex.hc) r.hardcore = +ex.hc; if (ex.dur) r.durability = +ex.dur; if (ex.safe) r.safety = +ex.safe; if (ex.sq) r.star_quality = +ex.sq; if (ex.cons) r.consistency = +ex.cons; if (ex.pot) r.potential = +ex.pot; if (ex.mor) r.morale = +ex.mor;
     const w = { id, ring_name: name, age: +age, gender: g, disposition: side === 'H' ? 'heel' : (side === 'T' ? 'tweener' : 'face'), roles: ex.roles ? ex.roles.split(',') : ['wrestler'], style: STYLE_NAME[style], ratings: r, media: { portrait: 'graphics/portraits/' + id + '.png' } };
+    if (HOME[name]) w.hometown = HOME[name];
     if (ex.lr) w.locker_role = ex.lr;
     if (FACES[name]) { const q = FACES[name].split(',').map(Number); w.face = { h: q[0], hr: q[1], fh: q[2], ms: q[3], ey: q[4], ns: q[5], sk: q[6], hc: q[7] }; }
     if (fin) w.finisher = fin; if (ex.pk) w.peak_years = ex.pk.split('-').map(Number); if (ex.cl) w.age_cliff = +ex.cl; if (ex.mgr) w._mgr = line.match(/mgr=(.*)$/)[1].trim();

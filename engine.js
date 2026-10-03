@@ -666,7 +666,7 @@ function doMatch(S,P,show,m,i,n,rep,used){
   var feud=null,x,y,a,b,br=m.mt==='br';
   for(x=0;x<sides.length&&!feud;x++)for(y=x+1;y<sides.length&&!feud;y++)for(a=0;a<sides[x].length&&!feud;a++)for(b=0;b<sides[y].length&&!feud;b++)feud=feudOf(S,sides[x][a].id,sides[y][b].id);
   var fx=[],FX=function(good,text){fx.push({s:good?1:-1,x:text});};
-  var ctx={S:S,P:P,show:show,m:m,sides:sides,all:all,stip:stip,mins:mins,t:t,feud:feud,isMain:isMain,big:big,isPl:isPl,i:i,n:n,rep:rep,fx:fx,champSide:champSide};
+  var ctx={rep:rep,S:S,P:P,show:show,m:m,sides:sides,all:all,stip:stip,mins:mins,t:t,feud:feud,isMain:isMain,big:big,isPl:isPl,i:i,n:n,rep:rep,fx:fx,champSide:champSide};
   var pre={};all.forEach(function(w){pre[w.id]=w.ws;});
   // effort and performance
   var effs=[],perfs=[],bad=false;
@@ -3783,6 +3783,20 @@ SHOWX.push(function(S,P,show,rep){
   rep.hofNight={name:w.name,speech:pick(S,HOF_SPEECH)};
   if(rep.sheet)rep.sheet.lines.unshift(w.name+' was inducted into the hall of fame tonight. '+rep.hofNight.speech);
   P.image=clamp(P.image+0.2,5,100);news(S,'story',w.name+'’s hall of fame induction was the emotional moment of '+show.name+'. '+rep.hofNight.speech);
+});
+
+/* home-town heroes: a wrestler in their home city gets a pop. Beating them there costs. A home-town title win lifts the city */
+function atHome(ctx,w){return !!(w.town&&ctx.rep&&ctx.rep.venue&&ctx.rep.venue.indexOf(w.town)===0);}
+CRX.push(function(ctx){
+  var h=ctx.all.filter(function(w){return atHome(ctx,w);});
+  return h.length?{d:1.6*Math.min(2,h.length),x:h[0].name+' is a hometown hero here'+(ctx.rep.venue?' in '+h[0].town:'')}:null;
+});
+POST.push(function(ctx){
+  if(ctx.S.cal||!ctx.rep||!ctx.rep.venue)return;var r=ctx.res,seg=r.seg;
+  var home=r.losers.filter(function(w){return atHome(ctx,w);});
+  if(home.length&&r.win>=0&&r.fin!=='dq'&&r.fin!=='co'){r.winners.forEach(function(w){w.mom=clamp(w.mom-1,-10,10);});seg.notes.push('The home crowd turns on '+names(r.winners)+' for beating '+home[0].name+' in '+home[0].town+'.');}
+  var champ=r.win>=0&&seg.change?r.winners.filter(function(w){return atHome(ctx,w);})[0]:null;
+  if(champ){ctx.P.image=clamp(ctx.P.image+0.15,5,100);seg.notes.push(champ.name+' wins the title in '+champ.town+'. The whole city is celebrating.');if(ctx.isPl)news(ctx.S,'story',champ.name+' won the title in their home town of '+champ.town+'.');}
 });
 
 /* ===== 85-universe.js ===== */
