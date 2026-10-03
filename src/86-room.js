@@ -290,3 +290,36 @@ E.sellTape=function(S){
   news(S,'money','You sold the back catalogue for '+money(t.sellFor)+'. The tapes belong to someone else now.');
   return {ok:true,text:'Sold for '+money(t.sellFor)+'. The shows already made are gone, and the library starts again from today.'};
 };
+
+/* ---------- 70. The crowd takes over: a crowd that rejects the pushed star chants for someone else (more in diehard cities) ---------- */
+function showCity(rep){return rep&&rep.venue?String(rep.venue).replace(/ (Armory|Civic Auditorium|Fieldhouse|Coliseum|Arena|Stadium)$/,''):'';}
+function diehard(S,city){return !!city&&h01('diehard'+city+S.seed)<0.35;}
+E.isDiehard=function(S,city){return diehard(S,city);};
+CRX.push(function(ctx){
+  var S=ctx.S;if(!ctx.isPl||S.cal||!ctx.isMain||ctx.m.mt==='br'||ctx.sides.length!==2||ctx.takeover!==undefined)return null;
+  var ps=ctx.t&&ctx.champSide>=0?ctx.champSide:(ctx.m.call!=null&&ctx.m.call>=0?ctx.m.call:-1);ctx.takeover=null;if(ps<0)return null;
+  var pushed=ctx.sides[ps],other=ctx.sides[ps===0?1:0],po=avg(pushed.map(function(w){return w.ovr;})),oo=avg(other.map(function(w){return w.ovr;}));
+  if(po>=oo+3)return null;
+  var city=showCity(ctx.rep),dh=diehard(S,city),lead=pushed[0];
+  var p=Math.min(0.4,0.04+0.01*Math.max(0,oo-po)+(dh?0.1:0)+(lead.mom<=-2?0.06:0));
+  if(!chance(S,p))return null;
+  var fav=ctx.all.length&&S.w.filter(function(w){return w.promo===ctx.P.id&&!w.nw&&w.inj<=0&&ctx.all.indexOf(w)<0&&w.align==='F'&&!(w.away>=S.week);}).sort(function(a,b){return (b.mom+b.ovr/20)-(a.mom+a.ovr/20);})[0]||other[0];
+  ctx.takeover={pushed:lead,fav:fav,city:city,dh:dh};
+  return {d:-3,x:'The crowd rejected '+lead.name+' and chanted for '+fav.name+(dh&&city?'. '+city+' is a hard crowd to push anything past':'')};
+});
+POST.push(function(ctx){
+  var S=ctx.S,tk=ctx.takeover;if(!tk||S.cal||!ctx.isPl)return;
+  var lead=tk.pushed,fav=tk.fav;lead.mom=clamp(lead.mom-1,-10,10);fav.mom=clamp(fav.mom+2,-10,10);
+  ctx.res.seg.notes.push('The crowd took over: they turned on '+lead.name+' and chanted for '+fav.name+'.');
+  news(S,'story','The crowd in '+(tk.city||'the building')+' chanted for '+fav.name+' during '+lead.name+'’s match.');
+  if(S.inbox.some(function(e){return e.type==='chant'&&!e.done;}))return;
+  pushEv(S,{type:'chant',w:fav.id,o:lead.id,text:'The crowd would not let it go: they rejected '+lead.name+' and wanted '+fav.name+'. What do you do about it?',
+    choices:['Give them what they want: a win for '+fav.name,'Stay the course with '+lead.name,'Turn it into a feud']});
+});
+EVR.chant=function(S,ev,choice,P,w){
+  var lead=S.w[ev.o];if(!lead)return 'The moment has passed.';
+  if(choice===0){S.quests.push({id:S.nid++,type:'win',w:w.id,due:S.week+3,text:'The crowd chose: book a win for '+w.name+' by '+cal(S.week+3).label});w.morale=clamp(w.morale+8,0,100);lead.morale=clamp(lead.morale-6,0,100);return 'You will give '+w.name+' the win. '+lead.name+' is not happy about it.';}
+  if(choice===1){lead.morale=clamp(lead.morale+3,0,100);S.trust=clamp(S.trust-1,0,100);w.morale=clamp(w.morale-3,0,100);return 'You are staying with '+lead.name+'. The crowd will not like it, and '+w.name+' knows they were wanted.';}
+  var f=startFeud(S,P,w,lead,45,w.name+' answered the crowd’s call against '+lead.name,{force:true});return f?'The chant becomes a story: '+w.name+' against '+lead.name+'.':'They were already feuding, and the chant fed it.';
+};
+E.crowdCity=function(S,rep){var c=showCity(rep);return {city:c,diehard:diehard(S,c)};};
