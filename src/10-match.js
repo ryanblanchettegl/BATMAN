@@ -277,6 +277,7 @@ function doMatch(S,P,show,m,i,n,rep,used){
     });});
     if(br)fin='clean';
     else if(m.ff&&FIN[m.ff])fin=m.ff;
+    else if(howOf(S,m,isPl))fin=howOf(S,m,isPl);
     else if(runin)fin=losers.indexOf(runin.p)>=0?'interf':'foiled';
     else if(feud&&feud.stakes&&/disqual/i.test(feud.stakes))fin=heelWin&&chance(S,0.4)?'cheap':'clean';
     else if(heelWin&&chance(S,0.3+(hasMouthpiece(S,winners[0])?0.15:0)))fin='cheap';

@@ -48,6 +48,7 @@ export function setMatch(i: number, c: string, v: string, at?: { s: number; p?: 
     else if (c === 'stip') m.stip = v;
     else if (c === 'len') m.len = v;
     else if (c === 'int') m.int = v;
+    else if (c === 'how') { if (v) m.how = v; else delete m.how; }
   });
 }
 /** The opening promo: who speaks, about what, and how tightly scripted. */

@@ -42,6 +42,9 @@ export function Editor(p: { m: Match; i: number }) {
         options={[['', 'Regular teams'], ...teams.map((t: any) => [t.id, teamName(t)] as Opt)]} /></Field>}
     </div>)}
     <Field label="Call the finish"><Sel id={'m' + i + '-call'} t="call" d={{ i }} value={m.call} onChange={v => setMatch(i, 'call', v)} options={calls} /></Field>
+    <Field label="How it ends"><Sel id={'m' + i + '-how'} t="how" d={{ i }} value={m.how || ''} onChange={v => setMatch(i, 'how', v)}
+      options={[['', 'Let the story decide'], ...Object.keys(E.HOWS).filter(k => !(['cheap', 'dq', 'co'].includes(k) && E.hasRule(S, 'clean'))).map(k => [k, E.HOWS[k].n] as Opt)]} /></Field>
+    {m.how && <p class="muted wide">{E.finishPrice(m.how)}</p>}
     <Field label="Title on the line"><Sel id={'m' + i + '-title'} t="title" d={{ i }} value={m.title} onChange={v => setMatch(i, 'title', v)}
       options={[['', 'No title'], ...titles.map((t: any) => [t.id, t.name + (t.holders.length ? '' : ' (vacant)')] as Opt)]} /></Field>
     <Field label="Stipulation"><Sel id={'m' + i + '-stip'} t="stip" d={{ i }} value={m.stip} onChange={v => setMatch(i, 'stip', v)} options={Object.keys(E.STIP).map(k => [k, E.STIP[k].n] as Opt)} /></Field>

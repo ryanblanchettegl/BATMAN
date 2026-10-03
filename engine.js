@@ -736,6 +736,7 @@ function doMatch(S,P,show,m,i,n,rep,used){
     });});
     if(br)fin='clean';
     else if(m.ff&&FIN[m.ff])fin=m.ff;
+    else if(howOf(S,m,isPl))fin=howOf(S,m,isPl);
     else if(runin)fin=losers.indexOf(runin.p)>=0?'interf':'foiled';
     else if(feud&&feud.stakes&&/disqual/i.test(feud.stakes))fin=heelWin&&chance(S,0.4)?'cheap':'clean';
     else if(heelWin&&chance(S,0.3+(hasMouthpiece(S,winners[0])?0.15:0)))fin='cheap';
@@ -3996,6 +3997,64 @@ E.noteHint=function(S,m,k){
   if(k==='steal')return sk>=72?'They are good enough to try.':(sk<=58?'They are not good enough. It would flop.':'It could go either way.');
   return NOTES[k].d;
 };
+
+/* ---------- 15. Finishes have a price (m.how: the finish the booker picks) ---------- */
+var HOWS={
+  clean:{n:'Clean win',price:'The winner gains in full. The loser pays most, and a third clean loss in a row buries them.'},
+  flash:{n:'Roll-up',price:'A small win for the winner. The loser is protected. The feud heats up: they will want a rematch.'},
+  cheap:{n:'Cheap win',price:'The feud gets hot and the loser gets sympathy. A hero who wins this way confuses the crowd.'},
+  dq:{n:'Disqualification',price:'Both are protected and the feud keeps its heat. The crowd is annoyed, most of all in a main event.'},
+  co:{n:'Count-out',price:'Both are protected, the feud cools and the crowd is annoyed.'}
+};
+var UNCLEAN={cheap:1,interf:1,dq:1,co:1,draw:1};
+function howOf(S,m,isPl){
+  var k=m&&m.how;if(!isPl||!k||!HOWS[k]||m.mt==='br')return null;
+  if((k==='cheap'||k==='dq'||k==='co')&&hasRule(S,'clean'))return null;
+  return k;
+}
+function sourMood(S){
+  var n=0,u=0;(S.fh||[]).forEach(function(e){if(S.week-e.w<4){n++;if(e.u)u++;}});
+  var sh=n?u/n:0;return {n:n,u:u,share:sh,pen:n>=12?clamp((sh-0.5)*14,0,4):0};
+}
+CRX.push(function(ctx){
+  if(!ctx.isPl||ctx.S.cal)return null;var o=sourMood(ctx.S);
+  return o.pen>=0.5?{d:-o.pen,x:'The crowd is tired of matches that end without a clean winner'}:null;
+});
+FINX.push(function(ctx,fin,winners){
+  if(fin==='cheap'&&winners[0]&&winners[0].align==='F'&&ctx.isPl)return {d:-2.5,x:'A hero won with a cheap shot and the crowd did not like it'};
+  return null;
+});
+POST.push(function(ctx){
+  var S=ctx.S,r=ctx.res,P=ctx.P;if(S.cal||!ctx.isPl)return;
+  var fh=S.fh||(S.fh=[]);fh.push({w:S.week,u:UNCLEAN[r.fin]?1:0});S.fh=fh.filter(function(e){return S.week-e.w<8;});
+  if(ctx.m.mt==='br')return;
+  var f=ctx.feud;
+  if(f){
+    if(r.fin==='flash')heatUp(S,f,2);
+    else if(r.fin==='co')heatUp(S,f,-7);
+    else if(r.fin==='draw')heatUp(S,f,-2);
+  }
+  if(r.win>=0){
+    if(r.fin==='clean')r.losers.forEach(function(l){
+      if(l.ws<=-3){l.morale=clamp(l.morale-2,0,100);l.mom=clamp(l.mom-1,-10,10);if(r.losers.indexOf(l)===0)r.seg.notes.push(l.name+' has lost clean '+(-l.ws)+' times running. The fans have stopped believing.');}
+    });
+    if(r.fin==='cheap'){
+      r.losers.forEach(function(l){if(l.align==='F')l.mom=clamp(l.mom+1,-10,10);});
+      r.winners.forEach(function(w){w.mom=clamp(w.mom+(w.align==='H'?0.5:-1),-10,10);});
+    }
+  }
+  var o=sourMood(S);
+  if(o.pen>=0.5&&!S.fsour){S.fsour=1;r.seg.notes.push('The crowd is tired of cheap finishes. Give them a clean one.');news(S,'story','Fans of '+P.name+' are grumbling about shows that end without a winner.');}
+  else if(o.pen<0.2&&S.fsour)S.fsour=0;
+});
+E.HOWS=HOWS;
+E.finishPrice=function(k){return HOWS[k]?HOWS[k].price:'The story decides how it ends.';};
+/* for the desk and the booking screen: how many finishes in the last four weeks were not clean */
+E.finishMood=function(S){
+  var o=sourMood(S);
+  return {n:o.n,u:o.u,share:o.share,sour:o.pen>=0.5,text:o.n<4?null:'Unclean finishes in the last four weeks: '+o.u+' of '+o.n+(o.pen>=0.5?'. The crowd is losing patience.':'.')};
+};
+E.hasRule=hasRule;
 
 /* ===== 83-moments.js ===== */
 /* ---------- moments from wrestling history ----------
