@@ -175,6 +175,15 @@ export function initInput() {
     if (e.key === 'Enter' && tag === 'TR') { e.preventDefault(); (tg as HTMLElement).click(); return; }
     if (NAV.on && e.key === 'Enter' && tag === 'SELECT') { e.preventDefault(); activate(tg); return; }
     for (const fn of keys) if (fn(e)) { e.preventDefault(); return; }
+    // long tables on a remote: channel up and down (and Page Up and Page Down) move ten rows
+    if (NAV.on && (e.key === 'PageDown' || e.key === 'PageUp' || e.key === 'ChannelUp' || e.key === 'ChannelDown' || e.keyCode === 427 || e.keyCode === 428)) {
+      const row = tg && (tg.closest('tr.pick') as HTMLElement | null);
+      if (row) {
+        const rows = [].slice.call((row.closest('table') as HTMLElement).querySelectorAll('tr.pick')) as HTMLElement[], i = rows.indexOf(row);
+        const down = e.key === 'PageDown' || e.key === 'ChannelDown' || e.keyCode === 428, j = Math.max(0, Math.min(rows.length - 1, i + (down ? 10 : -10)));
+        if (rows[j]) { e.preventDefault(); try { rows[j].focus(); rows[j].scrollIntoView({ block: 'nearest' }); } catch (err) { /* ignore */ } return; }
+      }
+    }
     if (NAV.on && /^Arrow/.test(e.key) && !e.altKey && !e.ctrlKey && !e.metaKey) { if (navKey(e.key.slice(5).toLowerCase())) e.preventDefault(); return; }
     if (e.key === 'Escape') {
       let done = false;

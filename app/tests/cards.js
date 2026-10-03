@@ -61,6 +61,13 @@ const { open, go, overflow, shot, state, redraw } = require('./helper');
       const back = await page.evaluate(() => ({ t: document.activeElement.dataset.t, id: document.activeElement.dataset.id }));
       ok(await n('.cards .win') === 0 && back.t === 'title-card' && back.id === mark, 'gamepad B closes it and the highlight returns to the name: ' + JSON.stringify(back) + ' wanted ' + mark);
     }
+    // remote: Page Down and Page Up (channel up and down) move ten rows of a long table
+    if (mode === 'tv') {
+      await go(page, 'roster'); await page.waitForTimeout(200);
+      await page.focus('tr.pick'); const at = () => page.evaluate(() => [].indexOf.call(document.querySelectorAll('tr.pick'), document.activeElement));
+      await page.keyboard.press('PageDown'); ok(await at() === 10, 'Page Down moves ten rows: row ' + await at());
+      await page.keyboard.press('PageUp'); ok(await at() === 0, 'Page Up moves back ten: row ' + await at());
+    }
     // gamepad X opens Help, Y opens the Jukebox
     if (mode === 'tv') {
       await page.evaluate(() => window.EWF_DEBUG.pad('x')); await page.waitForTimeout(100);
