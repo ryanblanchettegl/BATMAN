@@ -15,7 +15,11 @@ var STIP = {
   ladder:{n:'Ladder',w:[0.25,0.15,0.6],heat:4,inj:2.6,hc:0.15},
   cage:{n:'Steel cage',w:[0.55,0.15,0.3],heat:4,inj:1.6,hc:0.25},
   sub:{n:'Submission',w:[0.25,0.75,0],heat:2,inj:1},
-  iron:{n:'Iron man',w:null,heat:3,inj:1.3}
+  iron:{n:'Iron man',w:null,heat:3,inj:1.3},
+  tables:{n:'Tables',w:[0.65,0.1,0.25],heat:4,inj:1.9,hc:0.3},
+  lumber:{n:'Lumberjack',w:[0.5,0.2,0.3],heat:3,inj:1.3,hc:0.1},
+  mask:{n:'Mask against mask',w:[0.2,0.4,0.4],heat:6,inj:1.1},
+  hair:{n:'Hair against hair',w:[0.5,0.2,0.3],heat:5,inj:1.2}
 };
 var FIN = {clean:{r:0,wg:1,lg:1},flash:{r:-1,wg:0.7,lg:0.5},cheap:{r:-1,wg:0.6,lg:0.4},interf:{r:-1,wg:0.5,lg:0.25},foiled:{r:1,wg:1.1,lg:0.8},dq:{r:-5,wg:0.2,lg:0.1},co:{r:-6,wg:0.3,lg:0.2},draw:{r:-3,wg:0,lg:0}};
 var LEN = {S:6,M:12,L:20};
@@ -286,7 +290,15 @@ function titleFits(t,m){var d=MT[m.mt];return !!d&&(t.tag?m.mt==='tag':(d.per===
 /* ---------- booking ---------- */
 function eligible(S,P,show){return S.w.filter(function(w){return (w.promo===P.id&&w.inj<=0&&!w.camp&&!w.nw&&w.rest!==S.week&&!(w.away>=S.week)&&(show.big||!show.brand||w.brand===show.brand))||isGuest(S,P,w,show);});}
 function showTitles(P,show){return P.titles.filter(function(t){return show.big?!isDev(P,t.brand):(!show.brand||!t.brand||t.brand===show.brand);});}
-function gimmickFor(S,a){return a.style==='H'?'ladder':(a.style==='T'?'sub':(chance(S,0.5)?'cage':'hardcore'));}
+function gimmickFor(S,a,b){
+  var k=a.style==='H'?'ladder':(a.style==='T'?'sub':(chance(S,0.5)?'cage':'hardcore')),pm=a.promo!=='FA'&&S.promos[a.promo]?S.promos[a.promo].model:'';
+  var x=rnd(S);   // the wider library: a mask or hair match for the right pair, tables and lumberjacks now and then
+  if(b&&masked(a)===1&&masked(b)===1&&x<0.4)return 'mask';
+  if(b&&pm==='joshi'&&x<0.4&&!(a.sh>S.week-20)&&!(b.sh>S.week-20))return 'hair';
+  if(x>0.88)return pm==='purist'||pm==='corporate'?k:'tables';
+  if(x>0.8&&pm!=='purist')return 'lumber';
+  return k;
+}
 
 function autoBook(S,P,show){
   var big=!!show.big,n=big?7:5,used={},card=[],isPl=P.id===S.player;
@@ -390,7 +402,7 @@ function autoBook(S,P,show){
     fs.forEach(function(f){
       if(booked>=(big?2:1))return;
       var a=S.w[f.a[0]],b=S.w[f.b[0]];if(!free(a)||!free(b)||a.g!==b.g)return;
-      if(big?f.heat>=45:(f.heat>=30&&chance(S,0.35))){single(a,b,{len:big?'L':'M',stip:big&&f.heat>=60?gimmickFor(S,a):'std'},70);booked++;}
+      if(big?f.heat>=45:(f.heat>=30&&chance(S,0.35))){single(a,b,{len:big?'L':'M',stip:big&&f.heat>=60?gimmickFor(S,a,b):'std'},70);booked++;}
     });
   }
   if(L2.length>=2){if(!(wt[0]&&(big||chance(S,0.25)||!wt[0].holders.length)&&titleSingles(wt[0],'M',50)))filler(0,'M',G2,50);}
@@ -537,7 +549,7 @@ function expand(S,str,o,depth){
   return fill(str.replace(/#(\w+)#/g,function(_,k){return GR[k]?expand(S,sayPick(S,GR[k]),o,(depth||0)+1):'';}),o);
 }
 function say(S,sym,o){var t=expand(S,'#'+sym+'#',o);return t.charAt(0).toUpperCase()+t.slice(1);}
-var STIPLINE={hardcore:['Chairs and tables come into play.','They have found a trash can, and it is not for recycling.','Weapons everywhere. The referee can only watch.'],ladder:['Both climb, and both crash off the ladder.','Somebody just went through a ladder. I felt that from here.','Fingertips on the prize... and the ladder goes over!'],cage:['The cage itself becomes a weapon.','Face first into the steel!','Nowhere to run inside that cage.'],sub:['Each hunts for the hold that ends it.','Hold, counter, hold. Somebody is going to have to give up.'],iron:['The falls go back and forth across the half hour.','Pacing is everything in a match like this, and they both know it.']};
+var STIPLINE={tables:['A table is set up at ringside, and nobody is happy about it.','Somebody is going through a table tonight. The only question is who.'],lumber:['The lumberjacks line the ring and wait for somebody to roll out.','Nowhere to hide: the floor is full of angry colleagues.'],mask:['Everything they have built behind that mask is on the line tonight.','A mask is a promise. Tonight one of them breaks it.'],hair:['They have both put their hair on the line, and neither will step back.','Clippers are waiting at ringside for whoever loses.'],hardcore:['Chairs and tables come into play.','They have found a trash can, and it is not for recycling.','Weapons everywhere. The referee can only watch.'],ladder:['Both climb, and both crash off the ladder.','Somebody just went through a ladder. I felt that from here.','Fingertips on the prize... and the ladder goes over!'],cage:['The cage itself becomes a weapon.','Face first into the steel!','Nowhere to run inside that cage.'],sub:['Each hunts for the hold that ends it.','Hold, counter, hold. Somebody is going to have to give up.'],iron:['The falls go back and forth across the half hour.','Pacing is everything in a match like this, and they both know it.']};
 var CHEAP=['{w} grabs a handful of tights to steal the pin on {l}.','{w} uses the ropes for leverage and pins {l}.','A low blow behind the referee’s back lets {w} pin {l}.'];
 var REACT={Interview:['Say what you like about that, it got the people talking.','Confident. Maybe too confident.'],Promo:['Strong words. Now go and back them up.','That one is going to sting.'],Brawl:['Somebody get security out here!','They cannot keep these two apart.'],Ambush:['From behind! That is how you send a message.','No warning at all. That is how it is going to be, then.'],Challenge:['Now that is a match I want to see.','The champion did not look happy about that.'],Mystery:['Who would do this? Somebody in that locker room knows something.','I have a few names in mind, {p}, and I am keeping them to myself.'],Reveal:['I do not believe it. It was right in front of us the whole time!','Of all the people. Of all the people!'],'Face-off':['Feel this building shake. Sign that match!','Neither one blinked.'],Return:['Welcome back! This place has come unglued!','Look who it is!'],Save:['A helping hand, and maybe the start of something.','The cavalry has arrived.'],Turn:['Everything just changed.','I did not see that coming, and neither did they.'],'Mind games':['That is going to play on somebody’s mind all week.','Just watching. Just letting them know.'],'Contract signing':['Has a contract signing ever ended well?','Well, the table did not survive.'],Video:['When you see it all laid out like that, you understand why they hate each other.','That is the story so far. The ending is still to be written.'],Stakes:['The stakes just went through the roof.','No going back now.'],Betrayal:['Betrayed by a friend! I feel sick, {p}.','You think you know somebody.'],Attack:['That was not wrestling. That was an assault.','We need help out here!'],Announcement:['Mark your calendar. That one is going to be special.','It is official, and it is going to be a war.']};
 
@@ -825,7 +837,7 @@ function doMatch(S,P,show,m,i,n,rep,used){
     if(mins>8)seg.lines.push(say(S,mk?'mid_'+mk:'mid',o));
     seg.lines.push((MQ>=88?'This is something special. ':(MQ>=75?'A very good match. ':(MQ>=60?'Solid work. ':(MQ>=45?'It never finds a rhythm. ':'It falls apart in places. '))))+(CR>=88?'The crowd is molten.':(CR>=72?'The crowd is loud throughout.':(CR>=55?'The crowd is into it.':(CR>=40?'The crowd is polite but quiet.':'The crowd sits on its hands.')))));
   }
-  seg.finish=fill(br?'{w} throws {l} over the top rope and is the last one standing.':fin==='clean'?(lead.style==='T'||stip==='sub'?'{w} forces {l} to submit clean in the middle of the ring.':'{w} hits {fin} and pins {l} clean.'):
+  seg.finish=fill(br?'{w} throws {l} over the top rope and is the last one standing.':fin==='clean'?(lead.style==='T'||stip==='sub'?'{w} forces {l} to submit clean in the middle of the ring.':stip==='tables'?'{w} drives {l} through a table for the win.':stip==='mask'?'{w} wins, and {l} has to take off the mask.':stip==='hair'?'{w} wins, and the clippers come out for {l}.':'{w} hits {fin} and pins {l} clean.'):
     fin==='flash'?'{w} catches {l} in a roll-up out of nowhere.':
     fin==='cheap'?pick(S,CHEAP):
     fin==='interf'?'{x} runs in and distracts {l}; {w} takes advantage for the win.':
@@ -4055,6 +4067,72 @@ E.finishMood=function(S){
   return {n:o.n,u:o.u,share:o.share,sour:o.pen>=0.5,text:o.n<4?null:'Unclean finishes in the last four weeks: '+o.u+' of '+o.n+(o.pen>=0.5?'. The crowd is losing patience.':'.')};
 };
 E.hasRule=hasRule;
+
+/* ---------- 16. A library of match types: tables, lumberjack, mask against mask, hair against hair ---------- */
+/* masks: about one in seven wrestlers works in one. w.mk is 1 (masked), 0 (lost it) or missing (decided by name) */
+function masked(w){if(!w)return 0;if(w.mk!=null)return w.mk;return h01('mask'+w.id+w.name)<0.14?1:0;}
+var STIPFIT={
+  purist:{tables:[-3,'Tables are not what this crowd pays for'],lumber:[-1.5,'A lumberjack match is a circus to this crowd'],hair:[-1.5,'A haircut is a gimmick, and this crowd does not pay for gimmicks']},
+  corporate:{tables:[-2,'The sponsors winced at the tables'],mask:[-1,'Masks do not sell to this audience'],hair:[-1,'A haircut on television was a step too far']},
+  workrate:{tables:[-2,'Spots instead of wrestling, and this crowd noticed'],lumber:[-1,'Lumberjacks got in the way of the wrestling'],mask:[1.5,'A mask match decided by skill: the crowd approved'],hair:[-1,'The wager mattered more than the wrestling']},
+  outlaw:{tables:[3,'This crowd wanted to see someone go through a table'],lumber:[1.5,'A ring of lumberjacks suits this crowd'],hair:[1,'A wager like that suits this crowd']},
+  spectacle:{tables:[2,'Tables make a spectacle, and this crowd loves one'],lumber:[1.5,'The lumberjacks made it a show'],mask:[3,'A mask on the line: this crowd came for exactly this'],hair:[2,'Hair on the line is a big night here']},
+  tradition:{tables:[-2,'Tables are not how this crowd likes it done'],lumber:[1,'An old-fashioned lumberjack match'],mask:[2,'An old wager, and this crowd respects it'],hair:[2,'An old wager, and this crowd respects it']},
+  joshi:{tables:[-1,'Tables are not what this crowd came for'],mask:[1,null],hair:[3,'A hair match is a big night in this tradition']},
+  underdog:{tables:[1,null],lumber:[1,null],mask:[1,null],hair:[1,null]},
+  startup:{tables:[1.5,'A table keeps the new crowd awake'],lumber:[0.5,null]},
+  classic:{mask:[1,null],hair:[1,null]}
+};
+CRX.push(function(ctx){
+  var k=ctx.stip,d=0,f;if(!STIP[k]||(k!=='tables'&&k!=='lumber'&&k!=='mask'&&k!=='hair'))return null;
+  var fit=(STIPFIT[ctx.P.model]||{})[k];
+  if(fit){d+=fit[0];if(fit[1]&&Math.abs(fit[0])>=1)ctx.fx.push({s:fit[0]>=0?1:-1,x:fit[1],m:1});}
+  if((k==='mask'||k==='hair')&&!(ctx.feud&&ctx.feud.heat>=40)){d-=3;ctx.fx.push({s:-1,x:'Nothing in the story to wager a '+(k==='mask'?'mask':'head of hair')+' on'});}
+  if(k==='tables'&&ctx.P.risk===0){d-=2.5;ctx.fx.push({s:-1,x:'Tables are too rough for a family show'});}
+  if(k==='lumber'&&!ctx.S.cal){
+    var idle=rosterOf(ctx.S,ctx.P.id).filter(function(w){return w.inj<=0&&!w.nw&&ctx.all.indexOf(w)<0;}).length;
+    if(idle>=10){d+=1.5;ctx.fx.push({s:1,x:'Plenty of lumberjacks at ringside'});}else if(idle<6){d-=3;ctx.fx.push({s:-1,x:'Too few lumberjacks to fill the ringside'});}
+  }
+  return d?{d:d,x:null}:null;
+});
+/* the wager is paid when the bell rings */
+POST.push(function(ctx){
+  var S=ctx.S,r=ctx.res,k=ctx.stip;if(S.cal||r.win<0||(k!=='mask'&&k!=='hair'))return;
+  r.losers.forEach(function(w){
+    if(k==='mask'){w.mk=0;w.mom=clamp(w.mom-3,-10,10);w.morale=clamp(w.morale-8,0,100);addOvr(ctx.P,w,-0.6);}
+    else{w.sh=S.week;w.mom=clamp(w.mom-2,-10,10);w.morale=clamp(w.morale-6,0,100);}
+  });
+  r.winners.forEach(function(w){w.mom=clamp(w.mom+3,-10,10);addOvr(ctx.P,w,1);w.morale=clamp(w.morale+4,0,100);});
+  var txt=names(r.losers)+(k==='mask'?' lost the mask to ':' lost their hair to ')+names(r.winners)+' at '+ctx.show.name+'.';
+  news(S,'story',txt);
+  if(ctx.isPl)r.seg.notes.push(k==='mask'?names(r.losers)+(r.losers.length>1?' are':' is')+' unmasked for good.':names(r.losers)+(r.losers.length>1?' have':' has')+' lost '+(r.losers.length>1?'their':'their')+' hair.');
+});
+/* a mask match needs masks, a hair match needs hair that has grown back */
+(function(){
+  var was=E.validate;
+  E.validate=function(S,card){
+    var v=was(S,card);
+    card.forEach(function(m,i){
+      if(m.stip!=='mask'&&m.stip!=='hair')return;
+      var ws=[].concat.apply([],m.sides).filter(function(id){return id!=null&&S.w[id];}).map(function(id){return S.w[id];});
+      if(m.stip==='mask'&&ws.some(function(w){return masked(w)!==1;}))v.errors.push('Match '+(i+1)+': a mask match needs everyone in it to wear a mask.');
+      if(m.stip==='hair'){var bald=ws.filter(function(w){return w.sh!=null&&S.week-w.sh<20;})[0];if(bald)v.errors.push('Match '+(i+1)+': '+bald.name+' has not grown the hair back yet.');}
+    });
+    return v;
+  };
+})();
+E.masked=masked;
+E.STIPNOTE={
+  hardcore:'Rewards brawlers. Heavy wear and hurts. Not for family shows.',
+  ladder:'Rewards high flyers. The biggest risk of a hurt.',
+  cage:'Rewards brawlers. Good for ending a feud.',
+  sub:'Rewards technicians.',
+  iron:'Thirty minutes. Only the fittest should try it.',
+  tables:'Rewards brawlers. A heavy risk of a hurt. Purist and family crowds hate it.',
+  lumber:'Needs ten healthy wrestlers waiting at ringside to feel big.',
+  mask:'Everyone in it must wear a mask. Needs a hot feud. The loser is unmasked for good.',
+  hair:'Needs a hot feud. The loser is shaved and cannot wager again for 20 weeks.'
+};
 
 /* ===== 83-moments.js ===== */
 /* ---------- moments from wrestling history ----------

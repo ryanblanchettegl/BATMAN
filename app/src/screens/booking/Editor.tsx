@@ -48,6 +48,7 @@ export function Editor(p: { m: Match; i: number }) {
     <Field label="Title on the line"><Sel id={'m' + i + '-title'} t="title" d={{ i }} value={m.title} onChange={v => setMatch(i, 'title', v)}
       options={[['', 'No title'], ...titles.map((t: any) => [t.id, t.name + (t.holders.length ? '' : ' (vacant)')] as Opt)]} /></Field>
     <Field label="Stipulation"><Sel id={'m' + i + '-stip'} t="stip" d={{ i }} value={m.stip} onChange={v => setMatch(i, 'stip', v)} options={Object.keys(E.STIP).map(k => [k, E.STIP[k].n] as Opt)} /></Field>
+    {E.STIPNOTE[m.stip] && <p class="muted wide">{E.STIPNOTE[m.stip]}</p>}
     <Field label="Intensity"><Sel id={'m' + i + '-int'} t="int" d={{ i }} value={m.int || 'normal'} onChange={v => setMatch(i, 'int', v)} options={Object.keys(E.INTN).map(k => [k, E.INTN[k].n + (INT_NOTE[k] || '')] as Opt)} /></Field>
     <Field label="Length"><Sel id={'m' + i + '-len'} t="len" d={{ i }} value={m.len} onChange={v => setMatch(i, 'len', v)} options={[['S', 'Short'], ['M', 'Medium'], ['L', 'Long']]} /></Field>
     {od && od.chem != null && <p class="muted wide">Ring chemistry between them: {od.chem >= 2.2 ? <span class="good">great</span> : (od.chem <= -2.2 ? <span class="bad">poor</span> : 'ordinary')}.</p>}

@@ -11,7 +11,11 @@ var STIP = {
   ladder:{n:'Ladder',w:[0.25,0.15,0.6],heat:4,inj:2.6,hc:0.15},
   cage:{n:'Steel cage',w:[0.55,0.15,0.3],heat:4,inj:1.6,hc:0.25},
   sub:{n:'Submission',w:[0.25,0.75,0],heat:2,inj:1},
-  iron:{n:'Iron man',w:null,heat:3,inj:1.3}
+  iron:{n:'Iron man',w:null,heat:3,inj:1.3},
+  tables:{n:'Tables',w:[0.65,0.1,0.25],heat:4,inj:1.9,hc:0.3},
+  lumber:{n:'Lumberjack',w:[0.5,0.2,0.3],heat:3,inj:1.3,hc:0.1},
+  mask:{n:'Mask against mask',w:[0.2,0.4,0.4],heat:6,inj:1.1},
+  hair:{n:'Hair against hair',w:[0.5,0.2,0.3],heat:5,inj:1.2}
 };
 var FIN = {clean:{r:0,wg:1,lg:1},flash:{r:-1,wg:0.7,lg:0.5},cheap:{r:-1,wg:0.6,lg:0.4},interf:{r:-1,wg:0.5,lg:0.25},foiled:{r:1,wg:1.1,lg:0.8},dq:{r:-5,wg:0.2,lg:0.1},co:{r:-6,wg:0.3,lg:0.2},draw:{r:-3,wg:0,lg:0}};
 var LEN = {S:6,M:12,L:20};
@@ -282,7 +286,15 @@ function titleFits(t,m){var d=MT[m.mt];return !!d&&(t.tag?m.mt==='tag':(d.per===
 /* ---------- booking ---------- */
 function eligible(S,P,show){return S.w.filter(function(w){return (w.promo===P.id&&w.inj<=0&&!w.camp&&!w.nw&&w.rest!==S.week&&!(w.away>=S.week)&&(show.big||!show.brand||w.brand===show.brand))||isGuest(S,P,w,show);});}
 function showTitles(P,show){return P.titles.filter(function(t){return show.big?!isDev(P,t.brand):(!show.brand||!t.brand||t.brand===show.brand);});}
-function gimmickFor(S,a){return a.style==='H'?'ladder':(a.style==='T'?'sub':(chance(S,0.5)?'cage':'hardcore'));}
+function gimmickFor(S,a,b){
+  var k=a.style==='H'?'ladder':(a.style==='T'?'sub':(chance(S,0.5)?'cage':'hardcore')),pm=a.promo!=='FA'&&S.promos[a.promo]?S.promos[a.promo].model:'';
+  var x=rnd(S);   // the wider library: a mask or hair match for the right pair, tables and lumberjacks now and then
+  if(b&&masked(a)===1&&masked(b)===1&&x<0.4)return 'mask';
+  if(b&&pm==='joshi'&&x<0.4&&!(a.sh>S.week-20)&&!(b.sh>S.week-20))return 'hair';
+  if(x>0.88)return pm==='purist'||pm==='corporate'?k:'tables';
+  if(x>0.8&&pm!=='purist')return 'lumber';
+  return k;
+}
 
 function autoBook(S,P,show){
   var big=!!show.big,n=big?7:5,used={},card=[],isPl=P.id===S.player;
@@ -386,7 +398,7 @@ function autoBook(S,P,show){
     fs.forEach(function(f){
       if(booked>=(big?2:1))return;
       var a=S.w[f.a[0]],b=S.w[f.b[0]];if(!free(a)||!free(b)||a.g!==b.g)return;
-      if(big?f.heat>=45:(f.heat>=30&&chance(S,0.35))){single(a,b,{len:big?'L':'M',stip:big&&f.heat>=60?gimmickFor(S,a):'std'},70);booked++;}
+      if(big?f.heat>=45:(f.heat>=30&&chance(S,0.35))){single(a,b,{len:big?'L':'M',stip:big&&f.heat>=60?gimmickFor(S,a,b):'std'},70);booked++;}
     });
   }
   if(L2.length>=2){if(!(wt[0]&&(big||chance(S,0.25)||!wt[0].holders.length)&&titleSingles(wt[0],'M',50)))filler(0,'M',G2,50);}
