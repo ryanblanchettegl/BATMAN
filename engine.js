@@ -1134,7 +1134,7 @@ function runShow(S,P,show,card){
   card.forEach(function(m){var ids=flat(m.sides);for(var x=0;x<ids.length;x++)for(var y=x+1;y<ids.length;y++){var f=feudOf(S,ids[x],ids[y]);if(f&&f.heat>heat)heat=f.heat;}});
   rep.mainStar=star;
   if(!S.cal){
-    var hype=clamp(1+(star-(P.starB[key]||star))/80+heat/500+ADV_H[P.adv]+(isPl&&S.hype?S.hype:0),0.8,1.4),dm=TIX_D[P.tix],d=demand(P,show,1)*(isPl?tourBoost(S,P):1),cap=capFor(d);
+    var hype=clamp(1+(star-(P.starB[key]||star))/80+heat/500+ADV_H[P.adv]+(isPl&&S.hype?S.hype:0),0.8,1.4),dm=TIX_D[P.tix],d=demand(P,show,1)*(isPl?tourBoost(S,P)*tasteDraw(S,P,card,rep):1),cap=capFor(d);
     rep.hype=hype;rep.cap=cap;rep.att=Math.round(Math.min(cap,d*hype*dm));rep.sellout=rep.att>=cap;
     rep.energy=isPl?clamp((hype*dm-1)*9,-2,2):0;
     if(isPl){rep.venue=venueFor(S,P,cap);rep.ann=P.ann.slice();S.hype=0;
@@ -1181,7 +1181,7 @@ function runShow(S,P,show,card){
     S.stats.run=rep.rating>exp?S.stats.run+1:0;
     award(S,'ACH_FIRST_BELL');if(rep.rating>=80)award(S,'ACH_SHOW_80');if(rep.rating>=90)award(S,'ACH_SHOW_90');if(rep.rating<40)award(S,'ACH_BOMB');
     if(rep.sellout)award(S,'ACH_SELLOUT');if(S.stats.run>=5)award(S,'ACH_RUN_5');
-    rep.quest=[];
+    rep.quest=rep.quest||[];
     S.quests.slice().forEach(function(q){
       if(q.type==='sponsor'&&big){if(rep.rating>=q.target){P.led.bonus+=q.bonus;rep.quest.push('Sponsor target hit: +$'+q.bonus.toLocaleString('en-US')+'.');award(S,'ACH_QUEST');}else rep.quest.push('Sponsor target missed ('+q.target+'% needed).');dropQuest(S,q);}
       if(q.type==='network'&&q.show===show.id){if(q.hit){P.led.bonus+=q.bonus;rep.quest.push('Network target hit: +$'+q.bonus.toLocaleString('en-US')+'.');award(S,'ACH_QUEST');}else rep.quest.push('Network target missed ('+q.target+'% main event needed).');dropQuest(S,q);}
@@ -5564,13 +5564,35 @@ WEEKX.push(function(S){
   }
 });
 /* each region has a taste, and the wrong product plays flat there */
+function tasteVal(taste,ws,stips){
+  if(!ws.length)return 0;
+  if(taste==='brawl')return (avg(ws.map(function(w){return w.brawl;}))-55)/20+(stips.filter(function(s){return s==='hardcore'||s==='cage'||s==='tables';}).length?0.3:0);
+  if(taste==='work')return (avg(ws.map(workRate))-60)/20;
+  return (avg(ws.map(function(w){return w.sq;}))-55)/20+(stips.filter(function(s){return s==='ladder'||s==='mask'||s==='hair';}).length?0.3:0);
+}
+/* the advertised card meets the region's taste: a smaller or bigger house */
+function tasteFit(S,P,card){
+  var reg=P.tour?REGIONS[P.tour.reg]:REGIONS[homeReg(P)],ids={},ws=[],stips=[];
+  card.forEach(function(m){stips.push(m.stip||'std');m.sides.forEach(function(s){s.forEach(function(id){if(id!=null&&S.w[id]&&!ids[id]){ids[id]=1;ws.push(S.w[id]);}});});});
+  return {reg:reg,fit:clamp(tasteVal(reg.taste,ws,stips),-1,1)};
+}
+function tasteDraw(S,P,card,rep){
+  var f=tasteFit(S,P,card);
+  if(Math.abs(f.fit)>=0.5)(rep.quest=rep.quest||[]).push((P.tour?'On tour, ':'At home, ')+f.reg.n+' '+(f.fit>0?'got the '+TASTEN[f.reg.taste]+' it likes, and the house was a little bigger.':'wanted '+TASTEN[f.reg.taste]+' and did not get enough of it, and the house was a little smaller.'));
+  return 1+0.06*f.fit;
+}
+/* for the booking screen: what the region will make of this card */
+E.tasteForecast=function(S,card){
+  var P=S.promos[S.player],f=tasteFit(S,P,card);
+  return {region:f.reg,fit:f.fit,text:(P.tour?'On tour in ':'At home in ')+f.reg.n+', where they like '+TASTEN[f.reg.taste]+': '+(f.fit>=0.5?'this card suits them. Expect a bigger house.':(f.fit<=-0.5?'this card is short of it. Expect a smaller house.':'this card is about right.'))};
+};
 CRX.push(function(ctx){
-  var P=ctx.P;if(!ctx.isPl||!P.tour||ctx.S.cal)return null;
-  var t=REGIONS[P.tour.reg].taste,all=ctx.all,d=0,x=null;
+  var P=ctx.P;if(!ctx.isPl||ctx.S.cal)return null;
+  var home=!P.tour,k=home?0.7:1,t=(home?REGIONS[homeReg(P)]:REGIONS[P.tour.reg]).taste,all=ctx.all,d=0,x=null;
   if(t==='brawl'){var b=avg(all.map(function(w){return w.brawl;}));if(b>=62||ctx.stip==='hardcore'||ctx.stip==='cage'){d=1.5;x='A brawl, and this region likes a brawl';}else if(b<=48){d=-1.5;x='Too gentle for a region that likes a fight';}}
   else if(t==='work'){var wk=avg(all.map(workRate));if(wk>=65){d=1.5;x='Fine wrestling for a region that counts the holds';}else if(wk<50){d=-1.5;x='Sloppy work in front of a region that notices';}}
   else{var sq=avg(all.map(function(w){return w.sq;}));if(sq>=65||ctx.stip==='ladder'){d=1.5;x='Spectacle, and this region came for spectacle';}else if(sq<=45){d=-1.5;x='Plain stuff for a region that wants spectacle';}}
-  return d?{d:d,x:x}:null;
+  return d?{d:d*k,x:x}:null;
 });
 
 /* ---------- 59 (continued): what the rival owners say about you, by temperament ---------- */
