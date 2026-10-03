@@ -266,3 +266,24 @@ WEEKX.push(function(S){
   if(S.stats&&S.stats.feudsDone>=1)msAward(S,'MS_FEUD');if(S.sponsors&&S.sponsors.length)msAward(S,'MS_SPONSOR');
 });
 E.milestones=function(S){return E.ACH.filter(function(a){return a.ms;}).map(function(a){return {id:a.id,name:a.name,desc:a.desc,w:(S.firsts&&S.firsts[a.id])||null};});};
+
+/* careers have a shape: rising, in their prime, past their best, on the way out. High flyers peak young and fade fast; brawlers and talkers last */
+E.phase=function(w){
+  if(!w||w.rt)return {id:'retired',word:'retired'};
+  if(w.age<w.pk[0])return {id:'rising',word:'rising'};
+  if(w.age<=w.pk[1])return {id:'prime',word:'in their prime'};
+  if(w.age<w.cl)return {id:'past',word:'past their best'};
+  return {id:'late',word:'on the way out'};
+};
+/* once a year the booker hears who has moved from one phase to the next */
+WEEKX.push(function(S){
+  S.w.forEach(function(w){
+    if(w.rt||w.promo!==S.player||w.nw)return;var ph=E.phase(w).id;
+    if(w.ph==null){w.ph=ph;return;}
+    if(w.ph!==ph){(S.phaseLog||(S.phaseLog=[])).push({id:w.id,from:w.ph,to:ph,w:S.week});w.ph=ph;}
+  });
+  var c=cal(S.week);if(c.month!==11||c.wom!==4||S.cal)return;
+  var L=(S.phaseLog||[]).filter(function(x){return S.week-x.w<48&&S.w[x.id]&&S.w[x.id].promo===S.player;});S.phaseLog=[];if(!L.length)return;
+  var word={prime:'has reached their prime',past:'is now past their best',late:'is on the way out',rising:'is on the rise'};
+  news(S,'you','The year in careers: '+L.map(function(x){return S.w[x.id].name+' '+word[x.to];}).join('; ')+'.');
+});

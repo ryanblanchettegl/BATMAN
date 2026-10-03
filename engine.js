@@ -153,7 +153,7 @@ function addWrestler(S,d,promo,brand){
   w.sq=sv(d.sq,d.ovr*0.6+d.mic*0.25+12+j('q')*4,20);
   w.cons=sv(d.cons,60+(wk-60)*0.4+j('k')*5,30);
   w.age=num(d.age)?+d.age:24+hs%15+(d.ovr>=80?2:0);w.bw=hash(d.name+'bw')%48;
-  var p0=d.peak?+d.peak[0]:26+(hs>>>4)%4+({H:-1,T:1,E:1}[d.style]||0),p1=d.peak?+d.peak[1]:33+(hs>>>7)%6+({H:-2,T:2,E:2}[d.style]||0);
+  var p0=d.peak?+d.peak[0]:26+(hs>>>4)%4+({H:-1,T:1,E:1,B:1}[d.style]||0),p1=d.peak?+d.peak[1]:33+(hs>>>7)%6+({H:-2,T:2,E:2,B:2}[d.style]||0);
   w.pk=[p0,Math.max(p0+2,p1)];w.cl=num(d.cliff)?+d.cliff:w.pk[1]+3+(hs>>>11)%5;
   if(d.tweener)w.twn=true;if(d.roles&&(d.roles.length!==1||d.roles[0]!=='wrestler')){w.roles=d.roles.slice();if(d.roles.indexOf('wrestler')<0)w.nw=true;}
   w.pot=num(d.pot)?clamp(+d.pot,workRate(w),99):clamp(wk+Math.round(h01(d.name+'p')*(d.ovr<60?12:3)),Math.min(wk,99),99);
@@ -2238,7 +2238,7 @@ function birthday(S,w){
   // past the peak: decline can be slowed by staying active and healthy, never stopped
   var over=w.age-w.pk[1],d=(w.age>=w.cl?2.2:1)*(act>=20?0.7:(act<6?1.25:1))*((w.yi||0)>=8?1.25:1);w.yi=0;
   var dn=function(k,n){w[k]=clamp(w[k]-Math.max(0,Math.round(n)),15,99);};
-  dn('speed',1.4*d+over*0.3);dn('stam',1.1*d+over*0.2);dn('brawl',0.6*d);dn('tech',0.3*d);dn('dur',1.5*d);
+  dn('speed',(w.style==='H'?1.7:1.4)*d+over*0.3);dn('stam',1.1*d+over*0.2);dn('brawl',0.6*d);dn('tech',0.3*d);dn('dur',1.5*d);
   w.pot=Math.max(workRate(w),w.pot-2);
   if(w.promo===S.player&&!w.slow){w.slow=true;news(S,'story',w.name+' is '+w.age+' and starting to slow down.');mile(S,w,'age','Began to slow down at '+w.age);}
   if(w.age>=w.cl+1&&!w.retiring&&(workRate(w)<52||w.age>=w.cl+4||chance(S,0.3))){
@@ -3831,6 +3831,27 @@ WEEKX.push(function(S){
   if(S.stats&&S.stats.feudsDone>=1)msAward(S,'MS_FEUD');if(S.sponsors&&S.sponsors.length)msAward(S,'MS_SPONSOR');
 });
 E.milestones=function(S){return E.ACH.filter(function(a){return a.ms;}).map(function(a){return {id:a.id,name:a.name,desc:a.desc,w:(S.firsts&&S.firsts[a.id])||null};});};
+
+/* careers have a shape: rising, in their prime, past their best, on the way out. High flyers peak young and fade fast; brawlers and talkers last */
+E.phase=function(w){
+  if(!w||w.rt)return {id:'retired',word:'retired'};
+  if(w.age<w.pk[0])return {id:'rising',word:'rising'};
+  if(w.age<=w.pk[1])return {id:'prime',word:'in their prime'};
+  if(w.age<w.cl)return {id:'past',word:'past their best'};
+  return {id:'late',word:'on the way out'};
+};
+/* once a year the booker hears who has moved from one phase to the next */
+WEEKX.push(function(S){
+  S.w.forEach(function(w){
+    if(w.rt||w.promo!==S.player||w.nw)return;var ph=E.phase(w).id;
+    if(w.ph==null){w.ph=ph;return;}
+    if(w.ph!==ph){(S.phaseLog||(S.phaseLog=[])).push({id:w.id,from:w.ph,to:ph,w:S.week});w.ph=ph;}
+  });
+  var c=cal(S.week);if(c.month!==11||c.wom!==4||S.cal)return;
+  var L=(S.phaseLog||[]).filter(function(x){return S.week-x.w<48&&S.w[x.id]&&S.w[x.id].promo===S.player;});S.phaseLog=[];if(!L.length)return;
+  var word={prime:'has reached their prime',past:'is now past their best',late:'is on the way out',rising:'is on the rise'};
+  news(S,'you','The year in careers: '+L.map(function(x){return S.w[x.id].name+' '+word[x.to];}).join('; ')+'.');
+});
 
 /* ===== 83-moments.js ===== */
 /* ---------- moments from wrestling history ----------

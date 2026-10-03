@@ -149,7 +149,7 @@ function addWrestler(S,d,promo,brand){
   w.sq=sv(d.sq,d.ovr*0.6+d.mic*0.25+12+j('q')*4,20);
   w.cons=sv(d.cons,60+(wk-60)*0.4+j('k')*5,30);
   w.age=num(d.age)?+d.age:24+hs%15+(d.ovr>=80?2:0);w.bw=hash(d.name+'bw')%48;
-  var p0=d.peak?+d.peak[0]:26+(hs>>>4)%4+({H:-1,T:1,E:1}[d.style]||0),p1=d.peak?+d.peak[1]:33+(hs>>>7)%6+({H:-2,T:2,E:2}[d.style]||0);
+  var p0=d.peak?+d.peak[0]:26+(hs>>>4)%4+({H:-1,T:1,E:1,B:1}[d.style]||0),p1=d.peak?+d.peak[1]:33+(hs>>>7)%6+({H:-2,T:2,E:2,B:2}[d.style]||0);
   w.pk=[p0,Math.max(p0+2,p1)];w.cl=num(d.cliff)?+d.cliff:w.pk[1]+3+(hs>>>11)%5;
   if(d.tweener)w.twn=true;if(d.roles&&(d.roles.length!==1||d.roles[0]!=='wrestler')){w.roles=d.roles.slice();if(d.roles.indexOf('wrestler')<0)w.nw=true;}
   w.pot=num(d.pot)?clamp(+d.pot,workRate(w),99):clamp(wk+Math.round(h01(d.name+'p')*(d.ovr<60?12:3)),Math.min(wk,99),99);
