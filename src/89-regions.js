@@ -217,3 +217,18 @@ E.unify=function(S,g){
   news(S,'title','The '+m.name+' and the '+RV.name+' '+t.name+' are unified. '+names(m.holders.map(function(id){return S.w[id];}))+' is the champion of both.');
   return {ok:true,text:rollText(r)+'The belts are unified. The '+m.name+' now carries both lines of champions, and its prestige is up. '+RV.name+' retires its title.'};
 };
+
+/* ---------- 67. The rookie class: each year's class, where they came from, a scouting report, and a look back ---------- */
+E.classYears=function(S){return Object.keys(S.classes||{}).map(Number).sort(function(a,b){return b-a;});};
+E.classReport=function(S,year){
+  var ids=(S.classes||{})[year];if(!ids)return null;
+  var P=S.promos[S.player],rows=ids.map(function(id){
+    var w=S.w[id],n=E.intel(S,id),pr=n.stats.pot,st;
+    if(w.promo==='FA')st=w.rt?'Retired':'Still a free agent';else if(w.promo===P.id)st='Signed by you';else st='Signed by '+(S.promos[w.promo]?S.promos[w.promo].name:'another company');
+    var champ=false;S.order.forEach(function(pid){S.promos[pid].titles.forEach(function(t){if(t.holders.indexOf(id)>=0)champ=true;});});
+    return {w:w,region:REGIONS[w.reg==null?0:w.reg].n,potential:pr.lo===pr.hi?String(pr.lo):pr.lo+'–'+pr.hi,now:Math.round(w.ovr),status:st,champ:champ,sc:!!w.sc};
+  }).sort(function(a,b){return b.w.pot-a.w.pot;});
+  var mine=rows.filter(function(r){return r.w.promo===P.id;}).length,fa=rows.filter(function(r){return r.w.promo==='FA'&&!r.w.rt;}).length;
+  return {year:year,n:rows.length,rows:rows,mine:mine,fa:fa,champs:rows.filter(function(r){return r.champ;}).length,best:rows[0]?rows[0].w:null,
+    text:'The class of '+year+': '+rows.length+' rookies, '+fa+' still free agents, '+mine+' with you, '+rows.filter(function(r){return r.champ;}).length+' champions so far.'};
+};

@@ -2,7 +2,7 @@
 import { Fragment } from 'preact';
 import { E, W } from '../../engine';
 import { G, me, act, view, say, cash, full, openModal, plural, slice } from '../../store';
-import { Head, Panel, Btn, Sel, TextBox, Tag, Side, showResult } from '../../kit';
+import { Head, Panel, Btn, Sel, TextBox, Tag, Side, Name, Field, showResult } from '../../kit';
 import { rs } from './state';
 import { range, sendScout } from './Profile';
 
@@ -30,6 +30,20 @@ function OfferRow(p: { w: W; ask: number }) {
 }
 
 const SORTS: [string, string][] = [['ovr', 'Overness'], ['fit', 'Fit'], ['ask', 'Asking wage'], ['age', 'Youngest']];
+/** Each January's class of rookies: where they came from and what they might become. Pick a year to look back. */
+function ClassPanel() {
+  const S = G.S, yrs: number[] = E.classYears(S), cs = slice<{ y: number }>('class', () => ({ y: 0 }));
+  if (!yrs.length) return <Panel cls="mb2" title="The rookie class"><p class="muted">The first class turns professional in January. Rookies arrive from five regions, and each region leans toward a style.</p></Panel>;
+  const y = yrs.indexOf(cs.y) >= 0 ? cs.y : yrs[0], R = E.classReport(S, y);
+  return <Panel cls="mb2" title="The rookie class">
+    <Field label="Class of"><Sel id="cls-y" t="cls-y" value={y} options={yrs.map(v => [v, 'Class of ' + v] as [number, string])} onChange={v => view(() => { cs.y = +v; })} /></Field>
+    <p class="muted">{R.text}</p>
+    <ul class="list mt1">{R.rows.slice(0, 8).map((r: any) => <li class="col"><span><Name w={r.w} /> <span class="muted">{'·'} {r.region}, {E.STYLE_NAME[r.w.style]}</span></span>
+      <span class="muted">Potential {r.potential}{r.sc ? '' : ' (a rough guess until scouted)'} {'·'} now {r.now} {'·'} {r.status}{r.champ ? ' · a champion' : ''}</span></li>)}</ul>
+    {R.n > 8 ? <p class="muted">And {R.n - 8} more.</p> : null}
+  </Panel>;
+}
+
 export function Market() {
   const S = G.S, P = me(), st = rs(), q = st.mq.toLowerCase(), mk = slice<{ sort: string; will: boolean }>('market', () => ({ sort: 'ovr', will: false }));
   const fitV = (w: W) => { const f = E.fit(S, w.id); return f ? f.v : -999; };
@@ -40,6 +54,7 @@ export function Market() {
     <Head eyebrow={'Free agents and rivals’ talent with 12 weeks or less on their deals'} title="Free agents" />
     {!S.owner.me && <p class="muted mb2">{S.owner.name}{'’'}s wage budget is {full(E.budget(S))} a week. The bill is {full(E.rosterOf(S, P.id).reduce((a: number, w: W) => a + w.wage, 0))}.</p>}
     <CreatePanel />
+    <ClassPanel />
     <div class="row mb2">
       <TextBox type="search" id="mq" t="mq" label="Search market" placeholder="Search by name" value={st.mq} onInput={v => view(() => { st.mq = v; })} />
       <span class="muted">{L.length} available</span>

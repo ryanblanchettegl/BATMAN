@@ -2300,10 +2300,12 @@ function rookieClass(S,year){
     var g=i%3===2?'F':'M',nm,tries=0;
     do{nm=pick(S,g==='F'?I.firstF:I.firstM)+' '+pick(S,I.last);}while(have[nm]&&tries++<40);
     if(have[nm])continue;have[nm]=1;
-    var work=ri(S,38,60),blue=chance(S,0.15),w=addWrestler(S,{name:nm,g:g,ovr:ri(S,6,20)+(blue?6:0),style:pick(S,styles),work:work,mic:ri(S,30,75),align:chance(S,0.5)?'F':'H',age:ri(S,19,23)},'FA',null);
-    w.pot=clamp(work+ri(S,10,24)+(blue?12:0),work,97);w.sq=clamp(ri(S,30,72)+(blue?16:0),20,97);w.blue=blue;w.rk=year;assignGim(w);mile(S,w,'debut','Turned professional, class of '+year);made.push(w);
+    var rg=ri(S,0,REGIONS.length-1),rst={brawl:['B','P','S','A'],work:['T','A','S','H'],spectacle:['H','E','A','P']}[REGIONS[rg].taste],
+      work=ri(S,38,60),blue=chance(S,0.15),w=addWrestler(S,{name:nm,g:g,ovr:ri(S,6,20)+(blue?6:0),style:chance(S,0.6)?pick(S,rst):pick(S,styles),work:work,mic:ri(S,30,75),align:chance(S,0.5)?'F':'H',age:ri(S,19,23)},'FA',null);
+    w.pot=clamp(work+ri(S,10,24)+(blue?12:0),work,97);w.sq=clamp(ri(S,30,72)+(blue?16:0),20,97);w.blue=blue;w.rk=year;w.reg=rg;assignGim(w);mile(S,w,'debut','Turned professional, class of '+year);made.push(w);
   }
   made.sort(function(a,b){return b.pot-a.pot;});
+  (S.classes||(S.classes={}))[year]=made.map(function(w){return w.id;});
   if(made.length)news(S,'world','The class of '+year+' has turned professional: '+made.length+' rookies. The one everybody is talking about is '+made[0].name+'.');
 }
 /* scouting: hidden ratings show as a range until you know the wrestler well */
@@ -5731,6 +5733,21 @@ E.unify=function(S,g){
   RV.titles=RV.titles.filter(function(x){return x!==t;});RV.rel=clamp((RV.rel||0)+5,-100,100);
   news(S,'title','The '+m.name+' and the '+RV.name+' '+t.name+' are unified. '+names(m.holders.map(function(id){return S.w[id];}))+' is the champion of both.');
   return {ok:true,text:rollText(r)+'The belts are unified. The '+m.name+' now carries both lines of champions, and its prestige is up. '+RV.name+' retires its title.'};
+};
+
+/* ---------- 67. The rookie class: each year's class, where they came from, a scouting report, and a look back ---------- */
+E.classYears=function(S){return Object.keys(S.classes||{}).map(Number).sort(function(a,b){return b-a;});};
+E.classReport=function(S,year){
+  var ids=(S.classes||{})[year];if(!ids)return null;
+  var P=S.promos[S.player],rows=ids.map(function(id){
+    var w=S.w[id],n=E.intel(S,id),pr=n.stats.pot,st;
+    if(w.promo==='FA')st=w.rt?'Retired':'Still a free agent';else if(w.promo===P.id)st='Signed by you';else st='Signed by '+(S.promos[w.promo]?S.promos[w.promo].name:'another company');
+    var champ=false;S.order.forEach(function(pid){S.promos[pid].titles.forEach(function(t){if(t.holders.indexOf(id)>=0)champ=true;});});
+    return {w:w,region:REGIONS[w.reg==null?0:w.reg].n,potential:pr.lo===pr.hi?String(pr.lo):pr.lo+'–'+pr.hi,now:Math.round(w.ovr),status:st,champ:champ,sc:!!w.sc};
+  }).sort(function(a,b){return b.w.pot-a.w.pot;});
+  var mine=rows.filter(function(r){return r.w.promo===P.id;}).length,fa=rows.filter(function(r){return r.w.promo==='FA'&&!r.w.rt;}).length;
+  return {year:year,n:rows.length,rows:rows,mine:mine,fa:fa,champs:rows.filter(function(r){return r.champ;}).length,best:rows[0]?rows[0].w:null,
+    text:'The class of '+year+': '+rows.length+' rookies, '+fa+' still free agents, '+mine+' with you, '+rows.filter(function(r){return r.champ;}).length+' champions so far.'};
 };
 
 /* ===== 90-api.js ===== */

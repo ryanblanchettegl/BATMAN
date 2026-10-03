@@ -50,10 +50,12 @@ function rookieClass(S,year){
     var g=i%3===2?'F':'M',nm,tries=0;
     do{nm=pick(S,g==='F'?I.firstF:I.firstM)+' '+pick(S,I.last);}while(have[nm]&&tries++<40);
     if(have[nm])continue;have[nm]=1;
-    var work=ri(S,38,60),blue=chance(S,0.15),w=addWrestler(S,{name:nm,g:g,ovr:ri(S,6,20)+(blue?6:0),style:pick(S,styles),work:work,mic:ri(S,30,75),align:chance(S,0.5)?'F':'H',age:ri(S,19,23)},'FA',null);
-    w.pot=clamp(work+ri(S,10,24)+(blue?12:0),work,97);w.sq=clamp(ri(S,30,72)+(blue?16:0),20,97);w.blue=blue;w.rk=year;assignGim(w);mile(S,w,'debut','Turned professional, class of '+year);made.push(w);
+    var rg=ri(S,0,REGIONS.length-1),rst={brawl:['B','P','S','A'],work:['T','A','S','H'],spectacle:['H','E','A','P']}[REGIONS[rg].taste],
+      work=ri(S,38,60),blue=chance(S,0.15),w=addWrestler(S,{name:nm,g:g,ovr:ri(S,6,20)+(blue?6:0),style:chance(S,0.6)?pick(S,rst):pick(S,styles),work:work,mic:ri(S,30,75),align:chance(S,0.5)?'F':'H',age:ri(S,19,23)},'FA',null);
+    w.pot=clamp(work+ri(S,10,24)+(blue?12:0),work,97);w.sq=clamp(ri(S,30,72)+(blue?16:0),20,97);w.blue=blue;w.rk=year;w.reg=rg;assignGim(w);mile(S,w,'debut','Turned professional, class of '+year);made.push(w);
   }
   made.sort(function(a,b){return b.pot-a.pot;});
+  (S.classes||(S.classes={}))[year]=made.map(function(w){return w.id;});
   if(made.length)news(S,'world','The class of '+year+' has turned professional: '+made.length+' rookies. The one everybody is talking about is '+made[0].name+'.');
 }
 /* scouting: hidden ratings show as a range until you know the wrestler well */
