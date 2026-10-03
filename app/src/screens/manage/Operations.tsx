@@ -57,6 +57,18 @@ function Merch() {
   </Panel>;
 }
 
+/** Tours abroad: two or three weeks in another region. Big gates, a worn roster, and a following. */
+function Tours() {
+  const S = G.S, T = E.tourInfo(S), home = E.homeRegion(S);
+  const go = (reg: number, w: number) => act(() => { const r = E.startTour(S, reg, w); say(r.text, { err: !r.ok }); showResult('The tour', r.text, !r.ok); });
+  return <Panel title="Tours abroad">
+    <p class="muted">Home is {home.n}: {E.TASTEN[home.taste]}. A tour brings bigger crowds, tires everyone out, and builds a following in the region.</p>
+    {T.tour ? <p class="good mt1">On tour in {T.tour.reg.n}: {T.tour.left} {plural(T.tour.left, 'week')} to go. They like {E.TASTEN[T.tour.reg.taste]}.</p> : null}
+    <ul class="list mt1">{T.options.map((o: any) => <li class="col"><span><b>{o.reg.n}</b> <span class="muted">{'·'} likes {E.TASTEN[o.reg.taste]}{o.fol ? ' · following ' + o.fol : ''}</span><br /><span class="muted">{o.reg.d}</span></span>
+      <span class="row opts"><Btn kind="sm" t="tour" d={{ k: o.id, v: 2 }} disabled={!!T.tour} onClick={() => go(o.id, 2)}>2 weeks: {cash(o.cost2)}</Btn><Btn kind="sm" t="tour" d={{ k: o.id, v: 3 }} disabled={!!T.tour} onClick={() => go(o.id, 3)}>3 weeks: {cash(o.cost3)}</Btn></span></li>)}</ul>
+  </Panel>;
+}
+
 /** The wrestling school: open it, watch the class fill, see who graduates. */
 function School() {
   const S = G.S, c = E.school(S);
@@ -162,7 +174,7 @@ export function Operations() {
     <Head eyebrow={P.name} title="Operations" />
     <div class="cols">
       <div class="stack"><Broadcast /><Settings from={0} to={3} /></div>
-      <div class="stack"><Settings from={3} to={7} /><Merch /><School /><Universe /></div>
+      <div class="stack"><Settings from={3} to={7} /><Merch /><School /><Tours /><Universe /></div>
     </div>
   </>;
 }
