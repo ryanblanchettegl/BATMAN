@@ -1,8 +1,8 @@
 /* Manage: everything about the company that is a choice. Operations (the broadcast slot, the six settings, the universe
    export), House (house style and house rules) and Deals (sponsors, rivals, trades). What the choices add up to is read on Company. */
 import { E } from '../../engine';
-import { G, me, Modal, act, say, cash, plural, openModal, redraw } from '../../store';
-import { Head, Panel, Btn, Tag, Empty, Window, showResult } from '../../kit';
+import { G, me, Modal, act, say, cash, plural, openModal, redraw, slice, view } from '../../store';
+import { Head, Panel, Btn, Tag, Empty, Window, showResult, Name, Sel, Field } from '../../kit';
 import { copyText } from '../start';
 import { HouseStyle } from './HouseStyle';
 import { RivalsPanel } from './Rivals';
@@ -36,6 +36,24 @@ function Broadcast() {
       <Btn t="slot-ask" onClick={() => act(() => say(E.askSlot(S)))}>Ask the network for {E.SLOTN[so.to].toLowerCase()}</Btn>
       <span class="muted">{Math.round(so.p * 100)}% chance. One meeting every eight weeks.</span>
     </div> : <p class="muted mt1">{so.why}</p>}
+  </Panel>;
+}
+
+/** Merchandise lines: commission a design for a wrestler, and watch the ones that are selling. */
+function Merch() {
+  const S = G.S, P = me(), L = E.lineList(S), st = slice<{ w: string; k: string }>('merch', () => ({ w: '', k: 'shirt' }));
+  const R = S.w.filter((w: any) => w.promo === P.id && !w.nw).sort((a: any, b: any) => b.ovr - a.ovr).slice(0, 30);
+  const why = st.w ? E.lineWhy(S, +st.w, st.k) : 'Pick a wrestler.';
+  const go = () => act(() => { const r = E.commissionLine(S, +st.w, st.k); say(r.text, { err: !r.ok }); showResult('Merchandise', r.text, !r.ok); });
+  return <Panel title="Merchandise">
+    {L.length ? <ul class="list">{L.map((x: any) => <li><span><Name w={x.w} /> <span class="muted">{'·'} {x.kind}</span></span><span class="row"><span class="muted">{x.state}</span><span class="num">{cash(x.rev)} a week</span></span></li>)}</ul>
+      : <p class="muted">No lines out. A design costs a little up front and sells for weeks, more for a hot name.</p>}
+    <p class="muted mt1">{L.length} of {E.lineSlots(S)} lines.</p>
+    <Field label="Wrestler"><Sel id="mc-w" t="mc-w" value={st.w} options={[['', 'Pick a wrestler'], ...R.map((w: any) => [w.id, w.name + ' · ' + Math.round(w.ovr)] as [number | string, string])] as any} onChange={v => view(() => { st.w = v; })} /></Field>
+    <Field label="Design"><Sel id="mc-k" t="mc-k" value={st.k} options={Object.keys(E.LINEK).map(k => [k, E.LINEK[k].n + ' · ' + cash(E.lineCost(S, k))] as [string, string]) as any} onChange={v => view(() => { st.k = v; })} /></Field>
+    <p class="muted">{E.LINEK[st.k].d}</p>
+    <div class="row opts mt1"><Btn kind="sm" t="mc-go" disabled={!!why} onClick={go}>Commission it</Btn></div>
+    {why && st.w ? <p class="muted mt1">{why}</p> : null}
   </Panel>;
 }
 
@@ -129,7 +147,7 @@ export function Operations() {
     <Head eyebrow={P.name} title="Operations" />
     <div class="cols">
       <div class="stack"><Broadcast /><Settings from={0} to={3} /></div>
-      <div class="stack"><Settings from={3} to={7} /><Universe /></div>
+      <div class="stack"><Settings from={3} to={7} /><Merch /><Universe /></div>
     </div>
   </>;
 }

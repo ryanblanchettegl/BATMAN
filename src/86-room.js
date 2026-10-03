@@ -188,3 +188,57 @@ EVR.holdout=function(S,ev,choice,P,w){
   return rollText(r)+w.name+' does not blink. Four more weeks at home, and the room is talking about it.';
 };
 
+
+/* ---------- 47. Merchandise lines: commission a design for a wrestler (P.lines), each with its own sales curve ---------- */
+var LINEK={
+  shirt:{n:'T-shirt',cost:0.004,mult:0.14,plateau:6,hl:8,d:'A quick seller. Sells hard for six weeks, then fades.'},
+  poster:{n:'Poster',cost:0.0015,mult:0.15,plateau:4,hl:6,d:'Cheap and quick. A small, short run.'},
+  mask:{n:'Replica mask',cost:0.006,mult:0.17,plateau:6,hl:10,d:'For masked wrestlers only. Fans love a mask they can wear.'},
+  figure:{n:'Action figure',cost:0.012,mult:0.12,plateau:12,hl:16,d:'Dear to make and slow to catch on, but it sells for months.'}
+};
+function lineHeat(S,w){
+  var h=clamp(Math.pow(w.ovr/70,2),0.3,2.2)*(1+w.mom*0.04);
+  var P=S.promos[w.promo];if(P&&holdLvl(P,w.id)>0)h*=1.25;
+  if(P&&P.titles.some(function(t){return t.holders.indexOf(w.id)>=0&&S.week-t.since<=6;}))h*=1.35;   // a fresh title win
+  if(w.cphrase&&w.cphrase.n<15)h*=1.1;
+  return h;
+}
+function lineCurve(L,age){var k=LINEK[L.kind];return age<2?(age+1)/3:(age<2+k.plateau?1:Math.pow(0.5,(age-2-k.plateau)/k.hl));}
+function linesWeek(S,P){
+  if(!P||!P.lines||!P.lines.length)return 0;var t=0;
+  P.lines.forEach(function(L){var w=S.w[L.w],k=LINEK[L.kind];if(!w||!k)return;t+=P.inc0*k.cost*k.mult*lineHeat(S,w)*lineCurve(L,S.week-L.started);});
+  return t;
+}
+E.LINEK=LINEK;
+E.lineSlots=function(S){var P=S.promos[S.player];return 2+Math.floor(P.image/30);};
+E.lineList=function(S){
+  var P=S.promos[S.player];
+  return (P.lines||[]).map(function(L){var w=S.w[L.w],k=LINEK[L.kind],age=S.week-L.started,c=lineCurve(L,age);
+    return {w:w,kind:k.n,age:age,state:age<2?'Launching':(c>=1?'Selling well':(c>0.5?'Slowing':'Nearly done')),rev:Math.round(P.inc0*k.cost*k.mult*lineHeat(S,w)*c),id:L.id};});
+};
+E.lineCost=function(S,kind){var P=S.promos[S.player],k=LINEK[kind];return k?Math.round(P.inc0*k.cost):0;};
+E.lineWhy=function(S,wid,kind){
+  var P=S.promos[S.player],w=S.w[wid],k=LINEK[kind];
+  if(!w||!k||w.promo!==P.id||w.nw)return 'Pick one of your wrestlers.';
+  if((P.lines||[]).length>=E.lineSlots(S))return 'You have all '+E.lineSlots(S)+' lines going. More open as popularity grows.';
+  if((P.lines||[]).some(function(L){return L.w===wid&&L.kind===kind;}))return 'That line is already out.';
+  if(kind==='mask'&&masked(w)!==1)return w.name+' does not wear a mask.';
+  if(P.cash<E.lineCost(S,kind))return 'Not enough cash.';
+  return null;
+};
+E.commissionLine=function(S,wid,kind){
+  var why=E.lineWhy(S,wid,kind);if(why)return {ok:false,text:why};
+  var P=S.promos[S.player],w=S.w[wid],c=E.lineCost(S,kind);P.cash-=c;
+  (P.lines||(P.lines=[])).push({id:S.nid++,w:wid,kind:kind,started:S.week});
+  news(S,'money','A '+LINEK[kind].n.toLowerCase()+' for '+w.name+' goes on sale.');
+  return {ok:true,text:'You paid '+money(c)+' for a '+LINEK[kind].n.toLowerCase()+' for '+w.name+'. It goes on sale this week.'};
+};
+WEEKX.push(function(S){
+  if(S.cal)return;var P=S.promos[S.player];if(!P.lines||!P.lines.length)return;
+  P.lines=P.lines.filter(function(L){
+    var w=S.w[L.w],k=LINEK[L.kind],age=S.week-L.started;
+    if(!w||w.promo!==P.id||(L.kind==='mask'&&masked(w)!==1)){news(S,'money','The '+k.n.toLowerCase()+' for '+(w?w.name:'a departed wrestler')+' is pulled from sale.');return false;}
+    if(age>2+k.plateau&&lineCurve(L,age)<0.1){news(S,'money','The '+k.n.toLowerCase()+' for '+w.name+' has run its course.');return false;}
+    return true;
+  });
+});

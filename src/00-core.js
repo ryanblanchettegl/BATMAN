@@ -218,7 +218,7 @@ function demand(P,show,hype){return (show.big?60000*(show.flag?1.7:1):20000*show
 function ticket(P,show){return (15+P.image*0.85)*(show.big?1.6:1);}
 function buysK(P,show,hype){return 700*Math.pow(P.image/100,4)*hype*(show.flag?1.8:1);}
 function capFor(d){for(var i=0;i<CAPS.length;i++)if(CAPS[i]>=d)return CAPS[i];return CAPS[CAPS.length-1];}
-function merchWeek(S,P){var r=rosterOf(S,P.id).map(function(w){return w.ovr;}).sort(function(a,b){return b-a;}).slice(0,10);return 2.5e6*Math.pow(P.image/100,3)*Math.pow(avg(r)/100,2)*mixOf(P).merch*(1+catchBoost(S,P));}
+function merchWeek(S,P){var r=rosterOf(S,P.id).map(function(w){return w.ovr;}).sort(function(a,b){return b-a;}).slice(0,10);return 2.5e6*Math.pow(P.image/100,3)*Math.pow(avg(r)/100,2)*mixOf(P).merch*(1+catchBoost(S,P))+linesWeek(S,P);}
 function wagesWeek(S,P){var s=0;S.w.forEach(function(w){if(w.promo===P.id)s+=w.wage;});return s;}
 function baselineIncome(S,P){
   // what an on-expectation month brings in, per week (big events run a little hot: feuds peak there)

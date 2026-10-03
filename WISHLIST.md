@@ -75,7 +75,7 @@ Things that would make the game deeper. Each one adds a system, a choice or a me
 
 ## E. The business
 
-- [ ] **47. Merchandise lines.** Commission a design for a wrestler. Each design has a sales curve. A hot catchphrase or a title win sells. *M. Builds on `merchWeek` in `src/00-core.js`.*
+- [x] **47. Merchandise lines.** Commission a design for a wrestler. Each design has a sales curve. A hot catchphrase or a title win sells. *M. Builds on `merchWeek` in `src/00-core.js`.*
 - [ ] **48. Ticket prices.** Price tiers per building. Too high leaves seats empty, too low leaves money on the table. The game suggests a price. *M. (TASKS 4)*
 - [x] **49. Production values.** Spend on lights, set, pyro and cameras. It lifts the broadcast and the big matches. The corporate model expects it. The outlaw model does not care. *S. Check `E.budget` first.*
 - [ ] **50. The tape library.** Every show joins a back catalogue with a value. The library earns streaming money and can be licensed out or sold in a crisis. *M. (TASKS 5)*
