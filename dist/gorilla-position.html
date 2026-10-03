@@ -4367,6 +4367,21 @@ POST.push(function(ctx){
 });
 WEEKX.push(function(S){S.w.forEach(function(w){if(w.fol)w.fol=w.fol>2?w.fol*0.985:0;});});
 
+/* guest stars: an invented actor, athlete or singer wants a one-night spot. Casuals tune in, diehards groan, and the match itself is a risk */
+var GUESTS=[['Marlowe Kane','a film actor'],['Tessa Quill','a pop singer'],['Dag Holloway','an Olympic sprinter'],['Iris Valdane','a television host'],['Rudy Ashgrove','a retired boxer']];
+EVMAKE.push(function(S,P,R){
+  if(S.cal||(S.guestWeek!=null&&S.week-S.guestWeek<20)||S.week<6||!chance(S,0.05))return null;
+  var g=pick(S,GUESTS);S.guestWeek=S.week;
+  return {type:'guest',g:g[0],text:g[0]+', '+g[1]+', has asked for a one-night spot on your show. The casuals would tune in. The diehards would not thank you.',choices:['Book them in a match','A short cameo only','Turn them down']};
+});
+EVR.guest=function(S,ev,choice,P){
+  if(choice===2)return 'You thank '+ev.g+' and say the card is full. Nobody is surprised.';
+  if(choice===1){S.hype=(S.hype||0)+0.05;S.rateMod=(S.rateMod||0)-1;return ev.g+' walks out, waves, and walks off. Casual viewers will notice. The diehards will grumble. Expect a slight lift in the building and a flat spot in the show.';}
+  var ok=chance(S,0.5);S.hype=(S.hype||0)+0.12;S.rateMod=(S.rateMod||0)+(ok?3:-5);S.guestNote=ev.g+(ok?' held up better than anyone dared hope.':' was a liability in the ring.');
+  return ev.g+' will take part in a match on your next show. A big lift in the building, and a real risk in the ring.';
+};
+SHOWX.push(function(S,P,show,rep){if(P.id===S.player&&S.guestNote){rep.guest=S.guestNote;if(rep.sheet)rep.sheet.lines.unshift('Guest spot: '+S.guestNote);S.guestNote=null;}});
+
 /* ===== 85-universe.js ===== */
 /* ---------- universe packages: every roster, built-in or community-made, loads through this ----------
    A package is a manifest plus eight tables joined by string ids. The folder form (one JSON file per table)
