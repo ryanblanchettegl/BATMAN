@@ -98,7 +98,7 @@ async function run(mode) {
 
   /* ---- career: skills only when there is a point to spend ---- */
   await subnav('career');
-  ok(/Career/.test(await txt('h1')) && await count('.ach > div') === await page.evaluate(() => window.GP.ACH.length), 'career heading and every achievement');
+  ok(/Career/.test(await txt('h1')) && await count('.ach > div') === await page.evaluate(() => window.GP.ACH.filter(a => !a.ms).length), 'career heading and every achievement');
   ok(await count('[data-t="skill"]') === 0, 'no skill buttons without a point');
   await step('career', 'career');
   const key = await state(page, S => { S.booker.pts = 1; return Object.keys(window.GP.SKILLS)[0]; }); await redraw(page);
