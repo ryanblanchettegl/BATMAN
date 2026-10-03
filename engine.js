@@ -2830,7 +2830,7 @@ function isGim(stip){return stip==='hardcore'||stip==='ladder'||stip==='cage';}
 function tenureW(S,w){return S.week-(w.jw==null?-104:w.jw);}
 function mainG(S,P){var m=0,f=0;S.w.forEach(function(w){if(w.promo===P.id&&!w.nw){if(w.g==='F')f++;else m++;}});return f>m?'F':'M';}
 /* add `d` to a running total and put a line on the match's plus-and-minus list when it is big enough to matter */
-function mNote(ctx,d,text){if(text&&Math.abs(d)>=1)ctx.fx.push({s:d>=0?1:-1,x:text});return d;}
+function mNote(ctx,d,text){if(text&&Math.abs(d)>=1)ctx.fx.push({s:d>=0?1:-1,x:text,m:1});return d;}
 
 var MODELS={
   classic:{n:'Independent',ph:'an independent company',vals:'overness',d:'No house system. The crowd takes each show as it comes.',good:[],bad:[],mix:{}},

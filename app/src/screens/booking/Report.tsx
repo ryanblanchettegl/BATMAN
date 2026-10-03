@@ -18,7 +18,7 @@ export function OddsLine(p: { s: any }) {
 /** What moved the score, best and worst first. */
 export function FxList(p: { s: any; max: number }) {
   const fx = p.s.fx; if (!fx || !fx.length) return null;
-  return <ul class="fx">{fx.slice(0, p.max).map((f: any) => <li class={f.s > 0 ? 'good' : 'bad'}>{f.s > 0 ? '+ ' : '− '}{f.x}</li>)}</ul>;
+  return <ul class="fx">{fx.slice(0, p.max).map((f: any) => <li class={f.s > 0 ? 'good' : 'bad'}>{f.s > 0 ? '+ ' : '− '}{f.x}{f.m ? <span class="muted"> {'·'} company model</span> : null}</li>)}</ul>;
 }
 export function Crowd(p: { r: any }) { const r = p.r; return <>{r.att.toLocaleString('en-US')}{r.sellout ? <> <span class="mark">sell-out</span></> : null}</>; }
 
