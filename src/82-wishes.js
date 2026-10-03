@@ -523,20 +523,6 @@ POST.push(function(ctx){
   news(S,'story',txt);
   if(ctx.isPl)r.seg.notes.push(k==='mask'?names(r.losers)+(r.losers.length>1?' are':' is')+' unmasked for good.':names(r.losers)+(r.losers.length>1?' have':' has')+' lost '+(r.losers.length>1?'their':'their')+' hair.');
 });
-/* a mask match needs masks, a hair match needs hair that has grown back */
-(function(){
-  var was=E.validate;
-  E.validate=function(S,card){
-    var v=was(S,card);
-    card.forEach(function(m,i){
-      if(m.stip!=='mask'&&m.stip!=='hair')return;
-      var ws=[].concat.apply([],m.sides).filter(function(id){return id!=null&&S.w[id];}).map(function(id){return S.w[id];});
-      if(m.stip==='mask'&&ws.some(function(w){return masked(w)!==1;}))v.errors.push('Match '+(i+1)+': a mask match needs everyone in it to wear a mask.');
-      if(m.stip==='hair'){var bald=ws.filter(function(w){return w.sh!=null&&S.week-w.sh<20;})[0];if(bald)v.errors.push('Match '+(i+1)+': '+bald.name+' has not grown the hair back yet.');}
-    });
-    return v;
-  };
-})();
 E.masked=masked;
 E.STIPNOTE={
   hardcore:'Rewards brawlers. Heavy wear and hurts. Not for family shows.',
@@ -606,3 +592,68 @@ E.styleLessons=function(S,w){
   });
   return {good:good,bad:bad};
 };
+
+/* ---------- 26. The long plan: pencil in the flagship main event months ahead (S.lp) ---------- */
+function flagshipWeek(S){var P=S.promos[S.player];for(var w=S.week;w<S.week+60;w++){var c=cal(w);if(c.wom===4&&c.month===P.flagship)return w;}return null;}
+function lpFeud(S,lp){var f=feudOf(S,lp.a,lp.b);return f&&!f.res?f:null;}
+E.longPlan=function(S){
+  var lp=S.lp;if(!lp)return null;
+  var a=S.w[lp.a],b=S.w[lp.b],toGo=Math.max(0,lp.wk-S.week),made=S.week-lp.made;
+  var early=lp.wk-lp.made>=12;
+  return {a:a,b:b,title:lp.title,wk:lp.wk,toGo:toGo,made:made,built:lp.built,early:early,
+    when:cal(lp.wk).label,bonus:Math.round(Math.min(9,lp.built*0.5+(early?2:(lp.wk-lp.made>=8?1:0)))*10)/10,
+    state:lp.built>=10?'Everyone is talking about it.':(lp.built>=5?'The build is working.':(lp.built>=2?'The story is getting going.':'Nothing has been built yet. Put them in a feud.'))};
+};
+/* the flagship week, for the screen's heading */
+E.flagshipWeek=flagshipWeek;
+E.setLongPlan=function(S,a,b,title){
+  var P=S.promos[S.player],A=S.w[a],B=S.w[b],wk=flagshipWeek(S);
+  if(!wk)return {ok:false,text:'There is no flagship show in sight.'};
+  if(!A||!B||A===B||A.promo!==P.id||B.promo!==P.id)return {ok:false,text:'Pick two different wrestlers from your roster.'};
+  var cost='',old=S.lp;
+  if(old&&(old.a!==a||old.b!==b)){
+    if(old.wk-S.week<=4){
+      [S.w[old.a],S.w[old.b]].forEach(function(w){if(w)w.morale=clamp(w.morale-4,0,100);});S.trust=clamp(S.trust-2,0,100);
+      cost=' Changing the plan this late cost some trust, and '+(S.w[old.a]?S.w[old.a].name:'one')+' and '+(S.w[old.b]?S.w[old.b].name:'one')+' are not happy.';
+    }
+  }
+  var keep=old&&old.a===a&&old.b===b;
+  S.lp={a:a,b:b,title:title||null,made:keep?old.made:S.week,wk:wk,built:keep?old.built:0};
+  return {ok:true,text:A.name+' against '+B.name+' is pencilled in for '+cal(wk).label+'.'+cost};
+};
+E.clearLongPlan=function(S){
+  var old=S.lp;if(!old)return {ok:true,text:'There was no plan.'};
+  var cost='';
+  if(old.wk-S.week<=4){[S.w[old.a],S.w[old.b]].forEach(function(w){if(w)w.morale=clamp(w.morale-4,0,100);});S.trust=clamp(S.trust-2,0,100);cost=' Scrapping it this late cost some trust.';}
+  S.lp=null;return {ok:true,text:'The plan is scrapped.'+cost};
+};
+WEEKX.push(function(S){
+  var lp=S.lp;if(!lp||S.cal)return;
+  var a=S.w[lp.a],b=S.w[lp.b],P=S.promos[S.player];
+  if(!a||!b||a.promo!==P.id||b.promo!==P.id){news(S,'story','The plan for the flagship main event fell apart: one of the two has left.');S.lp=null;return;}
+  if(S.week>=lp.wk){
+    if(!lp.done)news(S,'story','The flagship passed without the planned main event.');
+    S.lp=null;return;
+  }
+  if(a.inj>lp.wk-S.week||b.inj>lp.wk-S.week){news(S,'story','The plan for the flagship main event is in doubt: '+(a.inj>lp.wk-S.week?a.name:b.name)+' will not be fit in time.');}
+  var f=lpFeud(S,lp),n=0;
+  if(f)n+=1+(f.heat>=50?1:0)+(f.heat>=75?1:0);else n+=(a.lu===S.week?0.3:0)+(b.lu===S.week?0.3:0);
+  lp.built=Math.round((lp.built+n)*10)/10;
+});
+CRX.push(function(ctx){
+  var S=ctx.S,lp=S.lp;if(!lp||!ctx.isPl||!ctx.show.big||!ctx.show.flag||!ctx.isMain)return null;
+  var sd=ctx.m.sides,ia=-1,ib=-1;sd.forEach(function(s,k){if(s.indexOf(lp.a)>=0)ia=k;if(s.indexOf(lp.b)>=0)ib=k;});
+  if(ia<0||ib<0||ia===ib)return null;
+  var pl=E.longPlan(S);if(!pl.bonus)return null;
+  return {d:pl.bonus,x:pl.early?'The main event they have been building to for months':'A main event that was planned ahead'};
+});
+POST.push(function(ctx){
+  var S=ctx.S,lp=S.lp;if(!lp||!ctx.isPl||S.cal||!ctx.show.big||!ctx.show.flag||!ctx.isMain)return;
+  var ia=-1,ib=-1;ctx.m.sides.forEach(function(s,k){if(s.indexOf(lp.a)>=0)ia=k;if(s.indexOf(lp.b)>=0)ib=k;});
+  if(ia<0||ib<0||ia===ib)return;
+  lp.done=true;var pl=E.longPlan(S);
+  [S.w[lp.a],S.w[lp.b]].forEach(function(w){w.morale=clamp(w.morale+5,0,100);w.mom=clamp(w.mom+1,-10,10);});
+  ctx.res.seg.notes.push('The plan paid off: the flagship main event that was pencilled in '+pl.made+' weeks ago was worth the wait.'+(pl.bonus>=3?' The crowd knew what it was there for.':''));
+  news(S,'story','The long plan paid off at '+ctx.show.name+': '+S.w[lp.a].name+' against '+S.w[lp.b].name+'.');
+  S.stats.plans=(S.stats.plans||0)+1;
+});

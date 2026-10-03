@@ -1,7 +1,7 @@
-/* Storylines: the rivalries your booking started, plus streaks, stables and tag teams. Read-only. */
+/* Storylines: the rivalries your booking started, plus streaks, stables and tag teams. The long plan is the one place to pencil something in. */
 import { E } from '../../engine';
-import { G, me, plural } from '../../store';
-import { Head, Panel, Tag, Name, Meter, Empty, teamName, Txt } from '../../kit';
+import { G, me, plural, slice, act, view, say } from '../../store';
+import { Head, Panel, Tag, Name, Meter, Empty, teamName, Txt, Btn, Sel, Field, showResult } from '../../kit';
 
 /** What each of the four acts needs from the booker. Act 4 depends on whether the match is already made. */
 function actNote(f: any): string {
@@ -93,6 +93,32 @@ function Teams() {
   </Panel>;
 }
 
+/** Pencil in the flagship main event. The build is counted every week, and a plan made early pays more. */
+function LongPlan() {
+  const S = G.S, P = me(), pl = E.longPlan(S), wk = E.flagshipWeek(S);
+  const st = slice<{ a: string; b: string }>('longplan', () => ({ a: '', b: '' }));
+  const R = S.w.filter((w: any) => w.promo === P.id && !w.nw && w.inj <= 0).sort((x: any, y: any) => y.ovr - x.ovr);
+  const opts = (skip: string) => [['', 'Pick a wrestler'], ...R.filter((w: any) => String(w.id) !== skip).map((w: any) => [w.id, w.name + ' · ' + Math.round(w.ovr)] as [number | string, string])] as any;
+  const set = () => act(() => { const r = E.setLongPlan(S, +st.a, +st.b, null); say(r.text, { err: !r.ok }); showResult('The long plan', r.text, !r.ok); });
+  const drop = () => act(() => { const r = E.clearLongPlan(S); say(r.text); showResult('The long plan', r.text); });
+  return <Panel title="The long plan">
+    {!wk ? <Empty>There is no flagship show in sight.</Empty> : <>
+      <p class="muted">Pick the flagship main event now. Each week that the two are in a feud builds it. A plan made early and paid off lifts the match.</p>
+      {pl ? <>
+        <p><Name w={pl.a} /> against <Name w={pl.b} /> at <b>{pl.when}</b>, in {pl.toGo} {plural(pl.toGo, 'week')}.</p>
+        <p class="muted">{pl.state} Build so far: <b class="num">{pl.built}</b>. If it pays off now: <b class="good num">+{pl.bonus}</b> to the match.</p>
+        {pl.toGo <= 4 ? <p class="bad">Changing it now costs trust and mood.</p> : null}
+      </> : <p class="muted">Nothing is pencilled in for {E.cal(wk).label}.</p>}
+      <Field label="One side"><Sel id="lp-a" t="lp-a" value={st.a} options={opts(st.b)} onChange={v => view(() => { st.a = v; })} /></Field>
+      <Field label="The other"><Sel id="lp-b" t="lp-b" value={st.b} options={opts(st.a)} onChange={v => view(() => { st.b = v; })} /></Field>
+      <div class="row opts mt1">
+        <Btn kind="sm" t="lp-set" disabled={!st.a || !st.b} onClick={set}>{pl ? 'Change the plan' : 'Pencil it in'}</Btn>
+        {pl ? <Btn kind="sm" t="lp-drop" onClick={drop}>Scrap it</Btn> : null}
+      </div>
+    </>}
+  </Panel>;
+}
+
 export function Storylines() {
   const S = G.S, P = me();
   const live = E.activeFeuds(S).filter((f: any) => f.promo === P.id).sort((a: any, b: any) => b.heat - a.heat);
@@ -106,7 +132,7 @@ export function Storylines() {
           : <Panel><Empty>No rivalries yet. Run a show or two: ambushes, challenges and betrayals start them.</Empty></Panel>}
         <Finished done={done} />
       </div>
-      <div class="stack"><Streaks /><StablePanel /><Teams /></div>
+      <div class="stack"><LongPlan /><Streaks /><StablePanel /><Teams /></div>
     </div>
   </>;
 }

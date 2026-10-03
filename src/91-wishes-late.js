@@ -40,3 +40,33 @@ E.applyJobTerms=function(S,terms){
   E.canSign=function(S,w){if(S.freeSign&&w.promo==='FA'&&!w.rt){var MD=modelOf(S.promos[S.player]);return !(MD.gender&&w.g!==MD.gender);}return cs(S,w);};
   E.sign=function(S,id,wage,weeks){var was=S.freeSign,r=sg(S,id,wage,weeks);if(was&&r&&r.ok)S.freeSign=false;return r;};
 })();
+
+/* a mask match needs masks, a hair match needs hair that has grown back */
+(function(){
+  var was=E.validate;
+  E.validate=function(S,card){
+    var v=was(S,card);
+    card.forEach(function(m,i){
+      if(m.stip!=='mask'&&m.stip!=='hair')return;
+      var ws=[].concat.apply([],m.sides).filter(function(id){return id!=null&&S.w[id];}).map(function(id){return S.w[id];});
+      if(m.stip==='mask'&&ws.some(function(w){return masked(w)!==1;}))v.errors.push('Match '+(i+1)+': a mask match needs everyone in it to wear a mask.');
+      if(m.stip==='hair'){var bald=ws.filter(function(w){return w.sh!=null&&S.week-w.sh<20;})[0];if(bald)v.errors.push('Match '+(i+1)+': '+bald.name+' has not grown the hair back yet.');}
+    });
+    return v;
+  };
+})();
+
+/* the suggested card for the flagship puts the planned match in the main event */
+(function(){
+  var was=E.suggest;
+  E.suggest=function(S){
+    var card=was(S),lp=S.lp,show=S.queue&&S.queue[S.qi];
+    if(!lp||!show||!show.big||!show.flag||S.cal||!card.length)return card;
+    var a=S.w[lp.a],b=S.w[lp.b];if(!a||!b||a.inj>0||b.inj>0||a.away>=S.week||b.away>=S.week||a.rest===S.week||b.rest===S.week)return card;
+    var rest=card.filter(function(m){var ids=[].concat.apply([],m.sides);return ids.indexOf(lp.a)<0&&ids.indexOf(lp.b)<0;});
+    var tt=lp.title&&titleById(S.promos[S.player],lp.title);
+    var mm={mt:'1v1',sides:[[lp.a],[lp.b]],stip:'std',len:'L',title:tt&&tt.holders.length&&(tt.holders.indexOf(lp.a)>=0||tt.holders.indexOf(lp.b)>=0)?lp.title:null};
+    while(rest.length>=SLOT_MAX[S.promos[S.player].slot]+(show.big?3:0)&&rest.length>3)rest.shift();
+    rest.push(mm);return rest;
+  };
+})();

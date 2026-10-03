@@ -49,6 +49,17 @@ async function storylines(page, mode) {
   check(mode, 'tag teams listed', await rows(page, 'Tag teams') === want.teams && (want.teams > 0 || /No regular teams/.test(await panel(page, 'Tag teams'))), want.teams + ' teams');
   check(mode, 'winning streaks listed', await rows(page, 'Winning streaks') === want.streaks && (want.streaks > 0 || /Nobody has won four in a row/.test(await panel(page, 'Winning streaks'))), want.streaks + ' streaks');
   await fits(page, mode, 'storylines with feuds');
+  // the long plan: two picks and a button pencil in the flagship main event
+  const ids = await state(page, S => { const P = S.promos[S.player]; return S.w.filter(w => w.promo === P.id && !w.nw && w.inj <= 0).sort((x, y) => y.ovr - x.ovr).slice(0, 2).map(w => w.id); });
+  check(mode, 'the long plan panel is there', (await panel(page, 'The long plan')) !== null && !!(await page.$('[data-t="lp-a"]')));
+  await page.selectOption('[data-t="lp-a"]', String(ids[0])); await page.selectOption('[data-t="lp-b"]', String(ids[1]));
+  await page.click('[data-t="lp-set"]'); await page.waitForTimeout(150);
+  const lp = await state(page, S => S.lp ? { a: S.lp.a, b: S.lp.b } : null);
+  check(mode, 'pencilling it in stores the plan', !!lp && lp.a === ids[0] && lp.b === ids[1], JSON.stringify(lp));
+  await page.keyboard.press('Escape'); await page.waitForTimeout(100);
+  check(mode, 'the panel shows the plan and a scrap button', /Build so far/.test(await panel(page, 'The long plan')) && !!(await page.$('[data-t="lp-drop"]')));
+  await page.click('[data-t="lp-drop"]'); await page.waitForTimeout(150); await page.keyboard.press('Escape');
+  check(mode, 'scrapping it clears the plan', (await state(page, S => S.lp)) == null);
 }
 async function history(page, mode) {
   await go(page, 'history');
