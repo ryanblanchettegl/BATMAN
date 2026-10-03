@@ -154,3 +154,37 @@ MQX.push(function(ctx){
   if(!ctx.isPl||ctx.S.cal)return null;var v=avg(ctx.all.map(function(w){return w.rd||0;}));
   return v>=65?{d:-(v-60)/12,x:'Worn out from the road'}:null;
 });
+
+/* ---------- 45. Holdouts: a star who earns well under a peer stays home until it is fixed (w.hold) ---------- */
+function holdPeer(S,P,w,R){
+  var best=null;R.forEach(function(o){if(o===w||o.g!==w.g||Math.abs(o.ovr-w.ovr)>4||o.wage<w.wage*1.35)return;if(!best||o.wage>best.wage)best=o;});
+  return best;
+}
+WEEKX.push(function(S){
+  if(S.cal)return;
+  var P=S.promos[S.player],R=rosterOf(S,P.id).filter(function(w){return !w.nw&&!w.rt;});
+  R.forEach(function(w){if(w.hold&&S.week>=w.hold.until){w.hold=null;w.morale=clamp(w.morale-5,0,100);news(S,'contract',w.name+' ended the holdout and came back without being paid more.');}});
+  if(!chance(S,0.04)||S.inbox.some(function(e){return e.type==='holdout'&&!e.done;}))return;
+  var ovrs=R.map(function(w){return w.ovr;}).sort(function(a,b){return b-a;}),cut=ovrs[Math.floor(R.length*0.25)]||0;
+  var c=R.filter(function(w){return w.ovr>=cut&&w.ovr>=55&&!w.hold&&w.inj<=0&&w.morale<75&&(w.hoAt==null||S.week-w.hoAt>=40)&&holdPeer(S,P,w,R);}).sort(function(a,b){return a.morale-b.morale;});
+  if(!c.length)return;
+  var w=c[0],peer=holdPeer(S,P,w,R);w.hoAt=S.week;w.hold={until:S.week+6,peer:peer.id,ask:Math.round(peer.wage*0.95/50)*50};w.away=S.week+1;
+  pushEv(S,{type:'holdout',w:w.id,o:peer.id,text:w.name+' earns '+money(w.wage)+' a week. '+peer.name+', who is no better, earns '+money(peer.wage)+'. '+w.name+' is staying home until it is fixed.',
+    choices:['Pay up: '+money(w.hold.ask)+' a week','Promise a win this month and a raise at the next renewal','Call the bluff'],
+    checks:{1:mkCheck(7,[moraleMod(w),trustMod(S)].concat(skillMods(S,'talk'))),2:mkCheck(8,[moraleMod(w),trustMod(S),{n:'Nowhere else to go',v:w.ovr<P.image?1:0},{n:'Other companies would take them',v:w.ovr>=P.image+5?-1:0}].concat(skillMods(S,'talk')))}});
+});
+EVR.holdout=function(S,ev,choice,P,w){
+  var h=w.hold,r;if(!h)return w.name+' is already back.';
+  if(choice===0){w.wage=h.ask;w.hold=null;w.away=null;w.morale=clamp(w.morale+10,0,100);return w.name+' is paid '+money(w.wage)+' a week and is back on the card.';}
+  if(choice===1){
+    r=rollCheck(S,ev.checks[1]);ev.roll=r;
+    if(r.ok){S.quests.push({id:S.nid++,type:'win',w:w.id,due:S.week+3,text:'Promise: book a win for '+w.name+' by '+cal(S.week+3).label});w.hold=null;w.away=null;w.morale=clamp(w.morale+4,0,100);return rollText(r)+w.name+' takes your word and returns. They will hold you to the win.';}
+    h.until=S.week+3;w.away=S.week+2;return rollText(r)+w.name+' wants it in writing. They stay home another two weeks.';
+  }
+  r=rollCheck(S,ev.checks[2]);ev.roll=r;
+  if(r.ok){w.hold=null;w.away=S.week+1;w.morale=clamp(w.morale-8,0,100);return rollText(r)+w.name+' blinks and comes back after a week, angry.';}
+  w.away=S.week+4;h.until=S.week+4;w.morale=clamp(w.morale-12,0,100);stressAdd(S,w,10);
+  news(S,'contract',w.name+' is still at home. Other companies are said to be interested.');
+  return rollText(r)+w.name+' does not blink. Four more weeks at home, and the room is talking about it.';
+};
+
