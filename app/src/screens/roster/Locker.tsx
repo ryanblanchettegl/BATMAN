@@ -1,6 +1,6 @@
 /* The Locker room page: the mood of the room, who plays which part in it, who is under strain and who is hurt. */
 import { E, W } from '../../engine';
-import { G, me, act, say } from '../../store';
+import { G, me, act, say, plural } from '../../store';
 import { Panel, Btn, Meter, Pie, Empty } from '../../kit';
 import { rs, selected, pick } from './state';
 import { RosterHead } from './Roster';
@@ -37,6 +37,12 @@ export function Locker() {
           {E.cliques(S).length ? <ul class="list">{E.cliques(S).map((c: any) => <li class="col"><span><b>{c.name}</b>{c.power ? <span class="muted"> · a star among them</span> : null}</span>
             <span>{c.m.map((w: W) => <><Who id={w.id} /> </>)}</span></li>)}</ul> : <Empty>Nobody is running in a pack. Friends form from good matches and long road trips.</Empty>}
           <p class="muted mt2">A group with a star in it will ask for favours together. Say yes, say no, or break them up.</p>
+        </Panel>
+        <Panel title="The camp show">
+          {(() => { const D = E.devShow(S); return D.n ? <>
+            <ul class="list">{D.rows.map((r: any) => <li class="col"><span><Who id={r.w.id} /> <span class="muted">{'·'} {r.matches} {plural(r.matches, 'match', 'matches')}, best {r.best}%, ring {r.gain >= 0 ? '+' : '−'}{Math.abs(r.gain)}, promos {r.micGain >= 0 ? '+' : '−'}{Math.abs(r.micGain)}</span></span><span class="muted">{r.last}</span></li>)}</ul>
+            <p class="muted mt2">A small show runs by itself every week with the people in camp. It speeds up their learning. When one has outgrown it, you will be asked about a call-up.</p>
+          </> : <Empty>Nobody is in camp. Send two or more prospects from their profile and the camp puts on its own show.</Empty>; })()}
         </Panel>
         {E.staff(S).length ? <Panel title="Second careers">
           <ul class="list">{E.staff(S).map((s: any) => <li class="col"><span><Who id={s.id} /> <b>{s.role}</b><br /><span class="muted">{s.d}</span></span></li>)}</ul>

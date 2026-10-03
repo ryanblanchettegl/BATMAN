@@ -135,7 +135,7 @@ async function run(mode) {
 
   /* ----- locker room ----- */
   await go(page, 'locker'); await page.waitForSelector('.piebox');
-  must(await page.$$eval('.panel > h2', L => L.map(e => e.textContent).join('|')) === 'Mood of the room|Who is who|Under strain|The trainer’s room', 'locker room panels are wrong');
+  must(await page.$$eval('.panel > h2', L => L.map(e => e.textContent).join('|')) === 'Mood of the room|Who is who|Cliques|The camp show|Under strain|The trainer’s room', 'locker room panels are wrong');
   await ok(t, 'locker room');
   if (mode === 'desk' || mode === 'phone') await shot(page, 'roster-locker-' + mode, true);
   let who = await page.$('.cols [data-t="sel"]');
