@@ -208,7 +208,7 @@ function demand(P,show,hype){return (show.big?60000*(show.flag?1.7:1):20000*show
 function ticket(P,show){return (15+P.image*0.85)*(show.big?1.6:1);}
 function buysK(P,show,hype){return 700*Math.pow(P.image/100,4)*hype*(show.flag?1.8:1);}
 function capFor(d){for(var i=0;i<CAPS.length;i++)if(CAPS[i]>=d)return CAPS[i];return CAPS[CAPS.length-1];}
-function merchWeek(S,P){var r=rosterOf(S,P.id).map(function(w){return w.ovr;}).sort(function(a,b){return b-a;}).slice(0,10);return 2.5e6*Math.pow(P.image/100,3)*Math.pow(avg(r)/100,2)*mixOf(P).merch;}
+function merchWeek(S,P){var r=rosterOf(S,P.id).map(function(w){return w.ovr;}).sort(function(a,b){return b-a;}).slice(0,10);return 2.5e6*Math.pow(P.image/100,3)*Math.pow(avg(r)/100,2)*mixOf(P).merch*(1+catchBoost(S,P));}
 function wagesWeek(S,P){var s=0;S.w.forEach(function(w){if(w.promo===P.id)s+=w.wage;});return s;}
 function baselineIncome(S,P){
   // what an on-expectation month brings in, per week (big events run a little hot: feuds peak there)
@@ -450,7 +450,7 @@ function validate(S,P,show,card){
 /* ---------- extension hooks: later systems plug into the match engine here ---------- */
 // EFX(ctx,w) -> effort delta; MQX/CRX(ctx) -> {d,x} quality / crowd delta with an optional dirt-sheet label;
 // POST(ctx) after a match is settled; SHOWX(S,P,show,rep) after a show; WEEKX(S) at week end; NEWX(S) on a new game.
-var MODEL_CROWD={},EFX=[],MQX=[],CRX=[],FINX=[],POST=[],SHOWX=[],WEEKX=[],NEWX=[],ANGX=[],EVMAKE=[],EVR={},QEND={},PREX=[];
+var MODEL_CROWD={},ANGDONE=[],EFX=[],MQX=[],CRX=[],FINX=[],POST=[],SHOWX=[],WEEKX=[],NEWX=[],ANGX=[],EVMAKE=[],EVR={},QEND={},PREX=[];
 
 /* ---------- match engine ---------- */
 function workOf(w,stip,mins){
@@ -1122,8 +1122,8 @@ function runShow(S,P,show,card){
   for(i=0;i<n;i++){
     if(slots[i]){
       ctx.left={};for(k=i;k<n;k++)flat(card[k].sides).forEach(function(id){ctx.left[id]=1;});
-      var a=genAngle(S,P,show,ctx);
-      if(a){var o={p:P.ann[0].split(' ')[0],c:P.ann[1].split(' ')[0]};a.bc=[{t:'note',x:a.text},{t:'col',x:fill(sayPick(S,REACT[a.head]||['Well, how about that.']),o)}];rep.segs.push(a);}
+      var nang=Object.keys(ctx.angled).length,a=genAngle(S,P,show,ctx);
+      if(a){ANGDONE.forEach(function(fn){fn(S,P,a,Object.keys(ctx.angled).slice(nang));});var o={p:P.ann[0].split(' ')[0],c:P.ann[1].split(' ')[0]};a.bc=[{t:'note',x:a.text},{t:'col',x:fill(sayPick(S,REACT[a.head]||['Well, how about that.']),o)}];rep.segs.push(a);}
     }
     rep.segs.push(doMatch(S,P,show,card[i],i,n,rep,used));
   }
@@ -3608,6 +3608,24 @@ SHOWX.push(function(S,P,show,rep){
   S.moty=L.filter(function(m){return m.yr===yr;}).sort(function(a,b){return b.ov-a.ov||a.w-b.w;}).slice(0,10);
 });
 E.matchOfYear=function(S){var yr=cal(S.week).year;return (S.moty||[]).filter(function(m){return m.yr===yr;}).map(function(m){return {l:m.l,ov:m.ov,show:m.show,promo:m.promo,promoName:S.promos[m.promo]?S.promos[m.promo].name:m.promo,w:m.w,win:m.win,title:m.title,stip:m.stip,mt:m.mt,mins:m.mins,ids:m.ids};});};
+
+/* catchphrases: a promo that lands can coin one. It lifts the crowd and merchandise until it is overused */
+var CATCHES=['Nobody leaves until I say so.','The house always wins.','Count the lights. Then count me out.','Kneel, or be knelt.','My name is the last thing you will hear.','Read it, and weep.','Say it to my face.','The bell tolls for you.','Ask the crowd who owns this ring.','Every story ends. Yours ends tonight.','You are late to your own funeral.','Bow to the champion.','The curtain falls on you.','Hear that? That is the sound of the end.','I was here before the bell.','Keep your eyes on the door.'];
+ANGDONE.push(function(S,P,a,ids){
+  if(S.cal||P.id!==S.player||!a||a.ov<72||!ids.length)return;
+  var w=ids.map(function(id){return S.w[id];}).filter(function(x){return x&&!x.cphrase&&x.mic>=60;}).sort(function(p,q){return q.mic-p.mic;})[0];
+  if(!w||rosterOf(S,P.id).filter(function(x){return x.cphrase;}).length>=6||!chance(S,0.15))return;
+  var taken={};S.w.forEach(function(x){if(x.cphrase)taken[x.cphrase.t]=1;});var free=CATCHES.filter(function(c){return !taken['“'+c+'”'];});if(!free.length)return;
+  var ph='“'+pick(S,free)+'”';w.cphrase={t:ph,w:S.week,n:0};
+  a.text+=' '+w.name+' ends it with a line the crowd will not forget: '+ph;news(S,'story',w.name+' has a catchphrase now: '+ph);mile(S,w,'promo','Coined a catchphrase: '+ph);
+});
+function catchFresh(w){return w.cphrase?clamp(1-w.cphrase.n/40,0,1):0;}
+function catchBoost(S,P){var b=0;rosterOf(S,P.id).forEach(function(w){if(w.cphrase)b+=0.025*catchFresh(w);});return Math.min(0.12,b);}
+CRX.push(function(ctx){
+  var d=0,who=[];ctx.all.forEach(function(w){if(w.cphrase&&catchFresh(w)>0.15){d+=1.2*catchFresh(w);who.push(w.name);}});
+  return who.length?{d:Math.min(2,d),x:'The crowd chants '+who[0]+'’s catchphrase with them'}:null;
+});
+POST.push(function(ctx){if(ctx.S.cal)return;ctx.all.forEach(function(w){if(w.cphrase)w.cphrase.n++;});});
 
 /* ===== 85-universe.js ===== */
 /* ---------- universe packages: every roster, built-in or community-made, loads through this ----------

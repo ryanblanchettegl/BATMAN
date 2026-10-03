@@ -1,7 +1,7 @@
 /* ---------- extension hooks: later systems plug into the match engine here ---------- */
 // EFX(ctx,w) -> effort delta; MQX/CRX(ctx) -> {d,x} quality / crowd delta with an optional dirt-sheet label;
 // POST(ctx) after a match is settled; SHOWX(S,P,show,rep) after a show; WEEKX(S) at week end; NEWX(S) on a new game.
-var MODEL_CROWD={},EFX=[],MQX=[],CRX=[],FINX=[],POST=[],SHOWX=[],WEEKX=[],NEWX=[],ANGX=[],EVMAKE=[],EVR={},QEND={},PREX=[];
+var MODEL_CROWD={},ANGDONE=[],EFX=[],MQX=[],CRX=[],FINX=[],POST=[],SHOWX=[],WEEKX=[],NEWX=[],ANGX=[],EVMAKE=[],EVR={},QEND={},PREX=[];
 
 /* ---------- match engine ---------- */
 function workOf(w,stip,mins){
