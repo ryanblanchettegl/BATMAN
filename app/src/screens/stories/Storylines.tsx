@@ -46,6 +46,15 @@ function FeudCard(p: { f: any }) {
   </Panel>;
 }
 
+/** The on-screen boss and the rebel who has declared war on them, while it lasts. */
+function Rebel() {
+  const S = G.S, R = E.rebelInfo(S); if (!R) return null;
+  return <Panel title="The boss and the rebel">
+    <p><Name w={R.w} /> against {R.boss ? <Name w={R.boss} /> : 'the boss'}, {R.weeks} {plural(R.weeks, 'week')} in.</p>
+    <div class="row"><Meter v={R.heat} kind="hot" /><span class="muted">heat {R.heat}</span></div>
+    <p class="muted mt1">Put the rebel on the card to keep it going. When it peaks, an inbox choice settles it.</p>
+  </Panel>;
+}
 function Mystery() {
   const S = G.S, m = S.mystery;
   if (!m || m.promo !== S.player) return null;
@@ -136,7 +145,7 @@ export function Storylines() {
           : <Panel><Empty>No rivalries yet. Run a show or two: ambushes, challenges and betrayals start them.</Empty></Panel>}
         <Finished done={done} />
       </div>
-      <div class="stack"><LongPlan /><Streaks /><StablePanel /><Teams /></div>
+      <div class="stack"><LongPlan /><Rebel /><Streaks /><StablePanel /><Teams /></div>
     </div>
   </>;
 }
