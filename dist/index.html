@@ -4382,6 +4382,28 @@ EVR.guest=function(S,ev,choice,P){
 };
 SHOWX.push(function(S,P,show,rep){if(P.id===S.player&&S.guestNote){rep.guest=S.guestNote;if(rep.sheet)rep.sheet.lines.unshift('Guest spot: '+S.guestNote);S.guestNote=null;}});
 
+/* hall of fame night: an induction is held on the flagship weekend, with a speech and a lift for the crowd */
+var HOF_SPEECH=['“I never thought a bag, a bell and a bad idea would bring me here.”','“Thank you to everyone who booed me. You made me.”','“The ring was the only place I ever knew who I was.”','“Look after each other. The business forgets, but we should not.”','“I fell more times than I won. I would do every one of them again.”'];
+(function(){
+  var old=EVR.hof;
+  EVR.hof=function(S,ev,choice,P){
+    var res=old(S,ev,choice,P),id=ev.c[choice];
+    if(id!=null){S.hofNight={id:id,week:E.nextBig(S).week};res+=' The ceremony will be held at '+E.nextBig(S).name+'.';}
+    return res;
+  };
+})();
+CRX.push(function(ctx){
+  var h=ctx.S.hofNight;if(!h||!(ctx.big||ctx.show.big)||ctx.S.week<h.week||ctx.P.id!==ctx.S.player||!ctx.isMain)return null;
+  return {d:1.5,x:'The hall of fame induction has warmed the building before the bell'};
+});
+SHOWX.push(function(S,P,show,rep){
+  var h=S.hofNight;if(!h||P.id!==S.player||!show.big||S.week<h.week)return;
+  var w=S.w[h.id];S.hofNight=null;if(!w)return;
+  rep.hofNight={name:w.name,speech:pick(S,HOF_SPEECH)};
+  if(rep.sheet)rep.sheet.lines.unshift(w.name+' was inducted into the hall of fame tonight. '+rep.hofNight.speech);
+  P.image=clamp(P.image+0.2,5,100);news(S,'story',w.name+'’s hall of fame induction was the emotional moment of '+show.name+'. '+rep.hofNight.speech);
+});
+
 /* ===== 85-universe.js ===== */
 /* ---------- universe packages: every roster, built-in or community-made, loads through this ----------
    A package is a manifest plus eight tables joined by string ids. The folder form (one JSON file per table)
