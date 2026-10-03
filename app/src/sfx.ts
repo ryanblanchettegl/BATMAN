@@ -1,5 +1,5 @@
 /* Sound: a handful of square-wave beeps and a burst of filtered noise for the crowd. Starts only after a click. */
-import { pref } from './store';
+import { pref, hooks } from './store';
 
 let AC: AudioContext | null = null;
 function ctx(): AudioContext { if (!AC) AC = new ((window as any).AudioContext || (window as any).webkitAudioContext)(); return AC!; }
@@ -26,5 +26,10 @@ export const SFX = {
   fanfare() { [523, 659, 784, 1047].forEach((f, i) => tone(f, 0.16, 'square', 0.04, i * 0.13)); tone(1047, 0.5, 'square', 0.04, 0.55); },
   ach() { tone(880, 0.1, 'square', 0.04, 0); tone(1320, 0.22, 'square', 0.04, 0.1); },
   crowd(cr: number) { crowdNoise(0.02 + Math.max(0, cr - 30) / 70 * 0.1, 0.9 + cr / 100); },
-  tick() { tone(1100, 0.012, 'square', 0.008); }
+  tick() { tone(1100, 0.012, 'square', 0.008); },
+  open() { tone(660, 0.05, 'square', 0.025, 0); tone(990, 0.07, 'square', 0.025, 0.05); },
+  close() { tone(990, 0.05, 'square', 0.025, 0); tone(660, 0.07, 'square', 0.025, 0.05); },
+  win() { tone(784, 0.09, 'square', 0.03, 0); tone(1047, 0.16, 'square', 0.03, 0.09); },
+  fail() { tone(220, 0.18, 'sawtooth', 0.035, 0); tone(165, 0.26, 'sawtooth', 0.035, 0.13); }
 };
+hooks.sound = k => { const f = (SFX as any)[k]; if (f) f(); };

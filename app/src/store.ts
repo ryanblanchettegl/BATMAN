@@ -75,7 +75,10 @@ export function onRedraw(fn: () => void) { draw = fn; }
 export function redraw() { draw(); }
 
 /** Show a one-line result above the page. */
-export function say(text: string | null | undefined, opt?: { err?: boolean }) { if (text) ui.flash = { text, err: !!(opt && opt.err) }; }
+/** Sound is plugged in by sfx.ts, so the store does not need to import it. */
+export const hooks: { sound?: (k: string) => void } = {};
+const snd = (k: string) => { if (hooks.sound) hooks.sound(k); };
+export function say(text: string | null | undefined, opt?: { err?: boolean }) { if (text) { ui.flash = { text, err: !!(opt && opt.err) }; if (opt) snd(opt.err ? 'fail' : 'win'); } }
 
 /** Run something the player did: clears the last message, runs it, saves, redraws. Use for every click that touches the game. */
 export function act<T>(fn: () => T): T {
@@ -88,18 +91,18 @@ export function act<T>(fn: () => T): T {
 /** Change view state only (no save): tabs, filters, opening a panel. Clears the last message, like act(). */
 export function view(fn: () => void) { ui.flash = null; fn(); redraw(); }
 
-export function openModal(m: Modal) { ui.modal = m; redraw(); }
-export function closeModal() { ui.modal = null; redraw(); }
+export function openModal(m: Modal) { ui.modal = m; snd('open'); redraw(); }
+export function closeModal() { if (ui.modal) snd('close'); ui.modal = null; redraw(); }
 /** Open a profile pop-up on top of whatever is showing. Opening the one already on top does nothing. */
 export function openCard(c: Card) {
   const top = ui.cards[ui.cards.length - 1];
   if (top && top.k === c.k && top.id === c.id && top.pid === c.pid) return;
   if (ui.cards.length >= 12) ui.cards.shift();
-  ui.cards.push(c); redraw();
+  ui.cards.push(c); snd('open'); redraw();
 }
 /** Step back to the pop-up underneath, or close the last one. */
-export function popCard() { ui.cards.pop(); redraw(); }
-export function closeCards() { ui.cards = []; redraw(); }
+export function popCard() { ui.cards.pop(); snd('close'); redraw(); }
+export function closeCards() { if (ui.cards.length) snd('close'); ui.cards = []; redraw(); }
 
 /* ---------- formatting ---------- */
 export function cash(n: number): string { const a = Math.abs(n), s = a >= 1e6 ? (a / 1e6).toFixed(a >= 1e8 ? 0 : 1) + 'M' : (a >= 1e3 ? Math.round(a / 1e3) + 'K' : String(Math.round(a))); return (n < 0 ? '−$' : '$') + s; }
