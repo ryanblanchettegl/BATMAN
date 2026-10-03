@@ -657,3 +657,49 @@ POST.push(function(ctx){
   news(S,'story','The long plan paid off at '+ctx.show.name+': '+S.w[lp.a].name+' against '+S.w[lp.b].name+'.');
   S.stats.plans=(S.stats.plans||0)+1;
 });
+
+/* ---------- 29. Titles have prestige: a short log of why it moves (t.pw), rises and falls ---------- */
+function presMove(S,t,d,why){
+  t.prestige=clamp(t.prestige+d,10,100);var L=t.pw||(t.pw=[]);
+  if(L.length&&L[0].x===why&&L[0].w===S.week){L[0].d=Math.round((L[0].d+d)*10)/10;return;}
+  L.unshift({w:S.week,d:Math.round(d*10)/10,x:why});if(L.length>6)L.length=6;
+}
+CRX.push(function(ctx){if(ctx.t){ctx.since0=ctx.t.since;ctx.defs0=ctx.t.defs;}return null;});
+POST.push(function(ctx){
+  var S=ctx.S,r=ctx.res,P=ctx.P,t=ctx.t;if(S.cal||ctx.m.mt==='br')return;
+  if(t){
+    if(r.seg.change&&!r.seg.crown){
+      var len=S.week-(ctx.since0||0);
+      if(len<4)presMove(S,t,-5,'It changed hands after only '+Math.max(1,len)+' '+(len<=1?'week':'weeks'));
+      else if(len>=26&&(ctx.defs0|0)>=4)presMove(S,t,2,'A long, credible reign came to a proper end');
+    }else if(r.win===ctx.champSide&&ctx.champSide>=0){
+      if(r.OV>=80&&(r.fin==='clean'||r.fin==='foiled'))presMove(S,t,1,'A strong defence');
+      else if(r.OV<50)presMove(S,t,-1,'A poor defence');
+    }
+  }
+  if(r.win>=0&&r.fin!=='dq'&&r.fin!=='co')r.losers.forEach(function(w){
+    P.titles.forEach(function(x){
+      if(x===t||x.holders.indexOf(w.id)<0)return;
+      presMove(S,x,-1.2,w.name+' lost a non-title match');
+    });
+  });
+});
+WEEKX.push(function(S){
+  if(S.cal)return;
+  S.order.forEach(function(pid){S.promos[pid].titles.forEach(function(t){
+    if(t.holders.length){
+      if(S.week-(t.last|0)>=10)presMove(S,t,-0.4,'Nobody has seen the title defended in weeks');
+      else if(S.week-t.since>=13&&t.defs>=3&&t.prestige<85)presMove(S,t,0.3,'A reign with real defences');
+    }else if(S.week-t.since>=6)presMove(S,t,-0.5,'The title has been vacant for weeks');
+  });});
+});
+E.prestigeWhy=function(t){return (t.pw||[]).slice(0,3);};
+
+/* ---------- 30. Contender ladders: jumping the queue costs most in the purist and tradition models ---------- */
+CRX.push(function(ctx){
+  var t=ctx.t;if(!t||t.tag||ctx.champSide<0||ctx.m.mt!=='1v1'||ctx.S.cal)return null;
+  var m=ctx.P.model;if(m!=='purist'&&m!=='tradition')return null;
+  var ch=ctx.sides[ctx.champSide===0?1:0][0];if(ch.shot===t.id)return null;
+  var rk=rankFor(ctx.S,ctx.P,t,5).map(function(w){return w.id;});
+  return rk.indexOf(ch.id)<0?{d:-3,x:m==='purist'?'The purists want a title shot earned in the ring':'Tradition says you wait your turn for a title shot'}:null;
+});

@@ -139,6 +139,7 @@ function TitleCard(p: { pid: string; id: string }) {
       <div><small>Prestige</small><span><Meter v={t.prestige} kind="au" /> <b class="num">{Math.round(t.prestige)}</b></span></div>
       <div><small>Champion{t.tag ? 's' : ''}</small><span>{t.holders.length ? list(t.holders.map((id: number) => <Name w={S.w[id]} />)) : <span class="mark">Vacant</span>}</span></div>
     </div>
+    {t.pw && t.pw.length ? <><p class="eyebrow mt2">Why the prestige moves</p><ul class="list">{E.prestigeWhy(t).map((x: any) => <li><span>{x.x}</span><span class={'r num ' + (x.d >= 0 ? 'good' : 'bad')}>{x.d >= 0 ? '+' : '−'}{Math.abs(x.d)}</span></li>)}</ul></> : null}
     {t.holders.length ? <p class="mt1 muted">Held since {E.cal(Math.max(1, t.since)).label}: {weeksText(S.week - Math.max(1, t.since))}, {t.defs} {plural(t.defs, 'defence')}.</p> : null}
     <p class="eyebrow mt2">Lineage</p>
     {H.length ? <ul class="list">{H.slice(0, 12).map((h: any) => <li><span>{who(h)}</span><span class="r muted num">{h.from <= 1 ? 'Before your time' : E.cal(h.from).label}{h.to ? ' to ' + E.cal(h.to).label : ' to now'} {'·'} {weeksText(len(h))} {'·'} {h.defs} {plural(h.defs, 'defence')}</span></li>)}</ul> : <Empty>No champion has been crowned yet.</Empty>}
