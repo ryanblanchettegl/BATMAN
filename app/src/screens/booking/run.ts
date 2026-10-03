@@ -4,6 +4,7 @@ import { E } from '../../engine';
 import { G, ui, pref, reduceMotion, act, view, say, slice } from '../../store';
 import { book } from '../../flow';
 import { SFX } from '../../sfx';
+import { showResult } from '../../kit';
 
 export type Match = any;
 const top0 = () => { try { window.scrollTo(0, 0); } catch (e) { /* ignore */ } };
@@ -20,6 +21,16 @@ export function onCard(skip?: number): Record<number, 1> {
   return o;
 }
 export const suggest = () => act(() => { const b = book(); G.S.card = E.suggest(G.S); b.edit = -1; b.tried = false; });
+/** The assistant books this show the way you usually would. */
+export const asstBook = () => act(() => { const b = book(); E.assistantBook(G.S); b.edit = -1; b.tried = false; });
+/** Fast mode: the assistant books and runs every small show left this week, then stops at the big event. */
+export const asstRun = () => act(() => {
+  const S = G.S, o: any[] = E.assistantRun(S);
+  const ok = o.filter(x => !x.err), bad = o.filter(x => x.err);
+  const text = o.length ? ok.map(x => x.show + ': ' + x.rating + '% (expected ' + x.exp + '%)').join('. ') + (bad.length ? '. Stopped at ' + bad[0].show + ': ' + bad[0].err : '') : 'There is no small show left to run.';
+  say(text, { err: !ok.length && o.length > 0 });
+  showResult('The assistant', text, !ok.length && o.length > 0);
+});
 export const addMatch = () => act(() => { const c = G.S.card; c.push({ mt: '1v1', sides: [[null], [null]], win: -2, call: null, title: null, stip: 'std', len: 'M' }); book().edit = c.length - 1; });
 export const clearCard = () => act(() => { const b = book(); G.S.card = []; b.edit = -1; b.tried = false; });
 export const removeMatch = (i: number) => act(() => { G.S.card.splice(i, 1); book().edit = -1; });

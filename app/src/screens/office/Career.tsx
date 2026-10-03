@@ -66,6 +66,17 @@ function MilestoneWall() {
   </Panel>;
 }
 
+/** The assistant who learns how you book and can run the small shows. */
+function Assistant() {
+  const S = G.S, A = E.assistant(S);
+  return <Panel title="Your assistant">
+    <p><b class={A.lvl >= 2 ? 'gold' : undefined}>{A.word}</b> <span class="muted">{'·'} learned from {A.shows} {plural(A.shows, 'show')}{A.next ? ', ' + A.next + ' more to the next level' : ''}</span></p>
+    <ul class="list mt1">{A.habits.map((h: string) => <li><span>{h}</span></li>)}</ul>
+    {A.fav.length ? <p class="muted mt1">The names you lean on: {A.fav.map((w: any) => w.name).join(', ')}.</p> : null}
+    <p class="muted mt1">The assistant books the small shows the way you do. A new one makes mistakes. A fully trained one is close to you. It never books a big event. {A.own ? 'It has run ' + A.own + ' ' + plural(A.own, 'show') + ' so far.' : ''}</p>
+  </Panel>;
+}
+
 /** What your booking has earned you a name for. */
 function Reputation() {
   const S = G.S, L = E.bookerRep(S);
@@ -82,7 +93,7 @@ export function Career() {
     <Head eyebrow={S.booker.name + ', ' + role() + ' of ' + P.name} title="Career" />
     <div class="cols">
       <div class="stack"><You /><YourWord /></div>
-      <div class="stack"><Reputation /><Saga /><MilestoneWall /><LegacyPanel /></div>
+      <div class="stack"><Reputation /><Assistant /><Saga /><MilestoneWall /><LegacyPanel /></div>
     </div>
     <Achievements />
   </>;
