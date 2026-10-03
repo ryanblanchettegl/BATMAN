@@ -61,7 +61,7 @@ E.matchOdds=function(S,m,i,n){
   var c=matchSetup(S,m);if(!c)return null;
   var od=winOdds(S,c.P,c.show,m,c.sides,c.t,c.champSide,c.feud,!!c.show.big,i===n-1),fav=0;
   od.p.forEach(function(p,k){if(p>od.p[fav])fav=k;});
-  var cost=od.p.map(function(p,k){return (p>=0.5?1:(p>=0.25?2:3))+(c.t&&c.t.holders.length&&k!==c.champSide?1:0);});
+  var cost=od.p.map(function(p,k){return (p>=0.5?1:(p>=0.25?2:3))+(c.t&&c.t.holders.length&&k!==c.champSide?1:0)+ccCost(S,m,k);});
   return {p:od.p,draw:od.draw,fav:fav,cost:cost,drawCost:2,chem:(S.booker.sk.eye>=2&&m.mt==='1v1')?chem(S,c.sides[0][0].id,c.sides[1][0].id):null};
 };
 function cardCost(S,card){

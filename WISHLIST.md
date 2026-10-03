@@ -64,7 +64,7 @@ Things that would make the game deeper. Each one adds a system, a choice or a me
 
 - [x] **37. Locker-room leaders.** One or two respected veterans keep order. Lose them and incidents rise. The Locker room page names them. *S. Builds on `src/76-locker.js`.*
 - [x] **38. Cliques.** Friends form a group. A clique with a top star asks for favours as a block: a push for a friend, a rival held down. Say yes, say no, or break them up. *M.*
-- [ ] **39. Creative control.** A top star can win the right to refuse a loss. Overriding it costs booking power and trust. *M.*
+- [x] **39. Creative control.** A top star can win the right to refuse a loss. Overriding it costs booking power and trust. *M.*
 - [ ] **40. Contract clauses.** Dates per month, a merchandise share, paid travel, a no-cut promise, outside dates, a title promise. Talks go back and forth two or three times. *L. Builds on `E.ask`, `E.sign`, `E.renew`.*
 - [x] **41. Ask the room.** Before a signing, find out who is glad and who is angry about it. *S. (TASKS 10)*
 - [x] **42. A court with a memory.** The wrestlers' court exists. Add a record of verdicts, harsher results for repeat offenders, and a judge chosen from the veterans. *S. Builds on `E.court`.*

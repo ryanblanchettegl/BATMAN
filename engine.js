@@ -736,6 +736,8 @@ function doMatch(S,P,show,m,i,n,rep,used){
   if(called)win=m.call;
   else{var roll=rnd(S);if(roll<od.draw)win=-1;else{roll-=od.draw;win=sides.length-1;for(x=0;x<sides.length;x++){roll-=od.p[x];if(roll<=0){win=x;break;}}}}
   if(m.nc)win=-1;
+  var ccNote=null;
+  if(isPl&&!called&&win>=0&&!m.nc){var ccx=ccRefusal(S,sides,win,t,champSide);if(ccx){win=ccx.side;ccNote=ccx.w.name;}}
   if(!(win>=0&&win<sides.length)){win=-1;fin='draw';}
   else{
     winners=sides[win];losers=flat(sides.filter(function(s,k){return k!==win;}));
@@ -851,6 +853,7 @@ function doMatch(S,P,show,m,i,n,rep,used){
     if(m.mt==='1v1'){var hk=rkey(all[0].id,all[1].id),hh=(S.h2h||(S.h2h={}))[hk]||(S.h2h[hk]={n:0,a:0,b:0,lw:-1,w:0});hh.n++;hh.w=S.week;hh.lw=win>=0?winners[0].id:-1;if(win>=0){if(winners[0].id===Math.min(all[0].id,all[1].id))hh.a++;else hh.b++;}}
     all.forEach(function(w){w.deb=false;});
   }
+  if(ccNote)seg.notes.push(ccNote+' used creative control and would not take the loss.');
   if(upset)seg.notes.push('Upset: '+names(winners)+' beat a much bigger name.');
   if(endedStreak)seg.notes.push('The winning streak ends at '+endedStreak+'.');
   if(feudMsg)seg.notes.push(feudMsg);
@@ -1814,7 +1817,7 @@ E.matchOdds=function(S,m,i,n){
   var c=matchSetup(S,m);if(!c)return null;
   var od=winOdds(S,c.P,c.show,m,c.sides,c.t,c.champSide,c.feud,!!c.show.big,i===n-1),fav=0;
   od.p.forEach(function(p,k){if(p>od.p[fav])fav=k;});
-  var cost=od.p.map(function(p,k){return (p>=0.5?1:(p>=0.25?2:3))+(c.t&&c.t.holders.length&&k!==c.champSide?1:0);});
+  var cost=od.p.map(function(p,k){return (p>=0.5?1:(p>=0.25?2:3))+(c.t&&c.t.holders.length&&k!==c.champSide?1:0)+ccCost(S,m,k);});
   return {p:od.p,draw:od.draw,fav:fav,cost:cost,drawCost:2,chem:(S.booker.sk.eye>=2&&m.mt==='1v1')?chem(S,c.sides[0][0].id,c.sides[1][0].id):null};
 };
 function cardCost(S,card){
@@ -5012,6 +5015,50 @@ POST.push(function(ctx){
     r.seg.notes.push(star.name+' noticed that '+w.name+' got the win. You said you would hold them down.');
   });
 });
+
+/* ---------- 39. Creative control: a top star can win the right to refuse a loss (w.cc) ---------- */
+/* the extra booking power for calling a loss on someone with control; a draw costs nothing extra */
+function ccCost(S,m,k){
+  return m.sides.some(function(s,j){return j!==k&&s.some(function(id){return S.w[id]&&S.w[id].cc;});})?2:0;
+}
+/* when the result is left to play out and the dice would have a controlling star lose, they refuse (not as a challenger in a title match) */
+function ccRefusal(S,sides,win,t,champSide){
+  for(var k=0;k<sides.length;k++){
+    if(k===win)continue;
+    for(var i=0;i<sides[k].length;i++){
+      var w=sides[k][i];
+      if(w.cc&&!(t&&champSide>=0&&k!==champSide))return {side:k,w:w};
+    }
+  }
+  return null;
+}
+WEEKX.push(function(S){
+  if(S.cal)return;
+  var P=S.promos[S.player],R=rosterOf(S,P.id).filter(function(w){return !w.nw;});
+  R.forEach(function(w){if(w.cc&&(S.week>=(w.ccUntil||0)||w.promo!==P.id)){w.cc=0;news(S,'contract',w.name+'’s creative control ended with the contract.');}});
+  if(!chance(S,0.05)||S.inbox.some(function(e){return e.type==='ccask'&&!e.done;}))return;
+  var ovrs=R.map(function(w){return w.ovr;}).sort(function(a,b){return b-a;}),cut=ovrs[Math.max(0,Math.floor(R.length*0.12))]||0;
+  var c=R.filter(function(w){return w.ovr>=cut&&w.ovr>=60&&!w.cc&&w.con>=6&&w.morale>=40&&w.inj<=0&&(w.ccAsk==null||S.week-w.ccAsk>=52);}).sort(function(a,b){return b.ovr-a.ovr;});
+  if(!c.length)return;
+  var w=c[0];w.ccAsk=S.week;
+  pushEv(S,{type:'ccask',w:w.id,text:w.name+' wants a clause in the contract: creative control. They would be able to refuse a loss on any show until the contract ends.',
+    choices:['Grant it until the contract ends','Offer ten percent more money instead','Turn them down'],
+    checks:{1:mkCheck(7,[moraleMod(w),trustMod(S)].concat(skillMods(S,'talk')))}});
+});
+EVR.ccask=function(S,ev,choice,P,w){
+  if(choice===0){w.cc=1;w.ccUntil=S.week+Math.max(6,w.con|0);w.morale=clamp(w.morale+10,0,100);return w.name+' has creative control until the contract ends. Leaving them to play out can end in a win they asked for, and calling a loss on them costs 2 more booking power.';}
+  if(choice===1){
+    var r=rollCheck(S,ev.checks[1]);ev.roll=r;
+    if(r.ok){w.wage=Math.round(w.wage*1.1/50)*50;w.morale=clamp(w.morale+3,0,100);return rollText(r)+w.name+' takes the money, now '+money(w.wage)+' a week, and drops the clause.';}
+    w.morale=clamp(w.morale-4,0,100);return rollText(r)+w.name+' says money is not the point.';
+  }
+  w.morale=clamp(w.morale-8,0,100);stressAdd(S,w,6);return w.name+' is not happy, but it is your show.';
+};
+POST.push(function(ctx){
+  var S=ctx.S,m=ctx.m,r=ctx.res;if(!ctx.isPl||S.cal||m.call==null||m.call<0||r.win<0)return;
+  ctx.sides.forEach(function(s,k){if(k===m.call)return;s.forEach(function(w){if(w.cc){w.morale=clamp(w.morale-5,0,100);S.trust=clamp(S.trust-1,0,100);r.seg.notes.push(w.name+' has creative control, and you overrode it. They remember.');}});});
+});
+E.controlWord=function(w){return w.cc?'Can refuse to lose. Calling a loss on them costs 2 more booking power and a little trust.':null;};
 
 /* ===== 90-api.js ===== */
 /* ---------- roster moves ---------- */

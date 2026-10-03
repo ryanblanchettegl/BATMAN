@@ -265,6 +265,8 @@ function doMatch(S,P,show,m,i,n,rep,used){
   if(called)win=m.call;
   else{var roll=rnd(S);if(roll<od.draw)win=-1;else{roll-=od.draw;win=sides.length-1;for(x=0;x<sides.length;x++){roll-=od.p[x];if(roll<=0){win=x;break;}}}}
   if(m.nc)win=-1;
+  var ccNote=null;
+  if(isPl&&!called&&win>=0&&!m.nc){var ccx=ccRefusal(S,sides,win,t,champSide);if(ccx){win=ccx.side;ccNote=ccx.w.name;}}
   if(!(win>=0&&win<sides.length)){win=-1;fin='draw';}
   else{
     winners=sides[win];losers=flat(sides.filter(function(s,k){return k!==win;}));
@@ -380,6 +382,7 @@ function doMatch(S,P,show,m,i,n,rep,used){
     if(m.mt==='1v1'){var hk=rkey(all[0].id,all[1].id),hh=(S.h2h||(S.h2h={}))[hk]||(S.h2h[hk]={n:0,a:0,b:0,lw:-1,w:0});hh.n++;hh.w=S.week;hh.lw=win>=0?winners[0].id:-1;if(win>=0){if(winners[0].id===Math.min(all[0].id,all[1].id))hh.a++;else hh.b++;}}
     all.forEach(function(w){w.deb=false;});
   }
+  if(ccNote)seg.notes.push(ccNote+' used creative control and would not take the loss.');
   if(upset)seg.notes.push('Upset: '+names(winners)+' beat a much bigger name.');
   if(endedStreak)seg.notes.push('The winning streak ends at '+endedStreak+'.');
   if(feudMsg)seg.notes.push(feudMsg);
