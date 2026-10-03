@@ -1078,6 +1078,10 @@ var GR={
   open_S:['{a} lights {b} up with strikes from the opening bell.','{a} and {b} trade shots, and {a} gets the better of it.','{a} is throwing bombs already.','Hard kicks from {a}. You can hear every one of them.'],
   open_E:['{a} plays to the crowd, then catches {b} off guard.','{a} stalls on the outside before taking control.','{a} is having a great time out there, and {b} is not.','{a} takes a bow, and {b} takes exception.'],
   open_A:['{a} and {b} feel each other out before {a} takes control.','{a} out-wrestles {b} in the opening minutes.','A cautious start, and {a} finds the first opening.','{a} gets the better of the early exchanges.'],
+  open_multi:['It is every wrestler for themselves, and {a} is the first to find a target in {b}.','The bell rings and the ring fills with bodies. {a} goes straight for {b}.','No partners, no friends, and the referee has their hands full. {a} starts with {b}.','Everyone is a rival here. {a} and {b} collide first while the others circle.'],
+  open_six:['Three against three, and the corner is a crowded place. {a} starts for their side against {b}.','A six-man tag: {a} and {b} start it, and the other four lean on the ropes.','Six bodies, two corners, one referee. {a} and {b} get things going.','{a} tags in, {b} tags out, and the crowd cannot keep track of who is legal.'],
+  mid_multi:['The ring turns into a pile-up and {b} is lost in the middle of it.','Two of them spill to the floor while {a} and {b} trade near-falls, and a third breaks up the cover.','Alliances flip every thirty seconds. {b} thinks about trusting {a}, then thinks better of it.','Nobody can stay on one opponent for long. {a} is pulled off {b} twice in a minute.'],
+  mid_six:['The hot tag brings the crowd up. {b} cannot reach the corner while {a} cuts the ring in half.','{a} is cut off from the corner, and the other side takes turns.','Chaos in the corner: the referee has three wrestlers on the apron and no idea who is legal.','{b} makes the tag and the whole building rises with them.'],
   limb:['arm','leg','knee','shoulder','neck'],
   mid:['{b} fights back and the two trade near-falls.','{b} cuts {a} off and slows the pace.','{b} rallies, and the momentum swings back and forth.','{b} survives a close call and fires up.','{b} catches {a} coming in and turns the tide.','Back and forth they go. Neither can keep the advantage.','{b} finds a second wind out of nowhere.'],
   near:['Cover by {b}! One, two... no! {a} kicks out!','{b} hooks the leg! One, two... {a} gets the shoulder up!','{a} goes for the finish, but {b} slips out the back!','#bigmove# from {b}! That has to be it... only a two count!','{a} thought that was three. So did I, {c}!','Shoulder up at two and nine-tenths!'],
@@ -1403,9 +1407,10 @@ function doMatch(S,P,show,m,i,n,rep,used){
   var lead=win>=0?winners[0]:sides[0][0],other=win>=0?losers.slice().sort(function(p,o){return br?o.ovr-p.ovr:p.ovr-o.ovr;})[0]:sides[1][0];
   var ca=chance(S,0.55)?other:lead,cb=ca===lead?other:lead,o={a:ca.name,b:cb.name,w:names(winners),l:other.name,x:runin?runin.r.name:'',fin:lead.fin?'the '+lead.fin:'the finish'};
   if(isPl){
-    seg.lines.push(say(S,GR['open_'+ca.style]?'open_'+ca.style:'open_A',o));
+    var mk=m.mt==='4way'||m.mt==='3way'?'multi':(m.mt==='6man'?'six':null);   // matches with more than two people read differently from singles
+    seg.lines.push(say(S,mk?'open_'+mk:(GR['open_'+ca.style]?'open_'+ca.style:'open_A'),o));
     if(STIPLINE[stip])seg.lines.push(STIPLINE[stip][0]);
-    if(mins>8)seg.lines.push(say(S,'mid',o));
+    if(mins>8)seg.lines.push(say(S,mk?'mid_'+mk:'mid',o));
     seg.lines.push((MQ>=88?'This is something special. ':(MQ>=75?'A very good match. ':(MQ>=60?'Solid work. ':(MQ>=45?'It never finds a rhythm. ':'It falls apart in places. '))))+(CR>=88?'The crowd is molten.':(CR>=72?'The crowd is loud throughout.':(CR>=55?'The crowd is into it.':(CR>=40?'The crowd is polite but quiet.':'The crowd sits on its hands.')))));
   }
   seg.finish=fill(br?'{w} throws {l} over the top rope and is the last one standing.':fin==='clean'?(lead.style==='T'||stip==='sub'?'{w} forces {l} to submit clean in the middle of the ring.':'{w} hits {fin} and pins {l} clean.'):
