@@ -1752,7 +1752,7 @@ function runShow(S,P,show,card){
   var ms=rep.segs.filter(function(s){return s.k==='match';}),num=0,den=0;
   ms.forEach(function(s,ix){var w=ix===ms.length-1?3:(ix===ms.length-2?2:(ix===0?1.5:1));num+=s.ov*w;den+=w;});
   rep.segs.forEach(function(s){if(s.k==='angle'){num+=s.ov*0.7;den+=0.7;}});
-  rep.rating=clamp(r1((den?num/den:30)+(P.prodLvl-P.prod0)*0.6+(isPl&&S.rateMod?S.rateMod:0)),5,99);rep.mainOv=ms.length?ms[ms.length-1].ov:0;
+  rep.rating=clamp(r1((den?num/den:30)+(P.prodLvl-P.prod0)*0.6*(modelOf(P).prodX==null?1:modelOf(P).prodX)+(isPl&&S.rateMod?S.rateMod:0)),5,99);rep.mainOv=ms.length?ms[ms.length-1].ov:0;
   if(isPl)S.rateMod=0;
   if(S.cal)return rep;
   var exp=expected(P,show);
@@ -3626,7 +3626,7 @@ var MODELS={
     d:'A cult following and no rules. Weapons, blood and personality; technique is beside the point. Cheap to run, and it will never be mainstream.',
     good:['Toughness and charisma are the work rate here','Gimmick matches hit harder, and you can run as many as you like','Tiny production costs; the gate and the merchandise table pay the bills'],
     bad:['Popularity has a ceiling','Sponsors and networks pay little','A plain wrestling match bores this crowd'],
-    mix:{tv:0.6,gate:1.3,ppv:0.9,merch:1.35,sp:0.5},turn:0.6,cap:62,riskMin:2,riskFree:true,gimFree:true,
+    mix:{tv:0.6,gate:1.3,ppv:0.9,merch:1.35,sp:0.5},prodX:0.25,turn:0.6,cap:62,riskMin:2,riskFree:true,gimFree:true,
     mq:function(ctx){var d=0,g=clamp((mAvg(ctx.all,'hc')-mAvg(ctx.all,'tech'))*0.08,-3,3);d+=mNote(ctx,g,g>=0?'Toughness is the work rate here':'Technicians without the stomach for this');
       if(isGim(ctx.stip))d+=mNote(ctx,2,'Exactly the kind of match this crowd came for');else if(ctx.stip==='std'&&ctx.i>=ctx.n-2)d+=mNote(ctx,-1.5,'No weapons, no blood: this crowd got restless');return {d:d,x:null};},
     cr:function(ctx){var c=mAvg(ctx.all,'cha');return {d:mNote(ctx,clamp((c-68)*0.1,-3,3),c>=68?'Personalities this crowd lives for':'Nobody in there this crowd connects with'),x:null};},
@@ -4314,6 +4314,14 @@ E.askRoom=function(S,id){
   var text=w.name+': '+(glad.length?'glad to see them: '+f(glad)+'. ':'nobody is especially glad. ')+(angry.length?'Unhappy: '+f(angry)+'.':'Nobody has a problem with it.');
   return {glad:glad.map(function(o){return o.w.id;}),angry:angry.map(function(o){return o.w.id;}),text:text};
 };
+
+/* production values: lights, set, pyro and cameras lift a big match. A corporate board expects a slick show; an outlaw crowd does not care */
+CRX.push(function(ctx){
+  var P=ctx.P,lv=P.prodLvl,M=modelOf(P),d=0,x=null;
+  if(ctx.isMain&&(ctx.big||ctx.show.big)&&M.prodX!==0.25&&lv!==P.prod0){d=0.7*(lv-P.prod0);x=d>0?'The production team makes the main event look huge':'The main event looks cheap next to what this crowd expects';}
+  if(M===MODELS.corporate&&lv<2){d-=1;x=x||'The board expects a slicker product than this';}
+  return d?{d:d,x:x}:null;
+});
 
 /* ===== 85-universe.js ===== */
 /* ---------- universe packages: every roster, built-in or community-made, loads through this ----------

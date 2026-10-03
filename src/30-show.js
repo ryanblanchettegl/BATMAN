@@ -50,7 +50,7 @@ function runShow(S,P,show,card){
   var ms=rep.segs.filter(function(s){return s.k==='match';}),num=0,den=0;
   ms.forEach(function(s,ix){var w=ix===ms.length-1?3:(ix===ms.length-2?2:(ix===0?1.5:1));num+=s.ov*w;den+=w;});
   rep.segs.forEach(function(s){if(s.k==='angle'){num+=s.ov*0.7;den+=0.7;}});
-  rep.rating=clamp(r1((den?num/den:30)+(P.prodLvl-P.prod0)*0.6+(isPl&&S.rateMod?S.rateMod:0)),5,99);rep.mainOv=ms.length?ms[ms.length-1].ov:0;
+  rep.rating=clamp(r1((den?num/den:30)+(P.prodLvl-P.prod0)*0.6*(modelOf(P).prodX==null?1:modelOf(P).prodX)+(isPl&&S.rateMod?S.rateMod:0)),5,99);rep.mainOv=ms.length?ms[ms.length-1].ov:0;
   if(isPl)S.rateMod=0;
   if(S.cal)return rep;
   var exp=expected(P,show);

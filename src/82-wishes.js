@@ -148,3 +148,11 @@ E.askRoom=function(S,id){
   var text=w.name+': '+(glad.length?'glad to see them: '+f(glad)+'. ':'nobody is especially glad. ')+(angry.length?'Unhappy: '+f(angry)+'.':'Nobody has a problem with it.');
   return {glad:glad.map(function(o){return o.w.id;}),angry:angry.map(function(o){return o.w.id;}),text:text};
 };
+
+/* production values: lights, set, pyro and cameras lift a big match. A corporate board expects a slick show; an outlaw crowd does not care */
+CRX.push(function(ctx){
+  var P=ctx.P,lv=P.prodLvl,M=modelOf(P),d=0,x=null;
+  if(ctx.isMain&&(ctx.big||ctx.show.big)&&M.prodX!==0.25&&lv!==P.prod0){d=0.7*(lv-P.prod0);x=d>0?'The production team makes the main event look huge':'The main event looks cheap next to what this crowd expects';}
+  if(M===MODELS.corporate&&lv<2){d-=1;x=x||'The board expects a slicker product than this';}
+  return d?{d:d,x:x}:null;
+});

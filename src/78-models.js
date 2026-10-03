@@ -94,7 +94,7 @@ var MODELS={
     d:'A cult following and no rules. Weapons, blood and personality; technique is beside the point. Cheap to run, and it will never be mainstream.',
     good:['Toughness and charisma are the work rate here','Gimmick matches hit harder, and you can run as many as you like','Tiny production costs; the gate and the merchandise table pay the bills'],
     bad:['Popularity has a ceiling','Sponsors and networks pay little','A plain wrestling match bores this crowd'],
-    mix:{tv:0.6,gate:1.3,ppv:0.9,merch:1.35,sp:0.5},turn:0.6,cap:62,riskMin:2,riskFree:true,gimFree:true,
+    mix:{tv:0.6,gate:1.3,ppv:0.9,merch:1.35,sp:0.5},prodX:0.25,turn:0.6,cap:62,riskMin:2,riskFree:true,gimFree:true,
     mq:function(ctx){var d=0,g=clamp((mAvg(ctx.all,'hc')-mAvg(ctx.all,'tech'))*0.08,-3,3);d+=mNote(ctx,g,g>=0?'Toughness is the work rate here':'Technicians without the stomach for this');
       if(isGim(ctx.stip))d+=mNote(ctx,2,'Exactly the kind of match this crowd came for');else if(ctx.stip==='std'&&ctx.i>=ctx.n-2)d+=mNote(ctx,-1.5,'No weapons, no blood: this crowd got restless');return {d:d,x:null};},
     cr:function(ctx){var c=mAvg(ctx.all,'cha');return {d:mNote(ctx,clamp((c-68)*0.1,-3,3),c>=68?'Personalities this crowd lives for':'Nobody in there this crowd connects with'),x:null};},
