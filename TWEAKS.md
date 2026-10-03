@@ -123,7 +123,7 @@ Each of these has a target. Use `test-uni.js` or a copy of it with several seeds
 - [x] **89.** Tradition: six-man matches should not push injuries above 1.5 per hundred, and no more than three retirements a year from a roster of 44.
 - [x] **90.** All-women company: merchandise between 15% and 25% of income, and a rival-run version of it keeps at least 24 wrestlers after 100 weeks.
 - [x] **91.** In sims several promotions lose a broadcast slot within 60 weeks. Find out why (the network review in `src/50-company.js`, or an inbox choice the sim makes) and fix it if a competent player would hit it too.
-- [ ] **92.** Rival releases: between two and five a year per promotion, never a champion, never the last six of a division.
+- [x] **92.** Rival releases: between two and five a year per promotion, never a champion, never the last six of a division.
 - [ ] **93.** The corporate board's monthly review (`MODELS.corporate.month`): a good month and a bad month should each move trust by one to three points, no more.
 - [ ] **94.** Difficulty levels: with the models in, Rookie and Legend should still differ by at least two points of rating against expectation over 60 weeks.
 

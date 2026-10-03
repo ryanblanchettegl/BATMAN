@@ -2870,7 +2870,7 @@ var MODELS={
     d:'Publicly traded. A family audience, entertainment before sport, and a board that reads the accounts before the reviews.',
     good:['Star quality and charisma lift every match','Television and sponsors pay more here than anywhere','Fewer injuries: the house style is safe'],
     bad:['Hardcore matches upset the audience and the sponsors','The product can never go past Mainstream','Great wrestlers nobody cares about get lost, and then released','The shareholders take a dividend of any surplus above a reserve'],
-    mix:{tv:1.25,gate:0.95,merch:1.2,sp:1.4},riskMax:1,inj:0.9,turn:1.6,ownShow:0.5,div:[1.3,0.5],
+    mix:{tv:1.25,gate:0.95,merch:1.2,sp:1.4},riskMax:1,inj:0.9,turn:1.3,ownShow:0.5,div:[1.3,0.5],
     cr:function(ctx){var d=0,sq=mAvg(ctx.all,'sq'),ch=mAvg(ctx.all,'cha');
       d+=mNote(ctx,clamp((sq-70)*0.07,-2,2.5),sq>=70?'Star presence: this audience buys names':'Nobody in there looks like a star to this audience');
       if(ctx.stip==='hardcore')d+=mNote(ctx,-3,'Too violent for a family audience');
@@ -2899,7 +2899,7 @@ var MODELS={
     d:'Wrestling presented as a sport. Stamina, fighting spirit and clean results; the roster is judged on its matches, not its television time.',
     good:['Stamina and long matches are rewarded','Tournament matches mean more','Great matches lift locker-room morale; time off television does not hurt it'],
     bad:['Entertainers and comedy are rejected','Gimmick matches and cheap finishes cost you','Little television money: the gate is the business'],
-    mix:{tv:0.7,gate:1.35,ppv:1.1,sp:0.9},riskMax:1,inj:1.15,noTvEgo:true,turn:0.8,
+    mix:{tv:0.7,gate:1.35,ppv:1.1,sp:0.9},riskMax:1,inj:1.15,noTvEgo:true,turn:1.1,
     mq:function(ctx){var d=0,st=mAvg(ctx.all,'stam');d+=mNote(ctx,clamp((st-72)*0.06,-1.5,2),st>=72?'Conditioning this crowd respects':'Short of the conditioning this crowd expects');
       if(ctx.m.len==='S'&&ctx.i>=ctx.n-3)d+=mNote(ctx,-1.5,'Too short to be taken seriously here');
       if(isGim(ctx.stip))d+=mNote(ctx,-3,'Gimmick matches are not what this crowd pays for');
@@ -2929,7 +2929,7 @@ var MODELS={
     d:'A brand-new company with a blank cheque and a clock. Stars cost a fortune, the rest of the roster is unknowns, and it loses money until it lands real television.',
     good:['Big names will sign for a company this size, at a price','A marquee name in the main event lifts the crowd','Television is worth more here than anywhere once the slot improves'],
     bad:['It loses money every week it stays in a late-night slot','Popularity leaks away while there is no better TV deal','A main event without a star falls flat'],
-    mix:{tv:1.3,sp:1.1},reach:45,premium:1.35,
+    mix:{tv:1.3,sp:1.1},turn:1.9,reach:45,premium:1.35,
     cr:function(ctx){if(!ctx.isMain)return null;var top=Math.max.apply(null,ctx.all.map(function(w){return w.ovr;})),im=ctx.P.image;
       return top>=im+22?{d:mNote(ctx,2,'A marquee name the building came to see'),x:null}:(top<im+8?{d:mNote(ctx,-2,'No star in the main event of a company built on stars'),x:null}:null);},
     push:function(w,P){return clamp(0.1*(w.ovr-P.image-10),-2,4);},
@@ -2942,7 +2942,7 @@ var MODELS={
     d:'A cult following and no rules. Weapons, blood and personality; technique is beside the point. Cheap to run, and it will never be mainstream.',
     good:['Toughness and charisma are the work rate here','Gimmick matches hit harder, and you can run as many as you like','Tiny production costs; the gate and the merchandise table pay the bills'],
     bad:['Popularity has a ceiling','Sponsors and networks pay little','A plain wrestling match bores this crowd'],
-    mix:{tv:0.6,gate:1.3,ppv:0.9,merch:1.35,sp:0.5},cap:62,riskMin:2,riskFree:true,gimFree:true,
+    mix:{tv:0.6,gate:1.3,ppv:0.9,merch:1.35,sp:0.5},turn:0.6,cap:62,riskMin:2,riskFree:true,gimFree:true,
     mq:function(ctx){var d=0,g=clamp((mAvg(ctx.all,'hc')-mAvg(ctx.all,'tech'))*0.08,-3,3);d+=mNote(ctx,g,g>=0?'Toughness is the work rate here':'Technicians without the stomach for this');
       if(isGim(ctx.stip))d+=mNote(ctx,2,'Exactly the kind of match this crowd came for');else if(ctx.stip==='std'&&ctx.i>=ctx.n-2)d+=mNote(ctx,-1.5,'No weapons, no blood: this crowd got restless');return {d:d,x:null};},
     cr:function(ctx){var c=mAvg(ctx.all,'cha');return {d:mNote(ctx,clamp((c-68)*0.1,-3,3),c>=68?'Personalities this crowd lives for':'Nobody in there this crowd connects with'),x:null};},
@@ -2967,7 +2967,7 @@ var MODELS={
     d:'The oldest way of doing things. Clean wrestling, teams and trios, family names, and a top spot that has to be earned over years.',
     good:['Tag and trios matches are the tradition','Clean finishes are rewarded','Long-serving wrestlers lift the top of the card and stay loyal'],
     bad:['Pushing anyone with under a year in the company costs you','A newcomer taking a title angers the veterans','Gimmick matches and cheap finishes go down badly'],
-    mix:{tv:0.9,gate:1.3,ppv:0.85,merch:0.9,sp:0.9},riskMax:1,inj:0.95,turn:0.4,
+    mix:{tv:0.9,gate:1.3,ppv:0.85,merch:0.9,sp:0.9},riskMax:1,inj:0.95,turn:0.9,
     cr:function(ctx){var d=0,S=ctx.S;
       if(ctx.isMain||ctx.t){var nw=ctx.all.filter(function(w){return tenureW(S,w)<52;});
         if(nw.length)d+=mNote(ctx,-2.5,nw[0].name+' has not paid their dues in this company');else if(ctx.all.every(function(w){return tenureW(S,w)>=156;}))d+=mNote(ctx,1,'Faces this crowd has trusted for years');}
@@ -2986,7 +2986,7 @@ var MODELS={
     d:'An all-women company. Blistering pace, stiff strikes and loyal factions; the money comes from the merchandise table, not the network.',
     good:['Speed and conditioning are rewarded','Faction against faction lifts the crowd','Merchandise pays double: the stars you build are the business'],
     bad:['Only women can be signed','The stiff style means more injuries','Television money is half what it is elsewhere'],
-    mix:{tv:0.5,gate:1.1,ppv:0.8,merch:1.35},riskMax:2,inj:1.3,
+    mix:{tv:0.5,gate:1.1,ppv:0.8,merch:1.35},turn:1.3,riskMax:2,inj:1.3,
     mq:function(ctx){var d=0,p=(mAvg(ctx.all,'speed')+mAvg(ctx.all,'stam'))/2;d+=mNote(ctx,clamp((p-72)*0.07,-2,2.5),p>=72?'The pace this crowd expects':'Too slow for this crowd');
       if(ctx.m.len==='L'&&!ctx.isMain)d+=mNote(ctx,-1,'The pace dropped in a long undercard match');return {d:d,x:null};},
     cr:function(ctx){if(ctx.sides.length!==2)return null;var a=ctx.sides[0][0].stable,b=ctx.sides[1][0].stable;if(a==null||b==null)return null;
@@ -3030,17 +3030,17 @@ WEEKX.push(function(S){
       if(P.prodLvl>0){P.prodLvl--;news(S,'money',P.name+' cut production to '+PRODN[P.prodLvl].toLowerCase()+' after weeks in the red.');}
       else{P.adv--;news(S,'money',P.name+' cut its advertising after weeks in the red.');}
       P.neg=8;return;}
-    if(P.cash<0&&chance(S,0.5)){var big=R.filter(function(w){return holdLvl(P,w.id)===0&&!inFeud(S,w.id);}).sort(function(a,b){return b.wage-a.wage;})[0];
-      if(big){news(S,'contract',P.name+' can no longer afford '+big.name+', who is a free agent.');leaveCompany(S,big,'released');big.cut={w:S.week,from:pid,img:P.image};big.promo='FA';big.brand=null;return;}}
-    if(!M.fit||R.length<Math.max(14,(P.size0||R.length)-3)||!chance(S,0.3*(M.turn||1)))return;
+    if(P.cash<0&&P.neg>=3&&chance(S,0.5)){var big=R.filter(function(w){return holdLvl(P,w.id)===0&&!inFeud(S,w.id);}).sort(function(a,b){return b.wage-a.wage;})[0];
+      if(big){news(S,'contract',P.name+' can no longer afford '+big.name+', who is a free agent.');P.nrel=(P.nrel||0)+1;leaveCompany(S,big,'released');big.cut={w:S.week,from:pid,img:P.image};big.promo='FA';big.brand=null;return;}}
+    if(!M.fit||R.length<Math.max(14,(P.size0||R.length)-3)||!chance(S,0.2*(M.turn||1)))return;
     // let go of whoever is worth least to this company relative to their standing: never a champion, a team half or anyone mid-feud
-    var G=mainG(S,P),c=R.filter(function(w){return holdLvl(P,w.id)===0&&w.team==null&&w.inj<=0&&!inFeud(S,w.id)&&S.week-(w.jw||0)>=26&&!(w.g!==G&&R.filter(function(x){return x.g===w.g;}).length<=6);});
+    var G=mainG(S,P),c=R.filter(function(w){return holdLvl(P,w.id)===0&&w.team==null&&w.inj<=0&&!inFeud(S,w.id)&&S.week-(w.jw||0)>=26&&R.filter(function(x){return x.g===w.g;}).length>6;});
     if(!c.length)return;
     var res=function(x){return fitFor(S,P,x)-x.ovr;},all=R.map(res).sort(function(a,b){return a-b;}),med=all[Math.floor(all.length/2)];
     c.sort(function(a,b){return res(a)-res(b);});
     var w=c[0];if(res(w)>med-5)return;
     news(S,'contract',P.name+' released '+w.name+'.'+(w.ovr>=60?' '+pick(S,['Not what that company is looking for.','A good hand who never fitted the system there.','Somebody else is going to be glad of that.']):''));
-    leaveCompany(S,w,'released');w.cut={w:S.week,from:pid,img:P.image};w.promo='FA';w.brand=null;w.morale=clamp(w.morale-10,20,100);
+    P.nrel=(P.nrel||0)+1;leaveCompany(S,w,'released');w.cut={w:S.week,from:pid,img:P.image};w.promo='FA';w.brand=null;w.morale=clamp(w.morale-10,20,100);
   });
 });
 
