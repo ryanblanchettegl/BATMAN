@@ -21,11 +21,12 @@ function Promo() {
     <div class="promo">
       <Field label="Who opens the show?"><Sel id="plan-sp" t="plan" d={{ k: 'sp' }} value={pl ? pl.sp : ''} onChange={v => setPlan('sp', v)}
         options={[['', 'Nobody. Leave it to the writers'], ...L.map((w: any) => [w.id, w.name + ' · mic ' + w.mic] as Opt)]} /></Field>
+      {pl && <Field label="What kind?"><Sel id="plan-kind" t="plan" d={{ k: 'kind' }} value={pl.kind || 'interview'} onChange={v => setPlan('kind', v)} options={Object.keys(E.PKIND).map(k => [k, E.PKIND[k].n] as Opt)} /></Field>}
       {pl && <Field label="About what?"><Sel id="plan-topic" t="plan" d={{ k: 'topic' }} value={pl.topic} onChange={v => setPlan('topic', v)} options={Object.keys(E.TOPIC).map(k => [k, E.TOPIC[k].n] as Opt)} /></Field>}
       {pl && <Field label="How?"><Sel id="plan-del" t="plan" d={{ k: 'del' }} value={pl.del} onChange={v => setPlan('del', v)} options={Object.keys(E.DELIV).map(k => [k, E.DELIV[k].n] as Opt)} /></Field>}
     </div>
     {pl && o ? <>
-      <p class="muted mt2">{E.DELIV[pl.del].d} {o.why}.</p>
+      <p class="muted mt2">{E.PKIND[pl.kind || 'interview'].d} {E.DELIV[pl.del].d} {o.why}.</p>
       <CheckLine label={'Delivery (up to ' + o.cap + ' of 10)'} ck={o.ck} />
       <p>Content <b>{o.content}</b> {'·'} Character <b>{o.character}</b> {'·'} Crowd <b>{o.crowd}</b> <span class="muted">out of 10</span></p>
     </> : <p class="muted mt2">Pick someone and you choose the subject and how tightly it is scripted. It is scored on delivery, content, character and crowd, and it counts toward the show.</p>}

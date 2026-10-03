@@ -3308,7 +3308,18 @@ var DELIV={
   notes:{n:'Bullet points',t:7,cap:9,d:'The usual way.'},
   cuff:{n:'Off the cuff',t:9,cap:10,d:'The best promos are made this way. So are the worst.'}
 };
-function promoParts(S,P,w,topic){
+/* ---------- 27. Promo kinds: seven ways to run the segment, each on different skills and each going wrong in its own way ---------- */
+var PKIND={
+  interview:{n:'Interview',skill:'Charisma',d:'The usual. Charisma carries it.',fail:'The questions go nowhere.'},
+  challenge:{n:'Challenge',skill:'Charisma',d:'Needs a live feud. A good one adds extra heat. Without a feud it just sounds loud.',fail:'The challenge falls flat and the crowd laughs.'},
+  brawl:{n:'Brawl',skill:'Fighting skill',d:'Words give way to fists. Fighting skill and a hot feud carry it. A bad one hurts somebody.',fail:'It turns into a real fight.'},
+  signing:{n:'Contract signing',skill:'Charisma',d:'Needs a hot feud. Success sets up the match; the heat goes up.',fail:'Neither of them will sign, and the table stays standing.'},
+  vignette:{n:'Taped vignette',skill:'Gimmick and presence',d:'Safe and tight. It cannot get great marks, and it cannot go wrong.',fail:'The tape looks cheap.'},
+  sitdown:{n:'Sit-down interview',skill:'Charisma',d:'Calm and story-led. Best right after something has happened to them.',fail:'It drags.'},
+  celebration:{n:'Celebration',skill:'Charisma',d:'For a champion or somebody on a run. Anyone else looks silly.',fail:'Nobody came to the party.'}
+};
+E.PKIND=PKIND;
+function promoParts(S,P,w,topic,kind){
   var f=feudsFor(S,w.id).filter(function(x){return x.promo===P.id;}).sort(function(a,b){return b.heat-a.heat;})[0],rv=f?S.w[(f.a.indexOf(w.id)>=0?f.b:f.a)[0]]:null;
   var C=5,why='',heel=w.align==='H',fit=7;
   if(topic==='rival'){C=f?Math.min(10,Math.round(6+f.heat/25)):3;why=f?'There is a live feud with '+rv.name+' to talk about':'Nobody to aim it at';fit=heel?9:7;}
@@ -3323,12 +3334,20 @@ function promoParts(S,P,w,topic){
     var hot=(w.lt&&S.week-w.lt.w<=8)||(w.tw&&S.week-w.tw<=6)||(w.rw&&S.week-w.rw<=3)||w.ws>=4||w.ws<=-3||w.deb;
     C=hot?9:5;why=hot?'Something has just happened to them worth talking about':'Nothing new in their story right now';fit=heel?6:9;
   }
+  kind=PKIND[kind]?kind:'interview';
+  if(kind==='challenge'||kind==='signing'){if(!f){C=Math.min(C,3);why='A '+PKIND[kind].n.toLowerCase()+' needs a feud to aim at';}else{C=Math.min(10,Math.max(C,Math.round(5+f.heat/22)));if(kind==='signing'&&f.heat<50){C=Math.min(C,5);why='The feud is not hot enough to sell a signing yet';}}}
+  else if(kind==='brawl'){C=f?Math.min(10,Math.round(5+f.heat/20)):4;why=f?'A feud with '+rv.name+' is ready to turn physical':'Nobody to fight';}
+  else if(kind==='celebration'){var win=holdLvl(P,w.id)>0||w.ws>=3;C=win?8:3;why=win?'There is something to celebrate':'Nothing to celebrate yet';}
+  else if(kind==='vignette'){C=6;why='Taped and tight';}
+  else if(kind==='sitdown'){var hot2=(w.lt&&S.week-w.lt.w<=8)||(w.tw&&S.week-w.tw<=6)||(w.rw&&S.week-w.rw<=3)||w.ws>=4||w.ws<=-3||w.deb;C=hot2?9:5;why=hot2?'Something has just happened to them worth talking about':'Nothing new in their story right now';}
   var Ch=clamp(Math.round(0.5*gimFit(w)/10+0.5*fit),1,10);
-  return {f:f,rv:rv,C:C,why:why,Ch:Ch,Cr:clamp(Math.round(0.07*w.ovr+0.03*w.cha+w.mom*0.3),1,10)};
+  return {f:f,rv:rv,C:C,why:why,Ch:Ch,Cr:clamp(Math.round(0.07*w.ovr+0.03*w.cha+w.mom*0.3),1,10),kind:kind};
 }
-function promoCheck(S,w,del){
-  var D=DELIV[del]||DELIV.notes,m=micOf(S,w);
-  return mkCheck(D.t,[{n:(hasMouthpiece(S,w)?'A mouthpiece does the talking: charisma ':'Charisma ')+Math.round(m),v:m>=85?2:(m>=70?1:(m<50?-1:0))},{n:'The gimmick fits',v:gimFit(w)>=80?1:0},moraleMod(w)].concat(skillMods(S,'creative')));
+function promoCheck(S,w,del,kind){
+  var D=DELIV[del]||DELIV.notes,m=micOf(S,w),label=hasMouthpiece(S,w)?'A mouthpiece does the talking: charisma ':'Charisma ',t=D.t;
+  if(kind==='brawl'){m=w.brawl*0.7+w.cha*0.3;label='Fighting skill ';}
+  else if(kind==='vignette'){m=gimFit(w)*0.6+w.cha*0.4;label='Gimmick and presence ';t=Math.max(3,D.t-2);}
+  return mkCheck(t,[{n:label+Math.round(m),v:m>=85?2:(m>=70?1:(m<50?-1:0))},{n:'The gimmick fits',v:gimFit(w)>=80?1:0},moraleMod(w)].concat(skillMods(S,'creative')));
 }
 E.TOPIC=TOPIC;E.DELIV=DELIV;
 E.promoBrief=function(S){
@@ -3337,17 +3356,18 @@ E.promoBrief=function(S){
 };
 E.promoOdds=function(S,plan){
   var P=S.promos[S.player],w=plan&&S.w[plan.sp];if(!w)return null;
-  var pp=promoParts(S,P,w,plan.topic),ck=promoCheck(S,w,plan.del);
-  return {ck:ck,content:pp.C,why:pp.why,character:pp.Ch,crowd:pp.Cr,rival:pp.rv?pp.rv.name:null,cap:(DELIV[plan.del]||DELIV.notes).cap};
+  var pp=promoParts(S,P,w,plan.topic,plan.kind),ck=promoCheck(S,w,plan.del,plan.kind);
+  return {kind:pp.kind,ck:ck,content:pp.C,why:pp.why,character:pp.Ch,crowd:pp.Cr,rival:pp.rv?pp.rv.name:null,cap:(DELIV[plan.del]||DELIV.notes).cap};
 };
-E.setPlan=function(S,plan){S.plan=plan&&S.w[plan.sp]?{sp:+plan.sp,topic:TOPIC[plan.topic]?plan.topic:'crowd',del:DELIV[plan.del]?plan.del:'notes'}:null;};
+E.setPlan=function(S,plan){S.plan=plan&&S.w[plan.sp]?{sp:+plan.sp,topic:TOPIC[plan.topic]?plan.topic:'crowd',del:DELIV[plan.del]?plan.del:'notes',kind:PKIND[plan.kind]?plan.kind:'interview'}:null;};
 function planPromo(S,P,show,ctx){
   var pl=S.plan;S.plan=null;if(!pl)return null;var w=S.w[pl.sp];if(!w||!ctx.inP[w.id])return null;
-  var pp=promoParts(S,P,w,pl.topic),D0=DELIV[pl.del],r=rollCheck(S,promoCheck(S,w,pl.del)),mg=r.total-r.target;
-  var D=r.ok?Math.min(D0.cap,7+mg):Math.max(2,5+mg),ov=clamp(Math.round(10*(0.35*D+0.25*pp.C+0.2*pp.Ch+0.2*pp.Cr)),5,99);
+  var kind=PKIND[pl.kind]?pl.kind:'interview',pp=promoParts(S,P,w,pl.topic,kind),D0=DELIV[pl.del],r=rollCheck(S,promoCheck(S,w,pl.del,kind)),mg=r.total-r.target;
+  var D=r.ok?Math.min(D0.cap,7+mg):Math.max(2,5+mg),ov=clamp(Math.round(10*(0.35*D+0.25*pp.C+0.2*pp.Ch+0.2*pp.Cr)),5,kind==='vignette'?78:99);
   ctx.angled[w.id]=1;
   var who=hasMouthpiece(S,w)?S.w[w.mgr].name+', speaking for '+w.name+',':w.name;
-  var text=who+' opens the show '+(pl.topic==='rival'?(pp.rv?'and goes after '+pp.rv.name:'looking for a fight and finding nobody'):(pl.topic==='title'?'and talks about championship gold':(pl.topic==='crowd'?'and plays to the crowd':'and tells the people where things stand')))+', '+(pl.del==='script'?'word for word from the script':(pl.del==='notes'?'working from a few bullet points':'with no script at all'))+'. '+
+  var KT={challenge:pp.rv?' and issues a challenge to '+pp.rv.name:' and issues a challenge to anybody listening',brawl:pp.rv?' and the talking stops: it turns into a brawl with '+pp.rv.name:' and picks a fight with a ringside barrier',signing:pp.rv?' and sits down with '+pp.rv.name+' for a contract signing':' and sits down to sign a contract with nobody',vignette:' and a taped vignette plays on the screens',sitdown:' and sits down for a quiet interview',celebration:' and celebrates in the middle of the ring'};
+  var text=kind!=='interview'?who+' opens the show'+KT[kind]+'. '+(r.ok?(D>=9?'Every line lands.':'It does the job.'):PKIND[kind].fail):who+' opens the show '+(pl.topic==='rival'?(pp.rv?'and goes after '+pp.rv.name:'looking for a fight and finding nobody'):(pl.topic==='title'?'and talks about championship gold':(pl.topic==='crowd'?'and plays to the crowd':'and tells the people where things stand')))+', '+(pl.del==='script'?'word for word from the script':(pl.del==='notes'?'working from a few bullet points':'with no script at all'))+'. '+
     (r.ok?(D>=9?'Every line lands.':'It does the job.'):(pl.del==='cuff'?'It wanders, and the crowd drifts.':'The delivery is flat.'));
   addOvr(P,w,clamp((ov-w.ovr)/30,-1,1.5));
   var extra='';
@@ -3355,12 +3375,19 @@ function planPromo(S,P,show,ctx){
   else if(pl.topic==='title'&&pp.C>=8&&holdLvl(P,w.id)===0)w.pts=(w.pts||0)+3;
   else if(pl.topic==='crowd'&&ov>=70)w.mom=clamp(w.mom+1,-10,10);
   else if(pl.topic==='story'&&ov>=70)w.morale=clamp(w.morale+3,0,100);
+  // each kind pays and fails in its own way
+  if(kind==='challenge'&&pp.f){heatUp(S,pp.f,r.ok?clamp((ov-45)/5,2,10):-2,w.name+' issued a challenge to '+pp.rv.name);ctx.angled[pp.rv.id]=1;extra+=r.ok?' '+pp.rv.name+' will have to answer.':'';}
+  else if(kind==='challenge'&&!pp.f&&r.ok){var ch=ctx.pool.filter(function(x){return x.id!==w.id&&x.g===w.g&&Math.abs(x.ovr-w.ovr)<=12&&!inFeud(S,x.id);});if(ch.length&&startFeud(S,P,pick(S,ch),w,30,w.name+' issued an open challenge'))extra+=' Somebody answered.';}
+  else if(kind==='brawl'&&pp.f){heatUp(S,pp.f,r.ok?clamp((ov-40)/6,2,9):3,w.name+' and '+pp.rv.name+' came to blows');ctx.angled[pp.rv.id]=1;if(!r.ok&&chance(S,0.35)){var hurt=chance(S,0.5)?w:pp.rv;hurt.inj=Math.max(hurt.inj,ri(S,1,3));extra+=' '+hurt.name+' was hurt in it.';}}
+  else if(kind==='signing'&&pp.f){heatUp(S,pp.f,r.ok?8:(pp.f.heat>=50?3:0),w.name+' and '+pp.rv.name+' faced off at a contract signing');ctx.angled[pp.rv.id]=1;extra+=r.ok?' The match is made for the next big event.':' The table is overturned and nobody signs.';}
+  else if(kind==='celebration'&&r.ok&&holdLvl(P,w.id)>0){P.titles.forEach(function(t){if(t.holders.indexOf(w.id)>=0)t.prestige=clamp(t.prestige+0.8,10,100);});}
+  else if(kind==='sitdown'&&r.ok&&pp.C>=9)w.morale=clamp(w.morale+3,0,100);
   if(!r.ok&&pl.del==='cuff'&&chance(S,0.4)){
     var cs=ctx.pool.filter(function(x){return x.id!==w.id&&x.g===w.g&&Math.abs(x.ovr-w.ovr)<=10&&!feudOf(S,w.id,x.id)&&(w.team==null||x.team!==w.team);});
     if(cs.length){var tg=pick(S,cs);if(startFeud(S,P,tg,w,30,w.name+' took an unscripted shot at '+tg.name))extra=' An unscripted remark about '+tg.name+' has started something.';}
   }
   if(ov>=80)gainXp(S,3);if(ov>=85)award(S,'ACH_PROMO');
-  var seg=angle('Opening promo',text+extra,ov);
+  var seg=angle(kind==='interview'?'Opening promo':'Opening '+PKIND[kind].n.toLowerCase(),text+extra,ov);
   seg.rub={d:D,c:pp.C,ch:pp.Ch,cr:pp.Cr};seg.roll=r;seg.who=w.name;if(pp.f&&pl.topic==='rival')seg.feud=pp.f.id;
   seg.bc=[{t:'note',x:text+extra},{t:'note',x:rollText(r)+'Delivery '+D+', content '+pp.C+', character '+pp.Ch+', crowd '+pp.Cr+' out of 10.'},{t:'col',x:ov>=80?'That is how you open a show.':(ov>=60?'A solid start to the night.':'Well. We have a long show ahead of us to make up for that.')}];
   return seg;

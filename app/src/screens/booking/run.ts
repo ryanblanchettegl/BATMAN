@@ -54,9 +54,9 @@ export function setMatch(i: number, c: string, v: string, at?: { s: number; p?: 
   });
 }
 /** The opening promo: who speaks, about what, and how tightly scripted. */
-export function setPlan(k: 'sp' | 'topic' | 'del', v: string) {
+export function setPlan(k: 'sp' | 'topic' | 'del' | 'kind', v: string) {
   act(() => {
-    const S = G.S; let pl: any = Object.assign({ sp: null, topic: 'crowd', del: 'notes' }, S.plan);
+    const S = G.S; let pl: any = Object.assign({ sp: null, topic: 'crowd', del: 'notes', kind: 'interview' }, S.plan);
     if (k === 'sp') { if (v === '') pl = null; else pl.sp = +v; } else pl[k] = v;
     E.setPlan(S, pl);
   });

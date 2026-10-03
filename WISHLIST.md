@@ -49,7 +49,7 @@ Things that would make the game deeper. Each one adds a system, a choice or a me
 
 - [ ] **25. Storyline templates with beats.** The system in TASKS 2: roles, a cost in booking power, beats over weeks, a payoff and a way to backfire. *L. (TASKS 2)*
 - [x] **26. The long plan.** Pencil in the flagship main event months ahead. The game tracks whether each show builds toward it and pays a bonus when a plan made early is paid off. Changing the plan late costs. *M. Builds on `E.setPlan`.*
-- [ ] **27. Promo kinds.** Interview, challenge, brawl, contract signing, taped vignette, sit-down, celebration. Each uses different skills and fails in its own way. *M. (TASKS 3)*
+- [x] **27. Promo kinds.** Interview, challenge, brawl, contract signing, taped vignette, sit-down, celebration. Each uses different skills and fails in its own way. *M. (TASKS 3)*
 - [x] **28. Catchphrases.** A promo that lands can coin a catchphrase from a word list. It lifts pops and merchandise until it is overused. *S.*
 - [x] **29. Titles have prestige.** Prestige rises with good defences and credible reigns. It falls with quick changes and champions losing non-title matches. A prestigious title lifts every match it is in. *M. Check `E.showTitles` first.*
 - [x] **30. Contender ladders.** A ranked top five per title, earned by wins. A challenger who earned the shot lifts the match. Jumping the queue costs most in the purist and tradition models. *M. Builds on `E.rankFor`.*
