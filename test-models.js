@@ -44,5 +44,17 @@ const R = {};
   const v = E.validateUniverse(pkg), w = v.warnings.map(x => x.msg).join(' | ');
   ok('kjp', 'a man and a men\'s title in the joshi promotion draw warnings', /signs only women/.test(w) && /men's title in a Joshi/.test(w), w.slice(0, 160));
 }
+{ // a very small all-women roster still gets a full suggested card
+  const S = E.newGame('kjp', 3, { name: 'R' }), keep = E.rosterOf(S, 'kjp').filter(w => w.g === 'F' && !w.nw).sort((a, b) => b.ovr - a.ovr).slice(0, 12).map(w => w.id);
+  E.rosterOf(S, 'kjp').forEach(w => { if (!w.nw && keep.indexOf(w.id) < 0) { w.promo = 'FA'; w.con = 0; } });
+  let min = 99, shows = 0;
+  for (let wk = 0; wk < 20 && !S.over; wk++) {
+    S.inbox.filter(e => !e.done).forEach(e => E.resolveEvent(S, e.id, 1));
+    if (S.owner.pending) E.setCreed(S, { style: 'merit', roots: 'tradition', pledge: 'stable' });
+    while (S.qi < S.queue.length) { const c = E.suggest(S), pr = E.preShow(S, c); if (pr) E.resolvePre(S, c, 0); min = Math.min(min, c.length); shows++; if (E.validate(S, c).errors.length) { S.qi++; continue; } E.runPlayerShow(S, c); }
+    E.endWeek(S);
+  }
+  ok('kjp', 'twelve wrestlers still fill a card of at least three matches', min >= 3, 'smallest card ' + min + ' over ' + shows + ' shows');
+}
 if (fails.length) { console.log('FAILED: ' + fails.length); process.exit(1); }
 console.log('test-models: all passed');
