@@ -2,10 +2,10 @@
 import { ComponentChildren } from 'preact';
 import { useRef } from 'preact/hooks';
 import { E } from '../../engine';
-import { G, ui, pref, Modal, VER, UNIS, saveUnis, savePrefs, setUniverse, builtInUniverse, loadSave, cash, view, redraw, openModal, plural } from '../../store';
+import { G, ui, pref, Modal, VER, UNIS, saveUnis, savePrefs, setUniverse, builtInUniverse, loadSave, cash, view, redraw, openModal, plural, slice } from '../../store';
 import { HOT, pageName } from '../../nav';
 import { autoScreen, skipBoot, onKey } from '../../input';
-import { startGame, continueGame } from '../../flow';
+import { startGame, continueGame, loadSaveText } from '../../flow';
 import { Btn, Panel, Head, Sel, Field, TextBox, Window, Data, dataAttrs } from '../../kit';
 import { MusicBtn } from '../../shell/Frame';
 import { ModelCard } from '../../shared/model';
@@ -201,6 +201,18 @@ function Help() {
     <div class="keys"><span><b>Arrows</b> move the highlight</span><span><b>OK / A</b> select</span><span><b>Back / B</b> go back</span><span><b>LB RB</b> change section</span><span><b>Start</b> options</span></div>
   </Window>;
 }
+/** Move a game between devices as text: copy it here, paste it there. */
+function SaveText() {
+  const sv = slice<{ mode: string; text: string; msg: string }>('savetext', () => ({ mode: '', text: '', msg: '' })), S = G.S;
+  const open = (m: string) => view(() => { sv.mode = sv.mode === m ? '' : m; sv.msg = ''; sv.text = m === 'copy' && S ? JSON.stringify(S) : ''; });
+  return <div class="mt2">
+    <div class="row">{S ? <Btn kind="sm" t="save-copy" on={sv.mode === 'copy'} onClick={() => { open('copy'); copyText(JSON.stringify(S), 'save-text', () => view(() => { sv.msg = 'Copied. Paste it into the same window on your other device.'; })); }}>Copy my save</Btn> : null}
+      <Btn kind="sm" t="save-paste" on={sv.mode === 'paste'} onClick={() => open('paste')}>Paste a save</Btn></div>
+    {sv.mode ? <><textarea id="save-text" class="savebox mt1" rows={4} readOnly={sv.mode === 'copy'} placeholder="Paste the text of a save here" value={sv.text} onInput={e => { sv.text = (e.currentTarget as HTMLTextAreaElement).value; }} />
+      {sv.mode === 'paste' ? <div class="row mt1"><Btn kind="sm" t="save-load" onClick={() => { const m = loadSaveText(sv.text); view(() => { if (m) sv.msg = m; else { sv.mode = ''; ui.modal = null; } }); }}>Load this save</Btn><span class="muted">This replaces the game you are playing.</span></div> : null}
+      {sv.msg ? <p class={sv.mode === 'paste' ? 'bad' : 'good'}>{sv.msg}</p> : null}</> : null}
+  </div>;
+}
 function Options() {
   const S = G.S;
   const toggle = (k: 'snd' | 'type' | 'crt' | 'boot', n: string, d: string) => <li><span><b>{n}</b><br /><span class="muted">{d}</span></span>
@@ -223,6 +235,7 @@ function Options() {
       {choice('zoom', 'Text size', 'Scales everything on screen.', [[0.85, 'Small'], [1, 'Normal'], [1.2, 'Large'], [1.45, 'Largest']])}
     </ul>
     <div class="row mt2"><Btn kind="sm" t="fullscreen" onClick={fs}>Full screen on or off</Btn></div>
+    <SaveText />
     {S && <div class="row mt2"><Btn kind="danger" t="newgame" onClick={() => view(() => { ui.confirm = 'new'; ui.modal = null; window.scrollTo(0, 0); })}>Start a new game</Btn><span class="muted">Asks before erasing anything.</span></div>}
   </Window>;
 }

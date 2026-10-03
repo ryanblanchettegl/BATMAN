@@ -19,6 +19,12 @@ export function startGame(pid: string | null, opts: { name: string; diff: string
 /** Fired bookers take a job elsewhere and keep their level and skills. */
 export function takeJob(pid: string) { const S = G.S, bk = S.booker; G.S = E.newGame(pid, seed(), { name: bk.name, booker: bk, diff: S.diff }); resetUi(); save(); redraw(); window.scrollTo(0, 0); }
 export function continueGame() { const sv = loadSave(); if (sv) { G.S = sv; resetUi(); E.attach(G.S); } redraw(); }
+/** Load a save pasted as text. Returns a message if it cannot be used, else null. */
+export function loadSaveText(text: string): string | null {
+  let o: any; try { o = JSON.parse(text); } catch (e) { return 'That is not a save. It should be the long block of text from Copy my save.'; }
+  if (!o || o.v !== 4 || !o.promos || !o.w || !o.player) return 'That text is not an EWF 9000 save, or it is from a version this game cannot read.';
+  G.S = o; resetUi(); E.attach(G.S); save(); redraw(); return null;
+}
 export function abandonGame() { clearSave(); G.S = null; resetUi({ scr: 'select' }); setUniverse(pref.uni || 'public_domain'); redraw(); }
 
 /** Close the week, go back to the desk and show the week-closed window. */
