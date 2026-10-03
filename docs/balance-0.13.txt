@@ -1,0 +1,15 @@
+EWF 9000 balance table. 100 weeks, seeds 3, 7, 11, suggested cards, The Public Domain Universe.
+Autopilot: the suggested card every show; inbox answers as in test-uni.js. Figures are means over the seeds; "min" is the worst seed.
+
+company model       cash start  cash end pop start pop end  r-exp trust end trust min weeks min  roster  FA 40+  FA all  save KB  ended
+whw     corporate       110.0M    158.1M      88.0    96.2   0.46       100        55       100      55      55     145     1249  -
+pdw     workrate         32.0M     54.6M      72.0    75.8  -0.27        98        51       100      50      12     100     1221  -
+ocw     purist            9.0M     73.0M      60.0    62.9  -0.24        98        55       100      55      14      71     1218  -
+pdp     outlaw            3.5M     31.7M      48.0    52.4  -0.07        95        55       100      28       8      73     1215  -
+ttt     underdog          2.2M     22.5M      40.0    44.7  -0.33        87        43       100      42      13      98     1206  -
+nmw     startup          30.0M     -0.8M      52.0    47.7   0.06        97        45       100      26      12      87     1192  -
+ldd     spectacle        14.0M     55.2M      56.0    62.9   0.12        99        53       100      33      26     114     1226  -
+lta     tradition        12.0M     37.1M      50.0    54.2  -0.08        97        43       100      34      11      80     1217  -
+kjp     joshi             4.5M     21.6M      46.0    48.2  -0.15       100        55       100      19      21     114     1180  -
+
+No validation errors and no bad numbers in any run.
