@@ -101,3 +101,18 @@ CRX.push(function(ctx){
   return who.length?{d:Math.min(2,d),x:'The crowd chants '+who[0]+'’s catchphrase with them'}:null;
 });
 POST.push(function(ctx){if(ctx.S.cal)return;ctx.all.forEach(function(w){if(w.cphrase)w.cphrase.n++;});});
+
+/* debuts with a build: teaser vignettes before a newcomer's first match. A hyped debut starts hot; an over-hyped one that flops costs more than no hype */
+CRX.push(function(ctx){
+  var d=0,who=[];ctx.all.forEach(function(w){if(w.deb&&w.hy){d+=1.3*w.hy;who.push(w);}});
+  ctx.debuts=who;
+  return who.length?{d:Math.min(4,d),x:who[0].name+'’s debut has been talked up for weeks'}:null;
+});
+POST.push(function(ctx){
+  var S=ctx.S,seg=ctx.res.seg;if(S.cal||!ctx.debuts||!ctx.debuts.length)return;
+  ctx.debuts.forEach(function(w){
+    var hy=w.hy;w.hy=0;
+    if(seg.ov<62&&hy>=2){w.morale=clamp(w.morale-8,0,100);ctx.P.image=clamp(ctx.P.image-0.25*hy,5,100);seg.notes.push(w.name+' was sold as the next big thing and the debut did not deliver. The crowd feels cheated.');if(ctx.isPl)news(S,'story',w.name+'’s debut flopped after weeks of hype.');}
+    else if(seg.ov>=72){w.mom=clamp(w.mom+2,-10,10);addOvr(ctx.P,w,0.6*hy);seg.notes.push(w.name+' arrives hot. The weeks of teasers paid off.');if(ctx.isPl)news(S,'story',w.name+' made a hot debut.');}
+  });
+});

@@ -102,6 +102,7 @@ function apActs(S,pl){
     L.push({id:'attack',n:'Stage a sneak attack',d:'The first wrestler jumps the second. Starts a rivalry, or pours fuel on one they already have.',need:'pair',same:true,ck:mkCheck(7,skillMods(S,'creative'))});
   }else if(pl==='truck'){
     L.push({id:'meet',n:'Sit in on the production meeting',d:'Your next show looks sharper. Better still if your ideas land.',ck:mkCheck(7,skillMods(S,'creative'))});
+    L.push({id:'tease',n:'Shoot a teaser vignette',d:'For a newcomer who has not appeared yet. Each teaser builds hype for the debut, up to three. A hyped debut starts hot, but a weak one that was over-hyped costs you.',need:'w'});
     L.push({id:'hype',n:'Cut a hype package',d:'A video for the top of the show. More people in the building next time.'});
   }
   return L;
@@ -132,6 +133,8 @@ E.apDo=function(S,pl,act,o){
   else if(act==='rounds'){var st=rosterOf(S,P.id).filter(function(w){return !w.nw;}).sort(function(x,y){return (y.stress||0)-(x.stress||0);}).slice(0,3);
     st.forEach(function(w){stressAdd(S,w,ok?-12:-4);});if(ok)S.trust=clamp(S.trust+1,0,100);msg=ok?'You listen more than you talk. '+names(st)+' leave the table lighter.':'They are polite about it. Nobody says what is really on their mind.';}
   else if(act==='pep'){S.pep=showKey(S)||('next');if(!S.queue[S.qi])S.pep=null;msg=S.pep?'You have the room. Expect more effort on '+S.queue[S.qi].name+'.':'There is no show left this week to fire them up for.';if(!S.pep)return {ok:false,msg:msg};}
+  else if(act==='tease'){if(!a.deb||a.hy>=3)return {ok:false,msg:a.deb?a.name+' already has all the hype a debut can carry.':a.name+' has already appeared on the shows. Pick a newcomer.'};
+    a.hy=(a.hy||0)+1;msg='A dark, grainy teaser for '+a.name+' airs on the next show. Hype for the debut: '+a.hy+' of 3.'+(a.hy>=3?' Any more would be too much.':'');}
   else if(act==='attack'){
     var f=feudOf(S,a.id,b.id);
     if(f){heatUp(S,f,ok?12:5,a.name+' jumped '+b.name+' in the parking lot');msg=ok?'It makes the news. The rivalry is hotter for it.':'The camera missed most of it, but word gets round.';}
