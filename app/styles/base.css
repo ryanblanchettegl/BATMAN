@@ -436,3 +436,4 @@ html[data-screen="desk"] .selrow .det{position:sticky;top:3em;margin-top:10px}
 html[data-music="on"] .mus::after{content:' on';color:var(--dgreen)}
 html[data-music="off"] .mus::after{content:' off';color:var(--dred)}
 .savebox{width:100%;box-sizing:border-box;font-family:inherit;font-size:.8em;background:var(--k);color:var(--green);border:1px solid var(--grey)}
+.gloss dt{margin-top:.5em}.gloss dd{margin:0 0 .3em}.gloss .on dt b{background:var(--k);color:var(--yellow);padding:0 .5ch}

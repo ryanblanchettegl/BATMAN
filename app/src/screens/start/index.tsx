@@ -1,6 +1,6 @@
 /* Before the game: boot sequence, title card, Select Promotion, the first-day screens, and the Help and Options windows. */
 import { ComponentChildren } from 'preact';
-import { useRef } from 'preact/hooks';
+import { useEffect, useRef } from 'preact/hooks';
 import { E } from '../../engine';
 import { G, ui, pref, Modal, VER, UNIS, saveUnis, savePrefs, setUniverse, builtInUniverse, loadSave, cash, view, redraw, openModal, plural, slice } from '../../store';
 import { HOT, pageName } from '../../nav';
@@ -117,6 +117,23 @@ function PickRow(p: { k: string; table: Record<string, any>; cur: string; label:
     <p class="muted mt1 mb2">{p.table[p.cur].d || ''}</p></>;
 }
 /** The long explanation lives behind a button so the first-day screen stays short. */
+/* ---------- the glossary: the words the game uses ---------- */
+const WORDS: [string, string, string][] = [
+  ['overness', 'Overness', 'How much the crowd cares about a wrestler, from 0 to 100. The higher it is, the more a wrestler draws and the more their wins and losses matter.'],
+  ['heat', 'Heat', 'How hot a rivalry is, from 0 to 100. Heat builds from promos, ambushes and matches between the two. A feud at 60 or more is ready for a big finish.'],
+  ['workrate', 'Work rate', 'How good a wrestler is in the ring: brawling, technical skill and speed together. It lifts match quality, but the crowd also needs a reason to care.'],
+  ['momentum', 'Momentum', 'Whether a wrestler is hot or cold right now. Wins and big moments raise it, losses lower it. A hot wrestler gets the benefit of the doubt on the night.'],
+  ['bp', 'Booking power', 'What you spend to call a finish yourself. The owner grants some each week. The favourite costs 1, an underdog 2, a long shot 3, and a title change 1 more.'],
+  ['prestige', 'Prestige', 'How much a title is worth, from 10 to 100. Good title matches raise it. A title with high prestige adds to the matches that carry it.']
+];
+function Glossary(p: { m: Modal }) {
+  useEffect(() => { const el = p.m.term && document.getElementById('gl-' + p.m.term); if (el) el.scrollIntoView({ block: 'nearest' }); }, []);
+  return <Window title="Glossary" ok="Got it">
+    <dl class="gloss">{WORDS.map(w => <div key={w[0]} id={'gl-' + w[0]} class={p.m.term === w[0] ? 'on' : undefined}><dt><b>{w[1]}</b></dt><dd>{w[2]}</dd></div>)}</dl>
+  </Window>;
+}
+/** A word that opens the glossary at its entry. */
+function Term(p: { id: string; children: any }) { return <button type="button" class="lnk" data-t="term" data-id={p.id} onClick={() => openModal({ kind: 'glossary', term: p.id })}>{p.children}</button>; }
 function HowBtn(p: { body: () => any }) { return <div class="row mb4"><Btn t="how" onClick={() => openModal({ kind: 'info', title: 'How it works', body: p.body })}>How it works</Btn></div>; }
 function DiffPanel() { const s = ui.setup!; return <Panel cls="mb4" title="Difficulty"><PickRow k="diff" table={E.DIFF} cur={s.diff || 'normal'} label="How hard a job is it?" set={v => { s.diff = v; }} /></Panel>; }
 function Begin(p: { label: string; block?: string }) {
@@ -175,6 +192,7 @@ export function Setup() {
       <p class="mt1">Each week {o.name} grants you <b>booking power</b>. Spend it to call a finish: 1 point for the favourite, 2 for an underdog, 3 for a long shot, and 1 more to change a title.</p>
       <p class="mt1">Good shows and met directives raise the owner{'’'}s trust, which raises your allowance. Lose that trust and you are out. Earn enough of it and the company is yours.</p>
     </>} />
+    <p class="muted mb2">Words used in the game: <Term id="overness">overness</Term>, <Term id="heat">heat</Term>, <Term id="workrate">work rate</Term>, <Term id="momentum">momentum</Term>, <Term id="bp">booking power</Term>, <Term id="prestige">prestige</Term>.</p>
     <DiffPanel />
     <Begin label="Take the job" />
   </div><div class="status"><span>Enter a name and take the job</span></div></div>;
@@ -197,6 +215,7 @@ function Help() {
     <p class="mt1"><b>Your company.</b> Each company runs on a model that changes what its crowd rewards and where its money comes from. Read it on the Company overview.</p>
     <p class="eyebrow mt2">Keys</p>
     <div class="keys">{Object.keys(HOT).map(k => <span><b>{k.toUpperCase()}</b> {pageName(HOT[k])}</span>)}<span><b>Enter</b> next line of a show</span><span><b>Esc</b> skip or close</span><span><b>F1</b> this window</span><span><b>F2</b> options</span></div>
+    <div class="row mt2"><Btn kind="sm" t="glossary" onClick={() => openModal({ kind: 'glossary' })}>Glossary of game words</Btn></div>
     <p class="eyebrow mt2">Remote or gamepad</p>
     <div class="keys"><span><b>Arrows</b> move the highlight</span><span><b>OK / A</b> select</span><span><b>Back / B</b> go back</span><span><b>LB RB</b> change section</span><span><b>Start</b> options</span></div>
   </Window>;
@@ -255,4 +274,4 @@ function UniReport(p: { m: Modal }) {
     {copy && <textarea id="modal-text" class="sr" readOnly value={p.m.text} />}
   </Window>;
 }
-export const modals: Record<string, (p: { m: Modal }) => ComponentChildren> = { help: Help, options: Options, unireport: UniReport };
+export const modals: Record<string, (p: { m: Modal }) => ComponentChildren> = { help: Help, glossary: Glossary, options: Options, unireport: UniReport };

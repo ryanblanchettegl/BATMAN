@@ -134,4 +134,4 @@ Each of these has a target. Use `test-uni.js` or a copy of it with several seeds
 - [x] **97.** Two or three commentary or crowd lines per model (an outlaw crowd, a sport-first crowd, a family crowd), used when the model's bonus or penalty fires.
 - [x] **98.** Read every promotion blurb, owner line and event name for anything that only made sense in a 1997 setting, now that the game starts in the present day.
 - [x] **99.** Five achievements tied to the models: survive two years as the startup, reach the outlaw's popularity ceiling, crown a ten-year veteran as champion in the traditional company, top the merchandise table with the all-women company, beat the board's plan four months running.
-- [ ] **100.** A glossary pop-up (overness, heat, work rate, momentum, booking power, prestige) opened from Help and from the words themselves on the first-day screen.
+- [x] **100.** A glossary pop-up (overness, heat, work rate, momentum, booking power, prestige) opened from Help and from the words themselves on the first-day screen.
