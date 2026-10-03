@@ -164,13 +164,30 @@ export function House() {
   </>;
 }
 
+/** The back catalogue: what it is worth, what it earns, and the two ways to cash it in. */
+function Tape() {
+  const S = G.S, t = E.tape(S);
+  const lic = () => act(() => { const r = E.licenseTape(S); say(r.text, { err: !r.ok }); showResult('Back catalogue', r.text, !r.ok); });
+  const sell = () => act(() => { const r = E.sellTape(S); say(r.text, { err: !r.ok }); showResult('Back catalogue', r.text, !r.ok); });
+  return <Panel title="Back catalogue">
+    <div class="kv"><div><small>Shows on tape</small><span class="num">{t.n}</span></div><div><small>Worth</small><span class="num">{cash(t.value)}</span></div><div><small>Earns</small><span class="num">{cash(t.weekly)} a week</span></div></div>
+    {t.licensed ? <p class="muted mt1">Licensed out for {t.licensed} more {plural(t.licensed, 'week')}.</p> : null}
+    {t.best.length ? <p class="muted mt1">Best of the library: {t.best.map((x: any) => x.n + ' (' + x.r + '%)').join(', ')}.</p> : <p class="muted mt1">Every show you run is filmed. Great shows are worth the most, and the value fades slowly.</p>}
+    <div class="row opts mt1">
+      <Btn kind="sm" t="tape-license" disabled={!!t.licensed || t.n < 8} onClick={lic}>License it: {cash(t.licenseFor)}</Btn>
+      <Btn kind="sm" t="tape-sell" disabled={t.n < 8} onClick={sell}>Sell it: {cash(t.sellFor)}</Btn>
+    </div>
+    <p class="muted mt1">Licensing pays a lump sum and halves your own streaming income for 26 weeks. Selling pays more and clears the library for good.</p>
+  </Panel>;
+}
+
 export function Deals() {
   const P = me();
   useKeepFocus();
   return <>
     <Head eyebrow={P.name} title="Deals" />
     <div class="cols">
-      <div class="stack"><Sponsors /><Offers /></div>
+      <div class="stack"><Sponsors /><Offers /><Tape /></div>
       <RivalsPanel />
     </div>
   </>;

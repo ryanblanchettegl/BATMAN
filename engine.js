@@ -5227,6 +5227,37 @@ E.ticketAdvice=function(S){
       :'For '+show.name+', '+TIXN[best].toLowerCase()+' prices would bring in about '+money(gain)+' more and leave '+rows[best].fill+'% of '+cap.toLocaleString('en-US')+' seats filled.'};
 };
 
+/* ---------- 50. The tape library: every show of yours joins a back catalogue (P.tape) that earns, can be licensed out, or sold in a crisis ---------- */
+function tapeValue(S,P){var v=0;(P.tape||[]).forEach(function(e){v+=e.v*Math.pow(0.992,S.week-e.w);});return v;}
+function tapeWeekly(S,P){return tapeValue(S,P)*0.0015*(P.tapeLic&&S.week<P.tapeLic?0.5:1);}
+SHOWX.push(function(S,P,show,rep){
+  if(S.cal||P.id!==S.player)return;
+  var L=P.tape||(P.tape=[]);L.push({w:S.week,n:show.name,r:Math.round(rep.rating),v:Math.round(P.inc0*Math.pow(rep.rating/100,3)*0.05)});
+  if(L.length>200)L.shift();
+  if(P.tapeW!==S.week){P.tapeW=S.week;P.led.bonus+=tapeWeekly(S,P);}   // once a week, whichever show goes first
+});
+E.tape=function(S){
+  var P=S.promos[S.player],L=P.tape||[],v=tapeValue(S,P);
+  return {n:L.length,value:Math.round(v),weekly:Math.round(tapeWeekly(S,P)),licensed:P.tapeLic&&S.week<P.tapeLic?P.tapeLic-S.week:0,
+    best:L.slice().sort(function(a,b){return b.v*Math.pow(0.992,S.week-b.w)-a.v*Math.pow(0.992,S.week-a.w);}).slice(0,3),
+    licenseFor:Math.round(v*0.12),sellFor:Math.round(v*0.55)};
+};
+E.licenseTape=function(S){
+  var P=S.promos[S.player],t=E.tape(S);
+  if(t.n<8)return {ok:false,text:'There is not enough back catalogue to license. Run more shows.'};
+  if(t.licensed)return {ok:false,text:'The library is already licensed out for '+t.licensed+' more weeks.'};
+  P.cash+=t.licenseFor;P.tapeLic=S.week+26;
+  news(S,'money','A network licensed your back catalogue for 26 weeks and paid '+money(t.licenseFor)+'.');
+  return {ok:true,text:'The library is licensed out for 26 weeks. You were paid '+money(t.licenseFor)+', and your own streaming income is halved while it lasts.'};
+};
+E.sellTape=function(S){
+  var P=S.promos[S.player],t=E.tape(S);
+  if(t.n<8)return {ok:false,text:'There is not enough back catalogue to sell.'};
+  P.cash+=t.sellFor;P.tape=[];P.tapeLic=0;P.tapeSold=(P.tapeSold|0)+1;
+  news(S,'money','You sold the back catalogue for '+money(t.sellFor)+'. The tapes belong to someone else now.');
+  return {ok:true,text:'Sold for '+money(t.sellFor)+'. The shows already made are gone, and the library starts again from today.'};
+};
+
 /* ===== 90-api.js ===== */
 /* ---------- roster moves ---------- */
 E.ask=function(S,w){var P=S.promos[S.player],MD=modelOf(P),m=(w.promo==='FA'?1:1.3)*talkDiscount(S);if(w.promo!=='FA'&&S.promos[w.promo].image>P.image+10)m+=0.25;
