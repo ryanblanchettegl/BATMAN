@@ -81,11 +81,27 @@ function Sponsors() {
   </Panel>;
 }
 
+/** One row showing where last week's income came from, with the company model's multipliers named under it. */
+function IncomeBar() {
+  const S = G.S, f = S.fin, M = E.modelOf(S);
+  if (!f) return null;
+  const src: [string, number, string, string][] = [['Television', f.tv, 'tv', 'tv'], ['Gate', f.gate, 'gate', 'gate'], ['Big events', f.ppv, 'ppv', 'ppv'], ['Merchandise', f.merch, 'merch', 'merch'], ['Sponsors', f.spons || 0, 'sp', 'sp']];
+  const tot = src.reduce((a, x) => a + Math.max(0, x[1]), 0);
+  if (tot <= 0) return null;
+  const odd = src.filter(x => Math.abs((M.mix[x[3]] || 1) - 1) >= 0.03);
+  return <Panel title={'Where week ' + f.w + ' income came from'}>
+    <div class="incbar" role="img" aria-label={src.map(x => x[0] + ' ' + Math.round(100 * x[1] / tot) + ' percent').join(', ')}>{src.map((x, i) => x[1] > 0 ? <i class={'s' + i} style={{ flexGrow: x[1] }} /> : null)}</div>
+    <ul class="incleg">{src.map((x, i) => <li><i class={'s' + i} /> {x[0]} <b class="num">{Math.round(100 * Math.max(0, x[1]) / tot)}%</b> <span class="muted">{cash(x[1])}</span></li>)}</ul>
+    <p class="muted mt1">{M.n}: {odd.length ? odd.map(x => x[0].toLowerCase() + ' pays ' + (M.mix[x[3]]).toFixed(2).replace(/0$/, '') + 'x').join(', ') + '.' : 'every source pays at the standard rate.'}</p>
+  </Panel>;
+}
+
 export function Overview() {
   const S = G.S, P = me();
   return <>
     <Head eyebrow={P.name} title="Company" />
     <Gauges />
+    <IncomeBar />
     <div class="cols">
       <div class="stack"><Panel title="How this company is run"><ModelCard id={P.model} /></Panel><Ownership /><Rules /></div>
       <div class="stack"><Setup /><Sponsors /></div>

@@ -419,3 +419,11 @@ html.nav .lnk:focus{outline:.16em solid var(--yellow);outline-offset:.08em}
 html[data-screen="desk"] .selrow{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:0 3ch;align-items:start}
 html[data-screen="desk"] .selrow .dbox{margin-inline:0;max-width:none}
 html[data-screen="desk"] .selrow .det{position:sticky;top:3em;margin-top:10px}
+
+/* income bar on the Company overview */
+.incbar{display:flex;gap:2px;height:1.1em;margin:6px 0}
+.incbar i,.incleg i{display:inline-block;background:#2a3590}
+.incbar i{min-width:3px}
+.incleg{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:0 3ch}
+.incleg i{width:1ch;height:1ch;vertical-align:baseline}
+.incbar .s0,.incleg .s0{background:var(--cyan)}.incbar .s1,.incleg .s1{background:var(--yellow)}.incbar .s2,.incleg .s2{background:var(--red)}.incbar .s3,.incleg .s3{background:var(--green)}.incbar .s4,.incleg .s4{background:var(--white)}

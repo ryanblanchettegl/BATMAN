@@ -53,7 +53,7 @@ Small jobs, each one commit. None of them needs a decision from Ryan. Read `CLAU
 - [x] **33.** Select promotion: show the model's name on each row, and on a desk put the detail panel beside the list so it is visible without scrolling.
 - [x] **34.** The first-day screen is four panels long. Keep the owner and the model; put "How it works" behind a button.
 - [x] **35.** Create a federation: show the starting cash, popularity and roster size for the chosen size, and refuse initials already used by a promotion in the universe.
-- [ ] **36.** Company overview: add a one-row bar showing where last week's income came from (television, gate, big events, merchandise, sponsors), with the model's multipliers named beneath it.
+- [x] **36.** Company overview: add a one-row bar showing where last week's income came from (television, gate, big events, merchandise, sponsors), with the model's multipliers named beneath it.
 - [ ] **37.** Finances: label the low and high values on the weekly chart and draw the owner's weekly plan (`P.net`) as a line on it.
 - [ ] **38.** World: add each promotion's model name to the table.
 - [ ] **39.** A promotion pop-up: a fourth card kind in `app/src/shared/cards.tsx` showing the model, popularity, champions, last show and your relations. Promotion names in tables and in linked text open it.
