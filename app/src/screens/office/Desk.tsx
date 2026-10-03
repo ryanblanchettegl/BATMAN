@@ -11,16 +11,22 @@ import { BeforeShow } from './BeforeShow';
 import { office, focusAfter, useFocusAfter } from './util';
 
 /** Things the player should know about before booking: money trouble, vacant titles, injuries, contracts, strain. */
-function alerts(): ComponentChildren[] {
-  const S = G.S, P = me(), R: W[] = E.rosterOf(S, P.id), out: ComponentChildren[] = [], byOvr = (a: W, b: W) => b.ovr - a.ovr;
-  if (S.owner.pending) out.push(<span class="mark">The company is yours. Set your house style on the Manage screen.</span>);
+interface Alert { c: ComponentChildren; to?: string; label?: string; run?: () => void }
+function alerts(): Alert[] {
+  const S = G.S, P = me(), R: W[] = E.rosterOf(S, P.id), raw: ComponentChildren[] = [], byOvr = (a: W, b: W) => b.ovr - a.ovr;
+  const out: any = { push: (x: ComponentChildren) => raw.push(x) };
+  const extra: Alert[] = [];
+  if (S.owner.pending) extra.push({ c: <span class="mark">The company is yours. Set your house style on the Manage screen.</span>, to: 'house', label: 'Set it' });
   if (P.neg > 0) out.push(<span class="bad">Cash has been negative for {P.neg} {plural(P.neg, 'week')}. Six in a row ends the game.</span>);
   P.titles.forEach((t: any) => { if (!t.holders.length) out.push(<>The {t.name} {t.tag ? 'are' : 'is'} vacant. Book a match for {t.tag ? 'them' : 'it'} to crown a champion.</>); });
   R.filter(w => w.inj > 0).sort(byOvr).slice(0, 5).forEach(w => out.push(<><Name w={w} /> is injured: {w.inj} {plural(w.inj, 'week')} left.</>));
   R.filter(w => w.con <= 8).sort(byOvr).slice(0, 5).forEach(w => out.push(<><Name w={w} />{'’'}s contract ends in {Math.max(0, w.con)} {w.con === 1 ? 'week' : 'weeks'}.</>));
   R.filter(w => (w.stress || 0) >= 60).slice(0, 4).forEach(w => out.push(<><Name w={w} /> is under strain (stress {Math.round(w.stress)}).</>));
   R.filter(w => w.morale < 40).slice(0, 4).forEach(w => out.push(<><Name w={w} /> is unhappy (morale {Math.round(w.morale)}).</>));
-  return out;
+  if (S.spOffers.length && S.sponsors.length < 3) extra.push({ c: <>{S.spOffers.length} sponsor {plural(S.spOffers.length, 'offer')} waiting for an answer.</>, to: 'deals', label: 'See offers' });
+  const ap = E.backstage(S).ap;
+  if (ap > 0 && S.queue.length - S.qi === 1) extra.push({ c: <>One show left this week and {ap} action {plural(ap, 'point')} unspent.</>, label: 'Spend them', run: () => { office().pl = 'office'; office().rooms = true; } });
+  return extra.concat(raw.map(c => ({ c })));
 }
 
 /** Each open event shows the chance of each attempt and one button per choice. Answered ones show what happened. */
@@ -84,7 +90,7 @@ export function Desk() {
         <Panel title="Promises and targets"><QuestList /></Panel>
       </div>
       <div class="stack">
-        <Panel title="Needs attention">{A.length ? <ul class="list">{A.map(a => <li><span>{a}</span></li>)}</ul> : <Empty>Nothing urgent.</Empty>}</Panel>
+        <Panel title="Needs attention">{A.length ? <ul class="list">{A.map(a => <li><span>{a.c}</span>{a.label ? <Btn kind="sm" t="attn" d={{ v: a.to || 'ap' }} onClick={() => { if (a.run) act(a.run); else if (a.to) go(a.to); }}>{a.label}</Btn> : null}</li>)}</ul> : <Empty>Nothing urgent.</Empty>}</Panel>
         <Clocks />
         <Panel title="Office news"><OfficeNews n={4} /><div class="row mt2"><Btn kind="sm" t="tab" d={{ v: 'world' }} onClick={() => go('world')}>All the news</Btn></div></Panel>
       </div>
