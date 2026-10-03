@@ -1,6 +1,6 @@
 /* The Office pop-ups: the week-closed summary and the clock detail. Both are drawn from the live game state. */
 import { E } from '../../engine';
-import { G, me, Modal, full } from '../../store';
+import { G, me, Modal, full, openModal } from '../../store';
 import { Window, ColChart, Dial, Empty, Txt, Name } from '../../kit';
 
 /** Opened by flow.endWeek() once the engine has closed the week: the money, the last ten weeks, the news, the new date. */
@@ -17,6 +17,24 @@ export function WeekClosed(p: { m: Modal }) {
       {p.m.down && S.w[p.m.down.id] ? <li><span>Biggest faller: <Name w={S.w[p.m.down.id]} /></span><span class="bad num">{p.m.down.d.toFixed(1)}</span></li> : null}
     </ul></>}
     <p class="mt2">It is now <b>{E.cal(S.week).label}</b>.</p>
+  </Window>;
+}
+
+/** The year in figures, opened once at the end of each year. */
+export function AnnualReport(p: { m: Modal }) {
+  const S = G.S, A = E.annualReport(S);
+  if (!A) return <Window title="Annual report"><Empty>The books close at the end of the year.</Empty></Window>;
+  const tot = Math.max(1, A.src.reduce((a: number, x: any) => a + Math.max(0, x.v), 0));
+  return <Window title={'Annual report, ' + A.year} wide ok="On to next year" onClose={() => (p.m.next ? openModal(p.m.next) : openModal({ kind: 'weekclosed' }))}>
+    <p>Net for the year: <b class={'num ' + (A.net < 0 ? 'bad' : 'good')}>{full(A.net)}</b> <span class="muted">against a plan of {full(A.plan)}</span></p>
+    <p class="eyebrow mt1">Where the money came from</p>
+    <pre class="ascii">{A.src.map((x: any) => (x.n + '              ').slice(0, 16) + '█'.repeat(Math.round(24 * Math.max(0, x.v) / tot)) + ' ' + Math.round(100 * Math.max(0, x.v) / tot) + '%\n')}</pre>
+    <ul class="list mt1">
+      {A.draw ? <li><span>Best draw</span><span class="r">{A.draw.n}: <b class="num">{A.draw.v.toLocaleString('en-US')}</b></span></li> : null}
+      {A.match ? <li><span>Best match</span><span class="r"><Txt>{A.match}</Txt></span></li> : null}
+      {A.sign ? <li><span>Biggest signing</span><span class="r"><Name w={S.w[A.sign.id]} /> at {full(A.sign.wage)} a week</span></li> : null}
+    </ul>
+    <p class="mt2"><i>{A.letter}</i></p>
   </Window>;
 }
 

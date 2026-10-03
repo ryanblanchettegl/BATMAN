@@ -85,7 +85,7 @@ Things that would make the game deeper. Each one adds a system, a choice or a me
 - [x] **54. Medical staff.** Pay for a doctor and trainers. Injuries are fewer and shorter, and wear (wish 3) recovers faster. *S. Builds on `E.medInfo`.*
 - [ ] **55. Tours abroad.** Two or three weeks overseas: big gates, a tired roster, and a following in a new region. *M. Builds on `E.zones`.*
 - [ ] **56. Licensing.** Toys, a video game, trading cards. They unlock as popularity grows, pay once a year, and want stars on long contracts. *M.*
-- [ ] **57. The annual report.** A year-end window: money by source as a text chart, best draw, best match, biggest signing, and a letter from the owner. *S.*
+- [x] **57. The annual report.** A year-end window: money by source as a text chart, best draw, best match, biggest signing, and a letter from the owner. *S.*
 - [ ] **58. Department budgets.** Monthly budgets for talent, production, travel and promotion, with a warning when one runs over. *S. Check `E.budget` first.*
 
 ## F. The world

@@ -39,5 +39,9 @@ export function endWeek() {
   const up = moves.filter((m: any) => m.d >= 0.3).sort((a: any, b: any) => b.d - a.d)[0] || null, down = moves.filter((m: any) => m.d <= -0.3).sort((a: any, b: any) => a.d - b.d)[0] || null;
   const b = book(); b.report = null; b.live = null; b.edit = -1;
   save(); go('desk');
-  if (S.fin && !S.over) openModal({ kind: 'weekclosed', did, up, down });
+  if (S.fin && !S.over) {
+    const wc = { kind: 'weekclosed', did, up, down };
+    // the year-end report comes first and hands over to the week-closed window when it is closed
+    if (S.annualNew) { S.annualNew = false; openModal({ kind: 'annual', next: wc }); } else openModal(wc);
+  }
 }

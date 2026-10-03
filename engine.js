@@ -3704,6 +3704,24 @@ CRX.push(function(ctx){
   return d?{d:d,x:x}:null;
 });
 
+/* the annual report: at the end of the year, money by source, best draw, best match, biggest signing and a letter from the owner */
+SHOWX.push(function(S,P,show,rep){
+  if(P.id!==S.player||S.cal)return;var y=S.ybest||(S.ybest={});
+  if(!y.draw||rep.att>y.draw.v)y.draw={v:rep.att,n:rep.name,w:S.week};
+});
+WEEKX.push(function(S){
+  var c=cal(S.week);if(c.month!==11||c.wom!==4||S.cal)return;
+  var P=S.promos[S.player],rows=P.hist.slice(-48),sum=function(k){return rows.reduce(function(a,r){return a+(r[k]||0);},0);};
+  var src=[{n:'Television',v:sum('tv')},{n:'Tickets',v:sum('gate')},{n:'Big event buys',v:sum('ppv')},{n:'Merchandise',v:sum('merch')},{n:'Sponsors',v:sum('spons')},{n:'Bonuses',v:sum('bonus')}],net=sum('net'),plan=P.net*rows.length;
+  var A=(S.awards&&S.awards[0]&&S.awards[0].year===c.year)?S.awards[0].list:[],mt=A.filter(function(x){return x.k==='Match of the year';})[0];
+  var sign=rosterOf(S,P.id).filter(function(w){return !w.nw&&w.jw!=null&&S.week-w.jw<=48;}).sort(function(a,b){return b.wage-a.wage;})[0];
+  var o=S.owner,good=net>=plan,t=o.me?null:o.trust;
+  var letter=o.me?'You kept the doors open for another year. Read the figures, then decide what the next one is for.':
+    o.name+(good?' writes: “The year beat the plan by '+money(net-plan)+'. ':' writes: “The year fell short of the plan by '+money(plan-net)+'. ')+(t>=70?'You have my confidence, and I mean to show it.”':(t>=45?'I will be watching the next one closely.”':'I need to see a different year from this one.”'));
+  S.annual={year:c.year,src:src,net:net,plan:plan,draw:S.ybest&&S.ybest.draw||null,match:mt?mt.v:null,sign:sign?{name:sign.name,wage:sign.wage,id:sign.id}:null,letter:letter};S.annualNew=true;S.ybest={};
+});
+E.annualReport=function(S){return S.annual||null;};
+
 /* ===== 85-universe.js ===== */
 /* ---------- universe packages: every roster, built-in or community-made, loads through this ----------
    A package is a manifest plus eight tables joined by string ids. The folder form (one JSON file per table)
