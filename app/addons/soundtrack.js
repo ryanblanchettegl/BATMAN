@@ -97,6 +97,7 @@ function musNextId() {
 }
 function musPick(id) {
   MUS.tr = musTrack(id) || musList()[0]; MUS.pos = 0; MP.cur = MUS.tr.id; saveMus();
+  try { window.dispatchEvent(new CustomEvent('ewf-track', { detail: { name: MUS.tr.n } })); } catch (e) {}
   if (JK.open) setTimeout(jkRender, 0);
 }
 function musTick() {

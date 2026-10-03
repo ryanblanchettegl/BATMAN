@@ -39,6 +39,13 @@ export function SubNav() {
 
 /** A figure in the status bar. Selecting it opens the Company overview, where the figures are explained. */
 const stat = (k: string, label: string, v: string | number, cls?: string) => <button type="button" class={cls} data-t="stat" data-v={k} aria-label={label + ' ' + v + '. Open the company overview.'} onClick={() => go('overview')}><b>{label}</b> {v}</button>;
+/** The name of the track that just started, shown in the status bar for three seconds. */
+let nowPlaying: { n: string; until: number } | null = null;
+window.addEventListener('ewf-track', (e: any) => {
+  if (!G.S || !MP_ON()) return;
+  nowPlaying = { n: String(e.detail && e.detail.name), until: Date.now() + 3000 }; redraw(); setTimeout(redraw, 3100);
+});
+function MP_ON() { return document.documentElement.getAttribute('data-music') !== 'off'; }
 export function StatusBar() {
   const S = G.S, P = me(), a = toastNow();
   if (a) return <footer class="status toast" role="status" data-t="toast" onClick={() => { clearTimeout(timer); nextToast(); }}>
@@ -47,6 +54,7 @@ export function StatusBar() {
   return <footer class="status">
     {stat('bp', 'BP', S.bp)}{stat('ap', 'AP', S.ap == null ? 0 : S.ap)}{stat('cash', 'Cash', cash(P.cash))}{stat('pop', 'Pop', P.image.toFixed(1))}
     {!S.owner.me && stat('owner', 'Owner', Math.round(S.owner.trust), 'opt')}
+    {nowPlaying && nowPlaying.until > Date.now() ? <span class="np">{'♫'} {nowPlaying.n}</span> : null}
     <span class="sp" />
     {NAV.pad ? <><span class="opt"><b>A</b> select</span><span class="opt"><b>B</b> back</span><span class="opt"><b>LB RB</b> sections</span><span class="opt"><b>X</b> help</span><span class="opt"><b>Y</b> music</span></> : (NAV.on ? <><span class="opt"><b>OK</b> select</span><span class="opt"><b>Back</b> back</span></> : null)}
     <button type="button" data-t="options" onClick={() => openModal({ kind: 'options' })}>[Options]</button>

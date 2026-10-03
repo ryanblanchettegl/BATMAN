@@ -89,7 +89,7 @@ Small jobs, each one commit. None of them needs a decision from Ryan. Read `CLAU
 ## E. Sound and feel
 
 - [x] **65.** The Music button should show whether music is on or off.
-- [ ] **66.** When the track changes, show its name in the status bar for three seconds.
+- [x] **66.** When the track changes, show its name in the status bar for three seconds.
 - [ ] **67.** Sounds for opening and closing a pop-up and for an attempt that works or fails. They obey the Sound option.
 - [ ] **68.** A "Reduce motion" option that turns off the typewriter and the blinking cursor, and follows the system setting by default.
 - [ ] **69.** A ring bell at the start and end of each match in the broadcast, if Sound is on.
