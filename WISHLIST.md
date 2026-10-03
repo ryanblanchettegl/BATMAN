@@ -107,7 +107,7 @@ Things that would make the game deeper. Each one adds a system, a choice or a me
 - [ ] **70. The crowd takes over.** A crowd that rejects the pushed star chants for someone else. It shows in the report and happens more in diehard cities. *M.*
 - [ ] **71. The fan board grows up.** Posts name matches, give them stars and argue with each other. One invented critic keeps a ratings list the wrestlers care about. *M. Builds on the net page.*
 - [x] **72. Followers.** Each wrestler has a following that grows with big moments. A clip can spread, bringing casual fans and merchandise. *S.*
-- [ ] **73. Speaking out.** A released wrestler gives an interview. It can hurt morale, reveal a rival's plans, or settle a score. *S.*
+- [x] **73. Speaking out.** A released wrestler gives an interview. It can hurt morale, reveal a rival's plans, or settle a score. *S.*
 - [ ] **74. Guest stars.** An actor, athlete or singer made up by the game does a one-night spot. Casuals tune in, diehards groan, and the match itself is a risk. *S.*
 - [ ] **75. Awards night.** A yearly ceremony screen with categories and short speeches. Winners gain morale and ask for more money. *M. (TASKS 7)*
 - [ ] **76. Hall of fame night.** The hall of fame exists. Add an induction on the flagship weekend with a speech and a lift for the crowd. *S.*
