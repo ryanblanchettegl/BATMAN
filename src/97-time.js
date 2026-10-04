@@ -188,6 +188,7 @@ function showFill(S,card){
     if(c.over)v.errors.push('The show runs '+(c.total-c.budget)+' minutes over its '+hw+'. Take something off, or give a match, a promo or an angle less time.');
     else if(c.short)v.errors.push((c.budget-c.total)+' minutes of the '+hw+' are still empty. Add a match, a promo or an angle, or give something more time.');
     else if(c.light)v.warnings.push('The show is '+(c.budget-c.total)+' minutes light. The announcers will have to fill, and the crowd will notice.');
+    var fw=faceWarn(S,card);if(fw)v.warnings.push(fw);
     var my=S.mystery&&S.mystery.promo===S.player?S.mystery:null;
     if(my&&S.w[my.v]&&!segRead(S).some(function(sg){return sg.k==='writers';}))v.warnings.push('Nobody knows yet who attacked '+S.w[my.v].name+'. That story moves only when the writers have time on the show (a Writers’ pick).');
     return v;

@@ -71,7 +71,7 @@ async function flash(page) { return (await page.$eval('.flash', e => e.innerText
 async function state(page, fn, arg) { return page.evaluate(new Function('arg', 'return (' + fn.toString() + ')(window.EWF_DEBUG.state(), arg)'), arg); }
 async function redraw(page) { await page.evaluate(() => window.EWF_DEBUG.render()); }
 /** See the show that is on screen through to its sign-off. On the air there is no skipping the night: each segment is
-    skipped to its result, and every call from the gorilla position is answered (the first choice, or opts.pick(kind)).
+    skipped to its result, and every call from the gorilla position is answered (the safe choice, or opts.pick(kind)).
     opts.onCall(kind) runs while a call is waiting. opts.report === false stops on the sign-off instead of opening the
     report. Works for a replay too. Returns the kinds of call that came up, in order. */
 async function airShow(page, opts) {
@@ -81,7 +81,8 @@ async function airShow(page, opts) {
       const k = await page.$eval('[data-t="live-call"]', e => e.getAttribute('data-v')); calls.push(k);
       if (opts.onCall) { await opts.onCall(k); if (!(await has('[data-t="live-call"]'))) continue; }   // onCall may answer it itself
       await page.waitForTimeout(430);   // a call takes no answer in its first moments
-      await page.click('[data-t="live-pick"][data-c="' + (opts.pick ? opts.pick(k) : 0) + '"]');
+      const safe = await page.evaluate(() => { const S = window.EWF_DEBUG.state(); return (S.live && S.live.ev && S.live.ev.safe) || 0; });
+      await page.click('[data-t="live-pick"][data-c="' + (opts.pick ? opts.pick(k) : safe) + '"]');
       continue;
     }
     if (await has('[data-t="live-done"]')) { if (opts.report !== false) await page.click('[data-t="live-done"]'); return calls; }

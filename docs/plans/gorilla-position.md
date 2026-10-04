@@ -45,6 +45,7 @@ What was built, where it differs from the plan below (the plan is kept as it was
 - The first kinds are not the three below. They are: the title is on the line, a rival at the curtain, off the script (the hot mic), after the bell, and trouble on the air (the old headset calls). The botch and the audible are still to do, and so are the `careless` and `ego` traits.
 - Limits: three calls on weekly television, four at a big event, each kind once a night, plus the one after the bell. Trouble on the air does not count. A feud's rival comes to the curtain at most every other week; a speaker goes off the script at most once in eight weeks.
 - The safe answer is always "do nothing", except for trouble on the air where it is the old safe choice.
+- Added in 0.25 (`src/32-direction.js`): the owner on the headset, and who the show is built around. These decide more than the night: the owner's trust, and a face of the company (`S.fc`) that the crowd comes to see.
 
 
 Today `runShow()` in `src/30-show.js` runs a whole show in one call, and the "headset" (`E.chaos` in `src/77-backstage.js`) asks one question before the show starts, about 13% of the time. Step 2 replaces that.

@@ -89,7 +89,7 @@ function answer(kind, c) {
   for (let g = 0; g < 40 && !seg; g++) { const r = E.liveNext(S); if (r.event) E.liveDecide(S, r.event.safe || 0); else if (r.seg) seg = r.seg; else if (r.done) break; }
   return { S, ev, seg, d };
 }
-for (const kind of ['titlecall', 'runin', 'hotmic', 'afterbell']) ok('kind', 'the ' + kind + ' call came up in the sample', !!found[kind]);
+for (const kind of ['titlecall', 'runin', 'hotmic', 'afterbell', 'owner', 'face']) ok('kind', 'the ' + kind + ' call came up in the sample', !!found[kind]);
 if (found.titlecall) { const F = found.titlecall, P0 = F.S.promos[F.S.player], m = F.S.live.card[F.ev.mi], t0 = P0.titles.find(t => t.id === m.title), champ = t0.holders.slice();
   const stay = answer('titlecall', 0), swap = answer('titlecall', 1), dq = answer('titlecall', 2);
   const holders = R => R.S.promos[R.S.player].titles.find(t => t.id === m.title).holders;
@@ -119,6 +119,44 @@ if (found.afterbell) { const F = found.afterbell, w = F.ev.who, l = F.ev.other;
   ok('ab2', 'the loser attacks: there is a feud between them, or the office says why not', !!feud(attack.S, w, l) || /too many feuds/.test(attack.d.text), attack.d.text);
   ok('ab3', 'what happened after the bell is on that match', shake.seg.bc[shake.seg.bc.length - 1].t === 'call' && shake.seg.calls.length >= 1);
   if (F.ev.choices[3]) { const walk = answer('afterbell', 3), c = F.ev.choices[3]; ok('ab4', 'a challenger walks out: they have a title shot coming', walk.S.w[c.who].shot === c.title); }
+}
+/* ---- the direction of the company ---- */
+if (found.owner) { const F = found.owner, f = F.ev.who, opp = F.ev.other, t0 = F.S.owner.trust;
+  const play = answer('owner', 0), win = answer('owner', 1), dq = answer('owner', 2);
+  ok('ow1', 'the owner only calls about a favourite who may well lose, and says so', /does not lose tonight/.test(F.ev.text) && F.ev.why.length === 2 && /% chance tonight/.test(F.ev.why[1]) && (F.S.owner.fav === f || F.S.quests.some(q => q.type === 'o_strong' && q.w === f)), F.ev.why.join(' | '));
+  ok('ow2', 'do as the office says: the favourite wins, it costs no booking power, the owner is pleased and the other side remembers', win.seg.wi.includes(f) && win.S.bp === F.S.bp && win.S.owner.trust === Math.min(100, t0 + 4) && lean(win.S, opp) < lean(F.S, opp));
+  ok('ow3', 'the favourite loses, but not clean: a disqualification, for one booking power', dq.seg.fin === 'dq' && !dq.seg.wi.includes(f) && dq.S.bp === F.S.bp - 1 && dq.S.owner.trust === Math.min(100, t0 + 1), dq.seg.fin);
+  const won = play.seg.wi.includes(f), clean = !won && (play.seg.fin === 'clean' || play.seg.fin === 'flash'), want = Math.max(0, Math.min(100, t0 - 2 + (won ? 3 : (clean ? -3 : 0))));
+  ok('ow4', 'refuse the office: it is a bet on the match, and the other side respects it', play.S.bp === F.S.bp && Math.abs(play.S.owner.trust - want) < 0.001 && lean(play.S, opp) > lean(F.S, opp), (won ? 'the favourite won anyway' : (clean ? 'the favourite lost clean' : 'the favourite lost, not clean')) + ', trust ' + t0 + ' to ' + play.S.owner.trust);
+  ok('ow5', 'the office does not call again for a few weeks', F.S.lcd.owner === F.S.week);
+}
+if (found.face) { const F = found.face, w = F.ev.who;
+  const stay = answer('face', 0), build = answer('face', 1);
+  ok('fc1', 'the question comes after a main event, with the reasons', F.ev.phase === 'post' && F.ev.why.length >= 1 && /who is this company built around/.test(F.ev.text), F.ev.why.join(' | '));
+  ok('fc2', 'build the company around the winner: it is recorded, and they remember who decided it', !!build.S.fc && build.S.fc.id === w && build.S.fc.w === build.S.week && E.faceInfo(build.S).name === F.S.w[w].name && lean(build.S, w) > lean(F.S, w));
+  ok('fc3', 'decide nothing: nothing is recorded', JSON.stringify(stay.S.fc || null) === JSON.stringify(F.S.fc || null) && stay.d.ok);
+  /* what it does on the next show: the same card with and without a face of the company */
+  const A = build.S; air(A); week(A); const card = desk(A);
+  if (card) { const B = clone(A); B.fc = null; const on = card[card.length - 1].sides.flat().includes(w) ? 2 : (card.some(m => m.sides.flat().includes(w)) ? 1 : 0);
+    const A0 = clone(A), sh = A0.queue[A0.qi], x = A0.w[w], said = c => E.validate(A0, c).warnings.some(t => /The shows are built around/.test(t));
+    const expect = E.faceInfo(A0).here && !(!sh.big && sh.brand && x.brand && x.brand !== sh.brand), off = card.filter(m => !m.sides.flat().includes(w));
+    const ra = E.runPlayerShow(A, card).rep, rb = E.runPlayerShow(B, card).rep, d = ra.hype - rb.hype;
+    const capped = ra.hype >= 1.4 || rb.hype >= 1.4 || ra.hype <= 0.8 || rb.hype <= 0.8;
+    ok('fc4', 'the crowd comes to see them: more interest when they are in the main event, less when they are left off', capped || (on === 2 ? Math.abs(d - 0.04) < 1e-9 : (on === 1 ? Math.abs(d) < 1e-9 : d <= 0)), 'on the card: ' + ['no', 'yes', 'in the main event'][on] + ', difference ' + d.toFixed(3));
+    ok('fc5', 'the card builder warns when they are left off their own show, and only then', said(off) === expect && (on === 0 || !said(card)), 'left off: ' + said(off) + ', expected ' + expect);
+    ok('fc6', 'their matches are louder', on === 0 || ra.segs.some(sg => sg.k === 'match' && (sg.fx || []).some(x => /The crowd came to see/.test(x.x))));
+  }
+}
+/* a company that already has a face: the third answer takes the place away from everyone */
+{ const S = E.newGame('pdw', 4, { name: 'R' }); let third = null;
+  for (let wk = 0; wk < 60 && !third && !S.over; wk++) { while (!third && desk(S)) { S.bp = Math.max(S.bp, 6); E.liveBegin(S, S.card); air(S, ev => ev.kind === 'face' ? 1 : (ev.safe || 0), (ev, S) => { if (ev.kind === 'face' && ev.choices.length === 3 && !third) third = { S: clone(S), ev: JSON.parse(JSON.stringify(ev)) }; }); } if (!third) week(S); }
+  ok('fc7', 'with someone already at the centre, the question comes again when a rival earns it', !!third, third ? third.ev.why.join(' | ') : 'never came up in 60 weeks');
+  if (third) { const old = third.S.fc.id, nw = third.ev.who;
+    const a = clone(third.S); E.liveDecide(a, 1); const b = clone(third.S); E.liveDecide(b, 2); const c = clone(third.S); E.liveDecide(c, 0);
+    ok('fc8', 'build it around the new name: the old one holds it against you and is jealous', a.fc.id === nw && lean(a, old) < lean(third.S, old) && E.rel(a, old, nw).bond < E.rel(third.S, old, nw).bond);
+    ok('fc9', 'nobody is bigger than the company: the place is empty, and the one who had it remembers', b.fc === null && lean(b, old) < lean(third.S, old) && E.faceInfo(b) === null);
+    ok('fc10', 'stay with them: they remember that too, and so does the one passed over', c.fc.id === old && lean(c, old) > lean(third.S, old) && lean(c, nw) < lean(third.S, nw));
+  }
 }
 /* trouble on the air comes up in the match it happens in */
 { const S = E.newGame('pdw', 5, { name: 'R' }); desk(S);

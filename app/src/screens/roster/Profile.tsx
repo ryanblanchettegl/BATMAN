@@ -126,6 +126,7 @@ export function Profile(p: { w: W }) {
             {w.role ? <Tag kind={w.role === 'toxic' || w.role === 'diva' ? 'bad' : 'good'}>{E.ROLE[w.role].n}</Tag> : null}
             {w.camp ? <Tag kind="warn">In camp: {E.FOCUS[w.focus] || ''}</Tag> : null}
             {w.hof ? <Tag kind="gold">Hall of fame</Tag> : null}
+            {S.fc && S.fc.id === w.id ? <Tag kind="gold">The shows are built around them</Tag> : null}
           </div>
         </div>
       </div>

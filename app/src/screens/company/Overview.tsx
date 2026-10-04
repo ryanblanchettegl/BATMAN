@@ -3,7 +3,7 @@
 import { ComponentChildren } from 'preact';
 import { E } from '../../engine';
 import { G, me, cash, full, plural } from '../../store';
-import { Head, Panel, Gauge, Meter, Empty } from '../../kit';
+import { Head, Panel, Gauge, Meter, Empty, Name } from '../../kit';
 import { ModelCard } from '../../shared/model';
 
 /** A gauge panel: the title is centred inside the box (docs/design.md, section 6). */
@@ -35,12 +35,14 @@ function Gauges() {
 }
 
 function Ownership() {
-  const S = G.S, o = S.owner, P = me();
+  const S = G.S, o = S.owner, P = me(), fc = E.faceInfo(S);
   return <Panel title="Ownership">
     {o.me ? <p>You own {P.name}, and you book it.</p> : <p><b>{o.name}</b> owns {P.name}. You book it.</p>}
     <p class="mt1">House style: <b>{E.STYLES[o.style].n}.</b> {E.STYLES[o.style].d}</p>
     <p class="mt1">The crowd: <b>{E.ROOTS[o.roots].n}.</b> {E.ROOTS[o.roots].d}</p>
     <p class="mt1">The locker room: <b>{E.PLEDGE[o.pledge].n}.</b> {E.PLEDGE[o.pledge].d}</p>
+    <p class="mt1" data-t="built-around">Built around: {fc ? <><b><Name w={S.w[fc.id]} /></b>, since {E.cal(fc.since).label}. The crowd comes to see them: a lift when they are in the main event, a letdown when they are left off the card.</>
+      : <><b>nobody yet.</b> That is decided on the air, after a main event, when the building will not sit down for the winner.</>}</p>
     <p class="muted mt2">True to the crowd <Meter v={S.creedScore} kind="cool" /> {S.creedScore}.{o.me ? null : <> {o.name}{'’'}s trust in you: <b class="num">{Math.round(o.trust)}</b>.</>}</p>
   </Panel>;
 }

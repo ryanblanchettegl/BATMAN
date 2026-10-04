@@ -23,7 +23,7 @@ function WrestlerCard(p: { id: number }) {
     <div class="row top nowrap gap2">
       <Portrait w={w} />
       <div>
-        <p><Side w={w} /> {w.rt ? <Tag>Retired</Tag> : null}{ts.map(x => <> <Tag kind="gold">Champion</Tag></>).slice(0, 1)}</p>
+        <p><Side w={w} /> {w.rt ? <Tag>Retired</Tag> : null}{ts.map(x => <> <Tag kind="gold">Champion</Tag></>).slice(0, 1)}{S.fc && S.fc.id === w.id ? <> <span data-t="is-face"><Tag kind="gold">The shows are built around them</Tag></span></> : null}</p>
         <p><b>{w.promo === 'FA' ? 'Free agent' : <PromoName id={w.promo} />}</b> {'·'} Age {w.age} {'·'} {E.STYLE_NAME[w.style] || ''}</p>
         <p class="muted">Finisher: the {w.fin || 'finish'} ({E.finisherWord(w)})</p>
       </div>

@@ -141,7 +141,14 @@ Ryan: "look up the philosophy of booking a wrestling show, the importance of the
   - About two calls a night. Three at most on weekly television and four at a big event, plus the one after the bell.
   - A show on the air cannot be skipped or left. A finished show can still be replayed, and a replay can be skipped.
   - [ ] More kinds: the botch (ring the bell or push through), the audible (the crowd is dead for the planned finish), a match running long, a manager at ringside, a debut, a walk-out, a double turn, the owner on the headset.
-  - [ ] Calls that set the direction of the company (who the show is built around, what kind of company the crowd is being taught to expect).
+  - [x] **(0.25) Calls that set the direction of the company.** Ryan, 4 October: "2". Code: `src/32-direction.js`. Tests: `node test-live.js`, `app/tests/direction.js`.
+    - The owner on the headset. When the owner's favourite, or someone the owner asked to be kept strong, is in a match they may well lose, the office calls the truck: "They do not lose tonight." Let the match play out (a bet: the owner is angrier if they lose clean, and has to admit you were right if they win), tell the referee they win (free, the owner is pleased, the other side remembers being fed to the favourite), or have them lose by disqualification for one booking power.
+    - A title match the owner wants changed now says so in its call.
+    - Who the show is built around. After a main event, when the building will not sit down for a top name, the truck asks where the last shot goes. Build the company around them, stay with who it is built around now, or say nobody is bigger than the company. The one chosen remembers it, the one replaced holds it against you, the other top names are jealous, and the owner has a view.
+    - What it does afterwards: more interest in a show with them in the main event, less in a show they are left off, louder matches. The card builder warns when they are left off. The Company page and their card say who it is.
+    - The question comes at most once in eight weeks. The office calls at most once in three.
+    - [ ] "Suggest a card" does not yet put the face of the company in the main event by itself.
+    - [ ] More of this kind: the network on the line about what goes out in its slot, a sponsor's guest at ringside, the owner's creed (what the crowd is being taught to expect).
   - [ ] Each segment still has "Skip to the result". Ryan to say whether it stays.
 - [x] **Step 3 (0.24): the broadcast screen.** Code: `app/src/screens/booking/Live.tsx`, `run.ts`. Tests: `app/tests/booking.js`, `advance.js`, `journey.js`. One screen, nothing scrolls. Left: what is on the air. Right: tonight's run sheet, with stars for what has aired. A call is a box of wide buttons, one for each answer, and the number keys answer too. The old headset window is gone.
   - [ ] The show report is still a scrolling page.

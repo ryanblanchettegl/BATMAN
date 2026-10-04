@@ -16,7 +16,7 @@
      pend  an answered call that the next segment should carry in its commentary
    A new kind of call is one entry in LIVEK: pre(S, L, step) or post(S, L, step, seg) returns the call or null,
    run(S, L, ev, choice) applies the answer and returns one line saying what happened. */
-var LIVE_MAX_TV=3,LIVE_MAX_BIG=4,LIVE_HM_CD=8,LIVEK={},LIVE_ORDER=['chaos','titlecall','runin','hotmic'];
+var LIVE_MAX_TV=3,LIVE_MAX_BIG=4,LIVE_HM_CD=8,LIVEK={},LIVE_ORDER=['chaos','titlecall','runin','hotmic'],LIVE_POST=['face','afterbell'];
 /* calls change a match through fields on it (m.call, m.ff, m.runin, m.nc) and through m.lx: [{cr, mq, x, note}] */
 CRX.push(function(ctx){var L=ctx.m.lx,d=0,x=null;if(!L)return null;L.forEach(function(e){if(e.cr){d+=e.cr;x=x||e.x;}});return d?{d:d,x:x}:null;});
 MQX.push(function(ctx){var L=ctx.m.lx,d=0,x=null;if(!L)return null;L.forEach(function(e){if(e.mq){d+=e.mq;if(!e.cr)x=x||e.x;}});return d?{d:d,x:x}:null;});
@@ -62,6 +62,7 @@ LIVEK.titlecall={n:'The title is on the line',
     if(f&&f.heat>=50)why.push('The feud is at '+Math.round(f.heat)+' heat');
     if(show.big&&f)why.push('It is a big event, and the feud wants an ending');
     if(co[0].align==='F'&&ch[0].align==='H'&&co[0].mom>=3)why.push('The crowd is behind '+names(co));
+    if(S.owner&&!S.owner.me&&S.quests.some(function(q){return q.type==='o_belt'&&q.title===t.id&&co.some(function(w){return w.id===q.w;});}))why.push(S.owner.name+' wants the '+t.name+' on '+names(co));
     if(!why.length)return null;
     return {phase:'mid',mi:step.i,who:co[0].id,other:ch[0].id,side:1-cs,
       text:'The building believes tonight is the night. '+names(co)+' '+(co.length>1?'have':'has')+' '+names(ch)+' in trouble, and the referee is looking at you.',why:why,safe:0,
@@ -216,8 +217,12 @@ function livePre(S,L){
 function livePost(S,L){
   var st=L.st,i=st.k-1,step=st.steps[i];if(i<0||!step||L.post>=i)return null;L.post=i;
   var seg=L.last>=0?st.rep.segs[L.last]:null;if(!seg)return null;
-  var K=LIVEK.afterbell;if(L.cnt>=liveMax(S)+1||L.had.afterbell)return null;
-  var ev=K.post(S,L,step,seg);return ev?liveMake(S,L,'afterbell',ev):null;
+  if(L.cnt>=liveMax(S)+1)return null;
+  for(var k=0;k<LIVE_POST.length;k++){   // one call after a segment: the first kind that fits
+    var kind=LIVE_POST[k],K=LIVEK[kind];if(!K||!K.post||L.had[kind])continue;
+    var ev=K.post(S,L,step,seg);if(ev)return liveMake(S,L,kind,ev);
+  }
+  return null;
 }
 /** Close the show: score it, file the report, move the week on. */
 function liveFinish(S){
