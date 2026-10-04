@@ -40,7 +40,7 @@ function RecordBook() {
     <ul class="list">{M.slice(0, 10).map((m: any) =>
       <Row v={stars(m.ov)}>{m.l}<br /><span class="muted">{m.show}, {wk(m.w)}</span></Row>)}</ul>
     <p class="eyebrow mt3">Best shows</p>
-    <ul class="list">{(R.shows || []).map((s: any) => <Row v={s.r + '%'}>{s.n}<br /><span class="muted">{wk(s.w)}</span></Row>)}</ul>
+    <ul class="list">{(R.shows || []).map((s: any) => <Row v={grade(s.r)}>{s.n}<br /><span class="muted">{wk(s.w)}</span></Row>)}</ul>
     <p class="eyebrow mt3">High-water marks</p>
     <ul class="list">
       {R.gate ? <Row v={R.gate.v.toLocaleString('en-US')}>Biggest crowd<br /><span class="muted">{R.gate.n}, {wk(R.gate.w)}</span></Row> : null}

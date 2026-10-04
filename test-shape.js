@@ -20,15 +20,25 @@ function run(S, card) { S.card = card; S.segs = []; const P = S.promos[S.player]
 /* ---- stars ---- */
 ok('stars', 'quarter steps, five stars at the top, never a percentage', E.stars(90) === '★★★★½' && E.stars(98) === '★★★★★' && E.stars(97) === '★★★★¾' && E.stars(70) === '★★★½' && E.stars(5) === '¼' && E.stars(61) === '★★★', [90, 98, 97, 70, 5, 61].map(v => E.stars(v)).join(' '));
 
-/* ---- words for a show ---- */
+/* ---- words and letter grades for a show ---- */
 { const L = E.SHOW_LADDER, w = v => E.showWord(v).a;
-  ok('words', 'one ladder of ten rungs, a bomb to an all-time classic', L.length === 10 && L[0].w === 'All-time classic' && L[9].w === 'A bomb' && L.every(x => x.d && !/%|\d/.test(x.w + x.a + x.d)));
-  ok('words', 'a score is said in words', w(96) === 'an all-time classic' && w(80) === 'a hot show' && w(77) === 'a hot show' && w(76.9) === 'a strong show' && w(50) === 'a flat show' && w(10) === 'a bomb', [96, 80, 76.9, 50, 10].map(w).join(', '));
-  const up = E.showVerdict(84, 78), par = E.showVerdict(78.2, 78), down = E.showVerdict(70, 78), bad = E.showVerdict(60, 78);
-  ok('words', 'a show against its crowd is a headline and a line, with no number in either', up.head === 'Blew the roof off' && par.head === 'Gave them what they came for' && down.head === 'Died in front of them' && E.showVerdict(76, 78).head === 'Came up short' && E.showVerdict(79, 78).head === 'Sent them home happy' && [up, par, down, bad].every(v => !/%|\d/.test(v.head + v.line)), [up, par, down].map(v => v.head + ' / ' + v.line).join(' | '));
+  ok('words', 'one ladder of ten rungs, a bomb to an all-time classic, each with its letter grade', L.length === 10 && L[0].w === 'All-time classic' && L[9].w === 'A bomb' && L[3].g === 'A-' && L[9].g === 'F' && L.every(x => x.d && x.g && !/%|\d/.test(x.w + x.a + x.d)));
+  ok('words', 'a score is said in words, and the rungs change where the grades do', w(96) === 'an all-time classic' && w(80) === 'a hot show' && w(79.9) === 'a strong show' && w(70) === 'a solid show' && w(60) === 'a flat show' && w(50) === 'a dud' && w(10) === 'a bomb', [96, 80, 79.9, 70, 60, 50, 10].map(w).join(', '));
+  ok('grade', 'a show’s score is a letter grade', E.grade(95) === 'A+' && E.grade(84.9) === 'A-' && E.grade(80) === 'A-' && E.grade(79.9) === 'B+' && E.grade(55) === 'C' && E.grade(40) === 'D' && E.grade(39.9) === 'F', [95, 84.9, 80, 79.9, 55, 40, 39.9].map(v => E.grade(v)).join(' '));
+  ok('grade', 'a target is met by the grade the player reads', E.gradeMeets(80.1, 83) && E.gradeMeets(86, 83) && !E.gradeMeets(79.9, 83) && E.gradeMeets(40, 40) && !E.gradeMeets(39, 41));
+  const up = E.showVerdict(86, 81), par = E.showVerdict(81.2, 81), down = E.showVerdict(72, 81), bad = E.showVerdict(66, 81);
+  ok('words', 'a show against its crowd is a headline and a line, with no number in either', up.head === 'Blew the roof off' && par.head === 'Gave them what they came for' && down.head === 'Died in front of them' && E.showVerdict(79, 81).head === 'Came up short' && E.showVerdict(82, 81).head === 'Sent them home happy' && [up, par, down, bad].every(v => !/%|\d/.test(v.head + v.line)), [up, par, down].map(v => v.head + ' / ' + v.line).join(' | '));
   ok('words', 'the line names both rungs, or says they match', up.line === 'A red-hot show for a crowd that expects a hot one.' && par.line === 'A hot show, which is what this crowd expects.' && bad.line === 'A decent show for a crowd that expects a hot one.', up.line + ' | ' + par.line + ' | ' + bad.line);
   const S = E.newGame('pdw', 3, { name: 'R' }), e = E.expectWords(S);
   ok('words', 'what the crowd expects of the next show is said in words', !!e && /^This crowd expects an? [a-z- ]+\.$/.test(e.text) && e.a === E.showWord(E.expected(S, S.queue[S.qi])).a, e && e.text);
+  /* no show score as a percentage anywhere the player reads: news, targets, sponsor offers, the report's notes */
+  let bad2 = 0, seen = 0, sample = '';
+  for (let wk = 0; wk < 16 && !S.over; wk++) { house(S);
+    while (S.qi < S.queue.length) { const card = E.suggest(S), pr = E.preShow(S, card); if (pr) { E.resolvePre(S, card, 0); E.fitShow(S, card); } S.card = card; if (E.validate(S, card).errors.length) { S.qi++; continue; } const r = E.runPlayerShow(S, card).rep; (r.quest || []).forEach(t => { seen++; if (/\d+(\.\d+)?%/.test(t)) { bad2++; sample = sample || t; } }); }
+    S.quests.map(q => q.text).concat(S.spOffers.map(o => o.text), S.sponsors.map(o => o.text), S.news.map(n => n.t)).forEach(t => { seen++; if (/(rated|scored|came in at|rates) [^.]*\d+(\.\d+)?%|\(\d+(\.\d+)?%\)/.test(t || '')) { bad2++; sample = sample || t; } });
+    E.endWeek(S); }
+  ok('grade', 'sixteen weeks of news, targets and sponsor lines never give a show a percentage', bad2 === 0 && seen > 100, bad2 ? sample : seen + ' lines read');
+  ok('grade', 'a sponsor’s show target is worded as a grade', S.spOffers.concat(S.sponsors).filter(o => o.type === 'rating').every(o => /^No show graded under (A\+|A|A-|B\+|B|B-|C\+|C|C-|D|F)$/.test(o.text)), S.spOffers.concat(S.sponsors).filter(o => o.type === 'rating').map(o => o.text).join(' | ') || 'none on offer');
 }
 
 /* ---- the opener ---- */

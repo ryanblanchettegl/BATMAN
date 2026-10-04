@@ -33,8 +33,8 @@ var SLOTN=['Late night','Early evening','Prime time'],SLOT_V=[0.55,0.8,1],SLOT_M
 var CAPS = [300,600,1000,1500,2500,4000,6000,8000,10000,13000,16000,20000,30000,45000,60000,80000,100000];
 var ACH = [
   {id:'ACH_FIRST_BELL',name:'Opening Bell',desc:'Run your first show.'},
-  {id:'ACH_SHOW_80',name:'Solid Outing',desc:'Run a show rated 80% or better.'},
-  {id:'ACH_SHOW_90',name:'Blowaway Show',desc:'Run a show rated 90% or better.'},
+  {id:'ACH_SHOW_80',name:'Solid Outing',desc:'Run a show graded A- or better.'},
+  {id:'ACH_SHOW_90',name:'Blowaway Show',desc:'Run a show graded A+.'},
   {id:'ACH_MATCH_90',name:'Match of the Year Candidate',desc:'Book a match of ★★★★½ or better.'},
   {id:'ACH_MATCH_97',name:'Five Stars',desc:'Book a five-star match.'},
   {id:'ACH_TITLE_CHANGE',name:'And New!',desc:'Book a title change.'},
@@ -87,7 +87,7 @@ var ACH = [
   {id:'ACH_BOARD',name:'Internet Darling',desc:'Get the fan board’s mood to 90.'},
   {id:'ACH_HARD',name:'The Hard Way',desc:'Last a year on Main eventer or Legend difficulty.'},
   {id:'ACH_FIRED',name:'Future Endeavours',desc:'Get fired by the owner.',hidden:true},
-  {id:'ACH_BOMB',name:'Go-Home Heat',desc:'Run a show rated under 40%.',hidden:true},
+  {id:'ACH_BOMB',name:'Go-Home Heat',desc:'Run a show graded F.',hidden:true},
   {id:'ACH_BROKE',name:'Folded',desc:'Go out of business.',hidden:true},
   {id:'ACH_STARTUP_2Y',name:'Blank Cheque Survivor',desc:'Reach week 104 with the new-money company.'},
   {id:'ACH_OUTLAW_CEIL',name:'Top of the Gutter',desc:'Take the outlaw company to the most popularity its crowd allows.'},
@@ -95,7 +95,7 @@ var ACH = [
   {id:'ACH_JOSHI_MERCH',name:'The Longest Table',desc:'Out-sell a bigger company in merchandise for a week with the all-women company.'},
   {id:'MS_SELLOUT',ms:true,name:'First sell-out',desc:'Fill a building to the rafters.'},
   {id:'MS_TOPMATCH',ms:true,name:'First top-grade match',desc:'Book a match of ★★★★½ or better.'},
-  {id:'MS_SHOW80',ms:true,name:'First show of 80% or more',desc:'Run a show rated 80% or better.'},
+  {id:'MS_SHOW80',ms:true,name:'First A- show',desc:'Run a show graded A- or better.'},
   {id:'MS_TITLECHANGE',ms:true,name:'First title change',desc:'See a belt change hands on your show.'},
   {id:'MS_CROWN',ms:true,name:'First champion crowned',desc:'Crown a champion for a vacant title.'},
   {id:'MS_BUILT',ms:true,name:'A champion built from nothing',desc:'Make a champion of someone who arrived as an unknown.'},

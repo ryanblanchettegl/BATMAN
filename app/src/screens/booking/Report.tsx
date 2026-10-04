@@ -16,9 +16,9 @@ export function Verdict(p: { r: any }) {
 export function Ladder(_p: { m: Modal }) {
   const S = G.S, e = S.queue[S.qi] ? E.expectWords(S) : null;
   return <Window title="How good is a show?" wide>
-    <p class="muted">A show is described in the words of the business, from a bomb to an all-time classic. A crowd expects a certain kind of show from your company, and the show is judged against that.</p>
-    <ol class="rules ladder" data-t="ladder-list">{E.SHOW_LADDER.map((x: any, i: number) => <li key={x.w} class={e && e.i === i ? 'on' : undefined}><b>{x.w}.</b> {x.d}{e && e.i === i ? <span class="gold"> This is what your crowd expects.</span> : null}</li>)}</ol>
-    <p class="mt2">Beat what they expect and your popularity goes up. Fall short and it goes down. What they expect rises as you get more popular, and they get used to whatever you keep giving them, good or bad.</p>
+    <p class="muted">A show gets a letter grade, and the business has a word for each one, from a bomb to an all-time classic. A crowd expects a certain kind of show from your company, and the show is judged against that.</p>
+    <ul class="rules ladder" data-t="ladder-list">{E.SHOW_LADDER.map((x: any, i: number) => <li key={x.w} class={e && e.i === i ? 'on' : undefined}><b class="lg">{x.g}</b> <b>{x.w}.</b> {x.d}{e && e.i === i ? <span class="gold"> This is what your crowd expects.</span> : null}</li>)}</ul>
+    <p class="mt2">Every show gets a letter grade, and each rung on the ladder goes with one. Beat what they expect and your popularity goes up. Fall short and it goes down. What they expect rises as you get more popular, and they get used to whatever you keep giving them, good or bad.</p>
   </Window>;
 }
 export function OddsLine(p: { s: any }) {
@@ -83,7 +83,7 @@ export function Report(p: { r: any }) {
     <Head eyebrow={E.cal(r.week).label + ' · show report'} title={r.name} />
     <Panel cls="mb3">
       <div class="row rating">
-        <div><div class="eyebrow">Show rating</div><div class="big">{r.rating}% <span class="gold">{grade(r.rating)}</span></div></div>
+        <div><div class="eyebrow">Show grade</div><div class="big" data-t="show-grade">{grade(r.rating)}</div></div>
         <p><Verdict r={r} /> {Math.abs(r.dImage) < 0.05 ? 'Popularity unchanged.' : 'Popularity ' + (r.dImage > 0 ? 'up ' : 'down ') + Math.abs(r.dImage).toFixed(1) + '.'}</p>
       </div>
       {(() => { const w = whyLine(r); return w.up.length || w.down.length ? <div class="why mt2"><p class="eyebrow">Why it scored</p>

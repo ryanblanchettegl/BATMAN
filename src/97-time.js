@@ -87,8 +87,9 @@ function showTimes(S,P,show,rep,card){
 
 /* ---------- making a show fit ---------- */
 /** Change lengths, and add or drop a segment if it must, until the show fits its time (within five minutes either
-    way). The suggested card uses it, and so does anything that books without a person. Returns how many changes. */
-function fitShow(S,card){
+    way). The suggested card uses it, and so does anything that books without a person. Returns how many changes.
+    `keep` is the index of a match that must not be given more time (one a call on the night has just cut short). */
+function fitShow(S,card,keep){
   var show=S.queue&&S.queue[S.qi];if(!show||!card.length)return 0;
   var P=S.promos[S.player],B=showMins(show),L=segList(S),changed=0,it,t,n;
   var total=function(){var s=hasPlan(S)?PLAN_MINS:0;card.forEach(function(m,i){s+=matchSlot(show,m,i===card.length-1);});L.forEach(function(sg){s+=segMins(sg);});return s;};
@@ -115,14 +116,14 @@ function fitShow(S,card){
   };
   var grow=function(){
     var i,m=card[n-1];
-    if(lenOf(m)!=='L'&&m.stip!=='iron'){m.len=lenOf(m)==='S'?'M':'L';return true;}
+    if(n-1!==keep&&lenOf(m)!=='L'&&m.stip!=='iron'){m.len=lenOf(m)==='S'?'M':'L';return true;}
     if(segStep('S','M',false))return true;
     // an undercard match gets more time, where it would not sit next to another long one (the last two may both be long)
-    i=choose(function(k){return k>0&&k<n-1&&lenOf(card[k])==='M'&&card[k].stip!=='iron'&&lenOf(card[k-1])!=='L'&&(k+1>=n-1||lenOf(card[k+1])!=='L');},false);if(i>=0){card[i].len='L';return true;}
-    for(i=0;i<n;i++)if(lenOf(card[i])==='S'&&card[i].stip!=='iron'){card[i].len='M';return true;}
+    i=choose(function(k){return k!==keep&&k>0&&k<n-1&&lenOf(card[k])==='M'&&card[k].stip!=='iron'&&lenOf(card[k-1])!=='L'&&(k+1>=n-1||lenOf(card[k+1])!=='L');},false);if(i>=0){card[i].len='L';return true;}
+    for(i=0;i<n;i++)if(i!==keep&&lenOf(card[i])==='S'&&card[i].stip!=='iron'){card[i].len='M';return true;}
     if(L.length<4){var taken={};L.forEach(function(sg){taken[clamp(sg.pos|0,0,n-1)]=1;});var at=[n-1,Math.min(1,n-1),Math.min(2,n-1),Math.min(3,n-1)].filter(function(p){return !taken[p];})[0];L.push({k:'writers',who:[],pos:at==null?n-1:at,len:'M'});return true;}
     if(segStep('M','L',false))return true;
-    i=choose(function(k){return k>0&&k<n-1&&lenOf(card[k])==='M'&&card[k].stip!=='iron';},false);if(i>=0){card[i].len='L';return true;}
+    i=choose(function(k){return k!==keep&&k>0&&k<n-1&&lenOf(card[k])==='M'&&card[k].stip!=='iron';},false);if(i>=0){card[i].len='L';return true;}
     return false;
   };
   for(it=0;it<40;it++){
@@ -172,7 +173,14 @@ function showFill(S,card){
 }
 
 (function(){
-  var v0=E.validate,s0=E.suggest;
+  var v0=E.validate,s0=E.suggest,c0=E.resolveChaos;
+  /* a call on the headset can cut a match short. The show is on the air by then, so the rest of the night stretches to
+     cover it: the booker is not sent back to the card. The match that was cut keeps its new length. */
+  E.resolveChaos=function(S,card,c){
+    var mi=S.chs&&!S.chs.done?S.chs.mi:null,r=c0(S,card,c);
+    if(card&&card.length){var k=showClock(S,card);if(k.over||k.short)fitShow(S,card,mi);}
+    return r;
+  };
   /* a show that does not fit its time cannot run */
   E.validate=function(S,card){
     var v=v0(S,card),show=S.queue&&S.queue[S.qi];if(!show||!card.length)return v;

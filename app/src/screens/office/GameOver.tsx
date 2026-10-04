@@ -5,7 +5,7 @@ import { takeJob, abandonGame } from '../../flow';
 import { copyText } from '../start';
 import { clearSave } from '../../store';
 import { clearToasts } from '../../shell/Frame';
-import { Head, Panel, Btn, KV, CheckLine, stars } from '../../kit';
+import { Head, Panel, Btn, KV, CheckLine, stars, grade } from '../../kit';
 
 /** The score for a finished career, kept in this browser so the next one has something to beat. */
 function bestSoFar(score: number, name: string): number {
@@ -74,7 +74,7 @@ export function GameOver() {
     <Panel>
       <p>{fired ? S.owner.name + ' has lost faith in your booking and let you go from ' + P.name + '.' : P.name + ' ran out of money after six straight weeks in the red.'}</p>
       <div class="kv mt3 mb2">
-        <KV label="Booker level">{S.booker.lvl}</KV><KV label="Shows run">{st.shows}</KV><KV label="Best show">{st.bestShow}%</KV><KV label="Best match">{stars(st.bestMatch)}</KV><KV label="Feuds finished">{st.feudsDone}</KV>
+        <KV label="Booker level">{S.booker.lvl}</KV><KV label="Shows run">{st.shows}</KV><KV label="Best show">{st.shows ? grade(st.bestShow) : '—'}</KV><KV label="Best match">{stars(st.bestMatch)}</KV><KV label="Feuds finished">{st.feudsDone}</KV>
       </div>
       {fired && <div class="mt3">
         <h2 class="mb1">Somebody is always hiring</h2>

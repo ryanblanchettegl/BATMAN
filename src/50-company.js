@@ -5,7 +5,7 @@ function mkOffer(S,P){
   var MD=modelOf(P),type=pick(S,MD.riskFree?['image','rating']:['risk','image','rating']),o={name:pick(S,names),weeks:ri(S,12,36),type:type},mult=1;
   if(type==='risk'){o.val=ri(S,0,2);mult=[1.5,1.2,1][o.val];o.text='Keep the product '+RISKN[o.val]+(o.val?' or tamer':'');}
   else if(type==='image'){o.val=Math.round(P.image-ri(S,0,3));o.text='Popularity stays at '+o.val+' or better';}
-  else{var lo=99;Object.keys(P.base).forEach(function(k){if(P.base[k]<lo)lo=P.base[k];});o.val=Math.round(lo+0.6*(P.image-P.image0)-ri(S,5,10));o.text='No show rated under '+o.val+'%';}
+  else{var lo=99;Object.keys(P.base).forEach(function(k){if(P.base[k]<lo)lo=P.base[k];});o.val=Math.round(lo+0.6*(P.image-P.image0)-ri(S,5,10));o.text='No show graded under '+gradeG(o.val);}
   o.pay=Math.max(1000,Math.round(P.inc0*(0.012+rnd(S)*0.02)*mult*mixOf(P).sp/1000)*1000);
   return o;
 }
@@ -13,7 +13,7 @@ function refreshOffers(S){var P=S.promos[S.player];S.spOffers=[];for(var i=0;i<3
 function sponsorBroken(S,P,x){
   if(x.type==='risk')return P.risk>x.val;
   if(x.type==='image')return P.image<x.val;
-  return S.reports.some(function(r){return r.week===S.week&&r.rating<x.val;});
+  return S.reports.some(function(r){return r.week===S.week&&!gradeMeets(r.rating,x.val);});
 }
 NEWX.push(function(S){refreshOffers(S);});
 WEEKX.push(function(S){

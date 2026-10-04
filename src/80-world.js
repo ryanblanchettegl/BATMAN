@@ -354,7 +354,7 @@ SHOWX.push(function(S,P,show,rep){
   if(P.id!==S.player||S.cal||!S.net)return;
   var posts=netPosts(S,P,show,rep),sum=0;posts.forEach(function(p){sum+=p.s;});
   S.net.mood=clamp(S.net.mood+(clamp(55+(rep.rating-rep.exp)*5+sum*3,0,100)-S.net.mood)*0.25,0,100);
-  S.net.threads.unshift({w:S.week,sub:rep.name+' ('+rep.rating+'%)',posts:posts});if(S.net.threads.length>10)S.net.threads.length=10;
+  S.net.threads.unshift({w:S.week,sub:rep.name+' ('+gradeG(rep.rating)+')',posts:posts});if(S.net.threads.length>10)S.net.threads.length=10;
   if(S.net.mood>=90)award(S,'ACH_BOARD');
 });
 PREX.push(function(S){if(S.net)S.hype=(S.hype||0)+clamp((S.net.mood-55)/900,-0.03,0.04)*(modelOf(S.promos[S.player]).netX||1);});

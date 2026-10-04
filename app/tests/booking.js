@@ -207,7 +207,7 @@ async function section(mode) {
   /* ---- the report ---- */
   await page.click('#live-go');
   const rep = await state(page, S => ({ rating: S.reports[0].rating, name: S.reports[0].name, matches: S.reports[0].segs.filter(s => s.k === 'match').length, angles: S.reports[0].segs.filter(s => s.k !== 'match').length }));
-  ok(!(await has(page, '#live')) && await txt(page, '.head h1') === rep.name && (await txt(page, '.big')).split(' ')[0] === rep.rating + '%', mode + ': the report');
+  ok(!(await has(page, '#live')) && await txt(page, '.head h1') === rep.name && /^(A\+|A|A-|B\+|B|B-|C\+|C|C-|D|F)$/.test((await txt(page, '.big')).trim()) && (await txt(page, '.big')).trim() === await state(page, (S, v) => GP.grade(v), rep.rating) && !/%/.test(await txt(page, '.rating')), mode + ': the report should give the show a letter grade and no percentage: ' + await txt(page, '.rating'));
   ok(await count(page, '.sheet .seg') === rep.matches && await count(page, '.sheet .angle') === rep.angles + (seen.pre ? 1 : 0), mode + ': every segment is in the report');
   ok(rep.name === shows[0] && await count(page, '[data-t="closeReport"]') === 2 && (await txt(page, '[data-t="closeReport"]')) === 'Book ' + shows[1], mode + ': the report offers the next show');
   await check('report');

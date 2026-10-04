@@ -181,7 +181,7 @@ SHOWX.push(function(S,P,show,rep){
   var mine=S.promos[S.player].cities||[],theirs=P.cities||[];if(!theirs.length)return;
   var city=theirs[hash('bar'+S.seed+P.id+S.week)%theirs.length];if(mine.indexOf(city)<0)return;
   (S.bar||(S.bar={}))[city]={w:S.week,d:Math.min(3,(rep.rating-rep.exp)/3),by:P.name,r:rep.rating};
-  news(S,'world',P.name+' had a great night in '+city+' ('+rep.rating+'%). Anyone who follows them there has more to live up to.');
+  news(S,'world',P.name+' had a great night in '+city+' (graded '+gradeG(rep.rating)+'). Anyone who follows them there has more to live up to.');
 });
 function barCity(S,venue){
   var B=S.bar;if(!B)return null;

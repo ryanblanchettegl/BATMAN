@@ -6,7 +6,7 @@ import { G, ui, me, Card, openCard, popCard, closeCards, cash, full, plural, ope
 import { go } from '../nav';
 import { rs } from '../screens/roster/state';
 import { sendScout } from '../screens/roster/Profile';
-import { Window, Btn, Tag, Name, Side, Meter, Portrait, BeltArt, TitleName, TeamName, PromoName, Empty, champOf, teamName, stars, Txt } from '../kit';
+import { Window, Btn, Tag, Name, Side, Meter, Portrait, BeltArt, TitleName, TeamName, PromoName, Empty, champOf, teamName, stars, grade, Txt } from '../kit';
 
 const promoName = (pid: string) => pid === 'FA' ? 'Free agent' : (G.S.promos[pid] ? G.S.promos[pid].name : pid);
 /** Every title in the world this wrestler holds, with the promotion that owns it. */
@@ -122,7 +122,7 @@ function PromoCard(p: { id: string }) {
       <div><small>Model</small><span>{M.n}</span></div>
       <div><small>Popularity</small><span><Meter v={P.image} /> <b class="num">{P.image.toFixed(1)}</b></span></div>
       <div><small>Roster</small><span class="num">{roster}</span></div>
-      <div><small>Last show</small><span>{P.last ? <>{P.last.name} <b class="num">{P.last.rating}%</b></> : '—'}</span></div>
+      <div><small>Last show</small><span>{P.last ? <>{P.last.name} <b class="gold">{grade(P.last.rating)}</b></> : '—'}</span></div>
       {mine ? null : <div><small>Relations with you</small><span class={'num ' + (rel >= 20 ? 'good' : (rel <= -20 ? 'bad' : ''))}>{(rel > 0 ? '+' : '') + rel}</span></div>}
     </div>
     <p class="eyebrow mt2">Champions</p>

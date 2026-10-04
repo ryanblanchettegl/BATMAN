@@ -134,6 +134,12 @@ const fx = (r, re) => r.segs.filter(s => s.k === 'match' && (s.fx || []).some(f 
   tryKind('save', { label: 'the two are a team', post: who => S.w[who[0]].team != null && S.w[who[0]].team === S.w[who[1]].team });
   tryKind('turn', { label: 'they changed sides', pre: who => S.w[who[0]].align, post: (who, pre) => S.w[who[0]].align !== pre });
   tryKind('words', { label: 'the feud is still going', post: who => true });
+  /* a call on the headset that cuts a match short does not leave the show unable to run */
+  { let cases = 0, stuck = 0, kept = 0, cut = 0;
+    for (let seed = 1; seed <= 24; seed++) { const S0 = E.newGame('pdw', seed, { name: 'R' }); house(S0); S0.card = E.suggest(S0);
+      let got = false; for (let i = 0; i < 400 && !got; i++) { S0.chs = null; got = !!E.chaos(S0, S0.card); } if (!got) continue;
+      for (let c = 0; c < 3; c++) { const T = JSON.parse(JSON.stringify(S0)), mi = T.chs.mi, was = T.card[mi] ? T.card[mi].len : null; E.resolveChaos(T, T.card, c); cases++; if (E.validate(T, T.card).errors.length) stuck++; if (T.card[mi] && was !== 'S' && T.card[mi].len === 'S') { cut++; kept++; } } }
+    ok('pdw', 'after any headset call the show still fits its time, and a match that was cut stays cut', cases > 30 && stuck === 0 && cut === kept, cases + ' calls, ' + stuck + ' left the show unable to run, ' + cut + ' cut a match short'); }
   /* a big event is three hours */
   for (let g = 0; g < 8 && !(S.queue[S.qi] && S.queue[S.qi].big); g++) { if (S.qi < S.queue.length) { show(S); } adv(S); }
   if (S.queue[S.qi] && S.queue[S.qi].big) { house(S); S.card = E.suggest(S); const cb = E.clock(S, S.card);

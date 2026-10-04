@@ -18,7 +18,7 @@ function Issue(p: { s: any; live: boolean }) {
       <div class="stack">
         <Panel title={P.name + ' this week'}>
           {s.yours.length ? s.yours.map((y: any) => <div class="sheet-show" key={y.show}>
-            <p><b>{y.show}</b> <span class="num">{y.rating}% <b class="gold">{grade(y.rating)}</b></span>{y.exp != null ? <span class="muted"> {E.showVerdict(y.rating, y.exp).line}</span> : null}</p>
+            <p><b>{y.show}</b> <b class="gold">{grade(y.rating)}</b>{y.exp != null ? <span class="muted"> {E.showVerdict(y.rating, y.exp).line}</span> : null}</p>
             {y.lines.length ? <ul class="sheet-lines">{y.lines.map((l: string, i: number) => <li key={i}><Txt>{l}</Txt></li>)}</ul> : null}
           </div>) : <Empty>No shows yet this week. Run one on Booking and the sheet will have a view.</Empty>}
           <p class="mt2"><b>The verdict:</b> {s.review}</p>

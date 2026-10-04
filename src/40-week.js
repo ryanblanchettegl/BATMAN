@@ -144,8 +144,8 @@ var EV={
   sponsor:function(S,P){
     if(cal(S.week).wom!==4||S.quests.some(function(q){return q.type==='sponsor';}))return null;
     var target=Math.round(expected(P,{big:true})+3),bonus=Math.round(P.inc0*0.08/1000)*1000;
-    S.quests.push({id:S.nid++,type:'sponsor',target:target,bonus:bonus,due:S.week,text:'Sponsor: big event rated '+target+'% or better ('+money(bonus)+')'});
-    return {type:'sponsor',text:'A sponsor will pay '+money(bonus)+' if this month’s big event rates '+target+'% or better.'};
+    S.quests.push({id:S.nid++,type:'sponsor',target:target,bonus:bonus,due:S.week,text:'Sponsor: big event graded '+gradeG(target)+' or better ('+money(bonus)+')'});
+    return {type:'sponsor',text:'A sponsor will pay '+money(bonus)+' if this month’s big event is graded '+gradeG(target)+' or better.'};
   }
 };
 function genEvents(S){

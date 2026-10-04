@@ -3,13 +3,13 @@ import { E } from '../engine';
 import { G, me } from '../store';
 import { go, pending } from '../nav';
 import { repFor, openReport, endWeek } from '../flow';
-import { Btn, Tag, Empty, brandName, Txt } from '../kit';
+import { Btn, Tag, Empty, brandName, Txt, grade } from '../kit';
 
 export function ScheduleList() {
   const S = G.S, gate = E.taskGate(S, 'book');
   return <ul class="list">{S.queue.map((sh: any, i: number) => {
     let right;
-    if (i < S.qi) { const ri = repFor(sh), r = ri >= 0 ? S.reports[ri] : null; right = r ? <span class="row"><span class="num">{r.rating}%</span><Btn kind="sm" t="report" d={{ v: ri }} onClick={() => openReport(ri)}>Report</Btn></span> : <span class="muted">Done</span>; }
+    if (i < S.qi) { const ri = repFor(sh), r = ri >= 0 ? S.reports[ri] : null; right = r ? <span class="row"><b class="gold" data-t="show-grade">{grade(r.rating)}</b><Btn kind="sm" t="report" d={{ v: ri }} onClick={() => openReport(ri)}>Report</Btn></span> : <span class="muted">Done</span>; }
     else if (i === S.qi) right = gate.ok ? <Btn kind="go" t="book-show" onClick={() => go('booking')}>Book this show</Btn> : <span class="muted">After this week{'’'}s tasks</span>;
     else right = <span class="muted">Up next</span>;
     return <li><span><b>{sh.name}</b> {sh.big ? <Tag kind="gold">Big event</Tag> : <Tag>TV</Tag>}{sh.brand ? <> <Tag>{brandName(me(), sh.brand)}</Tag></> : null}</span>{right}</li>;
