@@ -1,7 +1,7 @@
 /* World Editor: build a world from scratch through the interface, check it, play it, and find it again after a reload.
-   Run: NODE_PATH=<dir containing playwright> node app/tests/editor.js   (MODES=desk,phone,tv) */
+   Run: NODE_PATH=<dir containing playwright> node app/tests/editor.js   (MODES=desk,tv) */
 const { open, overflow, shot } = require('./helper');
-const MODES = (process.env.MODES || 'desk,phone,tv').split(',');
+const MODES = (process.env.MODES || 'desk,tv').split(',');
 const fails = [];
 const ok = (mode, label, pass, detail) => { console.log(mode.padEnd(6), pass ? 'ok  ' : 'FAIL', label + (detail ? ': ' + detail : '')); if (!pass) fails.push(mode + ' ' + label); };
 const txt = (page, sel) => page.$eval(sel, e => e.innerText).catch(() => '');

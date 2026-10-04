@@ -6,7 +6,7 @@ import { go } from '../../nav';
 import { Btn, Tag, Txt } from '../../kit';
 import { office } from './util';
 
-const TAG: Record<string, [string, 'warn' | 'good' | 'bad' | undefined]> = { todo: ['To do', 'warn'], optional: ['Worth doing', undefined], waved: ['Not this week', undefined], done: ['Done', 'good'] };
+const TAG: Record<string, [string, 'warn' | 'good' | 'bad' | undefined]> = { todo: ['Must do', 'warn'], optional: ['Worth doing', undefined], waved: ['Not this week', undefined], done: ['Done', 'good'] };
 
 function open(t: any) {
   if (t.id === 'ap') { act(() => { office().pl = 'office'; office().rooms = true; }); return; }
@@ -18,8 +18,8 @@ export function Tasks() {
   const S = G.S, T = E.tasks(S);
   return <div class="tasks">
     <p class="eyebrow">This week{'’'}s tasks</p>
-    {T.list.length ? <ul class="list">{T.list.map((t: any) => <li key={t.id} class={'task ' + t.state} data-task={t.id}>
-      <span><Tag kind={TAG[t.state][1]}>{TAG[t.state][0]}</Tag> <span class={t.state === 'done' || t.state === 'waved' ? 'muted' : undefined}><Txt>{t.text}</Txt></span></span>
+    {T.list.length ? <ul class="list">{T.list.map((t: any) => <li key={t.id} class={'task ' + t.state + (t.state === 'todo' && T.strict ? ' must' : '')} data-task={t.id}>
+      <span>{t.state === 'todo' && T.strict ? <span class="mark" aria-hidden="true">!</span> : null}<Tag kind={TAG[t.state][1]}>{t.state === 'todo' && !T.strict ? 'To do' : TAG[t.state][0]}</Tag> <span class={t.state === 'done' || t.state === 'waved' ? 'muted' : undefined}><Txt>{t.text}</Txt></span></span>
       <span class="row opts">
         {t.state === 'todo' || t.state === 'optional' ? <Btn kind="sm" t="task-go" d={{ v: t.id }} onClick={() => open(t)}>{t.label}</Btn> : null}
         {t.state === 'todo' && t.waive ? <Btn kind="sm" t="task-wave" d={{ v: t.id }} onClick={() => act(() => { const r = E.taskWave(S, t.id); say(r.msg, { err: !r.ok }); })}>Not this week</Btn> : null}

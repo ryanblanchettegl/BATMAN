@@ -7530,40 +7530,40 @@ E.NET_LVL={sure:'Sure',likely:'Likely',thin:'Thin'};
    Another system adds its own task through the TASKX hook list (declared with the others in src/10-match.js). */
 function taskOpen(S){
   var P=S.promos[S.player],L=[],R=rosterOf(S,P.id).filter(function(w){return !w.nw;});
-  var add=function(id,text,to,label,o){o=o||{};L.push({id:id,text:text,done:o.done||text,to:to,label:label,gate:o.gate||'show',card:!!o.card,need:o.need!==false,waive:o.waive!==false&&o.need!==false});};
-  if(S.owner&&S.owner.pending)add('house','The company is yours. Set your house style.','house','Set it',{waive:false,done:'House style set.'});
+  var add=function(id,text,to,label,o){o=o||{};L.push({id:id,text:text,short:o.short||text,done:o.done||text,to:to,label:label,gate:o.gate||'show',card:!!o.card,need:o.need!==false,waive:o.waive!==false&&o.need!==false});};
+  if(S.owner&&S.owner.pending)add('house','The company is yours. Set your house style.','house','Set it',{waive:false,done:'House style set.',short:'Set your house style'});
   var n=S.inbox.filter(function(e){return !e.done;}).length;
-  if(n)add('inbox',n+' '+(n===1?'matter':'matters')+' in your inbox '+(n===1?'needs':'need')+' an answer.','desk','Answer',{gate:'week',waive:false,done:'Inbox answered.'});
+  if(n)add('inbox',n+' '+(n===1?'matter':'matters')+' in your inbox '+(n===1?'needs':'need')+' an answer.','desk','Answer',{gate:'week',waive:false,done:'Inbox answered.',short:'Answer the inbox ('+n+')'});
   var D=P.desk||{},spare=(S.voices||[]).filter(function(v){return !v.hired;}).length;
   if(spare){
-    if(D.pbp==null)add('desk-pbp','You have not picked a play-by-play voice for the commentary desk.','manage','Assign',{done:'A play-by-play voice is in the chair.'});
-    if(D.col==null)add('desk-col','You have not picked a colour voice for the commentary desk.','manage','Assign',{done:'A colour voice is in the chair.'});
+    if(D.pbp==null)add('desk-pbp','You have not picked a play-by-play voice for the commentary desk.','manage','Assign',{done:'A play-by-play voice is in the chair.',short:'Pick a play-by-play voice'});
+    if(D.col==null)add('desk-col','You have not picked a colour voice for the commentary desk.','manage','Assign',{done:'A colour voice is in the chair.',short:'Pick a colour voice'});
   }
   var slots=spMax(P)-S.sponsors.length,can=S.spOffers.filter(function(o){return E.sponsorOk(S,o);}).length;
-  if(slots>0&&can>0)add('sponsors',can+' sponsor '+(can===1?'offer':'offers')+' you could sign, and '+slots+' free '+(slots===1?'slot':'slots')+'.','deals','See offers',{done:'Sponsor offers dealt with.'});
+  if(slots>0&&can>0)add('sponsors',can+' sponsor '+(can===1?'offer':'offers')+' you could sign, and '+slots+' free '+(slots===1?'slot':'slots')+'.','deals','See offers',{done:'Sponsor offers dealt with.',short:'Sponsor offers ('+can+')'});
   var T=tournActive(S);
   P.titles.forEach(function(t){
     if(t.holders.length)return;
     if(T&&T.title===t.id)return;
     if((S.card||[]).some(function(m){return m&&m.title===t.id;}))return;
-    add('title-'+t.id,'The '+t.name+' '+(t.tag?'are':'is')+' vacant. Book a match for '+(t.tag?'them':'it')+' or start a tournament.','titles','Titles',{card:true,done:'The '+t.name+' '+(t.tag?'are':'is')+' taken care of.'});
+    add('title-'+t.id,'The '+t.name+' '+(t.tag?'are':'is')+' vacant. Book a match for '+(t.tag?'them':'it')+' or start a tournament.','titles','Titles',{card:true,done:'The '+t.name+' '+(t.tag?'are':'is')+' taken care of.',short:'The '+t.name+': vacant'});
   });
   R.filter(function(w){return w.con!=null&&w.con<=1;}).sort(function(a,b){return b.ovr-a.ovr;}).slice(0,4).forEach(function(w){
-    add('con-'+w.id,w.name+'’s contract ends '+(w.con<=0?'this week':'next week')+'. Renew it or let them go.','roster','Roster',{done:w.name+'’s contract is dealt with.'});
+    add('con-'+w.id,w.name+'’s contract ends '+(w.con<=0?'this week':'next week')+'. Renew it or let them go.','roster','Roster',{done:w.name+'’s contract is dealt with.',short:w.name+'’s contract ends'});
   });
   // tasks from other systems: TASKX.push(function(S,P,add){ add(id,text,page,label,{gate,waive,need,card,done}); })
   TASKX.forEach(function(fn){fn(S,P,add);});
   // worth doing, never in the way
   var left=S.queue.length-S.qi,ap=E.backstage(S).ap;
-  if(ap>0&&left>0)add('ap',ap+' action '+(ap===1?'point':'points')+' to spend backstage before the week is out.','desk','Rooms',{need:false,done:'Action points spent.'});
-  S.quests.filter(function(q){return q.due!=null&&q.due<=S.week;}).slice(0,3).forEach(function(q){add('q-'+q.id,'Due this week: '+q.text,'booking','Booking',{need:false,done:'No longer due: '+q.text});});
+  if(ap>0&&left>0)add('ap',ap+' action '+(ap===1?'point':'points')+' to spend backstage before the week is out.','desk','Rooms',{need:false,done:'Action points spent.',short:'Action points to spend ('+ap+')'});
+  S.quests.filter(function(q){return q.due!=null&&q.due<=S.week;}).slice(0,3).forEach(function(q){add('q-'+q.id,'Due this week: '+q.text,'booking','Booking',{need:false,done:'No longer due: '+q.text,short:'A promise is due this week'});});
   return L;
 }
 /** The week's list: open tasks first, then what was done or waved off this week. Remembers what it has shown, so a
     task that is finished stays on the list with a tick until the week ends. That memory is bookkeeping, not game state. */
 E.tasks=function(S){
   var open=taskOpen(S),seen=S.taskSeen&&S.taskSeen.w===S.week?S.taskSeen:(S.taskSeen={w:S.week,t:{}}),wave=S.taskWave&&S.taskWave.w===S.week?S.taskWave.ids:{},now={},L=[];
-  open.forEach(function(t){now[t.id]=1;seen.t[t.id]={text:t.done,need:t.need};var waved=!!wave[t.id]&&t.waive;L.push({id:t.id,text:t.text,to:t.to,label:t.label,gate:t.gate,card:t.card,need:t.need,waive:t.waive,state:waved?'waved':(t.need?'todo':'optional')});});
+  open.forEach(function(t){now[t.id]=1;seen.t[t.id]={text:t.done,need:t.need};var waved=!!wave[t.id]&&t.waive;L.push({id:t.id,text:t.text,short:t.short,to:t.to,label:t.label,gate:t.gate,card:t.card,need:t.need,waive:t.waive,state:waved?'waved':(t.need?'todo':'optional')});});
   Object.keys(seen.t).forEach(function(id){if(!now[id])L.push({id:id,text:seen.t[id].text,need:seen.t[id].need,state:'done'});});
   var rank={todo:0,optional:1,waved:2,done:3};
   L.sort(function(a,b){return rank[a.state]-rank[b.state];});
@@ -7587,6 +7587,69 @@ E.taskWave=function(S,id){
 E.taskUnwave=function(S,id){if(S.taskWave&&S.taskWave.w===S.week)delete S.taskWave.ids[id];return {ok:true,msg:'Back on the list.'};};
 /** Whether open tasks stop a show from running and a week from ending (the default), or are only reminders. */
 E.setGate=function(S,strict){S.gateOff=!strict;return {ok:true,msg:strict?'This week’s tasks must be done or waved off before a show runs.':'This week’s tasks are reminders only.'};};
+
+/* ===== 96-advance.js ===== */
+/* ---------- The ADVANCE button: what the week needs next ----------
+   One button, always in the same place (top right), big, one or two words: the next thing that needs the booker. It guides: for a
+   decision it says where to go, and the screen takes the player there. It only acts for the two things that are a
+   single press already: running the show and ending the week. When this week's tasks (src/95-tasks.js) are in the
+   way it says only "Attention" and leads to the desk, where the list is. The desk also shows what is coming up (the
+   nearest countdowns), so there is always something about to pay off. The research is in docs/plans/advance-button.md.
+   Everything here only reads the game. It can be called on every redraw. */
+var ADV_DAYS=['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
+/** The day a show is on, from its name ("Wednesday Night Folio"). A big event is a Sunday. */
+function showDay(sh){
+  if(!sh)return '';
+  for(var i=0;i<ADV_DAYS.length;i++)if(sh.name.indexOf(ADV_DAYS[i])>=0)return ADV_DAYS[i];
+  return sh.big?'Sunday':'';
+}
+/** The next step of the week.
+    short: the one or two words on the button. label: the same thing as a sentence, for the note under the button.
+    k: 'task' (something needs attention: the button says only "Attention", and `why` lists everything in the way), 'book' (the card needs building or fixing), 'pre' (a problem before the bell),
+       'run' (the card is ready), 'week' (end the week), 'over'.
+    to: the page to go to. act: 'run' or 'week' when one press does it. why: what is in the way, in words. */
+E.advance=function(S){
+  if(S.over)return {k:'over',short:'',label:'The game is over',to:'desk',act:null,why:[],day:'',step:0,steps:0};
+  var T=E.tasks(S),todo=T.list.filter(function(t){return t.state==='todo';}),strict=T.strict,sh=S.queue[S.qi],n=S.queue.length;
+  var steps=n+1,step=Math.min(S.qi,n)+1,out=function(o){o.why=o.why||[];o.act=o.act||null;o.step=step;o.steps=steps;return o;};
+  if(sh){
+    var day=showDay(sh);
+    var hold=strict?todo.filter(function(t){return t.gate==='show'&&!t.card;}):[];
+    if(hold.length)return out({k:'task',short:'Attention',id:hold[0].id,label:hold[0].short,to:'desk',day:'Before '+sh.name,why:hold.map(function(t){return t.text;})});
+    if(S.pre&&S.pre.key===showKey(S)&&!S.pre.done)return out({k:'pre',short:'Attention',label:'Answer the problem before the show',to:'booking',day:day,why:['Something has come up before '+sh.name+'. It is at the top of the card.']});
+    var card=S.card||[];
+    if(!card.length)return out({k:'book',short:'Book show',label:'Book '+sh.name,to:'booking',day:day});
+    var v=E.validate(S,card);
+    if(v.errors.length)return out({k:'book',short:'Fix card',label:'Finish the card for '+sh.name,to:'booking',day:day,why:v.errors.slice(0,3)});
+    var onCard=strict?todo.filter(function(t){return t.gate==='show'&&t.card;}):[];
+    if(onCard.length)return out({k:'task',short:'Attention',id:onCard[0].id,label:onCard[0].short,to:'desk',day:day,why:onCard.map(function(t){return t.text;})});
+    return out({k:'run',short:'Run show',label:'Run '+sh.name,to:'booking',act:'run',day:day});
+  }
+  var open=S.inbox.some(function(e){return !e.done;});
+  if(open){var ib=todo.filter(function(t){return t.id==='inbox';})[0];return out({k:'task',short:'Attention',id:'inbox',label:ib?ib.short:'Answer the inbox',to:'desk',day:'The week is nearly over',why:[ib?ib.text:'The inbox needs an answer.']});}
+  if(strict&&todo.length)return out({k:'task',short:'Attention',id:todo[0].id,label:todo[0].short,to:'desk',day:'The week is nearly over',why:todo.map(function(t){return t.text;})});
+  return out({k:'week',short:'End week',label:'End the week',to:'desk',act:'week',day:'Sunday night'});
+};
+/** What is coming up: the nearest countdowns, soonest first, never more than three. n is weeks away (0 is this week). */
+E.comingUp=function(S){
+  if(S.over)return [];
+  var P=S.promos[S.player],L=[],wk=function(n){return n<=0?'this week':(n===1?'next week':'in '+n+' weeks');};
+  var nb=E.nextBig(S);L.push({n:nb.week-S.week,t:nb.name+' '+wk(nb.week-S.week),to:'booking',k:'big'});
+  var fs=activeFeuds(S).filter(function(f){return f.promo===P.id;}).sort(function(a,b){return b.heat-a.heat;});
+  fs.slice(0,6).forEach(function(f){
+    var act=feudAct(f),big=nb.week-S.week;
+    if(f.heat>=60&&big<=2)L.push({n:big,t:feudLabel(S,f)+' is ready to end at '+nb.name,to:'storylines',k:'feud'});
+    else if(act<3&&(f.heat>=52&&f.heat<60||f.heat>=24&&f.heat<30))L.push({n:1,t:feudLabel(S,f)+' is one good show from its next act',to:'storylines',k:'feud'});
+  });
+  var c=rosterOf(S,P.id).filter(function(w){return !w.nw&&w.con!=null&&w.con>=2&&w.con<=6;}).sort(function(a,b){return b.ovr-a.ovr;})[0];
+  if(c)L.push({n:c.con,t:c.name+'’s contract ends '+wk(c.con),to:'roster',k:'con'});
+  S.quests.filter(function(q){return q.due!=null&&q.due>S.week&&q.due-S.week<=4;}).sort(function(a,b){return a.due-b.due;}).slice(0,1).forEach(function(q){L.push({n:q.due-S.week,t:'A promise is due '+wk(q.due-S.week),to:'desk',k:'q'});});
+  var ye=48-((S.week-1)%48)-1;if(ye<=4)L.push({n:ye,t:'The year-end awards are '+wk(ye),to:'history',k:'year'});
+  if(S.scn&&!S.scn.done)L.push({n:S.scn.weeks-S.week,t:'The scenario ends '+wk(S.scn.weeks-S.week),to:'desk',k:'scn'});
+  if(S.chal&&!S.chal.done)L.push({n:S.chal.weeks-S.week,t:'The challenge ends '+wk(S.chal.weeks-S.week),to:'desk',k:'chal'});
+  var seen={};
+  return L.filter(function(x){if(x.n<0||seen[x.t])return false;seen[x.t]=1;return true;}).sort(function(a,b){return a.n-b.n||(a.k==='big'?-1:1);}).slice(0,3);
+};
 
 root.GP=E;
 })(typeof window !== 'undefined' ? window : globalThis);

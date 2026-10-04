@@ -1,11 +1,11 @@
-/* Browser run of the weekly challenge: the title card entry, the code checker, twelve weeks, and the finished screen with its code. Desk and phone.
+/* Browser run of the weekly challenge: the title card entry, the code checker, twelve weeks, and the finished screen with its code. Desk and tablet.
    Build first:  node build.js
    Run:          NODE_PATH=/opt/npm-tools/node_modules node app/tests/challenge.js */
 const { open, overflow, state, redraw } = require('./helper');
 const fails = [];
 function check(mode, label, ok, detail) { console.log(mode.padEnd(6), ok ? 'ok  ' : 'FAIL', label + (detail ? ': ' + detail : '')); if (!ok) fails.push(mode + ' ' + label); }
 (async () => {
-  for (const mode of ['desk', 'phone']) {
+  for (const mode of ['desk', 'tablet']) {
     const { browser, page, errs } = await open({ mode, promo: null, file: process.env.EWF_OUT || 'index' });
     await page.click('[data-t="challenge"]'); await page.waitForSelector('#chal-code');
     const txt = await page.$eval('.modal, [role="dialog"], .win', e => e.innerText).catch(() => '');

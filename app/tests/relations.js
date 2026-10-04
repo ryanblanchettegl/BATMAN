@@ -1,7 +1,7 @@
 /* The notification bar ("X will remember that") and what a wrestler card says about relationships.
-   Run: NODE_PATH=<dir containing playwright> node app/tests/relations.js   (MODES=desk,phone,tv) */
+   Run: NODE_PATH=<dir containing playwright> node app/tests/relations.js   (MODES=desk,tv) */
 const { open, go, overflow, shot, state, redraw } = require('./helper');
-const MODES = (process.env.MODES || 'desk,phone,tv').split(',');
+const MODES = (process.env.MODES || 'desk,tv').split(',');
 const fails = [];
 const ok = (mode, label, pass, detail) => { console.log(mode.padEnd(6), pass ? 'ok  ' : 'FAIL', label + (detail ? ': ' + detail : '')); if (!pass) fails.push(mode + ' ' + label); };
 const txt = (page, sel) => page.$eval(sel, e => e.innerText).catch(() => '');

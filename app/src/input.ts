@@ -1,4 +1,4 @@
-/* Input that is not a mouse: keyboard shortcuts, a TV remote, a gamepad. Also the screen mode (desk, tablet, TV, phone).
+/* Input that is not a mouse: keyboard shortcuts, a TV remote, a gamepad. Also the screen mode (desk, tablet, TV). There is no phone or portrait layout: a tall narrow window is asked to turn sideways (styles/base.css).
    See docs/design.md, sections 4 and 5. */
 import { G, ui, pref, reduceMotion, redraw, closeModal, openModal, popCard } from './store';
 import { HOT, SECTIONS, sectionOf, go } from './nav';
@@ -6,16 +6,16 @@ import { book } from './flow';
 
 /* ---------- screen mode ---------- */
 export const NAV = { on: false, pad: false, tv: false };
-export function autoScreen(): 'desk' | 'tablet' | 'tv' | 'phone' {
+export function autoScreen(): 'desk' | 'tablet' | 'tv' {
   const w = window.innerWidth, ua = navigator.userAgent || ''; let coarse = false;
   try { coarse = window.matchMedia('(pointer: coarse)').matches; } catch (e) { /* ignore */ }
   if (/SmartTV|SMART-TV|Tizen|Web0S|webOS|\bAFT[A-Z]|GoogleTV|Android TV|BRAVIA|HbbTV|CrKey|Roku|Xbox|PlayStation|\bTV\b/i.test(ua)) return 'tv';
-  if (w <= 640) return 'phone';
+  if (w <= 640) return 'tablet';   // a small landscape screen: the touch-sized layout
   // Steam Deck: 1280 by 800 on a 7 inch screen. Desk type is too small there, so it gets the tablet size.
   if (/Steam ?Deck|SteamOS/i.test(ua) || (w <= 1366 && window.innerHeight <= 800 && NAV.pad)) return 'tablet';
   return coarse ? 'tablet' : 'desk';
 }
-export function screenMode() { return pref.screen && pref.screen !== 'auto' ? pref.screen : autoScreen(); }
+export function screenMode() { return pref.screen && pref.screen !== 'auto' && (pref.screen as string) !== 'phone' ? pref.screen : autoScreen(); }
 export function applyScreen() {
   const de = document.documentElement, m = screenMode();
   de.setAttribute('data-screen', m); de.style.setProperty('--zoom', String(pref.zoom || 1));
@@ -43,7 +43,7 @@ export function navHome(): boolean {
   const scope = navScope();
   let el = scope.querySelector('[data-home]') as HTMLElement | null;
   if (!el) el = (scope.querySelector('.dmenu .mi.on') || scope.querySelector('#live-go') || scope.querySelector('#modal-ok')) as HTMLElement | null;
-  if (!el) { const L = focusables(scope), M = L.filter(e => !e.closest('.menu') && !e.closest('.status') && !e.closest('.wt') && !e.classList.contains('caw-x')); el = M[0] || L[0] || null; }
+  if (!el) { const L = focusables(scope), M = L.filter(e => !e.closest('.menu') && !e.closest('.status') && !e.closest('.ftop') && !e.closest('.ffoot') && !e.closest('.wt') && !e.classList.contains('caw-x')); el = M[0] || L[0] || null; }
   if (el) { try { el.focus(); el.scrollIntoView({ block: 'nearest' }); } catch (e) { /* ignore */ } }
   return !!el;
 }
@@ -53,7 +53,7 @@ function navMove(dir: string): boolean {
   if (!L.length) return false;
   if (!cur || L.indexOf(cur) < 0) return navHome();
   const curLnk = cur.classList.contains('lnk'), LNK_COST = vh * 0.18;
-  const barOf = (e: HTMLElement) => e.closest('.menu') ? 1 : (e.closest('.status') ? 2 : 0), cb = barOf(cur), r = cur.getBoundingClientRect();
+  const barOf = (e: HTMLElement) => e.closest('.ftop') || e.closest('.menu') ? 1 : (e.closest('.ffoot') || e.closest('.status') ? 2 : 0), cb = barOf(cur), r = cur.getBoundingClientRect();
   const pickFrom = (pool: HTMLElement[]) => {
     let best: HTMLElement | null = null, bs = Infinity;
     pool.forEach(e => {
@@ -132,6 +132,7 @@ export function padPress(k: string) {
   if (k === 'start') { if (ui.modal && ui.modal.kind === 'options') closeModal(); else openModal({ kind: 'options' }); return; }
   if (k === 'x') { if (ui.modal && ui.modal.kind === 'help') closeModal(); else openModal({ kind: 'help' }); return; }
   if (k === 'y') { const open = document.querySelector('.jk [data-jk="close"]') as HTMLElement | null, btn = document.querySelector('[data-jk="open"]') as HTMLElement | null; if (open) open.click(); else if (btn) btn.click(); return; }
+  if (k === 'rt') { const adv = document.querySelector('[data-t="advance"]') as HTMLElement | null; if (adv && !ui.modal) adv.click(); return; }
   if (k === 'sel') { if (ui.modal && ui.modal.kind === 'help') closeModal(); else openModal({ kind: 'help' }); return; }
   if ((k === 'lb' || k === 'rb') && G.S && !ui.modal && !G.S.over && !book().live) {
     let i = SECTIONS.indexOf(sectionOf(ui.page)); i = (i + (k === 'rb' ? 1 : SECTIONS.length - 1)) % SECTIONS.length; go(SECTIONS[i].id);
@@ -143,7 +144,7 @@ function padPoll() {
   for (const g of gps) if (g && g.connected) { gp = g; break; }
   if (gp) {
     const now = Date.now(), b = (n: number) => !!(gp!.buttons[n] && gp!.buttons[n].pressed), ax = gp.axes || [];
-    const st: Record<string, boolean> = { a: b(0), b: b(1), x: b(2), y: b(3), lb: b(4), rb: b(5), sel: b(8), start: b(9), up: b(12) || ax[1] < -0.6, down: b(13) || ax[1] > 0.6, left: b(14) || ax[0] < -0.6, right: b(15) || ax[0] > 0.6 };
+    const st: Record<string, boolean> = { a: b(0), b: b(1), x: b(2), y: b(3), lb: b(4), rb: b(5), rt: b(7), sel: b(8), start: b(9), up: b(12) || ax[1] < -0.6, down: b(13) || ax[1] > 0.6, left: b(14) || ax[0] < -0.6, right: b(15) || ax[0] > 0.6 };
     Object.keys(st).forEach(k => {
       const move = k === 'up' || k === 'down' || k === 'left' || k === 'right';
       if (st[k] && (!PAD.prev[k] || (move && now - PAD.t[k] > (PAD.rep[k] ? 120 : 400)))) { PAD.rep[k] = !!PAD.prev[k]; PAD.t[k] = now; padPress(k); }

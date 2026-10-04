@@ -1,7 +1,7 @@
 /* Leaving companies out of a new game, from the Federations screen.
-   Run: NODE_PATH=<dir containing playwright> node app/tests/leaveout.js   (MODES=desk,phone) */
+   Run: NODE_PATH=<dir containing playwright> node app/tests/leaveout.js   (MODES=desk,tablet) */
 const { open, overflow, state } = require('./helper');
-const MODES = (process.env.MODES || 'desk,phone').split(',');
+const MODES = (process.env.MODES || 'desk,tablet').split(',');
 const fails = [];
 const ok = (mode, label, pass, detail) => { console.log(mode.padEnd(6), pass ? 'ok  ' : 'FAIL', label + (detail ? ': ' + detail : '')); if (!pass) fails.push(mode + ' ' + label); };
 const txt = (page, sel) => page.$eval(sel, e => e.innerText).catch(() => '');
@@ -21,7 +21,7 @@ async function run(mode, gone) {
     await page.keyboard.press('Escape');
     ok(mode, 'the list shows only the companies left in', (await page.$$('[data-t="pick"]')).length === 3 && !!(await page.$('[data-t="pick"][data-v="pdw"]')) && !(await page.$('[data-t="pick"][data-v="whw"]')));
     ok(mode, 'the Universe panel says what was done', /2 of 9 companies/.test(await txt(page, '[data-t="uni-cut-note"]')));
-    await page.click('[data-t="pick"][data-v="ttt"]');
+    await page.$eval('[data-t="pick"][data-v="ttt"]', e => e.click());   // not page.click: on the touch layout the list re-flows as the pointer crosses it
     await page.fill('#bname', 'Ryan');
     await page.click('[data-t="begin"]');
     await page.waitForSelector('main.main');
@@ -29,7 +29,7 @@ async function run(mode, gone) {
     ok(mode, 'the game has two companies', w.n === 2 && w.ids === 'pdw,ttt', w.ids);
     ok(mode, gone ? 'the others’ wrestlers are gone' : 'the others’ wrestlers are free agents', gone ? w.people < 250 : w.fa > 250, w.people + ' people, ' + w.fa + ' free agents');
     ok(mode, 'no errors', errs.length === 0, errs.slice(0, 3).join(' | '));
-  } catch (e) { ok(mode, 'the run finished', false, String(e.message).split('\n')[0]); }
+  } catch (e) { ok(mode, 'the run finished', false, String(e.message).split('\n').slice(0, 12).join(' // ').slice(0, 1200)); }
   await browser.close();
 }
 (async () => {

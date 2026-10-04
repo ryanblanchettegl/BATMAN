@@ -16,7 +16,7 @@ const plant = page => state(page, S => { for (let i = 0; i < 400; i++) { S.chs =
 /** The newest commentary line as far as it has been typed (the rest is in the page, hidden, holding its place). */
 const typed = page => page.$eval('#live .ln.last', e => { const c = (e.querySelector('.tx') || e).cloneNode(true); c.querySelectorAll('.untyped').forEach(x => x.remove()); return c.textContent; }).catch(() => '');
 /** Is the continue button on screen, clear of the menu bar and the status bar? */
-const goInView = page => page.evaluate(() => { const g = document.getElementById('live-go').getBoundingClientRect(), st = document.querySelector('.status').getBoundingClientRect(), mn = document.querySelector('.menu').getBoundingClientRect(); return g.top >= mn.bottom && g.bottom <= st.top; });
+const goInView = page => page.evaluate(() => { const g = document.getElementById('live-go').getBoundingClientRect(), st = document.querySelector('.ffoot').getBoundingClientRect(), mn = document.querySelector('.menu').getBoundingClientRect(); return g.top >= mn.bottom && g.bottom <= st.top; });
 /** Advance the broadcast one step. The first press may only finish the line being typed, so press until it moves. */
 async function advance(page, how) {
   const from = await pos(page);
@@ -203,7 +203,7 @@ async function section(mode) {
   ok(rep.name === shows[0] && await count(page, '[data-t="closeReport"]') === 2 && (await txt(page, '[data-t="closeReport"]')) === 'Book ' + shows[1], mode + ': the report offers the next show');
   await check('report');
   await shot(page, 'booking-' + mode + '-report', true);
-  await page.click('.status [data-t="options"]'); await page.click('[data-t="pref"][data-k="type"]'); await page.click('#modal-ok');   // typewriter off
+  await page.click('[data-t="options"]'); await page.click('[data-t="pref"][data-k="type"]'); await page.click('#modal-ok');   // typewriter off
   await page.click('[data-t="replay"]');
   ok(await pos(page) === '-1:0' && await has(page, '#live'), mode + ': replay');
   ok(!(await has(page, '#live .untyped')) && /main event/.test(await typed(page)), mode + ': with the typewriter off the line is there at once');
@@ -272,4 +272,4 @@ async function tv() {
   await browser.close();
 }
 
-(async () => { await section('desk'); await section('phone'); await tv(); console.log('booking: all passed'); })().catch(e => { console.error('FAIL', e.message); process.exit(1); });
+(async () => { await section('desk'); await section('tablet'); await tv(); console.log('booking: all passed'); })().catch(e => { console.error('FAIL', e.message); process.exit(1); });

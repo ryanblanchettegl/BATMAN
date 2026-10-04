@@ -266,6 +266,7 @@ export function Setup() {
 function Help() {
   return <Window title="Help" ok="Got it">
     <p><b>The job.</b> Book the shows, answer the inbox, close the week. Shows that beat what the crowd expects raise your popularity.</p>
+    <p class="mt1"><b>The big button.</b> Top right, on every page. It always says the next thing the week needs: Book show, Run show, End week. If it says Attention, something on your desk needs you first: rest on it to see what, press it to go to the desk, where the tasks that cannot be skipped are marked. The space bar presses it.</p>
     <p class="mt1"><b>Booking.</b> A show is matches, promos and angles. You pick who is in each. The odds decide the matches unless you spend booking power. Where a match sits matters: open with something quick, keep two long matches apart, and put the biggest match on last. The Running order notes beside the card read your card against those rules. Matches and segments are rated in stars, up to five.</p>
     <ul class="list mt1">
       <li><span><b>Office.</b> The desk and your career. It opens on what needs doing before the show.</span></li>
@@ -313,7 +314,7 @@ function Options() {
       {toggle('type', 'Typewriter text', 'Commentary types itself out during a show.')}
       {toggle('crt', 'Monitor effect', 'Scanlines and a darkened edge, like a tube screen.')}
       {toggle('boot', 'Boot sequence', 'The loading screen when the game starts.')}
-      {choice('screen', 'Screen', 'Auto picks from the device. TV is for the couch: larger text, edge margins, and a remote or gamepad moves the highlight.', [['auto', 'Auto (' + ({ desk: 'desk', tablet: 'tablet', tv: 'TV', phone: 'phone' } as any)[autoScreen()] + ')'], ['desk', 'Desk'], ['tablet', 'Tablet'], ['tv', 'TV']])}
+      {choice('screen', 'Screen', 'Auto picks from the device. TV is for the couch: larger text, edge margins, and a remote or gamepad moves the highlight.', [['auto', 'Auto (' + ({ desk: 'desk', tablet: 'tablet', tv: 'TV' } as any)[autoScreen()] + ')'], ['desk', 'Desk'], ['tablet', 'Tablet'], ['tv', 'TV']])}
       {choice('fxvol', 'Effects volume', 'Bells, beeps and the crowd.', [[0.4, 'Low'], [1, 'Normal'], [1.8, 'High']])}
       {(window as any).EWF_MUSIC_VOL ? <li class="col"><span><b>Music volume</b><br /><span class="muted">The soundtrack. The Jukebox on the Music button has the rest.</span></span>
         <span class="row">{[[0.3, 'Low'], [0.6, 'Medium'], [1, 'High']].map(o => <Btn kind="sm" on={Math.abs((window as any).EWF_MUSIC_VOL.vol() - (o[0] as number)) < 0.01} t="musvol" d={{ v: o[0] }} onClick={() => { (window as any).EWF_MUSIC_VOL.setVol(o[0]); redraw(); }}>{o[1]}</Btn>)}</span></li> : null}

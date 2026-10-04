@@ -15,3 +15,17 @@
 /* this week's tasks, inside the Before the show box */
 .tasks{margin-top:12px;padding-top:10px;border-top:1px dashed var(--grey)}
 .tasks .task.done .tag,.tasks .task.waved .tag{opacity:.8}
+/* a task that cannot be skipped: a yellow bar down its side, a marker that blinks, its tag in solid yellow.
+   When the ATTENTION button sends the player here, those rows flash three times. */
+.tasks .task.must{border-left:4px solid var(--yellow);padding-left:1ch;background:linear-gradient(90deg,rgba(255,255,85,.14),transparent 60%)}
+.tasks .task.must .mark{color:var(--yellow);margin-right:.8ch;font-size:1.2em;line-height:1}
+html:not(.rm) .tasks .task.must .mark{animation:bl 1.1s steps(1) infinite}
+.tasks .task.must .tag{background:var(--yellow);color:var(--k);padding:0 .6ch}
+.tasks .task.done{opacity:.75}
+@keyframes taskhit{0%,100%{background-color:transparent}50%{background-color:rgba(255,255,85,.45)}}
+html:not(.rm) .tasks.hit .task.must{animation:taskhit .7s ease-in-out 3}
+.rm .tasks.hit .task.must{outline:2px solid var(--yellow)}
+.coming{display:block;margin-top:.2em}
+.coming .lnk{all:unset;cursor:pointer;color:var(--cyan);border-bottom:1px dotted var(--cyan)}
+.coming .lnk:focus-visible{outline:2px solid var(--yellow)}
+html.nav .coming .lnk:focus{background:var(--yellow);color:var(--k)}

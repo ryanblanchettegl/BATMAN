@@ -6,10 +6,10 @@ import { Head, Panel, KV, Pie, ColChart, Empty } from '../../kit';
 
 function Line(p: { k: string; v: number; neg?: boolean }) { return <li><span>{p.k}</span><span class={'num' + (p.neg ? ' bad' : '')}>{full(p.neg ? -p.v : p.v)}</span></li>; }
 
-/** Weekly net income as columns. A phone shows twelve weeks so the columns stay readable; the type shrinks to fit the panel. */
+/** Weekly net income as columns. The type shrinks to fit the panel. */
 function NetChart(p: { H: any[] }) {
   const P = me();
-  const H = p.H.slice(screenMode() === 'phone' ? -12 : -24), n = H.length;
+  const H = p.H.slice(-24), n = H.length;
   let best = H[0], worst = H[0];
   H.forEach(x => { if (x.net > best.net) best = x; if (x.net < worst.net) worst = x; });
   const labels = H.map((x, i) => n <= 12 || i % 4 === 0 || i === n - 1 ? String(x.w).slice(-2) : '');

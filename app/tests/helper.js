@@ -21,9 +21,9 @@ function serve() {
 }
 
 const SHOTS = process.env.SHOTS || require('os').tmpdir();   // where screenshots go
-const VIEWPORTS = { desk: { viewport: { width: 1280, height: 860 } }, phone: { viewport: { width: 400, height: 800 }, hasTouch: true, isMobile: true }, tablet: { viewport: { width: 1024, height: 768 }, hasTouch: true, isMobile: true }, tv: { viewport: { width: 1920, height: 1080 } } };
+const VIEWPORTS = { desk: { viewport: { width: 1280, height: 860 } }, tablet: { viewport: { width: 1024, height: 768 }, hasTouch: true, isMobile: true }, tv: { viewport: { width: 1920, height: 1080 } } };
 
-/** Open the game. opts: { mode: 'desk'|'phone'|'tablet'|'tv', file: 'index', promo: 'pdw' or null to stay on the title screen, name } */
+/** Open the game. opts: { mode: 'desk'|'tablet'|'tv', file: 'index', promo: 'pdw' or null to stay on the title screen, name } */
 async function open(opts) {
   opts = opts || {};
   const mode = opts.mode || 'desk', browser = await chromium.launch(), ctx = await browser.newContext(VIEWPORTS[mode]), page = await ctx.newPage(), errs = [];

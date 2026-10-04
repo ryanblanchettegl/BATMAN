@@ -3,7 +3,8 @@ import { Component, ComponentChildren } from 'preact';
 import { useEffect, useReducer } from 'preact/hooks';
 import { G, ui, Modal, VER, onRedraw } from './store';
 import { afterDraw, applyScreen } from './input';
-import { MenuBar, SubNav, StatusBar, FlashBar, drainToasts } from './shell/Frame';
+import { MenuBar, SubNav, StatusBar, FlashBar, NoteBar, drainToasts } from './shell/Frame';
+import { AdvanceBtn } from './shell/Advance';
 import { Window, Panel, Btn } from './kit';
 import { go } from './nav';
 import { CardHost } from './shared/cards';
@@ -59,9 +60,9 @@ export function App() {
   const P = PAGES[ui.page] || PAGES.desk;
   return <>
     <div class="crt">
-      <MenuBar />
+      <div class="ftop"><MenuBar /><AdvanceBtn /><NoteBar /></div>
       <main class="main"><FlashBar />{S.over ? <office.GameOver /> : <><SubNav /><Boundary key={ui.page}><P /></Boundary></>}</main>
-      <StatusBar />
+      <div class="ffoot"><StatusBar /></div>
     </div>
     <CardHost />
     <ModalHost />

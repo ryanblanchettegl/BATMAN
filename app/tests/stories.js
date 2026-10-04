@@ -1,4 +1,4 @@
-/* Browser run of the Stories section: Storylines, History, The Net. Desk and phone.
+/* Browser run of the Stories section: Storylines, History, The Net. Desk and tablet.
    Build first:  EWF_OUT=next-company EWF_DEV=1 node build.js
    Run:          NODE_PATH=/opt/npm-tools/node_modules node app/tests/stories.js */
 const { open, go, overflow, shot, state, redraw } = require('./helper');
@@ -8,7 +8,7 @@ const fails = [];
 function check(mode, label, ok, detail) { console.log(mode.padEnd(6), ok ? 'ok  ' : 'FAIL', label + (detail ? ': ' + detail : '')); if (!ok) fails.push(mode + ' ' + label); }
 async function fits(page, mode, label) { const o = await overflow(page); check(mode, label + ' fits the screen', o === '', o); }
 /** Achievement pop-ups sit over the top right corner for six seconds; wait them out before a screenshot. */
-async function calm(page) { await page.waitForFunction(() => { const S = window.EWF_DEBUG.state(); return !document.querySelector('.status.toast') && !(S && S.toasts.length); }, null, { timeout: 20000 }); }
+async function calm(page) { await page.waitForFunction(() => { const S = window.EWF_DEBUG.state(); return !document.querySelector('[data-t="toast"]') && !(S && S.toasts.length); }, null, { timeout: 20000 }); }
 /** Play `n` weeks through the engine: answer the inbox with the first choice, run the suggested cards, close the week. */
 async function advance(page, n) {
   await state(page, (S, n) => { for (let w = 0; w < n && !S.over; w++) { S.inbox.filter(e => !e.done).forEach(e => GP.resolveEvent(S, e.id, 0)); if (S.owner.pending) GP.setCreed(S, { style: 'merit', roots: 'tradition', pledge: 'stable' }); while (S.qi < S.queue.length) { const card = GP.suggest(S); const pr = GP.preShow(S, card); if (pr) GP.resolvePre(S, card, 0); const ch = GP.chaos(S, card); if (ch) GP.resolveChaos(S, card, 0); GP.runPlayerShow(S, card); } GP.endWeek(S); } }, n);
@@ -85,7 +85,7 @@ async function net(page, mode) {
 }
 
 (async () => {
-  for (const mode of ['desk', 'phone']) {
+  for (const mode of ['desk', 'tablet']) {
     const { browser, page, errs } = await start(mode, 'pdw', mode === 'desk' ? 0 : 1);
     await tour(page, mode, 'week 1');
     await go(page, 'storylines');

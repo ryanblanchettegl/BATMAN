@@ -336,47 +336,42 @@ canvas.pt{width:6.1em;height:6.1em;flex:none;image-rendering:crisp-edges;image-r
 /* ---------- screens: one layout, scaled. desk, tablet, TV, phone ---------- */
 html[data-screen="desk"]{--fs:clamp(19px,1.62vw,32px)}
 html[data-screen="tablet"]{--fs:clamp(21px,2.15vw,30px)}
-html[data-screen="phone"]{--fs:19px}
 html[data-screen="tv"]{--fs:clamp(22px,1.9vw,84px)}
 .main,.start{padding-inline:max(2ch,env(safe-area-inset-left,0px)) max(2ch,env(safe-area-inset-right,0px))}
 /* touch: controls a finger can hit */
-:is(html[data-screen="tablet"],html[data-screen="phone"]) .btn{padding:.44em 1.5ch;margin-bottom:.55em}
-:is(html[data-screen="tablet"],html[data-screen="phone"]) .menu button{padding:.5em 1.4ch}
-:is(html[data-screen="tablet"],html[data-screen="phone"]) .menu .f1{padding:.3em 1ch}
+html[data-screen="tablet"] .btn{padding:.44em 1.5ch;margin-bottom:.55em}
+html[data-screen="tablet"] .menu button{padding:.5em 1.4ch}
+html[data-screen="tablet"] .menu .f1{padding:.3em 1ch}
 /* Help and Music travel together at the right-hand end of the menu */
 .menu .tools{display:flex;align-items:center}
 /* phone: the seven sections are a grid of four, so none of them is ever scrolled out of sight. Help and Music share the top right cell. */
-html[data-screen="phone"] .menu{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));overflow:visible;padding:0}
-html[data-screen="phone"] .menu button{font-size:1em;padding:.5em 0;text-align:center}
-html[data-screen="phone"] .menu .f1{margin:.25em .6ch;padding:.25em 0}
 /* Music keeps the top right corner; the other buttons flow around it */
-html[data-screen="phone"] .menu .tools{grid-column:4;grid-row:1;justify-content:stretch}
-html[data-screen="phone"] .menu .tools .f1{flex:1;margin:.25em .3ch;text-align:center}
-html[data-screen="phone"] .menu:not(.startmenu) .mus .mw{display:none}
-html[data-screen="phone"] .menu .sp{display:none}
+/* phone: the last cell of the menu grid is empty; the button sits over it and hangs below the bar */
 /* the start menu has five buttons: three on the first row, Help and Music sharing the second, so no row is left with one */
-html[data-screen="phone"] .menu.startmenu{grid-template-columns:repeat(3,minmax(0,1fr))}
-html[data-screen="phone"] .menu.startmenu .f1.mus{grid-column:span 2;grid-row:auto}
-:is(html[data-screen="tablet"],html[data-screen="phone"]) :is(select,input[type=text],input[type=search],input[type=number]){min-height:2.2em}
-:is(html[data-screen="tablet"],html[data-screen="phone"]) tr.pick td{padding-block:.34em}
-:is(html[data-screen="tablet"],html[data-screen="phone"]) .status{padding-block:.3em}
-:is(html[data-screen="tablet"],html[data-screen="phone"]) .status button{padding:.5em .6ch}
-:is(html[data-screen="tablet"],html[data-screen="phone"]) .mi{padding-block:.5em}
-:is(html[data-screen="tablet"],html[data-screen="phone"]) .list li{padding-block:.45em}
-:is(html[data-screen="tablet"],html[data-screen="phone"]) .win .wt button{padding:.3em .6ch}
-:is(html[data-screen="tablet"],html[data-screen="phone"]) th button{padding-block:.3em}
-:is(html[data-screen="tablet"],html[data-screen="phone"]) .caw-pages button{min-width:1.9em;padding:.4em 0}
-:is(html[data-screen="tablet"],html[data-screen="phone"]) .caw-tree button{padding-block:.22em}
-:is(html[data-screen="tablet"],html[data-screen="phone"]) .caw-btn{padding-block:.5em}
-:is(html[data-screen="tablet"],html[data-screen="phone"]) .caw-arr{width:2.2em}
-:is(html[data-screen="tablet"],html[data-screen="phone"]) .caw-scroll{height:2em}
-:is(html[data-screen="tablet"],html[data-screen="phone"]) .caw-x{width:2.2em;height:2em}
+html[data-screen="tablet"] :is(select,input[type=text],input[type=search],input[type=number]){min-height:2.2em}
+html[data-screen="tablet"] tr.pick td{padding-block:.34em}
+html[data-screen="tablet"] .status{padding-block:.3em}
+html[data-screen="tablet"] .status button{padding:.5em .6ch}
+html[data-screen="tablet"] .mi{padding-block:.5em}
+html[data-screen="tablet"] .list li{padding-block:.45em}
+html[data-screen="tablet"] .win .wt button{padding:.3em .6ch}
+html[data-screen="tablet"] th button{padding-block:.3em}
+html[data-screen="tablet"] .caw-pages button{min-width:1.9em;padding:.4em 0}
+html[data-screen="tablet"] .caw-tree button{padding-block:.22em}
+html[data-screen="tablet"] .caw-btn{padding-block:.5em}
+html[data-screen="tablet"] .caw-arr{width:2.2em}
+html[data-screen="tablet"] .caw-scroll{height:2em}
+html[data-screen="tablet"] .caw-x{width:2.2em;height:2em}
 /* TV: fill the screen, stay clear of the edges, make the highlight unmissable */
 html[data-screen="tv"] body{padding:2.5vh 3vw}
 html[data-screen="tv"] #app{min-height:95vh}
 html[data-screen="tv"] .crt{max-width:none}
 html[data-screen="tv"] .menu{top:2.5vh}
+html[data-screen="tv"] .ftop{top:2.5vh}
+html[data-screen="tv"] .ftop>.menu{top:auto}
 html[data-screen="tv"] .status{bottom:2.5vh}
+html[data-screen="tv"] .ffoot{bottom:2.5vh}
+html[data-screen="tv"] .ffoot>.status{bottom:auto}
 html[data-screen="tv"]::before,html[data-screen="tv"]::after{content:'';position:fixed;left:0;right:0;height:2.5vh;background:var(--k);z-index:7}
 html[data-screen="tv"]::before{top:0} html[data-screen="tv"]::after{bottom:0}
 html[data-screen="tv"] .btn{padding:.12em 1.5ch;margin-bottom:.45em}
@@ -398,13 +393,42 @@ html.nav .caw :is(button,select,input):focus{outline:.2em solid #d00000;outline-
 .gap2{gap:6px 2ch}
 
 /* an achievement takes over the status bar for a few seconds instead of covering the page */
-.status.toast{background:var(--yellow);cursor:pointer}
-.status.toast .tn{color:var(--k);text-transform:uppercase}
-.status.toast.note{background:var(--cyan,#5ff)}
-.status.toast.note.bad{background:var(--red,#f55);color:var(--k)}
-.status.toast.note.good{background:var(--green,#5f5)}
-.status.toast.note .td{color:var(--k)}
-.status.toast .td{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:0 1 auto}
+/* the top of the screen: the menu, and under it the notification bar */
+.ftop{position:sticky;top:env(safe-area-inset-top,0px);z-index:6}
+.ftop>.menu{position:static}
+.toast{all:unset;box-sizing:border-box;display:flex;flex-wrap:wrap;gap:0 2ch;align-items:center;width:100%;padding:2px 2ch;background:var(--yellow);color:var(--k);cursor:pointer}
+.toast b{color:var(--dred)}
+.toast .sp{flex:1}
+.toast .tn{color:var(--k);text-transform:uppercase}
+.toast.note{background:var(--cyan)}
+.toast.note.bad{background:var(--red)}
+.toast.note.good{background:var(--green)}
+.toast .td{min-width:0;color:var(--k)}
+.toast:focus-visible{outline:2px solid var(--k);outline-offset:-2px}
+/* the bottom of the screen: the status line, with Options, Help and Music at its right end */
+.ffoot{position:sticky;bottom:0;z-index:5}
+.ffoot>.status{position:static}
+/* The ADVANCE button sits ON TOP of the menu bar, at its right end, and hangs a little below it. It is not part of
+   the bar: the bar keeps its own height and look. The bar leaves room for it on the right. */
+.ftop{--advw:19ch}
+.ftop>.menu{padding-right:calc(var(--advw) + 2ch)}
+.ftop>.toast{padding-right:calc(var(--advw) + 3ch)}
+.adv{all:unset;box-sizing:border-box;cursor:pointer;position:absolute;top:3px;right:1ch;z-index:7;width:var(--advw);background:var(--yellow);color:var(--k);padding:.1em 0 .15em;border:3px solid var(--k);box-shadow:5px 5px 0 var(--k);text-align:center;white-space:nowrap}
+.adv b{font-size:1.6em;font-weight:normal;text-transform:uppercase;letter-spacing:.08em;line-height:1.15;color:var(--k);text-shadow:1px 0 0 var(--k)}
+.adv:hover{background:var(--white)}
+.adv:active{transform:translate(4px,4px);box-shadow:1px 1px 0 var(--k)}
+.adv:focus-visible{outline:3px solid var(--white);outline-offset:2px}
+html.nav .adv:focus{background:var(--k);outline:none}
+html.nav .adv:focus b{color:var(--yellow);text-shadow:none}
+.adv .tip{display:none;position:absolute;right:0;top:calc(100% + 8px);width:min(44ch,92vw);background:var(--k);color:var(--grey);border:2px solid var(--yellow);padding:.4em 1ch;text-align:left;white-space:normal;box-shadow:3px 3px 0 var(--dgrey);z-index:8;text-transform:none;letter-spacing:0}
+.adv .tip .tl{display:block;padding:.1em 0}
+.adv.k-task .tip .tl::before{content:'· ';color:var(--yellow)}
+.adv .tip .th{display:block;color:var(--yellow);text-transform:uppercase}
+.adv .tip .hint{display:block;color:var(--dcyan);margin-top:.2em}
+.adv:hover .tip,.adv:focus-visible .tip,html.nav .adv:focus .tip{display:block}
+.status .tools{display:flex;flex-wrap:wrap;gap:0 2ch;align-items:center;margin-left:auto}
+.status .tools .mus{border:0;margin:0;padding:0;line-height:inherit}
+
 
 /* what a company model rewards and punishes */
 .fits{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:1px}
@@ -439,8 +463,8 @@ html[data-screen="desk"] .selrow .det{position:sticky;top:3em;margin-top:10px}
 .incbar .s0,.incleg .s0{background:var(--cyan)}.incbar .s1,.incleg .s1{background:var(--yellow)}.incbar .s2,.incleg .s2{background:var(--red)}.incbar .s3,.incleg .s3{background:var(--green)}.incbar .s4,.incleg .s4{background:var(--white)}
 .plan{color:var(--yellow)}
 /* linked names on a phone or tablet: a taller tap area that does not change how the text looks */
-:is(html[data-screen="tablet"],html[data-screen="phone"]) .lnk{position:relative}
-:is(html[data-screen="tablet"],html[data-screen="phone"]) .lnk::after{content:'';position:absolute;inset:-.22em -.5ch}
+html[data-screen="tablet"] .lnk{position:relative}
+html[data-screen="tablet"] .lnk::after{content:'';position:absolute;inset:-.22em -.5ch}
 /* the Music button says whether the soundtrack is on (the add-on sets data-music on the page) */
 html[data-music="on"] .mus::after{content:' on';color:var(--dgreen)}
 html[data-music="off"] .mus::after{content:' off';color:var(--dred)}
@@ -450,3 +474,9 @@ html[data-music="off"] .mus::after{content:' off';color:var(--dred)}
 
 /* what a wrestler remembers, on their card: sentences read from the left */
 [data-t="rel-notes"] .r,[data-t="rel-you"] .r{text-align:left;display:grid;gap:.25em}
+
+/* There is no portrait layout. A tall, narrow window gets one line asking for a wide one, and nothing else. */
+@media (orientation:portrait) and (max-width:720px){
+  #app{display:none}
+  body::before{content:'EWF 9000 needs a wide screen. Turn your device sideways, or make the window wider.';position:fixed;inset:0;z-index:99;display:flex;align-items:center;justify-content:center;text-align:center;padding:2em;background:var(--blue);color:var(--yellow);font-size:1.3em;line-height:1.4}
+}

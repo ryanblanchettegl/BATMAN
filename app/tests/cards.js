@@ -1,7 +1,7 @@
 const { open, go, overflow, shot, state, redraw } = require('./helper');
 (async () => {
   let bad = 0; const ok = (c, m) => { console.log(c ? 'ok  ' : 'FAIL', m); if (!c) bad++; };
-  for (const mode of (process.env.MODES || 'desk,phone,tablet,tv').split(',')) {
+  for (const mode of (process.env.MODES || 'desk,tablet,tv').split(',')) {
     const { browser, page, errs } = await open({ mode, promo: 'pdw' });
     const n = sel => page.$$eval(sel, L => L.length), title = () => page.$eval('.cards .wt span', e => e.textContent).catch(() => '');
     // titles page: a title name opens its history

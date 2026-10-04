@@ -11,6 +11,7 @@ Work for Claude Code, in order. `TWEAKS.md` and `WISHLIST.md` are finished; this
 - Do not stop to ask. Ryan's decisions are in `TASKS.md` and are not reopened. Where a step needs a choice he has not made, take the option closest to his decisions, write one line in `docs/decisions-needed.md` (what you chose, what the other option was), and carry on.
 - Old saves must load (rule 9). A new field on `S` gets a default when missing. If a step changes the shape of something saved, bump the save key and write the migration, and add a case to `app/tests/save.js`.
 - Every rule in `CLAUDE.md` holds. The ones that get forgotten: no real names, no dice wording, no hover-only controls, every control has a `data-t`, a game year is 48 weeks, Company shows information and Manage holds the choices.
+- There is no phone or portrait layout any more (rule 5 in `CLAUDE.md`). Do not build or test one.
 - Never publish the live page. Leave the build in `dist/`.
 - When a job is done, update its section in `TASKS.md` (tick boxes, say what is left) and bump `VER` in `app/src/store.ts` by 0.01.
 
@@ -41,17 +42,17 @@ Code: `src/86-editor.js`, `app/src/screens/editor/`. Tests: `test-editor.js`, `a
 - [ ] **1.13 Undo a delete.** After deleting a wrestler, belt, team, show or company, the note offers "Undo" until the next change. Keep the removed records in memory and put them back with their contracts, holders and members.
 - [ ] **1.14 A health line per company.** On the company form: average overness of its main eventers against its popularity, men and women counts against its belts, and a warning in plain words when the top of the card is far below what a company that size needs.
 - [ ] **1.15 Big events per company.** Only after job 3. A company's own named big events on the Shows tab.
-- [ ] **1.16 Tests.** Extend `test-editor.js` and `app/tests/editor.js` for every step above, on desk, phone and TV.
+- [ ] **1.16 Tests.** Extend `test-editor.js` and `app/tests/editor.js` for every step above, on desk, tablet and TV.
 
 ## Job 2. Pages that are too long
 
 Ryan's goal is screens that are easy to read and quick to act on. Manage, Operations now has 15 panels and is more than four screens tall on a desk.
 
-- [ ] **2.1 Measure.** Add to `app/tests/sweep.js`: for every page, the page height in screens on desk and phone, printed as a table. Fail when a page is taller than 3 screens on desk or 6 on a phone. Commit the first table as `docs/page-heights.txt`. Expect failures; the steps below fix them.
+- [ ] **2.1 Measure.** Add to `app/tests/sweep.js`: for every page, the page height in screens on desk and tablet, printed as a table. Fail when a page is taller than 3 screens on desk or 6 on a phone. Commit the first table as `docs/page-heights.txt`. Expect failures; the steps below fix them.
 - [ ] **2.2 Operations.** Keep on the page what is used every week: Broadcast, Shows and belts, and the settings. Move the rest (commentary desk, merchandise, school, tours, budgets, universe) into windows opened from one short "More to manage" list that shows each one's state in a line ("Commentary desk: both chairs empty"). Keep every `data-t`. Update `app/tests/company.js`.
 - [ ] **2.3 Every other page over the limit.** Same treatment: the weekly things stay, the rest becomes a one-line row that opens a window. Do not remove information and do not add pages to the menu.
 - [ ] **2.4 The desk.** "Before the show" must be fully visible without scrolling on a desk screen, with **Book the next show** in view. Check with a screenshot test.
-- [ ] **2.5 First week.** Play week one on a phone as a new player would and list every screen where the first useful button is below the fold. Fix each.
+- [ ] **2.5 First week.** Play week one on a tablet as a new player would and list every screen where the first useful button is below the fold. Fix each.
 
 ## Job 3. The year planner and big events (task 6, first two boxes)
 
@@ -155,5 +156,5 @@ Use `tools/balance.js` from step 0.3. Change one thing at a time and commit the 
 
 - [ ] **13.1** Rerun step 0.1: `TASKS.md` matches the code.
 - [ ] **13.2** `docs/map.md` matches the files.
-- [ ] **13.3** The Help window and the glossary cover what was added, in plain words, and still fit one phone screen each.
+- [ ] **13.3** The Help window and the glossary cover what was added, in plain words, and still fit one tablet screen each.
 - [ ] **13.4** Write `docs/run-notes.md`: what was built, what was skipped and why, what the next run should do first, and every line added to `docs/decisions-needed.md`.

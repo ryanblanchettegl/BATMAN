@@ -12,13 +12,15 @@ Elite Wrestling Federation 9000 is a wrestling booking sim in the Extreme Warfar
 2. **Odds, not orders.** Outcomes are simulated. Control is a scarce resource.
 3. **A show feels like a show.** Title card, commentary, a result you did not fully choose.
 4. **Depth you can read.** Every number has a reason the player can see.
-5. **One game on every screen.** Couch, desk, tablet, handheld and phone play the same save.
+5. **One game on every wide screen.** Couch, desk, tablet and handheld play the same save. There is no phone or portrait layout.
 
 ## 3. Screen map
 
 Start flow: Boot, Title, Select promotion, First day (or Create a federation).
 
 Seven sections, each with a row of page buttons. Nothing lives outside this map.
+
+Around every page: the menu bar at the top, with the yellow **ADVANCE button** laid over its right end (big, one or two words, always the next thing the week needs; the space bar presses it), and the notification bar under it. At the bottom, the status line, with Options, Help and Music at its right end. When tasks are in the way the button says Attention and leads to the desk, which is the one place tasks are listed.
 
 | Section | Pages | What you do there |
 |---|---|---|
@@ -58,8 +60,7 @@ One layout, scaled by a single type size.
 
 | Mode | When | Type size | Notes |
 |---|---|---|---|
-| Phone | 640px wide or less | 19px | One column |
-| Tablet | Touch, wider than a phone | 21 to 30px | Two columns in landscape |
+| Tablet | Touch, or a small landscape screen | 21 to 30px | Two columns in landscape |
 | Desk | Mouse | 19 to 32px, grows with the window | Content capped at 59em |
 | TV | TV browser, or chosen in Options | 1.9% of screen width | Fills the screen, 2.5% edge margin |
 
@@ -111,7 +112,7 @@ test*.js                headless sims.  app/tests: browser runs
 - **Interface stack.** Preact components in TypeScript, bundled by esbuild into one file. One store holds the game state and the view state. Components are small files grouped by section.
 - **Building blocks.** Panel, Button, Tabs, MenuList, Gauge, Meter, Table, Window, Dial, Pie, ColChart, Portrait, Tag, CheckLine, Banner. A screen is built only from these.
 - **Saves.** One versioned JSON blob. A version bump comes with a migration.
-- **Tests.** Seeded sims catch engine faults. Browser runs cover each section on phone, tablet, desk and TV, driven by mouse and by arrow keys.
+- **Tests.** Seeded sims catch engine faults. Browser runs cover each section on desk, tablet and TV, driven by mouse and by arrow keys.
 
 ## 9. Rebuild order
 

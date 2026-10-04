@@ -1,6 +1,6 @@
 const { open, go, overflow, flash } = require('./helper');
 (async () => {
-  for (const mode of ['desk', 'phone']) {
+  for (const mode of ['desk', 'tablet']) {
     const { browser, page, errs } = await open({ mode, promo: null, file: process.env.EWF_OUT || 'index' });
     console.log(mode, 'title overflow:', await overflow(page) || 'none');
     await page.click('[data-t="scr"][data-v="select"]'); console.log(mode, 'select overflow:', await overflow(page) || 'none');

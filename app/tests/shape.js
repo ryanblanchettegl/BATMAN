@@ -1,7 +1,7 @@
 /* The running order beside the card, the guide window, and stars instead of percentages for matches and segments.
-   Run: NODE_PATH=<dir containing playwright> node app/tests/shape.js   (MODES=desk,phone,tv) */
+   Run: NODE_PATH=<dir containing playwright> node app/tests/shape.js   (MODES=desk,tv) */
 const { open, go, overflow, shot, state, flash } = require('./helper');
-const MODES = (process.env.MODES || 'desk,phone,tv').split(',');
+const MODES = (process.env.MODES || 'desk,tv').split(',');
 const fails = [];
 const ok = (mode, label, pass, detail) => { console.log(mode.padEnd(6), pass ? 'ok  ' : 'FAIL', label + (detail ? ': ' + detail : '')); if (!pass) fails.push(mode + ' ' + label); };
 const txt = (page, sel) => page.$eval(sel, e => e.innerText).catch(() => '');

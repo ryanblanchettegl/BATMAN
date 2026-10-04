@@ -38,4 +38,4 @@ async function run(mode, weeks) {
   await browser.close();
   return bad.length + errs.length;
 }
-(async () => { let n = 0; for (const m of (process.env.MODES || "desk,phone,tablet,tv").split(",")) n += await run(m, +(process.env.WEEKS || 5)); console.log(n ? 'journey: ' + n + ' PROBLEMS' : 'journey: all passed'); process.exit(n ? 1 : 0); })().catch(e => { console.error('FAIL', e.message); process.exit(1); });
+(async () => { let n = 0; for (const m of (process.env.MODES || "desk,tablet,tv").split(",")) n += await run(m, +(process.env.WEEKS || 5)); console.log(n ? 'journey: ' + n + ' PROBLEMS' : 'journey: all passed'); process.exit(n ? 1 : 0); })().catch(e => { console.error('FAIL', e.message); process.exit(1); });

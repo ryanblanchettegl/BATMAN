@@ -25,7 +25,6 @@ export function MenuBar() {
       return <button type="button" data-t="tab" data-v={s.id} aria-current={cur === s ? 'page' : undefined} onClick={() => go(s.id)}><u>{s.n.charAt(0)}</u>{s.n.slice(1)}{badge ? <span class="badge"> ({badge})</span> : null}</button>;
     })}
     <span class="ttl">{P.name} {'·'} {E.cal(S.week).label}</span>
-    <span class="tools"><button type="button" class="f1" data-t="help" onClick={() => openModal({ kind: 'help' })}>Help</button><MusicBtn /></span>
   </nav>;
 }
 
@@ -45,21 +44,27 @@ window.addEventListener('ewf-track', (e: any) => {
   nowPlaying = { n: String(e.detail && e.detail.name), until: Date.now() + 3000 }; redraw(); setTimeout(redraw, 3100);
 });
 function MP_ON() { return document.documentElement.getAttribute('data-music') !== 'off'; }
-export function StatusBar() {
-  const S = G.S, P = me(), a = toastNow();
-  if (a && a.note) return <footer class={'status toast note' + (a.k ? ' ' + a.k : '')} role="status" data-t="toast" data-v="note" onClick={() => { clearTimeout(timer); nextToast(); }}>
+/** The notification bar, at the top of the screen under the menu: what changed because of what you just did, and
+    achievements. One at a time; press it to move on. */
+export function NoteBar() {
+  const a = toastNow(); if (!a) return null;
+  const next = () => { clearTimeout(timer); nextToast(); };
+  if (a.note) return <button type="button" class={'toast note' + (a.k ? ' ' + a.k : '')} role="status" data-t="toast" data-v="note" onClick={next}>
     <span class="tn"><b>{a.h}</b></span><span class="td">{a.t}</span><span class="sp" />{queue.length > 1 && <span class="opt">+{queue.length - 1} more</span>}
-  </footer>;
-  if (a) return <footer class="status toast" role="status" data-t="toast" onClick={() => { clearTimeout(timer); nextToast(); }}>
+  </button>;
+  return <button type="button" class="toast" role="status" data-t="toast" onClick={next}>
     <span><b>{a.ms ? 'Milestone' : 'Achievement unlocked'}</b></span><span class="tn">{a.name}</span><span class="opt td">{a.desc}</span><span class="sp" />{queue.length > 1 && <span class="opt">+{queue.length - 1} more</span>}
-  </footer>;
+  </button>;
+}
+export function StatusBar() {
+  const S = G.S, P = me();
   return <footer class="status">
     {stat('bp', 'BP', S.bp)}{stat('ap', 'AP', S.ap == null ? 0 : S.ap)}{stat('cash', 'Cash', cash(P.cash))}{stat('pop', 'Pop', P.image.toFixed(1))}
     {!S.owner.me && stat('owner', 'Owner', Math.round(S.owner.trust), 'opt')}
     {nowPlaying && nowPlaying.until > Date.now() ? <span class="np">{'♫'} {nowPlaying.n}</span> : null}
     <span class="sp" />
     {NAV.pad ? <><span class="opt"><b>A</b> select</span><span class="opt"><b>B</b> back</span><span class="opt"><b>LB RB</b> sections</span><span class="opt"><b>X</b> help</span><span class="opt"><b>Y</b> music</span></> : (NAV.on ? <><span class="opt"><b>OK</b> select</span><span class="opt"><b>Back</b> back</span></> : null)}
-    <button type="button" data-t="options" onClick={() => openModal({ kind: 'options' })}>[Options]</button>
+    <span class="tools"><button type="button" data-t="options" onClick={() => openModal({ kind: 'options' })}>Options</button><button type="button" data-t="help" onClick={() => openModal({ kind: 'help' })}>Help</button><MusicBtn /></span>
   </footer>;
 }
 

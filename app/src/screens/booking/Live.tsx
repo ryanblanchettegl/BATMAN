@@ -92,7 +92,7 @@ function Segment(p: { r: any; ms: any[]; s: any; at: number; done: boolean }) {
 
 /** Scroll just far enough that a control is clear of the menu bar above and the status bar below. */
 function keepInView(el: HTMLElement) {
-  const r = el.getBoundingClientRect(), menu = document.querySelector('.menu'), status = document.querySelector('.status');
+  const r = el.getBoundingClientRect(), menu = document.querySelector('.ftop') || document.querySelector('.menu'), status = document.querySelector('.ffoot') || document.querySelector('.status');
   const top = (menu ? menu.getBoundingClientRect().bottom : 0) + 8, bottom = (status ? status.getBoundingClientRect().top : window.innerHeight) - 12;
   if (r.bottom > bottom) window.scrollBy(0, r.bottom - bottom); else if (r.top < top) window.scrollBy(0, r.top - top);
 }

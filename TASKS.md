@@ -59,7 +59,8 @@ Two more lists sit beside this one, both finished:
 | Relationships | Relationships are the centre of the game. Every decision ripples through how wrestlers feel about each other, about the booker and about the crowd. People remember what you did, the way they do in a Telltale game, and a notification bar says what changed after an action. |
 | The broadcast | The Gorilla Position becomes an active phase: live events stop the show and the player makes the call (`docs/plans/gorilla-position.md`). |
 | Promos | Promos get real depth: archetypes that must fit the wrestler, heat that opens a feud's next act, and a good promo that shifts the odds of that wrestler's match (step 4 of the same plan). |
-| The ADVANCE button | Like Civilization 6: one button at the bottom of the screen that always leads to the next big action (book the show, next show, end the week), with the things to do first stacked above it. It is a core part of how the game is played, and it is the next thing built, ahead of the live Gorilla Position steps. Notifications move to the top of the screen. Researched in `docs/plans/advance-button.md`; two questions are open there. |
+| No phone | The game will not be on phones for the foreseeable future. Portrait mode is gone: the layouts are desk, tablet and TV, and a tall narrow window is asked to turn sideways. |
+| The ADVANCE button | Like Civilization 6: one button that always leads to the next big action. It is a core part of how the game is played. It is laid **over the right end of the top menu bar** (not inside it: the bar keeps its original height and look), big, bold and **always yellow**, **one or two words** (Attention, Book show, Fix card, Open card, Run show, Continue, End week), so it is satisfying to hit. When this week's tasks are in the way it says only **Attention**; a note under it (on hover or focus) says what, and pressing it goes to **the desk**, where the list lives. There is **no to-do strip** elsewhere: the desk is the place for tasks, and the ones that cannot be skipped are marked there (a yellow bar, a blinking marker, a solid tag) and flash when the button sends you. **Options, Help and Music are at the bottom right.** Notifications show at the top, under the menu. The week plays as the days that have something in them. The button guides, and only acts for running the show and ending the week. |
 | A deep character sheet | The roster grows to include referees, road agents, managers, legends, authority figures and commentators, as skills any person can have. Backstory and gimmick get real depth, with many options drawn from wrestling history, so players can build anyone they like with the creation tools. Researched from how the genre's deepest character creators do it. Work on this only after the current projects are done. |
 | Growing a company | A company adds titles and shows every year. So belts and weekly shows can be created inside a running game, not only in the World Editor, and rival companies add their own once a year. |
 | World Editor | The creation suite is its own page called **World Editor** on the title screen. A player builds a world from scratch (companies, shows, belts, wrestlers) and uploads it to the Workshop. This is the main next item. |
@@ -75,7 +76,7 @@ Code: `src/86-editor.js` (the `E.ed*` functions; no screen code), `app/src/scree
 - [x] "Fill the roster with unknowns" makes a new company playable in one press.
 - [x] Check and share: every problem in plain words with a **Go to it** button, **Play this world**, copy the world as text, save it as a file.
 - [x] Hidden ids follow names, so a shared file reads cleanly.
-- [x] Works on desk, phone and TV layouts. Back steps out one level at a time.
+- [x] Works on desk, tablet and TV layouts. Back steps out one level at a time.
 - [ ] **Workshop upload and subscribed worlds.** Written in `desktop/main.js` and `desktop/preload.js` (`gpSteam.workshopUpload`, `gpSteam.workshopWorlds`) from the steamworks.js documentation. Never run. Needs the Steam wrapper working first (task 12).
 - [ ] Pictures: a world cannot carry portrait or belt images yet. Portraits are drawn from the face settings. The folder form with `graphics/` is the Workshop build's job.
 - [ ] Not in the editor yet: brands, sponsors, columnists, announcers and staff names, the name lists for rookies, managers tied to wrestlers.
@@ -136,6 +137,17 @@ Ryan: "look up the philosophy of booking a wrestling show, the importance of the
 - [ ] **Step 2: live events.** The show runs in steps and stops for a decision: the botch, the hot mic, the audible. `E.resolveLiveDecision`.
 - [ ] **Step 3: the broadcast screen** for those decisions. The old headset window goes.
 - [ ] **Step 4: promo depth.** Archetypes, heat by act, odds shifted by a good promo.
+
+### 0f. The ADVANCE button (version 0.17)
+
+Plan and research: `docs/plans/advance-button.md`. Code: `src/96-advance.js` (`E.advance`, `E.comingUp`), `app/src/shell/Advance.tsx`. Test: `app/tests/advance.js` plays a whole week on the one button.
+- [x] One button laid over the right end of the menu bar, on every page, always yellow, on the space bar (right trigger on a gamepad). Its words are the next thing the week needs: Attention, Book show, Fix card, Open card, Run show, Continue, End week.
+- [x] Attention: a note opens under the button on hover or focus and lists what needs the player. Pressing it goes to the desk, brings this week's tasks into view and flashes the ones that cannot be skipped. Pressing it again there says how many need you.
+- [x] On the desk the tasks that cannot be skipped are marked "Must do": a yellow bar, a blinking marker, a solid yellow tag. The desk also shows **Coming up**: the nearest countdowns (the next big event, a feud close to its next act, a contract running out, a promise due, the year-end awards).
+- [x] Options, Help and Music moved to the bottom right. Notifications moved to the top, under the menu. The menu bar itself is unchanged.
+- [x] Tried and dropped at Ryan's word: a strip of to-do chips at the bottom (clutter), the button inside the menu bar (it changed the bar's shape), a colour per state (he wants yellow).
+- [ ] More countdowns as systems land (title reigns, the owner's clocks, sponsor deals ending).
+- [ ] "Thursday: what the rivals did" as its own stop in the week.
 
 ### 1. Finish the pop-ups (small)
 Feature list items 10 and 11. Code: `app/src/shared/cards.tsx`, `Name`, `TitleName`, `TeamName` and `Txt` in `app/src/kit/index.tsx`, the card stack in `app/src/store.ts`.

@@ -2,7 +2,7 @@
 
 Ryan, 3 October: a button at the bottom, in the style of the next-turn button in Civilization 6, that always leads to the next big action (next day, book the show, next day, book the show), with the things to do first stacked above it. It is a core part of how the game is played. Notifications move to the top of the screen. Research first, then build.
 
-Status: researched. Nothing built. Waiting for Ryan's answers to the two questions at the end.
+Status: **built in 0.17.** Ryan said go with the recommended answers to both questions, then shaped it while it was being built. As built: the button is laid **over the right end of the top menu bar** (the bar keeps its original height and look), big, bold, **always yellow**, **one or two words**. When tasks are in the way it says only **Attention**, a note opens under it on hover or focus, and pressing it goes to **the desk**, where the tasks that cannot be skipped are marked and flash. There is **no strip of to-do chips**: Ryan found it clutter and likes the list on the desk. "Coming up" is a line on the desk. **Options, Help and Music are at the bottom right.** Code: `src/96-advance.js`, `app/src/shell/Advance.tsx`. Test: `app/tests/advance.js`. The sections below are the plan as first written; where they differ from this paragraph, this paragraph is what was built.
 
 ## Why the button works in Civilization
 

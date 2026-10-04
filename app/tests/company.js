@@ -12,7 +12,7 @@ function check(mode, label, ok, detail) { console.log(mode.padEnd(6), ok ? 'ok  
 /** Nothing may stick out sideways after any step. */
 async function fits(page, mode, label) { const o = await overflow(page); check(mode, label + ' fits the screen', o === '', o); }
 /** Achievement pop-ups sit over the top right corner for six seconds; wait them out before clicking there. */
-async function calm(page) { await page.waitForFunction(() => { const S = window.EWF_DEBUG.state(); return !document.querySelector('.status.toast') && !(S && S.toasts.length); }, null, { timeout: 20000 }); }
+async function calm(page) { await page.waitForFunction(() => { const S = window.EWF_DEBUG.state(); return !document.querySelector('[data-t="toast"]') && !(S && S.toasts.length); }, null, { timeout: 20000 }); }
 async function click(page, sel) {
   await calm(page);
   // asking the owner now also opens a small result pop-up; close it before the next click
@@ -286,7 +286,7 @@ async function remote() {
 }
 
 (async () => {
-  for (const mode of ['desk', 'phone']) {
+  for (const mode of ['desk', 'tablet']) {
     const { browser, page, errs } = await start(mode, 'pdw', mode === 'desk' ? 0 : 1);
     await tour(page, mode, 'week 1');
     await go(page, 'finances');

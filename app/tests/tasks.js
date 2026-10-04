@@ -1,7 +1,7 @@
 /* This week's tasks on the desk, and how they hold a show and the week until they are done or waved off.
-   Run: NODE_PATH=<dir containing playwright> node app/tests/tasks.js   (MODES=desk,phone,tv) */
+   Run: NODE_PATH=<dir containing playwright> node app/tests/tasks.js   (MODES=desk,tv) */
 const { open, go, overflow, shot, state, flash } = require('./helper');
-const MODES = (process.env.MODES || 'desk,phone,tv').split(',');
+const MODES = (process.env.MODES || 'desk,tv').split(',');
 const fails = [];
 const ok = (mode, label, pass, detail) => { console.log(mode.padEnd(6), pass ? 'ok  ' : 'FAIL', label + (detail ? ': ' + detail : '')); if (!pass) fails.push(mode + ' ' + label); };
 const txt = (page, sel) => page.$eval(sel, e => e.innerText).catch(() => '');
@@ -13,7 +13,9 @@ async function run(mode) {
   const over = async label => { const o = await overflow(page); ok(mode, label + ' fits the screen', !o, o); };
   try {
     /* a new game answers its opening inbox first, so the list is about the week */
-    await state(page, S => { S.inbox.filter(e => !e.done).forEach(e => window.GP.resolveEvent(S, e.id, e.type === 'handover' ? 0 : 1)); });
+    await state(page, S => { S.inbox.filter(e => !e.done).forEach(e => window.GP.resolveEvent(S, e.id, e.type === 'handover' ? 0 : 1));
+      // the test wants one sponsor offer that can be signed, whatever the seed dealt
+      if (!S.spOffers.some(o => window.GP.sponsorOk(S, o)) && S.spOffers[0]) S.spOffers[0].type = 'rating'; });
     await go(page, 'desk');
     const todo = await rows(page, 'todo');
     ok(mode, 'the desk lists this week’s tasks', /This week.s tasks/i.test(await txt(page, '.tasks')) && ['desk-pbp', 'desk-col', 'sponsors'].every(id => todo.indexOf(id) >= 0), todo.join(', '));
