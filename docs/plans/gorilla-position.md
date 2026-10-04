@@ -45,6 +45,7 @@ What was built, where it differs from the plan below (the plan is kept as it was
 - The first kinds are not the three below. They are: the title is on the line, a rival at the curtain, off the script (the hot mic), after the bell, and trouble on the air (the old headset calls). The botch and the audible are still to do, and so are the `careless` and `ego` traits.
 - Limits: three calls on weekly television, four at a big event, each kind once a night, plus the one after the bell. Trouble on the air does not count. A feud's rival comes to the curtain at most every other week; a speaker goes off the script at most once in eight weeks.
 - The safe answer is always "do nothing", except for trouble on the air where it is the old safe choice.
+- Added in 0.26: somebody is hurt (the plan's botch, caused by wear and load), the crowd has gone quiet (the plan's audible), they are not going home (`src/33-ring.js`); the network on the line and the sponsor at ringside (`src/32-direction.js`). The `careless` and `ego` traits are still to do.
 - Added in 0.25 (`src/32-direction.js`): the owner on the headset, and who the show is built around. These decide more than the night: the owner's trust, and a face of the company (`S.fc`) that the crowd comes to see.
 
 

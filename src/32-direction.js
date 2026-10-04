@@ -129,7 +129,75 @@ LIVEK.face={n:'Who the show is built around',
       youRemember(S,w,'passed','The building wanted them, and you stayed with '+f.name+'.',-6);
       return 'The cameras find '+f.name+' before the show ends. It is still '+f.name+'’s company.';
     }
+    (S.lcd=S.lcd||{}).face=S.week+FACE_CD;   // told no, the truck does not ask again for twice as long
     return w.name+' celebrates, and the show goes off the air on the company’s name. Nothing has been decided.';
   }
 };
-LIVE_ORDER=['chaos','titlecall','owner','runin','hotmic'];
+
+/* ---------- the network and the sponsors ----------
+   Two more calls about what kind of company this is. The network on the line: what is going out is more than the
+   slot was sold as. The sponsor at ringside: a deal that is nearly up, and their people want their name on the
+   main event. Both use what the game already keeps: the network's patience (S.clocks.net) and the sponsor's deal. */
+var NET_CD=4;
+function netClock(S,d,why){E.clocks(S);var c=S.clocks.net;c.v=clamp(c.v+d,0,CLOCKS.net.segs);c.why=why;}
+LIVEK.network={n:'The network on the line',
+  pre:function(S,L,step){
+    var show=S.queue[S.qi],P=S.promos[S.player];
+    if(step.t!=='match'||!show||show.big||P.slot<1)return null;
+    var cd=S.lcd&&S.lcd.net;if(cd!=null&&S.week-cd<NET_CD)return null;
+    var M=liveMatch(S,L,step.i);if(!M||M.m.nc)return null;
+    var stip=M.m.stip||'std',f=M.c.feud,slot=SLOTN[P.slot].toLowerCase(),why=[];
+    if(M.m.int==='brutal')why.push('Brutal intensity in '+slot);
+    if(STIP[stip]&&STIP[stip].inj>=1.5)why.push('A '+STIP[stip].n.toLowerCase()+' match in '+slot);
+    if(P.risk>=2&&f&&f.heat>=60)why.push('An '+RISKN[P.risk].toLowerCase()+' product, and a feud this hot');
+    if(!why.length)return null;
+    (S.lcd=S.lcd||{}).net=S.week;
+    var sp=S.sponsors.filter(function(x){return x.type==='risk';})[0];
+    return {phase:'mid',mi:step.i,who:M.ids[0],other:M.ids[1],sp:sp?sp.name:null,
+      text:'The network’s standards desk is on the line to the truck. “This is more than we were sold for '+slot+'. Tell us it is not going to get worse.”',why:why,safe:0,
+      choices:[{n:'Let it run as booked',says:'The match goes out as it is. The network’s patience wears a little thinner.'},
+        {n:'Tone it down',says:'The referee passes the word to keep it clean. The crowd gets less than it came for. The network remembers that you listened.'},
+        {n:'Give them something to complain about',says:'The crowd gets more than it expected, and the people online love it. The network will not forget.'+(sp?' '+sp.name+' asked for a tamer product, and will hold back this week’s money.':'')}]};
+  },
+  run:function(S,L,ev,c){
+    var M=liveMatch(S,L,ev.mi),P=S.promos[S.player];if(!M)return 'The moment passes.';
+    if(c===1){
+      M.m.int=M.m.int==='brutal'?'normal':'safe';livePut(M.m,{cr:-3,x:'It was toned down for the network'});
+      netClock(S,-1,'The network liked how you handled a call from its standards desk');
+      return 'The word goes to the referee. They keep it clean, and the network hangs up happy.';
+    }
+    if(c===2){
+      M.m.int='brutal';livePut(M.m,{cr:4,x:'It went further than the network wanted'});
+      netClock(S,2,'You gave the network’s standards desk something to complain about');
+      if(S.net)S.net.mood=clamp(S.net.mood+3,0,100);
+      if(S.owner&&S.owner.roots==='rebellion')S.creedScore=clamp(S.creedScore+3,0,100);
+      var sp=S.sponsors.filter(function(x){return x.name===ev.sp;})[0];
+      if(sp){P.led.bonus-=sp.pay;news(S,'money',sp.name+' withheld a payment after what went out on '+S.queue[S.qi].name+'.');}
+      return 'You tell them to turn it up. The line from the network goes very quiet.'+(sp?' '+sp.name+' withhold this week’s payment.':'');
+    }
+    netClock(S,1,'The network did not like what went out in its slot');
+    return 'You tell the network it is under control, and let the match run.';
+  }
+};
+LIVEK.sponsor={n:'The sponsor at ringside',
+  pre:function(S,L,step){
+    if(step.t!=='match')return null;var M=liveMatch(S,L,step.i);if(!M||!M.main||M.m.nc)return null;
+    var sp=S.sponsors.filter(function(x){return x.weeks<=4&&x.asked==null;})[0];if(!sp)return null;
+    sp.asked=S.week;
+    var w=flat(M.c.sides).filter(function(x){return x.align==='F';}).sort(function(a,b){return b.ovr-a.ovr;})[0];
+    var ch=[{n:'Not tonight',says:'The main event stays clear of it. The deal runs out when it runs out.'},
+      {n:'The announcers read the plug',says:'A word from the sponsor in the middle of the main event. The crowd groans. '+sp.name+' sign for another 12 weeks.'}];
+    if(w)ch.push({n:w.name+' holds up the product after the bell',who:w.id,says:'The crowd groans louder, and '+w.name+' will not enjoy it. '+sp.name+' sign for another 24 weeks and pay a bonus tonight.'});
+    return {phase:'mid',mi:step.i,who:M.ids[0],other:M.ids[1],sp:sp.name,
+      text:sp.name+'’s people are in the front row tonight. Their deal is nearly up, and they want their name on the main event.',
+      why:[sp.name+' pays '+money(sp.pay)+' a week','The deal runs out in '+sp.weeks+' '+(sp.weeks===1?'week':'weeks')],safe:0,choices:ch};
+  },
+  run:function(S,L,ev,c){
+    var M=liveMatch(S,L,ev.mi),P=S.promos[S.player],sp=S.sponsors.filter(function(x){return x.name===ev.sp;})[0],pick=ev.choices[c];if(!M||!sp||!c)return 'The sponsor’s people watch the main event like everyone else.';
+    if(c===1){sp.weeks+=12;livePut(M.m,{cr:-2,x:'The crowd groaned through the sponsor’s plug'});news(S,'money',sp.name+' extended its sponsorship by 12 weeks.');return 'The announcers read it word for word. '+sp.name+'’s people shake hands in the front row.';}
+    var w=S.w[pick.who];sp.weeks+=24;P.led.bonus+=sp.pay*2;livePut(M.m,{cr:-3,x:'The crowd groaned at the sponsor’s product in the ring'});
+    if(w)youRemember(S,w,'shill','You had them hold up a sponsor’s product in the main event.',-6);
+    news(S,'money',sp.name+' extended its sponsorship by 24 weeks and paid a bonus of '+money(sp.pay*2)+'.');
+    return (w?w.name:'The winner')+' will hold it up for the cameras when the bell goes. '+sp.name+' pay a bonus of '+money(sp.pay*2)+' tonight.';
+  }
+};

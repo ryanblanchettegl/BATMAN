@@ -35,7 +35,7 @@ E.universe().promotions.forEach(d => {
   else ok(id, 'a show was refused for a stated reason', !!E.makeInfo(S).showWhy, E.makeInfo(S).showWhy);
   for (let i = 0; i < 26 && !S.over; i++) week(S, st);
   if (added && !S.over) ok(id, 'the new show ran', !!st.names['Test Night Lantern']);
-  if (mt.ok && !S.over) { const t = P.titles.find(x => x.name === 'Test Lantern Title'); ok(id, 'the new belt found a champion through the suggested cards', !!t && t.holders.length > 0, t ? 'defences ' + t.defs + ', prestige ' + Math.round(t.prestige) : 'gone'); }
+  if (mt.ok && !S.over) { const t = P.titles.find(x => x.name === 'Test Lantern Title'); ok(id, 'the new belt found a champion through the suggested cards', !!t && (t.holders.length > 0 || (t.hist || []).length > 0), t ? 'defences ' + t.defs + ', prestige ' + Math.round(t.prestige) + (t.holders.length ? '' : ', vacant now') : 'gone'); }   // a champion can leave the company: what matters is that it was won
   const after = net(S);
   /* retire and cancel */
   if (mt.ok && !S.over) { const t = P.titles.find(x => x.name === 'Test Lantern Title'), r = E.dropTitle(S, t.id); ok(id, 'the belt can be retired, or the game says why not', r.ok ? !P.titles.some(x => x.id === t.id) && P.oldTitles[0].name === 'Test Lantern Title' : r.msg.length > 10, r.ok ? '' : r.msg); }

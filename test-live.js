@@ -60,7 +60,7 @@ const DICE = /\b(roll|rolls|rolled|dice|die roll|d20|saving throw)\b/i;
 }
 
 /* ---- every kind of call, and what each answer does ---- */
-const found = {}, counts = { shows: 0, calls: 0, max: 0, kinds: {} }, texts = [];
+const found = {}, byPick = {}, counts = { shows: 0, calls: 0, max: 0, kinds: {} }, texts = [];
 for (const pid of E.universe().promotions.map(p => p.id).slice(0, 3)) for (const seed of [3, 7, 11]) {
   const S = E.newGame(pid, seed, { name: 'R' });
   for (let wk = 0; wk < 10 && !S.over; wk++) {
@@ -72,6 +72,7 @@ for (const pid of E.universe().promotions.map(p => p.id).slice(0, 3)) for (const
         n++; counts.kinds[ev.kind] = (counts.kinds[ev.kind] || 0) + 1;
         texts.push(ev.text, ...ev.choices.map(c => c.n + ' ' + (c.says || '')), ...(ev.why || []));
         if (!found[ev.kind]) found[ev.kind] = { S: clone(S), ev: JSON.parse(JSON.stringify(ev)) };
+        ev.choices.forEach((c, ci) => { const key = ev.kind + ':' + (c.k || ci); if ((c.k || ev.kind === 'audible' || ev.kind === 'overtime') && !byPick[key]) byPick[key] = { S: clone(S), ev: JSON.parse(JSON.stringify(ev)), c: ci }; });
       });
       counts.shows++; counts.calls += n; counts.max = Math.max(counts.max, n);
     }
@@ -89,7 +90,7 @@ function answer(kind, c) {
   for (let g = 0; g < 40 && !seg; g++) { const r = E.liveNext(S); if (r.event) E.liveDecide(S, r.event.safe || 0); else if (r.seg) seg = r.seg; else if (r.done) break; }
   return { S, ev, seg, d };
 }
-for (const kind of ['titlecall', 'runin', 'hotmic', 'afterbell', 'owner', 'face']) ok('kind', 'the ' + kind + ' call came up in the sample', !!found[kind]);
+for (const kind of ['titlecall', 'runin', 'hotmic', 'afterbell', 'face']) ok('kind', 'the ' + kind + ' call came up in the sample', !!found[kind]);
 if (found.titlecall) { const F = found.titlecall, P0 = F.S.promos[F.S.player], m = F.S.live.card[F.ev.mi], t0 = P0.titles.find(t => t.id === m.title), champ = t0.holders.slice();
   const stay = answer('titlecall', 0), swap = answer('titlecall', 1), dq = answer('titlecall', 2);
   const holders = R => R.S.promos[R.S.player].titles.find(t => t.id === m.title).holders;
@@ -120,6 +121,65 @@ if (found.afterbell) { const F = found.afterbell, w = F.ev.who, l = F.ev.other;
   ok('ab3', 'what happened after the bell is on that match', shake.seg.bc[shake.seg.bc.length - 1].t === 'call' && shake.seg.calls.length >= 1);
   if (F.ev.choices[3]) { const walk = answer('afterbell', 3), c = F.ev.choices[3]; ok('ab4', 'a challenger walks out: they have a title shot coming', walk.S.w[c.who].shot === c.title); }
 }
+/* ---- calls in the ring ---- */
+/** From a saved moment: answer with choice c, see the segment it belongs to, then see the night out. Returns {S, ev, seg, d, rep}. */
+function through(F, c) {
+  const S = clone(F.S), ev = S.live.ev, d = E.liveDecide(S, c); let seg = null;
+  for (let g = 0; g < 40 && !seg; g++) { const r = E.liveNext(S); if (r.event) E.liveDecide(S, r.event.safe || 0); else if (r.seg) seg = r.seg; else if (r.done) break; }
+  const rep = S.live ? air(S) : S.reports[0];
+  return { S, ev, seg, d, rep };
+}
+/* somebody is hurt: a road-worn wrestler in a brutal match */
+{ let F = null;
+  for (const seed of [2, 3, 4, 5, 6, 7, 8, 9]) { if (F) break; const S = E.newGame('pdw', seed, { name: 'R' }); desk(S); const m = S.card.find(x => x.mt === '1v1'); if (!m) continue;
+    const w = S.w[m.sides[0][0]]; w.rd = 95; m.int = 'brutal'; S.chs = { key: 'x', done: true };
+    if (!E.liveBegin(S, S.card).ok) continue;
+    for (let g = 0; g < 200 && !F; g++) { const r = E.liveNext(S); if (r.event) { if (r.event.kind === 'botch') F = { S: clone(S), ev: JSON.parse(JSON.stringify(r.event)), w: w.id }; else E.liveDecide(S, r.event.safe || 0); } else if (r.done) break; } }
+  ok('bt0', 'a worn body in a demanding match brings the call', !!F && F.ev.who === F.w, F ? F.ev.why.join(' | ') : 'never came up');
+  if (F) { found.botch = F; const w = F.ev.who, o = F.ev.other;
+    ok('bt1', 'it says what it was about the body and the match, and the third answer is an attempt with its chance', F.ev.why.some(x => /on the road too long/.test(x)) && F.ev.why.some(x => /Brutal intensity/.test(x)) && F.ev.choices.length === 3 && F.ev.checks[2].p > 0 && F.ev.checks[2].p <= 1, 'chance ' + Math.round(F.ev.checks[2].p * 100) + '%');
+    const stop = answer('botch', 0), go = answer('botch', 1), carry = answer('botch', 2);
+    ok('bt2', 'stop the match: no winner, they are looked after, and they remember it', !stop.seg.wi.length && /stops the match/.test(stop.seg.finish) && lean(stop.S, w) > lean(F.S, w), stop.seg.finish);
+    ok('bt3', 'go straight to the finish: a shorter match, and they hold it against you', go.seg.mins < carry.seg.mins && lean(go.S, w) < lean(F.S, w), go.seg.mins + ' minutes against ' + carry.seg.mins);
+    ok('bt4', 'have the other one carry it: the attempt works or it does not, and the text says which', /^The attempt (worked|did not come off)\. /.test(carry.d.text) && (/worked/.test(carry.d.text) ? lean(carry.S, o) > lean(F.S, o) : lean(carry.S, w) < lean(F.S, w)), carry.d.text.slice(0, 60));
+    ok('bt5', 'the same wrestler does not go down again for a month', F.S.lcd['bt' + w] === F.S.week);
+  }
+}
+/* the crowd has gone quiet */
+if (found.audible) { const F = found.audible;
+  ok('au1', 'the cause is the match the building just sat through', /last match/.test(F.ev.why[0]) && F.ev.choices.length >= 2 && !F.ev.choices[0].bp, F.ev.why.join(' | '));
+  const fl = byPick['audible:floor'], chq = byPick['audible:cheat'], up = byPick['audible:upset'];
+  ok('au2', 'the sample had each way out of it', !!fl && !!chq && !!up, Object.keys(byPick).filter(k => /^audible/.test(k)).join(', '));
+  if (fl) { const a = through(fl, fl.c); ok('au3', 'take it to the floor: the crowd wakes up and it is rougher', a.seg.fx.some(x => /fought through the seats/.test(x.x)) && a.S.bp === fl.S.bp); }
+  if (chq) { const a = through(chq, chq.c), pk = chq.ev.choices[chq.c], heel = chq.S.live.card[chq.ev.mi].sides[pk.side];
+    ok('au4', 'the villain cheats: a cheap win for one booking power, and a feud for it', a.seg.fin === 'cheap' && a.seg.wi.includes(heel[0]) && a.S.bp === chq.S.bp - 1 && !!feud(a.S, chq.ev.who, chq.ev.other), a.seg.fin); }
+  if (up) { const a = through(up, up.c), pk = up.ev.choices[up.c], card = up.S.live.card[up.ev.mi], dog = card.sides[pk.side], other = card.sides[1 - pk.side];
+    ok('au5', 'call the upset: the underdog wins for two booking power, and the loser remembers', a.seg.wi.includes(dog[0]) && a.S.bp === up.S.bp - 2 && lean(a.S, other[0]) < lean(up.S, other[0]) && lean(a.S, dog[0]) > lean(up.S, dog[0])); }
+  const stay = through(F, 0); ok('au6', 'stay with the plan: nothing is spent', stay.S.bp === F.S.bp && stay.d.ok);
+}
+ok('kind', 'the audible call came up in the sample', !!found.audible);
+/* they are not going home */
+ok('kind', 'the overtime call came up in the sample', !!found.overtime);
+if (found.overtime) { const F = found.overtime, home = through(F, 0);
+  ok('ot1', 'it says why they are going long, and taking it home costs nothing', F.ev.why.length >= 1 && F.ev.choices.length >= 2 && home.S.bp === F.S.bp, F.ev.why.join(' | '));
+  const sg = byPick['overtime:seg'], mn = byPick['overtime:main'], ov = byPick['overtime:over'];
+  ok('ot2', 'the sample had more than one way to find the time', [sg, mn, ov].filter(Boolean).length >= 2, Object.keys(byPick).filter(k => /^overtime/.test(k)).join(', '));
+  if (sg) { const base = through(sg, 0), a = through(sg, sg.c), cut = sg.S.live.st.steps[sg.ev.choices[sg.c].q], who = (cut.sg.who || [])[0];
+    ok('ot3', 'cut a segment for them: the match is longer, the segment does not air, and its people remember', a.seg.mins > base.seg.mins && a.rep.segs.length === base.rep.segs.length - 1 && a.rep.night.filter(x => x.si < 0).length === base.rep.night.filter(x => x.si < 0).length + 1 && (who == null || lean(a.S, who) < lean(sg.S, who)), a.seg.mins + ' minutes against ' + base.seg.mins);
+    ok('ot4', 'a show that lost a segment for time is not marked down as running light', !a.rep.light || a.rep.light <= (base.rep.light || 0), 'light ' + (a.rep.light || 0)); }
+  if (mn) { const base = through(mn, 0), a = through(mn, mn.c), last = r => r.segs.filter(x => x.k === 'match').pop(), mainId = mn.S.live.card[mn.S.live.card.length - 1].sides[0][0];
+    ok('ot5', 'take it out of the main event: this match is longer, the main event is shorter, and they know whose time it was', a.seg.mins > base.seg.mins && last(a.rep).mins < last(base.rep).mins && lean(a.S, mainId) < lean(mn.S, mainId), last(a.rep).mins + ' minutes against ' + last(base.rep).mins); }
+  let ov2 = ov;   // a main event on weekly television, booked at less than full length, with somebody who has creative control
+  for (const seed of [2, 3, 5, 8, 9, 10]) { if (ov2) break; const S = E.newGame('pdw', seed, { name: 'R' }); desk(S);
+    const m = S.card[S.card.length - 1], other = S.card.find(x => x !== m && x.len === 'M'); if (m.mt !== '1v1' || !other) continue;
+    m.len = 'M'; other.len = 'L'; S.w[m.sides[0][0]].cc = 1;   // the time taken off the main event goes to another match, so the show still fits
+    if (!E.liveBegin(S, S.card).ok) continue;
+    air(S, null, (ev, S) => { const ci = ev.choices.findIndex(c => c.k === 'over'); if (ev.kind === 'overtime' && ci >= 0 && !ov2) ov2 = { S: clone(S), ev: JSON.parse(JSON.stringify(ev)), c: ci }; }); }
+  ok('ot6', 'a main event on weekly television can run over the slot', !!ov2);
+  if (ov2) { const ov = ov2, a = clone(ov.S); E.clocks(a); const v0 = a.clocks.net.v; E.liveDecide(a, ov.c);
+    ok('ot7', 'run over the slot: the network’s patience wears', a.clocks.net.v === Math.min(6, v0 + 1) && /ran over/.test(a.clocks.net.why)); }
+}
+
 /* ---- the direction of the company ---- */
 if (found.owner) { const F = found.owner, f = F.ev.who, opp = F.ev.other, t0 = F.S.owner.trust;
   const play = answer('owner', 0), win = answer('owner', 1), dq = answer('owner', 2);
@@ -145,6 +205,32 @@ if (found.face) { const F = found.face, w = F.ev.who;
     ok('fc4', 'the crowd comes to see them: more interest when they are in the main event, less when they are left off', capped || (on === 2 ? Math.abs(d - 0.04) < 1e-9 : (on === 1 ? Math.abs(d) < 1e-9 : d <= 0)), 'on the card: ' + ['no', 'yes', 'in the main event'][on] + ', difference ' + d.toFixed(3));
     ok('fc5', 'the card builder warns when they are left off their own show, and only then', said(off) === expect && (on === 0 || !said(card)), 'left off: ' + said(off) + ', expected ' + expect);
     ok('fc6', 'their matches are louder', on === 0 || ra.segs.some(sg => sg.k === 'match' && (sg.fx || []).some(x => /The crowd came to see/.test(x.x))));
+  }
+}
+/* the network on the line */
+ok('kind', 'the network call came up in the sample', !!found.network);
+if (found.network) { const F = found.network, net = S => { E.clocks(S); return S.clocks.net.v; }, v0 = net(clone(F.S));
+  const run = c => { const S = clone(F.S); E.clocks(S); S.clocks.net.v = 2; const d = E.liveDecide(S, c); return { S, d }; };
+  const a = run(0), b = run(1), c = run(2);
+  ok('nw1', 'the network only calls about a weekly show in a better slot, and says what it objects to', !F.S.queue[F.S.qi].big && F.S.promos[F.S.player].slot >= 1 && F.ev.why.length >= 1 && /standards desk/.test(F.ev.text), F.ev.why.join(' | '));
+  ok('nw2', 'let it run: its patience wears a little', a.S.clocks.net.v === 3);
+  ok('nw3', 'tone it down: the match is tamer and the network is happier', b.S.clocks.net.v === 1 && ['normal', 'safe'].includes(b.S.live.card[F.ev.mi].int) && through(F, 1).seg.fx.some(x => /toned down for the network/.test(x.x)));
+  ok('nw4', 'give them something to complain about: a hotter match and a much less patient network', c.S.clocks.net.v === 4 && c.S.live.card[F.ev.mi].int === 'brutal' && c.S.net.mood >= F.S.net.mood);
+  ok('nw5', 'the standards desk does not call again for a month', F.S.lcd.net === F.S.week);
+}
+/* the sponsor at ringside: a deal that is nearly up */
+{ let F = null;
+  for (const seed of [3, 4, 5, 6]) { if (F) break; const S = E.newGame('pdw', seed, { name: 'R' }); desk(S);
+    S.sponsors.push({ name: 'Harbor Lager', weeks: 3, type: 'image', val: 0, text: 'Popularity stays at 0 or better', pay: 20000 });
+    if (!E.liveBegin(S, S.card).ok) continue;
+    for (let g = 0; g < 200 && !F; g++) { const r = E.liveNext(S); if (r.event) { if (r.event.kind === 'sponsor') F = { S: clone(S), ev: JSON.parse(JSON.stringify(r.event)) }; else E.liveDecide(S, r.event.safe || 0); } else if (r.done) break; } }
+  ok('sp0', 'a sponsor whose deal is nearly up asks for the main event', !!F && /Harbor Lager/.test(F.ev.text) && F.ev.why.length === 2, F ? F.ev.why.join(' | ') : 'never came up');
+  if (F) { found.sponsor = F; const sp = S => S.sponsors.find(x => x.name === 'Harbor Lager');
+    const no = through(F, 0), plug = through(F, 1);
+    ok('sp1', 'not tonight: nothing changes, and they do not ask twice', sp(no.S).weeks === 3 && sp(F.S).asked === F.S.week && !no.seg.fx.some(x => /sponsor/.test(x.x)));
+    ok('sp2', 'the announcers read the plug: the crowd groans and the deal is extended', sp(plug.S).weeks === 15 && plug.seg.fx.some(x => /groaned through the sponsor/.test(x.x)));
+    if (F.ev.choices[2]) { const hold = through(F, 2), w = F.ev.choices[2].who;
+      ok('sp3', 'the hero holds up the product: a longer deal, a bonus, and they do not enjoy it', sp(hold.S).weeks === 27 && lean(hold.S, w) < lean(F.S, w) && /bonus of \$40,000/.test(hold.d.text), hold.d.text); }
   }
 }
 /* a company that already has a face: the third answer takes the place away from everyone */

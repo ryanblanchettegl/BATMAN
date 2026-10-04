@@ -47,7 +47,7 @@ function showStart(S,P,show,card){
 }
 /** Run the next step of a show. Returns the segment it made (a match, a promo or an angle), or null if it made none. */
 function showStep(S,P,show,card,st){
-  var step=st.steps[st.k++],rep=st.rep,n=card.length,seg;if(!step)return null;
+  var step=st.steps[st.k++],rep=st.rep,n=card.length,seg;if(!step||step.cut)return null;   // a segment cut for time on the night does not air
   if(step.t==='match'){seg=doMatch(S,P,show,card[step.i],step.i,n,rep,st.used);rep.segs.push(seg);return seg;}
   var pool=showPool(S,P,show),inP={};pool.forEach(function(w){inP[w.id]=1;});
   var ctx={pool:pool,inP:inP,angled:st.angled,left:{},extra:[]};

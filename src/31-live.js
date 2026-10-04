@@ -287,7 +287,7 @@ E.liveInfo=function(S){
   ck.items.forEach(function(x){by[key(x)]=x;});
   var sheet=st.steps.map(function(sp,k){
     var it=by[key(sp)]||{},seg=sp.si!=null&&sp.si>=0?st.rep.segs[sp.si]:null;
-    return {k:k,t:sp.t,cat:it.cat||sp.t,label:it.label||'',at:it.at==null?null:it.at,mins:it.mins||0,top:it.top||0,ran:k<st.k,si:sp.si==null?-1:sp.si,ov:seg?seg.ov:null,no:sp.t==='match'?sp.i+1:0,main:sp.t==='match'&&sp.i===L.card.length-1};
+    return {k:k,t:sp.t,cat:it.cat||sp.t,label:it.label||'',at:it.at==null?null:it.at,mins:it.mins||0,top:it.top||0,ran:k<st.k,cut:!!sp.cut,si:sp.si==null?-1:sp.si,ov:seg?seg.ov:null,no:sp.t==='match'?sp.i+1:0,main:sp.t==='match'&&sp.i===L.card.length-1};
   });
   return {step:st.k,steps:st.steps.length,segs:st.rep.segs.length,event:L.ev&&!L.ev.done?L.ev:null,calls:L.log.length,max:liveMax(S),bp:S.bp,budget:ck.budget,sheet:sheet};
 };

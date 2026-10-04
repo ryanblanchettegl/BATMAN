@@ -113,17 +113,17 @@ function CallBox(p: { ev: any }) {
         <span class="n"><b>{i + 1}. {c.n}</b>{c.bp ? <span class="bp">{c.bp} BP</span> : null}</span>
         {c.says ? <span class="says">{c.says}</span> : null}
       </button>
-      {ev.checks && ev.checks[i] ? <CheckLine label="An attempt" ck={ev.checks[i]} /> : null}
+      {ev.checks && ev.checks[i] ? <CheckLine label="If you try it" ck={ev.checks[i]} /> : null}
     </div>)}</div>
     <p class="muted callhint">The show waits for your answer. Pick one, or press its number.</p>
   </div>;
 }
 
-interface NRow { key: string; at: number | null; tag: string; label: string; si: number; k: number; ran: boolean; ov: number | null; main: boolean; match: boolean }
+interface NRow { key: string; at: number | null; tag: string; label: string; si: number; k: number; ran: boolean; ov: number | null; main: boolean; match: boolean; cut?: boolean }
 /** Tonight's run sheet for the side of the broadcast. On the air it comes from the engine; a finished show kept its own. */
 function nightRows(r: any, info: any): NRow[] {
   const tag = (x: any) => x.t === 'match' ? String(x.no) : (x.cat === 'promo' ? 'MIC' : 'ANG');
-  if (info) return info.sheet.map((x: any) => ({ key: 'k' + x.k, at: x.at, tag: tag(x), label: x.label, si: x.si, k: x.k, ran: x.ran, ov: x.ov, main: x.main, match: x.t === 'match' }));
+  if (info) return info.sheet.map((x: any) => ({ key: 'k' + x.k, at: x.at, tag: tag(x), label: x.label, si: x.si, k: x.k, ran: x.ran, ov: x.ov, main: x.main, match: x.t === 'match', cut: x.cut }));
   if (r.night) return r.night.map((x: any, k: number) => ({ key: 'k' + k, at: x.at, tag: tag(x), label: x.label, si: x.si, k: k, ran: true, ov: x.si >= 0 && r.segs[x.si] ? r.segs[x.si].ov : null, main: !!x.main, match: x.t === 'match' }));
   let n = 0; const last = r.segs.map((s: any) => s.k).lastIndexOf('match');
   return r.segs.map((s: any, j: number) => ({ key: 'k' + j, at: s.at == null ? null : s.at, tag: s.k === 'match' ? String(++n) : 'ANG', label: s.label || s.head, si: j, k: j, ran: true, ov: s.ov, main: j === last, match: s.k === 'match' }));
@@ -134,9 +134,9 @@ function Night(p: { rows: NRow[]; at: number; done: boolean; wait: number; call:
     <h2>Tonight</h2>
     <ol class="nt">{p.rows.map(x => {
       const now = p.wait >= 0 ? x.k === p.wait : (x.si >= 0 && x.si === p.at), seen = x.si >= 0 && x.ov != null && (x.si < p.at || (x.si === p.at && p.done));
-      return <li key={x.key} class={'nt-r' + (now ? ' now' : '') + (seen ? ' seen' : '') + (x.main ? ' me' : '')} data-v={now ? 'now' : (seen ? 'seen' : 'next')}>
+      return <li key={x.key} class={'nt-r' + (now ? ' now' : '') + (seen || x.cut ? ' seen' : '') + (x.main ? ' me' : '')} data-v={now ? 'now' : (seen ? 'seen' : 'next')}>
         <span class="at">{x.at == null ? '' : hm(x.at)}</span><span class="no">{x.tag}</span><span class="who">{x.label}</span>
-        <span class="st">{now && p.call ? 'Your call' : (seen ? stars(x.ov as number) : (now ? 'On now' : (x.ran && x.si < 0 ? 'Cut' : '')))}</span>
+        <span class="st">{now && p.call ? 'Your call' : (seen ? stars(x.ov as number) : (now ? 'On now' : (x.cut || (x.ran && x.si < 0) ? 'Cut' : '')))}</span>
       </li>;
     })}</ol>
     {p.info ? <div class="muted nt-foot" data-t="night-calls"><p>Calls from the headset: <b>{p.info.calls}</b></p><p>Booking power: <b class="gold">{p.info.bp}</b></p></div> : null}
