@@ -9,7 +9,7 @@ import { book } from '../../flow';
 import { ScheduleList, EndWeekBtn } from '../../shared/week';
 import { Head, Panel, Btn, CheckLine, Window } from '../../kit';
 import { Card } from './Card';
-import { SegWindow } from './Segments';
+import { SegWindow, OpenGuide } from './Segments';
 import { ShapeGuide } from './Shape';
 import { Live } from './Live';
 import { Report } from './Report';
@@ -65,4 +65,4 @@ onBack(() => {
 onLeavePage(() => { typer.finish(); const b = book(); b.report = null; b.live = null; });
 
 export const pages: Record<string, () => ComponentChildren> = { booking: Booking };
-export const modals: Record<string, (p: { m: Modal }) => ComponentChildren> = { chaos: Chaos, segwin: SegWindow, shapeguide: ShapeGuide };
+export const modals: Record<string, (p: { m: Modal }) => ComponentChildren> = { chaos: Chaos, segwin: SegWindow, shapeguide: ShapeGuide, openguide: OpenGuide };

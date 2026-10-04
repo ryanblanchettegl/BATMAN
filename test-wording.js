@@ -11,7 +11,7 @@ for (const p of E.universe().promotions) {
     S.inbox.filter(e => !e.done).forEach(e => { const r = E.resolveEvent(S, e.id, e.type === 'handover' ? 0 : 1); scan(r, 'resolve', p.id); });
     if (S.owner.pending) E.setCreed(S, { style: 'merit', roots: 'tradition', pledge: 'stable' });
     while (S.qi < S.queue.length) {
-      const card = E.suggest(S), pr = E.preShow(S, card); if (pr) { scan(pr, 'preShow', p.id); scan(E.resolvePre(S, card, 0), 'pre', p.id); }
+      const card = E.suggest(S), pr = E.preShow(S, card); if (pr) { scan(pr, 'preShow', p.id); scan(E.resolvePre(S, card, 0), 'pre', p.id); E.fitShow(S, card); }
       if (E.validate(S, card).errors.length) { S.qi++; continue; }
       scan(E.runPlayerShow(S, card), 'show', p.id);
     }

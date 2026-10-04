@@ -23,7 +23,7 @@ export function Editor(p: { m: Match; i: number }) {
   const elig: W[] = E.eligible(S).slice().sort((a: W, b: W) => b.ovr - a.ovr), inE: Record<number, 1> = {}, busy = onCard(i);
   elig.forEach(w => { inE[w.id] = 1; });
   const teams = m.mt === 'tag' ? S.teams.filter((t: any) => t.promo === P.id && inE[t.m[0]] && inE[t.m[1]]) : [];
-  const od = E.matchOdds(S, m, i, S.card.length);
+  const od = E.matchOdds(S, m, i, S.card.length), mm = E.matchMins(S, m, i, S.card.length);
   const titles = E.showTitles(S).filter((t: any) => t.tag ? m.mt === 'tag' : (E.MT[m.mt].per === 1 && !(m.mt === 'br' && t.holders.length)));
   const calls: Opt[] = [['', 'Let it play out (free)']];
   if (od) {
@@ -52,7 +52,8 @@ export function Editor(p: { m: Match; i: number }) {
     <Field label="Stipulation"><Sel id={'m' + i + '-stip'} t="stip" d={{ i }} value={m.stip} onChange={v => setMatch(i, 'stip', v)} options={Object.keys(E.STIP).map(k => [k, E.STIP[k].n] as Opt)} /></Field>
     {E.STIPNOTE[m.stip] && <p class="muted wide">{E.STIPNOTE[m.stip]}</p>}
     <Field label="Intensity"><Sel id={'m' + i + '-int'} t="int" d={{ i }} value={m.int || 'normal'} onChange={v => setMatch(i, 'int', v)} options={Object.keys(E.INTN).map(k => [k, E.INTN[k].n + (INT_NOTE[k] || '')] as Opt)} /></Field>
-    <Field label="Length"><Sel id={'m' + i + '-len'} t="len" d={{ i }} value={m.len} onChange={v => setMatch(i, 'len', v)} options={[['S', 'Short'], ['M', 'Medium'], ['L', 'Long']]} /></Field>
+    <Field label="Length"><Sel id={'m' + i + '-len'} t="len" d={{ i }} value={m.len} onChange={v => setMatch(i, 'len', v)} options={[['S', 'Short · ' + mm.S + ' min'], ['M', 'Medium · ' + mm.M + ' min'], ['L', 'Long · ' + mm.L + ' min']]} /></Field>
+    <p class="muted wide" data-t="len-note">On the clock that is {mm.now} minutes: {mm.bell} in the ring, the rest for entrances and a break. Bigger matches take longer to set up.</p>
     {m.mt === '1v1' && m.sides[0][0] != null && m.sides[1][0] != null && <p class="muted wide">{E.pairMemory(S, m.sides[0][0], m.sides[1][0])}</p>}
     {od && od.chem != null && <p class="muted wide">Ring chemistry between them: {od.chem >= 2.2 ? <span class="good">great</span> : (od.chem <= -2.2 ? <span class="bad">poor</span> : 'ordinary')}.</p>}
   </div>;

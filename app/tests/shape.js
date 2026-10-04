@@ -37,7 +37,7 @@ async function run(mode) {
     await page.click('[data-t="seg-suggest"]');
     ok(mode, 'a booked promo or angle is forecast in stars', /should be about ★/.test(await txt(page, '.sheet')) && !/should (score|be) about \d/.test(await txt(page, '.sheet')));
     /* run the show and read the report */
-    const rep = await page.evaluate(() => { const S = window.EWF_DEBUG.state(), E = window.GP, pr = E.preShow(S, S.card); if (pr) E.resolvePre(S, S.card, 0); const v = E.validate(S, S.card); if (v.errors.length) return { err: v.errors.join(' | ') }; const r = E.runPlayerShow(S, S.card).rep; window.EWF_DEBUG.render(); return { n: r.segs.filter(s => s.k === 'match').length, lines: r.sheet.lines.join(' / ') }; });
+    const rep = await page.evaluate(() => { const S = window.EWF_DEBUG.state(), E = window.GP, pr = E.preShow(S, S.card); if (pr) E.resolvePre(S, S.card, 0); E.fitShow(S, S.card); const v = E.validate(S, S.card); if (v.errors.length) return { err: v.errors.join(' | ') }; const r = E.runPlayerShow(S, S.card).rep; window.EWF_DEBUG.render(); return { n: r.segs.filter(s => s.k === 'match').length, lines: r.sheet.lines.join(' / ') }; });
     ok(mode, 'the show ran', !rep.err, rep.err);
     await go(page, 'desk');
     await page.click('[data-t="report"]');

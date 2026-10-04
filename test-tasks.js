@@ -58,7 +58,7 @@ const st = (S, id) => (E.tasks(S).list.find(t => t.id === id) || {}).state;
   /* a new week brings a waved task back */
   E.taskWave(S, 'desk-col');
   S.inbox.filter(e => !e.done).forEach(e => E.resolveEvent(S, e.id, e.type === 'handover' ? 0 : 1));
-  while (S.qi < S.queue.length) { const card = E.suggest(S), pr = E.preShow(S, card); if (pr) E.resolvePre(S, card, 0); S.card = card; if (E.validate(S, card).errors.length) { S.qi++; continue; } E.runPlayerShow(S, card); }
+  while (S.qi < S.queue.length) { const card = E.suggest(S), pr = E.preShow(S, card); if (pr) { E.resolvePre(S, card, 0); E.fitShow(S, card); } S.card = card; if (E.validate(S, card).errors.length) { S.qi++; continue; } E.runPlayerShow(S, card); }
   S.inbox.filter(e => !e.done).forEach(e => E.resolveEvent(S, e.id, e.type === 'handover' ? 0 : 1));
   E.endWeek(S);
   ok('week', 'next week the waved task is back on the list and last week’s ticks are gone', st(S, 'desk-col') === 'todo' && !E.tasks(S).list.some(x => x.id === 'desk-pbp'), E.tasks(S).list.map(x => x.id + ':' + x.state).join(', '));
@@ -71,7 +71,7 @@ const st = (S, id) => (E.tasks(S).list.find(t => t.id === id) || {}).state;
       try { const T = E.tasks(S); n++; most = Math.max(most, T.todo); if (T.list.some(t => !t.text || /undefined|NaN/.test(t.text))) bad++; } catch (e) { bad++; console.log(id, wk, e.message); }
       S.inbox.filter(e => !e.done).forEach(e => E.resolveEvent(S, e.id, e.type === 'handover' ? 0 : 1));
       if (S.owner && S.owner.pending) E.setCreed(S, { style: 'merit', roots: 'tradition', pledge: 'stable' });
-      while (S.qi < S.queue.length) { const card = E.suggest(S), pr = E.preShow(S, card); if (pr) E.resolvePre(S, card, 0); S.card = card; if (E.validate(S, card).errors.length) { S.qi++; continue; } E.runPlayerShow(S, card); }
+      while (S.qi < S.queue.length) { const card = E.suggest(S), pr = E.preShow(S, card); if (pr) { E.resolvePre(S, card, 0); E.fitShow(S, card); } S.card = card; if (E.validate(S, card).errors.length) { S.qi++; continue; } E.runPlayerShow(S, card); }
       S.inbox.filter(e => !e.done).forEach(e => E.resolveEvent(S, e.id, e.type === 'handover' ? 0 : 1));
       E.endWeek(S);
     }

@@ -20,6 +20,20 @@
 .seg.sg{border-style:dashed}
 .seg.sg .no{font-size:1em;color:var(--mag);padding-top:8px}
 .seg.sg.bad{border-color:var(--red)}
+/* the clock on the run sheet: every row says when it starts */
+.seg .no{flex-direction:column;align-items:center;justify-content:flex-start;gap:3px}
+.seg .no .at{font-size:.62em;line-height:1;color:var(--dcyan)}
+.seg.sg .no .at{font-size:.85em}
+.seg.me .no .at{color:var(--k)}
+/* how the show opens: a banner at the head of the sheet */
+.seg.opener{border:4px double var(--yellow)}
+.seg.opener .no{font-size:1em;color:var(--yellow);padding-top:8px}
+.seg.opener .who{color:var(--yellow)}
+/* the item on the air when an hour starts */
+.seg.top{border-color:var(--yellow)}
+.showtime .meter{margin:0 1ch}
+.cats{display:flex;flex-wrap:wrap;gap:4px 3ch}
+.clocklist{list-style:none;margin:0;padding:0;display:grid;gap:.25em}
 
 /* the running order notes beside the card, and the guide window */
 .shape{list-style:none;margin:0;padding:0;display:grid;gap:.35em}

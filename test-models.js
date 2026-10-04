@@ -11,7 +11,7 @@ function play(id) {
     S.inbox.filter(e => !e.done).forEach(e => E.resolveEvent(S, e.id, e.type === 'handover' ? 0 : 1));
     if (S.owner.pending) E.setCreed(S, { style: 'merit', roots: 'tradition', pledge: 'stable' });
     while (S.qi < S.queue.length) {
-      const card = E.suggest(S), pr = E.preShow(S, card); if (pr) E.resolvePre(S, card, 0);
+      const card = E.suggest(S), pr = E.preShow(S, card); if (pr) { E.resolvePre(S, card, 0); E.fitShow(S, card); }
       if (E.validate(S, card).errors.length) { S.qi++; continue; }
       st.shows++; st.matches += card.length;
       st.stip += card.filter(m => m.stip && m.stip !== 'std').length;
@@ -51,7 +51,7 @@ const R = {};
   for (let wk = 0; wk < 20 && !S.over; wk++) {
     S.inbox.filter(e => !e.done).forEach(e => E.resolveEvent(S, e.id, 1));
     if (S.owner.pending) E.setCreed(S, { style: 'merit', roots: 'tradition', pledge: 'stable' });
-    while (S.qi < S.queue.length) { const c = E.suggest(S), pr = E.preShow(S, c); if (pr) E.resolvePre(S, c, 0); min = Math.min(min, c.length); shows++; if (E.validate(S, c).errors.length) { S.qi++; continue; } E.runPlayerShow(S, c); }
+    while (S.qi < S.queue.length) { const c = E.suggest(S), pr = E.preShow(S, c); if (pr) { E.resolvePre(S, c, 0); E.fitShow(S, c); } min = Math.min(min, c.length); shows++; if (E.validate(S, c).errors.length) { S.qi++; continue; } E.runPlayerShow(S, c); }
     E.endWeek(S);
   }
   ok('kjp', 'twelve wrestlers still fill a card of at least three matches', min >= 3, 'smallest card ' + min + ' over ' + shows + ' shows');

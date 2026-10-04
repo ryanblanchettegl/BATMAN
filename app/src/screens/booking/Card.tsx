@@ -5,10 +5,10 @@ import { G, me } from '../../store';
 import { book } from '../../flow';
 import { GateNote } from '../../shared/week';
 import { roleOf } from './Shape';
-import { Head, Panel, Btn, Name, brandName } from '../../kit';
+import { Head, Panel, Btn, Name, Meter, brandName } from '../../kit';
 import { Editor } from './Editor';
 import { Side } from './Side';
-import { OpenRow, SegRows, SegBar, bookSeg, segFree } from './Segments';
+import { Opening, PlanRow, SegRows, SegBar, TopTag, addPromo, addAngle, hm } from './Segments';
 import { Match, onCard, sideText, suggest, addMatch, clearCard, toggleEdit, moveMatch, removeMatch, run } from './run';
 
 const DOT = ' · ';
@@ -31,17 +31,18 @@ function odds(m: Match, i: number, n: number) {
   return <span>Favourite: <b>{sideText(m.sides[o.fav])}</b> {Math.round(o.p[o.fav] * 100)}%</span>;
 }
 
-function MatchRow(p: { m: Match; i: number; n: number }) {
-  const m = p.m, i = p.i, n = p.n, P = me(), open = book().edit === i;
+function MatchRow(p: { m: Match; i: number; n: number; c: any }) {
+  const m = p.m, i = p.i, n = p.n, P = me(), open = book().edit === i, it = p.c.items.find((x: any) => x.t === 'match' && x.i === i);
   const t = m.title ? P.titles.find((x: any) => x.id === m.title) : null;
   // each part is a keyed span: rows trade places without keys, and Preact needs the parts to keep one shape while they do
-  const meta: [string, ComponentChildren][] = [['mt', (roleOf(i, n) ? roleOf(i, n) + DOT : '') + E.MT[m.mt].n], ['len', LEN[m.len]]];
+  const meta: [string, ComponentChildren][] = [['mt', (roleOf(i, n) ? roleOf(i, n) + DOT : '') + E.MT[m.mt].n], ['len', LEN[m.len] + (it ? ', ' + it.mins + ' min' : '')]];
   if (m.stip !== 'std') meta.push(['stip', E.STIP[m.stip].n]);
   if (m.int && m.int !== 'normal') meta.push(['int', <span class={m.int === 'brutal' ? 'bad' : 'good'}>{E.INTN[m.int].n}</span>]);
   if (t) meta.push(['title', <span class="gold">{t.name}</span>]);
   meta.push(['odds', odds(m, i, n)]);
-  return <div class={'seg' + (i === n - 1 ? ' me' : '')} data-m={i}>
-    <div class="no" aria-hidden="true">{i + 1}</div>
+  if (it && it.top) meta.push(['top', <TopTag top={it.top} />]);
+  return <div class={'seg' + (i === n - 1 ? ' me' : '') + (it && it.top ? ' top' : '')} data-m={i}>
+    <div class="no" aria-hidden="true"><span>{i + 1}</span>{it ? <small class="at">{hm(it.at)}</small> : null}</div>
     <div class="body">
       <div class="line1">
         <div><div class="who"><Sides m={m} /></div><div class="meta">{meta.map((x, k) => <span key={x[0]}>{k ? DOT : null}{x[1]}</span>)}</div></div>
@@ -67,7 +68,7 @@ function PreShow(p: { pre: any }) {
 
 export function Card() {
   const S = G.S, P = me(), b = book(), c = E.cal(S.week), show = S.queue[S.qi], n = S.card.length;
-  const v = E.validate(S, S.card), cost = E.cardCost(S, S.card), on = onCard();
+  const v = E.validate(S, S.card), cost = E.cardCost(S, S.card), on = onCard(), ck = E.clock(S), tcls = ck.over || ck.short ? 'bad' : (ck.light ? 'warn' : 'good');
   const pre = S.pre && !S.pre.done && S.pre.key === S.week + ':' + show.id ? S.pre : null;
   return <>
     <Head eyebrow={c.label + DOT + 'show ' + (S.qi + 1) + ' of ' + S.queue.length} title={show.name}>
@@ -76,11 +77,13 @@ export function Card() {
       <p class="mt1">Booking power: <b class="gold">{S.bp}</b> {cost
         ? <span class={cost > S.bp ? 'bad' : 'muted'}>({cost} committed on this card)</span>
         : <span class="muted">(nothing called yet: every match plays out on the odds)</span>}</p>
+      <p class="mt1 showtime" data-t="clock" data-v={ck.over ? 'over' : (ck.short ? 'short' : (ck.light ? 'light' : 'ok'))}>Show time: <b class={'num ' + tcls}>{hm(ck.total)}</b> of <b class="num">{hm(ck.budget)}</b> <Meter v={Math.min(100, ck.total / ck.budget * 100)} kind="au" /> <span class={tcls}>{n || ck.total ? ck.words : (ck.budget / 60) + ' hours to fill.'}</span></p>
       <div class="row center mt2">
         <Btn t="suggest" onClick={suggest}>Suggest a card</Btn>
         <Btn t="add" onClick={addMatch}>Add a match</Btn>
-        <Btn t="seg-new" disabled={!segFree()} onClick={bookSeg}>Add a promo or angle</Btn>
-        {n > 0 && <Btn t="clear" onClick={clearCard}>Clear</Btn>}
+        <Btn t="add-promo" onClick={addPromo}>Add a promo</Btn>
+        <Btn t="add-angle" onClick={addAngle}>Add an angle</Btn>
+        {(n > 0 || ck.total > 0) && <Btn t="clear" onClick={clearCard}>Clear</Btn>}
       </div>
     </Head>
     <GateNote />
@@ -89,10 +92,10 @@ export function Card() {
     {n > 0 && v.warnings.length > 0 && <div class="flash">{v.warnings.map((w: string, k: number) => <>{k ? <br /> : null}{w}</>)}</div>}
     <div class="cols">
       <div class="stack">
-        <div class="sheet"><OpenRow />{n ? S.card.map((m: Match, i: number) => <><SegRows i={i} n={n} /><MatchRow m={m} i={i} n={n} /></>) : <SegRows i={0} n={1} />}</div>
-        {n ? null : <Panel><p><b>The card is empty.</b> Add matches one at a time, or start from a suggested card and change what you like.</p>
-            <p class="muted mt1">You choose who wrestles. The odds decide who wins, unless you spend booking power to call a finish. The promos and angles between the matches are yours to book too, or leave them to the writers.</p></Panel>}
-        <SegBar />
+        <div class="sheet"><Opening c={ck} /><PlanRow c={ck} />{n ? S.card.map((m: Match, i: number) => <><SegRows i={i} n={n} c={ck} /><MatchRow m={m} i={i} n={n} c={ck} /></>) : <SegRows i={0} n={1} c={ck} />}</div>
+        {n ? null : <Panel><p><b>The card is empty.</b> You have {ck.budget / 60} hours to fill. Add matches, promos and angles one at a time, or start from a suggested card and change what you like.</p>
+            <p class="muted mt1">You choose who wrestles. The odds decide who wins, unless you spend booking power to call a finish. Everything on the run sheet takes time off the clock, and the show cannot run until the time is filled.</p></Panel>}
+        <SegBar c={ck} />
       </div>
       <div class="stack"><Side on={on} /></div>
     </div>

@@ -7,7 +7,7 @@ function week(S, st) {
   S.inbox.filter(e => !e.done).forEach(e => { try { E.resolveEvent(S, e.id, e.type === 'handover' ? 0 : 1); } catch (x) { st.errs++; st.why = st.why || x.message; } });
   if (S.owner.pending) E.setCreed(S, { style: 'merit', roots: 'tradition', pledge: 'stable' });
   while (S.qi < S.queue.length) {
-    try { const card = E.suggest(S), pr = E.preShow(S, card); if (pr) E.resolvePre(S, card, 0); if (E.validate(S, card).errors.length) { S.qi++; continue; } st.names[S.queue[S.qi].name] = 1; E.runPlayerShow(S, card); st.shows++; }
+    try { const card = E.suggest(S), pr = E.preShow(S, card); if (pr) { E.resolvePre(S, card, 0); E.fitShow(S, card); } if (E.validate(S, card).errors.length) { S.qi++; continue; } st.names[S.queue[S.qi].name] = 1; E.runPlayerShow(S, card); st.shows++; }
     catch (x) { st.errs++; st.why = st.why || x.message; S.qi++; }
   }
   try { E.endWeek(S); } catch (x) { st.errs++; st.why = st.why || x.message; }

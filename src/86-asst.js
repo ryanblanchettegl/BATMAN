@@ -38,7 +38,7 @@ function asstBook(S){
   var g=0;while(g++<10&&cardCost(S,card)>S.bp){var last=card.slice().reverse().filter(function(m){return m.call!=null;})[0];if(!last)break;delete last.call;}
   return card;
 }
-E.assistantBook=function(S){S.card=asstBook(S);return S.card;};
+E.assistantBook=function(S){S.card=showFill(S,asstBook(S));return S.card;};
 /* a small show the assistant runs: never a big event, and a worse card while it is still learning */
 CRX.push(function(ctx){
   if(!ctx.isPl||ctx.S.cal||ctx.m.asst==null)return null;
@@ -55,8 +55,8 @@ E.assistant=function(S){
 E.assistantRun=function(S){
   var out=[],A=asstInit(S);if(S.over)return out;
   while(S.qi<S.queue.length&&!S.queue[S.qi].big&&!S.over){
-    var show=S.queue[S.qi],card=asstBook(S);S.card=card;
-    var pr=E.preShow(S,card);if(pr)E.resolvePre(S,card,0);
+    var show=S.queue[S.qi],card=showFill(S,asstBook(S));S.card=card;
+    var pr=E.preShow(S,card);if(pr){E.resolvePre(S,card,0);fitShow(S,card);}
     var v=E.validate(S,card);if(v.errors.length){out.push({show:show.name,err:v.errors[0]});break;}
     S.asstRun=true;var r=E.runPlayerShow(S,card);S.asstRun=false;
     if(r.errors){out.push({show:show.name,err:r.errors[0]});break;}

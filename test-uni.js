@@ -21,7 +21,7 @@ for(const p of info.promotions){
   for(let wk=0;wk<weeks&&!S.over;wk++){
     S.inbox.filter(e=>!e.done).forEach(e=>E.resolveEvent(S,e.id,e.type==='handover'?0:1));
     if(S.owner.pending)E.setCreed(S,{style:'merit',roots:'tradition',pledge:'stable'});
-    while(S.qi<S.queue.length){const card=E.suggest(S);const pr=E.preShow(S,card);if(pr)E.resolvePre(S,card,0);inv.push(...invariants(S,p.id+' wk '+S.week,card));const vv=E.validate(S,card);if(vv.errors.length){errs++;if(errs<3)console.log('  VALIDATION',p.id,S.week,vv.errors.slice(0,2),card.length);S.qi++;continue;}const r=E.runPlayerShow(S,card);rs.push(r.rep.rating-r.rep.exp);}
+    while(S.qi<S.queue.length){const card=E.suggest(S);const pr=E.preShow(S,card);if (pr) { E.resolvePre(S, card, 0); E.fitShow(S, card); }inv.push(...invariants(S,p.id+' wk '+S.week,card));const vv=E.validate(S,card);if(vv.errors.length){errs++;if(errs<3)console.log('  VALIDATION',p.id,S.week,vv.errors.slice(0,2),card.length);S.qi++;continue;}const r=E.runPlayerShow(S,card);rs.push(r.rep.rating-r.rep.exp);}
     E.endWeek(S);inv.push(...invariants(S,p.id+' wk '+S.week,null));
   }
   if(inv.length){failures++;console.log('  INVARIANTS',p.id,inv.length,'broken, first:',inv.slice(0,3).join(' | '));}

@@ -1,10 +1,11 @@
 /* The notes beside the card: what the office thinks, the opening promo, the storylines in play, what you have promised. */
 import { E } from '../../engine';
-import { G } from '../../store';
+import { G, openModal } from '../../store';
 import { book } from '../../flow';
 import { QuestList } from '../../shared/week';
-import { Panel, Tabs, Sel, Field, Tag, Name, Meter, CheckLine, Empty, Opt } from '../../kit';
+import { Panel, Tabs, Sel, Field, Tag, Name, Meter, CheckLine, Empty, Btn, Opt } from '../../kit';
 import { pickSide, setPlan } from './run';
+import { hm } from './Segments';
 import { Shape } from './Shape';
 
 type OnCard = Record<number, 1>;
@@ -21,7 +22,7 @@ function Promo() {
   return <Panel title="Opening promo">
     <div class="promo">
       <Field label="Who opens the show?"><Sel id="plan-sp" t="plan" d={{ k: 'sp' }} value={pl ? pl.sp : ''} onChange={v => setPlan('sp', v)}
-        options={[['', 'Nobody. Leave it to the writers'], ...L.map((w: any) => [w.id, w.name + ' · mic ' + w.mic] as Opt)]} /></Field>
+        options={[['', 'Nobody: no scripted opening promo'], ...L.map((w: any) => [w.id, w.name + ' · mic ' + w.mic] as Opt)]} /></Field>
       {pl && <Field label="What kind?"><Sel id="plan-kind" t="plan" d={{ k: 'kind' }} value={pl.kind || 'interview'} onChange={v => setPlan('kind', v)} options={Object.keys(E.PKIND).map(k => [k, E.PKIND[k].n] as Opt)} /></Field>}
       {pl && <Field label="About what?"><Sel id="plan-topic" t="plan" d={{ k: 'topic' }} value={pl.topic} onChange={v => setPlan('topic', v)} options={Object.keys(E.TOPIC).map(k => [k, E.TOPIC[k].n] as Opt)} /></Field>}
       {pl && <Field label="How?"><Sel id="plan-del" t="plan" d={{ k: 'del' }} value={pl.del} onChange={v => setPlan('del', v)} options={Object.keys(E.DELIV).map(k => [k, E.DELIV[k].n] as Opt)} /></Field>}
@@ -30,7 +31,7 @@ function Promo() {
       <p class="muted mt2">{E.PKIND[pl.kind || 'interview'].d} {E.DELIV[pl.del].d} {o.why}.</p>
       <CheckLine label={'Delivery (up to ' + o.cap + ' of 10)'} ck={o.ck} />
       <p>Content <b>{o.content}</b> {'·'} Character <b>{o.character}</b> {'·'} Crowd <b>{o.crowd}</b> <span class="muted">out of 10</span></p>
-    </> : <p class="muted mt2">Pick someone and you choose the subject and how tightly it is scripted. It is scored on delivery, content, character and crowd, and it counts toward the show.</p>}
+    </> : <p class="muted mt2">Pick someone and you choose the subject and how tightly it is scripted. It is scored on delivery, content, character and crowd, and it counts toward the show. It goes on first and takes ten minutes off the clock.</p>}
     {x && <p class="note mt2"><span>{x.kind === 'war' ? 'War with ' : 'Supershow with '}{S.promos[x.with].name}: {x.sc[0]}{'–'}{x.sc[1]}. Their wrestlers are marked {'“'}visiting{'”'} in the match editor{x.kind === 'war' ? '' : ' at the big event'}.</span></p>}
   </Panel>;
 }
@@ -57,6 +58,17 @@ function TournOwed(p: { on: OnCard }) {
   </Panel>;
 }
 
+/** The clock beside the card: how the show opens, and what is on the air at the top of each hour. */
+function Clock() {
+  const S = G.S, c = E.clock(S);
+  return <Panel title="The top of the hour">
+    {c.tops.length ? <ul class="clocklist" data-t="tops">{c.tops.map((t: any) => <li key={t.hour}><span class="gold num">{hm(t.at)}</span> {t.hour === 1 ? 'The show opens on' : 'Hour ' + t.hour + ' opens on'} <b>{c.items[t.k].label}</b></li>)}</ul> : null}
+    {c.tops.length ? null : <p>Nothing is booked yet.</p>}
+    <p class="muted mt2">Whatever is on when an hour starts is what people tuning in see. Put something strong there.</p>
+    <div class="row mt2"><Btn kind="sm" t="open-guide2" onClick={() => openModal({ kind: 'openguide' })}>Ways to open a show</Btn></div>
+  </Panel>;
+}
+
 const TABS = [['advice', 'Staff notes'], ['promo', 'Opening promo'], ['feuds', 'Storylines'], ['targets', 'Targets']];
 export function Side(p: { on: OnCard }) {
   const k = book().side || 'advice';
@@ -65,7 +77,7 @@ export function Side(p: { on: OnCard }) {
     {k === 'promo' ? <Promo />
       : k === 'feuds' ? <Panel title="Storylines in play"><Feuds on={p.on} /><p class="muted mt2">Rivals who are both on the show get promos, brawls and run-ins. A hot feud ends with a win at a big event or in a gimmick match.</p></Panel>
       : k === 'targets' ? <Panel title="Promises and targets"><QuestList /></Panel>
-      : <><Panel title="Running order"><Shape /></Panel><Panel title="The office says"><Advice /></Panel></>}
+      : <><Clock /><Panel title="Running order"><Shape /></Panel><Panel title="The office says"><Advice /></Panel></>}
     <TournOwed on={p.on} />
   </>;
 }

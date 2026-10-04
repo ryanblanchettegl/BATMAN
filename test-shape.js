@@ -14,7 +14,8 @@ function game(seed) {
   return { S, men, m: (a, b, len) => ({ mt: '1v1', sides: [[a.id], [b.id]], win: -2, title: null, stip: 'std', len: len || 'M' }) };
 }
 /** Run a card with no promos or angles in the way, so the running order is the only thing between the matches. */
-function run(S, card) { S.card = card; S.segs = []; const P = S.promos[S.player], was = P.angles; P.angles = 0; const v = E.validate(S, card); if (v.errors.length) throw new Error(v.errors.join(' | ')); const r = E.runPlayerShow(S, card).rep; P.angles = was; return r; }
+function run(S, card) { S.card = card; S.segs = []; const P = S.promos[S.player], was = P.angles; P.angles = 0; S.queue[S.qi].mins = E.clock(S, card).total;   // the show is as long as this card, so the clock is not what is being tested
+  const v = E.validate(S, card); if (v.errors.length) throw new Error(v.errors.join(' | ')); const r = E.runPlayerShow(S, card).rep; P.angles = was; return r; }
 
 /* ---- stars ---- */
 ok('stars', 'quarter steps, five stars at the top, never a percentage', E.stars(90) === '★★★★½' && E.stars(98) === '★★★★★' && E.stars(97) === '★★★★¾' && E.stars(70) === '★★★½' && E.stars(5) === '¼' && E.stars(61) === '★★★', [90, 98, 97, 70, 5, 61].map(v => E.stars(v)).join(' '));
@@ -74,7 +75,7 @@ ok('stars', 'quarter steps, five stars at the top, never a percentage', E.stars(
     for (let wk = 0; wk < 24 && !S.over; wk++) {
       house(S);
       while (S.qi < S.queue.length) {
-        const card = E.suggest(S), pr = E.preShow(S, card); if (pr) E.resolvePre(S, card, 0); S.card = card;
+        const card = E.suggest(S), pr = E.preShow(S, card); if (pr) { E.resolvePre(S, card, 0); E.fitShow(S, card); } S.card = card;
         if (E.validate(S, card).errors.length) { S.qi++; continue; }
         const sh = E.shape(S, card); shows++;
         sh.notes.filter(x => x.s < 0).forEach(x => { const k = x.t.replace(/\d+/g, 'N').slice(0, 40); notes[k] = (notes[k] || 0) + 1; });
@@ -92,7 +93,7 @@ ok('stars', 'quarter steps, five stars at the top, never a percentage', E.stars(
 }
 /* ---- what the player is asked for is asked in stars, and checked in stars ---- */
 { const S = E.newGame('pdw', 3, { name: 'R' }); let q = null;
-  for (let wk = 0; wk < 30 && !q; wk++) { house(S); q = S.quests.filter(x => x.type === 'network')[0]; if (q) break; while (S.qi < S.queue.length) { const card = E.suggest(S), pr = E.preShow(S, card); if (pr) E.resolvePre(S, card, 0); S.card = card; if (E.validate(S, card).errors.length) { S.qi++; continue; } E.runPlayerShow(S, card); } house(S); E.endWeek(S); }
+  for (let wk = 0; wk < 30 && !q; wk++) { house(S); q = S.quests.filter(x => x.type === 'network')[0]; if (q) break; while (S.qi < S.queue.length) { const card = E.suggest(S), pr = E.preShow(S, card); if (pr) { E.resolvePre(S, card, 0); E.fitShow(S, card); } S.card = card; if (E.validate(S, card).errors.length) { S.qi++; continue; } E.runPlayerShow(S, card); } house(S); E.endWeek(S); }
   ok('ask', 'a network target is worded in stars', !!q && /★/.test(q.text) && !/%/.test(q.text), q ? q.text : 'no network target in 30 weeks');
   ok('ask', 'the guide has the seven rules', E.SHAPE_GUIDE.length === 7 && E.SHAPE_GUIDE.every(r => r.n && r.d && !/—/.test(r.d)));
 }

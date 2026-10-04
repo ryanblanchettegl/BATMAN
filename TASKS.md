@@ -154,7 +154,18 @@ Plan and research: `docs/plans/advance-button.md`. Code: `src/96-advance.js` (`E
 Ryan's list of 3 October, after looking at the booking screen. Each step is built, shown to him, and waits for his word before the next.
 
 - [x] **Step 1 (0.18).** "Book it my way", "Assistant runs the small shows" and the small "Run the show" button are gone. The big yellow button is the only way to run a show: on the card it runs it, or brings up the list of what to fix. A remote's Play key presses it. The remote walk in `app/tests/booking.js` is parked (run it with `TV=1`): Ryan is not working on the remote for now.
-- [ ] **Step 2. Time is the budget.** A show is two or three hours and has to be filled. Each match type takes a set time; promos and angles are short, medium or long. As many matches, promos and angles as fit: no fixed count. Matches, promos and angles are three separate things of equal weight, each with its own Add button. How the show opens is a choice (a hot match, a recap, a promo, an angle, something else) and each gives its own "top of the hour" bonus. Sponsor segments come later.
+- [x] **Step 2 (0.19). Time is the budget.** Code: `src/97-time.js`, `src/93-segments.js`, `app/src/screens/booking/Segments.tsx`. Tests: `node test-segments.js`, `app/tests/segments.js`.
+  - A weekly show is two hours and a big event is three. Everything on the run sheet takes time: a match is its bell time plus entrances and a break (singles 5 minutes, tag and three-way 6, four-way and six-man 7, battle royal 9; a cage adds 3, a ladder 2), and a promo or an angle is short, medium or long (5, 10 or 15 minutes).
+  - No fixed count. As many matches, promos and angles as fit. Up to five minutes over is allowed. More than ten minutes empty and the show cannot run; six to ten light costs a little on the night.
+  - Three kinds, three Add buttons: a match, a promo, an angle. A new promo kind, the video recap (always five minutes). "Writers' pick" hands the time to the writers. The writers no longer add anything on their own.
+  - Length matters: a real talker gains from fifteen minutes and a poor one is found out; a long angle heats a feud faster; a longer segment counts for more in the show's rating.
+  - How the show opens is whatever is first on the sheet: straight to a match (no time spent), a promo (the speaker's match later gains), an angle (the feud heats faster, and a good one lifts the first match), a video recap (their match that night gains, more at a big event), or the writers.
+  - The top of the hour: whatever is on the air when each hour starts is judged against what the crowd expects of the company. Clearly better lifts the show's rating, clearly worse drops it. The run sheet marks those items, every row shows its start time, and the report says how each hour opened.
+  - "Suggest a card" now builds a whole show that fits the time.
+  - [ ] Sponsor segments (Ryan: later).
+  - [ ] A segment after the main event (a closing angle).
+  - [ ] Shows of other lengths (one hour, or a longer big event), tied to the TV deal.
+  - [ ] The scripted opening promo is still its own form in the side panel. Fold it into the promo window when promos get depth (plan step 4 in `docs/plans/gorilla-position.md`).
 - [ ] **Step 3. Words, not numbers.** "The crowd expects about 80%" goes: 80% reads like a very good show. Wrestling words for how good a show was and what the crowd expects.
 - [ ] **Step 4. Fog of war.** The game does not say early whether a match will be good. Road agents comment on each booked match, and better agents give better advice. The player learns traits and what works from the commentary during the match and from reviews after. Level-ups give more to go on.
 - [ ] **Step 5. Five goals for every show**, drawn from a first set of ten easy ones (later hundreds, from the stories in play). They move storylines, objectives and rookies along. Rewards differ: money, AP, the owner's mood, the fans' mood.

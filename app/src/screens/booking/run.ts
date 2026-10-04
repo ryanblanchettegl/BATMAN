@@ -19,10 +19,10 @@ export function onCard(skip?: number): Record<number, 1> {
   G.S.card.forEach((m: Match, k: number) => { if (k !== skip) m.sides.forEach((s: any[]) => s.forEach(id => { if (id != null) o[id] = 1; })); });
   return o;
 }
-/** A suggested card comes with one promo or angle pencilled in, when none is booked yet. The writers keep the rest. */
-export const suggest = () => act(() => { const b = book(); G.S.card = E.suggest(G.S); if (!E.segInfo(G.S).booked) E.segSuggest(G.S, 1); b.edit = -1; b.tried = false; });
+/** A suggested card is a whole show: matches, promos and angles, fitted to the show's time. */
+export const suggest = () => act(() => { const b = book(); G.S.card = E.suggest(G.S); b.edit = -1; b.tried = false; });
 export const addMatch = () => act(() => { const c = G.S.card; c.push({ mt: '1v1', sides: [[null], [null]], win: -2, call: null, title: null, stip: 'std', len: 'M' }); book().edit = c.length - 1; });
-export const clearCard = () => act(() => { const b = book(); G.S.card = []; b.edit = -1; b.tried = false; });
+export const clearCard = () => act(() => { const b = book(); G.S.card = []; E.segClear(G.S); b.edit = -1; b.tried = false; });
 export const removeMatch = (i: number) => act(() => { G.S.card.splice(i, 1); book().edit = -1; });
 export const toggleEdit = (i: number) => look(() => { const b = book(); b.edit = b.edit === i ? -1 : i; });
 export function moveMatch(i: number, by: -1 | 1) {

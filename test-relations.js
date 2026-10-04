@@ -6,7 +6,7 @@ E.useUniverse(JSON.parse(fs.readFileSync('universes/public_domain.json', 'utf8')
 const house = S => { S.inbox.filter(e => !e.done).forEach(e => E.resolveEvent(S, e.id, e.type === 'handover' ? 0 : 1)); if (S.owner.pending) E.setCreed(S, { style: 'merit', roots: 'tradition', pledge: 'stable' }); };
 const notes = S => S.toasts.filter(t => t && typeof t === 'object');
 const by = (S, name) => S.w.find(w => w.name === name);
-function week(S) { house(S); while (S.qi < S.queue.length) { const card = E.suggest(S), pr = E.preShow(S, card); if (pr) E.resolvePre(S, card, 0); S.card = card; if (E.validate(S, card).errors.length) { S.qi++; continue; } E.runPlayerShow(S, card); } house(S); E.endWeek(S); }
+function week(S) { house(S); while (S.qi < S.queue.length) { const card = E.suggest(S), pr = E.preShow(S, card); if (pr) { E.resolvePre(S, card, 0); E.fitShow(S, card); } S.card = card; if (E.validate(S, card).errors.length) { S.qi++; continue; } E.runPlayerShow(S, card); } house(S); E.endWeek(S); }
 
 /* ---- a new game ---- */
 { const S = E.newGame('pdw', 3, { name: 'R' }), n = Object.keys(S.rm).length;

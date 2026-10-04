@@ -128,7 +128,7 @@ async function section(mode) {
   await check('remove a match');
 
   /* ---- the side panel ---- */
-  for (const t of [['promo', 'Opening promo'], ['feuds', 'Storylines in play'], ['targets', 'Promises and targets'], ['advice', 'Running order']]) {
+  for (const t of [['promo', 'Opening promo'], ['feuds', 'Storylines in play'], ['targets', 'Promises and targets'], ['advice', 'The top of the hour']]) {
     await page.click('[data-t="bk"][data-v="' + t[0] + '"]');
     ok(await txt(page, '.cols > .stack:last-child .panel h2') === t[1], mode + ': side tab ' + t[0]);
     ok(await page.$eval('[data-t="bk"][data-v="' + t[0] + '"]', e => e.getAttribute('aria-pressed')) === 'true', mode + ': tab pressed');
@@ -144,6 +144,8 @@ async function section(mode) {
   await shot(page, 'booking-' + mode + '-card', true);
 
   /* ---- run it: pre-show incident if there is one, then the planted headset call ---- */
+  await state(page, S => { GP.fitShow(S, S.card); });   // the edits above changed what is on the clock: make the show fit its time again
+  await go(page, 'booking');
   const seen = await runShow(page, mode, check);
   ok(seen.chaos, mode + ': the planted headset call did not come up');
   ok(/Your call: /.test(await flash(page)), mode + ': the headset result should be said. Got: ' + await flash(page));

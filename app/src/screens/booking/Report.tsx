@@ -84,6 +84,9 @@ export function Report(p: { r: any }) {
         <KV label="TV viewers">{(r.viewers / 1e6).toFixed(2)}M</KV><KV label="TV money">{cash(r.tv)}</KV>
         {r.big ? <><KV label="Buys">{r.buys.toLocaleString('en-US')}</KV><KV label="Buy revenue">{cash(r.ppv)}</KV></> : null}
       </div>
+      {r.tops && r.tops.length ? <div class="why mt2" data-t="rep-tops"><p class="eyebrow">The top of the hour</p>
+        {r.tops.map((t: any) => <p class={t.d > 0 ? 'good' : (t.d < 0 ? 'bad' : 'muted')}>{t.d > 0 ? '+ ' : (t.d < 0 ? '− ' : '· ')}{t.x}: {t.label}, {stars(t.ov)}.</p>)}
+        {r.light ? <p class="bad">{'−'} The show ran {r.light} minutes light. The announcers had to fill.</p> : null}</div> : null}
       {(r.quest || []).map((q: string) => <p class="note"><span>{q}</span></p>)}
       {r.owner && r.owner.text ? <p class="note"><span>{r.owner.text}{r.owner.bonus ? ' You earn 1 booking power.' : ''}</span></p> : null}
       <Next r={r} />
