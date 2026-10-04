@@ -20,6 +20,17 @@ function run(S, card) { S.card = card; S.segs = []; const P = S.promos[S.player]
 /* ---- stars ---- */
 ok('stars', 'quarter steps, five stars at the top, never a percentage', E.stars(90) === '★★★★½' && E.stars(98) === '★★★★★' && E.stars(97) === '★★★★¾' && E.stars(70) === '★★★½' && E.stars(5) === '¼' && E.stars(61) === '★★★', [90, 98, 97, 70, 5, 61].map(v => E.stars(v)).join(' '));
 
+/* ---- words for a show ---- */
+{ const L = E.SHOW_LADDER, w = v => E.showWord(v).a;
+  ok('words', 'one ladder of ten rungs, a bomb to an all-time classic', L.length === 10 && L[0].w === 'All-time classic' && L[9].w === 'A bomb' && L.every(x => x.d && !/%|\d/.test(x.w + x.a + x.d)));
+  ok('words', 'a score is said in words', w(96) === 'an all-time classic' && w(80) === 'a hot show' && w(77) === 'a hot show' && w(76.9) === 'a strong show' && w(50) === 'a flat show' && w(10) === 'a bomb', [96, 80, 76.9, 50, 10].map(w).join(', '));
+  const up = E.showVerdict(84, 78), par = E.showVerdict(78.2, 78), down = E.showVerdict(70, 78), bad = E.showVerdict(60, 78);
+  ok('words', 'a show against its crowd is a headline and a line, with no number in either', up.head === 'Blew the roof off' && par.head === 'Gave them what they came for' && down.head === 'Died in front of them' && E.showVerdict(76, 78).head === 'Came up short' && E.showVerdict(79, 78).head === 'Sent them home happy' && [up, par, down, bad].every(v => !/%|\d/.test(v.head + v.line)), [up, par, down].map(v => v.head + ' / ' + v.line).join(' | '));
+  ok('words', 'the line names both rungs, or says they match', up.line === 'A red-hot show for a crowd that expects a hot one.' && par.line === 'A hot show, which is what this crowd expects.' && bad.line === 'A decent show for a crowd that expects a hot one.', up.line + ' | ' + par.line + ' | ' + bad.line);
+  const S = E.newGame('pdw', 3, { name: 'R' }), e = E.expectWords(S);
+  ok('words', 'what the crowd expects of the next show is said in words', !!e && /^This crowd expects an? [a-z- ]+\.$/.test(e.text) && e.a === E.showWord(E.expected(S, S.queue[S.qi])).a, e && e.text);
+}
+
 /* ---- the opener ---- */
 { const { S, men, m } = game(3), by = men.slice().sort((a, b) => pace(b) - pace(a)), fast = by.slice(0, 2), slow = by.slice(-2), rest = men.filter(w => fast.indexOf(w) < 0 && slow.indexOf(w) < 0).sort((a, b) => b.ovr - a.ovr);
   const card = [m(fast[0], fast[1], 'S'), m(rest[4], rest[5]), m(rest[2], rest[3]), m(rest[0], rest[1], 'L')];

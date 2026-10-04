@@ -1,16 +1,25 @@
 /* The show report: the rating, the money, the dirt sheet and every segment, match by match. */
 import { E } from '../../engine';
-import { G, cash } from '../../store';
+import { G, Modal, cash } from '../../store';
 import { weekDone, pending } from '../../nav';
 import { endWeek } from '../../flow';
-import { Head, Panel, Btn, Tag, KV, stars, grade, Txt, Meter } from '../../kit';
+import { Head, Panel, Btn, Tag, KV, Window, stars, grade, Txt, Meter } from '../../kit';
 import { roleOf } from './Shape';
 import { preNote, replay, closeReport } from './run';
 
-/** How the show did against what the crowd expected. */
-export function verdict(r: any): string {
-  const d = r.rating - r.exp;
-  return d >= 4 ? 'Well above what the crowd expected' : d >= 0.5 ? 'Better than the crowd expected' : d > -0.5 ? 'Right on expectations' : d > -4 ? 'A little under expectations' : 'Well under expectations';
+/** How the show did against what its crowd expects, in the words of the business (src/98-words.js). */
+export function Verdict(p: { r: any }) {
+  const v = E.showVerdict(p.r.rating, p.r.exp);
+  return <span data-t="verdict"><b class={v.s > 0 ? 'good' : (v.s < 0 ? 'bad' : undefined)}>{v.head}.</b> {v.line}</span>;
+}
+/** The ladder of words for how good a show is, with this crowd's expectation marked. */
+export function Ladder(_p: { m: Modal }) {
+  const S = G.S, e = S.queue[S.qi] ? E.expectWords(S) : null;
+  return <Window title="How good is a show?" wide>
+    <p class="muted">A show is described in the words of the business, from a bomb to an all-time classic. A crowd expects a certain kind of show from your company, and the show is judged against that.</p>
+    <ol class="rules ladder" data-t="ladder-list">{E.SHOW_LADDER.map((x: any, i: number) => <li key={x.w} class={e && e.i === i ? 'on' : undefined}><b>{x.w}.</b> {x.d}{e && e.i === i ? <span class="gold"> This is what your crowd expects.</span> : null}</li>)}</ol>
+    <p class="mt2">Beat what they expect and your popularity goes up. Fall short and it goes down. What they expect rises as you get more popular, and they get used to whatever you keep giving them, good or bad.</p>
+  </Window>;
 }
 export function OddsLine(p: { s: any }) {
   const s = p.s; if (!s.odds || !s.sidesN) return null;
@@ -75,7 +84,7 @@ export function Report(p: { r: any }) {
     <Panel cls="mb3">
       <div class="row rating">
         <div><div class="eyebrow">Show rating</div><div class="big">{r.rating}% <span class="gold">{grade(r.rating)}</span></div></div>
-        <p>{verdict(r)} ({r.exp}%). {Math.abs(r.dImage) < 0.05 ? 'Popularity unchanged.' : 'Popularity ' + (r.dImage > 0 ? 'up ' : 'down ') + Math.abs(r.dImage).toFixed(1) + '.'}</p>
+        <p><Verdict r={r} /> {Math.abs(r.dImage) < 0.05 ? 'Popularity unchanged.' : 'Popularity ' + (r.dImage > 0 ? 'up ' : 'down ') + Math.abs(r.dImage).toFixed(1) + '.'}</p>
       </div>
       {(() => { const w = whyLine(r); return w.up.length || w.down.length ? <div class="why mt2"><p class="eyebrow">Why it scored</p>
         {w.up.map(x => <p class="good">+ {x}</p>)}{w.down.map(x => <p class="bad">{'−'} {x}</p>)}</div> : null; })()}

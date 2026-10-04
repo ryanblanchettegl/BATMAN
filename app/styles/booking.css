@@ -33,6 +33,9 @@
 .seg.top{border-color:var(--yellow)}
 .showtime .meter{margin:0 1ch}
 .cats{display:flex;flex-wrap:wrap;gap:4px 3ch}
+/* the ladder of words for a show, with the crowd's expectation marked */
+.ladder li.on{color:var(--k);background:var(--yellow);padding:0 1ch}
+.ladder li.on b,.ladder li.on .gold{color:var(--k)}
 .clocklist{list-style:none;margin:0;padding:0;display:grid;gap:.25em}
 
 /* the running order notes beside the card, and the guide window */

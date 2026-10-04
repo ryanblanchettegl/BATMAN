@@ -340,7 +340,7 @@ function netPosts(S,P,show,rep){
   if(nonf>=2)add('old',-1,nonf+' matches without a winner. I counted. Finish your matches.');
   if(clean>=ms.length-1&&ms.length>=4)add('old',1,'Clean finishes up and down the card. That is how you build a division.');
   if(rep.gim&&!show.big)add('old',-1,'Giving away gimmick matches on free TV now. Save something for the big show.');
-  add('stats',d>=0?1:-1,rep.name+': '+rep.rating+'% against an expected '+rep.exp+'%. '+(d>=0?'That is '+r1(d)+' over par.':'That is '+r1(-d)+' under.')+' Paid attendance '+rep.att.toLocaleString('en-US')+(rep.sellout?', a sell-out.':'.'));
+  add('stats',d>=0?1:-1,rep.name+': '+showVerdict(rep.rating,rep.exp).line.replace(/^./,function(c){return c.toLowerCase();})+' '+(d>=0.5?'That is over par.':(d>-0.5?'That is par.':'That is under par.'))+' Paid attendance '+rep.att.toLocaleString('en-US')+(rep.sellout?', a sell-out.':'.'));
   var pr=rep.segs.filter(function(s){return s.rub;})[0];
   if(pr){var pd=pr.ov-rep.exp;if(pd>=5)add('casual',1,pick(S,['That opening promo from '+pr.who+'. Chills.',pr.who+' on the microphone to open the show. More of that.']));else if(pd<-8)add('smark',-1,pick(S,['The opening promo died in front of a live audience.','Somebody take the microphone away from '+pr.who+'.']));}
   if(d>=4)add('under',1,'Best show in months. Tell your friends.');else if(d<=-4)add('under',-1,'I defend this company every week and they give me that.');

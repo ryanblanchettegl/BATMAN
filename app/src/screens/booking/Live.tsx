@@ -5,7 +5,7 @@ import { E } from '../../engine';
 import { G, ui, me } from '../../store';
 import { book } from '../../flow';
 import { Btn, KV, Meter, Banner, BeltArt, Portrait, stars } from '../../kit';
-import { verdict, OddsLine, FxList, Crowd } from './Report';
+import { Verdict, OddsLine, FxList, Crowd } from './Report';
 import { typer, preNote, liveNext, liveSkip, liveEnd, liveDone } from './run';
 
 /** Text that types itself out once, when it first appears. Esc, Back or the continue button finishes it at once.
@@ -54,7 +54,7 @@ function TitleCard(p: { r: any }) {
 function SignOff(p: { r: any; ms: any[] }) {
   const r = p.r;
   return <>
-    <div class="card"><Rule /><p class="eyebrow">That is the show</p><div class="show">{r.rating}%</div><Rule /><p><b>{verdict(r)}</b> ({r.exp}%).</p></div>
+    <div class="card"><Rule /><p class="eyebrow">That is the show</p><div class="show">{r.rating}%</div><Rule /><p><Verdict r={r} /></p></div>
     <div class="kv mt2 mb1">
       <KV label="Attendance"><Crowd r={r} /></KV>
       <KV label="TV viewers">{(r.viewers / 1e6).toFixed(2)}M</KV>

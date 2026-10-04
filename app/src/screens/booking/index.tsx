@@ -12,7 +12,7 @@ import { Card } from './Card';
 import { SegWindow, OpenGuide } from './Segments';
 import { ShapeGuide } from './Shape';
 import { Live } from './Live';
-import { Report } from './Report';
+import { Report, Ladder } from './Report';
 import { run, typer, liveReport, liveSkip, closeReport } from './run';
 
 function WeekBooked() {
@@ -65,4 +65,4 @@ onBack(() => {
 onLeavePage(() => { typer.finish(); const b = book(); b.report = null; b.live = null; });
 
 export const pages: Record<string, () => ComponentChildren> = { booking: Booking };
-export const modals: Record<string, (p: { m: Modal }) => ComponentChildren> = { chaos: Chaos, segwin: SegWindow, shapeguide: ShapeGuide, openguide: OpenGuide };
+export const modals: Record<string, (p: { m: Modal }) => ComponentChildren> = { chaos: Chaos, segwin: SegWindow, shapeguide: ShapeGuide, openguide: OpenGuide, ladder: Ladder };

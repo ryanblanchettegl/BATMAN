@@ -1,7 +1,7 @@
 /* The card builder: tonight's show, the run sheet you are putting together, and the notes beside it. */
 import { ComponentChildren } from 'preact';
 import { E } from '../../engine';
-import { G, me } from '../../store';
+import { G, me, openModal } from '../../store';
 import { book } from '../../flow';
 import { GateNote } from '../../shared/week';
 import { roleOf } from './Shape';
@@ -72,7 +72,7 @@ export function Card() {
   const pre = S.pre && !S.pre.done && S.pre.key === S.week + ':' + show.id ? S.pre : null;
   return <>
     <Head eyebrow={c.label + DOT + 'show ' + (S.qi + 1) + ' of ' + S.queue.length} title={show.name}>
-      <p class="muted mt1">{show.big ? 'Big event' + (show.flag ? ', the biggest of the year' : '') + '. Whole roster available.' : 'Weekly TV' + (show.brand ? ', ' + brandName(P, show.brand) + ' brand roster' : '') + '.'} The crowd expects about <b class="num">{E.expected(S, show)}%</b>.</p>
+      <p class="muted mt1">{show.big ? 'Big event' + (show.flag ? ', the biggest of the year' : '') + '. Whole roster available.' : 'Weekly TV' + (show.brand ? ', ' + brandName(P, show.brand) + ' brand roster' : '') + '.'} This crowd expects <b class="gold" data-t="expect">{E.expectWords(S, show).a}</b>. <button type="button" class="lnk" data-t="ladder" onClick={() => openModal({ kind: 'ladder' })}>What that means</button></p>
       {show.rule && E.RULES[show.rule] ? <p class="good mt1">{E.RULES[show.rule]}</p> : null}
       <p class="mt1">Booking power: <b class="gold">{S.bp}</b> {cost
         ? <span class={cost > S.bp ? 'bad' : 'muted'}>({cost} committed on this card)</span>

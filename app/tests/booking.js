@@ -71,6 +71,11 @@ async function section(mode) {
   ok(shows.length >= 2, mode + ': expected two shows this week');
   ok(await txt(page, '.head h1') === shows[0], mode + ': heading should be the first show');
   ok(/The card is empty/.test(await txt(page, '.cols')), mode + ': empty card text');
+  ok(/This crowd expects an? [a-z- ]+\./.test(await txt(page, '.head')) && !/expects about/.test(await txt(page, '.head')) && !/%/.test(await txt(page, '[data-t="expect"]')), mode + ': what the crowd expects should be in words, not a number: ' + await txt(page, '.head'));
+  await page.click('[data-t="ladder"]');
+  ok((await page.$$('[data-t="ladder-list"] li')).length === 10 && (await page.$$('[data-t="ladder-list"] li.on')).length === 1 && /what your crowd expects/.test(await txt(page, '[data-t="ladder-list"] li.on')), mode + ': the ladder window should list ten rungs and mark this crowd’s');
+  await check('the ladder');
+  await page.click('#modal-ok');
   await check('empty card');
   await page.click('[data-t="suggest"]');
   const n = await count(page, '.sheet .seg:not(.sg)');   // matches only: promos and angles are .seg.sg

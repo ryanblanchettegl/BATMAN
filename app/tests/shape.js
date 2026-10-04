@@ -48,6 +48,7 @@ async function run(mode) {
     ok(mode, 'the score lines under a match carry no percentage either', scores.length > 0 && !/%/.test(scores), scores.slice(0, 120));
     const segStars = await page.$$eval('[data-t="seg-stars"]', L => L.map(e => e.innerText));
     ok(mode, 'promos and angles are rated in stars', segStars.length >= 1 && segStars.every(t => /^[★¼½¾]+$/.test(t.trim())), segStars.join(' '));
+    ok(mode, 'the report says how the show did in words, with no expected percentage', /^(Blew the roof off|Sent them home happy|Gave them what they came for|Came up short|Died in front of them)\. /.test(await txt(page, '[data-t="verdict"]')) && !/%/.test(await txt(page, '[data-t="verdict"]')), await txt(page, '[data-t="verdict"]'));
     ok(mode, 'the report names the spots', /Opener/.test(await txt(page, '.sheet')) && /Main event/.test(await txt(page, '.sheet')));
     ok(mode, 'the dirt sheet lines give stars', /Match of the night: .*★/.test(rep.lines) && !/Match of the night[^/]*\d%/.test(rep.lines), rep.lines.slice(0, 160));
     await over('the report');

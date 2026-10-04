@@ -166,7 +166,12 @@ Ryan's list of 3 October, after looking at the booking screen. Each step is buil
   - [ ] A segment after the main event (a closing angle).
   - [ ] Shows of other lengths (one hour, or a longer big event), tied to the TV deal.
   - [ ] The scripted opening promo is still its own form in the side panel. Fold it into the promo window when promos get depth (plan step 4 in `docs/plans/gorilla-position.md`).
-- [ ] **Step 3. Words, not numbers.** "The crowd expects about 80%" goes: 80% reads like a very good show. Wrestling words for how good a show was and what the crowd expects.
+- [x] **Step 3 (0.20). Words, not numbers.** Code: `src/98-words.js`. Tests: `node test-shape.js`, `app/tests/booking.js`, `app/tests/shape.js`.
+  - "The crowd expects about 80%" is gone. The booking page says "This crowd expects a hot show", with a "What that means" window that lists the ladder and marks this crowd's rung.
+  - One ladder of ten rungs for a show: a bomb, a dud, flat, decent, solid, strong, hot, red hot, blow-away, all-time classic.
+  - How a show did against its crowd is a headline and a line: Blew the roof off, Sent them home happy, Gave them what they came for, Came up short, Died in front of them. "A strong show for a crowd that expects a hot one." Used on the report, the sign-off card of the broadcast, the dirt sheet page, and the fans' numbers line.
+  - What a crowd expects is never shown as a number anywhere now.
+  - [ ] Open question for Ryan: the show's own score is still a percentage with a letter grade ("83.2% A-"). Keep it, or make the word the headline there too? Sponsor and owner targets are worded in that percentage today.
 - [ ] **Step 4. Fog of war.** The game does not say early whether a match will be good. Road agents comment on each booked match, and better agents give better advice. The player learns traits and what works from the commentary during the match and from reviews after. Level-ups give more to go on.
 - [ ] **Step 5. Five goals for every show**, drawn from a first set of ten easy ones (later hundreds, from the stories in play). They move storylines, objectives and rookies along. Rewards differ: money, AP, the owner's mood, the fans' mood.
 - [ ] **Step 6. The page itself.** The opener and the main event look important, and so do big storyline moments. The right-hand side says much more: who won last week, winning runs, who has not been used in more than two weeks, relationship news, what the owner has liked lately.
