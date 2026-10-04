@@ -9,13 +9,14 @@ import { onKey } from '../input';
 import { run } from '../screens/booking/run';
 
 /** Is the broadcast on screen? Then the button carries the show forward. */
-function live(): boolean { const b = book(); return ui.page === 'booking' && b.report != null && !!b.live && !!document.getElementById('live-go'); }
+function live(): boolean { const b = book(); return ui.page === 'booking' && ((!!G.S && !!G.S.live) || (b.report != null && !!b.live)) && !!document.getElementById('live-go'); }
 function reportOpen(): boolean { const b = book(); return ui.page === 'booking' && b.report != null; }
 
 /** What the button says right now: one or two words (short), and the same thing as a sentence (label). */
 export function advanceNow(): { short: string; label: string; day: string; k: string; why: string[] } {
   const S = G.S, A = E.advance(S), sh = S.queue[S.qi];
-  if (A.k !== 'over' && reportOpen() && book().live) return { short: 'Continue', label: 'On with the show', day: 'On the air', k: 'live', why: [] };
+  if (S.live) { const call = S.live.ev && !S.live.ev.done; return { short: call ? 'Your call' : 'Continue', label: call ? 'The gorilla position is waiting for your answer' : 'The show is on the air', day: 'On the air', k: 'live', why: [] }; }
+  if (A.k !== 'over' && reportOpen() && book().live) return { short: 'Continue', label: 'On with the replay', day: 'Replay', k: 'live', why: [] };
   if (A.k === 'run' && ui.page !== 'booking') return { short: 'Open card', label: 'The card for ' + sh.name + ' is ready. Open it, then run the show.', day: A.day, k: 'book', why: [] };
   return { short: A.short, label: A.label, day: A.day, k: A.k, why: A.why };
 }
@@ -35,6 +36,7 @@ function toDesk() {
 export function pressAdvance() {
   const S = G.S; if (!S || S.over || ui.modal || ui.cards.length) return;
   if (live()) { (document.getElementById('live-go') as HTMLElement).click(); return; }
+  if (S.live) { if (ui.page !== 'booking') go('booking'); else act(() => say('The gorilla position is waiting for your call.')); return; }
   if (reportOpen()) { const b = book(); act(() => { b.report = null; b.live = null; }); }
   const A = E.advance(S);
   if (A.k === 'week') { endWeek(); return; }

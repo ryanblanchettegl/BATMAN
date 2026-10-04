@@ -97,6 +97,7 @@ export function Report(p: { r: any }) {
         {r.tops.map((t: any) => <p class={t.d > 0 ? 'good' : (t.d < 0 ? 'bad' : 'muted')}>{t.d > 0 ? '+ ' : (t.d < 0 ? '− ' : '· ')}{t.x}: {t.label}, {stars(t.ov)}.</p>)}
         {r.light ? <p class="bad">{'−'} The show ran {r.light} minutes light. The announcers had to fill.</p> : null}</div> : null}
       {r.learned && r.learned.length ? <div class="why mt2" data-t="rep-learned"><p class="eyebrow">What you learned tonight</p>{r.learned.map((x: string) => <p><Txt>{x}</Txt></p>)}</div> : null}
+      {r.calls && r.calls.length ? <div class="why mt2" data-t="rep-calls"><p class="eyebrow">Your calls from the gorilla position</p>{r.calls.map((c: any) => <p><span class="gold">{c.a}.</span> <Txt>{c.r}</Txt></p>)}</div> : null}
       {(r.quest || []).map((q: string) => <p class="note"><span>{q}</span></p>)}
       {r.owner && r.owner.text ? <p class="note"><span>{r.owner.text}{r.owner.bonus ? ' You earn 1 booking power.' : ''}</span></p> : null}
       <Next r={r} />

@@ -33,14 +33,8 @@ E.pushMap=function(S,pid){
   Object.keys(groups).forEach(function(k){var L=groups[k].sort(function(a,b){return b.ovr-a.ovr;}),n=L.length;L.forEach(function(w,i){var f=i/n;out[w.id]=f<0.1?'Main event':(f<0.3?'Upper midcard':(f<0.6?'Midcard':(f<0.85?'Lower midcard':'Opener')));});});
   return out;
 };
-E.runPlayerShow=function(S,card){
-  var P=S.promos[S.player],show=S.queue[S.qi];if(!show||S.over)return {errors:['No show to run.']};
-  var v=E.validate(S,card);if(v.errors.length)return {errors:v.errors};
-  spendBP(S,card);PREX.forEach(function(fn){fn(S,P,show,card);});
-  var key=showKey(S),rep=runShow(S,P,show,JSON.parse(JSON.stringify(card)));if(S.pre&&S.pre.key===key&&S.pre.result)rep.pre=S.pre.result;
-  // what the booker did with their action points since the last show goes on the report too
-  rep.prep=(S.apLog||[]).filter(function(l){return !l.sh;}).map(function(l){l.sh=1;return {place:l.place,act:l.act,ok:l.ok,msg:l.msg};});S.qi++;S.card=[];return {rep:rep};
-};
+/* the player's show runs live, one step at a time (src/31-live.js). This runs all of it, with every call answered safely. */
+E.runPlayerShow=function(S,card){return livePlay(S,card);};
 E.suggest=function(S){var P=S.promos[S.player],show=S.queue[S.qi];return show?autoBook(S,P,show):[];};
 E.validate=function(S,card){var P=S.promos[S.player],show=S.queue[S.qi];if(!show)return {errors:[],warnings:[]};var v=validate(S,P,show,card),c=cardCost(S,card);if(c>S.bp){if(S.owner.me)v.warnings.push('You are '+(c-S.bp)+' booking power over. As the owner you can overrule, but each extra point costs locker-room trust.');else v.errors.push('These calls need '+c+' booking power and you have '+S.bp+'. Let some matches play out.');}return v;};
 E.eligible=function(S){var P=S.promos[S.player],show=S.queue[S.qi];return show?eligible(S,P,show):[];};

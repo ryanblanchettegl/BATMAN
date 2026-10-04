@@ -24,6 +24,8 @@ export function onLeavePage(fn: () => void) { leaveHooks.push(fn); }
 export function go(page: string) {
   const sec = SECTIONS.find(s => s.id === page);
   if (sec) page = sec.pages[0][0];
+  // a show that is on the air cannot be walked away from
+  if (G.S && G.S.live && page !== 'booking') { if (ui.page !== 'booking') page = 'booking'; else { ui.flash = { text: 'The show is on the air. See it through.', err: true }; redraw(); return; } }
   leaveHooks.forEach(fn => fn());
   ui.page = page; ui.confirm = null; ui.flash = null;
   try { window.scrollTo(0, 0); } catch (e) { /* ignore */ }

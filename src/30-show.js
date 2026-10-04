@@ -16,10 +16,15 @@ function dirtSheet(S,P,show,rep,pool){
   L.push(rep.sellout?'The building was sold out, '+rep.att.toLocaleString('en-US')+' strong.':(rep.att<rep.cap*0.75?'Only '+rep.att.toLocaleString('en-US')+' in a building that holds '+rep.cap.toLocaleString('en-US')+'. The card did not sell tickets.':rep.att.toLocaleString('en-US')+' paid to get in.'));
   return {by:S.columnist||'The Ringside Wire',lines:L.slice(0,7)};
 }
-function runShow(S,P,show,card){
-  var isPl=P.id===S.player&&!S.cal,big=!!show.big,n=card.length,used={},i,k,key=big?'big':show.id;
+/* A show runs in steps, so that the player's show can stop between any two of them for a call from the headset
+   (src/31-live.js). showStart sells the tickets and lays out the steps; showStep runs the next one; showEnd scores
+   the night and books the money. Everything a show needs between steps is in `st`, which is plain data, so a show
+   that is on the air can be saved and loaded. Rival shows and the sample shows run the three straight through. */
+function showPool(S,P,show){return eligible(S,P,show).filter(function(w){return w.promo===P.id&&!(show.big&&isDev(P,w.brand));});}
+function showStart(S,P,show,card){
+  var isPl=P.id===S.player&&!S.cal,big=!!show.big,n=card.length,i,key=big?'big':show.id;
   var rep={promo:P.id,id:show.id,name:show.name,big:big,week:S.week,segs:[],gim:false};
-  var pool=eligible(S,P,show).filter(function(w){return w.promo===P.id&&!(big&&isDev(P,w.brand));}),inP={};pool.forEach(function(w){inP[w.id]=1;});
+  var pool=showPool(S,P,show);
   // the advertised card sells the tickets: star power in the main event, the hottest feud, and advertising
   var star=n?avg(flat(card[n-1].sides).map(function(id){return S.w[id].ovr;})):50,heat=0;
   card.forEach(function(m){var ids=flat(m.sides);for(var x=0;x<ids.length;x++)for(var y=x+1;y<ids.length;y++){var f=feudOf(S,ids[x],ids[y]);if(f&&f.heat>heat)heat=f.heat;}});
@@ -31,23 +36,35 @@ function runShow(S,P,show,card){
     if(isPl){rep.venue=venueFor(S,P,cap);rep.ann=(deskNames(S,P)||P.ann).slice();S.hype=0;
       rep.lineup=card.map(function(m){var t=m.title?titleById(P,m.title):null;return vsLabel(m.sides.map(function(ids){return ids.map(function(id){return S.w[id];});}))+(t?' — '+t.name:'');});}
   }
-  var ctx={pool:pool,inP:inP,angled:{},left:{},extra:[]};
-  // the player books every promo and angle, and decides how much time the writers get (src/93-segments.js, src/97-time.js)
-  var bk=isPl?segBooked(S,show,n):{count:0,at:{}};
-  if(isPl)rep.open={k:'match'};
-  var angleDone=function(a,nang){rep.en=Math.min(100,(rep.en==null?100:rep.en)+14);ANGDONE.forEach(function(fn){fn(S,P,a,Object.keys(ctx.angled).slice(nang));});var o={p:P.ann[0].split(' ')[0],c:P.ann[1].split(' ')[0]};a.bc=[{t:'note',x:a.text},{t:'col',x:fill(sayPick(S,REACT[a.head]||['Well, how about that.']),o)}];rep.segs.push(a);};
-  if(isPl){var pp=planPromo(S,P,show,ctx);if(pp){pp.mins=PLAN_MINS;rep.open={k:'promo',ids:Object.keys(ctx.angled).map(Number),ov:pp.ov,feud:pp.feud};rep.segs.push(pp);}}
-  for(i=0;i<n;i++){
-    if(isPl&&bk.at[i])bk.at[i].forEach(function(x){
-      ctx.left={};for(var q=i;q<n;q++)flat(card[q].sides).forEach(function(id){ctx.left[id]=1;});
-      var ng=Object.keys(ctx.angled).length,first=!rep.segs.length,wr=x.sg.k==='writers',ba=wr?genAngle(S,P,show,ctx):runSeg(S,P,show,ctx,x.sg,x.slot,first);
-      if(!ba)return;
-      ba.mins=segMins(x.sg);if(wr)ba.wr=1;
-      if(first)rep.open={k:wr?'angle':(x.sg.k==='recap'?'recap':SEGK[x.sg.k].t),ids:Object.keys(ctx.angled).slice(ng).map(Number),ov:ba.ov,feud:ba.feud};
-      angleDone(ba,ng);
-    });
-    rep.segs.push(doMatch(S,P,show,card[i],i,n,rep,used));
-  }
+  var st={rep:rep,used:{},angled:{},k:0,steps:[]};
+  if(isPl){
+    // the player books every promo and angle, and decides how much time the writers get (src/93-segments.js, src/97-time.js)
+    var bk=segBooked(S,show,n);rep.open={k:'match'};
+    if(S.plan)st.steps.push({t:'plan'});
+    for(i=0;i<n;i++){(bk.at[i]||[]).forEach(function(x){st.steps.push({t:'seg',i:i,slot:x.slot,sg:JSON.parse(JSON.stringify(x.sg))});});st.steps.push({t:'match',i:i});}
+  }else{for(i=0;i<n;i++)st.steps.push({t:'match',i:i});st.pool=pool;}
+  return st;
+}
+/** Run the next step of a show. Returns the segment it made (a match, a promo or an angle), or null if it made none. */
+function showStep(S,P,show,card,st){
+  var step=st.steps[st.k++],rep=st.rep,n=card.length,seg;if(!step)return null;
+  if(step.t==='match'){seg=doMatch(S,P,show,card[step.i],step.i,n,rep,st.used);rep.segs.push(seg);return seg;}
+  var pool=showPool(S,P,show),inP={};pool.forEach(function(w){inP[w.id]=1;});
+  var ctx={pool:pool,inP:inP,angled:st.angled,left:{},extra:[]};
+  if(step.t==='plan'){var pp=planPromo(S,P,show,ctx);if(pp){pp.mins=PLAN_MINS;rep.open={k:'promo',ids:Object.keys(ctx.angled).map(Number),ov:pp.ov,feud:pp.feud};rep.segs.push(pp);}return pp;}
+  for(var q=step.i;q<n;q++)flat(card[q].sides).forEach(function(id){ctx.left[id]=1;});
+  var ng=Object.keys(ctx.angled).length,first=!rep.segs.length,wr=step.sg.k==='writers',ba=wr?genAngle(S,P,show,ctx):runSeg(S,P,show,ctx,step.sg,step.slot,first);
+  if(!ba)return null;
+  ba.mins=segMins(step.sg);if(wr)ba.wr=1;
+  if(first)rep.open={k:wr?'angle':(step.sg.k==='recap'?'recap':SEGK[step.sg.k].t),ids:Object.keys(ctx.angled).slice(ng).map(Number),ov:ba.ov,feud:ba.feud};
+  rep.en=Math.min(100,(rep.en==null?100:rep.en)+14);ANGDONE.forEach(function(fn){fn(S,P,ba,Object.keys(ctx.angled).slice(ng));});
+  var o={p:P.ann[0].split(' ')[0],c:P.ann[1].split(' ')[0]};ba.bc=[{t:'note',x:ba.text},{t:'col',x:fill(sayPick(S,REACT[ba.head]||['Well, how about that.']),o)}];rep.segs.push(ba);
+  return ba;
+}
+function runShow(S,P,show,card){var st=showStart(S,P,show,card);while(st.k<st.steps.length)showStep(S,P,show,card,st);return showEnd(S,P,show,card,st);}
+/** Score the night, sell it, and file the report. */
+function showEnd(S,P,show,card,st){
+  var isPl=P.id===S.player&&!S.cal,big=!!show.big,rep=st.rep,key=big?'big':show.id,k,pool=st.pool||showPool(S,P,show),inP={},ctx={angled:st.angled};pool.forEach(function(w){inP[w.id]=1;});
   if(!isPl){var top=pool.slice().sort(function(a,b){return (b.mic+b.ovr)-(a.mic+a.ovr);});
     for(k=0;k<(big?2:P.angles)&&k<top.length;k++)rep.segs.push({k:'angle',ai:true,ov:clamp(Math.round(0.62*top[k].mic+0.38*top[k].ovr+rnd(S)*8-4),5,99)});}
   // rating: the main event counts triple; production values lift the whole show

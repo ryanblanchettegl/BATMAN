@@ -19,6 +19,7 @@ function showDay(sh){
     to: the page to go to. act: 'run' or 'week' when one press does it. why: what is in the way, in words. */
 E.advance=function(S){
   if(S.over)return {k:'over',short:'',label:'The game is over',to:'desk',act:null,why:[],day:'',step:0,steps:0};
+  if(S.live)return {k:'live',short:'Continue',label:'The show is on the air',to:'booking',act:null,why:[],day:'On the air',step:0,steps:0};
   var T=E.tasks(S),todo=T.list.filter(function(t){return t.state==='todo';}),strict=T.strict,sh=S.queue[S.qi],n=S.queue.length;
   var steps=n+1,step=Math.min(S.qi,n)+1,out=function(o){o.why=o.why||[];o.act=o.act||null;o.step=step;o.steps=steps;return o;};
   if(sh){

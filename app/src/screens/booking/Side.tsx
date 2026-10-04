@@ -74,13 +74,15 @@ function Notes() {
   const S = G.S, b = book(), v = E.validate(S, S.card), g = E.taskGate(S, 'show');
   const errs = b.tried ? v.errors : [], A = E.advice(S, S.card).filter((a: any) => a.tips.length), F = E.fogInfo(S);
   const tips: { who: string; t: string }[] = []; A.forEach((a: any) => a.tips.forEach((t: string) => tips.push({ who: a.who, t })));
+  // how many notes a page holds: fewer on a tablet's shorter lines, and one fewer when a warning is showing above them
+  const small = document.documentElement.dataset.screen === 'tablet', warn = S.card.length > 0 && v.warnings.length > 0 && !errs.length;
   return <Panel title="Staff notes">
     {!g.ok ? <div class="flash err" data-t="gate-note"><b>On your desk before this show can run</b><ul>{g.left.slice(0, 4).map((x: string) => <li><Txt>{x}</Txt></li>)}</ul>
       <div class="row mt1"><Btn kind="sm" t="gate-desk" onClick={() => go('desk')}>Go to the desk</Btn></div></div> : null}
     {errs.length ? <div class="flash err"><b>Fix before the show can run</b><ul>{errs.slice(0, 4).map((e: string) => <li>{e}</li>)}</ul></div> : null}
     {S.card.length > 0 && v.warnings.length > 0 && !errs.length ? <div class="flash">{v.warnings.slice(0, 2).map((w: string, k: number) => <>{k ? <br /> : null}{w}</>)}</div> : null}
     {!S.card.length ? <Empty>Put a card together and your staff will look it over.</Empty>
-      : (tips.length ? <Paged id="tips" items={tips} per={errs.length || !g.ok ? 1 : 3} cls="tips" row={(x, k) => <li key={k}><span class="eyebrow">{x.who}</span><br />{'“'}{x.t}{'”'}</li>} />
+      : (tips.length ? <Paged id="tips" items={tips} per={errs.length || !g.ok ? 1 : Math.max(1, (small ? 2 : 3) - (warn ? 1 : 0))} cls="tips" row={(x, k) => <li key={k}><span class="eyebrow">{x.who}</span><br />{'“'}{x.t}{'”'}</li>} />
         : <p class="good">The writers and the announcers have no complaint about this card.</p>)}
     <p class="muted mt1" data-t="fog-note">{F.head} comments on every match on the sheet: select one to read it. {F.pairs} {F.pairs === 1 ? 'pairing' : 'pairings'} seen so far.</p>
   </Panel>;

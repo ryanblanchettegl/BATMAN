@@ -77,23 +77,22 @@ export function preNote(r: any): string | null {
   const S = G.S, key = r.week + ':' + r.id;
   return r.pre || (S.pre && S.pre.key === key && S.pre.result) || notes()[key] || null;
 }
-/** Run the show, or answer what stands in its way. `a` is 'run' (the ADVANCE button), 'pre' (a pre-show choice) or 'chaos' (a headset call). */
-export function run(a: 'run' | 'pre' | 'chaos', c?: number) {
+/** Put the show on the air, or answer what stands in its way before the bell. `a` is 'run' (the ADVANCE button) or
+    'pre' (the answer to a problem before the show). Once it is on the air the card is closed: the night runs one
+    segment at a time (liveNext) and stops for every call from the gorilla position (liveDecide). */
+export function run(a: 'run' | 'pre', c?: number) {
   act(() => {
-    const S = G.S, b = book(); let chNote: string | null = null;
+    const S = G.S, b = book();
     const cant = () => { b.tried = true; b.edit = -1; sel().seg = -1; b.side = 'advice'; say('The show can’t run yet. The list is beside the run sheet.', { err: true }); };
     // this week's tasks on the desk come first
     if (a === 'run') { const g = E.taskGate(S, 'show'); if (!g.ok) { say('The show cannot run yet. ' + g.left.length + ' ' + (g.left.length === 1 ? 'task is' : 'tasks are') + ' still on your desk.', { err: true }); top0(); return; } }
     if (a === 'pre') { E.resolvePre(S, S.card, c); b.edit = -1; }
-    if (a === 'chaos') { chNote = E.resolveChaos(S, S.card, c); ui.modal = null; }
     if (E.validate(S, S.card).errors.length) return cant();
     if (a === 'run' && E.preShow(S, S.card)) { b.edit = -1; top0(); return; }
-    if (a !== 'chaos' && E.chaos(S, S.card)) { ui.modal = { kind: 'chaos' }; b.edit = -1; SFX.ach(); return; }
-    const r = E.runPlayerShow(S, S.card);
-    if (r.errors) return cant();
     if (S.pre && S.pre.result) notes()[S.pre.key] = S.pre.result;
-    b.report = 0; b.live = { s: -1, b: 0 }; b.edit = -1; b.tried = false;
-    if (chNote) say('Your call: ' + chNote);
+    const r = E.liveBegin(S, S.card);
+    if (r.errors) return cant();
+    b.report = null; b.live = { s: -1, b: 0 }; b.edit = -1; sel().seg = -1; b.tried = false;
     top0(); SFX.fanfare();
   });
 }
@@ -116,32 +115,69 @@ export const typer = {
 };
 
 /* ---------- the broadcast ---------- */
-/** The report being broadcast, or null when the broadcast is not showing. */
+/** The show on screen: the one on the air (its report is still being written), or a finished one being replayed. Null when neither. */
 export function liveReport(): any | null {
   const S = G.S; if (!S || ui.page !== 'booking') return null;
+  if (S.live) return S.live.st.rep;
   const b = book(), r = b.live && b.report != null ? S.reports[b.report] : null;
   return r && r.venue ? r : null;
 }
+/** Is a show on the air right now? */
+export const onAir = (): boolean => !!(G.S && G.S.live);
+/** The call from the gorilla position that is waiting for an answer, or null. */
+export function liveCall(): any | null { const L = G.S && G.S.live; return L && L.ev && !L.ev.done ? L.ev : null; }
 /** Ring introductions come out together: a segment opens on its last entrance line. */
 export function lead(seg: any): number { const bc = seg.bc || []; let i = 0; while (i < bc.length && (bc[i].t === 'ring' || bc[i].t === 'ent')) i++; return Math.max(0, i - 1); }
+/** Where a segment starts on screen: at the call that shaped it if there was one (the introductions were watched while the call came in), else after the introductions. */
+function startBeat(seg: any): number { const bc = seg.bc || [], k = bc.findIndex((x: any) => x.t === 'call'); return k >= 0 ? k : lead(seg); }
+/** When the call on screen came up. An answer in its first moments is not taken: a press meant for Continue must not answer a call nobody has read. */
+let callAt = 0;
+/** Ask the engine for the next thing on the show and put the screen on it. Must be called inside act(). */
+function stepLive() {
+  const S = G.S, b = book(), L = b.live || (b.live = { s: -1, b: 0 });
+  for (let g = 0; g < 40; g++) {
+    const x = E.liveNext(S);
+    if (x.event) { callAt = Date.now(); SFX.ach(); return; }
+    if (x.skip) continue;
+    if (x.seg) { L.s = x.i; L.b = startBeat(x.seg); return; }
+    if (x.done) { b.report = 0; L.s = S.reports[0] ? S.reports[0].segs.length : 0; L.b = 0; L.aired = true; SFX.fanfare(); return; }   // the sign-off of the show that just aired, not a replay
+  }
+}
 const COUNT = /One, two, three|hree count|tapping|taps!|gets the three|and that is it/;
 export function liveNext() {
   if (typer.active()) { typer.finish(); return; }
   const r = liveReport(); if (!r) return;
-  look(() => {
-    const L = book().live!, sg = r.segs[L.s], bc = (sg && sg.bc) || [];
-    if (sg && L.b < bc.length) {
+  if (liveCall()) return;   // the headset is waiting: only an answer moves the show on
+  const L = book().live!, sg = r.segs[L.s], bc = (sg && sg.bc) || [];
+  if (sg && L.b < bc.length) {
+    look(() => {
       L.b++; const nb = bc[L.b];
       if (nb && COUNT.test(nb.x)) SFX.count();
       else if (!nb && sg.k === 'match') { SFX.bellEnd(); SFX.crowd(sg.cr); }
       else if (nb && nb.t === 'pbp' && sg.k === 'match' && L.b === lead(sg) + 2) SFX.bell();
-    }
-    else { L.s++; L.b = r.segs[L.s] ? lead(r.segs[L.s]) : 0; }
+    });
+    return;
+  }
+  if (onAir()) { act(stepLive); return; }   // the next thing has not happened yet
+  look(() => { L.s++; L.b = r.segs[L.s] ? lead(r.segs[L.s]) : 0; });
+}
+/** Answer the call that is waiting. A call made in a match carries on into it. A call made after the bell shows what came of it first. */
+export function liveDecide(c: number) {
+  if (Date.now() - callAt < 400) return;
+  typer.finish();
+  act(() => {
+    const S = G.S, ev = liveCall(); if (!ev || c < 0 || c >= ev.choices.length) return;
+    const d = E.liveDecide(S, c);
+    if (!d.ok) { say(d.msg, { err: true }); return; }
+    ui.flash = null;
+    if (ev.phase === 'post') { const L = book().live!, sg = S.live.st.rep.segs[ev.si]; if (sg) { L.s = ev.si; L.b = Math.max(0, (sg.bc || []).length - 1); return; } }
+    stepLive();
   });
 }
 /** Finish the line being typed and jump to this segment's result. */
-export function liveSkip() { typer.finish(); const r = liveReport(); if (r) look(() => { const L = book().live!; if (r.segs[L.s]) L.b = (r.segs[L.s].bc || []).length; }); }
-export function liveEnd() { const r = liveReport(); if (r) look(() => { book().live = { s: r.segs.length, b: 0 }; }); }
+export function liveSkip() { typer.finish(); const r = liveReport(); if (r && !liveCall()) look(() => { const L = book().live!; if (r.segs[L.s]) L.b = (r.segs[L.s].bc || []).length; }); }
+/** In a replay only: skip to the sign-off. A show on the air cannot be skipped. */
+export function liveEnd() { const r = liveReport(); if (r && !onAir()) look(() => { book().live = { s: r.segs.length, b: 0 }; }); }
 export const liveDone = () => look(() => { book().live = null; top0(); });
 export const replay = () => look(() => { book().live = { s: -1, b: 0 }; top0(); });
 export const closeReport = () => look(() => { const b = book(); b.report = null; b.live = null; top0(); });

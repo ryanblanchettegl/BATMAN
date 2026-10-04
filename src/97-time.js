@@ -79,7 +79,7 @@ function showTimes(S,P,show,rep,card){
     rep.tops.push({hour:h+1,label:what,ov:s.ov,d:td,x:td>0?(h?'Hour '+(h+1)+' opened strong. The people who tuned in stayed':'A strong start. The people who tuned in stayed'):(td<0?(h?'Hour '+(h+1)+' opened weak. Sets were turned off':'A weak start. Sets were turned off'):(h?'Hour '+(h+1)+' opened on something ordinary':'An ordinary start'))});
     d+=td;break;
   }
-  var empty=B-t;
+  var empty=B-t-(rep.slack||0);
   if(empty>TIME_FREE){rep.light=empty;d-=(empty-TIME_FREE)*0.3;}
   else if(t>B)rep.overrun=t-B;
   return d;
@@ -178,7 +178,7 @@ function showFill(S,card){
      cover it: the booker is not sent back to the card. The match that was cut keeps its new length. */
   E.resolveChaos=function(S,card,c){
     var mi=S.chs&&!S.chs.done?S.chs.mi:null,r=c0(S,card,c);
-    if(card&&card.length){var k=showClock(S,card);if(k.over||k.short)fitShow(S,card,mi);}
+    if(card&&card.length&&!S.live){var k=showClock(S,card);if(k.over||k.short)fitShow(S,card,mi);}   // on the air there is no re-fitting: the night runs short, and it is not held against the booker
     return r;
   };
   /* a show that does not fit its time cannot run */

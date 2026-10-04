@@ -4,7 +4,7 @@ import { G, ui, pref, save, loadSave, clearSave, resetUi, redraw, setUniverse, s
 import { go } from './nav';
 
 /** View state of the Booking section. Office reads it to link to a report. */
-export interface BookState { edit: number; tried: boolean; report: number | null; live: { s: number; b: number } | null; side: string }
+export interface BookState { edit: number; tried: boolean; report: number | null; live: { s: number; b: number; aired?: boolean } | null; side: string }
 export function book(): BookState { return slice<BookState>('booking', () => ({ edit: -1, tried: false, report: null, live: null, side: 'advice' })); }
 /** Index into S.reports of this week's report for a show, or -1. */
 export function repFor(sh: any): number { const S = G.S; for (let i = 0; i < S.reports.length; i++) if (S.reports[i].week === S.week && S.reports[i].id === sh.id) return i; return -1; }
@@ -42,12 +42,14 @@ export function takeJob(pid: string, terms?: string[]) {
   const msg = terms && terms.length ? E.applyJobTerms(G.S, terms) : null;
   resetUi(); if (msg) say(msg, { err: /did not like/.test(msg) }); save(); redraw(); window.scrollTo(0, 0);
 }
-export function continueGame() { const sv = loadSave(); if (sv) { G.S = sv; resetUi(); E.attach(G.S); } redraw(); }
+/** A game saved with a show on the air opens on the broadcast: the night has to be seen through. */
+const onAirPage = () => { if (G.S && G.S.live) ui.page = 'booking'; };
+export function continueGame() { const sv = loadSave(); if (sv) { G.S = sv; resetUi(); onAirPage(); E.attach(G.S); } redraw(); }
 /** Load a save pasted as text. Returns a message if it cannot be used, else null. */
 export function loadSaveText(text: string): string | null {
   let o: any; try { o = JSON.parse(text); } catch (e) { return 'That is not a save. It should be the long block of text from Copy my save.'; }
   if (!o || o.v !== 4 || !o.promos || !o.w || !o.player) return 'That text is not an EWF 9000 save, or it is from a version this game cannot read.';
-  G.S = o; resetUi(); E.attach(G.S); save(); redraw(); return null;
+  G.S = o; resetUi(); onAirPage(); E.attach(G.S); save(); redraw(); return null;
 }
 export function abandonGame() { clearSave(); G.S = null; resetUi({ scr: 'select' }); setUniverse(pref.uni || 'public_domain'); redraw(); }
 

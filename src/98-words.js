@@ -27,9 +27,10 @@ function showWord(v){for(var i=0;i<SHOW_WORDS.length;i++)if(v>=SHOW_WORDS[i].v)r
 function capW(t){return t.charAt(0).toUpperCase()+t.slice(1);}
 /** How a show did against what its crowd expects, in words: a headline and one line. s is 1 better, 0 level, -1 worse. */
 function showVerdict(rating,exp){
-  var d=rating-exp,w=showWord(rating),e=showWord(exp);
-  var head=d>=4?'Blew the roof off':(d>=0.5?'Sent them home happy':(d>-0.5?'Gave them what they came for':(d>-4?'Came up short':'Died in front of them')));
-  var line=w.i===e.i?capW(w.a)+', which is what this crowd expects.':capW(w.a)+' for a crowd that expects '+e.one+'.';
+  var d=rating-exp,w=showWord(rating),e=showWord(exp),same=w.i===e.i;
+  // on the same rung as the crowd expected, the headline never goes to either end: the line says which side of it the show fell
+  var head=d>=4&&!same?'Blew the roof off':(d>=0.5?'Sent them home happy':(d>-0.5?'Gave them what they came for':(d>-4||same?'Came up short':'Died in front of them')));
+  var line=same?capW(w.a)+(d>=0.5?', and a little more than this crowd expects.':(d>-0.5?', which is what this crowd expects.':', but this crowd wanted a little more.')):capW(w.a)+' for a crowd that expects '+e.one+'.';
   return {head:head,line:line,s:d>=0.5?1:(d>-0.5?0:-1),word:w,exp:e};
 }
 E.showWord=function(v){return showWord(v);};

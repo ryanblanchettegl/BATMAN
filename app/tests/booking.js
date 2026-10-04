@@ -1,7 +1,7 @@
-/* Booking: card builder, match editor, side panel, the run flow (pre-show incident, headset call), broadcast, report.
+/* Booking: card builder, match editor, side panel, the run flow (pre-show incident), the live broadcast and its calls from the gorilla position, report.
    Build:  EWF_OUT=next-booking EWF_DEV=1 node build.js
    Run:    NODE_PATH=/opt/npm-tools/node_modules node app/tests/booking.js */
-const { open, go, overflow, shot, flash, state, fits } = require('./helper');
+const { open, go, overflow, shot, flash, state, fits, airShow } = require('./helper');
 const FILE = process.env.EWF_OUT || 'index';
 
 function ok(cond, msg) { if (!cond) throw new Error(msg); }
@@ -17,34 +17,27 @@ const plant = page => state(page, S => { for (let i = 0; i < 400; i++) { S.chs =
 const typed = page => page.$eval('#live .ln.last', e => { const c = (e.querySelector('.tx') || e).cloneNode(true); c.querySelectorAll('.untyped').forEach(x => x.remove()); return c.textContent; }).catch(() => '');
 /** Is the continue button on screen, clear of the menu bar and the status bar? */
 const goInView = page => page.evaluate(() => { const g = document.getElementById('live-go').getBoundingClientRect(), st = document.querySelector('.ffoot').getBoundingClientRect(), mn = document.querySelector('.menu').getBoundingClientRect(); return g.top >= mn.bottom && g.bottom <= st.top; });
-/** Advance the broadcast one step. The first press may only finish the line being typed, so press until it moves. */
+/** What to do when a call from the gorilla position comes up while the test is walking the show. Set by section(). */
+let onCall = null;
+/** Advance the broadcast one step. The first press may only finish the line being typed, so press until it moves. A call that comes up is answered. */
 async function advance(page, how) {
   const from = await pos(page);
   for (let k = 0; k < 4; k++) {
     if (how === 'click') await page.click('#live-go'); else await page.keyboard.press(how);
     await page.waitForTimeout(25);
+    if (await has(page, '[data-t="live-call"]')) { await onCall(); return; }
     if (await pos(page) !== from) { if (await page.$('#live-go') && !(await goInView(page))) throw new Error('the continue button is off screen at ' + await pos(page)); return; }
   }
   throw new Error('the broadcast did not advance with ' + how + ' from ' + from);
 }
-/** Press Run and answer whatever stands in the way. Returns what happened: { pre, chaos }. */
+/** Press Run and answer whatever stands in the way before the bell. Returns what happened: { pre }. */
 async function runShow(page, mode, check) {
-  const seen = { pre: false, chaos: false };
+  const seen = { pre: false };
   ok(!(await has(page, '[data-t="run"]')) && !(await has(page, '[data-t="asst"]')) && !(await has(page, '[data-t="asstrun"]')), mode + ': the card has no Run or assistant buttons of its own');
   ok(await page.$eval('[data-t="advance"]', e => e.getAttribute('data-v') + ':' + e.innerText.split('\n')[0].trim().toLowerCase()) === 'run:run show', mode + ': the big button should say Run show');
   await page.click('[data-t="advance"]');
   for (let k = 0; k < 6 && !(await has(page, '#live')); k++) {
-    if (await has(page, '.win [data-t="chaos"]')) {
-      seen.chaos = true;
-      ok(await focusId(page) === 'modal-ok', mode + ': the first headset choice should have focus');
-      ok(!(await has(page, '.win .wf #modal-ok')), mode + ': the headset window has no OK button');
-      await check('headset call');
-      if (mode === 'desk') await shot(page, 'booking-' + mode + '-chaos');
-      // Esc puts the headset down; Run picks it up again
-      await page.keyboard.press('Escape'); ok(!(await has(page, '.win')), mode + ': Esc should close the headset window');
-      await page.click('[data-t="advance"]'); await page.waitForSelector('.win [data-t="chaos"]');
-      await page.click('.win [data-t="chaos"][data-c="1"]');
-    } else if (await has(page, '[data-t="pre"]')) {
+    if (await has(page, '[data-t="pre"]')) {
       seen.pre = true;
       ok(await page.$eval('[data-t="advance"]', e => e.getAttribute('data-v')) === 'pre', mode + ': the big button should wait for the pre-show answer');
       await check('pre-show incident');
@@ -161,10 +154,32 @@ async function section(mode) {
   await state(page, S => { GP.fitShow(S, S.card); });   // the edits above changed what is on the clock: make the show fit its time again
   await go(page, 'booking');
   const seen = await runShow(page, mode, check);
-  ok(seen.chaos, mode + ': the planted headset call did not come up');
-  ok(/Your call: /.test(await flash(page)), mode + ': the headset result should be said. Got: ' + await flash(page));
+  /* a call from the gorilla position: the show stops on it, Enter and the big button answer nothing, a choice does */
+  const calls = [];
+  onCall = async () => {
+    const k = await page.$eval('[data-t="live-call"]', e => e.getAttribute('data-v')), nth = calls.push(k);
+    ok(!(await has(page, '#live-go')) && !(await has(page, '[data-t="live-skip"]')) && !(await has(page, '[data-t="live-end"]')), mode + ': a call has no continue or skip button');
+    ok(await count(page, '[data-t="live-pick"]') >= 2 && (await txt(page, '.callbox .q')).length > 20, mode + ': a call should ask a question and offer at least two answers');
+    ok(/^YOUR CALL$/i.test(await page.$eval('[data-t="advance"] b', e => e.innerText.replace(/\s+/g, ' ').trim())), mode + ': the big button should say Your call');
+    ok(await page.$eval('[data-t="night"] .nt-r.now .st', e => e.innerText) === 'Your call', mode + ': tonight’s run sheet should mark where the call is');
+    await check('call: ' + k);
+    if (nth === 1) await shot(page, 'booking-' + mode + '-call');
+    await page.keyboard.press('Enter'); await page.click('[data-t="advance"]');
+    ok(await has(page, '[data-t="live-call"]'), mode + ': Enter and the big button should not answer a call');
+    await page.waitForTimeout(430);
+    const bp = await state(page, S => S.bp), cost = await state(page, S => S.live.ev.choices[0].bp || 0);
+    if (nth === 1) await page.keyboard.press('1'); else await page.click('[data-t="live-pick"][data-c="0"]');   // the number keys answer too
+    ok(!(await has(page, '[data-t="live-call"]')) && await state(page, S => S.live.log.length) === nth && await state(page, S => S.bp) === bp - cost, mode + ': the answer should be taken, logged and paid for');
+    ok(await has(page, '#live .ln.call'), mode + ': what the call led to should be on the broadcast');
+  };
+  ok(await state(page, S => !!S.live && S.card.length > 0), mode + ': the show should be on the air');
   ok(await pos(page) === '-1:0' && await txt(page, '#live-go') === 'Ring the bell', mode + ': the title card');
   ok(await focusId(page) === 'live-go', mode + ': the continue button should have focus');
+  ok(!(await has(page, '[data-t="live-end"]')), mode + ': a show on the air cannot be skipped');
+  ok(/^CONTINUE$/i.test(await page.$eval('[data-t="advance"] b', e => e.innerText.replace(/\s+/g, ' ').trim())), mode + ': on the air the big button says Continue');
+  await go(page, 'roster');
+  ok(await page.evaluate(() => window.EWF_DEBUG.ui.page) === 'booking' && /on the air/.test(await flash(page)), mode + ': nobody leaves the gorilla position while the show is on the air');
+  ok(await count(page, '[data-t="night"] .nt-r') === await state(page, S => S.live.st.steps.length) && await count(page, '[data-t="night"] .nt-r.seen') === 0, mode + ': tonight’s run sheet should list everything booked, with nothing aired yet');
   await check('title card');
   await shot(page, 'booking-' + mode + '-titlecard', true);
 
@@ -179,7 +194,7 @@ async function section(mode) {
   let finished = false;
   for (let k = 0; k < 80 && !(await has(page, '#live .result')); k++) {
     const at = await pos(page), part = await lastLine();
-    const whole = await state(page, (S, a) => { const q = a.split(':'), bc = S.reports[0].segs[+q[0]].bc || []; return bc[+q[1]] ? bc[+q[1]].x : ''; }, at);
+    const whole = await state(page, (S, a) => { const q = a.split(':'), bc = (S.live ? S.live.st.rep : S.reports[0]).segs[+q[0]].bc || []; return bc[+q[1]] ? bc[+q[1]].x : ''; }, at);
     if (!finished && whole.length - part.length > 45) {
       const t0 = Date.now(); await page.$eval('#live-go', e => e.click());   // not page.click: an achievement pop-up can sit over the button on a phone, and Playwright would wait it out
       const now = await pos(page), shown = await lastLine();
@@ -192,7 +207,14 @@ async function section(mode) {
   ok(finished, mode + ': never caught a line mid-typing');
   ok(await has(page, '#live .result'), mode + ': first segment result');
   ok(await focusId(page) === 'live-go', mode + ': focus stays on the continue button');
+  ok(await count(page, '[data-t="night"] .nt-r.seen') === 1 && /★|¼|½|¾/.test(await txt(page, '[data-t="night"] .nt-r.seen .st')), mode + ': the run sheet should show stars for what has aired, and only that');
   await check('segment result (button)');
+  if (mode === 'desk') {   // a game saved with the show on the air comes back on the air, where it had got to
+    const at = await state(page, S => S.live.st.k + ':' + S.live.log.length);
+    await page.reload(); await page.waitForSelector('[data-t="continue"]'); await page.click('[data-t="continue"]'); await page.waitForSelector('main.main');
+    ok(await has(page, '#live') && await state(page, S => S.live.st.k + ':' + S.live.log.length) === at && await has(page, '#live .result'), mode + ': a save taken on the air should load back on the air');
+    await check('loaded on the air');
+  }
   await shot(page, 'booking-' + mode + '-result', true);
   await advance(page, 'Enter');                                             // Enter on the focused button
   ok((await pos(page)).startsWith('1:'), mode + ': Enter should move to the second segment');
@@ -208,8 +230,10 @@ async function section(mode) {
   await advance(page, 'Enter');
   if (!(await has(page, '#live .result'))) { await page.evaluate(() => window.EWF_DEBUG.pad('b')); ok(await has(page, '#live .result'), mode + ': Back should skip to the result'); }
   if (await has(page, '[data-t="live-skip"]')) throw new Error(mode + ': no skip button once the result is showing');
-  await page.click('[data-t="live-end"]');
-  ok(await txt(page, '#live .bar span:last-child') === 'Sign-off' && await has(page, '#live-go[data-t="live-done"]'), mode + ': skip to the results');
+  const rest = await airShow(page, { report: false, onCall: async () => { await onCall(); } }).catch(e => { throw new Error(mode + ': ' + e.message); });
+  ok(await txt(page, '#live .bar span:last-child') === 'Sign-off' && await has(page, '#live-go[data-t="live-done"]'), mode + ': the show should reach its sign-off');
+  ok(calls.includes('chaos'), mode + ': the planted trouble should have come up in its match. Calls: ' + calls.join(', '));
+  ok(await state(page, S => !S.live && (S.reports[0].calls || []).length) === calls.length, mode + ': every call made should be on the report');
   await check('sign-off');
   await shot(page, 'booking-' + mode + '-signoff', true);
 
@@ -236,7 +260,7 @@ async function section(mode) {
   /* ---- the second show, then Week booked ---- */
   await page.click('[data-t="suggest"]');
   const seen2 = await runShow(page, mode, check);
-  await page.click('[data-t="live-end"]'); await page.click('#live-go');
+  onCall = null; const calls2 = await airShow(page);
   ok(await has(page, '.panel [data-t="endweek"]') && await has(page, '[data-t="replay"]') && !(await has(page, '[data-t="closeReport"]')), mode + ': the last report offers the end of the week');
   await check('second report');
   await page.keyboard.press('Escape');                                      // Back closes the report
@@ -249,7 +273,7 @@ async function section(mode) {
   await page.click('.menu [data-t="tab"][data-v="booking"]');
   ok(await txt(page, '.head h1') === 'Week booked', mode + ': the Booking button leaves the report');
   ok(!errs.length, mode + ': ' + errs.join(' | '));
-  console.log(mode, 'ok:', steps.length, 'steps, no overflow, no errors.', 'First show: pre-show incident', seen.pre ? 'yes' : 'no', '· headset call yes.', 'Second show: pre-show', seen2.pre ? 'yes' : 'no', '· headset', seen2.chaos ? 'yes' : 'no');
+  console.log(mode, 'ok:', steps.length, 'steps, no overflow, no errors.', 'First show: pre-show incident', seen.pre ? 'yes' : 'no', '· calls', calls.join(', ') + '.', 'Second show: pre-show', seen2.pre ? 'yes' : 'no', '· calls', calls2.join(', ') || 'none');
   await browser.close();
 }
 
@@ -268,21 +292,23 @@ async function tv() {
   ok(await overflow(page) === '', 'tv card: ' + await overflow(page));
   await shot(page, 'booking-tv-card');
   await page.click('[data-t="advance"]');
-  let presses = 0, pre = false, chaos = false;
-  for (let k = 0; k < 8 && !(await has(page, '#live')); k++) {       // a pre-show incident or a headset call: the highlight is already on the first answer
-    const t = await focusT(); ok(t === 'pre' || t === 'chaos', 'tv: the highlight should be on an answer, not ' + t + '. Message: ' + await flash(page));
-    if (t === 'pre') pre = true; else chaos = true;
+  let presses = 0, pre = false, chaos = 0;
+  for (let k = 0; k < 8 && !(await has(page, '#live')); k++) {       // a pre-show incident: the highlight is already on the first answer
+    const t = await focusT(); ok(t === 'pre', 'tv: the highlight should be on an answer, not ' + t + '. Message: ' + await flash(page));
+    pre = true;
     await key('Enter');
     if (!(await has(page, '[data-t="pre"]')) && !(await has(page, '.win')) && !(await has(page, '#live'))) await page.click('[data-t="advance"]');
   }
   ok(await has(page, '#live'), 'tv: the broadcast should start');
   ok(await overflow(page) === '', 'tv title card: ' + await overflow(page));
   await shot(page, 'booking-tv-live');
-  while (await has(page, '#live')) { ok(await page.evaluate(() => document.activeElement.id) === 'live-go' && await goInView(page), 'tv: the highlight should stay on the continue button, on screen'); await key('Enter'); if (++presses > 900) throw new Error('tv: the broadcast never ended'); }
+  while (await has(page, '#live')) {
+    if (await has(page, '[data-t="live-call"]')) { chaos++; await page.waitForTimeout(430); ok(await focusT() === 'live-pick', 'tv: on a call the highlight should be on the first answer, not ' + await focusT()); await key('Enter'); continue; }
+    ok(await page.evaluate(() => document.activeElement.id) === 'live-go' && await goInView(page), 'tv: the highlight should stay on the continue button, on screen'); await key('Enter'); if (++presses > 900) throw new Error('tv: the broadcast never ended'); }
   ok(await has(page, '.big') && await overflow(page) === '', 'tv report: ' + await overflow(page));
   ok(await focusT() === 'closeReport', 'tv: the highlight should land on the next show button, not ' + await focusT());
   ok(!errs.length, 'tv: ' + errs.join(' | '));
-  console.log('tv ok: suggested and ran a show with arrows and Enter (' + presses + ' presses through the broadcast' + (pre ? ', pre-show incident answered' : '') + (chaos ? ', headset call answered' : '') + '), no overflow, no errors.');
+  console.log('tv ok: suggested and ran a show with arrows and Enter (' + presses + ' presses through the broadcast' + (pre ? ', pre-show incident answered' : '') + (chaos ? ', ' + chaos + ' calls answered' : '') + '), no overflow, no errors.');
   await browser.close();
 }
 

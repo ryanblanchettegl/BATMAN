@@ -16,16 +16,22 @@ const press = async page => { await page.click('[data-t="advance"]'); await page
 async function runShow(page, mode) {
   await press(page);
   for (let i = 0; i < 6 && !(await has(page, '#live-go')); i++) {
-    if (await has(page, '.win [data-t="chaos"]')) await page.click('.win [data-t="chaos"][data-c="0"]');
-    else if (await has(page, '[data-t="pre"]')) { await page.click('[data-t="pre"][data-c="0"]'); await page.waitForTimeout(40); if (!(await has(page, '.win')) && !(await has(page, '#live-go'))) await press(page); }
+    if (await has(page, '[data-t="pre"]')) { await page.click('[data-t="pre"][data-c="0"]'); await page.waitForTimeout(40); if (!(await has(page, '.win')) && !(await has(page, '#live-go'))) await press(page); }
     else if ((await adv(page)).k === 'book') { await page.click('[data-t="suggest"]'); await press(page); }
     else await press(page);
     await page.waitForTimeout(60);
   }
   ok(mode, 'the button ran the show', await has(page, '#live-go'), await flash(page));
   ok(mode, 'on the air, the button carries the show forward', (await adv(page)).k === 'live' && /^CONTINUE$/i.test((await adv(page)).t), (await adv(page)).t);
-  for (let i = 0; i < 900 && await has(page, '#live-go'); i++) { await press(page); }
-  ok(mode, 'pressing it through the broadcast reaches the report', !(await has(page, '#live-go')) && await has(page, '[data-t="match-stars"]'));
+  let asked = false;
+  for (let i = 0; i < 900 && await has(page, '#live'); i++) {
+    if (await has(page, '[data-t="live-call"]')) {   // a call from the gorilla position: the button names it and waits, it does not answer
+      if (!asked) { asked = true; await press(page); const a = await adv(page); ok(mode, 'when the gorilla position needs an answer the button says Your call, and pressing it answers nothing', /^YOUR CALL$/i.test(a.t) && await has(page, '[data-t="live-call"]'), a.t); }
+      await page.waitForTimeout(430); await page.click('[data-t="live-pick"][data-c="0"]'); continue;
+    }
+    await press(page);
+  }
+  ok(mode, 'pressing it through the broadcast, and answering each call, reaches the report', !(await has(page, '#live')) && await has(page, '[data-t="match-stars"]'));
 }
 
 async function run(mode) {

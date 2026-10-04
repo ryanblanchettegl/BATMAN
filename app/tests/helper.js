@@ -59,7 +59,7 @@ async function fits(page) {
     if (!document.querySelector('.onescreen')) return '';
     const d = document.documentElement, bad = [], over = (sel, name) => { const e = document.querySelector(sel); if (e && e.scrollHeight - e.clientHeight > 1) bad.push(name + ' is ' + (e.scrollHeight - e.clientHeight) + 'px too tall'); };
     if (d.scrollHeight - d.clientHeight > 1) bad.push('the page scrolls by ' + (d.scrollHeight - d.clientHeight) + 'px');
-    over('.main', 'the page area'); over('.b1-pane', 'the pane beside the sheet'); over('.b1-pane > .panel', 'the panel in the pane'); over('.b1-rows', 'the run sheet');
+    over('.main', 'the page area'); over('.b1-pane', 'the pane beside the sheet'); over('.b1-pane > .panel', 'the panel in the pane'); over('.b1-rows', 'the run sheet'); over('.lv-main', 'the broadcast'); over('.lv-night', 'tonight’s run sheet'); over('.callbox', 'the call box');
     const st = document.querySelector('.ffoot'); if (st && st.getBoundingClientRect().bottom > window.innerHeight + 1) bad.push('the status line is off the screen');
     return bad.join('; ');
   });
@@ -70,4 +70,26 @@ async function flash(page) { return (await page.$eval('.flash', e => e.innerText
 /** Read or change the live game state, e.g. state(page, S => S.week). The function runs in the browser. */
 async function state(page, fn, arg) { return page.evaluate(new Function('arg', 'return (' + fn.toString() + ')(window.EWF_DEBUG.state(), arg)'), arg); }
 async function redraw(page) { await page.evaluate(() => window.EWF_DEBUG.render()); }
-module.exports = { open, go, overflow, shot, flash, state, redraw, SHOTS, fits };
+/** See the show that is on screen through to its sign-off. On the air there is no skipping the night: each segment is
+    skipped to its result, and every call from the gorilla position is answered (the first choice, or opts.pick(kind)).
+    opts.onCall(kind) runs while a call is waiting. opts.report === false stops on the sign-off instead of opening the
+    report. Works for a replay too. Returns the kinds of call that came up, in order. */
+async function airShow(page, opts) {
+  opts = opts || {}; const calls = [], has = async sel => !!(await page.$(sel));
+  for (let g = 0; g < 900; g++) {
+    if (await has('[data-t="live-call"]')) {
+      const k = await page.$eval('[data-t="live-call"]', e => e.getAttribute('data-v')); calls.push(k);
+      if (opts.onCall) { await opts.onCall(k); if (!(await has('[data-t="live-call"]'))) continue; }   // onCall may answer it itself
+      await page.waitForTimeout(430);   // a call takes no answer in its first moments
+      await page.click('[data-t="live-pick"][data-c="' + (opts.pick ? opts.pick(k) : 0) + '"]');
+      continue;
+    }
+    if (await has('[data-t="live-done"]')) { if (opts.report !== false) await page.click('[data-t="live-done"]'); return calls; }
+    if (await has('[data-t="live-end"]')) { await page.click('[data-t="live-end"]'); continue; }
+    if (await has('[data-t="live-skip"]')) { await page.click('[data-t="live-skip"]'); continue; }
+    if (await has('#live-go')) { await page.click('#live-go'); continue; }
+    throw new Error('the broadcast has no way forward');
+  }
+  throw new Error('the broadcast never ended');
+}
+module.exports = { open, go, overflow, shot, flash, state, redraw, SHOTS, fits, airShow };

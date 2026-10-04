@@ -1,4 +1,4 @@
-/* One screen, no scrolling: the card builder must fit the window at every size, whatever is on it.
+/* One screen, no scrolling: the card builder and the broadcast must fit the window at every size, whatever is on them.
    Run: NODE_PATH=<dir containing playwright> node app/tests/onescreen.js */
 const { open, go, overflow, shot, state, fits } = require('./helper');
 const SIZES = [['desk', 1280, 720], ['desk', 1280, 800], ['desk', 1920, 1080], ['desk', 2560, 1080], ['tablet', 1024, 768], ['tv', 1920, 1080]];
@@ -44,6 +44,26 @@ async function run(mode, w, h) {
     ok(id, 'the next page shows the rest', (await page.$$('.b1-rows .seg')).length === lines - 13 && await page.$eval('[data-t="sheet-next"]', e => e.disabled));
     await fit('the second page');
     if (w === 1280 && h === 720) await shot(page, 'onescreen-pages');
+    /* the broadcast: the title card, every call, every result and the sign-off */
+    await page.click('[data-t="clear"]'); await page.click('[data-t="suggest"]');
+    for (let k = 0; k < 6 && !(await has(page, '#live')); k++) { if (await has(page, '[data-t="pre"]')) await page.click('[data-t="pre"][data-c="0"]'); else await page.click('[data-t="advance"]'); await page.waitForTimeout(40); }
+    ok(id, 'the broadcast is a one-screen page', await has(page, '#live.onescreen'));
+    await fit('the title card');
+    let results = 0, calls = 0;
+    for (let g = 0; g < 900 && !(await has(page, '[data-t="live-done"]')); g++) {
+      if (await has(page, '[data-t="live-call"]')) {
+        const k = await page.$eval('[data-t="live-call"]', e => e.getAttribute('data-v') + ', ' + e.querySelectorAll('[data-t="live-pick"]').length + ' answers');
+        await page.waitForTimeout(430); await fit('a call (' + k + ')');
+        ok(id, 'every answer is on screen (' + k + ')', await page.evaluate(() => { const m = document.querySelector('.lv-main').getBoundingClientRect(); return [...document.querySelectorAll('[data-t="live-pick"]')].every(b => { const r = b.getBoundingClientRect(); return r.top >= m.top - 1 && r.bottom <= m.bottom + 1; }); }));
+        if (w === 1280 && h === 720 && !calls++) await shot(page, 'onescreen-call');
+        const n = await page.$$eval('[data-t="live-pick"]:not([disabled])', a => a.length);
+        await page.click('[data-t="live-pick"]:not([disabled]) >> nth=' + (n - 1)); continue;
+      }
+      if (await has(page, '#live .result')) { results++; await fit('result ' + results); if (w === 1280 && h === 720 && results === 1) await shot(page, 'onescreen-result'); await page.click('#live-go'); continue; }
+      if (await has(page, '[data-t="live-skip"]')) await page.click('[data-t="live-skip"]'); else await page.click('#live-go');
+    }
+    ok(id, 'the show reached its sign-off', await has(page, '[data-t="live-done"]') && results >= 4, results + ' results');
+    await fit('the sign-off');
     ok(id, 'no errors', errs.length === 0, errs.slice(0, 3).join(' | '));
   } catch (e) { ok(id, 'the run finished', false, String(e.message).split('\n')[0]); await shot(page, 'onescreen-fail-' + mode + w).catch(() => { }); }
   await browser.close();

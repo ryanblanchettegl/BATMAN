@@ -36,7 +36,16 @@ S.rmY["12"] = { v: -20, mem: [ {w: 31, k: "pushed", v: -20, t: "You sent them to
 - **The notification bar.** `note(S, heading, line, kind)` queues a line in `S.toasts`; the status bar shows it for a few seconds. It fires when a wrestler remembers something the player did, and when two people on the roster become friends or enemies.
 - **Deterministic.** Nothing in the file calls `rnd(S)`.
 
-## Step 2 (next): live events
+## Step 2 (built in 0.24): live events
+
+What was built, where it differs from the plan below (the plan is kept as it was written):
+
+- The functions are `E.liveBegin(S, card)`, `E.liveNext(S)`, `E.liveDecide(S, choice)` and `E.liveInfo(S)`, in `src/31-live.js`. `runShow` in `src/30-show.js` is `showStart`, `showStep` and `showEnd`.
+- A kind of call is an entry in `LIVEK`: `pre(S, L, step)` or `post(S, L, step, seg)` offers the call, `run(S, L, ev, choice)` applies the answer and returns one line. A call in a match is answered before the match is worked out, so the answer is built into it; the screen shows the ring introductions while the call is up.
+- The first kinds are not the three below. They are: the title is on the line, a rival at the curtain, off the script (the hot mic), after the bell, and trouble on the air (the old headset calls). The botch and the audible are still to do, and so are the `careless` and `ego` traits.
+- Limits: three calls on weekly television, four at a big event, each kind once a night, plus the one after the bell. Trouble on the air does not count. A feud's rival comes to the curtain at most every other week; a speaker goes off the script at most once in eight weeks.
+- The safe answer is always "do nothing", except for trouble on the air where it is the old safe choice.
+
 
 Today `runShow()` in `src/30-show.js` runs a whole show in one call, and the "headset" (`E.chaos` in `src/77-backstage.js`) asks one question before the show starts, about 13% of the time. Step 2 replaces that.
 
@@ -115,7 +124,9 @@ Two new hidden traits come with this step: `careless` (botches) and `ego` (hot m
 
 At most two events a show, more likely on a big event. A show with nothing risky on it has none.
 
-## Step 3: the screen
+## Step 3 (built in 0.24): the screen
+
+Built as one screen: what is on the air on the left, tonight's run sheet on the right, the call as a box of wide buttons where the commentary is.
 
 The broadcast page shows the event where the commentary is, with the choices as buttons, what each costs, and the "what helps and what hurts" list for any attempt. After the call: what happened, then the notification bar lines one by one. Works with mouse, touch, keyboard and remote. The old headset window goes.
 

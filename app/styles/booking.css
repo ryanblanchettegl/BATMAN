@@ -23,6 +23,17 @@
 /* what the road agent says about a match, and the writers about a promo, under its row */
 .agentsay{margin-top:6px;padding-top:5px;border-top:1px dotted var(--dcyan);display:grid;gap:2px}
 .agentsay .ag{color:var(--cyan);text-transform:uppercase}
+/* a call from the gorilla position: the show stops on this box until it is answered. Each choice is one wide button. */
+.callbox{flex:0 0 auto;border:4px double var(--yellow);padding:.3em 2ch .4em;display:grid;gap:.25em}
+.callbox .q{color:var(--white);font-size:1.1em;line-height:1.2}
+.callopts{display:grid;gap:.3em}
+.callopt{display:grid;width:100%;text-align:left;font:inherit;line-height:1.2;color:var(--grey);background:var(--k);border:.12em solid var(--dcyan);border-radius:0;padding:.15em 1.5ch .2em;cursor:pointer}
+.callopt .n{display:flex;justify-content:space-between;gap:2ch;color:var(--yellow);text-transform:uppercase}
+.callopt .n b{font-weight:normal}
+.callopt .bp{color:var(--k);background:var(--yellow);padding:0 1ch;white-space:nowrap;align-self:start}
+.callopt:hover,.callopt:focus-visible,html.nav .callopt:focus{border-color:var(--yellow);background:#0b6470;color:var(--white);outline:0}
+.callopt[disabled]{opacity:.45;cursor:not-allowed}
+.ln.call .sp{color:var(--yellow)} .ln.call .tx{color:var(--yellow)}
 /* the agent in the booker's ear during the broadcast */
 .ln.ear .sp{color:var(--green)} .ln.ear .tx{color:var(--green)}
 .ln.ear.last .tx{color:var(--white)}
@@ -124,3 +135,44 @@ html[data-screen="tablet"] .d1-meta{-webkit-line-clamp:1}
 html[data-screen="tablet"] .d1 [data-t="ed-note"]{display:none}
 html[data-screen="tablet"] .b1-pane .editor{gap:3px 1.5ch;padding-top:4px}
 html[data-screen="tablet"] .b1-pane .clocklist + p{display:none}
+
+/* ---------- the broadcast on one screen ----------
+   Left: the heading, the commentary and the result. Right: tonight's run sheet. Nothing scrolls: the commentary box
+   is as tall as the room it has, lines fill it from the top, and once it is full the oldest go off the top. */
+.live.live1{min-height:0;padding:.35em 2ch .45em;gap:.3em}
+.live1 .bar{margin-bottom:0}
+.lv-body{flex:1 1 0;min-height:0;display:grid;grid-template-columns:minmax(0,1fr) clamp(30ch,31%,46ch);grid-template-rows:minmax(0,1fr);gap:0 2ch}
+.lv-main{min-width:0;min-height:0;display:flex;flex-direction:column;gap:.25em}
+.lv-head{flex:0 0 auto;display:flex;justify-content:space-between;align-items:center;gap:0 2ch}
+.lv-head h1{margin:0;line-height:1.1;font-size:1.4em}
+.lv-head .vs{margin:0;flex:0 0 auto;flex-wrap:nowrap}
+.lv-head .vs canvas.pt{width:2.9em;height:2.9em}
+.lv-log{flex:1 1 0;min-height:0;overflow:hidden;display:flex;flex-direction:column;justify-content:flex-end}
+.lv-lines{flex:1 0 auto}
+.lv-log.full{-webkit-mask-image:linear-gradient(to bottom,transparent 0,#000 2.2em);mask-image:linear-gradient(to bottom,transparent 0,#000 2.2em)}
+.lv-log.mid .lv-lines{display:flex;flex-direction:column;justify-content:center}
+.live1 .ln{margin-block:.1em;line-height:1.2}
+.live1 .ln.note{margin-block:.2em}
+.live1 .card{padding:.2em 0;gap:.2em}
+.live1 .card .show{font-size:clamp(2em,6vw,3.6em)}
+.live1 .result{padding:.3em 1.5ch;margin-top:.3em}
+.live1 .result .scores{grid-template-columns:repeat(2,minmax(0,1fr));gap:0 3ch;margin-top:.2em}
+.live1 .result .scores div span:first-child{min-width:10ch}
+.live1 .foot{flex:0 0 auto;margin-top:0;padding-top:.2em;min-height:1.9em}
+.live1 .foot .btn{margin-bottom:.32em}
+.lv-night{min-width:0;min-height:0;overflow:hidden;border-left:.12em solid var(--dcyan);padding-left:2ch;display:flex;flex-direction:column;gap:.2em}
+.lv-night h2{color:var(--cyan);text-transform:uppercase;font-size:1em;margin:0}
+.nt{list-style:none;margin:0;padding:0;display:grid;gap:.1em}
+.nt-r{display:grid;grid-template-columns:4ch 3ch minmax(0,1fr) auto;gap:0 1ch;color:var(--grey);line-height:1.25;padding:0 .5ch}
+.nt-r .at{color:var(--dcyan)} .nt-r .no{color:var(--mag);text-align:right}
+.nt-r .who{overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.nt-r .st{color:var(--yellow);white-space:nowrap}
+.nt-r.seen{color:var(--dcyan)} .nt-r.seen .no{color:var(--dcyan)}
+.nt-r.now{background:var(--yellow);color:var(--k)} .nt-r.now :is(.at,.no,.st){color:var(--k)}
+.nt-r.me .who{text-transform:uppercase}
+.nt-foot{margin-top:auto}
+.callhint{text-align:right}
+html[data-screen="tablet"] .callhint{display:none}
+.live1.tight :is(.callbox .why,.callhint,.lv-head .vs){display:none}
+.live1.tight .callbox{padding-block:.15em .2em;gap:.15em} .live1.tight .callbox .q{font-size:1em} .live1.tight .callopts{gap:.15em} .live1.tight .callopt{padding-block:0 .05em}
+html[data-screen="tablet"] .lv-body{grid-template-columns:minmax(0,1fr) clamp(28ch,30%,38ch)}

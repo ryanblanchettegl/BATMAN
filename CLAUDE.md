@@ -20,6 +20,7 @@ node test-segments.js                               # promos and angles the play
 node test-tasks.js                                  # this week's tasks, and how they hold a show and the week
 node test-shape.js                                  # the running order rules, and stars instead of percentages
 node test-relations.js                              # the relationship matrix, memories and the notification bar
+node test-live.js                                   # the show on the air: steps, calls from the gorilla position, what each answer does
 node test-fog.js                                    # fog of war: what the road agent can say, what a show teaches, the agent in your ear
 node tools/build-public-domain.js                   # rebuild universes/public_domain.json after editing rosters
 python3 tools/build-font.py                         # rebuild app/fonts/ewf-blocks.woff2 (needs fonttools, brotli)
@@ -31,12 +32,13 @@ Browser tests need Playwright with Chromium. Build first, then run from the repo
 NODE_PATH=<dir containing playwright> node app/tests/<name>.js
 ```
 
-`<name>` is one of `onescreen`, `start`, `office`, `booking`, `roster`, `stories`, `company`, `cards`, `journey`, `linker`, `save`, `sweep`, `challenge`, `scenarios`, `editor`, `create`, `leaveout`, `segments`, `net`, `tasks`, `shape`, `relations`, `advance`. `journey.js` takes `MODES=desk,tablet,tv` and `WEEKS=5`. Each test prints its failures and exits non-zero if any. They are slow (one to five minutes each); run the ones for the section you touched, then `journey.js`.
+`<name>` is one of `onescreen`, `start`, `office`, `booking`, `roster`, `stories`, `company`, `cards`, `journey`, `linker`, `save`, `sweep`, `challenge`, `scenarios`, `editor`, `create`, `leaveout`, `segments`, `net`, `tasks`, `shape`, `relations`, `advance`. A test that has to get a show from the card to its report uses `airShow(page)` from the helper: there is no skipping a show on the air, and every call has to be answered. `journey.js` takes `MODES=desk,tablet,tv` and `WEEKS=5`. Each test prints its failures and exits non-zero if any. They are slow (one to five minutes each); run the ones for the section you touched, then `journey.js`.
 
 ## How the code is laid out
 
 - `src/*.js`: the simulation. Plain ES5 in one shared closure, concatenated in file-name order by `build.js`. No screen code. State `S` is plain JSON and is the save file. A seeded generator (`rnd(S)`) makes every game repeatable. Systems plug in through hook lists declared at the top of `src/10-match.js` (`MQX`, `CRX`, `FINX`, `EFX`, `POST`, `SHOWX`, `WEEKX`, `NEWX`, `PREX`, `TASKX`).
 - `src/66-relations.js`: the relationship matrix (`S.rm`) and what people remember (`S.rmY` for what they remember about the booker). It is the one place that says how two people feel about each other. Change it only through `relBump()` and `youRemember()`; read it with `relOf()`, `bondOf()`, `respOf()`, `jealOf()`. It never calls `rnd(S)`. `note(S, heading, line, kind)` puts a line on the notification bar. `docs/plans/gorilla-position.md` is the plan this belongs to.
+- `src/30-show.js`, `src/31-live.js` and `app/src/screens/booking/Live.tsx`: the live show. The player's show is not worked out in one go. `E.liveBegin(S, card)` puts it on the air (`S.live`, plain data, so a save taken mid-show loads back into it), `E.liveNext(S)` runs the next promo, angle or match, and the show stops whenever the gorilla position needs a call (`{event}`) until `E.liveDecide(S, choice)` answers it. A kind of call is one entry in `LIVEK` (`pre` or `post` offers it from what is true of the next step, never a flat chance; `run` applies the answer through `relBump()`, `youRemember()`, feuds and titles). `livePlay()` runs a whole show with the safe answers, and `E.runPlayerShow` is that. Rival shows run straight through with no calls. The broadcast screen is one screen: what is on the air on the left, tonight's run sheet on the right. A show on the air cannot be skipped or left.
 - `src/78-models.js`: the nine company models. Each is data plus small functions for match quality, crowd, finishes, pushes, hiring fit and the suggested card.
 - `app/src/`: the interface in Preact and TypeScript. `store.ts` holds the game and view state, `nav.ts` the screen map, `input.ts` screen modes and remote or gamepad focus, `kit/` the building blocks, `screens/<section>/` one folder per section, `shared/` pieces used by more than one section.
 - `src/86-editor.js` and `app/src/screens/editor/`: the World Editor, opened from the title screen. It edits a universe package (plain JSON kept with the player's other worlds), never a running game. Every change goes through an `E.ed*` function so it can be tested headless.
@@ -86,3 +88,5 @@ Ryan plays a published copy of `dist/gorilla-position.html` (a Claude artifact).
 - Preact needs keys on lists whose items change shape between redraws.
 - Browser tests start with this week's tasks as reminders only (`helper.open()` calls `E.setGate(S, false)`). Pass `gate: true` to test the stopping.
 - The headless sim never signs anyone, so its rosters shrink over time. That is the sim, not the game.
+- A call on the broadcast takes no answer for its first 400 ms, so a press meant for Continue cannot answer it. Browser tests wait before they pick.
+- While a show is on the air the report is `S.live.st.rep`, not `S.reports[0]`. It is filed when the show goes off the air.

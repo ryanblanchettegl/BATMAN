@@ -126,7 +126,7 @@ function runSeg(S,P,show,ctx,sg,slot,opens){
   var a=S.w[sg.who[0]],b=sg.who[1]!=null?S.w[sg.who[1]]:null,c=sg.who[2]!=null?S.w[sg.who[2]]:null,luck=rnd(S)*8-4,L=segLook(S,sg,slot),f=b?feudOf(S,a.id,b.id):null,r=null,nf;
   if(!L.ok)return null;
   sg.who.forEach(function(id){ctx.angled[id]=1;});
-  var ov=L.mid+luck;
+  var ov=L.mid+luck+(sg.mod||0);   // sg.mod: a call from the headset changed how it went (src/31-live.js)
   if(sg.k==='interview'){
     if(ov>a.ovr)addOvr(P,a,0.25);
     r=angle('Interview',(hasMouthpiece(S,a)?S.w[a.mgr].name+' does the talking for '+a.name+', and ':a.name+' takes the microphone and ')+(ov>=75?'has the crowd in the palm of a hand.':(ov>=55?'says what needed saying.':'loses the room.')),ov);

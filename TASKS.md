@@ -134,8 +134,17 @@ Ryan: "look up the philosophy of booking a wrestling show, the importance of the
 ### 0e. The live Gorilla Position, in steps (`docs/plans/gorilla-position.md`)
 
 - [x] **Step 1 (0.16): the relationship matrix, memories and the notification bar.** Code: `src/66-relations.js`. Tests: `node test-relations.js`, `app/tests/relations.js`. One entry per pair: a shared bond, respect each way, jealousy each way, and what they remember. A separate list of what each wrestler remembers about the booker. The old friend-or-enemy flags and bond scores are folded into it, and old saves convert on load. The status bar announces "X will remember that" and when two people become friends or enemies. The wrestler card lists what they remember and where the booker stands with them.
-- [ ] **Step 2: live events.** The show runs in steps and stops for a decision: the botch, the hot mic, the audible. `E.resolveLiveDecision`.
-- [ ] **Step 3: the broadcast screen** for those decisions. The old headset window goes.
+- [x] **Step 2 (0.24): the live show.** Ryan, 3 October: "focus on the broadcast now... more decisions that shape storylines and the direction of the company, titles and relationships... the broadcast is no longer skippable and the most important hopefully funnest part of the game". Code: `src/30-show.js`, `src/31-live.js`. Test: `node test-live.js`.
+  - The player's show goes on the air and runs one step at a time. Nobody knows how a match ends until it has run. A save taken mid-show loads back on the air.
+  - The show stops for calls from the gorilla position. Five kinds so far, each caused by what is true that night: the title is on the line (stay with the plan, call the title change, protect the champion with a disqualification), a rival at the curtain (keep them back, cost the match, get fought off), off the script (cut the microphone, let them talk), after the bell (fade out, shake hands, the loser attacks, a challenger walks out), and trouble on the air (the old headset calls, now in their own match).
+  - Every answer says what it does before it is picked, and people remember it. Titles change, feuds start or heat up, friends take sides.
+  - About two calls a night. Three at most on weekly television and four at a big event, plus the one after the bell.
+  - A show on the air cannot be skipped or left. A finished show can still be replayed, and a replay can be skipped.
+  - [ ] More kinds: the botch (ring the bell or push through), the audible (the crowd is dead for the planned finish), a match running long, a manager at ringside, a debut, a walk-out, a double turn, the owner on the headset.
+  - [ ] Calls that set the direction of the company (who the show is built around, what kind of company the crowd is being taught to expect).
+  - [ ] Each segment still has "Skip to the result". Ryan to say whether it stays.
+- [x] **Step 3 (0.24): the broadcast screen.** Code: `app/src/screens/booking/Live.tsx`, `run.ts`. Tests: `app/tests/booking.js`, `advance.js`, `journey.js`. One screen, nothing scrolls. Left: what is on the air. Right: tonight's run sheet, with stars for what has aired. A call is a box of wide buttons, one for each answer, and the number keys answer too. The old headset window is gone.
+  - [ ] The show report is still a scrolling page.
 - [ ] **Step 4: promo depth.** Archetypes, heat by act, odds shifted by a good promo.
 
 ### 0f. The ADVANCE button (version 0.17)
@@ -188,7 +197,8 @@ Ryan's list of 3 October, after looking at the booking screen. Each step is buil
   - Move earlier, move later and Remove are in the pane for the selected match. What stands in the way of the show (tasks on the desk, the list of what to fix, a problem before the bell) shows in the pane too.
   - A run sheet of more than 13 lines turns pages. Long lists in the pane turn pages. Nothing scrolls.
   - Type is sized from the window's height as well as its width, so the page fits at 1280x720, 1920x1080, an ultrawide window, a tablet and a TV.
-  - [ ] The show report and the broadcast are still scrolling pages.
+  - [x] (0.24) The broadcast is one screen.
+  - [ ] The show report is still a scrolling page.
   - [ ] Every other page (the desk, Roster, Stories, Net, Manage, Company, the title screens), one at a time.
 - [ ] **Step 5. Five goals for every show**, drawn from a first set of ten easy ones (later hundreds, from the stories in play). They move storylines, objectives and rookies along. Rewards differ: money, AP, the owner's mood, the fans' mood.
 - [ ] **Step 6. The page itself.** The opener and the main event look important, and so do big storyline moments. The right-hand side says much more: who won last week, winning runs, who has not been used in more than two weeks, relationship news, what the owner has liked lately.

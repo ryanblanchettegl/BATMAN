@@ -1,20 +1,22 @@
 /* A whole-game run on the combined build: five weeks by real clicks, every page visited, on four screen modes. */
-const { open, go, overflow, shot, flash } = require('./helper');
+const { open, go, overflow, shot, flash, fits, airShow } = require('./helper');
 const FILE = process.env.EWF_OUT || 'index';
 const PAGES = ['desk', 'career', 'booking', 'roster', 'locker', 'titles', 'market', 'storylines', 'history', 'sheet', 'feed', 'boards', 'manage', 'house', 'deals', 'overview', 'finances', 'world'];
 async function run(mode, weeks) {
   const { browser, page, errs } = await open({ mode, file: FILE, promo: process.env.PROMO || 'pdw' }), bad = [];
-  const fit = async where => { const o = await overflow(page); if (o) bad.push(where + ': ' + o); };
+  const fit = async where => { const o = await overflow(page); if (o) bad.push(where + ': ' + o); const f = await fits(page); if (f) bad.push(where + ' does not fit one screen: ' + f); };
   const has = sel => page.$(sel);
   const click = async sel => { const e = await page.$(sel); if (e) { await e.click(); return true; } return false; };
   const info = await page.evaluate(() => ({ screen: document.documentElement.dataset.screen, fs: getComputedStyle(document.body).fontSize, font: document.fonts ? [...document.fonts].filter(f => f.status === 'loaded').map(f => f.family).join(',') : '' }));
   for (let w = 0; w < weeks; w++) {
     await go(page, 'booking');
     for (let g = 0; g < 40; g++) {
-      if (await has('.win [data-t="chaos"]')) { await page.click('.win [data-t="chaos"]'); continue; }
       if (await has('.win')) { await page.click('.win #modal-ok'); continue; }
-      if (await has('[data-t="live-end"]')) { await page.click('[data-t="live-end"]'); continue; }
-      if (await has('[data-t="live-done"]')) { await page.click('[data-t="live-done"]'); await fit('report w' + w); continue; }
+      if (await has('#live')) {   // on the air: every call answered, and each one has to fit the screen
+        await fit('title card w' + w);
+        await airShow(page, { report: false, pick: k => (w + k.length) % 2, onCall: async k => { await fit('call ' + k + ' w' + w); } });
+        await fit('sign-off w' + w); await page.click('[data-t="live-done"]'); await fit('report w' + w); continue;
+      }
       if (await has('[data-t="closeReport"]')) { await page.click('[data-t="closeReport"]'); continue; }
       if (await has('[data-t="pre"]')) { await page.click('[data-t="pre"]'); continue; }
       if (await has('[data-t="suggest"]')) { await page.click('[data-t="suggest"]'); await fit('card w' + w); await page.click('[data-t="advance"]'); continue; }

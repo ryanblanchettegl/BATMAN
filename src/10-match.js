@@ -105,7 +105,8 @@ function memoryLines(S,P,x){
       else add(S.week-h.w<=6?8:6,'These two met '+weeksAgo(S,h.w)+(lw?', and '+lw+' got the win.':', and nobody could win it.'));
     }
   }
-  if(x.feud&&x.feud.log.length>1){var lg=x.feud.log[x.feud.log.length-1];if(S.week-lg.w<=2)add(8,'Do not forget what happened '+weeksAgo(S,lg.w)+': '+lg.t+'.');}
+  var fl=x.feud?(x.flog!=null?x.flog:x.feud.log.length):0;   // what was in the feud's log before this match: not its own result
+  if(fl>1){var lg=x.feud.log[fl-1];if(S.week-lg.w<=2)add(8,'Do not forget what happened '+weeksAgo(S,lg.w)+': '+lg.t+'.');}
   if(x.feud&&x.feud.stakes)add(9,'Remember the stakes tonight: '+x.feud.stakes.toLowerCase()+'.');
   all.forEach(function(w){
     if(w.lt&&w.lt.w<S.week&&S.week-w.lt.w<=8)add(x.t&&x.t.id===w.lt.id?9.5:7,w.name+' lost the '+w.lt.n+' '+weeksAgo(S,w.lt.w)+(x.t&&x.t.id===w.lt.id?' and wants it back tonight.':' and has had a point to prove ever since.'));
@@ -271,8 +272,10 @@ function doMatch(S,P,show,m,i,n,rep,used){
   else{
     winners=sides[win];losers=flat(sides.filter(function(s,k){return k!==win;}));
     var heelWin=winners[0].align==='H';
+    // a run-in the booker called from the headset (src/31-live.js)
+    if(isPl&&m.runin&&S.w[m.runin.r]&&S.w[m.runin.p]){var rf=feudOf(S,m.runin.r,m.runin.p);if(rf)runin={r:S.w[m.runin.r],p:S.w[m.runin.p],f:rf};}
     if(isPl&&!br)all.forEach(function(p){feudsFor(S,p.id).forEach(function(f){
-      if(runin||f.kind==='dream')return;
+      if(runin||m.norun||f.kind==='dream')return;
       var rs=(f.a.indexOf(p.id)>=0?f.b:f.a).map(function(id){return S.w[id];}).filter(function(r){return all.indexOf(r)<0&&r.inj<=0&&r.promo===P.id&&!(r.away>=S.week);});
       rs=rs.concat(stableMates(S,rs,all));
       if(rs.length&&chance(S,0.10+f.heat/400+(rs.length>1?0.06:0)))runin={r:pick(S,rs),p:p,f:f};
@@ -350,7 +353,7 @@ function doMatch(S,P,show,m,i,n,rep,used){
   });
   if(m.mt==='tag')sides.forEach(function(s,k){var tm=(s[0].team!=null&&s[0].team===s[1].team)?teamOf(S,s[0]):null;if(tm){tm.exp=Math.min(100,tm.exp+2+(k===win?1:0));tm.ls=(win>=0&&k!==win)?tm.ls+1:0;if(win>=0){if(k===win)tm.w=(tm.w|0)+1;else tm.l=(tm.l|0)+1;}}});
   // feud progress
-  var feudMsg=null,heatWas=feud?feud.heat:0;
+  var feudMsg=null,heatWas=feud?feud.heat:0,flogWas=feud?feud.log.length:0;
   if(feud){
     feud.matches++;
     if(win>=0){if(m.sides[win].some(function(id){return feud.a.indexOf(id)>=0;}))feud.aw++;else if(m.sides[win].some(function(id){return feud.b.indexOf(id)>=0;}))feud.bw++;}
@@ -378,7 +381,7 @@ function doMatch(S,P,show,m,i,n,rep,used){
     (mins>=20?'The time limit expires with neither able to put the other away.':'Both are counted out brawling on the floor.'),o);
   if(isPl){
     var srt=all.slice().sort(function(p,q){return p.ovr-q.ovr;});
-    seg.bc=callMatch(S,P,{fx:fx,o:o,m:m,all:all,pre:pre,champ:champ,mt:MT[m.mt].n,stip:stip,stipName:stip==='std'?null:STIP[stip].n,t:t,sides:sides,feud:feud,feudHeat:heatWas,gap:srt[srt.length-1].ovr-srt[0].ovr,under:srt[0].name,CR:CR,MQ:MQ,mins:mins,ca:ca,bad:bad,fin:fin,sub:lead.style==='T'||stip==='sub',win:win,plural:winners.length>1,change:!!seg.change,retain:win>=0&&win===champSide,entrance:ctx.entrance});
+    seg.bc=callMatch(S,P,{fx:fx,o:o,m:m,all:all,pre:pre,champ:champ,mt:MT[m.mt].n,stip:stip,stipName:stip==='std'?null:STIP[stip].n,t:t,sides:sides,feud:feud,feudHeat:heatWas,flog:flogWas,gap:srt[srt.length-1].ovr-srt[0].ovr,under:srt[0].name,CR:CR,MQ:MQ,mins:mins,ca:ca,bad:bad,fin:fin,sub:lead.style==='T'||stip==='sub',win:win,plural:winners.length>1,change:!!seg.change,retain:win>=0&&win===champSide,entrance:ctx.entrance});
     if(m.mt==='1v1'){var hk=rkey(all[0].id,all[1].id),hh=(S.h2h||(S.h2h={}))[hk]||(S.h2h[hk]={n:0,a:0,b:0,lw:-1,w:0});hh.n++;hh.w=S.week;hh.lw=win>=0?winners[0].id:-1;if(win>=0){if(winners[0].id===Math.min(all[0].id,all[1].id))hh.a++;else hh.b++;}}
     all.forEach(function(w){w.deb=false;});
   }
