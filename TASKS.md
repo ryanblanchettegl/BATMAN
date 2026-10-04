@@ -149,6 +149,18 @@ Plan and research: `docs/plans/advance-button.md`. Code: `src/96-advance.js` (`E
 - [ ] More countdowns as systems land (title reigns, the owner's clocks, sponsor deals ending).
 - [ ] "Thursday: what the rivals did" as its own stop in the week.
 
+### 0g. The booking screen, rebuilt one step at a time (version 0.18 on)
+
+Ryan's list of 3 October, after looking at the booking screen. Each step is built, shown to him, and waits for his word before the next.
+
+- [x] **Step 1 (0.18).** "Book it my way", "Assistant runs the small shows" and the small "Run the show" button are gone. The big yellow button is the only way to run a show: on the card it runs it, or brings up the list of what to fix. A remote's Play key presses it. The remote walk in `app/tests/booking.js` is parked (run it with `TV=1`): Ryan is not working on the remote for now.
+- [ ] **Step 2. Time is the budget.** A show is two or three hours and has to be filled. Each match type takes a set time; promos and angles are short, medium or long. As many matches, promos and angles as fit: no fixed count. Matches, promos and angles are three separate things of equal weight, each with its own Add button. How the show opens is a choice (a hot match, a recap, a promo, an angle, something else) and each gives its own "top of the hour" bonus. Sponsor segments come later.
+- [ ] **Step 3. Words, not numbers.** "The crowd expects about 80%" goes: 80% reads like a very good show. Wrestling words for how good a show was and what the crowd expects.
+- [ ] **Step 4. Fog of war.** The game does not say early whether a match will be good. Road agents comment on each booked match, and better agents give better advice. The player learns traits and what works from the commentary during the match and from reviews after. Level-ups give more to go on.
+- [ ] **Step 5. Five goals for every show**, drawn from a first set of ten easy ones (later hundreds, from the stories in play). They move storylines, objectives and rookies along. Rewards differ: money, AP, the owner's mood, the fans' mood.
+- [ ] **Step 6. The page itself.** The opener and the main event look important, and so do big storyline moments. The right-hand side says much more: who won last week, winning runs, who has not been used in more than two weeks, relationship news, what the owner has liked lately.
+- [ ] Open question for Ryan: the Assistant panel on the Career page describes a helper who books and runs the small shows. With its two buttons gone it does nothing on screen. Remove it, or keep it for a later fast mode?
+
 ### 1. Finish the pop-ups (small)
 Feature list items 10 and 11. Code: `app/src/shared/cards.tsx`, `Name`, `TitleName`, `TeamName` and `Txt` in `app/src/kit/index.tsx`, the card stack in `app/src/store.ts`.
 

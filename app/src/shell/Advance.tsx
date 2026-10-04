@@ -6,6 +6,7 @@ import { G, ui, act, say } from '../store';
 import { go } from '../nav';
 import { endWeek, book } from '../flow';
 import { onKey } from '../input';
+import { run } from '../screens/booking/run';
 
 /** Is the broadcast on screen? Then the button carries the show forward. */
 function live(): boolean { const b = book(); return ui.page === 'booking' && b.report != null && !!b.live && !!document.getElementById('live-go'); }
@@ -37,11 +38,9 @@ export function pressAdvance() {
   if (reportOpen()) { const b = book(); act(() => { b.report = null; b.live = null; }); }
   const A = E.advance(S);
   if (A.k === 'week') { endWeek(); return; }
-  if (A.k === 'run') {
-    if (ui.page !== 'booking') { go('booking'); return; }
-    const btn = document.querySelector('[data-t="run"]') as HTMLElement | null; if (btn) btn.click(); else go('booking');
-    return;
-  }
+  // on the card, this button is the only way to run the show. An unfinished card is tried too, so the list of what to fix comes up.
+  if (ui.page === 'booking' && (A.k === 'run' || (A.k === 'book' && S.card.length))) { run('run'); return; }
+  if (A.k === 'run') { go('booking'); return; }
   if (A.k === 'task') {
     const here = ui.page === 'desk';
     toDesk();
@@ -60,12 +59,15 @@ export function AdvanceBtn() {
   const A = advanceNow(), lines = A.k === 'task' ? A.why : [A.label].concat(A.why);
   return <button type="button" class={'adv k-' + A.k} data-t="advance" data-v={A.k} aria-label={A.short + ': ' + A.label} onClick={pressAdvance}>
     <b>{A.short}</b>
-    <span class="tip" data-t="adv-tip" role="note"><span class="th">{A.k === 'task' ? 'Needs you first' : (A.day || 'Next')}</span>{lines.map((x, i) => <span class="tl" key={i}>{x}</span>)}<span class="hint">{A.k === 'task' ? 'Press to go to your desk.' : 'Space bar'}</span></span>
+    <span class="tip" data-t="adv-tip" role="note"><span class="th">{A.k === 'task' ? 'Needs you first' : (A.day || 'Next')}</span>{lines.map((x, i) => <span class="tl" key={i}>{x}</span>)}<span class="hint">{A.k === 'task' ? 'Press to go to your desk.' : 'Space bar, or Play on a remote'}</span></span>
   </button>;
 }
 
 // The space bar is the ADVANCE key, anywhere a space would not be typed or press something else.
+// A remote has no space bar: its play button does the same from anywhere (a pad uses the right trigger).
+const PLAY = (e: KeyboardEvent) => e.key === 'MediaPlayPause' || e.key === 'MediaPlay' || e.keyCode === 415 || e.keyCode === 10252;
 onKey(e => {
+  if (PLAY(e)) { if (!G.S || G.S.over || ui.modal || ui.cards.length || ui.boot) return false; const a = document.querySelector('[data-t="advance"]') as HTMLElement | null; if (!a) return false; a.click(); return true; }
   if (e.key !== ' ' || !G.S || G.S.over || ui.modal || ui.cards.length || ui.boot || e.ctrlKey || e.metaKey || e.altKey) return false;
   const tag = (e.target as HTMLElement).tagName;
   if (tag === 'INPUT' || tag === 'SELECT' || tag === 'TEXTAREA' || tag === 'BUTTON' || tag === 'TR') return false;

@@ -28,8 +28,10 @@ async function run(mode) {
     ok(mode, 'the booking page lists what is still on the desk', /On your desk before this show can run/.test(await txt(page, '[data-t="gate-note"]')));
     await over('the booking page with the note');
     await page.click('[data-t="suggest"]');
-    await page.click('[data-t="run"]').catch(() => { });
-    ok(mode, 'Run the show is refused', /cannot run yet/.test(await flash(page)) && await state(page, S => S.qi) === 0, await flash(page));
+    ok(mode, 'the card has no Run button of its own', !(await has(page, '[data-t="run"]')));
+    await page.click('[data-t="advance"]');
+    ok(mode, 'the big button will not run the show: it leads to the desk', await has(page, '.tasks') && await state(page, S => S.qi) === 0);
+    await go(page, 'booking');
     await page.click('[data-t="gate-desk"]');
     ok(mode, 'the note takes you back to the desk', await has(page, '.tasks'));
     /* do one: the button goes to the place, and doing it ticks the task */

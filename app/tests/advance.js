@@ -17,7 +17,7 @@ async function runShow(page, mode) {
   await press(page);
   for (let i = 0; i < 6 && !(await has(page, '#live-go')); i++) {
     if (await has(page, '.win [data-t="chaos"]')) await page.click('.win [data-t="chaos"][data-c="0"]');
-    else if (await has(page, '[data-t="pre"]')) { await page.click('[data-t="pre"][data-c="0"]'); await press(page); }
+    else if (await has(page, '[data-t="pre"]')) { await page.click('[data-t="pre"][data-c="0"]'); await page.waitForTimeout(40); if (!(await has(page, '.win')) && !(await has(page, '#live-go'))) await press(page); }
     else if ((await adv(page)).k === 'book') { await page.click('[data-t="suggest"]'); await press(page); }
     else await press(page);
     await page.waitForTimeout(60);

@@ -9,7 +9,7 @@ import { Head, Panel, Btn, Name, brandName } from '../../kit';
 import { Editor } from './Editor';
 import { Side } from './Side';
 import { OpenRow, SegRows, SegBar, bookSeg, segFree } from './Segments';
-import { Match, onCard, sideText, suggest, addMatch, clearCard, toggleEdit, moveMatch, removeMatch, run, asstBook, asstRun } from './run';
+import { Match, onCard, sideText, suggest, addMatch, clearCard, toggleEdit, moveMatch, removeMatch, run } from './run';
 
 const DOT = ' · ';
 const LEN: Record<string, string> = { S: 'Short', M: 'Medium', L: 'Long' };
@@ -78,12 +78,9 @@ export function Card() {
         : <span class="muted">(nothing called yet: every match plays out on the odds)</span>}</p>
       <div class="row center mt2">
         <Btn t="suggest" onClick={suggest}>Suggest a card</Btn>
-        {!show.big && <Btn t="asst" onClick={asstBook}>Book it my way</Btn>}
-        {!show.big && !pre && <Btn t="asstrun" onClick={asstRun}>Assistant runs the small shows</Btn>}
         <Btn t="add" onClick={addMatch}>Add a match</Btn>
         <Btn t="seg-new" disabled={!segFree()} onClick={bookSeg}>Add a promo or angle</Btn>
         {n > 0 && <Btn t="clear" onClick={clearCard}>Clear</Btn>}
-        {!pre && <Btn kind="go" t="run" onClick={() => run('run')}>Run the show</Btn>}
       </div>
     </Head>
     <GateNote />

@@ -17,7 +17,7 @@ async function run(mode, weeks) {
       if (await has('[data-t="live-done"]')) { await page.click('[data-t="live-done"]'); await fit('report w' + w); continue; }
       if (await has('[data-t="closeReport"]')) { await page.click('[data-t="closeReport"]'); continue; }
       if (await has('[data-t="pre"]')) { await page.click('[data-t="pre"]'); continue; }
-      if (await has('[data-t="suggest"]')) { await page.click('[data-t="suggest"]'); await fit('card w' + w); await page.click('[data-t="run"]'); continue; }
+      if (await has('[data-t="suggest"]')) { await page.click('[data-t="suggest"]'); await fit('card w' + w); await page.click('[data-t="advance"]'); continue; }
       break;
     }
     await go(page, 'desk');
