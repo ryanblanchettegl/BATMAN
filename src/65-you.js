@@ -18,7 +18,7 @@ var PLEDGE={
 var SKILLS={
   creative:{n:'Creative',max:5,d:'Better angles, hotter feuds, and better odds on creative gambles.'},
   talk:{n:'Negotiation',max:5,d:'Cheaper contracts and better odds when you have to talk someone round.'},
-  eye:{n:'Eye for talent',max:3,d:'1: see potential. 2: see ring chemistry. 3: your staff spot more problems.'},
+  eye:{n:'Eye for talent',max:3,d:'See potential in young wrestlers. Every level makes your road agents’ reads on a match surer. At 3 they tell you more about each match, and your staff spot more problems.'},
   motivator:{n:'Motivator',max:5,d:'More effort in the ring and steadier morale.'},
   clout:{n:'Clout',max:3,d:'One more point of booking power every week.'}
 };
@@ -62,7 +62,7 @@ E.matchOdds=function(S,m,i,n){
   var od=winOdds(S,c.P,c.show,m,c.sides,c.t,c.champSide,c.feud,!!c.show.big,i===n-1),fav=0;
   od.p.forEach(function(p,k){if(p>od.p[fav])fav=k;});
   var cost=od.p.map(function(p,k){return (p>=0.5?1:(p>=0.25?2:3))+(c.t&&c.t.holders.length&&k!==c.champSide?1:0)+ccCost(S,m,k);});
-  return {p:od.p,draw:od.draw,fav:fav,cost:cost,drawCost:2,chem:(S.booker.sk.eye>=2&&m.mt==='1v1')?chem(S,c.sides[0][0].id,c.sides[1][0].id):null};
+  return {p:od.p,draw:od.draw,fav:fav,cost:cost,drawCost:2,chem:null};
 };
 function cardCost(S,card){
   var tot=0,n=card.length;
@@ -234,23 +234,18 @@ MQX.push(function(ctx){
   return d?{d:clamp(d,-3,3),x:lab}:null;
 });
 
-/* advisors: three voices look over your card before it runs */
+/* advisors: the head writer and the lead announcer look over your card before it runs. The road agent's notes are
+   per match, on the run sheet, and only say what the agent can see or read (src/99-fog.js). */
 E.advice=function(S,card){
   var P=S.promos[S.player],show=S.queue[S.qi];if(!show)return [];
   var agent=[],writer=[],ann=[],n=card.length,on={},twice={},extra=S.booker.sk.eye>=3?1:0;
   card.forEach(function(m){flat(m.sides).forEach(function(id){if(id!=null){if(on[id])twice[id]=1;on[id]=1;}});});
   card.forEach(function(m,i){
     var c=matchSetup(S,m);if(!c)return;var all=flat(c.sides),mins=(m.stip==='iron'?30:(LEN[m.len]||12))+(show.big?4:0)+(i===n-1?3:0);
-    all.forEach(function(w){var zs=E.zones(S,w.id).sort(function(a,b){return b.v-a.v;})[0];if(zs.v>=65&&m.int!=='safe')agent.push(w.name+'\u2019s '+zs.n.toLowerCase()+(zs.k==='n'||zs.k==='b'?' is':' are')+' in a bad way ('+zs.v+'). Book match '+(i+1)+' safe, or give them the week off.');
-      if(w.cond<50)agent.push(w.name+' is running on fumes ('+Math.round(w.cond)+'%). Match '+(i+1)+' will suffer.');else if(mins>6+w.stam*0.25+3)agent.push(w.name+' cannot go '+mins+' minutes. Shorten match '+(i+1)+'.');});
     if(m.mt==='1v1'){
-      var ch=chem(S,all[0].id,all[1].id),gap=Math.abs(all[0].ovr-all[1].ovr);
-      if(ch>=2.2)agent.push(all[0].name+' and '+all[1].name+' have real chemistry. Give match '+(i+1)+' time.');else if(ch<=-2.2)agent.push(all[0].name+' and '+all[1].name+' do not click in the ring. Keep match '+(i+1)+' short or change it.');
-      if(gap>25&&mins>7)agent.push('Match '+(i+1)+' is a squash. Keep it short.');
       if(all[0].align===all[1].align&&!c.feud)writer.push('Match '+(i+1)+' is '+(all[0].align==='F'?'face against face. Who do they boo?':'heel against heel. Who do they cheer?'));
       var rk=S.recent[P.id+':'+rkey(all[0].id,all[1].id)];if(rk&&S.week-rk<4&&!c.feud)ann.push('We just saw '+all[0].name+' against '+all[1].name+'. The crowd will not care a second time.');
     }
-    if(m.mt==='tag')c.sides.forEach(function(s){if(s[0].team==null||s[0].team!==s[1].team)agent.push(names(s)+' are not a regular team. Expect a rough match.');else if(relOf(S,s[0].id,s[1].id)<0)agent.push(names(s)+' do not mesh as partners.');});
     if(c.feud&&c.feud.heat>=60&&!show.big&&m.stip==='std')writer.push(feudLabel(S,c.feud)+' is hot enough to end. Save that match for the big event, or it will only simmer on.');
     if(m.call==null){var od=winOdds(S,P,show,m,c.sides,c.t,c.champSide,c.feud,!!show.big,i===n-1);S.quests.forEach(function(q){if(q.type==='win'||q.type==='o_strong'){var k=-1;c.sides.forEach(function(s,x){if(s.some(function(w){return w.id===q.w;}))k=x;});if(k>=0&&od.p[k]<0.6)writer.push(S.w[q.w].name+' is only '+Math.round(od.p[k]*100)+'% to win match '+(i+1)+', and you have a promise riding on it. Consider calling it.');}});}
   });

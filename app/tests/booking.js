@@ -81,6 +81,8 @@ async function section(mode) {
   const n = await count(page, '.sheet .seg:not(.sg)');   // matches only: promos and angles are .seg.sg
   ok(n >= 3 && n === await state(page, S => S.card.length), mode + ': suggested card');
   ok(await plant(page), mode + ': could not plant a headset call');
+  ok(await count(page, '[data-t="agent-say"]') === n && /no read|No read|cannot tell|Nothing to flag|My read|Hard to read|not a regular team|running on fumes|squash|bad way/.test(await txt(page, '[data-t="agent-say"]')), mode + ': every match should carry the road agent’s comment: ' + await txt(page, '[data-t="agent-say"]'));
+  ok(/comments on every match on the sheet/.test(await txt(page, '[data-t="fog-note"]')), mode + ': the office panel should say how the agent’s comments work');
   await check('suggest a card');
 
   /* ---- the match editor ---- */

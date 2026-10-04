@@ -13,8 +13,9 @@ type OnCard = Record<number, 1>;
 function Advice() {
   const S = G.S, A = E.advice(S, S.card).filter((a: any) => a.tips.length);
   if (!S.card.length) return <Empty>Put a card together and your staff will look it over.</Empty>;
-  if (!A.length) return <p class="good">Nobody in the office has a complaint about this card.</p>;
-  return <>{A.map((a: any) => <><p class="eyebrow mt2">{a.who}</p>{a.tips.map((t: string) => <p>{'“'}{t}{'”'}</p>)}</>)}</>;
+  const F = E.fogInfo(S), fog = <p class="muted mt2" data-t="fog-note">{F.head} comments on every match on the sheet, and only says what can be seen or read. {F.agents ? 'A road agent you put on a match reads it better.' : 'Hire a road agent and put them on a match for a better read.'} What you have seen on your own shows, you know for good: {F.pairs} {F.pairs === 1 ? 'pairing' : 'pairings'} so far.</p>;
+  if (!A.length) return <><p class="good">The writers and the announcers have no complaint about this card.</p>{fog}</>;
+  return <>{A.map((a: any) => <><p class="eyebrow mt2">{a.who}</p>{a.tips.map((t: string) => <p>{'“'}{t}{'”'}</p>)}</>)}{fog}</>;
 }
 
 function Promo() {

@@ -65,6 +65,7 @@ const fx = (r, re) => r.segs.filter(s => s.k === 'match' && (s.fx || []).some(f 
   const lk = (id, len) => E.segLook(S, { k: 'interview', who: [id], pos: 0, len }, -1);
   ok('pdw', 'short, medium and long are five, ten and fifteen minutes', lk(good, 'S').mins === 5 && lk(good, 'M').mins === 10 && lk(good, 'L').mins === 15);
   ok('pdw', 'a real talker gains from fifteen minutes', S.w[good].mic < 75 || lk(good, 'L').mid > lk(good, 'M').mid, S.w[good].name + ' mic ' + S.w[good].mic);
+  S.know.w[poor] = { mic: 1 };   // the office has heard them talk, so the writers say what they know (src/99-fog.js)
   ok('pdw', 'a poor talker is found out by fifteen minutes', S.w[poor].mic >= 75 || (lk(poor, 'L').mid < lk(poor, 'M').mid && lk(poor, 'L').notes.some(x => /long time on the microphone/.test(x[1]))), S.w[poor].name + ' mic ' + S.w[poor].mic);
   ok('pdw', 'a match costs more of the clock the longer it is, and a tag match more than a singles', (() => { const m = { mt: '1v1', stip: 'std', len: 'M', sides: [[null], [null]] }, a = E.matchMins(S, m, 1, 5), t = E.matchMins(S, { mt: 'tag', stip: 'std', len: 'M', sides: [[null, null], [null, null]] }, 1, 5); return a.S < a.M && a.M < a.L && a.now === a.M && t.M > a.M && E.matchMins(S, m, 4, 5).M > a.M; })());
   /* how the show opens */

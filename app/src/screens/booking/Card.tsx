@@ -31,7 +31,7 @@ function odds(m: Match, i: number, n: number) {
   return <span>Favourite: <b>{sideText(m.sides[o.fav])}</b> {Math.round(o.p[o.fav] * 100)}%</span>;
 }
 
-function MatchRow(p: { m: Match; i: number; n: number; c: any }) {
+function MatchRow(p: { m: Match; i: number; n: number; c: any; rd: any }) {
   const m = p.m, i = p.i, n = p.n, P = me(), open = book().edit === i, it = p.c.items.find((x: any) => x.t === 'match' && x.i === i);
   const t = m.title ? P.titles.find((x: any) => x.id === m.title) : null;
   // each part is a keyed span: rows trade places without keys, and Preact needs the parts to keep one shape while they do
@@ -53,6 +53,7 @@ function MatchRow(p: { m: Match; i: number; n: number; c: any }) {
           <Btn kind="sm" t="rm" d={{ v: i }} onClick={() => removeMatch(i)}>Remove</Btn>
         </div>
       </div>
+      {p.rd ? <div class="agentsay" data-t="agent-say" data-v={i}>{p.rd.lines.map((l: any, k: number) => <p key={k} class={l.s > 0 ? 'good' : (l.s < 0 ? 'bad' : 'muted')} data-src={l.src}><span class="ag">{p.rd.who}{p.rd.own ? ', on this match' : ''}:</span> {'“'}{l.t}{'”'}</p>)}</div> : null}
       {open && <Editor m={m} i={i} />}
     </div>
   </div>;
@@ -68,7 +69,7 @@ function PreShow(p: { pre: any }) {
 
 export function Card() {
   const S = G.S, P = me(), b = book(), c = E.cal(S.week), show = S.queue[S.qi], n = S.card.length;
-  const v = E.validate(S, S.card), cost = E.cardCost(S, S.card), on = onCard(), ck = E.clock(S), tcls = ck.over || ck.short ? 'bad' : (ck.light ? 'warn' : 'good');
+  const v = E.validate(S, S.card), cost = E.cardCost(S, S.card), on = onCard(), ck = E.clock(S), rd = E.agentReads(S), tcls = ck.over || ck.short ? 'bad' : (ck.light ? 'warn' : 'good');
   const pre = S.pre && !S.pre.done && S.pre.key === S.week + ':' + show.id ? S.pre : null;
   return <>
     <Head eyebrow={c.label + DOT + 'show ' + (S.qi + 1) + ' of ' + S.queue.length} title={show.name}>
@@ -92,7 +93,7 @@ export function Card() {
     {n > 0 && v.warnings.length > 0 && <div class="flash">{v.warnings.map((w: string, k: number) => <>{k ? <br /> : null}{w}</>)}</div>}
     <div class="cols">
       <div class="stack">
-        <div class="sheet"><Opening c={ck} /><PlanRow c={ck} />{n ? S.card.map((m: Match, i: number) => <><SegRows i={i} n={n} c={ck} /><MatchRow m={m} i={i} n={n} c={ck} /></>) : <SegRows i={0} n={1} c={ck} />}</div>
+        <div class="sheet"><Opening c={ck} /><PlanRow c={ck} />{n ? S.card.map((m: Match, i: number) => <><SegRows i={i} n={n} c={ck} /><MatchRow m={m} i={i} n={n} c={ck} rd={rd[i]} /></>) : <SegRows i={0} n={1} c={ck} />}</div>
         {n ? null : <Panel><p><b>The card is empty.</b> You have {ck.budget / 60} hours to fill. Add matches, promos and angles one at a time, or start from a suggested card and change what you like.</p>
             <p class="muted mt1">You choose who wrestles. The odds decide who wins, unless you spend booking power to call a finish. Everything on the run sheet takes time off the clock, and the show cannot run until the time is filled.</p></Panel>}
         <SegBar c={ck} />

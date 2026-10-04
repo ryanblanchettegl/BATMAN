@@ -33,9 +33,10 @@ async function run(mode) {
     await over('the guide');
     await shot(page, 'shape-guide-' + mode);
     await page.click('[data-t="modal-close"]');
-    /* a booked promo is forecast in stars */
+    /* before the show nothing is forecast in stars: the agent and the writers give a read in words */
     await page.click('[data-t="seg-suggest"]');
-    ok(mode, 'a booked promo or angle is forecast in stars', /should be about ★/.test(await txt(page, '.sheet')) && !/should (score|be) about \d/.test(await txt(page, '.sheet')));
+    ok(mode, 'a booked promo or angle gets a read in words, and the run sheet shows no stars before the show', (await page.$$('[data-t="seg-read"]')).length >= 1 && !/[★¼½¾]/.test(await txt(page, '.sheet')) && !/should (score|be) about/.test(await txt(page, '.sheet')));
+    ok(mode, 'the road agent comments on every match on the sheet', (await page.$$('[data-t="agent-say"]')).length === n && (await page.$$eval('[data-t="agent-say"]', L => L.every(e => /: “.+”/.test(e.innerText)))), await txt(page, '[data-t="agent-say"]'));
     /* run the show and read the report */
     const rep = await page.evaluate(() => { const S = window.EWF_DEBUG.state(), E = window.GP, pr = E.preShow(S, S.card); if (pr) E.resolvePre(S, S.card, 0); E.fitShow(S, S.card); const v = E.validate(S, S.card); if (v.errors.length) return { err: v.errors.join(' | ') }; const r = E.runPlayerShow(S, S.card).rep; window.EWF_DEBUG.render(); return { n: r.segs.filter(s => s.k === 'match').length, lines: r.sheet.lines.join(' / ') }; });
     ok(mode, 'the show ran', !rep.err, rep.err);
@@ -50,6 +51,7 @@ async function run(mode) {
     ok(mode, 'promos and angles are rated in stars', segStars.length >= 1 && segStars.every(t => /^[★¼½¾]+$/.test(t.trim())), segStars.join(' '));
     ok(mode, 'the report says how the show did in words, with no expected percentage', /^(Blew the roof off|Sent them home happy|Gave them what they came for|Came up short|Died in front of them)\. /.test(await txt(page, '[data-t="verdict"]')) && !/%/.test(await txt(page, '[data-t="verdict"]')), await txt(page, '[data-t="verdict"]'));
     ok(mode, 'the show itself gets a letter grade and no percentage', /^(A\+|A|A-|B\+|B|B-|C\+|C|C-|D|F)$/.test((await txt(page, '[data-t="show-grade"]')).trim()) && !/%/.test(await txt(page, '.rating')), await txt(page, '.rating'));
+    ok(mode, 'the report lists what the night taught', /What you learned tonight/i.test(await txt(page, '[data-t="rep-learned"]')) && (await page.$$('[data-t="rep-learned"] p')).length >= 2, await txt(page, '[data-t="rep-learned"]'));
     ok(mode, 'the report names the spots', /Opener/.test(await txt(page, '.sheet')) && /Main event/.test(await txt(page, '.sheet')));
     ok(mode, 'the dirt sheet lines give stars', /Match of the night: .*★/.test(rep.lines) && !/Match of the night[^/]*\d%/.test(rep.lines), rep.lines.slice(0, 160));
     await over('the report');

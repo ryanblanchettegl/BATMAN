@@ -20,7 +20,7 @@ interface Beat { t: string; x: string }
 function Line(p: { r: any; b: Beat; tk?: string }) {
   const b = p.b, cls = 'ln ' + b.t + (p.tk ? ' last' : ''), text = p.tk ? <Typed key={p.tk} text={b.x} /> : b.x;
   if (b.t === 'note' || b.t === 'ent') return <p class={cls}>{text}</p>;
-  const who = b.t === 'pbp' ? p.r.ann[0].split(' ').pop() : (b.t === 'col' ? p.r.ann[1].split(' ').pop() : 'Ring');
+  const who = b.t === 'pbp' ? p.r.ann[0].split(' ').pop() : (b.t === 'col' ? p.r.ann[1].split(' ').pop() : (b.t === 'ear' ? 'Headset' : 'Ring'));
   return <p class={cls}><span class="sp">{who}:</span><span class="tx">{text}</span></p>;
 }
 /** Portraits of both sides, for matches of up to six. */

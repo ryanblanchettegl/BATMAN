@@ -43,13 +43,14 @@ async function run(mode) {
     await page.selectOption('#seg-who-0', { index: 1 });
     ok(mode, 'the second pick opens once the first is made', !(await page.$eval('#seg-who-1', e => e.disabled)));
     await page.selectOption('#seg-who-1', { index: 1 });
-    ok(mode, 'the window says what to expect and how long it takes', /should be about ★/.test(await txt(page, '[data-t="seg-look"]')) && /takes 5 minutes/.test(await txt(page, '[data-t="seg-look"]')), await txt(page, '[data-t="seg-look"]'));
+    ok(mode, 'the window gives a read in words, never a forecast in stars, and says how long it takes', /(No read|should land|do its job|could die out there)/.test(await txt(page, '[data-t="seg-look"]')) && !/[★¼½¾]|should be about/.test(await txt(page, '[data-t="seg-look"]')) && /takes 5 minutes/.test(await txt(page, '[data-t="seg-look"]')), await txt(page, '[data-t="seg-look"]'));
     await page.selectOption('#seg-len', 'L');
     ok(mode, 'a long one takes fifteen', /takes 15 minutes/.test(await txt(page, '[data-t="seg-look"]')));
     await page.selectOption('#seg-pos', { index: 2 });
     await page.click('[data-t="seg-save"]');
     ok(mode, 'booking it says what was booked and for how long', /Booked: .* calls out .*, 15 minutes/.test(await flash(page)), await flash(page));
     ok(mode, 'the promo is on the run sheet before its match', await page.evaluate(() => { const rows = [...document.querySelectorAll('.sheet > .seg:not(.opener)')]; const i = rows.findIndex(r => r.querySelector('[data-t="seg-edit"]')); return i === 2 && /Call-out/.test(rows[i].innerText) && /Long, 15 min/.test(rows[i].innerText); }));
+    ok(mode, 'the row carries the same read, in words', /(No read|should land|do its job|could die out there)/.test(await txt(page, '[data-t="seg-read"]')) && !/[★¼½¾]/.test(await txt(page, '.sheet .seg.sg:not(.opener)')), await txt(page, '[data-t="seg-read"]'));
     ok(mode, 'and it is counted as a promo', await cat('promo') === 1 && await cat('angle') === 0);
     /* an angle, at the top of the show */
     await page.click('[data-t="add-angle"]');

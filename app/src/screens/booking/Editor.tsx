@@ -55,6 +55,5 @@ export function Editor(p: { m: Match; i: number }) {
     <Field label="Length"><Sel id={'m' + i + '-len'} t="len" d={{ i }} value={m.len} onChange={v => setMatch(i, 'len', v)} options={[['S', 'Short · ' + mm.S + ' min'], ['M', 'Medium · ' + mm.M + ' min'], ['L', 'Long · ' + mm.L + ' min']]} /></Field>
     <p class="muted wide" data-t="len-note">On the clock that is {mm.now} minutes: {mm.bell} in the ring, the rest for entrances and a break. Bigger matches take longer to set up.</p>
     {m.mt === '1v1' && m.sides[0][0] != null && m.sides[1][0] != null && <p class="muted wide">{E.pairMemory(S, m.sides[0][0], m.sides[1][0])}</p>}
-    {od && od.chem != null && <p class="muted wide">Ring chemistry between them: {od.chem >= 2.2 ? <span class="good">great</span> : (od.chem <= -2.2 ? <span class="bad">poor</span> : 'ordinary')}.</p>}
   </div>;
 }

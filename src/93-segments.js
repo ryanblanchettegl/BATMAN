@@ -98,8 +98,8 @@ function segLook(S,sg,slot){
   // how long it runs: a talker who can fill the time gains from more of it, and one who cannot is found out
   var K=SEGK[sg.k],len=segLen(sg),best=b&&K.t==='promo'?Math.max(micOf(S,a),micOf(S,b)):micOf(S,a);
   if(K.t==='promo'&&!K.fix){
-    if(len==='L'){if(best>=75){mid+=3;notes.push([1,'A talker who can fill fifteen minutes']);}else{mid-=5;notes.push([-1,'Fifteen minutes is a long time on the microphone for them']);}}
-    else if(len==='S'){if(best>=75){mid-=2;notes.push([-1,'Cut short: they could have done more with the time']);}else{mid+=1;notes.push([1,'Short and to the point']);}}
+    if(len==='L'){if(best>=75){mid+=3;notes.push([1,'A talker who can fill fifteen minutes',1]);}else{mid-=5;notes.push([-1,'Fifteen minutes is a long time on the microphone for them',1]);}}
+    else if(len==='S'){if(best>=75){mid-=2;notes.push([-1,'Cut short: they could have done more with the time',1]);}else{mid+=1;notes.push([1,'Short and to the point',1]);}}
   }else if(K.t==='angle'){
     if(len==='L'){mid+=2;notes.push([1,'Given time to become a scene. The feud heats faster']);}
     else if(len==='S')mid-=1;

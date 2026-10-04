@@ -3,7 +3,7 @@
    The engine side is src/93-segments.js (the segments) and src/97-time.js (the clock, and how a show opens). */
 import { E } from '../../engine';
 import { G, Modal, act, say, view, slice, openModal, closeModal } from '../../store';
-import { Btn, Panel, Window, Sel, Field, Name, Tag, Opt, stars } from '../../kit';
+import { Btn, Panel, Window, Sel, Field, Name, Tag, Opt } from '../../kit';
 import { pickSide } from './run';
 
 type Cat = 'promo' | 'angle';
@@ -68,10 +68,12 @@ export function SegRows(p: { i: number; n: number; c: any }) {
       <div class="no" aria-hidden="true"><span>{x.t === 'promo' ? 'MIC' : (x.t === 'angle' ? 'ANG' : 'WRI')}</span>{it ? <small class="at">{hm(it.at)}</small> : null}</div>
       <div class="body"><div class="line1">
         <div><div class="who">{x.why ? <span class="bad">{x.why}</span> : (x.who.length ? x.who.map((id: number, q: number) => <>{q ? ', ' : null}<Name w={S.w[id]} /></>) : <span>The writers decide</span>)}</div>
-          <div class="meta">{x.t === 'any' ? '' : CATN[x.t] + ': '}{E.SEGK[x.k].n} {'·'} {E.SEGLENN[x.len]}, {x.mins} min{x.look && x.look.mid != null ? <> {'·'} should be about <b class="gold">{stars(x.look.mid)}</b></> : null}{it && it.top ? <> {'·'} <TopTag top={it.top} /></> : null}</div></div>
+          <div class="meta">{x.t === 'any' ? '' : CATN[x.t] + ': '}{E.SEGK[x.k].n} {'·'} {E.SEGLENN[x.len]}, {x.mins} min{it && it.top ? <> {'·'} <TopTag top={it.top} /></> : null}</div></div>
         <div class="row"><Btn kind="sm" t="seg-edit" d={{ v: x.slot }} onClick={() => openSeg(x.slot)}>Change</Btn>
           <Btn kind="sm" t="seg-rm" d={{ v: x.slot }} onClick={() => act(() => { const r = E.setSeg(S, x.slot, null); say(r.msg); })}>Remove</Btn></div>
-      </div></div>
+      </div>
+      {x.look && x.look.read && x.k !== 'writers' ? <div class="agentsay" data-t="seg-read"><p class={x.look.read.k === 'good' ? 'good' : (x.look.read.k === 'bad' ? 'bad' : 'muted')}>{x.look.read.t}</p></div> : null}
+      </div>
     </div>;
   })}</>;
 }
@@ -117,7 +119,7 @@ export function SegWindow(_p: { m: Modal }) {
     })}</div>
     {look ? (look.ok ? <>
       {look.mid != null
-        ? <p class="mt2" data-t="seg-look">It should be about <b class="gold">{stars(look.mid)}</b> <span class="muted">(between {stars(look.lo)} and {stars(look.hi)} on the night)</span>. It takes <b>{look.mins} minutes</b>.</p>
+        ? <p class="mt2" data-t="seg-look"><span class={look.read.k === 'good' ? 'good' : (look.read.k === 'bad' ? 'bad' : undefined)}>{look.read.t}</span> It takes <b>{look.mins} minutes</b>.</p>
         : <p class="mt2" data-t="seg-look">The writers get <b>{look.mins} minutes</b>. What they do with it, you find out on the night.</p>}
       {look.notes.length ? <p class="muted">{look.notes.map((x: any, q: number) => <span key={q} class={x[0] > 0 ? 'good' : (x[0] < 0 ? 'bad' : undefined)}>{q ? ' · ' : ''}{x[0] > 0 ? '▲' : (x[0] < 0 ? '▼' : '')} {x[1]}</span>)}</p> : null}
     </> : <p class="bad mt2" data-t="seg-look">{look.why}</p>)
