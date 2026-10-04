@@ -476,7 +476,7 @@ html[data-music="off"] .mus::after{content:' off';color:var(--dred)}
 [data-t="rel-notes"] .r,[data-t="rel-you"] .r{text-align:left;display:grid;gap:.25em}
 
 /* There is no portrait layout. A tall, narrow window gets one line asking for a wide one, and nothing else. */
-@media (orientation:portrait) and (max-width:720px){
+@media (orientation:portrait) and (max-width:520px){
   #app{display:none}
   body::before{content:'EWF 9000 needs a wide screen. Turn your device sideways, or make the window wider.';position:fixed;inset:0;z-index:99;display:flex;align-items:center;justify-content:center;text-align:center;padding:2em;background:var(--blue);color:var(--yellow);font-size:1.3em;line-height:1.4}
 }
