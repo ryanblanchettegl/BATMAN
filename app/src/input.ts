@@ -42,7 +42,9 @@ export function isText(el: any): boolean { return !!el && (el.tagName === 'TEXTA
 export function navHome(): boolean {
   const scope = navScope();
   let el = scope.querySelector('[data-home]') as HTMLElement | null;
-  if (!el) el = (scope.querySelector('.dmenu .mi.on') || scope.querySelector('#live-go') || scope.querySelector('#modal-ok')) as HTMLElement | null;
+  // on a broadcast the big button is home, unless a call is waiting: then the first answer is
+  if (!el && scope.querySelector('#live') && !scope.querySelector('[data-t="live-call"]')) el = document.querySelector('[data-t="advance"]') as HTMLElement | null;
+  if (!el) el = (scope.querySelector('.dmenu .mi.on') || scope.querySelector('#modal-ok')) as HTMLElement | null;
   if (!el) { const L = focusables(scope), M = L.filter(e => !e.closest('.menu') && !e.closest('.status') && !e.closest('.ftop') && !e.closest('.ffoot') && !e.closest('.wt') && !e.classList.contains('caw-x')); el = M[0] || L[0] || null; }
   if (el) { try { el.focus(); el.scrollIntoView({ block: 'nearest' }); } catch (e) { /* ignore */ } }
   return !!el;

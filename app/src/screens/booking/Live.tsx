@@ -2,6 +2,7 @@
    result). Right: tonight's run sheet, with stars for what has aired and a mark on what is on now. Commentary fills
    from the top; when there is more than fits, the oldest lines go off the top, as on a terminal.
    A show on the air runs one segment at a time and nobody knows how it comes out, the booker included: Continue
+   (the big yellow button at the top right, Enter or Space: the broadcast has no continue button of its own)
    asks the engine for the next thing (src/31-live.js). When the gorilla position needs a call, the show stops on a
    box with the choices, and only an answer moves it on. A show on the air cannot be skipped. A finished show can
    be replayed from its report, and a replay can be skipped. */
@@ -12,7 +13,7 @@ import { G, ui, me } from '../../store';
 import { book } from '../../flow';
 import { Btn, KV, Meter, Banner, BeltArt, Portrait, CheckLine, stars, grade } from '../../kit';
 import { Verdict, OddsLine, FxList, Crowd } from './Report';
-import { typer, preNote, liveNext, liveSkip, liveEnd, liveDone, liveDecide, liveCall, onAir } from './run';
+import { typer, preNote, liveSkip, liveEnd, liveDecide, liveCall, onAir, livePos } from './run';
 import { hm } from './Segments';
 
 /** Text that types itself out once, when it first appears. Esc, Back or the continue button finishes it at once.
@@ -147,12 +148,12 @@ const DOT = ' · ';
 export function Live(p: { r: any }) {
   const r = p.r, air = onAir(), ev = liveCall(), S = G.S, info = air ? E.liveInfo(S) : null;
   // a game loaded with a show on the air picks up where the show had got to
-  const L = book().live || (book().live = { s: r.segs.length - 1, b: 9999 });
+  const L = livePos(r);
   const n = air ? S.live.st.steps.length : r.segs.length, ms = r.segs.filter((s: any) => s.k === 'match');
   const s = L.s >= 0 && L.s < r.segs.length ? r.segs[L.s] : null, done = !!s && L.b >= (s.bc || []).length, nx = r.segs[L.s + 1];
-  // each time the show moves on, the continue button takes the highlight (so Enter and OK keep it going)
+  // each time the show moves on, the big button takes the highlight (so Enter and OK keep it going). On a call the highlight is left to the answers.
   useLayoutEffect(() => {
-    const el = document.getElementById('live-go'); if (!el || ui.modal) return;
+    const el = document.querySelector('[data-t="advance"]') as HTMLElement | null; if (!el || ui.modal || ev) return;
     try { el.focus({ preventScroll: true }); } catch (e) { /* ignore */ }
   }, [r, L.s, L.b, ev ? ev.id : 0]);
   useLayoutEffect(() => {
@@ -174,17 +175,16 @@ export function Live(p: { r: any }) {
   } else if (L.s < 0) {
     state = 'title';
     log = <TitleCard r={r} />;
-    foot = <><Btn id="live-go" kind="go" t="live-next" onClick={liveNext}>Ring the bell</Btn>{air ? null : <Btn kind="sm" t="live-end" onClick={liveEnd}>Skip to the results</Btn>}</>;
+    foot = air ? null : <Btn kind="sm" t="live-end" onClick={liveEnd}>Skip to the results</Btn>;
   } else if (!s) {
     state = 'signoff';
     log = <SignOff r={r} ms={ms} />;
-    foot = <Btn id="live-go" kind="go" t="live-done" onClick={liveDone}>See the full report</Btn>;
+    foot = null;
   } else {
     state = 'seg';
     head = <SegHead rows={rows} si={L.s} s={s} />;
     log = <SegLines key={L.s} r={r} s={s} at={L.b} done={done} />;
     foot = <>
-      <Btn id="live-go" kind="go" t="live-next" onClick={liveNext}>{!done ? 'Continue' : (air ? (S.live.st.k < S.live.st.steps.length ? 'What is next' : 'Go off the air') : (nx ? (nx.k === 'match' ? 'Next match' : 'Next') : 'Close the show'))}</Btn>
       {!done && <Btn kind="sm" t="live-skip" onClick={liveSkip}>Skip to the result</Btn>}
       {!air && (L.s < n - 1 || !done) && <Btn kind="sm" t="live-end" onClick={liveEnd}>Skip the rest of the replay</Btn>}
     </>;
@@ -197,7 +197,7 @@ export function Live(p: { r: any }) {
         {head}
         <div class={'lv-log' + (state === 'title' || state === 'signoff' ? ' mid' : '')}><div class="lv-lines">{log}</div></div>
         {box}
-        {ev ? null : <div class="foot">{foot}<span class="blink" aria-hidden="true">_</span><span class="keys-hint">Enter continue</span></div>}
+        {ev ? null : <div class="foot">{foot}<span class="blink" aria-hidden="true">_</span><span class="keys-hint">The yellow button, Enter or Space: on with the show</span></div>}
       </div>
       <Night rows={rows} at={post ? ev.si : L.s} done={done || !!post} wait={ev && !post ? info.step : -1} call={!!ev} info={info} />
     </div>

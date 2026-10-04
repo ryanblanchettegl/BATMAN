@@ -85,10 +85,10 @@ async function airShow(page, opts) {
       await page.click('[data-t="live-pick"][data-c="' + (opts.pick ? opts.pick(k) : safe) + '"]');
       continue;
     }
-    if (await has('[data-t="live-done"]')) { if (opts.report !== false) await page.click('[data-t="live-done"]'); return calls; }
+    if (await has('#live[data-v="signoff"]')) { if (opts.report !== false) await page.click('[data-t="advance"]'); return calls; }
     if (await has('[data-t="live-end"]')) { await page.click('[data-t="live-end"]'); continue; }
     if (await has('[data-t="live-skip"]')) { await page.click('[data-t="live-skip"]'); continue; }
-    if (await has('#live-go')) { await page.click('#live-go'); continue; }
+    if (await has('#live')) { await page.click('[data-t="advance"]'); continue; }   // the big yellow button is the only way forward
     throw new Error('the broadcast has no way forward');
   }
   throw new Error('the broadcast never ended');

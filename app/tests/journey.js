@@ -15,7 +15,7 @@ async function run(mode, weeks) {
       if (await has('#live')) {   // on the air: every call answered, and each one has to fit the screen
         await fit('title card w' + w);
         await airShow(page, { report: false, pick: k => (w + k.length) % 2, onCall: async k => { await fit('call ' + k + ' w' + w); } });
-        await fit('sign-off w' + w); await page.click('[data-t="live-done"]'); await fit('report w' + w); continue;
+        await fit('sign-off w' + w); await page.click('[data-t="advance"]'); await fit('report w' + w); continue;
       }
       if (await has('[data-t="closeReport"]')) { await page.click('[data-t="closeReport"]'); continue; }
       if (await has('[data-t="pre"]')) { await page.click('[data-t="pre"]'); continue; }

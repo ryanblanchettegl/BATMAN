@@ -50,7 +50,7 @@ async function run(mode, w, h) {
     ok(id, 'the broadcast is a one-screen page', await has(page, '#live.onescreen'));
     await fit('the title card');
     let results = 0, calls = 0;
-    for (let g = 0; g < 900 && !(await has(page, '[data-t="live-done"]')); g++) {
+    for (let g = 0; g < 900 && !(await has(page, '#live[data-v="signoff"]')); g++) {
       if (await has(page, '[data-t="live-call"]')) {
         const k = await page.$eval('[data-t="live-call"]', e => e.getAttribute('data-v') + ', ' + e.querySelectorAll('[data-t="live-pick"]').length + ' answers');
         await page.waitForTimeout(430); await fit('a call (' + k + ')');
@@ -59,10 +59,10 @@ async function run(mode, w, h) {
         const n = await page.$$eval('[data-t="live-pick"]:not([disabled])', a => a.length);
         await page.click('[data-t="live-pick"]:not([disabled]) >> nth=' + (n - 1)); continue;
       }
-      if (await has(page, '#live .result')) { results++; await fit('result ' + results); if (w === 1280 && h === 720 && results === 1) await shot(page, 'onescreen-result'); await page.click('#live-go'); continue; }
-      if (await has(page, '[data-t="live-skip"]')) await page.click('[data-t="live-skip"]'); else await page.click('#live-go');
+      if (await has(page, '#live .result')) { results++; await fit('result ' + results); if (w === 1280 && h === 720 && results === 1) await shot(page, 'onescreen-result'); await page.click('[data-t="advance"]'); continue; }
+      if (await has(page, '[data-t="live-skip"]')) await page.click('[data-t="live-skip"]'); else await page.click('[data-t="advance"]');
     }
-    ok(id, 'the show reached its sign-off', await has(page, '[data-t="live-done"]') && results >= 4, results + ' results');
+    ok(id, 'the show reached its sign-off', await has(page, '#live[data-v="signoff"]') && results >= 4, results + ' results');
     await fit('the sign-off');
     ok(id, 'no errors', errs.length === 0, errs.slice(0, 3).join(' | '));
   } catch (e) { ok(id, 'the run finished', false, String(e.message).split('\n')[0]); await shot(page, 'onescreen-fail-' + mode + w).catch(() => { }); }

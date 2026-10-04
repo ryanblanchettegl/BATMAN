@@ -33,9 +33,9 @@ async function walk(page, on, between) {
       await state(page, S => { if (S.live) S.live.cnt = 0; });   // the test wants every call it set up, whatever else the night brought
       continue;
     }
-    if (await has(page, '[data-t="live-done"]')) return seen;
-    if (await has(page, '#live .result')) { if (between) await between(); await page.click('#live-go'); continue; }
-    if (await has(page, '[data-t="live-skip"]')) await page.click('[data-t="live-skip"]'); else await page.click('#live-go');
+    if (await has(page, '#live[data-v="signoff"]')) return seen;
+    if (await has(page, '#live .result')) { if (between) await between(); await page.click('[data-t="advance"]'); continue; }
+    if (await has(page, '[data-t="live-skip"]')) await page.click('[data-t="live-skip"]'); else await page.click('[data-t="advance"]');
   }
   throw new Error('the broadcast never ended');
 }
@@ -74,7 +74,7 @@ async function run(mode) {
       }
     }, async () => { if (!quiet) await state(page, S => { const segs = S.live ? S.live.st.rep.segs : []; if (segs.length) segs[segs.length - 1].cr = 30; }); });
     ok(mode, 'both calls came up', one.includes('botch') && one.includes('audible'), one.join(', '));
-    await page.click('[data-t="live-done"]');
+    await page.click('[data-t="advance"]');
     ok(mode, 'the report lists the calls', (await whole(page, '[data-t="rep-calls"]')).includes('Stop the match'));
     await page.click('[data-t="closeReport"]');
 
@@ -100,7 +100,7 @@ async function run(mode) {
       }
     });
     ok(mode, 'both calls came up', twoSeen.includes('network') && twoSeen.includes('overtime'), twoSeen.join(', '));
-    await page.click('[data-t="live-done"]');
+    await page.click('[data-t="advance"]');
 
     /* ---- next week: the sponsor at ringside ---- */
     await nextWeek(page);

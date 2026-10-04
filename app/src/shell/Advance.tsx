@@ -6,15 +6,17 @@ import { G, ui, act, say } from '../store';
 import { go } from '../nav';
 import { endWeek, book } from '../flow';
 import { onKey } from '../input';
-import { run } from '../screens/booking/run';
+import { run, liveStep, liveGo, onAir } from '../screens/booking/run';
 
 /** Is the broadcast on screen? Then the button carries the show forward. */
-function live(): boolean { const b = book(); return ui.page === 'booking' && ((!!G.S && !!G.S.live) || (b.report != null && !!b.live)) && !!document.getElementById('live-go'); }
+function live(): boolean { return !!liveStep(); }
 function reportOpen(): boolean { const b = book(); return ui.page === 'booking' && b.report != null; }
 
 /** What the button says right now: one or two words (short), and the same thing as a sentence (label). */
-export function advanceNow(): { short: string; label: string; day: string; k: string; why: string[] } {
-  const S = G.S, A = E.advance(S), sh = S.queue[S.qi];
+export function advanceNow(): { short: string; label: string; day: string; k: string; why: string[]; live?: string } {
+  const S = G.S, A = E.advance(S), sh = S.queue[S.qi], st = liveStep();
+  // a broadcast on screen: the button is the only way forward, and says what it will do
+  if (st) return { short: st.short, label: st.label, day: onAir() ? 'On the air' : 'Replay', k: 'live', why: [], live: st.k };
   if (S.live) { const call = S.live.ev && !S.live.ev.done; return { short: call ? 'Your call' : 'Continue', label: call ? 'The gorilla position is waiting for your answer' : 'The show is on the air', day: 'On the air', k: 'live', why: [] }; }
   if (A.k !== 'over' && reportOpen() && book().live) return { short: 'Continue', label: 'On with the replay', day: 'Replay', k: 'live', why: [] };
   if (A.k === 'run' && ui.page !== 'booking') return { short: 'Open card', label: 'The card for ' + sh.name + ' is ready. Open it, then run the show.', day: A.day, k: 'book', why: [] };
@@ -35,7 +37,7 @@ function toDesk() {
 /** Press the button: go to the next decision, or do the one thing that is a single press. */
 export function pressAdvance() {
   const S = G.S; if (!S || S.over || ui.modal || ui.cards.length) return;
-  if (live()) { (document.getElementById('live-go') as HTMLElement).click(); return; }
+  if (live()) { liveGo(); return; }
   if (S.live) { if (ui.page !== 'booking') go('booking'); else act(() => say('The gorilla position is waiting for your call.')); return; }
   if (reportOpen()) { const b = book(); act(() => { b.report = null; b.live = null; }); }
   const A = E.advance(S);
@@ -59,7 +61,7 @@ export function pressAdvance() {
 export function AdvanceBtn() {
   const S = G.S; if (!S || S.over) return null;
   const A = advanceNow(), lines = A.k === 'task' ? A.why : [A.label].concat(A.why);
-  return <button type="button" class={'adv k-' + A.k} data-t="advance" data-v={A.k} aria-label={A.short + ': ' + A.label} onClick={pressAdvance}>
+  return <button type="button" class={'adv k-' + A.k} data-t="advance" data-v={A.k} data-live={A.live} aria-label={A.short + ': ' + A.label} onClick={pressAdvance}>
     <b>{A.short}</b>
     <span class="tip" data-t="adv-tip" role="note"><span class="th">{A.k === 'task' ? 'Needs you first' : (A.day || 'Next')}</span>{lines.map((x, i) => <span class="tl" key={i}>{x}</span>)}<span class="hint">{A.k === 'task' ? 'Press to go to your desk.' : 'Space bar, or Play on a remote'}</span></span>
   </button>;
@@ -73,6 +75,5 @@ onKey(e => {
   if (e.key !== ' ' || !G.S || G.S.over || ui.modal || ui.cards.length || ui.boot || e.ctrlKey || e.metaKey || e.altKey) return false;
   const tag = (e.target as HTMLElement).tagName;
   if (tag === 'INPUT' || tag === 'SELECT' || tag === 'TEXTAREA' || tag === 'BUTTON' || tag === 'TR') return false;
-  if (document.getElementById('live-go')) return false;   // the broadcast has its own space bar
   pressAdvance(); return true;
 });

@@ -57,7 +57,7 @@ async function run(mode) {
     } });
     ok(mode, 'the owner’s call came up', seen);
     ok(mode, 'the favourite won', await state(page, (S, a) => S.reports[0].segs.some(s => s.k === 'match' && s.wi && s.wi.includes(a.id) && (s.calls || []).some(c => c.k === 'owner')), set));
-    await page.click('[data-t="live-done"]');
+    await page.click('[data-t="advance"]');
 
     /* ---- who the show is built around ---- */
     let face = null;
@@ -87,7 +87,7 @@ async function run(mode) {
         ok(mode, 'the game records who the company is built around', await state(page, (S, a) => !!S.fc && S.fc.id === a.id && S.fc.w === S.week, main));
         await shot(page, 'direction-' + mode + '-face-after');
       } });
-      await page.click('[data-t="live-done"]');
+      await page.click('[data-t="advance"]');
     }
     ok(mode, 'the call about who the show is built around came up', !!face);
     if (face) {

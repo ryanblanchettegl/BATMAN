@@ -174,6 +174,30 @@ export function liveDecide(c: number) {
     stepLive();
   });
 }
+/** Where the broadcast is on screen. A game loaded with a show on the air picks up where the show had got to. */
+export function livePos(r: any): { s: number; b: number; aired?: boolean } { const b = book(); return b.live || (b.live = { s: r.segs.length - 1, b: 9999 }); }
+/** What the big yellow button does while a broadcast is showing, in one or two words. Null when none is. The button
+    is the only way forward: there is no second continue button on the broadcast itself. */
+export function liveStep(): { short: string; label: string; k: 'call' | 'title' | 'seg' | 'next' | 'off' | 'signoff' } | null {
+  const r = liveReport(); if (!r) return null;
+  if (liveCall()) return { short: 'Your call', label: 'The gorilla position is waiting for your answer', k: 'call' };
+  const S = G.S, air = onAir(), L = livePos(r), s = L.s >= 0 && L.s < r.segs.length ? r.segs[L.s] : null;
+  if (L.s < 0) return { short: 'Ring bell', label: 'Ring the bell and start the show', k: 'title' };
+  if (!s) return { short: 'Report', label: 'See the full report', k: 'signoff' };
+  if (L.b < (s.bc || []).length) return { short: 'Continue', label: 'On with the show', k: 'seg' };
+  if (air) return S.live.st.k < S.live.st.steps.length ? { short: 'Next', label: 'What is next on the show', k: 'next' } : { short: 'Sign off', label: 'Go off the air', k: 'off' };
+  const nx = r.segs[L.s + 1];
+  return nx ? { short: nx.k === 'match' ? 'Next match' : 'Next', label: 'On with the replay', k: 'next' } : { short: 'Sign off', label: 'Close the show', k: 'off' };
+}
+/** The big button, Enter and Space during a broadcast: the next line, the next thing on the show, or the report at
+    the sign-off. A call from the gorilla position waits for its own answer. */
+export function liveGo() {
+  const st = liveStep(); if (!st) return;
+  if (st.k === 'signoff') { typer.finish(); liveDone(); return; }   // the good-night line does not hold up the report
+  if (typer.active()) { typer.finish(); return; }
+  if (st.k === 'call') { act(() => say('The gorilla position is waiting for your call.')); return; }
+  liveNext();
+}
 /** Finish the line being typed and jump to this segment's result. */
 export function liveSkip() { typer.finish(); const r = liveReport(); if (r && !liveCall()) look(() => { const L = book().live!; if (r.segs[L.s]) L.b = (r.segs[L.s].bc || []).length; }); }
 /** In a replay only: skip to the sign-off. A show on the air cannot be skipped. */

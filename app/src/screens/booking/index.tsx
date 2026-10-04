@@ -13,7 +13,7 @@ import { SegWindow, OpenGuide } from './Segments';
 import { ShapeGuide } from './Shape';
 import { Live } from './Live';
 import { Report, Ladder } from './Report';
-import { typer, liveReport, liveSkip, liveCall, liveDecide, closeReport } from './run';
+import { typer, liveReport, liveSkip, liveCall, liveDecide, liveGo, closeReport } from './run';
 
 function WeekBooked() {
   return <>
@@ -29,7 +29,7 @@ function Booking() {
 }
 
 /* ---------- keys and Back ---------- */
-// While the broadcast is showing: Enter or Space presses the continue button, Esc finishes the line and skips to the
+// While the broadcast is showing: Enter or Space does what the big yellow button does, Esc finishes the line and skips to the
 // result, and the page shortcuts wait until the show is over (as in the old interface).
 onKey(e => {
   if (ui.modal || !liveReport() || G.S.over || e.ctrlKey || e.metaKey || e.altKey) return false;
@@ -37,7 +37,7 @@ onKey(e => {
   if (tag === 'INPUT' || tag === 'SELECT' || tag === 'TEXTAREA') return false;
   if (liveCall() && /^[1-9]$/.test(e.key)) { liveDecide(+e.key - 1); return true; }   // the number keys answer a call
   if (e.key === 'Escape') { liveSkip(); return true; }
-  if ((e.key === 'Enter' || e.key === ' ') && tag !== 'BUTTON') { const go = document.getElementById('live-go'); if (go) go.click(); return true; }
+  if ((e.key === 'Enter' || e.key === ' ') && tag !== 'BUTTON') { liveGo(); return true; }
   return e.key.length === 1 && !!HOT[e.key.toLowerCase()];
 });
 // Back skips the segment being broadcast, else closes an open report.

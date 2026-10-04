@@ -431,6 +431,8 @@ html.nav .adv:focus b{color:var(--yellow);text-shadow:none}
 .adv .tip .th{display:block;color:var(--yellow);text-transform:uppercase}
 .adv .tip .hint{display:block;color:var(--dcyan);margin-top:.2em}
 .adv:hover .tip,.adv:focus-visible .tip,html.nav .adv:focus .tip{display:block}
+/* on a broadcast the button holds the focus the whole show, so its note stays shut: the word on it is enough */
+.adv.k-live .tip{display:none!important}
 .status .tools{display:flex;flex-wrap:wrap;gap:0 2ch;align-items:center;margin-left:auto}
 .status .tools .mus{border:0;margin:0;padding:0;line-height:inherit}
 

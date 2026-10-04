@@ -15,14 +15,14 @@ const press = async page => { await page.click('[data-t="advance"]'); await page
 /** Carry one show from "run" to its report using only the button, answering whatever stops it on the way. */
 async function runShow(page, mode) {
   await press(page);
-  for (let i = 0; i < 6 && !(await has(page, '#live-go')); i++) {
-    if (await has(page, '[data-t="pre"]')) { await page.click('[data-t="pre"][data-c="0"]'); await page.waitForTimeout(40); if (!(await has(page, '.win')) && !(await has(page, '#live-go'))) await press(page); }
+  for (let i = 0; i < 6 && !(await has(page, '#live')); i++) {
+    if (await has(page, '[data-t="pre"]')) { await page.click('[data-t="pre"][data-c="0"]'); await page.waitForTimeout(40); if (!(await has(page, '.win')) && !(await has(page, '#live'))) await press(page); }
     else if ((await adv(page)).k === 'book') { await page.click('[data-t="suggest"]'); await press(page); }
     else await press(page);
     await page.waitForTimeout(60);
   }
-  ok(mode, 'the button ran the show', await has(page, '#live-go'), await flash(page));
-  ok(mode, 'on the air, the button carries the show forward', (await adv(page)).k === 'live' && /^CONTINUE$/i.test((await adv(page)).t), (await adv(page)).t);
+  ok(mode, 'the button ran the show', await has(page, '#live'), await flash(page));
+  ok(mode, 'on the air, the button carries the show forward', (await adv(page)).k === 'live' && /^RING BELL$/i.test((await adv(page)).t), (await adv(page)).t);
   let asked = false;
   for (let i = 0; i < 900 && await has(page, '#live'); i++) {
     if (await has(page, '[data-t="live-call"]')) {   // a call from the gorilla position: the button names it and waits, it does not answer
