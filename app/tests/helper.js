@@ -53,10 +53,21 @@ async function overflow(page) {
     return 'page is ' + o + 'px too wide: ' + [...document.querySelectorAll('.crt *, .win *, .caw *')].filter(e => e.getBoundingClientRect().right > W + 1 && !e.closest('.tw') && !e.closest('pre') && !e.closest('.menu')).slice(0, 4).map(e => e.tagName + '.' + e.className + ' "' + (e.innerText || '').slice(0, 40).replace(/\n/g, ' ') + '"').join(' | ');
   });
 }
+/** On a one-screen page: '' if nothing needs scrolling, else what does not fit. Other pages always answer ''. */
+async function fits(page) {
+  return page.evaluate(() => {
+    if (!document.querySelector('.onescreen')) return '';
+    const d = document.documentElement, bad = [], over = (sel, name) => { const e = document.querySelector(sel); if (e && e.scrollHeight - e.clientHeight > 1) bad.push(name + ' is ' + (e.scrollHeight - e.clientHeight) + 'px too tall'); };
+    if (d.scrollHeight - d.clientHeight > 1) bad.push('the page scrolls by ' + (d.scrollHeight - d.clientHeight) + 'px');
+    over('.main', 'the page area'); over('.b1-pane', 'the pane beside the sheet'); over('.b1-pane > .panel', 'the panel in the pane'); over('.b1-rows', 'the run sheet');
+    const st = document.querySelector('.ffoot'); if (st && st.getBoundingClientRect().bottom > window.innerHeight + 1) bad.push('the status line is off the screen');
+    return bad.join('; ');
+  });
+}
 async function shot(page, name, full) { await page.screenshot({ path: path.join(SHOTS, name + '.png'), fullPage: !!full }); }
 /** The one-line message above the page, or '-'. */
 async function flash(page) { return (await page.$eval('.flash', e => e.innerText).catch(() => '-')).replace(/\n/g, ' ').slice(0, 200); }
 /** Read or change the live game state, e.g. state(page, S => S.week). The function runs in the browser. */
 async function state(page, fn, arg) { return page.evaluate(new Function('arg', 'return (' + fn.toString() + ')(window.EWF_DEBUG.state(), arg)'), arg); }
 async function redraw(page) { await page.evaluate(() => window.EWF_DEBUG.render()); }
-module.exports = { open, go, overflow, shot, flash, state, redraw, SHOTS };
+module.exports = { open, go, overflow, shot, flash, state, redraw, SHOTS, fits };

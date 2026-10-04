@@ -51,3 +51,76 @@
 .shape{list-style:none;margin:0;padding:0;display:grid;gap:.35em}
 .shape li{padding-left:2ch;text-indent:-2ch}
 .rules{margin:.6em 0 0;padding-left:3ch;display:grid;gap:.6em}
+
+/* ---------- one screen: the card builder fills the window exactly, and nothing scrolls ----------
+   A page marks itself with .onescreen. The frame then becomes exactly one window tall, the page gets what is left
+   between the bars, and its parts share that height. Type is sized from the window's height as well as its width
+   (base.css, --fs), so the same 29 lines of text fit whatever the window's shape. */
+#app:has(.onescreen){height:100vh;min-height:0}
+html[data-screen="tv"] #app:has(.onescreen){height:95vh;min-height:0}
+#app:has(.onescreen) > .crt{flex:1 1 0;min-height:0;overflow:hidden}
+.main:has(.onescreen){position:relative;min-height:0;overflow:hidden;display:flex;flex-direction:column;padding-block:6px 6px}
+/* a message lies over the top of the page instead of pushing it down */
+.main:has(.onescreen) > .flash{position:absolute;z-index:4;left:2ch;right:3ch;top:4px;margin:0}
+.onescreen{flex:1 1 0;min-height:0;display:flex;flex-direction:column;gap:6px}
+.clamp2{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden}
+
+/* the head of the card builder: four tight lines */
+.b1-head{flex:none;margin:0;display:block;text-align:center}
+.b1-title{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:center;gap:0 2ch}
+.b1-title h1{font-size:1.9em;line-height:1}
+.b1-btns{margin-top:4px}
+.b1-btns .btn{margin-bottom:.32em}
+/* the run sheet on the left, the pane on the right */
+.b1-body{flex:1 1 0;min-height:0;display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:0 2ch}
+.b1-sheet{min-height:0;min-width:0;display:flex;flex-direction:column;border:4px double var(--grey)}
+.b1-cap{flex:none;padding:1px 1ch;border-bottom:1px solid var(--grey);display:flex;justify-content:space-between;gap:1ch;white-space:nowrap;overflow:hidden}
+.b1-rows{flex:1 1 0;min-height:0;display:grid;gap:0;grid-template-rows:repeat(var(--rows,13),minmax(0,1fr));overflow:hidden}
+.b1-rows .seg{display:block;border:0;border-bottom:1px dotted #2a3590;min-height:0}
+.b1-rows .seg .no{display:inline;border:0;padding:0;font-size:1em;background:none;text-align:center}
+.b1-rows .seg .who{font-size:1em}
+.r1b{all:unset;box-sizing:border-box;cursor:pointer;display:grid;grid-template-columns:5ch 4ch minmax(0,1.25fr) minmax(0,1fr);gap:0 1ch;align-items:center;width:100%;height:100%;padding:0 1ch;white-space:nowrap}
+.r1b > span{overflow:hidden;text-overflow:ellipsis;min-width:0}
+.r1b *{white-space:nowrap}
+.r1b .at{color:var(--dcyan)} .r1b .no{color:var(--cyan)} .r1b .who{color:var(--white)} .r1b .meta{color:var(--dcyan)}
+.b1-rows .seg.sg .no{color:var(--mag)}
+.b1-rows .seg.me .no{background:var(--yellow);color:var(--k)}
+.b1-rows .seg.top .at{color:var(--yellow)}
+.b1-rows .seg.bad .who{color:var(--red)}
+.b1-rows .seg.sel .r1b,.r1b:hover,.r1b:focus-visible{background:var(--dcyan);outline:0}
+.b1-rows .seg.sel .r1b *,.r1b:hover *,.r1b:focus-visible *{color:var(--k)}
+.b1-rows .seg.sel .r1b{background:var(--yellow)}
+.b1-empty{grid-row:1/-1;padding:10px 1.5ch}
+.b1-foot{flex:none;display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:0 2ch;padding:1px 1ch;border-top:1px solid var(--grey);color:var(--dcyan)}
+.b1-foot .btn{margin-bottom:0}
+.b1-side{min-height:0;min-width:0;display:flex;flex-direction:column;gap:4px}
+.b1-side .subnav{flex:none;margin:0;gap:4px 0}
+.b1-pane{flex:1 1 0;min-height:0;display:flex;flex-direction:column;overflow:hidden;padding-top:.7em}
+.b1-pane > .panel{flex:1 1 0;min-height:0;display:flex;flex-direction:column;gap:4px}
+.b1-pane .flash{margin:0 1ch 8px 0}
+.b1-pane .list li{padding:3px 0}
+.pgr{margin-top:4px;justify-content:flex-end}
+.pgr .btn{margin-bottom:0}
+.tips{list-style:none;margin:0;padding:0;display:grid;gap:5px}
+/* the selected match: its line, what the agent says, and a compact editor (label beside box, two to a row) */
+.d1 .agentsay{margin:0;padding:0;border:0}
+.d1-btns{margin-top:auto;padding-top:4px}
+.d1-btns .btn{margin-bottom:.32em}
+.b1-pane .editor{margin-top:2px;padding-top:6px;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px 2ch}
+.b1-pane .editor .side{display:contents}
+.b1-pane .editor label.f{display:grid;grid-template-columns:9.5ch minmax(0,1fr);align-items:center;gap:0 1ch;white-space:nowrap}
+.b1-pane .editor label.f select{min-width:0;width:100%}
+.b1-pane .promo{gap:4px}
+.b1-pane .promo label.f{display:grid;grid-template-columns:12ch minmax(0,1fr);align-items:center;gap:0 1ch}
+.r1b .tag{white-space:nowrap}
+/* a tablet's controls are sized for a finger everywhere else; on a one-screen page they give a little of that back */
+html[data-screen="tablet"] .onescreen .btn{padding:.24em 1.2ch;margin-bottom:.4em}
+html[data-screen="tablet"] .onescreen :is(select,input[type=text],input[type=search],input[type=number]){min-height:1.7em}
+html[data-screen="tablet"] .b1-side .subnav .btn{padding-inline:.8ch;margin-right:.4ch}
+html[data-screen="tablet"] .b1-pane .editor label.f{grid-template-columns:8.5ch minmax(0,1fr)}
+html[data-screen="tablet"] .b1-pane .list li{padding-block:2px}
+.d1 .agentsay p,.d1-meta{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden}
+html[data-screen="tablet"] .d1-meta{-webkit-line-clamp:1}
+html[data-screen="tablet"] .d1 [data-t="ed-note"]{display:none}
+html[data-screen="tablet"] .b1-pane .editor{gap:3px 1.5ch;padding-top:4px}
+html[data-screen="tablet"] .b1-pane .clocklist + p{display:none}

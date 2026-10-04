@@ -1,4 +1,5 @@
-/* The editor that opens under a match on the card: who is in it, the finish you call, the title, the rules. */
+/* The editor for the match selected on the run sheet: who is in it, the finish you call, the title, the rules.
+   It sits in the pane beside the sheet, so it is compact: short labels beside their boxes, and one line of advice. */
 import { E, W } from '../../engine';
 import { G, me } from '../../store';
 import { Sel, Field, Opt, Data, teamName } from '../../kit';
@@ -13,8 +14,8 @@ function WrestlerSel(p: { id: string; sel: number | null; d: Data; elig: W[]; bu
 }
 function slotLabel(m: Match, k: number, p: number): string {
   if (m.sides.length > 2) return (m.mt === 'br' ? 'Entrant ' : 'Wrestler ') + (k + 1);
-  if (m.sides[k].length > 1) return 'Team ' + (k + 1) + ', member ' + (p + 1);
-  return k === 0 ? 'In this corner' : 'Opponent';
+  if (m.sides[k].length > 1) return 'Team ' + (k + 1) + (p ? ', ' + (p + 1) : '');
+  return k === 0 ? 'Corner' : 'Opponent';
 }
 const INT_NOTE: Record<string, string> = { safe: ' · less wear, flatter crowd', brutal: ' · louder crowd, heavy wear' };
 
@@ -33,27 +34,24 @@ export function Editor(p: { m: Match; i: number }) {
   // picking a regular team fills the side, then the list goes back to its heading so it can be used again
   const pickTeam = (k: number, id: string) => (v: string) => { setMatch(i, 'team', v, { s: k }); const el = document.getElementById(id) as HTMLSelectElement | null; if (el) el.value = ''; };
   return <div class="editor">
-    <Field label="Match type"><Sel id={'m' + i + '-type'} t="mt" d={{ i }} value={m.mt} onChange={v => setMatch(i, 'mt', v)} options={Object.keys(E.MT).map(k => [k, E.MT[k].n] as Opt)} /></Field>
+    <Field label="Type"><Sel id={'m' + i + '-type'} t="mt" d={{ i }} value={m.mt} onChange={v => setMatch(i, 'mt', v)} options={Object.keys(E.MT).map(k => [k, E.MT[k].n] as Opt)} /></Field>
     {m.sides.map((s: (number | null)[], k: number) => <div class="side">
       {s.map((id, q) => <Field label={slotLabel(m, k, q)}>
         <WrestlerSel id={'m' + i + '-s' + k + '-' + q} sel={id} d={{ i, s: k, p: q }} elig={elig} busy={busy} onChange={v => setMatch(i, 'slot', v, { s: k, p: q })} />
       </Field>)}
-      {teams.length > 0 && <Field label="Or pick a team"><Sel id={'m' + i + '-t' + k} t="team" d={{ i, s: k }} value="" onChange={pickTeam(k, 'm' + i + '-t' + k)}
+      {teams.length > 0 && <Field label="Or a team"><Sel id={'m' + i + '-t' + k} t="team" d={{ i, s: k }} value="" onChange={pickTeam(k, 'm' + i + '-t' + k)}
         options={[['', 'Regular teams'], ...teams.map((t: any) => [t.id, teamName(t)] as Opt)]} /></Field>}
     </div>)}
-    <Field label="Call the finish"><Sel id={'m' + i + '-call'} t="call" d={{ i }} value={m.call} onChange={v => setMatch(i, 'call', v)} options={calls} /></Field>
-    <Field label="How it ends"><Sel id={'m' + i + '-how'} t="how" d={{ i }} value={m.how || ''} onChange={v => setMatch(i, 'how', v)}
+    <Field label="Finish"><Sel id={'m' + i + '-call'} t="call" d={{ i }} value={m.call} onChange={v => setMatch(i, 'call', v)} options={calls} /></Field>
+    <Field label="Ending"><Sel id={'m' + i + '-how'} t="how" d={{ i }} value={m.how || ''} onChange={v => setMatch(i, 'how', v)}
       options={[['', 'Let the story decide'], ...Object.keys(E.HOWS).filter(k => !(['cheap', 'dq', 'co'].includes(k) && E.hasRule(S, 'clean'))).map(k => [k, E.HOWS[k].n] as Opt)]} /></Field>
-    {m.how && <p class="muted wide">{E.finishPrice(m.how)}</p>}
-    {E.hasBoss(S) && <Field label="Made by the boss"><Sel id={'m' + i + '-boss'} t="boss" d={{ i }} value={m.boss ? '1' : ''} onChange={v => setMatch(i, 'boss', v)} options={[['', 'No'], ['1', 'Yes: it reads well if a story explains it']]} /></Field>}
-    {E.agents(S).length > 0 && <Field label="Road agent"><Sel id={'m' + i + '-agent'} t="agent" d={{ i }} value={m.agent == null ? '' : m.agent} onChange={v => setMatch(i, 'agent', v)} options={[['', 'No agent'], ...E.agents(S).map((a: any) => [a.id, a.name + ' · skill ' + a.skill + (S.card.filter((x: any) => x.agent === a.id).length >= 2 && m.agent !== a.id ? ' · covering two' : '')] as Opt)]} /></Field>}
-    <Field label="Title on the line"><Sel id={'m' + i + '-title'} t="title" d={{ i }} value={m.title} onChange={v => setMatch(i, 'title', v)}
+    {E.hasBoss(S) && <Field label="By the boss"><Sel id={'m' + i + '-boss'} t="boss" d={{ i }} value={m.boss ? '1' : ''} onChange={v => setMatch(i, 'boss', v)} options={[['', 'No'], ['1', 'Yes: it reads well if a story explains it']]} /></Field>}
+    {E.agents(S).length > 0 && <Field label="Agent"><Sel id={'m' + i + '-agent'} t="agent" d={{ i }} value={m.agent == null ? '' : m.agent} onChange={v => setMatch(i, 'agent', v)} options={[['', 'No agent'], ...E.agents(S).map((a: any) => [a.id, a.name + ' · skill ' + a.skill + (S.card.filter((x: any) => x.agent === a.id).length >= 2 && m.agent !== a.id ? ' · covering two' : '')] as Opt)]} /></Field>}
+    <Field label="Title"><Sel id={'m' + i + '-title'} t="title" d={{ i }} value={m.title} onChange={v => setMatch(i, 'title', v)}
       options={[['', 'No title'], ...titles.map((t: any) => [t.id, t.name + (t.holders.length ? '' : ' (vacant)')] as Opt)]} /></Field>
-    <Field label="Stipulation"><Sel id={'m' + i + '-stip'} t="stip" d={{ i }} value={m.stip} onChange={v => setMatch(i, 'stip', v)} options={Object.keys(E.STIP).map(k => [k, E.STIP[k].n] as Opt)} /></Field>
-    {E.STIPNOTE[m.stip] && <p class="muted wide">{E.STIPNOTE[m.stip]}</p>}
+    <Field label="Rules"><Sel id={'m' + i + '-stip'} t="stip" d={{ i }} value={m.stip} onChange={v => setMatch(i, 'stip', v)} options={Object.keys(E.STIP).map(k => [k, E.STIP[k].n] as Opt)} /></Field>
     <Field label="Intensity"><Sel id={'m' + i + '-int'} t="int" d={{ i }} value={m.int || 'normal'} onChange={v => setMatch(i, 'int', v)} options={Object.keys(E.INTN).map(k => [k, E.INTN[k].n + (INT_NOTE[k] || '')] as Opt)} /></Field>
     <Field label="Length"><Sel id={'m' + i + '-len'} t="len" d={{ i }} value={m.len} onChange={v => setMatch(i, 'len', v)} options={[['S', 'Short · ' + mm.S + ' min'], ['M', 'Medium · ' + mm.M + ' min'], ['L', 'Long · ' + mm.L + ' min']]} /></Field>
-    <p class="muted wide" data-t="len-note">On the clock that is {mm.now} minutes: {mm.bell} in the ring, the rest for entrances and a break. Bigger matches take longer to set up.</p>
-    {m.mt === '1v1' && m.sides[0][0] != null && m.sides[1][0] != null && <p class="muted wide">{E.pairMemory(S, m.sides[0][0], m.sides[1][0])}</p>}
+    <p class="muted wide clamp2" data-t="ed-note">{m.how ? E.finishPrice(m.how) : (E.STIPNOTE[m.stip] ? E.STIPNOTE[m.stip] : (m.mt === '1v1' && m.sides[0][0] != null && m.sides[1][0] != null ? E.pairMemory(S, m.sides[0][0], m.sides[1][0]) : 'On the clock this match takes ' + mm.now + ' minutes: ' + mm.bell + ' in the ring, the rest for entrances and a break.'))}</p>
   </div>;
 }

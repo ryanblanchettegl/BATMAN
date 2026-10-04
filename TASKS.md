@@ -183,6 +183,13 @@ Ryan's list of 3 October, after looking at the booking screen. Each step is buil
   - The old "ring chemistry" line in the match editor, and the road agent's block in "The office says", are gone: the row comment replaces both.
   - [ ] More to learn this way: style clashes, who works well in which stipulation, who draws in which city, hidden traits (careless, ego) when live events arrive.
   - [ ] The reads could be shown on the wrestler's card ("What we know about them").
+- [x] **(0.23) One screen, no scrolling: the card builder.** Ryan, 3 October: "before that we need to start having everything fit on one screen with no scrolling". Code: `app/src/screens/booking/Card.tsx`, `Side.tsx`, `Editor.tsx`, the end of `app/styles/booking.css`. Tests: `app/tests/onescreen.js` (six window sizes), `fits()` in the helper.
+  - The card builder is one fixed screen. Top: the show, what the crowd expects, booking power, the clock, the Add buttons. Left: the run sheet, one line for each match, promo and angle, with its start time. Right: whatever is selected on the sheet (a match with its editor and the road agent's comment, or a promo or an angle), or one of six tabs of notes when nothing is: Notes, Order, Clock, Promo, Stories, Targets.
+  - Move earlier, move later and Remove are in the pane for the selected match. What stands in the way of the show (tasks on the desk, the list of what to fix, a problem before the bell) shows in the pane too.
+  - A run sheet of more than 13 lines turns pages. Long lists in the pane turn pages. Nothing scrolls.
+  - Type is sized from the window's height as well as its width, so the page fits at 1280x720, 1920x1080, an ultrawide window, a tablet and a TV.
+  - [ ] The show report and the broadcast are still scrolling pages.
+  - [ ] Every other page (the desk, Roster, Stories, Net, Manage, Company, the title screens), one at a time.
 - [ ] **Step 5. Five goals for every show**, drawn from a first set of ten easy ones (later hundreds, from the stories in play). They move storylines, objectives and rookies along. Rewards differ: money, AP, the owner's mood, the fans' mood.
 - [ ] **Step 6. The page itself.** The opener and the main event look important, and so do big storyline moments. The right-hand side says much more: who won last week, winning runs, who has not been used in more than two weeks, relationship news, what the owner has liked lately.
 - [ ] Open question for Ryan: the Assistant panel on the Career page describes a helper who books and runs the small shows. With its two buttons gone it does nothing on screen. Remove it, or keep it for a later fast mode?

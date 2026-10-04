@@ -337,6 +337,11 @@ canvas.pt{width:6.1em;height:6.1em;flex:none;image-rendering:crisp-edges;image-r
 html[data-screen="desk"]{--fs:clamp(19px,1.62vw,32px)}
 html[data-screen="tablet"]{--fs:clamp(21px,2.15vw,30px)}
 html[data-screen="tv"]{--fs:clamp(22px,1.9vw,84px)}
+/* on a one-screen page type follows the window's height as well as its width, so that 29 lines always fit.
+   Pages that still scroll keep the sizes above until they are converted. */
+html[data-screen="desk"]:has(.onescreen){--fs:min(clamp(19px,1.62vw,32px),2.92vh)}
+html[data-screen="tablet"]:has(.onescreen){--fs:min(clamp(21px,2.15vw,30px),2.7vh)}
+html[data-screen="tv"]:has(.onescreen){--fs:min(clamp(22px,1.9vw,84px),2.78vh)}
 .main,.start{padding-inline:max(2ch,env(safe-area-inset-left,0px)) max(2ch,env(safe-area-inset-right,0px))}
 /* touch: controls a finger can hit */
 html[data-screen="tablet"] .btn{padding:.44em 1.5ch;margin-bottom:.55em}

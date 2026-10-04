@@ -1,7 +1,7 @@
 /* Booking: card builder, match editor, side panel, the run flow (pre-show incident, headset call), broadcast, report.
    Build:  EWF_OUT=next-booking EWF_DEV=1 node build.js
    Run:    NODE_PATH=/opt/npm-tools/node_modules node app/tests/booking.js */
-const { open, go, overflow, shot, flash, state } = require('./helper');
+const { open, go, overflow, shot, flash, state, fits } = require('./helper');
 const FILE = process.env.EWF_OUT || 'index';
 
 function ok(cond, msg) { if (!cond) throw new Error(msg); }
@@ -62,7 +62,7 @@ async function runShow(page, mode, check) {
 async function section(mode) {
   const { browser, page, errs } = await open({ mode, file: FILE });
   const steps = [];
-  const check = async name => { const o = await overflow(page); ok(o === '', mode + ' / ' + name + ': ' + o); ok(!errs.length, mode + ' / ' + name + ': ' + errs.join(' | ')); steps.push(name); };
+  const check = async name => { const o = await overflow(page); ok(o === '', mode + ' / ' + name + ': ' + o); const f = await fits(page); ok(f === '', mode + ' / ' + name + ' should fit one screen: ' + f); ok(!errs.length, mode + ' / ' + name + ': ' + errs.join(' | ')); steps.push(name); };
   const seg = i => '.sheet .seg[data-m="' + i + '"]';   // a match row; promos and angles sit between them
 
   /* ---- the card builder ---- */
@@ -70,7 +70,8 @@ async function section(mode) {
   const shows = await state(page, S => S.queue.map(q => q.name));
   ok(shows.length >= 2, mode + ': expected two shows this week');
   ok(await txt(page, '.head h1') === shows[0], mode + ': heading should be the first show');
-  ok(/The card is empty/.test(await txt(page, '.cols')), mode + ': empty card text');
+  ok(/The card is empty/.test(await txt(page, '.b1-rows')), mode + ': empty card text');
+  ok(await has(page, '.onescreen'), mode + ': the card builder is a one-screen page');
   ok(/This crowd expects an? [a-z- ]+\./.test(await txt(page, '.head')) && !/expects about/.test(await txt(page, '.head')) && !/%/.test(await txt(page, '[data-t="expect"]')), mode + ': what the crowd expects should be in words, not a number: ' + await txt(page, '.head'));
   await page.click('[data-t="ladder"]');
   ok((await page.$$('[data-t="ladder-list"] li')).length === 10 && (await page.$$('[data-t="ladder-list"] li.on')).length === 1 && /what your crowd expects/.test(await txt(page, '[data-t="ladder-list"] li.on')), mode + ': the ladder window should list ten rungs and mark this crowd’s');
@@ -81,24 +82,26 @@ async function section(mode) {
   const n = await count(page, '.sheet .seg:not(.sg)');   // matches only: promos and angles are .seg.sg
   ok(n >= 3 && n === await state(page, S => S.card.length), mode + ': suggested card');
   ok(await plant(page), mode + ': could not plant a headset call');
-  ok(await count(page, '[data-t="agent-say"]') === n && /no read|No read|cannot tell|Nothing to flag|My read|Hard to read|not a regular team|running on fumes|squash|bad way/.test(await txt(page, '[data-t="agent-say"]')), mode + ': every match should carry the road agent’s comment: ' + await txt(page, '[data-t="agent-say"]'));
-  ok(/comments on every match on the sheet/.test(await txt(page, '[data-t="fog-note"]')), mode + ': the office panel should say how the agent’s comments work');
+  ok(/comments on every match on the sheet/.test(await txt(page, '[data-t="fog-note"]')), mode + ': the notes pane should say how the agent’s comments work');
+  for (let i = 0; i < n; i++) { await page.click('[data-t="edit"][data-v="' + i + '"]'); ok(await page.$eval('[data-t="pane"]', e => e.getAttribute('data-v')) === 'match' && /no read|No read|cannot tell|Nothing to flag|My read|Hard to read|not a regular team|running on fumes|squash|bad way/.test(await txt(page, '[data-t="agent-say"][data-v="' + i + '"]')), mode + ': selecting match ' + (i + 1) + ' should show the road agent’s comment on it: ' + await txt(page, '[data-t="agent-say"]')); await check('match ' + (i + 1) + ' selected'); }
+  await page.click('[data-t="done"]');
+  ok(await page.$eval('[data-t="pane"]', e => e.getAttribute('data-v')) === 'advice', mode + ': Done lets go of the match and the notes come back');
   await check('suggest a card');
 
   /* ---- the match editor ---- */
   await page.click('[data-t="edit"][data-v="0"]');
-  ok(await has(page, seg(0) + ' .editor'), mode + ': editor should open');
+  ok(await has(page, '.b1-pane .editor') && await has(page, seg(0) + '.sel'), mode + ': the editor should open beside the sheet');
   await page.selectOption('#m0-int', 'brutal');
-  ok(await state(page, S => S.card[0].int) === 'brutal' && /Brutal/.test(await txt(page, seg(0) + ' .meta')), mode + ': intensity');
+  ok(await state(page, S => S.card[0].int) === 'brutal' && /Brutal/.test(await txt(page, '.d1-meta')), mode + ': intensity');
   await check('intensity');
   const stip = await page.$eval('#m0-stip', e => [...e.options].map(o => o.value).find(v => v !== 'std'));
   await page.selectOption('#m0-stip', stip);
   const stipName = await page.$eval('#m0-stip', e => e.options[e.selectedIndex].text);
-  ok(await state(page, S => S.card[0].stip) === stip && (await txt(page, seg(0) + ' .meta')).includes(stipName), mode + ': stipulation');
+  ok(await state(page, S => S.card[0].stip) === stip && (await txt(page, '.d1-meta')).includes(stipName) && (await txt(page, seg(0) + ' .meta')).includes(stipName), mode + ': stipulation');
   await check('stipulation');
   await state(page, S => { S.card.forEach((m, i) => { if (i) delete m.call; }); });   // a suggested card may already hold a call; this check is about the one made here
   await page.selectOption('#m0-call', '0');
-  ok(await state(page, S => S.card[0].call) === 0 && /Your call: .* wins \(\d BP\)/.test(await txt(page, seg(0) + ' .meta')), mode + ': called finish');
+  ok(await state(page, S => S.card[0].call) === 0 && /Your call: .* wins \(\d BP\)/.test(await txt(page, '.d1-meta')) && /Your call/.test(await txt(page, seg(0) + ' .meta')), mode + ': called finish');
   ok(/committed on this card/.test(await txt(page, '.head')), mode + ': booking power committed');
   ok(await state(page, S => GP.cardCost(S, S.card) <= S.bp), mode + ': the call should be affordable: ' + await state(page, S => GP.cardCost(S, S.card) + ' of ' + S.bp + ' BP, ' + S.card.map(m => m.call).join(',')));
   ok(await page.$eval('#m0-call', e => e.value) === '0', mode + ': the select should show the call');
@@ -109,17 +112,20 @@ async function section(mode) {
 
   /* ---- order, add, remove ---- */
   const who = i => txt(page, seg(i) + ' .who'), a = await who(0), b = await who(1);
+  await page.click('[data-t="edit"][data-v="0"]');
   await page.click('[data-t="down"][data-v="0"]');
   ok(await who(0) === b && await who(1) === a, mode + ': move down');
   await check('move down');
   await page.click('[data-t="up"][data-v="1"]');
   ok(await who(0) === a && await who(1) === b, mode + ': move up');
-  ok(await page.$eval('[data-t="up"][data-v="0"]', e => e.disabled) && await page.$eval('[data-t="down"][data-v="' + (n - 1) + '"]', e => e.disabled), mode + ': end buttons disabled');
+  ok(await page.$eval('[data-t="up"][data-v="0"]', e => e.disabled), mode + ': the first match cannot move earlier');
+  await page.click('[data-t="edit"][data-v="' + (n - 1) + '"]');
+  ok(await page.$eval('[data-t="down"][data-v="' + (n - 1) + '"]', e => e.disabled), mode + ': the last match cannot move later');
   await check('move up');
   await page.click('[data-t="add"]');
   ok(await count(page, '.sheet .seg[data-m]') === n + 1 && await has(page, '#m' + n + '-type') && /Unfinished/.test(await txt(page, seg(n) + ' .meta')), mode + ': add a match');
   await page.selectOption('#m' + n + '-type', 'tag');
-  ok(await count(page, seg(n) + ' [data-t="slot"]') === 4, mode + ': a tag match has four slots');
+  ok(await count(page, '.b1-pane [data-t="slot"]') === 4, mode + ': a tag match has four slots');
   if (await has(page, '#m' + n + '-t0')) {
     const team = await page.$eval('#m' + n + '-t0', e => e.options[1].value);
     await page.selectOption('#m' + n + '-t0', team);
@@ -130,21 +136,22 @@ async function section(mode) {
   await page.click('[data-t="advance"]');
   ok(/can’t run yet/.test(await flash(page)) && /Fix before the show can run/.test(await txt(page, '.flash.err:not([role])')), mode + ': an unfinished card should not run');
   await check('validation');
+  await page.click('[data-t="edit"][data-v="' + n + '"]');
   await page.click('[data-t="rm"][data-v="' + n + '"]');
   ok(await count(page, '.sheet .seg[data-m]') === n && !(await has(page, '.editor')), mode + ': remove a match');
   await check('remove a match');
 
   /* ---- the side panel ---- */
-  for (const t of [['promo', 'Opening promo'], ['feuds', 'Storylines in play'], ['targets', 'Promises and targets'], ['advice', 'The top of the hour']]) {
+  for (const t of [['promo', 'Opening promo'], ['feuds', 'Storylines in play'], ['targets', 'Promises and targets'], ['order', 'Running order'], ['clock', 'The top of the hour'], ['advice', 'Staff notes']]) {
     await page.click('[data-t="bk"][data-v="' + t[0] + '"]');
-    ok(await txt(page, '.cols > .stack:last-child .panel h2') === t[1], mode + ': side tab ' + t[0]);
+    ok(await txt(page, '.b1-pane .panel h2') === t[1], mode + ': side tab ' + t[0] + ' should be titled ' + t[1] + ', not ' + await txt(page, '.b1-pane .panel h2'));
     ok(await page.$eval('[data-t="bk"][data-v="' + t[0] + '"]', e => e.getAttribute('aria-pressed')) === 'true', mode + ': tab pressed');
     if (t[0] === 'promo') {
       const sp = await page.$eval('#plan-sp', e => e.options[1].value);
       await page.selectOption('#plan-sp', sp);
       await page.selectOption('#plan-topic', await page.$eval('#plan-topic', e => e.options[1].value));
       await page.selectOption('#plan-del', await page.$eval('#plan-del', e => e.options[1].value));
-      ok(await state(page, (S, v) => S.plan && S.plan.sp === +v, sp) && /an attempt with a \d+% chance/.test(await txt(page, '.cols > .stack:last-child .panel')), mode + ': opening promo plan');
+      ok(await state(page, (S, v) => S.plan && S.plan.sp === +v, sp) && /an attempt with a \d+% chance/.test(await txt(page, '.b1-pane .panel')), mode + ': opening promo plan');
     }
     await check('side tab: ' + t[0]);
   }
@@ -223,7 +230,7 @@ async function section(mode) {
   ok(await has(page, '.big') && !(await has(page, '#live')), mode + ': back at the report after the replay');
   await check('replay');
   await page.click('[data-t="closeReport"]');
-  ok(await txt(page, '.head h1') === shows[1] && /The card is empty/.test(await txt(page, '.cols')), mode + ': closing the report opens the second show');
+  ok(await txt(page, '.head h1') === shows[1] && /The card is empty/.test(await txt(page, '.b1-rows')), mode + ': closing the report opens the second show');
   await check('close the report');
 
   /* ---- the second show, then Week booked ---- */

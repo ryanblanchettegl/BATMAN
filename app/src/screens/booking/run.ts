@@ -20,11 +20,17 @@ export function onCard(skip?: number): Record<number, 1> {
   return o;
 }
 /** A suggested card is a whole show: matches, promos and angles, fitted to the show's time. */
-export const suggest = () => act(() => { const b = book(); G.S.card = E.suggest(G.S); b.edit = -1; b.tried = false; });
-export const addMatch = () => act(() => { const c = G.S.card; c.push({ mt: '1v1', sides: [[null], [null]], win: -2, call: null, title: null, stip: 'std', len: 'M' }); book().edit = c.length - 1; });
-export const clearCard = () => act(() => { const b = book(); G.S.card = []; E.segClear(G.S); b.edit = -1; b.tried = false; });
+export const suggest = () => act(() => { const b = book(); G.S.card = E.suggest(G.S); b.edit = -1; sel().seg = -1; b.tried = false; });
+export const addMatch = () => act(() => { const c = G.S.card; c.push({ mt: '1v1', sides: [[null], [null]], win: -2, call: null, title: null, stip: 'std', len: 'M' }); book().edit = c.length - 1; sel().seg = -1; });
+export const clearCard = () => act(() => { const b = book(); G.S.card = []; E.segClear(G.S); b.edit = -1; sel().seg = -1; b.tried = false; });
 export const removeMatch = (i: number) => act(() => { G.S.card.splice(i, 1); book().edit = -1; });
-export const toggleEdit = (i: number) => look(() => { const b = book(); b.edit = b.edit === i ? -1 : i; });
+/** What is selected on the run sheet besides a match: a promo or an angle, by its place in the list (-1 for none). */
+export const sel = () => slice<{ seg: number }>('booksel', () => ({ seg: -1 }));
+/** Select a match on the run sheet (its details show beside the sheet), or let go of it. */
+export const pickMatch = (i: number) => look(() => { const b = book(); b.edit = b.edit === i ? -1 : i; sel().seg = -1; });
+export const toggleEdit = pickMatch;
+/** Select a promo or an angle on the run sheet, or let go of it. */
+export const pickSeg = (slot: number) => look(() => { const s = sel(); s.seg = s.seg === slot ? -1 : slot; book().edit = -1; });
 export function moveMatch(i: number, by: -1 | 1) {
   act(() => {
     const c = G.S.card, j = i + by, b = book(); if (j < 0 || j >= c.length) return;
@@ -75,7 +81,7 @@ export function preNote(r: any): string | null {
 export function run(a: 'run' | 'pre' | 'chaos', c?: number) {
   act(() => {
     const S = G.S, b = book(); let chNote: string | null = null;
-    const cant = () => { b.tried = true; say('The show can’t run yet. See the list below.', { err: true }); };
+    const cant = () => { b.tried = true; b.edit = -1; sel().seg = -1; b.side = 'advice'; say('The show can’t run yet. The list is beside the run sheet.', { err: true }); };
     // this week's tasks on the desk come first
     if (a === 'run') { const g = E.taskGate(S, 'show'); if (!g.ok) { say('The show cannot run yet. ' + g.left.length + ' ' + (g.left.length === 1 ? 'task is' : 'tasks are') + ' still on your desk.', { err: true }); top0(); return; } }
     if (a === 'pre') { E.resolvePre(S, S.card, c); b.edit = -1; }
@@ -139,4 +145,5 @@ export function liveEnd() { const r = liveReport(); if (r) look(() => { book().l
 export const liveDone = () => look(() => { book().live = null; top0(); });
 export const replay = () => look(() => { book().live = { s: -1, b: 0 }; top0(); });
 export const closeReport = () => look(() => { const b = book(); b.report = null; b.live = null; top0(); });
-export const pickSide = (id: string) => look(() => { book().side = id; });
+/** Show one of the booking notes beside the sheet. Whatever was selected on the sheet is let go. */
+export const pickSide = (id: string) => look(() => { const b = book(); b.side = id; b.edit = -1; sel().seg = -1; });
