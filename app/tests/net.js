@@ -11,7 +11,7 @@ async function run(mode) {
   const { browser, page, errs } = await open({ mode, promo: 'pdw' });
   const over = async label => { const o = await overflow(page); ok(mode, label + ' fits the screen', !o, o); };
   try {
-    ok(mode, 'Net is a section in the top menu, after Stories', await page.$$eval('.menu [data-t="tab"]', L => L.map(b => b.getAttribute('data-v')).join()) === 'office,booking,roster,stories,net,manage,company');
+    ok(mode, 'Net is a section in the top menu, after Roster', await page.$$eval('.menu [data-t="tab"]', L => L.map(b => b.getAttribute('data-v')).join()) === 'office,booking,roster,net,manage,company');
     ok(mode, 'every menu button is on screen', await page.evaluate(() => [...document.querySelectorAll('.menu button')].every(b => { const r = b.getBoundingClientRect(); return r.width > 20 && r.left >= 0 && r.right <= window.innerWidth + 1; })));
     await page.click('.menu [data-t="tab"][data-v="net"]');
     ok(mode, 'the section opens on the dirt sheet, with three pages', /DIRT SHEET/i.test(await txt(page, 'h1')) && await count(page, '.subnav [data-t]') >= 3);
