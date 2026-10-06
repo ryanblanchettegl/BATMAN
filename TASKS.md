@@ -257,8 +257,8 @@ How it fits what is built: a required action is a task on the desk that cannot b
 
 Fixed, in every playthrough (Ryan's list so far):
 
-- [ ] **After your first show: pick a sponsor.** Teaches sponsors. Today the sponsor offers are a task that can be left for another week. It becomes required once, after the first show.
-- [ ] **Before your first pay-per-view: name the face of your company.** Teaches who the shows are built around (`src/32-direction.js`, built in 0.25). Today it is only decided on the air, when the building will not sit down for someone. It becomes a required choice on the desk before the first big event. The call on the air stays as the way it changes later.
+- [x] **(0.34) After your first show: pick a sponsor.** Teaches sponsors. Today the sponsor offers are a task that can be left for another week. It becomes required once, after the first show.
+- [x] **(0.34) Before your first pay-per-view: name the face of your company.** Teaches who the shows are built around (`src/32-direction.js`, built in 0.25). Today it is only decided on the air, when the building will not sit down for someone. It becomes a required choice on the desk before the first big event. The call on the air stays as the way it changes later.
 - [ ] **The week before your third pay-per-view: the owner wants an authority figure added to a show.** A required addition. Needs people who are not wrestlers with jobs on the show (the character sheet work in Ryan's decisions: authority figures, managers, referees, road agents, commentators).
 - [ ] More fixed ones, to be thought up with Ryan. Every mechanic should have the moment that makes the player use it once.
 
@@ -279,7 +279,7 @@ Ryan, 4 October: "After a show, it should go back to the Office or your desk, so
   - The match-by-match report is a button there (Match by match) and closes back to it.
   - The yellow button says Office. The Office opens on Before the show, with no After the show panel. A small button, After the show recap, goes back.
   - Code: `app/src/screens/booking/After.tsx`, `run.ts`. Tests: `app/tests/booking.js`, `advance.js`, `journey.js`.
-  - [ ] After the show is not a one-screen page yet: it scrolls on a tablet.
+  - [x] (0.34) After the show is a one-screen page.
 - [x] ~~(0.30) Back to the desk after a show, with an After the show panel on the desk.~~ Replaced by 0.33, above. What follows describes 0.30.
 - [x] **(0.30) Back to the desk after a show.** Closing the report of a show that ran this week goes to the Office. The report's button says Back to the desk and the yellow button says The desk. From the desk the next show is one press away. Code: `src/34-night.js`, `AfterShow` in `app/src/screens/office/Desk.tsx`. Tests: `node test-live.js` (nt1 to nt7), `app/tests/booking.js`, `journey.js`.
 - [x] **(0.30) The desk after a show.** An "After the show" panel at the top of the desk: the grade and the verdict, then one line each, trouble first, each marked New until it has been looked at, each opening a pop-up on the desk:
@@ -315,6 +315,20 @@ Ryan, 4 October: "After a show, it should go back to the Office or your desk, so
 - [x] **(0.29) The commentary desk from the Office.** Ryan, 4 October: "From the office screen, I want you to be able to pick commentators via a pop up with available players." The two tasks for the commentary desk open a pop-up on the desk: both chairs, who is available for the chair being filled, what each costs, and how they would get on with the other voice. Signing one moves on to the empty chair. A button on the desk opens it at any time. Code: `VoicesWindow` in `app/src/screens/office/Windows.tsx`. Test: `app/tests/tasks.js`.
 - [ ] The same for every other task on the desk, so everything can be done from the Office: sponsor offers, the venue, contracts that are running out, a vacant title.
 - [ ] The people available are the hired voices on the market. Wrestlers, managers and legends at the desk wait for the character sheet work.
+
+### 0k. Core systems: six changes (0.34)
+
+Ryan, 6 October: "we can build out the depths of reasons later. Let's focus on core systems." And: "I also want a sixth add. When you start a new game you get a cool retro opening of the owner congratulating you on the new job and a little pretext. We can build out the pretext later." Tests: `node test-first.js`, `node test-people.js`, `app/tests/office.js`, `booking.js`.
+
+- [x] **1. The risk is on every line of the run sheet.** Each match shows short flags from what the road agent can see or has read: Worn down, No chemistry, Chemistry, Too long, Squash, Rough team, Unhappy. The fog holds: a flag never says more than the agent's read.
+- [x] **2. Promises reach the card.** A match with somebody you promised a win says so (Promised a win, or Promise kept once you call it). The card warns on the last show before a promise falls due. "Suggest a card" calls promised wins it has the booking power for, and puts the face of the company in the main event when they are on the card.
+- [x] **3. The Office opens on the fire.** Matters that need an answer are first on the desk, above the tasks, with their answers and "before the week can end". The one from last night is marked. Answered ones are in a panel lower down.
+- [x] **4. After the show hands you next week.** It is a one-screen page now (desk, tablet and TV): a list of one-line rows and a pane for the one picked. A "Next week" row lists promises coming due and what the desk is counting down to.
+- [x] **5. The first two required actions.** After your first show you have to sign a sponsor (the task says what a sponsor is, and cannot be left for another week). In the week of your first big event you have to name the face of your company, in a pop-up on the desk with the six biggest names and a reason for each. Each is asked once. (Section 0h.)
+- [x] **6. The opening.** A new game opens on a telex from the owner on a black screen, typed out a line at a time: the job is yours, what kind of company it is, where it stands in the world, who holds the top title and who the owner's money is on, your first show. An owner-booker gets their own version.
+  - [ ] The pretext is short. Ryan will build it out: how you got the job, who had it before, what the owner wants.
+  - [ ] It is shown with the start-up screens, so turning those off in Options turns it off too. It should get its own switch, and a way to read the letter again.
+- [x] Fixed on the way: making two people shake hands backstage did not change how they felt about each other. It does now.
 
 ### 0j. Backstage: people, not rooms (0.32)
 

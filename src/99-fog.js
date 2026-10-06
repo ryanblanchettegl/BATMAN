@@ -155,3 +155,57 @@ POST.push(function(ctx){
     return r;
   };
 })();
+
+/* ---------- the run sheet shows the risk on every line ----------
+   Booking is a risk and reward puzzle (rule 7a): what can hurt a match, and what you have promised, is on its line
+   of the sheet, not only in the notes beside it. A flag is short. It says only what the agent's read already says
+   (so the fog holds), plus two things anybody can see: who is unhappy, and who you gave your word to. */
+function cardFlags(S,card,i){
+  var m=card[i],out=[],rd=matchRead(S,card,i),P=S.promos[S.player],seen={};
+  var add=function(k,t,x){if(seen[t])return;seen[t]=1;out.push({k:k,t:t,x:x||t});};
+  if(rd)rd.lines.forEach(function(l){
+    var t=l.t;
+    if(/fumes|worn|carrying/.test(t))add('bad','Worn down',t);
+    else if(/do not click|will not click/.test(t))add('bad','No chemistry',t);
+    else if(/real chemistry|will click/.test(t))add('good','Chemistry',t);
+    else if(/minutes/.test(t)&&l.s<0)add('bad','Too long',t);
+    else if(/squash/.test(t))add('warn','Squash',t);
+    else if(/not a regular team|do not get on/.test(t))add('warn','Rough team',t);
+    else if(l.s<0)add('bad','A risk',t);
+  });
+  var ids=[];(m.sides||[]).forEach(function(s,si){s.forEach(function(id){if(id!=null)ids.push({id:id,si:si});});});
+  ids.forEach(function(q){var w=S.w[q.id];if(!w)return;
+    if(w.morale<38)add('warn','Unhappy',w.name+' is unhappy, and it will show in the effort.');
+    S.quests.forEach(function(qq){if(qq.type==='win'&&qq.w===w.id){var won=m.call===q.si;add(won?'good':'warn',won?'Promise kept':'Promised a win',won?'You promised '+w.name+' a win, and you have called it.':'You promised '+w.name+' a win by '+cal(qq.due).label+'. Call the finish, or hope.');}});
+  });
+  return out;
+}
+E.cardFlags=function(S,card){card=card||S.card||[];return card.map(function(m,i){return matchRead(S,card,i)?cardFlags(S,card,i):[];});};
+/* a promise that is about to fall due is a warning before the bell, and the suggested card honours what it can */
+(function(){
+  var val=E.validate;
+  E.validate=function(S,card){
+    var v=val(S,card),show=S.queue[S.qi];if(!show)return v;
+    var last=S.qi>=S.queue.length-1;
+    S.quests.forEach(function(q){
+      if(q.type!=='win'||!S.w[q.w]||!last||q.due>S.week)return;
+      var w=S.w[q.w],won=(card||[]).some(function(m){return m.call!=null&&m.call>=0&&m.sides[m.call]&&m.sides[m.call].indexOf(w.id)>=0;});
+      if(!won)v.warnings.push('You promised '+w.name+' a win by '+cal(q.due).label+', and this is the last show before it falls due. They are not called to win tonight.');
+    });
+    return v;
+  };
+  var sug=E.suggest;
+  E.suggest=function(S){
+    var card=sug(S),P=S.promos[S.player],n=card.length,ch=false;if(!n)return card;
+    // the one the shows are built around belongs in the main event, when they are on the card at all
+    var f=typeof faceOf==='function'?faceOf(S):null;
+    if(f){var at=-1;card.forEach(function(m,i){if(m.sides.some(function(s){return s.indexOf(f.id)>=0;}))at=i;});
+      if(at>=0&&at!==n-1&&(!card[n-1].title||card[at].title)){var t=card[at];card[at]=card[n-1];card[n-1]=t;if(card[at].len==='L'&&card[n-1].len!=='L'){var l=card[at].len;card[at].len=card[n-1].len;card[n-1].len=l;}ch=true;}}
+    // a promised win is called, as far as the booking power goes
+    S.quests.forEach(function(q){if(q.type!=='win')return;
+      card.forEach(function(m){if(m.call!=null)return;var si=-1;m.sides.forEach(function(s,k){if(s.indexOf(q.w)>=0)si=k;});if(si<0)return;
+        m.call=si;if(E.cardCost(S,card)>S.bp)m.call=null;else ch=true;});});
+    if(ch)E.fitShow(S,card);
+    return card;
+  };
+})();

@@ -67,7 +67,12 @@ E.afterShow=function(S){
   add('writers','The writers',L.writers[0].x,L.writers.map(function(w){return w.x;}),L.writers[0].s<0?'bad':(L.writers[0].s>0?'good':''));
   if(rep.sheet&&rep.sheet.lines&&rep.sheet.lines.length)add('sheet','The dirt sheet',rep.sheet.lines[0],rep.sheet.lines.slice(),'');
   var mt=null;if(L.matter!=null)S.inbox.forEach(function(e){if(e.id===L.matter)mt={id:e.id,text:e.text,done:!!e.done,result:e.result||''};});
-  return {key:L.key,name:rep.name,grade:gradeG(rep.rating),head:v.head,line:v.line,matter:mt,items:items,unseen:items.filter(function(x){return !x.seen;}).length,left:S.queue.length-S.qi};
+  // what the night hands to next week: promises coming due, and whatever the desk is counting down to
+  var nx=[];S.quests.filter(function(q){return q.due!=null&&q.text;}).sort(function(a,b){return a.due-b.due;}).slice(0,3).forEach(function(q){var d=q.due-S.week;nx.push({t:q.text,when:d<=0?'this week':(d===1?'next week':'in '+d+' weeks'),soon:d<=1});});
+  (typeof E.comingUp==='function'?E.comingUp(S):[]).slice(0,3).forEach(function(u){nx.push({t:u.t,when:'',soon:false});});
+  nx=nx.slice(0,5);
+  if(nx.length)add('next','Next week',nx[0].t+(nx[0].when?' ('+nx[0].when+')':''),nx.map(function(x){return x.t+(x.when?' ('+x.when+').':'');}),nx[0].soon?'warn':'');
+  return {key:L.key,name:rep.name,grade:gradeG(rep.rating),head:v.head,line:v.line,matter:mt,next:nx,items:items,unseen:items.filter(function(x){return !x.seen;}).length,left:S.queue.length-S.qi};
 };
 /** The booker has looked at one of the things the night left. */
 E.nightSeen=function(S,k){var A=E.afterShow(S);if(!A)return;if(!S.nightSeen||S.nightSeen.key!==A.key)S.nightSeen={key:A.key,k:{}};S.nightSeen.k[k]=1;};

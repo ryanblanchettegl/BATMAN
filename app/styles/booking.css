@@ -176,3 +176,20 @@ html[data-screen="tablet"] .callhint{display:none}
 .live1.tight :is(.callbox .why,.callhint,.lv-head .vs){display:none}
 .live1.tight .callbox{padding-block:.15em .2em;gap:.15em} .live1.tight .callbox .q{font-size:1em} .live1.tight .callopts{gap:.15em} .live1.tight .callopt{padding-block:0 .05em}
 html[data-screen="tablet"] .lv-body{grid-template-columns:minmax(0,1fr) clamp(28ch,30%,38ch)}
+
+/* After the show: one screen. The heading, the matter, then a list of one-line rows and a pane for the one picked. */
+.after1 .head{margin:0}.after1 .head h1{font-size:1.9em;margin:0;line-height:1.05}.after1 .head p{margin:.1em 0 0}
+.after1 .panel{margin:0;padding-block:.3em}
+.after1 .panel .btn{margin-bottom:.15em}
+.after1 .a1{flex:1 1 0;min-height:0;display:grid;grid-template-columns:minmax(0,5fr) minmax(0,6fr);gap:0;border:4px double var(--grey)}
+.after1 .a1-list{min-width:0;min-height:0;overflow:hidden;border-right:2px solid var(--dcyan);padding:.2em 0}
+.after1 .a1-list .eyebrow,.after1 .a1-pane .eyebrow{margin:0 0 .15em;padding-inline:1ch;color:var(--yellow)}
+.after1 .a1-r button{all:unset;box-sizing:border-box;cursor:pointer;display:flex;gap:1ch;width:100%;padding:.16em 1ch;white-space:nowrap;overflow:hidden}
+.after1 .a1-r button b{flex:none;font-weight:normal;color:var(--white);min-width:13ch}
+.after1 .a1-r button span{flex:1 1 0;min-width:0;overflow:hidden;text-overflow:ellipsis}
+.after1 .a1-r button:hover,.after1 .a1-r button:focus-visible{background:#0b6470}
+.after1 .a1-r.on button{background:var(--yellow)}.after1 .a1-r.on button *{color:var(--k)!important}
+.after1 .a1-pane{min-width:0;min-height:0;overflow:hidden;padding:.2em 0}
+.after1 .a1-pane p{margin:0 0 .3em;padding-inline:1ch}
+.after1 > .row{margin:0;align-items:center}
+.after1 > .row .btn{margin-bottom:0}

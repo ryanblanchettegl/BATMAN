@@ -42,11 +42,16 @@ const spare = (S, n) => E.rosterOf(S, S.player).filter(w => !w.nw && !all(S).som
 
 /* real heat between two people */
 { const S = fresh(6), R = E.rosterOf(S, 'pdw').filter(w => !w.nw && w.g === 'M').sort((x, y) => y.ovr - x.ovr), a = R[8], b = R[9];
-  S.feuds.forEach(f => { f.res = true; }); for (let i = 0; i < 6; i++) E.relBump ? E.relBump(S, a.id, b.id, -20) : 0;
-  const rm = S.rm; let p = all(S).find(x => x.k === 'heat');
-  ok('h1', 'two people with real heat are in catering, and it can be settled or put on television', !!p && p.room === 'catering' && p.acts.map(x => x.id).join() === 'shake,air', p ? p.why : 'nobody');
+  S.feuds.forEach(f => { f.res = true; }); E.rosterOf(S, 'pdw').forEach(x => E.rosterOf(S, 'pdw').forEach(y => { if (x.id < y.id && E.bondOf && E.bondOf(S, x.id, y.id) < 0) E.relBump(S, x.id, y.id, { bond: 60 }); })); E.relBump(S, a.id, b.id, { bond: -70 });
+  let p = all(S).find(x => x.k === 'heat');
+  ok('h1', 'two people with real heat are in catering, and it can be settled or put on television', !!p && (p.id === a.id || p.id === b.id) && p.room === 'catering' && p.acts.map(x => x.id).join() === 'shake,air', p ? p.why : 'nobody');
   if (p) { const n0 = S.feuds.filter(f => !f.res).length, r = E.peopleDo(S, p.id, 'air');
     ok('h2', 'putting it on television starts a rivalry between them', r.ok && S.feuds.filter(f => !f.res).length === n0 + 1, r.msg); } }
+{ const S = fresh(6), R = E.rosterOf(S, 'pdw').filter(w => !w.nw && w.g === 'M').sort((x, y) => y.ovr - x.ovr), a = R[8], b = R[9]; let moved = 0, tries = 0;
+  for (let seed = 20; seed < 28; seed++) { const T = fresh(seed), X = E.rosterOf(T, 'pdw').filter(w => !w.nw && w.g === 'M').sort((x, y) => y.ovr - x.ovr), u = X[8], v = X[9]; T.feuds.forEach(f => { f.res = true; });
+    E.rosterOf(T, 'pdw').forEach(x => E.rosterOf(T, 'pdw').forEach(y => { if (x.id < y.id && E.bondOf(T, x.id, y.id) < 0) E.relBump(T, x.id, y.id, { bond: 60 }); })); E.relBump(T, u.id, v.id, { bond: -70 });
+    const p = all(T).find(x => x.k === 'heat'); if (!p) continue; const b0 = E.bondOf(T, u.id, v.id), r = E.peopleDo(T, p.id, 'shake'); tries++; if (r.ok ? E.bondOf(T, u.id, v.id) > b0 + 20 : E.bondOf(T, u.id, v.id) < b0) moved++; }
+  ok('h3', 'making them shake hands moves how they feel about each other, up if it works and down if it does not', tries >= 6 && moved === tries, moved + ' of ' + tries); }
 
 /* what the last show left on the desk walks into the building */
 { const S = fresh(13); let card = E.suggest(S); const pr = E.preShow(S, card); if (pr) { E.resolvePre(S, card, 0); E.fitShow(S, card); }

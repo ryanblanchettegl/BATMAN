@@ -15,6 +15,7 @@ export function startGame(pid: string | null, opts: { name: string; diff: string
   setUniverse(pref.uni || 'public_domain', true);   // keeps any companies the player left out
   G.S = E.newGame(pid, seed(), opts);
   resetUi(); save(); redraw(); window.scrollTo(0, 0);
+  if (pref.boot && G.S) openModal({ kind: 'welcome' });   // the owner's letter. Skipped with the start-up screens.
 }
 /** The weekly challenge: the same world and seed for everyone this week, twelve weeks to run. */
 export function isoWeekId(d: Date): string {

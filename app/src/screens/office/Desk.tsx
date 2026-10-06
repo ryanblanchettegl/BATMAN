@@ -29,12 +29,13 @@ function alerts(): Alert[] {
 function Inbox() {
   const S = G.S;
   useFocusAfter();
-  if (!S.inbox.length) return <Empty>A quiet week in the office.</Empty>;
+  const done: any[] = S.inbox.filter((e: any) => e.done);
+  if (!done.length) return <Empty>{S.inbox.length ? 'Nothing answered yet. What needs you is at the top of the desk.' : 'A quiet week in the office.'}</Empty>;
   const answer = (id: number, c: number) => act(() => {
     E.resolveEvent(S, id, c);
     focusAfter(['[data-t="ev"]'], ['[data-t="endweek"]:not([disabled])', '[data-t="book-next"]']);
   });
-  return <ul class="list">{S.inbox.slice().sort((a: any, b: any) => (a.done ? 1 : 0) - (b.done ? 1 : 0)).map((e: any) => <li key={e.id}>
+  return <ul class="list">{done.map((e: any) => <li key={e.id}>
     <span><Txt>{e.text}</Txt>
       {e.result ? <><br /><span class={e.roll ? (e.roll.ok ? 'good' : 'bad') : 'muted'}><Txt>{e.result}</Txt></span></> : null}
       {!e.done && e.checks ? Object.keys(e.checks).map(k => <CheckLine label={e.choices[k]} ck={e.checks[k]} />) : null}
@@ -85,7 +86,7 @@ export function Desk() {
     <BeforeShow />
     <div class="cols">
       <div class="stack">
-        <Panel title={'Inbox' + (S.inbox.filter((e: any) => !e.done).length ? ' (' + S.inbox.filter((e: any) => !e.done).length + ' to answer)' : '')}><Inbox /></Panel>
+        <Panel title="Answered this week"><Inbox /></Panel>
         <Panel title="This week"><ScheduleList /></Panel>
         <Panel title="Promises and targets"><QuestList /></Panel>
       </div>

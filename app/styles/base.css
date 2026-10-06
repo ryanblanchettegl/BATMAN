@@ -502,3 +502,22 @@ html[data-music="off"] .mus::after{content:' off';color:var(--dred)}
 .ppl .nobody{display:block;padding:.3em .4ch}
 .bsmap.small{grid-template-columns:repeat(7,minmax(0,1fr))}
 .bsmap.small .room{padding:4px .5ch}.bsmap.small .room pre{display:none}.bsmap.small .room:nth-child(7){grid-column:auto}
+
+/* a new game opens on the owner's letter: a telex on a black screen, typed out a line at a time */
+.scrim.intro{background:#000;display:flex;align-items:center;justify-content:center;z-index:60}
+.telex{font-size:min(1em,2.5vh);width:min(64ch,94vw);max-height:98vh;overflow:hidden;color:#33ff66;text-shadow:0 0 6px rgba(51,255,102,.55);padding:1em 2ch}
+.telex .tx-head{font-family:var(--f);line-height:1.05;margin:0 0 .6em;color:#ffcc33;text-shadow:0 0 6px rgba(255,204,51,.5);overflow:hidden}
+.telex .tx-meta{display:flex;justify-content:space-between;color:#22aa44;margin:0}
+.telex .tx-body{margin-top:1em;border-top:1px dashed #22aa44;padding-top:.8em}
+.telex .tx-l{margin:0 0 .7em;opacity:0;animation:txin .45s steps(6) forwards}
+.telex .tx-l.first{font-size:1.5em;color:#ffff66;text-shadow:0 0 8px rgba(255,255,102,.6)}
+.telex .tx-l a,.telex .tx-l button.lnk{color:inherit}
+.telex .tx-sig{margin-top:1.2em;color:#ffcc33}
+.telex .tx-ps{color:#22aa44}
+.telex .tx-foot{display:flex;gap:2ch;align-items:center;margin-top:1em}
+@keyframes txin{from{opacity:0;transform:translateY(.3em)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.telex .tx-l{animation:none;opacity:1}}
+
+/* the fire: what needs an answer, first on the desk */
+.fire{border:2px solid var(--red,#ff5555);padding:.4em 1ch;margin:.6em 0}
+.fire .list li{align-items:flex-start}

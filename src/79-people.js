@@ -75,8 +75,8 @@ var PPL_ACT={
   shake:{n:'Make them shake hands',d:'Sit the two of them down. If it works the heat goes out of it. If not, it is worse, and they both remember who pushed.',
     ck:function(S,P,w,o){return mkCheck(8,[{n:'Where you stand with '+w.name,v:youLean(S,w)},{n:'Where you stand with '+o.name,v:youLean(S,o)}].concat(skillMods(S,'talk')));},
     run:function(S,P,w,o,r){
-      if(r.ok){relBump(S,w.id,o.id,28,{k:'peace',t:'The booker sat them down and they shook hands.',by:'you'});[w,o].forEach(function(x){stressAdd(S,x,-5);youRemember(S,x,'peace','You sat them down with '+(x===w?o.name:w.name)+' and it was settled.',4);});return {ok:true,msg:w.name+' and '+o.name+' shake hands. Nobody is friends, but the room breathes out.'};}
-      relBump(S,w.id,o.id,-8,{k:'forced',t:'The booker tried to make them shake hands.',by:'you'});[w,o].forEach(function(x){youRemember(S,x,'forced','You tried to force a handshake with '+(x===w?o.name:w.name)+'.',-3);});return {ok:false,msg:'It lasts about a minute. '+w.name+' walks out first.'};}},
+      if(r.ok){relBump(S,w.id,o.id,{bond:28},{k:'peace',t:'The booker sat them down and they shook hands.',by:'you'});[w,o].forEach(function(x){stressAdd(S,x,-5);youRemember(S,x,'peace','You sat them down with '+(x===w?o.name:w.name)+' and it was settled.',4);});return {ok:true,msg:w.name+' and '+o.name+' shake hands. Nobody is friends, but the room breathes out.'};}
+      relBump(S,w.id,o.id,{bond:-8},{k:'forced',t:'The booker tried to make them shake hands.',by:'you'});[w,o].forEach(function(x){youRemember(S,x,'forced','You tried to force a handshake with '+(x===w?o.name:w.name)+'.',-3);});return {ok:false,msg:'It lasts about a minute. '+w.name+' walks out first.'};}},
   air:{n:'Put it on television',d:'It is real, so use it. A rivalry starts warm. They will work stiff, and neither will thank you.',
     run:function(S,P,w,o){var f=startFeud(S,P,w,o,34,'It is real, and the booker put it on television');if(!f)return {ok:false,stop:true,msg:'There are too many rivalries running to start another.'};
       [w,o].forEach(function(x){youRemember(S,x,'usedheat','You put their real trouble with '+(x===w?o.name:w.name)+' on television.',-2);});return {ok:true,msg:w.name+' against '+o.name+' is a rivalry now, and none of it is acting. It is on the Storylines page.'};}},
@@ -131,3 +131,4 @@ E.peopleDo=function(S,wid,act){
   return {ok:res.ok,done:true,roll:r,msg:out};
 };
 WEEKX.push(function(S){S.apWho={};});
+E.bondOf=function(S,a,b){return bondOf(S,a,b);};

@@ -5,7 +5,7 @@
    Another system adds its own task through the TASKX hook list (declared with the others in src/10-match.js). */
 function taskOpen(S){
   var P=S.promos[S.player],L=[],R=rosterOf(S,P.id).filter(function(w){return !w.nw;});
-  var add=function(id,text,to,label,o){o=o||{};L.push({id:id,text:text,short:o.short||text,done:o.done||text,to:to,label:label,gate:o.gate||'show',card:!!o.card,need:o.need!==false,waive:o.waive!==false&&o.need!==false});};
+  var add=function(id,text,to,label,o){o=o||{};L.push({id:id,text:text,short:o.short||text,done:o.done||text,to:to,label:label,gate:o.gate||'show',card:!!o.card,need:o.need!==false,waive:o.waive!==false&&o.need!==false,req:!!o.req});};
   if(S.owner&&S.owner.pending)add('house','The company is yours. Set your house style.','house','Set it',{waive:false,done:'House style set.',short:'Set your house style'});
   var n=S.inbox.filter(function(e){return !e.done;}).length;
   if(n)add('inbox',n+' '+(n===1?'matter':'matters')+' in your inbox '+(n===1?'needs':'need')+' an answer.','desk','Answer',{gate:'week',waive:false,done:'Inbox answered.',short:'Answer the inbox ('+n+')'});
@@ -15,7 +15,9 @@ function taskOpen(S){
     if(D.col==null)add('desk-col','You have not picked a colour voice for the commentary desk.','manage','Assign',{done:'A colour voice is in the chair.',short:'Pick a colour voice'});
   }
   var slots=spMax(P)-S.sponsors.length,can=S.spOffers.filter(function(o){return E.sponsorOk(S,o);}).length;
-  if(slots>0&&can>0)add('sponsors',can+' sponsor '+(can===1?'offer':'offers')+' you could sign, and '+slots+' free '+(slots===1?'slot':'slots')+'.','deals','See offers',{done:'Sponsor offers dealt with.',short:'Sponsor offers ('+can+')'});
+  // after the first show a sponsor has to be signed, once: it cannot be left for another week (src/96-first.js)
+  var needSp=!(S.req&&S.req.sponsor)&&!S.sponsors.length&&S.stats&&S.stats.shows>=1;
+  if(slots>0&&can>0)add('sponsors',(needSp?'Your first show is done. Sign your first sponsor: money every week, for a condition you have to keep. ':'')+can+' sponsor '+(can===1?'offer':'offers')+' you could sign, and '+slots+' free '+(slots===1?'slot':'slots')+'.','deals','See offers',{done:'Sponsor offers dealt with.',short:needSp?'Sign your first sponsor':'Sponsor offers ('+can+')',waive:!needSp,req:needSp});
   var T=tournActive(S);
   P.titles.forEach(function(t){
     if(t.holders.length)return;
@@ -38,7 +40,7 @@ function taskOpen(S){
     task that is finished stays on the list with a tick until the week ends. That memory is bookkeeping, not game state. */
 E.tasks=function(S){
   var open=taskOpen(S),seen=S.taskSeen&&S.taskSeen.w===S.week?S.taskSeen:(S.taskSeen={w:S.week,t:{}}),wave=S.taskWave&&S.taskWave.w===S.week?S.taskWave.ids:{},now={},L=[];
-  open.forEach(function(t){now[t.id]=1;seen.t[t.id]={text:t.done,need:t.need};var waved=!!wave[t.id]&&t.waive;L.push({id:t.id,text:t.text,short:t.short,to:t.to,label:t.label,gate:t.gate,card:t.card,need:t.need,waive:t.waive,state:waved?'waved':(t.need?'todo':'optional')});});
+  open.forEach(function(t){now[t.id]=1;seen.t[t.id]={text:t.done,need:t.need};var waved=!!wave[t.id]&&t.waive;L.push({id:t.id,text:t.text,short:t.short,to:t.to,label:t.label,gate:t.gate,card:t.card,need:t.need,waive:t.waive,req:!!t.req,state:waved?'waved':(t.need?'todo':'optional')});});
   Object.keys(seen.t).forEach(function(id){if(!now[id])L.push({id:id,text:seen.t[id].text,need:seen.t[id].need,state:'done'});});
   var rank={todo:0,optional:1,waved:2,done:3};
   L.sort(function(a,b){return rank[a.state]-rank[b.state];});

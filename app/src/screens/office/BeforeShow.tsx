@@ -91,6 +91,21 @@ function ComingUp() {
   const U: any[] = E.comingUp(G.S); if (!U.length) return null;
   return <span class="coming" data-t="coming"><span class="eyebrow">Coming up</span> {U.map((u, i) => <>{i ? <span class="muted"> {'·'} </span> : null}<button type="button" class="lnk" data-t="coming-go" data-v={u.k} onClick={() => go(u.to)}>{u.t}</button></>)}</span>;
 }
+/** The fire: whatever needs an answer comes first on the desk, above the tasks, with its deadline. Each open matter
+    shows the chance of each attempt and one button for each answer. */
+function Fire() {
+  const S = G.S, open: any[] = S.inbox.filter((e: any) => !e.done);
+  if (!open.length) return null;
+  const answer = (id: number, c: number) => act(() => { E.resolveEvent(S, id, c); focusAfter(['[data-t="ev"]'], ['[data-t="endweek"]:not([disabled])', '[data-t="book-next"]']); });
+  return <div class="fire" data-t="fire">
+    <p class="eyebrow"><span class="bad">{open.length === 1 ? 'One matter needs' : open.length + ' matters need'} an answer</span> <span class="muted">{'·'} before the week can end</span></p>
+    <ul class="list">{open.map((e: any) => <li key={e.id} class={e.night ? 'night' : undefined}>
+      <span>{e.night ? <><Tag kind="bad">From last night</Tag> </> : null}<Txt>{e.text}</Txt>
+        {e.checks ? Object.keys(e.checks).map(k => <CheckLine label={e.choices[k]} ck={e.checks[k]} />) : null}</span>
+      <span class="row">{e.choices.map((c: string, i: number) => <Btn kind="sm" t="ev" d={{ id: e.id, c: i }} onClick={() => answer(e.id, i)}>{c}</Btn>)}</span>
+    </li>)}</ul>
+  </div>;
+}
 /** After a show has run this week: the button that goes back to After the show. */
 function Recap() { const A = E.afterShow(G.S); return A ? <Btn kind="sm" t="night-recap" onClick={openNight}>After the show recap</Btn> : null; }
 /** The show that is next, and the one button that takes you to book it. Once every show has run, the button ends the week. */
@@ -117,6 +132,7 @@ export function BeforeShow() {
   useFocusAfter();
   return <Panel title="Before the show" cls="pre mb3">
     <NextShow />
+    <Fire />
     <Tasks />
     <p class="mt2">Action points this week: <span class="pips" role="img" aria-label={B.ap + ' of ' + B.max}>{Array.from({ length: B.max }, (_, i) => i < B.ap ? <span class="gold">{'◆'}</span> : <span class="muted">{'◇'}</span>)}</span> <span class="num">{B.ap} of {B.max}</span>
       {S.court && S.court.length ? <span class="warn"> {'·'} {S.court.length} in court</span> : null}</p>

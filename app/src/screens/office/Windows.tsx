@@ -1,6 +1,6 @@
 /* The Office pop-ups: the week-closed summary and the clock detail. Both are drawn from the live game state. */
 import { E } from '../../engine';
-import { G, me, Modal, full, cash, openModal, act, say, view, slice } from '../../store';
+import { G, me, Modal, full, cash, openModal, closeModal, act, say, view, slice } from '../../store';
 import { Window, ColChart, Dial, Empty, Txt, Name, Btn, Tag } from '../../kit';
 
 /** Opened by flow.endWeek() once the engine has closed the week: the money, the last ten weeks, the news, the new date. */
@@ -79,3 +79,33 @@ export function VoicesWindow(p: { m: Modal }) {
 }
 /** Open the commentary desk pop-up on one chair. */
 export function openVoices(seat?: string) { const st = slice<{ seat: string; msg: string; err: boolean }>('voices', () => ({ seat: 'pbp', msg: '', err: false })); st.seat = seat === 'col' ? 'col' : 'pbp'; st.msg = ''; openModal({ kind: 'voices' }); }
+
+/** A new game opens on this: the owner's letter. Typed out line by line on a black screen, like a telex. */
+export function WelcomeWindow(_p: { m: Modal }) {
+  const S = G.S, W = E.welcome(S);
+  return <div class="scrim intro" role="dialog" aria-modal="true" aria-label={'A letter from ' + W.from} data-t="welcome">
+    <div class="telex">
+      <pre class="tx-head" aria-hidden="true">{'╔' + '═'.repeat(46) + '╗\n║' + (' ' + W.company.toUpperCase()).padEnd(46).slice(0, 46) + '║\n║' + (' OFFICE OF THE OWNER').padEnd(46) + '║\n╚' + '═'.repeat(46) + '╝'}</pre>
+      <p class="tx-meta"><span>TO: {W.to.toUpperCase()}</span><span>{W.date.toUpperCase()}</span></p>
+      <p class="tx-meta"><span>RE: THE JOB</span><span>*** URGENT ***</span></p>
+      <div class="tx-body">{W.lines.map((x: string, i: number) => <p key={i} class={'tx-l' + (i === 0 ? ' first' : '')} style={{ animationDelay: (0.5 + i * 0.9) + 's' }}><Txt>{x}</Txt></p>)}
+        <p class="tx-l tx-sig" style={{ animationDelay: (0.5 + W.lines.length * 0.9) + 's' }}>{'—'.length ? '' : ''}{W.from}<br /><span class="muted">{W.role}, {W.short}</span></p>
+        <p class="tx-l tx-ps" style={{ animationDelay: (1.1 + W.lines.length * 0.9) + 's' }}>P.S. {W.ps}</p></div>
+      <div class="tx-foot"><Btn kind="go" id="modal-ok" t="welcome-go" onClick={closeModal}>Get to work</Btn><span class="blink" aria-hidden="true">_</span></div>
+    </div>
+  </div>;
+}
+
+/** Name the face of the company, from the desk. Required once, before the first big event. */
+export function FaceWindow(_p: { m: Modal }) {
+  const S = G.S, C: any[] = E.faceCandidates(S), F = E.faceInfo ? E.faceInfo(S) : null, cur = S.fc ? S.fc.id : null;
+  const pick = (id: number) => act(() => { const r = E.nameFace(S, id); say(r.msg, { err: !r.ok }); if (r.ok) openModal({ kind: 'info', title: 'The face of the company', body: () => <p class="good"><Txt>{r.msg}</Txt></p> }); });
+  return <Window title="The face of the company" wide ok="Not now">
+    <p>Who are the shows built around? The crowd comes to see them. <span class="muted">A lift when they are in the main event. A letdown when they could be on the card and are not. It can change later, on the air, when the building will not sit down for somebody.</span></p>
+    <ul class="list mt1" data-t="face-list">{C.map((c: any) => <li key={c.id}>
+      <span><Name w={S.w[c.id]} /> <span class="muted">{'·'} {c.why}</span>{cur === c.id ? <> <Tag kind="good">Now</Tag></> : null}</span>
+      <span class="row opts"><Btn kind="sm" t="face-pick" d={{ v: c.id }} disabled={cur === c.id} onClick={() => pick(c.id)}>Build around them</Btn></span></li>)}</ul>
+    {F ? null : null}
+  </Window>;
+}
+export function openFace() { openModal({ kind: 'face' }); }

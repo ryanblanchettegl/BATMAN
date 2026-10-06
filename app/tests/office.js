@@ -129,6 +129,7 @@ async function run(mode) {
   let open0 = await state(page, S => S.inbox.filter(e => !e.done).length);
   ok(open0 > 0 && await count('[data-t="ev"]') >= 2, 'an inbox event with choices by week ' + await state(page, S => S.week));
   ok(/\((\d+)\)/.test(await txt('.menu [data-v="office"]')), 'menu badge counts the inbox');
+  ok(await page.evaluate(() => { const f = document.querySelector('[data-t="fire"]'), t = document.querySelector('.tasks'); return !!f && !!t && f.getBoundingClientRect().top < t.getBoundingClientRect().top && f.querySelectorAll('[data-t="ev"]').length >= 2; }), 'what needs an answer is first on the desk, above the tasks, with its answers');
   await step('inbox waiting', 'inbox');
   await state(page, runShows); await redraw(page);
   open0 = await state(page, S => S.inbox.filter(e => !e.done).length);   // a show can leave one more matter

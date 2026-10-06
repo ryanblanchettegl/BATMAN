@@ -1962,7 +1962,12 @@ E.afterShow=function(S){
   add('writers','The writers',L.writers[0].x,L.writers.map(function(w){return w.x;}),L.writers[0].s<0?'bad':(L.writers[0].s>0?'good':''));
   if(rep.sheet&&rep.sheet.lines&&rep.sheet.lines.length)add('sheet','The dirt sheet',rep.sheet.lines[0],rep.sheet.lines.slice(),'');
   var mt=null;if(L.matter!=null)S.inbox.forEach(function(e){if(e.id===L.matter)mt={id:e.id,text:e.text,done:!!e.done,result:e.result||''};});
-  return {key:L.key,name:rep.name,grade:gradeG(rep.rating),head:v.head,line:v.line,matter:mt,items:items,unseen:items.filter(function(x){return !x.seen;}).length,left:S.queue.length-S.qi};
+  // what the night hands to next week: promises coming due, and whatever the desk is counting down to
+  var nx=[];S.quests.filter(function(q){return q.due!=null&&q.text;}).sort(function(a,b){return a.due-b.due;}).slice(0,3).forEach(function(q){var d=q.due-S.week;nx.push({t:q.text,when:d<=0?'this week':(d===1?'next week':'in '+d+' weeks'),soon:d<=1});});
+  (typeof E.comingUp==='function'?E.comingUp(S):[]).slice(0,3).forEach(function(u){nx.push({t:u.t,when:'',soon:false});});
+  nx=nx.slice(0,5);
+  if(nx.length)add('next','Next week',nx[0].t+(nx[0].when?' ('+nx[0].when+')':''),nx.map(function(x){return x.t+(x.when?' ('+x.when+').':'');}),nx[0].soon?'warn':'');
+  return {key:L.key,name:rep.name,grade:gradeG(rep.rating),head:v.head,line:v.line,matter:mt,next:nx,items:items,unseen:items.filter(function(x){return !x.seen;}).length,left:S.queue.length-S.qi};
 };
 /** The booker has looked at one of the things the night left. */
 E.nightSeen=function(S,k){var A=E.afterShow(S);if(!A)return;if(!S.nightSeen||S.nightSeen.key!==A.key)S.nightSeen={key:A.key,k:{}};S.nightSeen.k[k]=1;};
@@ -4290,8 +4295,8 @@ var PPL_ACT={
   shake:{n:'Make them shake hands',d:'Sit the two of them down. If it works the heat goes out of it. If not, it is worse, and they both remember who pushed.',
     ck:function(S,P,w,o){return mkCheck(8,[{n:'Where you stand with '+w.name,v:youLean(S,w)},{n:'Where you stand with '+o.name,v:youLean(S,o)}].concat(skillMods(S,'talk')));},
     run:function(S,P,w,o,r){
-      if(r.ok){relBump(S,w.id,o.id,28,{k:'peace',t:'The booker sat them down and they shook hands.',by:'you'});[w,o].forEach(function(x){stressAdd(S,x,-5);youRemember(S,x,'peace','You sat them down with '+(x===w?o.name:w.name)+' and it was settled.',4);});return {ok:true,msg:w.name+' and '+o.name+' shake hands. Nobody is friends, but the room breathes out.'};}
-      relBump(S,w.id,o.id,-8,{k:'forced',t:'The booker tried to make them shake hands.',by:'you'});[w,o].forEach(function(x){youRemember(S,x,'forced','You tried to force a handshake with '+(x===w?o.name:w.name)+'.',-3);});return {ok:false,msg:'It lasts about a minute. '+w.name+' walks out first.'};}},
+      if(r.ok){relBump(S,w.id,o.id,{bond:28},{k:'peace',t:'The booker sat them down and they shook hands.',by:'you'});[w,o].forEach(function(x){stressAdd(S,x,-5);youRemember(S,x,'peace','You sat them down with '+(x===w?o.name:w.name)+' and it was settled.',4);});return {ok:true,msg:w.name+' and '+o.name+' shake hands. Nobody is friends, but the room breathes out.'};}
+      relBump(S,w.id,o.id,{bond:-8},{k:'forced',t:'The booker tried to make them shake hands.',by:'you'});[w,o].forEach(function(x){youRemember(S,x,'forced','You tried to force a handshake with '+(x===w?o.name:w.name)+'.',-3);});return {ok:false,msg:'It lasts about a minute. '+w.name+' walks out first.'};}},
   air:{n:'Put it on television',d:'It is real, so use it. A rivalry starts warm. They will work stiff, and neither will thank you.',
     run:function(S,P,w,o){var f=startFeud(S,P,w,o,34,'It is real, and the booker put it on television');if(!f)return {ok:false,stop:true,msg:'There are too many rivalries running to start another.'};
       [w,o].forEach(function(x){youRemember(S,x,'usedheat','You put their real trouble with '+(x===w?o.name:w.name)+' on television.',-2);});return {ok:true,msg:w.name+' against '+o.name+' is a rivalry now, and none of it is acting. It is on the Storylines page.'};}},
@@ -4346,6 +4351,7 @@ E.peopleDo=function(S,wid,act){
   return {ok:res.ok,done:true,roll:r,msg:out};
 };
 WEEKX.push(function(S){S.apWho={};});
+E.bondOf=function(S,a,b){return bondOf(S,a,b);};
 
 /* ===== 80-world.js ===== */
 /* ---------- difficulty ---------- */
@@ -8818,7 +8824,7 @@ E.NET_LVL={sure:'Sure',likely:'Likely',thin:'Thin'};
    Another system adds its own task through the TASKX hook list (declared with the others in src/10-match.js). */
 function taskOpen(S){
   var P=S.promos[S.player],L=[],R=rosterOf(S,P.id).filter(function(w){return !w.nw;});
-  var add=function(id,text,to,label,o){o=o||{};L.push({id:id,text:text,short:o.short||text,done:o.done||text,to:to,label:label,gate:o.gate||'show',card:!!o.card,need:o.need!==false,waive:o.waive!==false&&o.need!==false});};
+  var add=function(id,text,to,label,o){o=o||{};L.push({id:id,text:text,short:o.short||text,done:o.done||text,to:to,label:label,gate:o.gate||'show',card:!!o.card,need:o.need!==false,waive:o.waive!==false&&o.need!==false,req:!!o.req});};
   if(S.owner&&S.owner.pending)add('house','The company is yours. Set your house style.','house','Set it',{waive:false,done:'House style set.',short:'Set your house style'});
   var n=S.inbox.filter(function(e){return !e.done;}).length;
   if(n)add('inbox',n+' '+(n===1?'matter':'matters')+' in your inbox '+(n===1?'needs':'need')+' an answer.','desk','Answer',{gate:'week',waive:false,done:'Inbox answered.',short:'Answer the inbox ('+n+')'});
@@ -8828,7 +8834,9 @@ function taskOpen(S){
     if(D.col==null)add('desk-col','You have not picked a colour voice for the commentary desk.','manage','Assign',{done:'A colour voice is in the chair.',short:'Pick a colour voice'});
   }
   var slots=spMax(P)-S.sponsors.length,can=S.spOffers.filter(function(o){return E.sponsorOk(S,o);}).length;
-  if(slots>0&&can>0)add('sponsors',can+' sponsor '+(can===1?'offer':'offers')+' you could sign, and '+slots+' free '+(slots===1?'slot':'slots')+'.','deals','See offers',{done:'Sponsor offers dealt with.',short:'Sponsor offers ('+can+')'});
+  // after the first show a sponsor has to be signed, once: it cannot be left for another week (src/96-first.js)
+  var needSp=!(S.req&&S.req.sponsor)&&!S.sponsors.length&&S.stats&&S.stats.shows>=1;
+  if(slots>0&&can>0)add('sponsors',(needSp?'Your first show is done. Sign your first sponsor: money every week, for a condition you have to keep. ':'')+can+' sponsor '+(can===1?'offer':'offers')+' you could sign, and '+slots+' free '+(slots===1?'slot':'slots')+'.','deals','See offers',{done:'Sponsor offers dealt with.',short:needSp?'Sign your first sponsor':'Sponsor offers ('+can+')',waive:!needSp,req:needSp});
   var T=tournActive(S);
   P.titles.forEach(function(t){
     if(t.holders.length)return;
@@ -8851,7 +8859,7 @@ function taskOpen(S){
     task that is finished stays on the list with a tick until the week ends. That memory is bookkeeping, not game state. */
 E.tasks=function(S){
   var open=taskOpen(S),seen=S.taskSeen&&S.taskSeen.w===S.week?S.taskSeen:(S.taskSeen={w:S.week,t:{}}),wave=S.taskWave&&S.taskWave.w===S.week?S.taskWave.ids:{},now={},L=[];
-  open.forEach(function(t){now[t.id]=1;seen.t[t.id]={text:t.done,need:t.need};var waved=!!wave[t.id]&&t.waive;L.push({id:t.id,text:t.text,short:t.short,to:t.to,label:t.label,gate:t.gate,card:t.card,need:t.need,waive:t.waive,state:waved?'waved':(t.need?'todo':'optional')});});
+  open.forEach(function(t){now[t.id]=1;seen.t[t.id]={text:t.done,need:t.need};var waved=!!wave[t.id]&&t.waive;L.push({id:t.id,text:t.text,short:t.short,to:t.to,label:t.label,gate:t.gate,card:t.card,need:t.need,waive:t.waive,req:!!t.req,state:waved?'waved':(t.need?'todo':'optional')});});
   Object.keys(seen.t).forEach(function(id){if(!now[id])L.push({id:id,text:seen.t[id].text,need:seen.t[id].need,state:'done'});});
   var rank={todo:0,optional:1,waved:2,done:3};
   L.sort(function(a,b){return rank[a.state]-rank[b.state];});
@@ -8938,6 +8946,62 @@ E.comingUp=function(S){
   if(S.chal&&!S.chal.done)L.push({n:S.chal.weeks-S.week,t:'The challenge ends '+wk(S.chal.weeks-S.week),to:'desk',k:'chal'});
   var seen={};
   return L.filter(function(x){if(x.n<0||seen[x.t])return false;seen[x.t]=1;return true;}).sort(function(a,b){return a.n-b.n||(a.k==='big'?-1:1);}).slice(0,3);
+};
+
+/* ===== 96-first.js ===== */
+/* ---------- the first year: things every game makes you do, and how a game opens ----------
+   Ryan, 4 October: "We want every new game to feel free but some required actions need to be taken early on to make
+   sure all available mechanics are being used." A required action is a task on the desk that cannot be left for
+   another week, the first time only. Each says in a line what the mechanic is.
+     after your first show     sign a sponsor
+     before your first big event   name the face of your company
+   S.req = {sponsor, face} records the ones that are done. More go here.
+   Ryan, 6 October: a new game opens on the owner congratulating you on the job, with a little pretext
+   (E.welcome). The pretext is short for now and will be built out. */
+function reqOf(S){return S.req||(S.req={});}
+function faceCandidates(S){
+  var P=S.promos[S.player],R=rosterOf(S,P.id).filter(function(w){return !w.nw&&!w.rt&&!(w.inj>8);});
+  var sc=function(w){return w.ovr+(w.cha||50)*0.25+(w.sq||50)*0.2+holdLvl(P,w.id)*4+(w.mom||0);};
+  return R.sort(function(a,b){return sc(b)-sc(a);}).slice(0,6).map(function(w){var t=P.titles.filter(function(x){return x.holders.indexOf(w.id)>=0;})[0],why=[];
+    if(t)why.push('Holds the '+t.name);if(S.owner&&S.owner.fav===w.id&&!S.owner.me)why.push(S.owner.name+'’s favourite');
+    if(w.mom>=3)why.push('On a roll');if(w.age<=27)why.push('Young: '+w.age);else if(w.age>=38)why.push('Getting on: '+w.age);
+    if(youLean(S,w)>0)why.push('Thinks well of you');else if(youLean(S,w)<0)why.push('Does not trust you');
+    return {id:w.id,name:w.name,align:w.align,why:why.length?why.join('. ')+'.':'One of the biggest names you have.'};});
+}
+E.faceCandidates=function(S){return faceCandidates(S);};
+/** Name the face of the company from the desk. On the air it can still change after a main event. */
+E.nameFace=function(S,id){
+  var P=S.promos[S.player],w=S.w[+id],old=faceOf(S);
+  if(!w||w.promo!==P.id||w.nw)return {ok:false,msg:'Pick somebody on your roster.'};
+  if(old&&old.id===w.id)return {ok:false,msg:'The shows are already built around '+w.name+'.'};
+  S.fc={id:w.id,w:S.week};w.morale=clamp(w.morale+6,0,100);reqOf(S).face=1;
+  youRemember(S,w,'theone','You built the company around them.',18);
+  if(old){youRemember(S,old,'replaced','You took the company off their shoulders and gave it to '+w.name+'.',-15);relBump(S,old.id,w.id,{bond:-10,ja:25},{k:'passed',keep:true,t:old.name+' watched the company get built around '+w.name+'.'});}
+  rosterOf(S,P.id).filter(function(x){return !x.nw&&x.id!==w.id&&(!old||x.id!==old.id)&&x.ovr>=w.ovr-6;}).sort(function(a,b){return b.ovr-a.ovr;}).slice(0,3).forEach(function(x){relBump(S,x.id,w.id,{ja:10},{k:'passed',t:x.name+' thinks the company should have been built around someone else.'});});
+  news(S,'story',P.name+' is building its shows around '+w.name+'.');
+  return {ok:true,msg:'The shows are built around '+w.name+' now. The crowd comes to see them: a lift when they are in the main event, a letdown when they could be on the card and are not. The ones who thought it should be them will remember.'};
+};
+TASKX.push(function(S,P,add){
+  var R=reqOf(S);if(!R.sponsor&&S.sponsors&&S.sponsors.length)R.sponsor=1;
+  // before the first big event: who are the shows built around?
+  if(!R.face){
+    if(S.fc&&faceOf(S))R.face=1;
+    else if((S.queue||[]).slice(S.qi).some(function(q){return q.big;}))add('face','Your first big event is this week. Before it, name the face of your company: the one the shows are built around.','desk','Name them',{gate:'book',waive:false,req:true,done:'The face of the company is named.',short:'Name the face of the company'});
+  }
+});
+/** The letter a new game opens on. */
+E.welcome=function(S){
+  var P=S.promos[S.player],o=S.owner,me=!!o.me,rank=S.order.slice().sort(function(a,b){return S.promos[b].image-S.promos[a].image;}).indexOf(P.id)+1,n=S.order.length,sh=S.queue[S.qi]||P.shows[0];
+  var top=P.titles.filter(function(t){return !t.tag&&t.holders.length;}).sort(function(a,b){return b.lvl-a.lvl;})[0],ch=top?S.w[top.holders[0]]:null,fav=!me&&o.fav!=null?S.w[o.fav]:null;
+  var place=rank===1?'We are the biggest company in the world, and everybody else gets up in the morning to change that.':(rank<=3?'We are number '+rank+' of '+n+'. I did not hire you to stay there.':(rank>=n-1?'We are near the bottom of '+n+' companies. Nobody expects anything from us. Good.':'We are number '+rank+' of '+n+'. There is room above us and people below who want our spot.'));
+  var L=me?['It is yours. Your name is on the lease, the ring is paid for, and nobody upstairs can tell you no.',
+      'Nobody upstairs can save you either.',place.replace(/^We are/,'You are').replace(/I did not hire you to stay there\./,'That is not why you did this.')]
+    :['Congratulations. The job is yours.','You are the booker of '+(P.full||P.name)+', '+modelOf(P).ph+'. From tonight every match, every promo and every finish goes out with your name on it.',place];
+  if(ch)L.push(ch.name+' holds the '+top.name+'.'+(fav&&fav.id!==ch.id?' My money is on '+fav.name+'. You will hear from me about that.':(fav?' I like it that way.':'')));
+  L.push('Your first show is '+sh.name+'. The card is empty and the building is sold.');
+  L.push(me?'Go and book it.':'Do not make me regret this.');
+  return {from:me?S.booker.name:o.name,role:me?'Owner and booker':'Owner',company:P.full||P.name,short:P.name,to:S.booker.name,date:cal(S.week).label,lines:L,show:sh.name,
+    ps:'Before the show, the Office is where the week starts. The yellow button always knows what is next.'};
 };
 
 /* ===== 97-time.js ===== */
@@ -9349,6 +9413,60 @@ POST.push(function(ctx){
     var cur=segRead(S)[r.slot],lk=cur?fogLook(S,cur,l0(S,cur,r.slot)):null;
     if(lk&&lk.read)r.msg=r.msg.replace(/ It should be about [^.]*\.$/,' '+lk.read.t);
     return r;
+  };
+})();
+
+/* ---------- the run sheet shows the risk on every line ----------
+   Booking is a risk and reward puzzle (rule 7a): what can hurt a match, and what you have promised, is on its line
+   of the sheet, not only in the notes beside it. A flag is short. It says only what the agent's read already says
+   (so the fog holds), plus two things anybody can see: who is unhappy, and who you gave your word to. */
+function cardFlags(S,card,i){
+  var m=card[i],out=[],rd=matchRead(S,card,i),P=S.promos[S.player],seen={};
+  var add=function(k,t,x){if(seen[t])return;seen[t]=1;out.push({k:k,t:t,x:x||t});};
+  if(rd)rd.lines.forEach(function(l){
+    var t=l.t;
+    if(/fumes|worn|carrying/.test(t))add('bad','Worn down',t);
+    else if(/do not click|will not click/.test(t))add('bad','No chemistry',t);
+    else if(/real chemistry|will click/.test(t))add('good','Chemistry',t);
+    else if(/minutes/.test(t)&&l.s<0)add('bad','Too long',t);
+    else if(/squash/.test(t))add('warn','Squash',t);
+    else if(/not a regular team|do not get on/.test(t))add('warn','Rough team',t);
+    else if(l.s<0)add('bad','A risk',t);
+  });
+  var ids=[];(m.sides||[]).forEach(function(s,si){s.forEach(function(id){if(id!=null)ids.push({id:id,si:si});});});
+  ids.forEach(function(q){var w=S.w[q.id];if(!w)return;
+    if(w.morale<38)add('warn','Unhappy',w.name+' is unhappy, and it will show in the effort.');
+    S.quests.forEach(function(qq){if(qq.type==='win'&&qq.w===w.id){var won=m.call===q.si;add(won?'good':'warn',won?'Promise kept':'Promised a win',won?'You promised '+w.name+' a win, and you have called it.':'You promised '+w.name+' a win by '+cal(qq.due).label+'. Call the finish, or hope.');}});
+  });
+  return out;
+}
+E.cardFlags=function(S,card){card=card||S.card||[];return card.map(function(m,i){return matchRead(S,card,i)?cardFlags(S,card,i):[];});};
+/* a promise that is about to fall due is a warning before the bell, and the suggested card honours what it can */
+(function(){
+  var val=E.validate;
+  E.validate=function(S,card){
+    var v=val(S,card),show=S.queue[S.qi];if(!show)return v;
+    var last=S.qi>=S.queue.length-1;
+    S.quests.forEach(function(q){
+      if(q.type!=='win'||!S.w[q.w]||!last||q.due>S.week)return;
+      var w=S.w[q.w],won=(card||[]).some(function(m){return m.call!=null&&m.call>=0&&m.sides[m.call]&&m.sides[m.call].indexOf(w.id)>=0;});
+      if(!won)v.warnings.push('You promised '+w.name+' a win by '+cal(q.due).label+', and this is the last show before it falls due. They are not called to win tonight.');
+    });
+    return v;
+  };
+  var sug=E.suggest;
+  E.suggest=function(S){
+    var card=sug(S),P=S.promos[S.player],n=card.length,ch=false;if(!n)return card;
+    // the one the shows are built around belongs in the main event, when they are on the card at all
+    var f=typeof faceOf==='function'?faceOf(S):null;
+    if(f){var at=-1;card.forEach(function(m,i){if(m.sides.some(function(s){return s.indexOf(f.id)>=0;}))at=i;});
+      if(at>=0&&at!==n-1&&(!card[n-1].title||card[at].title)){var t=card[at];card[at]=card[n-1];card[n-1]=t;if(card[at].len==='L'&&card[n-1].len!=='L'){var l=card[at].len;card[at].len=card[n-1].len;card[n-1].len=l;}ch=true;}}
+    // a promised win is called, as far as the booking power goes
+    S.quests.forEach(function(q){if(q.type!=='win')return;
+      card.forEach(function(m){if(m.call!=null)return;var si=-1;m.sides.forEach(function(s,k){if(s.indexOf(q.w)>=0)si=k;});if(si<0)return;
+        m.call=si;if(E.cardCost(S,card)>S.bp)m.call=null;else ch=true;});});
+    if(ch)E.fitShow(S,card);
+    return card;
   };
 })();
 
