@@ -34,13 +34,13 @@ What it means for anything new:
 - **The Show pays out and sets the next hook.** A result is never only a grade. Something happens that nobody booked, and the night ends on a new problem or a new chance that sends the player back to the Office.
 - **Every phase hands the next one something unresolved.** A feature that ends a phase on a clean slate is not finished.
 
-Where the game stands against it, at version 0.28:
+Where the game stands against it, at version 0.30:
 
 | Phase | In the game now | Still missing |
 | --- | --- | --- |
 | Office | The week opens with events that need an answer (the owner's directives, a rival's offer to one of your stars, the network asking for a meeting, the locker room meeting without you), this week's tasks, the pressure clocks and the notification bar. | The fire is not always the first thing on the desk, and it rarely comes from last night's show. The dirt sheet sits in Net, not on the desk. No sponsor asking for a kind of show. No travel problem at the start of the week (only before the bell). |
 | Booking | Time is the budget. Fog of war: the road agent says what can be seen (worn down, running on fumes, a squash) and the rest is learned by running it. Wear, morale and effort change how a match goes, and the staff notes argue with the card. | Fatigue, morale and chemistry are not on every line of the run sheet. Nothing yet sets a tired champion against a rookie's chance as one clear trade. The five goals for every show are not built. |
-| Show | The show is live and cannot be left. A segment can be skipped to its result, a call never can, and the yellow button at the top right is the only way forward. Twelve kinds of call from the gorilla position, each caused by the night: titles, rivals, a promo off the script, somebody hurt, a quiet crowd, a match going long, the owner, the network, a sponsor, who the shows are built around. People remember every answer. The report says what was learned and what was called. | The night still ends on a grade and a report. It does not yet end on "what tonight left you with": the new problem or chance, named, with its deadline, waiting on the desk. A mid-card act catching fire is not yet called out as it happens. |
+| Show | The show is live and cannot be left. A segment can be skipped to its result, a call never can, and the yellow button at the top right is the only way forward. Twelve kinds of call from the gorilla position, each caused by the night: titles, rivals, a promo off the script, somebody hurt, a quiet crowd, a match going long, the owner, the network, a sponsor, who the shows are built around. People remember every answer. The report says what was learned and what was called. | From 0.30 the night ends on the desk: injuries, the locker room, the gate, television, the writers and the dirt sheet, each a line that opens a pop-up. They inform. They do not yet arrive as a named problem with a deadline. A mid-card act catching fire is not yet called out as it happens. |
 
 ## 2b. The first year teaches the game
 

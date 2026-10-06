@@ -76,7 +76,7 @@ async function run(mode) {
     ok(mode, 'both calls came up', one.includes('botch') && one.includes('audible'), one.join(', '));
     await page.click('[data-t="advance"]');
     ok(mode, 'the report lists the calls', (await whole(page, '[data-t="rep-calls"]')).includes('Stop the match'));
-    await page.click('[data-t="closeReport"]');
+    await page.click('[data-t="closeReport"]'); await go(page, 'booking');   // the report closes to the desk
 
     /* ---- show two: the network on the line, and a match that will not go home ---- */
     const two = await card(page, (S) => { const n = S.card.length, free = S.card.map((m, i) => i).filter(i => i < n - 1 && !S.card[i].title && (S.card[i].mt === '1v1' || S.card[i].mt === 'tag') && S.card[i].len !== 'L');

@@ -17,7 +17,7 @@ async function run(mode, weeks) {
         await airShow(page, { report: false, pick: k => (w + k.length) % 2, onCall: async k => { await fit('call ' + k + ' w' + w); } });
         await fit('sign-off w' + w); await page.click('[data-t="advance"]'); await fit('report w' + w); continue;
       }
-      if (await has('[data-t="closeReport"]')) { await page.click('[data-t="closeReport"]'); continue; }
+      if (await has('[data-t="closeReport"]')) { await page.click('[data-t="closeReport"]'); await fit('the desk after the show w' + w); if (await has('[data-t="after-look"]')) { await page.click('[data-t="after-look"]'); await page.click('#modal-ok'); } if (await has('[data-t="book-next"]:not([disabled])')) { await page.click('[data-t="book-next"]'); continue; } break; }
       if (await has('[data-t="pre"]')) { await page.click('[data-t="pre"]'); continue; }
       if (await has('[data-t="suggest"]')) { await page.click('[data-t="suggest"]'); await fit('card w' + w); await page.click('[data-t="advance"]'); continue; }
       break;

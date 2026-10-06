@@ -3,6 +3,7 @@
 import { E } from '../../engine';
 import { G, ui, pref, reduceMotion, act, view, say, slice } from '../../store';
 import { book } from '../../flow';
+import { go } from '../../nav';
 import { SFX } from '../../sfx';
 
 export type Match = any;
@@ -204,6 +205,7 @@ export function liveSkip() { typer.finish(); const r = liveReport(); if (r && !l
 export function liveEnd() { const r = liveReport(); if (r && !onAir()) look(() => { book().live = { s: r.segs.length, b: 0 }; }); }
 export const liveDone = () => look(() => { book().live = null; top0(); });
 export const replay = () => look(() => { book().live = { s: -1, b: 0 }; top0(); });
-export const closeReport = () => look(() => { const b = book(); b.report = null; b.live = null; top0(); });
+/** Close the report. After a show of this week the game goes back to the Office: whatever the night left behind is on the desk. A report opened from the history just closes. */
+export const closeReport = () => { const b = book(), S = G.S, r = b.report != null ? S.reports[b.report] : null, mine = !!r && r.week === S.week && !!r.left; look(() => { b.report = null; b.live = null; top0(); }); if (mine) go('desk'); };
 /** Show one of the booking notes beside the sheet. Whatever was selected on the sheet is let go. */
 export const pickSide = (id: string) => look(() => { const b = book(); b.side = id; b.edit = -1; sel().seg = -1; });

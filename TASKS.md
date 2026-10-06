@@ -271,14 +271,16 @@ Ryan, 4 October: "After a show, it should go back to the Office or your desk, so
 
 **Back to the desk after a show**
 
-- [ ] When the report is closed the game goes to the Office desk, not to the next card. The desk shows what the night left behind, and the yellow button leads on from there. (Today closing the report opens the next show's card.)
-- [ ] The desk after a show, built up over time. Each of these is a line on the desk that opens a pop-up, so nothing leaves the Office:
-  - the dirt sheets on last night (today they are in Net)
-  - injuries from the show, and who is carrying one
-  - what the writers thought: what worked, what did not, what they want next week
-  - how relationships changed: who fell out, who bonded, who will remember what you did
-  - tickets sold against tickets available (the gate report in section 4)
-  - streaming and television numbers by demographic (section 5, and the four kinds of fan)
+- [x] **(0.30) Back to the desk after a show.** Closing the report of a show that ran this week goes to the Office. The report's button says Back to the desk and the yellow button says The desk. From the desk the next show is one press away. Code: `src/34-night.js`, `AfterShow` in `app/src/screens/office/Desk.tsx`. Tests: `node test-live.js` (nt1 to nt7), `app/tests/booking.js`, `journey.js`.
+- [x] **(0.30) The desk after a show.** An "After the show" panel at the top of the desk: the grade and the verdict, then one line each, trouble first, each marked New until it has been looked at, each opening a pop-up on the desk:
+  - injuries from the show, how long, and whether a champion is out
+  - the locker room: who went home unhappy or happier, and what people will remember from tonight
+  - the gate: tickets sold against tickets available, and how the house looked
+  - television: who watched, against the show's recent run (buys for a big event)
+  - the writers: what they want followed up, what did not get across, an act the crowd took to, a hot feud left off the show
+  - the dirt sheet on the night
+- [ ] Still to come there: numbers by demographic (needs the four kinds of fan), the city's score after the gate (section 4), and decisions made in the pop-up itself (today each one informs; the deciding is still done on its page or in the inbox).
+- [ ] An injury or a walk-out from the show should arrive as a matter in the inbox with a deadline, so the night ends on a named problem and not only a line.
 - [ ] This is the Show phase handing the Office something unresolved (the "one more turn" rule, `docs/design.md` section 2a). It joins "the show ends on next week's problem".
 
 **A venue before every show**

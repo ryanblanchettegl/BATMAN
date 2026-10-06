@@ -58,6 +58,7 @@ function tieOf(S,a,b){
 function note(S,head,text,kind){
   if(S.cal||!S.toasts)return;
   S.toasts.push({h:head,t:text||'',k:kind||''});
+  if(S.live)nightNote(S,head,text,kind);
   if(S.toasts.length>40){for(var i=0;i<S.toasts.length;i++)if(typeof S.toasts[i]!=='string'){S.toasts.splice(i,1);break;}}
 }
 function relMine(S,a,b){var x=S.w[a],y=S.w[b];return !!x&&!!y&&x.promo===S.player&&y.promo===S.player;}

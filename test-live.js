@@ -256,5 +256,20 @@ if (found.network) { const F = found.network, net = S => { E.clocks(S); return S
 { const run = () => { const S = E.newGame('pdw', 7, { name: 'R' }); for (let wk = 0; wk < 3; wk++) { while (desk(S)) { E.liveBegin(S, S.card); air(S, (ev, k) => (k + 1) % ev.choices.length); } week(S); } return JSON.stringify(S); };
   ok('det1', 'the same answers give the same game', run() === run());
 }
+/* what the night left behind: filed with the report, laid out for the desk */
+{ const S = E.newGame('pdw', 12, { name: 'R' });
+  ok('nt1', 'before the first show the desk has nothing from a night', E.afterShow(S) === null);
+  const card = desk(S), w = S.w[card[0].sides[0][0]];
+  E.liveBegin(S, card); w.inj = 3; w.morale = Math.max(0, w.morale - 20); air(S, ev => ev.safe || 0);
+  const r = S.reports[0], A = E.afterShow(S), by = k => A.items.find(i => i.k === k);
+  ok('nt2', 'the report carries what the night left: the gate, television, who got hurt, whose mood moved, the writers', !!r.left && r.left.gate.att === r.att && r.left.gate.cap === r.cap && r.left.tv.v === r.viewers && r.left.hurt.some(h => h.id === w.id) && r.left.mood.some(m => m.id === w.id && m.d < 0) && r.left.writers.length >= 1);
+  ok('nt3', 'the desk gets it one line each, trouble first, with the detail for a pop-up', !!A && A.name === r.name && A.items[0].k === 'hurt' && A.items[0].tone === 'bad' && A.items[0].line.includes(w.name) && ['room', 'gate', 'tv', 'writers'].every(k => by(k) && by(k).line && by(k).detail.length) && A.unseen === A.items.length, A.items.map(i => i.k).join(', '));
+  ok('nt4', 'tickets are said against the seats there were, and the show gets a grade and a verdict in words', /tickets/.test(by('gate').line) && /^(A\+|A|A-|B\+|B|B-|C\+|C|C-|D|F)$/.test(A.grade) && !!A.head && !/%/.test(JSON.stringify(A)));
+  E.nightSeen(S, 'gate');
+  ok('nt5', 'looking at one marks it', E.afterShow(S).unseen === A.items.length - 1 && E.afterShow(S).items.find(i => i.k === 'gate').seen);
+  while (desk(S)) { E.liveBegin(S, S.card); air(S, ev => ev.safe || 0); }
+  ok('nt6', 'the next show replaces it, with nothing marked', E.afterShow(S).name === S.reports[0].name && (S.reports[0].name === r.name || E.afterShow(S).unseen === E.afterShow(S).items.length));
+  week(S);
+  ok('nt7', 'a new week starts with a clear desk', E.afterShow(S) === null); }
 if (fails.length) { console.log('\nFAILED: ' + fails.length + '\n' + fails.join('\n')); process.exit(1); }
 console.log('test-live: all passed');

@@ -6,10 +6,12 @@ import { G, ui, act, say } from '../store';
 import { go } from '../nav';
 import { endWeek, book } from '../flow';
 import { onKey } from '../input';
-import { run, liveStep, liveGo, onAir } from '../screens/booking/run';
+import { run, liveStep, liveGo, onAir, closeReport } from '../screens/booking/run';
 
 /** Is the broadcast on screen? Then the button carries the show forward. */
 function live(): boolean { return !!liveStep(); }
+/** Is the report of a show that ran this week open? Closing it goes to the desk. */
+function nightReport(): boolean { const b = book(), S = G.S; if (ui.page !== 'booking' || b.report == null || b.live) return false; const r = S.reports[b.report]; return !!r && r.week === S.week && !!r.left; }
 function reportOpen(): boolean { const b = book(); return ui.page === 'booking' && b.report != null; }
 
 /** What the button says right now: one or two words (short), and the same thing as a sentence (label). */
@@ -19,6 +21,8 @@ export function advanceNow(): { short: string; label: string; day: string; k: st
   if (st) return { short: st.short, label: st.label, day: onAir() ? 'On the air' : 'Replay', k: 'live', why: [], live: st.k };
   if (S.live) { const call = S.live.ev && !S.live.ev.done; return { short: call ? 'Your call' : 'Continue', label: call ? 'The gorilla position is waiting for your answer' : 'The show is on the air', day: 'On the air', k: 'live', why: [] }; }
   if (A.k !== 'over' && reportOpen() && book().live) return { short: 'Continue', label: 'On with the replay', day: 'Replay', k: 'live', why: [] };
+  // a report of tonight's show is open: the night ends on the desk, with what it left behind
+  if (A.k !== 'over' && nightReport()) return { short: 'The desk', label: 'Back to the Office. What the night left behind is on your desk.', day: 'After the show', k: 'desk', why: [] };
   if (A.k === 'run' && ui.page !== 'booking') return { short: 'Open card', label: 'The card for ' + sh.name + ' is ready. Open it, then run the show.', day: A.day, k: 'book', why: [] };
   return { short: A.short, label: A.label, day: A.day, k: A.k, why: A.why };
 }
@@ -39,6 +43,7 @@ export function pressAdvance() {
   const S = G.S; if (!S || S.over || ui.modal || ui.cards.length) return;
   if (live()) { liveGo(); return; }
   if (S.live) { if (ui.page !== 'booking') go('booking'); else act(() => say('The gorilla position is waiting for your call.')); return; }
+  if (nightReport()) { closeReport(); return; }
   if (reportOpen()) { const b = book(); act(() => { b.report = null; b.live = null; }); }
   const A = E.advance(S);
   if (A.k === 'week') { endWeek(); return; }
