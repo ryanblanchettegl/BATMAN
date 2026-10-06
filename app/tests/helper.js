@@ -96,4 +96,14 @@ async function airShow(page, opts) {
 }
 /** From the report or After the show, on to the Office (the yellow button, once or twice). */
 async function toOffice(page) { for (let i = 0; i < 3 && (await page.evaluate(() => window.EWF_DEBUG.ui.page)) !== 'desk'; i++) { await page.click('[data-t="advance"]'); await page.waitForTimeout(60); } }
-module.exports = { open, go, overflow, shot, flash, state, redraw, SHOTS, fits, airShow, toOffice };
+/** Manage is buttons now: a control lives in the pop-up of one of them. Make sure the control `sel` is on screen,
+    opening the button whose pop-up holds it if need be. Returns false if no button on this page has it. */
+async function ensure(page, sel) {
+  if (await page.$(sel)) return true;
+  for (let i = 0; i < 3 && await page.$('.win'); i++) { await page.keyboard.press('Escape'); await page.waitForTimeout(40); }
+  if (await page.$(sel)) return true;
+  const ids = await page.$$eval('[data-t="mng"], [data-t="plot-open"]', a => a.map(e => e.getAttribute('data-t') + '|' + e.getAttribute('data-v')));
+  for (const x of ids) { const [t, v] = x.split('|'); await page.click('[data-t="' + t + '"][data-v="' + v + '"]'); await page.waitForTimeout(40); if (await page.$(sel)) return true; await page.keyboard.press('Escape'); await page.waitForTimeout(40); }
+  return false;
+}
+module.exports = { open, go, overflow, shot, flash, state, redraw, SHOTS, fits, airShow, toOffice, ensure };

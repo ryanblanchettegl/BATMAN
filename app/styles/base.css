@@ -526,8 +526,15 @@ html[data-music="off"] .mus::after{content:' off';color:var(--dred)}
 /* backstage: things to do, one button each. Each opens a pop-up. */
 .bsacts{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:8px}
 .bsact{all:unset;box-sizing:border-box;cursor:pointer;display:flex;flex-direction:column;gap:2px;padding:.4em 1ch;border:2px solid var(--dcyan);background:#0a2a8a;min-width:0}
-.bsact b{font-weight:normal;color:var(--white)}
+.bsact b{font-weight:normal;color:var(--yellow);text-transform:uppercase;letter-spacing:.03em}
+.bsact .eff{color:var(--white)}
+.bsact .ft{margin-top:auto;padding-top:.3em}
+.bsgrp{margin-top:.7em}.bsgrp .eyebrow{margin:0;color:var(--cyan)}
 .bsact:hover,.bsact:focus-visible{background:#0b6470;outline:0;border-color:var(--yellow)}
 .bsact.used{opacity:.45}
 .bsact.hot{border-color:var(--mag)}
 html[data-screen="tablet"] .bsacts{grid-template-columns:repeat(3,minmax(0,1fr))}
+
+/* a panel shown inside a pop-up loses its own frame and heading: the window has both */
+.win .wb > .panel,.win .wb .inwin > .panel{border:0;padding:0;margin:0 0 .8em;box-shadow:none;background:none}
+.win .wb > .panel > h2,.win .wb .inwin > .panel > h2{position:static;display:block;background:none;padding:0;margin:0 0 .3em;color:var(--yellow)}

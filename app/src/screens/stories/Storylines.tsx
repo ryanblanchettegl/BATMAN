@@ -1,7 +1,7 @@
 /* Storylines: the rivalries your booking started, plus streaks, stables and tag teams. The long plan is the one place to pencil something in. */
 import { E } from '../../engine';
-import { G, me, plural, slice, act, view, say } from '../../store';
-import { Head, Panel, Tag, Name, Meter, Empty, teamName, Txt, Btn, Sel, Field, showResult } from '../../kit';
+import { G, me, plural, slice, act, view, say, openModal, Modal } from '../../store';
+import { Head, Panel, Tag, Name, Meter, Empty, teamName, Txt, Btn, Sel, Field, showResult, Window } from '../../kit';
 
 /** What each of the four acts needs from the booker. Act 4 depends on whether the match is already made. */
 function actNote(f: any): string {
@@ -142,33 +142,50 @@ function LongPlan() {
   </Panel>;
 }
 
-/** Booking power spent on the stories themselves: break up a team, push somebody, buy a cheap pre-tape for the next show. */
+/** Booking power spent on the stories themselves. Each thing it buys is a button; the button opens a pop-up with the choices. */
+const PLOT_UI: Record<string, string> = { split: 'One turns on the other. The team ends and a rivalry starts hot.', push: 'Momentum now, and the crowd is told they matter.', tape: 'A cheap promo or angle that adds itself to your next show, where you say.' };
 function Plot() {
-  const S = G.S, I = E.plotInfo(S);
-  const st = slice<{ team: string; who: string; w: string; k: string; a: string; b: string; at: string }>('plot', () => ({ team: '', who: '', w: '', k: 'interview', a: '', b: '', at: 'start' }));
-  const run = (id: string, o: any, after?: () => void) => act(() => { const r = E.plotDo(S, id, o); say(r.msg, { err: !r.ok }); showResult(I.acts.find((x: any) => x.id === id).n, r.msg, !r.ok); if (r.ok && after) after(); });
-  const A = (id: string) => I.acts.find((x: any) => x.id === id), tm = I.teams.find((t: any) => String(t.id) === st.team) || null, kind = I.kinds.find((k: any) => k.id === st.k) || I.kinds[0];
-  const W1: number[] = I.show ? (E.plotTapeWho(S, kind.id, [])[0] || []) : [], W2: number[] = I.show && kind.two && st.a ? (E.plotTapeWho(S, kind.id, [+st.a])[1] || []) : [];
-  const cost = (id: string) => <span class={A(id).can ? 'gold' : 'bad'}>{A(id).cost} BP</span>;
+  const S = G.S, I = E.plotInfo(S), pl = E.longPlan(S);
+  const open = (k: string) => { const st = plotState(); st.team = ''; st.who = ''; st.w = ''; st.a = ''; st.b = ''; openModal({ kind: 'plot', k }); };
   return <Panel title={'Booking power: ' + I.bp + ' to spend on the stories'} cls="mb2">
-    <ul class="list" data-t="plot">
-      <li class="col" data-t="plot-row" data-v="split"><span><b>{A('split').n}</b> {cost('split')}<br /><span class="muted">{A('split').d}</span></span>
-        {I.teams.length ? <span class="row"><Sel t="plot-team" label="Which team" value={st.team} options={[['', 'Pick a team'], ...I.teams.map((t: any): [string, string] => [String(t.id), t.n])]} onChange={v => view(() => { st.team = v; st.who = ''; })} />
-          {tm ? <Sel t="plot-who" label="Who turns" value={st.who} options={[['', 'Whoever is unhappier turns'], [String(tm.a), S.w[tm.a].name + ' turns'], [String(tm.b), S.w[tm.b].name + ' turns']]} onChange={v => view(() => { st.who = v; })} /> : null}
-          <Btn kind="sm" t="plot-do" d={{ v: 'split' }} disabled={!tm || !A('split').can} onClick={() => run('split', { team: st.team, who: st.who || null }, () => { st.team = ''; st.who = ''; })}>Break them up</Btn></span> : <span class="muted">You have no regular teams to break up.</span>}</li>
-      <li class="col" data-t="plot-row" data-v="push"><span><b>{A('push').n}</b> {cost('push')}<br /><span class="muted">{A('push').d}</span></span>
-        <span class="row"><Sel t="plot-w" label="Who to push" value={st.w} options={[['', 'Pick a wrestler'], ...I.push.map((w: any): [string, string] => [String(w.id), w.n])]} onChange={v => view(() => { st.w = v; })} />
-          <Btn kind="sm" t="plot-do" d={{ v: 'push' }} disabled={!st.w || !A('push').can} onClick={() => run('push', { w: st.w }, () => { st.w = ''; })}>Push them</Btn></span></li>
-      <li class="col" data-t="plot-row" data-v="tape"><span><b>{A('tape').n}</b> {cost('tape')}<br /><span class="muted">{A('tape').d}</span>
-        {I.taped ? <><br /><span class="good" data-t="plot-taped">On {I.show}, {I.taped.where.toLowerCase()}: {I.taped.label}.</span></> : null}</span>
-        {!I.show ? <span class="muted">Every show this week has run.</span> : (I.taped ? null : <span class="row">
-          <Sel t="plot-k" label="What it is" value={st.k} options={I.kinds.map((k: any): [string, string] => [k.id, k.n])} onChange={v => view(() => { st.k = v; st.a = ''; st.b = ''; })} />
-          <Sel t="plot-a" label="Who" value={st.a} options={[['', 'Who'], ...W1.map((id): [string, string] => [String(id), S.w[id].name])]} onChange={v => view(() => { st.a = v; st.b = ''; })} />
-          {kind.two ? <Sel t="plot-b" label="Against whom" value={st.b} disabled={!st.a} options={[['', 'Against whom'], ...W2.map((id): [string, string] => [String(id), S.w[id].name])]} onChange={v => view(() => { st.b = v; })} /> : null}
-          <Sel t="plot-at" label="Where on the show" value={st.at} options={I.pos.map((x: any): [string, string] => [x.id, x.n])} onChange={v => view(() => { st.at = v; })} />
-          <Btn kind="sm" t="plot-do" d={{ v: 'tape' }} disabled={!st.a || (kind.two && !st.b) || !A('tape').can} onClick={() => run('tape', { k: kind.id, who: kind.two ? [st.a, st.b] : [st.a], at: st.at }, () => { st.a = ''; st.b = ''; })}>Buy it for {I.show}</Btn></span>)}</li>
-    </ul>
+    <div class="bsacts" data-t="plot">{I.acts.map((a: any) => <button type="button" key={a.id} class={'bsact' + (a.can ? '' : ' used')} data-t="plot-open" data-v={a.id} onClick={() => open(a.id)}>
+      <b>{a.n}</b><span class="eff">{PLOT_UI[a.id]}</span>
+      <span class="ft"><span class={a.can ? 'gold' : 'bad'}>{a.cost} booking power</span>{a.id === 'tape' && I.taped ? <span class="good" data-t="plot-taped"> {'·'} on {I.show}: {I.taped.label}</span> : null}</span></button>)}
+      <button type="button" class="bsact" data-t="plot-open" data-v="plan" onClick={() => openModal({ kind: 'plot', k: 'plan' })}>
+        <b>Pencil in the long plan</b><span class="eff">Pick the main event of your flagship event now. Every week the two are in a rivalry builds it.</span>
+        <span class="ft muted">{pl ? 'A main event is pencilled in' : 'Nothing pencilled in'} {'·'} free</span></button>
+    </div>
   </Panel>;
+}
+const plotState = () => slice<{ team: string; who: string; w: string; k: string; a: string; b: string; at: string }>('plot', () => ({ team: '', who: '', w: '', k: 'interview', a: '', b: '', at: 'start' }));
+/** The pop-up for one thing booking power buys on Storylines (`m.k`), or for the long plan. */
+export function PlotWindow(p: { m: Modal }) {
+  const S = G.S, I = E.plotInfo(S), st = plotState(), id: string = p.m.k;
+  if (id === 'plan') return <Window title="The long plan" wide ok="Done"><LongPlan /></Window>;
+  const A = I.acts.find((x: any) => x.id === id); if (!A) return <Window title="Storylines"><Empty>That is not on offer.</Empty></Window>;
+  const run = (o: any) => act(() => { const r = E.plotDo(S, id, o); say(r.msg, { err: !r.ok }); showResult(A.n, r.msg, !r.ok); });
+  const tm = I.teams.find((t: any) => String(t.id) === st.team) || null, kind = I.kinds.find((k: any) => k.id === st.k) || I.kinds[0];
+  const W1: number[] = I.show ? (E.plotTapeWho(S, kind.id, [])[0] || []) : [], W2: number[] = I.show && kind.two && st.a ? (E.plotTapeWho(S, kind.id, [+st.a])[1] || []) : [];
+  let body: any = null;
+  if (id === 'split') body = I.teams.length ? <div class="row mt2">
+    <Field label="Which team"><Sel t="plot-team" label="Which team" value={st.team} options={[['', 'Pick a team'], ...I.teams.map((t: any): [string, string] => [String(t.id), t.n])]} onChange={v => view(() => { st.team = v; st.who = ''; })} /></Field>
+    {tm ? <Field label="Who turns"><Sel t="plot-who" label="Who turns" value={st.who} options={[['', 'Whoever is unhappier'], [String(tm.a), S.w[tm.a].name], [String(tm.b), S.w[tm.b].name]]} onChange={v => view(() => { st.who = v; })} /></Field> : null}
+    <Btn kind="go" t="plot-do" d={{ v: 'split' }} disabled={!tm || !A.can} onClick={() => run({ team: st.team, who: st.who || null })}>Break them up</Btn></div> : <p class="muted mt1">You have no regular teams to break up.</p>;
+  if (id === 'push') body = <div class="row mt2">
+    <Field label="Who to push"><Sel t="plot-w" label="Who to push" value={st.w} options={[['', 'Pick a wrestler'], ...I.push.map((w: any): [string, string] => [String(w.id), w.n])]} onChange={v => view(() => { st.w = v; })} /></Field>
+    <Btn kind="go" t="plot-do" d={{ v: 'push' }} disabled={!st.w || !A.can} onClick={() => run({ w: st.w })}>Push them</Btn></div>;
+  if (id === 'tape') body = !I.show ? <p class="muted mt1">Every show this week has run. Buy it when there is a show to put it on.</p>
+    : (I.taped ? <p class="good mt1">Already on {I.show}, {I.taped.where.toLowerCase()}: {I.taped.label}. One a show.</p> : <div class="row mt2">
+      <Field label="What it is"><Sel t="plot-k" label="What it is" value={st.k} options={I.kinds.map((k: any): [string, string] => [k.id, k.n])} onChange={v => view(() => { st.k = v; st.a = ''; st.b = ''; })} /></Field>
+      <Field label="Who"><Sel t="plot-a" label="Who" value={st.a} options={[['', 'Pick a wrestler'], ...W1.map((x): [string, string] => [String(x), S.w[x].name])]} onChange={v => view(() => { st.a = v; st.b = ''; })} /></Field>
+      {kind.two ? <Field label="Against whom"><Sel t="plot-b" label="Against whom" value={st.b} disabled={!st.a} options={[['', 'Pick a wrestler'], ...W2.map((x): [string, string] => [String(x), S.w[x].name])]} onChange={v => view(() => { st.b = v; })} /></Field> : null}
+      <Field label={'Where on ' + I.show}><Sel t="plot-at" label="Where on the show" value={st.at} options={I.pos.map((x: any): [string, string] => [x.id, x.n])} onChange={v => view(() => { st.at = v; })} /></Field>
+      <Btn kind="go" t="plot-do" d={{ v: 'tape' }} disabled={!st.a || (kind.two && !st.b) || !A.can} onClick={() => run({ k: kind.id, who: kind.two ? [st.a, st.b] : [st.a], at: st.at })}>Buy it</Btn></div>);
+  return <Window title={A.n} wide ok="Not now">
+    <p>{A.d}</p>
+    <p class={A.can ? 'gold' : 'bad'}>Costs {A.cost} booking power. You have {I.bp}.</p>
+    {body}
+  </Window>;
 }
 
 export function Storylines() {
@@ -185,7 +202,7 @@ export function Storylines() {
           : <Panel><Empty>No rivalries yet. Run a show or two: ambushes, challenges and betrayals start them.</Empty></Panel>}
         <Finished done={done} />
       </div>
-      <div class="stack"><LongPlan /><Rebel /><Streaks /><StablePanel /><StableRoles /><Teams /></div>
+      <div class="stack"><Rebel /><Streaks /><StablePanel /><StableRoles /><Teams /></div>
     </div>
   </>;
 }

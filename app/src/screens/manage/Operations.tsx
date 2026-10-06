@@ -102,7 +102,7 @@ function School() {
 }
 
 /** The six dials: production, risk, tickets, advertising, training camp, medical staff. The page shows them as two columns of three. */
-function Settings(p: { from: number; to: number }) {
+function Settings(p: { from: number; to: number; only?: number }) {
   const S = G.S, P = me(), C = E.company(S), md = E.medInfo(S), ci = E.campInfo(S);
   const prod = E.PRODN.map((n: string, i: number) => cash(C.prodCost[i]) + ' a TV show. ' + (i === P.prod0 ? 'What this audience is used to.'
     : (i > P.prod0 ? 'Show ratings +' + ((i - P.prod0) * 0.6).toFixed(1) + ', a few more viewers.' : 'Show ratings −' + ((P.prod0 - i) * 0.6).toFixed(1) + ', fewer viewers.')));
@@ -123,7 +123,7 @@ function Settings(p: { from: number; to: number }) {
     <Panel title="Medical staff"><OptRow k="med" cur={P.med || 0} names={md.names} notes={med} /></Panel>,
     <Panel title="Travel"><OptRow k="trv" cur={P.trv || 0} names={tv.names} notes={trv} /></Panel>
   ];
-  return <>{all.slice(p.from, p.to)}</>;
+  return <>{p.only != null ? all[p.only] : all.slice(p.from, p.to)}</>;
 }
 
 export function HousePanel() {
@@ -184,28 +184,74 @@ export function ExportWindow(p: { m: Modal }) {
   </Window>;
 }
 
+/* Every choice on Manage is a button. The button says what it is and where it stands now; pressing it opens a pop-up
+   with the choices (Ryan, 6 October). A tile is: an id, a name, what it is set to now, and the body of its pop-up. */
+interface Tile { id: string; n: string; now: () => string; d: string; body: () => any }
+function tiles(page: string): { grp: string; list: Tile[] }[] {
+  const S = G.S, P = me(), ci = E.campInfo(S), md = E.medInfo(S), tv = E.travelInfo(S), I = E.makeInfo(S), V = E.voices(S);
+  const set = (id: string, n: string, i: number, now: string, d: string): Tile => ({ id, n, now: () => now, d, body: () => <Settings from={0} to={0} only={i} /> });
+  if (page === 'manage') return [
+    { grp: 'On the air', list: [
+      { id: 'broadcast', n: 'Broadcast slot', now: () => E.SLOTN[P.slot], d: 'When your shows air. Ask the network for a better one.', body: () => <Broadcast /> },
+      { id: 'showsbelts', n: 'Shows and belts', now: () => I.shows.length + ' weekly ' + plural(I.shows.length, 'show') + ', ' + I.titles.length + ' ' + plural(I.titles.length, 'belt'), d: 'Your shows, their networks and standing. Add a show or a belt when there is an occasion.', body: () => <ShowsBelts /> },
+      { id: 'desk', n: 'Commentary desk', now: () => (V.pbp ? V.pbp.name : 'Empty') + ' and ' + (V.col ? V.col.name : 'empty'), d: 'The two voices on the air. A good desk lifts every match.', body: () => <Desk /> },
+      set('prodLvl', 'Production values', 0, E.PRODN[P.prodLvl], 'What the show looks like, and what it costs to make.'),
+      set('risk', 'Risk level', 1, E.RISKN[P.risk], 'How far the product goes. Sponsors and gimmick matches pull opposite ways.')] },
+    { grp: 'At the door', list: [
+      set('tix', 'Ticket prices', 2, E.TIXN[P.tix], 'Price against how full the building is.'),
+      set('adv', 'Advertising', 3, E.ADVN[P.adv], 'A weekly spend that lifts ticket demand and big-event buys.'),
+      { id: 'merch', n: 'Merchandise', now: () => 'Lines and shirts', d: 'Launch a line for a wrestler who is hot.', body: () => <Merch /> },
+      { id: 'tours', n: 'Tours abroad', now: () => 'The road', d: 'Take the company overseas for a run of shows.', body: () => <Tours /> }] },
+    { grp: 'Your people', list: [
+      set('camp', 'Training camp', 4, ci.names[P.camp || 0], 'Places in camp, where wrestlers improve faster.'),
+      set('med', 'Medical staff', 5, md.names[P.med || 0], 'Faster recovery and shorter injuries.'),
+      set('trv', 'Travel', 6, tv.names[P.trv || 0], 'How hard the road is on the roster.'),
+      { id: 'school', n: 'Wrestling school', now: () => 'Rookies', d: 'Open a school and bring your own rookies through.', body: () => <School /> }] },
+    { grp: 'The books', list: [
+      { id: 'budgets', n: 'Budgets', now: () => 'Wages and spending', d: 'What you are allowed to spend, and on what.', body: () => <Budgets /> },
+      { id: 'universe', n: 'Universe', now: () => 'Export this world', d: 'Save this world as a file to share or edit.', body: () => <Universe /> }] }];
+  if (page === 'house') return [{ grp: 'How the company does things', list: [
+    { id: 'style', n: 'House style', now: () => S.owner.me ? 'Yours to set' : S.owner.name + '’s creed', d: 'What the company stands for, and what the crowd is taught to expect.', body: () => <HouseStyle /> },
+    { id: 'rules', n: 'House rules', now: () => { const H = E.houseInfo(S); return (H && H.on ? H.on.length : 0) + ' in force'; }, d: 'Standing rules for the locker room and the booking sheet.', body: () => <HousePanel /> }] }];
+  return [
+    { grp: 'Sponsors', list: [
+      { id: 'sponsors', n: 'Your sponsors', now: () => S.sponsors.length + ' signed', d: 'The deals you have, what they pay and the condition on each.', body: () => <Sponsors /> },
+      { id: 'offers', n: 'Sponsor offers', now: () => S.spOffers.length + ' on the table', d: 'Money every week for a condition you have to keep.', body: () => <Offers /> }] },
+    { grp: 'The library and the money', list: [
+      { id: 'tape', n: 'Back catalogue', now: () => 'Your tape library', d: 'What your old shows are worth and what they earn.', body: () => <Tape /> },
+      { id: 'licensing', n: 'Licensing', now: () => 'Names and likenesses', d: 'License what you own to somebody else.', body: () => <Licensing /> },
+      { id: 'money', n: 'Loans and investors', now: () => P.loan ? 'A loan is running' : 'No loan', d: 'Borrow against the company, or bring money in.', body: () => <Money /> },
+      { id: 'forsale', n: 'For sale', now: () => 'The market', d: 'What can be bought or sold right now.', body: () => <ForSale /> }] },
+    { grp: 'The other companies', list: [
+      { id: 'rivals', n: 'Rivals', now: () => (S.order.length - 1) + ' companies', d: 'Where you stand with each rival, and what can be done with them.', body: () => <RivalsPanel /> }] }];
+}
+function Tiles(p: { page: string }) {
+  // for the browser tests of the choices themselves: every pop-up's body laid out on the page, as it was before the buttons
+  if ((window as any).EWF_FLAT) { const all = tiles(p.page).reduce((a: Tile[], g) => a.concat(g.list), []), h = Math.ceil(all.length / 2);
+    return <div class="cols"><div class="stack">{all.slice(0, h).map(t => t.body())}</div><div class="stack">{all.slice(h).map(t => t.body())}</div></div>; }
+  return <>{tiles(p.page).map(g => <Panel title={g.grp} cls="mb2" key={g.grp}>
+    <div class="bsacts">{g.list.map(t => <button type="button" key={t.id} class="bsact" data-t="mng" data-v={t.id} onClick={() => openModal({ kind: 'mng', k: p.page, v: t.id })}>
+      <b>{t.n}</b><span class="eff" data-t="mng-now">{t.now()}</span><span class="muted ft">{t.d}</span></button>)}</div>
+  </Panel>)}</>;
+}
+/** The pop-up for one tile: its choices. */
+export function ManageWindow(p: { m: Modal }) {
+  let t: Tile | null = null; tiles(p.m.k).forEach(g => g.list.forEach(x => { if (x.id === p.m.v) t = x; }));
+  if (!t) return <Window title="Manage"><Empty>That is not on this page.</Empty></Window>;
+  const T = t as Tile;
+  return <Window title={T.n} wide ok="Done"><p class="muted mb1">{T.d} <span class="gold">Now: {T.now()}.</span></p><div class="inwin" data-t="mng-body" data-v={T.id}>{T.body()}</div></Window>;
+}
+
 export function Operations() {
   const P = me();
   useKeepFocus();
-  return <>
-    <Head eyebrow={P.name} title="Operations" />
-    <div class="cols">
-      <div class="stack"><Broadcast /><ShowsBelts /><Settings from={0} to={3} /></div>
-      <div class="stack"><Settings from={3} to={7} /><Desk /><Merch /><School /><Tours /><Budgets /><Universe /></div>
-    </div>
-  </>;
+  return <><Head eyebrow={P.name} title="Operations" /><Tiles page="manage" /></>;
 }
 
 export function House() {
   const P = me();
   useKeepFocus();
-  return <>
-    <Head eyebrow={P.name} title="House" />
-    <div class="cols">
-      <HouseStyle />
-      <HousePanel />
-    </div>
-  </>;
+  return <><Head eyebrow={P.name} title="House" /><Tiles page="house" /></>;
 }
 
 /** The back catalogue: what it is worth, what it earns, and the two ways to cash it in. */
@@ -286,11 +332,5 @@ function Money() {
 export function Deals() {
   const P = me();
   useKeepFocus();
-  return <>
-    <Head eyebrow={P.name} title="Deals" />
-    <div class="cols">
-      <div class="stack"><Sponsors /><Offers /><Tape /><Licensing /><Money /><ForSale /></div>
-      <RivalsPanel />
-    </div>
-  </>;
+  return <><Head eyebrow={P.name} title="Deals" /><Tiles page="deals" /></>;
 }

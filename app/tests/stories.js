@@ -51,12 +51,15 @@ async function storylines(page, mode) {
   await fits(page, mode, 'storylines with feuds');
   // the long plan: two picks and a button pencil in the flagship main event
   const ids = await state(page, S => { const P = S.promos[S.player]; return S.w.filter(w => w.promo === P.id && !w.nw && w.inj <= 0).sort((x, y) => y.ovr - x.ovr).slice(0, 2).map(w => w.id); });
-  check(mode, 'the long plan panel is there', (await panel(page, 'The long plan')) !== null && !!(await page.$('[data-t="lp-a"]')));
+  await page.click('[data-t="plot-open"][data-v="plan"]');
+  check(mode, 'the long plan is a button that opens a pop-up', (await panel(page, 'The long plan')) !== null && !!(await page.$('.win [data-t="lp-a"]')));
   await page.selectOption('[data-t="lp-a"]', String(ids[0])); await page.selectOption('[data-t="lp-b"]', String(ids[1]));
   await page.click('[data-t="lp-set"]'); await page.waitForTimeout(150);
   const lp = await state(page, S => S.lp ? { a: S.lp.a, b: S.lp.b } : null);
   check(mode, 'pencilling it in stores the plan', !!lp && lp.a === ids[0] && lp.b === ids[1], JSON.stringify(lp));
   await page.keyboard.press('Escape'); await page.waitForTimeout(100);
+  for (let i = 0; i < 3 && await page.$('.win'); i++) { await page.keyboard.press('Escape'); await page.waitForTimeout(40); }
+  await page.click('[data-t="plot-open"][data-v="plan"]');
   check(mode, 'the panel shows the plan and a scrap button', /Build so far/.test(await panel(page, 'The long plan')) && !!(await page.$('[data-t="lp-drop"]')));
   await page.click('[data-t="lp-drop"]'); await page.waitForTimeout(150); await page.keyboard.press('Escape');
   check(mode, 'scrapping it clears the plan', (await state(page, S => S.lp)) == null);
@@ -90,10 +93,11 @@ async function net(page, mode) {
     await tour(page, mode, 'week 1');
     await go(page, 'storylines');
     check(mode, 'storylines page before any show', await page.$eval('h1', e => e.innerText) === 'STORYLINES' && await count(page, '.panel') >= 3);
-    check(mode, 'Storylines is a tab in the Office, and booking power can be spent there three ways', (await page.$$eval('[data-t="page"]', L => L.map(e => e.innerText.trim()).join('|'))) === 'The desk|Backstage|Storylines|Career' && await count(page, '[data-t="plot-row"]') === 3 && /booking power/i.test(await page.$eval('[data-t="plot"]', e => e.closest('.panel').innerText)));
+    check(mode, 'Storylines is a tab in the Office, and booking power can be spent there three ways', (await page.$$eval('[data-t="page"]', L => L.map(e => e.innerText.trim()).join('|'))) === 'The desk|Backstage|Storylines|Career' && await count(page, '[data-t="plot-open"]') === 4 && /booking power/i.test(await page.$eval('[data-t="plot"]', e => e.closest('.panel').innerText)));
     await state(page, S => { S.bp = 5; }); await page.evaluate(() => window.EWF_DEBUG.render());
+    await page.click('[data-t="plot-open"][data-v="tape"]');
     if (await count(page, '[data-t="plot-a"] option') > 2) { await page.selectOption('[data-t="plot-a"]', { index: 2 }); await page.selectOption('[data-t="plot-at"]', 'end'); await page.click('[data-t="plot-do"][data-v="tape"]'); await page.click('#modal-ok');
-      check(mode, 'a pre-tape bought here costs one booking power and is on the next show’s run sheet', await state(page, S => S.bp) === 4 && await state(page, S => (S.segs || []).some(x => x.tape && x.at === 'end')) && await count(page, '[data-t="plot-taped"]') === 1); }
+      check(mode, 'a pre-tape bought here costs one booking power and is on the next show’s run sheet', await state(page, S => S.bp) === 4 && await state(page, S => (S.segs || []).some(x => x.tape && x.at === 'end')) && await count(page, '[data-t="plot-taped"]') === 1); } else await page.keyboard.press('Escape');
     await go(page, 'history');
     check(mode, 'history before any show', /Run a show on Booking and the book opens/.test(await text(page)) && /Champion when you arrived/.test(await text(page)));
     await go(page, 'boards');

@@ -1,7 +1,7 @@
 /* This week's tasks, on the desk: everything that should be filled in before a show is booked or the week ends.
    Each one has a button that takes you to it, and where it can wait, a button to leave it for another week. */
 import { E } from '../../engine';
-import { G, act, say } from '../../store';
+import { G, act, say, openModal } from '../../store';
 import { go } from '../../nav';
 import { Btn, Tag, Txt } from '../../kit';
 import { office } from './util';
@@ -13,6 +13,8 @@ function open(t: any) {
   if (t.id === 'ap') { go('backstage'); return; }
   if (t.id === 'desk-pbp' || t.id === 'desk-col') { openVoices(t.id === 'desk-col' ? 'col' : 'pbp'); return; }   // answered in a pop-up, without leaving the Office
   if (t.id === 'face') { openFace(); return; }
+  if (t.id === 'house') { go('house'); openModal({ kind: 'mng', k: 'house', v: 'style' }); return; }
+  if (t.id === 'sponsors') { go('deals'); openModal({ kind: 'mng', k: 'deals', v: 'offers' }); return; }   // straight to the offers
   if (t.id === 'inbox') { const el = document.querySelector('[data-t="ev"]') as HTMLElement | null; if (el) { el.scrollIntoView({ block: 'center' }); el.focus(); } return; }
   go(t.to);
 }

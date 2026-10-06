@@ -2,7 +2,7 @@
    World: information only). Desk and phone, then a short pass on TV with arrow keys.
    Build first:  EWF_OUT=next-company EWF_DEV=1 node build.js
    Run:          NODE_PATH=/opt/npm-tools/node_modules node app/tests/company.js */
-const { open, go, overflow, shot, flash, state, redraw } = require('./helper');
+const { open, go, overflow, shot, flash, state, redraw, ensure } = require('./helper');
 const FILE = process.env.EWF_OUT || 'index';
 const PAGES = ['manage', 'house', 'deals', 'overview', 'finances', 'world'];
 /** Company is for reading: apart from the page buttons, none of its pages may offer a control. */
@@ -14,6 +14,7 @@ async function fits(page, mode, label) { const o = await overflow(page); check(m
 /** Achievement pop-ups sit over the top right corner for six seconds; wait them out before clicking there. */
 async function calm(page) { await page.waitForFunction(() => { const S = window.EWF_DEBUG.state(); return !document.querySelector('[data-t="toast"]') && !(S && S.toasts.length); }, null, { timeout: 20000 }); }
 async function click(page, sel) {
+  await ensure(page, sel);   // Manage is buttons: the control is in the pop-up of one of them
   await calm(page);
   // asking the owner now also opens a small result pop-up; close it before the next click
   const w = await page.$('.win'); if (w && /asking/i.test(await w.innerText())) { await page.keyboard.press('Escape'); await page.waitForTimeout(60); }
@@ -39,7 +40,7 @@ async function reseed(page, promo, seed) {
   await redraw(page);
 }
 /** Open the game on a promotion with a fixed seed. */
-async function start(mode, promo, n) { const o = await open({ mode, file: FILE, promo }); await reseed(o.page, promo, SEED + n); return o; }
+async function start(mode, promo, n) { const o = await open({ mode, file: FILE, promo }); await reseed(o.page, promo, SEED + n); o.page.FLAT = on => o.page.evaluate(v => { window.EWF_FLAT = v; window.EWF_DEBUG.render(); }, on ? 1 : 0); await o.page.FLAT(true); return o; }
 
 
 /* ---------- Front office as a hired booker ---------- */
@@ -51,7 +52,13 @@ async function frontOffice(page, mode) {
   check(mode, 'overview lists the seven settings', await count(page, '.setup li') === 7);
   await readOnly(page, mode);
   await go(page, 'manage');
-  check(mode, 'operations panels', await count(page, '.panel') === 15, await count(page, '.panel') + ' panels');
+  await page.FLAT(false);
+  check(mode, 'every choice on Operations is a button, in four groups', await count(page, '.panel') === 4 && await count(page, '[data-t="mng"]') === 15 && await count(page, 'main select, main input, main [data-t="co-set"]') === 0, await count(page, '[data-t="mng"]') + ' buttons');
+  await page.click('[data-t="mng"][data-v="prodLvl"]');
+  check(mode, 'a button opens a pop-up with its choices, and says where it stands now', await count(page, '.win [data-t="co-set"]') >= 4 && /Now:/.test(await page.$eval('.win', e => e.innerText)) && (await page.$eval('[data-t="mng"][data-v="prodLvl"] [data-t="mng-now"]', e => e.innerText)).length > 2);
+  await page.keyboard.press('Escape');
+  // the rest of this test is about the choices themselves: lay every pop-up's body out on the page
+  await page.FLAT(true);
 
   // a setting change: a booker has to ask the owner, and the answer is shown
   const before = await state(page, S => S.promos[S.player].adv);

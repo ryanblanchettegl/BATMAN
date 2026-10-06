@@ -54,7 +54,9 @@ async function run(mode) {
     await page.click('[data-t="task-wave"][data-v="desk-col"]');
     await page.click('[data-t="task-go"][data-v="sponsors"]');
     await page.waitForSelector('[data-t="sp-accept"]');
-    for (let i = 0; i < 3; i++) { const b = await page.$('[data-t="sp-accept"]:not([disabled])'); if (!b) break; await b.click(); const c = await page.$('[data-t="modal-close"]'); if (c) await c.click(); }
+    ok(mode, 'the sponsor task opens the offers in a pop-up on Deals', await page.evaluate(() => window.EWF_DEBUG.ui.page) === 'deals' && !!(await page.$('.win [data-t="sp-accept"]')));
+    for (let i = 0; i < 3; i++) { if (!(await page.$('.win'))) await page.click('[data-t="mng"][data-v="offers"]'); const b = await page.$('[data-t="sp-accept"]:not([disabled])'); if (!b) break; await b.click(); await page.waitForTimeout(60); }
+    for (let i = 0; i < 3 && await page.$('.win'); i++) { await page.keyboard.press('Escape'); await page.waitForTimeout(40); }
     await go(page, 'desk');
     ok(mode, 'signing the sponsors ticks the task', (await rows(page, 'done')).indexOf('sponsors') >= 0, (await rows(page)).join(', '));
     ok(mode, 'with nothing left to do the show can be booked', !(await page.$eval('[data-t="book-next"]', e => e.disabled)) && !(await has(page, '[data-t="book-wait"]')) && /Everything that had to be done is done/.test(await txt(page, '[data-t="task-note"]')));

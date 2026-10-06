@@ -138,6 +138,24 @@ export function BeforeShow() {
   </Panel>;
 }
 
+/** What each thing to do backstage is called on its button: what you get, in plain words, and which group it sits in.
+    The engine's own name for it (the flavour) is the title of the pop-up. */
+const ACT_UI: Record<string, string[]> = {
+  treat: ['Treat one wrestler’s injuries', 'Eases every worn body part, and takes a week off an injury of two weeks or more.', 'people'],
+  drill: ['Train two wrestlers together', 'Better chemistry between the two you pick, so their matches improve. A regular team gains experience.', 'people'],
+  class: ['Teach the young wrestlers', 'Up to six wrestlers of 25 and under learn a little faster this week.', 'people'],
+  rounds: ['Calm the three most stressed people', 'If it works, stress drops a lot for all three and the room trusts you more.', 'people'],
+  pep: ['Fire up the roster for your next show', 'Everybody works harder on the next show you run.', 'show'],
+  meet: ['Sharpen your next show with the crew', 'The next show is graded a little better. More if your ideas land.', 'show'],
+  hype: ['Advertise your next show', 'A video package for the top of the show. More people in the building next time.', 'show'],
+  network: ['Call the network to talk up the show', 'A bigger audience for your next card.', 'show'],
+  attack: ['Have one wrestler jump another', 'Starts a rivalry between the two you pick, or heats the one they have.', 'story'],
+  tease: ['Tease a newcomer’s debut', 'Hype for somebody who has not appeared yet, up to three times. A hyped debut starts hot.', 'story'],
+  bp: ['Ask the owner for 3 more booking power', 'Three extra points this week if the owner says yes. A little trust lost if not.', 'owner'],
+  budget: ['Ask the owner for a 5% bigger wage budget', 'More to spend on contracts, for good, if the owner says yes.', 'owner'],
+  sponsors: ['Get three new sponsor offers', 'A fresh set of offers lands on Manage, under Deals.', 'owner']
+};
+const ACT_GROUPS: [string, string][] = [['people', 'Your people'], ['show', 'Your next show'], ['story', 'The stories'], ['owner', 'The money and the office']];
 /** Open the pop-up for one thing to do backstage. */
 export function openAct(room: string, actId: string) { const st = office(); st.a = null; st.b = null; openModal({ kind: 'apact', k: room, v: actId }); }
 /** One thing to do backstage, in a pop-up: what it is, who it needs, the chance, and the button that spends the point. */
@@ -150,7 +168,8 @@ export function ActWindow(p: { m: Modal }) {
   if (!a) return <Window title={room.n}><Empty>That is not on offer right now.</Empty></Window>;
   const R: W[] = E.rosterOf(S, S.player).filter((w: W) => !w.nw).sort((x: W, y: W) => y.ovr - x.ovr), first = st.a != null ? S.w[st.a] : null;
   const spend = () => act(() => { const r = E.apDo(S, room.id, a.id, { a: st.a, b: st.b }); say(r.msg, { err: !r.ok }); showResult(a.n, r.msg, !r.ok); });
-  return <Window title={a.n} wide ok="Not now">
+  return <Window title={(ACT_UI[a.id] || [a.n])[0]} wide ok="Not now">
+    <p class="gold">{a.n}</p>
     <p data-t="bs-act-what">{a.d}</p>
     <p class="muted">{room.n}: {room.d}</p>
     {a.ck ? <CheckLine label={a.n} ck={a.ck} /> : null}
@@ -169,6 +188,11 @@ export function Backstage() {
   const room = st.pl ? B.places.find((p: any) => p.id === st.pl) : null;
   const blocked = !room ? '' : (B.ap <= 0 ? 'You are out of action points this week.' : (room.used ? 'You have already spent time here this week.' : ''));
   useFocusAfter();
+  const nc = S.court ? S.court.length : 0;
+  const acts: { pl: any; a: any; ui: string[]; hot?: boolean }[] = [];
+  B.places.forEach((pl: any) => pl.acts.forEach((a: any) => { if (!a.off && a.id !== 'case' && ACT_UI[a.id]) acts.push({ pl, a, ui: ACT_UI[a.id] }); }));
+  const court = B.places.find((x: any) => x.id === 'court');
+  if (court) acts.push({ pl: court, a: { id: 'case' }, ui: ['Judge a dispute between two wrestlers' + (nc ? ' (' + nc + ' waiting)' : ''), nc ? 'Hear both sides and rule. The winner and the loser both remember, and so does the room.' : 'Nobody has brought a case this week.', 'people'], hot: nc > 0 });
   return <>
     <Head eyebrow={E.cal(S.week).label} title="Backstage" />
     <Panel cls="mb2">
@@ -177,12 +201,13 @@ export function Backstage() {
       <People B={E.people(S)} />
     </Panel>
     <Panel title="Things to do">
-      <p class="muted">Each of these takes one action point, and each place can be used once a week.</p>
-      <div class="bsacts" data-t="bs-acts">{B.places.map((pl: any) => pl.acts.filter((a: any) => !a.off && a.id !== 'case').map((a: any) =>
-        <button type="button" key={pl.id + a.id} class={'bsact' + (pl.used ? ' used' : '')} {...dataAttrs('bs-act', { k: pl.id, v: a.id })} onClick={() => openAct(pl.id, a.id)}>
-          <b>{a.n}</b><span class="muted">{pl.n.replace(/^The /, '')}{pl.used ? ' · done this week' : ''}</span></button>)).concat([
-        <button type="button" key="court" class={'bsact' + (S.court && S.court.length ? ' hot' : '')} {...dataAttrs('bs-act', { k: 'court', v: 'case' })} onClick={() => openAct('court', 'case')}>
-          <b>Hold court{S.court && S.court.length ? ' (' + S.court.length + ')' : ''}</b><span class="muted">Wrestlers{'’'} court{S.court && S.court.length ? ' · ' + S.court.length + ' ' + plural(S.court.length, 'case') + ' waiting' : ' · no cases'}</span></button>])}</div>
+      <p class="muted">One action point each. Each place can be used once a week. The button says what you get.</p>
+      {ACT_GROUPS.map(g => { const L = acts.filter(x => x.ui[2] === g[0]); return L.length ? <div key={g[0]} class="bsgrp" data-t="bs-grp" data-v={g[0]}>
+        <p class="eyebrow">{g[1]}</p>
+        <div class="bsacts">{L.map(x => <button type="button" key={x.pl.id + x.a.id} class={'bsact' + (x.pl.used ? ' used' : '') + (x.hot ? ' hot' : '')} {...dataAttrs('bs-act', { k: x.pl.id, v: x.a.id })} onClick={() => openAct(x.pl.id, x.a.id)}>
+          <b>{x.ui[0]}</b><span class="eff">{x.ui[1]}</span>
+          <span class="muted ft">{x.a.ck ? <span class="warn">{Math.round(x.a.ck.p * 100)}% chance {'·'} </span> : (x.a.id === 'case' ? null : <span class="good">Sure thing {'·'} </span>)}{x.pl.n.replace(/^The /, '')}{x.pl.used ? ' · done this week' : ''}</span></button>)}</div>
+      </div> : null; })}
     </Panel>
     {B.log && B.log.length ? <Panel title="What you have done this week" cls="mt2"><div class="aplog">
       <ul class="list">{B.log.map((l: any) => <li class="col"><span><b>{l.place}</b> {'·'} {l.act}{l.who && l.who.length ? ' (' + l.who.join(', ') + ')' : ''}</span><span class={l.ok ? 'good' : 'bad'}><Txt>{l.msg}</Txt></span></li>)}</ul>

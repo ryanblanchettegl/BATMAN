@@ -317,6 +317,14 @@ Ryan, 4 October: "After a show, it should go back to the Office or your desk, so
 - [ ] The same for every other task on the desk, so everything can be done from the Office: sponsor offers, the venue, contracts that are running out, a vacant title.
 - [ ] The people available are the hired voices on the market. Wrestlers, managers and legends at the desk wait for the character sheet work.
 
+### 0m. Buttons that open pop-ups (building towards 0.36: three of five changes done)
+
+- [x] **1. Manage is buttons.** Ryan, 6 October: "On the manage screen, I love all the different options. But I want them all to be buttons you hit that a pop up comes up with the selectable options." Operations is fifteen buttons in four groups (On the air, At the door, Your people, The books). House is two, Deals is seven. Each says what it is set to now. The pop-up holds the same choices as before. The sponsor task and the new owner's house style task open their pop-up directly.
+- [x] **2. Storylines is buttons.** Ryan: "I would like the storyline page to be buttons too." Break up a tag team, push a wrestler, buy a pre-tape and the long plan are four buttons with their price. Each opens a pop-up with the choices.
+- [x] **3. Backstage buttons say what they do.** Ryan: "the buttons need to more accurately describe what they do rather than vague things like hold a production meeting. It has to be clear and look good." Each button is named for what you get (Train two wrestlers together, Advertise your next show, Ask the owner for 3 more booking power), says the effect in a line, shows the chance or "Sure thing", and sits in one of four groups: Your people, Your next show, The stories, The money and the office.
+- [ ] Two more changes before the version number moves.
+- [ ] A result pop-up replaces the pop-up it came from. It should go back to it.
+
 ### 0l. The Office: The desk, Backstage, Storylines (0.35)
 
 Ryan, 6 October: "Backstage needs to move to its own page in the office menu. That will give you room to expand that section so we can see the other rooms and who's in them. I also want to change production truck to Your Office (like wrestlers go to the booker's office to ask for storyline changes). I would also like to move Storylines from its own menu option to its own tab on office. I want The Desk, Backstage, and Storylines to be the main tabs in Office."

@@ -1,6 +1,6 @@
 /* Shows and belts made during a game, through the Manage section.
    Run: NODE_PATH=<dir containing playwright> node app/tests/create.js   (MODES=desk,tv) */
-const { open, go, overflow, shot, state } = require('./helper');
+const { open, go, overflow, shot, state, ensure } = require('./helper');
 const MODES = (process.env.MODES || 'desk,tv').split(',');
 const fails = [];
 const ok = (mode, label, pass, detail) => { console.log(mode.padEnd(6), pass ? 'ok  ' : 'FAIL', label + (detail ? ': ' + detail : '')); if (!pass) fails.push(mode + ' ' + label); };
@@ -11,11 +11,11 @@ async function run(mode) {
   const over = async label => { const o = await overflow(page); ok(mode, label + ' fits the screen', !o, o); };
   try {
     await go(page, 'manage');
-    ok(mode, 'Operations has a Shows and belts panel', /weekly shows? and/i.test(await txt(page, 'main.main')));
+    ok(mode, 'Operations has a Shows and belts button that says how many of each', /weekly shows?, [0-9]+ belts?/i.test(await txt(page, '[data-t="mng"][data-v="showsbelts"]')));
     const n0 = await state(page, S => S.promos[S.player].titles.length), cash0 = await state(page, S => S.promos[S.player].cash);
 
     /* belts */
-    await page.click('[data-t="make-belts"]');
+    await ensure(page, '[data-t="make-belts"]'); await page.click('[data-t="make-belts"]');
     await page.waitForSelector('.win');
     await over('the Belts window');
     const occ = await page.$$eval('[data-t="belt-occ"] li', a => a.map(li => li.getAttribute('data-v') + ': ' + li.querySelector('b').textContent));
@@ -38,7 +38,7 @@ async function run(mode) {
     await page.keyboard.press('Escape');
     await go(page, 'titles');
     ok(mode, 'the new belt is on the Titles page as vacant', /Golden Lantern Title/.test(await txt(page, 'main.main')) && /vacant/i.test(await txt(page, 'main.main')));
-    await page.click('[data-t="make-belts"]');
+    await ensure(page, '[data-t="make-belts"]'); await page.click('[data-t="make-belts"]');
     await page.waitForSelector('.win');
     await page.click('[data-t="make-del"][data-id="' + tid + '"]');
     await page.click('[data-t="make-del-yes"]');
@@ -49,7 +49,7 @@ async function run(mode) {
     /* shows */
     await go(page, 'manage');
     const s0 = await state(page, S => S.promos[S.player].shows.length);
-    await page.click('[data-t="make-shows"]');
+    await ensure(page, '[data-t="make-shows"]'); await page.click('[data-t="make-shows"]');
     await page.waitForSelector('.win');
     ok(mode, 'each show says how long it has been on the air, on which network, and its standing in words', (await page.$$('[data-t="show-air"]')).length === s0 && /years? on the air|first year/.test(await txt(page, '[data-t="show-air"]')) && /episodes/.test(await txt(page, '[data-t="show-air"]')) && /^(Brand new|Finding its feet|Established|A fixture|Appointment viewing|An institution)$/i.test(await txt(page, '[data-t="show-word"]')), await txt(page, '[data-t="show-air"]'));
     ok(mode, 'nothing is locked in a booker’s first year: with an occasion open, the show form gives the chance and the cost', (await page.$$('[data-t="show-occ"] li')).length === 3 && /open now/i.test(await txt(page, '[data-t="show-occ"]')) && /an attempt with a/.test(await txt(page, '.win')) && /Launching it costs/.test(await txt(page, '.win')));
@@ -74,7 +74,7 @@ async function run(mode) {
     await page.evaluate(() => { const E = window.GP, S = window.EWF_DEBUG.state(); E.endWeek(S); window.EWF_DEBUG.render(); });
     ok(mode, 'the new show is on next week’s schedule', await state(page, S => S.queue.some(q => q.name === 'Lantern Night')));
     await go(page, 'manage');
-    await page.click('[data-t="make-shows"]');
+    await ensure(page, '[data-t="make-shows"]'); await page.click('[data-t="make-shows"]');
     await page.waitForSelector('.win');
     await page.click('[data-t="make-del"][data-id="' + sid + '"]');
     await page.click('[data-t="make-del-yes"]');

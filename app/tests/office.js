@@ -85,7 +85,7 @@ async function run(mode) {
 
   /* ---- wrestlers' court: plant a case, rule on it; a second case can only be handed to a leader ---- */
   ok(await state(page, plantCase) === 1, 'case planted'); await redraw(page);
-  ok(/1 case waiting/.test(await txt(act('court', 'case'))) && /\(1\)/.test(await txt('[data-t="ppl-room"][data-v="court"]')), 'court badges');
+  ok(/1 waiting/.test(await txt(act('court', 'case'))) && /\(1\)/.test(await txt('[data-t="ppl-room"][data-v="court"]')), 'court badges');
   await page.click(act('court', 'case'));
   ok(await count('.win [data-t="bs-court"]') === 4 && /Witnesses/.test(await txt('.win')), 'the court pop-up shows four rulings and the witnesses');
   await step('court case', 'court');
