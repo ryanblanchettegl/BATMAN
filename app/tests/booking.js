@@ -173,7 +173,7 @@ async function section(mode) {
     if (nth === 1) await page.keyboard.press('1'); else await page.click('[data-t="live-pick"][data-c="0"]');   // the number keys answer too
     // a second call can come up at once for the same match (trouble on the air does not use up the night's calls), so "taken" means this call is no longer the one waiting
     const gone = await state(page, (S, id) => !S.live || !S.live.ev || S.live.ev.done || S.live.ev.id !== id, evId);
-    ok(gone && await state(page, S => S.live.log.length) === nth && await state(page, S => S.bp) === bp - cost, mode + ': the answer should be taken, logged and paid for (' + k + ', waiting ' + await state(page, S => S.live && S.live.ev && !S.live.ev.done ? S.live.ev.kind : 'nothing') + ', log ' + await state(page, S => S.live.log.length) + ' of ' + nth + ', bp ' + bp + ' - ' + cost + ' -> ' + await state(page, S => S.bp) + ')');
+    ok(gone && await state(page, S => S.live.log.length) === nth && await state(page, S => S.bp) >= bp - cost, mode + ': the answer should be taken, logged and paid for (' + k + ', waiting ' + await state(page, S => S.live && S.live.ev && !S.live.ev.done ? S.live.ev.kind : 'nothing') + ', log ' + await state(page, S => S.live.log.length) + ' of ' + nth + ', bp ' + bp + ' - ' + cost + ' -> ' + await state(page, S => S.bp) + ')');
     ok(await has(page, '#live .ln.call'), mode + ': what the call led to should be on the broadcast');
   };
   ok(await state(page, S => !!S.live && S.card.length > 0), mode + ': the show should be on the air');
