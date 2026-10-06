@@ -34,7 +34,7 @@ async function run(mode) {
   ok(await count('.gp') === 0 && await count('.gauge') === 0, 'no gauges on the desk: they are on Company');
   ok((await page.$$eval('.panel > h2', L => L[0].textContent)) === 'Before the show' && await count('.pre [data-t="book-next"]') === 1, 'the desk opens on Before the show, with the booking button');
   ok(await count('.onews li') >= 1, 'office news has a memo');
-  for (const t of ['Before the show', 'Inbox', 'This week', 'Promises and targets', 'Worth knowing', 'Clocks', 'Office news']) ok((await page.$$eval('.panel > h2', L => L.map(e => e.textContent))).includes(t), 'panel: ' + t);
+  for (const t of ['Before the show', 'Answered this week', 'This week', 'Promises and targets', 'Worth knowing', 'Clocks', 'Office news']) ok((await page.$$eval('.panel > h2', L => L.map(e => e.textContent))).includes(t), 'panel: ' + t);
   ok(await count('[data-t="book-show"]') === 1 && await count('[data-t="endweek"]') === 0, 'a show to book, no end-week button yet');
   /* backstage is people, not rooms: five rooms, a face for everybody who is there for a reason, and what a point does about it */
   ok(await count('[data-t="ppl-room"]') === 5 && await count('[data-t="ppl-who"]') >= 1 && await count('[data-t="ppl-who"] canvas') === await count('[data-t="ppl-who"]'), 'backstage shows people with faces, room by room');

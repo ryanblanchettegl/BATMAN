@@ -94,6 +94,10 @@ async function run(mode) {
     await press(page);
     ok(mode, 'pressing it goes to the Office, where Before the show comes first', await pageId(page) === 'desk' && !(await has(page, '[data-t="after-show"]')) && await has(page, '[data-t="night-recap"]'));
     a = await adv(page);
+    ok(mode, 'after the first show a sponsor has to be signed: the button says Attention and says why', a.k === 'task' && /^ATTENTION$/i.test(a.t) && /first sponsor/.test(a.tip), a.t + ' / ' + a.tip);
+    ok(mode, 'the task is marked Required and cannot be left for another week', /required/i.test(await txt(page, '[data-task="sponsors"]')) && !(await has(page, '[data-t="task-wave"][data-v="sponsors"]')));
+    await state(page, S => { const E = window.GP; E.acceptSponsor(S, S.spOffers.findIndex(o => E.sponsorOk(S, o))); }); await redraw(page);
+    a = await adv(page);
     ok(mode, 'from the desk it points at the next show', a.k === 'book' && /^BOOK SHOW$/i.test(a.t) && /Book Saturday Serial/.test(a.tip), a.t + ' / ' + a.tip);
     await press(page);
     ok(mode, 'pressing it opens the next card', await has(page, '[data-t="suggest"]'));
