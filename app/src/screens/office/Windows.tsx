@@ -84,14 +84,14 @@ export function openVoices(seat?: string) { const st = slice<{ seat: string; msg
 export function WelcomeWindow(_p: { m: Modal }) {
   const S = G.S, W = E.welcome(S);
   return <div class="scrim intro" role="dialog" aria-modal="true" aria-label={'A letter from ' + W.from} data-t="welcome">
-    <div class="telex">
+    <div class={'telex' + (_p.m.again ? ' again' : '')}>
       <pre class="tx-head" aria-hidden="true">{'╔' + '═'.repeat(46) + '╗\n║' + (' ' + W.company.toUpperCase()).padEnd(46).slice(0, 46) + '║\n║' + (' OFFICE OF THE OWNER').padEnd(46) + '║\n╚' + '═'.repeat(46) + '╝'}</pre>
       <p class="tx-meta"><span>TO: {W.to.toUpperCase()}</span><span>{W.date.toUpperCase()}</span></p>
       <p class="tx-meta"><span>RE: THE JOB</span><span>*** URGENT ***</span></p>
       <div class="tx-body">{W.lines.map((x: string, i: number) => <p key={i} class={'tx-l' + (i === 0 ? ' first' : '')} style={{ animationDelay: (0.5 + i * 0.9) + 's' }}><Txt>{x}</Txt></p>)}
         <p class="tx-l tx-sig" style={{ animationDelay: (0.5 + W.lines.length * 0.9) + 's' }}>{'—'.length ? '' : ''}{W.from}<br /><span class="muted">{W.role}, {W.short}</span></p>
         <p class="tx-l tx-ps" style={{ animationDelay: (1.1 + W.lines.length * 0.9) + 's' }}>P.S. {W.ps}</p></div>
-      <div class="tx-foot"><Btn kind="go" id="modal-ok" t="welcome-go" onClick={closeModal}>Get to work</Btn><span class="blink" aria-hidden="true">_</span></div>
+      <div class="tx-foot"><Btn kind="go" id="modal-ok" t="welcome-go" onClick={closeModal}>{_p.m.again ? 'Put it away' : 'Get to work'}</Btn><span class="blink" aria-hidden="true">_</span></div>
     </div>
   </div>;
 }

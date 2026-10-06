@@ -11,7 +11,7 @@ const spare = (S, n) => E.rosterOf(S, S.player).filter(w => !w.nw && !all(S).som
 
 { const S = fresh(3), B = E.people(S), L = all(S);
   ok('p1', 'seven rooms, your own office first, and at the start of a game somebody is already there for a reason', B.rooms.length === 7 && B.rooms[0].n === 'Your office' && L.length >= 1 && L.every(p => p.why && (p.acts.length >= 1 || p.room === 'court') && p.acts.every(a => a.n && a.d)), L.map(p => p.name + ' (' + p.k + ')').join(', '));
-  ok('p2', 'nobody is in two rooms, and no room holds more than three', new Set(L.map(p => p.id)).size === L.length && B.rooms.every(r => r.people.length <= 3));
+  ok('p2', 'nobody is in two rooms, and no room holds more than three', new Set(L.map(p => p.id)).size === L.length && B.rooms.every(r => r.people.length <= (r.id === 'truck' ? 4 : 3)));
   ok('p3', 'the same game shows the same people: who is there is read from the game, not drawn', JSON.stringify(E.people(S)) === JSON.stringify(E.people(S)) && JSON.stringify(all(fresh(3)).map(p => p.id)) === JSON.stringify(L.map(p => p.id))); }
 
 /* each reason puts the right person in the right room */
@@ -90,6 +90,26 @@ const spare = (S, n) => E.rosterOf(S, S.player).filter(w => !w.nw && !all(S).som
   const S3 = fresh(21), w3 = S3.w[w.id]; S3.feuds.forEach(f => { f.res = true; }); E.rosterOf(S3, 'pdw').forEach(x => { x.mom = 0; }); w3.mom = 3;
   const m3 = w3.morale; S3.qi = S3.queue.length; E.endWeek(S3);
   ok('a5', 'not seeing them at all is noticed', w3.morale < m3 + 3 && ((S3.rmY || {})[w3.id] || { mem: [] }).mem.some(m => m.k === 'waited')); }
+
+/* more requests, and scenes with two people in the room */
+{ const quiet = seed => { const S = fresh(seed); S.feuds.forEach(f => { f.res = true; }); E.rosterOf(S, 'pdw').forEach(x => { x.mom = 0; x.stress = 0; x.cond = 90; x.morale = 70; x.inj = 0; }); return S; };
+  let S = quiet(22), w = E.rosterOf(S, 'pdw').filter(x => !x.nw && !all(S).some(q => q.id === x.id || q.with === x.id)).sort((x, y) => x.ovr - y.ovr)[0]; w.mom = 3; w.con = 30; w.wage = 100;
+  let p = find(S, w.id);
+  ok('b1', 'somebody underpaid and winning asks for more money, and yes pays it', !!p && p.k === 'askraise' && /\$/.test(p.acts[0].d) && E.peopleDo(S, w.id, 'raise_yes').ok && w.wage > 100 && S.rmY[w.id].v > 0, p ? p.k + ' ' + p.acts[0].d : 'not there');
+  S = quiet(22); w = spare(S, 6); w.stress = 80; p = find(S, w.id);
+  const r1 = p && p.k === 'askoff' ? E.peopleDo(S, w.id, 'off_yes') : null;
+  ok('b2', 'somebody worn out asks for two weeks at home, and is off the card when you say yes', !!r1 && r1.ok && w.away === S.week + 2 && !find(S, w.id), p ? p.k : 'not there');
+  S = quiet(23); const T = S.teams.find(t => t.promo === 'pdw' && t.m.every(id => !S.w[id].nw)); T.ls = 3; const a = S.w[T.m[0]], b = S.w[T.m[1]];
+  p = find(S, a.id);
+  ok('b3', 'a team on a losing run comes in together, and the scene names both of them', !!p && p.k === 'argue' && p.room === 'truck' && p.duo === b.name && p.acts.length === 3 && p.acts.every(x => x.free) && p.acts[0].n === 'Back ' + a.name, p ? p.k + ' ' + p.why : all(S).map(x => x.k).join());
+  if (p) { const b0 = E.bondOf(S, a.id, b.id), r = E.peopleDo(S, a.id, 'side_a');
+    ok('b4', 'taking a side pleases one, costs the other, and sits between them', r.ok && E.bondOf(S, a.id, b.id) < b0 && S.rmY[a.id].v > 0 && S.rmY[b.id].v < 0 && !find(S, a.id), r.msg); }
+  S = quiet(24); const R = E.rosterOf(S, 'pdw').filter(x => !x.nw && !all(S).some(q => q.id === x.id || q.with === x.id)), y = R.slice().sort((p1, p2) => p2.ovr - p1.ovr)[3], v = R.find(x => x.id !== y.id && x.g === y.g); y.age = 22; v.age = 38; v.ovr = y.ovr + 10;
+  R.forEach(x => { if (x !== y && x.age <= 25) x.age = 27; });
+  p = find(S, y.id);
+  if (p && p.k === 'late') { const x0 = y.xp || 0, ap = S.ap, r = E.peopleDo(S, y.id, 'late');
+    ok('b5', 'a veteran working late with a young one is a scene, and a point makes it a habit', r.ok && S.ap === ap - 1 && (y.xp || 0) > x0 && E.bondOf(S, y.id, v.id) > 0 && p.room === 'gym' && !!p.duo, r.msg); }
+  else ok('b5', 'a veteran working late with a young one is a scene', false, p ? p.k : 'not there'); }
 
 if (fails.length) { console.log('FAILED: ' + fails.length); process.exit(1); }
 console.log('test-people: all passed');

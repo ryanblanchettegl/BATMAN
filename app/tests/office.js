@@ -69,6 +69,8 @@ async function run(mode) {
   await page.selectOption('#bs-a', { index: 1 });
   await page.click('.win [data-t="bs-do"]'); await page.waitForTimeout(80);
   ok(await ap() === max - 1 && /treatment/.test(await txt('.win')), 'the trainer costs one point, and the pop-up says what happened: ' + (await txt('.win')).slice(0, 90));
+  await page.click('#modal-ok'); await page.waitForTimeout(80);
+  ok(await count('.win [data-t="bs-do"]') === 1 && /already spent time/.test(await txt('.win')), 'closing the result goes back to the pop-up it came from, which says the room is used');
   await shut();
   ok(await count(act('trainer', 'treat') + '.used') === 1, 'the trainer’s room is used up for the week');
   await page.click(act('trainer', 'treat'));

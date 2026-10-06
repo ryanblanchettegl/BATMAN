@@ -40,6 +40,7 @@ TASKX.push(function(S,P,add){
 });
 /** The letter a new game opens on. */
 E.welcome=function(S){
+  if(S.letter)return S.letter;   // the letter is kept as it was written, so it can be read again later
   var P=S.promos[S.player],o=S.owner,me=!!o.me,rank=S.order.slice().sort(function(a,b){return S.promos[b].image-S.promos[a].image;}).indexOf(P.id)+1,n=S.order.length,sh=S.queue[S.qi]||P.shows[0];
   var top=P.titles.filter(function(t){return !t.tag&&t.holders.length;}).sort(function(a,b){return b.lvl-a.lvl;})[0],ch=top?S.w[top.holders[0]]:null,fav=!me&&o.fav!=null?S.w[o.fav]:null;
   var place=rank===1?'We are the biggest company in the world, and everybody else gets up in the morning to change that.':(rank<=3?'We are number '+rank+' of '+n+'. I did not hire you to stay there.':(rank>=n-1?'We are near the bottom of '+n+' companies. Nobody expects anything from us. Good.':'We are number '+rank+' of '+n+'. There is room above us and people below who want our spot.'));
@@ -49,6 +50,6 @@ E.welcome=function(S){
   if(ch)L.push(ch.name+' holds the '+top.name+'.'+(fav&&fav.id!==ch.id?' My money is on '+fav.name+'. You will hear from me about that.':(fav?' I like it that way.':'')));
   L.push('Your first show is '+sh.name+'. The card is empty and the building is sold.');
   L.push(me?'Go and book it.':'Do not make me regret this.');
-  return {from:me?S.booker.name:o.name,role:me?'Owner and booker':'Owner',company:P.full||P.name,short:P.name,to:S.booker.name,date:cal(S.week).label,lines:L,show:sh.name,
+  return S.letter={from:me?S.booker.name:o.name,role:me?'Owner and booker':'Owner',company:P.full||P.name,short:P.name,to:S.booker.name,date:cal(S.week).label,lines:L,show:sh.name,
     ps:'Before the show, the Office is where the week starts. The yellow button always knows what is next.'};
 };

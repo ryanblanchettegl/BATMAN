@@ -72,17 +72,17 @@ function People(p: { B: any }) {
       {r.people.length ? r.people.map((x: any) => <button type="button" key={x.id} class={'who' + (st.who === x.id ? ' on' : '') + (x.used ? ' used' : '')} aria-pressed={st.who === x.id} {...dataAttrs('ppl-who', { v: x.id, k: x.k })}
         onClick={() => view(() => { st.who = st.who === x.id ? null : x.id; st.pl = null; ui.flash = null; })}>
         <Portrait w={S.w[x.id]} cls="pf" />
-        <span><b>{x.name}</b><span class={'wy ' + (x.used ? 'muted' : (x.tone || 'muted'))}>{x.used ? 'You have seen them this week' : x.why}</span></span>
+        <span><b>{x.name}{x.duo ? ' and ' + x.duo : ''}</b><span class={'wy ' + (x.used ? 'muted' : (x.tone || 'muted'))}>{x.used ? 'You have seen them this week' : x.why}</span></span>
       </button>) : <span class="muted nobody">Nobody</span>}
     </div>)}</div>
     {sel ? <div class="roomdet" aria-live="polite" data-t="ppl-det">
-      <h3><Name w={S.w[sel.id]} />, in {sel.room.n.replace(/^The /, 'the ')}</h3>
+      <h3><Name w={S.w[sel.id]} />{sel.duo ? <> and <Name w={S.w[sel.with]} /></> : null}, in {sel.room.n.replace(/^The /, 'the ')}</h3>
       <p class={sel.tone || 'muted'}>{sel.why}.{sel.story ? <span class="muted"> {sel.story}.</span> : null}</p>
       {sel.used ? <p class="muted mt1">You have already spent time with them this week.</p> : (B.ap <= 0 && !sel.acts.some((a: any) => a.free) ? <p class="bad mt1">You are out of action points this week.</p> : null)}
       {sel.room.id === 'court' ? <div class="row mt1"><span class="muted">The case is heard in the court itself.</span><Btn kind="sm" t="ppl-court" onClick={() => openAct('court', 'case')}>Hold court</Btn></div> : null}
       <ul class="list">{sel.acts.map((a: any) => <li class="col" key={a.id}>
         <span><b>{a.n}</b><br /><span class="muted">{a.d}</span>{a.ck ? <CheckLine label={a.n} ck={a.ck} /> : null}</span>
-        <span class="row"><Btn kind="sm" cls={/_no$/.test(a.id) ? undefined : 'go'} t="ppl-do" d={{ v: a.id }} disabled={sel.used || (B.ap <= 0 && !a.free)} onClick={() => spend(a.id)}>{a.free ? (/_no$/.test(a.id) ? 'Say no' : 'Say yes') : 'Spend 1 action point'}</Btn>{a.free ? <span class="muted">No action point</span> : null}</span></li>)}</ul>
+        <span class="row"><Btn kind="sm" cls={/_no$/.test(a.id) ? undefined : 'go'} t="ppl-do" d={{ v: a.id }} disabled={sel.used || (B.ap <= 0 && !a.free)} onClick={() => spend(a.id)}>{a.free ? (/_no$/.test(a.id) ? 'Say no' : (/_yes$/.test(a.id) ? 'Say yes' : a.n)) : 'Spend 1 action point'}</Btn>{a.free ? <span class="muted">No action point</span> : null}</span></li>)}</ul>
     </div> : <p class="muted mt1">Pick somebody. One action point is spent on a person, once a week each. Everybody here is here for a reason.</p>}
   </div>;
 }

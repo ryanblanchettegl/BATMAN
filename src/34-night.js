@@ -96,11 +96,30 @@ function nightMatter(S,P,rep){
     return {type:'furious',w:w.id,bonus:bonus,text:w.name+' went home furious after '+rep.name+'. If it is left alone it will not stay between the two of you.',
       choices:['Talk to them tonight','Promise them a win within two weeks','Pay them a bonus of '+money(bonus),'Let them cool off'],
       checks:{0:mkCheck(8,[{n:'Where you stand with them',v:youLean(S,w)},{n:'Their morale is '+Math.round(w.morale),v:w.morale<35?-1:0}].concat(skillMods(S,'talk')))}};}
-  var ms=rep.segs.filter(function(s){return s.k==='match';}),main=ms[ms.length-1],hot=ms.slice(0,-1).filter(function(s){return main&&s.cr>=main.cr-4&&s.cr>=58&&s.win&&s.wi&&s.wi.length===1;}).sort(function(a,b){return b.cr-a.cr;})[0];
+  var ms=rep.segs.filter(function(s){return s.k==='match';}),main=ms[ms.length-1];
+  var one=function(q){return q.wi&&q.wi.length===1&&q.ids&&q.ids.length===2;},loserOf=function(q){return S.w[q.ids[0]===q.wi[0]?q.ids[1]:q.ids[0]];};
+  // a belt changed hands: the one who lost it wants it back, and wants your word tonight
+  var tc=ms.filter(function(q){return q.change&&q.title&&one(q);})[0];
+  if(tc){var lw=loserOf(tc),nw=S.w[tc.wi[0]],tt=P.titles.filter(function(x){return x.name===tc.title;})[0];
+    if(lw&&nw&&tt&&lw.promo===P.id&&nw.promo===P.id&&!(lw.inj>0)&&nightFree(S,'nt',lw.id)){nightMark(S,'nt',lw.id);
+      return {type:'clause',w:lw.id,o:nw.id,tid:tt.id,text:lw.name+' lost the '+tt.name+' to '+nw.name+' on '+rep.name+'. They want their rematch, and they want your word on it tonight.',
+        choices:['Promise the rematch within four weeks','No rematch. '+nw.name+' moves on to somebody new']};}}
+  var hot=ms.slice(0,-1).filter(function(s){return main&&s.cr>=main.cr-4&&s.cr>=58&&s.win&&s.wi&&s.wi.length===1;}).sort(function(a,b){return b.cr-a.cr;})[0];
   if(hot){w=S.w[hot.wi[0]];
     if(w&&w.promo===P.id&&holdLvl(P,w.id)===0&&!(w.inj>0)&&nightFree(S,'nh',w.id)){nightMark(S,'nh',w.id);
       return {type:'caughtfire',w:w.id,text:'The crowd took to '+w.name+' on '+rep.name+', as loud as anything on the show. The writers say this does not last if nothing is done with it.',
         choices:['Promise them a win within two weeks, and build on it','Not yet. Let it grow by itself']};}}
+  // an upset the office did not call: the favourite lost, and both of them want to know what it means
+  var up=ms.filter(function(q){return !q.called&&!q.change&&one(q)&&q.odds&&q.odds[q.ids[0]===q.wi[0]?0:1]<=30;})[0];
+  if(up){var uw=S.w[up.wi[0]],ul=loserOf(up);
+    if(uw&&ul&&uw.promo===P.id&&ul.promo===P.id&&!(uw.inj>0)&&!(ul.inj>0)&&nightFree(S,'nu',uw.id)&&nightFree(S,'nu',ul.id)){nightMark(S,'nu',uw.id);nightMark(S,'nu',ul.id);
+      return {type:'upset',w:uw.id,o:ul.id,text:uw.name+' beat '+ul.name+' on '+rep.name+', and nobody saw it coming. '+uw.name+' thinks it is the start of something. '+ul.name+' wants it put right.',
+        choices:['Back the upset: a win for '+uw.name+' within two weeks','Call it a fluke: a win for '+ul.name+' within two weeks','Say nothing to either of them']};}}
+  // the main event was the weakest match on the show: somebody has to carry it
+  if(main&&ms.length>=3&&main.ids&&main.ids.length===2&&main.ov<=rep.rating-6&&!ms.some(function(q){return q!==main&&q.ov<main.ov;})){var fa=S.w[main.ids[0]],fb=S.w[main.ids[1]];
+    if(fa&&fb&&fa.promo===P.id&&fb.promo===P.id&&nightFree(S,'nm',fa.id)&&nightFree(S,'nm',fb.id)){nightMark(S,'nm',fa.id);nightMark(S,'nm',fb.id);var boss=S.owner&&!S.owner.me?S.owner.name:null;
+      return {type:'mainflop',w:fa.id,o:fb.id,text:'The main event of '+rep.name+', '+fa.name+' against '+fb.name+', was the weakest match on the show. '+(boss?boss+' wants':'The writers want')+' to know whose fault it was.',
+        choices:['Take the blame yourself','Blame '+fa.name,'Blame '+fb.name]};}}
   // the match of the night, between two people with no story yet
   var best=ms.filter(function(q){return q.ids&&q.ids.length===2&&q.win&&q.ov>=rep.rating+5&&q.ov>=70;}).sort(function(x,y){return y.ov-x.ov;})[0];
   if(best){var a=S.w[best.ids[0]],b=S.w[best.ids[1]];
@@ -109,6 +128,31 @@ function nightMatter(S,P,rep){
         choices:['Make it a rivalry','Leave it as one great night']};}}
   return null;
 }
+EVR.clause=function(S,ev,choice,P,w,o){
+  var t=titleById(P,ev.tid);if(!w||w.promo!==P.id||!t)return 'It no longer matters.';
+  if(choice===0){S.quests.push({id:S.nid++,type:'shot',w:w.id,title:t.id,due:S.week+4,text:'Promise: give '+w.name+' the rematch for the '+t.name+' by '+cal(S.week+4).label});w.morale=clamp(w.morale+6,0,100);youRemember(S,w,'clause','They lost the belt and you gave them your word on a rematch.',6);
+    return 'You gave your word. '+w.name+' gets the rematch for the '+t.name+' by '+cal(S.week+4).label+'.';}
+  w.morale=clamp(w.morale-8,0,100);w.mom=clamp((w.mom||0)-1,-10,10);youRemember(S,w,'noclause','They lost the belt and you told them there would be no rematch.',-7);
+  if(o&&o.promo===P.id){o.morale=clamp(o.morale+4,0,100);youRemember(S,o,'newera','You let them start their run as champion with somebody new.',3);}
+  return 'No rematch. '+w.name+' takes it badly.'+(o?' '+o.name+' gets a clean start as champion.':'');
+};
+EVR.upset=function(S,ev,choice,P,w,o){
+  if(!w||!o||w.promo!==P.id||o.promo!==P.id)return 'One of them is no longer with the company.';
+  if(choice===0){nightWin(S,w);w.mom=clamp((w.mom||0)+2,-10,10);w.morale=clamp(w.morale+6,0,100);youRemember(S,w,'backed','They got the upset and you backed it.',7);o.morale=clamp(o.morale-4,0,100);youRemember(S,o,'leftit','They were beaten in an upset and you built on it.',-3);
+    return 'You gave your word: another win for '+w.name+' within two weeks. '+o.name+' will have to live with it.';}
+  if(choice===1){nightWin(S,o);o.morale=clamp(o.morale+4,0,100);youRemember(S,o,'putright','They were beaten in an upset and you promised to put it right.',4);w.morale=clamp(w.morale-6,0,100);youRemember(S,w,'fluke','They got the win of their life and you called it a fluke.',-6);
+    return 'You gave your word: a win for '+o.name+' within two weeks. '+w.name+' heard the word fluke, and will not forget it.';}
+  w.morale=clamp(w.morale-3,0,100);youRemember(S,w,'waited','They got the upset and you said nothing.',-3);
+  return 'You say nothing. '+w.name+' wonders what it takes. '+o.name+' assumes it will be put right without asking.';
+};
+EVR.mainflop=function(S,ev,choice,P,w,o){
+  if(!w||!o)return 'It no longer matters.';
+  if(choice===0){if(S.owner&&!S.owner.me)S.owner.trust=clamp(S.owner.trust-3,0,100);[w,o].forEach(function(x){if(x.promo===P.id){x.morale=clamp(x.morale+4,0,100);youRemember(S,x,'tookit','The main event fell flat and you took the blame yourself.',6);}});
+    return 'You say it was the booking. '+w.name+' and '+o.name+' both hear that you did.'+(S.owner&&!S.owner.me?' '+S.owner.name+' trusts you a little less.':'');}
+  var bad=choice===1?w:o,other=bad===w?o:w;bad.morale=clamp(bad.morale-8,0,100);youRemember(S,bad,'blamed','The main event fell flat and you put it on them.',-8);youRemember(S,other,'spared','The main event fell flat and you did not put it on them.',2);
+  relBump(S,bad.id,other.id,{bond:-8},{k:'blame',t:'The booker blamed '+bad.name+' for their main event.',by:'you'});
+  return 'You put it on '+bad.name+'. They hear about it before they have left the building. It sits between them and '+other.name+' now.';
+};
 EVR.rematch=function(S,ev,choice,P,w,o){
   if(!w||!o||w.promo!==P.id||o.promo!==P.id)return 'One of them is no longer with the company.';
   if(choice===0){var f=startFeud(S,P,w,o,45,'It began with the match of the night',{});if(!f)return 'There are too many rivalries running already. This one will have to wait.';

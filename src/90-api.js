@@ -25,6 +25,8 @@ E.sign=function(S,id,wage,weeks){
   return {ok:true,msg:w.name+' signs for '+money(wage)+' a week.'};
 };
 E.release=function(S,id){var w=S.w[id],P=S.promos[S.player];if(!w||w.promo!==P.id)return null;var pay=w.wage*4;P.cash-=pay;if(S.owner.pledge==='stable'){rosterOf(S,P.id).forEach(function(x){x.morale=clamp(x.morale-3,0,100);});S.trust=clamp(S.trust-4,0,100);}leaveCompany(S,w,'released');w.promo='FA';w.brand=null;news(S,'contract',P.name+' released '+w.name+'.');return w.name+' is released. Severance: '+money(pay)+'.';};
+/** What a new contract would cost a week, before it is signed. */
+E.renewAsk=function(S,id,weeks){var w=S.w[id];if(!w||w.promo!==S.player)return 0;return Math.round(renewAsk(S,w)*(weeks>60?1.1:1)/50)*50;};
 E.renew=function(S,id,weeks){var w=S.w[id];if(!w||w.promo!==S.player)return null;var ask=Math.round(renewAsk(S,w)*(weeks>60?1.1:1)/50)*50;w.wage=ask;w.con=weeks;w.cn=false;w.morale=clamp(w.morale+3,0,100);return w.name+' re-signs for '+money(ask)+' a week.';};
 E.setBrand=function(S,id,b){var w=S.w[id];if(w&&w.promo===S.player){w.brand=b;var tm=teamOf(S,w);if(tm&&S.w[tm.m[0]].brand!==S.w[tm.m[1]].brand)dissolveTeam(S,tm);}};
 E.pushMap=function(S,pid){

@@ -23,16 +23,16 @@ function taskOpen(S){
     if(t.holders.length)return;
     if(T&&T.title===t.id)return;
     if((S.card||[]).some(function(m){return m&&m.title===t.id;}))return;
-    add('title-'+t.id,'The '+t.name+' '+(t.tag?'are':'is')+' vacant. Book a match for '+(t.tag?'them':'it')+' or start a tournament.','titles','Titles',{card:true,done:'The '+t.name+' '+(t.tag?'are':'is')+' taken care of.',short:'The '+t.name+': vacant'});
+    add('title-'+t.id,'The '+t.name+' '+(t.tag?'are':'is')+' vacant. Book a match for '+(t.tag?'them':'it')+' or start a tournament.','titles','Decide',{card:true,done:'The '+t.name+' '+(t.tag?'are':'is')+' taken care of.',short:'The '+t.name+': vacant'});
   });
   R.filter(function(w){return w.con!=null&&w.con<=1;}).sort(function(a,b){return b.ovr-a.ovr;}).slice(0,4).forEach(function(w){
-    add('con-'+w.id,w.name+'’s contract ends '+(w.con<=0?'this week':'next week')+'. Renew it or let them go.','roster','Roster',{done:w.name+'’s contract is dealt with.',short:w.name+'’s contract ends'});
+    add('con-'+w.id,w.name+'’s contract ends '+(w.con<=0?'this week':'next week')+'. Renew it or let them go.','roster','Decide',{done:w.name+'’s contract is dealt with.',short:w.name+'’s contract ends'});
   });
   // tasks from other systems: TASKX.push(function(S,P,add){ add(id,text,page,label,{gate,waive,need,card,done}); })
   TASKX.forEach(function(fn){fn(S,P,add);});
   // worth doing, never in the way
   var left=S.queue.length-S.qi,ap=E.backstage(S).ap;
-  if(ap>0&&left>0)add('ap',ap+' action '+(ap===1?'point':'points')+' to spend backstage before the week is out.','desk','Rooms',{need:false,done:'Action points spent.',short:'Action points to spend ('+ap+')'});
+  if(ap>0&&left>0)add('ap',ap+' action '+(ap===1?'point':'points')+' to spend backstage before the week is out.','backstage','Go backstage',{need:false,done:'Action points spent.',short:'Action points to spend ('+ap+')'});
   S.quests.filter(function(q){return q.due!=null&&q.due<=S.week;}).slice(0,3).forEach(function(q){add('q-'+q.id,'Due this week: '+q.text,'booking','Booking',{need:false,done:'No longer due: '+q.text,short:'A promise is due this week'});});
   return L;
 }

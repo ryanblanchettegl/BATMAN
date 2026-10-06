@@ -29,7 +29,7 @@ async function open(opts) {
   const mode = opts.mode || 'desk', browser = await chromium.launch(), ctx = await browser.newContext(VIEWPORTS[mode]), page = await ctx.newPage(), errs = [];
   page.on('console', m => { if (m.type() === 'error' && !/ERR_TUNNEL|Failed to load resource/.test(m.text())) errs.push('console: ' + m.text().slice(0, 300)); });
   page.on('pageerror', e => errs.push('pageerror: ' + e.message));
-  await page.addInitScript(p => { try { if (!localStorage.getItem('gorilla-position-prefs')) localStorage.setItem('gorilla-position-prefs', JSON.stringify(p)); } catch (e) {} }, Object.assign({ boot: false }, mode === 'tv' ? { screen: 'tv' } : {}));
+  await page.addInitScript(p => { try { if (!localStorage.getItem('gorilla-position-prefs')) localStorage.setItem('gorilla-position-prefs', JSON.stringify(p)); } catch (e) {} }, Object.assign({ boot: false, letter: false }, mode === 'tv' ? { screen: 'tv' } : {}));
   await page.goto('http://127.0.0.1:' + (await serve()) + '/' + (opts.file || 'index') + '.html');
   await page.waitForSelector('.logo-box');
   if (opts.promo !== null) {

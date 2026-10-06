@@ -54,8 +54,8 @@ async function run(mode) {
     await page.click('[data-t="task-wave"][data-v="desk-col"]');
     await page.click('[data-t="task-go"][data-v="sponsors"]');
     await page.waitForSelector('[data-t="sp-accept"]');
-    ok(mode, 'the sponsor task opens the offers in a pop-up on Deals', await page.evaluate(() => window.EWF_DEBUG.ui.page) === 'deals' && !!(await page.$('.win [data-t="sp-accept"]')));
-    for (let i = 0; i < 3; i++) { if (!(await page.$('.win'))) await page.click('[data-t="mng"][data-v="offers"]'); const b = await page.$('[data-t="sp-accept"]:not([disabled])'); if (!b) break; await b.click(); await page.waitForTimeout(60); }
+    ok(mode, 'the sponsor task opens the offers in a pop-up over the desk', await page.evaluate(() => window.EWF_DEBUG.ui.page) === 'desk' && !!(await page.$('.win [data-t="sp-accept"]')));
+    for (let i = 0; i < 3; i++) { if (!(await page.$('.win'))) { const tg = await page.$('[data-t="task-go"][data-v="sponsors"]'); if (!tg) break; await tg.click(); } if (!(await page.$('[data-t="sp-accept"]'))) { await page.keyboard.press('Escape'); await page.waitForTimeout(60); } const b = await page.$('[data-t="sp-accept"]:not([disabled])'); if (!b) break; await b.click(); await page.waitForTimeout(60); }
     for (let i = 0; i < 3 && await page.$('.win'); i++) { await page.keyboard.press('Escape'); await page.waitForTimeout(40); }
     await go(page, 'desk');
     ok(mode, 'signing the sponsors ticks the task', (await rows(page, 'done')).indexOf('sponsors') >= 0, (await rows(page)).join(', '));
@@ -67,6 +67,20 @@ async function run(mode) {
     await state(page, S => { S.promos[S.player].titles[0].holders = []; S.card = []; });
     await go(page, 'desk');
     ok(mode, 'a vacant title is a task, and the card still opens to answer it', (await rows(page, 'todo')).some(id => /^title-/.test(id)) && !(await page.$eval('[data-t="book-next"]', e => e.disabled)));
+    await page.click('[data-t="task-go"][data-v^="title-"]'); await page.waitForSelector('.win [data-t="tt-tourn"]');
+    ok(mode, 'the vacant title is answered in a pop-up on the desk: a tournament or a match on the card', await page.evaluate(() => window.EWF_DEBUG.ui.page) === 'desk' && (await page.$$('.win [data-t="tt-tourn"]')).length === 2 && !!(await page.$('.win [data-t="tt-book"]')) && /vacant/i.test(await txt(page, '.win')));
+    await page.keyboard.press('Escape'); await page.waitForTimeout(60);
+    /* a contract about to end is answered on the desk too */
+    const cid = await state(page, S => { const w = window.GP.rosterOf(S, S.player).filter(x => !x.nw).sort((a, b) => b.ovr - a.ovr)[6]; w.con = 1; return w.id; });
+    await go(page, 'desk'); await page.click('[data-t="task-go"][data-v="con-' + cid + '"]'); await page.waitForSelector('.win [data-t="tc-renew"]');
+    const ask = await txt(page, '.win'); await page.click('.win [data-t="tc-renew"][data-v="48"]'); await page.waitForTimeout(80);
+    ok(mode, 'a contract ending is a pop-up with the price, and signing ticks the task', /\$[\d,]+ a week/.test(ask) && /re-signs/.test(await txt(page, '.win')) && await state(page, (S, id) => S.w[id].con === 48, cid));
+    for (let i = 0; i < 3 && await page.$('.win'); i++) { await page.keyboard.press('Escape'); await page.waitForTimeout(40); }
+    ok(mode, 'and the desk is still the page', await page.evaluate(() => window.EWF_DEBUG.ui.page) === 'desk' && (await rows(page, 'done')).indexOf('con-' + cid) >= 0);
+    /* the owner's letter can be read again from the desk */
+    await page.click('[data-t="open-letter"]'); await page.waitForSelector('[data-t="welcome"]');
+    ok(mode, 'the owner’s letter opens again from the desk, already written out', /the job/i.test(await txt(page, '[data-t="welcome"]')) && /Put it away/.test(await txt(page, '[data-t="welcome-go"]')) && await page.$eval('[data-t="welcome"] .tx-l', e => getComputedStyle(e).opacity === '1'));
+    await page.click('[data-t="welcome-go"]'); await page.waitForTimeout(60);
     await page.click('[data-t^="task-wave"][data-v^="title-"]');
     /* the rule can be turned off in Options */
     await page.click('[data-t="task-unwave"][data-v="desk-col"]');

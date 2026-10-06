@@ -293,5 +293,21 @@ if (found.network) { const F = found.network, net = S => { E.clocks(S); return S
   const S4 = E.newGame('pdw', 15, { name: 'R' }); let most = 0, total = 0, shows = 0, kinds = {};
   for (let wk = 0; wk < 8; wk++) { while (desk(S4)) { const n0 = S4.inbox.length; E.liveBegin(S4, S4.card); air(S4, e => e.safe || 0); shows++; const nw = S4.inbox.slice(n0).filter(e => e.night); most = Math.max(most, nw.length); total += nw.length; nw.forEach(e => { kinds[e.type] = 1; E.resolveEvent(S4, e.id, e.choices.length - 1); }); } week(S4); }
   ok('nm7', 'a show leaves one matter at most, and over eight weeks some shows do', most <= 1 && total >= 1 && total < shows, total + ' from ' + shows + ' shows: ' + Object.keys(kinds).join(', ')); }
+/* more causes: a belt that changed hands, an upset nobody called, a main event that fell flat */
+{ const got = {};
+  for (let seed = 15; seed < 40 && !(got.clause && got.upset); seed++) { const S = E.newGame('pdw', seed, { name: 'R' });
+    for (let wk = 0; wk < 8; wk++) { while (desk(S)) { const n0 = S.inbox.length; E.liveBegin(S, S.card); air(S, e => e.safe || 0);
+      S.inbox.slice(n0).filter(e => e.night).forEach(e => { if (/clause|upset|mainflop/.test(e.type) && !got[e.type]) { const w = S.w[e.w], q0 = S.quests.length, m0 = ((S.rmY || {})[w.id] || { mem: [] }).mem.length; const r = E.resolveEvent(S, e.id, 0);
+        got[e.type] = { n: e.choices.length, text: e.text, quest: S.quests.length - q0, mem: ((S.rmY || {})[w.id] || { mem: [] }).mem.length - m0, done: e.done }; } else E.resolveEvent(S, e.id, e.choices.length - 1); }); } week(S); } }
+  /* a main event given to the two weakest people on the roster, off the card otherwise */
+  for (let seed = 15; seed < 30 && !got.mainflop; seed++) { const S = E.newGame('pdw', seed, { name: 'R' }); const c = desk(S); if (!c) continue;
+    const main = c.filter(x => x && x.mt).pop(), on = {}; c.forEach(x => { if (x && x.sides && x !== main) x.sides.forEach(sd => sd.forEach(id => { on[id] = 1; })); });
+    const low = E.rosterOf(S, 'pdw').filter(w => !w.nw && !(w.inj > 0) && w.g === S.w[main.sides[0][0]].g && !on[w.id]).sort((x, y) => x.ovr - y.ovr);
+    if (main.mt !== '1v1' || low.length < 2) continue; main.sides = [[low[0].id], [low[1].id]]; main.title = null; E.fitShow(S, c); if (E.validate(S, c).errors.length) continue;
+    const n0 = S.inbox.length; E.liveBegin(S, S.card); air(S, e => e.safe || 0);
+    S.inbox.slice(n0).filter(e => e.night && e.type === 'mainflop').forEach(e => { const w = S.w[e.w], m0 = ((S.rmY || {})[w.id] || { mem: [] }).mem.length; E.resolveEvent(S, e.id, 1); got.mainflop = { n: e.choices.length, text: e.text, mem: ((S.rmY || {})[w.id] || { mem: [] }).mem.length - m0, bad: S.rmY[w.id].v < 0 }; }); }
+  ok('nm8', 'a lost belt leaves a rematch to answer, and yes is a promise', !!got.clause && got.clause.n === 2 && got.clause.quest === 1 && got.clause.mem >= 1 && got.clause.done, got.clause && got.clause.text);
+  ok('nm9', 'an upset nobody called leaves both of them wanting an answer', !!got.upset && got.upset.n === 3 && got.upset.quest === 1 && got.upset.mem >= 1, got.upset && got.upset.text);
+  ok('nm10', 'a main event that was the weakest match leaves the blame to hand out', !!got.mainflop && got.mainflop.n === 3 && got.mainflop.mem >= 1 && got.mainflop.bad, got.mainflop && got.mainflop.text); }
 if (fails.length) { console.log('\nFAILED: ' + fails.length + '\n' + fails.join('\n')); process.exit(1); }
 console.log('test-live: all passed');

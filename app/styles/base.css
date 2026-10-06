@@ -518,6 +518,7 @@ html[data-music="off"] .mus::after{content:' off';color:var(--dred)}
 .telex .tx-foot{display:flex;gap:2ch;align-items:center;margin-top:1em}
 @keyframes txin{from{opacity:0;transform:translateY(.3em)}to{opacity:1;transform:none}}
 @media (prefers-reduced-motion:reduce){.telex .tx-l{animation:none;opacity:1}}
+.telex.again .tx-l{animation:none;opacity:1}
 
 /* the fire: what needs an answer, first on the desk */
 .fire{border:2px solid var(--red,#ff5555);padding:.4em 1ch;margin:.6em 0}

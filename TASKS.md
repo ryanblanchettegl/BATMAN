@@ -317,6 +317,18 @@ Ryan, 4 October: "After a show, it should go back to the Office or your desk, so
 - [ ] The same for every other task on the desk, so everything can be done from the Office: sponsor offers, the venue, contracts that are running out, a vacant title.
 - [ ] The people available are the hired voices on the market. Wrestlers, managers and legends at the desk wait for the character sheet work.
 
+### 0n. Five more, picked from the open list (0.37)
+
+Ryan, 6 October: "next". These are the five open items offered after 0.36.
+
+- [x] **1. A Backstage result goes back to its pop-up.** Closing the result of a thing to do returns to the pop-up it came from, which now says the room is used. (`apact` in `BACK_TO`.)
+- [x] **2. More requests, and scenes with two people.** Two more reasons to come to Your office: more money (underpaid for their level, and winning or holding a belt) and two weeks at home (worn out). Three scenes put two people in a room together, named as a pair: a regular team at your door blaming each other for a losing run (back one, back the other, or tell them to sort it out, all free and all remembered), somebody in catering jealous of the spot another has (take them aside, or put it on television), and a veteran in the gym who has stayed late with a young one (make it a habit). Your office holds four people.
+  - [ ] Still to come: a new look, a match with somebody they name, off a show. A third answer: not yet, but here is what it would take.
+- [x] **3. More ways a night ends on a problem.** Three more causes, each from what happened on the show: a belt changed hands and the old champion wants a rematch, an upset the office did not call, and a main event that was the weakest match on the card (take the blame or hand it out). In the test game a matter now comes up on about six shows in ten, up from one in four.
+- [x] **4. The owner's letter has its own switch.** Options has a line for it, apart from the boot sequence. The desk has a button to read it again. The letter is kept as it was written on day one (`S.letter`).
+  - [ ] Build out the pretext.
+- [x] **5. The remaining desk tasks are pop-ups.** House style and sponsor offers open over the desk without leaving it. A vacant title opens a pop-up with who is first in line, a tournament in either format, or a way to the card. A contract about to end opens a pop-up with the price of one year and two.
+
 ### 0m. Buttons that open pop-ups, and people at your door (0.36)
 
 - [x] **1. Manage is buttons.** Ryan, 6 October: "On the manage screen, I love all the different options. But I want them all to be buttons you hit that a pop up comes up with the selectable options." Operations is fifteen buttons in four groups (On the air, At the door, Your people, The books). House is two, Deals is seven. Each says what it is set to now. The pop-up holds the same choices as before. The sponsor task and the new owner's house style task open their pop-up directly.
