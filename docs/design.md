@@ -34,13 +34,13 @@ What it means for anything new:
 - **The Show pays out and sets the next hook.** A result is never only a grade. Something happens that nobody booked, and the night ends on a new problem or a new chance that sends the player back to the Office.
 - **Every phase hands the next one something unresolved.** A feature that ends a phase on a clean slate is not finished.
 
-Where the game stands against it, at version 0.27:
+Where the game stands against it, at version 0.28:
 
 | Phase | In the game now | Still missing |
 | --- | --- | --- |
 | Office | The week opens with events that need an answer (the owner's directives, a rival's offer to one of your stars, the network asking for a meeting, the locker room meeting without you), this week's tasks, the pressure clocks and the notification bar. | The fire is not always the first thing on the desk, and it rarely comes from last night's show. The dirt sheet sits in Net, not on the desk. No sponsor asking for a kind of show. No travel problem at the start of the week (only before the bell). |
 | Booking | Time is the budget. Fog of war: the road agent says what can be seen (worn down, running on fumes, a squash) and the rest is learned by running it. Wear, morale and effort change how a match goes, and the staff notes argue with the card. | Fatigue, morale and chemistry are not on every line of the run sheet. Nothing yet sets a tired champion against a rookie's chance as one clear trade. The five goals for every show are not built. |
-| Show | The show is live and cannot be skipped. Twelve kinds of call from the gorilla position, each caused by the night: titles, rivals, a promo off the script, somebody hurt, a quiet crowd, a match going long, the owner, the network, a sponsor, who the shows are built around. People remember every answer. The report says what was learned and what was called. | The night still ends on a grade and a report. It does not yet end on "what tonight left you with": the new problem or chance, named, with its deadline, waiting on the desk. A mid-card act catching fire is not yet called out as it happens. |
+| Show | The show is live and cannot be left. A segment can be skipped to its result, a call never can, and the yellow button at the top right is the only way forward. Twelve kinds of call from the gorilla position, each caused by the night: titles, rivals, a promo off the script, somebody hurt, a quiet crowd, a match going long, the owner, the network, a sponsor, who the shows are built around. People remember every answer. The report says what was learned and what was called. | The night still ends on a grade and a report. It does not yet end on "what tonight left you with": the new problem or chance, named, with its deadline, waiting on the desk. A mid-card act catching fire is not yet called out as it happens. |
 
 ## 2b. The first year teaches the game
 
@@ -49,6 +49,20 @@ Ryan, 4 October 2026, for the road map. Every new game should feel free. But som
 His first three, all fixed: after the first show, the player has to pick a sponsor. Before the first pay-per-view, the player has to name the face of the company. The week before the third pay-per-view, the owner wants an authority figure added to a show, and that becomes a required addition.
 
 A required action is a task on the desk that cannot be waved off. It names the mechanic it teaches in a line or two, the first time only. The list and its state are in `TASKS.md`, section 0h.
+
+## 2c. After the show, back to the desk
+
+Ryan, 4 October 2026, for the road map. A show does not end on its report. When the report is closed the player is back at the Office desk, with whatever the night left behind waiting there: new events and decisions first, and in time always something to read or settle. The dirt sheets on last night. Injuries. What the writers thought. How relationships changed. Tickets sold against tickets available. Streaming numbers by demographic. Each is a line on the desk that opens a pop-up, so the player can do all of it without leaving the Office.
+
+Pop-ups are how the game shows more while every page stays one screen. The first is picking commentators from the desk. The aim is that every action, required or not, can be done from the Office.
+
+## 2d. Where a show is held
+
+Ryan, 4 October 2026, for the road map, not to be built yet. Before every show the player picks a venue, with several to choose from in each town. Later the game lays out a realistic one-year schedule around the country the company is based in. Special events can be booked in other countries at special venues, and each has its own risks and rewards. The list of work is in `TASKS.md`, section 0i.
+
+## 2e. Shows last
+
+Ryan, 4 October 2026. A weekly show is not a thing a company opens and shuts. It stays on the air for years, and the years are part of what it is worth. It gains prestige the longer it runs and as its audience grows. It does not end: now and then it changes network. New shows and new belts are rare because each needs an occasion, not because a rule locks them in the first years. The model is how companies work today.
 
 ## 3. Screen map
 

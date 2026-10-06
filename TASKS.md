@@ -65,6 +65,11 @@ Two more lists sit beside this one, both finished:
 | The ADVANCE button | Like Civilization 6: one button that always leads to the next big action. It is a core part of how the game is played. It is laid **over the right end of the top menu bar** (not inside it: the bar keeps its original height and look), big, bold and **always yellow**, **one or two words** (Attention, Book show, Fix card, Open card, Run show, Continue, End week), so it is satisfying to hit. When this week's tasks are in the way it says only **Attention**; a note under it (on hover or focus) says what, and pressing it goes to **the desk**, where the list lives. There is **no to-do strip** elsewhere: the desk is the place for tasks, and the ones that cannot be skipped are marked there (a yellow bar, a blinking marker, a solid tag) and flash when the button sends you. **Options, Help and Music are at the bottom right.** Notifications show at the top, under the menu. The week plays as the days that have something in them. The button guides, and only acts for running the show and ending the week. |
 | A deep character sheet | The roster grows to include referees, road agents, managers, legends, authority figures and commentators, as skills any person can have. Backstory and gimmick get real depth, with many options drawn from wrestling history, so players can build anyone they like with the creation tools. Researched from how the genre's deepest character creators do it. Work on this only after the current projects are done. |
 | Growing a company | 4 October, replacing the earlier wording: companies do **not** add titles and shows every year. A new belt or a new weekly show is a big deal when it happens, and it follows real-life precedent. It takes an occasion (a division with no title, enough teams for tag belts, a roster that has outgrown its titles, a new show that needs a title; for a show: a boom, a hit in prime time, a roster too big for its nights). No company adds more than one belt in a year or one show in two. Rivals add them rarely, one at a time, and each is news. Belts and weekly shows can still be created inside a running game, not only in the World Editor. |
+| On the air: the one button | 4 October: during a show the player can skip a promo, an angle or a match to its result. A dynamic moment (a call from the gorilla position) can never be skipped: skipping stops at it. The focus is the yellow button at the top right. The broadcast has no continue button of its own at the bottom. Built in 0.28. |
+| After the show | 4 October, for the road map: after a show the game goes back to the Office and the desk, so the player can work through whatever the night left behind. In time there is always something to do there after a show: read the dirt sheets, review injuries, hear from the writers, see how relationships changed, tickets sold against tickets available, streaming numbers by demographic. Plan: section 0i. |
+| Venues and the year | 4 October, for the road map: the player picks a venue before every show, with several options in each town. Later the game builds a realistic one-year schedule around the country the company is based in, and the player can book special events in other countries at special venues, each with its own risks and rewards. Not to be built yet. Plan: section 0i. |
+| Pop-ups from the desk | 4 October: the player picks commentators from the Office in a pop-up that lists who is available. Pop-ups will be used more and more to show information while everything stays on one screen. The aim is that every action, required or not, can be done from the Office if the player wants. |
+| Shows last | 4 October: shows and belts are not locked in a booker's first years. A weekly show stays on the air: it does not end, it changes network now and then. It gains prestige the longer it is on and with its viewers and growth. The model is how companies work today. |
 | World Editor | The creation suite is its own page called **World Editor** on the title screen. A player builds a world from scratch (companies, shows, belts, wrestlers) and uploads it to the Workshop. This is the main next item. |
 
 ## Tasks
@@ -167,7 +172,8 @@ Ryan: "look up the philosophy of booking a wrestling show, the importance of the
     - [x] **(0.26) The sponsor at ringside.** A sponsor with four weeks or fewer left on its deal wants its name on the main event. Not tonight, the announcers read the plug (the crowd groans, 12 more weeks), or the hero holds up the product after the bell (24 more weeks and a bonus, and they do not enjoy it). Each sponsor asks once.
     - [x] (0.26) Told "no one name above the company", the truck does not ask again for sixteen weeks.
     - [ ] More of this kind: the owner's creed (what the crowd is being taught to expect), a rival company's star in the building.
-  - [ ] Each segment still has "Skip to the result". Ryan to say whether it stays.
+  - [x] **(0.28) "Skip to the result" stays, and a call can never be skipped.** Ryan, 4 October: "During the shows they can skip to match results, but they can't skip dynamic moments, it will skip to those." A show on the air stops at every call whatever is skipped.
+  - [x] **(0.28) The big button is the only way forward.** Ryan: "I want the focus to be them hitting the next button on the top right. The advance button on the bottom is redundant." The broadcast's own continue button is gone. The yellow button says what it will do (Ring bell, Continue, Next, Sign off, Report, Your call), holds the focus through the show, and Enter and Space do the same thing. Its note stays shut on the air. Code: `liveStep()`, `liveGo()` in `app/src/screens/booking/run.ts`, `app/src/shell/Advance.tsx`.
 - [x] **Step 3 (0.24): the broadcast screen.** Code: `app/src/screens/booking/Live.tsx`, `run.ts`. Tests: `app/tests/booking.js`, `advance.js`, `journey.js`. One screen, nothing scrolls. Left: what is on the air. Right: tonight's run sheet, with stars for what has aired. A call is a box of wide buttons, one for each answer, and the number keys answer too. The old headset window is gone.
   - [ ] The show report is still a scrolling page.
 - [ ] **Step 4: promo depth.** Archetypes, heat by act, odds shifted by a good promo.
@@ -247,6 +253,37 @@ Dynamic (they come from the state of the game, so no two games get the same ones
 - [ ] To be thought up with Ryan. The game already has the raw material: the owner's monthly directives, the pressure clocks (the network's patience, a talent raid, a stale act, mutiny), the calls from the gorilla position, and the occasions for a new belt or show.
 
 Candidates for the fixed list, not decided (one for each mechanic that a player can miss today): the commentary desk (already a task), a house rule, a first title defence, a first feud taken to a big event, a first contract renewal, a first signing from the free agents, a first week in training camp for someone, a first tour, asking the network for a better slot.
+
+### 0i. After the show, venues and the year's schedule (road map, not started)
+
+Ryan, 4 October: "After a show, it should go back to the Office or your desk, so you can work through any new events or decisions that need to be made after the show." And: "I want to also pick a venue before every show having multiple options per town. Eventually we will have to build a realistic 1 year schedule around whatever country the company is located in with the ability to book special events in different countries with special venues with different risks and rewards. Don't build this now, but add it to the road map."
+
+**Back to the desk after a show**
+
+- [ ] When the report is closed the game goes to the Office desk, not to the next card. The desk shows what the night left behind, and the yellow button leads on from there. (Today closing the report opens the next show's card.)
+- [ ] The desk after a show, built up over time. Each of these is a line on the desk that opens a pop-up, so nothing leaves the Office:
+  - the dirt sheets on last night (today they are in Net)
+  - injuries from the show, and who is carrying one
+  - what the writers thought: what worked, what did not, what they want next week
+  - how relationships changed: who fell out, who bonded, who will remember what you did
+  - tickets sold against tickets available (the gate report in section 4)
+  - streaming and television numbers by demographic (section 5, and the four kinds of fan)
+- [ ] This is the Show phase handing the Office something unresolved (the "one more turn" rule, `docs/design.md` section 2a). It joins "the show ends on next week's problem".
+
+**A venue before every show**
+
+- [ ] Before a show is booked the player picks the town and then the building, with several buildings in each town: size, rent, the kind of crowd, how the company has drawn there before. This is section 4 ("Arena pick, gate report, popularity per city"), made a step that every show has. It is a task on the desk, answered in a pop-up.
+- [ ] Too big a building looks empty on television and costs rent. Too small leaves money at the door but looks hot. The agent gives a read, not a forecast (fog of war).
+
+**The year's schedule**
+
+- [ ] A one-year schedule built around the country the company is based in: where the weekly shows go, the loop of towns, the big events and their buildings, the breaks. Realistic for that country (distances, seasons, holidays, the big buildings). This grows out of section 6 ("Event calendar").
+- [ ] Special events in other countries at special venues, each with its own risks and rewards: a bigger gate and a new audience against travel cost, tired wrestlers, an unfamiliar crowd, weather for an outdoor show, a time zone that hurts the television number at home.
+- [ ] Needs first: popularity by city (section 4), the country of each company in the world file, and a list of buildings by country under invented or public-domain names.
+
+**Pop-ups from the desk**
+
+- [ ] Every task on the desk opens a pop-up where it stands, so the player can do everything from the Office. First one: the commentary desk (built next). Then sponsor offers, the venue, contracts that are running out, the inbox.
 
 ### 1. Finish the pop-ups (small)
 Feature list items 10 and 11. Code: `app/src/shared/cards.tsx`, `Name`, `TitleName`, `TeamName` and `Txt` in `app/src/kit/index.tsx`, the card stack in `app/src/store.ts`.
