@@ -51,9 +51,8 @@ async function run(mode) {
     const s0 = await state(page, S => S.promos[S.player].shows.length);
     await page.click('[data-t="make-shows"]');
     await page.waitForSelector('.win');
-    ok(mode, 'in a booker’s first year there is no form: the network wants to see a year of shows', !(await page.$('[data-t="make-show"]')) && /year of your shows/.test(await txt(page, '[data-t="make-show-why"]')) && (await page.$$('[data-t="show-occ"] li')).length === 3, await txt(page, '[data-t="make-show-why"]'));
-    await state(page, S => { S.promos[S.player].mk.t0 = S.week - 48; }); await page.evaluate(() => window.EWF_DEBUG.render());
-    ok(mode, 'a year on, with an occasion open, the show form gives the chance and the cost', /open now/i.test(await txt(page, '[data-t="show-occ"]')) && /an attempt with a/.test(await txt(page, '.win')) && /Launching it costs/.test(await txt(page, '.win')));
+    ok(mode, 'each show says how long it has been on the air, on which network, and its standing in words', (await page.$$('[data-t="show-air"]')).length === s0 && /years? on the air|first year/.test(await txt(page, '[data-t="show-air"]')) && /episodes/.test(await txt(page, '[data-t="show-air"]')) && /^(Brand new|Finding its feet|Established|A fixture|Appointment viewing|An institution)$/i.test(await txt(page, '[data-t="show-word"]')), await txt(page, '[data-t="show-air"]'));
+    ok(mode, 'nothing is locked in a booker’s first year: with an occasion open, the show form gives the chance and the cost', (await page.$$('[data-t="show-occ"] li')).length === 3 && /open now/i.test(await txt(page, '[data-t="show-occ"]')) && /an attempt with a/.test(await txt(page, '.win')) && /Launching it costs/.test(await txt(page, '.win')));
     await over('the Weekly shows window');
     let made = false, said = '';
     for (let i = 0; i < 25 && !made; i++) {
