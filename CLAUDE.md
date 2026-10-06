@@ -81,6 +81,7 @@ NODE_PATH=<dir containing playwright> node app/tests/<name>.js
 9a. **One step at a time.** Do one step, show Ryan the result, and wait for his go-ahead before the next. Do not run batches side by side.
 9b. **Relationships are the centre.** A new decision or event says what it does to the people involved through `relBump()` and `youRemember()`, so they remember it and the notification bar reports it.
 10. **Commits:** small, with a message that says what changed for the player. Tick the boxes in `TASKS.md` in the same commit.
+10a. **Versions:** from 6 October, at least five changes go into a version before its number moves (`VER` in `app/src/store.ts`). Commit each change as it is done; bump the number once five or more are in.
 
 ## The live page
 

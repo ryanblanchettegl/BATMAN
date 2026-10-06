@@ -70,6 +70,9 @@ Two more lists sit beside this one, both finished:
 | Venues and the year | 4 October, for the road map: the player picks a venue before every show, with several options in each town. Later the game builds a realistic one-year schedule around the country the company is based in, and the player can book special events in other countries at special venues, each with its own risks and rewards. Not to be built yet. Plan: section 0i. |
 | Pop-ups from the desk | 4 October: the player picks commentators from the Office in a pop-up that lists who is available. Pop-ups will be used more and more to show information while everything stays on one screen. The aim is that every action, required or not, can be done from the Office if the player wants. |
 | Shows last | 4 October: shows and belts are not locked in a booker's first years. A weekly show stays on the air: it does not end, it changes network now and then. It gains prestige the longer it is on and with its viewers and growth. The model is how companies work today. |
+| Versions | 6 October: at least five changes before a version number moves. |
+| Backstage | 6 October: people, not rooms. The people who show up backstage are connected to ongoing storylines or to what is going on in the company. Section 0j. |
+| After the show | 6 October: a show ends on its own After the show screen, not on the report. The Office has only a button back to it, After the show recap, and opens on Before the show. |
 | World Editor | The creation suite is its own page called **World Editor** on the title screen. A player builds a world from scratch (companies, shows, belts, wrestlers) and uploads it to the Workshop. This is the main next item. |
 
 ## Tasks
