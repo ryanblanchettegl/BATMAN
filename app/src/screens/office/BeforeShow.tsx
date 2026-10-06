@@ -3,7 +3,7 @@
 import { E, W } from '../../engine';
 import { G, ui, me, act, say, view, plural } from '../../store';
 import { go, weekDone } from '../../nav';
-import { Panel, Btn, Sel, Opt, Tag, CheckLine, Empty, brandName, dataAttrs, Txt, showResult, Name } from '../../kit';
+import { Panel, Btn, Sel, Opt, Tag, CheckLine, Empty, brandName, dataAttrs, Txt, showResult, Name, Head } from '../../kit';
 import { Portrait } from '../../kit/portrait';
 import { EndWeekBtn } from '../../shared/week';
 import { office, focusAfter, useFocusAfter, TO_MAP } from './util';
@@ -68,7 +68,7 @@ function People(p: { B: any }) {
   if (!all.length) return <Empty>Nobody needs you backstage right now. That will not last.</Empty>;
   return <div data-t="people">
     <div class="ppl">{B.rooms.map((r: any) => <div class="pl" key={r.id} data-t="ppl-room" data-v={r.id}>
-      <h4>{r.n.replace(/^The /, '')}</h4>
+      <h4>{r.n.replace(/^The /, '')}{r.id === 'court' && S.court && S.court.length ? ' (' + S.court.length + ')' : ''}</h4>
       {r.people.length ? r.people.map((x: any) => <button type="button" key={x.id} class={'who' + (st.who === x.id ? ' on' : '') + (x.used ? ' used' : '')} aria-pressed={st.who === x.id} {...dataAttrs('ppl-who', { v: x.id, k: x.k })}
         onClick={() => view(() => { st.who = st.who === x.id ? null : x.id; st.pl = null; ui.flash = null; })}>
         <Portrait w={S.w[x.id]} cls="pf" />
@@ -79,6 +79,7 @@ function People(p: { B: any }) {
       <h3><Name w={S.w[sel.id]} />, in {sel.room.n.replace(/^The /, 'the ')}</h3>
       <p class={sel.tone || 'muted'}>{sel.why}.{sel.story ? <span class="muted"> {sel.story}.</span> : null}</p>
       {sel.used ? <p class="muted mt1">You have already spent time with them this week.</p> : (B.ap <= 0 ? <p class="bad mt1">You are out of action points this week.</p> : null)}
+      {sel.room.id === 'court' ? <div class="row mt1"><span class="muted">The case is heard in the court itself.</span><Btn kind="sm" t="ppl-court" onClick={() => view(() => { st.pl = 'court'; st.who = null; })}>Go to the court</Btn></div> : null}
       <ul class="list">{sel.acts.map((a: any) => <li class="col" key={a.id}>
         <span><b>{a.n}</b><br /><span class="muted">{a.d}</span>{a.ck ? <CheckLine label={a.n} ck={a.ck} /> : null}</span>
         <span class="row"><Btn kind="sm" cls="go" t="ppl-do" d={{ v: a.id }} disabled={sel.used || B.ap <= 0} onClick={() => spend(a.id)}>Spend 1 action point</Btn></span></li>)}</ul>
@@ -124,33 +125,45 @@ function NextShow() {
 }
 
 export function BeforeShow() {
-  const S = G.S, B = E.backstage(S), st = office();
-  const room = st.pl ? B.places.find((p: any) => p.id === st.pl) : null;
-  const blocked = !room ? '' : (B.ap <= 0 ? 'You are out of action points this week.' : (room.used ? 'You have already spent time here this week.' : ''));
-  if (B.ap > 0) st.rooms = false;
-  const fold = B.ap <= 0 && !st.rooms && !room;
+  const S = G.S, B = E.backstage(S), N = E.people(S);
   useFocusAfter();
   return <Panel title="Before the show" cls="pre mb3">
     <NextShow />
     <Fire />
     <Tasks />
-    <p class="mt2">Action points this week: <span class="pips" role="img" aria-label={B.ap + ' of ' + B.max}>{Array.from({ length: B.max }, (_, i) => i < B.ap ? <span class="gold">{'◆'}</span> : <span class="muted">{'◇'}</span>)}</span> <span class="num">{B.ap} of {B.max}</span>
-      {S.court && S.court.length ? <span class="warn"> {'·'} {S.court.length} in court</span> : null}</p>
-    {fold ? <div class="row mt1"><span class="muted">The rooms are closed until next week.</span><Btn kind="sm" t="rooms-show" onClick={() => view(() => { st.rooms = true; })}>Show the rooms</Btn></div> : <>
-    <People B={E.people(S)} />
-    <p class="eyebrow mt2">Around the building</p>
-    <RoomMap places={B.places} open={room ? room.id : null} />
-    <div class="roomdet" aria-live="polite">
-      {!room ? <p class="muted">The rooms themselves: the owner, the court, the class, the pep talk, the truck. One visit to each a week.</p> : <>
-        <h3>{room.n}</h3>
-        <p class="muted">{room.d}</p>
-        {blocked ? <p class="bad mt1">{blocked}</p> : null}
-        {room.id === 'court' ? <Court blocked={blocked} /> : <RoomActs room={room} blocked={blocked} />}
-      </>}
-    </div></>}
-    {B.log && B.log.length ? <div class="aplog">
-      <p class="eyebrow">What you have done this week</p>
-      <ul class="list">{B.log.map((l: any) => <li class="col"><span><b>{l.place}</b> {'·'} {l.act}{l.who && l.who.length ? ' (' + l.who.join(', ') + ')' : ''}</span><span class={l.ok ? 'good' : 'bad'}><Txt>{l.msg}</Txt></span></li>)}</ul>
-    </div> : null}
+    <p class="mt2" data-t="bs-line">Backstage: <span class="pips" role="img" aria-label={B.ap + ' of ' + B.max}>{Array.from({ length: B.max }, (_, i) => i < B.ap ? <span class="gold">{'◆'}</span> : <span class="muted">{'◇'}</span>)}</span> <span class="num">{B.ap} of {B.max}</span> action {plural(B.max, 'point')} left
+      {' · '}<span class={N.count ? undefined : 'muted'}>{N.count ? N.count + ' ' + (N.count === 1 ? 'person is' : 'people are') + ' in the building for a reason' : 'nobody is waiting'}</span>
+      {S.court && S.court.length ? <span class="warn"> {'·'} {S.court.length} in court</span> : null}
+      {' '}<Btn kind="sm" t="to-backstage" onClick={() => go('backstage')}>Go backstage</Btn></p>
   </Panel>;
+}
+
+/** Backstage, its own page in the Office: every room, who is in it and why, and what a point does about it. */
+export function Backstage() {
+  const S = G.S, B = E.backstage(S), st = office();
+  const room = st.pl ? B.places.find((p: any) => p.id === st.pl) : null;
+  const blocked = !room ? '' : (B.ap <= 0 ? 'You are out of action points this week.' : (room.used ? 'You have already spent time here this week.' : ''));
+  useFocusAfter();
+  return <>
+    <Head eyebrow={E.cal(S.week).label} title="Backstage" />
+    <Panel cls="mb2">
+      <p data-t="bs-ap">Action points this week: <span class="pips" role="img" aria-label={B.ap + ' of ' + B.max}>{Array.from({ length: B.max }, (_, i) => i < B.ap ? <span class="gold">{'◆'}</span> : <span class="muted">{'◇'}</span>)}</span> <span class="num">{B.ap} of {B.max}</span>
+        <span class="muted"> {'·'} One point on a person, once a week each. One visit to each room a week.</span></p>
+      <People B={E.people(S)} />
+    </Panel>
+    <Panel title="The rooms themselves">
+      <RoomMap places={B.places} open={room ? room.id : null} />
+      <div class="roomdet" aria-live="polite">
+        {!room ? <p class="muted">Pick a room for what the room itself offers: the owner, the court, the class, the pep talk, a meeting in your office.</p> : <>
+          <h3>{room.n}</h3>
+          <p class="muted">{room.d}</p>
+          {blocked ? <p class="bad mt1">{blocked}</p> : null}
+          {room.id === 'court' ? <Court blocked={blocked} /> : <RoomActs room={room} blocked={blocked} />}
+        </>}
+      </div>
+    </Panel>
+    {B.log && B.log.length ? <Panel title="What you have done this week" cls="mt2"><div class="aplog">
+      <ul class="list">{B.log.map((l: any) => <li class="col"><span><b>{l.place}</b> {'·'} {l.act}{l.who && l.who.length ? ' (' + l.who.join(', ') + ')' : ''}</span><span class={l.ok ? 'good' : 'bad'}><Txt>{l.msg}</Txt></span></li>)}</ul>
+    </div></Panel> : null}
+  </>;
 }

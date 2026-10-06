@@ -3664,7 +3664,7 @@ var PLACES={
   gym:{n:'The gym',d:'A ring, some mats and whoever turned up early.'},
   catering:{n:'Catering',d:'Where everybody talks and nobody is on guard.'},
   lot:{n:'The parking lot',d:'No cameras, as far as anybody knows.'},
-  truck:{n:'The production truck',d:'Forty screens and one director with a headset.'}
+  truck:{n:'Your office',d:'The door is open. People come in with ideas for their story, and things they want changed.'}
 };
 function ownerMod(S){var t=S.owner.trust;return {n:'Owner trust '+Math.round(t),v:t>=75?2:(t>=55?1:(t<35?-1:0))};}
 function activeRoster(S){return rosterOf(S,S.player).filter(function(w){return !w.nw&&w.inj<=0&&!w.camp&&!(w.away>=S.week);});}
@@ -4229,7 +4229,7 @@ E.fit=function(S,id){var w=S.w[id],P=S.promos[S.player],M=modelOf(P);if(!w||!M.f
    the game. An attempt uses rollCheck() like every other attempt.
    A new reason for somebody to be backstage is one more block in peopleNow(); what can be done about it is one
    more entry in PPL_ACT. */
-var PPL_ROOMS=['catering','trainer','gym','lot','truck'],PPL_MAX=3;
+var PPL_ROOMS=['truck','catering','trainer','gym','lot','office','court'],PPL_MAX=3;
 function pplMatter(S,type,id){for(var i=0;i<S.inbox.length;i++){var e=S.inbox[i];if(!e.done&&e.type===type&&e.w===id)return e;}return null;}
 function pplFeudOf(S,P,id){return S.feuds.filter(function(f){return !f.res&&f.promo===P.id&&(f.a.indexOf(id)>=0||f.b.indexOf(id)>=0);}).sort(function(a,b){return b.heat-a.heat;})[0]||null;}
 function pplOther(S,f,id){var o=f.a.indexOf(id)>=0?f.b:f.a;return S.w[o[0]];}
@@ -4268,16 +4268,18 @@ function peopleNow(S){
   byOvr.filter(function(w){return here(w)&&!(w.inj>0)&&(pplMatter(S,'caughtfire',w.id)||w.mom>=4)&&holdLvl(P,w.id)===0;}).forEach(function(w){put('gym',w,'fire','The crowd is with them, and they know it','good',['next'],{story:pplMatter(S,'caughtfire',w.id)?'It is on your desk':null});});
   hot.slice(0,3).forEach(function(f){var a=S.w[f.a[0]],b=S.w[f.b[0]];
     if(here(a)&&here(b)&&!(a.inj>0)&&!(b.inj>0)&&chem(S,a.id,b.id)<0)if(put('gym',a,'clash','Has matches coming with '+b.name+', and they do not click in the ring','warn',['walk'],{with:b.id,story:'Their rivalry needs good matches'}))seen[b.id]=1;});
-  /* the production truck: the story that is running, a newcomer, the one the shows are built around */
+  /* your office: they come to the booker's door. The next chapter of a story, the champion, a newcomer, the one the shows are built around */
   hot.slice(0,2).forEach(function(f){var a=S.w[f.a[0]],b=S.w[f.b[0]],w=!seen[a.id]&&here(a)?a:b,o=w===a?b:a;
-    if(here(w)&&o)put('truck',w,'story','Has an idea for the next chapter with '+o.name,'',['package'],{with:o.id,story:'A rivalry '+(f.heat>=70?'at its peak':(f.heat>=50?'that is hot':'that is building'))});});
-  byOvr.filter(function(w){return here(w)&&w.deb&&(w.hy||0)<3;}).forEach(function(w){put('truck',w,'debut','Has not appeared on the shows yet. Wants to know how they will be introduced','',['tease']);});
+    if(here(w)&&o)put('truck',w,'story','Came to your door with an idea for the next chapter with '+o.name,'',['package'],{with:o.id,story:'A rivalry '+(f.heat>=70?'at its peak':(f.heat>=50?'that is hot':'that is building'))});});
+  byOvr.filter(function(w){return here(w)&&w.deb&&(w.hy||0)<3;}).forEach(function(w){put('truck',w,'debut','Has not appeared on the shows yet. Came in to ask how they will be introduced','',['tease']);});
   var top=P.titles.filter(function(t){return !t.tag&&t.holders.length;}).sort(function(a,b){return b.lvl-a.lvl||b.prestige-a.prestige;})[0],ch=top?S.w[top.holders[0]]:null;
-  if(here(ch)&&!(ch.inj>0))put('truck',ch,'champ','Holds the '+top.name+'. Wants to know who is next','',['plan'],{story:pplFeudOf(S,P,ch.id)?'In a rivalry with '+pplOther(S,pplFeudOf(S,P,ch.id),ch.id).name:'No challenger has been built yet'});
+  if(here(ch)&&!(ch.inj>0))put('truck',ch,'champ','Holds the '+top.name+'. Came in to ask who is next','',['plan'],{story:pplFeudOf(S,P,ch.id)?'In a rivalry with '+pplOther(S,pplFeudOf(S,P,ch.id),ch.id).name:'No challenger has been built yet'});
   var fav=S.owner&&S.owner.fav!=null&&!S.owner.me?S.w[S.owner.fav]:null;
-  if(here(fav)&&!(fav.inj>0))put('catering',fav,'fav',S.owner.name+'’s favourite. Has the owner’s ear, and knows it','',['word'],{});
+  if(here(fav)&&!(fav.inj>0))put('office',fav,'fav',S.owner.name+'’s favourite. In with the owner again, with the door shut','',['word'],{});
+  /* wrestlers' court: whoever has brought a case, and who it is against */
+  (S.court||[]).forEach(function(c){var a=S.w[c.a],b=S.w[c.b];if(here(a)&&b)if(put('court',a,'case','Has brought a case against '+b.name,'warn',[],{with:b.id,story:'The court is waiting for you to hear it'}))seen[b.id]=seen[b.id]||0;});
   var face=typeof faceOf==='function'?faceOf(S):null;
-  if(here(face)&&!(face.inj>0))put('truck',face,'face','The shows are built around them. Wants to see the run sheet','good',['run'],{});
+  if(here(face)&&!(face.inj>0))put('truck',face,'face','The shows are built around them. Came in to see the run sheet','good',['run'],{});
   return out;
 }
 var PPL_ACT={

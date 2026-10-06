@@ -73,6 +73,7 @@ Two more lists sit beside this one, both finished:
 | Versions | 6 October: at least five changes before a version number moves. |
 | Backstage | 6 October: people, not rooms. The people who show up backstage are connected to ongoing storylines or to what is going on in the company. Section 0j. |
 | After the show | 6 October: a show ends on its own After the show screen, not on the report. The Office has only a button back to it, After the show recap, and opens on Before the show. |
+| The Office | 6 October: The desk, Backstage and Storylines are the main tabs of the Office. Backstage is its own page. The production truck is Your office. Storylines is no longer its own menu. |
 | World Editor | The creation suite is its own page called **World Editor** on the title screen. A player builds a world from scratch (companies, shows, belts, wrestlers) and uploads it to the Workshop. This is the main next item. |
 
 ## Tasks
@@ -315,6 +316,16 @@ Ryan, 4 October: "After a show, it should go back to the Office or your desk, so
 - [x] **(0.29) The commentary desk from the Office.** Ryan, 4 October: "From the office screen, I want you to be able to pick commentators via a pop up with available players." The two tasks for the commentary desk open a pop-up on the desk: both chairs, who is available for the chair being filled, what each costs, and how they would get on with the other voice. Signing one moves on to the empty chair. A button on the desk opens it at any time. Code: `VoicesWindow` in `app/src/screens/office/Windows.tsx`. Test: `app/tests/tasks.js`.
 - [ ] The same for every other task on the desk, so everything can be done from the Office: sponsor offers, the venue, contracts that are running out, a vacant title.
 - [ ] The people available are the hired voices on the market. Wrestlers, managers and legends at the desk wait for the character sheet work.
+
+### 0l. The Office: The desk, Backstage, Storylines (building towards 0.35)
+
+Ryan, 6 October: "Backstage needs to move to its own page in the office menu. That will give you room to expand that section so we can see the other rooms and who's in them. I also want to change production truck to Your Office (like wrestlers go to the booker's office to ask for storyline changes). I would also like to move Storylines from its own menu option to its own tab on office. I want The Desk, Backstage, and Storylines to be the main tabs in Office."
+
+- [x] **1. Backstage is its own page in the Office.** All seven rooms and who is in them, the person you pick under them, then the rooms' own actions and the week's log. The desk keeps one line (points left, how many people are in the building for a reason) and a Go backstage button.
+- [x] **2. The production truck is Your office.** It comes first and is the widest. People come to your door: an idea for the next chapter of a rivalry, the champion asking who is next, a newcomer, the face of the company. The owner's favourite is now in the owner's office, and whoever has brought a case is in the court.
+- [x] **3. Storylines is a tab in the Office.** The Office tabs are The desk, Backstage, Storylines, Career. The Stories section is gone from the menu. History moved to Company with the other information pages.
+- [ ] Two more changes before the version number moves.
+- [ ] People coming to Your office should be able to ask for things: a title shot, a turn, a new partner, out of a rivalry. Say yes, say no, or make a promise.
 
 ### 0k. Core systems: six changes (0.34)
 

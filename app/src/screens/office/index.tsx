@@ -3,8 +3,9 @@ import { ComponentChildren } from 'preact';
 import { Modal } from '../../store';
 import { Desk } from './Desk';
 import { Career } from './Career';
+import { Backstage } from './BeforeShow';
 import { WeekClosed, ClockWindow, AnnualReport, VoicesWindow, WelcomeWindow, FaceWindow } from './Windows';
 
-export const pages: Record<string, () => ComponentChildren> = { desk: Desk, career: Career };
+export const pages: Record<string, () => ComponentChildren> = { desk: Desk, backstage: Backstage, career: Career };
 export const modals: Record<string, (p: { m: Modal }) => ComponentChildren> = { weekclosed: WeekClosed, annual: AnnualReport, clock: ClockWindow, voices: VoicesWindow, welcome: WelcomeWindow, face: FaceWindow };
 export { GameOver } from './GameOver';

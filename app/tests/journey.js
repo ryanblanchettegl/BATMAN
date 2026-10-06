@@ -1,7 +1,7 @@
 /* A whole-game run on the combined build: five weeks by real clicks, every page visited, on four screen modes. */
 const { open, go, overflow, shot, flash, fits, airShow } = require('./helper');
 const FILE = process.env.EWF_OUT || 'index';
-const PAGES = ['desk', 'career', 'booking', 'roster', 'locker', 'titles', 'market', 'storylines', 'history', 'sheet', 'feed', 'boards', 'manage', 'house', 'deals', 'overview', 'finances', 'world'];
+const PAGES = ['desk', 'backstage', 'career', 'booking', 'roster', 'locker', 'titles', 'market', 'storylines', 'history', 'sheet', 'feed', 'boards', 'manage', 'house', 'deals', 'overview', 'finances', 'world'];
 async function run(mode, weeks) {
   const { browser, page, errs } = await open({ mode, file: FILE, promo: process.env.PROMO || 'pdw' }), bad = [];
   const fit = async where => { const o = await overflow(page); if (o) bad.push(where + ': ' + o); const f = await fits(page); if (f) bad.push(where + ' does not fit one screen: ' + f); };

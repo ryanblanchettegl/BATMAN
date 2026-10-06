@@ -489,8 +489,9 @@ html[data-music="off"] .mus::after{content:' off';color:var(--dred)}
 }
 
 /* backstage as people, not rooms: a column a room, a face a person, and under each why they are there */
-.ppl{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));border:4px double var(--grey);margin-top:10px}
+.ppl{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));border:4px double var(--grey);margin-top:10px}
 .ppl .pl{border:1px solid var(--dcyan);padding:.4em .6ch;min-height:8.5em;min-width:0}
+.ppl .pl:nth-child(1){grid-column:span 2}.ppl .pl:nth-child(1) h4{color:var(--white)}
 .ppl .pl h4{margin:0 0 .3em;color:var(--yellow);text-transform:uppercase;font-weight:normal}
 .ppl .who{all:unset;box-sizing:border-box;cursor:pointer;display:flex;gap:1ch;align-items:flex-start;width:100%;padding:.25em .4ch;margin:.15em 0}
 .ppl .who .pf{width:5ch;height:5ch;flex:none;border:2px solid var(--dcyan);image-rendering:pixelated}

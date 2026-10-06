@@ -88,7 +88,7 @@ var PLACES={
   gym:{n:'The gym',d:'A ring, some mats and whoever turned up early.'},
   catering:{n:'Catering',d:'Where everybody talks and nobody is on guard.'},
   lot:{n:'The parking lot',d:'No cameras, as far as anybody knows.'},
-  truck:{n:'The production truck',d:'Forty screens and one director with a headset.'}
+  truck:{n:'Your office',d:'The door is open. People come in with ideas for their story, and things they want changed.'}
 };
 function ownerMod(S){var t=S.owner.trust;return {n:'Owner trust '+Math.round(t),v:t>=75?2:(t>=55?1:(t<35?-1:0))};}
 function activeRoster(S){return rosterOf(S,S.player).filter(function(w){return !w.nw&&w.inj<=0&&!w.camp&&!(w.away>=S.week);});}

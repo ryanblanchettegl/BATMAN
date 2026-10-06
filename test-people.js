@@ -10,7 +10,7 @@ const fresh = seed => { const S = E.newGame('pdw', seed, { name: 'R' }); S.inbox
 const spare = (S, n) => E.rosterOf(S, S.player).filter(w => !w.nw && !all(S).some(p => p.id === w.id || p.with === w.id)).sort((a, b) => b.ovr - a.ovr)[n || 0];
 
 { const S = fresh(3), B = E.people(S), L = all(S);
-  ok('p1', 'five rooms, and at the start of a game somebody is already there for a reason', B.rooms.length === 5 && L.length >= 1 && L.every(p => p.why && p.acts.length >= 1 && p.acts.every(a => a.n && a.d)), L.map(p => p.name + ' (' + p.k + ')').join(', '));
+  ok('p1', 'seven rooms, your own office first, and at the start of a game somebody is already there for a reason', B.rooms.length === 7 && B.rooms[0].n === 'Your office' && L.length >= 1 && L.every(p => p.why && (p.acts.length >= 1 || p.room === 'court') && p.acts.every(a => a.n && a.d)), L.map(p => p.name + ' (' + p.k + ')').join(', '));
   ok('p2', 'nobody is in two rooms, and no room holds more than three', new Set(L.map(p => p.id)).size === L.length && B.rooms.every(r => r.people.length <= 3));
   ok('p3', 'the same game shows the same people: who is there is read from the game, not drawn', JSON.stringify(E.people(S)) === JSON.stringify(E.people(S)) && JSON.stringify(all(fresh(3)).map(p => p.id)) === JSON.stringify(L.map(p => p.id))); }
 
@@ -65,7 +65,7 @@ const spare = (S, n) => E.rosterOf(S, S.player).filter(w => !w.nw && !all(S).som
 { const S = fresh(8); let errs = 0, seen = {}, most = 0, least = 99;
   for (let wk = 0; wk < 20 && !S.over; wk++) {
     try { const L = all(S); most = Math.max(most, L.length); least = Math.min(least, L.length); L.forEach(p => { seen[p.k] = 1; });
-      for (const p of L) { if (S.ap <= 0) break; E.peopleDo(S, p.id, p.acts[wk % p.acts.length].id); }
+      for (const p of L) { if (S.ap <= 0) break; if (p.acts.length) E.peopleDo(S, p.id, p.acts[wk % p.acts.length].id); }
       S.inbox.filter(e => !e.done).forEach(e => E.resolveEvent(S, e.id, e.type === 'handover' ? 0 : e.choices.length - 1));
       if (S.owner.pending) E.setCreed(S, { style: 'merit', roots: 'tradition', pledge: 'stable' });
       while (S.qi < S.queue.length) { const c = E.suggest(S), pr = E.preShow(S, c); if (pr) { E.resolvePre(S, c, 0); E.fitShow(S, c); } if (E.validate(S, c).errors.length) { S.qi++; continue; } E.runPlayerShow(S, c); }

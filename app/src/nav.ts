@@ -1,18 +1,18 @@
-/* The screen map (docs/design.md, section 3). Seven sections, each with a row of page buttons. */
+/* The screen map (docs/design.md, section 3). Six sections, each with a row of page buttons. Office holds the desk,
+   Backstage and Storylines (Ryan, 6 October); History sits with the other information pages on Company. */
 import { G, ui, redraw } from './store';
 
 export interface Section { id: string; n: string; key: string; pages: [string, string][] }
 export const SECTIONS: Section[] = [
-  { id: 'office', n: 'Office', key: 'o', pages: [['desk', 'The desk'], ['career', 'Career']] },
+  { id: 'office', n: 'Office', key: 'o', pages: [['desk', 'The desk'], ['backstage', 'Backstage'], ['storylines', 'Storylines'], ['career', 'Career']] },
   { id: 'booking', n: 'Booking', key: 'b', pages: [['booking', 'Booking']] },
   { id: 'roster', n: 'Roster', key: 'r', pages: [['roster', 'Roster'], ['locker', 'Locker room'], ['titles', 'Titles'], ['market', 'Free agents']] },
-  { id: 'stories', n: 'Stories', key: 's', pages: [['storylines', 'Storylines'], ['history', 'History']] },
   { id: 'net', n: 'Net', key: 'n', pages: [['sheet', 'Dirt sheet'], ['feed', 'The feed'], ['boards', 'The boards']] },
   { id: 'manage', n: 'Manage', key: 'm', pages: [['manage', 'Operations'], ['house', 'House'], ['deals', 'Deals']] },
-  { id: 'company', n: 'Company', key: 'c', pages: [['overview', 'Overview'], ['finances', 'Finances'], ['world', 'World']] }
+  { id: 'company', n: 'Company', key: 'c', pages: [['overview', 'Overview'], ['finances', 'Finances'], ['world', 'World'], ['history', 'History']] }
 ];
 /** keyboard shortcuts: letter -> page */
-export const HOT: Record<string, string> = { o: 'desk', a: 'career', b: 'booking', r: 'roster', l: 'locker', t: 'titles', k: 'market', s: 'storylines', h: 'history', n: 'sheet', e: 'feed', g: 'boards', m: 'manage', u: 'house', d: 'deals', c: 'overview', f: 'finances', w: 'world' };
+export const HOT: Record<string, string> = { o: 'desk', p: 'backstage', a: 'career', b: 'booking', r: 'roster', l: 'locker', t: 'titles', k: 'market', s: 'storylines', h: 'history', n: 'sheet', e: 'feed', g: 'boards', m: 'manage', u: 'house', d: 'deals', c: 'overview', f: 'finances', w: 'world' };
 export function sectionOf(page: string): Section { return SECTIONS.find(s => s.pages.some(p => p[0] === page)) || SECTIONS[0]; }
 export function pageName(page: string): string { for (const s of SECTIONS) for (const p of s.pages) if (p[0] === page) return p[1]; return page; }
 

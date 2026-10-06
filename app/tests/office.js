@@ -36,12 +36,7 @@ async function run(mode) {
   ok(await count('.onews li') >= 1, 'office news has a memo');
   for (const t of ['Before the show', 'Answered this week', 'This week', 'Promises and targets', 'Worth knowing', 'Clocks', 'Office news']) ok((await page.$$eval('.panel > h2', L => L.map(e => e.textContent))).includes(t), 'panel: ' + t);
   ok(await count('[data-t="book-show"]') === 1 && await count('[data-t="endweek"]') === 0, 'a show to book, no end-week button yet');
-  /* backstage is people, not rooms: five rooms, a face for everybody who is there for a reason, and what a point does about it */
-  ok(await count('[data-t="ppl-room"]') === 5 && await count('[data-t="ppl-who"]') >= 1 && await count('[data-t="ppl-who"] canvas') === await count('[data-t="ppl-who"]'), 'backstage shows people with faces, room by room');
-  await page.click('[data-t="ppl-who"]');
-  ok(await count('[data-t="ppl-det"] [data-t="ppl-do"]') >= 1 && (await txt('[data-t="ppl-det"]')).length > 40 && await state(page, S => S.ap) === await state(page, S => window.GP.backstage(S).max), 'picking somebody says why they are there and what a point does, and costs nothing yet');
-  await page.click('[data-t="ppl-who"]');
-  await step('desk', 'desk');
+  ok(/Backstage:/.test(await txt('[data-t="bs-line"]')) && await count('.pre .room') === 0 && await count('[data-t="ppl-who"]') === 0, 'the desk has one line about backstage and a button, not the rooms');
   await page.click('[data-t="book-next"]'); ok(await page.evaluate(() => window.EWF_DEBUG.ui.page) === 'booking', 'Book the next show opens Booking'); await go(page, 'desk');
 
   /* ---- a clock window: open, read, close with the button; open again, close with Esc ---- */
@@ -56,8 +51,15 @@ async function run(mode) {
   await step('clock closed');
 
   /* ---- backstage: the trainer's room ---- */
-  ok(await count('.pre .room') === 7 && await count('[data-t="page"]') === 2, 'seven rooms on the desk, and no separate Backstage page');
-  const max = await ap(); ok(max === 3 && /3 of 3/.test(await txt('.panel')), 'three action points to start');
+  await page.click('[data-t="to-backstage"]');
+  ok(await page.evaluate(() => window.EWF_DEBUG.ui.page) === 'backstage' && (await page.$$eval('[data-t="page"]', a => a.map(e => e.innerText.trim()))).join('|') === 'The desk|Backstage|Storylines|Career', 'Backstage is its own page in the Office, between the desk and Storylines: ' + (await page.$$eval('[data-t="page"]', a => a.map(e => e.innerText.trim()))).join('|'));
+  /* backstage is people, not rooms: seven rooms, your own office first, a face for everybody who is there for a reason */
+  ok(await count('[data-t="ppl-room"]') === 7 && /your office/i.test(await txt('[data-t="ppl-room"]')) && await count('[data-t="ppl-who"]') >= 1 && await count('[data-t="ppl-who"] canvas') === await count('[data-t="ppl-who"]'), 'backstage shows people with faces, room by room');
+  await page.click('[data-t="ppl-who"]');
+  ok((await txt('[data-t="ppl-det"]')).length > 40 && await state(page, S => S.ap) === await state(page, S => window.GP.backstage(S).max), 'picking somebody says why they are there and what a point does, and costs nothing yet');
+  await page.click('[data-t="ppl-who"]');
+  ok(await count('.room') === 7 && /your office/i.test(await txt('[data-t="bs-room"][data-v="truck"]')), 'the seven rooms themselves are under it, and the truck is Your office now');
+  const max = await ap(); ok(max === 3 && /3 of 3/.test(await txt('[data-t="bs-ap"]')), 'three action points to start');
   await step('rooms', 'rooms');
   await page.click('[data-t="bs-room"][data-v="trainer"]');
   ok(await count('.room.on') === 1 && await count('#bs-a') === 1 && await count('#bs-b') === 0, 'trainer room open with one wrestler picker');
@@ -80,7 +82,7 @@ async function run(mode) {
 
   /* ---- wrestlers' court: plant a case, rule on it; a second case can only be handed to a leader ---- */
   ok(await state(page, plantCase) === 1, 'case planted'); await redraw(page);
-  ok(/1 in court/.test(await txt('.pre')) && /1 case waiting/.test(await txt('[data-t="bs-room"][data-v="court"]')), 'court badges');
+  ok(/1 case waiting/.test(await txt('[data-t="bs-room"][data-v="court"]')) && /\(1\)/.test(await txt('[data-t="ppl-room"][data-v="court"]')), 'court badges');
   await page.click('[data-t="bs-room"][data-v="court"]');
   ok(await count('[data-t="bs-court"]') === 4 && /Witnesses/.test(await txt('.roomdet')), 'case shows four rulings and its witnesses');
   await step('court case', 'court');
@@ -175,10 +177,11 @@ async function remote() {
   const press = async sel => { await page.focus(sel); await key('Enter'); };
   // settle() after every go(): the input layer homes the highlight one frame after a page change, and two page changes
   // inside one frame leave it on the old control
-  for (const id of ['desk', 'career']) { await go(page, id); await settle(); const o = await overflow(page); ok(o === '', 'tv ' + id + ': ' + o); }
+  for (const id of ['desk', 'backstage', 'career']) { await go(page, id); await settle(); const o = await overflow(page); ok(o === '', 'tv ' + id + ': ' + o); }
   await go(page, 'desk'); await settle();
   ok(await focus() === 'book-next', 'the desk starts on Book the next show: ' + await focus());
   await key('ArrowDown'); ok(/^task-go:/.test(await focus()), 'down from the button reaches this week’s tasks: ' + await focus());
+  await go(page, 'backstage'); await settle();
   await page.focus('[data-t="bs-room"][data-v="office"]'); await key('ArrowRight'); await key('ArrowRight'); ok(await focus() === 'bs-room:trainer', 'arrows walk the map: ' + await focus());
   await key('Enter'); ok(await page.$$eval('.room.on', L => L.length) === 1 && await focus() === 'bs-room:trainer', 'OK opens the room and the highlight stays');
   await page.click('[data-t="bs-room"][data-v="gym"]'); await page.click('[data-t="bs-room"][data-v="trainer"]');   // whatever the arrows did, the trainer's room is open now
