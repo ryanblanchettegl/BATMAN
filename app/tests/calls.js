@@ -79,8 +79,8 @@ async function run(mode) {
     await page.click('[data-t="closeReport"]'); await go(page, 'booking');   // the report closes to the desk
 
     /* ---- show two: the network on the line, and a match that will not go home ---- */
-    const two = await card(page, (S) => { const n = S.card.length, free = S.card.map((m, i) => i).filter(i => i < n - 1 && !S.card[i].title && (S.card[i].mt === '1v1' || S.card[i].mt === 'tag') && S.card[i].len !== 'L');
-      if (free.length < 2) return null; S.card[free[0]].int = 'brutal'; const w = S.w[S.card[free[1]].sides[0][0]]; w.cc = 1; return { net: free[0], ot: free[1], name: w.name, slot: S.promos[S.player].slot }; });
+    let two = null; for (let t = 0; t < 4 && !two; t++) two = await card(page, (S) => { const n = S.card.length, free = S.card.map((m, i) => i).filter(i => i < n - 1 && !S.card[i].title && (S.card[i].mt === '1v1' || S.card[i].mt === 'tag') && S.card[i].len !== 'L');
+      if (free.length < 2) return null; S.card[free[0]].int = 'brutal'; const w = S.w[S.card[free[1]].sides[0][0]]; w.cc = 1; return { net: free[0], ot: free[1], name: w.name, slot: S.promos[S.player].slot }; });   // a suggested card does not always have two free matches; ask again
     ok(mode, 'the second card has room for both', !!two && two.slot >= 1, JSON.stringify(two));
     ok(mode, 'the second show goes on the air', await toAir(page));
     const twoSeen = await walk(page, {

@@ -282,7 +282,9 @@ async function section(mode) {
   onCall = null; const calls2 = await airShow(page);
   ok(await has(page, '.panel [data-t="endweek"]') && await has(page, '[data-t="replay"]') && (await txt(page, '[data-t="closeReport"]')) === 'Back to the desk', mode + ': the last report offers the desk and the end of the week');
   await check('second report');
-  await page.keyboard.press('Escape');                                      // Back closes the report
+  await page.keyboard.press('Escape');                                      // Back closes the report, and the night ends on the desk
+  ok(await page.evaluate(() => window.EWF_DEBUG.ui.page) === 'desk' && (await txt(page, '.panel.after')).includes(shows[1]), mode + ': Back closes the last report to the desk');
+  await go(page, 'booking');
   ok(await txt(page, '.head h1') === 'Week booked' && await count(page, '[data-t="report"]') === 2, mode + ': Week booked');
   await check('week booked');
   await shot(page, 'booking-' + mode + '-weekbooked', true);
