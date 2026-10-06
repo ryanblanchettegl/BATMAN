@@ -63,5 +63,24 @@ E.universe().promotions.forEach(d => { const S = E.newGame(d.id, 2, { name: 'Rya
   const R = E.agentReads(S, c);
   ok('fl3', 'a flag about the ring never says more than the agent’s read does', F.every((L, i) => L.filter(f => !/Unhappy|Promis/.test(f.t)).every(f => R[i].lines.some(l => l.t === f.x)))); }
 
+/* booking power on the Storylines page */
+{ const S = E.newGame('pdw', 9, { name: 'R' }), P = S.promos.pdw; S.bp = 0; let I = E.plotInfo(S);
+  ok('bp1', 'three things booking power buys on Storylines, each with its price', I.acts.map(a => a.id).join() === 'split,push,tape' && I.acts.every(a => a.cost >= 1 && a.d && !a.can));
+  ok('bp2', 'with no booking power nothing can be bought', !E.plotDo(S, 'push', { w: I.push[0].id }).ok && !E.plotDo(S, 'split', { team: (I.teams[0] || {}).id }).ok);
+  S.bp = 6; I = E.plotInfo(S); const t = I.teams[0], n0 = S.teams.length, f0 = S.feuds.filter(f => !f.res).length;
+  const r = E.plotDo(S, 'split', { team: t.id, who: t.b });
+  ok('bp3', 'breaking up a team ends it, starts a rivalry between the two, and the one who turns is the villain', r.ok && S.teams.length === n0 - 1 && S.w[t.a].team == null && S.feuds.filter(f => !f.res).length === f0 + 1 && !!E.feudOf(S, t.a, t.b) && S.w[t.b].align === 'H' && S.bp === 4, r.msg);
+  ok('bp4', 'they both remember who did it', S.rmY[t.a].v < 0 && S.rmY[t.b].v > 0);
+  const w = S.w[I.push[6].id], m0 = w.mom || 0, o0 = w.ovr, rp = E.plotDo(S, 'push', { w: w.id });
+  ok('bp5', 'a push gives momentum now, costs two, and is remembered', rp.ok && w.mom > m0 && w.ovr >= o0 && S.bp === 2 && S.rmY[w.id].v > 0, rp.msg);
+  ok('bp6', 'one push in eight weeks for each wrestler', !E.plotDo(S, 'push', { w: w.id }).ok && S.bp === 2);
+  const a = E.plotTapeWho(S, 'callout', [])[0][4], b = E.plotTapeWho(S, 'callout', [a])[1][0], rt = E.plotDo(S, 'tape', { k: 'callout', who: [a, b], at: 'end' });
+  ok('bp7', 'a pre-tape costs one and is on the next show’s run sheet at once', rt.ok && S.bp === 1 && S.segs.some(x => x.tape && x.k === 'callout' && x.at === 'end') && E.plotInfo(S).taped.where === 'End of the show', rt.msg);
+  ok('bp8', 'one pre-tape a show', !E.plotDo(S, 'tape', { k: 'interview', who: [E.plotTapeWho(S, 'interview', [])[0][0]], at: 'start' }).ok);
+  const card = E.suggest(S);
+  ok('bp9', 'a suggested card keeps the pre-tape, and the show still fits its time', S.segs.some(x => x.tape) && E.validate(S, card).errors.length === 0, E.validate(S, card).errors.join(' | '));
+  E.runPlayerShow(S, card);
+  ok('bp10', 'it airs on that show and is gone from the next', S.reports[0].segs.some(x => x.k !== 'match' && (x.ids || []).includes(a)) && !E.plotInfo(S).taped); }
+
 if (fails.length) { console.log('FAILED: ' + fails.length); process.exit(1); }
 console.log('test-first: all passed');

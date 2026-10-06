@@ -317,14 +317,19 @@ Ryan, 4 October: "After a show, it should go back to the Office or your desk, so
 - [ ] The same for every other task on the desk, so everything can be done from the Office: sponsor offers, the venue, contracts that are running out, a vacant title.
 - [ ] The people available are the hired voices on the market. Wrestlers, managers and legends at the desk wait for the character sheet work.
 
-### 0l. The Office: The desk, Backstage, Storylines (building towards 0.35)
+### 0l. The Office: The desk, Backstage, Storylines (0.35)
 
 Ryan, 6 October: "Backstage needs to move to its own page in the office menu. That will give you room to expand that section so we can see the other rooms and who's in them. I also want to change production truck to Your Office (like wrestlers go to the booker's office to ask for storyline changes). I would also like to move Storylines from its own menu option to its own tab on office. I want The Desk, Backstage, and Storylines to be the main tabs in Office."
 
 - [x] **1. Backstage is its own page in the Office.** All seven rooms and who is in them, the person you pick under them, then the rooms' own actions and the week's log. The desk keeps one line (points left, how many people are in the building for a reason) and a Go backstage button.
 - [x] **2. The production truck is Your office.** It comes first and is the widest. People come to your door: an idea for the next chapter of a rivalry, the champion asking who is next, a newcomer, the face of the company. The owner's favourite is now in the owner's office, and whoever has brought a case is in the court.
 - [x] **3. Storylines is a tab in the Office.** The Office tabs are The desk, Backstage, Storylines, Career. The Stories section is gone from the menu. History moved to Company with the other information pages.
-- [ ] Two more changes before the version number moves.
+- [x] **4. Things to do backstage are buttons, each with its own pop-up.** Ryan, 6 October: "the 'rooms themselves' menu needs to go. It should be various buttons that pop up things you can use your actions on. Like training 2 wrestlers of your choosing." Twelve buttons: ask for booking power, a bigger wage budget, the trainer, drills for two wrestlers, the class, the rounds, the pep talk, a sneak attack, the production meeting, a teaser, a hype package, hold court. The pop-up says what it does, asks who, shows the chance, and spends the point.
+- [x] **5. Booking power on the Storylines page.** Ryan: "you can use booking points to do various things on the Storylines screen besides start the top feud. Like tag team break up, push a wrestler, buy budget pre-tape angle/promo that auto adds itself to the next show based on where you say it goes on this screen. Like start of the show, mid show, end of show." Code: `src/98-plot.js`. Tests: `node test-first.js` (bp1 to bp10), `app/tests/stories.js`.
+  - Break up a tag team (2): pick the team and who turns. The team ends, a rivalry starts hot, and both remember.
+  - Push a wrestler (2): momentum now, a little more standing, and the two nearest them on the card get jealous. Once in eight weeks each.
+  - Buy a budget pre-tape (1): an interview, a call-out or an attack, for the next show, at the start, the middle or the end. It is on the run sheet at once, takes five minutes, grades a little under a live one, and a suggested card keeps it. One a show.
+  - [ ] More to buy: a turn, a title shot, a new stable, a mystery, a return. And prices that move with how hot the story is.
 - [ ] People coming to Your office should be able to ask for things: a title shot, a turn, a new partner, out of a rivalry. Say yes, say no, or make a promise.
 
 ### 0k. Core systems: six changes (0.34)

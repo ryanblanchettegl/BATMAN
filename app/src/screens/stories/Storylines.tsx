@@ -142,12 +142,42 @@ function LongPlan() {
   </Panel>;
 }
 
+/** Booking power spent on the stories themselves: break up a team, push somebody, buy a cheap pre-tape for the next show. */
+function Plot() {
+  const S = G.S, I = E.plotInfo(S);
+  const st = slice<{ team: string; who: string; w: string; k: string; a: string; b: string; at: string }>('plot', () => ({ team: '', who: '', w: '', k: 'interview', a: '', b: '', at: 'start' }));
+  const run = (id: string, o: any, after?: () => void) => act(() => { const r = E.plotDo(S, id, o); say(r.msg, { err: !r.ok }); showResult(I.acts.find((x: any) => x.id === id).n, r.msg, !r.ok); if (r.ok && after) after(); });
+  const A = (id: string) => I.acts.find((x: any) => x.id === id), tm = I.teams.find((t: any) => String(t.id) === st.team) || null, kind = I.kinds.find((k: any) => k.id === st.k) || I.kinds[0];
+  const W1: number[] = I.show ? (E.plotTapeWho(S, kind.id, [])[0] || []) : [], W2: number[] = I.show && kind.two && st.a ? (E.plotTapeWho(S, kind.id, [+st.a])[1] || []) : [];
+  const cost = (id: string) => <span class={A(id).can ? 'gold' : 'bad'}>{A(id).cost} BP</span>;
+  return <Panel title={'Booking power: ' + I.bp + ' to spend on the stories'} cls="mb2">
+    <ul class="list" data-t="plot">
+      <li class="col" data-t="plot-row" data-v="split"><span><b>{A('split').n}</b> {cost('split')}<br /><span class="muted">{A('split').d}</span></span>
+        {I.teams.length ? <span class="row"><Sel t="plot-team" label="Which team" value={st.team} options={[['', 'Pick a team'], ...I.teams.map((t: any): [string, string] => [String(t.id), t.n])]} onChange={v => view(() => { st.team = v; st.who = ''; })} />
+          {tm ? <Sel t="plot-who" label="Who turns" value={st.who} options={[['', 'Whoever is unhappier turns'], [String(tm.a), S.w[tm.a].name + ' turns'], [String(tm.b), S.w[tm.b].name + ' turns']]} onChange={v => view(() => { st.who = v; })} /> : null}
+          <Btn kind="sm" t="plot-do" d={{ v: 'split' }} disabled={!tm || !A('split').can} onClick={() => run('split', { team: st.team, who: st.who || null }, () => { st.team = ''; st.who = ''; })}>Break them up</Btn></span> : <span class="muted">You have no regular teams to break up.</span>}</li>
+      <li class="col" data-t="plot-row" data-v="push"><span><b>{A('push').n}</b> {cost('push')}<br /><span class="muted">{A('push').d}</span></span>
+        <span class="row"><Sel t="plot-w" label="Who to push" value={st.w} options={[['', 'Pick a wrestler'], ...I.push.map((w: any): [string, string] => [String(w.id), w.n])]} onChange={v => view(() => { st.w = v; })} />
+          <Btn kind="sm" t="plot-do" d={{ v: 'push' }} disabled={!st.w || !A('push').can} onClick={() => run('push', { w: st.w }, () => { st.w = ''; })}>Push them</Btn></span></li>
+      <li class="col" data-t="plot-row" data-v="tape"><span><b>{A('tape').n}</b> {cost('tape')}<br /><span class="muted">{A('tape').d}</span>
+        {I.taped ? <><br /><span class="good" data-t="plot-taped">On {I.show}, {I.taped.where.toLowerCase()}: {I.taped.label}.</span></> : null}</span>
+        {!I.show ? <span class="muted">Every show this week has run.</span> : (I.taped ? null : <span class="row">
+          <Sel t="plot-k" label="What it is" value={st.k} options={I.kinds.map((k: any): [string, string] => [k.id, k.n])} onChange={v => view(() => { st.k = v; st.a = ''; st.b = ''; })} />
+          <Sel t="plot-a" label="Who" value={st.a} options={[['', 'Who'], ...W1.map((id): [string, string] => [String(id), S.w[id].name])]} onChange={v => view(() => { st.a = v; st.b = ''; })} />
+          {kind.two ? <Sel t="plot-b" label="Against whom" value={st.b} disabled={!st.a} options={[['', 'Against whom'], ...W2.map((id): [string, string] => [String(id), S.w[id].name])]} onChange={v => view(() => { st.b = v; })} /> : null}
+          <Sel t="plot-at" label="Where on the show" value={st.at} options={I.pos.map((x: any): [string, string] => [x.id, x.n])} onChange={v => view(() => { st.at = v; })} />
+          <Btn kind="sm" t="plot-do" d={{ v: 'tape' }} disabled={!st.a || (kind.two && !st.b) || !A('tape').can} onClick={() => run('tape', { k: kind.id, who: kind.two ? [st.a, st.b] : [st.a], at: st.at }, () => { st.a = ''; st.b = ''; })}>Buy it for {I.show}</Btn></span>)}</li>
+    </ul>
+  </Panel>;
+}
+
 export function Storylines() {
   const S = G.S, P = me();
   const live = E.activeFeuds(S).filter((f: any) => f.promo === P.id).sort((a: any, b: any) => b.heat - a.heat);
   const done = S.feuds.filter((f: any) => f.res && f.promo === P.id).slice(-8).reverse();
   return <>
     <Head eyebrow="What your booking has set in motion" title="Storylines" />
+    <Plot />
     <div class="cols">
       <div class="stack">
         <Mystery />

@@ -90,6 +90,10 @@ async function net(page, mode) {
     await tour(page, mode, 'week 1');
     await go(page, 'storylines');
     check(mode, 'storylines page before any show', await page.$eval('h1', e => e.innerText) === 'STORYLINES' && await count(page, '.panel') >= 3);
+    check(mode, 'Storylines is a tab in the Office, and booking power can be spent there three ways', (await page.$$eval('[data-t="page"]', L => L.map(e => e.innerText.trim()).join('|'))) === 'The desk|Backstage|Storylines|Career' && await count(page, '[data-t="plot-row"]') === 3 && /booking power/i.test(await page.$eval('[data-t="plot"]', e => e.closest('.panel').innerText)));
+    await state(page, S => { S.bp = 5; }); await page.evaluate(() => window.EWF_DEBUG.render());
+    if (await count(page, '[data-t="plot-a"] option') > 2) { await page.selectOption('[data-t="plot-a"]', { index: 2 }); await page.selectOption('[data-t="plot-at"]', 'end'); await page.click('[data-t="plot-do"][data-v="tape"]'); await page.click('#modal-ok');
+      check(mode, 'a pre-tape bought here costs one booking power and is on the next show’s run sheet', await state(page, S => S.bp) === 4 && await state(page, S => (S.segs || []).some(x => x.tape && x.at === 'end')) && await count(page, '[data-t="plot-taped"]') === 1); }
     await go(page, 'history');
     check(mode, 'history before any show', /Run a show on Booking and the book opens/.test(await text(page)) && /Champion when you arrived/.test(await text(page)));
     await go(page, 'boards');

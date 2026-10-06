@@ -1,9 +1,9 @@
 /* Before the show: the first thing on the desk. The next show and the button that books it, then the backstage map and
    what one action point buys in the room that is open. */
 import { E, W } from '../../engine';
-import { G, ui, me, act, say, view, plural } from '../../store';
+import { G, ui, me, act, say, view, plural, openModal, Modal } from '../../store';
 import { go, weekDone } from '../../nav';
-import { Panel, Btn, Sel, Opt, Tag, CheckLine, Empty, brandName, dataAttrs, Txt, showResult, Name, Head } from '../../kit';
+import { Panel, Btn, Sel, Opt, Tag, CheckLine, Empty, brandName, dataAttrs, Txt, showResult, Name, Head, Window } from '../../kit';
 import { Portrait } from '../../kit/portrait';
 import { EndWeekBtn } from '../../shared/week';
 import { office, focusAfter, useFocusAfter, TO_MAP } from './util';
@@ -79,7 +79,7 @@ function People(p: { B: any }) {
       <h3><Name w={S.w[sel.id]} />, in {sel.room.n.replace(/^The /, 'the ')}</h3>
       <p class={sel.tone || 'muted'}>{sel.why}.{sel.story ? <span class="muted"> {sel.story}.</span> : null}</p>
       {sel.used ? <p class="muted mt1">You have already spent time with them this week.</p> : (B.ap <= 0 ? <p class="bad mt1">You are out of action points this week.</p> : null)}
-      {sel.room.id === 'court' ? <div class="row mt1"><span class="muted">The case is heard in the court itself.</span><Btn kind="sm" t="ppl-court" onClick={() => view(() => { st.pl = 'court'; st.who = null; })}>Go to the court</Btn></div> : null}
+      {sel.room.id === 'court' ? <div class="row mt1"><span class="muted">The case is heard in the court itself.</span><Btn kind="sm" t="ppl-court" onClick={() => openAct('court', 'case')}>Hold court</Btn></div> : null}
       <ul class="list">{sel.acts.map((a: any) => <li class="col" key={a.id}>
         <span><b>{a.n}</b><br /><span class="muted">{a.d}</span>{a.ck ? <CheckLine label={a.n} ck={a.ck} /> : null}</span>
         <span class="row"><Btn kind="sm" cls="go" t="ppl-do" d={{ v: a.id }} disabled={sel.used || B.ap <= 0} onClick={() => spend(a.id)}>Spend 1 action point</Btn></span></li>)}</ul>
@@ -138,6 +138,31 @@ export function BeforeShow() {
   </Panel>;
 }
 
+/** Open the pop-up for one thing to do backstage. */
+export function openAct(room: string, actId: string) { const st = office(); st.a = null; st.b = null; openModal({ kind: 'apact', k: room, v: actId }); }
+/** One thing to do backstage, in a pop-up: what it is, who it needs, the chance, and the button that spends the point. */
+export function ActWindow(p: { m: Modal }) {
+  const S = G.S, B = E.backstage(S), room = B.places.find((x: any) => x.id === p.m.k), st = office();
+  if (!room) return <Window title="Backstage"><Empty>Nothing to do there.</Empty></Window>;
+  const blocked = B.ap <= 0 ? 'You are out of action points this week.' : (room.used ? 'You have already spent time in ' + room.n.replace(/^The /, 'the ') + ' this week.' : '');
+  if (room.id === 'court') return <Window title="Wrestlers’ court" wide ok="Done"><p class="muted">{room.d}</p>{blocked ? <p class="bad mt1">{blocked}</p> : null}<Court blocked={blocked} /></Window>;
+  const a = room.acts.find((x: any) => x.id === p.m.v);
+  if (!a) return <Window title={room.n}><Empty>That is not on offer right now.</Empty></Window>;
+  const R: W[] = E.rosterOf(S, S.player).filter((w: W) => !w.nw).sort((x: W, y: W) => y.ovr - x.ovr), first = st.a != null ? S.w[st.a] : null;
+  const spend = () => act(() => { const r = E.apDo(S, room.id, a.id, { a: st.a, b: st.b }); say(r.msg, { err: !r.ok }); showResult(a.n, r.msg, !r.ok); });
+  return <Window title={a.n} wide ok="Not now">
+    <p data-t="bs-act-what">{a.d}</p>
+    <p class="muted">{room.n}: {room.d}</p>
+    {a.ck ? <CheckLine label={a.n} ck={a.ck} /> : null}
+    {blocked ? <p class="bad mt1">{blocked}</p> : null}
+    <div class="row mt2">
+      {a.need ? <WrestlerSel k="a" list={R} /> : null}
+      {a.need === 'pair' ? <WrestlerSel k="b" list={a.same && first ? R.filter(w => w.g === first.g && w.id !== first.id) : R} /> : null}
+      <Btn kind="go" t="bs-do" d={{ k: room.id, v: a.id }} disabled={!!blocked} onClick={spend}>Spend 1 action point</Btn>
+    </div>
+  </Window>;
+}
+
 /** Backstage, its own page in the Office: every room, who is in it and why, and what a point does about it. */
 export function Backstage() {
   const S = G.S, B = E.backstage(S), st = office();
@@ -151,16 +176,13 @@ export function Backstage() {
         <span class="muted"> {'·'} One point on a person, once a week each. One visit to each room a week.</span></p>
       <People B={E.people(S)} />
     </Panel>
-    <Panel title="The rooms themselves">
-      <RoomMap places={B.places} open={room ? room.id : null} />
-      <div class="roomdet" aria-live="polite">
-        {!room ? <p class="muted">Pick a room for what the room itself offers: the owner, the court, the class, the pep talk, a meeting in your office.</p> : <>
-          <h3>{room.n}</h3>
-          <p class="muted">{room.d}</p>
-          {blocked ? <p class="bad mt1">{blocked}</p> : null}
-          {room.id === 'court' ? <Court blocked={blocked} /> : <RoomActs room={room} blocked={blocked} />}
-        </>}
-      </div>
+    <Panel title="Things to do">
+      <p class="muted">Each of these takes one action point, and each place can be used once a week.</p>
+      <div class="bsacts" data-t="bs-acts">{B.places.map((pl: any) => pl.acts.filter((a: any) => !a.off && a.id !== 'case').map((a: any) =>
+        <button type="button" key={pl.id + a.id} class={'bsact' + (pl.used ? ' used' : '')} {...dataAttrs('bs-act', { k: pl.id, v: a.id })} onClick={() => openAct(pl.id, a.id)}>
+          <b>{a.n}</b><span class="muted">{pl.n.replace(/^The /, '')}{pl.used ? ' · done this week' : ''}</span></button>)).concat([
+        <button type="button" key="court" class={'bsact' + (S.court && S.court.length ? ' hot' : '')} {...dataAttrs('bs-act', { k: 'court', v: 'case' })} onClick={() => openAct('court', 'case')}>
+          <b>Hold court{S.court && S.court.length ? ' (' + S.court.length + ')' : ''}</b><span class="muted">Wrestlers{'’'} court{S.court && S.court.length ? ' · ' + S.court.length + ' ' + plural(S.court.length, 'case') + ' waiting' : ' · no cases'}</span></button>])}</div>
     </Panel>
     {B.log && B.log.length ? <Panel title="What you have done this week" cls="mt2"><div class="aplog">
       <ul class="list">{B.log.map((l: any) => <li class="col"><span><b>{l.place}</b> {'·'} {l.act}{l.who && l.who.length ? ' (' + l.who.join(', ') + ')' : ''}</span><span class={l.ok ? 'good' : 'bad'}><Txt>{l.msg}</Txt></span></li>)}</ul>

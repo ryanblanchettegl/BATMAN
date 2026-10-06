@@ -73,11 +73,12 @@ const { open, go, overflow, shot, state, redraw } = require('./helper');
     }
     // a long wrestler list: typing letters jumps to a name
     if (mode === 'desk') {
-      await go(page, 'backstage'); await page.waitForTimeout(100); await page.click('[data-t="bs-room"][data-v="trainer"]');
+      await go(page, 'backstage'); await page.waitForTimeout(100); await page.click('[data-t="bs-act"][data-k="trainer"][data-v="treat"]');
       const pick = await page.$eval('#bs-a', e => { const o = e.options[30]; return { name: o.text.split(' ·')[0], v: o.value }; });
       await page.focus('#bs-a'); await page.keyboard.type(pick.name.slice(0, 4), { delay: 20 });
       const got = await page.$eval('#bs-a', e => e.options[e.selectedIndex].text);
       ok(got.toLowerCase().indexOf(pick.name.slice(0, 4).toLowerCase()) === 0, 'typing ' + pick.name.slice(0, 4) + ' jumps to a name: ' + got);
+      await page.keyboard.press('Escape'); if (await page.$('.win')) await page.click('.win [data-t="modal-close"]');
     }
     // remote: Page Down and Page Up (channel up and down) move ten rows of a long table
     if (mode === 'tv') {

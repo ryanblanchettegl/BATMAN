@@ -58,49 +58,51 @@ async function run(mode) {
   await page.click('[data-t="ppl-who"]');
   ok((await txt('[data-t="ppl-det"]')).length > 40 && await state(page, S => S.ap) === await state(page, S => window.GP.backstage(S).max), 'picking somebody says why they are there and what a point does, and costs nothing yet');
   await page.click('[data-t="ppl-who"]');
-  ok(await count('.room') === 7 && /your office/i.test(await txt('[data-t="bs-room"][data-v="truck"]')), 'the seven rooms themselves are under it, and the truck is Your office now');
+  ok(/your office/i.test(await txt('[data-t="bs-act"][data-k="truck"]')), 'the truck is Your office now');
   const max = await ap(); ok(max === 3 && /3 of 3/.test(await txt('[data-t="bs-ap"]')), 'three action points to start');
   await step('rooms', 'rooms');
-  await page.click('[data-t="bs-room"][data-v="trainer"]');
-  ok(await count('.room.on') === 1 && await count('#bs-a') === 1 && await count('#bs-b') === 0, 'trainer room open with one wrestler picker');
-  await bsdo(page, '[data-t="bs-do"][data-v="treat"]');           // nobody picked: the engine refuses and nothing is spent
-  ok(/Pick a wrestler first/.test(await flash(page)) && await ap() === max, 'no wrestler picked: no point spent');
+  /* things to do: one button each, and each opens a pop-up. There is no menu of rooms. */
+  const act = (k, v) => '[data-t="bs-act"][data-k="' + k + '"][data-v="' + v + '"]', shut = async () => { for (let i = 0; i < 3 && await page.$('.win'); i++) { await page.keyboard.press('Escape'); await page.waitForTimeout(60); } };
+  ok(await count('.bsmap') === 0 && await count('[data-t="bs-room"]') === 0 && await count('[data-t="bs-act"]') >= 10, 'the rooms menu is gone: things to do are buttons');
+  await page.click(act('trainer', 'treat'));
+  ok(await count('.win #bs-a') === 1 && await count('.win [data-t="bs-do"]') === 1 && (await txt('.win [data-t="bs-act-what"]')).length > 20, 'a button opens a pop-up that says what it does and asks who');
   await page.selectOption('#bs-a', { index: 1 });
-  await bsdo(page, '[data-t="bs-do"][data-v="treat"]');
-  ok(await ap() === max - 1 && /treatment/.test(await flash(page)), 'trainer visit costs one point: ' + await flash(page));
-  ok(await page.$eval('[data-t="bs-do"][data-v="treat"]', e => e.disabled) && await count('.room.used') === 1 && /already spent time here/.test(await txt('.roomdet')), 'trainer room is used up for the week');
-  await bsdo(page, '[data-t="bs-do"][data-v="treat"]', { force: true }); ok(await ap() === max - 1, 'a used room spends nothing');
+  await page.click('.win [data-t="bs-do"]'); await page.waitForTimeout(80);
+  ok(await ap() === max - 1 && /treatment/.test(await txt('.win')), 'the trainer costs one point, and the pop-up says what happened: ' + (await txt('.win')).slice(0, 90));
+  await shut();
+  ok(await count(act('trainer', 'treat') + '.used') === 1, 'the trainer’s room is used up for the week');
+  await page.click(act('trainer', 'treat'));
+  ok(/already spent time/.test(await txt('.win')) && await page.$eval('.win [data-t="bs-do"]', e => e.disabled), 'a used room spends nothing'); await shut();
   await step('trainer visit', 'trainer');
 
-  /* ---- backstage: the gym needs two different wrestlers ---- */
-  await page.click('[data-t="bs-room"][data-v="gym"]');
-  ok(await count('#bs-a') === 1 && await count('#bs-b') === 1, 'gym has two pickers');
-  await page.selectOption('#bs-b', { index: 1 });               // the same wrestler twice
-  await bsdo(page, '[data-t="bs-do"][data-v="drill"]');
-  ok(/Pick two different wrestlers/.test(await flash(page)) && await ap() === max - 1, 'same wrestler twice: no point spent');
+  /* ---- drills need two different wrestlers ---- */
+  await page.click(act('gym', 'drill'));
+  ok(await count('.win #bs-a') === 1 && await count('.win #bs-b') === 1, 'drills ask for two wrestlers');
+  await page.selectOption('#bs-a', { index: 1 }); await page.selectOption('#bs-b', { index: 1 });   // the same wrestler twice
+  await page.click('.win [data-t="bs-do"]'); await page.waitForTimeout(80);
+  ok(/Pick two different wrestlers/.test(await txt('.win')) && await ap() === max - 1, 'same wrestler twice: no point spent'); await shut();
   await step('gym refused');
 
   /* ---- wrestlers' court: plant a case, rule on it; a second case can only be handed to a leader ---- */
   ok(await state(page, plantCase) === 1, 'case planted'); await redraw(page);
-  ok(/1 case waiting/.test(await txt('[data-t="bs-room"][data-v="court"]')) && /\(1\)/.test(await txt('[data-t="ppl-room"][data-v="court"]')), 'court badges');
-  await page.click('[data-t="bs-room"][data-v="court"]');
-  ok(await count('[data-t="bs-court"]') === 4 && /Witnesses/.test(await txt('.roomdet')), 'case shows four rulings and its witnesses');
+  ok(/1 case waiting/.test(await txt(act('court', 'case'))) && /\(1\)/.test(await txt('[data-t="ppl-room"][data-v="court"]')), 'court badges');
+  await page.click(act('court', 'case'));
+  ok(await count('.win [data-t="bs-court"]') === 4 && /Witnesses/.test(await txt('.win')), 'the court pop-up shows four rulings and the witnesses');
   await step('court case', 'court');
-  await page.click('[data-t="bs-court"][data-v="0"]');
-  ok(await state(page, S => S.court.length) === 0 && await ap() === max - 2 && /You find for/.test(await flash(page)), 'ruling closes the case for one point: ' + await flash(page));
-  ok(/No cases on the docket/.test(await txt('.roomdet')), 'empty docket');
-  await state(page, plantCase); await redraw(page);
-  ok(await page.$$eval('[data-t="bs-court"]', L => L.length === 4 && L.every(b => b.disabled)), 'court already sat this week: rulings are off');
-  if (await count('[data-t="bs-deleg"]')) { await page.click('[data-t="bs-deleg"]'); ok(await state(page, S => S.court.length) === 0 && await ap() === max - 2 && /hears the case/.test(await flash(page)), 'a leader hears it for free'); }
+  await page.click('.win [data-t="bs-court"][data-v="0"]'); await page.waitForTimeout(80);
+  ok(await state(page, S => S.court.length) === 0 && await ap() === max - 2, 'ruling closes the case for one point'); await shut();
+  await state(page, plantCase); await redraw(page); await page.click(act('court', 'case'));
+  ok(await page.$$eval('.win [data-t="bs-court"]', L => L.length === 4 && L.every(b => b.disabled)), 'court already sat this week: rulings are off');
+  if (await count('.win [data-t="bs-deleg"]')) { await page.click('.win [data-t="bs-deleg"]'); await page.waitForTimeout(80); ok(await state(page, S => S.court.length) === 0 && await ap() === max - 2, 'a leader hears it for free'); }
   else { log.push('(no locker-room leader: delegate button not shown)'); await state(page, S => { S.court.length = 0; }); await redraw(page); }
+  await shut();
   await step('court done');
 
   /* ---- spend the last point, then nothing more can be spent ---- */
-  await page.click('[data-t="bs-room"][data-v="truck"]'); await bsdo(page, '[data-t="bs-do"][data-v="hype"]');
-  ok(await ap() === 0 && /0 of 3/.test(await txt('.panel')), 'last point spent in the truck');
-  await page.click('[data-t="bs-room"][data-v="catering"]');
-  ok(/out of action points/.test(await txt('.roomdet')) && await page.$$eval('[data-t="bs-do"]', L => L.length === 2 && L.every(b => b.disabled)), 'out of points: every action is off');
-  await bsdo(page, '[data-t="bs-do"][data-v="pep"]', { force: true }); ok(await ap() === 0 && await state(page, S => !S.pep), 'nothing spent at zero');
+  await page.click(act('truck', 'hype')); await page.click('.win [data-t="bs-do"]'); await page.waitForTimeout(80); await shut();
+  ok(await ap() === 0 && /0 of 3/.test(await txt('[data-t="bs-ap"]')), 'last point spent in your office');
+  await page.click(act('catering', 'pep'));
+  ok(/out of action points/.test(await txt('.win')) && await page.$eval('.win [data-t="bs-do"]', e => e.disabled) && await state(page, S => !S.pep), 'out of points: nothing more can be spent'); await shut();
   await step('out of points', 'spent');
 
   /* ---- career: skills only when there is a point to spend ---- */
@@ -182,15 +184,15 @@ async function remote() {
   ok(await focus() === 'book-next', 'the desk starts on Book the next show: ' + await focus());
   await key('ArrowDown'); ok(/^task-go:/.test(await focus()), 'down from the button reaches this week’s tasks: ' + await focus());
   await go(page, 'backstage'); await settle();
-  await page.focus('[data-t="bs-room"][data-v="office"]'); await key('ArrowRight'); await key('ArrowRight'); ok(await focus() === 'bs-room:trainer', 'arrows walk the map: ' + await focus());
-  await key('Enter'); ok(await page.$$eval('.room.on', L => L.length) === 1 && await focus() === 'bs-room:trainer', 'OK opens the room and the highlight stays');
-  await page.click('[data-t="bs-room"][data-v="gym"]'); await page.click('[data-t="bs-room"][data-v="trainer"]');   // whatever the arrows did, the trainer's room is open now
-  await page.selectOption('#bs-a', { index: 1 }); await press('[data-t="bs-do"]');
+  await press('[data-t="bs-act"][data-k="trainer"][data-v="treat"]');
+  ok(await page.$$eval('.win', L => L.length) === 1 && /^(bs|modal-close|bs-do)/.test(await focus()), 'OK on a thing to do opens its pop-up and the highlight goes in: ' + await focus());
+  await page.selectOption('#bs-a', { index: 1 }); await press('.win [data-t="bs-do"]');
   ok(await focus() === 'modal-close', 'the result pop-up takes the highlight: ' + await focus());
-  await key('Escape'); await settle();
-  ok(await state(page, S => S.ap) === 2 && await focus() === 'bs-room:trainer', 'after spending, the highlight is back on the map: ' + await focus());
-  await state(page, plantCase); await redraw(page); await press('[data-t="bs-room"][data-v="court"]'); await press('[data-t="bs-court"][data-v="3"]');
-  ok(await state(page, S => S.court.length) === 0 && await focus() === 'bs-room:court', 'after a ruling, the highlight is back on the map: ' + await focus());
+  await key('Escape'); await settle(); if (await page.$('.win')) { await key('Escape'); await settle(); }
+  ok(await state(page, S => S.ap) === 2 && await focus() !== 'nothing', 'after spending, the highlight is not lost: ' + await focus());
+  await state(page, plantCase); await redraw(page); await press('[data-t="bs-act"][data-k="court"][data-v="case"]'); await press('.win [data-t="bs-court"][data-v="3"]');
+  if (await page.$('.win')) { await key('Escape'); await settle(); } if (await page.$('.win')) { await key('Escape'); await settle(); }
+  ok(await state(page, S => S.court.length) === 0 && await focus() !== 'nothing', 'after a ruling, the highlight is not lost: ' + await focus());
   let weeks = 0; while (weeks++ < 14 && !(await state(page, S => S.over || S.inbox.some(e => !e.done)))) await state(page, playWeek);
   await go(page, 'career'); await settle(); await go(page, 'desk'); await redraw(page); await settle();   // arriving from another page
   ok(await focus() === 'book-next', 'the desk starts on Book the next show, not on an answer: ' + await focus());

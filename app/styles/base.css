@@ -522,3 +522,12 @@ html[data-music="off"] .mus::after{content:' off';color:var(--dred)}
 /* the fire: what needs an answer, first on the desk */
 .fire{border:2px solid var(--red,#ff5555);padding:.4em 1ch;margin:.6em 0}
 .fire .list li{align-items:flex-start}
+
+/* backstage: things to do, one button each. Each opens a pop-up. */
+.bsacts{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:8px}
+.bsact{all:unset;box-sizing:border-box;cursor:pointer;display:flex;flex-direction:column;gap:2px;padding:.4em 1ch;border:2px solid var(--dcyan);background:#0a2a8a;min-width:0}
+.bsact b{font-weight:normal;color:var(--white)}
+.bsact:hover,.bsact:focus-visible{background:#0b6470;outline:0;border-color:var(--yellow)}
+.bsact.used{opacity:.45}
+.bsact.hot{border-color:var(--mag)}
+html[data-screen="tablet"] .bsacts{grid-template-columns:repeat(3,minmax(0,1fr))}
