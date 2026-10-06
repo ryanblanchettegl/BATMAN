@@ -131,6 +131,7 @@ async function run(mode) {
   ok(/\((\d+)\)/.test(await txt('.menu [data-v="office"]')), 'menu badge counts the inbox');
   await step('inbox waiting', 'inbox');
   await state(page, runShows); await redraw(page);
+  open0 = await state(page, S => S.inbox.filter(e => !e.done).length);   // a show can leave one more matter
   ok(await page.$eval('[data-t="endweek"]', e => e.disabled) && /Answer your inbox first/.test(await txt('.pre')) && await count('[data-t="book-next"]') === 0, 'cannot end the week with the inbox open');
   while (open0 > 0) {
     await page.click('[data-t="ev"]');

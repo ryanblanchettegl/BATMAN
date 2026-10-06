@@ -244,12 +244,23 @@ async function section(mode) {
   await check('sign-off');
   await shot(page, 'booking-' + mode + '-signoff', true);
 
-  /* ---- the report ---- */
+  /* ---- After the show: where a show ends. Not the match-by-match report. ---- */
   await page.click('[data-t="advance"]');
+  ok(await has(page, '[data-t="after-screen"]') && !(await has(page, '.sheet')) && !(await has(page, '#live')) && await txt(page, '.head h1') === shows[0], mode + ': the sign-off leads to After the show, not to the report');
+  ok(/^(A\+|A|A-|B\+|B|B-|C\+|C|C-|D|F)$/.test((await txt(page, '[data-t="after-grade"]')).trim()) && !/%/.test(await txt(page, '[data-t="after-verdict"]')), mode + ': it gives the show a letter grade and a verdict in words');
+  const items = await page.$$eval('[data-t="after-item"]', a => a.map(e => e.getAttribute('data-v')));
+  ok(['gate', 'tv', 'writers'].every(k => items.includes(k)) && /tickets/.test(await txt(page, '[data-t="after-item"][data-v="gate"]')), mode + ': it lists the gate, the television number and the writers: ' + items.join(', '));
+  await page.click('[data-t="after-look"][data-v="writers"]');
+  ok(await has(page, '[data-t="night-detail"][data-v="writers"]') && !(await has(page, '.win')), mode + ': picking one shows it beside the list, on the same screen');
+  ok(/^OFFICE$/i.test(await advWord(page)), mode + ': the big button leads on to the Office: ' + await advWord(page));
+  await check('after the show');
+  await shot(page, 'booking-' + mode + '-after', true);
+  /* ---- the report, match by match, is one press from there ---- */
+  await page.click('[data-t="after-full"]');
   const rep = await state(page, S => ({ rating: S.reports[0].rating, name: S.reports[0].name, matches: S.reports[0].segs.filter(s => s.k === 'match').length, angles: S.reports[0].segs.filter(s => s.k !== 'match').length }));
   ok(!(await has(page, '#live')) && await txt(page, '.head h1') === rep.name && /^(A\+|A|A-|B\+|B|B-|C\+|C|C-|D|F)$/.test((await txt(page, '.big')).trim()) && (await txt(page, '.big')).trim() === await state(page, (S, v) => GP.grade(v), rep.rating) && !/%/.test(await txt(page, '.rating')), mode + ': the report should give the show a letter grade and no percentage: ' + await txt(page, '.rating'));
   ok(await count(page, '.sheet .seg') === rep.matches && await count(page, '.sheet .angle') === rep.angles + (seen.pre ? 1 : 0), mode + ': every segment is in the report');
-  ok(rep.name === shows[0] && await count(page, '[data-t="closeReport"]') === 2 && (await txt(page, '[data-t="closeReport"]')) === 'Back to the desk' && /^THE DESK$/i.test(await advWord(page)), mode + ': the report leads back to the desk: ' + await advWord(page));
+  ok(rep.name === shows[0] && await count(page, '[data-t="closeReport"]') === 2 && (await txt(page, '[data-t="closeReport"]')) === 'Back to After the show' && /^RECAP$/i.test(await advWord(page)), mode + ': the report leads back to After the show: ' + await advWord(page));
   await check('report');
   await shot(page, 'booking-' + mode + '-report', true);
   await page.click('[data-t="options"]'); await page.click('[data-t="pref"][data-k="type"]'); await page.click('#modal-ok');   // typewriter off
@@ -261,16 +272,14 @@ async function section(mode) {
   ok(await has(page, '.big') && !(await has(page, '#live')), mode + ': back at the report after the replay');
   await check('replay');
   await page.click('[data-t="closeReport"]');
-  /* after a show the game is back at the Office, with what the night left behind on the desk */
-  ok(await page.evaluate(() => window.EWF_DEBUG.ui.page) === 'desk' && await has(page, '[data-t="after-show"]') && (await txt(page, '.panel.after')).includes(shows[0]), mode + ': closing the report goes back to the desk, and the night is on it');
-  const items = await page.$$eval('[data-t="after-item"]', a => a.map(e => e.getAttribute('data-v')));
-  ok(['gate', 'tv', 'writers'].every(k => items.includes(k)) && await count(page, '[data-t="after-item"][data-seen="0"]') === items.length, mode + ': the desk lists the gate, the television number and the writers, all new: ' + items.join(', '));
-  ok(/tickets/.test(await txt(page, '[data-t="after-item"][data-v="gate"]')), mode + ': tickets sold against tickets available');
-  await page.click('[data-t="after-look"][data-v="writers"]');
-  ok(await has(page, '.win [data-t="night-detail"][data-v="writers"]') && await page.evaluate(() => window.EWF_DEBUG.ui.page) === 'desk', mode + ': each one opens a pop-up on the desk');
-  await page.click('#modal-ok');
-  ok(await has(page, '[data-t="after-item"][data-v="writers"][data-seen="1"]') && +(await page.$eval('[data-t="after-show"]', e => e.getAttribute('data-left'))) === items.length - 1, mode + ': what has been looked at is marked');
-  if (mode === 'desk') await shot(page, 'booking-desk-after');
+  ok(await has(page, '[data-t="after-screen"]'), mode + ': closing the report goes back to After the show');
+  /* done with After the show: the Office, with Before the show first and a button that comes back */
+  await page.click('[data-t="advance"]');
+  ok(await page.evaluate(() => window.EWF_DEBUG.ui.page) === 'desk' && /before the show/i.test(await txt(page, '.panel h2')) && !(await has(page, '[data-t="after-show"]')), mode + ': then the Office, where Before the show is the first thing');
+  ok((await txt(page, '[data-t="night-recap"]')) === 'After the show recap', mode + ': the Office has a button back to After the show');
+  await page.click('[data-t="night-recap"]');
+  ok(await has(page, '[data-t="after-screen"]') && await txt(page, '.head h1') === shows[0], mode + ': and it goes back there');
+  await page.click('[data-t="advance"]');
   ok(/^BOOK SHOW$/i.test(await advWord(page)), mode + ': from the desk the big button leads to the next show: ' + await advWord(page));
   await page.click('[data-t="book-next"]');
   ok(await txt(page, '.head h1') === shows[1] && /The card is empty/.test(await txt(page, '.b1-rows')), mode + ': the next show’s card is one press from the desk');
@@ -280,10 +289,12 @@ async function section(mode) {
   await page.click('[data-t="suggest"]');
   const seen2 = await runShow(page, mode, check);
   onCall = null; const calls2 = await airShow(page);
-  ok(await has(page, '.panel [data-t="endweek"]') && await has(page, '[data-t="replay"]') && (await txt(page, '[data-t="closeReport"]')) === 'Back to the desk', mode + ': the last report offers the desk and the end of the week');
+  ok(await has(page, '[data-t="replay"]') && (await txt(page, '[data-t="closeReport"]')) === 'Back to After the show', mode + ': the last show of the week ends the same way');
   await check('second report');
-  await page.keyboard.press('Escape');                                      // Back closes the report, and the night ends on the desk
-  ok(await page.evaluate(() => window.EWF_DEBUG.ui.page) === 'desk' && (await txt(page, '.panel.after')).includes(shows[1]), mode + ': Back closes the last report to the desk');
+  await page.keyboard.press('Escape');                                      // Back closes the report
+  ok(await has(page, '[data-t="after-screen"]') && await txt(page, '.head h1') === shows[1], mode + ': Back closes the last report to After the show');
+  await page.click('[data-t="advance"]');
+  ok(await page.evaluate(() => window.EWF_DEBUG.ui.page) === 'desk' && await has(page, '[data-t="endweek"]'), mode + ': and the Office offers the end of the week');
   await go(page, 'booking');
   ok(await txt(page, '.head h1') === 'Week booked' && await count(page, '[data-t="report"]') === 2, mode + ': Week booked');
   await check('week booked');

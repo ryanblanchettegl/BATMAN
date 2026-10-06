@@ -12,6 +12,7 @@ import { Card } from './Card';
 import { SegWindow, OpenGuide } from './Segments';
 import { ShapeGuide } from './Shape';
 import { Live } from './Live';
+import { After } from './After';
 import { Report, Ladder } from './Report';
 import { typer, liveReport, liveSkip, liveCall, liveDecide, liveGo, closeReport } from './run';
 
@@ -25,6 +26,7 @@ function Booking() {
   const S = G.S, b = book(), r = b.report != null ? S.reports[b.report] : null;
   if (S.live) return <Live r={S.live.st.rep} />;   // a show on the air comes before everything
   if (r) return b.live && r.venue ? <Live r={r} /> : <Report r={r} />;
+  if (b.night && E.afterShow(S)) return <After />;   // where a show ends
   return weekDone() ? <WeekBooked /> : <Card />;
 }
 

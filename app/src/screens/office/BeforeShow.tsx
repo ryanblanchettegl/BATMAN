@@ -8,6 +8,7 @@ import { Portrait } from '../../kit/portrait';
 import { EndWeekBtn } from '../../shared/week';
 import { office, focusAfter, useFocusAfter, TO_MAP } from './util';
 import { Court } from './Court';
+import { openNight } from '../booking/run';
 import { Tasks } from './Tasks';
 
 const ROOMART: Record<string, string[]> = {
@@ -90,18 +91,20 @@ function ComingUp() {
   const U: any[] = E.comingUp(G.S); if (!U.length) return null;
   return <span class="coming" data-t="coming"><span class="eyebrow">Coming up</span> {U.map((u, i) => <>{i ? <span class="muted"> {'·'} </span> : null}<button type="button" class="lnk" data-t="coming-go" data-v={u.k} onClick={() => go(u.to)}>{u.t}</button></>)}</span>;
 }
+/** After a show has run this week: the button that goes back to After the show. */
+function Recap() { const A = E.afterShow(G.S); return A ? <Btn kind="sm" t="night-recap" onClick={openNight}>After the show recap</Btn> : null; }
 /** The show that is next, and the one button that takes you to book it. Once every show has run, the button ends the week. */
 function NextShow() {
   const S = G.S, sh = S.queue[S.qi], left = S.queue.length - S.qi, gate = E.taskGate(S, 'book');
   if (weekDone()) return <div class="nextshow">
     <p>Every show this week has run.<ComingUp /></p>
-    <EndWeekBtn />
+    <EndWeekBtn /><Recap />
   </div>;
   return <div class="nextshow">
     <p><span class="eyebrow">Next show</span><br /><b class="ns">{sh.name}</b> {sh.big ? <Tag kind="gold">Big event</Tag> : <Tag>TV</Tag>}{sh.brand ? <> <Tag>{brandName(me(), sh.brand)}</Tag></> : null}
       <br /><span class="muted">{left > 1 ? left + ' shows left this week.' : ''}</span><ComingUp /></p>
     <div class="row"><Btn kind="go" t="book-next" d={{ home: '' }} disabled={!gate.ok} onClick={() => go('booking')}>Book the next show</Btn>
-      {gate.ok ? null : <span class="muted" data-t="book-wait">Finish this week{'’'}s tasks first: {gate.left.length} to do.</span>}</div>
+      {gate.ok ? null : <span class="muted" data-t="book-wait">Finish this week{'’'}s tasks first: {gate.left.length} to do.</span>}<Recap /></div>
   </div>;
 }
 

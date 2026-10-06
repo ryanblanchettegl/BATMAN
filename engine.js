@@ -1959,7 +1959,7 @@ E.afterShow=function(S){
   var t=L.tv,tl=(t.v/1e6).toFixed(2)+'M watched'+(t.was?(t.v>t.was*1.01?', up on the show’s recent run':(t.v<t.was*0.99?', down on the show’s recent run':', level with the show’s recent run')):'')+'.';
   add('tv',rep.big?'Buys and viewers':'Television',rep.big?t.buys.toLocaleString('en-US')+' bought the event.':tl,
     (rep.big?[t.buys.toLocaleString('en-US')+' homes bought '+rep.name+'.']:[tl.charAt(0).toUpperCase()+tl.slice(1)].concat(rep.net?['It went out on '+rep.net+'.']:[])).concat(t.was&&!rep.big?['The show’s recent run is about '+(t.was/1e6).toFixed(2)+'M. A growing audience is one of the things that builds a show’s standing.']:[]).concat(['Numbers by kind of viewer are not counted yet.']),t.was&&t.v<t.was*0.99?'bad':(t.was&&t.v>t.was*1.01?'good':''));
-  add('writers','The writers',L.writers[0].x,L.writers.map(function(w){return w.x;}),L.writers.some(function(w){return w.s<0;})?'bad':'');
+  add('writers','The writers',L.writers[0].x,L.writers.map(function(w){return w.x;}),L.writers[0].s<0?'bad':(L.writers[0].s>0?'good':''));
   if(rep.sheet&&rep.sheet.lines&&rep.sheet.lines.length)add('sheet','The dirt sheet',rep.sheet.lines[0],rep.sheet.lines.slice(),'');
   var mt=null;if(L.matter!=null)S.inbox.forEach(function(e){if(e.id===L.matter)mt={id:e.id,text:e.text,done:!!e.done,result:e.result||''};});
   return {key:L.key,name:rep.name,grade:gradeG(rep.rating),head:v.head,line:v.line,matter:mt,items:items,unseen:items.filter(function(x){return !x.seen;}).length,left:S.queue.length-S.qi};

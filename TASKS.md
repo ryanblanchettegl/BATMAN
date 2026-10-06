@@ -271,6 +271,13 @@ Ryan, 4 October: "After a show, it should go back to the Office or your desk, so
 
 **Back to the desk after a show**
 
+- [x] **(0.33) After the show is its own screen.** Ryan, 6 October: "After the show, I don't want them to go to the show report screen. I want them to go to an After the Show screen that has all of the info that you have on the after the show section in the office. Take after the show off of the office screen and just have it be a button called after the show recap, that brings them back to After the show. When you are done with this screen, you then go to the office where the before the show option is first thing you see."
+  - The sign-off leads to After the show: grade, verdict, the matter that needs an answer (with its answers), and the list of what the night left with the picked one beside it. Nothing pops up.
+  - The match-by-match report is a button there (Match by match) and closes back to it.
+  - The yellow button says Office. The Office opens on Before the show, with no After the show panel. A small button, After the show recap, goes back.
+  - Code: `app/src/screens/booking/After.tsx`, `run.ts`. Tests: `app/tests/booking.js`, `advance.js`, `journey.js`.
+  - [ ] After the show is not a one-screen page yet: it scrolls on a tablet.
+- [x] ~~(0.30) Back to the desk after a show, with an After the show panel on the desk.~~ Replaced by 0.33, above. What follows describes 0.30.
 - [x] **(0.30) Back to the desk after a show.** Closing the report of a show that ran this week goes to the Office. The report's button says Back to the desk and the yellow button says The desk. From the desk the next show is one press away. Code: `src/34-night.js`, `AfterShow` in `app/src/screens/office/Desk.tsx`. Tests: `node test-live.js` (nt1 to nt7), `app/tests/booking.js`, `journey.js`.
 - [x] **(0.30) The desk after a show.** An "After the show" panel at the top of the desk: the grade and the verdict, then one line each, trouble first, each marked New until it has been looked at, each opening a pop-up on the desk:
   - injuries from the show, how long, and whether a champion is out

@@ -5,6 +5,7 @@ import { useLayoutEffect } from 'preact/hooks';
 import { E, W } from '../../engine';
 import { G, ui, me, act, openModal, plural, view } from '../../store';
 import { go, weekDone } from '../../nav';
+import { book } from '../../flow';
 import { Head, Panel, Btn, Name, CheckLine, Empty, Dial, dataAttrs, Txt, Tag } from '../../kit';
 import { ScheduleList, QuestList } from '../../shared/week';
 import { BeforeShow } from './BeforeShow';
@@ -76,27 +77,11 @@ function Clocks() {
   </Panel>;
 }
 
-/** After a show: what the night left on the desk. One line each; each opens a pop-up, so nothing leaves the Office. */
-function AfterShow() {
-  const S = G.S, A = E.afterShow(S); if (!A) return null;
-  const look = (it: any) => { act(() => { E.nightSeen(S, it.k); }); openModal({ kind: 'info', title: it.n + ': ' + A.name, body: () => <div data-t="night-detail" data-v={it.k}>{it.detail.map((x: string) => <p class="mb1"><Txt>{x}</Txt></p>)}</div> }); };
-  return <Panel title={'After the show: ' + A.name} cls="after mb3">
-    <div data-t="after-show" data-left={A.unseen}>
-      <p><b class="gold">{A.grade}</b> {'·'} <b>{A.head}.</b> <span class="muted">{A.line}</span></p>
-      {A.matter ? <p class={'mt1 ' + (A.matter.done ? 'muted' : 'warn')} data-t="after-matter" data-done={A.matter.done ? '1' : '0'}>{A.matter.done ? <><Tag kind="good">Answered</Tag> <Txt>{A.matter.result}</Txt></> : <><Tag kind="bad">Needs an answer</Tag> <Txt>{A.matter.text}</Txt> <Btn kind="sm" t="after-answer" onClick={() => { const el = document.querySelector('[data-t="ev"]') as HTMLElement | null; if (el) { el.scrollIntoView({ block: 'center' }); el.focus(); } }}>Answer it</Btn></>}</p> : null}
-      <ul class="list mt1">{A.items.map((it: any) => <li key={it.k} data-t="after-item" data-v={it.k} data-seen={it.seen ? '1' : '0'}>
-        <span>{it.seen ? null : <><Tag kind={it.tone === 'bad' ? 'bad' : (it.tone === 'good' ? 'good' : 'warn')}>New</Tag> </>}<b>{it.n}</b> <span class={it.seen ? 'muted' : (it.tone === 'bad' ? 'bad' : undefined)}><Txt>{it.line}</Txt></span></span>
-        <Btn kind="sm" t="after-look" d={{ v: it.k }} onClick={() => look(it)}>Look</Btn></li>)}</ul>
-      <p class="muted mt1">{A.unseen ? 'This is what the night left you. ' : 'You have been through all of it. '}{A.left > 0 ? 'The next show is under it.' : 'Every show this week has run.'}</p>
-    </div>
-  </Panel>;
-}
-
 export function Desk() {
   const S = G.S, A = alerts();
+  book().night = false;   // After the show is behind us once the Office is open; its button brings it back
   return <>
     <Head eyebrow={E.cal(S.week).label} title={'Office - Week ' + S.week} />
-    <AfterShow />
     <BeforeShow />
     <div class="cols">
       <div class="stack">

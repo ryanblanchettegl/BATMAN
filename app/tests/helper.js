@@ -85,7 +85,8 @@ async function airShow(page, opts) {
       await page.click('[data-t="live-pick"][data-c="' + (opts.pick ? opts.pick(k) : safe) + '"]');
       continue;
     }
-    if (await has('#live[data-v="signoff"]')) { if (opts.report !== false) await page.click('[data-t="advance"]'); return calls; }
+    // the sign-off leads to After the show. A test that wants the match-by-match report opens it from there.
+    if (await has('#live[data-v="signoff"]')) { if (opts.report !== false) { await page.click('[data-t="advance"]'); if (await has('[data-t="after-full"]')) await page.click('[data-t="after-full"]'); } return calls; }
     if (await has('[data-t="live-end"]')) { await page.click('[data-t="live-end"]'); continue; }
     if (await has('[data-t="live-skip"]')) { await page.click('[data-t="live-skip"]'); continue; }
     if (await has('#live')) { await page.click('[data-t="advance"]'); continue; }   // the big yellow button is the only way forward
@@ -93,4 +94,6 @@ async function airShow(page, opts) {
   }
   throw new Error('the broadcast never ended');
 }
-module.exports = { open, go, overflow, shot, flash, state, redraw, SHOTS, fits, airShow };
+/** From the report or After the show, on to the Office (the yellow button, once or twice). */
+async function toOffice(page) { for (let i = 0; i < 3 && (await page.evaluate(() => window.EWF_DEBUG.ui.page)) !== 'desk'; i++) { await page.click('[data-t="advance"]'); await page.waitForTimeout(60); } }
+module.exports = { open, go, overflow, shot, flash, state, redraw, SHOTS, fits, airShow, toOffice };

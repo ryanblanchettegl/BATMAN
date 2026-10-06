@@ -2,7 +2,7 @@
    The owner on the headset (the office wants its favourite to win), and who the show is built around (decided on
    the air after a main event). The test sets each one up, answers it, and checks what it leaves behind.
    Run: NODE_PATH=<dir containing playwright> node app/tests/direction.js   (MODES=desk,tablet) */
-const { open, go, overflow, shot, state, fits, airShow, redraw } = require('./helper');
+const { open, go, overflow, shot, state, fits, airShow, redraw, toOffice } = require('./helper');
 const MODES = (process.env.MODES || 'desk,tablet').split(',');
 const fails = [];
 const ok = (mode, label, pass, detail) => { console.log(mode.padEnd(6), pass ? 'ok  ' : 'FAIL', label + (detail ? ': ' + detail : '')); if (!pass) fails.push(mode + ' ' + label); };
@@ -57,7 +57,7 @@ async function run(mode) {
     } });
     ok(mode, 'the owner’s call came up', seen);
     ok(mode, 'the favourite won', await state(page, (S, a) => S.reports[0].segs.some(s => s.k === 'match' && s.wi && s.wi.includes(a.id) && (s.calls || []).some(c => c.k === 'owner')), set));
-    await page.click('[data-t="advance"]');
+    await toOffice(page); await go(page, 'booking');
 
     /* ---- who the show is built around ---- */
     let face = null;
@@ -87,7 +87,7 @@ async function run(mode) {
         ok(mode, 'the game records who the company is built around', await state(page, (S, a) => !!S.fc && S.fc.id === a.id && S.fc.w === S.week, main));
         await shot(page, 'direction-' + mode + '-face-after');
       } });
-      await page.click('[data-t="advance"]');
+      await toOffice(page); await go(page, 'booking');
     }
     ok(mode, 'the call about who the show is built around came up', !!face);
     if (face) {

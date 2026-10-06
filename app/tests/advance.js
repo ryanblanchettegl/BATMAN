@@ -31,7 +31,7 @@ async function runShow(page, mode) {
     }
     await press(page);
   }
-  ok(mode, 'pressing it through the broadcast, and answering each call, reaches the report', !(await has(page, '#live')) && await has(page, '[data-t="match-stars"]'));
+  ok(mode, 'pressing it through the broadcast, and answering each call, reaches After the show', !(await has(page, '#live')) && await has(page, '[data-t="after-screen"]'));
 }
 
 async function run(mode) {
@@ -90,16 +90,16 @@ async function run(mode) {
     /* the show, start to finish, on the one button */
     await runShow(page, mode);
     a = await adv(page);
-    ok(mode, 'after the show it points back at the desk', a.k === 'desk' && /^THE DESK$/i.test(a.t) && /night left behind/.test(a.tip), a.t + ' / ' + a.tip);
+    ok(mode, 'the show ends on After the show, and the button points on to the Office', await has(page, '[data-t="after-screen"]') && a.k === 'desk' && /^OFFICE$/i.test(a.t) && /Before the show/.test(a.tip), a.t + ' / ' + a.tip);
     await press(page);
-    ok(mode, 'pressing it closes the report and goes to the Office, where the night is on the desk', await pageId(page) === 'desk' && await has(page, '[data-t="after-show"]') && !(await has(page, '[data-t="match-stars"]')));
+    ok(mode, 'pressing it goes to the Office, where Before the show comes first', await pageId(page) === 'desk' && !(await has(page, '[data-t="after-show"]')) && await has(page, '[data-t="night-recap"]'));
     a = await adv(page);
     ok(mode, 'from the desk it points at the next show', a.k === 'book' && /^BOOK SHOW$/i.test(a.t) && /Book Saturday Serial/.test(a.tip), a.t + ' / ' + a.tip);
     await press(page);
     ok(mode, 'pressing it opens the next card', await has(page, '[data-t="suggest"]'));
     await page.click('[data-t="suggest"]');
     await runShow(page, mode);
-    ok(mode, 'the last show of the week ends on the desk too', /^THE DESK$/i.test((await adv(page)).t));
+    ok(mode, 'the last show of the week ends the same way', /^OFFICE$/i.test((await adv(page)).t));
     await press(page);
     /* the end of the week */
     await state(page, S => { S.inbox.filter(e => !e.done).forEach(e => window.GP.resolveEvent(S, e.id, e.type === 'handover' ? 0 : 1)); Object.keys({ a: 1 }).forEach(() => { window.GP.tasks(S).list.filter(t => t.state === 'todo' && t.waive).forEach(t => window.GP.taskWave(S, t.id)); }); });

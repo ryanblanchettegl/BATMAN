@@ -4,7 +4,7 @@ import { G, ui, pref, save, loadSave, clearSave, resetUi, redraw, setUniverse, s
 import { go } from './nav';
 
 /** View state of the Booking section. Office reads it to link to a report. */
-export interface BookState { edit: number; tried: boolean; report: number | null; live: { s: number; b: number; aired?: boolean } | null; side: string }
+export interface BookState { edit: number; tried: boolean; report: number | null; live: { s: number; b: number; aired?: boolean } | null; side: string; night?: boolean }
 export function book(): BookState { return slice<BookState>('booking', () => ({ edit: -1, tried: false, report: null, live: null, side: 'advice' })); }
 /** Index into S.reports of this week's report for a show, or -1. */
 export function repFor(sh: any): number { const S = G.S; for (let i = 0; i < S.reports.length; i++) if (S.reports[i].week === S.week && S.reports[i].id === sh.id) return i; return -1; }

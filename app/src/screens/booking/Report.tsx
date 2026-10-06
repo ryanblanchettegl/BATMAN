@@ -2,7 +2,7 @@
 import { E } from '../../engine';
 import { G, Modal, cash } from '../../store';
 import { weekDone, pending } from '../../nav';
-import { endWeek } from '../../flow';
+import { endWeek, book } from '../../flow';
 import { Head, Panel, Btn, Tag, KV, Window, stars, grade, Txt, Meter } from '../../kit';
 import { roleOf } from './Shape';
 import { preNote, replay, closeReport } from './run';
@@ -39,7 +39,8 @@ function Next(p: { r: any }) {
   if (r.week !== S.week) return <div class="row mt3"><Btn t="closeReport" onClick={closeReport}>Back</Btn>{again}</div>;
   // the same row as the shared EndWeekBtn, with the replay button on the end of it
   const g = E.taskGate(S, 'week');
-  const desk = r.left ? <Btn kind="go" t="closeReport" d={{ home: '' }} onClick={closeReport}>Back to the desk</Btn> : null;
+  const desk = r.left && book().night ? <Btn kind="go" t="closeReport" d={{ home: '' }} onClick={closeReport}>Back to After the show</Btn> : null;
+  if (desk) return <div class="row mt3">{desk}{again}</div>;
   if (weekDone()) return <div class="row mt3">{desk}<Btn kind={desk ? undefined : 'go'} t="endweek" disabled={!!n || !g.ok} onClick={endWeek}>End the week</Btn>{n ? <span class="muted">Answer your inbox first.</span> : (g.ok ? null : <span class="muted">Finish this week{'’'}s tasks on the desk first.</span>)}{again}</div>;
   return <div class="row mt3">{desk || <Btn kind="go" t="closeReport" onClick={closeReport}>Book {S.queue[S.qi].name}</Btn>}{again}</div>;
 }

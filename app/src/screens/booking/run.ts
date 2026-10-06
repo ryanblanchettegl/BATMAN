@@ -203,9 +203,16 @@ export function liveGo() {
 export function liveSkip() { typer.finish(); const r = liveReport(); if (r && !liveCall()) look(() => { const L = book().live!; if (r.segs[L.s]) L.b = (r.segs[L.s].bc || []).length; }); }
 /** In a replay only: skip to the sign-off. A show on the air cannot be skipped. */
 export function liveEnd() { const r = liveReport(); if (r && !onAir()) look(() => { book().live = { s: r.segs.length, b: 0 }; }); }
-export const liveDone = () => look(() => { book().live = null; top0(); });
+/** Leave the sign-off. A show that has just aired ends on After the show, not on the match-by-match report. A replay goes back to its report. */
+export const liveDone = () => look(() => { const b = book(), aired = !!(b.live && b.live.aired) && !!E.afterShow(G.S); b.live = null; if (aired) { b.report = null; b.night = true; } top0(); });
+/** Open After the show for the last show of this week (the Office has a button for it). */
+export function openNight() { if (!E.afterShow(G.S)) return; go('booking'); look(() => { const b = book(); b.night = true; b.report = null; b.live = null; top0(); }); }
+/** Done with After the show: on to the Office, where Before the show is the first thing on the desk. */
+export function closeNight() { book().night = false; go('desk'); }
+/** From After the show: the full report, match by match. Closing it comes back. */
+export function nightFull() { const S = G.S, A = E.afterShow(S); if (!A) return; const i = S.reports.findIndex((r: any) => r.left && r.left.key === A.key); if (i >= 0) look(() => { book().report = i; book().live = null; top0(); }); }
 export const replay = () => look(() => { book().live = { s: -1, b: 0 }; top0(); });
-/** Close the report. After a show of this week the game goes back to the Office: whatever the night left behind is on the desk. A report opened from the history just closes. */
-export const closeReport = () => { const b = book(), S = G.S, r = b.report != null ? S.reports[b.report] : null, mine = !!r && r.week === S.week && !!r.left; look(() => { b.report = null; b.live = null; top0(); }); if (mine) go('desk'); };
+/** Close the report. One opened from After the show goes back there (the screen is still under it). */
+export const closeReport = () => look(() => { const b = book(); b.report = null; b.live = null; top0(); });
 /** Show one of the booking notes beside the sheet. Whatever was selected on the sheet is let go. */
 export const pickSide = (id: string) => look(() => { const b = book(); b.side = id; b.edit = -1; sel().seg = -1; });

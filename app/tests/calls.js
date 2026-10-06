@@ -1,7 +1,7 @@
 /* More calls from the gorilla position, each set up by what causes it and then answered:
    somebody is hurt, the crowd has gone quiet, they are not going home, the network on the line, the sponsor at ringside.
    Every call has to fit one screen. Run: NODE_PATH=<dir containing playwright> node app/tests/calls.js   (MODES=desk,tablet) */
-const { open, go, overflow, shot, state, fits, redraw } = require('./helper');
+const { open, go, overflow, shot, state, fits, redraw, toOffice } = require('./helper');
 const MODES = (process.env.MODES || 'desk,tablet').split(',');
 const fails = [];
 const ok = (mode, label, pass, detail) => { console.log(mode.padEnd(6), pass ? 'ok  ' : 'FAIL', label + (detail ? ': ' + detail : '')); if (!pass) fails.push(mode + ' ' + label); };
@@ -74,9 +74,9 @@ async function run(mode) {
       }
     }, async () => { if (!quiet) await state(page, S => { const segs = S.live ? S.live.st.rep.segs : []; if (segs.length) segs[segs.length - 1].cr = 30; }); });
     ok(mode, 'both calls came up', one.includes('botch') && one.includes('audible'), one.join(', '));
-    await page.click('[data-t="advance"]');
+    await page.click('[data-t="advance"]'); await page.click('[data-t="after-full"]');   // After the show, then the report match by match
     ok(mode, 'the report lists the calls', (await whole(page, '[data-t="rep-calls"]')).includes('Stop the match'));
-    await page.click('[data-t="closeReport"]'); await go(page, 'booking');   // the report closes to the desk
+    await toOffice(page); await go(page, 'booking');   // the night ends at the Office
 
     /* ---- show two: the network on the line, and a match that will not go home ---- */
     let two = null; for (let t = 0; t < 4 && !two; t++) two = await card(page, (S) => { const n = S.card.length, free = S.card.map((m, i) => i).filter(i => i < n - 1 && !S.card[i].title && (S.card[i].mt === '1v1' || S.card[i].mt === 'tag') && S.card[i].len !== 'L');
@@ -100,7 +100,7 @@ async function run(mode) {
       }
     });
     ok(mode, 'both calls came up', twoSeen.includes('network') && twoSeen.includes('overtime'), twoSeen.join(', '));
-    await page.click('[data-t="advance"]');
+    await toOffice(page); await go(page, 'booking');
 
     /* ---- next week: the sponsor at ringside ---- */
     await nextWeek(page);
