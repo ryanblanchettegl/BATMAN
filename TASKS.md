@@ -105,8 +105,19 @@ Code: `src/87-create.js` (`E.makeShow`, `E.dropShow`, `E.makeTitle`, `E.dropTitl
   - The night a new belt gets its first champion, and a new show's first night, are occasions: a louder crowd, more interest, a line on the report.
   - Rivals look at themselves once a year, each in its own month, and do one thing at most. They only add a belt for something that has come about since the game began. A new show needs a boom, the people and the money, and a third show waits until the ones before it have found their audience. Across all rivals, new belts are at least 36 weeks apart and new shows at least 72. Each is in the news with its reason, and on the notification bar.
   - Measured over five years on two seeds: five big moments in the whole world (two shows, three belts). Before, most rivals added something every January.
+  - [x] **(0.29) No first-year lock.** Ryan, 4 October: "shows and belts aren't closed in the first years." The rule that a network wanted a year of the booker's shows first is gone, for the player and for rivals. The occasion is what makes a new show rare.
   - [ ] The other real-life occasions: a brand split (a top title for each brand), unifying two belts at a big event, buying a rival and taking in its title, a title retired when its division is gone.
   - [ ] A rival's new belt should get its first champion at that rival's next big event.
+- [x] **(0.29) A show lasts.** Ryan, 4 October: "Shows exist and can gain prestige the longer they are on and based on viewership and growth. [A flagship] has been on the air for like 40 years, it doesn't close, it just changes networks occasionally. Look at how current wrestling models work." Code: `src/88-shows.js`. Tests: the last part of `node test-create.js`.
+  - Every weekly show in the world has years on the air, an episode count, a network and a standing in words: Brand new, Finding its feet, Established, A fixture, Appointment viewing, An institution. The giant's flagship starts at 27 years and over 1,300 episodes. The new-money company's show is in its first year.
+  - Standing moves a little with every episode: up when the show beats what its crowd expected and when its audience is growing, down when it does not, and a point on every anniversary. It takes years. More standing means more viewers. A new game starts exactly where it did before.
+  - A network deal runs three to five years. When it is up, the matter is on the desk: stay, move to the other network that wants the show, or hold out for more (an attempt). A show that has grown is paid more and can move to a bigger network (more viewers, popularity moves faster, the audience has to find it again). One that has slipped is kept for less or can take a smaller network's money.
+  - Rivals settle their own deals. Some of their shows change network, and it is news. A rival in the red no longer cancels a show: it moves to a smaller network with a cheaper production.
+  - An anniversary and a milestone episode (100, 250, every 500) are occasions: the desk hears as the week begins, the title card says it, the building is up for it. The title card always carries the episode number and the network.
+  - The Weekly shows window lists each show's standing, years, episodes, network and when the deal runs out.
+  - [ ] The player can still cancel one of their own shows. Ryan to say whether that goes too.
+  - [ ] Years on the air are worked out from a company's size. The World Editor should let a world set them, and name its own networks (`networks` in the world file is read already).
+  - [ ] This is the first part of section 5 (TV deals). Still to come there: money by the hour, tastes, ratings targets, streaming, a rival's night.
 - [x] Measured over 32 weeks on three seeds: an extra show moved weekly profit between -$100K and +$214K and popularity by 0 to +1.6. It is a real choice, not free money.
 - [ ] Big events (the monthly pay-per-view) cannot be added or renamed in a game yet. That belongs with the year planner in task 6.
 - [ ] A new show or belt cannot be given to one brand of a brand split.
@@ -283,7 +294,9 @@ Ryan, 4 October: "After a show, it should go back to the Office or your desk, so
 
 **Pop-ups from the desk**
 
-- [ ] Every task on the desk opens a pop-up where it stands, so the player can do everything from the Office. First one: the commentary desk (built next). Then sponsor offers, the venue, contracts that are running out, the inbox.
+- [x] **(0.29) The commentary desk from the Office.** Ryan, 4 October: "From the office screen, I want you to be able to pick commentators via a pop up with available players." The two tasks for the commentary desk open a pop-up on the desk: both chairs, who is available for the chair being filled, what each costs, and how they would get on with the other voice. Signing one moves on to the empty chair. A button on the desk opens it at any time. Code: `VoicesWindow` in `app/src/screens/office/Windows.tsx`. Test: `app/tests/tasks.js`.
+- [ ] The same for every other task on the desk, so everything can be done from the Office: sponsor offers, the venue, contracts that are running out, a vacant title.
+- [ ] The people available are the hired voices on the market. Wrestlers, managers and legends at the desk wait for the character sheet work.
 
 ### 1. Finish the pop-ups (small)
 Feature list items 10 and 11. Code: `app/src/shared/cards.tsx`, `Name`, `TitleName`, `TeamName` and `Txt` in `app/src/kit/index.tsx`, the card stack in `app/src/store.ts`.

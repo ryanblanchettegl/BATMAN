@@ -5,11 +5,13 @@ import { G, act, say } from '../../store';
 import { go } from '../../nav';
 import { Btn, Tag, Txt } from '../../kit';
 import { office } from './util';
+import { openVoices } from './Windows';
 
 const TAG: Record<string, [string, 'warn' | 'good' | 'bad' | undefined]> = { todo: ['Must do', 'warn'], optional: ['Worth doing', undefined], waved: ['Not this week', undefined], done: ['Done', 'good'] };
 
 function open(t: any) {
   if (t.id === 'ap') { act(() => { office().pl = 'office'; office().rooms = true; }); return; }
+  if (t.id === 'desk-pbp' || t.id === 'desk-col') { openVoices(t.id === 'desk-col' ? 'col' : 'pbp'); return; }   // answered in a pop-up, without leaving the Office
   if (t.id === 'inbox') { const el = document.querySelector('[data-t="ev"]') as HTMLElement | null; if (el) { el.scrollIntoView({ block: 'center' }); el.focus(); } return; }
   go(t.to);
 }
@@ -25,6 +27,7 @@ export function Tasks() {
         {t.state === 'todo' && t.waive ? <Btn kind="sm" t="task-wave" d={{ v: t.id }} onClick={() => act(() => { const r = E.taskWave(S, t.id); say(r.msg, { err: !r.ok }); })}>Not this week</Btn> : null}
         {t.state === 'waved' ? <Btn kind="sm" t="task-unwave" d={{ v: t.id }} onClick={() => act(() => { E.taskUnwave(S, t.id); })}>Put it back</Btn> : null}
       </span></li>)}</ul> : <p class="good">Nothing is waiting on your desk this week.</p>}
+    <div class="row opts mt1"><span class="muted">From the desk:</span><Btn kind="sm" t="open-voices" onClick={() => openVoices()}>Commentary desk</Btn></div>
     {T.list.length ? <p class="muted mt1" data-t="task-note">{!T.strict ? 'Reminders only. You turned off the rule that tasks come first (Options).'
       : (T.todo ? T.todo + ' to do. ' + (T.show ? 'A show cannot run until ' + (T.show === 1 ? 'it is' : 'they are') + ' done or left for another week.' : 'The week cannot end until ' + (T.todo === 1 ? 'it is' : 'they are') + ' done.') : 'Everything that had to be done is done.')}</p> : null}
   </div>;

@@ -1,7 +1,7 @@
 /* The Office pop-ups: the week-closed summary and the clock detail. Both are drawn from the live game state. */
 import { E } from '../../engine';
-import { G, me, Modal, full, openModal } from '../../store';
-import { Window, ColChart, Dial, Empty, Txt, Name } from '../../kit';
+import { G, me, Modal, full, cash, openModal, act, say, view, slice } from '../../store';
+import { Window, ColChart, Dial, Empty, Txt, Name, Btn, Tag } from '../../kit';
 
 /** Opened by flow.endWeek() once the engine has closed the week: the money, the last ten weeks, the news, the new date. */
 export function WeekClosed(p: { m: Modal }) {
@@ -53,3 +53,29 @@ export function ClockWindow(p: { m: Modal }) {
     </div>
   </Window>;
 }
+
+/** The commentary desk, picked from the Office. `m.k` is the chair to fill first. The first of the desk pop-ups:
+    a task is answered where it stands, and the player never has to leave the Office for it. */
+export function VoicesWindow(p: { m: Modal }) {
+  const S = G.S, V = E.voices(S), st = slice<{ seat: string; msg: string; err: boolean }>('voices', () => ({ seat: 'pbp', msg: '', err: false }));
+  const seat = st.seat === 'col' ? 'col' : 'pbp', word = seat === 'pbp' ? 'play-by-play' : 'colour';
+  const run = (fn: () => any, next?: string) => act(() => { const r = fn(); st.msg = r.text; st.err = !r.ok; say(r.text, { err: !r.ok }); if (r.ok && next) st.seat = next; });
+  const chair = (k: string, label: string, v: any, skill: string) => <li class={seat === k ? 'on' : undefined} data-t="voice-chair" data-v={k} data-full={v ? '1' : '0'}>
+    <span><b>{label}</b> {v ? <><span>{v.name}</span> <span class="muted">{'·'} {skill} {v[k]} {'·'} {'$' + v.wage.toLocaleString('en-US')} a week</span></> : <span class="muted">Empty</span>}{seat === k ? <> <Tag kind="warn">Picking</Tag></> : null}</span>
+    <span class="row opts">{seat !== k ? <Btn kind="sm" t="voice-seat" d={{ v: k }} onClick={() => view(() => { st.seat = k; })}>Pick for this chair</Btn> : null}
+      {v ? <Btn kind="sm" t="voice-drop" d={{ v: k }} onClick={() => run(() => E.dropVoice(S, k))}>Let go</Btn> : null}</span></li>;
+  const pool: any[] = V.pool.slice().sort((a: any, b: any) => b[seat] - a[seat]).slice(0, 6);
+  return <Window title="The commentary desk" wide ok="Done">
+    {st.msg ? <p class={(st.err ? 'bad' : 'good') + ' mb1'} role="status" data-t="voice-msg">{st.msg}</p> : null}
+    <ul class="list">{chair('pbp', 'Play-by-play', V.pbp, 'calling')}{chair('col', 'Colour', V.col, 'colour')}</ul>
+    {V.chem != null ? <p class="mt1">Together: <b class={V.chem >= 1.5 ? 'good' : (V.chem <= -1.5 ? 'bad' : undefined)}>{E.chemWord(V.chem)}</b>. A good desk lifts every match and helps stories get across.</p>
+      : <p class="muted mt1">Two voices that work well together lift every match and help stories get across. A weak desk drags them down.</p>}
+    <p class="eyebrow mt2">Available for the {word} chair</p>
+    {pool.length ? <ul class="list" data-t="voice-pool">{pool.map((v: any) => { const ch = seat === 'pbp' ? v.chemPbp : v.chemCol; return <li key={v.id}>
+      <span><b>{v.name}</b> <span class="muted">{'·'} {v.style} {'·'} calling {v.pbp}, colour {v.col} {'·'} {'$' + v.wage.toLocaleString('en-US')} a week</span>{ch != null ? <> <span class={ch >= 1.5 ? 'good' : (ch <= -1.5 ? 'bad' : 'muted')}>{'·'} {E.chemWord(ch)} with your other voice</span></> : null}</span>
+      <span class="row opts"><Btn kind="sm" t="desk-hire" d={{ id: v.id }} onClick={() => run(() => E.hireVoice(S, v.id, seat), (seat === 'pbp' ? V.col : V.pbp) ? undefined : (seat === 'pbp' ? 'col' : 'pbp'))}>Sign</Btn></span></li>; })}</ul>
+      : <Empty>Nobody is available right now. New voices come on the market each year.</Empty>}
+  </Window>;
+}
+/** Open the commentary desk pop-up on one chair. */
+export function openVoices(seat?: string) { const st = slice<{ seat: string; msg: string; err: boolean }>('voices', () => ({ seat: 'pbp', msg: '', err: false })); st.seat = seat === 'col' ? 'col' : 'pbp'; st.msg = ''; openModal({ kind: 'voices' }); }

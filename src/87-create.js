@@ -6,13 +6,14 @@
      a belt   a division with no title of its own; enough regular teams for tag belts; a roster that has outgrown
               the titles it has (a second title, then a third); a new weekly show that needs a title of its own.
      a show   a company on a boom; a hit in prime time; a roster too big for the nights it has.
-   No company adds more than one belt in a year or one show in two, and a network wants a year of a booker's shows
-   before it talks about another night. The player needs an occasion that is open. A rival needs one that has come
+   No company adds more than one belt in a year or one show in two. Nothing is locked in a booker's first years:
+   the occasion is what makes it rare. A show is never cancelled by a rival: it moves to a smaller network
+   (src/88-shows.js). The player needs an occasion that is open. A rival needs one that has come
    about since the game began, looks once a year, and does one thing at most. Across all the rivals, new belts come
    at least 36 weeks apart and new shows at least 72 (S.mkw), so each one is news on its own.
    P.mk = {img, belt, show, c0} is where a company stood when the game began or when it last added a show (img),
    the weeks it last added a belt and a show, and the roster counts it started with. P.grown is the record. */
-var MAKE_SHOWS=3,MAKE_PER_SHOW=12,MAKE_WAIT=8,MAKE_BELT_GAP=48,MAKE_SHOW_GAP=96,MAKE_BOOM=5,MAKE_CROWD=16,MAKE_FIRST=48,WORLD_BELT_GAP=36,WORLD_SHOW_GAP=72;
+var MAKE_SHOWS=3,MAKE_PER_SHOW=12,MAKE_WAIT=8,MAKE_BELT_GAP=48,MAKE_SHOW_GAP=96,MAKE_BOOM=5,MAKE_CROWD=16,WORLD_BELT_GAP=36,WORLD_SHOW_GAP=72;
 var BELT_NEED={div:6,tag:4,second:14,third:24};
 var MAKE_DAYS=['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
 var MAKE_SHOW_WORDS=['Uproar','Bell Time','Turnbuckle','Roll Call','Open Challenge','Marquee','Late Card','Ringside','Headlock','Proving Ground','Main Line','Spotlight'];
@@ -49,7 +50,6 @@ function makeShowWhy(S,P){
   if(P.shows.length>=MAKE_SHOWS)return 'Three weekly shows is as many as a company can run.';
   var mk=mkOf(S,P);
   if(mk.show!=null&&S.week-mk.show<MAKE_SHOW_GAP)return 'A new weekly show comes along once in years. '+P.name+' launched one '+(S.week-mk.show)+' weeks ago. The next can be asked for after '+cal(mk.show+MAKE_SHOW_GAP).label+'.';
-  if(S.week-(mk.t0||0)<MAKE_FIRST)return 'A network wants to see a year of your shows before it talks about another night. Ask after '+cal((mk.t0||0)+MAKE_FIRST).label+'.';
   if(!showOccasions(S,P).some(function(x){return x.open;}))return MAKE_SHOW_NONE;
   var n=makeWrestlers(S,P).length,need=MAKE_PER_SHOW*(P.shows.length+1);
   if(n<need)return 'Another weekly show needs a roster of '+need+'. You have '+n+'.';
@@ -215,7 +215,7 @@ E.makeInfo=function(S){
   P.shows.forEach(function(s){MAKE_DAYS.forEach(function(d){if(s.name.indexOf(d)>=0)used[d]=1;});});
   var day=MAKE_DAYS.filter(function(d){return !used[d];})[0]||'Sunday';
   return {
-    shows:P.shows.map(function(s){return {id:s.id,name:s.name,size:makeSizeWord(s.mult==null?1:s.mult),since:s.since||null,income:Math.round(makeShowIncome(P,s)),own:!!s.since};}),
+    shows:P.shows.map(function(s){return {id:s.id,name:s.name,size:makeSizeWord(s.mult==null?1:s.mult),since:s.since||null,income:Math.round(makeShowIncome(P,s)*airPF(P,s)*(1+(airRate(P,s)-1)*0.5)),own:!!s.since};}),
     showMax:MAKE_SHOWS,showCan:!sw,showWhy:sw,showCost:makeShowCost(P),showCheck:sw?null:makeShowCheck(S,P),showNeed:MAKE_PER_SHOW*(P.shows.length+1),showSay:day+' Night '+MAKE_SHOW_WORDS[(S.week+P.shows.length)%MAKE_SHOW_WORDS.length],
     showGain:Math.round(makeShowIncome(P,{mult:0.4})),showProd:Math.round(P.prod),
     titles:P.titles.map(function(t){return {id:t.id,name:t.name,g:t.g,lvl:t.lvl,tag:!!t.tag,prestige:Math.round(t.prestige),holders:t.holders.slice(),busy:titleBusy(S,P,t.id),born:t.born||null};}),
@@ -239,16 +239,18 @@ function rivalNew(x,c,c0){
   if(k==='tag')return (c0['t'+g]||0)<BELT_NEED.tag;
   return (c0[g]||0)<BELT_NEED[k];
 }
-/** A rival's look at itself, once a year. It does one thing at most: cancel a show it cannot carry, launch one on a boom, or add a belt. */
+/** A rival's look at itself, once a year. It does one thing at most: move a show it cannot carry to a smaller network, launch one on a boom, or add a belt. A show is never cancelled. */
 function rivalGrow(S,P){
   var MD=modelOf(P),mk=mkOf(S,P),ros=makeWrestlers(S,P),n=ros.length,k=P.shows.length,W=S.mkw||(S.mkw={belt:null,show:null});
   if(k>1&&(P.cash<0||n<10*k)){
-    var sh=P.shows.filter(function(s){return s.since;}).pop()||P.shows[P.shows.length-1];removeShow(S,P,sh);mkLog(P,'cut',sh.name,P.cash<0?'The money ran out':'Not enough people to fill it').w=S.week;
-    news(S,'world',P.name+' cancelled '+sh.name+'. '+(P.cash<0?'The company is losing money.':'The roster is too thin to fill it.'));return;
+    var sh=P.shows.filter(function(s){return s.since;}).pop()||P.shows[P.shows.length-1],mv=airDemote(S,P,sh);
+    if(mv){mkLog(P,'move',sh.name,P.cash<0?'The money ran out':'Not enough people to fill it').w=S.week;
+      news(S,'world',sh.name+' has lost its place on '+mv.from+'. '+P.name+' has moved it to '+mv.to+', a smaller network. '+(P.cash<0?'The company is losing money.':'The roster is too thin to carry it.'));}
+    return;
   }
   // another weekly show: only on a boom, with the people and the money for it, and not twice in two years
   // a third show waits until the ones the company launched have found their audience
-  if(k<MAKE_SHOWS&&S.week-(mk.t0||0)>=MAKE_FIRST&&(mk.show==null||S.week-mk.show>=MAKE_SHOW_GAP)&&(W.show==null||S.week-W.show>=WORLD_SHOW_GAP)&&P.cash>0&&P.image>=mk.img+MAKE_BOOM+1&&P.image>=50+10*(k-1)&&n>=14*(k+1)&&P.shows.every(function(q){return !q.since||q.mult>=0.7;})){
+  if(k<MAKE_SHOWS&&(mk.show==null||S.week-mk.show>=MAKE_SHOW_GAP)&&(W.show==null||S.week-W.show>=WORLD_SHOW_GAP)&&P.cash>0&&P.image>=mk.img+MAKE_BOOM+1&&P.image>=50+10*(k-1)&&n>=14*(k+1)&&P.shows.every(function(q){return !q.since||q.mult>=0.7;})){
     var used={};P.shows.forEach(function(s){MAKE_DAYS.forEach(function(d){if(s.name.indexOf(d)>=0)used[d]=1;});});
     var days=MAKE_DAYS.filter(function(d){return !used[d];}),sn=(days.length?makePick(S,days):'Sunday')+' Night '+makePick(S,MAKE_SHOW_WORDS);
     if(!P.shows.some(function(s){return s.name===sn;})){

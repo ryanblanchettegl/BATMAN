@@ -3,8 +3,8 @@ import { ComponentChildren } from 'preact';
 import { Modal } from '../../store';
 import { Desk } from './Desk';
 import { Career } from './Career';
-import { WeekClosed, ClockWindow, AnnualReport } from './Windows';
+import { WeekClosed, ClockWindow, AnnualReport, VoicesWindow } from './Windows';
 
 export const pages: Record<string, () => ComponentChildren> = { desk: Desk, career: Career };
-export const modals: Record<string, (p: { m: Modal }) => ComponentChildren> = { weekclosed: WeekClosed, annual: AnnualReport, clock: ClockWindow };
+export const modals: Record<string, (p: { m: Modal }) => ComponentChildren> = { weekclosed: WeekClosed, annual: AnnualReport, clock: ClockWindow, voices: VoicesWindow };
 export { GameOver } from './GameOver';

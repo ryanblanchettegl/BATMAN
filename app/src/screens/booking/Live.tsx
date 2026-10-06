@@ -50,6 +50,8 @@ function TitleCard(p: { r: any }) {
       {r.big ? <Banner text={r.name.replace(P.name + ' ', '')} /> : <div class="show">{r.name}</div>}
       <Rule />
       <p><b>Live from the {r.venue}</b> {'·'} {E.cal(r.week).label}</p>
+      {r.ep && !r.big ? <p class="muted" data-t="live-ep">Episode {r.ep.toLocaleString('en-US')}{r.net ? ' · on ' + r.net : ''}</p> : null}
+      {r.occ ? <p class="gold" data-t="live-occ">Tonight: {r.occ.x.toLowerCase()}. The building is up for it.</p> : null}
       <p>Your hosts: {r.ann[0]} and {r.ann[1]}</p>
       <p><span class="gold">Tonight’s main event:</span> <b>{r.lineup[last]}</b></p>
       {pre ? <p class="good">Before the show: {pre}</p> : null}

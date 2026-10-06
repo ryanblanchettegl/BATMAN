@@ -33,7 +33,7 @@ function showStart(S,P,show,card){
     var hype=clamp(1+(star-(P.starB[key]||star))/80+heat/500+ADV_H[P.adv]+(isPl&&S.hype?S.hype:0)+(isPl?faceHype(S,P,card):0),0.8,1.4),dm=TIX_D[P.tix],d=demand(P,show,1)*(isPl?tourBoost(S,P)*tasteDraw(S,P,card,rep):1),cap=capFor(d);
     rep.hype=hype;rep.cap=cap;rep.att=Math.round(Math.min(cap,d*hype*dm));rep.sellout=rep.att>=cap;
     rep.energy=isPl?clamp((hype*dm-1)*9,-2,2):0;
-    if(isPl){rep.venue=venueFor(S,P,cap);rep.ann=(deskNames(S,P)||P.ann).slice();S.hype=0;
+    if(isPl){rep.venue=venueFor(S,P,cap);rep.ann=(deskNames(S,P)||P.ann).slice();var air=airStart(S,P,show);if(air){rep.ep=air.ep;rep.net=air.net;if(air.occ)rep.occ=air.occ;}S.hype=0;
       rep.lineup=card.map(function(m){var t=m.title?titleById(P,m.title):null;return vsLabel(m.sides.map(function(ids){return ids.map(function(id){return S.w[id];});}))+(t?' — '+t.name:'');});}
   }
   var st={rep:rep,used:{},angled:{},k:0,steps:[]};
@@ -78,14 +78,14 @@ function showEnd(S,P,show,card,st){
   if(S.cal)return rep;
   var exp=expected(P,show);
   if(isPl&&rep.venue){var bar=barCity(S,rep.venue);if(bar){exp+=bar.d;rep.barNote=bar.note;}}
-  var qf=clamp(1+(P.trend||0)/60,0.85,1.15)*(SLOT_V[P.slot]/SLOT_V[P.slot0])*(1+0.03*(P.prodLvl-P.prod0));
+  var qf=clamp(1+(P.trend||0)/60,0.85,1.15)*(SLOT_V[P.slot]/SLOT_V[P.slot0])*(1+0.03*(P.prodLvl-P.prod0))*airPF(P,show);
   rep.exp=r1(exp);
   var mx=mixOf(P);
-  rep.viewers=Math.round(viewersK(P,show,qf)*1000);rep.gate=Math.round(rep.att*ticket(P,show)*TIX_P[P.tix]*mx.gate);rep.tv=Math.round(rep.viewers/1000*P.tvRate*mx.tv);
+  rep.viewers=Math.round(viewersK(P,show,qf)*1000);rep.gate=Math.round(rep.att*ticket(P,show)*TIX_P[P.tix]*mx.gate);rep.tv=Math.round(rep.viewers/1000*P.tvRate*mx.tv*airRate(P,show));
   rep.buys=big?Math.round(buysK(P,show,rep.hype)*1000):0;rep.ppv=Math.round(rep.buys*22*mx.ppv);
-  P.led.tv+=rep.tv;P.led.gate+=rep.gate;P.led.ppv+=rep.ppv;P.led.prod+=P.prod*(big?4:1)*PRODF[P.prodLvl]/PRODF[P.prod0];
+  P.led.tv+=rep.tv;P.led.gate+=rep.gate;P.led.ppv+=rep.ppv;P.led.prod+=P.prod*(big?4:1)*PRODF[P.prodLvl]/PRODF[P.prod0]*airProd(P,show);
   var before=P.image;
-  P.image=clamp(P.image+(rep.rating-exp)*(big?0.08:0.03*showMult(show)),5,modelOf(P).cap||100);rep.dImage=r1(P.image-before);
+  P.image=clamp(P.image+(rep.rating-exp)*(big?0.08:0.03*showMult(show)*airReach(P,show)),5,modelOf(P).cap||100);rep.dImage=r1(P.image-before);
   P.trend=(P.trend||0)*0.6+(rep.rating-exp)*0.4;P.mainB[key]=(P.mainB[key]||rep.mainOv)*0.9+rep.mainOv*0.1;
   P.last={name:show.name,rating:rep.rating,week:S.week};
   // the crowd gets used to about half of whatever you keep giving it, good or bad
