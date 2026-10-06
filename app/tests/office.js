@@ -36,6 +36,11 @@ async function run(mode) {
   ok(await count('.onews li') >= 1, 'office news has a memo');
   for (const t of ['Before the show', 'Inbox', 'This week', 'Promises and targets', 'Worth knowing', 'Clocks', 'Office news']) ok((await page.$$eval('.panel > h2', L => L.map(e => e.textContent))).includes(t), 'panel: ' + t);
   ok(await count('[data-t="book-show"]') === 1 && await count('[data-t="endweek"]') === 0, 'a show to book, no end-week button yet');
+  /* backstage is people, not rooms: five rooms, a face for everybody who is there for a reason, and what a point does about it */
+  ok(await count('[data-t="ppl-room"]') === 5 && await count('[data-t="ppl-who"]') >= 1 && await count('[data-t="ppl-who"] canvas') === await count('[data-t="ppl-who"]'), 'backstage shows people with faces, room by room');
+  await page.click('[data-t="ppl-who"]');
+  ok(await count('[data-t="ppl-det"] [data-t="ppl-do"]') >= 1 && (await txt('[data-t="ppl-det"]')).length > 40 && await state(page, S => S.ap) === await state(page, S => window.GP.backstage(S).max), 'picking somebody says why they are there and what a point does, and costs nothing yet');
+  await page.click('[data-t="ppl-who"]');
   await step('desk', 'desk');
   await page.click('[data-t="book-next"]'); ok(await page.evaluate(() => window.EWF_DEBUG.ui.page) === 'booking', 'Book the next show opens Booking'); await go(page, 'desk');
 

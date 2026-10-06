@@ -487,3 +487,18 @@ html[data-music="off"] .mus::after{content:' off';color:var(--dred)}
   #app{display:none}
   body::before{content:'EWF 9000 needs a wide screen. Turn your device sideways, or make the window wider.';position:fixed;inset:0;z-index:99;display:flex;align-items:center;justify-content:center;text-align:center;padding:2em;background:var(--blue);color:var(--yellow);font-size:1.3em;line-height:1.4}
 }
+
+/* backstage as people, not rooms: a column a room, a face a person, and under each why they are there */
+.ppl{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));border:4px double var(--grey);margin-top:10px}
+.ppl .pl{border:1px solid var(--dcyan);padding:.4em .6ch;min-height:8.5em;min-width:0}
+.ppl .pl h4{margin:0 0 .3em;color:var(--yellow);text-transform:uppercase;font-weight:normal}
+.ppl .who{all:unset;box-sizing:border-box;cursor:pointer;display:flex;gap:1ch;align-items:flex-start;width:100%;padding:.25em .4ch;margin:.15em 0}
+.ppl .who .pf{width:5ch;height:5ch;flex:none;border:2px solid var(--dcyan);image-rendering:pixelated}
+.ppl .who b{display:block;color:var(--white);font-weight:normal}
+.ppl .who .wy{display:block}
+.ppl .who:hover,.ppl .who:focus-visible,.ppl .who.on{background:#0b6470;outline:0}
+.ppl .who.on{box-shadow:inset 0 0 0 2px var(--yellow)}
+.ppl .who.used{opacity:.5}
+.ppl .nobody{display:block;padding:.3em .4ch}
+.bsmap.small{grid-template-columns:repeat(7,minmax(0,1fr))}
+.bsmap.small .room{padding:4px .5ch}.bsmap.small .room pre{display:none}.bsmap.small .room:nth-child(7){grid-column:auto}

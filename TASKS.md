@@ -306,6 +306,24 @@ Ryan, 4 October: "After a show, it should go back to the Office or your desk, so
 - [ ] The same for every other task on the desk, so everything can be done from the Office: sponsor offers, the venue, contracts that are running out, a vacant title.
 - [ ] The people available are the hired voices on the market. Wrestlers, managers and legends at the desk wait for the character sheet work.
 
+### 0j. Backstage: people, not rooms (0.32)
+
+Ryan, 6 October, after seeing three mock-ups: "I like people not rooms. Let's expand on this concept and game it. I want the people who show up in these rooms to be connected to ongoing storylines or the current goings-on in your company." Code: `src/79-people.js`, `People` in `app/src/screens/office/BeforeShow.tsx`. Tests: `node test-people.js`, `app/tests/office.js`.
+
+- [x] The desk shows five rooms as columns, with a face for everybody who is there and one line saying why. Nobody is there by chance.
+- [x] Who shows up, and what one action point does about it:
+  - **Trainer's room:** hurt (stand over the trainer for a week off, or look in on them), worn down (the full treatment). A champion comes first.
+  - **Catering:** went home furious after the last show (sit down with them: an attempt, and it answers the matter on the desk), low (the same), real heat with somebody (make them shake hands, or put it on television as a rivalry), the owner's favourite (ask them to put in a word).
+  - **Parking lot:** a rival's offer or a contract running down (tell them you want them to stay), the villain of the hottest rivalry waiting for the other one (let it happen with a camera on it).
+  - **Gym:** the one the breakout clock is following (work with them yourself), an act the crowd is with (tell them they are next: a promised win), two rivals who do not click in the ring (make them walk through it).
+  - **Production truck:** somebody with an idea for the next chapter of a rivalry (shoot it), the champion who wants to know who is next, a newcomer who has not appeared (a teaser), the one the shows are built around (walk them through the show).
+- [x] One point, one person, once a week each. Everything done is remembered by the people involved and is on the week's log.
+- [x] The rooms' own actions are still there under "Around the building".
+- [ ] More reasons, from more of the game: a stable falling out, a tag team that wants to split, a mentor and a rookie, somebody back from injury, a title promise coming due, the dirt sheet's rumour of the week, a sponsor's guest, a rival's star in the building.
+- [ ] People talking to each other: two faces in one room as a scene, and the choice is which side to take.
+- [ ] The desk is not a one-screen page yet. This is the first piece of making it one: the people grid is the middle of that page.
+- [ ] The court and the owner are still rooms. They could become people too (the judge's bench, the owner at the desk).
+
 ### 1. Finish the pop-ups (small)
 Feature list items 10 and 11. Code: `app/src/shared/cards.tsx`, `Name`, `TitleName`, `TeamName` and `Txt` in `app/src/kit/index.tsx`, the card stack in `app/src/store.ts`.
 

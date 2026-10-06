@@ -397,5 +397,5 @@ WEEKX.push(function(S){
   });
   if(S.court.length<2&&chance(S,0.15+(hasRule(S,'kayfabe')?0.08:0)-(hasRule(S,'curfew')?0.07:0)+(R.some(function(w){return w.role==='toxic';})?0.06:0)+(R.some(function(w){return w.role==='leader'&&w.morale>=50;})?0:0.07))){var c=mkCase(S);if(c){S.court.push(c);news(S,'story','A case for wrestlers’ court: '+c.text);}}
   tickClocks(S);
-  S.ap=apMax(S);S.apUsed={};S.apLog=[];
+  S.ap=apMax(S);S.apUsed={};S.apWho={};S.apLog=[];
 });
