@@ -317,13 +317,15 @@ Ryan, 4 October: "After a show, it should go back to the Office or your desk, so
 - [ ] The same for every other task on the desk, so everything can be done from the Office: sponsor offers, the venue, contracts that are running out, a vacant title.
 - [ ] The people available are the hired voices on the market. Wrestlers, managers and legends at the desk wait for the character sheet work.
 
-### 0m. Buttons that open pop-ups (building towards 0.36: three of five changes done)
+### 0m. Buttons that open pop-ups, and people at your door (0.36)
 
 - [x] **1. Manage is buttons.** Ryan, 6 October: "On the manage screen, I love all the different options. But I want them all to be buttons you hit that a pop up comes up with the selectable options." Operations is fifteen buttons in four groups (On the air, At the door, Your people, The books). House is two, Deals is seven. Each says what it is set to now. The pop-up holds the same choices as before. The sponsor task and the new owner's house style task open their pop-up directly.
 - [x] **2. Storylines is buttons.** Ryan: "I would like the storyline page to be buttons too." Break up a tag team, push a wrestler, buy a pre-tape and the long plan are four buttons with their price. Each opens a pop-up with the choices.
 - [x] **3. Backstage buttons say what they do.** Ryan: "the buttons need to more accurately describe what they do rather than vague things like hold a production meeting. It has to be clear and look good." Each button is named for what you get (Train two wrestlers together, Advertise your next show, Ask the owner for 3 more booking power), says the effect in a line, shows the chance or "Sure thing", and sits in one of four groups: Your people, Your next show, The stories, The money and the office.
-- [ ] Two more changes before the version number moves.
-- [ ] A result pop-up replaces the pop-up it came from. It should go back to it.
+- [x] **4. A result goes back to the pop-up it came from.** On Manage and Storylines, closing a result returns to the choices, so several things can be done in one visit. (`BACK_TO` in `app/src/store.ts`.)
+- [x] **5. People come to Your office to ask for things.** Up to two a week, different each week, and only when it is true of them: a title shot (on a roll and close enough to the champion), out of a rivalry that has gone cold, a turn to villain (losing, unhappy, no story), or a team with a friend. Say yes or say no: neither costs an action point. Yes is a real thing in the game (a promised title match the game holds you to, the rivalry ends, they turn, the team is formed). No is remembered. Not seeing them at all is remembered too. Nobody asks again for twelve weeks. Code: the `ask` block in `peopleNow()` and the `_yes` and `ask_no` entries of `PPL_ACT` in `src/79-people.js`. Tests: `node test-people.js` (a1 to a5).
+  - [ ] More to ask for: a raise, time off, a new look, a match with somebody they name, off a show.
+  - [ ] A third answer: not yet, but here is what it would take.
 
 ### 0l. The Office: The desk, Backstage, Storylines (0.35)
 
@@ -338,7 +340,7 @@ Ryan, 6 October: "Backstage needs to move to its own page in the office menu. Th
   - Push a wrestler (2): momentum now, a little more standing, and the two nearest them on the card get jealous. Once in eight weeks each.
   - Buy a budget pre-tape (1): an interview, a call-out or an attack, for the next show, at the start, the middle or the end. It is on the run sheet at once, takes five minutes, grades a little under a live one, and a suggested card keeps it. One a show.
   - [ ] More to buy: a turn, a title shot, a new stable, a mystery, a return. And prices that move with how hot the story is.
-- [ ] People coming to Your office should be able to ask for things: a title shot, a turn, a new partner, out of a rivalry. Say yes, say no, or make a promise.
+- [x] (0.36) People coming to Your office ask for things. Section 0m.
 
 ### 0k. Core systems: six changes (0.34)
 

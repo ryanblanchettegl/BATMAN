@@ -20,7 +20,7 @@ function peopleNow(S){
   PPL_ROOMS.forEach(function(k){out[k]=[];});
   var put=function(room,w,k,why,tone,acts,o){
     if(!w||seen[w.id]||out[room].length>=PPL_MAX)return false;seen[w.id]=1;
-    out[room].push({id:w.id,k:k,why:why,tone:tone||'',acts:acts,with:o&&o.with!=null?o.with:null,story:o&&o.story||null,used:!!used[w.id]});return true;
+    out[room].push({id:w.id,k:k,why:why,tone:tone||'',acts:acts,with:o&&o.with!=null?o.with:null,story:o&&o.story||null,tid:o&&o.tid||null,used:!!used[w.id]});return true;
   };
   var here=function(w){return w&&w.promo===P.id&&!w.nw&&!(w.away>=S.week)&&!w.camp;};
   var byOvr=R.slice().sort(function(a,b){return b.ovr-a.ovr;});
@@ -58,6 +58,19 @@ function peopleNow(S){
   if(here(fav)&&!(fav.inj>0))put('office',fav,'fav',S.owner.name+'’s favourite. In with the owner again, with the door shut','',['word'],{});
   /* wrestlers' court: whoever has brought a case, and who it is against */
   (S.court||[]).forEach(function(c){var a=S.w[c.a],b=S.w[c.b];if(here(a)&&b)if(put('court',a,'case','Has brought a case against '+b.name,'warn',[],{with:b.id,story:'The court is waiting for you to hear it'}))seen[b.id]=seen[b.id]||0;});
+  /* people who came to your office to ask for something: at most two a week, and it changes week to week.
+     Saying yes or no costs no action point. Not seeing them at all is noticed. */
+  var asks=[],wkh=function(w){return hash('ask'+S.seed+':'+S.week+':'+w.id);},free=function(w){return here(w)&&!(w.inj>0)&&!seen[w.id]&&!hasQuest(S,w.id)&&!(S.lcd&&S.lcd['ak'+w.id]!=null&&S.week-S.lcd['ak'+w.id]<12);};
+  byOvr.forEach(function(w){
+    if(!free(w))return;var f=pplFeudOf(S,P,w.id),t=P.titles.filter(function(x){return !x.tag&&x.g===w.g&&x.holders.length&&x.holders[0]!==w.id;}).sort(function(a,b){return b.lvl-a.lvl;})[0];
+    if(holdLvl(P,w.id)===0&&(w.mom||0)>=2&&t&&S.w[t.holders[0]]&&w.ovr>=S.w[t.holders[0]].ovr-22)asks.push({w:w,k:'askshot',why:'Came in to ask for a shot at the '+t.name,acts:['shot_yes','ask_no'],o:{with:t.holders[0],story:'On a roll, and wants it to mean something',tid:t.id}});
+    else if(f&&f.heat<32&&S.week-f.start>=6)asks.push({w:w,k:'askout',why:'Came in to ask out of the rivalry with '+pplOther(S,f,w.id).name+'. It is going nowhere',acts:['out_yes','ask_no'],o:{with:pplOther(S,f,w.id).id,story:'The rivalry has gone cold'}});
+    else if(w.align==='F'&&w.morale<50&&(w.mom||0)<=-2&&!f)asks.push({w:w,k:'askturn',why:'Came in to ask for a change. Wants to turn villain',acts:['turn_yes','ask_no'],o:{story:'Losing, and the crowd has stopped caring'}});
+    else if(w.team==null&&!f&&holdLvl(P,w.id)===0){var fr=byOvr.filter(function(x){return x.id!==w.id&&x.g===w.g&&x.team==null&&free(x)&&holdLvl(P,x.id)===0&&bondOf(S,w.id,x.id)>=REL_ON;})[0];
+      if(fr)asks.push({w:w,k:'askteam',why:'Came in to ask to team with '+fr.name+'. They are friends',acts:['team_yes','ask_no'],o:{with:fr.id,story:'Neither has much going on alone'}});}
+  });
+  var pri={askshot:0,askout:1,askturn:2,askteam:3};
+  asks.sort(function(a,b){return pri[a.k]-pri[b.k]||wkh(a.w)-wkh(b.w);}).slice(0,2).forEach(function(q){put('truck',q.w,q.k,q.why,'warn',q.acts,q.o);});
   var face=typeof faceOf==='function'?faceOf(S):null;
   if(here(face)&&!(face.inj>0))put('truck',face,'face','The shows are built around them. Came in to see the run sheet','good',['run'],{});
   return out;
@@ -108,6 +121,21 @@ var PPL_ACT={
     run:function(S,P,w){w.morale=clamp(w.morale+5,0,100);stressAdd(S,w,-4);S.hype=(S.hype||0)+0.02;youRemember(S,w,'plan','You sat down and told them where the title was going.',5);return {ok:true,msg:w.name+' leaves knowing the plan, and likes being told first. A champion who believes in the story sells it.'};}},
   word:{n:'Ask them to put in a word',d:'The owner listens to this one. A little more trust upstairs. They will expect to be looked after.',
     run:function(S,P,w){S.owner.trust=clamp(S.owner.trust+3,0,100);youRemember(S,w,'favour','You asked them for a favour with '+S.owner.name+'. They will want one back.',2);return {ok:true,msg:w.name+' has a word with '+S.owner.name+'. It lands. You owe them one now.'};}},
+  shot_yes:{n:'Say yes: promise the title match',free:1,d:'You give your word: a match for the belt within six weeks. They will hold you to it.',
+    run:function(S,P,w,o,r,p){var t=titleById(P,p.tid);if(!t)return {ok:false,stop:true,msg:'That belt is no longer there to promise.'};
+      S.quests.push({id:S.nid++,type:'shot',w:w.id,title:t.id,due:S.week+6,text:'Promise: give '+w.name+' a match for the '+t.name+' by '+cal(S.week+6).label});w.morale=clamp(w.morale+8,0,100);youRemember(S,w,'saidyes','They asked for a title shot and you said yes to their face.',6);
+      return {ok:true,msg:'You gave your word. '+w.name+' gets a match for the '+t.name+' by '+cal(S.week+6).label+'.'};}},
+  out_yes:{n:'Say yes: end the rivalry',free:1,d:'The rivalry is dropped where it stands. Both of them are free for something new.',
+    run:function(S,P,w,o){var f=o?feudOf(S,w.id,o.id):null;if(!f)return {ok:false,stop:true,msg:'That rivalry is already over.'};f.res=true;f.dead=true;f.end=S.week;w.morale=clamp(w.morale+5,0,100);youRemember(S,w,'listened','They asked out of a rivalry that was going nowhere, and you listened.',5);
+      return {ok:true,msg:'The rivalry between '+w.name+' and '+o.name+' is over, quietly. '+w.name+' is grateful, and free for something new.'};}},
+  turn_yes:{n:'Say yes: they turn villain',free:1,d:'They change sides. A fresh start, and a reason for the crowd to care again.',
+    run:function(S,P,w){w.align='H';w.mom=clamp((w.mom||0)+2,-10,10);w.morale=clamp(w.morale+8,0,100);youRemember(S,w,'turned','They asked to turn villain and you let them.',6);news(S,'story',w.name+' has turned villain.');
+      return {ok:true,msg:w.name+' is a villain now. Book it on a show so the crowd sees why.'};}},
+  team_yes:{n:'Say yes: they are a team',free:1,d:'The two of them become a regular tag team.',
+    run:function(S,P,w,o){if(!o||w.team!=null||o.team!=null)return {ok:false,stop:true,msg:'One of them is already in a team.'};formTeam(S,P,w,o,8);[w,o].forEach(function(x){x.morale=clamp(x.morale+6,0,100);youRemember(S,x,'teamed','You put them together with '+(x===w?o.name:w.name)+' when they asked.',5);});
+      return {ok:true,msg:w.name+' and '+o.name+' are a regular team. They start with a little experience and a lot of goodwill.'};}},
+  ask_no:{n:'Say no',free:1,d:'Not now. They will not like it, but they heard it from you.',
+    run:function(S,P,w){w.morale=clamp(w.morale-4,0,100);youRemember(S,w,'saidno','They came to your office with a request and you said no.',-3);return {ok:true,msg:'You say no. '+w.name+' nods, and leaves the door open on the way out.'};}},
   run:{n:'Walk them through the show',d:'The one the shows are built around knows what the night needs. A bigger house next time, and they feel like it is theirs.',
     run:function(S,P,w){S.hype=(S.hype||0)+0.04;w.morale=clamp(w.morale+4,0,100);youRemember(S,w,'trusted','You walked them through the whole show before anybody else saw it.',4);return {ok:true,msg:w.name+' reads the run sheet twice and has one note. It is a good note. Expect a bigger house.'};}}
 };
@@ -116,7 +144,7 @@ E.people=function(S){
   var N=peopleNow(S),P=S.promos[S.player],n=0;
   var rooms=PPL_ROOMS.map(function(k){return {id:k,n:PLACES[k].n,people:N[k].map(function(p){var w=S.w[p.id],o=p.with!=null?S.w[p.with]:null;n++;
     return {id:p.id,name:w.name,k:p.k,why:p.why,tone:p.tone,story:p.story,with:p.with,used:p.used,
-      acts:p.acts.map(function(a){var A=PPL_ACT[a];return {id:a,n:A.n,d:A.d,ck:A.ck?A.ck(S,P,w,o):null};})};})};});
+      acts:p.acts.map(function(a){var A=PPL_ACT[a];return {id:a,n:A.n,d:A.d,free:!!A.free,ck:A.ck?A.ck(S,P,w,o):null};})};})};});
   return {ap:S.ap,max:apMax(S),rooms:rooms,count:n};
 };
 /** Spend one action point on a person. */
@@ -124,13 +152,18 @@ E.peopleDo=function(S,wid,act){
   var N=peopleNow(S),P=S.promos[S.player],p=null,room=null;
   PPL_ROOMS.forEach(function(k){N[k].forEach(function(x){if(x.id===+wid){p=x;room=k;}});});
   if(!p||p.acts.indexOf(act)<0)return {ok:false,msg:'They are not there any more.'};
-  if(S.ap<=0)return {ok:false,msg:'You are out of action points this week.'};
+  var A=PPL_ACT[act];
+  if(S.ap<=0&&!A.free)return {ok:false,msg:'You are out of action points this week.'};
   if(p.used)return {ok:false,msg:'You have already spent time with them this week.'};
-  var A=PPL_ACT[act],w=S.w[p.id],o=p.with!=null?S.w[p.with]:null,r=A.ck?rollCheck(S,A.ck(S,P,w,o)):null,res=A.run(S,P,w,o,r);
+  var w=S.w[p.id],o=p.with!=null?S.w[p.with]:null,r=A.ck?rollCheck(S,A.ck(S,P,w,o)):null,res=A.run(S,P,w,o,r,p);
   if(res.stop)return {ok:false,msg:res.msg};
-  S.ap--;(S.apWho=S.apWho||{})[w.id]=1;if(o)S.apWho[o.id]=1;gainXp(S,4);
+  if(!A.free)S.ap--;else (S.lcd=S.lcd||{})['ak'+w.id]=S.week;(S.apWho=S.apWho||{})[w.id]=1;if(o)S.apWho[o.id]=1;gainXp(S,4);
   var out=(r?rollText(r):'')+res.msg;S.apLog.push({pl:room,place:PLACES[room].n,act:A.n,ok:res.ok,msg:out,who:[w,o].filter(Boolean).map(function(x){return x.name;})});
   return {ok:res.ok,done:true,roll:r,msg:out};
 };
-WEEKX.push(function(S){S.apWho={};});
+WEEKX.push(function(S){
+  // somebody who came to your office to ask for something and was never seen takes it as an answer
+  var N=peopleNow(S);N.truck.forEach(function(p){if(/^ask/.test(p.k)&&!p.used){var w=S.w[p.id];(S.lcd=S.lcd||{})['ak'+w.id]=S.week;w.morale=clamp(w.morale-2,0,100);youRemember(S,w,'waited','They came to your office with a request and you never saw them.',-2);}});
+  S.apWho={};
+});
 E.bondOf=function(S,a,b){return bondOf(S,a,b);};

@@ -51,6 +51,7 @@ async function storylines(page, mode) {
   await fits(page, mode, 'storylines with feuds');
   // the long plan: two picks and a button pencil in the flagship main event
   const ids = await state(page, S => { const P = S.promos[S.player]; return S.w.filter(w => w.promo === P.id && !w.nw && w.inj <= 0).sort((x, y) => y.ovr - x.ovr).slice(0, 2).map(w => w.id); });
+  for (let i = 0; i < 4 && await page.$('.win, .caw'); i++) { await page.keyboard.press('Escape'); await page.waitForTimeout(60); }
   await page.click('[data-t="plot-open"][data-v="plan"]');
   check(mode, 'the long plan is a button that opens a pop-up', (await panel(page, 'The long plan')) !== null && !!(await page.$('.win [data-t="lp-a"]')));
   await page.selectOption('[data-t="lp-a"]', String(ids[0])); await page.selectOption('[data-t="lp-b"]', String(ids[1]));
@@ -62,6 +63,8 @@ async function storylines(page, mode) {
   await page.click('[data-t="plot-open"][data-v="plan"]');
   check(mode, 'the panel shows the plan and a scrap button', /Build so far/.test(await panel(page, 'The long plan')) && !!(await page.$('[data-t="lp-drop"]')));
   await page.click('[data-t="lp-drop"]'); await page.waitForTimeout(150); await page.keyboard.press('Escape');
+  check(mode, 'a result goes back to the pop-up it came from', !!(await page.$('.win [data-t="lp-a"]')));
+  for (let i = 0; i < 4 && await page.$('.win'); i++) { await page.keyboard.press('Escape'); await page.waitForTimeout(60); }
   check(mode, 'scrapping it clears the plan', (await state(page, S => S.lp)) == null);
 }
 async function history(page, mode) {

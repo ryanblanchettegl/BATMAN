@@ -2,7 +2,7 @@
 import { E, GameState } from './engine';
 
 export const KEY = 'ewf9000-save-4', UKEY = 'ewf9000-universes', PKEY = 'gorilla-position-prefs';
-export const VER = '0.35';
+export const VER = '0.36';
 
 /* ---------- preferences ---------- */
 export interface Prefs { snd: boolean; type: boolean; crt: boolean; boot: boolean; screen: 'auto' | 'desk' | 'tablet' | 'tv'; zoom: number; speed: number; motion: 'auto' | 'reduce' | 'full'; fxvol: number; uni: string }
@@ -102,8 +102,10 @@ export function act<T>(fn: () => T): T {
 /** Change view state only (no save): tabs, filters, opening a panel. Clears the last message, like act(). */
 export function view(fn: () => void) { ui.flash = null; fn(); redraw(); }
 
-export function openModal(m: Modal) { ui.modal = m; snd('open'); redraw(); }
-export function closeModal() { if (ui.modal) snd('close'); ui.modal = null; redraw(); }
+/** Pop-ups a result goes back to: a page of choices stays open while the player works through it. */
+const BACK_TO: Record<string, 1> = { mng: 1, plot: 1 };
+export function openModal(m: Modal) { const cur = ui.modal; if (m.kind === 'info' && cur && BACK_TO[cur.kind]) m.back = cur; ui.modal = m; snd('open'); redraw(); }
+export function closeModal() { const back = ui.modal && ui.modal.back; if (ui.modal) snd('close'); ui.modal = back || null; redraw(); }
 /** Open a profile pop-up on top of whatever is showing. Opening the one already on top does nothing. */
 export function openCard(c: Card) {
   const top = ui.cards[ui.cards.length - 1];

@@ -78,11 +78,11 @@ function People(p: { B: any }) {
     {sel ? <div class="roomdet" aria-live="polite" data-t="ppl-det">
       <h3><Name w={S.w[sel.id]} />, in {sel.room.n.replace(/^The /, 'the ')}</h3>
       <p class={sel.tone || 'muted'}>{sel.why}.{sel.story ? <span class="muted"> {sel.story}.</span> : null}</p>
-      {sel.used ? <p class="muted mt1">You have already spent time with them this week.</p> : (B.ap <= 0 ? <p class="bad mt1">You are out of action points this week.</p> : null)}
+      {sel.used ? <p class="muted mt1">You have already spent time with them this week.</p> : (B.ap <= 0 && !sel.acts.some((a: any) => a.free) ? <p class="bad mt1">You are out of action points this week.</p> : null)}
       {sel.room.id === 'court' ? <div class="row mt1"><span class="muted">The case is heard in the court itself.</span><Btn kind="sm" t="ppl-court" onClick={() => openAct('court', 'case')}>Hold court</Btn></div> : null}
       <ul class="list">{sel.acts.map((a: any) => <li class="col" key={a.id}>
         <span><b>{a.n}</b><br /><span class="muted">{a.d}</span>{a.ck ? <CheckLine label={a.n} ck={a.ck} /> : null}</span>
-        <span class="row"><Btn kind="sm" cls="go" t="ppl-do" d={{ v: a.id }} disabled={sel.used || B.ap <= 0} onClick={() => spend(a.id)}>Spend 1 action point</Btn></span></li>)}</ul>
+        <span class="row"><Btn kind="sm" cls={/_no$/.test(a.id) ? undefined : 'go'} t="ppl-do" d={{ v: a.id }} disabled={sel.used || (B.ap <= 0 && !a.free)} onClick={() => spend(a.id)}>{a.free ? (/_no$/.test(a.id) ? 'Say no' : 'Say yes') : 'Spend 1 action point'}</Btn>{a.free ? <span class="muted">No action point</span> : null}</span></li>)}</ul>
     </div> : <p class="muted mt1">Pick somebody. One action point is spent on a person, once a week each. Everybody here is here for a reason.</p>}
   </div>;
 }

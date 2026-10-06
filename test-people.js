@@ -75,5 +75,21 @@ const spare = (S, n) => E.rosterOf(S, S.player).filter(w => !w.nw && !all(S).som
   ok('w2', 'the building is never empty for long, and many kinds of reason come up', most >= 5 && Object.keys(seen).length >= 6, 'between ' + least + ' and ' + most + ' people; ' + Object.keys(seen).join(', '));
   ok('w3', 'a new week clears who has been seen', all(S).every(p => !p.used)); }
 
+/* people who come to your office to ask for something */
+{ const S = fresh(21), P = S.promos.pdw, R = E.rosterOf(S, 'pdw').filter(w => !w.nw && w.g === 'M').sort((x, y) => y.ovr - x.ovr);
+  const ch = P.titles.find(t => !t.tag && t.g === 'M' && t.lvl === 3 && t.holders.length), w = R.find(x => x.id !== ch.holders[0] && !P.titles.some(t => t.holders.includes(x.id)) && x.ovr >= S.w[ch.holders[0]].ovr - 15);
+  S.feuds.forEach(f => { f.res = true; }); R.forEach(x => { x.mom = 0; }); w.mom = 3;
+  let p = all(S).find(x => x.k === 'askshot');
+  ok('a1', 'somebody on a roll comes to your office to ask for a title shot, and the answers cost no action point', !!p && p.id === w.id && p.room === 'truck' && p.acts.map(a => a.id).join() === 'shot_yes,ask_no' && p.acts.every(a => a.free), p ? p.why : all(S).map(x => x.k).join(','));
+  if (p) { const ap = S.ap, q0 = S.quests.length, r = E.peopleDo(S, w.id, 'shot_yes');
+    ok('a2', 'saying yes is a promise the game holds you to, and it costs no point', r.ok && S.ap === ap && S.quests.length === q0 + 1 && S.quests[q0].type === 'shot' && S.quests[q0].w === w.id && S.rmY[w.id].v > 0, r.msg);
+    ok('a3', 'they do not come back with another request for weeks', !all(S).some(x => /^ask/.test(x.k) && x.id === w.id)); }
+  const S2 = fresh(21), w2 = S2.w[w.id]; S2.feuds.forEach(f => { f.res = true; }); E.rosterOf(S2, 'pdw').forEach(x => { x.mom = 0; }); w2.mom = 3; S2.ap = 0;
+  const m0 = w2.morale, r2 = E.peopleDo(S2, w2.id, 'ask_no');
+  ok('a4', 'saying no can be done with no points left, and they remember it', r2.ok && w2.morale < m0 && S2.rmY[w2.id].v < 0, r2.msg);
+  const S3 = fresh(21), w3 = S3.w[w.id]; S3.feuds.forEach(f => { f.res = true; }); E.rosterOf(S3, 'pdw').forEach(x => { x.mom = 0; }); w3.mom = 3;
+  const m3 = w3.morale; S3.qi = S3.queue.length; E.endWeek(S3);
+  ok('a5', 'not seeing them at all is noticed', w3.morale < m3 + 3 && ((S3.rmY || {})[w3.id] || { mem: [] }).mem.some(m => m.k === 'waited')); }
+
 if (fails.length) { console.log('FAILED: ' + fails.length); process.exit(1); }
 console.log('test-people: all passed');
