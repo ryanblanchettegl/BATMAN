@@ -83,6 +83,7 @@ function AfterShow() {
   return <Panel title={'After the show: ' + A.name} cls="after mb3">
     <div data-t="after-show" data-left={A.unseen}>
       <p><b class="gold">{A.grade}</b> {'·'} <b>{A.head}.</b> <span class="muted">{A.line}</span></p>
+      {A.matter ? <p class={'mt1 ' + (A.matter.done ? 'muted' : 'warn')} data-t="after-matter" data-done={A.matter.done ? '1' : '0'}>{A.matter.done ? <><Tag kind="good">Answered</Tag> <Txt>{A.matter.result}</Txt></> : <><Tag kind="bad">Needs an answer</Tag> <Txt>{A.matter.text}</Txt> <Btn kind="sm" t="after-answer" onClick={() => { const el = document.querySelector('[data-t="ev"]') as HTMLElement | null; if (el) { el.scrollIntoView({ block: 'center' }); el.focus(); } }}>Answer it</Btn></>}</p> : null}
       <ul class="list mt1">{A.items.map((it: any) => <li key={it.k} data-t="after-item" data-v={it.k} data-seen={it.seen ? '1' : '0'}>
         <span>{it.seen ? null : <><Tag kind={it.tone === 'bad' ? 'bad' : (it.tone === 'good' ? 'good' : 'warn')}>New</Tag> </>}<b>{it.n}</b> <span class={it.seen ? 'muted' : (it.tone === 'bad' ? 'bad' : undefined)}><Txt>{it.line}</Txt></span></span>
         <Btn kind="sm" t="after-look" d={{ v: it.k }} onClick={() => look(it)}>Look</Btn></li>)}</ul>

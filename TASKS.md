@@ -280,7 +280,13 @@ Ryan, 4 October: "After a show, it should go back to the Office or your desk, so
   - the writers: what they want followed up, what did not get across, an act the crowd took to, a hot feud left off the show
   - the dirt sheet on the night
 - [ ] Still to come there: numbers by demographic (needs the four kinds of fan), the city's score after the gate (section 4), and decisions made in the pop-up itself (today each one informs; the deciding is still done on its page or in the inbox).
-- [ ] An injury or a walk-out from the show should arrive as a matter in the inbox with a deadline, so the night ends on a named problem and not only a line.
+- [x] **(0.31) The night ends on a named problem.** A show can leave one matter in the inbox, at the top of the After the show panel, and the week cannot end until it is answered. Each is caused by the night and each answer is remembered. Code: the second half of `src/34-night.js`. Tests: `node test-live.js` (nm1 to nm7).
+  - A champion hurt for two weeks or more: vacate the title, or keep the belt on them (the belt loses standing).
+  - Somebody who went home furious: talk to them tonight (an attempt), promise a win within two weeks, pay a bonus, or let them cool off.
+  - An act lower on the card that was as loud as the main event: promise a win and build on it, or wait.
+  - The match of the night between two people with no story: make it a rivalry, or leave it as one great night.
+  - Measured over 201 shows on three seeds: 50 matters, about one show in four. Nobody is the subject twice in eight weeks.
+- [ ] One show in four is not every show. More causes are needed so that most nights leave something: a soft house, two people with real heat, a promo that went off the script, a rival's offer the morning after, a sponsor unhappy with what went out.
 - [ ] This is the Show phase handing the Office something unresolved (the "one more turn" rule, `docs/design.md` section 2a). It joins "the show ends on next week's problem".
 
 **A venue before every show**

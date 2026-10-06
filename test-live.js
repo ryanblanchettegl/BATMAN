@@ -271,5 +271,27 @@ if (found.network) { const F = found.network, net = S => { E.clocks(S); return S
   ok('nt6', 'the next show replaces it, with nothing marked', E.afterShow(S).name === S.reports[0].name && (S.reports[0].name === r.name || E.afterShow(S).unseen === E.afterShow(S).items.length));
   week(S);
   ok('nt7', 'a new week starts with a clear desk', E.afterShow(S) === null); }
+/* the night ends on a named problem: one matter in the inbox, caused by the show */
+{ const S = E.newGame('pdw', 13, { name: 'R' }), P = S.promos.pdw, t = P.titles.find(x => !x.tag && x.holders.length), ch = S.w[t.holders[0]];
+  S.inbox.forEach(e => { e.done = true; });
+  const card = desk(S); E.liveBegin(S, card); ch.inj = 5; air(S, ev => ev.safe || 0);
+  let ev = S.inbox.find(e => !e.done && e.type === 'champout'), A = E.afterShow(S);
+  ok('nm1', 'a champion hurt on the show is a matter on the desk, named, with choices', !!ev && ev.w === ch.id && ev.choices.length === 2 && ev.text.includes(ch.name) && ev.text.includes(t.name) && !!A.matter && A.matter.id === ev.id && !A.matter.done, ev ? ev.text : 'no matter');
+  ok('nm2', 'it holds the week: the inbox has to be answered', E.tasks(S).list.some(x => x.id === 'inbox' && x.state === 'todo'));
+  const pr = t.prestige, lean = ((S.rmY || {})[ch.id] || { v: 0 }).v; E.resolveEvent(S, ev.id, 1);
+  ok('nm3', 'keeping the belt on them costs the belt standing, and they remember it', t.holders[0] === ch.id && t.prestige < pr && S.rmY[ch.id].v > lean && E.afterShow(S).matter.done);
+  const S2 = E.newGame('pdw', 13, { name: 'R' }), P2 = S2.promos.pdw, t2 = P2.titles.find(x => !x.tag && x.holders.length), c2 = S2.w[t2.holders[0]];
+  E.liveBegin(S2, desk(S2)); c2.inj = 5; air(S2, e => e.safe || 0); E.resolveEvent(S2, S2.inbox.find(e => !e.done && e.type === 'champout').id, 0);
+  ok('nm4', 'vacating it empties the belt, and they remember that too', t2.holders.length === 0 && S2.rmY[c2.id].v < 0);
+  /* somebody who went home furious */
+  const S3 = E.newGame('pdw', 14, { name: 'R' }); S3.inbox.forEach(e => { e.done = true; }); const k3 = desk(S3), w3 = S3.w[k3[1].sides[0][0]];
+  E.liveBegin(S3, k3); w3.morale = Math.max(0, w3.morale - 30); air(S3, e => e.safe || 0);
+  const f = S3.inbox.find(e => !e.done && e.type === 'furious');
+  ok('nm5', 'somebody who went home furious is a matter with four answers, one of them an attempt', !!f && f.w === w3.id && f.choices.length === 4 && !!f.checks[0] && f.checks[0].p > 0, f ? f.text : (S3.inbox.filter(e => !e.done).map(e => e.type).join(',') || 'none'));
+  if (f) { const q0 = S3.quests.length; E.resolveEvent(S3, f.id, 1); ok('nm6', 'a promised win is a promise the game holds you to', S3.quests.length === q0 + 1 && S3.quests[q0].type === 'win' && S3.quests[q0].w === w3.id); }
+  /* at most one matter from a show, and not the same person again for weeks */
+  const S4 = E.newGame('pdw', 15, { name: 'R' }); let most = 0, total = 0, shows = 0, kinds = {};
+  for (let wk = 0; wk < 8; wk++) { while (desk(S4)) { const n0 = S4.inbox.length; E.liveBegin(S4, S4.card); air(S4, e => e.safe || 0); shows++; const nw = S4.inbox.slice(n0).filter(e => e.night); most = Math.max(most, nw.length); total += nw.length; nw.forEach(e => { kinds[e.type] = 1; E.resolveEvent(S4, e.id, e.choices.length - 1); }); } week(S4); }
+  ok('nm7', 'a show leaves one matter at most, and over eight weeks some shows do', most <= 1 && total >= 1 && total < shows, total + ' from ' + shows + ' shows: ' + Object.keys(kinds).join(', ')); }
 if (fails.length) { console.log('\nFAILED: ' + fails.length + '\n' + fails.join('\n')); process.exit(1); }
 console.log('test-live: all passed');
