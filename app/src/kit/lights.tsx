@@ -11,8 +11,8 @@
 import { useEffect, useLayoutEffect, useRef } from 'preact/hooks';
 import { dataAttrs } from './index';
 
-type Cell = [number, number, number] | null;            // the colour of a lit light, or null for one that is off
-interface Board { w: number; h: number; cells: Cell[] }
+export type Cell = [number, number, number] | null;            // the colour of a lit light, or null for one that is off
+export interface Board { w: number; h: number; cells: Cell[] }
 
 /* ---------- pictures: 64 by 48, painted by code ---------- */
 const GW = 64, GH = 48;
@@ -129,7 +129,7 @@ let wired = false;
 function wire() { if (wired) return; wired = true; let t: any = null; window.addEventListener('resize', () => { clearTimeout(t); t = setTimeout(() => live.forEach(fn => fn()), 60); }); }
 
 /** A canvas that shows a board. `dot` is the size of one light, in pixels at a 1280 wide desk; it grows with the type size and is always a whole number of screen pixels. */
-function BoardCanvas(p: { sig: string; make: () => Board | null; dot: number; label: string; t?: string; cls?: string }) {
+export function BoardCanvas(p: { sig: string; make: () => Board | null; dot: number; label: string; t?: string; cls?: string }) {
   const ref = useRef<HTMLCanvasElement>(null);
   const check = () => {
     const cv = ref.current; if (!cv) return;

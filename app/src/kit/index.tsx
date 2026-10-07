@@ -163,3 +163,4 @@ export * from './portrait';
 export * from './window';
 export * from './win';
 export * from './lights';
+export * from './logo';

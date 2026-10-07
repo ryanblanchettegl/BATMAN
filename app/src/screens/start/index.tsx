@@ -6,7 +6,7 @@ import { G, ui, pref, Modal, VER, UNIS, saveUnis, savePrefs, setUniverse, builtI
 import { HOT, pageName } from '../../nav';
 import { autoScreen, skipBoot, onKey } from '../../input';
 import { startGame, continueGame, loadSaveText, startChallenge, startScenario, isoWeekId } from '../../flow';
-import { Btn, Panel, Head, Sel, Field, TextBox, Window, Data, dataAttrs } from '../../kit';
+import { Btn, Panel, Head, Sel, Field, TextBox, Window, Logo, Data, dataAttrs } from '../../kit';
 import { MusicBtn } from '../../shell/Frame';
 import { ModelCard } from '../../shared/model';
 import { SFX } from '../../sfx';
@@ -121,7 +121,7 @@ export function Select() {
   return <div class="crt"><StartMenu /><div class="start">
     <div class="selrow"><div class="dbox"><h1 class="dt">Select promotion</h1><MenuList items={items} /></div>
     <Panel cls="det mb4" title={d ? d.name : 'New'} live>
-      {d ? <><p><b>{d.full || d.name}.</b> {d.blurb}</p><p class="kv"><span>Popularity <b>{d.image}</b></span><span>Cash <b>{cash(d.cash)}</b></span><span>Roster <b>{info.count[d.id] || 0}</b></span><span>Weekly shows <b>{d.shows.length}</b></span><span>Owner <b>{d.owner.name}</b></span></p><div class="mt1"><span class="eyebrow">How it is run</span><ModelCard id={d.model} short /></div></>
+      {d ? <><div class="row top nowrap"><Logo of={d} t="pick-logo" /><p><b>{d.full || d.name}.</b> {d.blurb}</p></div><p class="kv"><span>Popularity <b>{d.image}</b></span><span>Cash <b>{cash(d.cash)}</b></span><span>Roster <b>{info.count[d.id] || 0}</b></span><span>Weekly shows <b>{d.shows.length}</b></span><span>Owner <b>{d.owner.name}</b></span></p><div class="mt1"><span class="eyebrow">How it is run</span><ModelCard id={d.model} short /></div></>
         : <p><b>Create your own federation.</b> Name it, pick its size and house style, and start as owner and booker with a roster of unknowns and every title vacant.</p>}
     </Panel></div>
     <Panel cls="mb3" title="Universe">

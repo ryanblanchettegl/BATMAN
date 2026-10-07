@@ -1,6 +1,7 @@
 /* World Editor: companies, their weekly shows, and the big events of the year. */
 import { E } from '../../engine';
-import { Btn, Panel, Sel, Field, Opt, dataAttrs } from '../../kit';
+import { Btn, Panel, Sel, Field, Opt, Logo, dataAttrs } from '../../kit';
+import { openLogoMaker } from '../../shared/logomaker';
 import { ModelCard } from '../../shared/model';
 import { es, world, edit, look, note } from './state';
 import { TextF, NameF, NumF, SelF, PickList, DelBtn, TwoPane } from './parts';
@@ -28,6 +29,15 @@ export function CompaniesTab() {
       </div>
       <div class="editor plain"><TextF label="About it" rec={p} k="blurb" max={200} ph="One or two lines for the company list" /></div>
       <p class="muted mt2">Popularity sets the size of everything: crowds, television money, wages. 90 is a giant, 50 a regional company, 20 a local one.</p>
+    </Panel>
+    <Panel cls="mb4" title="The logo">
+      <div class="row top"><Logo of={p} t="ed-logo" /><div>
+        <p>{p.logo ? 'A logo of its own.' : 'The logo its model gives it, made from its letters.'} <Logo of={p} size="chip" /></p>
+        <div class="row mt1"><Btn kind="go" t="ed-logo-open" onClick={() => openLogoMaker({ name: p.name, model: p.model || 'classic', logo: E.logoOf(p), list: pkg.promotions, self: p.id,
+          onSave: m => { const r = E.edSetLogo(pkg, p.id, m); if (r.ok) edit(() => { note(r.msg); }); return r; } })}>Change the logo</Btn>
+          {p.logo ? <Btn kind="sm" t="ed-logo-reset" onClick={() => edit(() => { note(E.edSetLogo(pkg, p.id, null).msg); })}>Back to the model’s own</Btn> : null}</div>
+      </div></div>
+      <p class="muted mt2">Every company has its own icon, built from its initials. It shows beside the company’s name everywhere in the game.</p>
     </Panel>
     <Panel cls="mb4" title="How it is run">
       <div class="editor plain"><SelF label="Company model" rec={p} k="model" options={names(E.MODELS)} t="ed-model" /></div>

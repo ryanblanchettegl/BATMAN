@@ -6,7 +6,7 @@ import { G, ui, me, Card, openCard, popCard, closeCards, cash, full, plural, ope
 import { go } from '../nav';
 import { rs } from '../screens/roster/state';
 import { sendScout } from '../screens/roster/Profile';
-import { Window, Btn, Tag, Name, Side, Meter, Portrait, BeltArt, TitleName, TeamName, PromoName, Empty, champOf, teamName, stars, grade, Txt } from '../kit';
+import { Window, Btn, Tag, Name, Side, Meter, Portrait, BeltArt, TitleName, TeamName, PromoName, Empty, Logo, champOf, teamName, stars, grade, Txt } from '../kit';
 
 const promoName = (pid: string) => pid === 'FA' ? 'Free agent' : (G.S.promos[pid] ? G.S.promos[pid].name : pid);
 /** Every title in the world this wrestler holds, with the promotion that owns it. */
@@ -116,7 +116,7 @@ function PromoCard(p: { id: string }) {
   if (!P) return <Empty>This promotion is gone.</Empty>;
   const M = E.modelOf(S, p.id), mine = p.id === S.player, rel = Math.round(P.rel || 0), roster = E.rosterOf(S, p.id).length;
   return <>
-    <p><b>{P.full || P.name}</b> {mine ? <Tag>You</Tag> : null}</p>
+    <div class="row top nowrap"><Logo of={P} t="card-logo" /><p><b>{P.full || P.name}</b> {mine ? <Tag>You</Tag> : null}</p></div>
     {P.blurb ? <p class="muted">{P.blurb}</p> : null}
     <div class="kv mt2">
       <div><small>Model</small><span>{M.n}</span></div>

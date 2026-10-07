@@ -331,6 +331,8 @@ These only become possible after the steps above. None is promised.
 - 7 October: the game was renamed EWF Wrestling Manager (`TASKS.md`, the decisions table).
 - 7 October: Version A, step 1 is done: the window kit (`app/src/kit/win.tsx`, `app/styles/win.css`, the kit sheet at `go('kit')`, `app/tests/kit.js`). Pop-ups wear the new look.
 - 7 October: Version A, step 2 is done: the bottom line and the SPACE key. The floating button is gone.
-- 7 October: Version A, step 3 is done: the lights. Also fixed on the way: on a TV, the menu and the bottom line lay over the top and bottom of every one-screen page. Next is step 4, company marks and the logo creator.
+- 7 October: Version A, step 3 is done: the lights. Also fixed on the way: on a TV, the menu and the bottom line lay over the top and bottom of every one-screen page. 
+- 7 October: Version A, step 4 is done: company logos (`src/89-logos.js`, `Logo` in `app/src/kit/logo.tsx`) and the logo creator in the World Editor (`app/src/shared/logomaker.tsx`), with the full range of parts from section 3a. logos show on the menu bar, the company picker and every company's card. Not done yet: the creator for a player who owns their company (question 6), logos on the World page, the feed and the broadcast's top bar, and the extra shapes listed in 3a. Next is step 5, the desk in windows.
+- 7 October, Ryan: "its not marks. Its Logo." The word is logo everywhere: in the game, in the code (`P.logo`, `E.logoOf`, `Logo`) and in these notes from here on. Sections 3 and 3a above were written before that and still say mark; read it as logo.
 
 Still open from the playtest and not part of the art work: item 4 (stretch the stars so two is a bad match and four and a half is rare) and Ryan's call that every difficulty should need the player. Both are balance work and both move every crowd's expectations. Do them in a version of their own, not mixed in with the look.

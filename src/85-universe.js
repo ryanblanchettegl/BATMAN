@@ -11,7 +11,7 @@ var REL_TYPES=['rivalry','friendship','mentor','family','partners','dislike'];
 var ID_RE=/^[a-z0-9_]{2,40}$/;
 // field types: 'id', 'str', 'int', 'num', 'bool', 'obj', 'list', an array of allowed values, or 'ref:<table>'; a trailing ? makes it optional
 var SCHEMAS={
-  promotions:{required:['id','name','popularity'],fields:{id:'id',name:'str',full_name:'str?',blurb:'str?',owner:'obj?',staff:'obj?',announcers:'list?',cities:'list?',cash:'num?',popularity:'num',work_rate_weight:'num?',angles_per_show:'int?',wage_scale:'num?',tv_rate:'num?',production_cost:'num?',target_weekly_net:'num?',flagship_month:'int?',production_level:'int?',risk_level:'int?',tv_slot:'int?',model:'str?',brands:'list?',media:'obj?'}},
+  promotions:{required:['id','name','popularity'],fields:{id:'id',name:'str',full_name:'str?',blurb:'str?',owner:'obj?',staff:'obj?',announcers:'list?',cities:'list?',cash:'num?',popularity:'num',work_rate_weight:'num?',angles_per_show:'int?',wage_scale:'num?',tv_rate:'num?',production_cost:'num?',target_weekly_net:'num?',flagship_month:'int?',production_level:'int?',risk_level:'int?',tv_slot:'int?',model:'str?',brands:'list?',media:'obj?',logo:'obj?'}},
   workers:{required:['id','ring_name','gender','disposition','style','ratings'],fields:{id:'id',ring_name:'str',real_name:'str?',birth_date:'str?',age:'int?',hometown:'str?',gender:['M','F'],weight_class:['cruiser','heavy','super_heavy'],disposition:['face','heel','tweener'],roles:'list?',style:Object.keys(STYLE_KEY),finisher:'str?',manager_id:'str?',locker_role:['mentor','diva','gatekeeper','leader','toxic'],ratings:'obj',peak_years:'list?',age_cliff:'int?',media:'obj?',face:'obj?'}},
   contracts:{required:['worker_id','promotion_id'],fields:{worker_id:'str',promotion_id:'str',contract_type:['exclusive','pwa'],monthly_salary:'num?',per_show_fee:'num?',weeks_left:'int?',tenure_weeks:'int?',push_level:PUSH,brand:'str?'}},
   titles:{required:['id','promotion_id','name','gender','level'],fields:{id:'id',promotion_id:'str',name:'str',gender:['M','F'],level:'int',tag:'bool?',brand:'str?',holder_ids:'list?',media:'obj?'}},
@@ -114,7 +114,7 @@ function econ(pop){var x=clamp(pop,5,100)/100;return {wageMult:Math.max(0.15,r1(
 function buildDB(pkg){
   var man=pkg.manifest,W={},rows=[],promos=[],PR={};(pkg.workers||[]).forEach(function(w){W[w.id]=w;});
   (pkg.promotions||[]).forEach(function(p){
-    var e=econ(p.popularity),own=p.owner||{},MD=MODELS[p.model]||MODELS.classic,d={id:p.id,model:MODELS[p.model]?p.model:null,name:p.name,full:p.full_name||null,blurb:p.blurb||'',cash:p.cash!=null?p.cash:e.cash,image:clamp(p.popularity,5,100),wq:p.work_rate_weight!=null?clamp(p.work_rate_weight,0.2,0.8):(MD.wq||0.5),
+    var e=econ(p.popularity),own=p.owner||{},MD=MODELS[p.model]||MODELS.classic,d={id:p.id,logo:p.logo||null,model:MODELS[p.model]?p.model:null,name:p.name,full:p.full_name||null,blurb:p.blurb||'',cash:p.cash!=null?p.cash:e.cash,image:clamp(p.popularity,5,100),wq:p.work_rate_weight!=null?clamp(p.work_rate_weight,0.2,0.8):(MD.wq||0.5),
       angles:p.angles_per_show!=null?clamp(p.angles_per_show,0,3):2,wageMult:p.wage_scale!=null?p.wage_scale:e.wageMult,tvRate:p.tv_rate!=null?p.tv_rate:e.tvRate,prod:p.production_cost!=null?p.production_cost:e.prod,net:p.target_weekly_net!=null?p.target_weekly_net:e.net,
       flagship:p.flagship_month!=null?clamp(p.flagship_month-1,0,11):3,prodLvl:p.production_level!=null?clamp(p.production_level,0,4):2,risk:p.risk_level!=null?clamp(p.risk_level,0,3):1,slot:p.tv_slot!=null?clamp(p.tv_slot,0,2):1,
       owner:{name:own.name||'The owner',style:STYLES[own.style]?own.style:'stars',roots:ROOTS[own.roots]?own.roots:'tradition',pledge:PLEDGE[own.pledge]?own.pledge:'pay'},
@@ -178,7 +178,7 @@ E.exportUniverse=function(S,meta){
     var P=P0[id],own=id===S.player?{name:S.owner.name,style:S.owner.style,roots:S.owner.roots,pledge:S.owner.pledge}:(P.owner||{name:'The owner',style:P.style||'stars',roots:'tradition',pledge:'pay'});
     var o={id:pid(id),name:P.name,blurb:P.blurb||'',owner:own,staff:{road_agent:P.staff.agent,head_writer:P.staff.writer},announcers:P.ann.slice(),cities:P.cities.slice(),cash:Math.round(P.cash),popularity:r1(P.image),work_rate_weight:P.wq,angles_per_show:P.angles,wage_scale:P.wageMult,tv_rate:P.tvRate,production_cost:P.prod,target_weekly_net:P.net,flagship_month:P.flagship+1,production_level:P.prodLvl,risk_level:P.risk,tv_slot:P.slot};
     if(P.full)o.full_name=P.full;if(P.brands)o.brands=P.brands.map(function(b){var x={id:b.id,name:b.name};if(b.dev)x.dev=true;return x;});
-    if(P.model)o.model=P.model;
+    if(P.model)o.model=P.model;if(P.logo)o.logo=JSON.parse(JSON.stringify(P.logo));
     pkg.promotions.push(o);
     P.shows.forEach(function(s){var x={id:slug(id+'_'+s.id),promotion_id:pid(id),name:s.name,weight:s.mult==null?1:s.mult};if(s.brand)x.brand=s.brand;pkg.shows.push(x);});
     P.titles.forEach(function(t){var x={id:slug(t.id),promotion_id:pid(id),name:t.name,gender:t.g,level:t.lvl,tag:!!t.tag,holder_ids:t.holders.map(function(h){return uid[h];}).filter(Boolean)};if(t.brand)x.brand=t.brand;pkg.titles.push(x);});

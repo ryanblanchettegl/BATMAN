@@ -5,7 +5,7 @@ import { G, ui, me, cash, view, openModal, PLATFORM, redraw, onReset } from '../
 import { SECTIONS, sectionOf, go, weekDone, pending } from '../nav';
 import { NAV, onBack } from '../input';
 import { abandonGame } from '../flow';
-import { Btn, Tabs } from '../kit';
+import { Btn, Tabs, Logo } from '../kit';
 import { SFX } from '../sfx';
 import { AdvanceKey } from './Advance';
 
@@ -26,7 +26,7 @@ export function MenuBar() {
       const badge = s.id === 'office' && n ? n : (s.id === 'booking' && !weekDone() ? S.queue.length - S.qi : (s.id === 'manage' ? manageBadge() : (s.id === 'roster' ? endingSoon() : 0)));
       return <button type="button" data-t="tab" data-v={s.id} aria-current={cur === s ? 'page' : undefined} onClick={() => go(s.id)}><u>{s.n.charAt(0)}</u>{s.n.slice(1)}{badge ? <span class="badge"> ({badge})</span> : null}</button>;
     })}
-    <span class="ttl">{P.name} {'·'} {E.cal(S.week).label}</span>
+    <span class="ttl"><Logo of={P} size="chip" t="menu-logo" />{E.cal(S.week).label}</span>
   </nav>;
 }
 

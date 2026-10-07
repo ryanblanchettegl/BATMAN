@@ -120,7 +120,7 @@ async function run(mode) {
 
   /* ---- close week 1 through the real button; the week-closed window follows ---- */
   ok(await state(page, runShows), 'shows ran');
-  await state(page, S => { S.inbox.filter(e => !e.done && e.night).forEach(e => window.GP.resolveEvent(S, e.id, e.choices.length - 1)); });   // a show can leave a matter that holds the week
+  await state(page, S => { S.inbox.filter(e => !e.done).forEach(e => window.GP.resolveEvent(S, e.id, e.choices.length - 1)); });   // a show can leave a matter that holds the week: one for the night, or one of its own (a chant the crowd started)
   await go(page, 'desk');
   await page.click('[data-t="endweek"]'); await page.waitForSelector('.win');
   ok(/Week closed/.test(await txt('.win .wt')) && /Net for the week/.test(await txt('.win .wb')) && await count('.win pre.bars') === 1 && /It is now/.test(await txt('.win .wb')), 'week-closed window content');

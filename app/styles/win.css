@@ -130,6 +130,35 @@
 .lights-head{text-align:center;margin-bottom:6px}
 .lights-col{display:flex;flex-direction:column;gap:6px;align-items:flex-start}
 
+/* ---------- company logos ---------- */
+/* the chip: a company's letters on its own colour, for lists and the menu bar */
+.mkchip{display:inline-block;padding:0 .6ch;border:2px solid;line-height:1.05;letter-spacing:.06em;white-space:nowrap;vertical-align:baseline}
+.menu .ttl .mkchip{margin-right:.8ch;text-transform:none}
+.ledb.logo{padding:2px}
+/* the logo creator: the logo on the left, the parts in the middle, ideas on the right */
+.win:has(.mm){width:min(124ch,100%)}
+.mm{display:grid;grid-template-columns:auto minmax(0,1fr);gap:.4em 2.5ch;align-items:start}
+.mm-left{display:flex;flex-direction:column;gap:.3em;width:23ch}
+.mm-as{display:flex;flex-wrap:wrap;align-items:center;gap:.3em 1ch}
+.mm-row{display:grid;grid-template-columns:13ch minmax(0,1fr);gap:0 1ch;align-items:center;margin-bottom:.25em}
+.mm-l{color:#333}
+.mm-opts{display:flex;flex-wrap:wrap;align-items:center;gap:0 .2ch}
+.mm-opts .btn{margin-bottom:.3em}
+.mm-shapes,.mm-ideas{display:flex;flex-wrap:wrap;gap:4px}
+.mm-ideas{margin-bottom:0}
+.mm-s{all:unset;cursor:pointer;line-height:0;border:2px solid transparent;padding:1px}
+.mm-s.on{border-color:var(--dgreen);background:var(--dgreen)}
+.mm-s:hover{border-color:var(--k)}
+.mm-s:focus-visible,.mm-c:focus-visible{outline:2px solid var(--k);outline-offset:1px}
+html.nav .mm-s:focus,html.nav .mm-c:focus{outline:3px solid var(--k);outline-offset:1px}
+.mm-sw{display:flex;flex-wrap:wrap;gap:3px}
+.mm-c{all:unset;cursor:pointer;box-sizing:border-box;width:1.15em;height:1.15em;border:2px solid var(--dgrey)}
+.mm-c.on{border-color:var(--white);outline:3px solid var(--k)}
+.mm-h{color:var(--dred);margin:.25em 0 .1em;display:flex;align-items:center;gap:2ch}
+.mm-h .btn{margin-bottom:.2em}
+html[data-screen="tablet"] .mm .btn{padding-block:.12em;margin-bottom:.3em}
+.mm-right{display:flex;flex-direction:column;align-items:flex-start;border-top:1px solid var(--dgrey);margin-top:.2em}
+
 /* ---------- the bottom line: the numbers and how they moved, three small keys, and the SPACE key ----------
    One line along the bottom of every page. The key at its right end is the only big button in the game: its cap says
    which key presses it, its label says what happens next, and its colour says what kind of step that is. */
@@ -185,7 +214,11 @@ html[data-screen="tablet"] .ffoot>.status{padding-block:0}
 html[data-screen="tablet"] .status .nk,html[data-screen="tablet"] .status .key{padding:0}
 html[data-screen="tablet"] .status .nk em,html[data-screen="tablet"] .status .key .lab{padding-block:.5em}
 html[data-screen="tablet"] .ffoot>.status>button[data-t="stat"]{padding:.5em 0}
-html[data-screen="tablet"] .ffoot>.status{gap:0 1.6ch}
+html[data-screen="tablet"] .ffoot>.status{gap:0 1.1ch;padding-left:1ch}
+html[data-screen="tablet"] .status .key .lab{min-width:12ch;padding-inline:1.1ch}
+html[data-screen="tablet"] .status .nk em{padding-inline:.8ch}
+/* the last thing to give way on a narrow line is the owner's figure: it shrinks before anything sticks out */
+.ffoot>.status>button[data-t="stat"].opt{flex:0 1 auto;min-width:0;overflow:hidden}
 
 /* the kit sheet: every part of the kit on one screen (a page for building and testing, not on any menu) */
 .kitsheet{grid-template-columns:minmax(0,1.05fr) minmax(0,1.05fr) minmax(0,1.2fr);grid-template-rows:minmax(0,1.4fr) minmax(0,1fr)}
