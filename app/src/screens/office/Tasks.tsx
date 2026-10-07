@@ -46,7 +46,7 @@ export function ContractTaskWindow(p: { m: Modal }) {
   const row = (weeks: number, label: string) => { const ask = E.renewAsk(S, w.id, weeks); return <li class="col" key={weeks}>
     <span><b>{label}</b><br /><span class="muted">{full(ask)} a week{ask > w.wage ? ', up from ' + full(w.wage) : (ask < w.wage ? ', down from ' + full(w.wage) : ', the same as now')}.</span></span>
     <span class="row"><Btn kind="sm" t="tc-renew" d={{ v: weeks }} onClick={() => renew(weeks)}>Sign for {weeks} weeks</Btn></span></li>; };
-  return <Window title={w.name + '’s contract'} wide ok="Let it run out">
+  return <Window title={w.name + '’s contract'} wide ok="Not now">
     <p><Name w={w} /> is on {full(w.wage)} a week. The contract ends {w.con <= 0 ? 'this week' : 'next week'}. <span class="muted">If nothing is signed they become a free agent, and anybody can make an offer.</span></p>
     <ul class="list mt2">{row(48, 'One more year')}{row(96, 'Two more years')}</ul>
     <p class="muted mt1">Morale changes the asking price: {w.morale < 50 ? 'they are unhappy, so it costs more.' : (w.morale >= 75 ? 'they are happy here, so it costs less.' : 'theirs is about average.')}</p>

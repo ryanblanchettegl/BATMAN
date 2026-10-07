@@ -248,8 +248,14 @@ async function section(mode) {
   await page.click('[data-t="advance"]');
   ok(await has(page, '[data-t="after-screen"]') && !(await has(page, '.sheet')) && !(await has(page, '#live')) && await txt(page, '.head h1') === shows[0], mode + ': the sign-off leads to After the show, not to the report');
   ok(/^(A\+|A|A-|B\+|B|B-|C\+|C|C-|D|F)$/.test((await txt(page, '[data-t="after-grade"]')).trim()) && !/%/.test(await txt(page, '[data-t="after-verdict"]')), mode + ': it gives the show a letter grade and a verdict in words');
-  const items = await page.$$eval('[data-t="after-item"]', a => a.map(e => e.getAttribute('data-v')));
+  // the list turns pages when a matter is open above it: read every page
+  const nextPg = '[data-t="after-lpg"] [data-t="pg-next"]:not([disabled])', prevPg = '[data-t="after-lpg"] [data-t="pg-prev"]:not([disabled])';
+  const seek = async k => { while (await has(page, prevPg)) await page.click(prevPg); while (!(await has(page, '[data-t="after-item"][data-v="' + k + '"]')) && await has(page, nextPg)) await page.click(nextPg); };
+  let items = []; while (await has(page, prevPg)) await page.click(prevPg);
+  for (;;) { items = items.concat(await page.$$eval('[data-t="after-item"]', a => a.map(e => e.getAttribute('data-v')))); if (!(await has(page, nextPg))) break; await page.click(nextPg); }
+  await seek('gate');
   ok(['gate', 'tv', 'writers'].every(k => items.includes(k)) && /tickets/.test(await txt(page, '[data-t="after-item"][data-v="gate"]')), mode + ': it lists the gate, the television number and the writers: ' + items.join(', '));
+  await seek('writers');
   await page.click('[data-t="after-look"][data-v="writers"]');
   ok(await has(page, '[data-t="night-detail"][data-v="writers"]') && !(await has(page, '.win')), mode + ': picking one shows it beside the list, on the same screen');
   ok(/^OFFICE$/i.test(await advWord(page)), mode + ': the big button leads on to the Office: ' + await advWord(page));
