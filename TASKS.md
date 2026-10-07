@@ -79,6 +79,7 @@ Two more lists sit beside this one, both finished:
 | Difficulty | 6 October: every level should need you. Suggested cards aim to meet the crowd, not beat it. |
 | Your shows | 6 October: the player cannot cancel a show, like rivals. History stays on Company. Venues and the year's schedule are to be started. |
 | The outside playtest | 6 October: work its 50 upgrades in order, five a version (project doc `claude/outside-view-playtest-2026-10-06.md`). |
+| Art direction | 6 October, evening: the desk mock-up in grey desktop windows is "perfect and the new art direction of the game" (`docs/mockups/desk-windows.png`). Grey windows with a blue title bar, a drop shadow, grouped boxes with red headings, green buttons with a hard shadow, on the blue desktop. The road map sits across the top of the desk: a dotted country, this week's state lit, the tour as arcs, with the arena, ticket sales, hometown names and the road list beside it. Backstage becomes a board (one line a person, worst first, portraits kept, a card on hover or focus); its art style is still being chosen. |
 | World Editor | The creation suite is its own page called **World Editor** on the title screen. A player builds a world from scratch (companies, shows, belts, wrestlers) and uploads it to the Workshop. This is the main next item. |
 
 ## Tasks
@@ -321,6 +322,17 @@ Ryan, 4 October: "After a show, it should go back to the Office or your desk, so
 - [x] **(0.29) The commentary desk from the Office.** Ryan, 4 October: "From the office screen, I want you to be able to pick commentators via a pop up with available players." The two tasks for the commentary desk open a pop-up on the desk: both chairs, who is available for the chair being filled, what each costs, and how they would get on with the other voice. Signing one moves on to the empty chair. A button on the desk opens it at any time. Code: `VoicesWindow` in `app/src/screens/office/Windows.tsx`. Test: `app/tests/tasks.js`.
 - [ ] The same for every other task on the desk, so everything can be done from the Office: sponsor offers, the venue, contracts that are running out, a vacant title.
 - [ ] The people available are the hired voices on the market. Wrestlers, managers and legends at the desk wait for the character sheet work.
+
+### 0p. The new look: grey desktop windows (decided 6 October, not started)
+
+Mock-ups and the script that drew them are in `docs/mockups/`. Nothing here is built. The road data in the mock-up is made up: the game has no tour, state markets, hometowns or advance ticket sales yet.
+
+- [ ] The window kit: a `Win` building block (title bar, grey body, shadow), grouped boxes, the green button with a hard shadow, tags. Old panels keep working until each page is moved over.
+- [ ] The desk as four windows on one screen: The road across the top, then On your desk, This week's tasks, Next show. The big page heading goes; the week is in the road window's title bar.
+- [ ] The road map itself: the country as dots drawn by code, each state's outline as points in the code (a one-time job for the USA), this week's state lit, arcs for the road.
+- [ ] What the road window needs from the engine: where each show is (venue, city, state), tickets sold against seats and sold this week, who is from this town, how the market knows you, the last visit. This is the venues and year's schedule work (0i).
+- [ ] Backstage as the board. Ryan picks the art style from three (`backstage-board-window.png`, `-textmode.png`, `-paper.png`).
+- [ ] Then the other pages, one at a time, with Ryan's go-ahead for each.
 
 ### 0o. The outside playtest, part A: knowing how you did (0.38)
 
