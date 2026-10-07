@@ -1221,8 +1221,15 @@ function showEnd(S,P,show,card,st){
     if(rep.sellout)award(S,'ACH_SELLOUT');if(S.stats.run>=5)award(S,'ACH_RUN_5');
     rep.quest=rep.quest||[];
     S.quests.slice().forEach(function(q){
-      if(q.type==='sponsor'&&big){if((cgFix(S),gradeMeets(rep.cs,q.target))){P.led.bonus+=q.bonus;rep.quest.push('Sponsor target hit: +$'+q.bonus.toLocaleString('en-US')+'.');award(S,'ACH_QUEST');}else rep.quest.push('Sponsor target missed ('+gradeA(q.target)+' show was needed).');dropQuest(S,q);}
-      if(q.type==='network'&&q.show===show.id){if(q.hit){P.led.bonus+=q.bonus;rep.quest.push('Network target hit: +$'+q.bonus.toLocaleString('en-US')+'.');award(S,'ACH_QUEST');}else rep.quest.push('Network target missed (a '+starG(q.target)+' main event was needed).');dropQuest(S,q);}
+      var qt;
+      if(q.type==='sponsor'&&big){cgFix(S);var sok=gradeMeets(rep.cs,q.target);
+        if(sok){P.led.bonus+=q.bonus;qt='Sponsor target hit: '+gradeA(rep.cs)+' show, '+gradeA(q.target)+' was needed. +$'+q.bonus.toLocaleString('en-US')+'.';award(S,'ACH_QUEST');}
+        else qt='Sponsor target missed: needed '+gradeA(q.target)+' show, got '+gradeA(rep.cs)+'.';
+        rep.quest.push(qt);(rep.targets=rep.targets||[]).push({ok:sok,t:qt});dropQuest(S,q,sok,qt);}
+      if(q.type==='network'&&q.show===show.id){
+        if(q.hit){P.led.bonus+=q.bonus;qt='Network target hit: a main event of '+starG(q.got||q.target)+', '+starG(q.target)+' was needed. +$'+q.bonus.toLocaleString('en-US')+'.';award(S,'ACH_QUEST');}
+        else qt='Network target missed: needed a main event of '+starG(q.target)+(q.got!=null?', got '+starG(q.got):'')+'.';
+        rep.quest.push(qt);(rep.targets=rep.targets||[]).push({ok:!!q.hit,t:qt});dropQuest(S,q,!!q.hit,qt);}
     });
     rep.sheet=dirtSheet(S,P,show,rep,inP);
     S.reports.unshift(rep);if(S.reports.length>8)S.reports.length=8;
@@ -1231,13 +1238,17 @@ function showEnd(S,P,show,card,st){
   SHOWX.forEach(function(fn){fn(S,P,show,rep,card);});
   return rep;
 }
-function dropQuest(S,q){S.quests=S.quests.filter(function(x){return x!==q;});}
+/* A target or a promise that is settled leaves how it went, so the desk can say Hit or Missed and not just that it is gone. */
+function dropQuest(S,q,ok,text){
+  S.quests=S.quests.filter(function(x){return x!==q;});
+  if(ok!=null){if(!S.qres||S.qres.w!==S.week)S.qres={w:S.week,r:{}};S.qres.r[q.id]={ok:!!ok,t:text||q.text};}
+}
 function matchQuests(S,P,show,m,sides,win,t,OV,isMain,seg){
   var ids=flat(m.sides);
   S.quests.slice().forEach(function(q){
-    if(q.type==='shot'&&t&&t.id===q.title&&ids.indexOf(q.w)>=0){S.w[q.w].morale=clamp(S.w[q.w].morale+6,0,100);seg.notes.push('Promise kept: '+S.w[q.w].name+' got the title shot.');award(S,'ACH_PROMISE');keptPromise(S,q,true);dropQuest(S,q);}
-    else if(q.type==='win'&&win>=0&&m.sides[win].indexOf(q.w)>=0){S.w[q.w].morale=clamp(S.w[q.w].morale+6,0,100);seg.notes.push('Promise kept: '+S.w[q.w].name+' got the win.');award(S,'ACH_PROMISE');keptPromise(S,q,true);dropQuest(S,q);}
-    else if(q.type==='network'&&isMain&&q.show===show.id){q.hit=starMeets(OV,q.target);}
+    if(q.type==='shot'&&t&&t.id===q.title&&ids.indexOf(q.w)>=0){S.w[q.w].morale=clamp(S.w[q.w].morale+6,0,100);seg.notes.push('Promise kept: '+S.w[q.w].name+' got the title shot.');award(S,'ACH_PROMISE');keptPromise(S,q,true);dropQuest(S,q,true,'Promise kept: '+q.text.replace(/^Promise: /,''));}
+    else if(q.type==='win'&&win>=0&&m.sides[win].indexOf(q.w)>=0){S.w[q.w].morale=clamp(S.w[q.w].morale+6,0,100);seg.notes.push('Promise kept: '+S.w[q.w].name+' got the win.');award(S,'ACH_PROMISE');keptPromise(S,q,true);dropQuest(S,q,true,'Promise kept: '+q.text.replace(/^Promise: /,''));}
+    else if(q.type==='network'&&isMain&&q.show===show.id){q.hit=starMeets(OV,q.target);q.got=OV;}
     else if(q.type==='dream'&&show.big&&ids.indexOf(q.a)>=0&&ids.indexOf(q.b)>=0){P.led.bonus+=q.bonus;P.image=clamp(P.image+0.6,5,100);seg.notes.push('The dream match delivered: +$'+q.bonus.toLocaleString('en-US')+' in extra buys.');award(S,'ACH_QUEST');dropQuest(S,q);}
   });
 }
@@ -1950,6 +1961,10 @@ E.afterShow=function(S){
   if(L.hurt.length)add('hurt',L.hurt.length===1?'One injury':L.hurt.length+' injuries',L.hurt.map(function(h){return nm(h.id)+', '+h.weeks+' '+(h.weeks===1?'week':'weeks')+(h.belt?' (holds the '+h.belt+')':'');}).join('. ')+'.',
     L.hurt.map(function(h){return nm(h.id)+' is out for '+h.weeks+' '+(h.weeks===1?'week':'weeks')+'.'+(h.belt?' They hold the '+h.belt+': it cannot be defended until they are back, or it has to change hands another way.':'')+' Anything booked for them needs a new plan.';}),'bad');
   var down=L.mood.filter(function(m){return m.d<0;}),up=L.mood.filter(function(m){return m.d>0;}),rel=L.notes.filter(function(n){return n.h;});
+  (rep.targets||[]).filter(function(t){return !t.ok;}).forEach(function(t,i){add('miss'+i,'Target missed',t.t,[t.t,'Nothing is paid for a target that is missed.'],'bad');});
+  var ow=rep.owner;
+  if(ow&&!ow.me&&ow.was!=null){var od=Math.round((ow.now-ow.was)*10)/10,ol=S.owner.name+': trust '+(od>0?'up '+od:(od<0?'down '+(-od):'unchanged'))+', now '+Math.round(ow.now)+'.';
+    if(od<0||ow.edge)add('owner','The owner',ol,[ow.text].concat(ow.why),ow.edge||od<=-1?'bad':'warn');}
   if(down.length||up.length||rel.length){
     var d=[];down.forEach(function(m){d.push(nm(m.id)+' went home unhappy.');});up.forEach(function(m){d.push(nm(m.id)+' went home in a better mood.');});rel.forEach(function(n){d.push(n.h+(n.t?': '+n.t:'')+(/[.!?]$/.test(n.t||n.h)?'':'.'));});
     add('room','The locker room',(down.length?down.length+' went home unhappy':'Nobody went home unhappy')+(up.length?', '+up.length+' in a better mood':'')+(rel.length?'. '+rel.length+' '+(rel.length===1?'thing':'things')+' people will remember':'')+'.',d,down.length?'bad':(up.length?'good':''));
@@ -1966,6 +1981,8 @@ E.afterShow=function(S){
   var nx=[];S.quests.filter(function(q){return q.due!=null&&q.text;}).sort(function(a,b){return a.due-b.due;}).slice(0,3).forEach(function(q){var d=q.due-S.week;nx.push({t:q.text,when:d<=0?'this week':(d===1?'next week':'in '+d+' weeks'),soon:d<=1});});
   (typeof E.comingUp==='function'?E.comingUp(S):[]).slice(0,3).forEach(function(u){nx.push({t:u.t,when:'',soon:false});});
   nx=nx.slice(0,5);
+  (rep.targets||[]).filter(function(t){return t.ok;}).forEach(function(t,i){add('hit'+i,'Target hit',t.t,[t.t],'good');});
+  if(ow&&!ow.me&&ow.was!=null&&!(od<0||ow.edge))add('owner','The owner',ol,[ow.text].concat(ow.why),od>0?'good':'');
   if(nx.length)add('next','Next week',nx[0].t+(nx[0].when?' ('+nx[0].when+')':''),nx.map(function(x){return x.t+(x.when?' ('+x.when+').':'');}),nx[0].soon?'warn':'');
   return {key:L.key,name:rep.name,grade:gradeG(repCS(rep)),head:v.head,line:v.line,matter:mt,next:nx,items:items,unseen:items.filter(function(x){return !x.seen;}).length,left:S.queue.length-S.qi};
 };
@@ -2754,8 +2771,14 @@ SHOWX.push(function(S,P,show,rep){
   // the company's model colours the verdict: a board cares less about the reviews, a founder who is a fan cares more
   var MD=modelOf(P),mv=MD.show?MD.show(S,P,show,rep):null;
   var dt=(clamp(d*0.5,-3,3)*(MD.ownShow||1)+(like?0.5:(show.big?-0.5:0)))*2/(P.shows.length+1)+(mv?mv.d:0);
+  var t0=o.trust,why=[];
   o.trust=clamp(o.trust+dt,0,100);if(d>=3)S.bp+=1;
-  rep.owner={d:r1(dt),like:like,bonus:d>=3,text:o.name+(dt>=2?' is delighted.':(dt>=0.5?' is pleased.':(dt>-0.5?' has no complaints.':(dt>-2?' is not impressed.':' is furious.'))))+(like?' You gave them '+STYLES[o.style].likes+'.':'')+(mv?' '+mv.x:'')};
+  // the reasons, in the order they weighed (After the show lists them)
+  var vb=verdictBand(d);why.push(vb>0?'The show beat what the crowd expected.':(vb<0?'The show fell short of what the crowd expected.':'The show was what the crowd expected.'));
+  if(like)why.push('You gave them '+STYLES[o.style].likes+'.');else if(show.big)why.push('A big event without '+STYLES[o.style].likes+'.');
+  if(mv&&mv.x)why.push(mv.x);
+  var edge=5+dif(S).fire;if(o.trust<=edge+8)why.push(o.name+' is close to letting you go.');
+  rep.owner={was:r1(t0),now:r1(o.trust),why:why,edge:o.trust<=edge+8,d:r1(dt),like:like,bonus:d>=3,text:o.name+(dt>=2?' is delighted.':(dt>=0.5?' is pleased.':(dt>-0.5?' has no complaints.':(dt>-2?' is not impressed.':' is furious.'))))+(like?' You gave them '+STYLES[o.style].likes+'.':'')+(mv?' '+mv.x:'')};
   if(o.trust>=90)award(S,'ACH_OWNER_TRUST');
 });
 WEEKX.push(function(S){
@@ -8986,7 +9009,15 @@ function taskOpen(S){
 E.tasks=function(S){
   var open=taskOpen(S),seen=S.taskSeen&&S.taskSeen.w===S.week?S.taskSeen:(S.taskSeen={w:S.week,t:{}}),wave=S.taskWave&&S.taskWave.w===S.week?S.taskWave.ids:{},now={},L=[];
   open.forEach(function(t){now[t.id]=1;seen.t[t.id]={text:t.done,need:t.need};var waved=!!wave[t.id]&&t.waive;L.push({id:t.id,text:t.text,short:t.short,to:t.to,label:t.label,gate:t.gate,card:t.card,need:t.need,waive:t.waive,req:!!t.req,state:waved?'waved':(t.need?'todo':'optional')});});
-  Object.keys(seen.t).forEach(function(id){if(!now[id])L.push({id:id,text:seen.t[id].text,need:seen.t[id].need,state:'done'});});
+  var qr=S.qres&&S.qres.w===S.week?S.qres.r:{};
+  Object.keys(seen.t).forEach(function(id){
+    if(now[id])return;
+    var o={id:id,text:seen.t[id].text,need:seen.t[id].need,state:'done'},r=/^q-/.test(id)?qr[id.slice(2)]:null;
+    // a target or a promise says how it went; action points only read as spent when none are left
+    if(r){o.text=r.t;o.miss=!r.ok;o.hit=r.ok;}
+    else if(id==='ap'){var ap=E.backstage(S).ap;if(ap>0){o.text=ap+' action '+(ap===1?'point':'points')+' went unspent. The shows are over for the week.';o.miss=true;}}
+    L.push(o);
+  });
   var rank={todo:0,optional:1,waved:2,done:3};
   L.sort(function(a,b){return rank[a.state]-rank[b.state];});
   var todo=L.filter(function(t){return t.state==='todo';});

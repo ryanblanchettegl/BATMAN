@@ -97,8 +97,15 @@ function showEnd(S,P,show,card,st){
     if(rep.sellout)award(S,'ACH_SELLOUT');if(S.stats.run>=5)award(S,'ACH_RUN_5');
     rep.quest=rep.quest||[];
     S.quests.slice().forEach(function(q){
-      if(q.type==='sponsor'&&big){if((cgFix(S),gradeMeets(rep.cs,q.target))){P.led.bonus+=q.bonus;rep.quest.push('Sponsor target hit: +$'+q.bonus.toLocaleString('en-US')+'.');award(S,'ACH_QUEST');}else rep.quest.push('Sponsor target missed ('+gradeA(q.target)+' show was needed).');dropQuest(S,q);}
-      if(q.type==='network'&&q.show===show.id){if(q.hit){P.led.bonus+=q.bonus;rep.quest.push('Network target hit: +$'+q.bonus.toLocaleString('en-US')+'.');award(S,'ACH_QUEST');}else rep.quest.push('Network target missed (a '+starG(q.target)+' main event was needed).');dropQuest(S,q);}
+      var qt;
+      if(q.type==='sponsor'&&big){cgFix(S);var sok=gradeMeets(rep.cs,q.target);
+        if(sok){P.led.bonus+=q.bonus;qt='Sponsor target hit: '+gradeA(rep.cs)+' show, '+gradeA(q.target)+' was needed. +$'+q.bonus.toLocaleString('en-US')+'.';award(S,'ACH_QUEST');}
+        else qt='Sponsor target missed: needed '+gradeA(q.target)+' show, got '+gradeA(rep.cs)+'.';
+        rep.quest.push(qt);(rep.targets=rep.targets||[]).push({ok:sok,t:qt});dropQuest(S,q,sok,qt);}
+      if(q.type==='network'&&q.show===show.id){
+        if(q.hit){P.led.bonus+=q.bonus;qt='Network target hit: a main event of '+starG(q.got||q.target)+', '+starG(q.target)+' was needed. +$'+q.bonus.toLocaleString('en-US')+'.';award(S,'ACH_QUEST');}
+        else qt='Network target missed: needed a main event of '+starG(q.target)+(q.got!=null?', got '+starG(q.got):'')+'.';
+        rep.quest.push(qt);(rep.targets=rep.targets||[]).push({ok:!!q.hit,t:qt});dropQuest(S,q,!!q.hit,qt);}
     });
     rep.sheet=dirtSheet(S,P,show,rep,inP);
     S.reports.unshift(rep);if(S.reports.length>8)S.reports.length=8;
@@ -107,13 +114,17 @@ function showEnd(S,P,show,card,st){
   SHOWX.forEach(function(fn){fn(S,P,show,rep,card);});
   return rep;
 }
-function dropQuest(S,q){S.quests=S.quests.filter(function(x){return x!==q;});}
+/* A target or a promise that is settled leaves how it went, so the desk can say Hit or Missed and not just that it is gone. */
+function dropQuest(S,q,ok,text){
+  S.quests=S.quests.filter(function(x){return x!==q;});
+  if(ok!=null){if(!S.qres||S.qres.w!==S.week)S.qres={w:S.week,r:{}};S.qres.r[q.id]={ok:!!ok,t:text||q.text};}
+}
 function matchQuests(S,P,show,m,sides,win,t,OV,isMain,seg){
   var ids=flat(m.sides);
   S.quests.slice().forEach(function(q){
-    if(q.type==='shot'&&t&&t.id===q.title&&ids.indexOf(q.w)>=0){S.w[q.w].morale=clamp(S.w[q.w].morale+6,0,100);seg.notes.push('Promise kept: '+S.w[q.w].name+' got the title shot.');award(S,'ACH_PROMISE');keptPromise(S,q,true);dropQuest(S,q);}
-    else if(q.type==='win'&&win>=0&&m.sides[win].indexOf(q.w)>=0){S.w[q.w].morale=clamp(S.w[q.w].morale+6,0,100);seg.notes.push('Promise kept: '+S.w[q.w].name+' got the win.');award(S,'ACH_PROMISE');keptPromise(S,q,true);dropQuest(S,q);}
-    else if(q.type==='network'&&isMain&&q.show===show.id){q.hit=starMeets(OV,q.target);}
+    if(q.type==='shot'&&t&&t.id===q.title&&ids.indexOf(q.w)>=0){S.w[q.w].morale=clamp(S.w[q.w].morale+6,0,100);seg.notes.push('Promise kept: '+S.w[q.w].name+' got the title shot.');award(S,'ACH_PROMISE');keptPromise(S,q,true);dropQuest(S,q,true,'Promise kept: '+q.text.replace(/^Promise: /,''));}
+    else if(q.type==='win'&&win>=0&&m.sides[win].indexOf(q.w)>=0){S.w[q.w].morale=clamp(S.w[q.w].morale+6,0,100);seg.notes.push('Promise kept: '+S.w[q.w].name+' got the win.');award(S,'ACH_PROMISE');keptPromise(S,q,true);dropQuest(S,q,true,'Promise kept: '+q.text.replace(/^Promise: /,''));}
+    else if(q.type==='network'&&isMain&&q.show===show.id){q.hit=starMeets(OV,q.target);q.got=OV;}
     else if(q.type==='dream'&&show.big&&ids.indexOf(q.a)>=0&&ids.indexOf(q.b)>=0){P.led.bonus+=q.bonus;P.image=clamp(P.image+0.6,5,100);seg.notes.push('The dream match delivered: +$'+q.bonus.toLocaleString('en-US')+' in extra buys.');award(S,'ACH_QUEST');dropQuest(S,q);}
   });
 }

@@ -41,7 +41,15 @@ function taskOpen(S){
 E.tasks=function(S){
   var open=taskOpen(S),seen=S.taskSeen&&S.taskSeen.w===S.week?S.taskSeen:(S.taskSeen={w:S.week,t:{}}),wave=S.taskWave&&S.taskWave.w===S.week?S.taskWave.ids:{},now={},L=[];
   open.forEach(function(t){now[t.id]=1;seen.t[t.id]={text:t.done,need:t.need};var waved=!!wave[t.id]&&t.waive;L.push({id:t.id,text:t.text,short:t.short,to:t.to,label:t.label,gate:t.gate,card:t.card,need:t.need,waive:t.waive,req:!!t.req,state:waved?'waved':(t.need?'todo':'optional')});});
-  Object.keys(seen.t).forEach(function(id){if(!now[id])L.push({id:id,text:seen.t[id].text,need:seen.t[id].need,state:'done'});});
+  var qr=S.qres&&S.qres.w===S.week?S.qres.r:{};
+  Object.keys(seen.t).forEach(function(id){
+    if(now[id])return;
+    var o={id:id,text:seen.t[id].text,need:seen.t[id].need,state:'done'},r=/^q-/.test(id)?qr[id.slice(2)]:null;
+    // a target or a promise says how it went; action points only read as spent when none are left
+    if(r){o.text=r.t;o.miss=!r.ok;o.hit=r.ok;}
+    else if(id==='ap'){var ap=E.backstage(S).ap;if(ap>0){o.text=ap+' action '+(ap===1?'point':'points')+' went unspent. The shows are over for the week.';o.miss=true;}}
+    L.push(o);
+  });
   var rank={todo:0,optional:1,waved:2,done:3};
   L.sort(function(a,b){return rank[a.state]-rank[b.state];});
   var todo=L.filter(function(t){return t.state==='todo';});

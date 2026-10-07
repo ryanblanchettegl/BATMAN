@@ -90,6 +90,7 @@ export function Report(p: { r: any }) {
         <div><div class="eyebrow">Show grade</div><div class="big" data-t="show-grade">{E.repGrade(r)}</div></div>
         <p><Verdict r={r} /> {Math.abs(r.dImage) < 0.05 ? 'Popularity unchanged.' : 'Popularity ' + (r.dImage > 0 ? 'up ' : 'down ') + Math.abs(r.dImage).toFixed(1) + '.'}</p>
       </div>
+      {(r.targets || []).map((t: any) => <p class={'note ' + (t.ok ? 'good' : 'bad')} data-t="rep-target"><span><b>{t.t}</b></span></p>)}
       {(() => { const w = whyLine(r); return w.up.length || w.down.length ? <div class="why mt2"><p class="eyebrow">Why it scored</p>
         {w.up.map(x => <p class="good">+ {x}</p>)}{w.down.map(x => <p class="bad">{'−'} {x}</p>)}</div> : null; })()}
       <div class="kv mt3">
@@ -104,8 +105,8 @@ export function Report(p: { r: any }) {
       {r.calls && r.calls.length ? <div class="why mt2" data-t="rep-calls"><p class="eyebrow">Your calls from the gorilla position</p>{r.calls.map((c: any) => <p><span class="gold">{c.a}.</span> <Txt>{c.r}</Txt></p>)}</div> : null}
       {r.occ ? <p class="note" data-t="rep-occ"><span>{r.name}: {r.occ.x.toLowerCase()}. The building was up for it.</span></p> : null}
       {r.firstNight ? <p class="note" data-t="first-night"><span>The first night of {r.name}. The building was up for it.</span></p> : null}
-      {(r.quest || []).map((q: string) => <p class="note"><span>{q}</span></p>)}
-      {r.owner && r.owner.text ? <p class="note"><span>{r.owner.text}{r.owner.bonus ? ' You earn 1 booking power.' : ''}</span></p> : null}
+      {(r.quest || []).filter((q: string) => !(r.targets || []).some((t: any) => t.t === q)).map((q: string) => <p class="note"><span>{q}</span></p>)}
+      {r.owner && r.owner.text ? <p class="note" data-t="rep-owner"><span>{r.owner.text}{r.owner.was != null ? ' Trust ' + Math.round(r.owner.was) + ' to ' + Math.round(r.owner.now) + '.' : ''}{r.owner.bonus ? ' You earn 1 booking power.' : ''}</span></p> : null}
       <Next r={r} />
     </Panel>
     {r.sheet ? <Panel cls="mb3" title="The dirt sheet"><p class="eyebrow">{r.sheet.by}</p>{r.sheet.lines.map((x: string) => <p class="mt1"><Txt>{x}</Txt></p>)}</Panel> : null}

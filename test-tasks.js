@@ -78,5 +78,22 @@ const st = (S, id) => (E.tasks(S).list.find(t => t.id === id) || {}).state;
   }
   ok('all', 'a year of lists for every company, no broken lines', bad === 0 && n > 300, n + ' lists, most to do in one week ' + most);
 }
+/* a target that is settled says how it went, on the desk and after the show; the owner's trust is shown moving */
+{ let hit = null, miss = null, own = 0, ownWhy = 0, apBad = 0, shows = 0;
+  for (const seed of [3, 5, 8]) { const S = E.newGame('pdw', seed, { name: 'R' });
+    for (let wk = 0; wk < 30 && !(hit && miss); wk++) {
+      E.tasks(S);
+      while (S.qi < S.queue.length) { E.tasks(S); E.runPlayerShow(S, E.suggest(S)); shows++; const r = S.reports[0];
+        if (r.owner && r.owner.was != null && r.owner.why && r.owner.why.length) ownWhy++;
+        const A = E.afterShow(S); if (A && A.items.some(x => x.k === 'owner' && /trust (up|down|unchanged)/.test(x.line))) own++;
+        (r.targets || []).forEach(t => { const row = E.tasks(S).list.find(x => /^q-/.test(x.id) && x.text === t.t); const it = A && A.items.find(x => x.line === t.t);
+          if (row && it) { if (t.ok && row.hit && !row.miss && /needed/.test(t.t)) hit = t.t; if (!t.ok && row.miss && /needed .*got /.test(t.t)) miss = t.t; } }); }
+      const ap = E.tasks(S).list.find(x => x.id === 'ap' && x.state === 'done'); if (ap && E.backstage(S).ap > 0 && !ap.miss) apBad++;
+      S.inbox.forEach(e => { if (!e.done) E.resolveEvent(S, e.id, 0); }); E.endWeek(S); } }
+  ok('tgt', 'a target that was hit says so on the desk and after the show', !!hit, hit || 'none seen');
+  ok('tgt', 'a target that was missed says Missed, with what was needed and what it got', !!miss, miss || 'none seen');
+  ok('own', 'every show says where the owner’s trust moved and why', own === shows && ownWhy === shows, own + ' and ' + ownWhy + ' of ' + shows);
+  ok('ap', 'action points are never called spent while some are left', apBad === 0, apBad + ' weeks');
+}
 if (fails.length) { console.log('FAILED: ' + fails.length); process.exit(1); }
 console.log('tasks: all passed');

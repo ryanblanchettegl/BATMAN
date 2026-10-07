@@ -1,6 +1,6 @@
 {
   "name": "ewf-9000",
-  "version": "0.11.0",
+  "version": "0.38.0",
   "description": "Elite Wrestling Federation 9000: a wrestling booking sim",
   "main": "desktop/main.js",
   "scripts": {

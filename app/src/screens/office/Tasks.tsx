@@ -58,7 +58,7 @@ export function Tasks() {
   return <div class="tasks">
     <p class="eyebrow">This week{'’'}s tasks</p>
     {T.list.length ? <ul class="list">{T.list.map((t: any) => <li key={t.id} class={'task ' + t.state + (t.state === 'todo' && T.strict ? ' must' : '')} data-task={t.id}>
-      <span>{t.state === 'todo' && T.strict ? <span class="mark" aria-hidden="true">!</span> : null}<Tag kind={t.req ? 'bad' : TAG[t.state][1]}>{t.req ? 'Required' : (t.state === 'todo' && !T.strict ? 'To do' : TAG[t.state][0])}</Tag> <span class={t.state === 'done' || t.state === 'waved' ? 'muted' : undefined}><Txt>{t.text}</Txt></span></span>
+      <span>{t.state === 'todo' && T.strict ? <span class="mark" aria-hidden="true">!</span> : null}<Tag kind={t.req || t.miss ? 'bad' : TAG[t.state][1]}>{t.req ? 'Required' : (t.miss ? (t.id === 'ap' ? 'Unspent' : 'Missed') : (t.hit ? 'Hit' : (t.state === 'todo' && !T.strict ? 'To do' : TAG[t.state][0])))}</Tag> <span class={t.state === 'done' || t.state === 'waved' ? 'muted' : undefined}><Txt>{t.text}</Txt></span></span>
       <span class="row opts">
         {t.state === 'todo' || t.state === 'optional' ? <Btn kind="sm" t="task-go" d={{ v: t.id }} onClick={() => open(t)}>{t.label}</Btn> : null}
         {t.state === 'todo' && t.waive ? <Btn kind="sm" t="task-wave" d={{ v: t.id }} onClick={() => act(() => { const r = E.taskWave(S, t.id); say(r.msg, { err: !r.ok }); })}>Not this week</Btn> : null}

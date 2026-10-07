@@ -110,8 +110,14 @@ SHOWX.push(function(S,P,show,rep){
   // the company's model colours the verdict: a board cares less about the reviews, a founder who is a fan cares more
   var MD=modelOf(P),mv=MD.show?MD.show(S,P,show,rep):null;
   var dt=(clamp(d*0.5,-3,3)*(MD.ownShow||1)+(like?0.5:(show.big?-0.5:0)))*2/(P.shows.length+1)+(mv?mv.d:0);
+  var t0=o.trust,why=[];
   o.trust=clamp(o.trust+dt,0,100);if(d>=3)S.bp+=1;
-  rep.owner={d:r1(dt),like:like,bonus:d>=3,text:o.name+(dt>=2?' is delighted.':(dt>=0.5?' is pleased.':(dt>-0.5?' has no complaints.':(dt>-2?' is not impressed.':' is furious.'))))+(like?' You gave them '+STYLES[o.style].likes+'.':'')+(mv?' '+mv.x:'')};
+  // the reasons, in the order they weighed (After the show lists them)
+  var vb=verdictBand(d);why.push(vb>0?'The show beat what the crowd expected.':(vb<0?'The show fell short of what the crowd expected.':'The show was what the crowd expected.'));
+  if(like)why.push('You gave them '+STYLES[o.style].likes+'.');else if(show.big)why.push('A big event without '+STYLES[o.style].likes+'.');
+  if(mv&&mv.x)why.push(mv.x);
+  var edge=5+dif(S).fire;if(o.trust<=edge+8)why.push(o.name+' is close to letting you go.');
+  rep.owner={was:r1(t0),now:r1(o.trust),why:why,edge:o.trust<=edge+8,d:r1(dt),like:like,bonus:d>=3,text:o.name+(dt>=2?' is delighted.':(dt>=0.5?' is pleased.':(dt>-0.5?' has no complaints.':(dt>-2?' is not impressed.':' is furious.'))))+(like?' You gave them '+STYLES[o.style].likes+'.':'')+(mv?' '+mv.x:'')};
   if(o.trust>=90)award(S,'ACH_OWNER_TRUST');
 });
 WEEKX.push(function(S){

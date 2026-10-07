@@ -332,8 +332,8 @@ The playtest's items are numbered 1 to 50. Five a version, in its order.
 - [ ] 4. Stretch the stars. Its own version.
 - [x] 5. Words follow stars: "Below this crowd's bar" for a good match that was the weakest, and no "ordinary" for a top of the hour.
 - [x] 6. The bar before the bell: the card builder says what this crowd expects in stars.
-- [ ] 7. Owner trust moves after every show, with the reason.
-- [ ] 8. Targets get a headline result, and Missed on the desk.
+- [x] 7. Owner trust moves after every show, with the reason: a line on After the show (`rep.owner.was`, `now`, `why`), and a warning when the owner is close to letting you go.
+- [x] 8. Targets get a headline result: needed and got, at the top of the report and on After the show (`rep.targets`), and Hit or Missed on the desk (`S.qres`). Action points left over read Unspent, not spent (item 27).
 
 ### 0n. Five more, picked from the open list (0.37)
 
