@@ -325,6 +325,8 @@ Ryan, 4 October: "After a show, it should go back to the Office or your desk, so
 
 ### 0p. The new look: grey desktop windows (decided 6 October, not started)
 
+**The plan is `docs/plans/art-direction.md`.** It is the next session's main goal (Ryan, 6 October). It lists the engine work behind every screen, the build order in four versions, and six questions for him. Company marks from three initials are in it (`docs/mockups/final/company-marks.png`).
+
 Mock-ups and the script that drew them are in `docs/mockups/`. Nothing here is built. The road data in the mock-up is made up: the game has no tour, state markets, hometowns or advance ticket sales yet.
 
 - [x] The reference set. Ryan, 6 October: redo the picked screens with an outsider's eye, fix spacing and type, use the new key and drop the old button. They are in `docs/mockups/final/` and replace the earlier pictures as the thing to build toward: `final-1-desk.png`, `final-2-backstage.png`, `final-3-storylines.png`, `final-4a-show-feed.png`, `final-4b-show-champion.png`, `final-5-show-call.png`, plus `final-6-roster.png` and `final-7-book-show.png` (those two not yet picked by him). `final.js` draws them. What they settle: one window title style, wider gutters, labels that never clip, the SPACE key on the bottom line with the week's numbers and how they moved, and lettering in lights (a ticker on the road, the show's name, the season's next ending, NEW CHAMPION with the belt and fireworks, YOUR CALL with a countdown, a crowd meter on the broadcast).

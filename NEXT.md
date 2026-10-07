@@ -2,6 +2,8 @@
 
 Work for Claude Code, in order. `TWEAKS.md` and `WISHLIST.md` are finished; this file is what comes after them. It turns the big tasks in `TASKS.md` into steps small enough to land one at a time. Read `CLAUDE.md` first, then the decisions table in `TASKS.md`.
 
+**7 October: this list is not the next thing.** Ryan's main goal for the next session is the new art style. Start from `docs/plans/art-direction.md` (finish and publish version 0.38 first, as its last section says). Come back to this list after that.
+
 **How to work this list**
 
 - Start from `origin/main`. It holds everything: the overnight work, the World Editor (version 0.12), shows and belts made during a game (0.13), booked promos and angles, the Net section and this week's tasks (0.14), and the running order rules with stars instead of percentages (0.15: read rule 8a in `CLAUDE.md` and `src/92-shape.js` before touching booking). If your branch started before 0.14, merge `origin/main` into it first: the menu has seven sections now, The Net page moved out of Stories, and the desk's alerts became tasks. Work on your own branch and push it after every job.
