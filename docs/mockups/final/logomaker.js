@@ -1,0 +1,70 @@
+/* The logo creator: a concept. Every mark is letters, a shape, colours and one extra, drawn in lights. Mock-up only. */
+const { open } = require('/home/claude/batman/app/tests/helper.js');
+(async () => { const { browser, page } = await open({ mode: 'desk', promo: 'whw' });
+  await page.setViewportSize({ width: 1400, height: 1000 }); await page.waitForTimeout(200);
+  await page.evaluate(() => {
+    const FONT = { A: '0E11111F111111', B: '1E11111E11111E', C: '0E11101010110E', D: '1E11111111111E', E: '1F10101E10101F', F: '1F10101E101010', G: '0E11101711110F', H: '1111111F111111', I: '0E04040404040E', J: '0702020202120C', K: '11121418141211', L: '1010101010101F', M: '111B1515111111', N: '11111915131111', O: '0E11111111110E', P: '1E11111E101010', Q: '0E11111115120D', R: '1E11111E141211', S: '0F10100E01011E', T: '1F040404040404', U: '1111111111110E', V: '11111111110A04', W: '1111111515150A', X: '11110A040A1111', Y: '1111110A040404', Z: '1F01020408101F' };
+    const EGA = ['#0000aa', '#00aa00', '#00aaaa', '#aa0000', '#aa00aa', '#aa5500', '#aaaaaa', '#555555', '#5555ff', '#55ff55', '#55ffff', '#ff5555', '#ff55ff', '#ffff55', '#ffffff', '#000000'];
+    const SHAPES = ['shield', 'ring', 'laurel', 'slash', 'star', 'diamond', 'sun', 'steps', 'moon', 'circle', 'hex', 'crown'], SN = { shield: 'Shield', ring: 'Ring', laurel: 'Laurel', slash: 'Banner', star: 'Star', diamond: 'Diamond', sun: 'Sun', steps: 'Pyramid', moon: 'Moon', circle: 'Seal', hex: 'Plate', crown: 'Crown' };
+    const GW = 40, GH = 32, dark = h => { const n = parseInt(h.slice(1), 16); return '#' + [n >> 16, (n >> 8) & 255, n & 255].map(v => Math.round(v * .42).toString(16).padStart(2, '0')).join(''); };
+    function mark(m, p) { const c = document.createElement('canvas'); c.width = GW; c.height = GH; const x = c.getContext('2d'), c1 = m.c1, c2 = m.c2, s = m.sh, band = dark(c1);
+      const poly = (pts, col) => { x.fillStyle = col; x.beginPath(); pts.forEach((q, i) => i ? x.lineTo(q[0], q[1]) : x.moveTo(q[0], q[1])); x.closePath(); x.fill(); }, R = (a, b, w, h, col) => { x.fillStyle = col; x.fillRect(a, b, w, h); }, C = (a, b, r, col) => { x.fillStyle = col; x.beginPath(); x.arc(a, b, r, 0, 7); x.fill(); };
+      let oy = 13;
+      if (s === 'shield') { poly([[5, 2], [35, 2], [35, 17], [20, 31], [5, 17]], c2); poly([[7, 4], [33, 4], [33, 16], [20, 28], [7, 16]], c1); oy = 9; }
+      if (s === 'ring') { R(3, 4, 34, 24, c2); R(5, 6, 30, 20, c1); [8, 23].forEach(yy => R(5, yy, 30, 1, c2)); }
+      if (s === 'laurel') { C(20, 16, 15, c1); C(20, 16, 13, '#000'); for (let k = 0; k < 14; k++) { const an = Math.PI * (0.62 + k * 0.136); C(20 + Math.cos(an) * 14, 16 + Math.sin(an) * 14, 1.5, k % 2 ? c2 : c1); } R(8, 10, 24, 13, band); }
+      if (s === 'slash') { poly([[2, 8], [38, 3], [38, 24], [2, 29]], c1); poly([[2, 8], [38, 3], [38, 5], [2, 10]], c2); poly([[2, 27], [38, 22], [38, 24], [2, 29]], c2); }
+      if (s === 'star') { const P = []; for (let k = 0; k < 10; k++) { const an = -Math.PI / 2 + k * Math.PI / 5, r = k % 2 ? 9 : 19; P.push([20 + Math.cos(an) * r * 1.05, 17 + Math.sin(an) * r * 0.86]); } poly(P, c2); R(6, 10, 28, 13, c1); R(6, 10, 28, 1, c2); R(6, 22, 28, 1, c2); }
+      if (s === 'diamond') { poly([[20, 1], [39, 16], [20, 31], [1, 16]], c2); poly([[20, 4], [36, 16], [20, 28], [4, 16]], c1); R(9, 11, 22, 11, band); }
+      if (s === 'sun') { for (let k = 0; k < 16; k++) { const an = k * Math.PI / 8; poly([[20 + Math.cos(an - 0.1) * 10, 16 + Math.sin(an - 0.1) * 9], [20 + Math.cos(an) * 20, 16 + Math.sin(an) * 16], [20 + Math.cos(an + 0.1) * 10, 16 + Math.sin(an + 0.1) * 9]], k % 2 ? c2 : c1); } x.fillStyle = c1; x.beginPath(); x.ellipse(20, 16, 13, 10, 0, 0, 7); x.fill(); x.fillStyle = band; x.beginPath(); x.ellipse(20, 16, 11.5, 8.5, 0, 0, 7); x.fill(); }
+      if (s === 'steps') { [[14, 2, 12], [10, 6, 20], [6, 10, 28], [2, 14, 36]].forEach((q, i) => R(q[0], q[1], q[2], 4, i % 2 ? c2 : c1)); R(2, 18, 36, 11, c1); R(2, 18, 36, 1, c2); R(2, 28, 36, 1, c2); oy = 20; }
+      if (s === 'moon') { C(20, 16, 15, c1); C(26, 12, 12.5, '#000'); R(6, 12, 28, 11, band); }
+      if (s === 'circle') { C(20, 16, 15.5, c2); C(20, 16, 13.5, c1); C(20, 16, 12, band); for (let k = 0; k < 20; k++) { const an = k * Math.PI / 10; R(Math.round(20 + Math.cos(an) * 12.8), Math.round(16 + Math.sin(an) * 12.8), 1, 1, c2); } }
+      if (s === 'hex') { poly([[9, 3], [31, 3], [39, 16], [31, 29], [9, 29], [1, 16]], c2); poly([[10, 5], [30, 5], [36.5, 16], [30, 27], [10, 27], [3.5, 16]], c1); R(9, 11, 22, 11, band); }
+      if (s === 'crown') { poly([[4, 12], [10, 3], [15, 10], [20, 2], [25, 10], [30, 3], [36, 12], [36, 14], [4, 14]], c2); [[10, 3], [20, 2], [30, 3]].forEach(q => C(q[0], q[1] + 1, 1.4, '#ff5555')); R(4, 14, 32, 15, c1); R(4, 14, 32, 1, c2); R(4, 28, 32, 1, c2); oy = 18; }
+      if (m.ex === 'stars') { const sy = s === 'steps' ? 30 : (s === 'crown' ? 30 : (s === 'shield' ? 19 : (oy + 9))); [14, 20, 26].forEach(sx => { R(sx, sy, 1, 1, m.c3 || '#ffff55'); R(sx - 1, sy + 1, 3, 1, m.c3 || '#ffff55'); R(sx, sy + 2, 1, 1, m.c3 || '#ffff55'); }); }
+      if (m.ex === 'bar') R(11, oy + 9, 18, 1, m.c3 || '#ffff55');
+      const str = (m.n || '').slice(0, 3), w = str.length * 6 - 1, ox = Math.round((GW - w) / 2);
+      for (let i = 0; i < str.length; i++) { const g = FONT[str[i]] || FONT.A; for (let yy = 0; yy < 7; yy++) { const row = parseInt(g.substr(yy * 2, 2), 16); for (let xx = 0; xx < 5; xx++) if ((row >> (4 - xx)) & 1) R(ox + i * 6 + xx + (m.st === 'slant' ? Math.round((3 - yy) * 0.4) : 0), oy + yy - (s === 'slash' ? Math.round((ox + i * 6 + xx - 20) * 0.14) : 0), 1, 1, m.c3 || '#ffffff'); } }
+      const im = x.getImageData(0, 0, GW, GH), o = document.createElement('canvas'); o.width = GW * p; o.height = GH * p; const y = o.getContext('2d'); y.fillStyle = '#050505'; y.fillRect(0, 0, o.width, o.height);
+      for (let yy = 0; yy < GH; yy++) for (let xx = 0; xx < GW; xx++) { const i = (yy * GW + xx) * 4, a = im.data[i + 3], r = im.data[i], g = im.data[i + 1], b = im.data[i + 2], on = a > 90 && r + g + b > 40; y.shadowBlur = on ? p * .9 : 0; y.shadowColor = `rgb(${r},${g},${b})`; y.fillStyle = on ? `rgb(${r},${g},${b})` : '#161616'; y.beginPath(); y.arc(xx * p + p / 2, yy * p + p / 2, p * (on ? .42 : .26), 0, 7); y.fill(); }
+      o.style.display = 'block'; return o; }
+    const NOW = { n: 'WHW', sh: 'shield', c1: '#5555ff', c2: '#ffff55', c3: '#ffffff', ex: 'stars', st: 'block' };
+    const root = document.createElement('div'); root.id = 'lgroot'; root.style.cssText = 'position:absolute;left:0;top:0;z-index:99999;background:#0000aa;padding:20px 26px 30px;font-family:var(--f);font-size:21px;color:#000;width:1340px;box-sizing:border-box;line-height:1.26';
+    const sw = (sel, set) => `<div class="sws">${(set || EGA).map(c => `<span class="sw${c === sel ? ' on' : ''}" style="background:${c}"></span>`).join('')}</div>`;
+    root.innerHTML = `<style>
+      #lgroot .wn{background:#aaa;border:2px solid #fff;border-right-color:#555;border-bottom-color:#555;box-shadow:10px 10px 0 rgba(0,0,0,.55)}#lgroot .ttl{background:#0000aa;color:#fff;padding:0 10px;display:grid;grid-template-columns:1fr auto 1fr;white-space:nowrap}#lgroot .ttl b{color:#ffff55;font-weight:normal}#lgroot .ttl span:last-child{text-align:right}
+      #lgroot .bd{padding:10px 14px 14px;display:grid;grid-template-columns:372px minmax(0,1fr) 292px;gap:22px}#lgroot p{margin:0 0 3px}#lgroot .mut{color:#444}#lgroot .bl{color:#0000aa}
+      #lgroot .grp{border:2px solid #555;padding:12px 10px 6px;position:relative;margin:12px 0 4px}#lgroot .grp>h4{position:absolute;top:-13px;left:10px;margin:0;background:#aaa;padding:0 6px;font-weight:normal;color:#aa0000;font-size:21px}
+      #lgroot canvas{border:2px solid #555;border-right-color:#fff;border-bottom-color:#fff}#lgroot .bt{display:inline-block;background:#00aa00;color:#fff;padding:0 13px;box-shadow:6px 5px 0 #000;margin:3px 16px 9px 0;white-space:nowrap}#lgroot .bt.y{background:#ffff55;color:#000}#lgroot .bt.g{background:#555}
+      #lgroot .ltr{display:inline-flex;width:44px;height:48px;background:#fff;border:2px solid #555;border-right-color:#fff;border-bottom-color:#fff;align-items:center;justify-content:center;font-size:36px;margin-right:8px;box-shadow:inset 2px 2px 0 #000}#lgroot .ltr.on{background:#ffff55}
+      #lgroot .shp{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}#lgroot .shp>div{text-align:center;padding:4px 2px 0;border:2px solid transparent;font-size:18px}#lgroot .shp>div.on{background:#00aa00;color:#fff;border-color:#000}#lgroot .shp canvas{margin:0 auto}
+      #lgroot .sws{display:flex;gap:3px;flex-wrap:nowrap}#lgroot .sw{width:20px;height:20px;flex:none;border:2px solid #555;display:inline-block}#lgroot .sw.on{outline:3px solid #000;border-color:#fff;transform:translateY(-3px)}
+      #lgroot .rw{display:flex;align-items:center;gap:10px;margin:0 0 7px;white-space:nowrap}#lgroot .rw>span:first-child{width:76px;color:#333;flex:none}
+      #lgroot .ideas{display:grid;grid-template-columns:auto auto;gap:8px;justify-content:start}#lgroot .chip{display:inline-block;padding:0 9px;margin-right:8px}#lgroot .mini{background:#aaa;border:2px solid #fff;border-right-color:#555;border-bottom-color:#555;box-shadow:5px 5px 0 rgba(0,0,0,.5);width:236px}#lgroot .mini div:first-child{padding:0 6px;font-size:18px}#lgroot .mini div:last-child{padding:2px 6px;font-size:17px;color:#333}
+      #lgroot .barx{background:#aaa;border:2px solid #555;padding:0 6px;display:flex;align-items:center;gap:8px;font-size:19px;white-space:nowrap}#lgroot .barx canvas{border:0}#lgroot .air{background:#00aaaa;color:#000;padding:0 6px;display:flex;align-items:center;gap:8px;font-size:18px;white-space:nowrap;border:2px solid #000}
+      #lgroot .ft{grid-column:1/-1;border-top:2px solid #555;padding-top:8px;display:flex;justify-content:space-between;align-items:center}
+    </style><div class="wn"><div class="ttl"><span>[■]</span><b>Logo creator: World History Wrestling</b><span>World Editor · Company</span></div><div class="bd">
+      <div><div id="lg-big"></div><p class="mut" style="margin-top:6px">40 by 32 lights. Everything is drawn by the game from your choices.</p>
+        <div class="grp"><h4>How it will look</h4>
+          <div class="rw"><span>In lists</span><span class="chip" style="background:#5555ff;color:#fff">WHW</span><span class="chip" style="background:#000;color:#ffff55">WHW</span><span id="lg-sm"></span></div>
+          <div class="rw"><span>Menu bar</span><div class="barx"><span id="lg-xs"></span>WHW · Week 1, October 2026</div></div>
+          <div class="rw"><span>On the air</span><div class="air"><span id="lg-xs2"></span>MONDAY NIGHT DYNASTY</div></div>
+          <div class="rw" style="align-items:flex-start;margin-bottom:2px"><span>Windows</span><div class="mini"><div style="background:#5555ff;color:#ffff55">[■] The road</div><div>Title bars take your colours.</div></div></div></div></div>
+      <div><div class="grp" style="margin-top:2px"><h4>The letters</h4><div class="rw"><span>Initials</span><span><span class="ltr">W</span><span class="ltr on">H</span><span class="ltr">W</span></span><span class="mut">Two or three letters.</span></div>
+          <div class="rw" style="margin-bottom:2px"><span>Style</span><span>(•) Block &nbsp; ( ) Slanted &nbsp; ( ) Wide</span></div></div>
+        <div class="grp"><h4>The shape</h4><div class="shp" id="lg-shapes"></div></div>
+        <div class="grp"><h4>The colours</h4><div class="rw"><span>Shape</span>${sw('#5555ff')}</div><div class="rw"><span>Trim</span>${sw('#ffff55')}</div><div class="rw" style="margin-bottom:2px"><span>Letters</span>${sw('#ffffff', ['#ffffff', '#ffff55', '#55ffff', '#ff5555', '#000000'])}<span class="mut">Always kept readable.</span></div></div>
+        <div class="grp"><h4>One extra</h4><p>( ) None &nbsp; (•) Three stars &nbsp; ( ) A bar &nbsp; ( ) Edge lights</p></div></div>
+      <div><div class="grp" style="margin-top:2px"><h4>Ideas</h4><div class="ideas" id="lg-ideas"></div><p style="margin-top:8px"><span class="bt g">Shuffle</span></p><p class="mut">Press one to take it.</p></div>
+        <div class="grp"><h4>Start from</h4><p><span class="bt">The company’s model</span></p><p><span class="bt">A rival’s mark</span></p><p><span class="bt">Nothing</span></p></div></div>
+      <div class="ft"><span class="mut">Every change shows at once. Nothing is saved until you say so.</span><span><span class="bt g">Undo</span><span class="bt g">Put it back</span><span class="bt y" style="margin-right:6px">Save the mark</span></span></div>
+    </div></div>`;
+    document.body.appendChild(root);
+    root.querySelector('#lg-big').appendChild(mark(NOW, 9)); root.querySelector('#lg-sm').appendChild(mark(NOW, 2)); const xs = mark(NOW, 1); xs.style.cssText = 'display:block;width:40px;height:32px;border:0'; root.querySelector('#lg-xs').appendChild(xs); const xs2 = mark(NOW, 1); xs2.style.cssText = 'display:block;width:40px;height:32px;border:0'; root.querySelector('#lg-xs2').appendChild(xs2);
+    SHAPES.forEach(s => { const d = document.createElement('div'); if (s === NOW.sh) d.className = 'on'; d.appendChild(mark({ n: '', sh: s, c1: NOW.c1, c2: NOW.c2 }, 2)); d.appendChild(document.createTextNode(SN[s])); root.querySelector('#lg-shapes').appendChild(d); });
+    [['crown', '#aa0000', '#ffff55', 'bar'], ['circle', '#5555ff', '#ffffff', 'stars'], ['hex', '#00aaaa', '#ffff55', ''], ['star', '#aa5500', '#ffff55', ''], ['laurel', '#ffff55', '#ffffff', 'stars'], ['diamond', '#aa00aa', '#55ffff', 'bar']].forEach(v => root.querySelector('#lg-ideas').appendChild(mark({ n: 'WHW', sh: v[0], c1: v[1], c2: v[2], ex: v[3] }, 3)));
+  });
+  await page.waitForTimeout(300); const b = await (await page.$('#lgroot')).boundingBox();
+  await page.screenshot({ path: process.argv[2] + '/logo-creator.png', fullPage: true, clip: { x: 0, y: 0, width: b.width, height: b.height } }); console.log(Math.round(b.width), Math.round(b.height));
+  await browser.close(); })().catch(e => { console.error(e); process.exit(1); });

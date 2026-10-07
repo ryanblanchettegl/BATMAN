@@ -65,6 +65,44 @@ Ryan: "I want every company to have their own icons based on their 3 initials."
 
 **Company colours as a theme (ask Ryan first).** The window title bars could take the player's company colour instead of always being blue, so changing jobs changes how the whole game looks. It is cheap once marks exist: one CSS variable. It is his call because it changes the look he just approved.
 
+## 3a. The logo creator
+
+Ryan, 6 October: "We also need to concept a logo creator." The concept is `docs/mockups/final/logo-creator.png` (`logomaker.js` draws it). It is one window, and the mark on the left redraws with every choice.
+
+**What a mark is made of.** Five choices, all data:
+
+| Choice | Options |
+|---|---|
+| The letters | Two or three initials. A style: block, slanted or wide. |
+| The shape | Twelve to start: shield, ring, laurel, banner, star, diamond, sun, pyramid, moon, seal, plate, crown. |
+| The colours | One for the shape, one for the trim, one for the letters, from the game's sixteen. |
+| One extra | None, three stars, a bar under the letters, or lights round the edge. |
+| Where it started | The company's model, a rival's mark, or nothing. |
+
+So the stored mark grows from section 3 to `P.mark = { l, st, sh, c1, c2, c3, ex }`. Every field has a default from the company's model, so a mark is never missing.
+
+**The window.**
+- **Left:** the mark at full size in lights, and "How it will look": the chip for lists, the small badge, the menu bar, the broadcast's top bar, and a window title bar in the company's colours.
+- **Middle:** the letters, the shape as a grid of twelve small boards, three rows of colour swatches, and the extra.
+- **Right:** Ideas, which is six finished marks made from the same letters at once (press one to take it, Shuffle for six more), and Start from.
+- **Bottom:** Undo, Put it back, and a yellow Save the mark. Nothing is saved until that is pressed.
+
+**Rules it keeps.**
+- The letters always stay readable. The creator will not allow letters the same colour as the shape, and shows the nearest colour that works.
+- Two companies in one world cannot have the same mark. The creator says which rival already has it.
+- Ideas and Shuffle are picked with the editor's own counter, never `rnd(S)`, so making a logo cannot change how a game plays out.
+- Every choice is a real button reachable by keys and a gamepad (rule 5). The shape grid and the swatches move with the arrows.
+- It fits one screen.
+
+**Where it opens.**
+- The World Editor, on a company (the first home for it).
+- When the player takes ownership of a company or starts one.
+- Manage, House, as "The company's mark", if Ryan wants a booker who is not the owner to be able to change it. Ask him. A real booker would not be allowed to.
+
+**Engine.** `E.markOf(P)` (section 3), `E.markIdeas(letters, n, seed)` for the six ideas, `E.markOk(pkg, mark)` for the two checks above, and `E.edSetMark(pkg, pid, mark)` for the editor. A mark set during a game goes through `E.setMark(S, mark)`. Headless test: every model gives a valid mark, a clash is caught, an unreadable colour pair is refused, and the same seed gives the same six ideas.
+
+**Later, if it earns its place.** More shapes (wings, a globe, a mask, a lightning bolt), a second line of small text under the letters (a year or a city), a mark for each weekly show and each title built the same way, and a mark that changes when the company changes its model.
+
 ## 4. Lights: pictures and lettering in dots
 
 **Pictures.** Each picture is drawn by code onto a 64 by 48 grid, then every cell becomes one light. Ten exist as mock-ups: ring, belt, champion, mask, bell, microphone, cage, ladder, chair, entrance (`mock9.js`). In the game, a picture is a function in `app/src/kit/lights.tsx` that paints the small grid. One shared routine turns a grid into lights on a canvas.
@@ -169,7 +207,7 @@ Five changes a version (rule 10a). One step at a time, shown to Ryan (rule 9a). 
 1. The window kit: `Win`, group box, buttons, tags, list box, bars. Old panels keep working.
 2. The bottom line and the SPACE key (6.1 and 6.2). The floating button goes.
 3. Lights: the routine, the five by seven face, and three pictures (ring, bell, belt).
-4. Company marks (6.3).
+4. Company marks (6.3) and the logo creator in the World Editor (section 3a).
 5. The desk in windows, with the lower three windows real and the road window showing only what exists today (this week's venue, capacity, the crowd's taste).
 
 **Version B: the road**
@@ -213,7 +251,8 @@ These only become possible after the steps above. None is promised.
 3. **The page tabs.** Restyle them to match the windows, or leave them?
 4. **Roster and Book the show.** Are `final-6` and `final-7` right, or do you want options the way you had for the others?
 5. **Backstage.** You said the dossier layout was "the closest". What should change?
-6. **The old look.** While pages are moved over one at a time, the game will have both looks at once. Is that acceptable in the published copy, or should the new look ship only when a whole section is done?
+6. **Who may change a company's mark.** Only the owner, or the booker too (section 3a)?
+7. **The old look.** While pages are moved over one at a time, the game will have both looks at once. Is that acceptable in the published copy, or should the new look ship only when a whole section is done?
 
 ## 10. Before anything else next session
 
