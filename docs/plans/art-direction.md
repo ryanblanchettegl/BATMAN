@@ -87,6 +87,23 @@ So the stored mark grows from section 3 to `P.mark = { l, st, sh, c1, c2, c3, ex
 - **Right:** Ideas, which is six finished marks made from the same letters at once (press one to take it, Shuffle for six more), and Start from.
 - **Bottom:** Undo, Put it back, and a yellow Save the mark. Nothing is saved until that is pressed.
 
+**The full range (added the same evening).** Ryan asked for enough options that a player could build a mark in the style of any wrestling company they have in mind. `docs/mockups/final/logo-range.png` shows the wider set and twelve marks made with it (`marks2.js`):
+
+| Choice | Options |
+|---|---|
+| Letter style | Block, slanted, wide, tall, outlined, shadowed |
+| Layout | In a row, stacked, stairs, big middle letter |
+| Shape | Eighteen: the twelve above plus oval, globe, bolt, wings, flame, pennant. Or no shape at all, letters only. |
+| Finish | Flat, two-tone, striped |
+| One extra | Three stars, a bar, a small second line of text (up to eight characters), lights round the edge |
+| Colours | Shape, trim and letters, from sixteen |
+
+That is several million different marks before a single new shape is added. The stored mark becomes `P.mark = { l, st, lay, sh, fin, c1, c2, c3, ex, tag }`.
+
+**What the creator does not ship with.** No presets that copy a real company's logo, and no examples named after one. Rule 3 covers it: game content never names a real promotion, and that includes its trademarks. The creator is a set of general parts. What a player builds with those parts in their own world is theirs to decide, the same as in the World Editor.
+
+**Shapes worth adding next,** because they widen the range the most: a plain circle with a thick rim, a rectangle with cut corners, a chevron, a ribbon across the middle, a pair of crossed bars, a cog, and three or four animal heads drawn the way the portraits are (an eagle, a wolf, a bull, a dragon). Each is one drawing function and one name.
+
 **Rules it keeps.**
 - The letters always stay readable. The creator will not allow letters the same colour as the shape, and shows the nearest colour that works.
 - Two companies in one world cannot have the same mark. The creator says which rival already has it.
