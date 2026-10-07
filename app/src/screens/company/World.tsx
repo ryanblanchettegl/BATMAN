@@ -18,7 +18,7 @@ function Promotions() {
         <td class="r num">{cash(P.cash)}</td>
         <td class="r num">{E.rosterOf(S, id).length}</td>
         <td>{top && top.holders.length ? <Name w={S.w[top.holders[0]]} /> : <span class="muted">Vacant</span>}</td>
-        <td>{P.last ? <>{P.last.name} <b class="gold">{grade(P.last.rating)}</b></> : <span class="muted">—</span>}</td>
+        <td>{P.last ? <>{P.last.name} <b class="gold">{E.repGrade(P.last)}</b></> : <span class="muted">—</span>}</td>
       </tr>;
     })}</tbody>
   </table></div>;

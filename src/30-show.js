@@ -1,10 +1,10 @@
 /* ---------- running a show ---------- */
 function dirtSheet(S,P,show,rep,pool){
   var ms=rep.segs.filter(function(s){return s.k==='match';}),L=[],d=rep.rating-rep.exp,i;
-  L.push(d>=4?show.name+' beat every expectation. This is a company on a roll.':(d>=0.5?'A good night. '+show.name+' gave the crowd a little more than they came for.':(d>-0.5?show.name+' was exactly the show people expected. No more, no less.':(d>-4?'A flat night. '+show.name+' came up short of what this audience expects.':show.name+' was a miss. People were leaving before the main event ended.'))));
+  var vb=verdictBand(d);L.push(vb>1?show.name+' beat every expectation. This is a company on a roll.':(vb>0?'A good night. '+show.name+' gave the crowd a little more than they came for.':(vb===0?show.name+' was exactly the show people expected. No more, no less.':(vb===-1?'A flat night. '+show.name+' came up short of what this audience expects.':show.name+' was a miss. People were leaving before the main event ended.'))));
   var best=ms.slice().sort(function(a,b){return b.ov-a.ov;})[0],worst=ms.slice().sort(function(a,b){return a.ov-b.ov;})[0],main=ms[ms.length-1];
   if(best)L.push('Match of the night: '+best.label+', '+starG(best.ov)+(best.fx.filter(function(f){return f.s>0;})[0]?'. '+best.fx.filter(function(f){return f.s>0;})[0].x+'.':'.'));
-  if(worst&&worst!==best&&worst.ov<rep.rating-10){var why=worst.fx.filter(function(f){return f.s<0;})[0];L.push('Low point: '+worst.label+', '+starG(worst.ov)+(why?'. '+why.x+'.':'.'));}
+  if(worst&&worst!==best&&worst.ov<rep.rating-10){var why=worst.fx.filter(function(f){return f.s<0;})[0];L.push((worst.ov>=60?'Below this crowd’s bar: ':'Low point: ')+worst.label+', '+starG(worst.ov)+(why?'. '+why.x+'.':'.'));}
   if(main&&main!==best)L.push(main.ov>=rep.rating+4?'The main event delivered: '+starG(main.ov)+'.':(main.ov<rep.rating-3?'The main event ('+starG(main.ov)+') did not close the show the way it needed to.':'The main event did its job.'));
   var nf=ms.filter(function(s){return s.fin==='dq'||s.fin==='co'||s.fin==='draw';}).length;if(nf>=2)L.push(nf+' matches without a real finish is too many for one night.');
   var flat=ms.filter(function(s){return s.fx.some(function(f){return /^Nobody to/.test(f.x);});}).length;if(flat>=2)L.push(flat+' matches had nobody to cheer against. Mix your faces and heels.');
@@ -79,7 +79,7 @@ function showEnd(S,P,show,card,st){
   var exp=expected(P,show);
   if(isPl&&rep.venue){var bar=barCity(S,rep.venue);if(bar){exp+=bar.d;rep.barNote=bar.note;}}
   var qf=clamp(1+(P.trend||0)/60,0.85,1.15)*(SLOT_V[P.slot]/SLOT_V[P.slot0])*(1+0.03*(P.prodLvl-P.prod0))*airPF(P,show);
-  rep.exp=r1(exp);
+  rep.exp=r1(exp);rep.cs=crowdScore(rep.rating,rep.exp);
   var mx=mixOf(P);
   rep.viewers=Math.round(viewersK(P,show,qf)*1000);rep.gate=Math.round(rep.att*ticket(P,show)*TIX_P[P.tix]*mx.gate);rep.tv=Math.round(rep.viewers/1000*P.tvRate*mx.tv*airRate(P,show));
   rep.buys=big?Math.round(buysK(P,show,rep.hype)*1000):0;rep.ppv=Math.round(rep.buys*22*mx.ppv);
@@ -87,22 +87,22 @@ function showEnd(S,P,show,card,st){
   var before=P.image;
   P.image=clamp(P.image+(rep.rating-exp)*(big?0.08:0.03*showMult(show)*airReach(P,show)),5,modelOf(P).cap||100);rep.dImage=r1(P.image-before);
   P.trend=(P.trend||0)*0.6+(rep.rating-exp)*0.4;P.mainB[key]=(P.mainB[key]||rep.mainOv)*0.9+rep.mainOv*0.1;
-  P.last={name:show.name,rating:rep.rating,week:S.week};
+  P.last={name:show.name,rating:rep.rating,cs:rep.cs,week:S.week};
   // the crowd gets used to about half of whatever you keep giving it, good or bad
   if(isPl){var raw=rep.rating-(exp-(P.expA||0)-(P.expB||0));P.expA=clamp((P.expA||0)+(0.5*raw-(P.expA||0))*0.16/(P.shows.length+1),-4,8);}
   if(isPl){
-    S.stats.shows++;if(rep.rating>S.stats.bestShow)S.stats.bestShow=rep.rating;
+    S.stats.shows++;if(rep.rating>S.stats.bestShow)S.stats.bestShow=rep.rating;if(rep.cs>(S.stats.bestCS||0))S.stats.bestCS=rep.cs;
     S.stats.run=rep.rating>exp?S.stats.run+1:0;
-    award(S,'ACH_FIRST_BELL');if(rep.rating>=80)award(S,'ACH_SHOW_80');if(rep.rating>=90)award(S,'ACH_SHOW_90');if(rep.rating<40)award(S,'ACH_BOMB');
+    award(S,'ACH_FIRST_BELL');if(rep.cs>=80)award(S,'ACH_SHOW_80');if(rep.cs>=90)award(S,'ACH_SHOW_90');if(rep.rating<40)award(S,'ACH_BOMB');
     if(rep.sellout)award(S,'ACH_SELLOUT');if(S.stats.run>=5)award(S,'ACH_RUN_5');
     rep.quest=rep.quest||[];
     S.quests.slice().forEach(function(q){
-      if(q.type==='sponsor'&&big){if(gradeMeets(rep.rating,q.target)){P.led.bonus+=q.bonus;rep.quest.push('Sponsor target hit: +$'+q.bonus.toLocaleString('en-US')+'.');award(S,'ACH_QUEST');}else rep.quest.push('Sponsor target missed ('+gradeA(q.target)+' show was needed).');dropQuest(S,q);}
+      if(q.type==='sponsor'&&big){if((cgFix(S),gradeMeets(rep.cs,q.target))){P.led.bonus+=q.bonus;rep.quest.push('Sponsor target hit: +$'+q.bonus.toLocaleString('en-US')+'.');award(S,'ACH_QUEST');}else rep.quest.push('Sponsor target missed ('+gradeA(q.target)+' show was needed).');dropQuest(S,q);}
       if(q.type==='network'&&q.show===show.id){if(q.hit){P.led.bonus+=q.bonus;rep.quest.push('Network target hit: +$'+q.bonus.toLocaleString('en-US')+'.');award(S,'ACH_QUEST');}else rep.quest.push('Network target missed (a '+starG(q.target)+' main event was needed).');dropQuest(S,q);}
     });
     rep.sheet=dirtSheet(S,P,show,rep,inP);
     S.reports.unshift(rep);if(S.reports.length>8)S.reports.length=8;
-  }else if(big){var mm=ms[ms.length-1];news(S,'world',show.name+' was graded '+gradeG(rep.rating)+'. Main event: '+mm.label+(mm.win?' ('+mm.win+' won).':' (draw).'));}
+  }else if(big){var mm=ms[ms.length-1];news(S,'world',show.name+' was graded '+gradeG(repCS(rep))+'. Main event: '+mm.label+(mm.win?' ('+mm.win+' won).':' (draw).'));}
   if(isPl)Object.keys(ctx.angled).forEach(function(id){if(S.w[id])S.w[id].la=S.week;});
   SHOWX.forEach(function(fn){fn(S,P,show,rep,card);});
   return rep;

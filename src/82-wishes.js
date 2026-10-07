@@ -181,7 +181,7 @@ SHOWX.push(function(S,P,show,rep){
   var mine=S.promos[S.player].cities||[],theirs=P.cities||[];if(!theirs.length)return;
   var city=theirs[hash('bar'+S.seed+P.id+S.week)%theirs.length];if(mine.indexOf(city)<0)return;
   (S.bar||(S.bar={}))[city]={w:S.week,d:Math.min(3,(rep.rating-rep.exp)/3),by:P.name,r:rep.rating};
-  news(S,'world',P.name+' had a great night in '+city+' (graded '+gradeG(rep.rating)+'). Anyone who follows them there has more to live up to.');
+  news(S,'world',P.name+' had a great night in '+city+' (graded '+gradeG(repCS(rep))+'). Anyone who follows them there has more to live up to.');
 });
 function barCity(S,venue){
   var B=S.bar;if(!B)return null;
@@ -255,7 +255,7 @@ POST.push(function(ctx){
 function msAward(S,id){if(S.cal||(S.firsts&&S.firsts[id]))return;(S.firsts||(S.firsts={}))[id]=S.week;S.toasts.push(id);}
 SHOWX.push(function(S,P,show,rep){
   if(P.id!==S.player||S.cal)return;var ms=rep.segs.filter(function(s){return s.k==='match';});
-  if(rep.sellout)msAward(S,'MS_SELLOUT');if(rep.rating>=80)msAward(S,'MS_SHOW80');
+  if(rep.sellout)msAward(S,'MS_SELLOUT');if(repCS(rep)>=80)msAward(S,'MS_SHOW80');
   if(ms.some(function(s){return starQ(s.ov)>=18;}))msAward(S,'MS_TOPMATCH');
   if(ms.some(function(s){return s.change;}))msAward(S,'MS_TITLECHANGE');
   if(ms.some(function(s){return s.crown;}))msAward(S,'MS_CROWN');

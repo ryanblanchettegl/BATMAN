@@ -74,7 +74,7 @@ export function GameOver() {
     <Panel>
       <p>{fired ? S.owner.name + ' has lost faith in your booking and let you go from ' + P.name + '.' : P.name + ' ran out of money after six straight weeks in the red.'}</p>
       <div class="kv mt3 mb2">
-        <KV label="Booker level">{S.booker.lvl}</KV><KV label="Shows run">{st.shows}</KV><KV label="Best show">{st.shows ? grade(st.bestShow) : '—'}</KV><KV label="Best match">{stars(st.bestMatch)}</KV><KV label="Feuds finished">{st.feudsDone}</KV>
+        <KV label="Booker level">{S.booker.lvl}</KV><KV label="Shows run">{st.shows}</KV><KV label="Best show">{st.shows ? grade(st.bestCS != null ? st.bestCS : st.bestShow) : '—'}</KV><KV label="Best match">{stars(st.bestMatch)}</KV><KV label="Feuds finished">{st.feudsDone}</KV>
       </div>
       {fired && <div class="mt3">
         <h2 class="mb1">Somebody is always hiring</h2>

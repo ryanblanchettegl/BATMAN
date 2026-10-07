@@ -37,7 +37,7 @@ var SLOTN=['Late night','Early evening','Prime time'],SLOT_V=[0.55,0.8,1],SLOT_M
 var CAPS = [300,600,1000,1500,2500,4000,6000,8000,10000,13000,16000,20000,30000,45000,60000,80000,100000];
 var ACH = [
   {id:'ACH_FIRST_BELL',name:'Opening Bell',desc:'Run your first show.'},
-  {id:'ACH_SHOW_80',name:'Solid Outing',desc:'Run a show graded A- or better.'},
+  {id:'ACH_SHOW_80',name:'Solid Outing',desc:'Run a show graded A- or better: one that beat what its crowd expected.'},
   {id:'ACH_SHOW_90',name:'Blowaway Show',desc:'Run a show graded A+.'},
   {id:'ACH_MATCH_90',name:'Match of the Year Candidate',desc:'Book a match of ★★★★½ or better.'},
   {id:'ACH_MATCH_97',name:'Five Stars',desc:'Book a five-star match.'},
@@ -99,7 +99,7 @@ var ACH = [
   {id:'ACH_JOSHI_MERCH',name:'The Longest Table',desc:'Out-sell a bigger company in merchandise for a week with the all-women company.'},
   {id:'MS_SELLOUT',ms:true,name:'First sell-out',desc:'Fill a building to the rafters.'},
   {id:'MS_TOPMATCH',ms:true,name:'First top-grade match',desc:'Book a match of ★★★★½ or better.'},
-  {id:'MS_SHOW80',ms:true,name:'First A- show',desc:'Run a show graded A- or better.'},
+  {id:'MS_SHOW80',ms:true,name:'First A- show',desc:'Run a show graded A- or better: one that beat what its crowd expected.'},
   {id:'MS_TITLECHANGE',ms:true,name:'First title change',desc:'See a belt change hands on your show.'},
   {id:'MS_CROWN',ms:true,name:'First champion crowned',desc:'Crown a champion for a vacant title.'},
   {id:'MS_BUILT',ms:true,name:'A champion built from nothing',desc:'Make a champion of someone who arrived as an unknown.'},
@@ -1125,10 +1125,10 @@ function genAngle(S,P,show,ctx){
 /* ---------- running a show ---------- */
 function dirtSheet(S,P,show,rep,pool){
   var ms=rep.segs.filter(function(s){return s.k==='match';}),L=[],d=rep.rating-rep.exp,i;
-  L.push(d>=4?show.name+' beat every expectation. This is a company on a roll.':(d>=0.5?'A good night. '+show.name+' gave the crowd a little more than they came for.':(d>-0.5?show.name+' was exactly the show people expected. No more, no less.':(d>-4?'A flat night. '+show.name+' came up short of what this audience expects.':show.name+' was a miss. People were leaving before the main event ended.'))));
+  var vb=verdictBand(d);L.push(vb>1?show.name+' beat every expectation. This is a company on a roll.':(vb>0?'A good night. '+show.name+' gave the crowd a little more than they came for.':(vb===0?show.name+' was exactly the show people expected. No more, no less.':(vb===-1?'A flat night. '+show.name+' came up short of what this audience expects.':show.name+' was a miss. People were leaving before the main event ended.'))));
   var best=ms.slice().sort(function(a,b){return b.ov-a.ov;})[0],worst=ms.slice().sort(function(a,b){return a.ov-b.ov;})[0],main=ms[ms.length-1];
   if(best)L.push('Match of the night: '+best.label+', '+starG(best.ov)+(best.fx.filter(function(f){return f.s>0;})[0]?'. '+best.fx.filter(function(f){return f.s>0;})[0].x+'.':'.'));
-  if(worst&&worst!==best&&worst.ov<rep.rating-10){var why=worst.fx.filter(function(f){return f.s<0;})[0];L.push('Low point: '+worst.label+', '+starG(worst.ov)+(why?'. '+why.x+'.':'.'));}
+  if(worst&&worst!==best&&worst.ov<rep.rating-10){var why=worst.fx.filter(function(f){return f.s<0;})[0];L.push((worst.ov>=60?'Below this crowd’s bar: ':'Low point: ')+worst.label+', '+starG(worst.ov)+(why?'. '+why.x+'.':'.'));}
   if(main&&main!==best)L.push(main.ov>=rep.rating+4?'The main event delivered: '+starG(main.ov)+'.':(main.ov<rep.rating-3?'The main event ('+starG(main.ov)+') did not close the show the way it needed to.':'The main event did its job.'));
   var nf=ms.filter(function(s){return s.fin==='dq'||s.fin==='co'||s.fin==='draw';}).length;if(nf>=2)L.push(nf+' matches without a real finish is too many for one night.');
   var flat=ms.filter(function(s){return s.fx.some(function(f){return /^Nobody to/.test(f.x);});}).length;if(flat>=2)L.push(flat+' matches had nobody to cheer against. Mix your faces and heels.');
@@ -1203,7 +1203,7 @@ function showEnd(S,P,show,card,st){
   var exp=expected(P,show);
   if(isPl&&rep.venue){var bar=barCity(S,rep.venue);if(bar){exp+=bar.d;rep.barNote=bar.note;}}
   var qf=clamp(1+(P.trend||0)/60,0.85,1.15)*(SLOT_V[P.slot]/SLOT_V[P.slot0])*(1+0.03*(P.prodLvl-P.prod0))*airPF(P,show);
-  rep.exp=r1(exp);
+  rep.exp=r1(exp);rep.cs=crowdScore(rep.rating,rep.exp);
   var mx=mixOf(P);
   rep.viewers=Math.round(viewersK(P,show,qf)*1000);rep.gate=Math.round(rep.att*ticket(P,show)*TIX_P[P.tix]*mx.gate);rep.tv=Math.round(rep.viewers/1000*P.tvRate*mx.tv*airRate(P,show));
   rep.buys=big?Math.round(buysK(P,show,rep.hype)*1000):0;rep.ppv=Math.round(rep.buys*22*mx.ppv);
@@ -1211,22 +1211,22 @@ function showEnd(S,P,show,card,st){
   var before=P.image;
   P.image=clamp(P.image+(rep.rating-exp)*(big?0.08:0.03*showMult(show)*airReach(P,show)),5,modelOf(P).cap||100);rep.dImage=r1(P.image-before);
   P.trend=(P.trend||0)*0.6+(rep.rating-exp)*0.4;P.mainB[key]=(P.mainB[key]||rep.mainOv)*0.9+rep.mainOv*0.1;
-  P.last={name:show.name,rating:rep.rating,week:S.week};
+  P.last={name:show.name,rating:rep.rating,cs:rep.cs,week:S.week};
   // the crowd gets used to about half of whatever you keep giving it, good or bad
   if(isPl){var raw=rep.rating-(exp-(P.expA||0)-(P.expB||0));P.expA=clamp((P.expA||0)+(0.5*raw-(P.expA||0))*0.16/(P.shows.length+1),-4,8);}
   if(isPl){
-    S.stats.shows++;if(rep.rating>S.stats.bestShow)S.stats.bestShow=rep.rating;
+    S.stats.shows++;if(rep.rating>S.stats.bestShow)S.stats.bestShow=rep.rating;if(rep.cs>(S.stats.bestCS||0))S.stats.bestCS=rep.cs;
     S.stats.run=rep.rating>exp?S.stats.run+1:0;
-    award(S,'ACH_FIRST_BELL');if(rep.rating>=80)award(S,'ACH_SHOW_80');if(rep.rating>=90)award(S,'ACH_SHOW_90');if(rep.rating<40)award(S,'ACH_BOMB');
+    award(S,'ACH_FIRST_BELL');if(rep.cs>=80)award(S,'ACH_SHOW_80');if(rep.cs>=90)award(S,'ACH_SHOW_90');if(rep.rating<40)award(S,'ACH_BOMB');
     if(rep.sellout)award(S,'ACH_SELLOUT');if(S.stats.run>=5)award(S,'ACH_RUN_5');
     rep.quest=rep.quest||[];
     S.quests.slice().forEach(function(q){
-      if(q.type==='sponsor'&&big){if(gradeMeets(rep.rating,q.target)){P.led.bonus+=q.bonus;rep.quest.push('Sponsor target hit: +$'+q.bonus.toLocaleString('en-US')+'.');award(S,'ACH_QUEST');}else rep.quest.push('Sponsor target missed ('+gradeA(q.target)+' show was needed).');dropQuest(S,q);}
+      if(q.type==='sponsor'&&big){if((cgFix(S),gradeMeets(rep.cs,q.target))){P.led.bonus+=q.bonus;rep.quest.push('Sponsor target hit: +$'+q.bonus.toLocaleString('en-US')+'.');award(S,'ACH_QUEST');}else rep.quest.push('Sponsor target missed ('+gradeA(q.target)+' show was needed).');dropQuest(S,q);}
       if(q.type==='network'&&q.show===show.id){if(q.hit){P.led.bonus+=q.bonus;rep.quest.push('Network target hit: +$'+q.bonus.toLocaleString('en-US')+'.');award(S,'ACH_QUEST');}else rep.quest.push('Network target missed (a '+starG(q.target)+' main event was needed).');dropQuest(S,q);}
     });
     rep.sheet=dirtSheet(S,P,show,rep,inP);
     S.reports.unshift(rep);if(S.reports.length>8)S.reports.length=8;
-  }else if(big){var mm=ms[ms.length-1];news(S,'world',show.name+' was graded '+gradeG(rep.rating)+'. Main event: '+mm.label+(mm.win?' ('+mm.win+' won).':' (draw).'));}
+  }else if(big){var mm=ms[ms.length-1];news(S,'world',show.name+' was graded '+gradeG(repCS(rep))+'. Main event: '+mm.label+(mm.win?' ('+mm.win+' won).':' (draw).'));}
   if(isPl)Object.keys(ctx.angled).forEach(function(id){if(S.w[id])S.w[id].la=S.week;});
   SHOWX.forEach(function(fn){fn(S,P,show,rep,card);});
   return rep;
@@ -1967,7 +1967,7 @@ E.afterShow=function(S){
   (typeof E.comingUp==='function'?E.comingUp(S):[]).slice(0,3).forEach(function(u){nx.push({t:u.t,when:'',soon:false});});
   nx=nx.slice(0,5);
   if(nx.length)add('next','Next week',nx[0].t+(nx[0].when?' ('+nx[0].when+')':''),nx.map(function(x){return x.t+(x.when?' ('+x.when+').':'');}),nx[0].soon?'warn':'');
-  return {key:L.key,name:rep.name,grade:gradeG(rep.rating),head:v.head,line:v.line,matter:mt,next:nx,items:items,unseen:items.filter(function(x){return !x.seen;}).length,left:S.queue.length-S.qi};
+  return {key:L.key,name:rep.name,grade:gradeG(repCS(rep)),head:v.head,line:v.line,matter:mt,next:nx,items:items,unseen:items.filter(function(x){return !x.seen;}).length,left:S.queue.length-S.qi};
 };
 /** The booker has looked at one of the things the night left. */
 E.nightSeen=function(S,k){var A=E.afterShow(S);if(!A)return;if(!S.nightSeen||S.nightSeen.key!==A.key)S.nightSeen={key:A.key,k:{}};S.nightSeen.k[k]=1;};
@@ -2235,8 +2235,8 @@ var EV={
   },
   sponsor:function(S,P){
     if(cal(S.week).wom!==4||S.quests.some(function(q){return q.type==='sponsor';}))return null;
-    var target=Math.round(expected(P,{big:true})+3),bonus=Math.round(P.inc0*0.08/1000)*1000;
-    S.quests.push({id:S.nid++,type:'sponsor',target:target,bonus:bonus,due:S.week,text:'Sponsor: big event graded '+gradeG(target)+' or better ('+money(bonus)+')'});
+    var target=Math.round(crowdScoreD(3)),bonus=Math.round(P.inc0*0.08/1000)*1000;
+    S.quests.push({id:S.nid++,type:'sponsor',cg:1,target:target,bonus:bonus,due:S.week,text:'Sponsor: big event graded '+gradeG(target)+' or better ('+money(bonus)+')'});
     return {type:'sponsor',text:'A sponsor will pay '+money(bonus)+' if this month’s big event is graded '+gradeG(target)+' or better.'};
   }
 };
@@ -2296,7 +2296,7 @@ function mkOffer(S,P){
   var MD=modelOf(P),type=pick(S,MD.riskFree?['image','rating']:['risk','image','rating']),o={name:pick(S,names),weeks:ri(S,12,36),type:type},mult=1;
   if(type==='risk'){o.val=ri(S,0,2);mult=[1.5,1.2,1][o.val];o.text='Keep the product '+RISKN[o.val]+(o.val?' or tamer':'');}
   else if(type==='image'){o.val=Math.round(P.image-ri(S,0,3));o.text='Popularity stays at '+o.val+' or better';}
-  else{var lo=99;Object.keys(P.base).forEach(function(k){if(P.base[k]<lo)lo=P.base[k];});o.val=Math.round(lo+0.6*(P.image-P.image0)-ri(S,5,10));o.text='No show graded under '+gradeG(o.val);}
+  else{var lo=99;Object.keys(P.base).forEach(function(k){if(P.base[k]<lo)lo=P.base[k];});o.val=Math.round(crowdScoreD(-ri(S,5,10)));o.cg=1;o.text='No show graded under '+gradeG(o.val);}
   o.pay=Math.max(1000,Math.round(P.inc0*(0.012+rnd(S)*0.02)*mult*mixOf(P).sp/1000)*1000);
   return o;
 }
@@ -2304,7 +2304,7 @@ function refreshOffers(S){var P=S.promos[S.player];S.spOffers=[];for(var i=0;i<3
 function sponsorBroken(S,P,x){
   if(x.type==='risk')return P.risk>x.val;
   if(x.type==='image')return P.image<x.val;
-  return S.reports.some(function(r){return r.week===S.week&&!gradeMeets(r.rating,x.val);});
+  cgFix(S);return S.reports.some(function(r){return r.week===S.week&&!gradeMeets(repCS(r),x.val);});
 }
 NEWX.push(function(S){refreshOffers(S);});
 WEEKX.push(function(S){
@@ -3220,8 +3220,8 @@ SHOWX.push(function(S,P,show,rep){
     if(!Y.match||s.ov>Y.match.ov)Y.match={l:s.label,ov:s.ov,show:rep.name,w:S.week};
   });
   R.matches.sort(function(a,b){return b.ov-a.ov;});R.matches.length=Math.min(10,R.matches.length);
-  R.shows.push({n:rep.name,r:rep.rating,w:S.week});R.shows.sort(function(a,b){return b.r-a.r;});R.shows.length=Math.min(5,R.shows.length);
-  if(!Y.show||rep.rating>Y.show.r)Y.show={n:rep.name,r:rep.rating,w:S.week};
+  R.shows.push({n:rep.name,r:rep.rating,c:repCS(rep),w:S.week});R.shows.sort(function(a,b){return b.r-a.r;});R.shows.length=Math.min(5,R.shows.length);
+  if(!Y.show||rep.rating>Y.show.r)Y.show={n:rep.name,r:rep.rating,c:repCS(rep),w:S.week};
   if(!R.gate||rep.att>R.gate.v)R.gate={v:rep.att,n:rep.name,w:S.week};
   if(rep.buys&&(!R.buys||rep.buys>R.buys.v))R.buys={v:rep.buys,n:rep.name,w:S.week};
   rosterOf(S,P.id).forEach(function(w){if(w.ws>=3&&(!R.streak||w.ws>R.streak.v))R.streak={v:w.ws,n:w.name,w:S.week};});
@@ -3237,7 +3237,7 @@ function yearEnd(S){
   if(mwoy&&mwoy.yp){L.push({k:P.name+' wrestler of the year',v:mwoy.name,w:mwoy.id});addOvr(P,mwoy,1);mwoy.morale=clamp(mwoy.morale+5,0,100);}
   if(Y.match)L.push({k:'Match of the year',v:Y.match.l+', '+starG(Y.match.ov)+' at '+Y.match.show});
   if(Y.feud)L.push({k:'Feud of the year',v:Y.feud.l});
-  if(Y.show)L.push({k:'Show of the year',v:Y.show.n+', graded '+gradeG(Y.show.r)});
+  if(Y.show)L.push({k:'Show of the year',v:Y.show.n+', graded '+gradeG(Y.show.c!=null?Y.show.c:Y.show.r)});
   if(imp&&imp.ovr-imp.oy>=2)L.push({k:'Most improved',v:imp.name+' (+'+Math.round(imp.ovr-imp.oy)+' overness)',w:imp.id});
   var tm=by(S.teams.filter(function(t){return t.promo===P.id;}),function(t){return t.exp;});if(tm)L.push({k:'Tag team of the year',v:S.w[tm.m[0]].name+' & '+S.w[tm.m[1]].name});
   var pr=by(S.order.map(function(id){return S.promos[id];}),function(p){return p.image-(p.imgY==null?p.image0:p.imgY);});if(pr)L.push({k:'Promotion of the year',v:pr.name});
@@ -4834,7 +4834,7 @@ SHOWX.push(function(S,P,show,rep){
   if(P.id!==S.player||S.cal||!S.net)return;
   var posts=netPosts(S,P,show,rep),sum=0;posts.forEach(function(p){sum+=p.s;});
   S.net.mood=clamp(S.net.mood+(clamp(55+(rep.rating-rep.exp)*5+sum*3,0,100)-S.net.mood)*0.25,0,100);
-  S.net.threads.unshift({w:S.week,sub:rep.name+' ('+gradeG(rep.rating)+')',posts:posts});if(S.net.threads.length>10)S.net.threads.length=10;
+  S.net.threads.unshift({w:S.week,sub:rep.name+' ('+gradeG(repCS(rep))+')',posts:posts});if(S.net.threads.length>10)S.net.threads.length=10;
   if(S.net.mood>=90)award(S,'ACH_BOARD');
 });
 PREX.push(function(S){if(S.net)S.hype=(S.hype||0)+clamp((S.net.mood-55)/900,-0.03,0.04)*(modelOf(S.promos[S.player]).netX||1);});
@@ -5110,7 +5110,7 @@ SHOWX.push(function(S,P,show,rep){
   var mine=S.promos[S.player].cities||[],theirs=P.cities||[];if(!theirs.length)return;
   var city=theirs[hash('bar'+S.seed+P.id+S.week)%theirs.length];if(mine.indexOf(city)<0)return;
   (S.bar||(S.bar={}))[city]={w:S.week,d:Math.min(3,(rep.rating-rep.exp)/3),by:P.name,r:rep.rating};
-  news(S,'world',P.name+' had a great night in '+city+' (graded '+gradeG(rep.rating)+'). Anyone who follows them there has more to live up to.');
+  news(S,'world',P.name+' had a great night in '+city+' (graded '+gradeG(repCS(rep))+'). Anyone who follows them there has more to live up to.');
 });
 function barCity(S,venue){
   var B=S.bar;if(!B)return null;
@@ -5184,7 +5184,7 @@ POST.push(function(ctx){
 function msAward(S,id){if(S.cal||(S.firsts&&S.firsts[id]))return;(S.firsts||(S.firsts={}))[id]=S.week;S.toasts.push(id);}
 SHOWX.push(function(S,P,show,rep){
   if(P.id!==S.player||S.cal)return;var ms=rep.segs.filter(function(s){return s.k==='match';});
-  if(rep.sellout)msAward(S,'MS_SELLOUT');if(rep.rating>=80)msAward(S,'MS_SHOW80');
+  if(rep.sellout)msAward(S,'MS_SELLOUT');if(repCS(rep)>=80)msAward(S,'MS_SHOW80');
   if(ms.some(function(s){return starQ(s.ov)>=18;}))msAward(S,'MS_TOPMATCH');
   if(ms.some(function(s){return s.change;}))msAward(S,'MS_TITLECHANGE');
   if(ms.some(function(s){return s.crown;}))msAward(S,'MS_CROWN');
@@ -6647,7 +6647,7 @@ E.legacy=function(S){
   if(S.over&&S.over.why==='fired')parts.push({n:'Fired',v:-10});
   var score=0;parts.forEach(function(p){score+=p.v;});
   var tl=[{w:1,label:'Took over '+P.name+'.'}];
-  if(R.shows[0])tl.push({w:R.shows[0].w,label:'Best show: '+R.shows[0].n+', graded '+gradeG(R.shows[0].r)+'.'});
+  if(R.shows[0])tl.push({w:R.shows[0].w,label:'Best show: '+R.shows[0].n+', graded '+gradeG(R.shows[0].c!=null?R.shows[0].c:R.shows[0].r)+'.'});
   if(R.matches[0])tl.push({w:R.matches[0].w,label:'Best match: '+R.matches[0].l+', '+starG(R.matches[0].ov)+'.'});
   if(R.gate)tl.push({w:R.gate.w,label:'Biggest crowd: '+R.gate.v.toLocaleString('en-US')+' at '+R.gate.n+'.'});
   A.slice(0,4).forEach(function(a){var w0=a.list[0];tl.push({w:(a.week||0),year:a.year,label:'The '+a.year+' awards: '+(w0?w0.k+', '+w0.v+'.':'')});});
@@ -8880,8 +8880,8 @@ SHOWX.push(function(S,P,show,rep){
   if(ml&&h01(key+'L')<0.6)netStarPost(S,ml,netPickH(NET_LOSE,key+'l'),key+'l');
   ms.forEach(function(s,i){if(s!==main&&s.change&&s.wi&&s.wi.length){var cw=S.w[s.wi[0]];if(cw)netStarPost(S,cw,netPickH(NET_NEW,key+'c'+i),key+'c'+i);}});
   netPost(S,'c',netHandle(P.name),P.full||P.name,(rep.att?rep.att.toLocaleString('en-US')+' of you in the building':'A full night')+' for '+rep.name+'. '+(rep.sellout?'A sell-out. ':'')+'Thank you.',netLikes(P.image*P.image*2,key+'co'));
-  netPost(S,'p',netHandle(S.columnist||'The Ringside Wire'),S.columnist||'The Ringside Wire',best.label+' at '+rep.name+': '+starG(best.ov)+'. The show was graded '+gradeG(rep.rating)+(d>=3?', better than expected.':(d<=-3?', short of what the crowd expected.':'.')),netLikes(900,key+'pr'));
-  var fan=FANS[Math.floor(h01(key+'f')*FANS.length)%FANS.length][0],word=d>=4?'great':(d<=-4?'bad':'solid');
+  netPost(S,'p',netHandle(S.columnist||'The Ringside Wire'),S.columnist||'The Ringside Wire',best.label+' at '+rep.name+': '+starG(best.ov)+'. The show was graded '+gradeG(repCS(rep))+(verdictBand(d)>0?', better than this crowd expected.':(verdictBand(d)<0?', short of what this crowd expected.':', what this crowd came for.')),netLikes(900,key+'pr'));
+  var fan=FANS[Math.floor(h01(key+'f')*FANS.length)%FANS.length][0],word=verdictBand(d)>0?'great':(verdictBand(d)<0?'flat':'solid');
   netPost(S,'f','@'+fan,fan,fill(netPickH(NET_FAN,key+'ft'),{best:best.label,win:main.win||'nobody',lose:ml?ml.name:'the other side',show:rep.name,word:word}),netLikes(120,key+'fl'));
 });
 /* at the end of the week: the news that broke, as the press posts it */
@@ -8928,7 +8928,7 @@ function netSheet(S,wk){
   var used={};if(lead)used[lead.text]=1;
   var world=[];S.order.forEach(function(pid){
     if(pid===P.id)return;var RV=S.promos[pid],lines=news.filter(function(x){return x.k!=='you'&&!used[x.t]&&netMentions(x.t,RV.name);}).slice(0,2).map(function(x){used[x.t]=1;return x.t;});
-    if(RV.last&&RV.last.week===wk)lines.unshift(RV.last.name+' was graded '+gradeG(RV.last.rating)+'.');
+    if(RV.last&&RV.last.week===wk)lines.unshift(RV.last.name+' was graded '+gradeG(repCS(RV.last))+'.');
     if(lines.length)world.push({id:pid,name:RV.name,lines:lines.slice(0,3)});
   });
   var business=news.filter(function(x){return (x.k==='money'||x.k==='contract'||x.k==='injury')&&!used[x.t];}).slice(0,4).map(function(x){used[x.t]=1;return x.t;});
@@ -9210,7 +9210,7 @@ function showTimes(S,P,show,rep,card){
     s=rep.segs[i];if(!(s.at<=h*60&&h*60<s.at+s.slot))continue;
     var td=s.ov>=ex+TOP_GOOD?0.5:(s.ov<=ex-TOP_BAD?-0.5:0),what=s.k==='match'?s.label:(s.head||'A segment');
     s.top=h+1;
-    rep.tops.push({hour:h+1,label:what,ov:s.ov,d:td,x:td>0?(h?'Hour '+(h+1)+' opened strong. The people who tuned in stayed':'A strong start. The people who tuned in stayed'):(td<0?(h?'Hour '+(h+1)+' opened weak. Sets were turned off':'A weak start. Sets were turned off'):(h?'Hour '+(h+1)+' opened on something ordinary':'An ordinary start'))});
+    rep.tops.push({hour:h+1,label:what,ov:s.ov,d:td,x:td>0?(h?'Hour '+(h+1)+' opened strong. The people who tuned in stayed':'A strong start. The people who tuned in stayed'):(td<0?(h?'Hour '+(h+1)+' opened weak. Sets were turned off':'A weak start. Sets were turned off'):(h?'Hour '+(h+1)+' opened on about what this crowd expects':'A start at about what this crowd expects'))});
     d+=td;break;
   }
   var empty=B-t-(rep.slack||0);
@@ -9432,15 +9432,35 @@ function gradeG(v){for(var i=0;i<GRADES.length;i++)if(v>=GRADES[i][0])return GRA
 /** The grade with its article: "an A-", "a B+". */
 function gradeA(v){var g=gradeG(v);return (/^[AF]/.test(g)?'an ':'a ')+g;}
 function gradeMeets(v,target){return gradeIdx(v)>=gradeIdx(target);}
+/* The letter is the show against its own crowd (Ryan, 6 October): an A means it beat what this crowd expected, a B is
+   what they came for, and a big company and a small one are each graded on their own bar. crowdScore() puts the gap
+   between the show and the expectation on the grade scale, so gradeG() and gradeMeets() work on it unchanged. The
+   bands are the same ones the headline, the dirt sheet and the Net use (verdictBand), so the four can never disagree. */
+var CROWD_PTS=[[-12,40],[-8,50],[-6,55],[-4,60],[-2,65],[-0.5,70],[0.5,75],[2,80],[4,85],[7,90]];
+function crowdScoreD(d){
+  var p=CROWD_PTS,i;if(d<=p[0][0])return Math.max(5,p[0][1]+(d-p[0][0])*2.5);if(d>=p[p.length-1][0])return Math.min(99,90+(d-7));
+  for(i=1;i<p.length;i++)if(d<p[i][0])return p[i-1][1]+(d-p[i-1][0])/(p[i][0]-p[i-1][0])*(p[i][1]-p[i-1][1]);return 90;
+}
+function crowdScore(rating,exp){return Math.round(crowdScoreD(rating-exp)*10)/10;}
+/** A filed show's score on the grade scale. A report from before this has no `cs`: work it out, or fall back on the raw score. */
+function repCS(r){return !r?0:(r.cs!=null?r.cs:(r.exp!=null?crowdScore(r.rating,r.exp):r.rating));}
+/** 2 blew the roof off, 1 a little more, 0 what they came for, -1 short, -2 a miss. */
+function verdictBand(d){var c=Math.round(crowdScoreD(d)*10)/10;return c>=85?2:(c>=75?1:(c>=70?0:(c>=60?-1:-2)));}
+/* targets written before the letter meant this: put them on the same scale, once */
+function cgFix(S){
+  var P=S.promos[S.player];if(!P)return;
+  (S.sponsors||[]).concat(S.spOffers||[]).forEach(function(o){if(o&&o.type==='rating'&&!o.cg){var lo=99;Object.keys(P.base).forEach(function(k){if(P.base[k]<lo)lo=P.base[k];});
+    o.val=Math.round(crowdScoreD(o.val-(lo+0.6*(P.image-P.image0))));o.cg=1;o.text='No show graded under '+gradeG(o.val);}});
+  (S.quests||[]).forEach(function(q){if(q.type==='sponsor'&&!q.cg){q.target=Math.round(crowdScoreD(q.target-expected(P,{big:true})));q.cg=1;q.text='Sponsor: big event graded '+gradeG(q.target)+' or better ('+money(q.bonus)+')';}});
+}
 function showWord(v){for(var i=0;i<SHOW_WORDS.length;i++)if(v>=SHOW_WORDS[i].v)return {i:i,w:SHOW_WORDS[i].w,a:SHOW_WORDS[i].a,one:SHOW_WORDS[i].one};return {i:SHOW_WORDS.length-1,w:'A bomb',a:'a bomb',one:'a bomb'};}
 function capW(t){return t.charAt(0).toUpperCase()+t.slice(1);}
 /** How a show did against what its crowd expects, in words: a headline and one line. s is 1 better, 0 level, -1 worse. */
 function showVerdict(rating,exp){
   var d=rating-exp,w=showWord(rating),e=showWord(exp),same=w.i===e.i;
-  // on the same rung as the crowd expected, the headline never goes to either end: the line says which side of it the show fell
-  var head=d>=4&&!same?'Blew the roof off':(d>=0.5?'Sent them home happy':(d>-0.5?'Gave them what they came for':(d>-4||same?'Came up short':'Died in front of them')));
-  var line=same?capW(w.a)+(d>=0.5?', and a little more than this crowd expects.':(d>-0.5?', which is what this crowd expects.':', but this crowd wanted a little more.')):capW(w.a)+' for a crowd that expects '+e.one+'.';
-  return {head:head,line:line,s:d>=0.5?1:(d>-0.5?0:-1),word:w,exp:e};
+  var band=verdictBand(d),head=['Died in front of them','Came up short','Gave them what they came for','Sent them home happy','Blew the roof off'][band+2];
+  var line=band===0?capW(w.a)+', which is what this crowd expects.':(same?capW(w.a)+(band>0?', and a little more than this crowd expects.':', but this crowd wanted a little more.'):capW(w.a)+' for a crowd that expects '+e.one+'.');
+  return {head:head,line:line,s:band>0?1:(band<0?-1:0),band:band,grade:gradeG(crowdScore(rating,exp)),word:w,exp:e};
 }
 E.showWord=function(v){return showWord(v);};
 E.showVerdict=function(rating,exp){return showVerdict(rating,exp);};
@@ -9448,13 +9468,14 @@ E.showVerdict=function(rating,exp){return showVerdict(rating,exp);};
 E.expectWords=function(S,show){
   show=show||(S.queue&&S.queue[S.qi]);if(!show)return null;
   var e=expected(S.promos[S.player],show),w=showWord(e);
-  return {i:w.i,w:w.w,a:w.a,text:'This crowd expects '+w.a+'.'};
+  return {i:w.i,w:w.w,a:w.a,bar:starG(e),text:'This crowd expects '+w.a+'.'};
 };
 /** The ladder, best first, for the guide window. */
-E.SHOW_LADDER=SHOW_WORDS.map(function(x){return {w:x.w,a:x.a,d:x.d,g:x.g};});
-E.grade=function(v){return gradeG(v);};E.gradeMeets=function(v,t){return gradeMeets(v,t);};
+E.SHOW_LADDER=SHOW_WORDS.map(function(x){return {w:x.w,a:x.a,d:x.d};});
+E.grade=function(v){return gradeG(v);};E.repGrade=function(r){return gradeG(repCS(r));};E.repCS=function(r){return repCS(r);};E.crowdScore=function(a,b){return crowdScore(a,b);};E.gradeMeets=function(v,t){return gradeMeets(v,t);};
 /* a save from before grades: reword the sponsor lines it carries */
 WEEKX.push(function(S){
+  cgFix(S);
   (S.sponsors||[]).concat(S.spOffers||[]).forEach(function(o){if(o&&o.type==='rating'&&/%/.test(o.text||''))o.text='No show graded under '+gradeG(o.val);});
   (S.quests||[]).forEach(function(q){if(q.type==='sponsor'&&/%/.test(q.text||''))q.text='Sponsor: big event graded '+gradeG(q.target)+' or better ('+money(q.bonus)+')';});
 });

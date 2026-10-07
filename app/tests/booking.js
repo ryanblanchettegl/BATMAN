@@ -67,7 +67,7 @@ async function section(mode) {
   ok(await txt(page, '.head h1') === shows[0], mode + ': heading should be the first show');
   ok(/The card is empty/.test(await txt(page, '.b1-rows')), mode + ': empty card text');
   ok(await has(page, '.onescreen'), mode + ': the card builder is a one-screen page');
-  ok(/This crowd expects an? [a-z- ]+\./.test(await txt(page, '.head')) && !/expects about/.test(await txt(page, '.head')) && !/%/.test(await txt(page, '[data-t="expect"]')), mode + ': what the crowd expects should be in words, not a number: ' + await txt(page, '.head'));
+  ok(/This crowd expects an? [a-z- ]+, matches of [★¼½¾]+ or better\./.test(await txt(page, '.head')) && !/expects about/.test(await txt(page, '.head')) && !/%/.test(await txt(page, '[data-t="expect"]')), mode + ': what the crowd expects should be in words, not a number: ' + await txt(page, '.head'));
   await page.click('[data-t="ladder"]');
   ok((await page.$$('[data-t="ladder-list"] li')).length === 10 && (await page.$$('[data-t="ladder-list"] li.on')).length === 1 && /what your crowd expects/.test(await txt(page, '[data-t="ladder-list"] li.on')), mode + ': the ladder window should list ten rungs and mark this crowd’s');
   await check('the ladder');
@@ -264,7 +264,7 @@ async function section(mode) {
   /* ---- the report, match by match, is one press from there ---- */
   await page.click('[data-t="after-full"]');
   const rep = await state(page, S => ({ rating: S.reports[0].rating, name: S.reports[0].name, matches: S.reports[0].segs.filter(s => s.k === 'match').length, angles: S.reports[0].segs.filter(s => s.k !== 'match').length }));
-  ok(!(await has(page, '#live')) && await txt(page, '.head h1') === rep.name && /^(A\+|A|A-|B\+|B|B-|C\+|C|C-|D|F)$/.test((await txt(page, '.big')).trim()) && (await txt(page, '.big')).trim() === await state(page, (S, v) => GP.grade(v), rep.rating) && !/%/.test(await txt(page, '.rating')), mode + ': the report should give the show a letter grade and no percentage: ' + await txt(page, '.rating'));
+  ok(!(await has(page, '#live')) && await txt(page, '.head h1') === rep.name && /^(A\+|A|A-|B\+|B|B-|C\+|C|C-|D|F)$/.test((await txt(page, '.big')).trim()) && (await txt(page, '.big')).trim() === await state(page, S => GP.repGrade(S.reports[0])) && !/%/.test(await txt(page, '.rating')), mode + ': the report should give the show a letter grade and no percentage: ' + await txt(page, '.rating'));
   ok(await count(page, '.sheet .seg') === rep.matches && await count(page, '.sheet .angle') === rep.angles + (seen.pre ? 1 : 0), mode + ': every segment is in the report');
   ok(rep.name === shows[0] && await count(page, '[data-t="closeReport"]') === 2 && (await txt(page, '[data-t="closeReport"]')) === 'Back to After the show' && /^RECAP$/i.test(await advWord(page)), mode + ': the report leads back to After the show: ' + await advWord(page));
   await check('report');

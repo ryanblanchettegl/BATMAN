@@ -22,10 +22,19 @@ ok('stars', 'quarter steps, five stars at the top, never a percentage', E.stars(
 
 /* ---- words and letter grades for a show ---- */
 { const L = E.SHOW_LADDER, w = v => E.showWord(v).a;
-  ok('words', 'one ladder of ten rungs, a bomb to an all-time classic, each with its letter grade', L.length === 10 && L[0].w === 'All-time classic' && L[9].w === 'A bomb' && L[3].g === 'A-' && L[9].g === 'F' && L.every(x => x.d && x.g && !/%|\d/.test(x.w + x.a + x.d)));
+  ok('words', 'one ladder of ten rungs, a bomb to an all-time classic, in words only', L.length === 10 && L[0].w === 'All-time classic' && L[9].w === 'A bomb' && L.every(x => x.d && !x.g && !/%|\d/.test(x.w + x.a + x.d)));
   ok('words', 'a score is said in words, and the rungs change where the grades do', w(96) === 'an all-time classic' && w(80) === 'a hot show' && w(79.9) === 'a strong show' && w(70) === 'a solid show' && w(60) === 'a flat show' && w(50) === 'a dud' && w(10) === 'a bomb', [96, 80, 79.9, 70, 60, 50, 10].map(w).join(', '));
   ok('grade', 'a show’s score is a letter grade', E.grade(95) === 'A+' && E.grade(84.9) === 'A-' && E.grade(80) === 'A-' && E.grade(79.9) === 'B+' && E.grade(55) === 'C' && E.grade(40) === 'D' && E.grade(39.9) === 'F', [95, 84.9, 80, 79.9, 55, 40, 39.9].map(v => E.grade(v)).join(' '));
   ok('grade', 'a target is met by the grade the player reads', E.gradeMeets(80.1, 83) && E.gradeMeets(86, 83) && !E.gradeMeets(79.9, 83) && E.gradeMeets(40, 40) && !E.gradeMeets(39, 41));
+  // the letter is the show against its own crowd: the same show is a B for a crowd that expects it and an A for one that does not
+  const g = (r, e) => E.grade(E.crowdScore(r, e));
+  ok('grade', 'the letter is graded against the crowd', g(88, 88) === 'B' && g(88, 84) === 'A' && g(88, 80) === 'A+' && g(88, 87) === 'B+' && g(88, 90) === 'B-' && g(88, 91.9) === 'C+' && g(88, 93) === 'C' && g(60, 60) === 'B', [[88, 88], [88, 84], [88, 80], [88, 87], [88, 90], [88, 91.9], [88, 93], [60, 60]].map(x => g(x[0], x[1])).join(' '));
+  { let bad = 0, n = 0; const want = { 2: /^A\+?$/, 1: /^(A-|B\+)$/, 0: /^B$/, '-1': /^(B-|C\+)$/, '-2': /^(C|C-|D|F)$/ };
+    for (let e = 50; e <= 95; e += 5) for (let d = -15; d <= 10; d += 0.25) { const v = E.showVerdict(e + d, e); n++; if (!want[v.band].test(v.grade)) bad++; }
+    ok('grade', 'the headline and the letter can never disagree', bad === 0, bad + ' of ' + n + ' disagree'); }
+  { const S2 = E.newGame('whw', 3, { name: 'R' }); for (let i = 0; i < 12; i++) { while (S2.qi < S2.queue.length) E.runPlayerShow(S2, E.suggest(S2)); E.endWeek(S2); }
+    const R = S2.reports.filter(r => r.exp != null && r.sheet); const off = R.filter(r => { const v = E.showVerdict(r.rating, r.exp), l = r.sheet.lines[0]; return E.repGrade(r) !== v.grade || (v.band < 0) !== /flat night|was a miss/i.test(l) || (v.band > 0) !== /good night|beat every/i.test(l); });
+    ok('grade', 'the report, the dirt sheet and the letter say the same thing about a night', R.length > 5 && off.length === 0, R.length + ' shows, ' + off.length + ' disagree'); }
   const up = E.showVerdict(86, 81), par = E.showVerdict(81.2, 81), down = E.showVerdict(72, 81), bad = E.showVerdict(66, 81);
   ok('words', 'a show against its crowd is a headline and a line, with no number in either', up.head === 'Blew the roof off' && par.head === 'Gave them what they came for' && down.head === 'Died in front of them' && E.showVerdict(79, 81).head === 'Came up short' && E.showVerdict(82, 81).head === 'Sent them home happy' && [up, par, down, bad].every(v => !/%|\d/.test(v.head + v.line)), [up, par, down].map(v => v.head + ' / ' + v.line).join(' | '));
   ok('words', 'the line names both rungs, or says they match', up.line === 'A red-hot show for a crowd that expects a hot one.' && par.line === 'A hot show, which is what this crowd expects.' && bad.line === 'A decent show for a crowd that expects a hot one.', up.line + ' | ' + par.line + ' | ' + bad.line);

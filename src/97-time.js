@@ -76,7 +76,7 @@ function showTimes(S,P,show,rep,card){
     s=rep.segs[i];if(!(s.at<=h*60&&h*60<s.at+s.slot))continue;
     var td=s.ov>=ex+TOP_GOOD?0.5:(s.ov<=ex-TOP_BAD?-0.5:0),what=s.k==='match'?s.label:(s.head||'A segment');
     s.top=h+1;
-    rep.tops.push({hour:h+1,label:what,ov:s.ov,d:td,x:td>0?(h?'Hour '+(h+1)+' opened strong. The people who tuned in stayed':'A strong start. The people who tuned in stayed'):(td<0?(h?'Hour '+(h+1)+' opened weak. Sets were turned off':'A weak start. Sets were turned off'):(h?'Hour '+(h+1)+' opened on something ordinary':'An ordinary start'))});
+    rep.tops.push({hour:h+1,label:what,ov:s.ov,d:td,x:td>0?(h?'Hour '+(h+1)+' opened strong. The people who tuned in stayed':'A strong start. The people who tuned in stayed'):(td<0?(h?'Hour '+(h+1)+' opened weak. Sets were turned off':'A weak start. Sets were turned off'):(h?'Hour '+(h+1)+' opened on about what this crowd expects':'A start at about what this crowd expects'))});
     d+=td;break;
   }
   var empty=B-t-(rep.slack||0);

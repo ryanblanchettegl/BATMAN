@@ -74,6 +74,11 @@ Two more lists sit beside this one, both finished:
 | Backstage | 6 October: people, not rooms. The people who show up backstage are connected to ongoing storylines or to what is going on in the company. Section 0j. |
 | After the show | 6 October: a show ends on its own After the show screen, not on the report. The Office has only a button back to it, After the show recap, and opens on Before the show. |
 | The Office | 6 October: The desk, Backstage and Storylines are the main tabs of the Office. Backstage is its own page. The production truck is Your office. Storylines is no longer its own menu. |
+| The show grade | 6 October: the letter is the show against its own crowd. An A beat what this crowd expected, a B is what they came for. The headline, the dirt sheet, the Net and the milestones read the same result. |
+| Stars | 6 October: stretch the stars so two stars is a bad match and four and a half is rare. Its own version, with the balance pass. |
+| Difficulty | 6 October: every level should need you. Suggested cards aim to meet the crowd, not beat it. |
+| Your shows | 6 October: the player cannot cancel a show, like rivals. History stays on Company. Venues and the year's schedule are to be started. |
+| The outside playtest | 6 October: work its 50 upgrades in order, five a version (project doc `claude/outside-view-playtest-2026-10-06.md`). |
 | World Editor | The creation suite is its own page called **World Editor** on the title screen. A player builds a world from scratch (companies, shows, belts, wrestlers) and uploads it to the Workshop. This is the main next item. |
 
 ## Tasks
@@ -316,6 +321,19 @@ Ryan, 4 October: "After a show, it should go back to the Office or your desk, so
 - [x] **(0.29) The commentary desk from the Office.** Ryan, 4 October: "From the office screen, I want you to be able to pick commentators via a pop up with available players." The two tasks for the commentary desk open a pop-up on the desk: both chairs, who is available for the chair being filled, what each costs, and how they would get on with the other voice. Signing one moves on to the empty chair. A button on the desk opens it at any time. Code: `VoicesWindow` in `app/src/screens/office/Windows.tsx`. Test: `app/tests/tasks.js`.
 - [ ] The same for every other task on the desk, so everything can be done from the Office: sponsor offers, the venue, contracts that are running out, a vacant title.
 - [ ] The people available are the hired voices on the market. Wrestlers, managers and legends at the desk wait for the character sheet work.
+
+### 0o. The outside playtest, part A: knowing how you did (0.38)
+
+The playtest's items are numbered 1 to 50. Five a version, in its order.
+
+- [x] 1. The letter grade is the show against its crowd (`crowdScore()`, `repCS()`, `E.repGrade()` in `src/98-words.js`). Sponsor targets moved to the same scale (`cgFix()` for old saves).
+- [x] 2. One verdict: the headline, the letter, the dirt sheet's opener and the Net all read `verdictBand()`.
+- [x] 3. The "First A- show" milestone and the two show achievements go by the crowd grade.
+- [ ] 4. Stretch the stars. Its own version.
+- [x] 5. Words follow stars: "Below this crowd's bar" for a good match that was the weakest, and no "ordinary" for a top of the hour.
+- [x] 6. The bar before the bell: the card builder says what this crowd expects in stars.
+- [ ] 7. Owner trust moves after every show, with the reason.
+- [ ] 8. Targets get a headline result, and Missed on the desk.
 
 ### 0n. Five more, picked from the open list (0.37)
 

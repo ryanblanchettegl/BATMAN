@@ -34,8 +34,8 @@ SHOWX.push(function(S,P,show,rep){
   if(ml&&h01(key+'L')<0.6)netStarPost(S,ml,netPickH(NET_LOSE,key+'l'),key+'l');
   ms.forEach(function(s,i){if(s!==main&&s.change&&s.wi&&s.wi.length){var cw=S.w[s.wi[0]];if(cw)netStarPost(S,cw,netPickH(NET_NEW,key+'c'+i),key+'c'+i);}});
   netPost(S,'c',netHandle(P.name),P.full||P.name,(rep.att?rep.att.toLocaleString('en-US')+' of you in the building':'A full night')+' for '+rep.name+'. '+(rep.sellout?'A sell-out. ':'')+'Thank you.',netLikes(P.image*P.image*2,key+'co'));
-  netPost(S,'p',netHandle(S.columnist||'The Ringside Wire'),S.columnist||'The Ringside Wire',best.label+' at '+rep.name+': '+starG(best.ov)+'. The show was graded '+gradeG(rep.rating)+(d>=3?', better than expected.':(d<=-3?', short of what the crowd expected.':'.')),netLikes(900,key+'pr'));
-  var fan=FANS[Math.floor(h01(key+'f')*FANS.length)%FANS.length][0],word=d>=4?'great':(d<=-4?'bad':'solid');
+  netPost(S,'p',netHandle(S.columnist||'The Ringside Wire'),S.columnist||'The Ringside Wire',best.label+' at '+rep.name+': '+starG(best.ov)+'. The show was graded '+gradeG(repCS(rep))+(verdictBand(d)>0?', better than this crowd expected.':(verdictBand(d)<0?', short of what this crowd expected.':', what this crowd came for.')),netLikes(900,key+'pr'));
+  var fan=FANS[Math.floor(h01(key+'f')*FANS.length)%FANS.length][0],word=verdictBand(d)>0?'great':(verdictBand(d)<0?'flat':'solid');
   netPost(S,'f','@'+fan,fan,fill(netPickH(NET_FAN,key+'ft'),{best:best.label,win:main.win||'nobody',lose:ml?ml.name:'the other side',show:rep.name,word:word}),netLikes(120,key+'fl'));
 });
 /* at the end of the week: the news that broke, as the press posts it */
@@ -82,7 +82,7 @@ function netSheet(S,wk){
   var used={};if(lead)used[lead.text]=1;
   var world=[];S.order.forEach(function(pid){
     if(pid===P.id)return;var RV=S.promos[pid],lines=news.filter(function(x){return x.k!=='you'&&!used[x.t]&&netMentions(x.t,RV.name);}).slice(0,2).map(function(x){used[x.t]=1;return x.t;});
-    if(RV.last&&RV.last.week===wk)lines.unshift(RV.last.name+' was graded '+gradeG(RV.last.rating)+'.');
+    if(RV.last&&RV.last.week===wk)lines.unshift(RV.last.name+' was graded '+gradeG(repCS(RV.last))+'.');
     if(lines.length)world.push({id:pid,name:RV.name,lines:lines.slice(0,3)});
   });
   var business=news.filter(function(x){return (x.k==='money'||x.k==='contract'||x.k==='injury')&&!used[x.t];}).slice(0,4).map(function(x){used[x.t]=1;return x.t;});

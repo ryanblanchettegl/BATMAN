@@ -72,7 +72,7 @@ E.afterShow=function(S){
   (typeof E.comingUp==='function'?E.comingUp(S):[]).slice(0,3).forEach(function(u){nx.push({t:u.t,when:'',soon:false});});
   nx=nx.slice(0,5);
   if(nx.length)add('next','Next week',nx[0].t+(nx[0].when?' ('+nx[0].when+')':''),nx.map(function(x){return x.t+(x.when?' ('+x.when+').':'');}),nx[0].soon?'warn':'');
-  return {key:L.key,name:rep.name,grade:gradeG(rep.rating),head:v.head,line:v.line,matter:mt,next:nx,items:items,unseen:items.filter(function(x){return !x.seen;}).length,left:S.queue.length-S.qi};
+  return {key:L.key,name:rep.name,grade:gradeG(repCS(rep)),head:v.head,line:v.line,matter:mt,next:nx,items:items,unseen:items.filter(function(x){return !x.seen;}).length,left:S.queue.length-S.qi};
 };
 /** The booker has looked at one of the things the night left. */
 E.nightSeen=function(S,k){var A=E.afterShow(S);if(!A)return;if(!S.nightSeen||S.nightSeen.key!==A.key)S.nightSeen={key:A.key,k:{}};S.nightSeen.k[k]=1;};

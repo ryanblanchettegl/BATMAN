@@ -120,8 +120,8 @@ SHOWX.push(function(S,P,show,rep){
     if(!Y.match||s.ov>Y.match.ov)Y.match={l:s.label,ov:s.ov,show:rep.name,w:S.week};
   });
   R.matches.sort(function(a,b){return b.ov-a.ov;});R.matches.length=Math.min(10,R.matches.length);
-  R.shows.push({n:rep.name,r:rep.rating,w:S.week});R.shows.sort(function(a,b){return b.r-a.r;});R.shows.length=Math.min(5,R.shows.length);
-  if(!Y.show||rep.rating>Y.show.r)Y.show={n:rep.name,r:rep.rating,w:S.week};
+  R.shows.push({n:rep.name,r:rep.rating,c:repCS(rep),w:S.week});R.shows.sort(function(a,b){return b.r-a.r;});R.shows.length=Math.min(5,R.shows.length);
+  if(!Y.show||rep.rating>Y.show.r)Y.show={n:rep.name,r:rep.rating,c:repCS(rep),w:S.week};
   if(!R.gate||rep.att>R.gate.v)R.gate={v:rep.att,n:rep.name,w:S.week};
   if(rep.buys&&(!R.buys||rep.buys>R.buys.v))R.buys={v:rep.buys,n:rep.name,w:S.week};
   rosterOf(S,P.id).forEach(function(w){if(w.ws>=3&&(!R.streak||w.ws>R.streak.v))R.streak={v:w.ws,n:w.name,w:S.week};});
@@ -137,7 +137,7 @@ function yearEnd(S){
   if(mwoy&&mwoy.yp){L.push({k:P.name+' wrestler of the year',v:mwoy.name,w:mwoy.id});addOvr(P,mwoy,1);mwoy.morale=clamp(mwoy.morale+5,0,100);}
   if(Y.match)L.push({k:'Match of the year',v:Y.match.l+', '+starG(Y.match.ov)+' at '+Y.match.show});
   if(Y.feud)L.push({k:'Feud of the year',v:Y.feud.l});
-  if(Y.show)L.push({k:'Show of the year',v:Y.show.n+', graded '+gradeG(Y.show.r)});
+  if(Y.show)L.push({k:'Show of the year',v:Y.show.n+', graded '+gradeG(Y.show.c!=null?Y.show.c:Y.show.r)});
   if(imp&&imp.ovr-imp.oy>=2)L.push({k:'Most improved',v:imp.name+' (+'+Math.round(imp.ovr-imp.oy)+' overness)',w:imp.id});
   var tm=by(S.teams.filter(function(t){return t.promo===P.id;}),function(t){return t.exp;});if(tm)L.push({k:'Tag team of the year',v:S.w[tm.m[0]].name+' & '+S.w[tm.m[1]].name});
   var pr=by(S.order.map(function(id){return S.promos[id];}),function(p){return p.image-(p.imgY==null?p.image0:p.imgY);});if(pr)L.push({k:'Promotion of the year',v:pr.name});
