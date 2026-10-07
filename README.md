@@ -4,7 +4,7 @@ A text-based wrestling booking sim in the Extreme Warfare tradition, drawn as a 
 
 You are the booker. You build the card; every match has odds, and the odds decide the winner unless you spend the booking power the owner grants you to call a finish. Shows play out as a broadcast you click through. Earn enough of the owner's trust and the company becomes yours.
 
-**Status:** work in progress, version 0.38. Playable from start to finish; the feature list in `docs/` is still being built.
+**Status:** work in progress, version 0.39. Playable from start to finish; the feature list in `docs/` is still being built.
 
 ![The desk, where every week starts](docs/screens/desk.png)
 
