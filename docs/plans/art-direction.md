@@ -157,6 +157,8 @@ The bottom key always says what it will save. Nothing is saved until it is press
 
 ## 4. Lights: pictures and lettering in dots
 
+**Built 7 October** in `app/src/kit/lights.tsx`: the routine, the lettering (`LightText`) and three pictures (`LightPic`: ring, bell, belt). The other seven pictures below are still mock-ups.
+
 **Pictures.** Each picture is drawn by code onto a 64 by 48 grid, then every cell becomes one light. Ten exist as mock-ups: ring, belt, champion, mask, bell, microphone, cage, ladder, chair, entrance (`mock9.js`). In the game, a picture is a function in `app/src/kit/lights.tsx` that paints the small grid. One shared routine turns a grid into lights on a canvas.
 
 **Lettering.** A five by seven face, one light a pixel, defined as data (`dotlib.js` has A to Z, digits and a few signs). The game's own typeface does not survive being turned into dots at small sizes, so do not try to use it.
@@ -328,6 +330,7 @@ These only become possible after the steps above. None is promised.
 - 7 October: version 0.38 passed the full test run and is published. The live page's version id is `1791393273-993d` (Version 49). Read the live page and check that id before the next publish.
 - 7 October: the game was renamed EWF Wrestling Manager (`TASKS.md`, the decisions table).
 - 7 October: Version A, step 1 is done: the window kit (`app/src/kit/win.tsx`, `app/styles/win.css`, the kit sheet at `go('kit')`, `app/tests/kit.js`). Pop-ups wear the new look.
-- 7 October: Version A, step 2 is done: the bottom line and the SPACE key. The floating button is gone. Next is step 3, the lights.
+- 7 October: Version A, step 2 is done: the bottom line and the SPACE key. The floating button is gone.
+- 7 October: Version A, step 3 is done: the lights. Also fixed on the way: on a TV, the menu and the bottom line lay over the top and bottom of every one-screen page. Next is step 4, company marks and the logo creator.
 
 Still open from the playtest and not part of the art work: item 4 (stretch the stars so two is a bad match and four and a half is rare) and Ryan's call that every difficulty should need the player. Both are balance work and both move every crowd's expectations. Do them in a version of their own, not mixed in with the look.

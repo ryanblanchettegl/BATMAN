@@ -1,6 +1,7 @@
 /* Input that is not a mouse: keyboard shortcuts, a TV remote, a gamepad. Also the screen mode (desk, tablet, TV). There is no phone or portrait layout: a tall narrow window is asked to turn sideways (styles/base.css).
    See docs/design.md, sections 4 and 5. */
 import { G, ui, pref, reduceMotion, redraw, closeModal, openModal, popCard } from './store';
+import { lightDraws } from './kit/lights';
 import { HOT, SECTIONS, sectionOf, go } from './nav';
 import { book } from './flow';
 
@@ -208,5 +209,5 @@ export function initInput() {
     const k = e.key.length === 1 ? e.key.toLowerCase() : '';
     if (HOT[k]) { e.preventDefault(); go(HOT[k]); }
   });
-  (window as any).EWF_DEBUG = { state: () => G.S, render: redraw, go, pad: padPress, nav: NAV, ui };
+  (window as any).EWF_DEBUG = { state: () => G.S, render: redraw, go, pad: padPress, nav: NAV, ui, lights: lightDraws };
 }

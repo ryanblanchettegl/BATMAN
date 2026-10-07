@@ -70,6 +70,10 @@
 #app:has(.onescreen){height:100vh;min-height:0}
 html[data-screen="tv"] #app:has(.onescreen){height:95vh;min-height:0}
 #app:has(.onescreen) > .crt{flex:1 1 0;min-height:0;overflow:hidden}
+/* the frame of a one-screen page does not scroll, so the bars keep their own places. Without this a TV, which holds
+   the bars in from the edge of the glass, pushed the menu down over the top of the page and the bottom line up over its foot. */
+#app:has(.onescreen) .ftop{top:0}
+#app:has(.onescreen) .ffoot{bottom:0}
 .main:has(.onescreen){position:relative;min-height:0;overflow:hidden;display:flex;flex-direction:column;padding-block:6px 6px}
 /* a message lies over the top of the page instead of pushing it down */
 .main:has(.onescreen) > .flash{position:absolute;z-index:4;left:2ch;right:3ch;top:4px;margin:0}

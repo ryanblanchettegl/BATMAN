@@ -62,6 +62,7 @@ async function fits(page) {
     over('.main', 'the page area'); over('.b1-pane', 'the pane beside the sheet'); over('.b1-pane > .panel', 'the panel in the pane'); over('.b1-rows', 'the run sheet'); over('.lv-main', 'the broadcast'); over('.lv-night', 'tonight’s run sheet'); over('.callbox', 'the call box'); over('.a1-list', 'the list of what the night left'); over('.a1-pane', 'the pane beside it');
     document.querySelectorAll('.wn > .bd').forEach(e => { if (e.scrollHeight - e.clientHeight > 1) bad.push('the window “' + ((e.parentElement.querySelector('.ttl h2') || {}).textContent || '') + '” is ' + (e.scrollHeight - e.clientHeight) + 'px too tall'); });
     const st = document.querySelector('.ffoot'); if (st && st.getBoundingClientRect().bottom > window.innerHeight + 1) bad.push('the status line is off the screen');
+    const top = document.querySelector('.ftop'), mn = document.querySelector('.main'); if (top && mn && st) { const a = top.getBoundingClientRect(), m = mn.getBoundingClientRect(), b = st.getBoundingClientRect(); if (m.top < a.bottom - 1) bad.push('the menu lies over the top ' + Math.round(a.bottom - m.top) + 'px of the page'); if (m.bottom > b.top + 1) bad.push('the bottom line lies over the last ' + Math.round(m.bottom - b.top) + 'px of the page'); }
     return bad.join('; ');
   });
 }
@@ -83,7 +84,10 @@ async function airShow(page, opts) {
       if (opts.onCall) { await opts.onCall(k); if (!(await has('[data-t="live-call"]'))) continue; }   // onCall may answer it itself
       await page.waitForTimeout(430);   // a call takes no answer in its first moments
       const safe = await page.evaluate(() => { const S = window.EWF_DEBUG.state(); return (S.live && S.live.ev && S.live.ev.safe) || 0; });
-      await page.click('[data-t="live-pick"][data-c="' + (opts.pick ? opts.pick(k) : safe) + '"]');
+      // a test may ask for another answer, but one that costs more booking power than there is cannot be pressed: then the safe one
+      let c = opts.pick ? opts.pick(k) : safe;
+      if (c !== safe && await page.$eval('[data-t="live-pick"][data-c="' + c + '"]', e => e.disabled).catch(() => true)) c = safe;
+      await page.click('[data-t="live-pick"][data-c="' + c + '"]');
       continue;
     }
     // the sign-off leads to After the show. A test that wants the match-by-match report opens it from there.
