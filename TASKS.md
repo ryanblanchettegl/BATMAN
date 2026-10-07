@@ -325,7 +325,7 @@ Ryan, 4 October: "After a show, it should go back to the Office or your desk, so
 
 ### 0p. The new look: grey desktop windows (decided 6 October, not started)
 
-**The plan is `docs/plans/art-direction.md`.** It is the next session's main goal (Ryan, 6 October). It lists the engine work behind every screen, the build order in four versions, and seven questions for him. Company marks from three initials are in it (`docs/mockups/final/company-marks.png`), and so is the logo creator (`docs/mockups/final/logo-creator.png`, section 3a of the plan).
+**The plan is `docs/plans/art-direction.md`.** It is the next session's main goal (Ryan, 6 October). It lists the engine work behind every screen, the build order in four versions, and seven questions for him. Company marks from three initials are in it (`docs/mockups/final/company-marks.png`), and so is the logo creator (`docs/mockups/final/logo-creator.png`, section 3a of the plan). The creation suite is section 3b: ten creators mocked up in `docs/mockups/create/` (a federation with the logo creator in it, a move, a show, a belt, a tag team, a stable, a relationship, a storyline, an event, a gimmick).
 
 Mock-ups and the script that drew them are in `docs/mockups/`. Nothing here is built. The road data in the mock-up is made up: the game has no tour, state markets, hometowns or advance ticket sales yet.
 

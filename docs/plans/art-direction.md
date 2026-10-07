@@ -120,6 +120,39 @@ That is several million different marks before a single new shape is added. The 
 
 **Later, if it earns its place.** More shapes (wings, a globe, a mask, a lightning bolt), a second line of small text under the letters (a year or a city), a mark for each weekly show and each title built the same way, and a mark that changes when the company changes its model.
 
+## 3b. The creation suite
+
+Ryan, 6 October, late: put the logo creator on the create-a-federation screen, and concept a creator for a move, a show, a belt, a tag team, a stable, a relationship, a storyline, an event and a gimmick, "with all logical options that can help the game". The ten mock-ups are in `docs/mockups/create/` (`creators.js` draws them). They are World Editor pages in the new look.
+
+Every creator has the same three windows, so a player learns it once:
+- **Left: the thing.** Its name and the choices that define it.
+- **Middle: how it looks or reads.** A preview that redraws with every choice: a mark, a belt, a stage, or the lines the commentators will say.
+- **Right: what it means.** What it does in the game, what it connects to, and **the check**: a short list of ticks and warnings, so a broken thing cannot be saved without the player seeing why.
+
+The bottom key always says what it will save. Nothing is saved until it is pressed.
+
+| Creator | Picture | What you choose | In the engine today | New work |
+|---|---|---|---|---|
+| A federation | `create-1-federation.png` | Name, initials, model, home and cities, money, the owner, the product. The mark is made on the same page. Shows, belts and people are listed with buttons to their creators. | `E.edAddPromo` and the company form | The mark (section 3a). The owner's fields on one page. |
+| A move | `create-2-move.png` | Name, kind, finisher or not, which part of the body it works, how often it ends a match, the pop, the danger, who can do it, how it can be beaten, and the call lines | A finisher is only a name (`w.fin`). Body parts and their wear exist (`ZONES`, `w.bz`). | A moves table. A move changes the finish, the wear on the taker and the lines read out. The biggest new system here. |
+| A show | `create-3-show.png` | Name, company, weekly or big event, night, length, network and slot, production, how it opens, voices, building, stage look, its tradition | `E.edAddShow`, and everything in `src/88-shows.js` and `src/87-create.js` | The stage look, and a tradition as a rule the night follows |
+| A belt | `create-4-belt.png` | Name, rank, who can hold it, the rules, the first champion, and the look: centre plate, metal, strap, side plates, jewel, plate text | `E.edAddTitle`, levels, tag and women's belts, tournaments | The look as data (`t.look`), drawn in lights. The defence rule. Writing past reigns. |
+| A tag team | `create-5-tag-team.png` | Two people, a name, what kind of team, side, team move, who talks, manager, how it ends, and a mark | `E.edAddTeam`, team experience and chemistry | The kind of team, the team move, who talks. Chemistry stays hidden in a game (fog of war); the editor may set it. |
+| A stable | `create-6-stable.png` | Name, why they are together, side, members and their roles, the pecking order, rivals, a target, and a mark | Stables with a leader, members and tension | Roles and purpose as data. The who-gets-on grid is read from `S.rm`. |
+| A relationship | `create-7-relationship.png` | Two people, what they are to each other, the bond, respect each way, jealousy each way, who knows, why (the line they remember), and how they are in the ring | `E.edAddRel`, and the whole matrix in `src/66-relations.js` | "Who knows" is new. Everything else maps onto bond, respect, jealousy and a memory. |
+| A storyline | `create-8-storyline.png` | Name, kind, cost, what it needs, how long, where it ends, how it can go wrong, a cast of parts, and four acts each with a kind of segment and a line | Feuds in four acts. The plan in `docs/plans/storyline-templates.md`, with a draft engine set aside in the git stash. | The template engine that plan describes. Read the plan and the stash first. |
+| An event | `create-9-event.png` | Where it happens (desk, backstage, on the air, after the show), its causes, how often, a deadline, what ignoring it costs, the words, two to four answers, and what each answer changes | Inbox events (`pushEv`, `EVR`), calls on the air (`LIVEK`), backstage reasons (`peopleNow`) are all code today | Events as data: causes, answers and effects from fixed lists. Never a flat chance, only causes. Effects go through `relBump()` and `youRemember()`. |
+| A gimmick | `create-10-gimmick.png` | Name, kind of act, who it suits, where it works, how long it stays fresh, the entrance, the catchphrase and lines | Fourteen gimmicks as code, each with a fit rule (`GIMS` in `src/60-rpg.js`) | Gimmicks as data with the same fit rule, plus the entrance and lines |
+
+**Rules for all ten.**
+- Text the player writes uses a small fixed set of names in braces: `{a}`, `{b}`, `{who}`, `{friend}`, `{rival}`, `{hero}`, `{villain}`, `{move}`, `{event}`, `{show}`. The creator shows the line filled in with real people as it is typed. A line with a name the creator does not know fails the check.
+- Rule 3 holds inside the creators as it does everywhere: nothing ships that names a real promotion, wrestler, move, title or event.
+- Rule 4 holds: an answer with a chance shows the chance and what helps and hurts it.
+- Every creator fits one screen and works from keys and a gamepad.
+- Everything made here is part of the universe package, so it travels with a shared world. `src/85-universe.js` gets a new optional list for moves, gimmicks, story templates and events, and `E.edCheck` validates each.
+
+**Order to build them in.** Belt look and the federation page first (small, and they show off the new art). Then gimmicks and relationships (data that already exists as code). Then tag teams and stables. Then moves. Then storylines. Events last: they are the most powerful and the easiest to break a game with, so they need the check and "Play it now" working before anything else.
+
 ## 4. Lights: pictures and lettering in dots
 
 **Pictures.** Each picture is drawn by code onto a 64 by 48 grid, then every cell becomes one light. Ten exist as mock-ups: ring, belt, champion, mask, bell, microphone, cage, ladder, chair, entrance (`mock9.js`). In the game, a picture is a function in `app/src/kit/lights.tsx` that paints the small grid. One shared routine turns a grid into lights on a canvas.
@@ -241,7 +274,9 @@ Five changes a version (rule 10a). One step at a time, shown to Ryan (rule 9a). 
 14. Storylines as the season calendar.
 15. Roster in windows.
 
-**Version D: the show**
+**Version E: the creation suite** (section 3b), after the four versions above. The federation page and the belt look can move earlier if Ryan wants the World Editor to show the new art first.
+
+**Version D: the show** (built before Version E)
 16. Moments and their pop-up windows (6.11).
 17. The live feed and the crowd meter.
 18. The call from the gorilla position as a window with a countdown.
