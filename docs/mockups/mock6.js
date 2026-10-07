@@ -219,5 +219,35 @@ const ONLY = (process.argv[3] || '').split(',').filter(Boolean);
   await shot('button-a-in-the-bar', 'desk', deskHtml, '', chromeA);
   await shot('button-b-bottom-keys', 'desk', deskHtml, '', chromeB);
   await shot('button-c-week-strip', 'desk', deskHtml, '', chromeC);
+
+  /* ================= the key along the bottom, more ways ================= */
+  const kcss = ccss + `<style>.fk .fkst b{color:var(--dred);font-weight:normal;margin:0 .6ch 0 1.6ch}.fk .fkst{white-space:nowrap}.fk .sep{color:#555;margin:0 1ch}
+    .fk .nk{display:inline-flex;white-space:nowrap;align-self:stretch;align-items:stretch}.fk .nk i{font-style:normal;background:#000;color:var(--grey);padding:0 .5ch;display:flex;align-items:center}.fk .nk em{font-style:normal;background:var(--dcyan);color:#000;padding:0 1.1ch;display:flex;align-items:center;margin-right:.5ch}
+    .fk .bigk{display:inline-flex;align-self:stretch;align-items:stretch;white-space:nowrap;font-size:1.12em}.fk .bigk i{font-style:normal;background:var(--dred);color:#fff;padding:0 1ch;display:flex;align-items:center}.fk .bigk em{font-style:normal;background:var(--yellow);color:#000;padding:0 2.2ch;display:flex;align-items:center}
+    .fk .pip{background:var(--dgrey);color:#ddd;padding:0 1ch;white-space:nowrap}.fk .pip.dn{background:#006000;color:#fff}.fk .pip.on{background:var(--white);color:#000;outline:2px solid #000}.fk .ln{width:1.6ch;border-top:3px dotted #333;align-self:center}
+    .fk2{flex-direction:column;align-items:stretch!important}.fk2 .r{display:flex;align-items:center;flex:1;min-height:0}.fk2 .r+.r{border-top:1px solid #777}</style>`;
+  const stats = `<span class="fkst"><b>BP</b>5<b>AP</b>3<b>Cash</b>$110M<b>Pop</b>88.0<b>Owner</b>55</span>`;
+  const nk = (k, t) => `<span class="nk"><i>${k}</i><em>${t}</em></span>`;
+  const big = (t, k) => `<span class="bigk"><i>${k || 'SPACE'}</i><em>► ${t}</em></span>`;
+  // 1. a full row of keys; the numbers move up beside the date
+  const key1 = kcss + `<div class="fk" style="top:0;height:30px">${menu}<span class="fksp"></span>${stats}<span class="sep">│</span><span class="fkdt" style="margin-right:1.2ch">Week 1, October 2026</span></div>
+    <div class="fk" style="top:826px;height:34px">${nk('F1', 'Help')}${nk('F2', 'Options')}${nk('F3', 'Music')}${nk('F4', 'Save')}${nk('F5', 'Schedule')}${nk('F6', 'Roster')}${nk('F7', 'Inbox')}<span class="fksp"></span>${big('BOOK SHOW')}</div>`;
+  // 2. two lines: the week as steps above the keys
+  const key2 = kcss + topPlain + `<style>.dsk{height:13.1em!important}</style><div class="fk fk2" style="top:800px;height:60px"><div class="r" style="padding-left:1ch"><span style="color:#333;margin-right:1.4ch">This week</span><span class="pip dn">✔ Tasks</span><span class="ln"></span><span class="pip on">● ${D.queue[0]}</span><span class="ln"></span><span class="pip">○ ${q2}</span><span class="ln"></span><span class="pip">○ End the week</span><span class="fksp"></span>${stats}<span style="width:1.4ch"></span></div>
+    <div class="r">${nk('F1', 'Help')}${nk('F2', 'Options')}${nk('F3', 'Music')}<span class="fksp"></span><span style="color:#333;margin-right:1.6ch">Next: book ${D.queue[0]}</span>${big('BOOK SHOW')}</div></div>`;
+  // 3. one tall key at the right end, with a line that says what is next
+  const key3 = kcss + topPlain + `<style>.dsk{height:13.1em!important}</style><div class="fk" style="top:800px;height:60px;align-items:stretch"><div style="flex:1;display:flex;flex-direction:column;min-width:0"><div style="flex:1;display:flex;align-items:center">${stats}<span class="fksp"></span>${nk('F1', 'Help')}${nk('F2', 'Options')}${nk('F3', 'Music')}</div>
+     <div style="flex:1;display:flex;align-items:center;border-top:1px solid #777;padding-left:1.6ch;white-space:nowrap"><span style="color:var(--dred);margin-right:1ch">Next</span>Book ${D.queue[0]}. <span style="color:#333;margin-left:1ch">Three tasks on the desk can wait. Two shows left this week.</span></div></div>
+    <div style="display:flex;flex-direction:column;justify-content:center;background:var(--yellow);color:#000;padding:0 2.6ch;border-left:3px solid #000;box-shadow:inset -4px -4px 0 #a8a800,inset 4px 4px 0 #ffffc8;text-align:center"><span style="font-size:.74em;color:var(--dred);letter-spacing:.3em">SPACE</span><span style="font-size:1.45em;line-height:1">► BOOK SHOW</span></div></div>`;
+  // 4. a real space bar: wide and in the middle
+  const key4 = kcss + topPlain + `<div class="fk" style="top:822px;height:38px">${stats}<span class="fksp"></span><span style="display:flex;align-self:stretch;margin:3px 0;width:46ch;background:var(--yellow);color:#000;align-items:center;justify-content:center;box-shadow:inset -3px -3px 0 #a8a800,inset 3px 3px 0 #ffffc8,0 0 0 2px #000;font-size:1.12em;position:relative"><span style="position:absolute;left:1ch;font-size:.7em;color:var(--dred);letter-spacing:.2em">SPACE</span>► BOOK SHOW</span><span class="fksp"></span>${nk('F1', 'Help')}${nk('F2', 'Options')}${nk('F3', 'Music')}</div>`;
+  await shot('key-1-full-row', 'desk', deskHtml, '', key1);
+  await shot('key-2-week-and-keys', 'desk', deskHtml, '', key2);
+  await shot('key-3-tall-key', 'desk', deskHtml, '', key3);
+  await shot('key-4-space-bar', 'desk', deskHtml, '', key4);
+  // what the key says through a week
+  const kst = [['var(--yellow)', '#000', 'BOOK SHOW', 'The desk is clear enough. Open the card.'], ['var(--dred)', '#fff', 'ATTENTION', 'Something on the desk has to be answered first.'], ['var(--dgreen)', '#fff', 'RING THE BELL', 'The card fits the two hours. Go on the air.'], ['var(--dred)', '#fff', 'YOUR CALL', 'The gorilla position needs an answer. It cannot be skipped.'], ['var(--yellow)', '#000', 'CONTINUE', 'On the air: the next match, promo or angle.'], ['var(--white)', '#000', 'OFFICE', 'The show is over. Back to the desk.'], ['var(--dcyan)', '#000', 'END WEEK', 'Every show has run and nothing is waiting.']];
+  const states = `<div class="scr" style="grid-template-columns:1fr;grid-template-rows:auto"><div style="width:86ch;margin:1.5em auto 0">${W('One key, and it always says what happens next', kst.map(k => `<div class="row" style="margin:.35em 0"><span style="display:inline-flex;font-size:1.12em;white-space:nowrap;width:30ch;flex:none"><i style="font-style:normal;background:#000;color:#fff;padding:0 1ch">SPACE</i><em style="font-style:normal;background:${k[0]};color:${k[1]};padding:0 2ch;flex:1">► ${k[2]}</em></span><span>${k[3]}</span></div>`).join('') + '<p class="mut" style="margin-top:.5em">Yellow moves the week on. Red wants you first. Green puts a show on the air.</p>')}</div></div>`;
+  await shot('key-5-what-it-says', 'desk', states, '', kcss + topPlain + `<div class="fk" style="top:826px;height:34px">${stats}<span class="fksp"></span>${nk('F1', 'Help')}${nk('F2', 'Options')}${nk('F3', 'Music')}<span style="width:1.5ch"></span>${big('BOOK SHOW')}</div>`);
   await browser.close();
 })().catch(e => { console.error(e); process.exit(1); });
