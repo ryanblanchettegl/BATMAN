@@ -1,10 +1,10 @@
-# EWF 9000: design
+# EWF Wrestling Manager: design
 
 The fixed target for the interface rebuild. Change this file first, then the code.
 
 ## 1. The game in one paragraph
 
-Elite Wrestling Federation 9000 is a wrestling booking sim in the Extreme Warfare tradition. You are the booker. You build cards; the odds decide who wins, unless you spend booking power granted by the owner to call a finish. Shows play out as a broadcast you click through. Everything else (locker room, money, rivals, history) exists to make next week's card a harder and more interesting decision. Earn enough trust and you own the company.
+Elite Wrestling Federation Wrestling Manager is a wrestling booking sim in the Extreme Warfare tradition. You are the booker. You build cards; the odds decide who wins, unless you spend booking power granted by the owner to call a finish. Shows play out as a broadcast you click through. Everything else (locker room, money, rivals, history) exists to make next week's card a harder and more interesting decision. Earn enough trust and you own the company.
 
 ## 2. Pillars
 

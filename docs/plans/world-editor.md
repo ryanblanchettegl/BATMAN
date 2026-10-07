@@ -11,14 +11,14 @@ Counts marked "today" were measured in the engine on 6 October. Counts marked "a
 | | In the game today | In the box at release | A player can add |
 |---|---|---|---|
 | Open lists (moves, stipulations, gimmicks, story templates, events and so on) | about 410 entries in code | **1,172 entries in 30 lists** | Any number, in all 30 |
-| Fixed lists (the engine's bones) | about 90 parts | **233 parts in 20 lists** | None. They are picked from, not added to |
+| Fixed lists (the engine's bones) | about 90 parts | **241 parts in 21 lists** | None. They are picked from, not added to |
 | Rules of the world | 1 (difficulty) | **24 switches, 6 eras** | Their own eras, saved from the switches |
 | The world itself (companies, people, belts, ties) | 9 companies, 473 people, 39 belts, 85 ties | The same, plus the three rows below | Any number. No fixed limit |
 | Stories running on day one | 0 | **18** (two a company) | Any number |
 | Stories in the past | 0 | **54** (six a company, five years) | Any number |
 | Title reigns and big events in the past | made up when a game starts | **212 reigns, 45 big events**, written | Any number |
 
-So about 1,400 things to pick from on day one, and nothing a player picks from that they cannot also make, except the twenty lists the engine needs fixed.
+So about 1,400 things to pick from on day one, and nothing a player picks from that they cannot also make, except the twenty-one lists the engine needs fixed.
 
 ## 2. Three layers
 
@@ -32,7 +32,7 @@ Everything in the editor sits in one of three layers. The layer says whether a p
 
 Shipped library entries cannot be deleted or changed, so a shared world always opens on somebody else's machine. They can be **copied** (the copy is the player's to change) and **switched off** for one world.
 
-## 3. The bones: 20 fixed lists, 233 parts
+## 3. The bones: 21 fixed lists, 241 parts
 
 | List | Count | Why it is fixed |
 |---|---|---|
@@ -56,6 +56,7 @@ Shipped library entries cannot be deleted or changed, so a shared world always o
 | **What it does** | about 40 | New. See section 5 |
 | Parts of a company mark | 37 | Drawn by code (art-direction plan, section 3a) |
 | Parts of a belt | 26 | Drawn by code |
+| Maps | 8 | Drawn by code: the USA, Britain and Ireland, Europe, the Mediterranean and the Near East, Mexico and Central America, South America, Japan, the world (art-direction plan, section 6.4) |
 
 Portrait parts, the achievements and the six clocks are also fixed, and are not things a world picks from.
 
@@ -114,7 +115,7 @@ Portrait parts, the achievements and the six clocks are also fixed, and are not 
 | Sponsors | 12 | 24 | Name, what it pays, what it asks for |
 | Big event themes | 4 | 12 | A stipulation or a kind of story the night favours |
 | Venues | 0 | 60 | City, seats, cost, what crowd it draws |
-| Cities | 88 | 100 | Name, region, size, a spot on the map |
+| Cities | 88 | 100 | Name, size, which map it is on, its area and its spot |
 | Columnists and fan voices | 3 | 12 | Name, taste, how kind |
 
 ### The look
@@ -230,7 +231,7 @@ Seven sections across the top, each with a row of pages under it. Every page is 
 | Library | Every list. Packs. Names. Cities and places |
 | Check | What must be fixed, what is worth a look, and "Play a year, unattended" |
 
-**At a glance** (`world-1-home.png`) shows what is in the world, split into what shipped and what is the player's, and the check. **Every list** (`world-2-library.png`) shows all fifty lists with what ships, what is the player's, and Add or Fixed.
+**At a glance** (`world-1-home.png`) shows what is in the world, split into what shipped and what is the player's, and the check. **Every list** (`world-2-library.png`) shows all fifty-one lists with what ships, what is the player's, and Add or Fixed.
 
 **Packs.** A pack is a file of library entries that can be switched on for a world: a set of moves, a set of story templates, a set of rough stipulations. Core is always on. A shared world carries the packs it needs inside it. This is how a player's forty moves travel to their next world without being typed again.
 

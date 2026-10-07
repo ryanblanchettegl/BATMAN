@@ -1,4 +1,4 @@
-/* EWF 9000 interface styles. One deliberate look: a 16-colour 1990s PC program (docs/design.md, section 6), so there is no light theme.
+/* EWF Wrestling Manager interface styles. One deliberate look: a 16-colour 1990s PC program (docs/design.md, section 6), so there is no light theme.
    Sizes are in em and ch so the whole screen scales from one type size (--fs). */
 :root{
   color-scheme:dark;
@@ -485,7 +485,7 @@ html[data-music="off"] .mus::after{content:' off';color:var(--dred)}
 /* There is no portrait layout. A tall, narrow window gets one line asking for a wide one, and nothing else. */
 @media (orientation:portrait) and (max-width:520px){
   #app{display:none}
-  body::before{content:'EWF 9000 needs a wide screen. Turn your device sideways, or make the window wider.';position:fixed;inset:0;z-index:99;display:flex;align-items:center;justify-content:center;text-align:center;padding:2em;background:var(--blue);color:var(--yellow);font-size:1.3em;line-height:1.4}
+  body::before{content:'EWF Wrestling Manager needs a wide screen. Turn your device sideways, or make the window wider.';position:fixed;inset:0;z-index:99;display:flex;align-items:center;justify-content:center;text-align:center;padding:2em;background:var(--blue);color:var(--yellow);font-size:1.3em;line-height:1.4}
 }
 
 /* backstage as people, not rooms: a column a room, a face a person, and under each why they are there */

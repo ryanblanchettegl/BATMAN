@@ -19,7 +19,7 @@ if(fs.existsSync(path.join(appDir,'node_modules','esbuild'))){
   // add-ons: self-contained scripts appended after the interface (app/addons/*.js), each in its own script tag
   const addDir=path.join(appDir,'addons');
   const addons=fs.existsSync(addDir)?fs.readdirSync(addDir).filter(f=>f.endsWith('.js')).sort().map(f=>'\n<script>\n'+fs.readFileSync(path.join(addDir,f),'utf8').replace(/<\/script/gi,'<\\/script')+'</script>').join(''):'';
-  const next=`<title>Elite Wrestling Federation 9000</title>
+  const next=`<title>EWF Wrestling Manager</title>
 <style>
 ${font}${blocks}${css}</style>
 <div id="app"></div>

@@ -103,7 +103,7 @@ const ONLY = (process.argv[3] || '').split(',').filter(Boolean);
   const libPg = wcss + `<div class="scr" style="grid-template-columns:51ch minmax(0,1fr);grid-template-rows:1fr">
     ${W('Every list', `<div class="lb lib"><div class="hd"><span>List</span><span class="r">Shipped</span><span class="r">Yours</span><span></span></div>
       ${L.map((l, i) => `<div class="rw${i === 3 ? ' sel' : ''}"><b>${l[0]}</b><span class="r">${l[1]}</span><span class="r">${l[2] || '·'}</span><span>${l[3] ? '<span class="tg d" style="margin:0">Add</span>' : '<span class="tg o" style="margin:0">Fixed</span>'}</span></div>`).join('')}</div>
-      <p style="margin-top:.35em;text-align:center;white-space:nowrap">${B('◄', 'g')}Page 1 of 2 &nbsp;${B('►', 'g')}</p><p style="margin-top:.1em;text-align:center">${led('lib', .8)}</p>`, { right: '30 open · 20 fixed' })}
+      <p style="margin-top:.35em;text-align:center;white-space:nowrap">${B('◄', 'g')}Page 1 of 2 &nbsp;${B('►', 'g')}</p><p style="margin-top:.1em;text-align:center">${led('lib', .8)}</p>`, { right: '30 open · 21 fixed' })}
     ${W('Stipulations', `<div class="row top" style="gap:2.4ch"><div style="flex:1.25">
         ${G('In the box: 24', `<div class="chips">${STIPS.map((x, i) => `<span class="${i === 18 ? 'off' : ''}">${x}</span>`).join('')}</div><p class="mut" style="margin-top:.3em">Shipped ones cannot be deleted or changed, so every shared world still works. They can be copied, or switched off for this world.</p>`, 'margin-top:.35em')}
         ${G('Yours: 3', `<div class="chips"><span class="y">Scaffold</span><span class="y">Empty arena</span><span class="y">Torch-lit ring</span></div><p style="margin-top:.35em">${B('Add a stipulation')}${B('Copy one', 'g')}${B('Switch one off', 'g')}</p>`)}

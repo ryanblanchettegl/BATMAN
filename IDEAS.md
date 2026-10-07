@@ -1,4 +1,4 @@
-# EWF 9000: the next 100 (shelved)
+# EWF Wrestling Manager: the next 100 (shelved)
 
 **Shelved by Ryan on 3 October 2026. Do not build from this list.** The direction is back to fine-tuning the engine, the game loop, its logic and its rewards, one step at a time (see the decisions table in `TASKS.md`). None of these hundred were built. The list is kept only as a place to look when a step needs an idea.
 

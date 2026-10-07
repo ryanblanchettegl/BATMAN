@@ -1,4 +1,4 @@
-# EWF 9000: the next run
+# EWF Wrestling Manager: the next run
 
 Work for Claude Code, in order. `TWEAKS.md` and `WISHLIST.md` are finished; this file is what comes after them. It turns the big tasks in `TASKS.md` into steps small enough to land one at a time. Read `CLAUDE.md` first, then the decisions table in `TASKS.md`.
 

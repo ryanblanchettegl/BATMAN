@@ -1,4 +1,4 @@
-# EWF 9000: 100 tweaks
+# EWF Wrestling Manager: 100 tweaks
 
 Small jobs, each one commit. None of them needs a decision from Ryan. Read `CLAUDE.md` first.
 

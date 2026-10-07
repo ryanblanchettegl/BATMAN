@@ -1,4 +1,4 @@
-# Elite Wrestling Federation 9000
+# EWF Wrestling Manager
 
 A text-based wrestling booking sim in the Extreme Warfare tradition, drawn as a 1990s PC program.
 

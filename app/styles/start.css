@@ -1,7 +1,7 @@
 /* Styles only the Start screens need. Shared pieces live in base.css. */
 .editor.plain{border:0;margin:0;padding:0}
 .opts{margin-bottom:0}
-/* title card: block letters with a red drop shadow, "Wrestling Federation" as a line of plain type between them */
+/* title card: the full name in small type, EWF in block letters with a red drop shadow, "Wrestling Manager" under it */
 .logo-box{gap:1.1em;padding-block:1.4em 1.3em}
 .logo-sub{color:var(--white);text-transform:uppercase;text-align:center;line-height:1;letter-spacing:.16em;margin-right:-.16em;font-size:min(2.7em,calc((min(100vw,59em) - 5em) / 15.5));text-shadow:.06em .06em 0 var(--k)}
 .logo-main{display:block;width:100%;height:auto;overflow:visible}
@@ -9,3 +9,5 @@
 .logo-main text.sh{fill:var(--dred);stroke:var(--dred)}
 .logo-sub{font-size:min(3em,calc((min(100vw,59em) - 5em) / 17.5));letter-spacing:.1em;margin-right:-.1em;-webkit-text-stroke:.035em var(--white);paint-order:stroke fill}
 .logo-box{width:100%;gap:.7em}
+.logo-top{color:var(--cyan);text-transform:uppercase;text-align:center;line-height:1;letter-spacing:.3em;margin-right:-.3em;font-size:min(1.25em,calc((min(100vw,59em) - 5em) / 40))}
+.logo-main{max-height:26vh}

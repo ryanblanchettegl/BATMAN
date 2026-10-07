@@ -1,4 +1,4 @@
-# EWF 9000: 100 wishes
+# EWF Wrestling Manager: 100 wishes
 
 Things that would make the game deeper. Each one adds a system, a choice or a memory that the player can feel over a long save. They are bigger than the jobs in `TWEAKS.md` and smaller than the features in `TASKS.md`. Read `CLAUDE.md` first.
 

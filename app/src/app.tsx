@@ -38,7 +38,7 @@ class Boundary extends Component<{ children?: ComponentChildren }, { err: any }>
   componentDidCatch(err: any) { this.setState({ err }); }
   render() {
     const err = this.state.err; if (!err) return this.props.children;
-    const text = 'EWF 9000 ' + VER + ' page ' + ui.page + ' week ' + (G.S ? G.S.week : '-') + '\n' + String(err && (err.stack || err.message || err));
+    const text = 'EWF Wrestling Manager ' + VER + ' page ' + ui.page + ' week ' + (G.S ? G.S.week : '-') + '\n' + String(err && (err.stack || err.message || err));
     return <Panel title="Something went wrong">
       <p>This page could not be drawn. Your game is safe: nothing was lost.</p>
       <p class="bad mt1">{String(err && err.message || err)}</p>

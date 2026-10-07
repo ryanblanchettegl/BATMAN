@@ -1,4 +1,4 @@
-# EWF 9000 feature list
+# EWF Wrestling Manager feature list
 
 Copied on 2 October 2026 from Ryan's "EWF 9000 Feature List" doc (brainstormed in a side session, handed to the build thread). Every item is locked in by Ryan unless marked otherwise. `TASKS.md` at the repo root says what is built and in what order the rest comes.
 

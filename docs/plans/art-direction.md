@@ -151,7 +151,7 @@ The bottom key always says what it will save. Nothing is saved until it is press
 - Every creator fits one screen and works from keys and a gamepad.
 - Everything made here is part of the universe package, so it travels with a shared world. `src/85-universe.js` gets a new optional list for moves, gimmicks, story templates and events, and `E.edCheck` validates each.
 
-**The World Editor as a whole** has its own plan: `docs/plans/world-editor.md`. It says what ships in every list and what a player can add (30 open lists with 1,172 entries in the box, 20 fixed lists, 24 rules of the world), the stories running on day one and the written past, and the engine work in order. Its pictures are in `docs/mockups/world-editor/`. The ten creators here are the pages that plan uses.
+**The World Editor as a whole** has its own plan: `docs/plans/world-editor.md`. It says what ships in every list and what a player can add (30 open lists with 1,172 entries in the box, 21 fixed lists, 24 rules of the world), the stories running on day one and the written past, and the engine work in order. Its pictures are in `docs/mockups/world-editor/`. The ten creators here are the pages that plan uses.
 
 **Order to build them in.** Belt look and the federation page first (small, and they show off the new art). Then gimmicks and relationships (data that already exists as code). Then tag teams and stables. Then moves. Then storylines. Events last: they are the most powerful and the easiest to break a game with, so they need the check and "Play it now" working before anything else.
 
@@ -195,15 +195,30 @@ Each step is its own `src/NN-name.js` where it is a new system, with a headless 
 ### 6.3 Company marks
 Section 3. Small engine change, one component, an editor control. Do it early because every later screen uses it.
 
-### 6.4 Places (this is the big decision; see question 1)
-The default world is not the USA. WHW runs Rome, Athens, London, Kyoto and Chicago. OCW runs Athens, Sparta and Troy. KJP runs Kyoto and Osaka. PDP runs Whitby and Sleepy Hollow. NMW runs West Egg. A map of US states only suits two of the nine companies.
+### 6.4 Places and maps (decided 7 October)
+Ryan, 7 October: "I like the USA map and want to keep it. You will need to create new maps for the other regions." So question 1 is answered: the USA map stays as drawn in `final-1-desk.png`, with real state outlines and the week's state lit, and the rest of the world gets maps of its own in the same style. The default world's companies stay where they are.
 
-What I recommend building:
-- A city becomes a record, not a string: `{ n, lat, lon, land, area }`, where `land` is the country and `area` is the state, province or island. `P.cities` keeps its names; a new table `S.places` (from the universe package, with a built-in table for the default world) holds the rest. Fictional and ancient cities get a real spot on the map (Troy at its site, West Egg on Long Island, Sleepy Hollow in New York).
-- One world land mask in the code, a few kilobytes: a grid of land and sea. The map is this mask drawn as square dots.
-- A company's map frames its own cities: the view zooms to the box around them. KJP sees Japan. LDD and LTA see Mexico and the Caribbean. TTT sees the American West. WHW sees the world.
-- "The state they are in" is lit by area: the dots nearest this week's city within the same `area`. For the USA that means real state outlines can come later as an optional layer; the first version lights the area around the city.
-- `E.placeOf(S, city)`, `E.mapOf(S)` (the view box, the cities, which are lit), all read-only.
+**The maps to draw.** The default world's nine companies tour 88 cities. They fall on eight maps:
+
+| Map | Areas that light up | Who needs it |
+|---|---|---|
+| The USA | States | TTT and NMW mostly; WHW, PDW and PDP in part |
+| Britain and Ireland | Nations and regions | PDW, PDP |
+| Europe | Countries | WHW, PDW, PDP, NMW |
+| The Mediterranean and the Near East | Lands of the old world (Greece, Italy, Egypt, Anatolia, Mesopotamia) | OCW, WHW |
+| Mexico and Central America | States and lands | LDD, LTA |
+| South America | Countries | LDD, LTA |
+| Japan | Regions | KJP, WHW |
+| The world | Continents | A long trip (Melbourne, a tour abroad), and any city with no map of its own |
+
+**How they work.**
+- A city becomes a record, not a string: `{ n, map, area, x, y }`. `map` is which map it is on, `area` is the state, country or region that lights, and `x, y` is its dot. `P.cities` keeps its names; a new table `S.places` (from the universe package, with a built-in table for the default world) holds the rest. Fictional and ancient cities get a real spot (Troy at its site, West Egg on Long Island, Sleepy Hollow in New York, Camelot in the west of England).
+- A map is data in the code: a grid of dots, each dot marked with its area, plus the area names. No image files (rule 2). The USA grid from the mock-up (`maplib.js`) is the pattern; each other map is drawn the same way, once.
+- The road window shows the map this week's city is on. A company that crosses from one map to another shows the change as the tour moves: the title bar names the map, and the next stops that are off this map are listed under it with an arrow.
+- A world made in the World Editor picks its maps from this set, places its cities on them, and can use the world map alone if it wants none of the others. New maps come with updates (they are one of the fixed lists in `docs/plans/world-editor.md`).
+- `E.placeOf(S, city)`, `E.mapOf(S)` (which map, the cities on it, which area is lit, the road so far), all read-only.
+
+**Cost.** This is eight drawings, not one. The USA is done as a mock-up. Do the other seven one at a time, starting with the maps the most companies need (Europe, then the Mediterranean, then Japan), and show each to Ryan.
 
 ### 6.5 The road: a schedule
 Today a show's city is picked when the show runs. The road needs it picked ahead.
@@ -263,7 +278,7 @@ Five changes a version (rule 10a). One step at a time, shown to Ryan (rule 9a). 
 5. The desk in windows, with the lower three windows real and the road window showing only what exists today (this week's venue, capacity, the crowd's taste).
 
 **Version B: the road**
-6. Places (6.4), after question 1 is answered.
+6. Places and the eight maps (6.4), one map at a time.
 7. The schedule (6.5).
 8. Ticket sales (6.6).
 9. Markets (6.7) and hometowns (6.8).
@@ -300,7 +315,7 @@ These only become possible after the steps above. None is promised.
 
 ## 9. Questions for Ryan
 
-1. **The map.** The default world is not the USA (section 6.4). My recommendation is one world map in dots, zoomed to each company's own cities, with the area around this week's city lit. The alternative is to move the default world's companies to US cities so a state map fits everyone, which changes the character of the world. Which?
+1. **The map.** Answered 7 October: keep the USA map, and draw new maps for the other regions (section 6.4).
 2. **Company colours on the title bars.** Yes or no (section 3).
 3. **The page tabs.** Restyle them to match the windows, or leave them?
 4. **Roster and Book the show.** Are `final-6` and `final-7` right, or do you want options the way you had for the others?

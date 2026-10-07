@@ -1,4 +1,4 @@
-/* EWF 9000 portraits: a small procedural pixel-art face generator.
+/* EWF Wrestling Manager portraits: a small procedural pixel-art face generator.
    Every face is drawn from eight numbers (head, hair, facial hair, mustache, eyes, nose, skin tone, hair colour),
    so a portrait costs a few bytes in a save or a universe package and needs no image files. */
 

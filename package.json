@@ -1,7 +1,7 @@
 {
-  "name": "ewf-9000",
+  "name": "ewf-wrestling-manager",
   "version": "0.38.0",
-  "description": "Elite Wrestling Federation 9000: a wrestling booking sim",
+  "description": "EWF Wrestling Manager: a wrestling booking sim",
   "main": "desktop/main.js",
   "scripts": {
     "postinstall": "cd app && npm install",

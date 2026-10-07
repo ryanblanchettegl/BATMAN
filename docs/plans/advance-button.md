@@ -15,7 +15,7 @@ Status: **built in 0.17.** Ryan said go with the recommended answers to both que
 7. **Sid Meier's rules behind it:** a game is a series of interesting decisions; "keep the player focused on what's yet to come"; limit the choices on offer at any moment so nobody is swamped.
 8. **The warning.** The same pull exists in poor games. If a press brings no real decision and no real result, it feels like a slot machine and people regret the evening. The button is only as good as what each press delivers.
 
-## What that means for EWF 9000
+## What that means for EWF Wrestling Manager
 
 The game already has the parts: this week's tasks (`src/95-tasks.js`), the show queue, the report, the week closing, and many timers (the next big event, contracts, feud acts, promises, the owner's clocks, title reigns). They are spread over seven sections. The button gathers them.
 

@@ -28,7 +28,7 @@ ipcMain.handle('gp-workshop-upload', async (_event, pkg) => {
     fs.writeFileSync(path.join(dir, 'universe.json'), JSON.stringify(pkg));
     const made = await steam.workshop.createItem();
     if (made.needsToAcceptAgreement) return { ok: false, msg: 'Accept the Steam Workshop agreement in Steam first' };
-    await steam.workshop.updateItem(made.itemId, { title: String(man.name || 'EWF 9000 world'), description: String(man.description || '') + (man.author ? '\nBy ' + man.author : ''), contentPath: dir, tags: ['World'], changeNote: 'Version ' + String(man.version || '1.0') });
+    await steam.workshop.updateItem(made.itemId, { title: String(man.name || 'EWF Wrestling Manager world'), description: String(man.description || '') + (man.author ? '\nBy ' + man.author : ''), contentPath: dir, tags: ['World'], changeNote: 'Version ' + String(man.version || '1.0') });
     return { ok: true, id: String(made.itemId) };
   } catch (e) { return { ok: false, msg: e.message }; }
 });
