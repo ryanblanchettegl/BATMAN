@@ -31,7 +31,7 @@ function Booking() {
 }
 
 /* ---------- keys and Back ---------- */
-// While the broadcast is showing: Enter or Space does what the big yellow button does, Esc finishes the line and skips to the
+// While the broadcast is showing: Enter does what the SPACE key does, Esc finishes the line and skips to the
 // result, and the page shortcuts wait until the show is over (as in the old interface).
 onKey(e => {
   if (ui.modal || !liveReport() || G.S.over || e.ctrlKey || e.metaKey || e.altKey) return false;

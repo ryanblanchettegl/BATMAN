@@ -15,8 +15,8 @@ const plant = page => state(page, S => { for (let i = 0; i < 400; i++) { S.chs =
 
 /** The newest commentary line as far as it has been typed (the rest is in the page, hidden, holding its place). */
 const typed = page => page.$eval('#live .ln.last', e => { const c = (e.querySelector('.tx') || e).cloneNode(true); c.querySelectorAll('.untyped').forEach(x => x.remove()); return c.textContent; }).catch(() => '');
-/** Is the big yellow button on screen, at the top right, clear of the status bar? It is the only way forward on a broadcast. */
-const goInView = page => page.evaluate(() => { const g = document.querySelector('[data-t="advance"]').getBoundingClientRect(), st = document.querySelector('.ffoot').getBoundingClientRect(); return g.top >= 0 && g.right <= innerWidth && g.width > 40 && g.bottom <= st.top && g.left > innerWidth / 2; });
+/** Is the SPACE key on screen, at the right end of the bottom line? It is the only way forward on a broadcast. */
+const goInView = page => page.evaluate(() => { const g = document.querySelector('[data-t="advance"]').getBoundingClientRect(), st = document.querySelector('.ffoot').getBoundingClientRect(); return g.top >= st.top - 1 && g.bottom <= innerHeight + 1 && g.right <= innerWidth + 1 && g.width > 40 && g.left > innerWidth / 2; });
 const focusAdv = page => page.evaluate(() => !!document.activeElement && document.activeElement.getAttribute('data-t') === 'advance');
 const advWord = page => page.$eval('[data-t="advance"] b', e => e.innerText.replace(/\s+/g, ' ').trim());
 /** What to do when a call from the gorilla position comes up while the test is walking the show. Set by section(). */
@@ -36,7 +36,7 @@ async function advance(page, how) {
 async function runShow(page, mode, check) {
   const seen = { pre: false };
   ok(!(await has(page, '[data-t="run"]')) && !(await has(page, '[data-t="asst"]')) && !(await has(page, '[data-t="asstrun"]')), mode + ': the card has no Run or assistant buttons of its own');
-  ok(await page.$eval('[data-t="advance"]', e => e.getAttribute('data-v') + ':' + e.innerText.split('\n')[0].trim().toLowerCase()) === 'run:run show', mode + ': the big button should say Run show');
+  ok(await page.$eval('[data-t="advance"]', e => e.getAttribute('data-v') + ':' + e.querySelector('b').innerText.trim().toLowerCase() + ':' + e.getAttribute('data-tone')) === 'run:run show:air', mode + ': the key should say Run show, in green');
   await page.click('[data-t="advance"]');
   for (let k = 0; k < 6 && !(await has(page, '#live')); k++) {
     if (await has(page, '[data-t="pre"]')) {

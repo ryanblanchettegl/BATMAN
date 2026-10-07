@@ -1,4 +1,5 @@
-/* The frame around every page: one grey menu bar, the row of page buttons, the message line, one grey status bar. */
+/* The frame around every page: one grey menu bar, the row of page buttons, the message line, and the bottom line:
+   the numbers and how they moved on the left, three small keys (Help, Options, Music), and the SPACE key at the right end. */
 import { E } from '../engine';
 import { G, ui, me, cash, view, openModal, PLATFORM, redraw, onReset } from '../store';
 import { SECTIONS, sectionOf, go, weekDone, pending } from '../nav';
@@ -6,12 +7,13 @@ import { NAV, onBack } from '../input';
 import { abandonGame } from '../flow';
 import { Btn, Tabs } from '../kit';
 import { SFX } from '../sfx';
+import { AdvanceKey } from './Advance';
 
 /** The Music button, at the right-hand end of the top bar. The soundtrack add-on (app/addons/soundtrack.js) opens its
     Jukebox for any click on an element marked data-jk="open", so this button needs no handler of its own. */
 // Back on a remote or gamepad closes the Jukebox first
 onBack(() => { const c = document.querySelector('.jk [data-jk="close"]') as HTMLElement | null; if (!c) return false; c.click(); return true; });
-export function MusicBtn() { return <button type="button" class="f1 mus" data-t="music" data-jk="open" aria-label="Music jukebox">{'♫'}<span class="mw"> Music</span></button>; }
+export function MusicBtn(p: { cap?: string }) { return <button type="button" class={p.cap != null ? 'nk mus' : 'f1 mus'} data-t="music" data-jk="open" aria-label="Music jukebox">{p.cap ? <i aria-hidden="true">{p.cap}</i> : null}{p.cap != null ? <em>{'♫'} Music</em> : <>{'♫'}<span class="mw"> Music</span></>}</button>; }
 
 /** Manage: sponsor offers waiting, plus one if the house style still has to be set. */
 function manageBadge(): number { const S = G.S; return (S.sponsors.length < 3 ? S.spOffers.length : 0) + (S.owner.pending ? 1 : 0); }
@@ -35,8 +37,14 @@ export function SubNav() {
   return <Tabs label={sec.n + ' pages'} value={ui.page} onPick={go} items={sec.pages.map(p => ({ id: p[0], t: 'page', d: { v: p[0] }, label: p[1] }))} />;
 }
 
-/** A figure in the status bar. Selecting it opens the Company overview, where the figures are explained. */
-const stat = (k: string, label: string, v: string | number, cls?: string) => <button type="button" class={cls} data-t="stat" data-v={k} aria-label={label + ' ' + v + '. Open the company overview.'} onClick={() => go('overview')}><b>{label}</b> {v}</button>;
+/** A figure on the bottom line, and how it has moved. Selecting it opens the Company overview, where the figures are explained. */
+const stat = (k: string, label: string, v: string | number, cls?: string, mv?: { dir: number; t: string; say: string } | null) => <button type="button" class={cls} data-t="stat" data-v={k} aria-label={label + ' ' + v + (mv ? ', ' + mv.say : '') + '. Open the company overview.'} onClick={() => go('overview')}><b>{label}</b> {v}{mv ? <em class={'mv ' + (mv.dir > 0 ? 'up' : (mv.dir < 0 ? 'dn' : 'fl'))} data-t="moved" data-v={mv.dir}>{mv.t}</em> : null}</button>;
+/** How one number moved, in the few characters the bottom line has room for. */
+function mv(m: { d: number; dir: number } | undefined, fmt: (n: number) => string, since: string): { dir: number; t: string; say: string } | null {
+  if (!m) return null;
+  if (!m.dir) return { dir: 0, t: 'steady', say: 'steady ' + since };
+  return { dir: m.dir, t: (m.dir > 0 ? '▲ ' : '▼ ') + fmt(Math.abs(m.d)), say: (m.dir > 0 ? 'up ' : 'down ') + fmt(Math.abs(m.d)) + ' ' + since };
+}
 /** The name of the track that just started, shown in the status bar for three seconds. */
 let nowPlaying: { n: string; until: number } | null = null;
 window.addEventListener('ewf-track', (e: any) => {
@@ -57,14 +65,22 @@ export function NoteBar() {
   </button>;
 }
 export function StatusBar() {
-  const S = G.S, P = me();
+  const S = G.S, P = me(), M = E.moved(S), since = M ? M.since : '';
+  const tablet = document.documentElement.getAttribute('data-screen') === 'tablet', caps = !tablet && !NAV.tv;
   return <footer class="status">
-    {stat('bp', 'BP', S.bp)}{stat('ap', 'AP', S.ap == null ? 0 : S.ap)}{stat('cash', 'Cash', cash(P.cash))}{stat('pop', 'Pop', P.image.toFixed(1))}
-    {!S.owner.me && stat('owner', 'Owner', Math.round(S.owner.trust), 'opt')}
+    {stat('bp', 'BP', S.bp)}{stat('ap', 'AP', S.ap == null ? 0 : S.ap)}
+    {stat('cash', 'Cash', cash(P.cash), undefined, M ? mv(M.cash, cash, since) : null)}
+    {stat('pop', 'Pop', P.image.toFixed(1), undefined, M ? mv(M.image, n => n.toFixed(1), since) : null)}
+    {!S.owner.me && stat('owner', 'Owner', Math.round(S.owner.trust), 'opt', M ? mv(M.trust, n => n % 1 ? n.toFixed(1) : String(n), since) : null)}
     {nowPlaying && nowPlaying.until > Date.now() ? <span class="np">{'♫'} {nowPlaying.n}</span> : null}
-    <span class="sp" />
-    {NAV.pad ? <><span class="opt"><b>A</b> select</span><span class="opt"><b>B</b> back</span><span class="opt"><b>LB RB</b> sections</span><span class="opt"><b>X</b> help</span><span class="opt"><b>Y</b> music</span></> : (NAV.on ? <><span class="opt"><b>OK</b> select</span><span class="opt"><b>Back</b> back</span></> : null)}
-    <span class="tools"><button type="button" data-t="options" onClick={() => openModal({ kind: 'options' })}>Options</button><button type="button" data-t="help" onClick={() => openModal({ kind: 'help' })}>Help</button><MusicBtn /></span>
+    {NAV.pad ? <span class="pads"><i /><span><b>A</b> select</span><span><b>B</b> back</span><span><b>LB RB</b> sections</span></span>
+      : (NAV.on ? <span class="pads"><i /><span><b>OK</b> select</span><span><b>Back</b> back</span></span> : <span class="sp" />)}
+    <span class="tools">
+      <button type="button" class="nk" data-t="help" onClick={() => openModal({ kind: 'help' })}>{caps || NAV.pad ? <i aria-hidden="true">{NAV.pad ? 'X' : 'F1'}</i> : null}<em>Help</em></button>
+      <button type="button" class="nk" data-t="options" onClick={() => openModal({ kind: 'options' })}>{caps && !NAV.pad ? <i aria-hidden="true">F2</i> : null}<em>Options</em></button>
+      <MusicBtn cap={NAV.pad ? 'Y' : (caps ? 'F3' : '')} />
+    </span>
+    <AdvanceKey />
   </footer>;
 }
 

@@ -410,31 +410,10 @@ html.nav .caw :is(button,select,input):focus{outline:.2em solid #d00000;outline-
 .toast.note.good{background:var(--green)}
 .toast .td{min-width:0;color:var(--k)}
 .toast:focus-visible{outline:2px solid var(--k);outline-offset:-2px}
-/* the bottom of the screen: the status line, with Options, Help and Music at its right end */
+/* the bottom of the screen: one line, with the numbers on the left and the keys on the right */
 .ffoot{position:sticky;bottom:0;z-index:5}
 .ffoot>.status{position:static}
-/* The ADVANCE button sits ON TOP of the menu bar, at its right end, and hangs a little below it. It is not part of
-   the bar: the bar keeps its own height and look. The bar leaves room for it on the right. */
-.ftop{--advw:19ch}
-.ftop>.menu{padding-right:calc(var(--advw) + 2ch)}
-.ftop>.toast{padding-right:calc(var(--advw) + 3ch)}
-.adv{all:unset;box-sizing:border-box;cursor:pointer;position:absolute;top:3px;right:1ch;z-index:7;width:var(--advw);background:var(--yellow);color:var(--k);padding:.1em 0 .15em;border:3px solid var(--k);box-shadow:5px 5px 0 var(--k);text-align:center;white-space:nowrap}
-.adv b{font-size:1.6em;font-weight:normal;text-transform:uppercase;letter-spacing:.08em;line-height:1.15;color:var(--k);text-shadow:1px 0 0 var(--k)}
-.adv:hover{background:var(--white)}
-.adv:active{transform:translate(4px,4px);box-shadow:1px 1px 0 var(--k)}
-.adv:focus-visible{outline:3px solid var(--white);outline-offset:2px}
-html.nav .adv:focus{background:var(--k);outline:none}
-html.nav .adv:focus b{color:var(--yellow);text-shadow:none}
-.adv .tip{display:none;position:absolute;right:0;top:calc(100% + 8px);width:min(44ch,92vw);background:var(--k);color:var(--grey);border:2px solid var(--yellow);padding:.4em 1ch;text-align:left;white-space:normal;box-shadow:3px 3px 0 var(--dgrey);z-index:8;text-transform:none;letter-spacing:0}
-.adv .tip .tl{display:block;padding:.1em 0}
-.adv.k-task .tip .tl::before{content:'· ';color:var(--yellow)}
-.adv .tip .th{display:block;color:var(--yellow);text-transform:uppercase}
-.adv .tip .hint{display:block;color:var(--dcyan);margin-top:.2em}
-.adv:hover .tip,.adv:focus-visible .tip,html.nav .adv:focus .tip{display:block}
-/* on a broadcast the button holds the focus the whole show, so its note stays shut: the word on it is enough */
-.adv.k-live .tip{display:none!important}
-.status .tools{display:flex;flex-wrap:wrap;gap:0 2ch;align-items:center;margin-left:auto}
-.status .tools .mus{border:0;margin:0;padding:0;line-height:inherit}
+/* The bottom line (the numbers, the three small keys and the SPACE key) is styled in win.css. */
 
 
 /* what a company model rewards and punishes */

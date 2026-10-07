@@ -267,16 +267,16 @@ export function Setup() {
 function Help() {
   return <Window title="Help" ok="Got it">
     <p><b>The job.</b> Book the shows, answer the inbox, close the week. Shows that beat what the crowd expects raise your popularity.</p>
-    <p class="mt1"><b>The big button.</b> Top right, on every page. It always says the next thing the week needs: Book show, Run show, End week. If it says Attention, something on your desk needs you first: rest on it to see what, press it to go to the desk, where the tasks that cannot be skipped are marked. The space bar presses it.</p>
+    <p class="mt1"><b>The key.</b> Bottom right, on every page: SPACE, and what happens next. Yellow moves the week on (Book show, Continue). Green puts a show on the air. Red wants you first: Attention means something on your desk needs an answer, and Your call means the gorilla position is waiting. White goes back to the Office. Teal ends the week. Rest on it to see why. The space bar presses it.</p>
+    <p class="mt1"><b>The bottom line.</b> Your booking power, action points, cash, popularity and the owner’s trust, each with how it has moved since the last show went on the air or the last week ended. F1 is Help, F2 Options, F3 Music.</p>
     <p class="mt1"><b>Booking.</b> A show is matches, promos and angles. You pick who is in each. The odds decide the matches unless you spend booking power. Where a match sits matters: open with something quick, keep two long matches apart, and put the biggest match on last. The Running order notes beside the card read your card against those rules. Matches and segments are rated in stars, up to five.</p>
     <ul class="list mt1">
-      <li><span><b>Office.</b> The desk and your career. It opens on what needs doing before the show.</span></li>
+      <li><span><b>Office.</b> The desk, Backstage, Storylines and your career. It opens on what needs doing before the show.</span></li>
       <li><span><b>Booking.</b> Build the card. Spend booking power to call a finish.</span></li>
       <li><span><b>Roster.</b> Wrestlers, the locker room, titles and free agents.</span></li>
-      <li><span><b>Stories.</b> Rivalries and history.</span></li>
       <li><span><b>Net.</b> The dirt sheet, the feed and the fan boards.</span></li>
       <li><span><b>Manage.</b> Every choice: operations, house rules, deals.</span></li>
-      <li><span><b>Company.</b> Information only: overview, finances, the world.</span></li>
+      <li><span><b>Company.</b> Information only: overview, finances, the world, history.</span></li>
     </ul>
     <p class="mt1"><b>Attempts.</b> Some actions may fail. Each one shows its chance, what helps and what hurts.</p>
     <p class="mt1"><b>Names.</b> Select any name or title to open a pop-up. Back steps out, Close shuts them all.</p>

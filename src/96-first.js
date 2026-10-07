@@ -51,5 +51,5 @@ E.welcome=function(S){
   L.push('Your first show is '+sh.name+'. The card is empty and the building is sold.');
   L.push(me?'Go and book it.':'Do not make me regret this.');
   return S.letter={from:me?S.booker.name:o.name,role:me?'Owner and booker':'Owner',company:P.full||P.name,short:P.name,to:S.booker.name,date:cal(S.week).label,lines:L,show:sh.name,
-    ps:'Before the show, the Office is where the week starts. The yellow button always knows what is next.'};
+    ps:'Before the show, the Office is where the week starts. The key at the bottom right always says what is next.'};
 };

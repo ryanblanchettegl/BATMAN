@@ -78,7 +78,7 @@ export function preNote(r: any): string | null {
   const S = G.S, key = r.week + ':' + r.id;
   return r.pre || (S.pre && S.pre.key === key && S.pre.result) || notes()[key] || null;
 }
-/** Put the show on the air, or answer what stands in its way before the bell. `a` is 'run' (the ADVANCE button) or
+/** Put the show on the air, or answer what stands in its way before the bell. `a` is 'run' (the ADVANCE key) or
     'pre' (the answer to a problem before the show). Once it is on the air the card is closed: the night runs one
     segment at a time (liveNext) and stops for every call from the gorilla position (liveDecide). */
 export function run(a: 'run' | 'pre', c?: number) {
@@ -177,7 +177,7 @@ export function liveDecide(c: number) {
 }
 /** Where the broadcast is on screen. A game loaded with a show on the air picks up where the show had got to. */
 export function livePos(r: any): { s: number; b: number; aired?: boolean } { const b = book(); return b.live || (b.live = { s: r.segs.length - 1, b: 9999 }); }
-/** What the big yellow button does while a broadcast is showing, in one or two words. Null when none is. The button
+/** What the SPACE key does while a broadcast is showing, in one or two words. Null when none is. The button
     is the only way forward: there is no second continue button on the broadcast itself. */
 export function liveStep(): { short: string; label: string; k: 'call' | 'title' | 'seg' | 'next' | 'off' | 'signoff' } | null {
   const r = liveReport(); if (!r) return null;
@@ -190,7 +190,7 @@ export function liveStep(): { short: string; label: string; k: 'call' | 'title' 
   const nx = r.segs[L.s + 1];
   return nx ? { short: nx.k === 'match' ? 'Next match' : 'Next', label: 'On with the replay', k: 'next' } : { short: 'Sign off', label: 'Close the show', k: 'off' };
 }
-/** The big button, Enter and Space during a broadcast: the next line, the next thing on the show, or the report at
+/** The SPACE key and Enter during a broadcast: the next line, the next thing on the show, or the report at
     the sign-off. A call from the gorilla position waits for its own answer. */
 export function liveGo() {
   const st = liveStep(); if (!st) return;

@@ -122,5 +122,62 @@
 .win:has(.wb .btn.go) .wf > #modal-ok{background:var(--dgrey);color:var(--white)}
 .win:has(.wb .btn.go) .wf > #modal-ok:hover{background:#777}
 
+/* ---------- the bottom line: the numbers and how they moved, three small keys, and the SPACE key ----------
+   One line along the bottom of every page. The key at its right end is the only big button in the game: its cap says
+   which key presses it, its label says what happens next, and its colour says what kind of step that is. */
+.ffoot>.status{flex-wrap:nowrap;gap:0 2.4ch;padding:0 0 env(safe-area-inset-bottom,0px) 1.5ch;align-items:stretch;white-space:nowrap;min-height:1.5em}
+html[data-screen="tv"] .ffoot>.status{gap:0 1.7ch}
+.ffoot>.status>button[data-t="stat"]{align-self:center;flex:none}
+.status .mv{font-style:normal;font-size:.82em;margin-left:.7ch}
+.status .mv.up{color:#006000} .status .mv.dn{color:var(--dred)} .status .mv.fl{color:#555}
+.status button:hover .mv,html.nav .status button:focus .mv{color:inherit}
+.status .np{align-self:center;min-width:0;overflow:hidden;text-overflow:ellipsis;flex:0 1 auto}
+/* what the buttons on a pad or a remote do. It takes the room that is left: a hint that does not fit drops out whole. */
+.status .pads{align-self:center;flex:1 1 0;min-width:0;height:1.18em;overflow:hidden;display:flex;flex-wrap:wrap;justify-content:flex-end;gap:0 1.8ch}
+.status .pads>span{flex:none}
+.status .pads>i{flex:0 0 1px;height:1.18em}
+.ffoot>.status .sp{flex:1 1 0;min-width:0}
+.status .tools{display:flex;flex-wrap:nowrap;gap:0 .6ch;align-items:stretch;margin-left:0;flex:none}
+.status .nk{display:inline-flex;align-items:stretch;padding:0;cursor:pointer}
+.status .nk i{font-style:normal;background:var(--k);color:var(--grey);padding:0 .6ch;display:flex;align-items:center}
+.status .nk em{font-style:normal;background:var(--dcyan);color:var(--k);padding:0 1.1ch;display:flex;align-items:center}
+.status .nk:hover,.status .key:hover{background:none;color:inherit}
+.status .nk:hover em{background:var(--cyan)}
+.status .nk:focus-visible{outline:2px solid var(--k);outline-offset:-2px}
+html.nav .status .nk:focus{background:none}
+html.nav .status .nk:focus em{background:var(--k);color:var(--yellow)}
+.status .nk.mus::after{content:none}
+html[data-music="on"] .status .nk.mus em::after{content:'\00a0on';color:#004400}
+html[data-music="off"] .status .nk.mus em::after{content:'\00a0off';color:#770000}
+.status .key{display:inline-flex;align-items:stretch;font-size:1.12em;margin-left:1ch;position:relative;flex:none;cursor:pointer;box-shadow:inset 0 2px 0 rgba(255,255,255,.5)}
+.status .key .cap{font-style:normal;background:var(--k);color:var(--white);padding:0 1.1ch;display:flex;align-items:center}
+.status .key .lab{display:flex;align-items:center;justify-content:center;gap:1ch;min-width:15ch;padding:0 1.6ch;text-transform:uppercase;background:var(--yellow);color:var(--k)}
+.status .key .lab b{color:inherit}
+.status .key.tone-stop .lab{background:var(--dred);color:var(--white)}
+.status .key.tone-air .lab{background:var(--dgreen);color:var(--white)}
+.status .key.tone-home .lab{background:var(--white);color:var(--k)}
+.status .key.tone-end .lab{background:var(--dcyan);color:var(--k)}
+.status .key:hover .cap{background:var(--dgrey)}
+.status .key:active .lab{box-shadow:inset 0 3px 0 rgba(0,0,0,.35)}
+.status .key:focus-visible{outline:3px solid var(--white);outline-offset:-3px}
+html.nav .status .key:focus{background:none;outline:3px solid var(--white);outline-offset:-3px}
+html.nav .status .key:focus .cap{background:var(--white);color:var(--k)}
+/* the note that opens over the key: a small grey window that says the step in full, and what is in the way */
+.key .tip{display:none;position:absolute;right:0;bottom:calc(100% + 10px);width:min(44ch,92vw);font-size:.893em;line-height:1.26;background:var(--grey);color:var(--k);border:2px solid var(--white);border-right-color:var(--dgrey);border-bottom-color:var(--dgrey);box-shadow:1ch .55em 0 rgba(0,0,0,.55);padding:0 1ch .35em;text-align:left;white-space:normal;z-index:8;text-transform:none;cursor:default}
+.key .tip .th{display:block;background:var(--blue);color:var(--yellow);margin:0 -1ch .3em;padding:0 1ch}
+.key.tone-stop .tip .th{background:var(--dred)}
+.key .tip .tl{display:block;padding:.05em 0}
+.key.k-task .tip .tl::before{content:'· ';color:var(--dred)}
+.key .tip .hint{display:block;color:#444;margin-top:.2em}
+.key:hover .tip,.key:focus-visible .tip,html.nav .key:focus .tip{display:block}
+/* on a broadcast the key holds the focus the whole show, so its note stays shut: the word on it is enough */
+.key.k-live .tip{display:none!important}
+/* a tablet has no keys to name: the caps go, and everything on the line is tall enough for a finger */
+html[data-screen="tablet"] .ffoot>.status{padding-block:0}
+html[data-screen="tablet"] .status .nk,html[data-screen="tablet"] .status .key{padding:0}
+html[data-screen="tablet"] .status .nk em,html[data-screen="tablet"] .status .key .lab{padding-block:.5em}
+html[data-screen="tablet"] .ffoot>.status>button[data-t="stat"]{padding:.5em 0}
+html[data-screen="tablet"] .ffoot>.status{gap:0 1.6ch}
+
 /* the kit sheet: every part of the kit on one screen (a page for building and testing, not on any menu) */
 .kitsheet{grid-template-columns:minmax(0,1.15fr) minmax(0,1.15fr) minmax(0,1fr);grid-template-rows:minmax(0,1.4fr) minmax(0,1fr)}

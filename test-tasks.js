@@ -95,5 +95,36 @@ const st = (S, id) => (E.tasks(S).list.find(t => t.id === id) || {}).state;
   ok('own', 'every show says where the owner’s trust moved and why', own === shows && ownWhy === shows, own + ' and ' + ownWhy + ' of ' + shows);
   ok('ap', 'action points are never called spent while some are left', apBad === 0, apBad + ' weeks');
 }
+/* the key on the bottom line: its colour, and the numbers that moved */
+{ const S = E.newGame('pdw', 3, { name: 'R' }), P = S.promos.pdw;
+  ok('tone', 'a step that wants the booker first is a stop', E.advance(S).k === 'task' && E.advance(S).tone === 'stop', JSON.stringify(E.advance(S).tone));
+  const c0 = P.cash, i0 = P.image, t0 = S.owner.trust;
+  ok('mv', 'a new game marks the numbers as they stand, and says nothing about moving yet', !!S.was && S.was.cash === c0 && S.was.image === i0 && S.was.trust === t0 && S.was.w === 1 && !S.wasPrev && E.moved(S) === null, JSON.stringify(S.was));
+  E.setGate(S, false);
+  ok('tone', 'booking a show moves the week on', E.advance(S).k === 'book' && E.advance(S).tone === 'go');
+  const book = () => { const card = E.suggest(S), pr = E.preShow(S, card); if (pr) { E.resolvePre(S, card, 0); E.fitShow(S, card); } S.card = card; return card; };
+  book();
+  ok('tone', 'a card that is ready puts a show on the air', E.advance(S).k === 'run' && E.advance(S).tone === 'air', E.advance(S).k + ' ' + E.advance(S).tone);
+  E.runPlayerShow(S, S.card);
+  let M = E.moved(S);
+  ok('mv', 'after the first show, each number says how far it has moved this week and which way', !!M && M.now && M.cash.d === Math.round(P.cash - c0) && M.cash.dir === (M.cash.d >= 1000 ? 1 : (M.cash.d <= -1000 ? -1 : 0)) && Math.abs(M.image.d - Math.round((P.image - i0) * 10) / 10) < 1e-9 && Math.abs(M.trust.d - Math.round((S.owner.trust - t0) * 10) / 10) < 1e-9 && /this week/.test(M.since), JSON.stringify(M));
+  ok('mv', 'a move too small to show is called steady', E.moved(S).image.dir === (Math.abs(E.moved(S).image.d) >= 0.1 ? Math.sign(E.moved(S).image.d) : 0));
+  P.cash -= 250000; M = E.moved(S);
+  ok('mv', 'money spent since then is counted too', M.cash.d === Math.round(P.cash - c0) && M.cash.dir === -1);
+  while (S.qi < S.queue.length) { const card = book(); if (E.validate(S, card).errors.length) { S.qi++; continue; } E.runPlayerShow(S, card); }
+  S.inbox.forEach(e => { if (!e.done) E.resolveEvent(S, e.id, 0); });
+  ok('tone', 'ending the week is its own colour', E.advance(S).k === 'week' && E.advance(S).tone === 'end', E.advance(S).k + ' ' + E.advance(S).tone);
+  E.endWeek(S); M = E.moved(S);
+  ok('mv', 'when the week ends the numbers are marked again, and the last mark is kept', S.week === 2 && S.was.w === 2 && S.was.cash === P.cash && S.wasPrev.w === 1 && S.wasPrev.cash === c0, JSON.stringify([S.was, S.wasPrev]));
+  ok('mv', 'until a show of the new week has run, the line says what last week did', !!M && !M.now && /last week/.test(M.since) && M.cash.d === Math.round(P.cash - c0) && Math.abs(M.image.d - Math.round((P.image - i0) * 10) / 10) < 1e-9, JSON.stringify(M));
+  const c1 = P.cash; E.setGate(S, false); book(); E.runPlayerShow(S, S.card); M = E.moved(S);
+  ok('mv', 'after it, the line is this week so far', M.now && /this week/.test(M.since) && M.cash.d === Math.round(P.cash - c1), JSON.stringify(M));
+  E.advance(S); const A = JSON.stringify(S); E.moved(S);
+  ok('mv', 'reading how they moved changes nothing', JSON.stringify(S) === A);
+  const old = JSON.parse(A); delete old.was; delete old.wasPrev;
+  ok('mv', 'a save from before this shows no movement, and picks it up at its next week', E.moved(old) === null && (() => { while (old.qi < old.queue.length) old.qi++; old.inbox.forEach(e => { if (!e.done) E.resolveEvent(old, e.id, 0); }); E.endWeek(old); return !!old.was && !old.wasPrev && E.moved(old) === null; })());
+  const sc = E.SCENARIOS && E.SCENARIOS[0] ? E.newGame('pdw', 5, { name: 'R', scn: E.SCENARIOS[0].id }) : null;
+  ok('mv', 'a scenario marks the numbers after it has set its own start', !sc || sc.was.cash === sc.promos[sc.player].cash);
+}
 if (fails.length) { console.log('FAILED: ' + fails.length); process.exit(1); }
 console.log('tasks: all passed');

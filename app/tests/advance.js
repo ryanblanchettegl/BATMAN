@@ -1,6 +1,7 @@
-/* The ADVANCE button: one big button, top right, one or two words, that always leads to the next thing the week
-   needs. When this week's tasks are in the way it says Attention and leads to the desk, where the tasks that cannot
-   be skipped are marked. Options, Help and Music are bottom right; notifications show at the top under the menu.
+/* The ADVANCE key: one key at the right end of the bottom line, SPACE and one or two words, that always leads to the
+   next thing the week needs. Its colour says what kind of step it is. When this week's tasks are in the way it says
+   Attention and leads to the desk, where the tasks that cannot be skipped are marked. The numbers on the left say how
+   they moved; Help, Options and Music are small keys beside it; notifications show at the top under the menu.
    Run: NODE_PATH=<dir containing playwright> node app/tests/advance.js   (MODES=desk,tv) */
 const { open, go, overflow, shot, state, flash, redraw } = require('./helper');
 const MODES = (process.env.MODES || 'desk,tv').split(',');
@@ -8,7 +9,9 @@ const fails = [];
 const ok = (mode, label, pass, detail) => { console.log(mode.padEnd(6), pass ? 'ok  ' : 'FAIL', label + (detail ? ': ' + detail : '')); if (!pass) fails.push(mode + ' ' + label); };
 const txt = (page, sel) => page.$eval(sel, e => e.innerText.replace(/\s+/g, ' ')).catch(() => '');
 const has = async (page, sel) => !!(await page.$(sel));
-const adv = page => page.$eval('[data-t="advance"]', e => ({ k: e.getAttribute('data-v'), t: e.querySelector('b').innerText.replace(/\s+/g, ' ').trim(), tip: e.querySelector('[data-t="adv-tip"]').textContent })).catch(() => ({ k: '', t: '', tip: '' }));
+const adv = page => page.$eval('[data-t="advance"]', e => ({ k: e.getAttribute('data-v'), tone: e.getAttribute('data-tone'), bg: getComputedStyle(e.querySelector('.lab')).backgroundColor, t: e.querySelector('b').innerText.replace(/\s+/g, ' ').trim(), tip: e.querySelector('[data-t="adv-tip"]').textContent })).catch(() => ({ k: '', tone: '', bg: '', t: '', tip: '' }));
+const COL = { go: 'rgb(255, 255, 85)', stop: 'rgb(170, 0, 0)', air: 'rgb(0, 170, 0)', home: 'rgb(255, 255, 255)', end: 'rgb(0, 170, 170)' };
+const toned = (a, tone) => a.tone === tone && a.bg === COL[tone];
 const pageId = page => page.evaluate(() => window.EWF_DEBUG.ui.page);
 const press = async page => { await page.click('[data-t="advance"]'); await page.waitForTimeout(40); };
 
@@ -23,10 +26,11 @@ async function runShow(page, mode) {
   }
   ok(mode, 'the button ran the show', await has(page, '#live'), await flash(page));
   ok(mode, 'on the air, the button carries the show forward', (await adv(page)).k === 'live' && /^RING BELL$/i.test((await adv(page)).t), (await adv(page)).t);
+  ok(mode, 'the key is green to ring the bell', toned(await adv(page), 'air'), JSON.stringify(await adv(page)));
   let asked = false;
   for (let i = 0; i < 900 && await has(page, '#live'); i++) {
     if (await has(page, '[data-t="live-call"]')) {   // a call from the gorilla position: the button names it and waits, it does not answer
-      if (!asked) { asked = true; await press(page); const a = await adv(page); ok(mode, 'when the gorilla position needs an answer the button says Your call, and pressing it answers nothing', /^YOUR CALL$/i.test(a.t) && await has(page, '[data-t="live-call"]'), a.t); }
+      if (!asked) { asked = true; await press(page); const a = await adv(page); ok(mode, 'when the gorilla position needs an answer the key says Your call in red, and pressing it answers nothing', /^YOUR CALL$/i.test(a.t) && toned(a, 'stop') && await has(page, '[data-t="live-call"]'), JSON.stringify(a)); }
       await page.waitForTimeout(430); await page.click('[data-t="live-pick"][data-c="0"]'); continue;
     }
     await press(page);
@@ -43,17 +47,21 @@ async function run(mode) {
       if (!S.spOffers.some(o => window.GP.sponsorOk(S, o)) && S.spOffers[0]) S.spOffers[0].type = 'rating'; });
     await go(page, 'desk');
     let a = await adv(page);
-    ok(mode, 'when something needs you, the button just says Attention', a.k === 'task' && /^ATTENTION$/i.test(a.t), a.t);
-    ok(mode, 'the note is closed until the pointer or the highlight is on the button', await page.$eval('[data-t="adv-tip"]', e => getComputedStyle(e).display === 'none'));
+    ok(mode, 'when something needs you, the key just says Attention, in red', a.k === 'task' && /^ATTENTION$/i.test(a.t) && toned(a, 'stop'), JSON.stringify(a));
+    ok(mode, 'the note is closed until the pointer or the highlight is on the key', await page.$eval('[data-t="adv-tip"]', e => getComputedStyle(e).display === 'none'));
     await page.hover('[data-t="advance"]');
-    ok(mode, 'resting the pointer on it says what needs you', await page.$eval('[data-t="adv-tip"]', e => getComputedStyle(e).display !== 'none' && /play-by-play voice/.test(e.innerText) && /sponsor/.test(e.innerText) && e.getBoundingClientRect().right <= window.innerWidth + 1 && e.getBoundingClientRect().left >= -1), await txt(page, '[data-t="adv-tip"]'));
+    ok(mode, 'resting the pointer on it says what needs you, in a note that opens over the key and stays on the screen', await page.$eval('[data-t="adv-tip"]', e => { const r = e.getBoundingClientRect(), k = e.parentElement.getBoundingClientRect(); return getComputedStyle(e).display !== 'none' && /play-by-play voice/.test(e.innerText) && /sponsor/.test(e.innerText) && r.right <= window.innerWidth + 1 && r.left >= -1 && r.top >= 0 && r.bottom <= k.top + 1; }), await txt(page, '[data-t="adv-tip"]'));
+    ok(mode, 'the note is a grey window, not a black box', await page.$eval('[data-t="adv-tip"]', e => getComputedStyle(e).backgroundColor === 'rgb(170, 170, 170)' && getComputedStyle(e).color === 'rgb(0, 0, 0)'));
     await page.mouse.move(5, 5);
-    ok(mode, 'it sits at the top right, in the menu, and it is big', await page.evaluate(() => { const e = document.querySelector('.ftop > [data-t="advance"]'); if (!e || document.querySelector('.menu [data-t="advance"]')) return false; const b = e.getBoundingClientRect(), m = document.querySelector('.ftop .menu').getBoundingClientRect(), tab = document.querySelector('.menu [data-t="tab"]'); return b.top >= m.top - 1 && b.top < m.bottom && b.bottom > m.bottom && b.right > window.innerWidth * 0.8 && parseFloat(getComputedStyle(e.querySelector('b')).fontSize) > parseFloat(getComputedStyle(tab).fontSize) * 1.05; }));
-    ok(mode, 'the menu bar keeps its own height: one row of tabs' + (mode === 'phone' ? ', two on a phone' : ''), await page.evaluate(ph => { const m = document.querySelector('.ftop .menu').getBoundingClientRect(), t = document.querySelector('.menu [data-t="tab"]').getBoundingClientRect(); return m.height < t.height * (ph ? 2.4 : 1.4); }, mode === 'phone'));
-    ok(mode, 'and the button covers none of the tabs', await page.evaluate(() => { const b = document.querySelector('[data-t="advance"]').getBoundingClientRect(); return [...document.querySelectorAll('.menu [data-t="tab"]')].every(t => { const r = t.getBoundingClientRect(); return r.right <= b.left + 1 || r.bottom <= b.top + 1 || r.top >= b.bottom - 1; }); }));
+    ok(mode, 'it is the right end of the bottom line, and nothing floats over the menu', await page.evaluate(() => { const e = document.querySelector('.ffoot .status > [data-t="advance"]'); if (!e || document.querySelector('.ftop [data-t="advance"]') || document.querySelector('.adv')) return false; const b = e.getBoundingClientRect(), s = document.querySelector('.ffoot .status').getBoundingClientRect(); return Math.abs(b.right - s.right) <= 1 && b.top >= s.top - 1 && b.bottom <= s.bottom + 1 && e === document.querySelector('.ffoot .status').lastElementChild && b.width > 100; }));
+    ok(mode, 'its cap names the key that presses it: ' + (mode === 'tv' ? 'Play on a remote' : 'the space bar'), (await txt(page, '[data-t="advance"] .cap')) === (mode === 'tv' ? 'PLAY' : 'SPACE'), await txt(page, '[data-t="advance"] .cap'));
+    ok(mode, 'the menu bar keeps its own height: one row of tabs', await page.evaluate(() => { const m = document.querySelector('.ftop .menu').getBoundingClientRect(), t = document.querySelector('.menu [data-t="tab"]').getBoundingClientRect(); return m.height < t.height * 1.4; }));
+    ok(mode, 'the company and the date sit at the right end of the menu bar, with nothing over them', await page.evaluate(() => { const t = document.querySelector('.menu .ttl').getBoundingClientRect(), m = document.querySelector('.menu').getBoundingClientRect(), top = document.elementFromPoint(t.right - 4, (t.top + t.bottom) / 2); return m.right - t.right < 40 && !!top && !!top.closest('.menu'); }));
     ok(mode, 'its words are one or two', (a.t.split(' ').length <= 2));
-    ok(mode, 'Options, Help and Music are at the bottom right', await page.evaluate(() => ['options', 'help', 'music'].every(k => { const e = document.querySelector('.ffoot .status [data-t="' + k + '"]'); return !!e && e.getBoundingClientRect().left > window.innerWidth * 0.3 && e.getBoundingClientRect().top > window.innerHeight * 0.6; }) && !document.querySelector('.menu [data-t="options"]')));
-    ok(mode, 'there is no strip of things to do at the bottom: only the status line', !(await has(page, '[data-t="dock"]')) && !(await has(page, '[data-t="adv-chip"]')) && await page.evaluate(() => document.querySelector('.ffoot').children.length === 1));
+    ok(mode, 'Help, Options and Music are small keys on the bottom line, beside the big one', await page.evaluate(() => { const k = document.querySelector('[data-t="advance"]').getBoundingClientRect(); return ['help', 'options', 'music'].every(n => { const e = document.querySelector('.ffoot .status .tools [data-t="' + n + '"]'); if (!e) return false; const r = e.getBoundingClientRect(); return r.left > window.innerWidth * 0.3 && r.right <= k.left + 1 && r.top > window.innerHeight * 0.6; }) && !document.querySelector('.menu [data-t="options"]'); }));
+    ok(mode, 'the bottom line is one line, and nothing on it is cut off or sticks out', await page.evaluate(() => { const s = document.querySelector('.ffoot .status'), r = s.getBoundingClientRect(); return s.scrollWidth - s.clientWidth <= 1 && r.height < parseFloat(getComputedStyle(s).fontSize) * 2.2 && [...s.querySelectorAll('[data-t="stat"], .tools button, [data-t="advance"]')].every(e => { const q = e.getBoundingClientRect(); return q.left >= r.left - 1 && q.right <= r.right + 1 && q.top >= r.top - 1 && q.bottom <= r.bottom + 1; }); }));
+    ok(mode, 'before the first show the numbers say nothing about moving', !(await has(page, '[data-t="moved"]')));
+    ok(mode, 'there is no strip of things to do at the bottom: only the one line', !(await has(page, '[data-t="dock"]')) && !(await has(page, '[data-t="adv-chip"]')) && await page.evaluate(() => document.querySelector('.ffoot').children.length === 1));
     const must = await page.$$eval('.tasks .task.must', L => L.map(e => e.getAttribute('data-task')));
     ok(mode, 'on the desk, the tasks that cannot be skipped are marked', must.length === 3 && await page.$$eval('.tasks .task.must', L => L.every(e => /MUST DO/i.test(e.innerText) && !!e.querySelector('.mark') && getComputedStyle(e).borderLeftWidth === '4px')) && (await page.$$('.tasks .task.optional.must')).length === 0, must.join(', '));
     ok(mode, 'what is coming up is on the desk too', /All Hallows.? Eve in 3 weeks/.test(await txt(page, '[data-t="coming"]')), await txt(page, '[data-t="coming"]'));
@@ -74,14 +82,14 @@ async function run(mode) {
     await state(page, S => { const E = window.GP; E.taskWave(S, 'desk-col'); E.taskWave(S, 'sponsors'); });
     await redraw(page);
     a = await adv(page);
-    ok(mode, 'with the tasks done or waved off it says Book show', a.k === 'book' && /^BOOK SHOW$/i.test(a.t) && /Book Wednesday Night Folio/.test(a.tip) && /Wednesday/.test(a.tip), a.t + ' / ' + a.tip);
+    ok(mode, 'with the tasks done or waved off it says Book show, in yellow', a.k === 'book' && /^BOOK SHOW$/i.test(a.t) && toned(a, 'go') && /Book Wednesday Night Folio/.test(a.tip) && /Wednesday/.test(a.tip), a.t + ' / ' + a.tip);
     await press(page);
     ok(mode, 'and takes you to the card', await pageId(page) === 'booking' && await has(page, '[data-t="suggest"]'));
     await press(page);
     ok(mode, 'on an empty card it says how to start', /Suggest a card/.test(await flash(page)), await flash(page));
     await page.click('[data-t="suggest"]');
     a = await adv(page);
-    ok(mode, 'with a card that can run, it says Run show', a.k === 'run' && /^RUN SHOW$/i.test(a.t) && /Run Wednesday Night Folio/.test(a.tip), a.t);
+    ok(mode, 'with a card that can run, it says Run show, in green', a.k === 'run' && /^RUN SHOW$/i.test(a.t) && toned(a, 'air') && /Run Wednesday Night Folio/.test(a.tip), JSON.stringify(a));
     await over('the card');
     await go(page, 'roster');
     ok(mode, 'away from the card it offers to open it', /^OPEN CARD$/i.test((await adv(page)).t), (await adv(page)).t);
@@ -90,7 +98,11 @@ async function run(mode) {
     /* the show, start to finish, on the one button */
     await runShow(page, mode);
     a = await adv(page);
-    ok(mode, 'the show ends on After the show, and the button points on to the Office', await has(page, '[data-t="after-screen"]') && a.k === 'desk' && /^OFFICE$/i.test(a.t) && /Before the show/.test(a.tip), a.t + ' / ' + a.tip);
+    ok(mode, 'the show ends on After the show, and the key points on to the Office, in white', await has(page, '[data-t="after-screen"]') && a.k === 'desk' && /^OFFICE$/i.test(a.t) && toned(a, 'home') && /Before the show/.test(a.tip), a.t + ' / ' + a.tip);
+    ok(mode, 'the numbers now say how they have moved this week', await page.evaluate(() => { const L = [...document.querySelectorAll('.ffoot .status [data-t="moved"]')]; return L.length === 3 && L.every(e => /^(▲|▼) |^steady$/.test(e.textContent)) && /this week so far/.test(document.querySelector('[data-t="stat"][data-v="cash"]').getAttribute('aria-label')); }), await txt(page, '.ffoot .status'));
+    ok(mode, 'and what they say is true of the game', await state(page, S => { const M = window.GP.moved(S), P = S.promos[S.player]; return !!M && M.now && Math.abs(M.cash.d - Math.round(P.cash - S.was.cash)) < 1 && S.was.w === S.week; }));
+    ok(mode, 'up is dark green, down dark red, steady grey', await page.$$eval('.ffoot .status [data-t="moved"]', L => L.every(e => getComputedStyle(e).color === ({ '1': 'rgb(0, 96, 0)', '-1': 'rgb(170, 0, 0)', '0': 'rgb(85, 85, 85)' })[e.getAttribute('data-v')])));
+    await over('After the show, with the numbers moved');
     await press(page);
     ok(mode, 'pressing it goes to the Office, where Before the show comes first', await pageId(page) === 'desk' && !(await has(page, '[data-t="after-show"]')) && await has(page, '[data-t="night-recap"]'));
     a = await adv(page);
@@ -109,10 +121,11 @@ async function run(mode) {
     await state(page, S => { S.inbox.filter(e => !e.done).forEach(e => window.GP.resolveEvent(S, e.id, e.type === 'handover' ? 0 : 1)); Object.keys({ a: 1 }).forEach(() => { window.GP.tasks(S).list.filter(t => t.state === 'todo' && t.waive).forEach(t => window.GP.taskWave(S, t.id)); }); });
     await redraw(page);
     a = await adv(page);
-    ok(mode, 'with every show run it says End week', a.k === 'week' && /^END WEEK$/i.test(a.t), a.t);
+    ok(mode, 'with every show run it says End week, in teal', a.k === 'week' && /^END WEEK$/i.test(a.t) && toned(a, 'end'), JSON.stringify(a));
     await press(page);
     await page.waitForSelector('.win');
     ok(mode, 'pressing it ends the week and shows what happened', await state(page, S => S.week) === 2 && /week/i.test(await txt(page, '.win')));
+    ok(mode, 'the new week opens on what last week did to the numbers', await state(page, S => S.was.w === 2 && S.wasPrev.w === 1 && !window.GP.moved(S).now) && /over last week/.test(await page.$eval('[data-t="stat"][data-v="cash"]', e => e.getAttribute('aria-label'))) && /^(▲|▼) \$/.test(await txt(page, '[data-t="stat"][data-v="cash"] [data-t="moved"]')), await txt(page, '.ffoot .status'));
     await page.click('[data-t="modal-close"]');
     a = await adv(page);
     ok(mode, 'and the new week starts the button over', (a.k === 'task' || a.k === 'book') && !/END WEEK/i.test(a.t), a.t);
@@ -123,17 +136,24 @@ async function run(mode) {
     await page.keyboard.press(' ');
     await page.waitForTimeout(60);
     ok(mode, 'the space bar presses it', await pageId(page) !== before, before + ' -> ' + await pageId(page));
-    /* the notification bar is at the top now, and the button stays put under it */
+    /* the notification bar is at the top, under the menu, and the key stays put at the bottom */
     await state(page, S => { const w = S.w.find(x => x.promo === S.player && !x.nw); S.toasts.length = 0; window.GP.youRemember(S, w.id, 'test', 'You stopped the match when they were hurt.', 30); });
     await redraw(page);
     await page.waitForSelector('[data-t="toast"]');
     ok(mode, 'a notification shows at the top of the screen, under the menu', await page.evaluate(() => { const t = document.querySelector('[data-t="toast"]'), m = document.querySelector('.menu').getBoundingClientRect(), r = t.getBoundingClientRect(); return !!t.closest('.ftop') && r.top >= m.bottom - 1 && r.top < window.innerHeight / 2; }));
-    ok(mode, 'and the button stays where it is', await page.evaluate(() => { const b = document.querySelector('[data-t="advance"]').getBoundingClientRect(); return b.top < 200 && b.right > window.innerWidth * 0.8; }));
+    ok(mode, 'and the key stays where it is, at the bottom right', await page.evaluate(() => { const b = document.querySelector('[data-t="advance"]').getBoundingClientRect(); return b.top > window.innerHeight * 0.8 && b.right > window.innerWidth * 0.8; }));
     await over('the page with a notification');
     await shot(page, 'advance-note-' + mode);
     for (let i = 0; i < 8 && await has(page, '[data-t="toast"]'); i++) { await page.click('[data-t="toast"]'); await page.waitForTimeout(40); }
     ok(mode, 'pressing the notifications clears them', !(await has(page, '[data-t="toast"]')));
-    /* a game that is over has no button */
+    /* F2 and F3 are Options and Music */
+    await page.keyboard.press('F2'); await page.waitForSelector('.win');
+    ok(mode, 'F2 opens Options', /options/i.test(await txt(page, '.win .wt span')));
+    await page.keyboard.press('Escape');
+    await page.keyboard.press('F3'); await page.waitForTimeout(150);
+    ok(mode, 'F3 opens the jukebox', await has(page, '.jk'));
+    const jc = await page.$('.jk [data-jk="close"]'); if (jc) await jc.click();
+    /* a game that is over has no key */
     await state(page, S => { S.over = { why: 'fired', week: S.week }; });
     await redraw(page);
     ok(mode, 'when the game is over the button is gone', !(await has(page, '[data-t="advance"]')) && await has(page, '.ffoot [data-t="options"]'));

@@ -4,7 +4,6 @@ import { useEffect, useReducer } from 'preact/hooks';
 import { G, ui, Modal, VER, onRedraw } from './store';
 import { afterDraw, applyScreen } from './input';
 import { MenuBar, SubNav, StatusBar, FlashBar, NoteBar, drainToasts } from './shell/Frame';
-import { AdvanceBtn } from './shell/Advance';
 import { Window, Panel, Btn } from './kit';
 import { go } from './nav';
 import { CardHost } from './shared/cards';
@@ -61,7 +60,7 @@ export function App() {
   const P = PAGES[ui.page] || PAGES.desk;
   return <>
     <div class="crt">
-      <div class="ftop"><MenuBar /><AdvanceBtn /><NoteBar /></div>
+      <div class="ftop"><MenuBar /><NoteBar /></div>
       <main class="main"><FlashBar />{S.over ? <office.GameOver /> : <><SubNav /><Boundary key={ui.page}><P /></Boundary></>}</main>
       <div class="ffoot"><StatusBar /></div>
     </div>

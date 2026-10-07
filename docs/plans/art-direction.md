@@ -186,11 +186,11 @@ The mock-ups use the real roster, portraits, tasks, run sheet and clock. Everyth
 
 Each step is its own `src/NN-name.js` where it is a new system, with a headless test, and a default for every new field so old saves load (rule 9). The save key stays `ewf9000-save-4` unless a step says otherwise.
 
-### 6.1 The numbers that moved (small, do first)
-`S.was = { cash, image, trust, w }`, set when a show goes off the air and at week end. `E.moved(S)` returns the change in each. The bottom line shows it. This is also items 17 and 18 of the outside playtest.
+### 6.1 The numbers that moved (built 7 October)
+`S.was` is how cash, popularity and the owner's trust stood at the start of this week, `S.wasPrev` the week before. `E.moved(S)` returns the change in each: last week's until a show of the new week has run, then this week so far. The bottom line shows it. This is item 18 of the outside playtest (the weekly change). Item 17 (gate and television money reaching the bank after each show, not at the week's end) is not done: it changes when every company's money moves, so it is a job of its own.
 
-### 6.2 A tone for the key (small)
-`E.advance(S)` gains `tone`: `go` (yellow), `stop` (red: tasks in the way, a call on the air), `air` (green: ring the bell), `home` (white: back to the Office), `end` (teal: end the week). `Advance.tsx` moves from the menu bar to the bottom line. Update rule 5a, `app/tests/advance.js`, and every test that finds the button by its place.
+### 6.2 A tone for the key (built 7 October)
+`E.advance(S)` has `tone`: `go` (yellow), `stop` (red: tasks in the way, a call on the air), `air` (green: a show goes on the air), `home` (white: back to the Office), `end` (teal: end the week). The key is the right end of the bottom line (`Advance.tsx`, `StatusBar` in `Frame.tsx`). Rule 5a and `app/tests/advance.js` are updated.
 
 ### 6.3 Company marks
 Section 3. Small engine change, one component, an editor control. Do it early because every later screen uses it.
@@ -327,6 +327,7 @@ These only become possible after the steps above. None is promised.
 
 - 7 October: version 0.38 passed the full test run and is published. The live page's version id is `1791393273-993d` (Version 49). Read the live page and check that id before the next publish.
 - 7 October: the game was renamed EWF Wrestling Manager (`TASKS.md`, the decisions table).
-- 7 October: Version A, step 1 is done: the window kit (`app/src/kit/win.tsx`, `app/styles/win.css`, the kit sheet at `go('kit')`, `app/tests/kit.js`). Pop-ups wear the new look. Next is step 2, the bottom line and the SPACE key.
+- 7 October: Version A, step 1 is done: the window kit (`app/src/kit/win.tsx`, `app/styles/win.css`, the kit sheet at `go('kit')`, `app/tests/kit.js`). Pop-ups wear the new look.
+- 7 October: Version A, step 2 is done: the bottom line and the SPACE key. The floating button is gone. Next is step 3, the lights.
 
 Still open from the playtest and not part of the art work: item 4 (stretch the stars so two is a bad match and four and a half is rare) and Ryan's call that every difficulty should need the player. Both are balance work and both move every crowd's expectations. Do them in a version of their own, not mixed in with the look.

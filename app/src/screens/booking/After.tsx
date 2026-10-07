@@ -41,7 +41,7 @@ export function After() {
     </div>
     <div class="row">
       <Btn kind="sm" t="after-full" onClick={nightFull}>Match by match</Btn>
-      <span class="muted">The yellow button: on to the Office. {A.left > 0 ? 'The next show is waiting on your desk.' : 'Every show this week has run.'}</span>
+      <span class="muted">Space: on to the Office. {A.left > 0 ? 'The next show is waiting on your desk.' : 'Every show this week has run.'}</span>
     </div>
   </div>;
 }

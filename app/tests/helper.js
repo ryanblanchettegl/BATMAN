@@ -90,12 +90,12 @@ async function airShow(page, opts) {
     if (await has('#live[data-v="signoff"]')) { if (opts.report !== false) { await page.click('[data-t="advance"]'); if (await has('[data-t="after-full"]')) await page.click('[data-t="after-full"]'); } return calls; }
     if (await has('[data-t="live-end"]')) { await page.click('[data-t="live-end"]'); continue; }
     if (await has('[data-t="live-skip"]')) { await page.click('[data-t="live-skip"]'); continue; }
-    if (await has('#live')) { await page.click('[data-t="advance"]'); continue; }   // the big yellow button is the only way forward
+    if (await has('#live')) { await page.click('[data-t="advance"]'); continue; }   // the SPACE key on the bottom line is the only way forward
     throw new Error('the broadcast has no way forward');
   }
   throw new Error('the broadcast never ended');
 }
-/** From the report or After the show, on to the Office (the yellow button, once or twice). */
+/** From the report or After the show, on to the Office (the SPACE key, once or twice). */
 async function toOffice(page) { for (let i = 0; i < 3 && (await page.evaluate(() => window.EWF_DEBUG.ui.page)) !== 'desk'; i++) { await page.click('[data-t="advance"]'); await page.waitForTimeout(60); } }
 /** Manage is buttons now: a control lives in the pop-up of one of them. Make sure the control `sel` is on screen,
     opening the button whose pop-up holds it if need be. Returns false if no button on this page has it. */

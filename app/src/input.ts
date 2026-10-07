@@ -42,7 +42,7 @@ export function isText(el: any): boolean { return !!el && (el.tagName === 'TEXTA
 export function navHome(): boolean {
   const scope = navScope();
   let el = scope.querySelector('[data-home]') as HTMLElement | null;
-  // on a broadcast the big button is home, unless a call is waiting: then the first answer is
+  // on a broadcast the SPACE key on the bottom line is home, unless a call is waiting: then the first answer is
   if (!el && scope.querySelector('#live') && !scope.querySelector('[data-t="live-call"]')) el = document.querySelector('[data-t="advance"]') as HTMLElement | null;
   if (!el) el = (scope.querySelector('.dmenu .mi.on') || scope.querySelector('#modal-ok')) as HTMLElement | null;
   if (!el) { const L = focusables(scope), M = L.filter(e => !e.closest('.menu') && !e.closest('.status') && !e.closest('.ftop') && !e.closest('.ffoot') && !e.closest('.wt') && !e.classList.contains('caw-x')); el = M[0] || L[0] || null; }
@@ -179,6 +179,7 @@ export function initInput() {
     const tg = e.target as HTMLElement | null, tag = tg && tg.tagName;
     if (e.key === 'F1') { e.preventDefault(); if (ui.modal && ui.modal.kind === 'help') closeModal(); else openModal({ kind: 'help' }); return; }
     if (e.key === 'F2') { e.preventDefault(); openModal({ kind: 'options' }); return; }
+    if (e.key === 'F3') { e.preventDefault(); const m = document.querySelector('[data-t="music"]') as HTMLElement | null; if (m && !ui.modal) m.click(); return; }
     if (e.key === 'GoBack' || e.key === 'BrowserBack' || e.keyCode === 461 || e.keyCode === 10009 || (e.key === 'Backspace' && NAV.on && !isText(tg))) { if (goBack()) e.preventDefault(); return; }
     if (e.key === 'Enter' && tag === 'TR') { e.preventDefault(); (tg as HTMLElement).click(); return; }
     if (NAV.on && e.key === 'Enter' && tag === 'SELECT') { e.preventDefault(); activate(tg); return; }
