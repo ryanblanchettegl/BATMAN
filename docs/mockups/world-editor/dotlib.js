@@ -1,0 +1,75 @@
+/* Dot-matrix pictures and lettering, drawn in the page and handed back as images. */
+module.exports = async (page, spec) => page.evaluate(async (spec) => {
+  try { await document.fonts.load('16px VT323'); } catch (e) {}
+    const GW = 64, GH = 48, skin = '#e8b088', shade = '#b87850';
+    const ART = {}, NAME = { ring: 'The ring', belt: 'The belt', bell: 'The bell', mic: 'The microphone', cage: 'The cage', ladder: 'The ladder', chair: 'The chair', mask: 'The mask', flex: 'The champion', entrance: 'The entrance' };
+    function art(name, fn) { const c = document.createElement('canvas'); c.width = GW; c.height = GH; const x = c.getContext('2d');
+      const T = { x, R: (a, b, w, h, col) => { x.fillStyle = col; x.fillRect(a, b, w, h); }, L: (a, b, c2, d, col, w) => { x.strokeStyle = col; x.lineWidth = w || 1; x.lineCap = 'round'; x.beginPath(); x.moveTo(a + .5, b + .5); x.lineTo(c2 + .5, d + .5); x.stroke(); },
+        C: (a, b, r, col) => { x.fillStyle = col; x.beginPath(); x.arc(a + .5, b + .5, r, 0, 7); x.fill(); }, E: (a, b, rx, ry, col) => { x.fillStyle = col; x.beginPath(); x.ellipse(a + .5, b + .5, rx, ry, 0, 0, 7); x.fill(); },
+        P: (pts, col) => { x.fillStyle = col; x.beginPath(); pts.forEach((p, i) => i ? x.lineTo(p[0] + .5, p[1] + .5) : x.moveTo(p[0] + .5, p[1] + .5)); x.closePath(); x.fill(); },
+        A: (a, b, r, s, e, col, w) => { x.strokeStyle = col; x.lineWidth = w || 1; x.beginPath(); x.arc(a + .5, b + .5, r, s, e); x.stroke(); } };
+      fn(T); ART[name] = x.getImageData(0, 0, GW, GH); }
+    art('ring', ({ R, L, C, E, P }) => { for (let i = 0; i < 8; i++) C(5 + i * 7.7, 2, 1.1, i % 2 ? '#55ffff' : '#ffff55');
+      P([[10, 24], [54, 24], [61, 35], [3, 35]], '#b8c4d0'); E(32, 29.5, 7, 3, '#55ffff'); E(32, 29.5, 4, 1.6, '#0000aa');
+      P([[3, 35], [61, 35], [61, 43], [3, 43]], '#aa0000'); R(3, 35, 59, 1, '#ffffff'); R(22, 38, 20, 2, '#ffff55'); R(6, 44, 53, 1, '#555555');
+      R(9, 9, 2, 15, '#aaaaaa'); R(53, 9, 2, 15, '#aaaaaa'); [12, 16, 20].forEach(y => R(11, y, 42, 1, '#ffffff'));
+      [[12, 17], [16, 22], [20, 27]].forEach(p => { L(10, p[0], 3, p[1], '#dddddd', 1); L(54, p[0], 61, p[1], '#dddddd', 1); });
+      R(2, 14, 3, 22, '#cccccc'); R(59, 14, 3, 22, '#cccccc'); [17, 22, 27].forEach(y => R(5, y, 54, 1, '#ff5555'));
+      R(2, 12, 3, 3, '#ffff55'); R(59, 12, 3, 3, '#ffff55'); R(9, 7, 2, 2, '#ffff55'); R(53, 7, 2, 2, '#ffff55'); });
+    art('belt', ({ R, C, E, P }) => { R(2, 20, 60, 9, '#7a4a12'); R(2, 20, 60, 1, '#aa6a22'); R(2, 28, 60, 1, '#553008'); [4, 7].forEach(a => { C(a, 24, .9, '#cccccc'); C(62 - a, 24, .9, '#cccccc'); });
+      [11, 43].forEach(a => { R(a, 16, 10, 17, '#c9a400'); R(a + 1, 17, 8, 15, '#fff36b'); R(a + 2, 18, 6, 13, '#c9a400'); C(a + 4.5, 24, 1.6, '#55ffff'); });
+      P([[26, 11], [28, 6], [32, 10], [36, 6], [38, 11]], '#fff36b'); E(32, 24.5, 12, 14, '#fff36b'); E(32, 24.5, 10.5, 12.5, '#c9a400'); E(32, 24.5, 7, 8.5, '#806000'); C(32, 24.5, 3.4, '#ff5555'); C(31, 23.5, 1, '#ffffff'); });
+    art('bell', ({ x, R, L, C, P }) => { R(18, 3, 28, 2, '#aaaaaa'); R(30, 5, 4, 6, '#aaaaaa'); x.fillStyle = '#c9a400'; x.beginPath(); x.arc(32.5, 22.5, 11, Math.PI, 0); x.fill(); R(21, 22, 23, 9, '#c9a400'); P([[21, 31], [43, 31], [47, 36], [17, 36]], '#c9a400'); R(17, 35, 31, 2, '#fff36b'); R(25, 15, 2, 15, '#fff36b');
+      C(32, 39.5, 2.6, '#aaaaaa'); L(44, 45, 56, 31, '#aa5500', 2); R(52, 24, 10, 6, '#cccccc'); R(52, 24, 10, 1, '#ffffff');
+      [[50, 13, 54, 10], [52, 19, 58, 18], [13, 13, 9, 10], [11, 19, 5, 18]].forEach(p => L(p[0], p[1], p[2], p[3], '#ffff55', 1)); });
+    art('mic', ({ R, L, C, P, A }) => { A(22, 15, 15, 2.2, 4.1, '#55ffff', 1.2); A(22, 15, 19, 2.4, 3.9, '#00aaaa', 1.2); L(49, 44, 60, 47, '#888888', 1.5);
+      P([[26, 26], [32, 20], [53, 41], [48, 46]], '#555555'); P([[29, 25], [31, 23], [50, 42], [48, 44]], '#999999'); C(22, 15, 10, '#bbbbbb');
+      for (let yy = 5; yy <= 25; yy++) for (let xx = 12; xx <= 32; xx++) if ((xx - 22) ** 2 + (yy - 15) ** 2 < 82 && (xx + yy) % 2 === 0) R(xx, yy, 1, 1, '#555555'); C(19, 11, 1.6, '#ffffff'); L(26, 25, 33, 18, '#ffff55', 2.2); });
+    art('cage', ({ R, P }) => { P([[8, 38], [56, 38], [62, 45], [2, 45]], '#b8c4d0'); R(10, 12, 2, 26, '#888888'); R(52, 12, 2, 26, '#888888'); [18, 24, 30].forEach(y => R(12, y, 40, 1, '#ff5555'));
+      for (let a = 8; a <= 56; a += 4) R(a, 6, 1, 32, '#8fa6b8'); for (let b = 9; b <= 36; b += 4) R(6, b, 52, 1, '#8fa6b8');
+      R(4, 3, 56, 3, '#dddddd'); R(4, 3, 2, 37, '#dddddd'); R(58, 3, 2, 37, '#dddddd'); R(4, 38, 56, 2, '#dddddd'); R(27, 19, 1, 19, '#ffff55'); R(37, 19, 1, 19, '#ffff55'); R(27, 19, 11, 1, '#ffff55'); R(35, 28, 2, 2, '#ffff55'); });
+    art('ladder', ({ R, L, E, P }) => { P([[30, 0], [34, 0], [52, 46], [12, 46]], 'rgba(255,255,85,0.3)'); R(32, 0, 1, 4, '#aaaaaa'); R(25, 4, 15, 3, '#7a4a12'); E(32, 5.5, 3.6, 3.2, '#fff36b'); E(32, 5.5, 1.6, 1.4, '#ff5555');
+      L(20, 46, 29, 13, '#dddddd', 2); L(44, 46, 35, 13, '#dddddd', 2); R(28, 11, 9, 2, '#dddddd'); for (let y = 17; y <= 43; y += 5) { const t = (y - 13) / 33; R(Math.round(29 - 9 * t), y, Math.round(6 + 18 * t) + 1, 1, '#aaaaaa'); } R(10, 46, 45, 1, '#555555'); });
+    art('chair', ({ R, L, P }) => { R(21, 6, 22, 13, '#bbbbbb'); R(23, 8, 18, 6, '#444444'); R(23, 15, 18, 2, '#888888'); R(21, 19, 2, 6, '#aaaaaa'); R(41, 19, 2, 6, '#aaaaaa');
+      P([[19, 24], [45, 24], [49, 30], [15, 30]], '#cccccc'); P([[21, 25], [43, 25], [46, 29], [18, 29]], '#555555'); L(17, 30, 13, 46, '#bbbbbb', 2); L(47, 30, 51, 46, '#bbbbbb', 2); L(22, 30, 25, 44, '#888888', 1.5); L(42, 30, 39, 44, '#888888', 1.5); R(15, 40, 35, 1, '#888888');
+      [[50, 4, 54, 1], [52, 8, 58, 7], [49, 10, 55, 13], [47, 2, 48, 0]].forEach(p => L(p[0], p[1], p[2], p[3], '#ffff55', 1)); });
+    art('mask', ({ R, L, E, P }) => { E(32, 24, 15, 19, '#aa0000'); E(32, 23.5, 13.5, 17.5, '#ff5555'); P([[32, 6], [39, 16], [32, 20], [25, 16]], '#ffff55'); P([[32, 10], [35.5, 16], [32, 18], [28.5, 16]], '#aa0000');
+      [24.5, 39.5].forEach(a => { E(a, 24, 5.2, 3.8, '#ffffff'); E(a, 24, 3.6, 2.3, '#101010'); }); P([[32, 26], [34.5, 31], [29.5, 31]], '#aa0000'); E(32, 36, 5.6, 3.1, '#ffffff'); E(32, 36, 4, 1.7, '#101010');
+      L(19, 30, 23, 35, '#ffff55', 1.5); L(45, 30, 41, 35, '#ffff55', 1.5); R(17, 19, 1, 9, '#ffff55'); R(46, 19, 1, 9, '#ffff55'); });
+    art('flex', ({ R, L, C, E, P }) => { L(28, 34, 25, 44, skin, 4.5); L(36, 34, 39, 44, skin, 4.5); R(22, 43, 7, 4, '#ffff55'); R(36, 43, 7, 4, '#ffff55'); P([[25, 29], [39, 29], [38, 35], [32, 37], [26, 35]], '#aa0000');
+      P([[21, 15], [43, 15], [39, 29], [25, 29]], skin); R(26, 20, 5, 1, shade); R(33, 20, 5, 1, shade); R(32, 22, 1, 6, shade); R(28, 24, 9, 1, shade); R(24, 27, 17, 3, '#c9a400'); E(32, 28.5, 3.6, 2.6, '#fff36b');
+      L(22, 16, 13, 15, skin, 5); L(42, 16, 51, 15, skin, 5); C(17, 13, 3, skin); C(47, 13, 3, skin); L(13, 15, 15, 6, skin, 4); L(51, 15, 49, 6, skin, 4); C(15, 4.5, 2.6, skin); C(49, 4.5, 2.6, skin);
+      R(30, 12, 5, 3, shade); C(32, 8.5, 4.6, skin); P([[27.5, 8], [28, 4.5], [32, 3], [36, 4.5], [36.5, 8], [35, 6], [29, 6]], '#553008'); R(30, 9, 1, 1, '#101010'); R(34, 9, 1, 1, '#101010'); R(31, 11, 3, 1, shade); });
+    art('entrance', ({ R, L, C, P }) => { const F = { E: ['111', '100', '110', '100', '111'], W: ['10001', '10001', '10101', '11011', '10001'], F: ['111', '100', '110', '100', '100'] };
+      P([[15, 3], [17, 3], [36, 47], [22, 47]], 'rgba(85,255,255,0.3)'); P([[47, 3], [49, 3], [42, 47], [28, 47]], 'rgba(255,85,255,0.3)');
+      R(13, 1, 38, 2, '#888888'); for (let i = 0; i < 7; i++) C(15 + i * 5.7, 3.5, 1, ['#ffff55', '#55ffff', '#ff55ff'][i % 3]); R(17, 5, 30, 14, '#0000aa'); R(18, 6, 28, 12, '#5555ff');
+      let ox = 20; 'EWF'.split('').forEach(ch => { F[ch].forEach((row, yy) => row.split('').forEach((b, xx) => { if (b === '1') R(ox + xx * 2, 7 + yy * 2, 2, 2, '#ffffff'); })); ox += F[ch][0].length * 2 + 2; });
+      R(14, 19, 36, 2, '#888888'); P([[26, 21], [38, 21], [50, 47], [14, 47]], '#555555'); for (let y = 22; y < 47; y += 3) { const t = (y - 21) / 26; R(Math.round(26 - 12 * t), y, 1, 1, '#ffff55'); R(Math.round(38 + 12 * t), y, 1, 1, '#ffff55'); }
+      R(31, 15, 2, 2, skin); R(30, 17, 4, 3, '#aa0000'); R(30, 20, 1, 2, skin); R(33, 20, 1, 2, skin);
+      let s = 7; const rnd = () => (s = (s * 73 + 11) % 997) / 997; for (let y = 25; y < 48; y += 2) { const t = (y - 21) / 26, xl = 26 - 12 * t, xr = 38 + 12 * t; for (let a = (y % 4 ? 0 : 1); a < xl - 2; a += 2) R(a, y, 1, 1, rnd() < .12 ? '#ffff55' : (rnd() < .5 ? skin : '#888888')); for (let a = 63 - (y % 4 ? 0 : 1); a > xr + 2; a -= 2) R(a, y, 1, 1, rnd() < .12 ? '#55ffff' : (rnd() < .5 ? skin : '#888888')); }
+      [[11, 18], [53, 18]].forEach(p => { for (let k = 0; k < 7; k++) { const an = -Math.PI * (0.15 + 0.7 * k / 6); L(p[0], p[1], p[0] + Math.cos(an) * 6, p[1] + Math.sin(an) * 7, k % 2 ? '#ffff55' : '#ff5555', 1); } }); });
+    /* ---------- the six ways of lighting a dot ---------- */
+    const EGA = ['#000000', '#0000aa', '#00aa00', '#00aaaa', '#aa0000', '#aa00aa', '#aa5500', '#aaaaaa', '#555555', '#5555ff', '#55ff55', '#55ffff', '#ff5555', '#ff55ff', '#ffff55', '#ffffff'].map(h => [parseInt(h.slice(1, 3), 16), parseInt(h.slice(3, 5), 16), parseInt(h.slice(5, 7), 16)]);
+    const STY = {
+      led: { n: 'A. Colour lights', d: 'A full-colour light board', bg: '#050505', draw(c, X, Y, p, r, g, b, on, l) { c.shadowBlur = on ? p * .9 : 0; c.shadowColor = `rgb(${r},${g},${b})`; c.fillStyle = on ? `rgb(${r},${g},${b})` : '#161616'; c.beginPath(); c.arc(X, Y, p * (on ? .42 : .3), 0, 7); c.fill(); } },
+      amber: { n: 'B. Amber scoreboard', d: 'One colour, like an old arena board', bg: '#0a0600', draw(c, X, Y, p, r, g, b, on, l) { const k = .3 + .7 * l; c.shadowBlur = on ? p * .9 : 0; c.shadowColor = '#ff9a00'; c.fillStyle = on ? `rgb(${Math.round(255 * k)},${Math.round(176 * k)},${Math.round(20 * k)})` : '#241600'; c.beginPath(); c.arc(X, Y, p * (on ? .42 : .3), 0, 7); c.fill(); } },
+      ega: { n: 'C. Sixteen colours on blue', d: 'Square dots in the game’s own palette', bg: '#0000aa', draw(c, X, Y, p, r, g, b, on) { c.shadowBlur = 0; if (!on) { c.fillStyle = '#0000c4'; c.fillRect(X - 1, Y - 1, 2, 2); return; } let best = 0, bd = 1e9; EGA.forEach((e, i) => { if (i === 1 || i === 0) return; const d = (e[0] - r) ** 2 + (e[1] - g) ** 2 + (e[2] - b) ** 2; if (d < bd) { bd = d; best = i; } }); const e = EGA[best]; c.fillStyle = `rgb(${e[0]},${e[1]},${e[2]})`; c.fillRect(X - p * .42, Y - p * .42, p * .84, p * .84); } },
+      half: { n: 'D. Printed programme', d: 'Ink dots on paper, bigger where it is brighter', bg: '#f1ecd9', draw(c, X, Y, p, r, g, b, on, l) { c.shadowBlur = 0; if (!on) return; const red = r > g * 1.5 && r > b * 1.5; c.fillStyle = red ? '#c81e1e' : '#1b2a4a'; c.beginPath(); c.arc(X, Y, p * (.2 + .36 * Math.sqrt(l)), 0, 7); c.fill(); } },
+      lcd: { n: 'E. Pocket screen', d: 'Dark squares on a grey-green screen', bg: '#9aa583', draw(c, X, Y, p, r, g, b, on, l) { c.shadowBlur = 0; c.fillStyle = on ? (l > .62 ? '#20281a' : (l > .32 ? '#414c30' : '#667350')) : '#929d7b'; if (on) { c.fillStyle = 'rgba(0,0,0,.18)'; c.fillRect(X - p * .42 + 1, Y - p * .42 + 1, p * .84, p * .84); c.fillStyle = l > .62 ? '#20281a' : (l > .32 ? '#414c30' : '#667350'); } c.fillRect(X - p * .42, Y - p * .42, p * .84, p * .84); } },
+      green: { n: 'F. Green screen', d: 'One colour, like an old monitor', bg: '#001a08', draw(c, X, Y, p, r, g, b, on, l) { const k = .28 + .72 * l; c.shadowBlur = on ? p : 0; c.shadowColor = '#00ff66'; c.fillStyle = on ? `rgb(${Math.round(60 * k)},${Math.round(255 * k)},${Math.round(110 * k)})` : '#00280e'; c.beginPath(); c.arc(X, Y, p * (on ? .42 : .28), 0, 7); c.fill(); } } };
+    function render(name, sty, p) { const im = ART[name], S = STY[sty], c = document.createElement('canvas'); c.width = GW * p; c.height = GH * p; const x = c.getContext('2d'); x.fillStyle = S.bg; x.fillRect(0, 0, c.width, c.height);
+      for (let yy = 0; yy < GH; yy++) for (let xx = 0; xx < GW; xx++) { const i = (yy * GW + xx) * 4, a = im.data[i + 3] / 255; let r = im.data[i], g = im.data[i + 1], b = im.data[i + 2]; const on = a > .28 && (r + g + b) > 60; r = Math.round(r * Math.min(1, a * 1.05)); g = Math.round(g * Math.min(1, a * 1.05)); b = Math.round(b * Math.min(1, a * 1.05)); const l = Math.min(1, (0.3 * r + 0.59 * g + 0.11 * b) / 235);
+        S.draw(x, xx * p + p / 2, yy * p + p / 2, p, r, g, b, on, l); } c.style.display = 'block'; return c; }
+
+    const out = { art: {}, text: {} };
+    (spec.arts || []).forEach(a => { out.art[a[0] + '@' + a[1]] = render(a[0], a[2] || 'led', a[1]).toDataURL(); });
+    // lettering in lights: a five by seven face, one light a pixel
+    const FONT = { A: '0E11111F111111', B: '1E11111E11111E', C: '0E11101010110E', D: '1E11111111111E', E: '1F10101E10101F', F: '1F10101E101010', G: '0E11101711110F', H: '1111111F111111', I: '0E04040404040E', J: '0702020202120C', K: '11121418141211', L: '1010101010101F', M: '111B1515111111', N: '11111915131111', O: '0E11111111110E', P: '1E11111E101010', Q: '0E11111115120D', R: '1E11111E141211', S: '0F10100E01011E', T: '1F040404040404', U: '1111111111110E', V: '11111111110A04', W: '1111111515150A', X: '11110A040A1111', Y: '1111110A040404', Z: '1F01020408101F',
+      0: '0E11131519110E', 1: '040C040404040E', 2: '0E11010204081F', 3: '1F02040201110E', 4: '02060A121F0202', 5: '1F101E0101110E', 6: '0608101E11110E', 7: '1F010204080808', 8: '0E11110E11110E', 9: '0E11110F01020C',
+      ' ': '00000000000000', '.': '00000000000C0C', ',': '000000000C0408', ':': '000C0C000C0C00', '·': '0000000C0C0000', '-': '0000001F000000', '+': '0004041F040400', '!': '04040404040004', "'": '0C040800000000', '’': '0C040800000000', '$': '040F140E051E04', '&': '0C121408151 20D'.replace(' ', ''), '/': '00010204081000', '★': '04041F0E0E1B11', '▲': '0004040E0E1F00', '%': '18190204081303', '►': '080C0E0F0E0C08', '♥': '000A1F1F0E0400' };
+    (spec.texts || []).forEach(t => { const key = t[0], str = String(t[1]).toUpperCase(), col = t[2], p = t[3]; const w = str.length * 6 + 1, h = 9, c = document.createElement('canvas'); c.width = w * p; c.height = h * p; const x = c.getContext('2d'); x.fillStyle = '#050505'; x.fillRect(0, 0, c.width, c.height);
+      const on = (xx, yy) => { const ci = Math.floor((xx - 1) / 6), cx = (xx - 1) % 6, g = FONT[str[ci]] || FONT[' ']; if (xx < 1 || cx > 4 || yy < 1 || yy > 7) return false; return (parseInt(g.substr((yy - 1) * 2, 2), 16) >> (4 - cx)) & 1; };
+      for (let yy = 0; yy < h; yy++) for (let xx = 0; xx < w; xx++) { const lit = on(xx, yy), ci = Math.floor((xx - 1) / 6), cc = typeof col === 'string' ? col : (col[ci] || col[col.length - 1]); x.shadowBlur = lit ? p * .9 : 0; x.shadowColor = cc; x.fillStyle = lit ? cc : '#161616'; x.beginPath(); x.arc(xx * p + p / 2, yy * p + p / 2, p * (lit ? .42 : .26), 0, 7); x.fill(); }
+      out.text[key] = { url: c.toDataURL(), w: c.width, h: c.height }; });
+    return out;
+}, spec);

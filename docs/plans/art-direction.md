@@ -151,6 +151,8 @@ The bottom key always says what it will save. Nothing is saved until it is press
 - Every creator fits one screen and works from keys and a gamepad.
 - Everything made here is part of the universe package, so it travels with a shared world. `src/85-universe.js` gets a new optional list for moves, gimmicks, story templates and events, and `E.edCheck` validates each.
 
+**The World Editor as a whole** has its own plan: `docs/plans/world-editor.md`. It says what ships in every list and what a player can add (30 open lists with 1,172 entries in the box, 20 fixed lists, 24 rules of the world), the stories running on day one and the written past, and the engine work in order. Its pictures are in `docs/mockups/world-editor/`. The ten creators here are the pages that plan uses.
+
 **Order to build them in.** Belt look and the federation page first (small, and they show off the new art). Then gimmicks and relationships (data that already exists as code). Then tag teams and stables. Then moves. Then storylines. Events last: they are the most powerful and the easiest to break a game with, so they need the check and "Play it now" working before anything else.
 
 ## 4. Lights: pictures and lettering in dots
@@ -274,7 +276,7 @@ Five changes a version (rule 10a). One step at a time, shown to Ryan (rule 9a). 
 14. Storylines as the season calendar.
 15. Roster in windows.
 
-**Version E: the creation suite** (section 3b), after the four versions above. The federation page and the belt look can move earlier if Ryan wants the World Editor to show the new art first.
+**Version E: the creation suite** (section 3b) and the World Editor (`docs/plans/world-editor.md`, eight steps of its own), after the four versions above. The federation page and the belt look can move earlier if Ryan wants the World Editor to show the new art first.
 
 **Version D: the show** (built before Version E)
 16. Moments and their pop-up windows (6.11).
