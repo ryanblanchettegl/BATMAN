@@ -126,6 +126,8 @@ function drawBoard(cv: HTMLCanvasElement, B: Board, p: number, dpr: number) {
 /* boards on the page check their size again when the window changes size, because the type size sets the size of a light */
 const live = new Set<() => void>();
 let wired = false;
+/** Call `fn` again whenever the window changes size. Returns the function that stops it. The road map uses this too. */
+export function onBoardResize(fn: () => void): () => void { wire(); live.add(fn); return () => { live.delete(fn); }; }
 function wire() { if (wired) return; wired = true; let t: any = null; window.addEventListener('resize', () => { clearTimeout(t); t = setTimeout(() => live.forEach(fn => fn()), 60); }); }
 
 /** A canvas that shows a board. `dot` is the size of one light, in pixels at a 1280 wide desk; it grows with the type size and is always a whole number of screen pixels. */

@@ -47,6 +47,7 @@ async function run(mode) {
     const rep = await page.evaluate(() => { const S = window.EWF_DEBUG.state(), E = window.GP, pr = E.preShow(S, S.card); if (pr) E.resolvePre(S, S.card, 0); E.fitShow(S, S.card); const v = E.validate(S, S.card); if (v.errors.length) return { err: v.errors.join(' | ') }; const r = E.runPlayerShow(S, S.card).rep; window.EWF_DEBUG.render(); return { n: r.segs.filter(s => s.k === 'match').length, lines: r.sheet.lines.join(' / ') }; });
     ok(mode, 'the show ran', !rep.err, rep.err);
     await go(page, 'desk');
+    await page.click('[data-t="desk-more"]'); await page.click('[data-t="more-tab"][data-v="week"]');   // the week's shows and their reports are in The week in full
     await page.click('[data-t="report"]');
     await page.waitForSelector('[data-t="match-stars"]');
     const starsTxt = await page.$$eval('[data-t="match-stars"]', L => L.map(e => e.innerText));

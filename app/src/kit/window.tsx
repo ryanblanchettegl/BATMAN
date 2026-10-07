@@ -7,10 +7,11 @@ import { Btn } from './index';
 export function Window(p: { title: string; wide?: boolean; children: ComponentChildren; ok?: string; noOk?: boolean; hint?: string; footer?: ComponentChildren; onClose?: () => void }) {
   const close = p.onClose || closeModal;
   const box = useRef<HTMLDivElement>(null);
-  // focus moves into the window when it opens and returns to where it was when it closes
+  // focus moves into the window when it opens and returns to where it was when it closes. It lands on the button that
+  // closes it, unless something in the window is marked data-first (the thing the player just came back from).
   useEffect(() => {
     const prev = document.activeElement as HTMLElement | null, el = box.current;
-    if (el) { const first = (el.querySelector('#modal-ok') || el.querySelector('.wb button, .wb select, .wb input') || el.querySelector('button')) as HTMLElement | null; if (first) first.focus(); }
+    if (el) { const first = (el.querySelector('.wb [data-first]') || el.querySelector('#modal-ok') || el.querySelector('.wb button, .wb select, .wb input') || el.querySelector('button')) as HTMLElement | null; if (first) first.focus(); }
     return () => { if (prev && prev !== document.body && document.contains(prev)) { try { prev.focus({ preventScroll: true }); } catch (e) { /* ignore */ } } };
   }, []);
   // Tab and Shift+Tab go round inside the window and never reach the page behind it

@@ -281,8 +281,8 @@ async function section(mode) {
   ok(await has(page, '[data-t="after-screen"]'), mode + ': closing the report goes back to After the show');
   /* done with After the show: the Office, with Before the show first and a button that comes back */
   await page.click('[data-t="advance"]');
-  ok(await page.evaluate(() => window.EWF_DEBUG.ui.page) === 'desk' && /before the show/i.test(await txt(page, '.panel h2')) && !(await has(page, '[data-t="after-show"]')), mode + ': then the Office, where Before the show is the first thing');
-  ok((await txt(page, '[data-t="night-recap"]')) === 'After the show recap', mode + ': the Office has a button back to After the show');
+  ok(await page.evaluate(() => window.EWF_DEBUG.ui.page) === 'desk' && await has(page, '.deskpage [data-t="road"]') && await has(page, '.deskpage [data-t="next"]') && !(await has(page, '[data-t="after-show"]')), mode + ': then the Office, with the road and the next show');
+  ok((await page.$eval('[data-t="night-recap"]', e => e.getAttribute('aria-label'))) === 'After the show recap', mode + ': the Office has a button back to After the show');
   await page.click('[data-t="night-recap"]');
   ok(await has(page, '[data-t="after-screen"]') && await txt(page, '.head h1') === shows[0], mode + ': and it goes back there');
   await page.click('[data-t="advance"]');

@@ -32,22 +32,30 @@ async function run(mode) {
   /* ---- the desk, week 1 ---- */
   ok(/Office - Week 1/.test(await txt('h1')), 'desk heading');
   ok(await count('.gp') === 0 && await count('.gauge') === 0, 'no gauges on the desk: they are on Company');
-  ok((await page.$$eval('.panel > h2', L => L[0].textContent)) === 'Before the show' && await count('.pre [data-t="book-next"]') === 1, 'the desk opens on Before the show, with the booking button');
-  ok(await count('.onews li') >= 1, 'office news has a memo');
-  for (const t of ['Before the show', 'Answered this week', 'This week', 'Promises and targets', 'Worth knowing', 'Clocks', 'Office news']) ok((await page.$$eval('.panel > h2', L => L.map(e => e.textContent))).includes(t), 'panel: ' + t);
-  ok(await count('[data-t="book-show"]') === 1 && await count('[data-t="endweek"]') === 0, 'a show to book, no end-week button yet');
-  ok(/Backstage:/.test(await txt('[data-t="bs-line"]')) && await count('.pre .room') === 0 && await count('[data-t="ppl-who"]') === 0, 'the desk has one line about backstage and a button, not the rooms');
+  ok((await page.$$eval('.deskpage > .wn', L => L.map(e => e.getAttribute('data-t')).join())) === 'road,fire,task-win,next' && await count('[data-t="next"] [data-t="book-next"]') === 1, 'the desk is four windows: the road, what needs an answer, the tasks and the next show with its booking button');
+  ok(await count('.main .panel') === 0 && await count('[data-t="endweek"]') === 0, 'no old panels on the desk, and no end-week button yet');
+  /* everything else the desk keeps is in one pop-up */
+  const moreTab = async id => { if (!(await page.$('[data-t="more-tab"]'))) { await page.click('[data-t="desk-more"]'); await page.waitForSelector('[data-t="more-tab"]'); } await page.click('[data-t="more-tab"][data-v="' + id + '"]'); };
+  await page.click('[data-t="desk-more"]'); await page.waitForSelector('.win');
+  ok((await page.$$eval('[data-t="more-tab"]', L => L.map(e => e.innerText.trim()).join('|'))) === 'This week|Promises|Worth knowing|Clocks|News|Answered', 'The week in full has six tabs: ' + (await page.$$eval('[data-t="more-tab"]', L => L.map(e => e.innerText.trim()).join('|'))));
+  ok(await count('.win [data-t="book-show"]') === 1, 'This week lists the shows, with one to book');
+  await moreTab('news'); ok(await count('.win .onews li') >= 1, 'office news has a memo');
+  await step('the week in full', 'week');
+  await page.keyboard.press('Escape');
+  ok(/Backstage/.test(await txt('[data-t="bs-line"]')) && /\d of \d point/.test(await txt('[data-t="bs-line"]')) && await count('.pre .room') === 0 && await count('[data-t="ppl-who"]') === 0, 'the desk has one line about backstage and a button, not the rooms');
   await page.click('[data-t="book-next"]'); ok(await page.evaluate(() => window.EWF_DEBUG.ui.page) === 'booking', 'Book the next show opens Booking'); await go(page, 'desk');
 
   /* ---- a clock window: open, read, close with the button; open again, close with Esc ---- */
+  await moreTab('clocks');
   ok(await count('[data-t="clocks-quiet"]') === 1 || await count('[data-t="clock"]') === 6, 'quiet clocks fold into one button');
   if (await count('[data-t="clocks-quiet"]')) await page.click('[data-t="clocks-quiet"]');
   ok(await count('[data-t="clock"]') === 6, 'six clocks');
   await page.click('[data-t="clock"][data-k="mutiny"]'); await page.waitForSelector('.win');
   ok(/Mutiny/.test(await txt('.win .wt')) && /0 of 6 segments filled/.test(await txt('.win .wb')) && await count('.win .dial') === 1, 'clock window content');
   await step('clock window', 'clock');
-  await page.click('#modal-ok'); ok(await count('.win') === 0, 'clock window closes on OK');
-  await page.click('[data-t="clock"][data-k="star"]'); await page.waitForSelector('.win'); await page.keyboard.press('Escape'); ok(await count('.win') === 0, 'clock window closes on Esc');
+  await page.click('#modal-ok'); ok(await count('.win .dial') === 6 && await count('[data-t="clock"]') === 6, 'clock window closes on OK, back to the clocks');
+  await page.click('[data-t="clock"][data-k="star"]'); await page.waitForFunction(() => document.querySelectorAll('.win .dial').length === 1); await page.keyboard.press('Escape'); ok(await count('[data-t="clock"]') === 6, 'clock window closes on Esc, back to the clocks');
+  await page.keyboard.press('Escape'); ok(await count('.win') === 0, 'and Esc again closes the week in full');
   await step('clock closed');
 
   /* ---- backstage: the trainer's room ---- */
@@ -133,16 +141,22 @@ async function run(mode) {
   while (weeks++ < 14 && !(await state(page, S => S.over || S.inbox.some(e => !e.done)))) await state(page, playWeek);
   await redraw(page);
   let open0 = await state(page, S => S.inbox.filter(e => !e.done).length);
-  ok(open0 > 0 && await count('[data-t="ev"]') >= 2, 'an inbox event with choices by week ' + await state(page, S => S.week));
+  ok(open0 > 0 && await count('[data-t="ev-open"]') >= 1 && /to answer/.test(await txt('[data-t="fire"] .ttl')) && await page.$eval('[data-t="fire"]', e => e.classList.contains('hot')), 'an inbox matter on the desk, in a red window, by week ' + await state(page, S => S.week));
   ok(/\((\d+)\)/.test(await txt('.menu [data-v="office"]')), 'menu badge counts the inbox');
-  ok(await page.evaluate(() => { const f = document.querySelector('[data-t="fire"]'), t = document.querySelector('.tasks'); return !!f && !!t && f.getBoundingClientRect().top < t.getBoundingClientRect().top && f.querySelectorAll('[data-t="ev"]').length >= 2; }), 'what needs an answer is first on the desk, above the tasks, with its answers');
+  ok(await page.evaluate(() => { const f = document.querySelector('[data-t="fire"]'), t = document.querySelector('.tasks'); return !!f && !!t && f.getBoundingClientRect().left < t.getBoundingClientRect().left && f.querySelectorAll('[data-t="ev-open"]').length >= 1; }), 'what needs an answer is first on the desk, above the tasks, with its answers');
+  await page.click('[data-t="ev-open"]'); await page.waitForSelector('.win [data-t="ev"]');
+  ok(await count('.win [data-t="ev"]') >= 2 && (await txt('.win [data-t="ev-text"]')).length > 20, 'Answer opens the matter in a pop-up with a button for each answer');
   await step('inbox waiting', 'inbox');
+  await page.keyboard.press('Escape');
   await state(page, runShows); await redraw(page);
   open0 = await state(page, S => S.inbox.filter(e => !e.done).length);   // a show can leave one more matter
-  ok(await page.$eval('[data-t="endweek"]', e => e.disabled) && /Answer your inbox first/.test(await txt('.pre')) && await count('[data-t="book-next"]') === 0, 'cannot end the week with the inbox open');
+  ok(await page.$eval('[data-t="endweek"]', e => e.disabled) && /Answer what is on your desk first/.test(await txt('[data-t="next"]')) && await count('[data-t="book-next"]') === 0, 'cannot end the week with the inbox open');
   while (open0 > 0) {
-    await page.click('[data-t="ev"]');
-    const now = await state(page, S => S.inbox.filter(e => !e.done).length); ok(now === open0 - 1, 'one click answers one event'); open0 = now;
+    if (!(await page.$('.win [data-t="ev"]'))) await page.click('[data-t="ev-open"]');
+    await page.click('.win [data-t="ev"]');
+    const now = await state(page, S => S.inbox.filter(e => !e.done).length); ok(now === open0 - 1 && (await txt('.win [data-t="ev-result"]')).length > 3, 'one click answers one matter, and the pop-up says what happened'); open0 = now;
+    ok(now === 0 ? !(await page.$('[data-t="ev-next"]')) : !!(await page.$('[data-t="ev-next"]')), 'the next matter is offered while there is one');
+    if (now) await page.click('[data-t="ev-next"]'); else await page.keyboard.press('Escape');
   }
   ok(await count('[data-t="ev"]') === 0 && await state(page, S => S.inbox.some(e => e.done && e.result)), 'answered events show a result');
   await step('inbox answered', 'answered');
@@ -184,7 +198,7 @@ async function remote() {
   for (const id of ['desk', 'backstage', 'career']) { await go(page, id); await settle(); const o = await overflow(page); ok(o === '', 'tv ' + id + ': ' + o); }
   await go(page, 'desk'); await settle();
   ok(await focus() === 'book-next', 'the desk starts on Book the next show: ' + await focus());
-  await key('ArrowDown'); ok(/^task-go:/.test(await focus()), 'down from the button reaches this week’s tasks: ' + await focus());
+  await key('ArrowLeft'); ok(await page.evaluate(() => !!document.activeElement.closest('[data-t="task-win"]')), 'left from the button reaches this week’s tasks: ' + await focus());
   await go(page, 'backstage'); await settle();
   await press('[data-t="bs-act"][data-k="trainer"][data-v="treat"]');
   ok(await page.$$eval('.win', L => L.length) === 1 && /^(bs|modal-close|bs-do)/.test(await focus()), 'OK on a thing to do opens its pop-up and the highlight goes in: ' + await focus());
@@ -198,11 +212,14 @@ async function remote() {
   let weeks = 0; while (weeks++ < 14 && !(await state(page, S => S.over || S.inbox.some(e => !e.done)))) await state(page, playWeek);
   await go(page, 'career'); await settle(); await go(page, 'desk'); await redraw(page); await settle();   // arriving from another page
   ok(await focus() === 'book-next', 'the desk starts on Book the next show, not on an answer: ' + await focus());
-  let left = await page.$$eval('[data-t="ev"]', L => L.length); ok(left > 0, 'tv: an inbox event to answer');
-  while (left > 0) { await press('[data-t="ev"]'); left = await page.$$eval('[data-t="ev"]', L => L.length); ok(/^(ev|book-next|endweek)$/.test(await focus()), 'after an answer the highlight moves on: ' + await focus()); }
+  let left = await page.$$eval('[data-t="ev-open"]', L => L.length); ok(left > 0, 'tv: an inbox matter to answer');
+  await press('[data-t="ev-open"]'); ok(await focus() === 'modal-close', 'the matter opens with the highlight on Not now, never on an answer: ' + await focus());
+  while (left > 0) { await press('.win [data-t="ev"]'); left = await state(page, S => S.inbox.filter(e => !e.done).length); ok(await focus() === (left ? 'ev-next' : 'modal-close'), 'after an answer the highlight moves on: ' + await focus()); if (left) { await press('[data-t="ev-next"]'); await settle(); } }
+  await key('Escape'); await settle();
+  await press('[data-t="desk-more"]'); await settle(); await press('[data-t="more-tab"][data-v="clocks"]'); await settle();
   if (!(await page.$('[data-t="clock"][data-k="hot"]'))) await press('[data-t="clocks-quiet"]');
   await press('[data-t="clock"][data-k="hot"]'); ok(await focus() === 'modal-close', 'clock window takes the highlight: ' + await focus());
-  await key('Backspace'); ok(await page.$$eval('.win', L => L.length) === 0 && await focus() === 'clock', 'Back closes it and the highlight returns to the clock: ' + await focus());
+  await key('Backspace'); ok(await page.$$eval('.win .dial', L => L.length) > 1 && await focus() === 'clock', 'Back closes it and the highlight returns to the clock: ' + await focus());
   ok(errs.length === 0, 'console errors: ' + errs.join(' | '));
   await browser.close();
   console.log('remote (tv): ' + (fails.length ? fails.length + ' failed' : 'highlight never lost, no overflow, no errors')); fails.forEach(f => console.log('  FAIL ' + f));

@@ -1,15 +1,12 @@
-/* Before the show: the first thing on the desk. The next show and the button that books it, then the backstage map and
-   what one action point buys in the room that is open. */
+/* Backstage, its own page in the Office: who is in the building and why, and what one action point buys.
+   (The desk itself is in Desk.tsx.) */
 import { E, W } from '../../engine';
 import { G, ui, me, act, say, view, plural, openModal, Modal } from '../../store';
 import { go, weekDone } from '../../nav';
 import { Panel, Btn, Sel, Opt, Tag, CheckLine, Empty, brandName, dataAttrs, Txt, showResult, Name, Head, Window } from '../../kit';
 import { Portrait } from '../../kit/portrait';
-import { EndWeekBtn } from '../../shared/week';
 import { office, focusAfter, useFocusAfter, TO_MAP } from './util';
 import { Court } from './Court';
-import { openNight } from '../booking/run';
-import { Tasks } from './Tasks';
 
 const ROOMART: Record<string, string[]> = {
   office: ['╔═══╗', '║ $ ║', '╚═╩═╝'], court: [' ─┬─ ', '╱ │ ╲', '▔▔┴▔▔'], trainer: ['┌───┐', '│ + │', '└───┘'], gym: ['╔═╤═╗', '╟─┼─╢', '╚═╧═╝'],
@@ -85,57 +82,6 @@ function People(p: { B: any }) {
         <span class="row"><Btn kind="sm" cls={/_no$/.test(a.id) ? undefined : 'go'} t="ppl-do" d={{ v: a.id }} disabled={sel.used || (B.ap <= 0 && !a.free)} onClick={() => spend(a.id)}>{a.free ? (/_no$/.test(a.id) ? 'Say no' : (/_yes$/.test(a.id) ? 'Say yes' : a.n)) : 'Spend 1 action point'}</Btn>{a.free ? <span class="muted">No action point</span> : null}</span></li>)}</ul>
     </div> : <p class="muted mt1">Pick somebody. One action point is spent on a person, once a week each. Everybody here is here for a reason.</p>}
   </div>;
-}
-
-/** The nearest countdowns, so there is always something about to pay off. Each one goes to its page. */
-function ComingUp() {
-  const U: any[] = E.comingUp(G.S); if (!U.length) return null;
-  return <span class="coming" data-t="coming"><span class="eyebrow">Coming up</span> {U.map((u, i) => <>{i ? <span class="muted"> {'·'} </span> : null}<button type="button" class="lnk" data-t="coming-go" data-v={u.k} onClick={() => go(u.to)}>{u.t}</button></>)}</span>;
-}
-/** The fire: whatever needs an answer comes first on the desk, above the tasks, with its deadline. Each open matter
-    shows the chance of each attempt and one button for each answer. */
-function Fire() {
-  const S = G.S, open: any[] = S.inbox.filter((e: any) => !e.done);
-  if (!open.length) return null;
-  const answer = (id: number, c: number) => act(() => { E.resolveEvent(S, id, c); focusAfter(['[data-t="ev"]'], ['[data-t="endweek"]:not([disabled])', '[data-t="book-next"]']); });
-  return <div class="fire" data-t="fire">
-    <p class="eyebrow"><span class="bad">{open.length === 1 ? 'One matter needs' : open.length + ' matters need'} an answer</span> <span class="muted">{'·'} before the week can end</span></p>
-    <ul class="list">{open.map((e: any) => <li key={e.id} class={e.night ? 'night' : undefined}>
-      <span>{e.night ? <><Tag kind="bad">From last night</Tag> </> : null}<Txt>{e.text}</Txt>
-        {e.checks ? Object.keys(e.checks).map(k => <CheckLine label={e.choices[k]} ck={e.checks[k]} />) : null}</span>
-      <span class="row">{e.choices.map((c: string, i: number) => <Btn kind="sm" t="ev" d={{ id: e.id, c: i }} onClick={() => answer(e.id, i)}>{c}</Btn>)}</span>
-    </li>)}</ul>
-  </div>;
-}
-/** After a show has run this week: the button that goes back to After the show. */
-function Recap() { const A = E.afterShow(G.S); return A ? <Btn kind="sm" t="night-recap" onClick={openNight}>After the show recap</Btn> : null; }
-/** The show that is next, and the one button that takes you to book it. Once every show has run, the button ends the week. */
-function NextShow() {
-  const S = G.S, sh = S.queue[S.qi], left = S.queue.length - S.qi, gate = E.taskGate(S, 'book');
-  if (weekDone()) return <div class="nextshow">
-    <p>Every show this week has run.<ComingUp /></p>
-    <EndWeekBtn /><Recap />
-  </div>;
-  return <div class="nextshow">
-    <p><span class="eyebrow">Next show</span><br /><b class="ns">{sh.name}</b> {sh.big ? <Tag kind="gold">Big event</Tag> : <Tag>TV</Tag>}{sh.brand ? <> <Tag>{brandName(me(), sh.brand)}</Tag></> : null}
-      <br /><span class="muted">{left > 1 ? left + ' shows left this week.' : ''}</span><ComingUp /></p>
-    <div class="row"><Btn kind="go" t="book-next" d={{ home: '' }} disabled={!gate.ok} onClick={() => go('booking')}>Book the next show</Btn>
-      {gate.ok ? null : <span class="muted" data-t="book-wait">Finish this week{'’'}s tasks first: {gate.left.length} to do.</span>}<Recap /></div>
-  </div>;
-}
-
-export function BeforeShow() {
-  const S = G.S, B = E.backstage(S), N = E.people(S);
-  useFocusAfter();
-  return <Panel title="Before the show" cls="pre mb3">
-    <NextShow />
-    <Fire />
-    <Tasks />
-    <p class="mt2" data-t="bs-line">Backstage: <span class="pips" role="img" aria-label={B.ap + ' of ' + B.max}>{Array.from({ length: B.max }, (_, i) => i < B.ap ? <span class="gold">{'◆'}</span> : <span class="muted">{'◇'}</span>)}</span> <span class="num">{B.ap} of {B.max}</span> action {plural(B.max, 'point')} left
-      {' · '}<span class={N.count ? undefined : 'muted'}>{N.count ? N.count + ' ' + (N.count === 1 ? 'person is' : 'people are') + ' in the building for a reason' : 'nobody is waiting'}</span>
-      {S.court && S.court.length ? <span class="warn"> {'·'} {S.court.length} in court</span> : null}
-      {' '}<Btn kind="sm" t="to-backstage" onClick={() => go('backstage')}>Go backstage</Btn></p>
-  </Panel>;
 }
 
 /** What each thing to do backstage is called on its button: what you get, in plain words, and which group it sits in.

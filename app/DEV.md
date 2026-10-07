@@ -75,3 +75,7 @@ export function Titles() {
   </>;
 }
 ```
+
+## The desk (7 October)
+
+The desk is `screens/office/Desk.tsx`: a `Desktop` of four `Win`s inside `.onescreen`. The road window's map is `RoadMap` in `kit/roadmap.tsx`: a canvas that draws the board from `E.MAPS` and what `E.road(S)` says is lit, as large as whole dots allow in its box. It is drawn once and kept (`EWF_DEBUG.maps()` counts draws). To put something new on the desk, find it a line in a window that has room at 1280 by 720, or put it in "The week in full" (`DeskMoreWindow`, one more entry in `MORE`). `app/tests/desk.js` checks every size with the fullest desk it can make.

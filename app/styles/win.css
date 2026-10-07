@@ -200,7 +200,7 @@ html[data-music="off"] .status .nk.mus em::after{content:'\00a0off';color:#77000
 html.nav .status .key:focus{background:none;outline:3px solid var(--white);outline-offset:-3px}
 html.nav .status .key:focus .cap{background:var(--white);color:var(--k)}
 /* the note that opens over the key: a small grey window that says the step in full, and what is in the way */
-.key .tip{display:none;position:absolute;right:0;bottom:calc(100% + 10px);width:min(44ch,92vw);font-size:.893em;line-height:1.26;background:var(--grey);color:var(--k);border:2px solid var(--white);border-right-color:var(--dgrey);border-bottom-color:var(--dgrey);box-shadow:1ch .55em 0 rgba(0,0,0,.55);padding:0 1ch .35em;text-align:left;white-space:normal;z-index:8;text-transform:none;cursor:default}
+.key .tip{pointer-events:none;display:none;position:absolute;right:0;bottom:calc(100% + 10px);width:min(44ch,92vw);font-size:.893em;line-height:1.26;background:var(--grey);color:var(--k);border:2px solid var(--white);border-right-color:var(--dgrey);border-bottom-color:var(--dgrey);box-shadow:1ch .55em 0 rgba(0,0,0,.55);padding:0 1ch .35em;text-align:left;white-space:normal;z-index:8;text-transform:none;cursor:default}
 .key .tip .th{display:block;background:var(--blue);color:var(--yellow);margin:0 -1ch .3em;padding:0 1ch}
 .key.tone-stop .tip .th{background:var(--dred)}
 .key .tip .tl{display:block;padding:.05em 0}
@@ -222,3 +222,68 @@ html[data-screen="tablet"] .status .nk em{padding-inline:.8ch}
 
 /* the kit sheet: every part of the kit on one screen (a page for building and testing, not on any menu) */
 .kitsheet{grid-template-columns:minmax(0,1.05fr) minmax(0,1.05fr) minmax(0,1.2fr);grid-template-rows:minmax(0,1.4fr) minmax(0,1fr)}
+
+/* ---------- the desk: four windows on one screen (screens/office/Desk.tsx) ---------- */
+.vh{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+.deskpage{grid-template-columns:minmax(0,1.08fr) minmax(0,1.3fr) minmax(0,1.06fr);grid-template-rows:minmax(0,1.42fr) minmax(0,1fr);grid-template-areas:"road road road" "fire tasks next";line-height:1.18;gap:.95em 2.6ch}
+.wn .one{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.deskpage .btn{margin-bottom:.26em}
+/* the road: the map, this stop, and the stops around it; then a line of lights and two buttons */
+.road>.bd{display:flex;flex-direction:column;gap:.3em;padding-bottom:.3em}
+.road .r3{flex:1 1 0;min-height:0;display:grid;grid-template-columns:auto minmax(0,1.12fr) minmax(0,.9fr);grid-template-rows:minmax(0,1fr);gap:0 2ch}
+.rmap{min-height:0;min-width:0;height:100%;overflow:hidden;line-height:0}
+.rmap>canvas{display:block;box-sizing:content-box;border:2px solid var(--dgrey);border-right-color:var(--white);border-bottom-color:var(--white);background:#0000aa}
+.rmap>.nomap{line-height:1.18;width:24ch;color:#444}
+.road .rmid,.road .rright{min-width:0;min-height:0;overflow:hidden}
+.road .grp{margin:.58em 0 .12em;padding:.42em 1ch .1em}
+.road .rright .grp:first-child{margin-top:.5em}
+.road .chip{display:inline-block;width:1.3ch;height:.62em;margin-right:.9ch;border:1px solid #000;vertical-align:.02em}
+.road .hm canvas.pt{width:1.1em;height:1.1em;border-width:1px;vertical-align:-.2em;margin-right:.7ch}
+.road .rfoot{flex:none;display:flex;align-items:center;gap:1.6ch;min-width:0}
+.road .rfoot .tick{flex:1 1 0;min-width:0;overflow:hidden;text-align:center;line-height:0}
+.road .rfoot .btn{flex:none;margin-bottom:.2em}
+/* on your desk: a matter is two lines and a button */
+.ondesk .mat{display:flex;gap:1ch;align-items:flex-start;justify-content:space-between;border-bottom:1px solid var(--dgrey);padding:.12em 0 .16em}
+.ondesk .clamp{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;flex:1;min-width:0;margin:0}
+.ondesk .clamp.c3{-webkit-line-clamp:3}
+.ondesk .mat .btn{flex:none;margin-top:.1em}
+.ondesk .know{margin-top:.2em}
+.ondesk .know .hd{color:var(--dred)}
+/* this week's tasks: a line each */
+.wn .tasks{margin:0;padding:0;border:0}
+.taskwin .it{display:flex;justify-content:space-between;align-items:center;gap:1ch;border-bottom:1px solid var(--dgrey);padding:.06em 0 0}
+.taskwin>.bd{padding-top:.3em;padding-bottom:.2em}
+.taskwin .it .tx{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.taskwin .it .opts{flex:none;display:flex}
+.taskwin .it .opts .btn:last-child{margin-right:.6ch}
+.wn .tasks .task.must{border-left:4px solid var(--dred);padding-left:.8ch;background:none}
+.wn .tasks .task.must .mark{color:var(--dred)}
+.wn .tasks .task.must .tag{background:var(--dred);color:var(--white);padding:0 .7ch}
+.wn .tasks .task.done{opacity:1}
+.taskwin .tfoot{display:flex;align-items:center;gap:.8ch;margin-top:.22em;white-space:nowrap}
+.taskwin .tnote{display:flex;align-items:center;gap:1.2ch;min-width:0}
+.taskwin .tnote .pgr{display:flex;align-items:center;gap:.6ch;flex:none;white-space:nowrap}
+.taskwin .tnote .pgr .btn{padding:0 .8ch;margin:0 .5ch .2em 0}
+.taskwin .tnote .one{flex:1;min-width:0}
+html:not(.rm) .wn .tasks.hit .task.must{animation:taskhit .7s ease-in-out 3}
+/* the next show */
+.nextwin .lh{text-align:center;margin:0 0 .25em;line-height:0}
+.nextwin .nx{display:flex;gap:1.5ch;justify-content:space-between;align-items:flex-start}
+.nextwin .nx>div{min-width:0}
+.nextwin .bsl{margin-top:.2em;border-top:1px solid var(--dgrey);padding-top:.25em}
+.nextwin .bsl .btn{margin-right:1.4ch}
+.nextwin .cu{white-space:nowrap;overflow:hidden}
+.nextwin .nbtn{display:flex;flex-wrap:wrap}
+.wn .coming{display:inline;margin:0}
+.wn .coming .lnk{color:var(--blue);border-bottom:1px dotted var(--blue)}
+.wn .coming .lnk:focus-visible{outline:2px solid var(--k)}
+/* the week in full */
+.dmore{margin-top:.7em;min-height:11em}
+/* the desk holds more than other one-screen pages, so its type is a little smaller for the same window */
+html[data-screen="desk"]:has(.deskpage){--fs:min(clamp(19px,1.62vw,32px),2.6vh)}
+html[data-screen="tablet"]:has(.deskpage){--fs:min(clamp(18px,1.8vw,30px),2.4vh)}
+html[data-screen="tv"]:has(.deskpage){--fs:min(clamp(22px,1.9vw,84px),2.32vh)}
+.crt:has(.deskpage){max-width:72em}
+html[data-screen="tablet"] .deskpage .btn{padding:.14em 1.1ch;margin-bottom:.26em}
+.road .kvl .v{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+html[data-screen="tablet"] .nextwin .nx .ledb{display:none}

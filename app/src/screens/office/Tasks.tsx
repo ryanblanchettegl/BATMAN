@@ -1,7 +1,7 @@
 /* This week's tasks, on the desk: everything that should be filled in before a show is booked or the week ends.
    Each one has a button that takes you to it, and where it can wait, a button to leave it for another week. */
 import { E } from '../../engine';
-import { G, act, say, openModal, closeModal, Modal, full } from '../../store';
+import { G, act, say, view, openModal, closeModal, Modal, full } from '../../store';
 import { go } from '../../nav';
 import { Btn, Tag, Txt, Window, Empty, Name, showResult } from '../../kit';
 import { office } from './util';
@@ -17,7 +17,7 @@ function open(t: any) {
   if (t.id === 'sponsors') { openModal({ kind: 'mng', k: 'deals', v: 'offers' }); return; }   // the offers, over the desk
   if (/^title-/.test(t.id)) { openModal({ kind: 'tasktitle', id: t.id.slice(6) }); return; }
   if (/^con-/.test(t.id)) { openModal({ kind: 'taskcon', id: +t.id.slice(4) }); return; }
-  if (t.id === 'inbox') { const el = document.querySelector('[data-t="ev"]') as HTMLElement | null; if (el) { el.scrollIntoView({ block: 'center' }); el.focus(); } return; }
+  if (t.id === 'inbox') { const e = G.S.inbox.find((x: any) => !x.done); if (e) openModal({ kind: 'matter', id: e.id }); return; }
   go(t.to);
 }
 
@@ -53,19 +53,25 @@ export function ContractTaskWindow(p: { m: Modal }) {
   </Window>;
 }
 
+/** The body of the tasks window on the desk: four to a page, a line each, with the button that deals with it. */
 export function Tasks() {
-  const S = G.S, T = E.tasks(S);
-  return <div class="tasks">
-    <p class="eyebrow">This week{'’'}s tasks</p>
-    {T.list.length ? <ul class="list">{T.list.map((t: any) => <li key={t.id} class={'task ' + t.state + (t.state === 'todo' && T.strict ? ' must' : '')} data-task={t.id}>
-      <span>{t.state === 'todo' && T.strict ? <span class="mark" aria-hidden="true">!</span> : null}<Tag kind={t.req || t.miss ? 'bad' : TAG[t.state][1]}>{t.req ? 'Required' : (t.miss ? (t.id === 'ap' ? 'Unspent' : 'Missed') : (t.hit ? 'Hit' : (t.state === 'todo' && !T.strict ? 'To do' : TAG[t.state][0])))}</Tag> <span class={t.state === 'done' || t.state === 'waved' ? 'muted' : undefined}><Txt>{t.text}</Txt></span></span>
-      <span class="row opts">
-        {t.state === 'todo' || t.state === 'optional' ? <Btn kind="sm" t="task-go" d={{ v: t.id }} onClick={() => open(t)}>{t.label}</Btn> : null}
-        {t.state === 'todo' && t.waive ? <Btn kind="sm" t="task-wave" d={{ v: t.id }} onClick={() => act(() => { const r = E.taskWave(S, t.id); say(r.msg, { err: !r.ok }); })}>Not this week</Btn> : null}
-        {t.state === 'waved' ? <Btn kind="sm" t="task-unwave" d={{ v: t.id }} onClick={() => act(() => { E.taskUnwave(S, t.id); })}>Put it back</Btn> : null}
-      </span></li>)}</ul> : <p class="good">Nothing is waiting on your desk this week.</p>}
-    <div class="row opts mt1"><span class="muted">From the desk:</span><Btn kind="sm" t="open-voices" onClick={() => openVoices()}>Commentary desk</Btn><Btn kind="sm" t="open-letter" onClick={() => openModal({ kind: 'welcome', again: 1 })}>The owner{'’'}s letter</Btn></div>
-    {T.list.length ? <p class="muted mt1" data-t="task-note">{!T.strict ? 'Reminders only. You turned off the rule that tasks come first (Options).'
-      : (T.todo ? T.todo + ' to do. ' + (T.show ? 'A show cannot run until ' + (T.show === 1 ? 'it is' : 'they are') + ' done or left for another week.' : 'The week cannot end until ' + (T.todo === 1 ? 'it is' : 'they are') + ' done.') : 'Everything that had to be done is done.')}</p> : null}
+  const S = G.S, T = E.tasks(S), st = office() as any, per = (window as any).EWF_FLAT ? 99 : (document.documentElement.getAttribute('data-screen') === 'desk' ? 4 : 3), /* a test that wants every task on the page sets EWF_FLAT */ pages = Math.max(1, Math.ceil(T.list.length / per)), pg = Math.min(st.tpg || 0, pages - 1);
+  const L: any[] = T.list.slice(pg * per, pg * per + per);
+  return <div class="tasks" data-t="tasks">
+    {T.list.length ? L.map((t: any) => <div key={t.id} class={'it task ' + t.state + (t.state === 'todo' && T.strict ? ' must' : '')} data-task={t.id}>
+      <span class="tx">{t.state === 'todo' && T.strict ? <span class="mark" aria-hidden="true">!</span> : null}<Tag kind={t.req || t.miss ? 'bad' : (TAG[t.state][1] || 'off')}>{t.req ? 'Required' : (t.miss ? (t.id === 'ap' ? 'Unspent' : 'Missed') : (t.hit ? 'Hit' : (t.state === 'todo' && !T.strict ? 'To do' : TAG[t.state][0])))}</Tag><span class={t.state === 'done' || t.state === 'waved' ? 'muted' : undefined} title={t.text}>{t.short && t.state !== 'done' ? t.short : <Txt>{t.text}</Txt>}</span></span>
+      <span class="opts">
+        {t.state === 'todo' || t.state === 'optional' ? <Btn kind={t.state === 'optional' ? 'less' : undefined} t="task-go" d={{ v: t.id }} onClick={() => open(t)}>{t.label}</Btn> : null}
+        {t.state === 'todo' && t.waive ? <Btn kind="less" t="task-wave" d={{ v: t.id }} label={'Not this week: ' + t.text} onClick={() => act(() => { const r = E.taskWave(S, t.id); say(r.msg, { err: !r.ok }); })}>Later</Btn> : null}
+        {t.state === 'waved' ? <Btn kind="less" t="task-unwave" d={{ v: t.id }} onClick={() => act(() => { E.taskUnwave(S, t.id); })}>Put it back</Btn> : null}
+      </span></div>) : <p class="good">Nothing is waiting on your desk this week.</p>}
+    <div class="tfoot">
+      <Btn kind="sm" t="open-voices" onClick={() => openVoices()}>Commentary desk</Btn><Btn kind="sm" t="open-letter" onClick={() => openModal({ kind: 'welcome', again: 1 })}>Owner{'’'}s letter</Btn>
+    </div>
+    <div class="tnote">
+      {pages > 1 ? <span class="pgr"><Btn kind="sm" t="tasks-page" d={{ v: 'prev' }} label="Earlier tasks" disabled={pg <= 0} onClick={() => view(() => { st.tpg = pg - 1; })}>{'◄'}</Btn><span class="num" data-t="tasks-pg">{pg + 1} of {pages}</span><Btn kind="sm" t="tasks-page" d={{ v: 'next' }} label="More tasks" disabled={pg >= pages - 1} onClick={() => view(() => { st.tpg = pg + 1; })}>{'►'}</Btn></span> : null}
+      {T.list.length ? <span class="muted one" data-t="task-note">{!T.strict ? 'Reminders only. Tasks do not come first (Options).'
+        : (T.todo ? (T.show ? 'A show cannot run until ' + (T.show === 1 ? 'the one marked ! is' : 'those marked ! are') + ' done or left for later.' : 'The week cannot end until ' + (T.todo === 1 ? 'it is' : 'they are') + ' done.') : 'Everything that had to be done is done.')}</span> : null}
+    </div>
   </div>;
 }

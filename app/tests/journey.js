@@ -24,7 +24,7 @@ async function run(mode, weeks) {
       break;
     }
     await go(page, 'desk');
-    for (let g = 0; g < 12 && await click('[data-t="ev"]'); g++);
+    for (let g = 0; g < 12 && await click('[data-t="ev-open"]'); g++) { await click('.win [data-t="ev"]'); await page.keyboard.press('Escape'); await page.waitForTimeout(40); }
     await fit('desk w' + w);
     if (!(await has('[data-t="endweek"]:not([disabled])'))) { bad.push('week ' + w + ' could not be closed: ' + (await page.$eval('.main', e => e.innerText.slice(0, 200).replace(/\n/g, ' ')))); break; }
     await page.click('[data-t="endweek"]');

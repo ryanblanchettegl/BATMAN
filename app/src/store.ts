@@ -104,7 +104,7 @@ export function view(fn: () => void) { ui.flash = null; fn(); redraw(); }
 
 /** Pop-ups a result goes back to: a page of choices stays open while the player works through it. */
 const BACK_TO: Record<string, 1> = { mng: 1, plot: 1, apact: 1 };
-export function openModal(m: Modal) { const cur = ui.modal; if (m.kind === 'info' && cur && BACK_TO[cur.kind]) m.back = cur; ui.modal = m; snd('open'); redraw(); }
+export function openModal(m: Modal) { const cur = ui.modal; if (cur && ((m.kind === 'info' && BACK_TO[cur.kind]) || (m.kind === 'clock' && cur.kind === 'deskmore'))) m.back = cur; ui.modal = m; snd('open'); redraw(); }
 export function closeModal() { const back = ui.modal && ui.modal.back; if (ui.modal) snd('close'); ui.modal = back || null; redraw(); }
 /** Open a profile pop-up on top of whatever is showing. Opening the one already on top does nothing. */
 export function openCard(c: Card) {

@@ -6,7 +6,7 @@ const fails = [];
 const ok = (mode, label, pass, detail) => { console.log(mode.padEnd(6), pass ? 'ok  ' : 'FAIL', label + (detail ? ': ' + detail : '')); if (!pass) fails.push(mode + ' ' + label); };
 const txt = (page, sel) => page.$eval(sel, e => e.innerText).catch(() => '');
 const has = async (page, sel) => !!(await page.$(sel));
-const rows = (page, st) => page.$$eval('.tasks li.task' + (st ? '.' + st : ''), L => L.map(e => e.getAttribute('data-task')));
+const rows = (page, st) => page.$$eval('.tasks .task' + (st ? '.' + st : ''), L => L.map(e => e.getAttribute('data-task')));
 
 async function run(mode) {
   const { browser, page, errs } = await open({ mode, promo: 'pdw', gate: true });
@@ -16,11 +16,12 @@ async function run(mode) {
     await state(page, S => { S.inbox.filter(e => !e.done).forEach(e => window.GP.resolveEvent(S, e.id, e.type === 'handover' ? 0 : 1));
       // the test wants one sponsor offer that can be signed, whatever the seed dealt
       if (!S.spOffers.some(o => window.GP.sponsorOk(S, o)) && S.spOffers[0]) S.spOffers[0].type = 'rating'; });
+    await page.evaluate(() => { window.EWF_FLAT = 1; });   // the desk shows four tasks to a page; the test wants them all
     await go(page, 'desk');
     const todo = await rows(page, 'todo');
-    ok(mode, 'the desk lists this week’s tasks', /This week.s tasks/i.test(await txt(page, '.tasks')) && ['desk-pbp', 'desk-col', 'sponsors'].every(id => todo.indexOf(id) >= 0), todo.join(', '));
-    ok(mode, 'Book the next show waits for them', await page.$eval('[data-t="book-next"]', e => e.disabled) && /Finish this week.s tasks first: 3 to do/.test(await txt(page, '[data-t="book-wait"]')), await txt(page, '[data-t="book-wait"]'));
-    ok(mode, 'the note says a show cannot run', /3 to do\. A show cannot run until they are done or left for another week/.test(await txt(page, '[data-t="task-note"]')), await txt(page, '[data-t="task-note"]'));
+    ok(mode, 'the desk lists this week’s tasks', /This week.s tasks/i.test(await txt(page, '[data-t="task-win"]')) && ['desk-pbp', 'desk-col', 'sponsors'].every(id => todo.indexOf(id) >= 0), todo.join(', '));
+    ok(mode, 'Book the next show waits for them', await page.$eval('[data-t="book-next"]', e => e.disabled) && /tasks first: 3 to do/.test(await txt(page, '[data-t="book-wait"]')), await txt(page, '[data-t="book-wait"]'));
+    ok(mode, 'the note says a show cannot run', /3 to do/.test(await txt(page, '[data-t="task-win"] .ttl')) && /A show cannot run until those marked ! are done or left for later/.test(await txt(page, '[data-t="task-note"]')), await txt(page, '[data-t="task-note"]'));
     await over('the desk with tasks');
     await shot(page, 'tasks-' + mode, true);
     /* the booking page says the same thing and will not run the show */
@@ -43,8 +44,10 @@ async function run(mode) {
     await page.click('[data-t="modal-close"]');
     ok(mode, 'the desk can open it again at any time', await has(page, '[data-t="open-voices"]'));
     await go(page, 'desk');
-    ok(mode, 'a finished task says what was done', /A play-by-play voice is in the chair/.test(await txt(page, '.tasks li.task.done')));
-    ok(mode, 'the other Book this show button waits too', !(await has(page, '[data-t="book-show"]')));
+    ok(mode, 'a finished task says what was done', /A play-by-play voice is in the chair/.test(await txt(page, '.tasks .task.done')));
+    await page.click('[data-t="desk-more"]'); await page.click('[data-t="more-tab"][data-v="week"]');
+    ok(mode, 'the other Book this show button waits too', /After this week.s tasks/.test(await txt(page, '[data-t="desk-more-body"]')) && !(await has(page, '[data-t="book-show"]')));
+    await page.keyboard.press('Escape');
     ok(mode, 'signing a voice ticks the task', (await rows(page, 'done')).indexOf('desk-pbp') >= 0 && (await rows(page, 'todo')).indexOf('desk-pbp') < 0);
     /* wave one off, put it back, wave it again */
     await page.click('[data-t="task-wave"][data-v="desk-col"]');
