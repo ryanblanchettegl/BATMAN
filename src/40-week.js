@@ -1,6 +1,6 @@
 /* ---------- the week ---------- */
-function weekShows(S,P){
-  var c=cal(S.week),out=P.shows.map(function(sh){return {id:sh.id,name:sh.name,brand:sh.brand||null,mult:sh.mult};});
+function weekShows(S,P,w){
+  var c=cal(w==null?S.week:w),out=P.shows.map(function(sh){return {id:sh.id,name:sh.name,brand:sh.brand||null,mult:sh.mult};});
   if(c.wom===4)out.push({id:'big',big:true,flag:c.month===P.flagship,brand:null,name:P.name+' '+dbOf(S).events[c.month],rule:(dbOf(S).rules&&dbOf(S).rules[c.month])||null});
   return out;
 }

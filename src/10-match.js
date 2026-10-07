@@ -86,9 +86,12 @@ function pop(ws){
   var o=avg(ws.map(function(w){return w.ovr;})),f=ws[0].align==='F';
   return o>=85?(f?'the roof comes off':'deafening boos'):(o>=65?(f?'a big cheer':'loud boos'):(o>=45?(f?'a decent hand':'some jeers'):'barely a reaction'));
 }
+/* the player's show is in the next city on the road (src/91-road.js). The pick is still made and thrown away, so the
+   seeded generator stays in step with games saved before there was a road. */
 function venueFor(S,P,cap){
-  var c=pick(S,P.cities||['the city']);
-  return c+' '+(cap<=1000?'Armory':(cap<=2500?'Civic Auditorium':(cap<=6000?'Fieldhouse':(cap<=13000?'Coliseum':(cap<=30000?'Arena':'Stadium')))));
+  pick(S,P.cities||['the city']);
+  var n=S.rdn||0;S.rdn=n+1;
+  return venueName(roadCity(S,P,n),cap);
 }
 function nth(n){return ['zero','first','second','third','fourth','fifth','sixth','seventh','eighth','ninth','tenth'][n]||(n+'th');}
 function weeksAgo(S,w){var d=S.week-w;return d<=0?'earlier tonight':(d===1?'last week':d+' weeks ago');}

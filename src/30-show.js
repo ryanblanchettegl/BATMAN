@@ -30,7 +30,7 @@ function showStart(S,P,show,card){
   card.forEach(function(m){var ids=flat(m.sides);for(var x=0;x<ids.length;x++)for(var y=x+1;y<ids.length;y++){var f=feudOf(S,ids[x],ids[y]);if(f&&f.heat>heat)heat=f.heat;}});
   rep.mainStar=star;
   if(!S.cal){
-    var hype=clamp(1+(star-(P.starB[key]||star))/80+heat/500+ADV_H[P.adv]+(isPl&&S.hype?S.hype:0)+(isPl?faceHype(S,P,card):0),0.8,1.4),dm=TIX_D[P.tix],d=demand(P,show,1)*(isPl?tourBoost(S,P)*tasteDraw(S,P,card,rep):1),cap=capFor(d);
+    var hype=clamp(1+(star-(P.starB[key]||star))/80+heat/500+ADV_H[P.adv]+(isPl&&S.hype?S.hype:0)+(isPl?faceHype(S,P,card):0),0.8,1.4),dm=TIX_D[P.tix],d0=demand(P,show,1)*(isPl?tourBoost(S,P):1),d=d0*(isPl?tasteDraw(S,P,card,rep):1),cap=capFor(d0);   // the building was booked before the card was
     rep.hype=hype;rep.cap=cap;rep.att=Math.round(Math.min(cap,d*hype*dm));rep.sellout=rep.att>=cap;
     rep.energy=isPl?clamp((hype*dm-1)*9,-2,2):0;
     if(isPl){rep.venue=venueFor(S,P,cap);rep.ann=(deskNames(S,P)||P.ann).slice();var air=airStart(S,P,show);if(air){rep.ep=air.ep;rep.net=air.net;if(air.occ)rep.occ=air.occ;}S.hype=0;
