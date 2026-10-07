@@ -91,6 +91,7 @@ const { dots, bar } = require('./maplib.js');
       <p>This crowd expects <b>${D.exp}</b>: matches of <b>${D.bar}</b> or better.</p><p><span class="bt y">Book the next show</span></p>
       <p style="border-top:1px solid var(--dgrey);padding-top:.2em"><b>Backstage:</b> ${D.ap} action points, <span class="rd">2 at your door</span></p><p><span class="bt">Go backstage</span><span class="bt g">Last night</span></p>
       <p class="mut">Coming up: All Hallows' Eve in 3 weeks.</p></div></div></div>`;
+  require('fs').writeFileSync(__dirname + '/desk.html', desk);
   await shot('desk-window-onescreen', 'desk', desk, false);
   /* the road window on today's desk, whole page */
   await go(page, 'backstage'); await go(page, 'desk'); await page.waitForTimeout(250);
