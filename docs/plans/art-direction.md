@@ -323,12 +323,10 @@ These only become possible after the steps above. None is promised.
 6. **Who may change a company's mark.** Only the owner, or the booker too (section 3a)?
 7. **The old look.** While pages are moved over one at a time, the game will have both looks at once. Is that acceptable in the published copy, or should the new look ship only when a whole section is done?
 
-## 10. Before anything else next session
+## 10. Where the work stands
 
-Version 0.38 is committed but not published. It holds items 1, 2, 3, 5, 6, 7 and 8 of the outside playtest (`TASKS.md`, section 0o): the letter grade is now the show against its own crowd, one verdict everywhere, the owner's trust shown moving, and targets that say Hit or Missed.
+- 7 October: version 0.38 passed the full test run and is published. The live page's version id is `1791393273-993d` (Version 49). Read the live page and check that id before the next publish.
+- 7 October: the game was renamed EWF Wrestling Manager (`TASKS.md`, the decisions table).
+- 7 October: Version A, step 1 is done: the window kit (`app/src/kit/win.tsx`, `app/styles/win.css`, the kit sheet at `go('kit')`, `app/tests/kit.js`). Pop-ups wear the new look. Next is step 2, the bottom line and the SPACE key.
 
-1. Run the full test suite on the current build. The last full run was partly cut short: roster failed (it has failed under load before and was not re-run), and calls and company did not finish.
-2. Read the live page, confirm its version id is still `1791332227-7383`, and publish 0.38.
-3. Then start Version A above.
-
-Still open from the playtest and not part of the art work: item 4 (stretch the stars so two is a bad match and four and a half is rare) and Ryan's call that every difficulty should need the player. Both are balance work and both move every crowd's expectations. Do them in a version of their own, not mixed in with the new look.
+Still open from the playtest and not part of the art work: item 4 (stretch the stars so two is a bad match and four and a half is rare) and Ryan's call that every difficulty should need the player. Both are balance work and both move every crowd's expectations. Do them in a version of their own, not mixed in with the look.

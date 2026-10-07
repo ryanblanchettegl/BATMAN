@@ -14,8 +14,10 @@ export function dataAttrs(t?: string, d?: Data): Record<string, string> {
 }
 
 /* ---------- controls ---------- */
-export function Btn(p: { t?: string; d?: Data; kind?: 'go' | 'sm' | 'danger'; on?: boolean; disabled?: boolean; id?: string; label?: string; cls?: string; onClick?: () => void; children?: ComponentChildren }) {
-  return <button type="button" id={p.id} class={'btn' + (p.kind ? ' ' + p.kind : '') + (p.on ? ' on' : '') + (p.cls ? ' ' + p.cls : '')} disabled={p.disabled} aria-label={p.label} aria-pressed={p.on == null ? undefined : p.on} onClick={p.onClick} {...dataAttrs(p.t, p.d)}>{p.children}</button>;
+/** A button. `kind`: 'go' moves things on (yellow), 'less' is the lesser choice (grey), 'danger' is the one that hurts
+    (red), 'sm' is a small switch (teal). `cost` is shown at the right end of a button that costs something. */
+export function Btn(p: { t?: string; d?: Data; kind?: 'go' | 'sm' | 'danger' | 'less'; on?: boolean; disabled?: boolean; id?: string; label?: string; cls?: string; cost?: ComponentChildren; onClick?: () => void; children?: ComponentChildren }) {
+  return <button type="button" id={p.id} class={'btn' + (p.kind ? ' ' + p.kind : '') + (p.on ? ' on' : '') + (p.cls ? ' ' + p.cls : '')} disabled={p.disabled} aria-label={p.label} aria-pressed={p.on == null ? undefined : p.on} onClick={p.onClick} {...dataAttrs(p.t, p.d)}>{p.children}{p.cost != null && <span class="cost">{p.cost}</span>}</button>;
 }
 export interface TabItem { id: string; label: ComponentChildren; t?: string; d?: Data }
 /** A row of buttons that switches between pages or views. One is always pressed. */
@@ -60,7 +62,9 @@ export function Head(p: { eyebrow?: ComponentChildren; title: ComponentChildren;
 }
 
 /* ---------- small pieces ---------- */
-export function Tag(p: { kind?: 'face' | 'heel' | 'gold' | 'good' | 'bad' | 'warn'; children: ComponentChildren }) { return <span class={'tag' + (p.kind ? ' ' + p.kind : '')}>{p.children}</span>; }
+/** A one-word tag. On a dark page it is the word in brackets; inside a grey window it is a small filled box.
+    'info' (blue) and 'off' (grey) are for windows. */
+export function Tag(p: { kind?: 'face' | 'heel' | 'gold' | 'good' | 'bad' | 'warn' | 'info' | 'off'; children: ComponentChildren }) { return <span class={'tag' + (p.kind ? ' ' + p.kind : '')}>{p.children}</span>; }
 /** A wrestler's name in their alignment colour. */
 /** A wrestler's name in their alignment colour. Selecting it opens their pop-up profile; `plain` draws it as text only. */
 export function Name(p: { w: W; plain?: boolean }) {
@@ -119,10 +123,10 @@ export function Txt(p: { children: string | null | undefined }) {
   return <>{out}</>;
 }
 export function Side(p: { w: W }) { return <Tag kind={p.w.align === 'F' ? 'face' : 'heel'}>{p.w.align === 'F' ? 'Face' : 'Heel'}</Tag>; }
-/** Ten-block text meter for a 0 to 100 value. */
-export function Meter(p: { v: number; kind?: 'hot' | 'cool' | 'au' }) {
-  const n = Math.max(0, Math.min(10, Math.round(p.v / 10)));
-  return <span class={'meter' + (p.kind ? ' ' + p.kind : '')} role="img" aria-label={Math.round(p.v) + ' out of 100'}>{'█'.repeat(n)}<i>{'░'.repeat(10 - n)}</i></span>;
+/** A text meter in blocks for a 0 to 100 value: ten wide, or `n` wide (five or eight) where space is tight. */
+export function Meter(p: { v: number; kind?: 'hot' | 'cool' | 'au'; n?: number }) {
+  const w = p.n || 10, n = Math.max(0, Math.min(w, Math.round(p.v / 100 * w)));
+  return <span class={'meter' + (p.kind ? ' ' + p.kind : '')} role="img" aria-label={Math.round(p.v) + ' out of 100'}>{'█'.repeat(n)}<i>{'░'.repeat(w - n)}</i></span>;
 }
 /** The 18-segment gauge from the Office dashboard. `frac` is 0 to 1. */
 export function Gauge(p: { frac: number }) {
@@ -157,3 +161,4 @@ export function teamName(t: any): string { const S = G.S; return S.w[t.m[0]].nam
 export * from './charts';
 export * from './portrait';
 export * from './window';
+export * from './win';

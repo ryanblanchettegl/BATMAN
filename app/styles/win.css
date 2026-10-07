@@ -1,0 +1,126 @@
+/* The new look (docs/plans/art-direction.md, section 2): grey desktop windows on the blue desktop.
+   One kit, used by every page as it is moved over. Old panels keep their own styles until then.
+   Building blocks are in app/src/kit/win.tsx: Desktop, Win, Group, Line, ListBox, Row, Answer.
+   Inside a window Btn, Tag and Meter draw themselves for a grey background. */
+
+/* a page of windows: the gaps, and room for the shadows on the right and the bottom */
+.desktop{flex:1 1 0;min-height:0;min-width:0;display:grid;gap:1.15em 2.6ch;padding:0 1ch .55em 0;color:var(--k);line-height:1.26}
+
+/* ---------- the window ---------- */
+.wn{background:var(--grey);color:var(--k);box-shadow:1ch .55em 0 rgba(0,0,0,.55);border:2px solid var(--white);border-right-color:var(--dgrey);border-bottom-color:var(--dgrey);min-width:0;min-height:0;display:flex;flex-direction:column}
+.wn>.ttl{background:var(--blue);color:var(--white);padding:0 1ch;display:grid;grid-template-columns:minmax(4ch,1fr) minmax(0,auto) minmax(max-content,1fr);gap:1ch;flex:none;white-space:nowrap}
+.wn>.ttl h2{color:var(--yellow);text-transform:none;text-align:center;overflow:hidden;text-overflow:ellipsis}
+.wn>.ttl>span:last-child{text-align:right}
+.wn.hot>.ttl{background:var(--dred)}
+.wn.gold>.ttl{background:#806000}
+.wn>.bd{padding:.4em 1.2ch .45em;flex:1;min-height:0;min-width:0;overflow:hidden}
+.wn p{margin:0 0 .12em}
+
+/* text on grey: black, blue for names and headline figures, dark red for trouble, dark green for good news */
+.wn b{color:var(--k)}
+.wn .muted,.wn .empty{color:#444}
+.wn .hl,.wn .bl{color:var(--blue)}
+.wn .bad,.wn .rd{color:var(--dred)}
+.wn .good,.wn .gn{color:#006000}
+.wn .gold{color:#6a4a00}
+.wn .big{font-size:1.32em;line-height:1.1}
+.wn .lnk{color:var(--blue)} .wn .lnk.heel{color:var(--dred)} .wn .lnk.gold{color:#6a4a00}
+.wn .lnk:hover,.wn .lnk:focus-visible{background:var(--k);color:var(--yellow)}
+.wn :focus-visible{outline:2px solid var(--k);outline-offset:1px}
+.wn canvas.pt{border-color:var(--k)}
+.wn hr{border:0;border-top:1px solid var(--dgrey);margin:.3em 0}
+
+/* ---------- the group box: a thin frame with its heading in red on the top edge ---------- */
+.grp{border:2px solid var(--dgrey);padding:.55em 1ch .2em;position:relative;margin:.62em 0 .25em;min-width:0}
+.grp>h3{position:absolute;top:-.72em;left:1ch;max-width:calc(100% - 2ch);background:var(--grey);padding:0 .6ch;color:var(--dred);font-size:1em;line-height:1.26;text-transform:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+/* a label and its value, the label in a fixed column so values line up */
+.kvl{display:flex;gap:0 1ch}
+.kvl>.l{width:var(--lw,11ch);color:#333;flex:none}
+.kvl>.v{min-width:0;flex:1}
+
+/* ---------- buttons on grey: green with white text and a hard black shadow ---------- */
+.wn .btn,.win .btn{background:var(--dgreen);color:var(--white)}
+.wn .btn:hover,.win .btn:hover{background:var(--green);color:var(--k)}
+.wn .btn.go,.win .btn.go{background:var(--yellow);color:var(--k)}
+.wn .btn.go:hover,.win .btn.go:hover{background:var(--white)}
+.wn .btn.sm,.win .btn.sm{background:var(--dcyan);color:var(--k)}
+.wn .btn.sm:hover,.win .btn.sm:hover{background:var(--cyan)}
+.wn .btn.on,.wn .btn.on:hover,.win .btn.on,.win .btn.on:hover{background:var(--yellow);color:var(--k)}
+.btn.less{background:var(--dgrey);color:var(--white)}
+.wn .btn.less,.win .btn.less{background:var(--dgrey);color:var(--white)}
+.wn .btn.less:hover,.win .btn.less:hover,.btn.less:hover{background:#777;color:var(--white)}
+.wn .btn.danger,.win .btn.danger{background:var(--dred);color:var(--white)}
+.wn .btn.danger:hover,.win .btn.danger:hover{background:var(--red);color:var(--k)}
+.wn .btn[disabled],.wn .btn[disabled]:hover,.win .btn[disabled],.win .btn[disabled]:hover{background:#8c8c8c;color:#444;box-shadow:none}
+.btn>.cost{margin-left:1ch;color:#bff5bf}
+.btn.go>.cost,.btn.sm>.cost,.btn:hover>.cost{color:#444}
+.btn.less>.cost,.btn.danger>.cost{color:#ddd}
+.btn.wide{display:flex;justify-content:space-between;gap:2ch;width:calc(100% - .6ch);text-align:left}
+
+/* an answer drawn as a wide bar with a coloured left edge, the way the calls on the broadcast are */
+.ans{font:inherit;color:var(--k);text-align:left;cursor:pointer;width:100%;box-sizing:border-box;border:2px solid var(--dgrey);border-left:1ch solid var(--dgreen);border-radius:0;padding:.08em 1ch .1em;background:#bdbdbd;margin:.32em 0;display:flex;justify-content:space-between;gap:1ch;align-items:center}
+.ans:hover,.ans:focus-visible{background:var(--white)}
+.ans.go{border-left-color:var(--yellow)} .ans.danger{border-left-color:var(--dred)} .ans.less{border-left-color:var(--dgrey)}
+.ans>small{color:#444;font-size:1em;white-space:nowrap}
+.ans[disabled]{color:#555;cursor:not-allowed;background:#9c9c9c}
+
+/* ---------- tags on grey: a small filled box with one word (in windows and in pop-ups) ---------- */
+.wn .tag,.win .tag{display:inline-block;padding:0 .7ch;background:var(--dgrey);color:var(--white);text-transform:none;margin-right:.9ch;white-space:nowrap}
+.wn .tag::before,.wn .tag::after,.win .tag::before,.win .tag::after{content:none}
+.wn .tag.bad,.wn .tag.heel,.win .tag.bad,.win .tag.heel{background:var(--dred);color:var(--white)}
+.wn .tag.good,.win .tag.good{background:#006000;color:var(--white)}
+.wn .tag.info,.wn .tag.face,.win .tag.info,.win .tag.face{background:var(--blue);color:var(--white)}
+.wn .tag.warn,.wn .tag.gold,.win .tag.warn,.win .tag.gold{background:var(--yellow);color:var(--k)}
+.wn .tag.off,.win .tag.off{background:var(--dgrey);color:var(--white)}
+
+/* ---------- boxes to type in and pick from, on grey: white, sunk into the window ---------- */
+.wn :is(select,input[type=text],input[type=number],input[type=search]),.win :is(select,input[type=text],input[type=number],input[type=search]){background:var(--white);color:var(--k);border:2px solid var(--dgrey);border-right-color:var(--white);border-bottom-color:var(--white)}
+.wn input::placeholder,.win input::placeholder{color:#777}
+
+/* ---------- bars on grey ---------- */
+.wn .meter{color:#006000;letter-spacing:-.04em}
+.wn .meter i{color:#777}
+.wn .meter.hot{color:var(--dred)} .wn .meter.cool{color:var(--blue)} .wn .meter.au{color:#806000}
+
+/* ---------- the list box: teal, sunk into the window, one line an item, the picked line green ---------- */
+.lb{background:var(--dcyan);border:2px solid var(--dgrey);border-right-color:var(--white);border-bottom-color:var(--white);overflow:hidden;min-width:0}
+.lb .hd,.lb .rw{display:grid;grid-template-columns:var(--cols,minmax(0,1fr));gap:1.2ch;align-items:center;padding:0 1ch;box-sizing:border-box;width:100%}
+.lb .hd{background:var(--grey);border-bottom:2px solid var(--dgrey);color:var(--blue)}
+.lb .rw{border:0;border-bottom:1px solid #007c7c;padding-block:2px;background:none;color:var(--k);font:inherit;text-align:left;border-radius:0}
+.lb button.rw{cursor:pointer}
+.lb .rw:last-child{border-bottom:0}
+.lb .rw>*{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+.lb .rw .r,.lb .hd .r{text-align:right}
+.lb button.rw:hover{background:#18c0c0}
+.lb .rw.sel,.lb button.rw.sel:hover{background:var(--dgreen);color:var(--white)}
+.lb .rw.sel *{color:var(--white)}
+.lb .rw.sel .tag{outline:1px solid var(--white)}
+.lb .rw.sel .meter i{color:#9fd89f}
+.lb button.rw:focus-visible{outline:2px solid var(--yellow);outline-offset:-2px}
+.lb .meter i{color:#007c7c}
+.lb .bad{color:#7a0000} .lb .good{color:#004800}
+.lb .rw canvas.pt{display:block;width:1.2em;height:1.2em;border:1px solid var(--k)}
+.lb .rw.sel canvas.pt{border-color:var(--yellow)}
+.wn canvas.pt.m{width:3.6em;height:3.6em}
+
+/* ---------- pop-ups wear the same look: a bevel, a blue title bar, the title centred in yellow ---------- */
+.win{border:2px solid var(--white);border-right-color:var(--dgrey);border-bottom-color:var(--dgrey);box-shadow:1.4ch .8em 0 rgba(0,0,0,.6)}
+.win .wt{background:var(--blue);color:var(--yellow);text-transform:none;align-items:center}
+.win .wt>span{flex:1;text-align:center;min-width:0}
+.win .wt::before{content:'';width:3ch;flex:none}
+.win .wt button{color:var(--white)}
+.win .wt button:focus-visible{outline:2px solid var(--white)}
+.win.hot .wt{background:var(--dred)}
+.win.gold .wt{background:#806000}
+/* text in a pop-up follows the same colours as text in a window: nothing bright on grey */
+.win .hl{color:var(--blue)} .win .gold{color:#6a4a00} .win .face{color:var(--blue)} .win .heel{color:var(--dred)} .win .warn{color:#7a007a}
+.win .muted,.win .empty{color:#444} .win .good{color:#006000} .win .bad{color:var(--dred)}
+.win .wb > .panel > h2,.win .wb .inwin > .panel > h2{color:var(--dred);text-transform:none}
+.win .meter,.cards .win .kv .meter{color:#006000} .win .meter i,.cards .win .kv .meter i{color:#777} .win .meter.hot,.cards .win .kv .meter.hot{color:var(--dred)} .win .meter.cool,.cards .win .kv .meter.cool{color:var(--blue)} .win .meter.au,.cards .win .kv .meter.au{color:#806000}
+/* when a pop-up has its own yellow button, the one that only closes it is the lesser choice */
+.win:has(.wb .btn.go) .wf > #modal-ok{background:var(--dgrey);color:var(--white)}
+.win:has(.wb .btn.go) .wf > #modal-ok:hover{background:#777}
+
+/* the kit sheet: every part of the kit on one screen (a page for building and testing, not on any menu) */
+.kitsheet{grid-template-columns:minmax(0,1.15fr) minmax(0,1.15fr) minmax(0,1fr);grid-template-rows:minmax(0,1.4fr) minmax(0,1fr)}

@@ -60,6 +60,7 @@ async function fits(page) {
     const d = document.documentElement, bad = [], over = (sel, name) => { const e = document.querySelector(sel); if (e && e.scrollHeight - e.clientHeight > 1) bad.push(name + ' is ' + (e.scrollHeight - e.clientHeight) + 'px too tall'); };
     if (d.scrollHeight - d.clientHeight > 1) bad.push('the page scrolls by ' + (d.scrollHeight - d.clientHeight) + 'px');
     over('.main', 'the page area'); over('.b1-pane', 'the pane beside the sheet'); over('.b1-pane > .panel', 'the panel in the pane'); over('.b1-rows', 'the run sheet'); over('.lv-main', 'the broadcast'); over('.lv-night', 'tonight’s run sheet'); over('.callbox', 'the call box'); over('.a1-list', 'the list of what the night left'); over('.a1-pane', 'the pane beside it');
+    document.querySelectorAll('.wn > .bd').forEach(e => { if (e.scrollHeight - e.clientHeight > 1) bad.push('the window “' + ((e.parentElement.querySelector('.ttl h2') || {}).textContent || '') + '” is ' + (e.scrollHeight - e.clientHeight) + 'px too tall'); });
     const st = document.querySelector('.ffoot'); if (st && st.getBoundingClientRect().bottom > window.innerHeight + 1) bad.push('the status line is off the screen');
     return bad.join('; ');
   });

@@ -7,6 +7,8 @@ const MODES = (process.env.MODES || 'desk,tablet').split(',');
 const fails = [];
 const ok = (mode, label, pass, detail) => { console.log(mode.padEnd(6), pass ? 'ok  ' : 'FAIL', label + (detail ? ': ' + detail : '')); if (!pass) fails.push(mode + ' ' + label); };
 const txt = (page, sel) => page.$eval(sel, e => e.innerText.replace(/\s+/g, ' ').trim()).catch(() => '');
+/* the notes beside the sheet turn pages when there are many: read every page, then go back to the first */
+const paneAll = async page => { let out = await txt(page, '.b1-pane'), n = 0; for (let i = 0; i < 8; i++) { const nx = await page.$('.b1-pane [data-t="pg-next"]:not([disabled])'); if (!nx) break; await nx.click(); n++; out += ' ' + await txt(page, '.b1-pane'); } for (; n > 0; n--) { const pv = await page.$('.b1-pane [data-t="pg-prev"]:not([disabled])'); if (pv) await pv.click(); } return out; };
 const has = async (page, sel) => !!(await page.$(sel));
 /** All of an element's text, including the part of a line that has not typed itself out yet. */
 const whole = (page, sel) => page.$eval(sel, e => e.textContent.replace(/\s+/g, ' ').trim()).catch(() => '');
@@ -95,7 +97,7 @@ async function run(mode) {
       /* the next card: leave them off and the staff say so */
       await nextWeek(page); await page.click('[data-t="suggest"]');
       await state(page, (S, a) => { S.card = S.card.filter(m => !m.sides.some(s => s.includes(a.id))); }, face); await redraw(page);
-      ok(mode, 'left off the next card, the notes beside the sheet say the crowd will feel it', (await txt(page, '.b1-pane')).includes('The shows are built around ' + face.name), (await txt(page, '.b1-pane')).slice(0, 200));
+      ok(mode, 'left off the next card, the notes beside the sheet say the crowd will feel it', (await paneAll(page)).includes('The shows are built around ' + face.name), (await txt(page, '.b1-pane')).slice(0, 200));
       await fit('the card with that warning');
       await page.click('[data-t="suggest"]');
       /* the Company page and their profile */
