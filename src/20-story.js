@@ -2,7 +2,7 @@
 function promoScore(S,w,bonus){return clamp(Math.round(0.62*micOf(S,w)+0.38*w.ovr+(bonus||0)+(S.booker&&w.promo===S.player?S.booker.sk.creative:0)+rnd(S)*8-4),5,99);}
 function angle(head,text,ov){return {k:'angle',head:head,text:text,ov:clamp(Math.round(ov),5,99)};}
 var ACTN=['','Spark','Escalation','Twist','Blow-off'];
-function feudAct(f){return f.res?4:(f.heat>=60?(f.twist?4:3):(f.heat>=30?2:1));}
+function feudAct(f,S){if(S&&f.promo!=null)return feudActCal(S,f);return f.res?4:(f.heat>=60?(f.twist?4:3):(f.heat>=30?2:1));}
 function nextBigName(S,P){var w=S.week+(4-cal(S.week).wom);return P.name+' '+dbOf(S).events[cal(w).month];}
 
 /* Feud storylets: each feud moves through four acts, and each act unlocks different beats.
@@ -68,11 +68,12 @@ function genAngle(S,P,show,ctx){
   // feud storylets
   activeFeuds(S).forEach(function(f){
     if(f.promo!==P.id||!ok(f.a[0])||!ok(f.b[0]))return;
-    var a=S.w[f.a[0]],b=S.w[f.b[0]],h=a.align==='H'?a:(b.align==='H'?b:null),act=feudAct(f);
+    var a=S.w[f.a[0]],b=S.w[f.b[0]],h=a.align==='H'?a:(b.align==='H'?b:null),act=feudAct(f,S),seg=feudSeg(S,f);
     var c={S:S,P:P,f:f,a:a,b:b,h:h,o:h?(h===a?b:a):null,show:show,ok:ok,mark:mark,left:ctx.left||{}};
     FEUDLETS.forEach(function(sl){
       if(sl.acts.indexOf(act)<0||!sl.ok(c))return;
-      opts.push([sl.w*(1+f.heat/100)*(f.beat===sl.id?0.12:1),function(){mark(a,b);f.beat=sl.id;var r=sl.run(c);r.feud=f.id;r.act=feudAct(f);return r;}]);
+      if(sl.twist&&f.tww!=null&&f.tww>=seg.s0)return;   // one twist to a stretch of the story
+      opts.push([sl.w*(1+f.heat/100)*(f.beat===sl.id?0.12:1),function(){mark(a,b);f.beat=sl.id;if(sl.twist)f.tww=S.week;var r=sl.run(c);r.feud=f.id;r.act=feudAct(f,S);return r;}]);
     });
   });
   function interview(){

@@ -1,6 +1,6 @@
 # Plan: short, medium and long feuds, and rivals
 
-Concept only (8 October). Nothing here is built. Pictures: `docs/mockups/storylines/`.
+Concept 8 October. Pictures: `docs/mockups/storylines/`. Step 1 of the build order is done (`src/21-feudlen.js`, `node test-stories.js`); the rest is not built. Ryan's answers to the questions at the end are still to come, so the build follows the defaults written here.
 
 Ryan, 8 October: "We want short, medium and long feuds. We also want rivals."
 
@@ -16,7 +16,7 @@ So two things are missing: a story has no length and no planned end, and nothing
 
 ## 1. Three lengths of feud
 
-The player picks a length when a story starts. The length sets how many acts it has, how fast heat can climb, where it ends, what the ending is worth and what it costs.
+The player picks a length when a story starts. The length sets how many acts it has, how hot it can get, where it ends, what the ending is worth and what it costs.
 
 | | Short | Medium | Long |
 |---|---|---|---|
@@ -24,10 +24,9 @@ The player picks a length when a story starts. The length sets how many acts it 
 | Acts | Spark, Blow-off | Spark, Escalation, Twist, Blow-off | Spark, Escalation, then chapters: each chapter is a Twist and a match, and the last is the Blow-off |
 | Ends at | a weekly show, or the next big event if it is close | the next big event at least five weeks away | two or three big events; the last is the biggest of the season |
 | Heat can reach | Hot (60) | White hot (85) | 100 |
-| Heat a week, at most | fast: +14 | +10 | +7 |
 | Cost to start | 1 booking power | 2 | 3 |
 | Ends with | one match | one match with stakes if a twist set them | a match at each chapter end, the last one with the biggest stakes |
-| If you miss the ending | cools fast, gone in two weeks | cools, one week of grace | a chapter can slip to the next big event once |
+| If you miss the ending | one week of grace, then cools fast | moves once to the next big event, then cools | a chapter moves once; missed again it is lost and the story goes on |
 | What it leaves | a little popularity, a winner | a lift for both, maybe rivals | rivals for sure, a lift for both, a line in History |
 
 What each length is for:
@@ -38,7 +37,7 @@ What each length is for:
 
 ### Planned endings (this is 6.9 in the art direction plan)
 
-- Every feud gets `len: 's' | 'm' | 'l'` and `end: {w, show}`. A long feud also gets `ch: [{w, show, done, won}]`, its chapter ends.
+- Every feud gets `len: 's' | 'm' | 'l'` and `pay`, the week it is meant to end (`end` was already the week a feud ended). A long feud also gets `ch`, the weeks of its chapter ends, `chd`, how many have closed, and `chw`, who won each.
 - The ending is set when the story starts (the default is the one the table says) and can be moved on the Storylines page.
 - `feudAct()` reads the length and the weeks to the ending, not heat alone. Heat says how well it is going; the calendar says where it is.
 - Paid off on its ending: a lift (bigger for longer). Run past its ending: it cools. Ended early: no payoff.
@@ -115,7 +114,7 @@ Two people can be rivals in the ring and friends in catering, or hate each other
 
 One step at a time, each shown before the next.
 
-1. Engine: `len`, `end` and `ch` on feuds; `feudAct()` from the calendar; the payoff and the cooling; old saves get a length from their heat (version bump and migration). `test-uni.js` 60 weeks clean, and a new `test-stories.js`.
+1. (Built 8 October.) Engine: `len`, `pay` and `ch` on feuds; `feudAct()` from the calendar; the payoff and the cooling; old saves get a length the first time a feud is read, so no version bump was needed. `test-uni.js` 60 weeks clean, and a new `test-stories.js`.
 2. Start a story pop-up with the three lengths.
 3. The season calendar on the Storylines page, with the bars and the checks.
 4. Rivalries in the engine: `S.rv`, how one begins, the series, the level, the crowd lift, the rekindle.
@@ -130,3 +129,12 @@ One step at a time, each shown before the next.
 3. Can a long story run through a title change in the middle (the title moves at a chapter end and the story goes on)? This plan says yes.
 4. Should a tag team or a stable be able to have a rival too, or only one person against one person to start?
 5. "Start a rivalry" on the Storylines page becomes "Start a story". Rivalries are made by stories, not bought. Agree?
+
+## What step 1 decided
+
+- A story nobody chose a length for runs medium; a dream match runs short. Long is only by choice (step 2) or, later, a rival company's story of the year.
+- A story is not settled before its night, even if the two meet at an earlier big event. That match heats it instead.
+- On its night the autobooker books it first, for every company, and its people are kept out of other title matches; if one of them holds a title, the match is for the title.
+- A weekly limit on how fast heat climbs was tried and dropped: it made a call from the gorilla position do nothing late in a busy week.
+- What the ending is worth: short 0.6, medium 1, long 1.6, times the heat (a cold blow-off is worth half), times 0.7 if late. Both people's mood rises when it lands on its night.
+- Over 60 weeks of every company the numbers stay where they were: no errors, rating against expectation within noise. Fewer stories fizzle (in one year of the second company: 24 ended, 20 on their night, 4 fizzled).

@@ -50,9 +50,10 @@ E.comingUp=function(S){
   var nb=E.nextBig(S);L.push({n:nb.week-S.week,t:nb.name+' '+wk(nb.week-S.week),to:'booking',k:'big'});
   var fs=activeFeuds(S).filter(function(f){return f.promo===P.id;}).sort(function(a,b){return b.heat-a.heat;});
   fs.slice(0,6).forEach(function(f){
-    var act=feudAct(f),big=nb.week-S.week;
-    if(f.heat>=60&&big<=2)L.push({n:big,t:feudLabel(S,f)+' is ready to end at '+nb.name,to:'storylines',k:'feud'});
-    else if(act<3&&(f.heat>=52&&f.heat<60||f.heat>=24&&f.heat<30))L.push({n:1,t:feudLabel(S,f)+' is one good show from its next act',to:'storylines',k:'feud'});
+    var act=feudAct(f,S),big=nb.week-S.week;
+    var pl=E.feudPlan(S,f),nxt=pl.ch?pl.ch.filter(function(c){return !c.done;})[0]:null,ew=nxt?nxt.w:pl.pay,en=ew-S.week;
+    if(en>=0&&en<=2)L.push({n:en,t:feudLabel(S,f)+(nxt&&nxt.w!==pl.pay?': a chapter ends at ':' ends at ')+(nxt?nxt.at:pl.at)+' '+wk(en),to:'storylines',k:'feud'});
+    else if(pl.late)L.push({n:0,t:feudLabel(S,f)+' is past its ending and cooling',to:'storylines',k:'feud'});
   });
   var c=rosterOf(S,P.id).filter(function(w){return !w.nw&&w.con!=null&&w.con>=2&&w.con<=6;}).sort(function(a,b){return b.ovr-a.ovr;})[0];
   if(c)L.push({n:c.con,t:c.name+'’s contract ends '+wk(c.con),to:'roster',k:'con'});

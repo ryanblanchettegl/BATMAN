@@ -361,7 +361,11 @@ function doMatch(S,P,show,m,i,n,rep,used){
     feud.matches++;
     if(win>=0){if(m.sides[win].some(function(id){return feud.a.indexOf(id)>=0;}))feud.aw++;else if(m.sides[win].some(function(id){return feud.b.indexOf(id)>=0;}))feud.bw++;}
     heatUp(S,feud,5+(fin==='cheap'||fin==='interf'?5:0),(win>=0?names(winners)+' beat '+names(losers):'A draw')+(fin==='cheap'||fin==='interf'?' with a cheap finish':'')+' at '+show.name);
-    if(win>=0&&(big||stip!=='std')&&feud.heat>=(show.rule==='no_turning_back'?45:60)&&fin!=='dq'&&fin!=='co')feudMsg=settleFeud(S,P,show,feud,winners,losers,isPl);
+    var due=win>=0&&fin!=='dq'&&fin!=='co'?feudDue(S,feud,show):null;
+    // a medium story with a gimmick match on a weekly show after its ending has passed is a blow-off too
+    if(!due&&win>=0&&fin!=='dq'&&fin!=='co'&&stip!=='std'&&feud.len==='m'&&S.week>=feud.pay)due='end';
+    if(due==='chapter')feudMsg=closeChapter(S,P,show,feud,winners,losers,isPl);
+    else if(due==='end')feudMsg=settleFeud(S,P,show,feud,winners,losers,isPl);
   }
   if(S.cal)return seg;
   // report text
@@ -406,10 +410,11 @@ function doMatch(S,P,show,m,i,n,rep,used){
   return seg;
 }
 function settleFeud(S,P,show,feud,winners,losers,isPl){
-  feud.res=true;feud.end=S.week;
+  var pm=feudPayMult(S,feud),late=S.week>feud.pay;feud.res=true;feud.end=S.week;
   var full=feud.twist&&feud.finale;
-  winners.forEach(function(w){addOvr(P,w,full?3.5:2.5);w.mom=clamp(w.mom+2,-10,10);});losers.forEach(function(w){addOvr(P,w,full?1.5:1);});
-  var msg='The feud between '+feudLabel(S,feud)+' is settled'+(full?' after a full story, start to finish':'')+'. Both come out of it bigger stars.';
+  winners.forEach(function(w){addOvr(P,w,(full?3.5:2.5)*pm);w.mom=clamp(w.mom+2,-10,10);});losers.forEach(function(w){addOvr(P,w,(full?1.5:1)*pm);});
+  if(!late)winners.concat(losers).forEach(function(w){w.morale=clamp(w.morale+(feud.len==='l'?5:3),0,100);});
+  var msg='The '+FLEN[feud.len].n.toLowerCase()+' story between '+feudLabel(S,feud)+' is settled'+(late?', later than planned':' on the night it was meant to end')+(full?', after a full story, start to finish':'')+'. Both come out of it bigger stars.';
   if(feud.stakes&&/sits out/i.test(feud.stakes)){losers.forEach(function(w){w.away=S.week+4;});msg+=' As agreed, '+names(losers)+' will sit out the next four weeks.';}
   else if(feud.stakes&&/title shot/i.test(feud.stakes)){
     var w0=winners[0],tt=null;P.titles.forEach(function(x){if(!x.tag&&x.g===w0.g&&x.holders.length&&x.holders[0]!==w0.id&&(!x.brand||x.brand===w0.brand)&&(!tt||x.lvl>tt.lvl))tt=x;});

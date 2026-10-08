@@ -326,6 +326,17 @@ Ryan, 4 October: "After a show, it should go back to the Office or your desk, so
 - [ ] The same for every other task on the desk, so everything can be done from the Office: sponsor offers, the venue, contracts that are running out, a vacant title.
 - [ ] The people available are the hired voices on the market. Wrestlers, managers and legends at the desk wait for the character sheet work.
 
+### 0q. Storylines: short, medium and long feuds, and rivals (Ryan, 8 October)
+"We want short, medium and long feuds. We also want rivals." The plan is `docs/plans/storylines.md`; the pictures are `docs/mockups/storylines/`. His five questions in the plan are still open; the build goes on the plan's defaults until he answers.
+
+- [x] **Step 1. Lengths in the engine** (`src/21-feudlen.js`). Every feud has a length (`f.len`: s, m, l) and the week it is meant to end (`f.pay`); a long one has three chapters at big events (`f.ch`, `f.chd`). The act comes from the calendar (`feudAct(f, S)`). A story ends on its night, not before: the autobooker books it there first, for every company, and keeps its people out of other title matches. A medium story that misses its night gets one more big event, then cools; a chapter missed twice is lost. A short story never passes 60 heat, a medium 85. The ending's lift scales with the length and the heat. Old saves get a length the first time a feud is read (no version bump). The story cards say the length and the night. `node test-stories.js`.
+- [ ] Step 2. Start a story: the pop-up with the three lengths.
+- [ ] Step 3. The season calendar on the Storylines page, with the checks.
+- [ ] Step 4. Rivalries in the engine: `S.rv`, how one begins, the series, the level, the crowd lift, the rekindle.
+- [ ] Step 5. The Rivalries window and the rivalry file.
+- [ ] Step 6. Rivals in the file, the Roster, the ear, the desk, the dirt sheet.
+- [ ] Step 7. Rival companies run lengths by model.
+
 ### 0p. The new look: grey desktop windows (decided 6 October; the kit, the key, lights, logos and the desk are built and are version 0.39)
 
 **The plan is `docs/plans/art-direction.md`.** It is the next session's main goal (Ryan, 6 October). It lists the engine work behind every screen, the build order in four versions, and seven questions for him. Company marks from three initials are in it (`docs/mockups/final/company-marks.png`), and so is the logo creator (`docs/mockups/final/logo-creator.png`, section 3a of the plan). The creation suite is section 3b: ten creators mocked up in `docs/mockups/create/` (a federation with the logo creator in it, a move, a show, a belt, a tag team, a stable, a relationship, a storyline, an event, a gimmick).

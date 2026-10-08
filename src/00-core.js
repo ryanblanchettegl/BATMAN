@@ -274,11 +274,12 @@ function startFeud(S,P,a,b,heat,why,opts){
   if(f){f.heat=clamp(Math.max(f.heat,heat),0,100);f.last=S.week;f.log.push({w:S.week,t:why});return f;}
   if(activeFeuds(S).length>=8&&!opts.force)return null;
   f={id:S.nid++,promo:P.id,a:[a.id],b:[b.id],heat:clamp(heat,0,100),start:S.week,last:S.week,matches:0,aw:0,bw:0,log:[{w:S.week,t:why}],title:opts.title||null,kind:opts.kind||'feud',res:false};
+  if(opts.len&&FLEN[opts.len])feudSetLen(S,f,opts.len);else feudPlan(S,f);
   S.feuds.push(f);
   news(S,'story','New rivalry: '+a.name+' vs '+b.name+'.');
   return f;
 }
-function heatUp(S,f,amt,txt){if(amt>0)amt*=(modelOf(S.promos[f.promo]).heat||1)*deskHeat(S,f.promo);if(amt>0&&S.booker&&f.promo===S.player)amt*=(1+0.06*S.booker.sk.creative)*houseHeat(S);f.heat=clamp(f.heat+amt,0,100);f.last=S.week;if(txt){f.log.push({w:S.week,t:txt});if(f.log.length>16)f.log.shift();}if(f.heat>=90&&f.promo===S.player)award(S,'ACH_FEUD_HOT');}
+function heatUp(S,f,amt,txt){if(amt>0)amt*=(modelOf(S.promos[f.promo]).heat||1)*deskHeat(S,f.promo);if(amt>0&&S.booker&&f.promo===S.player)amt*=(1+0.06*S.booker.sk.creative)*houseHeat(S);var rm=feudHeatRoom(S,f,amt);amt=rm.amt;f.heat=amt>0?Math.min(f.heat+amt,Math.max(rm.cap,f.heat),100):clamp(f.heat+amt,0,100);f.last=S.week;if(txt){f.log.push({w:S.week,t:txt});if(f.log.length>16)f.log.shift();}if(f.heat>=90&&f.promo===S.player)award(S,'ACH_FEUD_HOT');}
 function turn(S,w,why){
   // a turn that was teased in the last two weeks lands harder; a wrestler who already turned inside the last year lands softer, and the fans say so
   var built=w.la!=null&&S.week-w.la<=2,tired=w.tw!=null&&S.week-w.tw<52,note='';
@@ -313,6 +314,8 @@ function autoBook(S,P,show){
   var guests=pool.filter(function(w){return w.promo!==P.id;});pool=pool.filter(function(w){return w.promo===P.id;});
   var inPool={};pool.forEach(function(w){inPool[w.id]=1;});
   var titles=showTitles(P,show);
+  // people whose story ends tonight are kept for it: a title match takes them only against each other
+  var resv={};activeFeuds(S).forEach(function(f){if(f.promo===P.id&&feudDue(S,f,show))f.a.concat(f.b).forEach(function(id){resv[id]=1;});});
   function free(w){return inPool[w.id]&&!used[w.id];}
   function take(m,pos){flat(m.sides).forEach(function(id){used[id]=1;});m._p=pos;card.push(m);}
   function byOvr(a,b){return b.ovr-a.ovr;}
@@ -336,17 +339,18 @@ function autoBook(S,P,show){
   function single(a,b,o,pos){o=o||{};var p=clamp(0.5+(a.ovr-b.ovr)/40+(a.mom-b.mom)*0.02+(o.bias||0),0.12,0.9);
     take({mt:'1v1',sides:[[a.id],[b.id]],win:chance(S,p)?0:1,title:o.title||null,stip:o.stip||'std',len:o.len||'M'},pos);}
   function contenders(t){
-    var L=(t.g==='F'?women:men).filter(function(w){return free(w)&&holdLvl(P,w.id)===0&&(!t.brand||big||w.brand===t.brand);});
+    var L=(t.g==='F'?women:men).filter(function(w){return free(w)&&!resv[w.id]&&holdLvl(P,w.id)===0&&(!t.brand||big||w.brand===t.brand);});
     var skip=t.lvl===3?0:(t.lvl===2?3:8);skip=Math.max(0,Math.min(skip,L.length-2));
     return L.slice(skip);
   }
   function titleSingles(t,len,pos){
     if(t.tag)return false;
-    var T=isPl&&S.tourn&&!S.tourn.done&&S.tourn.title===t.id?S.tourn:null,rk=rankFor(S,P,t,5).filter(free);
+    var T=isPl&&S.tourn&&!S.tourn.done&&S.tourn.title===t.id?S.tourn:null,rk=rankFor(S,P,t,5).filter(function(w){return free(w)&&!resv[w.id];});
     if(!t.holders.length){if(T)return false;var c=rk.length>=2?rk:contenders(t);if(c.length<2)return false;single(c[0],c[1],{title:t.id,len:len},pos);return true;}
     var ch=S.w[t.holders[0]],o=null;if(!free(ch))return false;
     rk.forEach(function(w){if(!o&&w.shot===t.id)o=w;});
-    if(!o)activeFeuds(S).forEach(function(f){if(o||f.title!==t.id)return;var id=f.a[0]===ch.id?f.b[0]:(f.b[0]===ch.id?f.a[0]:null);if(id!=null&&free(S.w[id])&&S.w[id].g===t.g)o=S.w[id];});
+    if(!o)activeFeuds(S).forEach(function(f){if(o||(f.title!==t.id&&!(resv[ch.id]&&feudDue(S,f,show))))return;var id=f.a[0]===ch.id?f.b[0]:(f.b[0]===ch.id?f.a[0]:null);if(id!=null&&free(S.w[id])&&S.w[id].g===t.g)o=S.w[id];});
+    if(!o&&resv[ch.id])return false;
     if(!o&&!T){var fresh=rk.filter(function(w){var r=S.recent[P.id+':'+rkey(ch.id,w.id)];return !(r&&S.week-r<4);});if(fresh.length)o=fresh[Math.min(fresh.length-1,Math.floor(rnd(S)*rnd(S)*3))];}
     if(!o&&!T)o=opp(ch,22,function(x){return holdLvl(P,x.id)===0&&(t.lvl>1||x.ovr<=ch.ovr+8);});
     if(!o)return false;
@@ -403,13 +407,14 @@ function autoBook(S,P,show){
   }else{
     if(!(worlds[0]&&(chance(S,0.3)||!worlds[0].holders.length)&&titleSingles(worlds[0],'L',100)))filler(0,'L',G1,100);
   }
-  // the player's running feuds
-  if(isPl){
-    var fs=activeFeuds(S).filter(function(f){return f.promo===P.id;}).sort(function(a,b){return b.heat-a.heat;}),booked=0;
+  // running feuds: a story on the night it is meant to end is booked first, for every company; the player's others as before
+  var fs=activeFeuds(S).filter(function(f){return f.promo===P.id&&(isPl||feudDue(S,f,show));}).sort(function(a,b){return (feudDue(S,b,show)?1:0)-(feudDue(S,a,show)?1:0)||b.heat-a.heat;}),booked=0;
+  if(fs.length){
     fs.forEach(function(f){
-      if(booked>=(big?2:1))return;
+      var due=!!feudDue(S,f,show);
+      if((booked>=(big?2:1)&&!due)||card.length>=n)return;
       var a=S.w[f.a[0]],b=S.w[f.b[0]];if(!free(a)||!free(b)||a.g!==b.g)return;
-      if(big?f.heat>=45:(f.heat>=30&&chance(S,0.35))){single(a,b,{len:big?'L':'M',stip:big&&f.heat>=60?gimmickFor(S,a,b):'std'},70);booked++;}
+      if(due||(big?f.heat>=45:(f.heat>=30&&chance(S,0.35)))){single(a,b,{len:big?'L':'M',stip:big&&f.heat>=60?gimmickFor(S,a,b):'std'},70);booked++;}
     });
   }
   if(L2.length>=2){if(!(wt[0]&&(big||chance(S,0.25)||!wt[0].holders.length)&&titleSingles(wt[0],'M',50)))filler(0,'M',G2,50);}
@@ -433,6 +438,8 @@ function autoBook(S,P,show){
     else take({mt:'4way',sides:ws.map(function(w){return [w.id];}),win:-2,title:null,stip:'std',len:'M'},45);
     while(card.length>n){var lo=card.filter(function(m){return !m.title&&m._p<45;}).sort(function(a,b){return a._p-b._p;})[0];if(!lo)break;card.splice(card.indexOf(lo),1);}
   }});
+  // never more than the show has room for: the least important untitled match goes first
+  var mx=big?10:SLOT_MAX[P.slot];while(card.length>mx){var lw=card.filter(function(m){return !m.title;}).sort(function(a,b){return a._p-b._p;})[0]||card[card.length-1];card.splice(card.indexOf(lw),1);}
   card.sort(function(a,b){return a._p-b._p;});
   shapeAuto(S,P,card);   // the running order: a quick opener first, no two of a kind together (src/92-shape.js)
   // calls cost booking power: drop the ones the player cannot afford, last asked first

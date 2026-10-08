@@ -3,28 +3,39 @@ import { E } from '../../engine';
 import { G, me, plural, slice, act, view, say, openModal, Modal } from '../../store';
 import { Head, Panel, Tag, Name, Meter, Empty, teamName, Txt, Btn, Sel, Field, showResult, Window } from '../../kit';
 
-/** What each of the four acts needs from the booker. Act 4 depends on whether the match is already made. */
+/** When a story ends: its night, or its next chapter. */
+function endLine(f: any): string {
+  const S = G.S, p = E.feudPlan(S, f), wk = (n: number) => n <= 0 ? 'this week' : n === 1 ? 'next week' : 'in ' + n + ' weeks';
+  if (p.ch) {
+    const nx = p.ch.find((c: any) => !c.done), k = p.ch.indexOf(nx) + 1;
+    if (nx && k < p.ch.length) return 'Chapter ' + k + ' of ' + p.ch.length + ' ends at ' + nx.at + ', ' + wk(nx.w - S.week) + '. It ends for good at ' + p.at + '.';
+  }
+  if (p.late) return 'It was meant to end at ' + p.at + '. It is cooling every week it runs over.';
+  return 'It ends at ' + p.at + ', ' + wk(p.in) + (p.slip ? ', one big event later than planned' : '') + '.';
+}
+
+/** What each act needs from the booker. The act comes from the calendar: where the story is on the way to its ending. */
 function actNote(f: any): string {
-  const a = E.feudAct(f);
-  if (a === 1) return 'Words and mind games. Keep both on the show to build it.';
-  if (a === 2) return 'Brawls, ambushes and contract signings. It needs to reach 60 heat.';
-  if (a === 3) return 'Something is about to change this feud for good.';
-  if (a === 4) return (f.finale ? 'Book the match at the big event' : 'The match gets made official next') + ', then finish it at a big event or in a gimmick match.';
+  const a = E.feudAct(f, G.S), p = E.feudPlan(G.S, f);
+  if (a === 1) return p.len === 's' ? 'A short story: a spark, then the match. Keep both on the show.' : 'Words and mind games. Keep both on the show to build it.';
+  if (a === 2) return 'Brawls, ambushes and contract signings. Build the heat before the twist.';
+  if (a === 3) return 'Something is about to change this feud for good: one twist to a stretch.';
+  if (a === 4) return (f.finale ? 'The match is made' : 'The match gets made official next') + '. Book it on the night the story ends.';
   return '';
 }
 
-/** One line on what would heat a feud up next. */
+/** One line on what the story needs next. */
 function heatStep(f: any): string {
-  const S = G.S, a = E.feudAct(f), cold = S.week - f.last;
+  const S = G.S, a = E.feudAct(f, S), cold = S.week - f.last;
   if (cold >= 3) return 'It has gone cold for ' + cold + ' weeks. Put both on the next show, in a segment or a match.';
   if (a === 1) return 'Book a promo or an ambush with both on the show.';
-  if (a === 2) return f.heat < 45 ? 'A brawl or an attack will get it past 45 heat.' : 'A contract signing or a brawl should take it to 60 heat.';
-  if (a === 3) return 'Raise the stakes or book a betrayal. That is the twist this feud needs.';
-  return f.finale ? 'Book the match at the big event. Heat peaks there.' : 'Make the match official, then book it on a big event.';
+  if (a === 2) return 'A brawl, an attack or a contract signing.';
+  if (a === 3) return 'Raise the stakes or book a betrayal. That is the twist this story needs.';
+  return 'Book the match on its night. If it is missed, it cools.';
 }
 
 function FeudCard(p: { f: any }) {
-  const S = G.S, P = me(), f = p.f, a = E.feudAct(f);
+  const S = G.S, P = me(), f = p.f, a = E.feudAct(f, S), pl = E.feudPlan(S, f);
   const t = f.title ? P.titles.find((x: any) => x.id === f.title) : null;
   return <Panel cls="feud">
     <div class="row between">
@@ -32,13 +43,15 @@ function FeudCard(p: { f: any }) {
       <div class="row"><Meter v={f.heat} kind="hot" /><span class="num">{Math.round(f.heat)} heat</span></div>
     </div>
     <div class="row">
-      <Tag kind="gold">Act {a} of 4: {E.ACTN[a]}</Tag>
+      <Tag kind={pl.len === 'l' ? 'heel' : pl.len === 'm' ? 'gold' : 'info'}>{pl.n} story</Tag>
+      <Tag kind="gold">{pl.len === 's' ? (a === 4 ? 'Blow-off' : 'Spark') : 'Act ' + a + ' of 4: ' + E.ACTN[a]}</Tag>
       <Tag kind={f.heat >= 60 ? 'heel' : undefined}>{E.feudStage(f)}</Tag>
       {f.finale ? <Tag kind="good">Match made</Tag> : null}
       {f.kind === 'dream' ? <Tag>Dream match</Tag> : null}
       {t ? <Tag kind="gold">{t.name}</Tag> : null}
       <span class="muted">{f.matches} {plural(f.matches, 'match', 'matches')}, {f.aw}–{f.bw} {'·'} since week {f.start}</span>
     </div>
+    <p data-t="feud-end" class={pl.late ? 'bad' : ''}>{endLine(f)}</p>
     {f.stakes ? <p class="good">Stakes: {f.stakes}</p> : null}
     <p class="muted">{actNote(f)}</p>
     <p>Next: {heatStep(f)}</p>

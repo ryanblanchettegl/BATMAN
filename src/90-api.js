@@ -45,5 +45,5 @@ E.nextBig=function(S){var w=S.week+(4-cal(S.week).wom),c=cal(w);return {week:w,n
 E.expected=function(S,show){return r1(expected(S.promos[S.player],show));};
 E.cal=cal;E.workRate=workRate;E.rosterOf=rosterOf;E.teamOf=teamOf;E.partnerOf=partnerOf;E.feudOf=feudOf;E.feudsFor=feudsFor;E.activeFeuds=activeFeuds;E.feudLabel=feudLabel;E.feudStage=feudStage;
 E.holdLvl=holdLvl;E.isDev=isDev;E.wageFor=wageFor;E.money=money;E.autoBook=autoBook;E.runShow=runShow;E.weekShows=weekShows;
-E.feudAct=feudAct;E.ACTN=ACTN;E.RISKN=RISKN;E.TIXN=TIXN;E.ADVN=ADVN;E.SLOTN=SLOTN;E.PRODN=PRODN;E.SLOT_MAX=SLOT_MAX;
+E.feudAct=function(f,S){return feudAct(f,S);};E.ACTN=ACTN;E.RISKN=RISKN;E.TIXN=TIXN;E.ADVN=ADVN;E.SLOTN=SLOTN;E.PRODN=PRODN;E.SLOT_MAX=SLOT_MAX;
 E.MT=MT;E.STIP=STIP;E.ACH=ACH;E.STYLE_NAME=STYLE_NAME;E.MONTHS=MONTHS;
