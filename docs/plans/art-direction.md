@@ -254,6 +254,7 @@ All 473 people in the default world have one: the place they were born, or for a
 - `E.hometown(S, city)` returns who is from here.
 
 ### 6.9 Story endings and the season
+The concept for feud lengths (short, medium, long) and rivals is `docs/plans/storylines.md` (8 October); it takes this section in.
 - A feud gains `end: { w, show }`, the planned blow-off. Set when a story starts (default: the next big event at least three weeks away) and movable by the player.
 - A story that reaches its ending and is paid off there gets a lift. One that runs past its ending cools. One ended early loses its payoff.
 - `E.season(S)` returns twelve weeks of every story (which act in which week, worked out from heat today and the ending) and the checks: two endings on one night, a month with none, a story with no ending, a person in two stories, a champion with no challenger, people with no story in four weeks.
