@@ -33,9 +33,12 @@ function dosTies(S,id,pid){
 E.dossier=function(S,id){
   var w=S.w[id],P=S.promos[S.player];if(!w||w.promo!==P.id)return null;
   var N=peopleNow(S),here=null;
-  PPL_ROOMS.forEach(function(k){N[k].forEach(function(p){if(here)return;if(p.id===w.id||p.with===w.id){var o=p.with!=null?S.w[p.with]:null;
+  // their own reason first; failing that, a scene somebody else brought them into
+  var mine=null,theirs=null;PPL_ROOMS.forEach(function(k){N[k].forEach(function(p){if(p.id===w.id&&!mine)mine=[k,p];else if(p.with===w.id&&!theirs)theirs=[k,p];});});
+  [mine||theirs].forEach(function(kp){if(!kp)return;var k=kp[0],p=kp[1];{var o=p.with!=null?S.w[p.with]:null;
     here={room:k,pid:p.id,place:PLACES[k].n,why:p.why,tone:p.tone||'',story:p.story||'',with:p.with===w.id?p.id:p.with,used:!!p.used,
-      acts:p.acts.map(function(a){var A=PPL_ACT[a],ck=A.ck?A.ck(S,P,S.w[p.id],o):null;return {id:a,n:pplTxt(A.n,S,P,S.w[p.id],o),free:!!A.free,cost:A.free?'Free':'1 action point',p:ck?Math.round(ck.p*100):null};})};}});});
+      acts:p.acts.map(function(a){var A=PPL_ACT[a],ck=A.ck?A.ck(S,P,S.w[p.id],o):null;return {id:a,n:pplTxt(A.n,S,P,S.w[p.id],o),free:!!A.free,cost:A.free?'Free':'1 action point',p:ck?Math.round(ck.p*100):null};})};
+    if(p.id!==w.id&&o){here.why=p.why.split(w.name).join(S.w[p.id].name);}}});   // a scene, told from their side
   var mood=Math.round(w.morale),was=S.moodAt&&S.moodAt.m&&S.moodAt.m[w.id]!=null?S.moodAt.m[w.id]:null,Y=S.rmY&&S.rmY[w.id],yv=Y?Math.round(Y.v):0,T=dosTies(S,w.id,P.id);
   return {id:w.id,name:w.name,age:w.age,align:w.align,ovr:Math.round(w.ovr),con:w.con,wage:w.wage,hurt:w.inj>0?w.inj:0,town:w.town||null,
     here:here,

@@ -77,6 +77,8 @@ html[data-screen="tv"] #app:has(.onescreen){height:95vh;min-height:0}
 .main:has(.onescreen){position:relative;min-height:0;overflow:hidden;display:flex;flex-direction:column;padding-block:6px 6px}
 /* a message lies over the top of the page instead of pushing it down */
 .main:has(.onescreen) > .flash{position:absolute;z-index:4;left:2ch;right:3ch;top:4px;margin:0}
+/* on a page of windows the note sits beside the page tabs, never over them, and a press goes through it */
+.main:has(.desktop) > .flash{left:auto;width:min(62%,60ch);pointer-events:none}
 .onescreen{flex:1 1 0;min-height:0;display:flex;flex-direction:column;gap:6px}
 .clamp2{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden}
 

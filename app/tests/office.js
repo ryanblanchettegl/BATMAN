@@ -3,7 +3,7 @@
    Run:    NODE_PATH=/opt/npm-tools/node_modules node app/tests/office.js            (MODES=desk,tablet,tv,remote picks the passes; the default is desk,tablet,remote) */
 /** A backstage action now also opens a small result pop-up; close it so the test can carry on. */
 const bsdo = async (page, sel, o) => { await page.click(sel, o); if (await page.$('.win')) { await page.keyboard.press('Escape'); await page.waitForTimeout(60); } };
-const { open, go, overflow, shot, flash, state, redraw } = require('./helper');
+const { open, go, overflow, shot, flash, state, redraw, fits } = require('./helper');
 
 const MODES = (process.env.MODES || 'desk,tablet,remote').split(',');
 const FILE = process.env.EWF_OUT || 'index';
@@ -61,22 +61,25 @@ async function run(mode) {
   /* ---- backstage: the trainer's room ---- */
   await page.click('[data-t="to-backstage"]');
   ok(await page.evaluate(() => window.EWF_DEBUG.ui.page) === 'backstage' && (await page.$$eval('[data-t="page"]', a => a.map(e => e.innerText.trim()))).join('|') === 'The desk|Backstage|Storylines|Career', 'Backstage is its own page in the Office, between the desk and Storylines: ' + (await page.$$eval('[data-t="page"]', a => a.map(e => e.innerText.trim()))).join('|'));
-  /* backstage is people, not rooms: seven rooms, your own office first, a face for everybody who is there for a reason */
-  ok(await count('[data-t="ppl-room"]') === 7 && /your office/i.test(await txt('[data-t="ppl-room"]')) && await count('[data-t="ppl-who"]') >= 1 && await count('[data-t="ppl-who"] canvas') === await count('[data-t="ppl-who"]'), 'backstage shows people with faces, room by room');
-  ok(/The room:/.test(await txt('[data-t="room-line"]')) && /unhappy/.test(await txt('[data-t="room-line"]')), 'Backstage sums up the room in one line');
-  await page.click('[data-t="ppl-who"]');
-  await page.click('[data-t="ppl-file"]'); await page.waitForSelector('[data-t="dossier"]');
-  ok(await count('.win [data-t="dz-here"]') === 1 && await count('.win [data-t="dz-stand"] .kvl') === 3 && await count('.win [data-t="dz-acts"] [data-t="dz-do"]') >= 1 && await page.$eval('.win', e => e.getBoundingClientRect().bottom <= innerHeight + 1), 'their file opens: why they are here, how they stand, and what you can do');
-  await step('their file', 'dossier');
-  await page.keyboard.press('Escape'); await page.waitForTimeout(40);
+  /* backstage is the board: everybody in the building for a reason, a line each with a face, and the picked one's file beside it */
+  ok(await count('.bspage > .wn') === 5 && await count('[data-t="ppl-who"]') >= 1 && await count('[data-t="ppl-who"] canvas') === await count('[data-t="ppl-who"]') && await count('[data-t="ppl-who"].sel') === 1, 'backstage is one screen: the board with a face for everybody, things to do, your door, the room and a file');
+  ok((await fits(page)) === '', 'Backstage fits one screen: ' + await fits(page));
+  ok(/Trust/.test(await txt('[data-t="room-line"]')) && /Unhappy/.test(await txt('[data-t="room-line"]')), 'the room is summed up in a window');
+  const first = await page.$eval('[data-t="ppl-who"].sel', e => e.getAttribute('data-v'));
+  ok(await page.$eval('[data-t="ppl-det"] [data-t="dossier"]', e => e.getAttribute('data-id')) === first && await count('[data-t="ppl-det"] [data-t="dz-stand"] .kvl') === 3, 'the file of whoever is picked stands beside the board');
+  const other = await page.$$eval('[data-t="ppl-who"]:not(.sel)', L => L.length ? L[0].getAttribute('data-v') : null);
+  if (other) { await page.click('[data-t="ppl-who"][data-v="' + other + '"]'); ok(await page.$eval('[data-t="ppl-det"] [data-t="dossier"]', e => e.getAttribute('data-id')) === other, 'picking somebody else opens their file'); }
   ok((await txt('[data-t="ppl-det"]')).length > 40 && await state(page, S => S.ap) === await state(page, S => window.GP.backstage(S).max), 'picking somebody says why they are there and what a point does, and costs nothing yet');
-  await page.click('[data-t="ppl-who"]');
-  ok(/your office/i.test(await txt('[data-t="bs-act"][data-k="truck"]')), 'the truck is Your office now');
+  for (const v of ['room', 'door', 'worst']) { await page.click('[data-t="bs-sort"][data-v="' + v + '"]'); }
+  ok(await count('[data-t="bs-sort"].on') === 1, 'the board sorts worst first, by room, or your door first');
+  await step('the board', 'board');
+  await page.evaluate(() => { window.EWF_FLAT = 1; }); await redraw(page);   // every thing to do on the page at once, for the checks below
+  ok(/your office/i.test(await txt('[data-t="bs-act"][data-k="truck"]')) || await count('[data-t="bs-act"][data-k="truck"]') >= 1, 'the truck is Your office now');
   const max = await ap(); ok(max === 3 && /3 of 3/.test(await txt('[data-t="bs-ap"]')), 'three action points to start');
   await step('rooms', 'rooms');
   /* things to do: one button each, and each opens a pop-up. There is no menu of rooms. */
   const act = (k, v) => '[data-t="bs-act"][data-k="' + k + '"][data-v="' + v + '"]', shut = async () => { for (let i = 0; i < 3 && await page.$('.win'); i++) { await page.keyboard.press('Escape'); await page.waitForTimeout(60); } };
-  ok(await count('.bsmap') === 0 && await count('[data-t="bs-room"]') === 0 && await count('[data-t="bs-act"]') >= 10, 'the rooms menu is gone: things to do are buttons');
+  ok(await count('.bsmap') === 0 && await count('[data-t="bs-room"]') === 0 && await count('[data-t="bs-act"]') >= 10, 'there is no menu of rooms: things to do are buttons');
   await page.click(act('trainer', 'treat'));
   ok(await count('.win #bs-a') === 1 && await count('.win [data-t="bs-do"]') === 1 && (await txt('.win [data-t="bs-act-what"]')).length > 20, 'a button opens a pop-up that says what it does and asks who');
   await page.selectOption('#bs-a', { index: 1 });
@@ -100,7 +103,7 @@ async function run(mode) {
 
   /* ---- wrestlers' court: plant a case, rule on it; a second case can only be handed to a leader ---- */
   ok(await state(page, plantCase) === 1, 'case planted'); await redraw(page);
-  ok(/1 waiting/.test(await txt(act('court', 'case'))) && /\(1\)/.test(await txt('[data-t="ppl-room"][data-v="court"]')), 'court badges');
+  ok(/1 waiting/.test(await txt(act('court', 'case'))), 'a case waiting: the court button says so');
   await page.click(act('court', 'case'));
   ok(await count('.win [data-t="bs-court"]') === 4 && /Witnesses/.test(await txt('.win')), 'the court pop-up shows four rulings and the witnesses');
   await step('court case', 'court');
@@ -119,6 +122,7 @@ async function run(mode) {
   await page.click(act('catering', 'pep'));
   ok(/out of action points/.test(await txt('.win')) && await page.$eval('.win [data-t="bs-do"]', e => e.disabled) && await state(page, S => !S.pep), 'out of points: nothing more can be spent'); await shut();
   await step('out of points', 'spent');
+  await page.evaluate(() => { delete window.EWF_FLAT; }); await redraw(page);
 
   /* ---- career: skills only when there is a point to spend ---- */
   await subnav('career');

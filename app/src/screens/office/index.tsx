@@ -5,7 +5,8 @@ import { DossierWindow } from './Dossier';
 import { Desk, MatterWindow, DeskMoreWindow, RoadYearWindow } from './Desk';
 import { Career } from './Career';
 import { TitleTaskWindow, ContractTaskWindow } from './Tasks';
-import { Backstage, ActWindow } from './BeforeShow';
+import { ActWindow } from './BeforeShow';
+import { Backstage } from './Backstage';
 import { WeekClosed, ClockWindow, AnnualReport, VoicesWindow, WelcomeWindow, FaceWindow } from './Windows';
 
 export const pages: Record<string, () => ComponentChildren> = { desk: Desk, backstage: Backstage, career: Career };
