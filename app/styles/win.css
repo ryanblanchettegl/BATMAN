@@ -346,3 +346,19 @@ html[data-screen="tablet"] [data-t="bs-roomwin"] .kvl:nth-child(n+5){display:non
 .bspage .kvl .v{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .dz-who i{white-space:nowrap}
 html[data-screen="tablet"] .bspage{grid-template-columns:minmax(0,1.1fr) minmax(0,1.1fr) minmax(0,.75fr) minmax(0,1.45fr)}
+
+/* Start a story (screens/stories/StartStory.tsx) */
+.ss-who{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);gap:2ch;align-items:end;margin-bottom:.3em}
+.ss-side{display:flex;gap:1ch;align-items:flex-end;min-width:0}.ss-side .field{flex:1;min-width:0}.ss-side select{width:100%}
+.ss-side .ss-face,.ss-side canvas.ss-face{width:3.2em;height:3.2em;flex:none;border:2px solid #000;image-rendering:pixelated;display:block}.ss-none{background:#8c8c8c}
+.ss-vs{color:var(--dred);font-size:1.6em;font-weight:normal;align-self:center}
+.ss-lens{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1.6ch;margin:.2em 0 .3em}
+.ss-len{display:flex;flex-direction:column;align-items:stretch;text-align:left;background:#b4b4b4;color:var(--k);border:2px solid var(--dgrey);padding:0 0 .3em;font:inherit;cursor:pointer;min-width:0}
+.ss-len>b{display:block;text-align:center;color:var(--white);font-weight:normal;padding:.1em 0;margin-bottom:.25em}
+.ss-len.ks>b{background:var(--blue)}.ss-len.km>b{background:#806000}.ss-len.kl>b{background:var(--dred)}
+.ss-len>span{display:flex;gap:1ch;padding:0 1ch;min-width:0}.ss-len>span>:last-child{min-width:0}.ss-len>span i{font-style:normal;color:#333;width:8ch;flex:none}.ss-len em{font-style:normal}
+.ss-len>small{display:block;padding:.15em 1ch 0;color:#333;font-size:1em;white-space:normal;line-height:1.15}
+.ss-len.on{outline:3px solid var(--yellow);outline-offset:1px;background:#c8c8c8}.ss-len.poor{opacity:.75}
+.ss-len:focus-visible{outline:3px solid var(--yellow)}
+.ss-two{display:grid;grid-template-columns:1fr 1fr;gap:2ch}.ss-two .grp p{margin:0 0 .15em}.ss-ag{color:var(--blue);font-weight:normal}
+.ss-warn .warn{color:#6a4a00}.ss-warn .bad{color:var(--dred)}

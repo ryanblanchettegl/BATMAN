@@ -96,11 +96,27 @@ async function net(page, mode) {
     await tour(page, mode, 'week 1');
     await go(page, 'storylines');
     check(mode, 'storylines page before any show', await page.$eval('h1', e => e.innerText) === 'STORYLINES' && await count(page, '.panel') >= 3);
-    check(mode, 'Storylines is a tab in the Office, and booking power can be spent there three ways', (await page.$$eval('[data-t="page"]', L => L.map(e => e.innerText.trim()).join('|'))) === 'The desk|Backstage|Storylines|Career' && await count(page, '[data-t="plot-open"]') === 4 && /booking power/i.test(await page.$eval('[data-t="plot"]', e => e.closest('.panel').innerText)));
+    check(mode, 'Storylines is a tab in the Office, and booking power can be spent there four ways', (await page.$$eval('[data-t="page"]', L => L.map(e => e.innerText.trim()).join('|'))) === 'The desk|Backstage|Storylines|Career' && await count(page, '[data-t="plot-open"]') === 5 && /booking power/i.test(await page.$eval('[data-t="plot"]', e => e.closest('.panel').innerText)));
     await state(page, S => { S.bp = 5; }); await page.evaluate(() => window.EWF_DEBUG.render());
     await page.click('[data-t="plot-open"][data-v="tape"]');
     if (await count(page, '[data-t="plot-a"] option') > 2) { await page.selectOption('[data-t="plot-a"]', { index: 2 }); await page.selectOption('[data-t="plot-at"]', 'end'); await page.click('[data-t="plot-do"][data-v="tape"]'); await page.click('#modal-ok');
       check(mode, 'a pre-tape bought here costs one booking power and is on the next show’s run sheet', await state(page, S => S.bp) === 4 && await state(page, S => (S.segs || []).some(x => x.tape && x.at === 'end')) && await count(page, '[data-t="plot-taped"]') === 1); } else await page.keyboard.press('Escape');
+    // start a story: two people, a length, and booking power
+    for (let i = 0; i < 4 && await count(page, '.win'); i++) { await page.keyboard.press('Escape'); await page.waitForTimeout(150); }
+    await state(page, S => { S.bp = 5; }); await page.evaluate(() => window.EWF_DEBUG.render());
+    const pair = await state(page, S => { const R = GP.storyPeople(S).filter(w => w.g === 'M' && !w.n && !w.hurt); return [R[3].id, R[8].id]; });
+    const feuds0 = await state(page, S => GP.activeFeuds(S).length);
+    await page.click('[data-t="plot-open"][data-v="story"]'); await page.waitForSelector('[data-t="story-a"]');
+    check(mode, 'Start a story shows the three lengths before anybody is picked', await count(page, '[data-t="story-len"]') === 3 && await page.$eval('[data-t="story-start"]', e => e.disabled));
+    await page.selectOption('[data-t="story-a"]', String(pair[0])); await page.selectOption('[data-t="story-b"]', String(pair[1]));
+    await page.click('[data-t="story-len"][data-v="l"]');
+    const ends = await page.$$eval('[data-t="story-ends"]', L => L.map(e => e.innerText));
+    check(mode, 'with two picked, each length names the night it ends', ends.length === 3 && ends.every(t => t && !/pick two/.test(t)) && /3 chapters/.test(ends[2]), ends.join(' | '));
+    await page.click('[data-t="story-start"]'); await page.waitForTimeout(200);
+    const made = await state(page, (S, p) => { const f = GP.feudOf(S, p[0], p[1]); return { bp: S.bp, len: f && f.len, ch: f && f.ch && f.ch.length, n: GP.activeFeuds(S).length }; }, pair);
+    check(mode, 'a long story costs three booking power and has three chapters', made.bp === 2 && made.len === 'l' && made.ch === 3 && made.n === feuds0 + 1, JSON.stringify(made));
+    await page.click('#modal-ok').catch(() => {}); await page.waitForTimeout(150);
+    check(mode, 'its card on the page says the length and where chapter 1 ends', /Long story/i.test(await page.$eval('main', e => e.innerText)) && (await page.$$eval('[data-t="feud-end"]', L => L.map(e => e.innerText).join('|'))).includes('Chapter 1 of 3'));
     await go(page, 'history');
     check(mode, 'history before any show', /Run a show on Booking and the book opens/.test(await text(page)) && /Champion when you arrived/.test(await text(page)));
     await go(page, 'boards');

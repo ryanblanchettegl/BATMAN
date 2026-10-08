@@ -85,4 +85,20 @@ function start(S, len) {
   ok(L.length >= 10 && onTime.length >= L.length * 0.5, 'a year: ' + L.length + ' stories ended, ' + onTime.length + ' on their night, ' + dead.length + ' fizzled');
   ok(S.feuds.every(f => f.len && f.pay), 'every story has a length and an ending');
 }
+// 9. Start a story: what the pop-up shows, what it costs, what it refuses, and who remembers
+{
+  const S = game(), P = S.promos[S.player], R = E.storyPeople(S).filter(w => !w.n && !w.hurt), M = R.filter(w => w.g === 'M'), F = R.find(w => w.g === 'F');
+  const pv = E.storyPreview(S, M[1].id, M[5].id);
+  ok(pv.ok && pv.lens.length === 3 && pv.lens.every(x => x.at && x.in > 0) && pv.lens[2].ch.length === 3, 'the preview names each length, its night and the long one\'s chapters');
+  ok(pv.know.length >= 1 && typeof pv.read === 'string' && pv.read.length > 5, 'the office says what it knows about them together: ' + pv.read);
+  if (F) ok(!E.storyPreview(S, M[1].id, F.id).ok && !E.storyStart(S, M[1].id, F.id, 'm').ok, 'two who cannot wrestle each other cannot be in a story');
+  ok(!E.storyStart(S, M[1].id, M[1].id, 's').ok, 'nobody is in a story with themselves');
+  S.bp = 2; const no = E.storyStart(S, M[1].id, M[5].id, 'l');
+  ok(!no.ok && /3 booking power/.test(no.msg) && S.bp === 2, 'a long story needs three booking power: ' + no.msg);
+  const was = (S.rmY && S.rmY[M[1].id] ? S.rmY[M[1].id].v : 0), r = E.storyStart(S, M[1].id, M[5].id, 'm'), f = E.feudOf(S, M[1].id, M[5].id);
+  ok(r.ok && S.bp === 0 && f && f.len === 'm' && f.chose === 1, 'a medium story costs two: ' + r.msg);
+  ok(S.rmY[M[1].id].v > was && S.rmY[M[1].id].mem[0].k === 'story', 'both remember who gave them the story');
+  ok(!E.storyPreview(S, M[1].id, M[5].id).ok, 'two already in a story cannot start another one together');
+  ok(E.storyPreview(S, M[1].id, M[6].id).warn.some(t => /already in/.test(t)), 'somebody in a story already gets a warning, not a refusal');
+}
 console.log(fails ? 'test-stories: ' + fails + ' failed' : 'test-stories: all passed'); process.exit(fails ? 1 : 0);

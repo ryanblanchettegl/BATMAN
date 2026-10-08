@@ -117,3 +117,63 @@ E.FLEN=FLEN;
 E.startStory=function(S,a,b,len,why){var P=S.promos[S.player],A=S.w[a],B=S.w[b];if(!A||!B)return null;return startFeud(S,P,A,B,30,why||(A.name+' and '+B.name+' have a score to settle'),{force:true,len:len});};
 /** Heat a story up (or down) by an amount, as a show would. For tests. */
 E.heatStory=function(S,f,amt){heatUp(S,f,amt,null);return f.heat;};
+
+/* ---------- Start a story (docs/plans/storylines.md, step 2) ----------
+   The player picks two people and a length, and pays for it in booking power: short 1, medium 2, long 3.
+   storyPreview() says everything the pop-up shows before anything is spent; storyStart() does it. */
+var FLEN_GOOD={s:'A challenger for a month. It cannot carry a big main event.',m:'Four acts and a blow-off at the big event.',l:'The story of the year. A twist in every chapter.'};
+var FLEN_CAPW={s:'Hot',m:'White hot',l:'As far as it goes'};
+function storyEnding(S,len){
+  var p=feudPayPlan(len,S.week);
+  if(p.pay<=S.week)p={pay:len==='s'?S.week+2:nextBigFrom(S.week+1)};
+  return p;
+}
+/** Who can be put in a story: everybody on your roster who is not brand new. Hurt people are listed and marked. */
+E.storyPeople=function(S){
+  var P=S.promos[S.player];
+  return rosterOf(S,P.id).filter(function(w){return !w.nw&&!w.rt;}).sort(function(a,b){return b.ovr-a.ovr;})
+    .map(function(w){var n=feudsFor(S,w.id).length;return {id:w.id,name:w.name,g:w.g,al:w.align,hurt:w.inj>0,n:n};});
+};
+/** Everything the Start a story pop-up shows for two people, before anything is spent. */
+E.storyPreview=function(S,a,b){
+  var P=S.promos[S.player],A=S.w[a],B=S.w[b],stop=[],warn=[];
+  if(!A||!B)return {ok:false,stop:['Pick two people.'],lens:[]};
+  if(A.id===B.id)stop.push('A story needs two people.');
+  if(A.promo!==P.id||B.promo!==P.id)stop.push('Both have to be on your roster.');
+  if(A.g!==B.g)stop.push('They would never meet in the ring: a story needs two who can wrestle each other.');
+  if(feudOf(S,A.id,B.id))stop.push('They are already in a story together. Its card on this page says where it ends.');
+  [A,B].forEach(function(w){
+    if(w.inj>0)warn.push(w.name+' is hurt for '+w.inj+' more '+(w.inj===1?'week':'weeks')+'. The story can start without them in the ring.');
+    feudsFor(S,w.id).forEach(function(f){warn.push(w.name+' is already in '+feudLabel(S,f)+'. Two stories at once split the crowd.');});
+  });
+  if(A.align===B.align)warn.push('Both are '+(A.align==='F'?'heroes':'villains')+'. The crowd will need a reason to pick a side.');
+  var bd=bondOf(S,A.id,B.id);if(bd<=-REL_STRONG)warn.push('They really do not like each other. The crowd will feel it, and it can get stiff in the ring.');
+  // what the office knows about them together
+  var hh=S.h2h&&S.h2h[rkey(A.id,B.id)],lo=Math.min(A.id,B.id),know=[];
+  if(hh&&hh.n){var aw=A.id===lo?hh.a:hh.b,bw=A.id===lo?hh.b:hh.a;know.push('They have met '+hh.n+' '+(hh.n===1?'time':'times')+' on your shows: '+A.name+' '+aw+', '+B.name+' '+bw+'.');}
+  else know.push('They have not met on your shows.');
+  var K=S.know||KNOW0,key=rkey(A.id,B.id),ch=chem(S,A.id,B.id),agent=P.staff&&P.staff.agent?P.staff.agent:'The road agent',read;
+  if(K.p[key])read=ch>=2.2?'They have real chemistry. We have seen it.':(ch<=-2.2?'They do not click. We have seen it. Keep their matches short.':'Nothing special between them in the ring, and nothing wrong.');
+  else if(h01(S.seed+':st:'+S.week+':'+key)<clamp(0.3+fogSkill(S),0.05,0.95))read=ch>=2.2?'My read: these two will click.':(ch<=-2.2?'My read: these two will not click.':'My read: no sparks, and no trouble either.');
+  else read='I have not seen them together. I cannot tell you yet.';
+  var lens=['s','m','l'].map(function(k){var L=FLEN[k],p=storyEnding(S,k),at=function(w){return isBigWeek(w)?P.name+' '+dbOf(S).events[cal(w).month]:(P.shows[0]?P.shows[0].name:'a weekly show');};
+    var atS=function(w){return isBigWeek(w)?dbOf(S).events[cal(w).month]:(P.shows[0]?P.shows[0].name:'a weekly show');};
+    return {len:k,n:L.n,runs:L.runs,cost:L.cost,can:S.bp>=L.cost,cap:FLEN_CAPW[k],good:FLEN_GOOD[k],pay:p.pay,in:p.pay-S.week,at:at(p.pay),atS:atS(p.pay),
+      ch:p.ch?p.ch.map(function(w){return {w:w,at:at(w),atS:atS(w),in:w-S.week};}):null};});
+  return {ok:!stop.length,stop:stop,warn:warn,know:know,agent:agent,read:read,lens:lens,bp:S.bp,a:{id:A.id,name:A.name,al:A.align},b:{id:B.id,name:B.name,al:B.align}};
+};
+/** Start a story between two of your people, at a length, for its booking power. */
+E.storyStart=function(S,a,b,len){
+  var pv=E.storyPreview(S,a,b),L=FLEN[len],P=S.promos[S.player];
+  if(!L)return {ok:false,msg:'Pick how long it runs.'};
+  if(!pv.ok)return {ok:false,msg:pv.stop[0]};
+  if(S.bp<L.cost)return {ok:false,msg:'A '+L.n.toLowerCase()+' story takes '+L.cost+' booking power. You have '+S.bp+'.'};
+  var A=S.w[a],B=S.w[b],f=startFeud(S,P,A,B,len==='s'?28:22,'The office put '+A.name+' and '+B.name+' in a story',{force:true,len:len});
+  if(!f)return {ok:false,msg:'The story could not start.'};
+  S.bp-=L.cost;f.chose=1;
+  var pl=E.feudPlan(S,f),big=len==='l'?6:(len==='m'?4:2);
+  [A,B].forEach(function(w){var o=w===A?B:A;youRemember(S,w,'story','You gave me a '+L.n.toLowerCase()+' story against '+o.name+'.',big);});
+  relBump(S,A.id,B.id,{ra:1,rb:1},{k:'story',t:'The office put them in a story together.',by:'you'});
+  var msg=feudLabel(S,f)+' is a '+L.n.toLowerCase()+' story. '+(pl.ch?'Chapter 1 ends at '+pl.ch[0].at+', and it ends for good at '+pl.at+'.':'It ends at '+pl.at+', in '+pl.in+' '+(pl.in===1?'week':'weeks')+'.')+' ('+L.cost+' booking power.)';
+  return {ok:true,msg:msg,id:f.id};
+};

@@ -1,6 +1,7 @@
 /* Storylines: the rivalries your booking started, plus streaks, stables and tag teams. The long plan is the one place to pencil something in. */
 import { E } from '../../engine';
 import { G, me, plural, slice, act, view, say, openModal, Modal } from '../../store';
+import { storyReset } from './StartStory';
 import { Head, Panel, Tag, Name, Meter, Empty, teamName, Txt, Btn, Sel, Field, showResult, Window } from '../../kit';
 
 /** When a story ends: its night, or its next chapter. */
@@ -161,7 +162,11 @@ function Plot() {
   const S = G.S, I = E.plotInfo(S), pl = E.longPlan(S);
   const open = (k: string) => { const st = plotState(); st.team = ''; st.who = ''; st.w = ''; st.a = ''; st.b = ''; openModal({ kind: 'plot', k }); };
   return <Panel title={'Booking power: ' + I.bp + ' to spend on the stories'} cls="mb2">
-    <div class="bsacts" data-t="plot">{I.acts.map((a: any) => <button type="button" key={a.id} class={'bsact' + (a.can ? '' : ' used')} data-t="plot-open" data-v={a.id} onClick={() => open(a.id)}>
+    <div class="bsacts" data-t="plot">
+      <button type="button" class={'bsact' + (I.bp >= 1 ? '' : ' used')} data-t="plot-open" data-v="story" onClick={() => { storyReset(); openModal({ kind: 'story' }); }}>
+        <b>Start a story</b><span class="eff">Two people, and how long it runs: short, medium or long. It ends on the night you pick.</span>
+        <span class="ft"><span class={I.bp >= 1 ? 'gold' : 'bad'}>1 to 3 booking power</span></span></button>
+      {I.acts.map((a: any) => <button type="button" key={a.id} class={'bsact' + (a.can ? '' : ' used')} data-t="plot-open" data-v={a.id} onClick={() => open(a.id)}>
       <b>{a.n}</b><span class="eff">{PLOT_UI[a.id]}</span>
       <span class="ft"><span class={a.can ? 'gold' : 'bad'}>{a.cost} booking power</span>{a.id === 'tape' && I.taped ? <span class="good" data-t="plot-taped"> {'·'} on {I.show}: {I.taped.label}</span> : null}</span></button>)}
       <button type="button" class="bsact" data-t="plot-open" data-v="plan" onClick={() => openModal({ kind: 'plot', k: 'plan' })}>

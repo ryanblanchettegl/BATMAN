@@ -1,6 +1,6 @@
 # Plan: short, medium and long feuds, and rivals
 
-Concept 8 October. Pictures: `docs/mockups/storylines/`. Step 1 of the build order is done (`src/21-feudlen.js`, `node test-stories.js`); the rest is not built. Ryan's answers to the questions at the end are still to come, so the build follows the defaults written here.
+Concept 8 October. Pictures: `docs/mockups/storylines/`. Steps 1 and 2 of the build order are done (`src/21-feudlen.js`, `app/src/screens/stories/StartStory.tsx`, `node test-stories.js`); the rest is not built. Ryan's answers to the questions at the end are still to come, so the build follows the defaults written here.
 
 Ryan, 8 October: "We want short, medium and long feuds. We also want rivals."
 
@@ -115,7 +115,7 @@ Two people can be rivals in the ring and friends in catering, or hate each other
 One step at a time, each shown before the next.
 
 1. (Built 8 October.) Engine: `len`, `pay` and `ch` on feuds; `feudAct()` from the calendar; the payoff and the cooling; old saves get a length the first time a feud is read, so no version bump was needed. `test-uni.js` 60 weeks clean, and a new `test-stories.js`.
-2. Start a story pop-up with the three lengths.
+2. (Built 8 October.) Start a story pop-up with the three lengths. The rivals' discount comes with step 4.
 3. The season calendar on the Storylines page, with the bars and the checks.
 4. Rivalries in the engine: `S.rv`, how one begins, the series, the level, the crowd lift, the rekindle.
 5. The Rivalries window and the rivalry file.
