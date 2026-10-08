@@ -7,6 +7,7 @@ import { Panel, Btn, Sel, Opt, Tag, CheckLine, Empty, brandName, dataAttrs, Txt,
 import { Portrait } from '../../kit/portrait';
 import { office, focusAfter, useFocusAfter, TO_MAP } from './util';
 import { Court } from './Court';
+import { openDossier, RoomLine } from './Dossier';
 
 const ROOMART: Record<string, string[]> = {
   office: ['╔═══╗', '║ $ ║', '╚═╩═╝'], court: [' ─┬─ ', '╱ │ ╲', '▔▔┴▔▔'], trainer: ['┌───┐', '│ + │', '└───┘'], gym: ['╔═╤═╗', '╟─┼─╢', '╚═╧═╝'],
@@ -75,6 +76,7 @@ function People(p: { B: any }) {
     {sel ? <div class="roomdet" aria-live="polite" data-t="ppl-det">
       <h3><Name w={S.w[sel.id]} />{sel.duo ? <> and <Name w={S.w[sel.with]} /></> : null}, in {sel.room.n.replace(/^The /, 'the ')}</h3>
       <p class={sel.tone || 'muted'}>{sel.why}.{sel.story ? <span class="muted"> {sel.story}.</span> : null}</p>
+      <p><Btn kind="sm" t="ppl-file" d={{ v: sel.id }} onClick={() => openDossier(sel.id)}>Their file</Btn>{sel.duo ? <Btn kind="sm" t="ppl-file" d={{ v: sel.with }} onClick={() => openDossier(sel.with)}>{sel.duo}{'’'}s file</Btn> : null}</p>
       {sel.used ? <p class="muted mt1">You have already spent time with them this week.</p> : (B.ap <= 0 && !sel.acts.some((a: any) => a.free) ? <p class="bad mt1">You are out of action points this week.</p> : null)}
       {sel.room.id === 'court' ? <div class="row mt1"><span class="muted">The case is heard in the court itself.</span><Btn kind="sm" t="ppl-court" onClick={() => openAct('court', 'case')}>Hold court</Btn></div> : null}
       <ul class="list">{sel.acts.map((a: any) => <li class="col" key={a.id}>
@@ -144,6 +146,7 @@ export function Backstage() {
     <Panel cls="mb2">
       <p data-t="bs-ap">Action points this week: <span class="pips" role="img" aria-label={B.ap + ' of ' + B.max}>{Array.from({ length: B.max }, (_, i) => i < B.ap ? <span class="gold">{'◆'}</span> : <span class="muted">{'◇'}</span>)}</span> <span class="num">{B.ap} of {B.max}</span>
         <span class="muted"> {'·'} One point on a person, once a week each. One visit to each room a week.</span></p>
+      <RoomLine />
       <People B={E.people(S)} />
     </Panel>
     <Panel title="Things to do">

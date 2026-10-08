@@ -63,7 +63,12 @@ async function run(mode) {
   ok(await page.evaluate(() => window.EWF_DEBUG.ui.page) === 'backstage' && (await page.$$eval('[data-t="page"]', a => a.map(e => e.innerText.trim()))).join('|') === 'The desk|Backstage|Storylines|Career', 'Backstage is its own page in the Office, between the desk and Storylines: ' + (await page.$$eval('[data-t="page"]', a => a.map(e => e.innerText.trim()))).join('|'));
   /* backstage is people, not rooms: seven rooms, your own office first, a face for everybody who is there for a reason */
   ok(await count('[data-t="ppl-room"]') === 7 && /your office/i.test(await txt('[data-t="ppl-room"]')) && await count('[data-t="ppl-who"]') >= 1 && await count('[data-t="ppl-who"] canvas') === await count('[data-t="ppl-who"]'), 'backstage shows people with faces, room by room');
+  ok(/The room:/.test(await txt('[data-t="room-line"]')) && /unhappy/.test(await txt('[data-t="room-line"]')), 'Backstage sums up the room in one line');
   await page.click('[data-t="ppl-who"]');
+  await page.click('[data-t="ppl-file"]'); await page.waitForSelector('[data-t="dossier"]');
+  ok(await count('.win [data-t="dz-here"]') === 1 && await count('.win [data-t="dz-stand"] .kvl') === 3 && await count('.win [data-t="dz-acts"] [data-t="dz-do"]') >= 1 && await page.$eval('.win', e => e.getBoundingClientRect().bottom <= innerHeight + 1), 'their file opens: why they are here, how they stand, and what you can do');
+  await step('their file', 'dossier');
+  await page.keyboard.press('Escape'); await page.waitForTimeout(40);
   ok((await txt('[data-t="ppl-det"]')).length > 40 && await state(page, S => S.ap) === await state(page, S => window.GP.backstage(S).max), 'picking somebody says why they are there and what a point does, and costs nothing yet');
   await page.click('[data-t="ppl-who"]');
   ok(/your office/i.test(await txt('[data-t="bs-act"][data-k="truck"]')), 'the truck is Your office now');

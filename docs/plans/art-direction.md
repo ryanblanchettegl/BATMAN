@@ -259,7 +259,9 @@ All 473 people in the default world have one: the place they were born, or for a
 - `E.season(S)` returns twelve weeks of every story (which act in which week, worked out from heat today and the ending) and the checks: two endings on one night, a month with none, a story with no ending, a person in two stories, a champion with no challenger, people with no story in four weeks.
 - Each check is a line the player can act on, not a punishment.
 
-### 6.10 The dossier and the room
+### 6.10 The dossier and the room (built 8 October)
+Built as planned in `src/79-dossier.js`, with the file as a pop-up on today's Backstage page (Their file) and the room as one line at its top, so both can be judged before Backstage becomes the board (step 12). The answers in the file are the same ones the person's pane offers and spend the point the same way.
+
 - `E.dossier(S, id)`: why they are here, mood and how it moved since the last show, where they stand with you, stress, the last three things they remember, their two closest friends and two worst rivals, and the answers open to you with their costs.
 - `E.roomInfo(S)`: trust, average mood, how many are unhappy or hurt, cliques, pairs with real heat.
 - Read-only, built from `peopleNow()`, `S.rm`, `S.rmY` and `S.live.n0`. No new state except a snapshot of moods at the last show.

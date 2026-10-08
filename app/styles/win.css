@@ -287,3 +287,10 @@ html[data-screen="tv"]:has(.deskpage){--fs:min(clamp(22px,1.9vw,84px),2.32vh)}
 html[data-screen="tablet"] .deskpage .btn{padding:.14em 1.1ch;margin-bottom:.26em}
 .road .kvl .v{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 html[data-screen="tablet"] .nextwin .nx .ledb{display:none}
+/* a person's file (screens/office/Dossier.tsx) */
+.dz-head{display:flex;gap:1.6ch;align-items:flex-start;margin-bottom:.2em}
+.dz-head canvas.pt.m{width:4.6em;height:4.6em}
+.dz .grp p{margin:.1em 0}
+.dz-who canvas.pt{width:1.2em;height:1.2em;border-width:1px;vertical-align:-.2em;margin-right:.7ch}
+.dz .ans{margin:.25em 0}
+.dz-name{font-size:1.5em;line-height:1.05}

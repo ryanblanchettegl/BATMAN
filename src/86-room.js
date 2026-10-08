@@ -11,7 +11,7 @@ E.cliques=function(S){
     while(q.length){var c=q.pop();R.forEach(function(o){if(!seen[o.id]&&relOf(S,c.id,o.id)>0){seen[o.id]=1;grp.push(o);q.push(o);}});}
     if(grp.length<3)return;
     grp.sort(function(a,b){return b.ovr-a.ovr;});
-    out.push({star:grp[0],m:grp,name:grp[0].name.split(' ')[0]+'’s circle',power:grp[0].ovr>=cut});
+    out.push({star:grp[0],m:grp,name:(/^The /.test(grp[0].name)?grp[0].name:grp[0].name.split(' ')[0])+'’s circle',power:grp[0].ovr>=cut});
   });
   return out;
 };

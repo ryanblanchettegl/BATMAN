@@ -111,5 +111,22 @@ const spare = (S, n) => E.rosterOf(S, S.player).filter(w => !w.nw && !all(S).som
     ok('b5', 'a veteran working late with a young one is a scene, and a point makes it a habit', r.ok && S.ap === ap - 1 && (y.xp || 0) > x0 && E.bondOf(S, y.id, v.id) > 0 && p.room === 'gym' && !!p.duo, r.msg); }
   else ok('b5', 'a veteran working late with a young one is a scene', false, p ? p.k : 'not there'); }
 
+/* the dossier and the room (6.10) */
+{ const S = E.newGame('whw', 3, { name: 'R' }), run = () => { const c = E.suggest(S), pr = E.preShow(S, c); if (pr) { E.resolvePre(S, c, 0); E.fitShow(S, c); } E.runPlayerShow(S, c); }, ans = () => S.inbox.forEach(e => { if (!e.done) E.resolveEvent(S, e.id, e.choices.length - 1); });
+  for (let i = 0; i < 4; i++) { ans(); while (S.qi < S.queue.length) run(); ans(); E.endWeek(S); }
+  const B = E.people(S), first = B.rooms.find(r => r.people.length).people[0], before = JSON.stringify(S), D = E.dossier(S, first.id), R = E.roomInfo(S);
+  ok('d1', 'reading a file and the room changes nothing', JSON.stringify(S) === before);
+  ok('d1', 'a file says why they are here, in which room, and what you can do with the cost of each', !!D.here && D.here.why === first.why && D.here.acts.length === first.acts.length && D.here.acts.every(a => /Free|1 action point/.test(a.cost)), D.here && D.here.place + ': ' + D.here.why);
+  ok('d1', 'mood, stress and where they stand with you are said in words', !!D.mood.w && !!D.stress.w && !!D.you.w && D.mood.d != null, D.mood.w + ' / ' + D.stress.w + ' / ' + D.you.w);
+  const W = E.rosterOf(S, S.player).filter(w => !w.nw), withMem = W.find(w => (E.dossier(S, w.id).remember || []).length);
+  ok('d1', 'they remember up to three things about you, newest first', !!withMem && E.dossier(S, withMem.id).remember.length <= 3 && E.dossier(S, withMem.id).remember.every((m, i, L) => !i || m.ago >= L[i - 1].ago));
+  const tied = W.map(w => E.dossier(S, w.id)).find(d => d.friends.length && d.rivals.length);
+  ok('d1', 'the people around them: friends are friends and rivals are rivals, two of each at most', !!tied && tied.friends.length <= 2 && tied.rivals.length <= 2 && tied.friends.every(f => f.bond > 0) && tied.rivals.every(f => f.bond < 0), tied && tied.name + ': ' + tied.friends.map(f => f.name).join(', ') + ' / ' + tied.rivals.map(f => f.name).join(', '));
+  ok('d1', 'nobody off the roster has a file', E.dossier(S, -1) === null);
+  ok('d2', 'the room: trust, the mood, how many are unhappy and hurt, the circles and the worst heat', !!R.trust.w && !!R.mood.w && R.size > 0 && Array.isArray(R.circles) && R.heat.every(h => h.bond <= -60) && R.heat.length <= 3, R.trust.w + ', ' + R.mood.w + ', ' + R.unhappy + ' unhappy, ' + R.circles.length + ' circles, ' + R.heatN + ' heat');
+  ok('d2', 'no circle is named after the word The', R.circles.every(c => !/^The’s/.test(c.name)));
+  const w = W[0], m0 = w.morale; w.morale = Math.max(0, m0 - 20); ok('d3', 'a mood that has dropped since the show says how far', E.dossier(S, w.id).mood.d === Math.round(w.morale) - S.moodAt.m[w.id] && E.dossier(S, w.id).mood.d < 0, E.dossier(S, w.id).mood.d);
+}
+
 if (fails.length) { console.log('FAILED: ' + fails.length); process.exit(1); }
 console.log('test-people: all passed');
