@@ -1148,17 +1148,24 @@ function dirtSheet(S,P,show,rep,pool){
    the night and books the money. Everything a show needs between steps is in `st`, which is plain data, so a show
    that is on the air can be saved and loaded. Rival shows and the sample shows run the three straight through. */
 function showPool(S,P,show){return eligible(S,P,show).filter(function(w){return w.promo===P.id&&!(show.big&&isDev(P,w.brand));});}
+/* the advertised card sells the tickets: star power in the main event, the hottest feud, advertising, anything
+   done this week to talk the show up, and the face of the company on the card. The desk's ticket sales use it too. */
+function cardHype(S,P,show,card,isPl){
+  var n=card.length,key=show.big?'big':show.id,star=n?avg(flat(card[n-1].sides).map(function(id){return S.w[id].ovr;})):50,heat=0;
+  card.forEach(function(m){var ids=flat(m.sides);for(var x=0;x<ids.length;x++)for(var y=x+1;y<ids.length;y++){var f=feudOf(S,ids[x],ids[y]);if(f&&f.heat>heat)heat=f.heat;}});
+  return clamp(1+(star-(P.starB[key]||star))/80+heat/500+ADV_H[P.adv]+(isPl&&S.hype?S.hype:0)+(isPl?faceHype(S,P,card):0),0.8,1.4);
+}
 function showStart(S,P,show,card){
   var isPl=P.id===S.player&&!S.cal,big=!!show.big,n=card.length,i,key=big?'big':show.id;
   var rep={promo:P.id,id:show.id,name:show.name,big:big,week:S.week,segs:[],gim:false};
   var pool=showPool(S,P,show);
-  // the advertised card sells the tickets: star power in the main event, the hottest feud, and advertising
-  var star=n?avg(flat(card[n-1].sides).map(function(id){return S.w[id].ovr;})):50,heat=0;
-  card.forEach(function(m){var ids=flat(m.sides);for(var x=0;x<ids.length;x++)for(var y=x+1;y<ids.length;y++){var f=feudOf(S,ids[x],ids[y]);if(f&&f.heat>heat)heat=f.heat;}});
+  var star=n?avg(flat(card[n-1].sides).map(function(id){return S.w[id].ovr;})):50;
   rep.mainStar=star;
   if(!S.cal){
-    var hype=clamp(1+(star-(P.starB[key]||star))/80+heat/500+ADV_H[P.adv]+(isPl&&S.hype?S.hype:0)+(isPl?faceHype(S,P,card):0),0.8,1.4),dm=TIX_D[P.tix],d0=demand(P,show,1)*(isPl?tourBoost(S,P):1),d=d0*(isPl?tasteDraw(S,P,card,rep):1),cap=capFor(d0);   // the building was booked before the card was
-    rep.hype=hype;rep.cap=cap;rep.att=Math.round(Math.min(cap,d*hype*dm));rep.sellout=rep.att>=cap;
+    var hype=cardHype(S,P,show,card,isPl),dm=TIX_D[P.tix],d0=demand(P,show,1)*(isPl?tourBoost(S,P):1),d=d0*(isPl?tasteDraw(S,P,card,rep):1),cap=capFor(d0);   // the building was booked before the card was
+    rep.hype=hype;rep.cap=cap;rep.att=Math.round(Math.min(cap,d*hype*dm));
+    if(isPl){var sold=roadSoldNow(S,P);if(sold>rep.att){rep.noshow=sold-rep.att;rep.att=sold;}}   // a ticket sold is a ticket paid for, whoever turns up
+    rep.sellout=rep.att>=cap;
     rep.energy=isPl?clamp((hype*dm-1)*9,-2,2):0;
     if(isPl){rep.venue=venueFor(S,P,cap);rep.ann=(deskNames(S,P)||P.ann).slice();var air=airStart(S,P,show);if(air){rep.ep=air.ep;rep.net=air.net;if(air.occ)rep.occ=air.occ;}S.hype=0;
       rep.lineup=card.map(function(m){var t=m.title?titleById(P,m.title):null;return vsLabel(m.sides.map(function(ids){return ids.map(function(id){return S.w[id];});}))+(t?' — '+t.name:'');});}
@@ -8739,11 +8746,47 @@ function roadRoute(S,P){
 function roadCity(S,P,n){var R=roadRoute(S,P);return R[((n%R.length)+R.length)%R.length];}
 /* the building is booked before the card is: its size comes from what this company draws, not from tonight's matches */
 function roadCap(S,P,show){return capFor(demand(P,show,1)*tourBoost(S,P));}
+/* ---------- tickets sold before the night (docs/plans/art-direction.md, 6.6) ----------
+   A television show goes on sale four weeks out, a big event eight. Each week more of the house is sold, up to about
+   nine in ten by the week of the show; the rest walk up on the night. What a stop will draw is worked out the way the
+   night itself works it out (cardHype() in src/30-show.js): popularity, ticket prices, advertising, anything done this
+   week to talk the next show up, the hottest story, and once the card is booked, the card itself. S.tix[stop] is what
+   had been sold when the last week ended, so a ticket once sold stays sold. Nothing here uses rnd(S). */
+function saleSpan(show){return show.big?8:4;}
+function saleFrac(wo,show){var span=saleSpan(show);if(wo>span)return 0;if(wo<0)wo=0;return 0.88*Math.pow(1-wo/(span+1),0.7);}
+function stopDraw(S,P,show,next){
+  var d0=demand(P,show,1)*tourBoost(S,P),hype;
+  if(next&&S.card&&S.card.length)hype=cardHype(S,P,show,S.card,true);
+  else{var heat=0;activeFeuds(S).forEach(function(f){if(f.heat>heat&&f.a.concat(f.b).some(function(id){return S.w[id]&&S.w[id].promo===P.id;}))heat=f.heat;});
+    hype=clamp(1+ADV_H[P.adv]+(next&&S.hype?S.hype:0)+heat/1000,0.8,1.4);}
+  return Math.min(roadCap(S,P,show),d0*hype*TIX_D[P.tix]);
+}
+/* what a stop has sold, what it had sold when this week began, and whether it is on sale yet */
+function stopSales(S,P,w,show,k,next){
+  var cap=roadCap(S,P,show),was=Math.min(cap,(S.tix&&S.tix[k])||0),wo=w-S.week,live=Math.round(stopDraw(S,P,show,next)*saleFrac(wo,show)),sold=Math.max(was,live);
+  return {sold:sold,wk:sold-was,cap:cap,on:wo<=saleSpan(show),opens:Math.max(0,wo-saleSpan(show))};
+}
+/* on the night: whatever was sold is paid for, whoever turns up */
+function roadSoldNow(S,P){var k=S.rdn||0;return Math.round((S.tix&&S.tix[k])||0);}
+/* when a week ends, what each stop has sold is written down, so the next week's sales start from there */
+(function(){var ew=E.endWeek;E.endWeek=function(S){
+  var P=S.promos[S.player],w0=S.week,keep={};
+  if(P&&!S.over)roadAhead(S,P,8).forEach(function(a,i){var x=stopSales(S,P,a.w,a.show,a.k,i===0);if(x.sold>0)keep[a.k]=x.sold;});
+  var r=ew.apply(this,arguments);
+  if(S.week!==w0){S.tix=keep;Object.keys(S.tix).forEach(function(k){if(+k<(S.rdn||0))delete S.tix[k];});}
+  return r;
+};})();
+/* a new game starts with the shows ahead already selling: what they had sold by the end of last week */
+(function(){var ng=E.newGame;E.newGame=function(){
+  var S=ng.apply(this,arguments),P=S&&S.promos&&S.promos[S.player];
+  if(P&&S.queue){S.tix={};roadAhead(S,P,8).forEach(function(a,i){var n=Math.round(stopDraw(S,P,a.show,i===0)*saleFrac(a.w-S.week+1,a.show));if(n>0)S.tix[a.k]=n;});}
+  return S;
+};})();
 /* the stops still to come: what is left of this week, then the weeks after it */
 function roadAhead(S,P,n){
   var out=[],k=S.rdn||0,w=S.week,i;
-  for(i=S.qi||0;S.queue&&i<S.queue.length;i++)out.push({w:w,show:S.queue[i],city:roadCity(S,P,k++)});
-  while(out.length<n&&w<S.week+12){w++;weekShows(S,P,w).forEach(function(sh){out.push({w:w,show:sh,city:roadCity(S,P,k++)});});}
+  for(i=S.qi||0;S.queue&&i<S.queue.length;i++){out.push({w:w,show:S.queue[i],city:roadCity(S,P,k),k:k});k++;}
+  while(out.length<n&&w<S.week+12){w++;weekShows(S,P,w).forEach(function(sh){out.push({w:w,show:sh,city:roadCity(S,P,k),k:k});k++;});}
   return out.slice(0,n);
 }
 /* a night in a city is remembered: when, how it went and how full it was */
@@ -8774,7 +8817,7 @@ E.road=function(S){
   var P=S.promos[S.player],ahead=roadAhead(S,P,6),past=[],i;
   if(!ahead.length)return null;
   for(i=0;i<S.reports.length&&past.length<3;i++){var r=S.reports[i];if(r&&r.venue)past.unshift({k:'past',city:r.city||cityOfVenue(r.venue),show:r.name,w:r.week,grade:gradeG(repCS(r)),att:r.att,cap:r.cap,so:!!r.sellout});}
-  var stops=past.concat(ahead.map(function(a,j){return {k:j===0?'now':(j===1?'next':'far'),city:a.city,show:a.show.name,big:!!a.show.big,w:a.w};}));
+  var stops=past.concat(ahead.map(function(a,j){var x=stopSales(S,P,a.w,a.show,a.k,j===0);return {k:j===0?'now':(j===1?'next':'far'),city:a.city,show:a.show.name,big:!!a.show.big,w:a.w,sold:x.sold,cap:x.cap,on:x.on,opens:x.opens};}));
   var A=ahead[0],city=A.city,near=[city];
   if(ahead[1])near.push(ahead[1].city);past.slice().reverse().forEach(function(p){near.push(p.city);});if(ahead[2])near.push(ahead[2].city);
   var M=roadMap(S,near),here=placeOf(S,city),lit={now:-1,next:-1,mine:[]},off=[];
@@ -8784,17 +8827,18 @@ E.road=function(S){
     if(lit.next===lit.now)lit.next=-1;
     (P.cities||[]).forEach(function(c){var p=placeOf(S,c);if(p&&mapHas(M,p)){var a=mapArea(M,p);if(a>=0&&lit.mine.indexOf(a)<0)lit.mine.push(a);}});
   }
-  var cap=roadCap(S,P,A.show),last=S.rdv&&S.rdv[city],bar=S.bar&&S.bar[city],reg=P.tour?REGIONS[P.tour.reg]:REGIONS[homeReg(P)];
+  var cap=roadCap(S,P,A.show),sale=stopSales(S,P,A.w,A.show,A.k,true),last=S.rdv&&S.rdv[city],bar=S.bar&&S.bar[city],reg=P.tour?REGIONS[P.tour.reg]:REGIONS[homeReg(P)];
   var home=rosterOf(S,P.id).filter(function(w){return w.town===city&&!w.nw;}).sort(function(a,b){return b.ovr-a.ovr;}).slice(0,3).map(function(w){return {id:w.id,name:w.name,hurt:w.inj>0};});
   return {map:M?M.id:null,mapName:M?M.n:null,lit:lit,stops:stops,off:off,
     now:{city:city,land:M&&lit.now>=0?M.a[lit.now]:null,show:A.show.name,big:!!A.show.big,w:A.w,later:A.w>S.week,left:Math.max(0,(S.queue?S.queue.length:0)-(S.qi||0)),
       venue:venueName(city,cap),cap:cap,seat:Math.round(ticket(P,A.show)*TIX_P[P.tix]),tix:TIXN[P.tix],
+      sold:sale.sold,wk:sale.wk,on:sale.on,opens:sale.opens,gate:Math.round(sale.sold*ticket(P,A.show)*TIX_P[P.tix]),
       last:last?{ago:S.week-last.w,grade:gradeG(last.cs),att:last.att,cap:last.cap,so:!!last.so}:null,
       rival:bar&&S.week-bar.w<=4?{by:bar.by,ago:S.week-bar.w}:null,
       taste:TASTEN[reg.taste],tour:P.tour?reg.n:null,home:home}};
 };
 /** The year ahead on the road: every stop for the next `n` shows, for the schedule pop-up. */
-E.roadAhead=function(S,n){var P=S.promos[S.player];return roadAhead(S,P,n||16).map(function(a){var c=cal(a.w);return {w:a.w,when:a.w===S.week?'This week':(a.w===S.week+1?'Next week':c.label),show:a.show.name,big:!!a.show.big,city:a.city,cap:roadCap(S,P,a.show)};});};
+E.roadAhead=function(S,n){var P=S.promos[S.player];return roadAhead(S,P,n||16).map(function(a,i){var c=cal(a.w);var x=stopSales(S,P,a.w,a.show,a.k,i===0);return {w:a.w,when:a.w===S.week?'This week':(a.w===S.week+1?'Next week':c.label),show:a.show.name,big:!!a.show.big,city:a.city,cap:x.cap,sold:x.sold,on:x.on,opens:x.opens};});};
 E.roadRoute=function(S,pid){return roadRoute(S,S.promos[pid==null?S.player:pid]);};
 E.mapArea=function(S,mapId,city){var M=mapById(mapId),p=placeOf(S,city);return M&&p&&mapHas(M,p)?mapArea(M,p):-1;};
 E.mapXY=function(S,mapId,city){var M=mapById(mapId),p=placeOf(S,city);return M&&p&&mapHas(M,p)?mapXY(M,p):null;};

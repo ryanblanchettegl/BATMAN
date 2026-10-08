@@ -9,7 +9,7 @@ import { E, W } from '../../engine';
 import { G, ui, me, act, openModal, closeModal, plural, view, Modal } from '../../store';
 import { go, weekDone, pending } from '../../nav';
 import { book, endWeek } from '../../flow';
-import { Btn, Name, CheckLine, Empty, Dial, dataAttrs, Txt, Tag, Tabs, Window, Desktop, Win, Group, Line, RoadMap, LightText, LightPic, brandName } from '../../kit';
+import { Btn, Meter, Name, CheckLine, Empty, Dial, dataAttrs, Txt, Tag, Tabs, Window, Desktop, Win, Group, Line, RoadMap, LightText, LightPic, brandName } from '../../kit';
 import { Portrait } from '../../kit/portrait';
 import { ScheduleList, QuestList } from '../../shared/week';
 import { openNight } from '../booking/run';
@@ -32,12 +32,12 @@ function alerts(): ComponentChildren[] {
 
 /* ---------- the road ---------- */
 const CHIP: Record<string, string> = { past: '#ff5555', now: '#ffff55', next: '#ff55ff', far: '#ffffff' };
-/** The line of lights under the map: the city, the show and the building, as much as there is room for. */
+/** The line of lights under the map: the city, the show, the building and the tickets, as much as there is room for. */
 function ticker(N: any): [string, string][] {
   const room = document.documentElement.getAttribute('data-screen') === 'tablet' ? 46 : 66, sep: [string, string] = [' · ', '#777777'];
-  const bits: [string, string][] = [[N.city, '#55ffff'], [N.show, '#ffff55'], [N.venue.slice(N.city.length + 1), '#ffffff'], ['Holds ' + num(N.cap), '#55ff55']];
+  const bits: [string, string][] = [[N.city, '#55ffff'], [N.show, '#ffff55'], [num(N.sold) + ' sold', '#55ff55'], [N.venue.slice(N.city.length + 1), '#ffffff'], ...(N.sold >= N.cap ? [['Sold out ★', '#ffff55'] as [string, string]] : [[num(N.cap - N.sold) + ' to a sell-out', '#ff5555'] as [string, string]])];
   const out: [string, string][] = []; let n = 0;
-  for (const b of bits) { const add = b[0].length + (out.length ? 3 : 0); if (out.length && n + add > room) break; if (out.length) out.push(sep); out.push([b[0].slice(0, room), b[1]]); n += add; }
+  for (const b of bits) { const add = b[0].length + (out.length ? 3 : 0); if (out.length && n + add > room) continue; if (out.length) out.push(sep); out.push([b[0].slice(0, room), b[1]]); n += add; }
   return out;
 }
 function Road() {
@@ -50,16 +50,16 @@ function Road() {
       <RoadMap road={R} t="road-map" />
       <div class="rmid">
         <p class="bl big one" data-t="road-city">{N.city.toUpperCase()}{N.land ? ', ' + N.land.toUpperCase() : ''}</p>
-        <p class="one" data-t="road-show">{N.show}{N.big ? <> <Tag kind="gold">Big event</Tag></> : null} <span class="muted">{'·'} {N.later ? 'next week. Every show this week has run.' : (N.left > 1 ? 'the first of ' + N.left + ' shows left this week' : 'the last show this week')}</span></p>
+        <p class="one" data-t="road-show"><b>{N.venue}</b>{N.big ? <> <Tag kind="gold">Big event</Tag></> : null} <span class="muted">{'·'} {N.later ? 'next week. Every show this week has run.' : (N.left > 1 ? 'the first of ' + N.left + ' shows left this week' : 'the last show this week')}</span></p>
         <Group title="The building" t="road-building">
-          <Line label="Arena" w={9}>{N.venue}</Line>
-          <Line label="Holds" w={9}><b>{num(N.cap)}</b></Line>
-          <Line label="A seat" w={9}>${num(N.seat)} <span class="muted">{'·'} {String(N.tix).toLowerCase()} prices</span></Line>
+          <Line label="Sold" w={12}><b class="bl">{num(N.sold)}</b> of {num(N.cap)} <Meter v={N.sold / N.cap * 100} n={8} kind={N.sold >= N.cap ? 'au' : 'cool'} />{N.sold >= N.cap ? <b class="good"> Sold out</b> : null}</Line>
+          <Line label="This week" w={12}>{N.wk > 0 ? <span class="good">{'▲'} {num(N.wk)} sold</span> : <span class="muted">Nothing sold yet</span>}</Line>
+          <Line label="Gate so far" w={12}>${num(N.gate)} <span class="muted">at ${num(N.seat)} a seat</span></Line>
         </Group>
         <Group title="The crowd" t="road-crowd">
-          <Line label="Likes" w={9}>{N.taste.charAt(0).toUpperCase() + N.taste.slice(1)}.{N.tour ? <span class="muted"> On tour in {N.tour}.</span> : null}</Line>
-          <Line label="Last here" w={9}>{N.last ? <>{weeks(N.last.ago).replace(/^a/, 'A')}, {/^[AF]/.test(N.last.grade) ? 'an' : 'a'} <b class={/^[AB]/.test(N.last.grade) ? 'good' : 'bad'}>{N.last.grade}</b>{N.last.so ? ', sold out' : ', ' + num(N.last.att) + ' in'}</> : <span class="muted">No night here on record</span>}</Line>
-          <Line label="In town" w={9}>{N.rival ? <span class="bad">{N.rival.by} had a great night here {weeks(N.rival.ago)}</span> : <span class="muted">Nobody else lately</span>}</Line>
+          <Line label="Likes" w={12}>{N.taste.charAt(0).toUpperCase() + N.taste.slice(1)}.{N.tour ? <span class="muted"> On tour in {N.tour}.</span> : null}</Line>
+          <Line label="Last here" w={12}>{N.last ? <>{weeks(N.last.ago).replace(/^a/, 'A')}, {/^[AF]/.test(N.last.grade) ? 'an' : 'a'} <b class={/^[AB]/.test(N.last.grade) ? 'good' : 'bad'}>{N.last.grade}</b>{N.last.so ? ', sold out' : ', ' + num(N.last.att) + ' in'}</> : <span class="muted">No night here on record</span>}</Line>
+          <Line label="In town" w={12}>{N.rival ? <span class="bad">{N.rival.by} had a great night here {weeks(N.rival.ago)}</span> : <span class="muted">Nobody else lately</span>}</Line>
         </Group>
       </div>
       <div class="rright">
@@ -69,7 +69,7 @@ function Road() {
         </Group>
         <Group title="The road" t="road-list">
           {past.map((s, i) => <p class="one" key={'p' + i}><i class="chip" style={{ background: CHIP.past }} />{s.city} <b class={/^[AB]/.test(s.grade) ? 'good' : 'bad'}>{s.grade}</b> <span class="muted">{'·'} {s.so ? 'sold out' : num(s.att)}</span></p>)}
-          {ahead.map((s, i) => <p class="one" key={'a' + i}><i class="chip" style={{ background: CHIP[s.k] }} />{s.k === 'now' ? <b>{'►'} {s.city}, {N.later ? 'next week' : 'this week'}</b> : <span class="bl">{s.city}{s.k === 'next' ? ' next' : ''}{s.big ? ' · the big event' : ''}</span>}{offMap(s)}</p>)}
+          {ahead.map((s, i) => <p class="one" key={'a' + i}><i class="chip" style={{ background: CHIP[s.k] }} />{s.k === 'now' ? <b>{'►'} {s.city}, {N.later ? 'next week' : 'this week'}</b> : <span class="bl">{s.city}{s.k === 'next' ? ' next' : ''}{s.big ? ' · the big event' : ''}</span>}{s.k === 'now' ? null : <span class="muted"> {'·'} {s.on ? num(s.sold) + ' sold' : 'on sale in ' + s.opens + (s.opens === 1 ? ' week' : ' weeks')}</span>}{offMap(s)}</p>)}
           <p class="one muted"><i class="chip" style={{ background: '#55ff55' }} />Where you tour</p>
         </Group>
       </div>
@@ -85,9 +85,9 @@ function Road() {
 export function RoadYearWindow() {
   const S = G.S, L: any[] = E.roadAhead(S, 16), R: string[] = E.roadRoute(S);
   return <Window title="The schedule" wide ok="Done">
-    <p>Your shows go from city to city in a loop, the nearest city next. The building is booked on what you draw today.</p>
-    <table class="mt1" data-t="road-ahead"><thead><tr><th>When</th><th>Show</th><th>City</th><th class="r">Holds</th></tr></thead>
-      <tbody>{L.map((a, i) => <tr key={i}><td>{a.when}</td><td>{a.show}{a.big ? <> <Tag kind="gold">Big event</Tag></> : null}</td><td><b>{a.city}</b></td><td class="r num">{num(a.cap)}</td></tr>)}</tbody></table>
+    <p>Your shows go from city to city in a loop, the nearest city next. The building is booked on what you draw today. A television show goes on sale four weeks out, a big event eight; Soon means not on sale yet.</p>
+    <table class="mt1" data-t="road-ahead"><thead><tr><th>When</th><th>Show</th><th>City</th><th class="r">Sold</th><th class="r">Holds</th></tr></thead>
+      <tbody>{L.map((a, i) => <tr key={i}><td>{a.when}</td><td>{a.show}{a.big ? <> <Tag kind="gold">Big event</Tag></> : null}</td><td><b>{a.city}</b></td><td class="r num">{a.on ? num(a.sold) : 'Soon'}</td><td class="r num">{num(a.cap)}</td></tr>)}</tbody></table>
     <p class="muted mt1">The loop: {R.join(', ')}.</p>
   </Window>;
 }

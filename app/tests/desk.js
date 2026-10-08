@@ -30,8 +30,10 @@ async function run(mode, w, h, promo) {
     const col = await mapColours(page);
     ok(id, 'this week’s land is lit yellow, the places the company tours a lighter green, the rest green', col.now > 0 && col.land > 20 && col.mine + col.next > 0, JSON.stringify(col));
     ok(id, 'the heading is this week’s city and its land', (await txt(page, '[data-t="road-city"]')).trim() === (R.now.city + ', ' + R.now.land).toUpperCase(), await txt(page, '[data-t="road-city"]'));
-    ok(id, 'the building is named before the show is booked, with how many it holds and what a seat costs', (await txt(page, '[data-t="road-building"]')).indexOf(R.now.venue) >= 0 && (await txt(page, '[data-t="road-building"]')).indexOf(R.now.cap.toLocaleString('en-US')) >= 0 && /\$\d+/.test(await txt(page, '[data-t="road-building"]')));
-    ok(id, 'the line of lights says the city and the show', new RegExp(R.now.city + ' · ' + R.now.show.slice(0, 8), 'i').test(await page.$eval('[data-t="road-ticker"]', e => e.getAttribute('aria-label'))), await page.$eval('[data-t="road-ticker"]', e => e.getAttribute('aria-label')));
+    ok(id, 'the building is named before the show is booked', (await txt(page, '[data-t="road-show"]')).indexOf(R.now.venue) >= 0);
+    const bt = await txt(page, '[data-t="road-building"]');
+    ok(id, 'it says how many tickets are sold of how many, how many this week, and the gate so far', bt.indexOf(R.now.sold.toLocaleString('en-US') + ' of ' + R.now.cap.toLocaleString('en-US')) >= 0 && bt.indexOf(R.now.wk.toLocaleString('en-US') + ' sold') >= 0 && bt.indexOf('$' + R.now.gate.toLocaleString('en-US')) >= 0, bt.replace(/\s+/g, ' '));
+    ok(id, 'the line of lights says the city, the show and the tickets', /sold/i.test(await page.$eval('[data-t="road-ticker"]', e => e.getAttribute('aria-label'))) && new RegExp(R.now.city + ' · ' + R.now.show.slice(0, 8), 'i').test(await page.$eval('[data-t="road-ticker"]', e => e.getAttribute('aria-label'))), await page.$eval('[data-t="road-ticker"]', e => e.getAttribute('aria-label')));
     ok(id, 'the map says what it shows to a screen reader', new RegExp('A map of ' + R.mapName + '\\. This week: ' + R.now.city).test(await page.$eval('[data-t="road-map"]', e => e.getAttribute('aria-label'))));
     ok(id, 'the road list has this week and the stops ahead, each with its colour', (await txt(page, '[data-t="road-list"]')).indexOf(R.now.city + ', this week') >= 0 && await page.$$eval('[data-t="road-list"] .chip', L => L.length >= 3));
     /* the map is drawn once and kept */

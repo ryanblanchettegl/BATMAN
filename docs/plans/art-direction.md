@@ -230,7 +230,9 @@ Today a show's city is picked when the show runs. The road needs it picked ahead
 - `E.road(S)` returns the list with grades for stops already run, for the desk and the ticker.
 - Rivals do not need a schedule. Their city is still picked on the night.
 
-### 6.6 Tickets sold before the night
+### 6.6 Tickets sold before the night (built 8 October)
+Built as planned, with one change: the night's crowd still comes from the same sum as before, and the tickets sold ahead are a floor under it (a sold ticket is paid for even if nobody comes). Over half a year of nights fewer than three seats in a hundred are sold to people who stay home, so calibration does not move (`test-road.js`). The desk shows sold of capacity, sold this week and the gate so far; the road list and the schedule show what each stop ahead has sold, or that it is not on sale yet; the line of lights says sold and how many to a sell-out.
+
 - Each stop on the road carries `sold`, starting when it goes on sale (four weeks out for television, eight for a big event).
 - Each week `sold` moves toward what the night will draw: the same things that set attendance today (popularity, ticket price, the market, the show's standing), plus what has been announced (a title match, a hot story's next act, a hometown star).
 - The night's attendance is what was sold plus the walk-up. It must still come out where the current formula puts it, so calibration does not move. Test: a year of gates before and after this change agree within a few percent.

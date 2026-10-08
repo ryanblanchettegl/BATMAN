@@ -47,6 +47,23 @@ const play = (S, weeks) => { for (let i = 0; i < weeks; i++) { answer(S); while 
   const D3 = E.road(S);
   ok(pid, 'it says when you were last here and how it went, and when a rival has had a great night in town', D3.now.last.ago === 3 && D3.now.last.so && D3.now.rival.ago === 2 && D3.now.rival.by === 'A rival', D3.now.last.grade);
 });
+/* tickets sold before the night */
+{ const S = E.newGame('whw', 4, { name: 'R' }), D = E.road(S), N = D.now, ahead = D.stops.filter(s => s.k !== 'past');
+  ok('tix', 'the next show is on sale, has sold most of the house, and sold some of it this week', N.on && N.sold > N.cap * 0.4 && N.sold <= N.cap && N.wk > 0 && N.wk < N.sold, N.sold + ' of ' + N.cap + ', ' + N.wk + ' this week');
+  const same = ahead.filter(s => s.show === N.show);
+  ok('tix', 'the further away a show is, the less of it is sold', same.length >= 2 && same.every((s, i, L) => !i || s.sold < L[i - 1].sold), same.map(s => s.city + ' ' + s.sold + '/' + s.cap).join(', '));
+  ok('tix', 'the gate so far is what is sold at what a seat costs', N.gate === Math.round(N.sold * N.seat) || Math.abs(N.gate - N.sold * N.seat) < N.sold);
+  const before = JSON.stringify(S); E.road(S); E.roadAhead(S, 12); ok('tix', 'reading the sales changes nothing', JSON.stringify(S) === before);
+  const P = S.promos[S.player], s0 = E.road(S).now.sold; P.adv = 3; S.hype = 0.1; const s1 = E.road(S).now.sold;
+  ok('tix', 'advertising and talking the show up sell more tickets', s1 > s0, s0 + ' then ' + s1);
+  P.adv = 0; S.hype = 0; const s2 = E.road(S).now.sold; ok('tix', 'and a ticket sold when the week began stays sold', s2 >= Math.min(...[s0]) - N.wk, s2);
+  answer(S); const rep = show(S); ok('tix', 'the night has at least as many in the building as had bought a ticket by the end of last week', rep.att >= (N.sold - N.wk), rep.att + ' in, ' + (N.sold - N.wk) + ' sold before the week');
+}
+{ /* a year of shows: tickets sold ahead never decide the gate, they only make sure a sold ticket is paid for */
+  let noshow = 0, att = 0, sold = 0;
+  ['whw', 'ttt', 'nmw'].forEach(pid => { const S = E.newGame(pid, 11, { name: 'R' }); for (let w = 0; w < 24; w++) { answer(S); while (S.qi < S.queue.length) { const r = show(S); noshow += r.noshow || 0; att += r.att; if (r.sellout) sold++; } answer(S); E.endWeek(S); } });
+  ok('tix', 'over half a year of nights, fewer than three in a hundred seats were sold to people who stayed home', noshow / att < 0.03, (noshow / att * 100).toFixed(2) + '% of ' + att);
+}
 /* hometowns and a city nobody has placed */
 { const S = E.newGame('whw', 9, { name: 'R' }), P = S.promos[S.player], w = E.rosterOf(S, P.id)[0]; w.town = E.road(S).now.city;
   ok('home', 'somebody from tonight’s city is named', E.road(S).now.home.some(h => h.id === w.id));
