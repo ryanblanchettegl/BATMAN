@@ -1153,7 +1153,7 @@ function showPool(S,P,show){return eligible(S,P,show).filter(function(w){return 
 function cardHype(S,P,show,card,isPl){
   var n=card.length,key=show.big?'big':show.id,star=n?avg(flat(card[n-1].sides).map(function(id){return S.w[id].ovr;})):50,heat=0;
   card.forEach(function(m){var ids=flat(m.sides);for(var x=0;x<ids.length;x++)for(var y=x+1;y<ids.length;y++){var f=feudOf(S,ids[x],ids[y]);if(f&&f.heat>heat)heat=f.heat;}});
-  return clamp(1+(star-(P.starB[key]||star))/80+heat/500+ADV_H[P.adv]+(isPl&&S.hype?S.hype:0)+(isPl?faceHype(S,P,card):0),0.8,1.4);
+  return clamp(1+(star-(P.starB[key]||star))/80+heat/500+ADV_H[P.adv]+(isPl&&S.hype?S.hype:0)+(isPl?faceHype(S,P,card)+homeHype(S,P,flat(card.map(function(m){return flat(m.sides);}))):0),0.8,1.4);
 }
 function showStart(S,P,show,card){
   var isPl=P.id===S.player&&!S.cal,big=!!show.big,n=card.length,i,key=big?'big':show.id;
@@ -5202,18 +5202,24 @@ SHOWX.push(function(S,P,show,rep){
   P.image=clamp(P.image+0.2,5,100);news(S,'story',w.name+'’s hall of fame induction was the emotional moment of '+show.name+'. '+rep.hofNight.speech);
 });
 
-/* home-town heroes: a wrestler in their home city gets a pop. Beating them there costs. A home-town title win lifts the city */
-function atHome(ctx,w){return !!(w.town&&ctx.rep&&ctx.rep.venue&&ctx.rep.venue.indexOf(w.town)===0);}
+/* home-town heroes: a wrestler in or near their home town gets a pop (homeKm() in src/91-road.js: the town itself, or
+   within HOME_KM of it). Beating them there costs. Win or lose there, they remember who booked it. A home-town title
+   win lifts the city */
+function atHome(ctx,w){if(!w.town||!ctx.rep||!ctx.rep.venue)return false;var k=homeKm(ctx.S,w,cityOfVenue(ctx.rep.venue));return k!=null&&k<=HOME_KM;}
+function homeWord(ctx,w){var c=cityOfVenue(ctx.rep.venue);return w.town===c?'here in '+c:'in '+c+', up the road from '+w.town;}
 CRX.push(function(ctx){
   var h=ctx.all.filter(function(w){return atHome(ctx,w);});
-  return h.length?{d:1.6*Math.min(2,h.length),x:h[0].name+' is a hometown hero here'+(ctx.rep.venue?' in '+h[0].town:'')}:null;
+  var c=cityOfVenue(ctx.rep.venue),n=0;h.forEach(function(w){n+=homeWeight(ctx.S,w,c);});
+  return h.length?{d:1.6*Math.min(2,n),x:h[0].name+' is a hometown hero '+homeWord(ctx,h[0])}:null;
 });
 POST.push(function(ctx){
   if(ctx.S.cal||!ctx.rep||!ctx.rep.venue)return;var r=ctx.res,seg=r.seg;
   var home=r.losers.filter(function(w){return atHome(ctx,w);});
-  if(home.length&&r.win>=0&&r.fin!=='dq'&&r.fin!=='co'){r.winners.forEach(function(w){w.mom=clamp(w.mom-1,-10,10);});seg.notes.push('The home crowd turns on '+names(r.winners)+' for beating '+home[0].name+' in '+home[0].town+'.');}
+  if(home.length&&r.win>=0&&r.fin!=='dq'&&r.fin!=='co'){r.winners.forEach(function(w){w.mom=clamp(w.mom-1,-10,10);});seg.notes.push('The home crowd turns on '+names(r.winners)+' for beating '+home[0].name+' '+homeWord(ctx,home[0])+'.');
+    if(ctx.isPl)home.forEach(function(w){w.morale=clamp(w.morale-3,0,100);youRemember(ctx.S,w,'homeloss','You had them lose in front of their own people, '+homeWord(ctx,w)+'.',-6);});}
+  if(ctx.isPl&&r.win>=0)r.winners.filter(function(w){return atHome(ctx,w);}).forEach(function(w){w.morale=clamp(w.morale+3,0,100);youRemember(ctx.S,w,'homewin','You gave them a win in front of their own people, '+homeWord(ctx,w)+'.',5);});
   var champ=r.win>=0&&seg.change?r.winners.filter(function(w){return atHome(ctx,w);})[0]:null;
-  if(champ){ctx.P.image=clamp(ctx.P.image+0.15,5,100);seg.notes.push(champ.name+' wins the title in '+champ.town+'. The whole city is celebrating.');if(ctx.isPl)news(ctx.S,'story',champ.name+' won the title in their home town of '+champ.town+'.');}
+  if(champ){ctx.P.image=clamp(ctx.P.image+0.15,5,100);seg.notes.push(champ.name+' wins the title '+homeWord(ctx,champ)+'. The whole town is celebrating.');if(ctx.isPl)news(ctx.S,'story',champ.name+' won the title in front of their own people, '+homeWord(ctx,champ)+'.');}
 });
 
 /* the milestone wall: a list of firsts with dates. Each one lands as a pop-up and is listed on Career */
@@ -8715,10 +8721,13 @@ var CITY_AT={'Rome':[41.9,12.5],'Athens':[37.98,23.73],'Alexandria':[31.2,29.92]
   'Chiloe':[-42.6,-73.9,['Chile']],'Mexico City':[19.43,-99.13],'Puebla':[19.04,-98.2,['Puebla']],'Guadalajara':[20.67,-103.35],'Veracruz':[19.17,-96.13],'Havana':[23.11,-82.37],'Caracas':[10.48,-66.9],'Bogota':[4.71,-74.07],
   'Quito':[-0.18,-78.47],'Lima':[-12.05,-77.04],'Santiago':[-33.45,-70.67],'Buenos Aires':[-34.6,-58.38],'Madrid':[40.42,-3.7],'Nara':[34.69,135.8],'Edo':[35.68,139.69],'Osaka':[34.69,135.5],
   'Kamakura':[35.32,139.55],'Izumo':[35.37,132.75],'Ise':[34.49,136.71],'Aizu':[37.49,139.93],'Sendai':[38.27,140.87],'Hakata':[33.59,130.4],'Nikko':[36.75,139.6],'Kanazawa':[36.56,136.65]};
+/* Hometowns that are not stops on any road: where they are, so a night nearby counts (src/82-wishes.js). A town with no
+   place (the Land of Oz) only ever counts in its own name. */
+var TOWN_AT={"Aachen":[50.78,6.08],"Abancay":[-13.64,-72.88],"Akita":[39.72,140.1],"Altdorf":[46.88,8.64],"Amarna":[27.65,30.9],"Amsterdam":[52.37,4.9],"Anenecuilco":[18.78,-98.98],"Anzio":[41.45,12.62],"Arauco":[-37.25,-73.32],"Arcadia":[37.6,22.3],"Argos":[37.63,22.73],"Arras":[50.29,2.78],"Ashigara":[35.3,139.03],"Auburn":[42.93,-76.57],"Babylon":[32.54,44.42],"Badajoz":[38.88,-6.97],"Barcelona":[41.39,2.17],"Barinas":[8.62,-70.21],"Bergen":[60.39,5.32],"Berlin":[52.52,13.4],"Bodenwerder":[51.97,9.52],"Bonn":[50.73,7.1],"Bowling Green":[39.34,-91.19],"Brasov":[45.65,25.6],"Braunschweig":[52.27,10.52],"Bremen":[53.08,8.8],"Breslau":[51.1,17.03],"Bristol":[51.45,-2.59],"Bubastis":[30.57,31.51],"Bundelkhand":[25.0,79.5],"Burgos":[42.34,-3.7],"Burnham Thorpe":[52.94,0.75],"Canterbury":[51.28,1.08],"Cap-Haitien":[19.76,-72.2],"Carlisle":[54.89,-2.93],"Carmarthen":[51.86,-4.31],"Carthage":[36.85,10.32],"Carthage, Missouri":[37.18,-94.31],"Catskill":[42.22,-73.86],"Cayce":[36.57,-89.06],"Chelmsford":[51.74,0.47],"Chillan":[-36.61,-72.1],"Chuquisaca":[-19.04,-65.26],"Circeo":[41.23,13.05],"Clew Bay":[53.8,-9.7],"Coatzacoalcos":[18.15,-94.43],"Cologne":[50.94,6.96],"Colotlan":[22.11,-103.27],"Concord":[42.46,-71.35],"Copenhagen":[55.68,12.57],"Coventry":[52.41,-1.51],"Croton":[39.08,17.13],"Cumana":[10.46,-64.17],"Cyrene":[32.82,21.86],"Delos":[37.4,25.27],"Derbyshire":[53.1,-1.6],"Dundalk":[54.0,-6.4],"Durban":[-29.86,31.02],"Edfu":[24.98,32.87],"Elderslie":[55.83,-4.48],"Eleusis":[38.04,23.54],"Etna":[37.75,15.0],"Exeter":[50.72,-3.53],"Faiyum":[29.31,30.84],"Falaise":[48.9,-0.2],"Florence":[43.77,11.25],"Freiburg":[47.99,7.85],"Galway":[53.27,-9.05],"Gascony":[43.69,0.18],"Gateshead":[54.96,-1.6],"Geneva":[46.2,6.14],"Ghent":[51.05,3.72],"Glastonbury":[51.15,-2.71],"Goliad":[28.67,-97.39],"Gordion":[39.65,31.98],"Gotaland":[57.7,12.0],"Greeneville":[36.16,-82.83],"Greenwich":[51.48,0.0],"Griffin":[33.25,-84.26],"Guaduas":[5.07,-74.6],"Guangyuan":[32.43,105.84],"Guatemala City":[14.63,-90.51],"Gyoda":[36.14,139.46],"Halicarnassus":[37.03,27.43],"Hamamatsu":[34.71,137.73],"Harz":[51.8,10.6],"Haworth":[53.83,-1.95],"Hekla":[63.99,-19.67],"Hempstead":[52.0,0.38],"Henryville":[45.13,-73.18],"Hertford":[51.8,-0.08],"Himeji":[34.82,134.69],"Ibague":[4.44,-75.23],"Inverness":[57.48,-4.22],"Iolcus":[39.36,22.94],"Iping":[51.0,-0.78],"Ithaca":[38.4,20.7],"Izu":[34.97,138.95],"Kameoka":[35.01,135.57],"Karatsu":[33.45,129.97],"Kassel":[51.31,9.48],"Kazbek":[42.7,44.5],"Kearney":[39.37,-94.36],"Keswick":[54.6,-3.13],"Khentii":[47.5,110.0],"Kiev":[50.45,30.52],"Kilkea":[52.95,-6.9],"Kingston":[41.99,-70.72],"Kinsale":[51.7,-8.52],"Kiso":[35.84,137.69],"Knossos":[35.3,25.16],"Konigsberg":[54.71,20.51],"La Mancha":[39.4,-3.0],"Lahore":[31.55,74.34],"Lambayeque":[-6.7,-79.9],"Lancaster":[37.62,-84.58],"Langtry":[29.81,-101.56],"Le Claire":[41.6,-90.34],"Lejre":[55.6,11.97],"Lemnos":[39.9,25.25],"Leominster":[42.53,-71.76],"Lille":[50.63,3.06],"Linlithgow":[55.98,-3.6],"Linzi":[36.8,118.3],"Lohr am Main":[50.0,9.58],"Luoyang":[34.62,112.45],"Luxor":[25.69,32.64],"Manaus":[-3.12,-60.02],"Marrakesh":[31.63,-8.0],"Marseille":[43.3,5.37],"Morelia":[19.7,-101.19],"Moscow":[55.75,37.62],"Mount Olympus":[40.09,22.36],"Nantucket":[41.28,-70.1],"Naqada":[25.9,32.72],"Nasu":[37.03,139.97],"Newark":[40.74,-74.17],"Noble's Isle":[-13.83,-171.76],"Norwich":[52.63,1.3],"Numata":[36.64,139.04],"Oaxaca":[17.06,-96.72],"Okayama":[34.66,133.93],"Ollantaytambo":[-13.26,-72.26],"Olympia":[37.64,21.63],"Onate":[43.03,-2.41],"Otranto":[40.15,18.49],"Oxford":[51.75,-1.26],"Padua":[45.41,11.88],"Palmyra":[34.55,38.27],"Pannonia":[47.5,19.0],"Paphos":[34.77,32.42],"Pecos":[31.42,-103.49],"Pella":[40.76,22.52],"Penzance":[50.12,-5.54],"Pisa":[43.72,10.4],"Pittsburgh":[40.44,-80.0],"Plasencia":[40.03,-6.09],"Point Pleasant":[38.9,-84.23],"Poitiers":[46.58,0.34],"Pokrovskoye":[57.4,66.6],"Princeton":[40.4,-93.58],"Q'umarkaj":[14.99,-91.17],"Quebec":[46.81,-71.21],"Rennes":[48.11,-1.68],"Reykjavik":[64.15,-21.94],"Rhamnous":[38.22,24.03],"Richmond":[51.46,-0.3],"Ringerike":[60.15,10.2],"Rochester":[51.39,0.5],"Rovaniemi":[66.5,25.7],"Russellville":[36.85,-86.89],"Sado":[38.02,138.37],"Saint-Germain":[48.9,2.09],"Salamis":[37.96,23.48],"Salzburg":[47.8,13.04],"San Antonio":[29.42,-98.49],"San Juan":[18.47,-66.1],"San Salvador":[13.69,-89.19],"Santiago de Cuba":[20.02,-75.82],"Seonee":[22.08,79.55],"Shrewsbury":[52.71,-2.75],"Sighisoara":[46.22,24.79],"Soma":[37.8,140.92],"Spanish Town":[17.99,-76.96],"Stagira":[40.53,23.75],"Stettin":[53.43,14.55],"Subiaco":[41.92,13.09],"Suwa":[36.04,138.11],"Syracuse":[37.07,15.29],"Taenarum":[36.39,22.48],"Takamatsu":[34.34,134.05],"Talcott":[37.65,-80.73],"Tanabe":[33.73,135.38],"Tavistock":[50.55,-4.14],"Themiscyra":[41.2,36.7],"Thrace":[41.5,26.0],"Tikrit":[34.6,43.68],"Tixtla":[17.57,-99.4],"Togakushi":[36.75,138.08],"Trenton":[40.22,-74.76],"Trondheim":[63.43,10.39],"Troy Grove":[41.47,-89.08],"Trujillo":[39.46,-5.88],"Van Buren":[35.44,-94.35],"Venice":[45.44,12.33],"Villanueva de la Serena":[38.98,-5.8],"Vinci":[43.79,10.93],"Westmoreland":[38.19,-76.92],"Woolsthorpe":[52.81,-0.63],"Worms":[49.63,8.36],"Xalapa":[19.54,-96.91],"Yanagawa":[33.16,130.4],"Yapeyu":[-29.47,-56.82],"York":[53.96,-1.08],"Yoshinogari":[33.33,130.39],"Zululand":[-28.4,31.4]};
 var VENUE_RE=/ (Armory|Civic Auditorium|Fieldhouse|Coliseum|Arena|Stadium)$/;
 function venueName(city,cap){return city+' '+(cap<=1000?'Armory':(cap<=2500?'Civic Auditorium':(cap<=6000?'Fieldhouse':(cap<=13000?'Coliseum':(cap<=30000?'Arena':'Stadium')))));}
 function cityOfVenue(v){return v?String(v).replace(VENUE_RE,''):'';}
-function placeOf(S,city){var p=(S&&S.places&&S.places[city])||CITY_AT[city];return p?{n:city,lat:p[0],lon:p[1],a:p[2]||null}:null;}
+function placeOf(S,city){var p=(S&&S.places&&S.places[city])||CITY_AT[city]||TOWN_AT[city];return p?{n:city,lat:p[0],lon:p[1],a:p[2]||null}:null;}
 function mapById(id){for(var i=0;i<MAPS.length;i++)if(MAPS[i].id===id)return MAPS[i];return null;}
 /* where a place falls on a map's board, in dots (it may be off the board) */
 function mapXY(M,pl){var x=pl.lon-M.f[0];if(x<0)x+=360;if(x>=360)x-=360;return [x/M.f[1],(M.f[2]-pl.lat)/M.f[3]];}
@@ -8734,6 +8743,15 @@ function mapArea(M,pl){
   }
   return best;
 }
+/* how far a wrestler is from home tonight, in kilometres: 0 in the town itself, null when either place is unknown */
+var HOME_KM=100;
+function homeKm(S,w,city){if(!w||!w.town||!city)return null;if(w.town===city)return 0;var a=placeOf(S,w.town),b=placeOf(S,city);return a&&b?Math.round(geoDist(a,b)*111):null;}
+function homeNear(S,w,city){var k=homeKm(S,w,city);return k!=null&&k<=HOME_KM;}
+/* the town itself counts in full, up the road counts half */
+function homeWeight(S,w,city){var k=homeKm(S,w,city);return k==null||k>HOME_KM?0:(k===0?1:0.5);}
+/* a home-town name on the bill sells tickets: on the card once it is booked, or on the roster before it is */
+function homeHype(S,P,ids){var city=roadCity(S,P,S.rdn||0),n=0;ids.forEach(function(id){var w=S.w[id];if(w&&w.inj<=0)n+=homeWeight(S,w,city);});return Math.min(2,n)*0.04;}
+function homeHypeAt(S,P,city){var n=0;rosterOf(S,P.id).forEach(function(w){if(!w.nw&&w.inj<=0)n+=homeWeight(S,w,city);});return Math.min(2,n)*0.03;}
 function geoDist(a,b){var k=Math.cos((a.lat+b.lat)/2*Math.PI/180),dx=Math.abs(a.lon-b.lon);if(dx>180)dx=360-dx;dx*=k;var dy=a.lat-b.lat;return Math.sqrt(dx*dx+dy*dy);}
 /* the loop a company tours: start somewhere the seed picks, then always the nearest city not yet visited */
 function roadRoute(S,P){
@@ -8780,7 +8798,7 @@ function stopDraw(S,P,show,next,city){
   var d0=demand(P,show,1)*tourBoost(S,P)*mktMult(S,P,city),hype;
   if(next&&S.card&&S.card.length)hype=cardHype(S,P,show,S.card,true);
   else{var heat=0;activeFeuds(S).forEach(function(f){if(f.heat>heat&&f.a.concat(f.b).some(function(id){return S.w[id]&&S.w[id].promo===P.id;}))heat=f.heat;});
-    hype=clamp(1+ADV_H[P.adv]+(next&&S.hype?S.hype:0)+heat/1000,0.8,1.4);}
+    hype=clamp(1+ADV_H[P.adv]+(next&&S.hype?S.hype:0)+heat/1000+homeHypeAt(S,P,city),0.8,1.4);}
   return Math.min(roadCap(S,P,show,city),d0*hype*TIX_D[P.tix]);
 }
 /* what a stop has sold, what it had sold when this week began, and whether it is on sale yet */
@@ -8853,7 +8871,7 @@ E.road=function(S){
     (P.cities||[]).forEach(function(c){var p=placeOf(S,c);if(p&&mapHas(M,p)){var a=mapArea(M,p);if(a>=0&&lit.mine.indexOf(a)<0)lit.mine.push(a);}});
   }
   var cap=roadCap(S,P,A.show,city),mk=mktKnow(S,P,city),sale=stopSales(S,P,A.w,A.show,A.k,true),last=S.rdv&&S.rdv[city],bar=S.bar&&S.bar[city],reg=P.tour?REGIONS[P.tour.reg]:REGIONS[homeReg(P)];
-  var home=rosterOf(S,P.id).filter(function(w){return w.town===city&&!w.nw;}).sort(function(a,b){return b.ovr-a.ovr;}).slice(0,3).map(function(w){return {id:w.id,name:w.name,hurt:w.inj>0};});
+  var home=rosterOf(S,P.id).filter(function(w){return !w.nw&&homeNear(S,w,city);}).sort(function(a,b){return (a.town===city?0:1)-(b.town===city?0:1)||b.ovr-a.ovr;}).slice(0,3).map(function(w){return {id:w.id,name:w.name,hurt:w.inj>0,town:w.town,near:w.town!==city,km:homeKm(S,w,city)};});
   return {map:M?M.id:null,mapName:M?M.n:null,lit:lit,stops:stops,off:off,
     now:{city:city,land:M&&lit.now>=0?M.a[lit.now]:null,show:A.show.name,big:!!A.show.big,w:A.w,later:A.w>S.week,left:Math.max(0,(S.queue?S.queue.length:0)-(S.qi||0)),
       venue:venueName(city,cap),cap:cap,seat:Math.round(ticket(P,A.show)*TIX_P[P.tix]),tix:TIXN[P.tix],

@@ -64,7 +64,7 @@ function Road() {
       </div>
       <div class="rright">
         <Group title="Hometown" t="road-home">
-          {N.home.length ? N.home.slice(0, 2).map((x: any) => <p class="one hm" key={x.id}><Portrait w={S.w[x.id]} /><Name w={S.w[x.id]} /> <span class={x.hurt ? 'bad' : 'muted'}>{x.hurt ? 'is hurt, and from here' : 'The crowd is theirs.'}</span></p>)
+          {N.home.length ? N.home.slice(0, 2).map((x: any) => <p class="one hm" key={x.id}><Portrait w={S.w[x.id]} /><Name w={S.w[x.id]} /> <span class={x.hurt ? 'bad' : 'muted'}>{x.hurt ? (x.near ? 'is hurt. From ' + x.town + ', up the road.' : 'is hurt, and from here.') : (x.near ? 'From ' + x.town + ', up the road.' : 'The crowd is theirs.')}</span></p>)
             : <p class="muted one">Nobody on the roster is from here.</p>}
         </Group>
         <Group title="The road" t="road-list">

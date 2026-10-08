@@ -26,7 +26,7 @@ function showPool(S,P,show){return eligible(S,P,show).filter(function(w){return 
 function cardHype(S,P,show,card,isPl){
   var n=card.length,key=show.big?'big':show.id,star=n?avg(flat(card[n-1].sides).map(function(id){return S.w[id].ovr;})):50,heat=0;
   card.forEach(function(m){var ids=flat(m.sides);for(var x=0;x<ids.length;x++)for(var y=x+1;y<ids.length;y++){var f=feudOf(S,ids[x],ids[y]);if(f&&f.heat>heat)heat=f.heat;}});
-  return clamp(1+(star-(P.starB[key]||star))/80+heat/500+ADV_H[P.adv]+(isPl&&S.hype?S.hype:0)+(isPl?faceHype(S,P,card):0),0.8,1.4);
+  return clamp(1+(star-(P.starB[key]||star))/80+heat/500+ADV_H[P.adv]+(isPl&&S.hype?S.hype:0)+(isPl?faceHype(S,P,card)+homeHype(S,P,flat(card.map(function(m){return flat(m.sides);}))):0),0.8,1.4);
 }
 function showStart(S,P,show,card){
   var isPl=P.id===S.player&&!S.cal,big=!!show.big,n=card.length,i,key=big?'big':show.id;

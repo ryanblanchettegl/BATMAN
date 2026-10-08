@@ -237,18 +237,24 @@ SHOWX.push(function(S,P,show,rep){
   P.image=clamp(P.image+0.2,5,100);news(S,'story',w.name+'’s hall of fame induction was the emotional moment of '+show.name+'. '+rep.hofNight.speech);
 });
 
-/* home-town heroes: a wrestler in their home city gets a pop. Beating them there costs. A home-town title win lifts the city */
-function atHome(ctx,w){return !!(w.town&&ctx.rep&&ctx.rep.venue&&ctx.rep.venue.indexOf(w.town)===0);}
+/* home-town heroes: a wrestler in or near their home town gets a pop (homeKm() in src/91-road.js: the town itself, or
+   within HOME_KM of it). Beating them there costs. Win or lose there, they remember who booked it. A home-town title
+   win lifts the city */
+function atHome(ctx,w){if(!w.town||!ctx.rep||!ctx.rep.venue)return false;var k=homeKm(ctx.S,w,cityOfVenue(ctx.rep.venue));return k!=null&&k<=HOME_KM;}
+function homeWord(ctx,w){var c=cityOfVenue(ctx.rep.venue);return w.town===c?'here in '+c:'in '+c+', up the road from '+w.town;}
 CRX.push(function(ctx){
   var h=ctx.all.filter(function(w){return atHome(ctx,w);});
-  return h.length?{d:1.6*Math.min(2,h.length),x:h[0].name+' is a hometown hero here'+(ctx.rep.venue?' in '+h[0].town:'')}:null;
+  var c=cityOfVenue(ctx.rep.venue),n=0;h.forEach(function(w){n+=homeWeight(ctx.S,w,c);});
+  return h.length?{d:1.6*Math.min(2,n),x:h[0].name+' is a hometown hero '+homeWord(ctx,h[0])}:null;
 });
 POST.push(function(ctx){
   if(ctx.S.cal||!ctx.rep||!ctx.rep.venue)return;var r=ctx.res,seg=r.seg;
   var home=r.losers.filter(function(w){return atHome(ctx,w);});
-  if(home.length&&r.win>=0&&r.fin!=='dq'&&r.fin!=='co'){r.winners.forEach(function(w){w.mom=clamp(w.mom-1,-10,10);});seg.notes.push('The home crowd turns on '+names(r.winners)+' for beating '+home[0].name+' in '+home[0].town+'.');}
+  if(home.length&&r.win>=0&&r.fin!=='dq'&&r.fin!=='co'){r.winners.forEach(function(w){w.mom=clamp(w.mom-1,-10,10);});seg.notes.push('The home crowd turns on '+names(r.winners)+' for beating '+home[0].name+' '+homeWord(ctx,home[0])+'.');
+    if(ctx.isPl)home.forEach(function(w){w.morale=clamp(w.morale-3,0,100);youRemember(ctx.S,w,'homeloss','You had them lose in front of their own people, '+homeWord(ctx,w)+'.',-6);});}
+  if(ctx.isPl&&r.win>=0)r.winners.filter(function(w){return atHome(ctx,w);}).forEach(function(w){w.morale=clamp(w.morale+3,0,100);youRemember(ctx.S,w,'homewin','You gave them a win in front of their own people, '+homeWord(ctx,w)+'.',5);});
   var champ=r.win>=0&&seg.change?r.winners.filter(function(w){return atHome(ctx,w);})[0]:null;
-  if(champ){ctx.P.image=clamp(ctx.P.image+0.15,5,100);seg.notes.push(champ.name+' wins the title in '+champ.town+'. The whole city is celebrating.');if(ctx.isPl)news(ctx.S,'story',champ.name+' won the title in their home town of '+champ.town+'.');}
+  if(champ){ctx.P.image=clamp(ctx.P.image+0.15,5,100);seg.notes.push(champ.name+' wins the title '+homeWord(ctx,champ)+'. The whole town is celebrating.');if(ctx.isPl)news(ctx.S,'story',champ.name+' won the title in front of their own people, '+homeWord(ctx,champ)+'.');}
 });
 
 /* the milestone wall: a list of firsts with dates. Each one lands as a pop-up and is listed on Career */

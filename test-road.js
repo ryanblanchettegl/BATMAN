@@ -78,6 +78,24 @@ const play = (S, weeks) => { for (let i = 0; i < weeks; i++) { answer(S); while 
   S.mkt[c] = { k: 90, w: S.week }; for (let i = 0; i < 12; i++) { answer(S); S.qi = S.queue.length; E.endWeek(S); }
   ok('mkt', 'stay away and a market cools', S.mkt[c].k < 90 && S.mkt[c].k >= 80, S.mkt[c].k);
 }
+/* hometowns for everybody */
+{ const W = U.workers, S = E.newGame('ocw', 7, { name: 'R' }), none = W.filter(w => !w.hometown), lost = [...new Set(W.filter(w => !E.placeOf(S, w.hometown)).map(w => w.hometown))];
+  ok('home', 'everybody in the default world has a hometown, and all but a few storybook ones are on the globe', !none.length && lost.length <= 3, none.length + ' without; no place: ' + lost.join(', '));
+  const R = E.roadRoute(S); let near = null, exact = null;
+  R.forEach((c, i) => { S.rdn = i; E.road(S).now.home.forEach(h => { if (h.near && !near) near = { c, h }; if (!h.near && !exact) exact = { c, h }; }); });
+  ok('home', 'the desk names who is from the city itself and who is from up the road, never further than 100 km', !!near && !!exact && near.h.km > 0 && near.h.km <= 100, near && near.h.name + ' from ' + near.h.town + ', ' + near.h.km + ' km from ' + near.c);
+  S.rdn = 0; const c = R[0], far = E.roadAhead(S, 6).find(a => a.city === c && a.w > S.week);
+  const T = E.newGame('ttt', 7, { name: 'R' }), ahead = E.roadAhead(T, 6), stop = ahead[ahead.length - 1], ros = E.rosterOf(T, T.player).filter(w => !w.nw && w.inj <= 0);
+  ros.forEach(w => { w.town = 'Nowhere'; }); const s0 = E.roadAhead(T, 6)[ahead.length - 1].sold;
+  ros.slice(0, 2).forEach(w => { w.town = stop.city; }); const s1 = E.roadAhead(T, 6)[ahead.length - 1].sold;
+  ok('home', 'two home-town names on the roster sell more tickets for that stop', s1 > s0 || stop.sold === 0, stop.city + ': ' + s0 + ' then ' + s1);
+}
+{ /* win or lose at home, they remember who booked it */
+  let won = 0, lost = 0;
+  for (let seed = 1; seed <= 4 && !(won && lost); seed++) { const S = E.newGame('pdw', seed, { name: 'R' }); for (let w = 0; w < 3; w++) { answer(S); while (S.qi < S.queue.length) { const c = E.roadAhead(S, 1)[0].city; E.rosterOf(S, S.player).forEach(x => { x.town = c; }); show(S); } answer(S); E.endWeek(S); }
+    Object.values(S.rmY || {}).forEach(e => e.mem.forEach(m => { if (m.k === 'homewin') won++; if (m.k === 'homeloss') lost++; })); }
+  ok('home', 'a win in front of their own people is remembered, and so is a loss', won > 0 && lost > 0, won + ' wins, ' + lost + ' losses remembered');
+}
 /* hometowns and a city nobody has placed */
 { const S = E.newGame('whw', 9, { name: 'R' }), P = S.promos[S.player], w = E.rosterOf(S, P.id)[0]; w.town = E.road(S).now.city;
   ok('home', 'somebody from tonight’s city is named', E.road(S).now.home.some(h => h.id === w.id));

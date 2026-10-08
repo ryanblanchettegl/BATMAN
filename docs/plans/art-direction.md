@@ -246,7 +246,9 @@ Built by city rather than by area, since a city is what the road visits. Four wo
 - Taste already exists by region (`REGIONS` in `src/89-regions.js`: brawling, work rate, spectacle). Give every area a taste and use the existing regional rule.
 - A rival's recent show in the same place already raises the bar (`S.bar`). Show it on the desk as "A rival ran here 3 weeks ago".
 
-### 6.8 Hometowns
+### 6.8 Hometowns (built 8 October)
+All 473 people in the default world have one: the place they were born, or for a character from myth or fiction the place their story belongs to. 216 of those towns are not stops on any road, so the engine knows where they are (`TOWN_AT`); three storybook ones (the Land of Oz, Kor, the Dragon Palace) have no place and only count in their own name. A night in the town itself counts in full and one within 100 km counts half: a louder pop, a few more tickets, and a win or a loss there is remembered. The effect on rating against expectation over 60 weeks stays within about a point for every company.
+
 - 47 of 509 people in the default world have a hometown (`w.town`). Fill in the rest in `tools/build-public-domain.js` and rebuild the universe.
 - On a night in or near a wrestler's hometown: a louder reaction, a little more sold, and a line on the desk. Losing there is remembered (`youRemember()`), winning there too (rule 9b).
 - `E.hometown(S, city)` returns who is from here.
