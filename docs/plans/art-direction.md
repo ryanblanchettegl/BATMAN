@@ -335,6 +335,7 @@ These only become possible after the steps above. None is promised.
 
 ## 10. Where the work stands
 
+- 8 October: version 0.40 (ticket sales, markets, hometowns, the dossier and the room, Backstage as the board) passed the full test run and is published. The live page's version id is in the next line once known.
 - 7 October: version 0.39 (the kit, the SPACE key, lights, logos, the desk with the road) passed the full test run and is published. The live page's version id is `1791416911-389a` (Version 50). Read the live page and check that id before the next publish. (0.38 was `1791393273-993d`, Version 49.)
 - 7 October: the game was renamed EWF Wrestling Manager (`TASKS.md`, the decisions table).
 - 7 October: Version A, step 1 is done: the window kit (`app/src/kit/win.tsx`, `app/styles/win.css`, the kit sheet at `go('kit')`, `app/tests/kit.js`). Pop-ups wear the new look.
