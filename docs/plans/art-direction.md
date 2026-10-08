@@ -238,7 +238,9 @@ Built as planned, with one change: the night's crowd still comes from the same s
 - The night's attendance is what was sold plus the walk-up. It must still come out where the current formula puts it, so calibration does not move. Test: a year of gates before and after this change agree within a few percent.
 - `E.sales(S)` for the desk: sold, capacity, sold this week, gate so far.
 
-### 6.7 Markets: how well a place knows you
+### 6.7 Markets: how well a place knows you (built 8 October)
+Built by city rather than by area, since a city is what the road visits. Four words: They hardly know you, They know you, A strong market, Your territory. A market scales what a stop draws from 0.85 to 1.15, so it sets the size of the building and how fast tickets sell; it is centred on 50, and markets start at 50 on average, so calibration does not move. A good night raises it (a sell-out a little more), a bad one lowers it, and after six weeks away it cools half a point a week. The desk's crowd group says the market and the region's taste on one line; the schedule has a Market column; After the show says when a night moved it. Taste by area is still the region's (`REGIONS`).
+
 - `S.mkt[area] = { know, last, grade, taste }`. `know` is 0 to 100 and is only ever said in words (Do not know you, Know you, A strong market, Your territory).
 - It rises when you run a good show there and fades slowly when you stay away. It feeds ticket sales.
 - Taste already exists by region (`REGIONS` in `src/89-regions.js`: brawling, work rate, spectacle). Give every area a taste and use the existing regional rule.

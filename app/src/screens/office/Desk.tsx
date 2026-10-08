@@ -57,7 +57,7 @@ function Road() {
           <Line label="Gate so far" w={12}>${num(N.gate)} <span class="muted">at ${num(N.seat)} a seat</span></Line>
         </Group>
         <Group title="The crowd" t="road-crowd">
-          <Line label="Likes" w={12}>{N.taste.charAt(0).toUpperCase() + N.taste.slice(1)}.{N.tour ? <span class="muted"> On tour in {N.tour}.</span> : null}</Line>
+          <Line label="Market" w={12}><b class={N.mktK >= 50 ? 'good' : (N.mktK < 30 ? 'bad' : undefined)} data-t="road-mkt">{N.mkt.w}.</b> <span class="muted">They like {N.taste}{N.tour ? ', on tour in ' + N.tour : ''}.</span></Line>
           <Line label="Last here" w={12}>{N.last ? <>{weeks(N.last.ago).replace(/^a/, 'A')}, {/^[AF]/.test(N.last.grade) ? 'an' : 'a'} <b class={/^[AB]/.test(N.last.grade) ? 'good' : 'bad'}>{N.last.grade}</b>{N.last.so ? ', sold out' : ', ' + num(N.last.att) + ' in'}</> : <span class="muted">No night here on record</span>}</Line>
           <Line label="In town" w={12}>{N.rival ? <span class="bad">{N.rival.by} had a great night here {weeks(N.rival.ago)}</span> : <span class="muted">Nobody else lately</span>}</Line>
         </Group>
@@ -85,9 +85,9 @@ function Road() {
 export function RoadYearWindow() {
   const S = G.S, L: any[] = E.roadAhead(S, 16), R: string[] = E.roadRoute(S);
   return <Window title="The schedule" wide ok="Done">
-    <p>Your shows go from city to city in a loop, the nearest city next. The building is booked on what you draw today. A television show goes on sale four weeks out, a big event eight; Soon means not on sale yet.</p>
-    <table class="mt1" data-t="road-ahead"><thead><tr><th>When</th><th>Show</th><th>City</th><th class="r">Sold</th><th class="r">Holds</th></tr></thead>
-      <tbody>{L.map((a, i) => <tr key={i}><td>{a.when}</td><td>{a.show}{a.big ? <> <Tag kind="gold">Big event</Tag></> : null}</td><td><b>{a.city}</b></td><td class="r num">{a.on ? num(a.sold) : 'Soon'}</td><td class="r num">{num(a.cap)}</td></tr>)}</tbody></table>
+    <p>Your shows go from city to city in a loop, the nearest city next. The building is booked on what you draw today. A television show goes on sale four weeks out, a big event eight; Soon means not on sale yet. A strong market fills a bigger building; a good night there makes it stronger, and staying away cools it.</p>
+    <table class="mt1" data-t="road-ahead"><thead><tr><th>When</th><th>Show</th><th>City</th><th>Market</th><th class="r">Sold</th><th class="r">Holds</th></tr></thead>
+      <tbody>{L.map((a, i) => <tr key={i}><td>{a.when}</td><td>{a.show}{a.big ? <> <Tag kind="gold">Big event</Tag></> : null}</td><td><b>{a.city}</b></td><td>{a.mkt}</td><td class="r num">{a.on ? num(a.sold) : 'Soon'}</td><td class="r num">{num(a.cap)}</td></tr>)}</tbody></table>
     <p class="muted mt1">The loop: {R.join(', ')}.</p>
   </Window>;
 }

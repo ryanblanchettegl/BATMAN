@@ -64,6 +64,20 @@ const play = (S, weeks) => { for (let i = 0; i < weeks; i++) { answer(S); while 
   ['whw', 'ttt', 'nmw'].forEach(pid => { const S = E.newGame(pid, 11, { name: 'R' }); for (let w = 0; w < 24; w++) { answer(S); while (S.qi < S.queue.length) { const r = show(S); noshow += r.noshow || 0; att += r.att; if (r.sellout) sold++; } answer(S); E.endWeek(S); } });
   ok('tix', 'over half a year of nights, fewer than three in a hundred seats were sold to people who stayed home', noshow / att < 0.03, (noshow / att * 100).toFixed(2) + '% of ' + att);
 }
+/* markets */
+{ const S = E.newGame('whw', 6, { name: 'R' }), P = S.promos[S.player], R = E.roadRoute(S), D = E.road(S);
+  ok('mkt', 'every stop has a market said in words', !!D.now.mkt && E.mktWords.some(x => x.w === D.now.mkt.w) && /\./.test(D.now.mkt.d), D.now.mkt.w);
+  const ks = []; ['whw', 'ttt', 'kjp', 'ldd', 'ocw', 'nmw', 'pdw', 'lta'].forEach(pid => { const T = E.newGame(pid, 6, { name: 'R' }); E.roadRoute(T).forEach(c => { T.rdn = E.roadRoute(T).indexOf(c); ks.push(E.road(T).now.mktK); }); });
+  const mean = ks.reduce((a, b) => a + b, 0) / ks.length;
+  ok('mkt', 'markets start near the middle, so a new game draws what it drew before', mean > 47 && mean < 54 && Math.min(...ks) >= 10 && Math.max(...ks) <= 90, mean.toFixed(1) + ' across ' + ks.length + ' cities');
+  const c = D.now.city, cap0 = D.now.cap; S.mkt = {}; S.mkt[c] = { k: 95, w: S.week }; const big = E.road(S).now; S.mkt[c] = { k: 5, w: S.week }; const small = E.road(S).now;
+  ok('mkt', 'a strong market draws a bigger house and sells more ahead, a weak one less', big.cap >= cap0 && small.cap <= cap0 && big.sold > small.sold && big.mkt.w === 'Your territory' && small.mkt.w === 'They hardly know you', small.cap + ' / ' + cap0 + ' / ' + big.cap);
+  S.mkt = {}; answer(S); const k0 = E.road(S).now.mktK, rep = show(S);
+  ok('mkt', 'a night there moves the market: up for a good one, down for a bad one', S.mkt[c] && rep.mkt && (E.repCS(rep) >= 66 ? S.mkt[c].k > k0 : (E.repCS(rep) < 64 ? S.mkt[c].k < k0 : true)), E.repGrade(rep) + ': ' + k0 + ' to ' + S.mkt[c].k);
+  const A = E.afterShow(S); ok('mkt', 'After the show says what the night did to the market', !!A && JSON.stringify(A).indexOf('The market') >= 0 || rep.mkt.now === rep.mkt.was);
+  S.mkt[c] = { k: 90, w: S.week }; for (let i = 0; i < 12; i++) { answer(S); S.qi = S.queue.length; E.endWeek(S); }
+  ok('mkt', 'stay away and a market cools', S.mkt[c].k < 90 && S.mkt[c].k >= 80, S.mkt[c].k);
+}
 /* hometowns and a city nobody has placed */
 { const S = E.newGame('whw', 9, { name: 'R' }), P = S.promos[S.player], w = E.rosterOf(S, P.id)[0]; w.town = E.road(S).now.city;
   ok('home', 'somebody from tonight’s city is named', E.road(S).now.home.some(h => h.id === w.id));

@@ -35,7 +35,7 @@ function showStart(S,P,show,card){
   var star=n?avg(flat(card[n-1].sides).map(function(id){return S.w[id].ovr;})):50;
   rep.mainStar=star;
   if(!S.cal){
-    var hype=cardHype(S,P,show,card,isPl),dm=TIX_D[P.tix],d0=demand(P,show,1)*(isPl?tourBoost(S,P):1),d=d0*(isPl?tasteDraw(S,P,card,rep):1),cap=capFor(d0);   // the building was booked before the card was
+    var hype=cardHype(S,P,show,card,isPl),dm=TIX_D[P.tix],d0=demand(P,show,1)*(isPl?tourBoost(S,P)*roadMktNow(S,P):1),d=d0*(isPl?tasteDraw(S,P,card,rep):1),cap=capFor(d0);   // the building was booked before the card was
     rep.hype=hype;rep.cap=cap;rep.att=Math.round(Math.min(cap,d*hype*dm));
     if(isPl){var sold=roadSoldNow(S,P);if(sold>rep.att){rep.noshow=sold-rep.att;rep.att=sold;}}   // a ticket sold is a ticket paid for, whoever turns up
     rep.sellout=rep.att>=cap;
