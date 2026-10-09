@@ -138,3 +138,19 @@ One step at a time, each shown before the next.
 - A weekly limit on how fast heat climbs was tried and dropped: it made a call from the gorilla position do nothing late in a busy week.
 - What the ending is worth: short 0.6, medium 1, long 1.6, times the heat (a cold blow-off is worth half), times 0.7 if late. Both people's mood rises when it lands on its night.
 - Over 60 weeks of every company the numbers stay where they were: no errors, rating against expectation within noise. Fewer stories fizzle (in one year of the second company: 24 ended, 20 on their night, 4 fizzled).
+
+## The writers' room: Ryan's decisions (8 October)
+
+Ryan: storylines are the best part of wrestling, especially in a booking simulator. The stories that changed the business (the rebel and the boss, the giant who turned on his friend, the invasion, the family) are the bar. Make them entertaining to watch and to read, and make them a game.
+
+1. **The player starts every storyline.** Nothing starts by itself any more. Starting one is a task in the first week.
+2. **Limits:** up to 6 storylines at once, and up to 4 rivalries. A rivalry is two known rivals whose history adds heat and other effects, a long-running thing that keeps coming back.
+3. **The brief** has four choices, plus the length and who it is built around: what it is about (revenge, betrayal, the chase, respect, proving it, power, mystery, loyalty), how it is told (in the ring, on the microphone, in the building), the tone (gritty, dramatic, sporting, over the top), and how bold.
+4. **The writers pitch, the booker picks.** The writers pitch two or three storylines from the brief; the booker picks one and does not edit its beats. He steers through the brief and through calls during the shows.
+5. **The writers are hired by the owner and are abstract.** They are not a quality lever. They are the engine that can make thousands of different storylines, all of them good, with different beats and branching paths. **Whether a storyline lands depends on the cast**: charisma, microphone, ring work and a new rating, **Selling** (scenes, vignettes, making the story believable). The writers' storylines are always good; the wrestlers might not be able to pull them off.
+6. **Each pitch names what its roles need, in words, with fog of war** ("the boss needs a great talker"). The booker's read on the cast is only as good as what he has seen of them.
+7. **Big moments, like an RPG questline.** Each storyline shape has its own pool of big moments, drawn differently each time, so no two playthroughs are alike. The writers hint at the next one ahead ("something is coming at the go-home show") without saying what. Calls on the air at those moments branch the story. A storyline can grow: a short one can become a long one.
+8. **What a show moment does:** an ambush, an upset or a betrayal on the air heats a rivalry and, when a storyline involves them, branches that storyline.
+9. **Casts:** singles, tag team storylines, stable storylines, and three-way storylines (triangles).
+10. **Rewards:** a hot storyline pays booking power, tickets and television, the owner's trust and sponsors, and the cast's careers. **Risk:** a cold or failed storyline has a real cost (wasted booking power, the cast's morale).
+11. **The Storylines page follows the beats** like an episode guide, fun to read. **The Net comments** on storylines, during and long after. Fan predictions and swerves: no preference given; the default is that the boards guess endings and a swerve is a gamble.
