@@ -116,7 +116,7 @@ async function net(page, mode) {
     const pair = await state(page, S => { const R = GP.storyPeople(S).filter(w => w.g === 'M' && !w.n && !w.hurt); return [R[3].id, R[8].id]; });
     const feuds0 = await state(page, S => GP.activeFeuds(S).length);
     await page.click('[data-t="plot-open"][data-v="story"]'); await page.waitForSelector('[data-t="story-a"]');
-    check(mode, 'Start a story shows the three lengths before anybody is picked', await count(page, '[data-t="story-len"]') === 3 && await page.$eval('[data-t="story-start"]', e => e.disabled));
+    check(mode, 'Start a feud shows the three lengths before anybody is picked', await count(page, '[data-t="story-len"]') === 3 && await page.$eval('[data-t="story-start"]', e => e.disabled));
     await page.selectOption('[data-t="story-a"]', String(pair[0])); await page.selectOption('[data-t="story-b"]', String(pair[1]));
     await page.click('[data-t="story-len"][data-v="l"]');
     const ends = await page.$$eval('[data-t="story-ends"]', L => L.map(e => e.innerText));
@@ -125,7 +125,7 @@ async function net(page, mode) {
     const made = await state(page, (S, p) => { const f = GP.feudOf(S, p[0], p[1]); return { bp: S.bp, len: f && f.len, ch: f && f.ch && f.ch.length, n: GP.activeFeuds(S).length }; }, pair);
     check(mode, 'a long story costs three booking power and has three chapters', made.bp === 2 && made.len === 'l' && made.ch === 3 && made.n === feuds0 + 1, JSON.stringify(made));
     await page.click('#modal-ok').catch(() => {}); await page.waitForTimeout(150);
-    check(mode, 'the new story is picked, and its pane says the length and where chapter 1 ends', /Long story/i.test(await page.$eval('[data-t="story-pane"]', e => e.innerText)) && /Chapter 1 ends/i.test(await page.$eval('[data-t="story-pane"]', e => e.innerText)));
+    check(mode, 'the new story is picked, and its pane says the length and where chapter 1 ends', /Long feud/i.test(await page.$eval('[data-t="story-pane"]', e => e.innerText)) && /Chapter 1 ends/i.test(await page.$eval('[data-t="story-pane"]', e => e.innerText)));
     await go(page, 'history');
     check(mode, 'history before any show', /Run a show on Booking and the book opens/.test(await text(page)) && /Champion when you arrived/.test(await text(page)));
     await go(page, 'boards');
@@ -155,7 +155,7 @@ async function net(page, mode) {
     await go(own.page, 'history');
     check(mode, 'vacant titles say so', /Nobody has held it yet/.test(await text(own.page)));
     await go(own.page, 'storylines');
-    check(mode, 'no stories yet', /No stories running/.test(await text(own.page)) && await count(own.page, '[data-t="season-row"]') === 0);
+    check(mode, 'no feuds yet', /No feuds running/.test(await text(own.page)) && await count(own.page, '[data-t="season-row"]') === 0);
     check(mode, 'no errors (own federation)', own.errs.length === 0, own.errs.join(' | '));
     await own.browser.close();
   }

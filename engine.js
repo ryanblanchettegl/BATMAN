@@ -1222,7 +1222,7 @@ function closeChapter(S,P,show,f,winners,losers,isPl){
   var left=f.ch.length-f.chd,msg='Chapter '+f.chd+' of '+feudLabel(S,f)+' goes to '+names(winners)+'. It is not over: '+left+' to go.';
   f.log.push({w:S.week,t:'Chapter '+f.chd+' went to '+names(winners)+' at '+show.name});if(f.log.length>16)f.log.shift();
   if(isPl){losers.forEach(function(l){winners.forEach(function(w){relBump(S,l.id,w.id,{bond:-3});});});
-    losers.forEach(function(l){youRemember(S,l,'chapter','You gave '+names(winners)+' chapter '+f.chd+' of our story',-2);});
+    losers.forEach(function(l){youRemember(S,l,'chapter','You gave '+names(winners)+' chapter '+f.chd+' of our feud',-2);});
     winners.forEach(function(w){youRemember(S,w,'chapter','You gave me chapter '+f.chd+' against '+names(losers),2);});
     note(S,'Chapter '+f.chd+' is over',msg,'');}
   news(S,'story',msg);
@@ -1268,7 +1268,7 @@ E.heatStory=function(S,f,amt){heatUp(S,f,amt,null);return f.heat;};
 /* ---------- Start a story (docs/plans/storylines.md, step 2) ----------
    The player picks two people and a length, and pays for it in booking power: short 1, medium 2, long 3.
    storyPreview() says everything the pop-up shows before anything is spent; storyStart() does it. */
-var FLEN_GOOD={s:'A challenger for a month. It cannot carry a big main event.',m:'Four acts and a blow-off at the big event.',l:'The story of the year. A twist in every chapter.'};
+var FLEN_GOOD={s:'A challenger for a month. It cannot carry a big main event.',m:'Four acts and a blow-off at the big event.',l:'The feud of the year. A twist in every chapter.'};
 var FLEN_CAPW={s:'Hot',m:'White hot',l:'As far as it goes'};
 function storyEnding(S,len){
   var p=feudPayPlan(len,S.week);
@@ -1285,13 +1285,13 @@ E.storyPeople=function(S){
 E.storyPreview=function(S,a,b){
   var P=S.promos[S.player],A=S.w[a],B=S.w[b],stop=[],warn=[];
   if(!A||!B)return {ok:false,stop:['Pick two people.'],lens:[]};
-  if(A.id===B.id)stop.push('A story needs two people.');
+  if(A.id===B.id)stop.push('A feud needs two people.');
   if(A.promo!==P.id||B.promo!==P.id)stop.push('Both have to be on your roster.');
-  if(A.g!==B.g)stop.push('They would never meet in the ring: a story needs two who can wrestle each other.');
-  if(feudOf(S,A.id,B.id))stop.push('They are already in a story together. Its card on this page says where it ends.');
+  if(A.g!==B.g)stop.push('They would never meet in the ring: a feud needs two who can wrestle each other.');
+  if(feudOf(S,A.id,B.id))stop.push('They are already in a feud together. Its line on this page says where it ends.');
   [A,B].forEach(function(w){
-    if(w.inj>0)warn.push(w.name+' is hurt for '+w.inj+' more '+(w.inj===1?'week':'weeks')+'. The story can start without them in the ring.');
-    feudsFor(S,w.id).forEach(function(f){warn.push(w.name+' is already in '+feudLabel(S,f)+'. Two stories at once split the crowd.');});
+    if(w.inj>0)warn.push(w.name+' is hurt for '+w.inj+' more '+(w.inj===1?'week':'weeks')+'. The feud can start without them in the ring.');
+    feudsFor(S,w.id).forEach(function(f){warn.push(w.name+' is already in '+feudLabel(S,f)+'. Two feuds at once split the crowd.');});
   });
   if(A.align===B.align)warn.push('Both are '+(A.align==='F'?'heroes':'villains')+'. The crowd will need a reason to pick a side.');
   var bd=bondOf(S,A.id,B.id);if(bd<=-REL_STRONG)warn.push('They really do not like each other. The crowd will feel it, and it can get stiff in the ring.');
@@ -1314,14 +1314,14 @@ E.storyStart=function(S,a,b,len){
   var pv=E.storyPreview(S,a,b),L=FLEN[len],P=S.promos[S.player];
   if(!L)return {ok:false,msg:'Pick how long it runs.'};
   if(!pv.ok)return {ok:false,msg:pv.stop[0]};
-  if(S.bp<L.cost)return {ok:false,msg:'A '+L.n.toLowerCase()+' story takes '+L.cost+' booking power. You have '+S.bp+'.'};
-  var A=S.w[a],B=S.w[b],f=startFeud(S,P,A,B,len==='s'?28:22,'The office put '+A.name+' and '+B.name+' in a story',{force:true,len:len});
-  if(!f)return {ok:false,msg:'The story could not start.'};
+  if(S.bp<L.cost)return {ok:false,msg:'A '+L.n.toLowerCase()+' feud takes '+L.cost+' booking power. You have '+S.bp+'.'};
+  var A=S.w[a],B=S.w[b],f=startFeud(S,P,A,B,len==='s'?28:22,'The office put '+A.name+' and '+B.name+' in a feud',{force:true,len:len});
+  if(!f)return {ok:false,msg:'The feud could not start.'};
   S.bp-=L.cost;f.chose=1;
   var pl=E.feudPlan(S,f),big=len==='l'?6:(len==='m'?4:2);
-  [A,B].forEach(function(w){var o=w===A?B:A;youRemember(S,w,'story','You gave me a '+L.n.toLowerCase()+' story against '+o.name+'.',big);});
-  relBump(S,A.id,B.id,{ra:1,rb:1},{k:'story',t:'The office put them in a story together.',by:'you'});
-  var msg=feudLabel(S,f)+' is a '+L.n.toLowerCase()+' story. '+(pl.ch?'Chapter 1 ends at '+pl.ch[0].at+', and it ends for good at '+pl.at+'.':'It ends at '+pl.at+', in '+pl.in+' '+(pl.in===1?'week':'weeks')+'.')+' ('+L.cost+' booking power.)';
+  [A,B].forEach(function(w){var o=w===A?B:A;youRemember(S,w,'story','You gave me a '+L.n.toLowerCase()+' feud against '+o.name+'.',big);});
+  relBump(S,A.id,B.id,{ra:1,rb:1},{k:'story',t:'The office put them in a feud together.',by:'you'});
+  var msg=feudLabel(S,f)+' is a '+L.n.toLowerCase()+' feud. '+(pl.ch?'Chapter 1 ends at '+pl.ch[0].at+', and it ends for good at '+pl.at+'.':'It ends at '+pl.at+', in '+pl.in+' '+(pl.in===1?'week':'weeks')+'.')+' ('+L.cost+' booking power.)';
   return {ok:true,msg:msg,id:f.id};
 };
 
@@ -1355,12 +1355,12 @@ E.season=function(S){
   L.forEach(function(f){(f.ch?f.ch.slice(f.chd||0):[f.pay]).forEach(function(w){if(isBigWeek(w)){(ends[w]=ends[w]||[]).push(f);}});});
   L.forEach(function(f){if(f.pay<S.week)says.push({k:'late',t:feudLabel(S,f)+' is past its night and cooling. Book the match.',id:f.id});});
   var who={};L.forEach(function(f){f.a.concat(f.b).forEach(function(id){(who[id]=who[id]||[]).push(f);});});
-  Object.keys(who).forEach(function(id){if(who[id].length>1)says.push({k:'clash',t:S.w[id].name+' is in '+who[id].length+' stories at once.',id:who[id][0].id,w:+id});});
+  Object.keys(who).forEach(function(id){if(who[id].length>1)says.push({k:'clash',t:S.w[id].name+' is in '+who[id].length+' feuds at once.',id:who[id][0].id,w:+id});});
   L.forEach(function(f){if(f.len==='l'&&S.week-Math.max(f.tww||0,f.start||0)>=4)says.push({k:'tired',t:feudLabel(S,f)+': no twist in '+(S.week-Math.max(f.tww||0,f.start||0))+' weeks. The crowd is tiring of it.',id:f.id});});
   L.forEach(function(f){f.a.concat(f.b).forEach(function(id){var w=S.w[id];if(w.inj>0&&S.week+w.inj>(f.ch?f.ch[Math.min(f.chd||0,f.ch.length-1)]:f.pay))says.push({k:'hurt',t:w.name+' is hurt past the night '+feudLabel(S,f)+' ends.',id:f.id,w:w.id});});});
   weeks.forEach(function(x){if(!x.big)return;var n=(ends[x.w]||[]).length;
-    if(n>=3)says.push({k:'crowd',t:n+' stories end at '+x.ev+'. Not all of them can be the main event.',w0:x.w});
-    else if(n===2)says.push({k:'good',t:'Two stories end at '+x.ev+'.',w0:x.w});
+    if(n>=3)says.push({k:'crowd',t:n+' feuds end at '+x.ev+'. Not all of them can be the main event.',w0:x.w});
+    else if(n===2)says.push({k:'good',t:'Two feuds end at '+x.ev+'.',w0:x.w});
     else if(n===0&&x.w-S.week>=2)says.push({k:'gap',t:'Nothing ends at '+x.ev+'. The crowd needs a reason to buy it.',w0:x.w});});
   // the champions with nobody after them
   var lone=[];P.titles.forEach(function(t){if(!t.holders.length||t.tag)return;var h=t.holders[0];if(!who[h]&&S.w[h]&&!(S.w[h].inj>0)&&lone.indexOf(h)<0)lone.push(h);});
@@ -1369,18 +1369,18 @@ E.season=function(S){
   var recent={};S.feuds.forEach(function(f){if(f.promo===P.id&&f.res&&S.week-(f.end||0)<=4)f.a.concat(f.b).forEach(function(id){recent[id]=1;});});
   var top=rosterOf(S,P.id).filter(function(w){return !w.nw&&!w.rt;}).sort(function(a,b){return b.ovr-a.ovr;});top=top.slice(0,12);
   var idle=top.filter(function(w){return !who[w.id]&&!recent[w.id]&&!(w.inj>0);});
-  if(idle.length)says.push({k:'idle',t:idle.length+' of your top 12 '+(idle.length===1?'has':'have')+' had no story in four weeks.',ids:idle.slice(0,8).map(function(w){return w.id;})});
+  if(idle.length)says.push({k:'idle',t:idle.length+' of your top 12 '+(idle.length===1?'has':'have')+' had no feud in four weeks.',ids:idle.slice(0,8).map(function(w){return w.id;})});
   var ORD={late:0,hurt:1,clash:2,tired:3,crowd:4,gap:5,idle:6,good:7};says.sort(function(a,b){return ORD[a.k]-ORD[b.k];});
   var nx=null;Object.keys(ends).map(Number).sort(function(a,b){return a-b;}).forEach(function(w){if(nx==null&&w>=S.week)nx=w;});
   return {week:S.week,weeks:weeks,stories:stories,says:says,next:nx==null?null:{w:nx,in:nx-S.week,ev:bigShort(S,nx),n:ends[nx].length}};
 };
 /** End a story now, before its night. No payoff, and both of them remember. */
 E.storyEnd=function(S,id){
-  var f=S.feuds.filter(function(x){return x.id===id&&!x.res&&x.promo===S.player;})[0];if(!f)return {ok:false,msg:'That story is already over.'};
+  var f=S.feuds.filter(function(x){return x.id===id&&!x.res&&x.promo===S.player;})[0];if(!f)return {ok:false,msg:'That feud is already over.'};
   f.res=true;f.dead=true;f.cut=1;f.end=S.week;
-  f.a.concat(f.b).forEach(function(id){var w=S.w[id];if(!w)return;w.morale=clamp(w.morale-3,0,100);youRemember(S,w,'storycut','You ended our story before it paid off.',-3);});
-  news(S,'story','The '+feudLabel(S,f)+' story was dropped before it paid off.');
-  return {ok:true,msg:'The '+feudLabel(S,f)+' story is over. It never got its night, and both of them know it.'};
+  f.a.concat(f.b).forEach(function(id){var w=S.w[id];if(!w)return;w.morale=clamp(w.morale-3,0,100);youRemember(S,w,'storycut','You ended our feud before it paid off.',-3);});
+  news(S,'story','The '+feudLabel(S,f)+' feud was dropped before it paid off.');
+  return {ok:true,msg:'The '+feudLabel(S,f)+' feud is over. It never got its night, and both of them know it.'};
 };
 
 /* ===== 30-show.js ===== */

@@ -65,7 +65,7 @@ export function PlotWindow(p: { m: Modal }) {
 const POPS = {
   finished: () => { const S = G.S, P = me(), L = S.feuds.filter((f: any) => f.res && f.promo === P.id).slice(-12).reverse();
     return L.length ? <ul class="list" data-t="st-finished">{L.map((f: any) => <li><span>{E.feudLabel(S, f)}{f.len ? <span class="muted"> {'·'} {E.FLEN[f.len].n.toLowerCase()}</span> : null}</span><span class={f.dead ? 'bad' : 'good'}>{f.cut ? 'Dropped' : (f.dead ? 'Fizzled out' : 'Settled')}, week {f.end}</span></li>)}</ul>
-      : <Empty>No story has finished yet.</Empty>; },
+      : <Empty>No feud has finished yet.</Empty>; },
   streaks: () => { const S = G.S, P = me(), L = E.rosterOf(S, P.id).filter((w: any) => w.ws >= 4).sort((a: any, b: any) => b.ws - a.ws);
     return L.length ? <><ul class="list" data-t="st-streaks">{L.map((w: any) => <li><span><Name w={w} /></span><span class="num">{w.ws} straight</span></li>)}</ul><p class="muted mt1">A streak of six or more draws a bigger reaction. Whoever ends it gets the rub.</p></>
       : <Empty>Nobody has won four in a row. Keep a hot wrestler on the card and call their wins.</Empty>; },
@@ -74,7 +74,7 @@ const POPS = {
       <p class="eyebrow">{s.name} {'·'} unity {E.stableUnity(S, s)} {'·'} tension <Meter v={Math.min(100, s.tension * 10)} kind="hot" /></p>
       <ul class="list">{E.stableRoles(S, s).map((r: any) => <li class="col"><span><Name w={r.w} />{r.w.id === s.leader ? <span class="muted"> (leader)</span> : null} <span class={r.role ? 'muted' : 'bad'}>{'·'} {r.name}</span></span><span class="muted">{r.note}</span></li>)}</ul></>)}
       <p class="muted mt1">Stablemates run in for each other. Losses raise the tension, and at the top of the meter somebody gets thrown out. Somebody nobody needs, who is also losing, is the first to go.</p></div>
-      : <Empty>No stables. They form from your stories and your shows.</Empty>; },
+      : <Empty>No stables. They form from your feuds and your shows.</Empty>; },
   teams: () => { const S = G.S, P = me(), L = S.teams.filter((t: any) => t.promo === P.id).sort((a: any, b: any) => b.exp - a.exp);
     return L.length ? <><ul class="list" data-t="st-teams">{L.map((t: any) => <li><span>{teamName(t)}</span><span class="row"><Meter v={t.exp} /><span class="num">{t.exp}</span></span></li>)}</ul><p class="muted mt1">Experience improves tag matches. Losing teams with little experience can fall apart.</p></>
       : <Empty>No regular teams. They form from tag matches and team-up angles on your shows.</Empty>; }

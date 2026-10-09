@@ -46,7 +46,7 @@ What each length is for:
 ### What the player sees
 
 - **The next twelve weeks** (the calendar already in the Storylines mock-up; wrestling has no seasons, see `storylines-research.md`) draws each story as a bar with its length on it: S, M or L. A long story has a star at each chapter end and two stars at its last.
-- **Start a story** (a pop-up from "Start a rivalry", renamed "Start a story"): pick the two, pick the length from three buttons that say what each gives, see where it ends, see what the road agent says about them. If the two are rivals already, it says so and starts further on.
+- **Start a feud** (a pop-up from "Start a rivalry", renamed "Start a feud"): pick the two, pick the length from three buttons that say what each gives, see where it ends, see what the road agent says about them. If the two are rivals already, it says so and starts further on.
 - **The story's pane** on the right: the acts or chapters as a track, heat, weeks to go, what this week needs, where it ends.
 - **The checks** under the calendar get two new lines: "A long story with no twist in five weeks" and "A short story in the main event of a big show".
 
@@ -115,7 +115,7 @@ Two people can be rivals in the ring and friends in catering, or hate each other
 One step at a time, each shown before the next.
 
 1. (Built 8 October.) Engine: `len`, `pay` and `ch` on feuds; `feudAct()` from the calendar; the payoff and the cooling; old saves get a length the first time a feud is read, so no version bump was needed. `test-uni.js` 60 weeks clean, and a new `test-stories.js`.
-2. (Built 8 October.) Start a story pop-up with the three lengths. The rivals' discount comes with step 4.
+2. (Built 8 October.) Start a feud pop-up with the three lengths. The rivals' discount comes with step 4.
 3. (Built 8 October.) The twelve-week calendar on the Storylines page, with the bars and the checks. The page is now one screen of windows.
 4. Rivalries in the engine: `S.rv`, how one begins, the series, the level, the crowd lift, the rekindle.
 5. The Rivalries window and the rivalry file.
@@ -128,7 +128,7 @@ One step at a time, each shown before the next.
 2. Are the weeks right? Short 2 to 4, medium 5 to 8, long 12 to 24.
 3. Can a long story run through a title change in the middle (the title moves at a chapter end and the story goes on)? This plan says yes.
 4. Should a tag team or a stable be able to have a rival too, or only one person against one person to start?
-5. "Start a rivalry" on the Storylines page becomes "Start a story". Rivalries are made by stories, not bought. Agree?
+5. "Start a rivalry" on the Storylines page becomes "Start a feud". Rivalries are made by stories, not bought. Agree?
 
 ## What step 1 decided
 
@@ -143,8 +143,8 @@ One step at a time, each shown before the next.
 
 Ryan: storylines are the best part of wrestling, especially in a booking simulator. The stories that changed the business (the rebel and the boss, the giant who turned on his friend, the invasion, the family) are the bar. Make them entertaining to watch and to read, and make them a game.
 
-1. **The player starts every storyline.** Nothing starts by itself any more. Starting one is a task in the first week.
-2. **Limits:** up to 6 storylines at once, and up to 4 rivalries. A rivalry is two known rivals whose history adds heat and other effects, a long-running thing that keeps coming back.
+1. **The player starts every feud.** Nothing starts by itself any more. Starting one is a task in the first week.
+2. **Limits:** up to 6 feuds at once, and up to 4 rivalries. A rivalry is two known rivals whose history adds heat and other effects, a long-running thing that keeps coming back.
 3. **The brief** has four choices, plus the length and who it is built around: what it is about (revenge, betrayal, the chase, respect, proving it, power, mystery, loyalty), how it is told (in the ring, on the microphone, in the building), the tone (gritty, dramatic, sporting, over the top), and how bold.
 4. **The writers pitch, the booker picks.** The writers pitch two or three storylines from the brief; the booker picks one and does not edit its beats. He steers through the brief and through calls during the shows.
 5. **The writers are hired by the owner and are abstract.** They are not a quality lever. They are the engine that can make thousands of different storylines, all of them good, with different beats and branching paths. **Whether a storyline lands depends on the cast**: charisma, microphone, ring work and a new rating, **Selling** (scenes, vignettes, making the story believable). The writers' storylines are always good; the wrestlers might not be able to pull them off.
@@ -154,3 +154,25 @@ Ryan: storylines are the best part of wrestling, especially in a booking simulat
 9. **Casts:** singles, tag team storylines, stable storylines, and three-way storylines (triangles).
 10. **Rewards:** a hot storyline pays booking power, tickets and television, the owner's trust and sponsors, and the cast's careers. **Risk:** a cold or failed storyline has a real cost (wasted booking power, the cast's morale).
 11. **The Storylines page follows the beats** like an episode guide, fun to read. **The Net comments** on storylines, during and long after. Fan predictions and swerves: no preference given; the default is that the boards guess endings and a swerve is a gamble.
+12. **Words (Ryan, 8 October): the booker starts a feud, not a storyline.** In the game the thing the writers pitch and the booker starts is a feud ("Start a feud", "a medium feud", "6 feuds at once"). The page keeps its name, Storylines.
+
+## The feud engine (Ryan, 8 October)
+
+Ryan: "The game will need to build out a logic system that builds the storyline around past history, the other characters' statistics, if one is an authority figure or not, if one is a manager, and how their gimmicks interact. This will probably have to be an engine in itself."
+
+How it is built:
+
+1. **It reads the world.** For every person and every pair it builds a fact sheet from what the game already holds: past feuds and how they ended, head-to-head record, the relationship matrix (bond, respect, jealousy) and what each remembers, who cost whom a title, old partners, mentor and student, champion, manager, authority figure, gimmick, alignment, ratings, hometown, the face of the company, coming back from an injury the other caused.
+2. **Rules turn facts into hooks** (a reason for a feud): "his manager used to manage the other man", "the boss against the rebel", "she cost her the title in March".
+3. **A table of gimmick pairings**: cocky against underdog, monster against daredevil, technician against brute, old hand against rookie, and pairings that do not work.
+4. **Shapes are data**: roles with what they need, the hooks that fit, a pool of big moments with conditions, branches and endings.
+5. **Pitches**: from the brief, the engine scores shapes against casts on the roster, picks two or three that differ, and writes each hook from its strongest reason.
+6. **On the air** each beat lands on the cast rating it needs (a promo on microphone and charisma, a brawl on ring work, a scene on Selling).
+7. **It feeds itself**: every feud writes back into history, so the longer a game runs the richer its pitches.
+
+Ryan's answers:
+
+- **Authority figures are a role the booker gives**, like a manager: someone on the roster, or someone who does not wrestle, is named the on-screen authority. They make matches and can be in feuds.
+- **A new game starts with generated backstory**: old partners, mentors and students, past grudges and old title wins, made from the world and kept in each person's file, so the first pitches already have reasons.
+- **Expand the gimmicks**: more gimmick types, still one per wrestler, for a richer pairing table.
+- **History from other companies counts**: rivalries and history follow people between companies, and a new signing can arrive with a grudge against someone on the roster.

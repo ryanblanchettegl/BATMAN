@@ -85,7 +85,7 @@ function start(S, len) {
   ok(L.length >= 10 && onTime.length >= L.length * 0.5, 'a year: ' + L.length + ' stories ended, ' + onTime.length + ' on their night, ' + dead.length + ' fizzled');
   ok(S.feuds.every(f => f.len && f.pay), 'every story has a length and an ending');
 }
-// 9. Start a story: what the pop-up shows, what it costs, what it refuses, and who remembers
+// 9. Start a feud: what the pop-up shows, what it costs, what it refuses, and who remembers
 {
   const S = game(), P = S.promos[S.player], R = E.storyPeople(S).filter(w => !w.n && !w.hurt), M = R.filter(w => w.g === 'M'), F = R.find(w => w.g === 'F');
   const pv = E.storyPreview(S, M[1].id, M[5].id);

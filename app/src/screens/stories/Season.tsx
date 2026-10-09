@@ -25,21 +25,21 @@ function Season(p: { se: any; sel: number | null }) {
   const pages = Math.max(1, Math.ceil(se.stories.length / per)), pg = Math.min(st.spg, pages - 1), L = se.stories.slice(pg * per, pg * per + per);
   const months: { m: string; n: number }[] = []; se.weeks.forEach((w: any) => { const l = months[months.length - 1]; if (l && l.m === w.month) l.n++; else months.push({ m: w.month, n: 1 }); });
   return <div class="sn-wrap">
-    <div class="sn" role="table" aria-label="The next twelve weeks of every story">
+    <div class="sn" role="table" aria-label="The next twelve weeks of every feud">
       <span class="mh0" />{months.map(m => <span class="mh" style={{ gridColumn: 'span ' + m.n }}>{m.n >= 2 ? m.m : m.m.slice(0, 3)}</span>)}
-      <span class="h0">Story {'·'} heat</span>{se.weeks.map((w: any, i: number) => <span class={'h' + (i === 0 ? ' now' : (w.big ? ' ev' : ''))} title={w.ev || ''}>{i === 0 ? 'NOW' : (w.big ? '★' : 'W' + w.wom)}</span>)}
+      <span class="h0">Feud {'·'} heat</span>{se.weeks.map((w: any, i: number) => <span class={'h' + (i === 0 ? ' now' : (w.big ? ' ev' : ''))} title={w.ev || ''}>{i === 0 ? 'NOW' : (w.big ? '★' : 'W' + w.wom)}</span>)}
       {L.map((x: any) => <>
         <button type="button" class={'nm' + (x.id === p.sel ? ' sel' : '')} {...dataAttrs('season-row', { v: x.id })} aria-pressed={x.id === p.sel} onClick={() => view(() => { st.sel = x.id; })}>
           <span class={'ln k' + x.len}>{LENW[x.len]}</span><Portrait w={S.w[x.a]} /><Portrait w={S.w[x.b]} />
           <b>{short(S.w[x.a].name)} vs {short(S.w[x.b].name)}</b><Meter v={x.heat} kind="hot" n={5} /></button>
         {x.cells.map((c: any, i: number) => <span class={'c' + (c.a ? ' c' + c.a : '') + (se.weeks[i].big ? ' evc' : '') + (c.late ? ' late' : '')} title={c.a ? ACTN[c.a] : ''}>{c.star ? '★' : (c.late ? '!' : '')}</span>)}
       </>)}
-      {!se.stories.length ? <span class="none">No stories running. Start one with booking power, or run a show: ambushes, challenges and betrayals start them.</span> : null}
+      {!se.stories.length ? <span class="none">No feuds running. Start one with booking power.</span> : null}
       <span class="h0 evr">Big events</span>{se.weeks.map((w: any) => <span class={'c' + (w.big ? ' evn' : '')} title={w.ev || ''}>{w.big ? w.ev.split(' ').map((x: string) => x[0]).join('').slice(0, 3).toUpperCase() : ''}</span>)}
     </div>
     <div class="sn-foot">
       <span class="lg"><span class="ln ks">S</span>Short <span class="ln km">M</span>Medium <span class="ln kl">L</span>Long <i class="c1" />Spark <i class="c2" />Build <i class="c3" />Twist <i class="c5" />Chapter <i class="c4" />Blow-off</span>
-      {pages > 1 ? <span class="pgr"><Btn kind="sm" t="season-page" d={{ v: 'prev' }} label="Earlier stories" disabled={pg <= 0} onClick={() => view(() => { st.spg = pg - 1; })}>{'◄'}</Btn><span class="num">{pg + 1} of {pages}</span><Btn kind="sm" t="season-page" d={{ v: 'next' }} label="More stories" disabled={pg >= pages - 1} onClick={() => view(() => { st.spg = pg + 1; })}>{'►'}</Btn></span> : null}
+      {pages > 1 ? <span class="pgr"><Btn kind="sm" t="season-page" d={{ v: 'prev' }} label="Earlier feuds" disabled={pg <= 0} onClick={() => view(() => { st.spg = pg - 1; })}>{'◄'}</Btn><span class="num">{pg + 1} of {pages}</span><Btn kind="sm" t="season-page" d={{ v: 'next' }} label="More feuds" disabled={pg >= pages - 1} onClick={() => view(() => { st.spg = pg + 1; })}>{'►'}</Btn></span> : null}
     </div>
     {se.next ? <p class="sn-led"><LightText dot={2} t="season-next" label={'Next ending: ' + se.next.ev + ', ' + wk(se.next.in)} text={[['NEXT ENDING · ', '#8a8a8a'], [se.next.ev.toUpperCase().slice(0, 20), '#ffff55'], [' · ', '#8a8a8a'], [(se.next.in <= 0 ? 'THIS WEEK' : se.next.in === 1 ? 'NEXT WEEK' : se.next.in + ' WEEKS'), '#55ffff'], [' · ', '#8a8a8a'], [se.next.n + (se.next.n === 1 ? ' STORY' : ' STORIES'), '#ff5555']]} /></p> : null}
   </div>;
@@ -48,8 +48,8 @@ function Season(p: { se: any; sel: number | null }) {
 /** The picked story: where it is, what it needs this week, and where it ends. */
 function StoryPane(p: { id: number | null }) {
   const S = G.S, f = p.id == null ? null : S.feuds.find((x: any) => x.id === p.id && !x.res);
-  if (!f) return <><Empty>No story picked. Start one: two people, and how long it runs.</Empty>
-    <p class="mt1"><Btn kind="go" t="story-new" onClick={() => { storyReset(); openModal({ kind: 'story' }); }}>Start a story</Btn></p></>;
+  if (!f) return <><Empty>No feud picked. Start one: two people, and how long it runs.</Empty>
+    <p class="mt1"><Btn kind="go" t="story-new" onClick={() => { storyReset(); openModal({ kind: 'story' }); }}>Start a feud</Btn></p></>;
   const pl = E.feudPlan(S, f), a = S.w[f.a[0]], b = S.w[f.b[0]], act0 = E.feudAct(f, S), run = S.week - f.start, total = pl.pay - f.start;
   const track = pl.ch ? [['Spark', f.start], ...pl.ch.map((c: any, i: number) => ['Ch ' + (i + 1), c.w])] : (pl.len === 's' ? [['Spark', 1], ['Blow-off', 4]] : [['Spark', 1], ['Build', 2], ['Twist', 3], ['Blow-off', 4]]);
   const at = pl.ch ? Math.min((f.chd || 0) + 1, pl.ch.length) : 0;
@@ -58,7 +58,7 @@ function StoryPane(p: { id: number | null }) {
   const log = () => openModal({ kind: 'info', title: E.feudLabel(S, f), wide: true, body: () => <ul class="list" data-t="story-log">{f.log.slice().reverse().map((l: any, i: number) => <li key={i}><span class="muted">Week {l.w}</span><span><Txt>{l.t}</Txt></span></li>)}</ul> });
   return <div class="sp">
     <div class="sp-vs"><span class="sp-one"><Portrait w={a} /><Name w={a} /></span><b class="rd">VS</b><span class="sp-one"><Portrait w={b} /><Name w={b} /></span></div>
-    <p class="sp-tags"><Tag kind={pl.len === 'l' ? 'heel' : pl.len === 'm' ? 'gold' : 'info'}>{pl.n} story</Tag><Tag kind={f.heat >= 60 ? 'heel' : undefined}>{E.feudStage(f)}</Tag>{f.finale ? <Tag kind="good">Match made</Tag> : null}</p>
+    <p class="sp-tags"><Tag kind={pl.len === 'l' ? 'heel' : pl.len === 'm' ? 'gold' : 'info'}>{pl.n} feud</Tag><Tag kind={f.heat >= 60 ? 'heel' : undefined}>{E.feudStage(f)}</Tag>{f.finale ? <Tag kind="good">Match made</Tag> : null}</p>
     <div class={'sp-trk n' + track.length} data-t="story-track">{track.map((x: any, i: number) => { const done = pl.ch ? (i === 0 ? true : i <= (f.chd || 0)) : x[1] < act0, on = pl.ch ? i === at : x[1] === act0;
       return <span class={done && !on ? 'dn' : (on ? 'on' : '')}>{done && !on ? '✔ ' : (on ? '● ' : '○ ')}{x[0]}</span>; })}</div>
     <Line label="Heat" w={9}><Meter v={f.heat} kind="hot" /> <span class="num">{Math.round(f.heat)}</span></Line>
@@ -68,8 +68,8 @@ function StoryPane(p: { id: number | null }) {
     </Group>
     <Group title="This week it needs"><p>{NEEDS[act0] ? NEEDS[act0](f, pl) : ''}</p></Group>
     {f.stakes ? <p class="good one">Stakes: {f.stakes}</p> : null}
-    <Group title="Last on the story"><div class="sp-log">{f.log.slice(-1).map((l: any, i: number) => <p key={i} class="clamp"><span class="muted">Week {l.w}:</span> <Txt>{l.t}</Txt></p>)}</div></Group>
-    <p class="sp-btns"><Btn kind="sm" t="story-log" onClick={log}>The story so far</Btn><Btn kind="danger" t="story-end" onClick={end}>End it</Btn></p>
+    <Group title="Last in the feud"><div class="sp-log">{f.log.slice(-1).map((l: any, i: number) => <p key={i} class="clamp"><span class="muted">Week {l.w}:</span> <Txt>{l.t}</Txt></p>)}</div></Group>
+    <p class="sp-btns"><Btn kind="sm" t="story-log" onClick={log}>The feud so far</Btn><Btn kind="danger" t="story-end" onClick={end}>End it</Btn></p>
   </div>;
 }
 const NEEDS: Record<number, (f: any, pl: any) => string> = {
@@ -84,7 +84,7 @@ function Says(p: { se: any }) {
   const S = G.S, st = stl(), L = p.se.says, per = flat() ? 99 : (mode() === 'tablet' ? 2 : 3);
   const pages = Math.max(1, Math.ceil(L.length / per)), pg = Math.min(st.npg, pages - 1);
   const KW: Record<string, [string, any]> = { late: ['Late', 'bad'], hurt: ['Hurt', 'bad'], clash: ['Clash', 'bad'], tired: ['Tired', 'warn'], crowd: ['Crowded', 'warn'], gap: ['Gap', 'bad'], idle: ['Idle', 'off'], good: ['Good', 'good'] };
-  if (!L.length) return <p class="muted">Nothing to fix. Every story has its night.</p>;
+  if (!L.length) return <p class="muted">Nothing to fix. Every feud has its night.</p>;
   return <>
     <ul class="says">{L.slice(pg * per, pg * per + per).map((x: any, i: number) => <li key={pg + ':' + i}>
       {x.id != null ? <button type="button" class="lnk" {...dataAttrs('says', { k: x.k })} onClick={() => view(() => { st.sel = x.id; })}><Tag kind={KW[x.k][1]}>{KW[x.k][0]}</Tag><Txt>{x.t}</Txt></button>
@@ -99,7 +99,7 @@ function Power() {
   const b = (v: string, n: string, cost: string, can: boolean, go: () => void, note?: ComponentChildren) => <button type="button" class={'btn st-pw' + (can ? '' : ' used')} {...dataAttrs('plot-open', { v })} onClick={go}>
     <span class="one">{n}{note}</span><span class="cost">{cost}</span></button>;
   return <div class="st-pws" data-t="plot">
-    {b('story', 'Start a story', '1-3', I.bp >= 1, () => { storyReset(); openModal({ kind: 'story' }); })}
+    {b('story', 'Start a feud', '1-3', I.bp >= 1, () => { storyReset(); openModal({ kind: 'story' }); })}
     {I.acts.map((a: any) => b(a.id, a.n, String(a.cost), a.can, () => openModal({ kind: 'plot', k: a.id }), a.id === 'tape' && I.taped ? <span class="good" data-t="plot-taped"> {'·'} on</span> : undefined))}
     {b('plan', 'The long plan', pl ? 'set' : 'free', true, () => openModal({ kind: 'plot', k: 'plan' }))}
   </div>;
@@ -113,7 +113,7 @@ function More(p: { pops: { [k: string]: () => ComponentChildren } }) {
   const m = S.mystery && S.mystery.promo === S.player ? S.mystery : null, R = E.rebelInfo(S);
   const b = (k: string, n: string, c: number, title: string) => <button type="button" class="btn st-pw" {...dataAttrs('st-more', { v: k })} onClick={() => openModal({ kind: 'info', title, wide: true, body: p.pops[k] })}><span class="one">{n}</span><span class="cost">{c}</span></button>;
   return <div class="st-pws">
-    {b('finished', 'Finished stories', done, 'Finished')}
+    {b('finished', 'Finished feuds', done, 'Finished')}
     {b('streaks', 'Winning streaks', streak, 'Winning streaks')}
     {b('stables', 'Stables', stables, 'Stables')}
     {b('teams', 'Tag teams', teams, 'Tag teams')}
@@ -129,11 +129,11 @@ export function SeasonPage(p: { pops: { [k: string]: () => ComponentChildren } }
   return <div class="onescreen">
     <h1 class="vh">Storylines</h1>
     <Desktop cls="stpage" t="storylines">
-      <Win title="The next twelve weeks: where every story ends" right={se.weeks[0] ? se.weeks[0].month : ""} area="season" t="season"><Season se={se} sel={sel} /></Win>
-      <Win title={cur ? cur.label : 'Your stories'} right={cur ? (cur.len === 'l' ? 'Long' : cur.len === 'm' ? 'Medium' : 'Short') : ''} area="story" t="story-pane"><StoryPane key={String(sel) + ':' + S.week} id={sel} /></Win>
+      <Win title="The next twelve weeks: where every feud ends" right={se.weeks[0] ? se.weeks[0].month : ""} area="season" t="season"><Season se={se} sel={sel} /></Win>
+      <Win title={cur ? cur.label : 'Your feuds'} right={cur ? (cur.len === 'l' ? 'Long' : cur.len === 'm' ? 'Medium' : 'Short') : ''} area="story" t="story-pane"><StoryPane key={String(sel) + ':' + S.week} id={sel} /></Win>
       <Win title="The calendar says" right={fix ? fix + ' to fix' : ''} tone={fix ? 'hot' : undefined} area="says" t="st-says"><Says se={se} /></Win>
       <Win title="Booking power" right={<span data-t="st-bp">{S.bp}</span>} area="power" t="st-power"><Power /></Win>
-      <Win title="Around the stories" area="more" t="st-morewin"><More pops={p.pops} /></Win>
+      <Win title="Around the feuds" area="more" t="st-morewin"><More pops={p.pops} /></Win>
     </Desktop>
   </div>;
 }
