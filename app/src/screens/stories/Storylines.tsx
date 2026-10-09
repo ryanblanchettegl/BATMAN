@@ -1,134 +1,8 @@
 /* Storylines: the rivalries your booking started, plus streaks, stables and tag teams. The long plan is the one place to pencil something in. */
 import { E } from '../../engine';
 import { G, me, plural, slice, act, view, say, openModal, Modal } from '../../store';
-import { storyReset } from './StartStory';
+import { SeasonPage } from './Season';
 import { Head, Panel, Tag, Name, Meter, Empty, teamName, Txt, Btn, Sel, Field, showResult, Window } from '../../kit';
-
-/** When a story ends: its night, or its next chapter. */
-function endLine(f: any): string {
-  const S = G.S, p = E.feudPlan(S, f), wk = (n: number) => n <= 0 ? 'this week' : n === 1 ? 'next week' : 'in ' + n + ' weeks';
-  if (p.ch) {
-    const nx = p.ch.find((c: any) => !c.done), k = p.ch.indexOf(nx) + 1;
-    if (nx && k < p.ch.length) return 'Chapter ' + k + ' of ' + p.ch.length + ' ends at ' + nx.at + ', ' + wk(nx.w - S.week) + '. It ends for good at ' + p.at + '.';
-  }
-  if (p.late) return 'It was meant to end at ' + p.at + '. It is cooling every week it runs over.';
-  return 'It ends at ' + p.at + ', ' + wk(p.in) + (p.slip ? ', one big event later than planned' : '') + '.';
-}
-
-/** What each act needs from the booker. The act comes from the calendar: where the story is on the way to its ending. */
-function actNote(f: any): string {
-  const a = E.feudAct(f, G.S), p = E.feudPlan(G.S, f);
-  if (a === 1) return p.len === 's' ? 'A short story: a spark, then the match. Keep both on the show.' : 'Words and mind games. Keep both on the show to build it.';
-  if (a === 2) return 'Brawls, ambushes and contract signings. Build the heat before the twist.';
-  if (a === 3) return 'Something is about to change this feud for good: one twist to a stretch.';
-  if (a === 4) return (f.finale ? 'The match is made' : 'The match gets made official next') + '. Book it on the night the story ends.';
-  return '';
-}
-
-/** One line on what the story needs next. */
-function heatStep(f: any): string {
-  const S = G.S, a = E.feudAct(f, S), cold = S.week - f.last;
-  if (cold >= 3) return 'It has gone cold for ' + cold + ' weeks. Put both on the next show, in a segment or a match.';
-  if (a === 1) return 'Book a promo or an ambush with both on the show.';
-  if (a === 2) return 'A brawl, an attack or a contract signing.';
-  if (a === 3) return 'Raise the stakes or book a betrayal. That is the twist this story needs.';
-  return 'Book the match on its night. If it is missed, it cools.';
-}
-
-function FeudCard(p: { f: any }) {
-  const S = G.S, P = me(), f = p.f, a = E.feudAct(f, S), pl = E.feudPlan(S, f);
-  const t = f.title ? P.titles.find((x: any) => x.id === f.title) : null;
-  return <Panel cls="feud">
-    <div class="row between">
-      <div class="t">{E.feudLabel(S, f)}</div>
-      <div class="row"><Meter v={f.heat} kind="hot" /><span class="num">{Math.round(f.heat)} heat</span></div>
-    </div>
-    <div class="row">
-      <Tag kind={pl.len === 'l' ? 'heel' : pl.len === 'm' ? 'gold' : 'info'}>{pl.n} story</Tag>
-      <Tag kind="gold">{pl.len === 's' ? (a === 4 ? 'Blow-off' : 'Spark') : 'Act ' + a + ' of 4: ' + E.ACTN[a]}</Tag>
-      <Tag kind={f.heat >= 60 ? 'heel' : undefined}>{E.feudStage(f)}</Tag>
-      {f.finale ? <Tag kind="good">Match made</Tag> : null}
-      {f.kind === 'dream' ? <Tag>Dream match</Tag> : null}
-      {t ? <Tag kind="gold">{t.name}</Tag> : null}
-      <span class="muted">{f.matches} {plural(f.matches, 'match', 'matches')}, {f.aw}–{f.bw} {'·'} since week {f.start}</span>
-    </div>
-    <p data-t="feud-end" class={pl.late ? 'bad' : ''}>{endLine(f)}</p>
-    {f.stakes ? <p class="good">Stakes: {f.stakes}</p> : null}
-    <p class="muted">{actNote(f)}</p>
-    <p>Next: {heatStep(f)}</p>
-    <div class="log">{f.log.slice(-6).map((l: any) => <span>Wk {l.w} <Txt>{l.t}</Txt></span>)}</div>
-  </Panel>;
-}
-
-/** The on-screen boss and the rebel who has declared war on them, while it lasts. */
-function Rebel() {
-  const S = G.S, R = E.rebelInfo(S); if (!R) return null;
-  return <Panel title="The boss and the rebel">
-    <p><Name w={R.w} /> against {R.boss ? <Name w={R.boss} /> : 'the boss'}, {R.weeks} {plural(R.weeks, 'week')} in.</p>
-    <div class="row"><Meter v={R.heat} kind="hot" /><span class="muted">heat {R.heat}</span></div>
-    <p class="muted mt1">Put the rebel on the card to keep it going. When it peaks, an inbox choice settles it.</p>
-  </Panel>;
-}
-function Mystery() {
-  const S = G.S, m = S.mystery;
-  if (!m || m.promo !== S.player) return null;
-  return <Panel title="Unsolved"><p>Someone attacked <Name w={S.w[m.v]} /> in week {m.start}. The attacker has not been named yet.</p></Panel>;
-}
-
-function Finished(p: { done: any[] }) {
-  const S = G.S;
-  if (!p.done.length) return null;
-  return <Panel title="Finished"><ul class="list">{p.done.map(f =>
-    <li><span>{E.feudLabel(S, f)}</span><span class="muted">{f.dead ? 'Fizzled out' : 'Settled'}, week {f.end}</span></li>)}</ul></Panel>;
-}
-
-function Streaks() {
-  const S = G.S, P = me();
-  const L = E.rosterOf(S, P.id).filter((w: any) => w.ws >= 4).sort((a: any, b: any) => b.ws - a.ws);
-  return <Panel title="Winning streaks">
-    {L.length ? <>
-      <ul class="list">{L.map((w: any) => <li><span><Name w={w} /></span><span class="num">{w.ws} straight</span></li>)}</ul>
-      <p class="muted mt2">A streak of six or more draws a bigger reaction. Whoever ends it gets the rub.</p>
-    </> : <Empty>Nobody has won four in a row. Keep a hot wrestler on the card and call their wins.</Empty>}
-  </Panel>;
-}
-
-export function StablePanel() {
-  const S = G.S, L = (S.stables || []).filter((s: any) => s.promo === S.player);
-  if (!L.length) return null;
-  return <Panel title="Stables">
-    <ul class="list">{L.map((s: any) => <li>
-      <span><b>{s.name}</b><br />{s.m.map((id: number, i: number) => <>{i ? ', ' : ''}<Name w={S.w[id]} />{id === s.leader ? <span class="muted"> (leader)</span> : null}</>)}</span>
-      <span class="row"><Meter v={Math.min(100, s.tension * 10)} kind="hot" /><span class="muted">tension</span></span>
-    </li>)}</ul>
-
-    <p class="muted mt2">Stablemates run in for each other. Losses raise the tension, and at the top of the meter somebody gets thrown out.</p>
-  </Panel>;
-}
-
-/** Who does what in each stable, and how well it holds together. */
-export function StableRoles() {
-  const S = G.S, L = (S.stables || []).filter((s: any) => s.promo === S.player);
-  if (!L.length) return null;
-  return <Panel title="Stable roles">
-    {L.map((s: any) => <>
-      <p class="eyebrow">{s.name} {'·'} unity {E.stableUnity(S, s)}</p>
-      <ul class="list">{E.stableRoles(S, s).map((r: any) => <li class="col"><span><Name w={r.w} /> <span class={r.role ? 'muted' : 'bad'}>{'·'} {r.name}</span></span><span class="muted">{r.note}</span></li>)}</ul>
-    </>)}
-    <p class="muted mt1">Every member needs a job. Somebody nobody needs, who is also losing, is the first to go.</p>
-  </Panel>;
-}
-
-function Teams() {
-  const S = G.S, P = me();
-  const L = S.teams.filter((t: any) => t.promo === P.id).sort((a: any, b: any) => b.exp - a.exp);
-  return <Panel title="Tag teams">
-    {L.length ? <>
-      <ul class="list">{L.map((t: any) => <li><span>{teamName(t)}</span><span class="row"><Meter v={t.exp} /><span class="num">{t.exp}</span></span></li>)}</ul>
-      <p class="muted mt2">Experience improves tag matches. Losing teams with little experience can fall apart.</p>
-    </> : <Empty>No regular teams. They form from tag matches and team-up angles on your shows.</Empty>}
-  </Panel>;
-}
 
 /** Pencil in the flagship main event. The build is counted every week, and a plan made early pays more. */
 function LongPlan() {
@@ -156,25 +30,6 @@ function LongPlan() {
   </Panel>;
 }
 
-/** Booking power spent on the stories themselves. Each thing it buys is a button; the button opens a pop-up with the choices. */
-const PLOT_UI: Record<string, string> = { split: 'One turns on the other. The team ends and a rivalry starts hot.', push: 'Momentum now, and the crowd is told they matter.', tape: 'A cheap promo or angle that adds itself to your next show, where you say.' };
-function Plot() {
-  const S = G.S, I = E.plotInfo(S), pl = E.longPlan(S);
-  const open = (k: string) => { const st = plotState(); st.team = ''; st.who = ''; st.w = ''; st.a = ''; st.b = ''; openModal({ kind: 'plot', k }); };
-  return <Panel title={'Booking power: ' + I.bp + ' to spend on the stories'} cls="mb2">
-    <div class="bsacts" data-t="plot">
-      <button type="button" class={'bsact' + (I.bp >= 1 ? '' : ' used')} data-t="plot-open" data-v="story" onClick={() => { storyReset(); openModal({ kind: 'story' }); }}>
-        <b>Start a story</b><span class="eff">Two people, and how long it runs: short, medium or long. It ends on the night you pick.</span>
-        <span class="ft"><span class={I.bp >= 1 ? 'gold' : 'bad'}>1 to 3 booking power</span></span></button>
-      {I.acts.map((a: any) => <button type="button" key={a.id} class={'bsact' + (a.can ? '' : ' used')} data-t="plot-open" data-v={a.id} onClick={() => open(a.id)}>
-      <b>{a.n}</b><span class="eff">{PLOT_UI[a.id]}</span>
-      <span class="ft"><span class={a.can ? 'gold' : 'bad'}>{a.cost} booking power</span>{a.id === 'tape' && I.taped ? <span class="good" data-t="plot-taped"> {'·'} on {I.show}: {I.taped.label}</span> : null}</span></button>)}
-      <button type="button" class="bsact" data-t="plot-open" data-v="plan" onClick={() => openModal({ kind: 'plot', k: 'plan' })}>
-        <b>Pencil in the long plan</b><span class="eff">Pick the main event of your flagship event now. Every week the two are in a rivalry builds it.</span>
-        <span class="ft muted">{pl ? 'A main event is pencilled in' : 'Nothing pencilled in'} {'·'} free</span></button>
-    </div>
-  </Panel>;
-}
 const plotState = () => slice<{ team: string; who: string; w: string; k: string; a: string; b: string; at: string }>('plot', () => ({ team: '', who: '', w: '', k: 'interview', a: '', b: '', at: 'start' }));
 /** The pop-up for one thing booking power buys on Storylines (`m.k`), or for the long plan. */
 export function PlotWindow(p: { m: Modal }) {
@@ -206,21 +61,24 @@ export function PlotWindow(p: { m: Modal }) {
   </Window>;
 }
 
-export function Storylines() {
-  const S = G.S, P = me();
-  const live = E.activeFeuds(S).filter((f: any) => f.promo === P.id).sort((a: any, b: any) => b.heat - a.heat);
-  const done = S.feuds.filter((f: any) => f.res && f.promo === P.id).slice(-8).reverse();
-  return <>
-    <Head eyebrow="What your booking has set in motion" title="Storylines" />
-    <Plot />
-    <div class="cols">
-      <div class="stack">
-        <Mystery />
-        {live.length ? live.map((f: any) => <FeudCard f={f} />)
-          : <Panel><Empty>No rivalries yet. Run a show or two: ambushes, challenges and betrayals start them.</Empty></Panel>}
-        <Finished done={done} />
-      </div>
-      <div class="stack"><Rebel /><Streaks /><StablePanel /><StableRoles /><Teams /></div>
-    </div>
-  </>;
-}
+/* what the buttons under Around the stories open */
+const POPS = {
+  finished: () => { const S = G.S, P = me(), L = S.feuds.filter((f: any) => f.res && f.promo === P.id).slice(-12).reverse();
+    return L.length ? <ul class="list" data-t="st-finished">{L.map((f: any) => <li><span>{E.feudLabel(S, f)}{f.len ? <span class="muted"> {'·'} {E.FLEN[f.len].n.toLowerCase()}</span> : null}</span><span class={f.dead ? 'bad' : 'good'}>{f.cut ? 'Dropped' : (f.dead ? 'Fizzled out' : 'Settled')}, week {f.end}</span></li>)}</ul>
+      : <Empty>No story has finished yet.</Empty>; },
+  streaks: () => { const S = G.S, P = me(), L = E.rosterOf(S, P.id).filter((w: any) => w.ws >= 4).sort((a: any, b: any) => b.ws - a.ws);
+    return L.length ? <><ul class="list" data-t="st-streaks">{L.map((w: any) => <li><span><Name w={w} /></span><span class="num">{w.ws} straight</span></li>)}</ul><p class="muted mt1">A streak of six or more draws a bigger reaction. Whoever ends it gets the rub.</p></>
+      : <Empty>Nobody has won four in a row. Keep a hot wrestler on the card and call their wins.</Empty>; },
+  stables: () => { const S = G.S, L = (S.stables || []).filter((s: any) => s.promo === S.player);
+    return L.length ? <div data-t="st-stables">{L.map((s: any) => <>
+      <p class="eyebrow">{s.name} {'·'} unity {E.stableUnity(S, s)} {'·'} tension <Meter v={Math.min(100, s.tension * 10)} kind="hot" /></p>
+      <ul class="list">{E.stableRoles(S, s).map((r: any) => <li class="col"><span><Name w={r.w} />{r.w.id === s.leader ? <span class="muted"> (leader)</span> : null} <span class={r.role ? 'muted' : 'bad'}>{'·'} {r.name}</span></span><span class="muted">{r.note}</span></li>)}</ul></>)}
+      <p class="muted mt1">Stablemates run in for each other. Losses raise the tension, and at the top of the meter somebody gets thrown out. Somebody nobody needs, who is also losing, is the first to go.</p></div>
+      : <Empty>No stables. They form from your stories and your shows.</Empty>; },
+  teams: () => { const S = G.S, P = me(), L = S.teams.filter((t: any) => t.promo === P.id).sort((a: any, b: any) => b.exp - a.exp);
+    return L.length ? <><ul class="list" data-t="st-teams">{L.map((t: any) => <li><span>{teamName(t)}</span><span class="row"><Meter v={t.exp} /><span class="num">{t.exp}</span></span></li>)}</ul><p class="muted mt1">Experience improves tag matches. Losing teams with little experience can fall apart.</p></>
+      : <Empty>No regular teams. They form from tag matches and team-up angles on your shows.</Empty>; }
+};
+
+/** The Storylines page: one screen of windows (Season.tsx). */
+export function Storylines() { return <SeasonPage pops={POPS} />; }

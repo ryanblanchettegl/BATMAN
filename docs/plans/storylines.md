@@ -1,6 +1,6 @@
 # Plan: short, medium and long feuds, and rivals
 
-Concept 8 October. Pictures: `docs/mockups/storylines/`. Steps 1 and 2 of the build order are done (`src/21-feudlen.js`, `app/src/screens/stories/StartStory.tsx`, `node test-stories.js`); the rest is not built. Ryan's answers to the questions at the end are still to come, so the build follows the defaults written here.
+Concept 8 October. Ryan then asked for research first ("wrestling doesn't really have seasons"): `docs/plans/storylines-research.md` is what real companies do and section 6 there lists what it changes here; those changes wait for his go-ahead. Pictures: `docs/mockups/storylines/`. Steps 1 to 3 of the build order are done (`src/21-feudlen.js`, `app/src/screens/stories/StartStory.tsx`, `node test-stories.js`); the rest is not built. Ryan's answers to the questions at the end are still to come, so the build follows the defaults written here.
 
 Ryan, 8 October: "We want short, medium and long feuds. We also want rivals."
 
@@ -45,7 +45,7 @@ What each length is for:
 
 ### What the player sees
 
-- **The season** (the calendar already in the Storylines mock-up) draws each story as a bar with its length on it: S, M or L. A long story has a star at each chapter end and two stars at its last.
+- **The next twelve weeks** (the calendar already in the Storylines mock-up; wrestling has no seasons, see `storylines-research.md`) draws each story as a bar with its length on it: S, M or L. A long story has a star at each chapter end and two stars at its last.
 - **Start a story** (a pop-up from "Start a rivalry", renamed "Start a story"): pick the two, pick the length from three buttons that say what each gives, see where it ends, see what the road agent says about them. If the two are rivals already, it says so and starts further on.
 - **The story's pane** on the right: the acts or chapters as a track, heat, weeks to go, what this week needs, where it ends.
 - **The checks** under the calendar get two new lines: "A long story with no twist in five weeks" and "A short story in the main event of a big show".
@@ -100,7 +100,7 @@ Two people can be rivals in the ring and friends in catering, or hate each other
 
 ### What the player sees
 
-- **Rivalries**, a window on the Storylines page under the season: each rivalry a line with both faces, its level in words, the series, how long since the last chapter. Live ones first, then the ones that are resting.
+- **Rivalries**, a window on the Storylines page under the calendar: each rivalry a line with both faces, its level in words, the series, how long since the last chapter. Live ones first, then the ones that are resting.
 - **The rivalry file** (a pop-up from that list, the Roster and a person's file): both faces, the level, the series, every chapter with its length, ending and grade, the best match, respect or real heat, how long it has rested and what that does, and Rekindle with its cost.
 - **The person's file** gets a line: Rival, with the name and the level. What it calls "rivals" today, people they dislike backstage, becomes "At odds with" so the two are not mixed up.
 
@@ -116,7 +116,7 @@ One step at a time, each shown before the next.
 
 1. (Built 8 October.) Engine: `len`, `pay` and `ch` on feuds; `feudAct()` from the calendar; the payoff and the cooling; old saves get a length the first time a feud is read, so no version bump was needed. `test-uni.js` 60 weeks clean, and a new `test-stories.js`.
 2. (Built 8 October.) Start a story pop-up with the three lengths. The rivals' discount comes with step 4.
-3. The season calendar on the Storylines page, with the bars and the checks.
+3. (Built 8 October.) The twelve-week calendar on the Storylines page, with the bars and the checks. The page is now one screen of windows.
 4. Rivalries in the engine: `S.rv`, how one begins, the series, the level, the crowd lift, the rekindle.
 5. The Rivalries window and the rivalry file.
 6. Rivals in the file, the Roster, the ear, the desk, the dirt sheet.

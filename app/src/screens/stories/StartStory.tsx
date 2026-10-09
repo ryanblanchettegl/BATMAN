@@ -19,7 +19,7 @@ export function StoryWindow(_p: { m: Modal }) {
   const pv = A && st.b ? E.storyPreview(S, +st.a, +st.b) : null;
   const L = pv ? pv.lens.find((x: any) => x.len === st.len) : null;
   const tag = (w: any) => w.name + (w.hurt ? ' (hurt)' : '') + (w.n ? ' · in ' + w.n + (w.n === 1 ? ' story' : ' stories') : '');
-  const start = () => act(() => { const r = E.storyStart(S, +st.a, +st.b, st.len); say(r.msg, { err: !r.ok }); showResult('Start a story', r.msg, !r.ok); });
+  const start = () => act(() => { const r = E.storyStart(S, +st.a, +st.b, st.len); if (r.ok) slice<any>('stl', () => ({ sel: null, spg: 0, npg: 0 })).sel = r.id; say(r.msg, { err: !r.ok }); showResult('Start a story', r.msg, !r.ok); });
   const face = (id: string) => S.w[+id] ? <Portrait w={S.w[+id]} cls="ss-face" /> : <span class="ss-face ss-none" />;
   return <Window title="Start a story" wide ok="Not now"
     footer={<Btn kind="go" t="story-start" disabled={!pv || !pv.ok || !L || !L.can} onClick={start}>{L ? 'Start it · ' + L.cost + ' booking power' : 'Start it'}</Btn>}>
