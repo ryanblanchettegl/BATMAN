@@ -3,7 +3,7 @@ import { E } from '../../engine';
 import { Btn, Panel, Sel, Field, Opt, FaceCanvas, dataAttrs } from '../../kit';
 import { derive, NAMES, Face, FaceKey } from '../../lib/portrait';
 import { es, world, edit, look, note, reId } from './state';
-import { TextF, NameF, NumF, SelF, Rating, PickList, DelBtn, TwoPane, opts } from './parts';
+import { TextF, NameF, NumF, SelF, Rating, PickList, DelBtn, TwoPane, opts, BrandSel } from './parts';
 
 const PARTS: [FaceKey, string][] = [['h', 'Head'], ['hr', 'Hair'], ['fh', 'Facial hair'], ['ms', 'Mustache'], ['ey', 'Eyes'], ['ns', 'Nose']];
 const SHOWN = 60;
@@ -54,6 +54,7 @@ function Form(p: { w: any }) {
       <div class="editor plain">
         <Field label="Company"><Sel t="ed-sign" value={con ? con.promotion_id : ''} options={companies} onChange={v => edit(() => { E.edSign(pkg, w.id, v || null, con ? con.push_level : undefined); })} /></Field>
         {con ? <SelF label="Place on the card" rec={con} k="push_level" options={opts(E.ED.push)} /> : null}
+        {con ? <BrandSel pkg={pkg} pid={con.promotion_id} rec={con} t="ed-wr-brand" /> : null}
         {roles.indexOf('wrestler') >= 0 ? <Field label="Managed by"><Sel t="ed-manager" value={w.manager_id || ''} options={[['', 'Nobody'] as Opt].concat(E.edManagers(pkg, w.id).map((m: any) => [m.id, m.name + (m.same ? '' : ' (another company)')] as Opt))} onChange={v => edit(() => { E.edSetManager(pkg, w.id, v || null); })} /></Field> : null}
         {con ? <NumF label="Weeks left on the contract" rec={con} k="weeks_left" min={1} max={520} blank="the game decides" /> : null}
       </div>

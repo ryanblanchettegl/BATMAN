@@ -42,6 +42,8 @@ async function run(mode) {
 
     await company(page, mode, 'AAA', 'Alpha Wrestling', 'workrate');
     await over('a company form');
+    await page.click('[data-t="ed-add-brand"]'); await page.fill('[data-t="ed-brand-name"]', 'Red Side');
+    ok(mode, 'a company can have a brand', /Red Side/.test(await page.$eval('[data-t="ed-brand-name"]', e => e.value)));
     await company(page, mode, 'BBB', 'Beta Wrestling', 'outlaw');
     ok(mode, 'two filled companies make the world ready to play', /ready to play/i.test(await txt(page, '.edtop')), await txt(page, '.edtop'));
 
@@ -49,6 +51,7 @@ async function run(mode) {
     await page.click('[data-t="ed-add-show"]');
     const shows = await page.$$('[data-t="ed-show-name"]');
     await shows[shows.length - 1].fill('Saturday Slam');
+    { const bs = await page.$$('[data-t="ed-show-brand"]'); ok(mode, 'a show of a company with brands can be put on one', bs.length >= 1); if (bs.length) await bs[0].selectOption({ index: 1 }); }
     await page.fill('[data-t="ed-ev-name"][data-v="3"]', 'Spring Clash');
     await page.selectOption('[data-t="ed-ev-rule"][data-v="3"]', 'all_titles');
     ok(mode, 'a second show and a named big event are kept', await page.evaluate(() => { const u = JSON.parse(localStorage.getItem('ewf9000-universes') || '{}'), w = u.test_world; return !!w; }) || true);
@@ -88,6 +91,7 @@ async function run(mode) {
     ok(mode, 'the world as text is a package with everything made here', !!pkg && pkg.promotions.length === 2 && pkg.workers.length === 25 && pkg.shows.some(s => s.name === 'Saturday Slam') && pkg.titles.some(t => t.name === 'Iron Crown' && t.holder_ids.length === 1)
       && pkg.events.some(e => e.month === 3 && e.name === 'Spring Clash' && e.rule === 'all_titles') && pkg.teams.some(t => t.name === 'The Pair' && t.member_ids.length === 2) && pkg.workers.some(w => w.ring_name === 'Captain Thunder' && w.ratings.overness === 88 && w.face && w.roles.indexOf('manager') >= 0),
       pkg ? pkg.promotions.length + ' companies, ' + pkg.workers.length + ' people' : 'not JSON');
+    ok(mode, 'the brand and the show on it are in the world', !!pkg && pkg.promotions.some(p => p.brands && p.brands[0].name === 'Red Side' && pkg.shows.some(sh => sh.promotion_id === p.id && sh.brand === p.brands[0].id)));
     ok(mode, 'the commentators and the road agent are in the world', !!pkg && pkg.promotions.some(p => p.announcers && p.announcers[0] === 'AAA Caller' && p.announcers[1] === 'AAA Colour' && p.staff && p.staff.road_agent === 'AAA Agent'));
     await over('Check and share');
     await shot(page, 'ed-' + mode + '-share', true);

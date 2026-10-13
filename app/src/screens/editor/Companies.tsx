@@ -4,7 +4,7 @@ import { Btn, Panel, Sel, Field, Opt, Logo, dataAttrs } from '../../kit';
 import { openLogoMaker } from '../../shared/logomaker';
 import { ModelCard } from '../../shared/model';
 import { es, world, edit, look, note } from './state';
-import { TextF, NameF, NumF, SelF, PickList, DelBtn, TwoPane } from './parts';
+import { TextF, NameF, NumF, SelF, PickList, DelBtn, TwoPane, BrandSel } from './parts';
 
 const names = (t: Record<string, any>): Opt[] => Object.keys(t).map(k => [k, t[k].n] as Opt);
 export const companyOpts = (pkg: any): Opt[] => pkg.promotions.map((p: any) => [p.id, p.name + (p.full_name ? ' - ' + p.full_name : '')] as Opt);
@@ -50,6 +50,14 @@ export function CompaniesTab() {
         <SelF label="What the crowd expects" rec={own} k="roots" options={names(E.ROOTS)} />
         <SelF label="Promise to the locker room" rec={own} k="pledge" options={names(E.PLEDGE)} />
       </div>
+    </Panel>
+    <Panel cls="mb4" title="Brands">
+      {(p.brands || []).length ? <ul class="list">{(p.brands as any[]).map((b: any) => <li key={b.id} class="col"><div class="editor plain">
+        <Field label="Brand name"><input type="text" maxLength={32} data-t="ed-brand-name" data-v={b.id} value={b.name} onInput={e => { const v = (e.currentTarget as HTMLInputElement).value; edit(() => { E.edSetBrand(pkg, p.id, b.id, { name: v }); }); }} /></Field>
+        </div><span class="row opts"><Btn kind="sm" t="ed-brand-dev" d={{ v: b.id }} on={!!b.dev} onClick={() => edit(() => { E.edSetBrand(pkg, p.id, b.id, { dev: !b.dev }); })}>{b.dev ? 'Developmental' : 'Main roster'}</Btn>
+        <DelBtn id={'brand:' + b.id} what={b.name} onDelete={() => { E.edRemoveBrand(pkg, p.id, b.id); note(b.name + ' is gone. Its shows, belts and wrestlers have no brand now.'); }} /></span></li>)}</ul>
+        : <p class="muted">No brands. One roster runs every show.</p>}
+      <div class="row mt2"><Btn kind="sm" t="ed-add-brand" onClick={() => edit(() => { const b = E.edAddBrand(pkg, p.id, ''); note(b.name + ' added. Put shows, belts and wrestlers on it.'); })}>Add a brand</Btn></div>
     </Panel>
     <Panel cls="mb4" title="The people">
       <div class="editor plain">
@@ -99,6 +107,7 @@ export function ShowsTab() {
           <Btn kind="go" t="ed-add-show" onClick={() => edit(() => { E.edAddShow(pkg, pid, 'New show'); })}>Add a show</Btn></div>
         {shows.length ? <ul class="list mt2">{shows.map((s: any, i: number) => <li class="col" key={i}><div class="editor plain">
           <NameF label="Name of the show" table="shows" rec={s} max={32} t="ed-show-name" />
+          <BrandSel pkg={pkg} pid={pid} rec={s} t="ed-show-brand" />
           <SelF label="How big" rec={s} k="weight" num options={(SIZES.some(z => z[0] === (s.weight == null ? 1 : s.weight)) ? SIZES : SIZES.concat([[s.weight, 'Size ' + s.weight]])) as Opt[]} />
         </div><span class="row opts"><DelBtn id={'show:' + s.id} what="this show" onDelete={() => { E.edRemove(pkg, 'shows', s.id); }} /></span></li>)}</ul>
           : <p class="bad mt2">This company has no weekly show. It needs one.</p>}

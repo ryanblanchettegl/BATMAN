@@ -57,3 +57,10 @@ export function TwoPane(p: { open: boolean; list: ComponentChildren; children: C
   </div>;
 }
 export const opts = (table: Record<string, string>): Opt[] => Object.keys(table).map(k => [k, table[k]] as Opt);
+
+/** The brand a show, belt or contract belongs to. Shown only when its company has brands. */
+export function BrandSel(p: { pkg: any; pid: string; rec: any; t?: string }) {
+  const P = p.pkg.promotions.find((x: any) => x.id === p.pid), B: any[] = (P && P.brands) || [];
+  if (!B.length) return null;
+  return <Field label="Brand"><Sel t={p.t || 'ed-brand'} value={p.rec.brand || ''} options={[['', 'No brand'] as Opt].concat(B.map((b: any) => [b.id, b.name + (b.dev ? ' (developmental)' : '')] as Opt))} onChange={v => edit(() => { E.edPutBrand(p.rec, v || null); })} /></Field>;
+}

@@ -2,7 +2,7 @@
 import { E } from '../../engine';
 import { Btn, Panel, Sel, Field, Opt, BeltArt } from '../../kit';
 import { es, world, edit, look, note } from './state';
-import { TextF, NameF, NumF, SelF, PickList, DelBtn, TwoPane, opts } from './parts';
+import { TextF, NameF, NumF, SelF, PickList, DelBtn, TwoPane, opts, BrandSel } from './parts';
 import { companyOpts } from './Companies';
 
 /** The wrestlers under contract to a company, biggest names first. */
@@ -33,6 +33,7 @@ export function BeltsTab() {
         <NameF label="Name of the belt" table="titles" rec={t} max={40} t="ed-belt-name" />
         <Field label="Company"><Sel t="ed-belt-co" value={t.promotion_id} options={companyOpts(pkg)} onChange={v => edit(() => { t.promotion_id = v; t.holder_ids = []; st.sel.beltsFor = v; })} /></Field>
         <Field label="Division"><Sel t="ed-belt-g" value={t.gender} options={[['M', 'Men'], ['F', 'Women']]} onChange={v => edit(() => { t.gender = v; t.holder_ids = []; })} /></Field>
+        <BrandSel pkg={pkg} pid={t.promotion_id} rec={t} t="ed-belt-brand" />
         <SelF label="How big a prize" rec={t} k="level" num options={[[3, 'Top title'], [2, 'Second title'], [1, 'Third title']]} />
         <Field label="Who fights for it"><Sel t="ed-belt-tag" value={t.tag ? '1' : ''} options={[['', 'One wrestler'], ['1', 'A tag team']]} onChange={v => edit(() => { t.tag = v === '1'; t.holder_ids = []; })} /></Field>
       </div>

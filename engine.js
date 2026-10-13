@@ -7145,6 +7145,27 @@ E.edMany=function(pkg,ids,what,pid){
     if(what==='sign'&&pid){E.edSign(pkg,id,pid);n++;}else if(what==='release'){E.edSign(pkg,id,null);n++;}else if(what==='delete'){E.edRemove(pkg,'workers',id);n++;}});
   return n;
 };
+/* ---------- brands: a company split into rosters, each with its own shows and belts ---------- */
+/** Add a brand to company `pid`. Returns it. */
+E.edAddBrand=function(pkg,pid,name){
+  edShape(pkg);var p=edFind(pkg,'promotions',pid);if(!p)return null;var B=p.brands||(p.brands=[]),nm=String(name||'').trim()||'Brand '+(B.length+1),used={};
+  B.forEach(function(b){used[b.id]=1;});var base=slug(nm)||'brand',id=base,n=2;while(used[id]){id=base+'_'+n;n++;}
+  var b={id:id,name:nm};B.push(b);return b;
+};
+/** Rename a brand, or set whether it is the developmental one. */
+E.edSetBrand=function(pkg,pid,bid,o){
+  var p=edFind(pkg,'promotions',pid),b=p&&p.brands?p.brands.filter(function(x){return x.id===bid;})[0]:null;if(!b)return null;
+  if(o.name!=null)b.name=String(o.name);if(o.dev!=null){if(o.dev)b.dev=true;else delete b.dev;}return b;
+};
+/** Remove a brand. Its shows, belts and contracts are left with no brand. */
+E.edRemoveBrand=function(pkg,pid,bid){
+  edShape(pkg);var p=edFind(pkg,'promotions',pid);if(!p||!p.brands)return false;
+  p.brands=p.brands.filter(function(b){return b.id!==bid;});if(!p.brands.length)delete p.brands;
+  ['shows','titles','contracts'].forEach(function(t){pkg[t].forEach(function(r){if(r.promotion_id===pid&&r.brand===bid)delete r.brand;});});
+  return true;
+};
+/** Put a show, belt or contract on a brand ('' for none). */
+E.edPutBrand=function(rec,bid){if(!rec)return;if(bid)rec.brand=bid;else delete rec.brand;};
 E.edFillFree=function(pkg,n,seed){
   edShape(pkg);var st={s:(seed>>>0)||1},N=edNames(pkg),used={},made=[],styles=Object.keys(STYLE_KEY),low=['midcarder','lower_midcarder','jobber'];
   pkg.workers.forEach(function(w){used[w.ring_name]=1;});n=clamp(Math.round(n)||6,1,40);

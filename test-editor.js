@@ -120,6 +120,15 @@ E.useUniverse(builtIn);
   ok('sign all picked moves every one of them', E.edMany(pkg, ids, 'sign', to) === 3 && ids.every(id => E.edHome(pkg, id) === to));
   ok('release all picked makes them free agents', E.edMany(pkg, ids, 'release') === 3 && ids.every(id => !E.edHome(pkg, id)));
   const n0 = pkg.workers.length; ok('delete all picked removes them', E.edMany(pkg, ids, 'delete') === 3 && pkg.workers.length === n0 - 3 && E.edCheck(pkg).errors === 0); }
+/* ---- brands ---- */
+{ const pkg = JSON.parse(JSON.stringify(builtIn)), p = pkg.promotions[0], b = E.edAddBrand(pkg, p.id, 'Red'), b2 = E.edAddBrand(pkg, p.id, 'Red');
+  ok('brands get their own ids, even with the same name', b.id !== b2.id && p.brands.length === 2);
+  const sh = pkg.shows.find(x => x.promotion_id === p.id), t = pkg.titles.find(x => x.promotion_id === p.id), c = pkg.contracts.find(x => x.promotion_id === p.id);
+  E.edPutBrand(sh, b.id); E.edPutBrand(t, b.id); E.edPutBrand(c, b.id); E.edSetBrand(pkg, p.id, b2.id, { name: 'Gold', dev: true });
+  ok('a brand can be renamed and made developmental', p.brands[1].name === 'Gold' && p.brands[1].dev === true);
+  ok('a world with brands passes the check', E.edCheck(pkg).errors === 0);
+  E.edRemoveBrand(pkg, p.id, b.id);
+  ok('removing a brand clears it from its shows, belts and contracts', !sh.brand && !t.brand && !c.brand && p.brands.length === 1); }
 /* ---- make a copy: a wrestler keeps their company, a belt starts vacant, a team empty, a company brings shows and belts, not people ---- */
 { const pkg = JSON.parse(JSON.stringify(builtIn)), w = pkg.workers.find(x => E.edHome(pkg, x.id)), cw = E.edDup(pkg, 'workers', w.id);
   ok('a copied wrestler has a new id and name and the same company', cw && cw.id !== w.id && /\(copy\)$/.test(cw.ring_name) && E.edHome(pkg, cw.id) === E.edHome(pkg, w.id) && !!E.edHome(pkg, cw.id));

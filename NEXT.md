@@ -36,7 +36,7 @@ Code: `src/86-editor.js`, `app/src/screens/editor/`. Tests: `test-editor.js`, `a
 - [x] **1.5 Unknown free agents.** On the Wrestlers tab with "Free agents" chosen, a "Make unknowns" button adds unsigned wrestlers.
 - [x] **1.6 Managers.** A wrestler with the Manager job can be tied to clients: a "Managed by" select on the wrestler form writes `manager_id`. The checker already validates it.
 - [x] **1.7 Announcers and staff.** On a company: play-by-play and colour names (`announcers`), road agent and head writer (`staff`).
-- [ ] **1.8 Brands.** On a company: add, rename and remove brands (`brands`, with the developmental switch). Shows, belts and contracts get a Brand select when the company has brands. Removing a brand clears it from them.
+- [x] **1.8 Brands.** On a company: add, rename and remove brands (`brands`, with the developmental switch). Shows, belts and contracts get a Brand select when the company has brands. Removing a brand clears it from them.
 - [ ] **1.9 Sponsors and columnists.** A world-level list for each on the World tab, if the package format has them (`sponsors`, `columnists` in `buildDB`). Document the fields in `docs/universe-format.md` as you go.
 - [ ] **1.10 Rookie names.** On the World tab: three text boxes for first names (men), first names (women) and last names, one per line. The game uses them for newcomers and `E.edFill` uses them for unknowns.
 - [ ] **1.11 Quick starts.** On "Start a new world": "A two-company territory" and "A nine-company world of unknowns". Each makes companies of different sizes and models with filled rosters, so a player can rename instead of build.
