@@ -1951,6 +1951,9 @@ var GR={
   tease:['{a} signals for the finish... {b} blocks it!','{a} sets up for the big one, and {b} wriggles free!','{b} sees it coming and rolls to the floor. Not yet!','{a} goes for it, and {b} counters at the last second!'],
   near2:['Another cover! One, two... NO! How did {a} kick out of that?','Everything they have got! One, two... and {a} is still alive!','{b} cannot believe it. Neither can I, {c}. Two and a half!','That should have been it! The referee’s hand was coming down!'],
   chant:['They are chanting both names now, {p}.','Listen to that. Half the building for {a}, half for {b}.','The whole place is standing. Nobody wants to sit down for this.','Stomping in the stands. You can feel it up here.'],
+  chantF:['“{n}! {n}!” The whole building is chanting it.','Listen to them, {p}. They are chanting for {n} before the bell.','You cannot hear yourself think in here. Every voice is for {n}.'],
+  chantH:['The crowd has a chant for {n}, and it is not a kind one.','Every seat in the house is letting {n} have it.','{n} cups an ear and the boos only get louder.'],
+  catch_:['Half the building shouts it with {n}: {cp}','{n} does not even have to say it. The crowd does: {cp}','There it is. {cp} You can buy it on a shirt now, {p}.'],
   main_in:['Ladies and gentlemen, it is time for the main event!','And now, the match you all came to see!','This is it. It is main event time!','The lights go down. It is time for the main event.'],
   upset:['UPSET! Nobody in this building saw that coming!','I do not believe it! What an upset!','Somebody check the odds, {p}. That was a stunner!','They will be talking about this one for weeks. What an upset!'],
   streak:['And just like that, the streak is over!','{l} had won {s} in a row. Not any more!','The streak ends tonight, and it ends in front of all of these people!'],
@@ -2026,7 +2029,7 @@ function callMatch(S,P,x){
   function raw(who,t){bc.push({t:who,x:fill(t,o)});}
   // extra beats are picked by a hash of the match, not the game's random stream, so they can never change how a game plays out
   var hk=(o.a||'')+'|'+(o.b||'')+'|'+x.mins+'|'+S.week;
-  function hp(who,sym,h){var L=GR[sym],t=fill(L[Math.floor(h01(hk+sym)*L.length)%L.length],o);var q={t:who,x:t.charAt(0).toUpperCase()+t.slice(1)};if(h)q.h=h;bc.push(q);}
+  function hp(who,sym,h){var L=GR[sym],t=fill(L[Math.floor(h01(hk+sym+(o.n||'')+(x.show||''))*L.length)%L.length],o);var q={t:who,x:t.charAt(0).toUpperCase()+t.slice(1)};if(h)q.h=h;bc.push(q);}
   if(x.m.mt==='br'){
     var outs=x.all.filter(function(w){return w.name!==o.w&&w.name!==o.l;}).sort(function(p,q){return p.ovr-q.ovr;});
     ring('This is an over-the-top-rope battle royal'+(x.t?' for the vacant '+x.t.name:'')+'! The last one left in the ring wins.');
@@ -2046,6 +2049,12 @@ function callMatch(S,P,x){
     ring((k===0?'Introducing first, ':(k===x.sides.length-1?'And the opponent'+(s.length>1?'s':'')+', ':'Next, '))+(isCh?'the '+x.t.name+' champion'+(s.length>1?'s':'')+', ':'')+names(s)+'!');
     bc.push({t:'ent',x:big?names(s)+' '+(s.length>1?'make their way out together':ENTR[lead.align==='F'?'F':'H'][lead.ent||0])+(isCh?', the title held high':'')+'. The reaction: '+pop(s)+'.':'The reaction: '+pop(s)+'.'});
   });
+  // the hottest act in the match gets a chant; a wrestler with a fresh catchphrase hears it shouted back
+  var hot=x.all.slice().sort(function(p,q){return q.ovr-p.ovr;})[0];
+  var top=(x.main||x.big)&&h01(hk+'ch')<0.6;
+  if(hot&&hot.ovr>=85&&top){o.n=hot.name;hp('col',hot.align==='F'?'chantF':'chantH');}
+  var cw=x.all.filter(function(w){return w.cphrase&&typeof catchFresh==='function'&&catchFresh(w)>0.3;})[0];
+  if(cw&&(x.main||x.big)&&h01(hk+cw.name+'cp')<0.5){o.n=cw.name;o.cp=cw.cphrase.t;hp('col','catch_');}
   var mem=memoryLines(S,P,x);
   if(mem[0])raw('col',mem[0]);
   else if(x.feud&&x.feud.kind==='dream')raw('col','This is the match everybody has been asking for, {p}.');
