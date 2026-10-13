@@ -1,4 +1,5 @@
 /* Before the game: boot sequence, title card, Select Promotion, the first-day screens, and the Help and Options windows. */
+import { saveFile, canSaveFile } from '../../shared/savefile';
 import { ComponentChildren } from 'preact';
 import { useEffect, useRef } from 'preact/hooks';
 import { E } from '../../engine';
@@ -296,10 +297,13 @@ function SaveText() {
   const open = (m: string) => view(() => { sv.mode = sv.mode === m ? '' : m; sv.msg = ''; sv.text = m === 'copy' && S ? JSON.stringify(S) : ''; });
   return <div class="mt2">
     <div class="row">{S ? <Btn kind="sm" t="save-copy" on={sv.mode === 'copy'} onClick={() => { open('copy'); copyText(JSON.stringify(S), 'save-text', () => view(() => { sv.msg = 'Copied. Paste it into the same window on your other device.'; })); }}>Copy my save</Btn> : null}
-      <Btn kind="sm" t="save-paste" on={sv.mode === 'paste'} onClick={() => open('paste')}>Paste a save</Btn></div>
+      <Btn kind="sm" t="save-paste" on={sv.mode === 'paste'} onClick={() => open('paste')}>Paste a save</Btn>
+      {S && canSaveFile() ? <Btn kind="sm" t="save-file" onClick={() => { const name = 'ewf-save-week-' + S.week + '.json'; saveFile(name, JSON.stringify(S)).then(r => view(() => { sv.msg = r === 'saved' ? 'Saved as ' + name + '. Keep it somewhere safe.' : (r === 'declined' ? 'Not saved.' : 'This device would not save a file. Copy the save instead.'); })); }}>Save to a file</Btn> : null}
+      <label class="btn sm" data-t="save-loadfile" tabIndex={0} role="button" onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); const i = (e.currentTarget as HTMLElement).querySelector('input'); if (i) (i as HTMLInputElement).click(); } }}>Load a save file<input type="file" accept=".json,application/json" style={{ display: 'none' }} onChange={e => { const f = (e.currentTarget as HTMLInputElement).files; if (!f || !f[0]) return; f[0].text().then(t => { const m = loadSaveText(t); view(() => { if (m) sv.msg = m; else { sv.mode = ''; ui.modal = null; } }); }); }} /></label></div>
     {sv.mode ? <><textarea id="save-text" class="savebox mt1" rows={4} readOnly={sv.mode === 'copy'} placeholder="Paste the text of a save here" value={sv.text} onInput={e => { sv.text = (e.currentTarget as HTMLTextAreaElement).value; }} />
       {sv.mode === 'paste' ? <div class="row mt1"><Btn kind="sm" t="save-load" onClick={() => { const m = loadSaveText(sv.text); view(() => { if (m) sv.msg = m; else { sv.mode = ''; ui.modal = null; } }); }}>Load this save</Btn><span class="muted">This replaces the game you are playing.</span></div> : null}
       {sv.msg ? <p class={sv.mode === 'paste' ? 'bad' : 'good'}>{sv.msg}</p> : null}</> : null}
+    {!sv.mode && sv.msg ? <p class="good mt1" data-t="save-msg">{sv.msg}</p> : null}
   </div>;
 }
 function Options() {
