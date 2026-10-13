@@ -134,7 +134,7 @@ export function MatterWindow(p: { m: Modal }) {
 /** The nearest countdown, so there is always something about to pay off. It goes to its page. */
 function ComingUp() {
   const U: any[] = E.comingUp(G.S); if (!U.length) return null; const u = U[0];
-  return <span class="coming" data-t="coming">Coming up: <button type="button" class="lnk" data-t="coming-go" data-v={u.k} onClick={() => go(u.to)}>{u.t}</button></span>;
+  return <span class="coming" data-t="coming">{u.when ? u.when + ': ' : 'Coming up: '}<button type="button" class="lnk" data-t="coming-go" data-v={u.k} onClick={() => go(u.to)}>{u.when ? u.what : u.t}</button></span>;
 }
 function NextShow() {
   const S = G.S, sh = S.queue[S.qi], left = S.queue.length - S.qi, gate = E.taskGate(S, 'book'), B = E.backstage(S), N = E.people(S), done = weekDone();

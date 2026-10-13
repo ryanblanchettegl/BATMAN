@@ -272,7 +272,7 @@ html:not(.rm) .wn .tasks.hit .task.must{animation:taskhit .7s ease-in-out 3}
 .nextwin .nx>div{min-width:0}
 .nextwin .bsl{margin-top:.2em;border-top:1px solid var(--dgrey);padding-top:.25em}
 .nextwin .bsl .btn{margin-right:1.4ch}
-.nextwin .cu{white-space:nowrap;overflow:hidden}
+.nextwin .cu{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .nextwin .nbtn{display:flex;flex-wrap:wrap}
 .wn .coming{display:inline;margin:0}
 .wn .coming .lnk{color:var(--blue);border-bottom:1px dotted var(--blue)}

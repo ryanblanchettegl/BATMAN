@@ -64,7 +64,7 @@ async function run(mode) {
     ok(mode, 'there is no strip of things to do at the bottom: only the one line', !(await has(page, '[data-t="dock"]')) && !(await has(page, '[data-t="adv-chip"]')) && await page.evaluate(() => document.querySelector('.ffoot').children.length === 1));
     const must = await page.$$eval('.tasks .task.must', L => L.map(e => e.getAttribute('data-task')));
     ok(mode, 'on the desk, the tasks that cannot be skipped are marked', must.length === 3 && await page.$$eval('.tasks .task.must', L => L.every(e => /MUST DO/i.test(e.innerText) && !!e.querySelector('.mark') && getComputedStyle(e).borderLeftWidth === '4px')) && (await page.$$('.tasks .task.optional.must')).length === 0, must.join(', '));
-    ok(mode, 'what is coming up is on the desk too', /All Hallows.? Eve in 3 weeks/.test(await txt(page, '[data-t="coming"]')), await txt(page, '[data-t="coming"]'));
+    ok(mode, 'what is coming up is on the desk too', /In 3 weeks: All Hallows.? Eve/.test(await txt(page, '[data-t="coming"]')), await txt(page, '[data-t="coming"]'));
     await over('the desk');
     await shot(page, 'advance-' + mode);
     /* it guides: pressing it goes to the place */
