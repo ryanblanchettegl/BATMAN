@@ -107,6 +107,7 @@ async function run(mode) {
       ok(mode, 'Make a copy adds a wrestler and opens the copy', /\(copy\)/.test(await page.$eval('[data-t="ed-wrname"]', e => e.value).catch(() => '')), await page.$eval('[data-t="ed-wrname"]', e => e.value).catch(() => 'no form'));
       { const before = await page.$eval('[data-t="ed-wrname"]', e => e.value); await page.click('[data-t="ed-randname"]'); await page.waitForTimeout(120);
         const after = await page.$eval('[data-t="ed-wrname"]', e => e.value); ok(mode, 'Random name gives the wrestler a new name', after && after !== before, before + ' -> ' + after); }
+      ok(mode, 'a wrestler has a Managed by choice', !!(await page.$('[data-t="ed-manager"]')));
       await page.click('[data-t="ed-tier"][data-v="jobber"]'); await page.waitForTimeout(80);
       ok(mode, 'Set ratings for an opener says what it did', /Ratings set for an opener/.test(await txt(page, '.edpage')));
       await page.keyboard.press('Escape'); }

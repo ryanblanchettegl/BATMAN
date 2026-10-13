@@ -7125,6 +7125,20 @@ E.edSetTier=function(pkg,wid,push,seed){
 };
 /** Unsigned unknowns for the free-agent pool: names from the world's lists, ratings for the lower half of a card in
     a middling company. Men and women both. Returns the new wrestlers. */
+/** Who can manage a wrestler: anyone with the Manager job other than themselves, the ones in the same company first. */
+E.edManagers=function(pkg,wid){
+  edShape(pkg);var home=E.edHome(pkg,wid);
+  return pkg.workers.filter(function(m){return m.id!==wid&&m.roles&&m.roles.indexOf('manager')>=0;})
+    .sort(function(a,b){return ((E.edHome(pkg,b.id)===home)-(E.edHome(pkg,a.id)===home))||String(a.ring_name).localeCompare(String(b.ring_name));})
+    .map(function(m){return {id:m.id,name:m.ring_name,same:E.edHome(pkg,m.id)===home};});
+};
+/** Tie a wrestler to a manager, or untie them with null. */
+E.edSetManager=function(pkg,wid,mid){
+  edShape(pkg);var w=edFind(pkg,'workers',wid);if(!w)return null;
+  if(mid==null||mid===''){delete w.manager_id;return w;}
+  var m=edFind(pkg,'workers',mid);if(!m||m.id===wid||!m.roles||m.roles.indexOf('manager')<0)return null;
+  w.manager_id=m.id;return w;
+};
 E.edFillFree=function(pkg,n,seed){
   edShape(pkg);var st={s:(seed>>>0)||1},N=edNames(pkg),used={},made=[],styles=Object.keys(STYLE_KEY),low=['midcarder','lower_midcarder','jobber'];
   pkg.workers.forEach(function(w){used[w.ring_name]=1;});n=clamp(Math.round(n)||6,1,40);

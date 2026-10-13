@@ -34,7 +34,7 @@ Code: `src/86-editor.js`, `app/src/screens/editor/`. Tests: `test-editor.js`, `a
 - [ ] **1.3 Move several at once.** A "Pick several" switch on the Wrestlers list turns rows into toggles. Then: sign all picked to a company, release all picked, delete all picked (two presses).
 - [x] **1.4 Random helpers.** "Random name" beside the ring name (uses the world's name lists, falls back to the built-in ones). "Set ratings for" a main eventer, a mid-carder or an opener: fills the ratings to suit the company's popularity, the same maths as `E.edFill`.
 - [x] **1.5 Unknown free agents.** On the Wrestlers tab with "Free agents" chosen, a "Make unknowns" button adds unsigned wrestlers.
-- [ ] **1.6 Managers.** A wrestler with the Manager job can be tied to clients: a "Managed by" select on the wrestler form writes `manager_id`. The checker already validates it.
+- [x] **1.6 Managers.** A wrestler with the Manager job can be tied to clients: a "Managed by" select on the wrestler form writes `manager_id`. The checker already validates it.
 - [ ] **1.7 Announcers and staff.** On a company: play-by-play and colour names (`announcers`), road agent and head writer (`staff`).
 - [ ] **1.8 Brands.** On a company: add, rename and remove brands (`brands`, with the developmental switch). Shows, belts and contracts get a Brand select when the company has brands. Removing a brand clears it from them.
 - [ ] **1.9 Sponsors and columnists.** A world-level list for each on the World tab, if the package format has them (`sponsors`, `columnists` in `buildDB`). Document the fields in `docs/universe-format.md` as you go.

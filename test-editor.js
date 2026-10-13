@@ -108,6 +108,13 @@ E.useUniverse(builtIn);
 { const pkg = JSON.parse(JSON.stringify(builtIn)), n0 = pkg.workers.length, m = E.edFillFree(pkg, 6, 7);
   ok('Make unknowns adds six unsigned wrestlers with names nobody has', m.length === 6 && pkg.workers.length === n0 + 6 && m.every(w => !E.edHome(pkg, w.id)) && new Set(pkg.workers.map(x => x.ring_name)).size === pkg.workers.length);
   ok('the world still passes its check', E.edCheck(pkg).errors === 0); }
+/* ---- managers ---- */
+{ const pkg = JSON.parse(JSON.stringify(builtIn)), w = pkg.workers.find(x => E.edHome(pkg, x.id) && !(x.roles || []).includes('manager'));
+  const m = E.edAddWorker(pkg, { ring_name: 'Test Manager', promotion_id: E.edHome(pkg, w.id) }); m.roles = ['manager'];
+  ok('a manager is offered, the same company first', E.edManagers(pkg, w.id).some(x => x.id === m.id && x.same) && E.edManagers(pkg, w.id).findIndex(x => !x.same) !== 0);
+  E.edSetManager(pkg, w.id, m.id); ok('picking one writes manager_id and the check accepts it', w.manager_id === m.id && E.edCheck(pkg).errors === 0);
+  ok('somebody without the Manager job cannot manage', E.edSetManager(pkg, w.id, pkg.workers.find(x => !(x.roles || []).includes('manager') && x.id !== w.id).id) === null && w.manager_id === m.id);
+  E.edSetManager(pkg, w.id, null); ok('Nobody unties them', !w.manager_id); }
 /* ---- make a copy: a wrestler keeps their company, a belt starts vacant, a team empty, a company brings shows and belts, not people ---- */
 { const pkg = JSON.parse(JSON.stringify(builtIn)), w = pkg.workers.find(x => E.edHome(pkg, x.id)), cw = E.edDup(pkg, 'workers', w.id);
   ok('a copied wrestler has a new id and name and the same company', cw && cw.id !== w.id && /\(copy\)$/.test(cw.ring_name) && E.edHome(pkg, cw.id) === E.edHome(pkg, w.id) && !!E.edHome(pkg, cw.id));
