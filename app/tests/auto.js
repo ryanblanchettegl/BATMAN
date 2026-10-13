@@ -54,4 +54,16 @@ async function run(mode) {
     ok(mode, 'no errors', !errs.length, errs.slice(0, 3).join(' | '));
   } finally { await browser.close(); }
 }
-(async () => { for (const m of MODES) await run(m); console.log(fails.length ? 'FAILED: ' + fails.join('; ') : 'auto: all passed'); process.exit(fails.length ? 1 : 0); })().catch(e => { console.error(e); process.exit(1); });
+/** On a fresh show, SPACE while the welcome is still typing rings the bell: one press, not two. */
+async function onePress(mode) {
+  const { browser, page, errs } = await open({ mode, promo: 'pdw', prefs: { speed: 0.5 } });
+  try {
+    await go(page, 'booking'); await page.click('[data-t="suggest"]');
+    for (let k = 0; k < 6 && !(await has(page, '#live')); k++) { if (await has(page, '[data-t="pre"]')) await page.click('[data-t="pre"][data-c="0"]'); else await page.click('[data-t="advance"]'); await page.waitForTimeout(50); }
+    const typing = await has(page, '#live .untyped');
+    await page.click('[data-t="advance"]'); await page.waitForTimeout(300);
+    ok(mode, 'one press rings the bell while the welcome is still typing', typing && !(await has(page, '#live[data-v="title"]')), 'typing: ' + typing);
+    ok(mode, 'no errors (one press)', !errs.length, errs.slice(0, 3).join(' | '));
+  } finally { await browser.close(); }
+}
+(async () => { for (const m of MODES) { await onePress(m); await run(m); } console.log(fails.length ? 'FAILED: ' + fails.join('; ') : 'auto: all passed'); process.exit(fails.length ? 1 : 0); })().catch(e => { console.error(e); process.exit(1); });

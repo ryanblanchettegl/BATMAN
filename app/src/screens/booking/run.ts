@@ -196,6 +196,7 @@ export function liveStep(): { short: string; label: string; k: 'call' | 'title' 
 export function liveGo() {
   const st = liveStep(); if (!st) return;
   if (st.k === 'signoff') { typer.finish(); liveDone(); return; }   // the good-night line does not hold up the report
+  if (st.k === 'title') typer.finish();   // nor does the welcome hold up the bell: one press rings it
   if (typer.active()) { typer.finish(); return; }
   if (st.k === 'call') { act(() => say('The gorilla position is waiting for your call.')); return; }
   liveNext();
