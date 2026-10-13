@@ -133,7 +133,8 @@ export function MatterWindow(p: { m: Modal }) {
 /* ---------- the next show ---------- */
 /** The nearest countdown, so there is always something about to pay off. It goes to its page. */
 function ComingUp() {
-  const U: any[] = E.comingUp(G.S); if (!U.length) return null; const u = U[0];
+  // a big event this week is already on the banner above: the countdown says the next thing instead
+  const U: any[] = E.comingUp(G.S).filter((x: any) => !(x.k === 'big' && x.n <= 0)); if (!U.length) return null; const u = U[0];
   return <span class="coming" data-t="coming">{u.when ? u.when + ': ' : 'Coming up: '}<button type="button" class="lnk" data-t="coming-go" data-v={u.k} onClick={() => go(u.to)}>{u.when ? u.what : u.t}</button></span>;
 }
 function NextShow() {
@@ -145,7 +146,7 @@ function NextShow() {
     <div class="nx">
       <div>
         {done ? <p>Every show this week has run.</p> : <>
-          <p data-t="next-expect">{sh.big ? <Tag kind="gold">Big event</Tag> : null}{sh.brand ? <Tag>{brandName(me(), sh.brand)}</Tag> : null}The crowd expects <b>{x ? x.a : 'a show'}</b>{x ? <>: matches of <b>{x.bar}</b> or better.</> : '.'}</p></>}
+          <p data-t="next-expect">{sh.brand ? <Tag>{brandName(me(), sh.brand)}</Tag> : null}The crowd expects <b>{x ? x.a : 'a show'}</b>{x ? <>: matches of <b>{x.bar}</b> or better.</> : '.'}</p></>}
         {done && (n || !wk.ok) ? <p class="bad one">{n ? 'Answer what is on your desk first.' : 'Finish this week’s tasks first.'}</p> : <p class="muted cu"><ComingUp /></p>}
       </div>
       <LightPic name={done ? 'bell' : 'ring'} dot={1} t="next-pic" />
