@@ -5,7 +5,7 @@ import { UNIS, ui, redraw, builtInUniverse, plural } from '../../store';
 import { onBack } from '../../input';
 import { Btn, Panel, Head, Tabs, Field } from '../../kit';
 import { StartMenu } from '../start';
-import { es, world, keep, look, note, report, freeId, openWorld, EdTab } from './state';
+import { es, world, keep, look, note, report, freeId, openWorld, EdTab, canUndo, undoDel } from './state';
 import { DelBtn } from './parts';
 import { WorldTab, ShareTab } from './World';
 import { CompaniesTab, ShowsTab } from './Companies';
@@ -39,7 +39,7 @@ function Home() {
   return <>
     <Head eyebrow="World Editor" title="Build your own world" />
     <p class="lede c mb3">Companies, shows, belts and wrestlers. Make them all, then play it or share it.</p>
-    {st.msg ? <p class={'ednote ' + (st.err ? 'bad' : 'good') + ' mb2'} role="status">{st.msg}</p> : null}
+    {st.msg ? <p class={'ednote ' + (st.err ? 'bad' : 'good') + ' mb2'} role="status">{st.msg}{canUndo() ? <> <Btn kind="sm" t="ed-undo" onClick={undoDel}>Undo</Btn></> : null}</p> : (canUndo() ? <p class="ednote mb2"><Btn kind="sm" t="ed-undo" onClick={undoDel}>Undo the delete</Btn></p> : null)}
     <Panel cls="mb4" title="Your worlds">
       {ids.length ? <ul class="list">{ids.map(id => { const pkg = UNIS[id], v = E.edCheck(pkg); return <li class="col" key={id}>
         <span><b>{pkg.manifest.name || id}</b> <span class="muted">{'·'} {summary(pkg)}</span><br />
@@ -83,7 +83,7 @@ function Open() {
         : <Btn kind="sm" t="ed-problems" onClick={() => look(() => { st.tab = 'share'; })}>{v.errors} {plural(v.errors, 'problem')} to fix</Btn>}
     </div>
     <Tabs label="Parts of the world" items={TABS.map(x => ({ id: x[0], label: x[1], t: 'ed-tab' }))} value={st.tab} onPick={id => look(() => { st.tab = id as EdTab; window.scrollTo(0, 0); })} />
-    {st.msg ? <p class={'ednote ' + (st.err ? 'bad' : 'good') + ' mt2'} role="status">{st.msg}</p> : null}
+    {st.msg ? <p class={'ednote ' + (st.err ? 'bad' : 'good') + ' mt2'} role="status">{st.msg}{canUndo() ? <> <Btn kind="sm" t="ed-undo" onClick={undoDel}>Undo</Btn></> : null}</p> : (canUndo() ? <p class="ednote mt2"><Btn kind="sm" t="ed-undo" onClick={undoDel}>Undo the delete</Btn></p> : null)}
     <div class="mt2">{body}</div>
   </>;
 }

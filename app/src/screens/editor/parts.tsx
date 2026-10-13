@@ -2,7 +2,7 @@
 import { ComponentChildren } from 'preact';
 import { Btn, Field, Sel, Opt, dataAttrs } from '../../kit';
 import { E } from '../../engine';
-import { es, edit, look, world, reId } from './state';
+import { es, edit, editDel, look, world, reId } from './state';
 
 type Rec = Record<string, any>;
 /** A text box that writes straight into a record. An empty optional field is removed, not stored as ''. */
@@ -46,7 +46,7 @@ export function PickList(p: { items: Pick[]; sel: string | null | undefined; onP
 export function DelBtn(p: { id: string; what: string; onDelete: () => void }) {
   const st = es(), armed = st.del === p.id;
   return armed
-    ? <span class="row"><Btn kind="danger" t="ed-del-yes" onClick={() => edit(p.onDelete)}>Yes, delete {p.what}</Btn><Btn kind="sm" t="ed-del-no" onClick={() => look(() => { /* look() disarms it */ })}>Keep it</Btn></span>
+    ? <span class="row"><Btn kind="danger" t="ed-del-yes" onClick={() => editDel(p.onDelete, p.what.charAt(0).toUpperCase() + p.what.slice(1))}>Yes, delete {p.what}</Btn><Btn kind="sm" t="ed-del-no" onClick={() => look(() => { /* look() disarms it */ })}>Keep it</Btn></span>
     : <Btn kind="sm" t="ed-del" onClick={() => look(() => { es().del = p.id; })}>Delete {p.what}</Btn>;
 }
 /** List on the left, the open record on the right. On a narrow screen the open record replaces the list. */

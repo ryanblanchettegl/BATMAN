@@ -2,7 +2,7 @@
 import { E } from '../../engine';
 import { Btn, Panel, Sel, Field, Opt, FaceCanvas, dataAttrs } from '../../kit';
 import { derive, NAMES, Face, FaceKey } from '../../lib/portrait';
-import { es, world, edit, look, note, reId } from './state';
+import { es, world, edit, editDel, look, note, reId } from './state';
 import { TextF, NameF, NumF, SelF, Rating, PickList, DelBtn, TwoPane, opts, BrandSel } from './parts';
 
 const PARTS: [FaceKey, string][] = [['h', 'Head'], ['hr', 'Hair'], ['fh', 'Facial hair'], ['ms', 'Mustache'], ['ey', 'Eyes'], ['ns', 'Nose']];
@@ -78,7 +78,7 @@ function Many() {
     <Sel t="ed-many-to" label="Company" value={to} options={pkg.promotions.map((x: any) => [x.id, x.name]) as Opt[]} onChange={v => look(() => { st.manyTo = v; })} />
     <Btn kind="sm" t="ed-many-sign" onClick={() => edit(() => { const k = E.edMany(pkg, ids, 'sign', to); done(k + ' signed to ' + ((pkg.promotions.find((x: any) => x.id === to) || {}).name || 'the company') + '.'); })}>Sign all {n}</Btn>
     <Btn kind="sm" t="ed-many-release" onClick={() => edit(() => { const k = E.edMany(pkg, ids, 'release'); done(k + ' released. They are free agents now.'); })}>Release all {n}</Btn>
-    {st.del === 'many' ? <Btn kind="danger" t="ed-many-del-yes" onClick={() => edit(() => { const k = E.edMany(pkg, ids, 'delete'); st.del = null; st.sel.wrestlers = null; done(k + ' deleted.'); })}>Yes, delete all {n}</Btn>
+    {st.del === 'many' ? <Btn kind="danger" t="ed-many-del-yes" onClick={() => editDel(() => { const k = E.edMany(pkg, ids, 'delete'); st.del = null; st.sel.wrestlers = null; done(k + ' deleted.'); }, 'The ' + n + ' you deleted')}>Yes, delete all {n}</Btn>
       : <Btn kind="sm" t="ed-many-del" onClick={() => look(() => { st.del = 'many'; })}>Delete all {n}</Btn>}
   </div>;
 }

@@ -122,6 +122,9 @@ async function run(mode) {
       ok(mode, 'Delete all asks first', (await rowsNow()).length === n1 && !!(await page.$('[data-t="ed-many-del-yes"]')));
       await page.click('[data-t="ed-many-del-yes"]'); await page.waitForTimeout(80);
       ok(mode, 'then deletes both', (await rowsNow()).length === n1 - 2 && /2 deleted/.test(await txt(page, '.edpage')));
+      ok(mode, 'a delete offers Undo', !!(await page.$('[data-t="ed-undo"]')));
+      await page.click('[data-t="ed-undo"]'); await page.waitForTimeout(100);
+      ok(mode, 'Undo puts both back', (await rowsNow()).length === n1 && /is back/.test(await txt(page, '.edpage')) && !(await page.$('[data-t="ed-undo"]')));
       await page.click('[data-t="ed-many"]');
       await page.click('.edlist .edrow'); await page.waitForSelector('[data-t="ed-dup"]');
       const n0 = (await rowsNow()).length; await page.click('[data-t="ed-dup"]'); await page.waitForTimeout(150);

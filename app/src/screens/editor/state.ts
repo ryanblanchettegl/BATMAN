@@ -23,7 +23,22 @@ export function keep(now?: boolean) {
   if (now) write(); else timer = setTimeout(write, 400);
 }
 /** Change the world, keep it and redraw. */
-export function edit(fn: () => void) { const st = es(); st.msg = ''; st.err = false; st.del = null; st.copied = false; fn(); keep(); redraw(); }
+export function edit(fn: () => void) { const st = es(); st.msg = ''; st.err = false; st.del = null; st.copied = false; undo = null; fn(); keep(); redraw(); }
+/* Undo a delete: the world as it stood just before, kept in memory until the next change. Putting it back restores the
+   record with everything tied to it (contracts, title holds, team places). */
+let undo: { id: string; snap: any; what: string } | null = null;
+/** Delete something, and offer to put it back until the next change. */
+export function editDel(fn: () => void, what: string) {
+  const st = es(), id = st.id as string, snap = JSON.parse(JSON.stringify(world()));
+  edit(fn); undo = { id, snap, what };
+}
+/** What the Undo button would put back, or null. */
+export function canUndo(): string | null { return undo && undo.id === es().id ? undo.what : null; }
+export function undoDel() {
+  const st = es(); if (!undo || undo.id !== st.id) return;
+  UNIS[undo.id] = undo.snap; const what = undo.what; undo = null; st.sel = {}; st.del = null; stale = true; keep(true);
+  st.msg = what + ' is back.'; st.err = false; redraw();
+}
 /** Change only the view. */
 export function look(fn: () => void) { const st = es(); st.del = null; fn(); redraw(); }
 export function note(msg: string, err?: boolean) { const st = es(); st.msg = msg; st.err = !!err; }
