@@ -2848,11 +2848,11 @@ function showStep(S,P,show,card,st){
   var ctx={pool:pool,inP:inP,angled:st.angled,left:{},extra:[]};
   if(step.t==='plan'){var pp=planPromo(S,P,show,ctx);if(pp){pp.mins=PLAN_MINS;rep.open={k:'promo',ids:Object.keys(ctx.angled).map(Number),ov:pp.ov,feud:pp.feud};rep.segs.push(pp);}return pp;}
   for(var q=step.i;q<n;q++)flat(card[q].sides).forEach(function(id){ctx.left[id]=1;});
-  var ng=Object.keys(ctx.angled).length,first=!rep.segs.length,wr=step.sg.k==='writers',ba=wr?genAngle(S,P,show,ctx):runSeg(S,P,show,ctx,step.sg,step.slot,first);
+  var had=Object.assign({},ctx.angled),fresh=function(){return Object.keys(ctx.angled).filter(function(k){return !had[k];});},first=!rep.segs.length,wr=step.sg.k==='writers',ba=wr?genAngle(S,P,show,ctx):runSeg(S,P,show,ctx,step.sg,step.slot,first);
   if(!ba)return null;
   ba.mins=segMins(step.sg);if(wr)ba.wr=1;
-  if(first)rep.open={k:wr?'angle':(step.sg.k==='recap'?'recap':SEGK[step.sg.k].t),ids:Object.keys(ctx.angled).slice(ng).map(Number),ov:ba.ov,feud:ba.feud};
-  rep.en=Math.min(100,(rep.en==null?100:rep.en)+14);ANGDONE.forEach(function(fn){fn(S,P,ba,Object.keys(ctx.angled).slice(ng));});
+  if(first)rep.open={k:wr?'angle':(step.sg.k==='recap'?'recap':SEGK[step.sg.k].t),ids:fresh().map(Number),ov:ba.ov,feud:ba.feud};
+  rep.en=Math.min(100,(rep.en==null?100:rep.en)+14);ANGDONE.forEach(function(fn){fn(S,P,ba,fresh());});   // the people this segment brought in (keys come back in number order, so not by position)
   var o={p:P.ann[0].split(' ')[0],c:P.ann[1].split(' ')[0]},react=fill(sayPick(S,REACT[ba.head]||['Well, how about that.']),o);
   ba.bc=stageSeg(S,ba,segPeople(S,P,ba.text),react);rep.segs.push(ba);
   return ba;
