@@ -84,6 +84,7 @@ function relBump(S,a,b,d,mem){
   e.last=S.week;
   if(mem&&mem.t){e.mem.unshift({w:S.week,k:mem.k||'',t:mem.t,by:mem.by==null?null:mem.by});if(e.mem.length>REL_MEM)e.mem.length=REL_MEM;}
   var now=relState(e);e.st=now;
+  if(now!==was&&now!==0)netTurn(S,a,b,now);
   if(now!==was&&relMine(S,a,b)){
     var A=S.w[a].name,B=S.w[b].name;
     if(now<0)note(S,A+' and '+B+' have real heat now',mem&&mem.t?mem.t:'It will show when they share a ring or a locker room.','bad');

@@ -16,6 +16,17 @@ var NET_LOSE=['Not my night. It will not happen twice.','I heard the count. I wi
 var NET_FAN=['Still thinking about {best}.','{win} over {lose} and I am fine with it.','{show} was a {word} show. Fight me.','I was there for {best}. My voice is gone.'];
 var NET_RIVAL=['{show} is in the books. Ask anybody who was there.','Another night, another building on its feet.','They say the competition is catching up. I have not noticed.'];
 
+/* two people turn into friends or enemies: the fans have a view, each in their own voice (called from relBump, never uses rnd) */
+var NET_TURN={
+  heat:{smark:['{a} and {b} have real heat now. This is the story I wanted.','{a} versus {b} for real? Book it.'],casual:['wait, did {a} and {b} fall out?','{a} and {b} not getting on. That will be good TV.'],old:['{a} and {b} at odds backstage. It used to get settled in the ring.'],heel:['{a} and {b} fighting. Good. Let them.'],stats:['{a} and {b} have clashed. Watch their next match.'],under:['{a} and {b} at war and nobody asks us.']},
+  friends:{smark:['{a} and {b} are tight now. Tag team when?','Anyone else see {a} and {b} getting along?'],casual:['{a} and {b} are friends? That is nice.'],old:['Good to see {a} and {b} looking out for each other.'],heel:['{a} and {b} are a team now. Fine. They still lose.'],stats:['{a} and {b} have become friends. Their matches together will be better.'],under:['{a} and {b} share a locker room and a laugh. Good for them.']}
+};
+function netTurn(S,a,b,now){
+  if(S.cal||!now)return;var x=S.w[a],y=S.w[b];if(!x||!y)return;
+  if(!(relMine(S,a,b)||x.ovr+y.ovr>=130))return;
+  var key=S.week+':t:'+a+'-'+b,f=FANS[Math.floor(h01(key)*FANS.length)%FANS.length],L=NET_TURN[now<0?'heat':'friends'][f[1]]||NET_TURN[now<0?'heat':'friends'].casual;
+  netPost(S,'f','@'+f[0],f[0],fill(netPickH(L,key+'t'),{a:x.name,b:y.name}),netLikes(150,key));
+}
 /* after every show: the people in it and the people who watched it have something to say */
 SHOWX.push(function(S,P,show,rep){
   if(S.cal)return;

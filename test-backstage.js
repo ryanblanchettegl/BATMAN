@@ -20,6 +20,12 @@ ok('at most three reports', s1.backstage.length <= 3);
 const before = JSON.stringify(S.rng !== undefined ? S.rng : S.seed); E.sheetInfo(S);
 ok('reading it does not touch the random stream', JSON.stringify(S.rng !== undefined ? S.rng : S.seed) === before);
 ok('an old week with no changes is empty', E.sheetInfo(S).now.week === wk && (() => { S.week += 1; const n = E.sheetInfo(S).now.backstage.length; S.week -= 1; return n === 0; })());
+/* two people turning on each other gets a post from a fan */
+{ const n0 = (S.feed || []).length, [p, q] = fresh(mine.slice(5));
+  E.relBump(S, p.id, q.id, { bond: -50 }, { k: 't', t: 'x' });
+  ok('a new enemy pair gets a feed post', S.feed.length === n0 + 1 && S.feed[0].k === 'f' && S.feed[0].t.includes(p.name), S.feed[0] && S.feed[0].t);
+  const n1 = S.feed.length; E.relBump(S, p.id, q.id, { bond: -5 }, { k: 't', t: 'y' });
+  ok('no second post while nothing turns', S.feed.length === n1); }
 /* rumours that come due are settled */
 S.rumF = [{ w: x.id, k: 'exp', pid: x.promo, due: S.week, lvl: 'sure' }, { w: y.id, k: 'fa', pid: S.order.find(p => p !== y.promo && p !== S.player), due: S.week, lvl: 'thin' }];
 S.rumR = [];
