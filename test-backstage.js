@@ -41,5 +41,9 @@ try { E.endWeek(S); } catch (e) { console.log('endWeek threw', e.message); }
 const R = (S.rumR || []).filter(r => r.w === WK);
 ok('a rumour that came due is settled', R.length === 2 && !S.rumF.some(r => r.due <= WK), JSON.stringify(R));
 ok('a deal that did run out is confirmed', R.some(r => r.ok && /CONFIRMED/.test(r.t) && r.t.includes(x.name)));
+x.promo = keep;
+S.rumF = [{ w: x.id, k: 'exp', pid: keep, due: S.week, lvl: 'sure' }]; S.rumR = [];
+try { E.endWeek(S); } catch (e) {}
+ok('a deal that was renewed is an update, not a correction', S.rumR.some(r => !r.ok && /^UPDATE/.test(r.t) && /re-signed/.test(r.t)), JSON.stringify(S.rumR));
 ok('a free agent never signed is corrected', R.some(r => !r.ok && /CORRECTION/.test(r.t)));
 console.log(fails.length ? 'FAILED: ' + fails.join('; ') : 'test-backstage: all passed'); process.exit(fails.length ? 1 : 0);

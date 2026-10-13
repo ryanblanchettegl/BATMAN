@@ -9841,9 +9841,9 @@ WEEKX.push(function(S){
     if(r.due>S.week)return true;
     var w=S.w[r.w],P=S.promos[r.pid];if(!w||!P)return false;
     var yes=r.k==='exp'?w.promo!==r.pid:w.promo===r.pid,txt;
-    if(r.k==='exp')txt=yes?w.name+' has left '+P.name+', as the paper said.':w.name+' is still with '+P.name+'. The report that the deal would run out unsigned was wrong.';
+    if(r.k==='exp')txt=yes?w.name+' has left '+P.name+', as the paper said.':w.name+' has re-signed with '+P.name+'. The deal did run out, and talks ended well.';
     else txt=yes?w.name+' has signed with '+P.name+'. The earlier report was right.':'Nothing came of '+w.name+' at '+P.name+'. We got that one wrong.';
-    RR.unshift({w:S.week,ok:yes,lvl:r.lvl,t:(yes?'CONFIRMED: ':'CORRECTION: ')+txt});
+    RR.unshift({w:S.week,ok:yes,lvl:r.lvl,t:(yes?'CONFIRMED: ':(r.k==='exp'?'UPDATE: ':'CORRECTION: '))+txt});
     if(yes)netPost(S,'p',netHandle(by),by,txt,netLikes(1500,S.week+'rr'+r.w));
     return false;
   });
@@ -9894,11 +9894,11 @@ function netBackstage(S,wk){
 function netThrowback(S,wk){
   var out=[];
   S.order.forEach(function(pid){S.promos[pid].titles.forEach(function(t){(t.hist||[]).forEach(function(h){
-    var d=wk-h.from;if(d<=0||d%48||h.show==='Before your time'||!h.h||!h.h.length)return;
+    var d=wk-h.from;if(d<=0||d%48||h.show==='Before your time'||!h.h||!h.h.length||(h.to!=null&&h.to-h.from<4))return;
     var y=d/48,span=h.to!=null?(h.to-h.from):null;
     out.push({t:y+' '+(y===1?'year':'years')+' ago this week, '+h.h.join(' and ')+' won the '+S.promos[pid].name+' '+t.name+(h.show?' at '+h.show:'')+'.'+(span!=null&&span>=24?' The reign lasted '+span+' weeks.':'')});
   });});});
-  return out.sort(function(a,b){return h01(wk+a.t)-h01(wk+b.t);}).slice(0,2);
+  return out.sort(function(a,b){return h01(wk+a.t)-h01(wk+b.t);}).slice(0,1);
 }
 /** One issue of the dirt sheet: what happened in week `wk`, as far as the game still remembers it. */
 function netSheet(S,wk){
