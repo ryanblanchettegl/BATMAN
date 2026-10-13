@@ -1462,8 +1462,45 @@ function showStep(S,P,show,card,st){
   ba.mins=segMins(step.sg);if(wr)ba.wr=1;
   if(first)rep.open={k:wr?'angle':(step.sg.k==='recap'?'recap':SEGK[step.sg.k].t),ids:Object.keys(ctx.angled).slice(ng).map(Number),ov:ba.ov,feud:ba.feud};
   rep.en=Math.min(100,(rep.en==null?100:rep.en)+14);ANGDONE.forEach(function(fn){fn(S,P,ba,Object.keys(ctx.angled).slice(ng));});
-  var o={p:P.ann[0].split(' ')[0],c:P.ann[1].split(' ')[0]};ba.bc=[{t:'note',x:ba.text},{t:'col',x:fill(sayPick(S,REACT[ba.head]||['Well, how about that.']),o)}];rep.segs.push(ba);
+  var o={p:P.ann[0].split(' ')[0],c:P.ann[1].split(' ')[0]},react=fill(sayPick(S,REACT[ba.head]||['Well, how about that.']),o);
+  ba.bc=stageSeg(S,ba,segPeople(S,P,ba.text),react);rep.segs.push(ba);
   return ba;
+}
+/* ---------- a promo or an angle on the air, as a scene ----------
+   The segment's text is the record of what happened. On the air it is told in pieces: who comes out, what happens a
+   sentence at a time, a quoted line said by the person who says it, how the building takes it, and the desk's word.
+   Lines here are picked by a hash of the segment, never the game's random stream. */
+var SEG_OUT=['The music hits, and out comes {n}.','Here comes {n}, and {n} has a microphone.','{n} is on the way to the ring, and {n} does not look happy.','The lights go down. When they come back up, {n} is standing at the top of the ramp.'];
+var SEG_CROWD=[[80,['The place is on its feet.','You can hear every word, because nobody is making a sound. Then the roof comes off.','They will be talking about that on the way home.']],[60,['A big reaction for that.','The crowd is right there with it.','They are buzzing in the stands.']],[40,['A mixed reaction from the crowd.','Some cheers, some boos, plenty of people checking their phones.','The crowd takes a while to warm to it.']],[0,['Crickets.','Not much of a reaction for that.','The crowd sat on their hands for that one.']]];
+function segSentences(t){
+  var out=[],cur='',i,ch,quote=0;t=String(t||'');
+  for(i=0;i<t.length;i++){ch=t.charAt(i);cur+=ch;if(ch==='“')quote++;if(ch==='”')quote=Math.max(0,quote-1);
+    if(!quote&&(ch==='.'||ch==='!'||ch==='?'||ch==='”')&&t.charAt(i+1)===' '&&/[A-Z“]/.test(t.charAt(i+2))&&!/(^|\s)(Dr|Mr|Mrs|Ms|St|Sr|Jr)\.$/.test(cur)){out.push(cur.trim());cur='';}}
+  if(cur.trim())out.push(cur.trim());return out;
+}
+/** The people a segment's text names, in the order it first names them. */
+function segPeople(S,P,text){
+  text=String(text||'');
+  return rosterOf(S,P.id).filter(function(w){return text.indexOf(w.name)>=0;}).sort(function(a,b){return text.indexOf(a.name)-text.indexOf(b.name);});
+}
+function stageSeg(S,ba,ppl,react){
+  var key=S.week+':'+ba.head+':'+String(ba.text||'').length,bc=[],pk=function(L,k){return L[Math.floor(h01(key+k)*L.length)%L.length];};
+  // who walks out first: the one being interrupted, else the first one named. An attack has no walk to the ring.
+  var t0=String(ba.text||''),iv=t0.indexOf('interrupts '),out=null;
+  if(iv>=0)ppl.forEach(function(w){if(!out&&t0.indexOf(w.name,iv)===iv+11)out=w;});
+  else if(!/Ambush|Attack|Brawl|Video|Backstage/i.test(ba.head)&&!/attacks|from behind|jumps/.test(t0))out=ppl[0];
+  if(out)bc.push({t:'pbp',x:fill(pk(SEG_OUT,'o'),{n:out.name})});
+  segSentences(ba.text).forEach(function(x,k){
+    var m=/^(.*?)[:,]?\s*“([^”]+)”[.!]?$/.exec(x),who=null;
+    if(m){ppl.forEach(function(w){if(!who&&m[1].indexOf(w.name)>=0)who=w.name;});if(!who&&ppl.length===1)who=ppl[0].name;}
+    if(m&&who){if(m[1].trim())bc.push({t:'note',x:m[1].trim().replace(/[:,]$/,'')+'.'});bc.push({t:'mic',w:who,x:'“'+m[2]+'”'});}
+    else bc.push({t:'note',x:x});
+  });
+  if(!bc.length)bc.push({t:'note',x:ba.text});
+  var band=SEG_CROWD.filter(function(b){return ba.ov>=b[0];})[0]||SEG_CROWD[3];
+  bc.push({t:'col',x:pk(band[1],'c')});
+  bc.push({t:'col',x:react});
+  return bc;
 }
 function runShow(S,P,show,card){var st=showStart(S,P,show,card);while(st.k<st.steps.length)showStep(S,P,show,card,st);return showEnd(S,P,show,card,st);}
 /** Score the night, sell it, and file the report. */
@@ -1801,7 +1838,7 @@ E.liveNext=function(S){
   var seg=showStep(S,P,show,L.card,st);L.last=seg?st.rep.segs.length-1:-1;st.steps[st.k-1].si=L.last;
   if(!seg){L.pend=null;return {skip:true};}
   if(L.pend){   // the call that shaped this segment is part of its commentary
-    var at=0,bc=seg.bc||(seg.bc=[]),q;for(q=0;q<bc.length;q++)if(bc[q].t==='pbp'){at=q+1;break;}
+    var at=0,bc=seg.bc||(seg.bc=[]),q,mark=seg.k==='match'?'pbp':'note';for(q=0;q<bc.length;q++)if(bc[q].t===mark){at=q+1;break;}   // a match: after the bell; a promo or angle: after the first thing that happens
     bc.splice(at,0,{t:'call',x:'Your call: '+L.pend.a+'. '+L.pend.r});(seg.calls=seg.calls||[]).push(L.pend);L.pend=null;
   }
   return {seg:seg,i:st.rep.segs.length-1};

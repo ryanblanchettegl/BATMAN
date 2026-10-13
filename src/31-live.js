@@ -260,7 +260,7 @@ E.liveNext=function(S){
   var seg=showStep(S,P,show,L.card,st);L.last=seg?st.rep.segs.length-1:-1;st.steps[st.k-1].si=L.last;
   if(!seg){L.pend=null;return {skip:true};}
   if(L.pend){   // the call that shaped this segment is part of its commentary
-    var at=0,bc=seg.bc||(seg.bc=[]),q;for(q=0;q<bc.length;q++)if(bc[q].t==='pbp'){at=q+1;break;}
+    var at=0,bc=seg.bc||(seg.bc=[]),q,mark=seg.k==='match'?'pbp':'note';for(q=0;q<bc.length;q++)if(bc[q].t===mark){at=q+1;break;}   // a match: after the bell; a promo or angle: after the first thing that happens
     bc.splice(at,0,{t:'call',x:'Your call: '+L.pend.a+'. '+L.pend.r});(seg.calls=seg.calls||[]).push(L.pend);L.pend=null;
   }
   return {seg:seg,i:st.rep.segs.length-1};

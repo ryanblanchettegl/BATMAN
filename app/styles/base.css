@@ -138,7 +138,7 @@ tbody tr.on input,tbody tr.on select{color:var(--yellow)}
 .live h1{font-size:1.5em;color:var(--white);margin-bottom:6px}
 .ln{margin:3px 0;display:grid;grid-template-columns:11ch minmax(0,1fr);gap:1ch}
 .ln .sp{text-transform:uppercase;text-align:right}
-.ln.pbp .sp{color:var(--yellow)} .ln.col .sp{color:var(--cyan)} .ln.ring .sp{color:var(--mag)}
+.ln.pbp .sp{color:var(--yellow)} .ln.mic .sp{color:var(--green)} .ln.mic .tx{color:var(--white)} .ln.col .sp{color:var(--cyan)} .ln.ring .sp{color:var(--mag)}
 .ln.ring .tx{color:var(--white);text-transform:uppercase}
 .ln.pbp .tx{color:var(--grey)} .ln.col .tx{color:var(--grey)}
 .ln.note{display:block;color:var(--green);margin:8px 0}

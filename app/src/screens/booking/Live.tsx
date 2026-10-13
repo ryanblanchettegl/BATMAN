@@ -23,12 +23,12 @@ function Typed(p: { text: string }) {
   useEffect(() => n < 0 ? undefined : typer.start(p.text.length, setN, () => setN(-1)), []);
   return <>{n < 0 ? p.text : p.text.slice(0, n)}{n < 0 ? null : <span class="untyped">{p.text.slice(n)}</span>}</>;
 }
-interface Beat { t: string; x: string; h?: number }
+interface Beat { t: string; x: string; h?: number; w?: string }
 /** One line of the broadcast. `tk` marks the newest line: it is drawn brighter and typed out. */
 function Line(p: { r: any; b: Beat; tk?: string }) {
   const b = p.b, cls = 'ln ' + b.t + (p.tk ? ' last' : '') + (b.h ? ' hot' + (b.h > 1 ? ' hot2' : '') : ''), text = p.tk ? <Typed key={p.tk} text={b.x} /> : b.x;
   if (b.t === 'note' || b.t === 'ent') return <p class={cls}>{text}</p>;
-  const who = b.t === 'pbp' ? p.r.ann[0].split(' ').pop() : (b.t === 'col' ? p.r.ann[1].split(' ').pop() : (b.t === 'ear' ? 'Headset' : (b.t === 'call' ? 'Gorilla' : 'Ring')));
+  const who = b.t === 'mic' ? String(b.w || '').split(' ').pop() : b.t === 'pbp' ? p.r.ann[0].split(' ').pop() : (b.t === 'col' ? p.r.ann[1].split(' ').pop() : (b.t === 'ear' ? 'Headset' : (b.t === 'call' ? 'Gorilla' : 'Ring')));
   return <p class={cls}><span class="sp">{who}:</span><span class="tx">{text}</span></p>;
 }
 /** Portraits of both sides, for matches of up to six. */

@@ -159,5 +159,22 @@ function longRun(id, seed) {
 }
 ['whw', 'ttt', 'kjp'].forEach(id => { const r = longRun(id, 5); ok(id, 'forty weeks with suggested promos and angles on every show', r.errs === 0 && JSON.stringify(r.S).indexOf('NaN') < 0 && r.booked > r.shows * 0.8, r.errs ? r.errs + ' errors: ' + r.why : r.booked + ' segments over ' + r.shows + ' shows'); });
 { const a = longRun('ocw', 9), b = longRun('ocw', 9); ok('ocw', 'the same seed and the same bookings give the same game', JSON.stringify(a.S) === JSON.stringify(b.S)); }
+/* ---- a promo or an angle on the air is a scene: an entrance, the words in pieces, a quoted line said by its speaker, the crowd and the desk ---- */
+{ let n = 0, mic = 0, bad = [];
+  for (const sd of [1, 2, 3, 4, 5, 6]) {
+    const S = E.newGame('pdw', sd, { name: 'R' }); S.inbox.forEach(e => E.resolveEvent(S, e.id, 0));
+    const c = E.suggest(S), pr = E.preShow(S, c); if (pr) { E.resolvePre(S, c, 0); E.fitShow(S, c); }
+    const r = E.runPlayerShow(S, c).rep, names = new Set(S.w.map(w => w.name));
+    r.segs.filter(s => s.k !== 'match' && s.bc && !s.rub).forEach(s => {
+      n++; const bc = s.bc, cols = bc.filter(b => b.t === 'col');
+      if (cols.length < 2) bad.push(s.head + ': no crowd line and desk line');
+      bc.filter(b => b.t === 'mic').forEach(b => { mic++; if (!names.has(b.w) || !String(s.text).includes(b.w)) bad.push(s.head + ': a quote from somebody not in it'); });
+      const out = bc[0].t === 'pbp' ? bc[0].x : '';
+      if (out && /interrupts/.test(s.text)) { const vic = s.text.split('interrupts ')[1]; if (!r.segs || !S.w.some(w => out.includes(w.name) && vic.startsWith(w.name))) bad.push(s.head + ': the wrong one walks out: ' + out); }
+      if (bc.some(b => /loudest reaction of the night/.test(b.x))) bad.push(s.head + ': a claim nobody checked');
+    });
+  }
+  ok('stage', 'promos and angles air as scenes: ' + n + ' segments, ' + mic + ' quoted lines', n > 3 && !bad.length, bad.slice(0, 3).join(' | '));
+}
 if (fails.length) { console.log('FAILED: ' + fails.length); process.exit(1); }
 console.log('test-segments: all passed');
