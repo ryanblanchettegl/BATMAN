@@ -50,7 +50,7 @@ Code: `src/86-editor.js`, `app/src/screens/editor/`. Tests: `test-editor.js`, `a
 
 Ryan's goal is screens that are easy to read and quick to act on. Manage, Operations now has 15 panels and is more than four screens tall on a desk.
 
-- [ ] **2.1 Measure.** Add to `app/tests/sweep.js`: for every page, the page height in screens on desk and tablet, printed as a table. Fail when a page is taller than 3 screens on desk or 6 on a phone. Commit the first table as `docs/page-heights.txt`. Expect failures; the steps below fix them.
+- [x] **2.1 Measure.** Add to `app/tests/sweep.js`: for every page, the page height in screens on desk and tablet, printed as a table. Fail when a page is taller than 3 screens on desk or 6 on a phone. Commit the first table as `docs/page-heights.txt`. Expect failures; the steps below fix them.
 - [ ] **2.2 Operations.** Keep on the page what is used every week: Broadcast, Shows and belts, and the settings. Move the rest (commentary desk, merchandise, school, tours, budgets, universe) into windows opened from one short "More to manage" list that shows each one's state in a line ("Commentary desk: both chairs empty"). Keep every `data-t`. Update `app/tests/company.js`.
 - [ ] **2.3 Every other page over the limit.** Same treatment: the weekly things stay, the rest becomes a one-line row that opens a window. Do not remove information and do not add pages to the menu.
 - [ ] **2.4 The desk.** "Before the show" must be fully visible without scrolling on a desk screen, with **Book the next show** in view. Check with a screenshot test.
