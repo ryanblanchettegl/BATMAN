@@ -15,6 +15,7 @@ The game should hand the player stories, not just ask them to write them. Every 
 |---|---|---|---|---|
 | The partner left behind | Singles wins and titles for one tag partner | Dirt sheet: "tired of standing in Y's shadow" | The jealous one turns after a tag loss | `src/66-relations.js`, `src/94-net.js`, `src/10-match.js` |
 | The student passes the teacher | A trained wrestler (`w.coach`) becomes more over | The matter itself | Put them over, leave it (jealousy), or teacher against student | `src/76-student.js` |
+| Friends on a collision course | A friend of the champion climbs to next in line | The matter itself | A respectful title match, a friendship gone sour, or kept apart | `src/76-friends.js` |
 | Rumours that come due | Contracts running down, free agents seen | The rumour, marked Sure, Likely or Thin | Confirmed, corrected or updated weeks later | `src/94-net.js` |
 
 ## Rules for the next arc
@@ -24,6 +25,5 @@ The game should hand the player stories, not just ask them to write them. Every 
 - Arcs with no player cause are background (rival companies). Arcs on the player's roster need a warning first.
 
 ## Next candidates
-- Friends on a collision course: a champion's closest friend becomes the next challenger.
 - The veteran on the way out who wants one last run.
 - A rival company's star unhappy in public, before they become a free agent.
