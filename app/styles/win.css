@@ -476,7 +476,6 @@ html[data-screen="tv"]:has(.rspage){--fs:min(clamp(22px,1.9vw,84px),2.32vh)}
 .book1 .b1-side{flex:1 1 0;min-height:0}
 .book1 .b1-sidewin{min-height:0;min-width:0}
 .book1 .b1-pane>.panel,.book1 .b1-pane .panel{background:var(--grey);border:2px solid var(--dgrey);color:var(--k)}
-.book1 .b1-pane .panel>h2{background:var(--grey);color:var(--dred);text-transform:none}
 .book1 .b1-pane b,.book1 .b1-pane .who{color:var(--k)}
 .book1 .b1-pane .muted,.book1 .b1-pane .empty{color:#444}
 .book1 .b1-pane .eyebrow{color:var(--blue)}
@@ -498,3 +497,44 @@ html[data-screen="tv"]:has(.book1){--fs:min(clamp(22px,1.9vw,84px),2.6vh)}
 .book1 .agentsay .ag{color:var(--blue)}
 .book1 .showtime .meter{color:var(--blue)}.book1 .showtime .meter i{color:#7a7a7a}
 .book1 .b1-head.head{display:flex;flex-direction:column;flex-wrap:nowrap;align-items:stretch;justify-content:flex-start;text-align:left;gap:0;margin:0}
+
+/* ---------- old panels in the new look: every page not yet rebuilt shows its panels as grey windows ---------- */
+.main .panel{background:var(--grey);color:var(--k);border:2px solid var(--white);border-right-color:var(--dgrey);border-bottom-color:var(--dgrey);box-shadow:1ch .55em 0 rgba(0,0,0,.55);padding:.35em 1.2ch .5em}
+.main .panel>h2:first-child{position:static;display:block;max-width:none;margin:-.35em -1.2ch .45em;padding:0 1ch;background:var(--blue);color:var(--yellow);text-align:center;text-transform:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.main .panel b,.main .panel .nm,.main .panel .who,.main .panel .t{color:var(--k)}
+.main .panel .muted,.main .panel .empty{color:#444}
+.main .panel .eyebrow,.main .panel label.f,.main .panel .hl{color:var(--blue)}
+.main .panel .gold,.main .panel .tag.gold{color:#5a4000}
+.main .panel .good,.main .panel .tag.good{color:#006000}
+.main .panel .bad,.main .panel .tag.bad,.main .panel .heel,.main .panel .tag.heel{color:var(--dred)}
+.main .panel .warn,.main .panel .tag.warn{color:#6a006a}
+.main .panel .face,.main .panel .tag.face{color:var(--blue)}
+.main .panel .tag{color:var(--k)}
+.main .panel .meter{color:var(--k)} .main .panel .meter i{color:#7a7a7a} .main .panel .meter.au{color:var(--blue)} .main .panel .meter.hot{color:var(--dred)}
+.main .panel .list li,.main .panel .ego>div,.main .panel .scores div{border-color:var(--dgrey)}
+.main .panel .lnk{color:var(--blue)}
+.main .panel .tw,.main .tw{border:2px solid var(--dgrey);border-right-color:var(--white);border-bottom-color:var(--white);background:var(--dcyan)}
+.main .tw th{background:var(--grey);color:var(--blue);border-bottom:2px solid var(--dgrey)}
+.main .tw td{color:var(--k);border-bottom:1px solid #007c7c}
+.main .tw td .nm{color:var(--k)}
+.main .tw .muted{color:#003c3c} .main .tw .good{color:#004800} .main .tw .bad,.main .tw .heel{color:#7a0000} .main .tw .gold{color:#5a4000} .main .tw .face{color:var(--blue)} .main .tw .warn{color:#5a005a}
+.main .tw tbody tr.pick:hover{background:#18c0c0}
+.main .tw tbody tr.on{background:var(--dgreen)} .main .tw tbody tr.on>td,.main .tw tbody tr.on>td *{color:var(--white)}
+.main .panel .ascii{color:var(--blue)} .main .panel .ascii.bars{color:var(--k)} .main .panel pre.body{color:var(--k)}
+.main .panel .pie{background:none}
+.main .panel .pc0{color:#7a6a00} .main .panel .pc1{color:#006a6a} .main .panel .pc2{color:#006000} .main .panel .pc3{color:#6a006a} .main .panel .pc4{color:var(--dred)} .main .panel .pc5{color:var(--k)} .main .panel .pc6{color:#004a6a}
+.main .panel .panel{box-shadow:none}
+.main .panel h2:not(:first-child){color:var(--k)}
+.main .panel .kv small,.main .panel .kv div small{color:var(--blue)} .main .panel .kv div span{color:var(--k)}
+.main .panel .big{color:var(--blue)}
+.main .tw .lnk{color:var(--blue)} .main .tw .lnk.gold{color:#4a3400} .main .tw .lnk.heel{color:#7a0000}
+.main .tw .meter.au{color:var(--yellow)}
+.main .panel .rank li::marker{color:var(--blue)}
+.main .panel .bsact{background:var(--grey);border:2px solid var(--white);border-right-color:var(--dgrey);border-bottom-color:var(--dgrey);color:var(--k)}
+.main .panel .bsact *{color:var(--k)}
+.main .panel .bsact .muted,.main .panel .bsact small{color:#444}
+.main .panel .bsact:hover,.main .panel .bsact:focus-visible{background:#c8c8c8}
+.main .gp{background:var(--grey);color:var(--k);border:2px solid var(--white);border-right-color:var(--dgrey);border-bottom-color:var(--dgrey);box-shadow:1ch .55em 0 rgba(0,0,0,.55);padding:0 1.2ch .4em}
+.main .gp h2{background:var(--blue);color:var(--yellow);margin:0 -1.2ch .3em;letter-spacing:.06em}
+.main .gp .kv b,.main .gp b{color:var(--blue)} .main .gp .muted{color:#444} .main .gp .good{color:#006000} .main .gp .bad{color:var(--dred)} .main .gp .gold,.main .gp .hl{color:#5a4000}
+.main .gp .gauge i{background:#8a8a8a} .main .gp .gauge i.on{background:var(--blue)}
