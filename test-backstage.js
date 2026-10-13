@@ -26,6 +26,12 @@ ok('an old week with no changes is empty', E.sheetInfo(S).now.week === wk && (()
   ok('a new enemy pair gets a feed post', S.feed.length === n0 + 1 && S.feed[0].k === 'f' && S.feed[0].t.includes(p.name), S.feed[0] && S.feed[0].t);
   const n1 = S.feed.length; E.relBump(S, p.id, q.id, { bond: -5 }, { k: 't', t: 'y' });
   ok('no second post while nothing turns', S.feed.length === n1); }
+/* looking back at a title win, a year on */
+{ const P = S.promos[S.player], t = P.titles[0];
+  t.hist = [{ ids: '1', h: ['Test Champion'], from: S.week, to: S.week + 30, show: 'Old Night', defs: 0 }];
+  S.week += 48; const tb = E.sheetInfo(S).now.throwback; S.week -= 48;
+  ok('a title win is remembered a year on', tb.length >= 1 && /1 year ago/.test(tb[0].t) && tb[0].t.includes('Test Champion') && /30 weeks/.test(tb[0].t), tb[0] && tb[0].t);
+  S.week += 20; ok('and not on any other week', E.sheetInfo(S).now.throwback.length === 0); S.week -= 20; }
 /* rumours that come due are settled */
 S.rumF = [{ w: x.id, k: 'exp', pid: x.promo, due: S.week, lvl: 'sure' }, { w: y.id, k: 'fa', pid: S.order.find(p => p !== y.promo && p !== S.player), due: S.week, lvl: 'thin' }];
 S.rumR = [];

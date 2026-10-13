@@ -24,6 +24,7 @@ function Issue(p: { s: any; live: boolean }) {
           <p class="mt2"><b>The verdict:</b> {s.review}</p>
         </Panel>
         {s.best ? <Panel title="Match of the week"><p><b><Txt>{s.best.label}</Txt></b></p><p class="muted">{s.best.show} {'·'} <span class="gold">{stars(s.best.ov)}</span></p></Panel> : null}
+        {s.throwback && s.throwback.length ? <Panel title="Looking back"><ul class="sheet-lines">{s.throwback.map((l: any, i: number) => <li key={i} data-t="throwback"><Txt>{l.t}</Txt></li>)}</ul></Panel> : null}
         {s.next.length ? <Panel title="Coming up"><ul class="sheet-lines">{s.next.map((l: string, i: number) => <li key={i}><Txt>{l}</Txt></li>)}</ul></Panel> : null}
       </div>
       <div class="stack">

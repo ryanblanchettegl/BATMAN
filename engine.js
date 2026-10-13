@@ -9890,6 +9890,16 @@ function netBackstage(S,wk){
   var rank={sure:0,likely:1,thin:2};
   return out.sort(function(a,b){return (rank[a.lvl]-rank[b.lvl])||(h01(wk+a.t)-h01(wk+b.t));}).slice(0,3);
 }
+/** Looking back: a title win whose anniversary falls in week `wk`, from the real title histories. Reads only. */
+function netThrowback(S,wk){
+  var out=[];
+  S.order.forEach(function(pid){S.promos[pid].titles.forEach(function(t){(t.hist||[]).forEach(function(h){
+    var d=wk-h.from;if(d<=0||d%48||h.show==='Before your time'||!h.h||!h.h.length)return;
+    var y=d/48,span=h.to!=null?(h.to-h.from):null;
+    out.push({t:y+' '+(y===1?'year':'years')+' ago this week, '+h.h.join(' and ')+' won the '+S.promos[pid].name+' '+t.name+(h.show?' at '+h.show:'')+'.'+(span!=null&&span>=24?' The reign lasted '+span+' weeks.':'')});
+  });});});
+  return out.sort(function(a,b){return h01(wk+a.t)-h01(wk+b.t);}).slice(0,2);
+}
 /** One issue of the dirt sheet: what happened in week `wk`, as far as the game still remembers it. */
 function netSheet(S,wk){
   var P=S.promos[S.player],news=S.news.filter(function(x){return x.w===wk;}),reps=S.reports.filter(function(r){return r.week===wk&&r.promo===P.id;}).reverse();
@@ -9911,7 +9921,7 @@ function netSheet(S,wk){
   if(c.wom===4)next.push(P.name+' '+dbOf(S).events[c.month]+' is next week.');
   var soon=rosterOf(S,P.id).filter(function(w){return !w.nw&&w.con!=null&&w.con<=2;}).sort(function(a,b){return b.ovr-a.ovr;})[0];if(soon)next.push(soon.name+'’s contract with '+P.name+' is nearly up.');
   var review=reps.length?(d>=3?'The booking is working: the shows are beating expectations.':(d<=-3?'The booking is missing: the shows are under what the crowd expects.':'The booking is doing its job, no more.')):'No shows from '+P.name+' yet this week.';
-  return {week:wk,label:cal(wk).label,by:S.columnist||'The Ringside Wire',lead:lead,yours:yours,best:best,world:world,business:business,backstage:netBackstage(S,wk),followups:(S.rumR||[]).filter(function(x){return x.w===wk;}),rumours:netRumours(S,wk),next:next,review:review};
+  return {week:wk,label:cal(wk).label,by:S.columnist||'The Ringside Wire',lead:lead,yours:yours,best:best,world:world,business:business,backstage:netBackstage(S,wk),throwback:netThrowback(S,wk),followups:(S.rumR||[]).filter(function(x){return x.w===wk;}),rumours:netRumours(S,wk),next:next,review:review};
 }
 E.sheetInfo=function(S){return {now:netSheet(S,S.week),past:(S.sheets||[]).slice()};};
 E.feed=function(S){return (S.feed||[]).slice();};
