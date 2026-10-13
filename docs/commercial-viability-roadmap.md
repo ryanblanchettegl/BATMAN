@@ -21,3 +21,6 @@ Facts here come from running things on 13 October 2026. Opinions are marked. Not
 
 ## Next
 Build the NSIS installer on Windows with an icon, then Steam achievements against app id 480 with the Steam client. Both need Ryan's go-ahead for anything that spends money or publishes.
+
+## Save size (measured 13 October)
+One game of PDW: 1.19 MB at week 50, 1.42 MB at week 100, 1.75 MB at week 200, growing about 3 KB a week. Browser storage holds about 5 million characters, so this is safe for several game years, but the wrestler records (885 of them, about 1.3 KB each, 1.1 MB in all) are the place to trim first if it becomes a problem. Saves can now also be kept as a file (Options, Save to a file).
