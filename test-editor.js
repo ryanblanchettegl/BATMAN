@@ -98,5 +98,15 @@ C.workers[0].ring_name = 'Changed'; ok('changing the copy leaves the original al
   [fa, gone].forEach((w, i) => { const r = play(w, 'ttt', 12); ok('twelve weeks in a two-company world (' + (i ? 'wrestlers gone' : 'free agents') + ')', r.errs === 0 && !r.nan && r.shows > 0, 'errs ' + r.errs + ', shows ' + r.shows); }); }
 
 E.useUniverse(builtIn);
+/* ---- make a copy: a wrestler keeps their company, a belt starts vacant, a team empty, a company brings shows and belts, not people ---- */
+{ const pkg = JSON.parse(JSON.stringify(builtIn)), w = pkg.workers.find(x => E.edHome(pkg, x.id)), cw = E.edDup(pkg, 'workers', w.id);
+  ok('a copied wrestler has a new id and name and the same company', cw && cw.id !== w.id && /\(copy\)$/.test(cw.ring_name) && E.edHome(pkg, cw.id).promotion_id === E.edHome(pkg, w.id).promotion_id);
+  const t = pkg.titles.find(x => x.holder_ids && x.holder_ids.length), ct = E.edDup(pkg, 'titles', t.id);
+  ok('a copied belt starts vacant', ct && ct.holder_ids.length === 0 && t.holder_ids.length > 0);
+  const tm = pkg.teams[0], ctm = E.edDup(pkg, 'teams', tm.id);
+  ok('a copied team starts with no members', ctm && ctm.member_ids.length === 0 && tm.member_ids.length > 0);
+  const p = pkg.promotions[0], s0 = pkg.shows.filter(x => x.promotion_id === p.id).length, b0 = pkg.titles.filter(x => x.promotion_id === p.id).length, cp = E.edDup(pkg, 'promotions', p.id);
+  ok('a copied company brings its shows and belts but not its roster', cp && pkg.shows.filter(x => x.promotion_id === cp.id).length === s0 && pkg.titles.filter(x => x.promotion_id === cp.id).length === b0 && !pkg.contracts.some(x => x.promotion_id === cp.id));
+  ok('the ids stay unique', new Set(pkg.workers.map(x => x.id)).size === pkg.workers.length && new Set(pkg.titles.map(x => x.id)).size === pkg.titles.length); }
 if (fails.length) { console.log('FAILED: ' + fails.length); process.exit(1); }
 console.log('test-editor: all passed');

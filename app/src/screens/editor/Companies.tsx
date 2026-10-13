@@ -69,7 +69,7 @@ export function CompaniesTab() {
         <Btn kind="sm" t="ed-see-roster" onClick={() => look(() => { st.tab = 'wrestlers'; st.fp = p.id; st.q = ''; st.sel.wrestlers = null; window.scrollTo(0, 0); })}>See its wrestlers</Btn></div>
       <p class="muted mt2">Unknowns are made-up names with ratings that suit a company this size. A quick way to make a world playable, then replace them with your own.</p>
     </Panel>
-    <div class="row mb4"><DelBtn id={'promo:' + p.id} what={p.name} onDelete={() => { E.edRemove(pkg, 'promotions', p.id); st.sel.companies = null; note(p.name + ' is gone, with its shows, belts and contracts. Its wrestlers are now unsigned.'); }} /></div>
+    <div class="row mb4"><Btn kind="sm" t="ed-dup" onClick={() => edit(() => { const c = E.edDup(pkg, 'promotions', p.id); if (c) { st.sel.companies = c.id; note('Made a copy: ' + c.name + ', with its shows and belts. Its roster is empty.'); } })}>Make a copy</Btn><DelBtn id={'promo:' + p.id} what={p.name} onDelete={() => { E.edRemove(pkg, 'promotions', p.id); st.sel.companies = null; note(p.name + ' is gone, with its shows, belts and contracts. Its wrestlers are now unsigned.'); }} /></div>
   </TwoPane>;
 }
 

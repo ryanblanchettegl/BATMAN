@@ -62,7 +62,7 @@ function Form(p: { w: any }) {
       <p class="muted mt2">Overness is how much the crowd cares. The ones marked auto are worked out from the rest unless you set them.</p>
     </Panel>
     <Looks w={w} />
-    <div class="row mb4"><DelBtn id={'worker:' + w.id} what={w.ring_name} onDelete={() => { E.edRemove(pkg, 'workers', w.id); st.sel.wrestlers = null; note(w.ring_name + ' has been removed from the world.'); }} /></div>
+    <div class="row mb4"><Btn kind="sm" t="ed-dup" onClick={() => edit(() => { const c = E.edDup(pkg, 'workers', w.id); if (c) { st.sel.wrestlers = c.id; note('Made a copy: ' + c.ring_name + '.'); } })}>Make a copy</Btn><DelBtn id={'worker:' + w.id} what={w.ring_name} onDelete={() => { E.edRemove(pkg, 'workers', w.id); st.sel.wrestlers = null; note(w.ring_name + ' has been removed from the world.'); }} /></div>
   </>;
 }
 

@@ -41,7 +41,7 @@ export function BeltsTab() {
       <div class="editor plain">{slots.map(i => <Field key={i} label={t.tag ? 'Champion ' + (i + 1) : 'Champion'}><Sel t="ed-holder" d={{ v: i }} value={hold[i] || ''} options={people(ros, 'Vacant')} onChange={v => setHolder(i, v)} /></Field>)}</div>
       <p class="muted mt2">{ros.length ? 'Only ' + (t.gender === 'F' ? 'women' : 'men') + ' under contract to this company are listed. Leave it vacant and the first champion is crowned in the game.' : 'Nobody in this division is under contract here yet, so the belt starts vacant.'}</p>
     </Panel>
-    <div class="row mb4"><DelBtn id={'belt:' + t.id} what={t.name} onDelete={() => { E.edRemove(pkg, 'titles', t.id); st.sel.belts = null; }} /></div>
+    <div class="row mb4"><Btn kind="sm" t="ed-dup" onClick={() => edit(() => { const c = E.edDup(pkg, 'titles', t.id); if (c) { st.sel.belts = c.id; note('Made a copy: ' + c.name + '. It starts vacant.'); } })}>Make a copy</Btn><DelBtn id={'belt:' + t.id} what={t.name} onDelete={() => { E.edRemove(pkg, 'titles', t.id); st.sel.belts = null; }} /></div>
   </TwoPane>;
 }
 
@@ -74,7 +74,7 @@ export function TeamsTab() {
         </> : <div class="editor plain">{[0, 1].map(i => <Field key={i} label={'Partner ' + (i + 1)}><Sel t="ed-member" d={{ v: i }} value={mem[i] || ''} options={people(ros.filter(w => w.id === mem[i] || mem.indexOf(w.id) < 0), 'Pick someone')} onChange={v => setM(i, v)} /></Field>)}</div>}
         <p class="muted mt2">{ros.length ? 'Only wrestlers under contract to this company are listed.' : 'Nobody is under contract to this company yet. Sign wrestlers first.'}</p>
       </Panel>
-      <div class="row mb4"><DelBtn id={'team:' + t.id} what={t.name} onDelete={() => { E.edRemove(pkg, 'teams', t.id); st.sel.teams = null; }} /></div>
+      <div class="row mb4"><Btn kind="sm" t="ed-dup" onClick={() => edit(() => { const c = E.edDup(pkg, 'teams', t.id); if (c) { st.sel.teams = c.id; note('Made a copy: ' + c.name + '. Add its members.'); } })}>Make a copy</Btn><DelBtn id={'team:' + t.id} what={t.name} onDelete={() => { E.edRemove(pkg, 'teams', t.id); st.sel.teams = null; }} /></div>
     </>;
   };
   return <>

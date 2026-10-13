@@ -6998,6 +6998,23 @@ E.edAddRel=function(pkg,a,b,type){edShape(pkg);var r={a:a,b:b,type:REL_TYPES.ind
 
 /** Put a wrestler under contract to a company, or make them a free agent with pid null.
     Titles and teams they held somewhere else are tidied up, so the world never points at someone who has left. */
+/** A copy of one record, under a new name. A wrestler joins the same company at the same push; a belt starts vacant;
+    a team starts with no members; a company brings its shows and belts but not its roster. Returns the copy. */
+E.edDup=function(pkg,table,id){
+  edShape(pkg);var r=edFind(pkg,table,id);if(!r)return null;
+  var c=JSON.parse(JSON.stringify(r)),nk=table==='workers'?'ring_name':'name',nm=String(r[nk]||'')+' (copy)';c[nk]=nm;
+  c.id=edId(pkg,table,nm,table.slice(0,4));
+  if(table==='workers'){pkg.workers.push(c);var h=edHome(pkg,r.id);if(h)E.edSign(pkg,c.id,h.promotion_id,h.push_level);return c;}
+  if(table==='titles'){c.holder_ids=[];pkg.titles.push(c);return c;}
+  if(table==='teams'){c.member_ids=[];delete c.leader_id;pkg.teams.push(c);return c;}
+  if(table==='promotions'){
+    c.full_name=String(r.full_name||r.name)+' (copy)';pkg.promotions.push(c);
+    pkg.shows.filter(function(x){return x.promotion_id===r.id;}).forEach(function(x){var y=JSON.parse(JSON.stringify(x));y.promotion_id=c.id;y.id=edId(pkg,'shows',c.id+'_'+(x.name||'show'));pkg.shows.push(y);});
+    pkg.titles.filter(function(x){return x.promotion_id===r.id;}).forEach(function(x){var y=JSON.parse(JSON.stringify(x));y.promotion_id=c.id;y.holder_ids=[];y.id=edId(pkg,'titles',c.id+'_'+(x.name||'title'));pkg.titles.push(y);});
+    return c;
+  }
+  return null;
+};
 E.edSign=function(pkg,wid,pid,push){
   edShape(pkg);var old=edHome(pkg,wid),from=old?old.promotion_id:null;
   if(from===pid){if(old&&push)old.push_level=push;return old;}

@@ -97,7 +97,11 @@ async function run(mode) {
       ok(mode, 'sort by name puts the list in alphabetical order', byName.length > 1 && byName.slice(0, 2).join('|') === byName.slice(0, 2).slice().sort().join('|'), byName.slice(0, 2).join(' | '));
       await pickSort('age'); ok(mode, 'sort by age changes the order', (await rowsNow()).join() !== byName.join() || byName.length < 2);
       ok(mode, 'the list says how many it shows', /Showing \d+/.test(await txt(page, '.edpage')));
-      await pickSort('over'); }
+      await pickSort('over');
+      await page.click('.edlist .edrow'); await page.waitForSelector('[data-t="ed-dup"]');
+      const n0 = (await rowsNow()).length; await page.click('[data-t="ed-dup"]'); await page.waitForTimeout(150);
+      ok(mode, 'Make a copy adds a wrestler and opens the copy', /\(copy\)/.test(await page.$eval('[data-t="ed-wrname"]', e => e.value).catch(() => '')), await page.$eval('[data-t="ed-wrname"]', e => e.value).catch(() => 'no form'));
+      await page.keyboard.press('Escape'); }
 
     /* Back steps out one level at a time */
     await page.click('[data-t="ed-tab"][data-v="wrestlers"]');
