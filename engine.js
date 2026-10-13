@@ -817,11 +817,11 @@ function doMatch(S,P,show,m,i,n,rep,used){
   if(t){
     t.last=S.week;t.prestige=clamp(t.prestige+(OV-t.prestige)*0.08,10,100);
     if(win>=0&&win!==champSide&&fin!=='dq'&&fin!=='co'){
-      var had=t.holders.length;
+      var had=t.holders.length,reign=S.week-(t.since||S.week),olds=t.defs,back=winners.filter(function(w){return (t.hist||[]).some(function(h){return String(h.ids||'').split(',').indexOf(String(w.id))>=0;});}).length===winners.length&&winners.length>0;
       t.holders.forEach(function(id){S.w[id].lt={n:t.name,id:t.id,w:S.week};});
       t.holders=m.sides[win].slice();t.since=S.week;t.defs=0;seg.change=true;seg.crown=!had;
       winners.forEach(function(w){w.mom=clamp(w.mom+2,-10,10);w.morale=clamp(w.morale+6,0,100);w.lt=null;});
-      news(S,'title',names(winners)+(had?' won the ':' won the vacant ')+P.name+' '+t.name+'.');
+      news(S,'title',names(winners)+(had?' won the ':' won the vacant ')+P.name+' '+t.name+'.'+(had&&reign>=24?' The old reign lasted '+reign+' weeks'+(olds>=4?', with '+olds+' defences.':'.'):'')+(back?' It is not their first time with the belt.':''));
       seg.notes.push('New champion'+(t.tag?'s':'')+': '+names(winners)+'.');
       if(isPl)award(S,had?'ACH_TITLE_CHANGE':'ACH_CROWN');
     }else{t.defs++;if(win>=0&&champSide>=0)seg.notes.push(names(sides[champSide])+' retain'+(sides[champSide].length>1?'':'s')+'.');}
