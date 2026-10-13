@@ -197,6 +197,18 @@ E.edSetTier=function(pkg,wid,push,seed){
   var h=edHome(pkg,wid),p=h?edFind(pkg,'promotions',h.promotion_id):null,r=edRatings({s:(seed>>>0)||1},p?clamp(p.popularity,5,100):50,push,w.style);
   w.ratings=Object.assign({},w.ratings||{},r);if(h)h.push_level=push;return w;
 };
+/** Unsigned unknowns for the free-agent pool: names from the world's lists, ratings for the lower half of a card in
+    a middling company. Men and women both. Returns the new wrestlers. */
+E.edFillFree=function(pkg,n,seed){
+  edShape(pkg);var st={s:(seed>>>0)||1},N=edNames(pkg),used={},made=[],styles=Object.keys(STYLE_KEY),low=['midcarder','lower_midcarder','jobber'];
+  pkg.workers.forEach(function(w){used[w.ring_name]=1;});n=clamp(Math.round(n)||6,1,40);
+  for(var i=0;i<n;i++){
+    var g=i%3===2?'F':'M',name,tries=0;do{name=edPick(st,g==='F'?N.f:N.m)+' '+edPick(st,N.l);tries++;}while(used[name]&&tries<40);used[name]=1;
+    var style=edPick(st,styles);
+    made.push(E.edAddWorker(pkg,{ring_name:name,gender:g,age:19+Math.floor(edRnd(st)*16),disposition:edRnd(st)<0.5?'face':'heel',style:style,ratings:edRatings(st,45,low[i%3],style)}));
+  }
+  return made;
+};
 E.edFill=function(pkg,pid,n,seed){
   edShape(pkg);var p=edFind(pkg,'promotions',pid);if(!p)return [];
   var st={s:(seed>>>0)||1},MD=MODELS[p.model]||MODELS.classic,nm=pkg.names||{},made=[];

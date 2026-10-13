@@ -104,6 +104,10 @@ E.useUniverse(builtIn);
   const w = pkg.workers.find(x => E.edHome(pkg, x.id)), con = () => pkg.contracts.find(c => c.worker_id === w.id);
   const lo = E.edSetTier(pkg, w.id, 'jobber', 3).ratings.overness, loPush = con().push_level, hi = E.edSetTier(pkg, w.id, 'main_eventer', 3).ratings.overness;
   ok('set ratings for a main eventer gives more overness than for an opener, and the push follows', hi > lo + 15 && loPush === 'jobber' && con().push_level === 'main_eventer', lo + ' -> ' + hi); }
+/* ---- unknown free agents ---- */
+{ const pkg = JSON.parse(JSON.stringify(builtIn)), n0 = pkg.workers.length, m = E.edFillFree(pkg, 6, 7);
+  ok('Make unknowns adds six unsigned wrestlers with names nobody has', m.length === 6 && pkg.workers.length === n0 + 6 && m.every(w => !E.edHome(pkg, w.id)) && new Set(pkg.workers.map(x => x.ring_name)).size === pkg.workers.length);
+  ok('the world still passes its check', E.edCheck(pkg).errors === 0); }
 /* ---- make a copy: a wrestler keeps their company, a belt starts vacant, a team empty, a company brings shows and belts, not people ---- */
 { const pkg = JSON.parse(JSON.stringify(builtIn)), w = pkg.workers.find(x => E.edHome(pkg, x.id)), cw = E.edDup(pkg, 'workers', w.id);
   ok('a copied wrestler has a new id and name and the same company', cw && cw.id !== w.id && /\(copy\)$/.test(cw.ring_name) && E.edHome(pkg, cw.id) === E.edHome(pkg, w.id) && !!E.edHome(pkg, cw.id));

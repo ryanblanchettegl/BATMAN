@@ -97,6 +97,10 @@ async function run(mode) {
       ok(mode, 'sort by name puts the list in alphabetical order', byName.length > 1 && byName.slice(0, 2).join('|') === byName.slice(0, 2).slice().sort().join('|'), byName.slice(0, 2).join(' | '));
       await pickSort('age'); ok(mode, 'sort by age changes the order', (await rowsNow()).join() !== byName.join() || byName.length < 2);
       ok(mode, 'the list says how many it shows', /Showing \d+/.test(await txt(page, '.edpage')));
+      await page.selectOption('[data-t="ed-fp"]', 'FA'); await page.waitForTimeout(80);
+      const fa0 = (await rowsNow()).length; await page.click('[data-t="ed-unknowns"]'); await page.waitForTimeout(120);
+      ok(mode, 'with Free agents chosen, Make unknowns adds unsigned wrestlers', (await rowsNow()).length > fa0 && /Six unknowns added/.test(await txt(page, '.edpage')));
+      await page.selectOption('[data-t="ed-fp"]', ''); await page.waitForTimeout(80);
       await pickSort('over');
       await page.click('.edlist .edrow'); await page.waitForSelector('[data-t="ed-dup"]');
       const n0 = (await rowsNow()).length; await page.click('[data-t="ed-dup"]'); await page.waitForTimeout(150);

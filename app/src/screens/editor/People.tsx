@@ -83,7 +83,8 @@ export function WrestlersTab() {
   const w = pkg.workers.find((x: any) => x.id === st.sel.wrestlers) || null;
   const add = () => edit(() => { const pid = st.fp && st.fp !== 'FA' ? st.fp : null, n = E.edAddWorker(pkg, { ring_name: 'New wrestler', promotion_id: pid }); st.sel.wrestlers = n.id; st.q = ''; });
   const list = <>
-    <div class="row mb2"><Btn kind="go" t="ed-add-wrestler" onClick={add}>Add a wrestler</Btn></div>
+    <div class="row mb2"><Btn kind="go" t="ed-add-wrestler" onClick={add}>Add a wrestler</Btn>
+      {st.fp === 'FA' ? <Btn kind="sm" t="ed-unknowns" onClick={() => edit(() => { const m = E.edFillFree(pkg, 6, Date.now() & 0xffff); note('Six unknowns added to the free agents: ' + m.map((x: any) => x.ring_name).slice(0, 3).join(', ') + ' and three more.'); })}>Make unknowns</Btn> : null}</div>
     <div class="row mb2">
       <input type="search" id="ed-q" data-t="ed-q" value={st.q} placeholder="Search by name" aria-label="Search by name" onInput={e => look(() => { st.q = (e.currentTarget as HTMLInputElement).value; })} />
       <Sel t="ed-sort" label="Sort by" value={by} options={[['over', 'Overness'], ['name', 'Name'], ['age', 'Age'], ['co', 'Company']] as Opt[]} onChange={v => look(() => { sorts[String(st.id)] = v; })} />
