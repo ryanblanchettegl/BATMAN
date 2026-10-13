@@ -65,6 +65,16 @@ async function run(mode) {
     ok(mode, 'the sign-off fits one screen', !(await fits(page)), await fits(page));
     ok(mode, 'auto-play stays on the sign-off', await has(page, '#live[data-v="signoff"]'));
     ok(mode, 'a near fall or a finish is marked as a big moment', await state(page, S => S.reports[0].segs.some(s => (s.bc || []).some(b => b.h))));
+    // a replay runs itself the same way: one press after the title card, then it moves with no press
+    await page.click('[data-t="live-auto"]').catch(() => {});   // auto-play back on
+    await page.click('[data-t="advance"]'); if (await has(page, '[data-t="after-full"]')) await page.click('[data-t="after-full"]');
+    if (await has(page, '[data-t="replay"]')) {
+      await page.click('[data-t="replay"]'); await page.waitForTimeout(300);
+      ok(mode, 'a replay opens on its title card and waits', await has(page, '#live[data-v="title"]'));
+      await page.click('[data-t="advance"]');
+      const r0 = await pos(page);
+      ok(mode, 'a replay runs itself after one press', await waitFor(page, async () => (await pos(page)) !== r0 && (await pos(page)) !== '', 12000), r0 + ' -> ' + await pos(page));
+    } else ok(mode, 'the report offers a replay', false);
     ok(mode, 'no errors', !errs.length, errs.slice(0, 3).join(' | '));
   } finally { await browser.close(); }
 }
