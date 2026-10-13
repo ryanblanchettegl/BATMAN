@@ -18,7 +18,7 @@ All of these are his words or his picks from mock-ups on 6 October. They are als
 | The big button | A key on the bottom line: SPACE and what happens next. Its colour says what kind of step it is. The floating yellow button goes. | every `final-*` picture |
 | Dot-matrix art | Colour lights: round lit dots on a black board with a glow, set in a grey window. | `docs/mockups/dots-sheet1.png` |
 | Company marks | Every company has its own icon built from its three initials. | `final/company-marks.png` |
-| Roster, Book the show | Roster built in windows (13 October, Ryan asked for the other pages to follow the desk). Book the show is next. | `final-6`, `final-7` |
+| Roster, Book the show | Roster and Book the show built in windows (13 October, Ryan asked for the other pages to follow the desk). Book the show keeps its old parts inside three windows; the stakes and bell windows of `final-7` are not built yet. | `final-6`, `final-7` |
 
 The scripts that drew every picture are beside them (`final.js`, `dotlib.js`, `maplib.js`, `marks.js`). They are throwaway mock-up code, but the drawing routines in them are the starting point for the real ones.
 
