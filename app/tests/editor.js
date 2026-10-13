@@ -14,6 +14,8 @@ async function company(page, mode, short, full, model) {
   await page.fill('[data-t="ed-f"][data-k="full_name"]', full);
   await page.fill('[data-t="ed-f"][data-k="popularity"]', '60');
   await page.selectOption('[data-t="ed-model"]', model);
+  await page.fill('[data-t="ed-ann"][data-v="0"]', short + ' Caller'); await page.fill('[data-t="ed-ann"][data-v="1"]', short + ' Colour');
+  await page.fill('[data-t="ed-agent"]', short + ' Agent');
   await page.selectOption('[data-t="ed-fill-n"]', '12');
   await page.click('[data-t="ed-fill"]');
   ok(mode, 'filling ' + short + ' says what happened', /12 unknowns signed to/.test(await txt(page, '.ednote')), await txt(page, '.ednote'));
@@ -86,6 +88,7 @@ async function run(mode) {
     ok(mode, 'the world as text is a package with everything made here', !!pkg && pkg.promotions.length === 2 && pkg.workers.length === 25 && pkg.shows.some(s => s.name === 'Saturday Slam') && pkg.titles.some(t => t.name === 'Iron Crown' && t.holder_ids.length === 1)
       && pkg.events.some(e => e.month === 3 && e.name === 'Spring Clash' && e.rule === 'all_titles') && pkg.teams.some(t => t.name === 'The Pair' && t.member_ids.length === 2) && pkg.workers.some(w => w.ring_name === 'Captain Thunder' && w.ratings.overness === 88 && w.face && w.roles.indexOf('manager') >= 0),
       pkg ? pkg.promotions.length + ' companies, ' + pkg.workers.length + ' people' : 'not JSON');
+    ok(mode, 'the commentators and the road agent are in the world', !!pkg && pkg.promotions.some(p => p.announcers && p.announcers[0] === 'AAA Caller' && p.announcers[1] === 'AAA Colour' && p.staff && p.staff.road_agent === 'AAA Agent'));
     await over('Check and share');
     await shot(page, 'ed-' + mode + '-share', true);
 

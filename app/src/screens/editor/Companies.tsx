@@ -18,7 +18,7 @@ export function CompaniesTab() {
       items={pkg.promotions.map((x: any) => { const c = info.per[x.id]; return { id: x.id, label: x.name, sub: 'Pop ' + x.popularity + ' · ' + c.roster + ' wrestlers', bad: c.roster < 6 || !c.shows }; })} />
   </>;
   if (!p) return <TwoPane open={false} list={list} onBack={() => { }}><p class="empty">Pick a company on the left, or add one.</p></TwoPane>;
-  const c = info.per[p.id], own = p.owner || (p.owner = {}), months: Opt[] = E.MONTHS.map((n: string, i: number) => [i + 1, n] as Opt);
+  const c = info.per[p.id], own = p.owner || (p.owner = {}), staff = p.staff || (p.staff = {}), months: Opt[] = E.MONTHS.map((n: string, i: number) => [i + 1, n] as Opt);
   const fill = () => edit(() => { const made = E.edFill(pkg, p.id, st.fill, Date.now()); note(made.length + ' unknowns signed to ' + p.name + '. Rename them on the Wrestlers tab.'); });
   return <TwoPane open list={list} onBack={() => { st.sel.companies = null; }}>
     <Panel cls="mb4" title={p.name || 'Company'}>
@@ -50,6 +50,15 @@ export function CompaniesTab() {
         <SelF label="What the crowd expects" rec={own} k="roots" options={names(E.ROOTS)} />
         <SelF label="Promise to the locker room" rec={own} k="pledge" options={names(E.PLEDGE)} />
       </div>
+    </Panel>
+    <Panel cls="mb4" title="The people">
+      <div class="editor plain">
+        {(['Play-by-play', 'Colour'] as string[]).map((lab, i) => <Field key={lab} label={lab}><input type="text" maxLength={32} placeholder={i ? 'The colour man' : 'The play-by-play man'} data-t="ed-ann" data-v={i} value={(p.announcers && p.announcers[i]) || ''}
+          onInput={e => { const v = (e.currentTarget as HTMLInputElement).value; edit(() => { const a = (p.announcers || ['', '']).slice(0, 2); while (a.length < 2) a.push(''); a[i] = v; if (a[0] || a[1]) p.announcers = a; else delete p.announcers; }); }} /></Field>)}
+        <TextF label="Road agent" rec={staff} k="road_agent" max={32} ph="The road agent" t="ed-agent" />
+        <TextF label="Head writer" rec={staff} k="head_writer" max={32} ph="The head writer" t="ed-writer" />
+      </div>
+      <p class="muted mt2">The voices on the broadcast and the two people backstage. Both commentators need a name for the game to use them.</p>
     </Panel>
     <Panel cls="mb4" title="Money and calendar">
       <div class="editor plain">
