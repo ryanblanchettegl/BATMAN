@@ -560,6 +560,9 @@ var GR={
   tease:['{a} signals for the finish... {b} blocks it!','{a} sets up for the big one, and {b} wriggles free!','{b} sees it coming and rolls to the floor. Not yet!','{a} goes for it, and {b} counters at the last second!'],
   near2:['Another cover! One, two... NO! How did {a} kick out of that?','Everything they have got! One, two... and {a} is still alive!','{b} cannot believe it. Neither can I, {c}. Two and a half!','That should have been it! The referee’s hand was coming down!'],
   chant:['They are chanting both names now, {p}.','Listen to that. Half the building for {a}, half for {b}.','The whole place is standing. Nobody wants to sit down for this.','Stomping in the stands. You can feel it up here.'],
+  main_in:['Ladies and gentlemen, it is time for the main event!','And now, the match you all came to see!','This is it. It is main event time!','The lights go down. It is time for the main event.'],
+  upset:['UPSET! Nobody in this building saw that coming!','I do not believe it! What an upset!','Somebody check the odds, {p}. That was a stunner!','They will be talking about this one for weeks. What an upset!'],
+  streak:['And just like that, the streak is over!','{l} had won {s} in a row. Not any more!','The streak ends tonight, and it ends in front of all of these people!'],
   newchamp:['We have a new champion! What a moment!','The title changes hands! Can you believe it?','A new era starts tonight!']
 };
 function sayPick(S,arr){
@@ -645,6 +648,7 @@ function callMatch(S,P,x){
     if(x.change)pbp('newchamp',2);
     return bc;
   }
+  if(x.main)hp('ring','main_in');
   ring('This '+x.mt.toLowerCase()+' match is scheduled for one fall'+(x.stipName?', and it is a '+x.stipName.toLowerCase()+' match':'')+(x.t?'. It is for the '+x.t.name+'!':'.'));
   x.sides.forEach(function(s,k){
     var isCh=x.champ&&x.champ===s,lead=s[0],big=avg(s.map(function(w){return w.ovr;}))>=62||isCh;
@@ -681,6 +685,8 @@ function callMatch(S,P,x){
   else if(f==='dq'){pbp('f_dq');col('r_dq');}
   else if(f==='co'){pbp('f_co');col('r_co');}
   else{pbp(x.mins>=20?'f_time':'f_dco');col('r_draw');}
+  if(x.upset&&!x.change)hp('col','upset',1);
+  if(x.streak){o.s=x.streak;hp('col','streak',1);}
   if(x.win<0)ring('This match is a draw.');
   else ring('Here '+(x.plural?'are your winners':'is your winner')+(f==='dq'?' by disqualification':(f==='co'?' by count-out':''))+(x.change?', and NEW '+x.t.name+' champion'+(x.plural?'s':''):(x.t&&x.retain?', and STILL '+x.t.name+' champion'+(x.plural?'s':''):''))+': {w}!');
   if(x.change)pbp('newchamp',2);
@@ -889,7 +895,7 @@ function doMatch(S,P,show,m,i,n,rep,used){
     (mins>=20?'The time limit expires with neither able to put the other away.':'Both are counted out brawling on the floor.'),o);
   if(isPl){
     var srt=all.slice().sort(function(p,q){return p.ovr-q.ovr;});
-    seg.bc=callMatch(S,P,{fx:fx,o:o,m:m,all:all,pre:pre,champ:champ,mt:MT[m.mt].n,stip:stip,stipName:stip==='std'?null:STIP[stip].n,t:t,sides:sides,feud:feud,feudHeat:heatWas,flog:flogWas,gap:srt[srt.length-1].ovr-srt[0].ovr,under:srt[0].name,CR:CR,MQ:MQ,mins:mins,ca:ca,bad:bad,fin:fin,sub:lead.style==='T'||stip==='sub',win:win,plural:winners.length>1,change:!!seg.change,retain:win>=0&&win===champSide,entrance:ctx.entrance});
+    seg.bc=callMatch(S,P,{fx:fx,o:o,m:m,all:all,pre:pre,champ:champ,mt:MT[m.mt].n,stip:stip,stipName:stip==='std'?null:STIP[stip].n,t:t,sides:sides,feud:feud,feudHeat:heatWas,flog:flogWas,gap:srt[srt.length-1].ovr-srt[0].ovr,under:srt[0].name,CR:CR,MQ:MQ,mins:mins,ca:ca,bad:bad,fin:fin,sub:lead.style==='T'||stip==='sub',win:win,plural:winners.length>1,change:!!seg.change,retain:win>=0&&win===champSide,entrance:ctx.entrance,main:isMain&&n>2,big:big,show:show.name,upset:upset,streak:endedStreak});
     if(m.mt==='1v1'){var hk=rkey(all[0].id,all[1].id),hh=(S.h2h||(S.h2h={}))[hk]||(S.h2h[hk]={n:0,a:0,b:0,lw:-1,w:0});hh.n++;hh.w=S.week;hh.lw=win>=0?winners[0].id:-1;if(win>=0){if(winners[0].id===Math.min(all[0].id,all[1].id))hh.a++;else hh.b++;}}
     all.forEach(function(w){w.deb=false;});
   }
