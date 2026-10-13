@@ -143,6 +143,11 @@ E.useUniverse(builtIn);
 /* ---- quick starts ---- */
 for (const k of ['territory', 'nine']) { const pkg = E.edQuick(k, '', 5), models = new Set(pkg.promotions.map(p => p.model));
   ok('quick start "' + k + '" is ready to play', E.edCheck(pkg).errors === 0 && pkg.promotions.length === (k === 'nine' ? 9 : 2) && (k !== 'nine' || models.size === 9), pkg.promotions.length + ' companies, ' + models.size + ' models'); }
+/* ---- a running game kept as a world ---- */
+{ E.useUniverse(builtIn); const S = E.newGame('pdw', 2, { name: 'R' }); for (let w = 0; w < 4; w++) { S.inbox.filter(e => !e.done).forEach(e => E.resolveEvent(S, e.id, 0)); while (S.qi < S.queue.length) E.runPlayerShow(S, E.suggest(S)); E.endWeek(S); }
+  const pk = E.exportUniverse(S, { name: 'Kept', id: 'kept_wk5' });
+  ok('a game kept as a world passes the World Editor check', E.edCheck(pk).errors === 0, (E.edCheck(pk).lines || []).filter(l => l.lvl === 'error').slice(0, 2).map(l => l.msg).join(' | '));
+  E.useUniverse(pk); const T = E.newGame('pdw', 1, { name: 'R' }); ok('and a new game starts in it', !!T.promos.pdw && T.w.length > 50); E.useUniverse(builtIn); }
 /* ---- make a copy: a wrestler keeps their company, a belt starts vacant, a team empty, a company brings shows and belts, not people ---- */
 { const pkg = JSON.parse(JSON.stringify(builtIn)), w = pkg.workers.find(x => E.edHome(pkg, x.id)), cw = E.edDup(pkg, 'workers', w.id);
   ok('a copied wrestler has a new id and name and the same company', cw && cw.id !== w.id && /\(copy\)$/.test(cw.ring_name) && E.edHome(pkg, cw.id) === E.edHome(pkg, w.id) && !!E.edHome(pkg, cw.id));
