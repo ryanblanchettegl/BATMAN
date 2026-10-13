@@ -11406,17 +11406,18 @@ WEEKX.push(function(S){
   S.rumF=RF.filter(function(r){
     if(r.due>S.week)return true;
     var w=S.w[r.w],P=S.promos[r.pid];if(!w||!P)return false;
-    var yes=r.k==='exp'?w.promo!==r.pid:w.promo===r.pid,txt;
-    if(r.k==='exp')txt=yes?w.name+' has left '+P.name+', as the paper said.':w.name+' has re-signed with '+P.name+'. The deal did run out, and talks ended well.';
+    var yes=r.k==='exp'||r.k==='unh'?w.promo!==r.pid:w.promo===r.pid,txt;
+    if(r.k==='unh')txt=yes?w.name+' has left '+P.name+'. The talk was true.':w.name+' stayed with '+P.name+' after all.';
+    else if(r.k==='exp')txt=yes?w.name+' has left '+P.name+', as the paper said.':w.name+' has re-signed with '+P.name+'. The deal did run out, and talks ended well.';
     else txt=yes?w.name+' has signed with '+P.name+'. The earlier report was right.':'Nothing came of '+w.name+' at '+P.name+'. We got that one wrong.';
-    RR.unshift({w:S.week,ok:yes,lvl:r.lvl,t:(yes?'CONFIRMED: ':(r.k==='exp'?'UPDATE: ':'CORRECTION: '))+txt});
+    RR.unshift({w:S.week,ok:yes,lvl:r.lvl,t:(yes?'CONFIRMED: ':(r.k==='exp'||r.k==='unh'?'UPDATE: ':'CORRECTION: '))+txt});
     if(yes)netPost(S,'p',netHandle(by),by,txt,netLikes(1500,S.week+'rr'+r.w));
     return false;
   });
   if(RR.length>12)RR.length=12;
   // new rumours worth following up are kept until they come due
   netRumours(S,S.week).forEach(function(r){
-    if(!r.k||S.rumF.length>=20||S.rumF.some(function(x){return x.w===r.w&&x.k===r.k;}))return;
+    if(!r.k||S.rumF.length>=20||S.rumF.some(function(x){return x.w===r.w;}))return;
     S.rumF.push({w:r.w,k:r.k,pid:r.pid,due:r.due,lvl:r.lvl});
   });
   // and the issue of the dirt sheet for the week that just ended is filed
@@ -11431,6 +11432,9 @@ function netRumours(S,wk){
     if(pid===S.player)return;var P=S.promos[pid],R=rosterOf(S,pid).filter(function(w){return !w.nw;});
     var up=R.filter(function(w){return w.con!=null&&w.con<=6;}).sort(function(a,b){return b.ovr-a.ovr;})[0];
     if(up&&up.ovr>=P.image-12)out.push({lvl:'sure',t:up.name+'’s deal with '+P.name+' runs out in '+up.con+' '+(up.con===1?'week':'weeks')+'. Nothing new has been signed.',w:up.id,k:'exp',pid:pid,due:wk+up.con+1});
+    // a star who is unhappy where they are, with the deal running down: the paper hears it before the market does
+    var sour=R.filter(function(w){return w.con!=null&&w.con>6&&w.con<=14&&w.ovr>=P.image-5&&holdLvl(P,w.id)===0;}).sort(function(a,b){return a.morale-b.morale||b.ovr-a.ovr;})[0];
+    if(sour)out.push({lvl:sour.morale<50?'likely':'thin',t:sour.name+' is said to be unhappy with their spot at '+P.name+', and their deal is up in a few months. Other companies will be listening.',w:sour.id,k:'unh',pid:pid,due:wk+sour.con+1});
     if(P.cash<0)out.push({lvl:'likely',t:P.name+' are behind on their bills. Expect cuts.'});
     if(P.shows.length<3&&P.cash>0&&P.image>=45+15*P.shows.length&&R.length>=14*(P.shows.length+1))out.push({lvl:'likely',t:P.name+' have been talking to a network about another weekly show.'});
   });

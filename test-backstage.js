@@ -45,6 +45,11 @@ ok('an old week with no changes is empty', E.sheetInfo(S).now.week === wk && (()
     const r = E.sheetInfo(T).now.rumours.find(x => x.t.includes('shadow'));
     ok('the sheet warns that a team is coming apart, naming the jealous one', !!r && r.t.startsWith('People backstage say ' + a.name) && r.lvl === 'likely', r && r.t);
   } }
+/* a rival star unhappy with their spot is followed up once, whatever else is said about them */
+{ const T = E.newGame('pdw', 2, { name: 'R' }); const twice = {};
+  for (let w = 0; w < 40 && !T.over; w++) { T.inbox.filter(e => !e.done).forEach(e => E.resolveEvent(T, e.id, 0)); if (T.owner.pending) E.setCreed(T, { style: 'merit', roots: 'tradition', pledge: 'stable' }); while (T.qi < T.queue.length) { const c = E.suggest(T); E.runPlayerShow(T, c); } E.endWeek(T);
+    const ids = (T.rumF || []).map(r => r.w); ids.forEach((id, i) => { if (ids.indexOf(id) !== i) twice[id] = 1; }); }
+  ok('nobody is followed up twice at once', !Object.keys(twice).length, Object.keys(twice).join(',')); }
 /* rumours that come due are settled */
 S.rumF = [{ w: x.id, k: 'exp', pid: x.promo, due: S.week, lvl: 'sure' }, { w: y.id, k: 'fa', pid: S.order.find(p => p !== y.promo && p !== S.player), due: S.week, lvl: 'thin' }];
 S.rumR = [];
