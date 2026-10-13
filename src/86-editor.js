@@ -213,6 +213,12 @@ E.edSetManager=function(pkg,wid,mid){
   var m=edFind(pkg,'workers',mid);if(!m||m.id===wid||!m.roles||m.roles.indexOf('manager')<0)return null;
   w.manager_id=m.id;return w;
 };
+/** One thing done to several wrestlers at once: 'sign' to company `pid`, 'release' (free agents) or 'delete'. Returns how many. */
+E.edMany=function(pkg,ids,what,pid){
+  edShape(pkg);var n=0;(ids||[]).forEach(function(id){if(!edFind(pkg,'workers',id))return;
+    if(what==='sign'&&pid){E.edSign(pkg,id,pid);n++;}else if(what==='release'){E.edSign(pkg,id,null);n++;}else if(what==='delete'){E.edRemove(pkg,'workers',id);n++;}});
+  return n;
+};
 E.edFillFree=function(pkg,n,seed){
   edShape(pkg);var st={s:(seed>>>0)||1},N=edNames(pkg),used={},made=[],styles=Object.keys(STYLE_KEY),low=['midcarder','lower_midcarder','jobber'];
   pkg.workers.forEach(function(w){used[w.ring_name]=1;});n=clamp(Math.round(n)||6,1,40);

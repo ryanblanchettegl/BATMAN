@@ -8,9 +8,9 @@ export interface EdState {
   id: string | null; tab: EdTab;
   /** the record open on each tab */
   sel: Record<string, string | null>;
-  q: string; fp: string; sort: Record<string, string>; newName: string; del: string | null; msg: string; err: boolean; text: string; copied: boolean; fill: number;
+  q: string; fp: string; sort: Record<string, string>; many: boolean; picked: Record<string, 1>; manyTo: string; newName: string; del: string | null; msg: string; err: boolean; text: string; copied: boolean; fill: number;
 }
-export const es = () => slice<EdState>('worldedit', () => ({ id: null, tab: 'world', sel: {}, q: '', fp: '', sort: {}, newName: '', del: null, msg: '', err: false, text: '', copied: false, fill: 12 }));
+export const es = () => slice<EdState>('worldedit', () => ({ id: null, tab: 'world', sel: {}, q: '', fp: '', sort: {}, many: false, picked: {}, manyTo: '', newName: '', del: null, msg: '', err: false, text: '', copied: false, fill: 12 }));
 /** The package open in the editor. */
 export const world = (): any => UNIS[es().id as string];
 

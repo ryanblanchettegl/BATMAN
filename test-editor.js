@@ -115,6 +115,11 @@ E.useUniverse(builtIn);
   E.edSetManager(pkg, w.id, m.id); ok('picking one writes manager_id and the check accepts it', w.manager_id === m.id && E.edCheck(pkg).errors === 0);
   ok('somebody without the Manager job cannot manage', E.edSetManager(pkg, w.id, pkg.workers.find(x => !(x.roles || []).includes('manager') && x.id !== w.id).id) === null && w.manager_id === m.id);
   E.edSetManager(pkg, w.id, null); ok('Nobody unties them', !w.manager_id); }
+/* ---- several at once ---- */
+{ const pkg = JSON.parse(JSON.stringify(builtIn)), ids = pkg.workers.filter(x => E.edHome(pkg, x.id)).slice(0, 3).map(x => x.id), to = pkg.promotions[1].id;
+  ok('sign all picked moves every one of them', E.edMany(pkg, ids, 'sign', to) === 3 && ids.every(id => E.edHome(pkg, id) === to));
+  ok('release all picked makes them free agents', E.edMany(pkg, ids, 'release') === 3 && ids.every(id => !E.edHome(pkg, id)));
+  const n0 = pkg.workers.length; ok('delete all picked removes them', E.edMany(pkg, ids, 'delete') === 3 && pkg.workers.length === n0 - 3 && E.edCheck(pkg).errors === 0); }
 /* ---- make a copy: a wrestler keeps their company, a belt starts vacant, a team empty, a company brings shows and belts, not people ---- */
 { const pkg = JSON.parse(JSON.stringify(builtIn)), w = pkg.workers.find(x => E.edHome(pkg, x.id)), cw = E.edDup(pkg, 'workers', w.id);
   ok('a copied wrestler has a new id and name and the same company', cw && cw.id !== w.id && /\(copy\)$/.test(cw.ring_name) && E.edHome(pkg, cw.id) === E.edHome(pkg, w.id) && !!E.edHome(pkg, cw.id));

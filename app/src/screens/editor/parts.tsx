@@ -36,9 +36,9 @@ export function Rating(p: { label: string; obj: Rec; k: string; opt?: boolean })
 }
 export interface Pick { id: string; label: string; sub?: string; bad?: boolean }
 /** The list on the left of a tab. One row is open at a time. */
-export function PickList(p: { items: Pick[]; sel: string | null | undefined; onPick: (id: string) => void; t: string; empty: string; more?: string }) {
+export function PickList(p: { items: Pick[]; sel: string | null | undefined; onPick: (id: string) => void; t: string; empty: string; more?: string; many?: Record<string, any> }) {
   if (!p.items.length) return <p class="empty">{p.empty}</p>;
-  return <div class="edlist" role="list">{p.items.map(it => <button type="button" key={it.id} class={'edrow' + (it.id === p.sel ? ' on' : '') + (it.bad ? ' bad' : '')} aria-pressed={it.id === p.sel} {...dataAttrs(p.t, { id: it.id })}
+  return <div class="edlist" role="list">{p.items.map(it => <button type="button" key={it.id} class={'edrow' + ((p.many ? !!p.many[it.id] : it.id === p.sel) ? ' on' : '') + (it.bad ? ' bad' : '')} aria-pressed={p.many ? !!p.many[it.id] : it.id === p.sel} {...dataAttrs(p.t, { id: it.id })}
     onClick={() => look(() => p.onPick(it.id))}><span class="nm">{it.label}</span>{it.sub ? <span class="st">{it.sub}</span> : null}</button>)}
     {p.more ? <p class="muted mt1">{p.more}</p> : null}</div>;
 }

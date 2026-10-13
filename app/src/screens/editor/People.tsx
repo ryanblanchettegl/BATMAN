@@ -69,6 +69,18 @@ function Form(p: { w: any }) {
   </>;
 }
 
+/** What to do with the wrestlers picked on the list: sign them all, release them all, or delete them all (two presses). */
+function Many() {
+  const st = es(), pkg = world(), ids = Object.keys(st.picked || {}), n = ids.length, to = st.manyTo || (pkg.promotions[0] && pkg.promotions[0].id) || '';
+  const done = (msg: string) => { st.picked = {}; note(msg); };
+  return <div class="row mb2 edmany" data-t="ed-many-acts">
+    <Sel t="ed-many-to" label="Company" value={to} options={pkg.promotions.map((x: any) => [x.id, x.name]) as Opt[]} onChange={v => look(() => { st.manyTo = v; })} />
+    <Btn kind="sm" t="ed-many-sign" onClick={() => edit(() => { const k = E.edMany(pkg, ids, 'sign', to); done(k + ' signed to ' + ((pkg.promotions.find((x: any) => x.id === to) || {}).name || 'the company') + '.'); })}>Sign all {n}</Btn>
+    <Btn kind="sm" t="ed-many-release" onClick={() => edit(() => { const k = E.edMany(pkg, ids, 'release'); done(k + ' released. They are free agents now.'); })}>Release all {n}</Btn>
+    {st.del === 'many' ? <Btn kind="danger" t="ed-many-del-yes" onClick={() => edit(() => { const k = E.edMany(pkg, ids, 'delete'); st.del = null; st.sel.wrestlers = null; done(k + ' deleted.'); })}>Yes, delete all {n}</Btn>
+      : <Btn kind="sm" t="ed-many-del" onClick={() => look(() => { st.del = 'many'; })}>Delete all {n}</Btn>}
+  </div>;
+}
 export function WrestlersTab() {
   const st = es(), pkg = world(), info = E.edInfo(pkg), q = st.q.trim().toLowerCase();
   const pname: Record<string, string> = {}; pkg.promotions.forEach((x: any) => { pname[x.id] = x.name; });
@@ -91,7 +103,10 @@ export function WrestlersTab() {
       <Sel t="ed-sort" label="Sort by" value={by} options={[['over', 'Overness'], ['name', 'Name'], ['age', 'Age'], ['co', 'Company']] as Opt[]} onChange={v => look(() => { sorts[String(st.id)] = v; })} />
       <Sel t="ed-fp" label="Company" value={st.fp} options={[['', 'Everyone'], ['FA', 'Free agents']].concat(pkg.promotions.map((x: any) => [x.id, x.name])) as Opt[]} onChange={v => look(() => { st.fp = v; })} />
     </div>
-    <PickList t="ed-pick" sel={st.sel.wrestlers} onPick={id => { st.sel.wrestlers = id; }} empty={pkg.workers.length ? 'Nobody matches.' : 'No wrestlers yet. Add one, or fill a roster from the Companies tab.'}
+    <div class="row mb2"><Btn kind="sm" t="ed-many" on={!!st.many} onClick={() => look(() => { st.many = !st.many; st.picked = {}; st.del = null; })}>{st.many ? 'Pick several: on' : 'Pick several'}</Btn>
+      {st.many ? <span class="muted">{Object.keys(st.picked || {}).length} picked</span> : null}</div>
+    {st.many && Object.keys(st.picked || {}).length ? <Many /> : null}
+    <PickList t="ed-pick" sel={st.sel.wrestlers} many={st.many ? (st.picked || (st.picked = {})) : undefined} onPick={id => { if (st.many) { const P = st.picked || (st.picked = {}); if (P[id]) delete P[id]; else P[id] = 1; } else st.sel.wrestlers = id; }} empty={pkg.workers.length ? 'Nobody matches.' : 'No wrestlers yet. Add one, or fill a roster from the Companies tab.'}
       more={(all.length > SHOWN ? 'Showing ' + SHOWN + ' of ' + all.length + '. Search or pick a company to narrow it.' : 'Showing ' + all.length + (all.length === 1 ? ' person.' : ' people.')) + (all.length < pkg.workers.length ? ' ' + pkg.workers.length + ' in this world.' : '')}
       items={all.slice(0, SHOWN).map(x => ({ id: x.id, label: x.ring_name, sub: (pname[info.home[x.id]] || 'Free agent') + ' · Over ' + ((x.ratings && x.ratings.overness) || 0) }))} />
   </>;

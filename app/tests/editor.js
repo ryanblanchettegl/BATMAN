@@ -105,6 +105,18 @@ async function run(mode) {
       ok(mode, 'with Free agents chosen, Make unknowns adds unsigned wrestlers', (await rowsNow()).length > fa0 && /Six unknowns added/.test(await txt(page, '.edpage')));
       await page.selectOption('[data-t="ed-fp"]', ''); await page.waitForTimeout(80);
       await pickSort('over');
+      /* pick several: two rows, release both, then delete both in two presses */
+      await page.click('[data-t="ed-many"]');
+      const rows = await page.$$('.edlist .edrow'); await rows[rows.length - 1].click(); await rows[rows.length - 2].click();
+      ok(mode, 'Pick several turns rows into toggles', /2 picked/.test(await txt(page, '.edpage')) && (await page.$$('.edlist .edrow.on')).length === 2);
+      await page.click('[data-t="ed-many-release"]'); await page.waitForTimeout(80);
+      ok(mode, 'Release all says what it did', /2 released/.test(await txt(page, '.edpage')));
+      const r2 = await page.$$('.edlist .edrow'); await r2[r2.length - 1].click(); await r2[r2.length - 2].click();
+      const n1 = (await rowsNow()).length; await page.click('[data-t="ed-many-del"]');
+      ok(mode, 'Delete all asks first', (await rowsNow()).length === n1 && !!(await page.$('[data-t="ed-many-del-yes"]')));
+      await page.click('[data-t="ed-many-del-yes"]'); await page.waitForTimeout(80);
+      ok(mode, 'then deletes both', (await rowsNow()).length === n1 - 2 && /2 deleted/.test(await txt(page, '.edpage')));
+      await page.click('[data-t="ed-many"]');
       await page.click('.edlist .edrow'); await page.waitForSelector('[data-t="ed-dup"]');
       const n0 = (await rowsNow()).length; await page.click('[data-t="ed-dup"]'); await page.waitForTimeout(150);
       ok(mode, 'Make a copy adds a wrestler and opens the copy', /\(copy\)/.test(await page.$eval('[data-t="ed-wrname"]', e => e.value).catch(() => '')), await page.$eval('[data-t="ed-wrname"]', e => e.value).catch(() => 'no form'));
