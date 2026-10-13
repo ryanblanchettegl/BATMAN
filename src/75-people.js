@@ -2,8 +2,16 @@
 function ovrCap(P,w){return Math.min(100,P.image+10+(w.sq==null?50:w.sq)*0.2);}
 function phaseOf(w){return w.age<w.pk[0]?0:(w.age<=w.pk[1]?1:(w.age<w.cl?2:3));}
 var PHASE=['Still developing','In their prime','Past their peak','In steep decline'];
+/** One line on a career for the retirement notice, from what the game kept: wins, title wins and big moments on the wrestler's log. */
+function careerLine(w){
+  var L=w.log||[],t=L.filter(function(x){return x.k==='title';}).length,h=L.filter(function(x){return x.k==='hof'||x.k==='honour';}).length,bits=[];
+  if(w.wins>=10)bits.push(w.wins+' wins');
+  if(t)bits.push(t+(t===1?' title win':' title wins'));
+  if(h)bits.push('a place in the honours');
+  return bits.length?' Career: '+bits.join(', ')+'.':'';
+}
 function retire(S,w,why){
-  if(w.promo!=='FA'){var P=S.promos[w.promo];leaveCompany(S,w,'retired');if(w.ovr>=50||w.promo===S.player)news(S,'contract',w.name+' ('+P.name+') has retired at '+w.age+(why?': '+why:'')+'.');}
+  if(w.promo!=='FA'){var P=S.promos[w.promo];leaveCompany(S,w,'retired');if(w.ovr>=50||w.promo===S.player)news(S,'contract',w.name+' ('+P.name+') has retired at '+w.age+(why?': '+why:'')+'.'+careerLine(w));}
   mile(S,w,'retire','Retired at '+w.age);w.rtp=w.promo!=='FA'?w.promo:null;w.promo='FA';w.brand=null;w.rt=S.week;w.camp=false;w.retiring=null;
 }
 function birthday(S,w){
