@@ -7,7 +7,7 @@ What already exists (see `CLAUDE.md`): relationship matrix and memories, live sh
 | # | Opportunity | Value | Effort | Risk | Status |
 |---|---|---|---|---|---|
 | 1 | Dirt sheet reports what people did to each other, with Sure/Likely/Thin by closeness | High | S | Low | Done (Backstage panel, `test-backstage.js`) |
-| 2 | Rumours that resolve: a Thin item later shown true or false, with a correction | High | M | Low | Next |
+| 2 | Rumours that resolve: a Thin item later shown true or false, with a correction | High | M | Low | Done (Follow-ups panel, `S.rumF`, `S.rumR`) |
 | 3 | Feed posts for relationship turns (new friends, new heat) from different voices | Med | S | Low | Open |
 | 4 | Archive page: champions, rivalries and careers from `S.reports` and `S.news` | High | L | Med | Open |
 | 5 | Illustrated cinematic match moments, picked from the simulated beats | High | L | High | Open, needs art decision from Ryan |

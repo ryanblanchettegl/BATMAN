@@ -9823,6 +9823,24 @@ WEEKX.push(function(S){
     if(n>=3||h01(S.week+'n'+i+x.t.length)>0.7)return;n++;
     netPost(S,'p',netHandle(by),by,(x.k==='title'?'TITLE NEWS: ':(x.k==='contract'?'CONTRACTS: ':(x.k==='injury'?'INJURY: ':'NEWS: ')))+x.t,netLikes(x.k==='title'?2400:1100,S.week+'n'+i));
   });
+  // rumours that came due are settled: confirmed, or corrected
+  var RF=S.rumF||(S.rumF=[]),RR=S.rumR||(S.rumR=[]);
+  S.rumF=RF.filter(function(r){
+    if(r.due>S.week)return true;
+    var w=S.w[r.w],P=S.promos[r.pid];if(!w||!P)return false;
+    var yes=r.k==='exp'?w.promo!==r.pid:w.promo===r.pid,txt;
+    if(r.k==='exp')txt=yes?w.name+' has left '+P.name+', as the paper said.':w.name+' is still with '+P.name+'. The report that the deal would run out unsigned was wrong.';
+    else txt=yes?w.name+' has signed with '+P.name+'. The earlier report was right.':'Nothing came of '+w.name+' at '+P.name+'. We got that one wrong.';
+    RR.unshift({w:S.week,ok:yes,lvl:r.lvl,t:(yes?'CONFIRMED: ':'CORRECTION: ')+txt});
+    if(yes)netPost(S,'p',netHandle(by),by,txt,netLikes(1500,S.week+'rr'+r.w));
+    return false;
+  });
+  if(RR.length>12)RR.length=12;
+  // new rumours worth following up are kept until they come due
+  netRumours(S,S.week).forEach(function(r){
+    if(!r.k||S.rumF.length>=20||S.rumF.some(function(x){return x.w===r.w&&x.k===r.k;}))return;
+    S.rumF.push({w:r.w,k:r.k,pid:r.pid,due:r.due,lvl:r.lvl});
+  });
   // and the issue of the dirt sheet for the week that just ended is filed
   var L=S.sheets||(S.sheets=[]);L.unshift(netSheet(S,S.week));if(L.length>NET_SHEETS)L.length=NET_SHEETS;
 });
@@ -9834,12 +9852,12 @@ function netRumours(S,wk){
   S.order.forEach(function(pid){
     if(pid===S.player)return;var P=S.promos[pid],R=rosterOf(S,pid).filter(function(w){return !w.nw;});
     var up=R.filter(function(w){return w.con!=null&&w.con<=6;}).sort(function(a,b){return b.ovr-a.ovr;})[0];
-    if(up&&up.ovr>=P.image-12)out.push({lvl:'sure',t:up.name+'’s deal with '+P.name+' runs out in '+up.con+' '+(up.con===1?'week':'weeks')+'. Nothing new has been signed.',w:up.id});
+    if(up&&up.ovr>=P.image-12)out.push({lvl:'sure',t:up.name+'’s deal with '+P.name+' runs out in '+up.con+' '+(up.con===1?'week':'weeks')+'. Nothing new has been signed.',w:up.id,k:'exp',pid:pid,due:wk+up.con+1});
     if(P.cash<0)out.push({lvl:'likely',t:P.name+' are behind on their bills. Expect cuts.'});
     if(P.shows.length<3&&P.cash>0&&P.image>=45+15*P.shows.length&&R.length>=14*(P.shows.length+1))out.push({lvl:'likely',t:P.name+' have been talking to a network about another weekly show.'});
   });
   var fa=S.w.filter(function(w){return w.promo==='FA'&&!w.rt&&!w.nw;}).sort(function(a,b){return b.ovr-a.ovr;})[0],rv=S.order.filter(function(p){var g=modelOf(S.promos[p]).gender;return p!==S.player&&(!g||!fa||g===fa.g);});
-  if(fa&&rv.length)out.push({lvl:'thin',t:fa.name+' was seen at a '+S.promos[netPickH(rv,wk+'thin')].name+' show this week. It could mean anything.',w:fa.id});
+  if(fa&&rv.length){var fp=netPickH(rv,wk+'thin');out.push({lvl:'thin',t:fa.name+' was seen at a '+S.promos[fp].name+' show this week. It could mean anything.',w:fa.id,k:'fa',pid:fp,due:wk+4});}
   var hot=activeFeuds(S).filter(function(f){return f.promo===me.id&&f.heat>=70;})[0];
   if(hot)out.push({lvl:'likely',t:'Everybody expects '+feudLabel(S,hot)+' to be settled at '+nextBigName(S,me)+'.'});
   // a different three each week, sure things first
@@ -9881,7 +9899,7 @@ function netSheet(S,wk){
   if(c.wom===4)next.push(P.name+' '+dbOf(S).events[c.month]+' is next week.');
   var soon=rosterOf(S,P.id).filter(function(w){return !w.nw&&w.con!=null&&w.con<=2;}).sort(function(a,b){return b.ovr-a.ovr;})[0];if(soon)next.push(soon.name+'’s contract with '+P.name+' is nearly up.');
   var review=reps.length?(d>=3?'The booking is working: the shows are beating expectations.':(d<=-3?'The booking is missing: the shows are under what the crowd expects.':'The booking is doing its job, no more.')):'No shows from '+P.name+' yet this week.';
-  return {week:wk,label:cal(wk).label,by:S.columnist||'The Ringside Wire',lead:lead,yours:yours,best:best,world:world,business:business,backstage:netBackstage(S,wk),rumours:netRumours(S,wk),next:next,review:review};
+  return {week:wk,label:cal(wk).label,by:S.columnist||'The Ringside Wire',lead:lead,yours:yours,best:best,world:world,business:business,backstage:netBackstage(S,wk),followups:(S.rumR||[]).filter(function(x){return x.w===wk;}),rumours:netRumours(S,wk),next:next,review:review};
 }
 E.sheetInfo=function(S){return {now:netSheet(S,S.week),past:(S.sheets||[]).slice()};};
 E.feed=function(S){return (S.feed||[]).slice();};

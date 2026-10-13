@@ -20,4 +20,14 @@ ok('at most three reports', s1.backstage.length <= 3);
 const before = JSON.stringify(S.rng !== undefined ? S.rng : S.seed); E.sheetInfo(S);
 ok('reading it does not touch the random stream', JSON.stringify(S.rng !== undefined ? S.rng : S.seed) === before);
 ok('an old week with no changes is empty', E.sheetInfo(S).now.week === wk && (() => { S.week += 1; const n = E.sheetInfo(S).now.backstage.length; S.week -= 1; return n === 0; })());
+/* rumours that come due are settled */
+S.rumF = [{ w: x.id, k: 'exp', pid: x.promo, due: S.week, lvl: 'sure' }, { w: y.id, k: 'fa', pid: S.order.find(p => p !== y.promo && p !== S.player), due: S.week, lvl: 'thin' }];
+S.rumR = [];
+const keep = x.promo; x.promo = 'FA';
+const WK = S.week, r0 = S.reports.length;
+try { E.endWeek(S); } catch (e) { console.log('endWeek threw', e.message); }
+const R = (S.rumR || []).filter(r => r.w === WK);
+ok('a rumour that came due is settled', R.length === 2 && !S.rumF.some(r => r.due <= WK), JSON.stringify(R));
+ok('a deal that did run out is confirmed', R.some(r => r.ok && /CONFIRMED/.test(r.t) && r.t.includes(x.name)));
+ok('a free agent never signed is corrected', R.some(r => !r.ok && /CORRECTION/.test(r.t)));
 console.log(fails.length ? 'FAILED: ' + fails.join('; ') : 'test-backstage: all passed'); process.exit(fails.length ? 1 : 0);
