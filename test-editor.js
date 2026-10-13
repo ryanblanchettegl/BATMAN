@@ -140,6 +140,9 @@ E.useUniverse(builtIn);
   ok('a game played in the world uses its columnist', S.columnist === 'The Bell Ringer', S.columnist);
   E.edSetList(pkg, 'sponsors', ''); ok('an empty box goes back to the game\'s own list', !pkg.sponsors);
   E.useUniverse(builtIn); }
+/* ---- quick starts ---- */
+for (const k of ['territory', 'nine']) { const pkg = E.edQuick(k, '', 5), models = new Set(pkg.promotions.map(p => p.model));
+  ok('quick start "' + k + '" is ready to play', E.edCheck(pkg).errors === 0 && pkg.promotions.length === (k === 'nine' ? 9 : 2) && (k !== 'nine' || models.size === 9), pkg.promotions.length + ' companies, ' + models.size + ' models'); }
 /* ---- make a copy: a wrestler keeps their company, a belt starts vacant, a team empty, a company brings shows and belts, not people ---- */
 { const pkg = JSON.parse(JSON.stringify(builtIn)), w = pkg.workers.find(x => E.edHome(pkg, x.id)), cw = E.edDup(pkg, 'workers', w.id);
   ok('a copied wrestler has a new id and name and the same company', cw && cw.id !== w.id && /\(copy\)$/.test(cw.ring_name) && E.edHome(pkg, cw.id) === E.edHome(pkg, w.id) && !!E.edHome(pkg, cw.id));

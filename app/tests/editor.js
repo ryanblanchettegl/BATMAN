@@ -163,6 +163,17 @@ async function run(mode) {
 
 (async () => {
   for (const m of MODES) await run(m);
+  /* the quick starts: a world ready to play in one press */
+  { const { browser, page, errs } = await open({ mode: 'desk', promo: null });
+    try {
+      await page.click('[data-t="editor"]'); await page.waitForSelector('.edpage');
+      await page.fill('#ed-newname', 'Quick Nine'); await page.click('[data-t="ed-new-nine"]'); await page.waitForTimeout(200);
+      ok('desk', 'a nine-company world of unknowns opens ready to play', /quick nine/i.test(await txt(page, '.edpage h1')) && /ready to play/i.test(await txt(page, '.edtop')), await txt(page, '.edtop'));
+      await page.keyboard.press('Escape'); await page.waitForTimeout(100);
+      await page.fill('#ed-newname', 'Quick Two'); await page.click('[data-t="ed-new-territory"]'); await page.waitForTimeout(200);
+      ok('desk', 'a two-company territory opens ready to play', /quick two/i.test(await txt(page, '.edpage h1')) && /ready to play/i.test(await txt(page, '.edtop')));
+      ok('desk', 'no errors (quick starts)', !errs.length, errs.slice(0, 3).join(' | '));
+    } finally { await browser.close(); } }
   if (fails.length) { console.log('FAILED: ' + fails.length); process.exit(1); }
   console.log('editor: all passed');
 })();

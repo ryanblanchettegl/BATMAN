@@ -251,6 +251,23 @@ E.edSetList=function(pkg,key,text){
   else{var N=pkg.names||(pkg.names={});if(L.length)N[k[1]]=L;else delete N[k[1]];if(!Object.keys(N).length)delete pkg.names;}
   return L.length;
 };
+/** A world ready to rename instead of build. 'territory': two companies sharing a region, one bigger than the other.
+    'nine': nine companies, one of each model, from a national giant down to a small promotion, every roster filled with
+    unknowns. Names are invented and plain, made to be changed. */
+var ED_QUICK={
+  territory:[['NTW','Northern Territory Wrestling','classic',58,22],['SCW','Southern Championship Wrestling','outlaw',44,16]],
+  nine:[['UWA','United Wrestling Alliance','corporate',85,40],['GPW','Grand Prix Wrestling','purist',66,26],['HCW','Hard Count Wrestling','workrate',58,22],
+    ['RCW','Rust City Wrestling','outlaw',50,20],['NMP','New Money Pro','startup',48,18],['UPW','Underground Pro Wrestling','underdog',44,18],
+    ['LEL','Liga Estrella Libre','spectacle',56,22],['LTC','Lucha Tradicional del Centro','tradition',46,18],['SJW','Starlight Joshi Wrestling','joshi',42,16]]
+};
+E.edQuick=function(kind,name,seed){
+  var L=ED_QUICK[kind];if(!L)return null;var pkg=E.edNew(name||(kind==='nine'?'A world of unknowns':'A territory')),k=(seed>>>0)||1;
+  L.forEach(function(x,i){var p=E.edAddPromo(pkg,{name:x[0],full_name:x[1],model:MODELS[x[2]]?x[2]:'classic',popularity:x[3]});
+    if(MODELS[p.model]&&MODELS[p.model].gender==='F')pkg.titles.forEach(function(t){if(t.promotion_id===p.id)t.gender='F';});
+    E.edFill(pkg,p.id,x[4],k+i*7919);});
+  E.edFillFree(pkg,kind==='nine'?12:6,k+104729);
+  return pkg;
+};
 E.edFillFree=function(pkg,n,seed){
   edShape(pkg);var st={s:(seed>>>0)||1},N=edNames(pkg),used={},made=[],styles=Object.keys(STYLE_KEY),low=['midcarder','lower_midcarder','jobber'];
   pkg.workers.forEach(function(w){used[w.ring_name]=1;});n=clamp(Math.round(n)||6,1,40);

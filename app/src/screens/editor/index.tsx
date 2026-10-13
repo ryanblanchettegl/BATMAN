@@ -54,6 +54,8 @@ function Home() {
       <div class="row mt2">
         <Btn kind="go" t="ed-new" onClick={() => look(() => { addWorld(E.edNew(st.newName)); st.newName = ''; })}>Start from scratch</Btn>
         <Btn t="ed-new-copy" onClick={() => look(() => { addWorld(E.edCopy(builtInUniverse(), st.newName || undefined)); st.newName = ''; })}>Start from a copy of the built-in world</Btn>
+        <Btn t="ed-new-territory" onClick={() => look(() => { addWorld(E.edQuick('territory', st.newName || undefined, Date.now() & 0xffff)); st.newName = ''; })}>A two-company territory</Btn>
+        <Btn t="ed-new-nine" onClick={() => look(() => { addWorld(E.edQuick('nine', st.newName || undefined, Date.now() & 0xffff)); st.newName = ''; })}>A nine-company world of unknowns</Btn>
         <Btn t="ed-import" onClick={() => file.current && file.current.click()}>Open a world file</Btn>
         <input type="file" id="ed-file" ref={file} accept=".json,application/json" hidden onChange={onFile} />
       </div>
