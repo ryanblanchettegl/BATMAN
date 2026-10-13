@@ -71,8 +71,12 @@ function Achievements() {
 
 function MilestoneWall() {
   const L: any[] = E.milestones(G.S), got = L.filter(m => m.w).length;
+  const list = (A: any[]) => <ul class="list">{A.map(m => <li><span><b>{m.name}</b><br /><span class="muted">{m.desc}</span></span><span class={m.w ? 'good' : 'muted'}>{m.w ? E.cal(m.w).label : 'Not yet'}</span></li>)}</ul>;
+  // the next two to reach are on the page; the whole wall is a button away
+  const next = L.filter(m => !m.w).slice(0, 2);
   return <Panel title={'Milestone wall · ' + got + ' of ' + L.length}>
-    <ul class="list">{L.map(m => <li><span><b>{m.name}</b><br /><span class="muted">{m.desc}</span></span><span class={m.w ? 'good' : 'muted'}>{m.w ? E.cal(m.w).label : 'Not yet'}</span></li>)}</ul>
+    {next.length ? <><p class="eyebrow">Next to reach</p>{list(next)}</> : <p class="good">Every milestone reached.</p>}
+    <div class="row mt1"><Btn kind="sm" t="career-wall" onClick={() => openModal({ kind: 'info', title: 'Milestone wall · ' + got + ' of ' + L.length, wide: true, body: () => list(L) })}>The whole wall</Btn></div>
   </Panel>;
 }
 
