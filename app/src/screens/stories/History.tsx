@@ -19,6 +19,15 @@ function Chronicles() {
 }
 
 /** The year's best matches across every promotion so far. Each opens a short card with the details. */
+/** The moments kept from your shows (src/84-kept.js), newest first, in the words they were called. */
+const KEPT_TAG: Record<string, string> = { gold: 'New champion', upset: 'Upset', streak: 'Streak broken', match: 'Five stars' };
+function Kept() {
+  const L: any[] = E.kept(G.S).slice(0, 8);
+  return <Panel title="Moments kept">
+    {L.length ? <ul class="list" data-t="kept">{L.map((k, i) => <li key={k.w + ':' + i} class="col"><span><span class="gold">{KEPT_TAG[k.k] || 'Moment'}</span> {'·'} <Txt>{k.label}</Txt> <span class="muted">{'·'} {k.show}, {wk(k.w)}</span></span><span><Txt>{'“' + k.x + '”'}</Txt></span></li>)}</ul>
+      : <Empty>Nothing kept yet. A new champion, an upset, a long streak broken or a five-star match will be.</Empty>}
+  </Panel>;
+}
 function MatchOfYear() {
   const L: any[] = E.matchOfYear(G.S);
   const open = (m: any) => openModal({ kind: 'info', title: m.l, body: () => <>
@@ -102,7 +111,7 @@ export function History() {
   return <>
     <Head eyebrow={P.name} title="History" />
     <div class="cols">
-      <div class="stack"><Chronicles /><MatchOfYear /><RecordBook /><Records /><Awards /><HallOfFame /></div>
+      <div class="stack"><Chronicles /><Kept /><MatchOfYear /><RecordBook /><Records /><Awards /><HallOfFame /></div>
       <div class="stack">{P.titles.map((t: any) => <TitleLine t={t} />)}</div>
     </div>
   </>;

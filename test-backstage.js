@@ -50,6 +50,12 @@ ok('an old week with no changes is empty', E.sheetInfo(S).now.week === wk && (()
   for (let w = 0; w < 40 && !T.over; w++) { T.inbox.filter(e => !e.done).forEach(e => E.resolveEvent(T, e.id, 0)); if (T.owner.pending) E.setCreed(T, { style: 'merit', roots: 'tradition', pledge: 'stable' }); while (T.qi < T.queue.length) { const c = E.suggest(T); E.runPlayerShow(T, c); } E.endWeek(T);
     const ids = (T.rumF || []).map(r => r.w); ids.forEach((id, i) => { if (ids.indexOf(id) !== i) twice[id] = 1; }); }
   ok('nobody is followed up twice at once', !Object.keys(twice).length, Object.keys(twice).join(',')); }
+/* moments kept for History: rare, and each one a line that really aired */
+{ const T = E.newGame('ttt', 1, { name: 'R' }), aired = new Set();
+  for (let w = 0; w < 48; w++) { T.inbox.filter(e => !e.done).forEach(e => E.resolveEvent(T, e.id, 0)); if (T.owner.pending) E.setCreed(T, { style: 'merit', roots: 'tradition', pledge: 'stable' }); while (T.qi < T.queue.length) { const c = E.suggest(T); const r = E.runPlayerShow(T, c).rep; r.segs.forEach(s => (s.bc || []).forEach(b => aired.add(b.x))); } E.endWeek(T); }
+  const K = E.kept(T);
+  ok('a year keeps a handful of moments, not every match', K.length >= 3 && K.length <= 30, K.length + ' kept');
+  ok('every kept moment is a line that aired', K.every(k => aired.has(k.x))); }
 /* rumours that come due are settled */
 S.rumF = [{ w: x.id, k: 'exp', pid: x.promo, due: S.week, lvl: 'sure' }, { w: y.id, k: 'fa', pid: S.order.find(p => p !== y.promo && p !== S.player), due: S.week, lvl: 'thin' }];
 S.rumR = [];
