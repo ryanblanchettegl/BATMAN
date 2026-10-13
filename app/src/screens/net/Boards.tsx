@@ -1,7 +1,7 @@
 /* The boards: the fan message board. Its mood nudges ticket demand, and the threads react to your shows. Read-only. */
 import { E } from '../../engine';
-import { G, me, plural } from '../../store';
-import { Head, Panel, Meter, Empty, Txt, Name } from '../../kit';
+import { G, me, plural, slice, view } from '../../store';
+import { Head, Panel, Meter, Empty, Txt, Name, Btn } from '../../kit';
 
 function moodNote(mood: number): string {
   if (mood >= 75) return 'They love you right now. Ticket demand is up a little.';
@@ -32,7 +32,10 @@ export function Boards() {
         <p class="muted mt1">Wrestlers read it. A place in his top ten lifts their mood, and the top spot more.</p>
       </> : null; })()}
     </Panel>
-    {N.threads.length ? N.threads.map((t: any) => <Thread t={t} />)
+    {N.threads.length ? (() => { const PER = 3, pages = Math.ceil(N.threads.length / PER), bp = slice<{ pg: number }>('boards', () => ({ pg: 0 })), pg = Math.min(bp.pg, pages - 1);
+      return <>{N.threads.slice(pg * PER, pg * PER + PER).map((t: any) => <Thread t={t} />)}
+        {pages > 1 ? <div class="row mt1"><Btn kind="sm" t="boards-newer" disabled={pg === 0} onClick={() => view(() => { bp.pg = pg - 1; })}>Newer threads</Btn><span class="muted">Page {pg + 1} of {pages}</span>
+          <Btn kind="sm" t="boards-older" disabled={pg >= pages - 1} onClick={() => view(() => { bp.pg = pg + 1; })}>Older threads</Btn></div> : null}</>; })()
       : <Panel><Empty>Nobody has posted yet. Run a show on Booking and they will have opinions.</Empty></Panel>}
   </>;
 }

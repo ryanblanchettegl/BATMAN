@@ -3,41 +3,41 @@ Page heights in screens, from app/tests/sweep.js. Limit: 3 on a desk, 4 on a tab
 desk (pdw, week 30)
 desk            1
 backstage       1
-career        7.6  over 3
+career        3.1  over 3
 booking         1
 roster        2.5
 locker        2.4
 titles          1
-market        5.9  over 3
+market        2.2
 storylines      1
-history       4.7  over 3
-sheet         2.3
+history       3.8  over 3
+sheet         2.1
 feed          2.8
-boards        3.3  over 3
+boards        1.6
 manage        1.4
 house           1
 deals           1
 overview      1.5
 finances        2
-world           4  over 3
+world         1.6
 
 tablet (pdw, week 30)
 desk            1
 backstage       1
-career         11  over 4
+career        4.3  over 4
 booking         1
 roster        4.5  over 4
-locker        3.9
+locker        3.8
 titles        1.3
-market          9  over 4
+market        3.5
 storylines      1
-history       7.1  over 4
-sheet         2.7
+history       5.5  over 4
+sheet         2.8
 feed          3.5
-boards        4.4  over 4
+boards        2.2
 manage        2.1
 house           1
 deals         1.4
 overview      1.9
 finances      2.6
-world         5.9  over 4
+world         2.2

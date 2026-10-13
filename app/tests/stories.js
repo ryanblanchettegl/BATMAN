@@ -92,8 +92,8 @@ async function history(page, mode) {
 }
 async function net(page, mode) {
   await go(page, 'boards');
-  const want = await state(page, S => ({ threads: S.net.threads.length, posts: S.net.threads.reduce((a, t) => a + t.posts.length, 0), mood: Math.round(S.net.mood), sub: S.net.threads[0] ? S.net.threads[0].sub : '', user: S.net.threads[0] ? S.net.threads[0].posts[0].u : '' }));
-  check(mode, 'every thread and post is on the board', want.threads > 0 && await count(page, '.post') === want.posts && await count(page, '.panel') === want.threads + 1, want.threads + ' threads, ' + want.posts + ' posts');
+  const want = await state(page, S => ({ threads: S.net.threads.slice(0, 3).length, posts: S.net.threads.slice(0, 3).reduce((a, t) => a + t.posts.length, 0), mood: Math.round(S.net.mood), sub: S.net.threads[0] ? S.net.threads[0].sub : '', user: S.net.threads[0] ? S.net.threads[0].posts[0].u : '' }));
+  check(mode, 'the newest three threads and their posts are on the board', want.threads > 0 && await count(page, '.post') === want.posts && await count(page, '.panel') === want.threads + 1, want.threads + ' threads, ' + want.posts + ' posts');
   check(mode, 'posts show who wrote them', await page.$eval('.post .u', e => e.innerText) === '<' + want.user + '>');
   check(mode, 'mood of the board', new RegExp('Mood of the board .* ' + want.mood + ' ').test(await text(page)), 'mood ' + want.mood);
   check(mode, 'newsgroup name', /^alt\.wrestling\.[a-z0-9]+$/i.test(await page.$eval('.eyebrow', e => e.innerText)), await page.$eval('.eyebrow', e => e.innerText));
@@ -132,7 +132,7 @@ async function net(page, mode) {
     const line0 = await page.$eval('.scrim', e => e.innerText).catch(() => ''); await page.keyboard.press('Escape'); await page.waitForTimeout(80);
     check(mode, 'history before any show', /Run a show on Booking and the book opens/.test(await text(page)) && /Champion when you arrived/.test(line0));
     await go(page, 'boards');
-    check(mode, 'the net before any show', await count(page, '.post') === await state(page, S => S.net.threads.reduce((a, t) => a + t.posts.length, 0)) && (await count(page, '.post') > 0 || /Nobody has posted yet/.test(await text(page))));
+    check(mode, 'the net before any show', await count(page, '.post') === await state(page, S => S.net.threads.slice(0, 3).reduce((a, t) => a + t.posts.length, 0)) && (await count(page, '.post') > 0 || /Nobody has posted yet/.test(await text(page))));
 
     await advance(page, 8);
     check(mode, 'eight weeks played', await state(page, S => S.week) === 9 && !(await state(page, S => S.over)));
