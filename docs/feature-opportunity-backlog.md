@@ -29,3 +29,5 @@ Done, each with tests (`app/tests/auto.js`, `test-segments.js`, `test-shape.js`)
 - Fixes found while playing: a catchphrase could go to somebody not in the promo; the owner's verdict repeated itself and praised while marking down; a C read "Died in front of them"; the desk countdown cut off the number of weeks.
 
 Next ideas for the show: rival shows the same week (needs the rivals to run before the player's show), crowd signs and chants for the hottest acts, a replay that plays back at auto pace.
+
+Known flaky test (13 October): `app/tests/desk.js` "this week's land is lit yellow..." failed once in three runs at 1280x860 with no next or touring dots counted. It looks like map drawing timing, not the colours. Not investigated yet.
