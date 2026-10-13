@@ -27,7 +27,9 @@ async function run(mode, w, h, promo) {
     ok(id, 'the map is the one the engine names, and the window says which', (await page.$eval('[data-t="road-map"]', e => e.getAttribute('data-map'))) === R.map && (await txt(page, '[data-t="road"] .ttl h2')).indexOf(R.mapName) > 0, R.mapName);
     const dot = +(await page.$eval('[data-t="road-map"]', e => e.getAttribute('data-dot'))), box = await page.$eval('[data-t="road-map"]', e => { const r = e.getBoundingClientRect(), b = e.closest('.r3').getBoundingClientRect(); return { w: r.width, h: r.height, bh: b.height, cw: e.width, ch: e.height }; });
     ok(id, 'the map is 59 by 32 square dots, each a whole number of pixels, and as tall as its window lets it be', box.cw === 59 * dot && box.ch === 32 * dot && dot >= 4 && box.h <= box.bh + 1 && box.bh - box.h < 34 + 32, dot + 'px dots, ' + Math.round(box.h) + ' of ' + Math.round(box.bh));
-    const col = await mapColours(page);
+    // the map redraws after a resize: sample until it has settled (up to two seconds) instead of trusting a fixed wait
+    let col = await mapColours(page);
+    for (let k = 0; k < 20 && !(col.now > 0 && col.land > 20 && col.mine + col.next > 0); k++) { await page.waitForTimeout(100); col = await mapColours(page); }
     ok(id, 'this week’s land is lit yellow, the places the company tours a lighter green, the rest green', col.now > 0 && col.land > 20 && col.mine + col.next > 0, JSON.stringify(col));
     ok(id, 'the heading is this week’s city and its land', (await txt(page, '[data-t="road-city"]')).trim() === (R.now.city + ', ' + R.now.land).toUpperCase(), await txt(page, '[data-t="road-city"]'));
     ok(id, 'the building is named before the show is booked', (await txt(page, '[data-t="road-show"]')).indexOf(R.now.venue) >= 0);

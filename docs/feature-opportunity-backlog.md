@@ -30,4 +30,4 @@ Done, each with tests (`app/tests/auto.js`, `test-segments.js`, `test-shape.js`)
 
 Next ideas for the show: rival shows the same week (needs the rivals to run before the player's show), crowd signs and chants for the hottest acts, a replay that plays back at auto pace.
 
-Known flaky test (13 October): `app/tests/desk.js` "this week's land is lit yellow..." failed once in three runs at 1280x860 with no next or touring dots counted. It looks like map drawing timing, not the colours. Not investigated yet.
+The flaky map check in `app/tests/desk.js` (13 October) was the map redrawing after a resize. The test now samples until it settles; three runs in a row pass.
