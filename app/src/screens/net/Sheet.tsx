@@ -32,6 +32,7 @@ function Issue(p: { s: any; live: boolean }) {
             <span>{w.lines.map((l: string, i: number) => <span key={i}>{i ? <br /> : null}<Txt>{l}</Txt></span>)}</span></li>)}</ul> : <Empty>Nothing from the other companies yet this week.</Empty>}
         </Panel>
         {s.business.length ? <Panel title="Business"><ul class="sheet-lines">{s.business.map((l: string, i: number) => <li key={i}><Txt>{l}</Txt></li>)}</ul></Panel> : null}
+        {s.backstage && s.backstage.length ? <Panel title="Backstage"><ul class="list">{s.backstage.map((r: any, i: number) => <li key={i} data-t="backstage-report"><span><Txt>{r.t}</Txt></span><Tag kind={LVL_KIND[r.lvl]}>{E.NET_LVL[r.lvl]}</Tag></li>)}</ul></Panel> : null}
         <Panel title="Rumours">
           {s.rumours.length ? <ul class="list">{s.rumours.map((r: any, i: number) => <li key={i}><span><Txt>{r.t}</Txt></span><Tag kind={LVL_KIND[r.lvl]}>{E.NET_LVL[r.lvl]}</Tag></li>)}</ul> : <Empty>The rumour mill is quiet.</Empty>}
           <p class="muted mt2">Sure is on the record. Likely is what people in the business expect. Thin is talk, and talk is often wrong.</p>

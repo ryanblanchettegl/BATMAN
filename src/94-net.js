@@ -69,6 +69,20 @@ function netRumours(S,wk){
   var rank={sure:0,likely:1,thin:2};
   return out.sort(function(a,b){return (rank[a.lvl]-rank[b.lvl])||(h01(wk+a.t)-h01(wk+b.t));}).slice(0,4);
 }
+/** Backstage reports: what people did to each other in week `wk`, read from the relationship matrix. How sure the paper is depends on
+    how close it sits to the people: both are yours (Sure), one is (Likely), neither (Thin, and only some of them get out). Reads only. */
+function netBackstage(S,wk){
+  var out=[],M=rmAll(S);
+  Object.keys(M).forEach(function(k){
+    var e=M[k];if(e.last!==wk||!e.mem.length||e.mem[0].w!==wk)return;
+    var ids=k.split('-').map(Number),x=S.w[ids[0]],y=S.w[ids[1]];if(!x||!y)return;
+    var mine=(x.promo===S.player?1:0)+(y.promo===S.player?1:0),m=e.mem[0];
+    if(!mine&&h01('bk'+wk+k)>0.4)return;
+    out.push({lvl:mine===2?'sure':(mine?'likely':'thin'),t:m.t,w:ids[0],v:ids[1],mood:e.bond<=-REL_ON?'heat':(e.bond>=REL_ON?'close':'')});
+  });
+  var rank={sure:0,likely:1,thin:2};
+  return out.sort(function(a,b){return (rank[a.lvl]-rank[b.lvl])||(h01(wk+a.t)-h01(wk+b.t));}).slice(0,3);
+}
 /** One issue of the dirt sheet: what happened in week `wk`, as far as the game still remembers it. */
 function netSheet(S,wk){
   var P=S.promos[S.player],news=S.news.filter(function(x){return x.w===wk;}),reps=S.reports.filter(function(r){return r.week===wk&&r.promo===P.id;}).reverse();
@@ -90,7 +104,7 @@ function netSheet(S,wk){
   if(c.wom===4)next.push(P.name+' '+dbOf(S).events[c.month]+' is next week.');
   var soon=rosterOf(S,P.id).filter(function(w){return !w.nw&&w.con!=null&&w.con<=2;}).sort(function(a,b){return b.ovr-a.ovr;})[0];if(soon)next.push(soon.name+'’s contract with '+P.name+' is nearly up.');
   var review=reps.length?(d>=3?'The booking is working: the shows are beating expectations.':(d<=-3?'The booking is missing: the shows are under what the crowd expects.':'The booking is doing its job, no more.')):'No shows from '+P.name+' yet this week.';
-  return {week:wk,label:cal(wk).label,by:S.columnist||'The Ringside Wire',lead:lead,yours:yours,best:best,world:world,business:business,rumours:netRumours(S,wk),next:next,review:review};
+  return {week:wk,label:cal(wk).label,by:S.columnist||'The Ringside Wire',lead:lead,yours:yours,best:best,world:world,business:business,backstage:netBackstage(S,wk),rumours:netRumours(S,wk),next:next,review:review};
 }
 E.sheetInfo=function(S){return {now:netSheet(S,S.week),past:(S.sheets||[]).slice()};};
 E.feed=function(S){return (S.feed||[]).slice();};
