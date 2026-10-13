@@ -45,6 +45,13 @@ function RecordBook() {
   const R = G.S.rec || {}, M = R.matches || [];
   if (!M.length) return <Panel title="Record book"><Empty>Run a show on Booking and the book opens.</Empty></Panel>;
   return <Panel title="Record book">
+    <ul class="list">{M.slice(0, 3).map((m: any) => <Row v={stars(m.ov)}>{m.l}<br /><span class="muted">{m.show}, {wk(m.w)}</span></Row>)}</ul>
+    <div class="row mt1"><Btn kind="sm" t="hist-book" onClick={() => openModal({ kind: 'info', title: 'Record book', wide: true, body: () => <RecordBookFull /> })}>The whole book</Btn></div>
+  </Panel>;
+}
+function RecordBookFull() {
+  const R = G.S.rec || {}, M = R.matches || [];
+  return <Panel title="Record book">
     <p class="eyebrow">Best matches</p>
     <ul class="list">{M.slice(0, 10).map((m: any) =>
       <Row v={stars(m.ov)}>{m.l}<br /><span class="muted">{m.show}, {wk(m.w)}</span></Row>)}</ul>
@@ -79,6 +86,14 @@ function HallOfFame() {
 
 /** One title's reigns, newest first. The current champion is in gold. */
 function TitleLine(p: { t: any }) {
+  const S = G.S, H = (p.t.hist || []).slice().reverse(), now = H[0] && H[0].to == null ? H[0] : null;
+  return <Panel title={p.t.name}>
+    {!H.length ? <Empty>Nobody has held it yet. Book a match for the title and the winner is crowned.</Empty>
+      : <p>{now ? <><b class="gold">{now.h.join(' & ')}</b> <span class="muted">{'·'} {S.week - now.from} wk, {now.defs} def.</span></> : <span class="muted">Vacant</span>}{H.length > 1 ? <span class="muted"> {'·'} {H.length} reigns</span> : null}</p>}
+    {H.length ? <div class="row mt1"><Btn kind="sm" t="hist-line" d={{ v: p.t.id }} onClick={() => openModal({ kind: 'info', title: p.t.name, wide: true, body: () => <TitleLineFull t={p.t} /> })}>The line of champions</Btn></div> : null}
+  </Panel>;
+}
+function TitleLineFull(p: { t: any }) {
   const S = G.S, H = (p.t.hist || []).slice().reverse();
   return <Panel title={p.t.name}>
     {H.length ? <>

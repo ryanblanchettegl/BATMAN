@@ -79,7 +79,8 @@ async function storylines(page, mode) {
 async function history(page, mode) {
   await go(page, 'history');
   const want = await state(page, S => { const P = S.promos[S.player], R = S.rec || {}; return { titles: P.titles.map(t => t.name), champ: (P.titles.find(t => t.holders.length) || { holders: [] }).holders.map(id => S.w[id].name).join(' & '), matches: Math.min(10, (R.matches || []).length), shows: (R.shows || []).length, best: R.matches && R.matches[0] ? R.matches[0].l : '', awards: (S.awards || []).length, hof: (S.hof || []).map(x => x.n), chron: (S.chron || []).map(c => c.title) }; });
-  const rec = await panel(page, 'Record book');
+  await page.click('[data-t="hist-book"]').catch(() => {}); await page.waitForTimeout(120);
+  const rec = await page.$eval('.scrim', e => e.innerText).catch(() => ''); await page.keyboard.press('Escape'); await page.waitForTimeout(80);
   check(mode, 'record book has the best matches and shows', want.matches > 0 && !!rec && rec.indexOf(want.best) >= 0 && /Best shows/i.test(rec) && /Biggest crowd/.test(rec), want.matches + ' matches, ' + want.shows + ' shows');
   check(mode, 'a panel for every title', (await Promise.all(want.titles.map(t => panel(page, t)))).every(Boolean), want.titles.length + ' titles');
   check(mode, 'the reigning champion is named in gold', !want.champ || (await page.$$eval('.panel b.gold', L => L.map(e => e.innerText))).indexOf(want.champ) >= 0, want.champ);
@@ -127,7 +128,9 @@ async function net(page, mode) {
     await page.click('#modal-ok').catch(() => {}); await page.waitForTimeout(150);
     check(mode, 'the new story is picked, and its pane says the length and where chapter 1 ends', /Long feud/i.test(await page.$eval('[data-t="story-pane"]', e => e.innerText)) && /Chapter 1 ends/i.test(await page.$eval('[data-t="story-pane"]', e => e.innerText)));
     await go(page, 'history');
-    check(mode, 'history before any show', /Run a show on Booking and the book opens/.test(await text(page)) && /Champion when you arrived/.test(await text(page)));
+    await page.click('[data-t="hist-line"]').catch(() => {}); await page.waitForTimeout(120);
+    const line0 = await page.$eval('.scrim', e => e.innerText).catch(() => ''); await page.keyboard.press('Escape'); await page.waitForTimeout(80);
+    check(mode, 'history before any show', /Run a show on Booking and the book opens/.test(await text(page)) && /Champion when you arrived/.test(line0));
     await go(page, 'boards');
     check(mode, 'the net before any show', await count(page, '.post') === await state(page, S => S.net.threads.reduce((a, t) => a + t.posts.length, 0)) && (await count(page, '.post') > 0 || /Nobody has posted yet/.test(await text(page))));
 
