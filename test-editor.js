@@ -98,9 +98,15 @@ C.workers[0].ring_name = 'Changed'; ok('changing the copy leaves the original al
   [fa, gone].forEach((w, i) => { const r = play(w, 'ttt', 12); ok('twelve weeks in a two-company world (' + (i ? 'wrestlers gone' : 'free agents') + ')', r.errs === 0 && !r.nan && r.shows > 0, 'errs ' + r.errs + ', shows ' + r.shows); }); }
 
 E.useUniverse(builtIn);
+/* ---- random helpers: a fresh name, and ratings for a place on the card ---- */
+{ const pkg = JSON.parse(JSON.stringify(builtIn)), names = new Set(pkg.workers.map(x => x.ring_name)), nm = E.edRandomName(pkg, 'F', 4);
+  ok('a random name is one nobody in the world has', !!nm && !names.has(nm), nm);
+  const w = pkg.workers.find(x => E.edHome(pkg, x.id)), con = () => pkg.contracts.find(c => c.worker_id === w.id);
+  const lo = E.edSetTier(pkg, w.id, 'jobber', 3).ratings.overness, loPush = con().push_level, hi = E.edSetTier(pkg, w.id, 'main_eventer', 3).ratings.overness;
+  ok('set ratings for a main eventer gives more overness than for an opener, and the push follows', hi > lo + 15 && loPush === 'jobber' && con().push_level === 'main_eventer', lo + ' -> ' + hi); }
 /* ---- make a copy: a wrestler keeps their company, a belt starts vacant, a team empty, a company brings shows and belts, not people ---- */
 { const pkg = JSON.parse(JSON.stringify(builtIn)), w = pkg.workers.find(x => E.edHome(pkg, x.id)), cw = E.edDup(pkg, 'workers', w.id);
-  ok('a copied wrestler has a new id and name and the same company', cw && cw.id !== w.id && /\(copy\)$/.test(cw.ring_name) && E.edHome(pkg, cw.id).promotion_id === E.edHome(pkg, w.id).promotion_id);
+  ok('a copied wrestler has a new id and name and the same company', cw && cw.id !== w.id && /\(copy\)$/.test(cw.ring_name) && E.edHome(pkg, cw.id) === E.edHome(pkg, w.id) && !!E.edHome(pkg, cw.id));
   const t = pkg.titles.find(x => x.holder_ids && x.holder_ids.length), ct = E.edDup(pkg, 'titles', t.id);
   ok('a copied belt starts vacant', ct && ct.holder_ids.length === 0 && t.holder_ids.length > 0);
   const tm = pkg.teams[0], ctm = E.edDup(pkg, 'teams', tm.id);

@@ -101,6 +101,10 @@ async function run(mode) {
       await page.click('.edlist .edrow'); await page.waitForSelector('[data-t="ed-dup"]');
       const n0 = (await rowsNow()).length; await page.click('[data-t="ed-dup"]'); await page.waitForTimeout(150);
       ok(mode, 'Make a copy adds a wrestler and opens the copy', /\(copy\)/.test(await page.$eval('[data-t="ed-wrname"]', e => e.value).catch(() => '')), await page.$eval('[data-t="ed-wrname"]', e => e.value).catch(() => 'no form'));
+      { const before = await page.$eval('[data-t="ed-wrname"]', e => e.value); await page.click('[data-t="ed-randname"]'); await page.waitForTimeout(120);
+        const after = await page.$eval('[data-t="ed-wrname"]', e => e.value); ok(mode, 'Random name gives the wrestler a new name', after && after !== before, before + ' -> ' + after); }
+      await page.click('[data-t="ed-tier"][data-v="jobber"]'); await page.waitForTimeout(80);
+      ok(mode, 'Set ratings for an opener says what it did', /Ratings set for an opener/.test(await txt(page, '.edpage')));
       await page.keyboard.press('Escape'); }
 
     /* Back steps out one level at a time */

@@ -32,7 +32,7 @@ Code: `src/86-editor.js`, `app/src/screens/editor/`. Tests: `test-editor.js`, `a
 - [x] **1.1 Sort and find.** The Wrestlers list sorts by name, overness, age or company (a select, kept per world). Show the total and how many are shown. (Done 13 October. The sort is kept per world for the session, not across a reload.)
 - [x] **1.2 Duplicate.** A "Make a copy" button on a wrestler, a belt, a team and a company (a company copy takes its shows and belts, not its roster).
 - [ ] **1.3 Move several at once.** A "Pick several" switch on the Wrestlers list turns rows into toggles. Then: sign all picked to a company, release all picked, delete all picked (two presses).
-- [ ] **1.4 Random helpers.** "Random name" beside the ring name (uses the world's name lists, falls back to the built-in ones). "Set ratings for" a main eventer, a mid-carder or an opener: fills the ratings to suit the company's popularity, the same maths as `E.edFill`.
+- [x] **1.4 Random helpers.** "Random name" beside the ring name (uses the world's name lists, falls back to the built-in ones). "Set ratings for" a main eventer, a mid-carder or an opener: fills the ratings to suit the company's popularity, the same maths as `E.edFill`.
 - [ ] **1.5 Unknown free agents.** On the Wrestlers tab with "Free agents" chosen, a "Make unknowns" button adds unsigned wrestlers.
 - [ ] **1.6 Managers.** A wrestler with the Manager job can be tied to clients: a "Managed by" select on the wrestler form writes `manager_id`. The checker already validates it.
 - [ ] **1.7 Announcers and staff.** On a company: play-by-play and colour names (`announcers`), road agent and head writer (`staff`).

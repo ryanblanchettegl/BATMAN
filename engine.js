@@ -7097,24 +7097,44 @@ E.edWithout=function(pkg,ids,gone){
 };
 
 /** Fill a company with unknowns so a new world is playable at once. The same seed makes the same people. */
+var ED_LADDER=['main_eventer','upper_midcarder','midcarder','midcarder','lower_midcarder','jobber'];
+/** Ratings for a place on the card in a company of popularity `pop`: the maths E.edFill uses for unknowns. */
+function edRatings(st,pop,push,style){
+  var tier=Math.max(0,ED_LADDER.indexOf(push)),top=1-tier/5;
+  var sk=function(lo,hi){return clamp(Math.round(lo+(hi-lo)*edRnd(st)+top*10),20,96);};
+  var r={overness:clamp(Math.round(pop-28+top*30+edRnd(st)*8),8,97),brawling:sk(42,70),technical:sk(40,70),aerial:sk(35,68),stamina:sk(45,72),promo_skill:sk(35,70),charisma:sk(38,72)};
+  if(style==='brawler'||style==='powerhouse')r.brawling=clamp(r.brawling+10,20,96);
+  if(style==='technician')r.technical=clamp(r.technical+12,20,96);
+  if(style==='flyer'||style==='striker')r.aerial=clamp(r.aerial+12,20,96);
+  if(style==='entertainer'){r.promo_skill=clamp(r.promo_skill+12,20,96);r.charisma=clamp(r.charisma+10,20,96);}
+  return r;
+}
+function edNames(pkg){var nm=pkg.names||{};return {m:nm.first_m&&nm.first_m.length>=8?nm.first_m:FALLBACK_NAMES.firstM,f:nm.first_f&&nm.first_f.length>=6?nm.first_f:FALLBACK_NAMES.firstF,l:nm.last&&nm.last.length>=8?nm.last:FALLBACK_NAMES.last};}
+/** A ring name nobody in the world has, from the world's own name lists (or the built-in ones). */
+E.edRandomName=function(pkg,gender,seed){
+  edShape(pkg);var st={s:(seed>>>0)||1},N=edNames(pkg),used={},name,tries=0;pkg.workers.forEach(function(w){used[w.ring_name]=1;});
+  do{name=edPick(st,gender==='F'?N.f:N.m)+' '+edPick(st,N.l);tries++;}while(used[name]&&tries<60);
+  return name;
+};
+/** Set a wrestler's ratings for a place on the card (main_eventer, midcarder or jobber), to suit their company. Keeps the
+    ratings this does not set. Their push follows. */
+E.edSetTier=function(pkg,wid,push,seed){
+  edShape(pkg);var w=edFind(pkg,'workers',wid);if(!w||ED_LADDER.indexOf(push)<0)return null;
+  var h=edHome(pkg,wid),p=h?edFind(pkg,'promotions',h.promotion_id):null,r=edRatings({s:(seed>>>0)||1},p?clamp(p.popularity,5,100):50,push,w.style);
+  w.ratings=Object.assign({},w.ratings||{},r);if(h)h.push_level=push;return w;
+};
 E.edFill=function(pkg,pid,n,seed){
   edShape(pkg);var p=edFind(pkg,'promotions',pid);if(!p)return [];
   var st={s:(seed>>>0)||1},MD=MODELS[p.model]||MODELS.classic,nm=pkg.names||{},made=[];
   var fm=nm.first_m&&nm.first_m.length>=8?nm.first_m:FALLBACK_NAMES.firstM,ff=nm.first_f&&nm.first_f.length>=6?nm.first_f:FALLBACK_NAMES.firstF,ln=nm.last&&nm.last.length>=8?nm.last:FALLBACK_NAMES.last;
   var women=(pkg.titles||[]).some(function(t){return t.promotion_id===pid&&t.gender==='F';}),styles=Object.keys(STYLE_KEY),used={};
   pkg.workers.forEach(function(w){used[w.ring_name]=1;});
-  var ladder=['main_eventer','upper_midcarder','midcarder','midcarder','lower_midcarder','jobber'],pop=clamp(p.popularity,5,100);
+  var ladder=ED_LADDER,pop=clamp(p.popularity,5,100);
   n=clamp(Math.round(n)||12,1,60);
   for(var i=0;i<n;i++){
     var g=MD.gender||(women&&i%4===3?'F':'M'),name,tries=0;
     do{name=edPick(st,g==='F'?ff:fm)+' '+edPick(st,ln);tries++;}while(used[name]&&tries<40);used[name]=1;
-    var push=ladder[i%ladder.length],tier=ladder.indexOf(push),top=1-tier/5,style=edPick(st,styles);
-    var sk=function(lo,hi){return clamp(Math.round(lo+(hi-lo)*edRnd(st)+top*10),20,96);};
-    var r={overness:clamp(Math.round(pop-28+top*30+edRnd(st)*8),8,97),brawling:sk(42,70),technical:sk(40,70),aerial:sk(35,68),stamina:sk(45,72),promo_skill:sk(35,70),charisma:sk(38,72)};
-    if(style==='brawler'||style==='powerhouse')r.brawling=clamp(r.brawling+10,20,96);
-    if(style==='technician')r.technical=clamp(r.technical+12,20,96);
-    if(style==='flyer'||style==='striker')r.aerial=clamp(r.aerial+12,20,96);
-    if(style==='entertainer'){r.promo_skill=clamp(r.promo_skill+12,20,96);r.charisma=clamp(r.charisma+10,20,96);}
+    var push=ladder[i%ladder.length],style=edPick(st,styles),r=edRatings(st,pop,push,style);
     made.push(E.edAddWorker(pkg,{ring_name:name,gender:g,age:20+Math.floor(edRnd(st)*18),disposition:edRnd(st)<0.5?'face':'heel',style:style,ratings:r,promotion_id:pid,push_level:push}));
   }
   return made;

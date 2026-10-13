@@ -2,7 +2,7 @@
 import { E } from '../../engine';
 import { Btn, Panel, Sel, Field, Opt, FaceCanvas, dataAttrs } from '../../kit';
 import { derive, NAMES, Face, FaceKey } from '../../lib/portrait';
-import { es, world, edit, look, note } from './state';
+import { es, world, edit, look, note, reId } from './state';
 import { TextF, NameF, NumF, SelF, Rating, PickList, DelBtn, TwoPane, opts } from './parts';
 
 const PARTS: [FaceKey, string][] = [['h', 'Head'], ['hr', 'Hair'], ['fh', 'Facial hair'], ['ms', 'Mustache'], ['ey', 'Eyes'], ['ns', 'Nose']];
@@ -37,6 +37,7 @@ function Form(p: { w: any }) {
     <Panel cls="mb4" title={w.ring_name || 'Wrestler'}>
       <div class="editor plain">
         <NameF label="Ring name" table="workers" rec={w} max={32} t="ed-wrname" />
+        <Field label="Need a name?"><Btn kind="sm" t="ed-randname" onClick={() => { const old = w.id; edit(() => { const nm = E.edRandomName(pkg, w.gender, Date.now() & 0xffff); reId('workers', old, E.edRename(pkg, 'workers', old, nm)); }); }}>Random name</Btn></Field>
         <SelF label="Division" rec={w} k="gender" options={[['M', 'Men'], ['F', 'Women']]} />
         <NumF label="Age" rec={w} k="age" min={16} max={75} blank="unknown" />
         <SelF label="Side" rec={w} k="disposition" options={opts(E.ED.sides)} />
@@ -58,6 +59,7 @@ function Form(p: { w: any }) {
       {con ? null : <p class="muted mt2">An unsigned wrestler starts the game as a free agent any company can sign.</p>}
     </Panel>
     <Panel cls="mb4" title="What they can do">
+      <div class="row opts mb2"><span class="muted">Set ratings for</span>{([['main_eventer', 'A main eventer'], ['midcarder', 'A mid-carder'], ['jobber', 'An opener']] as [string, string][]).map(x => <Btn kind="sm" key={x[0]} t="ed-tier" d={{ v: x[0] }} onClick={() => edit(() => { E.edSetTier(pkg, w.id, x[0], Date.now() & 0xffff); note('Ratings set for ' + x[1].toLowerCase() + (con ? ', to suit the company.' : '.')); })}>{x[1]}</Btn>)}</div>
       <div class="edrates">{E.ED.ratings.map((r: any) => <Rating key={r[0]} label={r[1]} obj={w.ratings} k={r[0]} opt={!r[2]} />)}</div>
       <p class="muted mt2">Overness is how much the crowd cares. The ones marked auto are worked out from the rest unless you set them.</p>
     </Panel>
