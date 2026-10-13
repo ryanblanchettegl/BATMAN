@@ -32,6 +32,10 @@ ok('an old week with no changes is empty', E.sheetInfo(S).now.week === wk && (()
   S.week += 48; const tb = E.sheetInfo(S).now.throwback; S.week -= 48;
   ok('a title win is remembered a year on', tb.length >= 1 && /1 year ago/.test(tb[0].t) && tb[0].t.includes('Test Champion') && /30 weeks/.test(tb[0].t), tb[0] && tb[0].t);
   S.week += 20; ok('and not on any other week', E.sheetInfo(S).now.throwback.length === 0); S.week -= 20; }
+/* the moment of the week comes from the show's marked beats */
+{ const T = E.newGame('pdw', 4, { name: 'R' }); T.inbox.forEach(e => E.resolveEvent(T, e.id, 0)); const c = E.suggest(T), pr = E.preShow(T, c); if (pr) { E.resolvePre(T, c, 0); E.fitShow(T, c); }
+  const rep = E.runPlayerShow(T, c).rep, m = E.sheetInfo(T).now.moment, all = rep.segs.flatMap(s => (s.bc || []).filter(b => b.h).map(b => b.x));
+  ok('the sheet names the moment of the week, as it aired', !!m && all.includes(m.t), m && m.t); }
 /* rumours that come due are settled */
 S.rumF = [{ w: x.id, k: 'exp', pid: x.promo, due: S.week, lvl: 'sure' }, { w: y.id, k: 'fa', pid: S.order.find(p => p !== y.promo && p !== S.player), due: S.week, lvl: 'thin' }];
 S.rumR = [];
