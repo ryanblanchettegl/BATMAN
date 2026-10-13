@@ -91,4 +91,25 @@ async function onePress(mode) {
     ok(mode, 'no errors (one press)', !errs.length, errs.slice(0, 3).join(' | '));
   } finally { await browser.close(); }
 }
-(async () => { for (const m of MODES) { await onePress(m); await run(m); } console.log(fails.length ? 'FAILED: ' + fails.join('; ') : 'auto: all passed'); process.exit(fails.length ? 1 : 0); })().catch(e => { console.error(e); process.exit(1); });
+/** Results pace: the night goes from result to result on its own, and still stops for every call. */
+async function results(mode) {
+  const { browser, page, errs } = await open({ mode, promo: 'pdw', auto: true, prefs: { pace: 'results' } });
+  try {
+    await go(page, 'booking'); await page.click('[data-t="suggest"]');
+    for (let k = 0; k < 6 && !(await has(page, '#live')); k++) { if (await has(page, '[data-t="pre"]')) await page.click('[data-t="pre"][data-c="0"]'); else await page.click('[data-t="advance"]'); await page.waitForTimeout(50); }
+    ok(mode, 'the footer with its buttons fits', !(await fits(page)), await fits(page));
+    ok(mode, 'the pace button says Results', /Results/.test(await page.$eval('[data-t="live-pace"]', e => e.textContent).catch(() => '')));
+    await page.waitForTimeout(1200); await page.click('[data-t="advance"]');
+    await page.waitForTimeout(1500); if (await has(page, '#live[data-v="seg"]')) ok(mode, 'a segment with skip, auto-play and pace fits', !(await fits(page)), await fits(page));
+    const t0 = Date.now(); let calls = 0, waitedOk = true;
+    while (Date.now() - t0 < 180000 && !(await has(page, '#live[data-v="signoff"]'))) {
+      if (await has(page, '[data-t="live-call"]')) { calls++; const n = await state(page, S => S.live.ev.id); await page.waitForTimeout(1500); if (!(await state(page, (S, n) => !!S.live.ev && S.live.ev.id === n && !S.live.ev.done, n))) waitedOk = false; const safe = await state(page, S => (S.live.ev && S.live.ev.safe) || 0); await page.click('[data-t="live-pick"][data-c="' + safe + '"]'); continue; }
+      await page.waitForTimeout(200);
+    }
+    const secs = Math.round((Date.now() - t0) / 1000);
+    ok(mode, 'on Results pace the night reaches its sign-off with no press but the answers', await has(page, '#live[data-v="signoff"]'), secs + ' s, ' + calls + ' calls');
+    ok(mode, 'and it still waits on every call', waitedOk && calls > 0, calls + ' calls');
+    ok(mode, 'no errors (results)', !errs.length, errs.slice(0, 3).join(' | '));
+  } finally { await browser.close(); }
+}
+(async () => { for (const m of MODES) { await onePress(m); await results(m); await run(m); } console.log(fails.length ? 'FAILED: ' + fails.join('; ') : 'auto: all passed'); process.exit(fails.length ? 1 : 0); })().catch(e => { console.error(e); process.exit(1); });

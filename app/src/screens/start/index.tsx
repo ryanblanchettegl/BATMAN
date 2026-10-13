@@ -306,7 +306,7 @@ function Options() {
   const S = G.S;
   const toggle = (k: 'snd' | 'type' | 'auto' | 'crt' | 'boot' | 'letter', n: string, d: string) => <li><span><b>{n}</b><br /><span class="muted">{d}</span></span>
     <Btn kind="sm" on={!!pref[k]} t="pref" d={{ k }} onClick={() => { pref[k] = !pref[k]; savePrefs(); if (k === 'snd' && pref.snd) SFX.ach(); redraw(); }}>{pref[k] ? 'On' : 'Off'}</Btn></li>;
-  const choice = (k: 'screen' | 'zoom' | 'speed' | 'motion' | 'fxvol', n: string, d: string, opts: [string | number, string][]) => <li class="col"><span><b>{n}</b><br /><span class="muted">{d}</span></span>
+  const choice = (k: 'screen' | 'zoom' | 'speed' | 'pace' | 'motion' | 'fxvol', n: string, d: string, opts: [string | number, string][]) => <li class="col"><span><b>{n}</b><br /><span class="muted">{d}</span></span>
     <span class="row">{opts.map(o => <Btn kind="sm" on={String(pref[k]) === String(o[0])} t="prefset" d={{ k, v: o[0] }} onClick={() => { (pref as any)[k] = o[0]; savePrefs(); redraw(); }}>{o[1]}</Btn>)}</span></li>;
   const fs = () => { try { if (document.fullscreenElement) document.exitFullscreen(); else document.documentElement.requestFullscreen().catch(() => {}); } catch (e) { /* not available here */ } };
   return <Window title="Options" ok="Done">
@@ -321,6 +321,7 @@ function Options() {
       {choice('fxvol', 'Effects volume', 'Bells, beeps and the crowd.', [[0.4, 'Low'], [1, 'Normal'], [1.8, 'High']])}
       {(window as any).EWF_MUSIC_VOL ? <li class="col"><span><b>Music volume</b><br /><span class="muted">The soundtrack. The Jukebox on the Music button has the rest.</span></span>
         <span class="row">{[[0.3, 'Low'], [0.6, 'Medium'], [1, 'High']].map(o => <Btn kind="sm" on={Math.abs((window as any).EWF_MUSIC_VOL.vol() - (o[0] as number)) < 0.01} t="musvol" d={{ v: o[0] }} onClick={() => { (window as any).EWF_MUSIC_VOL.setVol(o[0]); redraw(); }}>{o[1]}</Btn>)}</span></li> : null}
+      {choice('pace', 'Auto-play pace', 'Full shows every line. Quick hurries the routine lines and keeps the big moments. Results goes straight to each result. Every pace stops for your calls.', [['full', 'Full'], ['quick', 'Quick'], ['results', 'Results']])}
       {choice('speed', 'Broadcast speed', 'How fast the commentary types itself out.', [[0.5, 'Slow'], [1, 'Normal'], [2.5, 'Fast']])}
       {choice('motion', 'Reduce motion', 'Stops the typewriter text and the blinking cursor. Auto follows your device setting.', [['auto', 'Auto'], ['reduce', 'On'], ['full', 'Off']])}
       {choice('zoom', 'Text size', 'Scales everything on screen.', [[0.85, 'Small'], [1, 'Normal'], [1.2, 'Large'], [1.45, 'Largest']])}

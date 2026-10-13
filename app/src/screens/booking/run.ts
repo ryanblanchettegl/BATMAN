@@ -227,15 +227,22 @@ export const pickSide = (id: string) => look(() => { const b = book(); b.side = 
 let autoT: any = null, autoKey = '';
 const autoHalt = (k: string | undefined) => !k || k === 'signoff' || k === 'title' || k === 'call';
 export function autoStop() { if (autoT) { clearTimeout(autoT); autoT = null; } autoKey = ''; }
+const PACES: ('full' | 'quick' | 'results')[] = ['full', 'quick', 'results'];
+export const PACE_N: Record<string, string> = { full: 'Full', quick: 'Quick', results: 'Results' };
+/** Full, quick or results only. What is shown and how fast; never what happens. */
+export function paceNext() { look(() => { pref.pace = PACES[(PACES.indexOf(pref.pace) + 1) % PACES.length]; savePrefs(); }); }
 export function autoToggle() { look(() => { pref.auto = !pref.auto; savePrefs(); }); }
 /** How long the line on screen stays up, in milliseconds. */
 export function autoWait(): number {
   const r = liveReport(); if (!r) return 0;
   const L = livePos(r), s = r.segs[L.s], bc = (s && s.bc) || [], sp = Math.sqrt(pref.speed || 1);
   if (!s) return 0;
-  if (L.b >= bc.length) return Math.round(3400 / sp);   // the result: stars, the scores, the belt
-  const b = bc[L.b], len = b && b.x ? b.x.length : 40;
-  return Math.round(Math.min(5200, 800 + len * 26 + (b && b.h ? (b.h > 1 ? 1500 : 800) : 0)) / sp);
+  const quick = pref.pace === 'quick' || pref.pace === 'results';
+  if (L.b >= bc.length) return Math.round((quick ? 2400 : 3400) / sp);   // the result: stars, the scores, the belt
+  if (pref.pace === 'results') return 500;   // straight on to the result
+  const b = bc[L.b], len = b && b.x ? b.x.length : 40, hot = b && b.h ? (b.h > 1 ? 1500 : 800) : 0;
+  // quick: the routine lines go by at half the time; a big moment still gets its full time
+  return Math.round(Math.min(5200, (800 + len * 26) * (quick && !hot ? 0.5 : 1) + hot) / sp);
 }
 /** Arm auto-play for what is on screen now. `key` names that moment; a new moment re-arms it. */
 export function autoArm(key: string) {
@@ -246,7 +253,7 @@ export function autoArm(key: string) {
     autoT = null; if (!still()) return;
     if (typer.active() || (typeof document !== 'undefined' && document.hidden)) { autoT = setTimeout(wait, 150); return; }
     const st = liveStep(); if (!st || autoHalt(st.k)) return;
-    autoT = setTimeout(() => { autoT = null; if (!still() || typer.active()) return; const s2 = liveStep(); if (!s2 || autoHalt(s2.k)) return; liveNext(); }, autoWait());
+    autoT = setTimeout(() => { autoT = null; if (!still() || typer.active()) return; const s2 = liveStep(); if (!s2 || autoHalt(s2.k)) return; if (pref.pace === 'results' && s2.k === 'seg') liveSkip(); else liveNext(); }, autoWait());
   };
   autoT = setTimeout(wait, 60);
 }

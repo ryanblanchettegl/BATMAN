@@ -13,7 +13,7 @@ import { G, ui, me, pref } from '../../store';
 import { book } from '../../flow';
 import { Btn, KV, Meter, Banner, BeltArt, Portrait, CheckLine, stars, grade } from '../../kit';
 import { Verdict, OddsLine, FxList, Crowd } from './Report';
-import { typer, preNote, liveSkip, liveEnd, liveDecide, liveCall, onAir, livePos, autoArm, autoStop, autoToggle } from './run';
+import { typer, preNote, liveSkip, liveEnd, liveDecide, liveCall, onAir, livePos, autoArm, autoStop, autoToggle, paceNext, PACE_N } from './run';
 import { hm } from './Segments';
 
 /** Text that types itself out once, when it first appears. Esc, Back or the continue button finishes it at once.
@@ -210,7 +210,7 @@ export function Live(p: { r: any }) {
     if (live && main) { live.classList.remove('tight'); if (main.scrollHeight > main.clientHeight + 1) live.classList.add('tight'); }
   });
   // auto-play: re-armed every time the screen moves on, stopped when the broadcast goes
-  const akey = r.week + ':' + r.id + ':' + L.s + ':' + L.b + ':' + (ev ? ev.id : 0) + ':' + (pref.auto ? 1 : 0);
+  const akey = r.week + ':' + r.id + ':' + L.s + ':' + L.b + ':' + (ev ? ev.id : 0) + ':' + (pref.auto ? 1 : 0) + pref.pace;
   useEffect(() => { autoArm(akey); }, [akey]);
   useEffect(() => () => autoStop(), []);
   const rows = nightRows(r, info), post = ev && ev.phase === 'post' ? r.segs[ev.si] : null;
@@ -247,7 +247,7 @@ export function Live(p: { r: any }) {
         {head}
         <div class={'lv-log' + (state === 'title' || state === 'signoff' ? ' mid' : '')}><div class="lv-lines">{log}</div></div>
         {box}
-        {ev ? null : <div class="foot">{foot}<Btn kind="sm" t="live-auto" on={!!pref.auto} onClick={autoToggle}>{pref.auto ? 'Auto-play: on' : 'Auto-play: off'}</Btn><span class="blink" aria-hidden="true">_</span><span class="keys-hint">{state === 'signoff' ? 'Space: after the show' : (pref.auto ? (state === 'title' ? 'Space: ring the bell. The show then runs itself and stops for your calls' : 'Running itself. Space: next now. P: pause') : 'Space or Enter: on with the show. P: auto-play')}</span></div>}
+        {ev ? null : <div class="foot">{foot}<Btn kind="sm" t="live-auto" on={!!pref.auto} onClick={autoToggle}>{pref.auto ? 'Auto-play: on' : 'Auto-play: off'}</Btn>{pref.auto ? <Btn kind="sm" t="live-pace" onClick={paceNext}>{'Pace: ' + PACE_N[pref.pace]}</Btn> : null}<span class="blink" aria-hidden="true">_</span><span class="keys-hint">{state === 'signoff' ? 'Space: after the show' : (pref.auto ? (state === 'title' ? 'Space: ring the bell. The show then runs itself and stops for your calls' : 'Running itself. Space: next now. P: pause') : 'Space or Enter: on with the show. P: auto-play')}</span></div>}
       </div>
       <Night rows={rows} at={post ? ev.si : L.s} done={done || !!post} wait={ev && !post ? info.step : -1} call={!!ev} info={info} />
     </div>
