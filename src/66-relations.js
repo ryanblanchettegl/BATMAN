@@ -134,6 +134,16 @@ POST.push(function(ctx){
     }
     if(d.bond||d.ra||d.rb||mem)relBump(S,a.id,b.id,d,mem);
   }
+  // one half of a team going it alone: a singles win feeds the partner's jealousy, a singles title much more, and the
+  // winner's own jealousy of the partner eases. It fades by itself, so only a run of it builds to trouble (a betrayal).
+  if(ctx.m.mt==='1v1'&&r.win>=0&&r.winners.length===1&&typeof partnerOf==='function'){
+    var Wn=r.winners[0],Q=partnerOf(S,Wn);
+    if(Q&&Q.promo===Wn.promo&&all.indexOf(Q)<0){
+      var gold=!!(r.seg.change&&ctx.t&&!ctx.t.tag);
+      relBump(S,Q.id,Wn.id,{ja:gold?25:7},gold?{k:'passed',by:Wn.id,t:Q.name+' watched partner '+Wn.name+' win the '+ctx.t.name+' alone.'}:null);
+      if(jealOf(S,Wn.id,Q.id)>0)relBump(S,Wn.id,Q.id,{ja:-5});
+    }
+  }
   // a title changes hands: the people who thought it should be theirs watch somebody else hold it up
   var t=ctx.t;
   if(r.seg.change&&t&&!t.tag&&r.winners.length===1){

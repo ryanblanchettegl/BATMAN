@@ -92,6 +92,12 @@ function netRumours(S,wk){
   });
   var fa=S.w.filter(function(w){return w.promo==='FA'&&!w.rt&&!w.nw;}).sort(function(a,b){return b.ovr-a.ovr;})[0],rv=S.order.filter(function(p){var g=modelOf(S.promos[p]).gender;return p!==S.player&&(!g||!fa||g===fa.g);});
   if(fa&&rv.length){var fp=netPickH(rv,wk+'thin');out.push({lvl:'thin',t:fa.name+' was seen at a '+S.promos[fp].name+' show this week. It could mean anything.',w:fa.id,k:'fa',pid:fp,due:wk+4});}
+  // a team that is coming apart: one partner jealous of the other (the warning before a betrayal)
+  (S.teams||[]).forEach(function(tm){
+    if(!tm.m||tm.m.length!==2)return;var a=S.w[tm.m[0]],b=S.w[tm.m[1]];if(!a||!b||a.promo!==me.id||b.promo!==me.id)return;
+    var ja=jealOf(S,a.id,b.id),jb=jealOf(S,b.id,a.id);if(Math.max(ja,jb)<45)return;
+    var x=ja>=jb?a:b,y=x===a?b:a;out.push({lvl:Math.max(ja,jb)>=60?'likely':'thin',t:'People backstage say '+x.name+' is tired of standing in '+y.name+'’s shadow. Watch that team.',w:x.id});
+  });
   var hot=activeFeuds(S).filter(function(f){return f.promo===me.id&&f.heat>=70;})[0];
   if(hot)out.push({lvl:'likely',t:'Everybody expects '+feudLabel(S,hot)+' to be settled at '+nextBigName(S,me)+'.'});
   // a different three each week, sure things first

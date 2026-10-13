@@ -36,6 +36,15 @@ ok('an old week with no changes is empty', E.sheetInfo(S).now.week === wk && (()
 { const T = E.newGame('pdw', 4, { name: 'R' }); T.inbox.forEach(e => E.resolveEvent(T, e.id, 0)); const c = E.suggest(T), pr = E.preShow(T, c); if (pr) { E.resolvePre(T, c, 0); E.fitShow(T, c); }
   const rep = E.runPlayerShow(T, c).rep, m = E.sheetInfo(T).now.moment, all = rep.segs.flatMap(s => (s.bc || []).filter(b => b.h).map(b => b.x));
   ok('the sheet names the moment of the week, as it aired', !!m && all.includes(m.t), m && m.t); }
+/* a jealous partner: the sheet warns first, and the jealous one is the one who turns */
+{ const T = E.newGame('pdw', 6, { name: 'R' }); T.inbox.forEach(e => E.resolveEvent(T, e.id, 0));
+  const tm = T.teams.find(t => t.m.length === 2 && t.m.every(id => T.w[id].promo === 'pdw'));
+  if (!tm) ok('a two-man team to test with', false); else {
+    const [a, b] = tm.m.map(id => T.w[id]);
+    E.relBump(T, a.id, b.id, a.id < b.id ? { ja: 70 } : { jb: 70 });
+    const r = E.sheetInfo(T).now.rumours.find(x => x.t.includes('shadow'));
+    ok('the sheet warns that a team is coming apart, naming the jealous one', !!r && r.t.startsWith('People backstage say ' + a.name) && r.lvl === 'likely', r && r.t);
+  } }
 /* rumours that come due are settled */
 S.rumF = [{ w: x.id, k: 'exp', pid: x.promo, due: S.week, lvl: 'sure' }, { w: y.id, k: 'fa', pid: S.order.find(p => p !== y.promo && p !== S.player), due: S.week, lvl: 'thin' }];
 S.rumR = [];

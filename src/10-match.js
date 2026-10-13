@@ -461,13 +461,15 @@ function afterBell(S,P,show,m,sides,win,winners,losers,fin,runin,feud,t,OV,seg){
   // a losing team implodes
   if(m.mt==='tag'){
     var ls=sides[win===0?1:0],tm=(ls[0].team!=null&&ls[0].team===ls[1].team)?teamOf(S,ls[0]):null;
-    if(tm&&(tm.ls>=2||tm.exp<25||show.rule==='betrayal')&&chance(S,show.rule==='betrayal'?0.28:0.14)){
-      var att=chance(S,0.5)?ls[0]:ls[1],vic=att===ls[0]?ls[1]:ls[0];
+    // jealousy between partners counts as much as a losing run: the jealous one is the one who turns
+    var j0=tm?jealOf(S,ls[0].id,ls[1].id):0,j1=tm?jealOf(S,ls[1].id,ls[0].id):0,jealous=Math.max(j0,j1)>=60;
+    if(tm&&(tm.ls>=2||tm.exp<25||jealous||show.rule==='betrayal')&&chance(S,show.rule==='betrayal'?0.28:0.14)){
+      var att=chance(S,0.5)?ls[0]:ls[1];if(jealous)att=j0>=j1?ls[0]:ls[1];var vic=att===ls[0]?ls[1]:ls[0];
       P.titles.forEach(function(tt){if(tt.tag&&tt.holders.indexOf(att.id)>=0){tt.holders=[];tt.since=S.week;news(S,'title','The '+P.name+' '+tt.name+' are vacated after the champions split.');}});
       dissolveTeam(S,tm);
       if(att.align==='F')turn(S,att,'turned on '+vic.name);else if(vic.align==='H')turn(S,vic,'betrayed by '+att.name);
       startFeud(S,P,vic,att,55,att.name+' turned on partner '+vic.name,{force:true});memBetray(S,att,vic);
-      seg.notes.push('After the loss, '+att.name+' turns on '+vic.name+'. The team is finished.');
+      seg.notes.push(jealous?att.name+' has been jealous of '+vic.name+' for weeks. After the loss, '+att.name+' turns on them. The team is finished.':'After the loss, '+att.name+' turns on '+vic.name+'. The team is finished.');
       award(S,'ACH_BETRAYAL');return;
     }
   }
