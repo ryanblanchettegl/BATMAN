@@ -443,3 +443,58 @@ html[data-screen="tv"]:has(.rspage){--fs:min(clamp(22px,1.9vw,84px),2.32vh)}
 .rspage [data-t="roster-file"] .kvl .v{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .rsfull{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:40;display:flex;align-items:flex-start;justify-content:center;padding:3em 2ch;overflow:auto}
 .rsfull-in{max-width:76em;width:100%}
+
+/* ---------- Book the show (final-7): the show and its clock, the run sheet, the picked line ---------- */
+.book1 .b1-desk{display:flex;flex-direction:column;gap:.9em;padding:0 1ch .55em 0}
+.book1 .wn{color:var(--k)}
+.book1 .b1-head{flex:none;text-align:left}
+.book1 .b1-head>.bd{display:flex;flex-direction:column;gap:.15em}
+.book1 .b1-head .hl{color:var(--yellow)}
+.book1 .b1-head .b1-info{color:var(--k)}
+.book1 .b1-head .b1-info .gold,.book1 .b1-head .showtime .gold{color:var(--blue)}
+.book1 .showtime{text-align:left}
+.book1 .showtime .meter.au{color:var(--blue)} .book1 .showtime .meter i{color:var(--dgrey)}
+.book1 .warn{color:#7a3a00}
+.book1 .b1-btns{justify-content:flex-start;margin:0}
+.book1 .b1-body{gap:0 2.2ch}
+.book1 .b1-sheet{border:2px solid var(--white);border-right-color:var(--dgrey);border-bottom-color:var(--dgrey)}
+.book1 .b1-sheet>.bd,.book1 .b1-sidewin>.bd{display:flex;flex-direction:column;gap:.25em}
+.book1 .b1-cap,.book1 .b1-foot{border:0;color:var(--k)}
+.book1 .b1-cap .gold{color:var(--blue)}
+.book1 .b1-rows{background:var(--dcyan);border:2px solid var(--dgrey);border-right-color:var(--white);border-bottom-color:var(--white)}
+.book1 .b1-rows .seg{border-bottom:1px solid #007c7c}
+.book1 .r1b .at{color:#003c3c} .book1 .r1b .no{color:var(--blue)} .book1 .r1b .who{color:var(--k)} .book1 .r1b .meta{color:#003c3c}
+.book1 .r1b .meta .bad{color:#7a0000} .book1 .r1b .meta .good{color:#004800} .book1 .r1b .meta .warn{color:#5a2a00} .book1 .r1b .meta .gold{color:#5a4000}
+.book1 .b1-rows .seg.sg .no{color:#6a006a}
+.book1 .b1-rows .seg.me .no{background:var(--blue);color:var(--yellow)}
+.book1 .b1-rows .seg.top .at{color:var(--blue)}
+.book1 .b1-rows .seg.bad .who{color:#7a0000}
+.book1 .r1b:hover,.book1 .r1b:focus-visible{background:#18c0c0}
+.book1 .b1-rows .seg.sel .r1b{background:var(--dgreen)}
+.book1 .b1-rows .seg.sel .r1b *{color:var(--white)}
+.book1 .b1-empty,.book1 .b1-empty b{color:var(--k)} .book1 .b1-empty .muted{color:#003c3c}
+.book1 .b1-side{flex:1 1 0;min-height:0}
+.book1 .b1-sidewin{min-height:0;min-width:0}
+.book1 .b1-pane>.panel,.book1 .b1-pane .panel{background:var(--grey);border:2px solid var(--dgrey);color:var(--k)}
+.book1 .b1-pane .panel>h2{background:var(--grey);color:var(--dred);text-transform:none}
+.book1 .b1-pane b,.book1 .b1-pane .who{color:var(--k)}
+.book1 .b1-pane .muted,.book1 .b1-pane .empty{color:#444}
+.book1 .b1-pane .eyebrow{color:var(--blue)}
+.book1 .b1-pane .gold,.book1 .b1-pane .hl{color:#5a4000}
+.book1 .b1-pane .good{color:#006000} .book1 .b1-pane .bad{color:var(--dred)}
+.book1 .b1-pane label.f{color:var(--blue)}
+.book1 .b1-pane .list li{border-bottom-color:var(--dgrey)}
+.book1 .b1-pane .meter i{color:var(--dgrey)} .book1 .b1-pane .meter{color:var(--k)} .book1 .b1-pane .meter.au{color:var(--blue)}
+.book1 .tag{color:var(--k)} .book1 .tag.face{color:var(--blue)} .book1 .tag.heel,.book1 .tag.bad{color:var(--dred)} .book1 .tag.good{color:#006000} .book1 .tag.gold{color:#5a4000} .book1 .tag.warn{color:#6a006a}
+.book1 .face{color:var(--blue)} .book1 .heel{color:var(--dred)}
+.book1 .lnk{color:var(--blue)}
+html[data-screen="desk"]:has(.book1){--fs:min(clamp(19px,1.62vw,32px),2.75vh)}
+html[data-screen="tablet"]:has(.book1){--fs:min(clamp(18px,1.85vw,30px),2.45vh)}
+html[data-screen="tv"]:has(.book1){--fs:min(clamp(22px,1.9vw,84px),2.6vh)}
+.crt:has(.book1){max-width:76em}
+.book1 .b1-body{grid-template-columns:minmax(0,1.2fr) minmax(0,1fr)}
+.book1 .b1-side .subnav{flex-wrap:nowrap}
+.book1 .b1-side .subnav .btn{padding-inline:.8ch;margin-right:.4ch}
+.book1 .agentsay .ag{color:var(--blue)}
+.book1 .showtime .meter{color:var(--blue)}.book1 .showtime .meter i{color:#7a7a7a}
+.book1 .b1-head.head{display:flex;flex-direction:column;flex-wrap:nowrap;align-items:stretch;justify-content:flex-start;text-align:left;gap:0;margin:0}
