@@ -61,6 +61,8 @@ async function run(mode) {
     }
     ok(mode, 'the best match of the night so far is called out, and only then', bestOk, bestSeen + ' times');
     await page.waitForTimeout(4000);
+    ok(mode, 'the sign-off lists the night’s big moments', /Tonight’s moments/.test(await page.$eval('[data-t="live-moments"]', e => e.textContent).catch(() => '')));
+    ok(mode, 'the sign-off fits one screen', !(await fits(page)), await fits(page));
     ok(mode, 'auto-play stays on the sign-off', await has(page, '#live[data-v="signoff"]'));
     ok(mode, 'a near fall or a finish is marked as a big moment', await state(page, S => S.reports[0].segs.some(s => (s.bc || []).some(b => b.h))));
     ok(mode, 'no errors', !errs.length, errs.slice(0, 3).join(' | '));

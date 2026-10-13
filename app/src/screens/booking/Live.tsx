@@ -60,6 +60,15 @@ function TitleCard(p: { r: any }) {
     <Line r={r} tk="open" b={{ t: 'col', x: 'And wait until you see the main event: ' + r.lineup[last].split(' — ')[0] + '.' }} />
   </>;
 }
+/** The night's big moments, as they aired: a new champion first, then the best matches' near falls and finishes. At most three. */
+function Moments(p: { ms: any[] }) {
+  const L: { h: number; ov: number; x: string; label: string }[] = [];
+  p.ms.forEach(s => (s.bc || []).forEach((b: Beat) => { if (b.h) L.push({ h: b.h, ov: s.ov, x: b.x, label: s.label }); }));
+  // one moment from each match, the biggest of it
+  const seen: Record<string, 1> = {}, top = L.sort((a, b) => (b.h - a.h) || (b.ov - a.ov)).filter(m => seen[m.label] ? false : (seen[m.label] = 1)).slice(0, 3);
+  if (!top.length) return null;
+  return <div class="moments" data-t="live-moments"><p class="eyebrow">Tonight’s moments</p>{top.map((m, i) => <p key={i} class="ln"><span class="sp gold">{m.h > 1 ? 'Gold' : 'Moment'}:</span><span class="tx">{m.x} <span class="muted">({m.label})</span></span></p>)}</div>;
+}
 function SignOff(p: { r: any; ms: any[] }) {
   const r = p.r;
   return <>
@@ -70,6 +79,7 @@ function SignOff(p: { r: any; ms: any[] }) {
       {r.big ? <KV label="Buys">{r.buys.toLocaleString('en-US')}</KV> : null}
       <KV label="Best match">{stars(Math.max(...p.ms.map(s => s.ov)))}</KV>
     </div>
+    <Moments ms={p.ms} />
     <Line r={r} tk="close" b={{ t: 'pbp', x: 'For ' + r.ann[1] + ' and everyone at ' + me().name + ', I am ' + r.ann[0] + '. Good night from ' + cityOf(r) + '!' }} />
   </>;
 }
@@ -217,7 +227,7 @@ export function Live(p: { r: any }) {
         {head}
         <div class={'lv-log' + (state === 'title' || state === 'signoff' ? ' mid' : '')}><div class="lv-lines">{log}</div></div>
         {box}
-        {ev ? null : <div class="foot">{foot}<Btn kind="sm" t="live-auto" on={!!pref.auto} onClick={autoToggle}>{pref.auto ? 'Auto-play: on' : 'Auto-play: off'}</Btn><span class="blink" aria-hidden="true">_</span><span class="keys-hint">{pref.auto ? (state === 'title' ? 'Space: ring the bell. The show then runs itself and stops for your calls' : (state === 'signoff' ? 'Space: the report' : 'Running itself. Space: next now. P: pause')) : 'Space or Enter: on with the show. P: auto-play'}</span></div>}
+        {ev ? null : <div class="foot">{foot}<Btn kind="sm" t="live-auto" on={!!pref.auto} onClick={autoToggle}>{pref.auto ? 'Auto-play: on' : 'Auto-play: off'}</Btn><span class="blink" aria-hidden="true">_</span><span class="keys-hint">{state === 'signoff' ? 'Space: after the show' : (pref.auto ? (state === 'title' ? 'Space: ring the bell. The show then runs itself and stops for your calls' : 'Running itself. Space: next now. P: pause') : 'Space or Enter: on with the show. P: auto-play')}</span></div>}
       </div>
       <Night rows={rows} at={post ? ev.si : L.s} done={done || !!post} wait={ev && !post ? info.step : -1} call={!!ev} info={info} />
     </div>
