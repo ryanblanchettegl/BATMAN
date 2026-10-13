@@ -1,7 +1,7 @@
 /* Auto-play on the broadcast: the show runs itself at a reading pace, never rings the opening bell, stops for every
    call and never answers one, can be paused with P or its button, and stays on the sign-off.
    Run: NODE_PATH=<dir containing playwright> node app/tests/auto.js   (MODES=desk,tv) */
-const { open, go, state, redraw, airShow, fits } = require('./helper');
+const { open, go, state, redraw, fits } = require('./helper');
 const MODES = (process.env.MODES || 'desk').split(',');
 const fails = [];
 const ok = (mode, label, pass, detail) => { console.log(mode.padEnd(6), pass ? 'ok  ' : 'FAIL', label + (detail ? ': ' + detail : '')); if (!pass) fails.push(mode + ' ' + label); };
@@ -47,7 +47,19 @@ async function run(mode) {
     if (waited == null) await waitFor(page, () => has(page, '[data-t="live-call"]'), 120000).then(() => answer());
     ok(mode, 'auto-play waits on a call and never answers it', waited === true, String(waited));
     // the rest of the night, then the sign-off stays put
-    await airShow(page, { report: false });
+    // turn auto-play off and walk the rest of the night by hand, checking each match's result
+    if (/on/.test(await page.$eval('[data-t="live-auto"]', e => e.textContent).catch(() => 'off'))) await page.keyboard.press('p');
+    let bestOk = true, bestSeen = 0;
+    for (let g = 0; g < 900 && !(await has(page, '#live[data-v="signoff"]')); g++) {
+      if (await answer()) continue;
+      if (await has(page, '#live .result')) {
+        const want = await page.evaluate(() => { const S = window.EWF_DEBUG.state(), b = window.EWF_DEBUG.ui.slices.booking.live, r = S.live ? S.live.st.rep : S.reports[0], s = r.segs[b.s]; if (!s || s.k !== 'match') return null; const before = r.segs.slice(0, b.s).filter(x => x.k === 'match'); return before.length > 0 && before.every(x => s.ov > x.ov); });
+        const shown = await has(page, '[data-t="live-best"]'); if (want != null && want !== shown) bestOk = false; if (shown) bestSeen++;
+        await page.click('[data-t="advance"]'); continue;
+      }
+      if (await has(page, '[data-t="live-skip"]')) await page.click('[data-t="live-skip"]'); else await page.click('[data-t="advance"]');
+    }
+    ok(mode, 'the best match of the night so far is called out, and only then', bestOk, bestSeen + ' times');
     await page.waitForTimeout(4000);
     ok(mode, 'auto-play stays on the sign-off', await has(page, '#live[data-v="signoff"]'));
     ok(mode, 'a near fall or a finish is marked as a big moment', await state(page, S => S.reports[0].segs.some(s => (s.bc || []).some(b => b.h))));

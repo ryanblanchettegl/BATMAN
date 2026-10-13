@@ -73,14 +73,14 @@ function SignOff(p: { r: any; ms: any[] }) {
     <Line r={r} tk="close" b={{ t: 'pbp', x: 'For ' + r.ann[1] + ' and everyone at ' + me().name + ', I am ' + r.ann[0] + '. Good night from ' + cityOf(r) + '!' }} />
   </>;
 }
-function Result(p: { s: any }) {
+function Result(p: { s: any; best?: boolean }) {
   const s = p.s;
   if (s.k !== 'match') return <div class="result"><p>The segment: <span class="gold">{stars(s.ov)}</span></p></div>;
   const score = (label: string, v: number, kind?: 'hot' | 'cool' | 'au') => <div class={kind === 'au' ? 'ov' : undefined}><span>{label}</span><span><Meter v={v} kind={kind} /></span></div>;
   return <>
     {s.change ? <BeltArt name={s.title} /> : null}
     <div class="result">
-      <p><b>{s.win ? 'Winner: ' + s.win : 'Draw'}</b> {'·'} <span class="gold">{stars(s.ov)}</span></p>
+      <p><b>{s.win ? 'Winner: ' + s.win : 'Draw'}</b> {'·'} <span class="gold">{stars(s.ov)}</span>{p.best ? <> {'·'} <span class="gold" data-t="live-best">The best match of the night so far</span></> : null}</p>
       <OddsLine s={s} />
       <div class="scores">{score('The work', s.mq)}{score('The crowd', s.cr, 'hot')}{score('Effort', s.eff, 'cool')}<div class="ov"><span>Overall</span><span class="gold">{stars(s.ov)}</span></div></div>
       <FxList s={s} max={4} />
@@ -109,10 +109,12 @@ function SegHead(p: { rows: NRow[]; si: number; s: any; eyebrow?: string; at?: n
   </div>;
 }
 function SegLines(p: { r: any; s: any; at: number; done: boolean }) {
-  const s = p.s, bc: Beat[] = s.bc || [], shown = bc.slice(0, Math.min(bc.length, p.at + 1));
+  const s = p.s, bc: Beat[] = s.bc || [], shown = bc.slice(0, Math.min(bc.length, p.at + 1)), i = p.r.segs.indexOf(s);
+  // the best match so far: at least the second match of the night, and better than every one before it
+  const before = i > 0 ? p.r.segs.slice(0, i).filter((x: any) => x.k === 'match') : [], best = s.k === 'match' && before.length > 0 && before.every((x: any) => s.ov > x.ov);
   return <>
     {shown.map((b, i) => <Line r={p.r} b={b} tk={!p.done && i === shown.length - 1 ? 'b' + i : undefined} />)}
-    {p.done ? <Result s={s} /> : null}
+    {p.done ? <Result s={s} best={best} /> : null}
   </>;
 }
 
