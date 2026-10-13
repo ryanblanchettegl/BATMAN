@@ -40,6 +40,7 @@ async function run(mode) {
       ok(mode, 'the remote moves a highlight through the editor', !seen.has('') && seen.size >= 3, [...seen].join(', '));
     }
 
+    await page.click('[data-t="ed-tab"][data-v="world"]'); await page.fill('[data-t="ed-list"][data-v="sponsors"]', 'Test Cola\nRope Co'); await page.click('[data-t="ed-wname"]');
     await company(page, mode, 'AAA', 'Alpha Wrestling', 'workrate');
     await over('a company form');
     await page.click('[data-t="ed-add-brand"]'); await page.fill('[data-t="ed-brand-name"]', 'Red Side');
@@ -91,6 +92,7 @@ async function run(mode) {
     ok(mode, 'the world as text is a package with everything made here', !!pkg && pkg.promotions.length === 2 && pkg.workers.length === 25 && pkg.shows.some(s => s.name === 'Saturday Slam') && pkg.titles.some(t => t.name === 'Iron Crown' && t.holder_ids.length === 1)
       && pkg.events.some(e => e.month === 3 && e.name === 'Spring Clash' && e.rule === 'all_titles') && pkg.teams.some(t => t.name === 'The Pair' && t.member_ids.length === 2) && pkg.workers.some(w => w.ring_name === 'Captain Thunder' && w.ratings.overness === 88 && w.face && w.roles.indexOf('manager') >= 0),
       pkg ? pkg.promotions.length + ' companies, ' + pkg.workers.length + ' people' : 'not JSON');
+    ok(mode, 'the world tab names its sponsors', !!pkg && Array.isArray(pkg.sponsors) && pkg.sponsors[0] === 'Test Cola');
     ok(mode, 'the brand and the show on it are in the world', !!pkg && pkg.promotions.some(p => p.brands && p.brands[0].name === 'Red Side' && pkg.shows.some(sh => sh.promotion_id === p.id && sh.brand === p.brands[0].id)));
     ok(mode, 'the commentators and the road agent are in the world', !!pkg && pkg.promotions.some(p => p.announcers && p.announcers[0] === 'AAA Caller' && p.announcers[1] === 'AAA Colour' && p.staff && p.staff.road_agent === 'AAA Agent'));
     await over('Check and share');

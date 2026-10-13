@@ -129,6 +129,17 @@ E.useUniverse(builtIn);
   ok('a world with brands passes the check', E.edCheck(pkg).errors === 0);
   E.edRemoveBrand(pkg, p.id, b.id);
   ok('removing a brand clears it from its shows, belts and contracts', !sh.brand && !t.brand && !c.brand && p.brands.length === 1); }
+/* ---- the world's lists: sponsors, columnists, newcomers' names ---- */
+{ const pkg = JSON.parse(JSON.stringify(builtIn));
+  ok('a list is set one name a line, blanks and repeats dropped', E.edSetList(pkg, 'sponsors', 'Acme Rope\n\nAcme Rope\nBolt Cola') === 2 && pkg.sponsors.join() === 'Acme Rope,Bolt Cola');
+  E.edSetList(pkg, 'columnists', 'The Bell Ringer'); E.edSetList(pkg, 'first_m', 'A1\nA2\nA3\nA4\nA5\nA6\nA7\nA8'); E.edSetList(pkg, 'last', 'B1\nB2\nB3\nB4\nB5\nB6\nB7\nB8');
+  ok('the lists read back as text', E.edListText(pkg, 'columnists') === 'The Bell Ringer' && E.edListText(pkg, 'first_m').split('\n').length === 8);
+  ok('a world with its own lists passes the check', E.edCheck(pkg).errors === 0);
+  const fill = E.edFillFree(pkg, 3, 2); ok('newcomers are named from the world\'s lists (women from the game\'s own first names when the world has none)', fill.every(w => / B\d$/.test(w.ring_name) && (w.gender === 'F' || /^A\d /.test(w.ring_name))), fill.map(w => w.ring_name).join(', '));
+  E.useUniverse(pkg); const S = E.newGame('pdw', 1, { name: 'R' });
+  ok('a game played in the world uses its columnist', S.columnist === 'The Bell Ringer', S.columnist);
+  E.edSetList(pkg, 'sponsors', ''); ok('an empty box goes back to the game\'s own list', !pkg.sponsors);
+  E.useUniverse(builtIn); }
 /* ---- make a copy: a wrestler keeps their company, a belt starts vacant, a team empty, a company brings shows and belts, not people ---- */
 { const pkg = JSON.parse(JSON.stringify(builtIn)), w = pkg.workers.find(x => E.edHome(pkg, x.id)), cw = E.edDup(pkg, 'workers', w.id);
   ok('a copied wrestler has a new id and name and the same company', cw && cw.id !== w.id && /\(copy\)$/.test(cw.ring_name) && E.edHome(pkg, cw.id) === E.edHome(pkg, w.id) && !!E.edHome(pkg, cw.id));

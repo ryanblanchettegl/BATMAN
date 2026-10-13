@@ -204,3 +204,4 @@ html[data-screen="tablet"] .lv-body{grid-template-columns:minmax(0,1fr) clamp(28
 
 .moments{margin:.4em 0}.moments .eyebrow{margin:0 0 .2em}
 .live1.tight .moments .muted{display:none}
+.edlists{display:grid;grid-template-columns:repeat(auto-fit,minmax(24ch,1fr));gap:8px 2ch}.edlists textarea{width:100%;background:var(--k);color:var(--yellow);border:1px solid var(--grey);font:inherit}

@@ -2,9 +2,9 @@
 import { saveFile, canSaveFile } from '../../shared/savefile';
 import { E } from '../../engine';
 import { ui, setUniverse, plural } from '../../store';
-import { Btn, Panel, Opt } from '../../kit';
+import { Btn, Panel, Opt, Field } from '../../kit';
 import { copyText } from '../start';
-import { es, world, look, note, report, keep, EdTab } from './state';
+import { es, world, look, note, report, keep, EdTab, edit } from './state';
 import { TextF, NumF, SelF } from './parts';
 
 export function WorldTab() {
@@ -25,6 +25,11 @@ export function WorldTab() {
         <NumF label="Newcomers without a contract" rec={m} k="free_agents" min={0} max={120} />
       </div>
       <p class="muted mt2">The game adds that many unknown free agents on day one, on top of the wrestlers you leave unsigned.</p>
+    </Panel>
+    <Panel cls="mb4" title="The world's names">
+      <p class="muted mb2">One name a line. Leave a box empty and the game uses its own list. Newcomers need at least eight first names and eight last names to use yours.</p>
+      <div class="edlists">{([['sponsors', 'Sponsors'], ['columnists', 'Dirt sheet writers'], ['first_m', 'First names, men'], ['first_f', 'First names, women'], ['last', 'Last names']] as [string, string][]).map(x =>
+        <Field key={x[0]} label={x[1] + (E.edListText(pkg, x[0]) ? ' (' + E.edListText(pkg, x[0]).split('\n').length + ')' : '')}><textarea rows={5} data-t="ed-list" data-v={x[0]} value={E.edListText(pkg, x[0])} onChange={e => { const v = (e.currentTarget as HTMLTextAreaElement).value; edit(() => { E.edSetList(pkg, x[0], v); }); }} /></Field>)}</div>
     </Panel>
     <Panel cls="mb4" title="What is in it">
       <p class="kv"><span>Companies <b>{pkg.promotions.length}</b></span><span>Shows <b>{pkg.shows.length}</b></span><span>Belts <b>{pkg.titles.length}</b></span><span>Wrestlers <b>{info.workers}</b></span><span>Unsigned <b>{info.free}</b></span><span>Teams <b>{pkg.teams.length}</b></span></p>

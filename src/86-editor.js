@@ -240,6 +240,17 @@ E.edRemoveBrand=function(pkg,pid,bid){
 };
 /** Put a show, belt or contract on a brand ('' for none). */
 E.edPutBrand=function(rec,bid){if(!rec)return;if(bid)rec.brand=bid;else delete rec.brand;};
+/* ---------- the world's own lists: sponsors, columnists and the names newcomers are given ---------- */
+var ED_LISTS={sponsors:['sponsors'],columnists:['columnists'],first_m:['names','first_m'],first_f:['names','first_f'],last:['names','last']};
+/** A world list as text, one name a line. */
+E.edListText=function(pkg,key){var k=ED_LISTS[key];if(!k)return '';var v=k.length===1?pkg[k[0]]:(pkg.names||{})[k[1]];return (v||[]).join('\n');};
+/** Set a world list from text, one name a line. Blank lines and repeats go; an empty list goes back to the game's own. */
+E.edSetList=function(pkg,key,text){
+  var k=ED_LISTS[key];if(!k)return 0;var seen={},L=String(text||'').split(/\r?\n/).map(function(x){return x.trim().slice(0,40);}).filter(function(x){if(!x||seen[x])return false;seen[x]=1;return true;}).slice(0,200);
+  if(k.length===1){if(L.length)pkg[k[0]]=L;else delete pkg[k[0]];}
+  else{var N=pkg.names||(pkg.names={});if(L.length)N[k[1]]=L;else delete N[k[1]];if(!Object.keys(N).length)delete pkg.names;}
+  return L.length;
+};
 E.edFillFree=function(pkg,n,seed){
   edShape(pkg);var st={s:(seed>>>0)||1},N=edNames(pkg),used={},made=[],styles=Object.keys(STYLE_KEY),low=['midcarder','lower_midcarder','jobber'];
   pkg.workers.forEach(function(w){used[w.ring_name]=1;});n=clamp(Math.round(n)||6,1,40);
