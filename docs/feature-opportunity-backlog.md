@@ -14,3 +14,18 @@ What already exists (see `CLAUDE.md`): relationship matrix and memories, live sh
 | 6 | Desktop packaging and Steam: Electron scaffold exists in `desktop/`, untested here | High | M | Med | Open |
 
 Rules for all of these: read-only against `S`, no `rnd(S)` in Net code, one step at a time (CLAUDE.md 9a).
+
+## The show, round one (13 October, Ryan: "making the shows themselves funner, including scrolling text with less clicks")
+
+Done, each with tests (`app/tests/auto.js`, `test-segments.js`, `test-shape.js`), and 60 weeks of every company checked to play out the same:
+- Auto-play: the broadcast moves on at a reading pace, stops for every call, never rings the opening bell or leaves the sign-off. P or a button pauses it; a switch in Options.
+- One press rings the bell, even while the welcome is typing.
+- Big moments: near falls, finishes, new champions, upsets and broken streaks are marked (`h` on a beat), land brighter, and fill the sign-off's "Tonight's moments".
+- A crowd meter climbs through each match and ends on the crowd score the match got.
+- Longer matches have more in them (a second swing, a teased finish, chants, a second near fall), picked by hash.
+- Promos and angles air as scenes: who walks out, the story a sentence at a time, the quote said by its speaker, the crowd, the desk.
+- The main event is announced; the best match of the night so far is called out.
+- An opening promo is judged in words, not scores out of 10.
+- Fixes found while playing: a catchphrase could go to somebody not in the promo; the owner's verdict repeated itself and praised while marking down; a C read "Died in front of them"; the desk countdown cut off the number of weeks.
+
+Next ideas for the show: rival shows the same week (needs the rivals to run before the player's show), crowd signs and chants for the hottest acts, a replay that plays back at auto pace.
