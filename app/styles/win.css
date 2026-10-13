@@ -415,3 +415,31 @@ html[data-screen="tv"]:has(.stpage){--fs:min(clamp(22px,1.9vw,84px),2.32vh)}
 .sp-btns{margin-top:.3em}
 html[data-screen="tablet"] .stpage .st-pws{gap:.15em}html[data-screen="tablet"] .stpage .st-pw{padding:.08em 1ch}
 .st-note{color:var(--dred)}
+
+/* ---------- the Roster page (final-6): the list, the picked file, four sums along the bottom ---------- */
+.rspage{grid-template-columns:minmax(0,1fr) minmax(0,1fr) minmax(0,1fr) minmax(0,1fr) minmax(0,1.5fr);grid-template-rows:minmax(0,1fr) auto;grid-template-areas:"list list list list file" "wages mood bodies deals file";line-height:1.18;gap:.95em 2.2ch}
+html[data-screen="desk"]:has(.rspage){--fs:min(clamp(19px,1.62vw,32px),2.6vh)}
+html[data-screen="tablet"]:has(.rspage){--fs:min(clamp(18px,1.8vw,30px),2.4vh)}
+html[data-screen="tv"]:has(.rspage){--fs:min(clamp(22px,1.9vw,84px),2.32vh)}
+.crt:has(.rspage){max-width:76em}
+.rspage [data-t="roster-list"]>.bd{display:flex;flex-direction:column;gap:.3em}
+.rspage [data-t="roster-list"] .row.mb2{margin:0;flex-wrap:nowrap}
+.rspage .rsl{flex:1 1 0;min-height:0}
+.rspage .rsl table{width:100%;border-collapse:collapse;table-layout:auto}
+.rspage .rsl th{background:var(--grey);color:var(--blue);border-bottom:2px solid var(--dgrey);text-align:left;padding:0 .6ch;white-space:nowrap}
+.rspage .rsl th button{background:none;border:0;font:inherit;color:inherit;padding:0;cursor:pointer}
+.rspage .rsl td{padding:1px .6ch;border-bottom:1px solid #007c7c;white-space:nowrap;color:var(--k)}
+.rspage .rsl td.r,.rspage .rsl th.r{text-align:right}
+.rspage .rsl tr.pick{cursor:pointer}
+.rspage .rsl tr.pick:hover{background:#18c0c0}
+.rspage .rsl tr.pick.on{background:var(--dgreen)}
+.rspage .rsl tr.pick.on td,.rspage .rsl tr.pick.on td *{color:var(--white)}
+.rspage .rsl td.pf canvas.pt{display:block;width:1.2em;height:1.2em;border:1px solid var(--k)}
+.rspage .rsl td.stt{width:100%;max-width:0}.rspage .rsl td.stt>div{overflow:hidden;white-space:nowrap;text-overflow:clip}
+.rspage .rsl .tag{margin:0}
+.rspage .rsl .meter i{color:#007c7c}
+.rspage .pgr{display:flex;gap:.6ch;align-items:center;justify-content:flex-end;margin:0}
+.rspage [data-t="roster-file"] canvas.pt{width:4em;height:4em}
+.rspage [data-t="roster-file"] .kvl .v{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rsfull{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:40;display:flex;align-items:flex-start;justify-content:center;padding:3em 2ch;overflow:auto}
+.rsfull-in{max-width:76em;width:100%}

@@ -21,10 +21,11 @@ const sum = (page, sel) => page.$eval(sel, c => { const d = c.getContext('2d').g
 const repainted = async (page, sel, before) => { for (let i = 0; i < 40; i++) { if (await sum(page, sel) !== before) return true; await page.waitForTimeout(50); } return false; };
 const drawn = async (page, sel) => { for (let i = 0; i < 40; i++) { if (await ink(page, sel) > 3) return true; await page.waitForTimeout(50); } return false; };
 const profTab = async (page, v) => { await page.click('.prof [data-t="ptab"][data-v="' + v + '"]'); must(await page.$eval('.prof [data-t="ptab"][data-v="' + v + '"]', e => e.getAttribute('aria-pressed')) === 'true', 'profile page ' + v + ' not pressed'); };
-const openProfile = async (page, id) => { if (await page.$('.prof [data-t="sel"][data-id="' + id + '"]')) return; await page.click('tr.pick[data-id="' + id + '"]'); await page.waitForSelector('.prof [data-t="sel"][data-id="' + id + '"]'); };
+const openProfile = async (page, id) => { if (await page.$('.prof [data-t="sel"][data-id="' + id + '"]')) return; if (await page.$('.prof')) await page.keyboard.press('Escape'); await page.click('tr.pick[data-id="' + id + '"]'); if (!await page.$('.prof')) await page.click('[data-t="roster-full"][data-id="' + id + '"]'); await page.waitForSelector('.prof [data-t="sel"][data-id="' + id + '"]'); };
 
 async function run(mode) {
   const t = await open({ mode, file: FILE }), { page } = t;
+  await page.evaluate(() => { window.EWF_FLAT = 1; });
   const me = await state(page, S => ({ id: S.player, n: S.w.filter(w => w.promo === S.player && !w.rt).length, week: S.week }));
 
   /* ----- roster: sort and filter ----- */
@@ -232,6 +233,7 @@ async function tv() {
   must(a.tag === 'TR', 'tv: arrows never reached the table (' + n + ' presses, on ' + JSON.stringify(a) + ')');
   await page.keyboard.press('ArrowDown'); a = await at(); must(a.tag === 'TR', 'tv: Down left the table');
   const id = a.id;
+  await page.keyboard.press('Enter'); must(!await page.$('.prof') && await page.$eval('[data-t="roster-file"] h2', e => e.textContent).then(x => !!x), 'tv: one Enter should pick the line');
   await page.keyboard.press('Enter'); await page.waitForSelector('.prof');
   must(await page.$('.prof [data-t="sel"][data-id="' + id + '"]'), 'tv: Enter opened the wrong profile');
   await page.waitForFunction(() => !!document.activeElement.closest('.prof'), null, { timeout: 2000 }).catch(() => {});
