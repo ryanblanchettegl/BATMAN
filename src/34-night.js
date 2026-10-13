@@ -58,7 +58,7 @@ E.afterShow=function(S){
   (rep.targets||[]).filter(function(t){return !t.ok;}).forEach(function(t,i){add('miss'+i,'Target missed',t.t,[t.t,'Nothing is paid for a target that is missed.'],'bad');});
   var ow=rep.owner;
   if(ow&&!ow.me&&ow.was!=null){var od=Math.round((ow.now-ow.was)*10)/10,ol=S.owner.name+': trust '+(od>0?'up '+od:(od<0?'down '+(-od):'unchanged'))+', now '+Math.round(ow.now)+'.';
-    if(od<0||ow.edge)add('owner','The owner',ol,[ow.text].concat(ow.why),ow.edge||od<=-1?'bad':'warn');}
+    if(od<0||ow.edge)add('owner','The owner',ol,[ow.mood||ow.text].concat(ow.why),ow.edge||od<=-1?'bad':'warn');}
   if(down.length||up.length||rel.length){
     var d=[];down.forEach(function(m){d.push(nm(m.id)+' went home unhappy.');});up.forEach(function(m){d.push(nm(m.id)+' went home in a better mood.');});rel.forEach(function(n){d.push(n.h+(n.t?': '+n.t:'')+(/[.!?]$/.test(n.t||n.h)?'':'.'));});
     add('room','The locker room',(down.length?down.length+' went home unhappy':'Nobody went home unhappy')+(up.length?', '+up.length+' in a better mood':'')+(rel.length?'. '+rel.length+' '+(rel.length===1?'thing':'things')+' people will remember':'')+'.',d,down.length?'bad':(up.length?'good':''));
@@ -79,7 +79,7 @@ E.afterShow=function(S){
   (typeof E.comingUp==='function'?E.comingUp(S):[]).slice(0,3).forEach(function(u){nx.push({t:u.t,when:'',soon:false});});
   nx=nx.slice(0,5);
   (rep.targets||[]).filter(function(t){return t.ok;}).forEach(function(t,i){add('hit'+i,'Target hit',t.t,[t.t],'good');});
-  if(ow&&!ow.me&&ow.was!=null&&!(od<0||ow.edge))add('owner','The owner',ol,[ow.text].concat(ow.why),od>0?'good':'');
+  if(ow&&!ow.me&&ow.was!=null&&!(od<0||ow.edge))add('owner','The owner',ol,[ow.mood||ow.text].concat(ow.why),od>0?'good':'');
   if(nx.length)add('next','Next week',nx[0].t+(nx[0].when?' ('+nx[0].when+')':''),nx.map(function(x){return x.t+(x.when?' ('+x.when+').':'');}),nx[0].soon?'warn':'');
   return {key:L.key,name:rep.name,grade:gradeG(repCS(rep)),head:v.head,line:v.line,matter:mt,next:nx,items:items,unseen:items.filter(function(x){return !x.seen;}).length,left:S.queue.length-S.qi};
 };
