@@ -14,7 +14,7 @@ Work for Claude Code, in order. `TWEAKS.md` and `WISHLIST.md` are finished; this
 - Old saves must load (rule 9). A new field on `S` gets a default when missing. If a step changes the shape of something saved, bump the save key and write the migration, and add a case to `app/tests/save.js`.
 - Every rule in `CLAUDE.md` holds. The ones that get forgotten: no real names, no dice wording, no hover-only controls, every control has a `data-t`, a game year is 48 weeks, Company shows information and Manage holds the choices.
 - There is no phone or portrait layout any more (rule 5 in `CLAUDE.md`). Do not build or test one.
-- Never publish the live page. Leave the build in `dist/`.
+- Publish every new build to the live page (Ryan, 13 October; see "The live page" in `CLAUDE.md`).
 - When a job is done, update its section in `TASKS.md` (tick boxes, say what is left) and bump `VER` in `app/src/store.ts` by 0.01.
 
 ## Job 0. Know what exists (small, do this first)
