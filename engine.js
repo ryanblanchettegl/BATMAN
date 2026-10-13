@@ -556,6 +556,10 @@ var GR={
   br_elim:['{e} goes over the top and hits the floor! Gone!','{e} is dumped out! That is one fewer.','{e} hangs on... hangs on... no! Eliminated!','Three of them gang up on {e}. Over the top and out!','{e} never saw it coming. Over the top and out!','{e} skins the cat, climbs back up... and gets knocked right off the apron!'],
   br_two:['We are down to two: {w} and {l}!','Just {w} and {l} left, and both of them can barely stand.','It comes down to {l} and {w}. Listen to this place!'],
   br_final:['{l} charges, {w} ducks, and {l} goes over the top! {w} wins it!','{w} clotheslines {l} over the top rope! It is over!','{l} is teetering on the apron... and {w} knocks {l} to the floor! {w} has done it!'],
+  mid2:['{a} takes over again and goes to work.','{b} is hanging on, and {a} smells it.','{a} slows it down and makes {b} pay for every inch.','Now it is {a} with the upper hand, and the crowd does not know who to believe.'],
+  tease:['{a} signals for the finish... {b} blocks it!','{a} sets up for the big one, and {b} wriggles free!','{b} sees it coming and rolls to the floor. Not yet!','{a} goes for it, and {b} counters at the last second!'],
+  near2:['Another cover! One, two... NO! How did {a} kick out of that?','Everything they have got! One, two... and {a} is still alive!','{b} cannot believe it. Neither can I, {c}. Two and a half!','That should have been it! The referee’s hand was coming down!'],
+  chant:['They are chanting both names now, {p}.','Listen to that. Half the building for {a}, half for {b}.','The whole place is standing. Nobody wants to sit down for this.','Stomping in the stands. You can feel it up here.'],
   newchamp:['We have a new champion! What a moment!','The title changes hands! Can you believe it?','A new era starts tonight!']
 };
 function sayPick(S,arr){
@@ -626,6 +630,9 @@ function callMatch(S,P,x){
   function pbp(sym,h){var q={t:'pbp',x:say(S,sym,o)};if(h)q.h=h;bc.push(q);}
   function col(sym){bc.push({t:'col',x:say(S,sym,o)});}
   function raw(who,t){bc.push({t:who,x:fill(t,o)});}
+  // extra beats are picked by a hash of the match, not the game's random stream, so they can never change how a game plays out
+  var hk=(o.a||'')+'|'+(o.b||'')+'|'+x.mins+'|'+S.week;
+  function hp(who,sym,h){var L=GR[sym],t=fill(L[Math.floor(h01(hk+sym)*L.length)%L.length],o);var q={t:who,x:t.charAt(0).toUpperCase()+t.slice(1)};if(h)q.h=h;bc.push(q);}
   if(x.m.mt==='br'){
     var outs=x.all.filter(function(w){return w.name!==o.w&&w.name!==o.l;}).sort(function(p,q){return p.ovr-q.ovr;});
     ring('This is an over-the-top-rope battle royal'+(x.t?' for the vacant '+x.t.name:'')+'! The last one left in the ring wins.');
@@ -655,7 +662,11 @@ function callMatch(S,P,x){
   if(mem[1])raw('pbp',mem[1]);
   if(STIPLINE[x.stip])raw('pbp',sayPick(S,STIPLINE[x.stip]));
   if(x.mins>8){pbp(mk?'mid_'+mk:'mid');pbp('near',1);}
+  if(x.mins>=14&&!mk)hp('pbp','mid2');
+  if(x.mins>=12&&x.CR>=75)hp('col','chant');
+  if(x.mins>=14&&!mk)hp('pbp','tease');
   if(x.mins>=20)pbp('late');
+  if(x.mins>=18&&x.MQ>=70)hp('pbp','near2',1);
   col(x.bad?'q_off':(x.MQ>=88?'q_great':(x.MQ>=75?'q_good':(x.MQ>=60?'q_ok':(x.MQ>=45?'q_poor':'q_bad')))));
   if(x.mins>=14&&x.CR>=82)col('c_hot');
   // when the company model's bonus or penalty fired, the crowd sounds like that company's crowd
