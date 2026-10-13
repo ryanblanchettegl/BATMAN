@@ -42,6 +42,25 @@ function VsStrip(p: { s: any }) {
 const Rule = () => <div class="rule" aria-hidden="true">{'═'.repeat(60)}</div>;
 const cityOf = (r: any): string => r.venue.replace(/ (Armory|Civic Auditorium|Fieldhouse|Coliseum|Arena|Stadium)$/, '');
 
+/** The best-graded rival show from the week before this show, or null. Reads only. */
+function rivalBest(r: any): { cs: number; l: any; who: string } | null {
+  const S = G.S; if (!S || !S.order) return null;
+  let best: { cs: number; l: any; who: string } | null = null;
+  S.order.forEach((pid: string) => { if (pid === S.player) return; const P = S.promos[pid], l = P && P.last; if (!l || l.week !== r.week - 1) return; const cs = E.repCS(l); if (!best || cs > best.cs) best = { cs, l, who: P.name }; });
+  return best;
+}
+const gA = (g: string) => (/^[AF]/.test(g) ? 'an ' : 'a ') + g;
+/** The competition: the night starts with something to beat. */
+function Rival(p: { r: any }) {
+  const b = rivalBest(p.r); if (!b) return null;
+  return <p class="muted" data-t="live-rival">The competition: {b.who} {b.l.name} got <b class="gold">{gA(E.repGrade(b.l))}</b> last week.</p>;
+}
+/** At the sign-off: did tonight beat it? */
+function RivalBeat(p: { r: any }) {
+  const b = rivalBest(p.r); if (!b) return null;
+  const me = E.repCS(p.r), win = me > b.cs, tie = E.repGrade(p.r) === E.repGrade(b.l);
+  return <p data-t="live-rival-beat" class={win ? 'good' : (tie ? 'muted' : 'bad')}>{win ? 'You beat ' : (tie ? 'Level with ' : 'Short of ')}{b.who} {b.l.name}{' ('}{gA(E.repGrade(b.l))}{')'}{'.'}</p>;
+}
 function TitleCard(p: { r: any }) {
   const r = p.r, P = me(), pre = preNote(r), last = r.lineup.length - 1;
   return <>
@@ -55,6 +74,7 @@ function TitleCard(p: { r: any }) {
       <p>Your hosts: {r.ann[0]} and {r.ann[1]}</p>
       <p><span class="gold">Tonight’s main event:</span> <b>{r.lineup[last]}</b></p>
       {pre ? <p class="good">Before the show: {pre}</p> : null}
+      <Rival r={r} />
     </div>
     <Line r={r} b={{ t: 'pbp', x: 'Welcome, everybody, to ' + r.name + '! We are live in ' + cityOf(r) + ' with ' + r.att.toLocaleString('en-US') + ' on hand' + (r.sellout ? ', and this place is sold out!' : '.') }} />
     <Line r={r} tk="open" b={{ t: 'col', x: 'And wait until you see the main event: ' + r.lineup[last].split(' — ')[0] + '.' }} />
@@ -72,7 +92,7 @@ function Moments(p: { ms: any[] }) {
 function SignOff(p: { r: any; ms: any[] }) {
   const r = p.r;
   return <>
-    <div class="card"><Rule /><p class="eyebrow">That is the show</p><div class="show" data-t="show-grade">{E.repGrade(r)}</div><Rule /><p><Verdict r={r} /></p></div>
+    <div class="card"><Rule /><p class="eyebrow">That is the show</p><div class="show" data-t="show-grade">{E.repGrade(r)}</div><Rule /><p><Verdict r={r} /></p><RivalBeat r={r} /></div>
     <div class="kv mt2 mb1">
       <KV label="Attendance"><Crowd r={r} /></KV>
       <KV label="TV viewers">{(r.viewers / 1e6).toFixed(2)}M</KV>

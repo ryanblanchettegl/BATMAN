@@ -22,6 +22,7 @@ async function run(mode) {
     ok(mode, 'the auto-play button is on the broadcast and says it is on', /on/.test(await page.$eval('[data-t="live-auto"]', e => e.textContent).catch(() => '')));
     await page.waitForTimeout(2500);
     ok(mode, 'auto-play does not ring the opening bell', await has(page, '#live[data-v="title"]'));
+    ok(mode, 'week one has no rival show to name yet', !(await has(page, '[data-t="live-rival"]')));
     ok(mode, 'the title card fits one screen', !(await fits(page)), await fits(page));
     await page.click('[data-t="advance"]');
     // answer a call (after checking the first one is left waiting) and come back with the screen moving on its own
