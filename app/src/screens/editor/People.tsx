@@ -70,17 +70,25 @@ export function WrestlersTab() {
   const st = es(), pkg = world(), info = E.edInfo(pkg), q = st.q.trim().toLowerCase();
   const pname: Record<string, string> = {}; pkg.promotions.forEach((x: any) => { pname[x.id] = x.name; });
   const all: any[] = pkg.workers.filter((w: any) => (st.fp === '' || (st.fp === 'FA' ? !info.home[w.id] : info.home[w.id] === st.fp)) && (!q || String(w.ring_name).toLowerCase().indexOf(q) >= 0));
-  all.sort((a, b) => ((b.ratings && b.ratings.overness) || 0) - ((a.ratings && a.ratings.overness) || 0));
+  // sorted the way this world was last sorted (kept per world)
+  const sorts = st.sort || (st.sort = {}), by = sorts[String(st.id)] || 'over', ov = (x: any) => (x.ratings && x.ratings.overness) || 0, nm = (x: any) => String(x.ring_name || '');
+  const cmp: Record<string, (a: any, b: any) => number> = {
+    over: (a, b) => ov(b) - ov(a) || nm(a).localeCompare(nm(b)),
+    name: (a, b) => nm(a).localeCompare(nm(b)),
+    age: (a, b) => (+a.age || 0) - (+b.age || 0) || nm(a).localeCompare(nm(b)),
+    co: (a, b) => String(pname[info.home[a.id]] || '~').localeCompare(String(pname[info.home[b.id]] || '~')) || ov(b) - ov(a) };
+  all.sort(cmp[by] || cmp.over);
   const w = pkg.workers.find((x: any) => x.id === st.sel.wrestlers) || null;
   const add = () => edit(() => { const pid = st.fp && st.fp !== 'FA' ? st.fp : null, n = E.edAddWorker(pkg, { ring_name: 'New wrestler', promotion_id: pid }); st.sel.wrestlers = n.id; st.q = ''; });
   const list = <>
     <div class="row mb2"><Btn kind="go" t="ed-add-wrestler" onClick={add}>Add a wrestler</Btn></div>
     <div class="row mb2">
       <input type="search" id="ed-q" data-t="ed-q" value={st.q} placeholder="Search by name" aria-label="Search by name" onInput={e => look(() => { st.q = (e.currentTarget as HTMLInputElement).value; })} />
+      <Sel t="ed-sort" label="Sort by" value={by} options={[['over', 'Overness'], ['name', 'Name'], ['age', 'Age'], ['co', 'Company']] as Opt[]} onChange={v => look(() => { sorts[String(st.id)] = v; })} />
       <Sel t="ed-fp" label="Company" value={st.fp} options={[['', 'Everyone'], ['FA', 'Free agents']].concat(pkg.promotions.map((x: any) => [x.id, x.name])) as Opt[]} onChange={v => look(() => { st.fp = v; })} />
     </div>
     <PickList t="ed-pick" sel={st.sel.wrestlers} onPick={id => { st.sel.wrestlers = id; }} empty={pkg.workers.length ? 'Nobody matches.' : 'No wrestlers yet. Add one, or fill a roster from the Companies tab.'}
-      more={all.length > SHOWN ? 'Showing ' + SHOWN + ' of ' + all.length + '. Search or pick a company to narrow it.' : all.length + (all.length === 1 ? ' person.' : ' people.')}
+      more={(all.length > SHOWN ? 'Showing ' + SHOWN + ' of ' + all.length + '. Search or pick a company to narrow it.' : 'Showing ' + all.length + (all.length === 1 ? ' person.' : ' people.')) + (all.length < pkg.workers.length ? ' ' + pkg.workers.length + ' in this world.' : '')}
       items={all.slice(0, SHOWN).map(x => ({ id: x.id, label: x.ring_name, sub: (pname[info.home[x.id]] || 'Free agent') + ' · Over ' + ((x.ratings && x.ratings.overness) || 0) }))} />
   </>;
   return <TwoPane open={!!w} list={list} onBack={() => { st.sel.wrestlers = null; }}>{w ? <Form w={w} /> : <p class="empty">Pick someone on the left, or add a wrestler.</p>}</TwoPane>;

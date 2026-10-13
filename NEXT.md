@@ -29,7 +29,7 @@ The overnight run built 97 wishes, and many of them are parts of the big tasks. 
 
 Code: `src/86-editor.js`, `app/src/screens/editor/`. Tests: `test-editor.js`, `app/tests/editor.js`. Keep every change behind an `E.ed*` function.
 
-- [ ] **1.1 Sort and find.** The Wrestlers list sorts by name, overness, age or company (a select, kept per world). Show the total and how many are shown.
+- [x] **1.1 Sort and find.** The Wrestlers list sorts by name, overness, age or company (a select, kept per world). Show the total and how many are shown. (Done 13 October. The sort is kept per world for the session, not across a reload.)
 - [ ] **1.2 Duplicate.** A "Make a copy" button on a wrestler, a belt, a team and a company (a company copy takes its shows and belts, not its roster).
 - [ ] **1.3 Move several at once.** A "Pick several" switch on the Wrestlers list turns rows into toggles. Then: sign all picked to a company, release all picked, delete all picked (two presses).
 - [ ] **1.4 Random helpers.** "Random name" beside the ring name (uses the world's name lists, falls back to the built-in ones). "Set ratings for" a main eventer, a mid-carder or an opener: fills the ratings to suit the company's popularity, the same maths as `E.edFill`.

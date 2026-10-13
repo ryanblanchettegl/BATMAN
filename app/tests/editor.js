@@ -89,6 +89,16 @@ async function run(mode) {
     await over('Check and share');
     await shot(page, 'ed-' + mode + '-share', true);
 
+    /* the Wrestlers list sorts by overness, name, age or company, and says how many it shows */
+    await page.click('[data-t="ed-tab"][data-v="wrestlers"]');
+    { const rowsNow = () => page.$$eval('.edlist .edrow', L => L.map(e => e.textContent));
+      const pickSort = async v => { await page.selectOption('[data-t="ed-sort"]', v); await page.waitForTimeout(80); };
+      await pickSort('name'); const byName = await rowsNow();
+      ok(mode, 'sort by name puts the list in alphabetical order', byName.length > 1 && byName.slice(0, 2).join('|') === byName.slice(0, 2).slice().sort().join('|'), byName.slice(0, 2).join(' | '));
+      await pickSort('age'); ok(mode, 'sort by age changes the order', (await rowsNow()).join() !== byName.join() || byName.length < 2);
+      ok(mode, 'the list says how many it shows', /Showing \d+/.test(await txt(page, '.edpage')));
+      await pickSort('over'); }
+
     /* Back steps out one level at a time */
     await page.click('[data-t="ed-tab"][data-v="wrestlers"]');
     { const row = await page.$('.edlist .edrow'); if (row && await row.isVisible()) await row.click(); }   // on a phone the record made above is still open
