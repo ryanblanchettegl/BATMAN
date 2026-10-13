@@ -3146,6 +3146,17 @@ LIVEK.hotmic={n:'Off the script',
   }
 };
 /* after a big match: how does it go off the air? */
+/** What the headset says when the bell has gone, from what just happened. Picked by a hash, never the random stream. */
+function afterBellText(S,w,l,seg,M,f,t){
+  var k=S.week+':'+w.id+':'+l.id,pk=function(L){return L[Math.floor(h01(k)*L.length)%L.length];},W=w.name,L=l.name,o;
+  if(seg.change)o=[W+' has the gold, and '+L+' is still in the ring staring at it. The cameras are rolling. What now?',W+' is the new champion. '+L+' has not left. What do you want the last picture to be?'];
+  else if(seg.title)o=[W+' keeps the '+seg.title+'. '+L+' is still down on the mat. What happens now?','Still champion. '+W+' holds the '+seg.title+' up, and '+L+' is watching from the corner. What now?'];
+  else if((seg.notes||[]).some(function(n){return /^Upset/.test(n);}))o=[W+' has beaten '+L+', and nobody saw it coming. '+L+' looks like they want to break something. What now?','The upset is in. '+L+' cannot believe it, and neither can the crowd. Where do you take it?'];
+  else if(f&&!f.res)o=['The bell has gone, but this feud is not finished. '+W+' won tonight. '+L+' is getting up. What happens now?',W+' takes this round. '+L+' is already looking for the next one. What now?'];
+  else if(seg.ov>=85)o=['The crowd will not sit down. '+W+' beat '+L+' in that one, and both are still out there. What now?','That was something special. '+W+' and '+L+' are both on their knees. What is the last thing they see?'];
+  else o=['The bell has gone. '+W+' has beaten '+L+', and the cameras are still on them. What happens now?',W+' gets the win over '+L+'. The show has a minute to fill. What do you want in it?'];
+  return pk(o);
+}
 LIVEK.afterbell={n:'After the bell',
   post:function(S,L,step,seg){
     if(step.t!=='match'||!seg||seg.k!=='match'||!seg.wi||seg.wi.length!==1||seg.ids.length!==2)return null;
@@ -3160,7 +3171,7 @@ LIVEK.afterbell={n:'After the bell',
       {n:'They shake hands',says:'Respect between them, and the crowd likes it. Any feud between them cools.'},
       {n:l.name+' attacks '+w.name,says:(f&&!f.res?'The feud gets hotter. ':'A feud starts tonight. ')+(l.align==='F'?l.name+' turns on the crowd to do it.':'It is what the crowd expects of '+l.name+'.')}];
     if(c)ch.push({n:c.name+' walks out and points at the title',who:c.id,title:t.id,says:'A new feud for the title starts tonight: '+c.name+' against '+w.name+'.'});
-    return {phase:'post',si:L.st.rep.segs.indexOf(seg),mi:step.i,who:w.id,other:l.id,text:'The bell has gone. '+w.name+' has beaten '+l.name+', and the cameras are still on them. What happens now?',why:why,safe:0,choices:ch};
+    return {phase:'post',si:L.st.rep.segs.indexOf(seg),mi:step.i,who:w.id,other:l.id,text:afterBellText(S,w,l,seg,M,f,t),why:why,safe:0,choices:ch};
   },
   run:function(S,L,ev,c){
     var w=S.w[ev.who],l=S.w[ev.other],P=S.promos[S.player],f=feudOf(S,w.id,l.id),pick=ev.choices[c];
