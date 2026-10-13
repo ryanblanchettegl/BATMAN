@@ -133,7 +133,7 @@ function callMatch(S,P,x){
   var bc=[],o=x.o,first=function(n){return String(n).split(' ')[0];};
   var dv=deskNames(S,P);o.p=first(dv?dv[0]:P.ann[0]);o.c=first(dv?dv[1]:P.ann[1]);o.mark=x.mins>=27?'twenty-five':'fifteen';
   function ring(t){bc.push({t:'ring',x:fill(t,o)});}
-  function pbp(sym){bc.push({t:'pbp',x:say(S,sym,o)});}
+  function pbp(sym,h){var q={t:'pbp',x:say(S,sym,o)};if(h)q.h=h;bc.push(q);}
   function col(sym){bc.push({t:'col',x:say(S,sym,o)});}
   function raw(who,t){bc.push({t:who,x:fill(t,o)});}
   if(x.m.mt==='br'){
@@ -145,7 +145,7 @@ function callMatch(S,P,x){
     col(x.MQ>=75?'q_good':(x.MQ>=55?'q_ok':'q_poor'));
     pbp('br_two');pbp('br_final');col('r_clean');
     ring('Here is your winner'+(x.t?', and NEW '+x.t.name+' champion':'')+': {w}!');
-    if(x.change)pbp('newchamp');
+    if(x.change)pbp('newchamp',2);
     return bc;
   }
   ring('This '+x.mt.toLowerCase()+' match is scheduled for one fall'+(x.stipName?', and it is a '+x.stipName.toLowerCase()+' match':'')+(x.t?'. It is for the '+x.t.name+'!':'.'));
@@ -164,7 +164,7 @@ function callMatch(S,P,x){
   raw('pbp',say(S,'bell',o)+' '+say(S,mk?'open_'+mk:(GR['open_'+x.ca.style]?'open_'+x.ca.style:'open_A'),o));
   if(mem[1])raw('pbp',mem[1]);
   if(STIPLINE[x.stip])raw('pbp',sayPick(S,STIPLINE[x.stip]));
-  if(x.mins>8){pbp(mk?'mid_'+mk:'mid');pbp('near');}
+  if(x.mins>8){pbp(mk?'mid_'+mk:'mid');pbp('near',1);}
   if(x.mins>=20)pbp('late');
   col(x.bad?'q_off':(x.MQ>=88?'q_great':(x.MQ>=75?'q_good':(x.MQ>=60?'q_ok':(x.MQ>=45?'q_poor':'q_bad')))));
   if(x.mins>=14&&x.CR>=82)col('c_hot');
@@ -172,17 +172,17 @@ function callMatch(S,P,x){
   var mf=(x.fx||[]).filter(function(q){return q.m;});
   if(mf.length&&MODEL_CROWD[P.model||'classic']){var cl=MODEL_CROWD[P.model||'classic'][mf[0].s>0?0:1];if(cl&&cl.length)raw('col',sayPick(S,cl));}
   var f=x.fin;
-  if(f==='clean'){pbp(x.sub?'f_sub':'f_clean');col('r_clean');}
-  else if(f==='flash'){pbp('f_flash');col('r_flash');}
-  else if(f==='cheap'){pbp('f_cheap');col('r_cheap');}
-  else if(f==='interf'){pbp('f_interf');col('r_interf');}
-  else if(f==='foiled'){pbp('f_foiled');col('r_foiled');}
+  if(f==='clean'){pbp(x.sub?'f_sub':'f_clean',1);col('r_clean');}
+  else if(f==='flash'){pbp('f_flash',1);col('r_flash');}
+  else if(f==='cheap'){pbp('f_cheap',1);col('r_cheap');}
+  else if(f==='interf'){pbp('f_interf',1);col('r_interf');}
+  else if(f==='foiled'){pbp('f_foiled',1);col('r_foiled');}
   else if(f==='dq'){pbp('f_dq');col('r_dq');}
   else if(f==='co'){pbp('f_co');col('r_co');}
   else{pbp(x.mins>=20?'f_time':'f_dco');col('r_draw');}
   if(x.win<0)ring('This match is a draw.');
   else ring('Here '+(x.plural?'are your winners':'is your winner')+(f==='dq'?' by disqualification':(f==='co'?' by count-out':''))+(x.change?', and NEW '+x.t.name+' champion'+(x.plural?'s':''):(x.t&&x.retain?', and STILL '+x.t.name+' champion'+(x.plural?'s':''):''))+': {w}!');
-  if(x.change)pbp('newchamp');
+  if(x.change)pbp('newchamp',2);
   return bc;
 }
 

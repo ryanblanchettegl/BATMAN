@@ -144,6 +144,10 @@ tbody tr.on input,tbody tr.on select{color:var(--yellow)}
 .ln.note{display:block;color:var(--green);margin:8px 0}
 .ln.note::before{content:'*** '} .ln.note::after{content:' ***'}
 .ln.last .tx,.ln.note.last{color:var(--white)}
+.ln.hot .tx{color:var(--yellow)} .ln.hot.last .tx{color:var(--yellow);font-weight:bold}
+.ln.hot2 .tx{color:var(--yellow);text-transform:uppercase;letter-spacing:.04em}
+@media (prefers-reduced-motion:no-preference){.ln.hot.last{animation:lnpop .5s ease-out}}
+@keyframes lnpop{0%{transform:translateX(-6px);filter:brightness(1.8)}100%{transform:none;filter:none}}
 .live .foot{margin-top:auto;padding-top:14px;display:flex;flex-wrap:wrap;gap:8px 1ch;align-items:center}
 .card{text-align:center;display:flex;flex-direction:column;align-items:center;gap:8px;padding:10px 0}
 .card .show{font-size:clamp(2em,8vw,4.2em);line-height:.9;color:var(--yellow);text-transform:uppercase;text-shadow:.08em .08em 0 var(--dred);overflow-wrap:anywhere}

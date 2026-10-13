@@ -9,11 +9,11 @@
 import { ComponentChildren } from 'preact';
 import { useEffect, useLayoutEffect, useState } from 'preact/hooks';
 import { E } from '../../engine';
-import { G, ui, me } from '../../store';
+import { G, ui, me, pref } from '../../store';
 import { book } from '../../flow';
 import { Btn, KV, Meter, Banner, BeltArt, Portrait, CheckLine, stars, grade } from '../../kit';
 import { Verdict, OddsLine, FxList, Crowd } from './Report';
-import { typer, preNote, liveSkip, liveEnd, liveDecide, liveCall, onAir, livePos } from './run';
+import { typer, preNote, liveSkip, liveEnd, liveDecide, liveCall, onAir, livePos, autoArm, autoStop, autoToggle } from './run';
 import { hm } from './Segments';
 
 /** Text that types itself out once, when it first appears. Esc, Back or the continue button finishes it at once.
@@ -23,10 +23,10 @@ function Typed(p: { text: string }) {
   useEffect(() => n < 0 ? undefined : typer.start(p.text.length, setN, () => setN(-1)), []);
   return <>{n < 0 ? p.text : p.text.slice(0, n)}{n < 0 ? null : <span class="untyped">{p.text.slice(n)}</span>}</>;
 }
-interface Beat { t: string; x: string }
+interface Beat { t: string; x: string; h?: number }
 /** One line of the broadcast. `tk` marks the newest line: it is drawn brighter and typed out. */
 function Line(p: { r: any; b: Beat; tk?: string }) {
-  const b = p.b, cls = 'ln ' + b.t + (p.tk ? ' last' : ''), text = p.tk ? <Typed key={p.tk} text={b.x} /> : b.x;
+  const b = p.b, cls = 'ln ' + b.t + (p.tk ? ' last' : '') + (b.h ? ' hot' + (b.h > 1 ? ' hot2' : '') : ''), text = p.tk ? <Typed key={p.tk} text={b.x} /> : b.x;
   if (b.t === 'note' || b.t === 'ent') return <p class={cls}>{text}</p>;
   const who = b.t === 'pbp' ? p.r.ann[0].split(' ').pop() : (b.t === 'col' ? p.r.ann[1].split(' ').pop() : (b.t === 'ear' ? 'Headset' : (b.t === 'call' ? 'Gorilla' : 'Ring')));
   return <p class={cls}><span class="sp">{who}:</span><span class="tx">{text}</span></p>;
@@ -165,6 +165,10 @@ export function Live(p: { r: any }) {
     const live = document.getElementById('live'), main = live && live.querySelector('.lv-main') as HTMLElement | null;
     if (live && main) { live.classList.remove('tight'); if (main.scrollHeight > main.clientHeight + 1) live.classList.add('tight'); }
   });
+  // auto-play: re-armed every time the screen moves on, stopped when the broadcast goes
+  const akey = r.week + ':' + r.id + ':' + L.s + ':' + L.b + ':' + (ev ? ev.id : 0) + ':' + (pref.auto ? 1 : 0);
+  useEffect(() => { autoArm(akey); }, [akey]);
+  useEffect(() => () => autoStop(), []);
   const rows = nightRows(r, info), post = ev && ev.phase === 'post' ? r.segs[ev.si] : null;
   let head: ComponentChildren = null, log: ComponentChildren, box: ComponentChildren = null, foot: ComponentChildren, state: string;
   if (ev) {
@@ -199,7 +203,7 @@ export function Live(p: { r: any }) {
         {head}
         <div class={'lv-log' + (state === 'title' || state === 'signoff' ? ' mid' : '')}><div class="lv-lines">{log}</div></div>
         {box}
-        {ev ? null : <div class="foot">{foot}<span class="blink" aria-hidden="true">_</span><span class="keys-hint">Space or Enter: on with the show</span></div>}
+        {ev ? null : <div class="foot">{foot}<Btn kind="sm" t="live-auto" on={!!pref.auto} onClick={autoToggle}>{pref.auto ? 'Auto-play: on' : 'Auto-play: off'}</Btn><span class="blink" aria-hidden="true">_</span><span class="keys-hint">{pref.auto ? (state === 'title' ? 'Space: ring the bell. The show then runs itself and stops for your calls' : (state === 'signoff' ? 'Space: the report' : 'Running itself. Space: next now. P: pause')) : 'Space or Enter: on with the show. P: auto-play'}</span></div>}
       </div>
       <Night rows={rows} at={post ? ev.si : L.s} done={done || !!post} wait={ev && !post ? info.step : -1} call={!!ev} info={info} />
     </div>

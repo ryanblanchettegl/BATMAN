@@ -304,7 +304,7 @@ function SaveText() {
 }
 function Options() {
   const S = G.S;
-  const toggle = (k: 'snd' | 'type' | 'crt' | 'boot' | 'letter', n: string, d: string) => <li><span><b>{n}</b><br /><span class="muted">{d}</span></span>
+  const toggle = (k: 'snd' | 'type' | 'auto' | 'crt' | 'boot' | 'letter', n: string, d: string) => <li><span><b>{n}</b><br /><span class="muted">{d}</span></span>
     <Btn kind="sm" on={!!pref[k]} t="pref" d={{ k }} onClick={() => { pref[k] = !pref[k]; savePrefs(); if (k === 'snd' && pref.snd) SFX.ach(); redraw(); }}>{pref[k] ? 'On' : 'Off'}</Btn></li>;
   const choice = (k: 'screen' | 'zoom' | 'speed' | 'motion' | 'fxvol', n: string, d: string, opts: [string | number, string][]) => <li class="col"><span><b>{n}</b><br /><span class="muted">{d}</span></span>
     <span class="row">{opts.map(o => <Btn kind="sm" on={String(pref[k]) === String(o[0])} t="prefset" d={{ k, v: o[0] }} onClick={() => { (pref as any)[k] = o[0]; savePrefs(); redraw(); }}>{o[1]}</Btn>)}</span></li>;
@@ -313,6 +313,7 @@ function Options() {
     <ul class="list">
       {toggle('snd', 'Sound', 'Beeps, bells and fanfares.')}
       {toggle('type', 'Typewriter text', 'Commentary types itself out during a show.')}
+      {toggle('auto', 'Auto-play the show', 'The broadcast moves on by itself at a reading pace and stops for every call. P turns it on or off during a show.')}
       {toggle('crt', 'Monitor effect', 'Scanlines and a darkened edge, like a tube screen.')}
       {toggle('boot', 'Boot sequence', 'The loading screen when the game starts.')}
       {toggle('letter', 'The owner’s letter', 'A new game opens on a letter from the owner. It can be read again from the desk.')}

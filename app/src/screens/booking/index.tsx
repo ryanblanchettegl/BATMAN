@@ -14,7 +14,7 @@ import { ShapeGuide } from './Shape';
 import { Live } from './Live';
 import { After } from './After';
 import { Report, Ladder } from './Report';
-import { typer, liveReport, liveSkip, liveCall, liveDecide, liveGo, closeReport } from './run';
+import { typer, liveReport, liveSkip, liveCall, liveDecide, liveGo, closeReport, autoToggle, autoStop } from './run';
 
 function WeekBooked() {
   return <>
@@ -39,6 +39,7 @@ onKey(e => {
   if (tag === 'INPUT' || tag === 'SELECT' || tag === 'TEXTAREA') return false;
   if (liveCall() && /^[1-9]$/.test(e.key)) { liveDecide(+e.key - 1); return true; }   // the number keys answer a call
   if (e.key === 'Escape') { liveSkip(); return true; }
+  if (e.key === 'p' || e.key === 'P') { autoToggle(); return true; }   // auto-play on or off
   if ((e.key === 'Enter' || e.key === ' ') && tag !== 'BUTTON') { liveGo(); return true; }
   return e.key.length === 1 && !!HOT[e.key.toLowerCase()];
 });
@@ -50,7 +51,7 @@ onBack(() => {
   return false;
 });
 // Leaving the page drops the open report and the broadcast. (openReport() goes to Booking first, then sets the report.)
-onLeavePage(() => { typer.finish(); const b = book(); b.report = null; if (!(G.S && G.S.live)) b.live = null; });
+onLeavePage(() => { autoStop(); typer.finish(); const b = book(); b.report = null; if (!(G.S && G.S.live)) b.live = null; });
 
 export const pages: Record<string, () => ComponentChildren> = { booking: Booking };
 export const modals: Record<string, (p: { m: Modal }) => ComponentChildren> = { segwin: SegWindow, shapeguide: ShapeGuide, openguide: OpenGuide, ladder: Ladder };
