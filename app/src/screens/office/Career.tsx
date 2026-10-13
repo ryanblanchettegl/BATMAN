@@ -1,6 +1,6 @@
 /* Career: your own record. Level and skills, the owner's trust, your word, the season saga, achievements. */
 import { E } from '../../engine';
-import { G, me, act, plural } from '../../store';
+import { G, me, act, plural, openModal } from '../../store';
 import { Head, Panel, Btn, Tag, Meter } from '../../kit';
 import { LegacyPanel } from './GameOver';
 
@@ -48,10 +48,20 @@ function Saga() {
   </Panel>;
 }
 
-function Achievements() {
+/* The two long parts of the page are a line each, with a button that opens them in a pop-up (NEXT.md job 2). */
+function Legacy() {
+  const L = E.legacy(G.S);
+  return <Panel title="Your legacy so far"><p><b class="num">{L.score}</b> <span class="muted">points</span>{L.made.length ? <span class="muted"> {'·'} {L.made.length} {plural(L.made.length, 'star')} you made</span> : null}</p>
+    <div class="row mt1"><Btn kind="sm" t="career-legacy" onClick={() => openModal({ kind: 'info', title: 'Your legacy so far', wide: true, body: () => <LegacyPanel /> })}>The whole story</Btn></div></Panel>;
+}
+function AchievementsLine() {
   const S = G.S, got = Object.keys(S.ach).length, A = E.ACH.filter((a: any) => !a.ms);
+  return <Panel title="Achievements"><p><b class="num">{got}</b> <span class="muted">of {A.length} earned</span></p>
+    <div class="row mt1"><Btn kind="sm" t="career-ach" onClick={() => openModal({ kind: 'info', title: 'Achievements · ' + got + ' of ' + A.length, wide: true, body: () => <Achievements /> })}>See them all</Btn></div></Panel>;
+}
+function Achievements() {
+  const S = G.S, A = E.ACH.filter((a: any) => !a.ms);
   return <>
-    <h2 class="mt4 mb2">Achievements {'·'} {got} of {A.length}</h2>
     <div class="ach">{A.map((a: any) => {
       const g = S.ach[a.id], hide = a.hidden && !g;
       return <div class={g ? 'got' : undefined}><b>{hide ? 'Hidden' : a.name}</b><span>{hide ? 'Keep playing to find this one.' : a.desc}</span>{g ? <><br /><span class="muted">Unlocked {E.cal(g).label}</span></> : null}</div>;
@@ -93,8 +103,7 @@ export function Career() {
     <Head eyebrow={S.booker.name + ', ' + role() + ' of ' + P.name} title="Career" />
     <div class="cols">
       <div class="stack"><You /><YourWord /></div>
-      <div class="stack"><Reputation /><Assistant /><Saga /><MilestoneWall /><LegacyPanel /></div>
+      <div class="stack"><Reputation /><Assistant /><Saga /><MilestoneWall /><Legacy /><AchievementsLine /></div>
     </div>
-    <Achievements />
   </>;
 }

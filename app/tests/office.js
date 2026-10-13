@@ -126,7 +126,13 @@ async function run(mode) {
 
   /* ---- career: skills only when there is a point to spend ---- */
   await subnav('career');
-  ok(/Career/.test(await txt('h1')) && await count('.ach > div') === await page.evaluate(() => window.GP.ACH.filter(a => !a.ms).length), 'career heading and every achievement');
+  ok(/Career/.test(await txt('h1')) && /earned/.test(await txt('.main')), 'career heading and the achievements line');
+  await page.click('[data-t="career-ach"]'); await page.waitForTimeout(150);
+  ok(await count('.ach > div') === await page.evaluate(() => window.GP.ACH.filter(a => !a.ms).length), 'See them all opens every achievement');
+  await page.keyboard.press('Escape'); await page.waitForTimeout(100);
+  await page.click('[data-t="career-legacy"]'); await page.waitForTimeout(150);
+  ok(/points/.test(await txt('.scrim')) && /The career/i.test(await txt('.scrim')), 'The whole story opens the legacy');
+  await page.keyboard.press('Escape'); await page.waitForTimeout(100);
   ok(await count('[data-t="skill"]') === 0, 'no skill buttons without a point');
   await step('career', 'career');
   const key = await state(page, S => { S.booker.pts = 1; return Object.keys(window.GP.SKILLS)[0]; }); await redraw(page);
