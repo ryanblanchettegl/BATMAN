@@ -1,0 +1,15 @@
+Balance at 0.44 (13 October): node tools/balance.js 100. Each row is the mean of seeds 1, 2 and 3, played with suggested cards and the first answer to every matter.
+Read with care: the headless player never signs anyone, so rosters shrink, and nobody spends booking power.
+NMW (the startup model) goes broke around week 95 by design: it bleeds until a better TV slot, which needs popularity this player never builds. The same happened at 0.41 ($5.1M left at week 94).
+Saves reach about 1.4 MB after 100 weeks.
+
+   co    cash0    cash1     pop0     pop1    r-exp    trust    weeks   roster   freeag   saveKB
+  whw   110.0M   136.7M     88.0     90.8     0.27       98      100       56      103     1436
+  pdw    32.0M    42.2M     72.0     74.1    -0.31       98      100       55       95     1411
+  ocw     9.0M   100.8M     60.0     66.2     0.24       51      100       56       78     1369
+  pdp     3.5M    40.6M     48.0     54.4     0.24       96      100       33      100     1353
+  ttt     2.2M    28.9M     40.0     45.4    -0.26       88      100       46      104     1366
+  nmw    30.0M    -1.0M     52.0     47.5     0.35       99       95       30       84     1329
+  ldd    14.0M    46.4M     56.0     62.0     0.24       99      100       38       92     1410
+  lta    12.0M    41.6M     50.0     52.3    -0.52       99      100       38      103     1370
+  kjp     4.5M    26.6M     46.0     50.8     0.46       94      100       25       83     1345
