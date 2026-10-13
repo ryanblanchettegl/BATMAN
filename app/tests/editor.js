@@ -18,6 +18,7 @@ async function company(page, mode, short, full, model) {
   await page.fill('[data-t="ed-agent"]', short + ' Agent');
   await page.selectOption('[data-t="ed-fill-n"]', '12');
   await page.click('[data-t="ed-fill"]');
+  ok(mode, short + ' says how it stands', /main eventer/.test(await txt(page, '[data-t="ed-health"]')) && /men and/.test(await txt(page, '[data-t="ed-health"]')));
   ok(mode, 'filling ' + short + ' says what happened', /12 unknowns signed to/.test(await txt(page, '.ednote')), await txt(page, '.ednote'));
 }
 

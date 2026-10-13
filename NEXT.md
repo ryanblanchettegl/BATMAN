@@ -42,7 +42,7 @@ Code: `src/86-editor.js`, `app/src/screens/editor/`. Tests: `test-editor.js`, `a
 - [x] **1.11 Quick starts.** On "Start a new world": "A two-company territory" and "A nine-company world of unknowns". Each makes companies of different sizes and models with filled rosters, so a player can rename instead of build.
 - [x] **1.12 From a running game.** Manage, Operations, Universe gets "Open this world in the World Editor". It exports the game as it stands (`E.exportUniverse`), stores it with the player's worlds, and says where to find it. It does not leave the game.
 - [x] **1.13 Undo a delete.** After deleting a wrestler, belt, team, show or company, the note offers "Undo" until the next change. Keep the removed records in memory and put them back with their contracts, holders and members.
-- [ ] **1.14 A health line per company.** On the company form: average overness of its main eventers against its popularity, men and women counts against its belts, and a warning in plain words when the top of the card is far below what a company that size needs.
+- [x] **1.14 A health line per company.** On the company form: average overness of its main eventers against its popularity, men and women counts against its belts, and a warning in plain words when the top of the card is far below what a company that size needs.
 - [ ] **1.15 Big events per company.** Only after job 3. A company's own named big events on the Shows tab.
 - [ ] **1.16 Tests.** Extend `test-editor.js` and `app/tests/editor.js` for every step above, on desk, tablet and TV.
 

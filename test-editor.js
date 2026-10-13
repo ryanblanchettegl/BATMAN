@@ -148,6 +148,11 @@ for (const k of ['territory', 'nine']) { const pkg = E.edQuick(k, '', 5), models
   const pk = E.exportUniverse(S, { name: 'Kept', id: 'kept_wk5' });
   ok('a game kept as a world passes the World Editor check', E.edCheck(pk).errors === 0, (E.edCheck(pk).lines || []).filter(l => l.lvl === 'error').slice(0, 2).map(l => l.msg).join(' | '));
   E.useUniverse(pk); const T = E.newGame('pdw', 1, { name: 'R' }); ok('and a new game starts in it', !!T.promos.pdw && T.w.length > 50); E.useUniverse(builtIn); }
+/* ---- a health line per company ---- */
+{ const pkg = JSON.parse(JSON.stringify(builtIn)), p = pkg.promotions[0], H = E.edHealth(pkg, p.id);
+  ok('a company in the built-in world reads healthy', H.length >= 2 && !H.some(l => l.warn), H.map(l => l.t).join(' | '));
+  pkg.contracts.filter(c => c.promotion_id === p.id && c.push_level === 'main_eventer').forEach(c => { const w = pkg.workers.find(x => x.id === c.worker_id); w.ratings.overness = 15; });
+  const H2 = E.edHealth(pkg, p.id); ok('a weak top of the card is warned about in words', H2[0].warn && /far below/.test(H2[0].t), H2[0].t); }
 /* ---- make a copy: a wrestler keeps their company, a belt starts vacant, a team empty, a company brings shows and belts, not people ---- */
 { const pkg = JSON.parse(JSON.stringify(builtIn)), w = pkg.workers.find(x => E.edHome(pkg, x.id)), cw = E.edDup(pkg, 'workers', w.id);
   ok('a copied wrestler has a new id and name and the same company', cw && cw.id !== w.id && /\(copy\)$/.test(cw.ring_name) && E.edHome(pkg, cw.id) === E.edHome(pkg, w.id) && !!E.edHome(pkg, cw.id));

@@ -51,6 +51,9 @@ export function CompaniesTab() {
         <SelF label="Promise to the locker room" rec={own} k="pledge" options={names(E.PLEDGE)} />
       </div>
     </Panel>
+    <Panel cls="mb4" title="How it stands">
+      <ul class="sheet-lines" data-t="ed-health">{E.edHealth(pkg, p.id).map((l: any, i: number) => <li key={i} class={l.warn ? 'bad' : undefined}>{l.t}</li>)}</ul>
+    </Panel>
     <Panel cls="mb4" title="Brands">
       {(p.brands || []).length ? <ul class="list">{(p.brands as any[]).map((b: any) => <li key={b.id} class="col"><div class="editor plain">
         <Field label="Brand name"><input type="text" maxLength={32} data-t="ed-brand-name" data-v={b.id} value={b.name} onInput={e => { const v = (e.currentTarget as HTMLInputElement).value; edit(() => { E.edSetBrand(pkg, p.id, b.id, { name: v }); }); }} /></Field>

@@ -7194,6 +7194,21 @@ E.edQuick=function(kind,name,seed){
   E.edFillFree(pkg,kind==='nine'?12:6,k+104729);
   return pkg;
 };
+/** How a company stands, in a few plain lines: the top of the card against its popularity, and its men and women
+    against its belts. `warn` is set on a line that needs fixing before the world plays well. */
+E.edHealth=function(pkg,pid){
+  edShape(pkg);var p=edFind(pkg,'promotions',pid);if(!p)return [];
+  var ros=pkg.contracts.filter(function(c){return c.promotion_id===pid;}).map(function(c){return {c:c,w:edFind(pkg,'workers',c.worker_id)};}).filter(function(x){return x.w&&edIsWrestler(x.w);});
+  var ov=function(x){return (x.w.ratings&&x.w.ratings.overness)||0;},top=ros.filter(function(x){return x.c.push_level==='main_eventer';}),L=[];
+  var pop=p.popularity||50,need=Math.max(20,pop-5);
+  if(!top.length)L.push({t:'Nobody is booked as a main eventer. Put two or three of the most over at the top.',warn:true});
+  else{var a=Math.round(top.reduce(function(s,x){return s+ov(x);},0)/top.length);
+    L.push({t:top.length+' main eventer'+(top.length===1?'':'s')+', '+a+' overness on average, for a company at '+pop+' popularity.'+(a<need-10?' The top of the card is far below what a company this size needs.':(a<need?' A little light at the top.':'')),warn:a<need-10});}
+  var men=ros.filter(function(x){return x.w.gender!=='F';}).length,women=ros.length-men,belts=pkg.titles.filter(function(t){return t.promotion_id===pid;});
+  var mb=belts.filter(function(t){return t.gender!=='F';}).length,wb=belts.length-mb;
+  L.push({t:men+' men and '+women+' women for '+mb+' men\'s and '+wb+' women\'s belt'+(belts.length===1?'':'s')+'.'+(wb&&women<4?' Too few women for a women\'s belt.':'')+(mb&&men<4?' Too few men for a men\'s belt.':''),warn:(wb&&women<4)||(mb&&men<4)});
+  return L;
+};
 E.edFillFree=function(pkg,n,seed){
   edShape(pkg);var st={s:(seed>>>0)||1},N=edNames(pkg),used={},made=[],styles=Object.keys(STYLE_KEY),low=['midcarder','lower_midcarder','jobber'];
   pkg.workers.forEach(function(w){used[w.ring_name]=1;});n=clamp(Math.round(n)||6,1,40);
