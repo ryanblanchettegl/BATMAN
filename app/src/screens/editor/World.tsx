@@ -35,14 +35,22 @@ export function WorldTab() {
 /** Take the player to the record a problem is about. */
 function goTo(l: any) { const st = es(); st.tab = l.tab as EdTab; if (l.id) { st.sel[l.tab] = l.id; if (l.tab === 'wrestlers') { st.fp = ''; st.q = ''; } } window.scrollTo(0, 0); }
 
+/* Inside the published artifact the page sits in a frame and cannot download by itself: the viewer's downloads
+   capability offers the file instead (it asks the viewer first). Null where there is no such viewer. */
+let viewerDl: any = null;
+try { const c = (window as any).claude; if (c && typeof c.use === 'function') Promise.resolve(c.use('downloads')).then((d: any) => { viewerDl = d; }, () => {}); } catch (e) { /* not in the viewer */ }
 export function ShareTab() {
-  const st = es(), pkg = world(), v = report(), steam = (window as any).gpSteam, canFile = (() => { try { return window.self === window.top; } catch (e) { return false; } })();
+  const st = es(), pkg = world(), v = report(), steam = (window as any).gpSteam, top = (() => { try { return window.self === window.top; } catch (e) { return false; } })(), canFile = top || !!viewerDl;
   const errs = v.lines.filter((l: any) => l.lvl === 'error'), warns = v.lines.filter((l: any) => l.lvl === 'warning');
   const text = () => JSON.stringify(pkg);
   const line = (l: any, i: number) => <li key={l.lvl + i}><span><b>{l.where}{l.name ? ': ' + l.name : ''}</b><br /><span class="muted">{l.msg}</span></span>
     <Btn kind="sm" t="ed-goto" d={{ v: l.tab }} onClick={() => look(() => goTo(l))}>Go to it</Btn></li>;
   const play = () => { keep(true); const r = setUniverse(st.id as string); look(() => { if (r.ok) { ui.scr = 'select'; ui.mi = 0; ui.setup = null; window.scrollTo(0, 0); } else note('This world could not be loaded. Fix the problems listed here first.', true); }); };
-  const saveFile = () => { try { const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([JSON.stringify(pkg, null, 1)], { type: 'application/json' })); a.download = (pkg.manifest.id || 'world') + '.json'; document.body.appendChild(a); a.click(); a.remove(); look(() => note('Saved as ' + a.download + '.')); } catch (e) { look(() => note('This device would not save a file. Copy the text instead.', true)); } };
+  const saveFile = () => {
+    if (!top && viewerDl) { const name = (pkg.manifest.id || 'world') + '.json';
+      Promise.resolve(viewerDl.save({ filename: name, data: JSON.stringify(pkg, null, 1) })).then(() => look(() => note('Saved as ' + name + '.')), (e: any) => look(() => note(e && e.code === 'declined' ? 'Not saved.' : 'This device would not save a file. Copy the text below instead.', !(e && e.code === 'declined'))));
+      return; }
+    try { const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([JSON.stringify(pkg, null, 1)], { type: 'application/json' })); a.download = (pkg.manifest.id || 'world') + '.json'; document.body.appendChild(a); a.click(); a.remove(); look(() => note('Saved as ' + a.download + '.')); } catch (e) { look(() => note('This device would not save a file. Copy the text instead.', true)); } };
   const upload = () => { look(() => note('Sending to the Workshop...')); Promise.resolve(steam.workshopUpload(pkg)).then((r: any) => look(() => note(r && r.ok ? 'Sent to the Workshop' + (r.id ? ' as item ' + r.id : '') + '.' : 'The Workshop did not take it: ' + ((r && r.msg) || 'no reason given') + '.', !(r && r.ok))), (e: any) => look(() => note('The Workshop did not take it: ' + String((e && e.message) || e) + '.', true))); };
   return <>
     <Panel cls="mb4" title="The check">
