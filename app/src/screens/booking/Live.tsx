@@ -87,12 +87,24 @@ function Result(p: { s: any }) {
     </div>
   </>;
 }
+/** How loud the building is at this point of a match. It climbs through the match, jumps on a big moment and
+    ends on the crowd score the engine gave the match: it shows the result a beat at a time and never makes one up. */
+export function crowdAt(s: any, at: number): number {
+  const bc: Beat[] = s.bc || [], n = Math.max(1, bc.length - 1), f = Math.max(0, Math.min(1, at / n)), cr = s.cr || 0;
+  let hot = 0; for (let i = 0; i <= Math.min(at, bc.length - 1); i++) if (bc[i].h) hot = i === at ? 8 : Math.max(hot, 3);
+  return Math.max(0, Math.min(100, Math.round(cr * (0.4 + 0.6 * Math.pow(f, 1.3)) + (f < 1 ? hot : 0))));
+}
+const CROWD_W: [number, string][] = [[85, 'on its feet'], [70, 'loud'], [55, 'into it'], [40, 'warming up'], [0, 'quiet']];
+function CrowdNow(p: { s: any; at: number }) {
+  const v = crowdAt(p.s, p.at), w = (CROWD_W.find(x => v >= x[0]) as [number, string])[1];
+  return <p class="lv-crowd" data-t="live-crowd" data-v={v}>The crowd <Meter v={v} kind="hot" n={12} /> {w}</p>;
+}
 /** The heading of what is on the air: what it is, who is in it, and their faces. */
-function SegHead(p: { rows: NRow[]; si: number; s: any; eyebrow?: string }) {
+function SegHead(p: { rows: NRow[]; si: number; s: any; eyebrow?: string; at?: number }) {
   const s = p.s, row = p.rows.find(x => x.si === p.si), nm = p.rows.filter(x => x.match).length, meta = [s.mt, s.mins + ' min']; if (s.stip) meta.push(s.stip);
   return <div class="lv-head">
     {s.k === 'match'
-      ? <><div><p class="eyebrow">{p.eyebrow || ((row ? (row.main ? 'Main event' : 'Match ' + row.tag + ' of ' + nm) + ' · ' : '') + meta.join(' · '))}{s.title && !p.eyebrow ? <> {'·'} <span class="gold">{s.title}</span></> : null}</p><h1>{s.label}</h1></div><VsStrip s={s} /></>
+      ? <><div><p class="eyebrow">{p.eyebrow || ((row ? (row.main ? 'Main event' : 'Match ' + row.tag + ' of ' + nm) + ' · ' : '') + meta.join(' · '))}{s.title && !p.eyebrow ? <> {'·'} <span class="gold">{s.title}</span></> : null}</p><h1>{s.label}</h1>{p.at != null && p.at < (s.bc || []).length ? <CrowdNow s={s} at={p.at} /> : null}</div><VsStrip s={s} /></>
       : <div><p class="eyebrow">{p.eyebrow || s.head}</p><h1>{p.eyebrow ? s.head : 'Meanwhile...'}</h1></div>}
   </div>;
 }
@@ -188,7 +200,7 @@ export function Live(p: { r: any }) {
     foot = null;
   } else {
     state = 'seg';
-    head = <SegHead rows={rows} si={L.s} s={s} />;
+    head = <SegHead rows={rows} si={L.s} s={s} at={L.b} />;
     log = <SegLines key={L.s} r={r} s={s} at={L.b} done={done} />;
     foot = <>
       {!done && <Btn kind="sm" t="live-skip" onClick={liveSkip}>Skip to the result</Btn>}

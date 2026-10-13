@@ -36,6 +36,7 @@ async function run(mode) {
     /** Does the broadcast move within `ms` with no press but answers to calls? */
     const moves = async ms => { const t = Date.now(), p = await pos(page); while (Date.now() - t < ms) { if (await answer()) continue; if ((await pos(page)) !== p) return true; await page.waitForTimeout(150); } return false; };
     ok(mode, 'after the bell the lines come by themselves', await moves(15000), await pos(page));
+    if (await waitFor(page, () => has(page, '[data-t="live-crowd"]'), 15000)) ok(mode, 'a match shows how loud the building is', /The crowd/.test(await page.$eval('[data-t="live-crowd"]', e => e.textContent)));
     ok(mode, 'and keep coming with no press', await moves(10000), await pos(page));
     while (await answer());
     await page.keyboard.press('p'); await page.waitForTimeout(250);
