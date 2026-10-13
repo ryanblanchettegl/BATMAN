@@ -122,6 +122,9 @@ async function run(mode) {
     const cheap = L.filter(w => w.fa).sort((a, b) => a.ask - b.ask)[0]; return { n: E.market(S).length, room, scout: L[0], buy: cheap, cash: P.cash }; });
   must(mk.scout && mk.buy, 'nobody on the market to talk to');
   await ok(t, 'market', mk.n + ' in the market');
+  if (mk.n > 20) { must((await page.$$eval('.tw tbody tr', L => L.length)) <= 20, 'the market shows more than twenty at once');
+    await page.click('[data-t="mkpage-next"]'); must(/Page 2 of/.test(await page.$eval('.main', e => e.textContent)), 'Next 20 did not turn the page');
+    await page.click('[data-t="mkpage-prev"]'); await ok(t, 'market pages', 'twenty to a page'); }
   await page.click('[data-t="offer"][data-id="' + mk.scout.id + '"]'); await page.waitForSelector('#offer-wage');
   must(await page.$eval('#offer-wage', e => +e.value) === mk.scout.ask, 'offer does not start at the asking wage');
   await ok(t, 'offer row');

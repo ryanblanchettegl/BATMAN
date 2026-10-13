@@ -45,10 +45,15 @@ function ClassPanel() {
 }
 
 export function Market() {
-  const S = G.S, P = me(), st = rs(), q = st.mq.toLowerCase(), mk = slice<{ sort: string; will: boolean }>('market', () => ({ sort: 'ovr', will: false }));
+  const S = G.S, P = me(), st = rs(), q = st.mq.toLowerCase(), mk = slice<{ sort: string; will: boolean; pg: number; key: string }>('market', () => ({ sort: 'ovr', will: false, pg: 0, key: '' }));
   const fitV = (w: W) => { const f = E.fit(S, w.id); return f ? f.v : -999; };
   const key: Record<string, (w: W) => number> = { ovr: w => -w.ovr, fit: w => -fitV(w), ask: w => E.ask(S, w), age: w => w.age };
   const L: W[] = E.market(S).filter((w: W) => (!q || w.name.toLowerCase().indexOf(q) >= 0) && (!mk.will || (E.canSign(S, w) && !(w.lock > S.week)))).sort((a: W, b: W) => (key[mk.sort](a) - key[mk.sort](b)) || b.ovr - a.ovr).slice(0, 120);
+  // twenty to a page (NEXT.md job 2): the page goes back to the first whenever the search, sort or filter changes
+  const PER = 20, fk = q + '|' + mk.sort + '|' + mk.will; if (mk.key !== fk) { mk.key = fk; mk.pg = 0; }
+  const pages = Math.max(1, Math.ceil(L.length / PER)), pg = Math.min(mk.pg || 0, pages - 1), shown = L.slice(pg * PER, pg * PER + PER);
+  const turn = pages > 1 ? <div class="row mt1 mb2"><Btn kind="sm" t="mkpage-prev" disabled={pg === 0} onClick={() => view(() => { mk.pg = pg - 1; })}>Previous 20</Btn>
+    <span class="muted">Page {pg + 1} of {pages}</span><Btn kind="sm" t="mkpage-next" disabled={pg >= pages - 1} onClick={() => view(() => { mk.pg = pg + 1; })}>Next 20</Btn></div> : null;
   const toggle = (w: W, ask: number) => view(() => { if (st.offer === w.id) st.offer = null; else { st.offer = w.id; st.wage = String(ask); st.weeks = '48'; } });
   return <>
     <Head eyebrow={'Free agents and rivals’ talent with 12 weeks or less on their deals'} title="Free agents" />
@@ -64,7 +69,7 @@ export function Market() {
     <div class="tw mkt"><table>
       <thead><tr><th>Name</th><th>Status</th><th>Side</th><th>Style</th><th class="r">Age</th><th class="r">Over</th><th class="r">Work</th><th class="r">Promo</th><th class="r">Potential</th><th>Fit</th><th class="r">Asking/wk</th><th /></tr></thead>
       <tbody>
-        {L.map(w => {
+        {shown.map(w => {
           const ask = E.ask(S, w), locked = w.lock > S.week, can = E.canSign(S, w), open = st.offer === w.id && !locked && can;
           return <Fragment key={w.id}>
             <tr>
@@ -83,5 +88,6 @@ export function Market() {
         {!L.length && <tr><td colSpan={12} class="muted">Nobody available.</td></tr>}
       </tbody>
     </table></div>
+    {turn}
   </>;
 }

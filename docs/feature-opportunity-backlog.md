@@ -31,3 +31,5 @@ Done, each with tests (`app/tests/auto.js`, `test-segments.js`, `test-shape.js`)
 Next ideas for the show: rival shows the same week (needs the rivals to run before the player's show), crowd signs and chants for the hottest acts, a replay that plays back at auto pace.
 
 The flaky map check in `app/tests/desk.js` (13 October) was the map redrawing after a resize. The test now samples until it settles; three runs in a row pass.
+
+Intermittent (13 October): `app/tests/roster.js` failed once in seven runs after the market got pages; six reruns passed and the failure was not caught again. Rosters differ run to run, so a check may depend on who is in the game.
