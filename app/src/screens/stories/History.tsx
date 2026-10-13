@@ -21,9 +21,14 @@ function Chronicles() {
 /** The year's best matches across every promotion so far. Each opens a short card with the details. */
 /** The moments kept from your shows (src/84-kept.js), newest first, in the words they were called. */
 const KEPT_TAG: Record<string, string> = { gold: 'New champion', upset: 'Upset', streak: 'Streak broken', match: 'Five stars' };
+function KeptList(p: { n: number }) {
+  const L: any[] = E.kept(G.S).slice(0, p.n);
+  return <ul class="list" data-t="kept">{L.map((k, i) => <li key={k.w + ':' + i} class="col"><span><span class="gold">{KEPT_TAG[k.k] || 'Moment'}</span> {'·'} <Txt>{k.label}</Txt> <span class="muted">{'·'} {k.show}, {wk(k.w)}</span></span><span><Txt>{'“' + k.x + '”'}</Txt></span></li>)}</ul>;
+}
 function Kept() {
-  const L: any[] = E.kept(G.S).slice(0, 8);
+  const all = E.kept(G.S).length, L: any[] = E.kept(G.S).slice(0, 3);
   return <Panel title="Moments kept">
+    {all > 3 ? <div class="row mb1"><Btn kind="sm" t="hist-kept" onClick={() => openModal({ kind: 'info', title: 'Moments kept', wide: true, body: () => <KeptList n={40} /> })}>All {all} moments</Btn></div> : null}
     {L.length ? <ul class="list" data-t="kept">{L.map((k, i) => <li key={k.w + ':' + i} class="col"><span><span class="gold">{KEPT_TAG[k.k] || 'Moment'}</span> {'·'} <Txt>{k.label}</Txt> <span class="muted">{'·'} {k.show}, {wk(k.w)}</span></span><span><Txt>{'“' + k.x + '”'}</Txt></span></li>)}</ul>
       : <Empty>Nothing kept yet. A new champion, an upset, a long streak broken or a five-star match will be.</Empty>}
   </Panel>;
@@ -36,7 +41,8 @@ function MatchOfYear() {
     <p>{m.mt}{m.stip ? ' · ' + m.stip : ''}{m.mins ? ' · ' + m.mins + ' min' : ''}{m.title ? ' · ' + m.title : ''}</p>
     <p class="mt1">{m.win ? 'Winner: ' + m.win : 'No winner'}</p></> });
   return <Panel title="Match of the year, so far">
-    {L.length ? <ol class="rank">{L.map((m, i) => <li key={m.w + m.l}><Btn kind="sm" t="moty" d={{ v: i }} onClick={() => open(m)}>Details</Btn> <b class="gold">{stars(m.ov)}</b> <Txt>{m.l}</Txt><br /><span class="muted">{m.promoName}, {m.show}, {wk(m.w)}</span></li>)}</ol>
+    {L.length > 3 ? <div class="row mb1"><Btn kind="sm" t="moty-all" onClick={() => openModal({ kind: 'info', title: 'Match of the year, so far', wide: true, body: () => <ol class="rank">{L.map((m: any) => <li><b class="gold">{stars(m.ov)}</b> <Txt>{m.l}</Txt><br /><span class="muted">{m.promoName} {'·'} {m.show} {'·'} {wk(m.w)}</span></li>)}</ol> })}>The whole list</Btn></div> : null}
+    {L.length ? <ol class="rank">{L.slice(0, 3).map((m, i) => <li key={m.w + m.l}><Btn kind="sm" t="moty" d={{ v: i }} onClick={() => open(m)}>Details</Btn> <b class="gold">{stars(m.ov)}</b> <Txt>{m.l}</Txt><br /><span class="muted">{m.promoName}, {m.show}, {wk(m.w)}</span></li>)}</ol>
       : <Empty>No matches yet this year. Run a show and the list starts.</Empty>}
   </Panel>;
 }
