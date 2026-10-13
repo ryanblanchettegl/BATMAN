@@ -6441,10 +6441,18 @@ function planPromo(S,P,show,ctx){
   if(ov>=80)gainXp(S,3);if(starQ(ov)>=17)award(S,'ACH_PROMO');
   var seg=angle(kind==='interview'?'Opening promo':'Opening '+PKIND[kind].n.toLowerCase(),text+extra,ov);
   seg.rub={d:D,c:pp.C,ch:pp.Ch,cr:pp.Cr};seg.roll=r;seg.who=w.name;if(pp.f&&pl.topic==='rival')seg.feud=pp.f.id;
-  seg.bc=[{t:'note',x:text+extra},{t:'note',x:rollText(r)+'Delivery '+D+', content '+pp.C+', character '+pp.Ch+', crowd '+pp.Cr+' out of 10.'},{t:'col',x:ov>=80?'That is how you open a show.':(ov>=60?'A solid start to the night.':'Well. We have a long show ahead of us to make up for that.')}];
+  seg.bc=[{t:'note',x:text+extra},{t:'note',x:rollText(r).trim()},{t:'col',x:promoWords(D,pp.C,pp.Ch,pp.Cr)},{t:'col',x:ov>=80?'That is how you open a show.':(ov>=60?'A solid start to the night.':'Well. We have a long show ahead of us to make up for that.')}];
   return seg;
 }
 
+/** How a promo went, in words for the commentary desk: what was best about it and what was weakest. The scores
+    are out of 10 inside the game; the broadcast never says the number. */
+function promoWords(d,c,ch,cr){
+  var W=function(v){return v>=9?'outstanding':(v>=8?'strong':(v>=6?'solid':(v>=4?'shaky':'poor')));};
+  var L=[['the delivery',d],['what was said',c],['the character',ch],['the crowd',cr]].sort(function(a,b){return b[1]-a[1];}),hi=L[0],lo=L[3];
+  if(hi[1]-lo[1]<2)return 'Even all the way through: '+W(hi[1])+'.';
+  return 'The best of it: '+hi[0]+', '+W(hi[1])+'. The weak spot: '+lo[0]+', '+W(lo[1])+'.';
+}
 /* ---------- fed against fed: relations, trades, supershows and turf wars ---------- */
 
 function xf(S){return S.xf&&S.xf.until>=S.week?S.xf:null;}
