@@ -1425,6 +1425,28 @@ E.storyEnd=function(S,id){
   return {ok:true,msg:'The '+feudLabel(S,f)+' feud is over. It never got its blow-off, and both of them know it.'};
 };
 
+/* ---------- tonight, on the card being booked (Book the show: Tonight's stakes and Before the bell) ----------
+   What rides on tonight's show, and the checks a booker runs before the bell. Reads only. */
+E.tonight=function(S){
+  var P=S.promos[S.player],show=S.queue&&S.queue[S.qi],card=S.card||[],stakes=[],checks=[];
+  if(!show)return {stakes:stakes,checks:checks};
+  var nm=function(ids){return ids.map(function(id){return S.w[id]?S.w[id].name:'';}).join(' & ');};
+  (S.quests||[]).filter(function(q){return q.due-S.week<=1;}).slice(0,2).forEach(function(q){var qt=q.text.replace(/^[^:]+: /,'');stakes.push({k:'due',t:qt.charAt(0).toUpperCase()+qt.slice(1)});});
+  card.forEach(function(m){if(!m||!m.sides||m.sides.length<2||m.sides.some(function(s){return !s.length||s.some(function(id){return id==null;});}))return;
+    var f=E.matchFeud(S,m);if(m.end&&f)stakes.push({k:'story',t:feudLabel(S,f)+' ends tonight.'});
+    else if(f)stakes.push({k:'story',t:feudLabel(S,f)+': '+PHASE_N[feudPhase(S,f)].toLowerCase()+', heat '+Math.round(f.heat)+'.'});
+    if(m.title){var t=P.titles.filter(function(x){return x.id===m.title;})[0];if(t)stakes.push({k:'title',t:'The '+t.name+(t.tag?' are':' is')+' on the line.'});}});
+  if(show.big)activeFeuds(S).filter(function(f){return f.promo===P.id&&f.heat>=65&&f.fresh<50&&!card.some(function(m){return m&&m.end&&E.matchFeud(S,m)===f;});})
+    .slice(0,1).forEach(function(f){stakes.push({k:'ripe',t:feudLabel(S,f)+' is ripe and not ending tonight.'});});
+  var fw=faceOf(S);if(fw&&card.length&&!card.some(function(m){return m&&m.sides&&m.sides.some(function(s){return s.indexOf(fw.id)>=0;});}))stakes.push({k:'face',t:fw.name+', the face of the company, is not on the card.'});
+  var ck=E.clock(S);
+  checks.push({ok:!ck.over&&!ck.short,t:ck.over?'The show runs over its slot.':(ck.short?'There is too much empty time.':'The run sheet fills the slot.')});
+  var last=card[card.length-1];
+  if(last)checks.push({ok:!!(last.title||E.matchFeud(S,last)),t:last.title?'A title match closes the show.':(E.matchFeud(S,last)?'A feud closes the show.':'Nothing is at stake in the main event.')});
+  if(!card.length)checks.push({ok:false,t:'The card is empty.'});
+  return {stakes:stakes.slice(0,3),checks:checks.slice(0,2)};
+};
+
 /* ===== 30-show.js ===== */
 /* ---------- running a show ---------- */
 function dirtSheet(S,P,show,rep,pool){

@@ -7,7 +7,7 @@ import { E } from '../../engine';
 import { G, act, say, view, slice, openModal } from '../../store';
 import { book } from '../../flow';
 import { go } from '../../nav';
-import { Panel, Tabs, Sel, Field, Tag, Name, Meter, CheckLine, Empty, Btn, Txt, Opt } from '../../kit';
+import { Panel, Tabs, Sel, Field, Tag, Name, Meter, CheckLine, Empty, Btn, Txt, Opt, Group, LightPic } from '../../kit';
 import { Match, pickSide, setPlan, sel, pickMatch, pickSeg, moveMatch, removeMatch, run } from './run';
 import { Shape } from './Shape';
 import { Editor } from './Editor';
@@ -79,6 +79,16 @@ function PreShow(p: { pre: any }) {
 
 /* ---------- the booking notes ---------- */
 /** What stands in the way of the show, then what the writers and the announcers think of the card. */
+const STK: Record<string, [string, any]> = { due: ['Due', 'bad'], story: ['Story', 'good'], title: ['Title', 'face'], ripe: ['Ripe', 'gold'], face: ['Face', 'warn'] };
+/** Tonight's stakes and Before the bell (final-7): what rides on the show, and the checks before it airs. */
+function Tonight() {
+  const T = E.tonight(G.S);
+  if (!G.S.card.length) return null;
+  return <>
+    <Group title="Tonight's stakes" t="stakes">{T.stakes.length ? T.stakes.map((x: any, i: number) => <p key={i} class="tn-st clamp"><Tag kind={STK[x.k][1]}>{STK[x.k][0]}</Tag> <Txt>{x.t}</Txt></p>) : <p class="muted">Nothing special rides on tonight.</p>}</Group>
+    <Group title="Before the bell" t="bell-checks"><div class="tn-row"><div class="tn-checks">{T.checks.map((x: any, i: number) => <p key={i} class={'clamp ' + (x.ok ? 'good' : 'bad')}>{x.ok ? '✔' : '!'} {x.t}</p>)}</div><LightPic name="bell" dot={1} label="The bell" /></div></Group>
+  </>;
+}
 function Notes() {
   const S = G.S, b = book(), v = E.validate(S, S.card), g = E.taskGate(S, 'show');
   const errs = b.tried ? v.errors : [], A = E.advice(S, S.card).filter((a: any) => a.tips.length), F = E.fogInfo(S);
@@ -86,12 +96,13 @@ function Notes() {
   // how many notes a page holds: fewer on a tablet's shorter lines, and one fewer when a warning is showing above them
   const small = document.documentElement.dataset.screen === 'tablet', warn = S.card.length > 0 && v.warnings.length > 0 && !errs.length;
   return <Panel title="Staff notes">
+    {!errs.length && g.ok && !warn ? <Tonight /> : null}
     {!g.ok ? <div class="flash err" data-t="gate-note"><b>On your desk before this show can run</b><ul>{g.left.slice(0, 4).map((x: string) => <li><Txt>{x}</Txt></li>)}</ul>
       <div class="row mt1"><Btn kind="sm" t="gate-desk" onClick={() => go('desk')}>Go to the desk</Btn></div></div> : null}
     {errs.length ? <div class="flash err"><b>Fix before the show can run</b><ul>{errs.slice(0, 4).map((e: string) => <li>{e}</li>)}</ul></div> : null}
     {S.card.length > 0 && v.warnings.length > 0 && !errs.length ? <div class="flash">{v.warnings.slice(0, small ? 1 : 2).map((w: string, k: number) => <>{k ? <br /> : null}{w}</>)}</div> : null}
     {!S.card.length ? <Empty>Put a card together and your staff will look it over.</Empty>
-      : (tips.length ? <Paged id="tips" items={tips} per={errs.length || !g.ok ? 1 : Math.max(1, (small ? 2 : 3) - (warn ? 1 : 0))} cls="tips" row={(x, k) => <li key={k}><span class="eyebrow">{x.who}</span><br />{'“'}{x.t}{'”'}</li>} />
+      : (tips.length ? <Paged id="tips" items={tips} per={1} cls="tips" row={(x, k) => <li key={k}><span class="eyebrow">{x.who}</span><br />{'“'}{x.t}{'”'}</li>} />
         : <p class="good">The writers and the announcers have no complaint about this card.</p>)}
     <p class="muted mt1" data-t="fog-note">{F.head} comments on every match on the sheet: select one to read it. {F.pairs} {F.pairs === 1 ? 'pairing' : 'pairings'} seen so far.</p>
   </Panel>;
