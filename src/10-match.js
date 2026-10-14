@@ -443,7 +443,7 @@ function doMatch(S,P,show,m,i,n,rep,used){
   return seg;
 }
 function settleFeud(S,P,show,feud,winners,losers,isPl){
-  feudPlan(S,feud);var pm=feudPayMult(S,feud),age=S.week-feud.start;feud.res=true;feud.end=S.week;feudEmber(S,feud);
+  feudPlan(S,feud);var pm=feudPayMult(S,feud),age=S.week-feud.start;feud.res=true;feud.end=S.week;feudEmber(S,feud);feudFile(S,feud,'end');
   var full=feud.twist&&feud.finale,hot=feud.heat>=60;
   winners.forEach(function(w){addOvr(P,w,(full?3.5:2.5)*pm);w.mom=clamp(w.mom+2,-10,10);});losers.forEach(function(w){addOvr(P,w,(full?1.5:1)*pm);});
   if(hot)winners.concat(losers).forEach(function(w){w.morale=clamp(w.morale+(age>=24?6:(age>=8?4:3)),0,100);});

@@ -938,7 +938,7 @@ function doMatch(S,P,show,m,i,n,rep,used){
   return seg;
 }
 function settleFeud(S,P,show,feud,winners,losers,isPl){
-  feudPlan(S,feud);var pm=feudPayMult(S,feud),age=S.week-feud.start;feud.res=true;feud.end=S.week;feudEmber(S,feud);
+  feudPlan(S,feud);var pm=feudPayMult(S,feud),age=S.week-feud.start;feud.res=true;feud.end=S.week;feudEmber(S,feud);feudFile(S,feud,'end');
   var full=feud.twist&&feud.finale,hot=feud.heat>=60;
   winners.forEach(function(w){addOvr(P,w,(full?3.5:2.5)*pm);w.mom=clamp(w.mom+2,-10,10);});losers.forEach(function(w){addOvr(P,w,(full?1.5:1)*pm);});
   if(hot)winners.concat(losers).forEach(function(w){w.morale=clamp(w.morale+(age>=24?6:(age>=8?4:3)),0,100);});
@@ -1301,12 +1301,19 @@ function feudFizzle(S,f){
   if(f.bb!=null&&S.week<=f.bb)return false;   // a story on the back burner does not die
   var flat=S.week-f.start>=LIVE_FLAT&&(f.peak||0)<35;   // three months and it never got going
   if(!(f.fz>=LIVE_FIZZW||flat||S.week-f.last>=LIVE_SHELF))return false;
-  var cold=f.fz>=LIVE_FIZZW||flat;f.res=true;f.dead=true;f.fizzle=cold?'cold':'shelf';f.end=S.week;
+  var cold=f.fz>=LIVE_FIZZW||flat;f.res=true;f.dead=true;f.fizzle=cold?'cold':'shelf';f.end=S.week;if((f.peak||0)>=50)feudFile(S,f,'fizzle');
   f.a.concat(f.b).forEach(function(id){var w=S.w[id];if(w&&w.promo===f.promo){addOvr(S.promos[f.promo],w,-0.5);if(f.promo===S.player)youRemember(S,w,'fizzle',cold?'Our feud never caught on.':'You left our feud on the shelf until it died.',-1);}});
   news(S,'story',cold?'The rivalry between '+feudLabel(S,f)+' never caught on. It fizzles out.':'The rivalry between '+feudLabel(S,f)+' was left alone too long and is over.');
   return true;
 }
 
+/* the book of feuds: every one of yours that ends is filed with how long it ran and how hot it got (History shows the best) */
+function feudFile(S,f,how){
+  if(f.promo!==S.player||f.filed)return;f.filed=1;feudPlan(S,f);
+  var L=S.feudBook||(S.feudBook=[]);L.push({l:feudLabel(S,f),s:f.start,e:S.week,pk:Math.round(f.peak),h:Math.round(f.heat),r:f.chd||0,how:how});
+  L.sort(function(a,b){return (b.pk*(b.e-b.s+4))-(a.pk*(a.e-a.s+4));});if(L.length>20)L.length=20;
+}
+E.feudBook=function(S){return (S.feudBook||[]).slice();};
 /* embers: when a feud ends, the pair is remembered for a year; the same two start again with a head start */
 function feudEmber(S,f){var k=rkey(f.a[0],f.b[0]);(S.embers||(S.embers={}))[k]={w:S.week,h:Math.round(f.heat),n:((S.embers[k]||{}).n||0)+1};
   Object.keys(S.embers).forEach(function(x){if(S.week-S.embers[x].w>48)delete S.embers[x];});}
@@ -1427,7 +1434,7 @@ E.season=function(S){
 /** End a story now, with no match. No payoff, and both of them remember. */
 E.storyEnd=function(S,id){
   var f=S.feuds.filter(function(x){return x.id===id&&!x.res&&x.promo===S.player;})[0];if(!f)return {ok:false,msg:'That feud is already over.'};
-  f.res=true;f.dead=true;f.cut=1;f.end=S.week;
+  f.res=true;f.dead=true;f.cut=1;f.end=S.week;if((f.peak||0)>=50)feudFile(S,f,'drop');
   f.a.concat(f.b).forEach(function(id){var w=S.w[id];if(!w)return;w.morale=clamp(w.morale-3,0,100);youRemember(S,w,'storycut','You dropped our feud with no ending.',-3);});
   news(S,'story','The '+feudLabel(S,f)+' feud was dropped with no ending.');
   return {ok:true,msg:'The '+feudLabel(S,f)+' feud is over. It never got its blow-off, and both of them know it.'};

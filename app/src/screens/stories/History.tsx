@@ -33,6 +33,15 @@ function Kept() {
       : <Empty>Nothing kept yet. A new champion, an upset, a long streak broken or a five-star match will be.</Empty>}
   </Panel>;
 }
+/** The greatest feuds you have run: how long, how hot, and how they ended (src/21-living.js, feudFile). */
+function Feuds() {
+  const L: any[] = E.feudBook(G.S), HOW: Record<string, string> = { end: 'settled', fizzle: 'faded', drop: 'dropped' };
+  const line = (x: any) => <><Txt>{x.l}</Txt><br /><span class="muted">{x.e - x.s} weeks, at its hottest {x.pk}{x.r ? ', ' + x.r + (x.r === 1 ? ' round' : ' rounds') : ''}, {HOW[x.how] || 'ended'} {wk(x.e)}</span></>;
+  return <Panel title="Greatest feuds">
+    {L.length > 3 ? <div class="row mb1"><Btn kind="sm" t="feuds-all" onClick={() => openModal({ kind: 'info', title: 'Greatest feuds', wide: true, body: () => <ol class="rank">{L.map((x: any, i: number) => <li key={i}>{line(x)}</li>)}</ol> })}>All {L.length}</Btn></div> : null}
+    {L.length ? <ol class="rank" data-t="feud-book">{L.slice(0, 3).map((x: any, i: number) => <li key={i}>{line(x)}</li>)}</ol> : <Empty>No feud has finished yet. End one at its peak and it goes in the book.</Empty>}
+  </Panel>;
+}
 function MatchOfYear() {
   const L: any[] = E.matchOfYear(G.S);
   const open = (m: any) => openModal({ kind: 'info', title: m.l, body: () => <>
@@ -133,7 +142,7 @@ export function History() {
     <Head eyebrow={P.name} title="History" />
     <div class="cols">
       <div class="stack"><Chronicles /><Kept /><MatchOfYear /><RecordBook /><Records /><Awards /><HallOfFame /></div>
-      <div class="stack">{P.titles.map((t: any) => <TitleLine t={t} />)}</div>
+      <div class="stack"><Feuds />{P.titles.map((t: any) => <TitleLine t={t} />)}</div>
     </div>
   </div>;
 }
