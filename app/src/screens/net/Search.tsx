@@ -2,7 +2,8 @@
    the way a game world fills its own internet. Every site only reads the game; nothing here changes it. */
 import { ComponentChildren } from 'preact';
 import { E, W } from '../../engine';
-import { G, slice, view } from '../../store';
+import { G, ui, slice, view } from '../../store';
+import { onLeavePage } from '../../nav';
 import { Btn, Empty, Txt, Name, PromoName, TitleName } from '../../kit';
 import { Boards } from './Boards';
 
@@ -68,3 +69,6 @@ export function Search() {
     </div>}
   </div>;
 }
+
+/* Coming back to the Web page opens Wrestle Search on its front page. */
+onLeavePage(() => { const st = (ui.slices as any).wsearch; if (st) st.site = ''; });

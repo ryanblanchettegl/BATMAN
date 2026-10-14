@@ -3,7 +3,7 @@
    Run:          NODE_PATH=/opt/npm-tools/node_modules node app/tests/stories.js */
 const { open, go, overflow, shot, state, redraw, fits: fitsOne } = require('./helper');
 const FILE = process.env.EWF_OUT || 'index';
-const PAGES = ['storylines', 'history', 'boards'];
+const PAGES = ['storylines', 'history', 'web'];
 const fails = [];
 function check(mode, label, ok, detail) { console.log(mode.padEnd(6), ok ? 'ok  ' : 'FAIL', label + (detail ? ': ' + detail : '')); if (!ok) fails.push(mode + ' ' + label); }
 async function fits(page, mode, label) { const o = await overflow(page); check(mode, label + ' fits the screen', o === '', o); }
@@ -91,12 +91,12 @@ async function history(page, mode) {
   await fits(page, mode, 'history');
 }
 async function net(page, mode) {
-  await go(page, 'boards');
-  const want = await state(page, S => ({ threads: S.net.threads.slice(0, 3).length, posts: S.net.threads.slice(0, 3).reduce((a, t) => a + t.posts.length, 0), mood: Math.round(S.net.mood), sub: S.net.threads[0] ? S.net.threads[0].sub : '', user: S.net.threads[0] ? S.net.threads[0].posts[0].u : '' }));
-  check(mode, 'the newest three threads and their posts are on the board', want.threads > 0 && await count(page, '.post') === want.posts && await count(page, '.panel') === want.threads + 1, want.threads + ' threads, ' + want.posts + ' posts');
+  await go(page, 'boards'); await page.click('[data-t="ws-go"][data-v="board"]');
+  const want = await state(page, S => ({ threads: S.net.threads.slice(0, 2).length, posts: S.net.threads.slice(0, 2).reduce((a, t) => a + t.posts.length, 0), mood: Math.round(S.net.mood), sub: S.net.threads[0] ? S.net.threads[0].sub : '', user: S.net.threads[0] ? S.net.threads[0].posts[0].u : '' }));
+  check(mode, 'the newest two threads and their posts are on the board in Wrestle Search', want.threads > 0 && await count(page, '.post') === want.posts && await count(page, '.thread') === want.threads, want.threads + ' threads, ' + want.posts + ' posts');
   check(mode, 'posts show who wrote them', await page.$eval('.post .u', e => e.innerText) === '<' + want.user + '>');
   check(mode, 'mood of the board', new RegExp('Mood of the board .* ' + want.mood + ' ').test(await text(page)), 'mood ' + want.mood);
-  check(mode, 'newsgroup name', /^alt\.wrestling\.[a-z0-9]+$/i.test(await page.$eval('.eyebrow', e => e.innerText)), await page.$eval('.eyebrow', e => e.innerText));
+  check(mode, 'newsgroup name', /^alt\.wrestling\.[a-z0-9]+$/i.test(await page.$eval('[data-t="ws-site"] .eyebrow', e => e.innerText)), await page.$eval('[data-t="ws-site"] .eyebrow', e => e.innerText));
   await fits(page, mode, 'the net with threads');
 }
 
@@ -106,7 +106,7 @@ async function net(page, mode) {
     await tour(page, mode, 'week 1');
     await go(page, 'storylines');
     check(mode, 'storylines page before any show', await count(page, '[data-t="storylines"] .wn') === 5 && !!(await page.$('[data-t="season"]')));
-    check(mode, 'Storylines is a tab in the Office, and booking power can be spent there four ways', (await page.$$eval('[data-t="page"]', L => L.map(e => e.innerText.trim()).join('|'))) === 'The desk|Backstage|Storylines|Career' && await count(page, '[data-t="plot-open"]') === 5 && /booking power/i.test(await page.$eval('[data-t="plot"]', e => e.closest('.wn').innerText)));
+    check(mode, 'Storylines is a tab in the Office, and booking power can be spent there four ways', (await page.$$eval('[data-t="page"]', L => L.map(e => e.innerText.trim()).join('|'))) === 'The desk|Backstage|Storylines|Career' && await count(page, '[data-t="plot"] [data-t="plot-open"]') === 5 && /booking power/i.test(await page.$eval('[data-t="plot"]', e => e.closest('.wn').innerText)));
     await state(page, S => { S.bp = 5; }); await page.evaluate(() => window.EWF_DEBUG.render());
     await page.click('[data-t="plot-open"][data-v="tape"]');
     if (await count(page, '[data-t="plot-a"] option') > 2) { await page.selectOption('[data-t="plot-a"]', { index: 2 }); await page.selectOption('[data-t="plot-at"]', 'end'); await page.click('[data-t="plot-do"][data-v="tape"]'); await page.click('#modal-ok');
@@ -131,8 +131,8 @@ async function net(page, mode) {
     await page.click('[data-t="hist-line"]').catch(() => {}); await page.waitForTimeout(120);
     const line0 = await page.$eval('.scrim', e => e.innerText).catch(() => ''); await page.keyboard.press('Escape'); await page.waitForTimeout(80);
     check(mode, 'history before any show', /Run a show on Booking and the book opens/.test(await text(page)) && /Champion when you arrived/.test(line0));
-    await go(page, 'boards');
-    check(mode, 'the net before any show', await count(page, '.post') === await state(page, S => S.net.threads.slice(0, 3).reduce((a, t) => a + t.posts.length, 0)) && (await count(page, '.post') > 0 || /Nobody has posted yet/.test(await text(page))));
+    await go(page, 'boards'); await page.click('[data-t="ws-go"][data-v="board"]');
+    check(mode, 'the board before any show', await count(page, '.post') === await state(page, S => S.net.threads.slice(0, 2).reduce((a, t) => a + t.posts.length, 0)) && (await count(page, '.post') > 0 || /Nobody has posted yet/.test(await text(page))));
 
     await advance(page, 8);
     check(mode, 'eight weeks played', await state(page, S => S.week) === 9 && !(await state(page, S => S.over)));
