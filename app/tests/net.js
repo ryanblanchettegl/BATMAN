@@ -43,7 +43,7 @@ async function run(mode) {
     await over('the feed');
     await shot(page, 'net-' + mode + '-feed');
     await go(page, 'boards');
-    ok(mode, 'Wrestle Search opens on six sites', await count(page, '[data-t="ws-go"]') === 6);
+    ok(mode, 'Wrestle Search opens on six sites, all in view with nothing to scroll', await count(page, '[data-t="ws-go"]') === 6 && await page.$eval('[data-t="web-boards"] > .bd', e => e.scrollHeight - e.clientHeight <= 1));
     for (const v of ['rumor', 'results', 'rank', 'belts', 'whisper']) { await page.click('[data-t="ws-go"][data-v="' + v + '"]'); ok(mode, 'the site ' + v + ' opens with its address', await count(page, '[data-t="ws-site"][data-v="' + v + '"]') === 1 && /http:\/\/\S+/.test(await txt(page, '[data-t="ws-url"]'))); await page.click('[data-t="ws-back"]'); }
     await page.click('[data-t="ws-go"][data-v="board"]');
     ok(mode, 'the board keeps its threads, with votes on each post', /WEB/i.test(await txt(page, 'h1')) && await count(page, '.post') > 0 && await count(page, '.post .votes') === await count(page, '.post'));

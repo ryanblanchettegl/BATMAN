@@ -1678,6 +1678,14 @@ html[data-screen="desk"]:has(.webpage){--fs:min(clamp(18px,1.5vw,32px),2.6vh)}
 html[data-screen="tablet"]:has(.webpage){--fs:min(clamp(16px,1.6vw,30px),2.4vh)}
 html[data-screen="tv"]:has(.webpage){--fs:min(clamp(20px,1.7vw,84px),2.32vh)}
 .crt:has(.webpage){max-width:84em}
+/* the Wrestle Search front page fits its window with all six sites in view; only the sites themselves scroll */
+.wsearch .ws-home{padding:.3em 1ch .4em}
+.wsearch .ws-logo{font-size:1.6em}
+.wsearch .ws-tag{margin-bottom:.3em;font-size:.85em}
+.wsearch .ws-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:.35em .8ch}
+.wsearch .ws-link{padding:.15em .7ch;line-height:1.1}
+.wsearch .ws-link b{font-size:.9em}
+.wsearch .ws-link small{font-size:.72em}
 </style>
 <div id="app"></div>
 <script>
