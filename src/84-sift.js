@@ -68,30 +68,3 @@ E.sift=function(S){
   return rank.sort(function(a,b){return a.r-b.r||b.x.score-a.x.score;}).map(function(q){return q.x;}).slice(0,6);
 };
 
-/* ---------- the writers pick up a story the game found ----------
-   When the writers have the time (the Writers' pick on the run sheet) and a found story has both people in the
-   building, they may open it: a feud begins with the history as its first line, and the one who wants it says so. */
-var GR_STORY={
-  open:[
-    {t:'#o_rubber#',if:function(c){return c.k==='rubber';}},{t:'#o_rematch#',if:function(c){return c.k==='rematch';}},
-    {t:'#o_owed#',if:function(c){return c.k==='owed';}},{t:'#o_heat#',if:function(c){return c.k==='heat';}},
-    {t:'#o_teach#',if:function(c){return c.k==='teach';}},{t:'#o_shadow#',if:function(c){return c.k==='shadow';}}
-  ],
-  o_rubber:['{a} and {b} have split their matches down the middle. Tonight {b} walks out during {a}’s interview and asks for one more.','A video plays of every match between {a} and {b}. The screen goes black on the words ONE MORE.'],
-  o_rematch:['{b} has watched {a} carry the belt for weeks. Tonight {b} walks down the aisle and points at it.','{a} poses with the title in the ring. {b} comes out, takes the microphone, and asks for what was promised.'],
-  o_owed:['{b} has lost to {a} every time. Tonight {b} interrupts {a} and will not leave the ring.','{a} celebrates another win. {b} watches from the ramp, then walks to the ring.'],
-  o_heat:['What has been going on backstage between {a} and {b} spills out in front of the crowd.','{a} and {b} are kept apart in the corridor, and the cameras catch all of it.'],
-  o_teach:['{b} taught {a} everything. Tonight {a} says it is time to find out who is better.','{a} thanks {b} for everything, then asks for the match.'],
-  o_shadow:['{a} and {b} come out together, but only one of them gets the cheer. {a} notices.','{a} cuts {b} off in the middle of their team promo and walks out alone.']
-};
-function siftOpen(S,P,show,ctx,ok,mark){
-  if(P.id!==S.player||activeFeuds(S).length>=6)return null;
-  var L=E.sift(S).filter(function(x){return ok(x.a)&&ok(x.b)&&x.k!=='shadow'||(x.k==='shadow'&&ok(x.a)&&ok(x.b));});if(!L.length)return null;
-  var x=L[0],A=S.w[x.a],B=S.w[x.b],hero=A.align==='F'?A:B,vil=hero===A?B:A;
-  return [4,function(){
-    if(!startFeud(S,P,hero,vil,26,x.n+': '+x.facts[0]))return null;mark(A,B);
-    var wants=x.k==='rematch'||x.k==='owed'?B:A,other=wants===A?B:A,key='so'+S.week+x.a+'-'+x.b;
-    var t=gram(GR_STORY,'open',{k:x.k,a:A.name,b:B.name},key)+' '+promoSpeech(S,wants,other,x.k==='rematch'?'challenge':'callout',wants.mic,ctx.city||null,key+'p');
-    var r=angle(x.n,t,promoScore(S,wants,5));r.found=x.k;return r;
-  }];
-}

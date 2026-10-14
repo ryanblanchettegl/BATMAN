@@ -162,7 +162,6 @@ function genAngle(S,P,show,ctx){
   var nf=activeFeuds(S).length;
   if(nf<6){opts.push([nf<3?5:2,callOut]);opts.push([nf<3?4:2,champChallenge]);opts.push([0.8,stareDown]);}
   if(!S.mystery)opts.push([0.7,mysteryStart]);
-  var sf=siftOpen(S,P,show,ctx,ok,mark);if(sf)opts.push(sf);   // a story the game found (src/84-sift.js)
   opts.push([0.8,teamUp]);opts.push([1,crowdTurn]);opts.push([1.5,interview]);
   ANGX.forEach(function(fn){var e=fn(S,P,show,ctx,{ok:ok,mark:mark,pool:pool,ang:ang});if(e)opts.push(e);});
   for(var tries=0;tries<5&&opts.length;tries++){
