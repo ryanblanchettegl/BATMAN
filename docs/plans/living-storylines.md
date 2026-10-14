@@ -94,3 +94,5 @@ segment moves, and an ending the booker chooses at the right moment.
 - **Book the show** lists the feuds on the card in Tonight's stakes, and a match marked as the ending is billed as
   the final chapter on the broadcast.
 - **The newsletter** has a Feud watch, and **the chat room** talks about the feud that is boiling, dragging or over.
+- **A turn** (2 booking power, once a story): when both are heroes or both villains, one crosses over. Two heroes, the
+  one less over turns bad; two villains, the one more over comes good. It heats the feud and gives it room.

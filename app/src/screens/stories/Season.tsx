@@ -64,7 +64,7 @@ function StoryPane(p: { id: number | null }) {
       <p class="sp-btns">{pl.end ? <Btn kind="sm" t="story-unplan" onClick={() => plan(null)}>Take the plan off</Btn> : <Btn kind="go" t="story-plan" onClick={() => plan()}>End it at {pl.next.at.replace(/^\S+ /, '')}</Btn>}</p>
     </Group>
     <Group title="What it needs"><p class="clamp">{NEEDS[pl.phase] ? NEEDS[pl.phase](pl) : ''}</p>
-      <p class="sp-acts" data-t="story-acts">{E.storyActs(S, f.id).map((x: any) => <Btn key={x.id} kind="sm" t="story-act" d={{ v: x.id }} disabled={!x.can} label={x.n + '. ' + x.d + (x.why ? ' ' + x.why : '')} onClick={() => act(() => { const r = E.storyDo(S, f.id, x.id); say(r.msg, { err: !r.ok }); })}>{({ stakes: 'Stakes', sitdown: 'Sit-down', title: 'Title', shelf: x.n === 'Bring it back' ? 'Bring back' : 'Rest it' } as any)[x.id] || x.n}{x.cost ? ' · ' + x.cost : ''}</Btn>)}</p></Group>
+      <p class="sp-acts" data-t="story-acts">{E.storyActs(S, f.id).map((x: any) => <Btn key={x.id} kind="sm" t="story-act" d={{ v: x.id }} disabled={!x.can} label={x.n + '. ' + x.d + (x.why ? ' ' + x.why : '')} onClick={() => act(() => { const r = E.storyDo(S, f.id, x.id); say(r.msg, { err: !r.ok }); })}>{({ stakes: 'Stakes', sitdown: 'Sit-down', title: 'Title', turn: 'Turn', shelf: x.n === 'Bring it back' ? 'Bring back' : 'Rest it' } as any)[x.id] || x.n}{x.cost ? ' · ' + x.cost : ''}</Btn>)}</p></Group>
     {f.stakes ? <p class="good one">Stakes: {f.stakes}</p> : null}
     <p class="sp-btns"><Btn kind="sm" t="story-log" onClick={log}>The feud so far</Btn><Btn kind="danger" t="story-end" onClick={end}>Drop it</Btn></p>
   </div>;

@@ -288,8 +288,13 @@ E.storyActs=function(S,id){
   var bb=f.bb!=null&&S.week<=f.bb;
   out.push({id:'shelf',n:bb?'Bring it back':'Back burner',cost:0,d:bb?'Back on the shows from this week.':'Set it aside for four weeks: it rests and freshens, cools slowly, and will not fizzle. For an injury, or a story that needs a breather.',can:true,why:''});
   out.push({id:'title',n:t?'Put the '+t.name+' on it':'Put a title on it',cost:0,d:'The next match between them is for the belt. It freshens the story and raises the heat.',can:!!t&&!f.title,why:f.title?'A title is already on the line.':(!t?'Neither of them holds a singles title.':'')});
+  // a turn inside the story: when both are on the same side, one of them crosses over and the crowd finally knows who to cheer
+  var same=A.align===B.align,tn=same?storyTurner(A,B):null;
+  out.push({id:'turn',n:tn?'Turn '+tn.name:'A turn',cost:2,d:'One of them changes sides in the story. It gives the feud room again and gives the crowd someone to boo.',can:same&&!f.turned&&S.bp>=2,why:f.turned?'Somebody already turned in this story.':(!same?'They are already '+(A.align==='F'?'hero against villain':'villain against hero')+'.':(S.bp<2?'Takes 2 booking power.':''))});
   return out;
 };
+/** Who turns in a story between two on the same side: two heroes, the one less over goes bad; two villains, the one more over comes good. */
+function storyTurner(A,B){return A.align==='F'?(A.ovr<=B.ovr?A:B):(A.ovr>=B.ovr?A:B);}
 E.storyDo=function(S,id,act){
   var f=S.feuds.filter(function(x){return x.id===id&&!x.res&&x.promo===S.player;})[0];if(!f)return {ok:false,msg:'That feud is over.'};
   var a=E.storyActs(S,id).filter(function(x){return x.id===act;})[0];if(!a)return {ok:false,msg:'Nothing to do.'};if(!a.can)return {ok:false,msg:a.why||'Not now.'};
@@ -304,6 +309,9 @@ E.storyDo=function(S,id,act){
   else if(act==='title'){var t=null;P.titles.forEach(function(x){if(!t&&!x.tag&&x.holders.length&&(x.holders[0]===A.id||x.holders[0]===B.id))t=x;});
     f.title=t.id;f.tww=S.week;heatUp(S,f,5,'The '+t.name+' was put on the line');msg='The '+t.name+' is on the line in '+L+'. Book the match and the belt goes with it.';
     var ch=S.w[t.holders[0]],cl=ch===A?B:A;youRemember(S,cl,'titleshot','You gave me a title match against '+ch.name+'.',3);}
+  else if(act==='turn'){var tw=storyTurner(A,B),ot=tw===A?B:A;f.turned=S.week;turn(S,tw,'in the feud with '+ot.name);f.twist='turn';f.tww=S.week;
+    heatUp(S,f,8,tw.name+' turned on the story');relBump(S,tw.id,ot.id,{bond:-6});youRemember(S,tw,'turned','You turned me in the middle of my feud with '+ot.name+'.',tw.align==='H'?-1:2);
+    msg=tw.name+' turns '+(tw.align==='F'?'hero':'villain')+'. '+L+' finally has a side to cheer and a side to boo. The heat is '+Math.round(f.heat)+'.';}
   return {ok:true,msg:msg};
 };
 

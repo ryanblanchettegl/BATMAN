@@ -82,5 +82,13 @@ ok(stale >= 1 && ripe >= 1, 'no feud ever went stale or ripe');
   ok(o && o.cage === 'soon' && o.mask === 'soon' && o.sub !== 'soon', 'a cold feud: ' + JSON.stringify(o));
   f.heat = 90; o = E.stipFits(S, m); ok(o && o.cage === 'good' && o.mask === 'good', 'a white hot feud: ' + JSON.stringify(o));
 }
+// a turn inside the story: two heroes, the one less over turns, once a story, for two booking power
+{
+  const S = E.newGame(E.universe().promotions[1].id, 3, { name: 'R' }); S.bp = 10;
+  const fa = E.storyPeople(S).filter(w => w.g === 'M' && !w.n && S.w[w.id].align === 'F'), r = E.storyStart(S, fa[0].id, fa[1].id), f = S.feuds.find(x => x.id === r.id), bp = S.bp, h = f.heat;
+  const d = E.storyDo(S, f.id, 'turn');
+  ok(d.ok && S.w[f.a[0]].align !== S.w[f.b[0]].align && S.bp === bp - 2 && f.heat > h, 'a turn in the story did not take: ' + d.msg);
+  ok(!E.storyActs(S, f.id).find(x => x.id === 'turn').can, 'a story could turn twice');
+}
 if (fails) { console.log('FAILED: ' + fails); process.exit(1); }
 console.log('test-living: all passed');
