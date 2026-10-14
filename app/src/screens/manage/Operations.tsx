@@ -2,7 +2,7 @@
    export), House (house style and house rules) and Deals (sponsors, rivals, trades). What the choices add up to is read on Company. */
 import { E } from '../../engine';
 import { G, me, Modal, act, say, cash, plural, openModal, redraw, slice, view, UNIS, saveUnis } from '../../store';
-import { Head, Panel, Btn, Tag, Empty, Window, showResult, Name, Sel, Field } from '../../kit';
+import { Head, Panel, Btn, Tag, Empty, Window, showResult, Name, Sel, Field, TextBox } from '../../kit';
 import { copyText } from '../start';
 import { HouseStyle } from './HouseStyle';
 import { RivalsPanel } from './Rivals';
@@ -204,6 +204,7 @@ function tiles(page: string): { grp: string; list: Tile[] }[] {
     { grp: 'On the air', list: [
       { id: 'broadcast', n: 'Broadcast slot', now: () => E.SLOTN[P.slot], d: 'When your shows air. Ask the network for a better one.', body: () => <Broadcast /> },
       { id: 'showsbelts', n: 'Shows and belts', now: () => I.shows.length + ' weekly ' + plural(I.shows.length, 'show') + ', ' + I.titles.length + ' ' + plural(I.titles.length, 'belt'), d: 'Your shows, their networks and standing. Add a show or a belt when there is an occasion.', body: () => <ShowsBelts /> },
+      { id: 'year', n: 'Year planner', now: () => { const nb = E.nextBig(S); return nb.name + ' next'; }, d: 'Your twelve big events: rename them and choose what kind of night each one is.', body: () => <YearPlanner /> },
       { id: 'desk', n: 'Commentary desk', now: () => (V.pbp ? V.pbp.name : 'Empty') + ' and ' + (V.col ? V.col.name : 'empty'), d: 'The two voices on the air. A good desk lifts every match.', body: () => <Desk /> },
       set('prodLvl', 'Production values', 0, E.PRODN[P.prodLvl], 'What the show looks like, and what it costs to make.'),
       set('risk', 'Risk level', 1, E.RISKN[P.risk], 'How far the product goes. Sponsors and gimmick matches pull opposite ways.')] },
@@ -250,6 +251,25 @@ export function ManageWindow(p: { m: Modal }) {
   if (!t) return <Window title="Manage"><Empty>That is not on this page.</Empty></Window>;
   const T = t as Tile;
   return <Window title={T.n} wide ok="Done"><p class="muted mb1">{T.d} <span class="gold">Now: {T.now()}.</span></p><div class="inwin" data-t="mng-body" data-v={T.id}>{T.body()}</div></Window>;
+}
+
+/** The year planner: the twelve big events, a kind for each, and a new name for one. Changes start from next month. */
+function YearPlanner() {
+  const S = G.S, P = me(), L = E.events(S), st = slice<{ m: number; n: string }>('yearplan', () => ({ m: -1, n: '' }));
+  const types = Object.keys(E.EV_TYPES).filter(k => k !== 'flag').map(k => [k, E.EV_TYPES[k].n] as [string, string]);
+  const set = (m: number, o: any) => act(() => { const r = E.evSet(S, m, o); say(r.msg, { err: !r.ok }); });
+  return <Panel title="Your year">
+    <ul class="list" data-t="year-list">{L.map((e: any) => <li key={e.m}>
+      <span><b>{e.month.slice(0, 3)}</b> {e.n}{e.now ? <span class="muted"> (now)</span> : null}</span>
+      {e.flag ? <Tag kind="gold">Flagship</Tag> : <Sel id={'ev-' + e.m} t="ev-type" d={{ m: e.m }} value={e.t} disabled={e.now} label={'Kind of night for ' + e.month} options={types} onChange={v => set(e.m, { t: v })} />}
+    </li>)}</ul>
+    <p class="muted">{(L.find((e: any) => !e.flag && !e.now) || L[0]).d}</p>
+    <div class="row mt1">
+      <Field label="Rename"><Sel id="ev-pick" t="ev-pick" value={st.m < 0 ? '' : st.m} options={[['', 'Pick a month'], ...L.filter((e: any) => !e.now).map((e: any) => [e.m, e.month + ': ' + e.n] as [number, string])] as any} onChange={v => view(() => { st.m = v === '' ? -1 : +v; st.n = st.m >= 0 ? L[st.m].n : ''; })} /></Field>
+      <TextBox id="ev-name" t="ev-name" value={st.n} max={28} label="New name" onInput={v => { st.n = v; }} />
+      <Btn kind="go" t="ev-rename" disabled={st.m < 0} onClick={() => set(st.m, { n: st.n })}>Rename</Btn>
+    </div>
+  </Panel>;
 }
 
 export function Operations() {

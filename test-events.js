@@ -20,5 +20,23 @@ for (let w = 0; w < 50 && !S.over; w++) {
     const c = E.suggest(S), pr = E.preShow(S, c); if (pr) { E.resolvePre(S, c, 0); E.fitShow(S, c); } if (E.validate(S, c).errors.length) { S.qi++; continue; } E.runPlayerShow(S, c); }
   E.endWeek(S);
 }
+// the year planner: a later month can be renamed and given a kind; this month and the flagship's kind cannot change
+{
+  const S = E.newGame(E.universe().promotions[1].id, 3, { name: 'R' }), L = E.events(S), now = L.find(e => e.now), later = L.find(e => !e.now && !e.flag), fl = L.find(e => e.flag);
+  ok(!E.evSet(S, now.m, { n: 'Something Else' }).ok, 'this month\'s event could be renamed');
+  ok(!E.evSet(S, fl.m, { t: 'ballroom' }).ok, 'the flagship could be made a ballroom show');
+  ok(!E.evSet(S, later.m, { n: L.find(e => e.m !== later.m).n }).ok, 'two events could share a name');
+  const r = E.evSet(S, later.m, { n: 'Cellar Night', t: 'ballroom' }); ok(r.ok && E.events(S)[later.m].n === 'Cellar Night' && E.events(S)[later.m].t === 'ballroom', 'a later month could not be changed: ' + r.msg);
+}
+// a ballroom show draws a smaller house, and its crowd expects less than an arena's
+{
+  const run = ty => { const S = E.newGame(E.universe().promotions[1].id, 3, { name: 'R' }), now = E.events(S).find(x => x.now).m, nb = E.events(S).find(e => !e.flag && e.m === (now + 1) % 12);
+    if (!nb) return null; E.evSet(S, nb.m, { t: ty });
+    for (let w = 0; w < 9; w++) { S.inbox.filter(e => !e.done).forEach(e => E.resolveEvent(S, e.id, 0));
+      while (S.qi < S.queue.length) { const big = S.queue[S.qi].big && S.queue[S.qi].ty === ty, c = E.suggest(S), pr = E.preShow(S, c); if (pr) { E.resolvePre(S, c, 0); E.fitShow(S, c); }
+        if (E.validate(S, c).errors.length) { S.qi++; continue; } E.runPlayerShow(S, c); if (big) return S.reports[0]; } E.endWeek(S); } return null; };
+  const a = run('arena'), b = run('ballroom');
+  ok(a && b && b.cap < a.cap && b.exp < a.exp, 'a ballroom show was not smaller with a gentler crowd: ' + JSON.stringify({ a: a && [a.cap, a.exp], b: b && [b.cap, b.exp] }));
+}
 if (fails) { console.log('FAILED: ' + fails); process.exit(1); }
 console.log('test-events: all passed');

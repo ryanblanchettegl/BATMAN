@@ -799,3 +799,8 @@ html[data-screen="tablet"] .mkpage table th:nth-child(4),html[data-screen="table
 .fnpage .wn[data-t="fn-books"]>.bd{overflow-y:auto}
 .wn .kv small{color:var(--blue,#0000a8)} .wn .kv span{color:#111}
 .fnpage .wn[data-t="fn-chart"]>.bd{container-type:inline-size;overflow:hidden}
+/* the year planner: twelve months in two columns, a line each */
+[data-t="year-list"]{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));column-gap:2ch}
+[data-t="year-list"] li{display:flex;flex-wrap:nowrap;justify-content:space-between;padding:.1em 0;align-items:center;gap:.6ch;min-width:0}
+[data-t="year-list"] li>span{min-width:0;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+[data-t="year-list"] select{flex:none;width:auto;min-width:0;padding:0 .4ch;font-size:.9em}

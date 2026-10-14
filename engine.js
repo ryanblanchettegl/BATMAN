@@ -227,9 +227,9 @@ function partnerOf(S,w){var t=teamOf(S,w);if(!t)return null;return S.w[t.m[0]===
 /* ---------- money model ---------- */
 function showMult(show){return show.big?1:(show.mult||1);}
 function viewersK(P,show,qf){return 2200*Math.pow(P.image/100,3)*showMult(show)*qf;}
-function demand(P,show,hype){return (show.big?60000*(show.flag?1.7:1):20000*showMult(show))*Math.pow(P.image/100,3)*hype;}
-function ticket(P,show){return (15+P.image*0.85)*(show.big?1.6:1);}
-function buysK(P,show,hype){return 700*Math.pow(P.image/100,4)*hype*(show.flag?1.8:1);}
+function demand(P,show,hype){return (show.big?60000*(show.flag?1.7:1)*evTy(show).cap:20000*showMult(show))*Math.pow(P.image/100,3)*hype;}
+function ticket(P,show){return (15+P.image*0.85)*(show.big?1.6*evTy(show).price:1);}
+function buysK(P,show,hype){return 700*Math.pow(P.image/100,4)*hype*(show.flag?1.8:1)*(show.big?evTy(show).buys:1);}
 function capFor(d){for(var i=0;i<CAPS.length;i++)if(CAPS[i]>=d)return CAPS[i];return CAPS[CAPS.length-1];}
 function merchWeek(S,P){var r=rosterOf(S,P.id).map(function(w){return w.ovr;}).sort(function(a,b){return b-a;}).slice(0,10);return 2.5e6*Math.pow(P.image/100,3)*Math.pow(avg(r)/100,2)*mixOf(P).merch*(1+catchBoost(S,P))+linesWeek(S,P);}
 function wagesWeek(S,P){var s=0;S.w.forEach(function(w){if(w.promo===P.id)s+=w.wage;});return s+deskWage(S,P);}
@@ -262,7 +262,7 @@ function calibrateCosts(S,pid){
   P.fixed=Math.round(over*0.4);P.varRate=over*0.6/inc;P.inc0=inc;
 }
 function restAll(S,pid){S.w.forEach(function(w){if(w.promo===pid){w.cond=100;w.inj=0;}});}
-function expected(P,show){var b=show.big?P.base.big:(P.base[show.id]||P.base.big);return b+0.6*(P.image-P.image0)+(P.expB||0)+(P.expA||0);}
+function expected(P,show){var b=show.big?P.base.big+evTy(show).exp:(P.base[show.id]||P.base.big);return b+0.6*(P.image-P.image0)+(P.expB||0)+(P.expA||0);}
 
 /* ---------- storyline helpers ---------- */
 function activeFeuds(S){return S.feuds.filter(function(f){return !f.res;});}
@@ -1661,7 +1661,7 @@ function showEnd(S,P,show,card,st){
   var mx=mixOf(P);
   rep.viewers=Math.round(viewersK(P,show,qf)*1000);rep.gate=Math.round(rep.att*ticket(P,show)*TIX_P[P.tix]*mx.gate);rep.tv=Math.round(rep.viewers/1000*P.tvRate*mx.tv*airRate(P,show));
   rep.buys=big?Math.round(buysK(P,show,rep.hype)*1000):0;rep.ppv=Math.round(rep.buys*22*mx.ppv);
-  P.led.tv+=rep.tv;P.led.gate+=rep.gate;P.led.ppv+=rep.ppv;P.led.prod+=P.prod*(big?4:1)*PRODF[P.prodLvl]/PRODF[P.prod0]*airProd(P,show);
+  P.led.tv+=rep.tv;P.led.gate+=rep.gate;P.led.ppv+=rep.ppv;P.led.prod+=P.prod*(big?4*evTy(show).prod:1)*PRODF[P.prodLvl]/PRODF[P.prod0]*airProd(P,show);
   var before=P.image;
   P.image=clamp(P.image+(rep.rating-exp)*(big?0.08:0.03*showMult(show)*airReach(P,show)),5,modelOf(P).cap||100);rep.dImage=r1(P.image-before);
   P.trend=(P.trend||0)*0.6+(rep.rating-exp)*0.4;P.mainB[key]=(P.mainB[key]||rep.mainOv)*0.9+rep.mainOv*0.1;
@@ -2583,7 +2583,7 @@ EVR.caughtfire=function(S,ev,choice,P,w){
 /* ---------- the week ---------- */
 function weekShows(S,P,w){
   var c=cal(w==null?S.week:w),out=P.shows.map(function(sh){return {id:sh.id,name:sh.name,brand:sh.brand||null,mult:sh.mult};});
-  if(c.wom===4)out.push({id:'big',big:true,flag:c.month===P.flagship,brand:null,name:P.name+' '+evName(S,P,c.month),rule:evRule(S,P,c.month)});
+  if(c.wom===4)out.push({id:'big',big:true,flag:c.month===P.flagship,brand:null,name:P.name+' '+evName(S,P,c.month),rule:evRule(S,P,c.month),ty:evList(S,P)[c.month].t});
   return out;
 }
 function startWeek(S){var P=S.promos[S.player];S.queue=weekShows(S,P);S.qi=0;S.card=[];grantBP(S);S.inbox=S.inbox.filter(function(e){return !e.done;});genEvents(S);}
@@ -2783,6 +2783,17 @@ E.resolveEvent=function(S,id,choice){
    Each promotion has its own twelve monthly big events in P.events: a name, a type and an optional rule. They are
    filled from the world's list the first time they are needed, so old saves and worlds need nothing. Each company's
    flagship gets an original name of its own from a word list, so no two companies share one. */
+/* What a type of big event changes: the size of the house (cap), the ticket price (price), the buys at home (buys),
+   and what the crowd expects (exp, on the show rating scale). Flagship and arena change nothing from the old game. */
+var EV_TYPES={
+  flag:{n:'Flagship',cap:1,price:1,buys:1,exp:0,prod:1,d:'The biggest night of your year. The house, the price and the buys are at their highest.'},
+  arena:{n:'Arena show',cap:1,price:1,buys:1,exp:0,prod:1,d:'A big event in a big building. What the crowd expects of a big night.'},
+  ballroom:{n:'Ballroom show',cap:0.4,price:0.75,buys:0.7,exp:-6,prod:0.4,d:'A small room and a loud crowd. Fewer seats and fewer buys, but it costs far less to put on and the crowd forgives more.'},
+  gimmick:{n:'Gimmick night',cap:0.9,price:1,buys:1.1,exp:3,prod:1.1,d:'A night of stipulations. The buys go up, and the crowd expects violence.'},
+  rumble:{n:'Battle royal night',cap:1,price:0.9,buys:1.05,exp:1,prod:1,d:'A night built around a battle royal. A full house at a friendly price.'},
+  tourn:{n:'Tournament night',cap:0.85,price:0.9,buys:0.95,exp:-2,prod:0.9,d:'A bracket in one night. The crowd comes to see who survives.'}
+};
+function evTy(show){return (show&&show.big&&EV_TYPES[show.ty])||EV_TYPES.arena;}
 var FLAG_WORDS=['Summit','Coronation','Homecoming','Jubilee','High Water','Reckoning','Crown of Iron','Last Light','Great Gathering','Grand Assembly','Year of Days','Long Night','Iron Harvest','First Light'];
 function evList(S,P){
   if(P.events&&P.events.length===12)return P.events;
@@ -2797,7 +2808,17 @@ function evName(S,P,m){return P?evList(S,P)[m].n:dbOf(S).events[m];}
 function evRule(S,P,m){return P?evList(S,P)[m].rule:((dbOf(S).rules||{})[m]||null);}
 NEWX.push(function(S){S.order.forEach(function(id){evList(S,S.promos[id]);});});
 /** The player's twelve big events, for the screens. */
-E.events=function(S){var P=S.promos[S.player];return evList(S,P).map(function(e,m){return {m:m,month:MONTHS[m],n:e.n,t:e.t,rule:e.rule,flag:e.t==='flag'};});};
+E.events=function(S){var P=S.promos[S.player],now=cal(S.week).month;return evList(S,P).map(function(e,m){return {m:m,month:MONTHS[m],n:e.n,t:e.t,tn:EV_TYPES[e.t].n,d:EV_TYPES[e.t].d,rule:e.rule,flag:e.t==='flag',now:m===now};});};
+/** Rename a big event or change its type. Not this month's: changes take effect from the next month. */
+E.evSet=function(S,m,o){
+  var P=S.promos[S.player],L=evList(S,P),e=L[m];if(!e)return {ok:false,msg:'There is no such month.'};
+  if(m===cal(S.week).month)return {ok:false,msg:'This month\u2019s event is already on sale. Change a later one.'};
+  if(o.n!=null){var n=String(o.n).replace(/\s+/g,' ').trim().slice(0,28);if(n.length<3)return {ok:false,msg:'A name needs three letters or more.'};
+    if(L.some(function(x,i){return i!==m&&x.n.toLowerCase()===n.toLowerCase();}))return {ok:false,msg:'You already have an event called that.'};e.n=n;}
+  if(o.t!=null){if(!EV_TYPES[o.t])return {ok:false,msg:'There is no such kind of event.'};if((o.t==='flag')!==(e.t==='flag'))return {ok:false,msg:'The flagship stays the flagship.'};e.t=o.t;}
+  return {ok:true,msg:MONTHS[m]+': '+P.name+' '+e.n+', '+EV_TYPES[e.t].n.toLowerCase()+'.'};
+};
+E.EV_TYPES=EV_TYPES;
 
 /* ===== 50-company.js ===== */
 /* ---------- the company: broadcast slot, production, risk, tickets, advertising, sponsors ---------- */

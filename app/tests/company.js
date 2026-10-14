@@ -53,7 +53,14 @@ async function frontOffice(page, mode) {
   await readOnly(page, mode);
   await go(page, 'manage');
   await page.FLAT(false);
-  check(mode, 'every choice on Operations is a button, in four groups', await count(page, '.mngpage .wn') === 4 && await count(page, '[data-t="mng"]') === 15 && await count(page, 'main select, main input, main [data-t="co-set"]') === 0, await count(page, '[data-t="mng"]') + ' buttons');
+  check(mode, 'every choice on Operations is a button, in four groups', await count(page, '.mngpage .wn') === 4 && await count(page, '[data-t="mng"]') === 16 && await count(page, 'main select, main input, main [data-t="co-set"]') === 0, await count(page, '[data-t="mng"]') + ' buttons');
+  { await page.click('[data-t="mng"][data-v="year"]'); await page.waitForTimeout(150);
+    const m = await state(page, S => (GP.events(S).find(e => !e.flag && !e.now) || {}).m);
+    await page.selectOption('[data-t="ev-type"][data-m="' + m + '"]', 'ballroom'); await page.waitForTimeout(80);
+    await page.selectOption('[data-t="ev-pick"]', String(m)); await page.fill('[data-t="ev-name"]', 'Cellar Night'); await page.click('[data-t="ev-rename"]'); await page.waitForTimeout(80);
+    const e = await state(page, (S, m) => S.promos[S.player].events[m], m);
+    check(mode, 'the year planner renames a big event and changes its kind', e.n === 'Cellar Night' && e.t === 'ballroom', JSON.stringify(e));
+    await page.keyboard.press('Escape'); await page.waitForTimeout(80); }
   await page.click('[data-t="mng"][data-v="prodLvl"]');
   check(mode, 'a button opens a pop-up with its choices, and says where it stands now', await count(page, '.win [data-t="co-set"]') >= 4 && /Now:/.test(await page.$eval('.win', e => e.innerText)) && (await page.$eval('[data-t="mng"][data-v="prodLvl"] [data-t="mng-now"]', e => e.innerText)).length > 2);
   await page.keyboard.press('Escape');
