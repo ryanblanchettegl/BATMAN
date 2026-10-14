@@ -732,3 +732,12 @@ html[data-screen="tv"]:has(.webpage){--fs:min(clamp(20px,1.7vw,84px),2.32vh)}
 .book1 .b1-pane [data-t="fog-note"]{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:.2em}
 .book1 .b1-pane .grp{margin:.5em 0 .15em}
 .book1 .b1-pane .tn-st.clamp,.book1 .b1-pane .tn-checks .clamp{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block}
+
+/* ---------- the Career page ---------- */
+.crpage{grid-template-columns:minmax(0,1.15fr) minmax(0,1fr) minmax(0,1fr);grid-template-rows:minmax(0,1.25fr) minmax(0,1fr);grid-template-areas:"you rep saga" "word asst troph";line-height:1.18;gap:.95em 2.2ch}
+.crpage .wn>.bd{overflow-y:auto}
+.crpage .list li{padding:2px 0}
+html[data-screen="desk"]:has(.crpage){--fs:min(clamp(19px,1.62vw,32px),2.6vh)}
+html[data-screen="tablet"]:has(.crpage){--fs:min(clamp(17px,1.7vw,30px),2.35vh)}
+html[data-screen="tv"]:has(.crpage){--fs:min(clamp(22px,1.9vw,84px),2.32vh)}
+.crt:has(.crpage){max-width:78em}
