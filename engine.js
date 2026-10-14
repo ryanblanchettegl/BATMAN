@@ -1449,7 +1449,11 @@ E.tonight=function(S){
   var P=S.promos[S.player],show=S.queue&&S.queue[S.qi],card=S.card||[],stakes=[],checks=[];
   if(!show)return {stakes:stakes,checks:checks};
   var nm=function(ids){return ids.map(function(id){return S.w[id]?S.w[id].name:'';}).join(' & ');};
-  (S.quests||[]).filter(function(q){return q.due-S.week<=1;}).slice(0,2).forEach(function(q){var qt=q.text.replace(/^[^:]+: /,'');stakes.push({k:'due',t:qt.charAt(0).toUpperCase()+qt.slice(1)});});
+  (S.quests||[]).filter(function(q){return q.due-S.week<=1;}).slice(0,2).forEach(function(q){var w=q.w!=null?S.w[q.w]:null,qt;
+    if(q.type==='shot'&&w)qt=w.name+' is owed a title shot.';
+    else if(q.type==='win'&&w)qt=w.name+' is owed a win.';
+    else{qt=q.text.replace(/^[^:]+: /,'');qt=qt.charAt(0).toUpperCase()+qt.slice(1);}
+    stakes.push({k:'due',t:qt});});
   card.forEach(function(m){if(!m||!m.sides||m.sides.length<2||m.sides.some(function(s){return !s.length||s.some(function(id){return id==null;});}))return;
     var f=E.matchFeud(S,m);if(m.end&&f)stakes.push({k:'story',t:feudLabel(S,f)+' ends tonight.'});
     else if(f)stakes.push({k:'story',t:feudLabel(S,f)+': '+PHASE_N[feudPhase(S,f)].toLowerCase()+', heat '+Math.round(f.heat)+'.'});
