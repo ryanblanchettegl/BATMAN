@@ -2,7 +2,7 @@
 import { ComponentChildren } from 'preact';
 import { E } from '../../engine';
 import { G, me, openModal, slice, view } from '../../store';
-import { Head, Panel, Empty, stars, Txt, Btn, grade, Name } from '../../kit';
+import { Head, Panel, Empty, stars, Txt, Btn, grade, Name, Desktop, Win, ListBox, Row as KRow } from '../../kit';
 
 const wk = (w: number): string => E.cal(Math.max(1, w)).label;
 /** One line of a list: what it is on the left, the figure on the right. */
@@ -136,13 +136,31 @@ function Records() {
   </Panel>;
 }
 
+const BOOKS: { id: string; n: string; body: () => ComponentChildren }[] = [
+  { id: 'titles', n: 'Titles and champions', body: () => <>{me().titles.map((t: any) => <TitleLine t={t} />)}</> },
+  { id: 'feuds', n: 'Greatest feuds', body: () => <Feuds /> },
+  { id: 'records', n: 'Records', body: () => <><RecordBook /><Records /></> },
+  { id: 'moty', n: 'Match of the year', body: () => <MatchOfYear /> },
+  { id: 'kept', n: 'Moments kept', body: () => <Kept /> },
+  { id: 'awards', n: 'Year-end awards', body: () => <Awards /> },
+  { id: 'hof', n: 'Hall of fame', body: () => <HallOfFame /> },
+  { id: 'chron', n: 'Season chronicles', body: () => <Chronicles /> }
+];
 export function History() {
   const P = me();
-  return <div class="onescreen winpage">
+  // for the browser tests: every section laid out on the page, as it was
+  if ((window as any).EWF_FLAT) return <div class="onescreen winpage">
     <Head eyebrow={P.name} title="History" />
     <div class="cols">
       <div class="stack"><Chronicles /><Kept /><MatchOfYear /><RecordBook /><Records /><Awards /><HallOfFame /></div>
       <div class="stack"><Feuds />{P.titles.map((t: any) => <TitleLine t={t} />)}</div>
     </div>
   </div>;
+  const st = slice<{ k: string }>('history', () => ({ k: 'titles' })), cur = BOOKS.find(b => b.id === st.k) || BOOKS[0];
+  return <div class="onescreen"><div class="head sr"><h1>History</h1></div><Desktop cls="hspage" t="history">
+    <Win title={'The books of ' + P.name} area="list" t="hist-list">
+      <ListBox cols="1fr" label="Sections">{BOOKS.map(b => <KRow key={b.id} sel={b.id === cur.id} onPick={() => view(() => { st.k = b.id; })} t="hist-sec" d={{ v: b.id }} label={b.n}><span>{b.n}</span></KRow>)}</ListBox>
+    </Win>
+    <Win title={cur.n} area="pane" t="hist-pane"><div class="hspane">{cur.body()}</div></Win>
+  </Desktop></div>;
 }

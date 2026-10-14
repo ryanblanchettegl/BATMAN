@@ -781,3 +781,8 @@ html[data-screen="tablet"] .deskpage .wn>.bd{padding-block:.3em .3em}
 .wn .warn:not(.tag):not(.btn){color:#7a3a00}
 /* Free agents on a tablet: the style column gives way so the asking price and the offer fit */
 html[data-screen="tablet"] .mkpage table th:nth-child(4),html[data-screen="tablet"] .mkpage table td:nth-child(4){display:none}
+/* History: the books on the left, the picked one on the right; the pane scrolls inside itself */
+.hspage{grid-template-columns:minmax(0,1fr) minmax(0,2.6fr);grid-template-rows:minmax(0,1fr);grid-template-areas:"list pane"}
+.hspage .wn[data-t="hist-pane"]>.bd{overflow-y:auto}
+.hspane .panel{background:none;border:0;box-shadow:none;padding:0;margin:0 0 .9em}
+.hspane .panel>h2:first-child{position:static;background:none;color:var(--dred,#7a0000);text-align:left;padding:0;margin:0 0 .25em;border-bottom:1px solid #8a8678}

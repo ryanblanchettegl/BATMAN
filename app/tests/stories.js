@@ -76,8 +76,9 @@ async function storylines(page, mode) {
   for (let i = 0; i < 4 && await page.$('.win'); i++) { await page.keyboard.press('Escape'); await page.waitForTimeout(60); }
   check(mode, 'scrapping it clears the plan', (await state(page, S => S.lp)) == null);
 }
+const flat = (page, on) => page.evaluate(v => { window.EWF_FLAT = v; window.EWF_DEBUG.render(); }, on ? 1 : 0);
 async function history(page, mode) {
-  await go(page, 'history');
+  await go(page, 'history'); await flat(page, true);
   const want = await state(page, S => { const P = S.promos[S.player], R = S.rec || {}; return { titles: P.titles.map(t => t.name), champ: (P.titles.find(t => t.holders.length) || { holders: [] }).holders.map(id => S.w[id].name).join(' & '), matches: Math.min(10, (R.matches || []).length), shows: (R.shows || []).length, best: R.matches && R.matches[0] ? R.matches[0].l : '', awards: (S.awards || []).length, hof: (S.hof || []).map(x => x.n), chron: (S.chron || []).map(c => c.title) }; });
   await page.click('[data-t="hist-book"]').catch(() => {}); await page.waitForTimeout(120);
   const rec = await page.$eval('.scrim', e => e.innerText).catch(() => ''); await page.keyboard.press('Escape'); await page.waitForTimeout(80);
@@ -88,6 +89,10 @@ async function history(page, mode) {
   check(mode, 'awards', want.awards ? /\d{4}/.test(aw) && !/handed out in the last week/.test(aw) : /handed out in the last week of December/.test(aw), want.awards + ' years');
   check(mode, 'hall of fame', want.hof.length ? want.hof.every(n => hf.indexOf(n) >= 0) && /Class of \d{4}/.test(hf) : /Nobody inducted yet/.test(hf), want.hof.join(', ') || 'empty');
   check(mode, 'season chronicles', want.chron.length ? want.chron.every(t => ch.toLowerCase().indexOf(t.toLowerCase()) >= 0) && /Season \d+:/i.test(ch) : /first chronicle is written/.test(ch), want.chron.join(', ') || 'not yet');
+  await flat(page, false);
+  check(mode, 'history is a list of books and the picked one', await count(page, '[data-t="hist-sec"]') >= 8 && !!(await page.$('[data-t="hist-pane"]')));
+  await page.click('[data-t="hist-sec"][data-v="awards"]'); await page.waitForTimeout(100);
+  check(mode, 'picking a book shows it', /Year-end awards/.test(await page.$eval('[data-t="hist-pane"]', e => e.innerText)));
   await fits(page, mode, 'history');
 }
 async function net(page, mode) {
@@ -128,10 +133,11 @@ async function net(page, mode) {
     check(mode, 'planning the ending names the next big event', /Planned for/.test(await page.$eval('[data-t="feud-end"]', e => e.innerText)) && await state(page, (S, p) => GP.feudOf(S, p[0], p[1]).endAt != null, pair));
     await page.click('[data-t="story-unplan"]'); await page.waitForTimeout(150);
     check(mode, 'and the plan comes off again', /None planned/.test(await page.$eval('[data-t="feud-end"]', e => e.innerText)));
-    await go(page, 'history');
+    await go(page, 'history'); await flat(page, true);
     await page.click('[data-t="hist-line"]').catch(() => {}); await page.waitForTimeout(120);
     const line0 = await page.$eval('.scrim', e => e.innerText).catch(() => ''); await page.keyboard.press('Escape'); await page.waitForTimeout(80);
     check(mode, 'history before any show', /Run a show on Booking and the book opens/.test(await text(page)) && /Champion when you arrived/.test(line0));
+    await flat(page, false);
     await go(page, 'boards'); await page.click('[data-t="ws-go"][data-v="board"]');
     check(mode, 'the board before any show', await count(page, '.post') === await state(page, S => S.net.threads.slice(0, 2).reduce((a, t) => a + t.posts.length, 0)) && (await count(page, '.post') > 0 || /Nobody has posted yet/.test(await text(page))));
 
