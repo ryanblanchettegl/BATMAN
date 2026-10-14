@@ -139,11 +139,11 @@ async function run(mode) {
 
   /* ----- locker room ----- */
   await go(page, 'locker'); await page.waitForSelector('.piebox');
-  must(await page.$$eval('.panel > h2', L => L.map(e => e.textContent).join('|')) === 'Mood of the room|Who is who|Cliques|The camp show|Under strain|The trainer’s room', 'locker room panels are wrong');
+  must(await page.$$eval('.lkpage .wn > .ttl h2', L => L.map(e => e.textContent).join('|')) === 'Mood of the room|Who is who|Cliques|The camp show|Under strain|The trainer’s room', 'locker room windows are wrong');
   await ok(t, 'locker room');
   if (mode === 'desk' || mode === 'phone') await shot(page, 'roster-locker-' + mode, true);
-  let who = await page.$('.cols [data-t="sel"]');
-  if (!who) { console.log(mode, 'nobody is named in the locker room yet: the test puts one wrestler under strain'); await state(page, (S, id) => { S.w[id].stress = 80; }, fit); await go(page, 'locker'); who = await page.$('.cols [data-t="sel"]'); }
+  let who = await page.$('.lkpage [data-t="sel"]');
+  if (!who) { console.log(mode, 'nobody is named in the locker room yet: the test puts one wrestler under strain'); await state(page, (S, id) => { S.w[id].stress = 80; }, fit); await go(page, 'locker'); who = await page.$('.lkpage [data-t="sel"]'); }
   const whoId = await who.evaluate(e => +e.dataset.id), whoName = await who.evaluate(e => e.textContent);
   await who.click(); await page.waitForSelector('.prof');
   must(await page.$eval('.prof h2', e => e.textContent) === whoName && await view(page).then(v => v.sel) === whoId, 'the name did not open that profile');
@@ -158,7 +158,7 @@ async function run(mode) {
   if (tb) {
     const fmt = await tb.evaluate(e => e.dataset.v); await tb.click();
     must(/is set/.test(await flash(page)) && await state(page, S => !!S.tourn && !S.tourn.done), 'tournament said: ' + await flash(page));
-    must(await page.$eval('.panel.mb3 > h2', e => e.textContent) === await state(page, S => S.tourn.name), 'no tournament panel');
+    must(await page.$eval('[data-t="tourn-win"] h2', e => e.textContent) === await state(page, S => S.tourn.name), 'no tournament window');
     must(await page.$$eval('[data-t="tourn"]:not([disabled])', L => L.length) === 0, 'a second tournament is still on offer');
     if (fmt === 'ko') must(await page.$eval('.bracket', e => e.innerText.split('\n').length >= 15 && /[├┐┘]/.test(e.innerText)).catch(() => false), 'the knockout has no bracket drawn');
     await ok(t, 'tournament started', fmt === 'ko' ? 'knockout' : 'league');

@@ -538,3 +538,36 @@ html[data-screen="tv"]:has(.book1){--fs:min(clamp(22px,1.9vw,84px),2.6vh)}
 .main .gp h2{background:var(--blue);color:var(--yellow);margin:0 -1.2ch .3em;letter-spacing:.06em}
 .main .gp .kv b,.main .gp b{color:var(--blue)} .main .gp .muted{color:#444} .main .gp .good{color:#006000} .main .gp .bad{color:var(--dred)} .main .gp .gold,.main .gp .hl{color:#5a4000}
 .main .gp .gauge i{background:#8a8a8a} .main .gp .gauge i.on{background:var(--blue)}
+
+/* ---------- the Titles page: the belts, the contenders for one, the tournament or how a shot is earned ---------- */
+.ttpage{grid-template-columns:minmax(0,1fr) minmax(0,1fr);grid-template-rows:auto minmax(0,1fr);grid-template-areas:"belts belts" "cont tourn";line-height:1.18;gap:.95em 2.2ch}
+.ttpage .wn>.ttl .btn{margin:0;padding:0 .8ch;box-shadow:none}
+.ttpage .tw{margin-bottom:.3em}
+.ttpage .bracket{font-size:.8em;line-height:1;white-space:pre;overflow:hidden}
+html[data-screen="desk"]:has(.ttpage){--fs:min(clamp(19px,1.62vw,32px),2.6vh)}
+html[data-screen="tablet"]:has(.ttpage){--fs:min(clamp(18px,1.8vw,30px),2.4vh)}
+html[data-screen="tv"]:has(.ttpage){--fs:min(clamp(22px,1.9vw,84px),2.32vh)}
+.crt:has(.ttpage){max-width:76em}
+.wn .rank li::marker{color:var(--blue)} .wn .eyebrow{color:var(--blue)}
+.ttpage .bracket{font-size:.72em}
+
+/* ---------- the Locker room page ---------- */
+.lkpage{grid-template-columns:minmax(0,1fr) minmax(0,1.15fr) minmax(0,1fr);grid-template-rows:minmax(0,1.1fr) minmax(0,1fr);grid-template-areas:"mood who strain" "cliques camp hurt";line-height:1.18;gap:.95em 2.2ch}
+.lkpage .list li{padding:2px 0}
+.lkpage .list li.col{flex-wrap:nowrap}
+.lkpage .btn.sm{padding:0 .7ch;margin:0 .3ch .2em 0}
+.lkpage .piebox{margin-top:2px}
+.lkpage .pie{font-size:.62em}
+html[data-screen="desk"]:has(.lkpage){--fs:min(clamp(19px,1.62vw,32px),2.6vh)}
+html[data-screen="tablet"]:has(.lkpage){--fs:min(clamp(17px,1.7vw,30px),2.3vh)}
+html[data-screen="tv"]:has(.lkpage){--fs:min(clamp(22px,1.9vw,84px),2.32vh)}
+.crt:has(.lkpage){max-width:78em}
+.lkpage .btn.sm{background:none;box-shadow:none;color:var(--blue);padding:0;margin:0 1ch 0 0;text-decoration:underline;text-underline-offset:2px}
+.lkpage .btn.sm:hover,.lkpage .btn.sm:focus-visible{background:var(--k);color:var(--yellow)}
+.lkpage .btn.sm[aria-pressed="true"],.lkpage .btn.sm.on{color:var(--dred)}
+.lkpage .list li.col{display:block;padding:2px 0}
+.lkpage .list li.col>span{display:inline}
+.lkpage .list li.col>span:first-child::after{content:': '}
+.lkpage .btn.sm{display:inline;line-height:inherit;vertical-align:baseline;white-space:nowrap}
+.book1 .b1-pane .panel>h2:first-child{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);margin:0;padding:0}
+.book1 .b1-pane>.panel{border:0;box-shadow:none;padding:0}
