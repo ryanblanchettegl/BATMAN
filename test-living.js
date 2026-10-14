@@ -46,5 +46,17 @@ ok(stale >= 1 && ripe >= 1, 'no feud ever went stale or ripe');
   const r2 = E.storyStart(S, a, b), f2 = S.feuds.find(x => x.id === r2.id);
   ok(f2.heat > h0 && f2.log.some(l => /picks up where it left off/.test(l.t)), 'a feud between two with history did not start warmer (' + f2.heat + ' against ' + h0 + ')');
 }
+// what the booker can do from Storylines: a sit-down heats it and costs one, raising the stakes freshens it, a champion's belt goes on it
+{
+  const S = E.newGame(E.universe().promotions[1].id, 3, { name: 'R' }); S.bp = 10;
+  const P = S.promos[S.player], t = P.titles.find(x => !x.tag && x.holders.length), ch = t.holders[0];
+  const o = E.storyPeople(S).find(w => w.id !== ch && w.g === S.w[ch].g && !w.n && !w.hurt);
+  const r = E.storyStart(S, ch, o.id), f = S.feuds.find(x => x.id === r.id), bp0 = S.bp, h0 = f.heat;
+  const sd = E.storyDo(S, f.id, 'sitdown'); ok(sd.ok && f.heat > h0 && S.bp === bp0 - 1, 'a sit-down did not heat the feud for one booking power');
+  ok(!E.storyDo(S, f.id, 'sitdown').ok, 'two sit-downs in one week were allowed');
+  f.fresh = 30; const st = E.storyDo(S, f.id, 'stakes'); E.heatStory(S, f, 1);
+  ok(st.ok && !!f.stakes && f.fresh > 30, 'raising the stakes did not set them or freshen the story');
+  const tt = E.storyDo(S, f.id, 'title'); ok(tt.ok && f.title === t.id, 'the champion\'s belt did not go on the feud');
+}
 if (fails) { console.log('FAILED: ' + fails); process.exit(1); }
 console.log('test-living: all passed');

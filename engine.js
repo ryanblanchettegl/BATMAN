@@ -1447,6 +1447,36 @@ E.tonight=function(S){
   return {stakes:stakes.slice(0,3),checks:checks.slice(0,2)};
 };
 
+/* ---------- what the booker can do to a feud from the Storylines page ----------
+   Ways to heat a story or freshen it without waiting for the show: raise the stakes (a twist), a sit-down interview
+   aired on the next show (a beat), or put a title on it. Each spends booking power where it says, and both people
+   remember it. */
+var STORY_STAKES=['Loser sits out four weeks','Winner gets a title shot','No disqualifications: nobody can save you'];
+E.storyActs=function(S,id){
+  var f=S.feuds.filter(function(x){return x.id===id&&!x.res&&x.promo===S.player;})[0];if(!f)return [];feudPlan(S,f);
+  var P=S.promos[S.player],A=S.w[f.a[0]],B=S.w[f.b[0]],out=[];
+  out.push({id:'stakes',n:'Raise the stakes',cost:1,d:'A twist: the next match between them means more. It freshens the story.',can:S.bp>=1&&!f.stakes,why:f.stakes?'The stakes are already raised: '+f.stakes.toLowerCase()+'.':(S.bp<1?'Takes 1 booking power.':'')});
+  out.push({id:'sitdown',n:'Sit-down interview',cost:1,d:'Both of them, one table, cameras rolling. A beat that heats it, once a week.',can:S.bp>=1&&f.sit!==S.week,why:f.sit===S.week?'They sat down this week already.':(S.bp<1?'Takes 1 booking power.':'')});
+  var t=null;P.titles.forEach(function(x){if(!t&&!x.tag&&x.holders.length&&(x.holders[0]===A.id||x.holders[0]===B.id))t=x;});
+  out.push({id:'title',n:t?'Put the '+t.name+' on it':'Put a title on it',cost:0,d:'The next match between them is for the belt. It freshens the story and raises the heat.',can:!!t&&!f.title,why:f.title?'A title is already on the line.':(!t?'Neither of them holds a singles title.':'')});
+  return out;
+};
+E.storyDo=function(S,id,act){
+  var f=S.feuds.filter(function(x){return x.id===id&&!x.res&&x.promo===S.player;})[0];if(!f)return {ok:false,msg:'That feud is over.'};
+  var a=E.storyActs(S,id).filter(function(x){return x.id===act;})[0];if(!a)return {ok:false,msg:'Nothing to do.'};if(!a.can)return {ok:false,msg:a.why||'Not now.'};
+  var P=S.promos[S.player],A=S.w[f.a[0]],B=S.w[f.b[0]],L=feudLabel(S,f),msg='';
+  S.bp-=a.cost;
+  if(act==='stakes'){var opts=STORY_STAKES.filter(function(x){return !(f.title&&/title shot/.test(x));});f.stakes=opts[Math.floor(h01(S.seed+':stk:'+f.id+':'+S.week)*opts.length)%opts.length];f.twist='stakes';f.tww=S.week;
+    heatUp(S,f,6,'The stakes were raised: '+f.stakes.toLowerCase());msg='The stakes are raised for '+L+': '+f.stakes.toLowerCase()+'. The story has room again.';
+    [A,B].forEach(function(w){youRemember(S,w,'stakes','You raised the stakes on our feud.',1);});}
+  else if(act==='sitdown'){f.sit=S.week;heatUp(S,f,8,A.name+' and '+B.name+' sat down face to face, and it went badly');relBump(S,A.id,B.id,{bond:-4});
+    msg=A.name+' and '+B.name+' sit down for an interview. It ends with the table on the floor. The heat is '+Math.round(f.heat)+'.';}
+  else if(act==='title'){var t=null;P.titles.forEach(function(x){if(!t&&!x.tag&&x.holders.length&&(x.holders[0]===A.id||x.holders[0]===B.id))t=x;});
+    f.title=t.id;f.tww=S.week;heatUp(S,f,5,'The '+t.name+' was put on the line');msg='The '+t.name+' is on the line in '+L+'. Book the match and the belt goes with it.';
+    var ch=S.w[t.holders[0]],cl=ch===A?B:A;youRemember(S,cl,'titleshot','You gave me a title match against '+ch.name+'.',3);}
+  return {ok:true,msg:msg};
+};
+
 /* ===== 30-show.js ===== */
 /* ---------- running a show ---------- */
 function dirtSheet(S,P,show,rep,pool){

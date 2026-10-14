@@ -25,7 +25,7 @@ function Season(p: { se: any; sel: number | null }) {
   return <div class="sn-wrap">
     <div class="sn" role="table" aria-label="The heat of every feud over the last twelve weeks">
       <span class="mh0" />{months.map(m => <span class="mh" style={{ gridColumn: 'span ' + m.n }}>{m.n >= 2 ? m.m : m.m.slice(0, 3)}</span>)}
-      <span class="h0">Feud {'·'} heat</span>{se.weeks.map((w: any, i: number) => <span class={'h' + (i === last ? ' now' : (w.big ? ' ev' : ''))} title={w.ev || ''}>{i === last ? 'NOW' : (w.big ? '★' : 'W' + w.wom)}</span>)}
+      <span class="h0">Feud {'·'} heat</span>{se.weeks.map((w: any, i: number) => <span class={'h' + (i === last ? ' now' : (w.big && w.w >= 1 ? ' ev' : ''))} title={w.ev || ''}>{i === last ? 'NOW' : (w.w < 1 ? '' : (w.big ? '★' : 'W' + w.wom))}</span>)}
       {L.map((x: any) => <>
         <button type="button" class={'nm' + (x.id === p.sel ? ' sel' : '')} {...dataAttrs('season-row', { v: x.id })} aria-pressed={x.id === p.sel} onClick={() => view(() => { st.sel = x.id; })}>
           <span class={'ln k' + x.ph}>{PH[x.ph] || ''}</span><Portrait w={S.w[x.a]} /><Portrait w={S.w[x.b]} />
@@ -56,14 +56,15 @@ function StoryPane(p: { id: number | null }) {
   const log = () => openModal({ kind: 'info', title: E.feudLabel(S, f), wide: true, body: () => <ul class="list" data-t="story-log">{f.log.slice().reverse().map((l: any, i: number) => <li key={i}><span class="muted">Week {l.w}</span><span><Txt>{l.t}</Txt></span></li>)}</ul> });
   return <div class="sp">
     <div class="sp-vs"><span class="sp-one"><Portrait w={a} /><Name w={a} /></span><b class="rd">VS</b><span class="sp-one"><Portrait w={b} /><Name w={b} /></span></div>
-    <p class="sp-tags"><Tag kind={pl.phase === 'boil' ? 'heel' : (pl.phase === 'stale' || pl.phase === 'cool' ? 'warn' : 'gold')} >{pl.pn}</Tag><Tag kind={f.heat >= 60 ? 'heel' : undefined}>{E.feudStage(f)}</Tag>{pl.ripe ? <Tag kind="good">Ripe to end</Tag> : null}</p>
+    <p class="sp-tags"><Tag kind={f.heat >= 60 ? 'heel' : undefined}>{E.feudStage(f)}</Tag>{pl.ripe ? <Tag kind="good">Ripe to end</Tag> : null}</p>
     <Line label="Heat" w={9}><Meter v={f.heat} kind="hot" n={6} /> <span class="num">{pl.heat}</span> <span class="muted">Fresh</span> <Meter v={pl.fresh} kind="cool" n={6} /></Line>
-    <Line label="Running" w={9}>{pl.weeks} {pl.weeks === 1 ? 'week' : 'weeks'}{pl.rounds ? ', ' + pl.rounds + (pl.rounds === 1 ? ' round' : ' rounds') : ''}{pl.lead ? '. ' + pl.lead : ''}</Line>
+    <Line label="Running" w={9}><span title={pl.lead}>{pl.weeks} {pl.weeks === 1 ? 'week' : 'weeks'}{pl.rounds ? ', ' + pl.rounds + (pl.rounds === 1 ? ' round' : ' rounds') : ''}{pl.lead ? (/every time/.test(pl.lead) ? ', one-sided' : (/square/.test(pl.lead) ? ', all square' : '')) : ''}</span></Line>
     <Group title="The ending">
       <p data-t="feud-end" class="clamp">{pl.end ? (pl.end.in < 0 ? 'Planned for ' + pl.end.at + ', which has passed. It goes on until you book the ending.' : 'Planned for ' + pl.end.at + ', ' + wk(pl.end.in) + '. Book them on that show.') : 'None planned. It goes on as long as you want it to.'}</p>
       <p class="sp-btns">{pl.end ? <Btn kind="sm" t="story-unplan" onClick={() => plan(null)}>Take the plan off</Btn> : <Btn kind="go" t="story-plan" onClick={() => plan()}>End it at {pl.next.at.replace(/^\S+ /, '')}</Btn>}</p>
     </Group>
-    <Group title="What it needs"><p class="clamp">{NEEDS[pl.phase] ? NEEDS[pl.phase](pl) : ''}</p></Group>
+    <Group title="What it needs"><p class="clamp">{NEEDS[pl.phase] ? NEEDS[pl.phase](pl) : ''}</p>
+      <p class="sp-acts" data-t="story-acts">{E.storyActs(S, f.id).map((x: any) => <Btn key={x.id} kind="sm" t="story-act" d={{ v: x.id }} disabled={!x.can} label={x.n + '. ' + x.d + (x.why ? ' ' + x.why : '')} onClick={() => act(() => { const r = E.storyDo(S, f.id, x.id); say(r.msg, { err: !r.ok }); })}>{({ stakes: 'Stakes', sitdown: 'Sit-down', title: 'Title' } as any)[x.id] || x.n}{x.cost ? ' · ' + x.cost : ''}</Btn>)}</p></Group>
     {f.stakes ? <p class="good one">Stakes: {f.stakes}</p> : null}
     <p class="sp-btns"><Btn kind="sm" t="story-log" onClick={log}>The feud so far</Btn><Btn kind="danger" t="story-end" onClick={end}>Drop it</Btn></p>
   </div>;
