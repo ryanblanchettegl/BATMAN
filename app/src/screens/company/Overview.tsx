@@ -2,8 +2,8 @@
    up, the house rules in force and the sponsors signed. Read-only: every choice behind these numbers is made on Manage. */
 import { ComponentChildren } from 'preact';
 import { E } from '../../engine';
-import { G, me, cash, full, plural } from '../../store';
-import { Head, Panel, Gauge, Meter, Empty, Name } from '../../kit';
+import { G, me, cash, full, plural, slice, view } from '../../store';
+import { Head, Panel, Gauge, Meter, Empty, Name, Desktop, Win, ListBox, Row } from '../../kit';
 import { ModelCard } from '../../shared/model';
 
 /** A gauge panel: the title is centred inside the box (docs/design.md, section 6). */
@@ -98,14 +98,34 @@ function IncomeBar() {
   </Panel>;
 }
 
+const PARTS: { id: string; n: string; body: () => ComponentChildren }[] = [
+  { id: 'setup', n: 'How it runs', body: () => <Setup /> },
+  { id: 'income', n: 'Where the money came from', body: () => <IncomeBar /> },
+  { id: 'model', n: 'How this company is run', body: () => <Panel title="How this company is run"><ModelCard id={me().model} /></Panel> },
+  { id: 'owner', n: 'Ownership', body: () => <Ownership /> },
+  { id: 'rules', n: 'House rules', body: () => <Rules /> },
+  { id: 'sponsors', n: 'Sponsors', body: () => <Sponsors /> }
+];
 export function Overview() {
   const S = G.S, P = me();
-  return <div class="onescreen winpage">
+  // for the browser tests: every part laid out on the page, as it was
+  if ((window as any).EWF_FLAT) return <div class="onescreen winpage">
     <Head eyebrow={P.name} title="Company" />
     <Gauges />
     <div class="cols">
       <div class="stack"><Panel title="How this company is run"><ModelCard id={P.model} /></Panel><Ownership /><Rules /></div>
       <div class="stack"><IncomeBar /><Setup /><Sponsors /></div>
     </div>
+  </div>;
+  const st = slice<{ k: string }>('overview', () => ({ k: 'setup' })), cur = PARTS.find(x => x.id === st.k) || PARTS[0];
+  return <div class="onescreen winpage ovpage">
+    <Head eyebrow={P.name} title="Company" />
+    <Gauges />
+    <Desktop cls="ovdesk" t="overview">
+      <Win title={P.name} area="list" t="ov-list">
+        <ListBox cols="1fr" label="Parts">{PARTS.map(x => <Row key={x.id} sel={x.id === cur.id} onPick={() => view(() => { st.k = x.id; })} t="ov-sec" d={{ v: x.id }} label={x.n}><span>{x.n}</span></Row>)}</ListBox>
+      </Win>
+      <Win title={cur.n} area="pane" t="ov-pane"><div class="hspane">{cur.body()}</div></Win>
+    </Desktop>
   </div>;
 }
