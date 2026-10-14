@@ -224,6 +224,7 @@ E.season=function(S){
   L.forEach(function(f){var p=E.feudPlan(S,f);
     if(p.ripe)says.push({k:'ripe',t:feudLabel(S,f)+' is ripe. End it at '+p.next.at+'.',id:f.id});
     else if(p.phase==='stale')says.push({k:'tired',t:feudLabel(S,f)+' is going stale. Twist it or rest it.',id:f.id});
+    var sA=S.w[f.a[0]],sB=S.w[f.b[0]];if(f.a.length===1&&f.b.length===1&&sA&&sB&&sA.align===sB.align&&!f.turned&&(p.phase==='stale'||(f.matches||0)>=2))says.push({k:'turn',t:feudLabel(S,f)+' is '+(sA.align==='F'?'hero against hero':'villain against villain')+'. A turn would tell the crowd who to cheer.',id:f.id});
     if(f.fz>=1)says.push({k:'cold',t:feudLabel(S,f)+' is not catching on. Heat it or lose it.',id:f.id});
     if((f.matches||0)>=3&&Math.min(f.aw||0,f.bw||0)===0)says.push({k:'lop',t:feudLabel(S,f)+' is one-sided. The other side needs a win.',id:f.id});
     if(S.week-f.start>=24&&f.heat>=60)says.push({k:'good',t:feudLabel(S,f)+' has run '+(S.week-f.start)+' weeks and is still hot.',id:f.id});
@@ -240,7 +241,7 @@ E.season=function(S){
   if(idle.length)says.push({k:'idle',t:idle.length+' of your top 12 '+(idle.length===1?'has':'have')+' had no feud in four weeks.',ids:idle.slice(0,8).map(function(w){return w.id;})});
   var nb=nextBigFrom(S.week),ending=L.filter(function(f){return f.endAt===nb;});
   if(ending.length>=3)says.push({k:'crowd',t:ending.length+' feuds end at '+bigShort(S,nb)+'. Not all of them can be the main event.',w0:nb});
-  var ORD={late:0,hurt:1,cold:2,ripe:3,clash:4,lop:5,tired:6,crowd:7,idle:8,good:9};says.sort(function(a,b){return ORD[a.k]-ORD[b.k];});
+  var ORD={late:0,hurt:1,cold:2,ripe:3,clash:4,lop:5,tired:6,turn:7,crowd:8,idle:9,good:10};says.sort(function(a,b){return ORD[a.k]-ORD[b.k];});
   return {week:S.week,weeks:weeks,stories:stories,says:says,next:{w:nb,in:nb-S.week,ev:bigShort(S,nb),n:ending.length}};
 };
 /** End a story now, with no match. No payoff, and both of them remember. */

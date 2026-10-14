@@ -82,7 +82,7 @@ const NEEDS: Record<string, (pl: any) => string> = {
 function Says(p: { se: any }) {
   const S = G.S, st = stl(), L = p.se.says, per = flat() ? 99 : 2;
   const pages = Math.max(1, Math.ceil(L.length / per)), pg = Math.min(st.npg, pages - 1);
-  const KW: Record<string, [string, any]> = { late: ['Late', 'bad'], hurt: ['Hurt', 'bad'], cold: ['Cold', 'bad'], ripe: ['Ripe', 'good'], clash: ['Clash', 'bad'], lop: ['One-sided', 'warn'], tired: ['Stale', 'warn'], crowd: ['Crowded', 'warn'], idle: ['Idle', 'off'], good: ['Good', 'good'] };
+  const KW: Record<string, [string, any]> = { late: ['Late', 'bad'], hurt: ['Hurt', 'bad'], cold: ['Cold', 'bad'], ripe: ['Ripe', 'good'], clash: ['Clash', 'bad'], lop: ['One-sided', 'warn'], tired: ['Stale', 'warn'], turn: ['Turn', 'warn'], crowd: ['Crowded', 'warn'], idle: ['Idle', 'off'], good: ['Good', 'good'] };
   if (!L.length) return <p class="muted">Nothing to fix. Every feud is in good shape.</p>;
   return <>
     <ul class="says">{L.slice(pg * per, pg * per + per).map((x: any, i: number) => <li key={pg + ':' + i}>
