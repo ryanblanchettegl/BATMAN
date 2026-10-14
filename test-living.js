@@ -66,5 +66,13 @@ ok(stale >= 1 && ripe >= 1, 'no feud ever went stale or ripe');
   for (let i = 0; i < 4; i++) { const c = E.suggest(S); ok(!c.some(m => m.sides && m.sides.length === 2 && ((m.sides[0][0] === f.a[0] && m.sides[1][0] === f.b[0]) || (m.sides[0][0] === f.b[0] && m.sides[1][0] === f.a[0]))), 'the suggested card booked a story on the back burner'); S.qi = S.queue.length; E.endWeek(S); }
   ok(!f.res && f.fresh > 40, 'a story on the back burner fizzled or did not freshen (res ' + f.res + ', fresh ' + f.fresh + ')');
 }
+// a contract signing makes the match and plans the ending for the next big event
+{
+  const S = E.newGame(E.universe().promotions[1].id, 3, { name: 'R' }); S.bp = 10;
+  const R = E.storyPeople(S).filter(w => w.g === 'M' && !w.n && !w.hurt), r = E.storyStart(S, R[2].id, R[5].id), f = S.feuds.find(x => x.id === r.id), h0 = f.heat;
+  const c = E.suggest(S).filter(m => !m.sides.some(sd => sd.includes(f.a[0]) || sd.includes(f.b[0]))); S.segs = [{ k: 'signing', who: [f.a[0], f.b[0]], pos: 0, len: 'M' }]; E.fitShow(S, c);
+  const v = E.validate(S, c); ok(!v.errors.length, 'the signing could not be booked: ' + v.errors.join(' | '));
+  if (!v.errors.length) { E.runPlayerShow(S, c); ok(S.reports[0].segs.some(x => x.booked === 'signing') && f.endAt != null && f.finale && f.heat > h0, 'a contract signing did not make the match, plan the ending or heat the feud'); }
+}
 if (fails) { console.log('FAILED: ' + fails); process.exit(1); }
 console.log('test-living: all passed');

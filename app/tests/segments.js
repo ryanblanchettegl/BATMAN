@@ -38,7 +38,7 @@ async function run(mode) {
     await page.click('[data-t="add-promo"]');
     await page.waitForSelector('.win');
     await over('the booking window');
-    ok(mode, 'the window is for a promo: only promo kinds, and the writers', await page.$eval('#seg-kind', e => [...e.options].map(o => o.value).join()) === 'interview,callout,words,challenge,faceoff,recap,writers', await page.$eval('#seg-kind', e => [...e.options].map(o => o.value).join()));
+    ok(mode, 'the window is for a promo: only promo kinds, and the writers', await page.$eval('#seg-kind', e => [...e.options].map(o => o.value).join()) === 'interview,callout,words,challenge,faceoff,signing,recap,writers', await page.$eval('#seg-kind', e => [...e.options].map(o => o.value).join()));
     ok(mode, 'it says how much time is left', /minutes still to fill/.test(await txt(page, '[data-t="seg-left"]')));
     ok(mode, 'Book it waits until everyone is picked', await page.$eval('[data-t="seg-save"]', e => e.disabled));
     await page.selectOption('#seg-kind', 'callout');

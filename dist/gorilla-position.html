@@ -12028,6 +12028,7 @@ var SEGK={
   brawl:{len:'M',n:'Brawl',t:'angle',roles:['One rival','The other'],d:'Two rivals fight all over the building. It heats a feud fast, and now and then somebody gets a knock.'},
   save:{len:'M',n:'Save',t:'angle',roles:['Who gets attacked','Who makes the save','The attacker'],d:'One is attacked, another runs out to help, and the two shake hands. A new team is born, with an enemy.'},
   turn:{len:'M',n:'Turn',t:'angle',roles:['Who changes sides'],d:'A hero turns villain or a villain turns hero. It lands when the crowd was already leaning that way, and falls flat from nowhere.'},
+  signing:{len:'M',n:'Contract signing',t:'promo',roles:['One rival','The other'],d:'The two sign for their match at the next big event, on a table in the ring. It makes the match official and plans the ending for that night. It rarely ends with the table standing.'},
   recap:{len:'S',fix:1,n:'Video recap',t:'promo',roles:['One rival','The other'],d:'A video package on a feud: how it started and where it stands. Always five minutes. It keeps the feud warm, and when it opens the show their match that night means more.'},
   writers:{len:'M',n:'Writers’ pick',t:'any',roles:[],d:'Hand the time to the writers. They write whatever tonight’s stories need: the next beat of a feud, a mystery, a surprise. You find out on the night.'}
 };
@@ -12055,7 +12056,7 @@ function segChoices(S,kind,who,slot){
   var others=function(x){return free.filter(function(w){return !x||(w.id!==x.id&&w.g===x.g);});};
   if(!K.roles.length)return [];
   if(kind==='interview'||kind==='turn')return [free];
-  if(kind==='words'||kind==='brawl'||kind==='recap'){
+  if(kind==='words'||kind==='brawl'||kind==='recap'||kind==='signing'){
     var inF=free.filter(function(w){return feudsFor(S,w.id).some(function(f){return f.promo===P.id;});});
     return [inF,a?free.filter(function(w){return w.id!==a.id&&!!feudOf(S,a.id,w.id);}):[]];
   }
@@ -12172,6 +12173,10 @@ function runSeg(S,P,show,ctx,sg,slot,opens){
     f=startFeud(S,P,a,c,20,c.name+' attacked '+a.name+'; '+b.name+' made the save');if(f&&f.a.indexOf(a.id)>=0&&f.a.length<2)f.a.push(b.id);
     news(S,'story','New team: '+a.name+' & '+b.name+'.');
     r=angle('Save',c.name+' attacks '+a.name+' after an interview. '+b.name+' runs out to make the save, and the two shake hands. A new team is born.',ov);
+  }else if(sg.k==='signing'){
+    // the match is made for the next big event, and the story is set to end there (src/21-living.js)
+    heatUp(S,f,clamp(6+(ov-55)/6,3,12)*hm,a.name+' and '+b.name+' signed for their match');f.finale=true;var nb=nextBigFrom(S.week+(show.big?1:0));if(f.endAt==null)f.endAt=nb;
+    var tbl=ov>=62;r=angle('Contract signing',a.name+' and '+b.name+' sit across a table in the ring and sign for '+S.promos[f.promo].name+' '+dbOf(S).events[cal(nb).month]+'. '+(tbl?'The ink is barely dry when the table goes over.':'They sign, stare, and leave it there.'),ov);
   }else if(sg.k==='recap'){
     heatUp(S,f,3,'A video package told the story of '+a.name+' and '+b.name);
     r=angle('Video recap','A video package tells the story of '+a.name+' and '+b.name+': how it started, and what is at stake.',ov);
@@ -12184,7 +12189,7 @@ function runSeg(S,P,show,ctx,sg,slot,opens){
   if(r&&SEGK[sg.k].t==='promo'&&sg.k!=='recap'){
     var city=ctx.city||null,pkey='pr'+S.week+':'+sg.k+':'+sg.who.join(','),said=hasMouthpiece(S,a)?S.w[a.mgr]:a;
     r.text+=' '+promoSpeech(S,said,b,sg.k,said===a?ov:Math.max(ov,said.mic),city,pkey);
-    if(b&&(sg.k==='words'||sg.k==='faceoff'||sg.k==='challenge'))r.text+=' '+promoSpeech(S,b,a,sg.k==='challenge'?'words':sg.k,clamp(ov+(b.mic-a.mic)/2,5,99),city,pkey+'b');
+    if(b&&(sg.k==='words'||sg.k==='faceoff'||sg.k==='challenge'||sg.k==='signing'))r.text+=' '+promoSpeech(S,b,a,sg.k==='challenge'?'words':sg.k,clamp(ov+(b.mic-a.mic)/2,5,99),city,pkey+'b');
   }
   if(r){r.booked=sg.k;r.ids=sg.who.slice();if(f&&f.id!=null)r.feud=f.id;}
   return r;
