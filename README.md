@@ -8,7 +8,7 @@
 
 `Wrestling` `Management` `Simulation` `Text-Based` `Sports` `Singleplayer` `Retro` `Moddable`
 
-**Release:** Coming to Steam &nbsp;|&nbsp; **Version:** 0.51, early access build &nbsp;|&nbsp; **Developer:** Ryan
+**Release:** Coming to Steam &nbsp;|&nbsp; **Version:** 0.52, early access build &nbsp;|&nbsp; **Developer:** Ryan
 
 </div>
 
