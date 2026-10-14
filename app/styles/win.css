@@ -634,6 +634,7 @@ html[data-screen="tv"]:has(.mkpage){--fs:min(clamp(20px,1.6vw,84px),2.32vh)}
 .paper .muted,.paper .panel .muted{color:#4a4740}
 .paper .gold,.paper .panel .gold,.paper .good,.paper .bad,.paper .panel .good,.paper .panel .bad{color:#111}
 .paper .lnk,.paper .panel .lnk,.paper .lnk.heel,.paper .lnk.gold{color:#111;text-decoration:underline;text-decoration-style:dotted}
+.paper .lnk:hover,.paper .lnk:focus-visible,.wn .paper .lnk:hover,.wn .paper .lnk:focus-visible{background:#111;color:#f2eedf;text-decoration:none}
 .paper .sheet-lines{list-style:none;padding:0;margin:0}
 .paper .sheet-lines li::before{content:'-- '}
 .paper .list li{border-bottom:0;padding:.15em 0}
