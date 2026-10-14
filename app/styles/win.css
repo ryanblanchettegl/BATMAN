@@ -773,3 +773,7 @@ html[data-screen="tablet"] .deskpage .wn>.bd{padding-block:.3em .3em}
 /* Manage: each group of buttons is a grey window */
 .mngpage{display:flex;flex-direction:column;gap:12px}
 .mngpage .wn .bd{padding:8px}
+.crpage .sklist{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));column-gap:2ch}
+.crpage .sklist li{min-width:0;display:flex;flex-wrap:nowrap;align-items:center;justify-content:space-between;gap:.5ch}
+.crpage .sklist li>span{min-width:0;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.crpage .sklist li .btn{flex:none;margin:0;padding:0 .6ch}

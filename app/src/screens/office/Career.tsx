@@ -18,7 +18,7 @@ function You() {
     {o.me ? <p class="good">The company is yours. House style: {style.n}.</p>
       : <p>{o.name}{'’'}s trust <Meter v={o.trust} kind={o.trust < 25 ? 'hot' : 'cool'} /> <span class="num">{Math.round(o.trust)}</span>{o.trust < 20 ? <> <span class="bad">Your job is in danger.</span></> : null}<br />
         <span class="muted">House style: {style.n}. {o.name} wants {style.likes}.</span></p>}
-    <ul class="list">{Object.keys(E.SKILLS).map(k => {
+    <ul class="list sklist">{Object.keys(E.SKILLS).map(k => {
       const sk = E.SKILLS[k], lv = b.sk[k] || 0;
       return <li>
         <span title={sk.d}><b>{sk.n}</b> <span class="num gold" role="img" aria-label={lv + ' of ' + sk.max}>{'■'.repeat(lv)}<span class="muted">{'□'.repeat(Math.max(0, sk.max - lv))}</span></span></span>
@@ -33,7 +33,7 @@ function YourWord() {
   const S = G.S, t = S.trust == null ? 60 : S.trust, L: any[] = S.ledger || [];
   return <Win title="Your word" area="word" t="career-word">
     <p>Locker-room trust <Meter v={t} kind="cool" /> <span class="num">{Math.round(t)}</span></p>
-    {L.length ? <ul class="list">{L.slice(0, 3).map(x => <li><span>{x.t}</span><Tag kind={x.k ? 'good' : 'bad'}>{x.k ? 'Kept' : 'Broken'}</Tag></li>)}</ul>
+    {L.length ? <ul class="list">{L.slice(0, 3).map(x => <li><span>{x.t.charAt(0).toUpperCase() + x.t.slice(1)}</span><Tag kind={x.k ? 'good' : 'bad'}>{x.k ? 'Kept' : 'Broken'}</Tag></li>)}</ul>
       : <p class="muted">No promises made yet. Keeping your word builds trust; breaking it costs far more than it earns.</p>}
   </Win>;
 }
