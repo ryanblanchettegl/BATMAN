@@ -2989,8 +2989,12 @@ var GR_CHAT={
     {t:'#chat_new#',if:function(c){return !!c.champ;},w:3},
     {t:'#chat_fhot#',if:function(c){return !!c.feud&&c.fheat>=70&&!c.fend;},w:2},
     {t:'#chat_fold#',if:function(c){return !!c.feud&&c.fstale;},w:2},
-    {t:'#chat_fend#',if:function(c){return !!c.feud&&c.fend;},w:3}
+    {t:'#chat_fend#',if:function(c){return !!c.feud&&c.fend;},w:3},
+    {t:'#chat_heel#',if:function(c){return !!c.turn&&c.heel;},w:4},
+    {t:'#chat_face#',if:function(c){return !!c.turn&&!c.heel;},w:4}
   ],
+  chat_heel:['{turn} turned on us!!!','i KNEW {turn} was going bad. called it','{turn} is dead to me','{turn} as a villain is going to be so good','why {turn} WHY'],
+  chat_face:['{turn} is one of the good guys now??','{turn} turning good was overdue','not buying the new {turn}. give it a month','cheering for {turn} feels weird lol','{turn} finally sees the light'],
   chat_fhot:['{feud} is the best thing on tv right now','i need {feud} to never end','{feud}!!! this is what wrestling is about'],
   chat_fold:['how is {feud} STILL going','end {feud} already please','{feud} again?? zzz'],
   chat_fend:['so thats the end of {feud}. what a run','{feud} is over and i am not ok','cant believe they ended {feud} like that'],
@@ -10604,7 +10608,8 @@ SHOWX.push(function(S,P,show,rep){
   netPost(S,'p',netHandle(S.columnist||'The Ringside Wire'),S.columnist||'The Ringside Wire',best.label+' at '+rep.name+': '+starG(best.ov)+'. The show was graded '+gradeG(repCS(rep))+(verdictBand(d)>0?', better than this crowd expected.':(verdictBand(d)<0?', short of what this crowd expected.':', what this crowd came for.')),netLikes(900,key+'pr'));
   // the chat room after the show: two to four fans, each line written by the grammar from what happened (src/60-grammar.js)
   var mf=main.ids&&main.ids.length>=2?S.feuds.filter(function(f){return f.promo===P.id&&(f.a.indexOf(main.ids[0])>=0&&f.b.indexOf(main.ids[1])>=0||f.b.indexOf(main.ids[0])>=0&&f.a.indexOf(main.ids[1])>=0);}).slice(-1)[0]:null;
-  var cc={show:rep.name,co:P.name,band:verdictBand(d),best:best.label,win:mw?mw.name:null,lose:ml?ml.name:null,champ:main.change&&mw?mw.name:null,feud:mf?feudLabel(S,mf):null,fheat:mf?mf.heat:0,fstale:!!(mf&&!mf.res&&mf.fresh!=null&&mf.fresh<30),fend:!!(mf&&mf.res&&mf.end===S.week)},nf=2+Math.floor(h01(key+'nf')*3),said={};
+  var cc={show:rep.name,co:P.name,band:verdictBand(d),best:best.label,win:mw?mw.name:null,lose:ml?ml.name:null,champ:main.change&&mw?mw.name:null,feud:mf?feudLabel(S,mf):null,fheat:mf?mf.heat:0,fstale:!!(mf&&!mf.res&&mf.fresh!=null&&mf.fresh<30),fend:!!(mf&&mf.res&&mf.end===S.week),turn:null},nf=2+Math.floor(h01(key+'nf')*3),said={};
+  var tw=rosterOf(S,P.id).filter(function(w){return w.tw===S.week;})[0];if(tw){cc.turn=tw.name;cc.heel=tw.align==='H';}
   for(var fi=0;fi<nf;fi++){var fan=FANS[Math.floor(h01(key+'f'+fi)*FANS.length)%FANS.length][0],ln=gram(GR_CHAT,'line',cc,key+'ft'+fi);if(said[ln])continue;said[ln]=1;netPost(S,'f','@'+fan,fan,ln,netLikes(120,key+'fl'+fi));}
 });
 /* at the end of the week: the news that broke, as the press posts it */
