@@ -6,6 +6,7 @@ import { Head, Panel, Btn, Tag, Empty, Window, showResult, Name, Sel, Field } fr
 import { copyText } from '../start';
 import { HouseStyle } from './HouseStyle';
 import { RivalsPanel } from './Rivals';
+import { Desktop, Win } from '../../kit/win';
 import { useKeepFocus } from './focus';
 import { ShowsBelts } from './Create';
 
@@ -238,10 +239,10 @@ function Tiles(p: { page: string }) {
   // for the browser tests of the choices themselves: every pop-up's body laid out on the page, as it was before the buttons
   if ((window as any).EWF_FLAT) { const all = tiles(p.page).reduce((a: Tile[], g) => a.concat(g.list), []), h = Math.ceil(all.length / 2);
     return <div class="cols"><div class="stack">{all.slice(0, h).map(t => t.body())}</div><div class="stack">{all.slice(h).map(t => t.body())}</div></div>; }
-  return <>{tiles(p.page).map(g => <Panel title={g.grp} cls="mb2" key={g.grp}>
+  return <Desktop cls="mngpage" t="mng-page">{tiles(p.page).map(g => <Win title={g.grp} key={g.grp}>
     <div class="bsacts">{g.list.map(t => <button type="button" key={t.id} class="bsact" data-t="mng" data-v={t.id} onClick={() => openModal({ kind: 'mng', k: p.page, v: t.id })}>
       <b>{t.n}</b><span class="eff" data-t="mng-now">{t.now()}</span><span class="muted ft">{t.d}</span></button>)}</div>
-  </Panel>)}</>;
+  </Win>)}</Desktop>;
 }
 /** The pop-up for one tile: its choices. */
 export function ManageWindow(p: { m: Modal }) {

@@ -53,7 +53,7 @@ async function frontOffice(page, mode) {
   await readOnly(page, mode);
   await go(page, 'manage');
   await page.FLAT(false);
-  check(mode, 'every choice on Operations is a button, in four groups', await count(page, '.panel') === 4 && await count(page, '[data-t="mng"]') === 15 && await count(page, 'main select, main input, main [data-t="co-set"]') === 0, await count(page, '[data-t="mng"]') + ' buttons');
+  check(mode, 'every choice on Operations is a button, in four groups', await count(page, '.mngpage .wn') === 4 && await count(page, '[data-t="mng"]') === 15 && await count(page, 'main select, main input, main [data-t="co-set"]') === 0, await count(page, '[data-t="mng"]') + ' buttons');
   await page.click('[data-t="mng"][data-v="prodLvl"]');
   check(mode, 'a button opens a pop-up with its choices, and says where it stands now', await count(page, '.win [data-t="co-set"]') >= 4 && /Now:/.test(await page.$eval('.win', e => e.innerText)) && (await page.$eval('[data-t="mng"][data-v="prodLvl"] [data-t="mng-now"]', e => e.innerText)).length > 2);
   await page.keyboard.press('Escape');

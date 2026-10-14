@@ -769,3 +769,6 @@ html[data-screen="tablet"] .road .grp{margin:.5em 0 .1em;padding:.4em 1ch .1em}
 html[data-screen="tablet"] .road .rmid .big{font-size:1.15em}
 html[data-screen="tablet"] .road .rright .grp:first-child{margin-top:.4em}
 html[data-screen="tablet"] .deskpage .wn>.bd{padding-block:.3em .3em}
+/* Manage: each group of buttons is a grey window */
+.mngpage{display:flex;flex-direction:column;gap:12px}
+.mngpage .wn .bd{padding:8px}
