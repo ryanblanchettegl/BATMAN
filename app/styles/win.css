@@ -588,3 +588,104 @@ html[data-screen="tablet"]:has(.mkpage){--fs:min(clamp(15px,1.45vw,30px),2.4vh)}
 html[data-screen="tv"]:has(.mkpage){--fs:min(clamp(20px,1.6vw,84px),2.32vh)}
 .crt:has(.mkpage){max-width:84em}
 .main .tw .tag.face,.main .tw .tag.heel,.main .tw .tag.bad,.main .tw .tag.good{color:var(--white)}
+/* the old big heading, on pages not yet rebuilt: a small window-style caption instead */
+.main .head:not(.sr){justify-content:flex-start;text-align:left;margin-bottom:.7em}
+.main .head h1{font-size:1.15em;letter-spacing:.04em;text-shadow:none;color:var(--yellow)}
+.main .head .eyebrow{display:inline;margin-right:1.5ch}
+.main .head>div{display:flex;flex-wrap:wrap;align-items:baseline;gap:0 1.5ch;flex-direction:row-reverse;justify-content:flex-end}
+.main .panel>h2:not(:first-child){position:static;background:none;padding:0;max-width:none;white-space:normal;color:var(--blue);font-size:1.3em;text-transform:none}
+
+/* ---------- Web: the dirt sheet, the feed and the boards on one page ---------- */
+.webpage{grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);grid-template-areas:"sheet feed" "sheet boards";align-items:start;flex:none}
+.webpage .wn>.bd{overflow:visible}
+.webpage .panel{box-shadow:none;margin-bottom:.6em}
+.webpage .cols{grid-template-columns:minmax(0,1fr)}
+.webpage .thread{border-top:1px solid var(--dgrey);padding-top:.3em}
+.webpage .feed{list-style:none;margin:0;padding:0}
+.webpage .feed li{border-bottom:1px solid var(--dgrey);padding:.2em 0}
+.webpage .post .u{color:var(--blue)}
+.webpage .subnav .btn{margin-bottom:.2em}
+.wn .panel .tag{color:var(--white)} .wn .panel .tag.gold,.wn .panel .tag.warn{color:var(--k)}
+.webpage .fp .ft,.webpage .fp .ft *:not(.lnk),.webpage .fh b{color:var(--k)}
+.webpage .fp .fh .muted,.webpage .fp .fl{color:#444}
+.webpage .feed li.fp{border-left:0;padding-left:0}
+.webpage .post{padding-left:0;text-indent:0}
+.webpage .post .u{margin-right:.6ch}
+.wn .panel .tag.good,.wn .panel .tag.bad,.wn .panel .tag.heel,.wn .panel .tag.face{color:var(--white)}
+.webpage .feedbox{max-height:62vh;overflow-y:auto;border:2px solid var(--dgrey);border-right-color:var(--white);border-bottom-color:var(--white);background:#b8b8b8;padding:0 1ch}
+.webpage .feedbox::-webkit-scrollbar{width:1.1em}.webpage .feedbox::-webkit-scrollbar-track{background:#d8d8d8}.webpage .feedbox::-webkit-scrollbar-thumb{background:var(--grey);border:2px solid var(--white);border-right-color:var(--dgrey);border-bottom-color:var(--dgrey)}
+.webpage{grid-template-rows:auto 1fr}
+.webpage [data-t="web-boards"]{align-self:start}
+
+/* the dirt sheet as a 90s newsletter: typed on cream paper, a masthead, capital headings over a dashed rule, two dense columns */
+.paper{background:#f2eedf;color:#111;padding:.6em 1.6ch 1em;border:1px solid #8a8678;box-shadow:inset 0 0 0 1px #fff;font-size:.95em;line-height:1.22}
+.paper .mast{text-align:center;border-bottom:3px double #111;padding-bottom:.3em;margin-bottom:.6em}
+.paper .mt-name{font-size:1.9em;letter-spacing:.18em;line-height:1}
+.paper .mt-line{font-size:.85em;letter-spacing:.05em}
+.paper .panel,.paper .panel.lead{background:none;border:0;box-shadow:none;padding:0;margin:0 0 .8em;color:#111}
+.paper .panel>h2:first-child{position:static;background:none;color:#111;text-align:left;margin:0 0 .25em;padding:0;text-transform:uppercase;letter-spacing:.08em;border-bottom:1px dashed #111}
+.paper .lead .eyebrow{display:none}
+.paper .lead .sheet-head{color:#111;font-size:1.5em;text-transform:uppercase;letter-spacing:.04em;text-align:center}
+.paper .lead p{text-align:center}
+.paper .cols{display:block;column-count:2;column-gap:3ch;column-rule:1px solid #9a968a}
+.paper .cols>.stack{display:block}
+.paper .panel{break-inside:avoid}
+.paper b,.paper .panel b,.paper .who,.paper .nm{color:#111}
+.paper .muted,.paper .panel .muted{color:#4a4740}
+.paper .gold,.paper .panel .gold,.paper .good,.paper .bad,.paper .panel .good,.paper .panel .bad{color:#111}
+.paper .lnk,.paper .panel .lnk,.paper .lnk.heel,.paper .lnk.gold{color:#111;text-decoration:underline;text-decoration-style:dotted}
+.paper .sheet-lines{list-style:none;padding:0;margin:0}
+.paper .sheet-lines li::before{content:'-- '}
+.paper .list li{border-bottom:0;padding:.15em 0}
+.paper .panel .tag,.paper .wn .panel .tag,.wn .paper .panel .tag{background:none;color:#111;border:0;outline:0;padding:0}
+.paper .panel .tag::before{content:'['} .paper .panel .tag::after{content:']'}
+.paper .panel>h2.sheet-head{color:#111}
+.paper .panel>h2.sheet-head{color:#111}
+
+/* the feed as a 90s chat room: a white log in a grey frame, screen names in colour, who is here down the side */
+.chatroom{display:flex;flex-direction:column;gap:.3em}
+.chatroom .cr-top{display:flex;justify-content:space-between;background:var(--dgrey);color:var(--white);padding:0 1ch}
+.chatroom .cr-top b{color:var(--white)}
+.chatroom .cr-body{display:grid;grid-template-columns:minmax(0,1fr) 15ch;gap:.6ch}
+.webpage .chatroom .cr-log{background:#fff;color:#000;max-height:58vh;overflow-y:auto;border:2px solid var(--dgrey);border-right-color:var(--white);border-bottom-color:var(--white);padding:.2em 1ch;font-family:'Courier New',var(--f);font-size:.82em;line-height:1.3}
+.chatroom .cr-ln{margin:0}
+.chatroom .cr-ln,.chatroom .cr-ln *:not(.cr-sn):not(.lnk){color:#000}
+.chatroom .cr-sys{color:#808080;margin:.2em 0;font-style:italic}
+.chatroom .cr-sn{font-weight:700}
+.chatroom .k-f{color:#0000c0} .chatroom .k-w{color:#b00000} .chatroom .k-p{color:#006000} .chatroom .k-c{color:#800080}
+.chatroom .cr-who{list-style:none;margin:0;padding:.2em .8ch;background:#fff;border:2px solid var(--dgrey);border-right-color:var(--white);border-bottom-color:var(--white);font-family:'Courier New',var(--f);font-size:.78em;max-height:58vh;overflow:hidden}
+.chatroom .cr-who li{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.chatroom .cr-foot{color:#444;font-size:.9em}
+.chatroom .lnk{color:#0000c0}
+.chatroom .cr-log .fp{border:0;padding:0 0 .1em 2ch;margin:0;text-indent:-2ch;background:none}
+.chatroom .cr-log .fp{padding:0 0 .15em;text-indent:0}
+
+/* Wrestle Search: a 90s portal and six make-believe websites, each in its own loud style */
+.wsearch{display:flex;flex-direction:column;gap:.3em}
+.wsearch .ws-bar{display:flex;gap:1ch;align-items:center}
+.wsearch .ws-bar .btn{margin:0}
+.wsearch .ws-url{flex:1;background:#fff;color:#000;border:2px solid var(--dgrey);border-right-color:var(--white);border-bottom-color:var(--white);padding:0 .8ch;font-family:'Courier New',var(--f);font-size:.85em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.wsearch .ws-home{background:#fff;color:#000;padding:.6em 1ch 1em;text-align:center;border:2px solid var(--dgrey)}
+.wsearch .ws-logo{font-size:2.2em;line-height:1;color:#c00000;letter-spacing:.04em;font-weight:700}
+.wsearch .ws-logo span{color:#0000c0}
+.wsearch .ws-tag{color:#555;margin-bottom:.6em}
+.wsearch .ws-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.5em 1.2ch;text-align:left}
+.wsearch .ws-link{all:unset;box-sizing:border-box;cursor:pointer;display:flex;flex-direction:column;padding:.3em 1ch;background:#e8e8ff;border:2px solid #0000c0;min-width:0}
+.wsearch .ws-link b{color:#0000c0;text-decoration:underline}
+.wsearch .ws-link small{font-size:.85em;color:#333}
+.wsearch .ws-link:hover,.wsearch .ws-link:focus-visible{background:#ffff99;outline:2px solid #000}
+.wsearch .ws-site{padding:.5em 1ch .7em;border:2px solid var(--dgrey);font-family:'Times New Roman',var(--f);font-size:.95em;line-height:1.25}
+.wsearch .ws-title{font-size:1.6em;text-align:center;font-weight:700;margin-bottom:.3em}
+.wsearch .ws-count{text-align:center;font-size:.8em;margin-top:.6em;font-family:'Courier New',var(--f)}
+.wsearch .ws-small{font-size:.85em;opacity:.8}
+.wsearch .ws-ul{margin:0;padding-left:2.2ch}.wsearch .ws-ol{margin:0;padding-left:3ch}
+.wsearch .ws-ul li,.wsearch .ws-ol li{margin:.15em 0}
+.wsearch .ws-site b,.wsearch .ws-site .muted,.wsearch .ws-site .empty{color:inherit}
+.wsearch .ws-site .lnk{color:inherit;text-decoration:underline}
+.ws-rumor{background:#000;color:#ffff00}.ws-rumor .ws-title{color:#ff0000;text-shadow:2px 2px 0 #ffff00}
+.ws-board{background:#d4d0c8;color:#000}.ws-board .ws-title{background:#000080;color:#fff;font-family:var(--f)}
+.ws-results{background:#fff;color:#000}.ws-results .ws-title{color:#006000;border-bottom:3px solid #006000}
+.ws-rank{background:#400060;color:#fff}.ws-rank .ws-title{color:#ff66ff}
+.ws-belts{background:#fffbe0;color:#3a2a00}.ws-belts .ws-title{color:#a07000;text-shadow:1px 1px 0 #000}.ws-belts .ws-co{margin-bottom:.4em}
+.ws-whisper{background:#101820;color:#9fe0ff}.ws-whisper .ws-title{color:#fff;font-style:italic}
+.ws-board .post .u{color:#000080}

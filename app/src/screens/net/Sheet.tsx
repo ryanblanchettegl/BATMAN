@@ -2,7 +2,7 @@
    and what people are whispering. The issue for the week in progress fills in as the week goes. */
 import { E } from '../../engine';
 import { G, me, slice, view } from '../../store';
-import { Head, Panel, Tabs, Tag, Empty, Txt, PromoName, grade, stars } from '../../kit';
+import { Panel, Tabs, Tag, Empty, Txt, PromoName, grade, stars } from '../../kit';
 
 const LVL_KIND: Record<string, 'good' | 'warn' | 'bad'> = { sure: 'good', likely: 'warn', thin: 'bad' };
 
@@ -51,9 +51,13 @@ export function Sheet() {
   const def = I.now.yours.length || !I.past.length ? 'now' : 'p0', cur = st.k && (st.k === 'now' || I.past[+st.k.slice(1)]) ? st.k : def;
   const issue = cur === 'now' ? I.now : I.past[+cur.slice(1)];
   const tabs = [{ id: 'now', label: 'This week', t: 'sheet-tab', d: { v: 'now' } }].concat(I.past.map((x: any, i: number) => ({ id: 'p' + i, label: i === 0 ? 'Last week' : x.label.replace(/, \d+$/, ''), t: 'sheet-tab', d: { v: 'p' + i } })));
+  // the newsletter: a typed masthead, then the issue in dense columns on paper, the way the 90s sheets came in the post
+  const by = String(issue.by || ''), at = by.indexOf(' of '), paper = at >= 0 ? by.slice(at + 4) : by, ed = at >= 0 ? by.slice(0, at) : '';
   return <>
-    <Head eyebrow={issue.by} title="Dirt sheet" />
-    <Tabs label="Issues" items={tabs} value={cur} onPick={id => view(() => { st.k = id; })} cls="mb3" />
-    <Issue s={issue} live={cur === 'now'} />
+    <Tabs label="Issues" items={tabs} value={cur} onPick={id => view(() => { st.k = id; })} cls="mb2" />
+    <div class="paper" data-t="paper">
+      <div class="mast"><p class="mt-name">{paper.toUpperCase()}</p><p class="mt-line">{'Edited by ' + ed + ' · ' + issue.label + (cur === 'now' ? ' · so far' : '') + ' · subscribers only'}</p></div>
+      <Issue s={issue} live={cur === 'now'} />
+    </div>
   </>;
 }
