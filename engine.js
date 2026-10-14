@@ -1325,6 +1325,9 @@ E.feudBook=function(S){return (S.feudBook||[]).slice();};
 function feudEmber(S,f){var k=rkey(f.a[0],f.b[0]);(S.embers||(S.embers={}))[k]={w:S.week,h:Math.round(f.heat),n:((S.embers[k]||{}).n||0)+1};
   Object.keys(S.embers).forEach(function(x){if(S.week-S.embers[x].w>48)delete S.embers[x];});}
 function emberOf(S,a,b){var e=S.embers&&S.embers[rkey(a,b)];return e&&S.week-e.w<=48?e:null;}
+/** Whose home town the big night in week w is in, if either of the two's: their name and the city. */
+function feudHomeAt(S,P,f,w){if(f.promo!==S.player)return null;var st=roadAhead(S,P,12).filter(function(a){return a.w===w&&a.show.big;})[0];if(!st)return null;
+  var best=null,bk=0;[f.a[0],f.b[0]].forEach(function(id){var x=S.w[id],k=homeWeight(S,x,st.city);if(k>bk){bk=k;best=x;}});return best?{name:best.name,city:st.city}:null;}
 /** Everything the screens need about one story. */
 E.feudPlan=function(S,f){
   feudPlan(S,f);var P=S.promos[f.promo]||S.promos[S.player];
@@ -1332,7 +1335,7 @@ E.feudPlan=function(S,f){
   var ph=feudPhase(S,f);
   return {heat:Math.round(f.heat),fresh:Math.round(f.fresh),peak:Math.round(f.peak),phase:ph,pn:PHASE_N[ph],weeks:S.week-f.start,hist:f.hist.slice(-12),
     end:f.endAt!=null?{w:f.endAt,in:f.endAt-S.week,at:at(f.endAt)}:null,ripe:f.heat>=65&&f.fresh<50,lead:feudLead(f),rounds:f.chd||0,act:feudActCal(S,f),
-    next:{w:nextBigFrom(S.week),in:nextBigFrom(S.week)-S.week,at:at(nextBigFrom(S.week))}};
+    next:{w:nextBigFrom(S.week),in:nextBigFrom(S.week)-S.week,at:at(nextBigFrom(S.week))},home:feudHomeAt(S,P,f,f.endAt!=null?f.endAt:nextBigFrom(S.week))};
 };
 E.feudPhase=function(S,f){return PHASE_N[feudPhase(S,f)];};
 E.feudEmber=function(S,f){feudEmber(S,f);};

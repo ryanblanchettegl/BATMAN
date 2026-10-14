@@ -60,7 +60,7 @@ function StoryPane(p: { id: number | null }) {
     <Line label="Heat" w={9}><Meter v={f.heat} kind="hot" n={6} /> <span class="num">{pl.heat}</span> <span class="muted">Fresh</span> <Meter v={pl.fresh} kind="cool" n={6} /></Line>
     <Line label="Running" w={9}><span title={pl.lead}>{pl.weeks} {pl.weeks === 1 ? 'week' : 'weeks'}{pl.rounds ? ', ' + pl.rounds + (pl.rounds === 1 ? ' round' : ' rounds') : ''}{pl.lead ? (/every time/.test(pl.lead) ? ', one-sided' : (/square/.test(pl.lead) ? ', all square' : '')) : ''}</span></Line>
     <Group title="The ending">
-      <p data-t="feud-end" class="clamp">{pl.end ? (pl.end.in < 0 ? 'Planned for ' + pl.end.at + ', which has passed. It goes on until you book the ending.' : 'Planned for ' + pl.end.at + ', ' + wk(pl.end.in) + '. Book them on that show.') : 'None planned. It goes on as long as you want it to.'}</p>
+      <p data-t="feud-end" class="clamp">{pl.end ? (pl.end.in < 0 ? 'Planned for ' + pl.end.at + ', which has passed. It goes on until you book the ending.' : 'Planned for ' + pl.end.at + ', ' + wk(pl.end.in) + '.' + (pl.home ? '' : ' Book them on that show.')) : (pl.home ? 'None planned.' : 'None planned. It goes on as long as you want it to.')}{pl.home ? <span class="good" data-t="feud-home" title="An ending in a home town pays more."> {pl.end ? 'In' : 'Next big night:'} {pl.home.name}{'\u2019'}s home town.</span> : null}</p>
       <p class="sp-btns">{pl.end ? <Btn kind="sm" t="story-unplan" onClick={() => plan(null)}>Take the plan off</Btn> : <Btn kind="go" t="story-plan" onClick={() => plan()}>End it at {pl.next.at.replace(/^\S+ /, '')}</Btn>}</p>
     </Group>
     <Group title="What it needs"><p class="clamp">{NEEDS[pl.phase] ? NEEDS[pl.phase](pl) : ''}</p>
