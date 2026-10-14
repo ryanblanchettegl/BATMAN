@@ -57,5 +57,14 @@ for (let w = 0; w < 50 && !S.over; w++) {
   const changed = S.order.filter(id => id !== S.player && S.promos[id].events.some(e => e.t !== 'arena' && e.t !== 'flag'));
   ok(changed.length >= 1 && said, 'no rival reshaped its year: ' + changed.join(','));
 }
+// the buy rate report: after a big night, After the show says the buys against the forecast and what moved them
+{
+  const S = E.newGame(E.universe().promotions[1].id, 3, { name: 'R' }); let it = null;
+  for (let w = 0; w < 5 && !it; w++) { S.inbox.filter(e => !e.done).forEach(e => E.resolveEvent(S, e.id, 0));
+    while (S.qi < S.queue.length && !it) { const big = S.queue[S.qi].big, c = E.suggest(S), pr = E.preShow(S, c); if (pr) { E.resolvePre(S, c, 0); E.fitShow(S, c); }
+      if (E.validate(S, c).errors.length) { S.qi++; continue; } E.runPlayerShow(S, c); if (big) it = E.afterShow(S).items.find(x => x.k === 'buys'); }
+    if (!it) E.endWeek(S); }
+  ok(it && /forecast of [\d,]+/.test(it.line) && it.detail.length >= 2, 'the buy rate report is missing: ' + JSON.stringify(it));
+}
 if (fails) { console.log('FAILED: ' + fails); process.exit(1); }
 console.log('test-events: all passed');

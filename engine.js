@@ -1565,6 +1565,19 @@ function cardHype(S,P,show,card,isPl){
   card.forEach(function(m){var ids=flat(m.sides);for(var x=0;x<ids.length;x++)for(var y=x+1;y<ids.length;y++){var f=feudOf(S,ids[x],ids[y]);if(f&&f.heat>heat)heat=f.heat;}});
   return clamp(1+(star-(P.starB[key]||star))/80+heat/500+ADV_H[P.adv]+(isPl&&S.hype?S.hype:0)+(isPl?faceHype(S,P,card)+homeHype(S,P,flat(card.map(function(m){return flat(m.sides);}))):0),0.8,1.4);
 }
+/** What moved a big night's hype, in words, for the buy rate report. Reads the same parts as cardHype. */
+function hypeParts(S,P,show,card){
+  var n=card.length,key=show.big?'big':show.id,star=n?avg(flat(card[n-1].sides).map(function(id){return S.w[id].ovr;})):50,heat=0,out=[];
+  card.forEach(function(m){var ids=flat(m.sides);for(var x=0;x<ids.length;x++)for(var y=x+1;y<ids.length;y++){var f=feudOf(S,ids[x],ids[y]);if(f&&f.heat>heat)heat=f.heat;}});
+  var sd=(star-(P.starB[key]||star))/80;if(Math.abs(sd)>=0.02)out.push({t:sd>0?'A main event bigger than usual':'A main event smaller than usual',v:sd});
+  if(heat>=40)out.push({t:'A hot feud on the card',v:heat/500});
+  if(ADV_H[P.adv])out.push({t:'Advertising',v:ADV_H[P.adv]});
+  if(S.hype)out.push({t:S.hype>0?'Work done to build the night':'Bad word of mouth before the night',v:S.hype});
+  var fh=faceHype(S,P,card);if(fh)out.push({t:fh>0?'The face of the company on top':'The face of the company left off',v:fh});
+  var hh=homeHype(S,P,flat(card.map(function(m){return flat(m.sides);})));if(hh)out.push({t:'A home town name on the bill',v:hh});
+  var et=evTy(show);if(show.big&&et.buys!==1)out.push({t:'The kind of night: '+et.n.toLowerCase(),v:et.buys-1});
+  return out;
+}
 function showStart(S,P,show,card){
   var isPl=P.id===S.player&&!S.cal,big=!!show.big,n=card.length,i,key=big?'big':show.id;
   var rep={promo:P.id,id:show.id,name:show.name,big:big,week:S.week,segs:[],gim:false};
@@ -1574,6 +1587,7 @@ function showStart(S,P,show,card){
   if(!S.cal){
     var hype=cardHype(S,P,show,card,isPl),dm=TIX_D[P.tix],d0=demand(P,show,1)*(isPl?tourBoost(S,P)*roadMktNow(S,P):1),d=d0*(isPl?tasteDraw(S,P,card,rep):1),cap=capFor(d0);   // the building was booked before the card was
     rep.hype=hype;rep.cap=cap;rep.att=Math.round(Math.min(cap,d*hype*dm));
+    if(isPl&&big){rep.bf=Math.round(buysK(P,show,1)*1000);rep.hp=hypeParts(S,P,show,card);}   // the buy rate report (src/34-night.js): the forecast, and what moved it
     if(isPl){var sold=roadSoldNow(S,P);if(sold>rep.att){rep.noshow=sold-rep.att;rep.att=sold;}}   // a ticket sold is a ticket paid for, whoever turns up
     rep.sellout=rep.att>=cap;
     rep.energy=isPl?clamp((hype*dm-1)*9,-2,2):0;
@@ -2444,6 +2458,10 @@ E.afterShow=function(S){
     add('feuds','The feuds',fl(L.feuds[0])+(L.feuds.length>1?', and '+(L.feuds.length-1)+' more':'')+'.',L.feuds.map(function(x){return fl(x)+'.';}),L.feuds.some(function(x){return x.end;})?'good':(L.feuds[0].now>L.feuds[0].was?'good':'warn'));}
   add('gate','The gate',g.sold?'Sold out: '+g.att.toLocaleString('en-US')+' tickets, every one there was.':g.att.toLocaleString('en-US')+' tickets sold of '+g.cap.toLocaleString('en-US')+'. '+empty.toLocaleString('en-US')+' seats were empty.',
     [g.att.toLocaleString('en-US')+' tickets sold of '+g.cap.toLocaleString('en-US')+' in the '+rep.venue+'.',g.sold?'A sell-out. A bigger building would have sold more.':(pct>=0.85?'A healthy house. The empty seats did not show on television.':(pct>=0.6?'A soft house. The camera had to stay off parts of the building.':'A poor house. It looked empty on television, and the crowd was quieter for it.')),'The gate was '+money(g.money)+'.'],g.sold?'good':(pct<0.6?'bad':''));
+  // the buy rate report: buys at home against what was forecast, and what moved them (NEXT.md 3.6)
+  if(rep.big&&rep.bf){var bd=rep.buys-rep.bf,bp=rep.bf?bd/rep.bf:0,H=(rep.hp||[]).slice().sort(function(a,b){return b.v-a.v;});
+    add('buys','The buys',rep.buys.toLocaleString('en-US')+' bought it at home, '+(Math.abs(bp)<0.03?'right on':(bd>0?Math.round(bp*100)+'% over':Math.round(-bp*100)+'% under'))+' the forecast of '+rep.bf.toLocaleString('en-US')+'.',
+      ['Forecast: '+rep.bf.toLocaleString('en-US')+'. Bought: '+rep.buys.toLocaleString('en-US')+'. The money: '+money(rep.ppv)+'.'].concat(H.filter(function(h){return h.v>0;}).map(function(h){return 'Helped: '+h.t+'.';})).concat(H.filter(function(h){return h.v<0;}).map(function(h){return 'Hurt: '+h.t+'.';})),bd>=0?'good':'bad');}
   if(rep.mkt&&rep.city&&rep.mkt.now!==rep.mkt.was){var mw=mktWord(rep.mkt.now),mo=mktWord(rep.mkt.was),mu=rep.mkt.now>rep.mkt.was;
     add('market','The market',rep.city+(mw.w!==mo.w?': now '+mw.w.toLowerCase()+' (was '+mo.w.toLowerCase()+').':(mu?' knows you a little better.':' thinks a little less of you.')),
       [rep.city+(mu?' liked what it saw.':' did not like what it saw.')+' '+mw.d,'A strong market fills a bigger building and buys its tickets earlier. Stay away too long and it cools.'],mu?'good':'bad');}
