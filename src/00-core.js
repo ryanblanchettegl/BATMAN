@@ -273,6 +273,7 @@ function startFeud(S,P,a,b,heat,why,opts){
   var f=feudOf(S,a.id,b.id);
   if(f){f.heat=clamp(Math.max(f.heat,heat),0,100);f.last=S.week;f.log.push({w:S.week,t:why});return f;}
   if(activeFeuds(S).filter(function(x){return x.promo===P.id;}).length>=8&&!opts.force)return null;
+  if(!opts.force&&activeFeuds(S).some(function(x){return x.a.concat(x.b).some(function(id){return id===a.id||id===b.id;});}))return null;   // one story at a time, unless the booker says otherwise
   var em0=typeof emberOf==='function'?emberOf(S,a.id,b.id):null;if(em0&&S.week-em0.w<12&&!opts.force)return null;   // a story that just ended needs time before the same two go again
   f={id:S.nid++,promo:P.id,a:[a.id],b:[b.id],heat:clamp(heat,0,100),start:S.week,last:S.week,matches:0,aw:0,bw:0,log:[{w:S.week,t:why}],title:opts.title||null,kind:opts.kind||'feud',res:false};
   var em=typeof emberOf==='function'?emberOf(S,a.id,b.id):null;   // they have done this before: it picks up where it left off (src/21-living.js)
