@@ -7004,7 +7004,9 @@ function peopleNow(S){
       if(put('truck',a,'argue','Came in with '+b.name+', each blaming the other'+((t.ls||0)>=2?' for '+t.ls+' losses in a row':''),'bad',['side_a','side_b','heads'],{with:b.id,duo:1,team:t.id,story:'A team that is coming apart'}))seen[b.id]=1;});
   /* your office: they come to the booker's door. The next chapter of a story, the champion, a newcomer, the one the shows are built around */
   hot.slice(0,2).forEach(function(f){var a=S.w[f.a[0]],b=S.w[f.b[0]],w=!seen[a.id]&&here(a)?a:b,o=w===a?b:a;
-    if(here(w)&&o)put('truck',w,'story','Came to your door with an idea for the next chapter with '+o.name,'',['package'],{with:o.id,story:'A rivalry '+(f.heat>=70?'at its peak':(f.heat>=50?'that is hot':'that is building'))});});
+    var ripe=f.endAt==null&&f.heat>=65&&(f.fresh!=null?f.fresh:100)<50&&!(S.lcd&&S.lcd['ak'+w.id]!=null&&S.week-S.lcd['ak'+w.id]<12);
+    if(here(w)&&o&&ripe)put('truck',w,'askend','Came in to ask you to end the story with '+o.name+' on the next big night, while it is hot','warn',['end_yes','ask_no'],{with:o.id,story:'The story is ripe, and they know it'});
+    else if(here(w)&&o)put('truck',w,'story','Came to your door with an idea for the next chapter with '+o.name,'',['package'],{with:o.id,story:'A rivalry '+(f.heat>=70?'at its peak':(f.heat>=50?'that is hot':'that is building'))});});
   byOvr.filter(function(w){return here(w)&&w.deb&&(w.hy||0)<3;}).forEach(function(w){put('truck',w,'debut','Has not appeared on the shows yet. Came in to ask how they will be introduced','',['tease']);});
   var top=P.titles.filter(function(t){return !t.tag&&t.holders.length;}).sort(function(a,b){return b.lvl-a.lvl||b.prestige-a.prestige;})[0],ch=top?S.w[top.holders[0]]:null;
   if(here(ch)&&!(ch.inj>0))put('truck',ch,'champ','Holds the '+top.name+'. Came in to ask who is next','',['plan'],{story:pplFeudOf(S,P,ch.id)?'In a rivalry with '+pplOther(S,pplFeudOf(S,P,ch.id),ch.id).name:'No challenger has been built yet'});
@@ -7025,7 +7027,7 @@ function peopleNow(S){
     else if(w.team==null&&!f&&holdLvl(P,w.id)===0){var fr=byOvr.filter(function(x){return x.id!==w.id&&x.g===w.g&&x.team==null&&free(x)&&holdLvl(P,x.id)===0&&bondOf(S,w.id,x.id)>=REL_ON;})[0];
       if(fr)asks.push({w:w,k:'askteam',why:'Came in to ask to team with '+fr.name+'. They are friends',acts:['team_yes','ask_no'],o:{with:fr.id,story:'Neither has much going on alone'}});}
   });
-  var pri={askshot:0,askraise:1,askout:2,askturn:3,askoff:4,askteam:5};
+  var pri={askshot:0,askend:1,askraise:2,askout:3,askturn:4,askoff:5,askteam:6};
   asks.sort(function(a,b){return pri[a.k]-pri[b.k]||wkh(a.w)-wkh(b.w);}).slice(0,2).forEach(function(q){put('truck',q.w,q.k,q.why,'warn',q.acts,q.o);});
   var face=typeof faceOf==='function'?faceOf(S):null;
   if(here(face)&&!(face.inj>0))put('truck',face,'face','The shows are built around them. Came in to see the run sheet','good',['run'],{});
@@ -7091,6 +7093,10 @@ var PPL_ACT={
   out_yes:{n:'Say yes: end the rivalry',free:1,d:'The rivalry is dropped where it stands. Both of them are free for something new.',
     run:function(S,P,w,o){var f=o?feudOf(S,w.id,o.id):null;if(!f)return {ok:false,stop:true,msg:'That rivalry is already over.'};f.res=true;f.dead=true;f.end=S.week;w.morale=clamp(w.morale+5,0,100);youRemember(S,w,'listened','They asked out of a rivalry that was going nowhere, and you listened.',5);
       return {ok:true,msg:'The rivalry between '+w.name+' and '+o.name+' is over, quietly. '+w.name+' is grateful, and free for something new.'};}},
+  end_yes:{n:'Say yes: end it on the next big night',free:1,d:'The ending is planned for the next big event. Book them on that show and the story is settled there.',
+    run:function(S,P,w,o){var f=o?feudOf(S,w.id,o.id):null;if(!f||f.res)return {ok:false,stop:true,msg:'That story is already over.'};var r=E.storyPlanEnd(S,f.id);if(!r||!r.ok)return {ok:false,stop:true,msg:(r&&r.msg)||'The ending could not be planned.'};
+      [w,o].forEach(function(x){x.morale=clamp(x.morale+4,0,100);});youRemember(S,w,'listened','They asked for their story to end at its peak, and you planned it.',5);
+      return {ok:true,msg:'The story between '+w.name+' and '+o.name+' ends at '+E.feudPlan(S,f).end.at+'. Book them on that show.'};}},
   turn_yes:{n:'Say yes: they turn villain',free:1,d:'They change sides. A fresh start, and a reason for the crowd to care again.',
     run:function(S,P,w){w.align='H';w.mom=clamp((w.mom||0)+2,-10,10);w.morale=clamp(w.morale+8,0,100);youRemember(S,w,'turned','They asked to turn villain and you let them.',6);news(S,'story',w.name+' has turned villain.');
       return {ok:true,msg:w.name+' is a villain now. Book it on a show so the crowd sees why.'};}},

@@ -101,7 +101,7 @@ async function run(mode) {
       await fit('the card with that warning');
       await page.click('[data-t="suggest"]');
       /* the Company page and their profile */
-      await go(page, 'overview');
+      await go(page, 'overview'); await page.click('[data-t="ov-sec"][data-v="owner"]'); await page.waitForTimeout(100);
       ok(mode, 'the Company page says who the shows are built around', (await txt(page, '[data-t="built-around"]')).includes(face.name) && /a lift when they are in the main event/.test(await txt(page, '[data-t="built-around"]')), await txt(page, '[data-t="built-around"]'));
       const o = await overflow(page); ok(mode, 'the Company page fits its width', !o, o);
       await page.click('[data-t="built-around"] button');

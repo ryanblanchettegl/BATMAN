@@ -72,7 +72,7 @@ async function run(mode, w, h) {
       await page.setViewportSize({ width: w, height: h }); await page.waitForTimeout(400);
     }
     /* an old page still looks like itself */
-    await go(page, 'overview');
+    await go(page, 'world');
     ok(id, 'an old page shows its panels as grey windows', await page.$eval('.panel', e => getComputedStyle(e).backgroundColor === 'rgb(170, 170, 170)').catch(() => false));
     ok(id, 'no errors on the way', !errs.length, errs.join(' | '));
   } catch (e) { ok(id, 'ran to the end', false, e.message.split('\n')[0]); }
