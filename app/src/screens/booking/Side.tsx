@@ -35,7 +35,7 @@ function FeudEnd(p: { m: Match; i: number }) {
   if (!f) return null;
   const pl = E.feudPlan(S, f);
   return <p class="row d1-end" data-t="feud-line"><Btn kind="sm" on={!!p.m.end} t="match-end" d={{ v: p.i }} onClick={() => act(() => { E.setMatchEnd(S, p.i, !p.m.end); })}>{p.m.end ? '● Ends the story' : 'End the story here'}</Btn>
-    <span class="muted">Their feud: {pl.pn.toLowerCase()}, heat {pl.heat}{pl.ripe ? ', ripe to end' : ''}.</span></p>;
+    <span class="muted">{pl.pn}, heat {pl.heat}{pl.ripe ? ', ripe' : ''}</span></p>;
 }
 function MatchPane(p: { i: number; ck: any }) {
   const S = G.S, i = p.i, m: Match = S.card[i], n = S.card.length, it = p.ck.items.find((x: any) => x.t === 'match' && x.i === i), rd = E.agentReads(S)[i];

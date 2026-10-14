@@ -58,19 +58,21 @@ segment moves, and an ending the booker chooses at the right moment.
 12. **Split attention.** Somebody in two feuds at once heats both more slowly. Built.
 13. **Real heat counts.** Two people who really do not like each other (the relationship matrix) heat faster.
     Built.
-14. **Chemistry counts.** Two who work well together in the ring heat faster from their matches. Later.
-15. **Big nights count more.** A beat on a big event is worth more than the same beat on weekly television. Later.
+14. **Chemistry counts.** Two who work well together in the ring heat faster. Built.
+15. **Big nights count more.** A beat on a big event is worth more than the same beat on weekly television. Built.
 16. **Escalation unlocks.** The stipulations open up as the heat climbs: a no disqualification match is believable
-    at hot, a cage at white hot. Later.
+    at hot, a cage at white hot. Built as a simpler rule: a stipulation in a hot feud adds heat and one in a cold
+    feud takes it away ("too much, too soon"); locking the stipulations by heat is later.
 17. **Embers.** A finished feud leaves embers: the same two can be put back together months later with a head start,
-    and the dirt sheet remembers. Later (the sifter already finds rematches never given).
+    and Start a feud says they have history. Built (`S.embers`, kept a year).
 18. **The heat line.** The Storylines page shows each feud's heat over the last twelve weeks as a line, with its
     phase in words: Spark, Building, Boiling, Stale, Cooling. Built.
 19. **The calendar speaks to the state.** What the page says comes from the state: ripe to end (hot and getting
     stale), going stale, going cold, one sided, split attention, champion with no challenger. Built.
 20. **Rivals book the same way.** Other companies would end a feud when it is hot and starting to go stale, or let
     it fizzle, by the same rules. The rule is written (`rivalRipe()`), but rival companies do not keep feuds of their
-    own yet, so it waits for that. Later.
+    own yet, so it waits for that. Built: each rival keeps two or three feuds near the top of its card, its television
+    feeds them, its weekly cards book them, and it ends them by `rivalRipe()` on a big night.
 
 ## What changed in the code
 

@@ -77,6 +77,8 @@ function feudHeatRoom(S,f,amt){
   if((f.matches||0)>=3&&Math.min(f.aw||0,f.bw||0)===0)x*=0.75;   // the crowd needs doubt
   var split=f.a.concat(f.b).some(function(id){return feudsFor(S,id).length>1;});if(split)x*=0.8;
   var b=bondOf(S,f.a[0],f.b[0]);if(b<=-REL_STRONG)x*=1.2;else if(b<=-REL_ON)x*=1.1;   // real heat
+  x*=1+clamp(chem(S,f.a[0],f.b[0])/12,-0.2,0.25);   // two who work well together make it easier to believe
+  var sh=S.queue&&S.queue[S.qi];if(sh&&sh.big&&f.promo===S.player&&!S.cal)x*=1.25;   // a big night counts for more
   var same=f.lb===S.week-1||f.lb===S.week;f.fresh=Math.max(0,f.fresh-(same?5:3));f.lb=S.week;
   return {amt:amt*x,cap:100};
 }
@@ -90,6 +92,20 @@ WEEKX.push(function(S){
     f.fz=f.heat<LIVE_FIZZ&&S.week-f.start>=2?(f.fz||0)+1:Math.max(0,(f.fz||0)-1);   // a cold week counts, a warm one only takes one back
   });
 });
+/* rival companies keep feuds too: each keeps two or three going, between people near the top of its card, a hero
+   against a villain where it can. Their matches heat them, and they end them by rivalRipe() on a big night. */
+WEEKX.push(function(S){
+  S.order.forEach(function(pid){
+    if(pid===S.player)return;var P=S.promos[pid];if(!P||P.dead)return;
+    var mine=activeFeuds(S).filter(function(f){return f.promo===pid;});
+    mine.forEach(function(f){if(chance(S,0.6))heatUp(S,f,3+ri(S,0,5),null);});   // their television's promos and angles feed their stories
+    if(mine.length>=3||chance(S,0.5))return;
+    var R=rosterOf(S,pid).filter(function(w){return !w.nw&&!w.rt&&!(w.inj>0)&&!inFeud(S,w.id);}).sort(function(a,b){return b.ovr-a.ovr;}).slice(0,10);
+    if(R.length<2)return;var a=pick(S,R.slice(0,5)),o=R.filter(function(w){return w.id!==a.id&&w.g===a.g&&(a.team==null||w.team!==a.team);});
+    if(!o.length)return;o.sort(function(x,y){return (x.align===a.align?8:0)+Math.abs(x.ovr-a.ovr)-((y.align===a.align?8:0)+Math.abs(y.ovr-a.ovr));});
+    var b=o[0],hero=a.align==='F'?a:b,vil=hero===a?b:a;startFeud(S,P,hero,vil,22+ri(S,0,10),vil.name+' and '+hero.name+' have a score to settle');
+  });
+});
 /** Fizzling: a feud nobody cares about for four weeks, one that never got going in three months, or one left on the shelf too long, ends with no payoff. Called by the week. */
 function feudFizzle(S,f){
   var flat=S.week-f.start>=LIVE_FLAT&&(f.peak||0)<35;   // three months and it never got going
@@ -100,6 +116,10 @@ function feudFizzle(S,f){
   return true;
 }
 
+/* embers: when a feud ends, the pair is remembered for a year; the same two start again with a head start */
+function feudEmber(S,f){var k=rkey(f.a[0],f.b[0]);(S.embers||(S.embers={}))[k]={w:S.week,h:Math.round(f.heat),n:((S.embers[k]||{}).n||0)+1};
+  Object.keys(S.embers).forEach(function(x){if(S.week-S.embers[x].w>48)delete S.embers[x];});}
+function emberOf(S,a,b){var e=S.embers&&S.embers[rkey(a,b)];return e&&S.week-e.w<=48?e:null;}
 /** Everything the screens need about one story. */
 E.feudPlan=function(S,f){
   feudPlan(S,f);var P=S.promos[f.promo]||S.promos[S.player];
@@ -110,6 +130,7 @@ E.feudPlan=function(S,f){
     next:{w:nextBigFrom(S.week),in:nextBigFrom(S.week)-S.week,at:at(nextBigFrom(S.week))}};
 };
 E.feudPhase=function(S,f){return PHASE_N[feudPhase(S,f)];};
+E.feudEmber=function(S,f){feudEmber(S,f);};
 /** Start a story between two people (ids). Null if there is no room for another. */
 E.startStory=function(S,a,b,_len,why){var P=S.promos[S.player],A=S.w[a],B=S.w[b];if(!A||!B)return null;return startFeud(S,P,A,B,30,why||(A.name+' and '+B.name+' have a score to settle'),{force:true});};
 /** Heat a story up (or down) by an amount, as a show would. For tests. */
@@ -155,6 +176,7 @@ E.storyPreview=function(S,a,b){
   if(A.align===B.align)warn.push('Both are '+(A.align==='F'?'heroes':'villains')+'. The crowd will need a reason to pick a side.');
   else good.push('A hero against a villain: the crowd knows who to cheer.');
   var bd=bondOf(S,A.id,B.id);if(bd<=-REL_ON)good.push('They really do not like each other. It will heat faster.');
+  var em=emberOf(S,A.id,B.id);if(em)good.push('They have history: their last feud ended '+(S.week-em.w)+' weeks ago. This one starts warm.');
   var hh=S.h2h&&S.h2h[rkey(A.id,B.id)],lo=Math.min(A.id,B.id),know=[];
   if(hh&&hh.n){var aw=A.id===lo?hh.a:hh.b,bw=A.id===lo?hh.b:hh.a;know.push('They have met '+hh.n+' '+(hh.n===1?'time':'times')+' on your shows: '+A.name+' '+aw+', '+B.name+' '+bw+'.');}
   else know.push('They have not met on your shows.');
