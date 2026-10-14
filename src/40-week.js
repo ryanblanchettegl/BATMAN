@@ -54,7 +54,7 @@ E.endWeek=function(S){
   // feuds cool off if you leave them alone
   activeFeuds(S).forEach(function(f){
     if(f.last<S.week)f.heat=Math.max(0,f.heat-3);
-    if(f.heat<=0||S.week-f.last>=5){f.res=true;f.dead=true;f.end=S.week;f.a.concat(f.b).forEach(function(id){var w=S.w[id];if(w.promo===f.promo)addOvr(S.promos[f.promo],w,-0.5);});news(S,'story','The '+feudLabel(S,f)+' rivalry fizzles out.');}
+    feudFizzle(S,f);   // no heat for three weeks, or left on the shelf too long (src/21-living.js)
   });
   var done=S.feuds.filter(function(f){return f.res;});if(done.length>12){var drop=done.slice(0,done.length-12);S.feuds=S.feuds.filter(function(f){return drop.indexOf(f)<0;});}
   // promises come due

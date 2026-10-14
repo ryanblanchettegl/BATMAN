@@ -387,9 +387,8 @@ function doMatch(S,P,show,m,i,n,rep,used){
     feud.matches++;
     if(win>=0){if(m.sides[win].some(function(id){return feud.a.indexOf(id)>=0;}))feud.aw++;else if(m.sides[win].some(function(id){return feud.b.indexOf(id)>=0;}))feud.bw++;}
     heatUp(S,feud,5+(fin==='cheap'||fin==='interf'?5:0),(win>=0?names(winners)+' beat '+names(losers):'A draw')+(fin==='cheap'||fin==='interf'?' with a cheap finish':'')+' at '+show.name);
-    var due=win>=0&&fin!=='dq'&&fin!=='co'?feudDue(S,feud,show):null;
-    // a medium story with a gimmick match on a weekly show after its ending has passed is a blow-off too
-    if(!due&&win>=0&&fin!=='dq'&&fin!=='co'&&stip!=='std'&&feud.len==='m'&&S.week>=feud.pay)due='end';
+    // the booker marked this match as the ending (m.end), or the story's own rules say so (src/21-living.js)
+    var due=win>=0&&fin!=='dq'&&fin!=='co'?(m.end&&isPl?'end':feudDue(S,feud,show)):null;
     if(due==='chapter')feudMsg=closeChapter(S,P,show,feud,winners,losers,isPl);
     else if(due==='end')feudMsg=settleFeud(S,P,show,feud,winners,losers,isPl);
   }
@@ -436,11 +435,16 @@ function doMatch(S,P,show,m,i,n,rep,used){
   return seg;
 }
 function settleFeud(S,P,show,feud,winners,losers,isPl){
-  var pm=feudPayMult(S,feud),late=S.week>feud.pay;feud.res=true;feud.end=S.week;
-  var full=feud.twist&&feud.finale;
+  feudPlan(S,feud);var pm=feudPayMult(S,feud),age=S.week-feud.start;feud.res=true;feud.end=S.week;
+  var full=feud.twist&&feud.finale,hot=feud.heat>=60;
   winners.forEach(function(w){addOvr(P,w,(full?3.5:2.5)*pm);w.mom=clamp(w.mom+2,-10,10);});losers.forEach(function(w){addOvr(P,w,(full?1.5:1)*pm);});
-  if(!late)winners.concat(losers).forEach(function(w){w.morale=clamp(w.morale+(feud.len==='l'?5:3),0,100);});
-  var msg='The '+FLEN[feud.len].n.toLowerCase()+' story between '+feudLabel(S,feud)+' is settled'+(late?', later than planned':' on the night it was meant to end')+(full?', after a full story, start to finish':'')+'. Both come out of it bigger stars.';
+  if(hot)winners.concat(losers).forEach(function(w){w.morale=clamp(w.morale+(age>=24?6:(age>=8?4:3)),0,100);});
+  // how it ended, in words: the heat and freshness it had left, and how long it lived
+  var how=feud.heat>=75&&feud.fresh>=40?'at its peak':(feud.heat>=60?'while it was still hot':(feud.fresh<35?'after it had gone stale':'after it had cooled'));
+  var msg='The story between '+feudLabel(S,feud)+' is settled '+how+', after '+age+' '+(age===1?'week':'weeks')+(full?', a full story, start to finish':'')+'.'+(age>=24&&hot?' People will talk about this one for years.':(hot?' Both come out of it bigger stars.':' The crowd had moved on.'));
+  if(isPl&&age>=24&&hot)winners.concat(losers).forEach(function(w){youRemember(S,w,'epic','You gave me a feud people will remember.',5);});
+  // two who went to war over a hot story come out of it respecting each other
+  if(isPl&&hot)winners.forEach(function(w){losers.forEach(function(l){relBump(S,w.id,l.id,{ra:8,rb:8},{k:'war',keep:age>=12,t:w.name+' and '+l.name+' ended their feud at '+show.name+'.'});});});
   if(feud.stakes&&/sits out/i.test(feud.stakes)){losers.forEach(function(w){w.away=S.week+4;});msg+=' As agreed, '+names(losers)+' will sit out the next four weeks.';}
   else if(feud.stakes&&/title shot/i.test(feud.stakes)){
     var w0=winners[0],tt=null;P.titles.forEach(function(x){if(!x.tag&&x.g===w0.g&&x.holders.length&&x.holders[0]!==w0.id&&(!x.brand||x.brand===w0.brand)&&(!tt||x.lvl>tt.lvl))tt=x;});

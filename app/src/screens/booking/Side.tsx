@@ -29,6 +29,14 @@ function Paged<T>(p: { id: string; items: T[]; per: number; row: (x: T, i: numbe
 }
 
 /* ---------- what is selected on the sheet ---------- */
+/** A match between two in a feud can be its ending: the blow-off (docs/plans/living-storylines.md). */
+function FeudEnd(p: { m: Match; i: number }) {
+  const S = G.S, f = E.matchFeud(S, p.m);
+  if (!f) return null;
+  const pl = E.feudPlan(S, f);
+  return <p class="row d1-end" data-t="feud-line"><Btn kind="sm" on={!!p.m.end} t="match-end" d={{ v: p.i }} onClick={() => act(() => { E.setMatchEnd(S, p.i, !p.m.end); })}>{p.m.end ? '● Ends the story' : 'End the story here'}</Btn>
+    <span class="muted">Their feud: {pl.pn.toLowerCase()}, heat {pl.heat}{pl.ripe ? ', ripe to end' : ''}.</span></p>;
+}
 function MatchPane(p: { i: number; ck: any }) {
   const S = G.S, i = p.i, m: Match = S.card[i], n = S.card.length, it = p.ck.items.find((x: any) => x.t === 'match' && x.i === i), rd = E.agentReads(S)[i];
   const meta = matchMeta(m, i, n, it);
@@ -36,6 +44,7 @@ function MatchPane(p: { i: number; ck: any }) {
     <p class="meta d1-meta">{meta.map((x, k) => <span key={x[0]}>{k ? DOT : null}{x[1]}</span>)}</p>
     {rd ? <div class="agentsay" data-t="agent-say" data-v={i}>{rd.lines.map((l: any, k: number) => <p key={k} class={l.s > 0 ? 'good' : (l.s < 0 ? 'bad' : 'muted')} data-src={l.src}><span class="ag">{rd.who}{rd.own ? ', on this match' : ''}:</span> {'“'}{l.t}{'”'}</p>)}</div> : null}
     <Editor m={m} i={i} />
+    <FeudEnd m={m} i={i} />
     <div class="row d1-btns">
       <Btn kind="sm" t="up" d={{ v: i }} label={'Move match ' + (i + 1) + ' earlier'} disabled={i === 0} onClick={() => moveMatch(i, -1)}>{'↑'} Earlier</Btn>
       <Btn kind="sm" t="down" d={{ v: i }} label={'Move match ' + (i + 1) + ' later'} disabled={i === n - 1} onClick={() => moveMatch(i, 1)}>{'↓'} Later</Btn>

@@ -48,7 +48,7 @@ async function storylines(page, mode) {
   await page.evaluate(() => { window.EWF_FLAT = 0; window.EWF_DEBUG.render(); });
   const title = () => page.$eval('[data-t="story-pane"] h2', e => e.innerText);
   const labels = await state(page, S => GP.season(S).stories.map(x => ({ id: x.id, label: x.label })));
-  check(mode, 'a story is picked, with its track and its night', labels.map(x => x.label).includes(await title()) && await count(page, '[data-t="story-track"] .on') === 1 && (await page.$eval('[data-t="feud-end"]', e => e.innerText)).length > 5, await title());
+  check(mode, 'a story is picked, with its heat, freshness and ending', labels.map(x => x.label).includes(await title()) && /Fresh/.test(await page.$eval('[data-t="story-pane"]', e => e.innerText)) && (await page.$eval('[data-t="feud-end"]', e => e.innerText)).length > 5, await title());
   if (want.live > 1) { const v = await page.$eval('[data-t="season-row"]:not(.sel)', e => +e.getAttribute('data-v')); await page.click('[data-t="season-row"][data-v="' + v + '"]'); await page.waitForTimeout(100);
     check(mode, 'picking another line shows that story', (await title()) === labels.find(x => x.id === v).label && !!(await page.$('[data-t="season-row"][data-v="' + v + '"].sel'))); }
   const pop = async (v, n, extra) => { await page.click('[data-t="st-more"][data-v="' + v + '"]'); await page.waitForSelector('.win'); const t = await page.$eval('.win', e => e.innerText); const li = await page.$$eval('.win li', L => L.length);
@@ -111,22 +111,23 @@ async function net(page, mode) {
     await page.click('[data-t="plot-open"][data-v="tape"]');
     if (await count(page, '[data-t="plot-a"] option') > 2) { await page.selectOption('[data-t="plot-a"]', { index: 2 }); await page.selectOption('[data-t="plot-at"]', 'end'); await page.click('[data-t="plot-do"][data-v="tape"]'); await page.click('#modal-ok');
       check(mode, 'a pre-tape bought here costs one booking power and is on the next show’s run sheet', await state(page, S => S.bp) === 4 && await state(page, S => (S.segs || []).some(x => x.tape && x.at === 'end')) && await count(page, '[data-t="plot-taped"]') === 1); } else await page.keyboard.press('Escape');
-    // start a story: two people, a length, and booking power
+    // start a story: two people and booking power, no length (docs/plans/living-storylines.md)
     for (let i = 0; i < 4 && await count(page, '.win'); i++) { await page.keyboard.press('Escape'); await page.waitForTimeout(150); }
     await state(page, S => { S.bp = 5; }); await page.evaluate(() => window.EWF_DEBUG.render());
     const pair = await state(page, S => { const R = GP.storyPeople(S).filter(w => w.g === 'M' && !w.n && !w.hurt); return [R[3].id, R[8].id]; });
     const feuds0 = await state(page, S => GP.activeFeuds(S).length);
     await page.click('[data-t="plot-open"][data-v="story"]'); await page.waitForSelector('[data-t="story-a"]');
-    check(mode, 'Start a feud shows the three lengths before anybody is picked', await count(page, '[data-t="story-len"]') === 3 && await page.$eval('[data-t="story-start"]', e => e.disabled));
+    check(mode, 'Start a feud asks for two people and no length', await count(page, '[data-t="story-len"]') === 0 && await page.$eval('[data-t="story-start"]', e => e.disabled) && /no set length/i.test(await page.$eval('.win', e => e.innerText)));
     await page.selectOption('[data-t="story-a"]', String(pair[0])); await page.selectOption('[data-t="story-b"]', String(pair[1]));
-    await page.click('[data-t="story-len"][data-v="l"]');
-    const ends = await page.$$eval('[data-t="story-ends"]', L => L.map(e => e.innerText));
-    check(mode, 'with two picked, each length names the night it ends', ends.length === 3 && ends.every(t => t && !/pick two/.test(t)) && /3 chapters/.test(ends[2]), ends.join(' | '));
     await page.click('[data-t="story-start"]'); await page.waitForTimeout(200);
-    const made = await state(page, (S, p) => { const f = GP.feudOf(S, p[0], p[1]); return { bp: S.bp, len: f && f.len, ch: f && f.ch && f.ch.length, n: GP.activeFeuds(S).length }; }, pair);
-    check(mode, 'a long story costs three booking power and has three chapters', made.bp === 2 && made.len === 'l' && made.ch === 3 && made.n === feuds0 + 1, JSON.stringify(made));
+    const made = await state(page, (S, p) => { const f = GP.feudOf(S, p[0], p[1]); return { bp: S.bp, len: f && f.len, pay: f && f.pay, end: f && f.endAt, n: GP.activeFeuds(S).length }; }, pair);
+    check(mode, 'a feud costs two booking power and has no length or ending', made.bp === 3 && made.len == null && made.pay == null && made.end == null && made.n === feuds0 + 1, JSON.stringify(made));
     await page.click('#modal-ok').catch(() => {}); await page.waitForTimeout(150);
-    check(mode, 'the new story is picked, and its pane says the length and where chapter 1 ends', /Long feud/i.test(await page.$eval('[data-t="story-pane"]', e => e.innerText)) && /Chapter 1 ends/i.test(await page.$eval('[data-t="story-pane"]', e => e.innerText)));
+    check(mode, 'the new story is picked, and its pane says no ending is planned', /None planned/i.test(await page.$eval('[data-t="story-pane"]', e => e.innerText)));
+    await page.click('[data-t="story-plan"]'); await page.waitForTimeout(150);
+    check(mode, 'planning the ending names the next big event', /Planned for/.test(await page.$eval('[data-t="feud-end"]', e => e.innerText)) && await state(page, (S, p) => GP.feudOf(S, p[0], p[1]).endAt != null, pair));
+    await page.click('[data-t="story-unplan"]'); await page.waitForTimeout(150);
+    check(mode, 'and the plan comes off again', /None planned/.test(await page.$eval('[data-t="feud-end"]', e => e.innerText)));
     await go(page, 'history');
     await page.click('[data-t="hist-line"]').catch(() => {}); await page.waitForTimeout(120);
     const line0 = await page.$eval('.scrim', e => e.innerText).catch(() => ''); await page.keyboard.press('Escape'); await page.waitForTimeout(80);

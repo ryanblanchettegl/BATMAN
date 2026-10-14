@@ -39,6 +39,7 @@ export function matchMeta(m: Match, i: number, n: number, it: any): [string, Com
   if (m.stip !== 'std') meta.push(['stip', E.STIP[m.stip].n]);
   if (m.int && m.int !== 'normal') meta.push(['int', <span class={m.int === 'brutal' ? 'bad' : 'good'}>{E.INTN[m.int].n}</span>]);
   if (t) meta.push(['title', <span class="gold">{t.name}</span>]);
+  if ((m as any).end) meta.push(['end', <span class="gold" data-t="ends-story">Ends the story</span>]);
   meta.push(['odds', odds(m, i, n)]);
   if (it && it.top) meta.push(['top', <TopTag top={it.top} />]);
   return meta;
@@ -77,7 +78,7 @@ export function Card() {
     // the line on the sheet is short: what the spot is, the kind of match, the minutes, and the things that stand out
     const fl: any[] = done ? (FL[i] || []) : [];
     const meta = <>{fl.length ? <span data-t="row-flags">{fl.map((f: any, k: number) => <span key={k} class={f.k === 'bad' ? 'bad' : (f.k === 'good' ? 'good' : 'warn')}>[{f.t}] </span>)}</span> : null}{it && it.top ? <><TopTag top={it.top} /> </> : null}{roleOf(i, n) ? roleOf(i, n) + DOT : ''}{E.MT[m.mt].n}{m.stip !== 'std' ? DOT + E.STIP[m.stip].n : ''}{it ? DOT + it.mins + ' min' : ''}
-      {!done ? <>{DOT}<span class="warn">Unfinished</span></> : null}{m.call != null ? <>{DOT}<span class="gold">Your call</span></> : null}{t ? <>{DOT}<span class="gold">{t.name}</span></> : null}</>;
+      {!done ? <>{DOT}<span class="warn">Unfinished</span></> : null}{m.call != null ? <>{DOT}<span class="gold">Your call</span></> : null}{(m as any).end ? <>{DOT}<span class="gold">Ends the story</span></> : null}{t ? <>{DOT}<span class="gold">{t.name}</span></> : null}</>;
     L.push({ key: 'm' + i, cls: (i === n - 1 ? 'me' : '') + (it && it.top ? ' top' : ''), at: it ? it.at : null, no: String(i + 1), dm: i, who: matchLabel(m),
       meta: meta, t: 'edit', v: i, on: b.edit === i, pick: () => pickMatch(i) });
   }); else segsAt(0, 1);
