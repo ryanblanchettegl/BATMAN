@@ -313,7 +313,10 @@ function gimmickFor(S,a,b){
 
 function autoBook(S,P,show){
   var big=!!show.big,n=big?7:5,used={},card=[],isPl=P.id===S.player;
-  var pool=eligible(S,P,show).filter(function(w){return w.cond>=40&&!(big&&isDev(P,w.brand));});
+  // a story whose ending is planned for a night in the next week keeps its two off the shows before it, so they arrive fresh;
+  // on the night itself they work even if worn, because the ending is the point
+  var due={},rest={};activeFeuds(S).forEach(function(f){if(f.promo!==P.id)return;var ids=f.a.concat(f.b);if(feudDue(S,f,show))ids.forEach(function(id){due[id]=1;});else if(f.endAt!=null&&f.endAt>=S.week&&f.endAt-S.week<=1)ids.forEach(function(id){rest[id]=1;});});
+  var pool=eligible(S,P,show).filter(function(w){return (w.cond>=40||due[w.id])&&!rest[w.id]&&!(big&&isDev(P,w.brand));});
   var guests=pool.filter(function(w){return w.promo!==P.id;});pool=pool.filter(function(w){return w.promo===P.id;});
   var inPool={};pool.forEach(function(w){inPool[w.id]=1;});
   var titles=showTitles(P,show);

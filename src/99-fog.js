@@ -208,6 +208,14 @@ E.cardFlags=function(S,card){card=card||S.card||[];return card.map(function(m,i)
     S.quests.forEach(function(q){if(q.type!=='win')return;
       card.forEach(function(m){if(m.call!=null)return;var si=-1;m.sides.forEach(function(s,k){if(s.indexOf(q.w)>=0)si=k;});if(si<0)return;
         m.call=si;if(E.cardCost(S,card)>S.bp)m.call=null;else ch=true;});});
+    // a promised title shot falling due is booked: the champion against them, the belt on the line, in a match that is not the main event
+    var fm=function(m){return m.sides.length===2&&m.sides[0][0]!=null&&m.sides[1][0]!=null&&!!feudOf(S,m.sides[0][0],m.sides[1][0]);},show=S.queue[S.qi],el=show?eligible(S,P,show).map(function(w){return w.id;}):[],on=function(id){return card.some(function(m){return flat(m.sides).indexOf(id)>=0;});};
+    S.quests.forEach(function(q){if(q.type!=='shot'||q.due-S.week>1||el.indexOf(q.w)<0)return;var t=titleById(P,q.title);if(!t||t.tag||t.holders.length!==1||t.holders[0]===q.w||(t.g&&S.w[q.w].g!==t.g))return;
+      if(card.some(function(m){return m.title===t.id&&flat(m.sides).indexOf(q.w)>=0;}))return;var c=t.holders[0];if(el.indexOf(c)<0)return;
+      var at=-1;card.forEach(function(m,i){if(m.title===t.id&&m.sides.length===2&&m.sides[0].length===1&&m.sides[1].length===1&&flat(m.sides).indexOf(c)>=0)at=i;});
+      if(at>=0){if(on(q.w)||fm(card[at]))return;var m=card[at];m.sides=[[c],[q.w]];m.call=null;ch=true;return;}
+      if(on(c)||on(q.w))return;
+      for(var i=n-2;i>=0;i--){var m2=card[i];if(m2.title||m2.mt!=='1v1'||fm(m2)||m2.end)continue;m2.sides=[[c],[q.w]];m2.title=t.id;m2.call=null;m2.stip='std';ch=true;return;}});
     if(ch)E.fitShow(S,card);
     return card;
   };
