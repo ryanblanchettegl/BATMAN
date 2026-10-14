@@ -19,7 +19,9 @@ function evList(S,P){
   var db=dbOf(S),rules=db.rules||{},used={};
   S.order.forEach(function(id){var Q=S.promos[id];if(Q&&Q!==P&&Q.events)Q.events.forEach(function(e){if(e.t==='flag')used[e.n]=1;});});
   var fw=null;for(var i=0;i<FLAG_WORDS.length&&!fw;i++){var k=(hash('flag'+P.id)+i)%FLAG_WORDS.length;if(!used[FLAG_WORDS[k]])fw=FLAG_WORDS[k];}
-  P.events=db.events.map(function(n,m){var flag=m===P.flagship;return {n:flag&&fw?fw:n,t:flag?'flag':'arena',rule:rules[m]||null};});
+  var own={};(P.evIn||[]).forEach(function(e){if(e&&e.month>=1&&e.month<=12&&e.name)own[e.month-1]=e;});   // a world package can name a company's own events
+  P.events=db.events.map(function(n,m){var flag=m===P.flagship,o=own[m];return {n:o?String(o.name).slice(0,28):(flag&&fw?fw:n),t:flag?'flag':(o&&EV_TYPES[o.type]&&o.type!=='flag'?o.type:'arena'),rule:(o&&o.rule)||rules[m]||null};});
+  delete P.evIn;
   return P.events;
 }
 /** The name of a company's big event in a month (0 to 11), without the company's name. */

@@ -67,7 +67,7 @@ A company adds shows every year. Weekly shows can be added now (`src/87-create.j
 - [ ] **3.5 Promotion spend and hype.** A weekly spend on this month's event, next month's and the flagship. Each event has a hype meter that the spend, hot feuds and a title match raise. Hype feeds buys and the gate.
 - [ ] **3.6 Buy rate report.** After a big event: buys against forecast, what helped, what hurt, and the money. As a pop-up, and kept on Finances.
 - [ ] **3.7 Rivals.** Rivals rename, add and drop big events once a year, the same hook as `rivalGrow()`.
-- [ ] **3.8 Export.** `E.exportUniverse` and the package format carry per-company events. Update `docs/universe-format.md` and unlock editor step 1.15.
+- [x] **3.8 Export.** (Done 14 October: `promotions[].events` in the package, written by `E.exportUniverse` and read at game start. The editor step 1.15 can now be built.) `E.exportUniverse` and the package format carry per-company events. Update `docs/universe-format.md` and unlock editor step 1.15.
 
 ## Job 4. Storylines from wrestling history (task 2)
 

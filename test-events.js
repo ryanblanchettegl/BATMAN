@@ -38,5 +38,15 @@ for (let w = 0; w < 50 && !S.over; w++) {
   const a = run('arena'), b = run('ballroom');
   ok(a && b && b.cap < a.cap && b.exp < a.exp, 'a ballroom show was not smaller with a gentler crowd: ' + JSON.stringify({ a: a && [a.cap, a.exp], b: b && [b.cap, b.exp] }));
 }
+// a world saved from a game keeps each company's own events, and a new game from it starts with them
+{
+  const S = E.newGame(E.universe().promotions[1].id, 3, { name: 'R' }), m = E.events(S).find(e => !e.now && !e.flag).m;
+  E.evSet(S, m, { n: 'Cellar Night', t: 'ballroom' }); const flag = S.promos[S.player].events.find(e => e.t === 'flag').n;
+  const pkg = E.exportUniverse(S, { name: 'Round trip' }), chk = E.validateUniverse(pkg);
+  ok(!chk || !(chk.errors || []).length, 'the saved world does not check: ' + JSON.stringify(chk && chk.errors));
+  E.useUniverse(pkg); const T = E.newGame(E.universe().promotions[1].id, 3, { name: 'R' }), Q = T.promos[T.player];
+  ok(Q.events[m].n === 'Cellar Night' && Q.events[m].t === 'ballroom' && Q.events.find(e => e.t === 'flag').n === flag, 'a company\'s events were lost on the way: ' + JSON.stringify(Q.events[m]));
+  E.useUniverse(JSON.parse(fs.readFileSync('universes/public_domain.json', 'utf8')));
+}
 if (fails) { console.log('FAILED: ' + fails); process.exit(1); }
 console.log('test-events: all passed');
