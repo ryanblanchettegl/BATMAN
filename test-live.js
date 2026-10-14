@@ -124,10 +124,10 @@ if (found.afterbell) { const F = found.afterbell, w = F.ev.who, l = F.ev.other;
 /* ---- calls in the ring ---- */
 /** From a saved moment: answer with choice c, see the segment it belongs to, then see the night out. Returns {S, ev, seg, d, rep}. */
 function through(F, c) {
-  const S = clone(F.S), ev = S.live.ev, d = E.liveDecide(S, c); let seg = null;
+  const S = clone(F.S), ev = S.live.ev, d = E.liveDecide(S, c), bp1 = S.bp; let seg = null;
   for (let g = 0; g < 40 && !seg; g++) { const r = E.liveNext(S); if (r.event) E.liveDecide(S, r.event.safe || 0); else if (r.seg) seg = r.seg; else if (r.done) break; }
   const rep = S.live ? air(S) : S.reports[0];
-  return { S, ev, seg, d, rep };
+  return { S, ev, seg, d, rep, bp1 };
 }
 /* somebody is hurt: a road-worn wrestler in a brutal match */
 { let F = null;
@@ -154,7 +154,7 @@ if (found.audible) { const F = found.audible;
   if (chq) { const a = through(chq, chq.c), pk = chq.ev.choices[chq.c], heel = chq.S.live.card[chq.ev.mi].sides[pk.side];
     ok('au4', 'the villain cheats: a cheap win for one booking power, and a feud for it', a.seg.fin === 'cheap' && a.seg.wi.includes(heel[0]) && a.S.bp === chq.S.bp - 1 && !!feud(a.S, chq.ev.who, chq.ev.other), a.seg.fin); }
   if (up) { const a = through(up, up.c), pk = up.ev.choices[up.c], card = up.S.live.card[up.ev.mi], dog = card.sides[pk.side], other = card.sides[1 - pk.side];
-    ok('au5', 'call the upset: the underdog wins for two booking power, and the loser remembers', a.seg.wi.includes(dog[0]) && a.S.bp === up.S.bp - 2 && lean(a.S, other[0]) < lean(up.S, other[0]) && lean(a.S, dog[0]) > lean(up.S, dog[0])); }
+    ok('au5', 'call the upset: the underdog wins for two booking power, and the loser remembers', a.seg.wi.includes(dog[0]) && a.bp1 === up.S.bp - 2 && lean(a.S, other[0]) < lean(up.S, other[0]) && lean(a.S, dog[0]) > lean(up.S, dog[0])); }
   const stay = through(F, 0); ok('au6', 'stay with the plan: nothing is spent', stay.S.bp === F.S.bp && stay.d.ok);
 }
 ok('kind', 'the audible call came up in the sample', !!found.audible);
