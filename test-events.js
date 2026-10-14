@@ -48,5 +48,14 @@ for (let w = 0; w < 50 && !S.over; w++) {
   ok(Q.events[m].n === 'Cellar Night' && Q.events[m].t === 'ballroom' && Q.events.find(e => e.t === 'flag').n === flag, 'a company\'s events were lost on the way: ' + JSON.stringify(Q.events[m]));
   E.useUniverse(JSON.parse(fs.readFileSync('universes/public_domain.json', 'utf8')));
 }
+// rivals plan their year too: within a year at least one rival reshapes a month, and says so in the news
+{
+  const S = E.newGame(E.universe().promotions[1].id, 3, { name: 'R' }); let said = false;
+  for (let w = 0; w < 50; w++) { S.inbox.filter(e => !e.done).forEach(e => E.resolveEvent(S, e.id, 0));
+    while (S.qi < S.queue.length) { const c = E.suggest(S), pr = E.preShow(S, c); if (pr) { E.resolvePre(S, c, 0); E.fitShow(S, c); } if (E.validate(S, c).errors.length) { S.qi++; continue; } E.runPlayerShow(S, c); }
+    E.endWeek(S); if (/turns its \w+ event/.test(JSON.stringify(S.news.slice(0, 20)))) said = true; }
+  const changed = S.order.filter(id => id !== S.player && S.promos[id].events.some(e => e.t !== 'arena' && e.t !== 'flag'));
+  ok(changed.length >= 1 && said, 'no rival reshaped its year: ' + changed.join(','));
+}
 if (fails) { console.log('FAILED: ' + fails); process.exit(1); }
 console.log('test-events: all passed');

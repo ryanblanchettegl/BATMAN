@@ -4606,6 +4606,19 @@ E.evSet=function(S,m,o){
   return {ok:true,msg:MONTHS[m]+': '+P.name+' '+e.n+', '+EV_TYPES[e.t].n.toLowerCase()+'.'};
 };
 E.EV_TYPES=EV_TYPES;
+/* rivals plan their year too (NEXT.md 3.7): once a year, in a month of its own, a rival reshapes one later month.
+   A small company turns an arena show into a ballroom show it can fill; a big one makes a month a gimmick night.
+   It reads the game and never calls rnd(S), so it cannot change how a game plays except through the rival's own nights. */
+WEEKX.push(function(S){
+  if(S.cal)return;var c=cal(S.week);if(c.wom!==1)return;
+  S.order.forEach(function(id){
+    var P=S.promos[id];if(!P||id===S.player||P.dead)return;if(hash('evy'+id)%12!==c.month||P.evY===c.year)return;P.evY=c.year;
+    var L=evList(S,P),pick=function(want){for(var k=2;k<12;k++){var m=(c.month+k)%12,e=L[m];if(e.t===want)return m;}return -1;};
+    var to=P.image<45?'ballroom':(P.image>=70?'gimmick':null);if(!to||L.some(function(e){return e.t===to;}))return;
+    var m=pick('arena');if(m<0)return;L[m].t=to;
+    news(S,'world',P.name+' turns its '+MONTHS[m]+' event, '+L[m].n+', into '+(to==='ballroom'?'a ballroom show: a smaller room it can fill.':'a gimmick night.'));
+  });
+});
 
 /* ===== 50-company.js ===== */
 /* ---------- the company: broadcast slot, production, risk, tickets, advertising, sponsors ---------- */
