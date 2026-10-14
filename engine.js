@@ -791,7 +791,10 @@ function doMatch(S,P,show,m,i,n,rep,used){
   }
   if(t){cr+=t.prestige*0.04;if(t.prestige>=70)FX(true,'A prestigious title on the line');if(show.rule==='all_titles'){cr+=2;FX(true,'Every title is on the line tonight');}}
   var rsk=RISK_STIP[P.risk]/RISK_STIP[P.risk0],sh=STIP[stip].heat*(feud&&feud.heat>=40?1.5:0.3)*rsk;cr+=sh;
-  if(stip!=='std'){if(feud&&stipFitOf(feud,stip)>0)FX(true,'The stipulation fits the feud');if(rep.gim&&show.rule!=='gimmick_free'&&!modelOf(P).gimFree){cr-=4;FX(false,'Second gimmick match of the night');}rep.gim=true;}
+  if(stip!=='std'){if(feud&&stipFitOf(feud,stip)>0)FX(true,'The stipulation fits the feud');if(rep.gim&&show.rule!=='gimmick_free'&&!modelOf(P).gimFree&&show.ty!=='gimmick'){cr-=4;FX(false,'Second gimmick match of the night');}rep.gim=true;}
+  // the kind of night: a gimmick night wants stipulations, a battle royal night wants its battle royal (src/42-events.js)
+  if(show.big&&show.ty==='gimmick'){if(stip!=='std'){cr+=2;FX(true,'Just what a gimmick night promised');}else if(isMain){cr-=2;FX(false,'A plain main event on a gimmick night');}}
+  if(show.big&&show.ty==='rumble'&&m.mt==='br'){cr+=4;FX(true,'The battle royal the night was built around');}
   all.forEach(function(w){if(w.ws>=6){cr+=1.5;FX(true,w.name+'’s winning streak draws interest');}if(used[w.id]){cr-=4;FX(false,w.name+' already worked tonight');}});
   if(m.mt==='1v1'){var rk=S.recent[P.id+':'+rkey(all[0].id,all[1].id)];if(rk&&S.week-rk<4&&!feud){cr-=4;FX(false,'A rematch too soon');}}
   if(rep.energy){cr+=rep.energy;if(rep.energy>=1)FX(true,'A packed, noisy house');else if(rep.energy<=-1)FX(false,'Empty seats flattened the crowd');}
