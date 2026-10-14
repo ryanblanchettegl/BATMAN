@@ -415,7 +415,7 @@ function autoBook(S,P,show){
     if(!(worlds[0]&&(chance(S,0.3)||!worlds[0].holders.length)&&titleSingles(worlds[0],'L',100)))filler(0,'L',G1,100);
   }
   // running feuds: a story on the night it is meant to end is booked first, for every company; the player's others as before
-  var fs=activeFeuds(S).filter(function(f){return f.promo===P.id;}).sort(function(a,b){return (feudDue(S,b,show)?1:0)-(feudDue(S,a,show)?1:0)||b.heat-a.heat;}),booked=0;
+  var fs=activeFeuds(S).filter(function(f){return f.promo===P.id&&!(f.bb!=null&&S.week<=f.bb);}).sort(function(a,b){return (feudDue(S,b,show)?1:0)-(feudDue(S,a,show)?1:0)||b.heat-a.heat;}),booked=0;
   if(fs.length){
     fs.forEach(function(f){
       var due=!!feudDue(S,f,show);
@@ -1205,9 +1205,9 @@ function feudPlan(S,f){
 /* the stretch of story we are in: a twist is welcome once in four weeks */
 function feudSeg(S,f){feudPlan(S,f);return {s0:Math.max(f.start,S.week-3),e:S.week+4,first:S.week-f.start<4,last:false,k:0};}
 /* where the story is, in words: from the state, not the calendar */
-var PHASE_N={spark:'Spark',build:'Building',boil:'Boiling',stale:'Going stale',cool:'Cooling',done:'Finished'};
+var PHASE_N={spark:'Spark',build:'Building',boil:'Boiling',stale:'Going stale',cool:'Cooling',rest:'On the back burner',done:'Finished'};
 function feudPhase(S,f){
-  feudPlan(S,f);if(f.res)return 'done';
+  feudPlan(S,f);if(f.res)return 'done';if(f.bb!=null&&S.week<=f.bb)return 'rest';
   var h=f.hist,was=h.length>=3?h[h.length-3]:null;
   if(f.fresh<35&&f.heat>=30)return 'stale';
   if(was!=null&&f.heat<was-8&&f.heat<f.peak-10)return 'cool';
@@ -1274,7 +1274,9 @@ function feudHeatRoom(S,f,amt){
 WEEKX.push(function(S){
   activeFeuds(S).forEach(function(f){
     feudPlan(S,f);
-    if(f.last<S.week){f.fresh=Math.min(100,f.fresh+6);f.heat=Math.max(0,f.heat-f.heat*0.05);}   // a week off gives the story room, and a hot one cools faster
+    var shelf=f.bb!=null&&S.week<=f.bb;   // on the back burner: it rests and freshens, and cools only slowly
+    if(shelf){f.fresh=Math.min(100,f.fresh+10);f.heat=Math.max(0,f.heat-1.5);}
+    else if(f.last<S.week){f.fresh=Math.min(100,f.fresh+6);f.heat=Math.max(0,f.heat-f.heat*0.05);}   // a week off gives the story room, and a hot one cools faster
     else if(f.fresh<20)f.heat=Math.max(0,f.heat-8);   // fed again with nothing left to give: the crowd has seen it all
     f.peak=Math.max(f.peak,f.heat);f.hist.push(Math.round(f.heat));if(f.hist.length>24)f.hist.shift();
     f.fz=f.heat<LIVE_FIZZ&&S.week-f.start>=2?(f.fz||0)+1:Math.max(0,(f.fz||0)-1);   // a cold week counts, a warm one only takes one back
@@ -1296,6 +1298,7 @@ WEEKX.push(function(S){
 });
 /** Fizzling: a feud nobody cares about for four weeks, one that never got going in three months, or one left on the shelf too long, ends with no payoff. Called by the week. */
 function feudFizzle(S,f){
+  if(f.bb!=null&&S.week<=f.bb)return false;   // a story on the back burner does not die
   var flat=S.week-f.start>=LIVE_FLAT&&(f.peak||0)<35;   // three months and it never got going
   if(!(f.fz>=LIVE_FIZZW||flat||S.week-f.last>=LIVE_SHELF))return false;
   var cold=f.fz>=LIVE_FIZZW||flat;f.res=true;f.dead=true;f.fizzle=cold?'cold':'shelf';f.end=S.week;
@@ -1463,6 +1466,8 @@ E.storyActs=function(S,id){
   out.push({id:'stakes',n:'Raise the stakes',cost:1,d:'A twist: the next match between them means more. It freshens the story.',can:S.bp>=1&&!f.stakes,why:f.stakes?'The stakes are already raised: '+f.stakes.toLowerCase()+'.':(S.bp<1?'Takes 1 booking power.':'')});
   out.push({id:'sitdown',n:'Sit-down interview',cost:1,d:'Both of them, one table, cameras rolling. A beat that heats it, once a week.',can:S.bp>=1&&f.sit!==S.week,why:f.sit===S.week?'They sat down this week already.':(S.bp<1?'Takes 1 booking power.':'')});
   var t=null;P.titles.forEach(function(x){if(!t&&!x.tag&&x.holders.length&&(x.holders[0]===A.id||x.holders[0]===B.id))t=x;});
+  var bb=f.bb!=null&&S.week<=f.bb;
+  out.push({id:'shelf',n:bb?'Bring it back':'Back burner',cost:0,d:bb?'Back on the shows from this week.':'Set it aside for four weeks: it rests and freshens, cools slowly, and will not fizzle. For an injury, or a story that needs a breather.',can:true,why:''});
   out.push({id:'title',n:t?'Put the '+t.name+' on it':'Put a title on it',cost:0,d:'The next match between them is for the belt. It freshens the story and raises the heat.',can:!!t&&!f.title,why:f.title?'A title is already on the line.':(!t?'Neither of them holds a singles title.':'')});
   return out;
 };
@@ -1476,6 +1481,7 @@ E.storyDo=function(S,id,act){
     [A,B].forEach(function(w){youRemember(S,w,'stakes','You raised the stakes on our feud.',1);});}
   else if(act==='sitdown'){f.sit=S.week;heatUp(S,f,8,A.name+' and '+B.name+' sat down face to face, and it went badly');relBump(S,A.id,B.id,{bond:-4});
     msg=A.name+' and '+B.name+' sit down for an interview. It ends with the table on the floor. The heat is '+Math.round(f.heat)+'.';}
+  else if(act==='shelf'){if(f.bb!=null&&S.week<=f.bb){delete f.bb;f.last=S.week;msg=L+' is back on the shows.';}else{f.bb=S.week+4;msg=L+' is on the back burner until '+cal(f.bb).label+'. It will rest and freshen.';}}
   else if(act==='title'){var t=null;P.titles.forEach(function(x){if(!t&&!x.tag&&x.holders.length&&(x.holders[0]===A.id||x.holders[0]===B.id))t=x;});
     f.title=t.id;f.tww=S.week;heatUp(S,f,5,'The '+t.name+' was put on the line');msg='The '+t.name+' is on the line in '+L+'. Book the match and the belt goes with it.';
     var ch=S.w[t.holders[0]],cl=ch===A?B:A;youRemember(S,cl,'titleshot','You gave me a title match against '+ch.name+'.',3);}

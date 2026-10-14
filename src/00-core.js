@@ -411,7 +411,7 @@ function autoBook(S,P,show){
     if(!(worlds[0]&&(chance(S,0.3)||!worlds[0].holders.length)&&titleSingles(worlds[0],'L',100)))filler(0,'L',G1,100);
   }
   // running feuds: a story on the night it is meant to end is booked first, for every company; the player's others as before
-  var fs=activeFeuds(S).filter(function(f){return f.promo===P.id;}).sort(function(a,b){return (feudDue(S,b,show)?1:0)-(feudDue(S,a,show)?1:0)||b.heat-a.heat;}),booked=0;
+  var fs=activeFeuds(S).filter(function(f){return f.promo===P.id&&!(f.bb!=null&&S.week<=f.bb);}).sort(function(a,b){return (feudDue(S,b,show)?1:0)-(feudDue(S,a,show)?1:0)||b.heat-a.heat;}),booked=0;
   if(fs.length){
     fs.forEach(function(f){
       var due=!!feudDue(S,f,show);

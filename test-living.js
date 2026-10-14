@@ -58,5 +58,13 @@ ok(stale >= 1 && ripe >= 1, 'no feud ever went stale or ripe');
   ok(st.ok && !!f.stakes && f.fresh > 30, 'raising the stakes did not set them or freshen the story');
   const tt = E.storyDo(S, f.id, 'title'); ok(tt.ok && f.title === t.id, 'the champion\'s belt did not go on the feud');
 }
+// the back burner: a cold story set aside for four weeks does not fizzle, freshens, and the suggested card leaves it alone
+{
+  const S = E.newGame(E.universe().promotions[1].id, 3, { name: 'R' }); S.bp = 10;
+  const R = E.storyPeople(S).filter(w => w.g === 'M' && !w.n && !w.hurt), r = E.storyStart(S, R[4].id, R[7].id), f = S.feuds.find(x => x.id === r.id);
+  f.heat = 10; f.fresh = 40; ok(E.storyDo(S, f.id, 'shelf').ok && f.bb === S.week + 4, 'the back burner did not take');
+  for (let i = 0; i < 4; i++) { const c = E.suggest(S); ok(!c.some(m => m.sides && m.sides.length === 2 && ((m.sides[0][0] === f.a[0] && m.sides[1][0] === f.b[0]) || (m.sides[0][0] === f.b[0] && m.sides[1][0] === f.a[0]))), 'the suggested card booked a story on the back burner'); S.qi = S.queue.length; E.endWeek(S); }
+  ok(!f.res && f.fresh > 40, 'a story on the back burner fizzled or did not freshen (res ' + f.res + ', fresh ' + f.fresh + ')');
+}
 if (fails) { console.log('FAILED: ' + fails); process.exit(1); }
 console.log('test-living: all passed');

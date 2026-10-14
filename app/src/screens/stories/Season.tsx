@@ -42,7 +42,7 @@ function Season(p: { se: any; sel: number | null }) {
     {se.next ? <p class="sn-led"><LightText dot={2} t="season-next" label={'Next big event: ' + se.next.ev + ', ' + wk(se.next.in)} text={[['NEXT BIG EVENT · ', '#8a8a8a'], [se.next.ev.toUpperCase().slice(0, 20), '#ffff55'], [' · ', '#8a8a8a'], [(se.next.in <= 0 ? 'THIS WEEK' : se.next.in === 1 ? 'NEXT WEEK' : se.next.in + ' WEEKS'), '#55ffff'], [' · ', '#8a8a8a'], [se.next.n + (se.next.n === 1 ? ' ENDING' : ' ENDINGS'), '#ff5555']]} /></p> : null}
   </div>;
 }
-const PH: Record<string, string> = { spark: 'S', build: 'B', boil: 'H', stale: '~', cool: 'C' };
+const PH: Record<string, string> = { spark: 'S', build: 'B', boil: 'H', stale: '~', cool: 'C', rest: 'R' };
 
 /** The picked story: how hot, how fresh, who leads, what it needs, and its ending if one is planned. */
 function StoryPane(p: { id: number | null }) {
@@ -64,7 +64,7 @@ function StoryPane(p: { id: number | null }) {
       <p class="sp-btns">{pl.end ? <Btn kind="sm" t="story-unplan" onClick={() => plan(null)}>Take the plan off</Btn> : <Btn kind="go" t="story-plan" onClick={() => plan()}>End it at {pl.next.at.replace(/^\S+ /, '')}</Btn>}</p>
     </Group>
     <Group title="What it needs"><p class="clamp">{NEEDS[pl.phase] ? NEEDS[pl.phase](pl) : ''}</p>
-      <p class="sp-acts" data-t="story-acts">{E.storyActs(S, f.id).map((x: any) => <Btn key={x.id} kind="sm" t="story-act" d={{ v: x.id }} disabled={!x.can} label={x.n + '. ' + x.d + (x.why ? ' ' + x.why : '')} onClick={() => act(() => { const r = E.storyDo(S, f.id, x.id); say(r.msg, { err: !r.ok }); })}>{({ stakes: 'Stakes', sitdown: 'Sit-down', title: 'Title' } as any)[x.id] || x.n}{x.cost ? ' · ' + x.cost : ''}</Btn>)}</p></Group>
+      <p class="sp-acts" data-t="story-acts">{E.storyActs(S, f.id).map((x: any) => <Btn key={x.id} kind="sm" t="story-act" d={{ v: x.id }} disabled={!x.can} label={x.n + '. ' + x.d + (x.why ? ' ' + x.why : '')} onClick={() => act(() => { const r = E.storyDo(S, f.id, x.id); say(r.msg, { err: !r.ok }); })}>{({ stakes: 'Stakes', sitdown: 'Sit-down', title: 'Title', shelf: x.n === 'Bring it back' ? 'Bring back' : 'Rest it' } as any)[x.id] || x.n}{x.cost ? ' · ' + x.cost : ''}</Btn>)}</p></Group>
     {f.stakes ? <p class="good one">Stakes: {f.stakes}</p> : null}
     <p class="sp-btns"><Btn kind="sm" t="story-log" onClick={log}>The feud so far</Btn><Btn kind="danger" t="story-end" onClick={end}>Drop it</Btn></p>
   </div>;
@@ -74,7 +74,8 @@ const NEEDS: Record<string, (pl: any) => string> = {
   build: () => 'Keep feeding it, and mix it up: a brawl, a war of words, a match. The same thing twice is worth less.',
   boil: (pl) => pl.ripe ? 'It is as hot as it gets and has given most of what it has. End it at the next big event.' : 'It is boiling. Keep it on the show, or plan the ending for the next big event.',
   stale: () => 'It is going stale. A twist, a turn, a stipulation or a week off will freshen it. Or end it now.',
-  cool: () => 'It is cooling. Heat it this week or let it go.'
+  cool: () => 'It is cooling. Heat it this week or let it go.',
+  rest: () => 'It is resting. It will not fizzle, and it comes back fresher.'
 };
 
 /** What the calendar says: each line something to act on. A line about a story picks it. */
