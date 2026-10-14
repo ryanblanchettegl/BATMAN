@@ -277,6 +277,7 @@ function startFeud(S,P,a,b,heat,why,opts){
   var f=feudOf(S,a.id,b.id);
   if(f){f.heat=clamp(Math.max(f.heat,heat),0,100);f.last=S.week;f.log.push({w:S.week,t:why});return f;}
   if(activeFeuds(S).filter(function(x){return x.promo===P.id;}).length>=8&&!opts.force)return null;
+  var em0=typeof emberOf==='function'?emberOf(S,a.id,b.id):null;if(em0&&S.week-em0.w<12&&!opts.force)return null;   // a story that just ended needs time before the same two go again
   f={id:S.nid++,promo:P.id,a:[a.id],b:[b.id],heat:clamp(heat,0,100),start:S.week,last:S.week,matches:0,aw:0,bw:0,log:[{w:S.week,t:why}],title:opts.title||null,kind:opts.kind||'feud',res:false};
   var em=typeof emberOf==='function'?emberOf(S,a.id,b.id):null;   // they have done this before: it picks up where it left off (src/21-living.js)
   if(em){f.heat=clamp(f.heat+Math.min(20,em.h/4+5),0,100);f.log.push({w:S.week,t:'They have history: it picks up where it left off'});f.again=em.n;}
@@ -417,8 +418,9 @@ function autoBook(S,P,show){
   }else{
     if(!(worlds[0]&&(chance(S,0.3)||!worlds[0].holders.length)&&titleSingles(worlds[0],'L',100)))filler(0,'L',G1,100);
   }
-  // running feuds: a story on the night it is meant to end is booked first, for every company; the player's others as before
-  var fs=activeFeuds(S).filter(function(f){return f.promo===P.id&&!(f.bb!=null&&S.week<=f.bb);}).sort(function(a,b){return (feudDue(S,b,show)?1:0)-(feudDue(S,a,show)?1:0)||b.heat-a.heat;}),booked=0;
+  // running feuds: a story on the night it is meant to end is booked first, for every company; on the player's big night a ripe one next
+  function rp(f){return f.heat>=65&&f.fresh<50?1:0;}
+  var fs=activeFeuds(S).filter(function(f){return f.promo===P.id&&!(f.bb!=null&&S.week<=f.bb);}).sort(function(a,b){return (feudDue(S,b,show)?1:0)-(feudDue(S,a,show)?1:0)||(big&&isPl?(rp(b)-rp(a)):0)||b.heat-a.heat;}),booked=0;
   if(fs.length){
     fs.forEach(function(f){
       var due=!!feudDue(S,f,show);
