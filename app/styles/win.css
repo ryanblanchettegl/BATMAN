@@ -790,3 +790,11 @@ html[data-screen="tablet"] .mkpage table th:nth-child(4),html[data-screen="table
 .ovpage .ovdesk{flex:1 1 0;min-height:0;grid-template-columns:minmax(0,1fr) minmax(0,2.6fr);grid-template-rows:minmax(0,1fr);grid-template-areas:"list pane"}
 .ovpage .ovdesk .wn[data-t="ov-pane"]>.bd{overflow-y:auto}
 .ovpage .hspane>.panel:first-child>h2:first-child{display:none}
+/* Finances: the money across the top, the weekly net on the left, the books (income, costs, week by week) on the right */
+.fnpage{grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);grid-template-rows:auto minmax(0,1fr);grid-template-areas:"sum sum" "chart books"}
+.fnpage .wn[data-t="fn-books"]>.bd{display:flex;flex-direction:column;min-height:0}
+.fnpage .fnpane{flex:1 1 0;min-height:0;overflow-y:auto;margin-top:.4em}
+.fnpage .fnpane .panel{background:none;border:0;box-shadow:none;padding:0;margin:0}
+.fnpage .fnpane .panel>h2:first-child{display:none}
+.fnpage .wn[data-t="fn-books"]>.bd{overflow-y:auto}
+.wn .kv small{color:var(--blue,#0000a8)} .wn .kv span{color:#111}
