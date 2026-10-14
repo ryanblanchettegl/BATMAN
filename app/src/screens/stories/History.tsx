@@ -129,11 +129,11 @@ function Records() {
 
 export function History() {
   const P = me();
-  return <>
+  return <div class="onescreen winpage">
     <Head eyebrow={P.name} title="History" />
     <div class="cols">
       <div class="stack"><Chronicles /><Kept /><MatchOfYear /><RecordBook /><Records /><Awards /><HallOfFame /></div>
       <div class="stack">{P.titles.map((t: any) => <TitleLine t={t} />)}</div>
     </div>
-  </>;
+  </div>;
 }

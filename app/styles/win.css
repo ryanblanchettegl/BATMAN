@@ -741,3 +741,23 @@ html[data-screen="desk"]:has(.crpage){--fs:min(clamp(19px,1.62vw,32px),2.6vh)}
 html[data-screen="tablet"]:has(.crpage){--fs:min(clamp(17px,1.7vw,30px),2.35vh)}
 html[data-screen="tv"]:has(.crpage){--fs:min(clamp(22px,1.9vw,84px),2.32vh)}
 .crt:has(.crpage){max-width:78em}
+
+/* ---------- old panel pages on one screen (Ryan, 14 October: "we can use more scrolling tools") ----------
+   The page fills the window; its columns share the height; each panel is a window that scrolls inside itself. */
+.winpage{display:flex;flex-direction:column;gap:.7em;min-height:0}
+.winpage>.cols{flex:1 1 0;min-height:0;align-items:stretch}
+.winpage>.cols>.stack{min-height:0;gap:.9em}
+.winpage>.cols>.stack>.panel{flex:1 1 auto;min-height:3.5em;overflow-y:auto}
+.winpage>.cols>.stack>.panel>h2:first-child{position:sticky;top:-.35em;z-index:1}
+.winpage>.panel,.winpage>.gauges,.winpage>.row{flex:none}
+.winpage ::-webkit-scrollbar{width:1.05em}
+.winpage ::-webkit-scrollbar-track{background:#d8d8d8}
+.winpage ::-webkit-scrollbar-thumb{background:var(--grey);border:2px solid var(--white);border-right-color:var(--dgrey);border-bottom-color:var(--dgrey)}
+.winpage *{scrollbar-color:var(--grey) #d8d8d8}
+.winpage>.cols>.stack>.panel{min-height:2.6em}
+.winpage>.tw,.winpage>.panel{flex:0 1 auto;min-height:5em;overflow-y:auto}
+.winpage>.tw thead th{position:sticky;top:0;z-index:1}
+.winpage>.cols>.panel{min-height:0;overflow-y:auto}
+.winpage>.tw{flex:0 1 auto}
+.winpage .gp{padding-bottom:.2em}.winpage .gp .gauge{margin:.2em 0}
+.stpage [data-t="st-morewin"]>.bd{overflow-y:auto}

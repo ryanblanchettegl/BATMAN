@@ -100,13 +100,12 @@ function IncomeBar() {
 
 export function Overview() {
   const S = G.S, P = me();
-  return <>
+  return <div class="onescreen winpage">
     <Head eyebrow={P.name} title="Company" />
     <Gauges />
-    <IncomeBar />
     <div class="cols">
       <div class="stack"><Panel title="How this company is run"><ModelCard id={P.model} /></Panel><Ownership /><Rules /></div>
-      <div class="stack"><Setup /><Sponsors /></div>
+      <div class="stack"><IncomeBar /><Setup /><Sponsors /></div>
     </div>
-  </>;
+  </div>;
 }

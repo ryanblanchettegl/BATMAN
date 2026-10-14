@@ -61,7 +61,7 @@ function Arrangement() {
 
 export function World() {
   const S = G.S;
-  return <>
+  return <div class="onescreen winpage">
     <Head eyebrow={E.cal(S.week).label} title="World" />
     <Promotions />
     <Arrangement />
@@ -69,5 +69,5 @@ export function World() {
       <NewsWire />
       <PowerTen />
     </div>
-  </>;
+  </div>;
 }
