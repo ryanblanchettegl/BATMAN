@@ -244,7 +244,7 @@ function startXf(S,pid,kind){
   var wom=cal(S.week).wom,until;
   if(kind==='war'){until=S.week+7;until+=4-cal(until).wom;}else until=S.week+(4-wom)+(wom===4&&S.qi>=S.queue.length?4:0);
   S.xf={kind:kind,with:pid,start:S.week,until:until,guests:guests,sc:[0,0],n:0};
-  news(S,'world',kind==='war'?RV.name+' and '+P.name+' are at war: '+guests.map(function(id){return S.w[id].name;}).join(', ')+' have crossed the line.':P.name+' and '+RV.name+' will share a supershow at '+P.name+' '+dbOf(S).events[cal(until).month]+'.');
+  news(S,'world',kind==='war'?RV.name+' and '+P.name+' are at war: '+guests.map(function(id){return S.w[id].name;}).join(', ')+' have crossed the line.':P.name+' and '+RV.name+' will share a supershow at '+P.name+' '+evName(S,P,cal(until).month)+'.');
 }
 E.xfPropose=function(S,pid,kind){
   var why=E.xfCan(S,pid);if(why)return {ok:false,msg:why};

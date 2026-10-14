@@ -162,7 +162,7 @@ function netSheet(S,wk){
   });
   var business=news.filter(function(x){return (x.k==='money'||x.k==='contract'||x.k==='injury')&&!used[x.t];}).slice(0,4).map(function(x){used[x.t]=1;return x.t;});
   var c=cal(wk+1),next=[];
-  if(c.wom===4)next.push(P.name+' '+dbOf(S).events[c.month]+' is next week.');
+  if(c.wom===4)next.push(P.name+' '+evName(S,P,c.month)+' is next week.');
   var soon=rosterOf(S,P.id).filter(function(w){return !w.nw&&w.con!=null&&w.con<=2;}).sort(function(a,b){return b.ovr-a.ovr;})[0];if(soon)next.push(soon.name+'’s contract with '+P.name+' is nearly up.');
   // feud watch: the stories around the business, from their heat, freshness and age (src/21-living.js), one line each
   var fw=[];S.feuds.forEach(function(f){var co=S.promos[f.promo]?S.promos[f.promo].name:'';if(!co)return;var c={f:feudLabel(S,f),co:co,w:wk-f.start,k:null};

@@ -12,6 +12,7 @@ One line per file in `src/`, in build order: what it owns, then the `E.` functio
 - **33-ring.js**: Calls in the ring Three more calls from the gorilla position (src/31-live.js runs them), each caused by what is true of the match: Somebody is hurt.
 - **34-night.js**: what the night left behind Ryan, 4 October: "After a show, it should go back to the Office or your desk, so you can work through any new events or decisions that need to be made after the show." A show does not end... `E.liveBegin`, `E.afterShow`, `E.comingUp`, `E.nightSeen`
 - **40-week.js**: the week `E.endWeek`, `E.resolveEvent`
+- **42-events.js**: Big events belong to a company (NEXT.md, job 3) Each promotion has its own twelve monthly big events in P.events: a name, a type and an optional rule. `E.events`
 - **50-company.js**: the company: broadcast slot, production, risk, tickets, advertising, sponsors `E.setCompany`, `E.sponsorOk`, `E.acceptSponsor`, `E.dropSponsor`, `E.slotOdds`, `E.askSlot`, `E.company`
 - **55-preshow.js**: before the bell: something goes wrong (or right) and you make a call `E.preShow`, `E.resolvePre`
 - **60-grammar.js**: The text grammar: procedurally written lines for the newsletter, the websites and the chat room A small grammar engine in the manner of Tracery, with Improv's idea that a line may only be used when it is true of the...
