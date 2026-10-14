@@ -571,3 +571,20 @@ html[data-screen="tv"]:has(.lkpage){--fs:min(clamp(22px,1.9vw,84px),2.32vh)}
 .lkpage .btn.sm{display:inline;line-height:inherit;vertical-align:baseline;white-space:nowrap}
 .book1 .b1-pane .panel>h2:first-child{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);margin:0;padding:0}
 .book1 .b1-pane>.panel{border:0;box-shadow:none;padding:0}
+
+/* ---------- the Free agents page: the list, the scouts, and the rookie class or the offer being made ---------- */
+.mkpage{grid-template-columns:minmax(0,2.3fr) minmax(0,1fr);grid-template-rows:auto minmax(0,1fr);grid-template-areas:"list scouts" "list side";line-height:1.18;gap:.95em 2.2ch}
+.mkpage [data-t="mk-list"]>.bd{display:flex;flex-direction:column;gap:.3em}
+.mkpage .mkl{flex:1 1 0;min-height:0;overflow:hidden}
+.mkpage .mkl td,.mkpage .mkl th{padding:0 .6ch}
+.mkpage .mkl .btn.sm{margin:0;padding:0 .6ch;box-shadow:none}
+.mkpage .row.nowrap{flex-wrap:nowrap;gap:.6ch}
+.mkpage .row.nowrap .btn{margin:0 0 .2em}
+.mkpage .row.nowrap input{width:14ch}
+.mkpage .pgr{display:flex;gap:.6ch;align-items:center;justify-content:flex-end;margin:0}
+.mkpage input.wage{width:10ch}
+html[data-screen="desk"]:has(.mkpage){--fs:min(clamp(18px,1.5vw,32px),2.6vh)}
+html[data-screen="tablet"]:has(.mkpage){--fs:min(clamp(15px,1.45vw,30px),2.4vh)}
+html[data-screen="tv"]:has(.mkpage){--fs:min(clamp(20px,1.6vw,84px),2.32vh)}
+.crt:has(.mkpage){max-width:84em}
+.main .tw .tag.face,.main .tw .tag.heel,.main .tw .tag.bad,.main .tw .tag.good{color:var(--white)}
