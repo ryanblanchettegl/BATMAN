@@ -2535,7 +2535,7 @@ function doMatch(S,P,show,m,i,n,rep,used){
   }
   if(t){cr+=t.prestige*0.04;if(t.prestige>=70)FX(true,'A prestigious title on the line');if(show.rule==='all_titles'){cr+=2;FX(true,'Every title is on the line tonight');}}
   var rsk=RISK_STIP[P.risk]/RISK_STIP[P.risk0],sh=STIP[stip].heat*(feud&&feud.heat>=40?1.5:0.3)*rsk;cr+=sh;
-  if(stip!=='std'){if(feud&&feud.heat>=40)FX(true,'The stipulation fits the feud');if(rep.gim&&show.rule!=='gimmick_free'&&!modelOf(P).gimFree){cr-=4;FX(false,'Second gimmick match of the night');}rep.gim=true;}
+  if(stip!=='std'){if(feud&&stipFitOf(feud,stip)>0)FX(true,'The stipulation fits the feud');if(rep.gim&&show.rule!=='gimmick_free'&&!modelOf(P).gimFree){cr-=4;FX(false,'Second gimmick match of the night');}rep.gim=true;}
   all.forEach(function(w){if(w.ws>=6){cr+=1.5;FX(true,w.name+'’s winning streak draws interest');}if(used[w.id]){cr-=4;FX(false,w.name+' already worked tonight');}});
   if(m.mt==='1v1'){var rk=S.recent[P.id+':'+rkey(all[0].id,all[1].id)];if(rk&&S.week-rk<4&&!feud){cr-=4;FX(false,'A rematch too soon');}}
   if(rep.energy){cr+=rep.energy;if(rep.energy>=1)FX(true,'A packed, noisy house');else if(rep.energy<=-1)FX(false,'Empty seats flattened the crowd');}
@@ -2637,7 +2637,7 @@ function doMatch(S,P,show,m,i,n,rep,used){
   if(feud){
     feud.matches++;
     if(win>=0){if(m.sides[win].some(function(id){return feud.a.indexOf(id)>=0;}))feud.aw++;else if(m.sides[win].some(function(id){return feud.b.indexOf(id)>=0;}))feud.bw++;}
-    var stipFit=stip&&stip!=='std'?(feud.heat>=60?4:(feud.heat<30?-3:1)):0;   // a stipulation the story has earned adds to it; one it has not, takes away
+    var stipFit=stipFitOf(feud,stip);   // a stipulation the story has earned adds to it; one it has not, takes away
     if(stipFit&&isPl)seg.notes.push(stipFit>0?'The stipulation fit the story. The crowd bought it.':'A stipulation this early felt like too much, too soon.');
     heatUp(S,feud,5+stipFit+(fin==='cheap'||fin==='interf'?5:0),(win>=0?names(winners)+' beat '+names(losers):'A draw')+(fin==='cheap'||fin==='interf'?' with a cheap finish':'')+' at '+show.name);
     // the booker marked this match as the ending (m.end), or the story's own rules say so (src/21-living.js)
@@ -3244,6 +3244,13 @@ E.storyDo=function(S,id,act){
     var ch=S.w[t.holders[0]],cl=ch===A?B:A;youRemember(S,cl,'titleshot','You gave me a title match against '+ch.name+'.',3);}
   return {ok:true,msg:msg};
 };
+
+/* Escalation (idea 16): each stipulation needs the feud to be this hot before the crowd believes it.
+   A submission or lumberjack match fits early; a cage needs a hot feud; a mask or hair match only a white hot one. */
+var STIP_NEED={sub:20,lumber:25,iron:30,tables:40,hardcore:45,ladder:50,cage:60,hair:70,mask:75};
+function stipNeed(k){return STIP_NEED[k]||40;}
+/** How a stipulation sits with a feud's heat: 4 earned with room, 1 just earned, -3 too soon (worse the bigger the gap). */
+function stipFitOf(feud,k){if(!feud||!k||k==='std')return 0;var n=stipNeed(k),h=feud.heat;return h>=n+15?4:(h>=n?1:(h>=n-15?-3:-6));}
 
 /* ===== 30-show.js ===== */
 /* ---------- running a show ---------- */
@@ -13207,7 +13214,7 @@ function cardFlags(S,card,i){
   var add=function(k,t,x){if(seen[t])return;seen[t]=1;out.push({k:k,t:t,x:x||t});};
   // a stipulation in a feud: earned when the story is hot enough to carry it, too soon when it is not (src/21-living.js)
   if(m&&m.stip&&m.stip!=='std'&&m.sides&&m.sides.length===2&&m.sides[0][0]!=null&&m.sides[1][0]!=null){var ff=feudOf(S,m.sides[0][0],m.sides[1][0]);
-    if(ff&&ff.heat>=60)add('good','Earned','The feud is hot enough to carry a stipulation. It will add to the story.');else if(ff&&ff.heat<30)add('bad','Too soon','A stipulation this early in the feud will feel like too much, too soon.');}
+    var sf=stipFitOf(ff,m.stip),sn=(STIP[m.stip]||{}).n||'This stipulation';if(sf>=4)add('good','Earned','The feud is hot enough to carry a '+sn.toLowerCase()+' match. It will add to the story.');else if(sf<0)add('bad','Too soon',sn+' needs a hotter feud than this. It will feel like too much, too soon.');}
   if(rd)rd.lines.forEach(function(l){
     var t=l.t;
     if(/fumes|worn|carrying/.test(t))add('bad','Worn down',t);

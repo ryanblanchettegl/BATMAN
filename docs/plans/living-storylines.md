@@ -60,9 +60,10 @@ segment moves, and an ending the booker chooses at the right moment.
     Built.
 14. **Chemistry counts.** Two who work well together in the ring heat faster. Built.
 15. **Big nights count more.** A beat on a big event is worth more than the same beat on weekly television. Built.
-16. **Escalation unlocks.** The stipulations open up as the heat climbs: a no disqualification match is believable
-    at hot, a cage at white hot. Built as a simpler rule: a stipulation in a hot feud adds heat and one in a cold
-    feud takes it away ("too much, too soon"); locking the stipulations by heat is later.
+16. **Escalation unlocks.** Each stipulation needs the feud to be hot enough to believe it: a submission or lumberjack
+    match fits early, tables and hardcore need a feud that is building, a cage a hot one, hair or mask a white hot one
+    (`STIP_NEED`, `stipFitOf()`). Earned with room to spare adds the most heat; too soon takes heat away, and more the
+    further off it is. The run sheet flags it either way. Built.
 17. **Embers.** A finished feud leaves embers: the same two can be put back together months later with a head start,
     and Start a feud says they have history. Built (`S.embers`, kept a year).
 18. **The heat line.** The Storylines page shows each feud's heat over the last twelve weeks as a line, with its

@@ -306,3 +306,10 @@ E.storyDo=function(S,id,act){
     var ch=S.w[t.holders[0]],cl=ch===A?B:A;youRemember(S,cl,'titleshot','You gave me a title match against '+ch.name+'.',3);}
   return {ok:true,msg:msg};
 };
+
+/* Escalation (idea 16): each stipulation needs the feud to be this hot before the crowd believes it.
+   A submission or lumberjack match fits early; a cage needs a hot feud; a mask or hair match only a white hot one. */
+var STIP_NEED={sub:20,lumber:25,iron:30,tables:40,hardcore:45,ladder:50,cage:60,hair:70,mask:75};
+function stipNeed(k){return STIP_NEED[k]||40;}
+/** How a stipulation sits with a feud's heat: 4 earned with room, 1 just earned, -3 too soon (worse the bigger the gap). */
+function stipFitOf(feud,k){if(!feud||!k||k==='std')return 0;var n=stipNeed(k),h=feud.heat;return h>=n+15?4:(h>=n?1:(h>=n-15?-3:-6));}

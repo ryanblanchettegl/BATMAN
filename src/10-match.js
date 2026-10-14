@@ -290,7 +290,7 @@ function doMatch(S,P,show,m,i,n,rep,used){
   }
   if(t){cr+=t.prestige*0.04;if(t.prestige>=70)FX(true,'A prestigious title on the line');if(show.rule==='all_titles'){cr+=2;FX(true,'Every title is on the line tonight');}}
   var rsk=RISK_STIP[P.risk]/RISK_STIP[P.risk0],sh=STIP[stip].heat*(feud&&feud.heat>=40?1.5:0.3)*rsk;cr+=sh;
-  if(stip!=='std'){if(feud&&feud.heat>=40)FX(true,'The stipulation fits the feud');if(rep.gim&&show.rule!=='gimmick_free'&&!modelOf(P).gimFree){cr-=4;FX(false,'Second gimmick match of the night');}rep.gim=true;}
+  if(stip!=='std'){if(feud&&stipFitOf(feud,stip)>0)FX(true,'The stipulation fits the feud');if(rep.gim&&show.rule!=='gimmick_free'&&!modelOf(P).gimFree){cr-=4;FX(false,'Second gimmick match of the night');}rep.gim=true;}
   all.forEach(function(w){if(w.ws>=6){cr+=1.5;FX(true,w.name+'’s winning streak draws interest');}if(used[w.id]){cr-=4;FX(false,w.name+' already worked tonight');}});
   if(m.mt==='1v1'){var rk=S.recent[P.id+':'+rkey(all[0].id,all[1].id)];if(rk&&S.week-rk<4&&!feud){cr-=4;FX(false,'A rematch too soon');}}
   if(rep.energy){cr+=rep.energy;if(rep.energy>=1)FX(true,'A packed, noisy house');else if(rep.energy<=-1)FX(false,'Empty seats flattened the crowd');}
@@ -392,7 +392,7 @@ function doMatch(S,P,show,m,i,n,rep,used){
   if(feud){
     feud.matches++;
     if(win>=0){if(m.sides[win].some(function(id){return feud.a.indexOf(id)>=0;}))feud.aw++;else if(m.sides[win].some(function(id){return feud.b.indexOf(id)>=0;}))feud.bw++;}
-    var stipFit=stip&&stip!=='std'?(feud.heat>=60?4:(feud.heat<30?-3:1)):0;   // a stipulation the story has earned adds to it; one it has not, takes away
+    var stipFit=stipFitOf(feud,stip);   // a stipulation the story has earned adds to it; one it has not, takes away
     if(stipFit&&isPl)seg.notes.push(stipFit>0?'The stipulation fit the story. The crowd bought it.':'A stipulation this early felt like too much, too soon.');
     heatUp(S,feud,5+stipFit+(fin==='cheap'||fin==='interf'?5:0),(win>=0?names(winners)+' beat '+names(losers):'A draw')+(fin==='cheap'||fin==='interf'?' with a cheap finish':'')+' at '+show.name);
     // the booker marked this match as the ending (m.end), or the story's own rules say so (src/21-living.js)
