@@ -8,7 +8,7 @@ import { Portrait } from '../../kit/portrait';
 
 const storyState = () => slice<{ a: string; b: string; len: string }>('story', () => ({ a: '', b: '', len: 'm' }));
 /** Clear the picks before the pop-up opens (a story can be started with one person already chosen). */
-export function storyReset(a?: number) { const st = storyState(); st.a = a != null ? String(a) : ''; st.b = ''; st.len = 'm'; }
+export function storyReset(a?: number, b?: number) { const st = storyState(); st.a = a != null ? String(a) : ''; st.b = b != null ? String(b) : ''; st.len = 'm'; }
 
 const wk = (n: number) => n <= 0 ? 'this week' : n === 1 ? 'next week' : 'in ' + n + ' weeks';
 

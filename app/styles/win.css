@@ -718,3 +718,4 @@ html[data-screen="tv"]:has(.webpage){--fs:min(clamp(20px,1.7vw,84px),2.32vh)}
 .paper .sheet-open{text-align:left!important;margin-bottom:.4em}
 .wsearch .ws-head{text-align:center;font-weight:700;font-size:1.1em;margin:-.1em 0 .5em;padding:.15em 0;border-top:1px solid currentColor;border-bottom:1px solid currentColor;text-transform:uppercase;letter-spacing:.03em}
 .wsearch .ws-h2{font-weight:700;margin-top:.3em}
+.win [data-t="found"] li.col{flex-wrap:nowrap;align-items:center}.win [data-t="found"] li.col .btn{flex:none}

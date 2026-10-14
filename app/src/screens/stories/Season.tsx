@@ -105,6 +105,16 @@ function Power() {
   </div>;
 }
 
+/** Storylines the game found in what has already happened (src/84-sift.js): who, why, and one press to start it. */
+function Found() {
+  const S = G.S, L: any[] = E.sift(S);
+  if (!L.length) return <Empty>Nothing yet. Stories grow out of matches, title changes and who gets on with whom. Run a few shows.</Empty>;
+  return <ul class="list" data-t="found">{L.map(x => <li key={x.k + x.a + x.b} class="col" data-t="found-row">
+    <span><Tag kind="gold">{x.n}</Tag> <Name w={S.w[x.a]} /> and <Name w={S.w[x.b]} /><br />{x.facts.map((f: string, i: number) => <span key={i} class="muted">{f} </span>)}<br /><i>{x.pitch}</i></span>
+    <Btn kind="go" t="found-start" d={{ a: x.a, b: x.b }} onClick={() => { storyReset(x.a, x.b); openModal({ kind: 'story' }); }}>Start this feud</Btn>
+  </li>)}</ul>;
+}
+
 /** Everything else about the stories, one button each. */
 function More(p: { pops: { [k: string]: () => ComponentChildren } }) {
   const S = G.S, P = S.promos[S.player];
@@ -113,6 +123,7 @@ function More(p: { pops: { [k: string]: () => ComponentChildren } }) {
   const m = S.mystery && S.mystery.promo === S.player ? S.mystery : null, R = E.rebelInfo(S);
   const b = (k: string, n: string, c: number, title: string) => <button type="button" class="btn st-pw" {...dataAttrs('st-more', { v: k })} onClick={() => openModal({ kind: 'info', title, wide: true, body: p.pops[k] })}><span class="one">{n}</span><span class="cost">{c}</span></button>;
   return <div class="st-pws">
+    <button type="button" class="btn st-pw" {...dataAttrs('plot-open', { v: 'found' })} onClick={() => openModal({ kind: 'info', title: 'Stories waiting', wide: true, body: () => <Found /> })}><span class="one">Stories waiting</span><span class="cost">{E.sift(S).length}</span></button>
     {b('finished', 'Finished feuds', done, 'Finished')}
     {b('streaks', 'Winning streaks', streak, 'Winning streaks')}
     {b('stables', 'Stables', stables, 'Stables')}
