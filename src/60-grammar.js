@@ -92,8 +92,14 @@ var GR_CHAT={
     {t:'#chat_par#',if:function(c){return c.band===0;},w:3},
     {t:'#chat_best#',if:function(c){return !!c.best;},w:2},
     {t:'#chat_win#',if:function(c){return !!c.win&&!!c.lose;},w:2},
-    {t:'#chat_new#',if:function(c){return !!c.champ;},w:3}
+    {t:'#chat_new#',if:function(c){return !!c.champ;},w:3},
+    {t:'#chat_fhot#',if:function(c){return !!c.feud&&c.fheat>=70&&!c.fend;},w:2},
+    {t:'#chat_fold#',if:function(c){return !!c.feud&&c.fstale;},w:2},
+    {t:'#chat_fend#',if:function(c){return !!c.feud&&c.fend;},w:3}
   ],
+  chat_fhot:['{feud} is the best thing on tv right now','i need {feud} to never end','{feud}!!! this is what wrestling is about'],
+  chat_fold:['how is {feud} STILL going','end {feud} already please','{feud} again?? zzz'],
+  chat_fend:['so thats the end of {feud}. what a run','{feud} is over and i am not ok','cant believe they ended {feud} like that'],
   chat_hot:['{show} was awesome!!!','anybody else see {show}?? wow','{show} = show of the year so far','ok {co} is on fire right now','that crowd was LOUD tonight','i take back everything i said about {co}'],
   chat_bad:['{show} put me to sleep lol','{co} needs a new booker','why do i keep watching {co}','{show} was rough. real rough','zzzzzz','who books this stuff'],
   chat_par:['{show} was ok i guess','not bad from {co} tonight','{show} was fine. nothing special','decent show, slow middle'],

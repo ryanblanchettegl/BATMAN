@@ -46,7 +46,8 @@ SHOWX.push(function(S,P,show,rep){
   netPost(S,'c',netHandle(P.name),P.full||P.name,(rep.att?rep.att.toLocaleString('en-US')+' of you in the building':'A full night')+' for '+rep.name+'. '+(rep.sellout?'A sell-out. ':'')+'Thank you.',netLikes(P.image*P.image*2,key+'co'));
   netPost(S,'p',netHandle(S.columnist||'The Ringside Wire'),S.columnist||'The Ringside Wire',best.label+' at '+rep.name+': '+starG(best.ov)+'. The show was graded '+gradeG(repCS(rep))+(verdictBand(d)>0?', better than this crowd expected.':(verdictBand(d)<0?', short of what this crowd expected.':', what this crowd came for.')),netLikes(900,key+'pr'));
   // the chat room after the show: two to four fans, each line written by the grammar from what happened (src/60-grammar.js)
-  var cc={show:rep.name,co:P.name,band:verdictBand(d),best:best.label,win:mw?mw.name:null,lose:ml?ml.name:null,champ:main.change&&mw?mw.name:null},nf=2+Math.floor(h01(key+'nf')*3),said={};
+  var mf=main.ids&&main.ids.length>=2?S.feuds.filter(function(f){return f.promo===P.id&&(f.a.indexOf(main.ids[0])>=0&&f.b.indexOf(main.ids[1])>=0||f.b.indexOf(main.ids[0])>=0&&f.a.indexOf(main.ids[1])>=0);}).slice(-1)[0]:null;
+  var cc={show:rep.name,co:P.name,band:verdictBand(d),best:best.label,win:mw?mw.name:null,lose:ml?ml.name:null,champ:main.change&&mw?mw.name:null,feud:mf?feudLabel(S,mf):null,fheat:mf?mf.heat:0,fstale:!!(mf&&!mf.res&&mf.fresh!=null&&mf.fresh<30),fend:!!(mf&&mf.res&&mf.end===S.week)},nf=2+Math.floor(h01(key+'nf')*3),said={};
   for(var fi=0;fi<nf;fi++){var fan=FANS[Math.floor(h01(key+'f'+fi)*FANS.length)%FANS.length][0],ln=gram(GR_CHAT,'line',cc,key+'ft'+fi);if(said[ln])continue;said[ln]=1;netPost(S,'f','@'+fan,fan,ln,netLikes(120,key+'fl'+fi));}
 });
 /* at the end of the week: the news that broke, as the press posts it */
