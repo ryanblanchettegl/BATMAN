@@ -57,7 +57,7 @@ function showStep(S,P,show,card,st){
   var step=st.steps[st.k++],rep=st.rep,n=card.length,seg;if(!step||step.cut)return null;   // a segment cut for time on the night does not air
   if(step.t==='match'){seg=doMatch(S,P,show,card[step.i],step.i,n,rep,st.used);rep.segs.push(seg);return seg;}
   var pool=showPool(S,P,show),inP={};pool.forEach(function(w){inP[w.id]=1;});
-  var ctx={pool:pool,inP:inP,angled:st.angled,left:{},extra:[]};
+  var ctx={pool:pool,inP:inP,angled:st.angled,left:{},extra:[],city:st.rep&&st.rep.venue?cityOfVenue(st.rep.venue):null};
   if(step.t==='plan'){var pp=planPromo(S,P,show,ctx);if(pp){pp.mins=PLAN_MINS;rep.open={k:'promo',ids:Object.keys(ctx.angled).map(Number),ov:pp.ov,feud:pp.feud};rep.segs.push(pp);}return pp;}
   for(var q=step.i;q<n;q++)flat(card[q].sides).forEach(function(id){ctx.left[id]=1;});
   var had=Object.assign({},ctx.angled),fresh=function(){return Object.keys(ctx.angled).filter(function(k){return !had[k];});},first=!rep.segs.length,wr=step.sg.k==='writers',ba=wr?genAngle(S,P,show,ctx):runSeg(S,P,show,ctx,step.sg,step.slot,first);

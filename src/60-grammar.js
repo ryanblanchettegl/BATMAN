@@ -101,3 +101,66 @@ var GR_CHAT={
   chat_win:['cant believe {win} beat {lose}','{win} over {lose} was the right call','{lose} got robbed!!!','{win} {win} {win}!!!!','{lose} fans in shambles'],
   chat_new:['NEW CHAMPION!!! {champ}!!!','{champ} with the belt. finally','{champ} as champ? not sure about that','about time {champ} got the gold','{champ} wont hold it a month, watch']
 };
+
+/* ---------- promos: the words a wrestler says on the microphone ----------
+   Built from parts: an opener, a callback to something that really happened, the point (a boast, a threat, a
+   challenge), and a closer. How good they are on the mic decides the tier: 2 is polished, 1 says what needs saying,
+   0 fumbles. Heels and heroes talk differently. */
+var GR_PROMO={
+  speech:[
+    {t:'#open# #callback# #point# #close#',if:function(c){return c.tier===2;},w:3},
+    {t:'#open# #point# #close#',if:function(c){return c.tier===2;}},
+    {t:'#open# #callback# #point#',if:function(c){return c.tier===1;},w:2},
+    {t:'#point# #close#',if:function(c){return c.tier===1;}},
+    {t:'#fumble#',if:function(c){return c.tier===0;}}
+  ],
+  open:[
+    {t:'#open_f#',if:function(c){return !c.heel;}},{t:'#open_h#',if:function(c){return c.heel;}}
+  ],
+  open_f:['Thank you. Thank you all.',{t:'{city}, it is good to be home!',if:function(c){return c.home;},w:3},'I am not going to keep you long.','Everybody here knows why I am out here.','I have waited a long time to say this.'],
+  open_h:['Shut up. All of you.','Sit down. I am talking now.','Look at you people.','I did not come out here to be cheered, and I sure did not come out here to be booed.','You can boo all you like. It changes nothing.'],
+  callback:[
+    {t:'#cb_beat#',if:function(c){return !!c.lostTo;},w:3},
+    {t:'#cb_won#',if:function(c){return !!c.beat;},w:3},
+    {t:'#cb_champ#',if:function(c){return !!c.held;},w:3},
+    {t:'#cb_streak#',if:function(c){return c.streak>=3;},w:2},
+    {t:'#cb_home#',if:function(c){return !!c.home;},w:2},
+    {t:'#cb_feud#',if:function(c){return c.weeks>=3;},w:2},
+    {t:'#cb_any#',w:1}
+  ],
+  cb_beat:['{lostTo} beat me. I know it. You know it. I have watched that tape every night since.','Last time, {lostTo} got the better of me. Last time.','I have not forgotten what {lostTo} did to me, and I never will.'],
+  cb_won:['I already beat {beat} once. I can do it again.','{beat} knows what happens when we get in there. {beat} has the bruises to prove it.','The scoreboard says I am ahead of {beat}, and it is going to stay that way.'],
+  cb_champ:['This is the {held}, and it is mine.','Every day I wake up as the {held} holder, I earn it again.','People said I would never hold the {held}. Look at my shoulder.'],
+  cb_streak:['{streak} straight. Name one person who has done better.','I have not lost in {streak} matches. Think about that.','{streak} wins in a row, and I am just warming up.'],
+  cb_home:['I grew up ten minutes from this building.','{city} made me. Tonight I give something back.','I used to sit up in those seats and dream about this.'],
+  cb_feud:['{them} and I have been at it for {weeks} weeks now.','{weeks} weeks of this, and it ends soon.','This has been going on for {weeks} weeks, and I am tired of talking.'],
+  cb_any:['I have been in this business a long time.','People keep asking me what I am going to do next.','Everybody has an opinion about me.'],
+  point:[
+    {t:'#pt_challenge#',if:function(c){return c.k==='challenge';},w:3},
+    {t:'#pt_call#',if:function(c){return (c.k==='callout'||c.k==='faceoff'||c.k==='words')&&!!c.them;},w:3},
+    {t:'#pt_boast_h#',if:function(c){return c.heel;}},
+    {t:'#pt_boast_f#',if:function(c){return !c.heel;}}
+  ],
+  pt_challenge:['I want the {title}, {them}. Name the night.','{them}, enjoy holding the {title} while you can. It is coming home with me.','That belt looks good on you, {them}. It will look better on me.'],
+  pt_call:[{t:'{them}, I am calling you out. Right here, right now.',w:2},'{them}, you know where to find me.','{them}, I hope you are watching, because I am coming for you.',{t:'{them}, when this is over, nobody will remember your name.',if:function(c){return c.heel;},w:2},{t:'{them}, I respect you. I am still going to beat you.',if:function(c){return !c.heel;},w:2}],
+  pt_boast_h:['There is not one person in that locker room who can stay in the ring with me.','I am the best thing that ever happened to this company, and none of you deserve me.','Every one of you paid to see me. You are welcome.'],
+  pt_boast_f:['Every night I go out there and give you everything I have.','I do not care who is next. Send them out.','As long as you keep showing up, so will I.'],
+  close:[
+    {t:'#cl_fin#',if:function(c){return !!c.fin;},w:2},
+    {t:'#cl_h#',if:function(c){return c.heel;}},{t:'#cl_f#',if:function(c){return !c.heel;}}
+  ],
+  cl_fin:['And when it is over, it ends with the {fin}.','One {fin}, and it is done.','You know how this ends. The {fin}.'],
+  cl_h:['Now get out of my ring.','Remember my name. You will be saying it for years.','That is all. You are dismissed.'],
+  cl_f:['I will see you out there.','That is a promise.','Count on it.'],
+  fumble:['I, uh. I am going to win. That is what I am going to do.','{them}, you are going down. Down. You know what I mean.','I am the best. The best there is. At this. At wrestling.','People ask me, they say, what are you going to do? And I say. Well. I am going to do it.','I came out here to say something, and I am saying it. Right now.']
+};
+/** The words one wrestler says in a promo, in quotes after their name. Reads only; picks from h01. */
+function promoSpeech(S,a,b,kind,ov,city,key){
+  var P=S.promos[a.promo]||S.promos[S.player],h=b&&S.h2h?S.h2h[rkey(a.id,b.id)]:null,f=b?feudOf(S,a.id,b.id):null,t=null,held=null;
+  if(P)P.titles.forEach(function(x){if(!t&&kind==='challenge'&&b&&x.holders.indexOf(b.id)>=0)t=x;if(!held&&x.holders.indexOf(a.id)>=0)held=x;});
+  var lo=b?Math.min(a.id,b.id):0,aw=h?(a.id===lo?h.a:h.b):0,bw=h?(a.id===lo?h.b:h.a):0;
+  var c={k:kind,heel:a.align==='H',tier:ov>=72?2:(ov>=52?1:0),them:b?b.name:null,title:t?t.name:null,held:held?held.name:null,
+    lostTo:h&&h.lw===(b&&b.id)&&bw>0?b.name:null,beat:h&&h.lw===a.id&&aw>0&&b?b.name:null,streak:a.ws||0,
+    home:!!(city&&a.town&&homeKm(S,a,city)!=null&&homeKm(S,a,city)<=100),city:city||'everybody',weeks:f?Math.max(0,S.week-(f.start||S.week)):0,fin:a.fin||null};
+  return a.name+': “'+gram(GR_PROMO,'speech',c,key).replace(/\s+/g,' ').trim()+'”';
+}

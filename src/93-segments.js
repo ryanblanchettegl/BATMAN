@@ -166,6 +166,12 @@ function runSeg(S,P,show,ctx,sg,slot,opens){
     if(L.notes[0][0]>0){if(was==='H')addOvr(P,a,2);else a.mom=clamp(a.mom+3,-10,10);}else a.mom=clamp(a.mom-2,-10,10);
     r=angle('Turn',was==='H'?a.name+' turns away from the villains'+(L.notes[0][0]>0?', and the crowd that has been cheering for weeks roars.':'. The crowd is not sure what to make of it.'):a.name+' turns on the fans'+(L.notes[0][0]>0?' after weeks of losses, and walks out to boos.':'. Nobody saw a reason for it.'),ov);
   }
+  // the words themselves, from the promo grammar (src/60-grammar.js): who says what depends on their side, their mic and what really happened
+  if(r&&SEGK[sg.k].t==='promo'&&sg.k!=='recap'){
+    var city=ctx.city||null,pkey='pr'+S.week+':'+sg.k+':'+sg.who.join(','),said=hasMouthpiece(S,a)?S.w[a.mgr]:a;
+    r.text+=' '+promoSpeech(S,said,b,sg.k,said===a?ov:Math.max(ov,said.mic),city,pkey);
+    if(b&&(sg.k==='words'||sg.k==='faceoff'||sg.k==='challenge'))r.text+=' '+promoSpeech(S,b,a,sg.k==='challenge'?'words':sg.k,clamp(ov+(b.mic-a.mic)/2,5,99),city,pkey+'b');
+  }
   if(r){r.booked=sg.k;r.ids=sg.who.slice();if(f&&f.id!=null)r.feud=f.id;}
   return r;
 }
