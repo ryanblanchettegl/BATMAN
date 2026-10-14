@@ -81,7 +81,8 @@ function genAngle(S,P,show,ctx){
     if(!c.length)return null;var sp=pick(S,c),sc=promoScore(S,sp,0),lv=holdLvl(P,sp.id);mark(sp);
     if(sc>sp.ovr)addOvr(P,sp,0.25);
     if(hasMouthpiece(S,sp))return angle('Interview',S.w[sp.mgr].name+' does the talking for '+sp.name+', and does it well: '+(lv?'the title is going nowhere.':'the best is still to come.'),sc);
-    return angle('Interview',sp.name+' takes the microphone and '+(lv?'vows that the title is going nowhere.':(sp.ws>=3?'talks up a '+sp.ws+'-match winning streak.':'promises bigger things are coming.')),sc);
+    var r0=angle('Interview',sp.name+' takes the microphone and '+(lv?'vows that the title is going nowhere.':(sp.ws>=3?'talks up a '+sp.ws+'-match winning streak.':'promises bigger things are coming.')),sc);
+    r0.text+=' '+promoSpeech(S,sp,null,'interview',sc,ctx.city||null,'wi'+S.week+':'+sp.id);return r0;
   }
   function callOut(){
     var hs=pool.filter(function(w){return w.align==='H'&&w.mic>=55&&!ang[w.id]&&!inFeud(S,w.id);});if(!hs.length)return null;
@@ -97,7 +98,8 @@ function genAngle(S,P,show,ctx){
     var cs=pool.filter(function(w){return w.id!==c.id&&w.g===c.g&&!ang[w.id]&&holdLvl(P,w.id)===0&&!inFeud(S,w.id)&&Math.abs(w.ovr-c.ovr)<=16&&(!t.brand||show.big||w.brand===t.brand);});
     if(!cs.length)return null;cs.sort(function(a,b){return (b.ovr+b.mom*2+(b.align!==c.align?6:0))-(a.ovr+a.mom*2+(a.align!==c.align?6:0));});
     var ch=cs[0];if(!startFeud(S,P,ch,c,30,ch.name+' challenged for the '+t.name,{title:t.id}))return null;mark(c,ch);
-    return angle('Challenge',ch.name+' interrupts '+c.name+' and lays claim to the '+t.name+'.',promoScore(S,ch.mic>c.mic?ch:c,4));
+    var r1=angle('Challenge',ch.name+' interrupts '+c.name+' and lays claim to the '+t.name+'.',promoScore(S,ch.mic>c.mic?ch:c,4)),k1='wc'+S.week+':'+ch.id;
+    r1.text+=' '+promoSpeech(S,ch,c,'challenge',ch.mic,ctx.city||null,k1)+' '+promoSpeech(S,c,ch,'words',c.mic,ctx.city||null,k1+'b');return r1;
   }
   function mysteryStart(){
     var os=pool.map(function(w){return w.ovr;}).sort(function(a,b){return b-a;}),cut=os[Math.floor(os.length*0.3)]||0;
@@ -128,7 +130,8 @@ function genAngle(S,P,show,ctx){
       var a=L[i],b=L[j],rk=S.recent[P.id+':'+rkey(a.id,b.id)];
       if(a.align!=='F'||b.align!=='F'||(a.team!=null&&a.team===b.team)||(rk&&S.week-rk<10))continue;
       if(!startFeud(S,P,a,b,30,a.name+' and '+b.name+' faced off',{kind:'dream'}))return null;mark(a,b);
-      return angle('Face-off',a.name+' and '+b.name+' cross paths on the stage. Neither backs down, and the crowd wants the match.',0.8*(a.ovr+b.ovr)/2+8);
+      var r2=angle('Face-off',a.name+' and '+b.name+' cross paths on the stage. Neither backs down, and the crowd wants the match.',0.8*(a.ovr+b.ovr)/2+8),k2='wf'+S.week+':'+a.id;
+      r2.text+=' '+promoSpeech(S,a,b,'faceoff',a.mic,ctx.city||null,k2)+' '+promoSpeech(S,b,a,'faceoff',b.mic,ctx.city||null,k2+'b');return r2;
     }
     return null;
   }
