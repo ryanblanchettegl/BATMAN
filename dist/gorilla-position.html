@@ -1748,6 +1748,10 @@ html[data-screen="tablet"] .deskpage .wn>.bd{padding-block:.3em .3em}
 .crpage .sklist li{min-width:0;display:flex;flex-wrap:nowrap;align-items:center;justify-content:space-between;gap:.5ch}
 .crpage .sklist li>span{min-width:0;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
 .crpage .sklist li .btn{flex:none;margin:0;padding:0 .6ch}
+/* text marked warn reads dark orange on grey, not the old magenta */
+.wn .warn:not(.tag):not(.btn){color:#7a3a00}
+/* Free agents on a tablet: the style column gives way so the asking price and the offer fit */
+html[data-screen="tablet"] .mkpage table th:nth-child(4),html[data-screen="tablet"] .mkpage table td:nth-child(4){display:none}
 </style>
 <div id="app"></div>
 <script>
