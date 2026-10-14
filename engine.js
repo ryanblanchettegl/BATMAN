@@ -2804,7 +2804,7 @@ function evList(S,P){
   S.order.forEach(function(id){var Q=S.promos[id];if(Q&&Q!==P&&Q.events)Q.events.forEach(function(e){if(e.t==='flag')used[e.n]=1;});});
   var fw=null;for(var i=0;i<FLAG_WORDS.length&&!fw;i++){var k=(hash('flag'+P.id)+i)%FLAG_WORDS.length;if(!used[FLAG_WORDS[k]])fw=FLAG_WORDS[k];}
   var own={};(P.evIn||[]).forEach(function(e){if(e&&e.month>=1&&e.month<=12&&e.name)own[e.month-1]=e;});   // a world package can name a company's own events
-  P.events=db.events.map(function(n,m){var flag=m===P.flagship,o=own[m];return {n:o?String(o.name).slice(0,28):(flag&&fw?fw:n),t:flag?'flag':(o&&EV_TYPES[o.type]&&o.type!=='flag'?o.type:'arena'),rule:(o&&o.rule)||rules[m]||null};});
+  P.events=db.events.map(function(n,m){var flag=m===P.flagship,o=own[m];return {n:o?String(o.name).trim().slice(0,28):(flag&&fw?fw:n),t:flag?'flag':(o&&EV_TYPES[o.type]&&o.type!=='flag'?o.type:'arena'),rule:(o&&o.rule)||rules[m]||null};});
   delete P.evIn;
   return P.events;
 }
@@ -7775,6 +7775,17 @@ E.ED={push:ED_PUSH_N,styles:ED_STYLE_N,roles:ED_ROLE_N,rels:ED_REL_N,ratings:ED_
   lockers:{mentor:'Mentor',leader:'Leader',gatekeeper:'Gatekeeper',diva:'Diva',toxic:'Troublemaker'}};
 E.edHome=function(pkg,wid){var c=edHome(pkg,wid);return c?c.promotion_id:null;};
 E.edContract=function(pkg,wid){return edHome(pkg,wid);};
+
+/* a company's own big events (NEXT.md 1.15): a name and a kind for a month; an empty name and the arena kind take the month back to the world's list */
+E.edPromoEvent=function(pkg,pid,month,o){
+  var p=(pkg.promotions||[]).filter(function(x){return x.id===pid;})[0];if(!p||!(month>=1&&month<=12))return false;
+  var L=p.events||(p.events=[]),e=L.filter(function(x){return x.month===month;})[0];if(!e){e={month:month};L.push(e);L.sort(function(a,b){return a.month-b.month;});}
+  if(o.name!=null){var n=String(o.name).replace(/\s+/g,' ').replace(/^\s+/,'').slice(0,28);if(n.trim())e.name=n;else delete e.name;}
+  if(o.type!=null){if(o.type&&o.type!=='arena'&&EV_TYPES[o.type]&&o.type!=='flag')e.type=o.type;else delete e.type;}
+  if(!e.name&&!e.type)p.events=L.filter(function(x){return x!==e;});else if(!e.name){e.name=(((pkg.events||[]).filter(function(x){return x.month===month;})[0])||{}).name||MONTHS[month-1]+' Showcase';}
+  if(!p.events.length)delete p.events;
+  return true;
+};
 
 /* ===== 86-rep.js ===== */
 /* ---------- 89. A reputation as a booker: traits earned by how you book, each with a small edge and a small cost (S.reps) ---------- */
