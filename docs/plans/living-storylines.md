@@ -83,3 +83,13 @@ segment moves, and an ending the booker chooses at the right moment.
   so), and 'chapter' for a round on a big night.
 - Start a feud costs 2 booking power and asks only for two people.
 - On the run sheet a match between two in a feud has End the story here.
+
+## Built since (14 October)
+
+- **Things to do from the picked story** (`E.storyActs`, `E.storyDo`): raise the stakes (1 booking power, a twist that
+  freshens it), a sit-down interview (1, a beat, once a week), put a champion's title on it (free), and the back
+  burner (four weeks of rest: it freshens, cools slowly, never fizzles, and the suggested card leaves it alone).
+- **After the show** says how each feud moved that night: hotter or cooler and by how much, and which ended.
+- **Book the show** lists the feuds on the card in Tonight's stakes, and a match marked as the ending is billed as
+  the final chapter on the broadcast.
+- **The newsletter** has a Feud watch, and **the chat room** talks about the feud that is boiling, dragging or over.
