@@ -37,7 +37,7 @@ async function run(mode) {
     await go(page, 'booking'); await page.click('[data-t="suggest"]');
     const set = await state(page, S => { const E = window.GP, n = S.card.length; S.lcd = {};
       for (let i = 0; i < n; i++) { const m = S.card[i]; if (m.mt !== '1v1' || m.title || m.call != null) continue; const o = E.matchOdds(S, m, i, n); if (!o) continue; const side = o.p[0] < o.p[1] ? 0 : 1, id = m.sides[side][0];
-        S.quests = S.quests.filter(q => q.type !== 'o_strong'); S.quests.push({ id: S.nid++, type: 'o_strong', w: id, due: S.week + 3, gain: 6, bp: 2, text: S.owner.name + ': keep ' + S.w[id].name + ' strong this month. No clean losses.' });
+        S.owner.fav = id; S.quests = S.quests.filter(q => q.type !== 'o_strong'); S.quests.push({ id: S.nid++, type: 'o_strong', w: id, due: S.week + 3, gain: 6, bp: 2, text: S.owner.name + ': keep ' + S.w[id].name + ' strong this month. No clean losses.' });
         return { i, id, name: S.w[id].name, owner: S.owner.name, trust: S.owner.trust, bp: S.bp }; }
       return null; });
     ok(mode, 'a match the owner cares about is on the card', !!set, set ? set.name : '');

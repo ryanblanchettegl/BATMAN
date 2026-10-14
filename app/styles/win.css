@@ -764,3 +764,8 @@ html[data-screen="tv"]:has(.crpage){--fs:min(clamp(22px,1.9vw,84px),2.32vh)}
 .stpage .sp-acts{display:flex;flex-wrap:wrap;gap:.2em .6ch;margin:.2em 0 0}.stpage .sp-acts .btn{margin:0;padding:0 .7ch}
 .stpage .sp-acts{flex-wrap:nowrap}
 html[data-screen="tablet"] .book1 .b1-pane .tn-st:nth-of-type(n+3){display:none}
+/* the desk on a tablet: a little less air in the road window and Next show, so a busy week never runs over */
+html[data-screen="tablet"] .road .grp{margin:.5em 0 .1em;padding:.4em 1ch .1em}
+html[data-screen="tablet"] .road .rmid .big{font-size:1.15em}
+html[data-screen="tablet"] .road .rright .grp:first-child{margin-top:.4em}
+html[data-screen="tablet"] .deskpage .wn>.bd{padding-block:.3em .3em}
