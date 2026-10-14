@@ -798,3 +798,4 @@ html[data-screen="tablet"] .mkpage table th:nth-child(4),html[data-screen="table
 .fnpage .fnpane .panel>h2:first-child{display:none}
 .fnpage .wn[data-t="fn-books"]>.bd{overflow-y:auto}
 .wn .kv small{color:var(--blue,#0000a8)} .wn .kv span{color:#111}
+.fnpage .wn[data-t="fn-chart"]>.bd{container-type:inline-size;overflow:hidden}
