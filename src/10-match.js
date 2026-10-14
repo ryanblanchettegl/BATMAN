@@ -182,14 +182,18 @@ function callMatch(S,P,x){
   else col(x.CR>=80?'c_hot':(x.CR>=55?'c_mid':'c_cold'));
   var mk=x.m.mt==='4way'||x.m.mt==='3way'?'multi':(x.m.mt==='6man'?'six':null);
   raw('pbp',say(S,'bell',o)+' '+say(S,mk?'open_'+mk:(GR['open_'+x.ca.style]?'open_'+x.ca.style:'open_A'),o));
+  var shp=mk?null:matchShape(x,o,hk);   // the match's shape: its own intro, a spot with named moves, a late swing (src/60-grammar.js)
+  if(shp&&shp.intro)bc.push({t:'col',x:shp.intro.charAt(0).toUpperCase()+shp.intro.slice(1)});
   if(mem[1])raw('pbp',mem[1]);
   if(STIPLINE[x.stip])raw('pbp',sayPick(S,STIPLINE[x.stip]));
   if(x.mins>8){pbp(mk?'mid_'+mk:'mid');pbp('near',1);}
+  if(shp&&shp.spot)bc.push({t:'pbp',x:shp.spot.charAt(0).toUpperCase()+shp.spot.slice(1)});
   if(x.mins>=14&&!mk)hp('pbp','mid2');
   if(x.mins>=12&&x.CR>=75)hp('col','chant');
   if(x.mins>=14&&!mk)hp('pbp','tease');
   if(x.mins>=20)pbp('late');
   if(x.mins>=18&&x.MQ>=70)hp('pbp','near2',1);
+  if(shp&&shp.late)bc.push({t:'pbp',x:shp.late.charAt(0).toUpperCase()+shp.late.slice(1),h:1});
   col(x.bad?'q_off':(x.MQ>=88?'q_great':(x.MQ>=75?'q_good':(x.MQ>=60?'q_ok':(x.MQ>=45?'q_poor':'q_bad')))));
   if(x.mins>=14&&x.CR>=82)col('c_hot');
   // when the company model's bonus or penalty fired, the crowd sounds like that company's crowd

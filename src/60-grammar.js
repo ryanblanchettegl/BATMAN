@@ -164,3 +164,57 @@ function promoSpeech(S,a,b,kind,ov,city,key){
     home:!!(city&&a.town&&homeKm(S,a,city)!=null&&homeKm(S,a,city)<=100),city:city||'everybody',weeks:f?Math.max(0,S.week-(f.start||S.week)):0,fin:a.fin||null};
   return a.name+': “'+gram(GR_PROMO,'speech',c,key).replace(/\s+/g,' ').trim()+'”';
 }
+
+/* ---------- match shapes: how a match is told ----------
+   Every one-on-one or tag match gets a shape from what it is (a mismatch, a war in a hot feud, two high flyers, two
+   technicians, an underdog's comeback, or back and forth), and moves named for each wrestler's style. Picked by a hash
+   of the match, so the call varies while results never change. */
+var MOVES={
+  B:['a running clothesline','a headbutt','a stomp in the corner','a backbreaker','a lariat','a chair-shot of a forearm'],
+  T:['a suplex','a German suplex','an armbar','a figure-four','a bridging pin','a hammerlock'],
+  H:['a dive to the floor','a moonsault','a crossbody from the top','a springboard kick','a corkscrew press'],
+  P:['a powerbomb','a gorilla press','a spinebuster','a bearhug','a chokeslam'],
+  A:['a dropkick','a neckbreaker','a DDT','a vertical suplex','a flying elbow'],
+  S:['a spinning heel kick','a knee strike','a flurry of kicks','a superkick','a backfist'],
+  E:['a showboat elbow drop','a strut and a slap','a jumping elbow','a dance before a dropkick']
+};
+var GR_SHAPE={
+  intro:[
+    {t:'#i_squash#',if:function(c){return c.k==='squash';}},{t:'#i_war#',if:function(c){return c.k==='war';}},
+    {t:'#i_sprint#',if:function(c){return c.k==='sprint';}},{t:'#i_chess#',if:function(c){return c.k==='chess';}},
+    {t:'#i_back#',if:function(c){return c.k==='back'||c.k==='comeback';}}
+  ],
+  i_squash:['This is a mismatch, {p}, and everybody in the building knows it.','{big} is not even breathing hard.','{small} is in over their head here.'],
+  i_war:['They are not wrestling, {p}. They are fighting.','No feeling out here: they go straight for each other.','You can feel the bad blood from up here, {p}.'],
+  i_sprint:['They are going a mile a minute, {p}!','Nobody in this match is slowing down.','Blink and you will miss something in this one.'],
+  i_chess:['A chess match, {p}: every hold has a counter.','Hold for hold, counter for counter.','These two could wrestle each other for an hour.'],
+  i_back:['Back and forth early. Neither one gives an inch.','They trade holds, then they trade blows.','An even start. Nobody has the edge yet.'],
+  spot:[
+    {t:'#s_war#',if:function(c){return c.k==='war';},w:2},
+    {t:'{a} hits {am}, and {b} answers with {bm}.',w:2},
+    {t:'{a} goes for {am}, but {b} counters with {bm}!',w:2},
+    {t:'{b} catches {a} with {bm} out of nowhere.'}
+  ],
+  s_war:['They spill out to the floor and fight into the crowd.','{a} sends {b} into the steel steps.','The referee is losing control of this one.'],
+  late:[
+    {t:'{w} has been on the defensive all match, but here comes the comeback!',if:function(c){return c.k==='comeback';}},
+    {t:'{a} hits the {fa}... and {b} kicks out! Nobody kicks out of that!',if:function(c){return !!c.fa&&c.hot;}},
+    {t:'{b} goes for the {fb}, but {a} slips out of it!',if:function(c){return !!c.fb;}},
+    {t:'Both of them are down, {p}. The referee starts to count.',if:function(c){return c.hot;}}
+  ]
+};
+/** The extra beats a match's shape adds: an intro line for the colour man, a spot in the middle, a late swing. */
+function matchShape(x,o,hk){
+  var A=x.all.filter(function(w){return w.name===o.a;})[0]||x.all[0],B=x.all.filter(function(w){return w.name===o.b;})[0]||x.all[1];if(!A||!B)return null;
+  var k='back';
+  if(x.gap>=15&&x.mins<=8)k='squash';
+  else if(x.feud&&x.feudHeat>=60||/street|nodq|hardcore|cage|lms|brawl/.test(String(x.stip||'')))k='war';
+  else if(/[HS]/.test(A.style)&&/[HS]/.test(B.style))k='sprint';
+  else if(A.style==='T'&&B.style==='T')k='chess';
+  else if(x.upset||(x.under&&x.under===o.w&&x.gap>=6))k='comeback';
+  var pk=function(L,s){return L[Math.floor(h01(hk+s)*L.length)%L.length];};
+  var srt=[A,B].sort(function(p,q){return q.ovr-p.ovr;});
+  var c={k:k,p:o.p,a:A.name,b:B.name,w:o.w||A.name,big:srt[0].name,small:srt[1].name,am:pk(MOVES[A.style]||MOVES.A,'am'),bm:pk(MOVES[B.style]||MOVES.A,'bm'),
+    fa:A.fin||null,fb:B.fin||null,hot:x.MQ>=72&&x.mins>=12};
+  return {k:k,intro:gram(GR_SHAPE,'intro',c,hk+'i'),spot:x.mins>8&&k!=='squash'?gram(GR_SHAPE,'spot',c,hk+'s'):null,late:x.mins>=12&&k!=='squash'?gram(GR_SHAPE,'late',c,hk+'l'):null};
+}

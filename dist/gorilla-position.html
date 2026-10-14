@@ -2377,14 +2377,18 @@ function callMatch(S,P,x){
   else col(x.CR>=80?'c_hot':(x.CR>=55?'c_mid':'c_cold'));
   var mk=x.m.mt==='4way'||x.m.mt==='3way'?'multi':(x.m.mt==='6man'?'six':null);
   raw('pbp',say(S,'bell',o)+' '+say(S,mk?'open_'+mk:(GR['open_'+x.ca.style]?'open_'+x.ca.style:'open_A'),o));
+  var shp=mk?null:matchShape(x,o,hk);   // the match's shape: its own intro, a spot with named moves, a late swing (src/60-grammar.js)
+  if(shp&&shp.intro)bc.push({t:'col',x:shp.intro.charAt(0).toUpperCase()+shp.intro.slice(1)});
   if(mem[1])raw('pbp',mem[1]);
   if(STIPLINE[x.stip])raw('pbp',sayPick(S,STIPLINE[x.stip]));
   if(x.mins>8){pbp(mk?'mid_'+mk:'mid');pbp('near',1);}
+  if(shp&&shp.spot)bc.push({t:'pbp',x:shp.spot.charAt(0).toUpperCase()+shp.spot.slice(1)});
   if(x.mins>=14&&!mk)hp('pbp','mid2');
   if(x.mins>=12&&x.CR>=75)hp('col','chant');
   if(x.mins>=14&&!mk)hp('pbp','tease');
   if(x.mins>=20)pbp('late');
   if(x.mins>=18&&x.MQ>=70)hp('pbp','near2',1);
+  if(shp&&shp.late)bc.push({t:'pbp',x:shp.late.charAt(0).toUpperCase()+shp.late.slice(1),h:1});
   col(x.bad?'q_off':(x.MQ>=88?'q_great':(x.MQ>=75?'q_good':(x.MQ>=60?'q_ok':(x.MQ>=45?'q_poor':'q_bad')))));
   if(x.mins>=14&&x.CR>=82)col('c_hot');
   // when the company model's bonus or penalty fired, the crowd sounds like that company's crowd
@@ -4645,6 +4649,60 @@ function promoSpeech(S,a,b,kind,ov,city,key){
     lostTo:h&&h.lw===(b&&b.id)&&bw>0?b.name:null,beat:h&&h.lw===a.id&&aw>0&&b?b.name:null,streak:a.ws||0,
     home:!!(city&&a.town&&homeKm(S,a,city)!=null&&homeKm(S,a,city)<=100),city:city||'everybody',weeks:f?Math.max(0,S.week-(f.start||S.week)):0,fin:a.fin||null};
   return a.name+': “'+gram(GR_PROMO,'speech',c,key).replace(/\s+/g,' ').trim()+'”';
+}
+
+/* ---------- match shapes: how a match is told ----------
+   Every one-on-one or tag match gets a shape from what it is (a mismatch, a war in a hot feud, two high flyers, two
+   technicians, an underdog's comeback, or back and forth), and moves named for each wrestler's style. Picked by a hash
+   of the match, so the call varies while results never change. */
+var MOVES={
+  B:['a running clothesline','a headbutt','a stomp in the corner','a backbreaker','a lariat','a chair-shot of a forearm'],
+  T:['a suplex','a German suplex','an armbar','a figure-four','a bridging pin','a hammerlock'],
+  H:['a dive to the floor','a moonsault','a crossbody from the top','a springboard kick','a corkscrew press'],
+  P:['a powerbomb','a gorilla press','a spinebuster','a bearhug','a chokeslam'],
+  A:['a dropkick','a neckbreaker','a DDT','a vertical suplex','a flying elbow'],
+  S:['a spinning heel kick','a knee strike','a flurry of kicks','a superkick','a backfist'],
+  E:['a showboat elbow drop','a strut and a slap','a jumping elbow','a dance before a dropkick']
+};
+var GR_SHAPE={
+  intro:[
+    {t:'#i_squash#',if:function(c){return c.k==='squash';}},{t:'#i_war#',if:function(c){return c.k==='war';}},
+    {t:'#i_sprint#',if:function(c){return c.k==='sprint';}},{t:'#i_chess#',if:function(c){return c.k==='chess';}},
+    {t:'#i_back#',if:function(c){return c.k==='back'||c.k==='comeback';}}
+  ],
+  i_squash:['This is a mismatch, {p}, and everybody in the building knows it.','{big} is not even breathing hard.','{small} is in over their head here.'],
+  i_war:['They are not wrestling, {p}. They are fighting.','No feeling out here: they go straight for each other.','You can feel the bad blood from up here, {p}.'],
+  i_sprint:['They are going a mile a minute, {p}!','Nobody in this match is slowing down.','Blink and you will miss something in this one.'],
+  i_chess:['A chess match, {p}: every hold has a counter.','Hold for hold, counter for counter.','These two could wrestle each other for an hour.'],
+  i_back:['Back and forth early. Neither one gives an inch.','They trade holds, then they trade blows.','An even start. Nobody has the edge yet.'],
+  spot:[
+    {t:'#s_war#',if:function(c){return c.k==='war';},w:2},
+    {t:'{a} hits {am}, and {b} answers with {bm}.',w:2},
+    {t:'{a} goes for {am}, but {b} counters with {bm}!',w:2},
+    {t:'{b} catches {a} with {bm} out of nowhere.'}
+  ],
+  s_war:['They spill out to the floor and fight into the crowd.','{a} sends {b} into the steel steps.','The referee is losing control of this one.'],
+  late:[
+    {t:'{w} has been on the defensive all match, but here comes the comeback!',if:function(c){return c.k==='comeback';}},
+    {t:'{a} hits the {fa}... and {b} kicks out! Nobody kicks out of that!',if:function(c){return !!c.fa&&c.hot;}},
+    {t:'{b} goes for the {fb}, but {a} slips out of it!',if:function(c){return !!c.fb;}},
+    {t:'Both of them are down, {p}. The referee starts to count.',if:function(c){return c.hot;}}
+  ]
+};
+/** The extra beats a match's shape adds: an intro line for the colour man, a spot in the middle, a late swing. */
+function matchShape(x,o,hk){
+  var A=x.all.filter(function(w){return w.name===o.a;})[0]||x.all[0],B=x.all.filter(function(w){return w.name===o.b;})[0]||x.all[1];if(!A||!B)return null;
+  var k='back';
+  if(x.gap>=15&&x.mins<=8)k='squash';
+  else if(x.feud&&x.feudHeat>=60||/street|nodq|hardcore|cage|lms|brawl/.test(String(x.stip||'')))k='war';
+  else if(/[HS]/.test(A.style)&&/[HS]/.test(B.style))k='sprint';
+  else if(A.style==='T'&&B.style==='T')k='chess';
+  else if(x.upset||(x.under&&x.under===o.w&&x.gap>=6))k='comeback';
+  var pk=function(L,s){return L[Math.floor(h01(hk+s)*L.length)%L.length];};
+  var srt=[A,B].sort(function(p,q){return q.ovr-p.ovr;});
+  var c={k:k,p:o.p,a:A.name,b:B.name,w:o.w||A.name,big:srt[0].name,small:srt[1].name,am:pk(MOVES[A.style]||MOVES.A,'am'),bm:pk(MOVES[B.style]||MOVES.A,'bm'),
+    fa:A.fin||null,fb:B.fin||null,hot:x.MQ>=72&&x.mins>=12};
+  return {k:k,intro:gram(GR_SHAPE,'intro',c,hk+'i'),spot:x.mins>8&&k!=='squash'?gram(GR_SHAPE,'spot',c,hk+'s'):null,late:x.mins>=12&&k!=='squash'?gram(GR_SHAPE,'late',c,hk+'l'):null};
 }
 
 /* ===== 60-rpg.js ===== */
