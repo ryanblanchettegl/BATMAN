@@ -2769,6 +2769,111 @@ E.resolvePre=function(S,card,choice){
   pre.done=true;pre.result=res;return res;
 };
 
+/* ===== 60-grammar.js ===== */
+/* ===== The text grammar: procedurally written lines for the newsletter, the websites and the chat room =====
+   A small grammar engine in the manner of Tracery, with Improv's idea that a line may only be used when it is true
+   of the world. A rule set maps a symbol to its choices; "#sym#" in a choice expands that symbol, "{key}" fills in a
+   value from the context, and "#sym.cap#" or "#sym.up#" changes its case. A choice is a string, or {t, if, w}: `if`
+   is a function of the context that must hold, `w` a weight (1 if left out). Every pick comes from h01() on a key, so
+   the same week writes the same words, and nothing here ever draws on rnd(S): words never change how a game plays. */
+function gramPick(L,ctx,key){
+  var ok=[],tot=0;
+  for(var i=0;i<L.length;i++){var c=L[i];if(typeof c==='string'){ok.push({t:c,w:1});tot+=1;}else if(!c.if||c.if(ctx)){var w=c.w==null?1:c.w;ok.push({t:c.t,w:w});tot+=w;}}
+  if(!ok.length)return '';
+  var r=h01(key)*tot;for(var j=0;j<ok.length;j++){r-=ok[j].w;if(r<0)return ok[j].t;}
+  return ok[ok.length-1].t;
+}
+function gramCase(s,m){if(m==='cap')return s.charAt(0).toUpperCase()+s.slice(1);if(m==='up')return s.toUpperCase();if(m==='low')return s.toLowerCase();return s;}
+/** Expand `start` in rule set R with context ctx. key makes the picks repeatable; depth stops runaway rules. */
+function gram(R,start,ctx,key,depth){
+  depth=depth||0;var n=0;
+  var src=R[start]?gramPick(R[start],ctx,key+'|'+start):start;
+  if(depth>8)return src;
+  return src.replace(/#(\w+)(?:\.(\w+))?#/g,function(_,sym,mod){n++;return gramCase(gram(R,sym,ctx,key+'|'+n+sym,depth+1),mod);})
+    .replace(/\{(\w+)\}/g,function(_,k){return ctx[k]!=null?String(ctx[k]):'';});
+}
+
+/* ---------- the newsletter ---------- */
+var GR_SHEET={
+  // the headline over the lead story
+  head:[
+    {t:'#title_head#',if:function(c){return c.k==='title';},w:3},
+    {t:'#hot_head#',if:function(c){return c.k==='hot';},w:3},
+    {t:'#cold_head#',if:function(c){return c.k==='cold';},w:3},
+    {t:'#world_head#',if:function(c){return c.k==='world';},w:3},
+    {t:'#quiet_head#',if:function(c){return c.k==='quiet';},w:3}
+  ],
+  title_head:['Gold changes hands','The belt moves','So much for the long reign','A new name on the belt',{t:'{who} takes the gold',if:function(c){return !!c.who;},w:2},{t:'Title change: {who}',if:function(c){return !!c.who;},w:2},{t:'The night {who} got the belt',if:function(c){return !!c.who;},w:2}],
+  hot_head:['{co} on a roll','A big week for {co}','{co} is the hottest act in the business','Everything clicked for {co}','The crowds are coming back to {co}','{co} delivers again'],
+  cold_head:['A rough week for {co}','{co} misses the mark','Where did the crowd go?','Trouble in {co}','{co} has some thinking to do','Flat, flat, flat'],
+  world_head:['Around the business','News from around the rings','The rest of the world','Elsewhere this week','Meanwhile, over in {rival}'],
+  quiet_head:['A quiet week','Not much to report','The calm before something','Nothing broke this week','A slow news week'],
+  // the editor's opening line, set above everything else, the way the 90s sheets began
+  open:[
+    {t:'#open_title#',if:function(c){return c.k==='title';},w:2},
+    {t:'#open_hot#',if:function(c){return c.k==='hot';},w:2},
+    {t:'#open_cold#',if:function(c){return c.k==='cold';},w:2},
+    '#open_any#'
+  ],
+  open_title:['Let us start with the title change, because nothing else this week comes close.','We have a new champion, and the phones have not stopped ringing about it.','The big story is the belt, and we will get to everything else after.'],
+  open_hot:['If you only watch one company right now, it is {co}.','The word coming out of {co} this week is all good.','{co} put on the kind of week that gets people talking at work on Monday.'],
+  open_cold:['There is no nice way to put this week for {co}.','The tapes from {co} this week were a chore to get through.','Somebody at {co} needs to have a long look at the last few shows.'],
+  open_any:['Here is what happened this week.','Plenty to cover, so let us get to it.','As always, the phone lines were busy this week.','Lots of notes this week, some of them even good.','Pour a coffee. This one runs long.'],
+  // the closing verdict on the booking
+  verdict:[
+    {t:'#v_good#',if:function(c){return c.d>=3;}},
+    {t:'#v_bad#',if:function(c){return c.d<=-3;}},
+    {t:'#v_par#',if:function(c){return c.d>-3&&c.d<3;}}
+  ],
+  v_good:['The booking is working: the shows are beating expectations.','Whoever is putting these cards together deserves a raise.','Credit where it is due. The shows are better than they need to be.','This is a company that knows what its crowd wants.'],
+  v_bad:['The booking is missing: the shows are under what the crowd expects.','The cards are not landing, and the crowd is starting to notice.','Something has to change, and soon.','You cannot keep running shows like this and expect people to keep buying tickets.'],
+  v_par:['The booking is doing its job, no more.','Solid enough. Nobody is going to remember it in a month.','Not bad, not great. Par for the course.','The shows are fine. Fine is not what sells tickets.']
+};
+
+/* ---------- the websites on Wrestle Search ---------- */
+var GR_WEB={
+  rumor:[
+    {t:'EXCLUSIVE: #rumor_tease#',w:2},'SHOCKER: #rumor_tease#','You will NOT believe it: #rumor_tease#','Sources say: #rumor_tease#','BREAKING!!! #rumor_tease#'
+  ],
+  rumor_tease:[
+    {t:'{who} is not happy',if:function(c){return !!c.who;}},
+    {t:'{who} could be on the move',if:function(c){return !!c.who;}},
+    {t:'Big changes coming to {co}',if:function(c){return !!c.co;}},
+    'Somebody big is about to jump ship','The locker room is talking','Contracts, egos and a lot of phone calls'
+  ],
+  results:[
+    {t:'{show}: #res_hot#',if:function(c){return c.band>0;},w:2},
+    {t:'{show}: #res_par#',if:function(c){return c.band===0;},w:2},
+    {t:'{show}: #res_bad#',if:function(c){return c.band<0;},w:2},
+    'Full results from {show}'
+  ],
+  res_hot:['A must see','The crowd went home happy','Go find the tape','Best show in weeks','Do not miss this one'],
+  res_par:['A solid night','Nothing wrong with it','Business as usual','Did its job'],
+  res_bad:['Skip it','A long night','Not their finest hour','The crowd checked out early','We watched so you do not have to'],
+  rank:['The list is in!','Who is the best in the world?','This week’s top ten','The rankings everybody argues about',{t:'{who} holds number one',if:function(c){return !!c.who;},w:2}],
+  belts:['Every champion, every company','Who holds the gold right now','Champions of the world','The title picture, updated weekly',{t:'{n} belts and counting',if:function(c){return c.n>0;}}],
+  whisper:['What really happened behind the curtain','You did not hear it from us','The locker room report','Heard in catering',{t:'All eyes on {who}',if:function(c){return !!c.who;},w:2}],
+  board:['Welcome to the board! Be nice.','The fans have spoken','Hot topic: {topic}','Post your thoughts below',{t:'The board is in a mood today',if:function(c){return c.mood<45;},w:2},{t:'Everybody is happy for once',if:function(c){return c.mood>=75;},w:2}]
+};
+
+/* ---------- the chat room ---------- */
+var GR_CHAT={
+  line:[
+    {t:'#chat_hot#',if:function(c){return c.band>0;},w:3},
+    {t:'#chat_bad#',if:function(c){return c.band<0;},w:3},
+    {t:'#chat_par#',if:function(c){return c.band===0;},w:3},
+    {t:'#chat_best#',if:function(c){return !!c.best;},w:2},
+    {t:'#chat_win#',if:function(c){return !!c.win&&!!c.lose;},w:2},
+    {t:'#chat_new#',if:function(c){return !!c.champ;},w:3}
+  ],
+  chat_hot:['{show} was awesome!!!','anybody else see {show}?? wow','{show} = show of the year so far','ok {co} is on fire right now','that crowd was LOUD tonight','i take back everything i said about {co}'],
+  chat_bad:['{show} put me to sleep lol','{co} needs a new booker','why do i keep watching {co}','{show} was rough. real rough','zzzzzz','who books this stuff'],
+  chat_par:['{show} was ok i guess','not bad from {co} tonight','{show} was fine. nothing special','decent show, slow middle'],
+  chat_best:['{best} stole the show','did you see {best}?? unreal','{best} was the only thing worth watching','rewinding {best} right now'],
+  chat_win:['cant believe {win} beat {lose}','{win} over {lose} was the right call','{lose} got robbed!!!','{win} {win} {win}!!!!','{lose} fans in shambles'],
+  chat_new:['NEW CHAMPION!!! {champ}!!!','{champ} with the belt. finally','{champ} as champ? not sure about that','about time {champ} got the gold','{champ} wont hold it a month, watch']
+};
+
 /* ===== 60-rpg.js ===== */
 /* ---------- attempts: a chance of success built from what helps and what hurts, shown before you choose ----------
    Under the hood it is two six-sided numbers plus modifiers against a target; the player only ever sees the chance. */
@@ -10122,7 +10227,6 @@ var NET_WIN_F=['Thank you, {city}. That one was for you.','Every mile on the roa
 var NET_WIN_H=['Told you. Nobody in that building is on my level.','Boo all you like. The result is the same.','That was not a fight. That was a lesson.','You paid to see me win. You are welcome.'];
 var NET_NEW=['AND NEW. Read it again.','It is mine now. Come and try to take it.','Years of work for one night like this.'];
 var NET_LOSE=['Not my night. It will not happen twice.','I heard the count. I will hear it in my sleep. I will be back.','No excuses. Run it back.'];
-var NET_FAN=['Still thinking about {best}.','{win} over {lose} and I am fine with it.','{show} was a {word} show. Fight me.','I was there for {best}. My voice is gone.'];
 var NET_RIVAL=['{show} is in the books. Ask anybody who was there.','Another night, another building on its feet.','They say the competition is catching up. I have not noticed.'];
 
 /* two people turn into friends or enemies: the fans have a view, each in their own voice (called from relBump, never uses rnd) */
@@ -10155,8 +10259,9 @@ SHOWX.push(function(S,P,show,rep){
   ms.forEach(function(s,i){if(s!==main&&s.change&&s.wi&&s.wi.length){var cw=S.w[s.wi[0]];if(cw)netStarPost(S,cw,netPickH(NET_NEW,key+'c'+i),key+'c'+i);}});
   netPost(S,'c',netHandle(P.name),P.full||P.name,(rep.att?rep.att.toLocaleString('en-US')+' of you in the building':'A full night')+' for '+rep.name+'. '+(rep.sellout?'A sell-out. ':'')+'Thank you.',netLikes(P.image*P.image*2,key+'co'));
   netPost(S,'p',netHandle(S.columnist||'The Ringside Wire'),S.columnist||'The Ringside Wire',best.label+' at '+rep.name+': '+starG(best.ov)+'. The show was graded '+gradeG(repCS(rep))+(verdictBand(d)>0?', better than this crowd expected.':(verdictBand(d)<0?', short of what this crowd expected.':', what this crowd came for.')),netLikes(900,key+'pr'));
-  var fan=FANS[Math.floor(h01(key+'f')*FANS.length)%FANS.length][0],word=verdictBand(d)>0?'great':(verdictBand(d)<0?'flat':'solid');
-  netPost(S,'f','@'+fan,fan,fill(netPickH(NET_FAN,key+'ft'),{best:best.label,win:main.win||'nobody',lose:ml?ml.name:'the other side',show:rep.name,word:word}),netLikes(120,key+'fl'));
+  // the chat room after the show: two to four fans, each line written by the grammar from what happened (src/60-grammar.js)
+  var cc={show:rep.name,co:P.name,band:verdictBand(d),best:best.label,win:mw?mw.name:null,lose:ml?ml.name:null,champ:main.change&&mw?mw.name:null},nf=2+Math.floor(h01(key+'nf')*3),said={};
+  for(var fi=0;fi<nf;fi++){var fan=FANS[Math.floor(h01(key+'f'+fi)*FANS.length)%FANS.length][0],ln=gram(GR_CHAT,'line',cc,key+'ft'+fi);if(said[ln])continue;said[ln]=1;netPost(S,'f','@'+fan,fan,ln,netLikes(120,key+'fl'+fi));}
 });
 /* at the end of the week: the news that broke, as the press posts it */
 WEEKX.push(function(S){
@@ -10251,13 +10356,16 @@ function netMoment(reps){
 /** One issue of the dirt sheet: what happened in week `wk`, as far as the game still remembers it. */
 function netSheet(S,wk){
   var P=S.promos[S.player],news=S.news.filter(function(x){return x.w===wk;}),reps=S.reports.filter(function(r){return r.week===wk&&r.promo===P.id;}).reverse();
-  var yours=reps.map(function(r){return {show:r.name,rating:r.rating,exp:r.exp==null?null:Math.round(r.exp*10)/10,big:!!r.big,lines:r.sheet&&r.sheet.lines?r.sheet.lines.slice(0,5):[]};});
+  var yours=reps.map(function(r){return {show:r.name,rating:r.rating,exp:r.exp==null?null:Math.round(r.exp*10)/10,big:!!r.big,lines:r.sheet&&r.sheet.lines?r.sheet.lines.slice(0,5):[],head:gram(GR_WEB,'results',{show:r.name,band:verdictBand(r.rating-(r.exp==null?r.rating:r.exp))},'res'+r.week+r.name)};});
   var best=null;reps.forEach(function(r){r.segs.forEach(function(s){if(s.k==='match'&&(!best||s.ov>best.ov))best={label:s.label,ov:s.ov,show:r.name,stars:starG(s.ov)};});});
   var lead=null,d=reps.length?avg(reps.map(function(r){return r.rating-(r.exp==null?r.rating:r.exp);})):0,tn=news.filter(function(x){return x.k==='title';})[0];
-  if(tn)lead={head:'Gold changes hands',text:tn.t};
-  else if(reps.length&&d>=5)lead={head:'A big week for '+P.name,text:'The shows beat what the crowd expected by '+d.toFixed(1)+' points. People are talking.'};
-  else if(reps.length&&d<=-5)lead={head:'A rough week for '+P.name,text:'The shows fell '+(-d).toFixed(1)+' points short of what the crowd expected. The mood in the building was flat.'};
-  else{var wn=news.filter(function(x){return x.k==='world';})[0]||news.filter(function(x){return x.k==='story';})[0]||news[0];lead=wn?{head:wn.k==='world'?'Around the business':'The story of the week',text:wn.t}:{head:'A quiet week',text:'Nothing broke this week that anybody will remember.'};}
+  // the headline and the editor's opening come from the grammar (src/60-grammar.js), so no two weeks read the same
+  var gk='sheet'+wk+P.id,gc={co:P.name,d:d,who:null,rival:S.order.length>1?S.promos[netPickH(S.order.filter(function(p){return p!==P.id;}),gk+'rv')].name:P.name};
+  if(tn){gc.k='title';gc.who=/ won the /.test(tn.t)?tn.t.split(' won the ')[0]:null;lead={head:'',text:tn.t};}
+  else if(reps.length&&d>=5){gc.k='hot';lead={head:'',text:'The shows beat what the crowd expected by '+d.toFixed(1)+' points. People are talking.'};}
+  else if(reps.length&&d<=-5){gc.k='cold';lead={head:'',text:'The shows fell '+(-d).toFixed(1)+' points short of what the crowd expected. The mood in the building was flat.'};}
+  else{var wn=news.filter(function(x){return x.k==='world';})[0]||news.filter(function(x){return x.k==='story';})[0]||news[0];gc.k=wn?'world':'quiet';lead=wn?{head:'',text:wn.t}:{head:'',text:'Nothing broke this week that anybody will remember.'};}
+  lead.head=gram(GR_SHEET,'head',gc,gk+'h');lead.open=gram(GR_SHEET,'open',gc,gk+'o');
   var used={};if(lead)used[lead.text]=1;
   var world=[];S.order.forEach(function(pid){
     if(pid===P.id)return;var RV=S.promos[pid],lines=news.filter(function(x){return x.k!=='you'&&!used[x.t]&&netMentions(x.t,RV.name);}).slice(0,2).map(function(x){used[x.t]=1;return x.t;});
@@ -10268,11 +10376,26 @@ function netSheet(S,wk){
   var c=cal(wk+1),next=[];
   if(c.wom===4)next.push(P.name+' '+dbOf(S).events[c.month]+' is next week.');
   var soon=rosterOf(S,P.id).filter(function(w){return !w.nw&&w.con!=null&&w.con<=2;}).sort(function(a,b){return b.ovr-a.ovr;})[0];if(soon)next.push(soon.name+'’s contract with '+P.name+' is nearly up.');
-  var review=reps.length?(d>=3?'The booking is working: the shows are beating expectations.':(d<=-3?'The booking is missing: the shows are under what the crowd expects.':'The booking is doing its job, no more.')):'No shows from '+P.name+' yet this week.';
+  var review=reps.length?gram(GR_SHEET,'verdict',gc,gk+'v'):'No shows from '+P.name+' yet this week.';
   return {week:wk,label:cal(wk).label,by:S.columnist||'The Ringside Wire',lead:lead,yours:yours,best:best,world:world,business:business,backstage:netBackstage(S,wk),moment:netMoment(reps),throwback:netThrowback(S,wk),followups:(S.rumR||[]).filter(function(x){return x.w===wk;}),rumours:netRumours(S,wk),next:next,review:review};
 }
 E.sheetInfo=function(S){return {now:netSheet(S,S.week),past:(S.sheets||[]).slice()};};
 E.feed=function(S){return (S.feed||[]).slice();};
+/** The headline each site on Wrestle Search runs this week, written by the grammar from what is true of the game. Reads only. */
+E.webHeads=function(S){
+  var wk=S.week,P=S.promos[S.player],rum=netRumours(S,wk).filter(function(r){return r.w!=null;})[0],C=E.criticList(S),key='web'+wk;
+  var nb=0;S.order.forEach(function(pid){nb+=S.promos[pid].titles.length;});
+  var hurt=(S.news||[]).filter(function(x){return x.w>=wk-1&&x.k==='injury';})[0],N=S.net||{mood:60,threads:[]};
+  var star=rosterOf(S,P.id).filter(function(w){return !w.nw;}).sort(function(a,b){return a.morale-b.morale;})[0];
+  return {
+    rumor:gram(GR_WEB,'rumor',{who:rum?S.w[rum.w].name:null,co:rum&&rum.pid?S.promos[rum.pid].name:null},key+'r'),
+    results:gram(GR_WEB,'results',{show:P.last?P.last.name:P.name,band:P.last?verdictBand(P.last.rating-(P.last.exp==null?P.last.rating:P.last.exp)):0},key+'s'),
+    rank:gram(GR_WEB,'rank',{who:C.rows.length?C.rows[0].w.name:null},key+'k'),
+    belts:gram(GR_WEB,'belts',{n:nb},key+'b'),
+    whisper:gram(GR_WEB,'whisper',{who:star&&star.morale<50?star.name:(hurt?null:null)},key+'w'),
+    board:gram(GR_WEB,'board',{mood:N.mood,topic:N.threads.length?N.threads[0].sub:'the last show'},key+'o')
+  };
+};
 E.NET_LVL={sure:'Sure',likely:'Likely',thin:'Thin'};
 
 /* ===== 95-tasks.js ===== */

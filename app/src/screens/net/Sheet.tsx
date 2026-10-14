@@ -11,6 +11,7 @@ function Issue(p: { s: any; live: boolean }) {
   return <>
     <Panel cls="mb3 lead">
       <p class="eyebrow">{s.label}{p.live ? ' · so far' : ''}</p>
+      {s.lead.open ? <p class="sheet-open" data-t="sheet-open"><i>{s.lead.open}</i></p> : null}
       <h2 class="sheet-head">{s.lead.head}</h2>
       <p><Txt>{s.lead.text}</Txt></p>
     </Panel>

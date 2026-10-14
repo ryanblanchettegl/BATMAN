@@ -21,7 +21,7 @@ function Rumors() {
 function Results() {
   const s = issue();
   return <>
-    {s.yours.map((y: any) => <div key={y.show}><p><b>{y.show}</b> got a <b>{E.repGrade(y)}</b></p>{y.lines.slice(0, 3).map((l: string, i: number) => <p key={i}>{'> '}<Txt>{l}</Txt></p>)}</div>)}
+    {s.yours.map((y: any) => <div key={y.show}>{y.head ? <p class="ws-h2">{y.head}</p> : null}<p><b>{y.show}</b> got a <b>{E.repGrade(y)}</b></p>{y.lines.slice(0, 3).map((l: string, i: number) => <p key={i}>{'> '}<Txt>{l}</Txt></p>)}</div>)}
     {s.world.map((w: any) => <div key={w.id}><p><b><PromoName id={w.id} /></b></p>{w.lines.map((l: string, i: number) => <p key={i}>{'> '}<Txt>{l}</Txt></p>)}</div>)}
     {!s.yours.length && !s.world.length ? <Empty>No results posted yet this week.</Empty> : null}
   </>;
@@ -58,6 +58,7 @@ export function Search() {
     <div class="ws-bar"><Btn kind="sm" t="ws-back" disabled={!site} onClick={home}>Back</Btn><span class="ws-url" data-t="ws-url">http://{site ? site.url : 'www.wrestlesearch.com'}</span></div>
     {site ? <div class={'ws-site ' + site.cls} data-t="ws-site" data-v={site.id}>
       <p class="ws-title">{site.n}</p>
+      <p class="ws-head" data-t="ws-head">{E.webHeads(G.S)[site.id]}</p>
       <div class="ws-body">{site.body()}</div>
       <p class="ws-count">You are visitor number {hits(site.id)} {'·'} Best viewed at 800 by 600</p>
     </div> : <div class="ws-home">
