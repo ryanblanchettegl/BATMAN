@@ -1587,7 +1587,7 @@ function showStart(S,P,show,card){
   if(!S.cal){
     var hype=cardHype(S,P,show,card,isPl),dm=TIX_D[P.tix],d0=demand(P,show,1)*(isPl?tourBoost(S,P)*roadMktNow(S,P):1),d=d0*(isPl?tasteDraw(S,P,card,rep):1),cap=capFor(d0);   // the building was booked before the card was
     rep.hype=hype;rep.cap=cap;rep.att=Math.round(Math.min(cap,d*hype*dm));
-    if(isPl&&big){rep.bf=Math.round(buysK(P,show,1)*1000);rep.hp=hypeParts(S,P,show,card);}   // the buy rate report (src/34-night.js): the forecast, and what moved it
+    if(isPl&&big){var bh=P.bh||[],h0=bh.length?bh.reduce(function(a,b){return a+b;},0)/bh.length:1.15;rep.bf=Math.round(buysK(P,show,h0)*1000);rep.hp=hypeParts(S,P,show,card);P.bh=bh.concat([hype]).slice(-3);}   // the forecast is what the last few big nights drew   // the buy rate report (src/34-night.js): the forecast, and what moved it
     if(isPl){var sold=roadSoldNow(S,P);if(sold>rep.att){rep.noshow=sold-rep.att;rep.att=sold;}}   // a ticket sold is a ticket paid for, whoever turns up
     rep.sellout=rep.att>=cap;
     rep.energy=isPl?clamp((hype*dm-1)*9,-2,2):0;
@@ -2855,6 +2855,9 @@ WEEKX.push(function(S){
     news(S,'world',P.name+' turns its '+MONTHS[m]+' event, '+L[m].n+', into '+(to==='ballroom'?'a ballroom show: a smaller room it can fill.':'a gimmick night.'));
   });
 });
+/* every big night of yours is kept for Finances: the buys against the forecast and the money (NEXT.md 3.6) */
+SHOWX.push(function(S,P,show,rep){if(S.cal||P.id!==S.player||!show.big||!rep.bf)return;var L=S.buyLog||(S.buyLog=[]);L.unshift({w:S.week,n:rep.name,b:rep.buys,f:rep.bf,m:rep.ppv,t:(evTy(show)||{}).n});if(L.length>24)L.length=24;});
+E.buyLog=function(S){return (S.buyLog||[]).slice();};
 
 /* ===== 50-company.js ===== */
 /* ---------- the company: broadcast slot, production, risk, tickets, advertising, sponsors ---------- */

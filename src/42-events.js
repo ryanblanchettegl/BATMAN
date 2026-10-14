@@ -53,3 +53,6 @@ WEEKX.push(function(S){
     news(S,'world',P.name+' turns its '+MONTHS[m]+' event, '+L[m].n+', into '+(to==='ballroom'?'a ballroom show: a smaller room it can fill.':'a gimmick night.'));
   });
 });
+/* every big night of yours is kept for Finances: the buys against the forecast and the money (NEXT.md 3.6) */
+SHOWX.push(function(S,P,show,rep){if(S.cal||P.id!==S.player||!show.big||!rep.bf)return;var L=S.buyLog||(S.buyLog=[]);L.unshift({w:S.week,n:rep.name,b:rep.buys,f:rep.bf,m:rep.ppv,t:(evTy(show)||{}).n});if(L.length>24)L.length=24;});
+E.buyLog=function(S){return (S.buyLog||[]).slice();};

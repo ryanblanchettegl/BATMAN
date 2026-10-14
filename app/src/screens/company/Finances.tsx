@@ -56,6 +56,16 @@ function Weeks(p: { H: any[] }) {
   </table></div>;
 }
 
+/** Every big night: the buys at home against the forecast, and the money. */
+function BigNights() {
+  const L: any[] = E.buyLog(G.S), k = (n: number) => n >= 1000 ? Math.round(n / 1000) + 'K' : String(n);
+  if (!L.length) return <Empty>Your first big event goes in here, with its buys against the forecast.</Empty>;
+  return <div class="tw" data-t="fn-big"><table>
+    <thead><tr><th>Night</th><th class="r">Bought</th><th class="r">Forecast</th><th class="r">Money</th></tr></thead>
+    <tbody>{L.map((x, i) => <tr key={i}><td>{x.n.replace(me().name + ' ', '')}<br /><span class="muted">{E.cal(x.w).label.replace(/^Week \d+, /, '')}</span></td>
+      <td class={'r num ' + (x.b >= x.f ? 'good' : 'bad')}>{k(x.b)}</td><td class="r num">{k(x.f)}</td><td class="r num">{cash(x.m)}</td></tr>)}</tbody>
+  </table></div>;
+}
 export function Finances() {
   const S = G.S, P = me(), H = P.hist.slice(-24);
   let wages = 0; E.rosterOf(S, P.id).forEach((w: any) => { wages += w.wage; });
@@ -74,13 +84,13 @@ export function Finances() {
     {H.length ? <Weeks H={H} /> : null}
   </div>;
   const st = slice<{ k: string }>('finances', () => ({ k: 'inc' })), f = S.fin;
-  const TABS: [string, string][] = [['inc', f ? 'Week ' + f.w + ' income' : 'Income'], ['out', f ? 'Week ' + f.w + ' costs' : 'Costs'], ['weeks', 'Week by week']];
+  const TABS: [string, string][] = [['inc', 'Income'], ['out', 'Costs'], ['weeks', 'By week'], ['big', 'Big nights']];
   return <div class="onescreen"><div class="head sr"><h1>Finances</h1></div><Desktop cls="fnpage" t="finances">
     <Win title={'The money: ' + P.name} area="sum" t="fn-sum">{money}</Win>
     <Win title="Weekly net" area="chart" t="fn-chart">{H.length ? <NetChart H={H} bare /> : <Empty>The chart starts after your first week.</Empty>}</Win>
     <Win title="The books" area="books" t="fn-books">
       <div class="row">{TABS.map(([k, n]) => <Btn key={k} kind="sm" on={st.k === k} t="fn-tab" d={{ k }} onClick={() => view(() => { st.k = k; })}>{n}</Btn>)}</div>
-      <div class="fnpane">{st.k === 'weeks' ? (H.length ? <Weeks H={H} /> : <Empty>Nothing yet.</Empty>) : <Ledger only={st.k as any} />}</div>
+      <div class="fnpane">{st.k === 'big' ? <BigNights /> : st.k === 'weeks' ? (H.length ? <Weeks H={H} /> : <Empty>Nothing yet.</Empty>) : <Ledger only={st.k as any} />}</div>
     </Win>
   </Desktop></div>;
 }
