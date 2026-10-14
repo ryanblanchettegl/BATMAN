@@ -27,6 +27,7 @@ function Issue(p: { s: any; live: boolean }) {
         {s.moment ? <Panel title="Moment of the week"><p data-t="sheet-moment"><Txt>{'“' + s.moment.t + '”'}</Txt></p><p class="muted">{s.moment.label} {'·'} {s.moment.show}</p></Panel> : null}
         {s.best ? <Panel title="Match of the week"><p><b><Txt>{s.best.label}</Txt></b></p><p class="muted">{s.best.show} {'·'} <span class="gold">{stars(s.best.ov)}</span></p></Panel> : null}
         {s.throwback && s.throwback.length ? <Panel title="Looking back"><ul class="sheet-lines">{s.throwback.map((l: any, i: number) => <li key={i} data-t="throwback"><Txt>{l.t}</Txt></li>)}</ul></Panel> : null}
+        {s.feuds && s.feuds.length ? <Panel title="Feud watch"><ul class="sheet-lines" data-t="feud-watch">{s.feuds.map((l: string, i: number) => <li key={i}><Txt>{l}</Txt></li>)}</ul></Panel> : null}
         {s.next.length ? <Panel title="Coming up"><ul class="sheet-lines">{s.next.map((l: string, i: number) => <li key={i}><Txt>{l}</Txt></li>)}</ul></Panel> : null}
       </div>
       <div class="stack">

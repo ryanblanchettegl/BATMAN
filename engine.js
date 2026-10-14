@@ -3027,6 +3027,21 @@ function matchShape(x,o,hk){
   return {k:k,intro:gram(GR_SHAPE,'intro',c,hk+'i'),spot:x.mins>8&&k!=='squash'?gram(GR_SHAPE,'spot',c,hk+'s'):null,late:x.mins>=12&&k!=='squash'?gram(GR_SHAPE,'late',c,hk+'l'):null};
 }
 
+/* ---------- the newsletter's feud watch: how the stories around the business stand ---------- */
+var GR_FEUD={
+  line:[
+    {t:'#fw_hot#',if:function(c){return c.k==='hot';}},{t:'#fw_stale#',if:function(c){return c.k==='stale';}},
+    {t:'#fw_new#',if:function(c){return c.k==='new';}},{t:'#fw_long#',if:function(c){return c.k==='long';}},
+    {t:'#fw_done#',if:function(c){return c.k==='done';}},{t:'#fw_fizz#',if:function(c){return c.k==='fizz';}}
+  ],
+  fw_hot:['{f} in {co} is the hottest thing going right now.','Nobody is drawing like {f} in {co}.','{f} ({co}) has the crowds on their feet every week.'],
+  fw_stale:['{f} in {co} has run out of road. Time to end it.','We have seen everything {f} has to offer. {co} should take the hint.','{f} ({co}) is starting to drag.'],
+  fw_new:['Keep an eye on {f} in {co}. It is only just starting.','{co} has started something with {f}.','Early days for {f} in {co}, but there is something there.'],
+  fw_long:['{f} has been going for {w} weeks in {co}, and it is still hot. Remarkable.','{w} weeks in, {f} is still the story in {co}.'],
+  fw_done:['{f} came to an end in {co} this week.','That is a wrap on {f} in {co}.'],
+  fw_fizz:['{f} in {co} never caught on, and it is over.','{co} quietly let {f} die. Nobody noticed.']
+};
+
 /* ===== 60-rpg.js ===== */
 /* ---------- attempts: a chance of success built from what helps and what hurts, shown before you choose ----------
    Under the hood it is two six-sided numbers plus modifiers against a target; the player only ever sees the chance. */
@@ -10607,8 +10622,14 @@ function netSheet(S,wk){
   var c=cal(wk+1),next=[];
   if(c.wom===4)next.push(P.name+' '+dbOf(S).events[c.month]+' is next week.');
   var soon=rosterOf(S,P.id).filter(function(w){return !w.nw&&w.con!=null&&w.con<=2;}).sort(function(a,b){return b.ovr-a.ovr;})[0];if(soon)next.push(soon.name+'’s contract with '+P.name+' is nearly up.');
+  // feud watch: the stories around the business, from their heat, freshness and age (src/21-living.js), one line each
+  var fw=[];S.feuds.forEach(function(f){var co=S.promos[f.promo]?S.promos[f.promo].name:'';if(!co)return;var c={f:feudLabel(S,f),co:co,w:wk-f.start,k:null};
+    if(f.res){if(f.end===wk)c.k=f.dead?(f.fizzle==='cold'?'fizz':null):'done';}
+    else if(wk-f.start>=24&&f.heat>=60)c.k='long';else if(f.heat>=75)c.k=f.fresh!=null&&f.fresh<35?'stale':'hot';else if(wk-f.start<=1)c.k='new';
+    if(c.k)fw.push({k:c.k,h:f.heat,t:gram(GR_FEUD,'line',c,'fw'+wk+f.id)});});
+  var FWO={done:0,hot:1,long:2,stale:3,fizz:4,new:5};fw.sort(function(a,b){return FWO[a.k]-FWO[b.k]||b.h-a.h;});
   var review=reps.length?gram(GR_SHEET,'verdict',gc,gk+'v'):'No shows from '+P.name+' yet this week.';
-  return {week:wk,label:cal(wk).label,by:S.columnist||'The Ringside Wire',lead:lead,yours:yours,best:best,world:world,business:business,backstage:netBackstage(S,wk),moment:netMoment(reps),throwback:netThrowback(S,wk),followups:(S.rumR||[]).filter(function(x){return x.w===wk;}),rumours:netRumours(S,wk),next:next,review:review};
+  return {week:wk,label:cal(wk).label,by:S.columnist||'The Ringside Wire',lead:lead,yours:yours,best:best,world:world,business:business,backstage:netBackstage(S,wk),moment:netMoment(reps),throwback:netThrowback(S,wk),feuds:(function(){var n={};return fw.filter(function(x){n[x.k]=(n[x.k]||0)+1;return n[x.k]<=2;}).slice(0,5).map(function(x){return x.t;});})(),followups:(S.rumR||[]).filter(function(x){return x.w===wk;}),rumours:netRumours(S,wk),next:next,review:review};
 }
 E.sheetInfo=function(S){return {now:netSheet(S,S.week),past:(S.sheets||[]).slice()};};
 E.feed=function(S){return (S.feed||[]).slice();};
