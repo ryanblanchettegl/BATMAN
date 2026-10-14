@@ -18,7 +18,7 @@ All of these are his words or his picks from mock-ups on 6 October. They are als
 | The big button | A key on the bottom line: SPACE and what happens next. Its colour says what kind of step it is. The floating yellow button goes. | every `final-*` picture |
 | Dot-matrix art | Colour lights: round lit dots on a black board with a glow, set in a grey window. | `docs/mockups/dots-sheet1.png` |
 | Company marks | Every company has its own icon built from its three initials. | `final/company-marks.png` |
-| Roster, Book the show | Mocked up in the new look. Ryan has not reacted to these two yet. | `final-6`, `final-7` |
+| Roster, Book the show | Roster and Book the show built in windows (13 October, Ryan asked for the other pages to follow the desk). Book the show keeps its old parts inside three windows; the stakes and bell windows of `final-7` are not built yet. | `final-6`, `final-7` |
 
 The scripts that drew every picture are beside them (`final.js`, `dotlib.js`, `maplib.js`, `marks.js`). They are throwaway mock-up code, but the drawing routines in them are the starting point for the real ones.
 
@@ -336,6 +336,7 @@ These only become possible after the steps above. None is promised.
 
 ## 10. Where the work stands
 
+- 13 October: versions 0.41 to 0.44 (the dirt sheet's backstage, follow-ups and looking back; auto-play and its pace; big moments, the crowd meter and tonight's moments; promos and angles as scenes; the competition on the title card; story arcs; saves to a file) are published. Ryan: always publish the new build (see `CLAUDE.md`). Read the live page before each publish.
 - 8 October: version 0.40 (ticket sales, markets, hometowns, the dossier and the room, Backstage as the board) passed the full test run and is published. The live page's version id is `1791485963-9603` (Version 51). Read the live page and check that id before the next publish.
 - 7 October: version 0.39 (the kit, the SPACE key, lights, logos, the desk with the road) passed the full test run and is published. The live page's version id is `1791416911-389a` (Version 50). Read the live page and check that id before the next publish. (0.38 was `1791393273-993d`, Version 49.)
 - 7 October: the game was renamed EWF Wrestling Manager (`TASKS.md`, the decisions table).

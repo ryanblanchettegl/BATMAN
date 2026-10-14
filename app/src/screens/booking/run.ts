@@ -1,7 +1,7 @@
 /* What the Booking page does: edits to the draft card, the run flow (validate, pre-show incident, the headset call,
    the show itself) and the position in the broadcast. Components call these; nothing here draws. */
 import { E } from '../../engine';
-import { G, ui, pref, reduceMotion, act, view, say, slice } from '../../store';
+import { G, ui, pref, reduceMotion, act, view, say, slice, savePrefs } from '../../store';
 import { book } from '../../flow';
 import { go } from '../../nav';
 import { SFX } from '../../sfx';
@@ -154,6 +154,7 @@ export function liveNext() {
     look(() => {
       L.b++; const nb = bc[L.b];
       if (nb && COUNT.test(nb.x)) SFX.count();
+      else if (nb && nb.h) SFX.crowd(nb.h > 1 ? 100 : 80);
       else if (!nb && sg.k === 'match') { SFX.bellEnd(); SFX.crowd(sg.cr); }
       else if (nb && nb.t === 'pbp' && sg.k === 'match' && L.b === lead(sg) + 2) SFX.bell();
     });
@@ -195,6 +196,7 @@ export function liveStep(): { short: string; label: string; k: 'call' | 'title' 
 export function liveGo() {
   const st = liveStep(); if (!st) return;
   if (st.k === 'signoff') { typer.finish(); liveDone(); return; }   // the good-night line does not hold up the report
+  if (st.k === 'title') typer.finish();   // nor does the welcome hold up the bell: one press rings it
   if (typer.active()) { typer.finish(); return; }
   if (st.k === 'call') { act(() => say('The gorilla position is waiting for your call.')); return; }
   liveNext();
@@ -216,3 +218,42 @@ export const replay = () => look(() => { book().live = { s: -1, b: 0 }; top0(); 
 export const closeReport = () => look(() => { const b = book(); b.report = null; b.live = null; top0(); });
 /** Show one of the booking notes beside the sheet. Whatever was selected on the sheet is let go. */
 export const pickSide = (id: string) => look(() => { const b = book(); b.side = id; b.edit = -1; sel().seg = -1; });
+
+/* ---------- auto-play: the broadcast runs itself at a reading pace ----------
+   Each line stays up long enough to read (longer for a near fall, a finish or a new champion, longest on a
+   result), then the next one comes. It never answers a call, never rings the opening bell and never leaves the
+   sign-off: those wait for the player. SPACE still moves on at once, and P (or the button) pauses it. What is
+   shown and when is all it changes: the show itself was decided by the engine, whatever the pace. */
+let autoT: any = null, autoKey = '';
+const autoHalt = (k: string | undefined) => !k || k === 'signoff' || k === 'title' || k === 'call';
+export function autoStop() { if (autoT) { clearTimeout(autoT); autoT = null; } autoKey = ''; }
+const PACES: ('full' | 'quick' | 'results')[] = ['full', 'quick', 'results'];
+export const PACE_N: Record<string, string> = { full: 'Full', quick: 'Quick', results: 'Results' };
+/** Full, quick or results only. What is shown and how fast; never what happens. */
+export function paceNext() { look(() => { pref.pace = PACES[(PACES.indexOf(pref.pace) + 1) % PACES.length]; savePrefs(); }); }
+export function autoToggle() { look(() => { pref.auto = !pref.auto; savePrefs(); }); }
+/** How long the line on screen stays up, in milliseconds. */
+export function autoWait(): number {
+  const r = liveReport(); if (!r) return 0;
+  const L = livePos(r), s = r.segs[L.s], bc = (s && s.bc) || [], sp = Math.sqrt(pref.speed || 1);
+  if (!s) return 0;
+  const quick = pref.pace === 'quick' || pref.pace === 'results';
+  if (L.b >= bc.length) return Math.round((quick ? 2400 : 3400) / sp);   // the result: stars, the scores, the belt
+  if (pref.pace === 'results') return 500;   // straight on to the result
+  const b = bc[L.b], len = b && b.x ? b.x.length : 40, hot = b && b.h ? (b.h > 1 ? 1500 : 800) : 0;
+  // quick: the routine lines go by at half the time; a big moment still gets its full time
+  return Math.round(Math.min(5200, (800 + len * 26) * (quick && !hot ? 0.5 : 1) + hot) / sp);
+}
+/** Arm auto-play for what is on screen now. `key` names that moment; a new moment re-arms it. */
+export function autoArm(key: string) {
+  autoStop(); if (!pref.auto) return;
+  autoKey = key;
+  const still = () => pref.auto && autoKey === key && !ui.modal && !!liveReport() && !liveCall();
+  const wait = () => {
+    autoT = null; if (!still()) return;
+    if (typer.active() || (typeof document !== 'undefined' && document.hidden)) { autoT = setTimeout(wait, 150); return; }
+    const st = liveStep(); if (!st || autoHalt(st.k)) return;
+    autoT = setTimeout(() => { autoT = null; if (!still() || typer.active()) return; const s2 = liveStep(); if (!s2 || autoHalt(s2.k)) return; if (pref.pace === 'results' && s2.k === 'seg') liveSkip(); else liveNext(); }, autoWait());
+  };
+  autoT = setTimeout(wait, 60);
+}

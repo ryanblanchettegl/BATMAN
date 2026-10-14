@@ -72,6 +72,23 @@ E.edAddRel=function(pkg,a,b,type){edShape(pkg);var r={a:a,b:b,type:REL_TYPES.ind
 
 /** Put a wrestler under contract to a company, or make them a free agent with pid null.
     Titles and teams they held somewhere else are tidied up, so the world never points at someone who has left. */
+/** A copy of one record, under a new name. A wrestler joins the same company at the same push; a belt starts vacant;
+    a team starts with no members; a company brings its shows and belts but not its roster. Returns the copy. */
+E.edDup=function(pkg,table,id){
+  edShape(pkg);var r=edFind(pkg,table,id);if(!r)return null;
+  var c=JSON.parse(JSON.stringify(r)),nk=table==='workers'?'ring_name':'name',nm=String(r[nk]||'')+' (copy)';c[nk]=nm;
+  c.id=edId(pkg,table,nm,table.slice(0,4));
+  if(table==='workers'){pkg.workers.push(c);var h=edHome(pkg,r.id);if(h)E.edSign(pkg,c.id,h.promotion_id,h.push_level);return c;}
+  if(table==='titles'){c.holder_ids=[];pkg.titles.push(c);return c;}
+  if(table==='teams'){c.member_ids=[];delete c.leader_id;pkg.teams.push(c);return c;}
+  if(table==='promotions'){
+    c.full_name=String(r.full_name||r.name)+' (copy)';pkg.promotions.push(c);
+    pkg.shows.filter(function(x){return x.promotion_id===r.id;}).forEach(function(x){var y=JSON.parse(JSON.stringify(x));y.promotion_id=c.id;y.id=edId(pkg,'shows',c.id+'_'+(x.name||'show'));pkg.shows.push(y);});
+    pkg.titles.filter(function(x){return x.promotion_id===r.id;}).forEach(function(x){var y=JSON.parse(JSON.stringify(x));y.promotion_id=c.id;y.holder_ids=[];y.id=edId(pkg,'titles',c.id+'_'+(x.name||'title'));pkg.titles.push(y);});
+    return c;
+  }
+  return null;
+};
 E.edSign=function(pkg,wid,pid,push){
   edShape(pkg);var old=edHome(pkg,wid),from=old?old.promotion_id:null;
   if(from===pid){if(old&&push)old.push_level=push;return old;}
@@ -154,24 +171,140 @@ E.edWithout=function(pkg,ids,gone){
 };
 
 /** Fill a company with unknowns so a new world is playable at once. The same seed makes the same people. */
+var ED_LADDER=['main_eventer','upper_midcarder','midcarder','midcarder','lower_midcarder','jobber'];
+/** Ratings for a place on the card in a company of popularity `pop`: the maths E.edFill uses for unknowns. */
+function edRatings(st,pop,push,style){
+  var tier=Math.max(0,ED_LADDER.indexOf(push)),top=1-tier/5;
+  var sk=function(lo,hi){return clamp(Math.round(lo+(hi-lo)*edRnd(st)+top*10),20,96);};
+  var r={overness:clamp(Math.round(pop-28+top*30+edRnd(st)*8),8,97),brawling:sk(42,70),technical:sk(40,70),aerial:sk(35,68),stamina:sk(45,72),promo_skill:sk(35,70),charisma:sk(38,72)};
+  if(style==='brawler'||style==='powerhouse')r.brawling=clamp(r.brawling+10,20,96);
+  if(style==='technician')r.technical=clamp(r.technical+12,20,96);
+  if(style==='flyer'||style==='striker')r.aerial=clamp(r.aerial+12,20,96);
+  if(style==='entertainer'){r.promo_skill=clamp(r.promo_skill+12,20,96);r.charisma=clamp(r.charisma+10,20,96);}
+  return r;
+}
+function edNames(pkg){var nm=pkg.names||{};return {m:nm.first_m&&nm.first_m.length>=8?nm.first_m:FALLBACK_NAMES.firstM,f:nm.first_f&&nm.first_f.length>=6?nm.first_f:FALLBACK_NAMES.firstF,l:nm.last&&nm.last.length>=8?nm.last:FALLBACK_NAMES.last};}
+/** A ring name nobody in the world has, from the world's own name lists (or the built-in ones). */
+E.edRandomName=function(pkg,gender,seed){
+  edShape(pkg);var st={s:(seed>>>0)||1},N=edNames(pkg),used={},name,tries=0;pkg.workers.forEach(function(w){used[w.ring_name]=1;});
+  do{name=edPick(st,gender==='F'?N.f:N.m)+' '+edPick(st,N.l);tries++;}while(used[name]&&tries<60);
+  return name;
+};
+/** Set a wrestler's ratings for a place on the card (main_eventer, midcarder or jobber), to suit their company. Keeps the
+    ratings this does not set. Their push follows. */
+E.edSetTier=function(pkg,wid,push,seed){
+  edShape(pkg);var w=edFind(pkg,'workers',wid);if(!w||ED_LADDER.indexOf(push)<0)return null;
+  var h=edHome(pkg,wid),p=h?edFind(pkg,'promotions',h.promotion_id):null,r=edRatings({s:(seed>>>0)||1},p?clamp(p.popularity,5,100):50,push,w.style);
+  w.ratings=Object.assign({},w.ratings||{},r);if(h)h.push_level=push;return w;
+};
+/** Unsigned unknowns for the free-agent pool: names from the world's lists, ratings for the lower half of a card in
+    a middling company. Men and women both. Returns the new wrestlers. */
+/** Who can manage a wrestler: anyone with the Manager job other than themselves, the ones in the same company first. */
+E.edManagers=function(pkg,wid){
+  edShape(pkg);var home=E.edHome(pkg,wid);
+  return pkg.workers.filter(function(m){return m.id!==wid&&m.roles&&m.roles.indexOf('manager')>=0;})
+    .sort(function(a,b){return ((E.edHome(pkg,b.id)===home)-(E.edHome(pkg,a.id)===home))||String(a.ring_name).localeCompare(String(b.ring_name));})
+    .map(function(m){return {id:m.id,name:m.ring_name,same:E.edHome(pkg,m.id)===home};});
+};
+/** Tie a wrestler to a manager, or untie them with null. */
+E.edSetManager=function(pkg,wid,mid){
+  edShape(pkg);var w=edFind(pkg,'workers',wid);if(!w)return null;
+  if(mid==null||mid===''){delete w.manager_id;return w;}
+  var m=edFind(pkg,'workers',mid);if(!m||m.id===wid||!m.roles||m.roles.indexOf('manager')<0)return null;
+  w.manager_id=m.id;return w;
+};
+/** One thing done to several wrestlers at once: 'sign' to company `pid`, 'release' (free agents) or 'delete'. Returns how many. */
+E.edMany=function(pkg,ids,what,pid){
+  edShape(pkg);var n=0;(ids||[]).forEach(function(id){if(!edFind(pkg,'workers',id))return;
+    if(what==='sign'&&pid){E.edSign(pkg,id,pid);n++;}else if(what==='release'){E.edSign(pkg,id,null);n++;}else if(what==='delete'){E.edRemove(pkg,'workers',id);n++;}});
+  return n;
+};
+/* ---------- brands: a company split into rosters, each with its own shows and belts ---------- */
+/** Add a brand to company `pid`. Returns it. */
+E.edAddBrand=function(pkg,pid,name){
+  edShape(pkg);var p=edFind(pkg,'promotions',pid);if(!p)return null;var B=p.brands||(p.brands=[]),nm=String(name||'').trim()||'Brand '+(B.length+1),used={};
+  B.forEach(function(b){used[b.id]=1;});var base=slug(nm)||'brand',id=base,n=2;while(used[id]){id=base+'_'+n;n++;}
+  var b={id:id,name:nm};B.push(b);return b;
+};
+/** Rename a brand, or set whether it is the developmental one. */
+E.edSetBrand=function(pkg,pid,bid,o){
+  var p=edFind(pkg,'promotions',pid),b=p&&p.brands?p.brands.filter(function(x){return x.id===bid;})[0]:null;if(!b)return null;
+  if(o.name!=null)b.name=String(o.name);if(o.dev!=null){if(o.dev)b.dev=true;else delete b.dev;}return b;
+};
+/** Remove a brand. Its shows, belts and contracts are left with no brand. */
+E.edRemoveBrand=function(pkg,pid,bid){
+  edShape(pkg);var p=edFind(pkg,'promotions',pid);if(!p||!p.brands)return false;
+  p.brands=p.brands.filter(function(b){return b.id!==bid;});if(!p.brands.length)delete p.brands;
+  ['shows','titles','contracts'].forEach(function(t){pkg[t].forEach(function(r){if(r.promotion_id===pid&&r.brand===bid)delete r.brand;});});
+  return true;
+};
+/** Put a show, belt or contract on a brand ('' for none). */
+E.edPutBrand=function(rec,bid){if(!rec)return;if(bid)rec.brand=bid;else delete rec.brand;};
+/* ---------- the world's own lists: sponsors, columnists and the names newcomers are given ---------- */
+var ED_LISTS={sponsors:['sponsors'],columnists:['columnists'],first_m:['names','first_m'],first_f:['names','first_f'],last:['names','last']};
+/** A world list as text, one name a line. */
+E.edListText=function(pkg,key){var k=ED_LISTS[key];if(!k)return '';var v=k.length===1?pkg[k[0]]:(pkg.names||{})[k[1]];return (v||[]).join('\n');};
+/** Set a world list from text, one name a line. Blank lines and repeats go; an empty list goes back to the game's own. */
+E.edSetList=function(pkg,key,text){
+  var k=ED_LISTS[key];if(!k)return 0;var seen={},L=String(text||'').split(/\r?\n/).map(function(x){return x.trim().slice(0,40);}).filter(function(x){if(!x||seen[x])return false;seen[x]=1;return true;}).slice(0,200);
+  if(k.length===1){if(L.length)pkg[k[0]]=L;else delete pkg[k[0]];}
+  else{var N=pkg.names||(pkg.names={});if(L.length)N[k[1]]=L;else delete N[k[1]];if(!Object.keys(N).length)delete pkg.names;}
+  return L.length;
+};
+/** A world ready to rename instead of build. 'territory': two companies sharing a region, one bigger than the other.
+    'nine': nine companies, one of each model, from a national giant down to a small promotion, every roster filled with
+    unknowns. Names are invented and plain, made to be changed. */
+var ED_QUICK={
+  territory:[['NTW','Northern Territory Wrestling','classic',58,22],['SCW','Southern Championship Wrestling','outlaw',44,16]],
+  nine:[['UWA','United Wrestling Alliance','corporate',85,40],['GPW','Grand Prix Wrestling','purist',66,26],['HCW','Hard Count Wrestling','workrate',58,22],
+    ['RCW','Rust City Wrestling','outlaw',50,20],['NMP','New Money Pro','startup',48,18],['UPW','Underground Pro Wrestling','underdog',44,18],
+    ['LEL','Liga Estrella Libre','spectacle',56,22],['LTC','Lucha Tradicional del Centro','tradition',46,18],['SJW','Starlight Joshi Wrestling','joshi',42,16]]
+};
+E.edQuick=function(kind,name,seed){
+  var L=ED_QUICK[kind];if(!L)return null;var pkg=E.edNew(name||(kind==='nine'?'A world of unknowns':'A territory')),k=(seed>>>0)||1;
+  L.forEach(function(x,i){var p=E.edAddPromo(pkg,{name:x[0],full_name:x[1],model:MODELS[x[2]]?x[2]:'classic',popularity:x[3]});
+    if(MODELS[p.model]&&MODELS[p.model].gender==='F')pkg.titles.forEach(function(t){if(t.promotion_id===p.id)t.gender='F';});
+    E.edFill(pkg,p.id,x[4],k+i*7919);});
+  E.edFillFree(pkg,kind==='nine'?12:6,k+104729);
+  return pkg;
+};
+/** How a company stands, in a few plain lines: the top of the card against its popularity, and its men and women
+    against its belts. `warn` is set on a line that needs fixing before the world plays well. */
+E.edHealth=function(pkg,pid){
+  edShape(pkg);var p=edFind(pkg,'promotions',pid);if(!p)return [];
+  var ros=pkg.contracts.filter(function(c){return c.promotion_id===pid;}).map(function(c){return {c:c,w:edFind(pkg,'workers',c.worker_id)};}).filter(function(x){return x.w&&edIsWrestler(x.w);});
+  var ov=function(x){return (x.w.ratings&&x.w.ratings.overness)||0;},top=ros.filter(function(x){return x.c.push_level==='main_eventer';}),L=[];
+  var pop=p.popularity||50,need=Math.max(20,pop-5);
+  if(!top.length)L.push({t:'Nobody is booked as a main eventer. Put two or three of the most over at the top.',warn:true});
+  else{var a=Math.round(top.reduce(function(s,x){return s+ov(x);},0)/top.length);
+    L.push({t:top.length+' main eventer'+(top.length===1?'':'s')+', '+a+' overness on average, for a company at '+pop+' popularity.'+(a<need-10?' The top of the card is far below what a company this size needs.':(a<need?' A little light at the top.':'')),warn:a<need-10});}
+  var men=ros.filter(function(x){return x.w.gender!=='F';}).length,women=ros.length-men,belts=pkg.titles.filter(function(t){return t.promotion_id===pid;});
+  var mb=belts.filter(function(t){return t.gender!=='F';}).length,wb=belts.length-mb;
+  L.push({t:men+' men and '+women+' women for '+mb+' men\'s and '+wb+' women\'s belt'+(belts.length===1?'':'s')+'.'+(wb&&women<4?' Too few women for a women\'s belt.':'')+(mb&&men<4?' Too few men for a men\'s belt.':''),warn:(wb&&women<4)||(mb&&men<4)});
+  return L;
+};
+E.edFillFree=function(pkg,n,seed){
+  edShape(pkg);var st={s:(seed>>>0)||1},N=edNames(pkg),used={},made=[],styles=Object.keys(STYLE_KEY),low=['midcarder','lower_midcarder','jobber'];
+  pkg.workers.forEach(function(w){used[w.ring_name]=1;});n=clamp(Math.round(n)||6,1,40);
+  for(var i=0;i<n;i++){
+    var g=i%3===2?'F':'M',name,tries=0;do{name=edPick(st,g==='F'?N.f:N.m)+' '+edPick(st,N.l);tries++;}while(used[name]&&tries<40);used[name]=1;
+    var style=edPick(st,styles);
+    made.push(E.edAddWorker(pkg,{ring_name:name,gender:g,age:19+Math.floor(edRnd(st)*16),disposition:edRnd(st)<0.5?'face':'heel',style:style,ratings:edRatings(st,45,low[i%3],style)}));
+  }
+  return made;
+};
 E.edFill=function(pkg,pid,n,seed){
   edShape(pkg);var p=edFind(pkg,'promotions',pid);if(!p)return [];
   var st={s:(seed>>>0)||1},MD=MODELS[p.model]||MODELS.classic,nm=pkg.names||{},made=[];
   var fm=nm.first_m&&nm.first_m.length>=8?nm.first_m:FALLBACK_NAMES.firstM,ff=nm.first_f&&nm.first_f.length>=6?nm.first_f:FALLBACK_NAMES.firstF,ln=nm.last&&nm.last.length>=8?nm.last:FALLBACK_NAMES.last;
   var women=(pkg.titles||[]).some(function(t){return t.promotion_id===pid&&t.gender==='F';}),styles=Object.keys(STYLE_KEY),used={};
   pkg.workers.forEach(function(w){used[w.ring_name]=1;});
-  var ladder=['main_eventer','upper_midcarder','midcarder','midcarder','lower_midcarder','jobber'],pop=clamp(p.popularity,5,100);
+  var ladder=ED_LADDER,pop=clamp(p.popularity,5,100);
   n=clamp(Math.round(n)||12,1,60);
   for(var i=0;i<n;i++){
     var g=MD.gender||(women&&i%4===3?'F':'M'),name,tries=0;
     do{name=edPick(st,g==='F'?ff:fm)+' '+edPick(st,ln);tries++;}while(used[name]&&tries<40);used[name]=1;
-    var push=ladder[i%ladder.length],tier=ladder.indexOf(push),top=1-tier/5,style=edPick(st,styles);
-    var sk=function(lo,hi){return clamp(Math.round(lo+(hi-lo)*edRnd(st)+top*10),20,96);};
-    var r={overness:clamp(Math.round(pop-28+top*30+edRnd(st)*8),8,97),brawling:sk(42,70),technical:sk(40,70),aerial:sk(35,68),stamina:sk(45,72),promo_skill:sk(35,70),charisma:sk(38,72)};
-    if(style==='brawler'||style==='powerhouse')r.brawling=clamp(r.brawling+10,20,96);
-    if(style==='technician')r.technical=clamp(r.technical+12,20,96);
-    if(style==='flyer'||style==='striker')r.aerial=clamp(r.aerial+12,20,96);
-    if(style==='entertainer'){r.promo_skill=clamp(r.promo_skill+12,20,96);r.charisma=clamp(r.charisma+10,20,96);}
+    var push=ladder[i%ladder.length],style=edPick(st,styles),r=edRatings(st,pop,push,style);
     made.push(E.edAddWorker(pkg,{ring_name:name,gender:g,age:20+Math.floor(edRnd(st)*18),disposition:edRnd(st)<0.5?'face':'heel',style:style,ratings:r,promotion_id:pid,push_level:push}));
   }
   return made;

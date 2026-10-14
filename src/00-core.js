@@ -272,15 +272,18 @@ function startFeud(S,P,a,b,heat,why,opts){
   if(a.id===b.id)return null;
   var f=feudOf(S,a.id,b.id);
   if(f){f.heat=clamp(Math.max(f.heat,heat),0,100);f.last=S.week;f.log.push({w:S.week,t:why});return f;}
-  if(activeFeuds(S).length>=8&&!opts.force)return null;
+  if(activeFeuds(S).filter(function(x){return x.promo===P.id;}).length>=8&&!opts.force)return null;
   f={id:S.nid++,promo:P.id,a:[a.id],b:[b.id],heat:clamp(heat,0,100),start:S.week,last:S.week,matches:0,aw:0,bw:0,log:[{w:S.week,t:why}],title:opts.title||null,kind:opts.kind||'feud',res:false};
-  if(opts.len&&FLEN[opts.len])feudSetLen(S,f,opts.len);else feudPlan(S,f);
+  var em=typeof emberOf==='function'?emberOf(S,a.id,b.id):null;   // they have done this before: it picks up where it left off (src/21-living.js)
+  if(em){f.heat=clamp(f.heat+Math.min(20,em.h/4+5),0,100);f.log.push({w:S.week,t:'They have history: it picks up where it left off'});f.again=em.n;}
+  feudPlan(S,f);
   S.feuds.push(f);
   news(S,'story','New rivalry: '+a.name+' vs '+b.name+'.');
   return f;
 }
 function heatUp(S,f,amt,txt){if(amt>0)amt*=(modelOf(S.promos[f.promo]).heat||1)*deskHeat(S,f.promo);if(amt>0&&S.booker&&f.promo===S.player)amt*=(1+0.06*S.booker.sk.creative)*houseHeat(S);var rm=feudHeatRoom(S,f,amt);amt=rm.amt;f.heat=amt>0?Math.min(f.heat+amt,Math.max(rm.cap,f.heat),100):clamp(f.heat+amt,0,100);f.last=S.week;if(txt){f.log.push({w:S.week,t:txt});if(f.log.length>16)f.log.shift();}if(f.heat>=90&&f.promo===S.player)award(S,'ACH_FEUD_HOT');}
 function turn(S,w,why){
+  if(!S.cal)feudsFor(S,w.id).forEach(function(f){f.fresh=Math.min(100,(f.fresh==null?100:f.fresh)+25);});   // a turn gives a story room again (src/21-living.js)
   // a turn that was teased in the last two weeks lands harder; a wrestler who already turned inside the last year lands softer, and the fans say so
   var built=w.la!=null&&S.week-w.la<=2,tired=w.tw!=null&&S.week-w.tw<52,note='';
   if(!S.cal){
@@ -408,13 +411,15 @@ function autoBook(S,P,show){
     if(!(worlds[0]&&(chance(S,0.3)||!worlds[0].holders.length)&&titleSingles(worlds[0],'L',100)))filler(0,'L',G1,100);
   }
   // running feuds: a story on the night it is meant to end is booked first, for every company; the player's others as before
-  var fs=activeFeuds(S).filter(function(f){return f.promo===P.id&&(isPl||feudDue(S,f,show));}).sort(function(a,b){return (feudDue(S,b,show)?1:0)-(feudDue(S,a,show)?1:0)||b.heat-a.heat;}),booked=0;
+  var fs=activeFeuds(S).filter(function(f){return f.promo===P.id&&!(f.bb!=null&&S.week<=f.bb);}).sort(function(a,b){return (feudDue(S,b,show)?1:0)-(feudDue(S,a,show)?1:0)||b.heat-a.heat;}),booked=0;
   if(fs.length){
     fs.forEach(function(f){
       var due=!!feudDue(S,f,show);
       if((booked>=(big?2:1)&&!due)||card.length>=n)return;
       var a=S.w[f.a[0]],b=S.w[f.b[0]];if(!free(a)||!free(b)||a.g!==b.g)return;
-      if(due||(big?f.heat>=45:(f.heat>=30&&chance(S,0.35)))){single(a,b,{len:big?'L':'M',stip:big&&f.heat>=60?gimmickFor(S,a,b):'std'},70);booked++;}
+      if(due||(big?f.heat>=45:(f.heat>=30&&chance(S,0.35)))){single(a,b,{len:big?'L':'M',stip:big&&f.heat>=60?gimmickFor(S,a,b):'std'},70);booked++;
+        // a suggested card ends a ripe story on a big night, or the one the booker planned to end here (src/21-living.js)
+        if(isPl&&big&&(f.heat>=65&&f.fresh<50||feudDue(S,f,show)==='end')&&card.length){var lm=card[card.length-1];if(lm.sides&&lm.sides[0]&&lm.sides[0][0]===a.id)lm.end=1;}}
     });
   }
   if(L2.length>=2){if(!(wt[0]&&(big||chance(S,0.25)||!wt[0].holders.length)&&titleSingles(wt[0],'M',50)))filler(0,'M',G2,50);}

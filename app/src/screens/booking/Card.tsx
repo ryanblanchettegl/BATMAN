@@ -7,7 +7,7 @@ import { E } from '../../engine';
 import { G, me, openModal, view, slice } from '../../store';
 import { book } from '../../flow';
 import { roleOf } from './Shape';
-import { Btn, Meter, brandName, teamName } from '../../kit';
+import { Btn, Meter, Win, brandName, teamName } from '../../kit';
 import { Side } from './Side';
 import { TopTag, addPromo, addAngle, hm, CATN } from './Segments';
 import { Match, onCard, sideText, suggest, addMatch, clearCard, pickMatch, pickSeg, pickSide, sel } from './run';
@@ -39,6 +39,7 @@ export function matchMeta(m: Match, i: number, n: number, it: any): [string, Com
   if (m.stip !== 'std') meta.push(['stip', E.STIP[m.stip].n]);
   if (m.int && m.int !== 'normal') meta.push(['int', <span class={m.int === 'brutal' ? 'bad' : 'good'}>{E.INTN[m.int].n}</span>]);
   if (t) meta.push(['title', <span class="gold">{t.name}</span>]);
+  if ((m as any).end) meta.push(['end', <span class="gold" data-t="ends-story">Ends the story</span>]);
   meta.push(['odds', odds(m, i, n)]);
   if (it && it.top) meta.push(['top', <TopTag top={it.top} />]);
   return meta;
@@ -77,7 +78,7 @@ export function Card() {
     // the line on the sheet is short: what the spot is, the kind of match, the minutes, and the things that stand out
     const fl: any[] = done ? (FL[i] || []) : [];
     const meta = <>{fl.length ? <span data-t="row-flags">{fl.map((f: any, k: number) => <span key={k} class={f.k === 'bad' ? 'bad' : (f.k === 'good' ? 'good' : 'warn')}>[{f.t}] </span>)}</span> : null}{it && it.top ? <><TopTag top={it.top} /> </> : null}{roleOf(i, n) ? roleOf(i, n) + DOT : ''}{E.MT[m.mt].n}{m.stip !== 'std' ? DOT + E.STIP[m.stip].n : ''}{it ? DOT + it.mins + ' min' : ''}
-      {!done ? <>{DOT}<span class="warn">Unfinished</span></> : null}{m.call != null ? <>{DOT}<span class="gold">Your call</span></> : null}{t ? <>{DOT}<span class="gold">{t.name}</span></> : null}</>;
+      {!done ? <>{DOT}<span class="warn">Unfinished</span></> : null}{m.call != null ? <>{DOT}<span class="gold">Your call</span></> : null}{(m as any).end ? <>{DOT}<span class="gold">Ends the story</span></> : null}{t ? <>{DOT}<span class="gold">{t.name}</span></> : null}</>;
     L.push({ key: 'm' + i, cls: (i === n - 1 ? 'me' : '') + (it && it.top ? ' top' : ''), at: it ? it.at : null, no: String(i + 1), dm: i, who: matchLabel(m),
       meta: meta, t: 'edit', v: i, on: b.edit === i, pick: () => pickMatch(i) });
   }); else segsAt(0, 1);
@@ -87,9 +88,10 @@ export function Card() {
   if (pg.p >= pages) pg.p = pages - 1;
   const shown = L.slice(pg.p * PER, pg.p * PER + PER), turn = (d: number) => view(() => { book().edit = -1; sel().seg = -1; pg.p = Math.max(0, Math.min(pages - 1, pg.p + d)); });
   const cat = (k: string, one: string, many: string) => <span data-t={'cat-' + k}><b>{ck.cats[k].n}</b> {ck.cats[k].n === 1 ? one : many} <span class="num">{ck.cats[k].mins}</span> min</span>;
-  return <div class="onescreen book1" data-t="book1">
-    <div class="b1-head head">
-      <div class="b1-title"><p class="eyebrow">{c.label}{DOT}show {S.qi + 1} of {S.queue.length}</p><h1><span class="hl">{show.name}</span></h1></div>
+  const picked = b.edit >= 0 && b.edit < n ? 'Match ' + (b.edit + 1) + ' of ' + n : (s.seg >= 0 && s.seg < I.booked ? 'Promo or angle' : 'Booking notes');
+  return <div class="onescreen book1" data-t="book1"><div class="desktop b1-desk">
+    <Win cls="b1-head head" title={<>Book the show: <span class="hl">{show.name}</span></>} label={'Book the show: ' + show.name} right={<>{c.label}{DOT}show {S.qi + 1} of {S.queue.length}</>}>
+      <h1 class="sr">{show.name}</h1>
       <p class="muted b1-info">{show.big ? 'Big event' + (show.flag ? ', the biggest of the year' : '') + '. Whole roster available.' : 'Weekly TV' + (show.brand ? ', ' + brandName(P, show.brand) + ' brand roster' : '') + '.'} This crowd expects <b class="gold" data-t="expect">{E.expectWords(S, show).a}</b>, matches of <b class="gold" data-t="expect-bar">{E.expectWords(S, show).bar}</b> or better. <button type="button" class="lnk" data-t="ladder" onClick={() => openModal({ kind: 'ladder' })}>What that means</button>
         {DOT}Booking power: <b class="gold">{S.bp}</b> {cost ? <span class={cost > S.bp ? 'bad' : 'muted'}>({cost} committed on this card)</span> : <span class="muted">(nothing called yet)</span>}
         {show.rule && E.RULES[show.rule] ? <>{DOT}<span class="good">{E.RULES[show.rule]}</span></> : null}</p>
@@ -101,9 +103,9 @@ export function Card() {
         <Btn t="add-angle" onClick={addAngle}>Add an angle</Btn>
         {(n > 0 || ck.total > 0) && <Btn t="clear" onClick={clearCard}>Clear</Btn>}
       </div>
-    </div>
+    </Win>
     <div class="b1-body">
-      <div class="b1-sheet">
+      <Win cls="b1-sheet" title="Run sheet" right={L.length + ' on the sheet'}>
         <div class="b1-cap" data-t="opening" data-v={ck.open.k}><span class="gold">{ck.open.n}</span> <button type="button" class="lnk" data-t="open-guide" onClick={() => openModal({ kind: 'openguide' })}>Ways to open</button></div>
         <div class="sheet b1-rows" style={{ '--rows': Math.max(10, Math.min(PER, L.length)) } as any}>
           {shown.map(l => <Row key={l.key} l={l} />)}
@@ -114,8 +116,8 @@ export function Card() {
           <span class="cats">{cat('match', 'match', 'matches')}{cat('promo', 'promo', 'promos')}{cat('angle', 'angle', 'angles')}</span>
           {pages > 1 ? <span class="row" data-t="sheet-pages"><Btn kind="sm" t="sheet-prev" disabled={pg.p === 0} onClick={() => turn(-1)}>{'↑'}</Btn><span class="num">Page {pg.p + 1} of {pages}</span><Btn kind="sm" t="sheet-next" disabled={pg.p >= pages - 1} onClick={() => turn(1)}>{'↓'}</Btn></span> : null}
         </div>
-      </div>
-      <Side on={on} ck={ck} />
+      </Win>
+      <Win cls="b1-sidewin" title={picked}><Side on={on} ck={ck} /></Win>
     </div>
-  </div>;
+  </div></div>;
 }

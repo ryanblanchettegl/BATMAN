@@ -1,7 +1,7 @@
 /* World Editor: build a world from scratch through the interface, check it, play it, and find it again after a reload.
-   Run: NODE_PATH=<dir containing playwright> node app/tests/editor.js   (MODES=desk,tv) */
+   Run: NODE_PATH=<dir containing playwright> node app/tests/editor.js   (MODES=desk,tablet,tv) */
 const { open, overflow, shot } = require('./helper');
-const MODES = (process.env.MODES || 'desk,tv').split(',');
+const MODES = (process.env.MODES || 'desk,tablet,tv').split(',');
 const fails = [];
 const ok = (mode, label, pass, detail) => { console.log(mode.padEnd(6), pass ? 'ok  ' : 'FAIL', label + (detail ? ': ' + detail : '')); if (!pass) fails.push(mode + ' ' + label); };
 const txt = (page, sel) => page.$eval(sel, e => e.innerText).catch(() => '');
@@ -14,8 +14,11 @@ async function company(page, mode, short, full, model) {
   await page.fill('[data-t="ed-f"][data-k="full_name"]', full);
   await page.fill('[data-t="ed-f"][data-k="popularity"]', '60');
   await page.selectOption('[data-t="ed-model"]', model);
+  await page.fill('[data-t="ed-ann"][data-v="0"]', short + ' Caller'); await page.fill('[data-t="ed-ann"][data-v="1"]', short + ' Colour');
+  await page.fill('[data-t="ed-agent"]', short + ' Agent');
   await page.selectOption('[data-t="ed-fill-n"]', '12');
   await page.click('[data-t="ed-fill"]');
+  ok(mode, short + ' says how it stands', /main eventer/.test(await txt(page, '[data-t="ed-health"]')) && /men and/.test(await txt(page, '[data-t="ed-health"]')));
   ok(mode, 'filling ' + short + ' says what happened', /12 unknowns signed to/.test(await txt(page, '.ednote')), await txt(page, '.ednote'));
 }
 
@@ -38,8 +41,11 @@ async function run(mode) {
       ok(mode, 'the remote moves a highlight through the editor', !seen.has('') && seen.size >= 3, [...seen].join(', '));
     }
 
+    await page.click('[data-t="ed-tab"][data-v="world"]'); await page.fill('[data-t="ed-list"][data-v="sponsors"]', 'Test Cola\nRope Co'); await page.click('[data-t="ed-wname"]');
     await company(page, mode, 'AAA', 'Alpha Wrestling', 'workrate');
     await over('a company form');
+    await page.click('[data-t="ed-add-brand"]'); await page.fill('[data-t="ed-brand-name"]', 'Red Side');
+    ok(mode, 'a company can have a brand', /Red Side/.test(await page.$eval('[data-t="ed-brand-name"]', e => e.value)));
     await company(page, mode, 'BBB', 'Beta Wrestling', 'outlaw');
     ok(mode, 'two filled companies make the world ready to play', /ready to play/i.test(await txt(page, '.edtop')), await txt(page, '.edtop'));
 
@@ -47,6 +53,7 @@ async function run(mode) {
     await page.click('[data-t="ed-add-show"]');
     const shows = await page.$$('[data-t="ed-show-name"]');
     await shows[shows.length - 1].fill('Saturday Slam');
+    { const bs = await page.$$('[data-t="ed-show-brand"]'); ok(mode, 'a show of a company with brands can be put on one', bs.length >= 1); if (bs.length) await bs[0].selectOption({ index: 1 }); }
     await page.fill('[data-t="ed-ev-name"][data-v="3"]', 'Spring Clash');
     await page.selectOption('[data-t="ed-ev-rule"][data-v="3"]', 'all_titles');
     ok(mode, 'a second show and a named big event are kept', await page.evaluate(() => { const u = JSON.parse(localStorage.getItem('ewf9000-universes') || '{}'), w = u.test_world; return !!w; }) || true);
@@ -86,8 +93,49 @@ async function run(mode) {
     ok(mode, 'the world as text is a package with everything made here', !!pkg && pkg.promotions.length === 2 && pkg.workers.length === 25 && pkg.shows.some(s => s.name === 'Saturday Slam') && pkg.titles.some(t => t.name === 'Iron Crown' && t.holder_ids.length === 1)
       && pkg.events.some(e => e.month === 3 && e.name === 'Spring Clash' && e.rule === 'all_titles') && pkg.teams.some(t => t.name === 'The Pair' && t.member_ids.length === 2) && pkg.workers.some(w => w.ring_name === 'Captain Thunder' && w.ratings.overness === 88 && w.face && w.roles.indexOf('manager') >= 0),
       pkg ? pkg.promotions.length + ' companies, ' + pkg.workers.length + ' people' : 'not JSON');
+    ok(mode, 'the world tab names its sponsors', !!pkg && Array.isArray(pkg.sponsors) && pkg.sponsors[0] === 'Test Cola');
+    ok(mode, 'the brand and the show on it are in the world', !!pkg && pkg.promotions.some(p => p.brands && p.brands[0].name === 'Red Side' && pkg.shows.some(sh => sh.promotion_id === p.id && sh.brand === p.brands[0].id)));
+    ok(mode, 'the commentators and the road agent are in the world', !!pkg && pkg.promotions.some(p => p.announcers && p.announcers[0] === 'AAA Caller' && p.announcers[1] === 'AAA Colour' && p.staff && p.staff.road_agent === 'AAA Agent'));
     await over('Check and share');
     await shot(page, 'ed-' + mode + '-share', true);
+
+    /* the Wrestlers list sorts by overness, name, age or company, and says how many it shows */
+    await page.click('[data-t="ed-tab"][data-v="wrestlers"]');
+    { const rowsNow = () => page.$$eval('.edlist .edrow', L => L.map(e => e.textContent));
+      const pickSort = async v => { await page.selectOption('[data-t="ed-sort"]', v); await page.waitForTimeout(80); };
+      await pickSort('name'); const byName = await rowsNow();
+      ok(mode, 'sort by name puts the list in alphabetical order', byName.length > 1 && byName.slice(0, 2).join('|') === byName.slice(0, 2).slice().sort().join('|'), byName.slice(0, 2).join(' | '));
+      await pickSort('age'); ok(mode, 'sort by age changes the order', (await rowsNow()).join() !== byName.join() || byName.length < 2);
+      ok(mode, 'the list says how many it shows', /Showing \d+/.test(await txt(page, '.edpage')));
+      await page.selectOption('[data-t="ed-fp"]', 'FA'); await page.waitForTimeout(80);
+      const fa0 = (await rowsNow()).length; await page.click('[data-t="ed-unknowns"]'); await page.waitForTimeout(120);
+      ok(mode, 'with Free agents chosen, Make unknowns adds unsigned wrestlers', (await rowsNow()).length > fa0 && /Six unknowns added/.test(await txt(page, '.edpage')));
+      await page.selectOption('[data-t="ed-fp"]', ''); await page.waitForTimeout(80);
+      await pickSort('over');
+      /* pick several: two rows, release both, then delete both in two presses */
+      await page.click('[data-t="ed-many"]');
+      const rows = await page.$$('.edlist .edrow'); await rows[rows.length - 1].click(); await rows[rows.length - 2].click();
+      ok(mode, 'Pick several turns rows into toggles', /2 picked/.test(await txt(page, '.edpage')) && (await page.$$('.edlist .edrow.on')).length === 2);
+      await page.click('[data-t="ed-many-release"]'); await page.waitForTimeout(80);
+      ok(mode, 'Release all says what it did', /2 released/.test(await txt(page, '.edpage')));
+      const r2 = await page.$$('.edlist .edrow'); await r2[r2.length - 1].click(); await r2[r2.length - 2].click();
+      const n1 = (await rowsNow()).length; await page.click('[data-t="ed-many-del"]');
+      ok(mode, 'Delete all asks first', (await rowsNow()).length === n1 && !!(await page.$('[data-t="ed-many-del-yes"]')));
+      await page.click('[data-t="ed-many-del-yes"]'); await page.waitForTimeout(80);
+      ok(mode, 'then deletes both', (await rowsNow()).length === n1 - 2 && /2 deleted/.test(await txt(page, '.edpage')));
+      ok(mode, 'a delete offers Undo', !!(await page.$('[data-t="ed-undo"]')));
+      await page.click('[data-t="ed-undo"]'); await page.waitForTimeout(100);
+      ok(mode, 'Undo puts both back', (await rowsNow()).length === n1 && /is back/.test(await txt(page, '.edpage')) && !(await page.$('[data-t="ed-undo"]')));
+      await page.click('[data-t="ed-many"]');
+      await page.click('.edlist .edrow'); await page.waitForSelector('[data-t="ed-dup"]');
+      const n0 = (await rowsNow()).length; await page.click('[data-t="ed-dup"]'); await page.waitForTimeout(150);
+      ok(mode, 'Make a copy adds a wrestler and opens the copy', /\(copy\)/.test(await page.$eval('[data-t="ed-wrname"]', e => e.value).catch(() => '')), await page.$eval('[data-t="ed-wrname"]', e => e.value).catch(() => 'no form'));
+      { const before = await page.$eval('[data-t="ed-wrname"]', e => e.value); await page.click('[data-t="ed-randname"]'); await page.waitForTimeout(120);
+        const after = await page.$eval('[data-t="ed-wrname"]', e => e.value); ok(mode, 'Random name gives the wrestler a new name', after && after !== before, before + ' -> ' + after); }
+      ok(mode, 'a wrestler has a Managed by choice', !!(await page.$('[data-t="ed-manager"]')));
+      await page.click('[data-t="ed-tier"][data-v="jobber"]'); await page.waitForTimeout(80);
+      ok(mode, 'Set ratings for an opener says what it did', /Ratings set for an opener/.test(await txt(page, '.edpage')));
+      await page.keyboard.press('Escape'); }
 
     /* Back steps out one level at a time */
     await page.click('[data-t="ed-tab"][data-v="wrestlers"]');
@@ -119,6 +167,17 @@ async function run(mode) {
 
 (async () => {
   for (const m of MODES) await run(m);
+  /* the quick starts: a world ready to play in one press */
+  { const { browser, page, errs } = await open({ mode: 'desk', promo: null });
+    try {
+      await page.click('[data-t="editor"]'); await page.waitForSelector('.edpage');
+      await page.fill('#ed-newname', 'Quick Nine'); await page.click('[data-t="ed-new-nine"]'); await page.waitForTimeout(200);
+      ok('desk', 'a nine-company world of unknowns opens ready to play', /quick nine/i.test(await txt(page, '.edpage h1')) && /ready to play/i.test(await txt(page, '.edtop')), await txt(page, '.edtop'));
+      await page.keyboard.press('Escape'); await page.waitForTimeout(100);
+      await page.fill('#ed-newname', 'Quick Two'); await page.click('[data-t="ed-new-territory"]'); await page.waitForTimeout(200);
+      ok('desk', 'a two-company territory opens ready to play', /quick two/i.test(await txt(page, '.edpage h1')) && /ready to play/i.test(await txt(page, '.edtop')));
+      ok('desk', 'no errors (quick starts)', !errs.length, errs.slice(0, 3).join(' | '));
+    } finally { await browser.close(); } }
   if (fails.length) { console.log('FAILED: ' + fails.length); process.exit(1); }
   console.log('editor: all passed');
 })();

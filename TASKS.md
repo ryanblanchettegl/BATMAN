@@ -540,7 +540,7 @@ From the table in `docs/feature-list.md`. Check each against the engine first; s
 - [ ] The first-day screens grew; keep them readable (design goal: easy to read and quick to do).
 
 ### 12. Not tested or not decided
-- [ ] The Steam wrapper in `desktop/` has never been run.
+- [ ] The Steam wrapper in `desktop/` has been launched in Electron 33 (`tools/desktop-smoke.js`, 13 October: title screen, bridge, no errors). The Steam calls have never run against the Steam client.
 - [ ] TV and gamepad input were tested with simulated keys only, never on hardware.
 - [x] Portraits: Ryan decided to keep the code-drawn faces.
 - [x] The built-in world is named The EWF World (Ryan's decision).

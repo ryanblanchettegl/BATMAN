@@ -2,7 +2,7 @@
    and what people are whispering. The issue for the week in progress fills in as the week goes. */
 import { E } from '../../engine';
 import { G, me, slice, view } from '../../store';
-import { Head, Panel, Tabs, Tag, Empty, Txt, PromoName, grade, stars } from '../../kit';
+import { Panel, Tabs, Tag, Empty, Txt, PromoName, grade, stars } from '../../kit';
 
 const LVL_KIND: Record<string, 'good' | 'warn' | 'bad'> = { sure: 'good', likely: 'warn', thin: 'bad' };
 
@@ -11,6 +11,7 @@ function Issue(p: { s: any; live: boolean }) {
   return <>
     <Panel cls="mb3 lead">
       <p class="eyebrow">{s.label}{p.live ? ' · so far' : ''}</p>
+      {s.lead.open ? <p class="sheet-open" data-t="sheet-open"><i>{s.lead.open}</i></p> : null}
       <h2 class="sheet-head">{s.lead.head}</h2>
       <p><Txt>{s.lead.text}</Txt></p>
     </Panel>
@@ -23,7 +24,10 @@ function Issue(p: { s: any; live: boolean }) {
           </div>) : <Empty>No shows yet this week. Run one on Booking and the sheet will have a view.</Empty>}
           <p class="mt2"><b>The verdict:</b> {s.review}</p>
         </Panel>
+        {s.moment ? <Panel title="Moment of the week"><p data-t="sheet-moment"><Txt>{'“' + s.moment.t + '”'}</Txt></p><p class="muted">{s.moment.label} {'·'} {s.moment.show}</p></Panel> : null}
         {s.best ? <Panel title="Match of the week"><p><b><Txt>{s.best.label}</Txt></b></p><p class="muted">{s.best.show} {'·'} <span class="gold">{stars(s.best.ov)}</span></p></Panel> : null}
+        {s.throwback && s.throwback.length ? <Panel title="Looking back"><ul class="sheet-lines">{s.throwback.map((l: any, i: number) => <li key={i} data-t="throwback"><Txt>{l.t}</Txt></li>)}</ul></Panel> : null}
+        {s.feuds && s.feuds.length ? <Panel title="Feud watch"><ul class="sheet-lines" data-t="feud-watch">{s.feuds.map((l: string, i: number) => <li key={i}><Txt>{l}</Txt></li>)}</ul></Panel> : null}
         {s.next.length ? <Panel title="Coming up"><ul class="sheet-lines">{s.next.map((l: string, i: number) => <li key={i}><Txt>{l}</Txt></li>)}</ul></Panel> : null}
       </div>
       <div class="stack">
@@ -32,6 +36,8 @@ function Issue(p: { s: any; live: boolean }) {
             <span>{w.lines.map((l: string, i: number) => <span key={i}>{i ? <br /> : null}<Txt>{l}</Txt></span>)}</span></li>)}</ul> : <Empty>Nothing from the other companies yet this week.</Empty>}
         </Panel>
         {s.business.length ? <Panel title="Business"><ul class="sheet-lines">{s.business.map((l: string, i: number) => <li key={i}><Txt>{l}</Txt></li>)}</ul></Panel> : null}
+        {s.backstage && s.backstage.length ? <Panel title="Backstage"><ul class="list">{s.backstage.map((r: any, i: number) => <li key={i} data-t="backstage-report"><span><Txt>{r.t}</Txt></span><Tag kind={LVL_KIND[r.lvl]}>{E.NET_LVL[r.lvl]}</Tag></li>)}</ul></Panel> : null}
+        {s.followups && s.followups.length ? <Panel title="Follow-ups"><ul class="list">{s.followups.map((r: any, i: number) => <li key={i} data-t="rumour-followup"><span><Txt>{r.t}</Txt></span></li>)}</ul></Panel> : null}
         <Panel title="Rumours">
           {s.rumours.length ? <ul class="list">{s.rumours.map((r: any, i: number) => <li key={i}><span><Txt>{r.t}</Txt></span><Tag kind={LVL_KIND[r.lvl]}>{E.NET_LVL[r.lvl]}</Tag></li>)}</ul> : <Empty>The rumour mill is quiet.</Empty>}
           <p class="muted mt2">Sure is on the record. Likely is what people in the business expect. Thin is talk, and talk is often wrong.</p>
@@ -47,9 +53,13 @@ export function Sheet() {
   const def = I.now.yours.length || !I.past.length ? 'now' : 'p0', cur = st.k && (st.k === 'now' || I.past[+st.k.slice(1)]) ? st.k : def;
   const issue = cur === 'now' ? I.now : I.past[+cur.slice(1)];
   const tabs = [{ id: 'now', label: 'This week', t: 'sheet-tab', d: { v: 'now' } }].concat(I.past.map((x: any, i: number) => ({ id: 'p' + i, label: i === 0 ? 'Last week' : x.label.replace(/, \d+$/, ''), t: 'sheet-tab', d: { v: 'p' + i } })));
+  // the newsletter: a typed masthead, then the issue in dense columns on paper, the way the 90s sheets came in the post
+  const by = String(issue.by || ''), at = by.indexOf(' of '), paper = at >= 0 ? by.slice(at + 4) : by, ed = at >= 0 ? by.slice(0, at) : '';
   return <>
-    <Head eyebrow={issue.by} title="Dirt sheet" />
-    <Tabs label="Issues" items={tabs} value={cur} onPick={id => view(() => { st.k = id; })} cls="mb3" />
-    <Issue s={issue} live={cur === 'now'} />
+    <Tabs label="Issues" items={tabs} value={cur} onPick={id => view(() => { st.k = id; })} cls="mb2" />
+    <div class="paper" data-t="paper">
+      <div class="mast"><p class="mt-name">{paper.toUpperCase()}</p><p class="mt-line">{'Edited by ' + ed + ' · ' + issue.label + (cur === 'now' ? ' · so far' : '') + ' · subscribers only'}</p></div>
+      <Issue s={issue} live={cur === 'now'} />
+    </div>
   </>;
 }

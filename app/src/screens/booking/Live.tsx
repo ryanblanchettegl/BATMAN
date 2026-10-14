@@ -9,11 +9,11 @@
 import { ComponentChildren } from 'preact';
 import { useEffect, useLayoutEffect, useState } from 'preact/hooks';
 import { E } from '../../engine';
-import { G, ui, me } from '../../store';
+import { G, ui, me, pref } from '../../store';
 import { book } from '../../flow';
 import { Btn, KV, Meter, Banner, BeltArt, Portrait, CheckLine, stars, grade } from '../../kit';
 import { Verdict, OddsLine, FxList, Crowd } from './Report';
-import { typer, preNote, liveSkip, liveEnd, liveDecide, liveCall, onAir, livePos } from './run';
+import { typer, preNote, liveSkip, liveEnd, liveDecide, liveCall, onAir, livePos, autoArm, autoStop, autoToggle, paceNext, PACE_N } from './run';
 import { hm } from './Segments';
 
 /** Text that types itself out once, when it first appears. Esc, Back or the continue button finishes it at once.
@@ -23,12 +23,12 @@ function Typed(p: { text: string }) {
   useEffect(() => n < 0 ? undefined : typer.start(p.text.length, setN, () => setN(-1)), []);
   return <>{n < 0 ? p.text : p.text.slice(0, n)}{n < 0 ? null : <span class="untyped">{p.text.slice(n)}</span>}</>;
 }
-interface Beat { t: string; x: string }
+interface Beat { t: string; x: string; h?: number; w?: string }
 /** One line of the broadcast. `tk` marks the newest line: it is drawn brighter and typed out. */
 function Line(p: { r: any; b: Beat; tk?: string }) {
-  const b = p.b, cls = 'ln ' + b.t + (p.tk ? ' last' : ''), text = p.tk ? <Typed key={p.tk} text={b.x} /> : b.x;
+  const b = p.b, cls = 'ln ' + b.t + (p.tk ? ' last' : '') + (b.h ? ' hot' + (b.h > 1 ? ' hot2' : '') : ''), text = p.tk ? <Typed key={p.tk} text={b.x} /> : b.x;
   if (b.t === 'note' || b.t === 'ent') return <p class={cls}>{text}</p>;
-  const who = b.t === 'pbp' ? p.r.ann[0].split(' ').pop() : (b.t === 'col' ? p.r.ann[1].split(' ').pop() : (b.t === 'ear' ? 'Headset' : (b.t === 'call' ? 'Gorilla' : 'Ring')));
+  const who = b.t === 'mic' ? String(b.w || '').split(' ').pop() : b.t === 'pbp' ? p.r.ann[0].split(' ').pop() : (b.t === 'col' ? p.r.ann[1].split(' ').pop() : (b.t === 'ear' ? 'Headset' : (b.t === 'call' ? 'Gorilla' : 'Ring')));
   return <p class={cls}><span class="sp">{who}:</span><span class="tx">{text}</span></p>;
 }
 /** Portraits of both sides, for matches of up to six. */
@@ -42,6 +42,25 @@ function VsStrip(p: { s: any }) {
 const Rule = () => <div class="rule" aria-hidden="true">{'═'.repeat(60)}</div>;
 const cityOf = (r: any): string => r.venue.replace(/ (Armory|Civic Auditorium|Fieldhouse|Coliseum|Arena|Stadium)$/, '');
 
+/** The best-graded rival show from the week before this show, or null. Reads only. */
+function rivalBest(r: any): { cs: number; l: any; who: string } | null {
+  const S = G.S; if (!S || !S.order) return null;
+  let best: { cs: number; l: any; who: string } | null = null;
+  S.order.forEach((pid: string) => { if (pid === S.player) return; const P = S.promos[pid], l = P && P.last; if (!l || l.week !== r.week - 1) return; const cs = E.repCS(l); if (!best || cs > best.cs) best = { cs, l, who: P.name }; });
+  return best;
+}
+const gA = (g: string) => (/^[AF]/.test(g) ? 'an ' : 'a ') + g;
+/** The competition: the night starts with something to beat. */
+function Rival(p: { r: any }) {
+  const b = rivalBest(p.r); if (!b) return null;
+  return <p class="muted" data-t="live-rival">The competition: {b.who} {b.l.name} got <b class="gold">{gA(E.repGrade(b.l))}</b> last week.</p>;
+}
+/** At the sign-off: did tonight beat it? */
+function RivalBeat(p: { r: any }) {
+  const b = rivalBest(p.r); if (!b) return null;
+  const me = E.repCS(p.r), win = me > b.cs, tie = E.repGrade(p.r) === E.repGrade(b.l);
+  return <p data-t="live-rival-beat" class={win ? 'good' : (tie ? 'muted' : 'bad')}>{win ? 'You beat ' : (tie ? 'Level with ' : 'Short of ')}{b.who} {b.l.name}{' ('}{gA(E.repGrade(b.l))}{')'}{'.'}</p>;
+}
 function TitleCard(p: { r: any }) {
   const r = p.r, P = me(), pre = preNote(r), last = r.lineup.length - 1;
   return <>
@@ -55,52 +74,77 @@ function TitleCard(p: { r: any }) {
       <p>Your hosts: {r.ann[0]} and {r.ann[1]}</p>
       <p><span class="gold">Tonight’s main event:</span> <b>{r.lineup[last]}</b></p>
       {pre ? <p class="good">Before the show: {pre}</p> : null}
+      <Rival r={r} />
     </div>
     <Line r={r} b={{ t: 'pbp', x: 'Welcome, everybody, to ' + r.name + '! We are live in ' + cityOf(r) + ' with ' + r.att.toLocaleString('en-US') + ' on hand' + (r.sellout ? ', and this place is sold out!' : '.') }} />
     <Line r={r} tk="open" b={{ t: 'col', x: 'And wait until you see the main event: ' + r.lineup[last].split(' — ')[0] + '.' }} />
   </>;
 }
+/** The night's big moments, as they aired: a new champion first, then the best matches' near falls and finishes. At most three. */
+function Moments(p: { ms: any[] }) {
+  const L: { h: number; ov: number; x: string; label: string }[] = [];
+  p.ms.forEach(s => (s.bc || []).forEach((b: Beat) => { if (b.h) L.push({ h: b.h, ov: s.ov, x: b.x, label: s.label }); }));
+  // one moment from each match, the biggest of it
+  const seen: Record<string, 1> = {}, top = L.sort((a, b) => (b.h - a.h) || (b.ov - a.ov)).filter(m => seen[m.label] ? false : (seen[m.label] = 1)).slice(0, 3);
+  if (!top.length) return null;
+  return <div class="moments" data-t="live-moments"><p class="eyebrow">Tonight’s moments</p>{top.map((m, i) => <p key={i} class="ln"><span class="sp gold">{m.h > 1 ? 'Gold' : 'Moment'}:</span><span class="tx">{m.x} <span class="muted">({m.label})</span></span></p>)}</div>;
+}
 function SignOff(p: { r: any; ms: any[] }) {
   const r = p.r;
   return <>
-    <div class="card"><Rule /><p class="eyebrow">That is the show</p><div class="show" data-t="show-grade">{E.repGrade(r)}</div><Rule /><p><Verdict r={r} /></p></div>
+    <div class="card"><Rule /><p class="eyebrow">That is the show</p><div class="show" data-t="show-grade">{E.repGrade(r)}</div><Rule /><p><Verdict r={r} /></p><RivalBeat r={r} /></div>
     <div class="kv mt2 mb1">
       <KV label="Attendance"><Crowd r={r} /></KV>
       <KV label="TV viewers">{(r.viewers / 1e6).toFixed(2)}M</KV>
       {r.big ? <KV label="Buys">{r.buys.toLocaleString('en-US')}</KV> : null}
       <KV label="Best match">{stars(Math.max(...p.ms.map(s => s.ov)))}</KV>
     </div>
+    <Moments ms={p.ms} />
     <Line r={r} tk="close" b={{ t: 'pbp', x: 'For ' + r.ann[1] + ' and everyone at ' + me().name + ', I am ' + r.ann[0] + '. Good night from ' + cityOf(r) + '!' }} />
   </>;
 }
-function Result(p: { s: any }) {
+function Result(p: { s: any; best?: boolean }) {
   const s = p.s;
   if (s.k !== 'match') return <div class="result"><p>The segment: <span class="gold">{stars(s.ov)}</span></p></div>;
   const score = (label: string, v: number, kind?: 'hot' | 'cool' | 'au') => <div class={kind === 'au' ? 'ov' : undefined}><span>{label}</span><span><Meter v={v} kind={kind} /></span></div>;
   return <>
     {s.change ? <BeltArt name={s.title} /> : null}
     <div class="result">
-      <p><b>{s.win ? 'Winner: ' + s.win : 'Draw'}</b> {'·'} <span class="gold">{stars(s.ov)}</span></p>
+      <p><b>{s.win ? 'Winner: ' + s.win : 'Draw'}</b> {'·'} <span class="gold">{stars(s.ov)}</span>{p.best ? <> {'·'} <span class="gold" data-t="live-best">The best match of the night so far</span></> : null}</p>
       <OddsLine s={s} />
       <div class="scores">{score('The work', s.mq)}{score('The crowd', s.cr, 'hot')}{score('Effort', s.eff, 'cool')}<div class="ov"><span>Overall</span><span class="gold">{stars(s.ov)}</span></div></div>
       <FxList s={s} max={4} />
     </div>
   </>;
 }
+/** How loud the building is at this point of a match. It climbs through the match, jumps on a big moment and
+    ends on the crowd score the engine gave the match: it shows the result a beat at a time and never makes one up. */
+export function crowdAt(s: any, at: number): number {
+  const bc: Beat[] = s.bc || [], n = Math.max(1, bc.length - 1), f = Math.max(0, Math.min(1, at / n)), cr = s.cr || 0;
+  let hot = 0; for (let i = 0; i <= Math.min(at, bc.length - 1); i++) if (bc[i].h) hot = i === at ? 8 : Math.max(hot, 3);
+  return Math.max(0, Math.min(100, Math.round(cr * (0.4 + 0.6 * Math.pow(f, 1.3)) + (f < 1 ? hot : 0))));
+}
+const CROWD_W: [number, string][] = [[85, 'on its feet'], [70, 'loud'], [55, 'into it'], [40, 'warming up'], [0, 'quiet']];
+function CrowdNow(p: { s: any; at: number }) {
+  const v = crowdAt(p.s, p.at), w = (CROWD_W.find(x => v >= x[0]) as [number, string])[1];
+  return <p class="lv-crowd" data-t="live-crowd" data-v={v}>The crowd <Meter v={v} kind="hot" n={12} /> {w}</p>;
+}
 /** The heading of what is on the air: what it is, who is in it, and their faces. */
-function SegHead(p: { rows: NRow[]; si: number; s: any; eyebrow?: string }) {
+function SegHead(p: { rows: NRow[]; si: number; s: any; eyebrow?: string; at?: number }) {
   const s = p.s, row = p.rows.find(x => x.si === p.si), nm = p.rows.filter(x => x.match).length, meta = [s.mt, s.mins + ' min']; if (s.stip) meta.push(s.stip);
   return <div class="lv-head">
     {s.k === 'match'
-      ? <><div><p class="eyebrow">{p.eyebrow || ((row ? (row.main ? 'Main event' : 'Match ' + row.tag + ' of ' + nm) + ' · ' : '') + meta.join(' · '))}{s.title && !p.eyebrow ? <> {'·'} <span class="gold">{s.title}</span></> : null}</p><h1>{s.label}</h1></div><VsStrip s={s} /></>
+      ? <><div><p class="eyebrow">{p.eyebrow || ((row ? (row.main ? 'Main event' : 'Match ' + row.tag + ' of ' + nm) + ' · ' : '') + meta.join(' · '))}{s.title && !p.eyebrow ? <> {'·'} <span class="gold">{s.title}</span></> : null}</p><h1>{s.label}</h1>{p.at != null && p.at < (s.bc || []).length ? <CrowdNow s={s} at={p.at} /> : null}</div><VsStrip s={s} /></>
       : <div><p class="eyebrow">{p.eyebrow || s.head}</p><h1>{p.eyebrow ? s.head : 'Meanwhile...'}</h1></div>}
   </div>;
 }
 function SegLines(p: { r: any; s: any; at: number; done: boolean }) {
-  const s = p.s, bc: Beat[] = s.bc || [], shown = bc.slice(0, Math.min(bc.length, p.at + 1));
+  const s = p.s, bc: Beat[] = s.bc || [], shown = bc.slice(0, Math.min(bc.length, p.at + 1)), i = p.r.segs.indexOf(s);
+  // the best match so far: at least the second match of the night, and better than every one before it
+  const before = i > 0 ? p.r.segs.slice(0, i).filter((x: any) => x.k === 'match') : [], best = s.k === 'match' && before.length > 0 && before.every((x: any) => s.ov > x.ov);
   return <>
     {shown.map((b, i) => <Line r={p.r} b={b} tk={!p.done && i === shown.length - 1 ? 'b' + i : undefined} />)}
-    {p.done ? <Result s={s} /> : null}
+    {p.done ? <Result s={s} best={best} /> : null}
   </>;
 }
 
@@ -165,6 +209,10 @@ export function Live(p: { r: any }) {
     const live = document.getElementById('live'), main = live && live.querySelector('.lv-main') as HTMLElement | null;
     if (live && main) { live.classList.remove('tight'); if (main.scrollHeight > main.clientHeight + 1) live.classList.add('tight'); }
   });
+  // auto-play: re-armed every time the screen moves on, stopped when the broadcast goes
+  const akey = r.week + ':' + r.id + ':' + L.s + ':' + L.b + ':' + (ev ? ev.id : 0) + ':' + (pref.auto ? 1 : 0) + pref.pace;
+  useEffect(() => { autoArm(akey); }, [akey]);
+  useEffect(() => () => autoStop(), []);
   const rows = nightRows(r, info), post = ev && ev.phase === 'post' ? r.segs[ev.si] : null;
   let head: ComponentChildren = null, log: ComponentChildren, box: ComponentChildren = null, foot: ComponentChildren, state: string;
   if (ev) {
@@ -184,7 +232,7 @@ export function Live(p: { r: any }) {
     foot = null;
   } else {
     state = 'seg';
-    head = <SegHead rows={rows} si={L.s} s={s} />;
+    head = <SegHead rows={rows} si={L.s} s={s} at={L.b} />;
     log = <SegLines key={L.s} r={r} s={s} at={L.b} done={done} />;
     foot = <>
       {!done && <Btn kind="sm" t="live-skip" onClick={liveSkip}>Skip to the result</Btn>}
@@ -199,7 +247,7 @@ export function Live(p: { r: any }) {
         {head}
         <div class={'lv-log' + (state === 'title' || state === 'signoff' ? ' mid' : '')}><div class="lv-lines">{log}</div></div>
         {box}
-        {ev ? null : <div class="foot">{foot}<span class="blink" aria-hidden="true">_</span><span class="keys-hint">Space or Enter: on with the show</span></div>}
+        {ev ? null : <div class="foot">{foot}<Btn kind="sm" t="live-auto" on={!!pref.auto} onClick={autoToggle}>{pref.auto ? 'Auto-play: on' : 'Auto-play: off'}</Btn>{pref.auto ? <Btn kind="sm" t="live-pace" onClick={paceNext}>{'Pace: ' + PACE_N[pref.pace]}</Btn> : null}<span class="blink" aria-hidden="true">_</span><span class="keys-hint">{state === 'signoff' ? 'Space: after the show' : (pref.auto ? (state === 'title' ? 'Space: ring the bell. The show then runs itself and stops for your calls' : 'Running itself. Space: next now. P: pause') : 'Space or Enter: on with the show. P: auto-play')}</span></div>}
       </div>
       <Night rows={rows} at={post ? ev.si : L.s} done={done || !!post} wait={ev && !post ? info.step : -1} call={!!ev} info={info} />
     </div>

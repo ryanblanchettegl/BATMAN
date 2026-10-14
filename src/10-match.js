@@ -66,6 +66,16 @@ var GR={
   br_elim:['{e} goes over the top and hits the floor! Gone!','{e} is dumped out! That is one fewer.','{e} hangs on... hangs on... no! Eliminated!','Three of them gang up on {e}. Over the top and out!','{e} never saw it coming. Over the top and out!','{e} skins the cat, climbs back up... and gets knocked right off the apron!'],
   br_two:['We are down to two: {w} and {l}!','Just {w} and {l} left, and both of them can barely stand.','It comes down to {l} and {w}. Listen to this place!'],
   br_final:['{l} charges, {w} ducks, and {l} goes over the top! {w} wins it!','{w} clotheslines {l} over the top rope! It is over!','{l} is teetering on the apron... and {w} knocks {l} to the floor! {w} has done it!'],
+  mid2:['{a} takes over again and goes to work.','{b} is hanging on, and {a} smells it.','{a} slows it down and makes {b} pay for every inch.','Now it is {a} with the upper hand, and the crowd does not know who to believe.'],
+  tease:['{a} signals for the finish... {b} blocks it!','{a} sets up for the big one, and {b} wriggles free!','{b} sees it coming and rolls to the floor. Not yet!','{a} goes for it, and {b} counters at the last second!'],
+  near2:['Another cover! One, two... NO! How did {a} kick out of that?','Everything they have got! One, two... and {a} is still alive!','{b} cannot believe it. Neither can I, {c}. Two and a half!','That should have been it! The referee’s hand was coming down!'],
+  chant:['They are chanting both names now, {p}.','Listen to that. Half the building for {a}, half for {b}.','The whole place is standing. Nobody wants to sit down for this.','Stomping in the stands. You can feel it up here.'],
+  chantF:['“{n}! {n}!” The whole building is chanting it.','Listen to them, {p}. They are chanting for {n} before the bell.','You cannot hear yourself think in here. Every voice is for {n}.'],
+  chantH:['The crowd has a chant for {n}, and it is not a kind one.','Every seat in the house is letting {n} have it.','{n} cups an ear and the boos only get louder.'],
+  catch_:['Half the building shouts it with {n}: {cp}','{n} does not even have to say it. The crowd does: {cp}','There it is. {cp} You can buy it on a shirt now, {p}.'],
+  main_in:['Ladies and gentlemen, it is time for the main event!','And now, the match you all came to see!','This is it. It is main event time!','The lights go down. It is time for the main event.'],
+  upset:['UPSET! Nobody in this building saw that coming!','I do not believe it! What an upset!','Somebody check the odds, {p}. That was a stunner!','They will be talking about this one for weeks. What an upset!'],
+  streak:['And just like that, the streak is over!','{l} had won {s} in a row. Not any more!','The streak ends tonight, and it ends in front of all of these people!'],
   newchamp:['We have a new champion! What a moment!','The title changes hands! Can you believe it?','A new era starts tonight!']
 };
 function sayPick(S,arr){
@@ -133,9 +143,12 @@ function callMatch(S,P,x){
   var bc=[],o=x.o,first=function(n){return String(n).split(' ')[0];};
   var dv=deskNames(S,P);o.p=first(dv?dv[0]:P.ann[0]);o.c=first(dv?dv[1]:P.ann[1]);o.mark=x.mins>=27?'twenty-five':'fifteen';
   function ring(t){bc.push({t:'ring',x:fill(t,o)});}
-  function pbp(sym){bc.push({t:'pbp',x:say(S,sym,o)});}
+  function pbp(sym,h){var q={t:'pbp',x:say(S,sym,o)};if(h)q.h=h;bc.push(q);}
   function col(sym){bc.push({t:'col',x:say(S,sym,o)});}
   function raw(who,t){bc.push({t:who,x:fill(t,o)});}
+  // extra beats are picked by a hash of the match, not the game's random stream, so they can never change how a game plays out
+  var hk=(o.a||'')+'|'+(o.b||'')+'|'+x.mins+'|'+S.week;
+  function hp(who,sym,h){var L=GR[sym],t=fill(L[Math.floor(h01(hk+sym+(o.n||'')+(x.show||''))*L.length)%L.length],o);var q={t:who,x:t.charAt(0).toUpperCase()+t.slice(1)};if(h)q.h=h;bc.push(q);}
   if(x.m.mt==='br'){
     var outs=x.all.filter(function(w){return w.name!==o.w&&w.name!==o.l;}).sort(function(p,q){return p.ovr-q.ovr;});
     ring('This is an over-the-top-rope battle royal'+(x.t?' for the vacant '+x.t.name:'')+'! The last one left in the ring wins.');
@@ -145,44 +158,63 @@ function callMatch(S,P,x){
     col(x.MQ>=75?'q_good':(x.MQ>=55?'q_ok':'q_poor'));
     pbp('br_two');pbp('br_final');col('r_clean');
     ring('Here is your winner'+(x.t?', and NEW '+x.t.name+' champion':'')+': {w}!');
-    if(x.change)pbp('newchamp');
+    if(x.change)pbp('newchamp',2);
     return bc;
   }
+  if(x.main)hp('ring','main_in');
+  if(x.m.end&&x.feud)ring('Ladies and gentlemen, this is the final chapter. Tonight it ends.');   // the booker marked this match as the blow-off (src/21-living.js)
   ring('This '+x.mt.toLowerCase()+' match is scheduled for one fall'+(x.stipName?', and it is a '+x.stipName.toLowerCase()+' match':'')+(x.t?'. It is for the '+x.t.name+'!':'.'));
   x.sides.forEach(function(s,k){
     var isCh=x.champ&&x.champ===s,lead=s[0],big=avg(s.map(function(w){return w.ovr;}))>=62||isCh;
     ring((k===0?'Introducing first, ':(k===x.sides.length-1?'And the opponent'+(s.length>1?'s':'')+', ':'Next, '))+(isCh?'the '+x.t.name+' champion'+(s.length>1?'s':'')+', ':'')+names(s)+'!');
     bc.push({t:'ent',x:big?names(s)+' '+(s.length>1?'make their way out together':ENTR[lead.align==='F'?'F':'H'][lead.ent||0])+(isCh?', the title held high':'')+'. The reaction: '+pop(s)+'.':'The reaction: '+pop(s)+'.'});
   });
+  // the hottest act in the match gets a chant; a wrestler with a fresh catchphrase hears it shouted back
+  var hot=x.all.slice().sort(function(p,q){return q.ovr-p.ovr;})[0];
+  var top=(x.main||x.big)&&h01(hk+'ch')<0.6;
+  if(hot&&hot.ovr>=85&&top){o.n=hot.name;hp('col',hot.align==='F'?'chantF':'chantH');}
+  var cw=x.all.filter(function(w){return w.cphrase&&typeof catchFresh==='function'&&catchFresh(w)>0.3;})[0];
+  if(cw&&(x.main||x.big)&&h01(hk+cw.name+'cp')<0.5){o.n=cw.name;o.cp=cw.cphrase.t;hp('col','catch_');}
   var mem=memoryLines(S,P,x);
   if(mem[0])raw('col',mem[0]);
+  else if(x.m.end&&x.feud)raw('col',(x.feud.start!=null&&S.week-x.feud.start>=12?'Months of this, {p}, and it all comes down to tonight.':'This is where it ends, {p}. One of them walks out with the last word.'));
   else if(x.feud&&x.feud.kind==='dream')raw('col','This is the match everybody has been asking for, {p}.');
   else if(x.feud&&x.feudHeat>=60)raw('col','This has been building for weeks, {p}. Tonight somebody pays.');
   else if(x.t)raw('col','Championship gold on the line. Nobody holds anything back tonight.');
   else col(x.CR>=80?'c_hot':(x.CR>=55?'c_mid':'c_cold'));
   var mk=x.m.mt==='4way'||x.m.mt==='3way'?'multi':(x.m.mt==='6man'?'six':null);
   raw('pbp',say(S,'bell',o)+' '+say(S,mk?'open_'+mk:(GR['open_'+x.ca.style]?'open_'+x.ca.style:'open_A'),o));
+  var shp=mk?null:matchShape(x,o,hk);   // the match's shape: its own intro, a spot with named moves, a late swing (src/60-grammar.js)
+  if(shp&&shp.intro)bc.push({t:'col',x:shp.intro.charAt(0).toUpperCase()+shp.intro.slice(1)});
   if(mem[1])raw('pbp',mem[1]);
   if(STIPLINE[x.stip])raw('pbp',sayPick(S,STIPLINE[x.stip]));
-  if(x.mins>8){pbp(mk?'mid_'+mk:'mid');pbp('near');}
+  if(x.mins>8){pbp(mk?'mid_'+mk:'mid');pbp('near',1);}
+  if(shp&&shp.spot)bc.push({t:'pbp',x:shp.spot.charAt(0).toUpperCase()+shp.spot.slice(1)});
+  if(x.mins>=14&&!mk)hp('pbp','mid2');
+  if(x.mins>=12&&x.CR>=75)hp('col','chant');
+  if(x.mins>=14&&!mk)hp('pbp','tease');
   if(x.mins>=20)pbp('late');
+  if(x.mins>=18&&x.MQ>=70)hp('pbp','near2',1);
+  if(shp&&shp.late)bc.push({t:'pbp',x:shp.late.charAt(0).toUpperCase()+shp.late.slice(1),h:1});
   col(x.bad?'q_off':(x.MQ>=88?'q_great':(x.MQ>=75?'q_good':(x.MQ>=60?'q_ok':(x.MQ>=45?'q_poor':'q_bad')))));
   if(x.mins>=14&&x.CR>=82)col('c_hot');
   // when the company model's bonus or penalty fired, the crowd sounds like that company's crowd
   var mf=(x.fx||[]).filter(function(q){return q.m;});
   if(mf.length&&MODEL_CROWD[P.model||'classic']){var cl=MODEL_CROWD[P.model||'classic'][mf[0].s>0?0:1];if(cl&&cl.length)raw('col',sayPick(S,cl));}
   var f=x.fin;
-  if(f==='clean'){pbp(x.sub?'f_sub':'f_clean');col('r_clean');}
-  else if(f==='flash'){pbp('f_flash');col('r_flash');}
-  else if(f==='cheap'){pbp('f_cheap');col('r_cheap');}
-  else if(f==='interf'){pbp('f_interf');col('r_interf');}
-  else if(f==='foiled'){pbp('f_foiled');col('r_foiled');}
+  if(f==='clean'){pbp(x.sub?'f_sub':'f_clean',1);col('r_clean');}
+  else if(f==='flash'){pbp('f_flash',1);col('r_flash');}
+  else if(f==='cheap'){pbp('f_cheap',1);col('r_cheap');}
+  else if(f==='interf'){pbp('f_interf',1);col('r_interf');}
+  else if(f==='foiled'){pbp('f_foiled',1);col('r_foiled');}
   else if(f==='dq'){pbp('f_dq');col('r_dq');}
   else if(f==='co'){pbp('f_co');col('r_co');}
   else{pbp(x.mins>=20?'f_time':'f_dco');col('r_draw');}
+  if(x.upset&&!x.change)hp('col','upset',1);
+  if(x.streak){o.s=x.streak;hp('col','streak',1);}
   if(x.win<0)ring('This match is a draw.');
   else ring('Here '+(x.plural?'are your winners':'is your winner')+(f==='dq'?' by disqualification':(f==='co'?' by count-out':''))+(x.change?', and NEW '+x.t.name+' champion'+(x.plural?'s':''):(x.t&&x.retain?', and STILL '+x.t.name+' champion'+(x.plural?'s':''):''))+': {w}!');
-  if(x.change)pbp('newchamp');
+  if(x.change)pbp('newchamp',2);
   return bc;
 }
 
@@ -258,7 +290,7 @@ function doMatch(S,P,show,m,i,n,rep,used){
   }
   if(t){cr+=t.prestige*0.04;if(t.prestige>=70)FX(true,'A prestigious title on the line');if(show.rule==='all_titles'){cr+=2;FX(true,'Every title is on the line tonight');}}
   var rsk=RISK_STIP[P.risk]/RISK_STIP[P.risk0],sh=STIP[stip].heat*(feud&&feud.heat>=40?1.5:0.3)*rsk;cr+=sh;
-  if(stip!=='std'){if(feud&&feud.heat>=40)FX(true,'The stipulation fits the feud');if(rep.gim&&show.rule!=='gimmick_free'&&!modelOf(P).gimFree){cr-=4;FX(false,'Second gimmick match of the night');}rep.gim=true;}
+  if(stip!=='std'){if(feud&&stipFitOf(feud,stip)>0)FX(true,'The stipulation fits the feud');if(rep.gim&&show.rule!=='gimmick_free'&&!modelOf(P).gimFree){cr-=4;FX(false,'Second gimmick match of the night');}rep.gim=true;}
   all.forEach(function(w){if(w.ws>=6){cr+=1.5;FX(true,w.name+'’s winning streak draws interest');}if(used[w.id]){cr-=4;FX(false,w.name+' already worked tonight');}});
   if(m.mt==='1v1'){var rk=S.recent[P.id+':'+rkey(all[0].id,all[1].id)];if(rk&&S.week-rk<4&&!feud){cr-=4;FX(false,'A rematch too soon');}}
   if(rep.energy){cr+=rep.energy;if(rep.energy>=1)FX(true,'A packed, noisy house');else if(rep.energy<=-1)FX(false,'Empty seats flattened the crowd');}
@@ -327,11 +359,11 @@ function doMatch(S,P,show,m,i,n,rep,used){
   if(t){
     t.last=S.week;t.prestige=clamp(t.prestige+(OV-t.prestige)*0.08,10,100);
     if(win>=0&&win!==champSide&&fin!=='dq'&&fin!=='co'){
-      var had=t.holders.length;
+      var had=t.holders.length,reign=S.week-(t.since||S.week),olds=t.defs,back=winners.filter(function(w){return (t.hist||[]).some(function(h){return String(h.ids||'').split(',').indexOf(String(w.id))>=0;});}).length===winners.length&&winners.length>0;
       t.holders.forEach(function(id){S.w[id].lt={n:t.name,id:t.id,w:S.week};});
       t.holders=m.sides[win].slice();t.since=S.week;t.defs=0;seg.change=true;seg.crown=!had;
       winners.forEach(function(w){w.mom=clamp(w.mom+2,-10,10);w.morale=clamp(w.morale+6,0,100);w.lt=null;});
-      news(S,'title',names(winners)+(had?' won the ':' won the vacant ')+P.name+' '+t.name+'.');
+      news(S,'title',names(winners)+(had?' won the ':' won the vacant ')+P.name+' '+t.name+'.'+(had&&reign>=24?' The old reign lasted '+reign+' weeks'+(olds>=4?', with '+olds+' defences.':'.'):'')+(back?' It is not their first time with the belt.':''));
       seg.notes.push('New champion'+(t.tag?'s':'')+': '+names(winners)+'.');
       if(isPl)award(S,had?'ACH_TITLE_CHANGE':'ACH_CROWN');
     }else{t.defs++;if(win>=0&&champSide>=0)seg.notes.push(names(sides[champSide])+' retain'+(sides[champSide].length>1?'':'s')+'.');}
@@ -360,10 +392,11 @@ function doMatch(S,P,show,m,i,n,rep,used){
   if(feud){
     feud.matches++;
     if(win>=0){if(m.sides[win].some(function(id){return feud.a.indexOf(id)>=0;}))feud.aw++;else if(m.sides[win].some(function(id){return feud.b.indexOf(id)>=0;}))feud.bw++;}
-    heatUp(S,feud,5+(fin==='cheap'||fin==='interf'?5:0),(win>=0?names(winners)+' beat '+names(losers):'A draw')+(fin==='cheap'||fin==='interf'?' with a cheap finish':'')+' at '+show.name);
-    var due=win>=0&&fin!=='dq'&&fin!=='co'?feudDue(S,feud,show):null;
-    // a medium story with a gimmick match on a weekly show after its ending has passed is a blow-off too
-    if(!due&&win>=0&&fin!=='dq'&&fin!=='co'&&stip!=='std'&&feud.len==='m'&&S.week>=feud.pay)due='end';
+    var stipFit=stipFitOf(feud,stip);   // a stipulation the story has earned adds to it; one it has not, takes away
+    if(stipFit&&isPl)seg.notes.push(stipFit>0?'The stipulation fit the story. The crowd bought it.':'A stipulation this early felt like too much, too soon.');
+    heatUp(S,feud,5+stipFit+(fin==='cheap'||fin==='interf'?5:0),(win>=0?names(winners)+' beat '+names(losers):'A draw')+(fin==='cheap'||fin==='interf'?' with a cheap finish':'')+' at '+show.name);
+    // the booker marked this match as the ending (m.end), or the story's own rules say so (src/21-living.js)
+    var due=win>=0&&fin!=='dq'&&fin!=='co'?(m.end&&isPl?'end':feudDue(S,feud,show)):null;
     if(due==='chapter')feudMsg=closeChapter(S,P,show,feud,winners,losers,isPl);
     else if(due==='end')feudMsg=settleFeud(S,P,show,feud,winners,losers,isPl);
   }
@@ -388,7 +421,7 @@ function doMatch(S,P,show,m,i,n,rep,used){
     (mins>=20?'The time limit expires with neither able to put the other away.':'Both are counted out brawling on the floor.'),o);
   if(isPl){
     var srt=all.slice().sort(function(p,q){return p.ovr-q.ovr;});
-    seg.bc=callMatch(S,P,{fx:fx,o:o,m:m,all:all,pre:pre,champ:champ,mt:MT[m.mt].n,stip:stip,stipName:stip==='std'?null:STIP[stip].n,t:t,sides:sides,feud:feud,feudHeat:heatWas,flog:flogWas,gap:srt[srt.length-1].ovr-srt[0].ovr,under:srt[0].name,CR:CR,MQ:MQ,mins:mins,ca:ca,bad:bad,fin:fin,sub:lead.style==='T'||stip==='sub',win:win,plural:winners.length>1,change:!!seg.change,retain:win>=0&&win===champSide,entrance:ctx.entrance});
+    seg.bc=callMatch(S,P,{fx:fx,o:o,m:m,all:all,pre:pre,champ:champ,mt:MT[m.mt].n,stip:stip,stipName:stip==='std'?null:STIP[stip].n,t:t,sides:sides,feud:feud,feudHeat:heatWas,flog:flogWas,gap:srt[srt.length-1].ovr-srt[0].ovr,under:srt[0].name,CR:CR,MQ:MQ,mins:mins,ca:ca,bad:bad,fin:fin,sub:lead.style==='T'||stip==='sub',win:win,plural:winners.length>1,change:!!seg.change,retain:win>=0&&win===champSide,entrance:ctx.entrance,main:isMain&&n>2,big:big,show:show.name,upset:upset,streak:endedStreak});
     if(m.mt==='1v1'){var hk=rkey(all[0].id,all[1].id),hh=(S.h2h||(S.h2h={}))[hk]||(S.h2h[hk]={n:0,a:0,b:0,lw:-1,w:0});hh.n++;hh.w=S.week;hh.lw=win>=0?winners[0].id:-1;if(win>=0){if(winners[0].id===Math.min(all[0].id,all[1].id))hh.a++;else hh.b++;}}
     all.forEach(function(w){w.deb=false;});
   }
@@ -410,11 +443,16 @@ function doMatch(S,P,show,m,i,n,rep,used){
   return seg;
 }
 function settleFeud(S,P,show,feud,winners,losers,isPl){
-  var pm=feudPayMult(S,feud),late=S.week>feud.pay;feud.res=true;feud.end=S.week;
-  var full=feud.twist&&feud.finale;
+  feudPlan(S,feud);var pm=feudPayMult(S,feud),age=S.week-feud.start;feud.res=true;feud.end=S.week;feudEmber(S,feud);feudFile(S,feud,'end');
+  var full=feud.twist&&feud.finale,hot=feud.heat>=60;
   winners.forEach(function(w){addOvr(P,w,(full?3.5:2.5)*pm);w.mom=clamp(w.mom+2,-10,10);});losers.forEach(function(w){addOvr(P,w,(full?1.5:1)*pm);});
-  if(!late)winners.concat(losers).forEach(function(w){w.morale=clamp(w.morale+(feud.len==='l'?5:3),0,100);});
-  var msg='The '+FLEN[feud.len].n.toLowerCase()+' story between '+feudLabel(S,feud)+' is settled'+(late?', later than planned':' on the night it was meant to end')+(full?', after a full story, start to finish':'')+'. Both come out of it bigger stars.';
+  if(hot)winners.concat(losers).forEach(function(w){w.morale=clamp(w.morale+(age>=24?6:(age>=8?4:3)),0,100);});
+  // how it ended, in words: the heat and freshness it had left, and how long it lived
+  var how=feud.heat>=75&&feud.fresh>=40?'at its peak':(feud.heat>=60?'while it was still hot':(feud.fresh<35?'after it had gone stale':'after it had cooled'));
+  var msg='The story between '+feudLabel(S,feud)+' is settled '+how+', after '+age+' '+(age===1?'week':'weeks')+(full?', a full story, start to finish':'')+'.'+(age>=24&&hot?' People will talk about this one for years.':(hot?' Both come out of it bigger stars.':' The crowd had moved on.'));
+  if(isPl&&age>=24&&hot)winners.concat(losers).forEach(function(w){youRemember(S,w,'epic','You gave me a feud people will remember.',5);});
+  // two who went to war over a hot story come out of it respecting each other
+  if(isPl&&hot)winners.forEach(function(w){losers.forEach(function(l){relBump(S,w.id,l.id,{ra:8,rb:8},{k:'war',keep:age>=12,t:w.name+' and '+l.name+' ended their feud at '+show.name+'.'});});});
   if(feud.stakes&&/sits out/i.test(feud.stakes)){losers.forEach(function(w){w.away=S.week+4;});msg+=' As agreed, '+names(losers)+' will sit out the next four weeks.';}
   else if(feud.stakes&&/title shot/i.test(feud.stakes)){
     var w0=winners[0],tt=null;P.titles.forEach(function(x){if(!x.tag&&x.g===w0.g&&x.holders.length&&x.holders[0]!==w0.id&&(!x.brand||x.brand===w0.brand)&&(!tt||x.lvl>tt.lvl))tt=x;});
@@ -435,13 +473,15 @@ function afterBell(S,P,show,m,sides,win,winners,losers,fin,runin,feud,t,OV,seg){
   // a losing team implodes
   if(m.mt==='tag'){
     var ls=sides[win===0?1:0],tm=(ls[0].team!=null&&ls[0].team===ls[1].team)?teamOf(S,ls[0]):null;
-    if(tm&&(tm.ls>=2||tm.exp<25||show.rule==='betrayal')&&chance(S,show.rule==='betrayal'?0.28:0.14)){
-      var att=chance(S,0.5)?ls[0]:ls[1],vic=att===ls[0]?ls[1]:ls[0];
+    // jealousy between partners counts as much as a losing run: the jealous one is the one who turns
+    var j0=tm?jealOf(S,ls[0].id,ls[1].id):0,j1=tm?jealOf(S,ls[1].id,ls[0].id):0,jealous=Math.max(j0,j1)>=60;
+    if(tm&&(tm.ls>=2||tm.exp<25||jealous||show.rule==='betrayal')&&chance(S,show.rule==='betrayal'?0.28:0.14)){
+      var att=chance(S,0.5)?ls[0]:ls[1];if(jealous)att=j0>=j1?ls[0]:ls[1];var vic=att===ls[0]?ls[1]:ls[0];
       P.titles.forEach(function(tt){if(tt.tag&&tt.holders.indexOf(att.id)>=0){tt.holders=[];tt.since=S.week;news(S,'title','The '+P.name+' '+tt.name+' are vacated after the champions split.');}});
       dissolveTeam(S,tm);
       if(att.align==='F')turn(S,att,'turned on '+vic.name);else if(vic.align==='H')turn(S,vic,'betrayed by '+att.name);
       startFeud(S,P,vic,att,55,att.name+' turned on partner '+vic.name,{force:true});memBetray(S,att,vic);
-      seg.notes.push('After the loss, '+att.name+' turns on '+vic.name+'. The team is finished.');
+      seg.notes.push(jealous?att.name+' has been jealous of '+vic.name+' for weeks. After the loss, '+att.name+' turns on them. The team is finished.':'After the loss, '+att.name+' turns on '+vic.name+'. The team is finished.');
       award(S,'ACH_BETRAYAL');return;
     }
   }

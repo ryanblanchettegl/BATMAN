@@ -58,7 +58,7 @@ function Weeks(p: { H: any[] }) {
 export function Finances() {
   const S = G.S, P = me(), H = P.hist.slice(-24);
   let wages = 0; E.rosterOf(S, P.id).forEach((w: any) => { wages += w.wage; });
-  return <>
+  return <div class="onescreen winpage">
     <Head eyebrow={P.name} title="Finances" />
     <Panel cls="mb3 money">
       <div class="kv">
@@ -72,5 +72,5 @@ export function Finances() {
     {H.length ? <NetChart H={H} /> : null}
     <Ledger />
     {H.length ? <Weeks H={H} /> : null}
-  </>;
+  </div>;
 }

@@ -73,7 +73,7 @@ async function run(mode, w, h) {
     }
     /* an old page still looks like itself */
     await go(page, 'overview');
-    ok(id, 'an old page keeps its old panels', await page.$eval('.panel', e => getComputedStyle(e).borderTopStyle === 'double' && getComputedStyle(e).backgroundColor === 'rgb(0, 0, 170)').catch(() => false));
+    ok(id, 'an old page shows its panels as grey windows', await page.$eval('.panel', e => getComputedStyle(e).backgroundColor === 'rgb(170, 170, 170)').catch(() => false));
     ok(id, 'no errors on the way', !errs.length, errs.join(' | '));
   } catch (e) { ok(id, 'ran to the end', false, e.message.split('\n')[0]); }
   await browser.close();

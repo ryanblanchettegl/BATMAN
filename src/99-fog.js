@@ -163,6 +163,9 @@ POST.push(function(ctx){
 function cardFlags(S,card,i){
   var m=card[i],out=[],rd=matchRead(S,card,i),P=S.promos[S.player],seen={};
   var add=function(k,t,x){if(seen[t])return;seen[t]=1;out.push({k:k,t:t,x:x||t});};
+  // a stipulation in a feud: earned when the story is hot enough to carry it, too soon when it is not (src/21-living.js)
+  if(m&&m.stip&&m.stip!=='std'&&m.sides&&m.sides.length===2&&m.sides[0][0]!=null&&m.sides[1][0]!=null){var ff=feudOf(S,m.sides[0][0],m.sides[1][0]);
+    var sf=stipFitOf(ff,m.stip),sn=(STIP[m.stip]||{}).n||'This stipulation';if(sf>=4)add('good','Earned','The feud is hot enough to carry a '+sn.toLowerCase()+' match. It will add to the story.');else if(sf<0)add('bad','Too soon',sn+' needs a hotter feud than this. It will feel like too much, too soon.');}
   if(rd)rd.lines.forEach(function(l){
     var t=l.t;
     if(/fumes|worn|carrying/.test(t))add('bad','Worn down',t);

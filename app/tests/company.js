@@ -6,7 +6,7 @@ const { open, go, overflow, shot, flash, state, redraw, ensure } = require('./he
 const FILE = process.env.EWF_OUT || 'index';
 const PAGES = ['manage', 'house', 'deals', 'overview', 'finances', 'world'];
 /** Company is for reading: apart from the page buttons, none of its pages may offer a control. */
-async function readOnly(page, mode) { for (const p of ['overview', 'finances', 'world']) { await go(page, p); const n = await count(page, 'main button:not([data-t="page"]):not([data-t="newsf"]):not(.lnk), main select, main input'); check(mode, p + ' offers no choices', n === 0, n + ' controls'); } }
+async function readOnly(page, mode) { for (const p of ['overview', 'finances', 'world']) { await go(page, p); const n = await count(page, 'main button:not([data-t="page"]):not([data-t="newsf"]):not([data-t="news-newer"]):not([data-t="news-older"]):not(.lnk), main select, main input'); check(mode, p + ' offers no choices', n === 0, n + ' controls'); } }
 const fails = [];
 function check(mode, label, ok, detail) { console.log(mode.padEnd(6), ok ? 'ok  ' : 'FAIL', label + (detail ? ': ' + detail : '')); if (!ok) fails.push(mode + ' ' + label); }
 /** Nothing may stick out sideways after any step. */
@@ -53,7 +53,7 @@ async function frontOffice(page, mode) {
   await readOnly(page, mode);
   await go(page, 'manage');
   await page.FLAT(false);
-  check(mode, 'every choice on Operations is a button, in four groups', await count(page, '.panel') === 4 && await count(page, '[data-t="mng"]') === 15 && await count(page, 'main select, main input, main [data-t="co-set"]') === 0, await count(page, '[data-t="mng"]') + ' buttons');
+  check(mode, 'every choice on Operations is a button, in four groups', await count(page, '.mngpage .wn') === 4 && await count(page, '[data-t="mng"]') === 15 && await count(page, 'main select, main input, main [data-t="co-set"]') === 0, await count(page, '[data-t="mng"]') + ' buttons');
   await page.click('[data-t="mng"][data-v="prodLvl"]');
   check(mode, 'a button opens a pop-up with its choices, and says where it stands now', await count(page, '.win [data-t="co-set"]') >= 4 && /Now:/.test(await page.$eval('.win', e => e.innerText)) && (await page.$eval('[data-t="mng"][data-v="prodLvl"] [data-t="mng-now"]', e => e.innerText)).length > 2);
   await page.keyboard.press('Escape');
@@ -126,7 +126,7 @@ async function finances(page, mode, weeks) {
   check(mode, 'the chart fits its panel without scrolling', pre.s <= pre.c + 1, pre.s + ' of ' + pre.c + 'px at ' + pre.px.toFixed(1) + 'px type');
   check(mode, 'ledger adds up', await page.evaluate(() => { const f = window.EWF_DEBUG.state().fin; return Math.abs(f.inc - f.exp - f.net) < 2; }));
   const net = await page.evaluate(() => { const b = [...document.querySelectorAll('.ledger li')].pop().querySelector('.num b'); return { v: window.EWF_DEBUG.state().fin.net, c: getComputedStyle(b).color }; });
-  check(mode, 'the net figure is green or red by its sign', net.c === (net.v < 0 ? 'rgb(255, 85, 85)' : 'rgb(85, 255, 85)'), net.v + ' in ' + net.c);
+  check(mode, 'the net figure is green or red by its sign', net.c === (net.v < 0 ? 'rgb(170, 0, 0)' : 'rgb(0, 96, 0)'), net.v + ' in ' + net.c);
   check(mode, 'week table', await count(page, '.tw tbody tr') === Math.min(weeks, 12), await count(page, '.tw tbody tr') + ' rows');
   await fits(page, mode, 'finances after ' + weeks + ' weeks');
 }

@@ -25,18 +25,21 @@ function Promotions() {
 }
 
 const FILTERS: [string, string, string[] | null][] = [['all', 'All', null], ['title', 'Titles', ['title']], ['sign', 'Signings', ['contract']], ['story', 'Stories', ['story']], ['money', 'Money', ['money']]];
-function wire() { return slice<{ f: string }>('wire', () => ({ f: 'all' })); }
+function wire() { return slice<{ f: string; pg?: number }>('wire', () => ({ f: 'all', pg: 0 })); }
 /** The newest `n` lines of the news wire, optionally only one kind. */
-export function NewsList(p: { n: number; kinds?: string[] | null }) {
-  const S = G.S, L = p.kinds ? S.news.filter((x: any) => p.kinds!.indexOf(x.k) >= 0) : S.news;
+export function NewsList(p: { n: number; kinds?: string[] | null; from?: number }) {
+  const S = G.S, L = p.kinds ? S.news.filter((x: any) => p.kinds!.indexOf(x.k) >= 0) : S.news, a = p.from || 0;
   if (!L.length) return <Empty>{p.kinds ? 'Nothing of that kind yet.' : 'No news yet.'}</Empty>;
-  return <ul class="list news">{L.slice(0, p.n).map((x: any) => <li><span class="num muted">Wk {x.w}</span><span><Txt>{x.t}</Txt></span></li>)}</ul>;
+  return <ul class="list news">{L.slice(a, a + p.n).map((x: any) => <li><span class="num muted">Wk {x.w}</span><span><Txt>{x.t}</Txt></span></li>)}</ul>;
 }
 function NewsWire() {
   const st = wire(), cur = FILTERS.find(f => f[0] === st.f) || FILTERS[0];
   return <Panel title="News wire">
-    <div class="row opts mb2">{FILTERS.map(f => <Btn kind="sm" on={f[0] === cur[0]} t="newsf" d={{ v: f[0] }} onClick={() => view(() => { st.f = f[0]; })}>{f[1]}</Btn>)}</div>
-    <NewsList n={60} kinds={cur[2]} />
+    <div class="row opts mb2">{FILTERS.map(f => <Btn kind="sm" on={f[0] === cur[0]} t="newsf" d={{ v: f[0] }} onClick={() => view(() => { st.f = f[0]; st.pg = 0; })}>{f[1]}</Btn>)}</div>
+    {(() => { const PER = 15, n = cur[2] ? G.S.news.filter((x: any) => (cur[2] as string[]).indexOf(x.k) >= 0).length : G.S.news.length, pages = Math.max(1, Math.ceil(n / PER)), pg = Math.min(st.pg || 0, pages - 1);
+      return <><NewsList n={PER} kinds={cur[2]} from={pg * PER} />
+        {pages > 1 ? <div class="row mt1"><Btn kind="sm" t="news-newer" disabled={pg === 0} onClick={() => view(() => { st.pg = pg - 1; })}>Newer</Btn><span class="muted">Page {pg + 1} of {pages}</span>
+          <Btn kind="sm" t="news-older" disabled={pg >= pages - 1} onClick={() => view(() => { st.pg = pg + 1; })}>Older</Btn></div> : null}</>; })()}
   </Panel>;
 }
 
@@ -58,7 +61,7 @@ function Arrangement() {
 
 export function World() {
   const S = G.S;
-  return <>
+  return <div class="onescreen winpage">
     <Head eyebrow={E.cal(S.week).label} title="World" />
     <Promotions />
     <Arrangement />
@@ -66,5 +69,5 @@ export function World() {
       <NewsWire />
       <PowerTen />
     </div>
-  </>;
+  </div>;
 }

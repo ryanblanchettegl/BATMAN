@@ -43,7 +43,8 @@ function ticker(N: any): [string, string][] {
 function Road() {
   const S = G.S, R = E.road(S), date = E.cal(S.week).label;
   if (!R) return <Win title="The road" right={date} cls="road" area="road" t="road"><Empty>No show is on the road yet.</Empty></Win>;
-  const N = R.now, h = Math.min(2, N.home.length), past: any[] = R.stops.filter((s: any) => s.k === 'past').slice(h === 2 ? -2 : -3), ahead: any[] = R.stops.filter((s: any) => s.k !== 'past').slice(0, Math.min(4, (h === 2 ? 5 : 6) - past.length));
+  // a tablet's window is shorter: one hometown name and one stop fewer
+  const tab = document.documentElement.getAttribute('data-screen') === 'tablet', N = R.now, h = Math.min(tab ? 1 : 2, N.home.length), past: any[] = R.stops.filter((s: any) => s.k === 'past').slice(h === 2 ? -2 : -3), ahead: any[] = R.stops.filter((s: any) => s.k !== 'past').slice(0, Math.min(4, (h === 2 ? 5 : 6) - past.length - (tab ? 1 : 0)));
   const offMap = (s: any) => R.map && s.x == null ? <span class="muted"> {'·'} off this map</span> : null;
   return <Win title={R.mapName ? 'The road: ' + R.mapName : 'The road'} right={date} cls="road" area="road" t="road">
     <div class="r3">
@@ -64,7 +65,7 @@ function Road() {
       </div>
       <div class="rright">
         <Group title="Hometown" t="road-home">
-          {N.home.length ? N.home.slice(0, 2).map((x: any) => <p class="one hm" key={x.id}><Portrait w={S.w[x.id]} /><Name w={S.w[x.id]} /> <span class={x.hurt ? 'bad' : 'muted'}>{x.hurt ? (x.near ? 'is hurt. From ' + x.town + ', up the road.' : 'is hurt, and from here.') : (x.near ? 'From ' + x.town + ', up the road.' : 'The crowd is theirs.')}</span></p>)
+          {N.home.length ? N.home.slice(0, h).map((x: any) => <p class="one hm" key={x.id}><Portrait w={S.w[x.id]} /><Name w={S.w[x.id]} /> <span class={x.hurt ? 'bad' : 'muted'}>{x.hurt ? (x.near ? 'is hurt. From ' + x.town + ', up the road.' : 'is hurt, and from here.') : (x.near ? 'From ' + x.town + ', up the road.' : 'The crowd is theirs.')}</span></p>)
             : <p class="muted one">Nobody on the roster is from here.</p>}
         </Group>
         <Group title="The road" t="road-list">
@@ -133,8 +134,9 @@ export function MatterWindow(p: { m: Modal }) {
 /* ---------- the next show ---------- */
 /** The nearest countdown, so there is always something about to pay off. It goes to its page. */
 function ComingUp() {
-  const U: any[] = E.comingUp(G.S); if (!U.length) return null; const u = U[0];
-  return <span class="coming" data-t="coming">Coming up: <button type="button" class="lnk" data-t="coming-go" data-v={u.k} onClick={() => go(u.to)}>{u.t}</button></span>;
+  // a big event this week is already on the banner above: the countdown says the next thing instead
+  const U: any[] = E.comingUp(G.S).filter((x: any) => !(x.k === 'big' && x.n <= 0)); if (!U.length) return null; const u = U[0];
+  return <span class="coming" data-t="coming">{u.when ? u.when + ': ' : 'Coming up: '}<button type="button" class="lnk" data-t="coming-go" data-v={u.k} onClick={() => go(u.to)}>{u.when ? u.what : u.t}</button></span>;
 }
 function NextShow() {
   const S = G.S, sh = S.queue[S.qi], left = S.queue.length - S.qi, gate = E.taskGate(S, 'book'), B = E.backstage(S), N = E.people(S), done = weekDone();
@@ -145,7 +147,7 @@ function NextShow() {
     <div class="nx">
       <div>
         {done ? <p>Every show this week has run.</p> : <>
-          <p data-t="next-expect">{sh.big ? <Tag kind="gold">Big event</Tag> : null}{sh.brand ? <Tag>{brandName(me(), sh.brand)}</Tag> : null}The crowd expects <b>{x ? x.a : 'a show'}</b>{x ? <>: matches of <b>{x.bar}</b> or better.</> : '.'}</p></>}
+          <p data-t="next-expect">{sh.brand ? <Tag>{brandName(me(), sh.brand)}</Tag> : null}The crowd expects <b>{x ? x.a : 'a show'}</b>{x ? <>: matches of <b>{x.bar}</b> or better.</> : '.'}</p></>}
         {done && (n || !wk.ok) ? <p class="bad one">{n ? 'Answer what is on your desk first.' : 'Finish this week’s tasks first.'}</p> : <p class="muted cu"><ComingUp /></p>}
       </div>
       <LightPic name={done ? 'bell' : 'ring'} dot={1} t="next-pic" />

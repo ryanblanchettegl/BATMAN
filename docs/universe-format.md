@@ -47,6 +47,17 @@ Ids are lowercase slugs: 2 to 40 letters, digits or underscores.
 - `manifest.free_agents`: how many unsigned newcomers the game generates at the start (0 to 120).
 - `names`: `first_m`, `first_f`, `last` lists used for generated rookies.
 
+## World lists (optional)
+
+- `sponsors`: a list of company names the game offers sponsor deals from. Missing or empty: the game's own list.
+- `columnists`: a list of dirt sheet writers; one is picked for each game. Missing or empty: The Ringside Wire.
+- `names`: `{first_m, first_f, last}`, lists of names for newcomers and unknowns. A list is used only when it has at least eight names (six for `first_f`); otherwise the game's own.
+- `promotions[].brands`: `[{id, name, dev}]`, a company's brands; `dev: true` marks the developmental one. Shows, titles and contracts name theirs in `brand`.
+- `workers[].manager_id`: the id of a worker with the `manager` role who manages this one.
+- `promotions[].announcers` (play-by-play first, then colour) and `promotions[].staff` (`road_agent`, `head_writer`).
+
+The World Editor sets all of these (the World tab's names, a company's Brands and People panels, a wrestler's Managed by).
+
 ## Validation
 
 `E.validateUniverse(pkg)` returns `{ ok, errors, warnings }`. Errors block loading; warnings do not. It checks, in order: the manifest and schema version; every record against its table (types, allowed values, unknown fields with a "did you mean"); references between tables; world rules (roster sizes, one exclusive deal each, title holders under contract); media paths.

@@ -2,7 +2,7 @@
 import { ComponentChildren } from 'preact';
 import { Btn, Field, Sel, Opt, dataAttrs } from '../../kit';
 import { E } from '../../engine';
-import { es, edit, look, world, reId } from './state';
+import { es, edit, editDel, look, world, reId } from './state';
 
 type Rec = Record<string, any>;
 /** A text box that writes straight into a record. An empty optional field is removed, not stored as ''. */
@@ -36,9 +36,9 @@ export function Rating(p: { label: string; obj: Rec; k: string; opt?: boolean })
 }
 export interface Pick { id: string; label: string; sub?: string; bad?: boolean }
 /** The list on the left of a tab. One row is open at a time. */
-export function PickList(p: { items: Pick[]; sel: string | null | undefined; onPick: (id: string) => void; t: string; empty: string; more?: string }) {
+export function PickList(p: { items: Pick[]; sel: string | null | undefined; onPick: (id: string) => void; t: string; empty: string; more?: string; many?: Record<string, any> }) {
   if (!p.items.length) return <p class="empty">{p.empty}</p>;
-  return <div class="edlist" role="list">{p.items.map(it => <button type="button" key={it.id} class={'edrow' + (it.id === p.sel ? ' on' : '') + (it.bad ? ' bad' : '')} aria-pressed={it.id === p.sel} {...dataAttrs(p.t, { id: it.id })}
+  return <div class="edlist" role="list">{p.items.map(it => <button type="button" key={it.id} class={'edrow' + ((p.many ? !!p.many[it.id] : it.id === p.sel) ? ' on' : '') + (it.bad ? ' bad' : '')} aria-pressed={p.many ? !!p.many[it.id] : it.id === p.sel} {...dataAttrs(p.t, { id: it.id })}
     onClick={() => look(() => p.onPick(it.id))}><span class="nm">{it.label}</span>{it.sub ? <span class="st">{it.sub}</span> : null}</button>)}
     {p.more ? <p class="muted mt1">{p.more}</p> : null}</div>;
 }
@@ -46,7 +46,7 @@ export function PickList(p: { items: Pick[]; sel: string | null | undefined; onP
 export function DelBtn(p: { id: string; what: string; onDelete: () => void }) {
   const st = es(), armed = st.del === p.id;
   return armed
-    ? <span class="row"><Btn kind="danger" t="ed-del-yes" onClick={() => edit(p.onDelete)}>Yes, delete {p.what}</Btn><Btn kind="sm" t="ed-del-no" onClick={() => look(() => { /* look() disarms it */ })}>Keep it</Btn></span>
+    ? <span class="row"><Btn kind="danger" t="ed-del-yes" onClick={() => editDel(p.onDelete, p.what.charAt(0).toUpperCase() + p.what.slice(1))}>Yes, delete {p.what}</Btn><Btn kind="sm" t="ed-del-no" onClick={() => look(() => { /* look() disarms it */ })}>Keep it</Btn></span>
     : <Btn kind="sm" t="ed-del" onClick={() => look(() => { es().del = p.id; })}>Delete {p.what}</Btn>;
 }
 /** List on the left, the open record on the right. On a narrow screen the open record replaces the list. */
@@ -57,3 +57,10 @@ export function TwoPane(p: { open: boolean; list: ComponentChildren; children: C
   </div>;
 }
 export const opts = (table: Record<string, string>): Opt[] => Object.keys(table).map(k => [k, table[k]] as Opt);
+
+/** The brand a show, belt or contract belongs to. Shown only when its company has brands. */
+export function BrandSel(p: { pkg: any; pid: string; rec: any; t?: string }) {
+  const P = p.pkg.promotions.find((x: any) => x.id === p.pid), B: any[] = (P && P.brands) || [];
+  if (!B.length) return null;
+  return <Field label="Brand"><Sel t={p.t || 'ed-brand'} value={p.rec.brand || ''} options={[['', 'No brand'] as Opt].concat(B.map((b: any) => [b.id, b.name + (b.dev ? ' (developmental)' : '')] as Opt))} onChange={v => edit(() => { E.edPutBrand(p.rec, v || null); })} /></Field>;
+}

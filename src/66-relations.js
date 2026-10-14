@@ -84,6 +84,7 @@ function relBump(S,a,b,d,mem){
   e.last=S.week;
   if(mem&&mem.t){e.mem.unshift({w:S.week,k:mem.k||'',t:mem.t,by:mem.by==null?null:mem.by});if(e.mem.length>REL_MEM)e.mem.length=REL_MEM;}
   var now=relState(e);e.st=now;
+  if(now!==was&&now!==0)netTurn(S,a,b,now);
   if(now!==was&&relMine(S,a,b)){
     var A=S.w[a].name,B=S.w[b].name;
     if(now<0)note(S,A+' and '+B+' have real heat now',mem&&mem.t?mem.t:'It will show when they share a ring or a locker room.','bad');
@@ -132,6 +133,16 @@ POST.push(function(ctx){
       }
     }
     if(d.bond||d.ra||d.rb||mem)relBump(S,a.id,b.id,d,mem);
+  }
+  // one half of a team going it alone: a singles win feeds the partner's jealousy, a singles title much more, and the
+  // winner's own jealousy of the partner eases. It fades by itself, so only a run of it builds to trouble (a betrayal).
+  if(ctx.m.mt==='1v1'&&r.win>=0&&r.winners.length===1&&typeof partnerOf==='function'){
+    var Wn=r.winners[0],Q=partnerOf(S,Wn);
+    if(Q&&Q.promo===Wn.promo&&all.indexOf(Q)<0){
+      var gold=!!(r.seg.change&&ctx.t&&!ctx.t.tag);
+      relBump(S,Q.id,Wn.id,{ja:gold?25:7},gold?{k:'passed',by:Wn.id,t:Q.name+' watched partner '+Wn.name+' win the '+ctx.t.name+' alone.'}:null);
+      if(jealOf(S,Wn.id,Q.id)>0)relBump(S,Wn.id,Q.id,{ja:-5});
+    }
   }
   // a title changes hands: the people who thought it should be theirs watch somebody else hold it up
   var t=ctx.t;

@@ -14,7 +14,7 @@ export function After() {
   const it = A.items.find((x: any) => x.k === st.k) || A.items[0];
   const ev = A.matter ? S.inbox.find((e: any) => e.id === A.matter.id) : null;
   // the pane turns pages when the night left more than fits beside an open matter; it never scrolls
-  const per = ev && !ev.done ? 3 : 6, pages = it ? Math.max(1, Math.ceil(it.detail.length / per)) : 1, pg = Math.min(st.p || 0, pages - 1);
+  const tab = document.documentElement.getAttribute('data-screen') === 'tablet', per = ev && !ev.done ? 3 : (tab ? 3 : 6), pages = it ? Math.max(1, Math.ceil(it.detail.length / per)) : 1, pg = Math.min(st.p || 0, pages - 1);
   const lper = ev && !ev.done ? 4 : 8, lpages = Math.max(1, Math.ceil(A.items.length / lper)), lp = Math.min(st.lp || 0, lpages - 1);
   return <div class="onescreen after1" data-t="after-screen">
     <Head eyebrow="After the show" title={A.name}>

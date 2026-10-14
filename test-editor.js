@@ -98,5 +98,70 @@ C.workers[0].ring_name = 'Changed'; ok('changing the copy leaves the original al
   [fa, gone].forEach((w, i) => { const r = play(w, 'ttt', 12); ok('twelve weeks in a two-company world (' + (i ? 'wrestlers gone' : 'free agents') + ')', r.errs === 0 && !r.nan && r.shows > 0, 'errs ' + r.errs + ', shows ' + r.shows); }); }
 
 E.useUniverse(builtIn);
+/* ---- random helpers: a fresh name, and ratings for a place on the card ---- */
+{ const pkg = JSON.parse(JSON.stringify(builtIn)), names = new Set(pkg.workers.map(x => x.ring_name)), nm = E.edRandomName(pkg, 'F', 4);
+  ok('a random name is one nobody in the world has', !!nm && !names.has(nm), nm);
+  const w = pkg.workers.find(x => E.edHome(pkg, x.id)), con = () => pkg.contracts.find(c => c.worker_id === w.id);
+  const lo = E.edSetTier(pkg, w.id, 'jobber', 3).ratings.overness, loPush = con().push_level, hi = E.edSetTier(pkg, w.id, 'main_eventer', 3).ratings.overness;
+  ok('set ratings for a main eventer gives more overness than for an opener, and the push follows', hi > lo + 15 && loPush === 'jobber' && con().push_level === 'main_eventer', lo + ' -> ' + hi); }
+/* ---- unknown free agents ---- */
+{ const pkg = JSON.parse(JSON.stringify(builtIn)), n0 = pkg.workers.length, m = E.edFillFree(pkg, 6, 7);
+  ok('Make unknowns adds six unsigned wrestlers with names nobody has', m.length === 6 && pkg.workers.length === n0 + 6 && m.every(w => !E.edHome(pkg, w.id)) && new Set(pkg.workers.map(x => x.ring_name)).size === pkg.workers.length);
+  ok('the world still passes its check', E.edCheck(pkg).errors === 0); }
+/* ---- managers ---- */
+{ const pkg = JSON.parse(JSON.stringify(builtIn)), w = pkg.workers.find(x => E.edHome(pkg, x.id) && !(x.roles || []).includes('manager'));
+  const m = E.edAddWorker(pkg, { ring_name: 'Test Manager', promotion_id: E.edHome(pkg, w.id) }); m.roles = ['manager'];
+  ok('a manager is offered, the same company first', E.edManagers(pkg, w.id).some(x => x.id === m.id && x.same) && E.edManagers(pkg, w.id).findIndex(x => !x.same) !== 0);
+  E.edSetManager(pkg, w.id, m.id); ok('picking one writes manager_id and the check accepts it', w.manager_id === m.id && E.edCheck(pkg).errors === 0);
+  ok('somebody without the Manager job cannot manage', E.edSetManager(pkg, w.id, pkg.workers.find(x => !(x.roles || []).includes('manager') && x.id !== w.id).id) === null && w.manager_id === m.id);
+  E.edSetManager(pkg, w.id, null); ok('Nobody unties them', !w.manager_id); }
+/* ---- several at once ---- */
+{ const pkg = JSON.parse(JSON.stringify(builtIn)), ids = pkg.workers.filter(x => E.edHome(pkg, x.id)).slice(0, 3).map(x => x.id), to = pkg.promotions[1].id;
+  ok('sign all picked moves every one of them', E.edMany(pkg, ids, 'sign', to) === 3 && ids.every(id => E.edHome(pkg, id) === to));
+  ok('release all picked makes them free agents', E.edMany(pkg, ids, 'release') === 3 && ids.every(id => !E.edHome(pkg, id)));
+  const n0 = pkg.workers.length; ok('delete all picked removes them', E.edMany(pkg, ids, 'delete') === 3 && pkg.workers.length === n0 - 3 && E.edCheck(pkg).errors === 0); }
+/* ---- brands ---- */
+{ const pkg = JSON.parse(JSON.stringify(builtIn)), p = pkg.promotions[0], b = E.edAddBrand(pkg, p.id, 'Red'), b2 = E.edAddBrand(pkg, p.id, 'Red');
+  ok('brands get their own ids, even with the same name', b.id !== b2.id && p.brands.length === 2);
+  const sh = pkg.shows.find(x => x.promotion_id === p.id), t = pkg.titles.find(x => x.promotion_id === p.id), c = pkg.contracts.find(x => x.promotion_id === p.id);
+  E.edPutBrand(sh, b.id); E.edPutBrand(t, b.id); E.edPutBrand(c, b.id); E.edSetBrand(pkg, p.id, b2.id, { name: 'Gold', dev: true });
+  ok('a brand can be renamed and made developmental', p.brands[1].name === 'Gold' && p.brands[1].dev === true);
+  ok('a world with brands passes the check', E.edCheck(pkg).errors === 0);
+  E.edRemoveBrand(pkg, p.id, b.id);
+  ok('removing a brand clears it from its shows, belts and contracts', !sh.brand && !t.brand && !c.brand && p.brands.length === 1); }
+/* ---- the world's lists: sponsors, columnists, newcomers' names ---- */
+{ const pkg = JSON.parse(JSON.stringify(builtIn));
+  ok('a list is set one name a line, blanks and repeats dropped', E.edSetList(pkg, 'sponsors', 'Acme Rope\n\nAcme Rope\nBolt Cola') === 2 && pkg.sponsors.join() === 'Acme Rope,Bolt Cola');
+  E.edSetList(pkg, 'columnists', 'The Bell Ringer'); E.edSetList(pkg, 'first_m', 'A1\nA2\nA3\nA4\nA5\nA6\nA7\nA8'); E.edSetList(pkg, 'last', 'B1\nB2\nB3\nB4\nB5\nB6\nB7\nB8');
+  ok('the lists read back as text', E.edListText(pkg, 'columnists') === 'The Bell Ringer' && E.edListText(pkg, 'first_m').split('\n').length === 8);
+  ok('a world with its own lists passes the check', E.edCheck(pkg).errors === 0);
+  const fill = E.edFillFree(pkg, 3, 2); ok('newcomers are named from the world\'s lists (women from the game\'s own first names when the world has none)', fill.every(w => / B\d$/.test(w.ring_name) && (w.gender === 'F' || /^A\d /.test(w.ring_name))), fill.map(w => w.ring_name).join(', '));
+  E.useUniverse(pkg); const S = E.newGame('pdw', 1, { name: 'R' });
+  ok('a game played in the world uses its columnist', S.columnist === 'The Bell Ringer', S.columnist);
+  E.edSetList(pkg, 'sponsors', ''); ok('an empty box goes back to the game\'s own list', !pkg.sponsors);
+  E.useUniverse(builtIn); }
+/* ---- quick starts ---- */
+for (const k of ['territory', 'nine']) { const pkg = E.edQuick(k, '', 5), models = new Set(pkg.promotions.map(p => p.model));
+  ok('quick start "' + k + '" is ready to play', E.edCheck(pkg).errors === 0 && pkg.promotions.length === (k === 'nine' ? 9 : 2) && (k !== 'nine' || models.size === 9), pkg.promotions.length + ' companies, ' + models.size + ' models'); }
+/* ---- a running game kept as a world ---- */
+{ E.useUniverse(builtIn); const S = E.newGame('pdw', 2, { name: 'R' }); for (let w = 0; w < 4; w++) { S.inbox.filter(e => !e.done).forEach(e => E.resolveEvent(S, e.id, 0)); while (S.qi < S.queue.length) E.runPlayerShow(S, E.suggest(S)); E.endWeek(S); }
+  const pk = E.exportUniverse(S, { name: 'Kept', id: 'kept_wk5' });
+  ok('a game kept as a world passes the World Editor check', E.edCheck(pk).errors === 0, (E.edCheck(pk).lines || []).filter(l => l.lvl === 'error').slice(0, 2).map(l => l.msg).join(' | '));
+  E.useUniverse(pk); const T = E.newGame('pdw', 1, { name: 'R' }); ok('and a new game starts in it', !!T.promos.pdw && T.w.length > 50); E.useUniverse(builtIn); }
+/* ---- a health line per company ---- */
+{ const pkg = JSON.parse(JSON.stringify(builtIn)), p = pkg.promotions[0], H = E.edHealth(pkg, p.id);
+  ok('a company in the built-in world reads healthy', H.length >= 2 && !H.some(l => l.warn), H.map(l => l.t).join(' | '));
+  pkg.contracts.filter(c => c.promotion_id === p.id && c.push_level === 'main_eventer').forEach(c => { const w = pkg.workers.find(x => x.id === c.worker_id); w.ratings.overness = 15; });
+  const H2 = E.edHealth(pkg, p.id); ok('a weak top of the card is warned about in words', H2[0].warn && /far below/.test(H2[0].t), H2[0].t); }
+/* ---- make a copy: a wrestler keeps their company, a belt starts vacant, a team empty, a company brings shows and belts, not people ---- */
+{ const pkg = JSON.parse(JSON.stringify(builtIn)), w = pkg.workers.find(x => E.edHome(pkg, x.id)), cw = E.edDup(pkg, 'workers', w.id);
+  ok('a copied wrestler has a new id and name and the same company', cw && cw.id !== w.id && /\(copy\)$/.test(cw.ring_name) && E.edHome(pkg, cw.id) === E.edHome(pkg, w.id) && !!E.edHome(pkg, cw.id));
+  const t = pkg.titles.find(x => x.holder_ids && x.holder_ids.length), ct = E.edDup(pkg, 'titles', t.id);
+  ok('a copied belt starts vacant', ct && ct.holder_ids.length === 0 && t.holder_ids.length > 0);
+  const tm = pkg.teams[0], ctm = E.edDup(pkg, 'teams', tm.id);
+  ok('a copied team starts with no members', ctm && ctm.member_ids.length === 0 && tm.member_ids.length > 0);
+  const p = pkg.promotions[0], s0 = pkg.shows.filter(x => x.promotion_id === p.id).length, b0 = pkg.titles.filter(x => x.promotion_id === p.id).length, cp = E.edDup(pkg, 'promotions', p.id);
+  ok('a copied company brings its shows and belts but not its roster', cp && pkg.shows.filter(x => x.promotion_id === cp.id).length === s0 && pkg.titles.filter(x => x.promotion_id === cp.id).length === b0 && !pkg.contracts.some(x => x.promotion_id === cp.id));
+  ok('the ids stay unique', new Set(pkg.workers.map(x => x.id)).size === pkg.workers.length && new Set(pkg.titles.map(x => x.id)).size === pkg.titles.length); }
 if (fails.length) { console.log('FAILED: ' + fails.length); process.exit(1); }
 console.log('test-editor: all passed');

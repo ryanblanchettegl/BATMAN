@@ -10,7 +10,7 @@
   var begin=E.liveBegin;
   E.liveBegin=function(S,card){
     var r=begin(S,card);
-    if(r&&r.ok&&S.live){var n0={inj:{},mor:{},notes:[]};rosterOf(S,S.player).forEach(function(w){n0.inj[w.id]=w.inj||0;n0.mor[w.id]=w.morale;});S.live.n0=n0;}
+    if(r&&r.ok&&S.live){var n0={inj:{},mor:{},notes:[],fh:{}};rosterOf(S,S.player).forEach(function(w){n0.inj[w.id]=w.inj||0;n0.mor[w.id]=w.morale;});activeFeuds(S).forEach(function(f){if(f.promo===S.player)n0.fh[f.id]=Math.round(f.heat);});S.live.n0=n0;}
     return r;
   };
 })();
@@ -41,7 +41,10 @@ SHOWX.push(function(S,P,show,rep,card){
   mood.sort(function(a,b){return Math.abs(b.d)-Math.abs(a.d);});
   var sh=!show.big&&typeof airRec==='function'?airRec(P,show.id):null;
   rep.left={key:L.key,gate:{att:rep.att,cap:rep.cap,sold:rep.sellout,money:rep.gate},tv:{v:rep.viewers,was:sh&&sh.va?Math.round(sh.va):null,buys:rep.buys||0},
-    hurt:hurt,mood:mood.slice(0,8),notes:n0.notes.slice(),writers:nightWriters(S,P,rep,card)};
+    hurt:hurt,mood:mood.slice(0,8),notes:n0.notes.slice(),writers:nightWriters(S,P,rep,card),
+    // how each feud moved tonight (src/21-living.js): hotter, cooler, ended or fizzled
+    feuds:S.feuds.filter(function(f){return f.promo===P.id&&n0.fh&&n0.fh[f.id]!=null;}).map(function(f){return {id:f.id,l:feudLabel(S,f),was:n0.fh[f.id],now:Math.round(f.heat),end:f.res&&!f.dead?1:0,ph:f.res?null:PHASE_N[feudPhase(S,f)]};})
+      .filter(function(x){return x.end||Math.abs(x.now-x.was)>=3;}).sort(function(a,b){return b.end-a.end||Math.abs(b.now-b.was)-Math.abs(a.now-a.was);})};
 });
 /** The desk after a show: what the last show of this week left behind, one line each, with the detail for a pop-up.
     Null before the first show of a week has run. */
@@ -58,11 +61,13 @@ E.afterShow=function(S){
   (rep.targets||[]).filter(function(t){return !t.ok;}).forEach(function(t,i){add('miss'+i,'Target missed',t.t,[t.t,'Nothing is paid for a target that is missed.'],'bad');});
   var ow=rep.owner;
   if(ow&&!ow.me&&ow.was!=null){var od=Math.round((ow.now-ow.was)*10)/10,ol=S.owner.name+': trust '+(od>0?'up '+od:(od<0?'down '+(-od):'unchanged'))+', now '+Math.round(ow.now)+'.';
-    if(od<0||ow.edge)add('owner','The owner',ol,[ow.text].concat(ow.why),ow.edge||od<=-1?'bad':'warn');}
+    if(od<0||ow.edge)add('owner','The owner',ol,[ow.mood||ow.text].concat(ow.why),ow.edge||od<=-1?'bad':'warn');}
   if(down.length||up.length||rel.length){
     var d=[];down.forEach(function(m){d.push(nm(m.id)+' went home unhappy.');});up.forEach(function(m){d.push(nm(m.id)+' went home in a better mood.');});rel.forEach(function(n){d.push(n.h+(n.t?': '+n.t:'')+(/[.!?]$/.test(n.t||n.h)?'':'.'));});
     add('room','The locker room',(down.length?down.length+' went home unhappy':'Nobody went home unhappy')+(up.length?', '+up.length+' in a better mood':'')+(rel.length?'. '+rel.length+' '+(rel.length===1?'thing':'things')+' people will remember':'')+'.',d,down.length?'bad':(up.length?'good':''));
   }
+  if(L.feuds&&L.feuds.length){var fl=function(x){return x.l+(x.end?': ended tonight':(x.now>x.was?': hotter, '+x.was+' to '+x.now:': cooler, '+x.was+' to '+x.now)+(x.ph?' ('+x.ph.toLowerCase()+')':''));};
+    add('feuds','The feuds',fl(L.feuds[0])+(L.feuds.length>1?', and '+(L.feuds.length-1)+' more':'')+'.',L.feuds.map(function(x){return fl(x)+'.';}),L.feuds.some(function(x){return x.end;})?'good':(L.feuds[0].now>L.feuds[0].was?'good':'warn'));}
   add('gate','The gate',g.sold?'Sold out: '+g.att.toLocaleString('en-US')+' tickets, every one there was.':g.att.toLocaleString('en-US')+' tickets sold of '+g.cap.toLocaleString('en-US')+'. '+empty.toLocaleString('en-US')+' seats were empty.',
     [g.att.toLocaleString('en-US')+' tickets sold of '+g.cap.toLocaleString('en-US')+' in the '+rep.venue+'.',g.sold?'A sell-out. A bigger building would have sold more.':(pct>=0.85?'A healthy house. The empty seats did not show on television.':(pct>=0.6?'A soft house. The camera had to stay off parts of the building.':'A poor house. It looked empty on television, and the crowd was quieter for it.')),'The gate was '+money(g.money)+'.'],g.sold?'good':(pct<0.6?'bad':''));
   if(rep.mkt&&rep.city&&rep.mkt.now!==rep.mkt.was){var mw=mktWord(rep.mkt.now),mo=mktWord(rep.mkt.was),mu=rep.mkt.now>rep.mkt.was;
@@ -79,7 +84,7 @@ E.afterShow=function(S){
   (typeof E.comingUp==='function'?E.comingUp(S):[]).slice(0,3).forEach(function(u){nx.push({t:u.t,when:'',soon:false});});
   nx=nx.slice(0,5);
   (rep.targets||[]).filter(function(t){return t.ok;}).forEach(function(t,i){add('hit'+i,'Target hit',t.t,[t.t],'good');});
-  if(ow&&!ow.me&&ow.was!=null&&!(od<0||ow.edge))add('owner','The owner',ol,[ow.text].concat(ow.why),od>0?'good':'');
+  if(ow&&!ow.me&&ow.was!=null&&!(od<0||ow.edge))add('owner','The owner',ol,[ow.mood||ow.text].concat(ow.why),od>0?'good':'');
   if(nx.length)add('next','Next week',nx[0].t+(nx[0].when?' ('+nx[0].when+')':''),nx.map(function(x){return x.t+(x.when?' ('+x.when+').':'');}),nx[0].soon?'warn':'');
   return {key:L.key,name:rep.name,grade:gradeG(repCS(rep)),head:v.head,line:v.line,matter:mt,next:nx,items:items,unseen:items.filter(function(x){return !x.seen;}).length,left:S.queue.length-S.qi};
 };

@@ -27,7 +27,9 @@ async function run(mode, w, h, promo) {
     ok(id, 'the map is the one the engine names, and the window says which', (await page.$eval('[data-t="road-map"]', e => e.getAttribute('data-map'))) === R.map && (await txt(page, '[data-t="road"] .ttl h2')).indexOf(R.mapName) > 0, R.mapName);
     const dot = +(await page.$eval('[data-t="road-map"]', e => e.getAttribute('data-dot'))), box = await page.$eval('[data-t="road-map"]', e => { const r = e.getBoundingClientRect(), b = e.closest('.r3').getBoundingClientRect(); return { w: r.width, h: r.height, bh: b.height, cw: e.width, ch: e.height }; });
     ok(id, 'the map is 59 by 32 square dots, each a whole number of pixels, and as tall as its window lets it be', box.cw === 59 * dot && box.ch === 32 * dot && dot >= 4 && box.h <= box.bh + 1 && box.bh - box.h < 34 + 32, dot + 'px dots, ' + Math.round(box.h) + ' of ' + Math.round(box.bh));
-    const col = await mapColours(page);
+    // the map redraws after a resize: sample until it has settled (up to two seconds) instead of trusting a fixed wait
+    let col = await mapColours(page);
+    for (let k = 0; k < 20 && !(col.now > 0 && col.land > 20 && col.mine + col.next > 0); k++) { await page.waitForTimeout(100); col = await mapColours(page); }
     ok(id, 'this week’s land is lit yellow, the places the company tours a lighter green, the rest green', col.now > 0 && col.land > 20 && col.mine + col.next > 0, JSON.stringify(col));
     ok(id, 'the heading is this week’s city and its land', (await txt(page, '[data-t="road-city"]')).trim() === (R.now.city + ', ' + R.now.land).toUpperCase(), await txt(page, '[data-t="road-city"]'));
     ok(id, 'the building is named before the show is booked', (await txt(page, '[data-t="road-show"]')).indexOf(R.now.venue) >= 0);
@@ -47,7 +49,7 @@ async function run(mode, w, h, promo) {
     await state(page, playWeeks, 4); await redraw(page); await page.waitForTimeout(120);
     await fit('the desk in week five');
     const R2 = await state(page, S => window.GP.road(S));
-    ok(id, 'the road so far is listed with a grade for each night (three nights, or two when two hometown names take a line)', (await page.$$eval('[data-t="road-list"] p', L => L.filter(e => /\b[A-F][+-]?\b/.test(e.innerText) && /sold out|\d,\d{3}|\d{3}/.test(e.innerText)).length)) === (R2.now.home.length >= 2 ? 2 : 3) && await page.evaluate(() => window.EWF_DEBUG.maps()) > d0, R2.stops.filter(s => s.k === 'past').map(s => s.city + ' ' + s.grade).join(', '));
+    ok(id, 'the road so far is listed with a grade for each night (three nights, or two when two hometown names take a line)', (await page.$$eval('[data-t="road-list"] p', L => L.filter(e => /\b[A-F][+-]?\b/.test(e.innerText) && /sold out|\d,\d{3}|\d{3}/.test(e.innerText)).length)) === (R2.now.home.length >= 2 && !/tablet/.test(id) ? 2 : 3) && await page.evaluate(() => window.EWF_DEBUG.maps()) > d0, R2.stops.filter(s => s.k === 'past').map(s => s.city + ' ' + s.grade).join(', '));
     /* the fullest week there can be: three matters, a long one from last night, two from the hometown, a rival in town, every kind of task */
     await state(page, S => { const E = window.GP, R = E.rosterOf(S, S.player).filter(x => !x.nw), c = E.road(S).now.city, long = 'A very long matter that goes on for a good while about a promised win that is two weeks late and a locker room that is watching to see what the booker does about it before the next big event comes round.';
       R[0].town = c; R[1].town = c; R[2].inj = 3; R[3].con = 2; R[4].morale = 20; R[5].stress = 80;
@@ -57,7 +59,7 @@ async function run(mode, w, h, promo) {
     await redraw(page); await page.waitForTimeout(120);
     await fit('the fullest desk');
     ok(id, 'with something to answer the desk window is red and counts them', await page.$eval('[data-t="fire"]', e => e.classList.contains('hot')) && /4 to answer/.test(await txt(page, '[data-t="fire"] .ttl')) && await page.$$eval('[data-t="ev-open"]', L => L.length) === 3 && /1 more/.test(await txt(page, '[data-t="fire"]')));
-    ok(id, 'the hometown names, the last night here and the rival in town are all said', await page.$$eval('[data-t="road-home"] .hm', L => L.length) === 2 && /9 weeks ago, an A-, sold out/.test(await txt(page, '[data-t="road-crowd"]')) && /had a great night here 2 weeks ago/.test((await page.$eval('[data-t="road-crowd"]', e => e.textContent))));
+    ok(id, 'the hometown names, the last night here and the rival in town are all said', await page.$$eval('[data-t="road-home"] .hm', L => L.length) === (/tablet/.test(id) ? 1 : 2) && /9 weeks ago, an A-, sold out/.test(await txt(page, '[data-t="road-crowd"]')) && /had a great night here 2 weeks ago/.test((await page.$eval('[data-t="road-crowd"]', e => e.textContent))));
     ok(id, 'the tasks turn pages and never scroll', await page.$$eval('.tasks .task', L => L.length) <= 4 && /1 of \d/.test(await txt(page, '[data-t="tasks-pg"]')));
     await page.click('[data-t="tasks-page"][data-v="next"]'); ok(id, 'the next page of tasks', /2 of \d/.test(await txt(page, '[data-t="tasks-pg"]'))); await fit('the second page of tasks');
     await shot(page, 'desk-' + mode + '-' + w, false);

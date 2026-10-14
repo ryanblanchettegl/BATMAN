@@ -235,6 +235,7 @@ html[data-screen="tablet"] .status .nk em{padding-inline:.8ch}
 .rmap>canvas{display:block;box-sizing:content-box;border:2px solid var(--dgrey);border-right-color:var(--white);border-bottom-color:var(--white);background:#0000aa}
 .rmap>.nomap{line-height:1.18;width:24ch;color:#444}
 .road .rmid,.road .rright{min-width:0;min-height:0;overflow:hidden}
+.road .rmid .kvl .v{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
 .road .grp{margin:.58em 0 .12em;padding:.42em 1ch .1em}
 .road .rright .grp:first-child{margin-top:.5em}
 .road .chip{display:inline-block;width:1.3ch;height:.62em;margin-right:.9ch;border:1px solid #000;vertical-align:.02em}
@@ -272,7 +273,7 @@ html:not(.rm) .wn .tasks.hit .task.must{animation:taskhit .7s ease-in-out 3}
 .nextwin .nx>div{min-width:0}
 .nextwin .bsl{margin-top:.2em;border-top:1px solid var(--dgrey);padding-top:.25em}
 .nextwin .bsl .btn{margin-right:1.4ch}
-.nextwin .cu{white-space:nowrap;overflow:hidden}
+.nextwin .cu{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .nextwin .nbtn{display:flex;flex-wrap:wrap}
 .wn .coming{display:inline;margin:0}
 .wn .coming .lnk{color:var(--blue);border-bottom:1px dotted var(--blue)}
@@ -414,3 +415,360 @@ html[data-screen="tv"]:has(.stpage){--fs:min(clamp(22px,1.9vw,84px),2.32vh)}
 .sp-btns{margin-top:.3em}
 html[data-screen="tablet"] .stpage .st-pws{gap:.15em}html[data-screen="tablet"] .stpage .st-pw{padding:.08em 1ch}
 .st-note{color:var(--dred)}
+
+/* ---------- the Roster page (final-6): the list, the picked file, four sums along the bottom ---------- */
+.rspage{grid-template-columns:minmax(0,1fr) minmax(0,1fr) minmax(0,1fr) minmax(0,1fr) minmax(0,1.5fr);grid-template-rows:minmax(0,1fr) auto;grid-template-areas:"list list list list file" "wages mood bodies deals file";line-height:1.18;gap:.95em 2.2ch}
+html[data-screen="desk"]:has(.rspage){--fs:min(clamp(19px,1.62vw,32px),2.6vh)}
+html[data-screen="tablet"]:has(.rspage){--fs:min(clamp(18px,1.8vw,30px),2.4vh)}
+html[data-screen="tv"]:has(.rspage){--fs:min(clamp(22px,1.9vw,84px),2.32vh)}
+.crt:has(.rspage){max-width:76em}
+.rspage [data-t="roster-list"]>.bd{display:flex;flex-direction:column;gap:.3em}
+.rspage [data-t="roster-list"] .row.mb2{margin:0;flex-wrap:nowrap}
+.rspage .rsl{flex:1 1 0;min-height:0}
+.rspage .rsl table{width:100%;border-collapse:collapse;table-layout:auto}
+.rspage .rsl th{background:var(--grey);color:var(--blue);border-bottom:2px solid var(--dgrey);text-align:left;padding:0 .6ch;white-space:nowrap}
+.rspage .rsl th button{background:none;border:0;font:inherit;color:inherit;padding:0;cursor:pointer}
+.rspage .rsl td{padding:1px .6ch;border-bottom:1px solid #007c7c;white-space:nowrap;color:var(--k)}
+.rspage .rsl td.r,.rspage .rsl th.r{text-align:right}
+.rspage .rsl tr.pick{cursor:pointer}
+.rspage .rsl tr.pick:hover{background:#18c0c0}
+.rspage .rsl tr.pick.on{background:var(--dgreen)}
+.rspage .rsl tr.pick.on td,.rspage .rsl tr.pick.on td *{color:var(--white)}
+.rspage .rsl td.pf canvas.pt{display:block;width:1.2em;height:1.2em;border:1px solid var(--k)}
+.rspage .rsl td.stt{width:100%;max-width:0}.rspage .rsl td.stt>div{overflow:hidden;white-space:nowrap;text-overflow:clip}
+.rspage .rsl .tag{margin:0}
+.rspage .rsl .meter i{color:#007c7c}
+.rspage .pgr{display:flex;gap:.6ch;align-items:center;justify-content:flex-end;margin:0}
+.rspage [data-t="roster-file"] canvas.pt{width:4em;height:4em}
+.rspage [data-t="roster-file"] .kvl .v{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rsfull{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:40;display:flex;align-items:flex-start;justify-content:center;padding:3em 2ch;overflow:auto}
+.rsfull-in{max-width:76em;width:100%}
+
+/* ---------- Book the show (final-7): the show and its clock, the run sheet, the picked line ---------- */
+.book1 .b1-desk{display:flex;flex-direction:column;gap:.9em;padding:0 1ch .55em 0}
+.book1 .wn{color:var(--k)}
+.book1 .b1-head{flex:none;text-align:left}
+.book1 .b1-head>.bd{display:flex;flex-direction:column;gap:.15em}
+.book1 .b1-head .hl{color:var(--yellow)}
+.book1 .b1-head .b1-info{color:var(--k)}
+.book1 .b1-head .b1-info .gold,.book1 .b1-head .showtime .gold{color:var(--blue)}
+.book1 .showtime{text-align:left}
+.book1 .showtime .meter.au{color:var(--blue)} .book1 .showtime .meter i{color:var(--dgrey)}
+.book1 .warn{color:#7a3a00}
+.book1 .b1-btns{justify-content:flex-start;margin:0}
+.book1 .b1-body{gap:0 2.2ch}
+.book1 .b1-sheet{border:2px solid var(--white);border-right-color:var(--dgrey);border-bottom-color:var(--dgrey)}
+.book1 .b1-sheet>.bd,.book1 .b1-sidewin>.bd{display:flex;flex-direction:column;gap:.25em}
+.book1 .b1-cap,.book1 .b1-foot{border:0;color:var(--k)}
+.book1 .b1-cap .gold{color:var(--blue)}
+.book1 .b1-rows{background:var(--dcyan);border:2px solid var(--dgrey);border-right-color:var(--white);border-bottom-color:var(--white)}
+.book1 .b1-rows .seg{border-bottom:1px solid #007c7c}
+.book1 .r1b .at{color:#003c3c} .book1 .r1b .no{color:var(--blue)} .book1 .r1b .who{color:var(--k)} .book1 .r1b .meta{color:#003c3c}
+.book1 .r1b .meta .bad{color:#7a0000} .book1 .r1b .meta .good{color:#004800} .book1 .r1b .meta .warn{color:#5a2a00} .book1 .r1b .meta .gold{color:#5a4000}
+.book1 .b1-rows .seg.sg .no{color:#6a006a}
+.book1 .b1-rows .seg.me .no{background:var(--blue);color:var(--yellow)}
+.book1 .b1-rows .seg.top .at{color:var(--blue)}
+.book1 .b1-rows .seg.bad .who{color:#7a0000}
+.book1 .r1b:hover,.book1 .r1b:focus-visible{background:#18c0c0}
+.book1 .b1-rows .seg.sel .r1b{background:var(--dgreen)}
+.book1 .b1-rows .seg.sel .r1b *{color:var(--white)}
+.book1 .b1-empty,.book1 .b1-empty b{color:var(--k)} .book1 .b1-empty .muted{color:#003c3c}
+.book1 .b1-side{flex:1 1 0;min-height:0}
+.book1 .b1-sidewin{min-height:0;min-width:0}
+.book1 .b1-pane>.panel,.book1 .b1-pane .panel{background:var(--grey);border:2px solid var(--dgrey);color:var(--k)}
+.book1 .b1-pane b,.book1 .b1-pane .who{color:var(--k)}
+.book1 .b1-pane .muted,.book1 .b1-pane .empty{color:#444}
+.book1 .b1-pane .eyebrow{color:var(--blue)}
+.book1 .b1-pane .gold,.book1 .b1-pane .hl{color:#5a4000}
+.book1 .b1-pane .good{color:#006000} .book1 .b1-pane .bad{color:var(--dred)}
+.book1 .b1-pane label.f{color:var(--blue)}
+.book1 .b1-pane .list li{border-bottom-color:var(--dgrey)}
+.book1 .b1-pane .meter i{color:var(--dgrey)} .book1 .b1-pane .meter{color:var(--k)} .book1 .b1-pane .meter.au{color:var(--blue)}
+.book1 .tag{color:var(--k)} .book1 .tag.face{color:var(--blue)} .book1 .tag.heel,.book1 .tag.bad{color:var(--dred)} .book1 .tag.good{color:#006000} .book1 .tag.gold{color:#5a4000} .book1 .tag.warn{color:#6a006a}
+.book1 .face{color:var(--blue)} .book1 .heel{color:var(--dred)}
+.book1 .lnk{color:var(--blue)}
+html[data-screen="desk"]:has(.book1){--fs:min(clamp(19px,1.62vw,32px),2.75vh)}
+html[data-screen="tablet"]:has(.book1){--fs:min(clamp(18px,1.85vw,30px),2.45vh)}
+html[data-screen="tv"]:has(.book1){--fs:min(clamp(22px,1.9vw,84px),2.6vh)}
+.crt:has(.book1){max-width:76em}
+.book1 .b1-body{grid-template-columns:minmax(0,1.2fr) minmax(0,1fr)}
+.book1 .b1-side .subnav{flex-wrap:nowrap}
+.book1 .b1-side .subnav .btn{padding-inline:.8ch;margin-right:.4ch}
+.book1 .agentsay .ag{color:var(--blue)}
+.book1 .showtime .meter{color:var(--blue)}.book1 .showtime .meter i{color:#7a7a7a}
+.book1 .b1-head.head{display:flex;flex-direction:column;flex-wrap:nowrap;align-items:stretch;justify-content:flex-start;text-align:left;gap:0;margin:0}
+
+/* ---------- old panels in the new look: every page not yet rebuilt shows its panels as grey windows ---------- */
+.main .panel{background:var(--grey);color:var(--k);border:2px solid var(--white);border-right-color:var(--dgrey);border-bottom-color:var(--dgrey);box-shadow:1ch .55em 0 rgba(0,0,0,.55);padding:.35em 1.2ch .5em}
+.main .panel>h2:first-child{position:static;display:block;max-width:none;margin:-.35em -1.2ch .45em;padding:0 1ch;background:var(--blue);color:var(--yellow);text-align:center;text-transform:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.main .panel b,.main .panel .nm,.main .panel .who,.main .panel .t{color:var(--k)}
+.main .panel .muted,.main .panel .empty{color:#444}
+.main .panel .eyebrow,.main .panel label.f,.main .panel .hl{color:var(--blue)}
+.main .panel .gold,.main .panel .tag.gold{color:#5a4000}
+.main .panel .good,.main .panel .tag.good{color:#006000}
+.main .panel .bad,.main .panel .tag.bad,.main .panel .heel,.main .panel .tag.heel{color:var(--dred)}
+.main .panel .warn,.main .panel .tag.warn{color:#6a006a}
+.main .panel .face,.main .panel .tag.face{color:var(--blue)}
+.main .panel .tag{color:var(--k)}
+.main .panel .meter{color:var(--k)} .main .panel .meter i{color:#7a7a7a} .main .panel .meter.au{color:var(--blue)} .main .panel .meter.hot{color:var(--dred)}
+.main .panel .list li,.main .panel .ego>div,.main .panel .scores div{border-color:var(--dgrey)}
+.main .panel .lnk{color:var(--blue)}
+.main .panel .tw,.main .tw{border:2px solid var(--dgrey);border-right-color:var(--white);border-bottom-color:var(--white);background:var(--dcyan)}
+.main .tw th{background:var(--grey);color:var(--blue);border-bottom:2px solid var(--dgrey)}
+.main .tw td{color:var(--k);border-bottom:1px solid #007c7c}
+.main .tw td .nm{color:var(--k)}
+.main .tw .muted{color:#003c3c} .main .tw .good{color:#004800} .main .tw .bad,.main .tw .heel{color:#7a0000} .main .tw .gold{color:#5a4000} .main .tw .face{color:var(--blue)} .main .tw .warn{color:#5a005a}
+.main .tw tbody tr.pick:hover{background:#18c0c0}
+.main .tw tbody tr.on{background:var(--dgreen)} .main .tw tbody tr.on>td,.main .tw tbody tr.on>td *{color:var(--white)}
+.main .panel .ascii{color:var(--blue)} .main .panel .ascii.bars{color:var(--k)} .main .panel pre.body{color:var(--k)}
+.main .panel .pie{background:none}
+.main .panel .pc0{color:#7a6a00} .main .panel .pc1{color:#006a6a} .main .panel .pc2{color:#006000} .main .panel .pc3{color:#6a006a} .main .panel .pc4{color:var(--dred)} .main .panel .pc5{color:var(--k)} .main .panel .pc6{color:#004a6a}
+.main .panel .panel{box-shadow:none}
+.main .panel h2:not(:first-child){color:var(--k)}
+.main .panel .kv small,.main .panel .kv div small{color:var(--blue)} .main .panel .kv div span{color:var(--k)}
+.main .panel .big{color:var(--blue)}
+.main .tw .lnk{color:var(--blue)} .main .tw .lnk.gold{color:#4a3400} .main .tw .lnk.heel{color:#7a0000}
+.main .tw .meter.au{color:var(--yellow)}
+.main .panel .rank li::marker{color:var(--blue)}
+.main .panel .bsact{background:var(--grey);border:2px solid var(--white);border-right-color:var(--dgrey);border-bottom-color:var(--dgrey);color:var(--k)}
+.main .panel .bsact *{color:var(--k)}
+.main .panel .bsact .muted,.main .panel .bsact small{color:#444}
+.main .panel .bsact:hover,.main .panel .bsact:focus-visible{background:#c8c8c8}
+.main .gp{background:var(--grey);color:var(--k);border:2px solid var(--white);border-right-color:var(--dgrey);border-bottom-color:var(--dgrey);box-shadow:1ch .55em 0 rgba(0,0,0,.55);padding:0 1.2ch .4em}
+.main .gp h2{background:var(--blue);color:var(--yellow);margin:0 -1.2ch .3em;letter-spacing:.06em}
+.main .gp .kv b,.main .gp b{color:var(--blue)} .main .gp .muted{color:#444} .main .gp .good{color:#006000} .main .gp .bad{color:var(--dred)} .main .gp .gold,.main .gp .hl{color:#5a4000}
+.main .gp .gauge i{background:#8a8a8a} .main .gp .gauge i.on{background:var(--blue)}
+
+/* ---------- the Titles page: the belts, the contenders for one, the tournament or how a shot is earned ---------- */
+.ttpage{grid-template-columns:minmax(0,1fr) minmax(0,1fr);grid-template-rows:auto minmax(0,1fr);grid-template-areas:"belts belts" "cont tourn";line-height:1.18;gap:.95em 2.2ch}
+.ttpage .wn>.ttl .btn{margin:0;padding:0 .8ch;box-shadow:none}
+.ttpage .tw{margin-bottom:.3em}
+.ttpage .bracket{font-size:.8em;line-height:1;white-space:pre;overflow:hidden}
+html[data-screen="desk"]:has(.ttpage){--fs:min(clamp(19px,1.62vw,32px),2.6vh)}
+html[data-screen="tablet"]:has(.ttpage){--fs:min(clamp(18px,1.8vw,30px),2.4vh)}
+html[data-screen="tv"]:has(.ttpage){--fs:min(clamp(22px,1.9vw,84px),2.32vh)}
+.crt:has(.ttpage){max-width:76em}
+.wn .rank li::marker{color:var(--blue)} .wn .eyebrow{color:var(--blue)}
+.ttpage .bracket{font-size:.72em}
+
+/* ---------- the Locker room page ---------- */
+.lkpage{grid-template-columns:minmax(0,1fr) minmax(0,1.15fr) minmax(0,1fr);grid-template-rows:minmax(0,1.1fr) minmax(0,1fr);grid-template-areas:"mood who strain" "cliques camp hurt";line-height:1.18;gap:.95em 2.2ch}
+.lkpage .list li{padding:2px 0}
+.lkpage .list li.col{flex-wrap:nowrap}
+.lkpage .btn.sm{padding:0 .7ch;margin:0 .3ch .2em 0}
+.lkpage .piebox{margin-top:2px}
+.lkpage .pie{font-size:.62em}
+html[data-screen="desk"]:has(.lkpage){--fs:min(clamp(19px,1.62vw,32px),2.6vh)}
+html[data-screen="tablet"]:has(.lkpage){--fs:min(clamp(17px,1.7vw,30px),2.3vh)}
+html[data-screen="tv"]:has(.lkpage){--fs:min(clamp(22px,1.9vw,84px),2.32vh)}
+.crt:has(.lkpage){max-width:78em}
+.lkpage .btn.sm{background:none;box-shadow:none;color:var(--blue);padding:0;margin:0 1ch 0 0;text-decoration:underline;text-underline-offset:2px}
+.lkpage .btn.sm:hover,.lkpage .btn.sm:focus-visible{background:var(--k);color:var(--yellow)}
+.lkpage .btn.sm[aria-pressed="true"],.lkpage .btn.sm.on{color:var(--dred)}
+.lkpage .list li.col{display:block;padding:2px 0}
+.lkpage .list li.col>span{display:inline}
+.lkpage .list li.col>span:first-child::after{content:': '}
+.lkpage .btn.sm{display:inline;line-height:inherit;vertical-align:baseline;white-space:nowrap}
+.book1 .b1-pane .panel>h2:first-child{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);margin:0;padding:0}
+.book1 .b1-pane>.panel{border:0;box-shadow:none;padding:0}
+
+/* ---------- the Free agents page: the list, the scouts, and the rookie class or the offer being made ---------- */
+.mkpage{grid-template-columns:minmax(0,2.3fr) minmax(0,1fr);grid-template-rows:auto minmax(0,1fr);grid-template-areas:"list scouts" "list side";line-height:1.18;gap:.95em 2.2ch}
+.mkpage [data-t="mk-list"]>.bd{display:flex;flex-direction:column;gap:.3em}
+.mkpage .mkl{flex:1 1 0;min-height:0;overflow:hidden}
+.mkpage .mkl td,.mkpage .mkl th{padding:0 .6ch}
+.mkpage .mkl .btn.sm{margin:0;padding:0 .6ch;box-shadow:none}
+.mkpage .row.nowrap{flex-wrap:nowrap;gap:.6ch}
+.mkpage .row.nowrap .btn{margin:0 0 .2em}
+.mkpage .row.nowrap input{width:14ch}
+.mkpage .pgr{display:flex;gap:.6ch;align-items:center;justify-content:flex-end;margin:0}
+.mkpage input.wage{width:10ch}
+html[data-screen="desk"]:has(.mkpage){--fs:min(clamp(18px,1.5vw,32px),2.6vh)}
+html[data-screen="tablet"]:has(.mkpage){--fs:min(clamp(15px,1.45vw,30px),2.4vh)}
+html[data-screen="tv"]:has(.mkpage){--fs:min(clamp(20px,1.6vw,84px),2.32vh)}
+.crt:has(.mkpage){max-width:84em}
+.main .tw .tag.face,.main .tw .tag.heel,.main .tw .tag.bad,.main .tw .tag.good{color:var(--white)}
+/* the old big heading, on pages not yet rebuilt: a small window-style caption instead */
+.main .head:not(.sr){justify-content:flex-start;text-align:left;margin-bottom:.7em}
+.main .head h1{font-size:1.15em;letter-spacing:.04em;text-shadow:none;color:var(--yellow)}
+.main .head .eyebrow{display:inline;margin-right:1.5ch}
+.main .head>div{display:flex;flex-wrap:wrap;align-items:baseline;gap:0 1.5ch;flex-direction:row-reverse;justify-content:flex-end}
+.main .panel>h2:not(:first-child){position:static;background:none;padding:0;max-width:none;white-space:normal;color:var(--blue);font-size:1.3em;text-transform:none}
+
+/* ---------- Web: the dirt sheet, the feed and the boards on one page ---------- */
+.webpage{grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);grid-template-areas:"sheet feed" "sheet boards";align-items:start;flex:none}
+.webpage .wn>.bd{overflow:visible}
+.webpage .panel{box-shadow:none;margin-bottom:.6em}
+.webpage .cols{grid-template-columns:minmax(0,1fr)}
+.webpage .thread{border-top:1px solid var(--dgrey);padding-top:.3em}
+.webpage .feed{list-style:none;margin:0;padding:0}
+.webpage .feed li{border-bottom:1px solid var(--dgrey);padding:.2em 0}
+.webpage .post .u{color:var(--blue)}
+.webpage .subnav .btn{margin-bottom:.2em}
+.wn .panel .tag{color:var(--white)} .wn .panel .tag.gold,.wn .panel .tag.warn{color:var(--k)}
+.webpage .fp .ft,.webpage .fp .ft *:not(.lnk),.webpage .fh b{color:var(--k)}
+.webpage .fp .fh .muted,.webpage .fp .fl{color:#444}
+.webpage .feed li.fp{border-left:0;padding-left:0}
+.webpage .post{padding-left:0;text-indent:0}
+.webpage .post .u{margin-right:.6ch}
+.wn .panel .tag.good,.wn .panel .tag.bad,.wn .panel .tag.heel,.wn .panel .tag.face{color:var(--white)}
+.webpage .feedbox{max-height:62vh;overflow-y:auto;border:2px solid var(--dgrey);border-right-color:var(--white);border-bottom-color:var(--white);background:#b8b8b8;padding:0 1ch}
+.webpage .feedbox::-webkit-scrollbar{width:1.1em}.webpage .feedbox::-webkit-scrollbar-track{background:#d8d8d8}.webpage .feedbox::-webkit-scrollbar-thumb{background:var(--grey);border:2px solid var(--white);border-right-color:var(--dgrey);border-bottom-color:var(--dgrey)}
+.webpage{grid-template-rows:auto 1fr}
+.webpage [data-t="web-boards"]{align-self:start}
+
+/* the dirt sheet as a 90s newsletter: typed on cream paper, a masthead, capital headings over a dashed rule, two dense columns */
+.paper{background:#f2eedf;color:#111;padding:.6em 1.6ch 1em;border:1px solid #8a8678;box-shadow:inset 0 0 0 1px #fff;font-size:.95em;line-height:1.22}
+.paper .mast{text-align:center;border-bottom:3px double #111;padding-bottom:.3em;margin-bottom:.6em}
+.paper .mt-name{font-size:1.9em;letter-spacing:.18em;line-height:1}
+.paper .mt-line{font-size:.85em;letter-spacing:.05em}
+.paper .panel,.paper .panel.lead{background:none;border:0;box-shadow:none;padding:0;margin:0 0 .8em;color:#111}
+.paper .panel>h2:first-child{position:static;background:none;color:#111;text-align:left;margin:0 0 .25em;padding:0;text-transform:uppercase;letter-spacing:.08em;border-bottom:1px dashed #111}
+.paper .lead .eyebrow{display:none}
+.paper .lead .sheet-head{color:#111;font-size:1.5em;text-transform:uppercase;letter-spacing:.04em;text-align:center}
+.paper .lead p{text-align:center}
+.paper .cols{display:block;column-count:2;column-gap:3ch;column-rule:1px solid #9a968a}
+.paper .cols>.stack{display:block}
+.paper .panel{break-inside:avoid}
+.paper b,.paper .panel b,.paper .who,.paper .nm{color:#111}
+.paper .muted,.paper .panel .muted{color:#4a4740}
+.paper .gold,.paper .panel .gold,.paper .good,.paper .bad,.paper .panel .good,.paper .panel .bad{color:#111}
+.paper .lnk,.paper .panel .lnk,.paper .lnk.heel,.paper .lnk.gold{color:#111;text-decoration:underline;text-decoration-style:dotted}
+.paper .sheet-lines{list-style:none;padding:0;margin:0}
+.paper .sheet-lines li::before{content:'-- '}
+.paper .list li{border-bottom:0;padding:.15em 0}
+.paper .panel .tag,.paper .wn .panel .tag,.wn .paper .panel .tag{background:none;color:#111;border:0;outline:0;padding:0}
+.paper .panel .tag::before{content:'['} .paper .panel .tag::after{content:']'}
+.paper .panel>h2.sheet-head{color:#111}
+.paper .panel>h2.sheet-head{color:#111}
+
+/* the feed as a 90s chat room: a white log in a grey frame, screen names in colour, who is here down the side */
+.chatroom{display:flex;flex-direction:column;gap:.3em}
+.chatroom .cr-top{display:flex;justify-content:space-between;background:var(--dgrey);color:var(--white);padding:0 1ch}
+.chatroom .cr-top b{color:var(--white)}
+.chatroom .cr-body{display:grid;grid-template-columns:minmax(0,1fr) 15ch;gap:.6ch}
+.webpage .chatroom .cr-log{background:#fff;color:#000;max-height:58vh;overflow-y:auto;border:2px solid var(--dgrey);border-right-color:var(--white);border-bottom-color:var(--white);padding:.2em 1ch;font-family:'Courier New',var(--f);font-size:.82em;line-height:1.3}
+.chatroom .cr-ln{margin:0}
+.chatroom .cr-ln,.chatroom .cr-ln *:not(.cr-sn):not(.lnk){color:#000}
+.chatroom .cr-sys{color:#808080;margin:.2em 0;font-style:italic}
+.chatroom .cr-sn{font-weight:700}
+.chatroom .k-f{color:#0000c0} .chatroom .k-w{color:#b00000} .chatroom .k-p{color:#006000} .chatroom .k-c{color:#800080}
+.chatroom .cr-who{list-style:none;margin:0;padding:.2em .8ch;background:#fff;border:2px solid var(--dgrey);border-right-color:var(--white);border-bottom-color:var(--white);font-family:'Courier New',var(--f);font-size:.78em;max-height:58vh;overflow:hidden}
+.chatroom .cr-who li{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.chatroom .cr-foot{color:#444;font-size:.9em}
+.chatroom .lnk{color:#0000c0}
+.chatroom .cr-log .fp{border:0;padding:0 0 .1em 2ch;margin:0;text-indent:-2ch;background:none}
+.chatroom .cr-log .fp{padding:0 0 .15em;text-indent:0}
+
+/* Wrestle Search: a 90s portal and six make-believe websites, each in its own loud style */
+.wsearch{display:flex;flex-direction:column;gap:.3em}
+.wsearch .ws-bar{display:flex;gap:1ch;align-items:center}
+.wsearch .ws-bar .btn{margin:0}
+.wsearch .ws-url{flex:1;background:#fff;color:#000;border:2px solid var(--dgrey);border-right-color:var(--white);border-bottom-color:var(--white);padding:0 .8ch;font-family:'Courier New',var(--f);font-size:.85em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.wsearch .ws-home{background:#fff;color:#000;padding:.6em 1ch 1em;text-align:center;border:2px solid var(--dgrey)}
+.wsearch .ws-logo{font-size:2.2em;line-height:1;color:#c00000;letter-spacing:.04em;font-weight:700}
+.wsearch .ws-logo span{color:#0000c0}
+.wsearch .ws-tag{color:#555;margin-bottom:.6em}
+.wsearch .ws-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.5em 1.2ch;text-align:left}
+.wsearch .ws-link{all:unset;box-sizing:border-box;cursor:pointer;display:flex;flex-direction:column;padding:.3em 1ch;background:#e8e8ff;border:2px solid #0000c0;min-width:0}
+.wsearch .ws-link b{color:#0000c0;text-decoration:underline}
+.wsearch .ws-link small{font-size:.85em;color:#333}
+.wsearch .ws-link:hover,.wsearch .ws-link:focus-visible{background:#ffff99;outline:2px solid #000}
+.wsearch .ws-site{padding:.5em 1ch .7em;border:2px solid var(--dgrey);font-family:'Times New Roman',var(--f);font-size:.95em;line-height:1.25}
+.wsearch .ws-title{font-size:1.6em;text-align:center;font-weight:700;margin-bottom:.3em}
+.wsearch .ws-count{text-align:center;font-size:.8em;margin-top:.6em;font-family:'Courier New',var(--f)}
+.wsearch .ws-small{font-size:.85em;opacity:.8}
+.wsearch .ws-ul{margin:0;padding-left:2.2ch}.wsearch .ws-ol{margin:0;padding-left:3ch}
+.wsearch .ws-ul li,.wsearch .ws-ol li{margin:.15em 0}
+.wsearch .ws-site b,.wsearch .ws-site .muted,.wsearch .ws-site .empty{color:inherit}
+.wsearch .ws-site .lnk{color:inherit;text-decoration:underline}
+.ws-rumor{background:#000;color:#ffff00}.ws-rumor .ws-title{color:#ff0000;text-shadow:2px 2px 0 #ffff00}
+.ws-board{background:#d4d0c8;color:#000}.ws-board .ws-title{background:#000080;color:#fff;font-family:var(--f)}
+.ws-results{background:#fff;color:#000}.ws-results .ws-title{color:#006000;border-bottom:3px solid #006000}
+.ws-rank{background:#400060;color:#fff}.ws-rank .ws-title{color:#ff66ff}
+.ws-belts{background:#fffbe0;color:#3a2a00}.ws-belts .ws-title{color:#a07000;text-shadow:1px 1px 0 #000}.ws-belts .ws-co{margin-bottom:.4em}
+.ws-whisper{background:#101820;color:#9fe0ff}.ws-whisper .ws-title{color:#fff;font-style:italic}
+.ws-board .post .u{color:#000080}
+/* Web on one screen: the windows share the height and each scrolls inside itself, with a grey 90s scroll bar */
+.webpage{flex:1 1 0;min-height:0;grid-template-columns:minmax(0,1.45fr) minmax(0,1fr);grid-template-rows:minmax(0,1fr) minmax(0,1.15fr);align-items:stretch;gap:.95em 2.2ch}
+.webpage [data-t="web-boards"]{align-self:stretch}
+.webpage .wn>.bd{overflow-y:auto;overflow-x:hidden}
+.webpage [data-t="web-feed"]>.bd{overflow:hidden;display:flex;flex-direction:column}
+.webpage .chatroom{flex:1 1 0;min-height:0}
+.webpage .chatroom .cr-body{flex:1 1 0;min-height:0}
+.webpage .chatroom .cr-log,.webpage .chatroom .cr-who{max-height:none;height:100%}
+.webpage .chatroom .cr-who{overflow-y:auto}
+.webpage ::-webkit-scrollbar{width:1.05em;height:1.05em}
+.webpage ::-webkit-scrollbar-track{background:#d8d8d8}
+.webpage ::-webkit-scrollbar-thumb{background:var(--grey);border:2px solid var(--white);border-right-color:var(--dgrey);border-bottom-color:var(--dgrey)}
+.webpage ::-webkit-scrollbar-button:single-button{background:var(--grey);border:2px solid var(--white);border-right-color:var(--dgrey);border-bottom-color:var(--dgrey);height:1.05em}
+.webpage *{scrollbar-color:var(--grey) #d8d8d8}
+html[data-screen="desk"]:has(.webpage){--fs:min(clamp(18px,1.5vw,32px),2.6vh)}
+html[data-screen="tablet"]:has(.webpage){--fs:min(clamp(16px,1.6vw,30px),2.4vh)}
+html[data-screen="tv"]:has(.webpage){--fs:min(clamp(20px,1.7vw,84px),2.32vh)}
+.crt:has(.webpage){max-width:84em}
+/* the Wrestle Search front page fits its window with all six sites in view; only the sites themselves scroll */
+.wsearch .ws-home{padding:.3em 1ch .4em}
+.wsearch .ws-logo{font-size:1.6em}
+.wsearch .ws-tag{margin-bottom:.3em;font-size:.85em}
+.wsearch .ws-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:.35em .8ch}
+.wsearch .ws-link{padding:.15em .7ch;line-height:1.1}
+.wsearch .ws-link b{font-size:.9em}
+.wsearch .ws-link small{font-size:.72em}
+.paper .sheet-open{text-align:left!important;margin-bottom:.4em}
+.wsearch .ws-head{text-align:center;font-weight:700;font-size:1.1em;margin:-.1em 0 .5em;padding:.15em 0;border-top:1px solid currentColor;border-bottom:1px solid currentColor;text-transform:uppercase;letter-spacing:.03em}
+.wsearch .ws-h2{font-weight:700;margin-top:.3em}
+.win [data-t="found"] li.col{flex-wrap:nowrap;align-items:center}.win [data-t="found"] li.col .btn{flex:none}
+.book1 .d1-end{flex-wrap:nowrap;margin:.1em 0;white-space:nowrap;overflow:hidden}
+.book1 .d1-end .btn{margin:0}
+.stpage .st-note{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin:0}
+.book1 .wn .tag.face,.book1 .wn .tag.heel,.book1 .wn .tag.bad,.book1 .wn .tag.good{color:var(--white)}
+.book1 .wn .tag.gold,.book1 .wn .tag.warn{color:var(--k)}
+/* Tonight's stakes and Before the bell, the first page of the notes beside the run sheet */
+.book1 .b1-pane .tn-st{margin:0 0 .15em}
+.book1 .b1-pane .tn-row{display:flex;gap:1ch;align-items:center}
+.book1 .b1-pane .tn-checks{flex:1;min-width:0}.book1 .b1-pane .tn-checks p{margin:0 0 .1em}
+.book1 .b1-pane .tn-row .ledb{flex:none}
+.book1 .b1-pane [data-t="fog-note"]{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:.2em}
+.book1 .b1-pane .grp{margin:.5em 0 .15em}
+.book1 .b1-pane .tn-st.clamp,.book1 .b1-pane .tn-checks .clamp{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block}
+
+/* ---------- the Career page ---------- */
+.crpage{grid-template-columns:minmax(0,1.15fr) minmax(0,1fr) minmax(0,1fr);grid-template-rows:minmax(0,1.25fr) minmax(0,1fr);grid-template-areas:"you rep saga" "word asst troph";line-height:1.18;gap:.95em 2.2ch}
+.crpage .wn>.bd{overflow-y:auto}
+.crpage .list li{padding:2px 0}
+html[data-screen="desk"]:has(.crpage){--fs:min(clamp(19px,1.62vw,32px),2.6vh)}
+html[data-screen="tablet"]:has(.crpage){--fs:min(clamp(17px,1.7vw,30px),2.35vh)}
+html[data-screen="tv"]:has(.crpage){--fs:min(clamp(22px,1.9vw,84px),2.32vh)}
+.crt:has(.crpage){max-width:78em}
+
+/* ---------- old panel pages on one screen (Ryan, 14 October: "we can use more scrolling tools") ----------
+   The page fills the window; its columns share the height; each panel is a window that scrolls inside itself. */
+.winpage{display:flex;flex-direction:column;gap:.7em;min-height:0}
+.winpage>.cols{flex:1 1 0;min-height:0;align-items:stretch}
+.winpage>.cols>.stack{min-height:0;gap:.9em}
+.winpage>.cols>.stack>.panel{flex:1 1 auto;min-height:3.5em;overflow-y:auto}
+.winpage>.cols>.stack>.panel>h2:first-child{position:sticky;top:-.35em;z-index:1}
+.winpage>.panel,.winpage>.gauges,.winpage>.row{flex:none}
+.winpage ::-webkit-scrollbar{width:1.05em}
+.winpage ::-webkit-scrollbar-track{background:#d8d8d8}
+.winpage ::-webkit-scrollbar-thumb{background:var(--grey);border:2px solid var(--white);border-right-color:var(--dgrey);border-bottom-color:var(--dgrey)}
+.winpage *{scrollbar-color:var(--grey) #d8d8d8}
+.winpage>.cols>.stack>.panel{min-height:2.6em}
+.winpage>.tw,.winpage>.panel{flex:0 1 auto;min-height:5em;overflow-y:auto}
+.winpage>.tw thead th{position:sticky;top:0;z-index:1}
+.winpage>.cols>.panel{min-height:0;overflow-y:auto}
+.winpage>.tw{flex:0 1 auto}
+.winpage .gp{padding-bottom:.2em}.winpage .gp .gauge{margin:.2em 0}
+.stpage [data-t="st-morewin"]>.bd{overflow-y:auto}
+.stpage .sp-acts{display:flex;flex-wrap:wrap;gap:.2em .6ch;margin:.2em 0 0}.stpage .sp-acts .btn{margin:0;padding:0 .7ch}
+.stpage .sp-acts{flex-wrap:nowrap}
+html[data-screen="tablet"] .book1 .b1-pane .tn-st:nth-of-type(n+3){display:none}
+/* the desk on a tablet: a little less air in the road window and Next show, so a busy week never runs over */
+html[data-screen="tablet"] .road .grp{margin:.5em 0 .1em;padding:.4em 1ch .1em}
+html[data-screen="tablet"] .road .rmid .big{font-size:1.15em}
+html[data-screen="tablet"] .road .rright .grp:first-child{margin-top:.4em}
+html[data-screen="tablet"] .deskpage .wn>.bd{padding-block:.3em .3em}
+/* Manage: each group of buttons is a grey window */
+.mngpage{display:flex;flex-direction:column;gap:12px}
+.mngpage .wn .bd{padding:8px}

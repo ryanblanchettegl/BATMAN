@@ -7,12 +7,12 @@ export const SECTIONS: Section[] = [
   { id: 'office', n: 'Office', key: 'o', pages: [['desk', 'The desk'], ['backstage', 'Backstage'], ['storylines', 'Storylines'], ['career', 'Career']] },
   { id: 'booking', n: 'Booking', key: 'b', pages: [['booking', 'Booking']] },
   { id: 'roster', n: 'Roster', key: 'r', pages: [['roster', 'Roster'], ['locker', 'Locker room'], ['titles', 'Titles'], ['market', 'Free agents']] },
-  { id: 'net', n: 'Net', key: 'n', pages: [['sheet', 'Dirt sheet'], ['feed', 'The feed'], ['boards', 'The boards']] },
+  { id: 'net', n: 'Web', key: 'n', pages: [['web', 'Web']] },
   { id: 'manage', n: 'Manage', key: 'm', pages: [['manage', 'Operations'], ['house', 'House'], ['deals', 'Deals']] },
   { id: 'company', n: 'Company', key: 'c', pages: [['overview', 'Overview'], ['finances', 'Finances'], ['world', 'World'], ['history', 'History']] }
 ];
 /** keyboard shortcuts: letter -> page */
-export const HOT: Record<string, string> = { o: 'desk', p: 'backstage', a: 'career', b: 'booking', r: 'roster', l: 'locker', t: 'titles', k: 'market', s: 'storylines', h: 'history', n: 'sheet', e: 'feed', g: 'boards', m: 'manage', u: 'house', d: 'deals', c: 'overview', f: 'finances', w: 'world' };
+export const HOT: Record<string, string> = { o: 'desk', p: 'backstage', a: 'career', b: 'booking', r: 'roster', l: 'locker', t: 'titles', k: 'market', s: 'storylines', h: 'history', n: 'web', e: 'web', g: 'web', m: 'manage', u: 'house', d: 'deals', c: 'overview', f: 'finances', w: 'world' };
 export function sectionOf(page: string): Section { return SECTIONS.find(s => s.pages.some(p => p[0] === page)) || SECTIONS[0]; }
 export function pageName(page: string): string { for (const s of SECTIONS) for (const p of s.pages) if (p[0] === page) return p[1]; return page; }
 
@@ -22,6 +22,7 @@ export function onLeavePage(fn: () => void) { leaveHooks.push(fn); }
 
 /** Go to a page. Section ids work too and open the section's first page. */
 export function go(page: string) {
+  if (page === 'sheet' || page === 'feed' || page === 'boards') page = 'web';   // the three Net pages are one page now
   const sec = SECTIONS.find(s => s.id === page);
   if (sec) page = sec.pages[0][0];
   // a show that is on the air cannot be walked away from

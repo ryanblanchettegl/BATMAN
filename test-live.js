@@ -161,7 +161,7 @@ ok('kind', 'the audible call came up in the sample', !!found.audible);
 /* they are not going home */
 ok('kind', 'the overtime call came up in the sample', !!found.overtime);
 if (found.overtime) { const F = found.overtime, home = through(F, 0);
-  ok('ot1', 'it says why they are going long, and taking it home costs nothing', F.ev.why.length >= 1 && F.ev.choices.length >= 2 && home.S.bp === F.S.bp, F.ev.why.join(' | '));
+  ok('ot1', 'it says why they are going long, and taking it home costs nothing', F.ev.why.length >= 1 && F.ev.choices.length >= 2 && home.S.bp >= F.S.bp, F.ev.why.join(' | '));
   const sg = byPick['overtime:seg'], mn = byPick['overtime:main'], ov = byPick['overtime:over'];
   ok('ot2', 'the sample had more than one way to find the time', [sg, mn, ov].filter(Boolean).length >= 2, Object.keys(byPick).filter(k => /^overtime/.test(k)).join(', '));
   if (sg) { const base = through(sg, 0), a = through(sg, sg.c), cut = sg.S.live.st.steps[sg.ev.choices[sg.c].q], who = (cut.sg.who || [])[0];

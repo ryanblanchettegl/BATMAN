@@ -1,11 +1,12 @@
 /* Manage: everything about the company that is a choice. Operations (the broadcast slot, the six settings, the universe
    export), House (house style and house rules) and Deals (sponsors, rivals, trades). What the choices add up to is read on Company. */
 import { E } from '../../engine';
-import { G, me, Modal, act, say, cash, plural, openModal, redraw, slice, view } from '../../store';
+import { G, me, Modal, act, say, cash, plural, openModal, redraw, slice, view, UNIS, saveUnis } from '../../store';
 import { Head, Panel, Btn, Tag, Empty, Window, showResult, Name, Sel, Field } from '../../kit';
 import { copyText } from '../start';
 import { HouseStyle } from './HouseStyle';
 import { RivalsPanel } from './Rivals';
+import { Desktop, Win } from '../../kit/win';
 import { useKeepFocus } from './focus';
 import { ShowsBelts } from './Create';
 
@@ -167,12 +168,21 @@ function exportWorld() {
   const pk = E.exportUniverse(S, { name: base + ', ' + E.cal(S.week).label, id: id + '_wk' + S.week });
   openModal({ kind: 'export', text: JSON.stringify(pk), workers: pk.workers.length, promos: pk.promotions.length });
 }
+/** Keep the world as it stands with the player's worlds (the World Editor's list). The running game is left alone. */
+function keepWorld() {
+  const S = G.S, base = S.uni ? S.uni.name : 'My universe', name = base + ', ' + E.cal(S.week).label;
+  let id = (S.uni ? S.uni.id : 'my_universe') + '_wk' + S.week, n = 2; while (UNIS[id]) id = id.replace(/_\d+$/, '') + '_' + n++;
+  const pk = E.exportUniverse(S, { name, id }); UNIS[id] = pk;
+  const kept = saveUnis(); if (!kept) delete UNIS[id];
+  act(() => say(kept ? 'Kept as “' + name + '”. Open the World Editor from the title screen to change it.' : 'This device would not keep another world. Export it instead.', { err: !kept }));
+}
 function Universe() {
   const S = G.S;
   return <Panel title="Universe">
     <p>This world began as <b>{S.uni ? S.uni.name : 'the built-in roster'}</b>.</p>
     <p class="muted mt1">Export it as it stands today, with every signing, title change and created wrestler, as a universe package you can share or start a new game from.</p>
-    <div class="row mt2"><Btn t="uni-export" onClick={exportWorld}>Export this world</Btn></div>
+    <div class="row mt2"><Btn t="uni-export" onClick={exportWorld}>Export this world</Btn><Btn t="uni-keep" onClick={keepWorld}>Keep it with my worlds</Btn></div>
+    <p class="muted mt1">Keep it puts this world, as it stands today, with the worlds in the World Editor. Open the World Editor from the title screen to change it. This game carries on as it is.</p>
   </Panel>;
 }
 /** The export pop-up: the package as text, ready to copy. */
@@ -229,10 +239,10 @@ function Tiles(p: { page: string }) {
   // for the browser tests of the choices themselves: every pop-up's body laid out on the page, as it was before the buttons
   if ((window as any).EWF_FLAT) { const all = tiles(p.page).reduce((a: Tile[], g) => a.concat(g.list), []), h = Math.ceil(all.length / 2);
     return <div class="cols"><div class="stack">{all.slice(0, h).map(t => t.body())}</div><div class="stack">{all.slice(h).map(t => t.body())}</div></div>; }
-  return <>{tiles(p.page).map(g => <Panel title={g.grp} cls="mb2" key={g.grp}>
+  return <Desktop cls="mngpage" t="mng-page">{tiles(p.page).map(g => <Win title={g.grp} key={g.grp}>
     <div class="bsacts">{g.list.map(t => <button type="button" key={t.id} class="bsact" data-t="mng" data-v={t.id} onClick={() => openModal({ kind: 'mng', k: p.page, v: t.id })}>
       <b>{t.n}</b><span class="eff" data-t="mng-now">{t.now()}</span><span class="muted ft">{t.d}</span></button>)}</div>
-  </Panel>)}</>;
+  </Win>)}</Desktop>;
 }
 /** The pop-up for one tile: its choices. */
 export function ManageWindow(p: { m: Modal }) {

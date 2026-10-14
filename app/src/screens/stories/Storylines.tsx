@@ -64,7 +64,7 @@ export function PlotWindow(p: { m: Modal }) {
 /* what the buttons under Around the stories open */
 const POPS = {
   finished: () => { const S = G.S, P = me(), L = S.feuds.filter((f: any) => f.res && f.promo === P.id).slice(-12).reverse();
-    return L.length ? <ul class="list" data-t="st-finished">{L.map((f: any) => <li><span>{E.feudLabel(S, f)}{f.len ? <span class="muted"> {'·'} {E.FLEN[f.len].n.toLowerCase()}</span> : null}</span><span class={f.dead ? 'bad' : 'good'}>{f.cut ? 'Dropped' : (f.dead ? 'Fizzled out' : 'Settled')}, week {f.end}</span></li>)}</ul>
+    return L.length ? <ul class="list" data-t="st-finished">{L.map((f: any) => <li><span>{E.feudLabel(S, f)}{f.start != null && f.end != null ? <span class="muted"> {'·'} {f.end - f.start} weeks</span> : null}</span><span class={f.dead ? 'bad' : 'good'}>{f.cut ? 'Dropped' : (f.fizzle === 'cold' ? 'Never caught on' : (f.dead ? 'Fizzled out' : 'Settled'))}, week {f.end}</span></li>)}</ul>
       : <Empty>No feud has finished yet.</Empty>; },
   streaks: () => { const S = G.S, P = me(), L = E.rosterOf(S, P.id).filter((w: any) => w.ws >= 4).sort((a: any, b: any) => b.ws - a.ws);
     return L.length ? <><ul class="list" data-t="st-streaks">{L.map((w: any) => <li><span><Name w={w} /></span><span class="num">{w.ws} straight</span></li>)}</ul><p class="muted mt1">A streak of six or more draws a bigger reaction. Whoever ends it gets the rub.</p></>

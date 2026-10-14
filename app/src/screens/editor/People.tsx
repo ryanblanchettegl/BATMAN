@@ -2,8 +2,8 @@
 import { E } from '../../engine';
 import { Btn, Panel, Sel, Field, Opt, FaceCanvas, dataAttrs } from '../../kit';
 import { derive, NAMES, Face, FaceKey } from '../../lib/portrait';
-import { es, world, edit, look, note } from './state';
-import { TextF, NameF, NumF, SelF, Rating, PickList, DelBtn, TwoPane, opts } from './parts';
+import { es, world, edit, editDel, look, note, reId } from './state';
+import { TextF, NameF, NumF, SelF, Rating, PickList, DelBtn, TwoPane, opts, BrandSel } from './parts';
 
 const PARTS: [FaceKey, string][] = [['h', 'Head'], ['hr', 'Hair'], ['fh', 'Facial hair'], ['ms', 'Mustache'], ['ey', 'Eyes'], ['ns', 'Nose']];
 const SHOWN = 60;
@@ -37,6 +37,7 @@ function Form(p: { w: any }) {
     <Panel cls="mb4" title={w.ring_name || 'Wrestler'}>
       <div class="editor plain">
         <NameF label="Ring name" table="workers" rec={w} max={32} t="ed-wrname" />
+        <Field label="Need a name?"><Btn kind="sm" t="ed-randname" onClick={() => { const old = w.id; edit(() => { const nm = E.edRandomName(pkg, w.gender, Date.now() & 0xffff); reId('workers', old, E.edRename(pkg, 'workers', old, nm)); }); }}>Random name</Btn></Field>
         <SelF label="Division" rec={w} k="gender" options={[['M', 'Men'], ['F', 'Women']]} />
         <NumF label="Age" rec={w} k="age" min={16} max={75} blank="unknown" />
         <SelF label="Side" rec={w} k="disposition" options={opts(E.ED.sides)} />
@@ -53,34 +54,61 @@ function Form(p: { w: any }) {
       <div class="editor plain">
         <Field label="Company"><Sel t="ed-sign" value={con ? con.promotion_id : ''} options={companies} onChange={v => edit(() => { E.edSign(pkg, w.id, v || null, con ? con.push_level : undefined); })} /></Field>
         {con ? <SelF label="Place on the card" rec={con} k="push_level" options={opts(E.ED.push)} /> : null}
+        {con ? <BrandSel pkg={pkg} pid={con.promotion_id} rec={con} t="ed-wr-brand" /> : null}
+        {roles.indexOf('wrestler') >= 0 ? <Field label="Managed by"><Sel t="ed-manager" value={w.manager_id || ''} options={[['', 'Nobody'] as Opt].concat(E.edManagers(pkg, w.id).map((m: any) => [m.id, m.name + (m.same ? '' : ' (another company)')] as Opt))} onChange={v => edit(() => { E.edSetManager(pkg, w.id, v || null); })} /></Field> : null}
         {con ? <NumF label="Weeks left on the contract" rec={con} k="weeks_left" min={1} max={520} blank="the game decides" /> : null}
       </div>
       {con ? null : <p class="muted mt2">An unsigned wrestler starts the game as a free agent any company can sign.</p>}
     </Panel>
     <Panel cls="mb4" title="What they can do">
+      <div class="row opts mb2"><span class="muted">Set ratings for</span>{([['main_eventer', 'A main eventer'], ['midcarder', 'A mid-carder'], ['jobber', 'An opener']] as [string, string][]).map(x => <Btn kind="sm" key={x[0]} t="ed-tier" d={{ v: x[0] }} onClick={() => edit(() => { E.edSetTier(pkg, w.id, x[0], Date.now() & 0xffff); note('Ratings set for ' + x[1].toLowerCase() + (con ? ', to suit the company.' : '.')); })}>{x[1]}</Btn>)}</div>
       <div class="edrates">{E.ED.ratings.map((r: any) => <Rating key={r[0]} label={r[1]} obj={w.ratings} k={r[0]} opt={!r[2]} />)}</div>
       <p class="muted mt2">Overness is how much the crowd cares. The ones marked auto are worked out from the rest unless you set them.</p>
     </Panel>
     <Looks w={w} />
-    <div class="row mb4"><DelBtn id={'worker:' + w.id} what={w.ring_name} onDelete={() => { E.edRemove(pkg, 'workers', w.id); st.sel.wrestlers = null; note(w.ring_name + ' has been removed from the world.'); }} /></div>
+    <div class="row mb4"><Btn kind="sm" t="ed-dup" onClick={() => edit(() => { const c = E.edDup(pkg, 'workers', w.id); if (c) { st.sel.wrestlers = c.id; note('Made a copy: ' + c.ring_name + '.'); } })}>Make a copy</Btn><DelBtn id={'worker:' + w.id} what={w.ring_name} onDelete={() => { E.edRemove(pkg, 'workers', w.id); st.sel.wrestlers = null; note(w.ring_name + ' has been removed from the world.'); }} /></div>
   </>;
 }
 
+/** What to do with the wrestlers picked on the list: sign them all, release them all, or delete them all (two presses). */
+function Many() {
+  const st = es(), pkg = world(), ids = Object.keys(st.picked || {}), n = ids.length, to = st.manyTo || (pkg.promotions[0] && pkg.promotions[0].id) || '';
+  const done = (msg: string) => { st.picked = {}; note(msg); };
+  return <div class="row mb2 edmany" data-t="ed-many-acts">
+    <Sel t="ed-many-to" label="Company" value={to} options={pkg.promotions.map((x: any) => [x.id, x.name]) as Opt[]} onChange={v => look(() => { st.manyTo = v; })} />
+    <Btn kind="sm" t="ed-many-sign" onClick={() => edit(() => { const k = E.edMany(pkg, ids, 'sign', to); done(k + ' signed to ' + ((pkg.promotions.find((x: any) => x.id === to) || {}).name || 'the company') + '.'); })}>Sign all {n}</Btn>
+    <Btn kind="sm" t="ed-many-release" onClick={() => edit(() => { const k = E.edMany(pkg, ids, 'release'); done(k + ' released. They are free agents now.'); })}>Release all {n}</Btn>
+    {st.del === 'many' ? <Btn kind="danger" t="ed-many-del-yes" onClick={() => editDel(() => { const k = E.edMany(pkg, ids, 'delete'); st.del = null; st.sel.wrestlers = null; done(k + ' deleted.'); }, 'The ' + n + ' you deleted')}>Yes, delete all {n}</Btn>
+      : <Btn kind="sm" t="ed-many-del" onClick={() => look(() => { st.del = 'many'; })}>Delete all {n}</Btn>}
+  </div>;
+}
 export function WrestlersTab() {
   const st = es(), pkg = world(), info = E.edInfo(pkg), q = st.q.trim().toLowerCase();
   const pname: Record<string, string> = {}; pkg.promotions.forEach((x: any) => { pname[x.id] = x.name; });
   const all: any[] = pkg.workers.filter((w: any) => (st.fp === '' || (st.fp === 'FA' ? !info.home[w.id] : info.home[w.id] === st.fp)) && (!q || String(w.ring_name).toLowerCase().indexOf(q) >= 0));
-  all.sort((a, b) => ((b.ratings && b.ratings.overness) || 0) - ((a.ratings && a.ratings.overness) || 0));
+  // sorted the way this world was last sorted (kept per world)
+  const sorts = st.sort || (st.sort = {}), by = sorts[String(st.id)] || 'over', ov = (x: any) => (x.ratings && x.ratings.overness) || 0, nm = (x: any) => String(x.ring_name || '');
+  const cmp: Record<string, (a: any, b: any) => number> = {
+    over: (a, b) => ov(b) - ov(a) || nm(a).localeCompare(nm(b)),
+    name: (a, b) => nm(a).localeCompare(nm(b)),
+    age: (a, b) => (+a.age || 0) - (+b.age || 0) || nm(a).localeCompare(nm(b)),
+    co: (a, b) => String(pname[info.home[a.id]] || '~').localeCompare(String(pname[info.home[b.id]] || '~')) || ov(b) - ov(a) };
+  all.sort(cmp[by] || cmp.over);
   const w = pkg.workers.find((x: any) => x.id === st.sel.wrestlers) || null;
   const add = () => edit(() => { const pid = st.fp && st.fp !== 'FA' ? st.fp : null, n = E.edAddWorker(pkg, { ring_name: 'New wrestler', promotion_id: pid }); st.sel.wrestlers = n.id; st.q = ''; });
   const list = <>
-    <div class="row mb2"><Btn kind="go" t="ed-add-wrestler" onClick={add}>Add a wrestler</Btn></div>
+    <div class="row mb2"><Btn kind="go" t="ed-add-wrestler" onClick={add}>Add a wrestler</Btn>
+      {st.fp === 'FA' ? <Btn kind="sm" t="ed-unknowns" onClick={() => edit(() => { const m = E.edFillFree(pkg, 6, Date.now() & 0xffff); note('Six unknowns added to the free agents: ' + m.map((x: any) => x.ring_name).slice(0, 3).join(', ') + ' and three more.'); })}>Make unknowns</Btn> : null}</div>
     <div class="row mb2">
       <input type="search" id="ed-q" data-t="ed-q" value={st.q} placeholder="Search by name" aria-label="Search by name" onInput={e => look(() => { st.q = (e.currentTarget as HTMLInputElement).value; })} />
+      <Sel t="ed-sort" label="Sort by" value={by} options={[['over', 'Overness'], ['name', 'Name'], ['age', 'Age'], ['co', 'Company']] as Opt[]} onChange={v => look(() => { sorts[String(st.id)] = v; })} />
       <Sel t="ed-fp" label="Company" value={st.fp} options={[['', 'Everyone'], ['FA', 'Free agents']].concat(pkg.promotions.map((x: any) => [x.id, x.name])) as Opt[]} onChange={v => look(() => { st.fp = v; })} />
     </div>
-    <PickList t="ed-pick" sel={st.sel.wrestlers} onPick={id => { st.sel.wrestlers = id; }} empty={pkg.workers.length ? 'Nobody matches.' : 'No wrestlers yet. Add one, or fill a roster from the Companies tab.'}
-      more={all.length > SHOWN ? 'Showing ' + SHOWN + ' of ' + all.length + '. Search or pick a company to narrow it.' : all.length + (all.length === 1 ? ' person.' : ' people.')}
+    <div class="row mb2"><Btn kind="sm" t="ed-many" on={!!st.many} onClick={() => look(() => { st.many = !st.many; st.picked = {}; st.del = null; })}>{st.many ? 'Pick several: on' : 'Pick several'}</Btn>
+      {st.many ? <span class="muted">{Object.keys(st.picked || {}).length} picked</span> : null}</div>
+    {st.many && Object.keys(st.picked || {}).length ? <Many /> : null}
+    <PickList t="ed-pick" sel={st.sel.wrestlers} many={st.many ? (st.picked || (st.picked = {})) : undefined} onPick={id => { if (st.many) { const P = st.picked || (st.picked = {}); if (P[id]) delete P[id]; else P[id] = 1; } else st.sel.wrestlers = id; }} empty={pkg.workers.length ? 'Nobody matches.' : 'No wrestlers yet. Add one, or fill a roster from the Companies tab.'}
+      more={(all.length > SHOWN ? 'Showing ' + SHOWN + ' of ' + all.length + '. Search or pick a company to narrow it.' : 'Showing ' + all.length + (all.length === 1 ? ' person.' : ' people.')) + (all.length < pkg.workers.length ? ' ' + pkg.workers.length + ' in this world.' : '')}
       items={all.slice(0, SHOWN).map(x => ({ id: x.id, label: x.ring_name, sub: (pname[info.home[x.id]] || 'Free agent') + ' · Over ' + ((x.ratings && x.ratings.overness) || 0) }))} />
   </>;
   return <TwoPane open={!!w} list={list} onBack={() => { st.sel.wrestlers = null; }}>{w ? <Form w={w} /> : <p class="empty">Pick someone on the left, or add a wrestler.</p>}</TwoPane>;

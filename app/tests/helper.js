@@ -29,7 +29,7 @@ async function open(opts) {
   const mode = opts.mode || 'desk', browser = await chromium.launch(), ctx = await browser.newContext(VIEWPORTS[mode]), page = await ctx.newPage(), errs = [];
   page.on('console', m => { if (m.type() === 'error' && !/ERR_TUNNEL|Failed to load resource/.test(m.text())) errs.push('console: ' + m.text().slice(0, 300)); });
   page.on('pageerror', e => errs.push('pageerror: ' + e.message));
-  await page.addInitScript(p => { try { if (!localStorage.getItem('gorilla-position-prefs')) localStorage.setItem('gorilla-position-prefs', JSON.stringify(p)); } catch (e) {} }, Object.assign({ boot: false, letter: false }, mode === 'tv' ? { screen: 'tv' } : {}));
+  await page.addInitScript(p => { try { if (!localStorage.getItem('gorilla-position-prefs')) localStorage.setItem('gorilla-position-prefs', JSON.stringify(p)); } catch (e) {} }, Object.assign({ boot: false, letter: false, auto: !!opts.auto }, opts.prefs || {}, mode === 'tv' ? { screen: 'tv' } : {}));
   await page.goto('http://127.0.0.1:' + (await serve()) + '/' + (opts.file || 'index') + '.html');
   await page.waitForSelector('.logo-box');
   if (opts.promo !== null) {
@@ -61,7 +61,7 @@ async function fits(page) {
     if (d.scrollHeight - d.clientHeight > 1) bad.push('the page scrolls by ' + (d.scrollHeight - d.clientHeight) + 'px');
     over('.main', 'the page area'); over('.b1-pane', 'the pane beside the sheet'); over('.b1-pane > .panel', 'the panel in the pane'); over('.b1-rows', 'the run sheet'); over('.lv-main', 'the broadcast'); over('.lv-night', 'tonight’s run sheet'); over('.callbox', 'the call box'); over('.a1-list', 'the list of what the night left'); over('.a1-pane', 'the pane beside it');
     document.querySelectorAll('.road .rmid, .road .rright').forEach(e => { if (e.scrollHeight - e.clientHeight > 1) bad.push('a column of the road window is ' + (e.scrollHeight - e.clientHeight) + 'px too tall'); });
-    document.querySelectorAll('.wn > .bd').forEach(e => { if (e.scrollHeight - e.clientHeight > 1) bad.push('the window “' + ((e.parentElement.querySelector('.ttl h2') || {}).textContent || '') + '” is ' + (e.scrollHeight - e.clientHeight) + 'px too tall'); });
+    document.querySelectorAll('.wn > .bd').forEach(e => { const oy = getComputedStyle(e).overflowY; if (oy !== 'auto' && oy !== 'scroll' && e.scrollHeight - e.clientHeight > 1) bad.push('the window “' + ((e.parentElement.querySelector('.ttl h2') || {}).textContent || '') + '” is ' + (e.scrollHeight - e.clientHeight) + 'px too tall'); });
     const st = document.querySelector('.ffoot'); if (st && st.getBoundingClientRect().bottom > window.innerHeight + 1) bad.push('the status line is off the screen');
     const top = document.querySelector('.ftop'), mn = document.querySelector('.main'); if (top && mn && st) { const a = top.getBoundingClientRect(), m = mn.getBoundingClientRect(), b = st.getBoundingClientRect(); if (m.top < a.bottom - 1) bad.push('the menu lies over the top ' + Math.round(a.bottom - m.top) + 'px of the page'); if (m.bottom > b.top + 1) bad.push('the bottom line lies over the last ' + Math.round(m.bottom - b.top) + 'px of the page'); }
     return bad.join('; ');

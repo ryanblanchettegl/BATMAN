@@ -49,9 +49,9 @@ function capW(t){return t.charAt(0).toUpperCase()+t.slice(1);}
 /** How a show did against what its crowd expects, in words: a headline and one line. s is 1 better, 0 level, -1 worse. */
 function showVerdict(rating,exp){
   var d=rating-exp,w=showWord(rating),e=showWord(exp),same=w.i===e.i;
-  var band=verdictBand(d),head=['Died in front of them','Came up short','Gave them what they came for','Sent them home happy','Blew the roof off'][band+2];
+  var band=verdictBand(d),cs=crowdScore(rating,exp),head=[cs>=50?'Lost the crowd':'Died in front of them','Came up short','Gave them what they came for','Sent them home happy','Blew the roof off'][band+2];   // a C is a miss, not a disaster
   var line=band===0?capW(w.a)+', which is what this crowd expects.':(same?capW(w.a)+(band>0?', and a little more than this crowd expects.':', but this crowd wanted a little more.'):capW(w.a)+' for a crowd that expects '+e.one+'.');
-  return {head:head,line:line,s:band>0?1:(band<0?-1:0),band:band,grade:gradeG(crowdScore(rating,exp)),word:w,exp:e};
+  return {head:head,line:line,s:band>0?1:(band<0?-1:0),band:band,grade:gradeG(cs),word:w,exp:e};
 }
 E.showWord=function(v){return showWord(v);};
 E.showVerdict=function(rating,exp){return showVerdict(rating,exp);};

@@ -1,4 +1,5 @@
 /* Before the game: boot sequence, title card, Select Promotion, the first-day screens, and the Help and Options windows. */
+import { saveFile, canSaveFile } from '../../shared/savefile';
 import { ComponentChildren } from 'preact';
 import { useEffect, useRef } from 'preact/hooks';
 import { E } from '../../engine';
@@ -296,23 +297,27 @@ function SaveText() {
   const open = (m: string) => view(() => { sv.mode = sv.mode === m ? '' : m; sv.msg = ''; sv.text = m === 'copy' && S ? JSON.stringify(S) : ''; });
   return <div class="mt2">
     <div class="row">{S ? <Btn kind="sm" t="save-copy" on={sv.mode === 'copy'} onClick={() => { open('copy'); copyText(JSON.stringify(S), 'save-text', () => view(() => { sv.msg = 'Copied. Paste it into the same window on your other device.'; })); }}>Copy my save</Btn> : null}
-      <Btn kind="sm" t="save-paste" on={sv.mode === 'paste'} onClick={() => open('paste')}>Paste a save</Btn></div>
+      <Btn kind="sm" t="save-paste" on={sv.mode === 'paste'} onClick={() => open('paste')}>Paste a save</Btn>
+      {S && canSaveFile() ? <Btn kind="sm" t="save-file" onClick={() => { const name = 'ewf-save-week-' + S.week + '.json'; saveFile(name, JSON.stringify(S)).then(r => view(() => { sv.msg = r === 'saved' ? 'Saved as ' + name + '. Keep it somewhere safe.' : (r === 'declined' ? 'Not saved.' : 'This device would not save a file. Copy the save instead.'); })); }}>Save to a file</Btn> : null}
+      <label class="btn sm" data-t="save-loadfile" tabIndex={0} role="button" onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); const i = (e.currentTarget as HTMLElement).querySelector('input'); if (i) (i as HTMLInputElement).click(); } }}>Load a save file<input type="file" accept=".json,application/json" style={{ display: 'none' }} onChange={e => { const f = (e.currentTarget as HTMLInputElement).files; if (!f || !f[0]) return; f[0].text().then(t => { const m = loadSaveText(t); view(() => { if (m) sv.msg = m; else { sv.mode = ''; ui.modal = null; } }); }); }} /></label></div>
     {sv.mode ? <><textarea id="save-text" class="savebox mt1" rows={4} readOnly={sv.mode === 'copy'} placeholder="Paste the text of a save here" value={sv.text} onInput={e => { sv.text = (e.currentTarget as HTMLTextAreaElement).value; }} />
       {sv.mode === 'paste' ? <div class="row mt1"><Btn kind="sm" t="save-load" onClick={() => { const m = loadSaveText(sv.text); view(() => { if (m) sv.msg = m; else { sv.mode = ''; ui.modal = null; } }); }}>Load this save</Btn><span class="muted">This replaces the game you are playing.</span></div> : null}
       {sv.msg ? <p class={sv.mode === 'paste' ? 'bad' : 'good'}>{sv.msg}</p> : null}</> : null}
+    {!sv.mode && sv.msg ? <p class="good mt1" data-t="save-msg">{sv.msg}</p> : null}
   </div>;
 }
 function Options() {
   const S = G.S;
-  const toggle = (k: 'snd' | 'type' | 'crt' | 'boot' | 'letter', n: string, d: string) => <li><span><b>{n}</b><br /><span class="muted">{d}</span></span>
+  const toggle = (k: 'snd' | 'type' | 'auto' | 'crt' | 'boot' | 'letter', n: string, d: string) => <li><span><b>{n}</b><br /><span class="muted">{d}</span></span>
     <Btn kind="sm" on={!!pref[k]} t="pref" d={{ k }} onClick={() => { pref[k] = !pref[k]; savePrefs(); if (k === 'snd' && pref.snd) SFX.ach(); redraw(); }}>{pref[k] ? 'On' : 'Off'}</Btn></li>;
-  const choice = (k: 'screen' | 'zoom' | 'speed' | 'motion' | 'fxvol', n: string, d: string, opts: [string | number, string][]) => <li class="col"><span><b>{n}</b><br /><span class="muted">{d}</span></span>
+  const choice = (k: 'screen' | 'zoom' | 'speed' | 'pace' | 'motion' | 'fxvol', n: string, d: string, opts: [string | number, string][]) => <li class="col"><span><b>{n}</b><br /><span class="muted">{d}</span></span>
     <span class="row">{opts.map(o => <Btn kind="sm" on={String(pref[k]) === String(o[0])} t="prefset" d={{ k, v: o[0] }} onClick={() => { (pref as any)[k] = o[0]; savePrefs(); redraw(); }}>{o[1]}</Btn>)}</span></li>;
   const fs = () => { try { if (document.fullscreenElement) document.exitFullscreen(); else document.documentElement.requestFullscreen().catch(() => {}); } catch (e) { /* not available here */ } };
   return <Window title="Options" ok="Done">
     <ul class="list">
       {toggle('snd', 'Sound', 'Beeps, bells and fanfares.')}
       {toggle('type', 'Typewriter text', 'Commentary types itself out during a show.')}
+      {toggle('auto', 'Auto-play the show', 'The broadcast moves on by itself at a reading pace and stops for every call. P turns it on or off during a show.')}
       {toggle('crt', 'Monitor effect', 'Scanlines and a darkened edge, like a tube screen.')}
       {toggle('boot', 'Boot sequence', 'The loading screen when the game starts.')}
       {toggle('letter', 'The owner’s letter', 'A new game opens on a letter from the owner. It can be read again from the desk.')}
@@ -320,6 +325,7 @@ function Options() {
       {choice('fxvol', 'Effects volume', 'Bells, beeps and the crowd.', [[0.4, 'Low'], [1, 'Normal'], [1.8, 'High']])}
       {(window as any).EWF_MUSIC_VOL ? <li class="col"><span><b>Music volume</b><br /><span class="muted">The soundtrack. The Jukebox on the Music button has the rest.</span></span>
         <span class="row">{[[0.3, 'Low'], [0.6, 'Medium'], [1, 'High']].map(o => <Btn kind="sm" on={Math.abs((window as any).EWF_MUSIC_VOL.vol() - (o[0] as number)) < 0.01} t="musvol" d={{ v: o[0] }} onClick={() => { (window as any).EWF_MUSIC_VOL.setVol(o[0]); redraw(); }}>{o[1]}</Btn>)}</span></li> : null}
+      {choice('pace', 'Auto-play pace', 'Full shows every line. Quick hurries the routine lines and keeps the big moments. Results goes straight to each result. Every pace stops for your calls.', [['full', 'Full'], ['quick', 'Quick'], ['results', 'Results']])}
       {choice('speed', 'Broadcast speed', 'How fast the commentary types itself out.', [[0.5, 'Slow'], [1, 'Normal'], [2.5, 'Fast']])}
       {choice('motion', 'Reduce motion', 'Stops the typewriter text and the blinking cursor. Auto follows your device setting.', [['auto', 'Auto'], ['reduce', 'On'], ['full', 'Off']])}
       {choice('zoom', 'Text size', 'Scales everything on screen.', [[0.85, 'Small'], [1, 'Normal'], [1.2, 'Large'], [1.45, 'Largest']])}

@@ -10,10 +10,42 @@
     "test": "node test-uni.js universes/public_domain.json 60",
     "start": "node build.js && electron .",
     "typecheck": "cd app && node_modules/.bin/tsc --noEmit -p .",
-    "test:browser": "node tools/browser-tests.js"
+    "test:browser": "node tools/browser-tests.js",
+    "pack": "node build.js && npx electron-builder@25.1.8 --win --x64",
+    "pack:dir": "node build.js && npx electron-builder@25.1.8 --dir"
   },
   "optionalDependencies": {
-    "electron": "^33.0.0",
     "steamworks.js": "^0.4.0"
+  },
+  "build": {
+    "appId": "com.ewf.wrestlingmanager",
+    "productName": "EWF Wrestling Manager",
+    "electronVersion": "33.0.0",
+    "directories": {
+      "output": "release",
+      "app": "."
+    },
+    "files": [
+      "desktop/**",
+      "dist/index.html",
+      "package.json"
+    ],
+    "asarUnpack": [
+      "node_modules/steamworks.js/**"
+    ],
+    "win": {
+      "target": [
+        "nsis",
+        "dir"
+      ]
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true
+    },
+    "npmRebuild": false
+  },
+  "devDependencies": {
+    "electron": "^33.0.0"
   }
 }

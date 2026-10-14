@@ -17,6 +17,10 @@ export interface RosterState {
   pt: ProfilePage;
   rf: { brand: string; g: string; al: string; q: string };
   rs: { k: string; d: number };
+  /** the wrestler picked on the Roster list, whose file shows on the right */
+  peek?: number | null;
+  /** the page of the roster list, and how many lines a page holds */
+  pg?: number; per?: number;
   repack: { id: number; g: string } | null;
   mq: string;
   offer: number | null;

@@ -4,7 +4,7 @@ import { Btn, Panel, Sel, Field, Opt, Logo, dataAttrs } from '../../kit';
 import { openLogoMaker } from '../../shared/logomaker';
 import { ModelCard } from '../../shared/model';
 import { es, world, edit, look, note } from './state';
-import { TextF, NameF, NumF, SelF, PickList, DelBtn, TwoPane } from './parts';
+import { TextF, NameF, NumF, SelF, PickList, DelBtn, TwoPane, BrandSel } from './parts';
 
 const names = (t: Record<string, any>): Opt[] => Object.keys(t).map(k => [k, t[k].n] as Opt);
 export const companyOpts = (pkg: any): Opt[] => pkg.promotions.map((p: any) => [p.id, p.name + (p.full_name ? ' - ' + p.full_name : '')] as Opt);
@@ -18,7 +18,7 @@ export function CompaniesTab() {
       items={pkg.promotions.map((x: any) => { const c = info.per[x.id]; return { id: x.id, label: x.name, sub: 'Pop ' + x.popularity + ' · ' + c.roster + ' wrestlers', bad: c.roster < 6 || !c.shows }; })} />
   </>;
   if (!p) return <TwoPane open={false} list={list} onBack={() => { }}><p class="empty">Pick a company on the left, or add one.</p></TwoPane>;
-  const c = info.per[p.id], own = p.owner || (p.owner = {}), months: Opt[] = E.MONTHS.map((n: string, i: number) => [i + 1, n] as Opt);
+  const c = info.per[p.id], own = p.owner || (p.owner = {}), staff = p.staff || (p.staff = {}), months: Opt[] = E.MONTHS.map((n: string, i: number) => [i + 1, n] as Opt);
   const fill = () => edit(() => { const made = E.edFill(pkg, p.id, st.fill, Date.now()); note(made.length + ' unknowns signed to ' + p.name + '. Rename them on the Wrestlers tab.'); });
   return <TwoPane open list={list} onBack={() => { st.sel.companies = null; }}>
     <Panel cls="mb4" title={p.name || 'Company'}>
@@ -51,6 +51,26 @@ export function CompaniesTab() {
         <SelF label="Promise to the locker room" rec={own} k="pledge" options={names(E.PLEDGE)} />
       </div>
     </Panel>
+    <Panel cls="mb4" title="How it stands">
+      <ul class="sheet-lines" data-t="ed-health">{E.edHealth(pkg, p.id).map((l: any, i: number) => <li key={i} class={l.warn ? 'bad' : undefined}>{l.t}</li>)}</ul>
+    </Panel>
+    <Panel cls="mb4" title="Brands">
+      {(p.brands || []).length ? <ul class="list">{(p.brands as any[]).map((b: any) => <li key={b.id} class="col"><div class="editor plain">
+        <Field label="Brand name"><input type="text" maxLength={32} data-t="ed-brand-name" data-v={b.id} value={b.name} onInput={e => { const v = (e.currentTarget as HTMLInputElement).value; edit(() => { E.edSetBrand(pkg, p.id, b.id, { name: v }); }); }} /></Field>
+        </div><span class="row opts"><Btn kind="sm" t="ed-brand-dev" d={{ v: b.id }} on={!!b.dev} onClick={() => edit(() => { E.edSetBrand(pkg, p.id, b.id, { dev: !b.dev }); })}>{b.dev ? 'Developmental' : 'Main roster'}</Btn>
+        <DelBtn id={'brand:' + b.id} what={b.name} onDelete={() => { E.edRemoveBrand(pkg, p.id, b.id); note(b.name + ' is gone. Its shows, belts and wrestlers have no brand now.'); }} /></span></li>)}</ul>
+        : <p class="muted">No brands. One roster runs every show.</p>}
+      <div class="row mt2"><Btn kind="sm" t="ed-add-brand" onClick={() => edit(() => { const b = E.edAddBrand(pkg, p.id, ''); note(b.name + ' added. Put shows, belts and wrestlers on it.'); })}>Add a brand</Btn></div>
+    </Panel>
+    <Panel cls="mb4" title="The people">
+      <div class="editor plain">
+        {(['Play-by-play', 'Colour'] as string[]).map((lab, i) => <Field key={lab} label={lab}><input type="text" maxLength={32} placeholder={i ? 'The colour man' : 'The play-by-play man'} data-t="ed-ann" data-v={i} value={(p.announcers && p.announcers[i]) || ''}
+          onInput={e => { const v = (e.currentTarget as HTMLInputElement).value; edit(() => { const a = (p.announcers || ['', '']).slice(0, 2); while (a.length < 2) a.push(''); a[i] = v; if (a[0] || a[1]) p.announcers = a; else delete p.announcers; }); }} /></Field>)}
+        <TextF label="Road agent" rec={staff} k="road_agent" max={32} ph="The road agent" t="ed-agent" />
+        <TextF label="Head writer" rec={staff} k="head_writer" max={32} ph="The head writer" t="ed-writer" />
+      </div>
+      <p class="muted mt2">The voices on the broadcast and the two people backstage. Both commentators need a name for the game to use them.</p>
+    </Panel>
     <Panel cls="mb4" title="Money and calendar">
       <div class="editor plain">
         <NumF label="Cash at the start ($)" rec={p} k="cash" min={0} max={2000000000} step={100000} blank="worked out" />
@@ -69,7 +89,7 @@ export function CompaniesTab() {
         <Btn kind="sm" t="ed-see-roster" onClick={() => look(() => { st.tab = 'wrestlers'; st.fp = p.id; st.q = ''; st.sel.wrestlers = null; window.scrollTo(0, 0); })}>See its wrestlers</Btn></div>
       <p class="muted mt2">Unknowns are made-up names with ratings that suit a company this size. A quick way to make a world playable, then replace them with your own.</p>
     </Panel>
-    <div class="row mb4"><DelBtn id={'promo:' + p.id} what={p.name} onDelete={() => { E.edRemove(pkg, 'promotions', p.id); st.sel.companies = null; note(p.name + ' is gone, with its shows, belts and contracts. Its wrestlers are now unsigned.'); }} /></div>
+    <div class="row mb4"><Btn kind="sm" t="ed-dup" onClick={() => edit(() => { const c = E.edDup(pkg, 'promotions', p.id); if (c) { st.sel.companies = c.id; note('Made a copy: ' + c.name + ', with its shows and belts. Its roster is empty.'); } })}>Make a copy</Btn><DelBtn id={'promo:' + p.id} what={p.name} onDelete={() => { E.edRemove(pkg, 'promotions', p.id); st.sel.companies = null; note(p.name + ' is gone, with its shows, belts and contracts. Its wrestlers are now unsigned.'); }} /></div>
   </TwoPane>;
 }
 
@@ -90,6 +110,7 @@ export function ShowsTab() {
           <Btn kind="go" t="ed-add-show" onClick={() => edit(() => { E.edAddShow(pkg, pid, 'New show'); })}>Add a show</Btn></div>
         {shows.length ? <ul class="list mt2">{shows.map((s: any, i: number) => <li class="col" key={i}><div class="editor plain">
           <NameF label="Name of the show" table="shows" rec={s} max={32} t="ed-show-name" />
+          <BrandSel pkg={pkg} pid={pid} rec={s} t="ed-show-brand" />
           <SelF label="How big" rec={s} k="weight" num options={(SIZES.some(z => z[0] === (s.weight == null ? 1 : s.weight)) ? SIZES : SIZES.concat([[s.weight, 'Size ' + s.weight]])) as Opt[]} />
         </div><span class="row opts"><DelBtn id={'show:' + s.id} what="this show" onDelete={() => { E.edRemove(pkg, 'shows', s.id); }} /></span></li>)}</ul>
           : <p class="bad mt2">This company has no weekly show. It needs one.</p>}

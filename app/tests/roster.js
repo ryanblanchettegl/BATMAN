@@ -21,10 +21,11 @@ const sum = (page, sel) => page.$eval(sel, c => { const d = c.getContext('2d').g
 const repainted = async (page, sel, before) => { for (let i = 0; i < 40; i++) { if (await sum(page, sel) !== before) return true; await page.waitForTimeout(50); } return false; };
 const drawn = async (page, sel) => { for (let i = 0; i < 40; i++) { if (await ink(page, sel) > 3) return true; await page.waitForTimeout(50); } return false; };
 const profTab = async (page, v) => { await page.click('.prof [data-t="ptab"][data-v="' + v + '"]'); must(await page.$eval('.prof [data-t="ptab"][data-v="' + v + '"]', e => e.getAttribute('aria-pressed')) === 'true', 'profile page ' + v + ' not pressed'); };
-const openProfile = async (page, id) => { if (await page.$('.prof [data-t="sel"][data-id="' + id + '"]')) return; await page.click('tr.pick[data-id="' + id + '"]'); await page.waitForSelector('.prof [data-t="sel"][data-id="' + id + '"]'); };
+const openProfile = async (page, id) => { if (await page.$('.prof [data-t="sel"][data-id="' + id + '"]')) return; if (await page.$('.prof')) await page.keyboard.press('Escape'); await page.click('tr.pick[data-id="' + id + '"]'); if (!await page.$('.prof')) await page.click('[data-t="roster-full"][data-id="' + id + '"]'); await page.waitForSelector('.prof [data-t="sel"][data-id="' + id + '"]'); };
 
 async function run(mode) {
   const t = await open({ mode, file: FILE }), { page } = t;
+  await page.evaluate(() => { window.EWF_FLAT = 1; });
   const me = await state(page, S => ({ id: S.player, n: S.w.filter(w => w.promo === S.player && !w.rt).length, week: S.week }));
 
   /* ----- roster: sort and filter ----- */
@@ -122,6 +123,9 @@ async function run(mode) {
     const cheap = L.filter(w => w.fa).sort((a, b) => a.ask - b.ask)[0]; return { n: E.market(S).length, room, scout: L[0], buy: cheap, cash: P.cash }; });
   must(mk.scout && mk.buy, 'nobody on the market to talk to');
   await ok(t, 'market', mk.n + ' in the market');
+  if (mk.n > 20) { must((await page.$$eval('.tw tbody tr', L => L.length)) <= 20, 'the market shows more than twenty at once');
+    await page.click('[data-t="mkpage-next"]'); must(/Page 2 of/.test(await page.$eval('.main', e => e.textContent)), 'Next 20 did not turn the page');
+    await page.click('[data-t="mkpage-prev"]'); await ok(t, 'market pages', 'twenty to a page'); }
   await page.click('[data-t="offer"][data-id="' + mk.scout.id + '"]'); await page.waitForSelector('#offer-wage');
   must(await page.$eval('#offer-wage', e => +e.value) === mk.scout.ask, 'offer does not start at the asking wage');
   await ok(t, 'offer row');
@@ -135,11 +139,11 @@ async function run(mode) {
 
   /* ----- locker room ----- */
   await go(page, 'locker'); await page.waitForSelector('.piebox');
-  must(await page.$$eval('.panel > h2', L => L.map(e => e.textContent).join('|')) === 'Mood of the room|Who is who|Cliques|The camp show|Under strain|The trainer’s room', 'locker room panels are wrong');
+  must(await page.$$eval('.lkpage .wn > .ttl h2', L => L.map(e => e.textContent).join('|')) === 'Mood of the room|Who is who|Cliques|The camp show|Under strain|The trainer’s room', 'locker room windows are wrong');
   await ok(t, 'locker room');
   if (mode === 'desk' || mode === 'phone') await shot(page, 'roster-locker-' + mode, true);
-  let who = await page.$('.cols [data-t="sel"]');
-  if (!who) { console.log(mode, 'nobody is named in the locker room yet: the test puts one wrestler under strain'); await state(page, (S, id) => { S.w[id].stress = 80; }, fit); await go(page, 'locker'); who = await page.$('.cols [data-t="sel"]'); }
+  let who = await page.$('.lkpage [data-t="sel"]');
+  if (!who) { console.log(mode, 'nobody is named in the locker room yet: the test puts one wrestler under strain'); await state(page, (S, id) => { S.w[id].stress = 80; }, fit); await go(page, 'locker'); who = await page.$('.lkpage [data-t="sel"]'); }
   const whoId = await who.evaluate(e => +e.dataset.id), whoName = await who.evaluate(e => e.textContent);
   await who.click(); await page.waitForSelector('.prof');
   must(await page.$eval('.prof h2', e => e.textContent) === whoName && await view(page).then(v => v.sel) === whoId, 'the name did not open that profile');
@@ -154,7 +158,7 @@ async function run(mode) {
   if (tb) {
     const fmt = await tb.evaluate(e => e.dataset.v); await tb.click();
     must(/is set/.test(await flash(page)) && await state(page, S => !!S.tourn && !S.tourn.done), 'tournament said: ' + await flash(page));
-    must(await page.$eval('.panel.mb3 > h2', e => e.textContent) === await state(page, S => S.tourn.name), 'no tournament panel');
+    must(await page.$eval('[data-t="tourn-win"] h2', e => e.textContent) === await state(page, S => S.tourn.name), 'no tournament window');
     must(await page.$$eval('[data-t="tourn"]:not([disabled])', L => L.length) === 0, 'a second tournament is still on offer');
     if (fmt === 'ko') must(await page.$eval('.bracket', e => e.innerText.split('\n').length >= 15 && /[├┐┘]/.test(e.innerText)).catch(() => false), 'the knockout has no bracket drawn');
     await ok(t, 'tournament started', fmt === 'ko' ? 'knockout' : 'league');
@@ -229,6 +233,7 @@ async function tv() {
   must(a.tag === 'TR', 'tv: arrows never reached the table (' + n + ' presses, on ' + JSON.stringify(a) + ')');
   await page.keyboard.press('ArrowDown'); a = await at(); must(a.tag === 'TR', 'tv: Down left the table');
   const id = a.id;
+  await page.keyboard.press('Enter'); must(!await page.$('.prof') && await page.$eval('[data-t="roster-file"] h2', e => e.textContent).then(x => !!x), 'tv: one Enter should pick the line');
   await page.keyboard.press('Enter'); await page.waitForSelector('.prof');
   must(await page.$('.prof [data-t="sel"][data-id="' + id + '"]'), 'tv: Enter opened the wrong profile');
   await page.waitForFunction(() => !!document.activeElement.closest('.prof'), null, { timeout: 2000 }).catch(() => {});

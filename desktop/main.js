@@ -1,4 +1,4 @@
-// Desktop wrapper for Steam. UNTESTED scaffold: it has not been run against Electron or the Steam client yet.
+// Desktop wrapper for Steam. The window and page were smoke-tested in Electron 33 (tools/desktop-smoke.js); the Steam calls below have not been run against the Steam client.
 // Set STEAM_APP_ID to your app id (480 is Valve's public test app).
 const { app, BrowserWindow, ipcMain } = require('electron');
 const path = require('path');

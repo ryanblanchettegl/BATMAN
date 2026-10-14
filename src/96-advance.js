@@ -51,14 +51,16 @@ E.comingUp=function(S){
   var fs=activeFeuds(S).filter(function(f){return f.promo===P.id;}).sort(function(a,b){return b.heat-a.heat;});
   fs.slice(0,6).forEach(function(f){
     var act=feudAct(f,S),big=nb.week-S.week;
-    var pl=E.feudPlan(S,f),nxt=pl.ch?pl.ch.filter(function(c){return !c.done;})[0]:null,ew=nxt?nxt.w:pl.pay,en=ew-S.week;
-    if(en>=0&&en<=2)L.push({n:en,t:feudLabel(S,f)+(nxt&&nxt.w!==pl.pay?': a chapter ends at ':' ends at ')+(nxt?nxt.at:pl.at)+' '+wk(en),to:'storylines',k:'feud'});
-    else if(pl.late)L.push({n:0,t:feudLabel(S,f)+' is past its ending and cooling',to:'storylines',k:'feud'});
+    var pl=E.feudPlan(S,f);
+    if(pl.end&&pl.end.in>=0&&pl.end.in<=2)L.push({n:pl.end.in,t:feudLabel(S,f)+' ends at '+pl.end.at+' '+wk(pl.end.in),to:'storylines',k:'feud'});
+    else if(pl.ripe)L.push({n:big,t:feudLabel(S,f)+' is ripe: end it at '+pl.next.at+'?',to:'storylines',k:'feud'});
   });
   var c=rosterOf(S,P.id).filter(function(w){return !w.nw&&w.con!=null&&w.con>=2&&w.con<=6;}).sort(function(a,b){return b.ovr-a.ovr;})[0];
   if(c)L.push({n:c.con,t:c.name+'’s contract ends '+wk(c.con),to:'roster',k:'con'});
   S.quests.filter(function(q){return q.due!=null&&q.due>S.week&&q.due-S.week<=4;}).sort(function(a,b){return a.due-b.due;}).slice(0,1).forEach(function(q){L.push({n:q.due-S.week,t:'A promise is due '+wk(q.due-S.week),to:'desk',k:'q'});});
   var ye=48-((S.week-1)%48)-1;if(ye<=4)L.push({n:ye,t:'The year-end awards are '+wk(ye),to:'history',k:'year'});
+  // the same thing with the time first (a narrow line keeps the number and cuts the end of a long name)
+  L.forEach(function(u){var w=wk(u.n),k=u.t.length-w.length-1;if(k>0&&u.t.slice(k)===' '+w){u.when=w.charAt(0).toUpperCase()+w.slice(1);u.what=u.t.slice(0,k).replace(/ (is|are)$/,'');}});
   if(S.scn&&!S.scn.done)L.push({n:S.scn.weeks-S.week,t:'The scenario ends '+wk(S.scn.weeks-S.week),to:'desk',k:'scn'});
   if(S.chal&&!S.chal.done)L.push({n:S.chal.weeks-S.week,t:'The challenge ends '+wk(S.chal.weeks-S.week),to:'desk',k:'chal'});
   var seen={};

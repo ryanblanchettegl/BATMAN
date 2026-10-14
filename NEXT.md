@@ -14,7 +14,7 @@ Work for Claude Code, in order. `TWEAKS.md` and `WISHLIST.md` are finished; this
 - Old saves must load (rule 9). A new field on `S` gets a default when missing. If a step changes the shape of something saved, bump the save key and write the migration, and add a case to `app/tests/save.js`.
 - Every rule in `CLAUDE.md` holds. The ones that get forgotten: no real names, no dice wording, no hover-only controls, every control has a `data-t`, a game year is 48 weeks, Company shows information and Manage holds the choices.
 - There is no phone or portrait layout any more (rule 5 in `CLAUDE.md`). Do not build or test one.
-- Never publish the live page. Leave the build in `dist/`.
+- Publish every new build to the live page (Ryan, 13 October; see "The live page" in `CLAUDE.md`).
 - When a job is done, update its section in `TASKS.md` (tick boxes, say what is left) and bump `VER` in `app/src/store.ts` by 0.01.
 
 ## Job 0. Know what exists (small, do this first)
@@ -23,36 +23,36 @@ The overnight run built 97 wishes, and many of them are parts of the big tasks. 
 
 - [ ] **0.1** Go through tasks 2 to 10 in `TASKS.md` box by box and check each against the code. Tick what is fully there. For a box that is partly there, leave it open and add one line saying what exists and where. Places to look: history moments in `src/83-moments.js` (task 8), career goals in `src/87-goals.js` (task 10), awards night in `src/89-board.js` and the yearly awards in `src/70-season.js` (task 7), ticket prices and the tape library in `src/86-room.js` (tasks 4 and 5), new companies in `src/88-newco.js` (task 9), rival owners in `src/80-world.js` and working agreements in `src/89-regions.js` (task 10), promo kinds in `src/80-world.js` and agent notes in `src/82-wishes.js` (task 3), the assistant in `src/86-asst.js` (fast mode in task 3).
 - [ ] **0.2** Write `docs/map.md`: one line per `src/*.js` file saying what it owns and which `E.` functions it adds. Future runs read this before the code.
-- [ ] **0.3** Add `tools/balance.js`: plays each company for 100 weeks on three seeds with suggested cards and prints one table: cash start and end, popularity start and end, rating minus expectation, owner trust, weeks survived, roster size, free agents left, save size. Commit its output as `docs/balance-0.13.txt`. Later jobs rerun it to see what they moved.
+- [x] **0.3** Add `tools/balance.js`: plays each company for 100 weeks on three seeds with suggested cards and prints one table: cash start and end, popularity start and end, rating minus expectation, owner trust, weeks survived, roster size, free agents left, save size. Commit its output as `docs/balance-0.13.txt`. Later jobs rerun it to see what they moved.
 
 ## Job 1. World Editor, round two (Ryan's main item)
 
 Code: `src/86-editor.js`, `app/src/screens/editor/`. Tests: `test-editor.js`, `app/tests/editor.js`. Keep every change behind an `E.ed*` function.
 
-- [ ] **1.1 Sort and find.** The Wrestlers list sorts by name, overness, age or company (a select, kept per world). Show the total and how many are shown.
-- [ ] **1.2 Duplicate.** A "Make a copy" button on a wrestler, a belt, a team and a company (a company copy takes its shows and belts, not its roster).
-- [ ] **1.3 Move several at once.** A "Pick several" switch on the Wrestlers list turns rows into toggles. Then: sign all picked to a company, release all picked, delete all picked (two presses).
-- [ ] **1.4 Random helpers.** "Random name" beside the ring name (uses the world's name lists, falls back to the built-in ones). "Set ratings for" a main eventer, a mid-carder or an opener: fills the ratings to suit the company's popularity, the same maths as `E.edFill`.
-- [ ] **1.5 Unknown free agents.** On the Wrestlers tab with "Free agents" chosen, a "Make unknowns" button adds unsigned wrestlers.
-- [ ] **1.6 Managers.** A wrestler with the Manager job can be tied to clients: a "Managed by" select on the wrestler form writes `manager_id`. The checker already validates it.
-- [ ] **1.7 Announcers and staff.** On a company: play-by-play and colour names (`announcers`), road agent and head writer (`staff`).
-- [ ] **1.8 Brands.** On a company: add, rename and remove brands (`brands`, with the developmental switch). Shows, belts and contracts get a Brand select when the company has brands. Removing a brand clears it from them.
-- [ ] **1.9 Sponsors and columnists.** A world-level list for each on the World tab, if the package format has them (`sponsors`, `columnists` in `buildDB`). Document the fields in `docs/universe-format.md` as you go.
-- [ ] **1.10 Rookie names.** On the World tab: three text boxes for first names (men), first names (women) and last names, one per line. The game uses them for newcomers and `E.edFill` uses them for unknowns.
-- [ ] **1.11 Quick starts.** On "Start a new world": "A two-company territory" and "A nine-company world of unknowns". Each makes companies of different sizes and models with filled rosters, so a player can rename instead of build.
-- [ ] **1.12 From a running game.** Manage, Operations, Universe gets "Open this world in the World Editor". It exports the game as it stands (`E.exportUniverse`), stores it with the player's worlds, and says where to find it. It does not leave the game.
-- [ ] **1.13 Undo a delete.** After deleting a wrestler, belt, team, show or company, the note offers "Undo" until the next change. Keep the removed records in memory and put them back with their contracts, holders and members.
-- [ ] **1.14 A health line per company.** On the company form: average overness of its main eventers against its popularity, men and women counts against its belts, and a warning in plain words when the top of the card is far below what a company that size needs.
+- [x] **1.1 Sort and find.** The Wrestlers list sorts by name, overness, age or company (a select, kept per world). Show the total and how many are shown. (Done 13 October. The sort is kept per world for the session, not across a reload.)
+- [x] **1.2 Duplicate.** A "Make a copy" button on a wrestler, a belt, a team and a company (a company copy takes its shows and belts, not its roster).
+- [x] **1.3 Move several at once.** A "Pick several" switch on the Wrestlers list turns rows into toggles. Then: sign all picked to a company, release all picked, delete all picked (two presses).
+- [x] **1.4 Random helpers.** "Random name" beside the ring name (uses the world's name lists, falls back to the built-in ones). "Set ratings for" a main eventer, a mid-carder or an opener: fills the ratings to suit the company's popularity, the same maths as `E.edFill`.
+- [x] **1.5 Unknown free agents.** On the Wrestlers tab with "Free agents" chosen, a "Make unknowns" button adds unsigned wrestlers.
+- [x] **1.6 Managers.** A wrestler with the Manager job can be tied to clients: a "Managed by" select on the wrestler form writes `manager_id`. The checker already validates it.
+- [x] **1.7 Announcers and staff.** On a company: play-by-play and colour names (`announcers`), road agent and head writer (`staff`).
+- [x] **1.8 Brands.** On a company: add, rename and remove brands (`brands`, with the developmental switch). Shows, belts and contracts get a Brand select when the company has brands. Removing a brand clears it from them.
+- [x] **1.9 Sponsors and columnists.** A world-level list for each on the World tab, if the package format has them (`sponsors`, `columnists` in `buildDB`). Document the fields in `docs/universe-format.md` as you go.
+- [x] **1.10 Rookie names.** On the World tab: three text boxes for first names (men), first names (women) and last names, one per line. The game uses them for newcomers and `E.edFill` uses them for unknowns.
+- [x] **1.11 Quick starts.** On "Start a new world": "A two-company territory" and "A nine-company world of unknowns". Each makes companies of different sizes and models with filled rosters, so a player can rename instead of build.
+- [x] **1.12 From a running game.** Manage, Operations, Universe gets "Open this world in the World Editor". It exports the game as it stands (`E.exportUniverse`), stores it with the player's worlds, and says where to find it. It does not leave the game.
+- [x] **1.13 Undo a delete.** After deleting a wrestler, belt, team, show or company, the note offers "Undo" until the next change. Keep the removed records in memory and put them back with their contracts, holders and members.
+- [x] **1.14 A health line per company.** On the company form: average overness of its main eventers against its popularity, men and women counts against its belts, and a warning in plain words when the top of the card is far below what a company that size needs.
 - [ ] **1.15 Big events per company.** Only after job 3. A company's own named big events on the Shows tab.
-- [ ] **1.16 Tests.** Extend `test-editor.js` and `app/tests/editor.js` for every step above, on desk, tablet and TV.
+- [x] **1.16 Tests.** Extend `test-editor.js` and `app/tests/editor.js` for every step above, on desk, tablet and TV.
 
 ## Job 2. Pages that are too long
 
 Ryan's goal is screens that are easy to read and quick to act on. Manage, Operations now has 15 panels and is more than four screens tall on a desk.
 
-- [ ] **2.1 Measure.** Add to `app/tests/sweep.js`: for every page, the page height in screens on desk and tablet, printed as a table. Fail when a page is taller than 3 screens on desk or 6 on a phone. Commit the first table as `docs/page-heights.txt`. Expect failures; the steps below fix them.
+- [x] **2.1 Measure.** Add to `app/tests/sweep.js`: for every page, the page height in screens on desk and tablet, printed as a table. Fail when a page is taller than 3 screens on desk or 6 on a phone. Commit the first table as `docs/page-heights.txt`. Expect failures; the steps below fix them.
 - [ ] **2.2 Operations.** Keep on the page what is used every week: Broadcast, Shows and belts, and the settings. Move the rest (commentary desk, merchandise, school, tours, budgets, universe) into windows opened from one short "More to manage" list that shows each one's state in a line ("Commentary desk: both chairs empty"). Keep every `data-t`. Update `app/tests/company.js`.
-- [ ] **2.3 Every other page over the limit.** Same treatment: the weekly things stay, the rest becomes a one-line row that opens a window. Do not remove information and do not add pages to the menu.
+- [x] **2.3 Every other page over the limit.** Same treatment: the weekly things stay, the rest becomes a one-line row that opens a window. Do not remove information and do not add pages to the menu.
 - [ ] **2.4 The desk.** "Before the show" must be fully visible without scrolling on a desk screen, with **Book the next show** in view. Check with a screenshot test.
 - [ ] **2.5 First week.** Play week one on a tablet as a new player would and list every screen where the first useful button is below the fold. Fix each.
 
