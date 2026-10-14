@@ -90,5 +90,15 @@ ok(stale >= 1 && ripe >= 1, 'no feud ever went stale or ripe');
   ok(d.ok && S.w[f.a[0]].align !== S.w[f.b[0]].align && S.bp === bp - 2 && f.heat > h, 'a turn in the story did not take: ' + d.msg);
   ok(!E.storyActs(S, f.id).find(x => x.id === 'turn').can, 'a story could turn twice');
 }
+// an ending in front of one of their home towns pays more, and they remember it
+{
+  const go = home => { const S = E.newGame(E.universe().promotions[1].id, 3, { name: 'R' }); S.bp = 10;
+    const R = E.storyPeople(S).filter(w => w.g === 'M' && !w.n && !w.hurt), a = R[3].id, b = R[6].id, r = E.storyStart(S, a, b), f = S.feuds.find(x => x.id === r.id); f.heat = 80;
+    S.w[a].town = home ? E.road(S).now.city : 'Nowhere'; const c = E.suggest(S).filter(m => !m.sides.flat().some(id => id === a || id === b));
+    c[c.length - 1] = { ...c[c.length - 1], sides: [[a], [b]], title: null, end: 1, call: null, stip: 'std' }; E.fitShow(S, c);
+    if (E.validate(S, c).errors.length) return null; const o0 = S.w[a].ovr + S.w[b].ovr; E.runPlayerShow(S, c); return { res: f.res, gain: S.w[a].ovr + S.w[b].ovr - o0, mem: JSON.stringify(S).includes('my own people') }; };
+  const h = go(true), w = go(false);
+  ok(h && w && h.res && w.res && h.gain > w.gain && h.mem && !w.mem, 'a home town ending did not pay more: ' + JSON.stringify({ h, w }));
+}
 if (fails) { console.log('FAILED: ' + fails); process.exit(1); }
 console.log('test-living: all passed');

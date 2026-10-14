@@ -444,12 +444,16 @@ function doMatch(S,P,show,m,i,n,rep,used){
 }
 function settleFeud(S,P,show,feud,winners,losers,isPl){
   feudPlan(S,feud);var pm=feudPayMult(S,feud),age=S.week-feud.start;feud.res=true;feud.end=S.week;feudEmber(S,feud);feudFile(S,feud,'end');
+  // an ending in one of their home towns lands harder: the town saw it happen
+  var hc=isPl?roadCity(S,P,Math.max(0,(S.rdn||1)-1)):null,hw=null,hk=0;if(hc)winners.concat(losers).forEach(function(w){var k=homeWeight(S,w,hc);if(k>hk){hk=k;hw=w;}});
+  if(hw)pm*=1+0.2*hk;
   var full=feud.twist&&feud.finale,hot=feud.heat>=60;
   winners.forEach(function(w){addOvr(P,w,(full?3.5:2.5)*pm);w.mom=clamp(w.mom+2,-10,10);});losers.forEach(function(w){addOvr(P,w,(full?1.5:1)*pm);});
   if(hot)winners.concat(losers).forEach(function(w){w.morale=clamp(w.morale+(age>=24?6:(age>=8?4:3)),0,100);});
   // how it ended, in words: the heat and freshness it had left, and how long it lived
   var how=feud.heat>=75&&feud.fresh>=40?'at its peak':(feud.heat>=60?'while it was still hot':(feud.fresh<35?'after it had gone stale':'after it had cooled'));
   var msg='The story between '+feudLabel(S,feud)+' is settled '+how+', after '+age+' '+(age===1?'week':'weeks')+(full?', a full story, start to finish':'')+'.'+(age>=24&&hot?' People will talk about this one for years.':(hot?' Both come out of it bigger stars.':' The crowd had moved on.'));
+  if(hw){msg+=' It ended in front of '+hw.name+(hw.town===hc?'\u2019s home town':'\u2019s home crowd, up the road from '+hw.town)+', and the place will not forget it.';if(isPl)youRemember(S,hw,'homeend','You ended my feud in front of my own people.',3);}
   if(isPl&&age>=24&&hot)winners.concat(losers).forEach(function(w){youRemember(S,w,'epic','You gave me a feud people will remember.',5);});
   // two who went to war over a hot story come out of it respecting each other
   if(isPl&&hot)winners.forEach(function(w){losers.forEach(function(l){relBump(S,w.id,l.id,{ra:8,rb:8},{k:'war',keep:age>=12,t:w.name+' and '+l.name+' ended their feud at '+show.name+'.'});});});

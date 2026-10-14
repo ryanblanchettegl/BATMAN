@@ -96,3 +96,5 @@ segment moves, and an ending the booker chooses at the right moment.
 - **The newsletter** has a Feud watch, and **the chat room** talks about the feud that is boiling, dragging or over.
 - **A turn** (2 booking power, once a story): when both are heroes or both villains, one crosses over. Two heroes, the
   one less over turns bad; two villains, the one more over comes good. It heats the feud and gives it room.
+- **A home town ending.** A feud that ends in one of the two's home towns (or up the road from it) pays a fifth more,
+  the report says so, and they remember it.
