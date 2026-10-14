@@ -43,7 +43,8 @@ function ticker(N: any): [string, string][] {
 function Road() {
   const S = G.S, R = E.road(S), date = E.cal(S.week).label;
   if (!R) return <Win title="The road" right={date} cls="road" area="road" t="road"><Empty>No show is on the road yet.</Empty></Win>;
-  const N = R.now, h = Math.min(2, N.home.length), past: any[] = R.stops.filter((s: any) => s.k === 'past').slice(h === 2 ? -2 : -3), ahead: any[] = R.stops.filter((s: any) => s.k !== 'past').slice(0, Math.min(4, (h === 2 ? 5 : 6) - past.length));
+  // a tablet's window is shorter: one hometown name and one stop fewer
+  const tab = document.documentElement.getAttribute('data-screen') === 'tablet', N = R.now, h = Math.min(tab ? 1 : 2, N.home.length), past: any[] = R.stops.filter((s: any) => s.k === 'past').slice(h === 2 ? -2 : -3), ahead: any[] = R.stops.filter((s: any) => s.k !== 'past').slice(0, Math.min(4, (h === 2 ? 5 : 6) - past.length - (tab ? 1 : 0)));
   const offMap = (s: any) => R.map && s.x == null ? <span class="muted"> {'·'} off this map</span> : null;
   return <Win title={R.mapName ? 'The road: ' + R.mapName : 'The road'} right={date} cls="road" area="road" t="road">
     <div class="r3">
@@ -64,7 +65,7 @@ function Road() {
       </div>
       <div class="rright">
         <Group title="Hometown" t="road-home">
-          {N.home.length ? N.home.slice(0, 2).map((x: any) => <p class="one hm" key={x.id}><Portrait w={S.w[x.id]} /><Name w={S.w[x.id]} /> <span class={x.hurt ? 'bad' : 'muted'}>{x.hurt ? (x.near ? 'is hurt. From ' + x.town + ', up the road.' : 'is hurt, and from here.') : (x.near ? 'From ' + x.town + ', up the road.' : 'The crowd is theirs.')}</span></p>)
+          {N.home.length ? N.home.slice(0, h).map((x: any) => <p class="one hm" key={x.id}><Portrait w={S.w[x.id]} /><Name w={S.w[x.id]} /> <span class={x.hurt ? 'bad' : 'muted'}>{x.hurt ? (x.near ? 'is hurt. From ' + x.town + ', up the road.' : 'is hurt, and from here.') : (x.near ? 'From ' + x.town + ', up the road.' : 'The crowd is theirs.')}</span></p>)
             : <p class="muted one">Nobody on the roster is from here.</p>}
         </Group>
         <Group title="The road" t="road-list">
