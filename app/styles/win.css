@@ -689,3 +689,21 @@ html[data-screen="tv"]:has(.mkpage){--fs:min(clamp(20px,1.6vw,84px),2.32vh)}
 .ws-belts{background:#fffbe0;color:#3a2a00}.ws-belts .ws-title{color:#a07000;text-shadow:1px 1px 0 #000}.ws-belts .ws-co{margin-bottom:.4em}
 .ws-whisper{background:#101820;color:#9fe0ff}.ws-whisper .ws-title{color:#fff;font-style:italic}
 .ws-board .post .u{color:#000080}
+/* Web on one screen: the windows share the height and each scrolls inside itself, with a grey 90s scroll bar */
+.webpage{flex:1 1 0;min-height:0;grid-template-columns:minmax(0,1.45fr) minmax(0,1fr);grid-template-rows:minmax(0,1fr) minmax(0,1.15fr);align-items:stretch;gap:.95em 2.2ch}
+.webpage [data-t="web-boards"]{align-self:stretch}
+.webpage .wn>.bd{overflow-y:auto;overflow-x:hidden}
+.webpage [data-t="web-feed"]>.bd{overflow:hidden;display:flex;flex-direction:column}
+.webpage .chatroom{flex:1 1 0;min-height:0}
+.webpage .chatroom .cr-body{flex:1 1 0;min-height:0}
+.webpage .chatroom .cr-log,.webpage .chatroom .cr-who{max-height:none;height:100%}
+.webpage .chatroom .cr-who{overflow-y:auto}
+.webpage ::-webkit-scrollbar{width:1.05em;height:1.05em}
+.webpage ::-webkit-scrollbar-track{background:#d8d8d8}
+.webpage ::-webkit-scrollbar-thumb{background:var(--grey);border:2px solid var(--white);border-right-color:var(--dgrey);border-bottom-color:var(--dgrey)}
+.webpage ::-webkit-scrollbar-button:single-button{background:var(--grey);border:2px solid var(--white);border-right-color:var(--dgrey);border-bottom-color:var(--dgrey);height:1.05em}
+.webpage *{scrollbar-color:var(--grey) #d8d8d8}
+html[data-screen="desk"]:has(.webpage){--fs:min(clamp(18px,1.5vw,32px),2.6vh)}
+html[data-screen="tablet"]:has(.webpage){--fs:min(clamp(16px,1.6vw,30px),2.4vh)}
+html[data-screen="tv"]:has(.webpage){--fs:min(clamp(20px,1.7vw,84px),2.32vh)}
+.crt:has(.webpage){max-width:84em}
