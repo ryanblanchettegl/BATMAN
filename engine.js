@@ -1501,6 +1501,9 @@ var STIP_NEED={sub:20,lumber:25,iron:30,tables:40,hardcore:45,ladder:50,cage:60,
 function stipNeed(k){return STIP_NEED[k]||40;}
 /** How a stipulation sits with a feud's heat: 4 earned with room, 1 just earned, -3 too soon (worse the bigger the gap). */
 function stipFitOf(feud,k){if(!feud||!k||k==='std')return 0;var n=stipNeed(k),h=feud.heat;return h>=n+15?4:(h>=n?1:(h>=n-15?-3:-6));}
+/** For a match between two in a feud: how each stipulation sits with the story (good, ok, soon), or null. */
+E.stipFits=function(S,m){if(!m||!m.sides||m.sides.length!==2||m.sides[0][0]==null||m.sides[1][0]==null)return null;var f=feudOf(S,m.sides[0][0],m.sides[1][0]);if(!f)return null;
+  var o={};Object.keys(STIP).forEach(function(k){if(k==='std')return;var v=stipFitOf(f,k);o[k]=v>=4?'good':(v>0?'ok':'soon');});return o;};
 
 /* ===== 30-show.js ===== */
 /* ---------- running a show ---------- */

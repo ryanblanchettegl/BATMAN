@@ -74,5 +74,13 @@ ok(stale >= 1 && ripe >= 1, 'no feud ever went stale or ripe');
   const v = E.validate(S, c); ok(!v.errors.length, 'the signing could not be booked: ' + v.errors.join(' | '));
   if (!v.errors.length) { E.runPlayerShow(S, c); ok(S.reports[0].segs.some(x => x.booked === 'signing') && f.endAt != null && f.finale && f.heat > h0, 'a contract signing did not make the match, plan the ending or heat the feud'); }
 }
+// escalation: a cage is too soon for a cold feud and earned for a white hot one; a submission match fits early
+{
+  const S = E.newGame(E.universe().promotions[1].id, 3, { name: 'R' }); S.bp = 10;
+  const R = E.storyPeople(S).filter(w => w.g === 'M' && !w.n && !w.hurt), r = E.storyStart(S, R[1].id, R[4].id), f = S.feuds.find(x => x.id === r.id);
+  const m = { sides: [[f.a[0]], [f.b[0]]] }; f.heat = 25; let o = E.stipFits(S, m);
+  ok(o && o.cage === 'soon' && o.mask === 'soon' && o.sub !== 'soon', 'a cold feud: ' + JSON.stringify(o));
+  f.heat = 90; o = E.stipFits(S, m); ok(o && o.cage === 'good' && o.mask === 'good', 'a white hot feud: ' + JSON.stringify(o));
+}
 if (fails) { console.log('FAILED: ' + fails); process.exit(1); }
 console.log('test-living: all passed');
