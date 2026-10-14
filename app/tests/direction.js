@@ -34,7 +34,7 @@ async function run(mode) {
   const fit = async label => { const f = await fits(page), o = await overflow(page); ok(mode, label + ' fits one screen', !f && !o, f || o); };
   try {
     /* ---- the owner on the headset ---- */
-    await go(page, 'booking'); await page.click('[data-t="suggest"]');
+    await go(page, 'booking'); await page.click('[data-t="suggest"]'); await page.waitForFunction(() => window.EWF_DEBUG.state().card.length > 0, null, { timeout: 20000 }).catch(() => {});
     const set = await state(page, S => { const E = window.GP, n = S.card.length; S.lcd = {};
       for (let i = 0; i < n; i++) { const m = S.card[i]; if (m.mt !== '1v1' || m.title || m.call != null) continue; const o = E.matchOdds(S, m, i, n); if (!o) continue; const side = o.p[0] < o.p[1] ? 0 : 1, id = m.sides[side][0];
         S.owner.fav = id; S.quests = S.quests.filter(q => q.type !== 'o_strong'); S.quests.push({ id: S.nid++, type: 'o_strong', w: id, due: S.week + 3, gain: 6, bp: 2, text: S.owner.name + ': keep ' + S.w[id].name + ' strong this month. No clean losses.' });
