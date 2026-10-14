@@ -2399,6 +2399,7 @@ function callMatch(S,P,x){
     return bc;
   }
   if(x.main)hp('ring','main_in');
+  if(x.m.end&&x.feud)ring('Ladies and gentlemen, this is the final chapter. Tonight it ends.');   // the booker marked this match as the blow-off (src/21-living.js)
   ring('This '+x.mt.toLowerCase()+' match is scheduled for one fall'+(x.stipName?', and it is a '+x.stipName.toLowerCase()+' match':'')+(x.t?'. It is for the '+x.t.name+'!':'.'));
   x.sides.forEach(function(s,k){
     var isCh=x.champ&&x.champ===s,lead=s[0],big=avg(s.map(function(w){return w.ovr;}))>=62||isCh;
@@ -2413,6 +2414,7 @@ function callMatch(S,P,x){
   if(cw&&(x.main||x.big)&&h01(hk+cw.name+'cp')<0.5){o.n=cw.name;o.cp=cw.cphrase.t;hp('col','catch_');}
   var mem=memoryLines(S,P,x);
   if(mem[0])raw('col',mem[0]);
+  else if(x.m.end&&x.feud)raw('col',(x.feud.start!=null&&S.week-x.feud.start>=12?'Months of this, {p}, and it all comes down to tonight.':'This is where it ends, {p}. One of them walks out with the last word.'));
   else if(x.feud&&x.feud.kind==='dream')raw('col','This is the match everybody has been asking for, {p}.');
   else if(x.feud&&x.feudHeat>=60)raw('col','This has been building for weeks, {p}. Tonight somebody pays.');
   else if(x.t)raw('col','Championship gold on the line. Nobody holds anything back tonight.');
