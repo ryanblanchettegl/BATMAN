@@ -171,7 +171,7 @@ E.road=function(S){
   var cap=roadCap(S,P,A.show,city),mk=mktKnow(S,P,city),sale=stopSales(S,P,A.w,A.show,A.k,true),last=S.rdv&&S.rdv[city],bar=S.bar&&S.bar[city],reg=P.tour?REGIONS[P.tour.reg]:REGIONS[homeReg(P)];
   var home=rosterOf(S,P.id).filter(function(w){return !w.nw&&homeNear(S,w,city);}).sort(function(a,b){return (a.town===city?0:1)-(b.town===city?0:1)||b.ovr-a.ovr;}).slice(0,3).map(function(w){return {id:w.id,name:w.name,hurt:w.inj>0,town:w.town,near:w.town!==city,km:homeKm(S,w,city)};});
   return {map:M?M.id:null,mapName:M?M.n:null,lit:lit,stops:stops,off:off,
-    now:{city:city,land:M&&lit.now>=0?M.a[lit.now]:null,show:A.show.name,big:!!A.show.big,w:A.w,later:A.w>S.week,left:Math.max(0,(S.queue?S.queue.length:0)-(S.qi||0)),
+    now:{city:city,land:M&&lit.now>=0?M.a[lit.now]:null,show:A.show.name,big:!!A.show.big,kind:A.show.big?(A.show.flag?'Flagship':evTy(A.show).n):'',w:A.w,later:A.w>S.week,left:Math.max(0,(S.queue?S.queue.length:0)-(S.qi||0)),
       venue:venueName(city,cap),cap:cap,seat:Math.round(ticket(P,A.show)*TIX_P[P.tix]),tix:TIXN[P.tix],
       sold:sale.sold,wk:sale.wk,on:sale.on,opens:sale.opens,gate:Math.round(sale.sold*ticket(P,A.show)*TIX_P[P.tix]),
       last:last?{ago:S.week-last.w,grade:gradeG(last.cs),att:last.att,cap:last.cap,so:!!last.so}:null,
