@@ -132,7 +132,7 @@ Code: `src/87-create.js` (`E.makeShow`, `E.dropShow`, `E.makeTitle`, `E.dropTitl
   - [ ] Years on the air are worked out from a company's size. The World Editor should let a world set them, and name its own networks (`networks` in the world file is read already).
   - [ ] This is the first part of section 5 (TV deals). Still to come there: money by the hour, tastes, ratings targets, streaming, a rival's night.
 - [x] Measured over 32 weeks on three seeds: an extra show moved weekly profit between -$100K and +$214K and popularity by 0 to +1.6. It is a real choice, not free money.
-- [ ] Big events (the monthly pay-per-view) cannot be added or renamed in a game yet. That belongs with the year planner in task 6.
+- [x] Big events (the monthly pay-per-view) cannot be added or renamed in a game yet. That belongs with the year planner in task 6. (Done 15 October: P.events per company, the Year planner renames them, src/42-events.js.)
 - [ ] A new show or belt cannot be given to one brand of a brand split.
 - [ ] Rivals do not retire belts.
 
@@ -147,7 +147,7 @@ Code: `src/87-create.js` (`E.makeShow`, `E.dropShow`, `E.makeTitle`, `E.dropTitl
 **Net is its own section.** Code: `src/94-net.js`, `app/src/screens/net/`. Test: `app/tests/net.js`.
 - [x] Seventh section in the top menu, between Stories and Manage: **Dirt sheet** (one issue a week: lead story, your shows, match of the week, a part per company, business, rumours marked sure, likely or thin, next week, a review of the booking; the last four issues are kept), **The feed** (short posts from wrestlers, the company, the press and fans after every show), **The boards** (the fan boards, moved from Stories).
 - [x] It never touches the game's random stream, so it cannot change a result.
-- [ ] Rumours that turn out wrong, rival backstage drama, "on this day", and the scrum after a big event (task 8, `NEXT.md` job 9).
+- [x] Rumours that turn out wrong, rival backstage drama, "on this day", and the scrum after a big event (task 8, `NEXT.md` job 9). (Done 15 October: false thin rumours that get corrected, on this day for titles, feuds and matches, rival fallings-out in the backstage column, and the press scrum, EVR.scrum.)
 
 **This week's tasks on the desk.** Code: `src/95-tasks.js`, `app/src/screens/office/Tasks.tsx`. Tests: `node test-tasks.js`, `app/tests/tasks.js`.
 - [x] The desk lists every task for the week under Book the next show: house style to set, inbox to answer, empty commentary chairs, sponsor offers with a free slot, vacant titles, contracts about to end. Each has a button that goes to it. Action points and promises due are listed as worth doing.
@@ -456,7 +456,7 @@ Feature list items 10 and 11. Code: `app/src/shared/cards.tsx`, `Name`, `TitleNa
 ### 2. Storylines from wrestling history
 The player spends booking power to start an epic storyline; smaller ones can start by themselves or be offered by the writer.
 
-- [ ] A storyline template: a name, who it needs (roles such as leader, defector, rival, champion), a cost in booking power, three to six beats spread over weeks, what each beat needs on a show (a match, a promo, a run-in, a title change), a payoff, and how it can backfire.
+- [ ] A storyline template: a name, who it needs (roles such as leader, defector, rival, champion), a cost in booking power, three to six beats spread over weeks, what each beat needs on a show (a match, a promo, a run-in, a title change), a payoff, and how it can backfire. (Partly, 15 October: Ryan chose living storylines over templates on 15 October; see NEXT.md job 4.)
 - [ ] Templates under original names, each modelled on a real pattern. Epic ones: a renegade faction of outsiders takes over; an elite four-member stable built around a champion; two top stars trade the title across three big events; a personal blood feud that escalates through gimmick matches; the owner against the rebel wrestler; the long underdog chase for the title; partners who explode over jealousy. Infamous ones that can go wrong: an invasion nobody takes seriously; a title handed over without a match; a champion leaving with the belt; a mystery attacker whose reveal disappoints.
 - [ ] A Storylines page section to start one, see its beats, and see what the next show needs. Missing a beat cools it; hitting the payoff lifts everyone in it.
 - [ ] Rival promotions run them too, and the news reports it.
@@ -479,11 +479,11 @@ Feature list item 6. Replaces `app/src/screens/booking/` card editing; the engin
 ### 4. Arena pick, gate report, popularity per city
 Feature list items 1 and 2, plus weather, star names and event intent from the table.
 
-- [ ] Cities with a popularity score per federation; good shows raise it, bad shows lower it, absence fades it, overexposure shrinks the gain. Rivals have their own scores.
+- [x] Cities with a popularity score per federation; good shows raise it, bad shows lower it, absence fades it, overexposure shrinks the gain. Rivals have their own scores. (Done 15 October: markets, S.mkt in src/91-road.js.)
 - [ ] Before a show: pick the city, then a building (capacity, rent, crowd type), with an attendance forecast as a range.
-- [ ] Gate report pop-up after the show: tickets against capacity, why it drew, gate minus rent, the city's score before and after.
+- [ ] Gate report pop-up after the show: tickets against capacity, why it drew, gate minus rent, the city's score before and after. (Partly, 15 October: After the show has The gate and the market moving; no rent.)
 - [ ] Sellout streaks, bigger buildings unlocking, crowd heat feeding match ratings, seasonal weather.
-- [ ] A city list on Company with trend and weeks since the last visit.
+- [x] A city list on Company with trend and weeks since the last visit. (Done 15 October: Company, Overview, Your cities, E.cities.)
 - Engine starting points: `demand`, `capFor`, `ticket` and `venueFor` in `src/00-core.js` and `src/10-match.js`; each promotion already has a `cities` list.
 
 ### 5. TV deals paid per hour, streaming, same-night wars
@@ -498,23 +498,23 @@ Feature list items 3 and 4. Replaces the three-level broadcast slot (`P.slot`, `
 ### 6. Event calendar, promotion spending, sponsor tiers
 Feature list items 5 and 7.
 
-- [ ] A year planner: schedule events by type (flagship, arena, ballroom, gimmick night, battle royal, tournament). The flagship has an original name per promotion.
-- [ ] Weekly promotion spend on this month's event, next month's and the flagship; a hype meter per event; a buy rate report after each.
+- [ ] A year planner: schedule events by type (flagship, arena, ballroom, gimmick night, battle royal, tournament). The flagship has an original name per promotion. (Partly, 15 October: twelve monthly events, each with a kind, renamed or left dark, E.evSet.)
+- [ ] Weekly promotion spend on this month's event, next month's and the flagship; a hype meter per event; a buy rate report after each. (Partly, 15 October: one weekly spend on the next big night builds its hype, E.evSpend.)
 - [ ] Sponsors with tiers, their own boosts and an ongoing goal; tier-up pop-ups, unhappy warnings, conflicts between sponsors. Today sponsors are flat deals with one condition (`src/50-company.js`).
 
 ### 7. The tycoon layer
 - [ ] A world ranking of every wrestler across all promotions and free agents: a yearly top 500 and a weekly top ten. `E.power` in `src/90-api.js` is the seed of it.
-- [ ] Level-up pop-ups after a show for wrestlers who improved, saying what went up.
+- [x] Level-up pop-ups after a show for wrestlers who improved, saying what went up. (Done 15 October: Who grew on After the show, with the match that did it.)
 - [ ] Yearly awards across the world (the engine has awards and a hall of fame for the player's company).
-- [ ] Momentum should matter more, and say so (fan wish list).
+- [x] Momentum should matter more, and say so (fan wish list). (Done 15 October: run sheet flags On a roll and Cold streak, and the crowd weighs momentum more.)
 
 ### 8. All-federation dirt sheet and dynamic events
 Feature list item 9.
 
 - [x] A dirt sheet page: lead story, a section per federation, rumours with a reliability level, business news, match of the week, next week, and a review of the player's booking. It lives in the Net section (see 0c).
-- [ ] Rival backstage drama, "on this day", media scrums after big events.
+- [x] Rival backstage drama, "on this day", media scrums after big events. (Done 15 October: see the dirt sheet box above.)
 - [ ] Dynamic events of four kinds, on top of the inbox events in `src/40-week.js`.
-- [ ] History-moment events under original names: the player is put in a famous situation and makes the call. Examples of patterns: a champion is leaving and will not lose the title on the way out; a wrestler shows up on a rival's show with your belt; a live microphone goes off script; a faction's contract talks collapse the night before the big event.
+- [x] History-moment events under original names: the player is put in a famous situation and makes the call. Examples of patterns: a champion is leaving and will not lose the title on the way out; a wrestler shows up on a rival's show with your belt; a live microphone goes off script; a faction's contract talks collapse the night before the big event. (Done 15 October: src/83-moments.js, ten moments with follow-ups.)
 
 ### 9. Free agents and the indie scene
 - [ ] Indies as mini federations with their own small systems. They open and close over time.
@@ -525,7 +525,7 @@ Feature list item 9.
 ### 10. Locker-room and long-term items
 From the table in `docs/feature-list.md`. Check each against the engine first; several exist in part.
 
-- [ ] Career goals per wrestler; inner circle roles with political weight; canvas the locker room before a signing.
+- [ ] Career goals per wrestler; inner circle roles with political weight; canvas the locker room before a signing. (Partly, 15 October: career goals are built, src/87-goals.js; no political weight or canvassing.)
 - [ ] Team bonding, interventions and call-outs (extend the backstage actions in `src/77-backstage.js`).
 - [ ] Promoter friendliness per rival owner; cash in talent trades; joint super shows with shared money.
 - [ ] Owner goals with visible progress; headquarters and hall of fame building projects; wrestling school affiliations.
