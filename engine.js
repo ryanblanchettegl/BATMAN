@@ -3789,6 +3789,16 @@ E.advice=function(S,card){
   return out;
 };
 E.STYLES=STYLES;E.ROOTS=ROOTS;E.PLEDGE=PLEDGE;E.SKILLS=SKILLS;E.xpNeed=xpNeed;E.bpGrant=bpGrant;
+/** How a promise or a target stands right now, in a few words, or null. Only reads. */
+E.questNow=function(S,q){
+  var w=q.w!=null?S.w[q.w]:null,P=S.promos[S.player];
+  if(q.type==='o_elevate'&&w)return 'Now '+Math.round(w.ovr)+' of '+q.target;
+  if(q.type==='o_belt'&&w){var t=titleById(P,q.title);return t&&t.holders.indexOf(w.id)>=0?'They hold it':'Not yet champion';}
+  if(q.type==='o_strong'&&w)return (w.rr||[]).some(function(x){return x.r==='L'&&x.w>=q.due-3;})?'Lost since it was set':'No losses yet';
+  if(q.type==='shot'&&w)return S.card.some(function(m){return m.title===q.title&&m.sides.some(function(sd){return sd.indexOf(w.id)>=0;});})?'On tonight’s card':'Not booked yet';
+  if(q.type==='win'&&w)return S.card.some(function(m){return m.sides.some(function(sd){return sd.indexOf(w.id)>=0;});})?'On tonight’s card':'Not booked yet';
+  return null;
+};
 
 /* ===== 66-relations.js ===== */
 /* ---------- The relationship matrix (S.rm) and what people remember ----------

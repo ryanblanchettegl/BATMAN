@@ -161,7 +161,7 @@ function TournOwed(p: { on: OnCard }) {
 function Targets() {
   const S = G.S;
   if (!S.quests.length) return <Panel title="Promises and targets"><Empty>Nothing promised yet. Wrestlers and the network will ask soon enough; answer them from the inbox on the desk.</Empty></Panel>;
-  return <Panel title="Promises and targets"><Paged id="quests" items={S.quests} per={5} row={(q: any) => { const left = q.due - S.week; return <li><span><Txt>{q.text}</Txt></span><Tag kind={left <= 0 ? 'warn' : undefined}>{left <= 0 ? 'This week' : left + ' wk left'}</Tag></li>; }} /></Panel>;
+  return <Panel title="Promises and targets"><Paged id="quests" items={S.quests} per={5} row={(q: any) => { const left = q.due - S.week, nw = E.questNow(S, q); return <li><span><Txt>{q.text}</Txt>{nw ? <span class="muted"> ({nw})</span> : null}</span><Tag kind={left <= 0 ? 'warn' : undefined}>{left <= 0 ? 'This week' : left + ' wk left'}</Tag></li>; }} /></Panel>;
 }
 
 export function Side(p: { on: OnCard; ck: any }) {
