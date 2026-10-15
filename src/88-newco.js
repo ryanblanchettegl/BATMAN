@@ -9,6 +9,10 @@ function newCompany(S){
   var a,t=0,full,short;do{a=pick(S,NC_A);full=a+' '+pick(S,NC_B);short=a.slice(0,3).toUpperCase();t++;}while((used[short]||full===null)&&t<30);
   if(used[short])short=short.slice(0,2)+String.fromCharCode(65+ri(S,0,25));
   var id='nc'+S.nid++,backer=pick(S,I.firstM.concat(I.firstF))+' '+pick(S,I.last),indie=chance(S,0.4);
+  // an indie that grows up keeps its name: one of the circuits the free agents have been working (src/88-indies.js)
+  if(indie&&typeof INDIES!=='undefined'){var fullUsed={};S.order.forEach(function(x){fullUsed[S.promos[x].full||S.promos[x].name]=1;});var cand=INDIES.filter(function(x){return !fullUsed[x.n];});
+    if(cand.length){var ci=cand[hash('ncind'+S.seed+S.week)%cand.length],ini=ci.n.split(' ').filter(function(x){return /^[A-Z]/.test(x);}).map(function(x){return x[0];}).join('').slice(0,3);
+      if(ini.length>=2&&!used[ini]){full=ci.n;short=ini;}}}
   var models=Object.keys(MODELS).filter(function(k){return k!=='classic'&&k!=='joshi';}),model=chance(S,0.35)?'classic':pick(S,models);
   var f={name:full,short:short,show:pick(S,NC_SHOW),title:pick(S,NC_TITLE),size:chance(S,0.7)?'regional':'national',region:pick(S,Object.keys(FED_REGION)),model:model,style:'merit',roots:'tradition',pledge:'chance',women:model!=='joshi'?chance(S,0.7):true};
   var d=mkFedDef(f,backer);
