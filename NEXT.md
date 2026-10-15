@@ -135,13 +135,13 @@ Build it beside the old screen. Add a switch in Options, "New booking screen", o
 ## Job 10. The indie scene (task 9)
 
 - [ ] **10.1 Indies.** (First step 15 October: fourteen indies as names and regions, `src/88-indies.js`; free agents work their dates, which keeps them ready and helps the young ones grow, and the news names one who is tearing it up.) Twelve to twenty small promotions, each a name, a region, a size and a night. Not full companies: no finances page, no rosters under contract. They open and close over the years.
-- [ ] **10.2 Dates.** A free agent works for any number of indies. A signed wrestler can take an indie date only on a night their company has no show, and never if the company forbids outside dates (the corporate model does). Dates pay the wrestler, build their following, and wear them a little.
+- [ ] **10.2 Dates.** (In part: free agents work any indie, and a signed wrestler works them only with the outside dates clause.) A free agent works for any number of indies. A signed wrestler can take an indie date only on a night their company has no show, and never if the company forbids outside dates (the corporate model does). Dates pay the wrestler, build their following, and wear them a little.
 - [ ] **10.3 What the player sees.** (In part: Free agents shows the indie each one is working for.) On Free agents: where each one has been working and how they did. In the news: indie results that matter (a free agent on a hot run).
 - [ ] **10.4 Rarely, one grows up.** An indie on a long hot run becomes a real company through `src/88-newco.js`.
 
 ## Job 11. Two plans already written
 
-- [ ] **11.1 Contract clauses.** (Partly done 15 October: paid travel, a no-cut promise and a title match, `src/97-clauses.js`, toggles in the Offer window on Free agents, `test-clauses.js`. Renewals take clauses too, in the contract pop-up on the desk. A merchandise share sends a quarter of their lines' money to them. Two dates a week caps their shows and the suggested card respects it. Not yet: outside dates, and talks over several rounds.) Follow `docs/plans/contract-clauses.md`.
+- [ ] **11.1 Contract clauses.** (Partly done 15 October: paid travel, a no-cut promise and a title match, `src/97-clauses.js`, toggles in the Offer window on Free agents, `test-clauses.js`. Renewals take clauses too, in the contract pop-up on the desk. A merchandise share sends a quarter of their lines' money to them. Two dates a week caps their shows and the suggested card respects it. Outside dates let them work the indies on off nights. Not yet: talks over several rounds.) Follow `docs/plans/contract-clauses.md`.
 - [ ] **11.2 Invasions.** Follow `docs/plans/invasions.md`. Build it as a storyline template once job 4 is in.
 
 ## Job 12. Balance (task 11)

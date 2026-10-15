@@ -11232,6 +11232,8 @@ var CLAUSE={
     wants:function(S,w){return w.morale<55||!!w.cut;}},
   dates:{n:'Two dates a week',d:'They work at most two of your shows a week. Older bodies last longer that way.',save:0.06,
     wants:function(S,w){return w.age>=36;}},
+  outside:{n:'Outside dates',d:'They can work indie dates on nights you have no show. They stay sharp and happy, and their body wears a little faster.',save:0.05,
+    wants:function(S,w){return w.age<=30&&(w.mom||0)>=0;}},
   merch:{n:'A merchandise share',d:'A quarter of what their own merchandise lines make goes to them. Every line with their face on it keeps them happy.',save:0.07,
     wants:function(S,w){return w.mic>=72;}},
   title:{n:'A title match',d:'A match for a belt within twelve weeks of signing. Break it and they will remember.',save:0.1,
@@ -11267,6 +11269,10 @@ E.clauses=function(S,id){var w=S.w[id];if(!w)return [];var ask=E.ask(S,w);return
 WEEKX.push(function(S){if(S.cal)return;var P=S.promos[S.player];rosterOf(S,P.id).forEach(function(w){if(!w.cl||!w.cl.travel)return;w.cond=Math.min(100,w.cond+2);P.cash-=Math.round(w.wage*0.1);});});
 /* a merchandise share: somebody with a line out and a share of it is happier for it each week */
 WEEKX.push(function(S){if(S.cal)return;var P=S.promos[S.player];(P.lines||[]).forEach(function(L){var w=S.w[L.w];if(w&&w.cl&&w.cl.merch)w.morale=clamp(w.morale+1,0,100);});});
+/* outside dates: a weekly indie date on an off night (src/88-indies.js names the place) */
+WEEKX.push(function(S){if(S.cal)return;var P=S.promos[S.player];rosterOf(S,P.id).forEach(function(w){if(!w.cl||!w.cl.outside||w.inj>0)return;
+  w.cond=Math.max(0,w.cond-2);w.morale=clamp(w.morale+1,0,100);if(w.age<=27&&w.pot!=null&&w.ovr<w.pot-5)w.ovr=Math.min(w.pot,w.ovr+0.08);
+  var ind=indieOf(S,w);w.ind={n:ind.n,w:S.week,k:(w.ind&&w.ind.n===ind.n?(w.ind.k||0):0)+1};});});
 /* a clause lasts as long as the deal it was signed with */
 WEEKX.push(function(S){S.w.forEach(function(w){if(w.cl&&(w.promo!==S.player||w.rt))delete w.cl;});});
 /* renewing with clauses: the same saving on the new price, and the clauses start again with the new deal */

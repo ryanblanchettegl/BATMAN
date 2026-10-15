@@ -34,5 +34,10 @@ E.endWeek(S); ok(tr.cond > ot.cond, 'paid travel did not help the body: ' + tr.c
     Object.values(n).forEach(v => { worst = Math.max(worst, v); }); E.endWeek(T); }
   ok(worst <= 2, 'somebody with two dates a week worked ' + worst);
 }
+// outside dates: they work indie dates, a little more worn and a little happier
+{
+  const T = E.newGame('pdw', 4, { name: 'R' }), R = T.w.filter(x => x.promo === 'pdw' && !x.nw), a = R[3], b = R[4]; a.cl = { outside: T.week }; a.cond = b.cond = 90; a.morale = b.morale = 60;
+  E.endWeek(T); ok(a.cond < b.cond + 1.5 && a.morale >= b.morale && a.ind && /\w/.test(a.ind.n), 'outside dates did nothing: ' + JSON.stringify({ a: [a.cond, a.morale, a.ind], b: [b.cond, b.morale] }));
+}
 if (fails) { console.log('FAILED: ' + fails); process.exit(1); }
 console.log('test-clauses: all passed');
