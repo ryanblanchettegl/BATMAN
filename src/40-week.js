@@ -164,7 +164,7 @@ function genEvents(S){
   if(cal(S.week).wom===4&&want<1)want=1;
   for(i=0;i<types.length&&made<want;i++){var ev=EV[types[i]](S,P,R);if(ev){pushEv(S,ev);made++;}}
 }
-function renewAsk(S,w){return Math.round(wageFor(w.ovr,S.promos[S.player])*(1.05+(70-w.morale)/200)*talkDiscount(S)*pledgeRenew(S)/50)*50;}
+function renewAsk(S,w){return Math.round(wageFor(w.ovr,S.promos[S.player])*(1.05+(70-w.morale)/200)*talkDiscount(S)*pledgeRenew(S)*(S.pw10&&S.pw10.indexOf(w.id)>=0?1.08:1)/50)*50;}
 E.resolveEvent=function(S,id,choice){
   var ev=null;S.inbox.forEach(function(e){if(e.id===id)ev=e;});if(!ev||ev.done)return null;
   var P=S.promos[S.player],w=ev.w!=null?S.w[ev.w]:null,o=ev.o!=null?S.w[ev.o]:null,res='',roll;

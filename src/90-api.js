@@ -1,5 +1,5 @@
 /* ---------- roster moves ---------- */
-E.ask=function(S,w){var P=S.promos[S.player],MD=modelOf(P),m=(w.promo==='FA'?1:1.3)*talkDiscount(S);if(w.promo!=='FA'&&S.promos[w.promo].image>P.image+10)m+=0.25;
+E.ask=function(S,w){var P=S.promos[S.player],MD=modelOf(P),m=(w.promo==='FA'?1:1.3)*talkDiscount(S);if(w.promo!=='FA'&&S.promos[w.promo].image>P.image+10)m+=0.25;if(S.pw10&&S.pw10.indexOf(w.id)>=0)m+=0.1;
   if(MD.premium&&w.ovr>P.image+8)m*=MD.premium;                                   // a startup pays over the odds for a name
   if(MD.chip&&w.cut&&S.week-w.cut.w<52&&w.promo==='FA')m*=0.85;                   // a castoff comes cheap to an underdog
   return Math.round(wageFor(w.ovr,P)*m/50)*50;};
