@@ -10820,6 +10820,9 @@ function netThrowback(S,wk){
     var y=d/48,span=h.to!=null?(h.to-h.from):null;
     out.push({t:y+' '+(y===1?'year':'years')+' ago this week, '+h.h.join(' and ')+' won the '+S.promos[pid].name+' '+t.name+(h.show?' at '+h.show:'')+'.'+(span!=null&&span>=24?' The reign lasted '+span+' weeks.':'')});
   });});});
+  // the stories that ended, and the best matches, a year or more ago this week (your own shows)
+  (S.feudBook||[]).forEach(function(e){var d=wk-e.e;if(d<=0||d%48)return;var y=d/48;out.push({t:y+' '+(y===1?'year':'years')+' ago this week, '+e.l+' came to an end after '+(e.e-e.s)+' weeks.'});});
+  ((S.rec&&S.rec.matches)||[]).forEach(function(m){var d=wk-m.w;if(m.w==null||d<=0||d%48)return;var y=d/48;out.push({t:y+' '+(y===1?'year':'years')+' ago this week: '+m.l+(m.show?' at '+m.show:'')+', '+starG(m.ov)+'.'});});
   return out.sort(function(a,b){return h01(wk+a.t)-h01(wk+b.t);}).slice(0,1);
 }
 /** The moment of the week: the biggest marked beat from the player's shows (a new champion first, then the best match). */
