@@ -11164,7 +11164,7 @@ E.advance=function(S){
 E.comingUp=function(S){
   if(S.over)return [];
   var P=S.promos[S.player],L=[],wk=function(n){return n<=0?'this week':(n===1?'next week':'in '+n+' weeks');};
-  var nb=E.nextBig(S);L.push({n:nb.week-S.week,t:nb.name+' '+wk(nb.week-S.week),to:'booking',k:'big'});
+  var nb=E.nextBig(S),nk=evList(S,P)[cal(nb.week).month].t,nkw=nk==='flag'?' (your flagship)':(nk==='tent'?' (a tentpole)':(nk==='taped'?' (a taped special)':(nk==='tourn'?' (the tournament)':'')));L.push({n:nb.week-S.week,t:nb.name+nkw+' '+wk(nb.week-S.week),to:'booking',k:'big'});
   var fs=activeFeuds(S).filter(function(f){return f.promo===P.id;}).sort(function(a,b){return b.heat-a.heat;});
   fs.slice(0,6).forEach(function(f){
     var act=feudAct(f,S),big=nb.week-S.week;
