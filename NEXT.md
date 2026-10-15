@@ -150,7 +150,7 @@ Use `tools/balance.js` from step 0.3. Change one thing at a time and commit the 
 
 - [x] **12.1 The underdog** (Checked 15 October: TTT survives 100 weeks on all three seeds.) should survive 100 weeks on suggested cards with owner trust above 40.
 - [x] **12.2 The corporate giant** (Done 15 October: a publicly traded company pays its shareholders 60% of a week above 1.2 times the board's target. WHW nets about $1.7M a week against $1.5M over 100 weeks; Finances shows it as Shareholders.) should bank near its weekly target, not three times it.
-- [ ] **12.3 The startup** should still be in danger after it wins a better deal.
+- [x] **12.3 The startup** should still be in danger after it wins a better deal. (15 October: on suggested cards NMW runs out of money near week 80 to 95; the backer now tops it up once a year at a cost in the owner's patience, so it is in danger, not doomed.)
 - [x] **12.4 Free agents** (Checked 15 October: 78 to 90 unsigned at week 100.) should not run dry: at least 25 unsigned wrestlers worth signing at week 100.
 - [x] **12.5 Roster churn** (Checked 15 October: at week 150 every company has 39 to 72, with 129 free agents.) among rivals at 150 weeks: no company under 14 wrestlers, none over 90.
 - [x] **12.6 Save size** (Done 15 October: about 1.43 to 1.47 MB at week 151. Old reports drop their play-by-play, six reports kept, rivals keep 12 weeks of books, relationships with the retired are pruned, four recent results, a log of 16.) under 1.5 MB after 150 weeks. Trim logs that only grow.

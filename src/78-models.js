@@ -237,3 +237,12 @@ E.fit=function(S,id){var w=S.w[id],P=S.promos[S.player],M=modelOf(P);if(!w||!M.f
   if(fitMed.k!==k){var a=R.map(function(x){return fitShape(M,x,P,S);}).sort(function(x,y){return x-y;});fitMed={k:k,v:a.length?a[Math.floor(a.length/2)]:0};}
   var d=fitShape(M,w,P,S)-fitMed.v;
   return {v:Math.round(d),n:d>=8?'Made for this company':(d>=3?'A good fit':(d>-3?'Fits well enough':(d>-8?'An awkward fit':'Wrong for this company')))};};
+/* the blank cheque (NEXT.md 12.3): when a new-money company runs low, the backer tops it up, at most once a year.
+   It is not free: the owner's patience drops every time, more the second time. The clock keeps ticking. */
+WEEKX.push(function(S){
+  if(S.cal)return;S.order.forEach(function(id){var P=S.promos[id];if(!P||P.model!=='startup'||P.dead)return;
+    if(P.cash>P.cash0*0.15||(P.bkW!=null&&S.week-P.bkW<48))return;
+    var amt=Math.round(P.cash0*0.33/100000)*100000;P.cash+=amt;P.bkW=S.week;P.bkN=(P.bkN||0)+1;
+    if(id===S.player&&S.owner&&!S.owner.me){S.owner.trust=clamp(S.owner.trust-(P.bkN>1?20:12),0,100);note(S,'The backer',S.owner.name+' puts in another '+money(amt)+(P.bkN>1?', and says it is the last time.':'. It will not be forgotten.'),'bad');}
+    news(S,'business','The backer of '+P.name+' has put in another '+money(amt)+'.');});
+});
