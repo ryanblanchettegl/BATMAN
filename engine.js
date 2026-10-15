@@ -4180,6 +4180,14 @@ WEEKX.push(function(S){
   // old head-to-head and recent-match keys nobody will read again
   var keys=Object.keys(S.recent||{});if(keys.length>1500)keys.forEach(function(k){if(S.week-S.recent[k]>26)delete S.recent[k];});
 });
+/* the power ten matters to the people in it (NEXT.md 8.2): one of yours who climbs into it is lifted, and one who drops
+   out on a losing run starts to grumble. It reads the ranking and never calls rnd(S). */
+WEEKX.push(function(S){
+  if(S.cal)return;var top=E.power(S,10).map(function(x){return x.id!=null?x.id:(x.w?x.w.id:x);}),was=S.pw10||null;S.pw10=top;if(!was)return;
+  top.forEach(function(id){var w=S.w[id];if(!w||w.promo!==S.player||was.indexOf(id)>=0)return;w.morale=clamp(w.morale+3,0,100);note(S,'The power ten',w.name+' is in the power ten.','good');});
+  was.forEach(function(id){var w=S.w[id];if(!w||w.promo!==S.player||top.indexOf(id)>=0)return;var lost=(w.rr||[]).slice(0,3).filter(function(x){return x.r==='L';}).length;
+    if(lost>=2){w.morale=clamp(w.morale-3,0,100);note(S,'The power ten',w.name+' has dropped out of the power ten, and is not happy about the losses.','bad');}});
+});
 
 /* ===== 75-people.js ===== */
 /* ---------- people: ageing, retirement, each year's rookie class, and what your scouts can tell you ---------- */
