@@ -104,8 +104,19 @@ const PARTS: { id: string; n: string; body: () => ComponentChildren }[] = [
   { id: 'model', n: 'How this company is run', body: () => <Panel title="How this company is run"><ModelCard id={me().model} /></Panel> },
   { id: 'owner', n: 'Ownership', body: () => <Ownership /> },
   { id: 'rules', n: 'House rules', body: () => <Rules /> },
-  { id: 'sponsors', n: 'Sponsors', body: () => <Sponsors /> }
+  { id: 'sponsors', n: 'Sponsors', body: () => <Sponsors /> },
+  { id: 'cities', n: 'Your cities', body: () => <Cities /> }
 ];
+/** Every city on the road: the market in words and the last night there. */
+function Cities() {
+  const C: any[] = E.cities(G.S);
+  return <div class="tw" data-t="ov-cities"><table>
+    <thead><tr><th>City</th><th>Market</th><th>Last night</th><th class="r">Crowd</th></tr></thead>
+    <tbody>{C.map((c, i) => <tr key={i}><td>{c.city}</td><td>{c.word}</td>
+      <td>{c.last == null ? <span class="muted">Not yet</span> : <>{c.ago === 0 ? 'This week' : c.ago === 1 ? 'Last week' : c.ago + ' weeks ago'}{c.grade ? <span class="muted">, {c.grade}</span> : null}</>}</td>
+      <td class="r num">{c.att == null ? '' : c.so ? 'Sold out' : Math.round(c.att / Math.max(1, c.cap) * 100) + '% full'}</td></tr>)}</tbody>
+  </table></div>;
+}
 export function Overview() {
   const S = G.S, P = me();
   // for the browser tests: every part laid out on the page, as it was

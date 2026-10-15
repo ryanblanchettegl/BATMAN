@@ -183,3 +183,8 @@ E.roadAhead=function(S,n){var P=S.promos[S.player];return roadAhead(S,P,n||16).m
 E.roadRoute=function(S,pid){return roadRoute(S,S.promos[pid==null?S.player:pid]);};
 E.mapArea=function(S,mapId,city){var M=mapById(mapId),p=placeOf(S,city);return M&&p&&mapHas(M,p)?mapArea(M,p):-1;};
 E.mapXY=function(S,mapId,city){var M=mapById(mapId),p=placeOf(S,city);return M&&p&&mapHas(M,p)?mapXY(M,p):null;};
+/** Every city on your road (NEXT.md 6.5): the market in words, which way it moved, and the last night there. Only reads. */
+E.cities=function(S){
+  var P=S.promos[S.player];return roadRoute(S,P).map(function(c){var city=c.city||c.n||c,k=mktKnow(S,P,city),v=S.rdv&&S.rdv[city],m=S.mkt&&S.mkt[city];
+    return {city:city,k:Math.round(k),word:mktWord(k).w,last:v?v.w:null,ago:v?S.week-v.w:null,grade:v&&v.cs!=null?gradeG(v.cs):null,att:v?v.att:null,cap:v?v.cap:null,so:!!(v&&v.so)};});
+};

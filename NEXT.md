@@ -106,7 +106,7 @@ Build it beside the old screen. Add a switch in Options, "New booking screen", o
 - [ ] **6.2 Pick the place.** Before a show: the city, then a building (capacity, rent, kind of crowd), with an attendance forecast as a range. A suggested pick so it is one press when the player does not care.
 - [ ] **6.3 Gate report.** A pop-up after the show: tickets against capacity, why it drew, gate minus rent, the city's score before and after.
 - [ ] **6.4 The long game.** Sell-out streaks, bigger buildings unlocking as a city warms up, crowd heat feeding match ratings, weather by season.
-- [ ] **6.5 The list.** A city list on Company with trend and weeks since the last visit. The World Editor's cities box (job 1) feeds it.
+- [x] **6.5 The list.** (Done 15 October: Company, Overview, Your cities: every city on the road with its market in words, the last night there with its grade, and how full it was. `E.cities`.) A city list on Company with trend and weeks since the last visit. The World Editor's cities box (job 1) feeds it.
 
 ## Job 7. Television by the hour, streaming, ratings wars (task 5)
 
