@@ -25,6 +25,8 @@ export interface RosterState {
   mq: string;
   offer: number | null;
   wage: string;
+  cl?: string[];
+  clFor?: number | null;
   weeks: string;
   cw: Draft | null;
   caw: { cat: 'head' | 'face' | 'body' | 'gear' | 'skills'; part: FaceKey; pick: number | null };
