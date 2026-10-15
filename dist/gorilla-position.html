@@ -7722,7 +7722,8 @@ function netPosts(S,P,show,rep){
   var pr=rep.segs.filter(function(s){return s.rub;})[0];
   if(pr){var pd=pr.ov-rep.exp;if(pd>=5)add('casual',1,pick(S,['That opening promo from '+pr.who+'. Chills.',pr.who+' on the microphone to open the show. More of that.']));else if(pd<-8)add('smark',-1,pick(S,['The opening promo died in front of a live audience.','Somebody take the microphone away from '+pr.who+'.']));}
   if(d>=4)add('under',1,'Best show in months. Tell your friends.');else if(d<=-4)add('under',-1,'I defend this company every week and they give me that.');
-  if(rep.sellout)add('under',1,'I was there. Could not hear myself think. Sold out and it sounded like it.');
+  if(rep.sellout)add('under',1,rep.soRun>=3?'That is '+rep.soRun+' sell-outs in a row. Try getting a ticket for the next one.':'I was there. Could not hear myself think. Sold out and it sounded like it.');
+  else if(rep.cold)add('under',-1,'Freezing out tonight. Half my section stayed home, and I do not blame them.');
   // five posts at most, one per poster, in a shuffled order
   for(var i=out.length-1;i>0;i--){var j=Math.floor(rnd(S)*(i+1)),t=out[i];out[i]=out[j];out[j]=t;}
   return boardTouch(S,ms,out.slice(0,5).map(function(p){return {u:fanFor(S,p.k,used),t:p.t,s:p.s};}),used);
