@@ -45,6 +45,7 @@ One line per file in `src/`, in build order: what it owns, then the `E.` functio
 - **87-develop.js**: the development side: the camp's weekly show, and (later) the wrestling school `E.devShow`, `E.school`, `E.openSchool`, `E.closeSchool`
 - **87-goals.js**: 1. `E.goalsOf`
 - **88-finance.js**: the money side: loans and investors, licensing, budgets `E.loanOffers`, `E.investorOffer`, `E.finance`, `E.takeLoan`, `E.repayLoan`, `E.sellShare`, `E.buyOutInvestor`, `E.LOANT`, `E.LICK`, `E.licensing`, `E.signLicense`, `E.dropLicense`, `E.DEPT`, `E.budgets`, `E.setBudget`
+- **88-indies.js**: The indie scene (NEXT.md job 10, a first step) Small independent promotions are not companies in the game: a name, a region and a night. `E.indieOf`, `E.INDIES`
 - **88-newco.js**: 63. `E.newCompany`
 - **88-shows.js**: a weekly show lasts Ryan, 4 October: "Shows exist and can gain prestige the longer they are on and based on viewership and growth." A weekly show is not opened and shut. `E.airInfo`, `E.makeInfo`
 - **89-board.js**: the fan board grows up: stars, replies, and a critic's list `E.starsOf`, `E.stars`, `E.starQ`, `E.criticList`
@@ -62,7 +63,7 @@ One line per file in `src/`, in build order: what it owns, then the `E.` functio
 - **95-tasks.js**: This week's tasks: everything on the booker's desk that should be filled in before a show is booked or the week ends. `E.tasks`, `E.taskGate`, `E.taskWave`, `E.taskUnwave`, `E.setGate`
 - **96-advance.js**: The ADVANCE key: what the week needs next One key, always in the same place (the right end of the bottom line), one or two words: the next thing that needs the booker. `E.advance`, `E.comingUp`, `E.newGame`, `E.endWeek`, `E.moved`
 - **96-first.js**: the first year: things every game makes you do, and how a game opens Ryan, 4 October: "We want every new game to feel free but some required actions need to be taken early on to make sure all available mechanics are... `E.faceCandidates`, `E.nameFace`, `E.welcome`
-- **97-clauses.js**: Contract clauses (docs/plans/contract-clauses.md, NEXT.md 11.1) A wrestler cares about at most three clauses, chosen by who they are. `E.clauses`, `E.sign`, `E.ask`, `E.release`, `E.renewAsk`, `E.renew`, `E.CLAUSE`
+- **97-clauses.js**: Contract clauses (docs/plans/contract-clauses.md, NEXT.md 11.1) A wrestler cares about at most three clauses, chosen by who they are. `E.clauses`, `E.sign`, `E.ask`, `E.release`, `E.renewAsk`, `E.renew`, `E.validate`, `E.CLAUSE`
 - **97-time.js**: Time is the budget A show is two hours of weekly television or three hours of big event, and the booker has to fill it. `E.SHOW_OPENS`, `E.showMins`, `E.clock`, `E.matchMins`, `E.fitShow`, `E.OPEN_GUIDE`, `E.resolveChaos`, `E.validate`, `E.suggest`
 - **98-plot.js**: booking power on the Storylines page Ryan, 6 October: "Storylines will also start interacting with booking points and you can use booking points to do various things on the Storylines screen besides start the top feud. `E.plotInfo`, `E.plotTapeWho`, `E.plotDo`, `E.suggest`
 - **98-words.js**: Words for numbers A show's score is a number, and a number says nothing by itself: "the crowd expects 80%" reads like a promise of a very good show. `E.showWord`, `E.showVerdict`, `E.expectWords`, `E.SHOW_LADDER`, `E.grade`, `E.repGrade`, `E.repCS`, `E.crowdScore`, `E.gradeMeets`
