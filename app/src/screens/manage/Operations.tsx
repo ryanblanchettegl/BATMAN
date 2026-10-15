@@ -2,7 +2,7 @@
    export), House (house style and house rules) and Deals (sponsors, rivals, trades). What the choices add up to is read on Company. */
 import { E } from '../../engine';
 import { G, me, Modal, act, say, cash, plural, openModal, redraw, slice, view, UNIS, saveUnis } from '../../store';
-import { Head, Panel, Btn, Tag, Empty, Window, showResult, Name, Sel, Field, TextBox } from '../../kit';
+import { Head, Panel, Btn, Tag, Empty, Window, showResult, Name, Sel, Field, TextBox, Meter } from '../../kit';
 import { copyText } from '../start';
 import { HouseStyle } from './HouseStyle';
 import { RivalsPanel } from './Rivals';
@@ -204,7 +204,7 @@ function tiles(page: string): { grp: string; list: Tile[] }[] {
     { grp: 'On the air', list: [
       { id: 'broadcast', n: 'Broadcast slot', now: () => E.SLOTN[P.slot], d: 'When your shows air. Ask the network for a better one.', body: () => <Broadcast /> },
       { id: 'showsbelts', n: 'Shows and belts', now: () => I.shows.length + ' weekly ' + plural(I.shows.length, 'show') + ', ' + I.titles.length + ' ' + plural(I.titles.length, 'belt'), d: 'Your shows, their networks and standing. Add a show or a belt when there is an occasion.', body: () => <ShowsBelts /> },
-      { id: 'year', n: 'Year planner', now: () => { const nb = E.nextBig(S); return nb.name + ' next'; }, d: 'Your twelve big events: rename them and choose what kind of night each one is.', body: () => <YearPlanner /> },
+      { id: 'year', n: 'Year planner', now: () => { const nb = E.nextBig(S), H = E.evHype(S); return nb.name + ' next' + (H.lvl ? ', hype ' + H.word.toLowerCase() : ''); }, d: 'Your twelve big events: rename them and choose what kind of night each one is.', body: () => <YearPlanner /> },
       { id: 'desk', n: 'Commentary desk', now: () => (V.pbp ? V.pbp.name : 'Empty') + ' and ' + (V.col ? V.col.name : 'empty'), d: 'The two voices on the air. A good desk lifts every match.', body: () => <Desk /> },
       set('prodLvl', 'Production values', 0, E.PRODN[P.prodLvl], 'What the show looks like, and what it costs to make.'),
       set('risk', 'Risk level', 1, E.RISKN[P.risk], 'How far the product goes. Sponsors and gimmick matches pull opposite ways.')] },
@@ -264,6 +264,10 @@ function YearPlanner() {
       {e.flag ? <Tag kind="gold">Flagship</Tag> : <Sel id={'ev-' + e.m} t="ev-type" d={{ m: e.m }} value={e.t} disabled={e.now} label={'Kind of night for ' + e.month} options={types} onChange={v => set(e.m, { t: v })} />}
     </li>)}</ul>
     <p class="muted">{(L.find((e: any) => !e.flag && !e.now) || L[0]).d}</p>
+    {(() => { const H = E.evHype(S); return <div class="row mt1" data-t="ev-hype">
+      <Field label="Promote the next big night"><Sel id="ev-spend" t="ev-spend" value={H.lvl} options={H.names.map((n: string, i: number) => [i, n + (i ? ', ' + cash(H.cost[i]) + ' a week' : '')] as [number, string])} onChange={v => act(() => { say(E.evSpend(S, +v).msg); })} /></Field>
+      <span>Hype: <Meter v={H.pct} kind="au" /> <span class="muted">{H.word}</span></span>
+    </div>; })()}
     <div class="row mt1">
       <Field label="Rename"><Sel id="ev-pick" t="ev-pick" value={st.m < 0 ? '' : st.m} options={[['', 'Pick a month'], ...L.filter((e: any) => !e.now).map((e: any) => [e.m, e.month + ': ' + e.n] as [number, string])] as any} onChange={v => view(() => { st.m = v === '' ? -1 : +v; st.n = st.m >= 0 ? L[st.m].n : ''; })} /></Field>
       <TextBox id="ev-name" t="ev-name" value={st.n} max={28} label="New name" onInput={v => { st.n = v; }} />

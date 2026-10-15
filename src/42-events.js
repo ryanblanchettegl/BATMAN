@@ -56,3 +56,12 @@ WEEKX.push(function(S){
 /* every big night of yours is kept for Finances: the buys against the forecast and the money (NEXT.md 3.6) */
 SHOWX.push(function(S,P,show,rep){if(S.cal||P.id!==S.player||!show.big||!rep.bf)return;var L=S.buyLog||(S.buyLog=[]);L.unshift({w:S.week,n:rep.name,b:rep.buys,f:rep.bf,m:rep.ppv,t:(evTy(show)||{}).n});if(L.length>24)L.length=24;});
 E.buyLog=function(S){return (S.buyLog||[]).slice();};
+
+/* promoting the next big night (NEXT.md 3.5): a weekly spend builds that night's hype, P.evHype, up to a cap.
+   It is spent on the night: the hype lifts the house and the buys, and the meter starts again. */
+var EV_SPN=['Nothing','Some','Heavy'],EV_SPC=[0,0.01,0.025],EV_SPH=[0,0.02,0.04],EV_HMAX=0.15;
+function evSpendCost(P){return Math.round(EV_SPC[P.evSp||0]*P.inc0);}
+WEEKX.push(function(S){var P=S.promos[S.player];if(!P||S.cal)return;if(P.evSp)P.evHype=Math.min(EV_HMAX,(P.evHype||0)+EV_SPH[P.evSp]);});
+SHOWX.push(function(S,P,show){if(S.cal||P.id!==S.player||!show.big)return;P.evHype=0;});
+E.evSpend=function(S,lvl){var P=S.promos[S.player];lvl=clamp(lvl|0,0,2);P.evSp=lvl;return {ok:true,msg:lvl?EV_SPN[lvl]+' spending on the next big night: '+money(evSpendCost(P))+' a week.':'No more money on promoting the next big night.'};};
+E.evHype=function(S){var P=S.promos[S.player],h=P.evHype||0;return {lvl:P.evSp||0,names:EV_SPN,cost:EV_SPC.map(function(c){return Math.round(c*P.inc0);}),h:h,pct:Math.round(h/EV_HMAX*100),word:h<=0?'Nothing yet':(h<0.05?'A little buzz':(h<0.1?'Building':(h<EV_HMAX?'Strong':'As high as it goes')))};};

@@ -66,5 +66,16 @@ for (let w = 0; w < 50 && !S.over; w++) {
     if (!it) E.endWeek(S); }
   ok(it && /forecast of [\d,]+/.test(it.line) && it.detail.length >= 2, 'the buy rate report is missing: ' + JSON.stringify(it));
 }
+// promoting the next big night: the spend builds hype each week, it lifts the night, it costs money, and it starts again after
+{
+  const run = lvl => { const S = E.newGame(E.universe().promotions[1].id, 3, { name: 'R' }); E.evSpend(S, lvl); let wk = null;
+    for (let w = 0; w < 5; w++) { S.inbox.filter(e => !e.done).forEach(e => E.resolveEvent(S, e.id, 0));
+      while (S.qi < S.queue.length) { const big = S.queue[S.qi].big, c = E.suggest(S), pr = E.preShow(S, c); if (pr) { E.resolvePre(S, c, 0); E.fitShow(S, c); }
+        if (E.validate(S, c).errors.length) { S.qi++; continue; } E.runPlayerShow(S, c); if (big && !wk) wk = { hype: S.reports[0].hype, after: E.evHype(S).h }; }
+      const r = E.endWeek(S); }
+    return { wk, adv: S.promos[S.player].hist.slice(-1)[0].adv }; };
+  const a = run(0), b = run(2);
+  ok(a.wk && b.wk && b.wk.hype > a.wk.hype && b.wk.after === 0 && b.adv > a.adv, 'promoting the night did nothing: ' + JSON.stringify({ a, b }));
+}
 if (fails) { console.log('FAILED: ' + fails); process.exit(1); }
 console.log('test-events: all passed');
