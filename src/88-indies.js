@@ -23,3 +23,5 @@ WEEKX.push(function(S){
 /** Where a free agent has been working, for the Free agents page. */
 E.indieOf=function(S,id){var w=S.w[id];if(!w||w.promo!=='FA'||!w.ind||S.week-w.ind.w>4)return null;return {n:w.ind.n,weeks:w.ind.k||1};};
 E.INDIES=INDIES;
+/** Free agents on the longest run with one indie right now, best first: who the scene is talking about. */
+E.indieHot=function(S,n){return S.w.filter(function(w){return w.promo==='FA'&&!w.rt&&!w.nw&&w.ind&&S.week-w.ind.w<=2&&(w.ind.k||0)>=3;}).sort(function(a,b){return (b.ind.k-a.ind.k)||(b.ovr-a.ovr);}).slice(0,n||3).map(function(w){return {id:w.id,name:w.name,n:w.ind.n,k:w.ind.k};});};
