@@ -301,7 +301,7 @@ function rkey(a,b){return a<b?a+'-'+b:b+'-'+a;}
 function titleFits(t,m){var d=MT[m.mt];return !!d&&(t.tag?m.mt==='tag':(d.per===1&&!(m.mt==='br'&&t.holders.length)));}
 
 /* ---------- booking ---------- */
-function eligible(S,P,show){return S.w.filter(function(w){return (w.promo===P.id&&w.inj<=0&&!w.camp&&!w.nw&&w.rest!==S.week&&!(w.away>=S.week)&&(show.big||!show.brand||w.brand===show.brand))||isGuest(S,P,w,show);});}
+function eligible(S,P,show){return S.w.filter(function(w){return (w.promo===P.id&&w.inj<=0&&!w.camp&&!w.nw&&w.rest!==S.week&&!(w.cl&&w.cl.dates&&w.dwk===S.week&&(w.dn||0)>=2)&&!(w.away>=S.week)&&(show.big||!show.brand||w.brand===show.brand))||isGuest(S,P,w,show);});}
 function showTitles(P,show){return P.titles.filter(function(t){return show.big?!isDev(P,t.brand):(!show.brand||!t.brand||t.brand===show.brand);});}
 function gimmickFor(S,a,b){
   var k=a.style==='H'?'ladder':(a.style==='T'?'sub':(chance(S,0.5)?'cage':'hardcore')),pm=a.promo!=='FA'&&S.promos[a.promo]?S.promos[a.promo].model:'';

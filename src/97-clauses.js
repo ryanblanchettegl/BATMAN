@@ -8,6 +8,8 @@ var CLAUSE={
     wants:function(S,w){return w.age>=33||w.cond<70;}},
   nocut:{n:'A no-cut promise',d:'You will not let them go. If you do, it costs six months of their wage and the locker room hears about it.',save:0.08,
     wants:function(S,w){return w.morale<55||!!w.cut;}},
+  dates:{n:'Two dates a week',d:'They work at most two of your shows a week. Older bodies last longer that way.',save:0.06,
+    wants:function(S,w){return w.age>=36;}},
   merch:{n:'A merchandise share',d:'A quarter of what their own merchandise lines make goes to them. Every line with their face on it keeps them happy.',save:0.07,
     wants:function(S,w){return w.mic>=72;}},
   title:{n:'A title match',d:'A match for a belt within twelve weeks of signing. Break it and they will remember.',save:0.1,
@@ -55,4 +57,8 @@ WEEKX.push(function(S){S.w.forEach(function(w){if(w.cl&&(w.promo!==S.player||w.r
       if(t)S.quests.push({id:S.nid++,type:'shot',w:w.id,title:t.id,due:S.week+12,text:'Promise: give '+w.name+' a match for the '+t.name+' by '+cal(S.week+12).label+' (it is in their contract)'});}
     return w.name+' re-signs for '+money(w.wage)+' a week, with '+cl.map(function(k){return CLAUSE[k].n.toLowerCase();}).join(' and ')+' in the contract.';};
 })();
+/* two dates a week: count each show they appear on, refuse a third, and keep the suggested card from booking one */
+function datesFull(S,w){return !!(w&&w.cl&&w.cl.dates&&w.dwk===S.week&&(w.dn||0)>=2);}
+SHOWX.push(function(S,P,show,rep,card){if(S.cal||P.id!==S.player||!card)return;var seen={};card.forEach(function(m){flat(m.sides||[]).forEach(function(id){if(id==null||seen[id])return;seen[id]=1;var w=S.w[id];if(!w||!w.cl||!w.cl.dates)return;if(w.dwk!==S.week){w.dwk=S.week;w.dn=0;}w.dn++;});});});
+(function(){var v0=E.validate;E.validate=function(S,card){var v=v0(S,card);(card||[]).forEach(function(m){flat(m.sides||[]).forEach(function(id){var w=S.w[id];if(datesFull(S,w)&&v.errors.indexOf(w.name+'\u2019s contract says two dates a week, and they have worked two.')<0)v.errors.push(w.name+'\u2019s contract says two dates a week, and they have worked two.');});});return v;};})();
 E.CLAUSE=CLAUSE;
