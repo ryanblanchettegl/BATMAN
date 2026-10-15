@@ -88,3 +88,9 @@ EVR.scrum=function(S,ev,choice,P,w,o){
 
 /** The month before this one was dark: the crowd is hungrier for this big night. */
 function evAfterDark(S,P){var m=cal(S.week).month;return evList(S,P)[(m+11)%12].t==='dark';}
+/* each show feeds the next (TASKS 3): a main event well above what the crowd expected sends people home talking,
+   and the next show draws a little more; one well below sends them home early, and it draws a little less */
+SHOWX.push(function(S,P,show,rep){
+  if(S.cal||P.id!==S.player||rep.exp==null)return;var ms=(rep.segs||[]).filter(function(g){return g.k==='match';}),m=ms[ms.length-1];if(!m)return;
+  var d=m.ov-rep.exp;if(d>=6){S.hype=(S.hype||0)+0.04;rep.feed=1;}else if(d<=-8){S.hype=(S.hype||0)-0.03;rep.feed=-1;}
+});

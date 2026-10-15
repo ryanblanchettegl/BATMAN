@@ -2464,6 +2464,8 @@ E.afterShow=function(S){
     add('feuds','The feuds',fl(L.feuds[0])+(L.feuds.length>1?', and '+(L.feuds.length-1)+' more':'')+'.',L.feuds.map(function(x){return fl(x)+'.';}),L.feuds.some(function(x){return x.end;})?'good':(L.feuds[0].now>L.feuds[0].was?'good':'warn'));}
   add('gate','The gate',g.sold?'Sold out: '+g.att.toLocaleString('en-US')+' tickets, every one there was.':g.att.toLocaleString('en-US')+' tickets sold of '+g.cap.toLocaleString('en-US')+'. '+empty.toLocaleString('en-US')+' seats were empty.',
     [g.att.toLocaleString('en-US')+' tickets sold of '+g.cap.toLocaleString('en-US')+' in the '+rep.venue+'.',g.sold?'A sell-out. A bigger building would have sold more.':(pct>=0.85?'A healthy house. The empty seats did not show on television.':(pct>=0.6?'A soft house. The camera had to stay off parts of the building.':'A poor house. It looked empty on television, and the crowd was quieter for it.')),'The gate was '+money(g.money)+'.'],g.sold?'good':(pct<0.6?'bad':''));
+  // what the main event hands the next show
+  if(rep.feed)add('feed','The next show',rep.feed>0?'A strong finish. People went home talking, and the next show will draw a little more.':'A flat finish. People left early, and the next show will draw a little less.',[rep.feed>0?'The main event beat what this crowd expected by a distance. Word gets round.':'The main event fell well short of what this crowd expected. Word gets round.'],rep.feed>0?'good':'bad');
   // the buy rate report: buys at home against what was forecast, and what moved them (NEXT.md 3.6)
   if(rep.big&&rep.bf){var bd=rep.buys-rep.bf,bp=rep.bf?bd/rep.bf:0,H=(rep.hp||[]).slice().sort(function(a,b){return b.v-a.v;});
     add('buys','The buys',rep.buys.toLocaleString('en-US')+' bought it at home, '+(Math.abs(bp)<0.03?'right on':(bd>0?Math.round(bp*100)+'% over':Math.round(-bp*100)+'% under'))+' the forecast of '+rep.bf.toLocaleString('en-US')+'.',
@@ -2898,6 +2900,12 @@ EVR.scrum=function(S,ev,choice,P,w,o){
 
 /** The month before this one was dark: the crowd is hungrier for this big night. */
 function evAfterDark(S,P){var m=cal(S.week).month;return evList(S,P)[(m+11)%12].t==='dark';}
+/* each show feeds the next (TASKS 3): a main event well above what the crowd expected sends people home talking,
+   and the next show draws a little more; one well below sends them home early, and it draws a little less */
+SHOWX.push(function(S,P,show,rep){
+  if(S.cal||P.id!==S.player||rep.exp==null)return;var ms=(rep.segs||[]).filter(function(g){return g.k==='match';}),m=ms[ms.length-1];if(!m)return;
+  var d=m.ov-rep.exp;if(d>=6){S.hype=(S.hype||0)+0.04;rep.feed=1;}else if(d<=-8){S.hype=(S.hype||0)-0.03;rep.feed=-1;}
+});
 
 /* ===== 50-company.js ===== */
 /* ---------- the company: broadcast slot, production, risk, tickets, advertising, sponsors ---------- */
