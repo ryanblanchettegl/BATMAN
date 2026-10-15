@@ -159,6 +159,6 @@ Use `tools/balance.js` from step 0.3. Change one thing at a time and commit the 
 ## Job 13. Last, every time
 
 - [ ] **13.1** Rerun step 0.1: `TASKS.md` matches the code.
-- [ ] **13.2** `docs/map.md` matches the files.
+- [x] **13.2** `docs/map.md` matches the files (made again by `node tools/map.js`).
 - [ ] **13.3** (15 October: the glossary has heat as living storylines, freshness, kinds of night and contract clauses.) The Help window and the glossary cover what was added, in plain words, and still fit one tablet screen each.
-- [ ] **13.4** Write `docs/run-notes.md`: what was built, what was skipped and why, what the next run should do first, and every line added to `docs/decisions-needed.md`.
+- [x] **13.4** Write `docs/run-notes.md` (done 15 October): what was built, what was skipped and why, what the next run should do first, and every line added to `docs/decisions-needed.md`.
