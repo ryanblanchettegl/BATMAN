@@ -64,6 +64,13 @@ function Lineage(p: { t: any }) {
     {H.length ? <ul class="list">{H.map((r: any, i: number) => { const ids = String(r.ids).split(',').map(Number), wk = (r.to == null ? S.week : r.to) - r.from;
       return <li key={i}><span>{joined(ids.map(id => S.w[id] ? <Name w={S.w[id]} /> : <>{(r.h || [])[0] || 'Unknown'}</>), ' & ')} <span class="muted">{wk} {plural(wk, 'week')}{r.defs ? ', ' + r.defs + ' ' + plural(r.defs, 'defence') : ''}</span></span>{i === 0 && r.to == null ? <Tag kind="good">Now</Tag> : null}</li>; })}</ul>
       : <p class="muted">No reigns on record yet.</p>}
+    {(() => { const A: any[] = t ? (t.hist || []).filter((r: any) => r.show !== 'Before your time' || r.to != null) : [], cnt: Record<string, number> = {};
+      if (A.length < 2) return null;
+      A.forEach((r: any) => { const k = String(r.ids); cnt[k] = (cnt[k] || 0) + 1; });
+      const nm = (ids: any) => String(ids).split(',').map(Number).map(id => S.w[id] ? S.w[id].name : '?').join(' & ');
+      const most = Object.keys(cnt).sort((a, b) => cnt[b] - cnt[a])[0], len = (r: any) => (r.to == null ? S.week : r.to) - r.from;
+      const lng = A.slice().sort((a: any, b: any) => len(b) - len(a))[0], dfs = A.slice().sort((a: any, b: any) => (b.defs || 0) - (a.defs || 0))[0];
+      return <p class="mt1" data-t="title-records"><b>Records:</b> {cnt[most] > 1 ? <>most reigns, {nm(most)} ({cnt[most]}); </> : null}longest, {nm(lng.ids)} ({len(lng)} {plural(len(lng), 'week')}){dfs.defs ? <>; most defences, {nm(dfs.ids)} ({dfs.defs})</> : null}.</p>; })()}
     <p class="muted mt1">Wins earn ranking points, more at big events. A challenger who has not earned the shot gets a cold reception.</p>
   </Win>;
 }

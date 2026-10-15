@@ -529,7 +529,7 @@ From the table in `docs/feature-list.md`. Check each against the engine first; s
 - [ ] Team bonding, interventions and call-outs (extend the backstage actions in `src/77-backstage.js`).
 - [ ] Promoter friendliness per rival owner; cash in talent trades; joint super shows with shared money.
 - [ ] Owner goals with visible progress; headquarters and hall of fame building projects; wrestling school affiliations.
-- [ ] Custom house styles; per-title statistics.
+- [ ] Custom house styles; per-title statistics. (Partly, 15 October: per-title records on Titles, most reigns, longest reign and most defences.)
 - [ ] Rivals competing for time slots, cities and talent (finishes feature list item 8).
 
 ### 11. Balance and known problems
