@@ -53,7 +53,7 @@ E.FED_SIZE=FED_SIZE;E.FED_REGION=FED_REGION;
 
 /* ---------- career records: the shared bones for a booking game and a career mode ----------
    Every wrestler carries a milestone log and a stat line per year, whoever books them. */
-function mile(S,w,k,t){if(S.cal||!w)return;var L=w.log||(w.log=[]);L.push({w:S.week,k:k,t:t});if(L.length>24)L.splice(1,1);}
+function mile(S,w,k,t){if(S.cal||!w)return;var L=w.log||(w.log=[]);L.push({w:S.week,k:k,t:t});if(L.length>16)L.splice(1,1);}
 function ystat(S,w){var y=cal(S.week).year,Y=w.ys||(w.ys={});return Y[y]||(Y[y]=[0,0,0,0,0,0,0]);}   // matches, wins, losses, draws, best match, main events, titles won
 POST.push(function(ctx){
   var S=ctx.S,r=ctx.res,P=ctx.P;if(S.cal)return;

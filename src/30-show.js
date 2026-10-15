@@ -167,7 +167,7 @@ function showEnd(S,P,show,card,st){
         rep.quest.push(qt);(rep.targets=rep.targets||[]).push({ok:!!q.hit,t:qt});dropQuest(S,q,!!q.hit,qt);}
     });
     rep.sheet=dirtSheet(S,P,show,rep,inP);
-    S.reports.unshift(rep);if(S.reports.length>8)S.reports.length=8;
+    S.reports.unshift(rep);if(S.reports.length>6)S.reports.length=6;
   }else if(big){var mm=ms[ms.length-1];news(S,'world',show.name+' was graded '+gradeG(repCS(rep))+'. Main event: '+mm.label+(mm.win?' ('+mm.win+' won).':' (draw).'));}
   if(isPl)Object.keys(ctx.angled).forEach(function(id){if(S.w[id])S.w[id].la=S.week;});
   SHOWX.forEach(function(fn){fn(S,P,show,rep,card);});

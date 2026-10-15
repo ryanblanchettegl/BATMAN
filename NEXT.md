@@ -151,7 +151,7 @@ Use `tools/balance.js` from step 0.3. Change one thing at a time and commit the 
 - [ ] **12.3 The startup** should still be in danger after it wins a better deal.
 - [ ] **12.4 Free agents** should not run dry: at least 25 unsigned wrestlers worth signing at week 100.
 - [ ] **12.5 Roster churn** among rivals at 150 weeks: no company under 14 wrestlers, none over 90.
-- [ ] **12.6 Save size** under 1.5 MB after 150 weeks. Trim logs that only grow.
+- [x] **12.6 Save size** (Done 15 October: about 1.43 to 1.47 MB at week 151. Old reports drop their play-by-play, six reports kept, rivals keep 12 weeks of books, relationships with the retired are pruned, four recent results, a log of 16.) under 1.5 MB after 150 weeks. Trim logs that only grow.
 - [ ] **12.7 A new show** (`E.makeShow`) should stay a real choice after jobs 3 and 7: rerun the 32-week comparison from `TASKS.md` task 0b.
 
 ## Job 13. Last, every time

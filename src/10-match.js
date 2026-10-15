@@ -374,7 +374,7 @@ function doMatch(S,P,show,m,i,n,rep,used){
   // each wrestler keeps their last five results for the profile pop-up
   if(!S.cal&&!br&&win>=0)all.forEach(function(w){
     var mine=winners.indexOf(w)>=0,own=sides.filter(function(sd){return sd.indexOf(w)>=0;})[0]||[],foe=all.filter(function(o){return own.indexOf(o)<0;}).map(function(o){return o.name;}).join(' & ');
-    var L=w.rr||(w.rr=[]);L.unshift({w:S.week,r:mine?'W':'L',v:foe.slice(0,40),ov:OV});if(L.length>5)L.length=5;
+    var L=w.rr||(w.rr=[]);L.unshift({w:S.week,r:mine?'W':'L',v:foe.slice(0,28),ov:OV});if(L.length>4)L.length=4;
   });
   // injuries, growth, tag experience
   var injm=RISK_INJ[P.risk]/RISK_INJ[P.risk0]*(isPl?dif(S).inj:1)*(modelOf(P).inj||1)*(isPl&&hasRule(S,'testing')?0.88:1);

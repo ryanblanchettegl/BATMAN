@@ -195,6 +195,8 @@ E.FOCUS=FOCUS;E.tournActive=tournActive;
 /* Housekeeping: retired wrestlers who never held a title do not need their year lines, recent results or long logs.
    Keeps the save small in a long game (about 1.4 MB at week 300). Runs every 26 weeks. */
 WEEKX.push(function(S){
+  // the play-by-play of an old show is never read again: only the newest two keep it
+  (S.reports||[]).slice(2).forEach(function(r){(r.segs||[]).forEach(function(g){if(g.bc)delete g.bc;});});
   if(S.week%26!==0)return;
   var champs={};S.order.forEach(function(pid){S.promos[pid].titles.forEach(function(t){(t.hist||[]).forEach(function(h){String(h.ids||'').split(',').forEach(function(id){champs[id]=1;});});t.holders.forEach(function(id){champs[id]=1;});});});
   S.w.forEach(function(w){
@@ -202,6 +204,8 @@ WEEKX.push(function(S){
     delete w.rr;delete w.ys;delete w.bz;
     if(w.log&&w.log.length>6)w.log=w.log.slice(0,1).concat(w.log.slice(-5));
   });
+  // relationships with somebody retired are never read again
+  if(S.rm)Object.keys(S.rm).forEach(function(k){var ids=k.split('-');if(ids.some(function(id){var w=S.w[+id];return !w||w.rt;}))delete S.rm[k];});
   // old head-to-head and recent-match keys nobody will read again
   var keys=Object.keys(S.recent||{});if(keys.length>1500)keys.forEach(function(k){if(S.week-S.recent[k]>26)delete S.recent[k];});
 });
