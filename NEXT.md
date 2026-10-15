@@ -71,6 +71,8 @@ A company adds shows every year. Weekly shows can be added now (`src/87-create.j
 
 ## Job 4. Storylines from wrestling history (task 2)
 
+**Ryan, 15 October: living storylines instead.** The scripted templates below are not built. Feuds stay living (`src/21-living.js`, `docs/plans/living-storylines.md`): no beats on a timetable, heat and freshness moved by what the booker puts on the shows. What the templates wanted (factions, title trades, the long chase, betrayals) comes as more twists and story sifting patterns inside that system, not as scripts. Invasions (11.2) wait for the same treatment.
+
 The plan is in `docs/plans/storyline-templates.md`. Ryan's decision: the player spends booking power to start the epic ones, every name is invented, and the patterns follow famous and infamous real storylines.
 
 - [ ] **4.1 The template.** Name, roles needed (leader, defector, rival, champion, authority), cost in booking power, three to six beats over weeks, what each beat needs on a show (a match, a promo of a kind, a run-in, a title change), the payoff, and how it backfires.
