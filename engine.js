@@ -7068,18 +7068,20 @@ var GR_SIFT={
     {t:'#p_shadow#',if:function(c){return c.k==='shadow';}},
     {t:'#p_owed#',if:function(c){return c.k==='owed';}},
     {t:'#p_again#',if:function(c){return c.k==='again';}},
-    {t:'#p_chase#',if:function(c){return c.k==='chase';}}
+    {t:'#p_chase#',if:function(c){return c.k==='chase';}},
+    {t:'#p_mutiny#',if:function(c){return c.k==='mutiny';}}
   ],
   p_rubber:['One more match settles it.','The series is too close to leave alone.','The crowd wants to know who is better. So do they.','Best of {n} is not enough. Make it a decider.'],
   p_rematch:['{b} never got the rematch.','{b} has been waiting for this since the night the belt went.','The old champion against the new one.','{b} says the title was taken, not won.'],
   p_heat:['There is real heat here. Put it in the ring before it boils over backstage.','They cannot stand each other. The crowd will feel it.','Nobody has to act. That is the best kind of story.'],
   p_teach:['The student is ready to step out of the shadow.','Teacher against student: one of them learns something.','{b} taught {a} everything. Almost everything.'],
   p_shadow:['{a} is tired of standing behind {b}.','Partners who need different things.','One of them is going to turn. The question is when.'],
+  p_mutiny:['{a} is tired of taking orders from {b}.','Every group has one who wants to lead. In {g}, it is {a}.','{g} is cracking, and everybody can hear it.','Overthrow the leader, or be thrown out. Either way it is a story.'],
   p_chase:['{a} keeps coming up short against {b}. One day they will not.','The long chase: every loss makes the day {a} finally wins mean more.','{b} has the belt and the wins. {a} has the crowd waiting.','Make them wait. Then pay it off.'],
   p_again:['They were never really finished.','The last chapter left a door open.','{a} and {b} again. The crowd remembers.','Months later, it still is not settled.'],
   p_owed:['{a} beat {b} clean and {b} has not forgotten.','{b} wants the loss back.','Last time, {a} won. {b} says that was the last time.']
 };
-var SIFT_N={rubber:'The decider',rematch:'The rematch never given',heat:'Real heat',teach:'Teacher and student',shadow:'Partners apart',owed:'A loss to pay back',again:'Unfinished business',chase:'The long chase'};
+var SIFT_N={rubber:'The decider',rematch:'The rematch never given',heat:'Real heat',teach:'Teacher and student',shadow:'Partners apart',owed:'A loss to pay back',again:'Unfinished business',chase:'The long chase',mutiny:'A mutiny in the group'};
 
 /** Every storyline the game can find on your roster right now, best first. */
 E.sift=function(S){
@@ -7088,7 +7090,7 @@ E.sift=function(S){
   var feuding=function(a,b){return activeFeuds(S).some(function(f){return (f.a.indexOf(a)>=0&&f.b.indexOf(b)>=0)||(f.a.indexOf(b)>=0&&f.b.indexOf(a)>=0);});};
   var add=function(k,a,b,score,facts){
     if(!on[a]||!on[b]||a===b||feuding(a,b))return;var key=rkey(a,b);if(seen[key]&&seen[key].score>=score)return;
-    var A=S.w[a],B=S.w[b],c={k:k,a:A.name,b:B.name,n:facts.n||3};
+    var A=S.w[a],B=S.w[b],c={k:k,a:A.name,b:B.name,n:facts.n||3,g:facts.g||''};
     var x={k:k,n:SIFT_N[k],a:a,b:b,score:score,facts:facts.lines,pitch:gram(GR_SIFT,'pitch',c,'sift'+key+k+Math.floor(S.week/4))};
     if(seen[key])out.splice(out.indexOf(seen[key]),1);seen[key]=x;out.push(x);
   };
@@ -7127,6 +7129,10 @@ E.sift=function(S){
     Object.keys(S.h2h||{}).forEach(function(key){var h=S.h2h[key],ids=key.split('-').map(Number);if(ids.indexOf(ch)<0)return;var o=ids[0]===ch?ids[1]:ids[0];if(!on[o])return;
       var lo=Math.min(ch,o),cw=ch===lo?h.a:h.b,ow=ch===lo?h.b:h.a;if(cw<2||ow>0||S.w[o].ovr<S.w[ch].ovr-10)return;
       add('chase',o,ch,40+cw*7,{lines:[S.w[ch].name+' holds the '+t.name+' and has beaten '+S.w[o].name+' '+(cw===2?'twice':cw+' times')+'.',S.w[o].name+' has never won one. The crowd is starting to want it.']});});});
+  // a mutiny: a member of your stable who has grown jealous of its leader, or cannot stand them
+  (S.stables||[]).forEach(function(st){if(st.promo!==P.id||!on[st.leader])return;st.m.forEach(function(id){if(id===st.leader||!on[id])return;
+    var j=jealOf(S,id,st.leader),b=bondOf(S,id,st.leader);if(j<35&&b>-REL_ON&&(st.tension||0)<40)return;
+    add('mutiny',id,st.leader,35+Math.max(j,-b,st.tension||0)/2,{g:st.name,lines:[S.w[id].name+' is in '+st.name+', and '+S.w[st.leader].name+' leads it.',(j>=35?S.w[id].name+' wants that spot.':(b<=-REL_ON?'The two of them do not get on.':'The group has been on edge for weeks.'))]});});});
   // unfinished business: a story that ended hot at least twelve weeks ago, and both still here
   Object.keys(S.embers||{}).forEach(function(key){var e=S.embers[key],ids=key.split('-').map(Number);if(S.week-e.w<12||e.h<55)return;
     add('again',ids[0],ids[1],35+e.h/3,{lines:[S.w[ids[0]].name+' and '+S.w[ids[1]].name+' ended their story '+(S.week-e.w)+' weeks ago, still hot.',(e.n>1?'They have done this '+e.n+' times now.':'Start it again and it picks up where it left off.')]});});
