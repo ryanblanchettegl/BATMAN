@@ -96,5 +96,23 @@ for (let w = 0; w < 50 && !S.over; w++) {
   const T = E.newGame('pdw', 1, { name: 'R' }), L = E.events(T).filter(e => !e.flag && !e.now).map(e => e.m); [0, 1, 2].forEach(i => E.evSet(T, L[i], { t: 'dark' }));
   ok(!E.evSet(T, L[3], { t: 'dark' }).ok, 'a fourth dark month was allowed');
 }
+// each kind of company starts its year in its own shape, and a tentpole limit holds
+{
+  const S = E.newGame('pdw', 1, { name: 'R' }), k = id => S.promos[id].events.map(e => e.t);
+  ok(k('whw').filter(t => t === 'tent').length === 3, 'the corporate giant does not have three tentpoles: ' + k('whw'));
+  ok(k('ttt').filter(t => t === 'taped').length === 4, 'the underdog does not have taped specials: ' + k('ttt'));
+  ok(k('ocw').includes('tourn') && k('kjp').includes('tourn'), 'the sport-first and all-women companies have no tournament month');
+  const L = E.events(S).filter(e => !e.flag && !e.now && e.t !== 'tent'); let made = E.events(S).filter(e => e.t === 'tent').length;
+  for (const e of L) { if (made >= 4) break; if (E.evSet(S, e.m, { t: 'tent' }).ok) made++; }
+  const more = E.events(S).find(e => !e.flag && !e.now && e.t !== 'tent'); ok(!more || !E.evSet(S, more.m, { t: 'tent' }).ok, 'a fifth tentpole was allowed');
+}
+// the tournament month: its winner is promised the top title match at the flagship
+{
+  const S = E.newGame('ocw', 1, { name: 'R' }); let q = null;
+  for (let w = 0; w < 48 && !q; w++) { S.inbox.filter(e => !e.done).forEach(e => E.resolveEvent(S, e.id, 0));
+    while (S.qi < S.queue.length) { const c = E.suggest(S), pr = E.preShow(S, c); if (pr) { E.resolvePre(S, c, 0); E.fitShow(S, c); } if (E.validate(S, c).errors.length) { S.qi++; continue; } E.runPlayerShow(S, c); }
+    q = S.quests.find(x => x.type === 'shot' && /won the tournament/.test(x.text)); E.endWeek(S); }
+  ok(q && E.cal(q.due).month === S.promos.ocw.flagship, 'no tournament winner was promised the flagship: ' + JSON.stringify(q));
+}
 if (fails) { console.log('FAILED: ' + fails); process.exit(1); }
 console.log('test-events: all passed');

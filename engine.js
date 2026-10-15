@@ -2822,18 +2822,33 @@ var EV_TYPES={
   ballroom:{n:'Ballroom show',cap:0.4,price:0.75,buys:0.7,exp:-6,prod:0.4,d:'A small room and a loud crowd. Fewer seats and fewer buys, but it costs far less to put on and the crowd forgives more.'},
   gimmick:{n:'Gimmick night',cap:0.9,price:1,buys:1.1,exp:3,prod:1.1,d:'A night of stipulations. The buys go up, and the crowd expects violence.'},
   rumble:{n:'Battle royal night',cap:1,price:0.9,buys:1.05,exp:1,prod:1,d:'A night built around a battle royal. A full house at a friendly price.'},
+  tent:{n:'Tentpole',cap:1.3,price:1.15,buys:1.5,exp:3,prod:1.2,d:'One of the few nights a year that matter most. A bigger house, far more buys, and a crowd that expects more.'},
+  taped:{n:'Taped special',cap:0.35,price:0.6,buys:0.4,exp:-8,prod:0.3,d:'A cheap special shot in a small room. Little money, little at stake, and a crowd that forgives a lot. It keeps the lights on between the nights that matter.'},
   dark:{n:'No event this month',cap:1,price:1,buys:1,exp:0,prod:1,d:'A month off. No big night, no big money, and no big costs. The crowd is hungrier for the next one.'},
   tourn:{n:'Tournament night',cap:0.85,price:0.9,buys:0.95,exp:-2,prod:0.9,d:'A bracket in one night. The crowd comes to see who survives.'}
 };
 function evTy(show){return (show&&show.big&&EV_TYPES[show.ty])||EV_TYPES.arena;}
 var FLAG_WORDS=['Summit','Coronation','Homecoming','Jubilee','High Water','Reckoning','Crown of Iron','Last Light','Great Gathering','Grand Assembly','Year of Days','Long Night','Iron Harvest','First Light'];
+/* each kind of company starts its year in its own shape (docs/research/big-event-calendars.md): months counted from
+   the flagship. The corporate giant has three more tentpoles, the big four; the diehards' company four marquee nights
+   and two lighter ones; the underdog four real nights and taped specials between; the sport-first and all-women
+   companies a tournament month whose winner headlines the flagship. Any other company has one tentpole halfway round. */
+var MODEL_YEAR={
+  corporate:{3:'tent',6:'tent',9:'tent'},
+  workrate:{3:'tent',6:'tent',9:'tent',1:'ballroom',7:'ballroom'},
+  underdog:{3:'tent',6:'tent',9:'tent',1:'taped',4:'taped',7:'taped',10:'taped'},
+  purist:{7:'tourn',4:'tent'},
+  joshi:{7:'tourn',4:'tent'},
+  classic:{6:'tent'},startup:{6:'tent'},outlaw:{6:'tent',3:'gimmick'},spectacle:{6:'tent',9:'gimmick'},tradition:{6:'tent'}
+};
 function evList(S,P){
   if(P.events&&P.events.length===12)return P.events;
   var db=dbOf(S),rules=db.rules||{},used={};
   S.order.forEach(function(id){var Q=S.promos[id];if(Q&&Q!==P&&Q.events)Q.events.forEach(function(e){if(e.t==='flag')used[e.n]=1;});});
   var fw=null;for(var i=0;i<FLAG_WORDS.length&&!fw;i++){var k=(hash('flag'+P.id)+i)%FLAG_WORDS.length;if(!used[FLAG_WORDS[k]])fw=FLAG_WORDS[k];}
   var own={};(P.evIn||[]).forEach(function(e){if(e&&e.month>=1&&e.month<=12&&e.name)own[e.month-1]=e;});   // a world package can name a company's own events
-  P.events=db.events.map(function(n,m){var flag=m===P.flagship,o=own[m];return {n:o?String(o.name).trim().slice(0,28):(flag&&fw?fw:n),t:flag?'flag':(o&&EV_TYPES[o.type]&&o.type!=='flag'?o.type:'arena'),rule:(o&&o.rule)||rules[m]||null};});
+  var yr=MODEL_YEAR[P.model||'classic']||{},kindAt=function(m){var off=(m-P.flagship+12)%12;return yr[off]||'arena';};
+  P.events=db.events.map(function(n,m){var flag=m===P.flagship,o=own[m];return {n:o?String(o.name).trim().slice(0,28):(flag&&fw?fw:n),t:flag?'flag':(o&&EV_TYPES[o.type]&&o.type!=='flag'?o.type:kindAt(m)),rule:(o&&o.rule)||rules[m]||null};});
   delete P.evIn;
   return P.events;
 }
@@ -2849,7 +2864,7 @@ E.evSet=function(S,m,o){
   if(m===cal(S.week).month)return {ok:false,msg:'This month\u2019s event is already on sale. Change a later one.'};
   if(o.n!=null){var n=String(o.n).replace(/\s+/g,' ').trim().slice(0,28);if(n.length<3)return {ok:false,msg:'A name needs three letters or more.'};
     if(L.some(function(x,i){return i!==m&&x.n.toLowerCase()===n.toLowerCase();}))return {ok:false,msg:'You already have an event called that.'};e.n=n;}
-  if(o.t!=null){if(o.t==='dark'&&L.filter(function(x,i){return i!==m&&x.t==='dark';}).length>=3)return {ok:false,msg:'Three dark months a year is the most the network will stand.'};if(!EV_TYPES[o.t])return {ok:false,msg:'There is no such kind of event.'};if((o.t==='flag')!==(e.t==='flag'))return {ok:false,msg:'The flagship stays the flagship.'};e.t=o.t;}
+  if(o.t!=null){if(o.t==='tent'&&e.t!=='tent'&&L.filter(function(x){return x.t==='tent';}).length>=4)return {ok:false,msg:'Four tentpoles a year besides the flagship is the most a year can carry.'};if(o.t==='dark'&&L.filter(function(x,i){return i!==m&&x.t==='dark';}).length>=3)return {ok:false,msg:'Three dark months a year is the most the network will stand.'};if(!EV_TYPES[o.t])return {ok:false,msg:'There is no such kind of event.'};if((o.t==='flag')!==(e.t==='flag'))return {ok:false,msg:'The flagship stays the flagship.'};e.t=o.t;}
   return {ok:true,msg:MONTHS[m]+': '+P.name+' '+e.n+', '+EV_TYPES[e.t].n.toLowerCase()+'.'};
 };
 E.EV_TYPES=EV_TYPES;
@@ -2905,6 +2920,19 @@ function evAfterDark(S,P){var m=cal(S.week).month;return evList(S,P)[(m+11)%12].
 SHOWX.push(function(S,P,show,rep){
   if(S.cal||P.id!==S.player||rep.exp==null)return;var ms=(rep.segs||[]).filter(function(g){return g.k==='match';}),m=ms[ms.length-1];if(!m)return;
   var d=m.ov-rep.exp;if(d>=6){S.hype=(S.hype||0)+0.04;rep.feed=1;}else if(d<=-8){S.hype=(S.hype||0)-0.03;rep.feed=-1;}
+});
+/* the tournament month (docs/research/big-event-calendars.md): whoever wins the main event of a tournament night has
+   won the tournament, and earns a match for the top title at the company's flagship. For you it is a promise. */
+function flagWeekFrom(S,P){for(var w=S.week+1;w<S.week+60;w++){var c=cal(w);if(c.wom===4&&c.month===P.flagship)return w;}return null;}
+SHOWX.push(function(S,P,show,rep){
+  if(S.cal||!show.big||show.ty!=='tourn')return;var ms=(rep.segs||[]).filter(function(g){return g.k==='match';}),m=ms[ms.length-1];if(!m||!m.wi||!m.wi.length)return;
+  var w=S.w[m.wi[0]];if(!w)return;var fw=flagWeekFrom(S,P),t=P.titles.filter(function(x){return !x.tag&&x.g===w.g&&x.holders.length&&x.holders[0]!==w.id;}).sort(function(a,b){return b.lvl-a.lvl;})[0];
+  var fn=P.name+' '+evName(S,P,P.flagship);
+  news(S,'story',w.name+' won the '+P.name+' tournament'+(t?' and will face the champion for the '+t.name+' at '+fn:'')+'.');
+  if(P.id!==S.player||!t||!fw)return;
+  S.quests.push({id:S.nid++,type:'shot',w:w.id,title:t.id,due:fw,text:'Promise: '+w.name+' won the tournament and gets the '+t.name+' match at '+fn});
+  w.morale=clamp(w.morale+6,0,100);youRemember(S,w,'tourney','I won your tournament, and the main event of '+fn+' is mine.',5);
+  note(S,'The tournament',w.name+' won it, and headlines '+fn+'.','good');
 });
 
 /* ===== 50-company.js ===== */
