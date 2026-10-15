@@ -90,9 +90,9 @@ Ryan's decisions: it replaces the card editor; card size follows show length (1 
 
 Build it beside the old screen. Add a switch in Options, "New booking screen", off until step 5.9. `journey.js` must pass with the switch off after every step, and with it on from step 5.4.
 
-- [ ] **5.1 Show length.** Every show has hours: weekly shows 1 or 2 (from their size), big events 3. `E.cardShape(S)` returns how many matches and promos tonight's show takes. Old cards still validate.
+- [x] **5.1 Show length.** (Done another way: the show clock, `src/97-time.js`, two hours of television or three of a big event.) Every show has hours: weekly shows 1 or 2 (from their size), big events 3. `E.cardShape(S)` returns how many matches and promos tonight's show takes. Old cards still validate.
 - [x] **5.2 Promos are segments.** Built in 0.14: `src/93-segments.js`, `app/src/screens/booking/Segments.tsx`. Build on it, do not replace it. What is left: a contract signing kind, and the opening promo as an ordinary slot once 5.1 gives shows a length.
-- [ ] **5.3 Time.** Each segment has minutes. The show has a total. `E.cardTime(S, card)` returns each segment's ideal length and what too short or too long costs it.
+- [x] **5.3 Time.** (Done another way: every segment has minutes and the run sheet must fill the clock, `E.clock`, `E.fitShow`.) Each segment has minutes. The show has a total. `E.cardTime(S, card)` returns each segment's ideal length and what too short or too long costs it.
 - [ ] **5.4 The screen.** Slot cards in running order: tap a slot to fill it (people, match type or promo kind, finish), with suggested picks first. One time bar across the top split by segment. Each split moves with plus and minus buttons as well as by dragging. Quick-fill buttons: "Suggest the whole card", "Suggest the rest".
 - [ ] **5.5 What the screen tells you.** Crowd heat for tonight, the storyline beat due (job 4), who is tired or hurt, and booking power left. No more than one line each.
 - [ ] **5.6 The show plays segment by segment.** After each: a grade, the work score and the crowd score side by side, and the points that moved it, popping up one at a time. A grade for the show at the end. Skippable with one button.
@@ -113,7 +113,7 @@ Build it beside the old screen. Add a switch in Options, "New booking screen", o
 ## Job 7. Television by the hour, streaming, ratings wars (task 5)
 
 - [ ] **7.1 Networks.** Four to six invented networks and streamers, each with tastes (family, sport, late night, niche). A deal has an hourly rate, a night, a slot, a length in weeks and a ratings target. Replace `P.slot`, `E.askSlot` and the network attempt in `E.makeShow` with deals; migrate old saves to an equal deal.
-- [ ] **7.2 Ratings per hour** in the show report, against the target.
+- [x] **7.2 Ratings per hour** (Done another way: the top of each hour is judged against the crowd and kept as `rep.tops`.) in the show report, against the target.
 - [ ] **7.3 The network talks to you.** Executive calls, content rules, renewal countdowns, a bidding war when two want you, a warning before a cancellation.
 - [ ] **7.4 Streaming.** Pays per subscriber, grows with the tape library and match quality, lifts popularity in cities you do not tour, and can clash with a television deal that wants exclusivity.
 - [ ] **7.5 Nights.** Every promotion has a night. A network or streamer can offer to move your show onto a rival's night. Saying yes starts a ratings war with a weekly winner in the news.
