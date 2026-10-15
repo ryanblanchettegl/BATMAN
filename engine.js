@@ -7067,17 +7067,19 @@ var GR_SIFT={
     {t:'#p_teach#',if:function(c){return c.k==='teach';}},
     {t:'#p_shadow#',if:function(c){return c.k==='shadow';}},
     {t:'#p_owed#',if:function(c){return c.k==='owed';}},
-    {t:'#p_again#',if:function(c){return c.k==='again';}}
+    {t:'#p_again#',if:function(c){return c.k==='again';}},
+    {t:'#p_chase#',if:function(c){return c.k==='chase';}}
   ],
   p_rubber:['One more match settles it.','The series is too close to leave alone.','The crowd wants to know who is better. So do they.','Best of {n} is not enough. Make it a decider.'],
   p_rematch:['{b} never got the rematch.','{b} has been waiting for this since the night the belt went.','The old champion against the new one.','{b} says the title was taken, not won.'],
   p_heat:['There is real heat here. Put it in the ring before it boils over backstage.','They cannot stand each other. The crowd will feel it.','Nobody has to act. That is the best kind of story.'],
   p_teach:['The student is ready to step out of the shadow.','Teacher against student: one of them learns something.','{b} taught {a} everything. Almost everything.'],
   p_shadow:['{a} is tired of standing behind {b}.','Partners who need different things.','One of them is going to turn. The question is when.'],
+  p_chase:['{a} keeps coming up short against {b}. One day they will not.','The long chase: every loss makes the day {a} finally wins mean more.','{b} has the belt and the wins. {a} has the crowd waiting.','Make them wait. Then pay it off.'],
   p_again:['They were never really finished.','The last chapter left a door open.','{a} and {b} again. The crowd remembers.','Months later, it still is not settled.'],
   p_owed:['{a} beat {b} clean and {b} has not forgotten.','{b} wants the loss back.','Last time, {a} won. {b} says that was the last time.']
 };
-var SIFT_N={rubber:'The decider',rematch:'The rematch never given',heat:'Real heat',teach:'Teacher and student',shadow:'Partners apart',owed:'A loss to pay back',again:'Unfinished business'};
+var SIFT_N={rubber:'The decider',rematch:'The rematch never given',heat:'Real heat',teach:'Teacher and student',shadow:'Partners apart',owed:'A loss to pay back',again:'Unfinished business',chase:'The long chase'};
 
 /** Every storyline the game can find on your roster right now, best first. */
 E.sift=function(S){
@@ -7120,6 +7122,11 @@ E.sift=function(S){
   (S.teams||[]).forEach(function(tm){if(!tm.m||tm.m.length!==2||!on[tm.m[0]]||!on[tm.m[1]])return;
     var ja=jealOf(S,tm.m[0],tm.m[1]),jb=jealOf(S,tm.m[1],tm.m[0]),j=Math.max(ja,jb);if(j<35)return;var x=ja>=jb?tm.m[0]:tm.m[1],y=x===tm.m[0]?tm.m[1]:tm.m[0];
     add('shadow',x,y,30+j/2,{lines:[S.w[x].name+' and '+S.w[y].name+(tm.name?' team as '+tm.name+'.':' are a team.'),S.w[x].name+' has grown jealous of '+S.w[y].name+'.']});});
+  // the long chase: somebody your champion has beaten again and again, still close behind
+  P.titles.forEach(function(t){if(t.tag||!t.holders.length)return;var ch=t.holders[0];if(!on[ch])return;
+    Object.keys(S.h2h||{}).forEach(function(key){var h=S.h2h[key],ids=key.split('-').map(Number);if(ids.indexOf(ch)<0)return;var o=ids[0]===ch?ids[1]:ids[0];if(!on[o])return;
+      var lo=Math.min(ch,o),cw=ch===lo?h.a:h.b,ow=ch===lo?h.b:h.a;if(cw<2||ow>0||S.w[o].ovr<S.w[ch].ovr-10)return;
+      add('chase',o,ch,40+cw*7,{lines:[S.w[ch].name+' holds the '+t.name+' and has beaten '+S.w[o].name+' '+(cw===2?'twice':cw+' times')+'.',S.w[o].name+' has never won one. The crowd is starting to want it.']});});});
   // unfinished business: a story that ended hot at least twelve weeks ago, and both still here
   Object.keys(S.embers||{}).forEach(function(key){var e=S.embers[key],ids=key.split('-').map(Number);if(S.week-e.w<12||e.h<55)return;
     add('again',ids[0],ids[1],35+e.h/3,{lines:[S.w[ids[0]].name+' and '+S.w[ids[1]].name+' ended their story '+(S.week-e.w)+' weeks ago, still hot.',(e.n>1?'They have done this '+e.n+' times now.':'Start it again and it picks up where it left off.')]});});

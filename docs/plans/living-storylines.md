@@ -98,3 +98,4 @@ segment moves, and an ending the booker chooses at the right moment.
   one less over turns bad; two villains, the one more over comes good. It heats the feud and gives it room.
 - **A home town ending.** A feud that ends in one of the two's home towns (or up the road from it) pays a fifth more,
   the report says so, and they remember it.
+- **The long chase** (Stories waiting): a champion who has beaten the same challenger again and again, with the challenger still close, is pitched as a story. Ryan chose living storylines over scripted templates on 15 October; what the templates wanted comes in as patterns and twists like this one.
