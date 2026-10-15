@@ -171,10 +171,12 @@ async function run(mode) {
   // the starting face is random, so pick styles it does not already have
   const face0 = (await view(page)).cw.face, hr = (face0.hr + 3) % 10, ms = (face0.ms + 3) % 10;
   let before = await sum(page, '#portraitCanvas');
+  await page.waitForFunction(() => !document.querySelector('.status.toast, .toast'), null, { timeout: 15000 }).catch(() => {});   // a note over the creator would swallow the press
   await page.click('[data-t="caw-part"][data-v="hr"]'); await page.click('[data-t="caw-pick"][data-v="' + hr + '"]');
   must(new RegExp('^Hair ' + (hr + 1) + ': ').test(await page.$eval('.caw-split [role="status"]', e => e.textContent)) && await repainted(page, '#portraitCanvas', before), 'picking a hair style did not preview it');
   must((await view(page)).cw.face.hr === face0.hr, 'a style was applied before Apply was pressed');
   await page.click('[data-t="caw-apply"]'); must((await view(page)).cw.face.hr === hr && await page.$eval('[data-t="caw-apply"]', e => e.disabled), 'hair was not applied');
+  await page.waitForFunction(() => !document.querySelector('.status.toast, .toast'), null, { timeout: 15000 }).catch(() => {});
   await page.click('[data-t="caw-part"][data-v="ms"]'); await page.click('[data-t="caw-pick"][data-v="' + ms + '"]'); await page.click('[data-t="caw-apply"]');
   must((await view(page)).cw.face.ms === ms, 'mustache was not applied');
   await ok(t, 'creator hair and mustache', 'hair ' + (hr + 1) + ', mustache ' + (ms + 1));
