@@ -1,13 +1,15 @@
 /* ===== Contract clauses (docs/plans/contract-clauses.md, NEXT.md 11.1) =====
    A wrestler cares about at most three clauses, chosen by who they are. Each one they want and get lowers what they
    ask for. A clause is kept on the wrestler (w.cl) for the length of the deal and does what it says:
-   paid travel (their body recovers faster, at a weekly cost), a no-cut promise (letting them go costs six months'
+   paid travel (their body recovers faster, at a weekly cost), a merchandise share (a quarter of their lines' money), a no-cut promise (letting them go costs six months'
    pay and the room hears about it), and a title match (a promised shot within twelve weeks). */
 var CLAUSE={
   travel:{n:'Paid travel',d:'You pay their travel. Their body recovers faster between shows. It costs a tenth of their wage again each week.',save:0.06,
     wants:function(S,w){return w.age>=33||w.cond<70;}},
   nocut:{n:'A no-cut promise',d:'You will not let them go. If you do, it costs six months of their wage and the locker room hears about it.',save:0.08,
     wants:function(S,w){return w.morale<55||!!w.cut;}},
+  merch:{n:'A merchandise share',d:'A quarter of what their own merchandise lines make goes to them. Every line with their face on it keeps them happy.',save:0.07,
+    wants:function(S,w){return w.mic>=72;}},
   title:{n:'A title match',d:'A match for a belt within twelve weeks of signing. Break it and they will remember.',save:0.1,
     wants:function(S,w){var P=S.promos[S.player];return w.ovr>=P.image-6;}}
 };
@@ -39,6 +41,8 @@ E.clauses=function(S,id){var w=S.w[id];if(!w)return [];var ask=E.ask(S,w);return
 })();
 /* paid travel: the body recovers faster, and the company pays a tenth of the wage again each week */
 WEEKX.push(function(S){if(S.cal)return;var P=S.promos[S.player];rosterOf(S,P.id).forEach(function(w){if(!w.cl||!w.cl.travel)return;w.cond=Math.min(100,w.cond+2);P.cash-=Math.round(w.wage*0.1);});});
+/* a merchandise share: somebody with a line out and a share of it is happier for it each week */
+WEEKX.push(function(S){if(S.cal)return;var P=S.promos[S.player];(P.lines||[]).forEach(function(L){var w=S.w[L.w];if(w&&w.cl&&w.cl.merch)w.morale=clamp(w.morale+1,0,100);});});
 /* a clause lasts as long as the deal it was signed with */
 WEEKX.push(function(S){S.w.forEach(function(w){if(w.cl&&(w.promo!==S.player||w.rt))delete w.cl;});});
 /* renewing with clauses: the same saving on the new price, and the clauses start again with the new deal */
