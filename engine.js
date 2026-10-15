@@ -2399,7 +2399,7 @@ LIVE_ORDER=['chaos','botch','titlecall','owner','sponsor','network','overtime','
   var begin=E.liveBegin;
   E.liveBegin=function(S,card){
     var r=begin(S,card);
-    if(r&&r.ok&&S.live){var n0={inj:{},mor:{},notes:[],fh:{}};rosterOf(S,S.player).forEach(function(w){n0.inj[w.id]=w.inj||0;n0.mor[w.id]=w.morale;});activeFeuds(S).forEach(function(f){if(f.promo===S.player)n0.fh[f.id]=Math.round(f.heat);});S.live.n0=n0;}
+    if(r&&r.ok&&S.live){var n0={inj:{},mor:{},ov:{},notes:[],fh:{}};rosterOf(S,S.player).forEach(function(w){n0.inj[w.id]=w.inj||0;n0.mor[w.id]=w.morale;n0.ov[w.id]=w.ovr;});activeFeuds(S).forEach(function(f){if(f.promo===S.player)n0.fh[f.id]=Math.round(f.heat);});S.live.n0=n0;}
     return r;
   };
 })();
@@ -2422,15 +2422,16 @@ function nightWriters(S,P,rep,card){
 }
 SHOWX.push(function(S,P,show,rep,card){
   var L=S.live;if(P.id!==S.player||!L||!L.n0)return;
-  var n0=L.n0,hurt=[],mood=[];
+  var n0=L.n0,hurt=[],mood=[],grew=[];
   rosterOf(S,P.id).forEach(function(w){
     if(w.inj>0&&!(n0.inj[w.id]>0)){var t=P.titles.filter(function(x){return x.holders.indexOf(w.id)>=0;})[0];hurt.push({id:w.id,weeks:w.inj,belt:t?t.name:null});}
     if(n0.mor[w.id]!=null){var d=Math.round(w.morale-n0.mor[w.id]);if(Math.abs(d)>=4)mood.push({id:w.id,d:d});}
+    if(n0.ov&&n0.ov[w.id]!=null&&w.ovr-n0.ov[w.id]>=0.5)grew.push({id:w.id,d:Math.round((w.ovr-n0.ov[w.id])*10)/10});
   });
   mood.sort(function(a,b){return Math.abs(b.d)-Math.abs(a.d);});
   var sh=!show.big&&typeof airRec==='function'?airRec(P,show.id):null;
   rep.left={key:L.key,gate:{att:rep.att,cap:rep.cap,sold:rep.sellout,money:rep.gate},tv:{v:rep.viewers,was:sh&&sh.va?Math.round(sh.va):null,buys:rep.buys||0},
-    hurt:hurt,mood:mood.slice(0,8),notes:n0.notes.slice(),writers:nightWriters(S,P,rep,card),
+    hurt:hurt,mood:mood.slice(0,8),grew:grew.sort(function(a,b){return b.d-a.d;}).slice(0,8),notes:n0.notes.slice(),writers:nightWriters(S,P,rep,card),
     // how each feud moved tonight (src/21-living.js): hotter, cooler, ended or fizzled
     feuds:S.feuds.filter(function(f){return f.promo===P.id&&n0.fh&&n0.fh[f.id]!=null;}).map(function(f){return {id:f.id,l:feudLabel(S,f),was:n0.fh[f.id],now:Math.round(f.heat),end:f.res&&!f.dead?1:0,ph:f.res?null:PHASE_N[feudPhase(S,f)]};})
       .filter(function(x){return x.end||Math.abs(x.now-x.was)>=3;}).sort(function(a,b){return b.end-a.end||Math.abs(b.now-b.was)-Math.abs(a.now-a.was);})};
@@ -2454,6 +2455,9 @@ E.afterShow=function(S){
   if(down.length||up.length||rel.length){
     var d=[];down.forEach(function(m){d.push(nm(m.id)+' went home unhappy.');});up.forEach(function(m){d.push(nm(m.id)+' went home in a better mood.');});rel.forEach(function(n){d.push(n.h+(n.t?': '+n.t:'')+(/[.!?]$/.test(n.t||n.h)?'':'.'));});
     add('room','The locker room',(down.length?down.length+' went home unhappy':'Nobody went home unhappy')+(up.length?', '+up.length+' in a better mood':'')+(rel.length?'. '+rel.length+' '+(rel.length===1?'thing':'things')+' people will remember':'')+'.',d,down.length?'bad':(up.length?'good':''));
+  // level-ups: who grew tonight, and the match that did it (NEXT.md 8.3)
+  if((L.grew||[]).length){var mw=function(id){var g=(rep.segs||[]).filter(function(x){return x.k==='match'&&x.ids&&x.ids.indexOf(id)>=0;})[0];return g?(g.wi&&g.wi.indexOf(id)>=0?'won ':'')+(g.label||'their match')+', '+starG(g.ov):'their night';};
+    add('grew','Who grew',L.grew.length===1?nm(L.grew[0].id)+' came out of it a bigger name.':L.grew.length+' came out of it bigger names.',L.grew.map(function(g){return nm(g.id)+' is more over now ('+mw(g.id)+').';}),'good');}
   }
   if(L.feuds&&L.feuds.length){var fl=function(x){return x.l+(x.end?': ended tonight':(x.now>x.was?': hotter, '+x.was+' to '+x.now:': cooler, '+x.was+' to '+x.now)+(x.ph?' ('+x.ph.toLowerCase()+')':''));};
     add('feuds','The feuds',fl(L.feuds[0])+(L.feuds.length>1?', and '+(L.feuds.length-1)+' more':'')+'.',L.feuds.map(function(x){return fl(x)+'.';}),L.feuds.some(function(x){return x.end;})?'good':(L.feuds[0].now>L.feuds[0].was?'good':'warn'));}
