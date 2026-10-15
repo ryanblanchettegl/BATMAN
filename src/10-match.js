@@ -276,7 +276,7 @@ function doMatch(S,P,show,m,i,n,rep,used){
   MQX.forEach(function(fn){var r=fn(ctx);if(r){mq+=r.d;if(r.x)FX(r.d>=0,r.x);}});
   var MQ=clamp(mq,5,99);ctx.MQ=MQ;
   // crowd reaction
-  var ov=all.map(function(w){return w.ovr;}),mavg=avg(all.map(function(w){return w.mom;})),cr=0.6*avg(ov)+0.4*Math.max.apply(null,ov)+mavg*0.6+(avg(all.map(function(w){return w.cha;}))-65)*0.06;
+  var ov=all.map(function(w){return w.ovr;}),mavg=avg(all.map(function(w){return w.mom;})),cr=0.6*avg(ov)+0.4*Math.max.apply(null,ov)+mavg*0.8+(avg(all.map(function(w){return w.cha;}))-65)*0.06;
   if(mavg>=3.5)FX(true,'Hot momentum coming in');else if(mavg<=-3.5)FX(false,'Cold momentum coming in');
   if(m.mt==='1v1'){
     var d=Math.abs(ov[0]-ov[1]);if(d>25&&mins>7){cr-=(d-25)*0.3;FX(false,'A mismatch that dragged on');}

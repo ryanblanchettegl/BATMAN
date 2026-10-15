@@ -122,7 +122,7 @@ Build it beside the old screen. Add a switch in Options, "New booking screen", o
 - [ ] **8.1 The ranking.** Every wrestler in every promotion and every free agent, ranked each week from results, match quality, titles and popularity. `E.power` is the seed. A weekly top ten on Stories; a yearly top 500 kept in History with last year's place beside each name.
 - [x] **8.2 It matters.** (Done 15 October: climbing into the power ten lifts morale, dropping out of it on a losing run costs some, and the notification bar says so. Asking price is not touched yet.) A wrestler cares about their place: a big rise lifts morale and their asking price, a fall on a losing run starts grumbling.
 - [x] **8.3 Level-up pop-ups.** (Done 15 October as an item on After the show rather than a pop-up: Who grew, each with the match that did it.) After a show, wrestlers who improved get one line each in a pop-up: what went up and why.
-- [ ] **8.4 Momentum.** Make it count for more in match odds and crowd reaction, and say so on the card and in the report.
+- [x] **8.4 Momentum.** (Done 15 October: the run sheet flags On a roll and Cold streak, and the crowd weighs momentum a third more. The report already named hot and cold momentum.) Make it count for more in match odds and crowd reaction, and say so on the card and in the report.
 
 ## Job 9. The dirt sheet (task 8)
 

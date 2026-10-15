@@ -166,6 +166,10 @@ function cardFlags(S,card,i){
   // a stipulation in a feud: earned when the story is hot enough to carry it, too soon when it is not (src/21-living.js)
   if(m&&m.stip&&m.stip!=='std'&&m.sides&&m.sides.length===2&&m.sides[0][0]!=null&&m.sides[1][0]!=null){var ff=feudOf(S,m.sides[0][0],m.sides[1][0]);
     var sf=stipFitOf(ff,m.stip),sn=(STIP[m.stip]||{}).n||'This stipulation';if(sf>=4)add('good','Earned','The feud is hot enough to carry a '+sn.toLowerCase()+' match. It will add to the story.');else if(sf<0)add('bad','Too soon',sn+' needs a hotter feud than this. It will feel like too much, too soon.');}
+  // momentum anybody can see: a winning run or a cold one (NEXT.md 8.4)
+  if(m&&m.sides){var ids=flat(m.sides).filter(function(id){return id!=null;}),hot=ids.filter(function(id){return S.w[id]&&S.w[id].mom>=5;}),cold=ids.filter(function(id){return S.w[id]&&S.w[id].mom<=-5;});
+    if(hot.length)add('good','On a roll',hot.map(function(id){return S.w[id].name;}).join(' and ')+(hot.length>1?' are':' is')+' on a roll. The crowd is with a winner.');
+    if(cold.length)add('warn','Cold streak',cold.map(function(id){return S.w[id].name;}).join(' and ')+(cold.length>1?' have':' has')+' been losing. The crowd has stopped believing.');}
   // where the feud stands, when it matters: boiling, going stale, or this is its last night
   if(m&&m.sides&&m.sides.length===2&&m.sides[0][0]!=null&&m.sides[1][0]!=null){var fq=feudOf(S,m.sides[0][0],m.sides[1][0]);if(fq&&!fq.res){var ph=feudPhase(S,fq);
     if(m.end)add('good','Final chapter','The booker has marked this as the end of the story.');
