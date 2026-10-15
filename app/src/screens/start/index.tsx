@@ -176,7 +176,10 @@ function PickRow(p: { k: string; table: Record<string, any>; cur: string; label:
 /* ---------- the glossary: the words the game uses ---------- */
 const WORDS: [string, string, string][] = [
   ['overness', 'Overness', 'How much the crowd cares about a wrestler, from 0 to 100. The higher it is, the more a wrestler draws and the more their wins and losses matter.'],
-  ['heat', 'Heat', 'How hot a rivalry is, from 0 to 100. Heat builds from promos, ambushes and matches between the two. A feud at 60 or more is ready for a big finish.'],
+  ['heat', 'Heat', 'How much the crowd cares about a feud, from 0 to 100. Promos, angles, matches and twists build it. A feud has no set length: it ends when you end it, or fizzles if nobody cares.'],
+  ['fresh', 'Freshness', 'How much a feud still has to give. Every beat uses some up, the same beat twice uses more, and a twist, a turn or a rest gives it back. Hot and nearly used up is the moment to end it.'],
+  ['night', 'Kind of night', 'Each big event is an arena show, a ballroom show, a gimmick night, a battle royal night or a tournament night, set on the Year planner. Each changes the house, the price, the buys and what the crowd expects. A month can also go dark.'],
+  ['clause', 'Contract clause', 'Something a wrestler wants written into a deal: paid travel, a no-cut promise, a merchandise share or a title match. Each one you agree to brings their price down.'],
   ['workrate', 'Work rate', 'How good a wrestler is in the ring: brawling, technical skill and speed together. It lifts match quality, but the crowd also needs a reason to care.'],
   ['momentum', 'Momentum', 'Whether a wrestler is hot or cold right now. Wins and big moments raise it, losses lower it. A hot wrestler gets the benefit of the doubt on the night.'],
   ['bp', 'Booking power', 'What you spend to call a finish yourself. The owner grants some each week. The favourite costs 1, an underdog 2, a long shot 3, and a title change 1 more.'],
