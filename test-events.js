@@ -77,5 +77,14 @@ for (let w = 0; w < 50 && !S.over; w++) {
   const a = run(0), b = run(2);
   ok(a.wk && b.wk && b.wk.hype > a.wk.hype && b.wk.after === 0 && b.adv > a.adv, 'promoting the night did nothing: ' + JSON.stringify({ a, b }));
 }
+// the press scrum after a big night: one question, three answers, each does what it says
+{
+  const S = E.newGame('pdw', 1, { name: 'R' }); let sc = null;
+  for (let w = 0; w < 5 && !sc; w++) { S.inbox.filter(e => !e.done).forEach(e => E.resolveEvent(S, e.id, 0));
+    while (S.qi < S.queue.length) { const c = E.suggest(S), pr = E.preShow(S, c); if (pr) { E.resolvePre(S, c, 0); E.fitShow(S, c); } if (E.validate(S, c).errors.length) { S.qi++; continue; } E.runPlayerShow(S, c); }
+    sc = S.inbox.find(e => e.type === 'scrum' && !e.done); if (!sc) E.endWeek(S); }
+  ok(sc && sc.choices.length === 3 && !sc.choices[1].includes(S.reports[0].name), 'no scrum after a big night, or it sells the night just gone: ' + JSON.stringify(sc && sc.choices));
+  if (sc) { const h0 = S.hype || 0; E.resolveEvent(S, sc.id, 1); ok((S.hype || 0) > h0, 'selling the next big night did not build hype'); }
+}
 if (fails) { console.log('FAILED: ' + fails); process.exit(1); }
 console.log('test-events: all passed');

@@ -65,3 +65,22 @@ WEEKX.push(function(S){var P=S.promos[S.player];if(!P||S.cal)return;if(P.evSp)P.
 SHOWX.push(function(S,P,show){if(S.cal||P.id!==S.player||!show.big)return;P.evHype=0;});
 E.evSpend=function(S,lvl){var P=S.promos[S.player];lvl=clamp(lvl|0,0,2);P.evSp=lvl;return {ok:true,msg:lvl?EV_SPN[lvl]+' spending on the next big night: '+money(evSpendCost(P))+' a week.':'No more money on promoting the next big night.'};};
 E.evHype=function(S){var P=S.promos[S.player],h=P.evHype||0;return {lvl:P.evSp||0,names:EV_SPN,cost:EV_SPC.map(function(c){return Math.round(c*P.inc0);}),h:h,pct:Math.round(h/EV_HMAX*100),word:h<=0?'Nothing yet':(h<0.05?'A little buzz':(h<0.1?'Building':(h<EV_HMAX?'Strong':'As high as it goes')))};};
+/* the press scrum after a big night (NEXT.md 9.3): one question, and the answer is yours. It costs nothing and it is
+   remembered: praise the roster, sell the next big night, or say the main event was only the start. */
+SHOWX.push(function(S,P,show,rep){
+  if(S.cal||P.id!==S.player||!show.big)return;
+  var ms=(rep.segs||[]).filter(function(g){return g.k==='match';}),m=ms[ms.length-1];if(!m||!m.wi||!m.wi.length||!m.ids)return;
+  var w=m.wi[0],o=m.ids.filter(function(id){return m.wi.indexOf(id)<0;})[0];if(o==null||!S.w[w]||!S.w[o])return;
+  var nn=P.name+' '+evName(S,P,(cal(S.week).month+1)%12),cs=repCS(rep),good=cs>=0;
+  pushEv(S,{type:'scrum',w:w,o:o,text:'The press catches you on the way out of '+rep.name+'. '+(good?'The room is in a good mood':'The room smells blood')+'. One question: "What did tonight mean?"',
+    choices:['"This roster is the best in the business."','"Wait until you see '+nn+'."','"'+S.w[w].name+' and '+S.w[o].name+' are not finished."']});
+});
+EVR.scrum=function(S,ev,choice,P,w,o){
+  if(choice===0){rosterOf(S,P.id).forEach(function(x){if(!x.nw)x.morale=clamp(x.morale+2,0,100);});if(w)youRemember(S,w,'praised','You told the press the roster was the best in the business, after my main event.',2);
+    return 'The locker room reads it the next morning. Everybody walks a little taller.';}
+  if(choice===1){S.hype=(S.hype||0)+0.03;if(S.owner&&!S.owner.me)S.owner.trust=clamp(S.owner.trust+1,0,100);return 'It runs as the headline. People are already talking about the next big night.';}
+  if(!w||!o||w.promo!==P.id||o.promo!==P.id)return 'One of them has gone. The quote ages badly.';
+  var f=feudOf(S,w.id,o.id);if(f&&!f.res){heatUp(S,f,6,'The booker told the press they were not finished');}else startFeud(S,P,w,o,32,'The booker told the press they were not finished',{force:true});
+  [w,o].forEach(function(x){youRemember(S,x,'notdone','You told the press our story was not finished.',3);});
+  return 'Now everybody wants the rematch. '+w.name+' and '+o.name+' are a story again.';
+};
