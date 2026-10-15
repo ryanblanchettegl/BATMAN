@@ -88,7 +88,7 @@ export function RoadYearWindow() {
   return <Window title="The schedule" wide ok="Done">
     <p>Your shows go from city to city in a loop, the nearest city next. The building is booked on what you draw today. A television show goes on sale four weeks out, a big event eight; Soon means not on sale yet. A strong market fills a bigger building; a good night there makes it stronger, and staying away cools it.</p>
     <table class="mt1" data-t="road-ahead"><thead><tr><th>When</th><th>Show</th><th>City</th><th>Market</th><th class="r">Sold</th><th class="r">Holds</th></tr></thead>
-      <tbody>{L.map((a, i) => <tr key={i}><td>{a.when}</td><td>{a.show}{a.big ? <> <Tag kind="gold">Big event</Tag></> : null}</td><td><b>{a.city}</b></td><td>{a.mkt}</td><td class="r num">{a.on ? num(a.sold) : 'Soon'}</td><td class="r num">{num(a.cap)}</td></tr>)}</tbody></table>
+      <tbody>{L.map((a, i) => <tr key={i}><td>{a.when}</td><td>{a.show}{a.big ? <> <Tag kind="gold">{a.kind || 'Big event'}</Tag></> : null}</td><td><b>{a.city}</b></td><td>{a.mkt}</td><td class="r num">{a.on ? num(a.sold) : 'Soon'}</td><td class="r num">{num(a.cap)}</td></tr>)}</tbody></table>
     <p class="muted mt1">The loop: {R.join(', ')}.</p>
   </Window>;
 }
