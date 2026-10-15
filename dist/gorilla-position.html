@@ -12562,6 +12562,10 @@ function netRumours(S,wk){
     if(P.cash<0)out.push({lvl:'likely',t:P.name+' are behind on their bills. Expect cuts.'});
     if(P.shows.length<3&&P.cash>0&&P.image>=45+15*P.shows.length&&R.length>=14*(P.shows.length+1))out.push({lvl:'likely',t:P.name+' have been talking to a network about another weekly show.'});
   });
+  // a thin rumour is wrong about half the time (NEXT.md 9.2): some weeks the paper hears that a happy star wants out.
+  // It is filed like any other, so it comes due and is corrected: "stayed with them after all"
+  if(h01(wk+'lie'+S.seed)<0.5){var cand=[];S.order.forEach(function(pid){if(pid===S.player)return;rosterOf(S,pid).forEach(function(w){if(!w.nw&&w.con!=null&&w.con>20&&w.morale>=65&&w.ovr>=S.promos[pid].image-5)cand.push(w);});});
+    if(cand.length){var lw=cand[Math.floor(h01(wk+'liew'+S.seed)*cand.length)%cand.length],lp=S.promos[lw.promo];out.push({lvl:'thin',t:lw.name+' is said to be unhappy with their spot at '+lp.name+'. Other companies will be listening.',w:lw.id,k:'unh',pid:lw.promo,due:wk+6,lie:1});}}
   var fa=S.w.filter(function(w){return w.promo==='FA'&&!w.rt&&!w.nw;}).sort(function(a,b){return b.ovr-a.ovr;})[0],rv=S.order.filter(function(p){var g=modelOf(S.promos[p]).gender;return p!==S.player&&(!g||!fa||g===fa.g);});
   if(fa&&rv.length){var fp=netPickH(rv,wk+'thin');out.push({lvl:'thin',t:fa.name+' was seen at a '+S.promos[fp].name+' show this week. It could mean anything.',w:fa.id,k:'fa',pid:fp,due:wk+4});}
   // a team that is coming apart: one partner jealous of the other (the warning before a betrayal)

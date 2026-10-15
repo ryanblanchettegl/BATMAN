@@ -127,7 +127,7 @@ Build it beside the old screen. Add a switch in Options, "New booking screen", o
 ## Job 9. The dirt sheet (task 8)
 
 - [x] **9.1 One page a week.** Built in 0.14 as Net, Dirt sheet (`src/94-net.js`, `app/src/screens/net/Sheet.tsx`). Net code never calls `rnd(S)`; keep it that way.
-- [ ] **9.2 Rumours can be wrong.** (`netRumours` in `src/94-net.js` only prints true ones today.) A thin rumour is false about half the time. Acting on one is the player's risk.
+- [x] **9.2 Rumours can be wrong.** (Done 15 October: about half the weeks the paper prints a thin rumour that a happy star wants out; it comes due and is corrected like any other.) (`netRumours` in `src/94-net.js` only prints true ones today.) A thin rumour is false about half the time. Acting on one is the player's risk.
 - [ ] **9.3 The rest.** Rival backstage drama, "on this day" from the save's own history, and a scrum after each big event where one answer is the player's to choose.
 
 ## Job 10. The indie scene (task 9)
