@@ -2909,6 +2909,7 @@ SHOWX.push(function(S,P,show,rep){
 
 /* ===== 50-company.js ===== */
 /* ---------- the company: broadcast slot, production, risk, tickets, advertising, sponsors ---------- */
+var SP_TIER=['Local','Regional','National'];
 function mkOffer(S,P){
   var used={};S.sponsors.concat(S.spOffers).forEach(function(x){used[x.name]=1;});
   var names=(dbOf(S).sponsors||['Ironclad Tools','Blue Comet Energy','Harbor Lager','Pinnacle Insurance','Redline Auto Parts','Summit Sports Drinks','Big Sky Jerky','Voltage Games']).filter(function(n){return !used[n];});if(!names.length)return null;
@@ -2916,6 +2917,8 @@ function mkOffer(S,P){
   if(type==='risk'){o.val=ri(S,0,2);mult=[1.5,1.2,1][o.val];o.text='Keep the product '+RISKN[o.val]+(o.val?' or tamer':'');}
   else if(type==='image'){o.val=Math.round(P.image-ri(S,0,3));o.text='Popularity stays at '+o.val+' or better';}
   else{var lo=99;Object.keys(P.base).forEach(function(k){if(P.base[k]<lo)lo=P.base[k];});o.val=Math.round(crowdScoreD(-ri(S,5,10)));o.cg=1;o.text='No show graded under '+gradeG(o.val);}
+  // a tier, picked by a hash so the seeded draws stay in step: national sponsors only talk to a popular company (TASKS 6)
+  var hv=h01('sp'+S.seed+o.name+S.week),tr=P.image>=65&&hv<0.3?2:(P.image>=45&&hv<0.65?1:0);o.tier=tr;o.tn=SP_TIER[tr];mult*=[1,1.35,1.8][tr];
   o.pay=Math.max(1000,Math.round(P.inc0*(0.012+rnd(S)*0.02)*mult*mixOf(P).sp/1000)*1000);
   return o;
 }
@@ -2959,6 +2962,9 @@ E.askSlot=function(S){
   return 'The network says not yet, but leaves a door open: beat expectations on your next two TV shows and the slot is yours.';
 };
 E.company=function(S){var P=S.promos[S.player],rr=riskRange(P);return {riskMin:rr[0],riskMax:rr[1],spMax:spMax(P),adCost:ADV_C.map(function(c){return Math.round(c*P.inc0);}),prodCost:PRODF.map(function(f){return Math.round(P.prod*f/PRODF[P.prod0]);}),tixP:TIX_P,tixD:TIX_D,slotV:SLOT_V.map(function(v){return v/SLOT_V[P.slot0];}),slotReq:SLOT_REQ};};
+
+/* a national sponsor's advertising brings people in: every show of yours draws a little more while one is signed */
+PREX.push(function(S){if((S.sponsors||[]).some(function(o){return o.tier===2;}))S.hype=(S.hype||0)+0.02;});
 
 /* ===== 55-preshow.js ===== */
 /* ---------- before the bell: something goes wrong (or right) and you make a call ---------- */

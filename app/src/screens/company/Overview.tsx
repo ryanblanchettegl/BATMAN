@@ -77,7 +77,7 @@ function Sponsors() {
   const S = G.S; let pay = 0; S.sponsors.forEach((x: any) => { pay += x.pay; });
   return <Panel title="Sponsors">
     {S.sponsors.length ? <ul class="list">{S.sponsors.map((x: any) => <li class="col">
-      <span><b>{x.name}</b> {'·'} {cash(x.pay)} a week {'·'} {x.weeks} {plural(x.weeks, 'week')} left</span><span class="muted">Condition: {x.text}</span>
+      <span><b>{x.name}</b>{x.tn ? ' (' + x.tn.toLowerCase() + ')' : ''} {'·'} {cash(x.pay)} a week {'·'} {x.weeks} {plural(x.weeks, 'week')} left</span><span class="muted">Condition: {x.text}</span>
     </li>)}</ul> : <Empty>No sponsors signed. New offers arrive on Manage, under Deals, every four weeks.</Empty>}
     {S.sponsors.length ? <p class="muted mt2">{cash(pay)} a week in all.</p> : null}
   </Panel>;

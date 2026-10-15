@@ -143,7 +143,7 @@ function Sponsors() {
   const S = G.S;
   return <Panel title="Sponsors">
     {S.sponsors.length ? <ul class="list">{S.sponsors.map((x: any, i: number) => <li>
-      <span><b>{x.name}</b> {'·'} {cash(x.pay)} a week {'·'} {x.weeks} weeks left<br /><span class="muted">Condition: {x.text}</span></span>
+      <span><b>{x.name}</b>{x.tn ? ' (' + x.tn.toLowerCase() + ')' : ''} {'·'} {cash(x.pay)} a week {'·'} {x.weeks} weeks left<br /><span class="muted">Condition: {x.text}</span></span>
       <Btn kind="sm" t="sp-drop" d={{ v: i }} onClick={() => act(() => say(E.dropSponsor(S, i)))}>End deal</Btn>
     </li>)}</ul> : <Empty>No sponsors signed. You can carry three. Take an offer from the list below.</Empty>}
   </Panel>;
@@ -154,11 +154,12 @@ function Offers() {
     {S.spOffers.length ? <ul class="list">{S.spOffers.map((x: any, i: number) => {
       const ok = E.sponsorOk(S, x);
       return <li>
-        <span><b>{x.name}</b> {'·'} {cash(x.pay)} a week for {x.weeks} weeks<br /><span class="muted">Condition: {x.text}</span></span>
+        <span><b>{x.name}</b>{x.tn ? ' (' + x.tn.toLowerCase() + ')' : ''} {'·'} {cash(x.pay)} a week for {x.weeks} weeks<br /><span class="muted">Condition: {x.text}</span></span>
         <Btn kind="sm" t="sp-accept" d={{ v: i }} disabled={!ok} onClick={() => act(() => say(E.acceptSponsor(S, i)))}>{ok ? 'Sign' : (S.sponsors.length >= 3 ? 'Full' : 'Not met')}</Btn>
       </li>;
     })}</ul> : <Empty>No offers on the table. New ones arrive every four weeks.</Empty>}
     <p class="muted mt2">Break a condition and the sponsor walks, taking a little of your reputation along.</p>
+      <p class="muted mt1">Local, regional or national: a national sponsor only talks to a popular company, pays the most, and its advertising brings a bigger house to every show.</p>
   </Panel>;
 }
 

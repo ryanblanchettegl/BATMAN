@@ -500,7 +500,7 @@ Feature list items 5 and 7.
 
 - [ ] A year planner: schedule events by type (flagship, arena, ballroom, gimmick night, battle royal, tournament). The flagship has an original name per promotion. (Partly, 15 October: twelve monthly events, each with a kind, renamed or left dark, E.evSet.)
 - [ ] Weekly promotion spend on this month's event, next month's and the flagship; a hype meter per event; a buy rate report after each. (Partly, 15 October: one weekly spend on the next big night builds its hype, E.evSpend.)
-- [ ] Sponsors with tiers, their own boosts and an ongoing goal; tier-up pop-ups, unhappy warnings, conflicts between sponsors. Today sponsors are flat deals with one condition (`src/50-company.js`).
+- [x] Sponsors with tiers, their own boosts and an ongoing goal; tier-up pop-ups, unhappy warnings, conflicts between sponsors. Today sponsors are flat deals with one condition (`src/50-company.js`). (Done 15 October in part: local, regional and national tiers; national pays most and lifts every show. `SP_TIER` in src/50-company.js.)
 
 ### 7. The tycoon layer
 - [ ] A world ranking of every wrestler across all promotions and free agents: a yearly top 500 and a weekly top ten. `E.power` in `src/90-api.js` is the seed of it.
