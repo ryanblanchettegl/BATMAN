@@ -144,6 +144,10 @@ function yearEnd(S){
   S.awards.unshift({year:yr,list:L,week:S.week});
   news(S,'world','The '+yr+' awards are in. '+(woy?woy.name+' is wrestler of the year.':''));
   S.inbox.push({id:S.nid++,type:'awards',text:'The '+yr+' year-end awards: '+L.map(function(x){return x.k+': '+x.v;}).join('. ')+'.',done:true,result:null});
+  // the year's power list (NEXT.md 8.1): the top twenty-five across the world, with last year's place beside each
+  var prevL=(S.pwList&&S.pwList[0])?S.pwList[0].l:[];
+  (S.pwList||(S.pwList=[])).unshift({year:yr,l:E.power(S,25).map(function(w){var j=-1;prevL.forEach(function(x,i){if(x.id===w.id)j=i;});return {id:w.id,n:w.name,p:S.promos[w.promo]?S.promos[w.promo].name:'',was:j>=0?j+1:0};})});
+  S.pwList=S.pwList.slice(0,5);
   S.w.forEach(function(w){w.yp=0;w.oy=w.ovr;});S.order.forEach(function(id){S.promos[id].imgY=S.promos[id].image;});S.year={};S.hofDue=true;
   if(P.id===S.player)award(S,'ACH_AWARDS');
 }
@@ -160,6 +164,8 @@ EVR.hof=function(S,ev,choice,P){
   news(S,'story',w.name+' was inducted into the '+P.name+' hall of fame.');award(S,'ACH_HOF');
   return w.name+' takes a place in the hall of fame. The ceremony is a moment the crowd will remember.';
 };
+/** The year's power lists, newest first: {year, l:[{id, n, p, was}]}. */
+E.powerYears=function(S){return S.pwList||[];};
 E.power=function(S,n){return S.w.filter(function(w){return w.promo!=='FA';}).sort(function(a,b){return ((b.yp||0)+b.ovr*0.25)-((a.yp||0)+a.ovr*0.25);}).slice(0,n||10);};
 
 /* ---------- training camp ---------- */
