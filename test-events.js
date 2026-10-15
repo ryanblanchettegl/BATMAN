@@ -86,5 +86,15 @@ for (let w = 0; w < 50 && !S.over; w++) {
   ok(sc && sc.choices.length === 3 && !sc.choices[1].includes(S.reports[0].name), 'no scrum after a big night, or it sells the night just gone: ' + JSON.stringify(sc && sc.choices));
   if (sc) { const h0 = S.hype || 0; E.resolveEvent(S, sc.id, 1); ok((S.hype || 0) > h0, 'selling the next big night did not build hype'); }
 }
+// a dark month: no big night that month, the next big night is the one after, and its crowd is hungrier
+{
+  const S = E.newGame('pdw', 1, { name: 'R' }), now = E.events(S).find(e => e.now).m, nx = (now + 1) % 12; ok(E.evSet(S, nx, { t: 'dark' }).ok, 'a month could not go dark');
+  let bigs = [];
+  for (let w = 0; w < 12; w++) { S.inbox.filter(e => !e.done).forEach(e => E.resolveEvent(S, e.id, 0)); S.queue.forEach(q => { if (q.big) bigs.push(E.cal(S.week).month); });
+    while (S.qi < S.queue.length) { const c = E.suggest(S), pr = E.preShow(S, c); if (pr) { E.resolvePre(S, c, 0); E.fitShow(S, c); } if (E.validate(S, c).errors.length) { S.qi++; continue; } E.runPlayerShow(S, c); } E.endWeek(S); }
+  ok(bigs.indexOf(nx) < 0 && bigs.length >= 2, 'the dark month still had a big night: ' + bigs.join(','));
+  const T = E.newGame('pdw', 1, { name: 'R' }), L = E.events(T).filter(e => !e.flag && !e.now).map(e => e.m); [0, 1, 2].forEach(i => E.evSet(T, L[i], { t: 'dark' }));
+  ok(!E.evSet(T, L[3], { t: 'dark' }).ok, 'a fourth dark month was allowed');
+}
 if (fails) { console.log('FAILED: ' + fails); process.exit(1); }
 console.log('test-events: all passed');

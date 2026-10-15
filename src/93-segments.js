@@ -161,7 +161,7 @@ function runSeg(S,P,show,ctx,sg,slot,opens){
     r=angle('Save',c.name+' attacks '+a.name+' after an interview. '+b.name+' runs out to make the save, and the two shake hands. A new team is born.',ov);
   }else if(sg.k==='signing'){
     // the match is made for the next big event, and the story is set to end there (src/21-living.js)
-    heatUp(S,f,clamp(6+(ov-55)/6,3,12)*hm,a.name+' and '+b.name+' signed for their match');f.finale=true;var nb=nextBigFrom(S.week+(show.big?1:0));if(f.endAt==null)f.endAt=nb;
+    heatUp(S,f,clamp(6+(ov-55)/6,3,12)*hm,a.name+' and '+b.name+' signed for their match');f.finale=true;var nb=nextBigFrom(S.week+(show.big?1:0),S);if(f.endAt==null)f.endAt=nb;
     var tbl=ov>=62;r=angle('Contract signing',a.name+' and '+b.name+' sit across a table in the ring and sign for '+S.promos[f.promo].name+' '+evName(S,S.promos[f.promo],cal(nb).month)+'. '+(tbl?'The ink is barely dry when the table goes over.':'They sign, stare, and leave it there.'),ov);
   }else if(sg.k==='recap'){
     heatUp(S,f,3,'A video package told the story of '+a.name+' and '+b.name);

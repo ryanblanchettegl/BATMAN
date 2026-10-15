@@ -10,6 +10,7 @@ var EV_TYPES={
   ballroom:{n:'Ballroom show',cap:0.4,price:0.75,buys:0.7,exp:-6,prod:0.4,d:'A small room and a loud crowd. Fewer seats and fewer buys, but it costs far less to put on and the crowd forgives more.'},
   gimmick:{n:'Gimmick night',cap:0.9,price:1,buys:1.1,exp:3,prod:1.1,d:'A night of stipulations. The buys go up, and the crowd expects violence.'},
   rumble:{n:'Battle royal night',cap:1,price:0.9,buys:1.05,exp:1,prod:1,d:'A night built around a battle royal. A full house at a friendly price.'},
+  dark:{n:'No event this month',cap:1,price:1,buys:1,exp:0,prod:1,d:'A month off. No big night, no big money, and no big costs. The crowd is hungrier for the next one.'},
   tourn:{n:'Tournament night',cap:0.85,price:0.9,buys:0.95,exp:-2,prod:0.9,d:'A bracket in one night. The crowd comes to see who survives.'}
 };
 function evTy(show){return (show&&show.big&&EV_TYPES[show.ty])||EV_TYPES.arena;}
@@ -36,7 +37,7 @@ E.evSet=function(S,m,o){
   if(m===cal(S.week).month)return {ok:false,msg:'This month\u2019s event is already on sale. Change a later one.'};
   if(o.n!=null){var n=String(o.n).replace(/\s+/g,' ').trim().slice(0,28);if(n.length<3)return {ok:false,msg:'A name needs three letters or more.'};
     if(L.some(function(x,i){return i!==m&&x.n.toLowerCase()===n.toLowerCase();}))return {ok:false,msg:'You already have an event called that.'};e.n=n;}
-  if(o.t!=null){if(!EV_TYPES[o.t])return {ok:false,msg:'There is no such kind of event.'};if((o.t==='flag')!==(e.t==='flag'))return {ok:false,msg:'The flagship stays the flagship.'};e.t=o.t;}
+  if(o.t!=null){if(o.t==='dark'&&L.filter(function(x,i){return i!==m&&x.t==='dark';}).length>=3)return {ok:false,msg:'Three dark months a year is the most the network will stand.'};if(!EV_TYPES[o.t])return {ok:false,msg:'There is no such kind of event.'};if((o.t==='flag')!==(e.t==='flag'))return {ok:false,msg:'The flagship stays the flagship.'};e.t=o.t;}
   return {ok:true,msg:MONTHS[m]+': '+P.name+' '+e.n+', '+EV_TYPES[e.t].n.toLowerCase()+'.'};
 };
 E.EV_TYPES=EV_TYPES;
@@ -84,3 +85,6 @@ EVR.scrum=function(S,ev,choice,P,w,o){
   [w,o].forEach(function(x){youRemember(S,x,'notdone','You told the press our story was not finished.',3);});
   return 'Now everybody wants the rematch. '+w.name+' and '+o.name+' are a story again.';
 };
+
+/** The month before this one was dark: the crowd is hungrier for this big night. */
+function evAfterDark(S,P){var m=cal(S.week).month;return evList(S,P)[(m+11)%12].t==='dark';}

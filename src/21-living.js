@@ -6,8 +6,8 @@
    theirs by the same rules. An old save's feud simply goes on: its length and planned week are ignored.
    Nothing here uses rnd(S). */
 var LIVE_FIZZ=20,LIVE_FIZZW=4,LIVE_SHELF=10,LIVE_FLAT=12;
-function isBigWeek(w){return cal(w).wom===4;}
-function nextBigFrom(w){while(!isBigWeek(w))w++;return w;}
+function isBigWeek(w,S){var c=cal(w);if(c.wom!==4)return false;if(S&&S.promos&&S.promos[S.player]&&typeof evList==='function'&&evList(S,S.promos[S.player])[c.month].t==='dark')return false;return true;}   // a dark month on your calendar has no big night
+function nextBigFrom(w,S){for(var n=0;n<60&&!isBigWeek(w,S);n++)w++;return w;}
 /** Give a feud what a living story needs, if it has none yet. Safe to call any time. */
 function feudPlan(S,f){
   if(!f)return f;
@@ -42,7 +42,7 @@ function rivalRipe(S,f){
 function feudDue(S,f,show){
   feudPlan(S,f);var big=!!(show&&show.big);
   if(f.promo===S.player){
-    if(f.endAt!=null&&S.week>=f.endAt&&(big||!isBigWeek(f.endAt)))return 'end';
+    if(f.endAt!=null&&S.week>=f.endAt&&(big||!isBigWeek(f.endAt,S)))return 'end';
     return big?'chapter':null;
   }
   if(big&&rivalRipe(S,f))return 'end';
@@ -136,11 +136,11 @@ function feudHomeAt(S,P,f,w){if(f.promo!==S.player)return null;var st=roadAhead(
 /** Everything the screens need about one story. */
 E.feudPlan=function(S,f){
   feudPlan(S,f);var P=S.promos[f.promo]||S.promos[S.player];
-  var at=function(w){return isBigWeek(w)?P.name+' '+evName(S,P,cal(w).month):(P.shows[0]?P.shows[0].name:'a weekly show');};
+  var at=function(w){return isBigWeek(w,S)?P.name+' '+evName(S,P,cal(w).month):(P.shows[0]?P.shows[0].name:'a weekly show');};
   var ph=feudPhase(S,f);
   return {heat:Math.round(f.heat),fresh:Math.round(f.fresh),peak:Math.round(f.peak),phase:ph,pn:PHASE_N[ph],weeks:S.week-f.start,hist:f.hist.slice(-12),
     end:f.endAt!=null?{w:f.endAt,in:f.endAt-S.week,at:at(f.endAt)}:null,ripe:f.heat>=65&&f.fresh<50,lead:feudLead(f),rounds:f.chd||0,act:feudActCal(S,f),
-    next:{w:nextBigFrom(S.week),in:nextBigFrom(S.week)-S.week,at:at(nextBigFrom(S.week))},home:feudHomeAt(S,P,f,f.endAt!=null?f.endAt:nextBigFrom(S.week))};
+    next:{w:nextBigFrom(S.week,S),in:nextBigFrom(S.week,S)-S.week,at:at(nextBigFrom(S.week,S))},home:feudHomeAt(S,P,f,f.endAt!=null?f.endAt:nextBigFrom(S.week,S))};
 };
 E.feudPhase=function(S,f){return PHASE_N[feudPhase(S,f)];};
 E.feudEmber=function(S,f){feudEmber(S,f);};
@@ -152,7 +152,7 @@ E.heatStory=function(S,f,amt){heatUp(S,f,amt,null);return f.heat;};
 E.storyPlanEnd=function(S,id,w){
   var f=S.feuds.filter(function(x){return x.id===id&&!x.res&&x.promo===S.player;})[0];if(!f)return {ok:false,msg:'That feud is already over.'};
   if(w===null){delete f.endAt;return {ok:true,msg:'No ending planned. '+feudLabel(S,f)+' goes on as long as you want it to.'};}
-  f.endAt=w==null?nextBigFrom(S.week):w;var p=E.feudPlan(S,f);
+  f.endAt=w==null?nextBigFrom(S.week,S):w;var p=E.feudPlan(S,f);
   return {ok:true,msg:feudLabel(S,f)+' ends at '+p.end.at+(p.end.in<=0?', this week':(p.end.in===1?', next week':', in '+p.end.in+' weeks'))+'. Book the two of them on that show.'};
 };
 /** Mark a match on the card as the end of the story between its two sides (or take the mark off). */
@@ -216,7 +216,7 @@ var SEASON_N=12;
 function bigShort(S,w){return evName(S,S.promos[S.player],cal(w).month);}
 E.season=function(S){
   var P=S.promos[S.player],weeks=[],L=activeFeuds(S).filter(function(f){return f.promo===P.id;});
-  for(var i=SEASON_N-1;i>=0;i--){var w=S.week-i,c=cal(Math.max(1,w));weeks.push({w:w,wom:c.wom,month:MONTHS[c.month],big:isBigWeek(Math.max(1,w)),ev:isBigWeek(Math.max(1,w))?bigShort(S,Math.max(1,w)):null});}
+  for(var i=SEASON_N-1;i>=0;i--){var w=S.week-i,c=cal(Math.max(1,w));weeks.push({w:w,wom:c.wom,month:MONTHS[c.month],big:isBigWeek(Math.max(1,w),S),ev:isBigWeek(Math.max(1,w),S)?bigShort(S,Math.max(1,w)):null});}
   L.forEach(function(f){feudPlan(S,f);});
   L.sort(function(a,b){return b.heat-a.heat;});
   var stories=L.map(function(f){var p=E.feudPlan(S,f),h=f.hist.slice(-(SEASON_N-1)).concat([Math.round(f.heat)]),pad=SEASON_N-h.length,cells=[];
@@ -242,7 +242,7 @@ E.season=function(S){
   var top=rosterOf(S,P.id).filter(function(w){return !w.nw&&!w.rt;}).sort(function(a,b){return b.ovr-a.ovr;}).slice(0,12);
   var idle=top.filter(function(w){return !who[w.id]&&!recent[w.id]&&!(w.inj>0);});
   if(idle.length)says.push({k:'idle',t:idle.length+' of your top 12 '+(idle.length===1?'has':'have')+' had no feud in four weeks.',ids:idle.slice(0,8).map(function(w){return w.id;})});
-  var nb=nextBigFrom(S.week),ending=L.filter(function(f){return f.endAt===nb;});
+  var nb=nextBigFrom(S.week,S),ending=L.filter(function(f){return f.endAt===nb;});
   if(ending.length>=3)says.push({k:'crowd',t:ending.length+' feuds end at '+bigShort(S,nb)+'. Not all of them can be the main event.',w0:nb});
   var ORD={late:0,hurt:1,cold:2,ripe:3,clash:4,lop:5,tired:6,turn:7,crowd:8,idle:9,good:10};says.sort(function(a,b){return ORD[a.k]-ORD[b.k];});
   return {week:S.week,weeks:weeks,stories:stories,says:says,next:{w:nb,in:nb-S.week,ev:bigShort(S,nb),n:ending.length}};

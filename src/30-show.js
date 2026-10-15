@@ -26,7 +26,7 @@ function showPool(S,P,show){return eligible(S,P,show).filter(function(w){return 
 function cardHype(S,P,show,card,isPl){
   var n=card.length,key=show.big?'big':show.id,star=n?avg(flat(card[n-1].sides).map(function(id){return S.w[id].ovr;})):50,heat=0;
   card.forEach(function(m){var ids=flat(m.sides);for(var x=0;x<ids.length;x++)for(var y=x+1;y<ids.length;y++){var f=feudOf(S,ids[x],ids[y]);if(f&&f.heat>heat)heat=f.heat;}});
-  return clamp(1+(star-(P.starB[key]||star))/80+heat/500+ADV_H[P.adv]+(isPl&&S.hype?S.hype:0)+(isPl&&show.big&&P.evHype?P.evHype:0)+(isPl?faceHype(S,P,card)+homeHype(S,P,flat(card.map(function(m){return flat(m.sides);}))):0),0.8,1.4);
+  return clamp(1+(star-(P.starB[key]||star))/80+heat/500+ADV_H[P.adv]+(isPl&&S.hype?S.hype:0)+(isPl&&show.big&&P.evHype?P.evHype:0)+(isPl?faceHype(S,P,card)+homeHype(S,P,flat(card.map(function(m){return flat(m.sides);}))):0),0.8,1.4)*(isPl&&show.big&&evAfterDark(S,P)?1.08:1);
 }
 /** What moved a big night's hype, in words, for the buy rate report. Reads the same parts as cardHype. */
 function hypeParts(S,P,show,card){
@@ -35,6 +35,7 @@ function hypeParts(S,P,show,card){
   var sd=(star-(P.starB[key]||star))/80;if(Math.abs(sd)>=0.02)out.push({t:sd>0?'A main event bigger than usual':'A main event smaller than usual',v:sd});
   if(heat>=40)out.push({t:'A hot feud on the card',v:heat/500});
   if(ADV_H[P.adv])out.push({t:'Advertising',v:ADV_H[P.adv]});
+  if(show.big&&evAfterDark(S,P))out.push({t:'A month off before it: the crowd is hungry',v:0.08});
   if(show.big&&P.evHype)out.push({t:'Money spent promoting the night',v:P.evHype});
   if(S.hype)out.push({t:S.hype>0?'Work done to build the night':'Bad word of mouth before the night',v:S.hype});
   var fh=faceHype(S,P,card);if(fh)out.push({t:fh>0?'The face of the company on top':'The face of the company left off',v:fh});
