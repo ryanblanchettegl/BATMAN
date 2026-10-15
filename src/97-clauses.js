@@ -41,4 +41,14 @@ E.clauses=function(S,id){var w=S.w[id];if(!w)return [];var ask=E.ask(S,w);return
 WEEKX.push(function(S){if(S.cal)return;var P=S.promos[S.player];rosterOf(S,P.id).forEach(function(w){if(!w.cl||!w.cl.travel)return;w.cond=Math.min(100,w.cond+2);P.cash-=Math.round(w.wage*0.1);});});
 /* a clause lasts as long as the deal it was signed with */
 WEEKX.push(function(S){S.w.forEach(function(w){if(w.cl&&(w.promo!==S.player||w.rt))delete w.cl;});});
+/* renewing with clauses: the same saving on the new price, and the clauses start again with the new deal */
+(function(){
+  var ren0=E.renew,ra0=E.renewAsk,pick=function(S,w,cl){return (cl||[]).filter(function(k){return CLAUSE[k]&&clausesWanted(S,w).indexOf(k)>=0;});};
+  E.renewAsk=function(S,id,weeks,cl){var a=ra0(S,id,weeks),w=S.w[id];if(!w)return a;var sv=pick(S,w,cl).reduce(function(x,k){return x+CLAUSE[k].save;},0);return Math.round(a*(1-sv)/50)*50;};
+  E.renew=function(S,id,weeks,cl){var w=S.w[id];if(!w)return ren0(S,id,weeks);cl=pick(S,w,cl);var ask=E.renewAsk(S,id,weeks,cl),r=ren0(S,id,weeks);if(!cl.length||w.promo!==S.player)return r;
+    w.wage=ask;w.cl={};cl.forEach(function(k){w.cl[k]=S.week;});
+    if(w.cl.title){var P=S.promos[S.player],t=P.titles.filter(function(x){return !x.tag&&x.g===w.g&&x.holders.length&&x.holders[0]!==w.id;}).sort(function(a,b){return b.lvl-a.lvl;})[0];
+      if(t)S.quests.push({id:S.nid++,type:'shot',w:w.id,title:t.id,due:S.week+12,text:'Promise: give '+w.name+' a match for the '+t.name+' by '+cal(S.week+12).label+' (it is in their contract)'});}
+    return w.name+' re-signs for '+money(w.wage)+' a week, with '+cl.map(function(k){return CLAUSE[k].n.toLowerCase();}).join(' and ')+' in the contract.';};
+})();
 E.CLAUSE=CLAUSE;

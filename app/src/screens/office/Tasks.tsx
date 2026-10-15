@@ -1,7 +1,7 @@
 /* This week's tasks, on the desk: everything that should be filled in before a show is booked or the week ends.
    Each one has a button that takes you to it, and where it can wait, a button to leave it for another week. */
 import { E } from '../../engine';
-import { G, act, say, view, openModal, closeModal, Modal, full } from '../../store';
+import { G, act, say, view, openModal, closeModal, Modal, full, slice } from '../../store';
 import { go } from '../../nav';
 import { Btn, Tag, Txt, Window, Empty, Name, showResult } from '../../kit';
 import { office } from './util';
@@ -42,12 +42,15 @@ export function TitleTaskWindow(p: { m: Modal }) {
 export function ContractTaskWindow(p: { m: Modal }) {
   const S = G.S, w = S.w[p.m.id];
   if (!w || w.promo !== S.player || w.con > 1) return <Window title="The contract"><Empty>That contract is dealt with.</Empty></Window>;
-  const renew = (weeks: number) => act(() => { const r = E.renew(S, w.id, weeks); showResult(w.name, r); });
-  const row = (weeks: number, label: string) => { const ask = E.renewAsk(S, w.id, weeks); return <li class="col" key={weeks}>
+  const cs = slice<{ id: number; cl: string[] }>('ctask', () => ({ id: -1, cl: [] })); if (cs.id !== w.id) { cs.id = w.id; cs.cl = []; }
+  const C: any[] = E.clauses(S, w.id), on = (k: string) => cs.cl.indexOf(k) >= 0;
+  const renew = (weeks: number) => act(() => { const r = E.renew(S, w.id, weeks, cs.cl); showResult(w.name, r); });
+  const row = (weeks: number, label: string) => { const ask = E.renewAsk(S, w.id, weeks, cs.cl); return <li class="col" key={weeks}>
     <span><b>{label}</b><br /><span class="muted">{full(ask)} a week{ask > w.wage ? ', up from ' + full(w.wage) : (ask < w.wage ? ', down from ' + full(w.wage) : ', the same as now')}.</span></span>
     <span class="row"><Btn kind="sm" t="tc-renew" d={{ v: weeks }} onClick={() => renew(weeks)}>Sign for {weeks} weeks</Btn></span></li>; };
   return <Window title={w.name + '’s contract'} wide ok="Not now">
     <p><Name w={w} /> is on {full(w.wage)} a week. The contract ends {w.con <= 0 ? 'this week' : 'next week'}. <span class="muted">If nothing is signed they become a free agent, and anybody can make an offer.</span></p>
+    {C.length ? <div class="row mt1" data-t="tc-clauses"><span class="muted">They would like:</span>{C.map(c => <Btn key={c.k} kind="sm" on={on(c.k)} t="tc-clause" d={{ k: c.k }} label={c.n + '. ' + c.d} onClick={() => view(() => { cs.cl = on(c.k) ? cs.cl.filter(x => x !== c.k) : cs.cl.concat([c.k]); })}>{c.n}</Btn>)}</div> : null}
     <ul class="list mt2">{row(48, 'One more year')}{row(96, 'Two more years')}</ul>
     <p class="muted mt1">Morale changes the asking price: {w.morale < 50 ? 'they are unhappy, so it costs more.' : (w.morale >= 75 ? 'they are happy here, so it costs less.' : 'theirs is about average.')}</p>
   </Window>;

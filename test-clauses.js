@@ -18,5 +18,11 @@ ok(/no-cut/.test(msg) && c0 - P.cash >= nc.wage * 24, 'breaking a no-cut promise
 // paid travel: the body recovers faster
 const tr = S.w.filter(x => x.promo === 'pdw' && !x.nw)[6], ot = S.w.filter(x => x.promo === 'pdw' && !x.nw)[7]; tr.cl = { travel: S.week }; tr.cond = 60; ot.cond = 60;
 E.endWeek(S); ok(tr.cond > ot.cond, 'paid travel did not help the body: ' + tr.cond + ' against ' + ot.cond);
+// renewing with a clause: the price comes down and the clause is kept for the new deal
+{
+  const T = E.newGame('pdw', 2, { name: 'R' }), w = T.w.filter(x => x.promo === 'pdw' && !x.nw && E.clauses(T, x.id).length)[0];
+  if (w) { const k = E.clauses(T, w.id)[0].k, a0 = E.renewAsk(T, w.id, 48), a1 = E.renewAsk(T, w.id, 48, [k]); const msg = E.renew(T, w.id, 48, [k]);
+    ok(a1 < a0 && w.cl && w.cl[k] != null && w.wage === a1 && /in the contract/.test(msg), 'renewing with a clause did not work: ' + msg); }
+}
 if (fails) { console.log('FAILED: ' + fails); process.exit(1); }
 console.log('test-clauses: all passed');
