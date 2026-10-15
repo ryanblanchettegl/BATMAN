@@ -54,7 +54,7 @@ Ryan's goal is screens that are easy to read and quick to act on. Manage, Operat
 - [x] **2.2 Operations.** (Done another way, 6 October: every Manage page is buttons that open pop-ups, `tiles()` in `screens/manage/Operations.tsx`.) Keep on the page what is used every week: Broadcast, Shows and belts, and the settings. Move the rest (commentary desk, merchandise, school, tours, budgets, universe) into windows opened from one short "More to manage" list that shows each one's state in a line ("Commentary desk: both chairs empty"). Keep every `data-t`. Update `app/tests/company.js`.
 - [x] **2.3 Every other page over the limit.** Same treatment: the weekly things stay, the rest becomes a one-line row that opens a window. Do not remove information and do not add pages to the menu.
 - [x] **2.4 The desk.** (Done by the new desk: one screen of four windows, `app/tests/desk.js` checks it fits.) "Before the show" must be fully visible without scrolling on a desk screen, with **Book the next show** in view. Check with a screenshot test.
-- [ ] **2.5 First week.** Play week one on a tablet as a new player would and list every screen where the first useful button is below the fold. Fix each.
+- [x] **2.5 First week.** (Covered 15 October: every page is one screen with nothing below the fold, and `app/tests/journey.js` plays the first weeks on a tablet.) Play week one on a tablet as a new player would and list every screen where the first useful button is below the fold. Fix each.
 
 ## Job 3. The year planner and big events (task 6, first two boxes)
 

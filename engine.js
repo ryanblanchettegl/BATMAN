@@ -7083,19 +7083,21 @@ var GR_SIFT={
     {t:'#p_owed#',if:function(c){return c.k==='owed';}},
     {t:'#p_again#',if:function(c){return c.k==='again';}},
     {t:'#p_chase#',if:function(c){return c.k==='chase';}},
-    {t:'#p_mutiny#',if:function(c){return c.k==='mutiny';}}
+    {t:'#p_mutiny#',if:function(c){return c.k==='mutiny';}},
+    {t:'#p_trade#',if:function(c){return c.k==='trade';}}
   ],
   p_rubber:['One more match settles it.','The series is too close to leave alone.','The crowd wants to know who is better. So do they.','Best of {n} is not enough. Make it a decider.'],
   p_rematch:['{b} never got the rematch.','{b} has been waiting for this since the night the belt went.','The old champion against the new one.','{b} says the title was taken, not won.'],
   p_heat:['There is real heat here. Put it in the ring before it boils over backstage.','They cannot stand each other. The crowd will feel it.','Nobody has to act. That is the best kind of story.'],
   p_teach:['The student is ready to step out of the shadow.','Teacher against student: one of them learns something.','{b} taught {a} everything. Almost everything.'],
   p_shadow:['{a} is tired of standing behind {b}.','Partners who need different things.','One of them is going to turn. The question is when.'],
+  p_trade:['The belt has gone back and forth between them. Settle it.','{a} and {b} have both held it. Only one of them will be remembered for it.','Every time one wins it, the other takes it back. Give the crowd the last word.'],
   p_mutiny:['{a} is tired of taking orders from {b}.','Every group has one who wants to lead. In {g}, it is {a}.','{g} is cracking, and everybody can hear it.','Overthrow the leader, or be thrown out. Either way it is a story.'],
   p_chase:['{a} keeps coming up short against {b}. One day they will not.','The long chase: every loss makes the day {a} finally wins mean more.','{b} has the belt and the wins. {a} has the crowd waiting.','Make them wait. Then pay it off.'],
   p_again:['They were never really finished.','The last chapter left a door open.','{a} and {b} again. The crowd remembers.','Months later, it still is not settled.'],
   p_owed:['{a} beat {b} clean and {b} has not forgotten.','{b} wants the loss back.','Last time, {a} won. {b} says that was the last time.']
 };
-var SIFT_N={rubber:'The decider',rematch:'The rematch never given',heat:'Real heat',teach:'Teacher and student',shadow:'Partners apart',owed:'A loss to pay back',again:'Unfinished business',chase:'The long chase',mutiny:'A mutiny in the group'};
+var SIFT_N={rubber:'The decider',rematch:'The rematch never given',heat:'Real heat',teach:'Teacher and student',shadow:'Partners apart',owed:'A loss to pay back',again:'Unfinished business',chase:'The long chase',mutiny:'A mutiny in the group',trade:'The belt between them'};
 
 /** Every storyline the game can find on your roster right now, best first. */
 E.sift=function(S){
@@ -7147,6 +7149,11 @@ E.sift=function(S){
   (S.stables||[]).forEach(function(st){if(st.promo!==P.id||!on[st.leader])return;st.m.forEach(function(id){if(id===st.leader||!on[id])return;
     var j=jealOf(S,id,st.leader),b=bondOf(S,id,st.leader);if(j<35&&b>-REL_ON&&(st.tension||0)<40)return;
     add('mutiny',id,st.leader,35+Math.max(j,-b,st.tension||0)/2,{g:st.name,lines:[S.w[id].name+' is in '+st.name+', and '+S.w[st.leader].name+' leads it.',(j>=35?S.w[id].name+' wants that spot.':(b<=-REL_ON?'The two of them do not get on.':'The group has been on edge for weeks.'))]});});});
+  // the belt between them: two of yours who have taken the same title from each other in the last year
+  P.titles.forEach(function(t){if(t.tag)return;var H=(t.hist||[]).filter(function(h){return h.from>=S.week-48;}),seen2={};
+    for(var i=1;i<H.length;i++){var a=+String(H[i-1].ids).split(',')[0],b=+String(H[i].ids).split(',')[0];if(a===b||!on[a]||!on[b])continue;var k=rkey(a,b);seen2[k]=(seen2[k]||0)+1;}
+    Object.keys(seen2).forEach(function(k){if(seen2[k]<2)return;var ids=k.split('-').map(Number);
+      add('trade',ids[0],ids[1],50+seen2[k]*6,{lines:['The '+t.name+' has changed hands between '+S.w[ids[0]].name+' and '+S.w[ids[1]].name+' '+(seen2[k]===2?'twice':seen2[k]+' times')+' this year.','Neither has kept it from the other for long.']});});});
   // unfinished business: a story that ended hot at least twelve weeks ago, and both still here
   Object.keys(S.embers||{}).forEach(function(key){var e=S.embers[key],ids=key.split('-').map(Number);if(S.week-e.w<12||e.h<55)return;
     add('again',ids[0],ids[1],35+e.h/3,{lines:[S.w[ids[0]].name+' and '+S.w[ids[1]].name+' ended their story '+(S.week-e.w)+' weeks ago, still hot.',(e.n>1?'They have done this '+e.n+' times now.':'Start it again and it picks up where it left off.')]});});

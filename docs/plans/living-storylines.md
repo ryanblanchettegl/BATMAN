@@ -100,3 +100,4 @@ segment moves, and an ending the booker chooses at the right moment.
   the report says so, and they remember it.
 - **The long chase** (Stories waiting): a champion who has beaten the same challenger again and again, with the challenger still close, is pitched as a story. Ryan chose living storylines over scripted templates on 15 October; what the templates wanted comes in as patterns and twists like this one.
 - **A mutiny in the group** (Stories waiting): a member of your stable who is jealous of the leader, cannot stand them, or a group that has been on edge, is pitched as a story.
+- **The belt between them** (Stories waiting): two wrestlers who have taken the same title from each other at least twice in a year.
