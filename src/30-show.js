@@ -50,7 +50,7 @@ function showStart(S,P,show,card){
   var star=n?avg(flat(card[n-1].sides).map(function(id){return S.w[id].ovr;})):50;
   rep.mainStar=star;
   if(!S.cal){
-    var hype=cardHype(S,P,show,card,isPl),dm=TIX_D[P.tix],d0=demand(P,show,1)*(isPl?tourBoost(S,P)*roadMktNow(S,P):1),d=d0*(isPl?tasteDraw(S,P,card,rep):1),cap=capFor(d0);   // the building was booked before the card was
+    var hype=cardHype(S,P,show,card,isPl),dm=TIX_D[P.tix],d0=demand(P,show,1)*(isPl?tourBoost(S,P)*roadMktNow(S,P):1),d=d0*(isPl?tasteDraw(S,P,card,rep)*weatherMult(S,show,roadCity(S,P,S.rdn||0)):1),cap=capFor(d0);if(isPl&&coldNight(S,show,roadCity(S,P,S.rdn||0)))rep.cold=1;   // the building was booked before the card was
     rep.hype=hype;rep.cap=cap;rep.att=Math.round(Math.min(cap,d*hype*dm));
     if(isPl&&big){var bh=P.bh||[],h0=bh.length?bh.reduce(function(a,b){return a+b;},0)/bh.length:1.15;rep.bf=Math.round(buysK(P,show,h0)*1000);rep.hp=hypeParts(S,P,show,card);P.bh=bh.concat([hype]).slice(-3);}   // the forecast is what the last few big nights drew   // the buy rate report (src/34-night.js): the forecast, and what moved it
     if(isPl){var sold=roadSoldNow(S,P);if(sold>rep.att){rep.noshow=sold-rep.att;rep.att=sold;}}   // a ticket sold is a ticket paid for, whoever turns up

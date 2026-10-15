@@ -76,6 +76,11 @@ function roadCap(S,P,show,city){return capFor(demand(P,show,1)*tourBoost(S,P)*mk
 var MKT_WORDS=[[70,'Your territory','They are yours here.'],[50,'A strong market','They know you here.'],[30,'They know you','You are a name here, not a habit.'],[0,'They hardly know you','You are a stranger here.']];
 function mktBase(S,P,city){var R=roadRoute(S,P);return clamp(Math.round(50+h01('mkt'+S.seed+P.id+city)*24-12+(R[0]===city?12:0)),10,90);}
 function mktKnow(S,P,city){if(!city||P.id!==S.player)return 50;var m=S.mkt&&S.mkt[city];return m?m.k:mktBase(S,P,city);}
+/* the weather (NEXT.md 6.4): in the cold months a weekly television show in a city far from the equator draws a
+   little less walk-up trade. A big event is planned for, and people come whatever the weather. */
+function coldNight(S,show,city,week){if(show&&show.big)return false;var p=placeOf(S,city);if(!p)return false;var m=cal(week||S.week).month;
+  return p.lat>=38?(m===11||m===0||m===1):(p.lat<=-38?(m>=5&&m<=7):false);}
+function weatherMult(S,show,city,week){return coldNight(S,show,city,week)?0.94:1;}
 function mktMult(S,P,city){return 0.85+0.3*mktKnow(S,P,city)/100;}
 function mktWord(k){for(var i=0;i<MKT_WORDS.length;i++)if(k>=MKT_WORDS[i][0])return {w:MKT_WORDS[i][1],d:MKT_WORDS[i][2]};return {w:MKT_WORDS[3][1],d:MKT_WORDS[3][2]};}
 /* the market of the stop that is on the air now, for the night's own sums */
@@ -95,7 +100,7 @@ E.mktWords=MKT_WORDS.map(function(x){return {w:x[1],d:x[2],from:x[0]};});
 function saleSpan(show){return show.big?8:4;}
 function saleFrac(wo,show){var span=saleSpan(show);if(wo>span)return 0;if(wo<0)wo=0;return 0.88*Math.pow(1-wo/(span+1),0.7);}
 function stopDraw(S,P,show,next,city){
-  var d0=demand(P,show,1)*tourBoost(S,P)*mktMult(S,P,city),hype;
+  var d0=demand(P,show,1)*tourBoost(S,P)*mktMult(S,P,city)*weatherMult(S,show,city),hype;
   if(next&&S.card&&S.card.length)hype=cardHype(S,P,show,S.card,true);
   else{var heat=0;activeFeuds(S).forEach(function(f){if(f.heat>heat&&f.a.concat(f.b).some(function(id){return S.w[id]&&S.w[id].promo===P.id;}))heat=f.heat;});
     hype=clamp(1+ADV_H[P.adv]+(next&&S.hype?S.hype:0)+heat/1000+homeHypeAt(S,P,city),0.8,1.4);}

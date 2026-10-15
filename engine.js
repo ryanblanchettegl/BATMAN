@@ -1587,7 +1587,7 @@ function showStart(S,P,show,card){
   var star=n?avg(flat(card[n-1].sides).map(function(id){return S.w[id].ovr;})):50;
   rep.mainStar=star;
   if(!S.cal){
-    var hype=cardHype(S,P,show,card,isPl),dm=TIX_D[P.tix],d0=demand(P,show,1)*(isPl?tourBoost(S,P)*roadMktNow(S,P):1),d=d0*(isPl?tasteDraw(S,P,card,rep):1),cap=capFor(d0);   // the building was booked before the card was
+    var hype=cardHype(S,P,show,card,isPl),dm=TIX_D[P.tix],d0=demand(P,show,1)*(isPl?tourBoost(S,P)*roadMktNow(S,P):1),d=d0*(isPl?tasteDraw(S,P,card,rep)*weatherMult(S,show,roadCity(S,P,S.rdn||0)):1),cap=capFor(d0);if(isPl&&coldNight(S,show,roadCity(S,P,S.rdn||0)))rep.cold=1;   // the building was booked before the card was
     rep.hype=hype;rep.cap=cap;rep.att=Math.round(Math.min(cap,d*hype*dm));
     if(isPl&&big){var bh=P.bh||[],h0=bh.length?bh.reduce(function(a,b){return a+b;},0)/bh.length:1.15;rep.bf=Math.round(buysK(P,show,h0)*1000);rep.hp=hypeParts(S,P,show,card);P.bh=bh.concat([hype]).slice(-3);}   // the forecast is what the last few big nights drew   // the buy rate report (src/34-night.js): the forecast, and what moved it
     if(isPl){var sold=roadSoldNow(S,P);if(sold>rep.att){rep.noshow=sold-rep.att;rep.att=sold;}}   // a ticket sold is a ticket paid for, whoever turns up
@@ -2464,6 +2464,7 @@ E.afterShow=function(S){
     add('feuds','The feuds',fl(L.feuds[0])+(L.feuds.length>1?', and '+(L.feuds.length-1)+' more':'')+'.',L.feuds.map(function(x){return fl(x)+'.';}),L.feuds.some(function(x){return x.end;})?'good':(L.feuds[0].now>L.feuds[0].was?'good':'warn'));}
   add('gate','The gate',g.sold?'Sold out: '+g.att.toLocaleString('en-US')+' tickets, every one there was.':g.att.toLocaleString('en-US')+' tickets sold of '+g.cap.toLocaleString('en-US')+'. '+empty.toLocaleString('en-US')+' seats were empty.',
     [g.att.toLocaleString('en-US')+' tickets sold of '+g.cap.toLocaleString('en-US')+' in the '+rep.venue+'.',g.sold?'A sell-out. Next time here the office books a bigger building.':(pct>=0.85?'A healthy house. The empty seats did not show on television.':(pct>=0.6?'A soft house. The camera had to stay off parts of the building.':'A poor house. It looked empty on television, and the crowd was quieter for it.')),'The gate was '+money(g.money)+'.'],g.sold?'good':(pct<0.6?'bad':''));
+  if(rep.cold&&!g.sold)add('cold','The weather','A cold night kept some of the walk-up crowd at home.',['In the cold months a weekly show far from the equator sells a few fewer tickets on the night.','Big events draw whatever the weather.'],'warn');
   // a sell-out streak, from the third in a row, and the night it ends
   if(rep.soRun>=3)add('streak','Sell-outs',rep.soRun+' sell-outs in a row.',['Word is going round that tickets are hard to get. The next show draws a little more.','A show that does not sell out ends the streak.'],'good');
   else if(rep.soEnd)add('streak','Sell-outs','The streak of '+rep.soEnd+' sell-outs ended tonight.',['Every seat had been sold for '+rep.soEnd+' shows in a row.','Sell out again to start a new one.'],'warn');
@@ -10173,6 +10174,11 @@ function roadCap(S,P,show,city){return capFor(demand(P,show,1)*tourBoost(S,P)*mk
 var MKT_WORDS=[[70,'Your territory','They are yours here.'],[50,'A strong market','They know you here.'],[30,'They know you','You are a name here, not a habit.'],[0,'They hardly know you','You are a stranger here.']];
 function mktBase(S,P,city){var R=roadRoute(S,P);return clamp(Math.round(50+h01('mkt'+S.seed+P.id+city)*24-12+(R[0]===city?12:0)),10,90);}
 function mktKnow(S,P,city){if(!city||P.id!==S.player)return 50;var m=S.mkt&&S.mkt[city];return m?m.k:mktBase(S,P,city);}
+/* the weather (NEXT.md 6.4): in the cold months a weekly television show in a city far from the equator draws a
+   little less walk-up trade. A big event is planned for, and people come whatever the weather. */
+function coldNight(S,show,city,week){if(show&&show.big)return false;var p=placeOf(S,city);if(!p)return false;var m=cal(week||S.week).month;
+  return p.lat>=38?(m===11||m===0||m===1):(p.lat<=-38?(m>=5&&m<=7):false);}
+function weatherMult(S,show,city,week){return coldNight(S,show,city,week)?0.94:1;}
 function mktMult(S,P,city){return 0.85+0.3*mktKnow(S,P,city)/100;}
 function mktWord(k){for(var i=0;i<MKT_WORDS.length;i++)if(k>=MKT_WORDS[i][0])return {w:MKT_WORDS[i][1],d:MKT_WORDS[i][2]};return {w:MKT_WORDS[3][1],d:MKT_WORDS[3][2]};}
 /* the market of the stop that is on the air now, for the night's own sums */
@@ -10192,7 +10198,7 @@ E.mktWords=MKT_WORDS.map(function(x){return {w:x[1],d:x[2],from:x[0]};});
 function saleSpan(show){return show.big?8:4;}
 function saleFrac(wo,show){var span=saleSpan(show);if(wo>span)return 0;if(wo<0)wo=0;return 0.88*Math.pow(1-wo/(span+1),0.7);}
 function stopDraw(S,P,show,next,city){
-  var d0=demand(P,show,1)*tourBoost(S,P)*mktMult(S,P,city),hype;
+  var d0=demand(P,show,1)*tourBoost(S,P)*mktMult(S,P,city)*weatherMult(S,show,city),hype;
   if(next&&S.card&&S.card.length)hype=cardHype(S,P,show,S.card,true);
   else{var heat=0;activeFeuds(S).forEach(function(f){if(f.heat>heat&&f.a.concat(f.b).some(function(id){return S.w[id]&&S.w[id].promo===P.id;}))heat=f.heat;});
     hype=clamp(1+ADV_H[P.adv]+(next&&S.hype?S.hype:0)+heat/1000+homeHypeAt(S,P,city),0.8,1.4);}
