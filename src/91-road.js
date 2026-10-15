@@ -188,3 +188,10 @@ E.cities=function(S){
   var P=S.promos[S.player];return roadRoute(S,P).map(function(c){var city=c.city||c.n||c,k=mktKnow(S,P,city),v=S.rdv&&S.rdv[city],m=S.mkt&&S.mkt[city];
     return {city:city,k:Math.round(k),word:mktWord(k).w,last:v?v.w:null,ago:v?S.week-v.w:null,grade:v&&v.cs!=null?gradeG(v.cs):null,att:v?v.att:null,cap:v?v.cap:null,so:!!(v&&v.so)};});
 };
+/* a sell-out streak (NEXT.md 6.4): every show of yours that sells out in a row adds to it. From the third, word gets
+   round that tickets are hard to get, and the next show draws a little more. A show that does not sell out ends it. */
+SHOWX.push(function(S,P,show,rep){
+  if(S.cal||P.id!==S.player)return;
+  if(rep.sellout){S.soRun=(S.soRun||0)+1;rep.soRun=S.soRun;if(S.soRun>=3)S.hype=(S.hype||0)+0.02;if(S.soRun===5||S.soRun===10||S.soRun===20)news(S,'world',P.name+' has sold out '+S.soRun+' shows in a row.');}
+  else{if((S.soRun||0)>=3)rep.soEnd=S.soRun;S.soRun=0;}
+});

@@ -2464,6 +2464,9 @@ E.afterShow=function(S){
     add('feuds','The feuds',fl(L.feuds[0])+(L.feuds.length>1?', and '+(L.feuds.length-1)+' more':'')+'.',L.feuds.map(function(x){return fl(x)+'.';}),L.feuds.some(function(x){return x.end;})?'good':(L.feuds[0].now>L.feuds[0].was?'good':'warn'));}
   add('gate','The gate',g.sold?'Sold out: '+g.att.toLocaleString('en-US')+' tickets, every one there was.':g.att.toLocaleString('en-US')+' tickets sold of '+g.cap.toLocaleString('en-US')+'. '+empty.toLocaleString('en-US')+' seats were empty.',
     [g.att.toLocaleString('en-US')+' tickets sold of '+g.cap.toLocaleString('en-US')+' in the '+rep.venue+'.',g.sold?'A sell-out. A bigger building would have sold more.':(pct>=0.85?'A healthy house. The empty seats did not show on television.':(pct>=0.6?'A soft house. The camera had to stay off parts of the building.':'A poor house. It looked empty on television, and the crowd was quieter for it.')),'The gate was '+money(g.money)+'.'],g.sold?'good':(pct<0.6?'bad':''));
+  // a sell-out streak, from the third in a row, and the night it ends
+  if(rep.soRun>=3)add('streak','Sell-outs',rep.soRun+' sell-outs in a row.',['Word is going round that tickets are hard to get. The next show draws a little more.','A show that does not sell out ends the streak.'],'good');
+  else if(rep.soEnd)add('streak','Sell-outs','The streak of '+rep.soEnd+' sell-outs ended tonight.',['Every seat had been sold for '+rep.soEnd+' shows in a row.','Sell out again to start a new one.'],'warn');
   // what the main event hands the next show
   if(rep.feed)add('feed','The next show',rep.feed>0?'A strong finish. People went home talking, and the next show will draw a little more.':'A flat finish. People left early, and the next show will draw a little less.',[rep.feed>0?'The main event beat what this crowd expected by a distance. Word gets round.':'The main event fell well short of what this crowd expected. Word gets round.'],rep.feed>0?'good':'bad');
   // the buy rate report: buys at home against what was forecast, and what moved them (NEXT.md 3.6)
@@ -10282,6 +10285,13 @@ E.cities=function(S){
   var P=S.promos[S.player];return roadRoute(S,P).map(function(c){var city=c.city||c.n||c,k=mktKnow(S,P,city),v=S.rdv&&S.rdv[city],m=S.mkt&&S.mkt[city];
     return {city:city,k:Math.round(k),word:mktWord(k).w,last:v?v.w:null,ago:v?S.week-v.w:null,grade:v&&v.cs!=null?gradeG(v.cs):null,att:v?v.att:null,cap:v?v.cap:null,so:!!(v&&v.so)};});
 };
+/* a sell-out streak (NEXT.md 6.4): every show of yours that sells out in a row adds to it. From the third, word gets
+   round that tickets are hard to get, and the next show draws a little more. A show that does not sell out ends it. */
+SHOWX.push(function(S,P,show,rep){
+  if(S.cal||P.id!==S.player)return;
+  if(rep.sellout){S.soRun=(S.soRun||0)+1;rep.soRun=S.soRun;if(S.soRun>=3)S.hype=(S.hype||0)+0.02;if(S.soRun===5||S.soRun===10||S.soRun===20)news(S,'world',P.name+' has sold out '+S.soRun+' shows in a row.');}
+  else{if((S.soRun||0)>=3)rep.soEnd=S.soRun;S.soRun=0;}
+});
 
 /* ===== 91-wishes-late.js ===== */
 /* ---------- depth systems that wrap the player API in 90-api.js ---------- */
