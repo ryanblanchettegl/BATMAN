@@ -9088,7 +9088,25 @@ var INDIES=[
   {n:'High Plains Wrestling League',r:'the plains'},{n:'Quarry Road Pro',r:'the quarries'},{n:'Second Street Rumble',r:'the city'},
   {n:'Lighthouse Wrestling Club',r:'the harbour'},{n:'Cinder Track Wrestling',r:'the speedway'}
 ];
-function indieOf(S,w){var k=hash('ind'+S.seed+':'+w.id+':'+Math.floor(S.week/8));return INDIES[k%INDIES.length];}
+/* more names for the years to come: an indie closes once a year and a new one opens in its place (NEXT.md 10.1) */
+var INDIE_NEW=[
+  {n:'Brickyard Wrestling',r:'the mill towns'},{n:'Tidewater Pro',r:'the tidewater'},{n:'Crossroads Championship Wrestling',r:'the crossroads'},
+  {n:'Gaslight Grappling',r:'the old quarter'},{n:'Red Clay Wrestling',r:'the hill country'},{n:'Pier Nine Pro',r:'the docks'},
+  {n:'Boxcar Wrestling',r:'the rail yards'},{n:'Copper Hills Pro',r:'the mining towns'},{n:'Riverboat Rumble',r:'the river'},
+  {n:'Ember Street Wrestling',r:'the east side'}
+];
+/** The indies running now. A new game starts with the first fourteen. */
+function indiesOn(S){var all=INDIES.concat(INDIE_NEW);return (S.indOn||INDIES.map(function(x){return x.n;})).map(function(n){return all.filter(function(x){return x.n===n;})[0];}).filter(Boolean);}
+function indieOf(S,w){var L=indiesOn(S),k=hash('ind'+S.seed+':'+w.id+':'+Math.floor(S.week/8));return L[k%L.length];}
+/* once a year, in the middle of the year, one indie runs its last show and a new one runs its first */
+WEEKX.push(function(S){
+  if(S.cal||S.week%48!==24)return;var L=indiesOn(S).map(function(x){return x.n;}),all=INDIES.concat(INDIE_NEW),used={};
+  L.forEach(function(n){used[n]=1;});(S.indGone||[]).forEach(function(n){used[n]=1;});
+  var fresh=all.filter(function(x){return !used[x.n];});if(!fresh.length)return;
+  var gone=L[hash('indx'+S.seed+':'+S.week)%L.length],born=fresh[hash('indn'+S.seed+':'+S.week)%fresh.length];
+  S.indOn=L.filter(function(n){return n!==gone;}).concat([born.n]);S.indGone=(S.indGone||[]).concat([gone]).slice(-20);
+  news(S,'world',gone+' has run its last show. '+born.n+' runs its first, in '+born.r+'.');
+});
 WEEKX.push(function(S){
   if(S.cal)return;var star=null;
   S.w.forEach(function(w){if(w.promo!=='FA'||w.rt||w.nw)return;var h=h01('indw'+S.seed+':'+w.id+':'+S.week),ind=indieOf(S,w);
@@ -9101,6 +9119,7 @@ WEEKX.push(function(S){
 /** Where a free agent has been working, for the Free agents page. */
 E.indieOf=function(S,id){var w=S.w[id];if(!w||w.promo!=='FA'||!w.ind||S.week-w.ind.w>4)return null;return {n:w.ind.n,weeks:w.ind.k||1};};
 E.INDIES=INDIES;
+E.indiesOn=function(S){return indiesOn(S);};
 /** Free agents on the longest run with one indie right now, best first: who the scene is talking about. */
 E.indieHot=function(S,n){return S.w.filter(function(w){return w.promo==='FA'&&!w.rt&&!w.nw&&w.ind&&S.week-w.ind.w<=2&&(w.ind.k||0)>=3;}).sort(function(a,b){return (b.ind.k-a.ind.k)||(b.ovr-a.ovr);}).slice(0,n||3).map(function(w){return {id:w.id,name:w.name,n:w.ind.n,k:w.ind.k};});};
 
