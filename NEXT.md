@@ -116,7 +116,7 @@ Build it beside the old screen. Add a switch in Options, "New booking screen", o
 - [x] **7.2 Ratings per hour** (Done another way: the top of each hour is judged against the crowd and kept as `rep.tops`.) in the show report, against the target.
 - [ ] **7.3 The network talks to you.** Executive calls, content rules, renewal countdowns, a bidding war when two want you, a warning before a cancellation.
 - [ ] **7.4 Streaming.** Pays per subscriber, grows with the tape library and match quality, lifts popularity in cities you do not tour, and can clash with a television deal that wants exclusivity.
-- [ ] **7.5 Nights.** Every promotion has a night. A network or streamer can offer to move your show onto a rival's night. Saying yes starts a ratings war with a weekly winner in the news.
+- [ ] **7.5 Nights.** (First step 16 October, `src/88-nights.js`: a weekly show on the same night as a rival's in the same part of the world goes head to head with the nearest in size; winning the night adds a little hype, After the show and the news keep the count. Moving nights is not built.) Every promotion has a night. A network or streamer can offer to move your show onto a rival's night. Saying yes starts a ratings war with a weekly winner in the news.
 - [ ] **7.6 The startup model** moves its "land a better TV deal" pressure onto this system (`MODELS.startup.month` in `src/78-models.js`).
 
 ## Job 8. The world top 500 and level-ups (task 7)

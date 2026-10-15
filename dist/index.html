@@ -4249,6 +4249,7 @@ E.afterShow=function(S){
   add('gate','The gate',g.sold?'Sold out: '+g.att.toLocaleString('en-US')+' tickets, every one there was.':g.att.toLocaleString('en-US')+' tickets sold of '+g.cap.toLocaleString('en-US')+'. '+empty.toLocaleString('en-US')+' seats were empty.',
     [g.att.toLocaleString('en-US')+' tickets sold of '+g.cap.toLocaleString('en-US')+' in the '+rep.venue+'.',g.sold?'A sell-out. Next time here the office books a bigger building.':(pct>=0.85?'A healthy house. The empty seats did not show on television.':(pct>=0.6?'A soft house. The camera had to stay off parts of the building.':'A poor house. It looked empty on television, and the crowd was quieter for it.')),'The gate was '+money(g.money)+'.'],g.sold?'good':(pct<0.6?'bad':''));
   if(rep.cold&&!g.sold)add('cold','The weather','A cold night kept some of the walk-up crowd at home.',['In the cold months a weekly show far from the equator sells a few fewer tickets on the night.','Big events draw whatever the weather.'],'warn');
+  if(rep.h2h){var hh=rep.h2h;add('h2h','The '+hh.day+' war',(hh.won?'You won the night against ':'You lost the night to ')+hh.n+' ('+hh.co+'): '+hh.us.toLocaleString('en-US')+' watching to their '+hh.them.toLocaleString('en-US')+'.',[hh.co+' runs '+hh.n+' on your night.','So far: won '+hh.w+', lost '+hh.l+'.',hh.won?'Winning the night gets people talking. The next show draws a little more.':'Their audience is the one to beat next week.'],hh.won?'good':'warn');}
   // a sell-out streak, from the third in a row, and the night it ends
   if(rep.soRun>=3)add('streak','Sell-outs',rep.soRun+' sell-outs in a row.',['Word is going round that tickets are hard to get. The next show draws a little more.','A show that does not sell out ends the streak.'],'good');
   else if(rep.soEnd)add('streak','Sell-outs','The streak of '+rep.soEnd+' sell-outs ended tonight.',['Every seat had been sold for '+rep.soEnd+' shows in a row.','Sell out again to start a new one.'],'warn');
@@ -10951,6 +10952,29 @@ WEEKX.push(function(S){
   if(S.cal||S.week<78||S.week%26||S.order.length>=12||!chance(S,0.3))return;
   newCompany(S);
 });
+
+/* ===== 88-nights.js ===== */
+/* ===== Nights (NEXT.md 7.5, a first step) =====
+   Every weekly show has a night, read from its name. When a rival in the same part of the world runs a weekly show
+   on the same night as yours, the two go head to head: your audience tonight against what theirs has been drawing. Of several on the night, the one nearest your size is the one you are measured against.
+   Winning the night gets people talking (a little hype for your next show); the news keeps the count. Only reads
+   the game and uses no rnd(S). */
+var NIGHT_ALT={Lunes:'Monday',Martes:'Tuesday',Miercoles:'Wednesday',Jueves:'Thursday',Viernes:'Friday',Sabado:'Saturday',Domingo:'Sunday'};
+function nightOf(sh){if(!sh||sh.big)return '';var d=showDay(sh);if(d)return d;for(var k in NIGHT_ALT)if(sh.name.indexOf(k)>=0)return NIGHT_ALT[k];return '';}
+function regionOf(S,P){try{var c=roadRoute(S,P);var M=c&&c.length?roadMap(S,c):null;return M?M.id:null;}catch(e){return null;}}
+/** The rival weekly shows on the same night as one of yours, in the same part of the world. */
+function nightRivals(S,show){var P=S.promos[S.player],d=nightOf(show),reg=regionOf(S,P),out=[];if(!d||!reg)return out;
+  S.order.forEach(function(id){if(id===P.id)return;var R=S.promos[id];if(R.dead||regionOf(S,R)!==reg)return;
+    (R.shows||[]).forEach(function(sh){if(!sh.big&&nightOf(sh)===d){var a=airRec(R,sh.id);out.push({co:R.name,n:sh.name,va:a&&a.va?Math.round(a.va):0});}});});
+  return out;}
+SHOWX.push(function(S,P,show,rep){
+  if(S.cal||P.id!==S.player||show.big)return;var L=nightRivals(S,show).filter(function(x){return x.va>0;});if(!L.length)return;
+  var me=airRec(P,show.id),base=me&&me.va?me.va:rep.viewers,R=L.sort(function(a,b){return Math.abs(a.va-base)-Math.abs(b.va-base);})[0],won=rep.viewers>=R.va,d=nightOf(show),W=(S.nw||(S.nw={}))[d]||(S.nw[d]={w:0,l:0});
+  if(won){W.w++;S.hype=(S.hype||0)+0.02;}else W.l++;
+  rep.h2h={day:d,co:R.co,n:R.n,us:rep.viewers,them:R.va,won:won?1:0,w:W.w,l:W.l};
+  if((W.w+W.l)%4===0)news(S,'world','The '+d+' night war: '+show.name+' has won '+W.w+' and lost '+W.l+' against '+R.n+'.');
+});
+E.nightRivals=function(S,show){return nightRivals(S,show);};
 
 /* ===== 88-shows.js ===== */
 /* ---------- a weekly show lasts ----------
