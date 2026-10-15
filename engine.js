@@ -10285,7 +10285,7 @@ E.road=function(S){
       mkt:mktWord(mk),mktK:Math.round(mk),taste:TASTEN[reg.taste],tour:P.tour?reg.n:null,home:home}};
 };
 /** The year ahead on the road: every stop for the next `n` shows, for the schedule pop-up. */
-E.roadAhead=function(S,n){var P=S.promos[S.player];return roadAhead(S,P,n||16).map(function(a,i){var c=cal(a.w);var x=stopSales(S,P,a.w,a.show,a.k,i===0);return {w:a.w,when:a.w===S.week?'This week':(a.w===S.week+1?'Next week':c.label),show:a.show.name,big:!!a.show.big,kind:a.show.big?(a.show.flag?'Flagship':evTy(a.show).n):'',city:a.city,cap:x.cap,mkt:mktWord(mktKnow(S,P,a.city)).w,sold:x.sold,on:x.on,opens:x.opens};});};
+E.roadAhead=function(S,n){var P=S.promos[S.player];return roadAhead(S,P,n||16).map(function(a,i){var c=cal(a.w);var x=stopSales(S,P,a.w,a.show,a.k,i===0);return {w:a.w,when:a.w===S.week?'This week':(a.w===S.week+1?'Next week':c.label),show:a.show.name,big:!!a.show.big,kind:a.show.big?(a.show.flag?'Flagship':evTy(a.show).n):'',city:a.city,cold:coldNight(S,a.show,a.city,a.w),cap:x.cap,mkt:mktWord(mktKnow(S,P,a.city)).w,sold:x.sold,on:x.on,opens:x.opens};});};
 E.roadRoute=function(S,pid){return roadRoute(S,S.promos[pid==null?S.player:pid]);};
 E.mapArea=function(S,mapId,city){var M=mapById(mapId),p=placeOf(S,city);return M&&p&&mapHas(M,p)?mapArea(M,p):-1;};
 E.mapXY=function(S,mapId,city){var M=mapById(mapId),p=placeOf(S,city);return M&&p&&mapHas(M,p)?mapXY(M,p):null;};
