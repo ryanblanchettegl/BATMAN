@@ -2626,7 +2626,9 @@ function settle(S,P){
   var mine=P.id===S.player,sp=0;if(mine)S.sponsors.forEach(function(x){sp+=x.pay;});
   var adv=Math.round(ADV_C[P.adv]*P.inc0)+(mine?evSpendCost(P):0),camp=campCost(P),med=medCost(P),trv=travelCost(P);
   var L=P.led,merch=merchWeek(S,P),wages=wagesWeek(S,P),inc=L.tv+L.gate+L.ppv+L.bonus+merch+sp,over=P.fixed+P.varRate*(inc-sp),exp=wages+L.prod+over+adv+camp+med+trv;var fnc=mine?financeCost(S,P,inc-exp):0;exp+=fnc;
-  var row={w:S.week,spons:sp,adv:adv,camp:camp,med:med,trv:trv,fin:fnc,tv:Math.round(L.tv),gate:Math.round(L.gate),ppv:Math.round(L.ppv),bonus:Math.round(L.bonus),merch:Math.round(merch),wages:Math.round(wages),prod:Math.round(L.prod),over:Math.round(over),inc:Math.round(inc),exp:Math.round(exp),net:Math.round(inc-exp),image:r1(P.image)};
+  // a publicly traded company pays its shareholders out of a week well above the board's target (NEXT.md 12.2)
+  var dv=0;if(P.model==='corporate'&&P.net>0&&inc-exp>P.net*1.2){dv=Math.round((inc-exp-P.net*1.2)*0.6);exp+=dv;}
+  var row={w:S.week,div:dv,spons:sp,adv:adv,camp:camp,med:med,trv:trv,fin:fnc,tv:Math.round(L.tv),gate:Math.round(L.gate),ppv:Math.round(L.ppv),bonus:Math.round(L.bonus),merch:Math.round(merch),wages:Math.round(wages),prod:Math.round(L.prod),over:Math.round(over),inc:Math.round(inc),exp:Math.round(exp),net:Math.round(inc-exp),image:r1(P.image)};
   P.cash+=row.net;row.cash=Math.round(P.cash);P.hist.push(row);var hcap=mine?60:12;while(P.hist.length>hcap)P.hist.shift();
   P.led={tv:0,gate:0,ppv:0,bonus:0,prod:0};
   return row;
