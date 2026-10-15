@@ -875,7 +875,7 @@ function doMatch(S,P,show,m,i,n,rep,used){
   // each wrestler keeps their last five results for the profile pop-up
   if(!S.cal&&!br&&win>=0)all.forEach(function(w){
     var mine=winners.indexOf(w)>=0,own=sides.filter(function(sd){return sd.indexOf(w)>=0;})[0]||[],foe=all.filter(function(o){return own.indexOf(o)<0;}).map(function(o){return o.name;}).join(' & ');
-    var L=w.rr||(w.rr=[]);L.unshift({w:S.week,r:mine?'W':'L',v:foe.slice(0,40),ov:OV});if(L.length>5)L.length=5;
+    var L=w.rr||(w.rr=[]);L.unshift({w:S.week,r:mine?'W':'L',v:foe.slice(0,28),ov:OV});if(L.length>4)L.length=4;
   });
   // injuries, growth, tag experience
   var injm=RISK_INJ[P.risk]/RISK_INJ[P.risk0]*(isPl?dif(S).inj:1)*(modelOf(P).inj||1)*(isPl&&hasRule(S,'testing')?0.88:1);
@@ -1563,7 +1563,7 @@ function showPool(S,P,show){return eligible(S,P,show).filter(function(w){return 
 function cardHype(S,P,show,card,isPl){
   var n=card.length,key=show.big?'big':show.id,star=n?avg(flat(card[n-1].sides).map(function(id){return S.w[id].ovr;})):50,heat=0;
   card.forEach(function(m){var ids=flat(m.sides);for(var x=0;x<ids.length;x++)for(var y=x+1;y<ids.length;y++){var f=feudOf(S,ids[x],ids[y]);if(f&&f.heat>heat)heat=f.heat;}});
-  return clamp(1+(star-(P.starB[key]||star))/80+heat/500+ADV_H[P.adv]+(isPl&&S.hype?S.hype:0)+(isPl?faceHype(S,P,card)+homeHype(S,P,flat(card.map(function(m){return flat(m.sides);}))):0),0.8,1.4);
+  return clamp(1+(star-(P.starB[key]||star))/80+heat/500+ADV_H[P.adv]+(isPl&&S.hype?S.hype:0)+(isPl&&show.big&&P.evHype?P.evHype:0)+(isPl?faceHype(S,P,card)+homeHype(S,P,flat(card.map(function(m){return flat(m.sides);}))):0),0.8,1.4);
 }
 /** What moved a big night's hype, in words, for the buy rate report. Reads the same parts as cardHype. */
 function hypeParts(S,P,show,card){
@@ -1572,6 +1572,7 @@ function hypeParts(S,P,show,card){
   var sd=(star-(P.starB[key]||star))/80;if(Math.abs(sd)>=0.02)out.push({t:sd>0?'A main event bigger than usual':'A main event smaller than usual',v:sd});
   if(heat>=40)out.push({t:'A hot feud on the card',v:heat/500});
   if(ADV_H[P.adv])out.push({t:'Advertising',v:ADV_H[P.adv]});
+  if(show.big&&P.evHype)out.push({t:'Money spent promoting the night',v:P.evHype});
   if(S.hype)out.push({t:S.hype>0?'Work done to build the night':'Bad word of mouth before the night',v:S.hype});
   var fh=faceHype(S,P,card);if(fh)out.push({t:fh>0?'The face of the company on top':'The face of the company left off',v:fh});
   var hh=homeHype(S,P,flat(card.map(function(m){return flat(m.sides);})));if(hh)out.push({t:'A home town name on the bill',v:hh});
@@ -1703,7 +1704,7 @@ function showEnd(S,P,show,card,st){
         rep.quest.push(qt);(rep.targets=rep.targets||[]).push({ok:!!q.hit,t:qt});dropQuest(S,q,!!q.hit,qt);}
     });
     rep.sheet=dirtSheet(S,P,show,rep,inP);
-    S.reports.unshift(rep);if(S.reports.length>8)S.reports.length=8;
+    S.reports.unshift(rep);if(S.reports.length>6)S.reports.length=6;
   }else if(big){var mm=ms[ms.length-1];news(S,'world',show.name+' was graded '+gradeG(repCS(rep))+'. Main event: '+mm.label+(mm.win?' ('+mm.win+' won).':' (draw).'));}
   if(isPl)Object.keys(ctx.angled).forEach(function(id){if(S.w[id])S.w[id].la=S.week;});
   SHOWX.forEach(function(fn){fn(S,P,show,rep,card);});
@@ -2623,10 +2624,10 @@ function joinCompany(S,w,P,wage,weeks){
 }
 function settle(S,P){
   var mine=P.id===S.player,sp=0;if(mine)S.sponsors.forEach(function(x){sp+=x.pay;});
-  var adv=Math.round(ADV_C[P.adv]*P.inc0),camp=campCost(P),med=medCost(P),trv=travelCost(P);
+  var adv=Math.round(ADV_C[P.adv]*P.inc0)+(mine?evSpendCost(P):0),camp=campCost(P),med=medCost(P),trv=travelCost(P);
   var L=P.led,merch=merchWeek(S,P),wages=wagesWeek(S,P),inc=L.tv+L.gate+L.ppv+L.bonus+merch+sp,over=P.fixed+P.varRate*(inc-sp),exp=wages+L.prod+over+adv+camp+med+trv;var fnc=mine?financeCost(S,P,inc-exp):0;exp+=fnc;
   var row={w:S.week,spons:sp,adv:adv,camp:camp,med:med,trv:trv,fin:fnc,tv:Math.round(L.tv),gate:Math.round(L.gate),ppv:Math.round(L.ppv),bonus:Math.round(L.bonus),merch:Math.round(merch),wages:Math.round(wages),prod:Math.round(L.prod),over:Math.round(over),inc:Math.round(inc),exp:Math.round(exp),net:Math.round(inc-exp),image:r1(P.image)};
-  P.cash+=row.net;row.cash=Math.round(P.cash);P.hist.push(row);if(P.hist.length>60)P.hist.shift();
+  P.cash+=row.net;row.cash=Math.round(P.cash);P.hist.push(row);var hcap=mine?60:12;while(P.hist.length>hcap)P.hist.shift();
   P.led={tv:0,gate:0,ppv:0,bonus:0,prod:0};
   return row;
 }
@@ -2858,6 +2859,15 @@ WEEKX.push(function(S){
 /* every big night of yours is kept for Finances: the buys against the forecast and the money (NEXT.md 3.6) */
 SHOWX.push(function(S,P,show,rep){if(S.cal||P.id!==S.player||!show.big||!rep.bf)return;var L=S.buyLog||(S.buyLog=[]);L.unshift({w:S.week,n:rep.name,b:rep.buys,f:rep.bf,m:rep.ppv,t:(evTy(show)||{}).n});if(L.length>24)L.length=24;});
 E.buyLog=function(S){return (S.buyLog||[]).slice();};
+
+/* promoting the next big night (NEXT.md 3.5): a weekly spend builds that night's hype, P.evHype, up to a cap.
+   It is spent on the night: the hype lifts the house and the buys, and the meter starts again. */
+var EV_SPN=['Nothing','Some','Heavy'],EV_SPC=[0,0.01,0.025],EV_SPH=[0,0.02,0.04],EV_HMAX=0.15;
+function evSpendCost(P){return Math.round(EV_SPC[P.evSp||0]*P.inc0);}
+WEEKX.push(function(S){var P=S.promos[S.player];if(!P||S.cal)return;if(P.evSp)P.evHype=Math.min(EV_HMAX,(P.evHype||0)+EV_SPH[P.evSp]);});
+SHOWX.push(function(S,P,show){if(S.cal||P.id!==S.player||!show.big)return;P.evHype=0;});
+E.evSpend=function(S,lvl){var P=S.promos[S.player];lvl=clamp(lvl|0,0,2);P.evSp=lvl;return {ok:true,msg:lvl?EV_SPN[lvl]+' spending on the next big night: '+money(evSpendCost(P))+' a week.':'No more money on promoting the next big night.'};};
+E.evHype=function(S){var P=S.promos[S.player],h=P.evHype||0;return {lvl:P.evSp||0,names:EV_SPN,cost:EV_SPC.map(function(c){return Math.round(c*P.inc0);}),h:h,pct:Math.round(h/EV_HMAX*100),word:h<=0?'Nothing yet':(h<0.05?'A little buzz':(h<0.1?'Building':(h<EV_HMAX?'Strong':'As high as it goes')))};};
 
 /* ===== 50-company.js ===== */
 /* ---------- the company: broadcast slot, production, risk, tickets, advertising, sponsors ---------- */
@@ -4131,6 +4141,8 @@ E.FOCUS=FOCUS;E.tournActive=tournActive;
 /* Housekeeping: retired wrestlers who never held a title do not need their year lines, recent results or long logs.
    Keeps the save small in a long game (about 1.4 MB at week 300). Runs every 26 weeks. */
 WEEKX.push(function(S){
+  // the play-by-play of an old show is never read again: only the newest two keep it
+  (S.reports||[]).slice(2).forEach(function(r){(r.segs||[]).forEach(function(g){if(g.bc)delete g.bc;});});
   if(S.week%26!==0)return;
   var champs={};S.order.forEach(function(pid){S.promos[pid].titles.forEach(function(t){(t.hist||[]).forEach(function(h){String(h.ids||'').split(',').forEach(function(id){champs[id]=1;});});t.holders.forEach(function(id){champs[id]=1;});});});
   S.w.forEach(function(w){
@@ -4138,6 +4150,8 @@ WEEKX.push(function(S){
     delete w.rr;delete w.ys;delete w.bz;
     if(w.log&&w.log.length>6)w.log=w.log.slice(0,1).concat(w.log.slice(-5));
   });
+  // relationships with somebody retired are never read again
+  if(S.rm)Object.keys(S.rm).forEach(function(k){var ids=k.split('-');if(ids.some(function(id){var w=S.w[+id];return !w||w.rt;}))delete S.rm[k];});
   // old head-to-head and recent-match keys nobody will read again
   var keys=Object.keys(S.recent||{});if(keys.length>1500)keys.forEach(function(k){if(S.week-S.recent[k]>26)delete S.recent[k];});
 });
@@ -5522,7 +5536,7 @@ E.FED_SIZE=FED_SIZE;E.FED_REGION=FED_REGION;
 
 /* ---------- career records: the shared bones for a booking game and a career mode ----------
    Every wrestler carries a milestone log and a stat line per year, whoever books them. */
-function mile(S,w,k,t){if(S.cal||!w)return;var L=w.log||(w.log=[]);L.push({w:S.week,k:k,t:t});if(L.length>24)L.splice(1,1);}
+function mile(S,w,k,t){if(S.cal||!w)return;var L=w.log||(w.log=[]);L.push({w:S.week,k:k,t:t});if(L.length>16)L.splice(1,1);}
 function ystat(S,w){var y=cal(S.week).year,Y=w.ys||(w.ys={});return Y[y]||(Y[y]=[0,0,0,0,0,0,0]);}   // matches, wins, losses, draws, best match, main events, titles won
 POST.push(function(ctx){
   var S=ctx.S,r=ctx.res,P=ctx.P;if(S.cal)return;
