@@ -64,7 +64,9 @@ function roadRoute(S,P){
 }
 function roadCity(S,P,n){var R=roadRoute(S,P);return R[((n%R.length)+R.length)%R.length];}
 /* the building is booked before the card is: its size comes from what this company draws, not from tonight's matches */
-function roadCap(S,P,show,city){return capFor(demand(P,show,1)*tourBoost(S,P)*mktMult(S,P,city));}
+/* a city that sold out last time gets a bigger building next time (NEXT.md 6.4) */
+function soldOutLast(S,P,city){var v=P.id===S.player&&S.rdv&&S.rdv[city];return !!(v&&v.so);}
+function roadCap(S,P,show,city){return capFor(demand(P,show,1)*tourBoost(S,P)*mktMult(S,P,city)*(soldOutLast(S,P,city)?1.12:1));}
 /* ---------- markets: how well a place knows you (docs/plans/art-direction.md, 6.7) ----------
    Every city on the road has a market, 0 to 100, only ever said in words. It starts near the middle (a little higher
    in the city the loop starts from), rises with a good night there and falls with a bad one, and fades when you stay
