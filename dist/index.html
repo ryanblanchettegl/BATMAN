@@ -13962,9 +13962,14 @@ function matchRead(S,card,i){
     if(s[0].team==null||s[0].team!==s[1].team)add(-1,names(s)+' are not a regular team. Expect it to be rough.','see');
     else if(relOf(S,s[0].id,s[1].id)<0)add(-1,names(s)+' do not get on. It shows when they tag.','see');
   });
+  // a sharp agent sees more (roadmap 8): who the crowd will be behind, and two styles that fight each other. Only what can be read off the people.
+  var ag=agentOf(S,m),q=ag?agentQ(ag):0;
+  if(m.mt==='1v1'&&q>=0.6&&reads(S,m,'cr'+rkey(all[0].id,all[1].id))){var A1=all[0],B1=all[1],fav=A1.ovr+(A1.align==='F'?6:0)>=B1.ovr+(B1.align==='F'?6:0)?A1:B1;
+    if(Math.abs(A1.ovr-B1.ovr)<=12)add(fav.align==='F'?1:0,'My read: the crowd will be behind '+fav.name+'. Make them wait for it.','read');}
+  if(m.mt==='1v1'&&q>=0.8&&all[0].style&&all[0].style===all[1].style&&reads(S,m,'st'+rkey(all[0].id,all[1].id)))add(0,'My read: they wrestle the same way. Somebody has to bend, or it goes nowhere.','read');
   var NEW=['First time for these two on our shows. I have no read. We find out at the bell.','I have not seen these two work each other. I cannot tell you how it goes.','A new pairing for us. No read yet. Run it and we will know.'];
   if(!out.length)add(0,m.mt==='1v1'?(blind?NEW[Math.floor(h01(S.seed+':nw:'+rkey(all[0].id,all[1].id))*NEW.length)%NEW.length]:'Nothing to flag.'):(m.mt==='tag'?'Two regular teams. Nothing to flag.':'A lot of bodies in there. Hard to read until the bell.'),'none');
-  var max=1+(agentOf(S,m)?1:0)+(S.booker&&S.booker.sk.eye>=3?1:0);
+  var max=1+(ag?1:0)+(q>=0.8?1:0)+(S.booker&&S.booker.sk.eye>=3?1:0);
   return {i:i,who:agentName(S,m),lines:out.slice(0,max),more:out.length>max,own:!!agentOf(S,m)};
 }
 /** The agent's comment on every match of the card on the desk, in card order. */
