@@ -3,6 +3,13 @@ const fs=require('fs'),path=require('path');
 const rd=f=>fs.readFileSync(path.join(__dirname,f),'utf8');
 const parts=fs.readdirSync(path.join(__dirname,'src')).filter(f=>f.endsWith('.js')).sort();
 const engine="/* Gorilla Position — simulation engine (built from src/). No DOM. State is plain JSON so it can be saved as-is. */\n(function (root) {\n'use strict';\n"+parts.map(f=>'/* ===== '+f+' ===== */\n'+rd('src/'+f)).join('\n')+"\nroot.GP=E;\n})(typeof window !== 'undefined' ? window : globalThis);\n";
+// one version: VER in app/src/store.ts is the source; the build writes it into package.json and the README's version line
+(function(){
+  const ver=(fs.readFileSync(path.join(__dirname,'app','src','store.ts'),'utf8').match(/export const VER = '([\d.]+)'/)||[])[1];if(!ver)return;
+  const semver=ver.split('.').concat(['0','0']).slice(0,3).join('.');
+  for(const pj of ['package.json',path.join('app','package.json')]){const f=path.join(__dirname,pj);if(!fs.existsSync(f))continue;const J=JSON.parse(fs.readFileSync(f,'utf8'));if(J.version!==semver){J.version=semver;fs.writeFileSync(f,JSON.stringify(J,null,2)+'\n');}}
+  const rf=path.join(__dirname,'README.md');if(fs.existsSync(rf)){const R=fs.readFileSync(rf,'utf8'),R2=R.replace(/(\*\*Version:\*\* )[\d.]+/,'$1'+ver);if(R2!==R)fs.writeFileSync(rf,R2);}
+})();
 fs.writeFileSync(path.join(__dirname,'engine.js'),engine);
 // ---- the interface (app/): Preact + TypeScript, bundled to one script by esbuild ----
 const appDir=path.join(__dirname,'app');
