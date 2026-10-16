@@ -230,6 +230,7 @@ function tiles(page: string): { grp: string; list: Tile[] }[] {
       { id: 'sponsors', n: 'Your sponsors', now: () => S.sponsors.length + ' signed', d: 'The deals you have, what they pay and the condition on each.', body: () => <Sponsors /> },
       { id: 'offers', n: 'Sponsor offers', now: () => S.spOffers.length + ' on the table', d: 'Money every week for a condition you have to keep.', body: () => <Offers /> }] },
     { grp: 'The library and the money', list: [
+      { id: 'stream', n: 'Streaming', now: () => { const t = E.streamInfo(S); return t.on ? t.subs.toLocaleString('en-US') + ' subscribers' : 'Not open'; }, d: 'Your own service: subscribers pay every week.', body: () => <Streaming /> },
       { id: 'tape', n: 'Back catalogue', now: () => 'Your tape library', d: 'What your old shows are worth and what they earn.', body: () => <Tape /> },
       { id: 'licensing', n: 'Licensing', now: () => 'Names and likenesses', d: 'License what you own to somebody else.', body: () => <Licensing /> },
       { id: 'money', n: 'Loans and investors', now: () => P.loan ? 'A loan is running' : 'No loan', d: 'Borrow against the company, or bring money in.', body: () => <Money /> },
@@ -290,6 +291,22 @@ export function House() {
 }
 
 /** The back catalogue: what it is worth, what it earns, and the two ways to cash it in. */
+function Streaming() {
+  const S = G.S, t = E.streamInfo(S);
+  const go = (f: () => any) => act(() => { const r = f(); say(r.msg, { err: !r.ok }); showResult('Streaming', r.msg, !r.ok); });
+  return <Panel title="Streaming">
+    {t.on ? <>
+      <div class="kv"><div><small>Subscribers</small><span class="num" data-t="stream-subs">{t.subs.toLocaleString('en-US')}</span></div><div><small>This week</small><span class={'num ' + (t.wk >= 0 ? 'good' : 'bad')}>{t.wk >= 0 ? '+' : ''}{t.wk.toLocaleString('en-US')}</span></div><div><small>Earns</small><span class="num">{cash(t.pay)} a week</span></div></div>
+      <p class="muted mt1">Open since {t.since}. Room for about {t.cap.toLocaleString('en-US')} with a library of {t.lib} {plural(t.lib, 'show')} and your popularity. Good shows bring people in; bad ones lose some. The cities you do not tour still see you, so their markets do not cool.</p>
+      {t.major.length ? <p class="warn mt1">{t.major.join(' and ')} {t.major.length === 1 ? 'is' : 'are'} on a major network, which wants the show to itself and pays a little less while you stream.</p> : null}
+      <div class="row opts mt1"><Btn kind="sm" t="stream-stop" onClick={() => go(() => E.streamStop(S))}>Close the service</Btn></div>
+    </> : <>
+      <p>Your own streaming service. Subscribers pay {cash(t.price)} a week each. How many come depends on your popularity and on the shows in your tape library ({t.lib} so far): about {t.cap.toLocaleString('en-US')} at most today.</p>
+      <p class="muted mt1">It costs {cash(t.open)} to open and about {cash(t.run)} a week to run. While it runs, cities you do not tour do not cool. A major network pays a little less while you stream.</p>
+      <div class="row opts mt1"><Btn t="stream-start" onClick={() => go(() => E.streamStart(S))}>Open it: {cash(t.open)}</Btn></div>
+    </>}
+  </Panel>;
+}
 function Tape() {
   const S = G.S, t = E.tape(S);
   const lic = () => act(() => { const r = E.licenseTape(S); say(r.text, { err: !r.ok }); showResult('Back catalogue', r.text, !r.ok); });

@@ -88,7 +88,7 @@ function roadMktNow(S,P){return mktMult(S,P,roadCity(S,P,S.rdn||0));}
 /* away too long and a market cools, down to where it would be if you had never come */
 WEEKX.push(function(S){
   if(S.cal||!S.mkt)return;var P=S.promos[S.player];
-  Object.keys(S.mkt).forEach(function(c){var m=S.mkt[c],floor=Math.min(m.k,mktBase(S,P,c)-10);if(S.week-m.w>6&&m.k>floor)m.k=Math.max(floor,Math.round((m.k-0.5)*10)/10);});
+  Object.keys(S.mkt).forEach(function(c){var m=S.mkt[c],floor=Math.min(m.k,mktBase(S,P,c)-10);if(S.week-m.w>6&&m.k>floor&&!streamOn(S))m.k=Math.max(floor,Math.round((m.k-0.5)*10)/10);});
 });
 E.mktWords=MKT_WORDS.map(function(x){return {w:x[1],d:x[2],from:x[0]};});
 /* ---------- tickets sold before the night (docs/plans/art-direction.md, 6.6) ----------
