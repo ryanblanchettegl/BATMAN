@@ -61,3 +61,25 @@ E.brSurpriseInfo=function(S,m){
     return r;
   };
 })();
+/* The run sheet (roadmap 6): a match is moved to any place on the card, and a locked match (m.lock) keeps its place.
+   Moving one match shifts the others that are not locked; nothing moves into or out of a locked place. */
+E.lockMatch=function(S,i,on){var m=S.card&&S.card[i];if(!m)return {ok:false};if(on)m.lock=1;else delete m.lock;return {ok:true};};
+E.moveMatchTo=function(S,from,to){
+  var c=S.card||[];if(from===to||from<0||to<0||from>=c.length||to>=c.length)return {ok:false,msg:''};
+  if(c[from].lock)return {ok:false,msg:'That match is locked in its place. Unlock it first.'};
+  if(c[to].lock)return {ok:false,msg:'Match '+(to+1)+' is locked in its place.'};
+  var free=[],k;for(k=0;k<c.length;k++)if(!c[k].lock)free.push(k);
+  var order=free.map(function(x){return c[x];}),a=free.indexOf(from),b=free.indexOf(to),m=order.splice(a,1)[0];order.splice(b,0,m);
+  var out=c.slice();free.forEach(function(x,q){out[x]=order[q];});
+  for(k=0;k<c.length;k++)c[k]=out[k];
+  return {ok:true,i:to};
+};
+/** Suggest a card that keeps the locked matches where they are: the suggestion fills the places around them. */
+E.suggestKeep=function(S){
+  var keep=(S.card||[]).map(function(m,i){return m.lock?{m:m,i:i}:null;}).filter(Boolean),c=E.suggest(S);
+  if(!keep.length)return c;
+  var used={};keep.forEach(function(k){flat(k.m.sides).forEach(function(id){used[id]=1;});});
+  c=c.filter(function(m){return !flat(m.sides).some(function(id){return used[id];});});
+  keep.forEach(function(k){c.splice(Math.min(k.i,c.length),0,k.m);});
+  fitShow(S,c);return c;
+};

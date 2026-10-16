@@ -34,4 +34,11 @@ ok('shot', 'the winner (if on the roster) has a title shot', !win || win.promo !
   c2.unshift({ mt: 'br', sides: free.map(w => [w.id]), win: -2, title: null, stip: 'std', len: 'M' }); E.fitShow(S2, c2);
   const before = free.map(w => w.shot); E.runPlayerShow(S2, c2);
   ok('shot', 'a battle royal not booked for a title shot gives none', free.every((w, k) => w.shot === before[k])); }
+{ /* the run sheet: move a match anywhere, locked matches keep their place, Suggest keeps them too */
+  const S3 = E.newGame('pdw', 3, { name: 'R' }); house(S3); S3.card = E.suggest(S3); const n = S3.card.length, last = S3.card[n - 1], first = S3.card[0];
+  E.lockMatch(S3, n - 1, 1);
+  ok('sheet', 'nothing moves into a locked place', !E.moveMatchTo(S3, 0, n - 1).ok && S3.card[n - 1] === last);
+  ok('sheet', 'a match moves to any other place and the lock holds', E.moveMatchTo(S3, 0, n - 2).ok && S3.card[n - 2] === first && S3.card[n - 1] === last);
+  const c = E.suggestKeep(S3); ok('sheet', 'Suggest a card keeps a locked match where it was', c[n - 1] === last || c[c.length - 1] === last);
+}
 console.log(fails.length ? fails.length + ' failed' : 'test-royal: all passed'); process.exit(fails.length ? 1 : 0);

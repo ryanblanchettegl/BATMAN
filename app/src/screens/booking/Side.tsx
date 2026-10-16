@@ -8,7 +8,7 @@ import { G, act, say, view, slice, openModal, closeModal, Modal } from '../../st
 import { book } from '../../flow';
 import { go } from '../../nav';
 import { Window, Panel, Tabs, Sel, Field, Tag, Name, Meter, CheckLine, Empty, Btn, Txt, Opt, Group, LightPic } from '../../kit';
-import { Match, pickSide, setPlan, sel, pickMatch, pickSeg, moveMatch, removeMatch, run } from './run';
+import { Match, pickSide, setPlan, sel, pickMatch, pickSeg, moveMatch, removeMatch, run, lockMatch } from './run';
 import { Shape } from './Shape';
 import { Editor } from './Editor';
 import { hm, openSeg, CATN, TopTag } from './Segments';
@@ -60,8 +60,9 @@ export function MatchWindow(p: { m: Modal }) {
   if (!m) return <Window title="Match" ok="Close"><p class="muted">That match is no longer on the card.</p></Window>;
   const rd = E.agentReads(S)[i], it = E.clock(S).items.find((x: any) => x.t === 'match' && x.i === i), meta = matchMeta(m, i, n, it);
   return <Window title={'Match ' + (i + 1) + ' of ' + n} wide ok="Done"
-    footer={<><Btn t="mw-up" disabled={i === 0} onClick={() => { p.m.i = i - 1; moveMatch(i, -1); }}>{'↑'} Earlier</Btn>
-      <Btn t="mw-down" disabled={i === n - 1} onClick={() => { p.m.i = i + 1; moveMatch(i, 1); }}>{'↓'} Later</Btn>
+    footer={<><Btn t="mw-up" disabled={i === 0} onClick={() => { if (!m.lock && !(S.card[i - 1] || {}).lock) p.m.i = i - 1; moveMatch(i, -1); }}>{'↑'} Earlier</Btn>
+      <Btn t="mw-down" disabled={i === n - 1} onClick={() => { if (!m.lock && !(S.card[i + 1] || {}).lock) p.m.i = i + 1; moveMatch(i, 1); }}>{'↓'} Later</Btn>
+      <Btn t="mw-lock" on={!!m.lock} onClick={() => lockMatch(i)}>{m.lock ? 'Locked in place' : 'Lock this place'}</Btn>
       <Btn kind="danger" t="mw-rm" onClick={() => { closeModal(); removeMatch(i); }}>Remove</Btn></>}>
     <p class="meta d1-meta">{meta.map((x, k) => <span key={x[0]}>{k ? DOT : null}{x[1]}</span>)}</p>
     <Editor m={m} i={i} />

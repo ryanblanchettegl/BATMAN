@@ -9,7 +9,7 @@ Built in this order, one at a time, each tested, committed and published. Ryan's
 3. **Buildings by city.** (Done 16 October.) Every city has 3 to 5 named buildings (more in big cities). The road picks the one that fits the draw.
 4. **Cancellation.** (Done 16 October.) A network can cancel a weekly show after warnings. It becomes a house show (no TV money, a smaller crowd). A strong run of house shows can win a new network deal.
 5. **The match pop-up.** (Done 16 October: the Pop-up button beside the pane.) One pop-up books a match: type, people, stipulation, title, length and finish, with the road agent's hint at the bottom. It should look better and be easier than today.
-6. **The run sheet.** Drag a match or segment up or down the card. Lock a slot (the opener or the main event) so reordering leaves it alone. Every line keeps a keyboard and remote way to move (rule 5).
+6. **The run sheet.** (Done 16 October for matches: drag, lock in the pop-up, Suggest keeps locked matches.) Drag a match or segment up or down the card. Lock a slot (the opener or the main event) so reordering leaves it alone. Every line keeps a keyboard and remote way to move (rule 5).
 7. **What could happen tonight.** A window on Book the show with four parts: possible moments (a title could change, a feud could boil over, somebody could get hurt, the crowd could turn), who is at risk, what the card sets up and leaves cold, and one gut-feeling line. All in words, never a forecast (fog of war).
 8. **Sly hints.** The road agent's reads get sharper with a better agent; a weak one says little. Never wrong, never a score.
 9. **Book a debut.** When you sign somebody you can book their debut: a vignette, a surprise attack, or a match.

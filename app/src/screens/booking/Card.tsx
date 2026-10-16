@@ -10,7 +10,7 @@ import { roleOf } from './Shape';
 import { Btn, Meter, Win, brandName, teamName } from '../../kit';
 import { Side } from './Side';
 import { TopTag, addPromo, addAngle, hm, CATN } from './Segments';
-import { Match, onCard, sideText, suggest, addMatch, clearCard, pickMatch, pickSeg, pickSide, sel } from './run';
+import { Match, onCard, sideText, suggest, addMatch, clearCard, pickMatch, pickSeg, pickSide, sel, moveMatchTo } from './run';
 
 const DOT = ' · ';
 const LEN: Record<string, string> = { S: 'Short', M: 'Medium', L: 'Long' };
@@ -49,7 +49,9 @@ interface Line { key: string; cls: string; at: number | null; no: string; who: C
 /** One line of the run sheet: a button that selects it. */
 function Row(p: { l: Line }) {
   const l = p.l;
-  return <div class={'seg r1 ' + l.cls + (l.on ? ' sel' : '')} data-m={l.dm} data-seg={l.ds}>
+  const drag = l.dm != null ? { draggable: true, onDragStart: (e: DragEvent) => { e.dataTransfer?.setData('text/plain', String(l.dm)); }, onDragOver: (e: DragEvent) => e.preventDefault(),
+    onDrop: (e: DragEvent) => { e.preventDefault(); const f = +(e.dataTransfer?.getData('text/plain') || -1); if (f >= 0 && l.dm != null) moveMatchTo(f, l.dm); } } : {};
+  return <div class={'seg r1 ' + l.cls + (l.on ? ' sel' : '')} data-m={l.dm} data-seg={l.ds} {...drag}>
     <button type="button" class="r1b" data-t={l.t} data-v={l.v} aria-pressed={l.on} onClick={l.pick}>
       <span class="at">{l.at == null ? '' : hm(l.at)}</span><span class="no">{l.no}</span><span class="who">{l.who}</span><span class="meta">{l.meta}</span>
     </button>
@@ -78,7 +80,7 @@ export function Card() {
     // the line on the sheet is short: what the spot is, the kind of match, the minutes, and the things that stand out
     const fl: any[] = done ? (FL[i] || []) : [];
     const meta = <>{fl.length ? <span data-t="row-flags">{fl.map((f: any, k: number) => <span key={k} class={f.k === 'bad' ? 'bad' : (f.k === 'good' ? 'good' : 'warn')}>[{f.t}] </span>)}</span> : null}{it && it.top ? <><TopTag top={it.top} /> </> : null}{roleOf(i, n) ? roleOf(i, n) + DOT : ''}{E.MT[m.mt].n}{m.stip !== 'std' ? DOT + E.STIP[m.stip].n : ''}{it ? DOT + it.mins + ' min' : ''}
-      {!done ? <>{DOT}<span class="warn">Unfinished</span></> : null}{m.call != null ? <>{DOT}<span class="gold">Your call</span></> : null}{(m as any).end ? <>{DOT}<span class="gold">Ends the story</span></> : null}{t ? <>{DOT}<span class="gold">{t.name}</span></> : null}</>;
+      {!done ? <>{DOT}<span class="warn">Unfinished</span></> : null}{m.call != null ? <>{DOT}<span class="gold">Your call</span></> : null}{(m as any).end ? <>{DOT}<span class="gold">Ends the story</span></> : null}{(m as any).lock ? <>{DOT}<span class="warn" data-t="row-lock">Locked</span></> : null}{t ? <>{DOT}<span class="gold">{t.name}</span></> : null}</>;
     L.push({ key: 'm' + i, cls: (i === n - 1 ? 'me' : '') + (it && it.top ? ' top' : ''), at: it ? it.at : null, no: String(i + 1), dm: i, who: matchLabel(m),
       meta: meta, t: 'edit', v: i, on: b.edit === i, pick: () => pickMatch(i) });
   }); else segsAt(0, 1);
