@@ -1,0 +1,613 @@
+{
+ "reigns": [
+  {
+   "title": "wwc_undisputed",
+   "holders": [
+    "chad_champ"
+   ],
+   "from": "2025-04",
+   "to": "2025-08",
+   "defs": 4,
+   "event": "WrestleMoney"
+  },
+  {
+   "title": "wwc_undisputed",
+   "holders": [
+    "colt_highway"
+   ],
+   "from": "2025-08",
+   "to": null,
+   "defs": 8,
+   "event": "SummerSlamdunk"
+  },
+  {
+   "title": "wwc_heavyish",
+   "holders": [
+    "hype_hopkins"
+   ],
+   "from": "2025-04",
+   "to": "2025-06",
+   "defs": 2,
+   "event": "WrestleMoney"
+  },
+  {
+   "title": "wwc_heavyish",
+   "holders": [
+    "wilt_wellness"
+   ],
+   "from": "2025-06",
+   "to": null,
+   "defs": 9,
+   "event": "Monday Night RAWR"
+  },
+  {
+   "title": "wwc_ic",
+   "holders": [
+    "dirty_junior"
+   ],
+   "from": "2025-04",
+   "to": null,
+   "defs": 12,
+   "event": "WrestleMoney"
+  },
+  {
+   "title": "wwc_us",
+   "holders": [
+    "big_iosefa"
+   ],
+   "from": "2025-04",
+   "to": "2025-08",
+   "defs": 6,
+   "event": "WrestleMoney"
+  },
+  {
+   "title": "wwc_us",
+   "holders": [
+    "silent_sione"
+   ],
+   "from": "2025-08",
+   "to": null,
+   "defs": 5,
+   "event": "SummerSlamdunk"
+  },
+  {
+   "title": "wwc_womens_world",
+   "holders": [
+    "mama_morbid"
+   ],
+   "from": "2025-02",
+   "to": "2025-03",
+   "defs": 1,
+   "event": "Monday Night RAWR"
+  },
+  {
+   "title": "wwc_womens_world",
+   "holders": [
+    "kumo_cloud"
+   ],
+   "from": "2025-03",
+   "to": null,
+   "defs": 13,
+   "event": "Monday Night RAWR"
+  },
+  {
+   "title": "wwc_womens",
+   "holders": [
+    "tiara_orbit"
+   ],
+   "from": "2025-01",
+   "to": null,
+   "defs": 15,
+   "event": "Friday Night SlapDown"
+  },
+  {
+   "title": "wwc_tag_rawr",
+   "holders": [
+    "kojo_crown",
+    "xerxes_woodwind"
+   ],
+   "from": "2025-06",
+   "to": null,
+   "defs": 6,
+   "event": "Monday Night RAWR"
+  },
+  {
+   "title": "wwc_tag_slap",
+   "holders": [
+    "block_party_ace",
+    "block_party_deuce"
+   ],
+   "from": "2025-08",
+   "to": null,
+   "defs": 4,
+   "event": "Friday Night SlapDown"
+  },
+  {
+   "title": "wwc_notyet",
+   "holders": [
+    "king_kayode"
+   ],
+   "from": "2025-01",
+   "to": null,
+   "defs": 14,
+   "event": "NOT YET Tuesday"
+  },
+  {
+   "title": "wwc_notyet_w",
+   "holders": [
+    "la_primera_paloma"
+   ],
+   "from": "2025-06",
+   "to": null,
+   "defs": 8,
+   "event": "NOT YET Tuesday"
+  },
+  {
+   "title": "ewe_world",
+   "holders": [
+    "rodeo_regret"
+   ],
+   "from": "2025-07",
+   "to": null,
+   "defs": 7,
+   "event": "All Inn"
+  },
+  {
+   "title": "ewe_womens_world",
+   "holders": [
+    "hollywood_hazel"
+   ],
+   "from": "2025-02",
+   "to": null,
+   "defs": 12,
+   "event": "Grand Slammed: Down Under"
+  },
+  {
+   "title": "ewe_international",
+   "holders": [
+    "zed_zenith"
+   ],
+   "from": "2025-01",
+   "to": "2025-05",
+   "defs": 3,
+   "event": "Wednesday Night Detonation"
+  },
+  {
+   "title": "ewe_international",
+   "holders": [
+    "billy_kestrel"
+   ],
+   "from": "2025-05",
+   "to": null,
+   "defs": 9,
+   "event": "Double or Something"
+  },
+  {
+   "title": "ewe_cable",
+   "holders": [
+    "kid_comet"
+   ],
+   "from": "2025-08",
+   "to": null,
+   "defs": 4,
+   "event": "All Inn"
+  },
+  {
+   "title": "ewe_tag",
+   "holders": [
+    "burt_bluecollar",
+    "dex_diesel"
+   ],
+   "from": "2025-10",
+   "to": null,
+   "defs": 3,
+   "event": "WrestleDaydream"
+  },
+  {
+   "title": "ror_world",
+   "holders": [
+    "el_forajido"
+   ],
+   "from": "2025-04",
+   "to": null,
+   "defs": 7,
+   "event": "Ring of Respectable TV"
+  },
+  {
+   "title": "ror_pure",
+   "holders": [
+    "leg_lock_lee"
+   ],
+   "from": "2025-03",
+   "to": null,
+   "defs": 6,
+   "event": "Ring of Respectable TV"
+  },
+  {
+   "title": "ror_tv",
+   "holders": [
+    "shane_slabs"
+   ],
+   "from": "2025-05",
+   "to": null,
+   "defs": 5,
+   "event": "Ring of Respectable TV"
+  },
+  {
+   "title": "tba_world",
+   "holders": [
+    "believe_barnaby"
+   ],
+   "from": "2025-01",
+   "to": "2025-06",
+   "defs": 6,
+   "event": "Genesis (Working Title)"
+  },
+  {
+   "title": "tba_world",
+   "holders": [
+    "whoop_wallace"
+   ],
+   "from": "2025-06",
+   "to": "2025-10",
+   "defs": 4,
+   "event": "Slammiversary-ish Anniversary"
+  },
+  {
+   "title": "tba_world",
+   "holders": [
+    "santo_santiago"
+   ],
+   "from": "2025-10",
+   "to": null,
+   "defs": 8,
+   "event": "Bound for Somewhere"
+  },
+  {
+   "title": "tba_knockouts",
+   "holders": [
+    "masha_meanslam"
+   ],
+   "from": "2025-03",
+   "to": null,
+   "defs": 12,
+   "event": "Sacrifice Bunt"
+  },
+  {
+   "title": "tba_x",
+   "holders": [
+    "leon_launchpad"
+   ],
+   "from": "2025-04",
+   "to": null,
+   "defs": 9,
+   "event": "Rebellion Pending"
+  },
+  {
+   "title": "tba_tag",
+   "holders": [
+    "brother_ladder",
+    "brother_ladder_b"
+   ],
+   "from": "2025-03",
+   "to": null,
+   "defs": 10,
+   "event": "Sacrifice Bunt"
+  },
+  {
+   "title": "otpw_world",
+   "holders": [
+    "hiro_goto_again"
+   ],
+   "from": "2025-01",
+   "to": "2025-06",
+   "defs": 3,
+   "event": "Dome Kingdom"
+  },
+  {
+   "title": "otpw_world",
+   "holders": [
+    "simon_submission"
+   ],
+   "from": "2025-06",
+   "to": null,
+   "defs": 8,
+   "event": "Domination Over Lunch"
+  },
+  {
+   "title": "otpw_global",
+   "holders": [
+    "tsubasa_tomorrow"
+   ],
+   "from": "2025-10",
+   "to": null,
+   "defs": 3,
+   "event": "King of Something"
+  },
+  {
+   "title": "otpw_junior",
+   "holders": [
+    "el_solitario"
+   ],
+   "from": "2025-08",
+   "to": null,
+   "defs": 4,
+   "event": "Summer Sweat Climax Final"
+  },
+  {
+   "title": "otpw_women",
+   "holders": [
+    "lady_khaos"
+   ],
+   "from": "2025-05",
+   "to": null,
+   "defs": 5,
+   "event": "Golden Week Grapple"
+  },
+  {
+   "title": "nova_world",
+   "holders": [
+    "phoenix_fumika"
+   ],
+   "from": "2025-04",
+   "to": null,
+   "defs": 12,
+   "event": "All Star Grand Something"
+  },
+  {
+   "title": "nova_wonder",
+   "holders": [
+    "twinkle_mask"
+   ],
+   "from": "2025-06",
+   "to": null,
+   "defs": 8,
+   "event": "Flashing Lights Champions"
+  },
+  {
+   "title": "nova_tag",
+   "holders": [
+    "summer_sprite",
+    "ticktock_tomoe"
+   ],
+   "from": "2025-11",
+   "to": null,
+   "defs": 4,
+   "event": "Goddesses of Nova Tag League"
+  },
+  {
+   "title": "ayy_mega",
+   "holders": [
+    "hijo_del_drakkar"
+   ],
+   "from": "2025-08",
+   "to": null,
+   "defs": 6,
+   "event": "Tripleplosión"
+  },
+  {
+   "title": "ayy_reina",
+   "holders": [
+    "dama_serpiente"
+   ],
+   "from": "2025-06",
+   "to": null,
+   "defs": 5,
+   "event": "Verano de Escandalito"
+  },
+  {
+   "title": "call_heavy",
+   "holders": [
+    "ultimo_soldado"
+   ],
+   "from": "2025-09",
+   "to": null,
+   "defs": 5,
+   "event": "Aniversario Número Muchos"
+  },
+  {
+   "title": "call_middle",
+   "holders": [
+    "el_sagrado_celestial"
+   ],
+   "from": "2025-03",
+   "to": null,
+   "defs": 9,
+   "event": "Homenaje a Tres Leyendas"
+  },
+  {
+   "title": "ark_crown",
+   "holders": [
+    "young_ace_kazuma"
+   ],
+   "from": "2025-11",
+   "to": null,
+   "defs": 4,
+   "event": "The Long Voyage"
+  },
+  {
+   "title": "ddw_world",
+   "holders": [
+    "gutter_gary"
+   ],
+   "from": "2025-04",
+   "to": null,
+   "defs": 8,
+   "event": "The Whole Dumpster World"
+  }
+ ],
+ "matches": [
+  {
+   "a": "chad_champ",
+   "b": "colt_highway",
+   "winner": "chad_champ",
+   "date": "2025-04",
+   "event": "WrestleMoney",
+   "stars": 3.5,
+   "note": "The Invisible Franchise turned on the fans and won his last title. Nobody liked it, which was the point."
+  },
+  {
+   "a": "colt_highway",
+   "b": "chad_champ",
+   "winner": "colt_highway",
+   "date": "2025-08",
+   "event": "SummerSlamdunk",
+   "stars": 4,
+   "note": "Colt took the title back. The farewell tour went on without it."
+  },
+  {
+   "a": "straightedge_stan",
+   "b": "velvet_visionary",
+   "winner": "straightedge_stan",
+   "date": "2025-01",
+   "event": "Monday Night RAWR",
+   "stars": 4.5,
+   "note": "Their first match after years of real hatred. The first night on the streaming deal."
+  },
+  {
+   "a": "velvet_visionary",
+   "b": "rocco_rule",
+   "winner": "velvet_visionary",
+   "date": "2025-04",
+   "event": "WrestleMoney",
+   "stars": 5,
+   "note": "A three-way with Stan. The Visionary's adviser turned on Stan; the Visionary turned on everybody."
+  },
+  {
+   "a": "barbwire_burke",
+   "b": "rodeo_regret",
+   "winner": "rodeo_regret",
+   "date": "2025-07",
+   "event": "All Inn",
+   "stars": 4.5,
+   "note": "The cowboy took the title and ended the Hard Ride's reign."
+  },
+  {
+   "a": "santo_santiago",
+   "b": "whoop_wallace",
+   "winner": "santo_santiago",
+   "date": "2025-10",
+   "event": "Bound for Somewhere",
+   "stars": 4.5,
+   "note": "The hometown saviour beat the giant's loaned-out star and won the title at last."
+  },
+  {
+   "a": "whoop_wallace",
+   "b": "believe_barnaby",
+   "winner": "whoop_wallace",
+   "date": "2025-06",
+   "event": "Slammiversary-ish Anniversary",
+   "stars": 4,
+   "note": "A developmental star from the giant took the little company's title, and the internet argued for a month."
+  },
+  {
+   "a": "simon_submission",
+   "b": "hiro_goto_again",
+   "winner": "simon_submission",
+   "date": "2025-06",
+   "event": "Domination Over Lunch",
+   "stars": 4.5,
+   "note": "Hiro waited fifteen years for the title. Simon took it from him in thirty-one minutes."
+  },
+  {
+   "a": "phoenix_fumika",
+   "b": "twinkle_mask",
+   "winner": "phoenix_fumika",
+   "date": "2025-12",
+   "event": "Queen of Dreams Night",
+   "stars": 5,
+   "note": "The two aces; the best women's match of the year."
+  },
+  {
+   "a": "hijo_del_drakkar",
+   "b": "el_senoron",
+   "winner": "hijo_del_drakkar",
+   "date": "2025-08",
+   "event": "Tripleplosión",
+   "stars": 4.5,
+   "note": "The night after the American giant bought the company. The flyer took the title from the boss."
+  },
+  {
+   "a": "el_sagrado_celestial",
+   "b": "ultimo_soldado",
+   "winner": "el_sagrado_celestial",
+   "date": "2025-09",
+   "event": "Aniversario Número Muchos",
+   "stars": 5,
+   "note": "Mask against mask; the soldier kept his mask by a single count. Or so he says."
+  }
+ ],
+ "feuds": [
+  {
+   "a": [
+    "velvet_visionary"
+   ],
+   "b": [
+    "straightedge_stan"
+   ],
+   "from": "2025-04",
+   "to": "2026-03",
+   "heat": 90,
+   "ended": "finished",
+   "note": "The longest hate in the company, settled in a cage at the Royal Grumble."
+  },
+  {
+   "a": [
+    "barbwire_burke"
+   ],
+   "b": [
+    "rodeo_regret"
+   ],
+   "from": "2025-01",
+   "to": "2025-07",
+   "heat": 85,
+   "ended": "finished",
+   "note": "The Hard Ride held everything. The cowboy took it back."
+  },
+  {
+   "a": [
+    "santo_santiago"
+   ],
+   "b": [
+    "moose_mountain"
+   ],
+   "from": "2025-04",
+   "to": "2025-12",
+   "heat": 80,
+   "ended": "finished",
+   "note": "The hometown saviour against the man who ran the place."
+  }
+ ],
+ "moments": [
+  {
+   "who": "chad_champ",
+   "date": "2025-12",
+   "k": "retire",
+   "text": "Retired after a farewell tour of the whole world. Nobody saw it coming, as usual."
+  },
+  {
+   "who": "velvet_visionary",
+   "date": "2025-10",
+   "k": "injury",
+   "text": "Hurt his shoulder and gave up the world title."
+  },
+  {
+   "who": "captain_thesaurus",
+   "date": "2025-10",
+   "k": "leave",
+   "text": "Left the upstart after six years. The list of synonyms stayed."
+  },
+  {
+   "who": "tess_trouble",
+   "date": "2025-01",
+   "k": "return",
+   "text": "Came back after years away. Nobody asked; everybody watched."
+  },
+  {
+   "who": "lady_khaos",
+   "date": "2025-05",
+   "k": "title",
+   "text": "Became the first women's champion of the men's company."
+  }
+ ]
+}

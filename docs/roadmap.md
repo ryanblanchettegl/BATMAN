@@ -45,6 +45,7 @@ Built in this order, one at a time, each tested, committed and published. Ryan's
 27. **The show tells one story:** commentary that remembers last week and the week before, and respects what comes next; catchphrases, jokes; fake commercials from your sponsors; backstage cut-ins; the crowd as a character; surprises nobody booked that come from people's reasons.
 28. **Contracts by appearance, 6 months, 1, 2 or 3 years**, with realistic money.
 29. **Rivals keep feuds, raid your stars and react to your moves**; wrestlers have lives outside the ring.
+29b. **Wrestlers remember each other** (Ryan, 16 October: for later). The same memory the booker has (`youRemember`) between wrestlers: who cost whom a title, who carried whom, who betrayed whom, and it bears on what they do next (who they help, who they refuse to work with, who they turn on).
 30. **Careers:** no end unless you retire; fired, you can take a job at another company; after ten years you can start your own company with backing from a network or a sponsor. Goals each year from the owner, and the long goal of becoming number one.
 
 Sound (Ryan: "we are going to have to figure out how to make the sound better") sits with 23 and 27.
