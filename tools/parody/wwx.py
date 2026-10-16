@@ -4,7 +4,7 @@ Every wrestler's parody target is kept here for the design team only (the TARGET
 game's data. Ratings come from a tier and the style, then a small fixed nudge per person, so the output is the same
 every run. The JSON is what modders edit; this script is just how the first draft was made."""
 import json, os, hashlib
-from common import worker, write_company
+from common import worker, write_company, add_moves
 
 PROMO = {
     "id": "wwx", "model": "corporate", "name": "WWX", "full_name": "World Wrestling eXcess",
@@ -50,7 +50,7 @@ R = [
  ("brick_breakwater", "Brick Breakwater", "M", "heel", "powerhouse", "rawr", "upper_midcarder", 4, 28, "Pensacola", "Second-Generation Bulldozer", "A barking, bounding son of a famous family who tackles people for a warm-up. He has never once walked to the ring.", "WOOF. WOOF. WOOF.", "The Military Press Release", "He presses his opponent overhead and slams them, then issues a statement.", "Bron Breakker"),
  ("big_tad_tsunami", "Big Tad Tsunami", "M", "heel", "powerhouse", "rawr", "upper_midcarder", 3, 37, "Adelaide", "Australian Tidal Wave", "A giant from down under who splashes people from the top rope and then sits down to admire it.", "Tsunami warning: you.", "The Tidal Splash", "A full-weight senton from the top rope that registers on the local seismograph.", "Bronson Reed"),
  ("dirty_junior", "Dirty Junior", "M", "heel", "brawler", "rawr", "upper_midcarder", 3, 29, "San Diego", "Prison-Cred Nepo Baby", "A legend's son who claims he did hard time for one weekend. He is booed out of every building and loves it.", "Ask my dad. Actually, don't.", "The Frog Spoiler", "A frog splash his father taught him, done badly on purpose.", "Dominik Mysterio"),
- ("declan_demonne", "Declan Demonne", "M", "tweener", "all_rounder", "rawr", "upper_midcarder", 3, 45, "Bray", "Prince of Receipts", "An Irishman who paints himself as a demon twice a year and keeps receipts the rest of it.", "Too sweet? Too late.", "The Coup de Grâce Period", "A double foot stomp from the top rope, with a short window to pay.", "Finn Bálor"),
+ ("declan_demonne", "Declan Demonne", "M", "tweener", "all_rounder", "rawr", "upper_midcarder", 3, 45, "Bray", "Prince of Receipts", "An Irishman who paints himself as a demon twice a year and keeps receipts the rest of it.", "Paid in full. Or else.", "The Coup de Grâce Period", "A double foot stomp from the top rope, with a short window to pay.", "Finn Bálor"),
  ("sully_sweats", "Sully Sweats", "M", "face", "all_rounder", "rawr", "upper_midcarder", 4, 42, "Montreal", "The Underdog Everyone Loves", "A bearded, sweaty, emotional Canadian who has almost been world champion more times than anyone alive.", "Ole! Ole! Ole! (pause) Ole!", "The Very Big Kick", "A running kick to the face in the corner, still pending review.", "Sami Zayn"),
  ("the_hexagon", "The Hexagon", "M", "face", "flyer", "rawr", "upper_midcarder", 3, 41, "Mexico City", "Masked Fear-Free Luchador", "A masked high flyer who breaks his opponent's arm and then asks the crowd to count the sides of his mask with him.", "Six sides. Zero fear.", "The Sacrifice Bunt", "An arm-trap package piledriver, followed by a theatrical arm snap.", "Penta"),
  ("el_abuelo_enigma", "El Abuelo Enigma", "M", "face", "flyer", "rawr", "midcarder", 3, 51, "San Diego", "Masked Legend Grandad", "The masked legend who has outlived three eras and his own son's respect. Still flies; lands slower.", "Abuelo, OUT!", "The Six-Seventeen", "A springboard into the ropes and a dropkick through the middle, one number short of famous.", "Rey Mysterio"),
@@ -123,6 +123,33 @@ MOVE = {"rocco_rule": "Spear", "wilt_wellness": "Powerbomb", "hype_hopkins": "Fr
  "whoop_wallace": "Running kick", "young_og_jaylen": "Springboard cutter", "eli_everest": "Spinning driver", "juggernaut_josie": "Fireman's carry driver",
  "la_primera_paloma": "Face-down leg-lift submission", "pixie_paz": "Spinning cradle driver", "the_cerebral_shovel": "Double underhook facebuster", "chad_champ": "Fireman's carry slam"}
 
+SIG = {"rocco_rule": "Shrug Punch|Superman punch; Buffet Line|Running drive-by", "wilt_wellness": "The Lecture|Knife-edge chop; Posture Check|Sleeper hold",
+ "hype_hopkins": "Hype Kick|Superkick; Bounce House|Running hip attack", "straightedge_stan": "Bedtime Story|Running knee; Soda Pop|Anaconda vise",
+ "velvet_visionary": "Runway Walk|Buckle bomb; Couture Kick|Superkick", "brick_breakwater": "Dog Pile|Spear; Fetch|Gorilla press slam",
+ "big_tad_tsunami": "High Tide|Running splash; Undertow|Death valley driver", "dirty_junior": "Triple Trouble|Triple vertical suplex; Dad's Move|Springboard dropkick",
+ "declan_demonne": "Blade Shuffle|Running clothesline; Receipt|Shotgun dropkick", "sully_sweats": "Sweat Drop|Exploder suplex; Blue Thunder|Blue thunder bomb",
+ "the_hexagon": "Six Sides|Package piledriver; Snap|Arm snap", "el_abuelo_enigma": "Abuelo Sault|Springboard hurricanrana; Abuelo Kick|Springboard seated senton",
+ "kojo_crown": "Crown Jewel|Fireman's carry neckbreaker; Bitter Kick|Corner kick", "xerxes_woodwind": "Trombone Solo|Diving knee drop; Honk|Shining wizard",
+ "jp_punchbagan": "Spin Cycle|Spanish fly; Bruise|Running knee", "blaze_clickbait": "Viral Lariat|Springboard lariat; Like and Subscribe|Frog splash",
+ "boris_bulgarovich": "Machka Kick|Superkick; Bear Hug Tax|Bear hug", "mama_morbid": "Prism Trap|Inverted cloverleaf; Nursery Rhyme|Headbutt",
+ "kumo_cloud": "Cloud Burst|Missile dropkick; Weather Warning|Tope con hilo", "vendetta_viv": "Grudge Breaker|Double knee facebuster; Grudge|Thesz press",
+ "big_rosa_ruiz": "Rosa Bomb|Chokebomb; Big Hug|Fallaway slam", "molly_omalley": "Manhandle Slam|Manhandle slam; Dublin Drop|Exploder suplex",
+ "freya_fairwing": "Feather Kick|Spinning heel kick; Shieldmaiden|Fisherman's suplex", "hug_life_hannah": "Group Hug|Bridging belly-to-back; Hug Bomb|Top-rope elbow",
+ "colt_highway": "Dreamer's Elbow|Bionic elbow; Daydream Kick|Springboard cutter", "angus_robbedmore": "Kilt Kick|Double underhook DDT; Robbery|Glasgow kiss",
+ "vinny_venomson": "Draping DDT|Draping DDT; Coiled Punt|Punt kick", "silent_sione": "Shush|Superkick; Quiet Drop|Uranage",
+ "big_iosefa": "Tongan Thunder|Pop-up Samoan drop; Unhinged Headbutt|Headbutt", "mack_midlife": "Midlife Elbow|Jumping elbow drop; Crisis Kick|Running knee",
+ "father_punishment": "Reckoning|Crucifix powerbomb; Sermon Kick|Spinning kick", "pierre_poutine": "Gravy Bomb|Pop-up powerbomb; Fries With That|Frog splash",
+ "himself_hollis": "Main Character Kick|Spinning kick; Plot Twist|Double knee facebuster", "block_party_ace": "Dance Break|Spinning kick; Speaker Stack|Frog splash",
+ "block_party_deuce": "Bass Drop|Spinebuster; Volume Up|Sit-out powerbomb", "tiara_orbit": "Gravity Kick|Spinning heel kick; Crash Landing|Swanton",
+ "carlotta_woo": "Big Boot of Royalty|Big boot; Figure-Eight Ego|Figure-eight leg lock", "leilani_landslide": "Earthquake Hip|Running hip attack; Tremor|Samoan drop",
+ "onyx_olympia": "Statue Slam|Pump-handle slam; Plinth Kick|Spinning kick", "brielle_braidwhip": "Braid Whip|Hair whip; Sprint Slam|Spinning sit-out powerbomb",
+ "neon_nyla": "Split Kick|Split-legged moonsault; Blacklight|Enzuigiri", "la_bella_furia": "Furious Kick|Running kick; Milano Lock|Leg lock",
+ "karen_kompleint": "Manager Call|Running hurricanrana; Coupon Clip|Dropkick", "king_kayode": "Crown Toss|Fallaway slam; Royal Decree Drop|Powerbomb",
+ "whoop_wallace": "Whistle Dunk|Flying elbow; Chorus Kick|Big boot", "young_og_jaylen": "OG Flip|Standing shooting star press; Old Head Kick|Spinning heel kick",
+ "eli_everest": "Book Signing|Superkick; Ego Trip|Spinebuster", "juggernaut_josie": "Squat Rack|Muscle buster; Deadlift|Deadlift German suplex",
+ "la_primera_paloma": "Andes Kick|Running knee; Chilean Spin|Spinning backbreaker", "pixie_paz": "Fizz Kick|Spinning heel kick; Prodigy Bridge|Bridging German suplex",
+ "the_cerebral_shovel": "Sledgehammer Shrug|Spinebuster; Board Meeting|Knee drop", "chad_champ": "The Five-Step Routine|Fist drop; Invisible Lock|STF"}
+
 def build():
     roster = []
     for row in R:
@@ -142,8 +169,7 @@ def build():
         {"id": "wwx_judgment_daze", "name": "The Judgment Daze", "kind": "stable", "member_ids": ["declan_demonne", "dirty_junior", "jp_punchbagan", "big_rosa_ruiz", "vendetta_viv"], "leader_id": "declan_demonne"},
         {"id": "wwx_the_family_tree", "name": "The Family Tree", "kind": "stable", "member_ids": ["silent_sione", "big_iosefa"], "leader_id": "silent_sione"},
     ]
-    for w in roster:
-        if w["id"] in MOVE: w["finisher_move"] = MOVE[w["id"]]
+    add_moves(roster, MOVE, SIG)
     return {"promotion": PROMO, "shows": SHOWS, "titles": titles, "roster": roster, "teams": teams}
 
 if __name__ == "__main__":

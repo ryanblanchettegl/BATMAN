@@ -276,7 +276,17 @@
     "push": "main_eventer",
     "brand": "rawr"
    },
-   "finisher_move": "Spear"
+   "finisher_move": "Spear",
+   "signatures": [
+    {
+     "name": "Shrug Punch",
+     "move": "Superman punch"
+    },
+    {
+     "name": "Buffet Line",
+     "move": "Running drive-by"
+    }
+   ]
   },
   {
    "id": "wilt_wellness",
@@ -319,7 +329,17 @@
     "push": "main_eventer",
     "brand": "rawr"
    },
-   "finisher_move": "Powerbomb"
+   "finisher_move": "Powerbomb",
+   "signatures": [
+    {
+     "name": "The Lecture",
+     "move": "Knife-edge chop"
+    },
+    {
+     "name": "Posture Check",
+     "move": "Sleeper hold"
+    }
+   ]
   },
   {
    "id": "hype_hopkins",
@@ -362,7 +382,17 @@
     "push": "main_eventer",
     "brand": "rawr"
    },
-   "finisher_move": "Frog splash"
+   "finisher_move": "Frog splash",
+   "signatures": [
+    {
+     "name": "Hype Kick",
+     "move": "Superkick"
+    },
+    {
+     "name": "Bounce House",
+     "move": "Running hip attack"
+    }
+   ]
   },
   {
    "id": "straightedge_stan",
@@ -405,7 +435,17 @@
     "push": "main_eventer",
     "brand": "rawr"
    },
-   "finisher_move": "Fireman's carry knee strike"
+   "finisher_move": "Fireman's carry knee strike",
+   "signatures": [
+    {
+     "name": "Bedtime Story",
+     "move": "Running knee"
+    },
+    {
+     "name": "Soda Pop",
+     "move": "Anaconda vise"
+    }
+   ]
   },
   {
    "id": "velvet_visionary",
@@ -448,7 +488,17 @@
     "push": "main_eventer",
     "brand": "rawr"
    },
-   "finisher_move": "Curb stomp"
+   "finisher_move": "Curb stomp",
+   "signatures": [
+    {
+     "name": "Runway Walk",
+     "move": "Buckle bomb"
+    },
+    {
+     "name": "Couture Kick",
+     "move": "Superkick"
+    }
+   ]
   },
   {
    "id": "brick_breakwater",
@@ -491,7 +541,17 @@
     "push": "upper_midcarder",
     "brand": "rawr"
    },
-   "finisher_move": "Military press slam"
+   "finisher_move": "Military press slam",
+   "signatures": [
+    {
+     "name": "Dog Pile",
+     "move": "Spear"
+    },
+    {
+     "name": "Fetch",
+     "move": "Gorilla press slam"
+    }
+   ]
   },
   {
    "id": "big_tad_tsunami",
@@ -534,7 +594,17 @@
     "push": "upper_midcarder",
     "brand": "rawr"
    },
-   "finisher_move": "Top-rope senton"
+   "finisher_move": "Top-rope senton",
+   "signatures": [
+    {
+     "name": "High Tide",
+     "move": "Running splash"
+    },
+    {
+     "name": "Undertow",
+     "move": "Death valley driver"
+    }
+   ]
   },
   {
    "id": "dirty_junior",
@@ -577,7 +647,17 @@
     "push": "upper_midcarder",
     "brand": "rawr"
    },
-   "finisher_move": "Frog splash"
+   "finisher_move": "Frog splash",
+   "signatures": [
+    {
+     "name": "Triple Trouble",
+     "move": "Triple vertical suplex"
+    },
+    {
+     "name": "Dad's Move",
+     "move": "Springboard dropkick"
+    }
+   ]
   },
   {
    "id": "declan_demonne",
@@ -605,7 +685,7 @@
    },
    "gimmick_category": "Prince of Receipts",
    "gimmick": "An Irishman who paints himself as a demon twice a year and keeps receipts the rest of it.",
-   "catchphrase": "Too sweet? Too late.",
+   "catchphrase": "Paid in full. Or else.",
    "peak_years": [
     27,
     36
@@ -620,7 +700,17 @@
     "push": "upper_midcarder",
     "brand": "rawr"
    },
-   "finisher_move": "Top-rope double foot stomp"
+   "finisher_move": "Top-rope double foot stomp",
+   "signatures": [
+    {
+     "name": "Blade Shuffle",
+     "move": "Running clothesline"
+    },
+    {
+     "name": "Receipt",
+     "move": "Shotgun dropkick"
+    }
+   ]
   },
   {
    "id": "sully_sweats",
@@ -663,7 +753,17 @@
     "push": "upper_midcarder",
     "brand": "rawr"
    },
-   "finisher_move": "Running corner kick"
+   "finisher_move": "Running corner kick",
+   "signatures": [
+    {
+     "name": "Sweat Drop",
+     "move": "Exploder suplex"
+    },
+    {
+     "name": "Blue Thunder",
+     "move": "Blue thunder bomb"
+    }
+   ]
   },
   {
    "id": "the_hexagon",
@@ -706,7 +806,17 @@
     "push": "upper_midcarder",
     "brand": "rawr"
    },
-   "finisher_move": "Package piledriver"
+   "finisher_move": "Package piledriver",
+   "signatures": [
+    {
+     "name": "Six Sides",
+     "move": "Package piledriver"
+    },
+    {
+     "name": "Snap",
+     "move": "Arm snap"
+    }
+   ]
   },
   {
    "id": "el_abuelo_enigma",
@@ -749,7 +859,17 @@
     "push": "midcarder",
     "brand": "rawr"
    },
-   "finisher_move": "Springboard dropkick through the ropes"
+   "finisher_move": "Springboard dropkick through the ropes",
+   "signatures": [
+    {
+     "name": "Abuelo Sault",
+     "move": "Springboard hurricanrana"
+    },
+    {
+     "name": "Abuelo Kick",
+     "move": "Springboard seated senton"
+    }
+   ]
   },
   {
    "id": "kojo_crown",
@@ -792,7 +912,17 @@
     "push": "midcarder",
     "brand": "rawr"
    },
-   "finisher_move": "Double-team boot and senton"
+   "finisher_move": "Double-team boot and senton",
+   "signatures": [
+    {
+     "name": "Crown Jewel",
+     "move": "Fireman's carry neckbreaker"
+    },
+    {
+     "name": "Bitter Kick",
+     "move": "Corner kick"
+    }
+   ]
   },
   {
    "id": "xerxes_woodwind",
@@ -835,7 +965,17 @@
     "push": "midcarder",
     "brand": "rawr"
    },
-   "finisher_move": "Top-rope elbow drop"
+   "finisher_move": "Top-rope elbow drop",
+   "signatures": [
+    {
+     "name": "Trombone Solo",
+     "move": "Diving knee drop"
+    },
+    {
+     "name": "Honk",
+     "move": "Shining wizard"
+    }
+   ]
   },
   {
    "id": "jp_punchbagan",
@@ -878,7 +1018,17 @@
     "push": "lower_midcarder",
     "brand": "rawr"
    },
-   "finisher_move": "Moonsault"
+   "finisher_move": "Moonsault",
+   "signatures": [
+    {
+     "name": "Spin Cycle",
+     "move": "Spanish fly"
+    },
+    {
+     "name": "Bruise",
+     "move": "Running knee"
+    }
+   ]
   },
   {
    "id": "blaze_clickbait",
@@ -921,7 +1071,17 @@
     "push": "upper_midcarder",
     "brand": "rawr"
    },
-   "finisher_move": "Loaded punch"
+   "finisher_move": "Loaded punch",
+   "signatures": [
+    {
+     "name": "Viral Lariat",
+     "move": "Springboard lariat"
+    },
+    {
+     "name": "Like and Subscribe",
+     "move": "Frog splash"
+    }
+   ]
   },
   {
    "id": "boris_bulgarovich",
@@ -964,7 +1124,17 @@
     "push": "midcarder",
     "brand": "rawr"
    },
-   "finisher_move": "Camel clutch"
+   "finisher_move": "Camel clutch",
+   "signatures": [
+    {
+     "name": "Machka Kick",
+     "move": "Superkick"
+    },
+    {
+     "name": "Bear Hug Tax",
+     "move": "Bear hug"
+    }
+   ]
   },
   {
    "id": "mama_morbid",
@@ -1007,7 +1177,17 @@
     "push": "main_eventer",
     "brand": "rawr"
    },
-   "finisher_move": "Pumphandle sit-out powerbomb"
+   "finisher_move": "Pumphandle sit-out powerbomb",
+   "signatures": [
+    {
+     "name": "Prism Trap",
+     "move": "Inverted cloverleaf"
+    },
+    {
+     "name": "Nursery Rhyme",
+     "move": "Headbutt"
+    }
+   ]
   },
   {
    "id": "kumo_cloud",
@@ -1050,7 +1230,17 @@
     "push": "upper_midcarder",
     "brand": "rawr"
    },
-   "finisher_move": "Moonsault"
+   "finisher_move": "Moonsault",
+   "signatures": [
+    {
+     "name": "Cloud Burst",
+     "move": "Missile dropkick"
+    },
+    {
+     "name": "Weather Warning",
+     "move": "Tope con hilo"
+    }
+   ]
   },
   {
    "id": "vendetta_viv",
@@ -1093,7 +1283,17 @@
     "push": "main_eventer",
     "brand": "rawr"
    },
-   "finisher_move": "Swinging reverse DDT"
+   "finisher_move": "Swinging reverse DDT",
+   "signatures": [
+    {
+     "name": "Grudge Breaker",
+     "move": "Double knee facebuster"
+    },
+    {
+     "name": "Grudge",
+     "move": "Thesz press"
+    }
+   ]
   },
   {
    "id": "big_rosa_ruiz",
@@ -1136,7 +1336,17 @@
     "push": "midcarder",
     "brand": "rawr"
    },
-   "finisher_move": "Powerbomb"
+   "finisher_move": "Powerbomb",
+   "signatures": [
+    {
+     "name": "Rosa Bomb",
+     "move": "Chokebomb"
+    },
+    {
+     "name": "Big Hug",
+     "move": "Fallaway slam"
+    }
+   ]
   },
   {
    "id": "molly_omalley",
@@ -1179,7 +1389,17 @@
     "push": "main_eventer",
     "brand": "rawr"
    },
-   "finisher_move": "Seated armbar"
+   "finisher_move": "Seated armbar",
+   "signatures": [
+    {
+     "name": "Manhandle Slam",
+     "move": "Manhandle slam"
+    },
+    {
+     "name": "Dublin Drop",
+     "move": "Exploder suplex"
+    }
+   ]
   },
   {
    "id": "freya_fairwing",
@@ -1222,7 +1442,17 @@
     "push": "upper_midcarder",
     "brand": "rawr"
    },
-   "finisher_move": "Top-rope elbow drop"
+   "finisher_move": "Top-rope elbow drop",
+   "signatures": [
+    {
+     "name": "Feather Kick",
+     "move": "Spinning heel kick"
+    },
+    {
+     "name": "Shieldmaiden",
+     "move": "Fisherman's suplex"
+    }
+   ]
   },
   {
    "id": "hug_life_hannah",
@@ -1265,7 +1495,17 @@
     "push": "upper_midcarder",
     "brand": "rawr"
    },
-   "finisher_move": "Face-first driver"
+   "finisher_move": "Face-first driver",
+   "signatures": [
+    {
+     "name": "Group Hug",
+     "move": "Bridging belly-to-back"
+    },
+    {
+     "name": "Hug Bomb",
+     "move": "Top-rope elbow"
+    }
+   ]
   },
   {
    "id": "colt_highway",
@@ -1308,7 +1548,17 @@
     "push": "main_eventer",
     "brand": "slap"
    },
-   "finisher_move": "Spinning cutter"
+   "finisher_move": "Spinning cutter",
+   "signatures": [
+    {
+     "name": "Dreamer's Elbow",
+     "move": "Bionic elbow"
+    },
+    {
+     "name": "Daydream Kick",
+     "move": "Springboard cutter"
+    }
+   ]
   },
   {
    "id": "angus_robbedmore",
@@ -1351,7 +1601,17 @@
     "push": "main_eventer",
     "brand": "slap"
    },
-   "finisher_move": "Running jumping kick"
+   "finisher_move": "Running jumping kick",
+   "signatures": [
+    {
+     "name": "Kilt Kick",
+     "move": "Double underhook DDT"
+    },
+    {
+     "name": "Robbery",
+     "move": "Glasgow kiss"
+    }
+   ]
   },
   {
    "id": "vinny_venomson",
@@ -1394,7 +1654,17 @@
     "push": "main_eventer",
     "brand": "slap"
    },
-   "finisher_move": "Jumping cutter"
+   "finisher_move": "Jumping cutter",
+   "signatures": [
+    {
+     "name": "Draping DDT",
+     "move": "Draping DDT"
+    },
+    {
+     "name": "Coiled Punt",
+     "move": "Punt kick"
+    }
+   ]
   },
   {
    "id": "silent_sione",
@@ -1437,7 +1707,17 @@
     "push": "upper_midcarder",
     "brand": "slap"
    },
-   "finisher_move": "Throat spike into a cobra hold"
+   "finisher_move": "Throat spike into a cobra hold",
+   "signatures": [
+    {
+     "name": "Shush",
+     "move": "Superkick"
+    },
+    {
+     "name": "Quiet Drop",
+     "move": "Uranage"
+    }
+   ]
   },
   {
    "id": "big_iosefa",
@@ -1480,7 +1760,17 @@
     "push": "upper_midcarder",
     "brand": "slap"
    },
-   "finisher_move": "Moonsault"
+   "finisher_move": "Moonsault",
+   "signatures": [
+    {
+     "name": "Tongan Thunder",
+     "move": "Pop-up Samoan drop"
+    },
+    {
+     "name": "Unhinged Headbutt",
+     "move": "Headbutt"
+    }
+   ]
   },
   {
    "id": "mack_midlife",
@@ -1523,7 +1813,17 @@
     "push": "upper_midcarder",
     "brand": "slap"
    },
-   "finisher_move": "Running neckbreaker"
+   "finisher_move": "Running neckbreaker",
+   "signatures": [
+    {
+     "name": "Midlife Elbow",
+     "move": "Jumping elbow drop"
+    },
+    {
+     "name": "Crisis Kick",
+     "move": "Running knee"
+    }
+   ]
   },
   {
    "id": "father_punishment",
@@ -1566,7 +1866,17 @@
     "push": "upper_midcarder",
     "brand": "slap"
    },
-   "finisher_move": "Chokeslam"
+   "finisher_move": "Chokeslam",
+   "signatures": [
+    {
+     "name": "Reckoning",
+     "move": "Crucifix powerbomb"
+    },
+    {
+     "name": "Sermon Kick",
+     "move": "Spinning kick"
+    }
+   ]
   },
   {
    "id": "pierre_poutine",
@@ -1609,7 +1919,17 @@
     "push": "upper_midcarder",
     "brand": "slap"
    },
-   "finisher_move": "Apron powerbomb"
+   "finisher_move": "Apron powerbomb",
+   "signatures": [
+    {
+     "name": "Gravy Bomb",
+     "move": "Pop-up powerbomb"
+    },
+    {
+     "name": "Fries With That",
+     "move": "Frog splash"
+    }
+   ]
   },
   {
    "id": "himself_hollis",
@@ -1652,7 +1972,17 @@
     "push": "midcarder",
     "brand": "slap"
    },
-   "finisher_move": "Top-rope leg drop"
+   "finisher_move": "Top-rope leg drop",
+   "signatures": [
+    {
+     "name": "Main Character Kick",
+     "move": "Spinning kick"
+    },
+    {
+     "name": "Plot Twist",
+     "move": "Double knee facebuster"
+    }
+   ]
   },
   {
    "id": "block_party_ace",
@@ -1695,7 +2025,17 @@
     "push": "midcarder",
     "brand": "slap"
    },
-   "finisher_move": "Frog splash"
+   "finisher_move": "Frog splash",
+   "signatures": [
+    {
+     "name": "Dance Break",
+     "move": "Spinning kick"
+    },
+    {
+     "name": "Speaker Stack",
+     "move": "Frog splash"
+    }
+   ]
   },
   {
    "id": "block_party_deuce",
@@ -1738,7 +2078,17 @@
     "push": "midcarder",
     "brand": "slap"
    },
-   "finisher_move": "Spinning spinebuster"
+   "finisher_move": "Spinning spinebuster",
+   "signatures": [
+    {
+     "name": "Bass Drop",
+     "move": "Spinebuster"
+    },
+    {
+     "name": "Volume Up",
+     "move": "Sit-out powerbomb"
+    }
+   ]
   },
   {
    "id": "tiara_orbit",
@@ -1781,7 +2131,17 @@
     "push": "main_eventer",
     "brand": "slap"
    },
-   "finisher_move": "Moonsault"
+   "finisher_move": "Moonsault",
+   "signatures": [
+    {
+     "name": "Gravity Kick",
+     "move": "Spinning heel kick"
+    },
+    {
+     "name": "Crash Landing",
+     "move": "Swanton"
+    }
+   ]
   },
   {
    "id": "carlotta_woo",
@@ -1824,7 +2184,17 @@
     "push": "main_eventer",
     "brand": "slap"
    },
-   "finisher_move": "Somersault cutter"
+   "finisher_move": "Somersault cutter",
+   "signatures": [
+    {
+     "name": "Big Boot of Royalty",
+     "move": "Big boot"
+    },
+    {
+     "name": "Figure-Eight Ego",
+     "move": "Figure-eight leg lock"
+    }
+   ]
   },
   {
    "id": "leilani_landslide",
@@ -1867,7 +2237,17 @@
     "push": "upper_midcarder",
     "brand": "slap"
    },
-   "finisher_move": "Top-rope leg drop"
+   "finisher_move": "Top-rope leg drop",
+   "signatures": [
+    {
+     "name": "Earthquake Hip",
+     "move": "Running hip attack"
+    },
+    {
+     "name": "Tremor",
+     "move": "Samoan drop"
+    }
+   ]
   },
   {
    "id": "onyx_olympia",
@@ -1910,7 +2290,17 @@
     "push": "main_eventer",
     "brand": "slap"
    },
-   "finisher_move": "Rolling cutter"
+   "finisher_move": "Rolling cutter",
+   "signatures": [
+    {
+     "name": "Statue Slam",
+     "move": "Pump-handle slam"
+    },
+    {
+     "name": "Plinth Kick",
+     "move": "Spinning kick"
+    }
+   ]
   },
   {
    "id": "brielle_braidwhip",
@@ -1953,7 +2343,17 @@
     "push": "main_eventer",
     "brand": "slap"
    },
-   "finisher_move": "Fireman's carry facebuster"
+   "finisher_move": "Fireman's carry facebuster",
+   "signatures": [
+    {
+     "name": "Braid Whip",
+     "move": "Hair whip"
+    },
+    {
+     "name": "Sprint Slam",
+     "move": "Spinning sit-out powerbomb"
+    }
+   ]
   },
   {
    "id": "neon_nyla",
@@ -1996,7 +2396,17 @@
     "push": "upper_midcarder",
     "brand": "slap"
    },
-   "finisher_move": "Running hip attack"
+   "finisher_move": "Running hip attack",
+   "signatures": [
+    {
+     "name": "Split Kick",
+     "move": "Split-legged moonsault"
+    },
+    {
+     "name": "Blacklight",
+     "move": "Enzuigiri"
+    }
+   ]
   },
   {
    "id": "la_bella_furia",
@@ -2039,7 +2449,17 @@
     "push": "upper_midcarder",
     "brand": "slap"
    },
-   "finisher_move": "Northern lights powerbomb"
+   "finisher_move": "Northern lights powerbomb",
+   "signatures": [
+    {
+     "name": "Furious Kick",
+     "move": "Running kick"
+    },
+    {
+     "name": "Milano Lock",
+     "move": "Leg lock"
+    }
+   ]
   },
   {
    "id": "karen_kompleint",
@@ -2082,7 +2502,17 @@
     "push": "midcarder",
     "brand": "slap"
    },
-   "finisher_move": "Double-arm DDT"
+   "finisher_move": "Double-arm DDT",
+   "signatures": [
+    {
+     "name": "Manager Call",
+     "move": "Running hurricanrana"
+    },
+    {
+     "name": "Coupon Clip",
+     "move": "Dropkick"
+    }
+   ]
   },
   {
    "id": "king_kayode",
@@ -2125,7 +2555,17 @@
     "push": "main_eventer",
     "brand": "notyet"
    },
-   "finisher_move": "Pop-up powerbomb"
+   "finisher_move": "Pop-up powerbomb",
+   "signatures": [
+    {
+     "name": "Crown Toss",
+     "move": "Fallaway slam"
+    },
+    {
+     "name": "Royal Decree Drop",
+     "move": "Powerbomb"
+    }
+   ]
   },
   {
    "id": "whoop_wallace",
@@ -2168,7 +2608,17 @@
     "push": "main_eventer",
     "brand": "notyet"
    },
-   "finisher_move": "Running kick"
+   "finisher_move": "Running kick",
+   "signatures": [
+    {
+     "name": "Whistle Dunk",
+     "move": "Flying elbow"
+    },
+    {
+     "name": "Chorus Kick",
+     "move": "Big boot"
+    }
+   ]
   },
   {
    "id": "young_og_jaylen",
@@ -2211,7 +2661,17 @@
     "push": "midcarder",
     "brand": "notyet"
    },
-   "finisher_move": "Springboard cutter"
+   "finisher_move": "Springboard cutter",
+   "signatures": [
+    {
+     "name": "OG Flip",
+     "move": "Standing shooting star press"
+    },
+    {
+     "name": "Old Head Kick",
+     "move": "Spinning heel kick"
+    }
+   ]
   },
   {
    "id": "eli_everest",
@@ -2254,7 +2714,17 @@
     "push": "upper_midcarder",
     "brand": "notyet"
    },
-   "finisher_move": "Spinning driver"
+   "finisher_move": "Spinning driver",
+   "signatures": [
+    {
+     "name": "Book Signing",
+     "move": "Superkick"
+    },
+    {
+     "name": "Ego Trip",
+     "move": "Spinebuster"
+    }
+   ]
   },
   {
    "id": "juggernaut_josie",
@@ -2297,7 +2767,17 @@
     "push": "main_eventer",
     "brand": "notyet"
    },
-   "finisher_move": "Fireman's carry driver"
+   "finisher_move": "Fireman's carry driver",
+   "signatures": [
+    {
+     "name": "Squat Rack",
+     "move": "Muscle buster"
+    },
+    {
+     "name": "Deadlift",
+     "move": "Deadlift German suplex"
+    }
+   ]
   },
   {
    "id": "la_primera_paloma",
@@ -2340,7 +2820,17 @@
     "push": "main_eventer",
     "brand": "notyet"
    },
-   "finisher_move": "Face-down leg-lift submission"
+   "finisher_move": "Face-down leg-lift submission",
+   "signatures": [
+    {
+     "name": "Andes Kick",
+     "move": "Running knee"
+    },
+    {
+     "name": "Chilean Spin",
+     "move": "Spinning backbreaker"
+    }
+   ]
   },
   {
    "id": "pixie_paz",
@@ -2383,7 +2873,17 @@
     "push": "upper_midcarder",
     "brand": "notyet"
    },
-   "finisher_move": "Spinning cradle driver"
+   "finisher_move": "Spinning cradle driver",
+   "signatures": [
+    {
+     "name": "Fizz Kick",
+     "move": "Spinning heel kick"
+    },
+    {
+     "name": "Prodigy Bridge",
+     "move": "Bridging German suplex"
+    }
+   ]
   },
   {
    "id": "the_cerebral_shovel",
@@ -2427,7 +2927,17 @@
     "weeks_left": 30,
     "push": "main_eventer"
    },
-   "finisher_move": "Double underhook facebuster"
+   "finisher_move": "Double underhook facebuster",
+   "signatures": [
+    {
+     "name": "Sledgehammer Shrug",
+     "move": "Spinebuster"
+    },
+    {
+     "name": "Board Meeting",
+     "move": "Knee drop"
+    }
+   ]
   },
   {
    "id": "chad_champ",
@@ -2470,7 +2980,17 @@
     "weeks_left": 134,
     "push": "main_eventer"
    },
-   "finisher_move": "Fireman's carry slam"
+   "finisher_move": "Fireman's carry slam",
+   "signatures": [
+    {
+     "name": "The Five-Step Routine",
+     "move": "Fist drop"
+    },
+    {
+     "name": "Invisible Lock",
+     "move": "STF"
+    }
+   ]
   },
   {
    "id": "al_gavel",

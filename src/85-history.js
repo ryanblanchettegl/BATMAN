@@ -15,8 +15,8 @@ function histWeek(date,y0,m0){var p=String(date||'').split('-'),y=+p[0],m=(+p[1]
     var d=build(pkg),H=pkg.history;
     // the persona each wrestler carries in the world file (gimmick, catchphrase, finisher, debut, legend). Kept with
     // the world, not in the save: the save stays small however many people a world has.
-    d.persona={};(pkg.workers||[]).forEach(function(w){if(w.gimmick||w.catchphrase||w.finisher_description||w.gimmick_category||w.debut_year||w.legend)
-      d.persona[w.id]={cat:w.gimmick_category||null,d:w.gimmick||null,say:w.catchphrase||null,fin:w.finisher_description||null,move:w.finisher_move||null,debut:w.debut_year||null,legend:!!w.legend,ht:w.height||null,wt:w.weight||null};});
+    d.persona={};(pkg.workers||[]).forEach(function(w){if(w.gimmick||w.catchphrase||w.finisher_description||w.gimmick_category||w.debut_year||w.legend||w.signatures)
+      d.persona[w.id]={cat:w.gimmick_category||null,d:w.gimmick||null,say:w.catchphrase||null,fin:w.finisher_description||null,move:w.finisher_move||null,sigs:Array.isArray(w.signatures)?w.signatures:null,debut:w.debut_year||null,legend:!!w.legend,ht:w.height||null,wt:w.weight||null};});
     if(!H||typeof H!=='object')return d;d.history=H;
     // an old feud is real heat between the people in it, written into the relationships the game starts from
     var W={};(pkg.workers||[]).forEach(function(w){W[w.id]=1;});

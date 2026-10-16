@@ -46,3 +46,10 @@ def write_company(cid, data):
     with open(os.path.join(OUT, cid + ".json"), "w") as f:
         json.dump(data, f, indent=1, ensure_ascii=False)
     print("wrote companies/%s.json: %d people" % (cid, len(data["roster"])))
+
+def add_moves(roster, move, sig):
+    """move: id -> the plain name of the finisher. sig: id -> "Name|plain move; Name|plain move" (two signatures)."""
+    for w in roster:
+        if w["id"] in move: w["finisher_move"] = move[w["id"]]
+        if w["id"] in sig:
+            w["signatures"] = [{"name": a.split("|")[0].strip(), "move": a.split("|")[1].strip()} for a in sig[w["id"]].split(";")]
