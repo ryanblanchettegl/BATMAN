@@ -25,7 +25,8 @@ for(const p of info.promotions){
     E.endWeek(S);inv.push(...invariants(S,p.id+' wk '+S.week,null));
   }
   if(inv.length){failures++;console.log('  INVARIANTS',p.id,inv.length,'broken, first:',inv.slice(0,3).join(' | '));}
-  const bad=S.w.filter(w=>[w.ovr,w.cond,w.morale,w.mom,w.brawl,w.wage,w.age].some(x=>!isFinite(x)));
+  // a wrestler retired over two years ago is an archived stub (src/99-archive.js): name, record and a few lines only
+  const bad=S.w.filter(w=>!w.arch).filter(w=>[w.ovr,w.cond,w.morale,w.mom,w.brawl,w.wage,w.age].some(x=>!isFinite(x)));
   console.log(' ',p.id.padEnd(5),E.cal(1).label,'->',E.cal(S.week).label,'over',JSON.stringify(S.over),'img',p.image,'->',P.image.toFixed(1),'cash',(P.cash0/1e6).toFixed(2),'->',(P.cash/1e6).toFixed(2)+'M','r-exp',(rs.reduce((a,b)=>a+b,0)/rs.length).toFixed(2),'roster',E.rosterOf(S,p.id).length,'errs',errs,'NaN',bad.length,'stables',S.stables.length,'teams',S.teams.filter(t=>t.promo===p.id).length,'nets',P.hist.slice(0,4).map(h=>Math.round(h.net/1000)+'k').join(','));
   if(errs>0||bad.length>0||(S.over&&S.over.why!=='fired')){failures++;console.log('  FAIL',p.id,'errs',errs,'NaN',bad.length,'over',JSON.stringify(S.over));}
   if(p===info.promotions[0]){const rt=E.exportUniverse(S,{name:'round trip'});const v2=E.validateUniverse(rt);console.log('  re-export valid:',v2.ok,'errors',v2.errors.length,'warnings',v2.warnings.length,v2.errors.slice(0,3).map(e=>e.at+' '+e.msg).join(' | '));}

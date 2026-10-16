@@ -3,6 +3,7 @@
    words vary. Prints a few to read for tone. */
 require('./engine.js');
 const fs = require('fs'), E = globalThis.GP;
+E.suggest = E.suggestSmart;   // since 16 October Suggest a card hands promos to the writers; this test is about booked promos
 E.useUniverse(JSON.parse(fs.readFileSync('universes/public_domain.json', 'utf8')));
 let fails = 0, all = []; const bad = (m) => { if (fails++ < 12) console.log('  FAIL ' + m); };
 for (const pi of [0, 1, 2]) {

@@ -99,7 +99,7 @@ E.universe().promotions.forEach(d => {
   /* an episode: the count goes up, the standing moves a little */
   const sh = P.shows[0], ep0 = sh.ep, pr0 = sh.pr;
   week(S, st);
-  ok('air', 'each show that airs is one more episode, and its standing moves a little', sh.ep === ep0 + 1 && Math.abs(sh.pr - pr0) <= 1.3 && S.reports.some(r => r.name === sh.name && r.ep === ep0 + 1 && r.net === sh.net), 'episode ' + sh.ep + ', standing ' + pr0 + ' to ' + sh.pr.toFixed(2));
+  ok('air', 'each show that airs is one more episode, and its standing moves a little', sh.ep === ep0 + 1 && Math.abs(sh.pr - pr0) <= 1.3 && S.reports.some(r => r.name === sh.name && r.ep === ep0 + 1 && (r.net && r.net.n ? r.net.n : r.net) === sh.net), 'episode ' + sh.ep + ', standing ' + pr0 + ' to ' + sh.pr.toFixed(2));
   /* an anniversary and a milestone episode are occasions */
   sh.on = S.week - 48 * 20; const prA = sh.pr; week(S, st);
   const ra = S.reports.find(r => r.name === sh.name);

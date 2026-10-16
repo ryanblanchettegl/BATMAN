@@ -1,6 +1,6 @@
 import { render } from 'preact';
 import { App } from './app';
-import { G, ui, pref, setUniverse, DEFAULT_UNI } from './store';
+import { G, ui, pref, setUniverse, DEFAULT_UNI, initSaves } from './store';
 import { E } from './engine';
 import { initInput, setBootTimer } from './input';
 import { BOOT_STEPS } from './screens/start';
@@ -25,4 +25,5 @@ function boot(d: any) {
 let mounted = false;
 function draw() { if (!mounted) { mounted = true; render(<App />, document.getElementById('app')!); } else (window as any).EWF_DEBUG.render(); }
 if (hot && hot.snapshot) hot.snapshot(() => ({ S: G.S }));
-if (hot && hot.ready) hot.ready(boot); else boot((hot && hot.data) || {});
+// the saves are read from the database before the first screen
+initSaves().then(() => { if (hot && hot.ready) hot.ready(boot); else boot((hot && hot.data) || {}); });
