@@ -16,11 +16,22 @@ function open(t: any) {
   if (t.id === 'house') { openModal({ kind: 'mng', k: 'house', v: 'style' }); return; }
   if (t.id === 'sponsors') { openModal({ kind: 'mng', k: 'deals', v: 'offers' }); return; }   // the offers, over the desk
   if (/^title-/.test(t.id)) { openModal({ kind: 'tasktitle', id: t.id.slice(6) }); return; }
+  if (/^deb-/.test(t.id)) { openModal({ kind: 'debut', id: +t.id.slice(4) }); return; }
   if (/^con-/.test(t.id)) { openModal({ kind: 'taskcon', id: +t.id.slice(4) }); return; }
   if (t.id === 'inbox') { const e = G.S.inbox.find((x: any) => !x.done); if (e) openModal({ kind: 'matter', id: e.id }); return; }
   go(t.to);
 }
 
+/** A newcomer's debut, planned from the desk: vignettes, a surprise attack or a straight match. */
+export function DebutWindow(p: { m: Modal }) {
+  const S = G.S, w = S.w[p.m.id];
+  if (!w || !w.deb) return <Window title="A debut"><Empty>They have already appeared on the shows.</Empty></Window>;
+  const pick = (k: string) => act(() => { const r = E.debutPlan(S, w.id, k); showResult('Debut: ' + w.name, r.msg, !r.ok); });
+  return <Window title={'How does ' + w.name + ' debut?'} wide ok="Not now">
+    <p class="muted">{w.name} has not appeared on the shows yet. The first night is the one people remember.</p>
+    {Object.keys(E.DEBUT).map(k => <p key={k} class="row mt1"><Btn kind={w.dk === k ? 'go' : undefined} t="debut-pick" d={{ v: k }} onClick={() => pick(k)}>{E.DEBUT[k].n}</Btn> <span>{E.DEBUT[k].d}</span></p>)}
+  </Window>;
+}
 /** A vacant title, answered from the desk: start a tournament for it, or go and book a match for it. */
 export function TitleTaskWindow(p: { m: Modal }) {
   const S = G.S, P = S.promos[S.player], t = P.titles.find((x: any) => String(x.id) === String(p.m.id));

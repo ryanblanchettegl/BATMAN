@@ -12,7 +12,7 @@ Built in this order, one at a time, each tested, committed and published. Ryan's
 6. **The run sheet.** (Done 16 October for matches: drag, lock in the pop-up, Suggest keeps locked matches.) Drag a match or segment up or down the card. Lock a slot (the opener or the main event) so reordering leaves it alone. Every line keeps a keyboard and remote way to move (rule 5).
 7. **What could happen tonight.** (Done 16 October: the What could happen? button.) A window on Book the show with four parts: possible moments (a title could change, a feud could boil over, somebody could get hurt, the crowd could turn), who is at risk, what the card sets up and leaves cold, and one gut-feeling line. All in words, never a forecast (fog of war).
 8. **Sly hints.** (Done 16 October: a sharp agent says who the crowd will back and when two styles clash, and says more.) The road agent's reads get sharper with a better agent; a weak one says little. Never wrong, never a score.
-9. **Book a debut.** When you sign somebody you can book their debut: a vignette, a surprise attack, or a match.
+9. **Book a debut.** (Done 16 October: a task on the desk opens the plan.) When you sign somebody you can book their debut: a vignette, a surprise attack, or a match.
 10. **Booking power and action points reset after every show, not every week.** More of them overall, a little carries over, perks raise them, bad actions in the week lose some and good ones earn some back.
 
 ## B. Company arcs (11 to 17)
