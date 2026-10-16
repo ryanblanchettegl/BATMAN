@@ -22,6 +22,11 @@ const { open, go, fits } = require('./helper');
     const id0 = await page.evaluate(() => JSON.stringify(window.EWF_DEBUG.state().card[0].sides));
     await page.dragAndDrop('.sheet .seg[data-m="0"]', '.sheet .seg[data-m="1"]'); await page.waitForTimeout(80);
     ok(await page.evaluate(() => JSON.stringify(window.EWF_DEBUG.state().card[1].sides)) === id0, mode + ': a match can be dragged to another place');
+    await page.click('[data-t="could"]'); await page.waitForTimeout(80);
+    const cw = await page.$eval('.win', e => e.innerText);
+    ok(/Moments that could happen/.test(cw) && /Who is at risk/.test(cw) && /What it sets up/.test(cw) && /leaves cold/.test(cw) && !/%|★/.test(cw), mode + ': What could happen tonight has its four parts, in words');
+    const f2 = await fits(page); ok(!f2 || !f2.length, mode + ': it fits ' + JSON.stringify(f2));
+    await page.click('.win #modal-ok');
     ok(!errs.length, mode + ': no errors ' + errs.join(' | '));
     await browser.close();
   }

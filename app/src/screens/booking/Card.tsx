@@ -103,6 +103,7 @@ export function Card() {
         <Btn t="add" onClick={addMatch}>Add a match</Btn>
         <Btn t="add-promo" onClick={addPromo}>Add a promo</Btn>
         <Btn t="add-angle" onClick={addAngle}>Add an angle</Btn>
+        {n > 0 && <Btn t="could" onClick={() => openModal({ kind: 'could' })}>What could happen?</Btn>}
         {(n > 0 || ck.total > 0) && <Btn t="clear" onClick={clearCard}>Clear</Btn>}
       </div>
     </Win>

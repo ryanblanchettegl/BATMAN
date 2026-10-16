@@ -71,6 +71,18 @@ export function MatchWindow(p: { m: Modal }) {
       : <p class="muted">Fill every spot and the agent will say what they see.</p>}</Group>
   </Window>;
 }
+/** What could happen tonight (roadmap 7): moments, who is at risk, what the card sets up and leaves cold, the agent's gut. Words only. */
+export function CouldWindow(_p: { m: Modal }) {
+  const C = E.couldHappen(G.S);
+  const part = (title: string, t: string, L: string[], none: string) => <Group title={title} t={t}>{L.length ? L.map((x, k) => <p key={k} class="clamp"><Txt>{x}</Txt></p>) : <p class="muted">{none}</p>}</Group>;
+  return <Window title="What could happen tonight" wide ok="Close">
+    {part('Moments that could happen', 'could-moments', C.moments, 'Nothing on this card is built for a big moment.')}
+    {part('Who is at risk', 'could-risk', C.risk, 'Nobody on the card looks at risk.')}
+    {part('What it sets up', 'could-sets', C.sets, 'This card does not move a story on.')}
+    {part('What it leaves cold', 'could-cold', C.cold, 'Nothing hot is left off.')}
+    {C.gut ? <p class="agentsay" data-t="could-gut">{C.gut}</p> : null}
+  </Window>;
+}
 function SegPane(p: { slot: number; ck: any }) {
   const S = G.S, x = E.segInfo(S).list[p.slot], it = p.ck.items.find((q: any) => q.t === 'seg' && q.slot === p.slot);
   if (!x) return null;

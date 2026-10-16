@@ -11,7 +11,7 @@ import { Head, Panel } from '../../kit';
 import { Card } from './Card';
 import { SegWindow, OpenGuide } from './Segments';
 import { ShapeGuide } from './Shape';
-import { MatchWindow } from './Side';
+import { MatchWindow, CouldWindow } from './Side';
 import { Live } from './Live';
 import { After } from './After';
 import { Report, Ladder } from './Report';
@@ -55,4 +55,4 @@ onBack(() => {
 onLeavePage(() => { autoStop(); typer.finish(); const b = book(); b.report = null; if (!(G.S && G.S.live)) b.live = null; });
 
 export const pages: Record<string, () => ComponentChildren> = { booking: Booking };
-export const modals: Record<string, (p: { m: Modal }) => ComponentChildren> = { matchwin: MatchWindow, segwin: SegWindow, shapeguide: ShapeGuide, openguide: OpenGuide, ladder: Ladder };
+export const modals: Record<string, (p: { m: Modal }) => ComponentChildren> = { matchwin: MatchWindow, could: CouldWindow, segwin: SegWindow, shapeguide: ShapeGuide, openguide: OpenGuide, ladder: Ladder };
