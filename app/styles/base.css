@@ -459,6 +459,8 @@ html[data-screen="tablet"] .lnk::after{content:'';position:absolute;inset:-.22em
 html[data-music="on"] .mus::after{content:' on';color:var(--dgreen)}
 html[data-music="off"] .mus::after{content:' off';color:var(--dred)}
 .savebox{width:100%;box-sizing:border-box;font-family:inherit;font-size:.8em;background:var(--k);color:var(--green);border:1px solid var(--grey)}
+.helpsecs{display:grid;grid-template-columns:1fr 1fr;column-gap:2ch}
+.glossx{display:flex;flex-direction:column;gap:.8em}.gl-list{display:flex;flex-wrap:wrap;gap:.4em .6ch}.gl-pane{min-height:7em;border-top:1px solid var(--k);padding-top:.6em}
 .gloss dt{margin-top:.5em}.gloss dd{margin:0 0 .3em}.gloss .on dt b{background:var(--k);color:var(--yellow);padding:0 .5ch}
 .tree{white-space:pre;font-family:inherit;line-height:1.3}
 

@@ -154,11 +154,11 @@ Use `tools/balance.js` from step 0.3. Change one thing at a time and commit the 
 - [x] **12.4 Free agents** (Checked 15 October: 78 to 90 unsigned at week 100.) should not run dry: at least 25 unsigned wrestlers worth signing at week 100.
 - [x] **12.5 Roster churn** (Checked 15 October: at week 150 every company has 39 to 72, with 129 free agents.) among rivals at 150 weeks: no company under 14 wrestlers, none over 90.
 - [x] **12.6 Save size** (Done 15 October: about 1.43 to 1.47 MB at week 151. Old reports drop their play-by-play, six reports kept, rivals keep 12 weeks of books, relationships with the retired are pruned, four recent results, a log of 16.) under 1.5 MB after 150 weeks. Trim logs that only grow. (Checked again 16 October after networks, streaming and the yearly top 200: 1.47 to 1.50 MB at week 152 on three seeds; every 26 weeks a wrestler's numbers are rounded to three places and old match keys go.)
-- [ ] **12.7 A new show** (`E.makeShow`) should stay a real choice after jobs 3 and 7: rerun the 32-week comparison from `TASKS.md` task 0b.
+- [x] **12.7 A new show** (`E.makeShow`) should stay a real choice after jobs 3 and 7: rerun the 32-week comparison from `TASKS.md` task 0b. (Done 16 October: over 32 weeks on three seeds an extra show moved weekly profit by -$781K, +$166K and -$41K, and popularity by -4.2 to +0.3. Still a real choice.)
 
 ## Job 13. Last, every time
 
 - [ ] **13.1** Rerun step 0.1: `TASKS.md` matches the code.
 - [x] **13.2** `docs/map.md` matches the files (made again by `node tools/map.js`).
-- [ ] **13.3** (15 October: the glossary has heat as living storylines, freshness, kinds of night and contract clauses.) The Help window and the glossary cover what was added, in plain words, and still fit one tablet screen each.
+- [x] **13.3** (15 October: the glossary has heat as living storylines, freshness, kinds of night and contract clauses.) The Help window and the glossary cover what was added, in plain words, and still fit one tablet screen each. (Done 16 October: the glossary and the Help window are both a row of topics with the picked one beneath, so each fits one tablet screen; the glossary has networks, night wars, streaming, looking weak and sell-out streaks.)
 - [x] **13.4** Write `docs/run-notes.md` (done 15 October): what was built, what was skipped and why, what the next run should do first, and every line added to `docs/decisions-needed.md`.
