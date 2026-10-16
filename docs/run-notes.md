@@ -44,5 +44,5 @@ What this run of `NEXT.md` built, what it skipped, and what the next run should 
 ## Things the next run should know
 
 - `tools/balance.js` answers every inbox matter with its second choice. On PDW, one of those answers gives up the broadcast slot and drains the money. That is the harness, not the game.
-- `app/tests/roster.js` sometimes times out picking a style in the wrestler creator. It passes on a rerun.
+- `app/tests/roster.js` used to time out picking a style in the wrestler creator (the preview lay over the pick). Fixed 16 October: the test presses the pick through the page.
 - A version takes five changes before its number moves. This run put the number up once too early and took it back.

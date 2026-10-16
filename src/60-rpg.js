@@ -59,6 +59,17 @@ EVR.flop=function(S,ev,choice,P,w){
   turn(S,w,'back where they belong');w.arc=null;addOvr(P,w,1);w.morale=clamp(w.morale-2,0,100);return w.name+' goes back to what worked. The crowd is relieved.';
 };
 EVR.counter=function(S,ev,choice,P,w){
+  // talks go back and forth (NEXT.md 11.1): meet them halfway, and if they will not, they come back once more with a final number
+  if(ev.choices.length===3){
+    if(choice===2)choice=1;
+    else if(choice===1){var r=rollCheck(S,ev.checks[1]);ev.roll=r;
+      if(r.ok){if(wagesWeek(S,P)+ev.half>E.budget(S))return S.owner.name+' will not sign off on that: it breaks the wage budget.';if(w.promo===P.id||!E.canSign(S,w))return w.name+' is no longer free to sign.';
+        var fr=w.promo;if(fr!=='FA')leaveCompany(S,w,'left for '+P.name);joinCompany(S,w,P,ev.half,ev.weeks);news(S,'contract',P.name+' signed '+w.name+(fr!=='FA'?' away from '+S.promos[fr].name:'')+'.');award(S,fr==='FA'?'ACH_SIGN':'ACH_POACH');
+        return rollText(r)+'They take the middle. '+w.name+' signs for '+money(ev.half)+' a week.';}
+      var fin=Math.round((ev.ask+ev.half)/2/50)*50;if(fin<ev.half+50)fin=ev.ask;
+      pushEv(S,{type:'counter',w:w.id,ask:fin,weeks:ev.weeks,text:w.name+'\u2019s side will not take '+money(ev.half)+'. Their last word: '+money(fin)+' a week, or they talk to somebody else.',choices:['Accept at '+money(fin)+' a week','Walk away']});
+      return rollText(r)+'They will not take the middle. Their last word is in your inbox.';}
+  }
   if(choice===0&&wagesWeek(S,P)+ev.ask>E.budget(S))return S.owner.name+' will not sign off on that: it breaks the wage budget.';
   if(choice===0&&w.promo!==P.id&&E.canSign(S,w)){var from=w.promo;if(from!=='FA')leaveCompany(S,w,'left for '+P.name);joinCompany(S,w,P,ev.ask,ev.weeks);news(S,'contract',P.name+' signed '+w.name+(from!=='FA'?' away from '+S.promos[from].name:'')+'.');award(S,from==='FA'?'ACH_SIGN':'ACH_POACH');return w.name+' signs for '+money(ev.ask)+' a week.';}
   w.lock=S.week+4;return 'You walk away. '+w.name+' will not talk again for a month.';

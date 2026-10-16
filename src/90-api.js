@@ -15,7 +15,7 @@ E.sign=function(S,id,wage,weeks){
   if(wagesWeek(S,P)+wage>E.budget(S))return {ok:false,msg:S.owner.name+' will not sign off on that. It would take the wage bill past the '+money(E.budget(S))+' a week budget.'};
   var ask=E.ask(S,w);
   if(wage<ask*0.97){
-    if(!w.ctr){w.ctr=true;var ca=Math.round(ask*1.08/50)*50;pushEv(S,{type:'counter',w:w.id,ask:ca,weeks:weeks||48,text:w.name+'\u2019s side did not like your offer, but they have come back with a number: '+money(ca)+' a week.',choices:['Accept at '+money(ca)+' a week','Walk away']});return {ok:false,msg:w.name+' turned that down and sent a counter-offer. It is in your inbox.'};}
+    if(!w.ctr){w.ctr=true;var ca=Math.round(ask*1.08/50)*50;var half=Math.round((wage+ca)/2/50)*50;pushEv(S,{type:'counter',w:w.id,ask:ca,offer:wage,half:half,weeks:weeks||48,text:w.name+'\u2019s side did not like your offer of '+money(wage)+', but they have come back with a number: '+money(ca)+' a week.',choices:['Accept at '+money(ca)+' a week','Meet them halfway: '+money(half)+' a week','Walk away'],checks:{1:mkCheck(7,[{n:w.promo==='FA'?'They need the work':'They have a job already',v:w.promo==='FA'?1:-1},{n:'They are unhappy where they are',v:w.promo!=='FA'&&w.morale<45?1:0}].concat(skillMods(S,'talk')))}});return {ok:false,msg:w.name+' turned that down and sent a counter-offer. It is in your inbox.'};}
     w.lock=S.week+4;return {ok:false,msg:'Talks broke down. '+w.name+' wanted about '+money(ask)+' a week.'};
   }
   var from=w.promo;if(from!=='FA'){S.promos[from].rel=clamp((S.promos[from].rel||0)-12,-100,100);leaveCompany(S,w,'left for '+P.name);}

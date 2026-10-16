@@ -39,5 +39,13 @@ E.endWeek(S); ok(tr.cond > ot.cond, 'paid travel did not help the body: ' + tr.c
   const T = E.newGame('pdw', 4, { name: 'R' }), R = T.w.filter(x => x.promo === 'pdw' && !x.nw), a = R[3], b = R[4]; a.cl = { outside: T.week }; a.cond = b.cond = 90; a.morale = b.morale = 60;
   E.endWeek(T); ok(a.cond < b.cond + 1.5 && a.morale >= b.morale && a.ind && /\w/.test(a.ind.n), 'outside dates did nothing: ' + JSON.stringify({ a: [a.cond, a.morale, a.ind], b: [b.cond, b.morale] }));
 }
+// talks go back and forth: a low offer brings a counter with a middle answer; the middle signs or brings a last word
+{ let signed = 0, last = 0;
+  for (let seed = 11; seed < 23; seed++) { const T = E.newGame('pdw', seed, { name: 'R' }); T.owner.trust = 90; const w = T.w.filter(x => x.promo === 'FA' && !x.rt && E.canSign(T, x)).sort((a, b) => b.ovr - a.ovr)[0]; if (!w) continue;
+    const ask = E.ask(T, w), r = E.sign(T, w.id, Math.round(ask * 0.7 / 50) * 50, 48); const ev = T.inbox.find(e => e.type === 'counter' && !e.done);
+    ok(!r.ok && ev && ev.choices.length === 3, 'a low offer brings a counter with three answers'); if (!ev) continue;
+    ok(ev.half > Math.round(ask * 0.7 / 50) * 50 && ev.half < ev.ask, 'halfway is between the two numbers');
+    E.resolveEvent(T, ev.id, 1); if (w.promo === 'pdw') { signed++; ok(w.wage === ev.half, 'signed at the middle'); } else { const ev2 = T.inbox.find(e => e.type === 'counter' && !e.done && e.id !== ev.id); if (ev2) { last++; ok(ev2.choices.length === 2 && ev2.ask <= ev.ask && ev2.ask > ev.half, 'the last word is between the middle and their number'); } } }
+  ok(signed > 0 && last > 0, 'the middle sometimes signs (' + signed + ') and sometimes brings a last word (' + last + ')'); }
 if (fails) { console.log('FAILED: ' + fails); process.exit(1); }
 console.log('test-clauses: all passed');

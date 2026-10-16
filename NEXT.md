@@ -141,7 +141,7 @@ Build it beside the old screen. Add a switch in Options, "New booking screen", o
 
 ## Job 11. Two plans already written
 
-- [ ] **11.1 Contract clauses.** (Partly done 15 October: paid travel, a no-cut promise and a title match, `src/97-clauses.js`, toggles in the Offer window on Free agents, `test-clauses.js`. Renewals take clauses too, in the contract pop-up on the desk. A merchandise share sends a quarter of their lines' money to them. Two dates a week caps their shows and the suggested card respects it. Outside dates let them work the indies on off nights. Not yet: talks over several rounds.) Follow `docs/plans/contract-clauses.md`.
+- [x] **11.1 Contract clauses.** (Partly done 15 October: paid travel, a no-cut promise and a title match, `src/97-clauses.js`, toggles in the Offer window on Free agents, `test-clauses.js`. Renewals take clauses too, in the contract pop-up on the desk. A merchandise share sends a quarter of their lines' money to them. Two dates a week caps their shows and the suggested card respects it. Outside dates let them work the indies on off nights. Not yet: talks over several rounds.) Follow `docs/plans/contract-clauses.md`. (Talks done 16 October: a low offer brings a counter; meet them halfway is an attempt, and if they will not take it they come back once with a last word.)
 - [ ] **11.2 Invasions.** Follow `docs/plans/invasions.md`. Build it as a storyline template once job 4 is in.
 
 ## Job 12. Balance (task 11)
