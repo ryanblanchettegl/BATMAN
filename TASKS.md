@@ -22,6 +22,10 @@ Two more lists sit beside this one, both finished:
 
 | Topic | Decision |
 | --- | --- |
+| Booking, 16 Oct | No fast mode. Suggest a card gives a mediocre show: to win the game or keep the job the player has to decide well. Fog of war stays: the game never tells the player how to put on a good show; the road agent drops sly hints. Redo the booking screen: more buttons, matches dragged or moved up and down the card, match booking that looks better and is easier (pop-ups are fine), and what COULD happen on the show tonight from the player's choices. |
+| Battle royals, 16 Oct | Up to 30 people. 30 minutes for every 15: a 30-man battle royal lasts an hour. |
+| Buildings, 16 Oct | The player does not pick the building. Every city has its own list of buildings the road draws from. |
+| TV cancellation, 16 Oct | A TV show can be cancelled. It then becomes a house show. |
 | Calendar | The game starts in the present day (October 2026). The 1990s PC look stays exactly as it is. |
 | Screens | Office is the hub and opens on "Before the show" with a **Book the next show** button. Manage holds every choice. Company is information only. Music sits top right. |
 | Wording | No dice or rolls anywhere. An attempt has a percentage chance, with what helps and what hurts. |

@@ -84,6 +84,14 @@ The plan is in `docs/plans/storyline-templates.md`. Ryan's decision: the player 
 - [x] **4.7 Rivals** run them too, and the news reports the big beats. (Not built: Ryan chose living storylines over templates on 15 October.)
 - [x] **4.8 Tests.** `test-stories.js` plays every template to its payoff and to its backfire. `app/tests/stories.js` starts one and delivers a beat. (Not built: Ryan chose living storylines over templates on 15 October.)
 
+## Job 0. Ryan's calls of 16 October (do these first, one step at a time)
+
+- [ ] **0.1 Suggest a card is mediocre.** A safe, ordinary card that fills the clock: no reading of chemistry, no story beats chosen for effect, no finishes called. Good shows come from the player.
+- [ ] **0.2 Battle royals.** Up to 30 people; 30 minutes per 15 (a 30-man battle royal is an hour on the clock).
+- [ ] **0.3 Buildings by city.** Every city has its own list of buildings (names and sizes) the road draws from.
+- [ ] **0.4 Cancellation.** A network can cancel a weekly show after warnings; it becomes a house show (no TV money, a smaller crowd, no network).
+- [ ] **0.5 The booking screen.** More buttons; drag a match, or move it up and down; match booking that looks better and is easier (pop-ups are fine); what could happen tonight from the player's choices, in the road agent's sly words, never a forecast (fog of war, rule 8a).
+
 ## Job 5. The new booking screen (task 3, the core loop)
 
 Ryan's decisions: it replaces the card editor; card size follows show length (1 hour is 3 matches and 3 promos, 2 hours is 4 and 4, 3 hours or pay-per-view is 5 and 5); the player picks who is in a promo and what kind; the week can be pre-booked; each show affects the next; fast mode books and runs the week and stops for decisions.
@@ -98,7 +106,7 @@ Build it beside the old screen. Add a switch in Options, "New booking screen", o
 - [x] **5.6 The show plays segment by segment.** After each: a grade, the work score and the crowd score side by side, and the points that moved it, popping up one at a time. A grade for the show at the end. Skippable with one button. (Done another way: the show plays segment by segment on the live broadcast, with stars after each and a grade at the end.)
 - [ ] **5.7 Pre-book the week.** A tab per show this week. A card for a later show is kept until it runs (`S.cards` keyed by show id, replacing the single `S.card`; write the save migration). A wrestler hurt on Monday is flagged on Friday's card. (Waits for Ryan, 16 October: it changes how a card is kept, `S.card` to `S.cards`, with a save migration and a new tab on Book the show; worth a word with him first.)
 - [x] **5.8 Each show feeds the next.** (Partly, 15 October: a main event well above the crowd's bar lifts the next show's house, a flat one costs it, `rep.feed`; open threads already carry, `E.openThreads`.) A strong ending lifts the next show's audience. A thread left hanging (a challenge not answered, a cliffhanger not followed) costs it. The booking screen says what carried over in one line, and the report says what tonight set up. (Done 16 October: the main event carries hype to the next show, `rep.feed`, said on Book the show and After the show; open threads already carry.)
-- [ ] **5.9 Fast mode.** One button: the assistant (`src/86-asst.js`) books and runs every show left this week, skips the broadcast, and stops for anything that needs a decision. Results in one window. (Not built, 16 October: running a show without the broadcast breaks the rule that a show on the air cannot be skipped. Ask Ryan before building it.)
+- [x] **5.9 Fast mode.** (Ryan, 16 October: no fast mode.) One button: the assistant (`src/86-asst.js`) books and runs every show left this week, skips the broadcast, and stops for anything that needs a decision. Results in one window. (Not built, 16 October: running a show without the broadcast breaks the rule that a show on the air cannot be skipped. Ask Ryan before building it.)
 - [x] **5.10 Switch over.** Turn the new screen on by default, remove `Card.tsx` and `Editor.tsx`, remove the Options switch, rewrite `app/tests/booking.js`, update the Help window and `docs/design.md`. (Done earlier: the run sheet is the booking screen; there is no old screen or switch left.)
 - [x] **5.11 Creative energy.** The booking team generates a little each week; fresh ideas (a new match-up, a new promo kind for that pair) spend none, repeats spend some. Shown as one meter. Leave this out if it does not make booking more fun in a 20-week test; say so in `docs/decisions-needed.md`. (Left out, 16 October: freshness in living storylines already rewards new match-ups and costs repeats, so a second meter would say the same thing.)
 
