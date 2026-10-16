@@ -4,10 +4,10 @@
    Everything here is sized to fit the pane: long lists turn pages instead of scrolling. */
 import { ComponentChildren } from 'preact';
 import { E } from '../../engine';
-import { G, act, say, view, slice, openModal } from '../../store';
+import { G, act, say, view, slice, openModal, closeModal, Modal } from '../../store';
 import { book } from '../../flow';
 import { go } from '../../nav';
-import { Panel, Tabs, Sel, Field, Tag, Name, Meter, CheckLine, Empty, Btn, Txt, Opt, Group, LightPic } from '../../kit';
+import { Window, Panel, Tabs, Sel, Field, Tag, Name, Meter, CheckLine, Empty, Btn, Txt, Opt, Group, LightPic } from '../../kit';
 import { Match, pickSide, setPlan, sel, pickMatch, pickSeg, moveMatch, removeMatch, run } from './run';
 import { Shape } from './Shape';
 import { Editor } from './Editor';
@@ -49,9 +49,26 @@ function MatchPane(p: { i: number; ck: any }) {
       <Btn kind="sm" t="up" d={{ v: i }} label={'Move match ' + (i + 1) + ' earlier'} disabled={i === 0} onClick={() => moveMatch(i, -1)}>{'↑'} Earlier</Btn>
       <Btn kind="sm" t="down" d={{ v: i }} label={'Move match ' + (i + 1) + ' later'} disabled={i === n - 1} onClick={() => moveMatch(i, 1)}>{'↓'} Later</Btn>
       <Btn kind="sm" t="rm" d={{ v: i }} onClick={() => removeMatch(i)}>Remove</Btn>
+      <Btn kind="sm" t="match-pop" d={{ v: i }} onClick={() => openModal({ kind: 'matchwin', i })}>Book in one window</Btn>
       <Btn kind="sm" t="done" d={{ v: i }} onClick={() => pickMatch(i)}>Done</Btn>
     </div>
   </Panel>;
+}
+/** The match pop-up (roadmap 5): everything about one match in one window, the road agent's read at the bottom. */
+export function MatchWindow(p: { m: Modal }) {
+  const S = G.S, i = p.m.i as number, m: Match = S.card[i], n = S.card.length;
+  if (!m) return <Window title="Match" ok="Close"><p class="muted">That match is no longer on the card.</p></Window>;
+  const rd = E.agentReads(S)[i], it = E.clock(S).items.find((x: any) => x.t === 'match' && x.i === i), meta = matchMeta(m, i, n, it);
+  return <Window title={'Match ' + (i + 1) + ' of ' + n} wide ok="Done"
+    footer={<><Btn t="mw-up" disabled={i === 0} onClick={() => { p.m.i = i - 1; moveMatch(i, -1); }}>{'↑'} Earlier</Btn>
+      <Btn t="mw-down" disabled={i === n - 1} onClick={() => { p.m.i = i + 1; moveMatch(i, 1); }}>{'↓'} Later</Btn>
+      <Btn kind="danger" t="mw-rm" onClick={() => { closeModal(); removeMatch(i); }}>Remove</Btn></>}>
+    <p class="meta d1-meta">{meta.map((x, k) => <span key={x[0]}>{k ? DOT : null}{x[1]}</span>)}</p>
+    <Editor m={m} i={i} />
+    <FeudEnd m={m} i={i} />
+    <Group title="The road agent">{rd ? <div class="agentsay" data-t="mw-agent">{rd.lines.map((l: any, k: number) => <p key={k} class={l.s > 0 ? 'good' : (l.s < 0 ? 'bad' : 'muted')}><span class="ag">{rd.who}{rd.own ? ', on this match' : ''}:</span> {'“'}{l.t}{'”'}</p>)}</div>
+      : <p class="muted">Fill every spot and the agent will say what they see.</p>}</Group>
+  </Window>;
 }
 function SegPane(p: { slot: number; ck: any }) {
   const S = G.S, x = E.segInfo(S).list[p.slot], it = p.ck.items.find((q: any) => q.t === 'seg' && q.slot === p.slot);
