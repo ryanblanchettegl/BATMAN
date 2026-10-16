@@ -2394,6 +2394,7 @@ LIVEK.overtime={n:'They are not going home',
 LIVE_ORDER=['chaos','botch','titlecall','owner','sponsor','network','overtime','audible','runin','hotmic'];
 
 /* ===== 34-night.js ===== */
+/* wraps: 31-live.js (it must sort after them; test-buildorder.js checks) */
 /* ---------- what the night left behind ----------
    Ryan, 4 October: "After a show, it should go back to the Office or your desk, so you can work through any new
    events or decisions that need to be made after the show." A show does not end on its report. It ends on the
@@ -6082,6 +6083,7 @@ E.sagaInfo=function(S){
 };
 
 /* ===== 81-invasion.js ===== */
+/* wraps: 80-world.js (it must sort after them; test-buildorder.js checks) */
 /* ===== Invasions: who wins is agreed, and a bad one costs a year (NEXT.md 11.2, WISHLIST 66) =====
    A war with a rival (src/80-world.js, S.xf kind 'war') now starts with a phone call between the two offices about
    the finishes:
@@ -7297,66 +7299,6 @@ E.sift=function(S){
 };
 
 
-/* ===== 85-history.js ===== */
-/* ===== A world's history: what happened before the game begins (Ryan, 16 October: the parody world's 2020 to 2025) =====
-   A world package can carry an optional `history` table, so a new game opens on years that already happened:
-     reigns    [{title, holders:[ids], from:'2021-03', to:'2022-04' or null, defs, event}]  the line of champions
-     matches   [{a, b, winner, date:'2023-04', event, stars, note}]  head to head records; a famous one is in both careers
-     feuds     [{a:[ids], b:[ids], from:'2022-01', to:'2022-08', heat, ended, note}]  old rivalries: real heat between
-               them, and if it ended in the last year, an ember, so the same two start again with a head start
-     moments   [{who, date, text}]  a line in a wrestler's career (a debut, a return, an injury, a turn)
-   Dates are a year and a month. Everything before the world's start date is turned into game weeks before week 1.
-   It is read once, when a game starts, and never calls rnd(S), so a world with history plays the same seed the
-   same way every time. */
-function histWeek(date,y0,m0){var p=String(date||'').split('-'),y=+p[0],m=(+p[1]||1)-1;if(!y)return null;return 1+((y-y0)*12+(m-m0))*4;}
-(function(){
-  var build=buildDB;
-  buildDB=function(pkg){
-    var d=build(pkg),H=pkg.history;
-    // the persona each wrestler carries in the world file (gimmick, catchphrase, finisher, debut, legend). Kept with
-    // the world, not in the save: the save stays small however many people a world has.
-    d.persona={};(pkg.workers||[]).forEach(function(w){if(w.gimmick||w.catchphrase||w.finisher_description||w.gimmick_category||w.debut_year||w.legend||w.signatures)
-      d.persona[w.id]={cat:w.gimmick_category||null,d:w.gimmick||null,say:w.catchphrase||null,fin:w.finisher_description||null,move:w.finisher_move||null,sigs:Array.isArray(w.signatures)?w.signatures:null,debut:w.debut_year||null,legend:!!w.legend,ht:w.height||null,wt:w.weight||null};});
-    if(!H||typeof H!=='object')return d;d.history=H;
-    // an old feud is real heat between the people in it, written into the relationships the game starts from
-    var W={};(pkg.workers||[]).forEach(function(w){W[w.id]=1;});
-    (H.feuds||[]).forEach(function(f){(f.a||[]).forEach(function(a){(f.b||[]).forEach(function(b){if(W[a]&&W[b]&&!d.rels.some(function(r){return (r.a===a&&r.b===b)||(r.a===b&&r.b===a);}))
-      d.rels.push({a:a,b:b,type:'rivalry',strength:-Math.min(90,Math.max(30,f.heat||60)),ring_chemistry:f.chem!=null?f.chem:4,note:f.note||'They have history.'});});});});
-    return d;
-  };
-})();
-/** Lay a world's history into a new game. */
-function histApply(S){
-  var H=DB&&DB.history;if(!H)return;var y0=DB.startYear,m0=DB.startMonth,id={};S.w.forEach(function(w){if(w.uid)id[w.uid]=w.id;});
-  var wk=function(d){return histWeek(d,y0,m0);},nm=function(u){var w=S.w[id[u]];return w?w.name:u;};
-  var tby={};S.order.forEach(function(pid){(S.promos[pid].titles||[]).forEach(function(t){tby[t.id]=t;});});
-  // the line of champions, oldest first; the reign still running joins the one the title already has
-  (H.reigns||[]).slice().sort(function(a,b){return (wk(a.from)||0)-(wk(b.from)||0);}).forEach(function(r){var t=tby[r.title];if(!t)return;
-    var ids=(r.holders||[]).map(function(u){return id[u];}).filter(function(x){return x!=null;});if(!ids.length)return;
-    t.hist=t.hist||[];var to=r.to?wk(r.to):null;if(to!=null&&to>0)to=0;
-    if(to==null){t.hist=t.hist.filter(function(h){return !(h.ids===ids.slice().sort().join(',')&&h.to==null);});}
-    t.hist.push({ids:ids.slice().sort().join(','),h:ids.map(function(i){return S.w[i].name;}),from:wk(r.from),to:to,show:r.event||'Before your time',defs:r.defs||0});
-    ids.forEach(function(i){var w=S.w[i];(w.tr||(w.tr=[])).push(t.name);});
-  });
-  Object.keys(tby).forEach(function(k){var t=tby[k];if(t.hist)t.hist.sort(function(a,b){return (a.from||0)-(b.from||0);});});
-  // head to head, and the famous nights in both careers
-  (H.matches||[]).forEach(function(m){var a=id[m.a],b=id[m.b];if(a==null||b==null)return;var k=rkey(a,b),h=S.h2h[k]||(S.h2h[k]={n:0,a:0,b:0,lw:-1,w:0});
-    var win=m.winner!=null?id[m.winner]:null;h.n++;h.w=Math.min(0,wk(m.date)||0);if(win!=null){h.lw=win;if(win===Math.min(a,b))h.a++;else h.b++;}
-    if((m.stars||0)>=4.5||m.note){var t=(m.event?m.event+', ':'')+String(m.date||'').slice(0,4)+': '+(win!=null?nm(m.winner)+' beat '+(win===a?nm(m.b):nm(m.a)):nm(m.a)+' and '+nm(m.b)+' fought to a draw')+(m.note?'. '+m.note:'');
-      [a,b].forEach(function(i){var w=S.w[i];(w.log||(w.log=[])).push({w:Math.min(0,wk(m.date)||0),k:'classic',t:t});});}
-  });
-  // old feuds that ended in the last year leave an ember: the same two start again with a head start
-  (H.feuds||[]).forEach(function(f){var a=id[(f.a||[])[0]],b=id[(f.b||[])[0]],end=wk(f.to);if(a==null||b==null||end==null||end<-47)return;
-    (S.embers||(S.embers={}))[rkey(a,b)]={w:end,h:Math.round(f.heat||60),n:1};});
-  // moments in a career
-  (H.moments||[]).forEach(function(x){var w=S.w[id[x.who]];if(w)(w.log||(w.log=[])).push({w:Math.min(0,wk(x.date)||0),k:x.k||'moment',t:x.text});});
-  S.w.forEach(function(w){if(w.log&&w.log.length){w.log.sort(function(p,q){return p.w-q.w;});if(w.log.length>16)w.log=w.log.slice(-16);}});
-  S.histFrom=H.from||null;
-}
-(function(){var ng=E.newGame;E.newGame=function(){var S=ng.apply(this,arguments);if(S&&S.w)histApply(S);return S;};})();
-/** A wrestler's persona from the world file: gimmick, catchphrase, finisher, debut year and whether they are a legend. */
-E.persona=function(S,id){var w=S.w[id];return w&&w.uid&&DB&&DB.persona?DB.persona[w.uid]||null:null;};
-
 /* ===== 85-second.js ===== */
 /* ---------- second careers ----------
    A retired wrestler of yours can stay: road agent, trainer, commentator, manager or on-screen boss. Each role uses one of their old skills.
@@ -8094,6 +8036,67 @@ E.edPromoEvent=function(pkg,pid,month,o){
   if(!p.events.length)delete p.events;
   return true;
 };
+
+/* ===== 86-history.js ===== */
+/* wraps: 00-core.js, 85-universe.js (it must sort after them; test-buildorder.js checks) */
+/* ===== A world's history: what happened before the game begins (Ryan, 16 October: the parody world's 2020 to 2025) =====
+   A world package can carry an optional `history` table, so a new game opens on years that already happened:
+     reigns    [{title, holders:[ids], from:'2021-03', to:'2022-04' or null, defs, event}]  the line of champions
+     matches   [{a, b, winner, date:'2023-04', event, stars, note}]  head to head records; a famous one is in both careers
+     feuds     [{a:[ids], b:[ids], from:'2022-01', to:'2022-08', heat, ended, note}]  old rivalries: real heat between
+               them, and if it ended in the last year, an ember, so the same two start again with a head start
+     moments   [{who, date, text}]  a line in a wrestler's career (a debut, a return, an injury, a turn)
+   Dates are a year and a month. Everything before the world's start date is turned into game weeks before week 1.
+   It is read once, when a game starts, and never calls rnd(S), so a world with history plays the same seed the
+   same way every time. */
+function histWeek(date,y0,m0){var p=String(date||'').split('-'),y=+p[0],m=(+p[1]||1)-1;if(!y)return null;return 1+((y-y0)*12+(m-m0))*4;}
+(function(){
+  var build=buildDB;
+  buildDB=function(pkg){
+    var d=build(pkg),H=pkg.history;
+    // the persona each wrestler carries in the world file (gimmick, catchphrase, finisher, debut, legend). Kept with
+    // the world, not in the save: the save stays small however many people a world has.
+    d.persona={};(pkg.workers||[]).forEach(function(w){if(w.gimmick||w.catchphrase||w.finisher_description||w.gimmick_category||w.debut_year||w.legend||w.signatures)
+      d.persona[w.id]={cat:w.gimmick_category||null,d:w.gimmick||null,say:w.catchphrase||null,fin:w.finisher_description||null,move:w.finisher_move||null,sigs:Array.isArray(w.signatures)?w.signatures:null,debut:w.debut_year||null,legend:!!w.legend,ht:w.height||null,wt:w.weight||null};});
+    if(!H||typeof H!=='object')return d;d.history=H;
+    // an old feud is real heat between the people in it, written into the relationships the game starts from
+    var W={};(pkg.workers||[]).forEach(function(w){W[w.id]=1;});
+    (H.feuds||[]).forEach(function(f){(f.a||[]).forEach(function(a){(f.b||[]).forEach(function(b){if(W[a]&&W[b]&&!d.rels.some(function(r){return (r.a===a&&r.b===b)||(r.a===b&&r.b===a);}))
+      d.rels.push({a:a,b:b,type:'rivalry',strength:-Math.min(90,Math.max(30,f.heat||60)),ring_chemistry:f.chem!=null?f.chem:4,note:f.note||'They have history.'});});});});
+    return d;
+  };
+})();
+/** Lay a world's history into a new game. */
+function histApply(S){
+  var H=DB&&DB.history;if(!H)return;var y0=DB.startYear,m0=DB.startMonth,id={};S.w.forEach(function(w){if(w.uid)id[w.uid]=w.id;});
+  var wk=function(d){return histWeek(d,y0,m0);},nm=function(u){var w=S.w[id[u]];return w?w.name:u;};
+  var tby={};S.order.forEach(function(pid){(S.promos[pid].titles||[]).forEach(function(t){tby[t.id]=t;});});
+  // the line of champions, oldest first; the reign still running joins the one the title already has
+  (H.reigns||[]).slice().sort(function(a,b){return (wk(a.from)||0)-(wk(b.from)||0);}).forEach(function(r){var t=tby[r.title];if(!t)return;
+    var ids=(r.holders||[]).map(function(u){return id[u];}).filter(function(x){return x!=null;});if(!ids.length)return;
+    t.hist=t.hist||[];var to=r.to?wk(r.to):null;if(to!=null&&to>0)to=0;
+    if(to==null){t.hist=t.hist.filter(function(h){return !(h.ids===ids.slice().sort().join(',')&&h.to==null);});}
+    t.hist.push({ids:ids.slice().sort().join(','),h:ids.map(function(i){return S.w[i].name;}),from:wk(r.from),to:to,show:r.event||'Before your time',defs:r.defs||0});
+    ids.forEach(function(i){var w=S.w[i];(w.tr||(w.tr=[])).push(t.name);});
+  });
+  Object.keys(tby).forEach(function(k){var t=tby[k];if(t.hist)t.hist.sort(function(a,b){return (a.from||0)-(b.from||0);});});
+  // head to head, and the famous nights in both careers
+  (H.matches||[]).forEach(function(m){var a=id[m.a],b=id[m.b];if(a==null||b==null)return;var k=rkey(a,b),h=S.h2h[k]||(S.h2h[k]={n:0,a:0,b:0,lw:-1,w:0});
+    var win=m.winner!=null?id[m.winner]:null;h.n++;h.w=Math.min(0,wk(m.date)||0);if(win!=null){h.lw=win;if(win===Math.min(a,b))h.a++;else h.b++;}
+    if((m.stars||0)>=4.5||m.note){var t=(m.event?m.event+', ':'')+String(m.date||'').slice(0,4)+': '+(win!=null?nm(m.winner)+' beat '+(win===a?nm(m.b):nm(m.a)):nm(m.a)+' and '+nm(m.b)+' fought to a draw')+(m.note?'. '+m.note:'');
+      [a,b].forEach(function(i){var w=S.w[i];(w.log||(w.log=[])).push({w:Math.min(0,wk(m.date)||0),k:'classic',t:t});});}
+  });
+  // old feuds that ended in the last year leave an ember: the same two start again with a head start
+  (H.feuds||[]).forEach(function(f){var a=id[(f.a||[])[0]],b=id[(f.b||[])[0]],end=wk(f.to);if(a==null||b==null||end==null||end<-47)return;
+    (S.embers||(S.embers={}))[rkey(a,b)]={w:end,h:Math.round(f.heat||60),n:1};});
+  // moments in a career
+  (H.moments||[]).forEach(function(x){var w=S.w[id[x.who]];if(w)(w.log||(w.log=[])).push({w:Math.min(0,wk(x.date)||0),k:x.k||'moment',t:x.text});});
+  S.w.forEach(function(w){if(w.log&&w.log.length){w.log.sort(function(p,q){return p.w-q.w;});if(w.log.length>16)w.log=w.log.slice(-16);}});
+  S.histFrom=H.from||null;
+}
+(function(){var ng=E.newGame;E.newGame=function(){var S=ng.apply(this,arguments);if(S&&S.w)histApply(S);return S;};})();
+/** A wrestler's persona from the world file: gimmick, catchphrase, finisher, debut year and whether they are a legend. */
+E.persona=function(S,id){var w=S.w[id];return w&&w.uid&&DB&&DB.persona?DB.persona[w.uid]||null:null;};
 
 /* ===== 86-rep.js ===== */
 /* ---------- 89. A reputation as a booker: traits earned by how you book, each with a small edge and a small cost (S.reps) ---------- */
@@ -9349,6 +9352,7 @@ EVR.nightmove=function(S,ev,choice,P){
 };
 
 /* ===== 88-shows.js ===== */
+/* wraps: 87-create.js (it must sort after them; test-buildorder.js checks) */
 /* ---------- a weekly show lasts ----------
    Ryan, 4 October: "Shows exist and can gain prestige the longer they are on and based on viewership and growth."
    A weekly show is not opened and shut. It stays on the air for years, and the years are part of what it is worth.
@@ -9714,6 +9718,7 @@ E.setLogo=function(S,logo){
 };
 
 /* ===== 89-networks.js ===== */
+/* wraps: 88-shows.js (it must sort after them; test-buildorder.js checks) */
 /* ===== Networks and what they want (NEXT.md 7.1 and 7.3) =====
    Every network a weekly show can be on has a taste, worked out from its name with a hash (never rnd(S)):
      family  wants a clean show: hardcore, tables and ladder matches and a lot of shouting go down badly
@@ -10054,6 +10059,7 @@ E.classReport=function(S,year){
 };
 
 /* ===== 89-streaming.js ===== */
+/* wraps: 88-shows.js (it must sort after them; test-buildorder.js checks) */
 /* ===== Streaming (NEXT.md 7.4) =====
    A company can open its own streaming service (Manage, Deals). It costs money to open and a little every week to
    run. Subscribers pay every week. How many there can be depends on the company's popularity and its tape library
@@ -10140,6 +10146,7 @@ E.feudAct=function(f,S){return feudAct(f,S);};E.ACTN=ACTN;E.RISKN=RISKN;E.TIXN=T
 E.MT=MT;E.STIP=STIP;E.ACH=ACH;E.STYLE_NAME=STYLE_NAME;E.MONTHS=MONTHS;
 
 /* ===== 90-cancel.js ===== */
+/* wraps: 00-core.js, 88-shows.js (it must sort after them; test-buildorder.js checks) */
 /* Cancellation (roadmap 4, Ryan 16 October). A network can cancel a weekly show after warnings: every meeting the
    network calls (netmeet, when its patience runs out) is a warning, and the third in a year cancels the weakest
    weekly show. A cancelled show is not gone: it runs on as a house show (sh.off), with no television money and a
@@ -10469,6 +10476,7 @@ var MAPS=[
 ];
 
 /* ===== 91-road.js ===== */
+/* wraps: 00-core.js, 40-week.js (it must sort after them; test-buildorder.js checks) */
 /* ---------- the road: where every city is, the map it is on, and where the next shows are ----------
    (docs/plans/art-direction.md, sections 6.4 and 6.5)
 
@@ -10694,6 +10702,7 @@ SHOWX.push(function(S,P,show,rep){
 });
 
 /* ===== 91-wishes-late.js ===== */
+/* wraps: 90-api.js (it must sort after them; test-buildorder.js checks) */
 /* ---------- depth systems that wrap the player API in 90-api.js ---------- */
 
 /* speaking out: a released wrestler may give an interview. It can sour the room, give away a rival's plans, or settle a score */
@@ -10777,6 +10786,7 @@ E.applyJobTerms=function(S,terms){
 })();
 
 /* ===== 92-challenge.js ===== */
+/* wraps: 00-core.js (it must sort after them; test-buildorder.js checks) */
 /* ---------- 100. The weekly challenge: a dated seed, the same world for everyone, twelve weeks, one score, and a short code to share (S.chal) ---------- */
 function isoParts(id){var m=/^(\d{4})-?W(\d{1,2})$/.exec(String(id||''));return m?{y:+m[1],w:+m[2]}:null;}
 E.challengeInfo=function(id){
@@ -10821,6 +10831,7 @@ WEEKX.push(function(S){
 });
 
 /* ===== 92-scenarios.js ===== */
+/* wraps: 00-core.js (it must sort after them; test-buildorder.js checks) */
 /* ---------- 95. Scenarios: a problem and a deadline, each ending with a result (S.scn) ---------- */
 var SCN={
   rescue:{n:'Save the company',promo:'ttt',weeks:26,d:'A small company with the wage bill too high and almost no cash. Keep it open for 26 weeks and end with $1.5M in the bank.',
@@ -11693,6 +11704,7 @@ E.welcome=function(S){
 };
 
 /* ===== 97-clauses.js ===== */
+/* wraps: 90-api.js (it must sort after them; test-buildorder.js checks) */
 /* ===== Contract clauses (docs/plans/contract-clauses.md, NEXT.md 11.1) =====
    A wrestler cares about at most three clauses, chosen by who they are. Each one they want and get lowers what they
    ask for. A clause is kept on the wrestler (w.cl) for the length of the deal and does what it says:
@@ -11968,6 +11980,7 @@ function showFill(S,card){
 })();
 
 /* ===== 98-plot.js ===== */
+/* wraps: 90-api.js (it must sort after them; test-buildorder.js checks) */
 /* ---------- booking power on the Storylines page ----------
    Ryan, 6 October: "Storylines will also start interacting with booking points and you can use booking points to
    do various things on the Storylines screen besides start the top feud. Like tag team break up, push a wrestler,
@@ -12305,6 +12318,7 @@ TASKX.push(function(S,P,add){E.debuts(S).filter(function(d){return !d.k;}).slice
   add('deb-'+d.id,d.name+' has not appeared yet. Plan how they are introduced.','booking','Plan it',{need:false,short:'Plan a debut: '+d.name,done:'Debut planned.'});});});
 
 /* ===== 99-fog.js ===== */
+/* wraps: 90-api.js (it must sort after them; test-buildorder.js checks) */
 /* ---------- Fog of war ----------
    The game does not tell the booker how a match or a promo will go. The road agent comments on every match on the
    sheet, and what the agent can say depends on three things:
@@ -12543,6 +12557,7 @@ E.cardFlags=function(S,card){card=card||S.card||[];return card.map(function(m,i)
 })();
 
 /* ===== 99-points.js ===== */
+/* wraps: 65-you.js (it must sort after them; test-buildorder.js checks) */
 /* Booking power and action points refill after every show of yours, not once a week (roadmap 10, Ryan 16 October).
    Each show brings its share of the week's booking power and one more point, plus up to two points left unspent from
    before; action points come back in full after every show, and one unspent point carries over. A week with several
@@ -12561,6 +12576,7 @@ SHOWX.push(function(S,P){
 E.pointsInfo=function(S){return {bp:S.bp||0,perShow:bpPerShow(S),bpCarry:BP_CARRY,ap:S.ap||0,apMax:apMax(S),apCarry:AP_CARRY};};
 
 /* ===== 99-royal.js ===== */
+/* wraps: 31-live.js (it must sort after them; test-buildorder.js checks) */
 /* Battle royals (roadmap 2, Ryan 16 October). A battle royal takes 6 to 30 entrants and runs 30 minutes for every 15
    in it (brMins() in src/97-time.js). The booker can hold one spot for a surprise: somebody nobody on the roster, a free
    agent, a legend first, who walks out when the bell has rung and is paid for the night. The winner earns a title match
@@ -12648,6 +12664,7 @@ E.suggestKeep=function(S){
 };
 
 /* ===== 99-suggest-flat.js ===== */
+/* wraps: 90-api.js (it must sort after them; test-buildorder.js checks) */
 /* ===== Suggest a card is safe and flat (Ryan, 16 October; docs/roadmap.md change 1) =====
    "I want suggest a card to give a mediocre show, so you have to have smart decision making if you want to win the
    game or keep your job." The suggested card still fills the clock and breaks no rule, but it does none of the

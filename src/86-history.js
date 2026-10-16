@@ -1,3 +1,4 @@
+/* wraps: 00-core.js, 85-universe.js (it must sort after them; test-buildorder.js checks) */
 /* ===== A world's history: what happened before the game begins (Ryan, 16 October: the parody world's 2020 to 2025) =====
    A world package can carry an optional `history` table, so a new game opens on years that already happened:
      reigns    [{title, holders:[ids], from:'2021-03', to:'2022-04' or null, defs, event}]  the line of champions

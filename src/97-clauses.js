@@ -1,3 +1,4 @@
+/* wraps: 90-api.js (it must sort after them; test-buildorder.js checks) */
 /* ===== Contract clauses (docs/plans/contract-clauses.md, NEXT.md 11.1) =====
    A wrestler cares about at most three clauses, chosen by who they are. Each one they want and get lowers what they
    ask for. A clause is kept on the wrestler (w.cl) for the length of the deal and does what it says:

@@ -1,3 +1,4 @@
+/* wraps: 87-create.js (it must sort after them; test-buildorder.js checks) */
 /* ---------- a weekly show lasts ----------
    Ryan, 4 October: "Shows exist and can gain prestige the longer they are on and based on viewership and growth."
    A weekly show is not opened and shut. It stays on the air for years, and the years are part of what it is worth.

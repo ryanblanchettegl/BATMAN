@@ -1,3 +1,4 @@
+/* wraps: 80-world.js (it must sort after them; test-buildorder.js checks) */
 /* ===== Invasions: who wins is agreed, and a bad one costs a year (NEXT.md 11.2, WISHLIST 66) =====
    A war with a rival (src/80-world.js, S.xf kind 'war') now starts with a phone call between the two offices about
    the finishes:

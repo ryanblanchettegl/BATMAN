@@ -1,3 +1,4 @@
+/* wraps: 00-core.js (it must sort after them; test-buildorder.js checks) */
 /* ---------- 95. Scenarios: a problem and a deadline, each ending with a result (S.scn) ---------- */
 var SCN={
   rescue:{n:'Save the company',promo:'ttt',weeks:26,d:'A small company with the wage bill too high and almost no cash. Keep it open for 26 weeks and end with $1.5M in the bank.',
