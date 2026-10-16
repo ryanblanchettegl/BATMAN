@@ -12153,7 +12153,7 @@ function archYear(S){
       .forEach(function(w){leaveCompany(S,w,'released');w.promo='FA';w.brand=null;w.cut={w:S.week,from:pid,img:P.image};});});
   // a pool that only grows: past the cap, the weakest free agents unused for two years leave the business
   var fa=S.w.filter(function(w){return w.promo==='FA'&&w.rt==null&&!w.nw&&S.week-(w.lu||0)>96;}).sort(function(a,b){return a.ovr-b.ovr||a.id-b.id;}),n=S.w.filter(function(w){return w.promo==='FA'&&w.rt==null&&!w.nw;}).length;
-  for(var i=0;i<fa.length&&n>FA_CAP;i++,n--)retire(S,fa[i],'left the business');
+  var gone=0;for(var i=0;i<fa.length&&n>FA_CAP;i++,n--){retire(S,fa[i],'left the business');gone++;}
   // and somebody who left the business long ago and was never a champion keeps only a name and a line
   S.w.forEach(function(w){if(w.rt!=null&&S.week-w.rt>96&&!w.arch&&w.promo==='FA'&&!w.srole){
     Object.keys(w).forEach(function(k){if(ARCH_KEEP.indexOf(k)<0)delete w[k];});if(w.log&&w.log.length>3)w.log=w.log.slice(0,1).concat(w.log.slice(-2));w.arch=1;}});
@@ -12161,6 +12161,7 @@ function archYear(S){
   S.order.forEach(function(pid){S.promos[pid].titles.forEach(function(t){var H=t.hist;if(!H)return;
     H.forEach(function(h){if(h.to!=null&&S.week-h.to>96)delete h.show;});
     if(H.length>TITLE_KEEP){t.histCut=(t.histCut||0)+H.length-TITLE_KEEP;t.hist=H.slice(0,1).concat(H.slice(-(TITLE_KEEP-1)));}});});
+  news(S,'world','The office files away the year. Records from before '+keep+' are kept as one line per career'+(gone?', and '+gone+' free agents nobody had used in two years have left the business':'')+'.');
   S.archived=S.week;
 }
 WEEKX.push(function(S){if(S.week>0&&S.week%48===0)archYear(S);});
