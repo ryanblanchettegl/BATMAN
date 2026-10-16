@@ -267,6 +267,8 @@ E.tonight=function(S){
     else if(q.type==='win'&&w)qt=w.name+' is owed a win.';
     else{qt=q.text.replace(/^[^:]+: /,'');qt=qt.charAt(0).toUpperCase()+qt.slice(1);}
     stakes.push({k:'due',t:qt});});
+  // a company living down a lost war (src/81-invasion.js)
+  if(show.big&&P.weak&&P.weak>S.week)stakes.push({k:'weak',t:'You lost the war badly: big nights draw a little less until '+cal(P.weak).label+'.'});
   // the network's taste (src/89-networks.js)
   if(typeof netCardClash==='function'){var nc=netCardClash(S,show,card);if(nc)stakes.push({k:'net',t:nc});}
   // a rival on the same night (src/88-nights.js)

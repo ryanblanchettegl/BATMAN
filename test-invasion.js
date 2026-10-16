@@ -14,5 +14,7 @@ for (const ch of [0, 1, 2]) { const g = war(100 + ch * 50); ok(g, 'a war can sta
   if (S.xf) { S.xf.sc = ch === 2 ? [0, 3] : [3, 0]; const RV = S.promos[pid], P = S.promos.pdw; S.xf.until = S.week; E.endWeek(S);
     if (ch === 0) ok(!P.weak && !RV.weak, 'a traded war leaves nobody weak');
     if (ch === 1) ok(RV.weak > S.week, 'a war they agreed to lose leaves them weak');
-    if (ch === 2) ok(P.weak > S.week && E.weakUntil(S) > S.week, 'a war lost badly leaves you weak for a year'); } }
+    if (ch === 2) { ok(P.weak > S.week && E.weakUntil(S) > S.week, 'a war lost badly leaves you weak for a year');
+      for (let k = 0; k < 6 && !(S.queue[S.qi] && S.queue[S.qi].big); k++) { while (S.qi < S.queue.length && !S.queue[S.qi].big) { E.runPlayerShow(S, E.suggest(S)); } if (S.qi >= S.queue.length) E.endWeek(S); }
+      if (S.queue[S.qi] && S.queue[S.qi].big) ok(E.tonight(S).stakes.some(x => x.k === 'weak'), 'the next big night says you are living it down'); } } }
 console.log(fails ? 'test-invasion: ' + fails + ' failed' : 'test-invasion: all passed'); process.exit(fails ? 1 : 0);
