@@ -7882,9 +7882,10 @@ E.sagaInfo=function(S){
     checks:{1:mkCheck(9,[{n:RV.image>S.promos[S.player].image?'They are the bigger company':'You are the bigger company',v:RV.image>S.promos[S.player].image?-2:1},{n:(RV.rel||0)>0?'They like you':'They do not like you',v:(RV.rel||0)>0?1:-1}].concat(skillMods(S,'talk')))}});};})();
 EVR.xfdeal=function(S,ev,choice,P){
   var x=S.xf,RV=S.promos[ev.rival];if(!x||x.with!==ev.rival)return 'The war is already over.';
-  if(choice===0){x.deal='trade';RV.rel=clamp((RV.rel||0)+8,-100,100);return 'You agree to share the wins. Nobody leaves looking weak, and '+RV.name+' will remember that you played fair.';}
+  var guests=function(t,v){(x.guests||[]).forEach(function(id){var w=S.w[id];if(w)youRemember(S,w,'xfdeal',t,v);});};
+  if(choice===0){x.deal='trade';guests('You shared the wins with my company. We did not come here to be fed.',3);RV.rel=clamp((RV.rel||0)+8,-100,100);return 'You agree to share the wins. Nobody leaves looking weak, and '+RV.name+' will remember that you played fair.';}
   if(choice===1){var r=rollCheck(S,ev.checks[1]);ev.roll=r;
-    if(r.ok){x.deal='ours';return rollText(r)+RV.name+' agrees to put your people over. Win the war and they will look weak for a year.';}
+    if(r.ok){x.deal='ours';guests('You had my office agree that I lose to your people.',-5);return rollText(r)+RV.name+' agrees to put your people over. Win the war and they will look weak for a year.';}
     RV.rel=clamp((RV.rel||0)-15,-100,100);news(S,'world',RV.name+' pulled its wrestlers out of the war with '+P.name+' before it began.');S.xfLast={kind:'war',with:x.with,sc:[0,0],week:S.week};S.xf=null;
     return rollText(r)+RV.name+' will not lie down for anybody. They pull their people out, and the war is over before it starts.';}
   x.deal='ring';return 'Nothing agreed. The ring decides.';
