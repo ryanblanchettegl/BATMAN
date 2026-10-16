@@ -75,3 +75,14 @@ What this run of `NEXT.md` built, what it skipped, and what the next run should 
 - `tools/balance.js` answers every inbox matter with its second choice. On PDW, one of those answers gives up the broadcast slot and drains the money. That is the harness, not the game.
 - `app/tests/roster.js` used to time out picking a style in the wrestler creator (the preview lay over the pick). Fixed 16 October: the test presses the pick through the page.
 - A version takes five changes before its number moves. This run put the number up once too early and took it back.
+
+# Run notes: the add-ons run, Phase 0 (fixes), versions 0.73 to 0.77
+
+Built:
+- 0.73 Balance (TASKS 11). The biggest cause was a bug: the mutiny meeting's clock was never reset when the owner calmed the room, so it fired every few weeks and cost 6 owner trust each time. Fixed; the owner also takes a middling show calmly, and income-linked overheads are 4% lower. Before and after tables: `docs/balance-0.73.txt`. The underdog now survives 100 weeks on suggested cards on all three seeds; no company more than about triples its cash (the underdog 3.7x).
+- 0.74 One version number: `VER` in `app/src/store.ts`; the build writes it into both package.json files and the README.
+- 0.75 Build order: every file that wraps another file's functions has a `wraps:` header; `test-buildorder.js` reads it and also finds wraps in the code, and fails when one sorts too early. It found a real one: `85-history.js` wrapped `buildDB` from `85-universe.js` while sorting before it (it only worked by hoisting); renamed `86-history.js`. Added to `npm run check`.
+- 0.76 `docs/INDEX.md`: what each planning file is for and which is current. Nothing deleted.
+- 0.77 Legal housekeeping: the notes on who each parody character is based on moved to `private/` (gitignored); history still has them (decisions-needed). The modding guide asks for legal review before sharing a real-life roster. No licence chosen; options listed for the owner.
+
+Skipped or left: on suggested cards the giant is still fired on two seeds of three, and two companies go broke on one seed each (decisions-needed). Nothing published.
