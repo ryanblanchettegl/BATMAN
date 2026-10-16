@@ -23,6 +23,7 @@ const weeks = (n: number) => n <= 0 ? 'this week' : (n === 1 ? 'a week ago' : n 
 function alerts(): ComponentChildren[] {
   const S = G.S, P = me(), R: W[] = E.rosterOf(S, P.id), out: ComponentChildren[] = [], byOvr = (a: W, b: W) => b.ovr - a.ovr;
   if (P.neg > 0) out.push(<span class="bad">Cash has been negative for {P.neg} {plural(P.neg, 'week')}. Six in a row ends the game.</span>);
+  (E.netInfo(S) as any[]).filter((n: any) => n.miss >= 2).forEach((n: any) => out.push(<span class="bad">{n.name} has missed {n.net}{'’'}s target {n.miss} weeks running. One more and an executive calls.</span>));
   R.filter(w => w.inj > 0).sort(byOvr).slice(0, 5).forEach(w => out.push(<><Name w={w} /> is injured: {w.inj} {plural(w.inj, 'week')} left.</>));
   R.filter(w => w.con <= 8).sort(byOvr).slice(0, 5).forEach(w => out.push(<><Name w={w} />{'’'}s contract ends in {Math.max(0, w.con)} {w.con === 1 ? 'week' : 'weeks'}.</>));
   R.filter(w => (w.stress || 0) >= 60).slice(0, 4).forEach(w => out.push(<><Name w={w} /> is under strain (stress {Math.round(w.stress)}).</>));
