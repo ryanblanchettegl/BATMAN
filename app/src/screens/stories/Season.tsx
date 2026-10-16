@@ -123,6 +123,7 @@ function More(p: { pops: { [k: string]: () => ComponentChildren } }) {
   const b = (k: string, n: string, c: number, title: string) => <button type="button" class="btn st-pw" {...dataAttrs('st-more', { v: k })} onClick={() => openModal({ kind: 'info', title, wide: true, body: p.pops[k] })}><span class="one">{n}</span><span class="cost">{c}</span></button>;
   return <div class="st-pws">
     <button type="button" class="btn st-pw" {...dataAttrs('plot-open', { v: 'found' })} onClick={() => openModal({ kind: 'info', title: 'Stories waiting', wide: true, body: () => <Found /> })}><span class="one">Stories waiting</span><span class="cost">{E.sift(S).length}</span></button>
+    {(() => { const A = E.arcInfo(S); return <button type="button" class="btn st-pw" {...dataAttrs('plot-open', { v: 'arc' })} onClick={() => openModal({ kind: 'plot', k: 'arc' })}><span class="one">{A.on ? A.n : 'Company arc'}</span><span class="cost">{A.on ? (A.flop ? 'flop' : 'on') : (A.can ? 'pick' : 'later')}</span></button>; })()}
     {b('finished', 'Finished feuds', done, 'Finished')}
     {b('streaks', 'Winning streaks', streak, 'Winning streaks')}
     {b('stables', 'Stables', stables, 'Stables')}

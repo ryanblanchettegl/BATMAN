@@ -17,7 +17,7 @@ Built in this order, one at a time, each tested, committed and published. Ryan's
 
 ## B. Company arcs (11 to 17)
 
-11. **The arc engine.** Picked once a year on Storylines, in the month after the flagship; it builds all year and pays off at the next flagship. Procedurally generated chapters with decisions through the year. It can flop, at a cost, but a flop can be turned around and something saved at the flagship.
+11. **The arc engine.** (Done 16 October: Storylines, Company arc. 12 to 14 have a first version each.) Picked once a year on Storylines, in the month after the flagship; it builds all year and pays off at the next flagship. Procedurally generated chapters with decisions through the year. It can flop, at a cost, but a flop can be turned around and something saved at the flagship.
 12. **The faction takeover.** A group forms and runs roughshod over the company: pick the leader, who joins, who betrays.
 13. **The hostile authority.** A new on-screen boss fires people on screen, makes unfair matches, and must be overthrown.
 14. **The brand split.** Two shows, a draft, rosters kept apart.

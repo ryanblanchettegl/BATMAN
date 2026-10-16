@@ -41,6 +41,7 @@ node test-grammar.js                                # the text grammar: headline
 node test-royal.js                                  # battle royals: 6 to 30 entrants, 30 minutes per 15, a surprise entrant, a title shot
 node test-cancel.js                                 # cancellation: three network warnings cancel a show, it runs as a house show, a strong run wins a deal back
 node test-debut.js                                  # book a debut: vignettes, a surprise attack or a straight match, and what each does
+node test-arcs.js                                   # company arcs: one a year, chapters on the desk, a payoff at the flagship, a flop that can be turned around
 node tools/build-public-domain.js                   # rebuild universes/public_domain.json after editing rosters
 python3 tools/build-font.py                         # rebuild app/fonts/ewf-blocks.woff2 (needs fonttools, brotli)
 MAPS_MODULES=<dir>/node_modules node tools/build-maps.js   # rebuild src/91-maps.js (needs world-atlas, us-atlas, topojson-client installed in <dir>)
