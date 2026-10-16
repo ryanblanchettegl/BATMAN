@@ -346,7 +346,7 @@ function tickClocks(S){
   else if(S.week%3===0)bump('stale',-1,'Enough variety at the top of the card');else C.stale.why=C.stale.why||'Holding';
   if(C.stale.v>=CLOCKS.stale.segs){C.stale.v=4;S.staleUntil=S.week+4;if(S.net)S.net.mood=clamp(S.net.mood-15,0,100);news(S,'world','The crowd has seen this act too many times. Expect thinner houses for '+P.name+' until something changes.');}
   // network patience and hot streak
-  var reps=S.reports.filter(function(r){return r.week===S.week;}),tv=reps.filter(function(r){return !r.big;});
+  var reps=S.reports.filter(function(r){return r.week===S.week;}),tv=reps.filter(function(r){return !r.big&&!r.hs;});
   if(tv.some(function(r){return r.rating<r.exp-2;}))bump('net',1,'A weekly show came in well under expectations');
   else if(tv.length&&tv.every(function(r){return r.rating>r.exp+1;}))bump('net',-1,'The network liked this week');else C.net.why=C.net.why||'Holding';
   if(C.net.v>=CLOCKS.net.segs){C.net.v=2;pushEv(S,{type:'netmeet',text:'The network wants a meeting. The numbers for your weekly show have been soft for too long.',choices:['Promise them a big main event','Accept a worse time slot','Push back'],checks:{2:mkCheck(9,[{n:'Popularity '+Math.round(P.image),v:P.image>=75?2:(P.image>=55?1:0)}].concat(skillMods(S,'talk')))}});}
