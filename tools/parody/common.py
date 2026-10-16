@@ -53,3 +53,20 @@ def add_moves(roster, move, sig):
         if w["id"] in move: w["finisher_move"] = move[w["id"]]
         if w["id"] in sig:
             w["signatures"] = [{"name": a.split("|")[0].strip(), "move": a.split("|")[1].strip()} for a in sig[w["id"]].split(";")]
+
+def company(cid, promo, shows, titles, rows, holders, teams=(), people=()):
+    """rows: (id, name, g, disp, style, brand, push, tier, age, town, category, gimmick, catchphrase, finisher,
+    finisher description, plain finisher move, "Sig|move; Sig|move", TARGET). TARGET is the design team's note only.
+    people: the same with roles and a legend flag added after the TARGET."""
+    roster, targets = [], []
+    for r in list(rows) + list(people):
+        if len(r) in (17, 19): r = r[:5] + (None,) + r[5:]   # a person row may leave out the brand
+        (i, n, g, d, st, br, push, tier, age, town, cat, gim, say, fin, fdesc, move, sig, target) = r[:18]
+        roles, legend = (r[18], r[19]) if len(r) > 18 else (None, False)
+        w = worker(i, n, g, d, st, tier, age, town, cat, gim, say, fin or None, fdesc or None, push=push, brand=br, promo=cid, roles=roles, legend=legend)
+        add_moves([w], {i: move} if move else {}, {i: sig} if sig else {})
+        roster.append(w); targets.append("- %s: %s" % (n, target))
+    data = {"promotion": promo, "shows": shows, "titles": [dict(t, holder_ids=holders.get(t["id"], [])) for t in titles], "roster": roster, "teams": list(teams)}
+    write_company(cid, data)
+    with open(os.path.join(os.path.dirname(__file__), "..", "..", "docs", "parody", "targets-%s.md" % cid), "w") as f:
+        f.write("# %s: who each one parodies (design reference, never shipped)\n\n%s\n" % (promo["name"], "\n".join(targets)))

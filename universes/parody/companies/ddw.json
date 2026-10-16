@@ -1,0 +1,1014 @@
+{
+ "promotion": {
+  "id": "ddw",
+  "model": "outlaw",
+  "name": "DDW",
+  "full_name": "Deathmatch Dumpster Wrestling",
+  "blurb": "The indie that runs warehouses, bowling alleys and a parking lot in Atlantic City. Light tubes, thumbtacks and a crowd that throws its own chairs in. Everybody has wrestled here once, and most of them regret it.",
+  "owner": {
+   "name": "Brad Dumpster",
+   "style": "workrate",
+   "roots": "rebel",
+   "pledge": "pay"
+  },
+  "staff": {
+   "road_agent": "Uncle Thumbtack",
+   "head_writer": "Whatever Happens"
+  },
+  "announcers": [
+   "Lenny Loudmouth",
+   "Kevin Commentary"
+  ],
+  "cities": [
+   "Atlantic City",
+   "Philadelphia",
+   "Jersey City",
+   "Brooklyn",
+   "Indianapolis",
+   "Los Angeles",
+   "Chicago",
+   "Atlanta"
+  ],
+  "cash": 1200000,
+  "popularity": 36,
+  "flagship_month": 4,
+  "tv_slot": 0,
+  "production_level": 0,
+  "risk_level": 3,
+  "events": [
+   {
+    "n": "The Whole Dumpster World",
+    "t": "flag"
+   },
+   {
+    "n": "Thumbtack Valentine",
+    "t": "gimmick"
+   },
+   {
+    "n": "Bobby Balcony's Spring Breakdown",
+    "t": "arena"
+   },
+   {
+    "n": "Tournament of Bruising",
+    "t": "tourn"
+   },
+   {
+    "n": "Cage of Something",
+    "t": "gimmick"
+   },
+   {
+    "n": "Fightsport",
+    "t": "ballroom"
+   },
+   {
+    "n": "Homecoming to the Parking Lot",
+    "t": "ballroom"
+   },
+   {
+    "n": "Backyard Bash",
+    "t": "ballroom"
+   },
+   {
+    "n": "Basement Brawl Night",
+    "t": "ballroom"
+   },
+   {
+    "n": "Light Tube Halloween",
+    "t": "gimmick"
+   },
+   {
+    "n": "Thankskilling",
+    "t": "ballroom"
+   },
+   {
+    "n": "Dumpster Fire Christmas",
+    "t": "gimmick"
+   }
+  ]
+ },
+ "shows": [
+  {
+   "id": "ddw_live",
+   "name": "DDW Live From Somewhere",
+   "weight": 1
+  }
+ ],
+ "titles": [
+  {
+   "id": "ddw_world",
+   "name": "DDW World Championship",
+   "gender": "M",
+   "level": 3,
+   "holder_ids": [
+    "gutter_gary"
+   ]
+  },
+  {
+   "id": "ddw_tube",
+   "name": "Light Tube Championship",
+   "gender": "M",
+   "level": 2,
+   "holder_ids": [
+    "lightbulb_luis"
+   ]
+  },
+  {
+   "id": "ddw_tag",
+   "name": "DDW Tag Team Championship",
+   "gender": "M",
+   "level": 1,
+   "tag": true,
+   "holder_ids": [
+    "cowboy_cleaver",
+    "rodeo_clown_rigby"
+   ]
+  }
+ ],
+ "roster": [
+  {
+   "id": "gutter_gary",
+   "ring_name": "Gutter Gary",
+   "gender": "M",
+   "disposition": "heel",
+   "style": "brawler",
+   "age": 45,
+   "hometown": "Philadelphia",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 94,
+    "technical": 77,
+    "aerial": 56,
+    "stamina": 66,
+    "charisma": 76,
+    "promo_skill": 78,
+    "overness": 80,
+    "star_quality": 82,
+    "potential": 84,
+    "durability": 66,
+    "consistency": 86
+   },
+   "gimmick_category": "King of the Deathmatch",
+   "gimmick": "A scarred, grinning legend of the light tubes who has been stabbed, stitched and stapled, and says thank you for all of it.",
+   "catchphrase": "Thank you. Now bleed.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2002,
+   "finisher": "The Gutter Driver",
+   "finisher_description": "A piledriver onto a pile of light tubes.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 165000,
+    "weeks_left": 140,
+    "push": "main_eventer"
+   },
+   "finisher_move": "Piledriver",
+   "signatures": [
+    {
+     "name": "Night Shift",
+     "move": "Running lariat"
+    },
+    {
+     "name": "Tube Shot",
+     "move": "Light tube shot"
+    }
+   ]
+  },
+  {
+   "id": "tremor_tommy",
+   "ring_name": "Tremor Tommy",
+   "gender": "M",
+   "disposition": "face",
+   "style": "brawler",
+   "age": 40,
+   "hometown": "Baltimore",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 86,
+    "technical": 65,
+    "aerial": 63,
+    "stamina": 70,
+    "charisma": 68,
+    "promo_skill": 63,
+    "overness": 64,
+    "star_quality": 73,
+    "potential": 65,
+    "durability": 69,
+    "consistency": 84
+   },
+   "gimmick_category": "The Bearded Bleeder",
+   "gimmick": "A huge, sweet, bearded man who has bled more than any blood bank holds.",
+   "catchphrase": "Hug it out. Then tubes.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2007,
+   "finisher": "The Aftershock",
+   "finisher_description": "A sit-out powerbomb through a door.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 70000,
+    "weeks_left": 60,
+    "push": "upper_midcarder"
+   },
+   "finisher_move": "Sit-out powerbomb",
+   "signatures": [
+    {
+     "name": "Bear Hug of Glass",
+     "move": "Bear hug"
+    },
+    {
+     "name": "Tremor",
+     "move": "Running splash"
+    }
+   ]
+  },
+  {
+   "id": "rockabilly_rex",
+   "ring_name": "Rockabilly Rex",
+   "gender": "M",
+   "disposition": "face",
+   "style": "entertainer",
+   "age": 35,
+   "hometown": "Atlanta",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 76,
+    "technical": 70,
+    "aerial": 63,
+    "stamina": 75,
+    "charisma": 70,
+    "promo_skill": 69,
+    "overness": 69,
+    "star_quality": 72,
+    "potential": 72,
+    "durability": 70,
+    "consistency": 79
+   },
+   "gimmick_category": "Rockabilly Rebel",
+   "gimmick": "A greaser with a quiff, a grin and a fondness for kissing opponents mid-match.",
+   "catchphrase": "Rock around the ring!",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2012,
+   "finisher": "The Jukebox",
+   "finisher_description": "A running knee.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 70000,
+    "weeks_left": 116,
+    "push": "upper_midcarder"
+   },
+   "finisher_move": "Running knee",
+   "signatures": [
+    {
+     "name": "Hair Gel",
+     "move": "Lariat"
+    },
+    {
+     "name": "B-Side",
+     "move": "Neckbreaker"
+    }
+   ]
+  },
+  {
+   "id": "moonshine_mason",
+   "ring_name": "Moonshine Mason",
+   "gender": "M",
+   "disposition": "heel",
+   "style": "brawler",
+   "age": 36,
+   "hometown": "Bucksnort",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 77,
+    "technical": 69,
+    "aerial": 62,
+    "stamina": 70,
+    "charisma": 61,
+    "promo_skill": 54,
+    "overness": 71,
+    "star_quality": 65,
+    "potential": 70,
+    "durability": 70,
+    "consistency": 77
+   },
+   "gimmick_category": "Hillbilly Brawler",
+   "gimmick": "A moonshining brawler from the hills who fights with whatever is in his truck.",
+   "catchphrase": "Pass the jar.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2011,
+   "finisher": "The Still",
+   "finisher_description": "A powerbomb onto a truck tyre.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 70000,
+    "weeks_left": 70,
+    "push": "upper_midcarder"
+   },
+   "finisher_move": "Powerbomb",
+   "signatures": [
+    {
+     "name": "Jar Shot",
+     "move": "Moonshine jar"
+    },
+    {
+     "name": "Holler",
+     "move": "Lariat"
+    }
+   ]
+  },
+  {
+   "id": "bobby_balcony",
+   "ring_name": "Bad Boy Bobby Balcony",
+   "gender": "M",
+   "disposition": "face",
+   "style": "entertainer",
+   "age": 36,
+   "hometown": "Asbury Park",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 74,
+    "technical": 71,
+    "aerial": 62,
+    "stamina": 64,
+    "charisma": 69,
+    "promo_skill": 78,
+    "overness": 68,
+    "star_quality": 62,
+    "potential": 64,
+    "durability": 80,
+    "consistency": 77
+   },
+   "gimmick_category": "The Balcony Diver",
+   "gimmick": "A cocky Jersey boy who dives off every balcony in every building and runs a show named after himself.",
+   "catchphrase": "Somebody get me a balcony!",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2011,
+   "finisher": "The Balcony Elbow",
+   "finisher_description": "A diving elbow from the venue's balcony.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 70000,
+    "weeks_left": 28,
+    "push": "upper_midcarder"
+   },
+   "finisher_move": "Diving elbow",
+   "signatures": [
+    {
+     "name": "Spring Breakdown",
+     "move": "Running knee"
+    },
+    {
+     "name": "Jersey Turnpike",
+     "move": "Springboard cutter"
+    }
+   ]
+  },
+  {
+   "id": "two_bit_terry",
+   "ring_name": "Two-Bit Terry",
+   "gender": "M",
+   "disposition": "heel",
+   "style": "flyer",
+   "age": 31,
+   "hometown": "Philadelphia",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 60,
+    "technical": 70,
+    "aerial": 83,
+    "stamina": 76,
+    "charisma": 58,
+    "promo_skill": 67,
+    "overness": 66,
+    "star_quality": 66,
+    "potential": 64,
+    "durability": 79,
+    "consistency": 82
+   },
+   "gimmick_category": "Cheap Shot Artist",
+   "gimmick": "A small, nasty flyer who cheats at everything, including pinball.",
+   "catchphrase": "Got change?",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2016,
+   "finisher": "The Two-Bit Cutter",
+   "finisher_description": "A springboard cutter.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 38000,
+    "weeks_left": 50,
+    "push": "midcarder"
+   },
+   "finisher_move": "Springboard cutter",
+   "signatures": [
+    {
+     "name": "Penny Kick",
+     "move": "Superkick"
+    },
+    {
+     "name": "Pocket Change",
+     "move": "Small package"
+    }
+   ]
+  },
+  {
+   "id": "flip_flipperton",
+   "ring_name": "Flip Flipperton",
+   "gender": "M",
+   "disposition": "face",
+   "style": "flyer",
+   "age": 27,
+   "hometown": "Los Angeles",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 71,
+    "technical": 77,
+    "aerial": 86,
+    "stamina": 69,
+    "charisma": 71,
+    "promo_skill": 70,
+    "overness": 70,
+    "star_quality": 63,
+    "potential": 75,
+    "durability": 68,
+    "consistency": 78
+   },
+   "gimmick_category": "The Human Pinwheel",
+   "gimmick": "A flyer who has never landed on his feet when he could spin first.",
+   "catchphrase": "Spin it!",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2020,
+   "finisher": "The Pinwheel",
+   "finisher_description": "A 450 splash from the top.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 38000,
+    "weeks_left": 44,
+    "push": "midcarder"
+   },
+   "finisher_move": "450 splash",
+   "signatures": [
+    {
+     "name": "Pinwheel Kick",
+     "move": "Spinning kick"
+    },
+    {
+     "name": "Rotation",
+     "move": "Corkscrew moonsault"
+    }
+   ]
+  },
+  {
+   "id": "lightbulb_luis",
+   "ring_name": "Lightbulb Luis",
+   "gender": "M",
+   "disposition": "heel",
+   "style": "brawler",
+   "age": 36,
+   "hometown": "Puerto Rico",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 85,
+    "technical": 68,
+    "aerial": 57,
+    "stamina": 80,
+    "charisma": 63,
+    "promo_skill": 66,
+    "overness": 66,
+    "star_quality": 67,
+    "potential": 69,
+    "durability": 84,
+    "consistency": 84
+   },
+   "gimmick_category": "The Bulb Breaker",
+   "gimmick": "A deathmatch specialist who brings a box of light bulbs and a bad idea.",
+   "catchphrase": "Bright idea!",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2011,
+   "finisher": "The Blackout",
+   "finisher_description": "A brainbuster onto glass.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 38000,
+    "weeks_left": 68,
+    "push": "midcarder"
+   },
+   "finisher_move": "Brainbuster",
+   "signatures": [
+    {
+     "name": "Bulb Shot",
+     "move": "Light bulb"
+    },
+    {
+     "name": "Spark",
+     "move": "Lariat"
+    }
+   ]
+  },
+  {
+   "id": "cowboy_cleaver",
+   "ring_name": "Cowboy Cleaver",
+   "gender": "M",
+   "disposition": "heel",
+   "style": "brawler",
+   "age": 37,
+   "hometown": "Kentucky",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 84,
+    "technical": 69,
+    "aerial": 60,
+    "stamina": 76,
+    "charisma": 57,
+    "promo_skill": 63,
+    "overness": 69,
+    "star_quality": 68,
+    "potential": 70,
+    "durability": 70,
+    "consistency": 78
+   },
+   "gimmick_category": "Deathmatch Cowboy",
+   "gimmick": "A grim cowboy who brings a barbed-wire lasso to every match.",
+   "catchphrase": "Yeehaw. Ow.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2010,
+   "finisher": "The Barbed Lasso",
+   "finisher_description": "A lariat with a barbed-wire wrapped arm.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 38000,
+    "weeks_left": 54,
+    "push": "midcarder"
+   },
+   "finisher_move": "Lariat",
+   "signatures": [
+    {
+     "name": "Spur",
+     "move": "Running boot"
+    },
+    {
+     "name": "Branding",
+     "move": "Piledriver"
+    }
+   ]
+  },
+  {
+   "id": "rodeo_clown_rigby",
+   "ring_name": "Rodeo Clown Rigby",
+   "gender": "M",
+   "disposition": "face",
+   "style": "brawler",
+   "age": 33,
+   "hometown": "Texas",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 69,
+    "technical": 61,
+    "aerial": 50,
+    "stamina": 58,
+    "charisma": 47,
+    "promo_skill": 48,
+    "overness": 52,
+    "star_quality": 57,
+    "potential": 58,
+    "durability": 78,
+    "consistency": 71
+   },
+   "gimmick_category": "The One Called Cowpoke",
+   "gimmick": "A cowboy who calls himself just one name and nobody can remember it.",
+   "catchphrase": "I'm the one called... you know.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2014,
+   "finisher": "The Cattle Drive",
+   "finisher_description": "A running lariat.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 38000,
+    "weeks_left": 20,
+    "push": "midcarder"
+   },
+   "finisher_move": "Lariat",
+   "signatures": [
+    {
+     "name": "Branding Iron",
+     "move": "Lariat"
+    },
+    {
+     "name": "Lasso",
+     "move": "Clothesline"
+    }
+   ]
+  },
+  {
+   "id": "el_turista_loco",
+   "ring_name": "El Turista Loco",
+   "gender": "M",
+   "disposition": "face",
+   "style": "flyer",
+   "age": 38,
+   "hometown": "Arizona",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 51,
+    "technical": 59,
+    "aerial": 73,
+    "stamina": 69,
+    "charisma": 51,
+    "promo_skill": 52,
+    "overness": 51,
+    "star_quality": 55,
+    "potential": 54,
+    "durability": 68,
+    "consistency": 81
+   },
+   "gimmick_category": "The Crazy Tourist",
+   "gimmick": "A masked flyer in a Hawaiian shirt who takes photos of every move he lands.",
+   "catchphrase": "¡Foto, foto!",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2009,
+   "finisher": "The Postcard",
+   "finisher_description": "A 450 splash.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 22000,
+    "weeks_left": 80,
+    "push": "lower_midcarder"
+   },
+   "finisher_move": "450 splash",
+   "signatures": [
+    {
+     "name": "Souvenir",
+     "move": "Dropkick"
+    },
+    {
+     "name": "Passport",
+     "move": "Hurricanrana"
+    }
+   ]
+  },
+  {
+   "id": "thumbtack_tess",
+   "ring_name": "Thumbtack Tess",
+   "gender": "F",
+   "disposition": "heel",
+   "style": "brawler",
+   "age": 29,
+   "hometown": "Pittsburgh",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 84,
+    "technical": 65,
+    "aerial": 61,
+    "stamina": 73,
+    "charisma": 56,
+    "promo_skill": 60,
+    "overness": 69,
+    "star_quality": 72,
+    "potential": 78,
+    "durability": 76,
+    "consistency": 78
+   },
+   "gimmick_category": "Thumbtack Queen",
+   "gimmick": "A tiny brawler who pours thumbtacks into the ring like confetti.",
+   "catchphrase": "Watch your step.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2018,
+   "finisher": "The Tack Drop",
+   "finisher_description": "A DDT into thumbtacks.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 38000,
+    "weeks_left": 62,
+    "push": "midcarder"
+   },
+   "finisher_move": "DDT",
+   "signatures": [
+    {
+     "name": "Pinprick",
+     "move": "Running knee"
+    },
+    {
+     "name": "Confetti",
+     "move": "Senton"
+    }
+   ]
+  },
+  {
+   "id": "staple_gun_stan",
+   "ring_name": "Staple Gun Stan",
+   "gender": "M",
+   "disposition": "heel",
+   "style": "brawler",
+   "age": 39,
+   "hometown": "Camden",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 72,
+    "technical": 53,
+    "aerial": 49,
+    "stamina": 58,
+    "charisma": 52,
+    "promo_skill": 40,
+    "overness": 58,
+    "star_quality": 60,
+    "potential": 51,
+    "durability": 78,
+    "consistency": 70
+   },
+   "gimmick_category": "The Office Supply Maniac",
+   "gimmick": "A deathmatch nut who brings a staple gun, a hole punch and a laminator.",
+   "catchphrase": "Sign here. And here.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2008,
+   "finisher": "The Paperwork",
+   "finisher_description": "A piledriver onto a filing cabinet.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 22000,
+    "weeks_left": 124,
+    "push": "lower_midcarder"
+   },
+   "finisher_move": "Piledriver",
+   "signatures": [
+    {
+     "name": "Hole Punch",
+     "move": "Punch"
+    },
+    {
+     "name": "Laminate",
+     "move": "Splash"
+    }
+   ]
+  },
+  {
+   "id": "kid_kaboom",
+   "ring_name": "Kid Kaboom",
+   "gender": "M",
+   "disposition": "face",
+   "style": "flyer",
+   "age": 24,
+   "hometown": "Brooklyn",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 67,
+    "technical": 80,
+    "aerial": 84,
+    "stamina": 71,
+    "charisma": 60,
+    "promo_skill": 70,
+    "overness": 67,
+    "star_quality": 63,
+    "potential": 81,
+    "durability": 72,
+    "consistency": 81
+   },
+   "gimmick_category": "Indie Daredevil",
+   "gimmick": "A young flyer who dives into crowds and crowds dive back.",
+   "catchphrase": "KABOOM!",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2023,
+   "finisher": "The Crowd Surf",
+   "finisher_description": "A suicide dive into the crowd.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 38000,
+    "weeks_left": 102,
+    "push": "midcarder"
+   },
+   "finisher_move": "Suicide dive",
+   "signatures": [
+    {
+     "name": "Boom",
+     "move": "Superkick"
+    },
+    {
+     "name": "Fuse",
+     "move": "Springboard moonsault"
+    }
+   ]
+  },
+  {
+   "id": "jersey_jojo",
+   "ring_name": "Jersey Jojo",
+   "gender": "M",
+   "disposition": "heel",
+   "style": "entertainer",
+   "age": 34,
+   "hometown": "Jersey City",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 55,
+    "technical": 52,
+    "aerial": 49,
+    "stamina": 64,
+    "charisma": 59,
+    "promo_skill": 51,
+    "overness": 55,
+    "star_quality": 57,
+    "potential": 56,
+    "durability": 81,
+    "consistency": 82
+   },
+   "gimmick_category": "Jersey Shore Party Animal",
+   "gimmick": "A spray-tanned partier who sprays the crowd with energy drink.",
+   "catchphrase": "Fist pump!",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2013,
+   "finisher": "The Boardwalk",
+   "finisher_description": "A cutter.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 22000,
+    "weeks_left": 136,
+    "push": "lower_midcarder"
+   },
+   "finisher_move": "Cutter",
+   "signatures": [
+    {
+     "name": "Tan Line",
+     "move": "Superkick"
+    },
+    {
+     "name": "Shore",
+     "move": "Lariat"
+    }
+   ]
+  },
+  {
+   "id": "bubblegum_bree",
+   "ring_name": "Bubblegum Brawler Bree",
+   "gender": "F",
+   "disposition": "face",
+   "style": "brawler",
+   "age": 32,
+   "hometown": "Detroit",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 85,
+    "technical": 74,
+    "aerial": 63,
+    "stamina": 69,
+    "charisma": 56,
+    "promo_skill": 70,
+    "overness": 65,
+    "star_quality": 62,
+    "potential": 68,
+    "durability": 74,
+    "consistency": 84
+   },
+   "gimmick_category": "The Bubblegum Brawler",
+   "gimmick": "A pink-haired brawler who wrestles men, women and furniture, and always chews gum during it.",
+   "catchphrase": "Pop it!",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2015,
+   "finisher": "The Bubble Pop",
+   "finisher_description": "A piledriver.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 70000,
+    "weeks_left": 66,
+    "push": "upper_midcarder"
+   },
+   "finisher_move": "Piledriver",
+   "signatures": [
+    {
+     "name": "Pop Kick",
+     "move": "Running kick"
+    },
+    {
+     "name": "Gum Stick",
+     "move": "Sleeper"
+    }
+   ]
+  },
+  {
+   "id": "brad_dumpster",
+   "ring_name": "Brad Dumpster",
+   "gender": "M",
+   "disposition": "face",
+   "style": "entertainer",
+   "age": 41,
+   "hometown": "New Jersey",
+   "roles": [
+    "owner",
+    "booker"
+   ],
+   "ratings": {
+    "brawling": 43,
+    "technical": 47,
+    "aerial": 31,
+    "stamina": 48,
+    "charisma": 40,
+    "promo_skill": 35,
+    "overness": 39,
+    "star_quality": 42,
+    "potential": 37,
+    "durability": 66,
+    "consistency": 75
+   },
+   "gimmick_category": "The Owner Who Hosts the Show",
+   "gimmick": "The owner who runs the company from a folding chair and books it from his phone.",
+   "catchphrase": "We'll figure it out.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2006,
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 28000,
+    "weeks_left": 72,
+    "push": "non_wrestler"
+   }
+  }
+ ],
+ "teams": [
+  {
+   "id": "ddw_cattle_and_cleaver",
+   "name": "Cattle and Cleaver",
+   "kind": "tag",
+   "member_ids": [
+    "cowboy_cleaver",
+    "rodeo_clown_rigby"
+   ],
+   "experience": 60,
+   "chemistry": 7
+  }
+ ]
+}

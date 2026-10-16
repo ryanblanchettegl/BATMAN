@@ -1,0 +1,980 @@
+{
+ "promotion": {
+  "id": "ark",
+  "model": "purist",
+  "name": "ARK",
+  "full_name": "Pro Wrestling ARK",
+  "blurb": "The company that sailed away from the old giant to build its own boat. Heavy chops, heavier kicks, and a fanbase that counts every elbow drop.",
+  "owner": {
+   "name": "A Streaming Platform's Parent Company",
+   "style": "workrate",
+   "roots": "tradition",
+   "pledge": "stable"
+  },
+  "staff": {
+   "road_agent": "Captain Chop",
+   "head_writer": "The Crew"
+  },
+  "announcers": [
+   "Deckhand Dai",
+   "First Mate Fumio"
+  ],
+  "cities": [
+   "Tokyo",
+   "Osaka",
+   "Nagoya",
+   "Yokohama",
+   "Sendai",
+   "Fukuoka"
+  ],
+  "cash": 6000000,
+  "popularity": 46,
+  "flagship_month": 1,
+  "tv_slot": 0,
+  "production_level": 2,
+  "events": [
+   {
+    "n": "The Great Voyage Home",
+    "t": "flag"
+   },
+   {
+    "n": "Anchor Night",
+    "t": "taped"
+   },
+   {
+    "n": "Spring Navigation",
+    "t": "arena"
+   },
+   {
+    "n": "Shipwreck",
+    "t": "gimmick"
+   },
+   {
+    "n": "Destination Somewhere",
+    "t": "arena"
+   },
+   {
+    "n": "Departure Gate",
+    "t": "taped"
+   },
+   {
+    "n": "ARK-1 Victory",
+    "t": "tourn"
+   },
+   {
+    "n": "ARK-1 Final",
+    "t": "tent"
+   },
+   {
+    "n": "Harbour Lights",
+    "t": "taped"
+   },
+   {
+    "n": "Ark Tag League",
+    "t": "tourn"
+   },
+   {
+    "n": "The Long Voyage",
+    "t": "arena"
+   },
+   {
+    "n": "Dry Dock",
+    "t": "taped"
+   }
+  ]
+ },
+ "shows": [
+  {
+   "id": "ark_weekly",
+   "name": "ARK on the Water",
+   "weight": 1
+  }
+ ],
+ "titles": [
+  {
+   "id": "ark_crown",
+   "name": "Ark Grand Crown Heavyweight Championship",
+   "gender": "M",
+   "level": 3,
+   "holder_ids": [
+    "young_ace_kazuma"
+   ]
+  },
+  {
+   "id": "ark_national",
+   "name": "Ark National Championship",
+   "gender": "M",
+   "level": 2,
+   "holder_ids": [
+    "kensei_kicker"
+   ]
+  },
+  {
+   "id": "ark_junior",
+   "name": "Ark Junior Heavyweight Championship",
+   "gender": "M",
+   "level": 2,
+   "holder_ids": [
+    "grinning_goro"
+   ]
+  },
+  {
+   "id": "ark_tag",
+   "name": "Ark Tag Team Championship",
+   "gender": "M",
+   "level": 2,
+   "tag": true,
+   "holder_ids": [
+    "northern_brute",
+    "big_farmhand"
+   ]
+  }
+ ],
+ "roster": [
+  {
+   "id": "kensei_kicker",
+   "ring_name": "Kensei the Kicker",
+   "gender": "M",
+   "disposition": "heel",
+   "style": "striker",
+   "age": 41,
+   "hometown": "Aomori",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 86,
+    "technical": 88,
+    "aerial": 74,
+    "stamina": 78,
+    "charisma": 70,
+    "promo_skill": 79,
+    "overness": 82,
+    "star_quality": 81,
+    "potential": 76,
+    "durability": 72,
+    "consistency": 85
+   },
+   "gimmick_category": "The Kick-Boxing Rebel",
+   "gimmick": "A sharp-tongued kicker who calls everyone soft, then kicks them to prove it.",
+   "catchphrase": "Soft. All of you.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2006,
+   "finisher": "The Dragon's Wake",
+   "finisher_description": "A spinning heel kick into a sit-out.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 165000,
+    "weeks_left": 82,
+    "push": "main_eventer"
+   },
+   "finisher_move": "Spinning heel kick",
+   "signatures": [
+    {
+     "name": "Rebel Kick",
+     "move": "Head kick"
+    },
+    {
+     "name": "Rebel Lock",
+     "move": "Crossface"
+    }
+   ]
+  },
+  {
+   "id": "salt_chop_shiro",
+   "ring_name": "Salt Chop Shiro",
+   "gender": "M",
+   "disposition": "face",
+   "style": "brawler",
+   "age": 48,
+   "hometown": "Tokyo",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 91,
+    "technical": 77,
+    "aerial": 56,
+    "stamina": 62,
+    "charisma": 75,
+    "promo_skill": 78,
+    "overness": 76,
+    "star_quality": 83,
+    "potential": 77,
+    "durability": 61,
+    "consistency": 85
+   },
+   "gimmick_category": "Chop Machine",
+   "gimmick": "A veteran whose chest chops leave handprints in other people's photos.",
+   "catchphrase": "One hundred chops. Minimum.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 1999,
+   "finisher": "The Salt Lariat",
+   "finisher_description": "A running lariat, after a hundred chops.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 165000,
+    "weeks_left": 38,
+    "push": "main_eventer"
+   },
+   "finisher_move": "Lariat",
+   "signatures": [
+    {
+     "name": "Machine Gun Chops",
+     "move": "Chops"
+    },
+    {
+     "name": "Brine",
+     "move": "Moonsault"
+    }
+   ]
+  },
+  {
+   "id": "genius_maestro",
+   "ring_name": "The Genius Maestro",
+   "gender": "M",
+   "disposition": "tweener",
+   "style": "technician",
+   "age": 46,
+   "hometown": "Saitama",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 79,
+    "technical": 95,
+    "aerial": 66,
+    "stamina": 66,
+    "charisma": 81,
+    "promo_skill": 71,
+    "overness": 84,
+    "star_quality": 78,
+    "potential": 82,
+    "durability": 63,
+    "consistency": 86
+   },
+   "gimmick_category": "The Genius",
+   "gimmick": "A graceful veteran who has done every move once and does them better than whoever invented them.",
+   "catchphrase": "Genius is quiet.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2001,
+   "finisher": "The Silent Fire",
+   "finisher_description": "A springboard reverse DDT.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 70000,
+    "weeks_left": 132,
+    "push": "upper_midcarder"
+   },
+   "finisher_move": "Reverse DDT",
+   "signatures": [
+    {
+     "name": "Genius Kick",
+     "move": "Superkick"
+    },
+    {
+     "name": "Pole Shift",
+     "move": "Spinning sit-out slam"
+    }
+   ]
+  },
+  {
+   "id": "young_ace_kazuma",
+   "ring_name": "Young Ace Kazuma",
+   "gender": "M",
+   "disposition": "face",
+   "style": "all_rounder",
+   "age": 29,
+   "hometown": "Fukushima",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 83,
+    "technical": 83,
+    "aerial": 87,
+    "stamina": 81,
+    "charisma": 69,
+    "promo_skill": 77,
+    "overness": 79,
+    "star_quality": 80,
+    "potential": 87,
+    "durability": 78,
+    "consistency": 83
+   },
+   "gimmick_category": "The Next Ace",
+   "gimmick": "A handsome young ace who has been told he is the future so many times he has started a podcast about it.",
+   "catchphrase": "The future is listening.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2018,
+   "finisher": "The Ace Wave",
+   "finisher_description": "A shining wizard.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 165000,
+    "weeks_left": 140,
+    "push": "main_eventer"
+   },
+   "finisher_move": "Shining wizard",
+   "signatures": [
+    {
+     "name": "Ace Plex",
+     "move": "Tiger suplex"
+    },
+    {
+     "name": "Next Kick",
+     "move": "Running knee"
+    }
+   ]
+  },
+  {
+   "id": "iron_grandpa",
+   "ring_name": "Iron Grandpa",
+   "gender": "M",
+   "disposition": "heel",
+   "style": "brawler",
+   "age": 55,
+   "hometown": "Kyoto",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 86,
+    "technical": 70,
+    "aerial": 26,
+    "stamina": 36,
+    "charisma": 68,
+    "promo_skill": 69,
+    "overness": 64,
+    "star_quality": 64,
+    "potential": 70,
+    "durability": 41,
+    "consistency": 81
+   },
+   "gimmick_category": "The Silver-Haired Brawler",
+   "gimmick": "A grey-haired brute who knees young men in the head and sends their parents a letter.",
+   "catchphrase": "Respect your grandpa.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 1995,
+   "finisher": "The Pension Plan",
+   "finisher_description": "A running knee to the jaw.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 70000,
+    "weeks_left": 22,
+    "push": "upper_midcarder"
+   },
+   "finisher_move": "Running knee",
+   "signatures": [
+    {
+     "name": "Ankle Lock of Age",
+     "move": "Ankle lock"
+    },
+    {
+     "name": "Grandpa's Slam",
+     "move": "Olympic slam"
+    }
+   ]
+  },
+  {
+   "id": "northern_brute",
+   "ring_name": "Northern Brute",
+   "gender": "M",
+   "disposition": "heel",
+   "style": "powerhouse",
+   "age": 37,
+   "hometown": "Tokyo",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 76,
+    "technical": 65,
+    "aerial": 60,
+    "stamina": 78,
+    "charisma": 72,
+    "promo_skill": 58,
+    "overness": 66,
+    "star_quality": 73,
+    "potential": 64,
+    "durability": 83,
+    "consistency": 76
+   },
+   "gimmick_category": "The Brute",
+   "gimmick": "A wide, hairy powerhouse who lifts tag partners overhead whether they are his or not.",
+   "catchphrase": "North. Strong.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2010,
+   "finisher": "The Northern Bomb",
+   "finisher_description": "A jackknife powerbomb.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 38000,
+    "weeks_left": 120,
+    "push": "midcarder"
+   },
+   "finisher_move": "Jackknife powerbomb",
+   "signatures": [
+    {
+     "name": "Blizzard",
+     "move": "Lariat"
+    },
+    {
+     "name": "Tundra",
+     "move": "Powerslam"
+    }
+   ]
+  },
+  {
+   "id": "el_punal",
+   "ring_name": "El Puñal",
+   "gender": "M",
+   "disposition": "heel",
+   "style": "brawler",
+   "age": 33,
+   "hometown": "Mexico City",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 79,
+    "technical": 65,
+    "aerial": 58,
+    "stamina": 71,
+    "charisma": 67,
+    "promo_skill": 68,
+    "overness": 64,
+    "star_quality": 67,
+    "potential": 67,
+    "durability": 80,
+    "consistency": 83
+   },
+   "gimmick_category": "The Dagger From Abroad",
+   "gimmick": "A Mexican rudo who brought his dagger to Japan and stayed for the ramen.",
+   "catchphrase": "Corta.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2014,
+   "finisher": "The Stab",
+   "finisher_description": "A Michinoku driver.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 38000,
+    "weeks_left": 88,
+    "push": "midcarder"
+   },
+   "finisher_move": "Michinoku driver",
+   "signatures": [
+    {
+     "name": "Blade",
+     "move": "Superkick"
+    },
+    {
+     "name": "Hilt",
+     "move": "Lariat"
+    }
+   ]
+  },
+  {
+   "id": "grinning_goro",
+   "ring_name": "Grinning Goro",
+   "gender": "M",
+   "disposition": "face",
+   "style": "flyer",
+   "age": 44,
+   "hometown": "Osaka",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 61,
+    "technical": 76,
+    "aerial": 67,
+    "stamina": 66,
+    "charisma": 72,
+    "promo_skill": 69,
+    "overness": 71,
+    "star_quality": 71,
+    "potential": 72,
+    "durability": 65,
+    "consistency": 76
+   },
+   "gimmick_category": "The Smiling Junior",
+   "gimmick": "A junior who grins through every chop and wins with a smile that unsettles people.",
+   "catchphrase": "Smile.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2003,
+   "finisher": "The Grin Drop",
+   "finisher_description": "A top-rope senton.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 38000,
+    "weeks_left": 76,
+    "push": "midcarder"
+   },
+   "finisher_move": "Senton",
+   "signatures": [
+    {
+     "name": "Grin Kick",
+     "move": "Spinning kick"
+    },
+    {
+     "name": "Chuckle",
+     "move": "Hurricanrana"
+    }
+   ]
+  },
+  {
+   "id": "big_farmhand",
+   "ring_name": "The Big Farmhand",
+   "gender": "M",
+   "disposition": "face",
+   "style": "powerhouse",
+   "age": 32,
+   "hometown": "Niigata",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 76,
+    "technical": 65,
+    "aerial": 63,
+    "stamina": 67,
+    "charisma": 65,
+    "promo_skill": 53,
+    "overness": 71,
+    "star_quality": 66,
+    "potential": 71,
+    "durability": 73,
+    "consistency": 80
+   },
+   "gimmick_category": "The Rice Field Strongman",
+   "gimmick": "A huge, gentle farmer who body-slams people like he is bringing in the harvest.",
+   "catchphrase": "Harvest time.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2015,
+   "finisher": "The Harvest Moon",
+   "finisher_description": "A fallaway slam.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 38000,
+    "weeks_left": 80,
+    "push": "midcarder"
+   },
+   "finisher_move": "Fallaway slam",
+   "signatures": [
+    {
+     "name": "Field Lariat",
+     "move": "Lariat"
+    },
+    {
+     "name": "Plough",
+     "move": "Spinebuster"
+    }
+   ]
+  },
+  {
+   "id": "ozzy_overdrive",
+   "ring_name": "Ozzy Overdrive",
+   "gender": "M",
+   "disposition": "heel",
+   "style": "flyer",
+   "age": 28,
+   "hometown": "Tokyo",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 66,
+    "technical": 71,
+    "aerial": 85,
+    "stamina": 75,
+    "charisma": 70,
+    "promo_skill": 67,
+    "overness": 71,
+    "star_quality": 63,
+    "potential": 74,
+    "durability": 78,
+    "consistency": 83
+   },
+   "gimmick_category": "The Brat Prince",
+   "gimmick": "A brattish young flyer who left to be a star elsewhere and came back to rub it in.",
+   "catchphrase": "Did you miss me? Obviously.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2019,
+   "finisher": "The Overdrive",
+   "finisher_description": "A springboard cutter.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 70000,
+    "weeks_left": 24,
+    "push": "upper_midcarder"
+   },
+   "finisher_move": "Springboard cutter",
+   "signatures": [
+    {
+     "name": "Brat Kick",
+     "move": "Superkick"
+    },
+    {
+     "name": "Pout",
+     "move": "Hurricanrana"
+    }
+   ]
+  },
+  {
+   "id": "hayate_wind",
+   "ring_name": "Hayate the Wind",
+   "gender": "M",
+   "disposition": "heel",
+   "style": "flyer",
+   "age": 37,
+   "hometown": "Tokyo",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 70,
+    "technical": 74,
+    "aerial": 84,
+    "stamina": 71,
+    "charisma": 70,
+    "promo_skill": 57,
+    "overness": 69,
+    "star_quality": 65,
+    "potential": 72,
+    "durability": 80,
+    "consistency": 75
+   },
+   "gimmick_category": "Junior Speed Demon",
+   "gimmick": "A junior who moves so fast the camera catches only his hair.",
+   "catchphrase": "Too fast to film.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2010,
+   "finisher": "The Gust",
+   "finisher_description": "A 450 splash.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 38000,
+    "weeks_left": 42,
+    "push": "midcarder"
+   },
+   "finisher_move": "450 splash",
+   "signatures": [
+    {
+     "name": "Breeze",
+     "move": "Spinning kick"
+    },
+    {
+     "name": "Gale",
+     "move": "Tope"
+    }
+   ]
+  },
+  {
+   "id": "yo_heyhey",
+   "ring_name": "Yo-Hey Hey",
+   "gender": "M",
+   "disposition": "face",
+   "style": "flyer",
+   "age": 36,
+   "hometown": "Osaka",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 62,
+    "technical": 61,
+    "aerial": 80,
+    "stamina": 70,
+    "charisma": 58,
+    "promo_skill": 52,
+    "overness": 55,
+    "star_quality": 50,
+    "potential": 51,
+    "durability": 74,
+    "consistency": 73
+   },
+   "gimmick_category": "The Party Junior",
+   "gimmick": "A grinning junior who dances into every match and out of most of them.",
+   "catchphrase": "Hey hey!",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2011,
+   "finisher": "The Dance Party",
+   "finisher_description": "A frog splash.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 38000,
+    "weeks_left": 112,
+    "push": "midcarder"
+   },
+   "finisher_move": "Frog splash",
+   "signatures": [
+    {
+     "name": "Disco Kick",
+     "move": "Superkick"
+    },
+    {
+     "name": "Hey",
+     "move": "Hurricanrana"
+    }
+   ]
+  },
+  {
+   "id": "irish_jack",
+   "ring_name": "Irish Jack Mallory",
+   "gender": "M",
+   "disposition": "heel",
+   "style": "striker",
+   "age": 31,
+   "hometown": "Dublin",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 74,
+    "technical": 80,
+    "aerial": 67,
+    "stamina": 75,
+    "charisma": 65,
+    "promo_skill": 60,
+    "overness": 67,
+    "star_quality": 74,
+    "potential": 64,
+    "durability": 76,
+    "consistency": 83
+   },
+   "gimmick_category": "The Irish Kicker",
+   "gimmick": "A sharp-kicking Irishman who came to Japan for the strong style and stayed for the fights.",
+   "catchphrase": "Sláinte. Then kick.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2016,
+   "finisher": "The Shamrock Kick",
+   "finisher_description": "A spinning back kick.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 38000,
+    "weeks_left": 48,
+    "push": "midcarder"
+   },
+   "finisher_move": "Spinning back kick",
+   "signatures": [
+    {
+     "name": "Clover",
+     "move": "Head kick"
+    },
+    {
+     "name": "Pint",
+     "move": "Lariat"
+    }
+   ]
+  },
+  {
+   "id": "tadasu_grind",
+   "ring_name": "Tadasu the Grinder",
+   "gender": "M",
+   "disposition": "heel",
+   "style": "brawler",
+   "age": 39,
+   "hometown": "Tokyo",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 67,
+    "technical": 64,
+    "aerial": 51,
+    "stamina": 58,
+    "charisma": 58,
+    "promo_skill": 58,
+    "overness": 57,
+    "star_quality": 56,
+    "potential": 52,
+    "durability": 81,
+    "consistency": 78
+   },
+   "gimmick_category": "Henchman for Hire",
+   "gimmick": "A loyal heavy who does the dirty work for whoever pays that week.",
+   "catchphrase": "Who's paying?",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2008,
+   "finisher": "The Grind",
+   "finisher_description": "A lariat.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 22000,
+    "weeks_left": 36,
+    "push": "lower_midcarder"
+   },
+   "finisher_move": "Lariat",
+   "signatures": [
+    {
+     "name": "Payday",
+     "move": "Chop"
+    },
+    {
+     "name": "Shift Work",
+     "move": "Backbreaker"
+    }
+   ]
+  },
+  {
+   "id": "amakusa_ronin",
+   "ring_name": "Amakusa Ronin",
+   "gender": "M",
+   "disposition": "face",
+   "style": "technician",
+   "age": 31,
+   "hometown": "Kumamoto",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 65,
+    "technical": 78,
+    "aerial": 76,
+    "stamina": 78,
+    "charisma": 71,
+    "promo_skill": 61,
+    "overness": 66,
+    "star_quality": 65,
+    "potential": 67,
+    "durability": 70,
+    "consistency": 79
+   },
+   "gimmick_category": "The Masked Ronin",
+   "gimmick": "A masked swordsman-themed junior who bows before every match and after every win.",
+   "catchphrase": "The way of the ronin.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2016,
+   "finisher": "The Sword Draw",
+   "finisher_description": "A double-arm suplex into a pin.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 38000,
+    "weeks_left": 96,
+    "push": "midcarder"
+   },
+   "finisher_move": "Double-arm suplex",
+   "signatures": [
+    {
+     "name": "Iai",
+     "move": "Spinning kick"
+    },
+    {
+     "name": "Bow",
+     "move": "Crossbody"
+    }
+   ]
+  },
+  {
+   "id": "doctor_del_mal",
+   "ring_name": "El Doctor del Mal",
+   "gender": "M",
+   "disposition": "heel",
+   "style": "brawler",
+   "age": 38,
+   "hometown": "Mexico City",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 83,
+    "technical": 62,
+    "aerial": 65,
+    "stamina": 71,
+    "charisma": 56,
+    "promo_skill": 68,
+    "overness": 69,
+    "star_quality": 74,
+    "potential": 66,
+    "durability": 80,
+    "consistency": 76
+   },
+   "gimmick_category": "The Evil Doctor",
+   "gimmick": "A masked surgeon who diagnoses opponents with a lariat and prescribes a powerbomb.",
+   "catchphrase": "Diagnóstico: derrota.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2009,
+   "finisher": "The Prescription",
+   "finisher_description": "A sit-out powerbomb.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 38000,
+    "weeks_left": 134,
+    "push": "midcarder"
+   },
+   "finisher_move": "Sit-out powerbomb",
+   "signatures": [
+    {
+     "name": "Scalpel",
+     "move": "Superkick"
+    },
+    {
+     "name": "Second Opinion",
+     "move": "Lariat"
+    }
+   ]
+  }
+ ],
+ "teams": [
+  {
+   "id": "ark_harvest_and_frost",
+   "name": "Harvest and Frost",
+   "kind": "tag",
+   "member_ids": [
+    "northern_brute",
+    "big_farmhand"
+   ],
+   "experience": 60,
+   "chemistry": 7
+  }
+ ]
+}

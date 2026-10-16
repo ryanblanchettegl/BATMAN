@@ -1,0 +1,1349 @@
+{
+ "promotion": {
+  "id": "otpw",
+  "model": "purist",
+  "name": "OTPW",
+  "full_name": "Old Tokyo Pro Wrestling",
+  "blurb": "Japan's biggest company, which tours in long series of small shows that build to one night at the big dome. Strong style, long matches, and a summer tournament that ruins everybody's knees.",
+  "owner": {
+   "name": "A Trading Card Company",
+   "style": "workrate",
+   "roots": "tradition",
+   "pledge": "stable"
+  },
+  "staff": {
+   "road_agent": "Sensei Hardhead",
+   "head_writer": "The Matchmaking Office"
+  },
+  "announcers": [
+   "Ken Cornflake",
+   "Chuck Chatterton"
+  ],
+  "cities": [
+   "Tokyo",
+   "Osaka",
+   "Nagoya",
+   "Fukuoka",
+   "Sapporo",
+   "Sendai",
+   "Kobe",
+   "Hiroshima",
+   "Yokohama",
+   "Niigata"
+  ],
+  "cash": 30000000,
+  "popularity": 70,
+  "flagship_month": 1,
+  "tv_slot": 1,
+  "production_level": 3,
+  "events": [
+   {
+    "n": "Dome Kingdom",
+    "t": "flag"
+   },
+   {
+    "n": "New Beginning Again",
+    "t": "arena"
+   },
+   {
+    "n": "Old Japan Cup",
+    "t": "tourn"
+   },
+   {
+    "n": "Cherry Blossom Beginning",
+    "t": "arena"
+   },
+   {
+    "n": "Golden Week Grapple",
+    "t": "arena"
+   },
+   {
+    "n": "Domination Over Lunch",
+    "t": "tent"
+   },
+   {
+    "n": "Summer Sweat Climax",
+    "t": "tourn"
+   },
+   {
+    "n": "Summer Sweat Climax Final",
+    "t": "tent"
+   },
+   {
+    "n": "Destruction in a Few Cities",
+    "t": "arena"
+   },
+   {
+    "n": "King of Something",
+    "t": "arena"
+   },
+   {
+    "n": "Power Struggle Snuggle",
+    "t": "arena"
+   },
+   {
+    "n": "World Tag League Ending",
+    "t": "taped"
+   }
+  ]
+ },
+ "shows": [
+  {
+   "id": "otpw_tour",
+   "name": "Road to the Dome (Tour Show)",
+   "weight": 1
+  }
+ ],
+ "titles": [
+  {
+   "id": "otpw_world",
+   "name": "Dome World Heavyweight Championship",
+   "gender": "M",
+   "level": 3,
+   "holder_ids": [
+    "simon_submission"
+   ]
+  },
+  {
+   "id": "otpw_global",
+   "name": "Global-ish Heavyweight Championship",
+   "gender": "M",
+   "level": 2,
+   "holder_ids": [
+    "tsubasa_tomorrow"
+   ]
+  },
+  {
+   "id": "otpw_junior",
+   "name": "Junior Heavyweight Championship",
+   "gender": "M",
+   "level": 2,
+   "holder_ids": [
+    "el_solitario"
+   ]
+  },
+  {
+   "id": "otpw_never",
+   "name": "Never Mind Openweight Championship",
+   "gender": "M",
+   "level": 1,
+   "holder_ids": [
+    "grudge_gallagher"
+   ]
+  },
+  {
+   "id": "otpw_tag",
+   "name": "Heavyweight Tag Team Championship",
+   "gender": "M",
+   "level": 2,
+   "tag": true,
+   "holder_ids": [
+    "drill_sergeant_dorsey",
+    "nurlan_ironarm"
+   ]
+  },
+  {
+   "id": "otpw_women",
+   "name": "OTPW Women's Championship",
+   "gender": "F",
+   "level": 2,
+   "holder_ids": [
+    "lady_khaos"
+   ]
+  }
+ ],
+ "roster": [
+  {
+   "id": "simon_submission",
+   "ring_name": "Simon Submission",
+   "gender": "M",
+   "disposition": "heel",
+   "style": "technician",
+   "age": 38,
+   "hometown": "Sheerness",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 80,
+    "technical": 94,
+    "aerial": 88,
+    "stamina": 85,
+    "charisma": 88,
+    "promo_skill": 93,
+    "overness": 95,
+    "star_quality": 95,
+    "potential": 90,
+    "durability": 80,
+    "consistency": 79
+   },
+   "gimmick_category": "Tea-Drinking Submission Wizard",
+   "gimmick": "A skinny, smirking Englishman who ties people into knots nobody can name and drinks tea while they tap.",
+   "catchphrase": "Tea's getting cold. Tap.",
+   "peak_years": [
+    28,
+    38
+   ],
+   "debut_year": 2009,
+   "finisher": "The Unnamed Knot",
+   "finisher_description": "A pretzel of arms and legs that changes shape every match.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 206250.0,
+    "weeks_left": 66,
+    "push": "main_eventer"
+   },
+   "finisher_move": "Grounded submission",
+   "signatures": [
+    {
+     "name": "Continental Cradle",
+     "move": "European clutch"
+    },
+    {
+     "name": "Tea Break",
+     "move": "Octopus hold"
+    }
+   ]
+  },
+  {
+   "id": "hiro_goto_again",
+   "ring_name": "Hiro Gong",
+   "gender": "M",
+   "disposition": "face",
+   "style": "brawler",
+   "age": 46,
+   "hometown": "Kuwana",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 85,
+    "technical": 82,
+    "aerial": 52,
+    "stamina": 67,
+    "charisma": 70,
+    "promo_skill": 75,
+    "overness": 78,
+    "star_quality": 76,
+    "potential": 80,
+    "durability": 67,
+    "consistency": 88
+   },
+   "gimmick_category": "The Fierce Warrior Who Finally Won",
+   "gimmick": "A stern veteran who waited fifteen years for the top title and then held it like it owed him rent.",
+   "catchphrase": "Finally.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2001,
+   "finisher": "The Long Wait",
+   "finisher_description": "A lifting knee into a neckbreaker.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 165000,
+    "weeks_left": 108,
+    "push": "main_eventer"
+   },
+   "finisher_move": "Knee neckbreaker",
+   "signatures": [
+    {
+     "name": "Ox Bomb",
+     "move": "Death valley driver"
+    },
+    {
+     "name": "Warrior Headbutt",
+     "move": "Headbutt"
+    }
+   ]
+  },
+  {
+   "id": "takeo_shogun",
+   "ring_name": "Takeo Shogun",
+   "gender": "M",
+   "disposition": "heel",
+   "style": "brawler",
+   "age": 43,
+   "hometown": "Yamanashi",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 93,
+    "technical": 76,
+    "aerial": 66,
+    "stamina": 74,
+    "charisma": 73,
+    "promo_skill": 78,
+    "overness": 84,
+    "star_quality": 77,
+    "potential": 83,
+    "durability": 70,
+    "consistency": 77
+   },
+   "gimmick_category": "The Dragon Who Lifts Fridges",
+   "gimmick": "A short, wide powerhouse who lariats like a slammed shutter.",
+   "catchphrase": "Pump it. Then dump it.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2004,
+   "finisher": "The Last of the Shoguns",
+   "finisher_description": "A lifting sit-out powerbomb.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 165000,
+    "weeks_left": 28,
+    "push": "main_eventer"
+   },
+   "finisher_move": "Sit-out powerbomb",
+   "signatures": [
+    {
+     "name": "Shutter Slam",
+     "move": "Lariat"
+    },
+    {
+     "name": "Shogun Slam",
+     "move": "Lifting DDT"
+    }
+   ]
+  },
+  {
+   "id": "haruki_hypersonic",
+   "ring_name": "Haruki Hypersonic",
+   "gender": "M",
+   "disposition": "face",
+   "style": "flyer",
+   "age": 36,
+   "hometown": "Tokyo",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 74,
+    "technical": 86,
+    "aerial": 87,
+    "stamina": 84,
+    "charisma": 83,
+    "promo_skill": 72,
+    "overness": 81,
+    "star_quality": 79,
+    "potential": 78,
+    "durability": 80,
+    "consistency": 81
+   },
+   "gimmick_category": "The Junior Who Never Sits Still",
+   "gimmick": "A screaming junior who wrestles at double speed and talks to his cat between matches.",
+   "catchphrase": "BOOM, BABY!",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2011,
+   "finisher": "The Hypersonic Driver",
+   "finisher_description": "A sit-out powerbomb from a fireman's carry.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 165000,
+    "weeks_left": 50,
+    "push": "main_eventer"
+   },
+   "finisher_move": "Fireman's carry powerbomb",
+   "signatures": [
+    {
+     "name": "Death Valley Delivery",
+     "move": "Death valley driver"
+    },
+    {
+     "name": "Sunset Strip",
+     "move": "Sunset bomb"
+    }
+   ]
+  },
+  {
+   "id": "tsubasa_tomorrow",
+   "ring_name": "Tsubasa Tomorrow",
+   "gender": "M",
+   "disposition": "face",
+   "style": "all_rounder",
+   "age": 32,
+   "hometown": "Kanagawa",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 77,
+    "technical": 89,
+    "aerial": 83,
+    "stamina": 86,
+    "charisma": 69,
+    "promo_skill": 82,
+    "overness": 79,
+    "star_quality": 76,
+    "potential": 83,
+    "durability": 68,
+    "consistency": 86
+   },
+   "gimmick_category": "The Next Ace (Probably)",
+   "gimmick": "A tall former athlete who flips like a gymnast and is told every year he is the future.",
+   "catchphrase": "The future is a heavyweight.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2015,
+   "finisher": "The Tomorrow Spear",
+   "finisher_description": "A running spear from the far corner.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 165000,
+    "weeks_left": 52,
+    "push": "main_eventer"
+   },
+   "finisher_move": "Spear",
+   "signatures": [
+    {
+     "name": "Tsuji Lariat",
+     "move": "Lariat"
+    },
+    {
+     "name": "Future Crash",
+     "move": "Swanton"
+    }
+   ]
+  },
+  {
+   "id": "el_solitario",
+   "ring_name": "El Solitario",
+   "gender": "M",
+   "disposition": "heel",
+   "style": "brawler",
+   "age": 41,
+   "hometown": "Unknown",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 93,
+    "technical": 76,
+    "aerial": 62,
+    "stamina": 74,
+    "charisma": 79,
+    "promo_skill": 66,
+    "overness": 81,
+    "star_quality": 75,
+    "potential": 76,
+    "durability": 65,
+    "consistency": 77
+   },
+   "gimmick_category": "Lonely Masked Outlaw",
+   "gimmick": "A masked junior who sulks, swears, and wins anyway.",
+   "catchphrase": "Leave me alone. (Then he wins.)",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2006,
+   "finisher": "The Lonely Lock",
+   "finisher_description": "A stretch muffler on the leg.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 70000,
+    "weeks_left": 30,
+    "push": "upper_midcarder"
+   },
+   "finisher_move": "Leg submission",
+   "signatures": [
+    {
+     "name": "Numero Dos",
+     "move": "Spinebuster"
+    },
+    {
+     "name": "Lonely Guitar",
+     "move": "Flipping powerbomb"
+    }
+   ]
+  },
+  {
+   "id": "sakuma_cold",
+   "ring_name": "Sakuma Cold",
+   "gender": "M",
+   "disposition": "heel",
+   "style": "technician",
+   "age": 37,
+   "hometown": "Niigata",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 74,
+    "technical": 77,
+    "aerial": 70,
+    "stamina": 82,
+    "charisma": 58,
+    "promo_skill": 69,
+    "overness": 64,
+    "star_quality": 68,
+    "potential": 69,
+    "durability": 76,
+    "consistency": 77
+   },
+   "gimmick_category": "The Cold Skull Who Melted",
+   "gimmick": "A once-cool technician who joined a dark gang and now carries a ladder for no reason.",
+   "catchphrase": "Cold. Colder. Ladder.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2010,
+   "finisher": "The Cold Ending",
+   "finisher_description": "A moonsault into a cradle.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 70000,
+    "weeks_left": 44,
+    "push": "upper_midcarder"
+   },
+   "finisher_move": "Moonsault",
+   "signatures": [
+    {
+     "name": "Paradise Lock",
+     "move": "Leg tangle"
+    },
+    {
+     "name": "Cold Kick",
+     "move": "Dropkick"
+    }
+   ]
+  },
+  {
+   "id": "wicked_wataru",
+   "ring_name": "Wicked Wataru",
+   "gender": "M",
+   "disposition": "heel",
+   "style": "brawler",
+   "age": 38,
+   "hometown": "Ishinomaki",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 85,
+    "technical": 74,
+    "aerial": 59,
+    "stamina": 75,
+    "charisma": 62,
+    "promo_skill": 63,
+    "overness": 66,
+    "star_quality": 73,
+    "potential": 70,
+    "durability": 83,
+    "consistency": 76
+   },
+   "gimmick_category": "Chairman of Cheating",
+   "gimmick": "A dark leader whose henchman holds the referee's leg in every match he has ever won.",
+   "catchphrase": "Everything is evil. Including the receipts.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2009,
+   "finisher": "The Everything Is Evil",
+   "finisher_description": "A STO into a lifting slam.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 70000,
+    "weeks_left": 120,
+    "push": "upper_midcarder"
+   },
+   "finisher_move": "STO",
+   "signatures": [
+    {
+     "name": "Darkness Falls",
+     "move": "Fisherman's buster"
+    },
+    {
+     "name": "Chair Shot",
+     "move": "Chair shot"
+    }
+   ]
+  },
+  {
+   "id": "ryota_rising",
+   "ring_name": "Ryota Rising",
+   "gender": "M",
+   "disposition": "face",
+   "style": "technician",
+   "age": 31,
+   "hometown": "Kyoto",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 64,
+    "technical": 81,
+    "aerial": 67,
+    "stamina": 73,
+    "charisma": 65,
+    "promo_skill": 54,
+    "overness": 71,
+    "star_quality": 67,
+    "potential": 66,
+    "durability": 77,
+    "consistency": 83
+   },
+   "gimmick_category": "Former Young Lion, Now Tiger",
+   "gimmick": "A former trainee who did his time carrying bags and now carries a briefcase of grievances.",
+   "catchphrase": "I carried your bags. Now I carry this.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2016,
+   "finisher": "The Bag Carrier Sleeper",
+   "finisher_description": "A standing dragon sleeper.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 70000,
+    "weeks_left": 60,
+    "push": "upper_midcarder"
+   },
+   "finisher_move": "Dragon sleeper",
+   "signatures": [
+    {
+     "name": "Young Lion Crab",
+     "move": "Boston crab"
+    },
+    {
+     "name": "Rising Sun",
+     "move": "German suplex"
+    }
+   ]
+  },
+  {
+   "id": "haru_wave",
+   "ring_name": "Haru Wave",
+   "gender": "M",
+   "disposition": "face",
+   "style": "brawler",
+   "age": 28,
+   "hometown": "Tokyo",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 86,
+    "technical": 62,
+    "aerial": 60,
+    "stamina": 69,
+    "charisma": 56,
+    "promo_skill": 70,
+    "overness": 72,
+    "star_quality": 72,
+    "potential": 70,
+    "durability": 81,
+    "consistency": 78
+   },
+   "gimmick_category": "Rock and Roll Rookie",
+   "gimmick": "A leather-jacketed rookie with a famous father and a guitar he cannot play.",
+   "catchphrase": "Ride the wave, baby.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2019,
+   "finisher": "The Wipeout",
+   "finisher_description": "A double underhook DDT.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 70000,
+    "weeks_left": 138,
+    "push": "upper_midcarder"
+   },
+   "finisher_move": "Double underhook DDT",
+   "signatures": [
+    {
+     "name": "Ocean Lariat",
+     "move": "Lariat"
+    },
+    {
+     "name": "Undertow",
+     "move": "Bridging German"
+    }
+   ]
+  },
+  {
+   "id": "stone_pitbull",
+   "ring_name": "The Stone Pitbull",
+   "gender": "M",
+   "disposition": "face",
+   "style": "brawler",
+   "age": 49,
+   "hometown": "Tokyo",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 83,
+    "technical": 64,
+    "aerial": 40,
+    "stamina": 51,
+    "charisma": 65,
+    "promo_skill": 66,
+    "overness": 68,
+    "star_quality": 65,
+    "potential": 65,
+    "durability": 52,
+    "consistency": 85
+   },
+   "gimmick_category": "Concrete Chop Machine",
+   "gimmick": "A short, square veteran who has been chopped so many times his chest is now a museum.",
+   "catchphrase": "Hit me again. Please.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 1998,
+   "finisher": "The Brainbuster of Granite",
+   "finisher_description": "A vertical brainbuster held for a long count.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 70000,
+    "weeks_left": 96,
+    "push": "upper_midcarder"
+   },
+   "finisher_move": "Brainbuster",
+   "signatures": [
+    {
+     "name": "Sliding Lariat",
+     "move": "Sliding lariat"
+    },
+    {
+     "name": "Headbutt Wall",
+     "move": "Headbutt"
+    }
+   ]
+  },
+  {
+   "id": "cosmo_carefree",
+   "ring_name": "Cosmo Carefree",
+   "gender": "M",
+   "disposition": "heel",
+   "style": "flyer",
+   "age": 22,
+   "hometown": "Southampton",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 72,
+    "technical": 70,
+    "aerial": 84,
+    "stamina": 78,
+    "charisma": 59,
+    "promo_skill": 56,
+    "overness": 70,
+    "star_quality": 63,
+    "potential": 86,
+    "durability": 68,
+    "consistency": 79
+   },
+   "gimmick_category": "The Prince of Not Caring",
+   "gimmick": "A young Englishman who wrestles like he has nowhere better to be, because he does not.",
+   "catchphrase": "Not bothered.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2025,
+   "finisher": "The Ozzy Drive",
+   "finisher_description": "A spinning cutter from a springboard.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 70000,
+    "weeks_left": 70,
+    "push": "upper_midcarder"
+   },
+   "finisher_move": "Springboard cutter",
+   "signatures": [
+    {
+     "name": "Prince's Kick",
+     "move": "Superkick"
+    },
+    {
+     "name": "Don't Care",
+     "move": "Dropkick"
+    }
+   ]
+  },
+  {
+   "id": "nurlan_ironarm",
+   "ring_name": "Nurlan Ironarm",
+   "gender": "M",
+   "disposition": "face",
+   "style": "powerhouse",
+   "age": 33,
+   "hometown": "Almaty",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 83,
+    "technical": 72,
+    "aerial": 60,
+    "stamina": 66,
+    "charisma": 66,
+    "promo_skill": 69,
+    "overness": 67,
+    "star_quality": 70,
+    "potential": 66,
+    "durability": 83,
+    "consistency": 74
+   },
+   "gimmick_category": "Kazakh Strongman",
+   "gimmick": "A gentle Kazakh giant who lifts people as if they were feathers and apologises in three languages.",
+   "catchphrase": "Lift with the knees.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2014,
+   "finisher": "The Steppe Slam",
+   "finisher_description": "A fallaway slam held overhead.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 38000,
+    "weeks_left": 130,
+    "push": "midcarder"
+   },
+   "finisher_move": "Fallaway slam",
+   "signatures": [
+    {
+     "name": "Bolt Press",
+     "move": "Military press"
+    },
+    {
+     "name": "Steppe Clothesline",
+     "move": "Lariat"
+    }
+   ]
+  },
+  {
+   "id": "the_grand_conqueror",
+   "ring_name": "The Grand Conqueror",
+   "gender": "M",
+   "disposition": "heel",
+   "style": "powerhouse",
+   "age": 34,
+   "hometown": "Ulaanbaatar",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 86,
+    "technical": 67,
+    "aerial": 63,
+    "stamina": 75,
+    "charisma": 56,
+    "promo_skill": 60,
+    "overness": 69,
+    "star_quality": 64,
+    "potential": 70,
+    "durability": 80,
+    "consistency": 85
+   },
+   "gimmick_category": "The Mongolian Conqueror of Manners",
+   "gimmick": "A mustachioed conqueror who demands a polite bow before every beating.",
+   "catchphrase": "Bow. Then fall.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2013,
+   "finisher": "The Conqueror's Claw",
+   "finisher_description": "A claw to the face into a slam.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 70000,
+    "weeks_left": 56,
+    "push": "upper_midcarder"
+   },
+   "finisher_move": "Iron claw slam",
+   "signatures": [
+    {
+     "name": "Mongolian Chop",
+     "move": "Chop"
+    },
+    {
+     "name": "Conquest",
+     "move": "Fallaway slam"
+    }
+   ]
+  },
+  {
+   "id": "kalani_skipstone",
+   "ring_name": "Kalani Skipstone",
+   "gender": "M",
+   "disposition": "heel",
+   "style": "powerhouse",
+   "age": 43,
+   "hometown": "Honolulu",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 91,
+    "technical": 74,
+    "aerial": 58,
+    "stamina": 73,
+    "charisma": 69,
+    "promo_skill": 68,
+    "overness": 84,
+    "star_quality": 74,
+    "potential": 78,
+    "durability": 62,
+    "consistency": 88
+   },
+   "gimmick_category": "Olympic Superman",
+   "gimmick": "A thick former Olympian who suplexes people like he is skipping stones.",
+   "catchphrase": "Skip, skip, splash.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2004,
+   "finisher": "The Island Hop",
+   "finisher_description": "A spinning hip-toss into a powerslam.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 70000,
+    "weeks_left": 122,
+    "push": "upper_midcarder"
+   },
+   "finisher_move": "Spinning powerslam",
+   "signatures": [
+    {
+     "name": "Athletic Plex",
+     "move": "German suplex"
+    },
+    {
+     "name": "Island Chop",
+     "move": "Chop"
+    }
+   ]
+  },
+  {
+   "id": "grudge_gallagher",
+   "ring_name": "Grudge Gallagher",
+   "gender": "M",
+   "disposition": "heel",
+   "style": "brawler",
+   "age": 28,
+   "hometown": "Hertfordshire",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 84,
+    "technical": 63,
+    "aerial": 63,
+    "stamina": 75,
+    "charisma": 60,
+    "promo_skill": 59,
+    "overness": 67,
+    "star_quality": 71,
+    "potential": 72,
+    "durability": 81,
+    "consistency": 82
+   },
+   "gimmick_category": "Bloody War Dog",
+   "gimmick": "A shaven-headed English brawler who bleeds in every match whether he needs to or not.",
+   "catchphrase": "War. Every night.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2019,
+   "finisher": "The Piledriver of Grudges",
+   "finisher_description": "A sit-down piledriver.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 38000,
+    "weeks_left": 88,
+    "push": "midcarder"
+   },
+   "finisher_move": "Piledriver",
+   "signatures": [
+    {
+     "name": "Grudge Headbutt",
+     "move": "Headbutt"
+    },
+    {
+     "name": "War Dog",
+     "move": "Spear"
+    }
+   ]
+  },
+  {
+   "id": "drill_sergeant_dorsey",
+   "ring_name": "Drill Sergeant Dorsey",
+   "gender": "M",
+   "disposition": "face",
+   "style": "powerhouse",
+   "age": 33,
+   "hometown": "Boston",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 82,
+    "technical": 72,
+    "aerial": 62,
+    "stamina": 69,
+    "charisma": 58,
+    "promo_skill": 69,
+    "overness": 69,
+    "star_quality": 65,
+    "potential": 72,
+    "durability": 84,
+    "consistency": 74
+   },
+   "gimmick_category": "The Human Drill",
+   "gimmick": "A powerhouse who drills people into the canvas and asks how deep they went.",
+   "catchphrase": "How deep?",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2014,
+   "finisher": "The Drill Claw",
+   "finisher_description": "A sit-out powerbomb that ends with a drilling motion.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 38000,
+    "weeks_left": 60,
+    "push": "midcarder"
+   },
+   "finisher_move": "Sit-out powerbomb",
+   "signatures": [
+    {
+     "name": "Pounce Drill",
+     "move": "Pounce"
+    },
+    {
+     "name": "Drill Bit",
+     "move": "Running knee"
+    }
+   ]
+  },
+  {
+   "id": "karaoke_kenzo",
+   "ring_name": "Karaoke Kenzo",
+   "gender": "M",
+   "disposition": "heel",
+   "style": "entertainer",
+   "age": 45,
+   "hometown": "Hokkaido",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 60,
+    "technical": 51,
+    "aerial": 42,
+    "stamina": 47,
+    "charisma": 51,
+    "promo_skill": 49,
+    "overness": 52,
+    "star_quality": 59,
+    "potential": 54,
+    "durability": 58,
+    "consistency": 78
+   },
+   "gimmick_category": "Holy Emperor of Karaoke",
+   "gimmick": "A singer who wrestles between verses and tears his trousers off as a finishing move.",
+   "catchphrase": "Mic stand down!",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2002,
+   "finisher": "The Last Verse",
+   "finisher_description": "A tearaway-trouser kick followed by a backdrop driver.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 38000,
+    "weeks_left": 50,
+    "push": "midcarder"
+   },
+   "finisher_move": "Backdrop driver",
+   "signatures": [
+    {
+     "name": "Microphone Swing",
+     "move": "Mic stand shot"
+    },
+    {
+     "name": "Encore Driver",
+     "move": "Pumphandle driver"
+    }
+   ]
+  },
+  {
+   "id": "bone_soldier_jr",
+   "ring_name": "The Bone Soldier Jr.",
+   "gender": "M",
+   "disposition": "heel",
+   "style": "flyer",
+   "age": 42,
+   "hometown": "Tokyo",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 69,
+    "technical": 77,
+    "aerial": 77,
+    "stamina": 63,
+    "charisma": 62,
+    "promo_skill": 71,
+    "overness": 70,
+    "star_quality": 68,
+    "potential": 72,
+    "durability": 74,
+    "consistency": 73
+   },
+   "gimmick_category": "The Bone Soldier Junior",
+   "gimmick": "A veteran junior who has been the backup in every faction and the star of none.",
+   "catchphrase": "Still here.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2005,
+   "finisher": "The Backup Lock",
+   "finisher_description": "A crossface while seated.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 38000,
+    "weeks_left": 112,
+    "push": "midcarder"
+   },
+   "finisher_move": "Seated crossface",
+   "signatures": [
+    {
+     "name": "Spare Part",
+     "move": "Lifting sit-out"
+    },
+    {
+     "name": "Bone Kick",
+     "move": "Superkick"
+    }
+   ]
+  },
+  {
+   "id": "pipe_dream_daisuke",
+   "ring_name": "Pipe Dream Daisuke",
+   "gender": "M",
+   "disposition": "heel",
+   "style": "flyer",
+   "age": 33,
+   "hometown": "Tokyo",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 61,
+    "technical": 62,
+    "aerial": 72,
+    "stamina": 70,
+    "charisma": 52,
+    "promo_skill": 50,
+    "overness": 52,
+    "star_quality": 60,
+    "potential": 53,
+    "durability": 74,
+    "consistency": 81
+   },
+   "gimmick_category": "Pipe-Wielding Junior",
+   "gimmick": "A junior who brings a lead pipe to every match and waves it at the camera.",
+   "catchphrase": "Pipe down.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2014,
+   "finisher": "The Pipe Bomb",
+   "finisher_description": "A fishermen's buster from the corner.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 22000,
+    "weeks_left": 62,
+    "push": "lower_midcarder"
+   },
+   "finisher_move": "Fisherman's buster",
+   "signatures": [
+    {
+     "name": "Pipe Dream",
+     "move": "Pipe shot"
+    },
+    {
+     "name": "Dropout Kick",
+     "move": "Enzuigiri"
+    }
+   ]
+  },
+  {
+   "id": "lady_khaos",
+   "ring_name": "Lady Khaos",
+   "gender": "F",
+   "disposition": "heel",
+   "style": "brawler",
+   "age": 30,
+   "hometown": "Tokyo",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 80,
+    "technical": 63,
+    "aerial": 59,
+    "stamina": 74,
+    "charisma": 59,
+    "promo_skill": 55,
+    "overness": 72,
+    "star_quality": 63,
+    "potential": 73,
+    "durability": 78,
+    "consistency": 78
+   },
+   "gimmick_category": "Women's Champion of the Men's Company",
+   "gimmick": "The first great women's champion of a company that only just noticed women, and she does not let them forget it.",
+   "catchphrase": "Notice me now.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2017,
+   "finisher": "The Khaos Kick",
+   "finisher_description": "A running knee to the face.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 165000,
+    "weeks_left": 66,
+    "push": "main_eventer"
+   },
+   "finisher_move": "Running knee",
+   "signatures": [
+    {
+     "name": "Lady's Lariat",
+     "move": "Lariat"
+    },
+    {
+     "name": "Khaos Spin",
+     "move": "Spinning heel kick"
+    }
+   ]
+  },
+  {
+   "id": "sunny_ace",
+   "ring_name": "Sunny Ace, the Ace of Everything",
+   "gender": "M",
+   "disposition": "face",
+   "style": "all_rounder",
+   "age": 49,
+   "hometown": "Gifu",
+   "roles": [
+    "booker",
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 81,
+    "technical": 77,
+    "aerial": 66,
+    "stamina": 58,
+    "charisma": 72,
+    "promo_skill": 75,
+    "overness": 84,
+    "star_quality": 80,
+    "potential": 80,
+    "durability": 59,
+    "consistency": 78
+   },
+   "gimmick_category": "Retired Ace, Now President",
+   "gimmick": "The ace who saved the company with an air guitar and a frog splash, retired at the dome, and now runs the place in a suit.",
+   "catchphrase": "I love you all. Sincerely. Professionally.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 1998,
+   "finisher": "The Hi-Fly Frog",
+   "finisher_description": "A frog splash from the top rope, high and slow.",
+   "legend": true,
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 28000,
+    "weeks_left": 40,
+    "push": "non_wrestler"
+   },
+   "finisher_move": "Frog splash",
+   "signatures": [
+    {
+     "name": "Sunny Spin",
+     "move": "Spinning neckbreaker"
+    },
+    {
+     "name": "Air Guitar",
+     "move": "Air guitar taunt"
+    }
+   ]
+  }
+ ],
+ "teams": [
+  {
+   "id": "otpw_drill_and_bolt",
+   "name": "Drill and Iron",
+   "kind": "tag",
+   "member_ids": [
+    "drill_sergeant_dorsey",
+    "nurlan_ironarm"
+   ],
+   "experience": 70,
+   "chemistry": 7
+  },
+  {
+   "id": "otpw_house_of_evil",
+   "name": "The House of Evil",
+   "kind": "stable",
+   "member_ids": [
+    "wicked_wataru",
+    "sakuma_cold",
+    "pipe_dream_daisuke"
+   ],
+   "leader_id": "wicked_wataru"
+  },
+  {
+   "id": "otpw_bark_dogs",
+   "name": "The Bark Dogs",
+   "kind": "stable",
+   "member_ids": [
+    "grudge_gallagher",
+    "cosmo_carefree",
+    "kalani_skipstone"
+   ],
+   "leader_id": "grudge_gallagher"
+  },
+  {
+   "id": "otpw_ungovernables",
+   "name": "The Unaffiliated",
+   "kind": "stable",
+   "member_ids": [
+    "haruki_hypersonic",
+    "takeo_shogun",
+    "tsubasa_tomorrow"
+   ],
+   "leader_id": "tsubasa_tomorrow"
+  }
+ ]
+}

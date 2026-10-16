@@ -1,0 +1,1109 @@
+{
+ "promotion": {
+  "id": "ayy",
+  "model": "spectacle",
+  "name": "AYY",
+  "full_name": "AYY! Lucha Libre Mundial",
+  "blurb": "Mexico's loudest company: flying luchadores, clowns with chainsaws, and a summer spectacular in a bullring. Bought last year by the American giant, which has promised to change nothing and changed the lighting.",
+  "owner": {
+   "name": "Wrestling World Class (the parent company)",
+   "style": "stars",
+   "roots": "family",
+   "pledge": "pay"
+  },
+  "staff": {
+   "road_agent": "Don Escalera",
+   "head_writer": "La Comisión"
+  },
+  "announcers": [
+   "Rafa Grito",
+   "Lalo Lucha"
+  ],
+  "cities": [
+   "Mexico City",
+   "Monterrey",
+   "Guadalajara",
+   "Tijuana",
+   "Puebla",
+   "Mérida",
+   "Querétaro",
+   "León",
+   "Torreón",
+   "San Antonio",
+   "Los Angeles"
+  ],
+  "cash": 14000000,
+  "popularity": 58,
+  "flagship_month": 8,
+  "tv_slot": 1,
+  "production_level": 2,
+  "events": [
+   {
+    "n": "Rey de Todos",
+    "t": "rumble"
+   },
+   {
+    "n": "Noche de Locura",
+    "t": "arena"
+   },
+   {
+    "n": "Guerra de Gigantes",
+    "t": "arena"
+   },
+   {
+    "n": "Héroes Inmortalitos",
+    "t": "arena"
+   },
+   {
+    "n": "Verano de Escandalito",
+    "t": "tent"
+   },
+   {
+    "n": "Lucha de Máscaras Prestadas",
+    "t": "gimmick"
+   },
+   {
+    "n": "Fiesta en la Plaza de Toros",
+    "t": "arena"
+   },
+   {
+    "n": "Tripleplosión",
+    "t": "flag"
+   },
+   {
+    "n": "Noche de Revancha",
+    "t": "arena"
+   },
+   {
+    "n": "Día de Muertos Vivientes",
+    "t": "gimmick"
+   },
+   {
+    "n": "Guerra de Titanitos",
+    "t": "tent"
+   },
+   {
+    "n": "Navidad de Golpes",
+    "t": "taped"
+   }
+  ]
+ },
+ "shows": [
+  {
+   "id": "ayy_tv",
+   "name": "AYY! Lucha Semanal",
+   "weight": 1
+  }
+ ],
+ "titles": [
+  {
+   "id": "ayy_mega",
+   "name": "Mega Mucho Championship",
+   "gender": "M",
+   "level": 3,
+   "holder_ids": [
+    "hijo_del_drakkar"
+   ]
+  },
+  {
+   "id": "ayy_latino",
+   "name": "Campeonato Latino Americano-ish",
+   "gender": "M",
+   "level": 2,
+   "holder_ids": [
+    "el_senoron"
+   ]
+  },
+  {
+   "id": "ayy_cruiser",
+   "name": "Peso Pluma Championship",
+   "gender": "M",
+   "level": 2,
+   "holder_ids": [
+    "nino_de_la_frontera"
+   ]
+  },
+  {
+   "id": "ayy_reina",
+   "name": "Reina de Todas Championship",
+   "gender": "F",
+   "level": 3,
+   "holder_ids": [
+    "dama_serpiente"
+   ]
+  },
+  {
+   "id": "ayy_tag",
+   "name": "Parejas Mundiales Championship",
+   "gender": "M",
+   "level": 2,
+   "tag": true,
+   "holder_ids": [
+    "dodecaedro_jr",
+    "senor_lagartija"
+   ]
+  }
+ ],
+ "roster": [
+  {
+   "id": "hijo_del_drakkar",
+   "ring_name": "El Hijo del Drakkar",
+   "gender": "M",
+   "disposition": "face",
+   "style": "flyer",
+   "age": 28,
+   "hometown": "Mexico City",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 78,
+    "technical": 93,
+    "aerial": 98,
+    "stamina": 91,
+    "charisma": 88,
+    "promo_skill": 90,
+    "overness": 90,
+    "star_quality": 95,
+    "potential": 99,
+    "durability": 83,
+    "consistency": 82
+   },
+   "gimmick_category": "Viking Ship Highflyer",
+   "gimmick": "A masked flyer who does moves physicists have written papers about. He sails into the ring like a longboat and leaves it like a missile.",
+   "catchphrase": "¡A toda vela!",
+   "peak_years": [
+    28,
+    38
+   ],
+   "debut_year": 2019,
+   "finisher": "The Longboat 630",
+   "finisher_description": "A springboard 630 senton from the top rope.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 206250.0,
+    "weeks_left": 122,
+    "push": "main_eventer"
+   },
+   "finisher_move": "630 senton",
+   "signatures": [
+    {
+     "name": "Drakkar Spin",
+     "move": "Springboard spinning kick"
+    },
+    {
+     "name": "Remo",
+     "move": "Phoenix splash"
+    }
+   ]
+  },
+  {
+   "id": "payaso_siniestro",
+   "ring_name": "Payaso Siniestro",
+   "gender": "M",
+   "disposition": "face",
+   "style": "brawler",
+   "age": 40,
+   "hometown": "Mexico City",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 87,
+    "technical": 77,
+    "aerial": 69,
+    "stamina": 81,
+    "charisma": 72,
+    "promo_skill": 71,
+    "overness": 79,
+    "star_quality": 74,
+    "potential": 84,
+    "durability": 70,
+    "consistency": 88
+   },
+   "gimmick_category": "Sinister Clown Idol",
+   "gimmick": "A face-painted clown who sold his mask, his hair and his soul to the crowd, and they still want more.",
+   "catchphrase": "¡Que empiece la función!",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2007,
+   "finisher": "The Big Top Driver",
+   "finisher_description": "A sit-out piledriver from a fireman's carry.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 165000,
+    "weeks_left": 72,
+    "push": "main_eventer"
+   },
+   "finisher_move": "Piledriver",
+   "signatures": [
+    {
+     "name": "Pie in the Face",
+     "move": "Running knee"
+    },
+    {
+     "name": "Juggle",
+     "move": "Powerbomb"
+    }
+   ]
+  },
+  {
+   "id": "el_hereje",
+   "ring_name": "El Hereje",
+   "gender": "M",
+   "disposition": "heel",
+   "style": "brawler",
+   "age": 47,
+   "hometown": "Monterrey",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 90,
+    "technical": 73,
+    "aerial": 51,
+    "stamina": 62,
+    "charisma": 76,
+    "promo_skill": 75,
+    "overness": 82,
+    "star_quality": 83,
+    "potential": 80,
+    "durability": 61,
+    "consistency": 85
+   },
+   "gimmick_category": "Hardcore Heretic",
+   "gimmick": "A bloody, bald brawler who brings his own tables, his own chairs and his own priest.",
+   "catchphrase": "Sin perdón.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2000,
+   "finisher": "The Heresy",
+   "finisher_description": "A sit-out powerbomb through a table.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 70000,
+    "weeks_left": 20,
+    "push": "upper_midcarder"
+   },
+   "finisher_move": "Sit-out powerbomb",
+   "signatures": [
+    {
+     "name": "Confession",
+     "move": "Chair shot"
+    },
+    {
+     "name": "Penance",
+     "move": "Lariat"
+    }
+   ]
+  },
+  {
+   "id": "el_senoron",
+   "ring_name": "El Señorón",
+   "gender": "M",
+   "disposition": "heel",
+   "style": "technician",
+   "age": 48,
+   "hometown": "San Luis Potosí",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 80,
+    "technical": 90,
+    "aerial": 52,
+    "stamina": 65,
+    "charisma": 76,
+    "promo_skill": 67,
+    "overness": 84,
+    "star_quality": 82,
+    "potential": 84,
+    "durability": 58,
+    "consistency": 86
+   },
+   "gimmick_category": "The Big Boss Who Came Home",
+   "gimmick": "A tall, cocky veteran who was a champion in the north, came home, and now owns the room, the chair and the microphone.",
+   "catchphrase": "¡Yo soy el señorón!",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 1999,
+   "finisher": "The Boss's Kick",
+   "finisher_description": "A running kick to the head of a kneeling man.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 165000,
+    "weeks_left": 32,
+    "push": "main_eventer"
+   },
+   "finisher_move": "Running kick",
+   "signatures": [
+    {
+     "name": "Cross Armbreaker",
+     "move": "Cross armbar"
+    },
+    {
+     "name": "Backstabber",
+     "move": "Backstabber"
+    }
+   ]
+  },
+  {
+   "id": "nino_de_la_frontera",
+   "ring_name": "Niño de la Frontera",
+   "gender": "M",
+   "disposition": "face",
+   "style": "flyer",
+   "age": 36,
+   "hometown": "Laredo",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 66,
+    "technical": 71,
+    "aerial": 83,
+    "stamina": 72,
+    "charisma": 70,
+    "promo_skill": 68,
+    "overness": 72,
+    "star_quality": 62,
+    "potential": 66,
+    "durability": 69,
+    "consistency": 80
+   },
+   "gimmick_category": "Border Kid",
+   "gimmick": "A cheerful flyer from the border who has crossed it so many times his passport has a title belt.",
+   "catchphrase": "¡Sin fronteras!",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2011,
+   "finisher": "The Border Crossing",
+   "finisher_description": "A springboard 450 splash.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 70000,
+    "weeks_left": 124,
+    "push": "upper_midcarder"
+   },
+   "finisher_move": "450 splash",
+   "signatures": [
+    {
+     "name": "Laredo Leap",
+     "move": "Springboard crossbody"
+    },
+    {
+     "name": "Customs Check",
+     "move": "Hurricanrana"
+    }
+   ]
+  },
+  {
+   "id": "dodecaedro_jr",
+   "ring_name": "Dodecaedro Jr.",
+   "gender": "M",
+   "disposition": "face",
+   "style": "flyer",
+   "age": 37,
+   "hometown": "Xalapa",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 70,
+    "technical": 77,
+    "aerial": 82,
+    "stamina": 70,
+    "charisma": 58,
+    "promo_skill": 63,
+    "overness": 64,
+    "star_quality": 69,
+    "potential": 71,
+    "durability": 68,
+    "consistency": 83
+   },
+   "gimmick_category": "Twelve-Sided Legacy",
+   "gimmick": "The son of a legend whose mask has twelve sides, which is twice as many as anybody else's.",
+   "catchphrase": "¡Doce lados, cero miedo!",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2010,
+   "finisher": "The Twelve-Count",
+   "finisher_description": "A rana that twists twelve times.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 38000,
+    "weeks_left": 40,
+    "push": "midcarder"
+   },
+   "finisher_move": "Hurricanrana",
+   "signatures": [
+    {
+     "name": "Geometry",
+     "move": "Springboard dropkick"
+    },
+    {
+     "name": "Twelve",
+     "move": "Tope"
+    }
+   ]
+  },
+  {
+   "id": "senor_lagartija",
+   "ring_name": "Señor Lagartija",
+   "gender": "M",
+   "disposition": "face",
+   "style": "entertainer",
+   "age": 33,
+   "hometown": "Mexico City",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 64,
+    "technical": 72,
+    "aerial": 70,
+    "stamina": 76,
+    "charisma": 68,
+    "promo_skill": 62,
+    "overness": 65,
+    "star_quality": 63,
+    "potential": 71,
+    "durability": 83,
+    "consistency": 73
+   },
+   "gimmick_category": "Dancing Lizard",
+   "gimmick": "A dancing lizard man who wins by being so annoying the opponent forgets to fight.",
+   "catchphrase": "¡Bailamos!",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2014,
+   "finisher": "The Lizard Lean",
+   "finisher_description": "A dancing small package.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 38000,
+    "weeks_left": 44,
+    "push": "midcarder"
+   },
+   "finisher_move": "Small package",
+   "signatures": [
+    {
+     "name": "Tail Spin",
+     "move": "Tornado DDT"
+    },
+    {
+     "name": "Iguana Hop",
+     "move": "Hurricanrana"
+    }
+   ]
+  },
+  {
+   "id": "toro_bravo",
+   "ring_name": "El Toro Bravo",
+   "gender": "M",
+   "disposition": "heel",
+   "style": "powerhouse",
+   "age": 35,
+   "hometown": "Guadalajara",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 77,
+    "technical": 61,
+    "aerial": 60,
+    "stamina": 70,
+    "charisma": 59,
+    "promo_skill": 53,
+    "overness": 69,
+    "star_quality": 74,
+    "potential": 71,
+    "durability": 74,
+    "consistency": 77
+   },
+   "gimmick_category": "Raging Bull",
+   "gimmick": "A masked bull who charges at red things, including referees.",
+   "catchphrase": "¡Olé!",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2012,
+   "finisher": "The Goring",
+   "finisher_description": "A charging spear.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 38000,
+    "weeks_left": 52,
+    "push": "midcarder"
+   },
+   "finisher_move": "Spear",
+   "signatures": [
+    {
+     "name": "Horns",
+     "move": "Double headbutt"
+    },
+    {
+     "name": "Stampede",
+     "move": "Running splash"
+    }
+   ]
+  },
+  {
+   "id": "flama_roja",
+   "ring_name": "Flama Roja",
+   "gender": "M",
+   "disposition": "heel",
+   "style": "flyer",
+   "age": 29,
+   "hometown": "Puebla",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 54,
+    "technical": 67,
+    "aerial": 78,
+    "stamina": 66,
+    "charisma": 44,
+    "promo_skill": 44,
+    "overness": 52,
+    "star_quality": 55,
+    "potential": 58,
+    "durability": 75,
+    "consistency": 76
+   },
+   "gimmick_category": "The Red Flame",
+   "gimmick": "A young, cocky flyer who burns bright and loses just as fast.",
+   "catchphrase": "¡Quema!",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2018,
+   "finisher": "The Bonfire",
+   "finisher_description": "A frog splash.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 22000,
+    "weeks_left": 134,
+    "push": "lower_midcarder"
+   },
+   "finisher_move": "Frog splash",
+   "signatures": [
+    {
+     "name": "Ember Kick",
+     "move": "Superkick"
+    },
+    {
+     "name": "Smoke",
+     "move": "Moonsault"
+    }
+   ]
+  },
+  {
+   "id": "mascara_moderna",
+   "ring_name": "Máscara Moderna",
+   "gender": "M",
+   "disposition": "face",
+   "style": "flyer",
+   "age": 26,
+   "hometown": "Monterrey",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 67,
+    "technical": 71,
+    "aerial": 84,
+    "stamina": 75,
+    "charisma": 65,
+    "promo_skill": 60,
+    "overness": 65,
+    "star_quality": 66,
+    "potential": 85,
+    "durability": 68,
+    "consistency": 84
+   },
+   "gimmick_category": "The Modern Mask",
+   "gimmick": "A young flyer with an LED mask that lights up when he hits his finish.",
+   "catchphrase": "¡Enciende!",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2021,
+   "finisher": "The Light Show",
+   "finisher_description": "A springboard shooting star press.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 38000,
+    "weeks_left": 58,
+    "push": "midcarder"
+   },
+   "finisher_move": "Springboard shooting star press",
+   "signatures": [
+    {
+     "name": "Pixel",
+     "move": "Dropkick"
+    },
+    {
+     "name": "Glow",
+     "move": "Hurricanrana"
+    }
+   ]
+  },
+  {
+   "id": "el_mariachi_malo",
+   "ring_name": "El Mariachi Malo",
+   "gender": "M",
+   "disposition": "heel",
+   "style": "brawler",
+   "age": 38,
+   "hometown": "Guadalajara",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 77,
+    "technical": 63,
+    "aerial": 59,
+    "stamina": 74,
+    "charisma": 59,
+    "promo_skill": 71,
+    "overness": 67,
+    "star_quality": 66,
+    "potential": 65,
+    "durability": 78,
+    "consistency": 83
+   },
+   "gimmick_category": "The Bad Mariachi",
+   "gimmick": "A rudo who sings a ranchera to every opponent before hitting them with the guitar.",
+   "catchphrase": "¡Ay ay ay!",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2009,
+   "finisher": "The Serenade",
+   "finisher_description": "A guitar shot into a DDT.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 38000,
+    "weeks_left": 48,
+    "push": "midcarder"
+   },
+   "finisher_move": "DDT",
+   "signatures": [
+    {
+     "name": "Trumpet",
+     "move": "Superkick"
+    },
+    {
+     "name": "Encore",
+     "move": "Lariat"
+    }
+   ]
+  },
+  {
+   "id": "chupacabra_jr",
+   "ring_name": "Chupacabra Jr.",
+   "gender": "M",
+   "disposition": "heel",
+   "style": "brawler",
+   "age": 31,
+   "hometown": "Puebla",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 66,
+    "technical": 64,
+    "aerial": 51,
+    "stamina": 61,
+    "charisma": 54,
+    "promo_skill": 47,
+    "overness": 55,
+    "star_quality": 60,
+    "potential": 57,
+    "durability": 84,
+    "consistency": 72
+   },
+   "gimmick_category": "The Goat-Sucker",
+   "gimmick": "A masked monster who bites, hisses and steals the commentators' snacks.",
+   "catchphrase": "Ssssss.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2016,
+   "finisher": "The Goat Drop",
+   "finisher_description": "A piledriver.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 22000,
+    "weeks_left": 22,
+    "push": "lower_midcarder"
+   },
+   "finisher_move": "Piledriver",
+   "signatures": [
+    {
+     "name": "Fang",
+     "move": "Bite"
+    },
+    {
+     "name": "Hunt",
+     "move": "Spear"
+    }
+   ]
+  },
+  {
+   "id": "la_reina_azteca",
+   "ring_name": "La Reina Azteca",
+   "gender": "F",
+   "disposition": "face",
+   "style": "technician",
+   "age": 30,
+   "hometown": "Mexico City",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 64,
+    "technical": 75,
+    "aerial": 72,
+    "stamina": 73,
+    "charisma": 63,
+    "promo_skill": 53,
+    "overness": 67,
+    "star_quality": 74,
+    "potential": 71,
+    "durability": 83,
+    "consistency": 82
+   },
+   "gimmick_category": "The Aztec Queen",
+   "gimmick": "A técnica in a feathered headdress who rules the ring like a sun temple.",
+   "catchphrase": "¡Por el sol!",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2017,
+   "finisher": "The Sun Stone",
+   "finisher_description": "A sit-out powerbomb.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 70000,
+    "weeks_left": 114,
+    "push": "upper_midcarder"
+   },
+   "finisher_move": "Sit-out powerbomb",
+   "signatures": [
+    {
+     "name": "Feather",
+     "move": "Hurricanrana"
+    },
+    {
+     "name": "Pyramid",
+     "move": "German suplex"
+    }
+   ]
+  },
+  {
+   "id": "la_bruja_rosa",
+   "ring_name": "La Bruja Rosa",
+   "gender": "F",
+   "disposition": "heel",
+   "style": "entertainer",
+   "age": 34,
+   "hometown": "Tijuana",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 62,
+    "technical": 54,
+    "aerial": 57,
+    "stamina": 57,
+    "charisma": 51,
+    "promo_skill": 54,
+    "overness": 54,
+    "star_quality": 54,
+    "potential": 51,
+    "durability": 69,
+    "consistency": 71
+   },
+   "gimmick_category": "The Pink Witch",
+   "gimmick": "A cackling pink witch who curses opponents and the referee, in that order.",
+   "catchphrase": "¡Maldición!",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2013,
+   "finisher": "The Hex",
+   "finisher_description": "A spinning neckbreaker.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 38000,
+    "weeks_left": 102,
+    "push": "midcarder"
+   },
+   "finisher_move": "Spinning neckbreaker",
+   "signatures": [
+    {
+     "name": "Broom",
+     "move": "Lariat"
+    },
+    {
+     "name": "Cauldron",
+     "move": "Senton"
+    }
+   ]
+  },
+  {
+   "id": "el_cacto",
+   "ring_name": "El Cacto",
+   "gender": "M",
+   "disposition": "face",
+   "style": "powerhouse",
+   "age": 33,
+   "hometown": "Sonora",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 66,
+    "technical": 61,
+    "aerial": 42,
+    "stamina": 66,
+    "charisma": 56,
+    "promo_skill": 56,
+    "overness": 58,
+    "star_quality": 60,
+    "potential": 54,
+    "durability": 82,
+    "consistency": 82
+   },
+   "gimmick_category": "The Cactus Strongman",
+   "gimmick": "A prickly giant who hugs opponents and they regret it.",
+   "catchphrase": "No me toques.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2014,
+   "finisher": "The Needle Hug",
+   "finisher_description": "A bear hug.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 38000,
+    "weeks_left": 42,
+    "push": "midcarder"
+   },
+   "finisher_move": "Bear hug",
+   "signatures": [
+    {
+     "name": "Spine",
+     "move": "Spinebuster"
+    },
+    {
+     "name": "Bloom",
+     "move": "Powerslam"
+    }
+   ]
+  },
+  {
+   "id": "la_fiera_carmela",
+   "ring_name": "La Fiera Carmela",
+   "gender": "F",
+   "disposition": "face",
+   "style": "brawler",
+   "age": 45,
+   "hometown": "Mexico City",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 85,
+    "technical": 75,
+    "aerial": 55,
+    "stamina": 67,
+    "charisma": 83,
+    "promo_skill": 66,
+    "overness": 79,
+    "star_quality": 84,
+    "potential": 78,
+    "durability": 66,
+    "consistency": 87
+   },
+   "gimmick_category": "Queen of the Ring",
+   "gimmick": "The legend of the women's division, who has bled in more bullrings than anybody and refuses to stop.",
+   "catchphrase": "La reina no se rinde.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2002,
+   "finisher": "The Queen's Crown",
+   "finisher_description": "A tiger driver.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 165000,
+    "weeks_left": 104,
+    "push": "main_eventer"
+   },
+   "finisher_move": "Tiger driver",
+   "signatures": [
+    {
+     "name": "Hair Toss",
+     "move": "Hair-pull throw"
+    },
+    {
+     "name": "Fury",
+     "move": "Lariat"
+    }
+   ]
+  },
+  {
+   "id": "dama_serpiente",
+   "ring_name": "Dama Serpiente",
+   "gender": "F",
+   "disposition": "heel",
+   "style": "technician",
+   "age": 35,
+   "hometown": "Mexico City",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 73,
+    "technical": 83,
+    "aerial": 80,
+    "stamina": 78,
+    "charisma": 83,
+    "promo_skill": 74,
+    "overness": 79,
+    "star_quality": 75,
+    "potential": 78,
+    "durability": 69,
+    "consistency": 85
+   },
+   "gimmick_category": "The Serpent Lady",
+   "gimmick": "A slithering technician who squeezes the life out of opponents and the crowd's patience.",
+   "catchphrase": "Sssss... pin.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2012,
+   "finisher": "The Coil",
+   "finisher_description": "A modified cobra clutch.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 70000,
+    "weeks_left": 44,
+    "push": "upper_midcarder"
+   },
+   "finisher_move": "Cobra clutch",
+   "signatures": [
+    {
+     "name": "Fang Kick",
+     "move": "Running kick"
+    },
+    {
+     "name": "Slither",
+     "move": "Spinning DDT"
+    }
+   ]
+  },
+  {
+   "id": "la_enredadera",
+   "ring_name": "La Enredadera",
+   "gender": "F",
+   "disposition": "heel",
+   "style": "brawler",
+   "age": 33,
+   "hometown": "Mexico City",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 86,
+    "technical": 70,
+    "aerial": 66,
+    "stamina": 71,
+    "charisma": 59,
+    "promo_skill": 57,
+    "overness": 65,
+    "star_quality": 67,
+    "potential": 67,
+    "durability": 76,
+    "consistency": 80
+   },
+   "gimmick_category": "The Vine",
+   "gimmick": "A tangling, tattooed rudo who wraps her rivals up like ivy on a wall.",
+   "catchphrase": "Te atrapo.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2014,
+   "finisher": "The Overgrowth",
+   "finisher_description": "A spinning neckbreaker.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 38000,
+    "weeks_left": 38,
+    "push": "midcarder"
+   },
+   "finisher_move": "Spinning neckbreaker",
+   "signatures": [
+    {
+     "name": "Root Kick",
+     "move": "Running knee"
+    },
+    {
+     "name": "Thorn",
+     "move": "Bite"
+    }
+   ]
+  }
+ ],
+ "teams": [
+  {
+   "id": "ayy_los_raros",
+   "name": "Los Raros",
+   "kind": "tag",
+   "member_ids": [
+    "dodecaedro_jr",
+    "senor_lagartija"
+   ],
+   "experience": 60,
+   "chemistry": 7
+  },
+  {
+   "id": "ayy_la_secta_negra",
+   "name": "La Secta Negra",
+   "kind": "stable",
+   "member_ids": [
+    "el_hereje",
+    "el_senoron",
+    "la_enredadera"
+   ],
+   "leader_id": "el_senoron"
+  }
+ ]
+}

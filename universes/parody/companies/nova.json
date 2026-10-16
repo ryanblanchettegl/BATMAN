@@ -1,0 +1,1023 @@
+{
+ "promotion": {
+  "id": "nova",
+  "model": "joshi",
+  "name": "SUPERNOVA",
+  "full_name": "Supernova Joshi",
+  "blurb": "The best women's wrestling company in the world, by its own count and most other people's. Idol singing, factions with colour schemes, and a summer league that runs longer than some marriages.",
+  "owner": {
+   "name": "A Mobile Game Company",
+   "style": "stars",
+   "roots": "family",
+   "pledge": "pay"
+  },
+  "staff": {
+   "road_agent": "Coach Kawaii",
+   "head_writer": "The Faction Committee"
+  },
+  "announcers": [
+   "Nami Narrator",
+   "Mika Microphone"
+  ],
+  "cities": [
+   "Tokyo",
+   "Osaka",
+   "Nagoya",
+   "Yokohama",
+   "Kobe",
+   "Fukuoka",
+   "Sendai",
+   "Sapporo"
+  ],
+  "cash": 12000000,
+  "popularity": 58,
+  "flagship_month": 12,
+  "tv_slot": 1,
+  "production_level": 2,
+  "events": [
+   {
+    "n": "New Year Nova",
+    "t": "arena"
+   },
+   {
+    "n": "Supreme Fight-ish Night",
+    "t": "arena"
+   },
+   {
+    "n": "Cinderella Bracket",
+    "t": "tourn"
+   },
+   {
+    "n": "All Star Grand Something",
+    "t": "tent"
+   },
+   {
+    "n": "Flashing Lights Champions",
+    "t": "arena"
+   },
+   {
+    "n": "New Blood Transfusion",
+    "t": "taped"
+   },
+   {
+    "n": "Summer Star League",
+    "t": "tourn"
+   },
+   {
+    "n": "Summer League Final",
+    "t": "tent"
+   },
+   {
+    "n": "Queen of Dreams Rehearsal",
+    "t": "taped"
+   },
+   {
+    "n": "Goddesses of Nova Tag League",
+    "t": "tourn"
+   },
+   {
+    "n": "Crossover Chaos",
+    "t": "arena"
+   },
+   {
+    "n": "Queen of Dreams Night",
+    "t": "flag"
+   }
+  ]
+ },
+ "shows": [
+  {
+   "id": "nova_weekly",
+   "name": "Supernova Weekly Live",
+   "weight": 1
+  }
+ ],
+ "titles": [
+  {
+   "id": "nova_world",
+   "name": "World of Supernova Championship (Red Belt-ish)",
+   "gender": "F",
+   "level": 3,
+   "holder_ids": [
+    "phoenix_fumika"
+   ]
+  },
+  {
+   "id": "nova_wonder",
+   "name": "Wonder of Supernova Championship (White Belt-ish)",
+   "gender": "F",
+   "level": 3,
+   "holder_ids": [
+    "twinkle_mask"
+   ]
+  },
+  {
+   "id": "nova_tag",
+   "name": "Goddesses of Supernova Tag Championship",
+   "gender": "F",
+   "level": 2,
+   "tag": true,
+   "holder_ids": [
+    "summer_sprite",
+    "ticktock_tomoe"
+   ]
+  },
+  {
+   "id": "nova_artist",
+   "name": "Artistes of Supernova Trios Championship",
+   "gender": "F",
+   "level": 1,
+   "holder_ids": []
+  },
+  {
+   "id": "nova_future",
+   "name": "Future of Supernova Championship",
+   "gender": "F",
+   "level": 1,
+   "holder_ids": [
+    "rookie_rei"
+   ]
+  }
+ ],
+ "roster": [
+  {
+   "id": "phoenix_fumika",
+   "ring_name": "Phoenix Fumika",
+   "gender": "F",
+   "disposition": "heel",
+   "style": "flyer",
+   "age": 31,
+   "hometown": "Kanagawa",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 79,
+    "technical": 82,
+    "aerial": 94,
+    "stamina": 83,
+    "charisma": 89,
+    "promo_skill": 86,
+    "overness": 94,
+    "star_quality": 88,
+    "potential": 95,
+    "durability": 78,
+    "consistency": 88
+   },
+   "gimmick_category": "Golden Phoenix Champion",
+   "gimmick": "A soaring, smirking ace who wins with a phoenix splash and a speech about how nobody else is ready.",
+   "catchphrase": "Rise. Then bow.",
+   "peak_years": [
+    28,
+    38
+   ],
+   "debut_year": 2016,
+   "finisher": "The Golden Ascent",
+   "finisher_description": "A 450 splash with a flame-coloured robe flourish.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 206250.0,
+    "weeks_left": 38,
+    "push": "main_eventer"
+   },
+   "finisher_move": "450 splash",
+   "signatures": [
+    {
+     "name": "Gold Kick",
+     "move": "Superkick"
+    },
+    {
+     "name": "Phoenix Feather",
+     "move": "Moonsault"
+    }
+   ]
+  },
+  {
+   "id": "twinkle_mask",
+   "ring_name": "Twinkle Mask",
+   "gender": "F",
+   "disposition": "face",
+   "style": "flyer",
+   "age": 28,
+   "hometown": "Tokyo",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 80,
+    "technical": 85,
+    "aerial": 98,
+    "stamina": 78,
+    "charisma": 70,
+    "promo_skill": 71,
+    "overness": 80,
+    "star_quality": 83,
+    "potential": 84,
+    "durability": 79,
+    "consistency": 87
+   },
+   "gimmick_category": "Masked Star Child",
+   "gimmick": "A masked flyer who has worn the mask since childhood and plans to take it off only for a better mask.",
+   "catchphrase": "Wish upon me.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2019,
+   "finisher": "The Black Hole Splash",
+   "finisher_description": "A top-rope moonsault into a cradle.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 165000,
+    "weeks_left": 94,
+    "push": "main_eventer"
+   },
+   "finisher_move": "Moonsault",
+   "signatures": [
+    {
+     "name": "Star Spin",
+     "move": "Tornado DDT"
+    },
+    {
+     "name": "Comet Tail",
+     "move": "Hurricanrana"
+    }
+   ]
+  },
+  {
+   "id": "hana_hammer",
+   "ring_name": "Hana Hammer",
+   "gender": "F",
+   "disposition": "face",
+   "style": "powerhouse",
+   "age": 29,
+   "hometown": "Tokyo",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 85,
+    "technical": 78,
+    "aerial": 60,
+    "stamina": 76,
+    "charisma": 72,
+    "promo_skill": 73,
+    "overness": 82,
+    "star_quality": 78,
+    "potential": 88,
+    "durability": 70,
+    "consistency": 82
+   },
+   "gimmick_category": "The Cutie Powerhouse",
+   "gimmick": "A sweet singer with a death-valley-driver smile who lifts people twice her size.",
+   "catchphrase": "Cute. And CRUSHING.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2018,
+   "finisher": "The Death Valley Lullaby",
+   "finisher_description": "A death valley driver.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 165000,
+    "weeks_left": 112,
+    "push": "main_eventer"
+   },
+   "finisher_move": "Death valley driver",
+   "signatures": [
+    {
+     "name": "Idol Lariat",
+     "move": "Lariat"
+    },
+    {
+     "name": "Karaoke Bomb",
+     "move": "Powerbomb"
+    }
+   ]
+  },
+  {
+   "id": "peach_menace",
+   "ring_name": "Peach Menace",
+   "gender": "F",
+   "disposition": "heel",
+   "style": "striker",
+   "age": 25,
+   "hometown": "Fukuoka",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 88,
+    "technical": 82,
+    "aerial": 81,
+    "stamina": 83,
+    "charisma": 73,
+    "promo_skill": 80,
+    "overness": 77,
+    "star_quality": 80,
+    "potential": 95,
+    "durability": 81,
+    "consistency": 83
+   },
+   "gimmick_category": "Black Peach of Doom",
+   "gimmick": "A sharp-kicking heel who changed factions more times than outfits, and has many outfits.",
+   "catchphrase": "Peach. Bruised.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2022,
+   "finisher": "The Peach Sunrise",
+   "finisher_description": "A spinning back kick to the jaw.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 70000,
+    "weeks_left": 62,
+    "push": "upper_midcarder"
+   },
+   "finisher_move": "Spinning back kick",
+   "signatures": [
+    {
+     "name": "Peach Kick",
+     "move": "Running kick"
+    },
+    {
+     "name": "Bruise",
+     "move": "Lariat"
+    }
+   ]
+  },
+  {
+   "id": "ticktock_tomoe",
+   "ring_name": "Tick-Tock Tomoe",
+   "gender": "F",
+   "disposition": "heel",
+   "style": "flyer",
+   "age": 22,
+   "hometown": "Tokyo",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 62,
+    "technical": 78,
+    "aerial": 88,
+    "stamina": 72,
+    "charisma": 64,
+    "promo_skill": 61,
+    "overness": 72,
+    "star_quality": 65,
+    "potential": 86,
+    "durability": 69,
+    "consistency": 84
+   },
+   "gimmick_category": "The Youngest Veteran",
+   "gimmick": "A twenty-two-year-old with ten years in the business who roll-ups people faster than they can blink.",
+   "catchphrase": "I was here before you could walk.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2025,
+   "finisher": "The Pocket Watch",
+   "finisher_description": "A rolling cradle into a quick pin.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 70000,
+    "weeks_left": 124,
+    "push": "upper_midcarder"
+   },
+   "finisher_move": "Small package",
+   "signatures": [
+    {
+     "name": "Tick Tock",
+     "move": "Crossbody"
+    },
+    {
+     "name": "Snap",
+     "move": "Hurricanrana"
+    }
+   ]
+  },
+  {
+   "id": "summer_sprite",
+   "ring_name": "Summer Sprite",
+   "gender": "F",
+   "disposition": "face",
+   "style": "flyer",
+   "age": 29,
+   "hometown": "Kumamoto",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 62,
+    "technical": 72,
+    "aerial": 83,
+    "stamina": 72,
+    "charisma": 62,
+    "promo_skill": 54,
+    "overness": 71,
+    "star_quality": 64,
+    "potential": 73,
+    "durability": 84,
+    "consistency": 82
+   },
+   "gimmick_category": "Fairy of the Summer Ring",
+   "gimmick": "A fairy who flutters, flies and occasionally forgets which faction she is in.",
+   "catchphrase": "Flutter, flutter, PIN.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2018,
+   "finisher": "The Fairy Splash",
+   "finisher_description": "A diving splash.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 70000,
+    "weeks_left": 28,
+    "push": "upper_midcarder"
+   },
+   "finisher_move": "Diving splash",
+   "signatures": [
+    {
+     "name": "Wing Kick",
+     "move": "Dropkick"
+    },
+    {
+     "name": "Glitter",
+     "move": "Hurricanrana"
+    }
+   ]
+  },
+  {
+   "id": "sequin_sachiko",
+   "ring_name": "Sequin Sachiko",
+   "gender": "F",
+   "disposition": "face",
+   "style": "entertainer",
+   "age": 37,
+   "hometown": "Tokyo",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 67,
+    "technical": 66,
+    "aerial": 67,
+    "stamina": 73,
+    "charisma": 77,
+    "promo_skill": 69,
+    "overness": 69,
+    "star_quality": 67,
+    "potential": 68,
+    "durability": 78,
+    "consistency": 85
+   },
+   "gimmick_category": "The Glamorous Grappler",
+   "gimmick": "A former actress who wrestles in sequins and makes her rivals feel underdressed.",
+   "catchphrase": "Dress for the occasion.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2010,
+   "finisher": "The Figure-Eight Fashion",
+   "finisher_description": "A figure-four leg lock, with a pose.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 70000,
+    "weeks_left": 120,
+    "push": "upper_midcarder"
+   },
+   "finisher_move": "Figure-four",
+   "signatures": [
+    {
+     "name": "Glamour Elbow",
+     "move": "Elbow drop"
+    },
+    {
+     "name": "Runway",
+     "move": "Running knee"
+    }
+   ]
+  },
+  {
+   "id": "jingle_jun",
+   "ring_name": "Jingle Jun",
+   "gender": "F",
+   "disposition": "heel",
+   "style": "brawler",
+   "age": 22,
+   "hometown": "Kanagawa",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 84,
+    "technical": 71,
+    "aerial": 67,
+    "stamina": 70,
+    "charisma": 58,
+    "promo_skill": 56,
+    "overness": 72,
+    "star_quality": 68,
+    "potential": 85,
+    "durability": 83,
+    "consistency": 85
+   },
+   "gimmick_category": "The Sweet Bully",
+   "gimmick": "A pigtailed bully who smiles as she kicks you and giggles as she pins you.",
+   "catchphrase": "Ring-a-ding, you're done.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2025,
+   "finisher": "The Jingle Drop",
+   "finisher_description": "A sit-out powerbomb.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 70000,
+    "weeks_left": 54,
+    "push": "upper_midcarder"
+   },
+   "finisher_move": "Sit-out powerbomb",
+   "signatures": [
+    {
+     "name": "Bell Kick",
+     "move": "Running kick"
+    },
+    {
+     "name": "Giggle",
+     "move": "Lariat"
+    }
+   ]
+  },
+  {
+   "id": "comeback_kanna",
+   "ring_name": "Comeback Kanna",
+   "gender": "F",
+   "disposition": "heel",
+   "style": "brawler",
+   "age": 28,
+   "hometown": "Tokyo",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 78,
+    "technical": 69,
+    "aerial": 61,
+    "stamina": 73,
+    "charisma": 62,
+    "promo_skill": 57,
+    "overness": 71,
+    "star_quality": 62,
+    "potential": 73,
+    "durability": 72,
+    "consistency": 73
+   },
+   "gimmick_category": "The Returning Brawler",
+   "gimmick": "A tough brawler who retired, came back, and acts like she never left.",
+   "catchphrase": "Back. Obviously.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2019,
+   "finisher": "The Moonrise Kick",
+   "finisher_description": "A running knee strike.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 38000,
+    "weeks_left": 40,
+    "push": "midcarder"
+   },
+   "finisher_move": "Running knee",
+   "signatures": [
+    {
+     "name": "Hazy Lariat",
+     "move": "Lariat"
+    },
+    {
+     "name": "Eclipse",
+     "move": "Rolling elbow"
+    }
+   ]
+  },
+  {
+   "id": "bear_koguma",
+   "ring_name": "Little Bear Kokoro",
+   "gender": "F",
+   "disposition": "face",
+   "style": "powerhouse",
+   "age": 28,
+   "hometown": "Tokyo",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 84,
+    "technical": 69,
+    "aerial": 56,
+    "stamina": 77,
+    "charisma": 71,
+    "promo_skill": 66,
+    "overness": 67,
+    "star_quality": 72,
+    "potential": 76,
+    "durability": 73,
+    "consistency": 73
+   },
+   "gimmick_category": "Tiny Bear Powerhouse",
+   "gimmick": "A small, round, happy powerhouse who body-slams people while humming.",
+   "catchphrase": "Bear hug incoming!",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2019,
+   "finisher": "The Cub Slam",
+   "finisher_description": "A swinging side slam.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 38000,
+    "weeks_left": 36,
+    "push": "midcarder"
+   },
+   "finisher_move": "Swinging side slam",
+   "signatures": [
+    {
+     "name": "Bear Hug",
+     "move": "Bear hug"
+    },
+    {
+     "name": "Honey",
+     "move": "Hip attack"
+    }
+   ]
+  },
+  {
+   "id": "silent_shizuka",
+   "ring_name": "Silent Shizuka",
+   "gender": "F",
+   "disposition": "heel",
+   "style": "technician",
+   "age": 31,
+   "hometown": "Tokyo",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 69,
+    "technical": 76,
+    "aerial": 74,
+    "stamina": 75,
+    "charisma": 66,
+    "promo_skill": 53,
+    "overness": 66,
+    "star_quality": 65,
+    "potential": 67,
+    "durability": 82,
+    "consistency": 76
+   },
+   "gimmick_category": "The Cool Technician",
+   "gimmick": "A cool, silent technician who mostly communicates through submissions.",
+   "catchphrase": "...",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2016,
+   "finisher": "The Silent Lock",
+   "finisher_description": "A crossface.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 38000,
+    "weeks_left": 80,
+    "push": "midcarder"
+   },
+   "finisher_move": "Crossface",
+   "signatures": [
+    {
+     "name": "Silent Kick",
+     "move": "Spinning heel kick"
+    },
+    {
+     "name": "Fold",
+     "move": "German suplex"
+    }
+   ]
+  },
+  {
+   "id": "unstoppable_umeko",
+   "ring_name": "Unstoppable Umeko",
+   "gender": "F",
+   "disposition": "face",
+   "style": "powerhouse",
+   "age": 26,
+   "hometown": "Kanagawa",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 90,
+    "technical": 71,
+    "aerial": 69,
+    "stamina": 86,
+    "charisma": 82,
+    "promo_skill": 75,
+    "overness": 79,
+    "star_quality": 78,
+    "potential": 97,
+    "durability": 81,
+    "consistency": 83
+   },
+   "gimmick_category": "The Powerhouse Ace",
+   "gimmick": "A former ace who powerbombs people and then politely helps them up, then powerbombs them again.",
+   "catchphrase": "Again? Again.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2021,
+   "finisher": "The Unstoppable Bomb",
+   "finisher_description": "A lifting sit-out powerbomb.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 70000,
+    "weeks_left": 114,
+    "push": "upper_midcarder"
+   },
+   "finisher_move": "Sit-out powerbomb",
+   "signatures": [
+    {
+     "name": "Power Lariat",
+     "move": "Lariat"
+    },
+    {
+     "name": "Again Slam",
+     "move": "Spinebuster"
+    }
+   ]
+  },
+  {
+   "id": "rookie_rei",
+   "ring_name": "Rookie Rei",
+   "gender": "F",
+   "disposition": "face",
+   "style": "flyer",
+   "age": 22,
+   "hometown": "Tokyo",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 53,
+    "technical": 64,
+    "aerial": 79,
+    "stamina": 60,
+    "charisma": 54,
+    "promo_skill": 49,
+    "overness": 55,
+    "star_quality": 51,
+    "potential": 68,
+    "durability": 75,
+    "consistency": 70
+   },
+   "gimmick_category": "Rising Rookie",
+   "gimmick": "A young flyer the company is betting on, who loses the coin toss and wins the crowd.",
+   "catchphrase": "Next year. Definitely.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2025,
+   "finisher": "The Rookie Sault",
+   "finisher_description": "A moonsault.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 38000,
+    "weeks_left": 106,
+    "push": "midcarder"
+   },
+   "finisher_move": "Moonsault",
+   "signatures": [
+    {
+     "name": "Kick-Off",
+     "move": "Dropkick"
+    },
+    {
+     "name": "Serene Spin",
+     "move": "Hurricanrana"
+    }
+   ]
+  },
+  {
+   "id": "toxic_theresia",
+   "ring_name": "Toxic Theresia",
+   "gender": "F",
+   "disposition": "heel",
+   "style": "brawler",
+   "age": 31,
+   "hometown": "Vienna",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 78,
+    "technical": 74,
+    "aerial": 58,
+    "stamina": 77,
+    "charisma": 60,
+    "promo_skill": 71,
+    "overness": 69,
+    "star_quality": 65,
+    "potential": 68,
+    "durability": 82,
+    "consistency": 82
+   },
+   "gimmick_category": "The Austrian Toxin",
+   "gimmick": "A snarling Austrian who calls herself poison and is right about the effects.",
+   "catchphrase": "Poison is patient.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2016,
+   "finisher": "The Toxic Spiral",
+   "finisher_description": "A spinning sit-down powerbomb.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 38000,
+    "weeks_left": 138,
+    "push": "midcarder"
+   },
+   "finisher_move": "Spinning powerbomb",
+   "signatures": [
+    {
+     "name": "Venom Kick",
+     "move": "Superkick"
+    },
+    {
+     "name": "Antidote",
+     "move": "Neckbreaker"
+    }
+   ]
+  },
+  {
+   "id": "homework_hikari",
+   "ring_name": "Homework Hikari",
+   "gender": "F",
+   "disposition": "face",
+   "style": "technician",
+   "age": 21,
+   "hometown": "Tokyo",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 61,
+    "technical": 68,
+    "aerial": 59,
+    "stamina": 65,
+    "charisma": 59,
+    "promo_skill": 58,
+    "overness": 58,
+    "star_quality": 58,
+    "potential": 69,
+    "durability": 84,
+    "consistency": 70
+   },
+   "gimmick_category": "Youngest Heroine",
+   "gimmick": "A teenager-turned-adult who has been the future so long she is the present.",
+   "catchphrase": "Present!",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2025,
+   "finisher": "The Homework Bridge",
+   "finisher_description": "A bridging German suplex.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 22000,
+    "weeks_left": 122,
+    "push": "lower_midcarder"
+   },
+   "finisher_move": "Bridging German suplex",
+   "signatures": [
+    {
+     "name": "Bell Ringer",
+     "move": "Dropkick"
+    },
+    {
+     "name": "Pop Quiz",
+     "move": "Crossbody"
+    }
+   ]
+  },
+  {
+   "id": "old_man_orita",
+   "ring_name": "Old Man Orita",
+   "gender": "F",
+   "disposition": "heel",
+   "style": "entertainer",
+   "age": 39,
+   "hometown": "Tokyo",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 56,
+    "technical": 62,
+    "aerial": 46,
+    "stamina": 54,
+    "charisma": 59,
+    "promo_skill": 57,
+    "overness": 55,
+    "star_quality": 51,
+    "potential": 57,
+    "durability": 72,
+    "consistency": 80
+   },
+   "gimmick_category": "The Veteran President's Return",
+   "gimmick": "A veteran who once owned the place, sold it, and now wrestles there to annoy the new owners.",
+   "catchphrase": "I built this. You rent it.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2008,
+   "finisher": "The Founder's Fist",
+   "finisher_description": "A lariat.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 22000,
+    "weeks_left": 128,
+    "push": "lower_midcarder"
+   },
+   "finisher_move": "Lariat",
+   "signatures": [
+    {
+     "name": "Board Meeting",
+     "move": "Chop"
+    },
+    {
+     "name": "Shareholder",
+     "move": "Hip attack"
+    }
+   ]
+  }
+ ],
+ "teams": [
+  {
+   "id": "nova_crystal_clock",
+   "name": "The Crystal Clock",
+   "kind": "tag",
+   "member_ids": [
+    "summer_sprite",
+    "ticktock_tomoe"
+   ],
+   "experience": 80,
+   "chemistry": 8
+  },
+  {
+   "id": "nova_emperors_of_peach",
+   "name": "The Peach Empire",
+   "kind": "stable",
+   "member_ids": [
+    "peach_menace",
+    "toxic_theresia",
+    "silent_shizuka"
+   ],
+   "leader_id": "peach_menace"
+  },
+  {
+   "id": "nova_golden_flock",
+   "name": "The Golden Flock",
+   "kind": "stable",
+   "member_ids": [
+    "phoenix_fumika",
+    "jingle_jun",
+    "comeback_kanna"
+   ],
+   "leader_id": "phoenix_fumika"
+  },
+  {
+   "id": "nova_star_squad",
+   "name": "The Star Squad",
+   "kind": "stable",
+   "member_ids": [
+    "twinkle_mask",
+    "hana_hammer",
+    "bear_koguma",
+    "rookie_rei"
+   ],
+   "leader_id": "twinkle_mask"
+  }
+ ]
+}

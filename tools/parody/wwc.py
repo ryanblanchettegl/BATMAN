@@ -89,6 +89,14 @@ R = [
  ("la_bella_furia", "La Bella Furia", "F", "heel", "brawler", "slap", "upper_midcarder", 4, 32, "Milan", "Beautiful Madness Import", "An Italian-Japanese bruiser who came from the best women's company in the world and wants everyone to know it.", "Arrivederci.", "The Northern Lights Bomb", "A northern lights suplex turned into a powerbomb.", "Giulia"),
  ("karen_kompleint", "Karen Kompleint", "F", "heel", "entertainer", "slap", "midcarder", 2, 35, "Victoria", "Speaks to the Manager", "A Canadian who demands to speak to the manager of every match she loses.", "I want to speak to the MANAGER.", "The Complaint Form", "A double-arm DDT that leaves a form to fill in.", "Chelsea Green"),
  # NOT YET (developmental)
+ ("ricky_righteous", "Righteous Ricky", "M", "heel", "all_rounder", "notyet", "upper_midcarder", 3, 35, "Tampa", "Self-Declared Saint", "A smooth talker who changed his name to sound holier and his attitude to sound worse.", "Bless you. Now sit down.", "The Sermon Drop", "A rolling cutter.", "Ricky Saints"),
+ ("don_antonio", "Don Antonio", "M", "heel", "brawler", "notyet", "upper_midcarder", 3, 30, "Brooklyn", "Family Business Don", "A tracksuited would-be mob boss who offers you a deal you would be wise to refuse.", "Fuggedaboutit. Seriously, forget it.", "The Offer", "A spinebuster into the mat.", "Tony D'Angelo"),
+ ("tank_tucker", "Tank Tucker", "M", "face", "powerhouse", "notyet", "midcarder", 2, 29, "Ohio", "Lovable Tag Lunk", "Half of a huggable tag team who apologise after every slam.", "Sorry! (Slam.)", "The Tucker Drop", "A sit-out powerbomb.", "Tank Ledger"),
+ ("hank_huckle", "Hank Huckle", "M", "face", "brawler", "notyet", "midcarder", 2, 31, "Ohio", "Lovable Tag Lunk", "The other half, who hugs the referee after every win.", "Group hug!", "The Huckle Hug", "A bear hug into a slam.", "Hank Walker"),
+ ("fatal_fallon", "Fallon Fatal", "F", "heel", "brawler", "notyet", "upper_midcarder", 3, 31, "Chicago", "Influencer Enforcer", "The leader of a gang of influencers who film every beating for their followers.", "Like. Share. Lariat.", "The Viral Lariat", "A running lariat.", "Fallon Henley"),
+ ("sol_sunwave", "Sol Sunwave", "F", "face", "flyer", "notyet", "upper_midcarder", 3, 26, "San Diego", "Surfer Flyer", "A surfer who flips off the top rope like she is catching a wave.", "Cowabunga!", "The Sun Wave", "A springboard moonsault into a cutter.", "Sol Ruca"),
+ ("lola_lightning", "Lola Lightning", "F", "heel", "striker", "notyet", "midcarder", 3, 27, "Miami", "Fight-Club Kicker", "A mixed martial artist who kicks like a door slamming and celebrates like a nightclub.", "Lights out.", "The Last Call", "A spinning back kick.", "Lola Vice"),
+ ("thea_cheer", "Thea Cheerleader", "F", "face", "technician", "notyet", "midcarder", 2, 23, "Pennsylvania", "Super-Fan Cheerleader", "A bouncing super-fan who won a contract and still cannot believe it, loudly.", "Go team ME!", "The Pom-Pom Lock", "A kimura lock.", "Thea Hail"),
  ("king_kayode", "King Kayode", "M", "heel", "powerhouse", "notyet", "main_eventer", 4, 28, "Lagos", "Ruler of NOT YET", "A towering Nigerian who lifts men like luggage and wonders why the main roster has not called.", "The king does not ask.", "The Royal Drop", "A pop-up powerbomb from shoulder height.", "Oba Femi"),
  ("whoop_wallace", "Whoop Wallace", "M", "face", "all_rounder", "notyet", "main_eventer", 3, 32, "Columbia", "The Song the Crowd Sings", "A charismatic leaper the crowd sings about, whether he wants them to or not.", "WHOOP! WHOOP!", "The Whistle Kick", "A running kick to the face, delivered with a whistle.", "Trick Williams"),
  ("young_og_jaylen", "Young OG Jaylen", "M", "face", "flyer", "notyet", "midcarder", 3, 21, "Durham", "The Young Old Head", "The youngest man in the building, who flips like he has no bones and a lot of years left.", "Young. Old head. Next.", "The Backflip Cutter", "A springboard cutter with a backflip on the way down.", "Je'Von Evans"),
@@ -109,7 +117,7 @@ PEOPLE = [
 
 
 # the plain wrestling name of each finisher, for modders: what the move really is
-MOVE = {"rocco_rule": "Spear", "wilt_wellness": "Powerbomb", "hype_hopkins": "Frog splash", "straightedge_stan": "Fireman's carry knee strike",
+MOVE = {"thea_cheer": "Kimura lock", "lola_lightning": "Spinning back kick", "sol_sunwave": "Springboard cutter", "fatal_fallon": "Lariat", "hank_huckle": "Bear hug slam", "tank_tucker": "Sit-out powerbomb", "don_antonio": "Spinebuster", "ricky_righteous": "Rolling cutter", "rocco_rule": "Spear", "wilt_wellness": "Powerbomb", "hype_hopkins": "Frog splash", "straightedge_stan": "Fireman's carry knee strike",
  "velvet_visionary": "Curb stomp", "brick_breakwater": "Military press slam", "big_tad_tsunami": "Top-rope senton", "dirty_junior": "Frog splash",
  "declan_demonne": "Top-rope double foot stomp", "sully_sweats": "Running corner kick", "the_hexagon": "Package piledriver", "el_abuelo_enigma": "Springboard dropkick through the ropes",
  "kojo_crown": "Double-team boot and senton", "xerxes_woodwind": "Top-rope elbow drop", "jp_punchbagan": "Moonsault", "blaze_clickbait": "Loaded punch",
@@ -123,7 +131,7 @@ MOVE = {"rocco_rule": "Spear", "wilt_wellness": "Powerbomb", "hype_hopkins": "Fr
  "whoop_wallace": "Running kick", "young_og_jaylen": "Springboard cutter", "eli_everest": "Spinning driver", "juggernaut_josie": "Fireman's carry driver",
  "la_primera_paloma": "Face-down leg-lift submission", "pixie_paz": "Spinning cradle driver", "the_cerebral_shovel": "Double underhook facebuster", "chad_champ": "Fireman's carry slam"}
 
-SIG = {"rocco_rule": "Shrug Punch|Superman punch; Buffet Line|Running drive-by", "wilt_wellness": "The Lecture|Knife-edge chop; Posture Check|Sleeper hold",
+SIG = {"thea_cheer": "Cartwheel Kick|Running kick; Cheer Up|Crossbody", "lola_lightning": "Round One|Head kick; Clinch|Knee strike", "sol_sunwave": "Wipeout|Hurricanrana; Hang Ten|Springboard moonsault", "fatal_fallon": "Algorithm|Neckbreaker; Trending|Running knee", "hank_huckle": "Huckle Hip|Hip attack; Hugger|Bear hug", "tank_tucker": "Tank Slam|Body slam; Tread|Running splash", "don_antonio": "Cannoli Kick|Running knee; Family Meeting|Fisherman's buster", "ricky_righteous": "Collection Plate|Superkick; Amen|Neckbreaker", "rocco_rule": "Shrug Punch|Superman punch; Buffet Line|Running drive-by", "wilt_wellness": "The Lecture|Knife-edge chop; Posture Check|Sleeper hold",
  "hype_hopkins": "Hype Kick|Superkick; Bounce House|Running hip attack", "straightedge_stan": "Bedtime Story|Running knee; Soda Pop|Anaconda vise",
  "velvet_visionary": "Runway Walk|Buckle bomb; Couture Kick|Superkick", "brick_breakwater": "Dog Pile|Spear; Fetch|Gorilla press slam",
  "big_tad_tsunami": "High Tide|Running splash; Undertow|Death valley driver", "dirty_junior": "Triple Trouble|Triple vertical suplex; Dad's Move|Springboard dropkick",
@@ -165,6 +173,7 @@ def build():
     teams = [
         {"id": "wwc_sour_daze", "name": "The Sour Daze", "kind": "tag", "member_ids": ["kojo_crown", "xerxes_woodwind"], "experience": 95, "chemistry": 9},
         {"id": "wwc_block_party_boys", "name": "The Block Party Boys", "kind": "tag", "member_ids": ["block_party_ace", "block_party_deuce"], "experience": 85, "chemistry": 8},
+        {"id": "wwc_tank_and_hank", "name": "Tank and Hank", "kind": "tag", "member_ids": ["tank_tucker", "hank_huckle"], "experience": 60, "chemistry": 8},
         {"id": "wwc_the_vision_board", "name": "The Vision Board", "kind": "stable", "member_ids": ["velvet_visionary", "brick_breakwater", "big_tad_tsunami"], "leader_id": "velvet_visionary"},
         {"id": "wwc_judgment_daze", "name": "The Judgment Daze", "kind": "stable", "member_ids": ["declan_demonne", "dirty_junior", "jp_punchbagan", "big_rosa_ruiz", "vendetta_viv"], "leader_id": "declan_demonne"},
         {"id": "wwc_the_family_tree", "name": "The Family Tree", "kind": "stable", "member_ids": ["silent_sione", "big_iosefa"], "leader_id": "silent_sione"},

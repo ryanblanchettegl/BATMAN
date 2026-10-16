@@ -2515,6 +2515,430 @@
    ]
   },
   {
+   "id": "ricky_righteous",
+   "ring_name": "Righteous Ricky",
+   "gender": "M",
+   "disposition": "heel",
+   "style": "all_rounder",
+   "age": 35,
+   "hometown": "Tampa",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 70,
+    "technical": 71,
+    "aerial": 75,
+    "stamina": 69,
+    "charisma": 70,
+    "promo_skill": 64,
+    "overness": 66,
+    "star_quality": 65,
+    "potential": 67,
+    "durability": 82,
+    "consistency": 83
+   },
+   "gimmick_category": "Self-Declared Saint",
+   "gimmick": "A smooth talker who changed his name to sound holier and his attitude to sound worse.",
+   "catchphrase": "Bless you. Now sit down.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2012,
+   "finisher": "The Sermon Drop",
+   "finisher_description": "A rolling cutter.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 70000,
+    "weeks_left": 80,
+    "push": "upper_midcarder",
+    "brand": "notyet"
+   },
+   "finisher_move": "Rolling cutter",
+   "signatures": [
+    {
+     "name": "Collection Plate",
+     "move": "Superkick"
+    },
+    {
+     "name": "Amen",
+     "move": "Neckbreaker"
+    }
+   ]
+  },
+  {
+   "id": "don_antonio",
+   "ring_name": "Don Antonio",
+   "gender": "M",
+   "disposition": "heel",
+   "style": "brawler",
+   "age": 30,
+   "hometown": "Brooklyn",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 80,
+    "technical": 73,
+    "aerial": 61,
+    "stamina": 77,
+    "charisma": 56,
+    "promo_skill": 56,
+    "overness": 66,
+    "star_quality": 64,
+    "potential": 74,
+    "durability": 70,
+    "consistency": 73
+   },
+   "gimmick_category": "Family Business Don",
+   "gimmick": "A tracksuited would-be mob boss who offers you a deal you would be wise to refuse.",
+   "catchphrase": "Fuggedaboutit. Seriously, forget it.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2017,
+   "finisher": "The Offer",
+   "finisher_description": "A spinebuster into the mat.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 70000,
+    "weeks_left": 42,
+    "push": "upper_midcarder",
+    "brand": "notyet"
+   },
+   "finisher_move": "Spinebuster",
+   "signatures": [
+    {
+     "name": "Cannoli Kick",
+     "move": "Running knee"
+    },
+    {
+     "name": "Family Meeting",
+     "move": "Fisherman's buster"
+    }
+   ]
+  },
+  {
+   "id": "tank_tucker",
+   "ring_name": "Tank Tucker",
+   "gender": "M",
+   "disposition": "face",
+   "style": "powerhouse",
+   "age": 29,
+   "hometown": "Ohio",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 76,
+    "technical": 57,
+    "aerial": 48,
+    "stamina": 64,
+    "charisma": 52,
+    "promo_skill": 51,
+    "overness": 54,
+    "star_quality": 55,
+    "potential": 62,
+    "durability": 84,
+    "consistency": 71
+   },
+   "gimmick_category": "Lovable Tag Lunk",
+   "gimmick": "Half of a huggable tag team who apologise after every slam.",
+   "catchphrase": "Sorry! (Slam.)",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2018,
+   "finisher": "The Tucker Drop",
+   "finisher_description": "A sit-out powerbomb.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 38000,
+    "weeks_left": 44,
+    "push": "midcarder",
+    "brand": "notyet"
+   },
+   "finisher_move": "Sit-out powerbomb",
+   "signatures": [
+    {
+     "name": "Tank Slam",
+     "move": "Body slam"
+    },
+    {
+     "name": "Tread",
+     "move": "Running splash"
+    }
+   ]
+  },
+  {
+   "id": "hank_huckle",
+   "ring_name": "Hank Huckle",
+   "gender": "M",
+   "disposition": "face",
+   "style": "brawler",
+   "age": 31,
+   "hometown": "Ohio",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 65,
+    "technical": 57,
+    "aerial": 56,
+    "stamina": 65,
+    "charisma": 47,
+    "promo_skill": 49,
+    "overness": 56,
+    "star_quality": 59,
+    "potential": 54,
+    "durability": 84,
+    "consistency": 72
+   },
+   "gimmick_category": "Lovable Tag Lunk",
+   "gimmick": "The other half, who hugs the referee after every win.",
+   "catchphrase": "Group hug!",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2016,
+   "finisher": "The Huckle Hug",
+   "finisher_description": "A bear hug into a slam.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 38000,
+    "weeks_left": 38,
+    "push": "midcarder",
+    "brand": "notyet"
+   },
+   "finisher_move": "Bear hug slam",
+   "signatures": [
+    {
+     "name": "Huckle Hip",
+     "move": "Hip attack"
+    },
+    {
+     "name": "Hugger",
+     "move": "Bear hug"
+    }
+   ]
+  },
+  {
+   "id": "fatal_fallon",
+   "ring_name": "Fallon Fatal",
+   "gender": "F",
+   "disposition": "heel",
+   "style": "brawler",
+   "age": 31,
+   "hometown": "Chicago",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 76,
+    "technical": 62,
+    "aerial": 60,
+    "stamina": 76,
+    "charisma": 71,
+    "promo_skill": 63,
+    "overness": 65,
+    "star_quality": 69,
+    "potential": 67,
+    "durability": 70,
+    "consistency": 73
+   },
+   "gimmick_category": "Influencer Enforcer",
+   "gimmick": "The leader of a gang of influencers who film every beating for their followers.",
+   "catchphrase": "Like. Share. Lariat.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2016,
+   "finisher": "The Viral Lariat",
+   "finisher_description": "A running lariat.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 70000,
+    "weeks_left": 68,
+    "push": "upper_midcarder",
+    "brand": "notyet"
+   },
+   "finisher_move": "Lariat",
+   "signatures": [
+    {
+     "name": "Algorithm",
+     "move": "Neckbreaker"
+    },
+    {
+     "name": "Trending",
+     "move": "Running knee"
+    }
+   ]
+  },
+  {
+   "id": "sol_sunwave",
+   "ring_name": "Sol Sunwave",
+   "gender": "F",
+   "disposition": "face",
+   "style": "flyer",
+   "age": 26,
+   "hometown": "San Diego",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 60,
+    "technical": 75,
+    "aerial": 87,
+    "stamina": 80,
+    "charisma": 64,
+    "promo_skill": 70,
+    "overness": 64,
+    "star_quality": 67,
+    "potential": 79,
+    "durability": 68,
+    "consistency": 73
+   },
+   "gimmick_category": "Surfer Flyer",
+   "gimmick": "A surfer who flips off the top rope like she is catching a wave.",
+   "catchphrase": "Cowabunga!",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2021,
+   "finisher": "The Sun Wave",
+   "finisher_description": "A springboard moonsault into a cutter.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 70000,
+    "weeks_left": 44,
+    "push": "upper_midcarder",
+    "brand": "notyet"
+   },
+   "finisher_move": "Springboard cutter",
+   "signatures": [
+    {
+     "name": "Wipeout",
+     "move": "Hurricanrana"
+    },
+    {
+     "name": "Hang Ten",
+     "move": "Springboard moonsault"
+    }
+   ]
+  },
+  {
+   "id": "lola_lightning",
+   "ring_name": "Lola Lightning",
+   "gender": "F",
+   "disposition": "heel",
+   "style": "striker",
+   "age": 27,
+   "hometown": "Miami",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 82,
+    "technical": 70,
+    "aerial": 71,
+    "stamina": 79,
+    "charisma": 61,
+    "promo_skill": 55,
+    "overness": 65,
+    "star_quality": 70,
+    "potential": 75,
+    "durability": 68,
+    "consistency": 76
+   },
+   "gimmick_category": "Fight-Club Kicker",
+   "gimmick": "A mixed martial artist who kicks like a door slamming and celebrates like a nightclub.",
+   "catchphrase": "Lights out.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2020,
+   "finisher": "The Last Call",
+   "finisher_description": "A spinning back kick.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 38000,
+    "weeks_left": 30,
+    "push": "midcarder",
+    "brand": "notyet"
+   },
+   "finisher_move": "Spinning back kick",
+   "signatures": [
+    {
+     "name": "Round One",
+     "move": "Head kick"
+    },
+    {
+     "name": "Clinch",
+     "move": "Knee strike"
+    }
+   ]
+  },
+  {
+   "id": "thea_cheer",
+   "ring_name": "Thea Cheerleader",
+   "gender": "F",
+   "disposition": "face",
+   "style": "technician",
+   "age": 23,
+   "hometown": "Pennsylvania",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 58,
+    "technical": 77,
+    "aerial": 61,
+    "stamina": 66,
+    "charisma": 56,
+    "promo_skill": 47,
+    "overness": 51,
+    "star_quality": 53,
+    "potential": 69,
+    "durability": 70,
+    "consistency": 71
+   },
+   "gimmick_category": "Super-Fan Cheerleader",
+   "gimmick": "A bouncing super-fan who won a contract and still cannot believe it, loudly.",
+   "catchphrase": "Go team ME!",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2024,
+   "finisher": "The Pom-Pom Lock",
+   "finisher_description": "A kimura lock.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 38000,
+    "weeks_left": 92,
+    "push": "midcarder",
+    "brand": "notyet"
+   },
+   "finisher_move": "Kimura lock",
+   "signatures": [
+    {
+     "name": "Cartwheel Kick",
+     "move": "Running kick"
+    },
+    {
+     "name": "Cheer Up",
+     "move": "Crossbody"
+    }
+   ]
+  },
+  {
    "id": "king_kayode",
    "ring_name": "King Kayode",
    "gender": "M",
@@ -3170,6 +3594,17 @@
     "block_party_deuce"
    ],
    "experience": 85,
+   "chemistry": 8
+  },
+  {
+   "id": "wwc_tank_and_hank",
+   "name": "Tank and Hank",
+   "kind": "tag",
+   "member_ids": [
+    "tank_tucker",
+    "hank_huckle"
+   ],
+   "experience": 60,
    "chemistry": 8
   },
   {

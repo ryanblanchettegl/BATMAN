@@ -43,6 +43,14 @@
 - Neon Nyla: Naomi
 - La Bella Furia: Giulia
 - Karen Kompleint: Chelsea Green
+- Righteous Ricky: Ricky Saints
+- Don Antonio: Tony D'Angelo
+- Tank Tucker: Tank Ledger
+- Hank Huckle: Hank Walker
+- Fallon Fatal: Fallon Henley
+- Sol Sunwave: Sol Ruca
+- Lola Lightning: Lola Vice
+- Thea Cheerleader: Thea Hail
 - King Kayode: Oba Femi
 - Whoop Wallace: Trick Williams
 - Young OG Jaylen: Je'Von Evans
