@@ -23,8 +23,27 @@ var CITY_AT={'Rome':[41.9,12.5],'Athens':[37.98,23.73],'Alexandria':[31.2,29.92]
    place (the Land of Oz) only ever counts in its own name. */
 var TOWN_AT={"Aachen":[50.78,6.08],"Abancay":[-13.64,-72.88],"Akita":[39.72,140.1],"Altdorf":[46.88,8.64],"Amarna":[27.65,30.9],"Amsterdam":[52.37,4.9],"Anenecuilco":[18.78,-98.98],"Anzio":[41.45,12.62],"Arauco":[-37.25,-73.32],"Arcadia":[37.6,22.3],"Argos":[37.63,22.73],"Arras":[50.29,2.78],"Ashigara":[35.3,139.03],"Auburn":[42.93,-76.57],"Babylon":[32.54,44.42],"Badajoz":[38.88,-6.97],"Barcelona":[41.39,2.17],"Barinas":[8.62,-70.21],"Bergen":[60.39,5.32],"Berlin":[52.52,13.4],"Bodenwerder":[51.97,9.52],"Bonn":[50.73,7.1],"Bowling Green":[39.34,-91.19],"Brasov":[45.65,25.6],"Braunschweig":[52.27,10.52],"Bremen":[53.08,8.8],"Breslau":[51.1,17.03],"Bristol":[51.45,-2.59],"Bubastis":[30.57,31.51],"Bundelkhand":[25.0,79.5],"Burgos":[42.34,-3.7],"Burnham Thorpe":[52.94,0.75],"Canterbury":[51.28,1.08],"Cap-Haitien":[19.76,-72.2],"Carlisle":[54.89,-2.93],"Carmarthen":[51.86,-4.31],"Carthage":[36.85,10.32],"Carthage, Missouri":[37.18,-94.31],"Catskill":[42.22,-73.86],"Cayce":[36.57,-89.06],"Chelmsford":[51.74,0.47],"Chillan":[-36.61,-72.1],"Chuquisaca":[-19.04,-65.26],"Circeo":[41.23,13.05],"Clew Bay":[53.8,-9.7],"Coatzacoalcos":[18.15,-94.43],"Cologne":[50.94,6.96],"Colotlan":[22.11,-103.27],"Concord":[42.46,-71.35],"Copenhagen":[55.68,12.57],"Coventry":[52.41,-1.51],"Croton":[39.08,17.13],"Cumana":[10.46,-64.17],"Cyrene":[32.82,21.86],"Delos":[37.4,25.27],"Derbyshire":[53.1,-1.6],"Dundalk":[54.0,-6.4],"Durban":[-29.86,31.02],"Edfu":[24.98,32.87],"Elderslie":[55.83,-4.48],"Eleusis":[38.04,23.54],"Etna":[37.75,15.0],"Exeter":[50.72,-3.53],"Faiyum":[29.31,30.84],"Falaise":[48.9,-0.2],"Florence":[43.77,11.25],"Freiburg":[47.99,7.85],"Galway":[53.27,-9.05],"Gascony":[43.69,0.18],"Gateshead":[54.96,-1.6],"Geneva":[46.2,6.14],"Ghent":[51.05,3.72],"Glastonbury":[51.15,-2.71],"Goliad":[28.67,-97.39],"Gordion":[39.65,31.98],"Gotaland":[57.7,12.0],"Greeneville":[36.16,-82.83],"Greenwich":[51.48,0.0],"Griffin":[33.25,-84.26],"Guaduas":[5.07,-74.6],"Guangyuan":[32.43,105.84],"Guatemala City":[14.63,-90.51],"Gyoda":[36.14,139.46],"Halicarnassus":[37.03,27.43],"Hamamatsu":[34.71,137.73],"Harz":[51.8,10.6],"Haworth":[53.83,-1.95],"Hekla":[63.99,-19.67],"Hempstead":[52.0,0.38],"Henryville":[45.13,-73.18],"Hertford":[51.8,-0.08],"Himeji":[34.82,134.69],"Ibague":[4.44,-75.23],"Inverness":[57.48,-4.22],"Iolcus":[39.36,22.94],"Iping":[51.0,-0.78],"Ithaca":[38.4,20.7],"Izu":[34.97,138.95],"Kameoka":[35.01,135.57],"Karatsu":[33.45,129.97],"Kassel":[51.31,9.48],"Kazbek":[42.7,44.5],"Kearney":[39.37,-94.36],"Keswick":[54.6,-3.13],"Khentii":[47.5,110.0],"Kiev":[50.45,30.52],"Kilkea":[52.95,-6.9],"Kingston":[41.99,-70.72],"Kinsale":[51.7,-8.52],"Kiso":[35.84,137.69],"Knossos":[35.3,25.16],"Konigsberg":[54.71,20.51],"La Mancha":[39.4,-3.0],"Lahore":[31.55,74.34],"Lambayeque":[-6.7,-79.9],"Lancaster":[37.62,-84.58],"Langtry":[29.81,-101.56],"Le Claire":[41.6,-90.34],"Lejre":[55.6,11.97],"Lemnos":[39.9,25.25],"Leominster":[42.53,-71.76],"Lille":[50.63,3.06],"Linlithgow":[55.98,-3.6],"Linzi":[36.8,118.3],"Lohr am Main":[50.0,9.58],"Luoyang":[34.62,112.45],"Luxor":[25.69,32.64],"Manaus":[-3.12,-60.02],"Marrakesh":[31.63,-8.0],"Marseille":[43.3,5.37],"Morelia":[19.7,-101.19],"Moscow":[55.75,37.62],"Mount Olympus":[40.09,22.36],"Nantucket":[41.28,-70.1],"Naqada":[25.9,32.72],"Nasu":[37.03,139.97],"Newark":[40.74,-74.17],"Noble's Isle":[-13.83,-171.76],"Norwich":[52.63,1.3],"Numata":[36.64,139.04],"Oaxaca":[17.06,-96.72],"Okayama":[34.66,133.93],"Ollantaytambo":[-13.26,-72.26],"Olympia":[37.64,21.63],"Onate":[43.03,-2.41],"Otranto":[40.15,18.49],"Oxford":[51.75,-1.26],"Padua":[45.41,11.88],"Palmyra":[34.55,38.27],"Pannonia":[47.5,19.0],"Paphos":[34.77,32.42],"Pecos":[31.42,-103.49],"Pella":[40.76,22.52],"Penzance":[50.12,-5.54],"Pisa":[43.72,10.4],"Pittsburgh":[40.44,-80.0],"Plasencia":[40.03,-6.09],"Point Pleasant":[38.9,-84.23],"Poitiers":[46.58,0.34],"Pokrovskoye":[57.4,66.6],"Princeton":[40.4,-93.58],"Q'umarkaj":[14.99,-91.17],"Quebec":[46.81,-71.21],"Rennes":[48.11,-1.68],"Reykjavik":[64.15,-21.94],"Rhamnous":[38.22,24.03],"Richmond":[51.46,-0.3],"Ringerike":[60.15,10.2],"Rochester":[51.39,0.5],"Rovaniemi":[66.5,25.7],"Russellville":[36.85,-86.89],"Sado":[38.02,138.37],"Saint-Germain":[48.9,2.09],"Salamis":[37.96,23.48],"Salzburg":[47.8,13.04],"San Antonio":[29.42,-98.49],"San Juan":[18.47,-66.1],"San Salvador":[13.69,-89.19],"Santiago de Cuba":[20.02,-75.82],"Seonee":[22.08,79.55],"Shrewsbury":[52.71,-2.75],"Sighisoara":[46.22,24.79],"Soma":[37.8,140.92],"Spanish Town":[17.99,-76.96],"Stagira":[40.53,23.75],"Stettin":[53.43,14.55],"Subiaco":[41.92,13.09],"Suwa":[36.04,138.11],"Syracuse":[37.07,15.29],"Taenarum":[36.39,22.48],"Takamatsu":[34.34,134.05],"Talcott":[37.65,-80.73],"Tanabe":[33.73,135.38],"Tavistock":[50.55,-4.14],"Themiscyra":[41.2,36.7],"Thrace":[41.5,26.0],"Tikrit":[34.6,43.68],"Tixtla":[17.57,-99.4],"Togakushi":[36.75,138.08],"Trenton":[40.22,-74.76],"Trondheim":[63.43,10.39],"Troy Grove":[41.47,-89.08],"Trujillo":[39.46,-5.88],"Van Buren":[35.44,-94.35],"Venice":[45.44,12.33],"Villanueva de la Serena":[38.98,-5.8],"Vinci":[43.79,10.93],"Westmoreland":[38.19,-76.92],"Woolsthorpe":[52.81,-0.63],"Worms":[49.63,8.36],"Xalapa":[19.54,-96.91],"Yanagawa":[33.16,130.4],"Yapeyu":[-29.47,-56.82],"York":[53.96,-1.08],"Yoshinogari":[33.33,130.39],"Zululand":[-28.4,31.4]};
 var VENUE_RE=/ (Armory|Civic Auditorium|Fieldhouse|Coliseum|Arena|Stadium)$/;
-function venueName(city,cap){return city+' '+(cap<=1000?'Armory':(cap<=2500?'Civic Auditorium':(cap<=6000?'Fieldhouse':(cap<=13000?'Coliseum':(cap<=30000?'Arena':'Stadium')))));}
-function cityOfVenue(v){return v?String(v).replace(VENUE_RE,''):'';}
+/* Every city has 3 to 5 buildings of its own (roadmap 3, Ryan 16 October), from a small hall to its biggest room, made
+   from the city's name by a hash so a city keeps the same buildings all game. The road names the smallest that holds
+   the draw. A building is named "Name, City", so the city can always be read back off it. */
+var BLD_TIER=[{to:1000,k:['Armory','Union Hall','Legion Hall','Rec Center']},{to:2500,k:['Civic Auditorium','Ballroom','Exhibition Hall','Music Hall']},
+  {to:6000,k:['Fieldhouse','Expo Center','Sports Barn','Event Center']},{to:13000,k:['Coliseum','Gardens','Pavilion','Civic Center']},
+  {to:30000,k:['Arena','Dome','Center','Forum']},{to:90000,k:['Stadium','Bowl','Field']}];
+var BLD_WORDS=['Riverside','Harbor Street','Union','Memorial','Lakeside','Eastside','Old Mill','Market Street','Liberty','Veterans','Grand','Pioneer','Crossroads','Foundry','Railyard','Northgate','Westgate','Ironworks','Lincoln Park','Cedar Hill','Founders','Bayfront','Stockyard','Canal Street','Hilltop','Southside','Central','Midtown'];
+/** The buildings of a city, smallest first: {n: name, cap: seats, k: kind}. */
+function cityBuildings(city){
+  var c=String(city||'the city'),n=3+Math.floor(h01('bn:'+c)*3),tiers=[0,2,4],out=[],used={};
+  var spare=[1,3,5];while(tiers.length<n)tiers.push(spare.splice(Math.floor(h01('bt:'+c+':'+tiers.length)*spare.length),1)[0]);
+  tiers.sort(function(a,b){return a-b;});
+  tiers.forEach(function(t,i){var T=BLD_TIER[t],lo=t?BLD_TIER[t-1].to:400,k=T.k[Math.floor(h01('bk:'+c+':'+i)*T.k.length)];
+    var w=BLD_WORDS[Math.floor(h01('bw:'+c+':'+i)*BLD_WORDS.length)];while(used[w])w=BLD_WORDS[(BLD_WORDS.indexOf(w)+1)%BLD_WORDS.length];used[w]=1;
+    out.push({n:w+' '+k,cap:Math.round((lo+(T.to-lo)*(0.55+0.45*h01('bc:'+c+':'+i)))/100)*100,k:k});});
+  return out;
+}
+/** The building for a night of this size in this city: the smallest that holds the crowd, or the biggest there is. */
+function venueName(city,cap){var B=cityBuildings(city),b=B.filter(function(x){return x.cap>=cap;})[0]||B[B.length-1];return b.n+', '+city;}
+E.cityBuildings=function(S,city){return cityBuildings(city);};
+function cityOfVenue(v){if(!v)return '';v=String(v);var k=v.lastIndexOf(', ');return k>=0?v.slice(k+2):v.replace(VENUE_RE,'');}
 function placeOf(S,city){var p=(S&&S.places&&S.places[city])||CITY_AT[city]||TOWN_AT[city];return p?{n:city,lat:p[0],lon:p[1],a:p[2]||null}:null;}
 function mapById(id){for(var i=0;i<MAPS.length;i++)if(MAPS[i].id===id)return MAPS[i];return null;}
 /* where a place falls on a map's board, in dots (it may be off the board) */
@@ -64,7 +83,9 @@ function roadRoute(S,P){
 }
 function roadCity(S,P,n){var R=roadRoute(S,P);return R[((n%R.length)+R.length)%R.length];}
 /* the building is booked before the card is: its size comes from what this company draws, not from tonight's matches */
-function roadCap(S,P,show,city){return capFor(demand(P,show,1)*tourBoost(S,P)*mktMult(S,P,city));}
+/* a city that sold out last time gets a bigger building next time (NEXT.md 6.4) */
+function soldOutLast(S,P,city){var v=P.id===S.player&&S.rdv&&S.rdv[city];return !!(v&&v.so);}
+function roadCap(S,P,show,city){return capFor(demand(P,show,1)*tourBoost(S,P)*mktMult(S,P,city)*(soldOutLast(S,P,city)?1.12:1));}
 /* ---------- markets: how well a place knows you (docs/plans/art-direction.md, 6.7) ----------
    Every city on the road has a market, 0 to 100, only ever said in words. It starts near the middle (a little higher
    in the city the loop starts from), rises with a good night there and falls with a bad one, and fades when you stay
@@ -74,6 +95,11 @@ function roadCap(S,P,show,city){return capFor(demand(P,show,1)*tourBoost(S,P)*mk
 var MKT_WORDS=[[70,'Your territory','They are yours here.'],[50,'A strong market','They know you here.'],[30,'They know you','You are a name here, not a habit.'],[0,'They hardly know you','You are a stranger here.']];
 function mktBase(S,P,city){var R=roadRoute(S,P);return clamp(Math.round(50+h01('mkt'+S.seed+P.id+city)*24-12+(R[0]===city?12:0)),10,90);}
 function mktKnow(S,P,city){if(!city||P.id!==S.player)return 50;var m=S.mkt&&S.mkt[city];return m?m.k:mktBase(S,P,city);}
+/* the weather (NEXT.md 6.4): in the cold months a weekly television show in a city far from the equator draws a
+   little less walk-up trade. A big event is planned for, and people come whatever the weather. */
+function coldNight(S,show,city,week){if(show&&show.big)return false;var p=placeOf(S,city);if(!p)return false;var m=cal(week||S.week).month;
+  return p.lat>=38?(m===11||m===0||m===1):(p.lat<=-38?(m>=5&&m<=7):false);}
+function weatherMult(S,show,city,week){return coldNight(S,show,city,week)?0.94:1;}
 function mktMult(S,P,city){return 0.85+0.3*mktKnow(S,P,city)/100;}
 function mktWord(k){for(var i=0;i<MKT_WORDS.length;i++)if(k>=MKT_WORDS[i][0])return {w:MKT_WORDS[i][1],d:MKT_WORDS[i][2]};return {w:MKT_WORDS[3][1],d:MKT_WORDS[3][2]};}
 /* the market of the stop that is on the air now, for the night's own sums */
@@ -81,7 +107,7 @@ function roadMktNow(S,P){return mktMult(S,P,roadCity(S,P,S.rdn||0));}
 /* away too long and a market cools, down to where it would be if you had never come */
 WEEKX.push(function(S){
   if(S.cal||!S.mkt)return;var P=S.promos[S.player];
-  Object.keys(S.mkt).forEach(function(c){var m=S.mkt[c],floor=Math.min(m.k,mktBase(S,P,c)-10);if(S.week-m.w>6&&m.k>floor)m.k=Math.max(floor,Math.round((m.k-0.5)*10)/10);});
+  Object.keys(S.mkt).forEach(function(c){var m=S.mkt[c],floor=Math.min(m.k,mktBase(S,P,c)-10);if(S.week-m.w>6&&m.k>floor&&!streamOn(S))m.k=Math.max(floor,Math.round((m.k-0.5)*10)/10);});
 });
 E.mktWords=MKT_WORDS.map(function(x){return {w:x[1],d:x[2],from:x[0]};});
 /* ---------- tickets sold before the night (docs/plans/art-direction.md, 6.6) ----------
@@ -93,7 +119,7 @@ E.mktWords=MKT_WORDS.map(function(x){return {w:x[1],d:x[2],from:x[0]};});
 function saleSpan(show){return show.big?8:4;}
 function saleFrac(wo,show){var span=saleSpan(show);if(wo>span)return 0;if(wo<0)wo=0;return 0.88*Math.pow(1-wo/(span+1),0.7);}
 function stopDraw(S,P,show,next,city){
-  var d0=demand(P,show,1)*tourBoost(S,P)*mktMult(S,P,city),hype;
+  var d0=demand(P,show,1)*tourBoost(S,P)*mktMult(S,P,city)*weatherMult(S,show,city),hype;
   if(next&&S.card&&S.card.length)hype=cardHype(S,P,show,S.card,true);
   else{var heat=0;activeFeuds(S).forEach(function(f){if(f.heat>heat&&f.a.concat(f.b).some(function(id){return S.w[id]&&S.w[id].promo===P.id;}))heat=f.heat;});
     hype=clamp(1+ADV_H[P.adv]+(next&&S.hype?S.hype:0)+heat/1000+homeHypeAt(S,P,city),0.8,1.4);}
@@ -171,7 +197,7 @@ E.road=function(S){
   var cap=roadCap(S,P,A.show,city),mk=mktKnow(S,P,city),sale=stopSales(S,P,A.w,A.show,A.k,true),last=S.rdv&&S.rdv[city],bar=S.bar&&S.bar[city],reg=P.tour?REGIONS[P.tour.reg]:REGIONS[homeReg(P)];
   var home=rosterOf(S,P.id).filter(function(w){return !w.nw&&homeNear(S,w,city);}).sort(function(a,b){return (a.town===city?0:1)-(b.town===city?0:1)||b.ovr-a.ovr;}).slice(0,3).map(function(w){return {id:w.id,name:w.name,hurt:w.inj>0,town:w.town,near:w.town!==city,km:homeKm(S,w,city)};});
   return {map:M?M.id:null,mapName:M?M.n:null,lit:lit,stops:stops,off:off,
-    now:{city:city,land:M&&lit.now>=0?M.a[lit.now]:null,show:A.show.name,big:!!A.show.big,w:A.w,later:A.w>S.week,left:Math.max(0,(S.queue?S.queue.length:0)-(S.qi||0)),
+    now:{city:city,land:M&&lit.now>=0?M.a[lit.now]:null,show:A.show.name,big:!!A.show.big,kind:A.show.big?(A.show.flag?'Flagship':evTy(A.show).n):'',w:A.w,later:A.w>S.week,left:Math.max(0,(S.queue?S.queue.length:0)-(S.qi||0)),
       venue:venueName(city,cap),cap:cap,seat:Math.round(ticket(P,A.show)*TIX_P[P.tix]),tix:TIXN[P.tix],
       sold:sale.sold,wk:sale.wk,on:sale.on,opens:sale.opens,gate:Math.round(sale.sold*ticket(P,A.show)*TIX_P[P.tix]),
       last:last?{ago:S.week-last.w,grade:gradeG(last.cs),att:last.att,cap:last.cap,so:!!last.so}:null,
@@ -179,7 +205,19 @@ E.road=function(S){
       mkt:mktWord(mk),mktK:Math.round(mk),taste:TASTEN[reg.taste],tour:P.tour?reg.n:null,home:home}};
 };
 /** The year ahead on the road: every stop for the next `n` shows, for the schedule pop-up. */
-E.roadAhead=function(S,n){var P=S.promos[S.player];return roadAhead(S,P,n||16).map(function(a,i){var c=cal(a.w);var x=stopSales(S,P,a.w,a.show,a.k,i===0);return {w:a.w,when:a.w===S.week?'This week':(a.w===S.week+1?'Next week':c.label),show:a.show.name,big:!!a.show.big,city:a.city,cap:x.cap,mkt:mktWord(mktKnow(S,P,a.city)).w,sold:x.sold,on:x.on,opens:x.opens};});};
+E.roadAhead=function(S,n){var P=S.promos[S.player];return roadAhead(S,P,n||16).map(function(a,i){var c=cal(a.w);var x=stopSales(S,P,a.w,a.show,a.k,i===0);return {w:a.w,when:a.w===S.week?'This week':(a.w===S.week+1?'Next week':c.label),show:a.show.name,big:!!a.show.big,kind:a.show.big?(a.show.flag?'Flagship':evTy(a.show).n):'',city:a.city,cold:coldNight(S,a.show,a.city,a.w),cap:x.cap,mkt:mktWord(mktKnow(S,P,a.city)).w,sold:x.sold,on:x.on,opens:x.opens};});};
 E.roadRoute=function(S,pid){return roadRoute(S,S.promos[pid==null?S.player:pid]);};
 E.mapArea=function(S,mapId,city){var M=mapById(mapId),p=placeOf(S,city);return M&&p&&mapHas(M,p)?mapArea(M,p):-1;};
 E.mapXY=function(S,mapId,city){var M=mapById(mapId),p=placeOf(S,city);return M&&p&&mapHas(M,p)?mapXY(M,p):null;};
+/** Every city on your road (NEXT.md 6.5): the market in words, which way it moved, and the last night there. Only reads. */
+E.cities=function(S){
+  var P=S.promos[S.player];return roadRoute(S,P).map(function(c){var city=c.city||c.n||c,k=mktKnow(S,P,city),v=S.rdv&&S.rdv[city],m=S.mkt&&S.mkt[city];
+    return {city:city,k:Math.round(k),word:mktWord(k).w,last:v?v.w:null,ago:v?S.week-v.w:null,grade:v&&v.cs!=null?gradeG(v.cs):null,att:v?v.att:null,cap:v?v.cap:null,so:!!(v&&v.so)};});
+};
+/* a sell-out streak (NEXT.md 6.4): every show of yours that sells out in a row adds to it. From the third, word gets
+   round that tickets are hard to get, and the next show draws a little more. A show that does not sell out ends it. */
+SHOWX.push(function(S,P,show,rep){
+  if(S.cal||P.id!==S.player)return;
+  if(rep.sellout){S.soRun=(S.soRun||0)+1;rep.soRun=S.soRun;if(S.soRun>=3)S.hype=(S.hype||0)+0.02;if(S.soRun===5||S.soRun===10||S.soRun===20)news(S,'world',P.name+' has sold out '+S.soRun+' shows in a row.');}
+  else{if((S.soRun||0)>=3)rep.soEnd=S.soRun;S.soRun=0;}
+});

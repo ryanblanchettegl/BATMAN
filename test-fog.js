@@ -42,18 +42,22 @@ const lines = R => R.filter(Boolean).reduce((a, r) => a.concat(r.lines), []);
 }
 
 /* a read is never wrong, and a better reader reads more */
-{ let wrong = 0, readsHead = 0, readsAgent = 0, readsEye = 0, n = 0;
+{ let wrong = 0, readsHead = 0, readsAgent = 0, readsEye = 0, n = 0, linesHead = 0, linesAgent = 0, crowd = 0, crowdWrong = 0;
+  const lines = S => E.agentReads(S).reduce((k, r) => k + (r ? r.lines.length : 0), 0);
   for (let seed = 1; seed <= 10; seed++) { const S = E.newGame('pdw', seed, { name: 'R' }); house(S);
     const ag = E.rosterOf(S, 'pdw').filter(w => !w.nw).sort((a, b) => b.ovr - a.ovr).slice(-1)[0]; // any wrestler stands in as a hired agent for the test
     for (let wk = 0; wk < 3; wk++) { adv(S); S.card = E.suggest(S); S.know = { p: {}, w: {} };
       const count = () => { let k = 0; E.agentReads(S).forEach((r, i) => { if (!r || S.card[i].mt !== '1v1') return; r.lines.forEach(l => { if (l.src === 'read' && /click|sparks/.test(l.t)) { k++; if (l.s !== cat(chemOf(S, S.card[i]))) wrong++; } }); }); return k; };
       n += S.card.filter(m => m.mt === '1v1').length;
-      readsHead += count();
+      readsHead += count(); linesHead += lines(S);
       S.booker.sk.eye = 3; readsEye += count(); S.booker.sk.eye = 0;
-      const was = { nw: ag.nw, srole: ag.srole, cons: ag.cons }; ag.nw = true; ag.srole = 'agent'; ag.cons = 95; S.card.forEach(m => { m.agent = ag.id; }); readsAgent += count(); S.card.forEach(m => { delete m.agent; }); ag.nw = was.nw; ag.srole = was.srole; ag.cons = was.cons;
+      const was = { nw: ag.nw, srole: ag.srole, cons: ag.cons }; ag.nw = true; ag.srole = 'agent'; ag.cons = 95; S.card.forEach(m => { m.agent = ag.id; }); readsAgent += count(); linesAgent += lines(S);
+      E.agentReads(S).forEach((r, i) => { const m = S.card[i]; if (!r || m.mt !== '1v1') return; r.lines.filter(l => /crowd will be behind/.test(l.t)).forEach(l => { crowd++; const [a, b] = m.sides.map(s => S.w[s[0]]), f = x => x.ovr + (x.align === 'F' ? 6 : 0), fav = f(a) >= f(b) ? a : b; if (l.t.indexOf(fav.name) < 0) crowdWrong++; }); }); S.card.forEach(m => { delete m.agent; }); ag.nw = was.nw; ag.srole = was.srole; ag.cons = was.cons;
       const rep = run(S); if (!rep) S.qi++; } }
   ok('read', 'a read is never wrong', wrong === 0 && readsHead + readsAgent + readsEye > 20, wrong + ' wrong of ' + (readsHead + readsAgent + readsEye));
   ok('read', 'the company’s own agent reads a few matches, a good agent on the match reads most', readsHead < n * 0.5 && readsAgent > readsHead * 1.8 && readsAgent > n * 0.55, readsHead + ' against ' + readsAgent + ' of ' + n);
+  ok('read', 'a good agent on the match says more than the company agent', linesAgent > linesHead, linesHead + ' lines against ' + linesAgent);
+  ok('read', 'a sharp agent says who the crowd will be behind, and is never wrong about it', crowd > 0 && crowdWrong === 0, crowd + ' reads, ' + crowdWrong + ' wrong');
   ok('read', 'Eye for talent makes the same agent read more', readsEye > readsHead, readsHead + ' to ' + readsEye);
 }
 

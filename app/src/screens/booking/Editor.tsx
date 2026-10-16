@@ -1,7 +1,7 @@
 /* The editor for the match selected on the run sheet: who is in it, the finish you call, the title, the rules.
    It sits in the pane beside the sheet, so it is compact: short labels beside their boxes, and one line of advice. */
 import { E, W } from '../../engine';
-import { G, me } from '../../store';
+import { G, me, cash } from '../../store';
 import { Sel, Field, Opt, Data, teamName } from '../../kit';
 import { Match, onCard, setMatch, sideText } from './run';
 
@@ -42,6 +42,12 @@ export function Editor(p: { m: Match; i: number }) {
       {teams.length > 0 && <Field label="Or a team"><Sel id={'m' + i + '-t' + k} t="team" d={{ i, s: k }} value="" onChange={pickTeam(k, 'm' + i + '-t' + k)}
         options={[['', 'Regular teams'], ...teams.map((t: any) => [t.id, teamName(t)] as Opt)]} /></Field>}
     </div>)}
+    {m.mt === 'br' && <Field label="Entrants"><Sel id={'m' + i + '-size'} t="br-size" d={{ i }} value={m.sides.length} onChange={v => setMatch(i, 'size', v)}
+      options={Array.from({ length: E.MT.br.max - E.MT.br.min + 1 }, (_, k) => { const n = k + E.MT.br.min; return [n, n + ' entrants · ' + 2 * n + ' min'] as Opt; })} /></Field>}
+    {m.mt === 'br' && !m.title && <Field label="Prize"><Sel id={'m' + i + '-shot'} t="br-shot" d={{ i }} value={m.shot ? '1' : ''} onChange={v => setMatch(i, 'shot', v)}
+      options={[['', 'Bragging rights only'], ['1', 'The winner earns a title match']]} /></Field>}
+    {m.mt === 'br' && <Field label="Surprise"><Sel id={'m' + i + '-surp'} t="br-surp" d={{ i }} value={m.surp ? '1' : ''} onChange={v => setMatch(i, 'surp', v)}
+      options={[['', 'No surprise entrant'], ['1', 'Hold a spot for a surprise' + (E.brSurpriseInfo(S, m).n ? ' · about ' + cash(E.brSurpriseInfo(S, m).fee) : ' · nobody free')]]} /></Field>}
     <Field label="Finish"><Sel id={'m' + i + '-call'} t="call" d={{ i }} value={m.call} onChange={v => setMatch(i, 'call', v)} options={calls} /></Field>
     <Field label="Ending"><Sel id={'m' + i + '-how'} t="how" d={{ i }} value={m.how || ''} onChange={v => setMatch(i, 'how', v)}
       options={[['', 'Let the story decide'], ...Object.keys(E.HOWS).filter(k => !(['cheap', 'dq', 'co'].includes(k) && E.hasRule(S, 'clean'))).map(k => [k, E.HOWS[k].n] as Opt)]} /></Field>

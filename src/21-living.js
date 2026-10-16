@@ -6,8 +6,8 @@
    theirs by the same rules. An old save's feud simply goes on: its length and planned week are ignored.
    Nothing here uses rnd(S). */
 var LIVE_FIZZ=20,LIVE_FIZZW=4,LIVE_SHELF=10,LIVE_FLAT=12;
-function isBigWeek(w){return cal(w).wom===4;}
-function nextBigFrom(w){while(!isBigWeek(w))w++;return w;}
+function isBigWeek(w,S){var c=cal(w);if(c.wom!==4)return false;if(S&&S.promos&&S.promos[S.player]&&typeof evList==='function'&&evList(S,S.promos[S.player])[c.month].t==='dark')return false;return true;}   // a dark month on your calendar has no big night
+function nextBigFrom(w,S){for(var n=0;n<60&&!isBigWeek(w,S);n++)w++;return w;}
 /** Give a feud what a living story needs, if it has none yet. Safe to call any time. */
 function feudPlan(S,f){
   if(!f)return f;
@@ -42,7 +42,7 @@ function rivalRipe(S,f){
 function feudDue(S,f,show){
   feudPlan(S,f);var big=!!(show&&show.big);
   if(f.promo===S.player){
-    if(f.endAt!=null&&S.week>=f.endAt&&(big||!isBigWeek(f.endAt)))return 'end';
+    if(f.endAt!=null&&S.week>=f.endAt&&(big||!isBigWeek(f.endAt,S)))return 'end';
     return big?'chapter':null;
   }
   if(big&&rivalRipe(S,f))return 'end';
@@ -130,14 +130,17 @@ E.feudBook=function(S){return (S.feudBook||[]).slice();};
 function feudEmber(S,f){var k=rkey(f.a[0],f.b[0]);(S.embers||(S.embers={}))[k]={w:S.week,h:Math.round(f.heat),n:((S.embers[k]||{}).n||0)+1};
   Object.keys(S.embers).forEach(function(x){if(S.week-S.embers[x].w>48)delete S.embers[x];});}
 function emberOf(S,a,b){var e=S.embers&&S.embers[rkey(a,b)];return e&&S.week-e.w<=48?e:null;}
+/** Whose home town the big night in week w is in, if either of the two's: their name and the city. */
+function feudHomeAt(S,P,f,w){if(f.promo!==S.player)return null;var st=roadAhead(S,P,12).filter(function(a){return a.w===w&&a.show.big;})[0];if(!st)return null;
+  var best=null,bk=0;[f.a[0],f.b[0]].forEach(function(id){var x=S.w[id],k=homeWeight(S,x,st.city);if(k>bk){bk=k;best=x;}});return best?{name:best.name,city:st.city}:null;}
 /** Everything the screens need about one story. */
 E.feudPlan=function(S,f){
   feudPlan(S,f);var P=S.promos[f.promo]||S.promos[S.player];
-  var at=function(w){return isBigWeek(w)?P.name+' '+dbOf(S).events[cal(w).month]:(P.shows[0]?P.shows[0].name:'a weekly show');};
+  var at=function(w){return isBigWeek(w,S)?P.name+' '+evName(S,P,cal(w).month):(P.shows[0]?P.shows[0].name:'a weekly show');};
   var ph=feudPhase(S,f);
   return {heat:Math.round(f.heat),fresh:Math.round(f.fresh),peak:Math.round(f.peak),phase:ph,pn:PHASE_N[ph],weeks:S.week-f.start,hist:f.hist.slice(-12),
     end:f.endAt!=null?{w:f.endAt,in:f.endAt-S.week,at:at(f.endAt)}:null,ripe:f.heat>=65&&f.fresh<50,lead:feudLead(f),rounds:f.chd||0,act:feudActCal(S,f),
-    next:{w:nextBigFrom(S.week),in:nextBigFrom(S.week)-S.week,at:at(nextBigFrom(S.week))}};
+    next:{w:nextBigFrom(S.week,S),in:nextBigFrom(S.week,S)-S.week,at:at(nextBigFrom(S.week,S))},home:feudHomeAt(S,P,f,f.endAt!=null?f.endAt:nextBigFrom(S.week,S))};
 };
 E.feudPhase=function(S,f){return PHASE_N[feudPhase(S,f)];};
 E.feudEmber=function(S,f){feudEmber(S,f);};
@@ -149,7 +152,7 @@ E.heatStory=function(S,f,amt){heatUp(S,f,amt,null);return f.heat;};
 E.storyPlanEnd=function(S,id,w){
   var f=S.feuds.filter(function(x){return x.id===id&&!x.res&&x.promo===S.player;})[0];if(!f)return {ok:false,msg:'That feud is already over.'};
   if(w===null){delete f.endAt;return {ok:true,msg:'No ending planned. '+feudLabel(S,f)+' goes on as long as you want it to.'};}
-  f.endAt=w==null?nextBigFrom(S.week):w;var p=E.feudPlan(S,f);
+  f.endAt=w==null?nextBigFrom(S.week,S):w;var p=E.feudPlan(S,f);
   return {ok:true,msg:feudLabel(S,f)+' ends at '+p.end.at+(p.end.in<=0?', this week':(p.end.in===1?', next week':', in '+p.end.in+' weeks'))+'. Book the two of them on that show.'};
 };
 /** Mark a match on the card as the end of the story between its two sides (or take the mark off). */
@@ -210,10 +213,10 @@ E.storyStart=function(S,a,b){
 
 /* ---------- the season: every story's heat over the last twelve weeks, and what the state of each says ---------- */
 var SEASON_N=12;
-function bigShort(S,w){return dbOf(S).events[cal(w).month];}
+function bigShort(S,w){return evName(S,S.promos[S.player],cal(w).month);}
 E.season=function(S){
   var P=S.promos[S.player],weeks=[],L=activeFeuds(S).filter(function(f){return f.promo===P.id;});
-  for(var i=SEASON_N-1;i>=0;i--){var w=S.week-i,c=cal(Math.max(1,w));weeks.push({w:w,wom:c.wom,month:MONTHS[c.month],big:isBigWeek(Math.max(1,w)),ev:isBigWeek(Math.max(1,w))?bigShort(S,Math.max(1,w)):null});}
+  for(var i=SEASON_N-1;i>=0;i--){var w=S.week-i,c=cal(Math.max(1,w));weeks.push({w:w,wom:c.wom,month:MONTHS[c.month],big:isBigWeek(Math.max(1,w),S),ev:isBigWeek(Math.max(1,w),S)?bigShort(S,Math.max(1,w)):null});}
   L.forEach(function(f){feudPlan(S,f);});
   L.sort(function(a,b){return b.heat-a.heat;});
   var stories=L.map(function(f){var p=E.feudPlan(S,f),h=f.hist.slice(-(SEASON_N-1)).concat([Math.round(f.heat)]),pad=SEASON_N-h.length,cells=[];
@@ -224,6 +227,7 @@ E.season=function(S){
   L.forEach(function(f){var p=E.feudPlan(S,f);
     if(p.ripe)says.push({k:'ripe',t:feudLabel(S,f)+' is ripe. End it at '+p.next.at+'.',id:f.id});
     else if(p.phase==='stale')says.push({k:'tired',t:feudLabel(S,f)+' is going stale. Twist it or rest it.',id:f.id});
+    var sA=S.w[f.a[0]],sB=S.w[f.b[0]];if(f.a.length===1&&f.b.length===1&&sA&&sB&&sA.align===sB.align&&!f.turned&&(p.phase==='stale'||(f.matches||0)>=2))says.push({k:'turn',t:feudLabel(S,f)+' is '+(sA.align==='F'?'hero against hero':'villain against villain')+'. A turn would tell the crowd who to cheer.',id:f.id});
     if(f.fz>=1)says.push({k:'cold',t:feudLabel(S,f)+' is not catching on. Heat it or lose it.',id:f.id});
     if((f.matches||0)>=3&&Math.min(f.aw||0,f.bw||0)===0)says.push({k:'lop',t:feudLabel(S,f)+' is one-sided. The other side needs a win.',id:f.id});
     if(S.week-f.start>=24&&f.heat>=60)says.push({k:'good',t:feudLabel(S,f)+' has run '+(S.week-f.start)+' weeks and is still hot.',id:f.id});
@@ -238,9 +242,9 @@ E.season=function(S){
   var top=rosterOf(S,P.id).filter(function(w){return !w.nw&&!w.rt;}).sort(function(a,b){return b.ovr-a.ovr;}).slice(0,12);
   var idle=top.filter(function(w){return !who[w.id]&&!recent[w.id]&&!(w.inj>0);});
   if(idle.length)says.push({k:'idle',t:idle.length+' of your top 12 '+(idle.length===1?'has':'have')+' had no feud in four weeks.',ids:idle.slice(0,8).map(function(w){return w.id;})});
-  var nb=nextBigFrom(S.week),ending=L.filter(function(f){return f.endAt===nb;});
+  var nb=nextBigFrom(S.week,S),ending=L.filter(function(f){return f.endAt===nb;});
   if(ending.length>=3)says.push({k:'crowd',t:ending.length+' feuds end at '+bigShort(S,nb)+'. Not all of them can be the main event.',w0:nb});
-  var ORD={late:0,hurt:1,cold:2,ripe:3,clash:4,lop:5,tired:6,crowd:7,idle:8,good:9};says.sort(function(a,b){return ORD[a.k]-ORD[b.k];});
+  var ORD={late:0,hurt:1,cold:2,ripe:3,clash:4,lop:5,tired:6,turn:7,crowd:8,idle:9,good:10};says.sort(function(a,b){return ORD[a.k]-ORD[b.k];});
   return {week:S.week,weeks:weeks,stories:stories,says:says,next:{w:nb,in:nb-S.week,ev:bigShort(S,nb),n:ending.length}};
 };
 /** End a story now, with no match. No payoff, and both of them remember. */
@@ -258,7 +262,17 @@ E.tonight=function(S){
   var P=S.promos[S.player],show=S.queue&&S.queue[S.qi],card=S.card||[],stakes=[],checks=[];
   if(!show)return {stakes:stakes,checks:checks};
   var nm=function(ids){return ids.map(function(id){return S.w[id]?S.w[id].name:'';}).join(' & ');};
-  (S.quests||[]).filter(function(q){return q.due-S.week<=1;}).slice(0,2).forEach(function(q){var qt=q.text.replace(/^[^:]+: /,'');stakes.push({k:'due',t:qt.charAt(0).toUpperCase()+qt.slice(1)});});
+  (S.quests||[]).filter(function(q){return q.due-S.week<=1;}).slice(0,2).forEach(function(q){var w=q.w!=null?S.w[q.w]:null,qt;
+    if(q.type==='shot'&&w)qt=w.name+' is owed a title shot.';
+    else if(q.type==='win'&&w)qt=w.name+' is owed a win.';
+    else{qt=q.text.replace(/^[^:]+: /,'');qt=qt.charAt(0).toUpperCase()+qt.slice(1);}
+    stakes.push({k:'due',t:qt});});
+  // a company living down a lost war (src/81-invasion.js)
+  if(show.big&&P.weak&&P.weak>S.week)stakes.push({k:'weak',t:'You lost the war badly: big nights draw a little less until '+cal(P.weak).label+'.'});
+  // the network's taste (src/89-networks.js)
+  if(typeof netCardClash==='function'){var nc=netCardClash(S,show,card);if(nc)stakes.push({k:'net',t:nc});}
+  // a rival on the same night (src/88-nights.js)
+  if(!show.big&&typeof nightRivals==='function'){var nr=nightRivals(S,show);if(nr.length){var W=(S.nw||{})[nr[0]&&nightOf(airRec(P,show.id)||show)]||null;stakes.push({k:'war',t:'Up against '+nr[0].n+' ('+nr[0].co+') tonight'+(W?': won '+W.w+', lost '+W.l+'.':'.')});}}
   card.forEach(function(m){if(!m||!m.sides||m.sides.length<2||m.sides.some(function(s){return !s.length||s.some(function(id){return id==null;});}))return;
     var f=E.matchFeud(S,m);if(m.end&&f)stakes.push({k:'story',t:feudLabel(S,f)+' ends tonight.'});
     else if(f)stakes.push({k:'story',t:feudLabel(S,f)+': '+PHASE_N[feudPhase(S,f)].toLowerCase()+', heat '+Math.round(f.heat)+'.'});
@@ -288,8 +302,13 @@ E.storyActs=function(S,id){
   var bb=f.bb!=null&&S.week<=f.bb;
   out.push({id:'shelf',n:bb?'Bring it back':'Back burner',cost:0,d:bb?'Back on the shows from this week.':'Set it aside for four weeks: it rests and freshens, cools slowly, and will not fizzle. For an injury, or a story that needs a breather.',can:true,why:''});
   out.push({id:'title',n:t?'Put the '+t.name+' on it':'Put a title on it',cost:0,d:'The next match between them is for the belt. It freshens the story and raises the heat.',can:!!t&&!f.title,why:f.title?'A title is already on the line.':(!t?'Neither of them holds a singles title.':'')});
+  // a turn inside the story: when both are on the same side, one of them crosses over and the crowd finally knows who to cheer
+  var same=A.align===B.align,tn=same?storyTurner(A,B):null;
+  out.push({id:'turn',n:tn?'Turn '+tn.name:'A turn',cost:2,d:'One of them changes sides in the story. It gives the feud room again and gives the crowd someone to boo.',can:same&&!f.turned&&S.bp>=2,why:f.turned?'Somebody already turned in this story.':(!same?'They are already '+(A.align==='F'?'hero against villain':'villain against hero')+'.':(S.bp<2?'Takes 2 booking power.':''))});
   return out;
 };
+/** Who turns in a story between two on the same side: two heroes, the one less over goes bad; two villains, the one more over comes good. */
+function storyTurner(A,B){return A.align==='F'?(A.ovr<=B.ovr?A:B):(A.ovr>=B.ovr?A:B);}
 E.storyDo=function(S,id,act){
   var f=S.feuds.filter(function(x){return x.id===id&&!x.res&&x.promo===S.player;})[0];if(!f)return {ok:false,msg:'That feud is over.'};
   var a=E.storyActs(S,id).filter(function(x){return x.id===act;})[0];if(!a)return {ok:false,msg:'Nothing to do.'};if(!a.can)return {ok:false,msg:a.why||'Not now.'};
@@ -304,6 +323,9 @@ E.storyDo=function(S,id,act){
   else if(act==='title'){var t=null;P.titles.forEach(function(x){if(!t&&!x.tag&&x.holders.length&&(x.holders[0]===A.id||x.holders[0]===B.id))t=x;});
     f.title=t.id;f.tww=S.week;heatUp(S,f,5,'The '+t.name+' was put on the line');msg='The '+t.name+' is on the line in '+L+'. Book the match and the belt goes with it.';
     var ch=S.w[t.holders[0]],cl=ch===A?B:A;youRemember(S,cl,'titleshot','You gave me a title match against '+ch.name+'.',3);}
+  else if(act==='turn'){var tw=storyTurner(A,B),ot=tw===A?B:A;f.turned=S.week;turn(S,tw,'in the feud with '+ot.name);f.twist='turn';f.tww=S.week;
+    heatUp(S,f,8,tw.name+' turned on the story');relBump(S,tw.id,ot.id,{bond:-6});youRemember(S,tw,'turned','You turned me in the middle of my feud with '+ot.name+'.',tw.align==='H'?-1:2);
+    msg=tw.name+' turns '+(tw.align==='F'?'hero':'villain')+'. '+L+' finally has a side to cheer and a side to boo. The heat is '+Math.round(f.heat)+'.';}
   return {ok:true,msg:msg};
 };
 

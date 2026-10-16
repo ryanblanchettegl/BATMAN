@@ -132,23 +132,23 @@ function runSeg(S,P,show,ctx,sg,slot,opens){
     if(ov>a.ovr)addOvr(P,a,0.25);
     r=angle('Interview',(hasMouthpiece(S,a)?S.w[a.mgr].name+' does the talking for '+a.name+', and ':a.name+' takes the microphone and ')+(ov>=75?'has the crowd in the palm of a hand.':(ov>=55?'says what needed saying.':'loses the room.')),ov);
   }else if(sg.k==='callout'){
-    nf=!f;f=startFeud(S,P,b,a,24+ri(S,0,10),a.name+' called out '+b.name);
-    if(f&&!nf)heatUp(S,f,clamp((ov-50)/5,2,9)*hm,a.name+' called out '+b.name);
+    nf=!f;f=startFeud(S,P,b,a,24+ri(S,0,10),a.name+' called out '+b.name,{force:true});
+    if(f&&!nf)heatUp(S,f,clamp((ov-50)/5,2,9)*hm,a.name+' called out '+b.name,{force:true});
     r=angle('Promo',a.name+' calls out '+b.name+' by name'+(f?(nf?'. '+b.name+' answers from the stage. A new rivalry begins.':'. The feud gets hotter.'):'. The words hang in the air, and nothing more comes of it tonight.'),ov);
   }else if(sg.k==='words'){
     heatUp(S,f,clamp((ov-50)/4,2,10)*hm,a.name+' and '+b.name+' traded words');
     r=angle('Promo',a.name+' and '+b.name+' stand face to face with a microphone each. '+(ov>=72?'Every line draws blood.':'It gets personal.'),ov);
   }else if(sg.k==='challenge'){
-    var t=segTitleOf(S,P,show,b);nf=!f;f=startFeud(S,P,a,b,30,a.name+' challenged for the '+t.name,{title:t.id});
+    var t=segTitleOf(S,P,show,b);nf=!f;f=startFeud(S,P,a,b,30,a.name+' challenged for the '+t.name,{title:t.id,force:true});
     if(f&&!nf){if(!f.title)f.title=t.id;heatUp(S,f,6*hm,a.name+' challenged for the '+t.name);}
     r=angle('Challenge',a.name+' interrupts '+b.name+' and lays claim to the '+t.name+'.'+(f?'':' The champion laughs it off.'),ov);
   }else if(sg.k==='faceoff'){
-    nf=!f;f=startFeud(S,P,a,b,30,a.name+' and '+b.name+' faced off',a.align===b.align?{kind:'dream'}:{});
+    nf=!f;f=startFeud(S,P,a,b,30,a.name+' and '+b.name+' faced off',a.align===b.align?{kind:'dream',force:true}:{force:true});
     if(f&&!nf)heatUp(S,f,6*hm,a.name+' and '+b.name+' faced off');
     r=angle('Face-off',a.name+' and '+b.name+' cross paths on the stage. Neither backs down, and the crowd wants the match.',ov);
   }else if(sg.k==='ambush'){
-    nf=!f;f=startFeud(S,P,b,a,32+ri(S,0,8),a.name+' attacked '+b.name+' from behind');
-    if(f&&!nf)heatUp(S,f,12*hm,a.name+' attacked '+b.name+' from behind');
+    nf=!f;f=startFeud(S,P,b,a,32+ri(S,0,8),a.name+' attacked '+b.name+' from behind',{force:true});
+    if(f&&!nf)heatUp(S,f,12*hm,a.name+' attacked '+b.name+' from behind',{force:true});
     r=angle('Ambush',a.name+' attacks '+b.name+' from behind'+(a.align==='F'&&L.notes.some(function(x){return x[0]<0;})?'. The crowd does not know what to make of a hero doing that.':(nf&&f?'. A new rivalry begins.':'. This one is getting ugly.')),ov);
   }else if(sg.k==='brawl'){
     heatUp(S,f,clamp(10+(ov-60)/5,6,16)*hm,a.name+' and '+b.name+' brawled through the building');
@@ -156,13 +156,13 @@ function runSeg(S,P,show,ctx,sg,slot,opens){
     r=angle('Brawl',a.name+' and '+b.name+' fight through the crowd and out to the loading dock. Security pulls them apart.'+(hurt?' '+hurt.name+' comes out of it with a knock.':''),ov);
   }else if(sg.k==='save'){
     formTeam(S,P,a,b,8);
-    f=startFeud(S,P,a,c,20,c.name+' attacked '+a.name+'; '+b.name+' made the save');if(f&&f.a.indexOf(a.id)>=0&&f.a.length<2)f.a.push(b.id);
+    f=startFeud(S,P,a,c,20,c.name+' attacked '+a.name+'; '+b.name+' made the save',{force:true});if(f&&f.a.indexOf(a.id)>=0&&f.a.length<2)f.a.push(b.id);
     news(S,'story','New team: '+a.name+' & '+b.name+'.');
     r=angle('Save',c.name+' attacks '+a.name+' after an interview. '+b.name+' runs out to make the save, and the two shake hands. A new team is born.',ov);
   }else if(sg.k==='signing'){
     // the match is made for the next big event, and the story is set to end there (src/21-living.js)
-    heatUp(S,f,clamp(6+(ov-55)/6,3,12)*hm,a.name+' and '+b.name+' signed for their match');f.finale=true;var nb=nextBigFrom(S.week+(show.big?1:0));if(f.endAt==null)f.endAt=nb;
-    var tbl=ov>=62;r=angle('Contract signing',a.name+' and '+b.name+' sit across a table in the ring and sign for '+S.promos[f.promo].name+' '+dbOf(S).events[cal(nb).month]+'. '+(tbl?'The ink is barely dry when the table goes over.':'They sign, stare, and leave it there.'),ov);
+    heatUp(S,f,clamp(6+(ov-55)/6,3,12)*hm,a.name+' and '+b.name+' signed for their match');f.finale=true;var nb=nextBigFrom(S.week+(show.big?1:0),S);if(f.endAt==null)f.endAt=nb;
+    var tbl=ov>=62;r=angle('Contract signing',a.name+' and '+b.name+' sit across a table in the ring and sign for '+S.promos[f.promo].name+' '+evName(S,S.promos[f.promo],cal(nb).month)+'. '+(tbl?'The ink is barely dry when the table goes over.':'They sign, stare, and leave it there.'),ov);
   }else if(sg.k==='recap'){
     heatUp(S,f,3,'A video package told the story of '+a.name+' and '+b.name);
     r=angle('Video recap','A video package tells the story of '+a.name+' and '+b.name+': how it started, and what is at stake.',ov);

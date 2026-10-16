@@ -19,12 +19,16 @@ function Scouts() {
 /** The offer being made: wage, length, and the ways to learn more first. */
 function Offer(p: { w: W; ask: number }) {
   const S = G.S, st = rs(), w = p.w;
-  const send = () => act(() => { const r = E.sign(S, w.id, +st.wage || 0, +st.weeks || 48); say(r.msg, { err: !r.ok }); st.offer = null; });
+  if (st.clFor !== w.id) { st.clFor = w.id; st.cl = []; }
+  const C: any[] = E.clauses(S, w.id), on = (k: string) => (st.cl || []).indexOf(k) >= 0, save = C.filter(c => on(c.k)).reduce((a, c) => a + c.save, 0);
+  const send = () => act(() => { const r = E.sign(S, w.id, +st.wage || 0, +st.weeks || 48, st.cl || []); say(r.msg, { err: !r.ok }); st.offer = null; });
   return <Win title={'Offer to ' + w.name} area="side" t="mk-offer" tone="gold">
     <p class="muted">They are asking about {full(p.ask)} a week. A lowball ends talks for a month.</p>
     {/* the kit text box has no min or step, and the wage moves in fifties */}
     <label class="row mt1">Weekly wage <input type="number" id="offer-wage" class="wage" data-t="offer-wage" min={0} step={50} value={st.wage} onInput={e => { st.wage = (e.currentTarget as HTMLInputElement).value; }} /></label>
     <label class="row mt1">Length <Sel id="offer-weeks" t="offer-weeks" value={st.weeks} options={[['48', '48 weeks'], ['96', '96 weeks']]} onChange={v => view(() => { st.weeks = v; })} /></label>
+    {C.length ? <div class="mt1" data-t="offer-clauses"><p class="muted">They would like it in the contract:{save ? ' with these, about ' + full(p.ask - save) + ' a week.' : ''}</p>
+      <div class="row">{C.map(c => <Btn key={c.k} kind="sm" on={on(c.k)} t="offer-clause" d={{ k: c.k }} label={c.n + '. ' + c.d} onClick={() => view(() => { st.cl = on(c.k) ? (st.cl || []).filter(x => x !== c.k) : (st.cl || []).concat([c.k]); st.wage = String(p.ask - C.filter(x => (st.cl || []).indexOf(x.k) >= 0).reduce((a, x) => a + x.save, 0)); })}>{c.n}, saves {cash(c.save)}</Btn>)}</div></div> : null}
     <div class="row mt1"><Btn kind="go" t="sign" d={{ id: w.id }} onClick={send}>Send offer</Btn><Btn kind="sm" t="offer-cancel" onClick={() => view(() => { st.offer = null; })}>Cancel</Btn></div>
     <div class="row mt1"><Btn kind="sm" t="askroom" d={{ id: w.id }} onClick={() => showResult('Ask the room', E.askRoom(S, w.id).text)}>Ask the room</Btn>
       {!w.sc && <Btn kind="sm" t="scout" d={{ id: w.id }} onClick={() => sendScout(w.id)}>Scout first ({full(E.scoutInfo(S).cost)})</Btn>}</div>
@@ -34,10 +38,12 @@ function Offer(p: { w: W; ask: number }) {
 const SORTS: [string, string][] = [['ovr', 'Overness'], ['fit', 'Fit'], ['ask', 'Asking wage'], ['age', 'Youngest']];
 /** Each January's class of rookies: where they came from and what they might become. Pick a year to look back. */
 function ClassPanel() {
-  const S = G.S, yrs: number[] = E.classYears(S), cs = slice<{ y: number }>('class', () => ({ y: 0 }));
-  if (!yrs.length) return <Win title="The rookie class" area="side" t="mk-class"><p class="muted">The first class turns professional in January. Rookies arrive from five regions, and each region leans toward a style.</p></Win>;
+  const S = G.S, yrs: number[] = E.classYears(S), cs = slice<{ y: number }>('class', () => ({ y: 0 })), H: any[] = E.indieHot(S, 3);
+  const hot = H.length ? <div class="mb1" data-t="mk-indie"><p><b>Hot on the indies</b></p><ul class="list">{H.map(h => <li key={h.id}><span><Name w={S.w[h.id]} /> <span class="muted">{'·'} {h.n}{h.where ? ' (' + h.where + ')' : ''}, {h.k} weeks</span></span></li>)}</ul></div> : null;
+  if (!yrs.length) return <Win title="Rookies and the indies" area="side" t="mk-class">{hot}<p class="muted">The first class turns professional in January. Rookies arrive from five regions, and each region leans toward a style.</p></Win>;
   const y = yrs.indexOf(cs.y) >= 0 ? cs.y : yrs[0], R = E.classReport(S, y);
-  return <Win title="The rookie class" area="side" t="mk-class">
+  return <Win title="Rookies and the indies" area="side" t="mk-class">
+    {hot}
     <Field label="Class of"><Sel id="cls-y" t="cls-y" value={y} options={yrs.map(v => [v, 'Class of ' + v] as [number, string])} onChange={v => view(() => { cs.y = +v; })} /></Field>
     <p class="muted">{R.text}</p>
     <ul class="list mt1">{R.rows.slice(0, 5).map((r: any) => <li class="col"><span><Name w={r.w} /> <span class="muted">{'·'} {r.region}</span></span>
@@ -72,7 +78,7 @@ export function Market() {
             const ask = E.ask(S, w), locked = w.lock > S.week, can = E.canSign(S, w);
             return <tr key={w.id} class={st.offer === w.id ? 'on' : undefined}>
               <td><span class="nm">{w.name}</span></td>
-              <td>{w.promo === 'FA' ? (w.cut && S.promos[w.cut.from] ? 'Released by ' + S.promos[w.cut.from].name : 'Free agent') : S.promos[w.promo].name + ', ' + Math.max(0, w.con) + ' wk'}</td>
+              <td>{w.promo === 'FA' ? (w.cut && S.promos[w.cut.from] && S.week - (w.cut.w || 0) < 6 ? 'Released by ' + S.promos[w.cut.from].name : (E.indieOf(S, w.id) ? <span title={'Working dates for ' + E.indieOf(S, w.id).n}>{E.indieOf(S, w.id).n.split(' ').slice(0, 2).join(' ')}{E.indieOf(S, w.id).weeks >= 3 ? ', ' + E.indieOf(S, w.id).weeks + ' wk' : ''}</span> : 'Free agent')) : S.promos[w.promo].name + ', ' + Math.max(0, w.con) + ' wk'}</td>
               <td><Side w={w} /></td>
               <td>{E.STYLE_NAME[w.style] || ''}{w.rk ? <> <Tag kind="gold">Rookie</Tag></> : null}</td>
               <td class="r num">{w.age}</td><td class="r num">{Math.round(w.ovr)}</td>

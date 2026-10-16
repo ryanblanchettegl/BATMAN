@@ -1,0 +1,17 @@
+{
+ "id": "parody",
+ "name": "The Parody World",
+ "author": "EWF Wrestling Manager",
+ "version": "0.1",
+ "schema_version": 1,
+ "fictional": true,
+ "start_year": 2026,
+ "start_month": 10,
+ "free_agents": 24,
+ "description": "Every company and wrestler here is a parody: a joke about the business and the people in it, with changed names and no real logos. Its history runs from 2020 to the day the game begins. Any resemblance is the point of the joke.",
+ "disclaimer": "This is a work of parody. The companies and wrestlers in it are fictional and are not endorsed by, or affiliated with, any real promotion or person.",
+ "order": [
+  "ewe",
+  "wwc"
+ ]
+}

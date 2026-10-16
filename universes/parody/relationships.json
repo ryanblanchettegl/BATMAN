@@ -1,0 +1,570 @@
+[
+ {
+  "a": "rocco_rule",
+  "b": "hype_hopkins",
+  "type": "family",
+  "strength": 55,
+  "ring_chemistry": 8,
+  "note": "Cousins from the same wrestling dynasty. They fell out, made up, and fell out again over who is the real head of the family."
+ },
+ {
+  "a": "rocco_rule",
+  "b": "silent_sione",
+  "type": "family",
+  "strength": -40,
+  "ring_chemistry": 6,
+  "note": "Cousins. Sione tried to take the family over while Rocco was away and Rocco has not forgiven him."
+ },
+ {
+  "a": "silent_sione",
+  "b": "big_iosefa",
+  "type": "family",
+  "strength": 70,
+  "ring_chemistry": 8,
+  "note": "Cousins who run the new family together."
+ },
+ {
+  "a": "el_abuelo_enigma",
+  "b": "dirty_junior",
+  "type": "family",
+  "strength": -30,
+  "ring_chemistry": 7,
+  "note": "Father and son. The son turned on the father on live television and has been sorry ever since, mostly not."
+ },
+ {
+  "a": "brother_ladder",
+  "b": "brother_ladder_b",
+  "type": "family",
+  "strength": 90,
+  "ring_chemistry": 10,
+  "note": "Brothers who have climbed every ladder in the business together."
+ },
+ {
+  "a": "colt_highway",
+  "b": "gold_dust_darren",
+  "type": "family",
+  "strength": 65,
+  "ring_chemistry": 9,
+  "note": "Brothers, sons of the same dreaming legend. One went to the giant, one stayed with the upstart."
+ },
+ {
+  "a": "mitch_fawn",
+  "b": "nicky_fawn",
+  "type": "family",
+  "strength": 95,
+  "ring_chemistry": 10,
+  "note": "Brothers and partners for twenty years."
+ },
+ {
+  "a": "the_robe_collector",
+  "b": "carlotta_woo",
+  "type": "family",
+  "strength": 70,
+  "ring_chemistry": 6,
+  "note": "Father and daughter. She has won more than he did and he still takes the credit."
+ },
+ {
+  "a": "brick_breakwater",
+  "b": "big_tad_tsunami",
+  "type": "partners",
+  "strength": 40,
+  "ring_chemistry": 7,
+  "note": "Muscle for the Vision Board."
+ },
+ {
+  "a": "straightedge_stan",
+  "b": "velvet_visionary",
+  "type": "rivalry",
+  "strength": -80,
+  "ring_chemistry": 8,
+  "note": "They hate each other for real. Stan thinks the Visionary sold out; the Visionary thinks Stan never stopped whining."
+ },
+ {
+  "a": "straightedge_stan",
+  "b": "chairman_mcstrut",
+  "type": "dislike",
+  "strength": -95,
+  "ring_chemistry": 3,
+  "note": "Stan walked out on McStrut years ago and has said so in every promo since."
+ },
+ {
+  "a": "colt_highway",
+  "b": "rocco_rule",
+  "type": "rivalry",
+  "strength": -60,
+  "ring_chemistry": 9,
+  "note": "Colt finished his story by beating Rocco at WrestleMoney. Rocco wants the ending rewritten."
+ },
+ {
+  "a": "wilt_wellness",
+  "b": "sully_sweats",
+  "type": "rivalry",
+  "strength": -55,
+  "ring_chemistry": 8,
+  "note": "The general and the underdog: the best match of last year, and the bruises still show."
+ },
+ {
+  "a": "mama_morbid",
+  "b": "kumo_cloud",
+  "type": "rivalry",
+  "strength": -45,
+  "ring_chemistry": 9,
+  "note": "Former friends, now competing for the same title."
+ },
+ {
+  "a": "vendetta_viv",
+  "b": "dirty_junior",
+  "type": "partners",
+  "strength": 70,
+  "ring_chemistry": 7,
+  "note": "An on-screen couple that the crowd hates and the merchandise sells."
+ },
+ {
+  "a": "vendetta_viv",
+  "b": "mama_morbid",
+  "type": "rivalry",
+  "strength": -75,
+  "ring_chemistry": 8,
+  "note": "Viv stole Mama's title, Mama's boyfriend and Mama's entrance pose."
+ },
+ {
+  "a": "molly_omalley",
+  "b": "carlotta_woo",
+  "type": "rivalry",
+  "strength": -70,
+  "ring_chemistry": 9,
+  "note": "Two of the greatest of their generation who have fought each other in every building on earth."
+ },
+ {
+  "a": "tiara_orbit",
+  "b": "brielle_braidwhip",
+  "type": "rivalry",
+  "strength": -45,
+  "ring_chemistry": 7,
+  "note": "The new star and the old one. Neither will move over."
+ },
+ {
+  "a": "the_cerebral_shovel",
+  "b": "king_kayode",
+  "type": "mentor",
+  "strength": 50,
+  "ring_chemistry": 5,
+  "note": "The boss built NOT YET and treats King Kayode as his project."
+ },
+ {
+  "a": "the_cerebral_shovel",
+  "b": "chairman_mcstrut",
+  "type": "dislike",
+  "strength": -65,
+  "ring_chemistry": 4,
+  "note": "The son-in-law who took over the company and the man pushed out of it."
+ },
+ {
+  "a": "chad_champ",
+  "b": "rocco_rule",
+  "type": "rivalry",
+  "strength": -40,
+  "ring_chemistry": 8,
+  "note": "The old face of the company and the one who replaced him."
+ },
+ {
+  "a": "declan_demonne",
+  "b": "jp_punchbagan",
+  "type": "friendship",
+  "strength": 60,
+  "ring_chemistry": 7,
+  "note": "Irishmen in the same gang. Declan lets JP take the hits."
+ },
+ {
+  "a": "angus_robbedmore",
+  "b": "straightedge_stan",
+  "type": "rivalry",
+  "strength": -85,
+  "ring_chemistry": 8,
+  "note": "A real grudge. Angus says Stan cost him a title; Stan says Angus cost him a haircut."
+ },
+ {
+  "a": "vinny_venomson",
+  "b": "the_cerebral_shovel",
+  "type": "friendship",
+  "strength": 45,
+  "ring_chemistry": 7,
+  "note": "Old comrades from a famous faction."
+ },
+ {
+  "a": "rodeo_regret",
+  "b": "zed_zenith",
+  "type": "friendship",
+  "strength": 40,
+  "ring_chemistry": 10,
+  "note": "Best friends, then enemies, then friends again. They have wrestled each other in the best match of three different years."
+ },
+ {
+  "a": "rodeo_regret",
+  "b": "mitch_fawn",
+  "type": "friendship",
+  "strength": 25,
+  "ring_chemistry": 9,
+  "note": "Once in the same group, now cautious."
+ },
+ {
+  "a": "rodeo_regret",
+  "b": "detour_dante",
+  "type": "rivalry",
+  "strength": -85,
+  "ring_chemistry": 9,
+  "note": "Real heat. Dante came to Rodeo's home and Rodeo has never let it go."
+ },
+ {
+  "a": "rodeo_regret",
+  "b": "long_island_lux",
+  "type": "rivalry",
+  "strength": -70,
+  "ring_chemistry": 8,
+  "note": "Lux has been needling the cowboy for five years."
+ },
+ {
+  "a": "barbwire_burke",
+  "b": "rodeo_regret",
+  "type": "rivalry",
+  "strength": -60,
+  "ring_chemistry": 8,
+  "note": "Burke wants the title back and the cowboy out of the business."
+ },
+ {
+  "a": "zed_zenith",
+  "b": "reiji_ameda",
+  "type": "rivalry",
+  "strength": -50,
+  "ring_chemistry": 10,
+  "note": "Their matches in Japan made both of their names. They have never agreed who won the series."
+ },
+ {
+  "a": "billy_kestrel",
+  "b": "long_island_lux",
+  "type": "rivalry",
+  "strength": -65,
+  "ring_chemistry": 9,
+  "note": "Lux insults Billy's town; Billy keeps kicking Lux's head."
+ },
+ {
+  "a": "billy_kestrel",
+  "b": "kid_comet",
+  "type": "friendship",
+  "strength": 45,
+  "ring_chemistry": 10,
+  "note": "Training partners who keep stealing the show from each other."
+ },
+ {
+  "a": "spike_sharpe",
+  "b": "crispin_crate",
+  "type": "rivalry",
+  "strength": -60,
+  "ring_chemistry": 9,
+  "note": "Best friends and tag partners for decades, until Crispin betrayed him."
+ },
+ {
+  "a": "captain_thesaurus",
+  "b": "leather_jacket_jr",
+  "type": "mentor",
+  "strength": 25,
+  "ring_chemistry": 6,
+  "note": "The old man taught the kid to cheat, and the kid learned too well."
+ },
+ {
+  "a": "kale_kenway",
+  "b": "leather_jacket_jr",
+  "type": "mentor",
+  "strength": 60,
+  "ring_chemistry": 8,
+  "note": "The underdog trained the kid in the old ways."
+ },
+ {
+  "a": "barbwire_burke",
+  "b": "klaus_cuckoo",
+  "type": "partners",
+  "strength": 60,
+  "ring_chemistry": 8,
+  "note": "Leaders of the Hard Ride."
+ },
+ {
+  "a": "burt_bluecollar",
+  "b": "mitch_fawn",
+  "type": "rivalry",
+  "strength": -75,
+  "ring_chemistry": 10,
+  "note": "The Mustache Union and the Old Fawns have been fighting about how tag wrestling should be done for six years."
+ },
+ {
+  "a": "hollywood_hazel",
+  "b": "poppy_pinup",
+  "type": "rivalry",
+  "strength": -70,
+  "ring_chemistry": 9,
+  "note": "Hazel made Poppy a star, and Poppy stole the spotlight and the bathrobe."
+ },
+ {
+  "a": "coco_capital",
+  "b": "hollywood_hazel",
+  "type": "rivalry",
+  "strength": -50,
+  "ring_chemistry": 8,
+  "note": "Two divas, one spotlight."
+ },
+ {
+  "a": "kay_starchart",
+  "b": "wilma_warbler",
+  "type": "friendship",
+  "strength": 75,
+  "ring_chemistry": 9,
+  "note": "Best friends and tag partners who now want the same belt."
+ },
+ {
+  "a": "uncle_puppetstrings",
+  "b": "shinji_skyscraper",
+  "type": "mentor",
+  "strength": 50,
+  "ring_chemistry": 5,
+  "note": "Puppetstrings manages Shinji and takes half."
+ },
+ {
+  "a": "uncle_puppetstrings",
+  "b": "zed_zenith",
+  "type": "dislike",
+  "strength": -70,
+  "ring_chemistry": 5,
+  "note": "Puppetstrings betrayed Zed and turned his family against him."
+ },
+ {
+  "a": "tommy_spreadsheet",
+  "b": "long_island_lux",
+  "type": "dislike",
+  "strength": -30,
+  "ring_chemistry": 3,
+  "note": "The owner and his loudest star argue on social media every week."
+ },
+ {
+  "a": "ed_borough",
+  "b": "barbwire_burke",
+  "type": "rivalry",
+  "strength": -65,
+  "ring_chemistry": 8,
+  "note": "Old friends from the indies who now cannot stand each other."
+ },
+ {
+  "a": "el_forajido",
+  "b": "minerva_forever",
+  "type": "friendship",
+  "strength": 30,
+  "ring_chemistry": 5,
+  "note": "The brand's two champions, who carry it between them."
+ },
+ {
+  "a": "santo_santiago",
+  "b": "moose_mountain",
+  "type": "rivalry",
+  "strength": -60,
+  "ring_chemistry": 8,
+  "note": "The hometown saviour and the man who ran the place before he came home."
+ },
+ {
+  "a": "masha_meanslam",
+  "b": "tess_trouble",
+  "type": "rivalry",
+  "strength": -55,
+  "ring_chemistry": 8,
+  "note": "The two best women in the company, and neither will say it about the other."
+ },
+ {
+  "a": "believe_barnaby",
+  "b": "niles_nevermind",
+  "type": "rivalry",
+  "strength": -40,
+  "ring_chemistry": 7,
+  "note": "The crowd's favourite and the man who thinks the crowd is beneath him."
+ },
+ {
+  "a": "director_santo",
+  "b": "gail_goldstandard",
+  "type": "friendship",
+  "strength": 70,
+  "ring_chemistry": 5,
+  "note": "The two who run the place, mostly agreeing."
+ },
+ {
+  "a": "simon_submission",
+  "b": "sunny_ace",
+  "type": "rivalry",
+  "strength": -30,
+  "ring_chemistry": 9,
+  "note": "The ace retired before Simon could finish beating him."
+ },
+ {
+  "a": "simon_submission",
+  "b": "hiro_goto_again",
+  "type": "rivalry",
+  "strength": -40,
+  "ring_chemistry": 8,
+  "note": "Hiro waited fifteen years for the title; Simon took it off him in one."
+ },
+ {
+  "a": "wicked_wataru",
+  "b": "sakuma_cold",
+  "type": "partners",
+  "strength": 55,
+  "ring_chemistry": 6,
+  "note": "The leaders of the House of Evil."
+ },
+ {
+  "a": "haru_wave",
+  "b": "sunny_ace",
+  "type": "mentor",
+  "strength": 70,
+  "ring_chemistry": 7,
+  "note": "The retired ace trained the rock-and-roll rookie."
+ },
+ {
+  "a": "takeo_shogun",
+  "b": "haruki_hypersonic",
+  "type": "friendship",
+  "strength": 60,
+  "ring_chemistry": 9,
+  "note": "Stablemates who keep stealing each other's nights."
+ },
+ {
+  "a": "phoenix_fumika",
+  "b": "twinkle_mask",
+  "type": "rivalry",
+  "strength": -60,
+  "ring_chemistry": 10,
+  "note": "The phoenix and the star, the two aces of Supernova."
+ },
+ {
+  "a": "peach_menace",
+  "b": "phoenix_fumika",
+  "type": "dislike",
+  "strength": -50,
+  "ring_chemistry": 8,
+  "note": "Peach left Fumika's group and took half of it with her."
+ },
+ {
+  "a": "el_sagrado_celestial",
+  "b": "ultimo_soldado",
+  "type": "rivalry",
+  "strength": -70,
+  "ring_chemistry": 9,
+  "note": "The técnico and the rudo general, who have fought in the old arena for twenty years."
+ },
+ {
+  "a": "poseidon_viejo",
+  "b": "el_sagrado_celestial",
+  "type": "mentor",
+  "strength": 70,
+  "ring_chemistry": 8,
+  "note": "The old idol passed the torch to the new one."
+ },
+ {
+  "a": "hijo_del_drakkar",
+  "b": "el_senoron",
+  "type": "rivalry",
+  "strength": -55,
+  "ring_chemistry": 8,
+  "note": "The flyer and the big boss who came home to take his title."
+ },
+ {
+  "a": "payaso_siniestro",
+  "b": "el_hereje",
+  "type": "rivalry",
+  "strength": -60,
+  "ring_chemistry": 8,
+  "note": "The clown and the heretic have bled on each other in every bullring in Mexico."
+ },
+ {
+  "a": "kensei_kicker",
+  "b": "young_ace_kazuma",
+  "type": "rivalry",
+  "strength": -55,
+  "ring_chemistry": 9,
+  "note": "The rebel and the chosen one."
+ },
+ {
+  "a": "salt_chop_shiro",
+  "b": "genius_maestro",
+  "type": "friendship",
+  "strength": 50,
+  "ring_chemistry": 9,
+  "note": "Two veterans who built the company's reputation."
+ },
+ {
+  "a": "gutter_gary",
+  "b": "tremor_tommy",
+  "type": "rivalry",
+  "strength": -60,
+  "ring_chemistry": 8,
+  "note": "They have bled together more than any two men in the business."
+ },
+ {
+  "a": "bobby_balcony",
+  "b": "brad_dumpster",
+  "type": "friendship",
+  "strength": 60,
+  "ring_chemistry": 5,
+  "note": "The owner gave Bobby his own show; Bobby gave him a lot of headaches."
+ },
+ {
+  "a": "brother_bronzer",
+  "b": "mr_lastrites",
+  "type": "rivalry",
+  "strength": -50,
+  "ring_chemistry": 6,
+  "note": "Their old feud is a famous bad match that both have spent thirty years blaming on the other."
+ },
+ {
+  "a": "tepid_tex_granite",
+  "b": "chairman_mcstrut",
+  "type": "dislike",
+  "strength": -90,
+  "ring_chemistry": 9,
+  "note": "The most famous feud the giant ever had: the worker against the boss."
+ },
+ {
+  "a": "tepid_tex_granite",
+  "b": "the_electrifying_eyebrow",
+  "type": "rivalry",
+  "strength": -50,
+  "ring_chemistry": 10,
+  "note": "They main-evented the giant's biggest shows three times."
+ },
+ {
+  "a": "the_robe_collector",
+  "b": "showstopping_preacher",
+  "type": "friendship",
+  "strength": 70,
+  "ring_chemistry": 9,
+  "note": "The preacher retired the robe man, and they still cry about it together."
+ },
+ {
+  "a": "hardcore_uncle_mittens",
+  "b": "mr_lastrites",
+  "type": "rivalry",
+  "strength": -40,
+  "ring_chemistry": 8,
+  "note": "The night Mittens fell off the cell is still the most famous night in the giant's history."
+ },
+ {
+  "a": "olympic_ollie",
+  "b": "tepid_tex_granite",
+  "type": "friendship",
+  "strength": 40,
+  "ring_chemistry": 8,
+  "note": "Old rivals who now tell the stories together."
+ },
+ {
+  "a": "stratosphere_tess",
+  "b": "lady_lightning_rod",
+  "type": "rivalry",
+  "strength": 20,
+  "ring_chemistry": 9,
+  "note": "The two who made the women's division matter: rivals then, friends now."
+ }
+]

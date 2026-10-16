@@ -1,0 +1,1092 @@
+{
+ "promotion": {
+  "id": "call",
+  "model": "tradition",
+  "name": "CALL",
+  "full_name": "Consejo Antiguo de Lucha Libre",
+  "blurb": "The oldest wrestling company in the world, nearly a hundred years old, running the same old arena every Friday since before television. Masks are sacred, the técnicos are good, the rudos are bad, and that is that.",
+  "owner": {
+   "name": "The Founding Family (Fourth Generation)",
+   "style": "heroes",
+   "roots": "tradition",
+   "pledge": "stable"
+  },
+  "staff": {
+   "road_agent": "Maestro del Ring",
+   "head_writer": "El Consejo"
+  },
+  "announcers": [
+   "Don Narrador",
+   "Voz de la Arena"
+  ],
+  "cities": [
+   "Mexico City",
+   "Guadalajara",
+   "Puebla",
+   "Monterrey",
+   "Acapulco",
+   "Cuernavaca",
+   "Toluca",
+   "Pachuca"
+  ],
+  "cash": 11000000,
+  "popularity": 54,
+  "flagship_month": 9,
+  "tv_slot": 1,
+  "production_level": 1,
+  "events": [
+   {
+    "n": "Mania Fantasiosa",
+    "t": "tent"
+   },
+   {
+    "n": "Homenaje a Tres Leyendas",
+    "t": "arena"
+   },
+   {
+    "n": "Alternativa Grande",
+    "t": "tourn"
+   },
+   {
+    "n": "Arena Vieja Gala",
+    "t": "arena"
+   },
+   {
+    "n": "Noche de Máscaras",
+    "t": "gimmick"
+   },
+   {
+    "n": "Copa de Plata Vieja",
+    "t": "tourn"
+   },
+   {
+    "n": "Copa del Consejo",
+    "t": "tourn"
+   },
+   {
+    "n": "Noche de Cabelleras",
+    "t": "gimmick"
+   },
+   {
+    "n": "Aniversario Número Muchos",
+    "t": "flag"
+   },
+   {
+    "n": "Gran Prix de Siempre",
+    "t": "rumble"
+   },
+   {
+    "n": "Día de los Rudos",
+    "t": "arena"
+   },
+   {
+    "n": "Juicio Casi Final",
+    "t": "gimmick"
+   }
+  ]
+ },
+ "shows": [
+  {
+   "id": "call_friday",
+   "name": "Viernes en la Arena Vieja",
+   "weight": 1
+  }
+ ],
+ "titles": [
+  {
+   "id": "call_heavy",
+   "name": "CALL World Heavyweight Championship",
+   "gender": "M",
+   "level": 3,
+   "holder_ids": [
+    "ultimo_soldado"
+   ]
+  },
+  {
+   "id": "call_middle",
+   "name": "CALL World Middleweight Championship",
+   "gender": "M",
+   "level": 2,
+   "holder_ids": [
+    "el_sagrado_celestial"
+   ]
+  },
+  {
+   "id": "call_historic",
+   "name": "Historic Welterweight-ish Championship",
+   "gender": "M",
+   "level": 1,
+   "holder_ids": [
+    "monarca_jr"
+   ]
+  },
+  {
+   "id": "call_women",
+   "name": "CALL World Women's Championship",
+   "gender": "F",
+   "level": 3,
+   "holder_ids": [
+    "la_duquesa"
+   ]
+  },
+  {
+   "id": "call_trios",
+   "name": "CALL World Trios Championship",
+   "gender": "M",
+   "level": 1,
+   "holder_ids": []
+  }
+ ],
+ "roster": [
+  {
+   "id": "el_sagrado_celestial",
+   "ring_name": "El Sagrado Celestial",
+   "gender": "M",
+   "disposition": "face",
+   "style": "flyer",
+   "age": 42,
+   "hometown": "Mexico City",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 84,
+    "technical": 85,
+    "aerial": 85,
+    "stamina": 79,
+    "charisma": 93,
+    "promo_skill": 85,
+    "overness": 91,
+    "star_quality": 97,
+    "potential": 89,
+    "durability": 64,
+    "consistency": 91
+   },
+   "gimmick_category": "The Holy Masked Idol",
+   "gimmick": "The most famous mask in Mexico, worn by a man the whole country believes can fly, because he can.",
+   "catchphrase": "¡Por la gente!",
+   "peak_years": [
+    28,
+    38
+   ],
+   "debut_year": 2005,
+   "finisher": "The Holy Rana",
+   "finisher_description": "A spinning, rolling sunset flip into a pin.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 206250.0,
+    "weeks_left": 66,
+    "push": "main_eventer"
+   },
+   "finisher_move": "Rolling hurricanrana",
+   "signatures": [
+    {
+     "name": "Halo",
+     "move": "Tope con hilo"
+    },
+    {
+     "name": "Blessing",
+     "move": "Tilt-a-whirl armbar"
+    }
+   ]
+  },
+  {
+   "id": "poseidon_viejo",
+   "ring_name": "Poseidón Viejo",
+   "gender": "M",
+   "disposition": "face",
+   "style": "technician",
+   "age": 63,
+   "hometown": "Mexico City",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 72,
+    "technical": 89,
+    "aerial": 31,
+    "stamina": 28,
+    "charisma": 72,
+    "promo_skill": 78,
+    "overness": 77,
+    "star_quality": 75,
+    "potential": 82,
+    "durability": 18,
+    "consistency": 88
+   },
+   "gimmick_category": "The Idol of the Children (Retired-ish)",
+   "gimmick": "The oldest técnico still wrestling, who has never lost his mask and never will.",
+   "catchphrase": "El mar no se rinde.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 1995,
+   "finisher": "The Undertow Backbreaker",
+   "finisher_description": "A torture rack backbreaker.",
+   "legend": true,
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 70000,
+    "weeks_left": 28,
+    "push": "upper_midcarder"
+   },
+   "finisher_move": "Torture rack",
+   "signatures": [
+    {
+     "name": "Tide",
+     "move": "Dropkick"
+    },
+    {
+     "name": "Trident",
+     "move": "Armbar"
+    }
+   ]
+  },
+  {
+   "id": "ultimo_soldado",
+   "ring_name": "Último Soldado",
+   "gender": "M",
+   "disposition": "heel",
+   "style": "brawler",
+   "age": 52,
+   "hometown": "Gómez Palacio",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 94,
+    "technical": 75,
+    "aerial": 46,
+    "stamina": 51,
+    "charisma": 81,
+    "promo_skill": 66,
+    "overness": 83,
+    "star_quality": 81,
+    "potential": 84,
+    "durability": 51,
+    "consistency": 84
+   },
+   "gimmick_category": "The Last Soldier",
+   "gimmick": "The general of the rudos, who leads his army into every war and leaves every referee confused.",
+   "catchphrase": "Firmes. Y luego a la lona.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 1995,
+   "finisher": "The Final Order",
+   "finisher_description": "A sit-out powerbomb from the top rope.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 165000,
+    "weeks_left": 98,
+    "push": "main_eventer"
+   },
+   "finisher_move": "Super powerbomb",
+   "signatures": [
+    {
+     "name": "Drill",
+     "move": "Lariat"
+    },
+    {
+     "name": "Salute",
+     "move": "Running knee"
+    }
+   ]
+  },
+  {
+   "id": "planeador_jr",
+   "ring_name": "Planeador Jr.",
+   "gender": "M",
+   "disposition": "heel",
+   "style": "flyer",
+   "age": 43,
+   "hometown": "Mexico City",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 72,
+    "technical": 86,
+    "aerial": 76,
+    "stamina": 77,
+    "charisma": 73,
+    "promo_skill": 83,
+    "overness": 80,
+    "star_quality": 76,
+    "potential": 81,
+    "durability": 68,
+    "consistency": 86
+   },
+   "gimmick_category": "The Glider",
+   "gimmick": "A rudo who glides off the top rope like a paper aeroplane with a grudge.",
+   "catchphrase": "¡Despegue!",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2004,
+   "finisher": "The Paper Plane",
+   "finisher_description": "A spinning shooting star press.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 70000,
+    "weeks_left": 36,
+    "push": "upper_midcarder"
+   },
+   "finisher_move": "Spinning shooting star press",
+   "signatures": [
+    {
+     "name": "Wingtip",
+     "move": "Superkick"
+    },
+    {
+     "name": "Landing",
+     "move": "Senton"
+    }
+   ]
+  },
+  {
+   "id": "inframundo",
+   "ring_name": "Inframundo",
+   "gender": "M",
+   "disposition": "heel",
+   "style": "brawler",
+   "age": 48,
+   "hometown": "Mexico City",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 82,
+    "technical": 73,
+    "aerial": 40,
+    "stamina": 49,
+    "charisma": 63,
+    "promo_skill": 69,
+    "overness": 65,
+    "star_quality": 71,
+    "potential": 70,
+    "durability": 60,
+    "consistency": 83
+   },
+   "gimmick_category": "The Underworld",
+   "gimmick": "A masked rudo who has come up from somewhere below and wants to take you back with him.",
+   "catchphrase": "Bienvenido abajo.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 1999,
+   "finisher": "The Descent",
+   "finisher_description": "A piledriver.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 38000,
+    "weeks_left": 120,
+    "push": "midcarder"
+   },
+   "finisher_move": "Piledriver",
+   "signatures": [
+    {
+     "name": "Brimstone",
+     "move": "Lariat"
+    },
+    {
+     "name": "Pit",
+     "move": "Spinebuster"
+    }
+   ]
+  },
+  {
+   "id": "cruzado",
+   "ring_name": "El Cruzado",
+   "gender": "M",
+   "disposition": "heel",
+   "style": "brawler",
+   "age": 33,
+   "hometown": "Mexico City",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 76,
+    "technical": 70,
+    "aerial": 62,
+    "stamina": 72,
+    "charisma": 69,
+    "promo_skill": 55,
+    "overness": 67,
+    "star_quality": 71,
+    "potential": 69,
+    "durability": 80,
+    "consistency": 76
+   },
+   "gimmick_category": "The Crusader",
+   "gimmick": "A rudo in armour-like gear who fights every match like a holy war over a parking space.",
+   "catchphrase": "Por la orden.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2014,
+   "finisher": "The Sword",
+   "finisher_description": "A spear.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 38000,
+    "weeks_left": 22,
+    "push": "midcarder"
+   },
+   "finisher_move": "Spear",
+   "signatures": [
+    {
+     "name": "Shield",
+     "move": "Running knee"
+    },
+    {
+     "name": "Siege",
+     "move": "Powerbomb"
+    }
+   ]
+  },
+  {
+   "id": "coloso",
+   "ring_name": "El Coloso",
+   "gender": "M",
+   "disposition": "face",
+   "style": "flyer",
+   "age": 35,
+   "hometown": "Mexico City",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 68,
+    "technical": 74,
+    "aerial": 80,
+    "stamina": 70,
+    "charisma": 64,
+    "promo_skill": 71,
+    "overness": 71,
+    "star_quality": 62,
+    "potential": 72,
+    "durability": 73,
+    "consistency": 73
+   },
+   "gimmick_category": "The Colossus",
+   "gimmick": "A tall técnico who flies like someone half his size.",
+   "catchphrase": "¡Gigante y libre!",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2012,
+   "finisher": "The Colossus Dive",
+   "finisher_description": "A springboard moonsault.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 70000,
+    "weeks_left": 82,
+    "push": "upper_midcarder"
+   },
+   "finisher_move": "Springboard moonsault",
+   "signatures": [
+    {
+     "name": "Footing",
+     "move": "Dropkick"
+    },
+    {
+     "name": "Statue",
+     "move": "Powerslam"
+    }
+   ]
+  },
+  {
+   "id": "monarca_jr",
+   "ring_name": "Monarca Jr.",
+   "gender": "M",
+   "disposition": "face",
+   "style": "flyer",
+   "age": 26,
+   "hometown": "Mexico City",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 71,
+    "technical": 74,
+    "aerial": 84,
+    "stamina": 73,
+    "charisma": 64,
+    "promo_skill": 59,
+    "overness": 69,
+    "star_quality": 69,
+    "potential": 85,
+    "durability": 80,
+    "consistency": 80
+   },
+   "gimmick_category": "The Young Monarch",
+   "gimmick": "A third-generation flyer from a royal wrestling family, crowned before he could walk.",
+   "catchphrase": "Nací para esto.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2021,
+   "finisher": "The Royal Rana",
+   "finisher_description": "A rolling hurricanrana.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 70000,
+    "weeks_left": 52,
+    "push": "upper_midcarder"
+   },
+   "finisher_move": "Hurricanrana",
+   "signatures": [
+    {
+     "name": "Crown",
+     "move": "Tope"
+    },
+    {
+     "name": "Sceptre",
+     "move": "Springboard kick"
+    }
+   ]
+  },
+  {
+   "id": "el_nigromante",
+   "ring_name": "El Nigromante",
+   "gender": "M",
+   "disposition": "heel",
+   "style": "technician",
+   "age": 37,
+   "hometown": "Mexico City",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 72,
+    "technical": 95,
+    "aerial": 80,
+    "stamina": 86,
+    "charisma": 80,
+    "promo_skill": 79,
+    "overness": 78,
+    "star_quality": 75,
+    "potential": 80,
+    "durability": 84,
+    "consistency": 77
+   },
+   "gimmick_category": "The Necromancer",
+   "gimmick": "A technician who ties people into submissions that look like spells.",
+   "catchphrase": "Abracadabra. Rindete.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2010,
+   "finisher": "The Hex Lock",
+   "finisher_description": "A twisted leg submission.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 70000,
+    "weeks_left": 78,
+    "push": "upper_midcarder"
+   },
+   "finisher_move": "Leg submission",
+   "signatures": [
+    {
+     "name": "Grimoire",
+     "move": "Armbar"
+    },
+    {
+     "name": "Curse",
+     "move": "Backbreaker"
+    }
+   ]
+  },
+  {
+   "id": "troglodita",
+   "ring_name": "Troglodita",
+   "gender": "M",
+   "disposition": "heel",
+   "style": "brawler",
+   "age": 38,
+   "hometown": "Mexico City",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 83,
+    "technical": 67,
+    "aerial": 65,
+    "stamina": 70,
+    "charisma": 71,
+    "promo_skill": 70,
+    "overness": 70,
+    "star_quality": 73,
+    "potential": 72,
+    "durability": 73,
+    "consistency": 82
+   },
+   "gimmick_category": "The Caveman",
+   "gimmick": "A wild-haired caveman who climbs the ring posts and screams at the moon.",
+   "catchphrase": "¡UGH!",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2009,
+   "finisher": "The Cave Drop",
+   "finisher_description": "A top-rope splash.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 38000,
+    "weeks_left": 102,
+    "push": "midcarder"
+   },
+   "finisher_move": "Diving splash",
+   "signatures": [
+    {
+     "name": "Club",
+     "move": "Clothesline"
+    },
+    {
+     "name": "Cave Bite",
+     "move": "Bite"
+    }
+   ]
+  },
+  {
+   "id": "estrella_jr",
+   "ring_name": "Estrella Jr.",
+   "gender": "M",
+   "disposition": "face",
+   "style": "flyer",
+   "age": 31,
+   "hometown": "Mexico City",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 60,
+    "technical": 75,
+    "aerial": 88,
+    "stamina": 72,
+    "charisma": 64,
+    "promo_skill": 66,
+    "overness": 65,
+    "star_quality": 65,
+    "potential": 71,
+    "durability": 68,
+    "consistency": 73
+   },
+   "gimmick_category": "The Rising Star",
+   "gimmick": "A son of a legend who shines brightest on Friday nights.",
+   "catchphrase": "¡Brilla!",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2016,
+   "finisher": "The Star Rana",
+   "finisher_description": "A hurricanrana.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 38000,
+    "weeks_left": 62,
+    "push": "midcarder"
+   },
+   "finisher_move": "Hurricanrana",
+   "signatures": [
+    {
+     "name": "Twinkle",
+     "move": "Dropkick"
+    },
+    {
+     "name": "Supernova",
+     "move": "Tope"
+    }
+   ]
+  },
+  {
+   "id": "bombardero_jr",
+   "ring_name": "Bombardero Jr.",
+   "gender": "M",
+   "disposition": "face",
+   "style": "flyer",
+   "age": 41,
+   "hometown": "Mexico City",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 61,
+    "technical": 70,
+    "aerial": 83,
+    "stamina": 74,
+    "charisma": 70,
+    "promo_skill": 60,
+    "overness": 71,
+    "star_quality": 65,
+    "potential": 67,
+    "durability": 68,
+    "consistency": 75
+   },
+   "gimmick_category": "The Dive Bomber",
+   "gimmick": "A técnico who dives out of the ring like a bomber over a target.",
+   "catchphrase": "¡Bombas!",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2006,
+   "finisher": "The Air Raid",
+   "finisher_description": "A shooting star press.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 38000,
+    "weeks_left": 48,
+    "push": "midcarder"
+   },
+   "finisher_move": "Shooting star press",
+   "signatures": [
+    {
+     "name": "Siren",
+     "move": "Tope"
+    },
+    {
+     "name": "Payload",
+     "move": "Splash"
+    }
+   ]
+  },
+  {
+   "id": "la_jaguara",
+   "ring_name": "La Jaguara",
+   "gender": "F",
+   "disposition": "heel",
+   "style": "brawler",
+   "age": 29,
+   "hometown": "Mexico City",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 77,
+    "technical": 64,
+    "aerial": 62,
+    "stamina": 73,
+    "charisma": 72,
+    "promo_skill": 53,
+    "overness": 71,
+    "star_quality": 65,
+    "potential": 71,
+    "durability": 78,
+    "consistency": 77
+   },
+   "gimmick_category": "The Jaguar",
+   "gimmick": "A rudo who prowls the ring and pounces from the turnbuckle.",
+   "catchphrase": "Grrr.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2018,
+   "finisher": "The Pounce",
+   "finisher_description": "A diving crossbody.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 38000,
+    "weeks_left": 118,
+    "push": "midcarder"
+   },
+   "finisher_move": "Diving crossbody",
+   "signatures": [
+    {
+     "name": "Claw",
+     "move": "Rake"
+    },
+    {
+     "name": "Prowl",
+     "move": "Lariat"
+    }
+   ]
+  },
+  {
+   "id": "el_relojero",
+   "ring_name": "El Relojero",
+   "gender": "M",
+   "disposition": "heel",
+   "style": "technician",
+   "age": 45,
+   "hometown": "Mexico City",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 63,
+    "technical": 70,
+    "aerial": 43,
+    "stamina": 55,
+    "charisma": 53,
+    "promo_skill": 42,
+    "overness": 59,
+    "star_quality": 51,
+    "potential": 53,
+    "durability": 69,
+    "consistency": 72
+   },
+   "gimmick_category": "The Watchmaker",
+   "gimmick": "A precise old rudo who times every hold to the second and taps his watch at the referee.",
+   "catchphrase": "Se acabó el tiempo.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2002,
+   "finisher": "The Clock Stop",
+   "finisher_description": "A cross armbar.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 22000,
+    "weeks_left": 30,
+    "push": "lower_midcarder"
+   },
+   "finisher_move": "Cross armbar",
+   "signatures": [
+    {
+     "name": "Tick",
+     "move": "Backbreaker"
+    },
+    {
+     "name": "Tock",
+     "move": "Armbar"
+    }
+   ]
+  },
+  {
+   "id": "la_duquesa",
+   "ring_name": "La Duquesa",
+   "gender": "F",
+   "disposition": "heel",
+   "style": "technician",
+   "age": 32,
+   "hometown": "Mexico City",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 74,
+    "technical": 95,
+    "aerial": 83,
+    "stamina": 90,
+    "charisma": 82,
+    "promo_skill": 71,
+    "overness": 78,
+    "star_quality": 82,
+    "potential": 84,
+    "durability": 82,
+    "consistency": 83
+   },
+   "gimmick_category": "The Duchess",
+   "gimmick": "An elegant rudo who treats the ring like her estate and opponents like staff.",
+   "catchphrase": "Arrodíllate.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2015,
+   "finisher": "The Coronet",
+   "finisher_description": "A spinning neckbreaker.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 165000,
+    "weeks_left": 54,
+    "push": "main_eventer"
+   },
+   "finisher_move": "Spinning neckbreaker",
+   "signatures": [
+    {
+     "name": "Fan Slap",
+     "move": "Slap"
+    },
+    {
+     "name": "Estate",
+     "move": "Armbar"
+    }
+   ]
+  },
+  {
+   "id": "llovizna",
+   "ring_name": "Llovizna",
+   "gender": "F",
+   "disposition": "face",
+   "style": "flyer",
+   "age": 30,
+   "hometown": "Mexico City",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 70,
+    "technical": 74,
+    "aerial": 80,
+    "stamina": 70,
+    "charisma": 70,
+    "promo_skill": 61,
+    "overness": 64,
+    "star_quality": 67,
+    "potential": 74,
+    "durability": 73,
+    "consistency": 79
+   },
+   "gimmick_category": "The Gentle Rain",
+   "gimmick": "A técnica who falls on people from great heights, gently, but often.",
+   "catchphrase": "Cae la lluvia.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2017,
+   "finisher": "The Rainfall",
+   "finisher_description": "A moonsault.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 70000,
+    "weeks_left": 76,
+    "push": "upper_midcarder"
+   },
+   "finisher_move": "Moonsault",
+   "signatures": [
+    {
+     "name": "Puddle",
+     "move": "Hurricanrana"
+    },
+    {
+     "name": "Storm",
+     "move": "Tope"
+    }
+   ]
+  },
+  {
+   "id": "demeter",
+   "ring_name": "Deméter",
+   "gender": "F",
+   "disposition": "heel",
+   "style": "brawler",
+   "age": 33,
+   "hometown": "Mexico City",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 78,
+    "technical": 73,
+    "aerial": 63,
+    "stamina": 69,
+    "charisma": 67,
+    "promo_skill": 53,
+    "overness": 69,
+    "star_quality": 66,
+    "potential": 72,
+    "durability": 76,
+    "consistency": 74
+   },
+   "gimmick_category": "The Harvest Goddess",
+   "gimmick": "A goddess of the harvest who reaps opponents and plants them in the mat.",
+   "catchphrase": "Cosecha.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2014,
+   "finisher": "The Harvest",
+   "finisher_description": "A lifting powerbomb.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 70000,
+    "weeks_left": 32,
+    "push": "upper_midcarder"
+   },
+   "finisher_move": "Powerbomb",
+   "signatures": [
+    {
+     "name": "Sickle",
+     "move": "Lariat"
+    },
+    {
+     "name": "Seed",
+     "move": "Spinebuster"
+    }
+   ]
+  },
+  {
+   "id": "apeles",
+   "ring_name": "Apeles",
+   "gender": "F",
+   "disposition": "face",
+   "style": "all_rounder",
+   "age": 33,
+   "hometown": "Mexico City",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 70,
+    "technical": 77,
+    "aerial": 79,
+    "stamina": 81,
+    "charisma": 63,
+    "promo_skill": 66,
+    "overness": 68,
+    "star_quality": 74,
+    "potential": 68,
+    "durability": 68,
+    "consistency": 82
+   },
+   "gimmick_category": "The Painter",
+   "gimmick": "A técnica who paints her face before every match and paints the canvas with her rivals after.",
+   "catchphrase": "Mi obra maestra.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2014,
+   "finisher": "The Brushstroke",
+   "finisher_description": "A spinning heel kick.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 70000,
+    "weeks_left": 88,
+    "push": "upper_midcarder"
+   },
+   "finisher_move": "Spinning heel kick",
+   "signatures": [
+    {
+     "name": "Canvas",
+     "move": "German suplex"
+    },
+    {
+     "name": "Palette",
+     "move": "Hurricanrana"
+    }
+   ]
+  }
+ ],
+ "teams": [
+  {
+   "id": "call_los_soldados",
+   "name": "Los Soldados de la Guerra",
+   "kind": "stable",
+   "member_ids": [
+    "ultimo_soldado",
+    "inframundo",
+    "cruzado"
+   ],
+   "leader_id": "ultimo_soldado"
+  }
+ ]
+}

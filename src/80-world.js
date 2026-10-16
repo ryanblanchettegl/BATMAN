@@ -53,7 +53,7 @@ E.FED_SIZE=FED_SIZE;E.FED_REGION=FED_REGION;
 
 /* ---------- career records: the shared bones for a booking game and a career mode ----------
    Every wrestler carries a milestone log and a stat line per year, whoever books them. */
-function mile(S,w,k,t){if(S.cal||!w)return;var L=w.log||(w.log=[]);L.push({w:S.week,k:k,t:t});if(L.length>24)L.splice(1,1);}
+function mile(S,w,k,t){if(S.cal||!w)return;var L=w.log||(w.log=[]);L.push({w:S.week,k:k,t:t});if(L.length>16)L.splice(1,1);}
 function ystat(S,w){var y=cal(S.week).year,Y=w.ys||(w.ys={});return Y[y]||(Y[y]=[0,0,0,0,0,0,0]);}   // matches, wins, losses, draws, best match, main events, titles won
 POST.push(function(ctx){
   var S=ctx.S,r=ctx.res,P=ctx.P;if(S.cal)return;
@@ -244,7 +244,7 @@ function startXf(S,pid,kind){
   var wom=cal(S.week).wom,until;
   if(kind==='war'){until=S.week+7;until+=4-cal(until).wom;}else until=S.week+(4-wom)+(wom===4&&S.qi>=S.queue.length?4:0);
   S.xf={kind:kind,with:pid,start:S.week,until:until,guests:guests,sc:[0,0],n:0};
-  news(S,'world',kind==='war'?RV.name+' and '+P.name+' are at war: '+guests.map(function(id){return S.w[id].name;}).join(', ')+' have crossed the line.':P.name+' and '+RV.name+' will share a supershow at '+P.name+' '+dbOf(S).events[cal(until).month]+'.');
+  news(S,'world',kind==='war'?RV.name+' and '+P.name+' are at war: '+guests.map(function(id){return S.w[id].name;}).join(', ')+' have crossed the line.':P.name+' and '+RV.name+' will share a supershow at '+P.name+' '+evName(S,P,cal(until).month)+'.');
 }
 E.xfPropose=function(S,pid,kind){
   var why=E.xfCan(S,pid);if(why)return {ok:false,msg:why};
@@ -352,7 +352,8 @@ function netPosts(S,P,show,rep){
   var pr=rep.segs.filter(function(s){return s.rub;})[0];
   if(pr){var pd=pr.ov-rep.exp;if(pd>=5)add('casual',1,pick(S,['That opening promo from '+pr.who+'. Chills.',pr.who+' on the microphone to open the show. More of that.']));else if(pd<-8)add('smark',-1,pick(S,['The opening promo died in front of a live audience.','Somebody take the microphone away from '+pr.who+'.']));}
   if(d>=4)add('under',1,'Best show in months. Tell your friends.');else if(d<=-4)add('under',-1,'I defend this company every week and they give me that.');
-  if(rep.sellout)add('under',1,'I was there. Could not hear myself think. Sold out and it sounded like it.');
+  if(rep.sellout)add('under',1,rep.soRun>=3?'That is '+rep.soRun+' sell-outs in a row. Try getting a ticket for the next one.':'I was there. Could not hear myself think. Sold out and it sounded like it.');
+  else if(rep.cold)add('under',-1,'Freezing out tonight. Half my section stayed home, and I do not blame them.');
   // five posts at most, one per poster, in a shuffled order
   for(var i=out.length-1;i>0;i--){var j=Math.floor(rnd(S)*(i+1)),t=out[i];out[i]=out[j];out[j]=t;}
   return boardTouch(S,ms,out.slice(0,5).map(function(p){return {u:fanFor(S,p.k,used),t:p.t,s:p.s};}),used);

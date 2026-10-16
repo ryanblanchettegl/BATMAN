@@ -95,8 +95,12 @@ var GR_CHAT={
     {t:'#chat_new#',if:function(c){return !!c.champ;},w:3},
     {t:'#chat_fhot#',if:function(c){return !!c.feud&&c.fheat>=70&&!c.fend;},w:2},
     {t:'#chat_fold#',if:function(c){return !!c.feud&&c.fstale;},w:2},
-    {t:'#chat_fend#',if:function(c){return !!c.feud&&c.fend;},w:3}
+    {t:'#chat_fend#',if:function(c){return !!c.feud&&c.fend;},w:3},
+    {t:'#chat_heel#',if:function(c){return !!c.turn&&c.heel;},w:4},
+    {t:'#chat_face#',if:function(c){return !!c.turn&&!c.heel;},w:4}
   ],
+  chat_heel:['{turn} turned on us!!!','i KNEW {turn} was going bad. called it','{turn} is dead to me','{turn} as a villain is going to be so good','why {turn} WHY'],
+  chat_face:['{turn} is one of the good guys now??','{turn} turning good was overdue','not buying the new {turn}. give it a month','cheering for {turn} feels weird lol','{turn} finally sees the light'],
   chat_fhot:['{feud} is the best thing on tv right now','i need {feud} to never end','{feud}!!! this is what wrestling is about'],
   chat_fold:['how is {feud} STILL going','end {feud} already please','{feud} again?? zzz'],
   chat_fend:['so thats the end of {feud}. what a run','{feud} is over and i am not ok','cant believe they ended {feud} like that'],

@@ -1,7 +1,7 @@
 /* ---------- the week ---------- */
 function weekShows(S,P,w){
   var c=cal(w==null?S.week:w),out=P.shows.map(function(sh){return {id:sh.id,name:sh.name,brand:sh.brand||null,mult:sh.mult};});
-  if(c.wom===4)out.push({id:'big',big:true,flag:c.month===P.flagship,brand:null,name:P.name+' '+dbOf(S).events[c.month],rule:(dbOf(S).rules&&dbOf(S).rules[c.month])||null});
+  if(c.wom===4&&evList(S,P)[c.month].t!=='dark')out.push({id:'big',big:true,flag:c.month===P.flagship,brand:null,name:P.name+' '+evName(S,P,c.month),rule:evRule(S,P,c.month),ty:evList(S,P)[c.month].t});
   return out;
 }
 function startWeek(S){var P=S.promos[S.player];S.queue=weekShows(S,P);S.qi=0;S.card=[];grantBP(S);S.inbox=S.inbox.filter(function(e){return !e.done;});genEvents(S);}
@@ -20,10 +20,12 @@ function joinCompany(S,w,P,wage,weeks){
 }
 function settle(S,P){
   var mine=P.id===S.player,sp=0;if(mine)S.sponsors.forEach(function(x){sp+=x.pay;});
-  var adv=Math.round(ADV_C[P.adv]*P.inc0),camp=campCost(P),med=medCost(P),trv=travelCost(P);
+  var adv=Math.round(ADV_C[P.adv]*P.inc0)+(mine?evSpendCost(P):0),camp=campCost(P),med=medCost(P),trv=travelCost(P);
   var L=P.led,merch=merchWeek(S,P),wages=wagesWeek(S,P),inc=L.tv+L.gate+L.ppv+L.bonus+merch+sp,over=P.fixed+P.varRate*(inc-sp),exp=wages+L.prod+over+adv+camp+med+trv;var fnc=mine?financeCost(S,P,inc-exp):0;exp+=fnc;
-  var row={w:S.week,spons:sp,adv:adv,camp:camp,med:med,trv:trv,fin:fnc,tv:Math.round(L.tv),gate:Math.round(L.gate),ppv:Math.round(L.ppv),bonus:Math.round(L.bonus),merch:Math.round(merch),wages:Math.round(wages),prod:Math.round(L.prod),over:Math.round(over),inc:Math.round(inc),exp:Math.round(exp),net:Math.round(inc-exp),image:r1(P.image)};
-  P.cash+=row.net;row.cash=Math.round(P.cash);P.hist.push(row);if(P.hist.length>60)P.hist.shift();
+  // a publicly traded company pays its shareholders out of a week well above the board's target (NEXT.md 12.2)
+  var dv=0;if(P.model==='corporate'&&P.net>0&&inc-exp>P.net*1.2){dv=Math.round((inc-exp-P.net*1.2)*0.6);exp+=dv;}
+  var row={w:S.week,div:dv,spons:sp,adv:adv,camp:camp,med:med,trv:trv,fin:fnc,tv:Math.round(L.tv),gate:Math.round(L.gate),ppv:Math.round(L.ppv),bonus:Math.round(L.bonus),merch:Math.round(merch),wages:Math.round(wages),prod:Math.round(L.prod),over:Math.round(over),inc:Math.round(inc),exp:Math.round(exp),net:Math.round(inc-exp),image:r1(P.image)};
+  P.cash+=row.net;row.cash=Math.round(P.cash);P.hist.push(row);var hcap=mine?60:12;while(P.hist.length>hcap)P.hist.shift();
   P.led={tv:0,gate:0,ppv:0,bonus:0,prod:0};
   return row;
 }
@@ -162,7 +164,7 @@ function genEvents(S){
   if(cal(S.week).wom===4&&want<1)want=1;
   for(i=0;i<types.length&&made<want;i++){var ev=EV[types[i]](S,P,R);if(ev){pushEv(S,ev);made++;}}
 }
-function renewAsk(S,w){return Math.round(wageFor(w.ovr,S.promos[S.player])*(1.05+(70-w.morale)/200)*talkDiscount(S)*pledgeRenew(S)/50)*50;}
+function renewAsk(S,w){return Math.round(wageFor(w.ovr,S.promos[S.player])*(1.05+(70-w.morale)/200)*talkDiscount(S)*pledgeRenew(S)*(S.pw10&&S.pw10.indexOf(w.id)>=0?1.08:1)/50)*50;}
 E.resolveEvent=function(S,id,choice){
   var ev=null;S.inbox.forEach(function(e){if(e.id===id)ev=e;});if(!ev||ev.done)return null;
   var P=S.promos[S.player],w=ev.w!=null?S.w[ev.w]:null,o=ev.o!=null?S.w[ev.o]:null,res='',roll;

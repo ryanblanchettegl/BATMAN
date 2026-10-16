@@ -117,6 +117,15 @@ export function ShowsTab() {
         <p class="muted mt2">A company runs every one of its shows each week. Smaller shows draw less and count for less.</p>
       </> : <p class="empty">Add a company first.</p>}
     </Panel>
+    {pid ? (() => { const pr = pkg.promotions.find((x: any) => x.id === pid), own = (m: number) => (pr.events || []).find((e: any) => e.month === m) || {};
+      const kinds = Object.keys(E.EV_TYPES).filter(k => k !== 'flag').map(k => [k, E.EV_TYPES[k].n] as Opt);
+      return <Panel cls="mb4" title={pr.name + ': its own big events'}>
+        <p class="muted mb2">Name a month for this company alone, and choose what kind of night it is. Left empty, it uses the world's name below. The flagship month keeps its kind.</p>
+        <ul class="list">{E.MONTHS.map((mn: string, i: number) => { const e = own(i + 1); return <li class="col" key={'p' + mn}><div class="editor plain">
+          <Field label={mn}><input type="text" value={e.name || ''} maxLength={28} placeholder={(ev(i + 1) || {}).name || mn + ' Showcase'} {...dataAttrs('ed-pev-name', { v: i + 1 })} onInput={x => edit(() => { E.edPromoEvent(pkg, pid, i + 1, { name: (x.currentTarget as HTMLInputElement).value }); })} /></Field>
+          <Field label="Kind of night"><Sel t="ed-pev-type" d={{ v: i + 1 }} value={e.type || 'arena'} options={kinds} onChange={v => edit(() => { E.edPromoEvent(pkg, pid, i + 1, { type: v }); })} /></Field>
+        </div></li>; })}</ul>
+      </Panel>; })() : null}
     <Panel cls="mb4" title="The big events of the year">
       <p class="muted mb2">One big event a month, shared by every company in the world. Leave a month empty and it is called the Showcase. A rule changes how that night plays.</p>
       <ul class="list">{E.MONTHS.map((mn: string, i: number) => { const e = ev(i + 1) || {}; return <li class="col" key={mn}><div class="editor plain">

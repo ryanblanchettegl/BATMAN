@@ -128,5 +128,14 @@ const spare = (S, n) => E.rosterOf(S, S.player).filter(w => !w.nw && !all(S).som
   const w = W[0], m0 = w.morale; w.morale = Math.max(0, m0 - 20); ok('d3', 'a mood that has dropped since the show says how far', E.dossier(S, w.id).mood.d === Math.round(w.morale) - S.moodAt.m[w.id] && E.dossier(S, w.id).mood.d < 0, E.dossier(S, w.id).mood.d);
 }
 
+/* a story that is ripe: one of them comes to your door to ask for its ending on the next big night */
+{
+  const S = E.newGame(E.universe().promotions[1].id, 3, { name: 'R' }); S.bp = 10; S.lcd = {};
+  const R = E.storyPeople(S).filter(w => w.g === 'M' && !w.n && !w.hurt), r = E.storyStart(S, R[2].id, R[5].id), f = S.feuds.find(x => x.id === r.id); f.heat = 80; f.fresh = 30;
+  const a = E.people(S).rooms.flatMap(x => x.people).find(p => p.k === 'askend');
+  ok('e1', 'one of a ripe story comes in to ask for its ending', !!a && /end the story/.test(a.why), a && a.why);
+  if (a) { const bp = S.bp, d = E.peopleDo(S, a.id, 'end_yes'); ok('e2', 'saying yes plans the ending on the next big night, for free', d.ok && f.endAt != null && S.bp === bp, d.msg); }
+}
+
 if (fails.length) { console.log('FAILED: ' + fails.length); process.exit(1); }
 console.log('test-people: all passed');

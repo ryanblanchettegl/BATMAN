@@ -4,7 +4,7 @@ function dbOf(S){return (S&&S.db)||DB;}
 var MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
 var STYLE = {B:[6,-12,-10,0],T:[-8,8,-6,2],H:[-14,-6,10,3],P:[8,-14,-16,-8],A:[0,0,-2,0],S:[4,0,-4,0],E:[0,-6,-6,-4]};
 var STYLE_NAME = {B:'Brawler',T:'Technician',H:'High flyer',P:'Powerhouse',A:'All-rounder',S:'Striker',E:'Entertainer'};
-var MT = {'1v1':{n:'Singles',sides:2,per:1},tag:{n:'Tag team',sides:2,per:2},'3way':{n:'Triple threat',sides:3,per:1},'4way':{n:'Four-way',sides:4,per:1},'6man':{n:'Six-man tag',sides:2,per:3},br:{n:'Battle royal',sides:8,per:1}};
+var MT = {'1v1':{n:'Singles',sides:2,per:1},tag:{n:'Tag team',sides:2,per:2},'3way':{n:'Triple threat',sides:3,per:1},'4way':{n:'Four-way',sides:4,per:1},'6man':{n:'Six-man tag',sides:2,per:3},br:{n:'Battle royal',sides:8,per:1,min:6,max:30}};
 var STIP = {
   std:{n:'Standard',w:null,heat:0,inj:1},
   hardcore:{n:'Hardcore',w:[0.7,0.1,0.2],heat:4,inj:2.2,hc:0.45},
@@ -171,7 +171,7 @@ function buildPromo(S,d,byName){
     var P={id:d.id,name:d.name,blurb:d.blurb,cash:d.cash,cash0:d.cash,image:d.image,image0:d.image,wq:d.wq,angles:d.angles,style:(d.owner&&d.owner.style)||'stars',staff:d.staff||{agent:'The road agent',writer:'The head writer'},wageMult:d.wageMult,tvRate:d.tvRate,prod:d.prod,net:d.net,flagship:d.flagship,
       prodLvl:d.prodLvl==null?2:d.prodLvl,prod0:d.prodLvl==null?2:d.prodLvl,risk:d.risk==null?1:d.risk,risk0:d.risk==null?1:d.risk,tix:1,adv:0,slot:d.slot==null?1:d.slot,slot0:d.slot==null?1:d.slot,camp:d.image>=60?2:1,med:d.image>=80?3:(d.image>=60?2:(d.image>=45?1:0)),starB:{},ann:(d.announcers||['The play-by-play man','The colour man']).slice(),cities:(d.cities||['the city']).slice(),brands:d.brands?JSON.parse(JSON.stringify(d.brands)):null,shows:JSON.parse(JSON.stringify(d.shows)),titles:[],hist:[],led:{tv:0,gate:0,ppv:0,bonus:0,prod:0},base:{},mainB:{},trend:0,neg:0,fixed:0,varRate:0,last:null};
     d.titles.forEach(function(t){P.titles.push({id:t.id,name:t.name,brand:t.brand||null,g:t.g,lvl:t.lvl,tag:!!t.tag,holders:t.holders.map(function(n){return byName[n];}).filter(function(x){return x!==undefined;}),prestige:t.lvl===3?85:(t.lvl===2?68:52),since:1,last:1,defs:0});});
-    if(d.full)P.full=d.full;if(d.owner)P.owner=d.owner;if(d.media)P.media=d.media;if(d.model&&MODELS[d.model]&&d.model!=='classic')P.model=d.model;if(d.logo&&typeof d.logo==='object')P.logo=JSON.parse(JSON.stringify(d.logo));S.promos[P.id]=P;S.order.push(P.id);if(d.draft)draftRoster(S,P,d);
+    if(d.full)P.full=d.full;if(d.owner)P.owner=d.owner;if(d.media)P.media=d.media;if(d.model&&MODELS[d.model]&&d.model!=='classic')P.model=d.model;if(d.events)P.evIn=d.events;if(d.logo&&typeof d.logo==='object')P.logo=JSON.parse(JSON.stringify(d.logo));S.promos[P.id]=P;S.order.push(P.id);if(d.draft)draftRoster(S,P,d);
     (d.teams||[]).forEach(function(tm){var a=byName[tm[0]],b=byName[tm[1]];if(a===undefined||b===undefined||S.w[a].promo!==P.id||S.w[b].promo!==P.id)return;var t=formTeam(S,P,S.w[a],S.w[b],tm[2]!=null?clamp(tm[2],0,100):35+Math.round(h01(tm[0]+tm[1])*50));if(tm[3])t.chem=clamp(tm[3],-10,10);if(tm[4])t.name=tm[4];});
   return P;
 }
@@ -223,9 +223,9 @@ function partnerOf(S,w){var t=teamOf(S,w);if(!t)return null;return S.w[t.m[0]===
 /* ---------- money model ---------- */
 function showMult(show){return show.big?1:(show.mult||1);}
 function viewersK(P,show,qf){return 2200*Math.pow(P.image/100,3)*showMult(show)*qf;}
-function demand(P,show,hype){return (show.big?60000*(show.flag?1.7:1):20000*showMult(show))*Math.pow(P.image/100,3)*hype;}
-function ticket(P,show){return (15+P.image*0.85)*(show.big?1.6:1);}
-function buysK(P,show,hype){return 700*Math.pow(P.image/100,4)*hype*(show.flag?1.8:1);}
+function demand(P,show,hype){return (show.big?60000*(show.flag?1.7:1)*evTy(show).cap:20000*showMult(show))*Math.pow(P.image/100,3)*hype;}
+function ticket(P,show){return (15+P.image*0.85)*(show.big?1.6*evTy(show).price:1);}
+function buysK(P,show,hype){return 700*Math.pow(P.image/100,4)*hype*(show.flag?1.8:1)*(show.big?evTy(show).buys:1);}
 function capFor(d){for(var i=0;i<CAPS.length;i++)if(CAPS[i]>=d)return CAPS[i];return CAPS[CAPS.length-1];}
 function merchWeek(S,P){var r=rosterOf(S,P.id).map(function(w){return w.ovr;}).sort(function(a,b){return b-a;}).slice(0,10);return 2.5e6*Math.pow(P.image/100,3)*Math.pow(avg(r)/100,2)*mixOf(P).merch*(1+catchBoost(S,P))+linesWeek(S,P);}
 function wagesWeek(S,P){var s=0;S.w.forEach(function(w){if(w.promo===P.id)s+=w.wage;});return s+deskWage(S,P);}
@@ -258,7 +258,7 @@ function calibrateCosts(S,pid){
   P.fixed=Math.round(over*0.4);P.varRate=over*0.6/inc;P.inc0=inc;
 }
 function restAll(S,pid){S.w.forEach(function(w){if(w.promo===pid){w.cond=100;w.inj=0;}});}
-function expected(P,show){var b=show.big?P.base.big:(P.base[show.id]||P.base.big);return b+0.6*(P.image-P.image0)+(P.expB||0)+(P.expA||0);}
+function expected(P,show){var b=show.big?P.base.big+evTy(show).exp:(P.base[show.id]||P.base.big);return b+0.6*(P.image-P.image0)+(P.expB||0)+(P.expA||0);}
 
 /* ---------- storyline helpers ---------- */
 function activeFeuds(S){return S.feuds.filter(function(f){return !f.res;});}
@@ -273,6 +273,8 @@ function startFeud(S,P,a,b,heat,why,opts){
   var f=feudOf(S,a.id,b.id);
   if(f){f.heat=clamp(Math.max(f.heat,heat),0,100);f.last=S.week;f.log.push({w:S.week,t:why});return f;}
   if(activeFeuds(S).filter(function(x){return x.promo===P.id;}).length>=8&&!opts.force)return null;
+  if(!opts.force&&activeFeuds(S).some(function(x){return x.a.concat(x.b).some(function(id){return id===a.id||id===b.id;});}))return null;   // one story at a time, unless the booker says otherwise
+  var em0=typeof emberOf==='function'?emberOf(S,a.id,b.id):null;if(em0&&S.week-em0.w<12&&!opts.force)return null;   // a story that just ended needs time before the same two go again
   f={id:S.nid++,promo:P.id,a:[a.id],b:[b.id],heat:clamp(heat,0,100),start:S.week,last:S.week,matches:0,aw:0,bw:0,log:[{w:S.week,t:why}],title:opts.title||null,kind:opts.kind||'feud',res:false};
   var em=typeof emberOf==='function'?emberOf(S,a.id,b.id):null;   // they have done this before: it picks up where it left off (src/21-living.js)
   if(em){f.heat=clamp(f.heat+Math.min(20,em.h/4+5),0,100);f.log.push({w:S.week,t:'They have history: it picks up where it left off'});f.again=em.n;}
@@ -299,7 +301,7 @@ function rkey(a,b){return a<b?a+'-'+b:b+'-'+a;}
 function titleFits(t,m){var d=MT[m.mt];return !!d&&(t.tag?m.mt==='tag':(d.per===1&&!(m.mt==='br'&&t.holders.length)));}
 
 /* ---------- booking ---------- */
-function eligible(S,P,show){return S.w.filter(function(w){return (w.promo===P.id&&w.inj<=0&&!w.camp&&!w.nw&&w.rest!==S.week&&!(w.away>=S.week)&&(show.big||!show.brand||w.brand===show.brand))||isGuest(S,P,w,show);});}
+function eligible(S,P,show){return S.w.filter(function(w){return (w.promo===P.id&&w.inj<=0&&!w.camp&&!w.nw&&w.rest!==S.week&&!(w.cl&&w.cl.dates&&w.dwk===S.week&&(w.dn||0)>=2)&&!(w.away>=S.week)&&(show.big||!show.brand||w.brand===show.brand))||isGuest(S,P,w,show);});}
 function showTitles(P,show){return P.titles.filter(function(t){return show.big?!isDev(P,t.brand):(!show.brand||!t.brand||t.brand===show.brand);});}
 function gimmickFor(S,a,b){
   var k=a.style==='H'?'ladder':(a.style==='T'?'sub':(chance(S,0.5)?'cage':'hardcore')),pm=a.promo!=='FA'&&S.promos[a.promo]?S.promos[a.promo].model:'';
@@ -313,7 +315,10 @@ function gimmickFor(S,a,b){
 
 function autoBook(S,P,show){
   var big=!!show.big,n=big?7:5,used={},card=[],isPl=P.id===S.player;
-  var pool=eligible(S,P,show).filter(function(w){return w.cond>=40&&!(big&&isDev(P,w.brand));});
+  // a story whose ending is planned for a night in the next week keeps its two off the shows before it, so they arrive fresh;
+  // on the night itself they work even if worn, because the ending is the point
+  var due={},rest={};activeFeuds(S).forEach(function(f){if(f.promo!==P.id)return;var ids=f.a.concat(f.b);if(feudDue(S,f,show))ids.forEach(function(id){due[id]=1;});else if(f.endAt!=null&&f.endAt>=S.week&&f.endAt-S.week<=1)ids.forEach(function(id){rest[id]=1;});});
+  var pool=eligible(S,P,show).filter(function(w){return (w.cond>=40||due[w.id])&&!rest[w.id]&&!(big&&isDev(P,w.brand));});
   var guests=pool.filter(function(w){return w.promo!==P.id;});pool=pool.filter(function(w){return w.promo===P.id;});
   var inPool={};pool.forEach(function(w){inPool[w.id]=1;});
   var titles=showTitles(P,show);
@@ -410,8 +415,9 @@ function autoBook(S,P,show){
   }else{
     if(!(worlds[0]&&(chance(S,0.3)||!worlds[0].holders.length)&&titleSingles(worlds[0],'L',100)))filler(0,'L',G1,100);
   }
-  // running feuds: a story on the night it is meant to end is booked first, for every company; the player's others as before
-  var fs=activeFeuds(S).filter(function(f){return f.promo===P.id&&!(f.bb!=null&&S.week<=f.bb);}).sort(function(a,b){return (feudDue(S,b,show)?1:0)-(feudDue(S,a,show)?1:0)||b.heat-a.heat;}),booked=0;
+  // running feuds: a story on the night it is meant to end is booked first, for every company; on the player's big night a ripe one next
+  function rp(f){return f.heat>=65&&f.fresh<50?1:0;}
+  var fs=activeFeuds(S).filter(function(f){return f.promo===P.id&&!(f.bb!=null&&S.week<=f.bb);}).sort(function(a,b){return (feudDue(S,b,show)?1:0)-(feudDue(S,a,show)?1:0)||(big&&isPl?(rp(b)-rp(a)):0)||b.heat-a.heat;}),booked=0;
   if(fs.length){
     fs.forEach(function(f){
       var due=!!feudDue(S,f,show);
@@ -460,7 +466,7 @@ function validate(S,P,show,card){
   card.forEach(function(m,i){
     var n=i+1,def=MT[m.mt];if(!def){err.push('Match '+n+': pick a match type.');return;}
     var ids=flat(m.sides),ws=[],bad=false,dup={};
-    if(m.sides.length!==def.sides||m.sides.some(function(s){return s.length!==def.per;}))bad=true;
+    if((def.max?(m.sides.length<def.min||m.sides.length>def.max):m.sides.length!==def.sides)||m.sides.some(function(s){return s.length!==def.per;}))bad=true;
     ids.forEach(function(id){if(id==null||!S.w[id]){bad=true;return;}if(dup[id])err.push('Match '+n+': '+S.w[id].name+' is booked twice in the same match.');dup[id]=1;ws.push(S.w[id]);});
     if(bad){err.push('Match '+n+': fill every spot.');return;}
     ws.forEach(function(w){

@@ -3,6 +3,8 @@
    planned ending and a match marked as the ending both end a feud with a payoff, and that nothing has a length. */
 require('./engine.js');
 const fs = require('fs'), E = globalThis.GP, GP_ember = (S, f) => E.feudEmber(S, f);
+// these checks are about the thinking a suggested card used to do; since 16 October Suggest a card is flat, and that thinking is E.suggestSmart
+E.suggest = E.suggestSmart;
 E.useUniverse(JSON.parse(fs.readFileSync('universes/public_domain.json', 'utf8')));
 let fails = 0; const ok = (c, m) => { if (!c) { fails++; console.log('  FAIL ' + m); } };
 const week = S => { S.inbox.filter(e => !e.done).forEach(e => E.resolveEvent(S, e.id, 0)); if (S.owner.pending) E.setCreed(S, { style: 'merit', roots: 'tradition', pledge: 'stable' });
@@ -81,6 +83,24 @@ ok(stale >= 1 && ripe >= 1, 'no feud ever went stale or ripe');
   const m = { sides: [[f.a[0]], [f.b[0]]] }; f.heat = 25; let o = E.stipFits(S, m);
   ok(o && o.cage === 'soon' && o.mask === 'soon' && o.sub !== 'soon', 'a cold feud: ' + JSON.stringify(o));
   f.heat = 90; o = E.stipFits(S, m); ok(o && o.cage === 'good' && o.mask === 'good', 'a white hot feud: ' + JSON.stringify(o));
+}
+// a turn inside the story: two heroes, the one less over turns, once a story, for two booking power
+{
+  const S = E.newGame(E.universe().promotions[1].id, 3, { name: 'R' }); S.bp = 10;
+  const fa = E.storyPeople(S).filter(w => w.g === 'M' && !w.n && S.w[w.id].align === 'F'), r = E.storyStart(S, fa[0].id, fa[1].id), f = S.feuds.find(x => x.id === r.id), bp = S.bp, h = f.heat;
+  const d = E.storyDo(S, f.id, 'turn');
+  ok(d.ok && S.w[f.a[0]].align !== S.w[f.b[0]].align && S.bp === bp - 2 && f.heat > h, 'a turn in the story did not take: ' + d.msg);
+  ok(!E.storyActs(S, f.id).find(x => x.id === 'turn').can, 'a story could turn twice');
+}
+// an ending in front of one of their home towns pays more, and they remember it
+{
+  const go = home => { const S = E.newGame(E.universe().promotions[1].id, 3, { name: 'R' }); S.bp = 10;
+    const R = E.storyPeople(S).filter(w => w.g === 'M' && !w.n && !w.hurt), a = R[3].id, b = R[6].id, r = E.storyStart(S, a, b), f = S.feuds.find(x => x.id === r.id); f.heat = 80;
+    S.w[a].town = home ? E.road(S).now.city : 'Nowhere'; const c = E.suggest(S).filter(m => !m.sides.flat().some(id => id === a || id === b));
+    c[c.length - 1] = { ...c[c.length - 1], sides: [[a], [b]], title: null, end: 1, call: null, stip: 'std' }; E.fitShow(S, c);
+    if (E.validate(S, c).errors.length) return null; const o0 = S.w[a].ovr + S.w[b].ovr; E.runPlayerShow(S, c); return { res: f.res, gain: S.w[a].ovr + S.w[b].ovr - o0, mem: JSON.stringify(S).includes('my own people') }; };
+  const h = go(true), w = go(false);
+  ok(h && w && h.res && w.res && h.gain > w.gain && h.mem && !w.mem, 'a home town ending did not pay more: ' + JSON.stringify({ h, w }));
 }
 if (fails) { console.log('FAILED: ' + fails); process.exit(1); }
 console.log('test-living: all passed');

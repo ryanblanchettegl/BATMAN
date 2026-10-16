@@ -10,7 +10,7 @@ import { roleOf } from './Shape';
 import { Btn, Meter, Win, brandName, teamName } from '../../kit';
 import { Side } from './Side';
 import { TopTag, addPromo, addAngle, hm, CATN } from './Segments';
-import { Match, onCard, sideText, suggest, addMatch, clearCard, pickMatch, pickSeg, pickSide, sel } from './run';
+import { Match, onCard, sideText, suggest, addMatch, clearCard, pickMatch, pickSeg, pickSide, sel, moveMatchTo } from './run';
 
 const DOT = ' · ';
 const LEN: Record<string, string> = { S: 'Short', M: 'Medium', L: 'Long' };
@@ -49,7 +49,9 @@ interface Line { key: string; cls: string; at: number | null; no: string; who: C
 /** One line of the run sheet: a button that selects it. */
 function Row(p: { l: Line }) {
   const l = p.l;
-  return <div class={'seg r1 ' + l.cls + (l.on ? ' sel' : '')} data-m={l.dm} data-seg={l.ds}>
+  const drag = l.dm != null ? { draggable: true, onDragStart: (e: DragEvent) => { e.dataTransfer?.setData('text/plain', String(l.dm)); }, onDragOver: (e: DragEvent) => e.preventDefault(),
+    onDrop: (e: DragEvent) => { e.preventDefault(); const f = +(e.dataTransfer?.getData('text/plain') || -1); if (f >= 0 && l.dm != null) moveMatchTo(f, l.dm); } } : {};
+  return <div class={'seg r1 ' + l.cls + (l.on ? ' sel' : '')} data-m={l.dm} data-seg={l.ds} {...drag}>
     <button type="button" class="r1b" data-t={l.t} data-v={l.v} aria-pressed={l.on} onClick={l.pick}>
       <span class="at">{l.at == null ? '' : hm(l.at)}</span><span class="no">{l.no}</span><span class="who">{l.who}</span><span class="meta">{l.meta}</span>
     </button>
@@ -78,7 +80,7 @@ export function Card() {
     // the line on the sheet is short: what the spot is, the kind of match, the minutes, and the things that stand out
     const fl: any[] = done ? (FL[i] || []) : [];
     const meta = <>{fl.length ? <span data-t="row-flags">{fl.map((f: any, k: number) => <span key={k} class={f.k === 'bad' ? 'bad' : (f.k === 'good' ? 'good' : 'warn')}>[{f.t}] </span>)}</span> : null}{it && it.top ? <><TopTag top={it.top} /> </> : null}{roleOf(i, n) ? roleOf(i, n) + DOT : ''}{E.MT[m.mt].n}{m.stip !== 'std' ? DOT + E.STIP[m.stip].n : ''}{it ? DOT + it.mins + ' min' : ''}
-      {!done ? <>{DOT}<span class="warn">Unfinished</span></> : null}{m.call != null ? <>{DOT}<span class="gold">Your call</span></> : null}{(m as any).end ? <>{DOT}<span class="gold">Ends the story</span></> : null}{t ? <>{DOT}<span class="gold">{t.name}</span></> : null}</>;
+      {!done ? <>{DOT}<span class="warn">Unfinished</span></> : null}{m.call != null ? <>{DOT}<span class="gold">Your call</span></> : null}{(m as any).end ? <>{DOT}<span class="gold">Ends the story</span></> : null}{(m as any).lock ? <>{DOT}<span class="warn" data-t="row-lock">Locked</span></> : null}{t ? <>{DOT}<span class="gold">{t.name}</span></> : null}</>;
     L.push({ key: 'm' + i, cls: (i === n - 1 ? 'me' : '') + (it && it.top ? ' top' : ''), at: it ? it.at : null, no: String(i + 1), dm: i, who: matchLabel(m),
       meta: meta, t: 'edit', v: i, on: b.edit === i, pick: () => pickMatch(i) });
   }); else segsAt(0, 1);
@@ -92,7 +94,7 @@ export function Card() {
   return <div class="onescreen book1" data-t="book1"><div class="desktop b1-desk">
     <Win cls="b1-head head" title={<>Book the show: <span class="hl">{show.name}</span></>} label={'Book the show: ' + show.name} right={<>{c.label}{DOT}show {S.qi + 1} of {S.queue.length}</>}>
       <h1 class="sr">{show.name}</h1>
-      <p class="muted b1-info">{show.big ? 'Big event' + (show.flag ? ', the biggest of the year' : '') + '. Whole roster available.' : 'Weekly TV' + (show.brand ? ', ' + brandName(P, show.brand) + ' brand roster' : '') + '.'} This crowd expects <b class="gold" data-t="expect">{E.expectWords(S, show).a}</b>, matches of <b class="gold" data-t="expect-bar">{E.expectWords(S, show).bar}</b> or better. <button type="button" class="lnk" data-t="ladder" onClick={() => openModal({ kind: 'ladder' })}>What that means</button>
+      <p class="muted b1-info">{show.big ? 'Big event' + (show.flag ? ', the biggest of the year' : (show.ty && show.ty !== 'arena' && E.EV_TYPES[show.ty] ? ', a ' + E.EV_TYPES[show.ty].n.toLowerCase() : '')) + '. Whole roster available.' : 'Weekly TV' + (show.brand ? ', ' + brandName(P, show.brand) + ' brand roster' : '') + '.'} This crowd expects <b class="gold" data-t="expect">{E.expectWords(S, show).a}</b>, matches of <b class="gold" data-t="expect-bar">{E.expectWords(S, show).bar}</b> or better. <button type="button" class="lnk" data-t="ladder" onClick={() => openModal({ kind: 'ladder' })}>What that means</button>
         {DOT}Booking power: <b class="gold">{S.bp}</b> {cost ? <span class={cost > S.bp ? 'bad' : 'muted'}>({cost} committed on this card)</span> : <span class="muted">(nothing called yet)</span>}
         {show.rule && E.RULES[show.rule] ? <>{DOT}<span class="good">{E.RULES[show.rule]}</span></> : null}</p>
       <p class="showtime" data-t="clock" data-v={ck.over ? 'over' : (ck.short ? 'short' : (ck.light ? 'light' : 'ok'))}>Show time: <b class={'num ' + tcls}>{hm(ck.total)}</b> of <b class="num">{hm(ck.budget)}</b> <Meter v={Math.min(100, ck.total / ck.budget * 100)} kind="au" /> <span class={tcls}>{n || ck.total ? ck.words : (ck.budget / 60) + ' hours to fill.'}</span></p>
@@ -101,6 +103,7 @@ export function Card() {
         <Btn t="add" onClick={addMatch}>Add a match</Btn>
         <Btn t="add-promo" onClick={addPromo}>Add a promo</Btn>
         <Btn t="add-angle" onClick={addAngle}>Add an angle</Btn>
+        {n > 0 && <Btn t="could" onClick={() => openModal({ kind: 'could' })}>What could happen?</Btn>}
         {(n > 0 || ck.total > 0) && <Btn t="clear" onClick={clearCard}>Clear</Btn>}
       </div>
     </Win>

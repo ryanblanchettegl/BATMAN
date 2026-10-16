@@ -12,7 +12,7 @@ export function ScheduleList() {
     if (i < S.qi) { const ri = repFor(sh), r = ri >= 0 ? S.reports[ri] : null; right = r ? <span class="row"><b class="gold" data-t="show-grade">{E.repGrade(r)}</b><Btn kind="sm" t="report" d={{ v: ri }} onClick={() => openReport(ri)}>Report</Btn></span> : <span class="muted">Done</span>; }
     else if (i === S.qi) right = gate.ok ? <Btn kind="go" t="book-show" onClick={() => go('booking')}>Book this show</Btn> : <span class="muted">After this week{'’'}s tasks</span>;
     else right = <span class="muted">Up next</span>;
-    return <li><span><b>{sh.name}</b> {sh.big ? <Tag kind="gold">Big event</Tag> : <Tag>TV</Tag>}{sh.brand ? <> <Tag>{brandName(me(), sh.brand)}</Tag></> : null}</span>{right}</li>;
+    return <li><span><b>{sh.name}</b> {sh.big ? <Tag kind="gold">{sh.flag ? 'Flagship' : (sh.ty && sh.ty !== 'arena' && E.EV_TYPES[sh.ty] ? E.EV_TYPES[sh.ty].n : 'Big event')}</Tag> : <Tag>TV</Tag>}{sh.brand ? <> <Tag>{brandName(me(), sh.brand)}</Tag></> : null}</span>{right}</li>;
   })}</ul>;
 }
 export function EndWeekBtn() {
@@ -29,5 +29,5 @@ export function GateNote() {
 export function QuestList() {
   const S = G.S;
   if (!S.quests.length) return <Empty>Nothing promised yet. Wrestlers and the network will ask soon enough; answer them from the inbox on the desk.</Empty>;
-  return <ul class="list">{S.quests.map((q: any) => { const left = q.due - S.week; return <li><span><Txt>{q.text}</Txt></span><Tag kind={left <= 0 ? 'warn' : undefined}>{left <= 0 ? 'This week' : left + ' wk left'}</Tag></li>; })}</ul>;
+  return <ul class="list">{S.quests.map((q: any) => { const left = q.due - S.week; const nw = E.questNow(S, q); return <li><span><Txt>{q.text}</Txt>{nw ? <span class="muted"> ({nw})</span> : null}</span><Tag kind={left <= 0 ? 'warn' : undefined}>{left <= 0 ? 'This week' : left + ' wk left'}</Tag></li>; })}</ul>;
 }

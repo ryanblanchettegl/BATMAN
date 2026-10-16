@@ -15,7 +15,7 @@ POST.push(function(ctx){
 POST.push(function(ctx){
   var r=ctx.res,P=ctx.P;if(ctx.m.mt!=='br'||r.win<0)return;
   if(ctx.isPl)award(ctx.S,'ACH_BR');
-  if(ctx.t)return;
+  if(ctx.t||(ctx.isPl&&!ctx.m.shot))return;   // the player's battle royal is for a title shot only when booked as one
   var w=r.winners[0],tt=null;P.titles.forEach(function(x){if(!x.tag&&x.g===w.g&&x.holders.length&&x.holders[0]!==w.id&&(!x.brand||x.brand===w.brand)&&isDev(P,x.brand)===isDev(P,w.brand)&&x.lvl>holdLvl(P,w.id)&&(!tt||x.lvl>tt.lvl))tt=x;});
   if(!tt)return;w.shot=tt.id;w.pts=(w.pts||0)+6;r.seg.notes.push(w.name+' has earned a shot at the '+tt.name+'.');
 });
@@ -144,6 +144,11 @@ function yearEnd(S){
   S.awards.unshift({year:yr,list:L,week:S.week});
   news(S,'world','The '+yr+' awards are in. '+(woy?woy.name+' is wrestler of the year.':''));
   S.inbox.push({id:S.nid++,type:'awards',text:'The '+yr+' year-end awards: '+L.map(function(x){return x.k+': '+x.v;}).join('. ')+'.',done:true,result:null});
+  // the year's power list (NEXT.md 8.1): the top twenty-five across the world, with last year's place beside each
+  // kept small: [id, last year's place or 0] for the top 200, with the names of the top 25 written in
+  var prevL=(S.pwList&&S.pwList[0])?S.pwList[0].l:[],pidx={};prevL.forEach(function(x,i){pidx[x.id!=null?x.id:x[0]]=i+1;});
+  (S.pwList||(S.pwList=[])).unshift({year:yr,l:E.power(S,200).map(function(w,i){return i<25?{id:w.id,n:w.name,p:S.promos[w.promo]?S.promos[w.promo].name:'',was:pidx[w.id]||0}:[w.id,pidx[w.id]||0];})});
+  S.pwList=S.pwList.slice(0,2);
   S.w.forEach(function(w){w.yp=0;w.oy=w.ovr;});S.order.forEach(function(id){S.promos[id].imgY=S.promos[id].image;});S.year={};S.hofDue=true;
   if(P.id===S.player)award(S,'ACH_AWARDS');
 }
@@ -160,7 +165,15 @@ EVR.hof=function(S,ev,choice,P){
   news(S,'story',w.name+' was inducted into the '+P.name+' hall of fame.');award(S,'ACH_HOF');
   return w.name+' takes a place in the hall of fame. The ceremony is a moment the crowd will remember.';
 };
-E.power=function(S,n){return S.w.filter(function(w){return w.promo!=='FA';}).sort(function(a,b){return ((b.yp||0)+b.ovr*0.25)-((a.yp||0)+a.ovr*0.25);}).slice(0,n||10);};
+/** The year's power lists, newest first: {year, l:[{id, n, p, was}]}. */
+E.powerYears=function(S){return S.pwList||[];};
+/* the ranking (NEXT.md 8.1): the year's points from results (wins count more on bigger stages and with better
+   matches), a quarter of how over they are, and a champion counts for more */
+function powerHeld(S){var h={};S.order.forEach(function(pid){(S.promos[pid].titles||[]).forEach(function(t,ti){(t.holders||[]).forEach(function(id){h[id]=(h[id]||0)+(ti===0?2:1);});});});return h;}
+function powerScore(w,held){return (w.yp||0)+w.ovr*0.25+(held[w.id]||0)*6;}
+E.power=function(S,n){var held=powerHeld(S);return S.w.filter(function(w){return w.promo!=='FA'&&!w.rt;}).sort(function(a,b){return powerScore(b,held)-powerScore(a,held);}).slice(0,n||10);};
+/** Last week's place in the ranking, 1 up, or 0 if they were not in the top fifty. */
+E.powerWas=function(S,id){var L=S.pwPrev||[],i=L.indexOf(id);return i>=0?i+1:0;};
 
 /* ---------- training camp ---------- */
 var CAMP_CAP=[0,4,8,12],CAMP_C=[0,0.004,0.009,0.015],CAMPN=['None','Small gym','Training centre','Performance institute'];
@@ -195,13 +208,32 @@ E.FOCUS=FOCUS;E.tournActive=tournActive;
 /* Housekeeping: retired wrestlers who never held a title do not need their year lines, recent results or long logs.
    Keeps the save small in a long game (about 1.4 MB at week 300). Runs every 26 weeks. */
 WEEKX.push(function(S){
+  // the play-by-play of an old show is never read again: only the newest two keep it
+  (S.reports||[]).slice(2).forEach(function(r){(r.segs||[]).forEach(function(g){if(g.bc)delete g.bc;});});
   if(S.week%26!==0)return;
   var champs={};S.order.forEach(function(pid){S.promos[pid].titles.forEach(function(t){(t.hist||[]).forEach(function(h){String(h.ids||'').split(',').forEach(function(id){champs[id]=1;});});t.holders.forEach(function(id){champs[id]=1;});});});
+  // long decimals cost room and say nothing: three places is plenty
+  S.w.forEach(function(w){for(var k in w){var v=w[k];if(typeof v==='number'&&v!==Math.round(v))w[k]=Math.round(v*1000)/1000;}});
   S.w.forEach(function(w){
     if(!w.rt||champs[w.id])return;
     delete w.rr;delete w.ys;delete w.bz;
     if(w.log&&w.log.length>6)w.log=w.log.slice(0,1).concat(w.log.slice(-5));
   });
+  // relationships with somebody retired are never read again
+  if(S.rm)Object.keys(S.rm).forEach(function(k){var ids=k.split('-');if(ids.some(function(id){var w=S.w[+id];return !w||w.rt;}))delete S.rm[k];});
   // old head-to-head and recent-match keys nobody will read again
-  var keys=Object.keys(S.recent||{});if(keys.length>1500)keys.forEach(function(k){if(S.week-S.recent[k]>26)delete S.recent[k];});
+  var keys=Object.keys(S.recent||{});keys.forEach(function(k){if(S.week-S.recent[k]>20)delete S.recent[k];});
+  // where somebody worked on the indies is only read while they are free or on outside dates
+  S.w.forEach(function(w){if(w.ind&&(w.rt||(w.promo!=='FA'&&!(w.cl&&w.cl.outside))))delete w.ind;});
 });
+/* the power ten matters to the people in it (NEXT.md 8.2): one of yours who climbs into it is lifted, and one who drops
+   out on a losing run starts to grumble. It reads the ranking and never calls rnd(S). */
+WEEKX.push(function(S){
+  if(S.cal)return;var top=E.power(S,10).map(function(x){return x.id!=null?x.id:(x.w?x.w.id:x);}),was=S.pw10||null;S.pw10=top;if(!was)return;
+  top.forEach(function(id){var w=S.w[id];if(!w||w.promo!==S.player||was.indexOf(id)>=0)return;w.morale=clamp(w.morale+3,0,100);note(S,'The power ten',w.name+' is in the power ten.','good');});
+  was.forEach(function(id){var w=S.w[id];if(!w||w.promo!==S.player||top.indexOf(id)>=0)return;var lost=(w.rr||[]).slice(0,3).filter(function(x){return x.r==='L';}).length;
+    if(lost>=2){w.morale=clamp(w.morale-3,0,100);note(S,'The power ten',w.name+' has dropped out of the power ten, and is not happy about the losses.','bad');}});
+});
+
+/* last week's ranking, kept for the World page's arrows (the top fifty, ids only) */
+WEEKX.push(function(S){if(S.cal)return;S.pwPrev=E.power(S,50).map(function(w){return w.id;});});

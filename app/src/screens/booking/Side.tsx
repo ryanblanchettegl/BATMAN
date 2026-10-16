@@ -4,11 +4,11 @@
    Everything here is sized to fit the pane: long lists turn pages instead of scrolling. */
 import { ComponentChildren } from 'preact';
 import { E } from '../../engine';
-import { G, act, say, view, slice, openModal } from '../../store';
+import { G, act, say, view, slice, openModal, closeModal, Modal } from '../../store';
 import { book } from '../../flow';
 import { go } from '../../nav';
-import { Panel, Tabs, Sel, Field, Tag, Name, Meter, CheckLine, Empty, Btn, Txt, Opt, Group, LightPic } from '../../kit';
-import { Match, pickSide, setPlan, sel, pickMatch, pickSeg, moveMatch, removeMatch, run } from './run';
+import { Window, Panel, Tabs, Sel, Field, Tag, Name, Meter, CheckLine, Empty, Btn, Txt, Opt, Group, LightPic } from '../../kit';
+import { Match, pickSide, setPlan, sel, pickMatch, pickSeg, moveMatch, removeMatch, run, lockMatch } from './run';
 import { Shape } from './Shape';
 import { Editor } from './Editor';
 import { hm, openSeg, CATN, TopTag } from './Segments';
@@ -49,9 +49,39 @@ function MatchPane(p: { i: number; ck: any }) {
       <Btn kind="sm" t="up" d={{ v: i }} label={'Move match ' + (i + 1) + ' earlier'} disabled={i === 0} onClick={() => moveMatch(i, -1)}>{'↑'} Earlier</Btn>
       <Btn kind="sm" t="down" d={{ v: i }} label={'Move match ' + (i + 1) + ' later'} disabled={i === n - 1} onClick={() => moveMatch(i, 1)}>{'↓'} Later</Btn>
       <Btn kind="sm" t="rm" d={{ v: i }} onClick={() => removeMatch(i)}>Remove</Btn>
+      <Btn kind="sm" t="match-pop" d={{ v: i }} onClick={() => openModal({ kind: 'matchwin', i })}>Pop-up</Btn>
       <Btn kind="sm" t="done" d={{ v: i }} onClick={() => pickMatch(i)}>Done</Btn>
     </div>
   </Panel>;
+}
+/** The match pop-up (roadmap 5): everything about one match in one window, the road agent's read at the bottom. */
+export function MatchWindow(p: { m: Modal }) {
+  const S = G.S, i = p.m.i as number, m: Match = S.card[i], n = S.card.length;
+  if (!m) return <Window title="Match" ok="Close"><p class="muted">That match is no longer on the card.</p></Window>;
+  const rd = E.agentReads(S)[i], it = E.clock(S).items.find((x: any) => x.t === 'match' && x.i === i), meta = matchMeta(m, i, n, it);
+  return <Window title={'Match ' + (i + 1) + ' of ' + n} wide ok="Done"
+    footer={<><Btn t="mw-up" disabled={i === 0} onClick={() => { if (!m.lock && !(S.card[i - 1] || {}).lock) p.m.i = i - 1; moveMatch(i, -1); }}>{'↑'} Earlier</Btn>
+      <Btn t="mw-down" disabled={i === n - 1} onClick={() => { if (!m.lock && !(S.card[i + 1] || {}).lock) p.m.i = i + 1; moveMatch(i, 1); }}>{'↓'} Later</Btn>
+      <Btn t="mw-lock" on={!!m.lock} onClick={() => lockMatch(i)}>{m.lock ? 'Locked in place' : 'Lock this place'}</Btn>
+      <Btn kind="danger" t="mw-rm" onClick={() => { closeModal(); removeMatch(i); }}>Remove</Btn></>}>
+    <p class="meta d1-meta">{meta.map((x, k) => <span key={x[0]}>{k ? DOT : null}{x[1]}</span>)}</p>
+    <Editor m={m} i={i} />
+    <FeudEnd m={m} i={i} />
+    <Group title="The road agent">{rd ? <div class="agentsay" data-t="mw-agent">{rd.lines.map((l: any, k: number) => <p key={k} class={l.s > 0 ? 'good' : (l.s < 0 ? 'bad' : 'muted')}><span class="ag">{rd.who}{rd.own ? ', on this match' : ''}:</span> {'“'}{l.t}{'”'}</p>)}</div>
+      : <p class="muted">Fill every spot and the agent will say what they see.</p>}</Group>
+  </Window>;
+}
+/** What could happen tonight (roadmap 7): moments, who is at risk, what the card sets up and leaves cold, the agent's gut. Words only. */
+export function CouldWindow(_p: { m: Modal }) {
+  const C = E.couldHappen(G.S);
+  const part = (title: string, t: string, L: string[], none: string) => <Group title={title} t={t}>{L.length ? L.map((x, k) => <p key={k} class="clamp"><Txt>{x}</Txt></p>) : <p class="muted">{none}</p>}</Group>;
+  return <Window title="What could happen tonight" wide ok="Close">
+    {part('Moments that could happen', 'could-moments', C.moments, 'Nothing on this card is built for a big moment.')}
+    {part('Who is at risk', 'could-risk', C.risk, 'Nobody on the card looks at risk.')}
+    {part('What it sets up', 'could-sets', C.sets, 'This card does not move a story on.')}
+    {part('What it leaves cold', 'could-cold', C.cold, 'Nothing hot is left off.')}
+    {C.gut ? <p class="agentsay" data-t="could-gut">{C.gut}</p> : null}
+  </Window>;
 }
 function SegPane(p: { slot: number; ck: any }) {
   const S = G.S, x = E.segInfo(S).list[p.slot], it = p.ck.items.find((q: any) => q.t === 'seg' && q.slot === p.slot);
@@ -79,7 +109,7 @@ function PreShow(p: { pre: any }) {
 
 /* ---------- the booking notes ---------- */
 /** What stands in the way of the show, then what the writers and the announcers think of the card. */
-const STK: Record<string, [string, any]> = { due: ['Due', 'bad'], story: ['Story', 'good'], title: ['Title', 'face'], ripe: ['Ripe', 'gold'], face: ['Face', 'warn'] };
+const STK: Record<string, [string, any]> = { due: ['Due', 'bad'], story: ['Story', 'good'], title: ['Title', 'face'], ripe: ['Ripe', 'gold'], face: ['Face', 'warn'], war: ['Night', 'bad'], net: ['Network', 'bad'], weak: ['Weak', 'bad'] };
 /** Tonight's stakes and Before the bell (final-7): what rides on the show, and the checks before it airs. */
 function Tonight() {
   const T = E.tonight(G.S);
@@ -161,7 +191,7 @@ function TournOwed(p: { on: OnCard }) {
 function Targets() {
   const S = G.S;
   if (!S.quests.length) return <Panel title="Promises and targets"><Empty>Nothing promised yet. Wrestlers and the network will ask soon enough; answer them from the inbox on the desk.</Empty></Panel>;
-  return <Panel title="Promises and targets"><Paged id="quests" items={S.quests} per={5} row={(q: any) => { const left = q.due - S.week; return <li><span><Txt>{q.text}</Txt></span><Tag kind={left <= 0 ? 'warn' : undefined}>{left <= 0 ? 'This week' : left + ' wk left'}</Tag></li>; }} /></Panel>;
+  return <Panel title="Promises and targets"><Paged id="quests" items={S.quests} per={5} row={(q: any) => { const left = q.due - S.week, nw = E.questNow(S, q); return <li><span><Txt>{q.text}</Txt>{nw ? <span class="muted"> ({nw})</span> : null}</span><Tag kind={left <= 0 ? 'warn' : undefined}>{left <= 0 ? 'This week' : left + ' wk left'}</Tag></li>; }} /></Panel>;
 }
 
 export function Side(p: { on: OnCard; ck: any }) {

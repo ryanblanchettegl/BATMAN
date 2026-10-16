@@ -23,6 +23,7 @@ const weeks = (n: number) => n <= 0 ? 'this week' : (n === 1 ? 'a week ago' : n 
 function alerts(): ComponentChildren[] {
   const S = G.S, P = me(), R: W[] = E.rosterOf(S, P.id), out: ComponentChildren[] = [], byOvr = (a: W, b: W) => b.ovr - a.ovr;
   if (P.neg > 0) out.push(<span class="bad">Cash has been negative for {P.neg} {plural(P.neg, 'week')}. Six in a row ends the game.</span>);
+  (E.netInfo(S) as any[]).filter((n: any) => n.miss >= 2).forEach((n: any) => out.push(<span class="bad">{n.name} has missed {n.net}{'’'}s target {n.miss} weeks running. One more and an executive calls.</span>));
   R.filter(w => w.inj > 0).sort(byOvr).slice(0, 5).forEach(w => out.push(<><Name w={w} /> is injured: {w.inj} {plural(w.inj, 'week')} left.</>));
   R.filter(w => w.con <= 8).sort(byOvr).slice(0, 5).forEach(w => out.push(<><Name w={w} />{'’'}s contract ends in {Math.max(0, w.con)} {w.con === 1 ? 'week' : 'weeks'}.</>));
   R.filter(w => (w.stress || 0) >= 60).slice(0, 4).forEach(w => out.push(<><Name w={w} /> is under strain (stress {Math.round(w.stress)}).</>));
@@ -51,8 +52,8 @@ function Road() {
       <RoadMap road={R} t="road-map" />
       <div class="rmid">
         <p class="bl big one" data-t="road-city">{N.city.toUpperCase()}{N.land ? ', ' + N.land.toUpperCase() : ''}</p>
-        <p class="one" data-t="road-show"><b>{N.venue}</b>{N.big ? <> <Tag kind="gold">Big event</Tag></> : null} <span class="muted">{'·'} {N.later ? 'next week. Every show this week has run.' : (N.left > 1 ? 'the first of ' + N.left + ' shows left this week' : 'the last show this week')}</span></p>
-        <Group title="The building" t="road-building">
+        <p class="one" data-t="road-show"><b>{N.venue}</b>{N.big ? <> <Tag kind="gold">{N.kind || 'Big event'}</Tag></> : null} <span class="muted">{'·'} {N.later ? 'next week. Every show this week has run.' : (N.left > 1 ? 'the first of ' + N.left + ' shows left this week' : 'the last show this week')}</span></p>
+        <Group title={(G.S.soRun || 0) >= 2 ? 'The building: ' + G.S.soRun + ' sell-outs running' : 'The building'} t="road-building">
           <Line label="Sold" w={12}><b class="bl">{num(N.sold)}</b> of {num(N.cap)} <Meter v={N.sold / N.cap * 100} n={8} kind={N.sold >= N.cap ? 'au' : 'cool'} />{N.sold >= N.cap ? <b class="good"> Sold out</b> : null}</Line>
           <Line label="This week" w={12}>{N.wk > 0 ? <span class="good">{'▲'} {num(N.wk)} sold</span> : <span class="muted">Nothing sold yet</span>}</Line>
           <Line label="Gate so far" w={12}>${num(N.gate)} <span class="muted">at ${num(N.seat)} a seat</span></Line>
@@ -86,9 +87,9 @@ function Road() {
 export function RoadYearWindow() {
   const S = G.S, L: any[] = E.roadAhead(S, 16), R: string[] = E.roadRoute(S);
   return <Window title="The schedule" wide ok="Done">
-    <p>Your shows go from city to city in a loop, the nearest city next. The building is booked on what you draw today. A television show goes on sale four weeks out, a big event eight; Soon means not on sale yet. A strong market fills a bigger building; a good night there makes it stronger, and staying away cools it.</p>
+    <p>Your shows go from city to city in a loop, the nearest city next. The building is booked on what you draw today. A television show goes on sale four weeks out, a big event eight; Soon means not on sale yet. A strong market fills a bigger building; a good night there makes it stronger, and staying away cools it. Cold means a winter night: a weekly show there sells a few fewer tickets.</p>
     <table class="mt1" data-t="road-ahead"><thead><tr><th>When</th><th>Show</th><th>City</th><th>Market</th><th class="r">Sold</th><th class="r">Holds</th></tr></thead>
-      <tbody>{L.map((a, i) => <tr key={i}><td>{a.when}</td><td>{a.show}{a.big ? <> <Tag kind="gold">Big event</Tag></> : null}</td><td><b>{a.city}</b></td><td>{a.mkt}</td><td class="r num">{a.on ? num(a.sold) : 'Soon'}</td><td class="r num">{num(a.cap)}</td></tr>)}</tbody></table>
+      <tbody>{L.map((a, i) => <tr key={i}><td>{a.when}</td><td>{a.show}{a.big ? <> <Tag kind="gold">{a.kind || 'Big event'}</Tag></> : null}</td><td><b>{a.city}</b></td><td>{a.mkt}{a.cold ? <span class="muted">, cold</span> : null}</td><td class="r num">{a.on ? num(a.sold) : 'Soon'}</td><td class="r num">{num(a.cap)}</td></tr>)}</tbody></table>
     <p class="muted mt1">The loop: {R.join(', ')}.</p>
   </Window>;
 }

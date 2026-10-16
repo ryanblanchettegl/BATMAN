@@ -1,7 +1,7 @@
 /* This week's tasks, on the desk: everything that should be filled in before a show is booked or the week ends.
    Each one has a button that takes you to it, and where it can wait, a button to leave it for another week. */
 import { E } from '../../engine';
-import { G, act, say, view, openModal, closeModal, Modal, full } from '../../store';
+import { G, act, say, view, openModal, closeModal, Modal, full, slice } from '../../store';
 import { go } from '../../nav';
 import { Btn, Tag, Txt, Window, Empty, Name, showResult } from '../../kit';
 import { office } from './util';
@@ -16,11 +16,22 @@ function open(t: any) {
   if (t.id === 'house') { openModal({ kind: 'mng', k: 'house', v: 'style' }); return; }
   if (t.id === 'sponsors') { openModal({ kind: 'mng', k: 'deals', v: 'offers' }); return; }   // the offers, over the desk
   if (/^title-/.test(t.id)) { openModal({ kind: 'tasktitle', id: t.id.slice(6) }); return; }
+  if (/^deb-/.test(t.id)) { openModal({ kind: 'debut', id: +t.id.slice(4) }); return; }
   if (/^con-/.test(t.id)) { openModal({ kind: 'taskcon', id: +t.id.slice(4) }); return; }
   if (t.id === 'inbox') { const e = G.S.inbox.find((x: any) => !x.done); if (e) openModal({ kind: 'matter', id: e.id }); return; }
   go(t.to);
 }
 
+/** A newcomer's debut, planned from the desk: vignettes, a surprise attack or a straight match. */
+export function DebutWindow(p: { m: Modal }) {
+  const S = G.S, w = S.w[p.m.id];
+  if (!w || !w.deb) return <Window title="A debut"><Empty>They have already appeared on the shows.</Empty></Window>;
+  const pick = (k: string) => act(() => { const r = E.debutPlan(S, w.id, k); showResult('Debut: ' + w.name, r.msg, !r.ok); });
+  return <Window title={'How does ' + w.name + ' debut?'} wide ok="Not now">
+    <p class="muted">{w.name} has not appeared on the shows yet. The first night is the one people remember.</p>
+    {Object.keys(E.DEBUT).map(k => <p key={k} class="row mt1"><Btn kind={w.dk === k ? 'go' : undefined} t="debut-pick" d={{ v: k }} onClick={() => pick(k)}>{E.DEBUT[k].n}</Btn> <span>{E.DEBUT[k].d}</span></p>)}
+  </Window>;
+}
 /** A vacant title, answered from the desk: start a tournament for it, or go and book a match for it. */
 export function TitleTaskWindow(p: { m: Modal }) {
   const S = G.S, P = S.promos[S.player], t = P.titles.find((x: any) => String(x.id) === String(p.m.id));
@@ -42,12 +53,15 @@ export function TitleTaskWindow(p: { m: Modal }) {
 export function ContractTaskWindow(p: { m: Modal }) {
   const S = G.S, w = S.w[p.m.id];
   if (!w || w.promo !== S.player || w.con > 1) return <Window title="The contract"><Empty>That contract is dealt with.</Empty></Window>;
-  const renew = (weeks: number) => act(() => { const r = E.renew(S, w.id, weeks); showResult(w.name, r); });
-  const row = (weeks: number, label: string) => { const ask = E.renewAsk(S, w.id, weeks); return <li class="col" key={weeks}>
+  const cs = slice<{ id: number; cl: string[] }>('ctask', () => ({ id: -1, cl: [] })); if (cs.id !== w.id) { cs.id = w.id; cs.cl = []; }
+  const C: any[] = E.clauses(S, w.id), on = (k: string) => cs.cl.indexOf(k) >= 0;
+  const renew = (weeks: number) => act(() => { const r = E.renew(S, w.id, weeks, cs.cl); showResult(w.name, r); });
+  const row = (weeks: number, label: string) => { const ask = E.renewAsk(S, w.id, weeks, cs.cl); return <li class="col" key={weeks}>
     <span><b>{label}</b><br /><span class="muted">{full(ask)} a week{ask > w.wage ? ', up from ' + full(w.wage) : (ask < w.wage ? ', down from ' + full(w.wage) : ', the same as now')}.</span></span>
     <span class="row"><Btn kind="sm" t="tc-renew" d={{ v: weeks }} onClick={() => renew(weeks)}>Sign for {weeks} weeks</Btn></span></li>; };
   return <Window title={w.name + '’s contract'} wide ok="Not now">
     <p><Name w={w} /> is on {full(w.wage)} a week. The contract ends {w.con <= 0 ? 'this week' : 'next week'}. <span class="muted">If nothing is signed they become a free agent, and anybody can make an offer.</span></p>
+    {C.length ? <div class="row mt1" data-t="tc-clauses"><span class="muted">They would like:</span>{C.map(c => <Btn key={c.k} kind="sm" on={on(c.k)} t="tc-clause" d={{ k: c.k }} label={c.n + '. ' + c.d} onClick={() => view(() => { cs.cl = on(c.k) ? cs.cl.filter(x => x !== c.k) : cs.cl.concat([c.k]); })}>{c.n}</Btn>)}</div> : null}
     <ul class="list mt2">{row(48, 'One more year')}{row(96, 'Two more years')}</ul>
     <p class="muted mt1">Morale changes the asking price: {w.morale < 50 ? 'they are unhappy, so it costs more.' : (w.morale >= 75 ? 'they are happy here, so it costs less.' : 'theirs is about average.')}</p>
   </Window>;

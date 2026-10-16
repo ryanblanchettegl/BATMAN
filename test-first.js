@@ -2,6 +2,8 @@
    reach the card, and the risk shown on every line of the run sheet.  Run: node test-first.js */
 require('./engine.js');
 const fs = require('fs'), E = globalThis.GP, fails = [];
+// these checks are about the thinking a suggested card used to do; since 16 October Suggest a card is flat, and that thinking is E.suggestSmart
+E.suggest = E.suggestSmart;
 const ok = (id, label, pass, detail) => { console.log(id.padEnd(5), pass ? 'ok  ' : 'FAIL', label + (detail ? ': ' + detail : '')); if (!pass) fails.push(id + ' ' + label); };
 E.useUniverse(JSON.parse(fs.readFileSync('universes/public_domain.json', 'utf8')));
 const req = S => E.tasks(S).list.filter(t => t.req);

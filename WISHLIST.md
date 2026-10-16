@@ -65,7 +65,7 @@ Things that would make the game deeper. Each one adds a system, a choice or a me
 - [x] **37. Locker-room leaders.** One or two respected veterans keep order. Lose them and incidents rise. The Locker room page names them. *S. Builds on `src/76-locker.js`.*
 - [x] **38. Cliques.** Friends form a group. A clique with a top star asks for favours as a block: a push for a friend, a rival held down. Say yes, say no, or break them up. *M.*
 - [x] **39. Creative control.** A top star can win the right to refuse a loss. Overriding it costs booking power and trust. *M.*
-- [ ] **40. Contract clauses.** Dates per month, a merchandise share, paid travel, a no-cut promise, outside dates, a title promise. Talks go back and forth two or three times. *L. Builds on `E.ask`, `E.sign`, `E.renew`.*
+- [x] **40. Contract clauses.** Dates per month, a merchandise share, paid travel, a no-cut promise, outside dates, a title promise. Talks go back and forth two or three times. *L. Builds on `E.ask`, `E.sign`, `E.renew`.*
 - [x] **41. Ask the room.** Before a signing, find out who is glad and who is angry about it. *S. (TASKS 10)*
 - [x] **42. A court with a memory.** The wrestlers' court exists. Add a record of verdicts, harsher results for repeat offenders, and a judge chosen from the veterans. *S. Builds on `E.court`.*
 - [x] **43. House rules that bite.** Dress code, curfew, testing. Each trades morale against incidents, and each model has a view. *S. Check `E.RULES` first.*
@@ -97,7 +97,7 @@ Things that would make the game deeper. Each one adds a system, a choice or a me
 - [x] **63. New companies appear.** Every few years a backer starts a company and signs free agents. Sometimes it grows out of an indie. *M. (TASKS 9)*
 - [x] **64. Regional tastes.** Each region likes a kind of wrestling: work rate, brawling, spectacle. The wrong product draws less there. *M. Builds on `E.zones`.*
 - [x] **65. Title histories of the world.** Every title in every promotion keeps its full line of champions, open from any title pop-up. Partner promotions can unify titles. *M.*
-- [ ] **66. Invasions.** A cross-promotion story where a rival's wrestlers appear on your shows. Both sides must agree the winners. Done badly, one side looks weak for a year. *L. Builds on `E.sagaInfo` and the cross-promotion code in `src/80-world.js`.*
+- [x] **66. Invasions.** A cross-promotion story where a rival's wrestlers appear on your shows. Both sides must agree the winners. Done badly, one side looks weak for a year. *L. Builds on `E.sagaInfo` and the cross-promotion code in `src/80-world.js`.*
 - [x] **67. The rookie class.** Each year a class of new wrestlers arrives by region, with a scouting report and a "class of" list to look back on. This also fixes the free-agent pool running dry. *M. Builds on `E.scout`.*
 - [x] **68. The bar moves.** When a rival has a great night in a city you share, your next show there has more to live up to. The news says so. *S.*
 

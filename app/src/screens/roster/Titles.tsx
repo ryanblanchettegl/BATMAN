@@ -57,6 +57,23 @@ function Contenders(p: { t: any; busy: boolean }) {
   </>;
 }
 
+/** The picked belt's last few reigns, newest first, and a line on how a shot is earned. */
+function Lineage(p: { t: any }) {
+  const S = G.S, t = p.t, H: any[] = t ? (t.hist || []).slice(-5).reverse() : [];
+  return <Win title={t ? 'The line of the ' + t.name.replace(/ (Title|Titles|Championship)$/, '') : 'The line'} area="tourn" t="lineage">
+    {H.length ? <ul class="list">{H.map((r: any, i: number) => { const ids = String(r.ids).split(',').map(Number), wk = (r.to == null ? S.week : r.to) - r.from;
+      return <li key={i}><span>{joined(ids.map(id => S.w[id] ? <Name w={S.w[id]} /> : <>{(r.h || [])[0] || 'Unknown'}</>), ' & ')} <span class="muted">{wk} {plural(wk, 'week')}{r.defs ? ', ' + r.defs + ' ' + plural(r.defs, 'defence') : ''}</span></span>{i === 0 && r.to == null ? <Tag kind="good">Now</Tag> : null}</li>; })}</ul>
+      : <p class="muted">No reigns on record yet.</p>}
+    {(() => { const A: any[] = t ? (t.hist || []).filter((r: any) => r.show !== 'Before your time' || r.to != null) : [], cnt: Record<string, number> = {};
+      if (A.length < 2) return null;
+      A.forEach((r: any) => { const k = String(r.ids); cnt[k] = (cnt[k] || 0) + 1; });
+      const nm = (ids: any) => String(ids).split(',').map(Number).map(id => S.w[id] ? S.w[id].name : '?').join(' & ');
+      const most = Object.keys(cnt).sort((a, b) => cnt[b] - cnt[a])[0], len = (r: any) => (r.to == null ? S.week : r.to) - r.from;
+      const lng = A.slice().sort((a: any, b: any) => len(b) - len(a))[0], dfs = A.slice().sort((a: any, b: any) => (b.defs || 0) - (a.defs || 0))[0];
+      return <p class="mt1" data-t="title-records"><b>Records:</b> {cnt[most] > 1 ? <>most reigns, {nm(most)} ({cnt[most]}); </> : null}longest, {nm(lng.ids)} ({len(lng)} {plural(len(lng), 'week')}){dfs.defs ? <>; most defences, {nm(dfs.ids)} ({dfs.defs})</> : null}.</p>; })()}
+    <p class="muted mt1">Wins earn ranking points, more at big events. A challenger who has not earned the shot gets a cold reception.</p>
+  </Win>;
+}
 /** Which way a title's prestige has moved over the last four weeks. */
 function trend(t: any) {
   const h: number[] = t.ph || [], d = h.length >= 5 ? t.prestige - h[h.length - 5] : 0;
@@ -85,6 +102,6 @@ export function Titles() {
       {singles.length > 1 ? <div class="row">{singles.map((t: any) => <Btn key={t.id} kind="sm" on={t.id === cur.id} t="cont-pick" d={{ k: t.id }} onClick={() => view(() => { st.k = t.id; })}>{t.name.replace(/ (World )?(Heavyweight )?(Title|Championship|Titles)$/, '')}</Btn>)}</div> : null}
       {cur ? <Contenders t={cur} busy={busy} /> : <Empty>No singles titles.</Empty>}
     </Win>
-    {S.tourn ? <Tourn /> : <Win title="How a shot is earned" area="tourn" t="tourn-help"><p>Wins earn ranking points, more at big events and in main events, and they fade week by week.</p><p class="mt1">The crowd reacts badly to a challenger who has not earned the shot.</p><p class="mt1">A tournament winner takes a vacant title, or a shot at the champion. A battle royal winner earns a shot too.</p></Win>}
+    {S.tourn ? <Tourn /> : <Lineage t={cur} />}
   </Desktop></div>;
 }

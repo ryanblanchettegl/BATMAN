@@ -60,11 +60,11 @@ function StoryPane(p: { id: number | null }) {
     <Line label="Heat" w={9}><Meter v={f.heat} kind="hot" n={6} /> <span class="num">{pl.heat}</span> <span class="muted">Fresh</span> <Meter v={pl.fresh} kind="cool" n={6} /></Line>
     <Line label="Running" w={9}><span title={pl.lead}>{pl.weeks} {pl.weeks === 1 ? 'week' : 'weeks'}{pl.rounds ? ', ' + pl.rounds + (pl.rounds === 1 ? ' round' : ' rounds') : ''}{pl.lead ? (/every time/.test(pl.lead) ? ', one-sided' : (/square/.test(pl.lead) ? ', all square' : '')) : ''}</span></Line>
     <Group title="The ending">
-      <p data-t="feud-end" class="clamp">{pl.end ? (pl.end.in < 0 ? 'Planned for ' + pl.end.at + ', which has passed. It goes on until you book the ending.' : 'Planned for ' + pl.end.at + ', ' + wk(pl.end.in) + '. Book them on that show.') : 'None planned. It goes on as long as you want it to.'}</p>
+      <p data-t="feud-end" class="clamp">{pl.end ? (pl.end.in < 0 ? 'Planned for ' + pl.end.at + ', which has passed. It goes on until you book the ending.' : 'Planned for ' + pl.end.at + ', ' + wk(pl.end.in) + '.' + (pl.home ? '' : ' Book them on that show.')) : (pl.home ? 'None planned.' : 'None planned. It goes on as long as you want it to.')}{pl.home ? <span class="good" data-t="feud-home" title="An ending in a home town pays more."> {pl.end ? 'In' : 'Next big night:'} {pl.home.name}{'\u2019'}s home town.</span> : null}</p>
       <p class="sp-btns">{pl.end ? <Btn kind="sm" t="story-unplan" onClick={() => plan(null)}>Take the plan off</Btn> : <Btn kind="go" t="story-plan" onClick={() => plan()}>End it at {pl.next.at.replace(/^\S+ /, '')}</Btn>}</p>
     </Group>
     <Group title="What it needs"><p class="clamp">{NEEDS[pl.phase] ? NEEDS[pl.phase](pl) : ''}</p>
-      <p class="sp-acts" data-t="story-acts">{E.storyActs(S, f.id).map((x: any) => <Btn key={x.id} kind="sm" t="story-act" d={{ v: x.id }} disabled={!x.can} label={x.n + '. ' + x.d + (x.why ? ' ' + x.why : '')} onClick={() => act(() => { const r = E.storyDo(S, f.id, x.id); say(r.msg, { err: !r.ok }); })}>{({ stakes: 'Stakes', sitdown: 'Sit-down', title: 'Title', shelf: x.n === 'Bring it back' ? 'Bring back' : 'Rest it' } as any)[x.id] || x.n}{x.cost ? ' · ' + x.cost : ''}</Btn>)}</p></Group>
+      <p class="sp-acts" data-t="story-acts">{E.storyActs(S, f.id).map((x: any) => <Btn key={x.id} kind="sm" t="story-act" d={{ v: x.id }} disabled={!x.can} label={x.n + '. ' + x.d + (x.why ? ' ' + x.why : '')} onClick={() => act(() => { const r = E.storyDo(S, f.id, x.id); say(r.msg, { err: !r.ok }); })}>{({ stakes: 'Stakes', sitdown: 'Sit-down', title: 'Title', turn: 'Turn', shelf: x.n === 'Bring it back' ? 'Bring back' : 'Rest it' } as any)[x.id] || x.n}{x.cost ? ' · ' + x.cost : ''}</Btn>)}</p></Group>
     {f.stakes ? <p class="good one">Stakes: {f.stakes}</p> : null}
     <p class="sp-btns"><Btn kind="sm" t="story-log" onClick={log}>The feud so far</Btn><Btn kind="danger" t="story-end" onClick={end}>Drop it</Btn></p>
   </div>;
@@ -82,7 +82,7 @@ const NEEDS: Record<string, (pl: any) => string> = {
 function Says(p: { se: any }) {
   const S = G.S, st = stl(), L = p.se.says, per = flat() ? 99 : 2;
   const pages = Math.max(1, Math.ceil(L.length / per)), pg = Math.min(st.npg, pages - 1);
-  const KW: Record<string, [string, any]> = { late: ['Late', 'bad'], hurt: ['Hurt', 'bad'], cold: ['Cold', 'bad'], ripe: ['Ripe', 'good'], clash: ['Clash', 'bad'], lop: ['One-sided', 'warn'], tired: ['Stale', 'warn'], crowd: ['Crowded', 'warn'], idle: ['Idle', 'off'], good: ['Good', 'good'] };
+  const KW: Record<string, [string, any]> = { late: ['Late', 'bad'], hurt: ['Hurt', 'bad'], cold: ['Cold', 'bad'], ripe: ['Ripe', 'good'], clash: ['Clash', 'bad'], lop: ['One-sided', 'warn'], tired: ['Stale', 'warn'], turn: ['Turn', 'warn'], crowd: ['Crowded', 'warn'], idle: ['Idle', 'off'], good: ['Good', 'good'] };
   if (!L.length) return <p class="muted">Nothing to fix. Every feud is in good shape.</p>;
   return <>
     <ul class="says">{L.slice(pg * per, pg * per + per).map((x: any, i: number) => <li key={pg + ':' + i}>
@@ -123,6 +123,7 @@ function More(p: { pops: { [k: string]: () => ComponentChildren } }) {
   const b = (k: string, n: string, c: number, title: string) => <button type="button" class="btn st-pw" {...dataAttrs('st-more', { v: k })} onClick={() => openModal({ kind: 'info', title, wide: true, body: p.pops[k] })}><span class="one">{n}</span><span class="cost">{c}</span></button>;
   return <div class="st-pws">
     <button type="button" class="btn st-pw" {...dataAttrs('plot-open', { v: 'found' })} onClick={() => openModal({ kind: 'info', title: 'Stories waiting', wide: true, body: () => <Found /> })}><span class="one">Stories waiting</span><span class="cost">{E.sift(S).length}</span></button>
+    {(() => { const A = E.arcInfo(S); return <button type="button" class="btn st-pw" {...dataAttrs('plot-open', { v: 'arc' })} onClick={() => openModal({ kind: 'plot', k: 'arc' })}><span class="one">{A.on ? A.n : 'Company arc'}</span><span class="cost">{A.on ? (A.flop ? 'flop' : 'on') : (A.can ? 'pick' : 'later')}</span></button>; })()}
     {b('finished', 'Finished feuds', done, 'Finished')}
     {b('streaks', 'Winning streaks', streak, 'Winning streaks')}
     {b('stables', 'Stables', stables, 'Stables')}

@@ -49,7 +49,7 @@ export function report(): any {
   return checked.v;
 }
 /** A world id that no other stored world uses. */
-export function freeId(base: string): string { let id = base, n = 2; while (UNIS[id] || id === 'public_domain') { id = base.slice(0, 36) + '_' + n; n++; } return id; }
+export function freeId(base: string): string { let id = base, n = 2; while (UNIS[id] || id === 'public_domain' || id === 'parody') { id = base.slice(0, 36) + '_' + n; n++; } return id; }
 export function openWorld(id: string) { const st = es(); st.id = id; st.tab = 'world'; st.sel = {}; st.q = ''; st.fp = ''; st.msg = ''; st.text = ''; stale = true; ui.mi = 0; }
 export const pushOrder = ['main_eventer', 'upper_midcarder', 'midcarder', 'lower_midcarder', 'jobber', 'non_wrestler'];
 /** A record's id follows its name. Keep whatever was open pointing at it. */

@@ -1,5 +1,5 @@
 /* ---------- roster moves ---------- */
-E.ask=function(S,w){var P=S.promos[S.player],MD=modelOf(P),m=(w.promo==='FA'?1:1.3)*talkDiscount(S);if(w.promo!=='FA'&&S.promos[w.promo].image>P.image+10)m+=0.25;
+E.ask=function(S,w){var P=S.promos[S.player],MD=modelOf(P),m=(w.promo==='FA'?1:1.3)*talkDiscount(S);if(w.promo!=='FA'&&S.promos[w.promo].image>P.image+10)m+=0.25;if(S.pw10&&S.pw10.indexOf(w.id)>=0)m+=0.1;
   if(MD.premium&&w.ovr>P.image+8)m*=MD.premium;                                   // a startup pays over the odds for a name
   if(MD.chip&&w.cut&&S.week-w.cut.w<52&&w.promo==='FA')m*=0.85;                   // a castoff comes cheap to an underdog
   return Math.round(wageFor(w.ovr,P)*m/50)*50;};
@@ -15,7 +15,7 @@ E.sign=function(S,id,wage,weeks){
   if(wagesWeek(S,P)+wage>E.budget(S))return {ok:false,msg:S.owner.name+' will not sign off on that. It would take the wage bill past the '+money(E.budget(S))+' a week budget.'};
   var ask=E.ask(S,w);
   if(wage<ask*0.97){
-    if(!w.ctr){w.ctr=true;var ca=Math.round(ask*1.08/50)*50;pushEv(S,{type:'counter',w:w.id,ask:ca,weeks:weeks||48,text:w.name+'\u2019s side did not like your offer, but they have come back with a number: '+money(ca)+' a week.',choices:['Accept at '+money(ca)+' a week','Walk away']});return {ok:false,msg:w.name+' turned that down and sent a counter-offer. It is in your inbox.'};}
+    if(!w.ctr){w.ctr=true;var ca=Math.round(ask*1.08/50)*50;var half=Math.round((wage+ca)/2/50)*50;pushEv(S,{type:'counter',w:w.id,ask:ca,offer:wage,half:half,weeks:weeks||48,text:w.name+'\u2019s side did not like your offer of '+money(wage)+', but they have come back with a number: '+money(ca)+' a week.',choices:['Accept at '+money(ca)+' a week','Meet them halfway: '+money(half)+' a week','Walk away'],checks:{1:mkCheck(7,[{n:w.promo==='FA'?'They need the work':'They have a job already',v:w.promo==='FA'?1:-1},{n:'They are unhappy where they are',v:w.promo!=='FA'&&w.morale<45?1:0}].concat(skillMods(S,'talk')))}});return {ok:false,msg:w.name+' turned that down and sent a counter-offer. It is in your inbox.'};}
     w.lock=S.week+4;return {ok:false,msg:'Talks broke down. '+w.name+' wanted about '+money(ask)+' a week.'};
   }
   var from=w.promo;if(from!=='FA'){S.promos[from].rel=clamp((S.promos[from].rel||0)-12,-100,100);leaveCompany(S,w,'left for '+P.name);}
@@ -41,7 +41,7 @@ E.suggest=function(S){var P=S.promos[S.player],show=S.queue[S.qi];return show?au
 E.validate=function(S,card){var P=S.promos[S.player],show=S.queue[S.qi];if(!show)return {errors:[],warnings:[]};var v=validate(S,P,show,card),c=cardCost(S,card);if(c>S.bp){if(S.owner.me)v.warnings.push('You are '+(c-S.bp)+' booking power over. As the owner you can overrule, but each extra point costs locker-room trust.');else v.errors.push('These calls need '+c+' booking power and you have '+S.bp+'. Let some matches play out.');}return v;};
 E.eligible=function(S){var P=S.promos[S.player],show=S.queue[S.qi];return show?eligible(S,P,show):[];};
 E.showTitles=function(S){var P=S.promos[S.player],show=S.queue[S.qi];return show?(show.big?P.titles:showTitles(P,show)):[];};
-E.nextBig=function(S){var w=S.week+(4-cal(S.week).wom),c=cal(w);return {week:w,name:dbOf(S).events[c.month]||'the next big show',label:c.label};};
+E.nextBig=function(S){var w=nextBigFrom(S.week,S),c=cal(w);return {week:w,name:evName(S,S.promos[S.player],c.month)||'the next big show',label:c.label};};
 E.expected=function(S,show){return r1(expected(S.promos[S.player],show));};
 E.cal=cal;E.workRate=workRate;E.rosterOf=rosterOf;E.teamOf=teamOf;E.partnerOf=partnerOf;E.feudOf=feudOf;E.feudsFor=feudsFor;E.activeFeuds=activeFeuds;E.feudLabel=feudLabel;E.feudStage=feudStage;
 E.holdLvl=holdLvl;E.isDev=isDev;E.wageFor=wageFor;E.money=money;E.autoBook=autoBook;E.runShow=runShow;E.weekShows=weekShows;

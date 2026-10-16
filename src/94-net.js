@@ -47,7 +47,8 @@ SHOWX.push(function(S,P,show,rep){
   netPost(S,'p',netHandle(S.columnist||'The Ringside Wire'),S.columnist||'The Ringside Wire',best.label+' at '+rep.name+': '+starG(best.ov)+'. The show was graded '+gradeG(repCS(rep))+(verdictBand(d)>0?', better than this crowd expected.':(verdictBand(d)<0?', short of what this crowd expected.':', what this crowd came for.')),netLikes(900,key+'pr'));
   // the chat room after the show: two to four fans, each line written by the grammar from what happened (src/60-grammar.js)
   var mf=main.ids&&main.ids.length>=2?S.feuds.filter(function(f){return f.promo===P.id&&(f.a.indexOf(main.ids[0])>=0&&f.b.indexOf(main.ids[1])>=0||f.b.indexOf(main.ids[0])>=0&&f.a.indexOf(main.ids[1])>=0);}).slice(-1)[0]:null;
-  var cc={show:rep.name,co:P.name,band:verdictBand(d),best:best.label,win:mw?mw.name:null,lose:ml?ml.name:null,champ:main.change&&mw?mw.name:null,feud:mf?feudLabel(S,mf):null,fheat:mf?mf.heat:0,fstale:!!(mf&&!mf.res&&mf.fresh!=null&&mf.fresh<30),fend:!!(mf&&mf.res&&mf.end===S.week)},nf=2+Math.floor(h01(key+'nf')*3),said={};
+  var cc={show:rep.name,co:P.name,band:verdictBand(d),best:best.label,win:mw?mw.name:null,lose:ml?ml.name:null,champ:main.change&&mw?mw.name:null,feud:mf?feudLabel(S,mf):null,fheat:mf?mf.heat:0,fstale:!!(mf&&!mf.res&&mf.fresh!=null&&mf.fresh<30),fend:!!(mf&&mf.res&&mf.end===S.week),turn:null},nf=2+Math.floor(h01(key+'nf')*3),said={};
+  var tw=rosterOf(S,P.id).filter(function(w){return w.tw===S.week;})[0];if(tw){cc.turn=tw.name;cc.heel=tw.align==='H';}
   for(var fi=0;fi<nf;fi++){var fan=FANS[Math.floor(h01(key+'f'+fi)*FANS.length)%FANS.length][0],ln=gram(GR_CHAT,'line',cc,key+'ft'+fi);if(said[ln])continue;said[ln]=1;netPost(S,'f','@'+fan,fan,ln,netLikes(120,key+'fl'+fi));}
 });
 /* at the end of the week: the news that broke, as the press posts it */
@@ -95,6 +96,10 @@ function netRumours(S,wk){
     if(P.cash<0)out.push({lvl:'likely',t:P.name+' are behind on their bills. Expect cuts.'});
     if(P.shows.length<3&&P.cash>0&&P.image>=45+15*P.shows.length&&R.length>=14*(P.shows.length+1))out.push({lvl:'likely',t:P.name+' have been talking to a network about another weekly show.'});
   });
+  // a thin rumour is wrong about half the time (NEXT.md 9.2): some weeks the paper hears that a happy star wants out.
+  // It is filed like any other, so it comes due and is corrected: "stayed with them after all"
+  if(h01(wk+'lie'+S.seed)<0.5){var cand=[];S.order.forEach(function(pid){if(pid===S.player)return;rosterOf(S,pid).forEach(function(w){if(!w.nw&&w.con!=null&&w.con>20&&w.morale>=65&&w.ovr>=S.promos[pid].image-5)cand.push(w);});});
+    if(cand.length){var lw=cand[Math.floor(h01(wk+'liew'+S.seed)*cand.length)%cand.length],lp=S.promos[lw.promo];out.push({lvl:'thin',t:lw.name+' is said to be unhappy with their spot at '+lp.name+'. Other companies will be listening.',w:lw.id,k:'unh',pid:lw.promo,due:wk+6,lie:1});}}
   var fa=S.w.filter(function(w){return w.promo==='FA'&&!w.rt&&!w.nw;}).sort(function(a,b){return b.ovr-a.ovr;})[0],rv=S.order.filter(function(p){var g=modelOf(S.promos[p]).gender;return p!==S.player&&(!g||!fa||g===fa.g);});
   if(fa&&rv.length){var fp=netPickH(rv,wk+'thin');out.push({lvl:'thin',t:fa.name+' was seen at a '+S.promos[fp].name+' show this week. It could mean anything.',w:fa.id,k:'fa',pid:fp,due:wk+4});}
   // a team that is coming apart: one partner jealous of the other (the warning before a betrayal)
@@ -131,6 +136,9 @@ function netThrowback(S,wk){
     var y=d/48,span=h.to!=null?(h.to-h.from):null;
     out.push({t:y+' '+(y===1?'year':'years')+' ago this week, '+h.h.join(' and ')+' won the '+S.promos[pid].name+' '+t.name+(h.show?' at '+h.show:'')+'.'+(span!=null&&span>=24?' The reign lasted '+span+' weeks.':'')});
   });});});
+  // the stories that ended, and the best matches, a year or more ago this week (your own shows)
+  (S.feudBook||[]).forEach(function(e){var d=wk-e.e;if(d<=0||d%48)return;var y=d/48;out.push({t:y+' '+(y===1?'year':'years')+' ago this week, '+e.l+' came to an end after '+(e.e-e.s)+' weeks.'});});
+  ((S.rec&&S.rec.matches)||[]).forEach(function(m){var d=wk-m.w;if(m.w==null||d<=0||d%48)return;var y=d/48;out.push({t:y+' '+(y===1?'year':'years')+' ago this week: '+m.l+(m.show?' at '+m.show:'')+', '+starG(m.ov)+'.'});});
   return out.sort(function(a,b){return h01(wk+a.t)-h01(wk+b.t);}).slice(0,1);
 }
 /** The moment of the week: the biggest marked beat from the player's shows (a new champion first, then the best match). */
@@ -161,7 +169,7 @@ function netSheet(S,wk){
   });
   var business=news.filter(function(x){return (x.k==='money'||x.k==='contract'||x.k==='injury')&&!used[x.t];}).slice(0,4).map(function(x){used[x.t]=1;return x.t;});
   var c=cal(wk+1),next=[];
-  if(c.wom===4)next.push(P.name+' '+dbOf(S).events[c.month]+' is next week.');
+  if(c.wom===4)next.push(P.name+' '+evName(S,P,c.month)+' is next week.');
   var soon=rosterOf(S,P.id).filter(function(w){return !w.nw&&w.con!=null&&w.con<=2;}).sort(function(a,b){return b.ovr-a.ovr;})[0];if(soon)next.push(soon.name+'’s contract with '+P.name+' is nearly up.');
   // feud watch: the stories around the business, from their heat, freshness and age (src/21-living.js), one line each
   var fw=[];S.feuds.forEach(function(f){var co=S.promos[f.promo]?S.promos[f.promo].name:'';if(!co)return;var c={f:feudLabel(S,f),co:co,w:wk-f.start,k:null};

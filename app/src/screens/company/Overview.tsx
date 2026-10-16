@@ -2,8 +2,8 @@
    up, the house rules in force and the sponsors signed. Read-only: every choice behind these numbers is made on Manage. */
 import { ComponentChildren } from 'preact';
 import { E } from '../../engine';
-import { G, me, cash, full, plural } from '../../store';
-import { Head, Panel, Gauge, Meter, Empty, Name } from '../../kit';
+import { G, me, cash, full, plural, slice, view } from '../../store';
+import { Head, Panel, Gauge, Meter, Empty, Name, Desktop, Win, ListBox, Row } from '../../kit';
 import { ModelCard } from '../../shared/model';
 
 /** A gauge panel: the title is centred inside the box (docs/design.md, section 6). */
@@ -77,7 +77,7 @@ function Sponsors() {
   const S = G.S; let pay = 0; S.sponsors.forEach((x: any) => { pay += x.pay; });
   return <Panel title="Sponsors">
     {S.sponsors.length ? <ul class="list">{S.sponsors.map((x: any) => <li class="col">
-      <span><b>{x.name}</b> {'·'} {cash(x.pay)} a week {'·'} {x.weeks} {plural(x.weeks, 'week')} left</span><span class="muted">Condition: {x.text}</span>
+      <span><b>{x.name}</b>{x.tn ? ' (' + x.tn.toLowerCase() + ')' : ''} {'·'} {cash(x.pay)} a week {'·'} {x.weeks} {plural(x.weeks, 'week')} left</span><span class="muted">Condition: {x.text}</span>
     </li>)}</ul> : <Empty>No sponsors signed. New offers arrive on Manage, under Deals, every four weeks.</Empty>}
     {S.sponsors.length ? <p class="muted mt2">{cash(pay)} a week in all.</p> : null}
   </Panel>;
@@ -98,14 +98,45 @@ function IncomeBar() {
   </Panel>;
 }
 
+const PARTS: { id: string; n: string; body: () => ComponentChildren }[] = [
+  { id: 'setup', n: 'How it runs', body: () => <Setup /> },
+  { id: 'income', n: 'Where the money came from', body: () => <IncomeBar /> },
+  { id: 'model', n: 'How this company is run', body: () => <Panel title="How this company is run"><ModelCard id={me().model} /></Panel> },
+  { id: 'owner', n: 'Ownership', body: () => <Ownership /> },
+  { id: 'rules', n: 'House rules', body: () => <Rules /> },
+  { id: 'sponsors', n: 'Sponsors', body: () => <Sponsors /> },
+  { id: 'cities', n: 'Your cities', body: () => <Cities /> }
+];
+/** Every city on the road: the market in words and the last night there. */
+function Cities() {
+  const C: any[] = E.cities(G.S);
+  return <div class="tw" data-t="ov-cities"><table>
+    <thead><tr><th>City</th><th>Market</th><th>Last night</th><th class="r">Crowd</th></tr></thead>
+    <tbody>{C.map((c, i) => <tr key={i}><td>{c.city}</td><td>{c.word}</td>
+      <td>{c.last == null ? <span class="muted">Not yet</span> : <>{c.ago === 0 ? 'This week' : c.ago === 1 ? 'Last week' : c.ago + ' weeks ago'}{c.grade ? <span class="muted">, {c.grade}</span> : null}</>}</td>
+      <td class="r num">{c.att == null ? '' : c.so ? 'Sold out' : Math.round(c.att / Math.max(1, c.cap) * 100) + '% full'}</td></tr>)}</tbody>
+  </table></div>;
+}
 export function Overview() {
   const S = G.S, P = me();
-  return <div class="onescreen winpage">
+  // for the browser tests: every part laid out on the page, as it was
+  if ((window as any).EWF_FLAT) return <div class="onescreen winpage">
     <Head eyebrow={P.name} title="Company" />
     <Gauges />
     <div class="cols">
       <div class="stack"><Panel title="How this company is run"><ModelCard id={P.model} /></Panel><Ownership /><Rules /></div>
       <div class="stack"><IncomeBar /><Setup /><Sponsors /></div>
     </div>
+  </div>;
+  const st = slice<{ k: string }>('overview', () => ({ k: 'setup' })), cur = PARTS.find(x => x.id === st.k) || PARTS[0];
+  return <div class="onescreen winpage ovpage">
+    <Head eyebrow={P.name} title="Company" />
+    <Gauges />
+    <Desktop cls="ovdesk" t="overview">
+      <Win title={P.name} area="list" t="ov-list">
+        <ListBox cols="1fr" label="Parts">{PARTS.map(x => <Row key={x.id} sel={x.id === cur.id} onPick={() => view(() => { st.k = x.id; })} t="ov-sec" d={{ v: x.id }} label={x.n}><span>{x.n}</span></Row>)}</ListBox>
+      </Win>
+      <Win title={cur.n} area="pane" t="ov-pane"><div class="hspane">{cur.body()}</div></Win>
+    </Desktop>
   </div>;
 }

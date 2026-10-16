@@ -1,0 +1,45 @@
+{
+ "reigns": [
+  {
+   "title": "otpw_never",
+   "holders": [
+    "grudge_gallagher"
+   ],
+   "from": "2026-02",
+   "to": null,
+   "defs": 4,
+   "event": "New Beginning Again"
+  },
+  {
+   "title": "otpw_tag",
+   "holders": [
+    "drill_sergeant_dorsey",
+    "nurlan_ironarm"
+   ],
+   "from": "2026-01",
+   "to": null,
+   "defs": 3,
+   "event": "Dome Kingdom"
+  }
+ ],
+ "matches": [
+  {
+   "a": "sunny_ace",
+   "b": "reiji_ameda",
+   "winner": "sunny_ace",
+   "date": "2026-01",
+   "event": "Dome Kingdom",
+   "stars": 5,
+   "note": "The ace's last match. His oldest rival came back from America for it. Fifty thousand cried."
+  }
+ ],
+ "feuds": [],
+ "moments": [
+  {
+   "who": "sunny_ace",
+   "date": "2026-01",
+   "k": "retire",
+   "text": "Retired at the dome, after twenty-six years, and became president of the company."
+  }
+ ]
+}

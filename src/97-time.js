@@ -19,7 +19,9 @@ REACT['Video recap']=['Now you know why these two cannot be in the same building
 
 function showMins(show){return show?(show.mins||(show.big?SHOW_LEN.big:SHOW_LEN.tv)):0;}
 /** Bell to bell, the same sum the match itself uses. */
-function bellMins(show,m,isMain){return Math.max(4,(m.stip==='iron'?30:(LEN[m.len]||12))+(show&&show.big?4:0)+(isMain?3:0)+noteMins(m));}
+function bellMins(show,m,isMain){if(m.mt==='br')return brMins(m);return Math.max(4,(m.stip==='iron'?30:(LEN[m.len]||12))+(show&&show.big?4:0)+(isMain?3:0)+noteMins(m));}
+/** A battle royal runs 30 minutes for every 15 in it (Ryan, 16 October), whatever length is picked. */
+function brMins(m){return Math.max(10,Math.round(2*((m.sides?m.sides.length:8)+(m.surp?1:0))));}
 /** What a match takes off the clock: bell to bell, plus entrances and a break. */
 function matchSlot(show,m,isMain){return bellMins(show,m,isMain)+(MT_OVER[m.mt]||5)+(STIP_SET[m.stip]||0);}
 function hasPlan(S){return !!(S.plan&&S.w[S.plan.sp]);}
@@ -155,7 +157,7 @@ E.clock=function(S,card){
 /** How long this match would take off the clock at each length, where it sits now. */
 E.matchMins=function(S,m,i,n){
   var show=S.queue&&S.queue[S.qi],main=i===n-1,o={};
-  ['S','M','L'].forEach(function(l){var c={mt:m.mt,stip:m.stip,len:l,note:m.note};o[l]=matchSlot(show,c,main);});
+  ['S','M','L'].forEach(function(l){var c={mt:m.mt,stip:m.stip,len:l,note:m.note,sides:m.sides,surp:m.surp};o[l]=matchSlot(show,c,main);});
   o.now=matchSlot(show,m,main);o.bell=bellMins(show,m,main);return o;
 };
 E.fitShow=function(S,card){return fitShow(S,card||S.card||[]);};

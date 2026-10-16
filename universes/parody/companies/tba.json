@@ -1,0 +1,1473 @@
+{
+ "promotion": {
+  "id": "tba",
+  "model": "underdog",
+  "name": "TBA",
+  "full_name": "To Be Announced Wrestling",
+  "blurb": "The company that has changed its name, its network and its owner more often than its ring ropes. Always the comeback story, always one deal away from the big time, and always loved by the people who stayed.",
+  "owner": {
+   "name": "A Canadian Broadcasting Conglomerate (Name TBA)",
+   "style": "merit",
+   "roots": "tradition",
+   "pledge": "stable"
+  },
+  "staff": {
+   "road_agent": "Gary Ghostwriter",
+   "head_writer": "The Booking Committee (TBA)"
+  },
+  "announcers": [
+   "Thomas Hanniford",
+   "Matthew Rehearsal"
+  ],
+  "cities": [
+   "Nashville",
+   "Orlando",
+   "Atlanta",
+   "Philadelphia",
+   "Detroit",
+   "Cleveland",
+   "Dallas",
+   "Las Vegas",
+   "Windsor",
+   "Toronto",
+   "Montreal",
+   "Baltimore"
+  ],
+  "cash": 9000000,
+  "popularity": 52,
+  "flagship_month": 10,
+  "tv_slot": 1,
+  "production_level": 2,
+  "events": [
+   {
+    "n": "Genesis (Working Title)",
+    "t": "arena"
+   },
+   {
+    "n": "No Surrender Probably",
+    "t": "taped"
+   },
+   {
+    "n": "Sacrifice Bunt",
+    "t": "taped"
+   },
+   {
+    "n": "Rebellion Pending",
+    "t": "tent"
+   },
+   {
+    "n": "Under Siege, Over Budget",
+    "t": "taped"
+   },
+   {
+    "n": "Against Most Odds",
+    "t": "taped"
+   },
+   {
+    "n": "Birthday Slam",
+    "t": "tent"
+   },
+   {
+    "n": "Emergence From Hiding",
+    "t": "taped"
+   },
+   {
+    "n": "Victory Road Trip",
+    "t": "taped"
+   },
+   {
+    "n": "Bound for Somewhere",
+    "t": "flag"
+   },
+   {
+    "n": "Turning Point of No Return",
+    "t": "taped"
+   },
+   {
+    "n": "Final Resolution Pending",
+    "t": "arena"
+   }
+  ]
+ },
+ "shows": [
+  {
+   "id": "tba_thursday",
+   "name": "TBA Thursday Night Something",
+   "weight": 1
+  }
+ ],
+ "titles": [
+  {
+   "id": "tba_world",
+   "name": "TBA World Championship (Name Pending)",
+   "gender": "M",
+   "level": 3,
+   "holder_ids": [
+    "santo_santiago"
+   ]
+  },
+  {
+   "id": "tba_x",
+   "name": "X-Factor Division Championship",
+   "gender": "M",
+   "level": 2,
+   "holder_ids": [
+    "leon_launchpad"
+   ]
+  },
+  {
+   "id": "tba_knockouts",
+   "name": "Knockdowns World Championship",
+   "gender": "F",
+   "level": 3,
+   "holder_ids": [
+    "masha_meanslam"
+   ]
+  },
+  {
+   "id": "tba_tag",
+   "name": "TBA World Tag Team Championship",
+   "gender": "M",
+   "level": 2,
+   "tag": true,
+   "holder_ids": [
+    "brother_ladder",
+    "brother_ladder_b"
+   ]
+  },
+  {
+   "id": "tba_ko_tag",
+   "name": "Knockdowns Tag Team Championship",
+   "gender": "F",
+   "level": 1,
+   "tag": true,
+   "holder_ids": []
+  },
+  {
+   "id": "tba_digital",
+   "name": "Digital Download Championship",
+   "gender": "M",
+   "level": 1,
+   "holder_ids": [
+    "mitt_rebooted"
+   ]
+  }
+ ],
+ "roster": [
+  {
+   "id": "santo_santiago",
+   "ring_name": "Santo Santiago",
+   "gender": "M",
+   "disposition": "face",
+   "style": "brawler",
+   "age": 34,
+   "hometown": "Brooklyn",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 90,
+    "technical": 70,
+    "aerial": 70,
+    "stamina": 86,
+    "charisma": 72,
+    "promo_skill": 76,
+    "overness": 84,
+    "star_quality": 85,
+    "potential": 80,
+    "durability": 75,
+    "consistency": 88
+   },
+   "gimmick_category": "Hometown Saviour",
+   "gimmick": "A Brooklyn brawler who went away, came home, and carried the company on his back up three flights of stairs.",
+   "catchphrase": "Brooklyn built. TBA owned.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2013,
+   "finisher": "The Spin Cycle",
+   "finisher_description": "A spinning sit-out sideslam.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 165000,
+    "weeks_left": 32,
+    "push": "main_eventer"
+   },
+   "finisher_move": "Spinning sideslam",
+   "signatures": [
+    {
+     "name": "Bodega Kick",
+     "move": "Running knee"
+    },
+    {
+     "name": "Stoop Slam",
+     "move": "Powerslam"
+    }
+   ]
+  },
+  {
+   "id": "believe_barnaby",
+   "ring_name": "Believe-Boy Barnaby",
+   "gender": "M",
+   "disposition": "face",
+   "style": "entertainer",
+   "age": 37,
+   "hometown": "Glasgow",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 84,
+    "technical": 68,
+    "aerial": 70,
+    "stamina": 82,
+    "charisma": 79,
+    "promo_skill": 80,
+    "overness": 79,
+    "star_quality": 75,
+    "potential": 82,
+    "durability": 68,
+    "consistency": 77
+   },
+   "gimmick_category": "Musical Comedy Hero",
+   "gimmick": "A Scottish hero whose theme song is a sing-along about himself, and the crowd knows every word.",
+   "catchphrase": "Do you believe? You do now.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2010,
+   "finisher": "The Standing Ovation",
+   "finisher_description": "A fallaway slam held for a bow.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 165000,
+    "weeks_left": 46,
+    "push": "main_eventer"
+   },
+   "finisher_move": "Fallaway slam",
+   "signatures": [
+    {
+     "name": "Encore Lariat",
+     "move": "Lariat"
+    },
+    {
+     "name": "Chorus Line",
+     "move": "Corner splash"
+    }
+   ]
+  },
+  {
+   "id": "niles_nevermind",
+   "ring_name": "Niles Nevermind",
+   "gender": "M",
+   "disposition": "heel",
+   "style": "all_rounder",
+   "age": 46,
+   "hometown": "Parma",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 85,
+    "technical": 82,
+    "aerial": 68,
+    "stamina": 71,
+    "charisma": 77,
+    "promo_skill": 65,
+    "overness": 84,
+    "star_quality": 84,
+    "potential": 83,
+    "durability": 60,
+    "consistency": 80
+   },
+   "gimmick_category": "The Showoff Who Showed Up",
+   "gimmick": "A cocky veteran who thinks every match is beneath him and wins them anyway.",
+   "catchphrase": "Never mind. I'm the main event.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2001,
+   "finisher": "The Never Mind Kick",
+   "finisher_description": "A spinning superkick.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 165000,
+    "weeks_left": 54,
+    "push": "main_eventer"
+   },
+   "finisher_move": "Superkick",
+   "signatures": [
+    {
+     "name": "Showoff Elbow",
+     "move": "Rolling elbow"
+    },
+    {
+     "name": "Fame Flame",
+     "move": "Jumping reverse bulldog"
+    }
+   ]
+  },
+  {
+   "id": "moose_mountain",
+   "ring_name": "Moose Mountain",
+   "gender": "M",
+   "disposition": "heel",
+   "style": "powerhouse",
+   "age": 41,
+   "hometown": "Raleigh",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 83,
+    "technical": 72,
+    "aerial": 54,
+    "stamina": 77,
+    "charisma": 77,
+    "promo_skill": 75,
+    "overness": 81,
+    "star_quality": 78,
+    "potential": 83,
+    "durability": 65,
+    "consistency": 83
+   },
+   "gimmick_category": "Former Footballer With a System",
+   "gimmick": "A massive former footballer who leads a crew called The Program and spears people like a tackle dummy.",
+   "catchphrase": "Run the program.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2006,
+   "finisher": "The Antler Spear",
+   "finisher_description": "A running spear.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 70000,
+    "weeks_left": 56,
+    "push": "upper_midcarder"
+   },
+   "finisher_move": "Spear",
+   "signatures": [
+    {
+     "name": "Go to Church",
+     "move": "Pop-up powerbomb"
+    },
+    {
+     "name": "Locker Room Lift",
+     "move": "Gorilla press"
+    }
+   ]
+  },
+  {
+   "id": "eddie_everyman",
+   "ring_name": "Eddie Everyman",
+   "gender": "M",
+   "disposition": "heel",
+   "style": "brawler",
+   "age": 42,
+   "hometown": "Boston",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 85,
+    "technical": 71,
+    "aerial": 53,
+    "stamina": 63,
+    "charisma": 64,
+    "promo_skill": 62,
+    "overness": 66,
+    "star_quality": 65,
+    "potential": 65,
+    "durability": 68,
+    "consistency": 77
+   },
+   "gimmick_category": "Die-Hard Lifer",
+   "gimmick": "A gritty Boston lifer who has been in the company longer than its name has.",
+   "catchphrase": "Die hard. Live harder.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2005,
+   "finisher": "The Piggyback Ride",
+   "finisher_description": "A stunner from a piggyback.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 70000,
+    "weeks_left": 134,
+    "push": "upper_midcarder"
+   },
+   "finisher_move": "Piggyback cutter",
+   "signatures": [
+    {
+     "name": "Boston Knee",
+     "move": "Running knee"
+    },
+    {
+     "name": "Kendo Swing",
+     "move": "Kendo stick shot"
+    }
+   ]
+  },
+  {
+   "id": "brian_bystander",
+   "ring_name": "Brian Bystander",
+   "gender": "M",
+   "disposition": "heel",
+   "style": "technician",
+   "age": 39,
+   "hometown": "Long Island",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 54,
+    "technical": 77,
+    "aerial": 63,
+    "stamina": 63,
+    "charisma": 55,
+    "promo_skill": 43,
+    "overness": 52,
+    "star_quality": 61,
+    "potential": 51,
+    "durability": 72,
+    "consistency": 79
+   },
+   "gimmick_category": "Professional Hanger-On",
+   "gimmick": "A former tag champion who stands next to whoever is winning.",
+   "catchphrase": "I'm with him.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2008,
+   "finisher": "The Roster Cut",
+   "finisher_description": "A back-to-back cutter.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 38000,
+    "weeks_left": 138,
+    "push": "midcarder"
+   },
+   "finisher_move": "Cutter",
+   "signatures": [
+    {
+     "name": "Hanger-On",
+     "move": "Neckbreaker"
+    },
+    {
+     "name": "Coattails",
+     "move": "Running dropkick"
+    }
+   ]
+  },
+  {
+   "id": "frankie_fifteen",
+   "ring_name": "Frankie Fifteen-Years",
+   "gender": "M",
+   "disposition": "tweener",
+   "style": "technician",
+   "age": 48,
+   "hometown": "Anaheim",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 69,
+    "technical": 79,
+    "aerial": 46,
+    "stamina": 59,
+    "charisma": 72,
+    "promo_skill": 61,
+    "overness": 64,
+    "star_quality": 65,
+    "potential": 67,
+    "durability": 59,
+    "consistency": 77
+   },
+   "gimmick_category": "Founding Father of the X Division",
+   "gimmick": "A veteran who has been in the company for every name it has had and calls himself its founding father.",
+   "catchphrase": "I was here first.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 1999,
+   "finisher": "The Fade to Black",
+   "finisher_description": "A spinning neckbreaker into a sit-down.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 70000,
+    "weeks_left": 118,
+    "push": "upper_midcarder"
+   },
+   "finisher_move": "Spinning neckbreaker",
+   "signatures": [
+    {
+     "name": "Chicken Wing",
+     "move": "Chickenwing"
+    },
+    {
+     "name": "Slingshot Stunt",
+     "move": "Slingshot cutter"
+    }
+   ]
+  },
+  {
+   "id": "leon_launchpad",
+   "ring_name": "Leon Launchpad",
+   "gender": "M",
+   "disposition": "face",
+   "style": "flyer",
+   "age": 28,
+   "hometown": "Liverpool",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 78,
+    "technical": 81,
+    "aerial": 89,
+    "stamina": 77,
+    "charisma": 76,
+    "promo_skill": 81,
+    "overness": 76,
+    "star_quality": 76,
+    "potential": 83,
+    "durability": 73,
+    "consistency": 76
+   },
+   "gimmick_category": "Swanton Rocket",
+   "gimmick": "A Scouse flyer who once did a move nobody had ever seen and has been chasing it since.",
+   "catchphrase": "Liftoff!",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2019,
+   "finisher": "The Swanton 450",
+   "finisher_description": "A swanton turned into a 450 in mid-air.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 70000,
+    "weeks_left": 94,
+    "push": "upper_midcarder"
+   },
+   "finisher_move": "450 splash",
+   "signatures": [
+    {
+     "name": "Scouse Spin",
+     "move": "Springboard spin kick"
+    },
+    {
+     "name": "Docks Drop",
+     "move": "Tope con giro"
+    }
+   ]
+  },
+  {
+   "id": "mustafa_majestic",
+   "ring_name": "Mustafa Majestic",
+   "gender": "M",
+   "disposition": "face",
+   "style": "flyer",
+   "age": 39,
+   "hometown": "Bolingbrook",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 62,
+    "technical": 76,
+    "aerial": 88,
+    "stamina": 75,
+    "charisma": 71,
+    "promo_skill": 55,
+    "overness": 65,
+    "star_quality": 67,
+    "potential": 70,
+    "durability": 82,
+    "consistency": 73
+   },
+   "gimmick_category": "Champion of the People",
+   "gimmick": "A high flyer who believes he is running for office and campaigns in every match.",
+   "catchphrase": "Vote for me. I'll fly for you.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2008,
+   "finisher": "The Election Night",
+   "finisher_description": "A top-rope inverted 450.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 70000,
+    "weeks_left": 76,
+    "push": "upper_midcarder"
+   },
+   "finisher_move": "Inverted 450",
+   "signatures": [
+    {
+     "name": "Manifesto",
+     "move": "Tornado DDT"
+    },
+    {
+     "name": "Recount",
+     "move": "Running dropkick"
+    }
+   ]
+  },
+  {
+   "id": "major_maclean",
+   "ring_name": "Major MacLean",
+   "gender": "M",
+   "disposition": "heel",
+   "style": "brawler",
+   "age": 37,
+   "hometown": "Brooklyn",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 77,
+    "technical": 71,
+    "aerial": 61,
+    "stamina": 70,
+    "charisma": 58,
+    "promo_skill": 64,
+    "overness": 67,
+    "star_quality": 63,
+    "potential": 67,
+    "durability": 69,
+    "consistency": 83
+   },
+   "gimmick_category": "Former Soldier, Current Grudge",
+   "gimmick": "A grim ex-military bruiser who treats every match like a mission briefing.",
+   "catchphrase": "Mission accepted.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2010,
+   "finisher": "The Kill-Order",
+   "finisher_description": "A cradle back-to-belly piledriver.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 38000,
+    "weeks_left": 136,
+    "push": "midcarder"
+   },
+   "finisher_move": "Cradle piledriver",
+   "signatures": [
+    {
+     "name": "Mayday",
+     "move": "Lariat"
+    },
+    {
+     "name": "Recon",
+     "move": "Spear"
+    }
+   ]
+  },
+  {
+   "id": "mitt_rebooted",
+   "ring_name": "Mitt Rebooted",
+   "gender": "M",
+   "disposition": "heel",
+   "style": "entertainer",
+   "age": 40,
+   "hometown": "Merrick",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 64,
+    "technical": 63,
+    "aerial": 63,
+    "stamina": 70,
+    "charisma": 72,
+    "promo_skill": 74,
+    "overness": 68,
+    "star_quality": 73,
+    "potential": 68,
+    "durability": 71,
+    "consistency": 84
+   },
+   "gimmick_category": "Indie Toy Collector",
+   "gimmick": "A loud, broke veteran who spends his title money on action figures and talks about it on air.",
+   "catchphrase": "Always. Ready. Collectible.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2007,
+   "finisher": "The Mint in Box",
+   "finisher_description": "A running cutter in the corner.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 38000,
+    "weeks_left": 70,
+    "push": "midcarder"
+   },
+   "finisher_move": "Radio-style cutter",
+   "signatures": [
+    {
+     "name": "Pinfall Collector",
+     "move": "Lariat"
+    },
+    {
+     "name": "Variant Cover",
+     "move": "Neckbreaker"
+    }
+   ]
+  },
+  {
+   "id": "brother_ladder",
+   "ring_name": "Mattias Ladder",
+   "gender": "M",
+   "disposition": "face",
+   "style": "brawler",
+   "age": 51,
+   "hometown": "Cameron",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 92,
+    "technical": 78,
+    "aerial": 44,
+    "stamina": 60,
+    "charisma": 78,
+    "promo_skill": 83,
+    "overness": 81,
+    "star_quality": 86,
+    "potential": 77,
+    "durability": 54,
+    "consistency": 76
+   },
+   "gimmick_category": "Broken Brother",
+   "gimmick": "One half of the most famous brothers in ladders, who now speaks in riddles and loves every crowd.",
+   "catchphrase": "Reboot... pending.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 1996,
+   "finisher": "The Deletion Twist",
+   "finisher_description": "A front facelock into a reverse-neckbreaker drop.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 70000,
+    "weeks_left": 80,
+    "push": "upper_midcarder"
+   },
+   "finisher_move": "Twist neckbreaker",
+   "signatures": [
+    {
+     "name": "Broken Side",
+     "move": "Sideslam"
+    },
+    {
+     "name": "Brotherly Leg Drop",
+     "move": "Double-team leg drop"
+    }
+   ]
+  },
+  {
+   "id": "brother_ladder_b",
+   "ring_name": "Jethro Ladder",
+   "gender": "M",
+   "disposition": "face",
+   "style": "flyer",
+   "age": 48,
+   "hometown": "Cameron",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 69,
+    "technical": 82,
+    "aerial": 70,
+    "stamina": 58,
+    "charisma": 81,
+    "promo_skill": 78,
+    "overness": 78,
+    "star_quality": 78,
+    "potential": 83,
+    "durability": 58,
+    "consistency": 77
+   },
+   "gimmick_category": "Painted Daredevil Brother",
+   "gimmick": "The painted younger brother, who has fallen off more ladders than anyone has climbed.",
+   "catchphrase": "Fall harder. Get back up.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 1999,
+   "finisher": "The Twisted Swanton",
+   "finisher_description": "A swanton bomb from somewhere far too high.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 70000,
+    "weeks_left": 24,
+    "push": "upper_midcarder"
+   },
+   "finisher_move": "Swanton bomb",
+   "signatures": [
+    {
+     "name": "Whisper Kick",
+     "move": "Mule kick"
+    },
+    {
+     "name": "Ladder Lean",
+     "move": "Senton off a ladder"
+    }
+   ]
+  },
+  {
+   "id": "big_abe_fortress",
+   "ring_name": "Big Abe Fortress",
+   "gender": "M",
+   "disposition": "heel",
+   "style": "powerhouse",
+   "age": 37,
+   "hometown": "Mississauga",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 66,
+    "technical": 51,
+    "aerial": 50,
+    "stamina": 67,
+    "charisma": 48,
+    "promo_skill": 51,
+    "overness": 52,
+    "star_quality": 60,
+    "potential": 57,
+    "durability": 82,
+    "consistency": 79
+   },
+   "gimmick_category": "Rapper Muscle",
+   "gimmick": "A huge rapper-wrestler who plays his own theme and makes everyone listen to the whole song.",
+   "catchphrase": "Fortress for hire.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2010,
+   "finisher": "The Fortress Chokeslam",
+   "finisher_description": "A chokeslam from on high.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 38000,
+    "weeks_left": 40,
+    "push": "midcarder"
+   },
+   "finisher_move": "Chokeslam",
+   "signatures": [
+    {
+     "name": "Mic Check",
+     "move": "Big boot"
+    },
+    {
+     "name": "Bass Line",
+     "move": "Powerslam"
+    }
+   ]
+  },
+  {
+   "id": "rich_swagger",
+   "ring_name": "Rich Swagger",
+   "gender": "M",
+   "disposition": "face",
+   "style": "flyer",
+   "age": 35,
+   "hometown": "Baltimore",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 54,
+    "technical": 65,
+    "aerial": 75,
+    "stamina": 61,
+    "charisma": 47,
+    "promo_skill": 54,
+    "overness": 56,
+    "star_quality": 59,
+    "potential": 56,
+    "durability": 78,
+    "consistency": 82
+   },
+   "gimmick_category": "Party Starter",
+   "gimmick": "A dancing flyer who brings his own speaker to the ring.",
+   "catchphrase": "Party at my house!",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2012,
+   "finisher": "The Swagger Splash",
+   "finisher_description": "A 450 splash.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 22000,
+    "weeks_left": 54,
+    "push": "lower_midcarder"
+   },
+   "finisher_move": "450 splash",
+   "signatures": [
+    {
+     "name": "Lethal Spin",
+     "move": "Spinning kick"
+    },
+    {
+     "name": "Swagger Step",
+     "move": "Standing moonsault"
+    }
+   ]
+  },
+  {
+   "id": "jake_somethingorother",
+   "ring_name": "Jake Somethingorother",
+   "gender": "M",
+   "disposition": "face",
+   "style": "powerhouse",
+   "age": 34,
+   "hometown": "Dayton",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 71,
+    "technical": 62,
+    "aerial": 47,
+    "stamina": 56,
+    "charisma": 52,
+    "promo_skill": 55,
+    "overness": 53,
+    "star_quality": 57,
+    "potential": 51,
+    "durability": 68,
+    "consistency": 81
+   },
+   "gimmick_category": "Lovable Bruiser",
+   "gimmick": "A big lovable lump whose name nobody has ever fully finished saying.",
+   "catchphrase": "Something's coming.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2013,
+   "finisher": "The Black Hole Bomb",
+   "finisher_description": "A spinning powerbomb.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 22000,
+    "weeks_left": 124,
+    "push": "lower_midcarder"
+   },
+   "finisher_move": "Spinning powerbomb",
+   "signatures": [
+    {
+     "name": "Something Slam",
+     "move": "Body slam"
+    },
+    {
+     "name": "Something Else",
+     "move": "Lariat"
+    }
+   ]
+  },
+  {
+   "id": "masha_meanslam",
+   "ring_name": "Masha Meanslam",
+   "gender": "F",
+   "disposition": "heel",
+   "style": "brawler",
+   "age": 31,
+   "hometown": "Moscow",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 89,
+    "technical": 73,
+    "aerial": 73,
+    "stamina": 83,
+    "charisma": 71,
+    "promo_skill": 67,
+    "overness": 78,
+    "star_quality": 79,
+    "potential": 76,
+    "durability": 70,
+    "consistency": 84
+   },
+   "gimmick_category": "Russian Wrecking Ball",
+   "gimmick": "A cold Russian bruiser who piledrives people and does not look back.",
+   "catchphrase": "Next.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2016,
+   "finisher": "The Snowplow",
+   "finisher_description": "A lifting piledriver from a front facelock.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 165000,
+    "weeks_left": 106,
+    "push": "main_eventer"
+   },
+   "finisher_move": "Piledriver",
+   "signatures": [
+    {
+     "name": "Gulag Kick",
+     "move": "Running knee"
+    },
+    {
+     "name": "Winter",
+     "move": "Spinning backfist"
+    }
+   ]
+  },
+  {
+   "id": "lady_elegance",
+   "ring_name": "Lady Elegance",
+   "gender": "F",
+   "disposition": "heel",
+   "style": "entertainer",
+   "age": 35,
+   "hometown": "Atlanta",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 69,
+    "technical": 72,
+    "aerial": 60,
+    "stamina": 74,
+    "charisma": 67,
+    "promo_skill": 65,
+    "overness": 72,
+    "star_quality": 62,
+    "potential": 67,
+    "durability": 83,
+    "consistency": 73
+   },
+   "gimmick_category": "Society Heiress",
+   "gimmick": "A wealthy socialite who wrestles in gloves and makes her opponents sign an etiquette waiver.",
+   "catchphrase": "Manners. Then mayhem.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2012,
+   "finisher": "The Finishing School",
+   "finisher_description": "A neckbreaker from a bridge.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 70000,
+    "weeks_left": 30,
+    "push": "upper_midcarder"
+   },
+   "finisher_move": "Bridging neckbreaker",
+   "signatures": [
+    {
+     "name": "Curtsey",
+     "move": "Hip attack"
+    },
+    {
+     "name": "Pinky Out",
+     "move": "Rolling cutter"
+    }
+   ]
+  },
+  {
+   "id": "tess_trouble",
+   "ring_name": "Tess Trouble",
+   "gender": "F",
+   "disposition": "heel",
+   "style": "all_rounder",
+   "age": 30,
+   "hometown": "Charlotte",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 81,
+    "technical": 83,
+    "aerial": 82,
+    "stamina": 86,
+    "charisma": 76,
+    "promo_skill": 75,
+    "overness": 82,
+    "star_quality": 77,
+    "potential": 86,
+    "durability": 82,
+    "consistency": 85
+   },
+   "gimmick_category": "Third-Generation Trouble",
+   "gimmick": "A third-generation star who left, came back, and never once apologised for anything.",
+   "catchphrase": "Trouble's back. Nobody asked.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2017,
+   "finisher": "The Trouble DDT",
+   "finisher_description": "A spinning DDT from the corner.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 165000,
+    "weeks_left": 140,
+    "push": "main_eventer"
+   },
+   "finisher_move": "Spinning DDT",
+   "signatures": [
+    {
+     "name": "Family Name",
+     "move": "Swanton"
+    },
+    {
+     "name": "Sorry Not Sorry",
+     "move": "Superkick"
+    }
+   ]
+  },
+  {
+   "id": "rosemary_thorn",
+   "ring_name": "Rosemary Thorn",
+   "gender": "F",
+   "disposition": "tweener",
+   "style": "brawler",
+   "age": 41,
+   "hometown": "Mississauga",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 78,
+    "technical": 64,
+    "aerial": 62,
+    "stamina": 66,
+    "charisma": 59,
+    "promo_skill": 53,
+    "overness": 65,
+    "star_quality": 64,
+    "potential": 68,
+    "durability": 68,
+    "consistency": 76
+   },
+   "gimmick_category": "Demon Assassin",
+   "gimmick": "A wild-eyed demon who bites, hisses, and is the nicest person backstage.",
+   "catchphrase": "The hive is hungry.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2006,
+   "finisher": "The Hive Spear",
+   "finisher_description": "A charging spear.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 70000,
+    "weeks_left": 102,
+    "push": "upper_midcarder"
+   },
+   "finisher_move": "Spear",
+   "signatures": [
+    {
+     "name": "Thorn Bite",
+     "move": "Bite"
+    },
+    {
+     "name": "Hive Drop",
+     "move": "Uranage"
+    }
+   ]
+  },
+  {
+   "id": "grace_notes_gemma",
+   "ring_name": "Grace Notes Gemma",
+   "gender": "F",
+   "disposition": "heel",
+   "style": "technician",
+   "age": 35,
+   "hometown": "Manila",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 64,
+    "technical": 76,
+    "aerial": 68,
+    "stamina": 72,
+    "charisma": 72,
+    "promo_skill": 56,
+    "overness": 70,
+    "star_quality": 73,
+    "potential": 68,
+    "durability": 75,
+    "consistency": 74
+   },
+   "gimmick_category": "Champion of Herself",
+   "gimmick": "A sharp, sneering technician who calls herself the best in the room and is often right.",
+   "catchphrase": "Best in the room. Check.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2012,
+   "finisher": "The Quarter-Note Kick",
+   "finisher_description": "A spinning back kick.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 38000,
+    "weeks_left": 116,
+    "push": "midcarder"
+   },
+   "finisher_move": "Spinning back kick",
+   "signatures": [
+    {
+     "name": "Grace Note",
+     "move": "Hurricanrana"
+    },
+    {
+     "name": "Final Bar",
+     "move": "Neckbreaker"
+    }
+   ]
+  },
+  {
+   "id": "xenia_brookhaven",
+   "ring_name": "Xenia Brookhaven",
+   "gender": "F",
+   "disposition": "face",
+   "style": "flyer",
+   "age": 27,
+   "hometown": "Southampton",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 61,
+    "technical": 78,
+    "aerial": 86,
+    "stamina": 74,
+    "charisma": 71,
+    "promo_skill": 61,
+    "overness": 71,
+    "star_quality": 70,
+    "potential": 75,
+    "durability": 82,
+    "consistency": 76
+   },
+   "gimmick_category": "Second-Generation Sunshine",
+   "gimmick": "A cheerful flyer from a wrestling family who wins the crowd and loses the coin toss.",
+   "catchphrase": "Sunshine forecast!",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2020,
+   "finisher": "The Brook Bomb",
+   "finisher_description": "A diving crossbody into a pin.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 38000,
+    "weeks_left": 98,
+    "push": "midcarder"
+   },
+   "finisher_move": "Diving crossbody",
+   "signatures": [
+    {
+     "name": "Brook Kick",
+     "move": "Superkick"
+    },
+    {
+     "name": "Ripple",
+     "move": "Hurricanrana"
+    }
+   ]
+  },
+  {
+   "id": "director_santo",
+   "ring_name": "Director Santiago Mirella",
+   "gender": "M",
+   "disposition": "face",
+   "style": "entertainer",
+   "age": 52,
+   "hometown": "Mississauga",
+   "roles": [
+    "booker",
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 56,
+    "technical": 51,
+    "aerial": 29,
+    "stamina": 28,
+    "charisma": 52,
+    "promo_skill": 61,
+    "overness": 59,
+    "star_quality": 57,
+    "potential": 57,
+    "durability": 44,
+    "consistency": 74
+   },
+   "gimmick_category": "Director of Authority",
+   "gimmick": "A comedy legend who runs the place with a salute, a cobra puppet and a lot of goodwill.",
+   "catchphrase": "Authority! But friendly.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 1995,
+   "finisher": "The Cobra-in-a-Sock",
+   "finisher_description": "A sock puppet strike to the throat.",
+   "legend": true,
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 28000,
+    "weeks_left": 54,
+    "push": "non_wrestler"
+   },
+   "finisher_move": "Throat strike",
+   "signatures": [
+    {
+     "name": "Salute",
+     "move": "Hip toss"
+    },
+    {
+     "name": "Paperwork",
+     "move": "Arm drag"
+    }
+   ]
+  },
+  {
+   "id": "gail_goldstandard",
+   "ring_name": "Gail Goldstandard",
+   "gender": "F",
+   "disposition": "face",
+   "style": "technician",
+   "age": 49,
+   "hometown": "Toronto",
+   "roles": [
+    "booker",
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 74,
+    "technical": 85,
+    "aerial": 43,
+    "stamina": 60,
+    "charisma": 62,
+    "promo_skill": 56,
+    "overness": 68,
+    "star_quality": 70,
+    "potential": 68,
+    "durability": 48,
+    "consistency": 84
+   },
+   "gimmick_category": "Legend in the Front Office",
+   "gimmick": "The greatest of the company's women, who now runs the women's division and comes back for one more every few years.",
+   "catchphrase": "Back for one more.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 1998,
+   "finisher": "The Gold Standard",
+   "finisher_description": "A flying headscissors into a facebuster.",
+   "legend": true,
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 28000,
+    "weeks_left": 84,
+    "push": "non_wrestler"
+   },
+   "finisher_move": "Headscissors facebuster",
+   "signatures": [
+    {
+     "name": "Gold Kick",
+     "move": "Superkick"
+    },
+    {
+     "name": "Legend Lock",
+     "move": "Figure-four"
+    }
+   ]
+  },
+  {
+   "id": "thomas_hanniford",
+   "ring_name": "Thomas Hanniford",
+   "gender": "M",
+   "disposition": "face",
+   "style": "entertainer",
+   "age": 41,
+   "hometown": "Columbus",
+   "roles": [
+    "announcer"
+   ],
+   "ratings": {
+    "brawling": 54,
+    "technical": 49,
+    "aerial": 35,
+    "stamina": 37,
+    "charisma": 48,
+    "promo_skill": 42,
+    "overness": 38,
+    "star_quality": 44,
+    "potential": 35,
+    "durability": 72,
+    "consistency": 79
+   },
+   "gimmick_category": "Voice of the Company",
+   "gimmick": "The play-by-play voice with a gift for making every match sound like a title change.",
+   "catchphrase": "A REVELATION!",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2006,
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 28000,
+    "weeks_left": 96,
+    "push": "non_wrestler"
+   }
+  }
+ ],
+ "teams": [
+  {
+   "id": "tba_ladder_brothers",
+   "name": "The Ladder Brothers",
+   "kind": "tag",
+   "member_ids": [
+    "brother_ladder",
+    "brother_ladder_b"
+   ],
+   "experience": 99,
+   "chemistry": 10
+  },
+  {
+   "id": "tba_the_program",
+   "name": "The Program",
+   "kind": "stable",
+   "member_ids": [
+    "moose_mountain",
+    "eddie_everyman",
+    "brian_bystander"
+   ],
+   "leader_id": "moose_mountain"
+  }
+ ]
+}

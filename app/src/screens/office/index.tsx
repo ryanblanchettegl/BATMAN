@@ -4,11 +4,11 @@ import { Modal } from '../../store';
 import { DossierWindow } from './Dossier';
 import { Desk, MatterWindow, DeskMoreWindow, RoadYearWindow } from './Desk';
 import { Career } from './Career';
-import { TitleTaskWindow, ContractTaskWindow } from './Tasks';
+import { TitleTaskWindow, ContractTaskWindow, DebutWindow } from './Tasks';
 import { ActWindow } from './BeforeShow';
 import { Backstage } from './Backstage';
 import { WeekClosed, ClockWindow, AnnualReport, VoicesWindow, WelcomeWindow, FaceWindow } from './Windows';
 
 export const pages: Record<string, () => ComponentChildren> = { desk: Desk, backstage: Backstage, career: Career };
-export const modals: Record<string, (p: { m: Modal }) => ComponentChildren> = { weekclosed: WeekClosed, annual: AnnualReport, clock: ClockWindow, voices: VoicesWindow, welcome: WelcomeWindow, face: FaceWindow, apact: ActWindow, tasktitle: TitleTaskWindow, taskcon: ContractTaskWindow, matter: MatterWindow, deskmore: DeskMoreWindow, roadyear: RoadYearWindow, dossier: DossierWindow };
+export const modals: Record<string, (p: { m: Modal }) => ComponentChildren> = { weekclosed: WeekClosed, annual: AnnualReport, clock: ClockWindow, voices: VoicesWindow, welcome: WelcomeWindow, face: FaceWindow, apact: ActWindow, tasktitle: TitleTaskWindow, taskcon: ContractTaskWindow, debut: DebutWindow, matter: MatterWindow, deskmore: DeskMoreWindow, roadyear: RoadYearWindow, dossier: DossierWindow };
 export { GameOver } from './GameOver';

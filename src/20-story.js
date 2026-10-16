@@ -3,7 +3,7 @@ function promoScore(S,w,bonus){return clamp(Math.round(0.62*micOf(S,w)+0.38*w.ov
 function angle(head,text,ov){return {k:'angle',head:head,text:text,ov:clamp(Math.round(ov),5,99)};}
 var ACTN=['','Spark','Escalation','Twist','Blow-off'];
 function feudAct(f,S){if(S&&f.promo!=null)return feudActCal(S,f);return f.res?4:(f.heat>=60?(f.twist?4:3):(f.heat>=30?2:1));}
-function nextBigName(S,P){var w=S.week+(4-cal(S.week).wom);return P.name+' '+dbOf(S).events[cal(w).month];}
+function nextBigName(S,P){var w=S.week+(4-cal(S.week).wom);return P.name+' '+evName(S,P,cal(w).month);}
 
 /* Feud storylets: each feud moves through four acts, and each act unlocks different beats.
    A storylet is {id, head, acts, w (weight), ok(c) -> bool, run(c) -> angle}. c carries the feud and both leads. */

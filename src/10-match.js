@@ -276,7 +276,7 @@ function doMatch(S,P,show,m,i,n,rep,used){
   MQX.forEach(function(fn){var r=fn(ctx);if(r){mq+=r.d;if(r.x)FX(r.d>=0,r.x);}});
   var MQ=clamp(mq,5,99);ctx.MQ=MQ;
   // crowd reaction
-  var ov=all.map(function(w){return w.ovr;}),mavg=avg(all.map(function(w){return w.mom;})),cr=0.6*avg(ov)+0.4*Math.max.apply(null,ov)+mavg*0.6+(avg(all.map(function(w){return w.cha;}))-65)*0.06;
+  var ov=all.map(function(w){return w.ovr;}),mavg=avg(all.map(function(w){return w.mom;})),cr=0.6*avg(ov)+0.4*Math.max.apply(null,ov)+mavg*0.8+(avg(all.map(function(w){return w.cha;}))-65)*0.06;
   if(mavg>=3.5)FX(true,'Hot momentum coming in');else if(mavg<=-3.5)FX(false,'Cold momentum coming in');
   if(m.mt==='1v1'){
     var d=Math.abs(ov[0]-ov[1]);if(d>25&&mins>7){cr-=(d-25)*0.3;FX(false,'A mismatch that dragged on');}
@@ -290,7 +290,10 @@ function doMatch(S,P,show,m,i,n,rep,used){
   }
   if(t){cr+=t.prestige*0.04;if(t.prestige>=70)FX(true,'A prestigious title on the line');if(show.rule==='all_titles'){cr+=2;FX(true,'Every title is on the line tonight');}}
   var rsk=RISK_STIP[P.risk]/RISK_STIP[P.risk0],sh=STIP[stip].heat*(feud&&feud.heat>=40?1.5:0.3)*rsk;cr+=sh;
-  if(stip!=='std'){if(feud&&stipFitOf(feud,stip)>0)FX(true,'The stipulation fits the feud');if(rep.gim&&show.rule!=='gimmick_free'&&!modelOf(P).gimFree){cr-=4;FX(false,'Second gimmick match of the night');}rep.gim=true;}
+  if(stip!=='std'){if(feud&&stipFitOf(feud,stip)>0)FX(true,'The stipulation fits the feud');if(rep.gim&&show.rule!=='gimmick_free'&&!modelOf(P).gimFree&&show.ty!=='gimmick'){cr-=4;FX(false,'Second gimmick match of the night');}rep.gim=true;}
+  // the kind of night: a gimmick night wants stipulations, a battle royal night wants its battle royal (src/42-events.js)
+  if(show.big&&show.ty==='gimmick'){if(stip!=='std'){cr+=2;FX(true,'Just what a gimmick night promised');}else if(isMain){cr-=2;FX(false,'A plain main event on a gimmick night');}}
+  if(show.big&&show.ty==='rumble'&&m.mt==='br'){cr+=4;FX(true,'The battle royal the night was built around');}
   all.forEach(function(w){if(w.ws>=6){cr+=1.5;FX(true,w.name+'’s winning streak draws interest');}if(used[w.id]){cr-=4;FX(false,w.name+' already worked tonight');}});
   if(m.mt==='1v1'){var rk=S.recent[P.id+':'+rkey(all[0].id,all[1].id)];if(rk&&S.week-rk<4&&!feud){cr-=4;FX(false,'A rematch too soon');}}
   if(rep.energy){cr+=rep.energy;if(rep.energy>=1)FX(true,'A packed, noisy house');else if(rep.energy<=-1)FX(false,'Empty seats flattened the crowd');}
@@ -371,7 +374,7 @@ function doMatch(S,P,show,m,i,n,rep,used){
   // each wrestler keeps their last five results for the profile pop-up
   if(!S.cal&&!br&&win>=0)all.forEach(function(w){
     var mine=winners.indexOf(w)>=0,own=sides.filter(function(sd){return sd.indexOf(w)>=0;})[0]||[],foe=all.filter(function(o){return own.indexOf(o)<0;}).map(function(o){return o.name;}).join(' & ');
-    var L=w.rr||(w.rr=[]);L.unshift({w:S.week,r:mine?'W':'L',v:foe.slice(0,40),ov:OV});if(L.length>5)L.length=5;
+    var L=w.rr||(w.rr=[]);L.unshift({w:S.week,r:mine?'W':'L',v:foe.slice(0,28),ov:OV});if(L.length>4)L.length=4;
   });
   // injuries, growth, tag experience
   var injm=RISK_INJ[P.risk]/RISK_INJ[P.risk0]*(isPl?dif(S).inj:1)*(modelOf(P).inj||1)*(isPl&&hasRule(S,'testing')?0.88:1);
@@ -444,12 +447,16 @@ function doMatch(S,P,show,m,i,n,rep,used){
 }
 function settleFeud(S,P,show,feud,winners,losers,isPl){
   feudPlan(S,feud);var pm=feudPayMult(S,feud),age=S.week-feud.start;feud.res=true;feud.end=S.week;feudEmber(S,feud);feudFile(S,feud,'end');
+  // an ending in one of their home towns lands harder: the town saw it happen
+  var hc=isPl?roadCity(S,P,Math.max(0,(S.rdn||1)-1)):null,hw=null,hk=0;if(hc)winners.concat(losers).forEach(function(w){var k=homeWeight(S,w,hc);if(k>hk){hk=k;hw=w;}});
+  if(hw)pm*=1+0.2*hk;
   var full=feud.twist&&feud.finale,hot=feud.heat>=60;
   winners.forEach(function(w){addOvr(P,w,(full?3.5:2.5)*pm);w.mom=clamp(w.mom+2,-10,10);});losers.forEach(function(w){addOvr(P,w,(full?1.5:1)*pm);});
   if(hot)winners.concat(losers).forEach(function(w){w.morale=clamp(w.morale+(age>=24?6:(age>=8?4:3)),0,100);});
   // how it ended, in words: the heat and freshness it had left, and how long it lived
   var how=feud.heat>=75&&feud.fresh>=40?'at its peak':(feud.heat>=60?'while it was still hot':(feud.fresh<35?'after it had gone stale':'after it had cooled'));
   var msg='The story between '+feudLabel(S,feud)+' is settled '+how+', after '+age+' '+(age===1?'week':'weeks')+(full?', a full story, start to finish':'')+'.'+(age>=24&&hot?' People will talk about this one for years.':(hot?' Both come out of it bigger stars.':' The crowd had moved on.'));
+  if(hw){msg+=' It ended in front of '+hw.name+(hw.town===hc?'\u2019s home town':'\u2019s home crowd, up the road from '+hw.town)+', and the place will not forget it.';if(isPl)youRemember(S,hw,'homeend','You ended my feud in front of my own people.',3);}
   if(isPl&&age>=24&&hot)winners.concat(losers).forEach(function(w){youRemember(S,w,'epic','You gave me a feud people will remember.',5);});
   // two who went to war over a hot story come out of it respecting each other
   if(isPl&&hot)winners.forEach(function(w){losers.forEach(function(l){relBump(S,w.id,l.id,{ra:8,rb:8},{k:'war',keep:age>=12,t:w.name+' and '+l.name+' ended their feud at '+show.name+'.'});});});

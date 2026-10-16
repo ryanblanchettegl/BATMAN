@@ -1,0 +1,61 @@
+{
+ "reigns": [
+  {
+   "title": "wwc_undisputed",
+   "holders": [
+    "brutus_biceps"
+   ],
+   "from": "2021-03",
+   "to": "2021-09",
+   "defs": 5,
+   "event": "Monday Night RAWR"
+  },
+  {
+   "title": "wwc_undisputed",
+   "holders": [
+    "rocco_rule"
+   ],
+   "from": "2021-09",
+   "to": "2024-04",
+   "defs": 31,
+   "event": "Extreme Rules of Etiquette"
+  },
+  {
+   "title": "ewe_world",
+   "holders": [
+    "rodeo_regret"
+   ],
+   "from": "2021-11",
+   "to": "2022-05",
+   "defs": 4,
+   "event": "Half Gear"
+  }
+ ],
+ "matches": [
+  {
+   "a": "rodeo_regret",
+   "b": "zed_zenith",
+   "winner": "rodeo_regret",
+   "date": "2021-11",
+   "event": "Half Gear",
+   "stars": 5,
+   "note": "The cowboy finally beat his best friend. The crowd cried; so did the cowboy."
+  }
+ ],
+ "feuds": [
+  {
+   "a": [
+    "burt_bluecollar"
+   ],
+   "b": [
+    "mitch_fawn"
+   ],
+   "from": "2021-06",
+   "to": "2022-06",
+   "heat": 90,
+   "ended": "finished",
+   "note": "Tag wrestling's old argument, settled in a classic."
+  }
+ ],
+ "moments": []
+}

@@ -10,7 +10,7 @@
 var ADV_DAYS=['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
 /** The day a show is on, from its name ("Wednesday Night Folio"). A big event is a Sunday. */
 function showDay(sh){
-  if(!sh)return '';
+  if(!sh)return '';if(sh.day)return sh.day;
   for(var i=0;i<ADV_DAYS.length;i++)if(sh.name.indexOf(ADV_DAYS[i])>=0)return ADV_DAYS[i];
   return sh.big?'Sunday':'';
 }
@@ -47,7 +47,7 @@ E.advance=function(S){
 E.comingUp=function(S){
   if(S.over)return [];
   var P=S.promos[S.player],L=[],wk=function(n){return n<=0?'this week':(n===1?'next week':'in '+n+' weeks');};
-  var nb=E.nextBig(S);L.push({n:nb.week-S.week,t:nb.name+' '+wk(nb.week-S.week),to:'booking',k:'big'});
+  var nb=E.nextBig(S),nk=evList(S,P)[cal(nb.week).month].t,nkw=nk==='flag'?' (your flagship)':(nk==='tent'?' (a tentpole)':(nk==='taped'?' (a taped special)':(nk==='tourn'?' (the tournament)':'')));L.push({n:nb.week-S.week,t:nb.name+nkw+' '+wk(nb.week-S.week),to:'booking',k:'big'});
   var fs=activeFeuds(S).filter(function(f){return f.promo===P.id;}).sort(function(a,b){return b.heat-a.heat;});
   fs.slice(0,6).forEach(function(f){
     var act=feudAct(f,S),big=nb.week-S.week;

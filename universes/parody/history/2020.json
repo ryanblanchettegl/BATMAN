@@ -1,0 +1,60 @@
+{
+ "reigns": [
+  {
+   "title": "wwc_undisputed",
+   "holders": [
+    "angus_robbedmore"
+   ],
+   "from": "2020-04",
+   "to": "2021-03",
+   "defs": 9,
+   "event": "WrestleMoney"
+  },
+  {
+   "title": "ewe_world",
+   "holders": [
+    "barbwire_burke"
+   ],
+   "from": "2020-02",
+   "to": "2020-12",
+   "defs": 6,
+   "event": "Revolving Door"
+  },
+  {
+   "title": "ewe_world",
+   "holders": [
+    "zed_zenith"
+   ],
+   "from": "2020-12",
+   "to": "2021-11",
+   "defs": 10,
+   "event": "Wednesday Night Detonation"
+  }
+ ],
+ "matches": [
+  {
+   "a": "reiji_ameda",
+   "b": "zed_zenith",
+   "winner": "zed_zenith",
+   "date": "2020-01",
+   "event": "Dome Kingdom",
+   "stars": 5,
+   "note": "The last of their great series before Zed left for America."
+  }
+ ],
+ "feuds": [],
+ "moments": [
+  {
+   "who": "brother_bronzer",
+   "date": "2020-04",
+   "k": "honour",
+   "text": "Inducted into a hall of fame he founded."
+  },
+  {
+   "who": "mr_lastrites",
+   "date": "2020-11",
+   "k": "retire",
+   "text": "Retired after thirty years. Said so twice. Means it, this time, probably."
+  }
+ ]
+}

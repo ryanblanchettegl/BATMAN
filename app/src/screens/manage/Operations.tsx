@@ -2,7 +2,7 @@
    export), House (house style and house rules) and Deals (sponsors, rivals, trades). What the choices add up to is read on Company. */
 import { E } from '../../engine';
 import { G, me, Modal, act, say, cash, plural, openModal, redraw, slice, view, UNIS, saveUnis } from '../../store';
-import { Head, Panel, Btn, Tag, Empty, Window, showResult, Name, Sel, Field } from '../../kit';
+import { Head, Panel, Btn, Tag, Empty, Window, showResult, Name, Sel, Field, TextBox, Meter } from '../../kit';
 import { copyText } from '../start';
 import { HouseStyle } from './HouseStyle';
 import { RivalsPanel } from './Rivals';
@@ -143,7 +143,7 @@ function Sponsors() {
   const S = G.S;
   return <Panel title="Sponsors">
     {S.sponsors.length ? <ul class="list">{S.sponsors.map((x: any, i: number) => <li>
-      <span><b>{x.name}</b> {'·'} {cash(x.pay)} a week {'·'} {x.weeks} weeks left<br /><span class="muted">Condition: {x.text}</span></span>
+      <span><b>{x.name}</b>{x.tn ? ' (' + x.tn.toLowerCase() + ')' : ''} {'·'} {cash(x.pay)} a week {'·'} {x.weeks} weeks left<br /><span class="muted">Condition: {x.text}</span></span>
       <Btn kind="sm" t="sp-drop" d={{ v: i }} onClick={() => act(() => say(E.dropSponsor(S, i)))}>End deal</Btn>
     </li>)}</ul> : <Empty>No sponsors signed. You can carry three. Take an offer from the list below.</Empty>}
   </Panel>;
@@ -154,11 +154,12 @@ function Offers() {
     {S.spOffers.length ? <ul class="list">{S.spOffers.map((x: any, i: number) => {
       const ok = E.sponsorOk(S, x);
       return <li>
-        <span><b>{x.name}</b> {'·'} {cash(x.pay)} a week for {x.weeks} weeks<br /><span class="muted">Condition: {x.text}</span></span>
+        <span><b>{x.name}</b>{x.tn ? ' (' + x.tn.toLowerCase() + ')' : ''} {'·'} {cash(x.pay)} a week for {x.weeks} weeks<br /><span class="muted">Condition: {x.text}</span></span>
         <Btn kind="sm" t="sp-accept" d={{ v: i }} disabled={!ok} onClick={() => act(() => say(E.acceptSponsor(S, i)))}>{ok ? 'Sign' : (S.sponsors.length >= 3 ? 'Full' : 'Not met')}</Btn>
       </li>;
     })}</ul> : <Empty>No offers on the table. New ones arrive every four weeks.</Empty>}
     <p class="muted mt2">Break a condition and the sponsor walks, taking a little of your reputation along.</p>
+      <p class="muted mt1">Local, regional or national: a national sponsor only talks to a popular company, pays the most, and its advertising brings a bigger house to every show.</p>
   </Panel>;
 }
 
@@ -204,6 +205,7 @@ function tiles(page: string): { grp: string; list: Tile[] }[] {
     { grp: 'On the air', list: [
       { id: 'broadcast', n: 'Broadcast slot', now: () => E.SLOTN[P.slot], d: 'When your shows air. Ask the network for a better one.', body: () => <Broadcast /> },
       { id: 'showsbelts', n: 'Shows and belts', now: () => I.shows.length + ' weekly ' + plural(I.shows.length, 'show') + ', ' + I.titles.length + ' ' + plural(I.titles.length, 'belt'), d: 'Your shows, their networks and standing. Add a show or a belt when there is an occasion.', body: () => <ShowsBelts /> },
+      { id: 'year', n: 'Year planner', now: () => { const nb = E.nextBig(S), H = E.evHype(S); return nb.name + ' next' + (H.lvl ? ', hype ' + H.word.toLowerCase() : ''); }, d: 'Your twelve big events: rename them and choose what kind of night each one is.', body: () => <YearPlanner /> },
       { id: 'desk', n: 'Commentary desk', now: () => (V.pbp ? V.pbp.name : 'Empty') + ' and ' + (V.col ? V.col.name : 'empty'), d: 'The two voices on the air. A good desk lifts every match.', body: () => <Desk /> },
       set('prodLvl', 'Production values', 0, E.PRODN[P.prodLvl], 'What the show looks like, and what it costs to make.'),
       set('risk', 'Risk level', 1, E.RISKN[P.risk], 'How far the product goes. Sponsors and gimmick matches pull opposite ways.')] },
@@ -228,6 +230,7 @@ function tiles(page: string): { grp: string; list: Tile[] }[] {
       { id: 'sponsors', n: 'Your sponsors', now: () => S.sponsors.length + ' signed', d: 'The deals you have, what they pay and the condition on each.', body: () => <Sponsors /> },
       { id: 'offers', n: 'Sponsor offers', now: () => S.spOffers.length + ' on the table', d: 'Money every week for a condition you have to keep.', body: () => <Offers /> }] },
     { grp: 'The library and the money', list: [
+      { id: 'stream', n: 'Streaming', now: () => { const t = E.streamInfo(S); return t.on ? t.subs.toLocaleString('en-US') + ' subscribers' : 'Not open'; }, d: 'Your own service: subscribers pay every week.', body: () => <Streaming /> },
       { id: 'tape', n: 'Back catalogue', now: () => 'Your tape library', d: 'What your old shows are worth and what they earn.', body: () => <Tape /> },
       { id: 'licensing', n: 'Licensing', now: () => 'Names and likenesses', d: 'License what you own to somebody else.', body: () => <Licensing /> },
       { id: 'money', n: 'Loans and investors', now: () => P.loan ? 'A loan is running' : 'No loan', d: 'Borrow against the company, or bring money in.', body: () => <Money /> },
@@ -252,6 +255,29 @@ export function ManageWindow(p: { m: Modal }) {
   return <Window title={T.n} wide ok="Done"><p class="muted mb1">{T.d} <span class="gold">Now: {T.now()}.</span></p><div class="inwin" data-t="mng-body" data-v={T.id}>{T.body()}</div></Window>;
 }
 
+/** The year planner: the twelve big events, a kind for each, and a new name for one. Changes start from next month. */
+function YearPlanner() {
+  const S = G.S, P = me(), L = E.events(S), st = slice<{ m: number; n: string }>('yearplan', () => ({ m: -1, n: '' }));
+  const types = Object.keys(E.EV_TYPES).filter(k => k !== 'flag').map(k => [k, E.EV_TYPES[k].n] as [string, string]);
+  const set = (m: number, o: any) => act(() => { const r = E.evSet(S, m, o); say(r.msg, { err: !r.ok }); });
+  return <Panel title="Your year">
+    <ul class="list" data-t="year-list">{L.map((e: any) => <li key={e.m}>
+      <span><b>{e.month.slice(0, 3)}</b> {e.n}{e.now ? <span class="muted"> (now)</span> : null}</span>
+      {e.flag ? <Tag kind="gold">Flagship</Tag> : <Sel id={'ev-' + e.m} t="ev-type" d={{ m: e.m }} value={e.t} disabled={e.now} label={'Kind of night for ' + e.month} options={types} onChange={v => set(e.m, { t: v })} />}
+    </li>)}</ul>
+    <p class="muted">{(L.find((e: any) => !e.flag && !e.now) || L[0]).d}</p>
+    {(() => { const H = E.evHype(S); return <div class="row mt1" data-t="ev-hype">
+      <Field label="Promote the next big night"><Sel id="ev-spend" t="ev-spend" value={H.lvl} options={H.names.map((n: string, i: number) => [i, n + (i ? ', ' + cash(H.cost[i]) + ' a week' : '')] as [number, string])} onChange={v => act(() => { say(E.evSpend(S, +v).msg); })} /></Field>
+      <span>Hype: <Meter v={H.pct} kind="au" /> <span class="muted">{H.word}</span></span>
+    </div>; })()}
+    <div class="row mt1">
+      <Field label="Rename"><Sel id="ev-pick" t="ev-pick" value={st.m < 0 ? '' : st.m} options={[['', 'Pick a month'], ...L.filter((e: any) => !e.now).map((e: any) => [e.m, e.month + ': ' + e.n] as [number, string])] as any} onChange={v => view(() => { st.m = v === '' ? -1 : +v; st.n = st.m >= 0 ? L[st.m].n : ''; })} /></Field>
+      <TextBox id="ev-name" t="ev-name" value={st.n} max={28} label="New name" onInput={v => { st.n = v; }} />
+      <Btn kind="go" t="ev-rename" disabled={st.m < 0} onClick={() => set(st.m, { n: st.n })}>Rename</Btn>
+    </div>
+  </Panel>;
+}
+
 export function Operations() {
   const P = me();
   useKeepFocus();
@@ -265,6 +291,22 @@ export function House() {
 }
 
 /** The back catalogue: what it is worth, what it earns, and the two ways to cash it in. */
+function Streaming() {
+  const S = G.S, t = E.streamInfo(S);
+  const go = (f: () => any) => act(() => { const r = f(); say(r.msg, { err: !r.ok }); showResult('Streaming', r.msg, !r.ok); });
+  return <Panel title="Streaming">
+    {t.on ? <>
+      <div class="kv"><div><small>Subscribers</small><span class="num" data-t="stream-subs">{t.subs.toLocaleString('en-US')}</span></div><div><small>This week</small><span class={'num ' + (t.wk >= 0 ? 'good' : 'bad')}>{t.wk >= 0 ? '+' : ''}{t.wk.toLocaleString('en-US')}</span></div><div><small>Earns</small><span class="num">{cash(t.pay)} a week</span></div></div>
+      <p class="muted mt1">Open since {t.since}. Room for about {t.cap.toLocaleString('en-US')} with a library of {t.lib} {plural(t.lib, 'show')} and your popularity. Good shows bring people in; bad ones lose some. The cities you do not tour still see you, so their markets do not cool.</p>
+      {t.major.length ? <p class="warn mt1">{t.major.join(' and ')} {t.major.length === 1 ? 'is' : 'are'} on a major network, which wants the show to itself and pays a little less while you stream.</p> : null}
+      <div class="row opts mt1"><Btn kind="sm" t="stream-stop" onClick={() => go(() => E.streamStop(S))}>Close the service</Btn></div>
+    </> : <>
+      <p>Your own streaming service. Subscribers pay {cash(t.price)} a week each. How many come depends on your popularity and on the shows in your tape library ({t.lib} so far): about {t.cap.toLocaleString('en-US')} at most today.</p>
+      <p class="muted mt1">It costs {cash(t.open)} to open and about {cash(t.run)} a week to run. While it runs, cities you do not tour do not cool. A major network pays a little less while you stream.</p>
+      <div class="row opts mt1"><Btn t="stream-start" onClick={() => go(() => E.streamStart(S))}>Open it: {cash(t.open)}</Btn></div>
+    </>}
+  </Panel>;
+}
 function Tape() {
   const S = G.S, t = E.tape(S);
   const lic = () => act(() => { const r = E.licenseTape(S); say(r.text, { err: !r.ok }); showResult('Back catalogue', r.text, !r.ok); });

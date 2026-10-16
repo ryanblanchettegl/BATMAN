@@ -163,5 +163,17 @@ for (const k of ['territory', 'nine']) { const pkg = E.edQuick(k, '', 5), models
   const p = pkg.promotions[0], s0 = pkg.shows.filter(x => x.promotion_id === p.id).length, b0 = pkg.titles.filter(x => x.promotion_id === p.id).length, cp = E.edDup(pkg, 'promotions', p.id);
   ok('a copied company brings its shows and belts but not its roster', cp && pkg.shows.filter(x => x.promotion_id === cp.id).length === s0 && pkg.titles.filter(x => x.promotion_id === cp.id).length === b0 && !pkg.contracts.some(x => x.promotion_id === cp.id));
   ok('the ids stay unique', new Set(pkg.workers.map(x => x.id)).size === pkg.workers.length && new Set(pkg.titles.map(x => x.id)).size === pkg.titles.length); }
+/* a company's own big events (NEXT.md 1.15): set in the editor, and a game from the world starts with them */
+{
+  const pkg = E.edCopy(JSON.parse(fs.readFileSync('universes/public_domain.json', 'utf8')), 'Own events'), pid = pkg.promotions[1].id;
+  E.edPromoEvent(pkg, pid, 6, { name: 'Cellar Night ' }); E.edPromoEvent(pkg, pid, 6, { type: 'ballroom' }); E.edPromoEvent(pkg, pid, 7, { type: 'gimmick' });
+  const pe = pkg.promotions[1].events || [];
+  ok('a company keeps its own events in the package', pe.length === 2 && pe[0].name === 'Cellar Night ' && pe[0].type === 'ballroom' && pe[1].type === 'gimmick' && !!pe[1].name, JSON.stringify(pe));
+  E.useUniverse(pkg); const S = E.newGame(pid, 3, { name: 'R' }), P = S.promos[S.player];
+  ok('a game from that world starts with them', P.events[5].n === 'Cellar Night' && P.events[5].t === 'ballroom' && P.events[6].t === 'gimmick', JSON.stringify(P.events.slice(5, 7)));
+  E.edPromoEvent(pkg, pid, 6, { name: '', type: 'arena' }); E.edPromoEvent(pkg, pid, 7, { name: '', type: 'arena' });
+  ok('clearing a month gives it back to the world list', !pkg.promotions[1].events, JSON.stringify(pkg.promotions[1].events));
+}
+
 if (fails.length) { console.log('FAILED: ' + fails.length); process.exit(1); }
 console.log('test-editor: all passed');

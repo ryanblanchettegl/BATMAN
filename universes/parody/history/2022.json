@@ -1,0 +1,137 @@
+{
+ "reigns": [
+  {
+   "title": "wwc_ic",
+   "holders": [
+    "wilt_wellness"
+   ],
+   "from": "2022-06",
+   "to": "2024-04",
+   "defs": 25,
+   "event": "Friday Night SlapDown"
+  },
+  {
+   "title": "ewe_world",
+   "holders": [
+    "straightedge_stan"
+   ],
+   "from": "2022-05",
+   "to": "2022-09",
+   "defs": 0,
+   "event": "Double or Something"
+  },
+  {
+   "title": "ewe_world",
+   "holders": [
+    "barbwire_burke"
+   ],
+   "from": "2022-09",
+   "to": "2022-11",
+   "defs": 1,
+   "event": "All Out of Breath"
+  },
+  {
+   "title": "ewe_world",
+   "holders": [
+    "long_island_lux"
+   ],
+   "from": "2022-11",
+   "to": "2023-12",
+   "defs": 9,
+   "event": "Half Gear"
+  },
+  {
+   "title": "ewe_womens_world",
+   "holders": [
+    "lightning_lupe"
+   ],
+   "from": "2022-03",
+   "to": "2022-08",
+   "defs": 2,
+   "event": "Wednesday Night Detonation"
+  },
+  {
+   "title": "ewe_womens_world",
+   "holders": [
+    "hardcase_hattie"
+   ],
+   "from": "2022-11",
+   "to": "2023-02",
+   "defs": 2,
+   "event": "Half Gear"
+  },
+  {
+   "title": "ror_womens",
+   "holders": [
+    "minerva_forever"
+   ],
+   "from": "2022-12",
+   "to": null,
+   "defs": 31,
+   "event": "Ring of Respectable TV"
+  },
+  {
+   "title": "otpw_world",
+   "holders": [
+    "reiji_ameda"
+   ],
+   "from": "2022-06",
+   "to": "2023-04",
+   "defs": 7,
+   "event": "Dominion"
+  }
+ ],
+ "matches": [
+  {
+   "a": "molly_omalley",
+   "b": "carlotta_woo",
+   "winner": "molly_omalley",
+   "date": "2022-04",
+   "event": "WrestleMoney",
+   "stars": 4.5,
+   "note": "Two queens. Molly went on to have a baby and come back meaner."
+  },
+  {
+   "a": "mitch_fawn",
+   "b": "burt_bluecollar",
+   "winner": "burt_bluecollar",
+   "date": "2022-06",
+   "event": "Forbidden Screen Door",
+   "stars": 5,
+   "note": "The best tag match of the decade, in the eyes of both teams."
+  }
+ ],
+ "feuds": [],
+ "moments": [
+  {
+   "who": "the_cerebral_shovel",
+   "date": "2022-07",
+   "k": "honour",
+   "text": "Took over creative when the chairman was pushed out."
+  },
+  {
+   "who": "straightedge_stan",
+   "date": "2022-09",
+   "k": "leave",
+   "text": "A brawl backstage after a press conference. Stan left the upstart a year later."
+  },
+  {
+   "who": "rodeo_regret",
+   "date": "2022-05",
+   "k": "turn",
+   "text": "Lost the title, lost his way, and spent a year as the bitterest man in the company."
+  },
+  {
+   "who": "tepid_tex_granite",
+   "date": "2022-04",
+   "k": "return",
+   "text": "Came out of retirement for one match at WrestleMoney, drank warm soda, and went home."
+  },
+  {
+   "who": "the_robe_collector",
+   "date": "2022-07",
+   "k": "retire",
+   "text": "Had his last match at seventy-three. Then another."
+  }
+ ]
+}

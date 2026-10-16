@@ -54,6 +54,7 @@ Ids are lowercase slugs: 2 to 40 letters, digits or underscores.
 - `names`: `{first_m, first_f, last}`, lists of names for newcomers and unknowns. A list is used only when it has at least eight names (six for `first_f`); otherwise the game's own.
 - `promotions[].brands`: `[{id, name, dev}]`, a company's brands; `dev: true` marks the developmental one. Shows, titles and contracts name theirs in `brand`.
 - `workers[].manager_id`: the id of a worker with the `manager` role who manages this one.
+- `promotions[].events`: `[{month, name, type, rule}]`, a company's own big events (month 1 to 12). `type` is `arena`, `ballroom`, `gimmick`, `rumble` or `tourn`; the flagship month stays the flagship. A month left out uses the world's `events` list, and the flagship gets a name of its own. A world saved from a game writes them.
 - `promotions[].announcers` (play-by-play first, then colour) and `promotions[].staff` (`road_agent`, `head_writer`).
 
 The World Editor sets all of these (the World tab's names, a company's Brands and People panels, a wrestler's Managed by).

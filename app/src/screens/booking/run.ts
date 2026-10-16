@@ -21,7 +21,7 @@ export function onCard(skip?: number): Record<number, 1> {
   return o;
 }
 /** A suggested card is a whole show: matches, promos and angles, fitted to the show's time. */
-export const suggest = () => act(() => { const b = book(); G.S.card = E.suggest(G.S); b.edit = -1; sel().seg = -1; b.tried = false; });
+export const suggest = () => act(() => { const b = book(); G.S.card = E.suggestKeep(G.S); b.edit = -1; sel().seg = -1; b.tried = false; });
 export const addMatch = () => act(() => { const c = G.S.card; c.push({ mt: '1v1', sides: [[null], [null]], win: -2, call: null, title: null, stip: 'std', len: 'M' }); book().edit = c.length - 1; sel().seg = -1; });
 export const clearCard = () => act(() => { const b = book(); G.S.card = []; E.segClear(G.S); b.edit = -1; sel().seg = -1; b.tried = false; });
 export const removeMatch = (i: number) => act(() => { G.S.card.splice(i, 1); book().edit = -1; });
@@ -32,13 +32,16 @@ export const pickMatch = (i: number) => look(() => { const b = book(); b.edit = 
 export const toggleEdit = pickMatch;
 /** Select a promo or an angle on the run sheet, or let go of it. */
 export const pickSeg = (slot: number) => look(() => { const s = sel(); s.seg = s.seg === slot ? -1 : slot; book().edit = -1; });
-export function moveMatch(i: number, by: -1 | 1) {
+export function moveMatch(i: number, by: number) { moveMatchTo(i, i + by); }
+/** Move a match to another place on the card (the arrows, a drag, or the pop-up). Locked matches keep their places. */
+export function moveMatchTo(i: number, j: number) {
   act(() => {
-    const c = G.S.card, j = i + by, b = book(); if (j < 0 || j >= c.length) return;
-    const t = c[i]; c[i] = c[j]; c[j] = t;
-    if (b.edit === i) b.edit = j; else if (b.edit === j) b.edit = i;
+    const S = G.S, b = book(), was = S.card.map((m: any) => m), r = E.moveMatchTo(S, i, j);
+    if (!r.ok) { if (r.msg) say(r.msg, { err: true }); return; }
+    if (b.edit >= 0) b.edit = S.card.indexOf(was[b.edit]);
   });
 }
+export function lockMatch(i: number) { act(() => { const m = G.S.card[i]; if (m) E.lockMatch(G.S, i, !m.lock); }); }
 /** A select in the match editor changed. `c` is the old data-ch name. */
 export function setMatch(i: number, c: string, v: string, at?: { s: number; p?: number }) {
   act(() => {
@@ -51,6 +54,9 @@ export function setMatch(i: number, c: string, v: string, at?: { s: number; p?: 
     }
     else if (c === 'slot' && at) m.sides[at.s][at.p || 0] = v === '' ? null : +v;
     else if (c === 'team' && at) { const tm = S.teams.find((x: any) => x.id === +v); if (tm) m.sides[at.s] = tm.m.slice(); }
+    else if (c === 'size') E.brSize(S, i, +v);
+    else if (c === 'shot') E.brShot(S, i, !!v);
+    else if (c === 'surp') E.brSurprise(S, i, !!v);
     else if (c === 'call') m.call = v === '' ? null : +v;
     else if (c === 'title') m.title = v || null;
     else if (c === 'stip') m.stip = v;

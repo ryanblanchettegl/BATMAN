@@ -346,3 +346,14 @@ E.ED={push:ED_PUSH_N,styles:ED_STYLE_N,roles:ED_ROLE_N,rels:ED_REL_N,ratings:ED_
   lockers:{mentor:'Mentor',leader:'Leader',gatekeeper:'Gatekeeper',diva:'Diva',toxic:'Troublemaker'}};
 E.edHome=function(pkg,wid){var c=edHome(pkg,wid);return c?c.promotion_id:null;};
 E.edContract=function(pkg,wid){return edHome(pkg,wid);};
+
+/* a company's own big events (NEXT.md 1.15): a name and a kind for a month; an empty name and the arena kind take the month back to the world's list */
+E.edPromoEvent=function(pkg,pid,month,o){
+  var p=(pkg.promotions||[]).filter(function(x){return x.id===pid;})[0];if(!p||!(month>=1&&month<=12))return false;
+  var L=p.events||(p.events=[]),e=L.filter(function(x){return x.month===month;})[0];if(!e){e={month:month};L.push(e);L.sort(function(a,b){return a.month-b.month;});}
+  if(o.name!=null){var n=String(o.name).replace(/\s+/g,' ').replace(/^\s+/,'').slice(0,28);if(n.trim())e.name=n;else delete e.name;}
+  if(o.type!=null){if(o.type&&o.type!=='arena'&&EV_TYPES[o.type]&&o.type!=='flag')e.type=o.type;else delete e.type;}
+  if(!e.name&&!e.type)p.events=L.filter(function(x){return x!==e;});else if(!e.name){e.name=(((pkg.events||[]).filter(function(x){return x.month===month;})[0])||{}).name||MONTHS[month-1]+' Showcase';}
+  if(!p.events.length)delete p.events;
+  return true;
+};

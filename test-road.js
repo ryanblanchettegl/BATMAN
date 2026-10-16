@@ -33,7 +33,7 @@ const play = (S, weeks) => { for (let i = 0; i < weeks; i++) { answer(S); while 
   ok(pid, 'the road is a loop through every city once', R.length === P.cities.length && new Set(R).size === R.length, R.join(' > '));
   const before = JSON.stringify(S), D = E.road(S), ahead = E.roadAhead(S, 12);
   ok(pid, 'reading the road changes nothing in the game', JSON.stringify(S) === before);
-  ok(pid, 'the desk knows the city, the land, the show and the building before the show is booked', !!(D && D.now.city === R[0] && D.now.land && D.now.show === S.queue[0].name && D.now.cap > 0 && D.now.venue.indexOf(D.now.city) === 0 && D.map), D && D.now.city + ', ' + D.now.land + ' on ' + D.mapName + ': ' + D.now.venue + ' holds ' + D.now.cap);
+  ok(pid, 'the desk knows the city, the land, the show and the building before the show is booked', !!(D && D.now.city === R[0] && D.now.land && D.now.show === S.queue[0].name && D.now.cap > 0 && D.now.venue.endsWith(', ' + D.now.city) && D.map), D && D.now.city + ', ' + D.now.land + ' on ' + D.mapName + ': ' + D.now.venue + ' holds ' + D.now.cap);
   ok(pid, 'this stop has a dot on the map, and its land lights', !!(D && D.stops.find(s => s.k === 'now').x != null && D.lit.now >= 0));
   const told = D.now, rep = show(S);
   ok(pid, 'the show goes on in the city and the building the desk named', rep.venue === told.venue && rep.cap === told.cap && rep.city === told.city, rep.venue + ' ' + rep.cap);
@@ -61,7 +61,7 @@ const play = (S, weeks) => { for (let i = 0; i < weeks; i++) { answer(S); while 
 }
 { /* a year of shows: tickets sold ahead never decide the gate, they only make sure a sold ticket is paid for */
   let noshow = 0, att = 0, sold = 0;
-  ['whw', 'ttt', 'nmw'].forEach(pid => { const S = E.newGame(pid, 11, { name: 'R' }); for (let w = 0; w < 24; w++) { answer(S); while (S.qi < S.queue.length) { const r = show(S); noshow += r.noshow || 0; att += r.att; if (r.sellout) sold++; } answer(S); E.endWeek(S); } });
+  ['whw', 'ttt', 'nmw'].forEach(pid => { const S = E.newGame(pid, 11, { name: 'R' }); for (let w = 0; w < 24 && !S.over; w++) { answer(S); while (S.qi < S.queue.length && !S.over) { const r = show(S); noshow += r.noshow || 0; att += r.att; if (r.sellout) sold++; } answer(S); E.endWeek(S); } });
   ok('tix', 'over half a year of nights, fewer than three in a hundred seats were sold to people who stayed home', noshow / att < 0.03, (noshow / att * 100).toFixed(2) + '% of ' + att);
 }
 /* markets */
@@ -106,5 +106,11 @@ const play = (S, weeks) => { for (let i = 0; i < weeks; i++) { answer(S); while 
 }
 /* an old save has no road yet */
 { const S = E.newGame('ttt', 2, { name: 'R' }); delete S.rdn; delete S.rdv; const D = E.road(S); ok('old', 'a game saved before the road loads and starts the loop from its first stop', !!D && D.now.city === E.roadRoute(S)[0]); }
+{ /* every city has 3 to 5 buildings of its own, the same all game, and the road names the smallest that holds the draw */
+  const B = ['Chicago', 'Tokyo', 'Leeds', 'Sparta', 'Hannibal'].map(c => E.cityBuildings(null, c));
+  ok('bld', 'every city has 3 to 5 buildings, smallest first, all different', B.every(b => b.length >= 3 && b.length <= 5 && b.every((x, k) => !k || x.cap > b[k - 1].cap) && new Set(b.map(x => x.n)).size === b.length), B.map(b => b.length).join(' '));
+  ok('bld', 'a city keeps its buildings', JSON.stringify(E.cityBuildings(null, 'Chicago')) === JSON.stringify(B[0]));
+  ok('bld', 'a small house and a big one are different buildings', E.cityBuildings(null, 'Leeds')[0].n !== E.cityBuildings(null, 'Leeds')[2].n);
+}
 console.log(fails.length ? '\nFAILED: ' + fails.length + '\n' + fails.join('\n') : '\nall passed');
 process.exit(fails.length ? 1 : 0);

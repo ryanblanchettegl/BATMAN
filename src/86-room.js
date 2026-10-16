@@ -207,7 +207,7 @@ function lineHeat(S,w){
 function lineCurve(L,age){var k=LINEK[L.kind];return age<2?(age+1)/3:(age<2+k.plateau?1:Math.pow(0.5,(age-2-k.plateau)/k.hl));}
 function linesWeek(S,P){
   if(!P||!P.lines||!P.lines.length)return 0;var t=0;
-  P.lines.forEach(function(L){var w=S.w[L.w],k=LINEK[L.kind];if(!w||!k)return;t+=P.inc0*k.cost*k.mult*lineHeat(S,w)*lineCurve(L,S.week-L.started);});
+  P.lines.forEach(function(L){var w=S.w[L.w],k=LINEK[L.kind];if(!w||!k)return;t+=P.inc0*k.cost*k.mult*lineHeat(S,w)*lineCurve(L,S.week-L.started)*(w.cl&&w.cl.merch?0.75:1);});   // a merchandise share sends a quarter to them (src/97-clauses.js)
   return t;
 }
 E.LINEK=LINEK;

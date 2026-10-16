@@ -32,9 +32,27 @@ function LongPlan() {
 
 const plotState = () => slice<{ team: string; who: string; w: string; k: string; a: string; b: string; at: string }>('plot', () => ({ team: '', who: '', w: '', k: 'interview', a: '', b: '', at: 'start' }));
 /** The pop-up for one thing booking power buys on Storylines (`m.k`), or for the long plan. */
+/** The company arc (roadmap 11): the one running and how it is landing, or the ones on offer this year. */
+function ArcWindow() {
+  const S = G.S, A = E.arcInfo(S);
+  if (A.on) return <Window title={A.n} wide ok="Close">
+    <p>{A.d}</p>
+    <p class="mt1"><b class={A.flop ? 'bad' : 'good'} data-t="arc-word">{A.word}.</b> Chapter {Math.min(A.ch, A.of)} of {A.of}. It pays off at the flagship, {A.endLabel}.</p>
+    <p class="muted mt1">At the centre: {A.cast.join(', ')}. Chapters come to your desk as they fall due. Putting them in your main events keeps it going.</p>
+  </Window>;
+  const st = plotState() as any;
+  const start = (k: string) => act(() => { const r = E.arcStart(S, k, st.arcLead ? { lead: +st.arcLead } : undefined); showResult('Company arc', r.msg, !r.ok); });
+  return <Window title="A company arc for the year" wide ok="Not now">
+    <p class="muted">One story for the whole year, built from your roster, paid off at the flagship. It can flop, and a flop can still be turned around.{A.last ? ' Last time: ' + A.last.n + ' ' + A.last.res + '.' : ''}</p>
+    {!A.can ? <p class="bad mt1">{A.why}</p> : null}
+    {A.list.map((x: any) => <p key={x.k} class="row mt1"><Btn kind="go" t="arc-pick" d={{ v: x.k }} disabled={!A.can || !x.can} onClick={() => start(x.k)}>{x.n}</Btn> <span>{x.d} {x.can ? <span class="muted">With {x.who.join(', ')}.</span> : <span class="bad">{x.why}</span>}</span>
+      {x.pick && x.can ? <Sel t="arc-lead" label="Who leads it" value={st.arcLead || ''} options={[['', 'Leader: ' + x.who[0]], ...x.pick.from.map((w: any): [string, string] => [String(w.id), 'Leader: ' + w.n])]} onChange={v => view(() => { st.arcLead = v; })} /> : null}</p>)}
+  </Window>;
+}
 export function PlotWindow(p: { m: Modal }) {
   const S = G.S, I = E.plotInfo(S), st = plotState(), id: string = p.m.k;
   if (id === 'plan') return <Window title="The long plan" wide ok="Done"><LongPlan /></Window>;
+  if (id === 'arc') return <ArcWindow />;
   const A = I.acts.find((x: any) => x.id === id); if (!A) return <Window title="Storylines"><Empty>That is not on offer.</Empty></Window>;
   const run = (o: any) => act(() => { const r = E.plotDo(S, id, o); say(r.msg, { err: !r.ok }); showResult(A.n, r.msg, !r.ok); });
   const tm = I.teams.find((t: any) => String(t.id) === st.team) || null, kind = I.kinds.find((k: any) => k.id === st.k) || I.kinds[0];

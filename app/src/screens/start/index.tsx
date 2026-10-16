@@ -1,9 +1,9 @@
 /* Before the game: boot sequence, title card, Select Promotion, the first-day screens, and the Help and Options windows. */
 import { saveFile, canSaveFile } from '../../shared/savefile';
 import { ComponentChildren } from 'preact';
-import { useEffect, useRef } from 'preact/hooks';
+import { useEffect, useRef, useState } from 'preact/hooks';
 import { E } from '../../engine';
-import { G, ui, pref, Modal, VER, UNIS, saveUnis, savePrefs, setUniverse, builtInUniverse, basePackage, cut, loadSave, cash, view, redraw, openModal, plural, slice, act } from '../../store';
+import { G, ui, pref, Modal, VER, UNIS, saveUnis, savePrefs, setUniverse, builtInUniverse, basePackage, isBuiltIn, DEFAULT_UNI, cut, loadSave, cash, view, redraw, openModal, plural, slice, act } from '../../store';
 import { HOT, pageName } from '../../nav';
 import { autoScreen, skipBoot, onKey } from '../../input';
 import { startGame, continueGame, loadSaveText, startChallenge, startScenario, isoWeekId } from '../../flow';
@@ -113,7 +113,7 @@ function importUniverse(text: string, fname: string) {
   openModal({ kind: 'unireport', v, name, text: text2 });
 }
 export function Select() {
-  const info = E.universe(), ids = Object.keys(UNIS), cur = pref.uni && UNIS[pref.uni] ? pref.uni : 'public_domain', file = useRef<HTMLInputElement>(null);
+  const info = E.universe(), ids = Object.keys(UNIS), cur = pref.uni && (UNIS[pref.uni] || isBuiltIn(pref.uni)) ? pref.uni : DEFAULT_UNI, file = useRef<HTMLInputElement>(null);
   const items: (MenuItem & { promo?: any })[] = info.promotions.map((d: any) => ({ t: 'pick', d: { v: d.id }, promo: d, pick: () => pick(d.id),
     label: <><span class="ab">{d.name}</span><span class="fn">{d.full ? '- ' + d.full : ''}</span><span class="st">{(E.MODELS[d.model] || E.MODELS.classic).n} {'·'} Pop {d.image} {'·'} {cash(d.cash)} {'·'} {info.count[d.id] || 0} workers</span></> }));
   items.push({ t: 'pick', d: { v: 'OWN' }, cls: 'new', pick: () => pick('OWN'), label: <span class="fn">CREATE NEW FEDERATION</span> });
@@ -128,11 +128,11 @@ export function Select() {
     <Panel cls="mb3" title="Universe">
       <div class="row">
         <Sel id="uni-sel" label="Universe" value={cur} onChange={v => view(() => { setUniverse(v); ui.setup = null; ui.mi = 0; })}
-          options={[['public_domain', builtInUniverse().manifest.name + ' (built in)'], ...ids.map(id => [id, UNIS[id].manifest.name + ' (yours)'] as [string, string])]} />
+          options={[['parody', builtInUniverse('parody').manifest.name + ' (built in)'], ['public_domain', builtInUniverse('public_domain').manifest.name + ' (built in)'], ...ids.map(id => [id, UNIS[id].manifest.name + ' (yours)'] as [string, string])]} />
         <Btn t="uni-import" onClick={() => file.current && file.current.click()}>Import a universe file</Btn>
         <Btn t="uni-editor" onClick={() => toScreen('editor')}>World Editor</Btn>
         <Btn t="uni-cut" onClick={() => openModal({ kind: 'unicut' })}>Choose the companies in this game</Btn>
-        {cur !== 'public_domain' && <Btn t="uni-remove" onClick={() => view(() => { delete UNIS[pref.uni]; saveUnis(); setUniverse('public_domain'); ui.mi = 0; })}>Remove this one</Btn>}
+        {!isBuiltIn(cur) && <Btn t="uni-remove" onClick={() => view(() => { delete UNIS[pref.uni]; saveUnis(); setUniverse(DEFAULT_UNI); ui.mi = 0; })}>Remove this one</Btn>}
         <input type="file" id="uni-file" ref={file} accept=".json,application/json" hidden onChange={onFile} />
       </div>
       <p class="muted mt2">{info.desc} {info.workers} workers, {info.promotions.length} promotions. Starts in {info.start}.{info.author ? ' By ' + info.author + '.' : ''}</p>
@@ -147,8 +147,8 @@ function CutWindow() {
   const base = basePackage(), all: any[] = base.promotions, st = slice<{ msg: string }>('unicut', () => ({ msg: '' })), kept = all.length - cut.out.length;
   const apply = (out: string[], gone: boolean) => view(() => {
     const was = { out: cut.out.slice(), gone: cut.gone }; cut.out = out; cut.gone = gone;
-    const v = setUniverse(pref.uni || 'public_domain', true);
-    if (cut.out.length !== out.length) { cut.out = was.out; cut.gone = was.gone; setUniverse(pref.uni || 'public_domain', true); st.msg = 'That would leave a world the game cannot play' + (v && v.errors && v.errors[0] ? ': ' + v.errors[0].msg : '') + '.'; }
+    const v = setUniverse(pref.uni || DEFAULT_UNI, true);
+    if (cut.out.length !== out.length) { cut.out = was.out; cut.gone = was.gone; setUniverse(pref.uni || DEFAULT_UNI, true); st.msg = 'That would leave a world the game cannot play' + (v && v.errors && v.errors[0] ? ': ' + v.errors[0].msg : '') + '.'; }
     else st.msg = '';
     ui.mi = 0; ui.setup = null;
   });
@@ -176,16 +176,29 @@ function PickRow(p: { k: string; table: Record<string, any>; cur: string; label:
 /* ---------- the glossary: the words the game uses ---------- */
 const WORDS: [string, string, string][] = [
   ['overness', 'Overness', 'How much the crowd cares about a wrestler, from 0 to 100. The higher it is, the more a wrestler draws and the more their wins and losses matter.'],
-  ['heat', 'Heat', 'How hot a rivalry is, from 0 to 100. Heat builds from promos, ambushes and matches between the two. A feud at 60 or more is ready for a big finish.'],
+  ['heat', 'Heat', 'How much the crowd cares about a feud, from 0 to 100. Promos, angles, matches and twists build it. A feud has no set length: it ends when you end it, or fizzles if nobody cares.'],
+  ['fresh', 'Freshness', 'How much a feud still has to give. Every beat uses some up, the same beat twice uses more, and a twist, a turn or a rest gives it back. Hot and nearly used up is the moment to end it.'],
+  ['night', 'Kind of night', 'Each month ends in one big event: an arena show, a tentpole (one of the few nights that matter most), a ballroom show, a taped special, a gimmick night, a battle royal night or a tournament night, set on the Year planner. Each changes the house, the price, the buys and what the crowd expects. A month can also go dark. The tournament winner headlines your flagship.'],
+  ['clause', 'Contract clause', 'Something a wrestler wants written into a deal: paid travel, a no-cut promise, a merchandise share or a title match. Each one you agree to brings their price down.'],
+  ['network', 'Network', 'Where a weekly show airs. Each network has a taste (family, sport, late night or niche) and each deal a target audience. Miss it three weeks running and an executive calls.'],
+  ['war', 'Night war', 'A rival with a weekly show on your night, in your part of the world. Each week the bigger audience wins the night, and winning gets people talking.'],
+  ['stream', 'Streaming', 'Your own service, opened on Manage, Deals. Subscribers pay every week; more come with good shows and a bigger tape library.'],
+  ['weak', 'Looking weak', 'A company that loses a war with a rival badly. For a year its big nights draw a little less.'],
+  ['streak', 'Sell-out streak', 'Shows sold out in a row. From the third, the next show draws a little more, and a city that sold out gets a bigger building next time.'],
   ['workrate', 'Work rate', 'How good a wrestler is in the ring: brawling, technical skill and speed together. It lifts match quality, but the crowd also needs a reason to care.'],
   ['momentum', 'Momentum', 'Whether a wrestler is hot or cold right now. Wins and big moments raise it, losses lower it. A hot wrestler gets the benefit of the doubt on the night.'],
   ['bp', 'Booking power', 'What you spend to call a finish yourself. The owner grants some each week. The favourite costs 1, an underdog 2, a long shot 3, and a title change 1 more.'],
   ['prestige', 'Prestige', 'How much a title is worth, from 10 to 100. Good title matches raise it. A title with high prestige adds to the matches that carry it.']
 ];
+/** The glossary: the words in a list, and the picked one beside it, so it fits one screen however many words there are. */
 function Glossary(p: { m: Modal }) {
-  useEffect(() => { const el = p.m.term && document.getElementById('gl-' + p.m.term); if (el) el.scrollIntoView({ block: 'nearest' }); }, []);
-  return <Window title="Glossary" ok="Got it">
-    <dl class="gloss">{WORDS.map(w => <div key={w[0]} id={'gl-' + w[0]} class={p.m.term === w[0] ? 'on' : undefined}><dt><b>{w[1]}</b></dt><dd>{w[2]}</dd></div>)}</dl>
+  const [k, setK] = useState(p.m.term || WORDS[0][0]);
+  const w = WORDS.filter(x => x[0] === k)[0] || WORDS[0];
+  return <Window title="Glossary" wide ok="Got it">
+    <div class="glossx">
+      <div class="gl-list" role="listbox" aria-label="Words">{WORDS.map(x => <Btn kind="sm" key={x[0]} on={x[0] === w[0]} t="gl-term" d={{ k: x[0] }} onClick={() => setK(x[0])}>{x[1]}</Btn>)}</div>
+      <div class="gl-pane" id={'gl-' + w[0]} role="status"><p><b>{w[1]}</b></p><p class="mt1">{w[2]}</p></div>
+    </div>
   </Window>;
 }
 /** A word that opens the glossary at its entry. */
@@ -266,28 +279,48 @@ export function Setup() {
 
 /* ---------- windows: help, options, the universe import report ---------- */
 function Help() {
-  return <Window title="Help" ok="Got it">
+  const [k, setK] = useState('job');
+  const T: [string, string][] = [['job', 'The job'], ['line', 'The bottom line'], ['book', 'Booking and sections'], ['try', 'Attempts and names'], ['world', 'Your world'], ['keys', 'Keys']];
+  return <Window title="Help" wide ok="Got it">
+    <div class="glossx">
+      <div class="gl-list" role="tablist" aria-label="Help topics">{T.map(x => <Btn kind="sm" key={x[0]} on={x[0] === k} t="help-tab" d={{ k: x[0] }} onClick={() => setK(x[0])}>{x[1]}</Btn>)}</div>
+      <div class="gl-pane" role="tabpanel">
+      {k === 'job' ? <>
     <p><b>The job.</b> Book the shows, answer the inbox, close the week. Shows that beat what the crowd expects raise your popularity.</p>
     <p class="mt1"><b>The key.</b> Bottom right, on every page: SPACE, and what happens next. Yellow moves the week on (Book show, Continue). Green puts a show on the air. Red wants you first: Attention means something on your desk needs an answer, and Your call means the gorilla position is waiting. White goes back to the Office. Teal ends the week. Rest on it to see why. The space bar presses it.</p>
+      </> : null}
+      {k === 'line' ? <>
     <p class="mt1"><b>The bottom line.</b> Your booking power, action points, cash, popularity and the owner’s trust, each with how it has moved since the last show went on the air or the last week ended. F1 is Help, F2 Options, F3 Music.</p>
+      </> : null}
+      {k === 'book' ? <>
     <p class="mt1"><b>Booking.</b> A show is matches, promos and angles. You pick who is in each. The odds decide the matches unless you spend booking power. Where a match sits matters: open with something quick, keep two long matches apart, and put the biggest match on last. The Running order notes beside the card read your card against those rules. Matches and segments are rated in stars, up to five.</p>
-    <ul class="list mt1">
+    <ul class="list mt1 helpsecs">
       <li><span><b>Office.</b> The desk, Backstage, Storylines and your career. It opens on what needs doing before the show.</span></li>
       <li><span><b>Booking.</b> Build the card. Spend booking power to call a finish.</span></li>
       <li><span><b>Roster.</b> Wrestlers, the locker room, titles and free agents.</span></li>
-      <li><span><b>Net.</b> The dirt sheet, the feed and the fan boards.</span></li>
+      <li><span><b>Web.</b> The dirt sheet, the chat room and the wrestling sites.</span></li>
       <li><span><b>Manage.</b> Every choice: operations, house rules, deals.</span></li>
       <li><span><b>Company.</b> Information only: overview, finances, the world, history.</span></li>
     </ul>
+      </> : null}
+      {k === 'try' ? <>
     <p class="mt1"><b>Attempts.</b> Some actions may fail. Each one shows its chance, what helps and what hurts.</p>
     <p class="mt1"><b>Names.</b> Select any name or title to open a pop-up. Back steps out, Close shuts them all.</p>
+      </> : null}
+      {k === 'world' ? <>
     <p class="mt1"><b>World Editor.</b> On the title screen. Build your own world of companies, shows, belts and wrestlers, then play it or share it.</p>
     <p class="mt1"><b>Your company.</b> Each company runs on a model that changes what its crowd rewards and where its money comes from. Read it on the Company overview.</p>
+      </> : null}
+      {k === 'keys' ? <>
     <p class="eyebrow mt2">Keys</p>
     <div class="keys">{Object.keys(HOT).map(k => <span><b>{k.toUpperCase()}</b> {pageName(HOT[k])}</span>)}<span><b>Enter</b> next line of a show</span><span><b>Esc</b> skip or close</span><span><b>F1</b> this window</span><span><b>F2</b> options</span></div>
     <div class="row mt2"><Btn kind="sm" t="glossary" onClick={() => openModal({ kind: 'glossary' })}>Glossary of game words</Btn></div>
     <p class="eyebrow mt2">Remote or gamepad</p>
     <div class="keys"><span><b>Arrows</b> move the highlight</span><span><b>OK / A</b> select</span><span><b>Back / B</b> go back</span><span><b>LB RB</b> change section</span><span><b>Start</b> options</span></div>
+  
+      </> : null}
+      </div>
+    </div>
   </Window>;
 }
 /** Move a game between devices as text: copy it here, paste it there. */

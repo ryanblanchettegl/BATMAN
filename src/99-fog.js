@@ -57,9 +57,14 @@ function matchRead(S,card,i){
     if(s[0].team==null||s[0].team!==s[1].team)add(-1,names(s)+' are not a regular team. Expect it to be rough.','see');
     else if(relOf(S,s[0].id,s[1].id)<0)add(-1,names(s)+' do not get on. It shows when they tag.','see');
   });
+  // a sharp agent sees more (roadmap 8): who the crowd will be behind, and two styles that fight each other. Only what can be read off the people.
+  var ag=agentOf(S,m),q=ag?agentQ(ag):0;
+  if(m.mt==='1v1'&&q>=0.6&&reads(S,m,'cr'+rkey(all[0].id,all[1].id))){var A1=all[0],B1=all[1],fav=A1.ovr+(A1.align==='F'?6:0)>=B1.ovr+(B1.align==='F'?6:0)?A1:B1;
+    if(Math.abs(A1.ovr-B1.ovr)<=12)add(fav.align==='F'?1:0,'My read: the crowd will be behind '+fav.name+'. Make them wait for it.','read');}
+  if(m.mt==='1v1'&&q>=0.8&&all[0].style&&all[0].style===all[1].style&&reads(S,m,'st'+rkey(all[0].id,all[1].id)))add(0,'My read: they wrestle the same way. Somebody has to bend, or it goes nowhere.','read');
   var NEW=['First time for these two on our shows. I have no read. We find out at the bell.','I have not seen these two work each other. I cannot tell you how it goes.','A new pairing for us. No read yet. Run it and we will know.'];
   if(!out.length)add(0,m.mt==='1v1'?(blind?NEW[Math.floor(h01(S.seed+':nw:'+rkey(all[0].id,all[1].id))*NEW.length)%NEW.length]:'Nothing to flag.'):(m.mt==='tag'?'Two regular teams. Nothing to flag.':'A lot of bodies in there. Hard to read until the bell.'),'none');
-  var max=1+(agentOf(S,m)?1:0)+(S.booker&&S.booker.sk.eye>=3?1:0);
+  var max=1+(ag?1:0)+(q>=0.8?1:0)+(S.booker&&S.booker.sk.eye>=3?1:0);
   return {i:i,who:agentName(S,m),lines:out.slice(0,max),more:out.length>max,own:!!agentOf(S,m)};
 }
 /** The agent's comment on every match of the card on the desk, in card order. */
@@ -166,6 +171,15 @@ function cardFlags(S,card,i){
   // a stipulation in a feud: earned when the story is hot enough to carry it, too soon when it is not (src/21-living.js)
   if(m&&m.stip&&m.stip!=='std'&&m.sides&&m.sides.length===2&&m.sides[0][0]!=null&&m.sides[1][0]!=null){var ff=feudOf(S,m.sides[0][0],m.sides[1][0]);
     var sf=stipFitOf(ff,m.stip),sn=(STIP[m.stip]||{}).n||'This stipulation';if(sf>=4)add('good','Earned','The feud is hot enough to carry a '+sn.toLowerCase()+' match. It will add to the story.');else if(sf<0)add('bad','Too soon',sn+' needs a hotter feud than this. It will feel like too much, too soon.');}
+  // momentum anybody can see: a winning run or a cold one (NEXT.md 8.4)
+  if(m&&m.sides){var ids=flat(m.sides).filter(function(id){return id!=null;}),hot=ids.filter(function(id){return S.w[id]&&S.w[id].mom>=5;}),cold=ids.filter(function(id){return S.w[id]&&S.w[id].mom<=-5;});
+    if(hot.length)add('good','On a roll',hot.map(function(id){return S.w[id].name;}).join(' and ')+(hot.length>1?' are':' is')+' on a roll. The crowd is with a winner.');
+    if(cold.length)add('warn','Cold streak',cold.map(function(id){return S.w[id].name;}).join(' and ')+(cold.length>1?' have':' has')+' been losing. The crowd has stopped believing.');}
+  // where the feud stands, when it matters: boiling, going stale, or this is its last night
+  if(m&&m.sides&&m.sides.length===2&&m.sides[0][0]!=null&&m.sides[1][0]!=null){var fq=feudOf(S,m.sides[0][0],m.sides[1][0]);if(fq&&!fq.res){var ph=feudPhase(S,fq);
+    if(m.end)add('good','Final chapter','The booker has marked this as the end of the story.');
+    else if(ph==='boil')add('good','Boiling','The feud is boiling. The crowd will be up for this.');
+    else if(ph==='stale')add('bad','Stale feud','The crowd has seen this before. It needs a twist or an ending.');}}
   if(rd)rd.lines.forEach(function(l){
     var t=l.t;
     if(/fumes|worn|carrying/.test(t))add('bad','Worn down',t);
@@ -208,6 +222,14 @@ E.cardFlags=function(S,card){card=card||S.card||[];return card.map(function(m,i)
     S.quests.forEach(function(q){if(q.type!=='win')return;
       card.forEach(function(m){if(m.call!=null)return;var si=-1;m.sides.forEach(function(s,k){if(s.indexOf(q.w)>=0)si=k;});if(si<0)return;
         m.call=si;if(E.cardCost(S,card)>S.bp)m.call=null;else ch=true;});});
+    // a promised title shot falling due is booked: the champion against them, the belt on the line, in a match that is not the main event
+    var fm=function(m){return m.sides.length===2&&m.sides[0][0]!=null&&m.sides[1][0]!=null&&!!feudOf(S,m.sides[0][0],m.sides[1][0]);},show=S.queue[S.qi],el=show?eligible(S,P,show).map(function(w){return w.id;}):[],on=function(id){return card.some(function(m){return flat(m.sides).indexOf(id)>=0;});};
+    S.quests.forEach(function(q){if(q.type!=='shot'||q.due-S.week>1||el.indexOf(q.w)<0)return;var t=titleById(P,q.title);if(!t||t.tag||t.holders.length!==1||t.holders[0]===q.w||(t.g&&S.w[q.w].g!==t.g))return;
+      if(card.some(function(m){return m.title===t.id&&flat(m.sides).indexOf(q.w)>=0;}))return;var c=t.holders[0];if(el.indexOf(c)<0)return;
+      var at=-1;card.forEach(function(m,i){if(m.title===t.id&&m.sides.length===2&&m.sides[0].length===1&&m.sides[1].length===1&&flat(m.sides).indexOf(c)>=0)at=i;});
+      if(at>=0){if(on(q.w)||fm(card[at]))return;var m=card[at];m.sides=[[c],[q.w]];m.call=null;ch=true;return;}
+      if(on(c)||on(q.w))return;
+      for(var i=n-2;i>=0;i--){var m2=card[i];if(m2.title||m2.mt!=='1v1'||fm(m2)||m2.end)continue;m2.sides=[[c],[q.w]];m2.title=t.id;m2.call=null;m2.stip='std';ch=true;return;}});
     if(ch)E.fitShow(S,card);
     return card;
   };

@@ -21,5 +21,12 @@ for (const pi of [0, 1, 2]) {
   ok(JSON.stringify(E.sift(S)) === JSON.stringify(L) && JSON.stringify(S) === before, S.player + ': sifting changed the game or gave a different list');
   console.log(S.player + ': ' + L.map(x => x.n + ' (' + S.w[x.a].name + ', ' + S.w[x.b].name + ')').join('; '));
 }
+// unfinished business: an old story that ended hot comes back as a pitch after twelve weeks, not before
+{
+  const S = E.newGame(E.universe().promotions[1].id, 3, { name: 'R' }), R = E.storyPeople(S).filter(w => w.g === 'M' && !w.n);
+  const a = Math.min(R[1].id, R[4].id), b = Math.max(R[1].id, R[4].id);
+  S.embers = { [a + '-' + b]: { w: S.week - 6, h: 80, n: 1 } }; ok(!E.sift(S).some(x => x.k === 'again'), 'an old story came back too soon');
+  S.embers[a + '-' + b].w = S.week - 14; ok(E.sift(S).some(x => x.k === 'again' && x.a === a && x.b === b), 'an old story that ended hot was not pitched again');
+}
 if (fails) { console.log('FAILED: ' + fails); process.exit(1); }
 console.log('test-sift: all passed');

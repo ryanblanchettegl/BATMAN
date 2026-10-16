@@ -34,8 +34,10 @@ async function run(mode) {
   const fit = async label => { const f = await fits(page), o = await overflow(page); ok(mode, label + ' fits one screen', !f && !o, f || o); };
   try {
     /* ---- the owner on the headset ---- */
-    await go(page, 'booking'); await page.click('[data-t="suggest"]');
+    await go(page, 'booking'); await page.click('[data-t="suggest"]'); await page.waitForFunction(() => window.EWF_DEBUG.state().card.length > 0, null, { timeout: 20000 }).catch(() => {});
     const set = await state(page, S => { const E = window.GP, n = S.card.length; S.lcd = {};
+      // nobody on the card is worn down, so a hurt wrestler cannot take the owner's moment
+      S.card.forEach(m => m.sides.forEach(sd => sd.forEach(id => { S.w[id].cond = 100; })));
       for (let i = 0; i < n; i++) { const m = S.card[i]; if (m.mt !== '1v1' || m.title || m.call != null) continue; const o = E.matchOdds(S, m, i, n); if (!o) continue; const side = o.p[0] < o.p[1] ? 0 : 1, id = m.sides[side][0];
         S.owner.fav = id; S.quests = S.quests.filter(q => q.type !== 'o_strong'); S.quests.push({ id: S.nid++, type: 'o_strong', w: id, due: S.week + 3, gain: 6, bp: 2, text: S.owner.name + ': keep ' + S.w[id].name + ' strong this month. No clean losses.' });
         return { i, id, name: S.w[id].name, owner: S.owner.name, trust: S.owner.trust, bp: S.bp }; }
@@ -101,7 +103,7 @@ async function run(mode) {
       await fit('the card with that warning');
       await page.click('[data-t="suggest"]');
       /* the Company page and their profile */
-      await go(page, 'overview');
+      await go(page, 'overview'); await page.click('[data-t="ov-sec"][data-v="owner"]'); await page.waitForTimeout(100);
       ok(mode, 'the Company page says who the shows are built around', (await txt(page, '[data-t="built-around"]')).includes(face.name) && /a lift when they are in the main event/.test(await txt(page, '[data-t="built-around"]')), await txt(page, '[data-t="built-around"]'));
       const o = await overflow(page); ok(mode, 'the Company page fits its width', !o, o);
       await page.click('[data-t="built-around"] button');
