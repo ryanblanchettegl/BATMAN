@@ -26,6 +26,10 @@ Two more lists sit beside this one, both finished:
 | Battle royals, 16 Oct | Up to 30 people. 30 minutes for every 15: a 30-man battle royal lasts an hour. |
 | Buildings, 16 Oct | The player does not pick the building. Every city has its own list of buildings the road draws from. |
 | TV cancellation, 16 Oct | A TV show can be cancelled. It then becomes a house show. |
+| Company arcs, 16 Oct | Storylines gets Company Arcs, picked once a year: an invasion, a faction in the style of a famous 90s takeover group (original names), a hostile takeover by an authority figure, a brand split, or a plain build to the flagship. Each is its own procedurally generated engine with decisions through the year (who leads the faction, who the hostile authority fires on screen). |
+| The GM, 16 Oct | After the arcs: research and rebuild booking power, action points, levelling, notifications and the RPG side of building your GM. A skill tree, like Path of Exile but smaller and about wrestling and this game's mechanics; each perk does something different. |
+| Decisions, 16 Oct | The decision screens look better: big buttons that are easy to read and press, and something like simulated animation so a decision feels important. The events after every show and every week are one of the most fun parts and set the game apart. |
+| The living world, 16 Oct | Shows are entertaining and different every week to watch and read; decisions drive how alive the show and the game feel, not only feuds. Wrestling is an ecosystem that lives without you. Great storylines should come from people reacting for human reasons, not random numbers. |
 | Calendar | The game starts in the present day (October 2026). The 1990s PC look stays exactly as it is. |
 | Screens | Office is the hub and opens on "Before the show" with a **Book the next show** button. Manage holds every choice. Company is information only. Music sits top right. |
 | Wording | No dice or rolls anywhere. An attempt has a percentage chance, with what helps and what hurts. |

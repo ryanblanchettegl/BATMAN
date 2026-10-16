@@ -91,6 +91,10 @@ The plan is in `docs/plans/storyline-templates.md`. Ryan's decision: the player 
 - [ ] **0.3 Buildings by city.** Every city has its own list of buildings (names and sizes) the road draws from.
 - [ ] **0.4 Cancellation.** A network can cancel a weekly show after warnings; it becomes a house show (no TV money, a smaller crowd, no network).
 - [ ] **0.5 The booking screen.** More buttons; drag a match, or move it up and down; match booking that looks better and is easier (pop-ups are fine); what could happen tonight from the player's choices, in the road agent's sly words, never a forecast (fog of war, rule 8a).
+- [ ] **0.6 Company arcs.** Picked once a year on Storylines: invasion, faction takeover, hostile authority, brand split, the build to the flagship. Each its own procedural engine with decisions across the year.
+- [ ] **0.7 The GM skill tree.** Research first, then rebuild booking power, action points, levels and notifications around a small wrestling skill tree.
+- [ ] **0.8 Decisions that feel big.** Easy-to-read buttons and simulated animation on decision screens and the events after shows.
+- [ ] **0.9 A living show.** Every week's show different to watch and read; reactions for human reasons.
 
 ## Job 5. The new booking screen (task 3, the core loop)
 
