@@ -4190,10 +4190,10 @@ function yearEnd(S){
   news(S,'world','The '+yr+' awards are in. '+(woy?woy.name+' is wrestler of the year.':''));
   S.inbox.push({id:S.nid++,type:'awards',text:'The '+yr+' year-end awards: '+L.map(function(x){return x.k+': '+x.v;}).join('. ')+'.',done:true,result:null});
   // the year's power list (NEXT.md 8.1): the top twenty-five across the world, with last year's place beside each
-  // kept small: [id, last year's place or 0] for the top 500, with the names of the top 25 written in
+  // kept small: [id, last year's place or 0] for the top 200, with the names of the top 25 written in
   var prevL=(S.pwList&&S.pwList[0])?S.pwList[0].l:[],pidx={};prevL.forEach(function(x,i){pidx[x.id!=null?x.id:x[0]]=i+1;});
-  (S.pwList||(S.pwList=[])).unshift({year:yr,l:E.power(S,500).map(function(w,i){return i<25?{id:w.id,n:w.name,p:S.promos[w.promo]?S.promos[w.promo].name:'',was:pidx[w.id]||0}:[w.id,pidx[w.id]||0];})});
-  S.pwList=S.pwList.slice(0,3);
+  (S.pwList||(S.pwList=[])).unshift({year:yr,l:E.power(S,200).map(function(w,i){return i<25?{id:w.id,n:w.name,p:S.promos[w.promo]?S.promos[w.promo].name:'',was:pidx[w.id]||0}:[w.id,pidx[w.id]||0];})});
+  S.pwList=S.pwList.slice(0,2);
   S.w.forEach(function(w){w.yp=0;w.oy=w.ovr;});S.order.forEach(function(id){S.promos[id].imgY=S.promos[id].image;});S.year={};S.hofDue=true;
   if(P.id===S.player)award(S,'ACH_AWARDS');
 }
@@ -4257,6 +4257,8 @@ WEEKX.push(function(S){
   (S.reports||[]).slice(2).forEach(function(r){(r.segs||[]).forEach(function(g){if(g.bc)delete g.bc;});});
   if(S.week%26!==0)return;
   var champs={};S.order.forEach(function(pid){S.promos[pid].titles.forEach(function(t){(t.hist||[]).forEach(function(h){String(h.ids||'').split(',').forEach(function(id){champs[id]=1;});});t.holders.forEach(function(id){champs[id]=1;});});});
+  // long decimals cost room and say nothing: three places is plenty
+  S.w.forEach(function(w){for(var k in w){var v=w[k];if(typeof v==='number'&&v!==Math.round(v))w[k]=Math.round(v*1000)/1000;}});
   S.w.forEach(function(w){
     if(!w.rt||champs[w.id])return;
     delete w.rr;delete w.ys;delete w.bz;
@@ -4265,7 +4267,9 @@ WEEKX.push(function(S){
   // relationships with somebody retired are never read again
   if(S.rm)Object.keys(S.rm).forEach(function(k){var ids=k.split('-');if(ids.some(function(id){var w=S.w[+id];return !w||w.rt;}))delete S.rm[k];});
   // old head-to-head and recent-match keys nobody will read again
-  var keys=Object.keys(S.recent||{});if(keys.length>1500)keys.forEach(function(k){if(S.week-S.recent[k]>26)delete S.recent[k];});
+  var keys=Object.keys(S.recent||{});keys.forEach(function(k){if(S.week-S.recent[k]>20)delete S.recent[k];});
+  // where somebody worked on the indies is only read while they are free or on outside dates
+  S.w.forEach(function(w){if(w.ind&&(w.rt||(w.promo!=='FA'&&!(w.cl&&w.cl.outside))))delete w.ind;});
 });
 /* the power ten matters to the people in it (NEXT.md 8.2): one of yours who climbs into it is lifted, and one who drops
    out on a losing run starts to grumble. It reads the ranking and never calls rnd(S). */
