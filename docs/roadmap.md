@@ -6,7 +6,7 @@ Built in this order, one at a time, each tested, committed and published. Ryan's
 
 1. **Suggest a card is safe and flat.** It fills the clock and breaks no rules, but ignores chemistry, story timing and promises. It lands around a C. Good shows come from the player.
 2. **Battle royals.** (Done 16 October.) Up to 30 people; 30 minutes per 15 (30 people is an hour). Surprise entrants (legends, other companies' talent) can appear. A battle royal night's winner earns a title match at a later big event.
-3. **Buildings by city.** Every city has 3 to 5 named buildings (more in big cities). The road picks the one that fits the draw.
+3. **Buildings by city.** (Done 16 October.) Every city has 3 to 5 named buildings (more in big cities). The road picks the one that fits the draw.
 4. **Cancellation.** A network can cancel a weekly show after warnings. It becomes a house show (no TV money, a smaller crowd). A strong run of house shows can win a new network deal.
 5. **The match pop-up.** One pop-up books a match: type, people, stipulation, title, length and finish, with the road agent's hint at the bottom. It should look better and be easier than today.
 6. **The run sheet.** Drag a match or segment up or down the card. Lock a slot (the opener or the main event) so reordering leaves it alone. Every line keeps a keyboard and remote way to move (rule 5).
