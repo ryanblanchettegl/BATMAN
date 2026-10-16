@@ -79,7 +79,7 @@ function PreShow(p: { pre: any }) {
 
 /* ---------- the booking notes ---------- */
 /** What stands in the way of the show, then what the writers and the announcers think of the card. */
-const STK: Record<string, [string, any]> = { due: ['Due', 'bad'], story: ['Story', 'good'], title: ['Title', 'face'], ripe: ['Ripe', 'gold'], face: ['Face', 'warn'] };
+const STK: Record<string, [string, any]> = { due: ['Due', 'bad'], story: ['Story', 'good'], title: ['Title', 'face'], ripe: ['Ripe', 'gold'], face: ['Face', 'warn'], war: ['Night', 'bad'] };
 /** Tonight's stakes and Before the bell (final-7): what rides on the show, and the checks before it airs. */
 function Tonight() {
   const T = E.tonight(G.S);

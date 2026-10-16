@@ -1468,6 +1468,8 @@ E.tonight=function(S){
     else if(q.type==='win'&&w)qt=w.name+' is owed a win.';
     else{qt=q.text.replace(/^[^:]+: /,'');qt=qt.charAt(0).toUpperCase()+qt.slice(1);}
     stakes.push({k:'due',t:qt});});
+  // a rival on the same night (src/88-nights.js)
+  if(!show.big&&typeof nightRivals==='function'){var nr=nightRivals(S,show);if(nr.length){var W=(S.nw||{})[nr[0]&&nightOf(airRec(P,show.id)||show)]||null;stakes.push({k:'war',t:'Up against '+nr[0].n+' ('+nr[0].co+') tonight'+(W?': won '+W.w+', lost '+W.l+'.':'.')});}}
   card.forEach(function(m){if(!m||!m.sides||m.sides.length<2||m.sides.some(function(s){return !s.length||s.some(function(id){return id==null;});}))return;
     var f=E.matchFeud(S,m);if(m.end&&f)stakes.push({k:'story',t:feudLabel(S,f)+' ends tonight.'});
     else if(f)stakes.push({k:'story',t:feudLabel(S,f)+': '+PHASE_N[feudPhase(S,f)].toLowerCase()+', heat '+Math.round(f.heat)+'.'});
