@@ -20,6 +20,12 @@ function brSurprisePool(S,m){
   return Object.keys(S.w).map(function(k){return S.w[k];}).filter(function(w){return w&&w.promo==='FA'&&w.rt==null&&!w.nw&&!(w.inj>0)&&w.g===G&&!on[w.id];})
     .sort(function(a,b){return leg(b)-leg(a)||b.ovr-a.ovr;});
 }
+/** Book the battle royal at card position i as one for a title shot, or not. A battle royal for a vacant title is for the title itself. */
+E.brShot=function(S,i,on){
+  var m=S.card&&S.card[i];if(!m||m.mt!=='br')return {ok:false};
+  if(on)m.shot=1;else delete m.shot;
+  return {ok:true};
+};
 /** What a surprise appearance costs for one night. */
 function brFee(w){return Math.round((2000+w.ovr*w.ovr*3)/500)*500;}
 /** Turn the surprise spot on or off. The booker does not pick the person: the office finds somebody on the night. */

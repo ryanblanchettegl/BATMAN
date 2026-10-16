@@ -4066,7 +4066,7 @@ POST.push(function(ctx){
 POST.push(function(ctx){
   var r=ctx.res,P=ctx.P;if(ctx.m.mt!=='br'||r.win<0)return;
   if(ctx.isPl)award(ctx.S,'ACH_BR');
-  if(ctx.t)return;
+  if(ctx.t||(ctx.isPl&&!ctx.m.shot))return;   // the player's battle royal is for a title shot only when booked as one
   var w=r.winners[0],tt=null;P.titles.forEach(function(x){if(!x.tag&&x.g===w.g&&x.holders.length&&x.holders[0]!==w.id&&(!x.brand||x.brand===w.brand)&&isDev(P,x.brand)===isDev(P,w.brand)&&x.lvl>holdLvl(P,w.id)&&(!tt||x.lvl>tt.lvl))tt=x;});
   if(!tt)return;w.shot=tt.id;w.pts=(w.pts||0)+6;r.seg.notes.push(w.name+' has earned a shot at the '+tt.name+'.');
 });
@@ -12305,6 +12305,12 @@ function brSurprisePool(S,m){
   return Object.keys(S.w).map(function(k){return S.w[k];}).filter(function(w){return w&&w.promo==='FA'&&w.rt==null&&!w.nw&&!(w.inj>0)&&w.g===G&&!on[w.id];})
     .sort(function(a,b){return leg(b)-leg(a)||b.ovr-a.ovr;});
 }
+/** Book the battle royal at card position i as one for a title shot, or not. A battle royal for a vacant title is for the title itself. */
+E.brShot=function(S,i,on){
+  var m=S.card&&S.card[i];if(!m||m.mt!=='br')return {ok:false};
+  if(on)m.shot=1;else delete m.shot;
+  return {ok:true};
+};
 /** What a surprise appearance costs for one night. */
 function brFee(w){return Math.round((2000+w.ovr*w.ovr*3)/500)*500;}
 /** Turn the surprise spot on or off. The booker does not pick the person: the office finds somebody on the night. */

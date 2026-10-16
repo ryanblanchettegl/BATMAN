@@ -15,7 +15,7 @@ POST.push(function(ctx){
 POST.push(function(ctx){
   var r=ctx.res,P=ctx.P;if(ctx.m.mt!=='br'||r.win<0)return;
   if(ctx.isPl)award(ctx.S,'ACH_BR');
-  if(ctx.t)return;
+  if(ctx.t||(ctx.isPl&&!ctx.m.shot))return;   // the player's battle royal is for a title shot only when booked as one
   var w=r.winners[0],tt=null;P.titles.forEach(function(x){if(!x.tag&&x.g===w.g&&x.holders.length&&x.holders[0]!==w.id&&(!x.brand||x.brand===w.brand)&&isDev(P,x.brand)===isDev(P,w.brand)&&x.lvl>holdLvl(P,w.id)&&(!tt||x.lvl>tt.lvl))tt=x;});
   if(!tt)return;w.shot=tt.id;w.pts=(w.pts||0)+6;r.seg.notes.push(w.name+' has earned a shot at the '+tt.name+'.');
 });
