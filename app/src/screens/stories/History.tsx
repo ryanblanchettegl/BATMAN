@@ -84,7 +84,7 @@ function RecordBookFull() {
 function PowerYears() {
   const L: any[] = E.powerYears(G.S);
   return <Panel title="The year's top 25">
-    {L.length ? L.slice(0, 2).map((y: any) => <>
+    {L.length ? L.slice(0, 2).map((y: any) => ({ year: y.year, l: y.l.slice(0, 25).filter((x: any) => !Array.isArray(x)) })).map((y: any) => <>
       <p class="eyebrow mt2">{y.year}</p>
       <ul class="list" data-t="power-year">{y.l.map((x: any, i: number) => <Row v={<span class="muted">{x.was ? (x.was === i + 1 ? 'same place' : (x.was > i + 1 ? 'up from ' + x.was : 'down from ' + x.was)) : 'new'}</span>}>{i + 1}. <b>{x.n}</b> <span class="muted">{x.p}</span></Row>)}</ul>
     </>) : <Empty>The list is drawn up with the awards in the last week of December: the twenty-five wrestlers the whole business is talking about.</Empty>}

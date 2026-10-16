@@ -4179,9 +4179,10 @@ function yearEnd(S){
   news(S,'world','The '+yr+' awards are in. '+(woy?woy.name+' is wrestler of the year.':''));
   S.inbox.push({id:S.nid++,type:'awards',text:'The '+yr+' year-end awards: '+L.map(function(x){return x.k+': '+x.v;}).join('. ')+'.',done:true,result:null});
   // the year's power list (NEXT.md 8.1): the top twenty-five across the world, with last year's place beside each
-  var prevL=(S.pwList&&S.pwList[0])?S.pwList[0].l:[];
-  (S.pwList||(S.pwList=[])).unshift({year:yr,l:E.power(S,25).map(function(w){var j=-1;prevL.forEach(function(x,i){if(x.id===w.id)j=i;});return {id:w.id,n:w.name,p:S.promos[w.promo]?S.promos[w.promo].name:'',was:j>=0?j+1:0};})});
-  S.pwList=S.pwList.slice(0,5);
+  // kept small: [id, last year's place or 0] for the top 500, with the names of the top 25 written in
+  var prevL=(S.pwList&&S.pwList[0])?S.pwList[0].l:[],pidx={};prevL.forEach(function(x,i){pidx[x.id!=null?x.id:x[0]]=i+1;});
+  (S.pwList||(S.pwList=[])).unshift({year:yr,l:E.power(S,500).map(function(w,i){return i<25?{id:w.id,n:w.name,p:S.promos[w.promo]?S.promos[w.promo].name:'',was:pidx[w.id]||0}:[w.id,pidx[w.id]||0];})});
+  S.pwList=S.pwList.slice(0,3);
   S.w.forEach(function(w){w.yp=0;w.oy=w.ovr;});S.order.forEach(function(id){S.promos[id].imgY=S.promos[id].image;});S.year={};S.hofDue=true;
   if(P.id===S.player)award(S,'ACH_AWARDS');
 }
@@ -4200,7 +4201,13 @@ EVR.hof=function(S,ev,choice,P){
 };
 /** The year's power lists, newest first: {year, l:[{id, n, p, was}]}. */
 E.powerYears=function(S){return S.pwList||[];};
-E.power=function(S,n){return S.w.filter(function(w){return w.promo!=='FA';}).sort(function(a,b){return ((b.yp||0)+b.ovr*0.25)-((a.yp||0)+a.ovr*0.25);}).slice(0,n||10);};
+/* the ranking (NEXT.md 8.1): the year's points from results (wins count more on bigger stages and with better
+   matches), a quarter of how over they are, and a champion counts for more */
+function powerHeld(S){var h={};S.order.forEach(function(pid){(S.promos[pid].titles||[]).forEach(function(t,ti){(t.holders||[]).forEach(function(id){h[id]=(h[id]||0)+(ti===0?2:1);});});});return h;}
+function powerScore(w,held){return (w.yp||0)+w.ovr*0.25+(held[w.id]||0)*6;}
+E.power=function(S,n){var held=powerHeld(S);return S.w.filter(function(w){return w.promo!=='FA'&&!w.rt;}).sort(function(a,b){return powerScore(b,held)-powerScore(a,held);}).slice(0,n||10);};
+/** Last week's place in the ranking, 1 up, or 0 if they were not in the top fifty. */
+E.powerWas=function(S,id){var L=S.pwPrev||[],i=L.indexOf(id);return i>=0?i+1:0;};
 
 /* ---------- training camp ---------- */
 var CAMP_CAP=[0,4,8,12],CAMP_C=[0,0.004,0.009,0.015],CAMPN=['None','Small gym','Training centre','Performance institute'];
@@ -4257,6 +4264,9 @@ WEEKX.push(function(S){
   was.forEach(function(id){var w=S.w[id];if(!w||w.promo!==S.player||top.indexOf(id)>=0)return;var lost=(w.rr||[]).slice(0,3).filter(function(x){return x.r==='L';}).length;
     if(lost>=2){w.morale=clamp(w.morale-3,0,100);note(S,'The power ten',w.name+' has dropped out of the power ten, and is not happy about the losses.','bad');}});
 });
+
+/* last week's ranking, kept for the World page's arrows (the top fifty, ids only) */
+WEEKX.push(function(S){if(S.cal)return;S.pwPrev=E.power(S,50).map(function(w){return w.id;});});
 
 /* ===== 75-people.js ===== */
 /* ---------- people: ageing, retirement, each year's rookie class, and what your scouts can tell you ---------- */

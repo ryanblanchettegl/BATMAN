@@ -46,9 +46,9 @@ function NewsWire() {
 function PowerTen() {
   const S = G.S;
   return <Panel title="The power ten">
-    <ol class="rank">{E.power(S, 10).map((w: any) =>
-      <li>{w.promo === S.player ? <b>{w.name}</b> : w.name} <span class="muted">{S.promos[w.promo].name} {'·'} {Math.round(w.yp || 0)} pts</span></li>)}</ol>
-    <p class="muted mt2">The best year anyone is having, across every promotion. Wins on bigger stages count for more. The top name in the last week of December is wrestler of the year.</p>
+    <ol class="rank">{E.power(S, 10).map((w: any, i: number) =>
+      <li>{w.promo === S.player ? <b>{w.name}</b> : w.name} <span class="muted">{S.promos[w.promo].name} {'·'} {Math.round(w.yp || 0)} pts</span>{(() => { const was = E.powerWas(S, w.id), now = i + 1; return !S.pwPrev ? null : (!was ? <span class="good"> new</span> : (was > now ? <span class="good"> {'▲'} {was - now}</span> : (was < now ? <span class="bad"> {'▼'} {now - was}</span> : null))); })()}</li>)}</ol>
+    <p class="muted mt2">The best year anyone is having, across every promotion. Wins on bigger stages count for more, and so does a belt. The arrows are against last week. The top name in the last week of December is wrestler of the year.</p>
   </Panel>;
 }
 
