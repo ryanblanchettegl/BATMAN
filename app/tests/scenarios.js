@@ -21,6 +21,7 @@ function check(mode, label, ok, detail) { console.log(mode.padEnd(6), ok ? 'ok  
       await redraw(page); await page.waitForSelector('[data-t="newgame-yes"]');
       const t = await page.$eval('h1', e => e.innerText);
       check(mode, id + ' ends with a result', /You did it|Not this time/i.test(t), t);
+      check(mode, id + ' shows its score', await page.$('[data-t="scn-score"]') !== null);
       check(mode, id + ' result fits the screen', (await overflow(page)) === '', await overflow(page));
       await page.click('[data-t="newgame-yes"]'); await page.waitForSelector('.selrow');
       await page.click('[data-t="scr"][data-v="title"]'); await page.waitForSelector('.logo-box');

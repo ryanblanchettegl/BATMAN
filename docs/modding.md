@@ -181,7 +181,39 @@ One file a year. Every list is optional. Dates are a year and a month, before th
 
 History does not stop when the game starts. Every title change, match, feud and career line from your games is written into the same records, so the world's story carries on from where the files leave off.
 
-## 7. The parody world's rules
+## 7. Scenarios
+
+A world can bring its own scenarios: a company, a deadline, a problem, and one way to win. Put a list in `scenarios` at the top of the packed world (or in a `scenarios.json` beside `manifest.json` if you pack with your own tool). They sit beside the built-in ones on the title screen.
+
+```json
+{
+ "id": "rescue", "name": "Save the company", "promotion": "ttt", "weeks": 26,
+ "description": "What the player reads before they start.",
+ "setup": [ { "op": "cash", "inc0": 0.8 }, { "op": "wages", "mult": 1.25, "round": 50 } ],
+ "win": { "type": "cash", "atLeast": 1500000 },
+ "text": { "win": "The company is safe: {cash} in the bank.", "lose": "Only {cash} is in the bank." },
+ "figures": [ "Cash {cash} (target $1.5M)" ]
+}
+```
+
+| setup step | what it does |
+| --- | --- |
+| `cash` | sets the money to `inc0` times a normal week's income |
+| `wages` | multiplies every wage by `mult`, rounded to `round` |
+| `target` | picks the player's project: `g` (M or F), `maxAge`, `nth` from the bottom of the roster |
+| `image` | sets a company's popularity: `who` is `player` or a company id, `v` the value |
+| `rival` | names a rival company whose shows are measured against yours |
+| `war` | starts a ratings war with the company in `with` |
+
+| win type | met when | words it fills |
+| --- | --- | --- |
+| `cash` | the money is at least `atLeast` | `{cash}` |
+| `holdsTop` | the project holds the company's top title | `{name}`, `{title}`, `{ovr}`, `{o0}` |
+| `beatRival` | your shows beat expectations by `by` more than the rival's | `{m}`, `{r}`, `{mFig}`, `{rFig}` |
+
+Every scenario ends with a score from 0 to 100. It is also lost if the booker is fired or the money runs out first. The world check reports a scenario with an unknown company, step or win type.
+
+## 8. The parody world's rules
 
 The parody world parodies real companies and people under changed names. If you add to it, keep to the rules it was built on:
 
@@ -194,6 +226,6 @@ The design team keeps a note of who each character parodies outside the reposito
 
 A world you make for yourself can follow whatever rules you choose. What you share is your responsibility.
 
-## 8. Sharing a world
+## 9. Sharing a world
 
 A packed world is one file. It can be loaded from the title screen (World Editor, Load), and later shared on the Steam Workshop. The World Editor in the game can also open any packed world, change it and save it again.

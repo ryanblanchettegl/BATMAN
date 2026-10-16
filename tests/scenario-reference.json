@@ -1,0 +1,39 @@
+{
+ "rescue": {
+  "start": "428288a49987a43a799f8b6911443435",
+  "end": "df69e3501759e0c537c595b6ea4c533d",
+  "week": 11,
+  "res": {
+   "ok": false,
+   "text": "The company ran out of money before the 26 weeks were up.",
+   "figures": [
+    "Cash $-792,940 (target $1.5M)"
+   ]
+  }
+ },
+ "champion": {
+  "start": "5ab8f2a21a3103ea28246f628e741dce",
+  "end": "ed83a53af29c6828b72e184236505120",
+  "week": 40,
+  "res": {
+   "ok": false,
+   "text": "Paris does not hold the Olympian World Title after 39 weeks. They are now rated 65.",
+   "figures": [
+    "Paris rated 65 (started at 70)"
+   ]
+  }
+ },
+ "war": {
+  "start": "97957102109490bac5f8524c765c7f93",
+  "end": "b2ed46c6712d5800583bc5ef387a8f3f",
+  "week": 27,
+  "res": {
+   "ok": false,
+   "text": "You lost the ratings war: your shows averaged -1.6 against expectations, theirs +3.5.",
+   "figures": [
+    "Your shows: -1.6 against expectations",
+    "Theirs: +3.5"
+   ]
+  }
+ }
+}
