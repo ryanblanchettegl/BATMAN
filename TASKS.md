@@ -169,7 +169,7 @@ Ryan: "look up the philosophy of booking a wrestling show, the importance of the
 **Stars.**
 - [x] Matches, promos and angles show a star rating and nothing else: the report, the broadcast, History, the dirt sheet, the boards, wrestler cards, the season review, the end-of-game page. The work, the crowd and effort are bars with no number.
 - [x] Network targets, promises, season goals and achievements about a match are worded in stars and checked in quarter stars, so "★★★★½ or better" is met by any match that shows ★★★★½.
-- [ ] The show's own score, and what the crowd expects, are still percentages.
+- [x] The show's own score, and what the crowd expects, are still percentages. (Done: a show is a letter grade and a word, rule 8c; what a crowd expects is words on the ladder.)
 
 ### 0e. The live Gorilla Position, in steps (`docs/plans/gorilla-position.md`)
 
@@ -191,7 +191,7 @@ Ryan: "look up the philosophy of booking a wrestling show, the importance of the
     - Who the show is built around. After a main event, when the building will not sit down for a top name, the truck asks where the last shot goes. Build the company around them, stay with who it is built around now, or say nobody is bigger than the company. The one chosen remembers it, the one replaced holds it against you, the other top names are jealous, and the owner has a view.
     - What it does afterwards: more interest in a show with them in the main event, less in a show they are left off, louder matches. The card builder warns when they are left off. The Company page and their card say who it is.
     - The question comes at most once in eight weeks. The office calls at most once in three.
-    - [ ] "Suggest a card" does not yet put the face of the company in the main event by itself.
+    - [x] "Suggest a card" does not yet put the face of the company in the main event by itself. (Done: `E.suggest` in `src/99-fog.js` moves the face into the main event.)
     - [x] **(0.26) The network on the line.** On weekly television in early evening or prime time, when a match is brutal, a dangerous stipulation, or an edgy product with a feud this hot. Let it run (the network's patience wears), tone it down (a tamer match, a happier network), or give them something to complain about (a hotter match, the people online love it, the network's patience wears twice, and a sponsor that asked for a tamer product holds back a week's money). At most once in four weeks.
     - [x] **(0.26) The sponsor at ringside.** A sponsor with four weeks or fewer left on its deal wants its name on the main event. Not tonight, the announcers read the plug (the crowd groans, 12 more weeks), or the hero holds up the product after the bell (24 more weeks and a bonus, and they do not enjoy it). Each sponsor asks once.
     - [x] (0.26) Told "no one name above the company", the truck does not ask again for sixteen weeks.
@@ -311,14 +311,14 @@ Ryan, 4 October: "After a show, it should go back to the Office or your desk, so
 
 **A venue before every show**
 
-- [ ] Before a show is booked the player picks the town and then the building, with several buildings in each town: size, rent, the kind of crowd, how the company has drawn there before. This is section 4 ("Arena pick, gate report, popularity per city"), made a step that every show has. It is a task on the desk, answered in a pop-up.
-- [ ] Too big a building looks empty on television and costs rent. Too small leaves money at the door but looks hot. The agent gives a read, not a forecast (fog of war).
+- [x] Before a show is booked the player picks the town and then the building, with several buildings in each town: size, rent, the kind of crowd, how the company has drawn there before. This is section 4 ("Arena pick, gate report, popularity per city"), made a step that every show has. It is a task on the desk, answered in a pop-up. (Done another way, 16 October check: the road, `src/91-road.js`. Each company tours a loop of cities on its own map, the building is booked from the market before the card, the schedule shows every stop ahead, tickets sell ahead. Ryan to say if he still wants to pick the building by hand.)
+- [x] Too big a building looks empty on television and costs rent. Too small leaves money at the door but looks hot. The agent gives a read, not a forecast (fog of war). (Done another way, 16 October check: the road, `src/91-road.js`. Each company tours a loop of cities on its own map, the building is booked from the market before the card, the schedule shows every stop ahead, tickets sell ahead. Ryan to say if he still wants to pick the building by hand.)
 
 **The year's schedule**
 
-- [ ] A one-year schedule built around the country the company is based in: where the weekly shows go, the loop of towns, the big events and their buildings, the breaks. Realistic for that country (distances, seasons, holidays, the big buildings). This grows out of section 6 ("Event calendar").
-- [ ] Special events in other countries at special venues, each with its own risks and rewards: a bigger gate and a new audience against travel cost, tired wrestlers, an unfamiliar crowd, weather for an outdoor show, a time zone that hurts the television number at home.
-- [ ] Needs first: popularity by city (section 4), the country of each company in the world file, and a list of buildings by country under invented or public-domain names.
+- [x] A one-year schedule built around the country the company is based in: where the weekly shows go, the loop of towns, the big events and their buildings, the breaks. Realistic for that country (distances, seasons, holidays, the big buildings). This grows out of section 6 ("Event calendar"). (Done another way, 16 October check: the road, `src/91-road.js`. Each company tours a loop of cities on its own map, the building is booked from the market before the card, the schedule shows every stop ahead, tickets sell ahead. Ryan to say if he still wants to pick the building by hand.)
+- [x] Special events in other countries at special venues, each with its own risks and rewards: a bigger gate and a new audience against travel cost, tired wrestlers, an unfamiliar crowd, weather for an outdoor show, a time zone that hurts the television number at home. (Done another way, 16 October check: the road, `src/91-road.js`. Each company tours a loop of cities on its own map, the building is booked from the market before the card, the schedule shows every stop ahead, tickets sell ahead. Ryan to say if he still wants to pick the building by hand.)
+- [x] Needs first: popularity by city (section 4), the country of each company in the world file, and a list of buildings by country under invented or public-domain names. (Done another way, 16 October check: the road, `src/91-road.js`. Each company tours a loop of cities on its own map, the building is booked from the market before the card, the schedule shows every stop ahead, tickets sell ahead. Ryan to say if he still wants to pick the building by hand.)
 
 **Pop-ups from the desk**
 

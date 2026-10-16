@@ -1,3 +1,32 @@
+# Run notes, 16 October 2026
+
+Versions 0.64 to 0.68. Ryan: "Lets knock it all out in this go." The queue is worked through; what is left needs him.
+
+## Built
+
+- **Networks** (7.1, 7.3), `src/89-networks.js`: each network has a taste (family, sport, late night, niche) and each deal a ratings target; an executive calls after three misses; a rated show can start a bidding war at renewal. `test-networks.js`.
+- **Streaming** (7.4), `src/89-streaming.js`: open a service on Manage, Deals; subscribers pay weekly and grow with the company's size, popularity and tape library; cities you do not tour stay warm; a major network pays a little less.
+- **Night wars** (7.5), `src/88-nights.js`: a show on the same night as a rival's in your part of the world goes head to head; the network can offer to move a show onto a rival's night.
+- **Indies** (10): a size and a night for each; one closes and one opens each year; corporate companies do not offer outside dates.
+- **The ranking** (8.1): belts count, the power ten shows moves since last week, History keeps each year's top 200 (top 25 by name) for two years. The power ten asks more money (8.2).
+- **Contract talks** (11.1): meet them halfway, then a last word.
+- **Invasions** (11.2), `src/81-invasion.js`: a war starts with a deal on the finishes; a war lost badly leaves a company weak for a year. `test-invasion.js`.
+- **The road** (6.4): sell-out streaks, a bigger building after a sell-out, cold nights in winter.
+- **Smaller:** the kind of big night named on the desk, the schedule, the week list and Book the show; Book the show says what carried over, who is hurt, and the rival on your night; Help and the glossary are a row of topics that fits one screen.
+- **Save size:** 1.47 to 1.50 MB at week 152. Every 26 weeks a wrestler's numbers are rounded to three places.
+
+## Left for Ryan
+
+- **5.4 and 5.7:** a new slot screen and booking the whole week ahead. Both rework the card builder, which already fits one screen.
+- **5.9 Fast mode:** not built, because running a show without the broadcast breaks his rule that a show on the air cannot be skipped.
+- **Job 4:** scripted storyline templates. Not built; he chose living storylines.
+- **Building by hand:** the road books the building, so picking the town and building by hand (TASKS) is ticked as done another way. He may still want it.
+
+## Things the next run should know
+
+- `app/tests/roster.js` no longer flakes on the creator's style picks.
+- Files that wrap another file's functions must sort after it (`89-networks` after `88-shows`, `81-invasion` after `80-world`).
+
 # Run notes, 14 and 15 October 2026
 
 What this run of `NEXT.md` built, what it skipped, and what the next run should pick up. Versions 0.51 to 0.60.

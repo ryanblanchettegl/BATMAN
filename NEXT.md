@@ -158,7 +158,7 @@ Use `tools/balance.js` from step 0.3. Change one thing at a time and commit the 
 
 ## Job 13. Last, every time
 
-- [ ] **13.1** Rerun step 0.1: `TASKS.md` matches the code.
+- [x] **13.1** Rerun step 0.1: `TASKS.md` matches the code. (Done 16 October: today's work is ticked, and boxes found already built were ticked with where: the face in the main event, the letter grade, the road for the town, building and schedule.)
 - [x] **13.2** `docs/map.md` matches the files (made again by `node tools/map.js`).
 - [x] **13.3** (15 October: the glossary has heat as living storylines, freshness, kinds of night and contract clauses.) The Help window and the glossary cover what was added, in plain words, and still fit one tablet screen each. (Done 16 October: the glossary and the Help window are both a row of topics with the picked one beneath, so each fits one tablet screen; the glossary has networks, night wars, streaming, looking weak and sell-out streaks.)
 - [x] **13.4** Write `docs/run-notes.md` (done 15 October): what was built, what was skipped and why, what the next run should do first, and every line added to `docs/decisions-needed.md`.
