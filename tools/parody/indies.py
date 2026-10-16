@@ -43,9 +43,9 @@ DDW = {"id": "ddw", "model": "outlaw", "name": "DDW", "full_name": "Deathmatch D
  "staff": {"road_agent": "Uncle Thumbtack", "head_writer": "Whatever Happens"}, "announcers": ["Lenny Loudmouth", "Kevin Commentary"],
  "cities": ["Atlantic City", "Philadelphia", "Jersey City", "Brooklyn", "Indianapolis", "Los Angeles", "Chicago", "Atlanta"],
  "cash": 1200000, "popularity": 36, "flagship_month": 4, "tv_slot": 0, "production_level": 0, "risk_level": 3,
- "events": [{"n": "The Whole Dumpster World", "t": "flag"}, {"n": "Thumbtack Valentine", "t": "gimmick"}, {"n": "Bobby Balcony's Spring Breakdown", "t": "arena"},
+ "events": [{"n": "The Whole Dumpster World", "t": "flag"}, {"n": "Thumbtack Valentine", "t": "gimmick"}, {"n": "Balcony Spring Breakdown", "t": "arena"},
   {"n": "Tournament of Bruising", "t": "tourn"}, {"n": "Cage of Something", "t": "gimmick"}, {"n": "Fightsport", "t": "ballroom"},
-  {"n": "Homecoming to the Parking Lot", "t": "ballroom"}, {"n": "Backyard Bash", "t": "ballroom"}, {"n": "Basement Brawl Night", "t": "ballroom"},
+  {"n": "Parking Lot Homecoming", "t": "ballroom"}, {"n": "Backyard Bash", "t": "ballroom"}, {"n": "Basement Brawl Night", "t": "ballroom"},
   {"n": "Light Tube Halloween", "t": "gimmick"}, {"n": "Thankskilling", "t": "ballroom"}, {"n": "Dumpster Fire Christmas", "t": "gimmick"}]}
 DDW_SHOWS = [{"id": "ddw_live", "name": "DDW Live From Somewhere", "weight": 1}]
 DDW_TITLES = [{"id": "ddw_world", "name": "DDW World Championship", "gender": "M", "level": 3},

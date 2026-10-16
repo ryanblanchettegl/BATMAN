@@ -8,8 +8,8 @@ PROMO = {"id": "tba", "model": "underdog", "name": "TBA", "full_name": "To Be An
  "cities": ["Nashville", "Orlando", "Atlanta", "Philadelphia", "Detroit", "Cleveland", "Dallas", "Las Vegas", "Windsor", "Toronto", "Montreal", "Baltimore"],
  "cash": 9000000, "popularity": 52, "flagship_month": 10, "tv_slot": 1, "production_level": 2,
  "events": [{"n": "Genesis (Working Title)", "t": "arena"}, {"n": "No Surrender Probably", "t": "taped"}, {"n": "Sacrifice Bunt", "t": "taped"},
-  {"n": "Rebellion Pending", "t": "tent"}, {"n": "Under Siege, Over Budget", "t": "taped"}, {"n": "Against All Odds and Most Evens", "t": "taped"},
-  {"n": "Slammiversary-ish Anniversary", "t": "tent"}, {"n": "Emergence From Hiding", "t": "taped"}, {"n": "Victory Road Trip", "t": "taped"},
+  {"n": "Rebellion Pending", "t": "tent"}, {"n": "Under Siege, Over Budget", "t": "taped"}, {"n": "Against Most Odds", "t": "taped"},
+  {"n": "Birthday Slam", "t": "tent"}, {"n": "Emergence From Hiding", "t": "taped"}, {"n": "Victory Road Trip", "t": "taped"},
   {"n": "Bound for Somewhere", "t": "flag"}, {"n": "Turning Point of No Return", "t": "taped"}, {"n": "Final Resolution Pending", "t": "arena"}]}
 SHOWS = [{"id": "tba_thursday", "name": "TBA Thursday Night Something", "weight": 1}]
 TITLES = [{"id": "tba_world", "name": "TBA World Championship (Name Pending)", "gender": "M", "level": 3},

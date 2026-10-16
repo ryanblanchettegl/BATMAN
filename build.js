@@ -24,7 +24,8 @@ if(fs.existsSync(path.join(appDir,'node_modules','esbuild'))){
 ${font}${blocks}${css}</style>
 <div id="app"></div>
 <script>
-window.GP_UNIVERSE=${rd('universes/public_domain.json').replace(/<\//g,'<\\/')};</script>
+window.GP_UNIVERSE=${rd('universes/public_domain.json').replace(/<\//g,'<\\/')};
+window.GP_UNIVERSE_PARODY=${rd('universes/parody.json').replace(/<\//g,'<\\/')};</script>
 <script>
 ${engine}</script>
 <script>

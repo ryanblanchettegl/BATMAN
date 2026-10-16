@@ -2,14 +2,14 @@
 import { E, GameState } from './engine';
 
 export const KEY = 'ewf9000-save-4', UKEY = 'ewf9000-universes', PKEY = 'gorilla-position-prefs';
-export const VER = '0.69';
+export const VER = '0.70';
 
 /* ---------- preferences ---------- */
-export interface Prefs { snd: boolean; type: boolean; crt: boolean; boot: boolean; letter: boolean; screen: 'auto' | 'desk' | 'tablet' | 'tv'; zoom: number; speed: number; auto: boolean; pace: 'full' | 'quick' | 'results'; motion: 'auto' | 'reduce' | 'full'; fxvol: number; uni: string }
+export interface Prefs { snd: boolean; type: boolean; crt: boolean; boot: boolean; letter: boolean; screen: 'auto' | 'desk' | 'tablet' | 'tv'; zoom: number; speed: number; auto: boolean; pace: 'full' | 'quick' | 'results'; motion: 'auto' | 'reduce' | 'full'; fxvol: number; uni: string ; u2?: boolean }
 function readPrefs(): Prefs {
   let o: any = {};
   try { o = JSON.parse(localStorage.getItem(PKEY) || '{}') || {}; } catch (e) { /* storage can be blocked */ }
-  return { snd: o.snd !== false, type: o.type !== false, crt: o.crt !== false, boot: o.boot !== false, letter: o.letter !== false, screen: o.screen || 'auto', zoom: +o.zoom || 1, speed: +o.speed || 1, auto: o.auto !== false, pace: o.pace === 'quick' || o.pace === 'results' ? o.pace : 'full', fxvol: +o.fxvol || 1, motion: o.motion === 'reduce' || o.motion === 'full' ? o.motion : 'auto', uni: o.uni || 'public_domain' };
+  return { snd: o.snd !== false, type: o.type !== false, crt: o.crt !== false, boot: o.boot !== false, letter: o.letter !== false, screen: o.screen || 'auto', zoom: +o.zoom || 1, speed: +o.speed || 1, auto: o.auto !== false, pace: o.pace === 'quick' || o.pace === 'results' ? o.pace : 'full', fxvol: +o.fxvol || 1, motion: o.motion === 'reduce' || o.motion === 'full' ? o.motion : 'auto', uni: o.u2 ? (o.uni || 'parody') : (!o.uni || o.uni === 'public_domain' ? 'parody' : o.uni), u2: true };
 }
 export const pref: Prefs = readPrefs();
 /** Reduced motion: switched on in Options, or by the system when Options says Auto. Stops the typewriter and the blinking cursor. */
@@ -29,19 +29,23 @@ export function clearSave() { try { localStorage.removeItem(KEY); } catch (e) { 
 /* ---------- universes: the built-in default plus anything the player imported ---------- */
 export const UNIS: Record<string, any> = (() => { try { return JSON.parse(localStorage.getItem(UKEY) || '{}') || {}; } catch (e) { return {}; } })();
 export function saveUnis(): boolean { try { localStorage.setItem(UKEY, JSON.stringify(UNIS)); return true; } catch (e) { return false; } }
-export function builtInUniverse(): any { return (globalThis as any).GP_UNIVERSE; }
+/** The worlds that come with the game. The parody world is the default (Ryan, 16 October); the public-domain world stays. */
+export const DEFAULT_UNI = 'parody';
+export const BUILT_IN: Record<string, () => any> = { parody: () => (globalThis as any).GP_UNIVERSE_PARODY || (globalThis as any).GP_UNIVERSE, public_domain: () => (globalThis as any).GP_UNIVERSE };
+export function isBuiltIn(id?: string): boolean { return !!id && !!BUILT_IN[id]; }
+export function builtInUniverse(id?: string): any { return (BUILT_IN[id || DEFAULT_UNI] || BUILT_IN[DEFAULT_UNI])(); }
 /** Companies the player has left out of the next new game, and whether their wrestlers leave the world too.
     It lasts until another universe is chosen or a game is started and abandoned. */
 export const cut: { out: string[]; gone: boolean } = { out: [], gone: false };
 /** The universe as stored, before any companies are left out. */
-export function basePackage(id?: string): any { const u = id || pref.uni; return u && u !== 'public_domain' && UNIS[u] ? UNIS[u] : builtInUniverse(); }
+export function basePackage(id?: string): any { const u = id || pref.uni || DEFAULT_UNI; return !isBuiltIn(u) && UNIS[u] ? UNIS[u] : builtInUniverse(u); }
 /** Make a universe the one new games start from. Returns the validation report. Falls back to the built-in one if it does not load. `keepCut` keeps the companies left out. */
 export function setUniverse(id: string, keepCut?: boolean): any {
   if (!keepCut) { cut.out = []; cut.gone = false; }
-  let pkg = id !== 'public_domain' && UNIS[id] ? UNIS[id] : builtInUniverse();
+  let pkg = !isBuiltIn(id) && UNIS[id] ? UNIS[id] : builtInUniverse(isBuiltIn(id) ? id : DEFAULT_UNI);
   let v = E.useUniverse(cut.out.length ? E.edWithout(pkg, cut.out, cut.gone) : pkg);
   if (!v.ok && cut.out.length) { cut.out = []; cut.gone = false; v = E.useUniverse(pkg); }
-  if (!v.ok) { v = E.useUniverse(builtInUniverse()); id = 'public_domain'; }
+  if (!v.ok) { v = E.useUniverse(builtInUniverse()); id = DEFAULT_UNI; }
   pref.uni = id; savePrefs();
   return v;
 }

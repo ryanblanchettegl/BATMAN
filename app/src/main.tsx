@@ -1,11 +1,11 @@
 import { render } from 'preact';
 import { App } from './app';
-import { G, ui, pref, setUniverse } from './store';
+import { G, ui, pref, setUniverse, DEFAULT_UNI } from './store';
 import { E } from './engine';
 import { initInput, setBootTimer } from './input';
 import { BOOT_STEPS } from './screens/start';
 
-setUniverse(pref.uni || 'public_domain');
+setUniverse(pref.uni || DEFAULT_UNI);
 initInput();
 
 /* a preview host can hand back the state it captured before a hot reload */

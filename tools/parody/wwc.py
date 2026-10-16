@@ -16,10 +16,10 @@ PROMO = {
     "cash": 160000000, "popularity": 92, "flagship_month": 4, "tv_slot": 2, "production_level": 4,
     "brands": [{"id": "rawr", "name": "RAWR"}, {"id": "slap", "name": "SlapDown"}, {"id": "notyet", "name": "NOT YET", "dev": True}],
     "events": [
-        {"n": "The Royal Grumble", "t": "rumble"}, {"n": "Elimination Chamber Pot", "t": "gimmick"}, {"n": "Road to Somewhere", "t": "arena"},
-        {"n": "WrestleMoney", "t": "flag"}, {"n": "Backlash Against Backlash", "t": "arena"}, {"n": "Money in the Bank Account", "t": "gimmick"},
-        {"n": "Night of Big Champions", "t": "arena"}, {"n": "SummerSlamdunk", "t": "tent"}, {"n": "Clash at the Parking Lot", "t": "arena"},
-        {"n": "Bad Blood Pressure", "t": "gimmick"}, {"n": "Survivor Series of Unfortunate Events", "t": "tent"}, {"n": "Saturday Night's Main Expense", "t": "arena"}]
+        {"n": "The Royal Grumble", "t": "rumble"}, {"n": "The Steel Pot", "t": "gimmick"}, {"n": "Road to Somewhere", "t": "arena"},
+        {"n": "WrestleMoney", "t": "flag"}, {"n": "Backlash Against Backlash", "t": "arena"}, {"n": "Briefcase Season", "t": "gimmick"},
+        {"n": "Night of Big Champions", "t": "arena"}, {"n": "Summer Splashdown", "t": "tent"}, {"n": "Clash at the Parking Lot", "t": "arena"},
+        {"n": "Bad Blood Pressure", "t": "gimmick"}, {"n": "Last Team Standing", "t": "tent"}, {"n": "Saturday Night Splurge", "t": "arena"}]
 }
 SHOWS = [
     {"id": "wwc_rawr", "name": "Monday Night RAWR", "brand": "rawr", "weight": 1},

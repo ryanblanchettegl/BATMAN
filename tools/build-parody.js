@@ -23,8 +23,16 @@ const take = (entry, promo) => {
   if (c && promo) pkg.contracts.push(Object.assign({ worker_id: w.id, promotion_id: promo }, { contract_type: c.type || 'exclusive', monthly_salary: c.monthly_salary, per_show_fee: c.per_show_fee, weeks_left: c.weeks_left, tenure_weeks: c.tenure_weeks, push_level: c.push, brand: c.brand }));
 };
 const cdir = path.join(dir, 'companies');
-fs.readdirSync(cdir).filter(f => f.endsWith('.json')).sort().forEach(f => {
+// the order companies are listed in: manifest.order first (the first one is where a new game starts), then by size
+const corder = (pkg.manifest.order || []).slice();
+const cfiles = fs.readdirSync(cdir).filter(f => f.endsWith('.json')).map(f => ({ f, C: read(path.join(cdir, f)) }))
+  .sort((x, y) => { const a = corder.indexOf(x.C.promotion.id), b = corder.indexOf(y.C.promotion.id); return (a < 0 ? 99 : a) - (b < 0 ? 99 : b) || y.C.promotion.popularity - x.C.promotion.popularity; });
+delete pkg.manifest.order;
+cfiles.forEach(({ f }) => {
   const C = read(path.join(cdir, f)), id = C.promotion.id;
+  // a company's twelve big events, January first, as { n: name, t: kind }: the game reads { month, name, type }
+  if (Array.isArray(C.promotion.events) && C.promotion.events.length && C.promotion.events[0].n) C.promotion.events = C.promotion.events.map((e, i) => ({ month: i + 1, name: e.n, type: e.t }));
+  (C.promotion.events || []).forEach(e => { if (e.name && e.name.length > 28) console.log('  warn  ' + id + ' event name over 28 letters, cut: ' + e.name); });
   pkg.promotions.push(C.promotion);
   (C.shows || []).forEach(s => pkg.shows.push(Object.assign({ promotion_id: id }, s)));
   (C.titles || []).forEach(t => pkg.titles.push(Object.assign({ promotion_id: id }, t)));

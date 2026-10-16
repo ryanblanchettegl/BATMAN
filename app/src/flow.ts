@@ -1,6 +1,6 @@
 /* Things more than one section needs: starting and ending a game, ending the week, opening a show report. */
 import { E } from './engine';
-import { G, ui, pref, save, loadSave, clearSave, resetUi, redraw, setUniverse, slice, openModal, closeModal, say } from './store';
+import { G, ui, pref, save, loadSave, clearSave, resetUi, redraw, setUniverse, DEFAULT_UNI, slice, openModal, closeModal, say } from './store';
 import { go } from './nav';
 
 /** View state of the Booking section. Office reads it to link to a report. */
@@ -12,7 +12,7 @@ export function openReport(i: number) { go('booking'); const b = book(); b.repor
 
 const seed = () => (Date.now() % 2000000000) | 0;
 export function startGame(pid: string | null, opts: { name: string; diff: string; fed: any | null; dpart?: any; iron?: boolean }) {
-  setUniverse(pref.uni || 'public_domain', true);   // keeps any companies the player left out
+  setUniverse(pref.uni || DEFAULT_UNI, true);   // keeps any companies the player left out
   G.S = E.newGame(pid, seed(), opts);
   resetUi(); save(); redraw(); window.scrollTo(0, 0);
   if (pref.letter && G.S) openModal({ kind: 'welcome' });   // the owner's letter. It has its own switch in Options, and can be read again from the desk.
@@ -52,7 +52,7 @@ export function loadSaveText(text: string): string | null {
   if (!o || o.v !== 4 || !o.promos || !o.w || !o.player) return 'That text is not an EWF Wrestling Manager save, or it is from a version this game cannot read.';
   G.S = o; resetUi(); onAirPage(); E.attach(G.S); save(); redraw(); return null;
 }
-export function abandonGame() { clearSave(); G.S = null; resetUi({ scr: 'select' }); setUniverse(pref.uni || 'public_domain'); redraw(); }
+export function abandonGame() { clearSave(); G.S = null; resetUi({ scr: 'select' }); setUniverse(pref.uni || DEFAULT_UNI); redraw(); }
 
 /** Close the week, go back to the desk and show the week-closed window. */
 export function endWeek() {

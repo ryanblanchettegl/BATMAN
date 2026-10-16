@@ -18,7 +18,7 @@
    "from": "2025-08",
    "to": null,
    "defs": 8,
-   "event": "SummerSlamdunk"
+   "event": "Summer Splashdown"
   },
   {
    "title": "wwc_heavyish",
@@ -68,7 +68,7 @@
    "from": "2025-08",
    "to": null,
    "defs": 5,
-   "event": "SummerSlamdunk"
+   "event": "Summer Splashdown"
   },
   {
    "title": "wwc_womens_world",
@@ -251,7 +251,7 @@
    "from": "2025-06",
    "to": "2025-10",
    "defs": 4,
-   "event": "Slammiversary-ish Anniversary"
+   "event": "Birthday Slam"
   },
   {
    "title": "tba_world",
@@ -451,7 +451,7 @@
    "b": "chad_champ",
    "winner": "colt_highway",
    "date": "2025-08",
-   "event": "SummerSlamdunk",
+   "event": "Summer Splashdown",
    "stars": 4,
    "note": "Colt took the title back. The farewell tour went on without it."
   },
@@ -496,7 +496,7 @@
    "b": "believe_barnaby",
    "winner": "whoop_wallace",
    "date": "2025-06",
-   "event": "Slammiversary-ish Anniversary",
+   "event": "Birthday Slam",
    "stars": 4,
    "note": "A developmental star from the giant took the little company's title, and the internet argued for a month."
   },

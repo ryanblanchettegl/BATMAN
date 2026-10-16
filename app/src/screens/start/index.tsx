@@ -3,7 +3,7 @@ import { saveFile, canSaveFile } from '../../shared/savefile';
 import { ComponentChildren } from 'preact';
 import { useEffect, useRef, useState } from 'preact/hooks';
 import { E } from '../../engine';
-import { G, ui, pref, Modal, VER, UNIS, saveUnis, savePrefs, setUniverse, builtInUniverse, basePackage, cut, loadSave, cash, view, redraw, openModal, plural, slice, act } from '../../store';
+import { G, ui, pref, Modal, VER, UNIS, saveUnis, savePrefs, setUniverse, builtInUniverse, basePackage, isBuiltIn, DEFAULT_UNI, cut, loadSave, cash, view, redraw, openModal, plural, slice, act } from '../../store';
 import { HOT, pageName } from '../../nav';
 import { autoScreen, skipBoot, onKey } from '../../input';
 import { startGame, continueGame, loadSaveText, startChallenge, startScenario, isoWeekId } from '../../flow';
@@ -113,7 +113,7 @@ function importUniverse(text: string, fname: string) {
   openModal({ kind: 'unireport', v, name, text: text2 });
 }
 export function Select() {
-  const info = E.universe(), ids = Object.keys(UNIS), cur = pref.uni && UNIS[pref.uni] ? pref.uni : 'public_domain', file = useRef<HTMLInputElement>(null);
+  const info = E.universe(), ids = Object.keys(UNIS), cur = pref.uni && (UNIS[pref.uni] || isBuiltIn(pref.uni)) ? pref.uni : DEFAULT_UNI, file = useRef<HTMLInputElement>(null);
   const items: (MenuItem & { promo?: any })[] = info.promotions.map((d: any) => ({ t: 'pick', d: { v: d.id }, promo: d, pick: () => pick(d.id),
     label: <><span class="ab">{d.name}</span><span class="fn">{d.full ? '- ' + d.full : ''}</span><span class="st">{(E.MODELS[d.model] || E.MODELS.classic).n} {'·'} Pop {d.image} {'·'} {cash(d.cash)} {'·'} {info.count[d.id] || 0} workers</span></> }));
   items.push({ t: 'pick', d: { v: 'OWN' }, cls: 'new', pick: () => pick('OWN'), label: <span class="fn">CREATE NEW FEDERATION</span> });
@@ -128,11 +128,11 @@ export function Select() {
     <Panel cls="mb3" title="Universe">
       <div class="row">
         <Sel id="uni-sel" label="Universe" value={cur} onChange={v => view(() => { setUniverse(v); ui.setup = null; ui.mi = 0; })}
-          options={[['public_domain', builtInUniverse().manifest.name + ' (built in)'], ...ids.map(id => [id, UNIS[id].manifest.name + ' (yours)'] as [string, string])]} />
+          options={[['parody', builtInUniverse('parody').manifest.name + ' (built in)'], ['public_domain', builtInUniverse('public_domain').manifest.name + ' (built in)'], ...ids.map(id => [id, UNIS[id].manifest.name + ' (yours)'] as [string, string])]} />
         <Btn t="uni-import" onClick={() => file.current && file.current.click()}>Import a universe file</Btn>
         <Btn t="uni-editor" onClick={() => toScreen('editor')}>World Editor</Btn>
         <Btn t="uni-cut" onClick={() => openModal({ kind: 'unicut' })}>Choose the companies in this game</Btn>
-        {cur !== 'public_domain' && <Btn t="uni-remove" onClick={() => view(() => { delete UNIS[pref.uni]; saveUnis(); setUniverse('public_domain'); ui.mi = 0; })}>Remove this one</Btn>}
+        {!isBuiltIn(cur) && <Btn t="uni-remove" onClick={() => view(() => { delete UNIS[pref.uni]; saveUnis(); setUniverse(DEFAULT_UNI); ui.mi = 0; })}>Remove this one</Btn>}
         <input type="file" id="uni-file" ref={file} accept=".json,application/json" hidden onChange={onFile} />
       </div>
       <p class="muted mt2">{info.desc} {info.workers} workers, {info.promotions.length} promotions. Starts in {info.start}.{info.author ? ' By ' + info.author + '.' : ''}</p>
@@ -147,8 +147,8 @@ function CutWindow() {
   const base = basePackage(), all: any[] = base.promotions, st = slice<{ msg: string }>('unicut', () => ({ msg: '' })), kept = all.length - cut.out.length;
   const apply = (out: string[], gone: boolean) => view(() => {
     const was = { out: cut.out.slice(), gone: cut.gone }; cut.out = out; cut.gone = gone;
-    const v = setUniverse(pref.uni || 'public_domain', true);
-    if (cut.out.length !== out.length) { cut.out = was.out; cut.gone = was.gone; setUniverse(pref.uni || 'public_domain', true); st.msg = 'That would leave a world the game cannot play' + (v && v.errors && v.errors[0] ? ': ' + v.errors[0].msg : '') + '.'; }
+    const v = setUniverse(pref.uni || DEFAULT_UNI, true);
+    if (cut.out.length !== out.length) { cut.out = was.out; cut.gone = was.gone; setUniverse(pref.uni || DEFAULT_UNI, true); st.msg = 'That would leave a world the game cannot play' + (v && v.errors && v.errors[0] ? ': ' + v.errors[0].msg : '') + '.'; }
     else st.msg = '';
     ui.mi = 0; ui.setup = null;
   });

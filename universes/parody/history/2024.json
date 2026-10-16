@@ -28,7 +28,7 @@
    "from": "2024-08",
    "to": "2025-04",
    "defs": 11,
-   "event": "SummerSlamdunk"
+   "event": "Summer Splashdown"
   },
   {
    "title": "wwc_ic",
@@ -48,7 +48,7 @@
    "from": "2024-08",
    "to": "2025-04",
    "defs": 10,
-   "event": "SummerSlamdunk"
+   "event": "Summer Splashdown"
   },
   {
    "title": "wwc_us",
@@ -58,7 +58,7 @@
    "from": "2024-08",
    "to": "2024-12",
    "defs": 4,
-   "event": "SummerSlamdunk"
+   "event": "Summer Splashdown"
   },
   {
    "title": "wwc_womens_world",
@@ -216,7 +216,7 @@
    "b": "angus_robbedmore",
    "winner": "straightedge_stan",
    "date": "2024-08",
-   "event": "SummerSlamdunk",
+   "event": "Summer Splashdown",
    "stars": 4,
    "note": "A real grudge, settled with belts and fists."
   },
@@ -252,7 +252,7 @@
    "b": "tremor_tommy",
    "winner": "gutter_gary",
    "date": "2024-04",
-   "event": "Bobby Balcony's Spring Breakdown",
+   "event": "Balcony Spring Breakdown",
    "stars": 4,
    "note": "Four hundred light tubes, two ambulances, one winner."
   }
