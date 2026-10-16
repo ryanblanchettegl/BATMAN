@@ -366,7 +366,7 @@ EVR.mutiny=function(S,ev,choice,P){
     S.trust=clamp(S.trust-5,0,100);all(function(w){w.morale=clamp(w.morale-3,0,100);});return rollText(r)+'It turns into a shouting match. You leave with less than you walked in with.';}
   if(choice===1){
     if(S.owner.me){all(function(w){w.wage=Math.round(w.wage*1.05/10)*10;w.morale=clamp(w.morale+6,0,100);stressAdd(S,w,-6);});S.clocks.mutiny.v=0;return 'Everybody gets five per cent. It is expensive, and it works.';}
-    S.owner.trust=clamp(S.owner.trust-6,0,100);all(function(w){w.morale=clamp(w.morale+3,0,100);stressAdd(S,w,-6);});return S.owner.name+' calms them down, and reminds you afterwards whose job that was.';}
+    S.owner.trust=clamp(S.owner.trust-6,0,100);S.clocks.mutiny.v=0;all(function(w){w.morale=clamp(w.morale+7,0,100);stressAdd(S,w,-10);});return S.owner.name+' calms them down, and reminds you afterwards whose job that was.';}
   S.trust=clamp(S.trust-10,0,100);all(function(w){w.morale=clamp(w.morale-4,0,100);stressAdd(S,w,8);});return 'You carry on as if nothing happened. They notice.';
 };
 EVR.netmeet=function(S,ev,choice,P){

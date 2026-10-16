@@ -1,0 +1,44 @@
+Balance 0.73: node tools/balance.js 100, seeds 1 to 3, suggested cards (the flat Suggest a card since 16 October).
+trust = locker-room trust (S.trust); weeks = how long the booker lasted (100 = the whole run).
+
+BEFORE (0.72)
+   co    cash0    cash1     pop0     pop1    r-exp    trust    weeks   roster   freeag   saveKB
+  whw   110.0M   118.3M     88.0     85.1    -0.14       51       74       56      106     1231
+  pdw    32.0M    47.0M     72.0     70.3    -0.83       82       80       55       78     1196
+  ocw     9.0M    12.7M     60.0     54.1    -1.33        2      100       50       78     1247
+  pdp     3.5M     6.0M     48.0     45.9    -0.93       98      100       34       97     1200
+  ttt     2.2M     6.2M     40.0     36.0    -1.54       15       92       41       94     1189
+  nmw    30.0M     7.4M     52.0     45.5    -1.10       18       63       28       72     1075
+  ldd    14.0M    26.3M     56.0     53.5    -0.48       90      100       38       95     1270
+  lta    12.0M     6.8M     50.0     43.8    -0.97       99      100       37      108     1234
+  kjp     4.5M     5.1M     46.0     43.4    -0.72        6       88       19      108     1154
+
+AFTER (0.73)
+   co    cash0    cash1     pop0     pop1    r-exp    trust    weeks   roster   freeag   saveKB
+  whw   110.0M   119.6M     88.0     84.8    -0.05       57       91       52       89     1263
+  pdw    32.0M    26.7M     72.0     67.5    -1.14       67       88       53      105     1222
+  ocw     9.0M    10.4M     60.0     53.1    -1.84        1      100       52       89     1227
+  pdp     3.5M     1.6M     48.0     41.2    -1.70       94       91       32      105     1178
+  ttt     2.2M     8.1M     40.0     36.6    -1.52       11      100       39       95     1204
+  nmw    30.0M     1.6M     52.0     43.6    -0.95       40       81       23       92     1126
+  ldd    14.0M    18.4M     56.0     49.8    -0.74      100       97       37      103     1251
+  lta    12.0M    11.1M     50.0     45.3    -0.89      100      100       36       88     1239
+  kjp     4.5M     6.6M     46.0     42.0    -0.84       11      100       18       84     1192
+
+What changed (models and finance code only):
+1. The mutiny meeting: when the owner calms the room, the room is properly settled (mood up, stress down, the clock cleared).
+   Before, the clock was never reset, so the meeting came back every few weeks and cost 6 owner trust each time
+   (84 to 90 trust over 100 weeks for the underdog; this alone got it fired).
+2. How the owner reads a show (src/65-you.js): a middling show (a C, verdict band -1) costs a little trust (0.25 a show
+   before weighting); a dud or worse costs less steeply than before (0.35 a point, at most 2).
+3. Overheads that grow with income are 4% lower (src/40-week.js), so a company on suggested cards keeps a thin margin.
+
+Against the targets:
+- No company's cash grows more than about 3x in 100 weeks: met, except the underdog at 3.7x (2.2M to 8.1M).
+  The giant goes 110M to 120M (was the 400M problem in TASKS 11; already gone before this run).
+- The underdog survives 100 weeks on suggested cards with owner trust above the firing line: met on all three seeds
+  (owner trust at week 100: 21, 82, 96).
+- The startup still bleeds (30M to 1.6M); it did not land a better slot in these runs, so the +300K a week cap was not seen.
+Still open (docs/decisions-needed.md): on suggested cards the giant is fired on two seeds of three (weeks 84 and 90),
+and the workrate and outlaw companies go broke on one seed each. That follows from the flat Suggest a card
+(Ryan, 16 October: the game cannot play itself), so it was left as is.

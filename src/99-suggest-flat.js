@@ -9,8 +9,9 @@
   var smart=E.suggest;
   E.suggest=function(S){
     var card=smart(S);if(!card||card.length<2)return card;
-    var key='flat'+S.seed+':'+S.week+':'+S.qi;
+    var key='flat'+S.seed+':'+S.week+':'+S.qi,show=S.queue&&S.queue[S.qi];
     card.forEach(function(m){m.call=null;delete m.end;});
+
     // the right people, but who faces whom by the hash: no eye for chemistry or story. A champion stays in their
     // title match. (Ryan: it should still be helpful, it just cannot play the game for you.)
     var P=S.promos[S.player],held={};(P.titles||[]).forEach(function(t){(t.holders||[]).forEach(function(id){held[id]=1;});});

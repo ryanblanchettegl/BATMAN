@@ -2644,7 +2644,7 @@ function joinCompany(S,w,P,wage,weeks){
 function settle(S,P){
   var mine=P.id===S.player,sp=0;if(mine)S.sponsors.forEach(function(x){sp+=x.pay;});
   var adv=Math.round(ADV_C[P.adv]*P.inc0)+(mine?evSpendCost(P):0),camp=campCost(P),med=medCost(P),trv=travelCost(P);
-  var L=P.led,merch=merchWeek(S,P),wages=wagesWeek(S,P),inc=L.tv+L.gate+L.ppv+L.bonus+merch+sp,over=P.fixed+P.varRate*(inc-sp),exp=wages+L.prod+over+adv+camp+med+trv;var fnc=mine?financeCost(S,P,inc-exp):0;exp+=fnc;
+  var L=P.led,merch=merchWeek(S,P),wages=wagesWeek(S,P),inc=L.tv+L.gate+L.ppv+L.bonus+merch+sp,over=P.fixed+P.varRate*0.96*(inc-sp),exp=wages+L.prod+over+adv+camp+med+trv;var fnc=mine?financeCost(S,P,inc-exp):0;exp+=fnc;
   // a publicly traded company pays its shareholders out of a week well above the board's target (NEXT.md 12.2)
   var dv=0;if(P.model==='corporate'&&P.net>0&&inc-exp>P.net*1.2){dv=Math.round((inc-exp-P.net*1.2)*0.6);exp+=dv;}
   var row={w:S.week,div:dv,spons:sp,adv:adv,camp:camp,med:med,trv:trv,fin:fnc,tv:Math.round(L.tv),gate:Math.round(L.gate),ppv:Math.round(L.ppv),bonus:Math.round(L.bonus),merch:Math.round(merch),wages:Math.round(wages),prod:Math.round(L.prod),over:Math.round(over),inc:Math.round(inc),exp:Math.round(exp),net:Math.round(inc-exp),image:r1(P.image)};
@@ -3676,7 +3676,8 @@ SHOWX.push(function(S,P,show,rep){
   if(o.me){rep.owner={me:true,like:like};if(d>=3)S.bp+=1;return;}
   // the company's model colours the verdict: a board cares less about the reviews, a founder who is a fan cares more
   var MD=modelOf(P),mv=MD.show?MD.show(S,P,show,rep):null;
-  var dt=(clamp(d*0.5,-3,3)*(MD.ownShow||1)+(like?0.5:(show.big?-0.5:0)))*2/(P.shows.length+1)+(mv?mv.d:0);
+  var vb0=verdictBand(d),dd=vb0===-1?-0.25:(vb0<=-2?clamp(d*0.35,-2,0):clamp(d*0.5,-3,3));   // balance 0.73: a middling show (a C) costs the owner's trust only a little; a dud or worse costs it in full
+  var dt=(dd*(MD.ownShow||1)+(like?0.5:(show.big?-0.5:0)))*2/(P.shows.length+1)+(mv?mv.d:0);
   var t0=o.trust,why=[];
   o.trust=clamp(o.trust+dt,0,100);if(d>=3)S.bp+=1;
   // the reasons, in the order they weighed (After the show lists them)
@@ -5048,7 +5049,7 @@ EVR.mutiny=function(S,ev,choice,P){
     S.trust=clamp(S.trust-5,0,100);all(function(w){w.morale=clamp(w.morale-3,0,100);});return rollText(r)+'It turns into a shouting match. You leave with less than you walked in with.';}
   if(choice===1){
     if(S.owner.me){all(function(w){w.wage=Math.round(w.wage*1.05/10)*10;w.morale=clamp(w.morale+6,0,100);stressAdd(S,w,-6);});S.clocks.mutiny.v=0;return 'Everybody gets five per cent. It is expensive, and it works.';}
-    S.owner.trust=clamp(S.owner.trust-6,0,100);all(function(w){w.morale=clamp(w.morale+3,0,100);stressAdd(S,w,-6);});return S.owner.name+' calms them down, and reminds you afterwards whose job that was.';}
+    S.owner.trust=clamp(S.owner.trust-6,0,100);S.clocks.mutiny.v=0;all(function(w){w.morale=clamp(w.morale+7,0,100);stressAdd(S,w,-10);});return S.owner.name+' calms them down, and reminds you afterwards whose job that was.';}
   S.trust=clamp(S.trust-10,0,100);all(function(w){w.morale=clamp(w.morale-4,0,100);stressAdd(S,w,8);});return 'You carry on as if nothing happened. They notice.';
 };
 EVR.netmeet=function(S,ev,choice,P){
@@ -12658,8 +12659,9 @@ E.suggestKeep=function(S){
   var smart=E.suggest;
   E.suggest=function(S){
     var card=smart(S);if(!card||card.length<2)return card;
-    var key='flat'+S.seed+':'+S.week+':'+S.qi;
+    var key='flat'+S.seed+':'+S.week+':'+S.qi,show=S.queue&&S.queue[S.qi];
     card.forEach(function(m){m.call=null;delete m.end;});
+
     // the right people, but who faces whom by the hash: no eye for chemistry or story. A champion stays in their
     // title match. (Ryan: it should still be helpful, it just cannot play the game for you.)
     var P=S.promos[S.player],held={};(P.titles||[]).forEach(function(t){(t.holders||[]).forEach(function(id){held[id]=1;});});
