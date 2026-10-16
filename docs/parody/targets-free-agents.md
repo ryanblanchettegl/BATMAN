@@ -1,0 +1,22 @@
+# Free agents and legends: who each one parodies (design reference, never shipped)
+
+- Brother Bronzer: Hulk Hogan
+- Tepid Tex Granite: Stone Cold Steve Austin
+- Chairman Moneybags McStrut: Vince McMahon
+- Mr. Lastrites, the Funeral Director: The Undertaker
+- The Electrifying Eyebrow: The Rock
+- The Robe Collector: Ric Flair
+- The Showstopping Preacher: Shawn Michaels
+- Hardcore Uncle Mittens: Mick Foley
+- Olympic Ollie: Kurt Angle
+- Streak Stallworth: Goldberg
+- Five-Time Felix: Booker T
+- Stratosphere Tess: Trish Stratus
+- Lady Lightning Rod: Lita
+- Rapidfire Remy: Ricky Starks
+- Bang-Bang Bruce: Buddy Matthews
+- Morose Maarten: Malakai Black
+- Walking Weapon Wendell: Josh Alexander
+- Saskia Sterling: Indie prospect
+- Big Lou Lunchbox: Indie big man
+- Kiwi Kayla: Indie prospect
