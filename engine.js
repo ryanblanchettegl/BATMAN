@@ -9108,6 +9108,10 @@ var INDIE_NEW=[
   {n:'Boxcar Wrestling',r:'the rail yards'},{n:'Copper Hills Pro',r:'the mining towns'},{n:'Riverboat Rumble',r:'the river'},
   {n:'Ember Street Wrestling',r:'the east side'}
 ];
+/* each indie's size and night, from its name: a hall of a few hundred on a Thursday, or a fairground on a Saturday.
+   A bigger indie is better for a young wrestler: more people, better opponents. */
+var INDIE_SIZE=['a back room of a hundred','a hall of a few hundred','a fairground of a thousand'],INDIE_NIGHT=['Thursdays','Fridays','Saturdays','Sundays'];
+function indieMeta(x){var h=hash('indm:'+x.n);return {size:h%3,night:INDIE_NIGHT[(h>>>3)%4]};}
 /** The indies running now. A new game starts with the first fourteen. */
 function indiesOn(S){var all=INDIES.concat(INDIE_NEW);return (S.indOn||INDIES.map(function(x){return x.n;})).map(function(n){return all.filter(function(x){return x.n===n;})[0];}).filter(Boolean);}
 function indieOf(S,w){var L=indiesOn(S),k=hash('ind'+S.seed+':'+w.id+':'+Math.floor(S.week/8));return L[k%L.length];}
@@ -9124,7 +9128,7 @@ WEEKX.push(function(S){
   if(S.cal)return;var star=null;
   S.w.forEach(function(w){if(w.promo!=='FA'||w.rt||w.nw)return;var h=h01('indw'+S.seed+':'+w.id+':'+S.week),ind=indieOf(S,w);
     if(h<0.65){w.ind={n:ind.n,w:S.week,k:(w.ind&&w.ind.n===ind.n?(w.ind.k||0):0)+1};w.cond=Math.min(100,w.cond+1);
-      if(w.age<=27&&w.pot!=null&&w.ovr<w.pot-5)w.ovr=Math.min(w.pot,w.ovr+0.15);
+      if(w.age<=27&&w.pot!=null&&w.ovr<w.pot-5)w.ovr=Math.min(w.pot,w.ovr+0.1+0.05*indieMeta(ind).size);
       if(w.ind.k===6&&(!star||w.ovr>star.ovr))star=w;}
     else if(w.ind&&S.week-w.ind.w>6)w.ovr=Math.max(1,w.ovr-0.05);});
   if(star)news(S,'world',star.name+' has been tearing it up for '+star.ind.n+'. Somebody will sign them soon.');
@@ -9132,9 +9136,9 @@ WEEKX.push(function(S){
 /** Where a free agent has been working, for the Free agents page. */
 E.indieOf=function(S,id){var w=S.w[id];if(!w||w.promo!=='FA'||!w.ind||S.week-w.ind.w>4)return null;return {n:w.ind.n,weeks:w.ind.k||1};};
 E.INDIES=INDIES;
-E.indiesOn=function(S){return indiesOn(S);};
+E.indiesOn=function(S){return indiesOn(S).map(function(x){var m=indieMeta(x);return {n:x.n,r:x.r,size:INDIE_SIZE[m.size],night:m.night};});};
 /** Free agents on the longest run with one indie right now, best first: who the scene is talking about. */
-E.indieHot=function(S,n){return S.w.filter(function(w){return w.promo==='FA'&&!w.rt&&!w.nw&&w.ind&&S.week-w.ind.w<=2&&(w.ind.k||0)>=3;}).sort(function(a,b){return (b.ind.k-a.ind.k)||(b.ovr-a.ovr);}).slice(0,n||3).map(function(w){return {id:w.id,name:w.name,n:w.ind.n,k:w.ind.k};});};
+E.indieHot=function(S,n){return S.w.filter(function(w){return w.promo==='FA'&&!w.rt&&!w.nw&&w.ind&&S.week-w.ind.w<=2&&(w.ind.k||0)>=3;}).sort(function(a,b){return (b.ind.k-a.ind.k)||(b.ovr-a.ovr);}).slice(0,n||3).map(function(w){var x=INDIES.concat(INDIE_NEW).filter(function(i){return i.n===w.ind.n;})[0],m=x?indieMeta(x):null;return {id:w.id,name:w.name,n:w.ind.n,k:w.ind.k,where:x?m.night+' in '+x.r:''};});};
 
 /* ===== 88-newco.js ===== */
 /* ---------- 63. New companies appear: a backer starts a company and signs free agents; sometimes it grows out of an indie ---------- */
@@ -11506,7 +11510,8 @@ var CLAUSE={
     wants:function(S,w){var P=S.promos[S.player];return w.ovr>=P.image-6;}}
 };
 /** The clauses this wrestler wants, best first, at most three. */
-function clausesWanted(S,w){return Object.keys(CLAUSE).filter(function(k){return CLAUSE[k].wants(S,w);}).slice(0,3);}
+/* a corporate company does not let its people work outside dates (NEXT.md 10.2) */
+function clausesWanted(S,w){var P=S.promos[S.player],corp=P&&P.model==='corporate';return Object.keys(CLAUSE).filter(function(k){return !(corp&&k==='outside')&&CLAUSE[k].wants(S,w);}).slice(0,3);}
 E.clauses=function(S,id){var w=S.w[id];if(!w)return [];var ask=E.ask(S,w);return clausesWanted(S,w).map(function(k){var c=CLAUSE[k];return {k:k,n:c.n,d:c.d,save:Math.round(ask*c.save/50)*50};});};
 /* signing with clauses: the asking price comes down by what each clause is worth to them */
 (function(){

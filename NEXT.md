@@ -134,9 +134,9 @@ Build it beside the old screen. Add a switch in Options, "New booking screen", o
 
 ## Job 10. The indie scene (task 9)
 
-- [ ] **10.1 Indies.** (First step 15 October; from 16 October one indie closes and a new one opens each year, `INDIE_NEW`: fourteen indies as names and regions, `src/88-indies.js`; free agents work their dates, which keeps them ready and helps the young ones grow, and the news names one who is tearing it up.) Twelve to twenty small promotions, each a name, a region, a size and a night. Not full companies: no finances page, no rosters under contract. They open and close over the years.
-- [ ] **10.2 Dates.** (In part: free agents work any indie, and a signed wrestler works them only with the outside dates clause.) A free agent works for any number of indies. A signed wrestler can take an indie date only on a night their company has no show, and never if the company forbids outside dates (the corporate model does). Dates pay the wrestler, build their following, and wear them a little.
-- [ ] **10.3 What the player sees.** (In part: Free agents shows the indie each one is working for.) On Free agents: where each one has been working and how they did. In the news: indie results that matter (a free agent on a hot run).
+- [x] **10.1 Indies.** (Done 16 October: names, regions, a size and a night each, `indieMeta()`; one closes and one opens every year.)
+- [x] **10.2 Dates.** (Done 16 October: free agents work any indie; a signed wrestler only with the outside dates clause, on nights off; a corporate company does not offer that clause.)
+- [x] **10.3 What the player sees.** (Done 16 October: Free agents names each one's indie and how long, Hot on the indies names the night and the region, the news reports who is tearing it up and which indie closed or opened.)
 - [x] **10.4 Rarely, one grows up.** (15 October: a new company that grows out of the indies now takes the name of one of the circuits, `src/88-newco.js`.) An indie on a long hot run becomes a real company through `src/88-newco.js`.
 
 ## Job 11. Two plans already written

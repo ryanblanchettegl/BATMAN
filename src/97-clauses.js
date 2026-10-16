@@ -18,7 +18,8 @@ var CLAUSE={
     wants:function(S,w){var P=S.promos[S.player];return w.ovr>=P.image-6;}}
 };
 /** The clauses this wrestler wants, best first, at most three. */
-function clausesWanted(S,w){return Object.keys(CLAUSE).filter(function(k){return CLAUSE[k].wants(S,w);}).slice(0,3);}
+/* a corporate company does not let its people work outside dates (NEXT.md 10.2) */
+function clausesWanted(S,w){var P=S.promos[S.player],corp=P&&P.model==='corporate';return Object.keys(CLAUSE).filter(function(k){return !(corp&&k==='outside')&&CLAUSE[k].wants(S,w);}).slice(0,3);}
 E.clauses=function(S,id){var w=S.w[id];if(!w)return [];var ask=E.ask(S,w);return clausesWanted(S,w).map(function(k){var c=CLAUSE[k];return {k:k,n:c.n,d:c.d,save:Math.round(ask*c.save/50)*50};});};
 /* signing with clauses: the asking price comes down by what each clause is worth to them */
 (function(){

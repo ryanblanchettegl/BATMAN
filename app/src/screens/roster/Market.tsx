@@ -39,7 +39,7 @@ const SORTS: [string, string][] = [['ovr', 'Overness'], ['fit', 'Fit'], ['ask', 
 /** Each January's class of rookies: where they came from and what they might become. Pick a year to look back. */
 function ClassPanel() {
   const S = G.S, yrs: number[] = E.classYears(S), cs = slice<{ y: number }>('class', () => ({ y: 0 })), H: any[] = E.indieHot(S, 3);
-  const hot = H.length ? <div class="mb1" data-t="mk-indie"><p><b>Hot on the indies</b></p><ul class="list">{H.map(h => <li key={h.id}><span><Name w={S.w[h.id]} /> <span class="muted">{'·'} {h.n}, {h.k} weeks</span></span></li>)}</ul></div> : null;
+  const hot = H.length ? <div class="mb1" data-t="mk-indie"><p><b>Hot on the indies</b></p><ul class="list">{H.map(h => <li key={h.id}><span><Name w={S.w[h.id]} /> <span class="muted">{'·'} {h.n}{h.where ? ' (' + h.where + ')' : ''}, {h.k} weeks</span></span></li>)}</ul></div> : null;
   if (!yrs.length) return <Win title="Rookies and the indies" area="side" t="mk-class">{hot}<p class="muted">The first class turns professional in January. Rookies arrive from five regions, and each region leans toward a style.</p></Win>;
   const y = yrs.indexOf(cs.y) >= 0 ? cs.y : yrs[0], R = E.classReport(S, y);
   return <Win title="Rookies and the indies" area="side" t="mk-class">
