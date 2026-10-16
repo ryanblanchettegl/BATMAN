@@ -1468,6 +1468,8 @@ E.tonight=function(S){
     else if(q.type==='win'&&w)qt=w.name+' is owed a win.';
     else{qt=q.text.replace(/^[^:]+: /,'');qt=qt.charAt(0).toUpperCase()+qt.slice(1);}
     stakes.push({k:'due',t:qt});});
+  // the network's taste (src/89-networks.js)
+  if(typeof netCardClash==='function'){var nc=netCardClash(S,show,card);if(nc)stakes.push({k:'net',t:nc});}
   // a rival on the same night (src/88-nights.js)
   if(!show.big&&typeof nightRivals==='function'){var nr=nightRivals(S,show);if(nr.length){var W=(S.nw||{})[nr[0]&&nightOf(airRec(P,show.id)||show)]||null;stakes.push({k:'war',t:'Up against '+nr[0].n+' ('+nr[0].co+') tonight'+(W?': won '+W.w+', lost '+W.l+'.':'.')});}}
   card.forEach(function(m){if(!m||!m.sides||m.sides.length<2||m.sides.some(function(s){return !s.length||s.some(function(id){return id==null;});}))return;
@@ -9737,6 +9739,15 @@ EVR.netexec=function(S,ev,choice,P){
   airSign(S,P,sh,ev.other,ev.t2,o.move-sh.rate*0.04);sh.pr=clamp(sh.pr-3,0,100);sh.prd=sh.pr;airStep(sh);
   return rollText(r)+ev.third+' drops out early, and '+ev.other+' knows it. '+sh.name+' moves there for less than they first offered, about '+money(airPay(P,sh,sh.rate,sh.tier))+' a week.';
 };})();
+/** Before the bell: will tonight's card go against the network's taste? A short line for Tonight's stakes, or ''. */
+function netCardClash(S,show,card){
+  var P=S.promos[S.player],sh=show&&!show.big?airRec(P,show.id):null;if(!sh||!sh.net||!card.length)return '';
+  var t=netTaste(sh.net),talk=segRead(S).length,hc=card.filter(function(m){return m&&(m.stip==='hardcore'||m.stip==='tables'||m.stip==='ladder');}).length,st=card.some(function(m){return m&&m.stip&&m.stip!=='std';});
+  if(t==='family'&&hc)return sh.net+' is a family network, and a '+STIP[card.filter(function(m){return m&&(m.stip==='hardcore'||m.stip==='tables'||m.stip==='ladder');})[0].stip].n.toLowerCase()+' match will not go down well.';
+  if(t==='sport'&&talk>card.length)return sh.net+' is a sport network, and tonight has more talking than wrestling.';
+  if(t==='late'&&!talk&&!st)return sh.net+' is a late night network, and tonight has nothing to talk about: no promo, no angle, no stipulation.';
+  return '';
+}
 /** For the screens: each of your weekly shows' network, its taste, the target and how the last show did against it. */
 E.netInfo=function(S){var P=S.promos[S.player];return P.shows.filter(function(sh){return !sh.big&&sh.net;}).map(function(sh){var t=netTaste(sh.net);
   return {id:sh.id,name:sh.name,net:sh.net,taste:NET_TASTE[t].n,want:NET_TASTE[t].d,tgt:netTarget(sh),miss:sh.miss||0};});};

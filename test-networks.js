@@ -33,6 +33,9 @@ for (const ch of [0, 1, 2]) { const S = E.newGame('pdw', 2 + ch, { name: 'R' });
   if (ev) { const r0 = sh.rate; E.resolveEvent(S, ev.id, 0); ok(sh.day === ev.day && sh.rate > r0, 'moving nights moves the night and pays more');
     ok(E.nightRivals(S, sh).length > 0, 'the moved show now has a rival on its night'); }
   else console.log('  (no night offer came up in 60 weeks for this seed; fine if the world has no free rival night)'); }
+// before the bell: a card that goes against the taste is flagged in Tonight's stakes
+{ const S = E.newGame('pdw', 9, { name: 'R' }); const sh = S.promos.pdw.shows.find(x => !x.big); sh.net = 'Station 44'; let k = 0; while (E.netInfo(S).find(n => n.id === sh.id).taste !== 'Family' && k < 40) { sh.net = 'Net' + (k++); }
+  S.card = E.suggest(S); if (S.queue[S.qi].id === sh.id && S.card.length) { S.card[0].stip = 'hardcore'; ok(E.tonight(S).stakes.some(x => x.k === 'net'), 'a hardcore match on a family network is flagged before the bell'); } }
 // determinism: the tastes come from a hash
 ok(E.netInfo(E.newGame('pdw', 1, { name: 'R' })).map(n => n.taste).join() === E.netInfo(E.newGame('pdw', 1, { name: 'R' })).map(n => n.taste).join(), 'tastes are the same each time');
 console.log(fails ? 'test-networks: ' + fails + ' failed' : 'test-networks: all passed'); process.exit(fails ? 1 : 0);

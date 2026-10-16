@@ -267,6 +267,8 @@ E.tonight=function(S){
     else if(q.type==='win'&&w)qt=w.name+' is owed a win.';
     else{qt=q.text.replace(/^[^:]+: /,'');qt=qt.charAt(0).toUpperCase()+qt.slice(1);}
     stakes.push({k:'due',t:qt});});
+  // the network's taste (src/89-networks.js)
+  if(typeof netCardClash==='function'){var nc=netCardClash(S,show,card);if(nc)stakes.push({k:'net',t:nc});}
   // a rival on the same night (src/88-nights.js)
   if(!show.big&&typeof nightRivals==='function'){var nr=nightRivals(S,show);if(nr.length){var W=(S.nw||{})[nr[0]&&nightOf(airRec(P,show.id)||show)]||null;stakes.push({k:'war',t:'Up against '+nr[0].n+' ('+nr[0].co+') tonight'+(W?': won '+W.w+', lost '+W.l+'.':'.')});}}
   card.forEach(function(m){if(!m||!m.sides||m.sides.length<2||m.sides.some(function(s){return !s.length||s.some(function(id){return id==null;});}))return;
