@@ -28,7 +28,7 @@ function livePut(m,e){(m.lx=m.lx||[]).push(e);}
 /** The ring introductions for a match, before anything has been decided: what the booker watches while the call comes in. */
 function liveIntro(S,P,show,m,i,n){
   var c=matchSetup(S,m),bc=[];if(!c)return bc;
-  if(m.mt==='br'){bc.push({t:'ring',x:'This is an over-the-top-rope battle royal! The last one left in the ring wins.'});bc.push({t:'ent',x:'The ring fills up: '+names(flat(c.sides))+'.'});}
+  if(m.mt==='br'){bc.push({t:'ring',x:'This is an over-the-top-rope battle royal! The last one left in the ring wins.'});bc.push({t:'ent',x:'The ring fills up: '+names(flat(c.sides).filter(function(w){return w.id!==m.surpId;}))+'.'});if(m.surpId!=null&&S.w[m.surpId])bc.push({t:'ent',h:1,x:'Wait, that music! '+S.w[m.surpId].name+' is here, and nobody knew. The surprise entrant is in the ring!'});}
   else{
     var stip=STIP[m.stip]&&m.stip!=='std'?STIP[m.stip].n:null;
     bc.push({t:'ring',x:'This '+MT[m.mt].n.toLowerCase()+' match is scheduled for one fall'+(stip?', and it is a '+stip.toLowerCase()+' match':'')+(c.t?'. It is for the '+c.t.name+'!':'.')});

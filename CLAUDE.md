@@ -38,6 +38,7 @@ node test-history.js                                # a world's history: reigns,
 node tools/build-parody.js                          # pack and check universes/parody/ into universes/parody.json (build first)
 node test-events.js                                 # big events belong to a company: twelve each, a flagship name of their own
 node test-grammar.js                                # the text grammar: headlines, openings, site headlines and chat lines vary and have no unfilled slots
+node test-royal.js                                  # battle royals: 6 to 30 entrants, 30 minutes per 15, a surprise entrant, a title shot
 node tools/build-public-domain.js                   # rebuild universes/public_domain.json after editing rosters
 python3 tools/build-font.py                         # rebuild app/fonts/ewf-blocks.woff2 (needs fonttools, brotli)
 MAPS_MODULES=<dir>/node_modules node tools/build-maps.js   # rebuild src/91-maps.js (needs world-atlas, us-atlas, topojson-client installed in <dir>)

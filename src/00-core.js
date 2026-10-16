@@ -4,7 +4,7 @@ function dbOf(S){return (S&&S.db)||DB;}
 var MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
 var STYLE = {B:[6,-12,-10,0],T:[-8,8,-6,2],H:[-14,-6,10,3],P:[8,-14,-16,-8],A:[0,0,-2,0],S:[4,0,-4,0],E:[0,-6,-6,-4]};
 var STYLE_NAME = {B:'Brawler',T:'Technician',H:'High flyer',P:'Powerhouse',A:'All-rounder',S:'Striker',E:'Entertainer'};
-var MT = {'1v1':{n:'Singles',sides:2,per:1},tag:{n:'Tag team',sides:2,per:2},'3way':{n:'Triple threat',sides:3,per:1},'4way':{n:'Four-way',sides:4,per:1},'6man':{n:'Six-man tag',sides:2,per:3},br:{n:'Battle royal',sides:8,per:1}};
+var MT = {'1v1':{n:'Singles',sides:2,per:1},tag:{n:'Tag team',sides:2,per:2},'3way':{n:'Triple threat',sides:3,per:1},'4way':{n:'Four-way',sides:4,per:1},'6man':{n:'Six-man tag',sides:2,per:3},br:{n:'Battle royal',sides:8,per:1,min:6,max:30}};
 var STIP = {
   std:{n:'Standard',w:null,heat:0,inj:1},
   hardcore:{n:'Hardcore',w:[0.7,0.1,0.2],heat:4,inj:2.2,hc:0.45},
@@ -466,7 +466,7 @@ function validate(S,P,show,card){
   card.forEach(function(m,i){
     var n=i+1,def=MT[m.mt];if(!def){err.push('Match '+n+': pick a match type.');return;}
     var ids=flat(m.sides),ws=[],bad=false,dup={};
-    if(m.sides.length!==def.sides||m.sides.some(function(s){return s.length!==def.per;}))bad=true;
+    if((def.max?(m.sides.length<def.min||m.sides.length>def.max):m.sides.length!==def.sides)||m.sides.some(function(s){return s.length!==def.per;}))bad=true;
     ids.forEach(function(id){if(id==null||!S.w[id]){bad=true;return;}if(dup[id])err.push('Match '+n+': '+S.w[id].name+' is booked twice in the same match.');dup[id]=1;ws.push(S.w[id]);});
     if(bad){err.push('Match '+n+': fill every spot.');return;}
     ws.forEach(function(w){

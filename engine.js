@@ -8,7 +8,7 @@ function dbOf(S){return (S&&S.db)||DB;}
 var MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
 var STYLE = {B:[6,-12,-10,0],T:[-8,8,-6,2],H:[-14,-6,10,3],P:[8,-14,-16,-8],A:[0,0,-2,0],S:[4,0,-4,0],E:[0,-6,-6,-4]};
 var STYLE_NAME = {B:'Brawler',T:'Technician',H:'High flyer',P:'Powerhouse',A:'All-rounder',S:'Striker',E:'Entertainer'};
-var MT = {'1v1':{n:'Singles',sides:2,per:1},tag:{n:'Tag team',sides:2,per:2},'3way':{n:'Triple threat',sides:3,per:1},'4way':{n:'Four-way',sides:4,per:1},'6man':{n:'Six-man tag',sides:2,per:3},br:{n:'Battle royal',sides:8,per:1}};
+var MT = {'1v1':{n:'Singles',sides:2,per:1},tag:{n:'Tag team',sides:2,per:2},'3way':{n:'Triple threat',sides:3,per:1},'4way':{n:'Four-way',sides:4,per:1},'6man':{n:'Six-man tag',sides:2,per:3},br:{n:'Battle royal',sides:8,per:1,min:6,max:30}};
 var STIP = {
   std:{n:'Standard',w:null,heat:0,inj:1},
   hardcore:{n:'Hardcore',w:[0.7,0.1,0.2],heat:4,inj:2.2,hc:0.45},
@@ -470,7 +470,7 @@ function validate(S,P,show,card){
   card.forEach(function(m,i){
     var n=i+1,def=MT[m.mt];if(!def){err.push('Match '+n+': pick a match type.');return;}
     var ids=flat(m.sides),ws=[],bad=false,dup={};
-    if(m.sides.length!==def.sides||m.sides.some(function(s){return s.length!==def.per;}))bad=true;
+    if((def.max?(m.sides.length<def.min||m.sides.length>def.max):m.sides.length!==def.sides)||m.sides.some(function(s){return s.length!==def.per;}))bad=true;
     ids.forEach(function(id){if(id==null||!S.w[id]){bad=true;return;}if(dup[id])err.push('Match '+n+': '+S.w[id].name+' is booked twice in the same match.');dup[id]=1;ws.push(S.w[id]);});
     if(bad){err.push('Match '+n+': fill every spot.');return;}
     ws.forEach(function(w){
@@ -1768,7 +1768,7 @@ function livePut(m,e){(m.lx=m.lx||[]).push(e);}
 /** The ring introductions for a match, before anything has been decided: what the booker watches while the call comes in. */
 function liveIntro(S,P,show,m,i,n){
   var c=matchSetup(S,m),bc=[];if(!c)return bc;
-  if(m.mt==='br'){bc.push({t:'ring',x:'This is an over-the-top-rope battle royal! The last one left in the ring wins.'});bc.push({t:'ent',x:'The ring fills up: '+names(flat(c.sides))+'.'});}
+  if(m.mt==='br'){bc.push({t:'ring',x:'This is an over-the-top-rope battle royal! The last one left in the ring wins.'});bc.push({t:'ent',x:'The ring fills up: '+names(flat(c.sides).filter(function(w){return w.id!==m.surpId;}))+'.'});if(m.surpId!=null&&S.w[m.surpId])bc.push({t:'ent',h:1,x:'Wait, that music! '+S.w[m.surpId].name+' is here, and nobody knew. The surprise entrant is in the ring!'});}
   else{
     var stip=STIP[m.stip]&&m.stip!=='std'?STIP[m.stip].n:null;
     bc.push({t:'ring',x:'This '+MT[m.mt].n.toLowerCase()+' match is scheduled for one fall'+(stip?', and it is a '+stip.toLowerCase()+' match':'')+(c.t?'. It is for the '+c.t.name+'!':'.')});
@@ -11720,7 +11720,9 @@ REACT['Video recap']=['Now you know why these two cannot be in the same building
 
 function showMins(show){return show?(show.mins||(show.big?SHOW_LEN.big:SHOW_LEN.tv)):0;}
 /** Bell to bell, the same sum the match itself uses. */
-function bellMins(show,m,isMain){return Math.max(4,(m.stip==='iron'?30:(LEN[m.len]||12))+(show&&show.big?4:0)+(isMain?3:0)+noteMins(m));}
+function bellMins(show,m,isMain){if(m.mt==='br')return brMins(m);return Math.max(4,(m.stip==='iron'?30:(LEN[m.len]||12))+(show&&show.big?4:0)+(isMain?3:0)+noteMins(m));}
+/** A battle royal runs 30 minutes for every 15 in it (Ryan, 16 October), whatever length is picked. */
+function brMins(m){return Math.max(10,Math.round(2*((m.sides?m.sides.length:8)+(m.surp?1:0))));}
 /** What a match takes off the clock: bell to bell, plus entrances and a break. */
 function matchSlot(show,m,isMain){return bellMins(show,m,isMain)+(MT_OVER[m.mt]||5)+(STIP_SET[m.stip]||0);}
 function hasPlan(S){return !!(S.plan&&S.w[S.plan.sp]);}
@@ -11856,7 +11858,7 @@ E.clock=function(S,card){
 /** How long this match would take off the clock at each length, where it sits now. */
 E.matchMins=function(S,m,i,n){
   var show=S.queue&&S.queue[S.qi],main=i===n-1,o={};
-  ['S','M','L'].forEach(function(l){var c={mt:m.mt,stip:m.stip,len:l,note:m.note};o[l]=matchSlot(show,c,main);});
+  ['S','M','L'].forEach(function(l){var c={mt:m.mt,stip:m.stip,len:l,note:m.note,sides:m.sides,surp:m.surp};o[l]=matchSlot(show,c,main);});
   o.now=matchSlot(show,m,main);o.bell=bellMins(show,m,main);return o;
 };
 E.fitShow=function(S,card){return fitShow(S,card||S.card||[]);};
@@ -12277,6 +12279,65 @@ E.cardFlags=function(S,card){card=card||S.card||[];return card.map(function(m,i)
       for(var i=n-2;i>=0;i--){var m2=card[i];if(m2.title||m2.mt!=='1v1'||fm(m2)||m2.end)continue;m2.sides=[[c],[q.w]];m2.title=t.id;m2.call=null;m2.stip='std';ch=true;return;}});
     if(ch)E.fitShow(S,card);
     return card;
+  };
+})();
+
+/* ===== 99-royal.js ===== */
+/* Battle royals (roadmap 2, Ryan 16 October). A battle royal takes 6 to 30 entrants and runs 30 minutes for every 15
+   in it (brMins() in src/97-time.js). The booker can hold one spot for a surprise: somebody nobody on the roster, a free
+   agent, a legend first, who walks out when the bell has rung and is paid for the night. The winner earns a title match
+   (the battle royal POST in src/70-season.js). It wraps E.liveBegin, so it sorts after src/34-night.js.
+   The surprise is picked with h01(), never rnd(S). */
+/** Grow or shrink the battle royal at card position i to n entrants; new spots are empty. */
+E.brSize=function(S,i,n){
+  var m=S.card&&S.card[i];if(!m||m.mt!=='br')return {ok:false};
+  n=clamp(n|0,MT.br.min,MT.br.max);
+  while(m.sides.length<n)m.sides.push([null]);
+  if(m.sides.length>n)m.sides=m.sides.slice(0,n);
+  if(m.call!=null&&m.call>=n)m.call=null;
+  return {ok:true,n:n};
+};
+/** The free agents who could be the surprise entrant: same gender as most of the field, fit to work, legends first. */
+function brSurprisePool(S,m){
+  var g={M:0,F:0};flat(m.sides).forEach(function(id){var w=id!=null&&S.w[id];if(w)g[w.g]=(g[w.g]||0)+1;});
+  var G=g.F>g.M?'F':'M',on={};flat(m.sides).forEach(function(id){on[id]=1;});
+  var leg=function(w){var p=E.persona(S,w.id);return p&&p.legend?1:0;};
+  return Object.keys(S.w).map(function(k){return S.w[k];}).filter(function(w){return w&&w.promo==='FA'&&w.rt==null&&!w.nw&&!(w.inj>0)&&w.g===G&&!on[w.id];})
+    .sort(function(a,b){return leg(b)-leg(a)||b.ovr-a.ovr;});
+}
+/** What a surprise appearance costs for one night. */
+function brFee(w){return Math.round((2000+w.ovr*w.ovr*3)/500)*500;}
+/** Turn the surprise spot on or off. The booker does not pick the person: the office finds somebody on the night. */
+E.brSurprise=function(S,i,on){
+  var m=S.card&&S.card[i];if(!m||m.mt!=='br')return {ok:false};
+  if(on)m.surp=1;else delete m.surp;
+  return {ok:true};
+};
+/** For the editor: what the surprise spot would cost, and how many could fill it. Never names them. */
+E.brSurpriseInfo=function(S,m){
+  var L=brSurprisePool(S,m).slice(0,5);if(!L.length)return {n:0,fee:0,d:'Nobody free to come in. The spot would go empty.'};
+  var fee=Math.round(avg(L.map(brFee))/500)*500;
+  return {n:L.length,fee:fee,d:'A name from outside the company walks out when the bell has rung. About '+money(fee)+' for the night. The crowd only finds out when the music hits.'};
+};
+(function(){
+  var begin=E.liveBegin;
+  E.liveBegin=function(S,card){
+    var P=S.promos[S.player],adds=[];
+    (card||S.card||[]).forEach(function(m,i){
+      if(m.mt!=='br'||!m.surp||m.surpId!=null)return;
+      var L=brSurprisePool(S,m).slice(0,5);if(!L.length){delete m.surp;return;}
+      var w=L[Math.floor(h01('brs'+S.week+':'+i+':'+S.seed)*L.length)],fee=brFee(w);
+      if(P.cash<fee){delete m.surp;return;}
+      adds.push({i:i,m:m,w:w,fee:fee});
+    });
+    // the surprise joins after the card has been checked, so a free agent can stand in a battle royal for one night
+    var r=begin(S,card);
+    if(r&&r.ok&&S.live)adds.forEach(function(a){
+      var lm=S.live.card[a.i];if(!lm)return;lm.sides.push([a.w.id]);lm.surpId=a.w.id;P.cash-=a.fee;
+      youRemember(S,a.w,'surprise','Brought in as the surprise entrant in a battle royal.',3);
+      note(S,'A surprise entrant',a.w.name+' walks out during the battle royal. Paid '+money(a.fee)+' for the night.','good');
+    });
+    return r;
   };
 })();
 

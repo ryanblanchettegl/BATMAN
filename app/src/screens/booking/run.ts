@@ -51,6 +51,8 @@ export function setMatch(i: number, c: string, v: string, at?: { s: number; p?: 
     }
     else if (c === 'slot' && at) m.sides[at.s][at.p || 0] = v === '' ? null : +v;
     else if (c === 'team' && at) { const tm = S.teams.find((x: any) => x.id === +v); if (tm) m.sides[at.s] = tm.m.slice(); }
+    else if (c === 'size') E.brSize(S, i, +v);
+    else if (c === 'surp') E.brSurprise(S, i, !!v);
     else if (c === 'call') m.call = v === '' ? null : +v;
     else if (c === 'title') m.title = v || null;
     else if (c === 'stip') m.stip = v;
