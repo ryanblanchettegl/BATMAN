@@ -49,7 +49,7 @@ function MatchPane(p: { i: number; ck: any }) {
       <Btn kind="sm" t="up" d={{ v: i }} label={'Move match ' + (i + 1) + ' earlier'} disabled={i === 0} onClick={() => moveMatch(i, -1)}>{'↑'} Earlier</Btn>
       <Btn kind="sm" t="down" d={{ v: i }} label={'Move match ' + (i + 1) + ' later'} disabled={i === n - 1} onClick={() => moveMatch(i, 1)}>{'↓'} Later</Btn>
       <Btn kind="sm" t="rm" d={{ v: i }} onClick={() => removeMatch(i)}>Remove</Btn>
-      <Btn kind="sm" t="match-pop" d={{ v: i }} onClick={() => openModal({ kind: 'matchwin', i })}>Book in one window</Btn>
+      <Btn kind="sm" t="match-pop" d={{ v: i }} onClick={() => openModal({ kind: 'matchwin', i })}>Pop-up</Btn>
       <Btn kind="sm" t="done" d={{ v: i }} onClick={() => pickMatch(i)}>Done</Btn>
     </div>
   </Panel>;
