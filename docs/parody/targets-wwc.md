@@ -1,4 +1,4 @@
-# WWX: who each one parodies (design reference, never shipped)
+# WWC: who each one parodies (design reference, never shipped)
 
 - Rocco Rule: Roman Reigns
 - Wilt Wellness: Gunther

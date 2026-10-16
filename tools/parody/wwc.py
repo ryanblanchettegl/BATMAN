@@ -1,5 +1,5 @@
-"""The WWE parody company, WWX, written as compact rows and expanded into universes/parody/companies/wwx.json.
-Run: python3 tools/parody/wwx.py
+"""The WWE parody company, WWC, written as compact rows and expanded into universes/parody/companies/wwc.json.
+Run: python3 tools/parody/wwc.py
 Every wrestler's parody target is kept here for the design team only (the TARGET column); it is never written to the
 game's data. Ratings come from a tier and the style, then a small fixed nudge per person, so the output is the same
 every run. The JSON is what modders edit; this script is just how the first draft was made."""
@@ -7,7 +7,7 @@ import json, os, hashlib
 from common import worker, write_company, add_moves
 
 PROMO = {
-    "id": "wwx", "model": "corporate", "name": "WWX", "full_name": "World Wrestling eXcess",
+    "id": "wwc", "model": "corporate", "name": "WWC", "full_name": "Wrestling World Class",
     "blurb": "The giant. Owned by a sports and entertainment conglomerate that counts everything twice, run by a former champion who swears the old days are over. Three brands, two stadiums a year, and more cameras than wrestlers.",
     "owner": {"name": "The TK-Owe Holdings board", "style": "stars", "roots": "family", "pledge": "pay"},
     "staff": {"road_agent": "Ace Turnbuckle", "head_writer": "The Writers' Room"},
@@ -22,21 +22,21 @@ PROMO = {
         {"n": "Bad Blood Pressure", "t": "gimmick"}, {"n": "Survivor Series of Unfortunate Events", "t": "tent"}, {"n": "Saturday Night's Main Expense", "t": "arena"}]
 }
 SHOWS = [
-    {"id": "wwx_rawr", "name": "Monday Night RAWR", "brand": "rawr", "weight": 1},
-    {"id": "wwx_slap", "name": "Friday Night SlapDown", "brand": "slap", "weight": 1},
-    {"id": "wwx_notyet", "name": "NOT YET Tuesday", "brand": "notyet", "weight": 0.45},
+    {"id": "wwc_rawr", "name": "Monday Night RAWR", "brand": "rawr", "weight": 1},
+    {"id": "wwc_slap", "name": "Friday Night SlapDown", "brand": "slap", "weight": 1},
+    {"id": "wwc_notyet", "name": "NOT YET Tuesday", "brand": "notyet", "weight": 0.45},
 ]
 TITLES = [
-    {"id": "wwx_undisputed", "name": "WWX Undisputed-ish Championship", "gender": "M", "level": 3, "brand": "slap"},
-    {"id": "wwx_heavyish", "name": "World Heavyish Championship", "gender": "M", "level": 3, "brand": "rawr"},
-    {"id": "wwx_ic", "name": "Intercontinental Breakfast Championship", "gender": "M", "level": 2, "brand": "rawr"},
-    {"id": "wwx_us", "name": "United Snakes Championship", "gender": "M", "level": 2, "brand": "slap"},
-    {"id": "wwx_womens_world", "name": "Woman's World-ish Championship", "gender": "F", "level": 3, "brand": "rawr"},
-    {"id": "wwx_womens", "name": "WWX Women's Championship", "gender": "F", "level": 3, "brand": "slap"},
-    {"id": "wwx_tag_rawr", "name": "RAWR Tag Team Championship", "gender": "M", "level": 2, "tag": True, "brand": "rawr"},
-    {"id": "wwx_tag_slap", "name": "SlapDown Tag Team Championship", "gender": "M", "level": 2, "tag": True, "brand": "slap"},
-    {"id": "wwx_notyet", "name": "NOT YET Championship", "gender": "M", "level": 2, "brand": "notyet"},
-    {"id": "wwx_notyet_w", "name": "NOT YET Women's Championship", "gender": "F", "level": 2, "brand": "notyet"},
+    {"id": "wwc_undisputed", "name": "WWC Undisputed-ish Championship", "gender": "M", "level": 3, "brand": "slap"},
+    {"id": "wwc_heavyish", "name": "World Heavyish Championship", "gender": "M", "level": 3, "brand": "rawr"},
+    {"id": "wwc_ic", "name": "Intercontinental Breakfast Championship", "gender": "M", "level": 2, "brand": "rawr"},
+    {"id": "wwc_us", "name": "United Snakes Championship", "gender": "M", "level": 2, "brand": "slap"},
+    {"id": "wwc_womens_world", "name": "Woman's World-ish Championship", "gender": "F", "level": 3, "brand": "rawr"},
+    {"id": "wwc_womens", "name": "WWC Women's Championship", "gender": "F", "level": 3, "brand": "slap"},
+    {"id": "wwc_tag_rawr", "name": "RAWR Tag Team Championship", "gender": "M", "level": 2, "tag": True, "brand": "rawr"},
+    {"id": "wwc_tag_slap", "name": "SlapDown Tag Team Championship", "gender": "M", "level": 2, "tag": True, "brand": "slap"},
+    {"id": "wwc_notyet", "name": "NOT YET Championship", "gender": "M", "level": 2, "brand": "notyet"},
+    {"id": "wwc_notyet_w", "name": "NOT YET Women's Championship", "gender": "F", "level": 2, "brand": "notyet"},
 ]
 
 # id | ring name | gender | disposition | style | brand | push | tier 1-5 | age | hometown | gimmick category | gimmick | catchphrase | finisher | finisher description | TARGET (design only)
@@ -97,7 +97,7 @@ R = [
  ("la_primera_paloma", "La Primera Paloma", "F", "face", "technician", "notyet", "main_eventer", 4, 33, "Santiago", "Champion of Three Continents", "A Chilean technician who has held titles on three continents and plans a fourth.", "First. Always.", "The Chilean Smooch", "A face-down submission with a lifted leg.", "Stephanie Vaquer"),
  ("pixie_paz", "Prodigy Pixie Paz", "F", "heel", "flyer", "notyet", "upper_midcarder", 3, 24, "Laredo", "The Prodigy Who Peaked", "A gifted young star who was told she was the future and now acts like it is overdue.", "The future is now. And annoyed.", "The Fizzy Driver", "A spinning cradle into a driver.", "Roxanne Perez"),
 ]
-# legends and non-wrestlers who live in WWX
+# legends and non-wrestlers who live in WWC
 PEOPLE = [
  ("the_cerebral_shovel", "The Cerebral Shovel", "M", "heel", "brawler", "main_eventer", 4, 57, "Nashua", "Chief Content Officer", "A former champion who runs creative and swears the old days are over while booking the old days.", "Board meeting's in session.", "The Family Tree", "A double underhook facebuster, bloodline not included.", "Triple H", ["booker", "wrestler"], True),
  ("chad_champ", "Chad Champ, the Invisible Franchise", "M", "face", "powerhouse", "main_eventer", 5, 49, "West Newbury", "Retired Face of the Company", "The face of the company for twenty years, retired after a farewell tour, and very easy to miss in a crowd.", "Did anybody see that? No? Good.", "The Mood Changer", "A fireman's carry into a body slam, with a salute nobody saw.", "John Cena", ["wrestler"], True),
@@ -154,28 +154,28 @@ def build():
     roster = []
     for row in R:
         (i, n, g, d, st, br, push, tier, age, town, cat, gim, say, fin, fdesc, target) = row
-        roster.append(worker(i, n, g, d, st, tier, age, town, cat, gim, say, fin, fdesc, push=push, brand=br, promo="wwx"))
+        roster.append(worker(i, n, g, d, st, tier, age, town, cat, gim, say, fin, fdesc, push=push, brand=br, promo="wwc"))
     for row in PEOPLE:
         (i, n, g, d, st, push, tier, age, town, cat, gim, say, fin, fdesc, target, roles, legend) = row
-        roster.append(worker(i, n, g, d, st, tier, age, town, cat, gim, say, fin if fin != "-" else None, fdesc if fdesc != "-" else None, push=push, brand=None, promo="wwx", roles=roles, legend=legend))
-    holders = {"wwx_undisputed": ["colt_highway"], "wwx_heavyish": ["wilt_wellness"], "wwx_ic": ["dirty_junior"], "wwx_us": ["silent_sione"],
-               "wwx_womens_world": ["kumo_cloud"], "wwx_womens": ["tiara_orbit"], "wwx_tag_rawr": ["kojo_crown", "xerxes_woodwind"],
-               "wwx_tag_slap": ["block_party_ace", "block_party_deuce"], "wwx_notyet": ["king_kayode"], "wwx_notyet_w": ["la_primera_paloma"]}
+        roster.append(worker(i, n, g, d, st, tier, age, town, cat, gim, say, fin if fin != "-" else None, fdesc if fdesc != "-" else None, push=push, brand=None, promo="wwc", roles=roles, legend=legend))
+    holders = {"wwc_undisputed": ["colt_highway"], "wwc_heavyish": ["wilt_wellness"], "wwc_ic": ["dirty_junior"], "wwc_us": ["silent_sione"],
+               "wwc_womens_world": ["kumo_cloud"], "wwc_womens": ["tiara_orbit"], "wwc_tag_rawr": ["kojo_crown", "xerxes_woodwind"],
+               "wwc_tag_slap": ["block_party_ace", "block_party_deuce"], "wwc_notyet": ["king_kayode"], "wwc_notyet_w": ["la_primera_paloma"]}
     titles = [dict(t, holder_ids=holders.get(t["id"], [])) for t in TITLES]
     teams = [
-        {"id": "wwx_sour_daze", "name": "The Sour Daze", "kind": "tag", "member_ids": ["kojo_crown", "xerxes_woodwind"], "experience": 95, "chemistry": 9},
-        {"id": "wwx_block_party_boys", "name": "The Block Party Boys", "kind": "tag", "member_ids": ["block_party_ace", "block_party_deuce"], "experience": 85, "chemistry": 8},
-        {"id": "wwx_the_vision_board", "name": "The Vision Board", "kind": "stable", "member_ids": ["velvet_visionary", "brick_breakwater", "big_tad_tsunami"], "leader_id": "velvet_visionary"},
-        {"id": "wwx_judgment_daze", "name": "The Judgment Daze", "kind": "stable", "member_ids": ["declan_demonne", "dirty_junior", "jp_punchbagan", "big_rosa_ruiz", "vendetta_viv"], "leader_id": "declan_demonne"},
-        {"id": "wwx_the_family_tree", "name": "The Family Tree", "kind": "stable", "member_ids": ["silent_sione", "big_iosefa"], "leader_id": "silent_sione"},
+        {"id": "wwc_sour_daze", "name": "The Sour Daze", "kind": "tag", "member_ids": ["kojo_crown", "xerxes_woodwind"], "experience": 95, "chemistry": 9},
+        {"id": "wwc_block_party_boys", "name": "The Block Party Boys", "kind": "tag", "member_ids": ["block_party_ace", "block_party_deuce"], "experience": 85, "chemistry": 8},
+        {"id": "wwc_the_vision_board", "name": "The Vision Board", "kind": "stable", "member_ids": ["velvet_visionary", "brick_breakwater", "big_tad_tsunami"], "leader_id": "velvet_visionary"},
+        {"id": "wwc_judgment_daze", "name": "The Judgment Daze", "kind": "stable", "member_ids": ["declan_demonne", "dirty_junior", "jp_punchbagan", "big_rosa_ruiz", "vendetta_viv"], "leader_id": "declan_demonne"},
+        {"id": "wwc_the_family_tree", "name": "The Family Tree", "kind": "stable", "member_ids": ["silent_sione", "big_iosefa"], "leader_id": "silent_sione"},
     ]
     add_moves(roster, MOVE, SIG)
     return {"promotion": PROMO, "shows": SHOWS, "titles": titles, "roster": roster, "teams": teams}
 
 if __name__ == "__main__":
-    write_company("wwx", build())
+    write_company("wwc", build())
     # the design team's reference: who each one parodies. Never shipped.
-    with open(os.path.join(os.path.dirname(__file__), "..", "..", "docs", "parody", "targets-wwx.md"), "w") as f:
-        f.write("# WWX: who each one parodies (design reference, never shipped)\n\n")
+    with open(os.path.join(os.path.dirname(__file__), "..", "..", "docs", "parody", "targets-wwc.md"), "w") as f:
+        f.write("# WWC: who each one parodies (design reference, never shipped)\n\n")
         for row in R: f.write("- %s: %s\n" % (row[1], row[15]))
         for row in PEOPLE: f.write("- %s: %s\n" % (row[1], row[14]))

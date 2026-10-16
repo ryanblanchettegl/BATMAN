@@ -1,9 +1,9 @@
 {
  "promotion": {
-  "id": "wwx",
+  "id": "wwc",
   "model": "corporate",
-  "name": "WWX",
-  "full_name": "World Wrestling eXcess",
+  "name": "WWC",
+  "full_name": "Wrestling World Class",
   "blurb": "The giant. Owned by a sports and entertainment conglomerate that counts everything twice, run by a former champion who swears the old days are over. Three brands, two stadiums a year, and more cameras than wrestlers.",
   "owner": {
    "name": "The TK-Owe Holdings board",
@@ -110,19 +110,19 @@
  },
  "shows": [
   {
-   "id": "wwx_rawr",
+   "id": "wwc_rawr",
    "name": "Monday Night RAWR",
    "brand": "rawr",
    "weight": 1
   },
   {
-   "id": "wwx_slap",
+   "id": "wwc_slap",
    "name": "Friday Night SlapDown",
    "brand": "slap",
    "weight": 1
   },
   {
-   "id": "wwx_notyet",
+   "id": "wwc_notyet",
    "name": "NOT YET Tuesday",
    "brand": "notyet",
    "weight": 0.45
@@ -130,8 +130,8 @@
  ],
  "titles": [
   {
-   "id": "wwx_undisputed",
-   "name": "WWX Undisputed-ish Championship",
+   "id": "wwc_undisputed",
+   "name": "WWC Undisputed-ish Championship",
    "gender": "M",
    "level": 3,
    "brand": "slap",
@@ -140,7 +140,7 @@
    ]
   },
   {
-   "id": "wwx_heavyish",
+   "id": "wwc_heavyish",
    "name": "World Heavyish Championship",
    "gender": "M",
    "level": 3,
@@ -150,7 +150,7 @@
    ]
   },
   {
-   "id": "wwx_ic",
+   "id": "wwc_ic",
    "name": "Intercontinental Breakfast Championship",
    "gender": "M",
    "level": 2,
@@ -160,7 +160,7 @@
    ]
   },
   {
-   "id": "wwx_us",
+   "id": "wwc_us",
    "name": "United Snakes Championship",
    "gender": "M",
    "level": 2,
@@ -170,7 +170,7 @@
    ]
   },
   {
-   "id": "wwx_womens_world",
+   "id": "wwc_womens_world",
    "name": "Woman's World-ish Championship",
    "gender": "F",
    "level": 3,
@@ -180,8 +180,8 @@
    ]
   },
   {
-   "id": "wwx_womens",
-   "name": "WWX Women's Championship",
+   "id": "wwc_womens",
+   "name": "WWC Women's Championship",
    "gender": "F",
    "level": 3,
    "brand": "slap",
@@ -190,7 +190,7 @@
    ]
   },
   {
-   "id": "wwx_tag_rawr",
+   "id": "wwc_tag_rawr",
    "name": "RAWR Tag Team Championship",
    "gender": "M",
    "level": 2,
@@ -202,7 +202,7 @@
    ]
   },
   {
-   "id": "wwx_tag_slap",
+   "id": "wwc_tag_slap",
    "name": "SlapDown Tag Team Championship",
    "gender": "M",
    "level": 2,
@@ -214,7 +214,7 @@
    ]
   },
   {
-   "id": "wwx_notyet",
+   "id": "wwc_notyet",
    "name": "NOT YET Championship",
    "gender": "M",
    "level": 2,
@@ -224,7 +224,7 @@
    ]
   },
   {
-   "id": "wwx_notyet_w",
+   "id": "wwc_notyet_w",
    "name": "NOT YET Women's Championship",
    "gender": "F",
    "level": 2,
@@ -3151,7 +3151,7 @@
  ],
  "teams": [
   {
-   "id": "wwx_sour_daze",
+   "id": "wwc_sour_daze",
    "name": "The Sour Daze",
    "kind": "tag",
    "member_ids": [
@@ -3162,7 +3162,7 @@
    "chemistry": 9
   },
   {
-   "id": "wwx_block_party_boys",
+   "id": "wwc_block_party_boys",
    "name": "The Block Party Boys",
    "kind": "tag",
    "member_ids": [
@@ -3173,7 +3173,7 @@
    "chemistry": 8
   },
   {
-   "id": "wwx_the_vision_board",
+   "id": "wwc_the_vision_board",
    "name": "The Vision Board",
    "kind": "stable",
    "member_ids": [
@@ -3184,7 +3184,7 @@
    "leader_id": "velvet_visionary"
   },
   {
-   "id": "wwx_judgment_daze",
+   "id": "wwc_judgment_daze",
    "name": "The Judgment Daze",
    "kind": "stable",
    "member_ids": [
@@ -3197,7 +3197,7 @@
    "leader_id": "declan_demonne"
   },
   {
-   "id": "wwx_the_family_tree",
+   "id": "wwc_the_family_tree",
    "name": "The Family Tree",
    "kind": "stable",
    "member_ids": [
