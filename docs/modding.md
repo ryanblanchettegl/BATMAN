@@ -2,6 +2,8 @@
 
 A world is every company, wrestler, title and year of history the game starts from. The game ships two: the public-domain world and the parody world. This guide shows how to make your own, a real-life roster for example, starting from the parody world.
 
+**Get legal review before you ship or share a world built on real people.** Names, likenesses, nicknames and catchphrases can be protected. What you make for yourself is up to you; what you share is your responsibility.
+
 ## 1. Where a world lives
 
 A world is kept as a folder, one file for each part, so you can change one company without touching the rest:
@@ -188,7 +190,7 @@ The parody world parodies real companies and people under changed names. If you 
 - the plain move name (`finisher_move`, `signatures[].move`) is the generic name of the move, never someone's named version of it;
 - the joke comments on the original.
 
-The design team keeps a note of who each character parodies in `docs/parody/`. It is never part of the world file.
+The design team keeps a note of who each character parodies outside the repository. It is never part of the world file.
 
 A world you make for yourself can follow whatever rules you choose. What you share is your responsibility.
 

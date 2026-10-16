@@ -4,3 +4,6 @@ node_modules/
 .claude/
 release/
 __pycache__/
+
+# notes on who each parody character is based on: kept out of the repository (docs/decisions-needed.md)
+private/
