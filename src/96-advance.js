@@ -10,7 +10,7 @@
 var ADV_DAYS=['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
 /** The day a show is on, from its name ("Wednesday Night Folio"). A big event is a Sunday. */
 function showDay(sh){
-  if(!sh)return '';
+  if(!sh)return '';if(sh.day)return sh.day;
   for(var i=0;i<ADV_DAYS.length;i++)if(sh.name.indexOf(ADV_DAYS[i])>=0)return ADV_DAYS[i];
   return sh.big?'Sunday':'';
 }

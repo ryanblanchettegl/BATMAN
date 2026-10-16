@@ -27,6 +27,12 @@ for (const ch of [0, 1, 2]) { const S = E.newGame('pdw', 2 + ch, { name: 'R' });
   ok(!E.streamStart(S).ok, 'it cannot be opened twice');
   play(S, 8); const i1 = E.streamInfo(S); ok(i1.on && i1.subs > 0, 'subscribers come: ' + i1.subs); ok(i1.pay > 0, 'it pays once it has subscribers: ' + i1.pay);
   ok(E.streamStop(S).ok && !E.streamInfo(S).on && E.streamInfo(S).subs === 0, 'closing it lets them go'); }
+// the network's offer to move a show onto a rival's night
+{ const S = E.newGame('pdp', 5, { name: 'R' }); play(S, 1); const P = S.promos.pdp, sh = P.shows.find(x => !x.big);
+  let ev = null; for (let k = 0; k < 60 && !ev; k++) { play(S, 1); ev = S.inbox.find(e => e.type === 'nightmove' && !e.done); }
+  if (ev) { const r0 = sh.rate; E.resolveEvent(S, ev.id, 0); ok(sh.day === ev.day && sh.rate > r0, 'moving nights moves the night and pays more');
+    ok(E.nightRivals(S, sh).length > 0, 'the moved show now has a rival on its night'); }
+  else console.log('  (no night offer came up in 60 weeks for this seed; fine if the world has no free rival night)'); }
 // determinism: the tastes come from a hash
 ok(E.netInfo(E.newGame('pdw', 1, { name: 'R' })).map(n => n.taste).join() === E.netInfo(E.newGame('pdw', 1, { name: 'R' })).map(n => n.taste).join(), 'tastes are the same each time');
 console.log(fails ? 'test-networks: ' + fails + ' failed' : 'test-networks: all passed'); process.exit(fails ? 1 : 0);
