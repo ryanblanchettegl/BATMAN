@@ -3,7 +3,7 @@ from common import company
 
 PROMO = {"id": "tba", "model": "underdog", "name": "TBA", "full_name": "To Be Announced Wrestling",
  "blurb": "The company that has changed its name, its network and its owner more often than its ring ropes. Always the comeback story, always one deal away from the big time, and always loved by the people who stayed.",
- "owner": {"name": "A Canadian Broadcasting Conglomerate (Name TBA)", "style": "workrate", "roots": "tradition", "pledge": "stable"},
+ "owner": {"name": "A Canadian Broadcasting Conglomerate (Name TBA)", "style": "merit", "roots": "tradition", "pledge": "stable"},
  "staff": {"road_agent": "Gary Ghostwriter", "head_writer": "The Booking Committee (TBA)"}, "announcers": ["Thomas Hanniford", "Matthew Rehearsal"],
  "cities": ["Nashville", "Orlando", "Atlanta", "Philadelphia", "Detroit", "Cleveland", "Dallas", "Las Vegas", "Windsor", "Toronto", "Montreal", "Baltimore"],
  "cash": 9000000, "popularity": 52, "flagship_month": 10, "tv_slot": 1, "production_level": 2,

@@ -44,7 +44,7 @@ AYY_TEAMS = [{"id": "ayy_los_raros", "name": "Los Raros", "kind": "tag", "member
 
 CALL = {"id": "call", "model": "tradition", "name": "CALL", "full_name": "Consejo Antiguo de Lucha Libre",
  "blurb": "The oldest wrestling company in the world, nearly a hundred years old, running the same old arena every Friday since before television. Masks are sacred, the técnicos are good, the rudos are bad, and that is that.",
- "owner": {"name": "The Founding Family (Fourth Generation)", "style": "tradition", "roots": "tradition", "pledge": "stable"},
+ "owner": {"name": "The Founding Family (Fourth Generation)", "style": "heroes", "roots": "tradition", "pledge": "stable"},
  "staff": {"road_agent": "Maestro del Ring", "head_writer": "El Consejo"}, "announcers": ["Don Narrador", "Voz de la Arena"],
  "cities": ["Mexico City", "Guadalajara", "Puebla", "Monterrey", "Acapulco", "Cuernavaca", "Toluca", "Pachuca"],
  "cash": 11000000, "popularity": 54, "flagship_month": 9, "tv_slot": 1, "production_level": 1,

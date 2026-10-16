@@ -3,7 +3,7 @@ from common import company
 
 PROMO = {"id": "otpw", "model": "purist", "name": "OTPW", "full_name": "Old Tokyo Pro Wrestling",
  "blurb": "Japan's biggest company, which tours in long series of small shows that build to one night at the big dome. Strong style, long matches, and a summer tournament that ruins everybody's knees.",
- "owner": {"name": "A Trading Card Company", "style": "workrate", "roots": "tradition", "pledge": "stable"},
+ "owner": {"name": "A Trading Card Company", "style": "merit", "roots": "tradition", "pledge": "stable"},
  "staff": {"road_agent": "Sensei Hardhead", "head_writer": "The Matchmaking Office"}, "announcers": ["Ken Cornflake", "Chuck Chatterton"],
  "cities": ["Tokyo", "Osaka", "Nagoya", "Fukuoka", "Sapporo", "Sendai", "Kobe", "Hiroshima", "Yokohama", "Niigata"],
  "cash": 30000000, "popularity": 70, "flagship_month": 1, "tv_slot": 1, "production_level": 3,

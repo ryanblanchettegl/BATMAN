@@ -62,7 +62,7 @@ Everybody and everything has an id: short, lowercase, with underscores (`colt_hi
 | `model` | how the company is run: `corporate`, `workrate`, `purist`, `outlaw`, `underdog`, `startup`, `spectacle`, `tradition`, `joshi` (women only). It decides what its crowds reward and where its money comes from. |
 | `popularity` | 5 to 100. Sets the company's money, TV deal and crowds. Rough guide: 90 or more for the giant, 70s for the big rival, 50s for national companies, 30s for an indie. |
 | `cash` | money in the bank on day one |
-| `owner` | `name`, and the owner's `style`, `roots` and `pledge` (what they want from you) |
+| `owner` | `name`, and what the owner wants: `style` is `stars` (the biggest names win), `merit` (the better wrestler on a roll wins), `drama` (villains cheat through the build) or `heroes` (heels win on TV, heroes win the big one); `roots` is `tradition`, `rebellion` or `family`; `pledge` (what the locker room was promised) is `pay`, `chance` or `stable` |
 | `staff` | `road_agent` and `head_writer` names |
 | `announcers` | two names: play-by-play and colour |
 | `cities` | the towns the company tours, in any order. The road works out the loop. |

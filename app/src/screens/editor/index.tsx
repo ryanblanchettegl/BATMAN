@@ -1,7 +1,7 @@
 /* The World Editor: build a world from scratch, or change a copy of one, and share it. Reached from the title screen. */
 import { useRef } from 'preact/hooks';
 import { E } from '../../engine';
-import { UNIS, ui, redraw, builtInUniverse, plural } from '../../store';
+import { UNIS, ui, redraw, builtInUniverse, isBuiltIn, pref, plural } from '../../store';
 import { onBack } from '../../input';
 import { Btn, Panel, Head, Tabs, Field } from '../../kit';
 import { StartMenu } from '../start';
@@ -53,7 +53,7 @@ function Home() {
       <div class="row"><Field label="Name of the world"><input type="text" id="ed-newname" data-t="ed-newname" value={st.newName} maxLength={40} placeholder="My world" onInput={e => { st.newName = (e.currentTarget as HTMLInputElement).value; }} /></Field></div>
       <div class="row mt2">
         <Btn kind="go" t="ed-new" onClick={() => look(() => { addWorld(E.edNew(st.newName)); st.newName = ''; })}>Start from scratch</Btn>
-        <Btn t="ed-new-copy" onClick={() => look(() => { addWorld(E.edCopy(builtInUniverse(), st.newName || undefined)); st.newName = ''; })}>Start from a copy of the built-in world</Btn>
+        <Btn t="ed-new-copy" onClick={() => look(() => { addWorld(E.edCopy(builtInUniverse(isBuiltIn(pref.uni) ? pref.uni : undefined), st.newName || undefined)); st.newName = ''; })}>Start from a copy of {builtInUniverse(isBuiltIn(pref.uni) ? pref.uni : undefined).manifest.name}</Btn>
         <Btn t="ed-new-territory" onClick={() => look(() => { addWorld(E.edQuick('territory', st.newName || undefined, Date.now() & 0xffff)); st.newName = ''; })}>A two-company territory</Btn>
         <Btn t="ed-new-nine" onClick={() => look(() => { addWorld(E.edQuick('nine', st.newName || undefined, Date.now() & 0xffff)); st.newName = ''; })}>A nine-company world of unknowns</Btn>
         <Btn t="ed-import" onClick={() => file.current && file.current.click()}>Open a world file</Btn>

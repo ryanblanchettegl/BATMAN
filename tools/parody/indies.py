@@ -3,7 +3,7 @@ from common import company
 
 ARK = {"id": "ark", "model": "purist", "name": "ARK", "full_name": "Pro Wrestling ARK",
  "blurb": "The company that sailed away from the old giant to build its own boat. Heavy chops, heavier kicks, and a fanbase that counts every elbow drop.",
- "owner": {"name": "A Streaming Platform's Parent Company", "style": "workrate", "roots": "tradition", "pledge": "stable"},
+ "owner": {"name": "A Streaming Platform's Parent Company", "style": "merit", "roots": "tradition", "pledge": "stable"},
  "staff": {"road_agent": "Captain Chop", "head_writer": "The Crew"}, "announcers": ["Deckhand Dai", "First Mate Fumio"],
  "cities": ["Tokyo", "Osaka", "Nagoya", "Yokohama", "Sendai", "Fukuoka"],
  "cash": 6000000, "popularity": 46, "flagship_month": 1, "tv_slot": 0, "production_level": 2,
@@ -39,7 +39,7 @@ ARK_TEAMS = [{"id": "ark_harvest_and_frost", "name": "Harvest and Frost", "kind"
 
 DDW = {"id": "ddw", "model": "outlaw", "name": "DDW", "full_name": "Deathmatch Dumpster Wrestling",
  "blurb": "The indie that runs warehouses, bowling alleys and a parking lot in Atlantic City. Light tubes, thumbtacks and a crowd that throws its own chairs in. Everybody has wrestled here once, and most of them regret it.",
- "owner": {"name": "Brad Dumpster", "style": "workrate", "roots": "rebel", "pledge": "pay"},
+ "owner": {"name": "Brad Dumpster", "style": "merit", "roots": "rebellion", "pledge": "pay"},
  "staff": {"road_agent": "Uncle Thumbtack", "head_writer": "Whatever Happens"}, "announcers": ["Lenny Loudmouth", "Kevin Commentary"],
  "cities": ["Atlantic City", "Philadelphia", "Jersey City", "Brooklyn", "Indianapolis", "Los Angeles", "Chicago", "Atlanta"],
  "cash": 1200000, "popularity": 36, "flagship_month": 4, "tv_slot": 0, "production_level": 0, "risk_level": 3,

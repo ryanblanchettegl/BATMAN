@@ -9,7 +9,7 @@ from common import worker, write_company, add_moves
 PROMO = {
     "id": "ewe", "model": "workrate", "name": "EWE", "full_name": "Everyone Wrestles Everyone",
     "blurb": "The upstart that stopped being an upstart. Owned by a football heir with a spreadsheet for every feeling, it books long, hard matches, signs everybody, and argues with the internet every Wednesday night.",
-    "owner": {"name": "Tommy Spreadsheet", "style": "workrate", "roots": "tradition", "pledge": "pay"},
+    "owner": {"name": "Tommy Spreadsheet", "style": "merit", "roots": "tradition", "pledge": "pay"},
     "staff": {"road_agent": "Uncle Puppetstrings", "head_writer": "Tommy Spreadsheet's group chat"},
     "announcers": ["Exposition", "Tommy Tangent"],
     "cities": ["Jacksonville", "Chicago", "Philadelphia", "New York", "Boston", "Pittsburgh", "Cleveland", "Atlanta", "Dallas", "Houston", "Denver", "Los Angeles", "Seattle", "Toronto", "London", "Melbourne"],

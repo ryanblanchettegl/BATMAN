@@ -66,6 +66,9 @@ if (pkg.history) {
   pkg.history.feuds.forEach(f => { (f.a || []).concat(f.b || []).forEach(x => { if (!W[x]) hb('feud with an unknown wrestler ' + x); }); });
   pkg.history.moments.forEach(x => { if (!W[x.who]) hb('moment for an unknown wrestler ' + x.who); if (!okDate(x.date)) hb('moment for ' + x.who + ' has a bad date'); });
 }
+// an owner's style, roots and pledge must be ones the game knows, or the game falls back to its defaults without a word
+const OWN = { style: ['stars', 'merit', 'drama', 'heroes'], roots: ['tradition', 'rebellion', 'family'], pledge: ['pay', 'chance', 'stable'] };
+pkg.promotions.forEach(p => { const o = p.owner || {}; Object.keys(OWN).forEach(k => { if (o[k] != null && OWN[k].indexOf(o[k]) < 0) hb(p.id + ' owner ' + k + ' "' + o[k] + '" is not one of: ' + OWN[k].join(', ')); }); });
 if (!v.ok || hbad) { console.log('Not written: fix the errors above.'); process.exit(1); }
 fs.writeFileSync(out, JSON.stringify(pkg));
 console.log('Wrote ' + out + ': ' + pkg.promotions.length + ' companies, ' + pkg.workers.length + ' people, ' + pkg.titles.length + ' titles' + (pkg.history ? ', history from ' + pkg.history.from : '') + '.');
