@@ -3,6 +3,8 @@
    planned ending and a match marked as the ending both end a feud with a payoff, and that nothing has a length. */
 require('./engine.js');
 const fs = require('fs'), E = globalThis.GP, GP_ember = (S, f) => E.feudEmber(S, f);
+// these checks are about the thinking a suggested card used to do; since 16 October Suggest a card is flat, and that thinking is E.suggestSmart
+E.suggest = E.suggestSmart;
 E.useUniverse(JSON.parse(fs.readFileSync('universes/public_domain.json', 'utf8')));
 let fails = 0; const ok = (c, m) => { if (!c) { fails++; console.log('  FAIL ' + m); } };
 const week = S => { S.inbox.filter(e => !e.done).forEach(e => E.resolveEvent(S, e.id, 0)); if (S.owner.pending) E.setCreed(S, { style: 'merit', roots: 'tradition', pledge: 'stable' });
