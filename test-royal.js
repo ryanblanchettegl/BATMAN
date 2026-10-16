@@ -41,4 +41,10 @@ ok('shot', 'the winner (if on the roster) has a title shot', !win || win.promo !
   ok('sheet', 'a match moves to any other place and the lock holds', E.moveMatchTo(S3, 0, n - 2).ok && S3.card[n - 2] === first && S3.card[n - 1] === last);
   const c = E.suggestKeep(S3); ok('sheet', 'Suggest a card keeps a locked match where it was', c[n - 1] === last || c[c.length - 1] === last);
 }
+{ /* booking power and action points come back after every show, with a little carried over */
+  const S4 = E.newGame('pdw', 4, { name: 'R' }); house(S4); S4.bp = 9; S4.ap = 0; const per = E.pointsInfo(S4).perShow;
+  E.runPlayerShow(S4, E.suggest(S4));
+  ok('points', 'after a show: two points carried over and the show\'s share, and action points back in full', S4.bp === 2 + S4.bpGrant && S4.bpGrant >= 2 && S4.ap === E.pointsInfo(S4).apMax, S4.bp + ' bp, ' + S4.ap + ' ap');
+  S4.bp = 0; S4.ap = 2; E.runPlayerShow(S4, E.suggest(S4)); ok('points', 'one unspent action point carries over', S4.ap === E.pointsInfo(S4).apMax + 1, S4.ap);
+}
 console.log(fails.length ? fails.length + ' failed' : 'test-royal: all passed'); process.exit(fails.length ? 1 : 0);

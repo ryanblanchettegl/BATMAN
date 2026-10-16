@@ -126,7 +126,7 @@ if (found.afterbell) { const F = found.afterbell, w = F.ev.who, l = F.ev.other;
 /* ---- calls in the ring ---- */
 /** From a saved moment: answer with choice c, see the segment it belongs to, then see the night out. Returns {S, ev, seg, d, rep}. */
 function through(F, c) {
-  const S = clone(F.S), ev = S.live.ev, d = E.liveDecide(S, c), bp1 = S.bp; let seg = null;
+  const S = clone(F.S); S.noRefill = 1; const ev = S.live.ev, d = E.liveDecide(S, c), bp1 = S.bp; let seg = null;
   for (let g = 0; g < 40 && !seg; g++) { const r = E.liveNext(S); if (r.event) E.liveDecide(S, r.event.safe || 0); else if (r.seg) seg = r.seg; else if (r.done) break; }
   const rep = S.live ? air(S) : S.reports[0];
   return { S, ev, seg, d, rep, bp1 };
