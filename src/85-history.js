@@ -12,7 +12,12 @@ function histWeek(date,y0,m0){var p=String(date||'').split('-'),y=+p[0],m=(+p[1]
 (function(){
   var build=buildDB;
   buildDB=function(pkg){
-    var d=build(pkg),H=pkg.history;if(!H||typeof H!=='object')return d;d.history=H;
+    var d=build(pkg),H=pkg.history;
+    // the persona each wrestler carries in the world file (gimmick, catchphrase, finisher, debut, legend). Kept with
+    // the world, not in the save: the save stays small however many people a world has.
+    d.persona={};(pkg.workers||[]).forEach(function(w){if(w.gimmick||w.catchphrase||w.finisher_description||w.gimmick_category||w.debut_year||w.legend)
+      d.persona[w.id]={cat:w.gimmick_category||null,d:w.gimmick||null,say:w.catchphrase||null,fin:w.finisher_description||null,move:w.finisher_move||null,debut:w.debut_year||null,legend:!!w.legend,ht:w.height||null,wt:w.weight||null};});
+    if(!H||typeof H!=='object')return d;d.history=H;
     // an old feud is real heat between the people in it, written into the relationships the game starts from
     var W={};(pkg.workers||[]).forEach(function(w){W[w.id]=1;});
     (H.feuds||[]).forEach(function(f){(f.a||[]).forEach(function(a){(f.b||[]).forEach(function(b){if(W[a]&&W[b]&&!d.rels.some(function(r){return (r.a===a&&r.b===b)||(r.a===b&&r.b===a);}))
@@ -49,3 +54,5 @@ function histApply(S){
   S.histFrom=H.from||null;
 }
 (function(){var ng=E.newGame;E.newGame=function(){var S=ng.apply(this,arguments);if(S&&S.w)histApply(S);return S;};})();
+/** A wrestler's persona from the world file: gimmick, catchphrase, finisher, debut year and whether they are a legend. */
+E.persona=function(S,id){var w=S.w[id];return w&&w.uid&&DB&&DB.persona?DB.persona[w.uid]||null:null;};

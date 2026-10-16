@@ -1,0 +1,2690 @@
+{
+ "promotion": {
+  "id": "wwx",
+  "model": "corporate",
+  "name": "WWX",
+  "full_name": "World Wrestling eXcess",
+  "blurb": "The giant. Owned by a sports and entertainment conglomerate that counts everything twice, run by a former champion who swears the old days are over. Three brands, two stadiums a year, and more cameras than wrestlers.",
+  "owner": {
+   "name": "The TK-Owe Holdings board",
+   "style": "stars",
+   "roots": "family",
+   "pledge": "pay"
+  },
+  "staff": {
+   "road_agent": "Ace Turnbuckle",
+   "head_writer": "The Writers' Room"
+  },
+  "announcers": [
+   "Marty Ohmy",
+   "Punter Pete"
+  ],
+  "cities": [
+   "New York",
+   "Philadelphia",
+   "Boston",
+   "Chicago",
+   "Detroit",
+   "Atlanta",
+   "Houston",
+   "Dallas",
+   "Phoenix",
+   "Los Angeles",
+   "San Francisco",
+   "Seattle",
+   "Denver",
+   "St. Louis",
+   "Toronto",
+   "London"
+  ],
+  "cash": 160000000,
+  "popularity": 92,
+  "flagship_month": 4,
+  "tv_slot": 2,
+  "production_level": 4,
+  "brands": [
+   {
+    "id": "rawr",
+    "name": "RAWR"
+   },
+   {
+    "id": "slap",
+    "name": "SlapDown"
+   },
+   {
+    "id": "notyet",
+    "name": "NOT YET",
+    "dev": true
+   }
+  ],
+  "events": [
+   {
+    "n": "The Royal Grumble",
+    "t": "rumble"
+   },
+   {
+    "n": "Elimination Chamber Pot",
+    "t": "gimmick"
+   },
+   {
+    "n": "Road to Somewhere",
+    "t": "arena"
+   },
+   {
+    "n": "WrestleMoney",
+    "t": "flag"
+   },
+   {
+    "n": "Backlash Against Backlash",
+    "t": "arena"
+   },
+   {
+    "n": "Money in the Bank Account",
+    "t": "gimmick"
+   },
+   {
+    "n": "Night of Big Champions",
+    "t": "arena"
+   },
+   {
+    "n": "SummerSlamdunk",
+    "t": "tent"
+   },
+   {
+    "n": "Clash at the Parking Lot",
+    "t": "arena"
+   },
+   {
+    "n": "Bad Blood Pressure",
+    "t": "gimmick"
+   },
+   {
+    "n": "Survivor Series of Unfortunate Events",
+    "t": "tent"
+   },
+   {
+    "n": "Saturday Night's Main Expense",
+    "t": "arena"
+   }
+  ]
+ },
+ "shows": [
+  {
+   "id": "wwx_rawr",
+   "name": "Monday Night RAWR",
+   "brand": "rawr",
+   "weight": 1
+  },
+  {
+   "id": "wwx_slap",
+   "name": "Friday Night SlapDown",
+   "brand": "slap",
+   "weight": 1
+  },
+  {
+   "id": "wwx_notyet",
+   "name": "NOT YET Tuesday",
+   "brand": "notyet",
+   "weight": 0.45
+  }
+ ],
+ "titles": [
+  {
+   "id": "wwx_undisputed",
+   "name": "WWX Undisputed-ish Championship",
+   "gender": "M",
+   "level": 3,
+   "brand": "slap",
+   "holder_ids": [
+    "colt_highway"
+   ]
+  },
+  {
+   "id": "wwx_heavyish",
+   "name": "World Heavyish Championship",
+   "gender": "M",
+   "level": 3,
+   "brand": "rawr",
+   "holder_ids": [
+    "wilt_wellness"
+   ]
+  },
+  {
+   "id": "wwx_ic",
+   "name": "Intercontinental Breakfast Championship",
+   "gender": "M",
+   "level": 2,
+   "brand": "rawr",
+   "holder_ids": [
+    "dirty_junior"
+   ]
+  },
+  {
+   "id": "wwx_us",
+   "name": "United Snakes Championship",
+   "gender": "M",
+   "level": 2,
+   "brand": "slap",
+   "holder_ids": [
+    "silent_sione"
+   ]
+  },
+  {
+   "id": "wwx_womens_world",
+   "name": "Woman's World-ish Championship",
+   "gender": "F",
+   "level": 3,
+   "brand": "rawr",
+   "holder_ids": [
+    "kumo_cloud"
+   ]
+  },
+  {
+   "id": "wwx_womens",
+   "name": "WWX Women's Championship",
+   "gender": "F",
+   "level": 3,
+   "brand": "slap",
+   "holder_ids": [
+    "tiara_orbit"
+   ]
+  },
+  {
+   "id": "wwx_tag_rawr",
+   "name": "RAWR Tag Team Championship",
+   "gender": "M",
+   "level": 2,
+   "tag": true,
+   "brand": "rawr",
+   "holder_ids": [
+    "kojo_crown",
+    "xerxes_woodwind"
+   ]
+  },
+  {
+   "id": "wwx_tag_slap",
+   "name": "SlapDown Tag Team Championship",
+   "gender": "M",
+   "level": 2,
+   "tag": true,
+   "brand": "slap",
+   "holder_ids": [
+    "block_party_ace",
+    "block_party_deuce"
+   ]
+  },
+  {
+   "id": "wwx_notyet",
+   "name": "NOT YET Championship",
+   "gender": "M",
+   "level": 2,
+   "brand": "notyet",
+   "holder_ids": [
+    "king_kayode"
+   ]
+  },
+  {
+   "id": "wwx_notyet_w",
+   "name": "NOT YET Women's Championship",
+   "gender": "F",
+   "level": 2,
+   "brand": "notyet",
+   "holder_ids": [
+    "la_primera_paloma"
+   ]
+  }
+ ],
+ "roster": [
+  {
+   "id": "rocco_rule",
+   "ring_name": "Rocco Rule",
+   "gender": "M",
+   "disposition": "heel",
+   "style": "powerhouse",
+   "age": 41,
+   "hometown": "Pensacola",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 99,
+    "technical": 84,
+    "aerial": 72,
+    "stamina": 85,
+    "charisma": 90,
+    "promo_skill": 92,
+    "overness": 87,
+    "star_quality": 88,
+    "potential": 88,
+    "durability": 67,
+    "consistency": 91
+   },
+   "gimmick_category": "Head of the Buffet",
+   "gimmick": "The self-appointed Head of the Buffet, who demands to be thanked before every meal. He appears four times a year, takes all the credit, and leaves before the dishes.",
+   "catchphrase": "THANK me. Then pay the bill.",
+   "peak_years": [
+    28,
+    38
+   ],
+   "debut_year": 2006,
+   "finisher": "The Spear-mint",
+   "finisher_description": "A charging tackle through the midsection, finished with a breath-freshening point to the crowd.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 206250.0,
+    "weeks_left": 78,
+    "push": "main_eventer",
+    "brand": "rawr"
+   },
+   "finisher_move": "Spear"
+  },
+  {
+   "id": "wilt_wellness",
+   "ring_name": "Wilt Wellness",
+   "gender": "M",
+   "disposition": "heel",
+   "style": "technician",
+   "age": 38,
+   "hometown": "Vienna",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 87,
+    "technical": 96,
+    "aerial": 82,
+    "stamina": 89,
+    "charisma": 87,
+    "promo_skill": 84,
+    "overness": 92,
+    "star_quality": 95,
+    "potential": 95,
+    "durability": 76,
+    "consistency": 83
+   },
+   "gimmick_category": "Ring General",
+   "gimmick": "An Austrian drill sergeant who believes wrestling is corporal punishment. He chops chests until they file a complaint and calls everyone 'small person', including taller people.",
+   "catchphrase": "Is this... a WRESTLING?",
+   "peak_years": [
+    28,
+    38
+   ],
+   "debut_year": 2009,
+   "finisher": "The Strict Powerbomb",
+   "finisher_description": "A stiff, perfectly vertical powerbomb, followed by a lecture on posture.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 206250.0,
+    "weeks_left": 48,
+    "push": "main_eventer",
+    "brand": "rawr"
+   },
+   "finisher_move": "Powerbomb"
+  },
+  {
+   "id": "hype_hopkins",
+   "ring_name": "Hype Hopkins",
+   "gender": "M",
+   "disposition": "face",
+   "style": "brawler",
+   "age": 40,
+   "hometown": "San Francisco",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 87,
+    "technical": 77,
+    "aerial": 70,
+    "stamina": 78,
+    "charisma": 71,
+    "promo_skill": 71,
+    "overness": 79,
+    "star_quality": 77,
+    "potential": 82,
+    "durability": 73,
+    "consistency": 83
+   },
+   "gimmick_category": "Hype Machine",
+   "gimmick": "A twin who left the family business to become the most cheered man in any arena. He has one word, and the crowd says it louder than he does.",
+   "catchphrase": "HYPE! HYPE! HYPE!",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2007,
+   "finisher": "The Hopkins Splash",
+   "finisher_description": "A frog splash off the top rope, preceded by three arm swings and a bounce.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 165000,
+    "weeks_left": 128,
+    "push": "main_eventer",
+    "brand": "rawr"
+   },
+   "finisher_move": "Frog splash"
+  },
+  {
+   "id": "straightedge_stan",
+   "ring_name": "Straightedge Stan",
+   "gender": "M",
+   "disposition": "tweener",
+   "style": "technician",
+   "age": 47,
+   "hometown": "Chicago",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 88,
+    "technical": 94,
+    "aerial": 61,
+    "stamina": 70,
+    "charisma": 79,
+    "promo_skill": 86,
+    "overness": 94,
+    "star_quality": 88,
+    "potential": 89,
+    "durability": 61,
+    "consistency": 84
+   },
+   "gimmick_category": "Straight-Edge Prophet",
+   "gimmick": "A tattooed, soda-swilling rebel who once quit wrestling, then quit quitting. He talks for twenty minutes, insults everyone in the building, and somehow gets cheered for it.",
+   "catchphrase": "I'm the best in the building. Ask the building.",
+   "peak_years": [
+    28,
+    38
+   ],
+   "debut_year": 2000,
+   "finisher": "Lights Out, Kid",
+   "finisher_description": "He drapes his opponent over his shoulders and drops them face-first onto his rising knee, then tucks them in.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 206250.0,
+    "weeks_left": 136,
+    "push": "main_eventer",
+    "brand": "rawr"
+   },
+   "finisher_move": "Fireman's carry knee strike"
+  },
+  {
+   "id": "velvet_visionary",
+   "ring_name": "The Velvet Visionary",
+   "gender": "M",
+   "disposition": "heel",
+   "style": "all_rounder",
+   "age": 40,
+   "hometown": "Davenport",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 91,
+    "technical": 87,
+    "aerial": 80,
+    "stamina": 80,
+    "charisma": 91,
+    "promo_skill": 76,
+    "overness": 95,
+    "star_quality": 97,
+    "potential": 94,
+    "durability": 66,
+    "consistency": 85
+   },
+   "gimmick_category": "Fashion Messiah",
+   "gimmick": "A man who dresses like a sofa at a royal wedding and calls himself a visionary. He leads a faction of young believers and never wears the same blazer twice.",
+   "catchphrase": "Fashion forward. You, backward.",
+   "peak_years": [
+    28,
+    38
+   ],
+   "debut_year": 2007,
+   "finisher": "The Stomp Sale",
+   "finisher_description": "A running curb stomp, sold at full price.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 206250.0,
+    "weeks_left": 140,
+    "push": "main_eventer",
+    "brand": "rawr"
+   },
+   "finisher_move": "Curb stomp"
+  },
+  {
+   "id": "brick_breakwater",
+   "ring_name": "Brick Breakwater",
+   "gender": "M",
+   "disposition": "heel",
+   "style": "powerhouse",
+   "age": 28,
+   "hometown": "Pensacola",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 86,
+    "technical": 80,
+    "aerial": 65,
+    "stamina": 83,
+    "charisma": 82,
+    "promo_skill": 80,
+    "overness": 76,
+    "star_quality": 80,
+    "potential": 87,
+    "durability": 69,
+    "consistency": 84
+   },
+   "gimmick_category": "Second-Generation Bulldozer",
+   "gimmick": "A barking, bounding son of a famous family who tackles people for a warm-up. He has never once walked to the ring.",
+   "catchphrase": "WOOF. WOOF. WOOF.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2019,
+   "finisher": "The Military Press Release",
+   "finisher_description": "He presses his opponent overhead and slams them, then issues a statement.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 70000,
+    "weeks_left": 70,
+    "push": "upper_midcarder",
+    "brand": "rawr"
+   },
+   "finisher_move": "Military press slam"
+  },
+  {
+   "id": "big_tad_tsunami",
+   "ring_name": "Big Tad Tsunami",
+   "gender": "M",
+   "disposition": "heel",
+   "style": "powerhouse",
+   "age": 37,
+   "hometown": "Adelaide",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 77,
+    "technical": 63,
+    "aerial": 62,
+    "stamina": 73,
+    "charisma": 63,
+    "promo_skill": 62,
+    "overness": 67,
+    "star_quality": 70,
+    "potential": 66,
+    "durability": 79,
+    "consistency": 76
+   },
+   "gimmick_category": "Australian Tidal Wave",
+   "gimmick": "A giant from down under who splashes people from the top rope and then sits down to admire it.",
+   "catchphrase": "Tsunami warning: you.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2010,
+   "finisher": "The Tidal Splash",
+   "finisher_description": "A full-weight senton from the top rope that registers on the local seismograph.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 70000,
+    "weeks_left": 108,
+    "push": "upper_midcarder",
+    "brand": "rawr"
+   },
+   "finisher_move": "Top-rope senton"
+  },
+  {
+   "id": "dirty_junior",
+   "ring_name": "Dirty Junior",
+   "gender": "M",
+   "disposition": "heel",
+   "style": "brawler",
+   "age": 29,
+   "hometown": "San Diego",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 82,
+    "technical": 72,
+    "aerial": 65,
+    "stamina": 74,
+    "charisma": 62,
+    "promo_skill": 54,
+    "overness": 69,
+    "star_quality": 70,
+    "potential": 72,
+    "durability": 74,
+    "consistency": 82
+   },
+   "gimmick_category": "Prison-Cred Nepo Baby",
+   "gimmick": "A legend's son who claims he did hard time for one weekend. He is booed out of every building and loves it.",
+   "catchphrase": "Ask my dad. Actually, don't.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2018,
+   "finisher": "The Frog Spoiler",
+   "finisher_description": "A frog splash his father taught him, done badly on purpose.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 70000,
+    "weeks_left": 54,
+    "push": "upper_midcarder",
+    "brand": "rawr"
+   },
+   "finisher_move": "Frog splash"
+  },
+  {
+   "id": "declan_demonne",
+   "ring_name": "Declan Demonne",
+   "gender": "M",
+   "disposition": "tweener",
+   "style": "all_rounder",
+   "age": 45,
+   "hometown": "Bray",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 74,
+    "technical": 75,
+    "aerial": 65,
+    "stamina": 55,
+    "charisma": 64,
+    "promo_skill": 65,
+    "overness": 67,
+    "star_quality": 68,
+    "potential": 64,
+    "durability": 62,
+    "consistency": 79
+   },
+   "gimmick_category": "Prince of Receipts",
+   "gimmick": "An Irishman who paints himself as a demon twice a year and keeps receipts the rest of it.",
+   "catchphrase": "Too sweet? Too late.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2002,
+   "finisher": "The Coup de Grâce Period",
+   "finisher_description": "A double foot stomp from the top rope, with a short window to pay.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 70000,
+    "weeks_left": 34,
+    "push": "upper_midcarder",
+    "brand": "rawr"
+   },
+   "finisher_move": "Top-rope double foot stomp"
+  },
+  {
+   "id": "sully_sweats",
+   "ring_name": "Sully Sweats",
+   "gender": "M",
+   "disposition": "face",
+   "style": "all_rounder",
+   "age": 42,
+   "hometown": "Montreal",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 77,
+    "technical": 81,
+    "aerial": 77,
+    "stamina": 72,
+    "charisma": 75,
+    "promo_skill": 76,
+    "overness": 79,
+    "star_quality": 80,
+    "potential": 80,
+    "durability": 72,
+    "consistency": 83
+   },
+   "gimmick_category": "The Underdog Everyone Loves",
+   "gimmick": "A bearded, sweaty, emotional Canadian who has almost been world champion more times than anyone alive.",
+   "catchphrase": "Ole! Ole! Ole! (pause) Ole!",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2005,
+   "finisher": "The Very Big Kick",
+   "finisher_description": "A running kick to the face in the corner, still pending review.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 70000,
+    "weeks_left": 22,
+    "push": "upper_midcarder",
+    "brand": "rawr"
+   },
+   "finisher_move": "Running corner kick"
+  },
+  {
+   "id": "the_hexagon",
+   "ring_name": "The Hexagon",
+   "gender": "M",
+   "disposition": "face",
+   "style": "flyer",
+   "age": 41,
+   "hometown": "Mexico City",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 60,
+    "technical": 79,
+    "aerial": 73,
+    "stamina": 71,
+    "charisma": 61,
+    "promo_skill": 55,
+    "overness": 67,
+    "star_quality": 74,
+    "potential": 71,
+    "durability": 70,
+    "consistency": 74
+   },
+   "gimmick_category": "Masked Fear-Free Luchador",
+   "gimmick": "A masked high flyer who breaks his opponent's arm and then asks the crowd to count the sides of his mask with him.",
+   "catchphrase": "Six sides. Zero fear.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2006,
+   "finisher": "The Sacrifice Bunt",
+   "finisher_description": "An arm-trap package piledriver, followed by a theatrical arm snap.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 70000,
+    "weeks_left": 84,
+    "push": "upper_midcarder",
+    "brand": "rawr"
+   },
+   "finisher_move": "Package piledriver"
+  },
+  {
+   "id": "el_abuelo_enigma",
+   "ring_name": "El Abuelo Enigma",
+   "gender": "M",
+   "disposition": "face",
+   "style": "flyer",
+   "age": 51,
+   "hometown": "San Diego",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 69,
+    "technical": 75,
+    "aerial": 62,
+    "stamina": 45,
+    "charisma": 59,
+    "promo_skill": 69,
+    "overness": 70,
+    "star_quality": 74,
+    "potential": 68,
+    "durability": 58,
+    "consistency": 74
+   },
+   "gimmick_category": "Masked Legend Grandad",
+   "gimmick": "The masked legend who has outlived three eras and his own son's respect. Still flies; lands slower.",
+   "catchphrase": "Abuelo, OUT!",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 1996,
+   "finisher": "The Six-Seventeen",
+   "finisher_description": "A springboard into the ropes and a dropkick through the middle, one number short of famous.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 38000,
+    "weeks_left": 46,
+    "push": "midcarder",
+    "brand": "rawr"
+   },
+   "finisher_move": "Springboard dropkick through the ropes"
+  },
+  {
+   "id": "kojo_crown",
+   "ring_name": "Kojo Crown",
+   "gender": "M",
+   "disposition": "heel",
+   "style": "flyer",
+   "age": 45,
+   "hometown": "Accra",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 57,
+    "technical": 58,
+    "aerial": 58,
+    "stamina": 47,
+    "charisma": 44,
+    "promo_skill": 54,
+    "overness": 58,
+    "star_quality": 60,
+    "potential": 58,
+    "durability": 55,
+    "consistency": 74
+   },
+   "gimmick_category": "Bitter Former Feel-Gooder",
+   "gimmick": "Once half of the happiest act in wrestling, now furious that nobody remembers their anniversary.",
+   "catchphrase": "Positivity is cancelled.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2002,
+   "finisher": "The Trouble at the Nest",
+   "finisher_description": "A double-team boot and a seated senton.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 38000,
+    "weeks_left": 46,
+    "push": "midcarder",
+    "brand": "rawr"
+   },
+   "finisher_move": "Double-team boot and senton"
+  },
+  {
+   "id": "xerxes_woodwind",
+   "ring_name": "Xerxes Woodwind",
+   "gender": "M",
+   "disposition": "heel",
+   "style": "entertainer",
+   "age": 39,
+   "hometown": "Columbus",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 65,
+    "technical": 59,
+    "aerial": 46,
+    "stamina": 60,
+    "charisma": 55,
+    "promo_skill": 59,
+    "overness": 54,
+    "star_quality": 55,
+    "potential": 59,
+    "durability": 78,
+    "consistency": 78
+   },
+   "gimmick_category": "Trombone Malcontent",
+   "gimmick": "Kojo Crown's partner, who plays a sad trombone at every opponent's misfortune.",
+   "catchphrase": "Wah wah waaah.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2008,
+   "finisher": "The Limit Break",
+   "finisher_description": "A top-rope elbow that ends in a slide whistle.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 38000,
+    "weeks_left": 132,
+    "push": "midcarder",
+    "brand": "rawr"
+   },
+   "finisher_move": "Top-rope elbow drop"
+  },
+  {
+   "id": "jp_punchbagan",
+   "ring_name": "J.P. Punchbagan",
+   "gender": "M",
+   "disposition": "heel",
+   "style": "technician",
+   "age": 35,
+   "hometown": "Dublin",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 58,
+    "technical": 66,
+    "aerial": 64,
+    "stamina": 69,
+    "charisma": 43,
+    "promo_skill": 56,
+    "overness": 57,
+    "star_quality": 57,
+    "potential": 59,
+    "durability": 73,
+    "consistency": 73
+   },
+   "gimmick_category": "Professional Punching Bag",
+   "gimmick": "A pale Irishman who absorbs more punishment than any human in the company and keeps volunteering.",
+   "catchphrase": "I'll take another one, thanks.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2012,
+   "finisher": "The Punchbag Moonsault",
+   "finisher_description": "A moonsault from the top rope that rarely hits anybody but himself.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 22000,
+    "weeks_left": 96,
+    "push": "lower_midcarder",
+    "brand": "rawr"
+   },
+   "finisher_move": "Moonsault"
+  },
+  {
+   "id": "blaze_clickbait",
+   "ring_name": "Blaze Clickbait",
+   "gender": "M",
+   "disposition": "heel",
+   "style": "entertainer",
+   "age": 31,
+   "hometown": "Westlake",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 66,
+    "technical": 62,
+    "aerial": 64,
+    "stamina": 70,
+    "charisma": 72,
+    "promo_skill": 64,
+    "overness": 68,
+    "star_quality": 63,
+    "potential": 64,
+    "durability": 69,
+    "consistency": 74
+   },
+   "gimmick_category": "Influencer Supervillain",
+   "gimmick": "A social media celebrity who wrestles like a natural and sells an energy drink between every move.",
+   "catchphrase": "Smash that bell button.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2016,
+   "finisher": "The Brass Endorsement",
+   "finisher_description": "A right hand with something shiny in it, then a sponsored pin.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 70000,
+    "weeks_left": 74,
+    "push": "upper_midcarder",
+    "brand": "rawr"
+   },
+   "finisher_move": "Loaded punch"
+  },
+  {
+   "id": "boris_bulgarovich",
+   "ring_name": "Boris Bulgarovich",
+   "gender": "M",
+   "disposition": "heel",
+   "style": "powerhouse",
+   "age": 38,
+   "hometown": "Plovdiv",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 81,
+    "technical": 63,
+    "aerial": 61,
+    "stamina": 77,
+    "charisma": 64,
+    "promo_skill": 60,
+    "overness": 68,
+    "star_quality": 63,
+    "potential": 69,
+    "durability": 69,
+    "consistency": 81
+   },
+   "gimmick_category": "The Bulgarian Brute, Again",
+   "gimmick": "A Bulgarian strongman who left, came back, and now crushes everybody without a holiday to celebrate it.",
+   "catchphrase": "CRUSH. Then tax.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2009,
+   "finisher": "The Award Ceremony",
+   "finisher_description": "A camel clutch so deep the opponent sees the back of their own knees.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 38000,
+    "weeks_left": 108,
+    "push": "midcarder",
+    "brand": "rawr"
+   },
+   "finisher_move": "Camel clutch"
+  },
+  {
+   "id": "mama_morbid",
+   "ring_name": "Mama Morbid",
+   "gender": "F",
+   "disposition": "face",
+   "style": "powerhouse",
+   "age": 30,
+   "hometown": "Adelaide",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 90,
+    "technical": 77,
+    "aerial": 67,
+    "stamina": 82,
+    "charisma": 88,
+    "promo_skill": 94,
+    "overness": 93,
+    "star_quality": 96,
+    "potential": 93,
+    "durability": 69,
+    "consistency": 87
+   },
+   "gimmick_category": "Mother of the Mosh Pit",
+   "gimmick": "A gothic Australian powerhouse who calls herself everyone's mother and bites if you disagree.",
+   "catchphrase": "Mother knows best. Mother hits hardest.",
+   "peak_years": [
+    28,
+    38
+   ],
+   "debut_year": 2017,
+   "finisher": "The Mother's Day",
+   "finisher_description": "A pumphandle lift into a sit-out powerbomb, with a card.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 206250.0,
+    "weeks_left": 124,
+    "push": "main_eventer",
+    "brand": "rawr"
+   },
+   "finisher_move": "Pumphandle sit-out powerbomb"
+  },
+  {
+   "id": "kumo_cloud",
+   "ring_name": "Kumo Cloud",
+   "gender": "F",
+   "disposition": "face",
+   "style": "flyer",
+   "age": 31,
+   "hometown": "Tokyo",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 71,
+    "technical": 78,
+    "aerial": 91,
+    "stamina": 78,
+    "charisma": 79,
+    "promo_skill": 73,
+    "overness": 83,
+    "star_quality": 78,
+    "potential": 76,
+    "durability": 82,
+    "consistency": 77
+   },
+   "gimmick_category": "Genius of the Heavens",
+   "gimmick": "A tiny Japanese daredevil who moonsaults from places nobody has insured.",
+   "catchphrase": "The sky has no ceiling. My insurance does.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2016,
+   "finisher": "The Over-the-Moonsault",
+   "finisher_description": "A moonsault from the top rope with impossible hang time.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 70000,
+    "weeks_left": 108,
+    "push": "upper_midcarder",
+    "brand": "rawr"
+   },
+   "finisher_move": "Moonsault"
+  },
+  {
+   "id": "vendetta_viv",
+   "ring_name": "Vendetta Viv",
+   "gender": "F",
+   "disposition": "heel",
+   "style": "entertainer",
+   "age": 32,
+   "hometown": "Elmwood Park",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 72,
+    "technical": 77,
+    "aerial": 71,
+    "stamina": 77,
+    "charisma": 92,
+    "promo_skill": 78,
+    "overness": 80,
+    "star_quality": 76,
+    "potential": 77,
+    "durability": 68,
+    "consistency": 83
+   },
+   "gimmick_category": "Revenge Tour Manager",
+   "gimmick": "She keeps a list of everyone who ever wronged her and works through it alphabetically.",
+   "catchphrase": "Watch me. No really, watch.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2015,
+   "finisher": "The Revenge Receipt",
+   "finisher_description": "A swinging reverse DDT, with late fees.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 165000,
+    "weeks_left": 64,
+    "push": "main_eventer",
+    "brand": "rawr"
+   },
+   "finisher_move": "Swinging reverse DDT"
+  },
+  {
+   "id": "big_rosa_ruiz",
+   "ring_name": "Big Rosa Ruiz",
+   "gender": "F",
+   "disposition": "heel",
+   "style": "powerhouse",
+   "age": 34,
+   "hometown": "La Feria",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 84,
+    "technical": 70,
+    "aerial": 60,
+    "stamina": 68,
+    "charisma": 70,
+    "promo_skill": 65,
+    "overness": 71,
+    "star_quality": 74,
+    "potential": 65,
+    "durability": 73,
+    "consistency": 80
+   },
+   "gimmick_category": "Enforcer for Hire",
+   "gimmick": "Vendetta Viv's very large best friend and accountant of violence.",
+   "catchphrase": "Business is business.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2013,
+   "finisher": "The Texas Two-Story",
+   "finisher_description": "A powerbomb from a great height.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 38000,
+    "weeks_left": 24,
+    "push": "midcarder",
+    "brand": "rawr"
+   },
+   "finisher_move": "Powerbomb"
+  },
+  {
+   "id": "molly_omalley",
+   "ring_name": "Molly O'Malley, The Man-ager",
+   "gender": "F",
+   "disposition": "heel",
+   "style": "brawler",
+   "age": 39,
+   "hometown": "Dublin",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 89,
+    "technical": 78,
+    "aerial": 68,
+    "stamina": 91,
+    "charisma": 95,
+    "promo_skill": 89,
+    "overness": 91,
+    "star_quality": 96,
+    "potential": 92,
+    "durability": 81,
+    "consistency": 80
+   },
+   "gimmick_category": "The Man(ager)",
+   "gimmick": "A fiery Irish legend who returned to remind everyone she runs this place, lunch break included.",
+   "catchphrase": "The Man-ager will see you now.",
+   "peak_years": [
+    28,
+    38
+   ],
+   "debut_year": 2008,
+   "finisher": "The Arm Day",
+   "finisher_description": "A seated armbar so tight it hands back a receipt.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 206250.0,
+    "weeks_left": 94,
+    "push": "main_eventer",
+    "brand": "rawr"
+   },
+   "finisher_move": "Seated armbar"
+  },
+  {
+   "id": "freya_fairwing",
+   "ring_name": "Freya Fairwing",
+   "gender": "F",
+   "disposition": "face",
+   "style": "technician",
+   "age": 28,
+   "hometown": "Dublin",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 65,
+    "technical": 86,
+    "aerial": 73,
+    "stamina": 77,
+    "charisma": 72,
+    "promo_skill": 60,
+    "overness": 70,
+    "star_quality": 62,
+    "potential": 70,
+    "durability": 83,
+    "consistency": 75
+   },
+   "gimmick_category": "Valkyrie on Work Experience",
+   "gimmick": "A young Irish technician with wings on her robe and a lot to prove.",
+   "catchphrase": "Watch the wings.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2019,
+   "finisher": "The Wing Clip",
+   "finisher_description": "A top-rope elbow drop with a flutter.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 70000,
+    "weeks_left": 36,
+    "push": "upper_midcarder",
+    "brand": "rawr"
+   },
+   "finisher_move": "Top-rope elbow drop"
+  },
+  {
+   "id": "hug_life_hannah",
+   "ring_name": "Hug Life Hannah",
+   "gender": "F",
+   "disposition": "face",
+   "style": "technician",
+   "age": 36,
+   "hometown": "San Jose",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 70,
+    "technical": 87,
+    "aerial": 76,
+    "stamina": 70,
+    "charisma": 61,
+    "promo_skill": 67,
+    "overness": 70,
+    "star_quality": 67,
+    "potential": 70,
+    "durability": 68,
+    "consistency": 74
+   },
+   "gimmick_category": "Role Model (Self-Appointed)",
+   "gimmick": "A former hugger turned bitter turned hugger again, depending on the week.",
+   "catchphrase": "Hug it out or get out.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2011,
+   "finisher": "The Hug Drop",
+   "finisher_description": "A face-first driver into the mat, delivered with a hug.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 70000,
+    "weeks_left": 30,
+    "push": "upper_midcarder",
+    "brand": "rawr"
+   },
+   "finisher_move": "Face-first driver"
+  },
+  {
+   "id": "colt_highway",
+   "ring_name": "Colt Highway",
+   "gender": "M",
+   "disposition": "face",
+   "style": "all_rounder",
+   "age": 41,
+   "hometown": "Marietta",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 89,
+    "technical": 91,
+    "aerial": 85,
+    "stamina": 87,
+    "charisma": 79,
+    "promo_skill": 82,
+    "overness": 89,
+    "star_quality": 86,
+    "potential": 87,
+    "durability": 78,
+    "consistency": 85
+   },
+   "gimmick_category": "The American Daydream",
+   "gimmick": "The son of a dreaming legend who finished his story and then kept going, because the merchandise kept selling.",
+   "catchphrase": "Let's finish the next chapter.",
+   "peak_years": [
+    28,
+    38
+   ],
+   "debut_year": 2006,
+   "finisher": "The Highway Exit",
+   "finisher_description": "He spins his opponent into a falling cutter, then points at the eagle on his shirt.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 206250.0,
+    "weeks_left": 40,
+    "push": "main_eventer",
+    "brand": "slap"
+   },
+   "finisher_move": "Spinning cutter"
+  },
+  {
+   "id": "angus_robbedmore",
+   "ring_name": "Angus Robbedmore",
+   "gender": "M",
+   "disposition": "heel",
+   "style": "brawler",
+   "age": 41,
+   "hometown": "Ayr",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 83,
+    "technical": 71,
+    "aerial": 64,
+    "stamina": 72,
+    "charisma": 78,
+    "promo_skill": 72,
+    "overness": 82,
+    "star_quality": 83,
+    "potential": 76,
+    "durability": 64,
+    "consistency": 87
+   },
+   "gimmick_category": "Furious Scottish Warrior",
+   "gimmick": "A kilted Scot who has been robbed of everything he ever held and talks about it constantly.",
+   "catchphrase": "I was ROBBED. Again.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2006,
+   "finisher": "The Highland Bill",
+   "finisher_description": "A running jumping kick to the face, the size of a parking ticket.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 165000,
+    "weeks_left": 54,
+    "push": "main_eventer",
+    "brand": "slap"
+   },
+   "finisher_move": "Running jumping kick"
+  },
+  {
+   "id": "vinny_venomson",
+   "ring_name": "Vinny Venomson",
+   "gender": "M",
+   "disposition": "face",
+   "style": "technician",
+   "age": 46,
+   "hometown": "St. Louis",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 85,
+    "technical": 90,
+    "aerial": 69,
+    "stamina": 77,
+    "charisma": 90,
+    "promo_skill": 83,
+    "overness": 93,
+    "star_quality": 92,
+    "potential": 90,
+    "durability": 68,
+    "consistency": 81
+   },
+   "gimmick_category": "Viper with Back Problems",
+   "gimmick": "A third-generation legend who strikes from out of nowhere, if his back allows it.",
+   "catchphrase": "Strike first. Stretch later.",
+   "peak_years": [
+    28,
+    38
+   ],
+   "debut_year": 2001,
+   "finisher": "The Out-of-Nowhere",
+   "finisher_description": "A jumping cutter from out of nowhere. Nowhere is the corner.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 206250.0,
+    "weeks_left": 140,
+    "push": "main_eventer",
+    "brand": "slap"
+   },
+   "finisher_move": "Jumping cutter"
+  },
+  {
+   "id": "silent_sione",
+   "ring_name": "Silent Sione",
+   "gender": "M",
+   "disposition": "heel",
+   "style": "brawler",
+   "age": 33,
+   "hometown": "Sacramento",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 78,
+    "technical": 68,
+    "aerial": 56,
+    "stamina": 71,
+    "charisma": 67,
+    "promo_skill": 59,
+    "overness": 71,
+    "star_quality": 66,
+    "potential": 65,
+    "durability": 75,
+    "consistency": 77
+   },
+   "gimmick_category": "The Silent Usurper",
+   "gimmick": "A family enforcer who tried to take over the family and now leads a smaller one.",
+   "catchphrase": "...",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2014,
+   "finisher": "The Drop-off",
+   "finisher_description": "A spike to the throat into a cobra hold, then a drop-off at the curb.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 70000,
+    "weeks_left": 108,
+    "push": "upper_midcarder",
+    "brand": "slap"
+   },
+   "finisher_move": "Throat spike into a cobra hold"
+  },
+  {
+   "id": "big_iosefa",
+   "ring_name": "Big Unhinged Iosefa",
+   "gender": "M",
+   "disposition": "heel",
+   "style": "powerhouse",
+   "age": 34,
+   "hometown": "Sacramento",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 93,
+    "technical": 75,
+    "aerial": 68,
+    "stamina": 77,
+    "charisma": 82,
+    "promo_skill": 82,
+    "overness": 79,
+    "star_quality": 77,
+    "potential": 82,
+    "durability": 78,
+    "consistency": 87
+   },
+   "gimmick_category": "Moonsaulting Monster",
+   "gimmick": "A huge man who moonsaults as if gravity owes him money.",
+   "catchphrase": "Gravity owes me.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2013,
+   "finisher": "The Moon-Sold-Out",
+   "finisher_description": "A moonsault from the top by a man who should not be able to do one.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 70000,
+    "weeks_left": 54,
+    "push": "upper_midcarder",
+    "brand": "slap"
+   },
+   "finisher_move": "Moonsault"
+  },
+  {
+   "id": "mack_midlife",
+   "ring_name": "Megastar Mack Midlife",
+   "gender": "M",
+   "disposition": "face",
+   "style": "brawler",
+   "age": 43,
+   "hometown": "Hagerstown",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 84,
+    "technical": 73,
+    "aerial": 49,
+    "stamina": 60,
+    "charisma": 63,
+    "promo_skill": 59,
+    "overness": 66,
+    "star_quality": 70,
+    "potential": 71,
+    "durability": 69,
+    "consistency": 75
+   },
+   "gimmick_category": "Megastar Late Bloomer",
+   "gimmick": "A gravel-voiced veteran who became famous at forty and talks like a movie trailer.",
+   "catchphrase": "Lemme tell ya something. Slowly.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2004,
+   "finisher": "The Midlife Crisis",
+   "finisher_description": "A running neckbreaker, delivered with a sunglasses toss.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 70000,
+    "weeks_left": 70,
+    "push": "upper_midcarder",
+    "brand": "slap"
+   },
+   "finisher_move": "Running neckbreaker"
+  },
+  {
+   "id": "father_punishment",
+   "ring_name": "Father Punishment",
+   "gender": "M",
+   "disposition": "tweener",
+   "style": "powerhouse",
+   "age": 43,
+   "hometown": "Ponce",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 84,
+    "technical": 71,
+    "aerial": 52,
+    "stamina": 65,
+    "charisma": 59,
+    "promo_skill": 54,
+    "overness": 64,
+    "star_quality": 71,
+    "potential": 69,
+    "durability": 73,
+    "consistency": 76
+   },
+   "gimmick_category": "Punisher of the Back Room",
+   "gimmick": "A tall, spooky Puerto Rican who used to judge people and now just punishes them.",
+   "catchphrase": "Confess. Then lie down.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2004,
+   "finisher": "The Downward Sermon",
+   "finisher_description": "A chokeslam that ends in a short homily.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 70000,
+    "weeks_left": 28,
+    "push": "upper_midcarder",
+    "brand": "slap"
+   },
+   "finisher_move": "Chokeslam"
+  },
+  {
+   "id": "pierre_poutine",
+   "ring_name": "Prizefighter Pierre Poutine",
+   "gender": "M",
+   "disposition": "heel",
+   "style": "brawler",
+   "age": 42,
+   "hometown": "Marieville",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 85,
+    "technical": 79,
+    "aerial": 68,
+    "stamina": 68,
+    "charisma": 74,
+    "promo_skill": 71,
+    "overness": 80,
+    "star_quality": 85,
+    "potential": 82,
+    "durability": 74,
+    "consistency": 88
+   },
+   "gimmick_category": "Furious Canadian Prizefighter",
+   "gimmick": "A pudgy, ferocious Quebecer who swears at children and powerbombs men onto ring aprons.",
+   "catchphrase": "Fight me. Then buy me fries.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2005,
+   "finisher": "The Apron Special",
+   "finisher_description": "A powerbomb onto the hardest part of the ring apron.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 70000,
+    "weeks_left": 118,
+    "push": "upper_midcarder",
+    "brand": "slap"
+   },
+   "finisher_move": "Apron powerbomb"
+  },
+  {
+   "id": "himself_hollis",
+   "ring_name": "Himself Hollis",
+   "gender": "M",
+   "disposition": "heel",
+   "style": "flyer",
+   "age": 31,
+   "hometown": "Worcester",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 64,
+    "technical": 74,
+    "aerial": 85,
+    "stamina": 72,
+    "charisma": 64,
+    "promo_skill": 63,
+    "overness": 69,
+    "star_quality": 72,
+    "potential": 68,
+    "durability": 68,
+    "consistency": 75
+   },
+   "gimmick_category": "Self-Proclaimed Main Character",
+   "gimmick": "A slick high flyer who insists he is the main character, whoever that is.",
+   "catchphrase": "Main character energy. Side character results.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2016,
+   "finisher": "Hang Time Hollis",
+   "finisher_description": "A falling leg drop off the top rope with a long pause.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 38000,
+    "weeks_left": 72,
+    "push": "midcarder",
+    "brand": "slap"
+   },
+   "finisher_move": "Top-rope leg drop"
+  },
+  {
+   "id": "block_party_ace",
+   "ring_name": "Ace of the Block Party Boys",
+   "gender": "M",
+   "disposition": "face",
+   "style": "flyer",
+   "age": 38,
+   "hometown": "Tampa",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 63,
+    "technical": 74,
+    "aerial": 84,
+    "stamina": 74,
+    "charisma": 57,
+    "promo_skill": 65,
+    "overness": 64,
+    "star_quality": 62,
+    "potential": 71,
+    "durability": 80,
+    "consistency": 85
+   },
+   "gimmick_category": "Party Tag Team",
+   "gimmick": "Half of a tag team that turns every entrance into a block party.",
+   "catchphrase": "We brought the speakers.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2009,
+   "finisher": "The Block Party Splash",
+   "finisher_description": "A frog splash with a party horn.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 38000,
+    "weeks_left": 118,
+    "push": "midcarder",
+    "brand": "slap"
+   },
+   "finisher_move": "Frog splash"
+  },
+  {
+   "id": "block_party_deuce",
+   "ring_name": "Deuce of the Block Party Boys",
+   "gender": "M",
+   "disposition": "face",
+   "style": "powerhouse",
+   "age": 36,
+   "hometown": "Cincinnati",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 86,
+    "technical": 69,
+    "aerial": 63,
+    "stamina": 71,
+    "charisma": 60,
+    "promo_skill": 60,
+    "overness": 71,
+    "star_quality": 67,
+    "potential": 66,
+    "durability": 74,
+    "consistency": 80
+   },
+   "gimmick_category": "Party Tag Team",
+   "gimmick": "The other half, who carries the speakers.",
+   "catchphrase": "Turn it UP.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2011,
+   "finisher": "The Speaker Drop",
+   "finisher_description": "A spinning spinebuster.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 38000,
+    "weeks_left": 24,
+    "push": "midcarder",
+    "brand": "slap"
+   },
+   "finisher_move": "Spinning spinebuster"
+  },
+  {
+   "id": "tiara_orbit",
+   "ring_name": "Tiara Orbit",
+   "gender": "F",
+   "disposition": "heel",
+   "style": "flyer",
+   "age": 27,
+   "hometown": "Prior Lake",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 71,
+    "technical": 88,
+    "aerial": 95,
+    "stamina": 88,
+    "charisma": 68,
+    "promo_skill": 82,
+    "overness": 83,
+    "star_quality": 79,
+    "potential": 82,
+    "durability": 71,
+    "consistency": 80
+   },
+   "gimmick_category": "Center of the Universe",
+   "gimmick": "A blonde former gymnast who believes the universe revolves around her, and the camera crew agrees.",
+   "catchphrase": "Orbit me, peasants.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2020,
+   "finisher": "The Orbit",
+   "finisher_description": "A moonsault with a full pause to pose.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 165000,
+    "weeks_left": 42,
+    "push": "main_eventer",
+    "brand": "slap"
+   },
+   "finisher_move": "Moonsault"
+  },
+  {
+   "id": "carlotta_woo",
+   "ring_name": "Carlotta Woo",
+   "gender": "F",
+   "disposition": "heel",
+   "style": "all_rounder",
+   "age": 40,
+   "hometown": "Charlotte",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 91,
+    "technical": 95,
+    "aerial": 83,
+    "stamina": 81,
+    "charisma": 89,
+    "promo_skill": 92,
+    "overness": 94,
+    "star_quality": 86,
+    "potential": 88,
+    "durability": 76,
+    "consistency": 91
+   },
+   "gimmick_category": "Queen of Everything",
+   "gimmick": "A second-generation legend who has held every title, twice, and is offended you forgot.",
+   "catchphrase": "Bow down. Twice.",
+   "peak_years": [
+    28,
+    38
+   ],
+   "debut_year": 2007,
+   "finisher": "The Royal Decree",
+   "finisher_description": "A forward somersault into a cutter, then a ten-minute strut.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 206250.0,
+    "weeks_left": 128,
+    "push": "main_eventer",
+    "brand": "slap"
+   },
+   "finisher_move": "Somersault cutter"
+  },
+  {
+   "id": "leilani_landslide",
+   "ring_name": "Leilani Landslide",
+   "gender": "F",
+   "disposition": "heel",
+   "style": "powerhouse",
+   "age": 41,
+   "hometown": "Sacramento",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 87,
+    "technical": 72,
+    "aerial": 56,
+    "stamina": 77,
+    "charisma": 78,
+    "promo_skill": 77,
+    "overness": 78,
+    "star_quality": 83,
+    "potential": 81,
+    "durability": 64,
+    "consistency": 83
+   },
+   "gimmick_category": "Irresistible Force (Do Not Resist)",
+   "gimmick": "A massive Samoan who sits on people and calls it a submission.",
+   "catchphrase": "Not like most people. Like most buildings.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2006,
+   "finisher": "The Landslide",
+   "finisher_description": "A leg drop off the top rope, followed by the building's structural engineer.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 70000,
+    "weeks_left": 58,
+    "push": "upper_midcarder",
+    "brand": "slap"
+   },
+   "finisher_move": "Top-rope leg drop"
+  },
+  {
+   "id": "onyx_olympia",
+   "ring_name": "Onyx Olympia",
+   "gender": "F",
+   "disposition": "face",
+   "style": "powerhouse",
+   "age": 34,
+   "hometown": "Vero Beach",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 92,
+    "technical": 70,
+    "aerial": 69,
+    "stamina": 83,
+    "charisma": 69,
+    "promo_skill": 72,
+    "overness": 80,
+    "star_quality": 82,
+    "potential": 78,
+    "durability": 84,
+    "consistency": 88
+   },
+   "gimmick_category": "Living Statue",
+   "gimmick": "A sculpted powerhouse who looks like a superhero and does not need to tell you so.",
+   "catchphrase": "That's... that.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2013,
+   "finisher": "The Onyx Cutter",
+   "finisher_description": "A rolling cutter so fast the replay needs a replay.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 165000,
+    "weeks_left": 66,
+    "push": "main_eventer",
+    "brand": "slap"
+   },
+   "finisher_move": "Rolling cutter"
+  },
+  {
+   "id": "brielle_braidwhip",
+   "ring_name": "Brielle Braidwhip",
+   "gender": "F",
+   "disposition": "face",
+   "style": "powerhouse",
+   "age": 37,
+   "hometown": "Knoxville",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 93,
+    "technical": 75,
+    "aerial": 63,
+    "stamina": 78,
+    "charisma": 76,
+    "promo_skill": 67,
+    "overness": 80,
+    "star_quality": 84,
+    "potential": 83,
+    "durability": 78,
+    "consistency": 88
+   },
+   "gimmick_category": "Strongest Braid Alive",
+   "gimmick": "A sprinter with a braid that is legally a weapon.",
+   "catchphrase": "Mind the braid.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2010,
+   "finisher": "The Braid Breaker",
+   "finisher_description": "A fireman's carry into a facebuster.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 165000,
+    "weeks_left": 104,
+    "push": "main_eventer",
+    "brand": "slap"
+   },
+   "finisher_move": "Fireman's carry facebuster"
+  },
+  {
+   "id": "neon_nyla",
+   "ring_name": "Neon Nyla",
+   "gender": "F",
+   "disposition": "heel",
+   "style": "flyer",
+   "age": 39,
+   "hometown": "Sanford",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 64,
+    "technical": 76,
+    "aerial": 88,
+    "stamina": 76,
+    "charisma": 68,
+    "promo_skill": 62,
+    "overness": 68,
+    "star_quality": 73,
+    "potential": 67,
+    "durability": 79,
+    "consistency": 79
+   },
+   "gimmick_category": "Glow-in-the-Dark Veteran",
+   "gimmick": "A dancing veteran with glowing gear who turned nasty after twenty years of being nice.",
+   "catchphrase": "Lights off. Glow on.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2008,
+   "finisher": "The Glow Bump",
+   "finisher_description": "A running hip attack that leaves a mark you can see in the dark.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 70000,
+    "weeks_left": 42,
+    "push": "upper_midcarder",
+    "brand": "slap"
+   },
+   "finisher_move": "Running hip attack"
+  },
+  {
+   "id": "la_bella_furia",
+   "ring_name": "La Bella Furia",
+   "gender": "F",
+   "disposition": "heel",
+   "style": "brawler",
+   "age": 32,
+   "hometown": "Milan",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 86,
+    "technical": 79,
+    "aerial": 74,
+    "stamina": 84,
+    "charisma": 74,
+    "promo_skill": 72,
+    "overness": 77,
+    "star_quality": 85,
+    "potential": 79,
+    "durability": 80,
+    "consistency": 76
+   },
+   "gimmick_category": "Beautiful Madness Import",
+   "gimmick": "An Italian-Japanese bruiser who came from the best women's company in the world and wants everyone to know it.",
+   "catchphrase": "Arrivederci.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2015,
+   "finisher": "The Northern Lights Bomb",
+   "finisher_description": "A northern lights suplex turned into a powerbomb.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 70000,
+    "weeks_left": 22,
+    "push": "upper_midcarder",
+    "brand": "slap"
+   },
+   "finisher_move": "Northern lights powerbomb"
+  },
+  {
+   "id": "karen_kompleint",
+   "ring_name": "Karen Kompleint",
+   "gender": "F",
+   "disposition": "heel",
+   "style": "entertainer",
+   "age": 35,
+   "hometown": "Victoria",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 56,
+    "technical": 50,
+    "aerial": 59,
+    "stamina": 59,
+    "charisma": 56,
+    "promo_skill": 58,
+    "overness": 54,
+    "star_quality": 54,
+    "potential": 51,
+    "durability": 73,
+    "consistency": 78
+   },
+   "gimmick_category": "Speaks to the Manager",
+   "gimmick": "A Canadian who demands to speak to the manager of every match she loses.",
+   "catchphrase": "I want to speak to the MANAGER.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2012,
+   "finisher": "The Complaint Form",
+   "finisher_description": "A double-arm DDT that leaves a form to fill in.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 38000,
+    "weeks_left": 62,
+    "push": "midcarder",
+    "brand": "slap"
+   },
+   "finisher_move": "Double-arm DDT"
+  },
+  {
+   "id": "king_kayode",
+   "ring_name": "King Kayode",
+   "gender": "M",
+   "disposition": "heel",
+   "style": "powerhouse",
+   "age": 28,
+   "hometown": "Lagos",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 93,
+    "technical": 75,
+    "aerial": 66,
+    "stamina": 77,
+    "charisma": 76,
+    "promo_skill": 76,
+    "overness": 81,
+    "star_quality": 76,
+    "potential": 82,
+    "durability": 70,
+    "consistency": 76
+   },
+   "gimmick_category": "Ruler of NOT YET",
+   "gimmick": "A towering Nigerian who lifts men like luggage and wonders why the main roster has not called.",
+   "catchphrase": "The king does not ask.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2019,
+   "finisher": "The Royal Drop",
+   "finisher_description": "A pop-up powerbomb from shoulder height.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 165000,
+    "weeks_left": 132,
+    "push": "main_eventer",
+    "brand": "notyet"
+   },
+   "finisher_move": "Pop-up powerbomb"
+  },
+  {
+   "id": "whoop_wallace",
+   "ring_name": "Whoop Wallace",
+   "gender": "M",
+   "disposition": "face",
+   "style": "all_rounder",
+   "age": 32,
+   "hometown": "Columbia",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 79,
+    "technical": 79,
+    "aerial": 70,
+    "stamina": 81,
+    "charisma": 57,
+    "promo_skill": 65,
+    "overness": 66,
+    "star_quality": 70,
+    "potential": 68,
+    "durability": 69,
+    "consistency": 73
+   },
+   "gimmick_category": "The Song the Crowd Sings",
+   "gimmick": "A charismatic leaper the crowd sings about, whether he wants them to or not.",
+   "catchphrase": "WHOOP! WHOOP!",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2015,
+   "finisher": "The Whistle Kick",
+   "finisher_description": "A running kick to the face, delivered with a whistle.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 165000,
+    "weeks_left": 34,
+    "push": "main_eventer",
+    "brand": "notyet"
+   },
+   "finisher_move": "Running kick"
+  },
+  {
+   "id": "young_og_jaylen",
+   "ring_name": "Young OG Jaylen",
+   "gender": "M",
+   "disposition": "face",
+   "style": "flyer",
+   "age": 21,
+   "hometown": "Durham",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 66,
+    "technical": 77,
+    "aerial": 83,
+    "stamina": 79,
+    "charisma": 63,
+    "promo_skill": 53,
+    "overness": 68,
+    "star_quality": 67,
+    "potential": 79,
+    "durability": 69,
+    "consistency": 77
+   },
+   "gimmick_category": "The Young Old Head",
+   "gimmick": "The youngest man in the building, who flips like he has no bones and a lot of years left.",
+   "catchphrase": "Young. Old head. Next.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2025,
+   "finisher": "The Backflip Cutter",
+   "finisher_description": "A springboard cutter with a backflip on the way down.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 38000,
+    "weeks_left": 54,
+    "push": "midcarder",
+    "brand": "notyet"
+   },
+   "finisher_move": "Springboard cutter"
+  },
+  {
+   "id": "eli_everest",
+   "ring_name": "Egomaniac Eli Everest",
+   "gender": "M",
+   "disposition": "heel",
+   "style": "technician",
+   "age": 37,
+   "hometown": "Hamilton",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 73,
+    "technical": 78,
+    "aerial": 68,
+    "stamina": 78,
+    "charisma": 67,
+    "promo_skill": 54,
+    "overness": 70,
+    "star_quality": 68,
+    "potential": 66,
+    "durability": 72,
+    "consistency": 82
+   },
+   "gimmick_category": "Self-Published Legend",
+   "gimmick": "A veteran who writes his own reviews and they are glowing.",
+   "catchphrase": "Read my book. I wrote it.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2010,
+   "finisher": "The Ego Driver",
+   "finisher_description": "A spinning driver into the mat, with an autograph.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 70000,
+    "weeks_left": 130,
+    "push": "upper_midcarder",
+    "brand": "notyet"
+   },
+   "finisher_move": "Spinning driver"
+  },
+  {
+   "id": "juggernaut_josie",
+   "ring_name": "Juggernaut Josie",
+   "gender": "F",
+   "disposition": "face",
+   "style": "powerhouse",
+   "age": 30,
+   "hometown": "Austin",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 83,
+    "technical": 75,
+    "aerial": 63,
+    "stamina": 76,
+    "charisma": 72,
+    "promo_skill": 68,
+    "overness": 76,
+    "star_quality": 79,
+    "potential": 85,
+    "durability": 84,
+    "consistency": 77
+   },
+   "gimmick_category": "Lifts Everything",
+   "gimmick": "A powerhouse who lifts men in her spare time and women in her main time.",
+   "catchphrase": "Pump. Lift. Repeat.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2017,
+   "finisher": "The Freight Train",
+   "finisher_description": "A fireman's carry into a driver.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 165000,
+    "weeks_left": 138,
+    "push": "main_eventer",
+    "brand": "notyet"
+   },
+   "finisher_move": "Fireman's carry driver"
+  },
+  {
+   "id": "la_primera_paloma",
+   "ring_name": "La Primera Paloma",
+   "gender": "F",
+   "disposition": "face",
+   "style": "technician",
+   "age": 33,
+   "hometown": "Santiago",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 83,
+    "technical": 90,
+    "aerial": 84,
+    "stamina": 84,
+    "charisma": 70,
+    "promo_skill": 78,
+    "overness": 81,
+    "star_quality": 76,
+    "potential": 77,
+    "durability": 76,
+    "consistency": 81
+   },
+   "gimmick_category": "Champion of Three Continents",
+   "gimmick": "A Chilean technician who has held titles on three continents and plans a fourth.",
+   "catchphrase": "First. Always.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2014,
+   "finisher": "The Chilean Smooch",
+   "finisher_description": "A face-down submission with a lifted leg.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 165000,
+    "weeks_left": 134,
+    "push": "main_eventer",
+    "brand": "notyet"
+   },
+   "finisher_move": "Face-down leg-lift submission"
+  },
+  {
+   "id": "pixie_paz",
+   "ring_name": "Prodigy Pixie Paz",
+   "gender": "F",
+   "disposition": "heel",
+   "style": "flyer",
+   "age": 24,
+   "hometown": "Laredo",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 69,
+    "technical": 78,
+    "aerial": 80,
+    "stamina": 80,
+    "charisma": 67,
+    "promo_skill": 54,
+    "overness": 68,
+    "star_quality": 70,
+    "potential": 78,
+    "durability": 74,
+    "consistency": 84
+   },
+   "gimmick_category": "The Prodigy Who Peaked",
+   "gimmick": "A gifted young star who was told she was the future and now acts like it is overdue.",
+   "catchphrase": "The future is now. And annoyed.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2023,
+   "finisher": "The Fizzy Driver",
+   "finisher_description": "A spinning cradle into a driver.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 70000,
+    "weeks_left": 76,
+    "push": "upper_midcarder",
+    "brand": "notyet"
+   },
+   "finisher_move": "Spinning cradle driver"
+  },
+  {
+   "id": "the_cerebral_shovel",
+   "ring_name": "The Cerebral Shovel",
+   "gender": "M",
+   "disposition": "heel",
+   "style": "brawler",
+   "age": 57,
+   "hometown": "Nashua",
+   "roles": [
+    "booker",
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 94,
+    "technical": 77,
+    "aerial": 37,
+    "stamina": 40,
+    "charisma": 79,
+    "promo_skill": 80,
+    "overness": 83,
+    "star_quality": 83,
+    "potential": 76,
+    "durability": 31,
+    "consistency": 80
+   },
+   "gimmick_category": "Chief Content Officer",
+   "gimmick": "A former champion who runs creative and swears the old days are over while booking the old days.",
+   "catchphrase": "Board meeting's in session.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 1995,
+   "finisher": "The Family Tree",
+   "finisher_description": "A double underhook facebuster, bloodline not included.",
+   "legend": true,
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 165000,
+    "weeks_left": 30,
+    "push": "main_eventer"
+   },
+   "finisher_move": "Double underhook facebuster"
+  },
+  {
+   "id": "chad_champ",
+   "ring_name": "Chad Champ, the Invisible Franchise",
+   "gender": "M",
+   "disposition": "face",
+   "style": "powerhouse",
+   "age": 49,
+   "hometown": "West Newbury",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 92,
+    "technical": 86,
+    "aerial": 55,
+    "stamina": 58,
+    "charisma": 79,
+    "promo_skill": 89,
+    "overness": 92,
+    "star_quality": 88,
+    "potential": 93,
+    "durability": 51,
+    "consistency": 82
+   },
+   "gimmick_category": "Retired Face of the Company",
+   "gimmick": "The face of the company for twenty years, retired after a farewell tour, and very easy to miss in a crowd.",
+   "catchphrase": "Did anybody see that? No? Good.",
+   "peak_years": [
+    28,
+    38
+   ],
+   "debut_year": 1998,
+   "finisher": "The Mood Changer",
+   "finisher_description": "A fireman's carry into a body slam, with a salute nobody saw.",
+   "legend": true,
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 206250.0,
+    "weeks_left": 134,
+    "push": "main_eventer"
+   },
+   "finisher_move": "Fireman's carry slam"
+  },
+  {
+   "id": "al_gavel",
+   "ring_name": "Al Gavel",
+   "gender": "M",
+   "disposition": "face",
+   "style": "technician",
+   "age": 47,
+   "hometown": "Chicago",
+   "roles": [
+    "booker"
+   ],
+   "ratings": {
+    "brawling": 43,
+    "technical": 61,
+    "aerial": 35,
+    "stamina": 38,
+    "charisma": 30,
+    "promo_skill": 37,
+    "overness": 35,
+    "star_quality": 38,
+    "potential": 37,
+    "durability": 52,
+    "consistency": 73
+   },
+   "gimmick_category": "Exhausted General Manager",
+   "gimmick": "The RAWR general manager, who shouts for security into a microphone forty times a night.",
+   "catchphrase": "Security! SECURITY!",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2000,
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 28000,
+    "weeks_left": 32,
+    "push": "non_wrestler"
+   }
+  },
+  {
+   "id": "nigel_strictly",
+   "ring_name": "Nigel Strictly",
+   "gender": "M",
+   "disposition": "face",
+   "style": "technician",
+   "age": 39,
+   "hometown": "King's Lynn",
+   "roles": [
+    "booker"
+   ],
+   "ratings": {
+    "brawling": 45,
+    "technical": 58,
+    "aerial": 49,
+    "stamina": 58,
+    "charisma": 33,
+    "promo_skill": 34,
+    "overness": 36,
+    "star_quality": 36,
+    "potential": 38,
+    "durability": 66,
+    "consistency": 68
+   },
+   "gimmick_category": "Stern General Manager",
+   "gimmick": "The SlapDown general manager, a British former champion who is disappointed in all of you.",
+   "catchphrase": "This is not a debate.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2008,
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 28000,
+    "weeks_left": 104,
+    "push": "non_wrestler"
+   }
+  },
+  {
+   "id": "marty_ohmy",
+   "ring_name": "Marty Ohmy",
+   "gender": "M",
+   "disposition": "face",
+   "style": "entertainer",
+   "age": 58,
+   "hometown": "Kansas City",
+   "roles": [
+    "announcer"
+   ],
+   "ratings": {
+    "brawling": 46,
+    "technical": 45,
+    "aerial": 1,
+    "stamina": 11,
+    "charisma": 46,
+    "promo_skill": 48,
+    "overness": 36,
+    "star_quality": 36,
+    "potential": 41,
+    "durability": 42,
+    "consistency": 75
+   },
+   "gimmick_category": "Voice of the Company",
+   "gimmick": "Has called every big moment for thirty years and says 'oh my' about all of them.",
+   "catchphrase": "Oh my... oh my.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 1995,
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 28000,
+    "weeks_left": 46,
+    "push": "non_wrestler"
+   }
+  },
+  {
+   "id": "punter_pete",
+   "ring_name": "Punter Pete",
+   "gender": "M",
+   "disposition": "face",
+   "style": "entertainer",
+   "age": 39,
+   "hometown": "Plum",
+   "roles": [
+    "announcer"
+   ],
+   "ratings": {
+    "brawling": 44,
+    "technical": 41,
+    "aerial": 35,
+    "stamina": 49,
+    "charisma": 40,
+    "promo_skill": 48,
+    "overness": 41,
+    "star_quality": 39,
+    "potential": 39,
+    "durability": 71,
+    "consistency": 72
+   },
+   "gimmick_category": "Shouting Sports Guy",
+   "gimmick": "A former kicker who yells on commentary and occasionally kicks somebody.",
+   "catchphrase": "BANGER!",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2008,
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 28000,
+    "weeks_left": 76,
+    "push": "non_wrestler"
+   }
+  }
+ ],
+ "teams": [
+  {
+   "id": "wwx_sour_daze",
+   "name": "The Sour Daze",
+   "kind": "tag",
+   "member_ids": [
+    "kojo_crown",
+    "xerxes_woodwind"
+   ],
+   "experience": 95,
+   "chemistry": 9
+  },
+  {
+   "id": "wwx_block_party_boys",
+   "name": "The Block Party Boys",
+   "kind": "tag",
+   "member_ids": [
+    "block_party_ace",
+    "block_party_deuce"
+   ],
+   "experience": 85,
+   "chemistry": 8
+  },
+  {
+   "id": "wwx_the_vision_board",
+   "name": "The Vision Board",
+   "kind": "stable",
+   "member_ids": [
+    "velvet_visionary",
+    "brick_breakwater",
+    "big_tad_tsunami"
+   ],
+   "leader_id": "velvet_visionary"
+  },
+  {
+   "id": "wwx_judgment_daze",
+   "name": "The Judgment Daze",
+   "kind": "stable",
+   "member_ids": [
+    "declan_demonne",
+    "dirty_junior",
+    "jp_punchbagan",
+    "big_rosa_ruiz",
+    "vendetta_viv"
+   ],
+   "leader_id": "declan_demonne"
+  },
+  {
+   "id": "wwx_the_family_tree",
+   "name": "The Family Tree",
+   "kind": "stable",
+   "member_ids": [
+    "silent_sione",
+    "big_iosefa"
+   ],
+   "leader_id": "silent_sione"
+  }
+ ]
+}
