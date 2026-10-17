@@ -3,6 +3,7 @@
 import { G, ui, pref, reduceMotion, redraw, closeModal, openModal, popCard } from './store';
 import { lightDraws } from './kit/lights';
 import { roadMapDraws } from './kit/roadmap';
+import { arenaDraws } from './kit/arena';
 import { HOT, SECTIONS, sectionOf, go } from './nav';
 import { book } from './flow';
 
@@ -210,5 +211,5 @@ export function initInput() {
     const k = e.key.length === 1 ? e.key.toLowerCase() : '';
     if (HOT[k]) { e.preventDefault(); go(HOT[k]); }
   });
-  (window as any).EWF_DEBUG = { state: () => G.S, render: redraw, go, pad: padPress, nav: NAV, ui, lights: lightDraws, maps: roadMapDraws };
+  (window as any).EWF_DEBUG = { state: () => G.S, render: redraw, go, pad: padPress, nav: NAV, ui, lights: lightDraws, maps: roadMapDraws, arena: arenaDraws };
 }

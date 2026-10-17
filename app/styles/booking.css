@@ -207,3 +207,7 @@ html[data-screen="tablet"] .lv-body{grid-template-columns:minmax(0,1fr) clamp(28
 .edlists{display:grid;grid-template-columns:repeat(auto-fit,minmax(24ch,1fr));gap:8px 2ch}.edlists textarea{width:100%;background:var(--k);color:var(--yellow);border:1px solid var(--grey);font:inherit}
 /* After the show: a detail line never runs past three lines, so the pane cannot run over on a tablet */
 [data-t="night-detail"] > *{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+/* the arena in 3D on the broadcast (src/kit/arena.tsx): a band between the heading and the commentary */
+.lv-arena,.live1 .arena{flex:0 1 42%;min-height:6em;position:relative;border:.12em solid var(--dcyan);background:#05060c;overflow:hidden}
+.live1 .arena canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+.live1.tight .arena{display:none}

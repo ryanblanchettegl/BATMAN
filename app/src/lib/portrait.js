@@ -178,4 +178,5 @@ function draw(canvas, face, opt) {
   ctx.putImageData(img, 0, 0);
 }
 
-export { N, draw, derive, norm, NAMES, PARTS };
+function skinOf(t) { return pal(SKIN, t); }
+export { N, draw, derive, norm, NAMES, PARTS, skinOf };

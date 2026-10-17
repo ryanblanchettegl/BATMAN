@@ -19,13 +19,16 @@ if(fs.existsSync(path.join(appDir,'node_modules','esbuild'))){
   // add-ons: self-contained scripts appended after the interface (app/addons/*.js), each in its own script tag
   const addDir=path.join(appDir,'addons');
   const addons=fs.existsSync(addDir)?fs.readdirSync(addDir).filter(f=>f.endsWith('.js')).sort().map(f=>'\n<script>\n'+fs.readFileSync(path.join(addDir,f),'utf8').replace(/<\/script/gi,'<\\/script')+'</script>').join(''):'';
+  // 3D models made in Blender (app/models/*.glb), embedded so the page still fetches nothing: window.EWF_MODELS[name] is the file in base64
+  const modDir=path.join(appDir,'models');
+  const models=fs.existsSync(modDir)?fs.readdirSync(modDir).filter(f=>f.endsWith('.glb')).sort().map(f=>JSON.stringify(f.slice(0,-4))+':"'+fs.readFileSync(path.join(modDir,f)).toString('base64')+'"').join(','):'';
   const next=`<title>EWF Wrestling Manager</title>
 <style>
 ${font}${blocks}${css}</style>
 <div id="app"></div>
 <script>
 window.GP_UNIVERSE=${rd('universes/public_domain.json').replace(/<\//g,'<\\/')};
-window.GP_UNIVERSE_PARODY=${rd('universes/parody.json').replace(/<\//g,'<\\/')};</script>
+window.GP_UNIVERSE_PARODY=${rd('universes/parody.json').replace(/<\//g,'<\\/')};${models?'\nwindow.EWF_MODELS={'+models+'};':''}</script>
 <script>
 ${engine}</script>
 <script>

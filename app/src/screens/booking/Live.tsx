@@ -9,7 +9,8 @@
 import { ComponentChildren } from 'preact';
 import { useEffect, useLayoutEffect, useState } from 'preact/hooks';
 import { E } from '../../engine';
-import { G, ui, me, pref } from '../../store';
+import { G, ui, me, pref, savePrefs, redraw, reduceMotion } from '../../store';
+import { Arena, ArenaFig } from '../../kit/arena';
 import { book } from '../../flow';
 import { Btn, KV, Meter, Banner, BeltArt, Portrait, CheckLine, stars, grade } from '../../kit';
 import { Verdict, OddsLine, FxList, Crowd } from './Report';
@@ -191,6 +192,19 @@ function Night(p: { rows: NRow[]; at: number; done: boolean; wait: number; call:
 }
 const DOT = ' · ';
 
+/** What the 3D arena shows at this point of the broadcast, all of it read from the show. */
+function arenaProps(r: any, s: any, at: number, done: boolean, state: string) {
+  const S = G.S, bc: Beat[] = s && s.bc || [], ids: number[] = s && s.ids || [], ns = s && s.sidesN ? s.sidesN.length : 0, per = ns && ids.length % ns === 0 ? ids.length / ns : ids.length || 1;
+  const heat = state === 'title' ? 45 : (state === 'signoff' ? 60 : (!s ? 40 : (s.k === 'match' ? (done ? s.cr || 0 : crowdAt(s, at)) : (done ? s.ov || 40 : 35 + Math.min(at, 6) * 5))));
+  const beat = s && !done && at < bc.length ? bc[at] : null;
+  const figs: ArenaFig[] = state === 'seg' ? ids.slice(0, 8).map((id, i) => {
+    const w = S.w[id], side = ns ? Math.floor(i / per) : 0; if (!w) return null;
+    return { id, side, align: w.twn ? 'N' : w.align, skin: w.face && w.face.sk != null ? w.face.sk : (id * 37) % 100, g: w.g, win: done && !!s.win && s.sidesN && s.sidesN[side] === s.win };
+  }).filter(Boolean) as ArenaFig[] : [];
+  return { att: r.att || 0, cap: r.cap || r.att || 1, heat, hot: beat && beat.h ? (r.segs.indexOf(s) + 1) * 1000 + at : 0, gold: !!(s && s.change && done), show: r.name || '', figs };
+}
+function arenaToggle() { pref.arena = !pref.arena; savePrefs(); redraw(); }
+
 export function Live(p: { r: any }) {
   const r = p.r, air = onAir(), ev = liveCall(), S = G.S, info = air ? E.liveInfo(S) : null;
   // a game loaded with a show on the air picks up where the show had got to
@@ -245,9 +259,10 @@ export function Live(p: { r: any }) {
     <div class="lv-body">
       <div class="lv-main">
         {head}
+        {pref.arena && !ev ? <Arena {...arenaProps(r, s, L.b, done, state)} still={reduceMotion()} /> : null}
         <div class={'lv-log' + (state === 'title' || state === 'signoff' ? ' mid' : '')}><div class="lv-lines">{log}</div></div>
         {box}
-        {ev ? null : <div class="foot">{foot}<Btn kind="sm" t="live-auto" on={!!pref.auto} onClick={autoToggle}>{pref.auto ? 'Auto-play: on' : 'Auto-play: off'}</Btn>{pref.auto ? <Btn kind="sm" t="live-pace" onClick={paceNext}>{'Pace: ' + PACE_N[pref.pace]}</Btn> : null}<span class="blink" aria-hidden="true">_</span><span class="keys-hint">{state === 'signoff' ? 'Space: after the show' : (pref.auto ? (state === 'title' ? 'Space: ring the bell. The show then runs itself and stops for your calls' : 'Running itself. Space: next now. P: pause') : 'Space or Enter: on with the show. P: auto-play')}</span></div>}
+        {ev ? null : <div class="foot">{foot}<Btn kind="sm" t="live-arena" on={!!pref.arena} onClick={arenaToggle}>{pref.arena ? 'Arena: on' : 'Arena: off'}</Btn><Btn kind="sm" t="live-auto" on={!!pref.auto} onClick={autoToggle}>{pref.auto ? 'Auto-play: on' : 'Auto-play: off'}</Btn>{pref.auto ? <Btn kind="sm" t="live-pace" onClick={paceNext}>{'Pace: ' + PACE_N[pref.pace]}</Btn> : null}<span class="blink" aria-hidden="true">_</span><span class="keys-hint">{state === 'signoff' ? 'Space: after the show' : (pref.auto ? (state === 'title' ? 'Space: ring the bell. The show then runs itself and stops for your calls' : 'Running itself. Space: next now. P: pause') : 'Space or Enter: on with the show. P: auto-play')}</span></div>}
       </div>
       <Night rows={rows} at={post ? ev.si : L.s} done={done || !!post} wait={ev && !post ? info.step : -1} call={!!ev} info={info} />
     </div>

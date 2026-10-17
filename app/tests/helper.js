@@ -23,13 +23,13 @@ function serve() {
 const SHOTS = process.env.SHOTS || require('os').tmpdir();   // where screenshots go
 const VIEWPORTS = { desk: { viewport: { width: 1280, height: 860 } }, tablet: { viewport: { width: 1024, height: 768 }, hasTouch: true, isMobile: true }, tv: { viewport: { width: 1920, height: 1080 } } };
 
-/** Open the game. opts: { mode: 'desk'|'tablet'|'tv', file: 'index', promo: 'pdw' or null to stay on the title screen, name } */
+/** Open the game. opts: { mode: 'desk'|'tablet'|'tv', file: 'index', promo: 'pdw' or null to stay on the title screen, name, arena: true for the 3D arena on the broadcast (off in tests unless asked: drawing it in software is slow) } */
 async function open(opts) {
   opts = opts || {};
   const mode = opts.mode || 'desk', browser = await chromium.launch(), ctx = await browser.newContext(VIEWPORTS[mode]), page = await ctx.newPage(), errs = [];
   page.on('console', m => { if (m.type() === 'error' && !/ERR_TUNNEL|Failed to load resource/.test(m.text())) errs.push('console: ' + m.text().slice(0, 300)); });
   page.on('pageerror', e => errs.push('pageerror: ' + e.message));
-  await page.addInitScript(p => { try { if (!localStorage.getItem('gorilla-position-prefs')) localStorage.setItem('gorilla-position-prefs', JSON.stringify(p)); } catch (e) {} }, Object.assign({ boot: false, letter: false, auto: !!opts.auto, uni: opts.uni || 'public_domain', u2: true }, opts.prefs || {}, mode === 'tv' ? { screen: 'tv' } : {}));
+  await page.addInitScript(p => { try { if (!localStorage.getItem('gorilla-position-prefs')) localStorage.setItem('gorilla-position-prefs', JSON.stringify(p)); } catch (e) {} }, Object.assign({ boot: false, letter: false, auto: !!opts.auto, arena: !!opts.arena, uni: opts.uni || 'public_domain', u2: true }, opts.prefs || {}, mode === 'tv' ? { screen: 'tv' } : {}));
   await page.goto('http://127.0.0.1:' + (await serve()) + '/' + (opts.file || 'index') + '.html');
   await page.waitForSelector('.logo-box');
   if (opts.promo !== null) {
