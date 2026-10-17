@@ -5,6 +5,42 @@ there has ever been, in an art style of the game's own that pops.
 
 This is a concept for Ryan to pick through. Nothing here is built yet. The open questions are at the end.
 
+**Decided, 17 October (Ryan):** construction paper is the style, and it replaces the pixel portraits. The 3D ring
+waits until later. The first concept sheet is `docs/mockups/paper/portraits-1.png` (four made-up wrestlers) with
+a close-up in `portrait-closeup.png`, rendered in Blender by `tools/creator/paper-concept.py` in about ten seconds.
+Sections 1 to 3 below were written before the pick; where they say papier-mache, read construction paper.
+
+### What the concept sheet shows
+
+- A portrait is a stack of shapes cut from coloured card, about twenty pieces: two background cards in the side's
+  colours, shoulders, gear, neck, ears, head, a darker piece for the shade down one cheek, eyes (white, iris,
+  pupil, and a punched dot of light), brows, nose and nostrils, mouth, beard and moustache, hair, and extras
+  (earrings, freckles, face paint, a mask with its trim). The name is on a white strip along the bottom.
+- Every edge is cut by hand: short straight snips, each a little off the line. The cut edge shows the paler core
+  of the card. Each piece sits a little above the one under it, so light from the upper left leaves a soft shadow
+  round it.
+- Faces are the side colours of today's portraits: a hero on blue, a villain on maroon, in between on grey (purple
+  and other colours for a custom card).
+
+### What this means for how it is built
+
+Construction paper is flat pieces in layers, so a portrait does not need a 3D model in the game at all. Every
+piece is a shape worked out from the recipe's numbers (a head outline from its width, jaw and chin, an eye from
+its size and tilt), and the game can draw it straight onto a canvas: the piece, its shadow, the pale edge and the
+paper grain. That keeps the page small, draws fast on a tablet, and keeps today's rule that a portrait is numbers
+in the save and never an image file. Blender stays the place where the look is worked out and where the shapes for
+the parts library (hair, beards, masks, paint) are drawn and checked, and it renders the large pictures (match
+moments, the box art).
+
+So the order of work in section 6 becomes:
+
+1. The concept sheet (done) and Ryan's notes on it.
+2. A paper portrait drawn by the game from a recipe, on the kit sheet, beside the Blender picture of the same
+   recipe, until the two match.
+3. The recipe: the numbers, and every wrestler in both worlds given one (today's eight numbers carried across).
+4. Paper portraits everywhere the pixel faces are now.
+5. The creator pop-up, then the parts library filled out (section 2).
+
 ## 1. The art style: Ringside Papercraft
 
 Every wrestler is a handmade toy. The body is papier-mache: strips of newsprint pasted over a form, painted, with
