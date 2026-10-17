@@ -1,19 +1,19 @@
 {
  "rescue": {
   "start": "428288a49987a43a799f8b6911443435",
-  "end": "3deb92102526ab83b0541f132382f29e",
+  "end": "a5985124ff1558a2f058a97e33077ea5",
   "week": 11,
   "res": {
    "ok": false,
    "text": "The company ran out of money before the 26 weeks were up.",
    "figures": [
-    "Cash $-793,894 (target $1.5M)"
+    "Cash $-903,354 (target $1.5M)"
    ]
   }
  },
  "champion": {
   "start": "5ab8f2a21a3103ea28246f628e741dce",
-  "end": "ee7f7774d9ae449669459957e282afd6",
+  "end": "426e4becc933beeae77099de6aed55f4",
   "week": 40,
   "res": {
    "ok": false,
@@ -25,14 +25,14 @@
  },
  "war": {
   "start": "97957102109490bac5f8524c765c7f93",
-  "end": "218406f2dcebb75138cf71073c924927",
+  "end": "a3303787b4fa9f676bf0abcea96dc82e",
   "week": 27,
   "res": {
    "ok": false,
-   "text": "You lost the ratings war: your shows averaged -1.6 against expectations, theirs +3.5.",
+   "text": "You lost the ratings war: your shows averaged -1.4 against expectations, theirs +4.1.",
    "figures": [
-    "Your shows: -1.6 against expectations",
-    "Theirs: +3.5"
+    "Your shows: -1.4 against expectations",
+    "Theirs: +4.1"
    ]
   }
  }

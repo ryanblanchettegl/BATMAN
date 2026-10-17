@@ -109,6 +109,13 @@ function Secrets() {
     {K.leaks.length ? <ul class="list">{K.leaks.map((x: any, i: number) => <li key={i}><span>{x.when}: {x.t}.</span></li>)}</ul> : <p class="muted">Nothing has leaked.</p>}
   </Panel>;
 }
+/** The writers' room: who writes, in what style, who has the pen this month, and where each stands with you. */
+function Writers() {
+  const L = E.writers(G.S);
+  return <Panel title={'The writers\u2019 room'}>
+    <ul class="list" data-t="writers">{L.map((w: any) => <li key={w.id}><span class="clamp"><b>{w.name}</b>{w.head ? ', head writer' : ''}{w.pen ? <span class="gold"> {'·'} has the pen</span> : null} <span class="muted">{'·'} writes {w.style} {'·'} {w.strong}, {w.mood} {'·'} {w.you >= 10 ? 'on your side' : (w.you <= -10 ? 'cool on you' : 'neutral')}</span></span></li>)}</ul>
+  </Panel>;
+}
 const PARTS: { id: string; n: string; body: () => ComponentChildren }[] = [
   { id: 'setup', n: 'How it runs', body: () => <Setup /> },
   { id: 'income', n: 'Where the money came from', body: () => <IncomeBar /> },
@@ -117,7 +124,7 @@ const PARTS: { id: string; n: string; body: () => ComponentChildren }[] = [
   { id: 'rules', n: 'House rules', body: () => <Rules /> },
   { id: 'sponsors', n: 'Sponsors', body: () => <Sponsors /> },
   { id: 'cities', n: 'Your cities', body: () => <Cities /> },
-  { id: 'secrets', n: 'What the public knows', body: () => <Secrets /> }
+  { id: 'secrets', n: 'Behind the curtain', body: () => <><Secrets /><Writers /></> }
 ];
 /** Every city on the road: the market in words and the last night there. */
 function Cities() {

@@ -83,3 +83,4 @@ One line per file in `src/`, in build order: what it owns, then the `E.` functio
 - **99-royal.js**: wraps: 31-live.js (it must sort after them; test-buildorder.js checks) `E.brSize`, `E.brShot`, `E.brSurprise`, `E.brSurpriseInfo`, `E.liveBegin`, `E.lockMatch`, `E.moveMatchTo`, `E.suggestKeep`
 - **99-suggest-flat.js**: wraps: 90-api.js (it must sort after them; test-buildorder.js checks) `E.suggest`, `E.suggestSmart`
 - **99-tonight.js**: What could happen tonight (roadmap 7, Ryan 16 October). `E.couldHappen`
+- **99-writers.js**: The writers' room (the add-ons run, item 6). `E.writers`

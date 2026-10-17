@@ -46,7 +46,7 @@ WEEKX.push(function(S){
   // the weekly column on your last show, coloured by how its writer feels about you
   var rep=(S.reports||[]).filter(function(x){return x.promo===S.player&&x.week===S.week;})[0];if(!rep)return;
   var c=X.rep[S.week%X.rep.length],tone=c.warm+c.bias*0.5+(repCS(rep)-70)*1.5,g=gradeG(repCS(rep)),line;
-  var pk=function(L){return L[Math.floor(h01(S.seed+':col:'+S.week)*L.length)];};
+  var pk=function(L){return L[Math.floor(h01(S.seed+':col:'+S.week+':'+c.id+rep.name)*L.length)];};
   if(tone>=25){line=c.name+' on '+rep.name+' ('+g+'): '+pk(['"The office knows what it is doing."','"Whoever books this has a plan, and it shows."','"Worth the ticket. Worth the next one too."']);S.hype=(S.hype||0)+0.02;}
   else if(tone<=-25){line=c.name+' on '+rep.name+' ('+g+'): '+pk(['"Somebody should be asking who books this."','"Three hours I will not get back."','"The talent deserves better than this office."']);S.hype=(S.hype||0)-0.02;if(c.grudge>=60&&!S.owner.me)S.owner.trust=clamp(S.owner.trust-1,0,100);}
   else line=c.name+' on '+rep.name+' ('+g+'): '+pk(['"It was a wrestling show."','"Some of it worked. Some of it was filler."','"Nothing to write home about, nothing to complain about."']);

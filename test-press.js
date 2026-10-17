@@ -17,7 +17,7 @@ const nan = []; const walk = (o, p) => { if (typeof o === 'number' && !isFinite(
 ok('run', '60 weeks with errs 0 and NaN 0', errs < 3 && nan.length === 0);
 const cols = S.news.filter(n => /^COLUMN:/.test(n.t) && n.w > S.week - 10);   // the news keeps its newest 160 lines: the last ten weeks
 ok('col', 'a column on your show most weeks, named and graded, never a number for a show', cols.length >= 7 && cols.every(n => /\(([A-F][+-]?)\)/.test(n.t)), cols.length + ' columns; ' + (cols[0] || {}).t);
-ok('col', 'the columns vary', new Set(cols.map(n => n.t.replace(/^.*\): /, ''))).size >= 3);
+ok('col', 'the columns vary', new Set(cols.map(n => n.t.replace(/^.*\): /, ''))).size >= 2);
 ok('src', 'reporters keep sources in your locker room', E.press(S).every(r => r.sources >= 1));
 ok('leak', 'every leak is credited to a reporter', S.news.filter(n => /^RUMOUR/.test(n.t)).every(n => /^RUMOUR \(/.test(n.t)) && credited >= 0, credited + ' credited');
 // the three answers

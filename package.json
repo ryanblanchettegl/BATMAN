@@ -1,6 +1,6 @@
 {
   "name": "ewf-wrestling-manager",
-  "version": "0.81.0",
+  "version": "0.82.0",
   "description": "EWF Wrestling Manager: a wrestling booking sim",
   "main": "desktop/main.js",
   "scripts": {

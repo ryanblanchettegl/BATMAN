@@ -7,7 +7,7 @@ const fs = require('fs'), E = globalThis.GP, GP_ember = (S, f) => E.feudEmber(S,
 E.suggest = E.suggestSmart;
 E.useUniverse(JSON.parse(fs.readFileSync('universes/public_domain.json', 'utf8')));
 let fails = 0; const ok = (c, m) => { if (!c) { fails++; console.log('  FAIL ' + m); } };
-const week = S => { S.inbox.filter(e => !e.done).forEach(e => E.resolveEvent(S, e.id, 0)); if (S.owner.pending) E.setCreed(S, { style: 'merit', roots: 'tradition', pledge: 'stable' });
+const week = S => { S.inbox.filter(e => !e.done).forEach(e => E.resolveEvent(S, e.id, e.type === 'wroom' ? 2 : 0));   // the writers' room has its own test if (S.owner.pending) E.setCreed(S, { style: 'merit', roots: 'tradition', pledge: 'stable' });
   while (S.qi < S.queue.length) { const c = E.suggest(S), pr = E.preShow(S, c); if (pr) { E.resolvePre(S, c, 0); E.fitShow(S, c); } if (E.validate(S, c).errors.length) { S.qi++; continue; } E.runPlayerShow(S, c); } E.endWeek(S); };
 let longest = 0, fizz = 0, rivalEnds = 0, stale = 0, ripe = 0;
 for (const pi of [0, 1, 2]) {
