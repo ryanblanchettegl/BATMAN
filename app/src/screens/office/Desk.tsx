@@ -28,6 +28,8 @@ function alerts(): ComponentChildren[] {
   R.filter(w => w.con <= 8).sort(byOvr).slice(0, 5).forEach(w => out.push(<><Name w={w} />{'’'}s contract ends in {Math.max(0, w.con)} {w.con === 1 ? 'week' : 'weeks'}.</>));
   R.filter(w => (w.stress || 0) >= 60).slice(0, 4).forEach(w => out.push(<><Name w={w} /> is under strain (stress {Math.round(w.stress)}).</>));
   R.filter(w => w.morale < 40).slice(0, 4).forEach(w => out.push(<><Name w={w} /> is unhappy (morale {Math.round(w.morale)}).</>));
+  // the secrets come first among what is worth knowing: they change quietly and nothing else says so
+  { const K = E.kayfabe(S); if (K.kept.length || K.prot < 60) out.unshift(<span class={K.prot < 40 ? 'bad' : undefined} data-t="kf-line">Secrets: {K.line}</span>); }
   return out;
 }
 

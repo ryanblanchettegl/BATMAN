@@ -77,6 +77,7 @@ One line per file in `src/`, in build order: what it owns, then the `E.` functio
 - **99-arcs.js**: Company arcs (roadmap 11, Ryan 16 October). `E.ARCS`, `E.arcInfo`, `E.arcStart`
 - **99-debut.js**: Book a debut (roadmap 9, Ryan 16 October). `E.DEBUT`, `E.debuts`, `E.debutPlan`
 - **99-fog.js**: wraps: 90-api.js (it must sort after them; test-buildorder.js checks) `E.agentReads`, `E.fogInfo`, `E.segLook`, `E.segInfo`, `E.setSeg`, `E.cardFlags`, `E.validate`, `E.suggest`
+- **99-kayfabe.js**: The kayfabe layer (the add-ons run, item 3). `E.kayfabe`
 - **99-points.js**: wraps: 65-you.js (it must sort after them; test-buildorder.js checks) `E.pointsInfo`
 - **99-royal.js**: wraps: 31-live.js (it must sort after them; test-buildorder.js checks) `E.brSize`, `E.brShot`, `E.brSurprise`, `E.brSurpriseInfo`, `E.liveBegin`, `E.lockMatch`, `E.moveMatchTo`, `E.suggestKeep`
 - **99-suggest-flat.js**: wraps: 90-api.js (it must sort after them; test-buildorder.js checks) `E.suggest`, `E.suggestSmart`

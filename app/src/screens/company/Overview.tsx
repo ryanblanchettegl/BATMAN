@@ -98,6 +98,17 @@ function IncomeBar() {
   </Panel>;
 }
 
+/** The kayfabe layer: how well the business keeps its secrets, what is being kept, and what got out. Information only. */
+function Secrets() {
+  const K = E.kayfabe(G.S);
+  return <Panel title="What the public knows">
+    <p data-t="kf-word"><b>{K.word}.</b></p>
+    <p class="eyebrow mt1">Kept for now</p>
+    {K.kept.length ? <ul class="list">{K.kept.map((x: any, i: number) => <li key={i}><span>{x.real}. <span class="muted">The public believes: {x.t}. Chance it gets out this week: {x.risk}%.</span></span></li>)}</ul> : <p class="muted">Nothing the public does not know.</p>}
+    <p class="eyebrow mt1">What got out</p>
+    {K.leaks.length ? <ul class="list">{K.leaks.map((x: any, i: number) => <li key={i}><span>{x.when}: {x.t}.</span></li>)}</ul> : <p class="muted">Nothing has leaked.</p>}
+  </Panel>;
+}
 const PARTS: { id: string; n: string; body: () => ComponentChildren }[] = [
   { id: 'setup', n: 'How it runs', body: () => <Setup /> },
   { id: 'income', n: 'Where the money came from', body: () => <IncomeBar /> },
@@ -105,7 +116,8 @@ const PARTS: { id: string; n: string; body: () => ComponentChildren }[] = [
   { id: 'owner', n: 'Ownership', body: () => <Ownership /> },
   { id: 'rules', n: 'House rules', body: () => <Rules /> },
   { id: 'sponsors', n: 'Sponsors', body: () => <Sponsors /> },
-  { id: 'cities', n: 'Your cities', body: () => <Cities /> }
+  { id: 'cities', n: 'Your cities', body: () => <Cities /> },
+  { id: 'secrets', n: 'What the public knows', body: () => <Secrets /> }
 ];
 /** Every city on the road: the market in words and the last night there. */
 function Cities() {
