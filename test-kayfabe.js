@@ -27,7 +27,7 @@ ok('words', 'a leak names what was believed and what is true, with no unfilled s
   const ev = S.inbox.find(e => e.type === 'leak' && !e.done);
   ok('leak', 'an unhappy star in a room that does not trust you leaks within weeks', !!ev, ev && ev.text.slice(0, 90));
   if (ev) { const p0 = S.kf.prot; const r = E.resolveEvent(S, ev.id, 1); ok('answer', 'working it into the story mends the secrets a little', S.kf.prot > p0 && /story/.test(r), r);
-    ok('news', 'the leak reached the dirt sheet', S.news.some(n => /^RUMOUR:/.test(n.t)));
+    ok('news', 'the leak reached the dirt sheet', S.news.some(n => /^RUMOUR/.test(n.t)));
     ok('mem', 'the person it was about remembers', JSON.stringify(S.rmY || {}).indexOf('leak') >= 0); } }
 const A = E.newGame('pdw', 7, { name: 'R' }), B = E.newGame('pdw', 7, { name: 'R' });
 for (const T of [A, B]) for (let w = 0; w < 30; w++) { T.inbox.filter(e => !e.done).forEach(e => E.resolveEvent(T, e.id, 1)); while (T.qi < T.queue.length) { const c = E.suggest(T); if (E.validate(T, c).errors.length) { T.qi++; continue; } E.runPlayerShow(T, c); } E.endWeek(T); }

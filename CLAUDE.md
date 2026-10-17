@@ -46,6 +46,7 @@ node test-buildorder.js                             # a file that wraps another 
 node test-archive.js                                # career-scale saves: old records fold into summaries once a year; four years play with errs 0 and NaN 0
 node test-scenarios.js                              # scenarios as data: each built-in one plays exactly as before, a world package can bring its own
 node test-kayfabe.js                                # the kayfabe layer: secrets kept, leaks, the answers, what the desk and Company read
+node test-press.js                                  # the press: reporters with beats and sources, leaks credited, a weekly column, court, freeze and feed
 node tools/build-public-domain.js                   # rebuild universes/public_domain.json after editing rosters
 python3 tools/build-font.py                         # rebuild app/fonts/ewf-blocks.woff2 (needs fonttools, brotli)
 MAPS_MODULES=<dir>/node_modules node tools/build-maps.js   # rebuild src/91-maps.js (needs world-atlas, us-atlas, topojson-client installed in <dir>)

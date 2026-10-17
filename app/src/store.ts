@@ -2,7 +2,7 @@
 import { E, GameState } from './engine';
 
 export const KEY = 'ewf9000-save-4', UKEY = 'ewf9000-universes', PKEY = 'gorilla-position-prefs';
-export const VER = '0.80';
+export const VER = '0.81';
 
 /* ---------- preferences ---------- */
 export interface Prefs { snd: boolean; type: boolean; crt: boolean; boot: boolean; letter: boolean; screen: 'auto' | 'desk' | 'tablet' | 'tv'; zoom: number; speed: number; auto: boolean; pace: 'full' | 'quick' | 'results'; motion: 'auto' | 'reduce' | 'full'; fxvol: number; uni: string ; u2?: boolean }

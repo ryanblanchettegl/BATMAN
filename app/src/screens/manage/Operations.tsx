@@ -195,6 +195,15 @@ export function ExportWindow(p: { m: Modal }) {
   </Window>;
 }
 
+/** The press: each reporter, their beat, how they feel about you, and the three things you can do with them. */
+function Press() {
+  const S = G.S, L = E.press(S);
+  const run = (id: number, k: string) => act(() => { const r = E.pressDo(S, id, k); say(r.msg, { err: !r.ok }); });
+  return <div data-t="press">{L.map((r: any) => <div key={r.id} class="mt1">
+    <p><b>{r.name}</b> <span class="muted">{'·'} {r.beat} {'·'} {r.word}{r.grudge ? ' · ' + r.grudge : ''}{r.frozen ? ' · frozen out' : ''} {'·'} {r.sources} {r.sources === 1 ? 'source' : 'sources'} in your locker room</span></p>
+    <p class="row">{r.acts.map((a: any) => <Btn key={a.k} kind="sm" t="press-do" d={{ id: r.id, k: a.k }} disabled={!a.can} onClick={() => run(r.id, a.k)}>{a.n}{a.cost ? ' (' + cash(a.cost) + ')' : ''}</Btn>)}</p>
+  </div>)}</div>;
+}
 /* Every choice on Manage is a button. The button says what it is and where it stands now; pressing it opens a pop-up
    with the choices (Ryan, 6 October). A tile is: an id, a name, what it is set to now, and the body of its pop-up. */
 interface Tile { id: string; n: string; now: () => string; d: string; body: () => any }
@@ -236,7 +245,8 @@ function tiles(page: string): { grp: string; list: Tile[] }[] {
       { id: 'money', n: 'Loans and investors', now: () => P.loan ? 'A loan is running' : 'No loan', d: 'Borrow against the company, or bring money in.', body: () => <Money /> },
       { id: 'forsale', n: 'For sale', now: () => 'The market', d: 'What can be bought or sold right now.', body: () => <ForSale /> }] },
     { grp: 'The other companies', list: [
-      { id: 'rivals', n: 'Rivals', now: () => (S.order.length - 1) + ' companies', d: 'Where you stand with each rival, and what can be done with them.', body: () => <RivalsPanel /> }] }];
+      { id: 'rivals', n: 'Rivals', now: () => (S.order.length - 1) + ' companies', d: 'Where you stand with each rival, and what can be done with them.', body: () => <RivalsPanel /> },
+      { id: 'press', n: 'The press', now: () => { const L = E.press(S), f = L.filter((r: any) => r.word === 'friendly' || r.word === 'fair to you').length; return L.length + ' reporters, ' + f + ' on your side'; }, d: 'The reporters who write about you: court one, freeze one out, or feed one a story.', body: () => <Press /> }] }];
 }
 function Tiles(p: { page: string }) {
   // for the browser tests of the choices themselves: every pop-up's body laid out on the page, as it was before the buttons

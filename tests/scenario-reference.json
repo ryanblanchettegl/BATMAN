@@ -1,19 +1,19 @@
 {
  "rescue": {
   "start": "428288a49987a43a799f8b6911443435",
-  "end": "68efc089ef3152be182e401541930e75",
+  "end": "3deb92102526ab83b0541f132382f29e",
   "week": 11,
   "res": {
    "ok": false,
    "text": "The company ran out of money before the 26 weeks were up.",
    "figures": [
-    "Cash $-792,940 (target $1.5M)"
+    "Cash $-793,894 (target $1.5M)"
    ]
   }
  },
  "champion": {
   "start": "5ab8f2a21a3103ea28246f628e741dce",
-  "end": "f01dc1c9cf56ddd3a9c76214d4bf0676",
+  "end": "ee7f7774d9ae449669459957e282afd6",
   "week": 40,
   "res": {
    "ok": false,
@@ -25,7 +25,7 @@
  },
  "war": {
   "start": "97957102109490bac5f8524c765c7f93",
-  "end": "4d1e6e05751c93ce65fbe2db26fd0b19",
+  "end": "218406f2dcebb75138cf71073c924927",
   "week": 27,
   "res": {
    "ok": false,
