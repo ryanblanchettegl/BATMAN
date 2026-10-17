@@ -2,12 +2,18 @@
 import { ComponentChildren } from 'preact';
 import { E } from '../../engine';
 import { G, me, openModal, slice, view } from '../../store';
+import { ReviewBody } from '../office/Desk';
 import { Head, Panel, Empty, stars, Txt, Btn, grade, Name, Desktop, Win, ListBox, Row as KRow } from '../../kit';
 
 const wk = (w: number): string => E.cal(Math.max(1, w)).label;
 /** One line of a list: what it is on the left, the figure on the right. */
 function Row(p: { children: ComponentChildren; v: ComponentChildren }) { return <li><span>{p.children}</span><span class="num muted">{p.v}</span></li>; }
 
+/** The season in review (post-mortems): the year's causes, kept for the history books. */
+function SeasonReviews() {
+  const L = E.seasonReviews(G.S); if (!L.length) return null;
+  return <Panel title="The season in review"><div data-t="pm-season">{L.slice(0, 1).map((r: any, i: number) => <div key={i}><p class="eyebrow">{r.label}</p><ReviewBody r={r} /></div>)}</div></Panel>;
+}
 function Chronicles() {
   const L = G.S.chron || [];
   return <Panel title="Season chronicles">
@@ -154,7 +160,7 @@ const BOOKS: { id: string; n: string; body: () => ComponentChildren }[] = [
   { id: 'awards', n: 'Year-end awards', body: () => <Awards /> },
   { id: 'power', n: "The year's top 25", body: () => <PowerYears /> },
   { id: 'hof', n: 'Hall of fame', body: () => <HallOfFame /> },
-  { id: 'chron', n: 'Season chronicles', body: () => <Chronicles /> }
+  { id: 'chron', n: 'Season chronicles', body: () => <><SeasonReviews /><Chronicles /></> }
 ];
 export function History() {
   const P = me();

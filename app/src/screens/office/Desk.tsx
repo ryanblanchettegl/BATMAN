@@ -28,6 +28,7 @@ function alerts(): ComponentChildren[] {
   R.filter(w => w.con <= 8).sort(byOvr).slice(0, 5).forEach(w => out.push(<><Name w={w} />{'’'}s contract ends in {Math.max(0, w.con)} {w.con === 1 ? 'week' : 'weeks'}.</>));
   R.filter(w => (w.stress || 0) >= 60).slice(0, 4).forEach(w => out.push(<><Name w={w} /> is under strain (stress {Math.round(w.stress)}).</>));
   R.filter(w => w.morale < 40).slice(0, 4).forEach(w => out.push(<><Name w={w} /> is unhappy (morale {Math.round(w.morale)}).</>));
+  { const M = E.monthReview(S); if (M && M.unread) out.unshift(<button type="button" class="lnk" data-t="pm-open" onClick={() => { act(() => { E.readMonth(S); }); openModal({ kind: 'pmmonth' }); }}><span data-t="pm-line">{M.r.label} in review: what went well, what went badly, and why.</span></button>); }
   // the secrets come first among what is worth knowing: they change quietly and nothing else says so
   { const K = E.kayfabe(S); if (K.kept.length || K.prot < 60) out.unshift(<span class={K.prot < 40 ? 'bad' : undefined} data-t="kf-line">Secrets: {K.line}</span>); }
   return out;
@@ -86,6 +87,20 @@ function Road() {
   </Win>;
 }
 /** The stops ahead, in a pop-up: when, which show, where, and how big a building it is. */
+/** The month in review (post-mortems): what went well, what went badly, and why. Read once, it leaves the desk. */
+export function ReviewBody(p: { r: any }) {
+  const r = p.r, part = (h: string, L: any[], k: string) => <div class="mt1"><p class="eyebrow">{h}</p>{L.slice(0, 4).map((x: any, i: number) => <p key={i} class={'clamp ' + k}><Txt>{x.t + (x.why ? '. ' + x.why : '')}</Txt></p>)}</div>;
+  return <div data-t="pm-body">
+    {r.money ? <p class={r.money.good ? 'good' : 'bad'}><Txt>{r.money.lines.join(' ')}</Txt></p> : null}
+    {r.owner ? <p class="mt1"><Txt>{r.owner}</Txt></p> : null}
+    {part('What went well', r.well, 'good')}{part('What went badly', r.badly, 'bad')}
+  </div>;
+}
+export function MonthWindow(_p: { m: Modal }) {
+  const S = G.S, M = E.monthReview(S);
+  if (!M) return <Window title="The month in review"><Empty>The first month is not over yet.</Empty></Window>;
+  return <Window title={M.r.label + ' in review'} wide ok="Done"><ReviewBody r={M.r} /></Window>;
+}
 export function RoadYearWindow() {
   const S = G.S, L: any[] = E.roadAhead(S, 16), R: string[] = E.roadRoute(S);
   return <Window title="The schedule" wide ok="Done">
