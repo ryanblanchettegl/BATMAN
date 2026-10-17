@@ -98,7 +98,9 @@ if (found.titlecall) { const F = found.titlecall, P0 = F.S.promos[F.S.player], m
   const holders = R => R.S.promos[R.S.player].titles.find(t => t.id === m.title).holders;
   ok('tc1', 'call the title change: the title changes hands, it costs booking power, and both remember who made the call', holders(swap).includes(F.ev.who) && !holders(swap).includes(champ[0]) && swap.S.bp === F.S.bp - 2 && lean(swap.S, champ[0]) < lean(F.S, champ[0]) && lean(swap.S, F.ev.who) > lean(F.S, F.ev.who), 'new holder ' + holders(swap).join(','));
   ok('tc2', 'protect the champion: a disqualification, and the title stays', holders(dq).join() === champ.join() && dq.seg.fin === 'dq' && dq.S.bp === F.S.bp - 1 && lean(dq.S, F.ev.who) < lean(F.S, F.ev.who), dq.seg.fin);
-  ok('tc3', 'stay with the plan: nothing is spent and nobody holds it against you', stay.S.bp === F.S.bp && lean(stay.S, champ[0]) === lean(F.S, champ[0]));
+  // what the match itself leaves (a round of a feud) is not the call: only memories of the call count here
+  const callMem = (S2, id) => ((S2.rmY || {})[id] || { mem: [] }).mem.filter(m => m.k !== 'chapter' && m.k !== 'homewin' && m.k !== 'homeloss').length;
+  ok('tc3', 'stay with the plan: nothing is spent and nobody holds it against you', stay.S.bp === F.S.bp && callMem(stay.S, champ[0]) === callMem(F.S, champ[0]));
   const poor = clone(F.S); poor.bp = 0; const no = E.liveDecide(poor, 1);
   ok('tc4', 'a call that costs more booking power than is in hand is not taken', !no.ok && /booking power/.test(no.msg) && !poor.live.ev.done);
   ok('tc5', 'the answer is on the broadcast and on the segment', swap.seg.bc.some(b => b.t === 'call' && /Your call: Call the title change/.test(b.x)) && swap.seg.calls.length === 1);

@@ -56,7 +56,7 @@ function Road() {
       <div class="rmid">
         <p class="bl big one" data-t="road-city">{N.city.toUpperCase()}{N.land ? ', ' + N.land.toUpperCase() : ''}</p>
         <p class="one" data-t="road-show"><b>{N.venue}</b>{N.big ? <> <Tag kind="gold">{N.kind || 'Big event'}</Tag></> : null} <span class="muted">{'·'} {N.later ? 'next week. Every show this week has run.' : (N.left > 1 ? 'the first of ' + N.left + ' shows left this week' : 'the last show this week')}</span></p>
-        <Group title={(G.S.soRun || 0) >= 2 ? 'The building: ' + G.S.soRun + ' sell-outs running' : 'The building'} t="road-building">
+        <Group title={(G.S.soRun || 0) >= 2 ? 'The building: ' + G.S.soRun + ' sell-outs running' : 'The building' + ((() => { const B = E.buildingWords(G.S); return B && B.short !== 'nothing special' ? ': ' + B.short : ''; })())} t="road-building">
           <Line label="Sold" w={12}><b class="bl">{num(N.sold)}</b> of {num(N.cap)} <Meter v={N.sold / N.cap * 100} n={8} kind={N.sold >= N.cap ? 'au' : 'cool'} />{N.sold >= N.cap ? <b class="good"> Sold out</b> : null}</Line>
           <Line label="This week" w={12}>{N.wk > 0 ? <span class="good">{'▲'} {num(N.wk)} sold</span> : <span class="muted">Nothing sold yet</span>}</Line>
           <Line label="Gate so far" w={12}>${num(N.gate)} <span class="muted">at ${num(N.seat)} a seat</span></Line>

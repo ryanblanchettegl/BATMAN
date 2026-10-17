@@ -80,6 +80,7 @@ export function CouldWindow(_p: { m: Modal }) {
     {part('Who is at risk', 'could-risk', C.risk, 'Nobody on the card looks at risk.')}
     {part('What it sets up', 'could-sets', C.sets, 'This card does not move a story on.')}
     {part('What it leaves cold', 'could-cold', C.cold, 'Nothing hot is left off.')}
+    {(() => { const B = E.buildingWords(G.S); return B && B.words.length ? <Group title="The building" t="could-building"><p class="clamp">{B.words.join('; ')}.</p></Group> : null; })()}
     {C.gut ? <p class="agentsay" data-t="could-gut">{C.gut}</p> : null}
   </Window>;
 }
