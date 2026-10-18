@@ -185,7 +185,7 @@ E.newGame=function(playerId,seed,opts){
     stats:{shows:0,matches:0,run:0,feudsDone:0,bestMatch:0,bestShow:0},said:[],h2h:{},trust:60,ledger:[],sponsors:[],spOffers:[],slotAsk:-99,hype:0,rateMod:0,reports:[],queue:[],qi:0,card:[],over:null,nid:1,recent:{},fin:null};
   var cur={promo:'FA',brand:null},byName={};
   CAL0={y:DB.startYear,m:DB.startMonth};
-  S.db={startYear:DB.startYear,startMonth:DB.startMonth,events:DB.events,rules:DB.rules||null,indie:DB.indie,sponsors:DB.sponsors||null,columnists:DB.columnists||null,uni:DB.uni||null,fictional:!!DB.fictional};
+  S.db={startYear:DB.startYear,startMonth:DB.startMonth,events:DB.events,rules:DB.rules||null,indie:DB.indie,sponsors:DB.sponsors||null,columnists:DB.columnists||null,scenes:DB.scenes||null,uni:DB.uni||null,fictional:!!DB.fictional};
   var preset=[];
   if(DB.rows)DB.rows.forEach(function(d){var w=addWrestler(S,d,d.promo||'FA',d.brand||null);byName[w.name]=w.id;byName['#'+d.uid]=w.id;if(d.wage||d.con||d.tw!=null)preset.push([w,d]);});
   else DB.roster.split('\n').forEach(function(line){
@@ -7605,7 +7605,7 @@ function buildDB(pkg){
   var ev=[];for(var m=0;m<12;m++)ev.push(MONTHS[m]+' Showcase');(pkg.events||[]).forEach(function(e){if(e.month>=1&&e.month<=12)ev[e.month-1]=e.name;});
   var nm=pkg.names||{};
   return {fictional:!!man.fictional,uni:{id:man.id,name:man.name,version:String(man.version||'1'),author:man.author||'',desc:man.description||''},startYear:man.start_year||2026,startMonth:clamp((man.start_month||10)-1,0,11),
-    events:ev,rules:(pkg.events||[]).reduce(function(o,e){if(e.rule)o[e.month-1]=e.rule;return o;},{}),sponsors:pkg.sponsors&&pkg.sponsors.length?pkg.sponsors:null,columnists:pkg.columnists&&pkg.columnists.length?pkg.columnists:null,
+    events:ev,rules:(pkg.events||[]).reduce(function(o,e){if(e.rule)o[e.month-1]=e.rule;return o;},{}),sponsors:pkg.sponsors&&pkg.sponsors.length?pkg.sponsors:null,columnists:pkg.columnists&&pkg.columnists.length?pkg.columnists:null,scenes:Array.isArray(pkg.scenes)&&pkg.scenes.length?pkg.scenes:null,
     indie:{firstM:nm.first_m&&nm.first_m.length>=8?nm.first_m:FALLBACK_NAMES.firstM,firstF:nm.first_f&&nm.first_f.length>=6?nm.first_f:FALLBACK_NAMES.firstF,last:nm.last&&nm.last.length>=8?nm.last:FALLBACK_NAMES.last},
     freeAgents:man.free_agents!=null?clamp(man.free_agents,0,120):36,promotions:promos,rows:rows,stables:stables,rels:(pkg.relationships||[]).filter(function(r){return W[r.a]&&W[r.b];})};
 }
@@ -7636,7 +7636,7 @@ E.exportUniverse=function(S,meta){
   S.w.forEach(function(w){if(w.rt)return;var u=w.uid&&ID_RE.test(w.uid)&&!used[w.uid]?w.uid:slug(w.name)||'worker';if(u.length<2)u='w_'+u;var b=u,n=2;while(used[u])u=(b.slice(0,36)+'_'+(n++));used[u]=1;uid[w.id]=u;});
   var c0=cal(S.week),pkg={manifest:{id:slug(meta.id||meta.name||'my_universe')||'my_universe',name:meta.name||'My universe',author:meta.author||(S.booker?S.booker.name:''),version:meta.version||'1.0',schema_version:SCHEMA_VERSION,fictional:!!d.fictional,start_year:c0.year,start_month:c0.month+1,free_agents:0,description:meta.description||'Exported from Elite Wrestling Federation 9000, '+c0.label+'.'},
     promotions:[],shows:[],titles:[],workers:[],contracts:[],teams:[],relationships:[],events:d.events.map(function(n,i){var o={month:i+1,name:n};if(d.rules&&d.rules[i])o.rule=d.rules[i];return o;}),names:{first_m:d.indie.firstM,first_f:d.indie.firstF,last:d.indie.last}};
-  if(d.sponsors)pkg.sponsors=d.sponsors;if(d.columnists)pkg.columnists=d.columnists;
+  if(d.sponsors)pkg.sponsors=d.sponsors;if(d.columnists)pkg.columnists=d.columnists;if(d.scenes)pkg.scenes=d.scenes;
   S.order.forEach(function(id){
     var P=P0[id],own=id===S.player?{name:S.owner.name,style:S.owner.style,roots:S.owner.roots,pledge:S.owner.pledge}:(P.owner||{name:'The owner',style:P.style||'stars',roots:'tradition',pledge:'pay'});
     var o={id:pid(id),name:P.name,blurb:P.blurb||'',owner:own,staff:{road_agent:P.staff.agent,head_writer:P.staff.writer},announcers:P.ann.slice(),cities:P.cities.slice(),cash:Math.round(P.cash),popularity:r1(P.image),work_rate_weight:P.wq,angles_per_show:P.angles,wage_scale:P.wageMult,tv_rate:P.tvRate,production_cost:P.prod,target_weekly_net:P.net,flagship_month:P.flagship+1,production_level:P.prodLvl,risk_level:P.risk,tv_slot:P.slot};
@@ -8545,6 +8545,23 @@ EVR.chant=function(S,ev,choice,P,w){
   var f=startFeud(S,P,w,lead,45,w.name+' answered the crowd’s call against '+lead.name,{force:true});return f?'The chant becomes a story: '+w.name+' against '+lead.name+'.':'They were already feuding, and the chant fed it.';
 };
 E.crowdCity=function(S,rep){var c=showCity(rep);return {city:c,diehard:diehard(S,c)};};
+
+/* ===== 86-scenes.js ===== */
+/* ---------- scenes in a world (Create a Scene, docs/plans/papercraft-engine.md, sections 4 and 5) ----------
+   A world package can carry `scenes`: the pictures of moments made in Create a Scene, which sits in the World
+   Editor. Each is plain data (a set, slots, keyframes; the interface in app/src/kit/scene.ts reads and draws it).
+   A new game keeps the world's scenes in S.db, so the broadcast plays them, and writing the world out keeps them.
+   Nothing here plays a part in how a game goes, and nothing calls rnd(S). */
+function sceneOk(sc){return !!sc&&sc.v===1&&typeof sc.id==='string'&&/^[a-z0-9_-]{1,48}$/i.test(sc.id)&&typeof sc.name==='string'&&Array.isArray(sc.slots)&&Array.isArray(sc.keys)&&sc.keys.length>0&&sc.keys.length<=40&&
+  sc.keys.every(function(k){return typeof k.t==='number'&&k.figs&&typeof k.figs==='object'&&Array.isArray(k.props);});}
+/** The scenes a world carries, made in Create a Scene. */
+E.edScenes=function(pkg){return (pkg&&Array.isArray(pkg.scenes)?pkg.scenes:[]).filter(sceneOk);};
+/** Keep a scene in the world, in place of one with the same id. Returns false for anything that is not a scene. */
+E.edSetScene=function(pkg,sc){if(!pkg||!sceneOk(sc))return false;var a=Array.isArray(pkg.scenes)?pkg.scenes.filter(function(x){return x&&x.id!==sc.id;}):[];a.push(JSON.parse(JSON.stringify(sc)));pkg.scenes=a;return true;};
+E.edRemoveScene=function(pkg,id){if(pkg&&Array.isArray(pkg.scenes))pkg.scenes=pkg.scenes.filter(function(x){return x&&x.id!==id;});if(pkg&&pkg.scenes&&!pkg.scenes.length)delete pkg.scenes;};
+/** The scenes the world of this game carries (none for a world without any, or an old save). */
+E.worldScenes=function(S){var d=(S&&S.db)||DB;return d&&Array.isArray(d.scenes)?d.scenes.filter(sceneOk):[];};
+E.sceneOk=sceneOk;
 
 /* ===== 87-create.js ===== */
 /* A company grows: new weekly shows and new belts during a game, for the player and for rivals.

@@ -9,3 +9,7 @@ export function norm(face: Partial<Face> | null | undefined): Face;
 /** Style names for each part, ten per part. */
 export const NAMES: Record<FaceKey, string[]>;
 export const PARTS: Record<FaceKey, string>;
+/** The skin colour for a face's skin tone (0 to 100), as red, green and blue from 0 to 255. */
+export function skinOf(t: number): [number, number, number];
+/** The hair colour for a face's hair colour (0 to 100), as red, green and blue from 0 to 255. */
+export function hairOf(t: number): [number, number, number];

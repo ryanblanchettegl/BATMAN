@@ -11,6 +11,9 @@ import { WorldTab, ShareTab } from './World';
 import { CompaniesTab, ShowsTab } from './Companies';
 import { WrestlersTab } from './People';
 import { BeltsTab, TeamsTab } from './Belts';
+import { ScenesTab, keepScene, forgetScene } from './Scenes';
+import { SceneStudio, fromWorld } from '../scene';
+import { SCENES } from '../../kit/scene';
 
 /* Back steps out one level at a time: the open record, then the world, then the title screen. */
 onBack(() => {
@@ -70,10 +73,10 @@ function Home() {
   </>;
 }
 
-const TABS: [EdTab, string][] = [['world', 'World'], ['companies', 'Companies'], ['shows', 'Shows'], ['belts', 'Belts'], ['wrestlers', 'Wrestlers'], ['teams', 'Teams'], ['share', 'Check and share']];
+const TABS: [EdTab, string][] = [['world', 'World'], ['companies', 'Companies'], ['shows', 'Shows'], ['belts', 'Belts'], ['wrestlers', 'Wrestlers'], ['teams', 'Teams'], ['scenes', 'Scenes'], ['share', 'Check and share']];
 function Open() {
   const st = es(), pkg = world(), v = report();
-  const body = st.tab === 'world' ? <WorldTab /> : st.tab === 'companies' ? <CompaniesTab /> : st.tab === 'shows' ? <ShowsTab /> : st.tab === 'belts' ? <BeltsTab /> : st.tab === 'wrestlers' ? <WrestlersTab /> : st.tab === 'teams' ? <TeamsTab /> : <ShareTab />;
+  const body = st.tab === 'world' ? <WorldTab /> : st.tab === 'companies' ? <CompaniesTab /> : st.tab === 'shows' ? <ShowsTab /> : st.tab === 'belts' ? <BeltsTab /> : st.tab === 'wrestlers' ? <WrestlersTab /> : st.tab === 'teams' ? <TeamsTab /> : st.tab === 'scenes' ? <ScenesTab /> : <ShareTab />;
   return <>
     <Head eyebrow="World Editor" title={pkg.manifest.name || 'My world'} />
     <div class="row edtop mb2">
@@ -91,6 +94,11 @@ function Open() {
 export function Editor() {
   const st = es();
   if (st.id && !UNIS[st.id]) st.id = null;
+  if (st.id && st.scene) {   // Create a Scene, full screen, on the world being edited
+    const pkg = UNIS[st.id], mine = E.edScenes(pkg), start = st.scene === '__new' ? undefined : (mine.find((x: any) => x.id === st.scene) || SCENES.find(x => x.id === st.scene));
+    return <SceneStudio key={st.scene} world={pkg.manifest.name || 'this world'} roster={fromWorld(pkg)} saved={mine} start={start} blank={st.scene === '__new'}
+      onSave={keepScene} onForget={forgetScene} onDone={() => look(() => { st.scene = null; })} />;
+  }
   return <div class="crt"><StartMenu /><div class="start edpage">{st.id ? <Open /> : <Home />}</div>
     <div class="status"><span>World Editor</span><span class="opt">|</span><span class="opt">Changes are kept as you make them</span><span>Esc: back</span></div></div>;
 }

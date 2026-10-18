@@ -1,0 +1,115 @@
+/* Create a Scene and the scenes on the broadcast (app/src/screens/scene, app/src/kit/scene.ts).
+   The studio: it opens from the World Editor's Scenes tab, a person and a part of the body can be picked with the
+   pointer, the pins and the controls, turning and dragging change the pose, keyframes add and play, a scene saves in the world, a
+   file that is not a scene is refused, and the page fits one screen. The broadcast: with Scenes on, a match shows
+   a scene at the bell, the count at a near fall and the three at the finish; Scenes off takes it away.
+   Run: NODE_PATH=<dir containing playwright> node app/tests/scene.js   (MODES=desk,tablet,tv; SHOTS=<dir> keeps pictures) */
+const { open, go, state, fits, shot } = require('./helper');
+const MODES = (process.env.MODES || 'desk').split(',');
+const fails = [];
+const ok = (mode, label, pass, detail) => { console.log(mode.padEnd(6), pass ? 'ok  ' : 'FAIL', label + (detail ? ': ' + detail : '')); if (!pass) fails.push(mode + ' ' + label); };
+const has = async (page, sel) => !!(await page.$(sel));
+const attr = (page, sel, a) => page.$eval(sel, (e, a) => e.getAttribute(a), a).catch(() => null);
+
+async function studio(mode) {
+  const { browser, page, errs } = await open({ mode, promo: null });
+  try {
+    // Create a Scene is in the World Editor: a copy of a world, its Scenes tab
+    await page.click('[data-t="scr"][data-v="editor"]'); await page.click('[data-t="ed-new-copy"]');
+    await page.click('[data-t="ed-tab"][data-v="scenes"]');
+    ok(mode, 'the World Editor has a Scenes tab', await has(page, '[data-t="ed-scene-new"]'));
+    await page.click('[data-t="ed-scene-open"][data-id="lockup"]'); await page.waitForTimeout(400);
+    ok(mode, 'Create a Scene opens full screen on the stage', await has(page, '[data-t="scene-stage"]'));
+    ok(mode, 'the studio fits one screen', !(await fits(page)), await fits(page));
+    if (process.env.SHOTS) await shot(page, 'scene-' + mode + '-studio');
+    // pick a person, then a part by its pin, turn it, and see the angle move
+    await page.selectOption('[data-t="scene-who"]', 'A');
+    ok(mode, 'the picked person is drawn with a pin at every joint', (await page.$$eval('[data-t="scene-pin"]', a => a.length)) === 15, 'pins: ' + (await page.$$eval('[data-t="scene-pin"]', a => a.length)));
+    await page.click('[data-t="scene-pin"][data-v="sh_n"]');
+    ok(mode, 'pressing a pin picks that part', (await attr(page, '[data-t="scene-stage"]', 'data-sel')) === 'A:sh_n');
+    const a0 = +(await page.$eval('[data-t="scene-angle"]', e => e.textContent));
+    await page.click('[data-t="scene-turn"][data-v="15"]');
+    const a1 = +(await page.$eval('[data-t="scene-angle"]', e => e.textContent));
+    ok(mode, 'turning +15 turns the picked part', a1 === a0 + 15, a0 + ' to ' + a1);
+    await page.focus('[data-t="scene-stage"]'); await page.keyboard.press('ArrowLeft');
+    const a2 = +(await page.$eval('[data-t="scene-angle"]', e => e.textContent));
+    ok(mode, 'an arrow key on the stage turns the picked part', a2 === a1 + 5, a1 + ' to ' + a2);
+    // the pointer: dragging the part on the stage turns it
+    const box = await page.$eval('[data-t="scene-stage"]', e => { const r = e.getBoundingClientRect(); return { x: r.left, y: r.top, w: r.width, h: r.height }; });
+    await page.click('[data-t="scene-pin"][data-v="body"]');
+    const px = box.x + box.w * (0.5 + (-2.6 / 16)), py = box.y + box.h * (0.5 - (1.3 / 9));   // Wrestler A's chest at the first keyframe
+    await page.mouse.move(px, py); await page.mouse.down(); await page.mouse.move(px - 40, py, { steps: 4 }); await page.mouse.up();
+    ok(mode, 'pressing on a person on the stage picks them', /^A:/.test((await attr(page, '[data-t="scene-stage"]', 'data-sel')) || ''), await attr(page, '[data-t="scene-stage"]', 'data-sel'));
+    // the camera: zoom in, then drag an empty part of the stage to pan, then take a picture
+    await page.click('[data-t="scene-zoom"][data-v="in"]');
+    ok(mode, 'Zoom in moves the camera closer', (await page.$eval('[data-t="scene-zoomv"]', e => e.textContent)) === '125%', await page.$eval('[data-t="scene-zoomv"]', e => e.textContent));
+    const cam0 = await attr(page, '[data-t="scene-stage"]', 'data-cam');
+    const ex = box.x + box.w * 0.03, ey = box.y + box.h * 0.04;   // the top left corner, above the crowd: nothing to pick there
+    await page.mouse.move(ex, ey); await page.mouse.down(); await page.mouse.move(ex + 60, ey + 10, { steps: 4 }); await page.mouse.up();
+    const cam1 = await attr(page, '[data-t="scene-stage"]', 'data-cam');
+    ok(mode, 'a drag on an empty part of the stage pans the camera', cam1 !== cam0, cam0 + ' to ' + cam1);
+    const [dl] = await Promise.all([page.waitForEvent('download', { timeout: 8000 }), page.click('[data-t="scene-snap"]')]);
+    ok(mode, 'Take picture saves a picture', /\.png$/.test(dl.suggestedFilename()), dl.suggestedFilename());
+    await page.click('[data-t="scene-camreset"]');
+    ok(mode, 'Whole set puts the camera back', (await page.$eval('[data-t="scene-zoomv"]', e => e.textContent)) === '100%');
+    const k0 = await page.$$eval('[data-t="scene-key"]', a => a.length);
+    await page.click('[data-t="scene-addkey"]');
+    ok(mode, '+ Key adds a keyframe', (await page.$$eval('[data-t="scene-key"]', a => a.length)) === k0 + 1);
+    await page.click('[data-t="scene-play"]'); await page.waitForTimeout(300);
+    ok(mode, 'Play plays the scene', /Stop/.test(await page.$eval('[data-t="scene-play"]', e => e.textContent)));
+    await page.waitForTimeout(3200);
+    // a headline, then keep it in the world
+    await page.click('[data-t="scene-tab"][data-v="cast"]');
+    await page.selectOption('[data-t="scene-propkind"]', 'headline'); await page.fill('[data-t="scene-newwords"]', 'BREAKING NEWS'); await page.click('[data-t="scene-addprop"]');
+    ok(mode, 'a headline is added and picked', /:prop$/.test((await attr(page, '[data-t="scene-stage"]', 'data-sel')) || ''));
+    await page.click('[data-t="scene-tab"][data-v="file"]');
+    await page.fill('[data-t="scene-name"]', 'Test scene'); await page.selectOption('[data-t="scene-when"]', 'news');
+    await page.click('[data-t="scene-save"]');
+    ok(mode, 'Save keeps the scene in the world', /kept in/.test(await page.$eval('[data-t="scene-msg"]', e => e.textContent)), await page.$eval('[data-t="scene-msg"]', e => e.textContent));
+    await page.setInputFiles('[data-t="scene-file"]', { name: 'x.scene.json', mimeType: 'application/json', buffer: Buffer.from('{"hello":1}') });
+    await page.waitForTimeout(200);
+    ok(mode, 'a file that is not a scene is refused', /not a scene/.test(await page.$eval('[data-t="scene-msg"]', e => e.textContent)));
+    ok(mode, 'the studio still fits one screen', !(await fits(page)), await fits(page));
+    await page.click('[data-t="scene-done"]');
+    ok(mode, 'Done comes back to the Scenes tab, with the scene in the world', /Test scene/.test(await page.$eval('.edpage', e => e.textContent)));
+    ok(mode, 'no errors in the studio', !errs.length, errs.join(' | '));
+  } catch (e) { ok(mode, 'the studio run finished', false, e.message); }
+  await browser.close();
+}
+
+async function broadcast(mode) {
+  const { browser, page, errs } = await open({ mode, promo: 'pdw', pics: true });
+  try {
+    await go(page, 'booking'); await page.click('[data-t="suggest"]');
+    for (let k = 0; k < 6 && !(await has(page, '#live')); k++) { if (await has(page, '[data-t="pre"]')) await page.click('[data-t="pre"][data-c="0"]'); else await page.click('[data-t="advance"]'); await page.waitForTimeout(50); }
+    ok(mode, 'the show goes on the air', await has(page, '#live'));
+    const seen = new Set(); let shots = 0, fitBad = null;
+    for (let g = 0; g < 600; g++) {
+      if (await has(page, '[data-t="live-call"]')) {
+        ok(mode, 'a call takes the scene away', !(await has(page, '[data-t="live-scene"]')));
+        await page.waitForTimeout(430); const safe = await state(page, S => (S.live.ev && S.live.ev.safe) || 0);
+        await page.click('[data-t="live-pick"][data-c="' + safe + '"]'); continue;
+      }
+      if (await has(page, '#live[data-v="signoff"]')) break;
+      await page.click('[data-t="advance"]'); await page.waitForTimeout(40);
+      const v = await attr(page, '[data-t="live-scene"]', 'data-v');
+      if (v && !seen.has(v)) {
+        seen.add(v); await page.waitForTimeout(2600);
+        if (fitBad == null) fitBad = await fits(page);
+        if (process.env.SHOTS && shots++ < 8) await shot(page, 'scene-' + mode + '-live-' + v);
+      }
+    }
+    ok(mode, 'the bell brings the lock-up', seen.has('lockup'), [...seen].join(','));
+    ok(mode, 'a near fall brings the count', seen.has('nearfall'), [...seen].join(','));
+    ok(mode, 'a win brings the three count', seen.has('finish'), [...seen].join(','));
+    if (seen.has('promo')) ok(mode, 'a promo brings the microphone', true); else console.log(mode.padEnd(6), 'note', 'no promo with a speaker on this card, so the microphone scene was not seen');
+    ok(mode, 'the broadcast fits one screen with a scene on it', !fitBad, fitBad);
+    ok(mode, 'no errors on the broadcast', !errs.length, errs.join(' | '));
+  } catch (e) { ok(mode, 'the broadcast run finished', false, e.message); }
+  await browser.close();
+}
+(async () => {
+  for (const m of MODES) { await studio(m); await broadcast(m); }
+  console.log(fails.length ? 'FAILED: ' + fails.length : 'all scene checks passed');
+  process.exit(fails.length ? 1 : 0);
+})();
