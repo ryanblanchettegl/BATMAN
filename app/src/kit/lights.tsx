@@ -78,7 +78,7 @@ function picBoard(name: string): Board | null {
 /* ---------- lettering: a five by seven face, one light a pixel ---------- */
 /* Each letter is seven rows of five lights, a row as two hex digits. The game's own typeface does not survive being
    turned into dots at this size, so the board has a face of its own. */
-const FACE: Record<string, string> = {
+export const FACE: Record<string, string> = {
   A: '0E11111F111111', B: '1E11111E11111E', C: '0E11101010110E', D: '1E11111111111E', E: '1F10101E10101F', F: '1F10101E101010', G: '0E11101711110F',
   H: '1111111F111111', I: '0E04040404040E', J: '0702020202120C', K: '11121418141211', L: '1010101010101F', M: '111B1515111111', N: '11111915131111',
   O: '0E11111111110E', P: '1E11111E101010', Q: '0E11111115120D', R: '1E11111E141211', S: '0F10100E01011E', T: '1F040404040404', U: '1111111111110E',

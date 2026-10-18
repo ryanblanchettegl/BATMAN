@@ -40,3 +40,17 @@
 /* the camera row under the keyframes */
 .sc-cam .sc-lbl{color:var(--p-red,#c8322a);font-weight:bold;margin-right:.4ch}
 .sc-cam .sp{flex:1}
+/* Create a Player (app/src/screens/player): the wrestler on the left, the choices on the right */
+.cawpage{grid-template-columns:minmax(0,1.55fr) minmax(0,1fr)}
+.caw-stage{background:#0b0d1c}
+.caw-lbl{min-width:12ch}
+.cawpage input[type=range]{flex:1 1 8ch;min-width:6ch}
+.caw-chip{display:inline-block;width:1.4em;height:1.1em;border:2px solid #111;border-radius:.15em;box-shadow:.1em .12em 0 rgba(0,0,0,.4);flex:none}
+.caw-chip.foil{background-image:linear-gradient(135deg,rgba(255,255,255,.55),rgba(255,255,255,0) 45%,rgba(255,255,255,.6) 55%,rgba(0,0,0,.15))}
+.caw-chip.neon{box-shadow:0 0 .45em currentColor,.1em .12em 0 rgba(0,0,0,.4)}
+.caw-chip.corr{background-image:repeating-linear-gradient(90deg,rgba(0,0,0,.22) 0 2px,transparent 2px 6px)}
+.caw-chip.denim{background-image:repeating-linear-gradient(45deg,rgba(255,255,255,.18) 0 1px,transparent 1px 4px)}
+.cawpage .sc-row .muted{font-size:.9em}
+.caw-stage{position:relative}
+.caw-stage .lv-scene{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.caw-stage .lv-scene canvas{display:block}

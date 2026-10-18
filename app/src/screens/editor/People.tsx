@@ -23,6 +23,8 @@ function Looks(p: { w: any }) {
       <Field label="Skin tone"><input type="range" min={0} max={100} value={f.sk} {...dataAttrs('ed-face-sl', { k: 'sk' })} onInput={e => set('sk', +(e.currentTarget as HTMLInputElement).value)} /></Field>
       <Field label="Hair colour"><input type="range" min={0} max={100} value={f.hc} {...dataAttrs('ed-face-sl', { k: 'hc' })} onInput={e => set('hc', +(e.currentTarget as HTMLInputElement).value)} /></Field>
     </div>
+    <div class="row mt2"><Btn kind="go" t="ed-caw" onClick={() => look(() => { es().player = w.id; })}>{w.look ? 'Create a Player: change their file' : 'Create a Player'}</Btn>
+      {w.look ? <span class="muted">Drawn from their Create a Player file in every scene.</span> : null}</div>
     <div class="row mt2"><Btn kind="sm" t="ed-face-rnd" onClick={() => edit(() => { w.face = derive('ed' + Math.random(), w.gender, w.age || 28); })}>Random face</Btn>
       {w.face ? <Btn kind="sm" t="ed-face-auto" onClick={() => edit(() => { delete w.face; })}>Let the game draw it from the name</Btn> : null}</div>
   </Panel>;

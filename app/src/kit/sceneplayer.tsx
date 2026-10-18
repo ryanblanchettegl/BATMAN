@@ -12,15 +12,15 @@ let plays = 0;
 /** How many scenes have started on the broadcast since the page loaded (EWF_DEBUG.scenes). */
 export function scenePlays() { return plays; }
 
-export function ScenePlayer(p: { sc: Scene; cast: Record<string, Recipe>; play: string; still?: boolean; t?: string; label: string }) {
+export function ScenePlayer(p: { sc: Scene; cast: Record<string, Recipe>; play: string; still?: boolean; t?: string; label: string; orbit?: boolean; fill?: boolean }) {
   const box = useRef<HTMLDivElement>(null), cv = useRef<HTMLCanvasElement>(null), c3 = useRef<HTMLCanvasElement>(null), eng = useRef<Diorama3D | null>(null);
   const [size, setSize] = useState([0, 0]), [flat, setFlat] = useState(false);
   const props = useRef(p); props.current = p;
   useEffect(() => {
     const b = box.current; if (!b) return;
-    const fit = () => { const r = b.getBoundingClientRect(), w = Math.max(0, Math.floor(Math.min(r.width, r.height * 16 / 9))); setSize([w, Math.round(w * 9 / 16)]); };
+    const fit = () => { const r = b.getBoundingClientRect(); if (props.current.fill) { setSize([Math.floor(r.width), Math.floor(r.height)]); return; } const w = Math.max(0, Math.floor(Math.min(r.width, r.height * 16 / 9))); setSize([w, Math.round(w * 9 / 16)]); };
     fit(); const ro = new ResizeObserver(fit); ro.observe(b);
-    if (c3.current) { try { eng.current = new Diorama3D(c3.current, false); } catch (e) { eng.current = null; setFlat(true); } }
+    if (c3.current) { try { eng.current = new Diorama3D(c3.current, !!p.orbit); } catch (e) { eng.current = null; setFlat(true); } }
     return () => { ro.disconnect(); if (eng.current) eng.current.dispose(); eng.current = null; };
   }, []);
   useEffect(() => {

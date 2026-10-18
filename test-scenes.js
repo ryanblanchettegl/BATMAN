@@ -1,4 +1,5 @@
-/* Scenes in the engine: hooks, the parts of a scene the game fills from a moment of the show.  Run: node test-scenes.js */
+/* Scenes in the engine: hooks, the parts of a scene the game fills from a moment of the show; and Create a Player
+   files (a wrestler's look), checked, kept in a world, carried into a game and written out again.  Run: node test-scenes.js */
 require('./engine.js');
 const fs = require('fs'), E = globalThis.GP, fails = [], ok = (c, m) => { if (!c) fails.push(m); };
 E.useUniverse(JSON.parse(fs.readFileSync('universes/public_domain.json', 'utf8')));
@@ -37,5 +38,38 @@ if (tm) { h = E.sceneHooks(S, { ids: [tm.m[0], vil.id] }); ok(h.ally === tm.m[1]
 // nobody in the moment: nothing is filled, and nothing breaks
 h = E.sceneHooks(S, { ids: [] }); ok(h.hero == null && h.villain == null, 'an empty moment fills no parts');
 ok(Array.isArray(E.SCENE_HOOKS) && E.SCENE_HOOKS.includes('heel1'), 'the list of hooks');
-console.log(fails.length ? 'FAIL\n' + fails.join('\n') : 'ok: scene hooks');
+// Create a Player: Ryan's example file, word for word
+const RIP = { id: 'wrestler_uuid_98765', name: 'Rip Jackson', moniker: 'The Enforcer', hometown: 'Minneapolis, MN', archetype: 'Heavyweight',
+  physical_attributes: { height_inches: 76, weight_lbs: 275, body_archetype: 'Heavyweight_Powerhouse', proportional_scalers: { torso_width: 1.15, torso_height: 1.05, limb_length: 1.10, muscle_mass: 1.20 } },
+  attires: {
+    primary_ring: { description: 'In-Ring Gear', equipped_assets: { head: 'hair_buzz_01', upper_body: 'singlet_straps_down', lower_body: 'tights_long_01', footwear: 'boots_laced_heavy', accessories: ['wrist_tape_white'] },
+      palette_slots: { primary: 'swatch_black_matte', secondary: 'swatch_crimson_paper', trim: 'swatch_gold_foil' }, custom_layers: [{ type: 'shape_combiner', shape_id: 'tactical_vest_straps', placement: { x: 0, y: -5, z: 2 }, palette_slot: 'swatch_black_matte' }] },
+    entrance_gear: { description: 'Ring Walk / Entrance Attire', equipped_assets: { head: 'hair_buzz_01', upper_body: 'jacket_leather_biker', lower_body: 'tights_long_01', footwear: 'boots_laced_heavy', accessories: ['sunglasses_aviator'] },
+      palette_slots: { primary: 'swatch_black_matte', secondary: 'swatch_silver_foil', trim: 'swatch_leather_brown' }, custom_layers: [{ type: 'text_decal', string: 'ENFORCE', font: 'stencil_block', placement: { x: 0, y: -2, z: 3 }, palette_slot: 'swatch_white_paper' }] },
+    street_clothes: { description: 'Backstage / Promo Attire', equipped_assets: { head: 'hair_buzz_01', upper_body: 'shirt_tshirt_base', lower_body: 'jeans_distressed', footwear: 'sneakers_retro', accessories: [] },
+      palette_slots: { primary: 'swatch_blue_denim', secondary: 'swatch_charcoal_paper', trim: 'swatch_white_paper' }, custom_layers: [] } },
+  finishing_moves: [{ name: 'State Line Slam', impact_damage: 88, kickout_difficulty: 'Protected', position: 'Standing', category: 'Pinfall Impact', preview_pose_id: 'pose_slam_impact_01' }] };
+ok(E.lookOk(RIP), 'the example wrestler file is a look');
+const rc = E.lookClean(RIP);
+ok(rc.physical_attributes.height_inches === 76 && rc.physical_attributes.proportional_scalers.muscle_mass === 1.2, 'the body is kept');
+ok(rc.attires.primary_ring.equipped_assets.upper_body === 'singlet_straps_down' && rc.attires.entrance_gear.custom_layers[0].string === 'ENFORCE' && rc.attires.street_clothes.palette_slots.primary === 'swatch_blue_denim', 'the three outfits are kept, with their lettering and colours');
+ok(rc.finishing_moves[0].kickout_difficulty === 'Protected' && rc.finishing_moves[0].preview_pose_id === 'pose_slam_impact_01', 'the finishing move is kept');
+ok(JSON.stringify(E.lookClean(rc)) === JSON.stringify(rc), 'cleaning a clean file changes nothing');
+ok(!E.lookOk({ hello: 1 }) && !E.lookOk(null) && !E.lookOk([1, 2]) && !E.lookOk('x'), 'anything else is not a look');
+const odd = E.lookClean({ name: '<b>Big</b>' + 'x'.repeat(80), physical_attributes: { height_inches: 400, weight_lbs: -5 }, attires: { primary_ring: { equipped_assets: { upper_body: 'robe; drop', accessories: new Array(30).fill('knee_pads') }, palette_slots: { primary: 'swatch_gold_foil' }, custom_layers: [{ type: 'evil' }, { type: 'text_decal', string: '' }] } } });
+ok(odd.name.length <= 32 && odd.name.indexOf('<') < 0, 'a name is trimmed and has no markup');
+ok(odd.physical_attributes.height_inches === 96 && odd.physical_attributes.weight_lbs === 100, 'numbers are held in range');
+ok(!odd.attires.primary_ring.equipped_assets.upper_body && odd.attires.primary_ring.equipped_assets.accessories.length === 8 && odd.attires.primary_ring.custom_layers.length === 0, 'bad parts and empty lettering are left out');
+// kept on a worker in a world, carried into a game, written out again
+const pkg = JSON.parse(fs.readFileSync('universes/public_domain.json', 'utf8')), wk = pkg.workers.find(x => (pkg.contracts || []).some(c => c.worker_id === x.id && c.promotion_id === 'pdw'));
+ok(E.edSetLook(pkg, wk.id, RIP) && E.edLook(pkg, wk.id).name === 'Rip Jackson', 'a look is kept on a worker in the world');
+ok(!E.edSetLook(pkg, wk.id, { nope: 1 }) && E.edLook(pkg, wk.id).name === 'Rip Jackson', 'a bad file does not replace it');
+E.useUniverse(pkg);
+const G2 = E.newGame('pdw', 5, { name: 'R' }), gw = G2.w.find(x => x && x.name === wk.ring_name);
+ok(gw && gw.look && gw.look.finishing_moves[0].name === 'State Line Slam' && E.lookOf(G2, gw.id).name === 'Rip Jackson', 'a new game carries the look onto the wrestler');
+const out = E.exportUniverse(G2, {}), ow = out.workers.find(x => x.ring_name === wk.ring_name);
+ok(ow && ow.look && ow.look.attires.entrance_gear.equipped_assets.upper_body === 'jacket_leather_biker', 'writing the world out keeps the look');
+E.edRemoveLook(pkg, wk.id); ok(!E.edLook(pkg, wk.id), 'and a look can be taken off');
+const others = G2.w.filter(x => x && x.look && x.name !== wk.ring_name).length; ok(others === 0, 'nobody else wears a look');
+console.log(fails.length ? 'FAIL\n' + fails.join('\n') : 'ok: scene hooks and Create a Player files');
 process.exit(fails.length ? 1 : 0);

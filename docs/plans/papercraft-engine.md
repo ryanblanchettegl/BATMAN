@@ -94,7 +94,8 @@ The desktop build already has `steamworks.js` as an optional part.
 3. **The scene file and two canned scenes** (the lock-up, the cover) played on the broadcast at the right
    moments.
 4. **The record in section 2** in the save and the world packages, with the migration.
-5. **Create a wrestler** in the paper look, then the gear studio.
+5. **Create a wrestler** in the paper look, then the gear studio. *Built 18 October as Create a Player* (`create-a-player.md`):
+   the body, three outfits, swatches, lettering and shapes, finishers acted out on a dummy, one file a wrestler.
 6. **The scene builder** for players.
 7. **The parts library** filled out from Blender, with the export script.
 8. **Steam Workshop.**

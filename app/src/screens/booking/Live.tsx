@@ -11,7 +11,8 @@ import { useEffect, useLayoutEffect, useState } from 'preact/hooks';
 import { E } from '../../engine';
 import { G, ui, me, pref, savePrefs, redraw, reduceMotion } from '../../store';
 import { ScenePlayer } from '../../kit/sceneplayer';
-import { scenesFor, Scene } from '../../kit/scene';
+import { scenesFor, allScenes, copy, Scene } from '../../kit/scene';
+import { finScene } from '../../kit/caw';
 import { recipeOf, Recipe, commentator } from '../../kit/puppet';
 import { book } from '../../flow';
 import { Btn, KV, Meter, Banner, BeltArt, Portrait, CheckLine, stars, grade } from '../../kit';
@@ -249,7 +250,10 @@ function scenePick(r: any, s: any, at: number, done: boolean): { sc: Scene; cast
     else if (bc.slice(0, now + 1).filter(b => b.t === 'pbp' || b.t === 'col').length <= 2) { when = 'start'; key = 's'; }   // the bell: the first two lines of the call after the introductions
     else { key = 'm' + Math.floor(now / 4); const f = first((bc[now] || { x: '' }).x); if (f >= 0) a = f; }
   }
-  const sc0 = choose(when, key.length); if (!sc0) return null;
+  let sc0 = choose(when, key.length); if (!sc0) return null;
+  // a winner made in Create a Player finishes with their own move: its picture, with its name in the burst
+  const fm = when === 'finish' && S.w[a] && S.w[a].look && (S.w[a].look.finishing_moves || [])[0];
+  if (fm) { const fs = allScenes(world).find(x => x.id === finScene(fm)); if (fs) { sc0 = copy(fs); sc0.keys.forEach(k => k.props.forEach(q => { if (q.k === 'burst' && k === sc0!.keys[sc0!.keys.length - 1]) q.txt = fm.name.toUpperCase().slice(0, 16); })); sc0.name = fm.name; } }
   const b = ids.find(id => sideOf(id) !== sideOf(a)), wins = winSide >= 0 ? ids.filter(id => sideOf(id) === winSide) : [];
   const sc = fillScene(sc0, E.sceneHooks(S, { ids, a, b, win: wins, title: s.title || null }), cast); if (!sc) return null;
   return { sc, cast, play: i + ':' + key, label: sc.name + ': ' + Object.values(cast).map(nm).join(' and ') };

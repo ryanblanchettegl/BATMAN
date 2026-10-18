@@ -37,10 +37,17 @@ function grain(): THREE.Texture {
   return grainTex;
 }
 const mats = new Map<string, THREE.Material[]>();
-/** The face of the card and its paler cut edge. */
-function card(col: string): THREE.Material[] {
-  let m = mats.get(col);
-  if (!m) { m = [new THREE.MeshStandardMaterial({ color: new THREE.Color(col), roughness: 0.95, metalness: 0, map: grain() }), new THREE.MeshStandardMaterial({ color: new THREE.Color(shade(col, 1.25)), roughness: 1 })]; mats.set(col, m); }
+/** The face of the card and its paler cut edge. Foil shines, neon paper glows, leather has a little sheen. */
+function card(col: string, fin?: string): THREE.Material[] {
+  const key = col + (fin || ''); let m = mats.get(key);
+  if (!m) {
+    const face = new THREE.MeshStandardMaterial({ color: new THREE.Color(col), roughness: 0.95, metalness: 0, map: grain() });
+    if (fin === 'foil') { face.metalness = 0.55; face.roughness = 0.3; face.emissive = new THREE.Color(col); face.emissiveIntensity = 0.22; }   // no room to reflect, so foil carries a little of its own shine
+    else if (fin === 'leather') { face.roughness = 0.68; }
+    else if (fin === 'neon') { face.emissive = new THREE.Color(col); face.emissiveIntensity = 0.55; }
+    else if (fin === 'corr' || fin === 'denim') face.roughness = 1;
+    m = [face, new THREE.MeshStandardMaterial({ color: new THREE.Color(shade(col, 1.25)), roughness: 1 })]; mats.set(key, m);
+  }
   return m;
 }
 const lits = new Map<string, THREE.Material[]>();
@@ -56,7 +63,7 @@ function slab(p: Piece, d: number): THREE.Mesh | null {
   if (p.pts.length < 3) return null;
   const sh = new THREE.Shape(p.pts.map(q => new THREE.Vector2(q[0], q[1] - FOOT)));
   const g = new THREE.ExtrudeGeometry(sh, { depth: CARD, bevelEnabled: false, steps: 1 });
-  const m = new THREE.Mesh(g, card(p.col)); m.position.z = d; m.castShadow = true; m.receiveShadow = true; return m;
+  const m = new THREE.Mesh(g, card(p.col, p.fin)); m.position.z = d; m.castShadow = true; m.receiveShadow = true; return m;
 }
 /** Words (a burst, a sign) as a flat card with the lettering printed on it. */
 function words(p: Piece, d: number): THREE.Mesh | null {

@@ -135,7 +135,7 @@ function DollMap(p: { r: Recipe; part: string; onPart: (j: string) => void }) {
 const STY: Record<string, string> = { brawler: 'B', technician: 'T', flyer: 'H', powerhouse: 'P', all_rounder: 'A', striker: 'S', entertainer: 'E' };
 export function fromWorld(pkg: any): W[] {
   return (pkg && pkg.workers || []).filter((w: any) => !w.roles || w.roles.indexOf('wrestler') >= 0).map((w: any, i: number) => ({ id: i, name: w.ring_name || w.id, g: w.gender === 'F' ? 'F' : 'M',
-    align: w.disposition === 'heel' ? 'H' : 'F', twn: w.disposition === 'tweener', style: STY[w.style] || 'A', face: w.face, age: w.age || 28, gim: (w.gimmick_category || '') + ' ' + (w.gimmick || '') }));
+    align: w.disposition === 'heel' ? 'H' : 'F', twn: w.disposition === 'tweener', style: STY[w.style] || 'A', face: w.face, age: w.age || 28, gim: (w.gimmick_category || '') + ' ' + (w.gimmick || ''), look: w.look || null }));
 }
 export interface StudioProps { world: string; roster: W[]; saved: Scene[]; start?: Scene; blank?: boolean; onSave: (sc: Scene) => boolean; onForget: (id: string) => void; onDone: () => void }
 

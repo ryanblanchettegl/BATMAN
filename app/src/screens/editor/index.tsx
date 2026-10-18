@@ -5,7 +5,7 @@ import { UNIS, ui, redraw, builtInUniverse, isBuiltIn, pref, plural } from '../.
 import { onBack } from '../../input';
 import { Btn, Panel, Head, Tabs, Field } from '../../kit';
 import { StartMenu } from '../start';
-import { es, world, keep, look, note, report, freeId, openWorld, EdTab, canUndo, undoDel } from './state';
+import { es, world, keep, edit, look, note, report, freeId, openWorld, EdTab, canUndo, undoDel } from './state';
 import { DelBtn } from './parts';
 import { WorldTab, ShareTab } from './World';
 import { CompaniesTab, ShowsTab } from './Companies';
@@ -13,6 +13,7 @@ import { WrestlersTab } from './People';
 import { BeltsTab, TeamsTab } from './Belts';
 import { ScenesTab, keepScene, forgetScene } from './Scenes';
 import { SceneStudio, fromWorld } from '../scene';
+import { CreatePlayer } from '../player';
 import { SCENES } from '../../kit/scene';
 
 /* Back steps out one level at a time: the open record, then the world, then the title screen. */
@@ -94,6 +95,11 @@ function Open() {
 export function Editor() {
   const st = es();
   if (st.id && !UNIS[st.id]) st.id = null;
+  if (st.id && st.player) {   // Create a Player, full screen, on a wrestler in the world being edited
+    const pkg = UNIS[st.id], wk = (pkg.workers || []).find((x: any) => x.id === st.player);
+    if (wk) return <CreatePlayer key={st.player} world={pkg.manifest.name || 'this world'} worker={wk} onSave={lk => { let ok = false; edit(() => { ok = E.edSetLook(world(), wk.id, lk); }); return ok; }}
+      onForget={() => edit(() => { E.edRemoveLook(world(), wk.id); })} onDone={() => look(() => { st.player = null; })} />;
+  }
   if (st.id && st.scene) {   // Create a Scene, full screen, on the world being edited
     const pkg = UNIS[st.id], mine = E.edScenes(pkg), start = st.scene === '__new' ? undefined : (mine.find((x: any) => x.id === st.scene) || SCENES.find(x => x.id === st.scene));
     return <SceneStudio key={st.scene} world={pkg.manifest.name || 'this world'} roster={fromWorld(pkg)} saved={mine} start={start} blank={st.scene === '__new'}

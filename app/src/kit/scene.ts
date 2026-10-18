@@ -7,6 +7,7 @@
    the game state. */
 import { Piece, PAL, ell, rect, star, strip, drawScene, View, snip, shade } from './paper';
 import { Recipe, puppet, prop, Rig, blank, REF, Marks, commentator, dress } from './puppet';
+import { AttireKey, ATTIRE_OF, wear } from './caw';
 
 /** A person at a keyframe: where the waist is, the turn, which way they face, how far forward, the pose, the face,
     their size (1 as cut) and the marks on them. */
@@ -37,7 +38,9 @@ export const HOOKS: [string, string][] = [['', 'By the match (A or B)'], ['hero'
   ['attacker', 'The attacker'], ['victim', 'Who gets attacked'], ['face', 'The face of the company']];
 /** `frame` is the shape of the picture: wide (16 by 9, the broadcast) for now; tall for posters and covers and square
     for portraits are next. */
-export interface Scene { v: 1; id: string; name: string; when: string; set: string; slots: Slot[]; keys: Key[]; by?: string; frame?: 'wide' | 'tall' | 'square'; loop?: boolean }
+export interface Scene { v: 1; id: string; name: string; when: string; set: string; slots: Slot[]; keys: Key[]; by?: string; frame?: 'wide' | 'tall' | 'square'; loop?: boolean;
+  /** Which outfit Create a Player wrestlers wear in it; left out, the set decides (ring gear in the ring, street clothes backstage). */
+  attire?: AttireKey }
 
 /** When the broadcast plays a scene. A scene made by a player can take any of these. */
 /** What a scene is for. The match moments play on the broadcast now; the rest are where scenes go next
@@ -273,7 +276,8 @@ export function build(sc: Scene, k: Key, cast: Record<string, Recipe>, time = 0)
       if (q && hf) { f = { ...f, x: q[0] + f.x, y: q[1] + f.y, z: hf.z + f.z }; hold[sl.id] = hold[hw] || hw; }
     }
     const di = sc.slots.filter(x => x.dress === 'suit').indexOf(sl), c = cast[sl.id];
-    const r = c ? (sl.dress === 'suit' ? dress(c, di) : c) : sl.role === 'ref' ? REF : sl.dress === 'suit' ? commentator(di) : blank(i);
+    const c0 = c && c.kits ? wear(c, sc.attire || ATTIRE_OF[sc.set] || 'primary_ring') : c;   // a Create a Player wrestler dresses for the set
+    const r = c0 ? (sl.dress === 'suit' ? dress(c0, di) : c0) : sl.role === 'ref' ? REF : sl.dress === 'suit' ? commentator(di) : blank(i);
     rigs[sl.id] = puppet(r, { x: f.x, y: f.y, r: f.r, f: f.f, z: f.z, s: f.s, lz: f.lz }, f.p, f.e || '', sl.id, pieces, f.m || {});
     // a soft shadow on the floor where they stand or lie
     const rg = rigs[sl.id], lying = Math.abs(Math.sin(f.r * Math.PI / 180)) > 0.6, sz = f.s || 1;
