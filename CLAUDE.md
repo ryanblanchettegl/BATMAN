@@ -144,7 +144,7 @@ NODE_PATH=<dir containing playwright> node app/tests/<name>.js
 
 ## The live page
 
-Ryan plays a published copy of `dist/gorilla-position.html` at https://claude.ai/artifact/C6VzvPYynwV5FdRUDJ9RcQ (a Claude artifact). **Ryan, 13 October: always push the new build to the live version.** After every change that reaches the player, once its tests pass and it is committed: `node build.js`, then publish `dist/gorilla-position.html` to that URL. A second conversation of his also publishes to it, so read the live version first (`Artifact` read) and check it holds nothing the build lacks; if it does, merge that into the repo before publishing. Note the published version in the commit or the report. If you cannot publish from where you are, say so and leave the build in `dist/`.
+Ryan plays a published copy of `dist/gorilla-position.html` at https://claude.ai/artifact/CQRbSQNdiqDkRaeuUHRHPu (a Claude artifact; a new page from 18 October, when the old one at C6VzvPYynwV5FdRUDJ9RcQ could no longer be opened). **Ryan, 13 October: always push the new build to the live version.** After every change that reaches the player, once its tests pass and it is committed: `node build.js`, then publish `dist/gorilla-position.html` to that URL. A second conversation of his also publishes to it, so read the live version first (`Artifact` read) and check it holds nothing the build lacks; if it does, merge that into the repo before publishing. Note the published version in the commit or the report. If you cannot publish from where you are, say so and leave the build in `dist/`.
 
 ## Things that bite
 
