@@ -20,7 +20,7 @@ export interface Look {
   id?: string; name?: string; moniker?: string; hometown?: string; archetype?: string;
   physical_attributes?: { /** Not in Ryan's first draft: the body the doll is cut as, M or F. */ sex?: 'M' | 'F'; height_inches?: number; weight_lbs?: number; body_archetype?: string; proportional_scalers?: { torso_width?: number; torso_height?: number; limb_length?: number; muscle_mass?: number } };
   /** Not in Ryan's first draft: the head under the gear (the face numbers the game already keeps), so a file carries the whole person. */
-  appearance?: { face?: Record<string, number>; skin_tone?: number; hair_colour?: string; facial_hair?: string; face_paint?: string; paint_colour?: string; tattoos?: string[] };
+  appearance?: { face?: Record<string, number>; /** Not in Ryan's first draft: face sliders, each -1 to 1 (0 is as the face shape cuts it). */ shape?: Record<string, number>; /** Not in Ryan's first draft: which eyes, nose, mouth and ears (FEATURES). */ features?: { eyes?: string; nose?: string; mouth?: string; ears?: string }; skin_tone?: number; hair_colour?: string; facial_hair?: string; face_paint?: string; paint_colour?: string; tattoos?: string[] };
   attires?: Partial<Record<AttireKey, Attire>>;
   finishing_moves?: Finisher[];
   /** Not in Ryan's first draft: which of the canned entrances they come out on (a scene id). Their own pictures are
@@ -71,6 +71,17 @@ export const FACIAL: [string, string][] = [['', 'From the face'], ['none', 'Clea
   ['beard_full', 'Full beard'], ['beard_braided', 'Braided beard'], ['mustache', 'Moustache'], ['handlebar', 'Handlebar moustache'], ['horseshoe', 'Horseshoe moustache']];
 const FACIAL_N: Record<string, [number, number]> = { none: [0, 0], stubble: [1, 0], goatee: [7, 0], chin_strap: [10, 0], sideburns: [6, 0], beard_short: [4, 0], beard_full: [5, 0], beard_braided: [5, 0], mustache: [0, 2], handlebar: [0, 3], horseshoe: [0, 4] };
 export const PAINT: [string, string][] = [['', 'None'], ['stripes', 'Stripes under the eyes'], ['war', 'War paint'], ['half', 'The upper half'], ['full', 'The whole face'], ['skull', 'A skull']];
+/** Eyes, noses, mouths and ears to choose from (drawn in head() in kit/puppet.ts). */
+export const FEATURES: Record<'eyes' | 'nose' | 'mouth' | 'ears', [string, string][]> = {
+  eyes: [['almond', 'Almond'], ['round', 'Round'], ['narrow', 'Narrow'], ['hooded', 'Hooded'], ['deep', 'Deep set'], ['lashes', 'With lashes']],
+  nose: [['straight', 'Straight'], ['button', 'Button'], ['broad', 'Broad'], ['hooked', 'Hooked'], ['flat', 'Flat and broken'], ['pointed', 'Long and pointed']],
+  mouth: [['plain', 'Plain'], ['thin', 'Thin'], ['full', 'Full lips'], ['wide', 'Wide'], ['frown', 'A frown'], ['smile', 'A smile']],
+  ears: [['round', 'Round'], ['pointed', 'Pointed'], ['cauliflower', 'Cauliflower'], ['small', 'Small'], ['big', 'Big'], ['flat', 'Flat to the head']],
+};
+/** The face sliders: key, name, the low end and the high end. */
+export const FACE_SLIDERS: [string, string, string, string][] = [['head_w', 'Head width', 'narrow', 'wide'], ['head_h', 'Head height', 'short', 'long'], ['jaw', 'Jaw', 'round', 'square'], ['chin', 'Chin', 'broad', 'pointed'],
+  ['eye_size', 'Eye size', 'small', 'big'], ['eye_gap', 'Eyes apart', 'close', 'wide'], ['eye_height', 'Eyes', 'low', 'high'], ['brow_thick', 'Brows', 'thin', 'thick'], ['brow_angle', 'Brow angle', 'stern', 'worried'],
+  ['nose_w', 'Nose width', 'narrow', 'wide'], ['nose_l', 'Nose length', 'short', 'long'], ['mouth_w', 'Mouth', 'small', 'wide'], ['ears', 'Ears', 'small', 'big']];
 export const TATTOOS: [string, string][] = [['sleeve_near', 'Sleeve, near arm'], ['sleeve_far', 'Sleeve, far arm'], ['shoulder', 'Shoulder piece'], ['chest', 'Chest piece'], ['neck', 'Neck']];   // facial hair, moustache in the face numbers
 const HAIR_OF: Record<string, string> = { hair_bald: 'bald', hair_buzz_01: 'buzz', hair_crew_01: 'crew', hair_short_01: 'cap', hair_flat_top: 'flat', hair_mohawk_01: 'mohawk', hair_curls_01: 'curls', hair_long_01: 'long',
   hair_slick_01: 'slick', hair_spiky_01: 'spiky', hair_afro_01: 'afro', hair_cornrows_01: 'braids', hair_dreads_01: 'dreads', hair_ponytail_01: 'ponytail', hair_mullet_01: 'mullet', hair_wild_01: 'wild' };
@@ -180,6 +191,14 @@ export function fromLook(lk: Look, base: Recipe): Recipe {
   if (ap.facial_hair && FACIAL_N[ap.facial_hair]) { r.beard = FACIAL_N[ap.facial_hair][0]; r.mus = FACIAL_N[ap.facial_hair][1]; r.braid = ap.facial_hair === 'beard_braided'; }
   if (ap.face_paint) r.paint = { k: ap.face_paint, c: swatch(ap.paint_colour, { c: ap.face_paint === 'skull' ? PAL.white : PAL.red }).c };
   if (ap.tattoos && ap.tattoos.length) r.tats = ap.tattoos.slice();
+  if (ap.features) r.feat = { ...ap.features };
+  const sh = ap.shape || {}, v = (k: string) => Math.max(-1, Math.min(1, +sh[k] || 0));
+  if (Object.keys(sh).length) {   // the face sliders, over the face shape the numbers gave
+    const hd = r.head; r.head = { rx: hd.rx * (1 + 0.18 * v('head_w')), ryt: hd.ryt * (1 + 0.15 * v('head_h')), ryb: hd.ryb * (1 + 0.15 * v('head_h')), sq: Math.max(1.6, Math.min(5, hd.sq + 1.5 * v('jaw'))), chin: Math.max(0, Math.min(0.6, hd.chin + 0.3 * v('chin'))) };
+    r.noseW = r.noseW * (1 + 0.5 * v('nose_w')); r.noseL = r.noseL * (1 + 0.4 * v('nose_l'));
+    r.brow = Math.max(0.04, Math.min(0.3, r.brow * (1 + 0.8 * v('brow_thick')))); r.browAng = r.browAng + 0.08 * v('brow_angle');
+    r.fs = { eyeS: 1 + 0.35 * v('eye_size'), eyeG: 1 + 0.3 * v('eye_gap'), eyeY: 0.06 * v('eye_height'), mouthW: 1 + 0.35 * v('mouth_w'), earS: 1 + 0.5 * v('ears') };
+  }
   const at = lk.attires || {};
   r.kits = { primary_ring: kitOf(at.primary_ring, 'primary_ring', r), entrance_gear: kitOf(at.entrance_gear, 'entrance_gear', r), street_clothes: kitOf(at.street_clothes, 'street_clothes', r) };
   return wear(r, 'primary_ring');

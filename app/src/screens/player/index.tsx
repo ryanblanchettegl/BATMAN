@@ -11,19 +11,19 @@ import { Btn, TextBox, Desktop, Win, Group, Tabs } from '../../kit';
 import { ScenePlayer } from '../../kit/sceneplayer';
 import { Scene, SCENES, POSES, WAIST, copy, scenesFor, allScenes, WHEN } from '../../kit/scene';
 import { Recipe, recipeOf, blank } from '../../kit/puppet';
-import { Look, Attire, AttireKey, Layer, Finisher, ATTIRES, PARTS, SWATCHES, SLOTS, FONTS, SHAPES, ARCHETYPES, FACIAL, PAINT, TATTOOS, KICKOUT, POSITIONS, CATEGORIES, FIN_SCENES, fromLook, blankLook, finScene, swatch } from '../../kit/caw';
+import { Look, Attire, AttireKey, Layer, Finisher, ATTIRES, PARTS, SWATCHES, SLOTS, FONTS, SHAPES, ARCHETYPES, FACIAL, PAINT, TATTOOS, FACE_SLIDERS, FEATURES, KICKOUT, POSITIONS, CATEGORIES, FIN_SCENES, fromLook, blankLook, finScene, swatch } from '../../kit/caw';
 import { derive, NAMES, FaceKey } from '../../lib/portrait';
 import { PaperPortrait, PT_POSES, PT_FRAMES, companyCard } from '../../kit/paperportrait';
 import { EXPR } from '../../kit/puppet';
 
-type Tab = 'portrait' | 'sign' | 'body' | 'head' | 'gear' | 'colour' | 'studio' | 'fin' | 'scenes' | 'file' | 'a_head' | 'a_upper' | 'a_lower' | 'a_feet';
+type Tab = 'face' | 'ink' | 'portrait' | 'sign' | 'body' | 'head' | 'gear' | 'colour' | 'studio' | 'fin' | 'scenes' | 'file' | 'a_head' | 'a_upper' | 'a_lower' | 'a_feet';
 /** Edit attire's camera: in close on the part of the body being dressed. */
 const REGION_CAM: Record<string, { x: number; y: number; z: number }> = { a_head: { x: 0, y: 2.6, z: 3.8 }, a_upper: { x: 0, y: 1.1, z: 2.1 }, a_lower: { x: 0, y: -1.3, z: 2.1 }, a_feet: { x: 0, y: -2.5, z: 2.8 } };
 const SET_OF: Record<AttireKey, string> = { primary_ring: 'ring', entrance_gear: 'ramp', street_clothes: 'hall' };
 const CAM_OF: Record<AttireKey, { x: number; y: number; z: number }> = { primary_ring: { x: 0, y: 0.15, z: 1.4 }, entrance_gear: { x: 0, y: -0.3, z: 1.1 }, street_clothes: { x: 0, y: -0.5, z: 0.88 } };
 const STY: Record<string, string> = { brawler: 'B', technician: 'T', high_flyer: 'H', powerhouse: 'P', showman: 'S', all_rounder: 'A', hardcore: 'B', submission: 'T' };
 const VIEW_POSES: [string, string][] = [['stand', 'Standing'], ['fists', 'Fists up'], ['flex', 'Flexing'], ['armsup', 'Both arms up'], ['mic', 'On the microphone']];
-const FACE_PARTS: [FaceKey, string][] = [['h', 'Face shape'], ['ey', 'Eyes'], ['ns', 'Nose']];
+const FACE_PARTS: [FaceKey, string][] = [['h', 'Face shape']];
 const feet = (n: number) => Math.floor(n / 12) + "'" + (n % 12) + '"';
 const r2 = (v: number) => Math.round(v * 100) / 100;
 
@@ -120,7 +120,7 @@ export function CreatePlayer(pp: PlayerProps) {
   const AN = ATTIRES.find(a => a[0] === att)![1];
   const pt = lk.portrait || {}, card = pp.card || companyCard(null);
   const setPt = (o: any) => change(n => { const q: any = { ...(n.portrait || {}), ...o }; Object.keys(q).forEach(k => { if (q[k] === undefined || q[k] === '') delete q[k]; }); if (Object.keys(q).length) n.portrait = q; else delete n.portrait; });
-  const titles: Record<Tab, string> = { portrait: 'Their portrait', a_head: 'Head: ' + AN, a_upper: 'Upper body: ' + AN, a_lower: 'Lower body: ' + AN, a_feet: 'Feet: ' + AN, sign: 'A new wrestler', body: 'The body', head: 'The head', gear: 'Gear: ' + ATTIRES.find(a => a[0] === att)![1], colour: 'Colours: ' + ATTIRES.find(a => a[0] === att)![1], studio: 'Gear studio: lettering and shapes', fin: 'Finishing moves', scenes: 'Their entrance', file: 'The file' };
+  const titles: Record<Tab, string> = { face: 'Shape the face', ink: 'Paint and ink', portrait: 'Their portrait', a_head: 'Head: ' + AN, a_upper: 'Upper body: ' + AN, a_lower: 'Lower body: ' + AN, a_feet: 'Feet: ' + AN, sign: 'A new wrestler', body: 'The body', head: 'The head', gear: 'Gear: ' + ATTIRES.find(a => a[0] === att)![1], colour: 'Colours: ' + ATTIRES.find(a => a[0] === att)![1], studio: 'Gear studio: lettering and shapes', fin: 'Finishing moves', scenes: 'Their entrance', file: 'The file' };
   return <div class="scfull paper" data-t="caw">
     <div class="sc-menubar" role="group" aria-label={pp.sign ? 'Create a Player' : pp.attire ? 'Edit attire' : 'Edit wrestler'}>
       <b class="on">{pp.sign ? 'Create a Player' : pp.attire ? 'Edit attire' : 'Edit wrestler'}</b><span>{pp.world}</span><span class="sp" />
@@ -143,7 +143,7 @@ export function CreatePlayer(pp: PlayerProps) {
         </div>
       </Win>
       <Win title={titles[tab]} right={tab === 'gear' || tab === 'colour' || tab === 'studio' ? ATTIRES.find(a => a[0] === att)![1] : ''} area="side" t="caw-side">
-        <Tabs label="What to change" value={tab} onPick={v => setTab(v as Tab)} items={pp.attire ? [{ id: 'a_head', label: 'Head', t: 'caw-tab' }, { id: 'a_upper', label: 'Upper body', t: 'caw-tab' }, { id: 'a_lower', label: 'Lower body', t: 'caw-tab' }, { id: 'a_feet', label: 'Feet', t: 'caw-tab' }, { id: 'studio', label: 'Lettering', t: 'caw-tab' }, { id: 'colour', label: 'Colours', t: 'caw-tab' }] : [...(pp.sign ? [{ id: 'sign', label: 'Who they are', t: 'caw-tab' }] : []), { id: 'body', label: 'Body', t: 'caw-tab' }, { id: 'head', label: 'Head', t: 'caw-tab' }, { id: 'gear', label: 'Gear', t: 'caw-tab' },
+        <Tabs label="What to change" value={tab} onPick={v => setTab(v as Tab)} items={pp.attire ? [{ id: 'a_head', label: 'Head', t: 'caw-tab' }, { id: 'a_upper', label: 'Upper body', t: 'caw-tab' }, { id: 'a_lower', label: 'Lower body', t: 'caw-tab' }, { id: 'a_feet', label: 'Feet', t: 'caw-tab' }, { id: 'studio', label: 'Lettering', t: 'caw-tab' }, { id: 'colour', label: 'Colours', t: 'caw-tab' }] : [...(pp.sign ? [{ id: 'sign', label: 'Who they are', t: 'caw-tab' }] : []), { id: 'body', label: 'Body', t: 'caw-tab' }, { id: 'head', label: 'Head', t: 'caw-tab' }, { id: 'face', label: 'Face shape', t: 'caw-tab' }, { id: 'ink', label: 'Paint and ink', t: 'caw-tab' }, { id: 'gear', label: 'Gear', t: 'caw-tab' },
           { id: 'colour', label: 'Colours', t: 'caw-tab' }, { id: 'studio', label: 'Lettering', t: 'caw-tab' }, { id: 'fin', label: 'Finishers', t: 'caw-tab' }, { id: 'scenes', label: 'Entrance', t: 'caw-tab' }, { id: 'file', label: 'File', t: 'caw-tab' }]} />
         {tab === 'sign' && info && pv && <>
           <div class="sc-row"><span class="sc-slot">Ring name</span><TextBox value={lk.name || ''} max={28} label="Ring name" t="caw-name" width="18ch" onInput={v => change(n => { n.name = v; })} /></div>
@@ -157,6 +157,22 @@ export function CreatePlayer(pp: PlayerProps) {
             <p data-t="caw-cost">They will ask for about {full(pv.wage)} a week.</p>
           </Group>
           <div class="sc-row"><Btn kind="go" t="caw-create" onClick={signIt}>Create</Btn><span class="muted">They join the free agents, with their look, outfits and finisher. Sign them from Free agents like anybody else.</span></div>
+        </>}
+        {tab === 'face' && <>
+          <Group title="Shape the face">
+            {FACE_SLIDERS.map(([k, n, lo, hi]) => { const v = ((lk.appearance && lk.appearance.shape) || {})[k] || 0; return <div class="sc-row caw-fsl"><span class="caw-lbl">{n}</span><small>{lo}</small>
+              <input type="range" min={-100} max={100} step={5} value={Math.round(v * 100)} aria-label={n + ': from ' + lo + ' to ' + hi} data-t="caw-fsl" data-v={k} onInput={e => { const x = +(e.currentTarget as HTMLInputElement).value / 100; change(n2 => { n2.appearance = n2.appearance || {}; const shp: any = n2.appearance.shape = { ...(n2.appearance.shape || {}) }; if (x) shp[k] = x; else delete shp[k]; if (!Object.keys(shp).length) delete n2.appearance.shape; }); }} /><small>{hi}</small></div>; })}
+            <div class="sc-row"><Btn kind="less" t="caw-fslreset" disabled={!(lk.appearance && lk.appearance.shape)} onClick={() => change(n2 => { if (n2.appearance) delete n2.appearance.shape; })}>Back to the face shape</Btn></div>
+          </Group>
+        </>}
+        {tab === 'ink' && <>
+          <Group title="Paint and ink">
+            <div class="sc-row"><span class="sc-slot">Face paint</span><select aria-label="Face paint" data-t="caw-paint" value={(lk.appearance && lk.appearance.face_paint) || ''} onChange={e => { const v = (e.currentTarget as HTMLSelectElement).value; change(n => { n.appearance = n.appearance || {}; if (v) n.appearance.face_paint = v; else delete n.appearance.face_paint; }); }}>
+              {PAINT.map(f => <option value={f[0]}>{f[1]}</option>)}</select>
+              {lk.appearance && lk.appearance.face_paint && <select aria-label="Paint colour" data-t="caw-paintcol" value={lk.appearance.paint_colour || ''} onChange={e => { const v = (e.currentTarget as HTMLSelectElement).value; change(n => { n.appearance = n.appearance || {}; if (v) n.appearance.paint_colour = v; else delete n.appearance.paint_colour; }); }}>
+                <option value="">{lk.appearance.face_paint === 'skull' ? 'White' : 'Red'}</option>{SWATCHES.map(s2 => <option value={s2[0]}>{s2[1]}</option>)}</select>}</div>
+            <div class="sc-row"><span class="sc-slot">Tattoos</span>{TATTOOS.map(t => { const on = ((lk.appearance && lk.appearance.tattoos) || []).indexOf(t[0]) >= 0; return <Btn kind="less" t="caw-tat" d={{ v: t[0] }} on={on} onClick={() => change(n => { n.appearance = n.appearance || {}; const l = n.appearance.tattoos || []; n.appearance.tattoos = on ? l.filter(x => x !== t[0]) : l.concat([t[0]]); if (!n.appearance.tattoos.length) delete n.appearance.tattoos; })}>{t[1]}</Btn>; })}</div>
+          </Group>
         </>}
         {tab === 'body' && <>
           <Group title="Sex">
@@ -195,14 +211,10 @@ export function CreatePlayer(pp: PlayerProps) {
             {FACE_PARTS.map(([k, n]) => { const v = face[k] ?? 0; return <div class="sc-row"><span class="sc-slot">{n}</span>
               <Btn kind="less" t="caw-face" d={{ k, v: -1 }} label={'Previous ' + n} onClick={() => setFace(k, (v + 9) % 10)}>{'<'}</Btn><b>{NAMES[k][v]}</b>
               <Btn kind="less" t="caw-face" d={{ k, v: 1 }} label={'Next ' + n} onClick={() => setFace(k, (v + 1) % 10)}>{'>'}</Btn></div>; })}
+            {(['eyes', 'nose', 'mouth', 'ears'] as const).map(k => <div class="sc-row"><span class="sc-slot">{k === 'eyes' ? 'Eyes' : k === 'nose' ? 'Nose' : k === 'mouth' ? 'Mouth' : 'Ears'}</span>
+              <select aria-label={k} data-t="caw-feat" data-v={k} value={((lk.appearance && lk.appearance.features) || {})[k] || FEATURES[k][0][0]} onChange={e => { const v = (e.currentTarget as HTMLSelectElement).value; change(n2 => { n2.appearance = n2.appearance || {}; const f: any = n2.appearance.features = { ...(n2.appearance.features || {}) }; if (v === FEATURES[k][0][0]) delete f[k]; else f[k] = v; if (!Object.keys(f).length) delete n2.appearance.features; }); }}>
+                {FEATURES[k].map(o => <option value={o[0]}>{o[1]}</option>)}</select></div>)}
             <div class="sc-row"><span class="caw-lbl">Skin tone</span><input type="range" min={0} max={100} value={face.sk ?? 50} aria-label="Skin tone" data-t="caw-skin" onInput={e => setFace('sk', +(e.currentTarget as HTMLInputElement).value)} /></div>
-          </Group>
-          <Group title="Paint and ink">
-            <div class="sc-row"><span class="sc-slot">Face paint</span><select aria-label="Face paint" data-t="caw-paint" value={(lk.appearance && lk.appearance.face_paint) || ''} onChange={e => { const v = (e.currentTarget as HTMLSelectElement).value; change(n => { n.appearance = n.appearance || {}; if (v) n.appearance.face_paint = v; else delete n.appearance.face_paint; }); }}>
-              {PAINT.map(f => <option value={f[0]}>{f[1]}</option>)}</select>
-              {lk.appearance && lk.appearance.face_paint && <select aria-label="Paint colour" data-t="caw-paintcol" value={lk.appearance.paint_colour || ''} onChange={e => { const v = (e.currentTarget as HTMLSelectElement).value; change(n => { n.appearance = n.appearance || {}; if (v) n.appearance.paint_colour = v; else delete n.appearance.paint_colour; }); }}>
-                <option value="">{lk.appearance.face_paint === 'skull' ? 'White' : 'Red'}</option>{SWATCHES.map(s2 => <option value={s2[0]}>{s2[1]}</option>)}</select>}</div>
-            <div class="sc-row"><span class="sc-slot">Tattoos</span>{TATTOOS.map(t => { const on = ((lk.appearance && lk.appearance.tattoos) || []).indexOf(t[0]) >= 0; return <Btn kind="less" t="caw-tat" d={{ v: t[0] }} on={on} onClick={() => change(n => { n.appearance = n.appearance || {}; const l = n.appearance.tattoos || []; n.appearance.tattoos = on ? l.filter(x => x !== t[0]) : l.concat([t[0]]); if (!n.appearance.tattoos.length) delete n.appearance.tattoos; })}>{t[1]}</Btn>; })}</div>
           </Group>
         </>}
         {tab === 'portrait' && <>

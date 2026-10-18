@@ -8131,7 +8131,9 @@ function lookClean(x){
       proportional_scalers:lkPrune({torso_width:lkNum(ps.torso_width,0.7,1.5),torso_height:lkNum(ps.torso_height,0.8,1.25),limb_length:lkNum(ps.limb_length,0.8,1.25),muscle_mass:lkNum(ps.muscle_mass,0.6,1.6)})});}
   var ap=x.appearance;
   if(ap&&typeof ap==='object'){var f=null;if(ap.face&&typeof ap.face==='object'){f={};['h','hr','fh','ms','ey','ns','sk','hc'].forEach(function(k){var v=lkNum(ap.face[k],0,100);if(v!=null)f[k]=Math.round(v);});}
-    o.appearance=lkPrune({face:f&&Object.keys(f).length?f:undefined,skin_tone:lkNum(ap.skin_tone,0,100),hair_colour:lkId(ap.hair_colour),facial_hair:lkId(ap.facial_hair),face_paint:lkId(ap.face_paint),paint_colour:lkId(ap.paint_colour),
+    var shp=null;if(ap.shape&&typeof ap.shape==='object'){shp={};['head_w','head_h','jaw','chin','eye_size','eye_gap','eye_height','brow_thick','brow_angle','nose_w','nose_l','mouth_w','ears'].forEach(function(k){var v=lkNum(ap.shape[k],-1,1);if(v)shp[k]=Math.round(v*100)/100;});if(!Object.keys(shp).length)shp=null;}
+var ft=null;if(ap.features&&typeof ap.features==='object'){ft={};['eyes','nose','mouth','ears'].forEach(function(k){var v=lkId(ap.features[k]);if(v)ft[k]=v;});if(!Object.keys(ft).length)ft=null;}
+    o.appearance=lkPrune({features:ft||undefined,shape:shp||undefined,face:f&&Object.keys(f).length?f:undefined,skin_tone:lkNum(ap.skin_tone,0,100),hair_colour:lkId(ap.hair_colour),facial_hair:lkId(ap.facial_hair),face_paint:lkId(ap.face_paint),paint_colour:lkId(ap.paint_colour),
       tattoos:Array.isArray(ap.tattoos)?ap.tattoos.map(lkId).filter(function(v){return !!v;}).slice(0,8):undefined});}
   if(x.attires&&typeof x.attires==='object'){var at={};LOOK_ATTIRES.forEach(function(k){var a=x.attires[k];if(!a||typeof a!=='object')return;
     var eq=a.equipped_assets||{},e={};LOOK_PARTS.forEach(function(p){var v=lkId(eq[p]);if(v)e[p]=v;});
