@@ -123,7 +123,7 @@ export function CreatePlayer(pp: PlayerProps) {
   const titles: Record<Tab, string> = { portrait: 'Their portrait', a_head: 'Head: ' + AN, a_upper: 'Upper body: ' + AN, a_lower: 'Lower body: ' + AN, a_feet: 'Feet: ' + AN, sign: 'A new wrestler', body: 'The body', head: 'The head', gear: 'Gear: ' + ATTIRES.find(a => a[0] === att)![1], colour: 'Colours: ' + ATTIRES.find(a => a[0] === att)![1], studio: 'Gear studio: lettering and shapes', fin: 'Finishing moves', scenes: 'Their entrance', file: 'The file' };
   return <div class="scfull paper" data-t="caw">
     <div class="sc-menubar" role="group" aria-label={pp.sign ? 'Create a Player' : pp.attire ? 'Edit attire' : 'Edit wrestler'}>
-      <span class="sc-belt" aria-hidden="true" /><b class="on">{pp.sign ? 'Create a Player' : pp.attire ? 'Edit attire' : 'Edit wrestler'}</b><span>{pp.world}</span><span class="sp" />
+      <b class="on">{pp.sign ? 'Create a Player' : pp.attire ? 'Edit attire' : 'Edit wrestler'}</b><span>{pp.world}</span><span class="sp" />
       <span class={'sc-hint' + (msg ? (msg.err ? ' bad' : ' good') : '')} role="status" data-t="caw-msg">{msg ? msg.t : 'Change anything on the right; the wrestler on the left changes with it'}</span>
       <Btn kind="go" t="caw-save" onClick={save}>Save</Btn>
       <Btn kind="sm" t="caw-done" onClick={pp.onDone}>Done</Btn>

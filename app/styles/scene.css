@@ -35,8 +35,6 @@
 .sc-menubar .sc-hint{color:#555;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
 .sc-menubar .sc-hint.good{color:#1e6b28}.sc-menubar .sc-hint.bad{color:#b0201a}
 .sc-menubar .btn{margin:0}
-.sc-belt{display:inline-block;width:2.2em;height:1.1em;border-radius:.3em;background:#111;position:relative;flex:none}
-.sc-belt::after{content:'';position:absolute;left:50%;top:50%;width:1em;height:.85em;margin:-.425em 0 0 -.5em;border-radius:50%;background:radial-gradient(circle,#f9cd3b 35%,#d9a338 36%)}
 /* the camera row under the keyframes */
 .sc-cam .sc-lbl{color:var(--p-red,#c8322a);font-weight:bold;margin-right:.4ch}
 .sc-cam .sp{flex:1}

@@ -40,7 +40,7 @@ export function WrestlersPage() {
   const sideOf = (x: any) => x.disposition === 'heel' ? 'Heel' : x.disposition === 'tweener' ? 'Tweener' : 'Face';
   return <div class="scfull paper edpage edwfull" data-t="ed-wpage">
     <nav class="pmenu" aria-label="Parts of the world">
-      <span class="sc-belt" aria-hidden="true" /><b class="pm-app">World Editor</b>
+      <b class="pm-app">World Editor</b>
       {TABS.map(([id, n]) => <button type="button" class={'it' + (id === 'wrestlers' ? ' on' : '')} aria-current={id === 'wrestlers' ? 'page' : undefined} data-t="ed-tab" data-v={id} onClick={() => look(() => { st.tab = id as EdTab; })}>{n}</button>)}
       <span class="sp" /><span class="pm-world">{pkg.manifest.name || 'My world'}</span>
       {v.ok ? <span class="pm-ok" role="status">Ready to play</span> : <button type="button" class="it bad" data-t="ed-problems" onClick={() => look(() => { st.tab = 'share'; })}>{v.errors} {plural(v.errors, 'problem')}</button>}

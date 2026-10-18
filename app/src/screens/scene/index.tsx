@@ -216,7 +216,7 @@ export function SceneStudio(pp: StudioProps) {
   const angle = selFig && sel ? (sel.part === 'body' ? selFig.r : Math.round(selFig.p[sel.part] ?? STAND[sel.part] ?? 0)) : selProp ? selProp.r : 0;
   return <div class="scfull paper" data-t="scene">
     <div class="sc-menubar" role="group" aria-label="Create a Scene">
-      <span class="sc-belt" aria-hidden="true" /><b class="on">Create a Scene</b><span>{pp.world}</span><span class="sp" />
+      <b class="on">Create a Scene</b><span>{pp.world}</span><span class="sp" />
       <span class={'sc-hint' + (msg ? (msg.err ? ' bad' : ' good') : '')} role="status" data-t="scene-msg">{msg ? msg.t : 'Press a person or a pin, then drag, use the buttons, or the arrow keys'}</span>
       <Btn kind="go" t="scene-done" onClick={pp.onDone}>Done</Btn>
     </div>

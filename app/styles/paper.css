@@ -40,7 +40,6 @@
 /* a paper page full screen (the World Editor's Wrestlers page): the white menu bar, a navy strip for notes, the
    windows, and a control strip along the bottom, as on the desk */
 .pmenu{flex:none;display:flex;align-items:center;gap:.2ch;background:#fbf8f0;color:#111;border-bottom:3px solid #111;padding:.12em 1.2ch;box-shadow:0 .2em 0 rgba(0,0,0,.35);position:relative;z-index:2}
-.pmenu .sc-belt{margin-right:1ch}
 .pmenu .pm-app{background:#111;color:#fff;padding:.08em 1.2ch;margin-right:.8ch}
 .pmenu .it{font:inherit;background:none;border:0;color:#111;padding:.08em 1.1ch;cursor:pointer;border-radius:2px}
 .pmenu .it:hover{background:#e6dfcf}
