@@ -11,6 +11,7 @@ import { W } from '../../engine';
 import { Btn, TextBox, Desktop, Win, Group, Tabs } from '../../kit';
 import { Scene, Key, Fig, Prop, SCENES, WHEN, SETS, WAIST, CAM0, POSES, at, build, viewFor, tilt, paint, lastT, allScenes, ok, copy } from '../../kit/scene';
 import { drawPaper, drawScene, fromPx, toPx, pick, Piece, PAL } from '../../kit/paper';
+import { Diorama3D } from '../../kit/diorama3d';
 import { Recipe, recipeOf, JOINTS, PROPS, STAND, Rig, REF, blank, puppet, EXPR, Marks } from '../../kit/puppet';
 
 type Sel = { who: string; part: string } | null;   // part is 'body', a joint name, or 'prop'
@@ -69,6 +70,21 @@ function Stage(p: { sc: Scene; ki: number; time: number | null; cast: Record<str
       style={{ width: size[0] + 'px', height: size[1] + 'px' }} onPointerDown={down as any} onPointerMove={move as any} onPointerUp={up} onPointerCancel={up} onKeyDown={p.onKey as any}
       onWheel={(e: WheelEvent) => { if (p.time != null) return; e.preventDefault(); p.onCam(0, 0, e.deltaY < 0 ? 1.1 : 1 / 1.1); }} />
   </div>;
+}
+
+/** The stage in 3D: the same scene built as a real model and photographed (src/kit/diorama3d.ts). Drag to walk the
+    camera round it, the wheel to come closer. */
+function Stage3D(p: { sc: Scene; ki: number; time: number | null; cast: Record<string, Recipe> }) {
+  const box = useRef<HTMLDivElement>(null), cv = useRef<HTMLCanvasElement>(null), eng = useRef<Diorama3D | null>(null), [size, setSize] = useState([0, 0]);
+  useEffect(() => {
+    const b = box.current, c = cv.current; if (!b || !c) return;
+    try { eng.current = new Diorama3D(c); } catch (e) { eng.current = null; }
+    const fit = () => { const r = b.getBoundingClientRect(), w = Math.max(160, Math.floor(Math.min(r.width, r.height * 16 / 9))); setSize([w, Math.round(w * 9 / 16)]); if (eng.current) eng.current.size(w, Math.round(w * 9 / 16)); };
+    fit(); const ro = new ResizeObserver(fit); ro.observe(b);
+    return () => { ro.disconnect(); if (eng.current) eng.current.dispose(); eng.current = null; };
+  }, []);
+  useEffect(() => { const e = eng.current; if (!e) return; const t = p.time == null ? p.sc.keys[p.ki].t : p.time; e.show(p.sc, p.time == null ? p.sc.keys[p.ki] : at(p.sc, t), p.cast, t); });
+  return <div ref={box} class="sc-stage sc-3d"><canvas ref={cv} data-t="scene-stage3d" style={{ width: size[0] + 'px', height: size[1] + 'px' }} aria-label={'The scene in 3D: ' + p.sc.name + '. Drag to walk round it.'} /></div>;
 }
 
 /** The picked person as a small paper doll with a brass pin at every joint: press a pin to pick that part, press
@@ -153,7 +169,7 @@ export function SceneStudio(pp: StudioProps) {
   const selFig = sel && fig(key, sel.who), selProp = sel && sel.part === 'prop' ? propOf(key, sel.who) : null;
   const who = (id: string) => { const sl = sc.slots.find(s => s.id === id); return sl ? sl.n : id; };
   const mine = pp.saved;
-  const [tab, setTab] = useState('pose');
+  const [tab, setTab] = useState('pose'), [three, setThree] = useState(false);
   // the camera of the keyframe being edited: pan, zoom (1 is the whole set, up to 4), tilt
   const cam = key.cam || CAM0;
   const onCam = (dx: number, dy: number, zoom: number) => edit(k => { const c = { ...CAM0, ...(k.cam || {}) }; c.z = Math.max(0.8, Math.min(4, Math.round(c.z * zoom * 100) / 100)); c.x = Math.round((c.x + dx) * 100) / 100; c.y = Math.round((c.y + dy) * 100) / 100;
@@ -177,7 +193,7 @@ export function SceneStudio(pp: StudioProps) {
     </div>
     <Desktop cls="scpage">
     <Win title={'Create a Scene: ' + sc.name} right={sc.keys.length + (sc.keys.length === 1 ? ' keyframe' : ' keyframes')} area="stage" t="scene-win">
-      <Stage sc={sc} ki={Math.min(ki, sc.keys.length - 1)} time={time} cast={cast} sel={sel} onSel={setSel} onDrag={onDrag} onCam={onCam} onKey={onKey} />
+      {three ? <Stage3D sc={sc} ki={Math.min(ki, sc.keys.length - 1)} time={time} cast={cast} /> : <Stage sc={sc} ki={Math.min(ki, sc.keys.length - 1)} time={time} cast={cast} sel={sel} onSel={setSel} onDrag={onDrag} onCam={onCam} onKey={onKey} />}
       <div class="sc-keys" role="group" aria-label="Keyframes">
         {sc.keys.map((k, i) => <Btn key={'k' + i} kind="sm" t="scene-key" d={{ v: i }} on={i === ki && time == null} onClick={() => { setKi(i); setTime(null); }}>{'Key ' + (i + 1)}</Btn>)}
         <Btn kind="sm" t="scene-addkey" onClick={() => { const n = copy(sc), k = copy(n.keys[ki]); k.t = Math.round((lastT(n) + 0.8) * 10) / 10; n.keys.push(k); setSc(n); setKi(n.keys.length - 1); }}>+ Key</Btn>
@@ -195,6 +211,7 @@ export function SceneStudio(pp: StudioProps) {
           <Btn kind="less" t="scene-tilt" d={{ v: 5 }} onClick={() => tiltBy(5)}>Tilt +5</Btn><Btn kind="less" t="scene-tilt" d={{ v: -5 }} onClick={() => tiltBy(-5)}>Tilt -5</Btn>
         <Btn kind="less" t="scene-camreset" disabled={!key.cam} onClick={() => edit(k => { k.cam = undefined; })}>Whole set</Btn>
         <span class="sp" />
+        <Btn kind={three ? 'go' : 'sm'} t="scene-3d" on={three} onClick={() => setThree(!three)}>{three ? '3D: on' : '3D'}</Btn>
         <Btn kind="sm" t="scene-snap" onClick={snap}>Take picture</Btn>
       </div>
     </Win>
