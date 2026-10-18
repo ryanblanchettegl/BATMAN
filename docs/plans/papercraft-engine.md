@@ -34,11 +34,10 @@ A wrestler is a small JSON record:
 | `attires` | Outfits: `primary_ring`, `entrance_gear`, `street_clothes`. Each lists the parts worn, their colours, and the text and shapes stamped on them |
 | `finishing_moves` | The finisher and signature moves: `impact_damage`, `kickout_difficulty`, `position`, `category`, and the pose the picture shows |
 
-**How it fits today's code.** Today a wrestler lives inside the save (`S.w`, the save key `ewf9000-save-4`) and
-inside a world package. The record above becomes part of each wrestler there, so the save stays one piece and old
-saves carry over (rule 9: a version bump and a migration). Each wrestler can also be written out as its own
-`.json` file and read back in: on the desktop build into a folder of the player's (`/save/wrestlers/`), and that
-same file is what goes to the Steam Workshop (section 6). The finisher numbers feed the match engine through the
+**How it fits today's code.** Ryan's answer: a file per wrestler. Today a wrestler lives inside the save (`S.w`, the save key
+`ewf9000-save-4`) and inside a world package; the record above moves out into its own `.json` file
+(`/save/wrestlers/` on the desktop build), the save points to it by `id`, and old saves are split into files by a
+migration (rule 9). The same file is what goes to the Steam Workshop (section 6). The finisher numbers feed the match engine through the
 hooks it already has (`MQX`, `FINX` in `src/10-match.js`), so a big finish is harder to kick out of.
 
 ## 3. The gear studio: lettering and shapes
@@ -100,11 +99,12 @@ The desktop build already has `steamworks.js` as an optional part.
 7. **The parts library** filled out from Blender, with the export script.
 8. **Steam Workshop.**
 
-## Questions for Ryan
+## Ryan's answers (18 October)
 
-1. **Real names in scenes:** the blueprint names a real wrestler's celebration as an example. Rule 3 keeps real
-   names out of the game, so the scenes copy the kind of moment, never the person. All right?
-2. **Where wrestlers are saved:** inside the save and the world packages, with a file per wrestler to export and
-   import (and for the Workshop). Or should the game read its wrestlers from the folder of files directly?
-3. **The order:** section 4 says the diorama studio comes first. The renderer comes first above; the sandbox scene
-   builder is step 6, after the scenes it builds are working in the show. Is that the order you want?
+1. **Real names:** the named celebration was only an example. Scenes copy the kind of moment, never the person.
+2. **Where wrestlers live:** a file per wrestler. The game reads and writes each wrestler as its own `.json` file
+   (`/save/wrestlers/` on the desktop build; the browser build keeps the same records in its own storage). The
+   save points to the wrestlers by `id`. A world package is a folder of these files plus the companies and the
+   history.
+3. **What comes first:** the diorama renderer, with wrestlers drawn from what the game already knows about them,
+   then canned scenes on the broadcast; Create a wrestler after that (the order of work above stands).
