@@ -18,7 +18,7 @@ export interface Look {
   id?: string; name?: string; moniker?: string; hometown?: string; archetype?: string;
   physical_attributes?: { height_inches?: number; weight_lbs?: number; body_archetype?: string; proportional_scalers?: { torso_width?: number; torso_height?: number; limb_length?: number; muscle_mass?: number } };
   /** Not in Ryan's first draft: the head under the gear (the face numbers the game already keeps), so a file carries the whole person. */
-  appearance?: { face?: Record<string, number>; skin_tone?: number; hair_colour?: string; facial_hair?: string };
+  appearance?: { face?: Record<string, number>; skin_tone?: number; hair_colour?: string; facial_hair?: string; face_paint?: string; paint_colour?: string; tattoos?: string[] };
   attires?: Partial<Record<AttireKey, Attire>>;
   finishing_moves?: Finisher[];
   /** Not in Ryan's first draft: which of the canned entrances they come out on (a scene id). Their own pictures are
@@ -52,18 +52,25 @@ export function swatch(id: string | undefined, fb: Swatch): Swatch { if (!id) re
 
 /* ---------- the parts library: everything a slot can wear ---------- */
 export const PARTS: Record<'head' | 'upper_body' | 'lower_body' | 'footwear' | 'accessories', [string, string][]> = {
-  head: [['hair_bald', 'Bald'], ['hair_buzz_01', 'Buzz cut'], ['hair_crew_01', 'Crew cut'], ['hair_short_01', 'Short'], ['hair_flat_top', 'Flat top'], ['hair_mohawk_01', 'Mohawk'],
-    ['hair_curls_01', 'Curls'], ['hair_long_01', 'Long'], ['mask_full_01', 'Full mask'], ['hair_face', 'From the face']],
+  head: [['hair_face', 'From the face'], ['hair_bald', 'Bald'], ['hair_buzz_01', 'Buzz cut'], ['hair_crew_01', 'Crew cut'], ['hair_short_01', 'Short'], ['hair_flat_top', 'Flat top'], ['hair_slick_01', 'Slicked back'],
+    ['hair_spiky_01', 'Spiky'], ['hair_mohawk_01', 'Mohawk'], ['hair_curls_01', 'Curls'], ['hair_afro_01', 'Afro'], ['hair_cornrows_01', 'Cornrows'], ['hair_dreads_01', 'Dreadlocks'],
+    ['hair_ponytail_01', 'Ponytail'], ['hair_mullet_01', 'Mullet'], ['hair_long_01', 'Long'], ['hair_wild_01', 'Long and wild'],
+    ['mask_full_01', 'Mask, mouth open'], ['mask_closed_01', 'Full mask'], ['mask_half_01', 'Half mask']],
   upper_body: [['bare', 'Bare chest'], ['singlet_straps_up', 'Singlet, straps up'], ['singlet_straps_down', 'Singlet, straps down'], ['shirt_tshirt_base', 'T-shirt'], ['shirt_tank', 'Tank top'],
     ['top_sports', 'Sports top'], ['vest_open', 'Open vest'], ['jacket_leather_biker', 'Biker jacket'], ['robe_long', 'Entrance robe'], ['hoodie_01', 'Hooded top'], ['suit_jacket', 'Suit and tie']],
   lower_body: [['trunks_brief_01', 'Trunks'], ['trunks_long', 'Long trunks'], ['tights_long_01', 'Long tights'], ['shorts_fight', 'Fight shorts'], ['jeans_distressed', 'Torn jeans'], ['trousers_suit', 'Suit trousers']],
   footwear: [['boots_knee', 'Boots and knee pads'], ['boots_laced_heavy', 'Heavy laced boots'], ['boots_short', 'Short boots'], ['sneakers_retro', 'Retro sneakers'], ['shoes_dress', 'Dress shoes'], ['barefoot', 'Bare feet']],
   accessories: [['wrist_tape_white', 'Wrist tape'], ['knee_pads', 'Knee pads'], ['elbow_pads', 'Elbow pads'], ['gloves_fingerless', 'Fingerless gloves'], ['armband', 'Arm band'],
-    ['sunglasses_aviator', 'Aviator sunglasses'], ['hat_cowboy', 'Cowboy hat'], ['bandana', 'Bandana'], ['face_paint', 'Face paint'], ['chain_gold', 'Chain']],
+    ['sunglasses_aviator', 'Aviator sunglasses'], ['hat_cowboy', 'Cowboy hat'], ['bandana', 'Bandana'], ['chain_gold', 'Chain']],
 };
-export const FACIAL: [string, string][] = [['', 'From the face'], ['none', 'Clean shaven'], ['stubble', 'Stubble'], ['goatee', 'Goatee'], ['beard_short', 'Short beard'], ['beard_full', 'Full beard'], ['mustache', 'Moustache']];
-const FACIAL_N: Record<string, [number, number]> = { none: [0, 0], stubble: [1, 0], goatee: [7, 0], beard_short: [4, 0], beard_full: [5, 0], mustache: [0, 2] };   // facial hair, moustache in the face numbers
-const HAIR_OF: Record<string, string> = { hair_bald: 'bald', hair_buzz_01: 'buzz', hair_crew_01: 'crew', hair_short_01: 'cap', hair_flat_top: 'flat', hair_mohawk_01: 'mohawk', hair_curls_01: 'curls', hair_long_01: 'long' };
+export const FACIAL: [string, string][] = [['', 'From the face'], ['none', 'Clean shaven'], ['stubble', 'Stubble'], ['goatee', 'Goatee'], ['chin_strap', 'Chin strap'], ['sideburns', 'Sideburns'], ['beard_short', 'Short beard'],
+  ['beard_full', 'Full beard'], ['beard_braided', 'Braided beard'], ['mustache', 'Moustache'], ['handlebar', 'Handlebar moustache'], ['horseshoe', 'Horseshoe moustache']];
+const FACIAL_N: Record<string, [number, number]> = { none: [0, 0], stubble: [1, 0], goatee: [7, 0], chin_strap: [10, 0], sideburns: [6, 0], beard_short: [4, 0], beard_full: [5, 0], beard_braided: [5, 0], mustache: [0, 2], handlebar: [0, 3], horseshoe: [0, 4] };
+export const PAINT: [string, string][] = [['', 'None'], ['stripes', 'Stripes under the eyes'], ['war', 'War paint'], ['half', 'The upper half'], ['full', 'The whole face'], ['skull', 'A skull']];
+export const TATTOOS: [string, string][] = [['sleeve_near', 'Sleeve, near arm'], ['sleeve_far', 'Sleeve, far arm'], ['shoulder', 'Shoulder piece'], ['chest', 'Chest piece'], ['neck', 'Neck']];   // facial hair, moustache in the face numbers
+const HAIR_OF: Record<string, string> = { hair_bald: 'bald', hair_buzz_01: 'buzz', hair_crew_01: 'crew', hair_short_01: 'cap', hair_flat_top: 'flat', hair_mohawk_01: 'mohawk', hair_curls_01: 'curls', hair_long_01: 'long',
+  hair_slick_01: 'slick', hair_spiky_01: 'spiky', hair_afro_01: 'afro', hair_cornrows_01: 'braids', hair_dreads_01: 'dreads', hair_ponytail_01: 'ponytail', hair_mullet_01: 'mullet', hair_wild_01: 'wild' };
+const MASK_OF: Record<string, 'open' | 'full' | 'half'> = { mask_full_01: 'open', mask_closed_01: 'full', mask_half_01: 'half' };
 
 /* ---------- lettering and shapes for the gear studio ---------- */
 export const FONTS: [string, string][] = [['block', 'Block capitals'], ['stencil_block', 'Stencil'], ['tall', 'Tall and narrow']];
@@ -156,7 +163,9 @@ export function fromLook(lk: Look, base: Recipe): Recipe {
   }
   r.tw = sc.torso_width || 1; r.th = sc.torso_height || 1; r.ll = sc.limb_length || 1; r.mm = sc.muscle_mass || 1;
   if (ap.hair_colour) { const s = swatch(ap.hair_colour, { c: r.hairCol }); r.hairCol = s.c; r.browCol = s.c; }
-  if (ap.facial_hair && FACIAL_N[ap.facial_hair]) { r.beard = FACIAL_N[ap.facial_hair][0]; r.mus = FACIAL_N[ap.facial_hair][1]; }
+  if (ap.facial_hair && FACIAL_N[ap.facial_hair]) { r.beard = FACIAL_N[ap.facial_hair][0]; r.mus = FACIAL_N[ap.facial_hair][1]; r.braid = ap.facial_hair === 'beard_braided'; }
+  if (ap.face_paint) r.paint = { k: ap.face_paint, c: swatch(ap.paint_colour, { c: ap.face_paint === 'skull' ? PAL.white : PAL.red }).c };
+  if (ap.tattoos && ap.tattoos.length) r.tats = ap.tattoos.slice();
   const at = lk.attires || {};
   r.kits = { primary_ring: kitOf(at.primary_ring, 'primary_ring', r), entrance_gear: kitOf(at.entrance_gear, 'entrance_gear', r), street_clothes: kitOf(at.street_clothes, 'street_clothes', r) };
   return wear(r, 'primary_ring');
@@ -165,7 +174,7 @@ export function fromLook(lk: Look, base: Recipe): Recipe {
 export function wear(r: Recipe, k: AttireKey): Recipe {
   if (!r.kits) return r; const kit = r.kits[k] || r.kits.primary_ring, out: Recipe = { ...r, kit, straps: false, tape: false, shirt: undefined, pants: undefined, stripes: false, suit: undefined };
   const hd = kit.head;
-  if (hd === 'mask_full_01') out.mask = { base: kit.pal.p.c, trim: kit.pal.t.c }; else { out.mask = undefined; if (HAIR_OF[hd]) out.hair = HAIR_OF[hd]; }
+  if (MASK_OF[hd]) out.mask = { base: kit.pal.p.c, trim: kit.pal.t.c, kind: MASK_OF[hd] }; else { out.mask = undefined; if (HAIR_OF[hd]) out.hair = HAIR_OF[hd]; }
   if (kit.top === 'suit_jacket') out.suit = { jacket: kit.pal.p.c, tie: kit.pal.s.c, square: kit.pal.t.c };
   return out;
 }

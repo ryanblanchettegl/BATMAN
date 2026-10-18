@@ -56,6 +56,8 @@ ok(rc.attires.primary_ring.equipped_assets.upper_body === 'singlet_straps_down' 
 ok(rc.finishing_moves[0].kickout_difficulty === 'Protected' && rc.finishing_moves[0].preview_pose_id === 'pose_slam_impact_01', 'the finishing move is kept');
 ok(JSON.stringify(E.lookClean(rc)) === JSON.stringify(rc), 'cleaning a clean file changes nothing');
 ok(E.lookClean({ name: 'X', physical_attributes: { height_inches: 70 }, entrance: 'scene-abc' }).entrance === 'scene-abc' && !E.lookClean({ name: 'X', physical_attributes: { height_inches: 70 }, entrance: 'bad id!' }).entrance, 'their entrance is kept when it is a scene id');
+{ const ap = E.lookClean({ name: 'X', appearance: { face_paint: 'skull', paint_colour: 'swatch_white_paper', tattoos: ['chest', 'sleeve_near', '<bad>'], facial_hair: 'handlebar' } }).appearance;
+  ok(ap.face_paint === 'skull' && ap.tattoos.join() === 'chest,sleeve_near' && ap.facial_hair === 'handlebar', 'face paint, tattoos and facial hair are kept, and bad ones left out'); }
 ok(!E.lookOk({ hello: 1 }) && !E.lookOk(null) && !E.lookOk([1, 2]) && !E.lookOk('x'), 'anything else is not a look');
 const odd = E.lookClean({ name: '<b>Big</b>' + 'x'.repeat(80), physical_attributes: { height_inches: 400, weight_lbs: -5 }, attires: { primary_ring: { equipped_assets: { upper_body: 'robe; drop', accessories: new Array(30).fill('knee_pads') }, palette_slots: { primary: 'swatch_gold_foil' }, custom_layers: [{ type: 'evil' }, { type: 'text_decal', string: '' }] } } });
 ok(odd.name.length <= 32 && odd.name.indexOf('<') < 0, 'a name is trimmed and has no markup');

@@ -29,6 +29,13 @@ const msg = page => txt(page, '[data-t="caw-msg"]');
     ok('height and weight move one step at a time', (await txt(page, '[data-t="caw-heightv"]')) === '6\'9"' && (await txt(page, '[data-t="caw-weightv"]')) === '390 lb');
     await page.$eval('[data-t="caw-scale"][data-v="muscle_mass"]', e => { e.value = '1.4'; e.dispatchEvent(new Event('input', { bubbles: true })); });
     ok('a slider changes a proportion', /140%/.test(await page.$eval('[data-t="caw-scale"][data-v="muscle_mass"]', e => e.parentElement.textContent)));
+    // the head: a hair style, facial hair, face paint and tattoos
+    await page.click('[data-t="caw-tab"][data-v="head"]');
+    await page.selectOption('[data-t="caw-hair"]', 'hair_dreads_01'); await page.selectOption('[data-t="caw-facial"]', 'beard_braided');
+    await page.selectOption('[data-t="caw-paint"]', 'war'); await page.selectOption('[data-t="caw-paintcol"]', 'swatch_neon_green');
+    await page.click('[data-t="caw-tat"][data-v="sleeve_near"]'); await page.click('[data-t="caw-tat"][data-v="chest"]');
+    ok('hair, a beard, face paint and tattoos can be picked', (await page.$eval('[data-t="caw-hair"]', e => e.value)) === 'hair_dreads_01' && (await attr(page, '[data-t="caw-tat"][data-v="chest"]', 'aria-pressed')) === 'true');
+    ok('the suite still fits with the head tab full', !(await fits(page)), await fits(page));
     // gear for the ring, then the street, each its own
     await page.click('[data-t="caw-tab"][data-v="gear"]');
     await page.selectOption('[data-t="caw-part"][data-v="upper_body"]', 'singlet_straps_up');
@@ -80,6 +87,7 @@ const msg = page => txt(page, '[data-t="caw-msg"]');
     const [dl] = await Promise.all([page.waitForEvent('download', { timeout: 8000 }), page.click('[data-t="caw-export"]')]);
     ok('Write a file gives a .wrestler.json', /\.wrestler\.json$/.test(dl.suggestedFilename()), dl.suggestedFilename());
     const body = JSON.parse(require('fs').readFileSync(await dl.path(), 'utf8'));
+    ok('the file keeps the head: hair, beard, paint and tattoos', body.attires.primary_ring.equipped_assets.head === 'hair_dreads_01' && body.appearance.facial_hair === 'beard_braided' && body.appearance.face_paint === 'war' && body.appearance.paint_colour === 'swatch_neon_green' && body.appearance.tattoos.join() === 'sleeve_near,chest');
     ok('the file is the record: body, three outfits, the finisher', body.moniker === 'The Enforcer' && body.physical_attributes.height_inches === 81 && Object.keys(body.attires).length === 3 && body.finishing_moves[0].kickout_difficulty === 'Instant');
     await page.setInputFiles('[data-t="caw-file"]', { name: 'x.json', mimeType: 'application/json', buffer: Buffer.from('{"hello":1}') }); await page.waitForTimeout(200);
     ok('a file that is not a wrestler is refused', /not a wrestler/.test(await msg(page)));
