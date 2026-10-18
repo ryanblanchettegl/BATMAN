@@ -22,6 +22,7 @@ Two more lists sit beside this one, both finished:
 
 | Topic | Decision |
 | --- | --- |
+| Platforms, 18 Oct | Steam first (the desktop from 1080p to 4K, and the Steam Deck), Android down the road. No more tablet or TV test runs or layout rules; browser tests run at desk size. Controls keep working by touch for Android later. |
 | The look, 18 Oct | Construction paper on a mid 90s Macintosh is the new rule, replacing the grey windows of 6 October: cut card in layers, navy pinstripe title bars, cream windows, bold red, green, blue and yellow buttons stacked from card, tight shadows down and to the right, no CRT filter. Portraits and wrestlers are construction paper and replace the pixel faces. Reference `docs/mockups/paper/desk.png`; rule 2a in `CLAUDE.md`. |
 | Booking, 16 Oct | No fast mode. Suggest a card gives a mediocre show: to win the game or keep the job the player has to decide well. Fog of war stays: the game never tells the player how to put on a good show; the road agent drops sly hints. Redo the booking screen: more buttons, matches dragged or moved up and down the card, match booking that looks better and is easier (pop-ups are fine), and what COULD happen on the show tonight from the player's choices. |
 | Battle royals, 16 Oct | Up to 30 people. 30 minutes for every 15: a 30-man battle royal lasts an hour. |
