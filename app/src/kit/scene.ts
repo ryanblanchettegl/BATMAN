@@ -27,12 +27,31 @@ export interface Scene { v: 1; id: string; name: string; when: string; set: stri
     (Ryan, 18 October: breaking news, talk show highlights, posters, magazine covers, portraits, everything). */
 export const WHEN: [string, string][] = [['start', 'The opening bell'], ['mid', 'Back and forth'], ['nearfall', 'A near fall'], ['finish', 'The finish'], ['champion', 'A new champion'], ['promo', 'A promo'], ['attack', 'An attack'],
   ['news', 'Breaking news'], ['talk', 'A talk show'], ['poster', 'A poster'], ['cover', 'A magazine cover'], ['portrait', 'A portrait'], ['any', 'Only by hand']];
-export const SETS: [string, string][] = [['ring', 'The ring'], ['backstage', 'Backstage'], ['plain', 'Plain card']];
+/** The sets, each drawn from its own angle: pick the one that suits the moment. Every set keeps feet on the same line
+    (FOOT), so a pose works on all of them. */
+export const SETS: [string, string][] = [['ring', 'The ring: the hard camera'], ['ringlow', 'The ring: low at ringside'], ['ringcorner', 'The ring: from the corner'],
+  ['ramp', 'The entrance ramp'], ['hall', 'Backstage: the hallway'], ['locker', 'Backstage: the locker room'], ['office', 'The office'], ['backstage', 'Backstage: the wall'], ['plain', 'Plain card']];
 export const W16 = 16, H9 = 9;   // a scene is 16 units wide and 9 high; x = 0 is the middle, y = 0 the middle
 export const FOOT = -2.9;          // where feet stand on the mat
 export const WAIST = FOOT + 2.52 + 0.7;   // the waist of a doll of standard height standing on the mat
 
 /* ---------- the sets ---------- */
+type Add = (pts: [number, number][], col: string, z: number, lift?: number, rough?: number) => void;
+const SHIRTS = () => [PAL.red, PAL.black, PAL.white, PAL.blue, PAL.grey, PAL.maroon, PAL.yellow, PAL.teal];
+const SKINS = ['#f3dccb', '#e8c09e', '#d5a07a', '#b07a52', '#7f5236', '#5a3a26'];
+/** Rows of fans, the back rows small and dim, the front rows bigger and lit, between x0 and x1. */
+function crowd(add: Add, rows: number, yTop: number, dy: number, sz0: number, dsz: number, x0: number, x1: number, seed: number, z0 = -0.9) {
+  let s = seed; const r01 = () => { s = (s * 16807) % 2147483647; return s / 2147483647; }, sh = SHIRTS();
+  for (let row = 0; row < rows; row++) {
+    const y = yTop - row * dy, sz = sz0 + row * dsz, n = Math.max(3, Math.round((x1 - x0) / (sz * 2.6))), k = 0.5 + row * (0.5 / rows);
+    for (let i = 0; i < n; i++) {
+      const x = x0 + (i + 0.3 + r01() * 0.4) * (x1 - x0) / n;
+      add(ell(x, y - sz * 1.4, sz * 1.6, sz * 1.2, 10), shade(sh[Math.floor(r01() * sh.length)], k), z0 + row * 0.04, 0.03, 0.01);
+      add(ell(x, y, sz * 0.75, sz * 0.9, 10), shade(SKINS[Math.floor(r01() * SKINS.length)], k), z0 + 0.02 + row * 0.04, 0.03, 0.01);
+      if (r01() < 0.07) add(ell(x + sz * 0.8, y + sz, 0.05, 0.07, 6), '#fffff2', z0 + 0.05 + row * 0.04, 0.01, 0.002);
+    }
+  }
+}
 function setPieces(set: string): Piece[] {
   const o: Piece[] = []; let n = 0; const add = (pts: [number, number][], col: string, z: number, lift = 0.04, rough = 0.012) => o.push({ pts: snip(pts, 9000 + (n++) * 131, rough, 0.1), col, z, lift });
   if (set === 'ring') {
@@ -68,11 +87,84 @@ function setPieces(set: string): Piece[] {
       const a: [number, number] = [sd * FX, FAR + 0.55 * k], b: [number, number] = [sd * NX, NEAR + 0.75 * k];
       add(strip(a, b, 0.07, 0.13), PAL.white, -0.4, 0.03, 0.004);
     }
-  } else if (set === 'backstage') {  } else if (set === 'backstage') {
+  } else if (set === 'backstage') {
     add(rect(-11, -7, 22, 14), '#4a4f5c', -1, 0, 0);
     for (let i = 0; i < 6; i++) { add(rect(-7.8 + i * 1.5, -2.5, 1.3, 5.6), '#6f7a8a', -0.9, 0.05); add(rect(-7.6 + i * 1.5, 1.8, 0.9, 0.12), '#2b2f38', -0.85, 0.02); }
     add(rect(2.2, -2.6, 5.6, 4.8), '#c9b48a', -0.9, 0.06); add(rect(2.5, 1.2, 5.0, 0.7), PAL.red, -0.85, 0.03);
     add(rect(-11, -7, 22, 4.2), '#2d2f36', -0.5, 0.04);
+  } else if (set === 'ringlow') {
+    // Low at ringside: the camera at the apron, the crowd towering behind, the far ropes small, the near ropes and
+    // posts big in front of everybody
+    add(rect(-11, -7, 22, 14), PAL.navy, -1, 0, 0);
+    crowd(add, 5, 4.3, 1.0, 0.3, 0.07, -11, 11, 11);
+    add(rect(-11, -1.2, 22, 0.55), '#1a1a1f', -0.7, 0.03);
+    for (let k = 1; k <= 3; k++) add(rect(-11, -2.75 + 0.42 * k, 22, 0.06), PAL.white, -0.5, 0.02, 0.003);   // the far ropes
+    add(rect(-11, -3.3, 22, 0.55), PAL.mat, -0.45, 0.02, 0.01);                                                // the mat, edge on
+  } else if (set === 'ringcorner') {
+    // From the corner: the ring a diamond, the far corner post in the middle, the ropes running back to it
+    const FY = -0.5, SX = 9.6, SY = -2.6;
+    add(rect(-11, -7, 22, 14), PAL.navy, -1, 0, 0);
+    crowd(add, 5, 3.9, 0.8, 0.2, 0.035, -11, 11, 5);
+    add(rect(-11, -0.4, 22, 0.42), '#1a1a1f', -0.7, 0.03);
+    add([[0, FY], [SX, SY], [0, -6.4], [-SX, SY]], PAL.mat, -0.45, 0.02, 0.012);
+    add(ell(0, -2.9, 2.2, 0.75, 28), shade(PAL.blue, 1.05), -0.43, 0.01, 0.01); add(ell(0, -2.9, 1.7, 0.53, 24), PAL.mat, -0.42, 0.01, 0.008);
+    add(rect(-0.13, FY, 0.26, 2.1), PAL.steel, -0.6, 0.03, 0.006);
+    for (let k = 1; k <= 3; k++) add(ell(0, FY + 0.6 * k, 0.22, 0.17, 12), PAL.red, -0.55, 0.03, 0.006);
+    for (const sd of [-1, 1]) for (let k = 1; k <= 3; k++) add(strip([0, FY + 0.6 * k], [sd * SX, SY + 0.72 * k], 0.07, 0.12), PAL.white, -0.5, 0.03, 0.004);
+  } else if (set === 'ramp') {
+    // The entrance: a ramp running back to the stage under a giant screen, fans behind barricades either side
+    add(rect(-11, -7, 22, 14), '#0b0d1c', -1, 0, 0);
+    crowd(add, 4, 1.6, 0.75, 0.2, 0.05, -11, -3.6, 21); crowd(add, 4, 1.6, 0.75, 0.2, 0.05, 3.6, 11, 23);
+    add(rect(-5.2, 1.0, 10.4, 3.5), '#1a1f3d', -0.8, 0.05);                                       // the screen
+    add(rect(-4.9, 1.25, 9.8, 3.0), PAL.blue, -0.78, 0.02, 0.006);
+    add(star(0, 2.75, 1.1, 5, 0.45), PAL.yellow, -0.76, 0.02, 0.004);
+    for (const sx of [-5.5, 5.5]) add(rect(sx - 0.15, -0.2, 0.3, 4.9), PAL.steel, -0.75, 0.04, 0.006);   // the trusses
+    add(rect(-5.5, 4.55, 11, 0.25), PAL.steel, -0.75, 0.04, 0.006);
+    add(rect(-6.2, -0.3, 12.4, 1.3), '#20223a', -0.72, 0.04);                                      // the stage
+    add([[-2.4, -0.3], [2.4, -0.3], [6.2, -7], [-6.2, -7]], '#2c2e40', -0.6, 0.03, 0.01);          // the ramp
+    for (let i = 0; i < 9; i++) for (const sd of [-1, 1]) { const t = i / 8, x = sd * (2.4 + 3.8 * t), y = -0.3 - 6.7 * t; add(ell(x, y, 0.05 + t * 0.08, 0.04 + t * 0.06, 8), PAL.yellow, -0.58, 0.01, 0.002); }
+    for (const sd of [-1, 1]) add([[sd * 3.4, -0.4], [sd * 3.7, -0.4], [sd * 8.6, -7], [sd * 7.6, -7]], '#15161f', -0.55, 0.04, 0.008);   // the barricades
+  } else if (set === 'hall') {
+    // The hallway: block walls running away to a door at the far end, road cases along one side
+    const vx = 0, vy = 0.6, L = -2.7, R = 2.7, T = 2.4, B = -1.1;
+    add(rect(-11, -7, 22, 14), '#3c4250', -1, 0, 0);
+    add([[-11, 6], [L, T], [L, B], [-11, -5.4]], '#56607a', -0.95, 0.03, 0.01);                   // the left wall
+    add([[11, 6], [R, T], [R, B], [11, -5.4]], '#4d566e', -0.95, 0.03, 0.01);                     // the right wall
+    add([[-11, 6], [11, 6], [R, T], [L, T]], '#2b2f3c', -0.94, 0.03, 0.01);                        // the ceiling
+    add([[L, B], [R, B], [11, -5.4], [-11, -5.4]], '#7d7a72', -0.93, 0.03, 0.01);                  // the floor
+    add(rect(L, B, R - L, T - B), '#6a7290', -0.92, 0.03, 0.01);                                     // the far wall
+    add(rect(-0.8, B, 1.6, 2.5), '#3a2a1c', -0.9, 0.04, 0.006); add(ell(0.5, B + 1.2, 0.06, 0.06, 8), PAL.gold, -0.88, 0.01, 0.002);
+    for (const t of [0.25, 0.5, 0.75]) for (const sd of [-1, 1]) {                                  // lines of blocks, running to the far end
+      const x0 = sd * 11, y0 = -5.4 + 11.4 * t, x1 = sd * 2.7, y1 = B + (T - B) * t; add(strip([x0, y0], [x1, y1], 0.06, 0.02), shade('#56607a', 0.8), -0.91, 0.005, 0.003);
+    }
+    for (let i = 0; i < 3; i++) { const t = 0.35 + i * 0.2; add(strip([-1.8 * (1 - t) - 0.3, T + (6 - T) * t], [1.8 * (1 - t) + 0.3, T + (6 - T) * t], 0.18 * t + 0.05, 0.18 * t + 0.05), '#fff6c8', -0.9, 0.01, 0.004); }   // ceiling lights
+    add([[6.0, 4.2], [9.4, 5.6], [9.4, -3.6], [6.0, -2.4]], '#2a3a2a', -0.89, 0.04, 0.006);        // a door on the right wall
+    for (const [x, y, w, h] of [[-9.6, -4.4, 2.6, 2.0], [-9.2, -2.4, 1.9, 1.3], [-6.6, -3.6, 1.6, 1.4]] as [number, number, number, number][]) {   // road cases
+      add(rect(x, y, w, h), '#18181c', -0.7, 0.06, 0.006); for (const [cx, cy] of [[x, y], [x + w, y], [x, y + h], [x + w, y + h]]) add(rect(cx - 0.12, cy - 0.12, 0.24, 0.24), PAL.steel, -0.68, 0.01, 0.003);
+    }
+  } else if (set === 'locker') {
+    // The locker room: a wall of lockers, a bench, a tiled floor
+    add(rect(-11, -7, 22, 14), '#40463a', -1, 0, 0);
+    for (let i = 0; i < 12; i++) { const x = -10.5 + i * 1.8;
+      add(rect(x, -1.6, 1.7, 5.6), i % 2 ? '#5d6f86' : '#566a82', -0.9, 0.05, 0.006);
+      for (let v = 0; v < 3; v++) add(rect(x + 0.4, 3.0 - v * 0.18, 0.9, 0.07), '#2b3442', -0.88, 0.01, 0.002);
+      add(rect(x + 1.35, 1.0, 0.1, 0.45), PAL.steel, -0.88, 0.01, 0.002);
+    }
+    add(rect(-11, -7, 22, 5.4), '#b9b4a8', -0.8, 0.02, 0.01);
+    for (let i = 0; i < 12; i++) add(rect(-11 + i * 1.9, -7, 0.05, 5.4), '#9a958a', -0.79, 0.005, 0.002);
+    add(rect(-6.5, -2.2, 6.4, 0.35), PAL.wood, -0.6, 0.06, 0.006);                                  // the bench, behind whoever stands
+    for (const lx of [-6.1, -0.6]) add(rect(lx, -3.0, 0.22, 0.8), shade(PAL.wood, 0.6), -0.62, 0.03, 0.004);
+    add(rect(4.2, 1.2, 0.8, 1.4), PAL.white, -0.86, 0.03, 0.006); add(rect(6.0, 1.0, 0.8, 1.6), PAL.red, -0.86, 0.03, 0.006);   // towels
+  } else if (set === 'office') {
+    // The office: panelled walls, blinds, a belt framed on the wall, the big desk to one side
+    add(rect(-11, -7, 22, 14), '#5a3d28', -1, 0, 0);
+    for (let i = 0; i < 9; i++) add(rect(-11 + i * 2.5, -1.6, 0.06, 7), '#4a3020', -0.95, 0.005, 0.002);
+    add(rect(-8.4, 0.6, 5.0, 3.4), '#cfe3f0', -0.9, 0.04, 0.006);                                   // the window and its blinds
+    for (let i = 0; i < 9; i++) add(rect(-8.4, 0.75 + i * 0.36, 5.0, 0.16), '#e9e2cf', -0.88, 0.01, 0.003);
+    add(rect(0.6, 1.2, 3.6, 2.2), '#2b1b10', -0.9, 0.05, 0.006); add(rect(0.8, 1.4, 3.2, 1.8), '#7a1418', -0.88, 0.02, 0.004);   // the frame
+    add(rect(1.0, 2.15, 2.8, 0.3), PAL.black, -0.86, 0.02, 0.003); add(ell(2.4, 2.3, 0.5, 0.38, 16), PAL.gold, -0.85, 0.02, 0.003);
+    add(rect(-11, -7, 22, 5.4), '#3a3f5a', -0.8, 0.02, 0.01);                                       // the carpet
+    add(rect(5.0, -0.6, 2.4, 3.0), '#1a1a1f', -0.7, 0.05, 0.006);                                   // the big chair, behind the desk
   } else {
     add(rect(-11, -7, 22, 14), PAL.cream, -1, 0, 0);
     add(rect(-11, -7, 22, 4.1), shade(PAL.cream, 0.82), -0.5, 0.04);
@@ -80,6 +172,22 @@ function setPieces(set: string): Piece[] {
   return o;
 }
 const FRONT: Record<string, (o: Piece[]) => void> = {
+  ringlow: o => {   // the near ropes and posts, big, in front of everybody; the apron below
+    for (const sd of [-1, 1]) o.push({ pts: snip(rect(sd * 7.4 - 0.32, -5, 0.64, 7.6), 760 + sd, 0.01, 0.1), col: PAL.steel, z: 2.4, lift: 0.08 });
+    for (let k = 0; k < 3; k++) o.push({ pts: snip(rect(-11, -2.9 + 1.25 * k, 22, 0.16), 765 + k, 0.006, 0.1), col: PAL.white, z: 2.45, lift: 0.06 });
+    for (const sd of [-1, 1]) for (let k = 0; k < 3; k++) o.push({ pts: snip(ell(sd * 7.4, -2.82 + 1.25 * k, 0.5, 0.4, 14), 790 + k * 3 + sd, 0.006, 0.1), col: PAL.red, z: 2.5, lift: 0.06 });
+    o.push({ pts: snip(rect(-11, -7, 22, 3.75), 777, 0.015, 0.1), col: PAL.red, z: 2.55, lift: 0.08 });
+    o.push({ pts: snip(rect(-11, -3.5, 22, 0.25), 778, 0.008, 0.1), col: PAL.white, z: 2.6, lift: 0.03 });
+  },
+  ringcorner: o => {   // the apron below the two near edges of the diamond
+    o.push({ pts: snip([[-11, -2.6], [-9.6, -2.6], [0, -6.4], [9.6, -2.6], [11, -2.6], [11, -7], [-11, -7]], 777, 0.015, 0.1), col: PAL.red, z: 2.5, lift: 0.08 });
+    for (const sd of [-1, 1]) for (let k = 1; k <= 3; k++) o.push({ pts: snip(strip([sd * 9.6, -2.6 + 0.72 * k], [sd * 2.5, -5.4 + 0.9 * k], 0.13, 0.18), 800 + k * 2 + sd, 0.006, 0.1), col: PAL.white, z: 2.45, lift: 0.05 });
+  },
+  office: o => {   // the big desk, in front of whoever stands behind it
+    o.push({ pts: snip(rect(2.8, -3.9, 7.6, 2.5), 830, 0.01, 0.1), col: '#4a2c18', z: 2.3, lift: 0.08 });
+    o.push({ pts: snip(rect(2.6, -1.5, 8.0, 0.3), 831, 0.008, 0.1), col: '#6b4228', z: 2.35, lift: 0.05 });
+    o.push({ pts: snip(rect(5.4, -1.2, 1.6, 0.25), 832, 0.006, 0.1), col: PAL.white, z: 2.4, lift: 0.03 });
+  },
   ring: o => {   // the near posts at the edges, and the apron skirt along the bottom
     for (const sd of [-1, 1]) { o.push({ pts: snip(rect(sd * 9.2 - 0.18, -3.75, 0.36, 2.55), 770 + sd, 0.008, 0.1), col: PAL.steel, z: 2.4, lift: 0.06 });
       for (let k = 1; k <= 3; k++) o.push({ pts: snip(ell(sd * 9.2, -3.75 + 0.75 * k, 0.3, 0.24, 12), 780 + k * 3 + sd, 0.006, 0.1), col: PAL.red, z: 2.45, lift: 0.05 }); }

@@ -74,6 +74,9 @@ async function studio(mode) {
     await page.selectOption('[data-t="scene-propkind"]', 'headline'); await page.fill('[data-t="scene-newwords"]', 'BREAKING NEWS'); await page.click('[data-t="scene-addprop"]');
     ok(mode, 'a headline is added and picked', /:prop$/.test((await attr(page, '[data-t="scene-stage"]', 'data-sel')) || ''));
     await page.click('[data-t="scene-tab"][data-v="file"]');
+    const sets = await page.$$eval('[data-t="scene-set"] option', o => o.map(x => x.value));
+    for (const st of sets) { await page.selectOption('[data-t="scene-set"]', st); await page.waitForTimeout(80); }
+    ok(mode, 'every set draws (' + sets.length + ', each from its own angle)', sets.length >= 9 && !errs.length, sets.join(','));
     await page.fill('[data-t="scene-name"]', 'Test scene'); await page.selectOption('[data-t="scene-when"]', 'news');
     await page.click('[data-t="scene-save"]');
     ok(mode, 'Save keeps the scene in the world', /kept in/.test(await page.$eval('[data-t="scene-msg"]', e => e.textContent)), await page.$eval('[data-t="scene-msg"]', e => e.textContent));
