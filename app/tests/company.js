@@ -300,7 +300,7 @@ async function remote() {
 }
 
 (async () => {
-  for (const mode of ['desk', 'tablet']) {
+  for (const mode of (process.env.MODES || 'desk').split(',')) {
     const { browser, page, errs } = await start(mode, 'pdw', mode === 'desk' ? 0 : 1);
     await tour(page, mode, 'week 1');
     await go(page, 'finances');
