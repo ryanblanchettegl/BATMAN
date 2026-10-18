@@ -108,3 +108,50 @@ The desktop build already has `steamworks.js` as an optional part.
    history.
 3. **What comes first:** the diorama renderer, with wrestlers drawn from what the game already knows about them,
    then canned scenes on the broadcast; Create a wrestler after that (the order of work above stands).
+
+## What Create a Scene must be able to do (Ryan, 18 October)
+
+Create a Scene should work like a photo mode with enough options to make any picture: breaking news, talk show
+highlights, posters, magazine covers, portraits, and wrestling's big moments. Ryan gave a list of famous moments from
+the 1980s and 1990s as inspiration. We do not rebuild them by name (rule 3: no real wrestlers, events or logos in the
+game). They tell us which tools the studio needs, and players can stage their own versions.
+
+| The kind of moment | What the studio needs for it |
+|---|---|
+| A champion holding the belt high in a packed house | A packed stadium set, the belt held overhead (built), confetti (built), a low camera |
+| A giant and a hero nose to nose | Size per person (a giant beside a normal man), a close camera (built), snarling faces |
+| A giant lifted for a slam | One person held in another's hands (a figure fixed to a hand), motion lines, camera flashes in the crowd |
+| Partners screaming at each other backstage | More backstage sets (hallway, locker room, office), shouting faces (built) |
+| One man holding two belts | Several belts, a belt worn on the shoulder or the waist, pyro and smoke |
+| A wrestler lifting his manager while the crowd cries | People who are not wrestlers (a dress, a suit), lifting a person, tears |
+| A champion on his knees, crying, clutching the belt | A library of poses (kneel, sit, lie, lift, carry, cover, hold, point, celebrate), tears, sweat |
+| Three men side by side as the crowd turns on them | Groups of three or more (built, up to six), rubbish thrown into the ring, matching shirts with lettering |
+| A bloody man screaming in a submission hold | Blood (a cut, a trickle, a face covered), pain faces, two bodies locked together (each limb in front or behind) |
+| A figure in the rafters with a bat | A rafters set, a bat, a spotlight in a dark building |
+| A man thrown off the roof of a steel cage | A cage over the ring with a roof, a body in mid-air (built), an announce table below, a high wide camera |
+| A man spraying his rivals from a truck | A truck, a spray of liquid, men in suits |
+
+### The toolkit, by kind
+
+- **People:** size per person (from small to a giant); more faces (snarl, smirk, crying, pain, roar, eyes shut);
+  clothes for people who are not wrestlers (suit, dress, T-shirt, jeans; the referee's shirt is built); one person
+  held in another's hands; each limb in front of or behind the body, for holds; a library of poses to start from.
+- **Marks on people:** blood in three steps, sweat, tears, bruises.
+- **Effects:** motion lines, impact stars, camera flashes, smoke and pyro, sparks, a spray of liquid, confetti (built),
+  rubbish thrown in.
+- **Props:** more belts (held, on the shoulder, round the waist), chairs and tables (built; a broken table), ladders,
+  a bat, a kendo stick, steel steps, a bin, a truck, a hose, signs (built), headlines (built).
+- **Sets:** the ring (built), a packed stadium, backstage (built) plus hallway, locker room and office, the parking
+  lot, the entrance ramp, the rafters, a steel cage with a roof, the announce desk, a talk show set, a news desk.
+- **Light and camera:** a spotlight, a dark building, coloured light, flashes; the camera (built: zoom, pan, tilt);
+  tall pictures for posters and covers, square ones for portraits.
+- **Lettering:** headlines and bursts (built), captions, a magazine masthead.
+
+### The order to build it in (one batch at a time, each shown to Ryan)
+
+1. **People and marks:** size per person, more faces, blood, sweat and tears, and the pose library.
+2. **Holding and lifting:** a person fixed to another's hands, each limb in front or behind.
+3. **Light and effects:** spotlight and a dark building, motion lines, camera flashes, smoke, sparks, spray.
+4. **Sets:** the packed stadium, the steel cage, the rafters, the hallway and the office, a talk show and a news desk.
+5. **Props and clothes:** ladders, a bat, steps, a bin, a truck; suits, dresses and T-shirts.
+6. **Frames:** tall and square pictures, captions and a masthead, for posters, covers and portraits.
