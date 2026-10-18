@@ -1,5 +1,10 @@
 # The new look: plan for the next session
 
+> **18 October 2026: the look has changed.** Ryan picked construction paper on a mid 90s Macintosh as the new rule
+> ("this is the new rule"). It replaces the grey windows below. The reference is `docs/mockups/paper/desk.png`, and
+> rule 2a in `CLAUDE.md` says what it is made of. The plan below still holds for the engine work, the build order
+> and the parts already built (the kit, lights, logos); the pictures in `docs/mockups/final/` are now history.
+
 Written 6 October 2026, at the end of the session where Ryan picked the art direction. Read this first next time. It says what was decided, what the pictures promise that the game cannot do yet, the engine work behind each promise, and the order to build it in.
 
 Nothing in this document is built. The game today is version 0.38 in the repo, not yet published (see "Before anything else" at the end).
