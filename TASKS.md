@@ -116,7 +116,8 @@ Two more lists sit beside this one, both finished:
 ### 0v. The creator suite, built out (Ryan, 18 October: "add them to the queue"; `docs/plans/creator-suite-roadmap.md`)
 
 Create a Wrestler:
-- [ ] More hair (styles and a second colour), body hair, scars, freckles, more masks and mask designs, face paint in layers.
+- [x] More hair (styles and a second colour), body hair, scars, freckles, more masks and mask designs.
+- [ ] Face paint in layers.
 - [ ] More gear: jackets with lettering on the back, coats, hats, kick pads and wraps in more cuts, women's gear sets, capes, crowns and chains, a title belt worn on the waist or the shoulder.
 - [ ] A move set: signature moves for each part of a match, taunts.
 - [ ] An entrance built from parts: a music cue, pyro, lights, a walk.

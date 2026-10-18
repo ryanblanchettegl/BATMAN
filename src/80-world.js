@@ -95,7 +95,7 @@ E.createWrestler=function(S,o){
   if(o.face&&typeof o.face==='object'){w.face={};['h','hr','fh','ms','ey','ns'].forEach(function(k){w.face[k]=clamp(Math.round(+o.face[k]||0),0,9);});w.face.sk=clamp(Math.round(+o.face.sk||0),0,100);w.face.hc=clamp(Math.round(+o.face.hc||0),0,100);}
   if(o.look){var lc=lookClean(o.look);if(lc&&E.lookOk(lc)){lc.name=w.name;w.look=lc;var lf=lookFin(w);if(lf)w.fin=lf.name;}}   // made in Create a Player (src/86-looks.js)
   S.lastCreate=S.week;
-  mile(S,w,'debut','Made in Create a Player');news(S,'contract','A new name is looking for work: '+w.name+'.');
+  mile(S,w,'debut','Made in Create a Wrestler');news(S,'contract','A new name is looking for work: '+w.name+'.');
   return {ok:true,id:w.id,msg:w.name+' is a free agent now. Sign them from Free agents, like anybody else.'};
 };
 

@@ -5730,7 +5730,7 @@ E.createWrestler=function(S,o){
   if(o.face&&typeof o.face==='object'){w.face={};['h','hr','fh','ms','ey','ns'].forEach(function(k){w.face[k]=clamp(Math.round(+o.face[k]||0),0,9);});w.face.sk=clamp(Math.round(+o.face.sk||0),0,100);w.face.hc=clamp(Math.round(+o.face.hc||0),0,100);}
   if(o.look){var lc=lookClean(o.look);if(lc&&E.lookOk(lc)){lc.name=w.name;w.look=lc;var lf=lookFin(w);if(lf)w.fin=lf.name;}}   // made in Create a Player (src/86-looks.js)
   S.lastCreate=S.week;
-  mile(S,w,'debut','Made in Create a Player');news(S,'contract','A new name is looking for work: '+w.name+'.');
+  mile(S,w,'debut','Made in Create a Wrestler');news(S,'contract','A new name is looking for work: '+w.name+'.');
   return {ok:true,id:w.id,msg:w.name+' is a free agent now. Sign them from Free agents, like anybody else.'};
 };
 
@@ -8134,7 +8134,9 @@ function lookClean(x){
     var shp=null;if(ap.shape&&typeof ap.shape==='object'){shp={};['head_w','head_h','jaw','chin','eye_size','eye_gap','eye_height','brow_thick','brow_angle','nose_w','nose_l','mouth_w','ears'].forEach(function(k){var v=lkNum(ap.shape[k],-1,1);if(v)shp[k]=Math.round(v*100)/100;});if(!Object.keys(shp).length)shp=null;}
 var ft=null;if(ap.features&&typeof ap.features==='object'){ft={};['eyes','nose','mouth','ears'].forEach(function(k){var v=lkId(ap.features[k]);if(v)ft[k]=v;});if(!Object.keys(ft).length)ft=null;}
     o.appearance=lkPrune({features:ft||undefined,shape:shp||undefined,face:f&&Object.keys(f).length?f:undefined,skin_tone:lkNum(ap.skin_tone,0,100),hair_colour:lkId(ap.hair_colour),facial_hair:lkId(ap.facial_hair),face_paint:lkId(ap.face_paint),paint_colour:lkId(ap.paint_colour),
-      tattoos:Array.isArray(ap.tattoos)?ap.tattoos.map(lkId).filter(function(v){return !!v;}).slice(0,8):undefined});}
+      tattoos:Array.isArray(ap.tattoos)?ap.tattoos.map(lkId).filter(function(v){return !!v;}).slice(0,8):undefined,
+      hair_colour2:lkId(ap.hair_colour2),hair_mix:lkId(ap.hair_mix),body_hair:lkNum(ap.body_hair,0,2),freckles:ap.freckles===true?true:undefined,mask_design:lkId(ap.mask_design),
+      scars:Array.isArray(ap.scars)?ap.scars.map(lkId).filter(function(v){return !!v;}).slice(0,6):undefined});}
   if(x.attires&&typeof x.attires==='object'){var at={};LOOK_ATTIRES.forEach(function(k){var a=x.attires[k];if(!a||typeof a!=='object')return;
     var eq=a.equipped_assets||{},e={};LOOK_PARTS.forEach(function(p){var v=lkId(eq[p]);if(v)e[p]=v;});
     if(Array.isArray(eq.accessories))e.accessories=eq.accessories.map(lkId).filter(function(v){return !!v;}).slice(0,8);

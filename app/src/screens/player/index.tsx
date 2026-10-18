@@ -11,7 +11,7 @@ import { Btn, TextBox, Desktop, Win, Group, Tabs } from '../../kit';
 import { ScenePlayer } from '../../kit/sceneplayer';
 import { Scene, SCENES, POSES, WAIST, copy, scenesFor, allScenes, WHEN } from '../../kit/scene';
 import { Recipe, recipeOf, blank } from '../../kit/puppet';
-import { Look, Attire, AttireKey, Layer, Finisher, ATTIRES, PARTS, SWATCHES, SLOTS, FONTS, SHAPES, ARCHETYPES, FACIAL, PAINT, TATTOOS, FACE_SLIDERS, FEATURES, KICKOUT, POSITIONS, CATEGORIES, FIN_SCENES, fromLook, blankLook, finScene, swatch } from '../../kit/caw';
+import { Look, Attire, AttireKey, Layer, Finisher, ATTIRES, PARTS, SWATCHES, SLOTS, FONTS, SHAPES, ARCHETYPES, FACIAL, PAINT, TATTOOS, HAIR_MIX, SCARS, MASK_DESIGNS, FACE_SLIDERS, FEATURES, KICKOUT, POSITIONS, CATEGORIES, FIN_SCENES, fromLook, blankLook, finScene, swatch } from '../../kit/caw';
 import { derive, NAMES, FaceKey } from '../../lib/portrait';
 import { PaperPortrait, PT_POSES, PT_FRAMES, companyCard } from '../../kit/paperportrait';
 import { EXPR } from '../../kit/puppet';
@@ -66,6 +66,7 @@ export function CreatePlayer(pp: PlayerProps) {
   const A = (n: Look): Attire => { n.attires = n.attires || {}; const a = n.attires[att] || (n.attires[att] = { equipped_assets: {}, palette_slots: {}, custom_layers: [] }); a.custom_layers = a.custom_layers || []; return a; };
   const cur = (lk.attires && lk.attires[att]) || { equipped_assets: {}, palette_slots: {}, custom_layers: [] } as Attire, layers = cur.custom_layers || [];
   const pa = lk.physical_attributes || {}, ps = pa.proportional_scalers || {}, face = (lk.appearance && lk.appearance.face) || {};
+  const ap = lk.appearance || {}, setAp = (fn: (a: NonNullable<Look['appearance']>) => void) => change(n => { n.appearance = n.appearance || {}; fn(n.appearance); });
   const r: Recipe = fromLook(lk, recipeOf({ ...w0, face: { ...(w0.face || {}), ...face }, look: null }));
   const fins = lk.finishing_moves || [], fin: Finisher | null = fi >= 0 && fi < fins.length ? fins[fi] : null;
 
@@ -79,7 +80,7 @@ export function CreatePlayer(pp: PlayerProps) {
     sc = { ...copy(prevSc), loop: true }; play = 'sc' + prevSc.id + JSON.stringify(lk);
   } else {
     const pd = (POSES.find(x => x[0] === pose) || POSES[0])[1];
-    sc = { v: 1, id: 'caw', name: 'Create a Player', when: 'any', set: SET_OF[att], attire: att, slots: [{ id: 'A', n: lk.name || w0.name, role: 'a' }],
+    sc = { v: 1, id: 'caw', name: 'Create a Wrestler', when: 'any', set: SET_OF[att], attire: att, slots: [{ id: 'A', n: lk.name || w0.name, role: 'a' }],
       keys: [{ t: 0, figs: { A: { x: 0, y: pd.y ?? WAIST, r: pd.r || 0, f: 1, z: 0.6, p: { ...pd.p }, e: pd.e || '' } }, props: pose === 'mic' ? [{ id: 'mic', k: 'mic', x: 0.1, y: 0.1, r: -30, z: 1.2, at: 'A:hand_n' }] : [], cam: (pp.attire && REGION_CAM[tab]) || CAM_OF[att] }] };
     play = att + pose + (pp.attire ? tab : '') + JSON.stringify(lk);
   }
@@ -97,7 +98,7 @@ export function CreatePlayer(pp: PlayerProps) {
   const writeOut = () => {
     const b = new Blob([JSON.stringify(lk, null, 2)], { type: 'application/json' }), a = document.createElement('a');
     a.href = URL.createObjectURL(b); a.download = ((lk.name || w0.name).replace(/[^a-z0-9]+/gi, '-').toLowerCase() || 'wrestler') + '.wrestler.json'; document.body.appendChild(a); a.click(); a.remove();
-    say('Written out as ' + a.download + '. Anybody can open it in Create a Player.');
+    say('Written out as ' + a.download + '. Anybody can open it in Create a Wrestler.');
   };
   const readIn = (f: File) => { f.text().then(t => { let x: any = null; try { x = JSON.parse(t); } catch (e) { x = null; } if (!x || !E.lookOk(x)) { say('That file is not a wrestler.', true); return; } setLk(E.lookClean(x)); setLay(-1); setFi(-1); say('Opened ' + (x.name || 'a wrestler') + '. Save to keep it on ' + w0.name + '.'); }); };
 
@@ -122,8 +123,8 @@ export function CreatePlayer(pp: PlayerProps) {
   const setPt = (o: any) => change(n => { const q: any = { ...(n.portrait || {}), ...o }; Object.keys(q).forEach(k => { if (q[k] === undefined || q[k] === '') delete q[k]; }); if (Object.keys(q).length) n.portrait = q; else delete n.portrait; });
   const titles: Record<Tab, string> = { face: 'Shape the face', ink: 'Paint and ink', portrait: 'Their portrait', a_head: 'Head: ' + AN, a_upper: 'Upper body: ' + AN, a_lower: 'Lower body: ' + AN, a_feet: 'Feet: ' + AN, sign: 'A new wrestler', body: 'The body', head: 'The head', gear: 'Gear: ' + ATTIRES.find(a => a[0] === att)![1], colour: 'Colours: ' + ATTIRES.find(a => a[0] === att)![1], studio: 'Gear studio: lettering and shapes', fin: 'Finishing moves', scenes: 'Their entrance', file: 'The file' };
   return <div class="scfull paper" data-t="caw">
-    <div class="sc-menubar" role="group" aria-label={pp.sign ? 'Create a Player' : pp.attire ? 'Edit attire' : 'Edit wrestler'}>
-      <b class="on">{pp.sign ? 'Create a Player' : pp.attire ? 'Edit attire' : 'Edit wrestler'}</b><span>{pp.world}</span><span class="sp" />
+    <div class="sc-menubar" role="group" aria-label={pp.sign ? 'Create a Wrestler' : pp.attire ? 'Edit attire' : 'Edit wrestler'}>
+      <b class="on">{pp.sign ? 'Create a Wrestler' : pp.attire ? 'Edit attire' : 'Edit wrestler'}</b><span>{pp.world}</span><span class="sp" />
       <span class={'sc-hint' + (msg ? (msg.err ? ' bad' : ' good') : '')} role="status" data-t="caw-msg">{msg ? msg.t : 'Change anything on the right; the wrestler on the left changes with it'}</span>
       <Btn kind="go" t="caw-save" onClick={save}>Save</Btn>
       <Btn kind="sm" t="caw-done" onClick={pp.onDone}>Done</Btn>
@@ -173,6 +174,12 @@ export function CreatePlayer(pp: PlayerProps) {
                 <option value="">{lk.appearance.face_paint === 'skull' ? 'White' : 'Red'}</option>{SWATCHES.map(s2 => <option value={s2[0]}>{s2[1]}</option>)}</select>}</div>
             <div class="sc-row"><span class="sc-slot">Tattoos</span>{TATTOOS.map(t => { const on = ((lk.appearance && lk.appearance.tattoos) || []).indexOf(t[0]) >= 0; return <Btn kind="less" t="caw-tat" d={{ v: t[0] }} on={on} onClick={() => change(n => { n.appearance = n.appearance || {}; const l = n.appearance.tattoos || []; n.appearance.tattoos = on ? l.filter(x => x !== t[0]) : l.concat([t[0]]); if (!n.appearance.tattoos.length) delete n.appearance.tattoos; })}>{t[1]}</Btn>; })}</div>
           </Group>
+          <Group title="Scars, freckles and body hair">
+            <div class="sc-row"><span class="sc-slot">Scars</span>{SCARS.map(t => { const on = (ap.scars || []).indexOf(t[0]) >= 0; return <Btn kind="less" t="caw-scar" d={{ v: t[0] }} on={on} onClick={() => setAp(a => { const l = a.scars || []; a.scars = on ? l.filter(x => x !== t[0]) : l.concat([t[0]]); if (!a.scars.length) delete a.scars; })}>{t[1]}</Btn>; })}</div>
+            <div class="sc-row"><span class="sc-slot">Freckles</span><Btn kind="less" t="caw-freckles" on={!!ap.freckles} onClick={() => setAp(a => { if (a.freckles) delete a.freckles; else a.freckles = true; })}>{ap.freckles ? 'Freckles' : 'None'}</Btn>
+              <span class="sc-slot">Body hair</span>{(['None', 'The chest', 'Chest and belly']).map((n, i) => <Btn kind="less" t="caw-bodyhair" d={{ v: i }} on={(ap.body_hair || 0) === i} onClick={() => setAp(a => { if (i) a.body_hair = i; else delete a.body_hair; })}>{n}</Btn>)}</div>
+            <p class="muted">Scars and body hair show only where skin does.</p>
+          </Group>
         </>}
         {tab === 'body' && <>
           <Group title="Sex">
@@ -204,6 +211,12 @@ export function CreatePlayer(pp: PlayerProps) {
               <span class="muted">Worn with every outfit; a mask takes the main colour and the trim of each.</span></div>
             <div class="sc-row"><span class="sc-slot">Hair colour</span><select aria-label="Hair colour" data-t="caw-haircol" value={(lk.appearance && lk.appearance.hair_colour) || ''} onChange={e => { const v = (e.currentTarget as HTMLSelectElement).value; change(n => { n.appearance = n.appearance || {}; if (v) n.appearance.hair_colour = v; else delete n.appearance.hair_colour; }); }}>
               <option value="">From the face</option>{SWATCHES.map(s => <option value={s[0]}>{s[1]}</option>)}</select></div>
+            {!/^mask/.test(cur.equipped_assets.head || '') ? <div class="sc-row"><span class="sc-slot">Second colour</span><select aria-label="A second hair colour" data-t="caw-hairmix" value={ap.hair_mix || ''} onChange={e => { const v = (e.currentTarget as HTMLSelectElement).value; setAp(a => { if (v) { a.hair_mix = v; a.hair_colour2 = a.hair_colour2 || 'swatch_yellow_paper'; } else { delete a.hair_mix; delete a.hair_colour2; } }); }}>
+              {HAIR_MIX.map(m => <option value={m[0]}>{m[1]}</option>)}</select>
+              {ap.hair_mix ? <select aria-label="Second hair colour" data-t="caw-haircol2" value={ap.hair_colour2 || ''} onChange={e => { const v = (e.currentTarget as HTMLSelectElement).value; setAp(a => { a.hair_colour2 = v; }); }}>{SWATCHES.map(s => <option value={s[0]}>{s[1]}</option>)}</select> : null}</div>
+            : <div class="sc-row"><span class="sc-slot">Mask design</span><select aria-label="Mask design" data-t="caw-maskdesign" value={ap.mask_design || ''} onChange={e => { const v = (e.currentTarget as HTMLSelectElement).value; setAp(a => { if (v) a.mask_design = v; else delete a.mask_design; }); }}>
+              <option value="">{cur.equipped_assets.head === 'mask_hood_01' ? 'Plain' : 'Flames round the eyes'}</option>{MASK_DESIGNS.filter(m => m[0] !== 'flames').map(m => <option value={m[0]}>{m[1]}</option>)}</select>
+              <span class="muted">Cut in the trim colour.</span></div>}
             <div class="sc-row"><span class="sc-slot">Facial hair</span><select aria-label="Facial hair" data-t="caw-facial" value={(lk.appearance && lk.appearance.facial_hair) || ''} onChange={e => { const v = (e.currentTarget as HTMLSelectElement).value; change(n => { n.appearance = n.appearance || {}; if (v) n.appearance.facial_hair = v; else delete n.appearance.facial_hair; }); }}>
               {FACIAL.map(f => <option value={f[0]}>{f[1]}</option>)}</select></div>
           </Group>

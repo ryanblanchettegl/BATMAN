@@ -14,7 +14,7 @@ export interface Recipe {
   key: string; name: string; skin: string; h: number; w: number; belly: number; fem: boolean;
   head: { rx: number; ryt: number; ryb: number; sq: number; chin: number };
   hair: string; hairCol: string; beard: number; mus: number; brow: number; browAng: number; browCol: string; noseW: number; noseL: number;
-  mask?: { base: string; trim: string; kind?: 'open' | 'full' | 'half' }; gear: string; gear2: string; straps: boolean; tape: boolean;
+  mask?: { base: string; trim: string; kind?: 'open' | 'full' | 'half' | 'hood' }; gear: string; gear2: string; straps: boolean; tape: boolean;
   shirt?: string; pants?: string; stripes?: boolean;
   /** A suit: the jacket and trousers, the tie and the pocket square. */
   suit?: { jacket: string; tie: string; square?: string }; headset?: boolean;
@@ -27,6 +27,9 @@ export interface Recipe {
   fs?: { eyeS?: number; eyeG?: number; eyeY?: number; mouthW?: number; earS?: number };
   /** Which eyes, nose, mouth and ears (FEATURES in kit/caw.ts); left out, the first of each. */
   feat?: { eyes?: string; nose?: string; mouth?: string; ears?: string };
+  /** A second hair colour and how it goes in (HAIR_MIX in kit/caw.ts), body hair (1 the chest, 2 chest and belly),
+      scars (SCARS), freckles, and the design cut into a mask (MASK_DESIGNS; left out, flames round the eyes). */
+  hairCol2?: string; hairMix?: string; bodyHair?: number; scars?: string[]; freckles?: boolean; maskDesign?: string;
 }
 /** The joints a pose turns, in the order the studio lists them. Angles are degrees; 0 is the part hanging straight. */
 export const JOINTS: [string, string][] = [
@@ -270,6 +273,12 @@ export function puppet(r: Recipe, pl: Place, pose: Record<string, number>, expr:
     } else if (t === 'suit_jacket') suitBits(S.c, T.c, K.pal.h.c);
     if (has('chain_gold')) for (let i = 0; i <= 10; i++) { const a = Math.PI * (1.15 + 0.7 * i / 10); cut(to, ell(0.36 * bw * Math.cos(a), 1.9 * H + 0.55 * H * Math.sin(a), 0.05, 0.05, 8), K.pal.h, 0.495, 'torso', 0.02, 0.002); }
   }
+  if ((r.bodyHair || 0) > 0 && (K ? !covered : !r.shirt)) {   // body hair: a patch on the chest, and a line down the belly
+    const bh = shade(r.hairCol, 0.95), tuft = (x: number, y: number, k: number) => cut(to, strip([x, y], [x + k * 0.035, y - 0.075], 0.028, 0.006), bh, 0.452, 'torso', 0.003, 0.003);
+    for (let i = 0; i < 18; i++) { const u = ((i * 7) % 18) / 17, v = ((i * 11) % 5) / 4, x = (u - 0.5) * 0.62 * bw, y = (1.38 + 0.26 * v - 0.12 * Math.abs(u - 0.5)) * H; tuft(x, y, x < 0 ? -1 : 1); }
+    if (r.bodyHair! > 1) for (let k = 0; k < 9; k++) tuft((k % 2 ? 0.025 : -0.025), (1.3 - 0.11 * k) * H, k % 2 ? 1 : -1);
+  }
+  if ((r.scars || []).indexOf('chest') >= 0 && (K ? !covered : !r.shirt)) { cut(to, strip([-0.45 * bw, 1.7 * H], [0.4 * bw, 1.2 * H], 0.05, 0.04, 0.02), shade(sk, 0.62), 0.457, 'torso', 0.004, 0.004); cut(to, strip([-0.45 * bw, 1.7 * H], [0.4 * bw, 1.2 * H], 0.028, 0.02, 0.02), shade(sk, 1.45), 0.458, 'torso', 0.004, 0.003); }
   if ((r.tats || []).indexOf('chest') >= 0 && (K ? !covered : !r.shirt)) {   // a chest piece: wings spread from the breastbone
     const ink = inkOf(sk); for (const sd of [-1, 1]) { cut(to, strip([sd * 0.06, 1.47 * H], [sd * 0.55 * bw, 1.62 * H], 0.07, 0.025, sd * 0.04), ink, 0.455, 'torso', 0.005, 0.003); cut(to, strip([sd * 0.08, 1.42 * H], [sd * 0.45 * bw, 1.46 * H], 0.05, 0.02, sd * 0.03), ink, 0.455, 'torso', 0.005, 0.003); }
     cut(to, [[0, 1.55 * H], [0.05, 1.45 * H], [0, 1.34 * H], [-0.05, 1.45 * H]], ink, 0.456, 'torso', 0.005, 0.003);
@@ -330,13 +339,16 @@ function head(fr: F, r: Recipe, z: number, expr: string, cut: (f: F, poly: Pt[],
   const put = (poly: Pt[], col: string | Swatch, dz: number, rough = 0.008) => cut(fr, poly, col, z + dz, J, 0.03, rough);
   const K = r.kit, acc = (a: string) => !!K && K.acc.indexOf(a) >= 0;
   const HC = r.hairCol, bx = -hd.rx;   // the back of the head is to the left of the face
-  if ((r.hair === 'long' || r.hair === 'wild') && !r.mask) put(headPoly(hd, r.hair === 'wild' ? 1.22 : 1.12, -0.35, Math.PI + 0.35, 20, 0.02).concat([[-hd.rx * (r.hair === 'wild' ? 1.55 : 1.3), hd.cy - hd.ryb * (r.hair === 'wild' ? 1.4 : 1.6)], [hd.rx * 1.2, hd.cy - hd.ryb * 1.5]]), HC, -0.03, r.hair === 'wild' ? 0.07 : 0.03);
+  const HB = r.hairMix === 'under' && r.hairCol2 ? r.hairCol2 : HC;   // the hair at the back and hanging down, in a second colour when it goes underneath
+  if (r.hair === 'bob' && !r.mask) put(headPoly(hd, 1.12, -0.3, Math.PI + 0.3, 20, 0.01).concat([[-hd.rx * 1.18, hd.cy - hd.ryb * 0.85], [hd.rx * 0.95, hd.cy - hd.ryb * 0.7]]), HB, -0.03, 0.02);
+  if ((r.hair === 'long' || r.hair === 'wild') && !r.mask) put(headPoly(hd, r.hair === 'wild' ? 1.22 : 1.12, -0.35, Math.PI + 0.35, 20, 0.02).concat([[-hd.rx * (r.hair === 'wild' ? 1.55 : 1.3), hd.cy - hd.ryb * (r.hair === 'wild' ? 1.4 : 1.6)], [hd.rx * 1.2, hd.cy - hd.ryb * 1.5]]), HB, -0.03, r.hair === 'wild' ? 0.07 : 0.03);
   if (!r.mask) {
-    if (r.hair === 'ponytail') { put(strip([bx * 0.85, hd.cy + hd.ryt * 0.55], [bx * 1.45, hd.cy - hd.ryb * 1.3], 0.2, 0.08, 0.12), HC, -0.03, 0.02); put(ell(bx * 0.92, hd.cy + hd.ryt * 0.45, 0.06, 0.06, 8), shade(HC, 0.5), -0.02, 0.003); }
-    if (r.hair === 'mullet') put([[bx * 0.5, hd.cy + hd.ryt * 0.5], [bx * 1.12, hd.cy + hd.ryt * 0.1], [bx * 1.3, hd.cy - hd.ryb * 1.2], [bx * 1.05, hd.cy - hd.ryb * 1.55], [bx * 0.85, hd.cy - hd.ryb * 1.3], [bx * 0.45, hd.cy - hd.ryb * 0.6]], HC, -0.03, 0.05);
-    if (r.hair === 'afro') put(ell(-0.06, hd.cy + hd.ryt * 0.25, hd.rx * 1.55, hd.ryt * 1.45, 26), HC, -0.03, 0.05);
-    if (r.hair === 'dreads') for (let i = 0; i < 7; i++) { const a = Math.PI * (0.55 + 0.45 * i / 6), x0 = hd.rx * 1.02 * Math.cos(a), y0 = hd.cy + hd.ryt * 1.02 * Math.sin(a); put(strip([x0, y0], [x0 - 0.12 - i * 0.03, hd.cy - hd.ryb * (1.1 + (i % 3) * 0.25)], 0.09, 0.07, 0.05), shade(HC, i % 2 ? 0.85 : 1), -0.03 - i * 0.001, 0.015); }
-    if (r.hair === 'braids') for (const dy of [0.1, -0.12]) put(strip([bx * 0.95, hd.cy + dy], [bx * 1.2, hd.cy - hd.ryb * 1.2 + dy], 0.07, 0.05, 0.05), HC, -0.03, 0.01);
+    if (r.hair === 'ponytail') { put(strip([bx * 0.85, hd.cy + hd.ryt * 0.55], [bx * 1.45, hd.cy - hd.ryb * 1.3], 0.2, 0.08, 0.12), HB, -0.03, 0.02); put(ell(bx * 0.92, hd.cy + hd.ryt * 0.45, 0.06, 0.06, 8), shade(HB, 0.5), -0.02, 0.003); }
+    if (r.hair === 'pigtails') for (const [dy, len] of [[0.35, 0.9], [-0.05, 1.25]] as [number, number][]) { put(strip([bx * 0.85, hd.cy + hd.ryt * dy], [bx * 1.55, hd.cy - hd.ryb * len], 0.17, 0.07, 0.1), HB, -0.03, 0.02); put(ell(bx * 0.95, hd.cy + hd.ryt * dy - 0.04, 0.055, 0.055, 8), shade(HB, 0.5), -0.02, 0.003); }
+    if (r.hair === 'mullet') put([[bx * 0.5, hd.cy + hd.ryt * 0.5], [bx * 1.12, hd.cy + hd.ryt * 0.1], [bx * 1.3, hd.cy - hd.ryb * 1.2], [bx * 1.05, hd.cy - hd.ryb * 1.55], [bx * 0.85, hd.cy - hd.ryb * 1.3], [bx * 0.45, hd.cy - hd.ryb * 0.6]], HB, -0.03, 0.05);
+    if (r.hair === 'afro') put(ell(-0.06, hd.cy + hd.ryt * 0.25, hd.rx * 1.55, hd.ryt * 1.45, 26), HB, -0.03, 0.05);
+    if (r.hair === 'dreads') for (let i = 0; i < 7; i++) { const a = Math.PI * (0.55 + 0.45 * i / 6), x0 = hd.rx * 1.02 * Math.cos(a), y0 = hd.cy + hd.ryt * 1.02 * Math.sin(a); put(strip([x0, y0], [x0 - 0.12 - i * 0.03, hd.cy - hd.ryb * (1.1 + (i % 3) * 0.25)], 0.09, 0.07, 0.05), shade(HB, i % 2 ? 0.85 : 1), -0.03 - i * 0.001, 0.015); }
+    if (r.hair === 'braids') for (const dy of [0.1, -0.12]) put(strip([bx * 0.95, hd.cy + dy], [bx * 1.2, hd.cy - hd.ryb * 1.2 + dy], 0.07, 0.05, 0.05), HB, -0.03, 0.01);
   }
   const FS = r.fs || {}, eS = FS.eyeS || 1, eG = FS.eyeG || 1, earS = FS.earS || 1, mW = FS.mouthW || 1;
   const FT = r.feat || {}, ex = -hd.rx * 0.74 + tq * 0.4, eyy = hd.cy - 0.04;
@@ -355,11 +367,25 @@ function head(fr: F, r: Recipe, z: number, expr: string, cut: (f: F, poly: Pt[],
     if (mkind === 'half') put(headPoly(hd, 1.04, -0.12, Math.PI + 0.12, 22).concat([[-hd.rx * 1.02, hd.cy - 0.12], [hd.rx * 1.02, hd.cy - 0.12]] as Pt[]), r.mask.base, 0.04);   // over the head and eyes, the mouth and jaw bare
     else put(headPoly(hd, 1.04), r.mask.base, 0.04);
     if (mkind === 'open') put(headPoly(hd, 0.97, Math.PI + 0.4, 2 * Math.PI - 0.4, 18, -0.01).map(([x, y]) => [x + tq * 0.5, y] as Pt), sk, 0.06);
-    for (const sd of [-1, 1]) {
-      let fl: Pt[] = [[sd * 0.03, 0.34], [sd * 0.34, 0.36], [sd * 0.42, 0.52], [sd * 0.3, 0.45], [sd * 0.36, 0.62], [sd * 0.2, 0.46], [sd * 0.1, 0.4]];
-      fl = fl.map(([x, y]) => [x + tq, y + hd.cy - 0.27] as Pt); put(sd > 0 ? fl : fl.reverse(), r.mask.trim, 0.08);
+    const md = r.maskDesign || (mkind === 'hood' ? 'plain' : 'flames'), T = r.mask.trim, eyY = hd.cy + 0.1 + (FS.eyeY || 0);
+    if (mkind === 'hood') {   // a cloth hood: a point at the crown, the eye holes cut dark
+      put([[-hd.rx * 0.55, hd.cy + hd.ryt * 0.8], [hd.rx * 0.5, hd.cy + hd.ryt * 0.82], [bx * 0.15, hd.cy + hd.ryt * 1.5]], r.mask.base, 0.041, 0.012);
+      for (const sd of [-1, 1]) put(ell(sd * 0.16 * eG + tq, eyY, 0.13, 0.1, 14), shade(r.mask.base, 0.35), 0.075, 0.006);
     }
-    put(strip([tq * 0.6, hd.cy + hd.ryt * 0.98], [tq, hd.cy], 0.07, 0.03), r.mask.trim, 0.08);
+    if (md === 'split') put(headPoly(hd, 1.045, Math.PI * 0.5, Math.PI * 1.5, 18), T, 0.05);   // the back half in the second colour
+    if (md === 'flames') {
+      for (const sd of [-1, 1]) {
+        let fl: Pt[] = [[sd * 0.03, 0.34], [sd * 0.34, 0.36], [sd * 0.42, 0.52], [sd * 0.3, 0.45], [sd * 0.36, 0.62], [sd * 0.2, 0.46], [sd * 0.1, 0.4]];
+        fl = fl.map(([x, y]) => [x + tq, y + hd.cy - 0.27] as Pt); put(sd > 0 ? fl : fl.reverse(), T, 0.08);
+      }
+      put(strip([tq * 0.6, hd.cy + hd.ryt * 0.98], [tq, hd.cy], 0.07, 0.03), T, 0.08);
+    } else if (mkind !== 'hood') for (const sd of [-1, 1]) put(ell(sd * 0.16 * eG + tq, eyY, 0.145, 0.12, 14), T, 0.075, 0.006);   // rims round the eyes
+    if (md === 'star') put(star(tq * 0.4, hd.cy + hd.ryt * 0.62, 0.17, 5, 0.45), T, 0.08, 0.004);
+    if (md === 'stripes') for (const o of [-0.17, 0, 0.17]) put(strip([tq + o + 0.05, hd.cy + 0.26], [tq * 0.4 + o - 0.22, hd.cy + hd.ryt * 1.0], 0.05, 0.04, 0.03), T, 0.08, 0.004);
+    if (md === 'teeth' && mkind !== 'open' && mkind !== 'half') {   // a grin of teeth cut over the mouth
+      put(ell(tq + 0.04, hd.cy - 0.24, 0.2, 0.08, 16), PAL.black, 0.078, 0.004);
+      for (let k = 0; k < 6; k++) { const x = tq - 0.12 + k * 0.065; put([[x, hd.cy - 0.2], [x + 0.05, hd.cy - 0.2], [x + 0.025, hd.cy - 0.26]], PAL.white, 0.079, 0.002); put([[x, hd.cy - 0.29], [x + 0.05, hd.cy - 0.29], [x + 0.025, hd.cy - 0.23]], PAL.white, 0.079, 0.002); }
+    }
   } else {
     put(headPoly(hd, 1, -1.25, 1.1).concat(headPoly(hd, 0.86, 1.1, -1.25, 18, -0.01).map(([x, y]) => [x - 0.04, y] as Pt)), dk, 0.04);
     if (r.beard === 1 || r.beard === 9) put(headPoly(hd, 1.0, Math.PI + 0.25, 2 * Math.PI - 0.25, 18), shade(sk, 0.82), 0.05);
@@ -387,6 +413,12 @@ function head(fr: F, r: Recipe, z: number, expr: string, cut: (f: F, poly: Pt[],
       for (const sd of [-1, 1]) for (const k2 of [0, 0.07]) put(strip([sd * 0.16 + tq - 0.06 + k2, ey - 0.08], [sd * 0.16 + tq - 0.1 + k2, ey - 0.36], 0.035, 0.025), C, 0.096, 0.003);
     }
   }
+  if (r.freckles && !fullMask) for (const sd of [-1, 1]) for (const [dx, dy] of [[-0.05, -0.08], [0.02, -0.11], [0.07, -0.07], [-0.01, -0.15], [0.05, -0.17], [0.1, -0.13]] as [number, number][]) put(ell(sd * 0.16 * eG + tq + dx, ey + dy, 0.018, 0.018, 6), shade(sk, 0.58), 0.097, 0.001);
+  // scars: a pale line with a darker edge, on whatever skin shows
+  const scar = (a: Pt, b: Pt, dz: number) => { put(strip(a, b, 0.045, 0.036, 0.01), shade(sk, 0.62), dz, 0.004); put(strip(a, b, 0.024, 0.018, 0.01), shade(sk, 1.45), dz + 0.001, 0.003); };
+  const SC = r.scars || [];
+  if (!fullMask && SC.indexOf('cheek') >= 0) scar([tq + 0.32, ey - 0.07], [tq + 0.13, ey - 0.3], 0.099);
+  if (!fullMask && SC.indexOf('lip') >= 0) scar([tq + 0.13, hd.cy - 0.12], [tq + 0.09, hd.cy - 0.32], 0.185);
   for (const sd of [-1, 1]) {
     const cx = sd * 0.16 * eG + tq;
     if (shut) put(strip([cx - 0.08, ey + 0.01], [cx + 0.08, ey - 0.02], 0.035, 0.03, expr === 'pain' ? -0.04 : expr === 'shut' ? 0.02 : -0.03), PAL.black, 0.1);
@@ -414,6 +446,7 @@ function head(fr: F, r: Recipe, z: number, expr: string, cut: (f: F, poly: Pt[],
   else if (nk === 'flat') put([[tq - 0.04, ey - 0.06], [tq + 0.05, ey - 0.04], [tq + nw * 1.45 + 0.02, ey - nl * 0.8], [tq + 0.03, ey - nl * 0.8 - 0.05], [tq - nw * 1.2, ey - nl * 0.78]], dk, 0.13);   // broken and flattened
   else if (nk === 'pointed') put([[tq - 0.02, ey - 0.02], [tq + 0.02, ey - 0.02], [tq + nw * 0.8 + 0.06, ey - nl * 1.12], [tq - nw * 0.4, ey - nl * 1.05]], dk, 0.13);
   else put([[tq - 0.03, ey - 0.02], [tq + 0.03, ey - 0.02], [tq + nw, ey - nl], [tq + 0.02, ey - nl - 0.04], [tq - nw * 0.8, ey - nl]], dk, 0.13);
+  if (!r.mask && SC.indexOf('brow') >= 0) scar([tq + 0.24, ey + 0.24], [tq + 0.12, ey + 0.0], 0.145);
   const my = ey - nl - 0.14, open = ['shout', 'hurt', 'roar', 'snarl', 'pain', 'cry', 'talk'].includes(expr);
   if (!fullMask && [2, 4, 5, 7, 8].includes(r.beard)) {
     if (r.beard === 4 || r.beard === 5) {
@@ -461,6 +494,10 @@ function head(fr: F, r: Recipe, z: number, expr: string, cut: (f: F, poly: Pt[],
     } else if (r.hair === 'afro') {
       const top = headPoly(hd, 1.12, 0.15, Math.PI - 0.15, 18), fr: Pt[] = []; for (let i = 0; i <= 8; i++) fr.push([hd.rx * 0.9 - 1.8 * hd.rx * i / 8, hd.cy + hd.ryt * (0.6 + 0.08 * Math.sin(Math.PI * i / 4))]);
       put(top.concat(fr.reverse()), r.hairCol, 0.19, 0.04);
+    } else if (r.hair === 'undercut') {   // the sides shaved short, a tall top swept forward
+      const sides = headPoly(hd, 1.02, -0.1, Math.PI + 0.1, 20), fr: Pt[] = []; for (let i = 0; i <= 8; i++) fr.push([hd.rx * 0.98 - 2 * hd.rx * 0.98 * i / 8, hd.cy + hd.ryt * 0.62]);
+      put(sides.concat(fr.reverse()), shade(r.hairCol, 0.78), 0.19, 0.006);
+      put(headPoly(hd, 1.2, 0.12, Math.PI - 0.5, 16).concat([[bx * 0.55, hd.cy + hd.ryt * 0.74], [hd.rx * 0.95, hd.cy + hd.ryt * 0.58]] as Pt[]), r.hairCol, 0.195, 0.012);
     } else if (r.hair === 'braids') {
       put(headPoly(hd, 1.02, -0.1, Math.PI + 0.1, 20).concat([[bx * 0.98, hd.cy + hd.ryt * 0.62], [hd.rx * 0.98, hd.cy + hd.ryt * 0.62]] as Pt[]), r.hairCol, 0.19, 0.006);
       for (let i = 0; i < 4; i++) { const x = hd.rx * (0.7 - i * 0.45); put(strip([x, hd.cy + hd.ryt * 0.62], [x - 0.12, hd.cy + hd.ryt * 1.0], 0.03, 0.03, 0.04), shade(r.hairCol, 0.55), 0.195, 0.003); }   // the rows
@@ -469,8 +506,14 @@ function head(fr: F, r: Recipe, z: number, expr: string, cut: (f: F, poly: Pt[],
       const fr: Pt[] = []; for (let i = 0; i <= 8; i++) fr.push([hd.rx * 0.98 - 2 * hd.rx * 0.98 * i / 8, hd.cy + hd.ryt * ((r.hair === 'buzz' ? 0.62 : 0.5) + 0.15 * Math.sin(Math.PI * i / 8))]);
       put(top.concat(fr.reverse()), r.hairCol, 0.19, r.hair === 'curls' ? 0.03 : 0.012);
       if (r.hair === 'curls') for (let i = 0; i < 7; i++) { const a = Math.PI * (0.1 + 0.8 * i / 6); put(ell(hd.rx * 1.02 * Math.cos(a), hd.cy + hd.ryt * 1.02 * Math.sin(a), 0.11, 0.11, 10), r.hairCol, 0.2, 0.02); }
+      if (r.hair === 'bun') { put(ell(bx * 0.45, hd.cy + hd.ryt * 1.13, 0.17, 0.14, 14), r.hairCol, 0.2, 0.015); put(strip([bx * 0.62, hd.cy + hd.ryt * 1.05], [bx * 0.3, hd.cy + hd.ryt * 1.08], 0.03, 0.03), shade(r.hairCol, 0.5), 0.205, 0.003); }
     }
+    const C2 = r.hairCol2;
+    if (C2 && r.hairMix === 'tips') for (let i = 0; i <= 8; i++) { const a = Math.PI * (0.06 + 0.88 * i / 8), k = r.hair === 'spiky' ? 1.3 : r.hair === 'afro' ? 1.12 : 1.06; put(ell(hd.rx * k * Math.cos(a), hd.cy + hd.ryt * k * Math.sin(a), 0.075, 0.055, 8), C2, 0.205, 0.012); }
+    if (C2 && r.hairMix === 'streak') put(strip([hd.rx * 0.6, hd.cy + hd.ryt * 0.92], [bx * 0.75, hd.cy + hd.ryt * 0.82], 0.08, 0.05, 0.14), C2, 0.205, 0.006);
+    if (C2 && r.hairMix === 'fringe') put(headPoly(hd, 1.08, 0.08, 0.95, 8).concat([[hd.rx * 0.45, hd.cy + hd.ryt * 0.55], [hd.rx * 0.98, hd.cy + hd.ryt * 0.45]] as Pt[]), C2, 0.205, 0.01);
   }
+  if (SC.indexOf('head') >= 0 && !r.mask && ['bald', 'buzz', 'crew', 'undercut'].indexOf(r.hair) >= 0) scar([hd.rx * 0.35, hd.cy + hd.ryt * 0.98], [bx * 0.45, hd.cy + hd.ryt * 0.7], 0.21);
   if (acc('bandana')) { put(strip([-hd.rx * 1.02, hd.cy + 0.38], [hd.rx * 1.02, hd.cy + 0.42], 0.15, 0.15, 0.04), K!.pal.s, 0.215, 0.006); put([[-hd.rx * 0.95, hd.cy + 0.4], [-hd.rx * 1.4, hd.cy + 0.18], [-hd.rx * 1.3, hd.cy + 0.1], [-hd.rx * 0.9, hd.cy + 0.3]], K!.pal.s, 0.214, 0.01); }
   if (acc('hat_cowboy')) {
     put(strip([-hd.rx * 1.75, hd.cy + hd.ryt * 0.62], [hd.rx * 1.75, hd.cy + hd.ryt * 0.62], 0.1, 0.1, 0.12), K!.pal.s, 0.3, 0.006);   // the brim

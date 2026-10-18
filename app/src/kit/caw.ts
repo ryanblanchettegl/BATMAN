@@ -20,7 +20,9 @@ export interface Look {
   id?: string; name?: string; moniker?: string; hometown?: string; archetype?: string;
   physical_attributes?: { /** Not in Ryan's first draft: the body the doll is cut as, M or F. */ sex?: 'M' | 'F'; height_inches?: number; weight_lbs?: number; body_archetype?: string; proportional_scalers?: { torso_width?: number; torso_height?: number; limb_length?: number; muscle_mass?: number } };
   /** Not in Ryan's first draft: the head under the gear (the face numbers the game already keeps), so a file carries the whole person. */
-  appearance?: { face?: Record<string, number>; /** Not in Ryan's first draft: face sliders, each -1 to 1 (0 is as the face shape cuts it). */ shape?: Record<string, number>; /** Not in Ryan's first draft: which eyes, nose, mouth and ears (FEATURES). */ features?: { eyes?: string; nose?: string; mouth?: string; ears?: string }; skin_tone?: number; hair_colour?: string; facial_hair?: string; face_paint?: string; paint_colour?: string; tattoos?: string[] };
+  appearance?: { face?: Record<string, number>; /** Not in Ryan's first draft: face sliders, each -1 to 1 (0 is as the face shape cuts it). */ shape?: Record<string, number>; /** Not in Ryan's first draft: which eyes, nose, mouth and ears (FEATURES). */ features?: { eyes?: string; nose?: string; mouth?: string; ears?: string }; skin_tone?: number; hair_colour?: string; facial_hair?: string; face_paint?: string; paint_colour?: string; tattoos?: string[];
+    /** Not in Ryan's first draft: a second hair colour and how it goes in (HAIR_MIX), body hair (0 none, 1 the chest, 2 chest and belly), scars (SCARS), freckles, and the design on a mask (MASK_DESIGNS). */
+    hair_colour2?: string; hair_mix?: string; body_hair?: number; scars?: string[]; freckles?: boolean; mask_design?: string };
   attires?: Partial<Record<AttireKey, Attire>>;
   finishing_moves?: Finisher[];
   /** Not in Ryan's first draft: which of the canned entrances they come out on (a scene id). Their own pictures are
@@ -59,7 +61,8 @@ export const PARTS: Record<'head' | 'upper_body' | 'lower_body' | 'footwear' | '
   head: [['hair_face', 'From the face'], ['hair_bald', 'Bald'], ['hair_buzz_01', 'Buzz cut'], ['hair_crew_01', 'Crew cut'], ['hair_short_01', 'Short'], ['hair_flat_top', 'Flat top'], ['hair_slick_01', 'Slicked back'],
     ['hair_spiky_01', 'Spiky'], ['hair_mohawk_01', 'Mohawk'], ['hair_curls_01', 'Curls'], ['hair_afro_01', 'Afro'], ['hair_cornrows_01', 'Cornrows'], ['hair_dreads_01', 'Dreadlocks'],
     ['hair_ponytail_01', 'Ponytail'], ['hair_mullet_01', 'Mullet'], ['hair_long_01', 'Long'], ['hair_wild_01', 'Long and wild'],
-    ['mask_full_01', 'Mask, mouth open'], ['mask_closed_01', 'Full mask'], ['mask_half_01', 'Half mask']],
+    ['hair_bun_01', 'Top knot'], ['hair_undercut_01', 'Undercut'], ['hair_pigtails_01', 'Pigtails'], ['hair_bob_01', 'Bob'],
+    ['mask_full_01', 'Mask, mouth open'], ['mask_closed_01', 'Full mask'], ['mask_half_01', 'Half mask'], ['mask_hood_01', 'Hood']],
   upper_body: [['bare', 'Bare chest'], ['singlet_straps_up', 'Singlet, straps up'], ['singlet_straps_down', 'Singlet, straps down'], ['singlet_full', 'Full singlet, to the thigh'], ['shirt_tshirt_base', 'T-shirt'], ['shirt_tank', 'Tank top'],
     ['top_sports', 'Sports top'], ['top_crop', 'Crop top'], ['vest_open', 'Open vest'], ['jacket_leather_biker', 'Biker jacket'], ['robe_long', 'Entrance robe'], ['hoodie_01', 'Hooded top'], ['suit_jacket', 'Suit and tie']],
   lower_body: [['trunks_brief_01', 'Trunks'], ['trunks_long', 'Long trunks'], ['tights_long_01', 'Long tights'], ['shorts_fight', 'Fight shorts'], ['skirt_short', 'Short ring skirt'], ['jeans_distressed', 'Torn jeans'], ['trousers_suit', 'Suit trousers']],
@@ -84,8 +87,15 @@ export const FACE_SLIDERS: [string, string, string, string][] = [['head_w', 'Hea
   ['nose_w', 'Nose width', 'narrow', 'wide'], ['nose_l', 'Nose length', 'short', 'long'], ['mouth_w', 'Mouth', 'small', 'wide'], ['ears', 'Ears', 'small', 'big']];
 export const TATTOOS: [string, string][] = [['sleeve_near', 'Sleeve, near arm'], ['sleeve_far', 'Sleeve, far arm'], ['shoulder', 'Shoulder piece'], ['chest', 'Chest piece'], ['neck', 'Neck']];   // facial hair, moustache in the face numbers
 const HAIR_OF: Record<string, string> = { hair_bald: 'bald', hair_buzz_01: 'buzz', hair_crew_01: 'crew', hair_short_01: 'cap', hair_flat_top: 'flat', hair_mohawk_01: 'mohawk', hair_curls_01: 'curls', hair_long_01: 'long',
-  hair_slick_01: 'slick', hair_spiky_01: 'spiky', hair_afro_01: 'afro', hair_cornrows_01: 'braids', hair_dreads_01: 'dreads', hair_ponytail_01: 'ponytail', hair_mullet_01: 'mullet', hair_wild_01: 'wild' };
-const MASK_OF: Record<string, 'open' | 'full' | 'half'> = { mask_full_01: 'open', mask_closed_01: 'full', mask_half_01: 'half' };
+  hair_slick_01: 'slick', hair_spiky_01: 'spiky', hair_afro_01: 'afro', hair_cornrows_01: 'braids', hair_dreads_01: 'dreads', hair_ponytail_01: 'ponytail', hair_mullet_01: 'mullet', hair_wild_01: 'wild',
+  hair_bun_01: 'bun', hair_undercut_01: 'undercut', hair_pigtails_01: 'pigtails', hair_bob_01: 'bob' };
+const MASK_OF: Record<string, 'open' | 'full' | 'half' | 'hood'> = { mask_full_01: 'open', mask_closed_01: 'full', mask_half_01: 'half', mask_hood_01: 'hood' };
+/** How a second hair colour goes in. */
+export const HAIR_MIX: [string, string][] = [['', 'One colour'], ['tips', 'Frosted tips'], ['streak', 'A streak'], ['fringe', 'The front'], ['under', 'Underneath and the back']];
+/** Where a scar can be. */
+export const SCARS: [string, string][] = [['brow', 'Through the eyebrow'], ['cheek', 'Across the cheek'], ['lip', 'The lip'], ['head', 'Over the scalp'], ['chest', 'Across the chest']];
+/** What is cut into a mask, in its trim colour. */
+export const MASK_DESIGNS: [string, string][] = [['flames', 'Flames round the eyes'], ['plain', 'Plain, rims round the eyes'], ['star', 'A star on the brow'], ['stripes', 'Stripes over the top'], ['split', 'Split down the middle'], ['teeth', 'A mouth of teeth']];
 
 /* ---------- lettering and shapes for the gear studio ---------- */
 export const FONTS: [string, string][] = [['block', 'Block capitals'], ['stencil_block', 'Stencil'], ['tall', 'Tall and narrow']];
@@ -191,6 +201,11 @@ export function fromLook(lk: Look, base: Recipe): Recipe {
   if (ap.facial_hair && FACIAL_N[ap.facial_hair]) { r.beard = FACIAL_N[ap.facial_hair][0]; r.mus = FACIAL_N[ap.facial_hair][1]; r.braid = ap.facial_hair === 'beard_braided'; }
   if (ap.face_paint) r.paint = { k: ap.face_paint, c: swatch(ap.paint_colour, { c: ap.face_paint === 'skull' ? PAL.white : PAL.red }).c };
   if (ap.tattoos && ap.tattoos.length) r.tats = ap.tattoos.slice();
+  if (ap.hair_mix && ap.hair_colour2) { r.hairMix = ap.hair_mix; r.hairCol2 = swatch(ap.hair_colour2, { c: PAL.yellow }).c; }
+  if (ap.body_hair) r.bodyHair = ap.body_hair;
+  if (ap.scars && ap.scars.length) r.scars = ap.scars.slice();
+  if (ap.freckles) r.freckles = true;
+  if (ap.mask_design) r.maskDesign = ap.mask_design;
   if (ap.features) r.feat = { ...ap.features };
   const sh = ap.shape || {}, v = (k: string) => Math.max(-1, Math.min(1, +sh[k] || 0));
   if (Object.keys(sh).length) {   // the face sliders, over the face shape the numbers gave
