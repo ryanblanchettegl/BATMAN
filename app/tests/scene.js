@@ -69,6 +69,21 @@ async function studio(mode) {
     await page.click('[data-t="scene-play"]'); await page.waitForTimeout(300);
     ok(mode, 'Play plays the scene', /Stop/.test(await page.$eval('[data-t="scene-play"]', e => e.textContent)));
     await page.waitForTimeout(3200);
+    // the 3D stage: the same scene as a model; press a person to pick them, drag a part to turn it
+    await page.click('[data-t="scene-key"][data-v="0"]');
+    await page.click('[data-t="scene-3d"]'); await page.waitForTimeout(2500);
+    ok(mode, 'the 3D stage opens', await has(page, '[data-t="scene-stage3d"]'));
+    const ca = await page.evaluate(() => window.EWF_DEBUG.three && window.EWF_DEBUG.three() ? window.EWF_DEBUG.three().where('B', 'chest') : null);
+    if (ca) { await page.mouse.click(ca[0], ca[1]); await page.waitForTimeout(300); }
+    ok(mode, 'pressing a person in 3D picks them', /^B:/.test((await attr(page, '[data-t="scene-stage3d"]', 'data-sel')) || ''), await attr(page, '[data-t="scene-stage3d"]', 'data-sel'));
+    await page.click('[data-t="scene-pin"][data-v="sh_n"]');
+    const s0 = +(await page.$eval('[data-t="scene-angle"]', e => e.textContent));
+    const hd = await page.evaluate(() => window.EWF_DEBUG.three().where('B', 'hand_n'));
+    if (hd) { await page.mouse.move(hd[0], hd[1]); await page.mouse.down(); await page.mouse.move(hd[0] + 10, hd[1] - 110, { steps: 6 }); await page.mouse.up(); await page.waitForTimeout(300); }
+    const s1 = +(await page.$eval('[data-t="scene-angle"]', e => e.textContent));
+    ok(mode, 'dragging a part in 3D turns it round its pin', s1 !== s0 && /^B:/.test((await attr(page, '[data-t="scene-stage3d"]', 'data-sel')) || ''), s0 + ' to ' + s1);
+    if (process.env.SHOTS) await shot(page, 'scene-' + mode + '-3d');
+    await page.click('[data-t="scene-3d"]');
     // a headline, then keep it in the world
     await page.click('[data-t="scene-tab"][data-v="cast"]');
     await page.selectOption('[data-t="scene-propkind"]', 'headline'); await page.fill('[data-t="scene-newwords"]', 'BREAKING NEWS'); await page.click('[data-t="scene-addprop"]');

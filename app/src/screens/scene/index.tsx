@@ -72,19 +72,38 @@ function Stage(p: { sc: Scene; ki: number; time: number | null; cast: Record<str
   </div>;
 }
 
-/** The stage in 3D: the same scene built as a real model and photographed (src/kit/diorama3d.ts). Drag to walk the
-    camera round it, the wheel to come closer. */
-function Stage3D(p: { sc: Scene; ki: number; time: number | null; cast: Record<string, Recipe> }) {
+/** The stage in 3D: the same scene built as a real model and photographed (src/kit/diorama3d.ts). Press a person
+    or a prop to pick it and drag a part to turn it round its pin, or the body to move them; a drag on nothing walks
+    the camera round the model, the wheel comes closer. The keys work as on the flat stage. */
+function Stage3D(p: { sc: Scene; ki: number; time: number | null; cast: Record<string, Recipe>; sel: Sel; onSel: (s: Sel) => void; onDrag: (s: Sel, wx: number, wy: number, dx: number, dy: number, rig: Rig | null) => void; onKey: (e: KeyboardEvent) => void }) {
   const box = useRef<HTMLDivElement>(null), cv = useRef<HTMLCanvasElement>(null), eng = useRef<Diorama3D | null>(null), [size, setSize] = useState([0, 0]);
+  const drag = useRef<{ sel: Sel; at: [number, number] } | null>(null), props = useRef(p); props.current = p;
   useEffect(() => {
     const b = box.current, c = cv.current; if (!b || !c) return;
     try { eng.current = new Diorama3D(c); } catch (e) { eng.current = null; }
+    const dbg = (window as any).EWF_DEBUG; if (dbg) dbg.three = () => eng.current;
     const fit = () => { const r = b.getBoundingClientRect(), w = Math.max(160, Math.floor(Math.min(r.width, r.height * 16 / 9))); setSize([w, Math.round(w * 9 / 16)]); if (eng.current) eng.current.size(w, Math.round(w * 9 / 16)); };
     fit(); const ro = new ResizeObserver(fit); ro.observe(b);
-    return () => { ro.disconnect(); if (eng.current) eng.current.dispose(); eng.current = null; };
+    // the pointer: in the capture phase, so a press on a person stops the camera before it starts to turn
+    const down = (e: PointerEvent) => {
+      const E3 = eng.current; if (!E3 || props.current.time != null || e.target !== c) return;
+      const hit = E3.pick(e.clientX, e.clientY); if (!hit) return;   // nothing there: the camera walks round
+      E3.ctl.enabled = false; props.current.onSel(hit);
+      const at0 = E3.toScene(hit.who, e.clientX, e.clientY); drag.current = at0 ? { sel: hit, at: at0 } : null;
+      c.setPointerCapture(e.pointerId); e.stopPropagation();
+    };
+    const move = (e: PointerEvent) => {
+      const d = drag.current, E3 = eng.current; if (!d || !E3 || !d.sel) return;
+      const q = E3.toScene(d.sel.who, e.clientX, e.clientY); if (!q) return;
+      props.current.onDrag(d.sel, q[0], q[1], q[0] - d.at[0], q[1] - d.at[1], E3.rigs[d.sel.who] || null); d.at = q;
+    };
+    const up = () => { drag.current = null; if (eng.current) eng.current.ctl.enabled = true; };
+    b.addEventListener('pointerdown', down, true); b.addEventListener('pointermove', move, true); b.addEventListener('pointerup', up, true); b.addEventListener('pointercancel', up, true);
+    return () => { ro.disconnect(); b.removeEventListener('pointerdown', down, true); b.removeEventListener('pointermove', move, true); b.removeEventListener('pointerup', up, true); b.removeEventListener('pointercancel', up, true); if (eng.current) eng.current.dispose(); eng.current = null; };
   }, []);
-  useEffect(() => { const e = eng.current; if (!e) return; const t = p.time == null ? p.sc.keys[p.ki].t : p.time; e.show(p.sc, p.time == null ? p.sc.keys[p.ki] : at(p.sc, t), p.cast, t); });
-  return <div ref={box} class="sc-stage sc-3d"><canvas ref={cv} data-t="scene-stage3d" style={{ width: size[0] + 'px', height: size[1] + 'px' }} aria-label={'The scene in 3D: ' + p.sc.name + '. Drag to walk round it.'} /></div>;
+  useEffect(() => { const e = eng.current; if (!e) return; const t = p.time == null ? p.sc.keys[p.ki].t : p.time; e.show(p.sc, p.time == null ? p.sc.keys[p.ki] : at(p.sc, t), p.cast, t, p.time == null ? p.sel : null); });
+  return <div ref={box} class="sc-stage sc-3d"><canvas ref={cv} tabIndex={0} data-t="scene-stage3d" data-sel={p.sel ? p.sel.who + ':' + p.sel.part : ''} style={{ width: size[0] + 'px', height: size[1] + 'px' }} onKeyDown={p.onKey as any}
+    aria-label={'The scene in 3D: ' + p.sc.name + '. Press a person or a prop to pick it and drag it; drag anywhere else to walk round the model.'} /></div>;
 }
 
 /** The picked person as a small paper doll with a brass pin at every joint: press a pin to pick that part, press
@@ -193,7 +212,7 @@ export function SceneStudio(pp: StudioProps) {
     </div>
     <Desktop cls="scpage">
     <Win title={'Create a Scene: ' + sc.name} right={sc.keys.length + (sc.keys.length === 1 ? ' keyframe' : ' keyframes')} area="stage" t="scene-win">
-      {three ? <Stage3D sc={sc} ki={Math.min(ki, sc.keys.length - 1)} time={time} cast={cast} /> : <Stage sc={sc} ki={Math.min(ki, sc.keys.length - 1)} time={time} cast={cast} sel={sel} onSel={setSel} onDrag={onDrag} onCam={onCam} onKey={onKey} />}
+      {three ? <Stage3D sc={sc} ki={Math.min(ki, sc.keys.length - 1)} time={time} cast={cast} sel={sel} onSel={setSel} onDrag={onDrag} onKey={onKey} /> : <Stage sc={sc} ki={Math.min(ki, sc.keys.length - 1)} time={time} cast={cast} sel={sel} onSel={setSel} onDrag={onDrag} onCam={onCam} onKey={onKey} />}
       <div class="sc-keys" role="group" aria-label="Keyframes">
         {sc.keys.map((k, i) => <Btn key={'k' + i} kind="sm" t="scene-key" d={{ v: i }} on={i === ki && time == null} onClick={() => { setKi(i); setTime(null); }}>{'Key ' + (i + 1)}</Btn>)}
         <Btn kind="sm" t="scene-addkey" onClick={() => { const n = copy(sc), k = copy(n.keys[ki]); k.t = Math.round((lastT(n) + 0.8) * 10) / 10; n.keys.push(k); setSc(n); setKi(n.keys.length - 1); }}>+ Key</Btn>

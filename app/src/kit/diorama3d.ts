@@ -18,7 +18,7 @@ import { BokehPass } from 'three/examples/jsm/postprocessing/BokehPass.js';
 import { OutputPass } from 'three/examples/jsm/postprocessing/OutputPass.js';
 import { Scene, Key, build, FOOT } from './scene';
 import { Piece, PAL, shade, drawScene, View } from './paper';
-import { Recipe } from './puppet';
+import { Recipe, Rig } from './puppet';
 
 const RINGS = ['ring', 'ringlow', 'ringcorner'];
 const DEPTH = 0.9;      // a layer step, in feet of depth
@@ -41,6 +41,12 @@ const mats = new Map<string, THREE.Material[]>();
 function card(col: string): THREE.Material[] {
   let m = mats.get(col);
   if (!m) { m = [new THREE.MeshStandardMaterial({ color: new THREE.Color(col), roughness: 0.95, metalness: 0, map: grain() }), new THREE.MeshStandardMaterial({ color: new THREE.Color(shade(col, 1.25)), roughness: 1 })]; mats.set(col, m); }
+  return m;
+}
+const lits = new Map<string, THREE.Material[]>();
+/** A picked piece: the same card, glowing a little yellow. */
+function lit(col: string): THREE.Material[] {
+  let m = lits.get(col); if (!m) { m = card(col).map(x => { const c = (x as THREE.MeshStandardMaterial).clone(); c.emissive = new THREE.Color(0xffd23a); c.emissiveIntensity = 0.35; return c; }); lits.set(col, m); }
   return m;
 }
 const steel = new THREE.MeshStandardMaterial({ color: 0xb8bcc8, roughness: 0.35, metalness: 0.7 });
@@ -157,20 +163,64 @@ export class Diorama3D {
   }
   /** Draw on the next frame, once: the picture is only drawn again when something has changed (a Steam Deck on battery
       should not draw a still picture sixty times a second). */
-  ask() { if (this.raf) return; this.raf = requestAnimationFrame(() => { this.raf = 0; (this.bokeh.uniforms as any).focus.value = this.cam.position.distanceTo(this.ctl.target); this.comp.render(); this.drawn++; }); }
+  ask() { if (this.raf) return; this.raf = requestAnimationFrame(() => { this.raf = 0; this.face(); (this.bokeh.uniforms as any).focus.value = this.cam.position.distanceTo(this.ctl.target); this.comp.render(); this.drawn++; }); }
   drawn = 0;
   size(w: number, h: number) { this.r.setSize(w, h, false); this.comp.setSize(w, h); this.cam.aspect = w / h; this.cam.updateProjectionMatrix(); this.ask(); }
-  show(sc: Scene, k: Key, cast: Record<string, Recipe>, time = 0) {
+  /** The people and props, each a group that turns to face the camera like a paper figure, so it never looks thin
+      from the side. `rigs` are the last joints, for dragging a part in 3D. */
+  groups: THREE.Group[] = []; rigs: Record<string, Rig> = {}; sel: { who: string; part: string } | null = null;
+  show(sc: Scene, k: Key, cast: Record<string, Recipe>, time = 0, sel: { who: string; part: string } | null = null) {
     if (this.set !== sc.set) { this.clear(this.world); if (RINGS.includes(sc.set)) arena(this.world); else flat(this.world, sc); this.set = sc.set; this.framed = ''; }
     const fk = sc.set + JSON.stringify(k.cam || null); if (this.framed !== fk) { frame(sc.set, this.cam, this.ctl, k); this.framed = fk; }
-    this.clear(this.people);
-    const b = build(sc, k, cast, time), zOf: Record<string, number> = {}; for (const id in k.figs) zOf[id] = k.figs[id].z;
-    for (const p of b.pieces) {
-      if (p.layer || p.soft) continue;
-      const base = p.own != null && zOf[p.own] != null ? zOf[p.own] : p.z, d = base * DEPTH + (p.z - base) * 0.06;
-      const m = p.txt ? words(p, d) : slab(p, d); if (m) this.people.add(m);
-    }
+    this.clear(this.people); this.groups = []; this.sel = sel;
+    const b = build(sc, k, cast, time); this.rigs = b.rigs;
+    const byWho = new Map<string, Piece[]>();
+    for (const p of b.pieces) { if (p.layer || p.soft) continue; const w = p.own != null ? 'f:' + p.own : p.prop != null ? 'p:' + p.prop : 'x:' + byWho.size; (byWho.get(w) || byWho.set(w, []).get(w)!).push(p); }
+    byWho.forEach((ps, w) => {
+      const kind = w[0], id = w.slice(2), f = kind === 'f' ? k.figs[id] : null;
+      // the pivot: the figure's waist, or the middle of the prop; it stands at the depth of its layer
+      let px = 0, n = 0; if (f) px = f.x; else { for (const p of ps) for (const q of p.pts) { px += q[0]; n++; } px = n ? px / n : (ps[0].txt ? ps[0].txt.x : 0); }
+      const base = f ? f.z : Math.min(...ps.map(p => p.z)), g = new THREE.Group(); g.position.set(px, 0, base * DEPTH);
+      g.userData = { who: id, prop: kind === 'p' };
+      for (const p of ps) {
+        const d = (p.z - base) * 0.06, m = p.txt ? words(p, d) : slab(p, d); if (!m) continue;
+        m.position.x -= px; m.userData = { who: id, joint: p.joint, prop: kind === 'p' };
+        if (sel && sel.who === id && (sel.part === 'body' || sel.part === 'prop' || p.joint === sel.part) && !p.txt) m.material = lit(p.col);
+        g.add(m);
+      }
+      if (f && sel && sel.who === id && this.rigs[id] && this.rigs[id].joints[sel.part]) {   // a bright pin on the picked joint
+        const rg = this.rigs[id], j = rg.joints[sel.part], wx = rg.f < 0 ? 2 * rg.rootx - j.x : j.x;
+        const pin = new THREE.Mesh(new THREE.SphereGeometry(0.14, 16, 12), new THREE.MeshBasicMaterial({ color: 0xffe14a })); pin.position.set(wx - px, j.y - FOOT, 1.2); g.add(pin);
+      }
+      this.people.add(g); this.groups.push(g);
+    });
     this.ask();
+  }
+  /** Where a figure's anchor (chest, hand_n, ...) is on the screen, in client pixels (for tests and for pointing). */
+  where(who: string, anchor = 'chest'): [number, number] | null {
+    const g = this.groups.find(x => x.userData.who === who), rg = this.rigs[who]; if (!g || !rg || !rg.anchors[anchor]) return null;
+    this.face(); g.updateMatrixWorld(true); const a = rg.anchors[anchor], v = g.localToWorld(new THREE.Vector3(a[0] - g.position.x, a[1] - FOOT, 0.3)).project(this.cam);
+    const r = this.r.domElement.getBoundingClientRect(); return [r.left + (v.x + 1) / 2 * r.width, r.top + (1 - v.y) / 2 * r.height];
+  }
+  /** Turn every figure and prop toward the camera, round its own upright. */
+  face() { for (const g of this.groups) g.rotation.y = Math.atan2(this.cam.position.x - g.position.x, this.cam.position.z - g.position.z); }
+  private ray(cx: number, cy: number): THREE.Raycaster {
+    const r = this.r.domElement.getBoundingClientRect(), rc = new THREE.Raycaster();
+    rc.setFromCamera(new THREE.Vector2(((cx - r.left) / r.width) * 2 - 1, -((cy - r.top) / r.height) * 2 + 1), this.cam); return rc;
+  }
+  /** What is under the pointer: a part of a person, a prop, or nothing. */
+  pick(cx: number, cy: number): { who: string; part: string } | null {
+    this.face(); this.people.updateMatrixWorld(true);
+    for (const h of this.ray(cx, cy).intersectObjects(this.people.children, true)) { const u = h.object.userData; if (u && u.who != null) return { who: u.who, part: u.prop ? 'prop' : (u.joint && u.joint !== 'body' ? u.joint : 'body') }; }
+    return null;
+  }
+  /** Where the pointer is on the card of a person or prop, in the scene's own units (for dragging a part round its pin). */
+  toScene(who: string, cx: number, cy: number): [number, number] | null {
+    const g = this.groups.find(x => x.userData.who === who); if (!g) return null;
+    this.face(); g.updateMatrixWorld(true);
+    const n = new THREE.Vector3(0, 0, 1).applyQuaternion(g.quaternion), plane = new THREE.Plane().setFromNormalAndCoplanarPoint(n, g.position), hit = new THREE.Vector3();
+    if (!this.ray(cx, cy).ray.intersectPlane(plane, hit)) return null;
+    const l = g.worldToLocal(hit); return [l.x + g.position.x, l.y + FOOT];
   }
   clear(g: THREE.Group) { g.children.slice().forEach(c => { g.remove(c); c.traverse((o: any) => { if (o.geometry) o.geometry.dispose(); const m = o.material; if (m && !Array.isArray(m) && m.map && m.map.isTexture && m.map !== grainTex) { m.map.dispose(); m.dispose(); } }); }); }
   dispose() { cancelAnimationFrame(this.raf); this.ctl.dispose(); this.clear(this.world); this.clear(this.people); this.r.dispose(); this.r.forceContextLoss(); }
