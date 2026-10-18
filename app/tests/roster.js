@@ -251,7 +251,7 @@ async function tv() {
 }
 
 (async () => {
-  for (const mode of ['desk', 'tablet']) await run(mode);
+  for (const mode of (process.env.MODES || 'desk').split(',')) await run(mode);
   await tv();
   console.log('roster: all passed');
 })().catch(e => { console.error('FAIL', e.message); process.exit(1); });

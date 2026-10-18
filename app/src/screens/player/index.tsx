@@ -13,8 +13,10 @@ import { Scene, SCENES, POSES, WAIST, copy, scenesFor, allScenes, WHEN } from '.
 import { Recipe, recipeOf, blank } from '../../kit/puppet';
 import { Look, Attire, AttireKey, Layer, Finisher, ATTIRES, PARTS, SWATCHES, SLOTS, FONTS, SHAPES, ARCHETYPES, FACIAL, PAINT, TATTOOS, KICKOUT, POSITIONS, CATEGORIES, FIN_SCENES, fromLook, blankLook, finScene, swatch } from '../../kit/caw';
 import { derive, NAMES, FaceKey } from '../../lib/portrait';
+import { PaperPortrait, PT_POSES, PT_FRAMES, sideCard } from '../../kit/paperportrait';
+import { EXPR } from '../../kit/puppet';
 
-type Tab = 'sign' | 'body' | 'head' | 'gear' | 'colour' | 'studio' | 'fin' | 'scenes' | 'file' | 'a_head' | 'a_upper' | 'a_lower' | 'a_feet';
+type Tab = 'portrait' | 'sign' | 'body' | 'head' | 'gear' | 'colour' | 'studio' | 'fin' | 'scenes' | 'file' | 'a_head' | 'a_upper' | 'a_lower' | 'a_feet';
 /** Edit attire's camera: in close on the part of the body being dressed. */
 const REGION_CAM: Record<string, { x: number; y: number; z: number }> = { a_head: { x: 0, y: 2.6, z: 3.8 }, a_upper: { x: 0, y: 1.1, z: 2.1 }, a_lower: { x: 0, y: -1.3, z: 2.1 }, a_feet: { x: 0, y: -2.5, z: 2.8 } };
 const SET_OF: Record<AttireKey, string> = { primary_ring: 'ring', entrance_gear: 'ramp', street_clothes: 'hall' };
@@ -114,7 +116,9 @@ export function CreatePlayer(pp: PlayerProps) {
   const hairRow = <div class="sc-row"><span class="sc-slot">Hair or mask</span><select aria-label="Hair" data-t="caw-hair" value={cur.equipped_assets.head || 'hair_face'} onChange={e => { const v = (e.currentTarget as HTMLSelectElement).value; change(n => { ATTIRES.forEach(a => { const x = (n.attires = n.attires || {})[a[0]] || (n.attires[a[0]] = { equipped_assets: {}, palette_slots: {} }); x.equipped_assets.head = v; }); }); }}>
     {PARTS.head.map(p => <option value={p[0]}>{p[1]}</option>)}</select></div>;
   const AN = ATTIRES.find(a => a[0] === att)![1];
-  const titles: Record<Tab, string> = { a_head: 'Head: ' + AN, a_upper: 'Upper body: ' + AN, a_lower: 'Lower body: ' + AN, a_feet: 'Feet: ' + AN, sign: 'A new wrestler', body: 'The body', head: 'The head', gear: 'Gear: ' + ATTIRES.find(a => a[0] === att)![1], colour: 'Colours: ' + ATTIRES.find(a => a[0] === att)![1], studio: 'Gear studio: lettering and shapes', fin: 'Finishing moves', scenes: 'Their entrance', file: 'The file' };
+  const pt = lk.portrait || {}, side = w0.twn ? 'N' : w0.align === 'H' ? 'H' : 'F';
+  const setPt = (o: any) => change(n => { const q: any = { ...(n.portrait || {}), ...o }; Object.keys(q).forEach(k => { if (q[k] === undefined || q[k] === '') delete q[k]; }); if (Object.keys(q).length) n.portrait = q; else delete n.portrait; });
+  const titles: Record<Tab, string> = { portrait: 'Their portrait', a_head: 'Head: ' + AN, a_upper: 'Upper body: ' + AN, a_lower: 'Lower body: ' + AN, a_feet: 'Feet: ' + AN, sign: 'A new wrestler', body: 'The body', head: 'The head', gear: 'Gear: ' + ATTIRES.find(a => a[0] === att)![1], colour: 'Colours: ' + ATTIRES.find(a => a[0] === att)![1], studio: 'Gear studio: lettering and shapes', fin: 'Finishing moves', scenes: 'Their entrance', file: 'The file' };
   return <div class="scfull paper" data-t="caw">
     <div class="sc-menubar" role="group" aria-label={pp.sign ? 'Create a Player' : pp.attire ? 'Edit attire' : 'Edit wrestler'}>
       <span class="sc-belt" aria-hidden="true" /><b class="on">{pp.sign ? 'Create a Player' : pp.attire ? 'Edit attire' : 'Edit wrestler'}</b><span>{pp.world}</span><span class="sp" />
@@ -133,6 +137,12 @@ export function CreatePlayer(pp: PlayerProps) {
           <span class="sc-lbl">Pose</span>
           {VIEW_POSES.map(p => <Btn kind="less" t="caw-pose" d={{ v: p[0] }} on={pose === p[0] && !acting} onClick={() => { setPose(p[0]); setActing(false); }}>{p[1]}</Btn>)}
           <span class="sp" /><span class="muted">Drag the picture to walk round them</span>
+        </div>
+      </Win>
+      <Win title="Portrait" area="port" t="caw-portwin" cls="caw-portwin">
+        <div class="caw-port">
+          <button type="button" class={'caw-ptbtn' + (tab === 'portrait' ? ' on' : '')} data-t="caw-portrait" aria-label="Change their portrait" onClick={() => setTab('portrait')}><PaperPortrait r={r} ps={pt} side={side} label={'Portrait of ' + (lk.name || w0.name)} /></button>
+          <p class="muted">{tab === 'portrait' ? 'Changing it on the right.' : 'Shown on the roster, in lists and on cards. Press it to change it.'}</p>
         </div>
       </Win>
       <Win title={titles[tab]} right={tab === 'gear' || tab === 'colour' || tab === 'studio' ? ATTIRES.find(a => a[0] === att)![1] : ''} area="side" t="caw-side">
@@ -197,6 +207,15 @@ export function CreatePlayer(pp: PlayerProps) {
                 <option value="">{lk.appearance.face_paint === 'skull' ? 'White' : 'Red'}</option>{SWATCHES.map(s2 => <option value={s2[0]}>{s2[1]}</option>)}</select>}</div>
             <div class="sc-row"><span class="sc-slot">Tattoos</span>{TATTOOS.map(t => { const on = ((lk.appearance && lk.appearance.tattoos) || []).indexOf(t[0]) >= 0; return <Btn kind="less" t="caw-tat" d={{ v: t[0] }} on={on} onClick={() => change(n => { n.appearance = n.appearance || {}; const l = n.appearance.tattoos || []; n.appearance.tattoos = on ? l.filter(x => x !== t[0]) : l.concat([t[0]]); if (!n.appearance.tattoos.length) delete n.appearance.tattoos; })}>{t[1]}</Btn>; })}</div>
           </Group>
+        </>}
+        {tab === 'portrait' && <>
+          <div class="sc-row"><span class="sc-slot">Outfit</span>{ATTIRES.map(a => <Btn kind="less" t="caw-ptatt" d={{ v: a[0] }} on={(pt.attire || 'primary_ring') === a[0]} onClick={() => setPt({ attire: a[0] })}>{a[1]}</Btn>)}</div>
+          <Group title="Their face"><div class="sc-row">{EXPR.map(x => <Btn kind="less" t="caw-ptexpr" d={{ v: x[0] || 'calm' }} on={(pt.expr || '') === x[0]} onClick={() => setPt({ expr: x[0] })}>{x[1]}</Btn>)}</div></Group>
+          <div class="sc-row"><span class="sc-slot">Pose</span><select aria-label="Pose" data-t="caw-ptpose" value={pt.pose || 'stand'} onChange={e => setPt({ pose: (e.currentTarget as HTMLSelectElement).value })}>{PT_POSES.map(x => <option value={x[0]}>{x[1]}</option>)}</select>
+            <select aria-label="Framing" data-t="caw-ptframe" value={pt.frame || 'head'} onChange={e => setPt({ frame: (e.currentTarget as HTMLSelectElement).value as 'head' | 'chest' })}>{PT_FRAMES.map(x => <option value={x[0]}>{x[1]}</option>)}</select></div>
+          <div class="sc-row"><span class="sc-slot">The card</span>{chip(pt.bg)}<select aria-label="Background" data-t="caw-ptbg" value={pt.bg || ''} onChange={e => setPt({ bg: (e.currentTarget as HTMLSelectElement).value || undefined })}>
+            <option value="">Their side's colour</option>{SWATCHES.map(x => <option value={x[0]}>{x[1]}</option>)}</select></div>
+          <p class="muted">This is the picture the game shows of them: on the roster, in lists, on cards and in their file.</p>
         </>}
         {tab === 'a_head' && <>{hairRow}<Group title="On the head">{extras(['hat_cowboy', 'bandana', 'sunglasses_aviator'])}</Group><p class="muted">Hair is worn with every outfit; a mask takes this outfit's main colour and trim.</p></>}
         {tab === 'a_upper' && <>{partRow('upper_body')}<Group title="Arms and chest">{extras(['wrist_tape_white', 'wrist_wraps', 'elbow_pads', 'gloves_fingerless', 'armband', 'chain_gold'])}</Group></>}

@@ -26,6 +26,8 @@ export interface Look {
   /** Not in Ryan's first draft: which of the canned entrances they come out on (a scene id). Their own pictures are
       their moves': each finishing or signature move picks the canned scene it plays as. */
   entrance?: string;
+  /** Not in Ryan's first draft: their portrait, used wherever the game shows one (outfit, face, pose, card, framing). */
+  portrait?: { attire?: AttireKey; expr?: string; pose?: string; bg?: string; frame?: 'head' | 'chest' };
 }
 export const ATTIRES: [AttireKey, string, string][] = [['primary_ring', 'Ring gear', 'In-ring gear'], ['entrance_gear', 'Entrance', 'Ring walk and entrance'], ['street_clothes', 'Street clothes', 'Backstage and promos']];
 /** Which outfit a set calls for: ring gear in the ring, entrance gear on the ramp, street clothes backstage. */

@@ -42,6 +42,7 @@ function lookClean(x){
     return lkPrune({name:lkStr(m.name,32),impact_damage:lkNum(m.impact_damage,1,100),kickout_difficulty:LOOK_KICK.indexOf(m.kickout_difficulty)>=0?m.kickout_difficulty:undefined,
       position:LOOK_POS.indexOf(m.position)>=0?m.position:undefined,category:lkStr(m.category,24),preview_pose_id:lkId(m.preview_pose_id)});}).filter(function(m){return !!m;});
   var en=lkId(x.entrance);if(en)o.entrance=en;   // one of the canned entrances
+  if(x.portrait&&typeof x.portrait==='object'){var pt=x.portrait;o.portrait=lkPrune({attire:LOOK_ATTIRES.indexOf(pt.attire)>=0?pt.attire:undefined,expr:typeof pt.expr==='string'&&/^[a-z]{0,8}$/.test(pt.expr)?pt.expr:undefined,pose:lkId(pt.pose),bg:lkId(pt.bg),frame:pt.frame==='chest'||pt.frame==='head'?pt.frame:undefined});if(!Object.keys(o.portrait).length)delete o.portrait;}   // their portrait
   return Object.keys(o).length?o:null;
 }
 /** Is this a wrestler's look (a .wrestler.json file)? */

@@ -86,6 +86,12 @@ const msg = page => txt(page, '[data-t="caw-msg"]');
     await page.click('[data-t="scene-save"]'); await page.click('[data-t="scene-done"]'); await page.waitForSelector('[data-t="caw"]');
     await page.click('[data-t="caw-tab"][data-v="scenes"]');
     ok('Done comes back to them with the custom entrance picked', !!(await page.$('[data-t="caw-ent"][aria-pressed="true"][data-v^="scene-"]')));
+    // their portrait: bottom right, pressed to change it
+    ok('their portrait is in the bottom right', !!(await page.$('[data-t="caw-portwin"] [data-t="caw-portrait"] canvas')));
+    await page.click('[data-t="caw-portrait"]');
+    await page.click('[data-t="caw-ptexpr"][data-v="snarl"]'); await page.selectOption('[data-t="caw-ptbg"]', 'swatch_crimson_paper'); await page.selectOption('[data-t="caw-ptframe"]', 'chest');
+    ok('pressing it opens the portrait, and it changes', /Their portrait/.test(await txt(page, '[data-t="caw-side"]')) && (await attr(page, '[data-t="caw-ptexpr"][data-v="snarl"]', 'aria-pressed')) === 'true');
+    ok('the suite fits with the portrait', !(await fits(page)), await fits(page));
     // the file
     await page.click('[data-t="caw-tab"][data-v="file"]');
     await page.fill('[data-t="caw-moniker"]', 'The Enforcer');
@@ -94,6 +100,7 @@ const msg = page => txt(page, '[data-t="caw-msg"]');
     const [dl] = await Promise.all([page.waitForEvent('download', { timeout: 8000 }), page.click('[data-t="caw-export"]')]);
     ok('Write a file gives a .wrestler.json', /\.wrestler\.json$/.test(dl.suggestedFilename()), dl.suggestedFilename());
     const body = JSON.parse(require('fs').readFileSync(await dl.path(), 'utf8'));
+    ok('the file keeps the portrait', body.portrait && body.portrait.expr === 'snarl' && body.portrait.bg === 'swatch_crimson_paper' && body.portrait.frame === 'chest');
     ok('the file keeps a part\'s own colour', body.attires.primary_ring.part_colours && body.attires.primary_ring.part_colours.footwear === 'swatch_gold_foil');
     ok('the file keeps the head: hair, beard, paint and tattoos', body.attires.primary_ring.equipped_assets.head === 'hair_dreads_01' && body.appearance.facial_hair === 'beard_braided' && body.appearance.face_paint === 'war' && body.appearance.paint_colour === 'swatch_neon_green' && body.appearance.tattoos.join() === 'sleeve_near,chest');
     ok('the file is the record: body, three outfits, the finisher', body.moniker === 'The Enforcer' && body.physical_attributes.height_inches === 81 && body.physical_attributes.sex === 'M' && Object.keys(body.attires).length === 3 && body.finishing_moves[0].kickout_difficulty === 'Instant');

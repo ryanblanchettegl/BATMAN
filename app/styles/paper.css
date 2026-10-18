@@ -99,3 +99,7 @@
 .edsheet .panel>h2,.edsheet .panel>.ph{color:var(--p-red)}
 .edsheet .edrates{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.4em 2ch}
 .edsheet .muted{color:#5a5248}
+/* inside a window, the grey kit's button colours give way to the card's (a picked button is yellow) */
+.paper .wn .btn,.paper .win .btn,.paper .wn .btn:hover,.paper .win .btn:hover{background:var(--p-grain),var(--b);color:#fff}
+.paper .wn .btn.on,.paper .wn .btn.go,.paper .win .btn.on,.paper .win .btn.go,.paper .wn .btn.on:hover,.paper .wn .btn.go:hover{color:#111}
+.paper .wn .btn[disabled],.paper .win .btn[disabled]{color:#6b6355}
