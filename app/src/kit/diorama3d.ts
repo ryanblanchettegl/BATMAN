@@ -217,7 +217,8 @@ function frame(set: string, cam: THREE.PerspectiveCamera, ctl: OrbitControls, k:
 export class Diorama3D {
   r: THREE.WebGLRenderer; scene = new THREE.Scene(); cam = new THREE.PerspectiveCamera(30, 16 / 9, 0.5, 400); ctl: OrbitControls; comp: EffectComposer; bokeh: BokehPass;
   world = new THREE.Group(); people = new THREE.Group(); set = ''; raf = 0; framed = '';
-  constructor(canvas: HTMLCanvasElement) {
+  /** `interactive` false is the broadcast: the camera is the scene's own and cannot be walked round. */
+  constructor(canvas: HTMLCanvasElement, interactive = true) {
     this.r = new THREE.WebGLRenderer({ canvas, antialias: true, preserveDrawingBuffer: true });
     this.r.setPixelRatio(Math.min(2, window.devicePixelRatio || 1)); this.r.shadowMap.enabled = true; this.r.shadowMap.type = THREE.PCFSoftShadowMap;
     this.r.toneMapping = THREE.ACESFilmicToneMapping; this.r.toneMappingExposure = 1.05;
@@ -227,7 +228,8 @@ export class Diorama3D {
     key.shadow.mapSize.set(2048, 2048); key.shadow.camera.left = -16; key.shadow.camera.right = 16; key.shadow.camera.top = 16; key.shadow.camera.bottom = -16; key.shadow.camera.near = 5; key.shadow.camera.far = 90; key.shadow.radius = 4; key.shadow.bias = -0.0005;
     this.scene.add(key);
     this.scene.add(this.world, this.people);
-    this.ctl = new OrbitControls(this.cam, canvas); this.ctl.enableDamping = false; this.ctl.addEventListener('change', () => this.ask()); this.ctl.maxPolarAngle = Math.PI * 0.49; this.ctl.minDistance = 4; this.ctl.maxDistance = 60;
+    this.ctl = new OrbitControls(this.cam, canvas); this.ctl.enableDamping = false; this.ctl.addEventListener('change', () => this.ask());
+    if (!interactive) this.ctl.enabled = false; this.ctl.maxPolarAngle = Math.PI * 0.49; this.ctl.minDistance = 4; this.ctl.maxDistance = 60;
     this.comp = new EffectComposer(this.r); this.comp.addPass(new RenderPass(this.scene, this.cam));
     this.bokeh = new BokehPass(this.scene, this.cam, { focus: 21, aperture: 0.0006, maxblur: 0.006 }); this.comp.addPass(this.bokeh); this.comp.addPass(new OutputPass());
     this.ask();

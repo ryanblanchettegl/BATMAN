@@ -12,7 +12,7 @@ import { E } from '../../engine';
 import { G, ui, me, pref, savePrefs, redraw, reduceMotion } from '../../store';
 import { ScenePlayer } from '../../kit/sceneplayer';
 import { scenesFor, Scene } from '../../kit/scene';
-import { recipeOf, Recipe } from '../../kit/puppet';
+import { recipeOf, Recipe, commentator } from '../../kit/puppet';
 import { book } from '../../flow';
 import { Btn, KV, Meter, Banner, BeltArt, Portrait, CheckLine, stars, grade } from '../../kit';
 import { Verdict, OddsLine, FxList, Crowd } from './Report';
@@ -215,6 +215,14 @@ function scenePick(r: any, s: any, at: number, done: boolean): { sc: Scene; cast
   const winSide = s.win ? (s.sidesN as string[]).indexOf(s.win) : -1, winner = winSide >= 0 ? ids[winSide * per] : -1;
   let lastH = -1; bc.forEach((b, j) => { if (b.h) lastH = j; });
   let when = 'mid', key = 'm', a = ids[0];
+  // a line of colour from the desk, between the moves: cut to the two of them, the colour voice talking
+  const line = bc[now];
+  if (!done && line && line.t === 'col' && !line.h && now !== lastH) {
+    const sc = choose('desk2', now); if (sc) { const ann: string[] = r.ann || [];
+      cast.C1 = { ...commentator(0), name: ann[0] || 'Play-by-play' }; cast.C2 = { ...commentator(1), name: ann[1] || 'Colour' };
+      return { sc, cast, play: i + ':d' + now, label: 'At the desk: ' + (ann[1] || 'the colour voice') + ' talking, with ' + (ann[0] || 'the play-by-play voice') };
+    }
+  }
   if (done && s.change && winner >= 0) { when = 'champion'; key = 'c'; a = winner; }
   else if (winner >= 0 && lastH >= 0 && now >= lastH) { when = 'finish'; key = 'f'; a = winner; }
   else {
