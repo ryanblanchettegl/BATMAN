@@ -40,6 +40,17 @@ async function studio(mode) {
     const px = box.x + box.w * (0.5 + (-2.6 / 16)), py = box.y + box.h * (0.5 - (1.3 / 9));   // Wrestler A's chest at the first keyframe
     await page.mouse.move(px, py); await page.mouse.down(); await page.mouse.move(px - 40, py, { steps: 4 }); await page.mouse.up();
     ok(mode, 'pressing on a person on the stage picks them', /^A:/.test((await attr(page, '[data-t="scene-stage"]', 'data-sel')) || ''), await attr(page, '[data-t="scene-stage"]', 'data-sel'));
+    // a pose to start from, a size, a face and marks
+    await page.selectOption('[data-t="scene-poselib"]', 'kneel');
+    await page.click('[data-t="scene-size"][data-v="+"]');
+    ok(mode, 'the size goes up', (await page.$eval('[data-t="scene-sizev"]', e => e.textContent)) === '105%', await page.$eval('[data-t="scene-sizev"]', e => e.textContent));
+    await page.click('[data-t="scene-tab"][data-v="face"]');
+    await page.click('[data-t="scene-expr"][data-v="snarl"]'); await page.click('[data-t="scene-blood"][data-v="3"]'); await page.click('[data-t="scene-mark"][data-v="tears"]');
+    const fg = JSON.parse(await attr(page, '[data-t="scene-fig"]', 'data-v') || '{}');
+    ok(mode, 'a pose from the library is applied', fg.y === -1.33 && fg.p && fg.p.kn_n === -90, JSON.stringify(fg.p));
+    ok(mode, 'a face and marks are kept on the keyframe', fg.e === 'snarl' && fg.m && fg.m.blood === 3 && fg.m.tears === true, JSON.stringify(fg.m) + ' ' + fg.e);
+    if (process.env.SHOTS) await shot(page, 'scene-' + mode + '-marks');
+    await page.click('[data-t="scene-tab"][data-v="pose"]');
     // the camera: zoom in, then drag an empty part of the stage to pan, then take a picture
     await page.click('[data-t="scene-zoom"][data-v="in"]');
     ok(mode, 'Zoom in moves the camera closer', (await page.$eval('[data-t="scene-zoomv"]', e => e.textContent)) === '125%', await page.$eval('[data-t="scene-zoomv"]', e => e.textContent));

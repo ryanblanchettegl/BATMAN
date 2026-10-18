@@ -80,12 +80,20 @@ function taper(w0: number, w1: number, L: number): Pt[] {
   return o;
 }
 
-export interface Place { x: number; y: number; r: number; f: number; z: number }
+/** Where a doll stands: its waist, its turn, which way it faces, how far forward, and its size (1 is as cut; a giant
+    is 1.3, a small one 0.8). A doll grows and shrinks from its feet, so it stays standing where it stood. */
+export interface Place { x: number; y: number; r: number; f: number; z: number; s?: number }
+/** Marks on a person: blood (1 a cut, 2 a trickle, 3 a face covered), sweat, tears, a bruise. */
+export interface Marks { blood?: number; sweat?: boolean; tears?: boolean; bruise?: boolean }
+/** The faces a doll can pull. */
+export const EXPR: [string, string][] = [['', 'Calm'], ['shout', 'Shouting'], ['roar', 'Roaring'], ['snarl', 'Snarling'], ['smirk', 'Smirking'], ['hurt', 'Hurt'], ['pain', 'In pain'], ['cry', 'Crying'], ['shut', 'Eyes shut']];
+const BLOOD = '#9e1414', BLOOD2 = '#c42a22', WET = '#bfe6ff';
 /** Where each joint ended up: for dragging a part round its pin, and for anchoring props to a hand. */
 export interface Rig { joints: Record<string, { x: number; y: number; pa: number; up: boolean }>; anchors: Record<string, Pt>; rootx: number; f: number }
 
 /** Cut and pin a doll. `pl` places its waist and turns it; `pose` is angles in degrees; `expr` is calm, shout or hurt. */
-export function puppet(r: Recipe, pl: Place, pose: Record<string, number>, expr: string, own: string, out: Piece[]): Rig {
+export function puppet(r: Recipe, pl: Place, pose: Record<string, number>, expr: string, own: string, out: Piece[], mk: Marks = {}): Rig {
+  const n0 = out.length;
   const P = { ...STAND, ...pose }, h = r.h, w = r.w, sk = r.skin, dk = shade(sk, 0.74), seed = hash(r.key);
   const y = pl.y + (legs(r) - LEGS0) * Math.cos(pl.r * Math.PI / 180);   // a taller doll's waist sits higher, so its feet stay on the mat
   const root: F = { x: pl.x, y, a: pl.r * Math.PI / 180 }, fx = pl.f < 0 ? (px: number) => 2 * pl.x - px : (px: number) => px;
@@ -140,16 +148,25 @@ export function puppet(r: Recipe, pl: Place, pose: Record<string, number>, expr:
   rig.anchors.waist = W_(root, [[0, 0.2]])[0]; rig.anchors.chest = W_(to, [[0, 1.4 * h]])[0];
   const nk = child(to, [0, 1.95 * h], P.head); note('head', nk, to, true);
   cut(nk, [[-0.26 * w, -0.1], [0.26 * w, -0.1], [0.22 * w, 0.45], [-0.22 * w, 0.45]], dk, 0.5, 'head');
-  head(nk, r, 0.56, expr, cut);
+  head(nk, r, 0.56, expr, cut, mk);
+  if ((mk.blood || 0) >= 3) for (const [x0, len] of [[-0.3, 0.9], [0.1, 0.6], [0.45, 1.1]] as [number, number][]) cut(to, strip([x0 * w, 1.9 * h], [x0 * w + 0.04, 1.9 * h - len], 0.1, 0.03), BLOOD, 0.5, 'torso', 0.01, 0.01);   // blood run down the chest
   rig.anchors.head = W_(nk, [[0, 1.0]])[0];
   arm('n', 0.95);
   for (const [f, z] of pins) { const c = W_(f, [[0, 0]])[0]; out.push({ pts: ell(c[0], c[1], 0.07, 0.07, 10), col: '#d9a338', z: pl.z + z + 0.04, lift: 0.02, own }); }
   const hn = rig.anchors.hand_n, hf = rig.anchors.hand_f; rig.anchors.hands = [(hn[0] + hf[0]) / 2, (hn[1] + hf[1]) / 2];
+  const k = pl.s && Math.abs(pl.s - 1) > 0.001 ? Math.max(0.5, Math.min(1.6, pl.s)) : 1;
+  if (k !== 1) {   // grow or shrink from the feet
+    const pu = rot([0, -(legs(r) + 0.6)], root.a), fu: Pt = [root.x + pu[0], root.y + pu[1]], fw: Pt = [fx(fu[0]), fu[1]];
+    const sc = (q: Pt, c: Pt): Pt => [c[0] + (q[0] - c[0]) * k, c[1] + (q[1] - c[1]) * k];
+    for (let i = n0; i < out.length; i++) { out[i].pts = out[i].pts.map(q => sc(q, fw)); const t = out[i].txt; if (t) { const q = sc([t.x, t.y], fw); t.x = q[0]; t.y = q[1]; } }
+    for (const j in rig.joints) { const q = sc([rig.joints[j].x, rig.joints[j].y], fu); rig.joints[j].x = q[0]; rig.joints[j].y = q[1]; }
+    for (const a in rig.anchors) rig.anchors[a] = sc(rig.anchors[a], fw);
+  }
   return rig;
 }
 
 /** The face at body size, cut from the same recipe as the portrait, turned three quarters toward the way the doll faces. */
-function head(fr: F, r: Recipe, z: number, expr: string, cut: (f: F, poly: Pt[], col: string, z: number, joint?: string, lift?: number, rough?: number) => void) {
+function head(fr: F, r: Recipe, z: number, expr: string, cut: (f: F, poly: Pt[], col: string, z: number, joint?: string, lift?: number, rough?: number) => void, mk: Marks = {}) {
   const s = 0.47, hd: Head = { cx: 0, cy: 0.98, rx: r.head.rx * s, ryt: r.head.ryt * s, ryb: r.head.ryb * s, sq: r.head.sq, chin: r.head.chin }, tq = 0.09;
   const sk = r.skin, dk = shade(sk, 0.74), deep = shade(sk, 0.5), J = 'head';
   const put = (poly: Pt[], col: string, dz: number, rough = 0.008) => cut(fr, poly, col, z + dz, J, 0.03, rough);
@@ -168,16 +185,23 @@ function head(fr: F, r: Recipe, z: number, expr: string, cut: (f: F, poly: Pt[],
     put(headPoly(hd, 1, -1.25, 1.1).concat(headPoly(hd, 0.86, 1.1, -1.25, 18, -0.01).map(([x, y]) => [x - 0.04, y] as Pt)), dk, 0.04);
     if (r.beard === 1 || r.beard === 9) put(headPoly(hd, 1.0, Math.PI + 0.25, 2 * Math.PI - 0.25, 18), shade(sk, 0.82), 0.05);
   }
-  const ey = hd.cy + 0.1;
+  const ey = hd.cy + 0.1, shut = ['hurt', 'pain', 'cry', 'shut'].includes(expr), mad = ['shout', 'roar', 'snarl', 'pain', 'hurt'].includes(expr);
+  // blood under the eyes and brows: a cut on the brow, a trickle down the face, or the face covered
+  const bl = mk.blood || 0;
+  if (bl >= 3) put(headPoly(hd, 0.97, 0.15, Math.PI - 0.15, 16).concat([[-hd.rx * 0.8, hd.cy - 0.12], [-0.1, hd.cy - 0.24], [tq, hd.cy - 0.1], [0.12, hd.cy - 0.3], [hd.rx * 0.8, hd.cy - 0.14]]).reverse(), BLOOD, 0.09, 0.02);
+  if (bl >= 1) put(strip([tq - 0.14, hd.cy + 0.36], [tq + 0.1, hd.cy + 0.4], 0.035, 0.025, 0.02), BLOOD2, 0.095, 0.004);
+  if (bl >= 2) for (const [x0, len] of [[tq - 0.06, 0.62], [tq + 0.24, 0.5]] as [number, number][]) put(strip([x0, hd.cy + 0.36], [x0 + 0.02, hd.cy + 0.36 - len], 0.04, 0.02), BLOOD, 0.095, 0.006);
+  if (mk.bruise) put(ell(tq + 0.17, ey - 0.07, 0.09, 0.06, 10), '#5b3a6e', 0.095, 0.006);
   for (const sd of [-1, 1]) {
     const cx = sd * 0.16 + tq;
-    if (expr === 'hurt') put(strip([cx - 0.08, ey + 0.01], [cx + 0.08, ey - 0.02], 0.035, 0.03, -0.03), PAL.black, 0.1);
+    if (shut) put(strip([cx - 0.08, ey + 0.01], [cx + 0.08, ey - 0.02], 0.035, 0.03, expr === 'pain' ? -0.04 : expr === 'shut' ? 0.02 : -0.03), PAL.black, 0.1);
     else { put(almond(cx, ey, 0.17, 0.075), PAL.white, 0.1, 0.003); put(ell(cx + 0.03, ey + 0.005, 0.038, 0.038, 8), PAL.black, 0.12, 0.002); }
-    if (!r.mask && r.brow > 0) { const a = (expr === 'shout' || expr === 'hurt' ? -0.05 : r.browAng); put(strip([cx - 0.1 * sd, ey + 0.1 + a * sd], [cx + 0.1 * sd, ey + 0.11 - a * sd], r.brow * 0.5, r.brow * 0.3), r.browCol, 0.14); }
+    if (mk.tears || expr === 'cry') put(strip([cx + 0.02, ey - 0.04], [cx + 0.03, ey - 0.3], 0.035, 0.05), WET, 0.135, 0.004);
+    if (!r.mask && r.brow > 0) { const a = mad ? -0.07 : expr === 'cry' ? 0.06 : expr === 'smirk' && sd > 0 ? 0.06 : r.browAng; put(strip([cx - 0.1 * sd, ey + 0.1 + a * sd], [cx + 0.1 * sd, ey + 0.11 - a * sd], r.brow * 0.5, r.brow * 0.3), r.browCol, 0.14); }
   }
   const nw = r.noseW * 0.25, nl = r.noseL * 0.4;
   put([[tq - 0.03, ey - 0.02], [tq + 0.03, ey - 0.02], [tq + nw, ey - nl], [tq + 0.02, ey - nl - 0.04], [tq - nw * 0.8, ey - nl]], dk, 0.13);
-  const my = ey - nl - 0.14, open = expr === 'shout' || expr === 'hurt';
+  const my = ey - nl - 0.14, open = ['shout', 'hurt', 'roar', 'snarl', 'pain', 'cry'].includes(expr);
   if (!r.mask && [2, 4, 5, 7, 8].includes(r.beard)) {
     if (r.beard === 4 || r.beard === 5) {
       const lng = r.beard === 5 ? 0.22 : 0.08;
@@ -187,7 +211,11 @@ function head(fr: F, r: Recipe, z: number, expr: string, cut: (f: F, poly: Pt[],
     } else put(ell(tq, hd.cy - hd.ryb * 0.82, r.beard === 7 ? 0.04 : 0.11, r.beard === 7 ? 0.05 : 0.11, 12), r.hairCol, 0.15, 0.015);
   }
   if (!r.mask && r.beard === 6) for (const sd of [-1, 1]) put(ell(sd * hd.rx * 0.78 + tq * 0.5, hd.cy - 0.12, 0.08, 0.18, 10), r.hairCol, 0.15, 0.015);
-  put(almond(tq, my, open ? 0.17 : 0.2, open ? 0.11 : 0.035), open ? PAL.black : (r.beard >= 4 && r.beard <= 5 ? shade(sk, 0.55) : deep), 0.17, 0.004);
+  const mw = expr === 'roar' ? 0.22 : expr === 'pain' || expr === 'snarl' ? 0.24 : expr === 'cry' ? 0.13 : 0.17, mh = expr === 'roar' ? 0.17 : expr === 'pain' || expr === 'snarl' ? 0.08 : expr === 'cry' ? 0.07 : 0.11;
+  if (expr === 'smirk') put(strip([tq - 0.1, my - 0.01], [tq + 0.11, my + 0.04], 0.035, 0.03, 0.02), deep, 0.17, 0.004);
+  else put(almond(tq, my, open ? mw : 0.2, open ? mh : 0.035), open ? PAL.black : (r.beard >= 4 && r.beard <= 5 ? shade(sk, 0.55) : deep), 0.17, 0.004);
+  if (expr === 'snarl' || expr === 'pain') put([[tq - mw * 0.4, my + 0.02], [tq + mw * 0.4, my + 0.02], [tq + mw * 0.38, my - 0.015], [tq - mw * 0.38, my - 0.015]], PAL.white, 0.175, 0.002);   // gritted teeth
+  if (mk.sweat) for (const [x0, y0] of [[-0.18, 0.5], [0.3, 0.42], [-0.3, 0.2]] as [number, number][]) put(ell(tq + x0, hd.cy + y0, 0.025, 0.04, 8), WET, 0.22, 0.002);
   if (!r.mask && r.mus > 0) {
     const wd = r.mus === 1 ? 0.03 : 0.06, dr = r.mus === 3 || r.mus === 4 ? 0.12 : 0.04;
     put([[tq - 0.02, my + 0.08], [tq + 0.02, my + 0.08], [tq + 0.15, my + 0.03], [tq + 0.17, my - dr], [tq + 0.12, my - 0.01], [tq, my + 0.08 - wd], [tq - 0.12, my - 0.01], [tq - 0.17, my - dr], [tq - 0.15, my + 0.03]], r.hairCol, 0.18, 0.006);

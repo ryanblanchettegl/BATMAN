@@ -9,14 +9,13 @@
 import { useEffect, useRef, useState } from 'preact/hooks';
 import { W } from '../../engine';
 import { Btn, TextBox, Desktop, Win, Group, Tabs } from '../../kit';
-import { Scene, Key, Fig, Prop, SCENES, WHEN, SETS, WAIST, CAM0, at, build, viewFor, tilt, paint, lastT, allScenes, ok, copy } from '../../kit/scene';
+import { Scene, Key, Fig, Prop, SCENES, WHEN, SETS, WAIST, CAM0, POSES, at, build, viewFor, tilt, paint, lastT, allScenes, ok, copy } from '../../kit/scene';
 import { drawPaper, fromPx, toPx, pick, Piece, PAL } from '../../kit/paper';
-import { Recipe, recipeOf, JOINTS, PROPS, STAND, Rig, REF, blank, puppet } from '../../kit/puppet';
+import { Recipe, recipeOf, JOINTS, PROPS, STAND, Rig, REF, blank, puppet, EXPR, Marks } from '../../kit/puppet';
 
 type Sel = { who: string; part: string } | null;   // part is 'body', a joint name, or 'prop'
 const deg = (r: number) => r * 180 / Math.PI;
 const norm = (a: number) => { while (a > 180) a -= 360; while (a < -180) a += 360; return Math.round(a); };
-const EXPR: [string, string][] = [['', 'Calm'], ['shout', 'Shouting'], ['hurt', 'Hurt']];
 
 function blankScene(): Scene {
   return { v: 1, id: 'scene-' + Date.now().toString(36), name: 'My scene', when: 'any', set: 'ring', slots: [{ id: 'A', n: 'Wrestler A', role: 'a' }, { id: 'B', n: 'Wrestler B', role: 'b' }, { id: 'R', n: 'The referee', role: 'ref' }],
@@ -157,8 +156,8 @@ export function SceneStudio(pp: StudioProps) {
   const [tab, setTab] = useState('pose');
   // the camera of the keyframe being edited: pan, zoom (1 is the whole set, up to 4), tilt
   const cam = key.cam || CAM0;
-  const onCam = (dx: number, dy: number, zoom: number) => edit(k => { const c = { ...CAM0, ...(k.cam || {}) }; c.z = Math.max(1, Math.min(4, Math.round(c.z * zoom * 100) / 100)); c.x = Math.round((c.x + dx) * 100) / 100; c.y = Math.round((c.y + dy) * 100) / 100;
-    const lim = (v: number, m: number) => Math.max(-m, Math.min(m, v)); c.x = lim(c.x, 8 - 8 / c.z); c.y = lim(c.y, 4.5 - 4.5 / c.z); k.cam = c.z === 1 && !c.r ? undefined : c; });
+  const onCam = (dx: number, dy: number, zoom: number) => edit(k => { const c = { ...CAM0, ...(k.cam || {}) }; c.z = Math.max(0.8, Math.min(4, Math.round(c.z * zoom * 100) / 100)); c.x = Math.round((c.x + dx) * 100) / 100; c.y = Math.round((c.y + dy) * 100) / 100;
+    const lim = (v: number, m: number) => Math.max(-m, Math.min(m, v)); c.x = lim(c.x, Math.max(0, 8 - 8 / c.z)); c.y = lim(c.y, Math.max(0.6, 4.5 - 4.5 / c.z)); k.cam = c.z === 1 && !c.r ? undefined : c; });
   const tiltBy = (d: number) => edit(k => { const c = { ...CAM0, ...(k.cam || {}) }; c.r = Math.max(-20, Math.min(20, (c.r || 0) + d)); k.cam = c; });
   /** Take a picture: the keyframe through its camera, drawn large, saved as a PNG. */
   const snap = () => {
@@ -188,19 +187,19 @@ export function SceneStudio(pp: StudioProps) {
       </div>
       <div class="sc-keys sc-cam" role="group" aria-label="The camera">
         <span class="sc-lbl">Camera</span>
-        <Btn kind="less" t="scene-zoom" d={{ v: 'out' }} disabled={cam.z <= 1} onClick={() => onCam(0, 0, 1 / 1.25)}>Zoom out</Btn>
+        <Btn kind="less" t="scene-zoom" d={{ v: 'out' }} disabled={cam.z <= 0.8} onClick={() => onCam(0, 0, 1 / 1.25)}>Zoom out</Btn>
         <b data-t="scene-zoomv">{Math.round(cam.z * 100) + '%'}</b>
         <Btn kind="less" t="scene-zoom" d={{ v: 'in' }} disabled={cam.z >= 4} onClick={() => onCam(0, 0, 1.25)}>Zoom in</Btn>
-        <Btn kind="less" t="scene-pan" d={{ v: 'l' }} disabled={cam.z <= 1} onClick={() => onCam(-0.5, 0, 1)}>Pan left</Btn><Btn kind="less" t="scene-pan" d={{ v: 'r' }} disabled={cam.z <= 1} onClick={() => onCam(0.5, 0, 1)}>Right</Btn>
-          <Btn kind="less" t="scene-pan" d={{ v: 'u' }} disabled={cam.z <= 1} onClick={() => onCam(0, 0.5, 1)}>Up</Btn><Btn kind="less" t="scene-pan" d={{ v: 'd' }} disabled={cam.z <= 1} onClick={() => onCam(0, -0.5, 1)}>Down</Btn>
+        <Btn kind="less" t="scene-pan" d={{ v: 'l' }} onClick={() => onCam(-0.5, 0, 1)}>Pan left</Btn><Btn kind="less" t="scene-pan" d={{ v: 'r' }} onClick={() => onCam(0.5, 0, 1)}>Right</Btn>
+          <Btn kind="less" t="scene-pan" d={{ v: 'u' }} onClick={() => onCam(0, 0.5, 1)}>Up</Btn><Btn kind="less" t="scene-pan" d={{ v: 'd' }} onClick={() => onCam(0, -0.5, 1)}>Down</Btn>
           <Btn kind="less" t="scene-tilt" d={{ v: 5 }} onClick={() => tiltBy(5)}>Tilt +5</Btn><Btn kind="less" t="scene-tilt" d={{ v: -5 }} onClick={() => tiltBy(-5)}>Tilt -5</Btn>
         <Btn kind="less" t="scene-camreset" disabled={!key.cam} onClick={() => edit(k => { k.cam = undefined; })}>Whole set</Btn>
         <span class="sp" />
         <Btn kind="sm" t="scene-snap" onClick={snap}>Take picture</Btn>
       </div>
     </Win>
-    <Win title={tab === 'pose' ? 'Pose' : tab === 'cast' ? 'Cast and props' : 'The scene'} right={sel && tab === 'pose' ? (sel.part === 'prop' ? 'a prop' : who(sel.who)) : ''} area="side" t="scene-side">
-      <Tabs label="What to change" value={tab} onPick={setTab} items={[{ id: 'pose', label: 'Pose', t: 'scene-tab' }, { id: 'cast', label: 'Cast and props', t: 'scene-tab' }, { id: 'file', label: 'The scene', t: 'scene-tab' }]} />
+    <Win title={tab === 'pose' ? 'Pose' : tab === 'face' ? 'Face and marks' : tab === 'cast' ? 'Cast and props' : 'The scene'} right={sel && (tab === 'pose' || tab === 'face') ? (sel.part === 'prop' ? 'a prop' : who(sel.who)) : ''} area="side" t="scene-side">
+      <Tabs label="What to change" value={tab} onPick={setTab} items={[{ id: 'pose', label: 'Pose', t: 'scene-tab' }, { id: 'face', label: 'Face and marks', t: 'scene-tab' }, { id: 'cast', label: 'Cast and props', t: 'scene-tab' }, { id: 'file', label: 'The scene', t: 'scene-tab' }]} />
       {tab === 'pose' && <>
         <div class="sc-row">
           <select aria-label="Who or what" data-t="scene-who" value={sel ? sel.who : ''} onChange={e => { const v = (e.currentTarget as HTMLSelectElement).value; setSel(v ? { who: v, part: key.figs[v] ? 'body' : 'prop' } : null); }}>
@@ -209,6 +208,15 @@ export function SceneStudio(pp: StudioProps) {
             {key.props.map(q => <option value={q.id}>{(PROPS.find(x => x[0] === q.k) || ['', q.k])[1] + (q.txt ? ': ' + q.txt : '')}</option>)}
           </select>
         </div>
+        {figR && sel && selFig && <div class="sc-row">
+          <select aria-label="Start from a pose" data-t="scene-poselib" value="" onChange={e => { const d = POSES.find(x => x[0] === (e.currentTarget as HTMLSelectElement).value); if (d) edit(k => { const f = fig(k, sel.who); if (f) { f.p = { ...d[1].p }; f.r = d[1].r || 0; f.y = d[1].y ?? WAIST; if (d[1].e != null) f.e = d[1].e; } }); }}>
+            <option value="">Start from a pose...</option>{POSES.map(x => <option value={x[0]}>{x[1].n}</option>)}
+          </select>
+          <span class="sc-lbl">Size</span>
+          <Btn kind="less" t="scene-size" d={{ v: '-' }} disabled={(selFig.s || 1) <= 0.75} onClick={() => edit(k => { const f = fig(k, sel.who); if (f) f.s = Math.round(((f.s || 1) - 0.05) * 100) / 100; })}>-</Btn>
+          <b data-t="scene-sizev">{Math.round((selFig.s || 1) * 100) + '%'}</b>
+          <Btn kind="less" t="scene-size" d={{ v: '+' }} disabled={(selFig.s || 1) >= 1.25} onClick={() => edit(k => { const f = fig(k, sel.who); if (f) f.s = Math.round(((f.s || 1) + 0.05) * 100) / 100; })}>+</Btn>
+        </div>}
         {figR && sel && <div class="sc-row"><Btn kind="less" t="scene-pin" d={{ v: 'body' }} on={sel.part === 'body'} onClick={() => setSel({ who: sel.who, part: 'body' })}>The whole body</Btn><span class="muted">or a pin to pick a part</span></div>}
         {figR && sel && <DollMap r={figR} part={sel.part} onPart={j => setSel({ who: sel.who, part: j })} />}
         {selProp && <div class="sc-row">
@@ -227,7 +235,6 @@ export function SceneStudio(pp: StudioProps) {
           <Btn kind="less" t="scene-move" d={{ v: 'u' }} disabled={!sel} onClick={() => nudge(0, 0.25)}>Up</Btn><Btn kind="less" t="scene-move" d={{ v: 'd' }} disabled={!sel} onClick={() => nudge(0, -0.25)}>Down</Btn>
         </div>
         {selFig && <div class="sc-row">
-          <select aria-label="Face" data-t="scene-expr" value={selFig.e || ''} onChange={e => { const v = (e.currentTarget as HTMLSelectElement).value; edit(k => { const f = fig(k, sel!.who); if (f) f.e = v; }); }}>{EXPR.map(x => <option value={x[0]}>{x[1]}</option>)}</select>
           <Btn kind="less" t="scene-face" onClick={() => edit(k => { const f = fig(k, sel!.who); if (f) f.f = -f.f; })}>Turn round</Btn>
           <Btn kind="less" t="scene-front" onClick={() => edit(k => { const f = fig(k, sel!.who); if (f) f.z = Math.round((f.z + 0.6) * 10) / 10; })}>Front</Btn>
           <Btn kind="less" t="scene-back" onClick={() => edit(k => { const f = fig(k, sel!.who); if (f) f.z = Math.round((f.z - 0.6) * 10) / 10; })}>Back</Btn>
@@ -235,6 +242,19 @@ export function SceneStudio(pp: StudioProps) {
           <Btn kind="less" t="scene-lie" onClick={() => edit(k => { const f = fig(k, sel!.who); if (f) { f.r = 90; f.y = -2.15; } })}>Lie down</Btn>
         </div>}
       </>}
+      {tab === 'face' && (selFig ? <>
+        <span hidden data-t="scene-fig" data-v={JSON.stringify(selFig)} />
+        <Group title="The face">
+          <div class="sc-row">{EXPR.map(x => <Btn kind="less" t="scene-expr" d={{ v: x[0] || 'calm' }} on={(selFig.e || '') === x[0]} onClick={() => edit(k => { const f = fig(k, sel!.who); if (f) f.e = x[0]; })}>{x[1]}</Btn>)}</div>
+        </Group>
+        <Group title="Marks">
+          <div class="sc-row"><span class="sc-lbl">Blood</span>{[[0, 'None'], [1, 'A cut'], [2, 'A trickle'], [3, 'The face covered']].map(([v, n]) =>
+            <Btn kind="less" t="scene-blood" d={{ v: v as number }} on={((selFig.m && selFig.m.blood) || 0) === v} onClick={() => edit(k => { const f = fig(k, sel!.who); if (f) f.m = { ...(f.m || {}), blood: v as number }; })}>{n as string}</Btn>)}</div>
+          <div class="sc-row">{([['sweat', 'Sweat'], ['tears', 'Tears'], ['bruise', 'A bruise']] as [keyof Marks, string][]).map(([m, n]) =>
+            <Btn kind="less" t="scene-mark" d={{ v: m }} on={!!(selFig.m && selFig.m[m])} onClick={() => edit(k => { const f = fig(k, sel!.who); if (f) f.m = { ...(f.m || {}), [m]: !(f.m && f.m[m]) }; })}>{n}</Btn>)}</div>
+        </Group>
+        <p class="muted">Faces and marks belong to this keyframe, so a scene can show the blood come or the tears start.</p>
+      </> : <p class="empty">Pick a person on the stage, or from the list on the Pose tab.</p>)}
       {tab === 'cast' && <>
         <Group title="Who plays it here">
           {sc.slots.filter(x => x.role !== 'ref').map(x => <div class="sc-row"><span class="sc-slot">{x.n}</span>

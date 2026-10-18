@@ -6,9 +6,11 @@
    (`SCENES` below is what it saved), so a player can open them, change them and share them. Nothing here touches
    the game state. */
 import { Piece, PAL, ell, rect, star, drawPaper, View, snip, shade } from './paper';
-import { Recipe, puppet, prop, Rig, blank, REF } from './puppet';
+import { Recipe, puppet, prop, Rig, blank, REF, Marks } from './puppet';
 
-export interface Fig { x: number; y: number; r: number; f: number; z: number; p: Record<string, number>; e?: string }
+/** A person at a keyframe: where the waist is, the turn, which way they face, how far forward, the pose, the face,
+    their size (1 as cut) and the marks on them. */
+export interface Fig { x: number; y: number; r: number; f: number; z: number; p: Record<string, number>; e?: string; s?: number; m?: Marks }
 export interface Prop { id: string; k: string; x: number; y: number; r: number; z: number; s?: number; txt?: string; col?: string; at?: string }
 /** The camera at a keyframe: where it looks (x, y in scene units), how close (z: 1 is the whole set, 3 is a close-up)
     and a tilt in degrees. Left out, it shows the whole set. */
@@ -34,41 +36,41 @@ export const WAIST = FOOT + 2.52 + 0.7;   // the waist of a doll of standard hei
 function setPieces(set: string): Piece[] {
   const o: Piece[] = []; let n = 0; const add = (pts: [number, number][], col: string, z: number, lift = 0.04, rough = 0.012) => o.push({ pts: snip(pts, 9000 + (n++) * 131, rough, 0.1), col, z, lift });
   if (set === 'ring') {
-    add(rect(-8.6, -5, 17.2, 10), PAL.navy, -1, 0, 0);
+    add(rect(-11, -7, 22, 14), PAL.navy, -1, 0, 0);
     let s = 3;
     const r01 = () => { s = (s * 16807) % 2147483647; return s / 2147483647; };
     const shirts = [PAL.red, PAL.black, PAL.white, PAL.blue, PAL.grey, PAL.maroon, PAL.yellow, PAL.teal];
     const skins = ['#f3dccb', '#e8c09e', '#d5a07a', '#b07a52', '#7f5236', '#5a3a26'];
     for (let row = 0; row < 4; row++) {
-      const y = 3.3 - row * 0.85, n2 = 22 + row, k = 0.55 + row * 0.12;
+      const y = 3.3 - row * 0.85, n2 = 28 + row, k = 0.55 + row * 0.12;
       for (let i = 0; i < n2; i++) {
-        const x = -8.2 + (i + r01() * 0.4) * 16.6 / n2 + (row % 2) * 0.3, sz = 0.24 + row * 0.03;
+        const x = -10.4 + (i + r01() * 0.4) * 20.8 / n2 + (row % 2) * 0.3, sz = 0.24 + row * 0.03;
         add(ell(x, y - sz * 1.4, sz * 1.6, sz * 1.2, 10), shade(shirts[Math.floor(r01() * shirts.length)], k), -0.9 + row * 0.04, 0.03, 0.01);
         add(ell(x, y, sz * 0.75, sz * 0.9, 10), shade(skins[Math.floor(r01() * skins.length)], k), -0.88 + row * 0.04, 0.03, 0.01);
         if (r01() < 0.08) add(ell(x + 0.2, y + 0.25, 0.05, 0.07, 6), '#fffff2', -0.85 + row * 0.04, 0.01, 0.002);
       }
     }
-    add(rect(-8.6, 0.45, 17.2, 0.1), '#1a1a1f', -0.7, 0.02);
+    add(rect(-11, 0.45, 22, 0.1), '#1a1a1f', -0.7, 0.02);
     for (let i = 0; i < 7; i++) add(ell(-7.2 + i * 2.4, 4.55, 0.22, 0.22, 12), PAL.yellow, -0.65, 0.02, 0.01);
     for (const sx of [-7.6, 7.6]) {
       add(rect(sx - 0.14, -2.6, 0.28, 4.5), PAL.steel, -0.6, 0.04, 0.008);
       for (const y of [-1.55, -0.55, 0.45]) add(ell(sx, y, 0.26, 0.2, 12), PAL.red, -0.55, 0.04, 0.008);
     }
     for (const y of [-1.55, -0.55, 0.45]) add(rect(-7.6, y - 0.05, 15.2, 0.1), PAL.white, -0.5, 0.03, 0.004);
-    add(rect(-8.6, -3.15, 17.2, 0.7), PAL.mat, -0.45, 0.03, 0.01);
+    add(rect(-11, -3.15, 22, 0.7), PAL.mat, -0.45, 0.03, 0.01);
   } else if (set === 'backstage') {
-    add(rect(-8.6, -5, 17.2, 10), '#4a4f5c', -1, 0, 0);
+    add(rect(-11, -7, 22, 14), '#4a4f5c', -1, 0, 0);
     for (let i = 0; i < 6; i++) { add(rect(-7.8 + i * 1.5, -2.5, 1.3, 5.6), '#6f7a8a', -0.9, 0.05); add(rect(-7.6 + i * 1.5, 1.8, 0.9, 0.12), '#2b2f38', -0.85, 0.02); }
     add(rect(2.2, -2.6, 5.6, 4.8), '#c9b48a', -0.9, 0.06); add(rect(2.5, 1.2, 5.0, 0.7), PAL.red, -0.85, 0.03);
-    add(rect(-8.6, -5, 17.2, 2.2), '#2d2f36', -0.5, 0.04);
+    add(rect(-11, -7, 22, 4.2), '#2d2f36', -0.5, 0.04);
   } else {
-    add(rect(-8.6, -5, 17.2, 10), PAL.cream, -1, 0, 0);
-    add(rect(-8.6, -5, 17.2, 2.1), shade(PAL.cream, 0.82), -0.5, 0.04);
+    add(rect(-11, -7, 22, 14), PAL.cream, -1, 0, 0);
+    add(rect(-11, -7, 22, 4.1), shade(PAL.cream, 0.82), -0.5, 0.04);
   }
   return o;
 }
 const FRONT: Record<string, (o: Piece[]) => void> = {
-  ring: o => { o.push({ pts: snip(rect(-8.6, -5, 17.2, 1.9), 777, 0.015, 0.1), col: PAL.red, z: 2.5, lift: 0.08 }); o.push({ pts: snip(rect(-8.6, -3.35, 17.2, 0.25), 778, 0.008, 0.1), col: PAL.white, z: 2.55, lift: 0.03 }); },
+  ring: o => { o.push({ pts: snip(rect(-11, -7, 22, 3.9), 777, 0.015, 0.1), col: PAL.red, z: 2.5, lift: 0.08 }); o.push({ pts: snip(rect(-11, -3.35, 22, 0.25), 778, 0.008, 0.1), col: PAL.white, z: 2.55, lift: 0.03 }); },
 };
 
 /* ---------- where things are at a moment ---------- */
@@ -86,7 +88,7 @@ export function at(sc: Scene, time: number): Key {
       for (const id in a.figs) {
         const fa = a.figs[id], fb = b.figs[id]; if (!fb) { figs[id] = fa; continue; }
         const p: Record<string, number> = {}; for (const k of new Set([...Object.keys(fa.p), ...Object.keys(fb.p)])) p[k] = mix(fa.p[k] || 0, fb.p[k] || 0, t);
-        figs[id] = { x: mix(fa.x, fb.x, t), y: mix(fa.y, fb.y, t), r: mix(fa.r, fb.r, t), f: t < 0.5 ? fa.f : fb.f, z: t < 0.5 ? fa.z : fb.z, p, e: t < 0.5 ? fa.e : fb.e };
+        figs[id] = { x: mix(fa.x, fb.x, t), y: mix(fa.y, fb.y, t), r: mix(fa.r, fb.r, t), f: t < 0.5 ? fa.f : fb.f, z: t < 0.5 ? fa.z : fb.z, p, e: t < 0.5 ? fa.e : fb.e, s: mix(fa.s || 1, fb.s || 1, t), m: t < 0.5 ? fa.m : fb.m };
       }
       const props = a.props.map(pa => { const pb = b.props.find(x => x.id === pa.id); return pb ? { ...pa, x: mix(pa.x, pb.x, t), y: mix(pa.y, pb.y, t), r: mix(pa.r, pb.r, t) } : pa; });
       const ca = a.cam || CAM0, cb = b.cam || CAM0, cam = { x: mix(ca.x, cb.x, t), y: mix(ca.y, cb.y, t), z: mix(ca.z, cb.z, t), r: mix(ca.r || 0, cb.r || 0, t) };
@@ -102,7 +104,7 @@ export function build(sc: Scene, k: Key, cast: Record<string, Recipe>, time = 0)
   sc.slots.forEach((sl, i) => {
     const f = k.figs[sl.id]; if (!f) return;
     const r = cast[sl.id] || (sl.role === 'ref' ? REF : blank(i));
-    rigs[sl.id] = puppet(r, { x: f.x, y: f.y, r: f.r, f: f.f, z: f.z }, f.p, f.e || '', sl.id, pieces);
+    rigs[sl.id] = puppet(r, { x: f.x, y: f.y, r: f.r, f: f.f, z: f.z, s: f.s }, f.p, f.e || '', sl.id, pieces, f.m || {});
   });
   for (const p of k.props) {
     let x = p.x, y = p.y;
@@ -115,7 +117,7 @@ export function build(sc: Scene, k: Key, cast: Record<string, Recipe>, time = 0)
 
 /** The view that fits a 16 by 9 scene into a canvas of this size, through the camera. */
 export function viewFor(w: number, h: number, cam?: Cam): View {
-  const c = cam || CAM0, s = Math.min(w / W16, h / H9) * Math.max(0.5, c.z);
+  const c = cam || CAM0, s = Math.min(w / W16, h / H9) * Math.max(0.8, c.z);
   return { s, ox: w / 2 - c.x * s, oy: h / 2 + c.y * s };
 }
 /** Tilt the canvas round its middle for the camera's tilt; call before drawing, and ctx.restore() after. */
@@ -128,6 +130,32 @@ export function paint(ctx: CanvasRenderingContext2D, sc: Scene, time: number, ca
   ctx.fillStyle = PAL.navy; ctx.fillRect(0, 0, c.width, c.height);
   const b = build(sc, k, cast, time); tilt(ctx, k.cam); drawPaper(ctx, b.pieces, v); ctx.restore(); return { ...b, v };
 }
+
+/* ---------- poses to start from ---------- */
+/** A pose to start from: the angles, and where the waist sits for it (standing, kneeling, sitting or on the mat). */
+export interface PoseDef { n: string; p: Record<string, number>; r?: number; y?: number; e?: string }
+const KN = { torso: -10, hip_n: -5, kn_n: -90, an_n: 60, hip_f: 5, kn_f: -95, an_f: 60 };
+export const POSES: [string, PoseDef][] = [
+  ['stand', { n: 'Standing', p: {} }],
+  ['fists', { n: 'Fists up', p: { sh_n: 25, el_n: 100, sh_f: 20, el_f: 105, hip_n: 12, kn_n: -12, hip_f: -12 } }],
+  ['point', { n: 'Pointing', p: { sh_n: 95, el_n: 5, sh_f: -15, el_f: -10, head: 4 } }],
+  ['armsup', { n: 'Both arms up', p: { sh_n: 165, el_n: 10, sh_f: -165, el_f: -10, head: 8, hip_n: 6, hip_f: -6 }, e: 'shout' }],
+  ['onearm', { n: 'One arm up', p: { sh_n: 165, el_n: 5, sh_f: -20, el_f: -20, head: 6 }, e: 'shout' }],
+  ['flex', { n: 'Flexing', p: { sh_n: 90, el_n: 115, sh_f: -90, el_f: -115, hip_n: 10, hip_f: -10 }, e: 'roar' }],
+  ['mic', { n: 'On the microphone', p: { sh_n: 150, el_n: 120, sh_f: -20, el_f: -30, head: 4 } }],
+  ['punch', { n: 'Throwing a punch', p: { torso: 12, sh_n: 95, el_n: 5, sh_f: 30, el_f: 90, hip_n: 30, kn_n: -20, hip_f: -24, kn_f: -10 }, r: -10, e: 'shout' }],
+  ['kick', { n: 'A kick', p: { torso: -12, hip_n: 85, kn_n: -10, an_n: 0, hip_f: -10, sh_n: 40, el_n: 60, sh_f: -40, el_f: -60 }, e: 'shout' }],
+  ['lift', { n: 'Lifting overhead', p: { sh_n: 165, el_n: 20, sh_f: -160, el_f: -20, hip_n: 25, kn_n: -40, hip_f: -15, kn_f: -30 }, e: 'roar' }],
+  ['carry', { n: 'Arms out to carry', p: { sh_n: 80, el_n: 40, sh_f: 70, el_f: 40, hip_n: 10, kn_n: -15 } }],
+  ['stagger', { n: 'Staggering back', p: { torso: -22, head: -20, sh_n: 80, el_n: 40, sh_f: -60, el_f: 30, hip_n: -10, kn_n: -20, hip_f: -24, kn_f: -20 }, r: -12, e: 'hurt' }],
+  ['doubled', { n: 'Doubled over', p: { torso: 50, head: 20, sh_n: 30, el_n: 80, sh_f: 20, el_f: 90, hip_n: 10, kn_n: -20 }, e: 'pain' }],
+  ['kneel', { n: 'Kneeling', p: { ...KN }, y: -1.33 }],
+  ['weep', { n: 'On the knees, clutching', p: { ...KN, torso: -12, head: -8, sh_n: 15, el_n: 95, sh_f: 10, el_f: 100 }, y: -1.33, e: 'cry' }],
+  ['sit', { n: 'Sitting on the mat', p: { torso: -10, hip_n: 90, kn_n: -20, an_n: -20, hip_f: 85, kn_f: -30, an_f: -20, sh_n: -40, el_n: 10, sh_f: -50, el_f: 10 }, y: -2.2 }],
+  ['back', { n: 'Flat on the back', p: { sh_n: 160, el_n: 5, sh_f: 140, el_f: -10, hip_n: 10 }, r: 90, y: -2.15, e: 'hurt' }],
+  ['front', { n: 'Face down', p: { sh_n: -10, sh_f: 10, hip_n: 4 }, r: -90, y: -2.15, e: 'hurt' }],
+  ['cover', { n: 'Covering', p: { sh_n: -120, el_n: -30, sh_f: -60, el_f: -40, kn_n: -10, kn_f: -20, an_n: -30, an_f: -30, head: 25 }, r: -65, y: -1.75 }],
+];
 
 /* ---------- the scenes the game ships with: made in Create a Scene ---------- */
 const STD = (x: number, f: number, p: Record<string, number> = {}, e?: string, z = 0): Fig => ({ x, y: WAIST, r: 0, f, z, p, e });
