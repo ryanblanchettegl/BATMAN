@@ -155,3 +155,17 @@ game). They tell us which tools the studio needs, and players can stage their ow
 4. **Sets:** the packed stadium, the steel cage, the rafters, the hallway and the office, a talk show and a news desk.
 5. **Props and clothes:** ladders, a bat, steps, a bin, a truck; suits, dresses and T-shirts.
 6. **Frames:** tall and square pictures, captions and a masthead, for posters, covers and portraits.
+
+### Hooks: who a scene is about (Ryan, 18 October; for when the scene library is bigger)
+
+A scene's people are not fixed wrestlers. Each slot is a **hook**: the part somebody plays in the story, such as the
+Protagonist, the Villain, Heel group member 1, 2 and 3, the Champion, the Challenger, the Manager, the Authority
+figure, the Interviewer or the Referee. The game fills each hook from what is happening: the face of the company, the
+members of the heel stable in the feud, the holder of the title on the line, the general manager who made the match.
+So one scene of a faction beating down a hero plays for any faction and any hero, and a player making a scene picks
+hooks, not people.
+
+Today a slot has a role of `a`, `b`, `ref` or `c`, and the broadcast fills it from the match (the winner, the one
+covering, the one on the microphone). Hooks replace those roles with named parts and give the game rules for filling
+each one. This comes once there is a bigger list of kinds of scene to build them for: beat-downs, run-ins, contract
+signings, interviews, title presentations, celebrations, and the rest of the big moments above.
