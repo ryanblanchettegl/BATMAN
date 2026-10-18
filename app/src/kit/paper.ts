@@ -14,6 +14,7 @@ export interface Piece {
   glow?: boolean;           // lit lettering: no grain over it
   layer?: 'back' | 'front'; // part of the set: drawn once and kept (back behind everybody, front before them)
   soft?: boolean;           // a soft shadow on the floor, not a piece of card
+  fin?: 'foil' | 'corr' | 'neon' | 'denim' | 'leather';   // a card that is not plain matte (Create a Player swatches)
 }
 export interface View { s: number; ox: number; oy: number }   // pixels per unit; the pixel position of x = 0, y = 0 (y up)
 
@@ -160,9 +161,20 @@ function drawPieces(ctx: CanvasRenderingContext2D, list: Piece[], v: View) {
     path(ctx, v, p.pts); ctx.shadowColor = 'transparent';
     if (quality > 0) {
       let x0 = 1e9, y0 = 1e9, x1 = -1e9, y1 = -1e9; for (const q of p.pts) { const r = toPx(v, q); if (r[0] < x0) x0 = r[0]; if (r[0] > x1) x1 = r[0]; if (r[1] < y0) y0 = r[1]; if (r[1] > y1) y1 = r[1]; }
-      const g = ctx.createLinearGradient(x0, y0, x1, y1); g.addColorStop(0, shade(p.col, 1.08)); g.addColorStop(1, shade(p.col, 0.88)); ctx.fillStyle = g;
+      const g = ctx.createLinearGradient(x0, y0, x1, y1);
+      if (p.fin === 'foil') { g.addColorStop(0, shade(p.col, 1.3)); g.addColorStop(0.38, shade(p.col, 0.78)); g.addColorStop(0.5, shade(p.col, 1.65)); g.addColorStop(0.62, shade(p.col, 0.8)); g.addColorStop(1, shade(p.col, 1.15)); }
+      else if (p.fin === 'leather') { g.addColorStop(0, shade(p.col, 1.16)); g.addColorStop(0.25, shade(p.col, 1.0)); g.addColorStop(1, shade(p.col, 0.72)); }
+      else { g.addColorStop(0, shade(p.col, 1.08)); g.addColorStop(1, shade(p.col, 0.88)); }
+      ctx.fillStyle = g;
     } else ctx.fillStyle = p.col;
-    ctx.fill();
+    if (p.fin === 'neon') { ctx.shadowColor = p.col; ctx.shadowBlur = v.s * 0.14; ctx.shadowOffsetX = 0; ctx.shadowOffsetY = 0; }
+    ctx.fill(); ctx.shadowColor = 'transparent';
+    if ((p.fin === 'corr' || p.fin === 'denim') && quality > 0) {   // the ridges of corrugated board, the weave of denim
+      ctx.save(); ctx.clip(); let x0 = 1e9, y0 = 1e9, x1 = -1e9, y1 = -1e9; for (const q of p.pts) { const r = toPx(v, q); x0 = Math.min(x0, r[0]); x1 = Math.max(x1, r[0]); y0 = Math.min(y0, r[1]); y1 = Math.max(y1, r[1]); }
+      const step = Math.max(2, v.s * (p.fin === 'corr' ? 0.07 : 0.035)); ctx.lineWidth = Math.max(1, step * (p.fin === 'corr' ? 0.35 : 0.3)); ctx.strokeStyle = p.fin === 'corr' ? 'rgba(0,0,0,0.2)' : 'rgba(255,255,255,0.13)';
+      ctx.beginPath(); if (p.fin === 'corr') for (let x = x0; x <= x1; x += step) { ctx.moveTo(x, y0); ctx.lineTo(x, y1); } else for (let x = x0 - (y1 - y0); x <= x1; x += step) { ctx.moveTo(x, y1); ctx.lineTo(x + (y1 - y0), y0); }
+      ctx.stroke(); ctx.restore(); path(ctx, v, p.pts);
+    }
     ctx.strokeStyle = shade(p.col, 1.35); ctx.globalAlpha = 0.6; ctx.lineWidth = edge; ctx.stroke(); ctx.globalAlpha = 1;   // the paler core along the cut
   }
   ctx.restore();

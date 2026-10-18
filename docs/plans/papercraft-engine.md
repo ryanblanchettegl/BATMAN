@@ -94,7 +94,8 @@ The desktop build already has `steamworks.js` as an optional part.
 3. **The scene file and two canned scenes** (the lock-up, the cover) played on the broadcast at the right
    moments.
 4. **The record in section 2** in the save and the world packages, with the migration.
-5. **Create a wrestler** in the paper look, then the gear studio.
+5. **Create a wrestler** in the paper look, then the gear studio. *Built 18 October as Create a Player* (`create-a-player.md`):
+   the body, three outfits, swatches, lettering and shapes, finishers acted out on a dummy, one file a wrestler.
 6. **The scene builder** for players.
 7. **The parts library** filled out from Blender, with the export script.
 8. **Steam Workshop.**
@@ -150,7 +151,11 @@ game). They tell us which tools the studio needs, and players can stage their ow
 ### The order to build it in (one batch at a time, each shown to Ryan)
 
 1. **People and marks:** size per person, more faces, blood, sweat and tears, and the pose library.
-2. **Holding and lifting:** a person fixed to another's hands, each limb in front or behind.
+2. **Holding and lifting:** a person fixed to another's hands, each limb in front or behind. *Built:* a figure can be
+   held by another's hands, shoulders, chest, waist or head (`Fig.on`, "A:hands"; Held by on the Pose tab), and any arm
+   or leg can be brought in front of everyone or sent behind (`Fig.lz`). Three scenes use it: the slam, the sleeper
+   hold and the carry over the shoulders. In 3D a held person is cut on the card of the one holding them, so the two
+   turn together and an arm round a neck stays in front.
 3. **Light and effects:** spotlight and a dark building, motion lines, camera flashes, smoke, sparks, spray.
 4. **Sets:** the packed stadium, the steel cage, the rafters, the hallway and the office, a talk show and a news desk.
 5. **Props and clothes:** ladders, a bat, steps, a bin, a truck; suits, dresses and T-shirts.
@@ -169,3 +174,12 @@ Today a slot has a role of `a`, `b`, `ref` or `c`, and the broadcast fills it fr
 covering, the one on the microphone). Hooks replace those roles with named parts and give the game rules for filling
 each one. This comes once there is a bigger list of kinds of scene to build them for: beat-downs, run-ins, contract
 signings, interviews, title presentations, celebrations, and the rest of the big moments above.
+
+*Built (18 October):* a slot can carry a `hook` (the Cast and props tab, "the part in the story"). `E.sceneHooks(S, o)`
+in `src/86-scenes.js` fills the parts from a moment of the show and what the game knows: the hero and the villain by
+side, the villain's group (the stable's leader first, then the rest, a tag partner, the manager), the hero's partner,
+the manager, the champion of the title on the line and the challenger, the winner and the loser, the one talking,
+the attacker and who gets attacked, and the face of the company. A slot whose part nobody in the moment can play is
+left out of the picture. The first scene built on hooks is the beat-down (an attack, an ambush or a brawl on the
+broadcast): the villain and two of the villain's group on the hero. `node test-scenes.js` checks the rules.
+Still to come: the authority figure, the interviewer, and the referee as a named person.

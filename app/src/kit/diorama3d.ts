@@ -37,10 +37,17 @@ function grain(): THREE.Texture {
   return grainTex;
 }
 const mats = new Map<string, THREE.Material[]>();
-/** The face of the card and its paler cut edge. */
-function card(col: string): THREE.Material[] {
-  let m = mats.get(col);
-  if (!m) { m = [new THREE.MeshStandardMaterial({ color: new THREE.Color(col), roughness: 0.95, metalness: 0, map: grain() }), new THREE.MeshStandardMaterial({ color: new THREE.Color(shade(col, 1.25)), roughness: 1 })]; mats.set(col, m); }
+/** The face of the card and its paler cut edge. Foil shines, neon paper glows, leather has a little sheen. */
+function card(col: string, fin?: string): THREE.Material[] {
+  const key = col + (fin || ''); let m = mats.get(key);
+  if (!m) {
+    const face = new THREE.MeshStandardMaterial({ color: new THREE.Color(col), roughness: 0.95, metalness: 0, map: grain() });
+    if (fin === 'foil') { face.metalness = 0.55; face.roughness = 0.3; face.emissive = new THREE.Color(col); face.emissiveIntensity = 0.22; }   // no room to reflect, so foil carries a little of its own shine
+    else if (fin === 'leather') { face.roughness = 0.68; }
+    else if (fin === 'neon') { face.emissive = new THREE.Color(col); face.emissiveIntensity = 0.55; }
+    else if (fin === 'corr' || fin === 'denim') face.roughness = 1;
+    m = [face, new THREE.MeshStandardMaterial({ color: new THREE.Color(shade(col, 1.25)), roughness: 1 })]; mats.set(key, m);
+  }
   return m;
 }
 const lits = new Map<string, THREE.Material[]>();
@@ -56,7 +63,7 @@ function slab(p: Piece, d: number): THREE.Mesh | null {
   if (p.pts.length < 3) return null;
   const sh = new THREE.Shape(p.pts.map(q => new THREE.Vector2(q[0], q[1] - FOOT)));
   const g = new THREE.ExtrudeGeometry(sh, { depth: CARD, bevelEnabled: false, steps: 1 });
-  const m = new THREE.Mesh(g, card(p.col)); m.position.z = d; m.castShadow = true; m.receiveShadow = true; return m;
+  const m = new THREE.Mesh(g, card(p.col, p.fin)); m.position.z = d; m.castShadow = true; m.receiveShadow = true; return m;
 }
 /** Words (a burst, a sign) as a flat card with the lettering printed on it. */
 function words(p: Piece, d: number): THREE.Mesh | null {
@@ -241,14 +248,14 @@ export class Diorama3D {
   size(w: number, h: number) { this.r.setSize(w, h, false); this.comp.setSize(w, h); this.cam.aspect = w / h; this.cam.updateProjectionMatrix(); this.ask(); }
   /** The people and props, each a group that turns to face the camera like a paper figure, so it never looks thin
       from the side. `rigs` are the last joints, for dragging a part in 3D. */
-  groups: THREE.Group[] = []; rigs: Record<string, Rig> = {}; sel: { who: string; part: string } | null = null;
+  groups: THREE.Group[] = []; rigs: Record<string, Rig> = {}; hold: Record<string, string> = {}; sel: { who: string; part: string } | null = null;
   show(sc: Scene, k: Key, cast: Record<string, Recipe>, time = 0, sel: { who: string; part: string } | null = null) {
     if (this.set !== sc.set) { this.clear(this.world); const room = ROOMS[sc.set]; if (RINGS.includes(sc.set)) arena(this.world); else if (room) room(this.world); else flat(this.world, sc); this.mood(sc.set); this.set = sc.set; this.framed = ''; }
     const fk = sc.set + JSON.stringify(k.cam || null); if (this.framed !== fk) { frame(sc.set, this.cam, this.ctl, k); this.framed = fk; }
     this.clear(this.people); this.groups = []; this.sel = sel;
-    const b = build(sc, k, cast, time); this.rigs = b.rigs;
+    const b = build(sc, k, cast, time); this.rigs = b.rigs; this.hold = b.hold;
     const byWho = new Map<string, Piece[]>();
-    for (const p of b.pieces) { if (p.layer || p.soft) continue; const w = p.own != null ? 'f:' + p.own : p.prop != null ? 'p:' + p.prop : 'x:' + byWho.size; (byWho.get(w) || byWho.set(w, []).get(w)!).push(p); }
+    for (const p of b.pieces) { if (p.layer || p.soft) continue; const w = p.own != null ? 'f:' + (b.hold[p.own] || p.own) : p.prop != null ? 'p:' + p.prop : 'x:' + byWho.size; (byWho.get(w) || byWho.set(w, []).get(w)!).push(p); }
     byWho.forEach((ps, w) => {
       const kind = w[0], id = w.slice(2), f = kind === 'f' ? k.figs[id] : null;
       // the pivot: the figure's waist, or the middle of the prop; it stands at the depth of its layer
@@ -257,12 +264,13 @@ export class Diorama3D {
       g.userData = { who: id, prop: kind === 'p' };
       for (const p of ps) {
         const d = (p.z - base) * 0.06, m = p.txt ? words(p, d) : slab(p, d); if (!m) continue;
-        m.position.x -= px; m.userData = { who: id, joint: p.joint, prop: kind === 'p' };
-        if (sel && sel.who === id && (sel.part === 'body' || sel.part === 'prop' || p.joint === sel.part) && !p.txt) m.material = lit(p.col);
+        const pw = kind === 'f' && p.own != null ? p.own : id;   // a held person is cut on the card of the one holding them
+        m.position.x -= px; m.userData = { who: pw, joint: p.joint, prop: kind === 'p' };
+        if (sel && sel.who === pw && (sel.part === 'body' || sel.part === 'prop' || p.joint === sel.part) && !p.txt) m.material = lit(p.col);
         g.add(m);
       }
-      if (f && sel && sel.who === id && this.rigs[id] && this.rigs[id].joints[sel.part]) {   // a bright pin on the picked joint
-        const rg = this.rigs[id], j = rg.joints[sel.part], wx = rg.f < 0 ? 2 * rg.rootx - j.x : j.x;
+      if (f && sel && (sel.who === id || b.hold[sel.who] === id) && this.rigs[sel.who] && this.rigs[sel.who].joints[sel.part]) {   // a bright pin on the picked joint
+        const rg = this.rigs[sel.who], j = rg.joints[sel.part], wx = rg.f < 0 ? 2 * rg.rootx - j.x : j.x;
         const pin = new THREE.Mesh(new THREE.SphereGeometry(0.14, 16, 12), new THREE.MeshBasicMaterial({ color: 0xffe14a })); pin.position.set(wx - px, j.y - FOOT, 1.2); g.add(pin);
       }
       this.people.add(g); this.groups.push(g);
@@ -271,7 +279,7 @@ export class Diorama3D {
   }
   /** Where a figure's anchor (chest, hand_n, ...) is on the screen, in client pixels (for tests and for pointing). */
   where(who: string, anchor = 'chest'): [number, number] | null {
-    const g = this.groups.find(x => x.userData.who === who), rg = this.rigs[who]; if (!g || !rg || !rg.anchors[anchor]) return null;
+    const g = this.groups.find(x => x.userData.who === (this.hold[who] || who)), rg = this.rigs[who]; if (!g || !rg || !rg.anchors[anchor]) return null;
     this.face(); g.updateMatrixWorld(true); const a = rg.anchors[anchor], v = g.localToWorld(new THREE.Vector3(a[0] - g.position.x, a[1] - FOOT, 0.3)).project(this.cam);
     const r = this.r.domElement.getBoundingClientRect(); return [r.left + (v.x + 1) / 2 * r.width, r.top + (1 - v.y) / 2 * r.height];
   }
@@ -294,7 +302,7 @@ export class Diorama3D {
   }
   /** Where the pointer is on the card of a person or prop, in the scene's own units (for dragging a part round its pin). */
   toScene(who: string, cx: number, cy: number): [number, number] | null {
-    const g = this.groups.find(x => x.userData.who === who); if (!g) return null;
+    const g = this.groups.find(x => x.userData.who === (this.hold[who] || who)); if (!g) return null;
     this.face(); g.updateMatrixWorld(true);
     const n = new THREE.Vector3(0, 0, 1).applyQuaternion(g.quaternion), plane = new THREE.Plane().setFromNormalAndCoplanarPoint(n, g.position), hit = new THREE.Vector3();
     if (!this.ray(cx, cy).ray.intersectPlane(plane, hit)) return null;

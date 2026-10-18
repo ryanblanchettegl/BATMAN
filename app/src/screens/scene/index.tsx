@@ -9,7 +9,7 @@
 import { useEffect, useRef, useState } from 'preact/hooks';
 import { W } from '../../engine';
 import { Btn, TextBox, Desktop, Win, Group, Tabs } from '../../kit';
-import { Scene, Key, Fig, Prop, SCENES, WHEN, SETS, WAIST, CAM0, POSES, at, build, viewFor, tilt, paint, lastT, allScenes, ok, copy } from '../../kit/scene';
+import { Scene, Key, Fig, Prop, SCENES, WHEN, SETS, WAIST, CAM0, POSES, HOLDS, LIMBS, HOOKS, at, build, viewFor, tilt, paint, lastT, allScenes, ok, copy } from '../../kit/scene';
 import { drawPaper, drawScene, fromPx, toPx, pick, Piece, PAL } from '../../kit/paper';
 import { Diorama3D } from '../../kit/diorama3d';
 import { Recipe, recipeOf, JOINTS, PROPS, STAND, Rig, REF, blank, puppet, EXPR, Marks } from '../../kit/puppet';
@@ -135,16 +135,16 @@ function DollMap(p: { r: Recipe; part: string; onPart: (j: string) => void }) {
 const STY: Record<string, string> = { brawler: 'B', technician: 'T', flyer: 'H', powerhouse: 'P', all_rounder: 'A', striker: 'S', entertainer: 'E' };
 export function fromWorld(pkg: any): W[] {
   return (pkg && pkg.workers || []).filter((w: any) => !w.roles || w.roles.indexOf('wrestler') >= 0).map((w: any, i: number) => ({ id: i, name: w.ring_name || w.id, g: w.gender === 'F' ? 'F' : 'M',
-    align: w.disposition === 'heel' ? 'H' : 'F', twn: w.disposition === 'tweener', style: STY[w.style] || 'A', face: w.face, age: w.age || 28, gim: (w.gimmick_category || '') + ' ' + (w.gimmick || '') }));
+    align: w.disposition === 'heel' ? 'H' : 'F', twn: w.disposition === 'tweener', style: STY[w.style] || 'A', face: w.face, age: w.age || 28, gim: (w.gimmick_category || '') + ' ' + (w.gimmick || ''), look: w.look || null }));
 }
-export interface StudioProps { world: string; roster: W[]; saved: Scene[]; start?: Scene; blank?: boolean; onSave: (sc: Scene) => boolean; onForget: (id: string) => void; onDone: () => void }
+export interface StudioProps { world: string; roster: W[]; saved: Scene[]; start?: Scene; blank?: boolean; castA?: number; onSave: (sc: Scene) => boolean; onForget: (id: string) => void; onDone: () => void }
 
 /** Create a Scene, full screen, opened from the World Editor. The scene is kept in the world being edited. */
 export function SceneStudio(pp: StudioProps) {
   const roster = pp.roster, [msg, setMsg] = useState<{ t: string; err?: boolean } | null>(null);
   const say = (t: string, o?: { err?: boolean }) => setMsg({ t, err: !!(o && o.err) }), redraw = () => { /* the studio redraws itself */ };
   const [sc, setSc] = useState<Scene>(() => pp.blank ? blankScene() : copy(pp.start || SCENES[0])), [ki, setKi] = useState(0), [sel, setSel] = useState<Sel>({ who: 'A', part: 'body' });
-  const [time, setTime] = useState<number | null>(null), [castIds, setCast] = useState<Record<string, number>>(() => ({ A: roster[0] ? roster[0].id : -1, B: roster[1] ? roster[1].id : -1 }));
+  const [time, setTime] = useState<number | null>(null), [castIds, setCast] = useState<Record<string, number>>(() => ({ A: pp.castA != null ? pp.castA : roster[0] ? roster[0].id : -1, B: (roster.find(w => w.id !== pp.castA) || { id: -1 }).id }));
   const [addK, setAddK] = useState('belt'), [words, setWords] = useState('WOW!'), file = useRef<HTMLInputElement>(null);
   const cast: Record<string, Recipe> = {}; for (const id in castIds) { const w = roster.find(x => x.id === castIds[id]); if (w) cast[id] = recipeOf(w); }
   const key = sc.keys[Math.min(ki, sc.keys.length - 1)];
@@ -168,6 +168,16 @@ export function SceneStudio(pp: StudioProps) {
     if (!sel) { m.ArrowLeft = () => onCam(-0.25, 0, 1); m.ArrowRight = () => onCam(0.25, 0, 1); m.ArrowUp = () => onCam(0, 0.25, 1); m.ArrowDown = () => onCam(0, -0.25, 1); }   // nothing picked: the arrows move the camera
     if (m[e.key]) { e.preventDefault(); e.stopPropagation(); m[e.key](); }
   };
+  /** Pick somebody up, or put them down, without moving them: where they are now becomes a place on the one holding. */
+  const holdBy = (who: string, on: string) => edit((k, n) => {
+    const f = fig(k, who); if (!f) return; const b = build(n, k, cast);
+    const abs = { x: f.x, y: f.y, z: f.z };
+    if (f.on) { const [hw, an] = f.on.split(':'), q = b.rigs[hw] && b.rigs[hw].anchors[an], hf = k.figs[hw]; if (q) { abs.x = q[0] + f.x; abs.y = q[1] + f.y; } abs.z = (hf ? hf.z : 0) + f.z; }
+    delete f.on; f.x = abs.x; f.y = abs.y; f.z = abs.z;
+    if (!on) { f.x = Math.round(f.x * 100) / 100; f.y = Math.round(f.y * 100) / 100; return; }
+    const [hw, a] = on.split(':'), hr = b.rigs[hw], q = hr && hr.anchors[a], hf = k.figs[hw]; if (!q || !hf) return;
+    f.on = on; f.x = Math.round((abs.x - q[0]) * 100) / 100; f.y = Math.round((abs.y - q[1]) * 100) / 100; f.z = 0.6;
+  });
   const parts = ['body', ...JOINTS.map(j => j[0])];
   const cyclePart = (d: number) => { if (!sel || sel.part === 'prop') return; const i = parts.indexOf(sel.part); setSel({ who: sel.who, part: parts[(i + d + parts.length) % parts.length] }); };
   // play: slide through the keyframes once, then come back to the one being edited
@@ -275,7 +285,19 @@ export function SceneStudio(pp: StudioProps) {
           <Btn kind="less" t="scene-front" onClick={() => edit(k => { const f = fig(k, sel!.who); if (f) f.z = Math.round((f.z + 0.6) * 10) / 10; })}>Front</Btn>
           <Btn kind="less" t="scene-back" onClick={() => edit(k => { const f = fig(k, sel!.who); if (f) f.z = Math.round((f.z - 0.6) * 10) / 10; })}>Back</Btn>
           <Btn kind="less" t="scene-stand" onClick={() => edit(k => { const f = fig(k, sel!.who); if (f) { f.p = {}; f.r = 0; f.y = WAIST; } })}>Stand</Btn>
-          <Btn kind="less" t="scene-lie" onClick={() => edit(k => { const f = fig(k, sel!.who); if (f) { f.r = 90; f.y = -2.15; } })}>Lie down</Btn>
+          <Btn kind="less" t="scene-lie" onClick={() => edit(k => { const f = fig(k, sel!.who); if (f) { f.r = 90; f.y = f.on ? 0 : -2.15; } })}>Lie down</Btn>
+        </div>}
+        {selFig && sel && <div class="sc-row">
+          <span class="sc-lbl">Held by</span>
+          <select aria-label="Held by" data-t="scene-heldby" value={selFig.on || ''} onChange={e => holdBy(sel.who, (e.currentTarget as HTMLSelectElement).value)}>
+            <option value="">Nobody: on their own feet</option>
+            {sc.slots.filter(x => x.id !== sel.who && key.figs[x.id] && !(key.figs[x.id].on || '').startsWith(sel.who + ':')).map(x => HOLDS.map(([a, n]) => <option value={x.id + ':' + a}>{x.n + "'s " + n}</option>))}
+          </select>
+        </div>}
+        {selFig && sel && LIMBS[sel.part] && <div class="sc-row" role="group" aria-label="This limb">
+          <span class="sc-lbl">This {LIMBS[sel.part].startsWith('arm') ? 'arm' : 'leg'}</span>
+          {([[3, 'In front of everyone'], [0, 'Where it was cut'], [-3, 'Behind']] as [number, string][]).map(([v, n]) =>
+            <Btn kind="less" t="scene-limb" d={{ v }} on={((selFig.lz || {})[LIMBS[sel.part]] || 0) === v} onClick={() => edit(k => { const f = fig(k, sel.who); if (f) { const lz = { ...(f.lz || {}) }; if (v) lz[LIMBS[sel.part]] = v; else delete lz[LIMBS[sel.part]]; f.lz = lz; } })}>{n}</Btn>)}
         </div>}
       </>}
       {tab === 'face' && (selFig ? <>
@@ -292,10 +314,13 @@ export function SceneStudio(pp: StudioProps) {
         <p class="muted">Faces and marks belong to this keyframe, so a scene can show the blood come or the tears start.</p>
       </> : <p class="empty">Pick a person on the stage, or from the list on the Pose tab.</p>)}
       {tab === 'cast' && <>
-        <Group title="Who plays it here">
+        <Group title="Who plays it: the part in the story, and who stands in for it here">
           {sc.slots.filter(x => x.role !== 'ref').map(x => <div class="sc-row"><span class="sc-slot">{x.n}</span>
             {key.figs[x.id] ? (x.at && <Btn kind="less" t="scene-sendaway" d={{ v: x.id }} onClick={() => { const n = copy(sc); n.keys.forEach(k => { delete k.figs[x.id]; }); setSc(n); if (sel && sel.who === x.id) setSel(null); }}>Send away</Btn>)
               : <Btn kind="sm" t="scene-bringin" d={{ v: x.id }} onClick={() => { const n = copy(sc); n.keys.forEach(k => { k.figs[x.id] = copy(x.at || { x: 0, y: WAIST, r: 0, f: 1, z: 0.6, p: {} }); }); setSc(n); setSel({ who: x.id, part: 'body' }); }}>Bring in</Btn>}
+            <select aria-label={'The part ' + x.n + ' plays in the story'} data-t="scene-hook" data-v={x.id} value={x.hook || ''} onChange={e => { const v = (e.currentTarget as HTMLSelectElement).value, n = copy(sc), sl = n.slots.find(y => y.id === x.id)!; if (v) { sl.hook = v; sl.n = (HOOKS.find(h => h[0] === v) || ['', sl.n])[1]; } else delete sl.hook; setSc(n); }}>
+              {HOOKS.map(h => <option value={h[0]}>{h[1]}</option>)}
+            </select>
             <select aria-label={'Who plays ' + x.n} data-t="scene-cast" data-v={x.id} value={String(castIds[x.id] ?? -1)} onChange={e => setCast({ ...castIds, [x.id]: +(e.currentTarget as HTMLSelectElement).value })}>
               <option value="-1">A plain card figure</option>{roster.map(w => <option value={String(w.id)}>{w.name}</option>)}
             </select></div>)}

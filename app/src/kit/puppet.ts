@@ -8,6 +8,7 @@ import { G } from '../store';
 import { faceOf } from './portrait';
 import { skinOf, hairOf } from '../lib/portrait';
 import { Pt, Piece, PAL, shade, ell, star, almond, strip, headPoly, Head, snip } from './paper';
+import { Kit, Swatch, AttireKey, layerSwatch, letters, shape, fromLook, Look } from './caw';
 
 export interface Recipe {
   key: string; name: string; skin: string; h: number; w: number; belly: number; fem: boolean;
@@ -17,6 +18,9 @@ export interface Recipe {
   shirt?: string; pants?: string; stripes?: boolean;
   /** A suit: the jacket and trousers, the tie and the pocket square. */
   suit?: { jacket: string; tie: string; square?: string }; headset?: boolean;
+  /** From a Create a Player file (src/kit/caw.ts): torso width and height, limb length and muscle (1 is as cut), the
+      three outfits, and the one being worn. */
+  tw?: number; th?: number; ll?: number; mm?: number; kits?: Record<AttireKey, Kit>; kit?: Kit;
 }
 /** The joints a pose turns, in the order the studio lists them. Angles are degrees; 0 is the part hanging straight. */
 export const JOINTS: [string, string][] = [
@@ -36,6 +40,11 @@ const HAIRS = ['bald', 'buzz', 'crew', 'cap', 'cap', 'flat', 'mohawk', 'curls', 
     `gim`). The same wrestler always gives the same doll. Create a Player will make these by hand; until then this
     is a stand-in made from what the game already knows. */
 export function recipeOf(w: W): Recipe {
+  const lk: Look | null = w.look && typeof w.look === 'object' ? w.look : null;
+  if (lk) { const ap = lk.appearance || {}; return fromLook(lk, plainRecipe(ap.face ? { ...w, face: { ...(w.face || {}), ...ap.face }, look: null } : { ...w, look: null })); }
+  return plainRecipe(w);
+}
+function plainRecipe(w: W): Recipe {
   const f = faceOf(w), h = (k: string, n: number) => hash(w.name + '|' + k) % n, fem = w.g === 'F', hd = HEADS[f.h] || HEADS[0];
   const S = G.S, per = w.gim == null && S && E.persona ? E.persona(S, w.id) : null, gim = w.gim != null ? String(w.gim) : per ? ((per.cat || '') + ' ' + (per.d || '')) : '';
   const masked = /mask|lucha/i.test(gim) || /^(El|La) /.test(w.name) && h('m', 3) === 0;
@@ -71,13 +80,13 @@ export function commentator(i: number): Recipe {
     shirt: J, pants: J, stripes: false, suit: { jacket: J, tie: T, square: i === 0 ? PAL.white : T }, headset: true };
 }
 /** Dress whoever plays a slot for the desk: a suit (theirs, if they have one) and a headset. */
-export function dress(r: Recipe, i: number): Recipe { if (r.suit) return { ...r, headset: true }; const c = commentator(i); return { ...r, shirt: c.shirt, pants: c.pants, stripes: false, suit: c.suit, headset: true, straps: false, tape: false, mask: r.mask }; }
+export function dress(r: Recipe, i: number): Recipe { if (r.kits && r.kits.street_clothes.top === 'suit_jacket') { const s = r.kits.street_clothes; return { ...r, kit: s, suit: { jacket: s.pal.s.c, tie: s.pal.t.c, square: s.pal.h.c }, headset: true }; } if (r.suit && !r.kit) return { ...r, headset: true }; const c = commentator(i); return { ...r, kit: undefined, shirt: c.shirt, pants: c.pants, stripes: false, suit: c.suit, headset: true, straps: false, tape: false, mask: r.mask }; }
 export function blank(i: number): Recipe {
   return { ...REF, key: 'blank' + i, name: ['Wrestler A', 'Wrestler B', 'Wrestler C', 'Wrestler D'][i] || 'Wrestler', skin: '#c9a184', hair: 'bald', shirt: undefined, pants: undefined, stripes: false, gear: [PAL.blue, PAL.red, PAL.green, PAL.gold][i % 4], gear2: PAL.white, tape: true, w: 1.05, h: 1 };
 }
 
 /** How long the legs are: a figure stands on the mat whatever its height. */
-export const legs = (r: Recipe) => (1.3 + 1.22) * r.h;
+export const legs = (r: Recipe) => (1.3 + 1.22) * r.h * (r.ll || 1);
 export const LEGS0 = 1.3 + 1.22;
 
 /* ---------- the joints ---------- */
@@ -93,7 +102,7 @@ function taper(w0: number, w1: number, L: number): Pt[] {
 
 /** Where a doll stands: its waist, its turn, which way it faces, how far forward, and its size (1 is as cut; a giant
     is 1.3, a small one 0.8). A doll grows and shrinks from its feet, so it stays standing where it stood. */
-export interface Place { x: number; y: number; r: number; f: number; z: number; s?: number }
+export interface Place { x: number; y: number; r: number; f: number; z: number; s?: number; lz?: Record<string, number> }
 /** Marks on a person: blood (1 a cut, 2 a trickle, 3 a face covered), sweat, tears, a bruise. */
 export interface Marks { blood?: number; sweat?: boolean; tears?: boolean; bruise?: boolean }
 /** The faces a doll can pull. */
@@ -106,73 +115,178 @@ export interface Rig { joints: Record<string, { x: number; y: number; pa: number
 export function puppet(r: Recipe, pl: Place, pose: Record<string, number>, expr: string, own: string, out: Piece[], mk: Marks = {}): Rig {
   const n0 = out.length;
   const P = { ...STAND, ...pose }, h = r.h, w = r.w, sk = r.skin, dk = shade(sk, 0.74), seed = hash(r.key);
+  const ll = r.ll || 1, H = h * (r.th || 1), mm = r.mm || 1, K = r.kit;
+  const aw = w * (0.8 + 0.2 * mm), bw = w * (r.tw || 1) * (1 + (mm - 1) * 0.3);   // limbs thicken with muscle; the chest with the torso and muscle sliders
   const y = pl.y + (legs(r) - LEGS0) * Math.cos(pl.r * Math.PI / 180);   // a taller doll's waist sits higher, so its feet stay on the mat
   const root: F = { x: pl.x, y, a: pl.r * Math.PI / 180 }, fx = pl.f < 0 ? (px: number) => 2 * pl.x - px : (px: number) => px;
   const W_ = (f: F, poly: Pt[]): Pt[] => poly.map(p => { const d = rot(p, f.a); return [fx(f.x + d[0]), f.y + d[1]] as Pt; });
   const rig: Rig = { joints: {}, anchors: {}, rootx: pl.x, f: pl.f };
   let n = 0;
-  const cut = (f: F, poly: Pt[], col: string, z: number, joint?: string, lift = 0.09, rough = 0.012) => {
-    out.push({ pts: snip(W_(f, poly), seed + (n++) * 977, rough, 0.08), col, z: pl.z + z, lift, own, joint });
+  const cut = (f: F, poly: Pt[], col: string | Swatch, z: number, joint?: string, lift = 0.09, rough = 0.012) => {
+    const c = typeof col === 'string' ? col : col.c, fin = typeof col === 'string' ? undefined : col.f;
+    out.push({ pts: snip(W_(f, poly), seed + (n++) * 977, rough, 0.08), col: c, z: pl.z + z, lift, own, joint, fin: fin && fin !== 'matte' ? fin : undefined });
   };
   const pins: [F, number][] = [];
-  const L = { up: 1.0 * h, fore: 0.92 * h, thigh: 1.3 * h, shin: 1.22 * h, torso: 1.95 * h };
+  const L = { up: 1.0 * h * ll, fore: 0.92 * h * ll, thigh: 1.3 * h * ll, shin: 1.22 * h * ll, torso: 1.95 * H };
   const note = (name: string, f: F, parent: F, up = false) => { rig.joints[name] = { x: f.x, y: f.y, pa: parent.a, up }; };
+  const has = (a: string) => !!K && K.acc.indexOf(a) >= 0;
+  const OVER = ['shirt_tshirt_base', 'hoodie_01', 'jacket_leather_biker', 'robe_long', 'suit_jacket'];   // tops with sleeves to the wrist (the T-shirt only to the elbow)
   const to = child(root, [0, 0], P.torso);
   note('torso', to, root, true);
   const arm = (s: 'n' | 'f', z: number) => {
-    const sh = child(to, [(s === 'n' ? 0.74 : -0.74) * w, L.torso - 0.12], P['sh_' + s]); note('sh_' + s, sh, to);
-    const col = r.suit ? r.suit.jacket : r.shirt && r.stripes ? r.shirt : sk;
-    cut(sh, taper(0.46 * w, 0.36 * w, L.up), col, z, 'sh_' + s); cut(sh, ell(0, -0.08, 0.27 * w, 0.32 * w, 14), col, z + 0.02, 'sh_' + s); pins.push([sh, z + 0.03]);
+    const sh = child(to, [(s === 'n' ? 0.74 : -0.74) * bw, L.torso - 0.12], P['sh_' + s]); note('sh_' + s, sh, to);
+    let up: string | Swatch = r.suit ? r.suit.jacket : r.shirt && r.stripes ? r.shirt : sk, fore: string | Swatch = r.suit ? r.suit.jacket : sk;
+    if (K) { up = sk; fore = sk; if (OVER.indexOf(K.top) >= 0) { up = K.pal.s; if (K.top !== 'shirt_tshirt_base') fore = K.pal.s; } }
+    const robe = !!K && K.top === 'robe_long', rw = robe ? 1.25 : 1;
+    cut(sh, taper(0.46 * aw * rw, 0.36 * aw * rw, L.up), up, z, 'sh_' + s); cut(sh, ell(0, -0.08, 0.27 * aw * rw, 0.32 * aw * rw, 14), up, z + 0.02, 'sh_' + s); pins.push([sh, z + 0.03]);
+    if (K && K.top === 'shirt_tshirt_base') {   // a short sleeve with its hem
+      cut(sh, ell(0, -0.08, 0.3 * aw, 0.35 * aw, 14).concat([[0.26 * aw, -0.5 * L.up], [-0.26 * aw, -0.5 * L.up]]), K.pal.s, z + 0.021, 'sh_' + s);
+      cut(sh, [[-0.26 * aw, -0.44 * L.up], [0.26 * aw, -0.44 * L.up], [0.26 * aw, -0.52 * L.up], [-0.26 * aw, -0.52 * L.up]], K.pal.t, z + 0.022, 'sh_' + s, 0.02, 0.004);
+    }
+    if (has('armband')) cut(sh, [[-0.25 * aw, -0.45 * L.up], [0.25 * aw, -0.45 * L.up], [0.24 * aw, -0.58 * L.up], [-0.24 * aw, -0.58 * L.up]], K!.pal.t, z + 0.025, 'sh_' + s, 0.02, 0.004);
     const el = child(sh, [0, -L.up], P['el_' + s]); note('el_' + s, el, sh);
-    cut(el, taper(0.36 * w, 0.29 * w, L.fore), r.suit ? r.suit.jacket : sk, z + 0.04, 'el_' + s); pins.push([el, z + 0.07]);
-    if (r.suit) cut(el, [[-0.16 * w, -L.fore + 0.16], [0.16 * w, -L.fore + 0.16], [0.15 * w, -L.fore + 0.02], [-0.15 * w, -L.fore + 0.02]], PAL.white, z + 0.06, 'el_' + s, 0.02, 0.004);   // the shirt cuff
-    if (r.tape) cut(el, [[-0.17 * w, -L.fore + 0.25], [0.17 * w, -L.fore + 0.25], [0.16 * w, -L.fore + 0.02], [-0.16 * w, -L.fore + 0.02]], PAL.white, z + 0.06, 'el_' + s, 0.02, 0.006);
+    cut(el, taper(0.36 * aw * rw, 0.29 * aw * rw * (robe ? 1.3 : 1), L.fore), fore, z + 0.04, 'el_' + s); pins.push([el, z + 0.07]);
+    if (has('elbow_pads')) cut(el, ell(0, -0.02, 0.22 * aw, 0.2 * aw, 12), K!.pal.s, z + 0.065, 'el_' + s, 0.04);
+    if (r.suit) cut(el, [[-0.16 * aw, -L.fore + 0.16], [0.16 * aw, -L.fore + 0.16], [0.15 * aw, -L.fore + 0.02], [-0.15 * aw, -L.fore + 0.02]], PAL.white, z + 0.06, 'el_' + s, 0.02, 0.004);   // the shirt cuff
+    else if (K && OVER.indexOf(K.top) >= 0 && K.top !== 'shirt_tshirt_base') cut(el, [[-0.17 * aw * rw, -L.fore + 0.18], [0.17 * aw * rw * (robe ? 1.3 : 1), -L.fore + 0.18], [0.16 * aw * rw * (robe ? 1.3 : 1), -L.fore + 0.02], [-0.16 * aw * rw, -L.fore + 0.02]], K.pal.t, z + 0.06, 'el_' + s, 0.02, 0.004);   // a cuff in the trim
+    if (r.tape || has('wrist_tape_white')) cut(el, [[-0.17 * aw, -L.fore + 0.25], [0.17 * aw, -L.fore + 0.25], [0.16 * aw, -L.fore + 0.02], [-0.16 * aw, -L.fore + 0.02]], PAL.white, z + 0.06, 'el_' + s, 0.02, 0.006);
     const wr = child(el, [0, -L.fore], P['wr_' + s]); note('wr_' + s, wr, el);
-    cut(wr, ell(0.02, -0.17, 0.17 * w, 0.22, 12), sk, z + 0.08, 'wr_' + s);
+    cut(wr, ell(0.02, -0.17, 0.17 * aw, 0.22, 12), sk, z + 0.08, 'wr_' + s);
+    if (has('gloves_fingerless')) { cut(wr, ell(0.02, -0.12, 0.17 * aw, 0.15, 12), K!.pal.s, z + 0.09, 'wr_' + s, 0.02); cut(wr, [[-0.16 * aw, 0.02], [0.16 * aw, 0.02], [0.16 * aw, -0.06], [-0.16 * aw, -0.06]], K!.pal.t, z + 0.095, 'wr_' + s, 0.02, 0.004); }
     const hand = W_(wr, [[0.02, -0.17]])[0]; rig.anchors['hand_' + s] = hand;
   };
+  const LONG = ['tights_long_01', 'jeans_distressed', 'trousers_suit'];
   const leg = (s: 'n' | 'f', z: number) => {
     const hp = child(root, [(s === 'n' ? 0.32 : -0.32) * w, -0.42], P['hip_' + s]); note('hip_' + s, hp, root);
-    cut(hp, taper(0.66 * w, 0.46 * w, L.thigh), r.pants || sk, z, 'hip_' + s); pins.push([hp, z + 0.03]);
+    const thighC: string | Swatch = K ? (LONG.indexOf(K.bottom) >= 0 || K.bottom === 'shorts_fight' ? K.pal.p : sk) : r.pants || sk;
+    const shinC: string | Swatch = K ? (LONG.indexOf(K.bottom) >= 0 ? K.pal.p : sk) : r.pants || sk;
+    cut(hp, taper(0.66 * aw, 0.46 * aw, L.thigh), thighC, z, 'hip_' + s); pins.push([hp, z + 0.03]);
+    if (K) {
+      if (K.bottom === 'trunks_long') { cut(hp, [[-0.34 * aw, 0.1], [0.34 * aw, 0.1], [0.3 * aw, -0.45 * L.thigh], [-0.3 * aw, -0.45 * L.thigh]], K.pal.p, z + 0.015, 'hip_' + s); cut(hp, [[-0.3 * aw, -0.4 * L.thigh], [0.3 * aw, -0.4 * L.thigh], [0.3 * aw, -0.47 * L.thigh], [-0.3 * aw, -0.47 * L.thigh]], K.pal.t, z + 0.017, 'hip_' + s, 0.02, 0.004); }
+      if (K.bottom === 'shorts_fight') { cut(hp, [[0.05, 0], [0.22 * aw, 0], [0.18 * aw, -0.9 * L.thigh], [0.02, -0.9 * L.thigh]], K.pal.s, z + 0.015, 'hip_' + s, 0.02); cut(hp, [[-0.25 * aw, -0.86 * L.thigh], [0.25 * aw, -0.86 * L.thigh], [0.24 * aw, -0.95 * L.thigh], [-0.24 * aw, -0.95 * L.thigh]], K.pal.t, z + 0.017, 'hip_' + s, 0.02, 0.004); }
+      if (K.bottom === 'tights_long_01') cut(hp, strip([0, 0.05], [0, -L.thigh + 0.05], 0.08, 0.06), K.pal.t, z + 0.015, 'hip_' + s, 0.02, 0.004);
+      if (K.bottom === 'trousers_suit') cut(hp, strip([0.05, -0.1], [0.04, -L.thigh + 0.05], 0.025, 0.02), shade(K.pal.p.c, 0.7), z + 0.015, 'hip_' + s, 0.01, 0.003);
+      if (K.bottom === 'jeans_distressed' && s === 'n') cut(hp, [[-0.1, -0.55 * L.thigh], [0.12, -0.5 * L.thigh], [0.18, -0.6 * L.thigh], [0.05, -0.66 * L.thigh], [-0.12, -0.62 * L.thigh]], sk, z + 0.015, 'hip_' + s, 0.01, 0.02);   // a rip
+    }
     const kn = child(hp, [0, -L.thigh], P['kn_' + s]); note('kn_' + s, kn, hp);
-    cut(kn, taper(0.47 * w, 0.36 * w, L.shin), r.pants || sk, z + 0.03, 'kn_' + s); pins.push([kn, z + 0.06]);
-    if (!r.pants) {
-      cut(kn, ell(0, -0.05, 0.21 * w, 0.24 * w, 14), r.gear2, z + 0.05, 'kn_' + s, 0.03);
-      cut(kn, [[-0.2 * w, -L.shin * 0.42], [0.2 * w, -L.shin * 0.42], [0.19 * w, -L.shin + 0.05], [-0.19 * w, -L.shin + 0.05]], r.gear, z + 0.05, 'kn_' + s, 0.03);
+    cut(kn, taper(0.47 * aw, 0.36 * aw, L.shin), shinC, z + 0.03, 'kn_' + s); pins.push([kn, z + 0.06]);
+    if (K && K.bottom === 'tights_long_01') cut(kn, strip([0, 0.02], [0, -L.shin + 0.1], 0.06, 0.05), K.pal.t, z + 0.035, 'kn_' + s, 0.02, 0.004);
+    if (K && K.bottom === 'jeans_distressed' && s === 'n') cut(kn, [[-0.12, 0.05], [0.12, 0.08], [0.16, -0.06], [0.0, -0.1], [-0.14, -0.05]], sk, z + 0.035, 'kn_' + s, 0.01, 0.02);
+    const shinGear = (top: number, col: Swatch | string) => cut(kn, [[-0.2 * aw, -L.shin * top], [0.2 * aw, -L.shin * top], [0.19 * aw, -L.shin + 0.05], [-0.19 * aw, -L.shin + 0.05]], col, z + 0.05, 'kn_' + s, 0.03);
+    if (!K) {
+      if (!r.pants) { cut(kn, ell(0, -0.05, 0.21 * aw, 0.24 * aw, 14), r.gear2, z + 0.05, 'kn_' + s, 0.03); shinGear(0.42, r.gear); }
+    } else {
+      if (K.feet === 'boots_knee') { cut(kn, ell(0, -0.05, 0.21 * aw, 0.24 * aw, 14), K.pal.t, z + 0.055, 'kn_' + s, 0.03); shinGear(0.42, K.pal.s); }
+      else if (K.feet === 'boots_laced_heavy') { shinGear(0.4, K.pal.s); for (let i = 0; i < 4; i++) { const yy = -L.shin * (0.48 + i * 0.12); cut(kn, [[0.08 * aw, yy], [0.21 * aw, yy - 0.02], [0.21 * aw, yy - 0.06], [0.08 * aw, yy - 0.04]], K.pal.t, z + 0.06, 'kn_' + s, 0.01, 0.003); } }
+      else if (K.feet === 'boots_short') shinGear(0.78, K.pal.s);
+      if (has('knee_pads') && K.feet !== 'boots_knee') cut(kn, ell(0, -0.05, 0.22 * aw, 0.25 * aw, 14), K.pal.s, z + 0.056, 'kn_' + s, 0.03);
     }
     const an = child(kn, [0, -L.shin], P['an_' + s]); note('an_' + s, an, kn);
-    cut(an, [[-0.22 * w, 0.12], [0.2 * w, 0.12], [0.24 * w, -0.12], [0.55 * w, -0.14], [0.58 * w, -0.3], [-0.24 * w, -0.3]], r.pants ? PAL.black : r.gear, z + 0.07, 'an_' + s);
-    rig.anchors['foot_' + s] = W_(an, [[0.15 * w, -0.3]])[0];
+    const ft = K ? K.feet : '', bare = ft === 'barefoot', small = bare || ft === 'shoes_dress';
+    const foot: Pt[] = small ? [[-0.2 * aw, 0.1], [0.18 * aw, 0.1], [0.22 * aw, -0.12], [0.5 * aw, -0.16], [0.52 * aw, -0.3], [-0.22 * aw, -0.3]] : [[-0.22 * aw, 0.12], [0.2 * aw, 0.12], [0.24 * aw, -0.12], [0.55 * aw, -0.14], [0.58 * aw, -0.3], [-0.24 * aw, -0.3]];
+    const footC: string | Swatch = !K ? (r.pants ? PAL.black : r.gear) : bare ? sk : ft === 'shoes_dress' ? { c: PAL.black, f: 'leather' } : K.pal.s;
+    cut(an, foot, footC, z + 0.07, 'an_' + s);
+    if (ft === 'sneakers_retro' || ft === 'boots_laced_heavy') cut(an, [[-0.25 * aw, -0.22], [0.6 * aw, -0.22], [0.6 * aw, -0.32], [-0.25 * aw, -0.32]], ft === 'sneakers_retro' ? K!.pal.t : PAL.black, z + 0.075, 'an_' + s, 0.02, 0.004);   // the sole
+    if (ft === 'sneakers_retro') cut(an, strip([-0.1 * aw, 0.0], [0.35 * aw, -0.12], 0.06, 0.04), K!.pal.t, z + 0.078, 'an_' + s, 0.02, 0.003);
+    rig.anchors['foot_' + s] = W_(an, [[0.15 * aw, -0.3]])[0];
   };
-  arm('f', 0); leg('f', 0.12); leg('n', 0.24);
-  cut(root, [[-0.62 * w, 0.06], [0.62 * w, 0.06], [0.66 * w, -0.5], [0.1 * w, -0.62], [-0.1 * w, -0.62], [-0.66 * w, -0.5]], r.pants || r.gear, 0.36, 'body');
-  const b = r.belly, bw = w;
-  cut(to, [[-0.58 * bw - b, 0], [0.58 * bw + b, 0], [0.68 * bw + b * 0.8, 0.55], [0.86 * bw, 1.45 * h], [0.74 * bw, 1.86 * h], [0.28, 1.98 * h], [-0.28, 1.98 * h], [-0.74 * bw, 1.86 * h], [-0.86 * bw, 1.45 * h], [-0.68 * bw - b * 0.8, 0.55]], r.shirt || sk, 0.42, 'torso');
-  pins.push([to, 0.55]);
-  if (!r.shirt) {
-    cut(to, [[0.05, 1.2 * h], [0.75 * bw, 1.25 * h], [0.6 * bw, 1.05 * h], [0.1, 1.08 * h]], dk, 0.45, 'torso', 0.02);
-    cut(to, [[-0.75 * bw, 1.25 * h], [-0.05, 1.2 * h], [-0.1, 1.08 * h], [-0.6 * bw, 1.05 * h]], dk, 0.45, 'torso', 0.02);
-    cut(to, [[0.5 * bw + b * 0.6, 0.1], [0.62 * bw + b * 0.7, 0.1], [0.8 * bw, 1.4 * h], [0.68 * bw, 1.4 * h]], dk, 0.45, 'torso', 0.02);
-    if (r.straps) for (const s of [-1, 1]) cut(to, [[s * 0.3 * bw, 1.95 * h], [s * 0.52 * bw, 1.9 * h], [s * 0.5 * bw, 0], [s * 0.22 * bw, 0]], r.gear, 0.47, 'torso', 0.03);
-    if (r.fem) cut(to, [[-0.66 * bw, 1.62 * h], [0.66 * bw, 1.62 * h], [0.6 * bw, 1.12 * h], [-0.6 * bw, 1.12 * h]], r.gear, 0.48, 'torso', 0.03);
-  } else if (r.suit) {   // the shirt and tie in the opening of the jacket, the lapels either side, a pocket square
-    const J = r.suit.jacket, lap = shade(J, 0.72);
-    cut(to, [[-0.3 * bw, 1.98 * h], [0.3 * bw, 1.98 * h], [0.06, 0.95 * h], [-0.06, 0.95 * h]], PAL.white, 0.45, 'torso', 0.02, 0.004);
-    cut(to, [[-0.07, 1.9 * h], [0.07, 1.9 * h], [0.11, 1.05 * h], [0, 0.92 * h], [-0.11, 1.05 * h]], r.suit.tie, 0.46, 'torso', 0.02, 0.004);
-    cut(to, [[-0.08, 1.93 * h], [0.08, 1.93 * h], [0.06, 1.8 * h], [-0.06, 1.8 * h]], shade(r.suit.tie, 0.75), 0.47, 'torso', 0.01, 0.002);   // the knot
-    for (const sd of [-1, 1]) cut(to, [[sd * 0.3 * bw, 1.98 * h], [sd * 0.5 * bw, 1.92 * h], [sd * 0.34 * bw, 1.5 * h], [sd * 0.08, 0.95 * h]], lap, 0.48, 'torso', 0.03, 0.004);
-    cut(to, [[0.42 * bw, 1.45 * h], [0.62 * bw, 1.45 * h], [0.6 * bw, 1.35 * h], [0.43 * bw, 1.35 * h]], r.suit.square || PAL.white, 0.49, 'torso', 0.02, 0.003);
-    for (const yy of [0.7, 0.45]) cut(to, ell(0.08 * bw, yy * h, 0.04, 0.04, 8), shade(J, 0.5), 0.49, 'torso', 0.01, 0.002);   // buttons
-  } else if (r.stripes) {
-    for (let i = -2; i <= 2; i++) { const sx = i * 0.3 * bw; cut(to, [[sx - 0.07, 0.05], [sx + 0.07, 0.05], [sx * 1.25 + 0.07, 1.85 * h], [sx * 1.25 - 0.07, 1.85 * h]], PAL.black, 0.45, 'torso', 0.02, 0.004); }
+  arm('f', 0 + ((pl.lz || {}).arm_f || 0)); leg('f', 0.12 + ((pl.lz || {}).leg_f || 0)); leg('n', 0.24 + ((pl.lz || {}).leg_n || 0));
+  // the trunks, or the bottom of whatever is worn on the legs
+  const trunks: [number, number][] = [[-0.62 * w, 0.06], [0.62 * w, 0.06], [0.66 * w, -0.5], [0.1 * w, -0.62], [-0.1 * w, -0.62], [-0.66 * w, -0.5]];
+  cut(root, trunks, K ? K.pal.p : r.pants || r.gear, 0.36, 'body');
+  if (K) {
+    if (K.bottom === 'trunks_brief_01' || K.bottom === 'trunks_long' || K.bottom === 'shorts_fight') cut(root, [[-0.62 * w, 0.06], [0.62 * w, 0.06], [0.63 * w, -0.06], [-0.63 * w, -0.06]], K.pal.t, 0.37, 'body', 0.02, 0.004);
+    if (K.bottom === 'jeans_distressed' || K.bottom === 'trousers_suit') { cut(root, [[-0.63 * w, 0.06], [0.63 * w, 0.06], [0.64 * w, -0.08], [-0.64 * w, -0.08]], K.bottom === 'trousers_suit' ? { c: PAL.black, f: 'leather' } : { c: '#3a2414', f: 'leather' }, 0.37, 'body', 0.02, 0.004); cut(root, [[0.1, 0.07], [0.32, 0.07], [0.32, -0.09], [0.1, -0.09]], K.pal.h, 0.375, 'body', 0.02, 0.003); }
+    if (K.top === 'singlet_straps_down') for (const sd of [-1, 1]) cut(root, strip([sd * 0.42 * w, 0.02], [sd * 0.5 * w, -0.85], 0.16, 0.14, sd * 0.05), K.pal.p, 0.38, 'body', 0.03);
+    if (K.top === 'robe_long') { cut(root, [[-0.72 * bw, 0.1], [0.72 * bw, 0.1], [1.05 * bw, -2.0 * h * ll], [-1.0 * bw, -2.0 * h * ll]], K.pal.s, 0.385, 'body', 0.06); cut(root, [[-1.0 * bw, -1.86 * h * ll], [1.04 * bw, -1.86 * h * ll], [1.05 * bw, -2.0 * h * ll], [-1.0 * bw, -2.0 * h * ll]], K.pal.t, 0.39, 'body', 0.02, 0.005); }
   }
-  rig.anchors.waist = W_(root, [[0, 0.2]])[0]; rig.anchors.chest = W_(to, [[0, 1.4 * h]])[0];
-  const nk = child(to, [0, 1.95 * h], P.head); note('head', nk, to, true);
+  const b = r.belly;
+  const torsoPoly: Pt[] = [[-0.58 * bw - b, 0], [0.58 * bw + b, 0], [0.68 * bw + b * 0.8, 0.55], [0.86 * bw, 1.45 * H], [0.74 * bw, 1.86 * H], [0.28, 1.98 * H], [-0.28, 1.98 * H], [-0.74 * bw, 1.86 * H], [-0.86 * bw, 1.45 * H], [-0.68 * bw - b * 0.8, 0.55]];
+  const covered = K ? ['shirt_tshirt_base', 'shirt_tank', 'jacket_leather_biker', 'robe_long', 'hoodie_01', 'suit_jacket'].indexOf(K.top) >= 0 : !!r.shirt;
+  cut(to, torsoPoly, K ? (covered ? K.pal.s : sk) : r.shirt || sk, 0.42, 'torso');
+  pins.push([to, 0.55]);
+  const muscles = () => {
+    cut(to, [[0.05, 1.2 * H], [0.75 * bw, 1.25 * H], [0.6 * bw, 1.05 * H], [0.1, 1.08 * H]], dk, 0.45, 'torso', 0.02);
+    cut(to, [[-0.75 * bw, 1.25 * H], [-0.05, 1.2 * H], [-0.1, 1.08 * H], [-0.6 * bw, 1.05 * H]], dk, 0.45, 'torso', 0.02);
+    cut(to, [[0.5 * bw + b * 0.6, 0.1], [0.62 * bw + b * 0.7, 0.1], [0.8 * bw, 1.4 * H], [0.68 * bw, 1.4 * H]], dk, 0.45, 'torso', 0.02);
+  };
+  const suitBits = (J: string, tie: string, sq?: string) => {   // the shirt and tie in the opening of the jacket, the lapels either side, a pocket square
+    const lap = shade(J, 0.72);
+    cut(to, [[-0.3 * bw, 1.98 * H], [0.3 * bw, 1.98 * H], [0.06, 0.95 * H], [-0.06, 0.95 * H]], PAL.white, 0.45, 'torso', 0.02, 0.004);
+    cut(to, [[-0.07, 1.9 * H], [0.07, 1.9 * H], [0.11, 1.05 * H], [0, 0.92 * H], [-0.11, 1.05 * H]], tie, 0.46, 'torso', 0.02, 0.004);
+    cut(to, [[-0.08, 1.93 * H], [0.08, 1.93 * H], [0.06, 1.8 * H], [-0.06, 1.8 * H]], shade(tie, 0.75), 0.47, 'torso', 0.01, 0.002);   // the knot
+    for (const sd of [-1, 1]) cut(to, [[sd * 0.3 * bw, 1.98 * H], [sd * 0.5 * bw, 1.92 * H], [sd * 0.34 * bw, 1.5 * H], [sd * 0.08, 0.95 * H]], lap, 0.48, 'torso', 0.03, 0.004);
+    cut(to, [[0.42 * bw, 1.45 * H], [0.62 * bw, 1.45 * H], [0.6 * bw, 1.35 * H], [0.43 * bw, 1.35 * H]], sq || PAL.white, 0.49, 'torso', 0.02, 0.003);
+    for (const yy of [0.7, 0.45]) cut(to, ell(0.08 * bw, yy * H, 0.04, 0.04, 8), shade(J, 0.5), 0.49, 'torso', 0.01, 0.002);   // buttons
+  };
+  if (!K) {
+    if (!r.shirt) {
+      muscles();
+      if (r.straps) for (const s of [-1, 1]) cut(to, [[s * 0.3 * bw, 1.95 * H], [s * 0.52 * bw, 1.9 * H], [s * 0.5 * bw, 0], [s * 0.22 * bw, 0]], r.gear, 0.47, 'torso', 0.03);
+      if (r.fem) cut(to, [[-0.66 * bw, 1.62 * H], [0.66 * bw, 1.62 * H], [0.6 * bw, 1.12 * H], [-0.6 * bw, 1.12 * H]], r.gear, 0.48, 'torso', 0.03);
+    } else if (r.suit) suitBits(r.suit.jacket, r.suit.tie, r.suit.square);
+    else if (r.stripes) {
+      for (let i = -2; i <= 2; i++) { const sx = i * 0.3 * bw; cut(to, [[sx - 0.07, 0.05], [sx + 0.07, 0.05], [sx * 1.25 + 0.07, 1.85 * H], [sx * 1.25 - 0.07, 1.85 * H]], PAL.black, 0.45, 'torso', 0.02, 0.004); }
+    }
+  } else {
+    const t = K.top, S = K.pal.s, T = K.pal.t;
+    if (!covered) muscles();
+    if (t === 'singlet_straps_up') {
+      cut(to, [[-0.6 * bw - b, 0], [0.6 * bw + b, 0], [0.7 * bw + b * 0.8, 0.55], [0.84 * bw, 1.3 * H], [0.5 * bw, 1.36 * H], [0.22 * bw, 1.2 * H], [-0.22 * bw, 1.2 * H], [-0.5 * bw, 1.36 * H], [-0.84 * bw, 1.3 * H], [-0.7 * bw - b * 0.8, 0.55]], K.pal.p, 0.46, 'torso', 0.03);
+      for (const s of [-1, 1]) cut(to, [[s * 0.3 * bw, 1.95 * H], [s * 0.52 * bw, 1.9 * H], [s * 0.52 * bw, 1.3 * H], [s * 0.3 * bw, 1.22 * H]], K.pal.p, 0.47, 'torso', 0.03);
+      cut(to, strip([-0.84 * bw, 1.3 * H], [0.84 * bw, 1.3 * H], 0.05, 0.05, -0.1 * H), T, 0.475, 'torso', 0.01, 0.003);
+    } else if (t === 'singlet_straps_down') cut(to, [[-0.6 * bw - b, 0], [0.6 * bw + b, 0], [0.66 * bw + b * 0.9, 0.38], [-0.66 * bw - b * 0.9, 0.38]], K.pal.p, 0.46, 'torso', 0.03);
+    else if (t === 'top_sports') { cut(to, [[-0.66 * bw, 1.62 * H], [0.66 * bw, 1.62 * H], [0.6 * bw, 1.12 * H], [-0.6 * bw, 1.12 * H]], K.pal.p, 0.46, 'torso', 0.03); cut(to, [[-0.6 * bw, 1.18 * H], [0.6 * bw, 1.18 * H], [0.6 * bw, 1.1 * H], [-0.6 * bw, 1.1 * H]], T, 0.47, 'torso', 0.01, 0.003); for (const s of [-1, 1]) cut(to, [[s * 0.3 * bw, 1.95 * H], [s * 0.45 * bw, 1.92 * H], [s * 0.5 * bw, 1.6 * H], [s * 0.34 * bw, 1.6 * H]], K.pal.p, 0.47, 'torso', 0.03); }
+    else if (t === 'vest_open') for (const s of [-1, 1]) { cut(to, [[s * 0.86 * bw, 1.45 * H], [s * 0.74 * bw, 1.86 * H], [s * 0.4 * bw, 1.96 * H], [s * 0.3 * bw, 0.1], [s * (0.6 * bw + b), 0]], S, 0.46, 'torso', 0.03); cut(to, strip([s * 0.4 * bw, 1.95 * H], [s * 0.3 * bw, 0.1], 0.05, 0.05), T, 0.47, 'torso', 0.01, 0.003); }
+    else if (t === 'shirt_tshirt_base' || t === 'hoodie_01') {
+      cut(to, strip([-0.3 * bw, 1.96 * H], [0.3 * bw, 1.96 * H], 0.08, 0.08, -0.12 * H), t === 'hoodie_01' ? shade(S.c, 0.75) : T, 0.46, 'torso', 0.01, 0.003);   // the collar
+      cut(to, [[-0.5 * bw, 0.3], [0.5 * bw, 0.3], [0.55 * bw, 0.38], [-0.55 * bw, 0.38]], shade(S.c, 0.82), 0.455, 'torso', 0.01, 0.004);   // a fold
+      if (t === 'hoodie_01') { cut(to, [[-0.42 * bw, 0.2], [0.42 * bw, 0.2], [0.34 * bw, 0.75 * H], [-0.34 * bw, 0.75 * H]], shade(S.c, 0.86), 0.46, 'torso', 0.02, 0.005); for (const s of [-1, 1]) cut(to, strip([s * 0.1, 1.9 * H], [s * 0.12, 1.45 * H], 0.03, 0.03), T, 0.47, 'torso', 0.01, 0.002); }
+    } else if (t === 'shirt_tank') cut(to, [[-0.86 * bw, 1.45 * H], [-0.48 * bw, 1.98 * H], [-0.36 * bw, 1.98 * H], [-0.3 * bw, 1.6 * H], [0.3 * bw, 1.6 * H], [0.36 * bw, 1.98 * H], [0.48 * bw, 1.98 * H], [0.86 * bw, 1.45 * H], [0.9 * bw, 1.5 * H], [0.86 * bw, 2.02 * H], [-0.86 * bw, 2.02 * H], [-0.9 * bw, 1.5 * H]], sk, 0.43, 'torso', 0.01);   // the arm holes show the shoulders
+    else if (t === 'jacket_leather_biker') {
+      cut(to, [[-0.32 * bw, 1.98 * H], [0.32 * bw, 1.98 * H], [0.12, 0.25], [-0.12, 0.25]], sk, 0.45, 'torso', 0.02, 0.004);   // the open front
+      for (const sd of [-1, 1]) cut(to, [[sd * 0.32 * bw, 1.98 * H], [sd * 0.62 * bw, 1.9 * H], [sd * 0.5 * bw, 1.45 * H], [sd * 0.2 * bw, 1.2 * H]], shade(S.c, 0.7), 0.47, 'torso', 0.03, 0.004);   // the collar
+      cut(to, strip([0.16 * bw, 0.25], [0.5 * bw, 1.5 * H], 0.04, 0.04), K.pal.h, 0.48, 'torso', 0.01, 0.002);   // the zip
+      cut(to, [[-0.6 * bw - b, 0], [0.6 * bw + b, 0], [0.62 * bw + b, 0.16], [-0.62 * bw - b, 0.16]], T, 0.475, 'torso', 0.02, 0.004);
+    } else if (t === 'robe_long') {
+      for (const sd of [-1, 1]) cut(to, strip([sd * 0.32 * bw, 1.98 * H], [sd * 0.05, 0.15], 0.14, 0.12), T, 0.47, 'torso', 0.02, 0.004);   // the lapels
+      cut(to, [[-0.66 * bw - b, 0.5], [0.66 * bw + b, 0.5], [0.66 * bw + b, 0.66], [-0.66 * bw - b, 0.66]], T, 0.48, 'torso', 0.02, 0.004);   // the sash
+    } else if (t === 'suit_jacket') suitBits(S.c, T.c, K.pal.h.c);
+    if (has('chain_gold')) for (let i = 0; i <= 10; i++) { const a = Math.PI * (1.15 + 0.7 * i / 10); cut(to, ell(0.36 * bw * Math.cos(a), 1.9 * H + 0.55 * H * Math.sin(a), 0.05, 0.05, 8), K.pal.h, 0.495, 'torso', 0.02, 0.002); }
+  }
+  rig.anchors.waist = W_(root, [[0, 0.2]])[0]; rig.anchors.chest = W_(to, [[0, 1.4 * H]])[0];
+  const nk = child(to, [0, 1.95 * H], P.head); note('head', nk, to, true);
   cut(nk, [[-0.26 * w, -0.1], [0.26 * w, -0.1], [0.22 * w, 0.45], [-0.22 * w, 0.45]], dk, 0.5, 'head');
+  if (K && K.top === 'hoodie_01') cut(nk, ell(-0.12, 0.85, 0.72, 0.8, 18), shade(K.pal.s.c, 0.8), 0.52, 'head', 0.04);   // the hood down behind the head
   head(nk, r, 0.56, expr, cut, mk);
-  if ((mk.blood || 0) >= 3) for (const [x0, len] of [[-0.3, 0.9], [0.1, 0.6], [0.45, 1.1]] as [number, number][]) cut(to, strip([x0 * w, 1.9 * h], [x0 * w + 0.04, 1.9 * h - len], 0.1, 0.03), BLOOD, 0.5, 'torso', 0.01, 0.01);   // blood run down the chest
+  if ((mk.blood || 0) >= 3) for (const [x0, len] of [[-0.3, 0.9], [0.1, 0.6], [0.45, 1.1]] as [number, number][]) cut(to, strip([x0 * w, 1.9 * H], [x0 * w + 0.04, 1.9 * H - len], 0.1, 0.03), BLOOD, 0.5, 'torso', 0.01, 0.01);   // blood run down the chest
   rig.anchors.head = W_(nk, [[0, 1.0]])[0];
-  arm('n', 0.95);
+  rig.anchors.shoulders = W_(to, [[0, 1.85 * H]])[0];
+  arm('n', 0.95 + ((pl.lz || {}).arm_n || 0));
+  // lettering and shapes stuck on the gear: on the chest, or down the near thigh
+  if (K && K.layers.length) {
+    const hpN = child(root, [0.32 * w, -0.42], P.hip_n);
+    K.layers.forEach((ly, li) => {
+      const leg_ = ly.on === 'lower_body', fr = leg_ ? hpN : to, ox = 0, oy = leg_ ? -0.5 * L.thigh : 1.0 * H, u = leg_ ? 0.04 * aw : 0.06 * bw;
+      const z0 = (leg_ ? 0.24 + 0.026 : 0.492) + (ly.placement.z || 0) * 0.0003 + li * 0.00001, sw = layerSwatch(K, ly.palette_slot), sc = ly.scale || 1, ra = (ly.rot || 0) * Math.PI / 180;
+      const cx = ox + (ly.placement.x || 0) * u, cy = oy + (ly.placement.y || 0) * u;
+      const place = (q: Pt[], k: number, ang: number, dx: number, dy: number) => q.map(([x, yy]) => { const c = Math.cos(ang), s2 = Math.sin(ang), X = x * k, Y = yy * k; return [cx + dx + X * c - Y * s2, cy + dy + X * s2 + Y * c] as Pt; });
+      if (ly.type === 'text_decal' && ly.string) {
+        const word = ly.string.slice(0, 20), nch = Array.from(word).length, span = (leg_ ? 0.5 * aw : 1.25 * bw), cell = Math.min(leg_ ? 0.035 : 0.055, span / Math.max(1, nch * 6)) * sc;
+        Array.from(word.toUpperCase()).forEach((ch, i) => {
+          const t = nch > 1 ? i / (nch - 1) : 0.5, lx = (i * 6 + 2.5 - (nch * 6 - 1) / 2) * cell, arch = (ly.arch || 0) * 3.2 * cell;
+          const ly_ = arch * (1 - Math.pow(2 * t - 1, 2)), ang = Math.atan(-arch * 4 * (2 * t - 1) / Math.max(0.001, (nch * 6 - 1) * cell));   // along the arch, each letter turned to follow it
+          for (const bar of letters(ch, ly.font)) {
+            const rotd = place(bar.map(([x, yy]) => { const c = Math.cos(ang), s2 = Math.sin(ang); return [x * c - yy * s2, x * s2 + yy * c] as Pt; }), cell, ra, Math.cos(ra) * lx - Math.sin(ra) * ly_, Math.sin(ra) * lx + Math.cos(ra) * ly_);
+            cut(fr, rotd, sw, z0, leg_ ? 'hip_n' : 'torso', 0.015, 0.002);
+          }
+        });
+      } else if (ly.type === 'shape_combiner' && ly.shape_id) {
+        const size = (leg_ ? 0.5 * aw : 0.95 * bw) * sc;
+        shape(ly.shape_id, li + 1).forEach((pc, k) => cut(fr, place(pc, size, ra, 0, 0), ly.shape_id === 'buckle' && k === 1 ? shade(sw.c, 0.6) : sw, z0 + k * 0.00002, leg_ ? 'hip_n' : 'torso', 0.02, 0.004));
+      }
+    });
+  }
   for (const [f, z] of pins) { const c = W_(f, [[0, 0]])[0]; out.push({ pts: ell(c[0], c[1], 0.07, 0.07, 10), col: '#d9a338', z: pl.z + z + 0.04, lift: 0.02, own }); }
   const hn = rig.anchors.hand_n, hf = rig.anchors.hand_f; rig.anchors.hands = [(hn[0] + hf[0]) / 2, (hn[1] + hf[1]) / 2];
   const k = pl.s && Math.abs(pl.s - 1) > 0.001 ? Math.max(0.5, Math.min(1.6, pl.s)) : 1;
@@ -187,10 +301,11 @@ export function puppet(r: Recipe, pl: Place, pose: Record<string, number>, expr:
 }
 
 /** The face at body size, cut from the same recipe as the portrait, turned three quarters toward the way the doll faces. */
-function head(fr: F, r: Recipe, z: number, expr: string, cut: (f: F, poly: Pt[], col: string, z: number, joint?: string, lift?: number, rough?: number) => void, mk: Marks = {}) {
+function head(fr: F, r: Recipe, z: number, expr: string, cut: (f: F, poly: Pt[], col: string | Swatch, z: number, joint?: string, lift?: number, rough?: number) => void, mk: Marks = {}) {
   const s = 0.47, hd: Head = { cx: 0, cy: 0.98, rx: r.head.rx * s, ryt: r.head.ryt * s, ryb: r.head.ryb * s, sq: r.head.sq, chin: r.head.chin }, tq = 0.09;
   const sk = r.skin, dk = shade(sk, 0.74), deep = shade(sk, 0.5), J = 'head';
-  const put = (poly: Pt[], col: string, dz: number, rough = 0.008) => cut(fr, poly, col, z + dz, J, 0.03, rough);
+  const put = (poly: Pt[], col: string | Swatch, dz: number, rough = 0.008) => cut(fr, poly, col, z + dz, J, 0.03, rough);
+  const K = r.kit, acc = (a: string) => !!K && K.acc.indexOf(a) >= 0;
   if (r.hair === 'long' && !r.mask) put(headPoly(hd, 1.12, -0.35, Math.PI + 0.35, 20, 0.02).concat([[-hd.rx * 1.3, hd.cy - hd.ryb * 1.6], [hd.rx * 1.2, hd.cy - hd.ryb * 1.5]]), r.hairCol, -0.03, 0.03);
   put(ell(-hd.rx * 0.95 + tq * 0.4, hd.cy - 0.02, 0.09, 0.13, 10), sk, 0);
   put(headPoly(hd), sk, 0.02);
@@ -219,6 +334,11 @@ function head(fr: F, r: Recipe, z: number, expr: string, cut: (f: F, poly: Pt[],
     else { put(almond(cx, ey, 0.17, 0.075), PAL.white, 0.1, 0.003); put(ell(cx + 0.03, ey + 0.005, 0.038, 0.038, 8), PAL.black, 0.12, 0.002); }
     if (mk.tears || expr === 'cry') put(strip([cx + 0.02, ey - 0.04], [cx + 0.03, ey - 0.3], 0.035, 0.05), WET, 0.135, 0.004);
     if (!r.mask && r.brow > 0) { const a = mad ? -0.07 : expr === 'cry' ? 0.06 : expr === 'smirk' && sd > 0 ? 0.06 : r.browAng; put(strip([cx - 0.1 * sd, ey + 0.1 + a * sd], [cx + 0.1 * sd, ey + 0.11 - a * sd], r.brow * 0.5, r.brow * 0.3), r.browCol, 0.14); }
+  }
+  if (acc('face_paint') && !r.mask) for (const sd of [-1, 1]) put(strip([sd * 0.16 + tq - 0.1, ey - 0.08], [sd * 0.16 + tq + 0.08, ey - 0.3], 0.07, 0.03), K!.pal.s, 0.105, 0.004);
+  if (acc('sunglasses_aviator')) {
+    for (const sd of [-1, 1]) { put(almond(sd * 0.16 + tq, ey - 0.01, 0.24, 0.13), K!.pal.h, 0.145, 0.003); put(almond(sd * 0.16 + tq, ey - 0.005, 0.2, 0.1), { c: '#141820', f: 'foil' }, 0.15, 0.003); }
+    put(strip([tq - 0.05, ey + 0.03], [tq + 0.05, ey + 0.03], 0.025, 0.025, 0.02), K!.pal.h, 0.152, 0.002); put(strip([tq + 0.27, ey + 0.02], [hd.rx * 0.98, ey + 0.05], 0.025, 0.025), K!.pal.h, 0.152, 0.002);
   }
   const nw = r.noseW * 0.25, nl = r.noseL * 0.4;
   put([[tq - 0.03, ey - 0.02], [tq + 0.03, ey - 0.02], [tq + nw, ey - nl], [tq + 0.02, ey - nl - 0.04], [tq - nw * 0.8, ey - nl]], dk, 0.13);
@@ -251,6 +371,12 @@ function head(fr: F, r: Recipe, z: number, expr: string, cut: (f: F, poly: Pt[],
       put(top.concat(fr.reverse()), r.hairCol, 0.19, r.hair === 'curls' ? 0.03 : 0.012);
       if (r.hair === 'curls') for (let i = 0; i < 7; i++) { const a = Math.PI * (0.1 + 0.8 * i / 6); put(ell(hd.rx * 1.02 * Math.cos(a), hd.cy + hd.ryt * 1.02 * Math.sin(a), 0.11, 0.11, 10), r.hairCol, 0.2, 0.02); }
     }
+  }
+  if (acc('bandana')) { put(strip([-hd.rx * 1.02, hd.cy + 0.38], [hd.rx * 1.02, hd.cy + 0.42], 0.15, 0.15, 0.04), K!.pal.s, 0.215, 0.006); put([[-hd.rx * 0.95, hd.cy + 0.4], [-hd.rx * 1.4, hd.cy + 0.18], [-hd.rx * 1.3, hd.cy + 0.1], [-hd.rx * 0.9, hd.cy + 0.3]], K!.pal.s, 0.214, 0.01); }
+  if (acc('hat_cowboy')) {
+    put(strip([-hd.rx * 1.75, hd.cy + hd.ryt * 0.62], [hd.rx * 1.75, hd.cy + hd.ryt * 0.62], 0.1, 0.1, 0.12), K!.pal.s, 0.3, 0.006);   // the brim
+    put([[-hd.rx * 0.95, hd.cy + hd.ryt * 0.6], [hd.rx * 0.95, hd.cy + hd.ryt * 0.6], [hd.rx * 0.8, hd.cy + hd.ryt * 1.45], [0.1, hd.cy + hd.ryt * 1.3], [-0.1, hd.cy + hd.ryt * 1.3], [-hd.rx * 0.8, hd.cy + hd.ryt * 1.45]], K!.pal.s, 0.31, 0.008);   // the crown
+    put([[-hd.rx * 0.92, hd.cy + hd.ryt * 0.66], [hd.rx * 0.92, hd.cy + hd.ryt * 0.66], [hd.rx * 0.9, hd.cy + hd.ryt * 0.82], [-hd.rx * 0.9, hd.cy + hd.ryt * 0.82]], K!.pal.t, 0.315, 0.004);   // the band
   }
   if (r.headset) {   // the band over the head, the cup on the near ear, the boom round to the mouth
     const band: Pt[] = []; for (let i = 0; i <= 12; i++) { const a = Math.PI * (0.02 + 0.96 * i / 12); band.push([hd.rx * 1.1 * Math.cos(a), hd.cy + hd.ryt * 1.1 * Math.sin(a)]); }

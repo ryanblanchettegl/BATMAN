@@ -167,8 +167,8 @@ function addWrestler(S,d,promo,brand){
   w.pk=[p0,Math.max(p0+2,p1)];w.cl=num(d.cliff)?+d.cliff:w.pk[1]+3+(hs>>>11)%5;
   if(d.tweener)w.twn=true;if(d.roles&&(d.roles.length!==1||d.roles[0]!=='wrestler')){w.roles=d.roles.slice();if(d.roles.indexOf('wrestler')<0)w.nw=true;}
   w.pot=num(d.pot)?clamp(+d.pot,workRate(w),99):clamp(wk+Math.round(h01(d.name+'p')*(d.ovr<60?12:3)),Math.min(wk,99),99);
-  if(d.uid)w.uid=d.uid;if(d.real)w.real=d.real;if(d.town)w.town=d.town;if(d.wc)w.wc=d.wc;if(d.media)w.media=d.media;if(d.face)w.face=d.face;if(num(d.gr))w.gr=+d.gr;
-  var fp=FINISH[d.style]||FINISH.A;w.fin=d.fin||fp[hash(d.name+'f')%fp.length];w.ent=hash(d.name+'e')%ENTR.F.length;
+  if(d.uid)w.uid=d.uid;if(d.real)w.real=d.real;if(d.town)w.town=d.town;if(d.wc)w.wc=d.wc;if(d.media)w.media=d.media;if(d.face)w.face=d.face;if(d.look)w.look=d.look;if(num(d.gr))w.gr=+d.gr;
+  var fp=FINISH[d.style]||FINISH.A;w.fin=(d.look&&d.look.finishing_moves&&d.look.finishing_moves[0]&&d.look.finishing_moves[0].name)||d.fin||fp[hash(d.name+'f')%fp.length];w.ent=hash(d.name+'e')%ENTR.F.length;
   S.w.push(w);return w;
 }
 function buildPromo(S,d,byName){
@@ -697,13 +697,23 @@ function callMatch(S,P,x){
   if(x.mins>=20)pbp('late');
   if(x.mins>=18&&x.MQ>=70)hp('pbp','near2',1);
   if(shp&&shp.late)bc.push({t:'pbp',x:shp.late.charAt(0).toUpperCase()+shp.late.slice(1),h:1});
+  // a finisher kicked out of (src/86-looks.js); without a file, a long main event can still have one, in words only
+  if(x.fko){bc.push({t:'pbp',x:(x.fko.again?x.fko.who+' hits '+x.fko.f+'! This is it! One, two... ':'Out of nowhere, '+x.fko.who+' hits '+x.fko.f+'! One, two... ')+x.fko.by+' KICKS OUT!',h:1});
+    raw('col',x.fko.huge?'Nobody kicks out of that, {p}! Nobody! I have never seen that!':'{p}, I have seen that move finish bigger names than this. Not tonight!');}
+  else if(!x.fm&&x.win>=0&&x.lfin&&(x.main||x.big)&&x.mins>=18&&h01(hk+'fko')<0.3)bc.push({t:'pbp',x:x.lname+' hits '+(/^the /i.test(x.lfin)?'':'the ')+x.lfin+'! One, two... '+o.w+' kicks out!',h:1});
   col(x.bad?'q_off':(x.MQ>=88?'q_great':(x.MQ>=75?'q_good':(x.MQ>=60?'q_ok':(x.MQ>=45?'q_poor':'q_bad')))));
   if(x.mins>=14&&x.CR>=82)col('c_hot');
   // when the company model's bonus or penalty fired, the crowd sounds like that company's crowd
   var mf=(x.fx||[]).filter(function(q){return q.m;});
   if(mf.length&&MODEL_CROWD[P.model||'classic']){var cl=MODEL_CROWD[P.model||'classic'][mf[0].s>0?0:1];if(cl&&cl.length)raw('col',sayPick(S,cl));}
   var f=x.fin;
-  if(f==='clean'){pbp(x.sub?'f_sub':'f_clean',1);col('r_clean');}
+  if(f==='clean'&&x.fm&&!x.sub){   // a finisher from a wrestler's file: where it comes from, and how final it is
+    var fn=x.fm.name,pos=x.fm.position,ag=x.fko&&x.fko.again?'Again! ':'';
+    var fl=pos==='Top Rope'?ag+x.wname+' goes up top... '+fn+' from the top rope! Cover! One, two, three!':pos==='Running'?ag+x.wname+' hits the ropes... '+fn+'! Cover, and that is it!':pos==='Counter'?'{l} goes for it, but '+x.wname+' turns it into '+fn+'! One, two, three!':ag+x.wname+' hits '+fn+'! Cover! One, two, three!';
+    if(x.fm.kickout_difficulty==='Instant')fl+=' It was over the moment it landed.';
+    bc.push({t:'pbp',x:fill(fl,o),h:1});col('r_clean');
+  }
+  else if(f==='clean'){pbp(x.sub?'f_sub':'f_clean',1);col('r_clean');}
   else if(f==='flash'){pbp('f_flash',1);col('r_flash');}
   else if(f==='cheap'){pbp('f_cheap',1);col('r_cheap');}
   else if(f==='interf'){pbp('f_interf',1);col('r_interf');}
@@ -907,7 +917,7 @@ function doMatch(S,P,show,m,i,n,rep,used){
   if(S.cal)return seg;
   // report text
   var lead=win>=0?winners[0]:sides[0][0],other=win>=0?losers.slice().sort(function(p,o){return br?o.ovr-p.ovr:p.ovr-o.ovr;})[0]:sides[1][0];
-  var ca=chance(S,0.55)?other:lead,cb=ca===lead?other:lead,o={a:ca.name,b:cb.name,w:names(winners),l:other.name,x:runin?runin.r.name:'',fin:(m.mt==='tag'&&win>=0&&teamFin(S,winners))||(lead.fin?'the '+lead.fin:'the finish')};
+  var ca=chance(S,0.55)?other:lead,cb=ca===lead?other:lead,o={a:ca.name,b:cb.name,w:names(winners),l:other.name,x:runin?runin.r.name:'',fin:(m.mt==='tag'&&win>=0&&teamFin(S,winners))||(lead.fin?(/^the /i.test(lead.fin)?lead.fin:'the '+lead.fin):'the finish')};
   if(isPl){
     var mk=m.mt==='4way'||m.mt==='3way'?'multi':(m.mt==='6man'?'six':null);   // matches with more than two people read differently from singles
     seg.lines.push(say(S,mk?'open_'+mk:(GR['open_'+ca.style]?'open_'+ca.style:'open_A'),o));
@@ -925,7 +935,7 @@ function doMatch(S,P,show,m,i,n,rep,used){
     (mins>=20?'The time limit expires with neither able to put the other away.':'Both are counted out brawling on the floor.'),o);
   if(isPl){
     var srt=all.slice().sort(function(p,q){return p.ovr-q.ovr;});
-    seg.bc=callMatch(S,P,{fx:fx,o:o,m:m,all:all,pre:pre,champ:champ,mt:MT[m.mt].n,stip:stip,stipName:stip==='std'?null:STIP[stip].n,t:t,sides:sides,feud:feud,feudHeat:heatWas,flog:flogWas,gap:srt[srt.length-1].ovr-srt[0].ovr,under:srt[0].name,CR:CR,MQ:MQ,mins:mins,ca:ca,bad:bad,fin:fin,sub:lead.style==='T'||stip==='sub',win:win,plural:winners.length>1,change:!!seg.change,retain:win>=0&&win===champSide,entrance:ctx.entrance,main:isMain&&n>2,big:big,show:show.name,upset:upset,streak:endedStreak});
+    seg.bc=callMatch(S,P,{fx:fx,o:o,m:m,all:all,pre:pre,champ:champ,mt:MT[m.mt].n,stip:stip,stipName:stip==='std'?null:STIP[stip].n,t:t,sides:sides,feud:feud,feudHeat:heatWas,flog:flogWas,gap:srt[srt.length-1].ovr-srt[0].ovr,under:srt[0].name,CR:CR,MQ:MQ,mins:mins,ca:ca,bad:bad,fin:fin,sub:lookFin(lead)?lookFin(lead).category==='Submission':(lead.style==='T'||stip==='sub'),fko:ctx.fko||null,fm:ctx.fm||null,lfin:other.fin||null,lname:other.name,wname:lead.name,win:win,plural:winners.length>1,change:!!seg.change,retain:win>=0&&win===champSide,entrance:ctx.entrance,main:isMain&&n>2,big:big,show:show.name,upset:upset,streak:endedStreak});
     if(m.mt==='1v1'){var hk=rkey(all[0].id,all[1].id),hh=(S.h2h||(S.h2h={}))[hk]||(S.h2h[hk]={n:0,a:0,b:0,lw:-1,w:0});hh.n++;hh.w=S.week;hh.lw=win>=0?winners[0].id:-1;if(win>=0){if(winners[0].id===Math.min(all[0].id,all[1].id))hh.a++;else hh.b++;}}
     all.forEach(function(w){w.deb=false;});
   }
@@ -5706,20 +5716,22 @@ function createStats(S,o){
   var P=S.promos[S.player],bg=BGS[o.bg]||BGS.indie,ovr=clamp(Math.round(P.image+bg.ovr+(o.emph==='look'?5:0)),5,90),work=bg.work+(o.emph==='ring'?8:0),mic=bg.mic+(o.emph==='mic'?10:0),wage=wageFor(ovr,P);
   return {ovr:ovr,work:work,mic:mic,pot:Math.min(99,work+bg.pot),wage:wage,fee:wage*8};
 }
-E.createInfo=function(S){var wait=(S.lastCreate==null?-99:S.lastCreate)+6-S.week;return {ok:wait<=0,wait:Math.max(0,wait),bgs:BGS,emph:EMPH};};
+E.createInfo=function(S){return {ok:true,wait:0,bgs:BGS,emph:EMPH};};
 E.createPreview=createStats;
+/** Create a Player in a game (Ryan, 18 October): a new wrestler made by the player goes to free agency, like
+    anybody else looking for work, and is signed from Free agents with an offer. Only the World Editor puts somebody
+    straight into a company. */
 E.createWrestler=function(S,o){
-  var P=S.promos[S.player],info=E.createInfo(S);if(!info.ok)return {ok:false,msg:'Your scouts need '+info.wait+' more week'+(info.wait===1?'':'s')+' before they bring you anyone new.'};
   var name=clean(o.name,28);if(name.length<2)return {ok:false,msg:'Give them a name first.'};
   if(S.w.some(function(w){return w.name.toLowerCase()===name.toLowerCase();}))return {ok:false,msg:'There is already a '+name+' in the business.'};
   var st=createStats(S,o);
-  if(wagesWeek(S,P)+st.wage>E.budget(S))return {ok:false,msg:S.owner.name+' will not sign off on another wage.'};
   var w=addWrestler(S,{name:name,g:o.g==='F'?'F':'M',ovr:st.ovr,style:STYLE[o.style]?o.style:'A',work:st.work,mic:st.mic,align:o.align==='H'?'H':'F',fin:clean(o.fin,24)||null},'FA',null);
   w.pot=clamp(st.pot,workRate(w),99);w.cr=true;assignGim(w);if(GIMBY[o.gim])w.gim=o.gim;
   if(o.face&&typeof o.face==='object'){w.face={};['h','hr','fh','ms','ey','ns'].forEach(function(k){w.face[k]=clamp(Math.round(+o.face[k]||0),0,9);});w.face.sk=clamp(Math.round(+o.face.sk||0),0,100);w.face.hc=clamp(Math.round(+o.face.hc||0),0,100);}
-  joinCompany(S,w,P,st.wage,96);P.cash-=st.fee;S.lastCreate=S.week;
-  mile(S,w,'debut','Discovered and signed by '+P.name);news(S,'contract',P.name+' signed newcomer '+w.name+'.');award(S,'ACH_CREATE');
-  return {ok:true,id:w.id,msg:w.name+' signs a two-year deal at '+money(st.wage)+' a week. Signing cost: '+money(st.fee)+'.'};
+  if(o.look){var lc=lookClean(o.look);if(lc&&E.lookOk(lc)){lc.name=w.name;w.look=lc;var lf=lookFin(w);if(lf)w.fin=lf.name;}}   // made in Create a Player (src/86-looks.js)
+  S.lastCreate=S.week;
+  mile(S,w,'debut','Made in Create a Player');news(S,'contract','A new name is looking for work: '+w.name+'.');
+  return {ok:true,id:w.id,msg:w.name+' is a free agent now. Sign them from Free agents, like anybody else.'};
 };
 
 /* ---------- the opening promo: you choose who talks, about what, and how ---------- */
@@ -7475,7 +7487,7 @@ var ID_RE=/^[a-z0-9_]{2,40}$/;
 // field types: 'id', 'str', 'int', 'num', 'bool', 'obj', 'list', an array of allowed values, or 'ref:<table>'; a trailing ? makes it optional
 var SCHEMAS={
   promotions:{required:['id','name','popularity'],fields:{id:'id',name:'str',full_name:'str?',blurb:'str?',owner:'obj?',staff:'obj?',announcers:'list?',cities:'list?',cash:'num?',popularity:'num',work_rate_weight:'num?',angles_per_show:'int?',wage_scale:'num?',tv_rate:'num?',production_cost:'num?',target_weekly_net:'num?',flagship_month:'int?',production_level:'int?',risk_level:'int?',tv_slot:'int?',model:'str?',brands:'list?',media:'obj?',logo:'obj?',events:'list?'}},
-  workers:{required:['id','ring_name','gender','disposition','style','ratings'],fields:{id:'id',ring_name:'str',real_name:'str?',birth_date:'str?',age:'int?',hometown:'str?',gender:['M','F'],weight_class:['cruiser','heavy','super_heavy'],disposition:['face','heel','tweener'],roles:'list?',style:Object.keys(STYLE_KEY),finisher:'str?',manager_id:'str?',locker_role:['mentor','diva','gatekeeper','leader','toxic'],ratings:'obj',peak_years:'list?',age_cliff:'int?',media:'obj?',face:'obj?',gimmick_category:'str?',gimmick:'str?',catchphrase:'str?',finisher_description:'str?',finisher_move:'str?',signatures:'list?',debut_year:'int?',legend:'bool?',height:'str?',weight:'str?',notes:'str?'}},
+  workers:{required:['id','ring_name','gender','disposition','style','ratings'],fields:{id:'id',ring_name:'str',real_name:'str?',birth_date:'str?',age:'int?',hometown:'str?',gender:['M','F'],weight_class:['cruiser','heavy','super_heavy'],disposition:['face','heel','tweener'],roles:'list?',style:Object.keys(STYLE_KEY),finisher:'str?',manager_id:'str?',locker_role:['mentor','diva','gatekeeper','leader','toxic'],ratings:'obj',peak_years:'list?',age_cliff:'int?',media:'obj?',face:'obj?',gimmick_category:'str?',gimmick:'str?',catchphrase:'str?',finisher_description:'str?',finisher_move:'str?',signatures:'list?',debut_year:'int?',legend:'bool?',height:'str?',weight:'str?',notes:'str?',look:'obj?'}},
   contracts:{required:['worker_id','promotion_id'],fields:{worker_id:'str',promotion_id:'str',contract_type:['exclusive','pwa'],monthly_salary:'num?',per_show_fee:'num?',weeks_left:'int?',tenure_weeks:'int?',push_level:PUSH,brand:'str?'}},
   titles:{required:['id','promotion_id','name','gender','level'],fields:{id:'id',promotion_id:'str',name:'str',gender:['M','F'],level:'int',tag:'bool?',brand:'str?',holder_ids:'list?',media:'obj?'}},
   teams:{required:['id','name','member_ids','promotion_id'],fields:{id:'id',name:'str',kind:['tag','stable'],member_ids:'list',leader_id:'str?',experience:'num?',chemistry:'num?',finisher:'str?',promotion_id:'str'}},
@@ -7596,7 +7608,7 @@ function buildDB(pkg){
   (pkg.workers||[]).forEach(function(w){
     var r=w.ratings,c=con[w.id],d={uid:w.id,name:w.ring_name,g:w.gender,style:STYLE_KEY[w.style]||'A',align:w.disposition==='heel'?'H':'F',tweener:w.disposition==='tweener',fin:w.finisher||null,promo:c?c.promotion_id:'FA',brand:c&&c.brand?c.brand:null,
       roles:(w.roles&&w.roles.length?w.roles:['wrestler']).filter(function(x){return ROLES.indexOf(x)>=0;}),age:w.age!=null?w.age:(w.birth_date?Math.max(16,(man.start_year||2026)-(+String(w.birth_date).slice(0,4)||1990)):null),peak:w.peak_years&&w.peak_years.length===2?w.peak_years:null,cliff:w.age_cliff!=null?w.age_cliff:null,mgr:w.manager_id||null,
-      real:w.real_name||null,town:w.hometown||null,wc:w.weight_class||null,media:w.media||null,face:w.face||null};
+      real:w.real_name||null,town:w.hometown||null,wc:w.weight_class||null,media:w.media||null,face:w.face||null,look:w.look?lookClean(w.look):null};
     Object.keys(RMAP).forEach(function(k){if(r[k]!=null)d[RMAP[k]]=clamp(Math.round(r[k]),0,100);});
     if(w.locker_role)d.lrole=w.locker_role==='gatekeeper'?'gate':w.locker_role;
     if(c){d.con=c.weeks_left!=null?Math.max(1,c.weeks_left):null;d.tw=c.tenure_weeks!=null?Math.max(0,c.tenure_weeks):null;d.push=c.push_level||null;d.wage=c.monthly_salary?Math.round(c.monthly_salary*12/52/10)*10:(c.per_show_fee?Math.round(c.per_show_fee/10)*10:null);d.pwa=c.contract_type==='pwa';}
@@ -7653,7 +7665,7 @@ E.exportUniverse=function(S,meta){
     if(w.rt)return;var r={};Object.keys(RMAP).forEach(function(k){var v=w[RMAP[k]];if(k==='gimmick_rating')v=w.gim?gimFit(w):null;if(v!=null)r[k]=clamp(Math.round(v),0,100);});
     var o={id:uid[w.id],ring_name:w.name,age:w.age,gender:w.g,disposition:w.twn?'tweener':(w.align==='H'?'heel':'face'),roles:w.roles?w.roles.slice():['wrestler'],style:STYLE_OUT[w.style]||'all_rounder',finisher:w.fin||undefined,ratings:r,peak_years:w.pk.slice(),age_cliff:w.cl};
     if(w.role)o.locker_role=w.role==='gate'?'gatekeeper':w.role;
-    if(w.real)o.real_name=w.real;if(w.town)o.hometown=w.town;if(w.wc)o.weight_class=w.wc;if(w.media)o.media=w.media;if(w.face)o.face=w.face;if(w.mgr!=null&&uid[w.mgr])o.manager_id=uid[w.mgr];
+    if(w.real)o.real_name=w.real;if(w.town)o.hometown=w.town;if(w.wc)o.weight_class=w.wc;if(w.media)o.media=w.media;if(w.face)o.face=w.face;if(w.look)o.look=JSON.parse(JSON.stringify(w.look));if(w.mgr!=null&&uid[w.mgr])o.manager_id=uid[w.mgr];
     pkg.workers.push(o);
     if(w.promo!=='FA'&&P0[w.promo]){var c={worker_id:uid[w.id],promotion_id:pid(w.promo),contract_type:w.pwa?'pwa':'exclusive',monthly_salary:Math.round(w.wage*52/12),per_show_fee:0,weeks_left:Math.max(1,w.con),tenure_weeks:w.jw!=null?Math.max(0,S.week-w.jw):undefined,push_level:w.nw?'non_wrestler':(PL[push[w.id]]||'midcarder')};if(w.brand)c.brand=w.brand;pkg.contracts.push(c);}
   });
@@ -8093,6 +8105,115 @@ E.edPromoEvent=function(pkg,pid,month,o){
   if(!p.events.length)delete p.events;
   return true;
 };
+
+/* ===== 86-looks.js ===== */
+/* ---------- Create a Player: a wrestler's look as a file (docs/plans/create-a-player.md) ----------
+   A wrestler made in Create a Player is a small record in the shape Ryan set out (18 October): who they are, their
+   body (height, weight, a body type and four sliders), three outfits (ring gear, entrance gear, street clothes),
+   each with the parts worn, the colours of its palette slots and the lettering and shapes stuck on it, and their
+   finishing moves. It is kept on the worker in a world package (`look`), carried onto the wrestler in a game
+   (`w.look`), and written out as its own .wrestler.json file to share. The interface draws it (app/src/kit/caw.ts);
+   nothing here plays a part in how a match goes yet, and nothing calls rnd(S). lookClean() keeps only what it knows,
+   so a file from anywhere is safe to load. */
+var LOOK_ATTIRES=['primary_ring','entrance_gear','street_clothes'],LOOK_SLOTS=['primary','secondary','trim','hardware'],LOOK_PARTS=['head','upper_body','lower_body','footwear'];
+var LOOK_KICK=['Easy','Medium','Protected','Instant'],LOOK_POS=['Standing','Top Rope','Running','Counter'];
+function lkStr(v,n){return typeof v==='string'?v.replace(/[\u0000-\u001f<>]/g,'').slice(0,n||40):undefined;}
+function lkId(v){return typeof v==='string'&&/^[#a-z0-9_ -]{1,48}$/i.test(v)?v:undefined;}
+function lkNum(v,a,b){return typeof v==='number'&&isFinite(v)?Math.max(a,Math.min(b,v)):undefined;}
+function lkPrune(o){Object.keys(o).forEach(function(k){if(o[k]===undefined)delete o[k];});return o;}
+/** A clean copy of a look, or null when it is not one. */
+function lookClean(x){
+  if(!x||typeof x!=='object'||Array.isArray(x))return null;
+  var o=lkPrune({id:lkId(x.id),name:lkStr(x.name,32),moniker:lkStr(x.moniker,40),hometown:lkStr(x.hometown,40),archetype:lkStr(x.archetype,32)});
+  var pa=x.physical_attributes;
+  if(pa&&typeof pa==='object'){var ps=pa.proportional_scalers||{};
+    o.physical_attributes=lkPrune({height_inches:lkNum(pa.height_inches,58,96),weight_lbs:lkNum(pa.weight_lbs,100,600),body_archetype:lkId(pa.body_archetype),
+      proportional_scalers:lkPrune({torso_width:lkNum(ps.torso_width,0.7,1.5),torso_height:lkNum(ps.torso_height,0.8,1.25),limb_length:lkNum(ps.limb_length,0.8,1.25),muscle_mass:lkNum(ps.muscle_mass,0.6,1.6)})});}
+  var ap=x.appearance;
+  if(ap&&typeof ap==='object'){var f=null;if(ap.face&&typeof ap.face==='object'){f={};['h','hr','fh','ms','ey','ns','sk','hc'].forEach(function(k){var v=lkNum(ap.face[k],0,100);if(v!=null)f[k]=Math.round(v);});}
+    o.appearance=lkPrune({face:f&&Object.keys(f).length?f:undefined,skin_tone:lkNum(ap.skin_tone,0,100),hair_colour:lkId(ap.hair_colour),facial_hair:lkId(ap.facial_hair)});}
+  if(x.attires&&typeof x.attires==='object'){var at={};LOOK_ATTIRES.forEach(function(k){var a=x.attires[k];if(!a||typeof a!=='object')return;
+    var eq=a.equipped_assets||{},e={};LOOK_PARTS.forEach(function(p){var v=lkId(eq[p]);if(v)e[p]=v;});
+    if(Array.isArray(eq.accessories))e.accessories=eq.accessories.map(lkId).filter(function(v){return !!v;}).slice(0,8);
+    var pal={};LOOK_SLOTS.forEach(function(s){var v=lkId((a.palette_slots||{})[s]);if(v)pal[s]=v;});
+    var lay=(Array.isArray(a.custom_layers)?a.custom_layers:[]).slice(0,16).map(function(l){
+      if(!l||(l.type!=='text_decal'&&l.type!=='shape_combiner'))return null;var pl=l.placement||{};
+      var c=lkPrune({type:l.type,string:l.type==='text_decal'?lkStr(l.string,20):undefined,font:lkId(l.font),shape_id:l.type==='shape_combiner'?lkId(l.shape_id):undefined,
+        placement:{x:lkNum(pl.x,-20,20)||0,y:lkNum(pl.y,-20,20)||0,z:lkNum(pl.z,0,20)||0},palette_slot:lkId(l.palette_slot),on:l.on==='lower_body'?'lower_body':undefined,
+        arch:lkNum(l.arch,-1,1),scale:lkNum(l.scale,0.2,4),rot:lkNum(l.rot,-180,180)});
+      return (c.type==='text_decal'&&c.string)||(c.type==='shape_combiner'&&c.shape_id)?c:null;}).filter(function(l){return !!l;});
+    at[k]=lkPrune({description:lkStr(a.description,40),equipped_assets:e,palette_slots:pal,custom_layers:lay});});
+    if(Object.keys(at).length)o.attires=at;}
+  if(Array.isArray(x.finishing_moves))o.finishing_moves=x.finishing_moves.slice(0,4).map(function(m){
+    if(!m||typeof m!=='object'||!lkStr(m.name,32))return null;
+    return lkPrune({name:lkStr(m.name,32),impact_damage:lkNum(m.impact_damage,1,100),kickout_difficulty:LOOK_KICK.indexOf(m.kickout_difficulty)>=0?m.kickout_difficulty:undefined,
+      position:LOOK_POS.indexOf(m.position)>=0?m.position:undefined,category:lkStr(m.category,24),preview_pose_id:lkId(m.preview_pose_id)});}).filter(function(m){return !!m;});
+  var en=lkId(x.entrance);if(en)o.entrance=en;   // one of the canned entrances
+  return Object.keys(o).length?o:null;
+}
+/** Is this a wrestler's look (a .wrestler.json file)? */
+E.lookOk=function(x){var c=lookClean(x);return !!(c&&(c.attires||c.physical_attributes||c.appearance));};
+E.lookClean=lookClean;
+function lkWorker(pkg,id){return pkg&&Array.isArray(pkg.workers)?pkg.workers.filter(function(w){return w&&w.id===id;})[0]:null;}
+/** The look a worker in a world package wears, or null. */
+E.edLook=function(pkg,id){var w=lkWorker(pkg,id);return w&&w.look?lookClean(w.look):null;};
+/** Keep a look on a worker in the world. Returns false for anything that is not a look. */
+E.edSetLook=function(pkg,id,look){var w=lkWorker(pkg,id),c=lookClean(look);if(!w||!c||!E.lookOk(c))return false;w.look=c;return true;};
+E.edRemoveLook=function(pkg,id){var w=lkWorker(pkg,id);if(w)delete w.look;};
+/** The look a wrestler in a game wears, or null (somebody never made in Create a Player). */
+E.lookOf=function(S,id){var w=S&&S.w[id];return w&&w.look?w.look:null;};
+
+/* ---------- finishing moves in the match (docs/plans/create-a-player.md, next step 1) ----------
+   A finisher from a wrestler's file changes how a finish lands, never who wins (the booker still decides that).
+   People kick out of finishers: an easy one often, a medium one now and then on a big night, a protected one hardly
+   ever (and the building comes apart when it happens), an instant one almost never. Every kick-out wears the move
+   down (up to eight steps): it gets kicked out of a little more and lands a little lighter, and it comes back a step
+   every month. Whoever kicks out gains momentum. A clean win with the move pays by how protected it is,
+   how hard it hits and where it comes from. Kick-outs are picked by a hash of the match, never rnd(S). */
+function lookFin(w){var l=w&&w.look;return l&&l.finishing_moves&&l.finishing_moves[0]||null;}
+var FIN_KO={Easy:0.5,Medium:0.28,Protected:0.06,Instant:0.015},FIN_PAY={Easy:0.3,Medium:0.8,Protected:1.6,Instant:2.2};
+/** How much of its protection a wrestler's finisher still has, 1 when it has never been kicked out of. */
+function finProt(w){return 1/(1+(w.fko||0)*0.25);}
+FINX.push(function(ctx,fin,W,L,win){
+  if(win<0||!W.length||!L.length||ctx.m.mt==='br'||fin==='dq'||fin==='co')return null;
+  var S=ctx.S,w=W[0],l=L[0],d=0,xs=[],ko=null;
+  var weight=(ctx.isMain||ctx.big?1:0.4)*(ctx.mins>=14?1:(ctx.mins>=10?0.5:0.2)),key=S.week+':'+ctx.i+':'+w.id+':'+l.id+':'+(ctx.show&&ctx.show.name||'');
+  // the loser's finisher kicked out of by the winner, or the winner's own kicked out of before it finally lands
+  [[l,w],[w,l]].forEach(function(p,k){
+    if(ko)return;var who=p[0],by=p[1],f=lookFin(who);if(!f)return;
+    var pk=Math.min(0.85,(FIN_KO[f.kickout_difficulty]||FIN_KO.Medium)+Math.min(8,who.fko||0)*0.025)*weight*(by.ovr>=who.ovr+10?1.3:1);
+    if(h01(key+':fko'+k)<pk)ko={who:who,by:by,f:f,again:k===1};
+  });
+  if(ko){
+    var lv=ko.f.kickout_difficulty||'Medium',huge=lv==='Protected'||lv==='Instant';
+    d+=huge?3:1.5;xs.push(huge?ko.by.name+' kicked out of '+ko.f.name+', and nobody kicks out of that':'A kick-out from '+ko.f.name);
+    if(!S.cal){ko.who.fko=Math.min(8,(ko.who.fko||0)+1);ko.by.mom=clamp(ko.by.mom+(huge?2:1),-10,10);}
+    ctx.fko={who:ko.who.name,by:ko.by.name,f:ko.f.name,huge:huge,again:ko.again};
+  }
+  var fw=lookFin(w);
+  if(fw&&fin==='clean'){
+    var pay=(FIN_PAY[fw.kickout_difficulty]||FIN_PAY.Medium)*finProt(w)+((fw.impact_damage||0)>=85?0.5:0)+(fw.position==='Top Rope'?0.4:0);
+    d+=pay;if(pay>=1)xs.push(fw.name+' put it away');ctx.fm=fw;
+  }
+  if(!d)return null;
+  return {d:Math.min(4,Math.round(d*10)/10),x:xs.join('. ')};
+});
+WEEKX.push(function(S){if(S.week%4!==0)return;S.w.forEach(function(w){if(w&&w.fko)w.fko--;});});
+/** A wrestler's finisher as the screens show it: the move, and how much of its protection it still has. */
+E.finInfo=function(S,id){var w=S.w[id],f=lookFin(w);return f?{name:f.name,kick:f.kickout_difficulty||'Medium',kicked:w.fko||0,prot:Math.round(finProt(w)*100)}:null;};
+
+/* ---------- Create a Player in a game: a new look for somebody on your roster ---------- */
+/** Give a wrestler on your roster a new look (or their first). Their first finishing move becomes their finisher.
+    They remember it, once a week at most. */
+E.setLook=function(S,id,look){
+  var w=S.w[id];if(!w||w.promo!==S.player)return {ok:false,msg:'Only somebody on your roster can be changed.'};
+  var c=lookClean(look);if(!c||!E.lookOk(c))return {ok:false,msg:'That is not a wrestler\'s look.'};
+  var first=!w.look;w.look=c;var f=lookFin(w);if(f)w.fin=f.name;
+  if(w.lookW!==S.week){w.lookW=S.week;youRemember(S,w,'look',first?'You gave them a look of their own.':'You gave them a new look.',1);}
+  return {ok:true,msg:w.name+(first?' has a look of their own now.':' has a new look.')+' Every scene draws them like this.'};
+};
+/** Take the look off a wrestler on your roster: the game draws them again. */
+E.clearLook=function(S,id){var w=S.w[id];if(!w||w.promo!==S.player||!w.look)return {ok:false,msg:'Nothing to take off.'};delete w.look;return {ok:true,msg:w.name+' is drawn by the game again.'};};
 
 /* ===== 86-rep.js ===== */
 /* ---------- 89. A reputation as a booker: traits earned by how you book, each with a small edge and a small cost (S.reps) ---------- */
@@ -8562,6 +8683,47 @@ E.edRemoveScene=function(pkg,id){if(pkg&&Array.isArray(pkg.scenes))pkg.scenes=pk
 /** The scenes the world of this game carries (none for a world without any, or an old save). */
 E.worldScenes=function(S){var d=(S&&S.db)||DB;return d&&Array.isArray(d.scenes)?d.scenes.filter(sceneOk):[];};
 E.sceneOk=sceneOk;
+
+/* ---------- hooks: who a scene is about (docs/plans/papercraft-engine.md, "Hooks") ----------
+   A slot in a scene can name a part in the story instead of a fixed person: the hero, the villain, the villain's
+   group, the champion, the manager. E.sceneHooks fills every part it can from a moment of the show and what the
+   game knows (stables, tag teams, managers, titles, the face of the company). It only reads the game. */
+var HOOKS=['a','b','hero','villain','heel1','heel2','heel3','ally','manager','champ','challenger','winner','loser','talker','attacker','victim','face'];
+/** o: {ids: everybody in the moment, in the order they appear; a: who does it (the attacker, the winner, the one
+    talking); b: who it is done to; win: the winners' ids; title: the title's name, if one is on the line}. Returns
+    {hook: wrestler id} for every part that could be filled. */
+E.sceneHooks=function(S,o){
+  o=o||{};var W=function(id){return id!=null&&S.w[id]?S.w[id]:null;},ids=(o.ids||[]).filter(function(id){return !!W(id);}),out={},used={};
+  var a=W(o.a)?o.a:ids[0],b=W(o.b)?o.b:ids.filter(function(x){return x!==a;})[0];
+  var put=function(k,id){if(W(id)&&out[k]==null)out[k]=id;};
+  put('a',a);put('b',b);put('attacker',a);put('victim',b);put('talker',a);
+  var all=[a,b].concat(ids).filter(function(x,i,l){return W(x)&&l.indexOf(x)===i;});
+  var hero=all.filter(function(id){return W(id).align!=='H';})[0],villain=all.filter(function(id){return W(id).align==='H'&&id!==hero;})[0];
+  if(hero==null&&villain!=null)hero=all.filter(function(id){return id!==villain;})[0];
+  if(villain==null&&hero!=null)villain=all.filter(function(id){return id!==hero;})[0];
+  put('hero',hero);put('villain',villain);
+  // the villain's people: the stable first (the leader before the rest), then a tag partner, then the manager
+  var v=W(villain),h=W(hero),grp=[];
+  if(v){var st=stableOf(S,v);if(st)[st.leader].concat(st.m).forEach(function(id){if(id!==villain&&id!==hero&&W(id)&&grp.indexOf(id)<0)grp.push(id);});
+    var tm=teamOf(S,v);if(tm&&tm.m)tm.m.forEach(function(id){if(id!==villain&&id!==hero&&W(id)&&grp.indexOf(id)<0)grp.push(id);});
+    if(v.mgr!=null&&W(v.mgr)&&grp.indexOf(v.mgr)<0&&v.mgr!==hero)grp.push(v.mgr);}
+  // whoever else in the moment is on the villain's side counts too
+  all.forEach(function(id){if(id!==villain&&id!==hero&&W(id).align==='H'&&grp.indexOf(id)<0)grp.push(id);});
+  grp.slice(0,3).forEach(function(id,i){put('heel'+(i+1),id);});
+  if(h){var ht=teamOf(S,h),al=ht&&ht.m?ht.m.filter(function(id){return id!==hero&&W(id);}):[];if(al.length)put('ally',al[0]);
+    else{var sh=stableOf(S,h);if(sh)put('ally',sh.m.filter(function(id){return id!==hero;})[0]);}}
+  put('manager',v&&v.mgr!=null?v.mgr:(h&&h.mgr!=null?h.mgr:null));
+  // the champion: whoever holds the title on the line; else the best title held by somebody in the moment
+  var P=S.promos&&S.promos[W(all[0])?W(all[0]).promo:S.player],best=null;
+  if(P&&P.titles)P.titles.forEach(function(t){var hd=t.holders[0];if(hd==null)return;if(o.title&&t.name===o.title){best={t:t,id:hd,on:1};return;}
+    if(all.indexOf(hd)>=0&&(!best||(!best.on&&t.lvl>best.t.lvl)))best={t:t,id:hd};});
+  if(best){put('champ',best.id);put('challenger',all.filter(function(id){return id!==best.id;})[0]);}
+  var win=(o.win||[]).filter(function(id){return !!W(id);});
+  if(win.length){put('winner',win[0]);put('loser',all.filter(function(id){return win.indexOf(id)<0;})[0]);}
+  var f=faceOf(S);if(f)put('face',f.id);
+  return out;
+};
+E.SCENE_HOOKS=HOOKS;
 
 /* ===== 87-create.js ===== */
 /* A company grows: new weekly shows and new belts during a game, for the player and for rivals.
@@ -10128,7 +10290,7 @@ E.sign=function(S,id,wage,weeks){
   var from=w.promo;if(from!=='FA'){S.promos[from].rel=clamp((S.promos[from].rel||0)-12,-100,100);leaveCompany(S,w,'left for '+P.name);}
   joinCompany(S,w,P,wage,weeks||48);
   news(S,'contract',P.name+' signed '+w.name+(from!=='FA'?' away from '+S.promos[from].name:'')+'.');
-  award(S,from==='FA'?'ACH_SIGN':'ACH_POACH');
+  award(S,from==='FA'?'ACH_SIGN':'ACH_POACH');if(w.cr)award(S,'ACH_CREATE');   // a wrestler made in Create a Player
   return {ok:true,msg:w.name+' signs for '+money(wage)+' a week.'};
 };
 E.release=function(S,id){var w=S.w[id],P=S.promos[S.player];if(!w||w.promo!==P.id)return null;var pay=w.wage*4;P.cash-=pay;if(S.owner.pledge==='stable'){rosterOf(S,P.id).forEach(function(x){x.morale=clamp(x.morale-3,0,100);});S.trust=clamp(S.trust-4,0,100);}leaveCompany(S,w,'released');w.promo='FA';w.brand=null;news(S,'contract',P.name+' released '+w.name+'.');return w.name+' is released. Severance: '+money(pay)+'.';};

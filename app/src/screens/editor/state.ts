@@ -10,6 +10,10 @@ export interface EdState {
   sel: Record<string, string | null>;
   /** the scene open in Create a Scene ('__new' for a new one), or null */
   scene?: string | null;
+  /** the wrestler open in Create a Player (their id in the world), or null */
+  player?: string | null;
+  /** a custom entrance started from Create a Player, and the wrestler it is for (saving picks it; Done goes back to them) */
+  sceneStart?: any; sceneFor?: { who: string; cast: string } | null;
   q: string; fp: string; sort: Record<string, string>; many: boolean; picked: Record<string, 1>; manyTo: string; newName: string; del: string | null; msg: string; err: boolean; text: string; copied: boolean; fill: number;
 }
 export const es = () => slice<EdState>('worldedit', () => ({ id: null, tab: 'world', sel: {}, q: '', fp: '', sort: {}, many: false, picked: {}, manyTo: '', newName: '', del: null, msg: '', err: false, text: '', copied: false, fill: 12 }));

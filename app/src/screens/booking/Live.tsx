@@ -11,7 +11,8 @@ import { useEffect, useLayoutEffect, useState } from 'preact/hooks';
 import { E } from '../../engine';
 import { G, ui, me, pref, savePrefs, redraw, reduceMotion } from '../../store';
 import { ScenePlayer } from '../../kit/sceneplayer';
-import { scenesFor, Scene } from '../../kit/scene';
+import { scenesFor, allScenes, copy, Scene } from '../../kit/scene';
+import { finScene } from '../../kit/caw';
 import { recipeOf, Recipe, commentator } from '../../kit/puppet';
 import { book } from '../../flow';
 import { Btn, KV, Meter, Banner, BeltArt, Portrait, CheckLine, stars, grade } from '../../kit';
@@ -198,22 +199,48 @@ const DOT = ' · ';
     the bell and the first exchanges get the lock-up, the middle a trade of blows, a near fall the count and the
     kick-out (the one named first in the line is the one covering), the deciding fall the three count, a new
     champion the belt held high, and a promo the one holding the microphone. */
+/** Who plays each part of a scene: a slot with a hook gets whoever the game says fills it (E.sceneHooks); a slot
+    with none gets A or B by its role. A slot nobody can fill is left out of the picture. */
+function fillScene(sc: Scene, hk: Record<string, number>, cast: Record<string, Recipe>): Scene | null {
+  const S = G.S, keep = sc.slots.filter(sl => {
+    if (cast[sl.id] || sl.role === 'ref' || sl.dress === 'suit') return true;
+    const id = hk[sl.hook || sl.role]; if (id == null || !S.w[id]) return false;
+    cast[sl.id] = recipeOf(S.w[id]); return true;
+  });
+  if (keep.filter(sl => sl.role !== 'ref').length < Math.min(2, sc.slots.filter(sl => sl.role !== 'ref').length)) return null;
+  return keep.length === sc.slots.length ? sc : { ...sc, slots: keep };
+}
 function scenePick(r: any, s: any, at: number, done: boolean): { sc: Scene; cast: Record<string, Recipe>; play: string; label: string } | null {
   const S = G.S; if (!S || !s) return null;
   const bc: Beat[] = s.bc || [], i = r.segs.indexOf(s), now = Math.min(at, bc.length - 1), cast: Record<string, Recipe> = {};
   const world = E.worldScenes(S) as Scene[], choose = (when: string, salt: number) => { const l = scenesFor(when, world); return l.length ? l[Math.abs((r.week || 0) * 31 + i * 7 + salt) % l.length] : null; };
+  const nm = (rc?: Recipe) => rc ? rc.name : '';
+  // the canned entrance a wrestler picked in Create a Player, if they did
+  const ownEnt = (id: number): Scene | null => { const w = S.w[id], v = w && w.look && w.look.entrance; return v ? allScenes(world).find(x => x.id === v && x.when === 'entrance') || null : null; };
   if (s.k !== 'match') {
+    // an attack: the first named does it to the second, and the villain's people come with them
+    const txt = String(s.text || ''), named = S.w.filter((w: any) => w && w.promo === S.player && txt.indexOf(w.name) >= 0).sort((x: any, y: any) => txt.indexOf(x.name) - txt.indexOf(y.name)).map((w: any) => w.id as number);
+    if (/ambush|brawl|attack|beat|jump/i.test((s.head || '') + ' ' + txt.slice(0, 80)) && named.length >= 2) {
+      const sc0 = choose('attack', 0), hk = E.sceneHooks(S, { ids: named, a: named[0], b: named[1] }), sc = sc0 && fillScene(sc0, hk, cast);
+      if (sc) return { sc, cast, play: 'a' + i, label: sc.name + ': ' + Object.values(cast).map(nm).join(', ') };
+    }
     let who = ''; for (let j = now; j >= 0 && !who; j--) if (bc[j] && bc[j].t === 'mic' && bc[j].w) who = bc[j].w || '';
     const w = who && S.w.find((x: any) => x && x.name === who); if (!w) return null;
-    const sc = choose('promo', 0); if (!sc) return null;
-    cast.A = recipeOf(w); return { sc, cast, play: 'p' + i + ':' + who, label: who + ' on the microphone' };
+    const sc0 = choose('promo', 0); if (!sc0) return null;
+    const sc = fillScene(sc0, E.sceneHooks(S, { ids: [w.id].concat(named.filter((x: number) => x !== w.id)), a: w.id }), cast); if (!sc) return null;
+    return { sc, cast, play: 'p' + i + ':' + who, label: who + ' on the microphone' };
   }
   const ids: number[] = s.ids || [], ns = (s.sidesN || []).length; if (!ns || !ids.length) return null;
   const per = Math.max(1, Math.floor(ids.length / ns)), sideOf = (id: number) => Math.floor(ids.indexOf(id) / per);
   const first = (txt: string) => { let best = -1, pos = 1e9; ids.forEach(id => { const w = S.w[id], k = w ? txt.indexOf(w.name) : -1; if (k >= 0 && k < pos) { pos = k; best = id; } }); return best; };
-  const put = (a: number) => { const sa = sideOf(a), b = ids.find(id => sideOf(id) !== sa); if (S.w[a]) cast.A = recipeOf(S.w[a]); if (b != null && S.w[b]) cast.B = recipeOf(S.w[b]); };
   const winSide = s.win ? (s.sidesN as string[]).indexOf(s.win) : -1, winner = winSide >= 0 ? ids[winSide * per] : -1;
   let lastH = -1; bc.forEach((b, j) => { if (b.h) lastH = j; });
+  // the entrances: whoever is walking out, in their entrance gear, on their own entrance if they picked one
+  if (!done && bc[now] && bc[now].t === 'ent') {
+    const k = bc.slice(0, now + 1).filter(b => b.t === 'ent').length - 1, who = ids[Math.min(ids.length - 1, k * per)];
+    const sc0 = ownEnt(who) || choose('entrance', k), sc = sc0 && fillScene(sc0, { a: who }, cast);
+    if (sc) return { sc, cast, play: i + ':e' + k, label: nm(cast.A) + ' comes out' };
+  }
   let when = 'mid', key = 'm', a = ids[0];
   // a line of colour from the desk, between the moves: cut to the two of them, the colour voice talking
   const line = bc[now];
@@ -231,10 +258,16 @@ function scenePick(r: any, s: any, at: number, done: boolean): { sc: Scene; cast
     else if (bc.slice(0, now + 1).filter(b => b.t === 'pbp' || b.t === 'col').length <= 2) { when = 'start'; key = 's'; }   // the bell: the first two lines of the call after the introductions
     else { key = 'm' + Math.floor(now / 4); const f = first((bc[now] || { x: '' }).x); if (f >= 0) a = f; }
   }
-  const sc = choose(when, key.length); if (!sc) return null;
-  put(a);
-  const nm = (rc?: Recipe) => rc ? rc.name : '';
-  return { sc, cast, play: i + ':' + key, label: sc.name + ': ' + nm(cast.A) + (cast.B ? ' and ' + nm(cast.B) : '') };
+  let sc0 = choose(when, key.length); if (!sc0) return null;
+  const sigs = when === 'mid' && S.w[a] && S.w[a].look ? (S.w[a].look.finishing_moves || []).slice(1) : [];
+  if (sigs.length) { const sm = sigs[Math.abs((r.week || 0) + i * 3 + key.length * 7 + now) % sigs.length], fs = allScenes(world).find(x => x.id === finScene(sm));
+    if (fs) { sc0 = copy(fs); const lk0 = sc0.keys[sc0.keys.length - 1]; let named = false; lk0.props.forEach(q => { if (q.k === 'burst') { q.txt = sm.name.toUpperCase().slice(0, 16); named = true; } }); if (!named) lk0.props.push({ id: 'sig', k: 'burst', x: 3.6, y: 2.8, r: 0, z: 3, s: 1, txt: sm.name.toUpperCase().slice(0, 16) }); sc0.name = sm.name; } }
+  // a winner made in Create a Player finishes with their own move: its picture, with its name in the burst
+  const fm = when === 'finish' && S.w[a] && S.w[a].look && (S.w[a].look.finishing_moves || [])[0];
+  if (fm) { const fs = allScenes(world).find(x => x.id === finScene(fm)); if (fs) { sc0 = copy(fs); sc0.keys.forEach(k => k.props.forEach(q => { if (q.k === 'burst' && k === sc0!.keys[sc0!.keys.length - 1]) q.txt = fm.name.toUpperCase().slice(0, 16); })); sc0.name = fm.name; } }
+  const b = ids.find(id => sideOf(id) !== sideOf(a)), wins = winSide >= 0 ? ids.filter(id => sideOf(id) === winSide) : [];
+  const sc = fillScene(sc0, E.sceneHooks(S, { ids, a, b, win: wins, title: s.title || null }), cast); if (!sc) return null;
+  return { sc, cast, play: i + ':' + key, label: sc.name + ': ' + Object.values(cast).map(nm).join(' and ') };
 }
 function picsToggle() { pref.pics = !pref.pics; savePrefs(); redraw(); }
 

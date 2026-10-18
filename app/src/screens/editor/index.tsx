@@ -5,7 +5,7 @@ import { UNIS, ui, redraw, builtInUniverse, isBuiltIn, pref, plural } from '../.
 import { onBack } from '../../input';
 import { Btn, Panel, Head, Tabs, Field } from '../../kit';
 import { StartMenu } from '../start';
-import { es, world, keep, look, note, report, freeId, openWorld, EdTab, canUndo, undoDel } from './state';
+import { es, world, keep, edit, look, note, report, freeId, openWorld, EdTab, canUndo, undoDel } from './state';
 import { DelBtn } from './parts';
 import { WorldTab, ShareTab } from './World';
 import { CompaniesTab, ShowsTab } from './Companies';
@@ -13,7 +13,8 @@ import { WrestlersTab } from './People';
 import { BeltsTab, TeamsTab } from './Belts';
 import { ScenesTab, keepScene, forgetScene } from './Scenes';
 import { SceneStudio, fromWorld } from '../scene';
-import { SCENES } from '../../kit/scene';
+import { CreatePlayer, workerW } from '../player';
+import { SCENES, copy } from '../../kit/scene';
 
 /* Back steps out one level at a time: the open record, then the world, then the title screen. */
 onBack(() => {
@@ -94,10 +95,26 @@ function Open() {
 export function Editor() {
   const st = es();
   if (st.id && !UNIS[st.id]) st.id = null;
+  if (st.id && st.player) {   // Create a Player, full screen, on a wrestler in the world being edited
+    const pkg = UNIS[st.id], wk = (pkg.workers || []).find((x: any) => x.id === st.player);
+    if (wk) { const nm = pkg.manifest.name || 'this world';
+      return <CreatePlayer key={st.player} world={nm} w={workerW(wk)} had={wk.look || null}
+        onSave={lk => { let ok = false; edit(() => { ok = E.edSetLook(world(), wk.id, lk); }); return { ok, msg: ok ? (lk.name || wk.ring_name) + ' is kept in ' + nm + '. Every scene in the game now draws them like this.' : 'That could not be kept.' }; }}
+        onForget={() => { edit(() => { E.edRemoveLook(world(), wk.id); }); return { ok: true, msg: wk.ring_name + ' is drawn by the game again.' }; }} onDone={() => look(() => { st.player = null; })}
+        scenes={E.edScenes(pkg)} onNewEntrance={lk => {   // keep the wrestler, then Create a Scene on a copy of their entrance, with them in it
+          edit(() => { E.edSetLook(world(), wk.id, lk); });
+          const all = E.edScenes(pkg).concat(SCENES), src = all.find((x: any) => x.id === lk.entrance && x.when === 'entrance') || SCENES.find(x => x.when === 'entrance')!, sc = copy(src);
+          sc.id = 'scene-' + Date.now().toString(36); sc.name = ((lk.name || wk.ring_name) + ' comes out').slice(0, 32);
+          look(() => { st.player = null; st.scene = sc.id; st.sceneStart = sc; st.sceneFor = { who: wk.id, cast: wk.ring_name }; });
+        }} />; }
+  }
   if (st.id && st.scene) {   // Create a Scene, full screen, on the world being edited
-    const pkg = UNIS[st.id], mine = E.edScenes(pkg), start = st.scene === '__new' ? undefined : (mine.find((x: any) => x.id === st.scene) || SCENES.find(x => x.id === st.scene));
-    return <SceneStudio key={st.scene} world={pkg.manifest.name || 'this world'} roster={fromWorld(pkg)} saved={mine} start={start} blank={st.scene === '__new'}
-      onSave={keepScene} onForget={forgetScene} onDone={() => look(() => { st.scene = null; })} />;
+    const pkg = UNIS[st.id], mine = E.edScenes(pkg), start = st.scene === '__new' ? undefined : (mine.find((x: any) => x.id === st.scene) || (st.sceneStart && st.sceneStart.id === st.scene ? st.sceneStart : null) || SCENES.find(x => x.id === st.scene));
+    const R = fromWorld(pkg), fr = st.sceneFor, castA = fr ? R.find(w => w.name === fr.cast) : undefined;
+    // a custom entrance made from Create a Player: saving it picks it for them, and Done goes back to them
+    return <SceneStudio key={st.scene} world={pkg.manifest.name || 'this world'} roster={R} saved={mine} start={start} blank={st.scene === '__new'} castA={castA ? castA.id : undefined}
+      onSave={sc => { const ok = keepScene(sc); if (ok && fr && sc.when === 'entrance') edit(() => { const lk = E.edLook(world(), fr.who); if (lk) { lk.entrance = sc.id; E.edSetLook(world(), fr.who, lk); } }); return ok; }}
+      onForget={forgetScene} onDone={() => look(() => { st.scene = null; st.sceneStart = null; if (fr) { st.player = fr.who; st.sceneFor = null; } })} />;
   }
   return <div class="crt"><StartMenu /><div class="start edpage">{st.id ? <Open /> : <Home />}</div>
     <div class="status"><span>World Editor</span><span class="opt">|</span><span class="opt">Changes are kept as you make them</span><span>Esc: back</span></div></div>;

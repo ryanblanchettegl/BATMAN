@@ -36,7 +36,7 @@ export function onKey(fn: (e: KeyboardEvent) => boolean) { keys.push(fn); }
 
 /* ---------- focus by geometry ---------- */
 const app = () => document.getElementById('app')!;
-function navScope(): HTMLElement { return (document.querySelector('.win') || document.querySelector('.caw-win') || app()) as HTMLElement; }
+function navScope(): HTMLElement { return (document.querySelector('.win') || document.querySelector('.scfull') || app()) as HTMLElement; }
 function focusables(scope: HTMLElement): HTMLElement[] {
   return ([].slice.call(scope.querySelectorAll('button:not([disabled]),select:not([disabled]),input:not([disabled]):not([hidden]),textarea,tr.pick')) as HTMLElement[]).filter(e => { const r = e.getBoundingClientRect(); return r.width > 0 && r.height > 0; });
 }
