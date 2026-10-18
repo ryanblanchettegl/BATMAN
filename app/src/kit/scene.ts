@@ -10,7 +10,16 @@ import { Recipe, puppet, prop, Rig, blank, REF, Marks, commentator, dress } from
 
 /** A person at a keyframe: where the waist is, the turn, which way they face, how far forward, the pose, the face,
     their size (1 as cut) and the marks on them. */
-export interface Fig { x: number; y: number; r: number; f: number; z: number; p: Record<string, number>; e?: string; s?: number; m?: Marks }
+export interface Fig { x: number; y: number; r: number; f: number; z: number; p: Record<string, number>; e?: string; s?: number; m?: Marks;
+  /** Held by somebody: "A:hands", "A:shoulders", "A:chest", "A:waist" or "A:head". Then x and y are from that point
+      and z is in front of (or behind) the one holding, so the two move and turn together. */
+  on?: string;
+  /** A limb brought in front of everything else (3) or sent behind (-3): an arm round a neck, a leg hooked behind. */
+  lz?: Record<string, number> }
+/** Where one person can hold another. */
+export const HOLDS: [string, string][] = [['hands', 'hands'], ['shoulders', 'shoulders'], ['chest', 'chest'], ['waist', 'waist'], ['head', 'head']];
+/** The limbs that can come in front or go behind, and the parts of each. */
+export const LIMBS: Record<string, string> = { sh_n: 'arm_n', el_n: 'arm_n', wr_n: 'arm_n', sh_f: 'arm_f', el_f: 'arm_f', wr_f: 'arm_f', hip_n: 'leg_n', kn_n: 'leg_n', an_n: 'leg_n', hip_f: 'leg_f', kn_f: 'leg_f', an_f: 'leg_f' };
 export interface Prop { id: string; k: string; x: number; y: number; r: number; z: number; s?: number; txt?: string; col?: string; at?: string }
 /** The camera at a keyframe: where it looks (x, y in scene units), how close (z: 1 is the whole set, 3 is a close-up)
     and a tilt in degrees. Left out, it shows the whole set. */
@@ -19,7 +28,13 @@ export const CAM0: Cam = { x: 0, y: 0, z: 1, r: 0 };
 export interface Key { t: number; figs: Record<string, Fig>; props: Prop[]; cam?: Cam }
 /** A part in a scene. `dress` puts whoever plays it in a suit and a headset (the desk); `at` is where they go when
     brought in, for a slot that starts empty (the third chair at the desk). */
-export interface Slot { id: string; n: string; role: 'a' | 'b' | 'ref' | 'c'; dress?: 'suit'; at?: Fig }
+export interface Slot { id: string; n: string; role: 'a' | 'b' | 'ref' | 'c'; dress?: 'suit'; at?: Fig; hook?: string }
+/** The parts a slot can stand for, filled by the game from the moment (E.sceneHooks). A slot with no hook is filled by
+    its role: a is whoever does it (the winner, the one covering, the one talking), b the other. A slot whose part
+    nobody in the moment can play is left out of the picture. */
+export const HOOKS: [string, string][] = [['', 'By the match (A or B)'], ['hero', 'The hero'], ['villain', 'The villain'], ['heel1', 'Heel group member 1'], ['heel2', 'Heel group member 2'], ['heel3', 'Heel group member 3'],
+  ['ally', "The hero's partner"], ['manager', 'The manager'], ['champ', 'The champion'], ['challenger', 'The challenger'], ['winner', 'The winner'], ['loser', 'The loser'], ['talker', 'On the microphone'],
+  ['attacker', 'The attacker'], ['victim', 'Who gets attacked'], ['face', 'The face of the company']];
 /** `frame` is the shape of the picture: wide (16 by 9, the broadcast) for now; tall for posters and covers and square
     for portraits are next. */
 export interface Scene { v: 1; id: string; name: string; when: string; set: string; slots: Slot[]; keys: Key[]; by?: string; frame?: 'wide' | 'tall' | 'square'; loop?: boolean }
@@ -234,7 +249,8 @@ export function at(sc: Scene, time: number): Key {
       for (const id in a.figs) {
         const fa = a.figs[id], fb = b.figs[id]; if (!fb) { figs[id] = fa; continue; }
         const p: Record<string, number> = {}; for (const k of new Set([...Object.keys(fa.p), ...Object.keys(fb.p)])) p[k] = mix(fa.p[k] || 0, fb.p[k] || 0, t);
-        figs[id] = { x: mix(fa.x, fb.x, t), y: mix(fa.y, fb.y, t), r: mix(fa.r, fb.r, t), f: t < 0.5 ? fa.f : fb.f, z: t < 0.5 ? fa.z : fb.z, p, e: t < 0.5 ? fa.e : fb.e, s: mix(fa.s || 1, fb.s || 1, t), m: t < 0.5 ? fa.m : fb.m };
+        const h = t < 0.5 ? fa : fb, same = (fa.on || '') === (fb.on || '');   // picked up or put down: the hold changes half way
+        figs[id] = { x: same ? mix(fa.x, fb.x, t) : h.x, y: same ? mix(fa.y, fb.y, t) : h.y, r: mix(fa.r, fb.r, t), f: h.f, z: same ? mix(fa.z, fb.z, t) : h.z, p, e: h.e, s: mix(fa.s || 1, fb.s || 1, t), m: h.m, on: h.on, lz: h.lz };
       }
       const props = a.props.map(pa => { const pb = b.props.find(x => x.id === pa.id); return pb ? { ...pa, x: mix(pa.x, pb.x, t), y: mix(pa.y, pb.y, t), r: mix(pa.r, pb.r, t) } : pa; });
       const ca = a.cam || CAM0, cb = b.cam || CAM0, cam = { x: mix(ca.x, cb.x, t), y: mix(ca.y, cb.y, t), z: mix(ca.z, cb.z, t), r: mix(ca.r || 0, cb.r || 0, t) };
@@ -245,13 +261,20 @@ export function at(sc: Scene, time: number): Key {
 }
 
 /** Everything in the picture at a moment, as pieces, with each figure's joints (for dragging) and anchors (for props). */
-export function build(sc: Scene, k: Key, cast: Record<string, Recipe>, time = 0): { pieces: Piece[]; rigs: Record<string, Rig> } {
-  const pieces = setPieces(sc.set), rigs: Record<string, Rig> = {};
-  sc.slots.forEach((sl, i) => {
-    const f = k.figs[sl.id]; if (!f) return;
+export function build(sc: Scene, k: Key, cast: Record<string, Recipe>, time = 0): { pieces: Piece[]; rigs: Record<string, Rig>; hold: Record<string, string> } {
+  const pieces = setPieces(sc.set), rigs: Record<string, Rig> = {}, hold: Record<string, string> = {};
+  // whoever is held is cut after whoever holds them, at the point they are held by
+  const order = sc.slots.map((sl, i) => ({ sl, i })), deep = (id: string, n = 0): number => { const f = k.figs[id], h = f && f.on ? f.on.split(':')[0] : ''; return h && n < 4 && k.figs[h] ? 1 + deep(h, n + 1) : 0; };
+  order.sort((a, b) => deep(a.sl.id) - deep(b.sl.id));
+  order.forEach(({ sl, i }) => {
+    let f = k.figs[sl.id]; if (!f) return;
+    if (f.on) {
+      const [hw, anc] = f.on.split(':'), hr = rigs[hw], q = hr && (hr.anchors[anc] || hr.anchors.hands), hf = k.figs[hw];
+      if (q && hf) { f = { ...f, x: q[0] + f.x, y: q[1] + f.y, z: hf.z + f.z }; hold[sl.id] = hold[hw] || hw; }
+    }
     const di = sc.slots.filter(x => x.dress === 'suit').indexOf(sl), c = cast[sl.id];
     const r = c ? (sl.dress === 'suit' ? dress(c, di) : c) : sl.role === 'ref' ? REF : sl.dress === 'suit' ? commentator(di) : blank(i);
-    rigs[sl.id] = puppet(r, { x: f.x, y: f.y, r: f.r, f: f.f, z: f.z, s: f.s }, f.p, f.e || '', sl.id, pieces, f.m || {});
+    rigs[sl.id] = puppet(r, { x: f.x, y: f.y, r: f.r, f: f.f, z: f.z, s: f.s, lz: f.lz }, f.p, f.e || '', sl.id, pieces, f.m || {});
     // a soft shadow on the floor where they stand or lie
     const rg = rigs[sl.id], lying = Math.abs(Math.sin(f.r * Math.PI / 180)) > 0.6, sz = f.s || 1;
     if (lying) { const c = rg.anchors.waist; pieces.push({ pts: ell(c[0], FOOT + 0.3, 2.0 * sz, 0.32, 20), col: 'rgba(0,0,0,0.32)', z: f.z - 0.05, soft: true }); }
@@ -263,7 +286,7 @@ export function build(sc: Scene, k: Key, cast: Record<string, Recipe>, time = 0)
     prop({ ...p, x, y }, pieces, time);
   }
   if (FRONT[sc.set]) { const f: Piece[] = []; FRONT[sc.set](f); f.forEach(p => { p.layer = 'front'; }); pieces.push(...f); }
-  return { pieces, rigs };
+  return { pieces, rigs, hold };
 }
 
 /** The view that fits a 16 by 9 scene into a canvas of this size, through the camera. */
@@ -317,6 +340,7 @@ const REFKN = (x: number, f: number, arm: Record<string, number>): Fig => ({ x, 
 const AB: Slot[] = [{ id: 'A', n: 'Wrestler A', role: 'a' }, { id: 'B', n: 'Wrestler B', role: 'b' }, { id: 'R', n: 'The referee', role: 'ref' }];
 const burst = (id: string, txt: string, x: number, y: number, col = PAL.yellow): Prop => ({ id, k: 'burst', x, y, r: 0, z: 3, s: 1, txt, col });
 const COVER_B = { sh_n: 160, el_n: 5, sh_f: 140, el_f: -10, hip_n: 35, kn_n: -60, an_n: 20 };
+const SLAMCAM: Cam = { x: 0, y: 0.9, z: 0.85 }, SLEEPCAM: Cam = { x: 0.8, y: -0.7, z: 1.2 };
 const COVER_A = { sh_n: -120, el_n: -30, sh_f: -60, el_f: -40, kn_n: -10, kn_f: -20, an_n: -30, an_f: -30, head: 25 };
 
 /** The commentary desk: two in suits and headsets, the one with the line talking (the mouth moving, a hand going),
@@ -359,6 +383,32 @@ export const SCENES: Scene[] = [
   { v: 1, id: 'champion', name: 'New champion', when: 'champion', set: 'ring', slots: AB, keys: [
     { t: 0, figs: { A: STD(0, 1, { sh_n: 60, el_n: 40, sh_f: -60, el_f: -40, hip_n: 4 }, 'shout', 0.6), B: LAY(4.2, -1, 90, { sh_n: 150, sh_f: 130, hip_n: 20, kn_n: -40 }, 'hurt', 0.2), R: STD(-3.4, 1, { sh_n: 110, el_n: 0 }, 'shout', 0.4) }, props: [{ id: 'belt', k: 'belt', x: 0, y: 0, r: 0, z: 2, s: 1, at: 'A:hands' }] },
     { t: 1.0, figs: { A: STD(0, 1, { sh_n: 170, el_n: 10, sh_f: -170, el_f: -10, hip_n: 6, hip_f: -6, head: 8 }, 'shout', 0.6), B: LAY(4.2, -1, 90, { sh_n: 150, sh_f: 130, hip_n: 20, kn_n: -40 }, 'hurt', 0.2), R: STD(-3.4, 1, { sh_n: 160, el_n: 0, sh_f: -20 }, 'shout', 0.4) }, props: [{ id: 'belt', k: 'belt', x: 0, y: 0.1, r: 0, z: 2, s: 1, at: 'A:hands' }, burst('b1', 'NEW CHAMPION!', -4.6, 3.0, PAL.gold), { id: 'cf', k: 'confetti', x: 0, y: 0, r: 0, z: 2.8 }] },
+  ] },
+  { v: 1, id: 'slam', name: 'Up and down: a slam', when: 'mid', set: 'ring', slots: AB, keys: [
+    { t: 0, figs: { A: STD(-1.4, 1, { torso: -12, sh_n: 80, el_n: 40, sh_f: 70, el_f: 40, hip_n: 25, kn_n: -40, hip_f: -15, kn_f: -30 }, 'shout'), B: STD(0.8, -1, { torso: -45, head: -15, sh_n: 30, el_n: 40, sh_f: 20, el_f: 50, hip_n: 10, kn_n: -20 }, 'pain', 0.6), R: STD(-5, 1, { sh_n: 30, el_n: 40 }, '', -0.3) }, props: [], cam: SLAMCAM },
+    { t: 0.8, figs: { A: STD(-1.2, 1, { sh_n: 165, el_n: 20, sh_f: -160, el_f: -20, hip_n: 25, kn_n: -40, hip_f: -15, kn_f: -30, head: 10 }, 'roar'), B: { x: 0, y: 0.1, r: 90, f: -1, z: 0.6, p: { head: -10, sh_n: 120, el_n: 30, sh_f: 100, el_f: 40, hip_n: 20, kn_n: -40, hip_f: -10, kn_f: -20 }, e: 'shout', on: 'A:hands' }, R: STD(-5, 1, { sh_n: 60, el_n: 30, sh_f: 30 }, 'shout', -0.3) }, props: [], cam: SLAMCAM },
+    { t: 1.5, figs: { A: STD(-1.4, 1, { torso: -30, sh_n: 60, el_n: 20, sh_f: 50, el_f: 20, hip_n: 25, kn_n: -40, hip_f: -15, kn_f: -30 }, 'shout'), B: LAY(1.2, -1, 90, { ...COVER_B, sh_n: 170, sh_f: 150 }, 'pain', 0.6), R: STD(-5, 1, { sh_n: 100, el_n: 0 }, 'shout', -0.3) }, props: [burst('b1', 'SLAM!', 2.2, 2.6)], cam: SLAMCAM },
+  ] },
+  { v: 1, id: 'sleeper', name: 'The sleeper hold', when: 'mid', set: 'ring', slots: AB, keys: [
+    { t: 0, figs: { B: { x: 0.4, y: -2.2, r: 0, f: 1, z: 0.6, p: { torso: 0, head: -4, hip_n: 90, kn_n: -20, an_n: -20, hip_f: 85, kn_f: -30, an_f: -20, sh_n: 70, el_n: 90, sh_f: 60, el_f: 100 }, e: 'pain' },
+      A: { x: -1.0, y: -1.33, r: 0, f: 1, z: 0, p: { ...KN, torso: -14, head: -6, sh_n: 42, el_n: 118, wr_n: 30, sh_f: 60, el_f: 70 }, e: 'snarl', lz: { arm_n: 3 } }, R: REFKN(4.4, -1, { sh_n: 60, el_n: 40 }) }, props: [], cam: SLEEPCAM },
+    { t: 0.9, figs: { B: { x: 0.4, y: -2.2, r: 0, f: 1, z: 0.6, p: { torso: 6, head: 14, hip_n: 90, kn_n: -20, an_n: -20, hip_f: 85, kn_f: -30, an_f: -20, sh_n: 15, el_n: 20, sh_f: 5, el_f: 15 }, e: 'shut' },
+      A: { x: -1.0, y: -1.33, r: 0, f: 1, z: 0, p: { ...KN, torso: -16, head: -10, sh_n: 44, el_n: 122, wr_n: 30, sh_f: 62, el_f: 75 }, e: 'snarl', lz: { arm_n: 3 } }, R: REFKN(3.4, -1, { sh_n: 90, el_n: 10 }) }, props: [burst('b1', 'ASK HIM!', 3.6, 1.8)], cam: SLEEPCAM },
+  ] },
+  { v: 1, id: 'carry', name: 'Over the shoulders', when: 'mid', set: 'ring', slots: AB, keys: [
+    { t: 0, figs: { A: STD(-1.6, 1, { sh_n: 100, el_n: 70, sh_f: -60, el_f: -40, hip_n: 15, kn_n: -20, hip_f: -10, kn_f: -10 }, 'shout'), B: { x: -1.0, y: 0.3, r: -90, f: 1, z: -0.3, p: { head: -20, sh_n: 80, el_n: 10, sh_f: 95, el_f: 10, hip_n: 10, kn_n: 60, hip_f: 15, kn_f: 50 }, e: 'hurt', on: 'A:shoulders' }, R: STD(4.4, -1, { sh_n: 40, el_n: 30 }, '', -0.3) }, props: [] },
+    { t: 0.9, figs: { A: STD(0.2, 1, { sh_n: 100, el_n: 70, sh_f: -60, el_f: -40, hip_n: -15, kn_n: -10, hip_f: 15, kn_f: -25 }, 'roar'), B: { x: -1.0, y: 0.3, r: -90, f: 1, z: -0.3, p: { head: -30, sh_n: 95, el_n: 10, sh_f: 105, el_f: 10, hip_n: 10, kn_n: 70, hip_f: 15, kn_f: 60 }, e: 'hurt', on: 'A:shoulders' }, R: STD(4.4, -1, { sh_n: 80, el_n: 10 }, 'shout', -0.3) }, props: [] },
+  ] },
+  { v: 1, id: 'beatdown', name: 'The beat-down', when: 'attack', set: 'ring', slots: [{ id: 'H', n: 'The hero', role: 'b', hook: 'hero' }, { id: 'V', n: 'The villain', role: 'a', hook: 'villain' }, { id: 'G1', n: 'Heel group member 1', role: 'c', hook: 'heel1' }, { id: 'G2', n: 'Heel group member 2', role: 'c', hook: 'heel2' }], keys: [
+    { t: 0, figs: { H: { x: -0.2, y: -1.33, r: 0, f: 1, z: 0.5, p: { ...KN, torso: 20, head: 18, sh_n: 40, el_n: 90, sh_f: 30, el_f: 100 }, e: 'hurt' },
+      G1: STD(-3.0, 1, { torso: -8, hip_n: 70, kn_n: -60, an_n: 10, hip_f: -8, sh_n: 50, el_n: 60, sh_f: -40, el_f: -50 }, 'snarl', 0), G2: STD(2.4, -1, { torso: -12, sh_n: 95, el_n: 5, sh_f: -15, el_f: -10, head: 4, hip_n: 10, hip_f: -10 }, 'shout', 0.1),
+      V: STD(5.0, -1, { sh_n: 25, el_n: 100, sh_f: 20, el_f: 105, hip_n: 25, kn_n: -10, hip_f: -25 }, 'smirk', 1.1) }, props: [] },
+    { t: 0.8, figs: { H: { x: -0.2, y: -1.33, r: 0, f: 1, z: 0.5, p: { ...KN, torso: 28, head: 25, sh_n: 40, el_n: 95, sh_f: 30, el_f: 100 }, e: 'pain' },
+      G1: STD(-2.6, 1, { torso: -4, hip_n: 30, kn_n: -10, an_n: 0, hip_f: -8, sh_n: 40, el_n: 60, sh_f: -40, el_f: -50 }, 'roar', 0), G2: STD(2.2, -1, { torso: -12, sh_n: 120, el_n: 10, sh_f: -20, el_f: -10, head: 6, hip_n: 10, hip_f: -10 }, 'roar', 0.1),
+      V: STD(2.6, -1, { torso: -10, sh_n: -40, el_n: 100, sh_f: 40, el_f: 90, hip_n: 18, kn_n: -14, hip_f: -14 }, 'snarl', 1.1) }, props: [] },
+    { t: 1.4, figs: { H: { x: -0.4, y: -1.33, r: 14, f: 1, z: 0.5, p: { ...KN, torso: 40, head: 35, sh_n: 120, el_n: 30, sh_f: -60, el_f: -20 }, e: 'pain', m: { blood: 1 } },
+      G1: STD(-2.6, 1, { torso: -10, sh_n: 160, el_n: 10, sh_f: -150, el_f: -10, hip_n: 6, hip_f: -6 }, 'roar', 0), G2: STD(2.2, -1, { torso: -10, sh_n: 160, el_n: 10, sh_f: -20, el_f: -10, head: 8 }, 'roar', 0.1),
+      V: { ...STD(1.5, -1, { torso: -20, sh_n: 95, el_n: 5, sh_f: 30, el_f: 90, hip_n: 30, kn_n: -20, hip_f: -24, kn_f: -10 }, 'shout', 1.1), r: -10 } }, props: [burst('b1', 'POW!', -0.6, 2.4)] },
   ] },
   deskScene('desk1', 'At the desk: the call', 'desk1', 'C1'),
   deskScene('desk2', 'At the desk: the colour', 'desk2', 'C2'),

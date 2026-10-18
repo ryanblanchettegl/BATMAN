@@ -93,7 +93,7 @@ function taper(w0: number, w1: number, L: number): Pt[] {
 
 /** Where a doll stands: its waist, its turn, which way it faces, how far forward, and its size (1 is as cut; a giant
     is 1.3, a small one 0.8). A doll grows and shrinks from its feet, so it stays standing where it stood. */
-export interface Place { x: number; y: number; r: number; f: number; z: number; s?: number }
+export interface Place { x: number; y: number; r: number; f: number; z: number; s?: number; lz?: Record<string, number> }
 /** Marks on a person: blood (1 a cut, 2 a trickle, 3 a face covered), sweat, tears, a bruise. */
 export interface Marks { blood?: number; sweat?: boolean; tears?: boolean; bruise?: boolean }
 /** The faces a doll can pull. */
@@ -144,7 +144,8 @@ export function puppet(r: Recipe, pl: Place, pose: Record<string, number>, expr:
     cut(an, [[-0.22 * w, 0.12], [0.2 * w, 0.12], [0.24 * w, -0.12], [0.55 * w, -0.14], [0.58 * w, -0.3], [-0.24 * w, -0.3]], r.pants ? PAL.black : r.gear, z + 0.07, 'an_' + s);
     rig.anchors['foot_' + s] = W_(an, [[0.15 * w, -0.3]])[0];
   };
-  arm('f', 0); leg('f', 0.12); leg('n', 0.24);
+  const lz = pl.lz || {};
+  arm('f', 0 + (lz.arm_f || 0)); leg('f', 0.12 + (lz.leg_f || 0)); leg('n', 0.24 + (lz.leg_n || 0));
   cut(root, [[-0.62 * w, 0.06], [0.62 * w, 0.06], [0.66 * w, -0.5], [0.1 * w, -0.62], [-0.1 * w, -0.62], [-0.66 * w, -0.5]], r.pants || r.gear, 0.36, 'body');
   const b = r.belly, bw = w;
   cut(to, [[-0.58 * bw - b, 0], [0.58 * bw + b, 0], [0.68 * bw + b * 0.8, 0.55], [0.86 * bw, 1.45 * h], [0.74 * bw, 1.86 * h], [0.28, 1.98 * h], [-0.28, 1.98 * h], [-0.74 * bw, 1.86 * h], [-0.86 * bw, 1.45 * h], [-0.68 * bw - b * 0.8, 0.55]], r.shirt || sk, 0.42, 'torso');
@@ -172,7 +173,8 @@ export function puppet(r: Recipe, pl: Place, pose: Record<string, number>, expr:
   head(nk, r, 0.56, expr, cut, mk);
   if ((mk.blood || 0) >= 3) for (const [x0, len] of [[-0.3, 0.9], [0.1, 0.6], [0.45, 1.1]] as [number, number][]) cut(to, strip([x0 * w, 1.9 * h], [x0 * w + 0.04, 1.9 * h - len], 0.1, 0.03), BLOOD, 0.5, 'torso', 0.01, 0.01);   // blood run down the chest
   rig.anchors.head = W_(nk, [[0, 1.0]])[0];
-  arm('n', 0.95);
+  rig.anchors.shoulders = W_(to, [[0, 1.85 * h]])[0];
+  arm('n', 0.95 + (lz.arm_n || 0));
   for (const [f, z] of pins) { const c = W_(f, [[0, 0]])[0]; out.push({ pts: ell(c[0], c[1], 0.07, 0.07, 10), col: '#d9a338', z: pl.z + z + 0.04, lift: 0.02, own }); }
   const hn = rig.anchors.hand_n, hf = rig.anchors.hand_f; rig.anchors.hands = [(hn[0] + hf[0]) / 2, (hn[1] + hf[1]) / 2];
   const k = pl.s && Math.abs(pl.s - 1) > 0.001 ? Math.max(0.5, Math.min(1.6, pl.s)) : 1;

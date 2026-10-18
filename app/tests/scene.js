@@ -3,7 +3,7 @@
    pointer, the pins and the controls, turning and dragging change the pose, keyframes add and play, a scene saves in the world, a
    file that is not a scene is refused, and the page fits one screen. The broadcast: with Scenes on, a match shows
    a scene at the bell, the count at a near fall and the three at the finish; Scenes off takes it away.
-   Run: NODE_PATH=<dir containing playwright> node app/tests/scene.js   (MODES=desk,tablet,tv; SHOTS=<dir> keeps pictures) */
+   Run: NODE_PATH=<dir containing playwright> node app/tests/scene.js   (SHOTS=<dir> keeps pictures) */
 const { open, go, state, fits, shot } = require('./helper');
 const MODES = (process.env.MODES || 'desk').split(',');
 const fails = [];
@@ -108,6 +108,30 @@ async function studio(mode) {
     await page.click('[data-t="scene-sendaway"][data-v="C3"]');
     ok(mode, 'and sent away again', await has(page, '[data-t="scene-bringin"][data-v="C3"]'));
     if (process.env.SHOTS) await shot(page, 'scene-' + mode + '-desk');
+    // holding: the slam lifts B in A's hands; put B down and pick B up again, and bring an arm in front
+    await page.click('[data-t="scene-tab"][data-v="file"]');
+    await page.selectOption('[data-t="scene-open"]', 'slam'); await page.waitForTimeout(200);
+    await page.click('[data-t="scene-tab"][data-v="pose"]');
+    await (await page.$$('[data-t="scene-key"]'))[1].click();
+    await page.selectOption('[data-t="scene-who"]', 'B');
+    ok(mode, 'in the slam B is held in A\'s hands', (await page.$eval('[data-t="scene-heldby"]', e => e.value)) === 'A:hands');
+    const figOf = async () => { await page.click('[data-t="scene-tab"][data-v="face"]'); const f = JSON.parse(await attr(page, '[data-t="scene-fig"]', 'data-v')); await page.click('[data-t="scene-tab"][data-v="pose"]'); return f; };
+    const held = await figOf();
+    await page.selectOption('[data-t="scene-heldby"]', '');
+    const down = await figOf();
+    ok(mode, 'put down, B stays where they were, on their own', !down.on && down.y > held.y + 2, JSON.stringify({ was: held.y, now: down.y }));
+    await page.selectOption('[data-t="scene-heldby"]', 'A:shoulders');
+    const up = await figOf();
+    ok(mode, 'and can be picked up again, by the shoulders', up.on === 'A:shoulders', up.on);
+    await page.selectOption('[data-t="scene-who"]', 'A'); await page.click('[data-t="scene-pin"][data-v="el_n"]');
+    await page.click('[data-t="scene-limb"][data-v="3"]');
+    const arm = await figOf();
+    ok(mode, 'an arm can be brought in front of everyone', arm.lz && arm.lz.arm_n === 3, JSON.stringify(arm.lz));
+    // hooks: a slot is a part in the story
+    await page.click('[data-t="scene-tab"][data-v="cast"]');
+    await page.selectOption('[data-t="scene-hook"][data-v="B"]', 'villain');
+    ok(mode, 'a slot can be given a part in the story', /The villain/.test(await page.$eval('[data-t="scene-side"]', e => e.textContent)));
+    ok(mode, 'the studio fits one screen with the holds and the parts', !(await fits(page)), await fits(page));
     await page.click('[data-t="scene-tab"][data-v="file"]');
     await page.click('[data-t="scene-done"]');
     ok(mode, 'Done comes back to the Scenes tab, with the scene in the world', /Test scene/.test(await page.$eval('.edpage', e => e.textContent)));

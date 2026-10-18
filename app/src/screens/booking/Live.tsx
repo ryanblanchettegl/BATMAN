@@ -198,20 +198,38 @@ const DOT = ' · ';
     the bell and the first exchanges get the lock-up, the middle a trade of blows, a near fall the count and the
     kick-out (the one named first in the line is the one covering), the deciding fall the three count, a new
     champion the belt held high, and a promo the one holding the microphone. */
+/** Who plays each part of a scene: a slot with a hook gets whoever the game says fills it (E.sceneHooks); a slot
+    with none gets A or B by its role. A slot nobody can fill is left out of the picture. */
+function fillScene(sc: Scene, hk: Record<string, number>, cast: Record<string, Recipe>): Scene | null {
+  const S = G.S, keep = sc.slots.filter(sl => {
+    if (cast[sl.id] || sl.role === 'ref' || sl.dress === 'suit') return true;
+    const id = hk[sl.hook || sl.role]; if (id == null || !S.w[id]) return false;
+    cast[sl.id] = recipeOf(S.w[id]); return true;
+  });
+  if (keep.filter(sl => sl.role !== 'ref').length < Math.min(2, sc.slots.filter(sl => sl.role !== 'ref').length)) return null;
+  return keep.length === sc.slots.length ? sc : { ...sc, slots: keep };
+}
 function scenePick(r: any, s: any, at: number, done: boolean): { sc: Scene; cast: Record<string, Recipe>; play: string; label: string } | null {
   const S = G.S; if (!S || !s) return null;
   const bc: Beat[] = s.bc || [], i = r.segs.indexOf(s), now = Math.min(at, bc.length - 1), cast: Record<string, Recipe> = {};
   const world = E.worldScenes(S) as Scene[], choose = (when: string, salt: number) => { const l = scenesFor(when, world); return l.length ? l[Math.abs((r.week || 0) * 31 + i * 7 + salt) % l.length] : null; };
+  const nm = (rc?: Recipe) => rc ? rc.name : '';
   if (s.k !== 'match') {
+    // an attack: the first named does it to the second, and the villain's people come with them
+    const txt = String(s.text || ''), named = S.w.filter((w: any) => w && w.promo === S.player && txt.indexOf(w.name) >= 0).sort((x: any, y: any) => txt.indexOf(x.name) - txt.indexOf(y.name)).map((w: any) => w.id as number);
+    if (/ambush|brawl|attack|beat|jump/i.test((s.head || '') + ' ' + txt.slice(0, 80)) && named.length >= 2) {
+      const sc0 = choose('attack', 0), hk = E.sceneHooks(S, { ids: named, a: named[0], b: named[1] }), sc = sc0 && fillScene(sc0, hk, cast);
+      if (sc) return { sc, cast, play: 'a' + i, label: sc.name + ': ' + Object.values(cast).map(nm).join(', ') };
+    }
     let who = ''; for (let j = now; j >= 0 && !who; j--) if (bc[j] && bc[j].t === 'mic' && bc[j].w) who = bc[j].w || '';
     const w = who && S.w.find((x: any) => x && x.name === who); if (!w) return null;
-    const sc = choose('promo', 0); if (!sc) return null;
-    cast.A = recipeOf(w); return { sc, cast, play: 'p' + i + ':' + who, label: who + ' on the microphone' };
+    const sc0 = choose('promo', 0); if (!sc0) return null;
+    const sc = fillScene(sc0, E.sceneHooks(S, { ids: [w.id].concat(named.filter((x: number) => x !== w.id)), a: w.id }), cast); if (!sc) return null;
+    return { sc, cast, play: 'p' + i + ':' + who, label: who + ' on the microphone' };
   }
   const ids: number[] = s.ids || [], ns = (s.sidesN || []).length; if (!ns || !ids.length) return null;
   const per = Math.max(1, Math.floor(ids.length / ns)), sideOf = (id: number) => Math.floor(ids.indexOf(id) / per);
   const first = (txt: string) => { let best = -1, pos = 1e9; ids.forEach(id => { const w = S.w[id], k = w ? txt.indexOf(w.name) : -1; if (k >= 0 && k < pos) { pos = k; best = id; } }); return best; };
-  const put = (a: number) => { const sa = sideOf(a), b = ids.find(id => sideOf(id) !== sa); if (S.w[a]) cast.A = recipeOf(S.w[a]); if (b != null && S.w[b]) cast.B = recipeOf(S.w[b]); };
   const winSide = s.win ? (s.sidesN as string[]).indexOf(s.win) : -1, winner = winSide >= 0 ? ids[winSide * per] : -1;
   let lastH = -1; bc.forEach((b, j) => { if (b.h) lastH = j; });
   let when = 'mid', key = 'm', a = ids[0];
@@ -231,10 +249,10 @@ function scenePick(r: any, s: any, at: number, done: boolean): { sc: Scene; cast
     else if (bc.slice(0, now + 1).filter(b => b.t === 'pbp' || b.t === 'col').length <= 2) { when = 'start'; key = 's'; }   // the bell: the first two lines of the call after the introductions
     else { key = 'm' + Math.floor(now / 4); const f = first((bc[now] || { x: '' }).x); if (f >= 0) a = f; }
   }
-  const sc = choose(when, key.length); if (!sc) return null;
-  put(a);
-  const nm = (rc?: Recipe) => rc ? rc.name : '';
-  return { sc, cast, play: i + ':' + key, label: sc.name + ': ' + nm(cast.A) + (cast.B ? ' and ' + nm(cast.B) : '') };
+  const sc0 = choose(when, key.length); if (!sc0) return null;
+  const b = ids.find(id => sideOf(id) !== sideOf(a)), wins = winSide >= 0 ? ids.filter(id => sideOf(id) === winSide) : [];
+  const sc = fillScene(sc0, E.sceneHooks(S, { ids, a, b, win: wins, title: s.title || null }), cast); if (!sc) return null;
+  return { sc, cast, play: i + ':' + key, label: sc.name + ': ' + Object.values(cast).map(nm).join(' and ') };
 }
 function picsToggle() { pref.pics = !pref.pics; savePrefs(); redraw(); }
 
