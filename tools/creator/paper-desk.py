@@ -108,7 +108,7 @@ def text(s, x, y, size, col=C['ink'], z=0.0, align='LEFT', glow=0.0):
     cu.materials.append(card(col, glow)[0])
 
 # ---------------------------------------------------------------- the parts of the look
-def window(x, y, w, h, title, info=None, z=6.0):
+def window(x, y, w, h, title, info=None, z=3.0):
     """A window as on a mid 90s Macintosh, cut from card: a black outline, a pinstriped grey title bar with a
     close box and a zoom box, the title on a patch in the middle, and the info strip under it (left and right)."""
     cut(rrect(x - 3, y - 3, w + 6, h + 6, 2), C['black'], z, 0.3, 0.12)
@@ -133,25 +133,25 @@ def window(x, y, w, h, title, info=None, z=6.0):
 
 def group(x, y, w, h, head, z):
     """A group box: a darker card with a tab that carries the heading in red."""
-    z += 0.7   # glued on a little foam, so it throws a shadow onto the window
+    z += 0.3   # glued on a little foam, so it throws a shadow onto the window
     cut(rrect(x, y, w, h, 5), C['cream2'], z, 0.12, 0.2)
     tw = len(head) * 13 + 22
-    cut(rrect(x + 12, y - 16, tw, 30, 4), C['cream'], z + 0.5, 0.12, 0.15)
-    text(head, x + 12 + tw / 2, y - 1, 28, C['red'], z + 0.62, 'CENTER')
+    cut(rrect(x + 12, y - 16, tw, 30, 4), C['cream'], z + 0.2, 0.12, 0.15)
+    text(head, x + 12 + tw / 2, y - 1, 28, C['red'], z + 0.32, 'CENTER')
     return z + 0.12
 
 def button(x, y, w, h, label, kind='go', z=3.0, size=28):
     """A button built up from card: a dark base, a coloured face raised on it, and the label on top."""
     face = dict(go=C['green'], navy=C['navy'], danger=C['red'], less=C['steel'], gold=C['gold'])[kind]
     base = tuple(c * 0.45 for c in face); ink = C['ink'] if kind == 'gold' else C['white']
-    z += 0.9   # stacked high, so a button stands well off the window
+    z += 0.3   # stacked up, so a button stands off the window
     cut(rrect(x, y + 4, w, h, h * 0.3), C['black'], z, 0.45, 0.15)
     cut(rrect(x, y, w, h, h * 0.3), base, z + 0.45, 0.45, 0.12)
     cut(rrect(x + 2, y + 1, w - 6, h - 6, h * 0.28), face, z + 0.9, 0.4, 0.1)
     text(label, x + w / 2 - 1, y + h / 2 - 2, size, ink, z + 1.3, 'CENTER')
 
 def tag(x, y, label, col, ink=C['white'], z=3.0):
-    w = len(label) * 13 + 20; cut(rrect(x, y, w, 30, 3), col, z + 0.4, 0.15, 0.15); text(label, x + w / 2, y + 15, 26, ink, z + 0.55, 'CENTER'); return w
+    w = len(label) * 13 + 20; cut(rrect(x, y, w, 30, 3), col, z + 0.15, 0.15, 0.15); text(label, x + w / 2, y + 15, 26, ink, z + 0.3, 'CENTER'); return w
 
 def meter(x, y, w, h, parts, z):
     cut(rrect(x, y, w, h, 2), (0.2, 0.2, 0.24), z, 0.1, 0.12); cx = x + 3
@@ -282,9 +282,9 @@ def render():
     sc.render.resolution_x, sc.render.resolution_y = W, H
     sc.view_settings.view_transform = 'Standard'; sc.view_settings.look = 'Medium High Contrast'; sc.view_settings.exposure = 0.0
     w = bpy.data.worlds.new('w'); sc.world = w
-    w.node_tree.nodes['Background'].inputs['Color'].default_value = (0.55, 0.55, 0.58, 1); w.node_tree.nodes['Background'].inputs['Strength'].default_value = 0.2
-    sun = bpy.data.lights.new('sun', 'SUN'); sun.energy = 3.9; sun.angle = math.radians(7)
-    so = bpy.data.objects.new('sun', sun); bpy.context.collection.objects.link(so); so.rotation_euler = Euler((math.radians(-34), math.radians(-30), 0))
+    w.node_tree.nodes['Background'].inputs['Color'].default_value = (0.55, 0.55, 0.58, 1); w.node_tree.nodes['Background'].inputs['Strength'].default_value = 0.28
+    sun = bpy.data.lights.new('sun', 'SUN'); sun.energy = 3.6; sun.angle = math.radians(2)
+    so = bpy.data.objects.new('sun', sun); bpy.context.collection.objects.link(so); so.rotation_euler = Euler((math.radians(-24), math.radians(-22), 0))
     zoom = float(os.environ.get('ZOOM', 1)); cam = bpy.data.cameras.new('cam'); cam.type = 'ORTHO'; cam.ortho_scale = W / 10.0 / zoom
     co = bpy.data.objects.new('cam', cam); bpy.context.collection.objects.link(co); sc.camera = co; co.location = (*P(float(os.environ.get('CX', W / 2)), float(os.environ.get('CY', H / 2))), 60)
     desk()
