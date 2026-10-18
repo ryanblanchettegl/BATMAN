@@ -21,7 +21,7 @@ E.sign=function(S,id,wage,weeks){
   var from=w.promo;if(from!=='FA'){S.promos[from].rel=clamp((S.promos[from].rel||0)-12,-100,100);leaveCompany(S,w,'left for '+P.name);}
   joinCompany(S,w,P,wage,weeks||48);
   news(S,'contract',P.name+' signed '+w.name+(from!=='FA'?' away from '+S.promos[from].name:'')+'.');
-  award(S,from==='FA'?'ACH_SIGN':'ACH_POACH');
+  award(S,from==='FA'?'ACH_SIGN':'ACH_POACH');if(w.cr)award(S,'ACH_CREATE');   // a wrestler made in Create a Player
   return {ok:true,msg:w.name+' signs for '+money(wage)+' a week.'};
 };
 E.release=function(S,id){var w=S.w[id],P=S.promos[S.player];if(!w||w.promo!==P.id)return null;var pay=w.wage*4;P.cash-=pay;if(S.owner.pledge==='stable'){rosterOf(S,P.id).forEach(function(x){x.morale=clamp(x.morale-3,0,100);});S.trust=clamp(S.trust-4,0,100);}leaveCompany(S,w,'released');w.promo='FA';w.brand=null;news(S,'contract',P.name+' released '+w.name+'.');return w.name+' is released. Severance: '+money(pay)+'.';};

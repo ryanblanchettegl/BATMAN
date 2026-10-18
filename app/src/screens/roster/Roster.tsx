@@ -1,7 +1,7 @@
 /* The Roster page as a desktop of windows: the list on the left, the picked file on the right, four sums along
    the bottom, and the full profile one press away. */
 import { E, W } from '../../engine';
-import { G, me, cash, view } from '../../store';
+import { G, me, cash, view, openModal } from '../../store';
 import { useLayoutEffect } from 'preact/hooks';
 import { Head, Sel, TextBox, Tag, Side, Opt, Meter, Btn, Portrait, champOf, brandName, dataAttrs } from '../../kit';
 import { Desktop, Win, Group, Line } from '../../kit';
@@ -92,7 +92,8 @@ function File(p: { w: W | null; spot: string }) {
       <Line label="Pay">{cash(w.wage)} a week</Line>
       <Line label="Contract"><span class={w.con <= 4 ? 'bad' : undefined}>{Math.max(0, w.con)} weeks left</span></Line>
     </Group>
-    <div class="row mt1"><Btn kind="go" t="roster-full" d={{ id: w.id }} onClick={() => view(() => { const st = rs(); st.peek = w.id; st.sel = w.id; })}>Full profile</Btn></div>
+    <div class="row mt1"><Btn kind="go" t="roster-full" d={{ id: w.id }} onClick={() => view(() => { const st = rs(); st.peek = w.id; st.sel = w.id; })}>Full profile</Btn>
+      <Btn t="roster-caw" d={{ id: w.id }} onClick={() => openModal({ kind: 'player', id: w.id })}>Edit wrestler</Btn></div>
   </Win>;
 }
 

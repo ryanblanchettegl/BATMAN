@@ -91,3 +91,16 @@ FINX.push(function(ctx,fin,W,L,win){
 WEEKX.push(function(S){if(S.week%4!==0)return;S.w.forEach(function(w){if(w&&w.fko)w.fko--;});});
 /** A wrestler's finisher as the screens show it: the move, and how much of its protection it still has. */
 E.finInfo=function(S,id){var w=S.w[id],f=lookFin(w);return f?{name:f.name,kick:f.kickout_difficulty||'Medium',kicked:w.fko||0,prot:Math.round(finProt(w)*100)}:null;};
+
+/* ---------- Create a Player in a game: a new look for somebody on your roster ---------- */
+/** Give a wrestler on your roster a new look (or their first). Their first finishing move becomes their finisher.
+    They remember it, once a week at most. */
+E.setLook=function(S,id,look){
+  var w=S.w[id];if(!w||w.promo!==S.player)return {ok:false,msg:'Only somebody on your roster can be changed.'};
+  var c=lookClean(look);if(!c||!E.lookOk(c))return {ok:false,msg:'That is not a wrestler\'s look.'};
+  var first=!w.look;w.look=c;var f=lookFin(w);if(f)w.fin=f.name;
+  if(w.lookW!==S.week){w.lookW=S.week;youRemember(S,w,'look',first?'You gave them a look of their own.':'You gave them a new look.',1);}
+  return {ok:true,msg:w.name+(first?' has a look of their own now.':' has a new look.')+' Every scene draws them like this.'};
+};
+/** Take the look off a wrestler on your roster: the game draws them again. */
+E.clearLook=function(S,id){var w=S.w[id];if(!w||w.promo!==S.player||!w.look)return {ok:false,msg:'Nothing to take off.'};delete w.look;return {ok:true,msg:w.name+' is drawn by the game again.'};};

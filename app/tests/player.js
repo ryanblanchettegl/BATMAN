@@ -17,7 +17,7 @@ const msg = page => txt(page, '[data-t="caw-msg"]');
   try {
     await page.click('[data-t="scr"][data-v="editor"]'); await page.click('[data-t="ed-new-copy"]'); await page.click('[data-t="ed-tab"][data-v="wrestlers"]');
     await (await page.$$('[data-t="ed-pick"]'))[2].click(); await page.waitForTimeout(200);
-    ok('a wrestler\'s page has a Create a Player button', await has(page, '[data-t="ed-caw"]'));
+    ok('a wrestler\'s page has an Edit wrestler button', await has(page, '[data-t="ed-caw"]'));
     await page.click('[data-t="ed-caw"]'); await page.waitForTimeout(1500);
     ok('Create a Player opens full screen', await has(page, '[data-t="caw"]'));
     ok('the wrestler is drawn in 3D', (await attr(page, '[data-t="caw-view"]', 'data-3d')) === '1');
@@ -76,7 +76,7 @@ const msg = page => txt(page, '[data-t="caw-msg"]');
     ok('a wrestler file opens', /Opened From File/.test(await msg(page)) && /Opened From File/.test(await txt(page, '[data-t="caw-win"]')));
     if (process.env.SHOTS) await shot(page, 'player-file');
     await page.click('[data-t="caw-done"]'); await page.waitForTimeout(300);
-    ok('Done goes back to the wrestler, who now has a file', /change their file/.test(await txt(page, '[data-t="ed-caw"]')));
+    ok('Done goes back to the wrestler, drawn from their own record', /their own record/.test(await txt(page, '.edface, .panel')) || /their own record/.test(await page.$eval('body', e => e.innerText)));
     ok('no errors', !errs.length, errs.join(' | '));
   } catch (e) { ok('the run finished', false, e.message); }
   await browser.close();

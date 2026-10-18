@@ -5,8 +5,8 @@ import { Roster } from './Roster';
 import { Locker } from './Locker';
 import { Titles } from './Titles';
 import { Market } from './Market';
-import { Creator } from './Creator';
+import { PlayerModal } from '../player/modal';
 import { ScoutWindow } from './Profile';
 
 export const pages: Record<string, () => ComponentChildren> = { roster: Roster, locker: Locker, titles: Titles, market: Market };
-export const modals: Record<string, (p: { m: Modal }) => ComponentChildren> = { scout: ScoutWindow, caw: Creator };
+export const modals: Record<string, (p: { m: Modal }) => ComponentChildren> = { scout: ScoutWindow, player: PlayerModal };

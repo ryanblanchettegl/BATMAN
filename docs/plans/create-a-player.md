@@ -81,7 +81,13 @@ a wrestler with no file is drawn as before.
    it hits and where it comes from, and the call says where it came from (the top rope, off the ropes, on the counter);
    a submission ends on a tap-out. The move's name is the wrestler's finisher everywhere the game names it.
    `E.finInfo(S, id)` is the move and how much protection it has left. Picked by a hash of the match, never rnd(S).
-2. **Create a Player in a game**, for the player's own signings and for the wrestlers they already have (today it
-   opens from the World Editor), and Create a Scene's link from it when picking scenes.
+2. **Create a Player in a game.** *Built 18 October* (Ryan's calls that day). On the Roster page every wrestler's file
+   has **Edit wrestler**: it opens that wrestler's record in the suite (one built from what the game knows if they
+   have never been edited), and Save keeps it through `E.setLook` (they remember it). **Create a wrestler** on Free
+   agents opens Create a Player on a new wrestler: who they are (name, division, side, style, background, strongest
+   suit, gimmick, and what that makes them), then the body, gear and finishers, then Create. A new wrestler always
+   goes to **free agency** (`E.createWrestler`) and is signed from Free agents like anybody else; only the World
+   Editor puts somebody straight into a company. The old Windows 95 Create a wrestler window is gone. Still to come:
+   Create a Scene's link from it when picking scenes.
 3. **More parts**, then the parts made in Blender with sockets (`papercraft-engine.md`, section 1).
 4. **A file per wrestler on disk** on the desktop build (`/save/wrestlers/`), and the Steam Workshop.

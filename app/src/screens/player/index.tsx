@@ -6,6 +6,7 @@
    screen only edits its own copy until Save (rule 1: the engine checks and keeps it). */
 import { useRef, useState } from 'preact/hooks';
 import { E } from '../../engine';
+import { G, act, full, say as note } from '../../store';
 import { Btn, TextBox, Desktop, Win, Group, Tabs } from '../../kit';
 import { ScenePlayer } from '../../kit/sceneplayer';
 import { Scene, SCENES, POSES, WAIST, copy } from '../../kit/scene';
@@ -13,7 +14,7 @@ import { Recipe, recipeOf, blank } from '../../kit/puppet';
 import { Look, Attire, AttireKey, Layer, Finisher, ATTIRES, PARTS, SWATCHES, SLOTS, FONTS, SHAPES, ARCHETYPES, FACIAL, KICKOUT, POSITIONS, CATEGORIES, FIN_SCENES, fromLook, blankLook, finScene, swatch } from '../../kit/caw';
 import { derive, NAMES, FaceKey } from '../../lib/portrait';
 
-type Tab = 'body' | 'head' | 'gear' | 'colour' | 'studio' | 'fin' | 'file';
+type Tab = 'sign' | 'body' | 'head' | 'gear' | 'colour' | 'studio' | 'fin' | 'file';
 const SET_OF: Record<AttireKey, string> = { primary_ring: 'ring', entrance_gear: 'ramp', street_clothes: 'hall' };
 const CAM_OF: Record<AttireKey, { x: number; y: number; z: number }> = { primary_ring: { x: 0, y: 0.15, z: 1.4 }, entrance_gear: { x: 0, y: -0.3, z: 1.1 }, street_clothes: { x: 0, y: -0.5, z: 0.88 } };
 const STY: Record<string, string> = { brawler: 'B', technician: 'T', high_flyer: 'H', powerhouse: 'P', showman: 'S', all_rounder: 'A', hardcore: 'B', submission: 'T' };
@@ -28,16 +29,25 @@ export function workerW(w: any) {
     face: w.face, age: w.age || 28, gim: (w.gimmick_category || '') + ' ' + (w.gimmick || ''), uid: w.id, town: w.hometown, height: w.height, weight: w.weight };
 }
 
-export interface PlayerProps { world: string; worker: any; onSave: (look: Look) => boolean; onForget: () => void; onDone: () => void }
+/** What the suite is open on: a wrestler (from a world package through workerW, or from the game), the file they
+    wear if any, and what Save and Take the file off do. With `sign`, it makes a new wrestler and signs them. */
+export interface PlayerProps { world: string; w: any; had: Look | null; onSave: (look: Look) => { ok: boolean; msg: string }; onForget?: () => { ok: boolean; msg: string }; onDone: () => void; sign?: boolean }   // sign: a new wrestler, made in a game, who goes to free agency
+/** The choices for a new signing, as the old Create a wrestler window had them (E.createWrestler). */
+interface Draft { g: string; style: string; bg: string; emph: string; align: string; gim: string }
 
 export function CreatePlayer(pp: PlayerProps) {
-  const w0 = workerW(pp.worker), base = recipeOf({ ...w0, look: null });
+  const [d, setD] = useState<Draft>({ g: 'M', style: 'A', bg: 'indie', emph: 'ring', align: 'F', gim: '' });
+  const [seed] = useState(() => 'cw' + Date.now());
+  const startW = pp.sign ? { id: -1, name: '', g: 'M', align: 'F', style: 'A', face: derive(seed, 'M', 25), age: 25 } : pp.w;
   const [lk, setLk] = useState<Look>(() => {
-    const had = pp.worker.look ? E.lookClean(pp.worker.look) : null;
+    const had = pp.had ? E.lookClean(pp.had) : null;
     if (had) return had;
-    const n = blankLook(w0, base); n.appearance = { face: { ...derive(w0.name, w0.g, w0.age), ...(w0.face || {}) } }; return n;
+    const n = blankLook(startW, recipeOf({ ...startW, look: null })); n.appearance = { face: { ...derive(startW.name || seed, startW.g, startW.age || 25), ...(startW.face || {}) } };
+    if (pp.sign) { n.name = ''; n.id = undefined; }
+    return n;
   });
-  const [att, setAtt] = useState<AttireKey>('primary_ring'), [tab, setTab] = useState<Tab>('body'), [pose, setPose] = useState('stand');
+  const w0 = pp.sign ? { ...startW, name: lk.name || 'New wrestler', g: d.g, align: d.align, style: d.style } : pp.w, base = recipeOf({ ...w0, look: null });
+  const [att, setAtt] = useState<AttireKey>('primary_ring'), [tab, setTab] = useState<Tab>(pp.sign ? 'sign' : 'body'), [pose, setPose] = useState('stand');
   const [lay, setLay] = useState(-1), [fi, setFi] = useState(-1), [acting, setActing] = useState(false), [msg, setMsg] = useState<{ t: string; err?: boolean } | null>(null);
   const [text, setText] = useState('CHAMP'), [font, setFont] = useState('block'), [shp, setShp] = useState('star'), file = useRef<HTMLInputElement>(null);
   const say = (t: string, err = false) => setMsg({ t, err });
@@ -60,7 +70,16 @@ export function CreatePlayer(pp: PlayerProps) {
     play = att + pose + JSON.stringify(lk);
   }
 
-  const save = () => { const ok = pp.onSave(lk); say(ok ? (lk.name || w0.name) + ' is kept in ' + pp.world + '. Every scene in the game now draws them like this.' : 'That could not be kept.', !ok); };
+  const save = () => { if (pp.sign) { setTab('sign'); say('Press Create on Who they are to make them.'); return; } const r0 = pp.onSave(lk); say(r0.msg, !r0.ok); };
+  // a new wrestler: who they are, what that makes them, and Create (they go to free agency)
+  const info = pp.sign ? E.createInfo(G.S) : null, pv = pp.sign ? E.createPreview(G.S, { ...d, name: lk.name || '' }) : null;
+  const setDraft = (k: keyof Draft, v: string) => { setD({ ...d, [k]: v }); setMsg(null);
+    if (k === 'g') change(n => { const a = (n.attires || {}).primary_ring; if (a) { if (v === 'F' && a.equipped_assets.upper_body === 'bare') a.equipped_assets.upper_body = 'top_sports'; if (v === 'M' && a.equipped_assets.upper_body === 'top_sports') a.equipped_assets.upper_body = 'bare'; } }); };
+  const signIt = () => {
+    let r0: any = null; const fm = (lk.finishing_moves || [])[0];
+    act(() => { r0 = E.createWrestler(G.S, { ...d, name: lk.name || '', fin: fm ? fm.name : '', face: (lk.appearance || {}).face, look: lk }); });
+    if (r0 && r0.ok) { pp.onDone(); note(r0.msg); } else say(r0 ? r0.msg : 'That did not work.', true);
+  };
   const writeOut = () => {
     const b = new Blob([JSON.stringify(lk, null, 2)], { type: 'application/json' }), a = document.createElement('a');
     a.href = URL.createObjectURL(b); a.download = ((lk.name || w0.name).replace(/[^a-z0-9]+/gi, '-').toLowerCase() || 'wrestler') + '.wrestler.json'; document.body.appendChild(a); a.click(); a.remove();
@@ -74,10 +93,10 @@ export function CreatePlayer(pp: PlayerProps) {
   const setFin = (fn: (f: Finisher) => void) => change(n => { const F = n.finishing_moves || []; if (F[fi]) fn(F[fi]); n.finishing_moves = F; });
   const chip = (id?: string) => { const s = swatch(id, { c: '#888' }); return <span class={'caw-chip' + (s.f && s.f !== 'matte' ? ' ' + s.f : '')} style={{ background: s.c }} aria-hidden="true" />; };
 
-  const titles: Record<Tab, string> = { body: 'The body', head: 'The head', gear: 'Gear: ' + ATTIRES.find(a => a[0] === att)![1], colour: 'Colours: ' + ATTIRES.find(a => a[0] === att)![1], studio: 'Gear studio: lettering and shapes', fin: 'Finishing moves', file: 'The file' };
+  const titles: Record<Tab, string> = { sign: 'A new wrestler', body: 'The body', head: 'The head', gear: 'Gear: ' + ATTIRES.find(a => a[0] === att)![1], colour: 'Colours: ' + ATTIRES.find(a => a[0] === att)![1], studio: 'Gear studio: lettering and shapes', fin: 'Finishing moves', file: 'The file' };
   return <div class="scfull paper" data-t="caw">
-    <div class="sc-menubar" role="group" aria-label="Create a Player">
-      <span class="sc-belt" aria-hidden="true" /><b class="on">Create a Player</b><span>{pp.world}</span><span class="sp" />
+    <div class="sc-menubar" role="group" aria-label={pp.sign ? 'Create a Player' : 'Edit wrestler'}>
+      <span class="sc-belt" aria-hidden="true" /><b class="on">{pp.sign ? 'Create a Player' : 'Edit wrestler'}</b><span>{pp.world}</span><span class="sp" />
       <span class={'sc-hint' + (msg ? (msg.err ? ' bad' : ' good') : '')} role="status" data-t="caw-msg">{msg ? msg.t : 'Change anything on the right; the wrestler on the left changes with it'}</span>
       <Btn kind="go" t="caw-save" onClick={save}>Save</Btn>
       <Btn kind="sm" t="caw-done" onClick={pp.onDone}>Done</Btn>
@@ -96,8 +115,21 @@ export function CreatePlayer(pp: PlayerProps) {
         </div>
       </Win>
       <Win title={titles[tab]} right={tab === 'gear' || tab === 'colour' || tab === 'studio' ? ATTIRES.find(a => a[0] === att)![1] : ''} area="side" t="caw-side">
-        <Tabs label="What to change" value={tab} onPick={v => setTab(v as Tab)} items={[{ id: 'body', label: 'Body', t: 'caw-tab' }, { id: 'head', label: 'Head', t: 'caw-tab' }, { id: 'gear', label: 'Gear', t: 'caw-tab' },
+        <Tabs label="What to change" value={tab} onPick={v => setTab(v as Tab)} items={[...(pp.sign ? [{ id: 'sign', label: 'Who they are', t: 'caw-tab' }] : []), { id: 'body', label: 'Body', t: 'caw-tab' }, { id: 'head', label: 'Head', t: 'caw-tab' }, { id: 'gear', label: 'Gear', t: 'caw-tab' },
           { id: 'colour', label: 'Colours', t: 'caw-tab' }, { id: 'studio', label: 'Lettering', t: 'caw-tab' }, { id: 'fin', label: 'Finishers', t: 'caw-tab' }, { id: 'file', label: 'File', t: 'caw-tab' }]} />
+        {tab === 'sign' && info && pv && <>
+          <div class="sc-row"><span class="sc-slot">Ring name</span><TextBox value={lk.name || ''} max={28} label="Ring name" t="caw-name" width="18ch" onInput={v => change(n => { n.name = v; })} /></div>
+          {([['g', 'Division', [['M', 'Men'], ['F', 'Women']]], ['align', 'Side', [['F', 'Face'], ['H', 'Heel']]], ['style', 'Style', Object.keys(E.STYLE_NAME).map(k => [k, E.STYLE_NAME[k]])],
+            ['bg', 'Background', Object.keys(info.bgs).map(k => [k, info.bgs[k].n])], ['emph', 'Strongest suit', Object.keys(info.emph).map(k => [k, info.emph[k]])],
+            ['gim', 'Gimmick', [['', 'Whatever suits them']].concat(E.GIMS.map((g: any) => [g.id, g.n]))]] as [keyof Draft, string, string[][]][]).map(([k, n, opts]) =>
+            <div class="sc-row"><span class="sc-slot">{n}</span><select aria-label={n} data-t="caw-draft" data-v={k} value={d[k]} onChange={e => setDraft(k, (e.currentTarget as HTMLSelectElement).value)}>{opts.map(o => <option value={o[0]}>{o[1]}</option>)}</select></div>)}
+          <p class="muted">{(info.bgs[d.bg] || info.bgs.indie).d}</p>
+          <Group title="What you get">
+            <p>Overness <b>{pv.ovr}</b>{' · '}Work rate about <b>{pv.work}</b>{' · '}Charisma <b>{pv.mic}</b>{' · '}Potential <b>{pv.pot}</b></p>
+            <p data-t="caw-cost">They will ask for about {full(pv.wage)} a week.</p>
+          </Group>
+          <div class="sc-row"><Btn kind="go" t="caw-create" onClick={signIt}>Create</Btn><span class="muted">They join the free agents, with their look, outfits and finisher. Sign them from Free agents like anybody else.</span></div>
+        </>}
         {tab === 'body' && <>
           <Group title="Body type">
             <div class="sc-row">{ARCHETYPES.map(a => <Btn kind="less" t="caw-arch" d={{ v: a[0] }} on={pa.body_archetype === a[0]} onClick={() => change(n => { n.archetype = a[0]; n.physical_attributes = { height_inches: a[2].h, weight_lbs: a[2].w, body_archetype: a[0], proportional_scalers: { torso_width: a[2].s[0], torso_height: a[2].s[1], limb_length: a[2].s[2], muscle_mass: a[2].s[3] } }; })}>{a[1]}</Btn>)}</div>
@@ -198,10 +230,10 @@ export function CreatePlayer(pp: PlayerProps) {
             <div class="sc-row"><span class="sc-slot">Home town</span><TextBox value={lk.hometown || ''} max={40} label="Home town" t="caw-town" width="18ch" onInput={v => change(n => { n.hometown = v; })} /></div>
           </Group>
           <Group title="Files">
-            <div class="sc-row"><Btn t="caw-save2" onClick={save}>Save in this world</Btn><Btn kind="sm" t="caw-export" onClick={writeOut}>Write a file</Btn><Btn kind="sm" t="caw-import" onClick={() => file.current && file.current.click()}>Open a file</Btn>
+            <div class="sc-row"><Btn t="caw-save2" onClick={save}>{pp.sign ? 'Create them first' : 'Save'}</Btn><Btn kind="sm" t="caw-export" onClick={writeOut}>Write a file</Btn><Btn kind="sm" t="caw-import" onClick={() => file.current && file.current.click()}>Open a file</Btn>
               <input ref={file} type="file" accept=".json,application/json" hidden data-t="caw-file" onChange={e => { const f = (e.currentTarget as HTMLInputElement).files; if (f && f[0]) readIn(f[0]); (e.currentTarget as HTMLInputElement).value = ''; }} /></div>
             <div class="sc-row"><Btn kind="less" t="caw-reset" onClick={() => { const n = blankLook(w0, base); n.appearance = { face: { ...derive(w0.name, w0.g, w0.age), ...(w0.face || {}) } }; setLk(n); setLay(-1); setFi(-1); say('Back to how the game drew them. Save to keep it.'); }}>Start again</Btn>
-              {pp.worker.look && <Btn kind="danger" t="caw-forget" onClick={() => { pp.onForget(); say(w0.name + ' is drawn by the game again.'); }}>Take the file off them</Btn>}</div>
+              {pp.had && pp.onForget && <Btn kind="danger" t="caw-forget" onClick={() => { const r0 = pp.onForget!(); if (r0) say(r0.msg, !r0.ok); }}>Take the file off them</Btn>}</div>
           </Group>
           <p class="muted">A wrestler is one small file: the body, three outfits, lettering and shapes, and the finishing moves. No pictures, so it shares in a moment.</p>
         </>}

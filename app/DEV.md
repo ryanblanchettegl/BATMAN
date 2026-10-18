@@ -21,7 +21,6 @@ app/
     screens/<section>/index.tsx   exports `pages` and `modals` for that section
   styles/
     base.css          everything shared
-    caw.css           the Windows 95 creator window
     <section>.css     rules only that section needs
   tests/              browser tests: helper.js, journey.js, one per section
 ```
