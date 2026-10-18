@@ -1,0 +1,39 @@
+/* The paper look (rule 2a; docs/mockups/paper/desk.png): a page marked .paper wears it. Cream card with a fine grain
+   and a little blotchy colour, a black outline and a tight shadow down and to the right; a navy title bar in
+   pinstripes with a close box and a zoom box and the title in yellow; group boxes of darker card with a paper tab
+   for the heading; buttons stacked from card that press down. The grain is drawn by the browser from a few lines of
+   SVG, so nothing is loaded (rule 2). Colours are the ring scene's (C in tools/creator/paper-desk.py). */
+.paper{
+  --p-navy:#343b61; --p-pin:#56619a; --p-cream:#efe6cf; --p-card:#ddd0b2; --p-ink:#1b1b1f; --p-red:#c8322a; --p-yellow:#f9cd3b;
+  --p-green:#3a9a45; --p-blue:#406fba; --p-redb:#e0402f; --p-off:#b7ad97;
+  --p-grain:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 .11 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  --p-mottle:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='600' height='600'><filter id='m'><feTurbulence type='fractalNoise' baseFrequency='.012' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 .07 0'/></filter><rect width='100%' height='100%' filter='url(%23m)'/></svg>");
+  background:var(--p-grain),var(--p-mottle),var(--p-navy);padding:.5em 1.2ch .7em;color:var(--p-ink)
+}
+/* a window: cream card, outlined, a short shadow */
+.paper .wn{background:var(--p-grain),var(--p-mottle),var(--p-cream);border:2px solid #111;border-radius:2px;box-shadow:.32em .42em 0 rgba(0,0,0,.45)}
+.paper .wn>.ttl{background:repeating-linear-gradient(180deg,transparent 0 .18em,var(--p-pin) .18em .3em),var(--p-navy);border-bottom:2px solid #111;padding:.12em 1ch;align-items:center}
+.paper .wn>.ttl h2{justify-self:center;background:var(--p-navy);color:var(--p-yellow);padding:0 1.2ch;max-width:100%}
+.paper .wn>.ttl>span:first-child{font-size:0;line-height:0}
+.paper .wn>.ttl>span:first-child::before,.paper .wn>.ttl>span:last-child::after{content:'';display:inline-block;width:.78rem;height:.78rem;background:var(--p-cream);border:2px solid #111;vertical-align:middle}
+.paper .wn>.ttl>span:last-child{justify-self:end;display:inline-flex;align-items:center;gap:1ch;color:var(--p-cream)}
+.paper .wn>.ttl>span:last-child::after{box-shadow:inset .32rem .32rem 0 -.12rem var(--p-cream),inset .34rem .34rem 0 -.04rem #111}
+.paper .wn>.bd{color:var(--p-ink)}
+/* group boxes: darker card, a paper tab for the heading */
+.paper .grp{border:0;border-radius:3px;background:var(--p-grain),var(--p-card);box-shadow:.16em .22em 0 rgba(0,0,0,.35);margin-top:1em}
+.paper .grp>h3{background:var(--p-grain),var(--p-cream);color:var(--p-red);top:-.95em;padding:.02em .9ch;border-radius:3px 3px 0 0;box-shadow:.12em .14em 0 rgba(0,0,0,.3)}
+/* buttons: card stacked on card; pressing pushes it down */
+.paper .btn{--b:var(--p-green);--d:#1e5a26;background:var(--p-grain),var(--b);color:#fff;border:2px solid rgba(0,0,0,.6);border-radius:.55em;padding:.02em 1.2ch;margin:0 .6ch .5em 0;
+  box-shadow:0 .22em 0 var(--d),.24em .42em 0 rgba(0,0,0,.4);transition:transform .05s,box-shadow .05s}
+.paper .btn:hover{filter:brightness(1.08);background:var(--p-grain),var(--b);color:#fff}
+.paper .btn:active{transform:translateY(.18em);box-shadow:0 .04em 0 var(--d),.1em .18em 0 rgba(0,0,0,.4)}
+.paper .btn.sm{--b:var(--p-blue);--d:#22406f}
+.paper .btn.less{--b:var(--p-navy);--d:#1a1e33}
+.paper .btn.danger{--b:var(--p-redb);--d:#7d1a12}
+.paper .btn.go,.paper .btn.on,.paper .btn.go:hover,.paper .btn.on:hover{--b:var(--p-yellow);--d:#9a7a10;color:#111}
+.paper .btn[disabled],.paper .btn[disabled]:hover{--b:var(--p-off);--d:#8a8270;color:#6b6355;filter:none;transform:none}
+/* fields: a white card with a black edge */
+.paper select,.paper input[type=text],.paper input:not([type]){background:#fbf6ea;color:#111;border:2px solid #111;border-radius:3px;box-shadow:.12em .16em 0 rgba(0,0,0,.35);padding:0 .6ch}
+.paper select:focus-visible,.paper input:focus-visible,.paper .btn:focus-visible{outline:3px solid var(--p-yellow);outline-offset:1px}
+.paper b,.paper .bl{color:var(--p-ink)}
+.paper .sc-stage{background:#151a33;border:2px solid #111;box-shadow:inset .1em .1em 0 rgba(0,0,0,.4)}

@@ -9,7 +9,10 @@
 import { ComponentChildren } from 'preact';
 import { useEffect, useLayoutEffect, useState } from 'preact/hooks';
 import { E } from '../../engine';
-import { G, ui, me, pref } from '../../store';
+import { G, ui, me, pref, savePrefs, redraw, reduceMotion } from '../../store';
+import { ScenePlayer } from '../../kit/sceneplayer';
+import { scenesFor, Scene } from '../../kit/scene';
+import { recipeOf, Recipe, commentator } from '../../kit/puppet';
 import { book } from '../../flow';
 import { Btn, KV, Meter, Banner, BeltArt, Portrait, CheckLine, stars, grade } from '../../kit';
 import { Verdict, OddsLine, FxList, Crowd } from './Report';
@@ -191,6 +194,50 @@ function Night(p: { rows: NRow[]; at: number; done: boolean; wait: number; call:
 }
 const DOT = ' · ';
 
+/** Which scene from Create a Scene fits this moment of the broadcast, and who plays it. It only reads the show:
+    the bell and the first exchanges get the lock-up, the middle a trade of blows, a near fall the count and the
+    kick-out (the one named first in the line is the one covering), the deciding fall the three count, a new
+    champion the belt held high, and a promo the one holding the microphone. */
+function scenePick(r: any, s: any, at: number, done: boolean): { sc: Scene; cast: Record<string, Recipe>; play: string; label: string } | null {
+  const S = G.S; if (!S || !s) return null;
+  const bc: Beat[] = s.bc || [], i = r.segs.indexOf(s), now = Math.min(at, bc.length - 1), cast: Record<string, Recipe> = {};
+  const world = E.worldScenes(S) as Scene[], choose = (when: string, salt: number) => { const l = scenesFor(when, world); return l.length ? l[Math.abs((r.week || 0) * 31 + i * 7 + salt) % l.length] : null; };
+  if (s.k !== 'match') {
+    let who = ''; for (let j = now; j >= 0 && !who; j--) if (bc[j] && bc[j].t === 'mic' && bc[j].w) who = bc[j].w || '';
+    const w = who && S.w.find((x: any) => x && x.name === who); if (!w) return null;
+    const sc = choose('promo', 0); if (!sc) return null;
+    cast.A = recipeOf(w); return { sc, cast, play: 'p' + i + ':' + who, label: who + ' on the microphone' };
+  }
+  const ids: number[] = s.ids || [], ns = (s.sidesN || []).length; if (!ns || !ids.length) return null;
+  const per = Math.max(1, Math.floor(ids.length / ns)), sideOf = (id: number) => Math.floor(ids.indexOf(id) / per);
+  const first = (txt: string) => { let best = -1, pos = 1e9; ids.forEach(id => { const w = S.w[id], k = w ? txt.indexOf(w.name) : -1; if (k >= 0 && k < pos) { pos = k; best = id; } }); return best; };
+  const put = (a: number) => { const sa = sideOf(a), b = ids.find(id => sideOf(id) !== sa); if (S.w[a]) cast.A = recipeOf(S.w[a]); if (b != null && S.w[b]) cast.B = recipeOf(S.w[b]); };
+  const winSide = s.win ? (s.sidesN as string[]).indexOf(s.win) : -1, winner = winSide >= 0 ? ids[winSide * per] : -1;
+  let lastH = -1; bc.forEach((b, j) => { if (b.h) lastH = j; });
+  let when = 'mid', key = 'm', a = ids[0];
+  // a line of colour from the desk, between the moves: cut to the two of them, the colour voice talking
+  const line = bc[now];
+  if (!done && line && line.t === 'col' && !line.h && now !== lastH) {
+    const sc = choose('desk2', now); if (sc) { const ann: string[] = r.ann || [];
+      cast.C1 = { ...commentator(0), name: ann[0] || 'Play-by-play' }; cast.C2 = { ...commentator(1), name: ann[1] || 'Colour' };
+      return { sc, cast, play: i + ':d' + now, label: 'At the desk: ' + (ann[1] || 'the colour voice') + ' talking, with ' + (ann[0] || 'the play-by-play voice') };
+    }
+  }
+  if (done && s.change && winner >= 0) { when = 'champion'; key = 'c'; a = winner; }
+  else if (winner >= 0 && lastH >= 0 && now >= lastH) { when = 'finish'; key = 'f'; a = winner; }
+  else {
+    let h = -1; for (let j = now; j >= Math.max(0, now - 1); j--) if (bc[j] && bc[j].h) { h = j; break; }
+    if (h >= 0) { when = 'nearfall'; key = 'n' + h; const f = first(bc[h].x); if (f >= 0) a = f; }
+    else if (bc.slice(0, now + 1).filter(b => b.t === 'pbp' || b.t === 'col').length <= 2) { when = 'start'; key = 's'; }   // the bell: the first two lines of the call after the introductions
+    else { key = 'm' + Math.floor(now / 4); const f = first((bc[now] || { x: '' }).x); if (f >= 0) a = f; }
+  }
+  const sc = choose(when, key.length); if (!sc) return null;
+  put(a);
+  const nm = (rc?: Recipe) => rc ? rc.name : '';
+  return { sc, cast, play: i + ':' + key, label: sc.name + ': ' + nm(cast.A) + (cast.B ? ' and ' + nm(cast.B) : '') };
+}
+function picsToggle() { pref.pics = !pref.pics; savePrefs(); redraw(); }
+
 export function Live(p: { r: any }) {
   const r = p.r, air = onAir(), ev = liveCall(), S = G.S, info = air ? E.liveInfo(S) : null;
   // a game loaded with a show on the air picks up where the show had got to
@@ -245,9 +292,10 @@ export function Live(p: { r: any }) {
     <div class="lv-body">
       <div class="lv-main">
         {head}
+        {pref.pics && !ev && state === 'seg' ? (() => { const pk = scenePick(r, s, L.b, done); return pk ? <ScenePlayer key="scene" sc={pk.sc} cast={pk.cast} play={pk.play} label={pk.label} still={reduceMotion()} /> : null; })() : null}
         <div class={'lv-log' + (state === 'title' || state === 'signoff' ? ' mid' : '')}><div class="lv-lines">{log}</div></div>
         {box}
-        {ev ? null : <div class="foot">{foot}<Btn kind="sm" t="live-auto" on={!!pref.auto} onClick={autoToggle}>{pref.auto ? 'Auto-play: on' : 'Auto-play: off'}</Btn>{pref.auto ? <Btn kind="sm" t="live-pace" onClick={paceNext}>{'Pace: ' + PACE_N[pref.pace]}</Btn> : null}<span class="blink" aria-hidden="true">_</span><span class="keys-hint">{state === 'signoff' ? 'Space: after the show' : (pref.auto ? (state === 'title' ? 'Space: ring the bell. The show then runs itself and stops for your calls' : 'Running itself. Space: next now. P: pause') : 'Space or Enter: on with the show. P: auto-play')}</span></div>}
+        {ev ? null : <div class="foot">{foot}<Btn kind="sm" t="live-pics" on={!!pref.pics} onClick={picsToggle}>{pref.pics ? 'Scenes: on' : 'Scenes: off'}</Btn><Btn kind="sm" t="live-auto" on={!!pref.auto} onClick={autoToggle}>{pref.auto ? 'Auto-play: on' : 'Auto-play: off'}</Btn>{pref.auto ? <Btn kind="sm" t="live-pace" onClick={paceNext}>{'Pace: ' + PACE_N[pref.pace]}</Btn> : null}<span class="blink" aria-hidden="true">_</span><span class="keys-hint">{state === 'signoff' ? 'Space: after the show' : (pref.auto ? (state === 'title' ? 'Space: ring the bell. The show then runs itself and stops for your calls' : 'Running itself. Space: next now. P: pause') : 'Space or Enter: on with the show. P: auto-play')}</span></div>}
       </div>
       <Night rows={rows} at={post ? ev.si : L.s} done={done || !!post} wait={ev && !post ? info.step : -1} call={!!ev} info={info} />
     </div>
