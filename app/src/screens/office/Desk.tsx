@@ -11,6 +11,7 @@ import { go, weekDone, pending } from '../../nav';
 import { book, endWeek } from '../../flow';
 import { Btn, Meter, Name, CheckLine, Empty, Dial, dataAttrs, Txt, Tag, Tabs, Window, Desktop, Win, Group, Line, RoadMap, LightText, LightPic, brandName } from '../../kit';
 import { Portrait } from '../../kit/portrait';
+import { MomentPic } from '../../shared/moment';
 import { ScheduleList, QuestList } from '../../shared/week';
 import { openNight } from '../booking/run';
 import { Tasks } from './Tasks';
@@ -115,20 +116,34 @@ function OnDesk() {
 }
 /** One matter from the inbox, in a pop-up: the whole of it, the chance of each attempt, and a button for each answer.
     Once it is answered the same window says what happened, and offers the next one. */
+/** The answers' colours, card on card as on the desk: the first green, the last (often leaving it) navy, the rest blue. */
+const mtKind = (i: number, n: number) => i === 0 ? undefined : (i === n - 1 ? 'less' : 'sm');
 export function MatterWindow(p: { m: Modal }) {
   const S = G.S, e: any = S.inbox.find((x: any) => x.id === p.m.id);
   if (!e) return <Window title="On your desk"><Empty>That matter is closed.</Empty></Window>;
   const next: any = S.inbox.find((x: any) => !x.done && x.id !== e.id);
-  if (e.done) return <Window title="On your desk" wide ok={next ? 'Back to the desk' : 'Done'} footer={next ? <Btn kind="go" t="ev-next" d={{ home: '' }} onClick={() => openModal({ kind: 'matter', id: next.id })}>The next matter</Btn> : undefined}>
-    <p class="muted"><Txt>{e.text}</Txt></p>
-    <p class={'mt1 ' + (e.roll ? (e.roll.ok ? 'good' : 'bad') : '')} data-t="ev-result"><Txt>{e.result || 'It is dealt with.'}</Txt></p>
-    {next ? <p class="muted mt1">{pending()} more on your desk.</p> : null}
+  if (e.done) return <Window title="On your desk" wide paper info={[e.night ? 'From last night' : 'A matter', 'Answered']} ok={next ? 'Back to the desk' : 'Done'} footer={next ? <Btn kind="go" t="ev-next" d={{ home: '' }} onClick={() => openModal({ kind: 'matter', id: next.id })}>The next matter</Btn> : undefined}>
+    <div class="mtwin">
+      <MomentPic ev={e} />
+      <div class="mtside">
+        <p class="muted"><Txt>{e.text}</Txt></p>
+        <p class={'mt1 ' + (e.roll ? (e.roll.ok ? 'good' : 'bad') : '')} data-t="ev-result"><Txt>{e.result || 'It is dealt with.'}</Txt></p>
+        {next ? <p class="muted mt1">{pending()} more on your desk.</p> : null}
+      </div>
+    </div>
   </Window>;
-  return <Window title={e.night ? 'From last night' : 'On your desk'} wide ok="Not now">
-    <p data-t="ev-text"><Txt>{e.text}</Txt></p>
-    {e.checks ? Object.keys(e.checks).map(k => <CheckLine key={k} label={e.choices[k]} ck={e.checks[k]} />) : null}
-    <div class="row mt2">{e.choices.map((c: string, i: number) => <Btn key={i} t="ev" d={{ id: e.id, c: i }} onClick={() => act(() => { E.resolveEvent(S, e.id, i); })}>{c}</Btn>)}</div>
-    <p class="muted mt1">The week cannot end until this has an answer.</p>
+  return <Window title={e.night ? 'From last night' : 'On your desk'} wide paper info={[e.choices.length + ' answers', pending() > 1 ? pending() + ' on your desk' : 'Needs an answer']} ok="Not now">
+    <div class="mtwin">
+      <MomentPic ev={e} />
+      <div class="mtside">
+        <p data-t="ev-text"><Txt>{e.text}</Txt></p>
+        <div class="mtopts">{e.choices.map((c: string, i: number) => <div key={i} class="mtopt">
+          <Btn kind={mtKind(i, e.choices.length)} t="ev" d={{ id: e.id, c: i }} onClick={() => act(() => { E.resolveEvent(S, e.id, i); })}>{c}</Btn>
+          {e.checks && e.checks[i] ? <CheckLine label="If you try it" ck={e.checks[i]} /> : null}
+        </div>)}</div>
+        <p class="muted mt1">The week cannot end until this has an answer.</p>
+      </div>
+    </div>
   </Window>;
 }
 

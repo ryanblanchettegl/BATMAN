@@ -15,6 +15,7 @@ import { scenesFor, allScenes, copy, Scene } from '../../kit/scene';
 import { finScene } from '../../kit/caw';
 import { recipeOf, Recipe, commentator } from '../../kit/puppet';
 import { book } from '../../flow';
+import { fillScene, MomentPic } from '../../shared/moment';
 import { Btn, KV, Meter, Banner, BeltArt, Portrait, CheckLine, stars, grade } from '../../kit';
 import { Verdict, OddsLine, FxList, Crowd } from './Report';
 import { typer, preNote, liveSkip, liveEnd, liveDecide, liveCall, onAir, livePos, autoArm, autoStop, autoToggle, paceNext, PACE_N } from './run';
@@ -155,18 +156,25 @@ function SegLines(p: { r: any; s: any; at: number; done: boolean }) {
 /** The call from the gorilla position: what is happening, why now, and the choices. Each choice is one big button
     that says what it does. Only an answer moves the show on. The number keys answer too. */
 function CallBox(p: { ev: any }) {
-  const ev = p.ev, S = G.S;
-  return <div class="callbox" data-t="live-call" data-v={ev.kind}>
+  const ev = p.ev, S = G.S, n = ev.choices.length;
+  return <div class="callbox paper" data-t="live-call" data-v={ev.kind}>
+    <div class="cbt"><span class="pbox" aria-hidden="true" /><h2>{'Gorilla position: ' + ev.title}</h2><span class="pbox zoom" aria-hidden="true" /></div>
+    <div class="wnfo"><span>{n + ' answers'}</span><span>The show waits for you</span></div>
+    <div class="cbb">
+    <MomentPic ev={ev} call t="call-pic" />
+    <div class="callside">
     <p class="q"><Typed key={'ev' + ev.id} text={ev.text} /></p>
     {ev.why && ev.why.length ? <p class="muted why">Why now: {ev.why.join('. ')}.</p> : null}
     <div class="callopts">{ev.choices.map((c: any, i: number) => <div key={i}>
-      <button type="button" class="callopt" data-t="live-pick" data-c={i} disabled={!!c.bp && S.bp < c.bp} onClick={() => liveDecide(i)}>
+      <button type="button" class={'callopt ' + (i === 0 ? 'k0' : i === n - 1 ? 'kz' : 'k1')} data-t="live-pick" data-c={i} disabled={!!c.bp && S.bp < c.bp} onClick={() => liveDecide(i)}>
         <span class="n"><b>{i + 1}. {c.n}</b>{c.bp ? <span class="bp">{c.bp} BP</span> : null}</span>
         {c.says ? <span class="says">{c.says}</span> : null}
       </button>
       {ev.checks && ev.checks[i] ? <CheckLine label="If you try it" ck={ev.checks[i]} /> : null}
     </div>)}</div>
-    <p class="muted callhint">The show waits for your answer. Pick one, or press its number.</p>
+    <p class="muted callhint">Pick one, or press its number.</p>
+    </div>
+    </div>
   </div>;
 }
 
@@ -199,17 +207,6 @@ const DOT = ' · ';
     the bell and the first exchanges get the lock-up, the middle a trade of blows, a near fall the count and the
     kick-out (the one named first in the line is the one covering), the deciding fall the three count, a new
     champion the belt held high, and a promo the one holding the microphone. */
-/** Who plays each part of a scene: a slot with a hook gets whoever the game says fills it (E.sceneHooks); a slot
-    with none gets A or B by its role. A slot nobody can fill is left out of the picture. */
-function fillScene(sc: Scene, hk: Record<string, number>, cast: Record<string, Recipe>): Scene | null {
-  const S = G.S, keep = sc.slots.filter(sl => {
-    if (cast[sl.id] || sl.role === 'ref' || sl.dress === 'suit') return true;
-    const id = hk[sl.hook || sl.role]; if (id == null || !S.w[id]) return false;
-    cast[sl.id] = recipeOf(S.w[id]); return true;
-  });
-  if (keep.filter(sl => sl.role !== 'ref').length < Math.min(2, sc.slots.filter(sl => sl.role !== 'ref').length)) return null;
-  return keep.length === sc.slots.length ? sc : { ...sc, slots: keep };
-}
 function scenePick(r: any, s: any, at: number, done: boolean): { sc: Scene; cast: Record<string, Recipe>; play: string; label: string } | null {
   const S = G.S; if (!S || !s) return null;
   const bc: Beat[] = s.bc || [], i = r.segs.indexOf(s), now = Math.min(at, bc.length - 1), cast: Record<string, Recipe> = {};

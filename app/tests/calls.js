@@ -62,6 +62,7 @@ async function run(mode) {
         ok(mode, 'a worn body in a brutal match goes down wrong', (await box()).includes(hurt.name + ' goes down wrong') && /on the road too long/.test(await why()) && /Brutal intensity/.test(await why()), await why());
         ok(mode, 'three answers, and the third is an attempt with its chance', (await picks(page)).length === 3 && /an attempt with a \d+% chance/.test(await whole(page, '.callbox')), (await picks(page)).join(' | '));
         await fit('the call when somebody is hurt'); await shot(page, 'calls-' + mode + '-hurt');
+        ok(mode, 'the call is a paper window with a still picture of somebody hurt beside the answers', await has(page, '.callbox.paper [data-t="call-pic"][data-k="hurt"] canvas') && await page.$eval('.callbox [data-t="call-pic"] .moment', (e) => { const p = e.getBoundingClientRect(), o = document.querySelector('.callbox .callopts').getBoundingClientRect(); return p.right <= o.left + 1; }));
         await page.click('[data-t="live-pick"][data-c="0"]');
         ok(mode, 'stopping the match is on the broadcast, and they remember it', /You stop it/.test(await lastCall(page)) && await state(page, (S, a) => S.rmY[a.id].v > 0, hurt), await lastCall(page));
       },
@@ -87,6 +88,7 @@ async function run(mode) {
       network: async () => {
         ok(mode, 'the network objects to what is going out in its slot', /standards desk/.test(await box()) && /Brutal intensity in/.test(await why()) && (await picks(page)).length === 3, await why());
         await fit('the network’s call'); await shot(page, 'calls-' + mode + '-network');
+        ok(mode, 'a call with nobody in it shows the office with a headline', await has(page, '[data-t="call-pic"][data-k="phone"]'));
         await page.click('[data-t="live-pick"][data-c="1"]');
         ok(mode, 'toning it down is on the broadcast, and the match is tamer', /keep it clean/.test(await lastCall(page)) && await state(page, (S, a) => S.live.card[a.net].int === 'normal', two), await lastCall(page));
       },

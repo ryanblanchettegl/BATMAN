@@ -165,7 +165,7 @@ async function broadcast(mode) {
     ok(mode, 'the bell brings the lock-up', seen.has('lockup'), [...seen].join(','));
     ok(mode, 'a near fall brings the count', seen.has('nearfall'), [...seen].join(','));
     ok(mode, 'a win brings the three count', seen.has('finish'), [...seen].join(','));
-    ok(mode, 'each wrestler comes out on an entrance', seen.has('entrance'), [...seen].join(','));
+    ok(mode, 'each wrestler comes out on an entrance', [...seen].some(x => x === 'entrance' || x.startsWith('ent_')), [...seen].join(','));
     ok(mode, 'a line of colour cuts to the commentary desk', seen.has('desk2'), [...seen].join(','));
     ok(mode, 'the broadcast draws its scenes in 3D', (await attr(page, '[data-t="live-scene"]', 'data-3d').catch(() => null)) !== '0');
     if (seen.has('promo')) ok(mode, 'a promo brings the microphone', true); else console.log(mode.padEnd(6), 'note', 'no promo with a speaker on this card, so the microphone scene was not seen');

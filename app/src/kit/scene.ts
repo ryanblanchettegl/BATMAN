@@ -39,6 +39,9 @@ export const HOOKS: [string, string][] = [['', 'By the match (A or B)'], ['hero'
 /** `frame` is the shape of the picture: wide (16 by 9, the broadcast) for now; tall for posters and covers and square
     for portraits are next. */
 export interface Scene { v: 1; id: string; name: string; when: string; set: string; slots: Slot[]; keys: Key[]; by?: string; frame?: 'wide' | 'tall' | 'square'; loop?: boolean;
+  /** A still picture: one keyframe and nothing plays. Stills go beside the moments the booker answers (a matter on
+      the desk, a call from the gorilla position); moving scenes go on the broadcast. Both are made in Create a Scene. */
+  still?: boolean;
   /** Which outfit Create a Player wrestlers wear in it; left out, the set decides (ring gear in the ring, street clothes backstage). */
   attire?: AttireKey }
 
@@ -47,6 +50,10 @@ export interface Scene { v: 1; id: string; name: string; when: string; set: stri
     (Ryan, 18 October: breaking news, talk show highlights, posters, magazine covers, portraits, everything). */
 export const WHEN: [string, string][] = [['start', 'The opening bell'], ['mid', 'Back and forth'], ['nearfall', 'A near fall'], ['finish', 'The finish'], ['champion', 'A new champion'], ['promo', 'A promo'], ['attack', 'An attack'], ['entrance', 'The entrance'],
   ['desk1', 'The desk: play-by-play talking'], ['desk2', 'The desk: colour talking'], ['news', 'Breaking news'], ['talk', 'A talk show'], ['poster', 'A poster'], ['cover', 'A magazine cover'], ['portrait', 'A portrait'], ['any', 'Only by hand']];
+/** What a still picture is for: the moments the booker has to answer (Ryan, 18 October: "one static diorama image of
+    the wrestler getting hurt, backstage fight"). The desk and the broadcast pick one by what the matter is about. */
+export const STILL_WHEN: [string, string][] = [['hurt', 'Somebody hurt'], ['brawl', 'A fight'], ['argue', 'Face to face'], ['meeting', 'Across your desk'],
+  ['walkout', 'Walking out'], ['cheer', 'The crowd is with them'], ['title', 'Over a title'], ['press', 'The press'], ['phone', 'A call to the office (nobody in it)'], ['any', 'Only by hand']];
 /** The sets, each drawn from its own angle: pick the one that suits the moment. Every set keeps feet on the same line
     (FOOT), so a pose works on all of them. */
 export const SETS: [string, string][] = [['ring', 'The ring: the hard camera'], ['ringlow', 'The ring: low at ringside'], ['ringcorner', 'The ring: from the corner'],
@@ -448,6 +455,56 @@ export const SCENES: Scene[] = [
   ] },
 ];
 
+/* ---------- the stills: one picture each, for the moments the booker answers ---------- */
+/** A still: one keyframe. `cap` is a headline the game can write over (a call to the office with nobody in it). */
+function still(id: string, name: string, when: string, set: string, slots: Slot[], figs: Record<string, Fig>, props: Prop[] = [], cam?: Cam): Scene {
+  return { v: 1, id, name, when, set, slots, still: true, keys: [{ t: 0, figs, props, cam }] };
+}
+const S1: Slot[] = [{ id: 'A', n: 'Who it is about', role: 'a' }], S2: Slot[] = [{ id: 'A', n: 'Who it is about', role: 'a' }, { id: 'B', n: 'The other one', role: 'b' }];
+const CROSS = { sh_n: 40, el_n: 125, wr_n: 10, sh_f: 45, el_f: 120 };   // arms folded
+const cap = (txt: string, y = 3.0): Prop => ({ id: 'cap', k: 'headline', x: 0, y, r: 0, z: 3, s: 1, txt, col: PAL.yellow });
+export const STILLS: Scene[] = [
+  still('st_hurt_ring', 'Down in the ring', 'hurt', 'ring', [...S1, { id: 'R', n: 'The referee', role: 'ref' }], {
+    A: LAY(-0.8, 1, 90, { head: 14, sh_n: 70, el_n: 95, sh_f: 55, el_f: 110, hip_n: 55, kn_n: -110, an_n: 30, hip_f: 8, kn_f: -10 }, 'pain', 0.4),
+    R: REFKN(1.6, -1, { torso: -10, sh_n: 165, el_n: 20, sh_f: 40, el_f: 60, head: 10 }) }, [], { x: 0.2, y: -1.4, z: 1.6 }),
+  still('st_hurt_back', 'In the trainer’s room', 'hurt', 'locker', S1, {
+    A: { x: -3.2, y: -1.45, r: 0, f: 1, z: 0.3, p: { torso: 18, head: 22, hip_n: 90, kn_n: -90, hip_f: 85, kn_f: -95, sh_n: -10, el_n: 20, sh_f: 70, el_f: 120, wr_f: 20 }, e: 'pain' } }, [], { x: -2.2, y: -0.5, z: 1.35 }),
+  still('st_brawl_hall', 'A fight in the hallway', 'brawl', 'hall', S2, {
+    A: { ...STD(-1.2, 1, { torso: 12, sh_n: 95, el_n: 5, sh_f: 30, el_f: 90, hip_n: 30, kn_n: -20, hip_f: -24, kn_f: -10 }, 'roar', 0.6), r: -10 },
+    B: { ...STD(1.5, -1, { torso: -22, head: -24, sh_n: 80, el_n: 40, sh_f: -60, el_f: 30, hip_n: -10, kn_n: -20, hip_f: -24, kn_f: -20 }, 'hurt', 0.8), r: -14 } },
+    [{ id: 'b1', k: 'burst', x: 2.6, y: 2.4, r: 0, z: 3, s: 1, txt: 'BRAWL!', col: PAL.red }]),
+  still('st_brawl_lock', 'Pulled apart in the locker room', 'brawl', 'locker', S2, {
+    A: { ...STD(-1.0, 1, { torso: 14, head: -6, sh_n: 105, el_n: 25, sh_f: 70, el_f: 50, hip_n: 30, kn_n: -30, an_n: 4, hip_f: -26, kn_f: -14 }, 'roar', 0.5), r: -14 },
+    B: { ...STD(0.9, -1, { torso: 12, head: -4, sh_n: 100, el_n: 35, sh_f: 65, el_f: 55, hip_n: 26, kn_n: -26, hip_f: -24, kn_f: -14 }, 'snarl', 0.7), r: 12 } }),
+  still('st_argue', 'Nose to nose', 'argue', 'backstage', S2, {
+    A: STD(-1.1, 1, { torso: 6, head: 4, sh_n: 95, el_n: 5, sh_f: -15, el_f: -10, hip_n: 10, hip_f: -8 }, 'shout', 0.4),
+    B: STD(1.1, -1, { ...CROSS, head: -4 }, 'snarl', 0.6) }, [], { x: 0, y: 0.6, z: 1.25 }),
+  still('st_argue_lock', 'Words in the locker room', 'argue', 'locker', S2, {
+    A: STD(-1.3, 1, { sh_n: 30, el_n: 90, sh_f: 25, el_f: 95, head: 2 }, 'talk', 0.4),
+    B: STD(1.3, -1, { torso: -6, sh_n: 120, el_n: 30, sh_f: -30, el_f: -40, head: 6 }, 'shout', 0.6) }),
+  still('st_alone', 'Alone with it', 'argue', 'locker', S1, {
+    A: { x: -2.6, y: -1.45, r: 0, f: 1, z: 0.3, p: { torso: 30, head: 30, hip_n: 90, kn_n: -90, hip_f: 85, kn_f: -95, sh_n: 50, el_n: 100, sh_f: 40, el_f: 110 }, e: 'snarl' } }, [], { x: -2.0, y: -0.4, z: 1.35 }),
+  still('st_meet', 'Across your desk', 'meeting', 'office', S1, {
+    A: STD(-0.6, 1, { ...CROSS, head: 2 }, 'talk', 0.6) }, [], { x: 0.6, y: 0.2, z: 1.2 }),
+  still('st_meet_two', 'Two at your door', 'meeting', 'office', S2, {
+    A: STD(-1.8, 1, { sh_n: 95, el_n: 5, sh_f: -15, el_f: -10 }, 'shout', 0.5), B: STD(0.6, 1, CROSS, 'snarl', 0.3) }, [], { x: 0.4, y: 0.2, z: 1.15 }),
+  still('st_walkout', 'Out the door', 'walkout', 'hall', S1, {
+    A: STD(1.6, 1, { torso: -4, head: -16, hip_n: -14, kn_n: -10, hip_f: 18, kn_f: -16, sh_n: 20, el_n: 10, sh_f: -25, el_f: 15 }, 'snarl', 0.8) }, [], { x: 1.0, y: 0.4, z: 1.2 }),
+  still('st_cheer', 'The crowd on its feet', 'cheer', 'ringlow', S1, {
+    A: STD(-0.4, 1, { sh_n: 165, el_n: 5, sh_f: -20, el_f: -20, head: 10, hip_n: 6, hip_f: -6 }, 'roar', 0.5) }, [], { x: 0, y: 0.9, z: 1.0 }),
+  still('st_title', 'Eyes on the belt', 'title', 'ring', S2, {
+    A: STD(-1.4, 1, { sh_n: 60, el_n: 120, sh_f: 30, el_f: 90, head: 4 }, 'smirk', 0.5),
+    B: STD(1.4, -1, { sh_n: 95, el_n: 5, sh_f: -15, el_f: -10, head: 4 }, 'shout', 0.7) },
+    [{ id: 'belt', k: 'belt', x: 0.2, y: 0.1, r: 70, z: 1, s: 0.8, at: 'A:shoulders' }], { x: 0, y: -0.2, z: 1.7 }),
+  still('st_title_one', 'Holding the belt', 'title', 'ring', S1, {
+    A: STD(-0.2, 1, { sh_n: 160, el_n: 10, sh_f: -150, el_f: -10, head: 8 }, 'shout', 0.5) },
+    [{ id: 'belt', k: 'belt', x: 0, y: 0.1, r: 0, z: 2, s: 1, at: 'A:hands' }], { x: 0, y: 0.2, z: 1.5 }),
+  still('st_press', 'In front of the press', 'press', 'backstage', S1, {
+    A: STD(-0.4, 1, { sh_n: 150, el_n: 120, sh_f: -40, el_f: -70, head: 4 }, 'talk', 0.5) },
+    [{ id: 'mic', k: 'mic', x: 0.1, y: 0.1, r: -30, z: 1.2, at: 'A:hand_n' }], { x: 0, y: 0.6, z: 1.25 }),
+  still('st_phone', 'The office phone', 'phone', 'office', [], {}, [cap('THE OFFICE')]),
+];
+
 /* ---------- scenes in a world: made in Create a Scene in the World Editor, kept in the world package ---------- */
 /** Does this look like a scene file? Anything else is refused. */
 export function ok(x: any): x is Scene {
@@ -455,7 +512,7 @@ export function ok(x: any): x is Scene {
     x.keys.every((k: any) => typeof k.t === 'number' && k.figs && typeof k.figs === 'object' && Array.isArray(k.props));
 }
 /** Every scene the world can play: the world's own (which take the place of a game scene with the same id), then the game's. */
-export function allScenes(world: Scene[]): Scene[] { const ids = new Set(world.map(s => s.id)); return world.concat(SCENES.filter(s => !ids.has(s.id))); }
+export function allScenes(world: Scene[]): Scene[] { const ids = new Set(world.map(s => s.id)); return world.concat(SCENES.concat(STILLS).filter(s => !ids.has(s.id))); }
 /** The scenes that can play for a moment of the broadcast. */
 export function scenesFor(when: string, world: Scene[]): Scene[] { return allScenes(world).filter(s => s.when === when); }
 export const copy = <T>(x: T): T => JSON.parse(JSON.stringify(x));

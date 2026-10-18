@@ -65,6 +65,7 @@ async function run(mode, w, h, promo) {
     await shot(page, 'desk-' + mode + '-' + w, false);
     /* answering: the pop-up, the result, the next one */
     await page.click('[data-t="ev-open"]'); await page.waitForSelector('.win [data-t="ev"]');
+    await page.waitForTimeout(400); ok(id, 'the matter is a paper pop-up with a still picture of it beside the answers', !!(await page.$('.win.ppop [data-t="moment-pic"] .moment canvas')) && await page.$eval('.win.ppop', w => { const p = w.querySelector('.moment').getBoundingClientRect(), o = w.querySelector('.mtopts').getBoundingClientRect(); return p.right <= o.left + 1; }));
     ok(id, 'Answer opens the whole matter with a button for each answer, inside the screen', await page.$$eval('.win [data-t="ev"]', L => L.length) === 3 && await page.$eval('.win', e => { const r = e.getBoundingClientRect(); return r.bottom <= innerHeight + 1 && r.right <= innerWidth + 1; }));
     await page.waitForTimeout(80); await page.click('.win [data-t="ev"]');
     ok(id, 'the answer is taken and the next matter is offered', await state(page, S => S.inbox.filter(e => !e.done).length) === 3 && !!(await page.$('[data-t="ev-next"]')));
