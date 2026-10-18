@@ -5,7 +5,7 @@
    figure from one keyframe to the next. The game's own scenes are made in Create a Scene like anybody else's
    (`SCENES` below is what it saved), so a player can open them, change them and share them. Nothing here touches
    the game state. */
-import { Piece, PAL, ell, rect, star, strip, drawPaper, View, snip, shade } from './paper';
+import { Piece, PAL, ell, rect, star, strip, drawScene, View, snip, shade } from './paper';
 import { Recipe, puppet, prop, Rig, blank, REF, Marks } from './puppet';
 
 /** A person at a keyframe: where the waist is, the turn, which way they face, how far forward, the pose, the face,
@@ -53,7 +53,7 @@ function crowd(add: Add, rows: number, yTop: number, dy: number, sz0: number, ds
   }
 }
 function setPieces(set: string): Piece[] {
-  const o: Piece[] = []; let n = 0; const add = (pts: [number, number][], col: string, z: number, lift = 0.04, rough = 0.012) => o.push({ pts: snip(pts, 9000 + (n++) * 131, rough, 0.1), col, z, lift });
+  const o: Piece[] = []; let n = 0; const add = (pts: [number, number][], col: string, z: number, lift = 0.04, rough = 0.012) => o.push({ pts: snip(pts, 9000 + (n++) * 131, rough, 0.1), col, z, lift, layer: 'back' });
   if (set === 'ring') {
     // The ring as the hard camera sees it: the mat a floor that widens toward us, the far ropes and posts behind the
     // wrestlers at about their waist, the side ropes running back to them, the crowd rising past the barricade.
@@ -228,13 +228,17 @@ export function build(sc: Scene, k: Key, cast: Record<string, Recipe>, time = 0)
     const f = k.figs[sl.id]; if (!f) return;
     const r = cast[sl.id] || (sl.role === 'ref' ? REF : blank(i));
     rigs[sl.id] = puppet(r, { x: f.x, y: f.y, r: f.r, f: f.f, z: f.z, s: f.s }, f.p, f.e || '', sl.id, pieces, f.m || {});
+    // a soft shadow on the floor where they stand or lie
+    const rg = rigs[sl.id], lying = Math.abs(Math.sin(f.r * Math.PI / 180)) > 0.6, sz = f.s || 1;
+    if (lying) { const c = rg.anchors.waist; pieces.push({ pts: ell(c[0], FOOT + 0.3, 2.0 * sz, 0.32, 20), col: 'rgba(0,0,0,0.32)', z: f.z - 0.05, soft: true }); }
+    else for (const ft of ['foot_n', 'foot_f']) { const c = rg.anchors[ft]; if (c && c[1] < FOOT + 1.2) pieces.push({ pts: ell(c[0] + 0.12, Math.min(c[1], FOOT + 0.1) - 0.08, 0.5 * sz, 0.13, 16), col: 'rgba(0,0,0,0.35)', z: f.z - 0.05, soft: true }); }
   });
   for (const p of k.props) {
     let x = p.x, y = p.y;
     if (p.at) { const [who, anc] = p.at.split(':'), rg = rigs[who], q = rg && rg.anchors[anc]; if (q) { x = q[0] + p.x; y = q[1] + p.y; } }
     prop({ ...p, x, y }, pieces, time);
   }
-  if (FRONT[sc.set]) FRONT[sc.set](pieces);
+  if (FRONT[sc.set]) { const f: Piece[] = []; FRONT[sc.set](f); f.forEach(p => { p.layer = 'front'; }); pieces.push(...f); }
   return { pieces, rigs };
 }
 
@@ -251,7 +255,7 @@ export function tilt(ctx: CanvasRenderingContext2D, cam?: Cam) {
 export function paint(ctx: CanvasRenderingContext2D, sc: Scene, time: number, cast: Record<string, Recipe>) {
   const c = ctx.canvas, k = at(sc, time), v = viewFor(c.width, c.height, k.cam);
   ctx.fillStyle = PAL.navy; ctx.fillRect(0, 0, c.width, c.height);
-  const b = build(sc, k, cast, time); tilt(ctx, k.cam); drawPaper(ctx, b.pieces, v); ctx.restore(); return { ...b, v };
+  const b = build(sc, k, cast, time); tilt(ctx, k.cam); drawScene(ctx, b.pieces, v, sc.set); ctx.restore(); return { ...b, v };
 }
 
 /* ---------- poses to start from ---------- */

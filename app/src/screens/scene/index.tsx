@@ -10,7 +10,7 @@ import { useEffect, useRef, useState } from 'preact/hooks';
 import { W } from '../../engine';
 import { Btn, TextBox, Desktop, Win, Group, Tabs } from '../../kit';
 import { Scene, Key, Fig, Prop, SCENES, WHEN, SETS, WAIST, CAM0, POSES, at, build, viewFor, tilt, paint, lastT, allScenes, ok, copy } from '../../kit/scene';
-import { drawPaper, fromPx, toPx, pick, Piece, PAL } from '../../kit/paper';
+import { drawPaper, drawScene, fromPx, toPx, pick, Piece, PAL } from '../../kit/paper';
 import { Recipe, recipeOf, JOINTS, PROPS, STAND, Rig, REF, blank, puppet, EXPR, Marks } from '../../kit/puppet';
 
 type Sel = { who: string; part: string } | null;   // part is 'body', a joint name, or 'prop'
@@ -37,7 +37,7 @@ function Stage(p: { sc: Scene; ki: number; time: number | null; cast: Record<str
     const c = cv.current; if (!c) return; const dpr = Math.min(2, window.devicePixelRatio || 1);
     c.width = Math.round(size[0] * dpr); c.height = Math.round(size[1] * dpr);
     const t = p.time == null ? p.sc.keys[p.ki].t : p.time, k = p.time == null ? p.sc.keys[p.ki] : at(p.sc, t), ctx = c.getContext('2d')!, v = viewFor(c.width, c.height, k.cam), b = build(p.sc, k, p.cast, t);
-    ctx.fillStyle = PAL.navy; ctx.fillRect(0, 0, c.width, c.height); tilt(ctx, k.cam); drawPaper(ctx, b.pieces, v); ctx.restore();
+    ctx.fillStyle = PAL.navy; ctx.fillRect(0, 0, c.width, c.height); tilt(ctx, k.cam); drawScene(ctx, b.pieces, v, p.sc.set); ctx.restore();
     last.current = { ...b, v };
     if (p.sel && p.time == null) {   // outline what is picked, and mark its pin
       ctx.save(); ctx.strokeStyle = '#ffe14a'; ctx.lineWidth = Math.max(2, v.s * 0.035); ctx.setLineDash([v.s * 0.12, v.s * 0.08]);

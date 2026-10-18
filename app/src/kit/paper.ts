@@ -12,6 +12,8 @@ export interface Piece {
   own?: string; joint?: string; prop?: string;   // who it belongs to, for picking it with a pointer
   txt?: { s: string; x: number; y: number; size: number; col: string; align?: CanvasTextAlign };
   glow?: boolean;           // lit lettering: no grain over it
+  layer?: 'back' | 'front'; // part of the set: drawn once and kept (back behind everybody, front before them)
+  soft?: boolean;           // a soft shadow on the floor, not a piece of card
 }
 export interface View { s: number; ox: number; oy: number }   // pixels per unit; the pixel position of x = 0, y = 0 (y up)
 
@@ -117,6 +119,81 @@ export function drawPaper(ctx: CanvasRenderingContext2D, pieces: Piece[], v: Vie
   if (grainOn) {
     ctx.save(); ctx.globalCompositeOperation = 'multiply'; ctx.fillStyle = ctx.createPattern(grain(), 'repeat')!; ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height); ctx.restore();
   }
+}
+
+/* ---------- the diorama: the graphics engine of the game ----------
+   Ryan, 18 October: this is how the whole game looks, on Steam, from a Steam Deck to a 4K screen. A scene is drawn
+   like a shoebox diorama photographed close up:
+   - every piece of card has a thickness: a sliver of its darker edge shows below and to the right of it;
+   - light falls across each piece, brighter at the top left;
+   - each piece throws a shadow that grows with how far it stands off what is under it, and people throw a soft
+     shadow on the floor where they stand or lie;
+   - the far part of the set (the crowd, the back walls) is a little out of focus, and the very front a touch, as in
+     a photograph of something small;
+   - a pool of light falls on the middle and the edges of the box go dark.
+   The set is drawn once and kept (two layers, behind and in front of the people); only the people and props are
+   drawn every frame. `quality` 0 (a Steam Deck on battery) leaves out the blur and the light across each piece. */
+export let quality = 2;
+export function setQuality(q: number) { quality = Math.max(0, Math.min(2, q)); layerCache.clear(); }
+const layerCache = new Map<string, HTMLCanvasElement>();
+
+function drawPieces(ctx: CanvasRenderingContext2D, list: Piece[], v: View) {
+  const edge = Math.max(1, v.s * 0.012), thick = Math.max(1.2, v.s * 0.032);
+  ctx.save(); ctx.lineJoin = 'round';
+  for (const p of list) {
+    if (p.txt) {
+      const q = toPx(v, [p.txt.x, p.txt.y]);
+      ctx.shadowColor = 'transparent'; ctx.fillStyle = p.txt.col; ctx.textAlign = p.txt.align || 'center'; ctx.textBaseline = 'middle';
+      ctx.font = Math.round(p.txt.size * v.s) + "px 'VT323', monospace"; ctx.fillText(p.txt.s, q[0], q[1]);
+      continue;
+    }
+    if (p.pts.length < 3) continue;
+    if (p.soft) {   // a soft shadow on the floor
+      ctx.save(); if (quality > 0) ctx.filter = 'blur(' + Math.round(v.s * 0.09) + 'px)'; path(ctx, v, p.pts); ctx.fillStyle = p.col; ctx.fill(); ctx.restore(); continue;
+    }
+    const L = (p.lift == null ? 0.05 : p.lift) * v.s;
+    // the thickness of the card, with the shadow thrown under it
+    ctx.save(); ctx.translate(thick * 0.55, thick * 0.75); path(ctx, v, p.pts);
+    ctx.shadowColor = 'rgba(0,0,0,0.45)'; ctx.shadowOffsetX = L * 0.55; ctx.shadowOffsetY = L * 0.7; ctx.shadowBlur = L * 1.1;
+    ctx.fillStyle = shade(p.col, 0.55); ctx.fill(); ctx.restore();
+    // the face of the card, with the light across it
+    path(ctx, v, p.pts); ctx.shadowColor = 'transparent';
+    if (quality > 0) {
+      let x0 = 1e9, y0 = 1e9, x1 = -1e9, y1 = -1e9; for (const q of p.pts) { const r = toPx(v, q); if (r[0] < x0) x0 = r[0]; if (r[0] > x1) x1 = r[0]; if (r[1] < y0) y0 = r[1]; if (r[1] > y1) y1 = r[1]; }
+      const g = ctx.createLinearGradient(x0, y0, x1, y1); g.addColorStop(0, shade(p.col, 1.08)); g.addColorStop(1, shade(p.col, 0.88)); ctx.fillStyle = g;
+    } else ctx.fillStyle = p.col;
+    ctx.fill();
+    ctx.strokeStyle = shade(p.col, 1.35); ctx.globalAlpha = 0.6; ctx.lineWidth = edge; ctx.stroke(); ctx.globalAlpha = 1;   // the paler core along the cut
+  }
+  ctx.restore();
+}
+function layer(key: string, w: number, h: number, draw: (c: CanvasRenderingContext2D) => void): HTMLCanvasElement {
+  let c = layerCache.get(key);
+  if (!c) { c = document.createElement('canvas'); c.width = w; c.height = h; draw(c.getContext('2d')!); if (layerCache.size > 24) layerCache.clear(); layerCache.set(key, c); }
+  return c;
+}
+/** Draw a scene as a diorama. `key` names the set, so its layers are drawn once and kept. */
+export function drawScene(ctx: CanvasRenderingContext2D, pieces: Piece[], v: View, key: string) {
+  const W = ctx.canvas.width, H = ctx.canvas.height, k = key + '|' + W + 'x' + H + '|' + Math.round(v.s * 100) + ',' + Math.round(v.ox) + ',' + Math.round(v.oy) + '|q' + quality;
+  const back = pieces.filter(p => p.layer === 'back'), front = pieces.filter(p => p.layer === 'front'), mid = pieces.filter(p => !p.layer).sort((a, b) => a.z - b.z);
+  const far = back.filter(p => p.z < -0.75).sort((a, b) => a.z - b.z), near = back.filter(p => p.z >= -0.75).sort((a, b) => a.z - b.z);
+  const blur = (n: number) => quality > 0 ? 'blur(' + Math.max(0, n).toFixed(1) + 'px)' : 'none';
+  const B = layer(k + 'b', W, H, c => {
+    const f = layer(k + 'f', W, H, d => drawPieces(d, far, v));
+    c.save(); c.filter = blur(v.s * 0.04); c.drawImage(f, 0, 0); c.restore();   // the far part, a little out of focus
+    drawPieces(c, near, v);
+  });
+  const Fr = layer(k + 'n', W, H, c => drawPieces(c, front.sort((a, b) => a.z - b.z), v));
+  ctx.drawImage(B, 0, 0);
+  drawPieces(ctx, mid, v);
+  ctx.save(); ctx.filter = blur(v.s * 0.015); ctx.drawImage(Fr, 0, 0); ctx.restore();   // the very front, a touch soft
+  // the light: a pool on the middle, the edges of the box dark
+  const L = layer('light|' + W + 'x' + H, W, H, c => {
+    const g = c.createRadialGradient(W * 0.48, H * 0.38, H * 0.15, W * 0.5, H * 0.5, Math.hypot(W, H) * 0.6);
+    g.addColorStop(0, 'rgba(255,244,214,0.10)'); g.addColorStop(0.55, 'rgba(0,0,0,0)'); g.addColorStop(1, 'rgba(4,6,20,0.55)'); c.fillStyle = g; c.fillRect(0, 0, W, H);
+  });
+  ctx.drawImage(L, 0, 0);
+  ctx.save(); ctx.globalCompositeOperation = 'multiply'; ctx.fillStyle = ctx.createPattern(grain(), 'repeat')!; ctx.fillRect(0, 0, W, H); ctx.restore();
 }
 
 /** Which piece is under a point (pixels), from the top down. */

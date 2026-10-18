@@ -100,7 +100,7 @@ export function puppet(r: Recipe, pl: Place, pose: Record<string, number>, expr:
   const W_ = (f: F, poly: Pt[]): Pt[] => poly.map(p => { const d = rot(p, f.a); return [fx(f.x + d[0]), f.y + d[1]] as Pt; });
   const rig: Rig = { joints: {}, anchors: {}, rootx: pl.x, f: pl.f };
   let n = 0;
-  const cut = (f: F, poly: Pt[], col: string, z: number, joint?: string, lift = 0.06, rough = 0.012) => {
+  const cut = (f: F, poly: Pt[], col: string, z: number, joint?: string, lift = 0.09, rough = 0.012) => {
     out.push({ pts: snip(W_(f, poly), seed + (n++) * 977, rough, 0.08), col, z: pl.z + z, lift, own, joint });
   };
   const pins: [F, number][] = [];
@@ -130,6 +130,7 @@ export function puppet(r: Recipe, pl: Place, pose: Record<string, number>, expr:
     }
     const an = child(kn, [0, -L.shin], P['an_' + s]); note('an_' + s, an, kn);
     cut(an, [[-0.22 * w, 0.12], [0.2 * w, 0.12], [0.24 * w, -0.12], [0.55 * w, -0.14], [0.58 * w, -0.3], [-0.24 * w, -0.3]], r.pants ? PAL.black : r.gear, z + 0.07, 'an_' + s);
+    rig.anchors['foot_' + s] = W_(an, [[0.15 * w, -0.3]])[0];
   };
   arm('f', 0); leg('f', 0.12); leg('n', 0.24);
   cut(root, [[-0.62 * w, 0.06], [0.62 * w, 0.06], [0.66 * w, -0.5], [0.1 * w, -0.62], [-0.1 * w, -0.62], [-0.66 * w, -0.5]], r.pants || r.gear, 0.36, 'body');
