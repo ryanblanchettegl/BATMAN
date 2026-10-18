@@ -22,6 +22,7 @@ Two more lists sit beside this one, both finished:
 
 | Topic | Decision |
 | --- | --- |
+| The art style, 18 Oct | The desk image is the art style: everything looks made from construction paper. Built in CSS and canvas now; Blender renders of the pieces later to make it more 3D. |
 | The World Editor's foundation, 18 Oct | Create a Wrestler (Create a Player) and Create a Scene are the new foundation for the World Editor. Its other parts are built around them. |
 | Entrances and move pictures, 18 Oct | A wrestler's own picks are for their signature moves and finishers. Entrances: pick a canned one, or make a custom entrance through Create a Scene (World Editor). No other per-wrestler scenes. |
 | Create a Player in a game, 18 Oct | The roster says **Edit wrestler** and opens that wrestler's record. **Create a Player** makes someone new, and in an active game every new wrestler goes to free agency; you sign them like anybody else. Only the World Editor puts somebody into a company. |
@@ -103,6 +104,12 @@ Two more lists sit beside this one, both finished:
 | World Editor | The creation suite is its own page called **World Editor** on the title screen. A player builds a world from scratch (companies, shows, belts, wrestlers) and uploads it to the Workshop. This is the main next item. |
 
 ## Tasks
+
+### 0x. The paper look built out in Blender (later; Ryan, 18 October)
+
+The desk image (`docs/mockups/paper/desk.png`) is the art style: the whole game looks made from construction paper. Pages are built to it now in CSS and canvas.
+- [ ] Render the interface pieces in Blender as cut card (window frames and title bars, buttons in each colour, tags, group tabs, the menu bar, the control strip tiles and keys) so the paper has real thickness, light and shadow, and use them in the game as 9-slice images or baked textures.
+- [ ] Every page moved to the paper look, one at a time with Ryan's go-ahead.
 
 ### 0y. The World Editor rebuilt on Create a Wrestler and Create a Scene (Ryan, 18 October)
 
