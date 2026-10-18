@@ -103,6 +103,13 @@ Two more lists sit beside this one, both finished:
 
 ## Tasks
 
+### 0z. Create a Scene, built out (later; Ryan, 18 October: "the bones are there and work")
+
+- [ ] Zoomed out, the front of the ring runs too long and does not look right (the apron and floor under the camera).
+- [ ] The people do not read as 2D paper figures in the 3D view; they should look like cut card standing in a diorama.
+- [ ] Starting a scene, choose the set and setup (the commentary desk with its chairs, the ramp, backstage rooms, a talk show) instead of always the ring.
+- [ ] It should do a lot more over time: the toolkit in `docs/plans/papercraft-engine.md` (light and effects, more sets, props and clothes, tall and square frames).
+
 ### 0. The World Editor (Ryan's main next item)
 Code: `src/86-editor.js` (the `E.ed*` functions; no screen code), `app/src/screens/editor/`, `app/styles/editor.css`. Tests: `node test-editor.js` and `app/tests/editor.js`.
 
