@@ -8143,7 +8143,8 @@ function lookClean(x){
         placement:{x:lkNum(pl.x,-20,20)||0,y:lkNum(pl.y,-20,20)||0,z:lkNum(pl.z,0,20)||0},palette_slot:lkId(l.palette_slot),on:l.on==='lower_body'?'lower_body':undefined,
         arch:lkNum(l.arch,-1,1),scale:lkNum(l.scale,0.2,4),rot:lkNum(l.rot,-180,180)});
       return (c.type==='text_decal'&&c.string)||(c.type==='shape_combiner'&&c.shape_id)?c:null;}).filter(function(l){return !!l;});
-    at[k]=lkPrune({description:lkStr(a.description,40),equipped_assets:e,palette_slots:pal,custom_layers:lay});});
+    var pcs={};['upper_body','lower_body','footwear'].forEach(function(q){var v=lkId((a.part_colours||{})[q]);if(v)pcs[q]=v;});
+    at[k]=lkPrune({description:lkStr(a.description,40),equipped_assets:e,palette_slots:pal,custom_layers:lay,part_colours:Object.keys(pcs).length?pcs:undefined});});
     if(Object.keys(at).length)o.attires=at;}
   if(Array.isArray(x.finishing_moves))o.finishing_moves=x.finishing_moves.slice(0,4).map(function(m){
     if(!m||typeof m!=='object'||!lkStr(m.name,32))return null;

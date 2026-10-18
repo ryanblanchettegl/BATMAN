@@ -182,7 +182,10 @@ export function CreatePlayer(pp: PlayerProps) {
         {tab === 'gear' && <>
           {(['upper_body', 'lower_body', 'footwear'] as const).map(slot => <div class="sc-row"><span class="sc-slot">{slot === 'upper_body' ? 'Top' : slot === 'lower_body' ? 'Bottoms' : 'Footwear'}</span>
             <select aria-label={slot === 'upper_body' ? 'Top' : slot === 'lower_body' ? 'Bottoms' : 'Footwear'} data-t="caw-part" data-v={slot} value={cur.equipped_assets[slot] || ''} onChange={e => { const v = (e.currentTarget as HTMLSelectElement).value; change(n => { A(n).equipped_assets[slot] = v; }); }}>
-              {PARTS[slot].map(p => <option value={p[0]}>{p[1]}</option>)}</select></div>)}
+              {PARTS[slot].map(p => <option value={p[0]}>{p[1]}</option>)}</select>
+            {chip((cur.part_colours || {})[slot] || undefined)}<select aria-label={'Colour of the ' + (slot === 'upper_body' ? 'top' : slot === 'lower_body' ? 'bottoms' : 'footwear')} data-t="caw-partcol" data-v={slot} value={(cur.part_colours || {})[slot] || ''}
+              onChange={e => { const v = (e.currentTarget as HTMLSelectElement).value; change(n => { const a2 = A(n), pc: any = a2.part_colours = a2.part_colours || {}; if (v) pc[slot] = v; else delete pc[slot]; if (!Object.keys(pc).length) delete a2.part_colours; }); }}>
+              <option value="">The outfit's colours</option>{SWATCHES.map(s2 => <option value={s2[0]}>{s2[1]}</option>)}</select></div>)}
           <Group title="Extras">
             <div class="sc-row">{PARTS.accessories.map(p => { const on = (cur.equipped_assets.accessories || []).indexOf(p[0]) >= 0; return <Btn kind="less" t="caw-acc" d={{ v: p[0] }} on={on} onClick={() => change(n => { const e = A(n).equipped_assets, l = e.accessories || []; e.accessories = on ? l.filter(x => x !== p[0]) : l.concat([p[0]]).slice(0, 8); })}>{p[1]}</Btn>; })}</div>
           </Group>

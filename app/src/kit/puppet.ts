@@ -82,7 +82,7 @@ export function commentator(i: number): Recipe {
     shirt: J, pants: J, stripes: false, suit: { jacket: J, tie: T, square: i === 0 ? PAL.white : T }, headset: true };
 }
 /** Dress whoever plays a slot for the desk: a suit (theirs, if they have one) and a headset. */
-export function dress(r: Recipe, i: number): Recipe { if (r.kits && r.kits.street_clothes.top === 'suit_jacket') { const s = r.kits.street_clothes; return { ...r, kit: s, suit: { jacket: s.pal.s.c, tie: s.pal.t.c, square: s.pal.h.c }, headset: true }; } if (r.suit && !r.kit) return { ...r, headset: true }; const c = commentator(i); return { ...r, kit: undefined, shirt: c.shirt, pants: c.pants, stripes: false, suit: c.suit, headset: true, straps: false, tape: false, mask: r.mask }; }
+export function dress(r: Recipe, i: number): Recipe { if (r.kits && r.kits.street_clothes.top === 'suit_jacket') { const s = r.kits.street_clothes; return { ...r, kit: s, suit: { jacket: s.col.top.c, tie: s.pal.t.c, square: s.pal.h.c }, headset: true }; } if (r.suit && !r.kit) return { ...r, headset: true }; const c = commentator(i); return { ...r, kit: undefined, shirt: c.shirt, pants: c.pants, stripes: false, suit: c.suit, headset: true, straps: false, tape: false, mask: r.mask }; }
 export function blank(i: number): Recipe {
   return { ...REF, key: 'blank' + i, name: ['Wrestler A', 'Wrestler B', 'Wrestler C', 'Wrestler D'][i] || 'Wrestler', skin: '#c9a184', hair: 'bald', shirt: undefined, pants: undefined, stripes: false, gear: [PAL.blue, PAL.red, PAL.green, PAL.gold][i % 4], gear2: PAL.white, tape: true, w: 1.05, h: 1 };
 }
@@ -138,11 +138,11 @@ export function puppet(r: Recipe, pl: Place, pose: Record<string, number>, expr:
   const arm = (s: 'n' | 'f', z: number) => {
     const sh = child(to, [(s === 'n' ? 0.74 : -0.74) * bw, L.torso - 0.12], P['sh_' + s]); note('sh_' + s, sh, to);
     let up: string | Swatch = r.suit ? r.suit.jacket : r.shirt && r.stripes ? r.shirt : sk, fore: string | Swatch = r.suit ? r.suit.jacket : sk;
-    if (K) { up = sk; fore = sk; if (OVER.indexOf(K.top) >= 0) { up = K.pal.s; if (K.top !== 'shirt_tshirt_base') fore = K.pal.s; } }
+    if (K) { up = sk; fore = sk; if (OVER.indexOf(K.top) >= 0) { up = K.col.top; if (K.top !== 'shirt_tshirt_base') fore = K.col.top; } }
     const robe = !!K && K.top === 'robe_long', rw = robe ? 1.25 : 1;
     cut(sh, taper(0.46 * aw * rw, 0.36 * aw * rw, L.up), up, z, 'sh_' + s); cut(sh, ell(0, -0.08, 0.27 * aw * rw, 0.32 * aw * rw, 14), up, z + 0.02, 'sh_' + s); pins.push([sh, z + 0.03]);
     if (K && K.top === 'shirt_tshirt_base') {   // a short sleeve with its hem
-      cut(sh, ell(0, -0.08, 0.3 * aw, 0.35 * aw, 14).concat([[0.26 * aw, -0.5 * L.up], [-0.26 * aw, -0.5 * L.up]]), K.pal.s, z + 0.021, 'sh_' + s);
+      cut(sh, ell(0, -0.08, 0.3 * aw, 0.35 * aw, 14).concat([[0.26 * aw, -0.5 * L.up], [-0.26 * aw, -0.5 * L.up]]), K.col.top, z + 0.021, 'sh_' + s);
       cut(sh, [[-0.26 * aw, -0.44 * L.up], [0.26 * aw, -0.44 * L.up], [0.26 * aw, -0.52 * L.up], [-0.26 * aw, -0.52 * L.up]], K.pal.t, z + 0.022, 'sh_' + s, 0.02, 0.004);
     }
     const tat = r.tats || [], ink = inkOf(sk), sleeve = tat.indexOf(s === 'n' ? 'sleeve_near' : 'sleeve_far') >= 0;
@@ -155,6 +155,7 @@ export function puppet(r: Recipe, pl: Place, pose: Record<string, number>, expr:
     if (has('elbow_pads')) cut(el, ell(0, -0.02, 0.22 * aw, 0.2 * aw, 12), K!.pal.s, z + 0.065, 'el_' + s, 0.04);
     if (r.suit) cut(el, [[-0.16 * aw, -L.fore + 0.16], [0.16 * aw, -L.fore + 0.16], [0.15 * aw, -L.fore + 0.02], [-0.15 * aw, -L.fore + 0.02]], PAL.white, z + 0.06, 'el_' + s, 0.02, 0.004);   // the shirt cuff
     else if (K && OVER.indexOf(K.top) >= 0 && K.top !== 'shirt_tshirt_base') cut(el, [[-0.17 * aw * rw, -L.fore + 0.18], [0.17 * aw * rw * (robe ? 1.3 : 1), -L.fore + 0.18], [0.16 * aw * rw * (robe ? 1.3 : 1), -L.fore + 0.02], [-0.16 * aw * rw, -L.fore + 0.02]], K.pal.t, z + 0.06, 'el_' + s, 0.02, 0.004);   // a cuff in the trim
+    if (has('wrist_wraps')) cut(el, [[-0.18 * aw, -L.fore + 0.34], [0.18 * aw, -L.fore + 0.3], [0.17 * aw, -L.fore + 0.02], [-0.17 * aw, -L.fore + 0.02]], K!.pal.s, z + 0.061, 'el_' + s, 0.02, 0.006);
     if (r.tape || has('wrist_tape_white')) cut(el, [[-0.17 * aw, -L.fore + 0.25], [0.17 * aw, -L.fore + 0.25], [0.16 * aw, -L.fore + 0.02], [-0.16 * aw, -L.fore + 0.02]], PAL.white, z + 0.06, 'el_' + s, 0.02, 0.006);
     const wr = child(el, [0, -L.fore], P['wr_' + s]); note('wr_' + s, wr, el);
     cut(wr, ell(0.02, -0.17, 0.17 * aw, 0.22, 12), sk, z + 0.08, 'wr_' + s);
@@ -164,14 +165,14 @@ export function puppet(r: Recipe, pl: Place, pose: Record<string, number>, expr:
   const LONG = ['tights_long_01', 'jeans_distressed', 'trousers_suit'];
   const leg = (s: 'n' | 'f', z: number) => {
     const hp = child(root, [(s === 'n' ? 0.32 : -0.32) * w, -0.42], P['hip_' + s]); note('hip_' + s, hp, root);
-    const thighC: string | Swatch = K ? (LONG.indexOf(K.bottom) >= 0 || K.bottom === 'shorts_fight' ? K.pal.p : sk) : r.pants || sk;
-    const shinC: string | Swatch = K ? (LONG.indexOf(K.bottom) >= 0 ? K.pal.p : sk) : r.pants || sk;
+    const thighC: string | Swatch = K ? (LONG.indexOf(K.bottom) >= 0 || K.bottom === 'shorts_fight' ? K.col.bottom : sk) : r.pants || sk;
+    const shinC: string | Swatch = K ? (LONG.indexOf(K.bottom) >= 0 ? K.col.bottom : sk) : r.pants || sk;
     cut(hp, taper(0.66 * aw, 0.46 * aw, L.thigh), thighC, z, 'hip_' + s); pins.push([hp, z + 0.03]);
     if (K) {
-      if (K.bottom === 'trunks_long') { cut(hp, [[-0.34 * aw, 0.1], [0.34 * aw, 0.1], [0.3 * aw, -0.45 * L.thigh], [-0.3 * aw, -0.45 * L.thigh]], K.pal.p, z + 0.015, 'hip_' + s); cut(hp, [[-0.3 * aw, -0.4 * L.thigh], [0.3 * aw, -0.4 * L.thigh], [0.3 * aw, -0.47 * L.thigh], [-0.3 * aw, -0.47 * L.thigh]], K.pal.t, z + 0.017, 'hip_' + s, 0.02, 0.004); }
+      if (K.bottom === 'trunks_long' || K.top === 'singlet_full') { cut(hp, [[-0.34 * aw, 0.1], [0.34 * aw, 0.1], [0.3 * aw, -0.45 * L.thigh], [-0.3 * aw, -0.45 * L.thigh]], K.top === 'singlet_full' ? K.col.top : K.col.bottom, z + 0.015, 'hip_' + s); cut(hp, [[-0.3 * aw, -0.4 * L.thigh], [0.3 * aw, -0.4 * L.thigh], [0.3 * aw, -0.47 * L.thigh], [-0.3 * aw, -0.47 * L.thigh]], K.pal.t, z + 0.017, 'hip_' + s, 0.02, 0.004); }
       if (K.bottom === 'shorts_fight') { cut(hp, [[0.05, 0], [0.22 * aw, 0], [0.18 * aw, -0.9 * L.thigh], [0.02, -0.9 * L.thigh]], K.pal.s, z + 0.015, 'hip_' + s, 0.02); cut(hp, [[-0.25 * aw, -0.86 * L.thigh], [0.25 * aw, -0.86 * L.thigh], [0.24 * aw, -0.95 * L.thigh], [-0.24 * aw, -0.95 * L.thigh]], K.pal.t, z + 0.017, 'hip_' + s, 0.02, 0.004); }
       if (K.bottom === 'tights_long_01') cut(hp, strip([0, 0.05], [0, -L.thigh + 0.05], 0.08, 0.06), K.pal.t, z + 0.015, 'hip_' + s, 0.02, 0.004);
-      if (K.bottom === 'trousers_suit') cut(hp, strip([0.05, -0.1], [0.04, -L.thigh + 0.05], 0.025, 0.02), shade(K.pal.p.c, 0.7), z + 0.015, 'hip_' + s, 0.01, 0.003);
+      if (K.bottom === 'trousers_suit') cut(hp, strip([0.05, -0.1], [0.04, -L.thigh + 0.05], 0.025, 0.02), shade(K.col.bottom.c, 0.7), z + 0.015, 'hip_' + s, 0.01, 0.003);
       if (K.bottom === 'jeans_distressed' && s === 'n') cut(hp, [[-0.1, -0.55 * L.thigh], [0.12, -0.5 * L.thigh], [0.18, -0.6 * L.thigh], [0.05, -0.66 * L.thigh], [-0.12, -0.62 * L.thigh]], sk, z + 0.015, 'hip_' + s, 0.01, 0.02);   // a rip
     }
     const kn = child(hp, [0, -L.thigh], P['kn_' + s]); note('kn_' + s, kn, hp);
@@ -182,16 +183,19 @@ export function puppet(r: Recipe, pl: Place, pose: Record<string, number>, expr:
     if (!K) {
       if (!r.pants) { cut(kn, ell(0, -0.05, 0.21 * aw, 0.24 * aw, 14), r.gear2, z + 0.05, 'kn_' + s, 0.03); shinGear(0.42, r.gear); }
     } else {
-      if (K.feet === 'boots_knee') { cut(kn, ell(0, -0.05, 0.21 * aw, 0.24 * aw, 14), K.pal.t, z + 0.055, 'kn_' + s, 0.03); shinGear(0.42, K.pal.s); }
-      else if (K.feet === 'boots_laced_heavy') { shinGear(0.4, K.pal.s); for (let i = 0; i < 4; i++) { const yy = -L.shin * (0.48 + i * 0.12); cut(kn, [[0.08 * aw, yy], [0.21 * aw, yy - 0.02], [0.21 * aw, yy - 0.06], [0.08 * aw, yy - 0.04]], K.pal.t, z + 0.06, 'kn_' + s, 0.01, 0.003); } }
-      else if (K.feet === 'boots_short') shinGear(0.78, K.pal.s);
+      if (K.feet === 'boots_knee') { cut(kn, ell(0, -0.05, 0.21 * aw, 0.24 * aw, 14), K.pal.t, z + 0.055, 'kn_' + s, 0.03); shinGear(0.42, K.col.feet); }
+      else if (K.feet === 'kick_pads') { cut(kn, [[-0.22 * aw, -0.02], [0.3 * aw, -0.06], [0.32 * aw, -L.shin * 0.5], [0.26 * aw, -L.shin + 0.02], [-0.2 * aw, -L.shin + 0.02]], K.col.feet, z + 0.05, 'kn_' + s, 0.05); for (const t of [0.3, 0.62]) cut(kn, [[0.0, -L.shin * t], [0.31 * aw, -L.shin * t - 0.02], [0.31 * aw, -L.shin * t - 0.08], [0.0, -L.shin * t - 0.06]], K.pal.t, z + 0.052, 'kn_' + s, 0.01, 0.003); }
+      else if (K.feet === 'boots_laced_heavy') { shinGear(0.4, K.col.feet); for (let i = 0; i < 4; i++) { const yy = -L.shin * (0.48 + i * 0.12); cut(kn, [[0.08 * aw, yy], [0.21 * aw, yy - 0.02], [0.21 * aw, yy - 0.06], [0.08 * aw, yy - 0.04]], K.pal.t, z + 0.06, 'kn_' + s, 0.01, 0.003); } }
+      else if (K.feet === 'boots_short') shinGear(0.78, K.col.feet);
+      if (has('knee_sleeves') && K.feet !== 'boots_knee') cut(kn, [[-0.25 * aw, 0.25], [0.25 * aw, 0.25], [0.22 * aw, -0.3], [-0.22 * aw, -0.3]], K.pal.s, z + 0.054, 'kn_' + s, 0.02);
       if (has('knee_pads') && K.feet !== 'boots_knee') cut(kn, ell(0, -0.05, 0.22 * aw, 0.25 * aw, 14), K.pal.s, z + 0.056, 'kn_' + s, 0.03);
     }
     const an = child(kn, [0, -L.shin], P['an_' + s]); note('an_' + s, an, kn);
-    const ft = K ? K.feet : '', bare = ft === 'barefoot', small = bare || ft === 'shoes_dress';
+    const ft = K ? K.feet : '', bare = ft === 'barefoot' || ft === 'kick_pads', small = bare || ft === 'shoes_dress';
     const foot: Pt[] = small ? [[-0.2 * aw, 0.1], [0.18 * aw, 0.1], [0.22 * aw, -0.12], [0.5 * aw, -0.16], [0.52 * aw, -0.3], [-0.22 * aw, -0.3]] : [[-0.22 * aw, 0.12], [0.2 * aw, 0.12], [0.24 * aw, -0.12], [0.55 * aw, -0.14], [0.58 * aw, -0.3], [-0.24 * aw, -0.3]];
-    const footC: string | Swatch = !K ? (r.pants ? PAL.black : r.gear) : bare ? sk : ft === 'shoes_dress' ? { c: PAL.black, f: 'leather' } : K.pal.s;
+    const footC: string | Swatch = !K ? (r.pants ? PAL.black : r.gear) : bare ? sk : ft === 'shoes_dress' ? { c: PAL.black, f: 'leather' } : K.col.feet;
     cut(an, foot, footC, z + 0.07, 'an_' + s);
+    if (ft === 'kick_pads') cut(an, [[-0.05 * aw, 0.1], [0.2 * aw, 0.1], [0.3 * aw, -0.14], [0.05 * aw, -0.14]], K!.col.feet, z + 0.075, 'an_' + s, 0.02, 0.004);   // the strap over the instep
     if (ft === 'sneakers_retro' || ft === 'boots_laced_heavy') cut(an, [[-0.25 * aw, -0.22], [0.6 * aw, -0.22], [0.6 * aw, -0.32], [-0.25 * aw, -0.32]], ft === 'sneakers_retro' ? K!.pal.t : PAL.black, z + 0.075, 'an_' + s, 0.02, 0.004);   // the sole
     if (ft === 'sneakers_retro') cut(an, strip([-0.1 * aw, 0.0], [0.35 * aw, -0.12], 0.06, 0.04), K!.pal.t, z + 0.078, 'an_' + s, 0.02, 0.003);
     rig.anchors['foot_' + s] = W_(an, [[0.15 * aw, -0.3]])[0];
@@ -199,17 +203,18 @@ export function puppet(r: Recipe, pl: Place, pose: Record<string, number>, expr:
   arm('f', 0 + ((pl.lz || {}).arm_f || 0)); leg('f', 0.12 + ((pl.lz || {}).leg_f || 0)); leg('n', 0.24 + ((pl.lz || {}).leg_n || 0));
   // the trunks, or the bottom of whatever is worn on the legs
   const trunks: [number, number][] = [[-0.62 * w, 0.06], [0.62 * w, 0.06], [0.66 * w, -0.5], [0.1 * w, -0.62], [-0.1 * w, -0.62], [-0.66 * w, -0.5]];
-  cut(root, trunks, K ? K.pal.p : r.pants || r.gear, 0.36, 'body');
+  cut(root, trunks, K ? (K.top === 'singlet_full' ? K.col.top : K.col.bottom) : r.pants || r.gear, 0.36, 'body');
   if (K) {
     if (K.bottom === 'trunks_brief_01' || K.bottom === 'trunks_long' || K.bottom === 'shorts_fight') cut(root, [[-0.62 * w, 0.06], [0.62 * w, 0.06], [0.63 * w, -0.06], [-0.63 * w, -0.06]], K.pal.t, 0.37, 'body', 0.02, 0.004);
     if (K.bottom === 'jeans_distressed' || K.bottom === 'trousers_suit') { cut(root, [[-0.63 * w, 0.06], [0.63 * w, 0.06], [0.64 * w, -0.08], [-0.64 * w, -0.08]], K.bottom === 'trousers_suit' ? { c: PAL.black, f: 'leather' } : { c: '#3a2414', f: 'leather' }, 0.37, 'body', 0.02, 0.004); cut(root, [[0.1, 0.07], [0.32, 0.07], [0.32, -0.09], [0.1, -0.09]], K.pal.h, 0.375, 'body', 0.02, 0.003); }
-    if (K.top === 'singlet_straps_down') for (const sd of [-1, 1]) cut(root, strip([sd * 0.42 * w, 0.02], [sd * 0.5 * w, -0.85], 0.16, 0.14, sd * 0.05), K.pal.p, 0.38, 'body', 0.03);
-    if (K.top === 'robe_long') { cut(root, [[-0.72 * bw, 0.1], [0.72 * bw, 0.1], [1.05 * bw, -2.0 * h * ll], [-1.0 * bw, -2.0 * h * ll]], K.pal.s, 0.385, 'body', 0.06); cut(root, [[-1.0 * bw, -1.86 * h * ll], [1.04 * bw, -1.86 * h * ll], [1.05 * bw, -2.0 * h * ll], [-1.0 * bw, -2.0 * h * ll]], K.pal.t, 0.39, 'body', 0.02, 0.005); }
+    if (K.top === 'singlet_straps_down') for (const sd of [-1, 1]) cut(root, strip([sd * 0.42 * w, 0.02], [sd * 0.5 * w, -0.85], 0.16, 0.14, sd * 0.05), K.col.top, 0.38, 'body', 0.03);
+    if (K.bottom === 'skirt_short') { cut(root, [[-0.66 * w, 0.08], [0.66 * w, 0.08], [0.95 * w, -0.85], [-0.9 * w, -0.85]], K.col.bottom, 0.385, 'body', 0.05); cut(root, [[-0.9 * w, -0.76], [0.94 * w, -0.76], [0.95 * w, -0.85], [-0.9 * w, -0.85]], K.pal.t, 0.39, 'body', 0.02, 0.004); }
+    if (K.top === 'robe_long') { cut(root, [[-0.72 * bw, 0.1], [0.72 * bw, 0.1], [1.05 * bw, -2.0 * h * ll], [-1.0 * bw, -2.0 * h * ll]], K.col.top, 0.385, 'body', 0.06); cut(root, [[-1.0 * bw, -1.86 * h * ll], [1.04 * bw, -1.86 * h * ll], [1.05 * bw, -2.0 * h * ll], [-1.0 * bw, -2.0 * h * ll]], K.pal.t, 0.39, 'body', 0.02, 0.005); }
   }
   const b = r.belly;
   const torsoPoly: Pt[] = [[-0.58 * bw - b, 0], [0.58 * bw + b, 0], [0.68 * bw + b * 0.8, 0.55], [0.86 * bw, 1.45 * H], [0.74 * bw, 1.86 * H], [0.28, 1.98 * H], [-0.28, 1.98 * H], [-0.74 * bw, 1.86 * H], [-0.86 * bw, 1.45 * H], [-0.68 * bw - b * 0.8, 0.55]];
   const covered = K ? ['shirt_tshirt_base', 'shirt_tank', 'jacket_leather_biker', 'robe_long', 'hoodie_01', 'suit_jacket'].indexOf(K.top) >= 0 : !!r.shirt;
-  cut(to, torsoPoly, K ? (covered ? K.pal.s : sk) : r.shirt || sk, 0.42, 'torso');
+  cut(to, torsoPoly, K ? (covered ? K.col.top : sk) : r.shirt || sk, 0.42, 'torso');
   pins.push([to, 0.55]);
   const muscles = () => {
     cut(to, [[0.05, 1.2 * H], [0.75 * bw, 1.25 * H], [0.6 * bw, 1.05 * H], [0.1, 1.08 * H]], dk, 0.45, 'torso', 0.02);
@@ -235,14 +240,15 @@ export function puppet(r: Recipe, pl: Place, pose: Record<string, number>, expr:
       for (let i = -2; i <= 2; i++) { const sx = i * 0.3 * bw; cut(to, [[sx - 0.07, 0.05], [sx + 0.07, 0.05], [sx * 1.25 + 0.07, 1.85 * H], [sx * 1.25 - 0.07, 1.85 * H]], PAL.black, 0.45, 'torso', 0.02, 0.004); }
     }
   } else {
-    const t = K.top, S = K.pal.s, T = K.pal.t;
+    const t = K.top, S = K.col.top, T = K.pal.t;
     if (!covered) muscles();
-    if (t === 'singlet_straps_up') {
-      cut(to, [[-0.6 * bw - b, 0], [0.6 * bw + b, 0], [0.7 * bw + b * 0.8, 0.55], [0.84 * bw, 1.3 * H], [0.5 * bw, 1.36 * H], [0.22 * bw, 1.2 * H], [-0.22 * bw, 1.2 * H], [-0.5 * bw, 1.36 * H], [-0.84 * bw, 1.3 * H], [-0.7 * bw - b * 0.8, 0.55]], K.pal.p, 0.46, 'torso', 0.03);
-      for (const s of [-1, 1]) cut(to, [[s * 0.3 * bw, 1.95 * H], [s * 0.52 * bw, 1.9 * H], [s * 0.52 * bw, 1.3 * H], [s * 0.3 * bw, 1.22 * H]], K.pal.p, 0.47, 'torso', 0.03);
+    if (t === 'singlet_straps_up' || t === 'singlet_full') {
+      cut(to, [[-0.6 * bw - b, 0], [0.6 * bw + b, 0], [0.7 * bw + b * 0.8, 0.55], [0.84 * bw, 1.3 * H], [0.5 * bw, 1.36 * H], [0.22 * bw, 1.2 * H], [-0.22 * bw, 1.2 * H], [-0.5 * bw, 1.36 * H], [-0.84 * bw, 1.3 * H], [-0.7 * bw - b * 0.8, 0.55]], S, 0.46, 'torso', 0.03);
+      for (const s of [-1, 1]) cut(to, [[s * 0.3 * bw, 1.95 * H], [s * 0.52 * bw, 1.9 * H], [s * 0.52 * bw, 1.3 * H], [s * 0.3 * bw, 1.22 * H]], S, 0.47, 'torso', 0.03);
       cut(to, strip([-0.84 * bw, 1.3 * H], [0.84 * bw, 1.3 * H], 0.05, 0.05, -0.1 * H), T, 0.475, 'torso', 0.01, 0.003);
-    } else if (t === 'singlet_straps_down') cut(to, [[-0.6 * bw - b, 0], [0.6 * bw + b, 0], [0.66 * bw + b * 0.9, 0.38], [-0.66 * bw - b * 0.9, 0.38]], K.pal.p, 0.46, 'torso', 0.03);
-    else if (t === 'top_sports') { cut(to, [[-0.66 * bw, 1.62 * H], [0.66 * bw, 1.62 * H], [0.6 * bw, 1.12 * H], [-0.6 * bw, 1.12 * H]], K.pal.p, 0.46, 'torso', 0.03); cut(to, [[-0.6 * bw, 1.18 * H], [0.6 * bw, 1.18 * H], [0.6 * bw, 1.1 * H], [-0.6 * bw, 1.1 * H]], T, 0.47, 'torso', 0.01, 0.003); for (const s of [-1, 1]) cut(to, [[s * 0.3 * bw, 1.95 * H], [s * 0.45 * bw, 1.92 * H], [s * 0.5 * bw, 1.6 * H], [s * 0.34 * bw, 1.6 * H]], K.pal.p, 0.47, 'torso', 0.03); }
+    } else if (t === 'singlet_straps_down') cut(to, [[-0.6 * bw - b, 0], [0.6 * bw + b, 0], [0.66 * bw + b * 0.9, 0.38], [-0.66 * bw - b * 0.9, 0.38]], S, 0.46, 'torso', 0.03);
+    else if (t === 'top_sports') { cut(to, [[-0.66 * bw, 1.62 * H], [0.66 * bw, 1.62 * H], [0.6 * bw, 1.12 * H], [-0.6 * bw, 1.12 * H]], S, 0.46, 'torso', 0.03); cut(to, [[-0.6 * bw, 1.18 * H], [0.6 * bw, 1.18 * H], [0.6 * bw, 1.1 * H], [-0.6 * bw, 1.1 * H]], T, 0.47, 'torso', 0.01, 0.003); for (const s of [-1, 1]) cut(to, [[s * 0.3 * bw, 1.95 * H], [s * 0.45 * bw, 1.92 * H], [s * 0.5 * bw, 1.6 * H], [s * 0.34 * bw, 1.6 * H]], S, 0.47, 'torso', 0.03); }
+    else if (t === 'top_crop') { cut(to, [[-0.72 * bw, 1.0 * H], [0.72 * bw, 1.0 * H], [0.86 * bw, 1.45 * H], [0.74 * bw, 1.86 * H], [0.28, 1.98 * H], [-0.28, 1.98 * H], [-0.74 * bw, 1.86 * H], [-0.86 * bw, 1.45 * H]], S, 0.46, 'torso', 0.03); cut(to, [[-0.72 * bw, 1.06 * H], [0.72 * bw, 1.06 * H], [0.72 * bw, 0.98 * H], [-0.72 * bw, 0.98 * H]], T, 0.47, 'torso', 0.01, 0.003); }
     else if (t === 'vest_open') for (const s of [-1, 1]) { cut(to, [[s * 0.86 * bw, 1.45 * H], [s * 0.74 * bw, 1.86 * H], [s * 0.4 * bw, 1.96 * H], [s * 0.3 * bw, 0.1], [s * (0.6 * bw + b), 0]], S, 0.46, 'torso', 0.03); cut(to, strip([s * 0.4 * bw, 1.95 * H], [s * 0.3 * bw, 0.1], 0.05, 0.05), T, 0.47, 'torso', 0.01, 0.003); }
     else if (t === 'shirt_tshirt_base' || t === 'hoodie_01') {
       cut(to, strip([-0.3 * bw, 1.96 * H], [0.3 * bw, 1.96 * H], 0.08, 0.08, -0.12 * H), t === 'hoodie_01' ? shade(S.c, 0.75) : T, 0.46, 'torso', 0.01, 0.003);   // the collar
@@ -261,8 +267,8 @@ export function puppet(r: Recipe, pl: Place, pose: Record<string, number>, expr:
     if (has('chain_gold')) for (let i = 0; i <= 10; i++) { const a = Math.PI * (1.15 + 0.7 * i / 10); cut(to, ell(0.36 * bw * Math.cos(a), 1.9 * H + 0.55 * H * Math.sin(a), 0.05, 0.05, 8), K.pal.h, 0.495, 'torso', 0.02, 0.002); }
   }
   if ((r.tats || []).indexOf('chest') >= 0 && (K ? !covered : !r.shirt)) {   // a chest piece: wings spread from the breastbone
-    const ink = inkOf(sk); for (const sd of [-1, 1]) cut(to, [[sd * 0.04, 1.5 * H], [sd * 0.62 * bw, 1.66 * H], [sd * 0.5 * bw, 1.52 * H], [sd * 0.58 * bw, 1.46 * H], [sd * 0.42 * bw, 1.36 * H], [sd * 0.46 * bw, 1.28 * H], [sd * 0.06, 1.38 * H]], ink, 0.455, 'torso', 0.005, 0.004);
-    cut(to, [[0, 1.58 * H], [0.07, 1.45 * H], [0, 1.3 * H], [-0.07, 1.45 * H]], ink, 0.456, 'torso', 0.005, 0.003);
+    const ink = inkOf(sk); for (const sd of [-1, 1]) { cut(to, strip([sd * 0.06, 1.47 * H], [sd * 0.55 * bw, 1.62 * H], 0.07, 0.025, sd * 0.04), ink, 0.455, 'torso', 0.005, 0.003); cut(to, strip([sd * 0.08, 1.42 * H], [sd * 0.45 * bw, 1.46 * H], 0.05, 0.02, sd * 0.03), ink, 0.455, 'torso', 0.005, 0.003); }
+    cut(to, [[0, 1.55 * H], [0.05, 1.45 * H], [0, 1.34 * H], [-0.05, 1.45 * H]], ink, 0.456, 'torso', 0.005, 0.003);
   }
   rig.anchors.waist = W_(root, [[0, 0.2]])[0]; rig.anchors.chest = W_(to, [[0, 1.4 * H]])[0];
   const nk = child(to, [0, 1.95 * H], P.head); note('head', nk, to, true);
@@ -359,8 +365,8 @@ function head(fr: F, r: Recipe, z: number, expr: string, cut: (f: F, poly: Pt[],
     else if (pt.k === 'full' || pt.k === 'skull') {
       put(headPoly(hd, 0.985), pt.k === 'skull' ? PAL.white : C, 0.096, 0.006);
       if (pt.k === 'skull') {
-        for (const sd of [-1, 1]) put(ell(sd * 0.16 + tq, ey, 0.14, 0.12, 14), PAL.black, 0.097, 0.006);
-        put([[tq - 0.06, ey - 0.12], [tq + 0.06, ey - 0.12], [tq, ey - 0.24]], PAL.black, 0.097, 0.004);
+        for (const sd of [-1, 1]) { put(ell(sd * 0.16 + tq, ey, 0.12, 0.1, 14), PAL.black, 0.125, 0.006); put(ell(sd * 0.16 + tq + 0.02, ey, 0.025, 0.025, 8), PAL.white, 0.126, 0.002); }
+        put([[tq - 0.06, ey - 0.14], [tq + 0.06, ey - 0.14], [tq, ey - 0.26]], PAL.black, 0.135, 0.004);
       }
     } else if (pt.k === 'war') {
       put(strip([-hd.rx * 0.8, hd.cy + hd.ryt * 0.45], [hd.rx * 0.85, hd.cy + hd.ryt * 0.5], 0.06, 0.06), C, 0.096, 0.004);
@@ -372,7 +378,7 @@ function head(fr: F, r: Recipe, z: number, expr: string, cut: (f: F, poly: Pt[],
     if (shut) put(strip([cx - 0.08, ey + 0.01], [cx + 0.08, ey - 0.02], 0.035, 0.03, expr === 'pain' ? -0.04 : expr === 'shut' ? 0.02 : -0.03), PAL.black, 0.1);
     else { put(almond(cx, ey, 0.17, 0.075), PAL.white, 0.1, 0.003); put(ell(cx + 0.03, ey + 0.005, 0.038, 0.038, 8), PAL.black, 0.12, 0.002); }
     if (mk.tears || expr === 'cry') put(strip([cx + 0.02, ey - 0.04], [cx + 0.03, ey - 0.3], 0.035, 0.05), WET, 0.135, 0.004);
-    if (!r.mask && r.brow > 0) { const a = mad ? -0.07 : expr === 'cry' ? 0.06 : expr === 'smirk' && sd > 0 ? 0.06 : r.browAng; put(strip([cx - 0.1 * sd, ey + 0.1 + a * sd], [cx + 0.1 * sd, ey + 0.11 - a * sd], r.brow * 0.5, r.brow * 0.3), r.browCol, 0.14); }
+    if (!r.mask && r.brow > 0 && !(r.paint && r.paint.k === 'skull')) { const a = mad ? -0.07 : expr === 'cry' ? 0.06 : expr === 'smirk' && sd > 0 ? 0.06 : r.browAng; put(strip([cx - 0.1 * sd, ey + 0.1 + a * sd], [cx + 0.1 * sd, ey + 0.11 - a * sd], r.brow * 0.5, r.brow * 0.3), r.browCol, 0.14); }
   }
   if (acc('face_paint') && !r.mask) for (const sd of [-1, 1]) put(strip([sd * 0.16 + tq - 0.1, ey - 0.08], [sd * 0.16 + tq + 0.08, ey - 0.3], 0.07, 0.03), K!.pal.s, 0.105, 0.004);
   if (acc('sunglasses_aviator')) {

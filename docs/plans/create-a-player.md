@@ -18,15 +18,16 @@ It never makes a picture: it builds a paper doll from data, and every part is cu
 | Body | Height in inches and weight in pounds stretch and widen the doll; four sliders for chest and shoulders, length of the body, length of arms and legs, and muscle; four body types (cruiserweight or high flyer, technical, heavyweight, super heavyweight or monster) | Yes |
 | Three outfits | Ring gear, entrance gear and street clothes, each with its own parts, colours and lettering. A scene dresses each person for its set: ring gear in the ring, entrance gear on the ramp, street clothes backstage and at the desk | Yes |
 | Colours | A palette of paper swatches with a finish each: matte card, foil (it shines), corrugated board (ridges), neon paper (it glows), denim, leather. Each outfit has four slots (main colour, second colour, trim, buckles and metal), and every part takes its colour from a slot, so one change recolours the outfit | Yes |
+| A colour for each part | The top, the bottoms and the footwear can each take a swatch of their own over the outfit's palette (`part_colours`) | Yes |
 | Gear studio | Lettering cut from card in three styles (block capitals, stencil, tall and narrow), bent into an arch, on the chest or down the leg; shapes (vest straps, a bandolier, stripes, a patch, a disc, a star, a diamond, a triangle, a lightning bolt, flames, a heart, a buckle, spray paint) to layer and pin, moved, sized and turned | Yes |
 | Finishers | Up to four moves, each with a name, impact, how hard it is to kick out of (easy, medium, protected, instant), where it comes from (standing, running, the top rope, on the counter) and how it wins (an impact and the pin, or a submission). The wrestler acts it out on a plain card dummy | Yes, in the picture and in the match |
 | The head | Sixteen hair styles (bald to an afro, cornrows, dreadlocks, a ponytail, a mullet, long and wild) or one of three masks (mouth open, full, half), hair colour, eleven kinds of facial hair (a chin strap, a braided beard, a handlebar, a horseshoe and the rest), face shape, eyes, nose and skin tone | Yes |
 | Paint and ink | Face paint (stripes, war paint, the upper half, the whole face, a skull) in any swatch; tattoos (a sleeve on either arm, a shoulder piece, a chest piece, the neck), drawn only where skin shows | Yes |
 
 The parts library today is drawn by code in `app/src/kit/puppet.ts`: tops (bare chest, a singlet with the straps up
-or down, a T-shirt, a tank top, a sports top, an open vest, a biker jacket, an entrance robe, a hooded top, a suit and
-tie), bottoms (trunks, long trunks, long tights, fight shorts, torn jeans, suit trousers), footwear (boots with knee
-pads, heavy laced boots, short boots, retro sneakers, dress shoes, bare feet) and extras (wrist tape, knee and elbow
+or down, a full singlet to the thigh, a crop top, a T-shirt, a tank top, a sports top, an open vest, a biker jacket, an entrance robe, a hooded top, a suit and
+tie), bottoms (trunks, long trunks, long tights, fight shorts, a short ring skirt, torn jeans, suit trousers), footwear (boots with knee
+pads, kick pads, heavy laced boots, short boots, retro sneakers, dress shoes, bare feet) and extras (wrist tape, wrist wraps, knee pads and sleeves, elbow
 pads, fingerless gloves, an arm band, aviator sunglasses, a cowboy hat, a bandana, face paint, a chain). Parts made in
 Blender come later and take the same ids (`papercraft-engine.md`, section 1).
 

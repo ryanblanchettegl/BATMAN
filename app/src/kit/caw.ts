@@ -11,7 +11,9 @@ import type { Recipe } from './puppet';
 /* ---------- the file ---------- */
 export interface Placement { x: number; y: number; z?: number }
 export interface Layer { type: 'text_decal' | 'shape_combiner'; string?: string; font?: string; shape_id?: string; placement: Placement; palette_slot?: string; on?: 'lower_body'; arch?: number; scale?: number; rot?: number }
-export interface Attire { description?: string; equipped_assets: { head?: string; upper_body?: string; lower_body?: string; footwear?: string; accessories?: string[] }; palette_slots: { primary?: string; secondary?: string; trim?: string; hardware?: string }; custom_layers?: Layer[] }
+export interface Attire { description?: string; equipped_assets: { head?: string; upper_body?: string; lower_body?: string; footwear?: string; accessories?: string[] }; palette_slots: { primary?: string; secondary?: string; trim?: string; hardware?: string }; custom_layers?: Layer[];
+  /** Not in Ryan's first draft: a colour of its own for one part, over the palette slot it would take. */
+  part_colours?: { upper_body?: string; lower_body?: string; footwear?: string } }
 export interface Finisher { name: string; impact_damage?: number; kickout_difficulty?: string; position?: string; category?: string; preview_pose_id?: string }
 export type AttireKey = 'primary_ring' | 'entrance_gear' | 'street_clothes';
 export interface Look {
@@ -56,11 +58,11 @@ export const PARTS: Record<'head' | 'upper_body' | 'lower_body' | 'footwear' | '
     ['hair_spiky_01', 'Spiky'], ['hair_mohawk_01', 'Mohawk'], ['hair_curls_01', 'Curls'], ['hair_afro_01', 'Afro'], ['hair_cornrows_01', 'Cornrows'], ['hair_dreads_01', 'Dreadlocks'],
     ['hair_ponytail_01', 'Ponytail'], ['hair_mullet_01', 'Mullet'], ['hair_long_01', 'Long'], ['hair_wild_01', 'Long and wild'],
     ['mask_full_01', 'Mask, mouth open'], ['mask_closed_01', 'Full mask'], ['mask_half_01', 'Half mask']],
-  upper_body: [['bare', 'Bare chest'], ['singlet_straps_up', 'Singlet, straps up'], ['singlet_straps_down', 'Singlet, straps down'], ['shirt_tshirt_base', 'T-shirt'], ['shirt_tank', 'Tank top'],
-    ['top_sports', 'Sports top'], ['vest_open', 'Open vest'], ['jacket_leather_biker', 'Biker jacket'], ['robe_long', 'Entrance robe'], ['hoodie_01', 'Hooded top'], ['suit_jacket', 'Suit and tie']],
-  lower_body: [['trunks_brief_01', 'Trunks'], ['trunks_long', 'Long trunks'], ['tights_long_01', 'Long tights'], ['shorts_fight', 'Fight shorts'], ['jeans_distressed', 'Torn jeans'], ['trousers_suit', 'Suit trousers']],
-  footwear: [['boots_knee', 'Boots and knee pads'], ['boots_laced_heavy', 'Heavy laced boots'], ['boots_short', 'Short boots'], ['sneakers_retro', 'Retro sneakers'], ['shoes_dress', 'Dress shoes'], ['barefoot', 'Bare feet']],
-  accessories: [['wrist_tape_white', 'Wrist tape'], ['knee_pads', 'Knee pads'], ['elbow_pads', 'Elbow pads'], ['gloves_fingerless', 'Fingerless gloves'], ['armband', 'Arm band'],
+  upper_body: [['bare', 'Bare chest'], ['singlet_straps_up', 'Singlet, straps up'], ['singlet_straps_down', 'Singlet, straps down'], ['singlet_full', 'Full singlet, to the thigh'], ['shirt_tshirt_base', 'T-shirt'], ['shirt_tank', 'Tank top'],
+    ['top_sports', 'Sports top'], ['top_crop', 'Crop top'], ['vest_open', 'Open vest'], ['jacket_leather_biker', 'Biker jacket'], ['robe_long', 'Entrance robe'], ['hoodie_01', 'Hooded top'], ['suit_jacket', 'Suit and tie']],
+  lower_body: [['trunks_brief_01', 'Trunks'], ['trunks_long', 'Long trunks'], ['tights_long_01', 'Long tights'], ['shorts_fight', 'Fight shorts'], ['skirt_short', 'Short ring skirt'], ['jeans_distressed', 'Torn jeans'], ['trousers_suit', 'Suit trousers']],
+  footwear: [['boots_knee', 'Boots and knee pads'], ['boots_laced_heavy', 'Heavy laced boots'], ['boots_short', 'Short boots'], ['kick_pads', 'Kick pads'], ['sneakers_retro', 'Retro sneakers'], ['shoes_dress', 'Dress shoes'], ['barefoot', 'Bare feet']],
+  accessories: [['wrist_tape_white', 'Wrist tape'], ['wrist_wraps', 'Wrist wraps'], ['knee_pads', 'Knee pads'], ['knee_sleeves', 'Knee sleeves'], ['elbow_pads', 'Elbow pads'], ['gloves_fingerless', 'Fingerless gloves'], ['armband', 'Arm band'],
     ['sunglasses_aviator', 'Aviator sunglasses'], ['hat_cowboy', 'Cowboy hat'], ['bandana', 'Bandana'], ['chain_gold', 'Chain']],
 };
 export const FACIAL: [string, string][] = [['', 'From the face'], ['none', 'Clean shaven'], ['stubble', 'Stubble'], ['goatee', 'Goatee'], ['chin_strap', 'Chin strap'], ['sideburns', 'Sideburns'], ['beard_short', 'Short beard'],
@@ -134,18 +136,26 @@ export const ARCHETYPES: [string, string, { h: number; w: number; s: [number, nu
 
 /* ---------- the file as a doll ---------- */
 /** The outfit as the puppet wears it: every part and every colour worked out. */
-export interface Kit { top: string; bottom: string; feet: string; acc: string[]; head: string; pal: { p: Swatch; s: Swatch; t: Swatch; h: Swatch }; layers: Layer[] }
+export interface Kit { top: string; bottom: string; feet: string; acc: string[]; head: string; pal: { p: Swatch; s: Swatch; t: Swatch; h: Swatch }; layers: Layer[];
+  /** The colour each part is cut from: its own, or the slot it takes (ring tops and bottoms the main colour; tops worn over, and footwear, the second). */
+  col: { top: Swatch; bottom: Swatch; feet: Swatch } }
+const RING_TOPS = ['bare', 'singlet_straps_up', 'singlet_straps_down', 'singlet_full', 'top_sports', 'top_crop'];
 const DEF: Record<AttireKey, Attire> = {
   primary_ring: { equipped_assets: { upper_body: 'bare', lower_body: 'trunks_brief_01', footwear: 'boots_knee', accessories: ['wrist_tape_white'] }, palette_slots: {} },
   entrance_gear: { equipped_assets: { upper_body: 'robe_long', lower_body: 'trunks_brief_01', footwear: 'boots_knee', accessories: [] }, palette_slots: {} },
   street_clothes: { equipped_assets: { upper_body: 'shirt_tshirt_base', lower_body: 'jeans_distressed', footwear: 'sneakers_retro', accessories: [] }, palette_slots: {} },
 };
 function kitOf(a: Attire | undefined, k: AttireKey, r: Recipe): Kit {
+  const K0 = kitBase(a, k, r), pc = (a && a.part_colours) || {};
+  K0.col = { top: swatch(pc.upper_body, RING_TOPS.indexOf(K0.top) >= 0 ? K0.pal.p : K0.pal.s), bottom: swatch(pc.lower_body, K0.pal.p), feet: swatch(pc.footwear, K0.pal.s) };
+  return K0;
+}
+function kitBase(a: Attire | undefined, k: AttireKey, r: Recipe): Kit {
   const d = DEF[k], e = (a && a.equipped_assets) || d.equipped_assets, p = (a && a.palette_slots) || {};
   const gear: Swatch = { c: r.gear, f: 'matte' }, gear2: Swatch = { c: r.gear2, f: 'matte' };
   return { top: e.upper_body || d.equipped_assets.upper_body!, bottom: e.lower_body || d.equipped_assets.lower_body!, feet: e.footwear || d.equipped_assets.footwear!, acc: (e.accessories || []).slice(), head: e.head || 'hair_face',
     pal: { p: swatch(p.primary, k === 'street_clothes' ? { c: '#3d5a8a', f: 'denim' } : gear), s: swatch(p.secondary, gear2), t: swatch(p.trim, { c: PAL.white, f: 'matte' }), h: swatch(p.hardware, { c: '#b9bcc6', f: 'foil' }) },
-    layers: (a && a.custom_layers) || [] };
+    layers: (a && a.custom_layers) || [], col: null as any };
 }
 /** What a layer's palette_slot names: one of the outfit's slots, or a swatch of its own. */
 export function layerSwatch(k: Kit, id?: string): Swatch {
@@ -175,7 +185,7 @@ export function wear(r: Recipe, k: AttireKey): Recipe {
   if (!r.kits) return r; const kit = r.kits[k] || r.kits.primary_ring, out: Recipe = { ...r, kit, straps: false, tape: false, shirt: undefined, pants: undefined, stripes: false, suit: undefined };
   const hd = kit.head;
   if (MASK_OF[hd]) out.mask = { base: kit.pal.p.c, trim: kit.pal.t.c, kind: MASK_OF[hd] }; else { out.mask = undefined; if (HAIR_OF[hd]) out.hair = HAIR_OF[hd]; }
-  if (kit.top === 'suit_jacket') out.suit = { jacket: kit.pal.p.c, tie: kit.pal.s.c, square: kit.pal.t.c };
+  if (kit.top === 'suit_jacket') out.suit = { jacket: kit.col.top.c, tie: kit.pal.t.c, square: kit.pal.h.c };
   return out;
 }
 /** A new file for a wrestler: their body from what the game knows, and the three outfits in their colours. */
