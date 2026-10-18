@@ -54,11 +54,12 @@
 .caw-stage{position:relative}
 .caw-stage .lv-scene{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;overflow:hidden}
 .caw-stage .lv-scene canvas{display:block}
-/* the portrait, bottom right of Create a Player */
-.cawpage{grid-template-rows:minmax(0,1fr) auto;grid-template-areas:"stage side" "stage port"}
-.caw-port{display:flex;align-items:center;gap:1.2ch}
-.caw-port .muted{margin:0;font-size:.9em}
-.caw-ptbtn{flex:none;padding:0;border:2px solid #111;background:none;cursor:pointer;box-shadow:.16em .22em 0 rgba(0,0,0,.4);line-height:0}
+/* the portrait, in the bottom right corner of the full-body picture */
+.caw-ptbtn{padding:0;border:2px solid #111;background:#111;cursor:pointer;box-shadow:.16em .22em 0 rgba(0,0,0,.5);line-height:1;display:flex;flex-direction:column;align-items:stretch}
 .caw-ptbtn.on,.caw-ptbtn:focus-visible{outline:3px solid var(--p-yellow,#f9cd3b);outline-offset:2px}
-.caw-ptbtn canvas.pt{width:5.2em;height:5.2em;border:0;display:block}
+.caw-ptbtn canvas.pt{width:5.4em;height:5.4em;border:0;display:block}
+.caw-ptlbl{background:#fbf6ea;color:#111;font-size:.75em;padding:.1em 0;text-align:center;border-top:2px solid #111}
 canvas.paperpt{image-rendering:auto}
+.caw-stagerow{flex:1 1 0;min-height:0;display:flex;gap:.8ch}
+.caw-stagerow .caw-stage{flex:1 1 0;min-width:0}
+.caw-ptcol{flex:none;display:flex;flex-direction:column;justify-content:flex-end}

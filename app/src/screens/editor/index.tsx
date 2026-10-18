@@ -15,6 +15,7 @@ import { BeltsTab, TeamsTab } from './Belts';
 import { ScenesTab, keepScene, forgetScene } from './Scenes';
 import { SceneStudio, fromWorld } from '../scene';
 import { CreatePlayer, workerW } from '../player';
+import { companyCard } from '../../kit/paperportrait';
 import { SCENES, copy } from '../../kit/scene';
 
 /* Back steps out one level at a time: the open record, then the world, then the title screen. */
@@ -98,7 +99,9 @@ export function Editor() {
   if (st.id && st.player) {   // Create a Player, full screen, on a wrestler in the world being edited
     const pkg = UNIS[st.id], wk = (pkg.workers || []).find((x: any) => x.id === st.player);
     if (wk) { const nm = pkg.manifest.name || 'this world';
-      return <CreatePlayer key={st.player + (st.attire ? ':a' : '')} world={nm} w={workerW(wk)} had={wk.look || null} attire={!!st.attire}
+      const con = E.edContract(pkg, wk.id), pr = con && pkg.promotions.find((x: any) => x.id === con.promotion_id), bi = pr && pr.brands && con.brand ? pr.brands.findIndex((b: any) => b.id === con.brand) : -1;
+      const card = pr ? companyCard(E.logoOf({ logo: pr.logo, model: pr.model, name: pr.name, full: pr.full_name }), bi) : companyCard(null);
+      return <CreatePlayer key={st.player + (st.attire ? ':a' : '')} world={nm} w={workerW(wk)} had={wk.look || null} attire={!!st.attire} card={card}
         onSave={lk => { let ok = false; edit(() => { ok = E.edSetLook(world(), wk.id, lk); const sx = lk.physical_attributes && lk.physical_attributes.sex; if (ok && sx && wk.gender !== sx) wk.gender = sx; }); return { ok, msg: ok ? (lk.name || wk.ring_name) + ' is kept in ' + nm + '. Every scene in the game now draws them like this.' : 'That could not be kept.' }; }}
         onForget={() => { edit(() => { E.edRemoveLook(world(), wk.id); }); return { ok: true, msg: wk.ring_name + ' is drawn by the game again.' }; }} onDone={() => look(() => { st.player = null; st.attire = false; })}
         scenes={E.edScenes(pkg)} onNewEntrance={lk => {   // keep the wrestler, then Create a Scene on a copy of their entrance, with them in it

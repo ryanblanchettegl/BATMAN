@@ -13,7 +13,7 @@ import { Scene, SCENES, POSES, WAIST, copy, scenesFor, allScenes, WHEN } from '.
 import { Recipe, recipeOf, blank } from '../../kit/puppet';
 import { Look, Attire, AttireKey, Layer, Finisher, ATTIRES, PARTS, SWATCHES, SLOTS, FONTS, SHAPES, ARCHETYPES, FACIAL, PAINT, TATTOOS, KICKOUT, POSITIONS, CATEGORIES, FIN_SCENES, fromLook, blankLook, finScene, swatch } from '../../kit/caw';
 import { derive, NAMES, FaceKey } from '../../lib/portrait';
-import { PaperPortrait, PT_POSES, PT_FRAMES, sideCard } from '../../kit/paperportrait';
+import { PaperPortrait, PT_POSES, PT_FRAMES, companyCard } from '../../kit/paperportrait';
 import { EXPR } from '../../kit/puppet';
 
 type Tab = 'portrait' | 'sign' | 'body' | 'head' | 'gear' | 'colour' | 'studio' | 'fin' | 'scenes' | 'file' | 'a_head' | 'a_upper' | 'a_lower' | 'a_feet';
@@ -40,7 +40,9 @@ export interface PlayerProps { world: string; w: any; had: Look | null; onSave: 
   attire?: boolean;
   /** The world's own scenes, besides the game's: its entrances are offered too. In the World Editor, onNewEntrance
       keeps the wrestler and opens Create a Scene to make them a custom entrance. */
-  scenes?: Scene[]; onNewEntrance?: (look: Look) => void }   // sign: a new wrestler, made in a game, who goes to free agency
+  scenes?: Scene[]; onNewEntrance?: (look: Look) => void;
+  /** The card behind their portrait: their company's or brand's colour. */
+  card?: string }   // sign: a new wrestler, made in a game, who goes to free agency
 /** The choices for a new signing, as the old Create a wrestler window had them (E.createWrestler). */
 interface Draft { g: string; style: string; bg: string; emph: string; align: string; gim: string }
 
@@ -116,7 +118,7 @@ export function CreatePlayer(pp: PlayerProps) {
   const hairRow = <div class="sc-row"><span class="sc-slot">Hair or mask</span><select aria-label="Hair" data-t="caw-hair" value={cur.equipped_assets.head || 'hair_face'} onChange={e => { const v = (e.currentTarget as HTMLSelectElement).value; change(n => { ATTIRES.forEach(a => { const x = (n.attires = n.attires || {})[a[0]] || (n.attires[a[0]] = { equipped_assets: {}, palette_slots: {} }); x.equipped_assets.head = v; }); }); }}>
     {PARTS.head.map(p => <option value={p[0]}>{p[1]}</option>)}</select></div>;
   const AN = ATTIRES.find(a => a[0] === att)![1];
-  const pt = lk.portrait || {}, side = w0.twn ? 'N' : w0.align === 'H' ? 'H' : 'F';
+  const pt = lk.portrait || {}, card = pp.card || companyCard(null);
   const setPt = (o: any) => change(n => { const q: any = { ...(n.portrait || {}), ...o }; Object.keys(q).forEach(k => { if (q[k] === undefined || q[k] === '') delete q[k]; }); if (Object.keys(q).length) n.portrait = q; else delete n.portrait; });
   const titles: Record<Tab, string> = { portrait: 'Their portrait', a_head: 'Head: ' + AN, a_upper: 'Upper body: ' + AN, a_lower: 'Lower body: ' + AN, a_feet: 'Feet: ' + AN, sign: 'A new wrestler', body: 'The body', head: 'The head', gear: 'Gear: ' + ATTIRES.find(a => a[0] === att)![1], colour: 'Colours: ' + ATTIRES.find(a => a[0] === att)![1], studio: 'Gear studio: lettering and shapes', fin: 'Finishing moves', scenes: 'Their entrance', file: 'The file' };
   return <div class="scfull paper" data-t="caw">
@@ -132,17 +134,12 @@ export function CreatePlayer(pp: PlayerProps) {
           <span class="sc-lbl">Outfit</span>
           {ATTIRES.map(a => <Btn kind="sm" t="caw-attire" d={{ v: a[0] }} on={att === a[0]} onClick={() => { setAtt(a[0]); setActing(false); setLay(-1); }}>{a[1]}</Btn>)}
         </div>
-        <div class="sc-stage caw-stage"><ScenePlayer key="caw" sc={sc} cast={cast} play={play} still={!(acting && fin) && !(prevSc && tab === 'scenes')} orbit fill={!(acting && fin) && !(prevSc && tab === 'scenes')} t="caw-view" label={(lk.name || w0.name) + ' in ' + ATTIRES.find(a => a[0] === att)![1].toLowerCase() + '. Drag to walk round them.'} /></div>
+        <div class="caw-stagerow"><div class="sc-stage caw-stage"><ScenePlayer key="caw" sc={sc} cast={cast} play={play} still={!(acting && fin) && !(prevSc && tab === 'scenes')} orbit fill={!(acting && fin) && !(prevSc && tab === 'scenes')} t="caw-view" label={(lk.name || w0.name) + ' in ' + ATTIRES.find(a => a[0] === att)![1].toLowerCase() + '. Drag to walk round them.'} /></div>
+          <div class="caw-ptcol"><button type="button" class={'caw-ptbtn' + (tab === 'portrait' ? ' on' : '')} data-t="caw-portrait" aria-label="Their portrait: press to change it" title="Their portrait: press to change it" onClick={() => setTab('portrait')}><PaperPortrait r={r} ps={pt} card={card} label={'Portrait of ' + (lk.name || w0.name)} /><span class="caw-ptlbl">Portrait</span></button></div></div>
         <div class="sc-keys" role="group" aria-label="Pose">
           <span class="sc-lbl">Pose</span>
           {VIEW_POSES.map(p => <Btn kind="less" t="caw-pose" d={{ v: p[0] }} on={pose === p[0] && !acting} onClick={() => { setPose(p[0]); setActing(false); }}>{p[1]}</Btn>)}
-          <span class="sp" /><span class="muted">Drag the picture to walk round them</span>
-        </div>
-      </Win>
-      <Win title="Portrait" area="port" t="caw-portwin" cls="caw-portwin">
-        <div class="caw-port">
-          <button type="button" class={'caw-ptbtn' + (tab === 'portrait' ? ' on' : '')} data-t="caw-portrait" aria-label="Change their portrait" onClick={() => setTab('portrait')}><PaperPortrait r={r} ps={pt} side={side} label={'Portrait of ' + (lk.name || w0.name)} /></button>
-          <p class="muted">{tab === 'portrait' ? 'Changing it on the right.' : 'Shown on the roster, in lists and on cards. Press it to change it.'}</p>
+          <span class="sp" />
         </div>
       </Win>
       <Win title={titles[tab]} right={tab === 'gear' || tab === 'colour' || tab === 'studio' ? ATTIRES.find(a => a[0] === att)![1] : ''} area="side" t="caw-side">
@@ -213,9 +210,8 @@ export function CreatePlayer(pp: PlayerProps) {
           <Group title="Their face"><div class="sc-row">{EXPR.map(x => <Btn kind="less" t="caw-ptexpr" d={{ v: x[0] || 'calm' }} on={(pt.expr || '') === x[0]} onClick={() => setPt({ expr: x[0] })}>{x[1]}</Btn>)}</div></Group>
           <div class="sc-row"><span class="sc-slot">Pose</span><select aria-label="Pose" data-t="caw-ptpose" value={pt.pose || 'stand'} onChange={e => setPt({ pose: (e.currentTarget as HTMLSelectElement).value })}>{PT_POSES.map(x => <option value={x[0]}>{x[1]}</option>)}</select>
             <select aria-label="Framing" data-t="caw-ptframe" value={pt.frame || 'head'} onChange={e => setPt({ frame: (e.currentTarget as HTMLSelectElement).value as 'head' | 'chest' })}>{PT_FRAMES.map(x => <option value={x[0]}>{x[1]}</option>)}</select></div>
-          <div class="sc-row"><span class="sc-slot">The card</span>{chip(pt.bg)}<select aria-label="Background" data-t="caw-ptbg" value={pt.bg || ''} onChange={e => setPt({ bg: (e.currentTarget as HTMLSelectElement).value || undefined })}>
-            <option value="">Their side's colour</option>{SWATCHES.map(x => <option value={x[0]}>{x[1]}</option>)}</select></div>
-          <p class="muted">This is the picture the game shows of them: on the roster, in lists, on cards and in their file.</p>
+
+          <p class="muted">This is the picture the game shows of them: on the roster, in lists, on cards and in their file. The card behind them is their company's colour, or their brand's.</p>
         </>}
         {tab === 'a_head' && <>{hairRow}<Group title="On the head">{extras(['hat_cowboy', 'bandana', 'sunglasses_aviator'])}</Group><p class="muted">Hair is worn with every outfit; a mask takes this outfit's main colour and trim.</p></>}
         {tab === 'a_upper' && <>{partRow('upper_body')}<Group title="Arms and chest">{extras(['wrist_tape_white', 'wrist_wraps', 'elbow_pads', 'gloves_fingerless', 'armband', 'chain_gold'])}</Group></>}
