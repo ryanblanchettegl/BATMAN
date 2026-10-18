@@ -52,3 +52,42 @@ E.edSetLook=function(pkg,id,look){var w=lkWorker(pkg,id),c=lookClean(look);if(!w
 E.edRemoveLook=function(pkg,id){var w=lkWorker(pkg,id);if(w)delete w.look;};
 /** The look a wrestler in a game wears, or null (somebody never made in Create a Player). */
 E.lookOf=function(S,id){var w=S&&S.w[id];return w&&w.look?w.look:null;};
+
+/* ---------- finishing moves in the match (docs/plans/create-a-player.md, next step 1) ----------
+   A finisher from a wrestler's file changes how a finish lands, never who wins (the booker still decides that).
+   People kick out of finishers: an easy one often, a medium one now and then on a big night, a protected one hardly
+   ever (and the building comes apart when it happens), an instant one almost never. Every kick-out wears the move
+   down (up to eight steps): it gets kicked out of a little more and lands a little lighter, and it comes back a step
+   every month. Whoever kicks out gains momentum. A clean win with the move pays by how protected it is,
+   how hard it hits and where it comes from. Kick-outs are picked by a hash of the match, never rnd(S). */
+function lookFin(w){var l=w&&w.look;return l&&l.finishing_moves&&l.finishing_moves[0]||null;}
+var FIN_KO={Easy:0.5,Medium:0.28,Protected:0.06,Instant:0.015},FIN_PAY={Easy:0.3,Medium:0.8,Protected:1.6,Instant:2.2};
+/** How much of its protection a wrestler's finisher still has, 1 when it has never been kicked out of. */
+function finProt(w){return 1/(1+(w.fko||0)*0.25);}
+FINX.push(function(ctx,fin,W,L,win){
+  if(win<0||!W.length||!L.length||ctx.m.mt==='br'||fin==='dq'||fin==='co')return null;
+  var S=ctx.S,w=W[0],l=L[0],d=0,xs=[],ko=null;
+  var weight=(ctx.isMain||ctx.big?1:0.4)*(ctx.mins>=14?1:(ctx.mins>=10?0.5:0.2)),key=S.week+':'+ctx.i+':'+w.id+':'+l.id+':'+(ctx.show&&ctx.show.name||'');
+  // the loser's finisher kicked out of by the winner, or the winner's own kicked out of before it finally lands
+  [[l,w],[w,l]].forEach(function(p,k){
+    if(ko)return;var who=p[0],by=p[1],f=lookFin(who);if(!f)return;
+    var pk=Math.min(0.85,(FIN_KO[f.kickout_difficulty]||FIN_KO.Medium)+Math.min(8,who.fko||0)*0.025)*weight*(by.ovr>=who.ovr+10?1.3:1);
+    if(h01(key+':fko'+k)<pk)ko={who:who,by:by,f:f,again:k===1};
+  });
+  if(ko){
+    var lv=ko.f.kickout_difficulty||'Medium',huge=lv==='Protected'||lv==='Instant';
+    d+=huge?3:1.5;xs.push(huge?ko.by.name+' kicked out of '+ko.f.name+', and nobody kicks out of that':'A kick-out from '+ko.f.name);
+    if(!S.cal){ko.who.fko=Math.min(8,(ko.who.fko||0)+1);ko.by.mom=clamp(ko.by.mom+(huge?2:1),-10,10);}
+    ctx.fko={who:ko.who.name,by:ko.by.name,f:ko.f.name,huge:huge,again:ko.again};
+  }
+  var fw=lookFin(w);
+  if(fw&&fin==='clean'){
+    var pay=(FIN_PAY[fw.kickout_difficulty]||FIN_PAY.Medium)*finProt(w)+((fw.impact_damage||0)>=85?0.5:0)+(fw.position==='Top Rope'?0.4:0);
+    d+=pay;if(pay>=1)xs.push(fw.name+' put it away');ctx.fm=fw;
+  }
+  if(!d)return null;
+  return {d:Math.min(4,Math.round(d*10)/10),x:xs.join('. ')};
+});
+WEEKX.push(function(S){if(S.week%4!==0)return;S.w.forEach(function(w){if(w&&w.fko)w.fko--;});});
+/** A wrestler's finisher as the screens show it: the move, and how much of its protection it still has. */
+E.finInfo=function(S,id){var w=S.w[id],f=lookFin(w);return f?{name:f.name,kick:f.kickout_difficulty||'Medium',kicked:w.fko||0,prot:Math.round(finProt(w)*100)}:null;};

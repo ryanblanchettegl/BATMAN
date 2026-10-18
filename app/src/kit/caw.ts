@@ -186,7 +186,7 @@ function pounds(s?: string) { if (!s) return 0; const m = /(\d{2,3})\s*(lb|lbs|p
 function dist(a: string, b: string) { const x = parseInt(a.slice(1), 16), y = parseInt(b.slice(1), 16); return Math.abs((x >> 16) - (y >> 16)) + Math.abs(((x >> 8) & 255) - ((y >> 8) & 255)) + Math.abs((x & 255) - (y & 255)); }
 
 /* ---------- finishing moves ---------- */
-export const KICKOUT: [string, string][] = [['Easy', 'Easy to kick out of'], ['Medium', 'Hard to kick out of'], ['Protected', 'Protected: almost nobody kicks out'], ['Instant', 'Instant: the match is over']];
+export const KICKOUT: [string, string][] = [['Easy', 'Easy: kicked out of often'], ['Medium', 'Medium: kicked out of on big nights'], ['Protected', 'Protected: a kick-out is a huge moment'], ['Instant', 'Instant: a kick-out would shock the world']];
 export const POSITIONS: [string, string][] = [['Standing', 'Standing'], ['Running', 'Running'], ['Top Rope', 'From the top rope'], ['Counter', 'On the counter']];
 export const CATEGORIES: [string, string][] = [['Pinfall Impact', 'A big impact, then the pin'], ['Submission', 'A hold until they give up']];
 /** The scene a finisher plays as, by the pose it names (old names from the first draft still work). */

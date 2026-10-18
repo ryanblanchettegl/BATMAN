@@ -71,5 +71,39 @@ const out = E.exportUniverse(G2, {}), ow = out.workers.find(x => x.ring_name ===
 ok(ow && ow.look && ow.look.attires.entrance_gear.equipped_assets.upper_body === 'jacket_leather_biker', 'writing the world out keeps the look');
 E.edRemoveLook(pkg, wk.id); ok(!E.edLook(pkg, wk.id), 'and a look can be taken off');
 const others = G2.w.filter(x => x && x.look && x.name !== wk.ring_name).length; ok(others === 0, 'nobody else wears a look');
-console.log(fails.length ? 'FAIL\n' + fails.join('\n') : 'ok: scene hooks and Create a Player files');
+// finishers in the match: people kick out of them, by how protected they are, and it wears them down
+{
+  const pk = JSON.parse(fs.readFileSync('universes/public_domain.json', 'utf8')), LV = ['Easy', 'Medium', 'Protected', 'Instant'];
+  const mineW = pk.workers.filter(x => (pk.contracts || []).some(c => c.worker_id === x.id && c.promotion_id === 'pdw'));
+  mineW.forEach((x, i) => E.edSetLook(pk, x.id, { name: x.ring_name, physical_attributes: { height_inches: 74 }, finishing_moves: [{ name: 'Move ' + i, kickout_difficulty: LV[i % 4], impact_damage: 80, position: 'Standing', category: 'Pinfall Impact' }] }));
+  E.useUniverse(pk);
+  const tally = { Easy: [0, 0], Medium: [0, 0], Protected: [0, 0], Instant: [0, 0] }, kickLines = [], finLines = [];
+  for (let seed = 1; seed <= 3; seed++) {
+    const S = E.newGame('pdw', seed, { name: 'R' }), lv = {};
+    S.w.forEach(w => { if (w && w.look && w.look.finishing_moves) lv[w.name] = w.look.finishing_moves[0].kickout_difficulty; });
+    if (seed === 1) ok(S.w.filter(w => w && w.look).every(w => w.fin === w.look.finishing_moves[0].name), 'a file\'s first move is the wrestler\'s finisher');
+    for (let wk = 0; wk < 36 && !S.over; wk++) {
+      S.inbox.filter(e => !e.done).forEach(e => E.resolveEvent(S, e.id, e.type === 'handover' ? 0 : 1));
+      if (S.owner.pending) E.setCreed(S, { style: 'merit', roots: 'tradition', pledge: 'stable' });
+      while (S.qi < S.queue.length) {
+        const card = E.suggest(S); const pr = E.preShow(S, card); if (pr) { E.resolvePre(S, card, 0); E.fitShow(S, card); }
+        if (E.validate(S, card).errors.length) { S.qi++; continue; }
+        const r = E.runPlayerShow(S, card);
+        r.rep.segs.filter(g => g.k === 'match').forEach(g => {
+          (g.ids || []).forEach(id => { const w = S.w[id]; if (w && lv[w.name] && g.win) tally[lv[w.name]][0]++; });
+          (g.bc || []).forEach(b => { if (/KICKS OUT!/.test(b.x)) { kickLines.push(b.x); const who = Object.keys(lv).find(n => b.x.indexOf('hits') > 0 && b.x.slice(0, b.x.indexOf(' hits')).endsWith(n)); if (who) tally[lv[who]][1]++; } if (/! One, two, three!|that is it!|over the moment/.test(b.x) && /Move \d+/.test(b.x)) finLines.push(b.x); });
+        });
+      }
+      E.endWeek(S);
+    }
+    if (seed === 3) { const k = S.w.filter(w => w && w.fko > 0); ok(k.every(w => w.fko <= 8), 'wear stays in bounds'); }
+  }
+  const rate = l => tally[l][1] / Math.max(1, tally[l][0]);
+  console.log('  finisher kick-outs by level (kick-outs / matches):', LV.map(l => l + ' ' + tally[l][1] + '/' + tally[l][0]).join(', '));
+  ok(tally.Easy[1] > 0 && tally.Medium[1] > 0, 'people kick out of easy and medium finishers');
+  ok(rate('Easy') > rate('Medium') && rate('Medium') > rate('Protected') && rate('Protected') >= rate('Instant'), 'the more protected a finisher, the rarer the kick-out');
+  ok(kickLines.every(t => /KICKS OUT!$/.test(t)), 'a kick-out is called as one');
+  ok(finLines.length > 0, 'a clean win with a finisher is called by its name');
+}
+console.log(fails.length ? 'FAIL\n' + fails.join('\n') : 'ok: scene hooks, Create a Player files, and finishers in the match');
 process.exit(fails.length ? 1 : 0);

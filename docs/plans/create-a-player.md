@@ -19,7 +19,7 @@ It never makes a picture: it builds a paper doll from data, and every part is cu
 | Three outfits | Ring gear, entrance gear and street clothes, each with its own parts, colours and lettering. A scene dresses each person for its set: ring gear in the ring, entrance gear on the ramp, street clothes backstage and at the desk | Yes |
 | Colours | A palette of paper swatches with a finish each: matte card, foil (it shines), corrugated board (ridges), neon paper (it glows), denim, leather. Each outfit has four slots (main colour, second colour, trim, buckles and metal), and every part takes its colour from a slot, so one change recolours the outfit | Yes |
 | Gear studio | Lettering cut from card in three styles (block capitals, stencil, tall and narrow), bent into an arch, on the chest or down the leg; shapes (vest straps, a bandolier, stripes, a patch, a disc, a star, a diamond, a triangle, a lightning bolt, flames, a heart, a buckle, spray paint) to layer and pin, moved, sized and turned | Yes |
-| Finishers | Up to four moves, each with a name, impact, how hard it is to kick out of (easy, medium, protected, instant), where it comes from (standing, running, the top rope, on the counter) and how it wins (an impact and the pin, or a submission). The wrestler acts it out on a plain card dummy | Yes, the picture; the numbers are kept for the match engine |
+| Finishers | Up to four moves, each with a name, impact, how hard it is to kick out of (easy, medium, protected, instant), where it comes from (standing, running, the top rope, on the counter) and how it wins (an impact and the pin, or a submission). The wrestler acts it out on a plain card dummy | Yes, in the picture and in the match |
 | The head | Hair or a full mask, hair colour, facial hair, face shape, eyes, nose and skin tone | Yes |
 
 The parts library today is drawn by code in `app/src/kit/puppet.ts`: tops (bare chest, a singlet with the straps up
@@ -71,8 +71,16 @@ a wrestler with no file is drawn as before.
 
 ## Next steps (one at a time, each shown to Ryan)
 
-1. **The finisher in the match engine:** impact and kick-out difficulty through the hooks the match already has
-   (`FINX`, `MQX` in `src/10-match.js`), so a protected finisher is kicked out of about never, and an instant one ends it.
+1. **The finisher in the match engine.** *Built 18 October* (`src/86-looks.js`, a `FINX` hook; Ryan: "people can kick
+   out of finishers too"). The booker still picks the winner; the finisher changes how the finish plays and lands.
+   People kick out of finishers: in a season of tests, an easy one about one match in five, a medium one about one in
+   twelve, a protected one about one in seventy-five (and the building comes apart), an instant one about one in three
+   hundred. A kick-out needs a big night or a long match, is called on the air ("...KICKS OUT!"), and gives whoever
+   kicked out momentum. Every kick-out wears the move down a step (up to eight; kicked out of a little more, landing a
+   little lighter), and it comes back a step a month. A clean win with the move pays by how protected it is, how hard
+   it hits and where it comes from, and the call says where it came from (the top rope, off the ropes, on the counter);
+   a submission ends on a tap-out. The move's name is the wrestler's finisher everywhere the game names it.
+   `E.finInfo(S, id)` is the move and how much protection it has left. Picked by a hash of the match, never rnd(S).
 2. **Create a Player in a game**, for the player's own signings and for the wrestlers they already have (today it
    opens from the World Editor), and Create a Scene's link from it when picking scenes.
 3. **More parts**, then the parts made in Blender with sockets (`papercraft-engine.md`, section 1).

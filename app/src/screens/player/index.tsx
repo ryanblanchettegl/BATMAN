@@ -188,7 +188,7 @@ export function CreatePlayer(pp: PlayerProps) {
               <div class="sc-row"><span class="sc-slot">{n}</span><select aria-label={n} data-t="caw-finopt" data-v={k} value={(k === 'preview_pose_id' ? finScene(fin) : (fin[k] as string)) || ''} onChange={e => { const v = (e.currentTarget as HTMLSelectElement).value; setFin(f => { (f as any)[k] = v; }); }}>{opts.map(o => <option value={o[0]}>{o[1]}</option>)}</select></div>)}
             <div class="sc-row"><Btn kind="go" t="caw-act" onClick={() => setActing(!acting)}>{acting ? 'Stop' : 'Act it out on the dummy'}</Btn>
               <Btn kind="danger" t="caw-dropfin" onClick={() => { change(n => { (n.finishing_moves || []).splice(fi, 1); }); setFi(-1); setActing(false); }}>Remove</Btn></div>
-            <p class="muted">The picture is what plays on the broadcast when this move ends a match. How hard it is to kick out of is kept in the file for the match engine.</p>
+            <p class="muted">The picture plays on the broadcast when this move ends a match. People do kick out of finishers: the more protected the move, the rarer and bigger the kick-out, and every kick-out wears it down a little until it rests. A clean win with it lands by how protected it is, how hard it hits and where it comes from.</p>
           </> : <p class="empty">{fins.length ? 'Pick a move to change it.' : 'No finishing moves yet.'}</p>}
         </>}
         {tab === 'file' && <>
