@@ -16,7 +16,7 @@ import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
 import { BokehPass } from 'three/examples/jsm/postprocessing/BokehPass.js';
 import { OutputPass } from 'three/examples/jsm/postprocessing/OutputPass.js';
-import { Scene, Key, build, FOOT } from './scene';
+import { Scene, Key, build, FOOT, DESK_SEATS } from './scene';
 import { Piece, PAL, shade, drawScene, View } from './paper';
 import { Recipe, Rig } from './puppet';
 
@@ -69,7 +69,7 @@ function words(p: Piece, d: number): THREE.Mesh | null {
 }
 
 /* ---------- the arena: a ring of card and steel, a barricade, tiered stands of cardboard fans ---------- */
-function arena(root: THREE.Group) {
+function arena(root: THREE.Group, near = true) {
   const box = (w: number, h: number, d: number, col: string | THREE.Material, x: number, y: number, z: number, shadow = true) => {
     const m = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), typeof col === 'string' ? card(col)[0] : col); m.position.set(x, y, z); m.receiveShadow = true; m.castShadow = shadow; root.add(m); return m;
   };
@@ -92,8 +92,9 @@ function arena(root: THREE.Group) {
     for (const y of [1.5, 3, 4.5]) { const r = new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.07, L, 8), rope); r.position.set((x0 + x1) / 2, y, (z0 + z1) / 2); r.rotation.z = Math.PI / 2; r.rotation.y = -Math.atan2(z1 - z0, x1 - x0); r.castShadow = true; root.add(r); } }
   // the barricade, and the stands behind it on three sides
   const B = 16;
-  for (const [w, d, x, z] of [[B * 2, 0.3, 0, -B], [0.3, B * 2, B, 0], [0.3, B * 2, -B, 0], [B * 2, 0.3, 0, B]] as number[][]) box(w, 3.4, d, '#1b1d28', x, -APRON + 1.7, z);
+  for (const [w, d, x, z] of ([[B * 2, 0.3, 0, -B], [0.3, B * 2, B, 0], [0.3, B * 2, -B, 0]] as number[][]).concat(near ? [[B * 2, 0.3, 0, B]] : [])) box(w, 3.4, d, '#1b1d28', x, -APRON + 1.7, z);   // the near side is left out where the camera sits inside it
   fans(root);
+  for (const [x, z] of [[-8, -8], [8, -8], [8, 8], [-8, 8]]) { const s = new THREE.SpotLight(0xffe2b0, 140, 70, 0.5, 0.7, 1.6); s.position.set(x, 30, z); s.target.position.set(0, 0, 0); root.add(s, s.target); }   // the lights over the ring
 }
 function fans(root: THREE.Group) {
   // a fan is two cut cards: the shirt and the head, facing the ring
@@ -122,6 +123,76 @@ function fans(root: THREE.Group) {
   });
   root.add(mb, mh);
 }
+/* ---------- rooms: the desk, the hallway, the office, the locker room, built as models with their own light ---------- */
+function bx(root: THREE.Object3D, w: number, h: number, d: number, col: string | THREE.Material, x: number, y: number, z: number, cast = true): THREE.Mesh {
+  const m = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), typeof col === 'string' ? card(col)[0] : col); m.position.set(x, y, z); m.castShadow = cast; m.receiveShadow = true; root.add(m); return m;
+}
+function glow(col: number, i = 1): THREE.MeshStandardMaterial { return new THREE.MeshStandardMaterial({ color: col, emissive: col, emissiveIntensity: i, roughness: 1 }); }
+function plate(text: string, w: number, h: number, bg: string, fg: string): THREE.MeshStandardMaterial {
+  const c = document.createElement('canvas'); c.width = Math.round(w * 64); c.height = Math.round(h * 64); const x = c.getContext('2d')!;
+  x.fillStyle = bg; x.fillRect(0, 0, c.width, c.height); x.fillStyle = fg; x.font = Math.round(h * 44) + "px 'VT323', monospace"; x.textAlign = 'center'; x.textBaseline = 'middle'; x.fillText(text, c.width / 2, c.height / 2);
+  const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; return new THREE.MeshStandardMaterial({ map: t, roughness: 0.9 });
+}
+const ROOMS: Record<string, (root: THREE.Group) => void> = {
+  desk: root => {
+    // the ring behind, raised on its apron, with the arena round it
+    const ring = new THREE.Group(); arena(ring, false); ring.position.set(0, 4, -13.2); root.add(ring);
+    // the three high-backed chairs
+    for (const cx of DESK_SEATS) { bx(root, 1.8, 3.0, 0.28, '#16161b', cx, 3.4, -0.62); bx(root, 1.7, 0.35, 1.3, '#1c1c22', cx, 1.75, -0.1); bx(root, 0.14, 1.7, 0.14, steel, cx, 0.85, -0.1, false); }
+    // the desk: its top, a front panel in the company's colours, the lettering, monitors, notes and coffee
+    bx(root, 15.4, 0.16, 1.5, '#34405f', 0, 2.62, 1.45); bx(root, 15.42, 0.07, 0.1, PAL.gold, 0, 2.7, 2.2, false);
+    bx(root, 15, 2.5, 0.14, '#1f2a52', 0, 1.25, 2.2); bx(root, 15.02, 0.32, 0.16, PAL.gold, 0, 2.15, 2.21); bx(root, 15.02, 0.12, 0.16, PAL.red, 0, 0.6, 2.21);
+    const live = new THREE.Mesh(new THREE.PlaneGeometry(2.6, 0.9), plate('LIVE', 2.6, 0.9, '#1f2a52', PAL.yellow)); live.position.set(-5.2, 1.3, 2.29); root.add(live);
+    for (const mx of [-4.2, -0.9]) { const sc = bx(root, 0.9, 0.5, 0.06, '#111116', mx, 2.98, 1.15); sc.rotation.x = -0.25; bx(root, 0.12, 0.18, 0.12, '#2a2a30', mx, 2.78, 1.22, false); }
+    for (const [nx, nz] of [[-2.5, 1.0], [4.9, 1.1]]) bx(root, 0.9, 0.03, 0.65, PAL.white, nx, 2.72, nz, false);
+    for (const cx of [-1.45, 1.55]) { const mug = new THREE.Mesh(new THREE.CylinderGeometry(0.16, 0.14, 0.38, 14), card(PAL.white)[0]); mug.position.set(cx, 2.89, 0.95); mug.castShadow = true; root.add(mug);
+      const cof = new THREE.Mesh(new THREE.CylinderGeometry(0.13, 0.13, 0.02, 14), card('#5a3a26')[0]); cof.position.set(cx, 3.07, 0.95); root.add(cof); }
+    // a cool light behind the two, picking out their edges, and a warm one in front
+    const rim = new THREE.SpotLight(0x9fc0ff, 110, 34, 0.7, 0.6, 1.2); rim.position.set(0, 10, -5); rim.target.position.set(-0.9, 3.4, 0); root.add(rim, rim.target);
+    const fill = new THREE.PointLight(0xffe0b8, 90, 40, 1.2); fill.position.set(-3, 8, 10); root.add(fill);
+    const front = new THREE.SpotLight(0xfff0d8, 70, 30, 0.6, 0.7, 1.2); front.position.set(2, 6, 14); front.target.position.set(0, 1.6, 2.2); root.add(front, front.target);   // the front of the desk
+  },
+  hall: root => {
+    const W = 4.6, L = 44;
+    bx(root, W * 2, 0.2, L, '#7d7a72', 0, -0.1, 6 - L / 2, false);
+    for (const sd of [-1, 1]) {
+      bx(root, 0.3, 10, L, sd < 0 ? '#56607a' : '#4d566e', sd * W, 5, 6 - L / 2, false);
+      for (let i = 1; i < 10; i++) bx(root, 0.32, 0.05, L, '#45506a', sd * W, i, 6 - L / 2, false);   // the lines of the blocks
+    }
+    bx(root, W * 2, 0.3, L, '#2b2f3c', 0, 10, 6 - L / 2, false);
+    for (let i = 0; i < 6; i++) { const z = 2 - i * 7; bx(root, 2.4, 0.1, 1.2, glow(0xfff2c8, 1.6), 0, 9.8, z, false); const l = new THREE.PointLight(0xfff0cc, 40, 22, 1.4); l.position.set(0, 9, z); root.add(l); }
+    bx(root, 3.2, 7, 0.3, '#3a2a1c', 0, 3.5, 6 - L); bx(root, 0.25, 0.25, 0.1, PAL.gold, 1.1, 3.4, 6 - L + 0.2);   // the far door
+    for (const z of [-6, -20, -32]) bx(root, 0.2, 7.2, 3.2, '#2a3a2a', W - 0.12, 3.6, z);                               // doors on the right
+    for (const [z, w, h] of [[-3, 2.6, 2.2], [-6.5, 2.2, 1.6], [-10, 2.6, 2.4]] as number[][]) {                       // road cases on the left
+      bx(root, 2.0, h, w, '#18181c', -W + 1.2, h / 2, z); for (const yy of [0.15, h - 0.15]) bx(root, 2.05, 0.12, w + 0.05, steel, -W + 1.2, yy, z, false);
+    }
+  },
+  office: root => {
+    bx(root, 30, 0.2, 30, '#3a3f5a', 0, -0.1, 0, false);                                                               // the carpet
+    bx(root, 26, 12, 0.3, '#5a3d28', 0, 6, -4.6, false); for (let i = 0; i < 9; i++) bx(root, 0.08, 12, 0.32, '#4a3020', -11 + i * 2.75, 6, -4.55, false);
+    bx(root, 0.3, 12, 20, '#4f3624', -12, 6, 5, false);
+    bx(root, 5.2, 3.6, 0.1, glow(0xd8ecf8, 0.9), -6, 5.6, -4.4, false); for (let i = 0; i < 10; i++) bx(root, 5.2, 0.16, 0.12, '#e9e2cf', -6, 3.95 + i * 0.36, -4.3);   // the window and blinds
+    bx(root, 3.8, 2.4, 0.2, '#2b1b10', 2.6, 6.2, -4.4); bx(root, 3.4, 2.0, 0.22, '#7a1418', 2.6, 6.2, -4.36, false);    // the frame
+    bx(root, 3.0, 0.32, 0.25, PAL.black, 2.6, 6.2, -4.3, false); const plateB = new THREE.Mesh(new THREE.CylinderGeometry(0.55, 0.55, 0.12, 24), card(PAL.gold)[0]); plateB.rotation.x = Math.PI / 2; plateB.position.set(2.6, 6.2, -4.18); root.add(plateB);
+    bx(root, 6.4, 0.25, 2.8, '#6b4228', 4.6, 2.6, 1.6); bx(root, 6.2, 2.5, 0.12, '#4a2c18', 4.6, 1.25, 2.95); bx(root, 0.12, 2.5, 2.6, '#4a2c18', 1.5, 1.25, 1.6);   // the big desk
+    bx(root, 2.0, 3.6, 0.35, '#1a1a1f', 4.6, 3.6, -1.2); bx(root, 1.9, 0.4, 1.6, '#1a1a1f', 4.6, 1.6, -0.5);              // its chair
+    bx(root, 1.2, 0.05, 0.8, PAL.white, 3.4, 2.75, 1.6, false);
+    const sun = new THREE.PointLight(0xdcecff, 55, 30, 1.2); sun.position.set(-6, 6, -2); root.add(sun);
+    const lamp = new THREE.PointLight(0xffdca8, 35, 20, 1.3); lamp.position.set(5, 6.5, 3); root.add(lamp);
+  },
+  locker: root => {
+    bx(root, 30, 0.2, 20, '#b9b4a8', 0, -0.1, 4, false); for (let i = 0; i < 14; i++) bx(root, 0.05, 0.21, 20, '#9a958a', -13 + i * 2, -0.08, 4, false);
+    bx(root, 30, 12, 0.3, '#40463a', 0, 6, -3.6, false);
+    for (let i = 0; i < 13; i++) { const x = -11 + i * 1.82;
+      bx(root, 1.75, 6.4, 0.7, i % 2 ? '#5d6f86' : '#566a82', x, 3.2, -3.0);
+      for (let v = 0; v < 3; v++) bx(root, 1.0, 0.08, 0.72, '#2b3442', x, 5.6 - v * 0.2, -2.98, false);
+      bx(root, 0.1, 0.5, 0.74, steel, x + 0.6, 3.2, -2.96, false);
+    }
+    bx(root, 6.6, 0.3, 1.1, PAL.wood, -3.3, 1.3, -1.4); for (const lx of [-6.2, -0.4]) bx(root, 0.25, 1.2, 0.8, shade(PAL.wood, 0.6), lx, 0.6, -1.4);   // the bench
+    bx(root, 0.9, 1.5, 0.08, PAL.white, 4.4, 4.3, -2.6); bx(root, 0.9, 1.7, 0.08, PAL.red, 6.2, 4.2, -2.6);              // towels
+    for (const x of [-6, 2]) { bx(root, 3, 0.1, 1, glow(0xf4f8ff, 1.4), x, 11.8, 1, false); const l = new THREE.PointLight(0xf4f8ff, 45, 26, 1.3); l.position.set(x, 10.5, 2); root.add(l); }
+  },
+};
 /** A set that is not a ring: its 2D painting as a backdrop flat, and a floor in front of it. */
 function flat(root: THREE.Group, sc: Scene) {
   const c = document.createElement('canvas'); c.width = 2200; c.height = 1400; const x = c.getContext('2d')!;
@@ -136,7 +207,8 @@ function flat(root: THREE.Group, sc: Scene) {
 /* ---------- the camera for each set ---------- */
 function frame(set: string, cam: THREE.PerspectiveCamera, ctl: OrbitControls, k: Key) {
   const c = k.cam || { x: 0, y: 0, z: 1, r: 0 };
-  const P: Record<string, [number[], number[]]> = { ring: [[0, 9, 21], [0, 3.2, 0]], ringlow: [[0, 2.2, 15], [0, 4.2, 0]], ringcorner: [[15, 9, 15], [0, 3.2, 0]] };
+  const P: Record<string, [number[], number[]]> = { ring: [[0, 9, 21], [0, 3.2, 0]], ringlow: [[0, 2.2, 15], [0, 4.2, 0]], ringcorner: [[15, 9, 15], [0, 3.2, 0]],
+    desk: [[0, 4.3, 13.5], [0, 2.6, 0]], hall: [[0, 5.2, 13], [0, 3.8, -6]], office: [[0, 5, 14], [0, 3.6, 0]], locker: [[0, 5, 14], [0, 3.6, -1]] };
   const [pos, look] = P[set] || [[0, 5.5, 17], [0, 3.6, 0]];
   cam.position.set(pos[0] + c.x, pos[1] + c.y, pos[2]); ctl.target.set(look[0] + c.x, look[1] + c.y, look[2]); cam.zoom = c.z; cam.rotation.z = 0; cam.updateProjectionMatrix(); ctl.update();
 }
@@ -154,7 +226,6 @@ export class Diorama3D {
     const key = new THREE.DirectionalLight(0xfff3dc, 2.2); key.position.set(-14, 34, 22); key.castShadow = true;
     key.shadow.mapSize.set(2048, 2048); key.shadow.camera.left = -16; key.shadow.camera.right = 16; key.shadow.camera.top = 16; key.shadow.camera.bottom = -16; key.shadow.camera.near = 5; key.shadow.camera.far = 90; key.shadow.radius = 4; key.shadow.bias = -0.0005;
     this.scene.add(key);
-    for (const [x, z] of [[-8, -8], [8, -8], [8, 8], [-8, 8]]) { const s = new THREE.SpotLight(0xffe2b0, 140, 70, 0.5, 0.7, 1.6); s.position.set(x, 30, z); s.target.position.set(0, 0, 0); this.scene.add(s, s.target); }
     this.scene.add(this.world, this.people);
     this.ctl = new OrbitControls(this.cam, canvas); this.ctl.enableDamping = false; this.ctl.addEventListener('change', () => this.ask()); this.ctl.maxPolarAngle = Math.PI * 0.49; this.ctl.minDistance = 4; this.ctl.maxDistance = 60;
     this.comp = new EffectComposer(this.r); this.comp.addPass(new RenderPass(this.scene, this.cam));
@@ -170,7 +241,7 @@ export class Diorama3D {
       from the side. `rigs` are the last joints, for dragging a part in 3D. */
   groups: THREE.Group[] = []; rigs: Record<string, Rig> = {}; sel: { who: string; part: string } | null = null;
   show(sc: Scene, k: Key, cast: Record<string, Recipe>, time = 0, sel: { who: string; part: string } | null = null) {
-    if (this.set !== sc.set) { this.clear(this.world); if (RINGS.includes(sc.set)) arena(this.world); else flat(this.world, sc); this.set = sc.set; this.framed = ''; }
+    if (this.set !== sc.set) { this.clear(this.world); const room = ROOMS[sc.set]; if (RINGS.includes(sc.set)) arena(this.world); else if (room) room(this.world); else flat(this.world, sc); this.mood(sc.set); this.set = sc.set; this.framed = ''; }
     const fk = sc.set + JSON.stringify(k.cam || null); if (this.framed !== fk) { frame(sc.set, this.cam, this.ctl, k); this.framed = fk; }
     this.clear(this.people); this.groups = []; this.sel = sel;
     const b = build(sc, k, cast, time); this.rigs = b.rigs;
@@ -201,6 +272,11 @@ export class Diorama3D {
     const g = this.groups.find(x => x.userData.who === who), rg = this.rigs[who]; if (!g || !rg || !rg.anchors[anchor]) return null;
     this.face(); g.updateMatrixWorld(true); const a = rg.anchors[anchor], v = g.localToWorld(new THREE.Vector3(a[0] - g.position.x, a[1] - FOOT, 0.3)).project(this.cam);
     const r = this.r.domElement.getBoundingClientRect(); return [r.left + (v.x + 1) / 2 * r.width, r.top + (1 - v.y) / 2 * r.height];
+  }
+  /** The air of the place: the dark of an arena, or a room lit from inside. */
+  mood(set: string) {
+    const inside = ['hall', 'office', 'locker'].includes(set), c = inside ? '#14161e' : '#0a0c1c';
+    this.scene.background = new THREE.Color(c); this.scene.fog = new THREE.Fog(c, inside ? 26 : 38, inside ? 70 : 95);
   }
   /** Turn every figure and prop toward the camera, round its own upright. */
   face() { for (const g of this.groups) g.rotation.y = Math.atan2(this.cam.position.x - g.position.x, this.cam.position.z - g.position.z); }

@@ -6,7 +6,7 @@
    (`SCENES` below is what it saved), so a player can open them, change them and share them. Nothing here touches
    the game state. */
 import { Piece, PAL, ell, rect, star, strip, drawScene, View, snip, shade } from './paper';
-import { Recipe, puppet, prop, Rig, blank, REF, Marks } from './puppet';
+import { Recipe, puppet, prop, Rig, blank, REF, Marks, commentator, dress } from './puppet';
 
 /** A person at a keyframe: where the waist is, the turn, which way they face, how far forward, the pose, the face,
     their size (1 as cut) and the marks on them. */
@@ -17,23 +17,27 @@ export interface Prop { id: string; k: string; x: number; y: number; r: number; 
 export interface Cam { x: number; y: number; z: number; r?: number }
 export const CAM0: Cam = { x: 0, y: 0, z: 1, r: 0 };
 export interface Key { t: number; figs: Record<string, Fig>; props: Prop[]; cam?: Cam }
-export interface Slot { id: string; n: string; role: 'a' | 'b' | 'ref' | 'c' }
+/** A part in a scene. `dress` puts whoever plays it in a suit and a headset (the desk); `at` is where they go when
+    brought in, for a slot that starts empty (the third chair at the desk). */
+export interface Slot { id: string; n: string; role: 'a' | 'b' | 'ref' | 'c'; dress?: 'suit'; at?: Fig }
 /** `frame` is the shape of the picture: wide (16 by 9, the broadcast) for now; tall for posters and covers and square
     for portraits are next. */
-export interface Scene { v: 1; id: string; name: string; when: string; set: string; slots: Slot[]; keys: Key[]; by?: string; frame?: 'wide' | 'tall' | 'square' }
+export interface Scene { v: 1; id: string; name: string; when: string; set: string; slots: Slot[]; keys: Key[]; by?: string; frame?: 'wide' | 'tall' | 'square'; loop?: boolean }
 
 /** When the broadcast plays a scene. A scene made by a player can take any of these. */
 /** What a scene is for. The match moments play on the broadcast now; the rest are where scenes go next
     (Ryan, 18 October: breaking news, talk show highlights, posters, magazine covers, portraits, everything). */
 export const WHEN: [string, string][] = [['start', 'The opening bell'], ['mid', 'Back and forth'], ['nearfall', 'A near fall'], ['finish', 'The finish'], ['champion', 'A new champion'], ['promo', 'A promo'], ['attack', 'An attack'],
-  ['news', 'Breaking news'], ['talk', 'A talk show'], ['poster', 'A poster'], ['cover', 'A magazine cover'], ['portrait', 'A portrait'], ['any', 'Only by hand']];
+  ['desk1', 'The desk: play-by-play talking'], ['desk2', 'The desk: colour talking'], ['news', 'Breaking news'], ['talk', 'A talk show'], ['poster', 'A poster'], ['cover', 'A magazine cover'], ['portrait', 'A portrait'], ['any', 'Only by hand']];
 /** The sets, each drawn from its own angle: pick the one that suits the moment. Every set keeps feet on the same line
     (FOOT), so a pose works on all of them. */
 export const SETS: [string, string][] = [['ring', 'The ring: the hard camera'], ['ringlow', 'The ring: low at ringside'], ['ringcorner', 'The ring: from the corner'],
-  ['ramp', 'The entrance ramp'], ['hall', 'Backstage: the hallway'], ['locker', 'Backstage: the locker room'], ['office', 'The office'], ['backstage', 'Backstage: the wall'], ['plain', 'Plain card']];
+  ['desk', 'The commentary desk'], ['ramp', 'The entrance ramp'], ['hall', 'Backstage: the hallway'], ['locker', 'Backstage: the locker room'], ['office', 'The office'], ['backstage', 'Backstage: the wall'], ['plain', 'Plain card']];
 export const W16 = 16, H9 = 9;   // a scene is 16 units wide and 9 high; x = 0 is the middle, y = 0 the middle
 export const FOOT = -2.9;          // where feet stand on the mat
 export const WAIST = FOOT + 2.52 + 0.7;   // the waist of a doll of standard height standing on the mat
+/** Where the three chairs at the commentary desk are. */
+export const DESK_SEATS = [-2.4, 0.6, 3.6];
 
 /* ---------- the sets ---------- */
 type Add = (pts: [number, number][], col: string, z: number, lift?: number, rough?: number) => void;
@@ -155,6 +159,15 @@ function setPieces(set: string): Piece[] {
     add(rect(-6.5, -2.2, 6.4, 0.35), PAL.wood, -0.6, 0.06, 0.006);                                  // the bench, behind whoever stands
     for (const lx of [-6.1, -0.6]) add(rect(lx, -3.0, 0.22, 0.8), shade(PAL.wood, 0.6), -0.62, 0.03, 0.004);
     add(rect(4.2, 1.2, 0.8, 1.4), PAL.white, -0.86, 0.03, 0.006); add(rect(6.0, 1.0, 0.8, 1.6), PAL.red, -0.86, 0.03, 0.006);   // towels
+  } else if (set === 'desk') {
+    // The commentary desk at ringside: the crowd and the ring behind, three high-backed chairs; the desk is in front
+    add(rect(-11, -7, 22, 14), PAL.navy, -1, 0, 0);
+    crowd(add, 4, 4.2, 0.8, 0.2, 0.035, -11, 11, 31);
+    add(rect(-11, 0.5, 22, 0.35), '#1a1a1f', -0.72, 0.03);
+    add(rect(-11, -0.5, 22, 1.2), PAL.red, -0.7, 0.04, 0.01); add(rect(-11, 0.55, 22, 0.15), PAL.white, -0.69, 0.02, 0.004);   // the ring apron behind them
+    for (let k = 1; k <= 3; k++) add(rect(-11, 0.7 + 0.5 * k, 22, 0.07), PAL.white, -0.68, 0.02, 0.003);
+    add(rect(-11, -7, 22, 6.5), '#1b1d2a', -0.6, 0.02, 0);                                            // the floor
+    for (const cx of DESK_SEATS) { add(rect(cx - 0.9, -0.8, 1.8, 2.7), '#16161b', -0.4, 0.08, 0.008); add(rect(cx - 0.75, 1.6, 1.5, 0.25), '#2a2a32', -0.38, 0.02, 0.004); }
   } else if (set === 'office') {
     // The office: panelled walls, blinds, a belt framed on the wall, the big desk to one side
     add(rect(-11, -7, 22, 14), '#5a3d28', -1, 0, 0);
@@ -172,6 +185,16 @@ function setPieces(set: string): Piece[] {
   return o;
 }
 const FRONT: Record<string, (o: Piece[]) => void> = {
+  desk: o => {   // the announce desk: its top, a front panel in the company's colours, monitors, notes and coffee
+    let n = 0; const P = (pts: [number, number][], col: string, z: number, lift = 0.06) => o.push({ pts: snip(pts, 850 + (n++) * 7, 0.008, 0.1), col, z, lift });
+    P(rect(-7.2, -4.8, 14.4, 3.65), '#1f2a52', 2.3, 0.1);
+    P(rect(-7.2, -2.3, 14.4, 0.35), PAL.gold, 2.35, 0.03); P(rect(-7.2, -3.9, 14.4, 0.12), PAL.red, 2.35, 0.02);
+    P(rect(-7.5, -1.25, 15, 0.3), '#2b2d36', 2.4, 0.06);
+    o.push({ pts: [], col: '', z: 2.42, txt: { s: 'LIVE', x: -5.2, y: -3.1, size: 0.75, col: PAL.yellow } });
+    for (const mx of [-4.2, -0.9, 2.1]) { P([[mx - 0.5, -0.95], [mx + 0.5, -0.95], [mx + 0.4, -0.55], [mx - 0.4, -0.55]], '#111116', 2.45, 0.05); P(rect(mx - 0.08, -1.0, 0.16, 0.08), '#2a2a30', 2.44, 0.02); }
+    P(rect(-2.9, -1.0, 0.9, 0.06), PAL.white, 2.46, 0.01); P(rect(4.6, -1.0, 0.9, 0.06), PAL.white, 2.46, 0.01);
+    for (const cx of [-1.6, 1.4]) { P(rect(cx, -1.0, 0.32, 0.38), PAL.white, 2.47, 0.03); P(rect(cx + 0.06, -0.66, 0.2, 0.04), '#5a3a26', 2.48, 0.01); }
+  },
   ringlow: o => {   // the near ropes and posts, big, in front of everybody; the apron below
     for (const sd of [-1, 1]) o.push({ pts: snip(rect(sd * 7.4 - 0.32, -5, 0.64, 7.6), 760 + sd, 0.01, 0.1), col: PAL.steel, z: 2.4, lift: 0.08 });
     for (let k = 0; k < 3; k++) o.push({ pts: snip(rect(-11, -2.9 + 1.25 * k, 22, 0.16), 765 + k, 0.006, 0.1), col: PAL.white, z: 2.45, lift: 0.06 });
@@ -226,7 +249,8 @@ export function build(sc: Scene, k: Key, cast: Record<string, Recipe>, time = 0)
   const pieces = setPieces(sc.set), rigs: Record<string, Rig> = {};
   sc.slots.forEach((sl, i) => {
     const f = k.figs[sl.id]; if (!f) return;
-    const r = cast[sl.id] || (sl.role === 'ref' ? REF : blank(i));
+    const di = sc.slots.filter(x => x.dress === 'suit').indexOf(sl), c = cast[sl.id];
+    const r = c ? (sl.dress === 'suit' ? dress(c, di) : c) : sl.role === 'ref' ? REF : sl.dress === 'suit' ? commentator(di) : blank(i);
     rigs[sl.id] = puppet(r, { x: f.x, y: f.y, r: f.r, f: f.f, z: f.z, s: f.s }, f.p, f.e || '', sl.id, pieces, f.m || {});
     // a soft shadow on the floor where they stand or lie
     const rg = rigs[sl.id], lying = Math.abs(Math.sin(f.r * Math.PI / 180)) > 0.6, sz = f.s || 1;
@@ -281,6 +305,7 @@ export const POSES: [string, PoseDef][] = [
   ['sit', { n: 'Sitting on the mat', p: { torso: -10, hip_n: 90, kn_n: -20, an_n: -20, hip_f: 85, kn_f: -30, an_f: -20, sh_n: -40, el_n: 10, sh_f: -50, el_f: 10 }, y: -2.2 }],
   ['back', { n: 'Flat on the back', p: { sh_n: 160, el_n: 5, sh_f: 140, el_f: -10, hip_n: 10 }, r: 90, y: -2.15, e: 'hurt' }],
   ['front', { n: 'Face down', p: { sh_n: -10, sh_f: 10, hip_n: 4 }, r: -90, y: -2.15, e: 'hurt' }],
+  ['seated', { n: 'Seated at a desk', p: { hip_n: 90, kn_n: -90, an_n: 0, hip_f: 85, kn_f: -90, an_f: 0, sh_n: 30, el_n: 80, sh_f: 30, el_f: 75 }, y: -0.75 }],
   ['cover', { n: 'Covering', p: { sh_n: -120, el_n: -30, sh_f: -60, el_f: -40, kn_n: -10, kn_f: -20, an_n: -30, an_f: -30, head: 25 }, r: -65, y: -1.75 }],
 ];
 
@@ -293,6 +318,21 @@ const AB: Slot[] = [{ id: 'A', n: 'Wrestler A', role: 'a' }, { id: 'B', n: 'Wres
 const burst = (id: string, txt: string, x: number, y: number, col = PAL.yellow): Prop => ({ id, k: 'burst', x, y, r: 0, z: 3, s: 1, txt, col });
 const COVER_B = { sh_n: 160, el_n: 5, sh_f: 140, el_f: -10, hip_n: 35, kn_n: -60, an_n: 20 };
 const COVER_A = { sh_n: -120, el_n: -30, sh_f: -60, el_f: -40, kn_n: -10, kn_f: -20, an_n: -30, an_f: -30, head: 25 };
+
+/** The commentary desk: two in suits and headsets, the one with the line talking (the mouth moving, a hand going),
+    the other listening and turning to them, and the third chair open for a guest. It loops while the line is on. */
+function deskScene(id: string, name: string, when: string, talker: string): Scene {
+  const SEAT = { hip_n: 90, kn_n: -90, hip_f: 85, kn_f: -90 }, Y = -0.75;
+  const seat = (x: number, f: number, p: Record<string, number>, e = ''): Fig => ({ x, y: Y, r: 0, f, z: 0, p: { ...SEAT, ...p }, e });
+  const talk = (t: number, open: boolean, arm: number, head: number): Key => {
+    const tk = (who: string) => who === talker, side = (who: string) => who === 'C1' ? 1 : -1, x = (who: string) => who === 'C1' ? DESK_SEATS[0] : DESK_SEATS[1];
+    const fig = (who: string): Fig => tk(who) ? seat(x(who), side(who), { sh_n: arm, el_n: 75, wr_n: 10, sh_f: 30, el_f: 75, head }, open ? 'talk' : '') : seat(x(who), side(who), { sh_n: 30, el_n: 80, sh_f: 30, el_f: 75, head: 8 }, '');
+    return { t, figs: { C1: fig('C1'), C2: fig('C2') }, props: [], cam: { x: -0.9, y: 0.7, z: 1.15 } };
+  };
+  return { v: 1, id, name, when, set: 'desk', loop: true,
+    slots: [{ id: 'C1', n: 'Play-by-play', role: 'c', dress: 'suit' }, { id: 'C2', n: 'Colour', role: 'c', dress: 'suit' }, { id: 'C3', n: 'A guest', role: 'c', dress: 'suit', at: { x: DESK_SEATS[2], y: Y, r: 0, f: -1, z: 0, p: { ...SEAT, sh_n: 30, el_n: 80, sh_f: 30, el_f: 75 } } }],
+    keys: [talk(0, true, 100, 4), talk(0.3, false, 112, -2), talk(0.6, true, 92, 6), talk(0.9, false, 118, 0), talk(1.2, true, 104, 3)] };
+}
 
 export const SCENES: Scene[] = [
   { v: 1, id: 'lockup', name: 'The lock-up', when: 'start', set: 'ring', slots: AB, keys: [
@@ -320,6 +360,8 @@ export const SCENES: Scene[] = [
     { t: 0, figs: { A: STD(0, 1, { sh_n: 60, el_n: 40, sh_f: -60, el_f: -40, hip_n: 4 }, 'shout', 0.6), B: LAY(4.2, -1, 90, { sh_n: 150, sh_f: 130, hip_n: 20, kn_n: -40 }, 'hurt', 0.2), R: STD(-3.4, 1, { sh_n: 110, el_n: 0 }, 'shout', 0.4) }, props: [{ id: 'belt', k: 'belt', x: 0, y: 0, r: 0, z: 2, s: 1, at: 'A:hands' }] },
     { t: 1.0, figs: { A: STD(0, 1, { sh_n: 170, el_n: 10, sh_f: -170, el_f: -10, hip_n: 6, hip_f: -6, head: 8 }, 'shout', 0.6), B: LAY(4.2, -1, 90, { sh_n: 150, sh_f: 130, hip_n: 20, kn_n: -40 }, 'hurt', 0.2), R: STD(-3.4, 1, { sh_n: 160, el_n: 0, sh_f: -20 }, 'shout', 0.4) }, props: [{ id: 'belt', k: 'belt', x: 0, y: 0.1, r: 0, z: 2, s: 1, at: 'A:hands' }, burst('b1', 'NEW CHAMPION!', -4.6, 3.0, PAL.gold), { id: 'cf', k: 'confetti', x: 0, y: 0, r: 0, z: 2.8 }] },
   ] },
+  deskScene('desk1', 'At the desk: the call', 'desk1', 'C1'),
+  deskScene('desk2', 'At the desk: the colour', 'desk2', 'C2'),
   { v: 1, id: 'promo', name: 'On the microphone', when: 'promo', set: 'ring', slots: [{ id: 'A', n: 'The talker', role: 'a' }], keys: [
     { t: 0, figs: { A: STD(-0.6, 1, { sh_n: 150, el_n: 120, sh_f: -20, el_f: -30, head: 4 }, '') }, props: [{ id: 'mic', k: 'mic', x: 0.1, y: 0.1, r: -30, z: 1.2, at: 'A:hand_n' }] },
     { t: 0.8, figs: { A: STD(-0.6, 1, { sh_n: 150, el_n: 120, sh_f: -100, el_f: -20, head: 10 }, 'shout') }, props: [{ id: 'mic', k: 'mic', x: 0.1, y: 0.1, r: -30, z: 1.2, at: 'A:hand_n' }] },

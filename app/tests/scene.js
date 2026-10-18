@@ -99,6 +99,16 @@ async function studio(mode) {
     await page.waitForTimeout(200);
     ok(mode, 'a file that is not a scene is refused', /not a scene/.test(await page.$eval('[data-t="scene-msg"]', e => e.textContent)));
     ok(mode, 'the studio still fits one screen', !(await fits(page)), await fits(page));
+    // the commentary desk: two in suits, an open chair; bring a guest in and send them away
+    await page.selectOption('[data-t="scene-open"]', 'desk1'); await page.waitForTimeout(200);
+    await page.click('[data-t="scene-tab"][data-v="cast"]');
+    ok(mode, 'the desk has an open chair to bring a guest into', await has(page, '[data-t="scene-bringin"][data-v="C3"]'));
+    await page.click('[data-t="scene-bringin"][data-v="C3"]');
+    ok(mode, 'a guest is brought in to the third chair', await has(page, '[data-t="scene-sendaway"][data-v="C3"]') && /^C3:/.test((await attr(page, '[data-t="scene-stage"]', 'data-sel')) || ''));
+    await page.click('[data-t="scene-sendaway"][data-v="C3"]');
+    ok(mode, 'and sent away again', await has(page, '[data-t="scene-bringin"][data-v="C3"]'));
+    if (process.env.SHOTS) await shot(page, 'scene-' + mode + '-desk');
+    await page.click('[data-t="scene-tab"][data-v="file"]');
     await page.click('[data-t="scene-done"]');
     ok(mode, 'Done comes back to the Scenes tab, with the scene in the world', /Test scene/.test(await page.$eval('.edpage', e => e.textContent)));
     ok(mode, 'no errors in the studio', !errs.length, errs.join(' | '));

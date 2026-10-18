@@ -173,7 +173,7 @@ export function SceneStudio(pp: StudioProps) {
   // play: slide through the keyframes once, then come back to the one being edited
   useEffect(() => {
     if (time == null) return; let raf = 0, t0 = performance.now() - time * 1000;
-    const step = (now: number) => { const t = (now - t0) / 1000; if (t > lastT(sc) + 0.6) { setTime(null); return; } setTime(t); raf = requestAnimationFrame(step); };
+    const step = (now: number) => { let t = (now - t0) / 1000; if (sc.loop && lastT(sc) > 0) t = t % (lastT(sc) + 0.32); else if (t > lastT(sc) + 0.6) { setTime(null); return; } setTime(t); raf = requestAnimationFrame(step); };
     raf = requestAnimationFrame(step); return () => cancelAnimationFrame(raf);
   }, [time == null]);
   const open = (s: Scene) => { setSc(copy(s)); setKi(0); setSel(null); setTime(null); };
@@ -294,6 +294,8 @@ export function SceneStudio(pp: StudioProps) {
       {tab === 'cast' && <>
         <Group title="Who plays it here">
           {sc.slots.filter(x => x.role !== 'ref').map(x => <div class="sc-row"><span class="sc-slot">{x.n}</span>
+            {key.figs[x.id] ? (x.at && <Btn kind="less" t="scene-sendaway" d={{ v: x.id }} onClick={() => { const n = copy(sc); n.keys.forEach(k => { delete k.figs[x.id]; }); setSc(n); if (sel && sel.who === x.id) setSel(null); }}>Send away</Btn>)
+              : <Btn kind="sm" t="scene-bringin" d={{ v: x.id }} onClick={() => { const n = copy(sc); n.keys.forEach(k => { k.figs[x.id] = copy(x.at || { x: 0, y: WAIST, r: 0, f: 1, z: 0.6, p: {} }); }); setSc(n); setSel({ who: x.id, part: 'body' }); }}>Bring in</Btn>}
             <select aria-label={'Who plays ' + x.n} data-t="scene-cast" data-v={x.id} value={String(castIds[x.id] ?? -1)} onChange={e => setCast({ ...castIds, [x.id]: +(e.currentTarget as HTMLSelectElement).value })}>
               <option value="-1">A plain card figure</option>{roster.map(w => <option value={String(w.id)}>{w.name}</option>)}
             </select></div>)}

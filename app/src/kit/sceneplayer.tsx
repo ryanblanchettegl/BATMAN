@@ -25,7 +25,7 @@ export function ScenePlayer(p: { sc: Scene; cast: Record<string, Recipe>; play: 
     plays++;
     if (props.current.still || end <= 0) { paint(ctx, sc, end, props.current.cast); return; }
     let raf = 0; const t0 = performance.now(), keepFor = end + 4;   // confetti keeps falling a while after the last keyframe
-    const step = (now: number) => { const t = (now - t0) / 1000; try { paint(ctx, sc, t, props.current.cast); } catch (e) { return; } if (t < keepFor) raf = requestAnimationFrame(step); };
+    const step = (now: number) => { let t = (now - t0) / 1000; if (sc.loop) t = t % (end + 0.32); try { paint(ctx, sc, t, props.current.cast); } catch (e) { return; } if (sc.loop || t < keepFor) raf = requestAnimationFrame(step); };
     raf = requestAnimationFrame(step); return () => cancelAnimationFrame(raf);
   }, [p.play, size[0], size[1]]);
   return <div ref={box} class="lv-scene" data-t={p.t || 'live-scene'} data-v={p.sc.id} role="img" aria-label={p.label}>
