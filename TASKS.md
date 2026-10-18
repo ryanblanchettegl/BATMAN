@@ -22,6 +22,7 @@ Two more lists sit beside this one, both finished:
 
 | Topic | Decision |
 | --- | --- |
+| Entrances and move pictures, 18 Oct | A wrestler's own picks are for their signature moves and finishers. Entrances: pick a canned one, or make a custom entrance through Create a Scene (World Editor). No other per-wrestler scenes. |
 | Create a Player in a game, 18 Oct | The roster says **Edit wrestler** and opens that wrestler's record. **Create a Player** makes someone new, and in an active game every new wrestler goes to free agency; you sign them like anybody else. Only the World Editor puts somebody into a company. |
 | Create a Player, 18 Oct | Ryan's blueprint (`docs/plans/create-a-player.md`): a SmackDown-style suite, the wrestler on the left and windows on the right; body by height, weight, type and four sliders; three outfits (ring, entrance, street) worn by context; paper swatches with finishes in four slots; lettering and shapes cut from card; finishers acted out on a dummy; one `wrestler.json` a wrestler, no pictures, read by the scene engine. Real names in the blueprint were examples only (rule 3). |
 | Platforms, 18 Oct | Steam first (the desktop from 1080p to 4K, and the Steam Deck), Android down the road. No more tablet or TV test runs or layout rules; browser tests run at desk size. Controls keep working by touch for Android later. |

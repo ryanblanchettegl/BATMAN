@@ -87,7 +87,14 @@ a wrestler with no file is drawn as before.
    agents opens Create a Player on a new wrestler: who they are (name, division, side, style, background, strongest
    suit, gimmick, and what that makes them), then the body, gear and finishers, then Create. A new wrestler always
    goes to **free agency** (`E.createWrestler`) and is signed from Free agents like anybody else; only the World
-   Editor puts somebody straight into a company. The old Windows 95 Create a wrestler window is gone. Still to come:
-   Create a Scene's link from it when picking scenes.
-3. **More parts**, then the parts made in Blender with sockets (`papercraft-engine.md`, section 1).
-4. **A file per wrestler on disk** on the desktop build (`/save/wrestlers/`), and the Steam Workshop.
+   Editor puts somebody straight into a company. The old Windows 95 Create a wrestler window is gone.
+3. **Entrances and move pictures** (Ryan, 18 October). Every wrestler comes out on an entrance, worn in entrance
+   gear: one of the game's five (arms up at the top of the ramp, points out at the crowd, stops and flexes, a slow
+   cold walk, taunts the crowd), or a custom one. In the World Editor, Make a custom entrance on the Entrance tab
+   saves the wrestler and opens Create a Scene on a copy of their entrance with them in it; saving there picks it for
+   them and Done comes back (a custom entrance is a world scene, so others can pick it too). Their other pictures are
+   their moves: the first move is the finisher, the rest are signature moves, and each picks the scene it plays as.
+   On the broadcast each wrestler comes out on their entrance, a back-and-forth moment led by somebody with signature
+   moves plays one of them with its name, and the finisher ends the match. Create a Scene stays in the World Editor.
+4. **More parts**, then the parts made in Blender with sockets (`papercraft-engine.md`, section 1).
+5. **A file per wrestler on disk** on the desktop build (`/save/wrestlers/`), and the Steam Workshop.

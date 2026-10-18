@@ -21,6 +21,9 @@ export interface Look {
   appearance?: { face?: Record<string, number>; skin_tone?: number; hair_colour?: string; facial_hair?: string };
   attires?: Partial<Record<AttireKey, Attire>>;
   finishing_moves?: Finisher[];
+  /** Not in Ryan's first draft: which of the canned entrances they come out on (a scene id). Their own pictures are
+      their moves': each finishing or signature move picks the canned scene it plays as. */
+  entrance?: string;
 }
 export const ATTIRES: [AttireKey, string, string][] = [['primary_ring', 'Ring gear', 'In-ring gear'], ['entrance_gear', 'Entrance', 'Ring walk and entrance'], ['street_clothes', 'Street clothes', 'Backstage and promos']];
 /** Which outfit a set calls for: ring gear in the ring, entrance gear on the ramp, street clothes backstage. */
@@ -192,4 +195,5 @@ export const CATEGORIES: [string, string][] = [['Pinfall Impact', 'A big impact,
 /** The scene a finisher plays as, by the pose it names (old names from the first draft still work). */
 export const FIN_SCENES: [string, string][] = [['slam', 'Lift and slam'], ['carry', 'Over the shoulders'], ['sleeper', 'A hold from behind'], ['strike', 'A big strike'], ['finish', 'Straight into the cover']];
 const FIN_ALIAS: Record<string, string> = { pose_slam_impact_01: 'slam', pose_submission_01: 'sleeper', pose_strike_01: 'strike', pose_carry_01: 'carry', pose_cover_01: 'finish' };
+/** The first move is the finisher; the rest are signature moves, played during the match. */
 export function finScene(f: Finisher): string { const p = f.preview_pose_id || ''; return FIN_SCENES.some(x => x[0] === p) ? p : FIN_ALIAS[p] || (f.category === 'Submission' ? 'sleeper' : 'slam'); }

@@ -9,12 +9,12 @@ import { E } from '../../engine';
 import { G, act, full, say as note } from '../../store';
 import { Btn, TextBox, Desktop, Win, Group, Tabs } from '../../kit';
 import { ScenePlayer } from '../../kit/sceneplayer';
-import { Scene, SCENES, POSES, WAIST, copy } from '../../kit/scene';
+import { Scene, SCENES, POSES, WAIST, copy, scenesFor, allScenes, WHEN } from '../../kit/scene';
 import { Recipe, recipeOf, blank } from '../../kit/puppet';
 import { Look, Attire, AttireKey, Layer, Finisher, ATTIRES, PARTS, SWATCHES, SLOTS, FONTS, SHAPES, ARCHETYPES, FACIAL, KICKOUT, POSITIONS, CATEGORIES, FIN_SCENES, fromLook, blankLook, finScene, swatch } from '../../kit/caw';
 import { derive, NAMES, FaceKey } from '../../lib/portrait';
 
-type Tab = 'sign' | 'body' | 'head' | 'gear' | 'colour' | 'studio' | 'fin' | 'file';
+type Tab = 'sign' | 'body' | 'head' | 'gear' | 'colour' | 'studio' | 'fin' | 'scenes' | 'file';
 const SET_OF: Record<AttireKey, string> = { primary_ring: 'ring', entrance_gear: 'ramp', street_clothes: 'hall' };
 const CAM_OF: Record<AttireKey, { x: number; y: number; z: number }> = { primary_ring: { x: 0, y: 0.15, z: 1.4 }, entrance_gear: { x: 0, y: -0.3, z: 1.1 }, street_clothes: { x: 0, y: -0.5, z: 0.88 } };
 const STY: Record<string, string> = { brawler: 'B', technician: 'T', high_flyer: 'H', powerhouse: 'P', showman: 'S', all_rounder: 'A', hardcore: 'B', submission: 'T' };
@@ -31,7 +31,10 @@ export function workerW(w: any) {
 
 /** What the suite is open on: a wrestler (from a world package through workerW, or from the game), the file they
     wear if any, and what Save and Take the file off do. With `sign`, it makes a new wrestler and signs them. */
-export interface PlayerProps { world: string; w: any; had: Look | null; onSave: (look: Look) => { ok: boolean; msg: string }; onForget?: () => { ok: boolean; msg: string }; onDone: () => void; sign?: boolean }   // sign: a new wrestler, made in a game, who goes to free agency
+export interface PlayerProps { world: string; w: any; had: Look | null; onSave: (look: Look) => { ok: boolean; msg: string }; onForget?: () => { ok: boolean; msg: string }; onDone: () => void; sign?: boolean;
+  /** The world's own scenes, besides the game's: its entrances are offered too. In the World Editor, onNewEntrance
+      keeps the wrestler and opens Create a Scene to make them a custom entrance. */
+  scenes?: Scene[]; onNewEntrance?: (look: Look) => void }   // sign: a new wrestler, made in a game, who goes to free agency
 /** The choices for a new signing, as the old Create a wrestler window had them (E.createWrestler). */
 interface Draft { g: string; style: string; bg: string; emph: string; align: string; gim: string }
 
@@ -60,9 +63,12 @@ export function CreatePlayer(pp: PlayerProps) {
 
   // what the viewport shows: the wrestler in the outfit being changed, or acting out a finisher on a dummy
   let sc: Scene, cast: Record<string, Recipe> = { A: r }, play: string;
+  const world = pp.scenes || [], [prev, setPrev] = useState<string | null>(null), prevSc = prev ? allScenes(world).find(x => x.id === prev) : null;
   if (acting && fin) {
     const src = SCENES.find(x => x.id === finScene(fin)) || SCENES[0];
     sc = { ...copy(src), attire: 'primary_ring', loop: true }; cast.B = { ...blank(1), name: 'The dummy' }; play = 'fin' + fi + JSON.stringify(lk) + sc.id;
+  } else if (prevSc && tab === 'scenes') {   // the entrance they picked, with them in it
+    sc = { ...copy(prevSc), loop: true }; play = 'sc' + prevSc.id + JSON.stringify(lk);
   } else {
     const pd = (POSES.find(x => x[0] === pose) || POSES[0])[1];
     sc = { v: 1, id: 'caw', name: 'Create a Player', when: 'any', set: SET_OF[att], attire: att, slots: [{ id: 'A', n: lk.name || w0.name, role: 'a' }],
@@ -93,7 +99,7 @@ export function CreatePlayer(pp: PlayerProps) {
   const setFin = (fn: (f: Finisher) => void) => change(n => { const F = n.finishing_moves || []; if (F[fi]) fn(F[fi]); n.finishing_moves = F; });
   const chip = (id?: string) => { const s = swatch(id, { c: '#888' }); return <span class={'caw-chip' + (s.f && s.f !== 'matte' ? ' ' + s.f : '')} style={{ background: s.c }} aria-hidden="true" />; };
 
-  const titles: Record<Tab, string> = { sign: 'A new wrestler', body: 'The body', head: 'The head', gear: 'Gear: ' + ATTIRES.find(a => a[0] === att)![1], colour: 'Colours: ' + ATTIRES.find(a => a[0] === att)![1], studio: 'Gear studio: lettering and shapes', fin: 'Finishing moves', file: 'The file' };
+  const titles: Record<Tab, string> = { sign: 'A new wrestler', body: 'The body', head: 'The head', gear: 'Gear: ' + ATTIRES.find(a => a[0] === att)![1], colour: 'Colours: ' + ATTIRES.find(a => a[0] === att)![1], studio: 'Gear studio: lettering and shapes', fin: 'Finishing moves', scenes: 'Their entrance', file: 'The file' };
   return <div class="scfull paper" data-t="caw">
     <div class="sc-menubar" role="group" aria-label={pp.sign ? 'Create a Player' : 'Edit wrestler'}>
       <span class="sc-belt" aria-hidden="true" /><b class="on">{pp.sign ? 'Create a Player' : 'Edit wrestler'}</b><span>{pp.world}</span><span class="sp" />
@@ -107,7 +113,7 @@ export function CreatePlayer(pp: PlayerProps) {
           <span class="sc-lbl">Outfit</span>
           {ATTIRES.map(a => <Btn kind="sm" t="caw-attire" d={{ v: a[0] }} on={att === a[0]} onClick={() => { setAtt(a[0]); setActing(false); setLay(-1); }}>{a[1]}</Btn>)}
         </div>
-        <div class="sc-stage caw-stage"><ScenePlayer key="caw" sc={sc} cast={cast} play={play} still={!(acting && fin)} orbit fill={!(acting && fin)} t="caw-view" label={(lk.name || w0.name) + ' in ' + ATTIRES.find(a => a[0] === att)![1].toLowerCase() + '. Drag to walk round them.'} /></div>
+        <div class="sc-stage caw-stage"><ScenePlayer key="caw" sc={sc} cast={cast} play={play} still={!(acting && fin) && !(prevSc && tab === 'scenes')} orbit fill={!(acting && fin) && !(prevSc && tab === 'scenes')} t="caw-view" label={(lk.name || w0.name) + ' in ' + ATTIRES.find(a => a[0] === att)![1].toLowerCase() + '. Drag to walk round them.'} /></div>
         <div class="sc-keys" role="group" aria-label="Pose">
           <span class="sc-lbl">Pose</span>
           {VIEW_POSES.map(p => <Btn kind="less" t="caw-pose" d={{ v: p[0] }} on={pose === p[0] && !acting} onClick={() => { setPose(p[0]); setActing(false); }}>{p[1]}</Btn>)}
@@ -116,7 +122,7 @@ export function CreatePlayer(pp: PlayerProps) {
       </Win>
       <Win title={titles[tab]} right={tab === 'gear' || tab === 'colour' || tab === 'studio' ? ATTIRES.find(a => a[0] === att)![1] : ''} area="side" t="caw-side">
         <Tabs label="What to change" value={tab} onPick={v => setTab(v as Tab)} items={[...(pp.sign ? [{ id: 'sign', label: 'Who they are', t: 'caw-tab' }] : []), { id: 'body', label: 'Body', t: 'caw-tab' }, { id: 'head', label: 'Head', t: 'caw-tab' }, { id: 'gear', label: 'Gear', t: 'caw-tab' },
-          { id: 'colour', label: 'Colours', t: 'caw-tab' }, { id: 'studio', label: 'Lettering', t: 'caw-tab' }, { id: 'fin', label: 'Finishers', t: 'caw-tab' }, { id: 'file', label: 'File', t: 'caw-tab' }]} />
+          { id: 'colour', label: 'Colours', t: 'caw-tab' }, { id: 'studio', label: 'Lettering', t: 'caw-tab' }, { id: 'fin', label: 'Finishers', t: 'caw-tab' }, { id: 'scenes', label: 'Entrance', t: 'caw-tab' }, { id: 'file', label: 'File', t: 'caw-tab' }]} />
         {tab === 'sign' && info && pv && <>
           <div class="sc-row"><span class="sc-slot">Ring name</span><TextBox value={lk.name || ''} max={28} label="Ring name" t="caw-name" width="18ch" onInput={v => change(n => { n.name = v; })} /></div>
           {([['g', 'Division', [['M', 'Men'], ['F', 'Women']]], ['align', 'Side', [['F', 'Face'], ['H', 'Heel']]], ['style', 'Style', Object.keys(E.STYLE_NAME).map(k => [k, E.STYLE_NAME[k]])],
@@ -211,7 +217,7 @@ export function CreatePlayer(pp: PlayerProps) {
           </Group>
         </>}
         {tab === 'fin' && <>
-          <div class="sc-row">{fins.map((f, i) => <Btn kind="less" t="caw-fin" d={{ v: i }} on={i === fi} onClick={() => { setFi(i); setActing(false); }}>{f.name}</Btn>)}
+          <div class="sc-row">{fins.map((f, i) => <Btn kind="less" t="caw-fin" d={{ v: i }} on={i === fi} onClick={() => { setFi(i); setActing(false); }}>{(i ? 'Signature: ' : 'Finisher: ') + f.name}</Btn>)}
             <Btn kind="sm" t="caw-addfin" disabled={fins.length >= 4} onClick={() => { change(n => { const F = n.finishing_moves = n.finishing_moves || []; F.push({ name: fins.length ? 'Signature move ' + fins.length : 'The finisher', impact_damage: 80, kickout_difficulty: 'Protected', position: 'Standing', category: 'Pinfall Impact', preview_pose_id: 'slam' }); }); setFi(fins.length); }}>Add a move</Btn></div>
           {fin ? <>
             <div class="sc-row"><TextBox value={fin.name} max={32} label="Name of the move" t="caw-finname" width="18ch" onInput={v => setFin(f => { f.name = v; })} /></div>
@@ -220,8 +226,17 @@ export function CreatePlayer(pp: PlayerProps) {
               <div class="sc-row"><span class="sc-slot">{n}</span><select aria-label={n} data-t="caw-finopt" data-v={k} value={(k === 'preview_pose_id' ? finScene(fin) : (fin[k] as string)) || ''} onChange={e => { const v = (e.currentTarget as HTMLSelectElement).value; setFin(f => { (f as any)[k] = v; }); }}>{opts.map(o => <option value={o[0]}>{o[1]}</option>)}</select></div>)}
             <div class="sc-row"><Btn kind="go" t="caw-act" onClick={() => setActing(!acting)}>{acting ? 'Stop' : 'Act it out on the dummy'}</Btn>
               <Btn kind="danger" t="caw-dropfin" onClick={() => { change(n => { (n.finishing_moves || []).splice(fi, 1); }); setFi(-1); setActing(false); }}>Remove</Btn></div>
-            <p class="muted">The picture plays on the broadcast when this move ends a match. People do kick out of finishers: the more protected the move, the rarer and bigger the kick-out, and every kick-out wears it down a little until it rests. A clean win with it lands by how protected it is, how hard it hits and where it comes from.</p>
+            <p class="muted">The first move is the finisher: its picture plays when it ends a match. The others are signature moves: their pictures play during the match. People do kick out of finishers: the more protected the move, the rarer and bigger the kick-out, and every kick-out wears it down a little until it rests. A clean win with it lands by how protected it is, how hard it hits and where it comes from.</p>
           </> : <p class="empty">{fins.length ? 'Pick a move to change it.' : 'No finishing moves yet.'}</p>}
+        </>}
+        {tab === 'scenes' && <>
+          <div class="sc-row" role="group" aria-label="Entrances">
+            <Btn kind="less" t="caw-ent" d={{ v: '' }} on={!lk.entrance} onClick={() => { change(n => { delete n.entrance; }); setPrev(null); }}>Whatever the show picks</Btn>
+            {scenesFor('entrance', world).map(o => <Btn kind="less" t="caw-ent" d={{ v: o.id }} on={lk.entrance === o.id} onClick={() => { change(n => { n.entrance = o.id; }); setPrev(o.id); }}>{o.name}</Btn>)}
+          </div>
+          {pp.onNewEntrance && <div class="sc-row"><Btn kind="go" t="caw-newent" onClick={() => pp.onNewEntrance!(lk)}>Make a custom entrance</Btn><span class="muted">Saves them, and opens Create a Scene with them in it.</span></div>}
+          {prevSc && <div class="sc-row"><Btn kind="sm" t="caw-entstop" onClick={() => setPrev(null)}>Stop</Btn><span class="muted">{prevSc.name}, in their entrance gear</span></div>}
+          <p class="muted">Pick an entrance, or make a custom one in the World Editor. Entrances are worn in entrance gear. Their own pictures are their moves: each finisher and signature move picks the picture it plays as, on the Finishers tab.</p>
         </>}
         {tab === 'file' && <>
           <Group title="Who they are">

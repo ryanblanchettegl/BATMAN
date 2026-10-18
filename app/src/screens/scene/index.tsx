@@ -137,14 +137,14 @@ export function fromWorld(pkg: any): W[] {
   return (pkg && pkg.workers || []).filter((w: any) => !w.roles || w.roles.indexOf('wrestler') >= 0).map((w: any, i: number) => ({ id: i, name: w.ring_name || w.id, g: w.gender === 'F' ? 'F' : 'M',
     align: w.disposition === 'heel' ? 'H' : 'F', twn: w.disposition === 'tweener', style: STY[w.style] || 'A', face: w.face, age: w.age || 28, gim: (w.gimmick_category || '') + ' ' + (w.gimmick || ''), look: w.look || null }));
 }
-export interface StudioProps { world: string; roster: W[]; saved: Scene[]; start?: Scene; blank?: boolean; onSave: (sc: Scene) => boolean; onForget: (id: string) => void; onDone: () => void }
+export interface StudioProps { world: string; roster: W[]; saved: Scene[]; start?: Scene; blank?: boolean; castA?: number; onSave: (sc: Scene) => boolean; onForget: (id: string) => void; onDone: () => void }
 
 /** Create a Scene, full screen, opened from the World Editor. The scene is kept in the world being edited. */
 export function SceneStudio(pp: StudioProps) {
   const roster = pp.roster, [msg, setMsg] = useState<{ t: string; err?: boolean } | null>(null);
   const say = (t: string, o?: { err?: boolean }) => setMsg({ t, err: !!(o && o.err) }), redraw = () => { /* the studio redraws itself */ };
   const [sc, setSc] = useState<Scene>(() => pp.blank ? blankScene() : copy(pp.start || SCENES[0])), [ki, setKi] = useState(0), [sel, setSel] = useState<Sel>({ who: 'A', part: 'body' });
-  const [time, setTime] = useState<number | null>(null), [castIds, setCast] = useState<Record<string, number>>(() => ({ A: roster[0] ? roster[0].id : -1, B: roster[1] ? roster[1].id : -1 }));
+  const [time, setTime] = useState<number | null>(null), [castIds, setCast] = useState<Record<string, number>>(() => ({ A: pp.castA != null ? pp.castA : roster[0] ? roster[0].id : -1, B: (roster.find(w => w.id !== pp.castA) || { id: -1 }).id }));
   const [addK, setAddK] = useState('belt'), [words, setWords] = useState('WOW!'), file = useRef<HTMLInputElement>(null);
   const cast: Record<string, Recipe> = {}; for (const id in castIds) { const w = roster.find(x => x.id === castIds[id]); if (w) cast[id] = recipeOf(w); }
   const key = sc.keys[Math.min(ki, sc.keys.length - 1)];

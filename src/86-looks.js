@@ -39,6 +39,7 @@ function lookClean(x){
     if(!m||typeof m!=='object'||!lkStr(m.name,32))return null;
     return lkPrune({name:lkStr(m.name,32),impact_damage:lkNum(m.impact_damage,1,100),kickout_difficulty:LOOK_KICK.indexOf(m.kickout_difficulty)>=0?m.kickout_difficulty:undefined,
       position:LOOK_POS.indexOf(m.position)>=0?m.position:undefined,category:lkStr(m.category,24),preview_pose_id:lkId(m.preview_pose_id)});}).filter(function(m){return !!m;});
+  var en=lkId(x.entrance);if(en)o.entrance=en;   // one of the canned entrances
   return Object.keys(o).length?o:null;
 }
 /** Is this a wrestler's look (a .wrestler.json file)? */

@@ -61,6 +61,17 @@ const msg = page => txt(page, '[data-t="caw-msg"]');
     await page.selectOption('[data-t="caw-finopt"][data-v="preview_pose_id"]', 'sleeper'); await page.waitForTimeout(400);
     ok('a submission plays as a hold', (await attr(page, '[data-t="caw-view"]', 'data-v')) === 'sleeper');
     await page.click('[data-t="caw-act"]');
+    // the entrance: one of the game's, or a custom one made in Create a Scene
+    await page.click('[data-t="caw-tab"][data-v="scenes"]');
+    ok('there are canned entrances to pick from', (await page.$$('[data-t="caw-ent"]')).length >= 6);
+    await page.click('[data-t="caw-ent"][data-v="ent_flex"]'); await page.waitForTimeout(600);
+    ok('a picked entrance plays with them in it', (await attr(page, '[data-t="caw-view"]', 'data-v')) === 'ent_flex' && (await attr(page, '[data-t="caw-ent"][data-v="ent_flex"]', 'aria-pressed')) === 'true');
+    await page.click('[data-t="caw-newent"]'); await page.waitForSelector('[data-t="scene-stage"]');
+    await page.click('[data-t="scene-tab"][data-v="file"]');
+    ok('Make a custom entrance opens Create a Scene on their entrance', /Napoleon/.test(await page.$eval('[data-t="scene-win"]', e => e.textContent)) && (await page.$eval('[data-t="scene-when"]', e => e.value)) === 'entrance');
+    await page.click('[data-t="scene-save"]'); await page.click('[data-t="scene-done"]'); await page.waitForSelector('[data-t="caw"]');
+    await page.click('[data-t="caw-tab"][data-v="scenes"]');
+    ok('Done comes back to them with the custom entrance picked', !!(await page.$('[data-t="caw-ent"][aria-pressed="true"][data-v^="scene-"]')));
     // the file
     await page.click('[data-t="caw-tab"][data-v="file"]');
     await page.fill('[data-t="caw-moniker"]', 'The Enforcer');

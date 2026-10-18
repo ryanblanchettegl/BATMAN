@@ -215,6 +215,8 @@ function scenePick(r: any, s: any, at: number, done: boolean): { sc: Scene; cast
   const bc: Beat[] = s.bc || [], i = r.segs.indexOf(s), now = Math.min(at, bc.length - 1), cast: Record<string, Recipe> = {};
   const world = E.worldScenes(S) as Scene[], choose = (when: string, salt: number) => { const l = scenesFor(when, world); return l.length ? l[Math.abs((r.week || 0) * 31 + i * 7 + salt) % l.length] : null; };
   const nm = (rc?: Recipe) => rc ? rc.name : '';
+  // the canned entrance a wrestler picked in Create a Player, if they did
+  const ownEnt = (id: number): Scene | null => { const w = S.w[id], v = w && w.look && w.look.entrance; return v ? allScenes(world).find(x => x.id === v && x.when === 'entrance') || null : null; };
   if (s.k !== 'match') {
     // an attack: the first named does it to the second, and the villain's people come with them
     const txt = String(s.text || ''), named = S.w.filter((w: any) => w && w.promo === S.player && txt.indexOf(w.name) >= 0).sort((x: any, y: any) => txt.indexOf(x.name) - txt.indexOf(y.name)).map((w: any) => w.id as number);
@@ -233,6 +235,12 @@ function scenePick(r: any, s: any, at: number, done: boolean): { sc: Scene; cast
   const first = (txt: string) => { let best = -1, pos = 1e9; ids.forEach(id => { const w = S.w[id], k = w ? txt.indexOf(w.name) : -1; if (k >= 0 && k < pos) { pos = k; best = id; } }); return best; };
   const winSide = s.win ? (s.sidesN as string[]).indexOf(s.win) : -1, winner = winSide >= 0 ? ids[winSide * per] : -1;
   let lastH = -1; bc.forEach((b, j) => { if (b.h) lastH = j; });
+  // the entrances: whoever is walking out, in their entrance gear, on their own entrance if they picked one
+  if (!done && bc[now] && bc[now].t === 'ent') {
+    const k = bc.slice(0, now + 1).filter(b => b.t === 'ent').length - 1, who = ids[Math.min(ids.length - 1, k * per)];
+    const sc0 = ownEnt(who) || choose('entrance', k), sc = sc0 && fillScene(sc0, { a: who }, cast);
+    if (sc) return { sc, cast, play: i + ':e' + k, label: nm(cast.A) + ' comes out' };
+  }
   let when = 'mid', key = 'm', a = ids[0];
   // a line of colour from the desk, between the moves: cut to the two of them, the colour voice talking
   const line = bc[now];
@@ -251,6 +259,9 @@ function scenePick(r: any, s: any, at: number, done: boolean): { sc: Scene; cast
     else { key = 'm' + Math.floor(now / 4); const f = first((bc[now] || { x: '' }).x); if (f >= 0) a = f; }
   }
   let sc0 = choose(when, key.length); if (!sc0) return null;
+  const sigs = when === 'mid' && S.w[a] && S.w[a].look ? (S.w[a].look.finishing_moves || []).slice(1) : [];
+  if (sigs.length) { const sm = sigs[Math.abs((r.week || 0) + i * 3 + key.length * 7 + now) % sigs.length], fs = allScenes(world).find(x => x.id === finScene(sm));
+    if (fs) { sc0 = copy(fs); const lk0 = sc0.keys[sc0.keys.length - 1]; let named = false; lk0.props.forEach(q => { if (q.k === 'burst') { q.txt = sm.name.toUpperCase().slice(0, 16); named = true; } }); if (!named) lk0.props.push({ id: 'sig', k: 'burst', x: 3.6, y: 2.8, r: 0, z: 3, s: 1, txt: sm.name.toUpperCase().slice(0, 16) }); sc0.name = sm.name; } }
   // a winner made in Create a Player finishes with their own move: its picture, with its name in the burst
   const fm = when === 'finish' && S.w[a] && S.w[a].look && (S.w[a].look.finishing_moves || [])[0];
   if (fm) { const fs = allScenes(world).find(x => x.id === finScene(fm)); if (fs) { sc0 = copy(fs); sc0.keys.forEach(k => k.props.forEach(q => { if (q.k === 'burst' && k === sc0!.keys[sc0!.keys.length - 1]) q.txt = fm.name.toUpperCase().slice(0, 16); })); sc0.name = fm.name; } }

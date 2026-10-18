@@ -45,7 +45,7 @@ export interface Scene { v: 1; id: string; name: string; when: string; set: stri
 /** When the broadcast plays a scene. A scene made by a player can take any of these. */
 /** What a scene is for. The match moments play on the broadcast now; the rest are where scenes go next
     (Ryan, 18 October: breaking news, talk show highlights, posters, magazine covers, portraits, everything). */
-export const WHEN: [string, string][] = [['start', 'The opening bell'], ['mid', 'Back and forth'], ['nearfall', 'A near fall'], ['finish', 'The finish'], ['champion', 'A new champion'], ['promo', 'A promo'], ['attack', 'An attack'],
+export const WHEN: [string, string][] = [['start', 'The opening bell'], ['mid', 'Back and forth'], ['nearfall', 'A near fall'], ['finish', 'The finish'], ['champion', 'A new champion'], ['promo', 'A promo'], ['attack', 'An attack'], ['entrance', 'The entrance'],
   ['desk1', 'The desk: play-by-play talking'], ['desk2', 'The desk: colour talking'], ['news', 'Breaking news'], ['talk', 'A talk show'], ['poster', 'A poster'], ['cover', 'A magazine cover'], ['portrait', 'A portrait'], ['any', 'Only by hand']];
 /** The sets, each drawn from its own angle: pick the one that suits the moment. Every set keeps feet on the same line
     (FOOT), so a pose works on all of them. */
@@ -347,6 +347,11 @@ const COVER_B = { sh_n: 160, el_n: 5, sh_f: 140, el_f: -10, hip_n: 35, kn_n: -60
 const SLAMCAM: Cam = { x: 0, y: 0.9, z: 0.85 }, SLEEPCAM: Cam = { x: 0.8, y: -0.7, z: 1.2 };
 const COVER_A = { sh_n: -120, el_n: -30, sh_f: -60, el_f: -40, kn_n: -10, kn_f: -20, an_n: -30, an_f: -30, head: 25 };
 
+/** A canned entrance on the ramp: who comes out walks toward the camera through a few poses. Wrestlers pick one in
+    Create a Player (their `entrance`); the show picks for anybody who has not. */
+function ent(id: string, name: string, ks: [number, Record<string, number>, string, number][]): Scene {
+  return { v: 1, id, name, when: 'entrance', set: 'ramp', slots: [{ id: 'A', n: 'Who comes out', role: 'a' }], keys: ks.map(([t, p, e, x]) => ({ t, figs: { A: STD(x, 1, p, e, 0.6) }, props: [] })) };
+}
 /** The commentary desk: two in suits and headsets, the one with the line talking (the mouth moving, a hand going),
     the other listening and turning to them, and the third chair open for a guest. It loops while the line is on. */
 function deskScene(id: string, name: string, when: string, talker: string): Scene {
@@ -414,6 +419,26 @@ export const SCENES: Scene[] = [
       G1: STD(-2.6, 1, { torso: -10, sh_n: 160, el_n: 10, sh_f: -150, el_f: -10, hip_n: 6, hip_f: -6 }, 'roar', 0), G2: STD(2.2, -1, { torso: -10, sh_n: 160, el_n: 10, sh_f: -20, el_f: -10, head: 8 }, 'roar', 0.1),
       V: { ...STD(1.5, -1, { torso: -20, sh_n: 95, el_n: 5, sh_f: 30, el_f: 90, hip_n: 30, kn_n: -20, hip_f: -24, kn_f: -10 }, 'shout', 1.1), r: -10 } }, props: [burst('b1', 'POW!', -0.6, 2.4)] },
   ] },
+  ent('entrance', 'Arms up at the top of the ramp', [
+    [0, { hip_n: 18, kn_n: -10, hip_f: -14, kn_f: -12, sh_n: -20, el_n: 10, sh_f: 20, el_f: 10, head: 4 }, '', 0],
+    [0.9, { hip_n: -12, kn_n: -14, hip_f: 16, kn_f: -8, sh_n: 95, el_n: 5, sh_f: -15, el_f: -10, head: 6 }, 'smirk', 0.3],
+    [1.8, { sh_n: 165, el_n: 10, sh_f: -165, el_f: -10, head: 10, hip_n: 6, hip_f: -6 }, 'roar', 0.5]]),
+  ent('ent_point', 'Points out at the crowd', [
+    [0, { hip_n: 16, kn_n: -10, hip_f: -14, kn_f: -10, sh_n: -15, sh_f: 15, head: 2 }, '', 0],
+    [0.8, { sh_n: 95, el_n: 5, sh_f: -15, el_f: -10, head: 4, hip_n: -10, hip_f: 12 }, 'shout', 0.3],
+    [1.6, { sh_n: 110, el_n: 5, sh_f: 60, el_f: 30, head: 8 }, 'shout', 0.4]]),
+  ent('ent_flex', 'Stops and flexes', [
+    [0, { hip_n: 16, kn_n: -10, hip_f: -14, kn_f: -10, sh_n: -15, sh_f: 15 }, '', 0],
+    [0.9, { sh_n: 90, el_n: 115, sh_f: -90, el_f: -115, hip_n: 10, hip_f: -10 }, 'roar', 0.2],
+    [1.7, { sh_n: 60, el_n: 130, sh_f: -60, el_f: -130, torso: -6, hip_n: 12, hip_f: -12 }, 'roar', 0.2]]),
+  ent('ent_stare', 'A slow, cold walk', [
+    [0, { torso: -6, head: -18, hip_n: 10, kn_n: -6, hip_f: -8, sh_n: 5, sh_f: -5 }, 'shut', 0],
+    [1.0, { torso: -4, head: -10, hip_n: -8, hip_f: 10, kn_f: -8, sh_n: -5, sh_f: 5 }, '', 0.25],
+    [2.0, { head: 6, sh_n: 5, sh_f: -5 }, 'snarl', 0.45]]),
+  ent('ent_taunt', 'Taunts the crowd', [
+    [0, { hip_n: 14, kn_n: -10, hip_f: -12, sh_n: 30, el_n: 90, sh_f: 20, el_f: 95 }, 'smirk', 0],
+    [0.8, { sh_n: 150, el_n: 120, sh_f: -20, el_f: -30, head: 10 }, 'smirk', 0.3],
+    [1.6, { torso: 8, sh_n: 80, el_n: 60, sh_f: -80, el_f: -60, head: 12 }, 'snarl', 0.4]]),
   deskScene('desk1', 'At the desk: the call', 'desk1', 'C1'),
   deskScene('desk2', 'At the desk: the colour', 'desk2', 'C2'),
   { v: 1, id: 'promo', name: 'On the microphone', when: 'promo', set: 'ring', slots: [{ id: 'A', n: 'The talker', role: 'a' }], keys: [
