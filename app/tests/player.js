@@ -23,6 +23,11 @@ const msg = page => txt(page, '[data-t="caw-msg"]');
     ok('the wrestler is drawn in 3D', (await attr(page, '[data-t="caw-view"]', 'data-3d')) === '1');
     ok('the suite fits one screen', !(await fits(page)), await fits(page));
     // the body
+    await page.click('[data-t="caw-sex"][data-v="F"]');
+    ok('the body can be a woman\'s or a man\'s', (await attr(page, '[data-t="caw-sex"][data-v="F"]', 'aria-pressed')) === 'true');
+    await page.click('[data-t="caw-arch"][data-v="Big_Man"]');
+    ok('a body type can be picked, a big man among them', (await attr(page, '[data-t="caw-arch"][data-v="Big_Man"]', 'aria-pressed')) === 'true');
+    await page.click('[data-t="caw-sex"][data-v="M"]');
     await page.click('[data-t="caw-arch"][data-v="Super_Heavyweight"]');
     ok('a body type sets the height and weight', (await txt(page, '[data-t="caw-heightv"]')) === '6\'10"' && (await txt(page, '[data-t="caw-weightv"]')) === '380 lb', (await txt(page, '[data-t="caw-heightv"]')) + ' ' + (await txt(page, '[data-t="caw-weightv"]')));
     await page.click('[data-t="caw-height"][data-v="-"]'); await page.click('[data-t="caw-weight"][data-v="+"]');
@@ -91,14 +96,24 @@ const msg = page => txt(page, '[data-t="caw-msg"]');
     const body = JSON.parse(require('fs').readFileSync(await dl.path(), 'utf8'));
     ok('the file keeps a part\'s own colour', body.attires.primary_ring.part_colours && body.attires.primary_ring.part_colours.footwear === 'swatch_gold_foil');
     ok('the file keeps the head: hair, beard, paint and tattoos', body.attires.primary_ring.equipped_assets.head === 'hair_dreads_01' && body.appearance.facial_hair === 'beard_braided' && body.appearance.face_paint === 'war' && body.appearance.paint_colour === 'swatch_neon_green' && body.appearance.tattoos.join() === 'sleeve_near,chest');
-    ok('the file is the record: body, three outfits, the finisher', body.moniker === 'The Enforcer' && body.physical_attributes.height_inches === 81 && Object.keys(body.attires).length === 3 && body.finishing_moves[0].kickout_difficulty === 'Instant');
+    ok('the file is the record: body, three outfits, the finisher', body.moniker === 'The Enforcer' && body.physical_attributes.height_inches === 81 && body.physical_attributes.sex === 'M' && Object.keys(body.attires).length === 3 && body.finishing_moves[0].kickout_difficulty === 'Instant');
     await page.setInputFiles('[data-t="caw-file"]', { name: 'x.json', mimeType: 'application/json', buffer: Buffer.from('{"hello":1}') }); await page.waitForTimeout(200);
     ok('a file that is not a wrestler is refused', /not a wrestler/.test(await msg(page)));
     body.name = 'Opened From File'; await page.setInputFiles('[data-t="caw-file"]', { name: 'w.wrestler.json', mimeType: 'application/json', buffer: Buffer.from(JSON.stringify(body)) }); await page.waitForTimeout(200);
     ok('a wrestler file opens', /Opened From File/.test(await msg(page)) && /Opened From File/.test(await txt(page, '[data-t="caw-win"]')));
     if (process.env.SHOTS) await shot(page, 'player-file');
     await page.click('[data-t="caw-done"]'); await page.waitForTimeout(300);
-    ok('Done goes back to the wrestler, drawn from their own record', /their own record/.test(await txt(page, '.edface, .panel')) || /their own record/.test(await page.$eval('body', e => e.innerText)));
+    ok('Done goes back to the wrestler, drawn from their own look', /their own look/.test(await txt(page, '[data-t="ed-wdoll"]')));
+    // Edit attire: the outfits a part of the body at a time
+    await page.click('[data-t="ed-attire"]'); await page.waitForSelector('[data-t="caw"]');
+    ok('Edit attire opens on the head', /Edit attire/.test(await txt(page, '.sc-menubar')) && (await attr(page, '[data-t="caw-tab"][data-v="a_head"]', 'aria-pressed')) === 'true');
+    for (const t of ['a_upper', 'a_lower', 'a_feet']) await page.click('[data-t="caw-tab"][data-v="' + t + '"]');
+    await page.selectOption('[data-t="caw-part"][data-v="footwear"]', 'kick_pads');
+    await page.click('[data-t="caw-tab"][data-v="a_upper"]'); await page.click('[data-t="caw-acc"][data-v="gloves_fingerless"]');
+    ok('Edit attire fits one screen', !(await fits(page)), await fits(page));
+    await page.click('[data-t="caw-save"]');
+    ok('Edit attire saves the outfit', /kept in/.test(await msg(page)), await msg(page));
+    await page.click('[data-t="caw-done"]');
     ok('no errors', !errs.length, errs.join(' | '));
   } catch (e) { ok('the run finished', false, e.message); }
   await browser.close();

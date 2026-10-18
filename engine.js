@@ -8127,7 +8127,7 @@ function lookClean(x){
   var o=lkPrune({id:lkId(x.id),name:lkStr(x.name,32),moniker:lkStr(x.moniker,40),hometown:lkStr(x.hometown,40),archetype:lkStr(x.archetype,32)});
   var pa=x.physical_attributes;
   if(pa&&typeof pa==='object'){var ps=pa.proportional_scalers||{};
-    o.physical_attributes=lkPrune({height_inches:lkNum(pa.height_inches,58,96),weight_lbs:lkNum(pa.weight_lbs,100,600),body_archetype:lkId(pa.body_archetype),
+    o.physical_attributes=lkPrune({sex:pa.sex==='F'||pa.sex==='M'?pa.sex:undefined,height_inches:lkNum(pa.height_inches,58,96),weight_lbs:lkNum(pa.weight_lbs,100,600),body_archetype:lkId(pa.body_archetype),
       proportional_scalers:lkPrune({torso_width:lkNum(ps.torso_width,0.7,1.5),torso_height:lkNum(ps.torso_height,0.8,1.25),limb_length:lkNum(ps.limb_length,0.8,1.25),muscle_mass:lkNum(ps.muscle_mass,0.6,1.6)})});}
   var ap=x.appearance;
   if(ap&&typeof ap==='object'){var f=null;if(ap.face&&typeof ap.face==='object'){f={};['h','hr','fh','ms','ey','ns','sk','hc'].forEach(function(k){var v=lkNum(ap.face[k],0,100);if(v!=null)f[k]=Math.round(v);});}

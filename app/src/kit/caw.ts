@@ -18,7 +18,7 @@ export interface Finisher { name: string; impact_damage?: number; kickout_diffic
 export type AttireKey = 'primary_ring' | 'entrance_gear' | 'street_clothes';
 export interface Look {
   id?: string; name?: string; moniker?: string; hometown?: string; archetype?: string;
-  physical_attributes?: { height_inches?: number; weight_lbs?: number; body_archetype?: string; proportional_scalers?: { torso_width?: number; torso_height?: number; limb_length?: number; muscle_mass?: number } };
+  physical_attributes?: { /** Not in Ryan's first draft: the body the doll is cut as, M or F. */ sex?: 'M' | 'F'; height_inches?: number; weight_lbs?: number; body_archetype?: string; proportional_scalers?: { torso_width?: number; torso_height?: number; limb_length?: number; muscle_mass?: number } };
   /** Not in Ryan's first draft: the head under the gear (the face numbers the game already keeps), so a file carries the whole person. */
   appearance?: { face?: Record<string, number>; skin_tone?: number; hair_colour?: string; facial_hair?: string; face_paint?: string; paint_colour?: string; tattoos?: string[] };
   attires?: Partial<Record<AttireKey, Attire>>;
@@ -130,7 +130,9 @@ export function shape(id: string, seed = 1): Pt[][] {
 export const ARCHETYPES: [string, string, { h: number; w: number; s: [number, number, number, number] }][] = [
   ['Cruiserweight', 'Cruiserweight or high flyer', { h: 68, w: 190, s: [0.92, 0.98, 1.03, 0.9] }],
   ['Technical', 'Technical or wiry', { h: 72, w: 215, s: [0.97, 1, 1.02, 0.95] }],
+  ['Bodybuilder', 'Bodybuilder', { h: 74, w: 255, s: [1.25, 1.0, 1.02, 1.5] }],
   ['Heavyweight', 'Heavyweight', { h: 76, w: 270, s: [1.12, 1.04, 1.06, 1.18] }],
+  ['Big_Man', 'Big man, big belly', { h: 75, w: 340, s: [1.18, 1.02, 0.98, 0.9] }],
   ['Super_Heavyweight', 'Super heavyweight or monster', { h: 82, w: 380, s: [1.3, 1.08, 1.0, 1.25] }],
 ];
 
@@ -165,11 +167,11 @@ export function layerSwatch(k: Kit, id?: string): Swatch {
 /** A paper doll from a file, over the recipe the game would draw anyway (for the face and anything the file leaves out). */
 export function fromLook(lk: Look, base: Recipe): Recipe {
   const pa = lk.physical_attributes || {}, sc = pa.proportional_scalers || {}, ap = lk.appearance || {};
-  const r: Recipe = { ...base, name: lk.name || base.name };
-  if (pa.height_inches) r.h = Math.max(0.8, Math.min(1.26, pa.height_inches / 74)) * (base.fem ? 1.04 : 1);
+  const fem = pa.sex ? pa.sex === 'F' : base.fem, r: Recipe = { ...base, name: lk.name || base.name, fem };
+  if (pa.height_inches) r.h = Math.max(0.8, Math.min(1.26, pa.height_inches / 74)) * (fem ? 1.04 : 1);
   if (pa.weight_lbs) {
     const std = 240 * Math.pow((pa.height_inches || 74) / 74, 2.2), ratio = pa.weight_lbs / std;
-    r.w = Math.max(0.72, Math.min(1.5, Math.sqrt(ratio))) * (base.fem ? 0.88 : 1); r.belly = Math.max(0, Math.min(0.32, (ratio - 1.12) * 0.5));
+    r.w = Math.max(0.72, Math.min(1.5, Math.sqrt(ratio))) * (fem ? 0.88 : 1); r.belly = Math.max(0, Math.min(0.32, (ratio - 1.12) * 0.5));
   }
   r.tw = sc.torso_width || 1; r.th = sc.torso_height || 1; r.ll = sc.limb_length || 1; r.mm = sc.muscle_mass || 1;
   if (ap.hair_colour) { const s = swatch(ap.hair_colour, { c: r.hairCol }); r.hairCol = s.c; r.browCol = s.c; }
@@ -195,7 +197,7 @@ export function blankLook(w: { name: string; g?: string; style?: string; uid?: s
   const near = (c: string) => { let best = SWATCHES[0][0], d0 = 1e9; for (const s of SWATCHES) { if (s[3] !== 'matte' && s[3] !== 'foil') continue; const dd = dist(c, s[2]); if (dd < d0) { d0 = dd; best = s[0]; } } return best; };
   const p = near(r.gear), s = near(r.gear2);
   return { id: (w.uid || w.name).toLowerCase().replace(/[^a-z0-9]+/g, '_').slice(0, 40), name: w.name, hometown: w.town || undefined, archetype: arch,
-    physical_attributes: { height_inches: hgt, weight_lbs: wgt, body_archetype: arch, proportional_scalers: { torso_width: A.s[0], torso_height: A.s[1], limb_length: A.s[2], muscle_mass: A.s[3] } },
+    physical_attributes: { sex: w.g === 'F' ? 'F' : 'M', height_inches: hgt, weight_lbs: wgt, body_archetype: arch, proportional_scalers: { torso_width: A.s[0], torso_height: A.s[1], limb_length: A.s[2], muscle_mass: A.s[3] } },
     attires: {
       primary_ring: { description: 'In-ring gear', equipped_assets: { head: 'hair_face', upper_body: r.fem ? 'top_sports' : 'bare', lower_body: 'trunks_brief_01', footwear: 'boots_knee', accessories: ['wrist_tape_white'] }, palette_slots: { primary: p, secondary: p, trim: s, hardware: 'swatch_silver_foil' }, custom_layers: [] },
       entrance_gear: { description: 'Ring walk and entrance', equipped_assets: { head: 'hair_face', upper_body: 'jacket_leather_biker', lower_body: 'trunks_brief_01', footwear: 'boots_knee', accessories: [] }, palette_slots: { primary: p, secondary: 'swatch_leather_black', trim: s, hardware: 'swatch_silver_foil' }, custom_layers: [] },

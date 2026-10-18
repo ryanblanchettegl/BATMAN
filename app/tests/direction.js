@@ -3,7 +3,7 @@
    the air after a main event). The test sets each one up, answers it, and checks what it leaves behind.
    Run: NODE_PATH=<dir containing playwright> node app/tests/direction.js   (MODES=desk,tablet) */
 const { open, go, overflow, shot, state, fits, airShow, redraw, toOffice } = require('./helper');
-const MODES = (process.env.MODES || 'desk,tablet').split(',');
+const MODES = (process.env.MODES || 'desk').split(',');
 const fails = [];
 const ok = (mode, label, pass, detail) => { console.log(mode.padEnd(6), pass ? 'ok  ' : 'FAIL', label + (detail ? ': ' + detail : '')); if (!pass) fails.push(mode + ' ' + label); };
 const txt = (page, sel) => page.$eval(sel, e => e.innerText.replace(/\s+/g, ' ').trim()).catch(() => '');

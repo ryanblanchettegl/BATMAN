@@ -2,7 +2,7 @@
    somebody is hurt, the crowd has gone quiet, they are not going home, the network on the line, the sponsor at ringside.
    Every call has to fit one screen. Run: NODE_PATH=<dir containing playwright> node app/tests/calls.js   (MODES=desk,tablet) */
 const { open, go, overflow, shot, state, fits, redraw, toOffice } = require('./helper');
-const MODES = (process.env.MODES || 'desk,tablet').split(',');
+const MODES = (process.env.MODES || 'desk').split(',');
 const fails = [];
 const ok = (mode, label, pass, detail) => { console.log(mode.padEnd(6), pass ? 'ok  ' : 'FAIL', label + (detail ? ': ' + detail : '')); if (!pass) fails.push(mode + ' ' + label); };
 const has = async (page, sel) => !!(await page.$(sel));

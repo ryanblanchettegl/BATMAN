@@ -37,3 +37,65 @@
 .paper select:focus-visible,.paper input:focus-visible,.paper .btn:focus-visible{outline:3px solid var(--p-yellow);outline-offset:1px}
 .paper b,.paper .bl{color:var(--p-ink)}
 .paper .sc-stage{background:#151a33;border:2px solid #111;box-shadow:inset .1em .1em 0 rgba(0,0,0,.4)}
+/* a paper page full screen (the World Editor's Wrestlers page): the white menu bar, a navy strip for notes, the
+   windows, and a control strip along the bottom, as on the desk */
+.pmenu{flex:none;display:flex;align-items:center;gap:.2ch;background:#fbf8f0;color:#111;border-bottom:3px solid #111;padding:.12em 1.2ch;box-shadow:0 .2em 0 rgba(0,0,0,.35);position:relative;z-index:2}
+.pmenu .sc-belt{margin-right:1ch}
+.pmenu .pm-app{background:#111;color:#fff;padding:.08em 1.2ch;margin-right:.8ch}
+.pmenu .it{font:inherit;background:none;border:0;color:#111;padding:.08em 1.1ch;cursor:pointer;border-radius:2px}
+.pmenu .it:hover{background:#e6dfcf}
+.pmenu .it.on{background:#111;color:#fff}
+.pmenu .it.bad{color:#b0201a}
+.pmenu .it:focus-visible{outline:3px solid var(--p-yellow);outline-offset:1px}
+.pmenu .sp{flex:1}
+.pmenu .pm-world{color:#333;margin-right:1.2ch;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:28ch}
+.pmenu .pm-ok{color:#1e6b28;margin-right:1ch;white-space:nowrap}
+.pnote{flex:none;display:flex;align-items:center;gap:1.2ch;background:var(--p-navy);color:var(--p-yellow);padding:.18em 1.6ch;border-bottom:2px solid #111;min-height:1.6em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pnote.bad{color:#ff8a7a}
+.pnote .btn{margin:0;padding:0 1ch}
+/* a window's info strip under the title bar: a count on the left, a state on the right */
+.wnfo{display:flex;justify-content:space-between;gap:2ch;padding:.15em 1.2ch;border-bottom:2px solid #111;font-size:.88em;white-space:nowrap;overflow:hidden}
+.paper .wnfo{color:#3a3530;background:var(--p-grain),var(--p-cream)}
+/* the list: rows with a ring at the left; the picked one green, as the road on the desk */
+.paper .edlist{max-height:none;overflow:hidden;border:0;padding:0;gap:.15em;flex:1 1 0;min-height:0}
+.paper .edrow{flex-direction:row;align-items:center;gap:1ch;color:#111;padding:.1em .8ch .1em 2.4em;position:relative;border-radius:2px}
+.paper .edrow::before{content:'';position:absolute;left:.55em;top:50%;width:.8em;height:.8em;margin-top:-.4em;border-radius:50%;border:2px solid #333;background:#efe6cf;box-shadow:inset .08em .1em 0 rgba(0,0,0,.25)}
+.paper .edrow .nm{color:#111;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.paper .edrow .st{color:#5a5248;font-size:.85em;white-space:nowrap}
+.paper .edrow:hover,.paper .edrow:focus-visible{background:#e6dcc4}
+.paper .edrow:hover .nm,.paper .edrow:hover .st,.paper .edrow:focus-visible .nm,.paper .edrow:focus-visible .st{color:#111}
+.paper .edrow.on{background:var(--p-green);box-shadow:.1em .14em 0 rgba(0,0,0,.35)}
+.paper .edrow.on::before{background:var(--p-yellow);border-color:#111}
+.paper .edrow.on .nm,.paper .edrow.on .st{color:#fff}
+/* the control strip: tiles, the key caps and the yellow key */
+.pstrip{flex:none;display:flex;align-items:center;gap:.9ch;padding:.35em 1.4ch;background:var(--p-navy);border-top:2px solid #111}
+.pstrip .tile{background:var(--p-grain),var(--p-cream);color:#111;border:2px solid #111;padding:.05em 1.2ch;box-shadow:.12em .16em 0 rgba(0,0,0,.4);white-space:nowrap}
+.pstrip .sp{flex:1}
+.pstrip kbd{background:#111;color:#fff;font:inherit;padding:.05em .9ch;border-radius:2px;border:2px solid #000}
+.pstrip .btn{margin:0}
+.paper .btn.pkey{padding:.05em 4ch;font-size:1.05em}
+/* the Wrestlers page itself */
+.edwfull{gap:0;padding:0}
+.edwfull .desktop.edwpage{flex:1 1 0;min-height:0;padding:.8em 1.4ch;display:grid;grid-template-columns:minmax(0,.95fr) minmax(0,1.15fr) minmax(0,1.25fr);grid-template-rows:minmax(0,1fr);grid-template-areas:"list doll sheet";gap:1.1em 2ch}
+.edwpage .wn{display:flex;flex-direction:column;min-height:0}
+.edwpage .wn>.bd{flex:1 1 0;min-height:0;display:flex;flex-direction:column;gap:.35em;overflow:hidden;padding:.5em 1ch}
+.edwpage .sc-row{display:flex;flex-wrap:wrap;align-items:center;gap:.3em .6ch}
+.edwpage .sc-row input[type=search]{flex:1;min-width:0}
+.edwpage .sc-row select{flex:1;min-width:0}
+.edwpage .edshow{margin:0;font-size:.88em}
+.edw-stage{flex:1 1 0;min-height:0;position:relative}
+.edw-stage .lv-scene{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.edw-stage .lv-scene canvas{display:block}
+.pmarquee{flex:none;background:#111;border:2px solid #111;padding:.3em .6ch;display:flex;justify-content:center;box-shadow:.12em .16em 0 rgba(0,0,0,.4);overflow:hidden}
+.edw-acts .muted{font-size:.9em}
+.edw-parts .btn{margin:0 .4ch .2em 0}
+.edsheet{flex:1 1 0;min-height:0;overflow-y:auto;padding-right:.6ch}
+.edsheet .editor{display:block;border:0;margin:0;padding:0}
+.edsheet .f{text-transform:none;letter-spacing:0;display:grid;grid-template-columns:minmax(9ch,40%) minmax(0,1fr);align-items:center;gap:.2em 1ch;margin:.25em 0;color:#3a3530}
+.edsheet .f input,.edsheet .f select{width:100%;min-width:0}
+.edsheet .eyebrow{color:var(--p-red);margin:.6em 0 .2em}
+.edsheet .opts .btn{margin:0 .4ch .3em 0}
+.edsheet .panel{border:0;background:none;padding:0;margin:0}
+.edsheet .panel>h2,.edsheet .panel>.ph{color:var(--p-red)}
+.edsheet .edrates{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.4em 2ch}
+.edsheet .muted{color:#5a5248}

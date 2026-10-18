@@ -14,7 +14,9 @@ import { Recipe, recipeOf, blank } from '../../kit/puppet';
 import { Look, Attire, AttireKey, Layer, Finisher, ATTIRES, PARTS, SWATCHES, SLOTS, FONTS, SHAPES, ARCHETYPES, FACIAL, PAINT, TATTOOS, KICKOUT, POSITIONS, CATEGORIES, FIN_SCENES, fromLook, blankLook, finScene, swatch } from '../../kit/caw';
 import { derive, NAMES, FaceKey } from '../../lib/portrait';
 
-type Tab = 'sign' | 'body' | 'head' | 'gear' | 'colour' | 'studio' | 'fin' | 'scenes' | 'file';
+type Tab = 'sign' | 'body' | 'head' | 'gear' | 'colour' | 'studio' | 'fin' | 'scenes' | 'file' | 'a_head' | 'a_upper' | 'a_lower' | 'a_feet';
+/** Edit attire's camera: in close on the part of the body being dressed. */
+const REGION_CAM: Record<string, { x: number; y: number; z: number }> = { a_head: { x: 0, y: 2.6, z: 3.8 }, a_upper: { x: 0, y: 1.1, z: 2.1 }, a_lower: { x: 0, y: -1.3, z: 2.1 }, a_feet: { x: 0, y: -2.5, z: 2.8 } };
 const SET_OF: Record<AttireKey, string> = { primary_ring: 'ring', entrance_gear: 'ramp', street_clothes: 'hall' };
 const CAM_OF: Record<AttireKey, { x: number; y: number; z: number }> = { primary_ring: { x: 0, y: 0.15, z: 1.4 }, entrance_gear: { x: 0, y: -0.3, z: 1.1 }, street_clothes: { x: 0, y: -0.5, z: 0.88 } };
 const STY: Record<string, string> = { brawler: 'B', technician: 'T', high_flyer: 'H', powerhouse: 'P', showman: 'S', all_rounder: 'A', hardcore: 'B', submission: 'T' };
@@ -32,6 +34,8 @@ export function workerW(w: any) {
 /** What the suite is open on: a wrestler (from a world package through workerW, or from the game), the file they
     wear if any, and what Save and Take the file off do. With `sign`, it makes a new wrestler and signs them. */
 export interface PlayerProps { world: string; w: any; had: Look | null; onSave: (look: Look) => { ok: boolean; msg: string }; onForget?: () => { ok: boolean; msg: string }; onDone: () => void; sign?: boolean;
+  /** Edit attire: the outfits a part of the body at a time (head, upper body, lower body, feet), then lettering and colours. */
+  attire?: boolean;
   /** The world's own scenes, besides the game's: its entrances are offered too. In the World Editor, onNewEntrance
       keeps the wrestler and opens Create a Scene to make them a custom entrance. */
   scenes?: Scene[]; onNewEntrance?: (look: Look) => void }   // sign: a new wrestler, made in a game, who goes to free agency
@@ -50,7 +54,7 @@ export function CreatePlayer(pp: PlayerProps) {
     return n;
   });
   const w0 = pp.sign ? { ...startW, name: lk.name || 'New wrestler', g: d.g, align: d.align, style: d.style } : pp.w, base = recipeOf({ ...w0, look: null });
-  const [att, setAtt] = useState<AttireKey>('primary_ring'), [tab, setTab] = useState<Tab>(pp.sign ? 'sign' : 'body'), [pose, setPose] = useState('stand');
+  const [att, setAtt] = useState<AttireKey>('primary_ring'), [tab, setTab] = useState<Tab>(pp.sign ? 'sign' : pp.attire ? 'a_head' : 'body'), [pose, setPose] = useState('stand');
   const [lay, setLay] = useState(-1), [fi, setFi] = useState(-1), [acting, setActing] = useState(false), [msg, setMsg] = useState<{ t: string; err?: boolean } | null>(null);
   const [text, setText] = useState('CHAMP'), [font, setFont] = useState('block'), [shp, setShp] = useState('star'), file = useRef<HTMLInputElement>(null);
   const say = (t: string, err = false) => setMsg({ t, err });
@@ -72,15 +76,15 @@ export function CreatePlayer(pp: PlayerProps) {
   } else {
     const pd = (POSES.find(x => x[0] === pose) || POSES[0])[1];
     sc = { v: 1, id: 'caw', name: 'Create a Player', when: 'any', set: SET_OF[att], attire: att, slots: [{ id: 'A', n: lk.name || w0.name, role: 'a' }],
-      keys: [{ t: 0, figs: { A: { x: 0, y: pd.y ?? WAIST, r: pd.r || 0, f: 1, z: 0.6, p: { ...pd.p }, e: pd.e || '' } }, props: pose === 'mic' ? [{ id: 'mic', k: 'mic', x: 0.1, y: 0.1, r: -30, z: 1.2, at: 'A:hand_n' }] : [], cam: CAM_OF[att] }] };
-    play = att + pose + JSON.stringify(lk);
+      keys: [{ t: 0, figs: { A: { x: 0, y: pd.y ?? WAIST, r: pd.r || 0, f: 1, z: 0.6, p: { ...pd.p }, e: pd.e || '' } }, props: pose === 'mic' ? [{ id: 'mic', k: 'mic', x: 0.1, y: 0.1, r: -30, z: 1.2, at: 'A:hand_n' }] : [], cam: (pp.attire && REGION_CAM[tab]) || CAM_OF[att] }] };
+    play = att + pose + (pp.attire ? tab : '') + JSON.stringify(lk);
   }
 
   const save = () => { if (pp.sign) { setTab('sign'); say('Press Create on Who they are to make them.'); return; } const r0 = pp.onSave(lk); say(r0.msg, !r0.ok); };
   // a new wrestler: who they are, what that makes them, and Create (they go to free agency)
   const info = pp.sign ? E.createInfo(G.S) : null, pv = pp.sign ? E.createPreview(G.S, { ...d, name: lk.name || '' }) : null;
   const setDraft = (k: keyof Draft, v: string) => { setD({ ...d, [k]: v }); setMsg(null);
-    if (k === 'g') change(n => { const a = (n.attires || {}).primary_ring; if (a) { if (v === 'F' && a.equipped_assets.upper_body === 'bare') a.equipped_assets.upper_body = 'top_sports'; if (v === 'M' && a.equipped_assets.upper_body === 'top_sports') a.equipped_assets.upper_body = 'bare'; } }); };
+    if (k === 'g') change(n => { (n.physical_attributes = n.physical_attributes || {}).sex = v as 'M' | 'F'; const a = (n.attires || {}).primary_ring; if (a) { if (v === 'F' && a.equipped_assets.upper_body === 'bare') a.equipped_assets.upper_body = 'top_sports'; if (v === 'M' && a.equipped_assets.upper_body === 'top_sports') a.equipped_assets.upper_body = 'bare'; } }); };
   const signIt = () => {
     let r0: any = null; const fm = (lk.finishing_moves || [])[0];
     act(() => { r0 = E.createWrestler(G.S, { ...d, name: lk.name || '', fin: fm ? fm.name : '', face: (lk.appearance || {}).face, look: lk }); });
@@ -99,10 +103,21 @@ export function CreatePlayer(pp: PlayerProps) {
   const setFin = (fn: (f: Finisher) => void) => change(n => { const F = n.finishing_moves || []; if (F[fi]) fn(F[fi]); n.finishing_moves = F; });
   const chip = (id?: string) => { const s = swatch(id, { c: '#888' }); return <span class={'caw-chip' + (s.f && s.f !== 'matte' ? ' ' + s.f : '')} style={{ background: s.c }} aria-hidden="true" />; };
 
-  const titles: Record<Tab, string> = { sign: 'A new wrestler', body: 'The body', head: 'The head', gear: 'Gear: ' + ATTIRES.find(a => a[0] === att)![1], colour: 'Colours: ' + ATTIRES.find(a => a[0] === att)![1], studio: 'Gear studio: lettering and shapes', fin: 'Finishing moves', scenes: 'Their entrance', file: 'The file' };
+  // a part with its own colour, and extras to switch on: the Gear tab, and the regions of Edit attire
+  const partRow = (slot: 'upper_body' | 'lower_body' | 'footwear') => <div class="sc-row"><span class="sc-slot">{slot === 'upper_body' ? 'Top' : slot === 'lower_body' ? 'Bottoms' : 'Footwear'}</span>
+            <select aria-label={slot === 'upper_body' ? 'Top' : slot === 'lower_body' ? 'Bottoms' : 'Footwear'} data-t="caw-part" data-v={slot} value={cur.equipped_assets[slot] || ''} onChange={e => { const v = (e.currentTarget as HTMLSelectElement).value; change(n => { A(n).equipped_assets[slot] = v; }); }}>
+              {PARTS[slot].map(p => <option value={p[0]}>{p[1]}</option>)}</select>
+            {chip((cur.part_colours || {})[slot] || undefined)}<select aria-label={'Colour of the ' + (slot === 'upper_body' ? 'top' : slot === 'lower_body' ? 'bottoms' : 'footwear')} data-t="caw-partcol" data-v={slot} value={(cur.part_colours || {})[slot] || ''}
+              onChange={e => { const v = (e.currentTarget as HTMLSelectElement).value; change(n => { const a2 = A(n), pc: any = a2.part_colours = a2.part_colours || {}; if (v) pc[slot] = v; else delete pc[slot]; if (!Object.keys(pc).length) delete a2.part_colours; }); }}>
+              <option value="">The outfit's colours</option>{SWATCHES.map(s2 => <option value={s2[0]}>{s2[1]}</option>)}</select></div>;
+  const extras = (ids: string[]) => <div class="sc-row">{PARTS.accessories.filter(p => ids.indexOf(p[0]) >= 0).map(p => { const on = (cur.equipped_assets.accessories || []).indexOf(p[0]) >= 0; return <Btn kind="less" t="caw-acc" d={{ v: p[0] }} on={on} onClick={() => change(n => { const e = A(n).equipped_assets, l = e.accessories || []; e.accessories = on ? l.filter(x => x !== p[0]) : l.concat([p[0]]).slice(0, 8); })}>{p[1]}</Btn>; })}</div>;
+  const hairRow = <div class="sc-row"><span class="sc-slot">Hair or mask</span><select aria-label="Hair" data-t="caw-hair" value={cur.equipped_assets.head || 'hair_face'} onChange={e => { const v = (e.currentTarget as HTMLSelectElement).value; change(n => { ATTIRES.forEach(a => { const x = (n.attires = n.attires || {})[a[0]] || (n.attires[a[0]] = { equipped_assets: {}, palette_slots: {} }); x.equipped_assets.head = v; }); }); }}>
+    {PARTS.head.map(p => <option value={p[0]}>{p[1]}</option>)}</select></div>;
+  const AN = ATTIRES.find(a => a[0] === att)![1];
+  const titles: Record<Tab, string> = { a_head: 'Head: ' + AN, a_upper: 'Upper body: ' + AN, a_lower: 'Lower body: ' + AN, a_feet: 'Feet: ' + AN, sign: 'A new wrestler', body: 'The body', head: 'The head', gear: 'Gear: ' + ATTIRES.find(a => a[0] === att)![1], colour: 'Colours: ' + ATTIRES.find(a => a[0] === att)![1], studio: 'Gear studio: lettering and shapes', fin: 'Finishing moves', scenes: 'Their entrance', file: 'The file' };
   return <div class="scfull paper" data-t="caw">
-    <div class="sc-menubar" role="group" aria-label={pp.sign ? 'Create a Player' : 'Edit wrestler'}>
-      <span class="sc-belt" aria-hidden="true" /><b class="on">{pp.sign ? 'Create a Player' : 'Edit wrestler'}</b><span>{pp.world}</span><span class="sp" />
+    <div class="sc-menubar" role="group" aria-label={pp.sign ? 'Create a Player' : pp.attire ? 'Edit attire' : 'Edit wrestler'}>
+      <span class="sc-belt" aria-hidden="true" /><b class="on">{pp.sign ? 'Create a Player' : pp.attire ? 'Edit attire' : 'Edit wrestler'}</b><span>{pp.world}</span><span class="sp" />
       <span class={'sc-hint' + (msg ? (msg.err ? ' bad' : ' good') : '')} role="status" data-t="caw-msg">{msg ? msg.t : 'Change anything on the right; the wrestler on the left changes with it'}</span>
       <Btn kind="go" t="caw-save" onClick={save}>Save</Btn>
       <Btn kind="sm" t="caw-done" onClick={pp.onDone}>Done</Btn>
@@ -121,7 +136,7 @@ export function CreatePlayer(pp: PlayerProps) {
         </div>
       </Win>
       <Win title={titles[tab]} right={tab === 'gear' || tab === 'colour' || tab === 'studio' ? ATTIRES.find(a => a[0] === att)![1] : ''} area="side" t="caw-side">
-        <Tabs label="What to change" value={tab} onPick={v => setTab(v as Tab)} items={[...(pp.sign ? [{ id: 'sign', label: 'Who they are', t: 'caw-tab' }] : []), { id: 'body', label: 'Body', t: 'caw-tab' }, { id: 'head', label: 'Head', t: 'caw-tab' }, { id: 'gear', label: 'Gear', t: 'caw-tab' },
+        <Tabs label="What to change" value={tab} onPick={v => setTab(v as Tab)} items={pp.attire ? [{ id: 'a_head', label: 'Head', t: 'caw-tab' }, { id: 'a_upper', label: 'Upper body', t: 'caw-tab' }, { id: 'a_lower', label: 'Lower body', t: 'caw-tab' }, { id: 'a_feet', label: 'Feet', t: 'caw-tab' }, { id: 'studio', label: 'Lettering', t: 'caw-tab' }, { id: 'colour', label: 'Colours', t: 'caw-tab' }] : [...(pp.sign ? [{ id: 'sign', label: 'Who they are', t: 'caw-tab' }] : []), { id: 'body', label: 'Body', t: 'caw-tab' }, { id: 'head', label: 'Head', t: 'caw-tab' }, { id: 'gear', label: 'Gear', t: 'caw-tab' },
           { id: 'colour', label: 'Colours', t: 'caw-tab' }, { id: 'studio', label: 'Lettering', t: 'caw-tab' }, { id: 'fin', label: 'Finishers', t: 'caw-tab' }, { id: 'scenes', label: 'Entrance', t: 'caw-tab' }, { id: 'file', label: 'File', t: 'caw-tab' }]} />
         {tab === 'sign' && info && pv && <>
           <div class="sc-row"><span class="sc-slot">Ring name</span><TextBox value={lk.name || ''} max={28} label="Ring name" t="caw-name" width="18ch" onInput={v => change(n => { n.name = v; })} /></div>
@@ -137,8 +152,12 @@ export function CreatePlayer(pp: PlayerProps) {
           <div class="sc-row"><Btn kind="go" t="caw-create" onClick={signIt}>Create</Btn><span class="muted">They join the free agents, with their look, outfits and finisher. Sign them from Free agents like anybody else.</span></div>
         </>}
         {tab === 'body' && <>
+          <Group title="Sex">
+            <div class="sc-row">{([['M', 'Men'], ['F', 'Women']] as ['M' | 'F', string][]).map(([g, n]) => <Btn kind="less" t="caw-sex" d={{ v: g }} on={(pa.sex || (w0.g === 'F' ? 'F' : 'M')) === g} onClick={() => { change(n2 => { const p2 = n2.physical_attributes = n2.physical_attributes || {}; p2.sex = g; const a = (n2.attires || {}).primary_ring; if (a) { if (g === 'F' && a.equipped_assets.upper_body === 'bare') a.equipped_assets.upper_body = 'top_sports'; if (g === 'M' && a.equipped_assets.upper_body === 'top_sports') a.equipped_assets.upper_body = 'bare'; } }); if (pp.sign) setD({ ...d, g }); }}>{n}</Btn>)}
+              <span class="muted">{pp.sign || pp.onNewEntrance ? 'Their division follows.' : 'In a running game this changes how they look; their division stays.'}</span></div>
+          </Group>
           <Group title="Body type">
-            <div class="sc-row">{ARCHETYPES.map(a => <Btn kind="less" t="caw-arch" d={{ v: a[0] }} on={pa.body_archetype === a[0]} onClick={() => change(n => { n.archetype = a[0]; n.physical_attributes = { height_inches: a[2].h, weight_lbs: a[2].w, body_archetype: a[0], proportional_scalers: { torso_width: a[2].s[0], torso_height: a[2].s[1], limb_length: a[2].s[2], muscle_mass: a[2].s[3] } }; })}>{a[1]}</Btn>)}</div>
+            <div class="sc-row">{ARCHETYPES.map(a => <Btn kind="less" t="caw-arch" d={{ v: a[0] }} on={pa.body_archetype === a[0]} onClick={() => change(n => { n.archetype = a[0]; n.physical_attributes = { sex: (n.physical_attributes || {}).sex, height_inches: a[2].h, weight_lbs: a[2].w, body_archetype: a[0], proportional_scalers: { torso_width: a[2].s[0], torso_height: a[2].s[1], limb_length: a[2].s[2], muscle_mass: a[2].s[3] } }; })}>{a[1]}</Btn>)}</div>
           </Group>
           <Group title="Height and weight">
             <div class="sc-row"><span class="sc-slot">Height</span>
@@ -179,16 +198,13 @@ export function CreatePlayer(pp: PlayerProps) {
             <div class="sc-row"><span class="sc-slot">Tattoos</span>{TATTOOS.map(t => { const on = ((lk.appearance && lk.appearance.tattoos) || []).indexOf(t[0]) >= 0; return <Btn kind="less" t="caw-tat" d={{ v: t[0] }} on={on} onClick={() => change(n => { n.appearance = n.appearance || {}; const l = n.appearance.tattoos || []; n.appearance.tattoos = on ? l.filter(x => x !== t[0]) : l.concat([t[0]]); if (!n.appearance.tattoos.length) delete n.appearance.tattoos; })}>{t[1]}</Btn>; })}</div>
           </Group>
         </>}
+        {tab === 'a_head' && <>{hairRow}<Group title="On the head">{extras(['hat_cowboy', 'bandana', 'sunglasses_aviator'])}</Group><p class="muted">Hair is worn with every outfit; a mask takes this outfit's main colour and trim.</p></>}
+        {tab === 'a_upper' && <>{partRow('upper_body')}<Group title="Arms and chest">{extras(['wrist_tape_white', 'wrist_wraps', 'elbow_pads', 'gloves_fingerless', 'armband', 'chain_gold'])}</Group></>}
+        {tab === 'a_lower' && <>{partRow('lower_body')}<Group title="Knees">{extras(['knee_pads', 'knee_sleeves'])}</Group></>}
+        {tab === 'a_feet' && <>{partRow('footwear')}<p class="muted">Boots come up the shin; kick pads leave the foot bare.</p></>}
         {tab === 'gear' && <>
-          {(['upper_body', 'lower_body', 'footwear'] as const).map(slot => <div class="sc-row"><span class="sc-slot">{slot === 'upper_body' ? 'Top' : slot === 'lower_body' ? 'Bottoms' : 'Footwear'}</span>
-            <select aria-label={slot === 'upper_body' ? 'Top' : slot === 'lower_body' ? 'Bottoms' : 'Footwear'} data-t="caw-part" data-v={slot} value={cur.equipped_assets[slot] || ''} onChange={e => { const v = (e.currentTarget as HTMLSelectElement).value; change(n => { A(n).equipped_assets[slot] = v; }); }}>
-              {PARTS[slot].map(p => <option value={p[0]}>{p[1]}</option>)}</select>
-            {chip((cur.part_colours || {})[slot] || undefined)}<select aria-label={'Colour of the ' + (slot === 'upper_body' ? 'top' : slot === 'lower_body' ? 'bottoms' : 'footwear')} data-t="caw-partcol" data-v={slot} value={(cur.part_colours || {})[slot] || ''}
-              onChange={e => { const v = (e.currentTarget as HTMLSelectElement).value; change(n => { const a2 = A(n), pc: any = a2.part_colours = a2.part_colours || {}; if (v) pc[slot] = v; else delete pc[slot]; if (!Object.keys(pc).length) delete a2.part_colours; }); }}>
-              <option value="">The outfit's colours</option>{SWATCHES.map(s2 => <option value={s2[0]}>{s2[1]}</option>)}</select></div>)}
-          <Group title="Extras">
-            <div class="sc-row">{PARTS.accessories.map(p => { const on = (cur.equipped_assets.accessories || []).indexOf(p[0]) >= 0; return <Btn kind="less" t="caw-acc" d={{ v: p[0] }} on={on} onClick={() => change(n => { const e = A(n).equipped_assets, l = e.accessories || []; e.accessories = on ? l.filter(x => x !== p[0]) : l.concat([p[0]]).slice(0, 8); })}>{p[1]}</Btn>; })}</div>
-          </Group>
+          {(['upper_body', 'lower_body', 'footwear'] as const).map(partRow)}
+          <Group title="Extras">{extras(PARTS.accessories.map(p => p[0]))}</Group>
           <p class="muted">Each outfit is worn where it belongs: ring gear in the ring, entrance gear on the ramp, street clothes backstage and in promos.</p>
         </>}
         {tab === 'colour' && <>

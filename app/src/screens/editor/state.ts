@@ -3,6 +3,7 @@ import { E } from '../../engine';
 import { UNIS, saveUnis, slice, redraw, ui } from '../../store';
 
 export type EdTab = 'world' | 'companies' | 'shows' | 'belts' | 'wrestlers' | 'teams' | 'scenes' | 'share';
+export const TABS: [EdTab, string][] = [['world', 'World'], ['companies', 'Companies'], ['shows', 'Shows'], ['belts', 'Belts'], ['wrestlers', 'Wrestlers'], ['teams', 'Teams'], ['scenes', 'Scenes'], ['share', 'Check and share']];
 export interface EdState {
   /** the world open in the editor, or null on the list of worlds */
   id: string | null; tab: EdTab;
@@ -12,8 +13,12 @@ export interface EdState {
   scene?: string | null;
   /** the wrestler open in Create a Player (their id in the world), or null */
   player?: string | null;
+  /** open Create a Player on Edit attire (the outfits, a part of the body at a time) */
+  attire?: boolean;
   /** a custom entrance started from Create a Player, and the wrestler it is for (saving picks it; Done goes back to them) */
   sceneStart?: any; sceneFor?: { who: string; cast: string } | null;
+  /** the Wrestlers page: the ring sheet's section, and the page of the list */
+  sheet?: 'who' | 'work' | 'rates' | 'more'; wpg?: number;
   q: string; fp: string; sort: Record<string, string>; many: boolean; picked: Record<string, 1>; manyTo: string; newName: string; del: string | null; msg: string; err: boolean; text: string; copied: boolean; fill: number;
 }
 export const es = () => slice<EdState>('worldedit', () => ({ id: null, tab: 'world', sel: {}, q: '', fp: '', sort: {}, many: false, picked: {}, manyTo: '', newName: '', del: null, msg: '', err: false, text: '', copied: false, fill: 12 }));

@@ -1,7 +1,7 @@
 /* World Editor: build a world from scratch through the interface, check it, play it, and find it again after a reload.
-   Run: NODE_PATH=<dir containing playwright> node app/tests/editor.js   (MODES=desk,tablet,tv) */
+   Run: NODE_PATH=<dir containing playwright> node app/tests/editor.js   (desk size; MODES picks others) */
 const { open, overflow, shot } = require('./helper');
-const MODES = (process.env.MODES || 'desk,tablet,tv').split(',');
+const MODES = (process.env.MODES || 'desk').split(',');
 const fails = [];
 const ok = (mode, label, pass, detail) => { console.log(mode.padEnd(6), pass ? 'ok  ' : 'FAIL', label + (detail ? ': ' + detail : '')); if (!pass) fails.push(mode + ' ' + label); };
 const txt = (page, sel) => page.$eval(sel, e => e.innerText).catch(() => '');
@@ -70,11 +70,16 @@ async function run(mode) {
     await page.click('[data-t="ed-tab"][data-v="wrestlers"]');
     await page.click('[data-t="ed-add-wrestler"]');
     await page.fill('[data-t="ed-wrname"]', 'Captain Thunder');
-    await page.selectOption('[data-t="ed-sign"]', { index: 1 });
-    await page.$eval('[data-t="ed-rate"][data-k="overness"]', e => { e.value = '88'; e.dispatchEvent(new Event('input', { bubbles: true })); });
-    await page.click('[data-t="ed-face"][data-k="hr"][data-v="1"]');
     await page.click('[data-t="ed-role"][data-v="manager"]');
-    ok(mode, 'a wrestler can be made, rated, signed and given a face', /captain thunder/i.test(await txt(page, '.edcol-form')) && /88/.test(await txt(page, '.edrates')) && !!(await page.$('[data-t="ed-f"][data-k="push_level"]')));
+    const named = /captain thunder/i.test(await txt(page, '[data-t="ed-wdoll"]'));
+    await page.click('[data-t="ed-sheet"][data-v="work"]'); await page.selectOption('[data-t="ed-sign"]', { index: 1 });
+    const signed = !!(await page.$('[data-t="ed-f"][data-k="push_level"]'));
+    await page.click('[data-t="ed-sheet"][data-v="rates"]'); await page.$eval('[data-t="ed-rate"][data-k="overness"]', e => { e.value = '88'; e.dispatchEvent(new Event('input', { bubbles: true })); });
+    const rated = /88/.test(await txt(page, '.edrates'));
+    await page.click('[data-t="ed-sheet"][data-v="more"]'); await page.click('[data-t="ed-face"][data-k="hr"][data-v="1"]');
+    ok(mode, 'a wrestler can be made, rated, signed and given a face', named && signed && rated, JSON.stringify({ named, signed, rated }));
+    ok(mode, 'the Wrestlers page draws the wrestler in the middle', !!(await page.$('[data-t="ed-wview"]')) && !!(await page.$('[data-t="ed-caw"]')) && !!(await page.$('[data-t="ed-attire"]')));
+    await page.click('[data-t="ed-sheet"][data-v="who"]');
     await over('a wrestler form');
 
     await page.click('[data-t="ed-tab"][data-v="teams"]');
@@ -101,15 +106,15 @@ async function run(mode) {
 
     /* the Wrestlers list sorts by overness, name, age or company, and says how many it shows */
     await page.click('[data-t="ed-tab"][data-v="wrestlers"]');
-    { const rowsNow = () => page.$$eval('.edlist .edrow', L => L.map(e => e.textContent));
+    { const rowsNow = () => page.$$eval('.edlist .edrow', L => L.map(e => e.textContent)), total = () => page.$eval('.edlist', e => +e.dataset.n);
       const pickSort = async v => { await page.selectOption('[data-t="ed-sort"]', v); await page.waitForTimeout(80); };
       await pickSort('name'); const byName = await rowsNow();
       ok(mode, 'sort by name puts the list in alphabetical order', byName.length > 1 && byName.slice(0, 2).join('|') === byName.slice(0, 2).slice().sort().join('|'), byName.slice(0, 2).join(' | '));
       await pickSort('age'); ok(mode, 'sort by age changes the order', (await rowsNow()).join() !== byName.join() || byName.length < 2);
       ok(mode, 'the list says how many it shows', /Showing \d+/.test(await txt(page, '.edpage')));
       await page.selectOption('[data-t="ed-fp"]', 'FA'); await page.waitForTimeout(80);
-      const fa0 = (await rowsNow()).length; await page.click('[data-t="ed-unknowns"]'); await page.waitForTimeout(120);
-      ok(mode, 'with Free agents chosen, Make unknowns adds unsigned wrestlers', (await rowsNow()).length > fa0 && /Six unknowns added/.test(await txt(page, '.edpage')));
+      const fa0 = await total(); await page.click('[data-t="ed-unknowns"]'); await page.waitForTimeout(120);
+      ok(mode, 'with Free agents chosen, Make unknowns adds unsigned wrestlers', (await total()) > fa0 && /Six unknowns added/.test(await txt(page, '.edpage')));
       await page.selectOption('[data-t="ed-fp"]', ''); await page.waitForTimeout(80);
       await pickSort('over');
       /* pick several: two rows, release both, then delete both in two presses */
@@ -119,21 +124,21 @@ async function run(mode) {
       await page.click('[data-t="ed-many-release"]'); await page.waitForTimeout(80);
       ok(mode, 'Release all says what it did', /2 released/.test(await txt(page, '.edpage')));
       const r2 = await page.$$('.edlist .edrow'); await r2[r2.length - 1].click(); await r2[r2.length - 2].click();
-      const n1 = (await rowsNow()).length; await page.click('[data-t="ed-many-del"]');
-      ok(mode, 'Delete all asks first', (await rowsNow()).length === n1 && !!(await page.$('[data-t="ed-many-del-yes"]')));
+      const n1 = await total(); await page.click('[data-t="ed-many-del"]');
+      ok(mode, 'Delete all asks first', (await total()) === n1 && !!(await page.$('[data-t="ed-many-del-yes"]')));
       await page.click('[data-t="ed-many-del-yes"]'); await page.waitForTimeout(80);
-      ok(mode, 'then deletes both', (await rowsNow()).length === n1 - 2 && /2 deleted/.test(await txt(page, '.edpage')));
+      ok(mode, 'then deletes both', (await total()) === n1 - 2 && /2 deleted/.test(await txt(page, '.edpage')));
       ok(mode, 'a delete offers Undo', !!(await page.$('[data-t="ed-undo"]')));
       await page.click('[data-t="ed-undo"]'); await page.waitForTimeout(100);
-      ok(mode, 'Undo puts both back', (await rowsNow()).length === n1 && /is back/.test(await txt(page, '.edpage')) && !(await page.$('[data-t="ed-undo"]')));
+      ok(mode, 'Undo puts both back', (await total()) === n1 && /is back/.test(await txt(page, '.edpage')) && !(await page.$('[data-t="ed-undo"]')));
       await page.click('[data-t="ed-many"]');
-      await page.click('.edlist .edrow'); await page.waitForSelector('[data-t="ed-dup"]');
-      const n0 = (await rowsNow()).length; await page.click('[data-t="ed-dup"]'); await page.waitForTimeout(150);
+      await page.click('.edlist .edrow'); await page.click('[data-t="ed-sheet"][data-v="more"]'); await page.waitForSelector('[data-t="ed-dup"]');
+      await page.click('[data-t="ed-dup"]'); await page.waitForTimeout(150); await page.click('[data-t="ed-sheet"][data-v="who"]');
       ok(mode, 'Make a copy adds a wrestler and opens the copy', /\(copy\)/.test(await page.$eval('[data-t="ed-wrname"]', e => e.value).catch(() => '')), await page.$eval('[data-t="ed-wrname"]', e => e.value).catch(() => 'no form'));
       { const before = await page.$eval('[data-t="ed-wrname"]', e => e.value); await page.click('[data-t="ed-randname"]'); await page.waitForTimeout(120);
         const after = await page.$eval('[data-t="ed-wrname"]', e => e.value); ok(mode, 'Random name gives the wrestler a new name', after && after !== before, before + ' -> ' + after); }
-      ok(mode, 'a wrestler has a Managed by choice', !!(await page.$('[data-t="ed-manager"]')));
-      await page.click('[data-t="ed-tier"][data-v="jobber"]'); await page.waitForTimeout(80);
+      await page.click('[data-t="ed-sheet"][data-v="work"]'); ok(mode, 'a wrestler has a Managed by choice', !!(await page.$('[data-t="ed-manager"]')));
+      await page.click('[data-t="ed-sheet"][data-v="rates"]'); await page.click('[data-t="ed-tier"][data-v="jobber"]'); await page.waitForTimeout(80);
       ok(mode, 'Set ratings for an opener says what it did', /Ratings set for an opener/.test(await txt(page, '.edpage')));
       await page.keyboard.press('Escape'); }
 

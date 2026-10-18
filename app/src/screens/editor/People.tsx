@@ -1,6 +1,6 @@
 /* World Editor: wrestlers and other people. Who they are, what they can do, how they look, and who they work for. */
 import { E } from '../../engine';
-import { Btn, Panel, Sel, Field, Opt, FaceCanvas, dataAttrs } from '../../kit';
+import { Btn, Panel, Sel, Field, Opt, FaceCanvas, dataAttrs, Group } from '../../kit';
 import { derive, NAMES, Face, FaceKey } from '../../lib/portrait';
 import { es, world, edit, editDel, look, note, reId } from './state';
 import { TextF, NameF, NumF, SelF, Rating, PickList, DelBtn, TwoPane, opts, BrandSel } from './parts';
@@ -9,9 +9,9 @@ const PARTS: [FaceKey, string][] = [['h', 'Head'], ['hr', 'Hair'], ['fh', 'Facia
 const SHOWN = 60;
 const faceOf = (w: any): Face => Object.assign(derive(w.ring_name || w.id, w.gender, w.age || 28), w.face || {});
 
-function Looks(p: { w: any }) {
+export function Looks(p: { w: any }) {
   const w = p.w, f = faceOf(w), set = (k: string, v: number) => edit(() => { w.face = Object.assign(faceOf(w), { [k]: v }); });
-  return <Panel cls="mb4" title="How they look">
+  return <Panel cls="mb4" title="Their portrait in lists">
     <div class="edface">
       <FaceCanvas cls="pt" face={f} g={w.gender} bg={w.disposition === 'heel' ? 'H' : (w.disposition === 'tweener' ? 'N' : 'F')} label={'Portrait of ' + w.ring_name} />
       <div class="edparts">{PARTS.map(x => <div class="edpart" key={x[0]}>
@@ -23,20 +23,18 @@ function Looks(p: { w: any }) {
       <Field label="Skin tone"><input type="range" min={0} max={100} value={f.sk} {...dataAttrs('ed-face-sl', { k: 'sk' })} onInput={e => set('sk', +(e.currentTarget as HTMLInputElement).value)} /></Field>
       <Field label="Hair colour"><input type="range" min={0} max={100} value={f.hc} {...dataAttrs('ed-face-sl', { k: 'hc' })} onInput={e => set('hc', +(e.currentTarget as HTMLInputElement).value)} /></Field>
     </div>
-    <div class="row mt2"><Btn kind="go" t="ed-caw" onClick={() => look(() => { es().player = w.id; })}>Edit wrestler</Btn>
-      {w.look ? <span class="muted">Drawn from their own record in every scene.</span> : null}</div>
     <div class="row mt2"><Btn kind="sm" t="ed-face-rnd" onClick={() => edit(() => { w.face = derive('ed' + Math.random(), w.gender, w.age || 28); })}>Random face</Btn>
       {w.face ? <Btn kind="sm" t="ed-face-auto" onClick={() => edit(() => { delete w.face; })}>Let the game draw it from the name</Btn> : null}</div>
   </Panel>;
 }
 
-function Form(p: { w: any }) {
+/** The sections about a wrestler (Biography, Company, Attributes, More) (the paper Wrestlers page shows one at a time; Form shows them all). */
+export function Sheet(p: { w: any; part: 'who' | 'work' | 'rates' | 'more' }) {
   const st = es(), pkg = world(), w = p.w; if (!w.ratings) w.ratings = {};
   const con = E.edContract(pkg, w.id), roles: string[] = w.roles && w.roles.length ? w.roles : ['wrestler'];
   const companies: Opt[] = [['', 'Free agent (no contract)'] as Opt].concat(pkg.promotions.map((x: any) => [x.id, x.name] as Opt));
   const role = (r: string) => edit(() => { const has = roles.indexOf(r) >= 0, next = has ? roles.filter(x => x !== r) : roles.concat([r]); w.roles = next.length ? next : ['wrestler']; });
-  return <>
-    <Panel cls="mb4" title={w.ring_name || 'Wrestler'}>
+  if (p.part === 'who') return <>
       <div class="editor plain">
         <NameF label="Ring name" table="workers" rec={w} max={32} t="ed-wrname" />
         <Field label="Need a name?"><Btn kind="sm" t="ed-randname" onClick={() => { const old = w.id; edit(() => { const nm = E.edRandomName(pkg, w.gender, Date.now() & 0xffff); reId('workers', old, E.edRename(pkg, 'workers', old, nm)); }); }}>Random name</Btn></Field>
@@ -51,8 +49,9 @@ function Form(p: { w: any }) {
       </div>
       <p class="eyebrow mt2">What they do</p>
       <div class="row opts">{Object.keys(E.ED.roles).map(r => <Btn kind="sm" key={r} on={roles.indexOf(r) >= 0} t="ed-role" d={{ v: r }} onClick={() => role(r)}>{E.ED.roles[r]}</Btn>)}</div>
-    </Panel>
-    <Panel cls="mb4" title="Who they work for">
+  </>;
+  if (p.part === 'work') return <>
+    <Group title="Company">
       <div class="editor plain">
         <Field label="Company"><Sel t="ed-sign" value={con ? con.promotion_id : ''} options={companies} onChange={v => edit(() => { E.edSign(pkg, w.id, v || null, con ? con.push_level : undefined); })} /></Field>
         {con ? <SelF label="Place on the card" rec={con} k="push_level" options={opts(E.ED.push)} /> : null}
@@ -61,19 +60,26 @@ function Form(p: { w: any }) {
         {con ? <NumF label="Weeks left on the contract" rec={con} k="weeks_left" min={1} max={520} blank="the game decides" /> : null}
       </div>
       {con ? null : <p class="muted mt2">An unsigned wrestler starts the game as a free agent any company can sign.</p>}
-    </Panel>
-    <Panel cls="mb4" title="What they can do">
+    </Group>
+  </>;
+  if (p.part === 'rates') return <>
+    <Group title="Attributes">
       <div class="row opts mb2"><span class="muted">Set ratings for</span>{([['main_eventer', 'A main eventer'], ['midcarder', 'A mid-carder'], ['jobber', 'An opener']] as [string, string][]).map(x => <Btn kind="sm" key={x[0]} t="ed-tier" d={{ v: x[0] }} onClick={() => edit(() => { E.edSetTier(pkg, w.id, x[0], Date.now() & 0xffff); note('Ratings set for ' + x[1].toLowerCase() + (con ? ', to suit the company.' : '.')); })}>{x[1]}</Btn>)}</div>
       <div class="edrates">{E.ED.ratings.map((r: any) => <Rating key={r[0]} label={r[1]} obj={w.ratings} k={r[0]} opt={!r[2]} />)}</div>
       <p class="muted mt2">Overness is how much the crowd cares. The ones marked auto are worked out from the rest unless you set them.</p>
-    </Panel>
+    </Group>
+  </>;
+  return <>
     <Looks w={w} />
     <div class="row mb4"><Btn kind="sm" t="ed-dup" onClick={() => edit(() => { const c = E.edDup(pkg, 'workers', w.id); if (c) { st.sel.wrestlers = c.id; note('Made a copy: ' + c.ring_name + '.'); } })}>Make a copy</Btn><DelBtn id={'worker:' + w.id} what={w.ring_name} onDelete={() => { E.edRemove(pkg, 'workers', w.id); st.sel.wrestlers = null; note(w.ring_name + ' has been removed from the world.'); }} /></div>
   </>;
 }
+function Form(p: { w: any }) {
+  return <><Panel cls="mb4" title={p.w.ring_name || 'Wrestler'}><Sheet w={p.w} part="who" /></Panel><Sheet w={p.w} part="work" /><Sheet w={p.w} part="rates" /><Sheet w={p.w} part="more" /></>;
+}
 
 /** What to do with the wrestlers picked on the list: sign them all, release them all, or delete them all (two presses). */
-function Many() {
+export function Many() {
   const st = es(), pkg = world(), ids = Object.keys(st.picked || {}), n = ids.length, to = st.manyTo || (pkg.promotions[0] && pkg.promotions[0].id) || '';
   const done = (msg: string) => { st.picked = {}; note(msg); };
   return <div class="row mb2 edmany" data-t="ed-many-acts">

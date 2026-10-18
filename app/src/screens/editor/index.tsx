@@ -5,7 +5,8 @@ import { UNIS, ui, redraw, builtInUniverse, isBuiltIn, pref, plural } from '../.
 import { onBack } from '../../input';
 import { Btn, Panel, Head, Tabs, Field } from '../../kit';
 import { StartMenu } from '../start';
-import { es, world, keep, edit, look, note, report, freeId, openWorld, EdTab, canUndo, undoDel } from './state';
+import { es, world, keep, edit, look, note, report, freeId, openWorld, EdTab, TABS, canUndo, undoDel } from './state';
+import { WrestlersPage } from './Wrestlers';
 import { DelBtn } from './parts';
 import { WorldTab, ShareTab } from './World';
 import { CompaniesTab, ShowsTab } from './Companies';
@@ -74,7 +75,6 @@ function Home() {
   </>;
 }
 
-const TABS: [EdTab, string][] = [['world', 'World'], ['companies', 'Companies'], ['shows', 'Shows'], ['belts', 'Belts'], ['wrestlers', 'Wrestlers'], ['teams', 'Teams'], ['scenes', 'Scenes'], ['share', 'Check and share']];
 function Open() {
   const st = es(), pkg = world(), v = report();
   const body = st.tab === 'world' ? <WorldTab /> : st.tab === 'companies' ? <CompaniesTab /> : st.tab === 'shows' ? <ShowsTab /> : st.tab === 'belts' ? <BeltsTab /> : st.tab === 'wrestlers' ? <WrestlersTab /> : st.tab === 'teams' ? <TeamsTab /> : st.tab === 'scenes' ? <ScenesTab /> : <ShareTab />;
@@ -98,9 +98,9 @@ export function Editor() {
   if (st.id && st.player) {   // Create a Player, full screen, on a wrestler in the world being edited
     const pkg = UNIS[st.id], wk = (pkg.workers || []).find((x: any) => x.id === st.player);
     if (wk) { const nm = pkg.manifest.name || 'this world';
-      return <CreatePlayer key={st.player} world={nm} w={workerW(wk)} had={wk.look || null}
-        onSave={lk => { let ok = false; edit(() => { ok = E.edSetLook(world(), wk.id, lk); }); return { ok, msg: ok ? (lk.name || wk.ring_name) + ' is kept in ' + nm + '. Every scene in the game now draws them like this.' : 'That could not be kept.' }; }}
-        onForget={() => { edit(() => { E.edRemoveLook(world(), wk.id); }); return { ok: true, msg: wk.ring_name + ' is drawn by the game again.' }; }} onDone={() => look(() => { st.player = null; })}
+      return <CreatePlayer key={st.player + (st.attire ? ':a' : '')} world={nm} w={workerW(wk)} had={wk.look || null} attire={!!st.attire}
+        onSave={lk => { let ok = false; edit(() => { ok = E.edSetLook(world(), wk.id, lk); const sx = lk.physical_attributes && lk.physical_attributes.sex; if (ok && sx && wk.gender !== sx) wk.gender = sx; }); return { ok, msg: ok ? (lk.name || wk.ring_name) + ' is kept in ' + nm + '. Every scene in the game now draws them like this.' : 'That could not be kept.' }; }}
+        onForget={() => { edit(() => { E.edRemoveLook(world(), wk.id); }); return { ok: true, msg: wk.ring_name + ' is drawn by the game again.' }; }} onDone={() => look(() => { st.player = null; st.attire = false; })}
         scenes={E.edScenes(pkg)} onNewEntrance={lk => {   // keep the wrestler, then Create a Scene on a copy of their entrance, with them in it
           edit(() => { E.edSetLook(world(), wk.id, lk); });
           const all = E.edScenes(pkg).concat(SCENES), src = all.find((x: any) => x.id === lk.entrance && x.when === 'entrance') || SCENES.find(x => x.when === 'entrance')!, sc = copy(src);
@@ -116,6 +116,7 @@ export function Editor() {
       onSave={sc => { const ok = keepScene(sc); if (ok && fr && sc.when === 'entrance') edit(() => { const lk = E.edLook(world(), fr.who); if (lk) { lk.entrance = sc.id; E.edSetLook(world(), fr.who, lk); } }); return ok; }}
       onForget={forgetScene} onDone={() => look(() => { st.scene = null; st.sceneStart = null; if (fr) { st.player = fr.who; st.sceneFor = null; } })} />;
   }
+  if (st.id && st.tab === 'wrestlers') return <WrestlersPage />;   // the first page in the paper look (rule 2a): Create a Wrestler at its heart
   return <div class="crt"><StartMenu /><div class="start edpage">{st.id ? <Open /> : <Home />}</div>
     <div class="status"><span>World Editor</span><span class="opt">|</span><span class="opt">Changes are kept as you make them</span><span>Esc: back</span></div></div>;
 }

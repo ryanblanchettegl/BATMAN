@@ -22,6 +22,7 @@ Two more lists sit beside this one, both finished:
 
 | Topic | Decision |
 | --- | --- |
+| The wrestler always on show, 18 Oct | On the World Editor's Wrestlers page, the Roster page and Free agents the wrestler is always drawn full length beside the list, like the roster screens of SmackDown: Here Comes the Pain. The Wrestlers page as built is the pattern (rule 5c). |
 | The art style, 18 Oct | The desk image is the art style: everything looks made from construction paper. Built in CSS and canvas now; Blender renders of the pieces later to make it more 3D. |
 | The World Editor's foundation, 18 Oct | Create a Wrestler (Create a Player) and Create a Scene are the new foundation for the World Editor. Its other parts are built around them. |
 | Entrances and move pictures, 18 Oct | A wrestler's own picks are for their signature moves and finishers. Entrances: pick a canned one, or make a custom entrance through Create a Scene (World Editor). No other per-wrestler scenes. |
@@ -116,6 +117,7 @@ The desk image (`docs/mockups/paper/desk.png`) is the art style: the whole game 
 - [ ] A wrestler's page in the World Editor opens on Create a Wrestler (the body, outfits, entrance, finishers), with the ring-sheet details (ratings, contract, gimmick) beside it, instead of the old face panel.
 - [ ] The Scenes tab and Create a Scene sit beside it as the editor's other main tool; worlds are made of wrestlers and scenes first.
 - [ ] Then the rest of the editor (companies, shows, belts, teams) in the same paper look, one at a time with Ryan's go-ahead.
+- [ ] The Roster page and Free agents in the game follow the same rule: the list on the left, the wrestler drawn full length in the middle at all times, the details on the right, as the World Editor's Wrestlers page (rule 5c).
 
 ### 0z. Create a Scene, built out (later; Ryan, 18 October: "the bones are there and work")
 

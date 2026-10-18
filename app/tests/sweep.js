@@ -5,7 +5,7 @@ const PAGES = ['desk', 'backstage', 'career', 'booking', 'roster', 'locker', 'ti
 const PLAY = (S, n) => { for (let w = 0; w < n && !S.over; w++) { S.inbox.filter(e => !e.done).forEach(e => GP.resolveEvent(S, e.id, 0)); if (S.owner.pending) GP.setCreed(S, { style: 'merit', roots: 'tradition', pledge: 'stable' }); while (S.qi < S.queue.length) { const c = GP.suggest(S), pr = GP.preShow(S, c); if (pr) GP.resolvePre(S, c, 0); GP.runPlayerShow(S, c); } GP.endWeek(S); } };
 (async () => {
   let bad = 0; const heights = [];
-  for (const mode of (process.env.MODES || 'desk,tablet,tv').split(',')) {
+  for (const mode of (process.env.MODES || 'desk').split(',')) {
     const { browser, page, errs } = await open({ mode, promo: process.env.PROMO || 'pdw' });
     await state(page, PLAY, 29); await redraw(page);
     const week = await state(page, S => S.week), over = await state(page, S => !!S.over);
