@@ -1,138 +1,132 @@
-/* The craft look, the core art style (Ryan, 19 October: concept C, the scrapbook zine, "is the winner"). A corkboard covered in construction paper cut with pinking shears, pinned up with
-   pushpins and drawn on with markers: the broadcast is a Polaroid pinned to the board, the call is written in ink on
-   torn notebook paper, the feed is a run of coloured scraps, and the doodles say what matters. Pieces from
-   tools/creator/craft-kit.py (--lk-*, app/ui/craft). Readable first: titles, buttons and labels are in marker, running
-   text in Patrick Hand (the clearest of the hand faces) at a comfortable size, and nothing sits on the cork without a
-   paper or a shadow under it. */
-:root{--marker:'Craft Marker','EWF Sans',sans-serif;--gochi:'Craft Gochi','EWF Sans',sans-serif;--hand:'Craft Hand','EWF Sans',sans-serif}
-body{background:radial-gradient(120% 100% at 30% 0%,rgba(255,240,210,.12),rgba(30,15,0,.35)),var(--lk-cork) 0 0/360px,#b98552}
+/* The craft look, the core art style (Ryan, 19 October: "we are switching to concept a"): the workbench. The page is a
+   green cutting mat. Windows are torn cream paper (no tape: Ryan, 19 October), title strips are navy card lettered in
+   yellow marker, buttons are cut from coloured card, the feed is index cards and sticky notes, and the broadcast is a
+   black card mat in a white card frame. Pieces from tools/creator/craft-kit.py (--lk-*, app/ui/craft). Readable first:
+   titles, buttons and labels in marker, running text in Patrick Hand (the clearest of the hand faces), dark ink on
+   light paper, and nothing sits on the mat without paper under it. */
+:root{--hand:'Craft Hand','EWF Sans',sans-serif;--marker:'Craft Marker','EWF Sans',sans-serif;--kalam:'Craft Kalam','EWF Sans',sans-serif;--gochi:'Craft Gochi','EWF Sans',sans-serif;--ink:#23232a}
+body{background:radial-gradient(130% 100% at 30% 10%,rgba(255,255,255,.04),rgba(0,0,0,.3)),var(--lk-black) 0 0/480px 480px,#1e1d21}
 
-/* the menu: scraps of coloured paper pinned along the top */
-.menu{background:none;border:0;box-shadow:none;padding:.35em 1.2ch .2em;gap:.6ch}
-.menu button{font-family:var(--marker);font-weight:400;font-size:1.08em;color:#232027;border:0;border-image:var(--lk-zig-white) 30 fill / 14px / 4px;padding:.3em 1.6ch .38em;border-radius:0}
-.menu button:nth-of-type(2){border-image-source:var(--lk-zig-pink)} .menu button:nth-of-type(3){border-image-source:var(--lk-zig-green)} .menu button:nth-of-type(4){border-image-source:var(--lk-zig-blue)} .menu button:nth-of-type(5){border-image-source:var(--lk-zig-yellow)} .menu button:nth-of-type(6){border-image-source:var(--lk-zig-purple)}
-.menu button:nth-of-type(odd){transform:rotate(-2deg)} .menu button:nth-of-type(even){transform:rotate(1.8deg)}
-.menu button[aria-current="page"],.menu button[aria-current="page"]:hover{background:none;color:#fff;border-image-source:var(--lk-zig-black);transform:rotate(-3deg) scale(1.08)}
-.menu .ttl{font-family:var(--marker);color:#fff;background:none;text-shadow:0 .1em .2em rgba(0,0,0,.6)}
-.toast{background:var(--lk-zig-yellow) 0 0/100% 100%;color:#232027;font-family:var(--gochi)}
+/* the menu bar: a long strip of cream paper laid across the top of the mat */
+.menu{background:var(--lk-paper) 0 0/360px;border:0;box-shadow:0 .25em .5em rgba(0,0,0,.4);padding:.25em 1.2ch .3em}
+.menu button{font-family:var(--marker);font-size:1.12em;font-weight:400;letter-spacing:.01em;color:var(--ink)}
+.menu button[aria-current="page"],.menu button[aria-current="page"]:hover{background:var(--lk-navy) 0 0/240px;color:#ffe48a;transform:rotate(-1.5deg);box-shadow:.12em .2em 0 rgba(0,0,0,.35);border-radius:2px}
+.menu .ttl{font-family:var(--hand);font-size:1.12em;color:var(--ink)}
+.toast{background:var(--lk-note) 0 0/100% 100%;color:var(--ink);font-family:var(--hand)}
 
-/* windows: white paper cut with pinking shears; title strips of black paper lettered in white marker */
-:is(html,body) :is(.wn,.win).wn,:is(html,body) .win.win,.wn,.win{border-image:var(--lk-zig-white) 30 fill / 18px / 6px stretch;color:#232027;position:relative}
-.wn>.ttl,.win .wt{background:#232027;border:0;margin:8px 8px 0;border-radius:0;transform:rotate(-.8deg);box-shadow:.1em .16em .2em rgba(0,0,0,.4);padding:.2em 1.2ch .25em}
-.wn>.ttl h2,.win .wt>span{background:none;font-family:var(--marker);font-weight:400;font-size:1.15em;color:#fff;letter-spacing:.02em}
-.wn>.ttl>span:last-child{font-family:var(--gochi);font-size:1.08em;color:#ffd23f}
-.wn>.ttl>span:first-child::before,.wn>.ttl>span:last-child::after{display:none}
-.wn::before{content:'';position:absolute;z-index:5;left:calc(50% - 16px);top:-18px;width:32px;height:32px;background:var(--lk-pin) center/100%}
-.wn>.bd,.win .wb{font-family:var(--hand);font-size:1.1em;line-height:1.28}
+/* windows: torn cream paper laid on the mat; title strips of navy card */
+:is(html,body) :is(.wn,.win).wn,:is(html,body) .win.win,.wn,.win{border-image:var(--lk-win) 30 fill / 20px / 6px stretch;color:var(--ink);position:relative}
+.wn>.ttl,.win .wt{background:var(--lk-navy) 0 0/240px;border:0;margin:6px 6px 0;border-radius:0;clip-path:polygon(0 8%,12% 0,40% 6%,70% 0,100% 7%,99% 92%,72% 100%,45% 93%,15% 100%,1% 92%);padding:.22em 1.2ch .28em}
+.wn>.ttl h2,.win .wt>span{background:none;font-family:var(--marker);font-weight:400;font-size:1.12em;color:#ffe48a;letter-spacing:.02em}
+.wn>.ttl>span:last-child{font-family:var(--hand);font-size:1.08em;color:#f3ebd6}
+.wn>.ttl>span:first-child::before,.wn>.ttl>span:last-child::after{background:#f3ebd6;border:0;border-radius:50%;width:.7rem;height:.7rem;box-shadow:inset -.1rem -.1rem 0 rgba(0,0,0,.25)}
+.wn>.bd,.win .wb{font-family:var(--hand);font-size:1.06em}
+.wn b{font-family:var(--kalam)}
 
-/* buttons: paper scraps lettered in marker */
-.btn,.wn .btn,.win .btn{border-image:var(--bi) 30 fill / 14px / 4px;--bi:var(--lk-zig-green);font-family:var(--marker);font-weight:400;color:#fff;text-shadow:0 1px 0 rgba(0,0,0,.35);padding:.25em 1.7ch .32em}
-.btn.sm,.wn .btn.sm,.win .btn.sm{--bi:var(--lk-zig-blue)} .btn.less,.wn .btn.less,.win .btn.less{--bi:var(--lk-zig-purple)} .btn.danger,.wn .btn.danger{--bi:var(--lk-zig-pink)}
-.btn.go,.btn.on,.wn .btn.go,.wn .btn.on,.win .btn.go,.win .btn.on,.btn.go:hover,.btn.on:hover,.wn .btn.on:hover{--bi:var(--lk-zig-yellow);color:#232027;text-shadow:none}
-.btn[disabled],.wn .btn[disabled]{--bi:var(--lk-zig-white);color:#9a958c}
-.btn:nth-child(odd){transform:rotate(-1.5deg)} .btn:nth-child(even){transform:rotate(1.2deg)}
+/* buttons: cut card, lettered with a marker, each placed by hand a touch off straight */
+.btn,.wn .btn,.win .btn{border-image:var(--bi) 22 fill / 13px / 4px;--bi:var(--lk-btn-green);font-family:var(--marker);font-weight:400;letter-spacing:.02em;color:#fff;text-shadow:0 1px 0 rgba(0,0,0,.25);padding:.2em 1.6ch .3em}
+.btn.sm,.wn .btn.sm,.win .btn.sm{--bi:var(--lk-btn-blue)} .btn.less,.wn .btn.less,.win .btn.less{--bi:var(--lk-btn-navy)} .btn.danger,.wn .btn.danger{--bi:var(--lk-btn-red)}
+.btn.go,.btn.on,.wn .btn.go,.wn .btn.on,.win .btn.go,.win .btn.on,.btn.go:hover,.btn.on:hover,.wn .btn.on:hover{--bi:var(--lk-btn-yellow);color:var(--ink);text-shadow:none}
+.btn[disabled],.wn .btn[disabled]{--bi:var(--lk-btn-off)}
+.btn:nth-child(3n){transform:rotate(-1.2deg)} .btn:nth-child(3n+1){transform:rotate(.8deg)}
+.btn:not([disabled]):hover,.btn:focus-visible{transform:rotate(0) translateY(-2px);filter:drop-shadow(0 .25em .25em rgba(0,0,0,.3))}
+.btn:focus-visible{outline:3px dashed var(--ink);outline-offset:3px}
 
 /* ---------- the broadcast ---------- */
-.live1 .bar{background:#232027;color:#fff;font-family:var(--marker);font-weight:400;border-radius:0;transform:rotate(-.4deg);box-shadow:.12em .2em .25em rgba(0,0,0,.45)}
-.live1 .bar>span:first-child::before{font-family:var(--marker);font-weight:400;background:#ff4f4f;border-radius:40% 55% 45% 60%;padding:.12em 1ch;transform:rotate(-8deg);display:inline-block}
-.live1 .bar>span:last-child{font-family:var(--gochi);font-size:1.08em;color:#ffd23f}
-.lv-rail .nt-r{border:0;background:none;border-image:var(--lk-zig-white) 30 fill / 12px / 3px;border-radius:0;font-family:var(--hand);font-size:1.02em;box-shadow:none;color:#232027}
-.lv-rail .nt-r:nth-child(3n){border-image-source:var(--lk-zig-blue)} .lv-rail .nt-r:nth-child(3n+1){border-image-source:var(--lk-zig-green)}
-.lv-rail .nt-r:nth-child(odd){transform:rotate(-1.5deg)} .lv-rail .nt-r:nth-child(even){transform:rotate(1.3deg)}
-.lv-rail .nt-r.now{border-image-source:var(--lk-zig-yellow);transform:rotate(-2.5deg) scale(1.05)}
+.live1 .bar{background:var(--lk-navy) 0 0/240px;font-family:var(--hand);font-size:1.12em;border-radius:0;clip-path:polygon(0 10%,30% 0,70% 8%,100% 0,100% 90%,60% 100%,25% 92%,0 100%)}
+.live1 .bar>span:first-child::before{font-family:var(--marker);font-weight:400;background:#d9443a;transform:rotate(-4deg);display:inline-block;border-radius:2px}
+.lv-rail .nt-r{background:var(--lk-paper) 0 0/360px;border:0;border-radius:0;font-family:var(--hand);font-size:.95em;box-shadow:.1em .16em .2em rgba(0,0,0,.35);clip-path:polygon(0 0,100% 4%,98% 100%,2% 96%);color:var(--ink)}
+.lv-rail .nt-r:nth-child(even){transform:rotate(.7deg)} .lv-rail .nt-r:nth-child(odd){transform:rotate(-.5deg)}
+.lv-rail .nt-r.seen{filter:sepia(.25) brightness(.9)}
+.lv-rail .nt-r.now{background:#fff1a6;transform:rotate(-1.4deg) translateY(-1px);box-shadow:.14em .22em .25em rgba(0,0,0,.4)}
 .lv-rail .nt-r .no{font-family:var(--marker);font-weight:400}
-/* the Polaroid, pinned to the board, with what it is written under the picture */
-.tvframe{border:0;border-radius:0;border-image:var(--lk-polaroid) 30 fill / 18px 18px 52px 18px / 6px;background:none;box-shadow:none;overflow:visible;padding:16px 16px 50px;transform:rotate(-.8deg)}
-.tvframe::before{content:'';position:absolute;z-index:6;left:calc(50% - 22px);top:-24px;width:44px;height:44px;background:var(--lk-pin) center/100%}
-.tvframe::after{content:'LIVE TONIGHT!!';position:absolute;z-index:6;left:2ch;bottom:.5em;font-family:var(--marker);font-size:1.5em;color:#232027;transform:rotate(-2deg);letter-spacing:.02em}
-.live1 .tvframe .lv-scene{background:#18161c}
-.tvframe .chyron{left:auto;right:2ch;bottom:-.1em;max-width:62%;z-index:7}
-.tvframe .chyron .lv-head{background:none;border:0;border-left:0;border-image:var(--lk-zig-yellow) 30 fill / 14px / 4px;border-radius:0;color:#232027;transform:rotate(2deg);padding:.3em 2ch .35em;box-shadow:none}
-.tvframe .chyron .lv-head h1{font-family:var(--marker);font-weight:400;color:#232027;font-size:1.25em}
-.tvframe .chyron .lv-head .eyebrow{font-family:var(--gochi);color:#c2244f;font-size:1.05em}
-.tvframe .bug{background:none;right:2.4ch;top:1.3em;font-family:var(--marker);font-weight:400;color:#fff;font-size:1.1em;text-shadow:0 .1em .2em rgba(0,0,0,.8);padding:.5em 1.6ch}
-.tvframe .bug::after{content:'';position:absolute;inset:-.55em -1.4ch;background:var(--lk-circle) center/100% 100% no-repeat;transform:rotate(-6deg)}
-.tvframe .bug>:first-child{display:none}
-/* the call: blue ink on torn notebook paper */
-.live1 .tvframe~.lv-log{background:none;border:0;border-image:var(--lk-notebook) 40 30 30 40 fill / 20px 15px 15px 20px / 5px;box-shadow:none;padding:.35em 2ch .35em 4ch;transform:rotate(.4deg);max-height:7.6em;margin-top:.4em}
-.live1 .lv-log .ln{font-family:var(--hand);font-size:1.16em;line-height:1.24}
-.live1 .lv-log .ln .tx{color:#1f3f8f} .live1 .lv-log .ln.last .tx{color:#0f2a75}
-.live1 .lv-log .ln .sp{font-family:var(--marker);font-weight:400;color:#d03a3a}
-.live1 .lv-log .ln.hot .tx{color:#d03a3a;font-weight:400}
-.live1 .ln.note{color:#2f8a3a;font-family:var(--gochi)}
-.live1 .foot .keys-hint,.lv-side .nt-foot{font-family:var(--gochi);color:#fff;text-shadow:0 .1em .2em rgba(0,0,0,.6);font-size:1em}
-/* the feed: scraps of every colour, pinned and taped, a star on the big ones */
+/* the set: a black card mat in a thick white card frame */
+.tvframe{border:0;border-radius:0;border-image:var(--lk-card) 30 fill / 22px / 6px;background:none;box-shadow:none;padding:14px;overflow:visible}
+.live1 .tvframe .lv-scene{background:#121318;outline:3px solid #121318}
+.tvframe .chyron{left:2.2ch;bottom:1.4em}
+.tvframe .chyron .lv-head{background:var(--lk-navy) 0 0/240px;border:0;border-left:0;border-radius:0;clip-path:polygon(0 6%,100% 0,97% 100%,2% 94%);transform:rotate(-1deg);padding:.35em 2ch .45em}
+.tvframe .chyron .lv-head h1{font-family:var(--marker);font-weight:400;font-size:1.35em;letter-spacing:.01em}
+.tvframe .chyron .lv-head .eyebrow{font-family:var(--hand);font-size:1em;color:#ffe48a}
+.tvframe .bug{right:2.4ch;top:1.2em;background:#d9443a;font-family:var(--marker);font-weight:400;transform:rotate(4deg);border-radius:50% 46% 52% 44%;padding:.3em 1ch;box-shadow:.1em .16em .2em rgba(0,0,0,.4)}
+.tvframe .bug .logo,.tvframe .bug>:first-child{display:none}
+/* the call: handwriting on a card under the picture */
+.live1 .tvframe~.lv-log{background:none;border:0;border-image:var(--lk-card) 30 fill / 18px / 5px;box-shadow:none;padding:.35em 2ch;transform:rotate(.25deg);max-height:7.4em}
+.live1 .lv-log .ln{font-family:var(--hand);font-size:1.14em;line-height:1.2}
+.live1 .lv-log .ln .tx{color:var(--ink)} .live1 .lv-log .ln.last .tx{color:#000}
+.live1 .lv-log .ln .sp{font-family:var(--marker);font-weight:400;color:#c23a30}
+.live1 .lv-log .ln.hot .tx{color:#1b4fa0;font-weight:400}
+.live1 .ln.note{color:#2f7a3a;font-family:var(--hand)}
+.live1 .foot .keys-hint{font-family:var(--hand);font-size:1em;color:#e7efe9;text-shadow:0 .1em .2em rgba(0,0,0,.6)}
+/* the feed: index cards, and a sticky note when a wrestler posts */
 .lv-side .fdwin>.bd{background:none}
-.post{background:none;border:0;border-image:var(--lk-zig-white) 30 fill / 14px / 4px;box-shadow:none;padding:.4em 1.3ch .35em;position:relative}
-.post:nth-child(4n+1){border-image-source:var(--lk-zig-yellow)} .post:nth-child(4n+2){border-image-source:var(--lk-zig-blue)} .post:nth-child(4n+3){border-image-source:var(--lk-zig-pink)}
-.post:nth-child(odd){transform:rotate(-1.4deg)} .post:nth-child(even){transform:rotate(1.1deg)}
-.post.k-w::after{content:'';position:absolute;right:-.4em;top:-.5em;width:2.2em;height:2.2em;background:var(--lk-star) center/100% no-repeat}
-.post .ph b{font-family:var(--marker);font-weight:400;color:#232027}
-.post .pt{font-family:var(--hand);font-size:1.12em;color:#232027}
-.post .hn,.post .tm,.post .pm{font-family:var(--gochi);color:#4a4550}
-.post .av{border:2px solid #232027;border-radius:50%}
-/* the crowd: hand-drawn bars */
-.crowdm{background:none;border:0;border-image:var(--lk-zig-black) 30 fill / 14px / 4px;border-radius:0;transform:rotate(-.6deg)}
-.crowdm .cl{font-family:var(--marker);font-weight:400;color:#fff}
-.crowdm .cm i{border-radius:40% 30% 45% 35%;background:#3a3640}
-.crowdm .cm i.on.g{background:#5cc46a;box-shadow:none} .crowdm .cm i.on.y{background:#ffd23f;box-shadow:none} .crowdm .cm i.on.r{background:#ff4f4f;box-shadow:none}
-.crowdm .cw{font-family:var(--marker);font-weight:400;color:#ffd23f;transform:rotate(-4deg);font-size:1.15em}
+.post{background:none;border:0;border-image:var(--lk-card) 30 fill / 14px / 4px;box-shadow:none;padding:.4em 1.2ch .35em;color:var(--ink)}
+.post.k-w{border-image-source:var(--lk-note)} .post.k-p,.post.k-c{border-image-source:var(--lk-card)}
+.post:nth-child(odd){transform:rotate(-.7deg)} .post:nth-child(even){transform:rotate(.6deg)}
+.post .ph b{font-family:var(--kalam);font-weight:700}
+.post .pt{font-family:var(--hand);font-size:1.08em}
+.post .hn,.post .tm,.post .pm{font-family:var(--hand)}
+.post .av{border:2px solid var(--ink);border-radius:46% 54% 50% 50%}
+/* the crowd: squares of coloured card on a strip of navy, the word in marker */
+.crowdm{background:var(--lk-navy) 0 0/240px;border:0;border-radius:0;clip-path:polygon(0 6%,100% 0,99% 100%,1% 94%)}
+.crowdm .cl{font-family:var(--hand);font-size:.95em;letter-spacing:.04em}
+.crowdm .cm i{border-radius:1px;background:#3c4470}
+.crowdm .cm i:nth-child(odd){transform:rotate(-4deg)} .crowdm .cm i:nth-child(even){transform:rotate(3deg)}
+.crowdm .cm i.on.g{background:#5fbf5a;box-shadow:none} .crowdm .cm i.on.y{background:#f6c93a;box-shadow:none} .crowdm .cm i.on.r{background:#e2483c;box-shadow:none}
+.crowdm .cw{font-family:var(--marker);font-weight:400;font-size:1.15em;color:#ffe48a;transform:rotate(-3deg)}
+.lv-side .nt-foot{font-family:var(--hand);font-size:.95em;color:#e7efe9;text-shadow:0 .1em .2em rgba(0,0,0,.6)}
 
-/* the bottom line: scraps along the foot of the board */
-.status,.ffoot>.status{background:rgba(35,32,39,.82);border:0;box-shadow:0 -.2em .4em rgba(0,0,0,.35);color:#fff}
-.ffoot>.status>button[data-t="stat"]{border-image:var(--lk-zig-white) 30 fill / 12px / 3px;font-family:var(--gochi);font-size:1.06em;color:#232027}
-.ffoot>.status>button[data-t="stat"]:nth-of-type(even){transform:rotate(1.5deg)} .ffoot>.status>button[data-t="stat"]:nth-of-type(odd){transform:rotate(-1.2deg)}
-.status .nk i,.status .key .cap{font-family:var(--marker);font-weight:400;background:#fff;color:#232027;border-radius:2px;transform:rotate(-4deg)}
-.status .nk em{border-image:var(--lk-zig-blue) 30 fill / 12px / 3px;font-family:var(--marker);font-weight:400}
-.status .key .lab{--bi:var(--lk-zig-yellow);border-image:var(--bi) 30 fill / 14px / 4px;font-family:var(--marker);font-weight:400;font-size:1.12em;color:#232027;transform:rotate(-1.5deg)}
-.status .key.tone-air .lab{--bi:var(--lk-zig-green);color:#fff} .status .key.tone-stop .lab{--bi:var(--lk-zig-pink);color:#fff} .status .key.tone-home .lab{--bi:var(--lk-zig-white)} .status .key.tone-end .lab{--bi:var(--lk-zig-blue);color:#fff}
-.live1 .result,.live1 .result *{color:#2a1d10} .live1 .result .good{color:#2f6a2a} .live1 .result .bad{color:#9a2a1a}
+/* the bottom line: a strip of cream paper with cards on it, and the yellow key */
+.status,.ffoot>.status{background:var(--lk-paper) 0 0/360px;border:0;box-shadow:0 -.25em .5em rgba(0,0,0,.35);color:var(--ink)}
+.ffoot>.status>button[data-t="stat"]{border-image:var(--lk-card) 30 fill / 12px / 3px;font-family:var(--hand);font-size:1.06em;color:var(--ink)}
+.status .nk i,.status .key .cap{font-family:var(--marker);font-weight:400;background:var(--ink);color:#fff;border-radius:2px;transform:rotate(-3deg)}
+.status .nk em{border-image:var(--lk-btn-blue) 22 fill / 12px / 3px;font-family:var(--marker);font-weight:400}
+.status .key .lab{--bi:var(--lk-btn-yellow);border-image:var(--bi) 22 fill / 14px / 4px;font-family:var(--marker);font-weight:400;font-size:1.12em;letter-spacing:.03em;color:var(--ink)}
+.status .key.tone-air .lab{--bi:var(--lk-btn-green);color:#fff} .status .key.tone-stop .lab{--bi:var(--lk-btn-red);color:#fff} .status .key.tone-home .lab{--bi:var(--lk-btn-cream)} .status .key.tone-end .lab{--bi:var(--lk-btn-blue);color:#fff}
+.live1 .result,.live1 .result *{color:var(--ink);font-family:var(--hand)} .live1 .result .gold{color:#a5730c} .live1 .result .good{color:#2f7a3a} .live1 .result .bad{color:#b8322a}
 
-/* ---------- choices that open a pop-up (rule 6a): scraps of paper that lift and straighten when you point at them ---------- */
-.bsact{border:0;background:none;border-image:var(--lk-zig-white) 30 fill / 16px / 4px;padding:.55em 1.6ch .6em;color:#232027;transition:transform .16s var(--ease),filter .16s;gap:.15em}
-.bsacts>.bsact:nth-child(5n+1){border-image-source:var(--lk-zig-yellow)} .bsacts>.bsact:nth-child(5n+2){border-image-source:var(--lk-zig-blue)}
-.bsacts>.bsact:nth-child(5n+3){border-image-source:var(--lk-zig-pink)} .bsacts>.bsact:nth-child(5n+4){border-image-source:var(--lk-zig-green)}
+/* ---------- choices that open a pop-up (rule 6a): index cards and sticky notes that lift and straighten when you point at them ---------- */
+.bsact{border:0;background:none;border-image:var(--lk-card) 30 fill / 14px / 4px;padding:.55em 1.6ch .6em;color:var(--ink);transition:transform .16s var(--ease),filter .16s;gap:.15em}
+.bsacts>.bsact:nth-child(3n+2){border-image-source:var(--lk-note)}
 .bsacts>.bsact:nth-child(odd){transform:rotate(-.8deg)} .bsacts>.bsact:nth-child(even){transform:rotate(.7deg)}
-.bsact b{font-family:var(--marker);font-weight:400;color:#232027;text-transform:none;letter-spacing:.01em;font-size:1.08em}
-.bsact .eff{font-family:var(--hand);font-size:1.1em;color:#232027;font-weight:700}
-.bsact .muted,.bsact .ft,.bsact span{font-family:var(--hand);color:#3d3842}
+.bsact b{font-family:var(--marker);font-weight:400;color:#1d2a5c;text-transform:none;letter-spacing:.01em;font-size:1.08em}
+.bsact .eff{font-family:var(--hand);font-size:1.1em;color:var(--ink);font-weight:700}
+.bsact .muted,.bsact .ft,.bsact span{font-family:var(--hand);color:#3d3d46}
 .bsact:hover,.bsact:focus-visible{background:none;transform:rotate(0) translateY(-3px) scale(1.02);filter:drop-shadow(0 .35em .4em rgba(0,0,0,.35));outline:0}
-.bsact:focus-visible{outline:3px dashed #232027;outline-offset:3px}
+.bsact:focus-visible{outline:3px dashed var(--ink);outline-offset:3px}
 .bsact.used{opacity:.55;filter:grayscale(.4)}
-/* the gauges on Overview: white paper with a black marker strip */
-.gp{border:0;border-image:var(--lk-zig-white) 30 fill / 16px / 4px;padding:.5em 1.6ch .6em;color:#232027}
-.gp h2{background:#232027;color:#fff;font-family:var(--marker);font-weight:400;text-transform:none;letter-spacing:.02em;display:inline-block;padding:.1em 1.4ch;transform:rotate(-1.2deg);margin-bottom:.3em}
-.gp .kv,.gp .kv *{font-family:var(--hand);color:#232027} .gp .kv b{font-family:var(--marker);font-weight:400;color:#c2244f}
-.gauge i{background:#e6e0d4;border-radius:2px} .gauge i.on{background:#4ea3e6}
-/* a page's own heading: a label of black paper, so it reads on the cork */
-.head h1,.head .eyebrow{display:inline-block;background:#232027;padding:.1em 1.4ch;transform:rotate(-1deg);box-shadow:.12em .2em .25em rgba(0,0,0,.45)}
-.head h1,.head h1 .hl{font-family:var(--marker);font-weight:400;color:#fff;text-transform:none;letter-spacing:.02em}
-.head .eyebrow{font-family:var(--hand);color:#ffd23f;margin-bottom:.2em}
-/* lists and tables in a window: lines of the notebook, the picked one a yellow highlighter stroke */
-.wn .lb,.win .lb{background:#fffdf6;border:2px solid #232027;border-radius:3px}
-.lb .rw.sel,.lb button.rw.sel:hover,.rspage .rsl tr.pick.on,.book1 .b1-rows .seg.sel .r1b{background:linear-gradient(transparent 8%,#ffe066 8%,#ffd23f 92%,transparent 92%);color:#232027;box-shadow:none}
-.lb .rw.sel *,.rspage .rsl tr.pick.on td,.rspage .rsl tr.pick.on td *,.book1 .b1-rows .seg.sel .r1b *{color:#232027}
-.lb .hd,.rspage .rsl th{background:none;color:#c2244f;font-family:var(--marker);font-weight:400;border-bottom:2px solid #232027}
+/* the gauges on Overview: index cards with a navy strip */
+.gp{border:0;border-image:var(--lk-card) 30 fill / 14px / 4px;padding:.5em 1.6ch .6em;color:var(--ink)}
+.gp h2{background:var(--lk-navy) 0 0/240px;color:#ffe48a;font-family:var(--marker);font-weight:400;text-transform:none;letter-spacing:.02em;display:inline-block;padding:.1em 1.4ch;transform:rotate(-1.2deg);margin-bottom:.3em}
+.gp .kv,.gp .kv *{font-family:var(--hand);color:var(--ink)} .gp .kv b{font-family:var(--marker);font-weight:400;color:#c23a30}
+.gauge i{background:#e6e0d4;border-radius:2px} .gauge i.on{background:#3f7fd0}
+/* a page's own heading: a strip of navy card, so it reads on the mat */
+.head h1,.head .eyebrow{display:inline-block;background:var(--lk-navy) 0 0/240px;padding:.1em 1.4ch;transform:rotate(-1deg);box-shadow:.12em .2em .25em rgba(0,0,0,.45)}
+.head h1,.head h1 .hl{font-family:var(--marker);font-weight:400;color:#ffe48a;text-transform:none;letter-spacing:.02em}
+.head .eyebrow{font-family:var(--hand);color:#f3ebd6;margin-bottom:.2em}
+/* lists and tables in a window: plain card, the picked line a yellow highlighter stroke */
+.wn .lb,.win .lb{background:#fbf8ee;border:2px solid var(--ink);border-radius:3px}
+.lb .rw.sel,.lb button.rw.sel:hover,.rspage .rsl tr.pick.on,.book1 .b1-rows .seg.sel .r1b{background:linear-gradient(transparent 8%,#ffe066 8%,#ffd23f 92%,transparent 92%);color:var(--ink);box-shadow:none}
+.lb .rw.sel *,.rspage .rsl tr.pick.on td,.rspage .rsl tr.pick.on td *,.book1 .b1-rows .seg.sel .r1b *{color:var(--ink)}
+.lb .hd,.rspage .rsl th{background:none;color:#c23a30;font-family:var(--marker);font-weight:400;border-bottom:2px solid var(--ink)}
 
-/* ---------- the title screen: the name in ransom-note letters, each cut from a different scrap ---------- */
+/* ---------- the title screen: the name in letters cut from coloured card, a navy strip under it, the menu an index card ---------- */
 .start .logo-box{border:0;background:none;padding:.4em 0 .2em;gap:.5em}
 .start .logo-box>i{display:none}
-.start .logo-top{font-family:var(--hand);font-size:1.25em;letter-spacing:.04em;text-transform:none;color:#232027;background:none;border-image:var(--lk-zig-yellow) 30 fill / 14px / 4px;padding:.25em 2ch .3em;transform:rotate(-2deg);margin:0}
+.start .logo-top{font-family:var(--hand);font-size:1.25em;letter-spacing:.04em;text-transform:none;color:var(--ink);background:none;border-image:var(--lk-note) 30 fill / 14px / 4px;padding:.25em 2ch .3em;transform:rotate(-2deg);margin:0}
 .ransom{display:flex;justify-content:center;gap:.08em;margin:.15em 0;font-family:var(--marker);font-size:clamp(2.6em,7.4vw,6.2em);line-height:1}
-.ransom .rl{display:inline-block;padding:.06em .14em .1em;border-image:var(--lk-zig-white) 30 fill / 10px / 3px;color:#232027;filter:drop-shadow(.05em .08em .06em rgba(0,0,0,.45))}
-.ransom .r0{border-image-source:var(--lk-zig-yellow);transform:rotate(-6deg) translateY(.04em)} .ransom .r1{border-image-source:var(--lk-zig-black);color:#fff;transform:rotate(4deg)}
-.ransom .r2{border-image-source:var(--lk-zig-pink);transform:rotate(-3deg) translateY(-.06em)} .ransom .r3{border-image-source:var(--lk-zig-blue);color:#fff;transform:rotate(7deg)}
-.ransom .r4{border-image-source:var(--lk-zig-green);transform:rotate(-5deg) translateY(.05em)} .ransom .r5{transform:rotate(3deg) translateY(-.03em)}
-.ransom .r6{border-image-source:var(--lk-zig-purple);color:#fff;transform:rotate(-2deg)}
-.start .logo-sub{font-family:var(--marker);font-size:clamp(1.4em,3.2vw,2.6em);color:#fff;-webkit-text-stroke:0;letter-spacing:.06em;margin:0;background:#232027;padding:.12em 1.4ch .18em;transform:rotate(1.5deg);box-shadow:.12em .2em .25em rgba(0,0,0,.5)}
+.ransom .rl{display:inline-block;padding:.06em .14em .1em;border-image:var(--lk-card) 30 fill / 10px / 3px;color:var(--ink);filter:drop-shadow(.05em .08em .06em rgba(0,0,0,.45))}
+.ransom .r0{border-image:var(--lk-btn-yellow) 22 fill / 10px / 3px;transform:rotate(-6deg) translateY(.04em)} .ransom .r1{border-image:var(--lk-btn-navy) 22 fill / 10px / 3px;color:#ffe48a;transform:rotate(4deg)}
+.ransom .r2{border-image:var(--lk-btn-red) 22 fill / 10px / 3px;color:#fff;transform:rotate(-3deg) translateY(-.06em)} .ransom .r3{border-image:var(--lk-btn-blue) 22 fill / 10px / 3px;color:#fff;transform:rotate(7deg)}
+.ransom .r4{border-image:var(--lk-btn-green) 22 fill / 10px / 3px;color:#fff;transform:rotate(-5deg) translateY(.05em)} .ransom .r5{transform:rotate(3deg) translateY(-.03em)}
+.ransom .r6{border-image:var(--lk-note) 30 fill / 10px / 3px;transform:rotate(-2deg)}
+.start .logo-sub{font-family:var(--marker);font-size:clamp(1.4em,3.2vw,2.6em);color:#ffe48a;-webkit-text-stroke:0;letter-spacing:.06em;margin:0;background:var(--lk-navy) 0 0/240px;padding:.12em 1.4ch .18em;transform:rotate(1.5deg);box-shadow:.12em .2em .25em rgba(0,0,0,.5)}
 .start .lede.c{font-family:var(--hand);font-size:1.2em;color:#fff;text-shadow:0 .1em .25em rgba(0,0,0,.8);margin:.4em auto .5em}
-/* the menu: a sheet of notebook paper, the picked line in highlighter */
-.start .dbox{border:0;outline:0;border-image:var(--lk-notebook) 40 30 30 40 fill / 20px 15px 15px 20px / 5px;padding:.6em 2ch .6em 4.4ch;max-width:60ch;transform:rotate(-.6deg)}
-.start .dbox .mi{font-family:var(--marker);font-size:1.25em;color:#232027;padding:.12em 1.2ch}
-.start .dbox .mi .ab{color:#232027}
-.start .dbox .mi .st{font-family:var(--hand);font-size:.82em;color:#4a4550}
-.start .dbox .mi.on,.start .dbox .mi:focus-visible{background:linear-gradient(transparent 10%,#ffe066 10%,#ffd23f 90%,transparent 90%);color:#232027}
-.start .dbox .mi.on *,.start .dbox .mi:focus-visible *{color:#232027}
+.start .dbox{border:0;outline:0;border-image:var(--lk-card) 30 fill / 18px / 5px;padding:.6em 2ch;max-width:60ch;transform:rotate(-.6deg)}
+.start .dbox .mi{font-family:var(--marker);font-size:1.25em;color:var(--ink);padding:.12em 1.2ch}
+.start .dbox .mi .ab{color:var(--ink)}
+.start .dbox .mi .st{font-family:var(--hand);font-size:.82em;color:#4a4a52}
+.start .dbox .mi.on,.start .dbox .mi:focus-visible{background:linear-gradient(transparent 10%,#ffe066 10%,#ffd23f 90%,transparent 90%);color:var(--ink)}
+.start .dbox .mi.on *,.start .dbox .mi:focus-visible *{color:var(--ink)}
 .status.c{font-family:var(--hand);font-size:1.05em}
 
 /* ---------- room: the craft frames and the hand faces are taller than the plain ones, so windows give a little back ---------- */

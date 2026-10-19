@@ -8,10 +8,10 @@ const ok = (id, label, pass, detail) => { console.log(id.padEnd(15), pass ? 'ok 
 const rgb = (page, sel, prop) => page.$eval(sel, (e, p) => getComputedStyle(e)[p], prop);
 /* the paper look (app/styles/theme.css): which Blender card a piece is cut from (tools/creator/ui-pieces.py) */
 const cut = (page, sel) => page.$eval(sel, e => { const u = x => x.trim().replace(/^url\(["']?|["']?\)$/g, ''), bi = u(getComputedStyle(e).borderImageSource), rs = getComputedStyle(document.documentElement);
-  // the craft look (app/styles/craft.css): scraps of paper cut with pinking shears, --lk-zig-*
-  return ['zig-white', 'zig-yellow', 'zig-blue', 'zig-pink', 'zig-green', 'zig-purple', 'zig-black'].find(k => bi === u(rs.getPropertyValue('--lk-' + k)))
+  // the craft look (app/styles/craft.css): torn cream paper and cut card on the workbench, --lk-*
+  return ['win', 'card', 'note', 'btn-green', 'btn-blue', 'btn-red', 'btn-yellow', 'btn-navy', 'btn-off', 'btn-cream'].map(k => 'lk-' + k).find(k => bi === u(rs.getPropertyValue('--' + k)))
     || ['win', 'grp', 'tile', 'btn-green', 'btn-blue', 'btn-red', 'btn-yellow', 'btn-navy', 'btn-off', 'btn-cream'].find(k => bi === u(rs.getPropertyValue('--ui-' + k))) || 'none'; });
-const INK = 'rgb(35, 32, 39)', WHITE = 'rgb(255, 255, 255)';
+const INK = 'rgb(35, 35, 42)', WHITE = 'rgb(255, 255, 255)', MARKER = 'rgb(255, 228, 138)';
 
 async function run(mode, w, h) {
   const id = mode + ' ' + w + 'x' + h, { browser, page, errs } = await open({ mode, promo: 'whw' });
@@ -24,9 +24,9 @@ async function run(mode, w, h) {
     ok(id, 'six windows, each with a title bar and a body', await page.$$eval('.wn', L => L.length === 6 && L.every(x => x.querySelector(':scope > .ttl h2') && x.querySelector(':scope > .bd'))));
     ok(id, 'no window runs into another, and every shadow has room', await page.evaluate(() => { const L = [...document.querySelectorAll('.wn')].map(e => e.getBoundingClientRect()), D = document.querySelector('.desktop').getBoundingClientRect(); return L.every((a, i) => a.right <= D.right - 4 && a.bottom <= D.bottom - 4 && L.every((b, j) => i === j || a.right <= b.left || b.right <= a.left || a.bottom <= b.top || b.bottom <= a.top)); }));
     ok(id, 'no title is cut short', await page.$$eval('.wn > .ttl h2', L => L.every(e => e.scrollWidth <= e.clientWidth + 1)));
-    ok(id, 'a window is white paper cut with pinking shears, dark ink, its title a strip of black paper in white marker', (await cut(page, '[data-t="kit-list"]')) === 'zig-white' && (await rgb(page, '[data-t="kit-list"] > .bd', 'color')) === INK && (await rgb(page, '[data-t="kit-list"] > .ttl', 'backgroundColor')) === INK && (await rgb(page, '[data-t="kit-list"] > .ttl h2', 'color')) === WHITE);
+    ok(id, 'a window is torn cream paper, dark ink, its title a strip of navy card in yellow marker', (await cut(page, '[data-t="kit-list"]')) === 'lk-win' && (await rgb(page, '[data-t="kit-list"] > .bd', 'color')) === INK && (await rgb(page, '[data-t="kit-list"] > .ttl', 'backgroundImage')) !== 'none' && (await rgb(page, '[data-t="kit-list"] > .ttl h2', 'color')) === MARKER);
     ok(id, 'a window that wants attention has a red bar, a celebration a gold one', (await rgb(page, '[data-t="kit-hot"] > .ttl', 'backgroundColor')) === 'rgb(184, 50, 42)' && (await rgb(page, '[data-t="kit-gold"] > .ttl', 'backgroundColor')) === 'rgb(201, 154, 24)');
-    ok(id, 'buttons are scraps of coloured paper: green with white marker, yellow, purple, pink', (await cut(page, '[data-t="kit-b1"]')) === 'zig-green' && (await rgb(page, '[data-t="kit-b1"]', 'color')) === WHITE && (await cut(page, '[data-t="kit-b2"]')) === 'zig-yellow' && (await cut(page, '[data-t="kit-b3"]')) === 'zig-purple' && (await cut(page, '[data-t="kit-b4"]')) === 'zig-pink');
+    ok(id, 'buttons are cut coloured card: green with white marker, yellow, navy, red', (await cut(page, '[data-t="kit-b1"]')) === 'lk-btn-green' && (await rgb(page, '[data-t="kit-b1"]', 'color')) === WHITE && (await cut(page, '[data-t="kit-b2"]')) === 'lk-btn-yellow' && (await cut(page, '[data-t="kit-b3"]')) === 'lk-btn-navy' && (await cut(page, '[data-t="kit-b4"]')) === 'lk-btn-red');
     ok(id, 'a button that costs something says so at its right end', /1 point$/.test((await page.$eval('[data-t="kit-talk"]', e => e.textContent)).trim()));
     ok(id, 'a tag in a window is a filled box, not a word in brackets', await page.$eval('[data-t="kit-tags"] .tag.bad', e => getComputedStyle(e).backgroundColor === 'rgb(230, 77, 64)' && getComputedStyle(e, '::before').content === 'none'));
     ok(id, 'bars come ten, eight and five wide', await page.$$eval('[data-t="kit-tags"] .meter', L => L.map(e => e.textContent.length).join(',') === '10,8,5,5'));
@@ -46,8 +46,8 @@ async function run(mode, w, h) {
     await page.click('[data-t="kit-ans-2"]');
     await page.waitForSelector('.win');
     ok(id, 'an answer opens its result in a pop-up', /60% chance/.test(await page.$eval('.win .wb', e => e.innerText)));
-    ok(id, 'the pop-up wears the craft look: a black paper strip, a white title in the middle, cut paper', await page.evaluate(() => { const w = document.querySelector('.win'), t = w.querySelector('.wt'), s = t.querySelector('span'), c = getComputedStyle(t), b = getComputedStyle(w), tr = t.getBoundingClientRect(), sr = s.getBoundingClientRect(), r = document.createRange(); r.selectNodeContents(s); const xr = r.getBoundingClientRect(); return c.backgroundColor === 'rgb(35, 32, 39)' && getComputedStyle(s).color === 'rgb(255, 255, 255)' && b.borderImageSource !== 'none' && Math.abs((xr.left + xr.right) / 2 - (tr.left + tr.right) / 2) < tr.width * 0.06; }));
-    ok(id, 'its OK button is a yellow scrap with dark marker', (await cut(page, '#modal-ok')) === 'zig-yellow' && (await rgb(page, '#modal-ok', 'color')) === INK);
+    ok(id, 'the pop-up wears the craft look: a strip of navy card, a yellow title in the middle, torn paper', await page.evaluate(() => { const w = document.querySelector('.win'), t = w.querySelector('.wt'), s = t.querySelector('span'), c = getComputedStyle(t), b = getComputedStyle(w), tr = t.getBoundingClientRect(), sr = s.getBoundingClientRect(), r = document.createRange(); r.selectNodeContents(s); const xr = r.getBoundingClientRect(); return c.backgroundImage !== 'none' && getComputedStyle(s).color === 'rgb(255, 228, 138)' && b.borderImageSource !== 'none' && Math.abs((xr.left + xr.right) / 2 - (tr.left + tr.right) / 2) < tr.width * 0.06; }));
+    ok(id, 'its OK button is yellow card with dark marker', (await cut(page, '#modal-ok')) === 'lk-btn-yellow' && (await rgb(page, '#modal-ok', 'color')) === INK);
     await page.keyboard.press('Escape');
     ok(id, 'Esc closes it', !(await page.$('.win')));
     ok(id, 'a disabled answer cannot be pressed', await page.$eval('[data-t="kit-ans-4"]', e => e.disabled));

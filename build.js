@@ -19,15 +19,15 @@ if(fs.existsSync(path.join(appDir,'node_modules','esbuild'))){
   // the paper pieces rendered in Blender (tools/creator/ui-pieces.py), as variables the theme reads
   const uiDir=path.join(appDir,'ui');
   const ui=fs.existsSync(uiDir)?':root{'+fs.readdirSync(uiDir).filter(f=>f.endsWith('.png')).sort().map(f=>'--ui-'+f.slice(0,-4)+':url(data:image/png;base64,'+fs.readFileSync(path.join(uiDir,f)).toString('base64')+');').join('')+'}\n':'';
-  // The craft look (Ryan, 19 October: the scrapbook zine is the core art style): its pieces (tools/creator/craft-kit.py,
-  // app/ui/craft) as --lk-*, the hand-lettering faces, and app/styles/craft.css after everything else. EWF_LOOK=a|b
+  // The craft look (Ryan, 19 October: the workbench, concept A, is the core art style): its pieces (tools/creator/craft-kit.py,
+  // app/ui/craft) as --lk-*, the hand-lettering faces, and app/styles/craft.css after everything else. EWF_LOOK=b|c
   // with EWF_OUT layers one of the two concepts that lost (app/styles/looks/) on top, to look back at them.
   const look=process.env.EWF_LOOK,lkDir=path.join(uiDir,'craft');
   const pieces=d=>fs.existsSync(d)?':root{'+fs.readdirSync(d).filter(f=>f.endsWith('.png')).sort().map(f=>'--lk-'+f.slice(0,-4)+':url(data:image/png;base64,'+fs.readFileSync(path.join(d,f)).toString('base64')+');').join('')+'}\n':'';
   const lk=pieces(lkDir)
     +[['marker','Craft Marker'],['hand','Craft Hand'],['typed','Craft Typed'],['kalam','Craft Kalam'],['gochi','Craft Gochi']].map(x=>{const f=path.join(appDir,'fonts','hand',x[0]+'.woff2');return fs.existsSync(f)?"@font-face{font-family:'"+x[1]+"';font-display:swap;src:url(data:font/woff2;base64,"+fs.readFileSync(f).toString('base64')+") format('woff2')}\n":'';}).join('')
     +fs.readFileSync(path.join(appDir,'styles','craft.css'),'utf8').replace(/(^|[^\w.#-])(-?\d*\.?\d+)ch\b/g,(m,pre,n)=>pre+'calc('+n+'*var(--ch))')
-    +(look&&look!=='c'?pieces(path.join(uiDir,look))
+    +(look&&look!=='a'?pieces(path.join(uiDir,look))
       +fs.readFileSync(path.join(appDir,'styles','looks',look+'.css'),'utf8').replace(/(^|[^\w.#-])(-?\d*\.?\d+)ch\b/g,(m,pre,n)=>pre+'calc('+n+'*var(--ch))'):'');
   // the one typeface is embedded, so the game fetches nothing at all (VT323, SIL Open Font License 1.1)
   const fontFile=path.join(appDir,'node_modules','@fontsource','vt323','files','vt323-latin-400-normal.woff2');

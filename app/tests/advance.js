@@ -9,9 +9,9 @@ const fails = [];
 const ok = (mode, label, pass, detail) => { console.log(mode.padEnd(6), pass ? 'ok  ' : 'FAIL', label + (detail ? ': ' + detail : '')); if (!pass) fails.push(mode + ' ' + label); };
 const txt = (page, sel) => page.$eval(sel, e => e.innerText.replace(/\s+/g, ' ')).catch(() => '');
 const has = async (page, sel) => !!(await page.$(sel));
-const adv = page => page.$eval('[data-t="advance"]', e => ({ k: e.getAttribute('data-v'), tone: e.getAttribute('data-tone'), bg: (() => { const bi = getComputedStyle(e.querySelector('.lab')).borderImageSource, rs = getComputedStyle(document.documentElement); const u = x => x.trim().replace(/^url\(["']?|["']?\)$/g, ''); return ['yellow', 'pink', 'green', 'white', 'blue'].find(c => u(bi) === u(rs.getPropertyValue('--lk-zig-' + c))) || 'none'; })(), t: e.querySelector('b').innerText.replace(/\s+/g, ' ').trim(), tip: e.querySelector('[data-t="adv-tip"]').textContent })).catch(() => ({ k: '', tone: '', bg: '', t: '', tip: '' }));
+const adv = page => page.$eval('[data-t="advance"]', e => ({ k: e.getAttribute('data-v'), tone: e.getAttribute('data-tone'), bg: (() => { const bi = getComputedStyle(e.querySelector('.lab')).borderImageSource, rs = getComputedStyle(document.documentElement); const u = x => x.trim().replace(/^url\(["']?|["']?\)$/g, ''); return ['yellow', 'red', 'green', 'cream', 'blue'].find(c => u(bi) === u(rs.getPropertyValue('--lk-btn-' + c))) || 'none'; })(), t: e.querySelector('b').innerText.replace(/\s+/g, ' ').trim(), tip: e.querySelector('[data-t="adv-tip"]').textContent })).catch(() => ({ k: '', tone: '', bg: '', t: '', tip: '' }));
 // the key is a stacked card in the paper look (app/styles/theme.css): its colour is the card it is cut from
-const COL = { go: 'yellow', stop: 'pink', air: 'green', home: 'white', end: 'blue' };   // scraps of paper in the craft look (app/styles/craft.css)
+const COL = { go: 'yellow', stop: 'red', air: 'green', home: 'cream', end: 'blue' };   // cut card in the craft look (app/styles/craft.css)
 const toned = (a, tone) => a.tone === tone && a.bg === COL[tone];
 const pageId = page => page.evaluate(() => window.EWF_DEBUG.ui.page);
 const press = async page => { await page.click('[data-t="advance"]'); await page.waitForTimeout(40); };
