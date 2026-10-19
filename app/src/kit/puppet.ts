@@ -22,7 +22,7 @@ export interface Recipe {
       three outfits, and the one being worn. */
   tw?: number; th?: number; ll?: number; mm?: number; kits?: Record<AttireKey, Kit>; kit?: Kit;
   /** Face paint (a design and its colour), tattoos (where), and a braid in a long beard. */
-  paint?: { k: string; c: string }; tats?: string[]; braid?: boolean;
+  paint?: { k: string; c: string }; /** More designs painted over the first, in order. */ paint2?: { k: string; c: string }[]; tats?: string[]; braid?: boolean;
   /** Face sliders from a file: eye size, gap and height, mouth width, ear size (1 or 0 is as cut). */
   fs?: { eyeS?: number; eyeG?: number; eyeY?: number; mouthW?: number; earS?: number };
   /** Which eyes, nose, mouth and ears (FEATURES in kit/caw.ts); left out, the first of each. */
@@ -425,21 +425,26 @@ function head(fr: F, r: Recipe, z: number, expr: string, cut: (f: F, poly: Pt[],
   if (bl >= 2) for (const [x0, len] of [[tq - 0.06, 0.62], [tq + 0.24, 0.5]] as [number, number][]) put(strip([x0, hd.cy + 0.36], [x0 + 0.02, hd.cy + 0.36 - len], 0.04, 0.02), BLOOD, 0.095, 0.006);
   if (mk.bruise) put(ell(tq + 0.17, ey - 0.07, 0.09, 0.06, 10), '#5b3a6e', 0.095, 0.006);
   const pt = r.paint && !fullMask ? r.paint : (acc('face_paint') && !r.mask ? { k: 'stripes', c: K!.pal.s.c } : null);
-  if (pt) {   // face paint, under the eyes, brows and mouth
-    const C = pt.c;
-    if (pt.k === 'stripes') for (const sd of [-1, 1]) put(strip([sd * 0.16 + tq - 0.1, ey - 0.08], [sd * 0.16 + tq + 0.08, ey - 0.3], 0.07, 0.03), C, 0.096, 0.004);
-    else if (pt.k === 'half') put(headPoly(hd, 0.985, -0.08, Math.PI + 0.08, 22).concat([[-hd.rx * 0.99, ey - 0.13], [tq, ey - 0.2], [hd.rx * 0.99, ey - 0.13]] as Pt[]), C, 0.096, 0.006);
-    else if (pt.k === 'full' || pt.k === 'skull') {
-      put(headPoly(hd, 0.985), pt.k === 'skull' ? PAL.white : C, 0.096, 0.006);
-      if (pt.k === 'skull') {
+  // face paint, under the eyes, brows and mouth: the first design, then each layer painted over it
+  const paintOne = (pk: string, C: string, z0: number) => {
+    if (pk === 'stripes') for (const sd of [-1, 1]) put(strip([sd * 0.16 + tq - 0.1, ey - 0.08], [sd * 0.16 + tq + 0.08, ey - 0.3], 0.07, 0.03), C, z0, 0.004);
+    else if (pk === 'half') put(headPoly(hd, 0.985, -0.08, Math.PI + 0.08, 22).concat([[-hd.rx * 0.99, ey - 0.13], [tq, ey - 0.2], [hd.rx * 0.99, ey - 0.13]] as Pt[]), C, z0, 0.006);
+    else if (pk === 'full' || pk === 'skull') {
+      put(headPoly(hd, 0.985), pk === 'skull' ? PAL.white : C, z0, 0.006);
+      if (pk === 'skull') {
         for (const sd of [-1, 1]) { put(ell(sd * 0.16 + tq, ey, 0.12, 0.1, 14), PAL.black, 0.125, 0.006); put(ell(sd * 0.16 + tq + 0.02, ey, 0.025, 0.025, 8), PAL.white, 0.126, 0.002); }
         put([[tq - 0.06, ey - 0.14], [tq + 0.06, ey - 0.14], [tq, ey - 0.26]], PAL.black, 0.135, 0.004);
       }
-    } else if (pt.k === 'war') {
-      put(strip([-hd.rx * 0.8, hd.cy + hd.ryt * 0.45], [hd.rx * 0.85, hd.cy + hd.ryt * 0.5], 0.06, 0.06), C, 0.096, 0.004);
-      for (const sd of [-1, 1]) for (const k2 of [0, 0.07]) put(strip([sd * 0.16 + tq - 0.06 + k2, ey - 0.08], [sd * 0.16 + tq - 0.1 + k2, ey - 0.36], 0.035, 0.025), C, 0.096, 0.003);
-    }
-  }
+    } else if (pk === 'war') {
+      put(strip([-hd.rx * 0.8, hd.cy + hd.ryt * 0.45], [hd.rx * 0.85, hd.cy + hd.ryt * 0.5], 0.06, 0.06), C, z0, 0.004);
+      for (const sd of [-1, 1]) for (const k2 of [0, 0.07]) put(strip([sd * 0.16 + tq - 0.06 + k2, ey - 0.08], [sd * 0.16 + tq - 0.1 + k2, ey - 0.36], 0.035, 0.025), C, z0, 0.003);
+    } else if (pk === 'eyes') for (const sd of [-1, 1]) put(ell(sd * 0.16 * eG + tq, ey + 0.01, 0.15, 0.12, 16), C, z0, 0.006);   // a patch round each eye
+    else if (pk === 'tear') put([[tq + 0.15, ey - 0.12], [tq + 0.19, ey - 0.25], [tq + 0.15, ey - 0.31], [tq + 0.11, ey - 0.25]], C, z0, 0.003);   // one tear under the eye
+    else if (pk === 'grin') { const my = ey - r.noseL * 0.4 - 0.14; put(strip([tq - 0.34, my + 0.1], [tq, my - 0.06], 0.035, 0.03), C, z0, 0.003); put(strip([tq, my - 0.06], [tq + 0.34, my + 0.1], 0.03, 0.035), C, z0, 0.003); }   // a grin cut to the ears
+    else if (pk === 'cross') { put(strip([tq, hd.cy + hd.ryt * 0.7], [tq, hd.cy - hd.ryb * 0.75], 0.07, 0.07), C, z0, 0.004); put(strip([-hd.rx * 0.8, ey + 0.02], [hd.rx * 0.8, ey + 0.02], 0.06, 0.06), C, z0 + 0.0002, 0.004); }
+  };
+  if (pt) paintOne(pt.k, pt.c, 0.096);
+  if (r.paint2 && !fullMask && !r.mask) r.paint2.forEach((l, i) => paintOne(l.k, l.c, 0.0962 + i * 0.0006));
   if (r.freckles && !fullMask) for (const sd of [-1, 1]) for (const [dx, dy] of [[-0.05, -0.08], [0.02, -0.11], [0.07, -0.07], [-0.01, -0.15], [0.05, -0.17], [0.1, -0.13]] as [number, number][]) put(ell(sd * 0.16 * eG + tq + dx, ey + dy, 0.018, 0.018, 6), shade(sk, 0.58), 0.097, 0.001);
   // scars: a pale line with a darker edge, on whatever skin shows
   const scar = (a: Pt, b: Pt, dz: number) => { put(strip(a, b, 0.045, 0.036, 0.01), shade(sk, 0.62), dz, 0.004); put(strip(a, b, 0.024, 0.018, 0.01), shade(sk, 1.45), dz + 0.001, 0.003); };

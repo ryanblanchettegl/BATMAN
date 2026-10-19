@@ -71,7 +71,7 @@ export interface Look {
   entrance_fx?: { pyro?: string; lights?: string; music?: string };
   physical_attributes?: { /** Not in Ryan's first draft: the body the doll is cut as, M or F. */ sex?: 'M' | 'F'; height_inches?: number; weight_lbs?: number; body_archetype?: string; proportional_scalers?: { torso_width?: number; torso_height?: number; limb_length?: number; muscle_mass?: number } };
   /** Not in Ryan's first draft: the head under the gear (the face numbers the game already keeps), so a file carries the whole person. */
-  appearance?: { face?: Record<string, number>; /** Not in Ryan's first draft: face sliders, each -1 to 1 (0 is as the face shape cuts it). */ shape?: Record<string, number>; /** Not in Ryan's first draft: which eyes, nose, mouth and ears (FEATURES). */ features?: { eyes?: string; nose?: string; mouth?: string; ears?: string }; skin_tone?: number; hair_colour?: string; facial_hair?: string; face_paint?: string; paint_colour?: string; tattoos?: string[];
+  appearance?: { face?: Record<string, number>; /** Not in Ryan's first draft: face sliders, each -1 to 1 (0 is as the face shape cuts it). */ shape?: Record<string, number>; /** Not in Ryan's first draft: which eyes, nose, mouth and ears (FEATURES). */ features?: { eyes?: string; nose?: string; mouth?: string; ears?: string }; skin_tone?: number; hair_colour?: string; facial_hair?: string; face_paint?: string; paint_colour?: string; /** Not in Ryan's first draft: up to three more designs painted over the first, each in its own colour. */ paint_layers?: { k: string; c?: string }[]; tattoos?: string[];
     /** Not in Ryan's first draft: a second hair colour and how it goes in (HAIR_MIX), body hair (0 none, 1 the chest, 2 chest and belly), scars (SCARS), freckles, and the design on a mask (MASK_DESIGNS). */
     hair_colour2?: string; hair_mix?: string; body_hair?: number; scars?: string[]; freckles?: boolean; mask_design?: string };
   attires?: Partial<Record<AttireKey, Attire>>;
@@ -127,6 +127,8 @@ export const FACIAL: [string, string][] = [['', 'From the face'], ['none', 'Clea
   ['beard_full', 'Full beard'], ['beard_braided', 'Braided beard'], ['mustache', 'Moustache'], ['handlebar', 'Handlebar moustache'], ['horseshoe', 'Horseshoe moustache']];
 const FACIAL_N: Record<string, [number, number]> = { none: [0, 0], stubble: [1, 0], goatee: [7, 0], chin_strap: [10, 0], sideburns: [6, 0], beard_short: [4, 0], beard_full: [5, 0], beard_braided: [5, 0], mustache: [0, 2], handlebar: [0, 3], horseshoe: [0, 4] };
 export const PAINT: [string, string][] = [['', 'None'], ['stripes', 'Stripes under the eyes'], ['war', 'War paint'], ['half', 'The upper half'], ['full', 'The whole face'], ['skull', 'A skull']];
+/** Designs that can be painted over the first: the first list's designs, and some that only make sense on top. */
+export const PAINT_LAYERS: [string, string][] = [['eyes', 'Round the eyes'], ['tear', 'A tear'], ['grin', 'A painted grin'], ['cross', 'A cross'], ['stripes', 'Stripes under the eyes'], ['war', 'War paint'], ['half', 'The upper half']];
 /** Eyes, noses, mouths and ears to choose from (drawn in head() in kit/puppet.ts). */
 export const FEATURES: Record<'eyes' | 'nose' | 'mouth' | 'ears', [string, string][]> = {
   eyes: [['almond', 'Almond'], ['round', 'Round'], ['narrow', 'Narrow'], ['hooded', 'Hooded'], ['deep', 'Deep set'], ['lashes', 'With lashes']],
@@ -253,6 +255,7 @@ export function fromLook(lk: Look, base: Recipe): Recipe {
   if (ap.hair_colour) { const s = swatch(ap.hair_colour, { c: r.hairCol }); r.hairCol = s.c; r.browCol = s.c; }
   if (ap.facial_hair && FACIAL_N[ap.facial_hair]) { r.beard = FACIAL_N[ap.facial_hair][0]; r.mus = FACIAL_N[ap.facial_hair][1]; r.braid = ap.facial_hair === 'beard_braided'; }
   if (ap.face_paint) r.paint = { k: ap.face_paint, c: swatch(ap.paint_colour, { c: ap.face_paint === 'skull' ? PAL.white : PAL.red }).c };
+  if (ap.paint_layers && ap.paint_layers.length) r.paint2 = ap.paint_layers.slice(0, 3).map(l => ({ k: l.k, c: swatch(l.c, { c: PAL.black }).c }));
   if (ap.tattoos && ap.tattoos.length) r.tats = ap.tattoos.slice();
   if (ap.hair_mix && ap.hair_colour2) { r.hairMix = ap.hair_mix; r.hairCol2 = swatch(ap.hair_colour2, { c: PAL.yellow }).c; }
   if (ap.body_hair) r.bodyHair = ap.body_hair;

@@ -118,7 +118,7 @@ Two more lists sit beside this one, both finished:
 
 Create a Wrestler:
 - [x] More hair (styles and a second colour), body hair, scars, freckles, more masks and mask designs.
-- [ ] Face paint in layers.
+- [x] Face paint in layers: up to three designs painted over the first, each in its own colour (round the eyes, a tear, a painted grin, a cross, and the first list's designs).
 - [x] More gear: a satin ring jacket, a long coat, a baseball cap and a wool hat, bare feet taped at the ankle, a ring bodysuit and flared ring pants, a cape, a crown, a title belt round the waist or over the shoulder.
 - [ ] Lettering on the back of a jacket: it needs a picture from behind (a pose that turns away), which the paper doll does not have yet.
 - [x] A move set: every wrestler has one finisher and two signature moves (Ryan, 19 October), each signature early, in the middle or late in a match; up to three taunts, played now and then by whoever is on top. Wrestlers with no file get signatures by style.
