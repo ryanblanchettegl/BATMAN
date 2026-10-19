@@ -131,12 +131,12 @@ Create a Scene (with 0z):
 - [x] More sets: a steel cage, a parking lot, a talk show, a news desk (each a setup on the New tab).
 - [ ] Still to come: a packed stadium, the rafters.
 - [x] Effects: spotlights, coloured light, strobes, lights down, sparks, pyro fountains, a flash, columns of fire, camera flashes in the crowd, motion lines, a spray of water.
-- [ ] Smoke.
+- [x] Smoke rolling along the floor.
 - [x] Props: ladders, a bat, ring steps, a bin, a broken table.
 - [ ] A truck; props that can be thrown.
 - [ ] Frames: tall and square pictures for posters, magazine covers and portraits, with captions and mastheads.
 - [ ] Animation: more keyframes with a choice of easing, a timeline, sound cues, and moves that can be used again.
-- [ ] More hooks (the authority figure, the interviewer, the referee as a person) and canned scenes for them.
+- [x] More hooks (the authority figure: the boss of the hostile authority arc, else the owner or booker on the roster; the interviewer: an announcer; the referee as a person, dressed in stripes) and two stills for them (an interview backstage, called out by the boss).
 - [x] Presentation filters a scene can pick (Ryan, 19 October): scan lines, an old TV tube and black and white, all off by default (Look, on The scene tab; `sc.fx`); for artistic promos and old-school companies.
 - [ ] A background creator: make a backdrop for a scene (walls, banners, a skyline, a show's set) and keep it in the world like a scene.
 

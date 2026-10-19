@@ -88,6 +88,8 @@ export function commentator(i: number): Recipe {
     browCol: rgb(hairOf([30, 64, 48, 8][i % 4]).map(v => v * 0.8)), mus: i === 1 ? 2 : 0, beard: 0, w: 0.98, h: 0.98, belly: i === 1 ? 0.08 : 0.02,
     shirt: J, pants: J, stripes: false, suit: { jacket: J, tie: T, square: i === 0 ? PAL.white : T }, headset: true };
 }
+/** Dress a person cast as the referee in the striped shirt and black trousers, their own face and hair kept. */
+export function refDress(r: Recipe): Recipe { return { ...r, kit: undefined, kits: undefined, shirt: REF.shirt, pants: REF.pants, stripes: true, gear: REF.gear, gear2: REF.gear2, straps: false, tape: false, suit: undefined, mask: undefined }; }
 /** Dress whoever plays a slot for the desk: a suit (theirs, if they have one) and a headset. */
 export function dress(r: Recipe, i: number): Recipe { if (r.kits && r.kits.street_clothes.top === 'suit_jacket') { const s = r.kits.street_clothes; return { ...r, kit: s, suit: { jacket: s.col.top.c, tie: s.pal.t.c, square: s.pal.h.c }, headset: true }; } if (r.suit && !r.kit) return { ...r, headset: true }; const c = commentator(i); return { ...r, kit: undefined, shirt: c.shirt, pants: c.pants, stripes: false, suit: c.suit, headset: true, straps: false, tape: false, mask: r.mask }; }
 export function blank(i: number): Recipe {
@@ -573,7 +575,7 @@ export interface PropDraw { k: string; x: number; y: number; r: number; z: numbe
 const PR = (pts: Pt[], cx: number, cy: number, a: number, s: number): Pt[] => pts.map(([x, y]) => { const d = rot([x * s, y * s], a); return [cx + d[0], cy + d[1]] as Pt; });
 export const PROPS: [string, string][] = [['belt', 'Title belt'], ['chair', 'Chair'], ['table', 'Table'], ['mic', 'Microphone'], ['burst', 'Burst'], ['sign', 'Sign'], ['headline', 'Headline'], ['confetti', 'Confetti'],
   ['spot', 'Spotlight'], ['beams', 'Coloured lights'], ['strobe', 'Strobes'], ['dim', 'Lights down'], ['sparks', 'Sparks'], ['fountain', 'Pyro fountain'], ['flash', 'A flash'], ['fire', 'A column of fire'],
-  ['ladder', 'Ladder'], ['bat', 'Baseball bat'], ['steps', 'Ring steps'], ['bin', 'Rubbish bin'], ['table_broken', 'Broken table'], ['cameras', 'Camera flashes'], ['motion', 'Motion lines'], ['spray', 'A spray of water']];
+  ['ladder', 'Ladder'], ['bat', 'Baseball bat'], ['steps', 'Ring steps'], ['bin', 'Rubbish bin'], ['table_broken', 'Broken table'], ['cameras', 'Camera flashes'], ['motion', 'Motion lines'], ['spray', 'A spray of water'], ['smoke', 'Smoke']];
 /** Cut a prop. `t` (seconds) moves the things that move by themselves (confetti). */
 export function prop(p: PropDraw, out: Piece[], t = 0) {
   const a = p.r * Math.PI / 180, s = p.s || 1, z = p.z, own = p.id, seed = hash(p.id + p.k);
@@ -622,6 +624,9 @@ export function prop(p: PropDraw, out: Piece[], t = 0) {
   } else if (p.k === 'fire') {   // a column of fire: red, orange and yellow tongues of card, licking up
     const fl = (w0: number, h0: number, col: string, dz: number) => { const pts: Pt[] = [[-w0, 0]]; for (let i = 0; i <= 6; i++) pts.push([-w0 + 2 * w0 * i / 6, h0 * (0.75 + 0.25 * Math.sin(t * 9 + i * 1.7 + seed % 7)) * (i % 2 ? 0.8 : 1)]); pts.push([w0, 0]); add(pts, col, dz, 0.03, 0.02); };
     fl(0.6, 3.6, PAL.red, 0); fl(0.45, 2.8, PAL.orange, 0.01); fl(0.28, 1.9, PAL.yellow, 0.02);
+  } else if (p.k === 'smoke') {   // smoke rolling along the floor: pale puffs of tissue that drift and swell
+    for (let i = 0; i < 14; i++) { const h1 = Math.abs((seed >> (i % 9)) + i * 7919) % 1000 / 1000, dr = ((t * 0.35 + h1) % 1), x = (i - 6.5) * 0.8 + dr * 0.9 * (i % 2 ? 1 : -1), r0 = 0.65 + h1 * 0.4 + dr * 0.25;
+      add(ell(x, -0.3 + (i % 3) * 0.22 + dr * 0.3, r0 * 1.5, r0 * 0.6, 14), i % 3 ? '#d9dbe2' : '#eef0f4', 0.005 * i, 0.01, 0.02); }
   } else if (p.k === 'ladder') {   // a steel ladder: two rails and the rungs between
     for (const sx of [-0.45, 0.45]) add([[sx - 0.07, -1.6], [sx + 0.07, -1.6], [sx + 0.07, 1.6], [sx - 0.07, 1.6]], PAL.steel, 0);
     for (let i = 0; i < 6; i++) { const y = -1.35 + i * 0.54; add([[-0.42, y - 0.04], [0.42, y - 0.04], [0.42, y + 0.04], [-0.42, y + 0.04]], shade(PAL.steel, 0.82), -0.01); }

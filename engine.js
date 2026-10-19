@@ -8697,7 +8697,7 @@ E.sceneOk=sceneOk;
    A slot in a scene can name a part in the story instead of a fixed person: the hero, the villain, the villain's
    group, the champion, the manager. E.sceneHooks fills every part it can from a moment of the show and what the
    game knows (stables, tag teams, managers, titles, the face of the company). It only reads the game. */
-var HOOKS=['a','b','hero','villain','heel1','heel2','heel3','ally','manager','champ','challenger','winner','loser','talker','attacker','victim','face'];
+var HOOKS=['a','b','hero','villain','heel1','heel2','heel3','ally','manager','champ','challenger','winner','loser','talker','attacker','victim','face','authority','interviewer','referee'];
 /** o: {ids: everybody in the moment, in the order they appear; a: who does it (the attacker, the winner, the one
     talking); b: who it is done to; win: the winners' ids; title: the title's name, if one is on the line}. Returns
     {hook: wrestler id} for every part that could be filled. */
@@ -8730,6 +8730,12 @@ E.sceneHooks=function(S,o){
   var win=(o.win||[]).filter(function(id){return !!W(id);});
   if(win.length){put('winner',win[0]);put('loser',all.filter(function(id){return win.indexOf(id)<0;})[0]);}
   var f=faceOf(S);if(f)put('face',f.id);
+  // people who are not wrestlers: whoever has power on screen, whoever holds the microphone, the referee
+  var pid=P?P.id:S.player,staff=function(r){return rosterOf(S,pid).filter(function(w){return w.roles&&w.roles.indexOf(r)>=0&&all.indexOf(w.id)<0;}).sort(function(x,y){return (y.mic||0)-(x.mic||0);})[0];};
+  var A=S.arc;if(A&&!A.done&&A.k==='authority'&&A.cast&&W(A.cast.lead))put('authority',A.cast.lead);
+  var ow=staff('owner')||staff('booker');if(ow)put('authority',ow.id);
+  var iv=staff('interviewer')||staff('announcer');if(iv)put('interviewer',iv.id);
+  var rf=staff('referee');if(rf)put('referee',rf.id);
   return out;
 };
 E.SCENE_HOOKS=HOOKS;

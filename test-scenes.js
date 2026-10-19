@@ -38,6 +38,13 @@ if (tm) { h = E.sceneHooks(S, { ids: [tm.m[0], vil.id] }); ok(h.ally === tm.m[1]
 // nobody in the moment: nothing is filled, and nothing breaks
 h = E.sceneHooks(S, { ids: [] }); ok(h.hero == null && h.villain == null, 'an empty moment fills no parts');
 ok(Array.isArray(E.SCENE_HOOKS) && E.SCENE_HOOKS.includes('heel1'), 'the list of hooks');
+// people who are not wrestlers: the announcer holds the microphone, the owner on screen is the authority, the referee is a person
+{ const S2 = JSON.parse(JSON.stringify(S)), r = S2.w.filter(w => w && w.promo === 'pdw' && w.id !== hero.id && w.id !== vil.id).slice(-3);
+  r[0].roles = ['announcer']; r[0].nw = true; r[1].roles = ['owner']; r[1].nw = true; r[2].roles = ['referee']; r[2].nw = true;
+  const h2 = E.sceneHooks(S2, { ids: [hero.id, vil.id], a: hero.id, b: vil.id });
+  ok(h2.interviewer === r[0].id, 'an announcer is the interviewer'); ok(h2.authority === r[1].id, 'the owner is the authority figure'); ok(h2.referee === r[2].id, 'a referee on the roster is the referee');
+  const h3 = E.sceneHooks(S2, { ids: [r[0].id, hero.id] }); ok(h3.interviewer !== r[0].id, 'somebody in the moment is not also the interviewer');
+  ok(['authority', 'interviewer', 'referee'].every(k => E.SCENE_HOOKS.includes(k)), 'the new hooks are listed'); }
 // Create a Player: Ryan's example file, word for word
 const RIP = { id: 'wrestler_uuid_98765', name: 'Rip Jackson', moniker: 'The Enforcer', hometown: 'Minneapolis, MN', archetype: 'Heavyweight',
   physical_attributes: { height_inches: 76, weight_lbs: 275, body_archetype: 'Heavyweight_Powerhouse', proportional_scalers: { torso_width: 1.15, torso_height: 1.05, limb_length: 1.10, muscle_mass: 1.20 } },

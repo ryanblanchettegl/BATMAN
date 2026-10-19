@@ -6,7 +6,7 @@
    (`SCENES` below is what it saved), so a player can open them, change them and share them. Nothing here touches
    the game state. */
 import { Piece, PAL, ell, rect, star, strip, drawScene, View, snip, shade } from './paper';
-import { Recipe, puppet, prop, Rig, blank, REF, Marks, commentator, dress } from './puppet';
+import { Recipe, puppet, prop, Rig, blank, REF, Marks, commentator, dress, refDress } from './puppet';
 import { AttireKey, ATTIRE_OF, wear } from './caw';
 
 /** A person at a keyframe: where the waist is, the turn, which way they face, how far forward, the pose, the face,
@@ -35,7 +35,8 @@ export interface Slot { id: string; n: string; role: 'a' | 'b' | 'ref' | 'c'; dr
     nobody in the moment can play is left out of the picture. */
 export const HOOKS: [string, string][] = [['', 'By the match (A or B)'], ['hero', 'The hero'], ['villain', 'The villain'], ['heel1', 'Heel group member 1'], ['heel2', 'Heel group member 2'], ['heel3', 'Heel group member 3'],
   ['ally', "The hero's partner"], ['manager', 'The manager'], ['champ', 'The champion'], ['challenger', 'The challenger'], ['winner', 'The winner'], ['loser', 'The loser'], ['talker', 'On the microphone'],
-  ['attacker', 'The attacker'], ['victim', 'Who gets attacked'], ['face', 'The face of the company']];
+  ['attacker', 'The attacker'], ['victim', 'Who gets attacked'], ['face', 'The face of the company'],
+  ['authority', 'The authority figure'], ['interviewer', 'The interviewer'], ['referee', 'The referee (a person)']];
 /** `frame` is the shape of the picture: wide (16 by 9, the broadcast) for now; tall for posters and covers and square
     for portraits are next. */
 export interface Scene { v: 1; id: string; name: string; when: string; set: string; slots: Slot[]; keys: Key[]; by?: string; frame?: 'wide' | 'tall' | 'square'; loop?: boolean;
@@ -324,7 +325,7 @@ export function build(sc: Scene, k: Key, cast: Record<string, Recipe>, time = 0)
     }
     const di = sc.slots.filter(x => x.dress === 'suit').indexOf(sl), c = cast[sl.id];
     const c0 = c && c.kits ? wear(c, sc.attire || ATTIRE_OF[sc.set] || 'primary_ring') : c;   // a Create a Player wrestler dresses for the set
-    const r = c0 ? (sl.dress === 'suit' ? dress(c0, di) : c0) : sl.role === 'ref' ? REF : sl.dress === 'suit' ? commentator(di) : blank(i);
+    const r = c0 ? (sl.dress === 'suit' ? dress(c0, di) : sl.role === 'ref' ? refDress(c0) : c0) : sl.role === 'ref' ? REF : sl.dress === 'suit' ? commentator(di) : blank(i);
     rigs[sl.id] = puppet(r, { x: f.x, y: f.y, r: f.r, f: f.f, z: f.z, s: f.s, lz: f.lz }, f.p, f.e || '', sl.id, pieces, f.m || {});
     // a soft shadow on the floor where they stand or lie
     const rg = rigs[sl.id], lying = Math.abs(Math.sin(f.r * Math.PI / 180)) > 0.6, sz = f.s || 1;
@@ -550,6 +551,14 @@ export const STILLS: Scene[] = [
   still('st_press', 'In front of the press', 'press', 'backstage', S1, {
     A: STD(-0.4, 1, { sh_n: 150, el_n: 120, sh_f: -40, el_f: -70, head: 4 }, 'talk', 0.5) },
     [{ id: 'mic', k: 'mic', x: 0.1, y: 0.1, r: -30, z: 1.2, at: 'A:hand_n' }], { x: 0, y: 0.6, z: 1.25 }),
+  still('st_interview', 'An interview backstage', 'press', 'hall', [{ id: 'A', n: 'Who it is about', role: 'a' }, { id: 'I', n: 'The interviewer', role: 'c', dress: 'suit', hook: 'interviewer' }], {
+    A: STD(-1.5, 1, { sh_n: 35, el_n: 100, sh_f: -12, el_f: 10, head: 4 }, 'shout', 0.4),
+    I: STD(1.9, -1, { sh_n: 100, el_n: 30, sh_f: 8, el_f: 15, head: -4 }, '', 0.6) },
+    [{ id: 'mic', k: 'mic', x: 0.05, y: 0.15, r: 70, z: 1.4, at: 'I:hand_n' }], { x: 0.2, y: 0.6, z: 1.3 }),
+  still('st_boss', 'Called out by the boss', 'any', 'ring', [{ id: 'A', n: 'Who it is about', role: 'a' }, { id: 'B', n: 'The authority figure', role: 'b', dress: 'suit', hook: 'authority' }], {
+    A: STD(-1.4, 1, { ...CROSS, head: 4 }, 'snarl', 0.5),
+    B: STD(1.4, -1, { sh_n: 150, el_n: 120, sh_f: 95, el_f: 5, head: -2 }, 'shout', 0.5) },
+    [{ id: 'mic', k: 'mic', x: 0.1, y: 0.1, r: -30, z: 1.2, at: 'B:hand_n' }], { x: 0, y: 0.4, z: 1.4 }),
   still('st_phone', 'The office phone', 'phone', 'office', [], {}, [cap('THE OFFICE')]),
 ];
 

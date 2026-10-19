@@ -12,8 +12,10 @@ import { recipeOf, Recipe } from '../kit/puppet';
     with none gets A or B by its role. A slot nobody can fill is left out of the picture. */
 export function fillScene(sc: Scene, hk: Record<string, number>, cast: Record<string, Recipe>): Scene | null {
   const S = G.S, keep = sc.slots.filter(sl => {
-    if (cast[sl.id] || sl.role === 'ref' || sl.dress === 'suit') return true;
-    const id = hk[sl.hook || sl.role]; if (id == null || !S.w[id]) return false;
+    if (cast[sl.id]) return true;
+    const id = hk[sl.hook || sl.role], there = id != null && !!S.w[id];
+    if (sl.role === 'ref' || sl.dress === 'suit') { if (sl.hook && there) cast[sl.id] = recipeOf(S.w[id]); return true; }   // nobody to play them: the stock referee or commentator
+    if (!there) return false;
     cast[sl.id] = recipeOf(S.w[id]); return true;
   });
   if (keep.filter(sl => sl.role !== 'ref').length < Math.min(2, sc.slots.filter(sl => sl.role !== 'ref').length)) return null;
@@ -50,7 +52,7 @@ export function momentPick(k: string, a: number | null, b: number | null, salt: 
   if (pa != null) { hk.a = pa; if (pb != null) hk.b = pb; else delete hk.b; }
   const list = scenesFor(when, world).filter(s => s.still);
   // two people named: a still for two first; one: a still for one
-  const two = (s: Scene) => s.slots.filter(sl => sl.role !== 'ref').length >= 2;
+  const two = (s: Scene) => s.slots.filter(sl => sl.role === 'a' || sl.role === 'b').length >= 2;   // an interviewer or a referee is not the second person
   const fit = list.filter(s => pb != null ? two(s) : !two(s));
   const pool = fit.length ? fit : list;
   for (let i = 0; i < pool.length; i++) {
