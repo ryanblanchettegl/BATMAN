@@ -116,6 +116,7 @@ export function Editor() {
     const R = fromWorld(pkg), fr = st.sceneFor, castA = fr ? R.find(w => w.name === fr.cast) : undefined;
     // a custom entrance made from Create a Player: saving it picks it for them, and Done goes back to them
     return <SceneStudio key={st.scene} world={pkg.manifest.name || 'this world'} roster={R} saved={mine} start={start} blank={st.scene === '__new'} castA={castA ? castA.id : undefined}
+      backdrops={E.edBackdrops(pkg)} onSaveBg={b => { let okd = false; edit(() => { okd = E.edSetBackdrop(world(), b); }); return okd; }}
       onSave={sc => { const ok = keepScene(sc); if (ok && fr && sc.when === 'entrance') edit(() => { const lk = E.edLook(world(), fr.who); if (lk) { lk.entrance = sc.id; E.edSetLook(world(), fr.who, lk); } }); return ok; }}
       onForget={forgetScene} onDone={() => look(() => { st.scene = null; st.sceneStart = null; if (fr) { st.player = fr.who; st.sceneFor = null; } })} />;
   }

@@ -108,6 +108,20 @@ async function studio(mode) {
     if (process.env.SHOTS) await shot(page, 'scene-' + mode + '-layers');
     ok(mode, 'the studio fits with the layers open', !(await fits(page)), await fits(page));
     await page.click('[data-t="scene-lhide"][data-v="' + order1[0] + '"]'); await page.click('[data-t="scene-llock"][data-v="' + order1[1] + '"]');
+    // the Backdrop tab: a wall of your own behind the scene
+    await page.click('[data-t="scene-tab"][data-v="bg"]'); await page.click('[data-t="scene-bgnew"]'); await page.waitForTimeout(150);
+    await page.selectOption('[data-t="scene-bgwall"]', '#5c2430');
+    await page.fill('[data-t="scene-bgwords"]', 'FIGHT NIGHT'); await page.click('[data-t="scene-bgadd"]');
+    await page.selectOption('[data-t="scene-bgkind"]', 'skyline'); await page.click('[data-t="scene-bgadd"]');
+    await page.click('[data-t="scene-bgpart"][data-v="0"]'); await page.click('[data-t="scene-bgmove"][data-v="u"]'); await page.waitForTimeout(250);
+    ok(mode, 'a backdrop takes a banner and a skyline', (await page.$$('[data-t="scene-bgpart"]')).length === 2);
+    if (process.env.SHOTS) await shot(page, 'scene-' + mode + '-backdrop');
+    ok(mode, 'the studio fits with the Backdrop tab', !(await fits(page)), await fits(page));
+    await page.click('[data-t="scene-bgsave"]'); await page.waitForTimeout(100);
+    ok(mode, 'Keep the backdrop keeps it in the world', /kept in/.test(await page.$eval('[data-t="scene-msg"]', e => e.textContent)));
+    await page.click('[data-t="scene-tab"][data-v="file"]');
+    ok(mode, 'the set list offers the backdrop', (await page.$$eval('[data-t="scene-set"] option', o => o.filter(x => x.value.indexOf('bg_') === 0).length)) >= 1);
+    await page.selectOption('[data-t="scene-set"]', 'plain');
     // easing: how a keyframe is reached
     await page.click('[data-t="scene-key"][data-v="1"]'); await page.waitForTimeout(100);
     await page.selectOption('[data-t="scene-ease"]', 'cut'); await page.waitForTimeout(100);

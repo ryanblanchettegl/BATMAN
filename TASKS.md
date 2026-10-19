@@ -141,7 +141,7 @@ Create a Scene (with 0z):
 - [ ] Still to come in animation: a timeline view, sound cues, and moves that can be used again.
 - [x] More hooks (the authority figure: the boss of the hostile authority arc, else the owner or booker on the roster; the interviewer: an announcer; the referee as a person, dressed in stripes) and two stills for them (an interview backstage, called out by the boss).
 - [x] Presentation filters a scene can pick (Ryan, 19 October): scan lines, an old TV tube and black and white, all off by default (Look, on The scene tab; `sc.fx`); for artistic promos and old-school companies.
-- [ ] A background creator: make a backdrop for a scene (walls, banners, a skyline, a show's set) and keep it in the world like a scene.
+- [x] A background creator: the Backdrop tab in Create a Scene makes a wall of your own (wall and floor colours, banners, signs, a big screen, posters, windows, a door, curtains, a skyline, a stripe, a row of lights, plants) and keeps it in the world like a scene (`pkg.backdrops`, `E.edSetBackdrop`, `kit/backdrop.ts`); any scene can stand in front of it.
 
 New creators, each a small file cut by code, played in the game and shared:
 - [ ] Create a Belt: plates, straps, gems, lettering and the company's logo in card and foil, worn by champions in every scene, portrait and title page.

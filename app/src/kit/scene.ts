@@ -5,6 +5,7 @@
    figure from one keyframe to the next. The game's own scenes are made in Create a Scene like anybody else's
    (`SCENES` below is what it saved), so a player can open them, change them and share them. Nothing here touches
    the game state. */
+import { bgPieces, isBg, backdropOf, setKey } from './backdrop';
 import { Piece, PAL, ell, rect, star, strip, drawScene, View, snip, shade } from './paper';
 import { Recipe, puppet, prop, Rig, blank, REF, Marks, commentator, dress, refDress } from './puppet';
 import { AttireKey, ATTIRE_OF, wear } from './caw';
@@ -104,6 +105,7 @@ function crowd(add: Add, rows: number, yTop: number, dy: number, sz0: number, ds
   }
 }
 function setPieces(set: string): Piece[] {
+  if (isBg(set)) return bgPieces(backdropOf(set.slice(3)));   // a backdrop made in the Backdrop tab
   const o: Piece[] = []; let n = 0; const add = (pts: [number, number][], col: string, z: number, lift = 0.04, rough = 0.012) => o.push({ pts: snip(pts, 9000 + (n++) * 131, rough, 0.1), col, z, lift, layer: 'back' });
   if (set === 'ring' || set === 'cage') {
     // The ring as the hard camera sees it: the mat a floor that widens toward us, the far ropes and posts behind the
@@ -368,7 +370,7 @@ export function tilt(ctx: CanvasRenderingContext2D, cam?: Cam) {
 export function paint(ctx: CanvasRenderingContext2D, sc: Scene, time: number, cast: Record<string, Recipe>) {
   const c = ctx.canvas, k = at(sc, time), v = viewFor(c.width, c.height, k.cam, cropOf(sc));
   ctx.fillStyle = PAL.navy; ctx.fillRect(0, 0, c.width, c.height);
-  const b = build(sc, k, cast, time); tilt(ctx, k.cam); drawScene(ctx, b.pieces, v, sc.set); ctx.restore(); return { ...b, v };
+  const b = build(sc, k, cast, time); tilt(ctx, k.cam); drawScene(ctx, b.pieces, v, setKey(sc.set)); ctx.restore(); return { ...b, v };
 }
 
 /* ---------- poses to start from ---------- */

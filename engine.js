@@ -185,7 +185,7 @@ E.newGame=function(playerId,seed,opts){
     stats:{shows:0,matches:0,run:0,feudsDone:0,bestMatch:0,bestShow:0},said:[],h2h:{},trust:60,ledger:[],sponsors:[],spOffers:[],slotAsk:-99,hype:0,rateMod:0,reports:[],queue:[],qi:0,card:[],over:null,nid:1,recent:{},fin:null};
   var cur={promo:'FA',brand:null},byName={};
   CAL0={y:DB.startYear,m:DB.startMonth};
-  S.db={startYear:DB.startYear,startMonth:DB.startMonth,events:DB.events,rules:DB.rules||null,indie:DB.indie,sponsors:DB.sponsors||null,columnists:DB.columnists||null,scenes:DB.scenes||null,uni:DB.uni||null,fictional:!!DB.fictional};
+  S.db={startYear:DB.startYear,startMonth:DB.startMonth,events:DB.events,rules:DB.rules||null,indie:DB.indie,sponsors:DB.sponsors||null,columnists:DB.columnists||null,scenes:DB.scenes||null,backdrops:DB.backdrops||null,uni:DB.uni||null,fictional:!!DB.fictional};
   var preset=[];
   if(DB.rows)DB.rows.forEach(function(d){var w=addWrestler(S,d,d.promo||'FA',d.brand||null);byName[w.name]=w.id;byName['#'+d.uid]=w.id;if(d.wage||d.con||d.tw!=null)preset.push([w,d]);});
   else DB.roster.split('\n').forEach(function(line){
@@ -7617,7 +7617,7 @@ function buildDB(pkg){
   var ev=[];for(var m=0;m<12;m++)ev.push(MONTHS[m]+' Showcase');(pkg.events||[]).forEach(function(e){if(e.month>=1&&e.month<=12)ev[e.month-1]=e.name;});
   var nm=pkg.names||{};
   return {fictional:!!man.fictional,uni:{id:man.id,name:man.name,version:String(man.version||'1'),author:man.author||'',desc:man.description||''},startYear:man.start_year||2026,startMonth:clamp((man.start_month||10)-1,0,11),
-    events:ev,rules:(pkg.events||[]).reduce(function(o,e){if(e.rule)o[e.month-1]=e.rule;return o;},{}),sponsors:pkg.sponsors&&pkg.sponsors.length?pkg.sponsors:null,columnists:pkg.columnists&&pkg.columnists.length?pkg.columnists:null,scenes:Array.isArray(pkg.scenes)&&pkg.scenes.length?pkg.scenes:null,
+    events:ev,rules:(pkg.events||[]).reduce(function(o,e){if(e.rule)o[e.month-1]=e.rule;return o;},{}),sponsors:pkg.sponsors&&pkg.sponsors.length?pkg.sponsors:null,columnists:pkg.columnists&&pkg.columnists.length?pkg.columnists:null,scenes:Array.isArray(pkg.scenes)&&pkg.scenes.length?pkg.scenes:null,backdrops:Array.isArray(pkg.backdrops)&&pkg.backdrops.length?pkg.backdrops:null,
     indie:{firstM:nm.first_m&&nm.first_m.length>=8?nm.first_m:FALLBACK_NAMES.firstM,firstF:nm.first_f&&nm.first_f.length>=6?nm.first_f:FALLBACK_NAMES.firstF,last:nm.last&&nm.last.length>=8?nm.last:FALLBACK_NAMES.last},
     freeAgents:man.free_agents!=null?clamp(man.free_agents,0,120):36,promotions:promos,rows:rows,stables:stables,rels:(pkg.relationships||[]).filter(function(r){return W[r.a]&&W[r.b];})};
 }
@@ -7648,7 +7648,7 @@ E.exportUniverse=function(S,meta){
   S.w.forEach(function(w){if(w.rt)return;var u=w.uid&&ID_RE.test(w.uid)&&!used[w.uid]?w.uid:slug(w.name)||'worker';if(u.length<2)u='w_'+u;var b=u,n=2;while(used[u])u=(b.slice(0,36)+'_'+(n++));used[u]=1;uid[w.id]=u;});
   var c0=cal(S.week),pkg={manifest:{id:slug(meta.id||meta.name||'my_universe')||'my_universe',name:meta.name||'My universe',author:meta.author||(S.booker?S.booker.name:''),version:meta.version||'1.0',schema_version:SCHEMA_VERSION,fictional:!!d.fictional,start_year:c0.year,start_month:c0.month+1,free_agents:0,description:meta.description||'Exported from Elite Wrestling Federation 9000, '+c0.label+'.'},
     promotions:[],shows:[],titles:[],workers:[],contracts:[],teams:[],relationships:[],events:d.events.map(function(n,i){var o={month:i+1,name:n};if(d.rules&&d.rules[i])o.rule=d.rules[i];return o;}),names:{first_m:d.indie.firstM,first_f:d.indie.firstF,last:d.indie.last}};
-  if(d.sponsors)pkg.sponsors=d.sponsors;if(d.columnists)pkg.columnists=d.columnists;if(d.scenes)pkg.scenes=d.scenes;
+  if(d.sponsors)pkg.sponsors=d.sponsors;if(d.columnists)pkg.columnists=d.columnists;if(d.scenes)pkg.scenes=d.scenes;if(d.backdrops)pkg.backdrops=d.backdrops;
   S.order.forEach(function(id){
     var P=P0[id],own=id===S.player?{name:S.owner.name,style:S.owner.style,roots:S.owner.roots,pledge:S.owner.pledge}:(P.owner||{name:'The owner',style:P.style||'stars',roots:'tradition',pledge:'pay'});
     var o={id:pid(id),name:P.name,blurb:P.blurb||'',owner:own,staff:{road_agent:P.staff.agent,head_writer:P.staff.writer},announcers:P.ann.slice(),cities:P.cities.slice(),cash:Math.round(P.cash),popularity:r1(P.image),work_rate_weight:P.wq,angles_per_show:P.angles,wage_scale:P.wageMult,tv_rate:P.tvRate,production_cost:P.prod,target_weekly_net:P.net,flagship_month:P.flagship+1,production_level:P.prodLvl,risk_level:P.risk,tv_slot:P.slot};
@@ -8693,6 +8693,20 @@ E.edRemoveScene=function(pkg,id){if(pkg&&Array.isArray(pkg.scenes))pkg.scenes=pk
 /** The scenes the world of this game carries (none for a world without any, or an old save). */
 E.worldScenes=function(S){var d=(S&&S.db)||DB;return d&&Array.isArray(d.scenes)?d.scenes.filter(sceneOk):[];};
 E.sceneOk=sceneOk;
+
+/* ---------- backdrops: the walls behind a scene, made in Create a Scene's Backdrop tab ----------
+   A backdrop is plain data: a wall and a floor colour and up to 40 parts (banners, windows, a skyline, curtains).
+   A scene stands in front of one when its set is "bg_" and the backdrop's id. Kept in the world like scenes. */
+function bgOk(b){return !!b&&b.v===1&&typeof b.id==='string'&&/^[a-z0-9_-]{1,48}$/i.test(b.id)&&typeof b.name==='string'&&b.name.length<=40&&Array.isArray(b.parts)&&b.parts.length<=40&&
+  b.parts.every(function(q){return q&&typeof q.k==='string'&&/^[a-z_]{1,16}$/.test(q.k)&&[q.x,q.y,q.w,q.h].every(function(n){return typeof n==='number'&&isFinite(n)&&Math.abs(n)<=40;})&&(q.txt==null||(typeof q.txt==='string'&&q.txt.length<=24));});}
+/** The backdrops a world carries. */
+E.edBackdrops=function(pkg){return (pkg&&Array.isArray(pkg.backdrops)?pkg.backdrops:[]).filter(bgOk);};
+/** Keep a backdrop in the world, in place of one with the same id. Returns false for anything that is not a backdrop. */
+E.edSetBackdrop=function(pkg,b){if(!pkg||!bgOk(b))return false;var a=Array.isArray(pkg.backdrops)?pkg.backdrops.filter(function(x){return x&&x.id!==b.id;}):[];a.push(JSON.parse(JSON.stringify(b)));pkg.backdrops=a;return true;};
+E.edRemoveBackdrop=function(pkg,id){if(pkg&&Array.isArray(pkg.backdrops))pkg.backdrops=pkg.backdrops.filter(function(x){return x&&x.id!==id;});if(pkg&&pkg.backdrops&&!pkg.backdrops.length)delete pkg.backdrops;};
+/** The backdrops the world of this game carries. */
+E.worldBackdrops=function(S){var d=(S&&S.db)||DB;return d&&Array.isArray(d.backdrops)?d.backdrops.filter(bgOk):[];};
+E.backdropOk=bgOk;
 
 /* ---------- hooks: who a scene is about (docs/plans/papercraft-engine.md, "Hooks") ----------
    A slot in a scene can name a part in the story instead of a fixed person: the hero, the villain, the villain's

@@ -1,5 +1,6 @@
 /* One store: the game state (owned by the engine), the view state (owned by the interface), preferences and saving. */
 import { E, GameState } from './engine';
+import { useBackdropSource } from './kit/backdrop';
 
 export const KEY = 'ewf9000-save-4', UKEY = 'ewf9000-universes', PKEY = 'gorilla-position-prefs';
 export const VER = '0.73';
@@ -19,6 +20,8 @@ export function savePrefs() { try { localStorage.setItem(PKEY, JSON.stringify(pr
 /* ---------- game state ---------- */
 /** The live game. `G.S` is null on the start screens. Only the engine changes what is inside it. */
 export const G: { S: GameState | null } = { S: null };
+// scenes in a game stand in front of the backdrops its world carries
+useBackdropSource(() => G.S ? E.worldBackdrops(G.S) : []);
 export function me() { return G.S.promos[G.S.player]; }
 export function save(): boolean { try { localStorage.setItem(KEY, JSON.stringify(G.S)); return true; } catch (e) { return false; } }
 export function loadSave(): GameState | null {

@@ -14,6 +14,20 @@ E.edRemoveScene=function(pkg,id){if(pkg&&Array.isArray(pkg.scenes))pkg.scenes=pk
 E.worldScenes=function(S){var d=(S&&S.db)||DB;return d&&Array.isArray(d.scenes)?d.scenes.filter(sceneOk):[];};
 E.sceneOk=sceneOk;
 
+/* ---------- backdrops: the walls behind a scene, made in Create a Scene's Backdrop tab ----------
+   A backdrop is plain data: a wall and a floor colour and up to 40 parts (banners, windows, a skyline, curtains).
+   A scene stands in front of one when its set is "bg_" and the backdrop's id. Kept in the world like scenes. */
+function bgOk(b){return !!b&&b.v===1&&typeof b.id==='string'&&/^[a-z0-9_-]{1,48}$/i.test(b.id)&&typeof b.name==='string'&&b.name.length<=40&&Array.isArray(b.parts)&&b.parts.length<=40&&
+  b.parts.every(function(q){return q&&typeof q.k==='string'&&/^[a-z_]{1,16}$/.test(q.k)&&[q.x,q.y,q.w,q.h].every(function(n){return typeof n==='number'&&isFinite(n)&&Math.abs(n)<=40;})&&(q.txt==null||(typeof q.txt==='string'&&q.txt.length<=24));});}
+/** The backdrops a world carries. */
+E.edBackdrops=function(pkg){return (pkg&&Array.isArray(pkg.backdrops)?pkg.backdrops:[]).filter(bgOk);};
+/** Keep a backdrop in the world, in place of one with the same id. Returns false for anything that is not a backdrop. */
+E.edSetBackdrop=function(pkg,b){if(!pkg||!bgOk(b))return false;var a=Array.isArray(pkg.backdrops)?pkg.backdrops.filter(function(x){return x&&x.id!==b.id;}):[];a.push(JSON.parse(JSON.stringify(b)));pkg.backdrops=a;return true;};
+E.edRemoveBackdrop=function(pkg,id){if(pkg&&Array.isArray(pkg.backdrops))pkg.backdrops=pkg.backdrops.filter(function(x){return x&&x.id!==id;});if(pkg&&pkg.backdrops&&!pkg.backdrops.length)delete pkg.backdrops;};
+/** The backdrops the world of this game carries. */
+E.worldBackdrops=function(S){var d=(S&&S.db)||DB;return d&&Array.isArray(d.backdrops)?d.backdrops.filter(bgOk):[];};
+E.backdropOk=bgOk;
+
 /* ---------- hooks: who a scene is about (docs/plans/papercraft-engine.md, "Hooks") ----------
    A slot in a scene can name a part in the story instead of a fixed person: the hero, the villain, the villain's
    group, the champion, the manager. E.sceneHooks fills every part it can from a moment of the show and what the

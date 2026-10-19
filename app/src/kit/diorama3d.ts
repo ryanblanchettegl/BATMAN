@@ -10,6 +10,7 @@
    Units are feet: a wrestler is about six tall, the ring twenty across, the mat at height 0. The scene's x is the
    world's x, its height is y, and its layer order (a figure's z) is how far forward it stands.
    It only reads the scene, and it is the graphics engine's 3D side (CLAUDE.md, rule 0). */
+import { setKey } from './backdrop';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
@@ -222,7 +223,7 @@ const ROOMS: Record<string, (root: THREE.Group) => void> = {
 function flat(root: THREE.Group, sc: Scene) {
   const c = document.createElement('canvas'); c.width = 2200; c.height = 1400; const x = c.getContext('2d')!;
   const v: View = { s: 100, ox: 1100, oy: 700 }, set = build({ ...sc, slots: [], keys: [{ t: 0, figs: {}, props: [] }] }, { t: 0, figs: {}, props: [] }, {}).pieces;
-  drawScene(x, set, v, 'flat-' + sc.set);
+  drawScene(x, set, v, 'flat-' + setKey(sc.set));
   const tex = new THREE.CanvasTexture(c); tex.colorSpace = THREE.SRGBColorSpace;
   const back = new THREE.Mesh(new THREE.PlaneGeometry(22, 14), new THREE.MeshStandardMaterial({ map: tex, roughness: 1 }));
   back.position.set(0, -FOOT, -2.5); back.receiveShadow = true; root.add(back);
@@ -268,7 +269,7 @@ export class Diorama3D {
       from the side. `rigs` are the last joints, for dragging a part in 3D. */
   groups: THREE.Group[] = []; rigs: Record<string, Rig> = {}; hold: Record<string, string> = {}; sel: { who: string; part: string } | null = null;
   show(sc: Scene, k: Key, cast: Record<string, Recipe>, time = 0, sel: { who: string; part: string } | null = null) {
-    if (this.set !== sc.set) { this.clear(this.world); const room = ROOMS[sc.set]; if (RINGS.includes(sc.set)) arena(this.world); else if (room) room(this.world); else flat(this.world, sc); this.mood(sc.set); this.set = sc.set; this.framed = ''; }
+    if (this.set !== setKey(sc.set)) { this.clear(this.world); const room = ROOMS[sc.set]; if (RINGS.includes(sc.set)) arena(this.world); else if (room) room(this.world); else flat(this.world, sc); this.mood(sc.set); this.set = setKey(sc.set); this.framed = ''; }
     const fk = sc.set + JSON.stringify(k.cam || null); if (this.framed !== fk) { frame(sc.set, this.cam, this.ctl, k); this.framed = fk; }
     this.clear(this.people); this.groups = []; this.sel = sel;
     const b = build(sc, k, cast, time); this.rigs = b.rigs; this.hold = b.hold;

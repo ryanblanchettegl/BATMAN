@@ -45,6 +45,11 @@ ok(Array.isArray(E.SCENE_HOOKS) && E.SCENE_HOOKS.includes('heel1'), 'the list of
   ok(h2.interviewer === r[0].id, 'an announcer is the interviewer'); ok(h2.authority === r[1].id, 'the owner is the authority figure'); ok(h2.referee === r[2].id, 'a referee on the roster is the referee');
   const h3 = E.sceneHooks(S2, { ids: [r[0].id, hero.id] }); ok(h3.interviewer !== r[0].id, 'somebody in the moment is not also the interviewer');
   ok(['authority', 'interviewer', 'referee'].every(k => E.SCENE_HOOKS.includes(k)), 'the new hooks are listed'); }
+// backdrops kept in a world
+{ const pkg = {}, good = { v: 1, id: 'bgx', name: 'Gym wall', wall: '#3b3f6b', floor: '#6a4a2e', parts: [{ k: 'banner', x: 0, y: 1, w: 6, h: 1.2, col: '#c2342b', txt: 'EWF' }] };
+  ok(E.edSetBackdrop(pkg, good) && E.edBackdrops(pkg).length === 1, 'a backdrop is kept in a world');
+  ok(!E.edSetBackdrop(pkg, { ...good, id: 'bad id!' }) && !E.edSetBackdrop(pkg, { ...good, parts: [{ k: 'banner', x: 'a' }] }), 'a broken backdrop is refused');
+  E.edRemoveBackdrop(pkg, 'bgx'); ok(!pkg.backdrops, 'a backdrop can be taken out of a world'); }
 // Create a Player: Ryan's example file, word for word
 const RIP = { id: 'wrestler_uuid_98765', name: 'Rip Jackson', moniker: 'The Enforcer', hometown: 'Minneapolis, MN', archetype: 'Heavyweight',
   physical_attributes: { height_inches: 76, weight_lbs: 275, body_archetype: 'Heavyweight_Powerhouse', proportional_scalers: { torso_width: 1.15, torso_height: 1.05, limb_length: 1.10, muscle_mass: 1.20 } },
