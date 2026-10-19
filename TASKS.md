@@ -102,6 +102,7 @@ Two more lists sit beside this one, both finished:
 | The name | 7 October: the game is **EWF Wrestling Manager**, in full Elite Wrestling Federation Wrestling Manager. It was EWF 9000. The title card, the page title, the save message, the wide-screen message and the Steam wrapper say the new name. The stored keys (`ewf9000-save-4`, `ewf9000-universes`, `ewf9000-legacy`) keep the old name so nobody loses a save. |
 | The word is logo | 7 October: "its not marks. Its Logo." A company's icon is its logo, in the game, in the code and in the notes. |
 | The map | 7 October: "I like the USA map and want to keep it. You will need to create new maps for the other regions." So the road window keeps the USA drawn in dots with the week's state lit, and every other part of the world the default companies tour gets a map of its own in the same style, with its own areas to light: Britain and Ireland, Europe, the Mediterranean and the Near East, Mexico and Central America, South America, Japan, and a world map for a long trip. The window shows the map this week's city is on. `docs/plans/art-direction.md`, section 6.4. |
+| Scenes are the show | 19 October: storylines and building a card are hooked into scenes. Every storyline, and every angle or promo a player can put on a card, has a scene; building a show is building out its scenes. Arc storylines and multi-week moments have scenes for their beats. The World Editor gets an easy builder for players' own storylines, angles and promos. Start it once Create a Wrestler and Create a Scene are built out; the match builder and the broadcast are redone in the new look after. CLAUDE.md rule 9c. |
 | World Editor | The creation suite is its own page called **World Editor** on the title screen. A player builds a world from scratch (companies, shows, belts, wrestlers) and uploads it to the Workshop. This is the main next item. |
 
 ## Tasks
@@ -157,6 +158,15 @@ The Steam Workshop:
 The desk image (`docs/mockups/paper/desk.png`) is the art style: the whole game looks made from construction paper. Pages are built to it now in CSS and canvas.
 - [ ] Render the interface pieces in Blender as cut card (window frames and title bars, buttons in each colour, tags, group tabs, the menu bar, the control strip tiles and keys) so the paper has real thickness, light and shadow, and use them in the game as 9-slice images or baked textures.
 - [ ] Every page moved to the paper look, one at a time with Ryan's go-ahead.
+
+### 0u. Every booking choice is a scene (Ryan, 19 October: the core mechanic; next after 0v, 0z and Create a Wrestler)
+
+- [ ] List every storyline beat, angle kind and promo kind the player can put on a card (`src/93-segments.js`, `src/21-living.js`, the arcs, debuts, invasions) and give each a scene: a `when` it plays at, slots filled by `E.sceneHooks`.
+- [ ] Booking a segment shows its scene on the run sheet, so the card reads as the scenes of the show; the broadcast plays the scene of each segment.
+- [ ] Arc storylines and multi-week moments: a scene for each beat (the spark, each chapter, the payoff, a twist or turn).
+- [ ] A check (headless test) that fails when a storyline beat, angle or promo kind has no scene.
+- [ ] The World Editor's story builder: an easy pop-up for a player's own storyline, angle or promo (who, what happens, which scene plays, what it does to heat and the people in it through `relBump()`), kept in the world package and played in a game.
+- [ ] Then redo the build-a-match screen and the show on the air in the paper look on top of the scenes, one at a time with Ryan's go-ahead.
 
 ### 0y. The World Editor rebuilt on Create a Wrestler and Create a Scene (Ryan, 18 October)
 
