@@ -69,7 +69,7 @@ export function ContractTaskWindow(p: { m: Modal }) {
 
 /** The body of the tasks window on the desk: four to a page, a line each, with the button that deals with it. */
 export function Tasks() {
-  const S = G.S, T = E.tasks(S), st = office() as any, per = (window as any).EWF_FLAT ? 99 : (document.documentElement.getAttribute('data-screen') === 'desk' ? 9 : 3), /* a test that wants every task on the page sets EWF_FLAT */ pages = Math.max(1, Math.ceil(T.list.length / per)), pg = Math.min(st.tpg || 0, pages - 1);
+  const S = G.S, T = E.tasks(S), st = office() as any, per = (window as any).EWF_FLAT ? 99 : (document.documentElement.getAttribute('data-screen') === 'desk' ? 8 : 3), /* a test that wants every task on the page sets EWF_FLAT */ pages = Math.max(1, Math.ceil(T.list.length / per)), pg = Math.min(st.tpg || 0, pages - 1);
   const L: any[] = T.list.slice(pg * per, pg * per + per);
   return <div class="tasks" data-t="tasks">
     {T.list.length ? L.map((t: any) => <div key={t.id} class={'it task ' + t.state + (t.state === 'todo' && T.strict ? ' must' : '')} data-task={t.id}>

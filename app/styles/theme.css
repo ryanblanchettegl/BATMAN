@@ -297,7 +297,7 @@ html .crt.crt{max-width:none}
 .ondesk .quiet>.mfig{flex:0 0 40%}
 .nextwin .nxr .cu{white-space:normal;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
 /* the desk: the tasks are a tall column at the right, from the top down, beside the road and the two windows under it */
-.deskpage{grid-template-columns:minmax(0,1fr) minmax(0,1fr) minmax(0,.86fr);grid-template-rows:minmax(0,1.2fr) minmax(0,1fr);grid-template-areas:"road road tasks" "fire next tasks"}
+.deskpage{grid-template-columns:minmax(0,1fr) minmax(0,1fr) minmax(0,.86fr);grid-template-rows:minmax(0,1.27fr) minmax(0,1fr);grid-template-areas:"road road tasks" "fire next tasks"}
 .deskpage .road .r3{grid-template-columns:auto minmax(0,1fr) minmax(0,.85fr);gap:0 1.4ch}
 .taskwin .it{padding:.18em 0 .12em}
 .deskpage .taskwin .it{flex-wrap:wrap;gap:.1em 1ch;padding:.28em 0 .2em}
