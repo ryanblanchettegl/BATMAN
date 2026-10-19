@@ -113,3 +113,24 @@ body{background:radial-gradient(120% 100% at 30% 0%,rgba(255,240,210,.12),rgba(3
 .lb .rw.sel,.lb button.rw.sel:hover,.rspage .rsl tr.pick.on,.book1 .b1-rows .seg.sel .r1b{background:linear-gradient(transparent 8%,#ffe066 8%,#ffd23f 92%,transparent 92%);color:#232027;box-shadow:none}
 .lb .rw.sel *,.rspage .rsl tr.pick.on td,.rspage .rsl tr.pick.on td *,.book1 .b1-rows .seg.sel .r1b *{color:#232027}
 .lb .hd,.rspage .rsl th{background:none;color:#c2244f;font-family:var(--marker);font-weight:400;border-bottom:2px solid #232027}
+
+/* ---------- the title screen: the name in ransom-note letters, each cut from a different scrap ---------- */
+.start .logo-box{border:0;background:none;padding:.4em 0 .2em;gap:.5em}
+.start .logo-box>i{display:none}
+.start .logo-top{font-family:var(--hand);font-size:1.25em;letter-spacing:.04em;text-transform:none;color:#232027;background:none;border-image:var(--lk-zig-yellow) 30 fill / 14px / 4px;padding:.25em 2ch .3em;transform:rotate(-2deg);margin:0}
+.ransom{display:flex;justify-content:center;gap:.08em;margin:.15em 0;font-family:var(--marker);font-size:clamp(2.6em,7.4vw,6.2em);line-height:1}
+.ransom .rl{display:inline-block;padding:.06em .14em .1em;border-image:var(--lk-zig-white) 30 fill / 10px / 3px;color:#232027;filter:drop-shadow(.05em .08em .06em rgba(0,0,0,.45))}
+.ransom .r0{border-image-source:var(--lk-zig-yellow);transform:rotate(-6deg) translateY(.04em)} .ransom .r1{border-image-source:var(--lk-zig-black);color:#fff;transform:rotate(4deg)}
+.ransom .r2{border-image-source:var(--lk-zig-pink);transform:rotate(-3deg) translateY(-.06em)} .ransom .r3{border-image-source:var(--lk-zig-blue);color:#fff;transform:rotate(7deg)}
+.ransom .r4{border-image-source:var(--lk-zig-green);transform:rotate(-5deg) translateY(.05em)} .ransom .r5{transform:rotate(3deg) translateY(-.03em)}
+.ransom .r6{border-image-source:var(--lk-zig-purple);color:#fff;transform:rotate(-2deg)}
+.start .logo-sub{font-family:var(--marker);font-size:clamp(1.4em,3.2vw,2.6em);color:#fff;-webkit-text-stroke:0;letter-spacing:.06em;margin:0;background:#232027;padding:.12em 1.4ch .18em;transform:rotate(1.5deg);box-shadow:.12em .2em .25em rgba(0,0,0,.5)}
+.start .lede.c{font-family:var(--hand);font-size:1.2em;color:#fff;text-shadow:0 .1em .25em rgba(0,0,0,.8);margin:.4em auto .5em}
+/* the menu: a sheet of notebook paper, the picked line in highlighter */
+.start .dbox{border:0;outline:0;border-image:var(--lk-notebook) 40 30 30 40 fill / 20px 15px 15px 20px / 5px;padding:.6em 2ch .6em 4.4ch;max-width:60ch;transform:rotate(-.6deg)}
+.start .dbox .mi{font-family:var(--marker);font-size:1.25em;color:#232027;padding:.12em 1.2ch}
+.start .dbox .mi .ab{color:#232027}
+.start .dbox .mi .st{font-family:var(--hand);font-size:.82em;color:#4a4550}
+.start .dbox .mi.on,.start .dbox .mi:focus-visible{background:linear-gradient(transparent 10%,#ffe066 10%,#ffd23f 90%,transparent 90%);color:#232027}
+.start .dbox .mi.on *,.start .dbox .mi:focus-visible *{color:#232027}
+.status.c{font-family:var(--hand);font-size:1.05em}

@@ -1,7 +1,7 @@
 {
-  "name": "ewf-wrestling-manager",
+  "name": "wrestlecraft",
   "version": "0.40.0",
-  "description": "EWF Wrestling Manager: a wrestling booking sim",
+  "description": "WrestleCraft: Be The Booker, a wrestling booking sim",
   "main": "desktop/main.js",
   "scripts": {
     "postinstall": "cd app && npm install",
@@ -18,8 +18,8 @@
     "steamworks.js": "^0.4.0"
   },
   "build": {
-    "appId": "com.ewf.wrestlingmanager",
-    "productName": "EWF Wrestling Manager",
+    "appId": "com.wrestlecraft.bethebooker",
+    "productName": "WrestleCraft: Be The Booker",
     "electronVersion": "33.0.0",
     "directories": {
       "output": "release",

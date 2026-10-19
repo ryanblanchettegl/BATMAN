@@ -89,15 +89,15 @@ export function Title() {
   items.push({ t: 'editor', pick: () => toScreen('editor'), label: <><span class="ab">WORLD EDITOR</span><span class="st">Build your own world: companies, shows, belts, wrestlers</span></> });
   items.push({ t: 'options', pick: () => openModal({ kind: 'options' }), label: <><span class="ab">OPTIONS</span><span class="st">Sound, text size, screen</span></> });
   return <div class="crt"><StartMenu /><div class="start">
-    <h1 class="sr">EWF Wrestling Manager. Elite Wrestling Federation Wrestling Manager.</h1>
+    <h1 class="sr">WrestleCraft: Be The Booker.</h1>
     <div class="logo-box"><i class="tl" /><i class="tr" /><i class="bl" /><i class="br" />
-      <p class="logo-top" aria-hidden="true">Elite Wrestling Federation</p>
-      <svg class="logo-main" aria-hidden="true" viewBox="0 0 500 112"><text class="sh" x="258" y="108" textLength="300" lengthAdjust="spacingAndGlyphs">EWF</text><text x="250" y="100" textLength="300" lengthAdjust="spacingAndGlyphs">EWF</text></svg>
-      <p class="logo-sub" aria-hidden="true">Wrestling Manager</p>
+      <p class="logo-top" aria-hidden="true">A wrestling booking game, made by hand</p>
+      <p class="ransom" aria-hidden="true">{'WRESTLECRAFT'.split('').map((c, i) => <span key={i} class={'rl r' + ((i * 5) % 7)}>{c}</span>)}</p>
+      <p class="logo-sub" aria-hidden="true">Be The Booker</p>
     </div>
     <p class="lede c">Whatcha gonna do, booker man?</p>
     <div class="dbox sm"><MenuList items={items} /></div>
-  </div><div class="status c"><span>Gorilla Position Engine v{VER}</span><span class="opt">|</span><span>(C) 1997 Elite Software</span></div></div>;
+  </div><div class="status c"><span>Gorilla Position Engine v{VER}</span><span class="opt">|</span><span>WrestleCraft: Be The Booker</span></div></div>;
 }
 
 /* ---------- select promotion ---------- */

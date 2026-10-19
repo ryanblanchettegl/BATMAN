@@ -1,6 +1,6 @@
-# EWF Wrestling Manager: working notes for Claude Code
+# WrestleCraft: Be The Booker: working notes for Claude Code
 
-EWF Wrestling Manager (in full, Elite Wrestling Federation Wrestling Manager) is a text-based wrestling booking sim for Steam, drawn as a 1990s PC program. Ryan renamed it on 7 October 2026; it was EWF 9000 before, and the stored keys keep that name on purpose (rule 9). The owner is Ryan. `NEXT.md` is the work queue: ordered steps for the next unattended run. `TASKS.md` is the task list and holds his decisions; `TWEAKS.md` is 100 small jobs and `WISHLIST.md` is 100 depth ideas, each with its own "how to work this list"; `docs/feature-list.md` is the full feature wording; `docs/design.md` is the design document; `app/DEV.md` says how screens are written.
+WrestleCraft: Be The Booker is a wrestling booking sim for Steam that looks made by hand (rule 2a). Ryan renamed it on 19 October 2026; it was EWF Wrestling Manager from 7 October and EWF 9000 before that. The stored keys (`ewf9000-save-4`, `gorilla-position-prefs`) and the desktop build's save folder keep the old names on purpose (rule 9), so nobody's games go missing. The player's own promotion still defaults to the Elite Wrestling Federation (EWF), a company inside the game. The owner is Ryan. `NEXT.md` is the work queue: ordered steps for the next unattended run. `TASKS.md` is the task list and holds his decisions; `TWEAKS.md` is 100 small jobs and `WISHLIST.md` is 100 depth ideas, each with its own "how to work this list"; `docs/feature-list.md` is the full feature wording; `docs/design.md` is the design document; `app/DEV.md` says how screens are written.
 
 ## Commands
 

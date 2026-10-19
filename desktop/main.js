@@ -2,6 +2,9 @@
 // Set STEAM_APP_ID to your app id (480 is Valve's public test app).
 const { app, BrowserWindow, ipcMain } = require('electron');
 const path = require('path');
+// The game is WrestleCraft: Be The Booker now (Ryan, 19 October), but saves stay in the folder the old name made, so
+// nobody's games go missing (rule 9: stored names keep the old name).
+app.setPath('userData', path.join(app.getPath('appData'), 'EWF Wrestling Manager'));
 
 let steam = null;
 try {
@@ -28,7 +31,7 @@ ipcMain.handle('gp-workshop-upload', async (_event, pkg) => {
     fs.writeFileSync(path.join(dir, 'universe.json'), JSON.stringify(pkg));
     const made = await steam.workshop.createItem();
     if (made.needsToAcceptAgreement) return { ok: false, msg: 'Accept the Steam Workshop agreement in Steam first' };
-    await steam.workshop.updateItem(made.itemId, { title: String(man.name || 'EWF Wrestling Manager world'), description: String(man.description || '') + (man.author ? '\nBy ' + man.author : ''), contentPath: dir, tags: ['World'], changeNote: 'Version ' + String(man.version || '1.0') });
+    await steam.workshop.updateItem(made.itemId, { title: String(man.name || 'WrestleCraft world'), description: String(man.description || '') + (man.author ? '\nBy ' + man.author : ''), contentPath: dir, tags: ['World'], changeNote: 'Version ' + String(man.version || '1.0') });
     return { ok: true, id: String(made.itemId) };
   } catch (e) { return { ok: false, msg: e.message }; }
 });
