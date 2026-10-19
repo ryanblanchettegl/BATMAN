@@ -22,6 +22,13 @@ async function studio(mode) {
     ok(mode, 'Create a Scene opens full screen on the stage', await has(page, '[data-t="scene-stage"]'));
     ok(mode, 'the studio fits one screen', !(await fits(page)), await fits(page));
     if (process.env.SHOTS) await shot(page, 'scene-' + mode + '-studio');
+    // a new scene starts from a setup: the set and the people placed for it
+    await page.click('[data-t="scene-tab"][data-v="new"]');
+    ok(mode, 'a new scene offers a setup for every kind of set', (await page.$$('[data-t="scene-setup"]')).length >= 10);
+    await page.click('[data-t="scene-setup"][data-v="talk"]'); await page.waitForTimeout(300);
+    ok(mode, 'a talk show setup puts a host and a guest on the talk show set', (await page.$eval('[data-t="scene-set"]', e => e.value).catch(() => '')) === 'talk' || /talk show/i.test(await page.$eval('[data-t="scene-msg"]', e => e.textContent)));
+    ok(mode, 'the studio still fits with a setup', !(await fits(page)), await fits(page));
+    await page.click('[data-t="scene-done"]'); await page.waitForTimeout(300); await page.click('[data-t="ed-scene-open"][data-id="lockup"]'); await page.waitForTimeout(400);
     // pick a person, then a part by its pin, turn it, and see the angle move
     await page.selectOption('[data-t="scene-who"]', 'A');
     ok(mode, 'the picked person is drawn with a pin at every joint', (await page.$$eval('[data-t="scene-pin"]', a => a.length)) === 15, 'pins: ' + (await page.$$eval('[data-t="scene-pin"]', a => a.length)));

@@ -572,7 +572,8 @@ function head(fr: F, r: Recipe, z: number, expr: string, cut: (f: F, poly: Pt[],
 export interface PropDraw { k: string; x: number; y: number; r: number; z: number; s?: number; txt?: string; col?: string; id: string }
 const PR = (pts: Pt[], cx: number, cy: number, a: number, s: number): Pt[] => pts.map(([x, y]) => { const d = rot([x * s, y * s], a); return [cx + d[0], cy + d[1]] as Pt; });
 export const PROPS: [string, string][] = [['belt', 'Title belt'], ['chair', 'Chair'], ['table', 'Table'], ['mic', 'Microphone'], ['burst', 'Burst'], ['sign', 'Sign'], ['headline', 'Headline'], ['confetti', 'Confetti'],
-  ['spot', 'Spotlight'], ['beams', 'Coloured lights'], ['strobe', 'Strobes'], ['dim', 'Lights down'], ['sparks', 'Sparks'], ['fountain', 'Pyro fountain'], ['flash', 'A flash'], ['fire', 'A column of fire']];
+  ['spot', 'Spotlight'], ['beams', 'Coloured lights'], ['strobe', 'Strobes'], ['dim', 'Lights down'], ['sparks', 'Sparks'], ['fountain', 'Pyro fountain'], ['flash', 'A flash'], ['fire', 'A column of fire'],
+  ['ladder', 'Ladder'], ['bat', 'Baseball bat'], ['steps', 'Ring steps'], ['bin', 'Rubbish bin'], ['table_broken', 'Broken table'], ['cameras', 'Camera flashes'], ['motion', 'Motion lines'], ['spray', 'A spray of water']];
 /** Cut a prop. `t` (seconds) moves the things that move by themselves (confetti). */
 export function prop(p: PropDraw, out: Piece[], t = 0) {
   const a = p.r * Math.PI / 180, s = p.s || 1, z = p.z, own = p.id, seed = hash(p.id + p.k);
@@ -621,6 +622,27 @@ export function prop(p: PropDraw, out: Piece[], t = 0) {
   } else if (p.k === 'fire') {   // a column of fire: red, orange and yellow tongues of card, licking up
     const fl = (w0: number, h0: number, col: string, dz: number) => { const pts: Pt[] = [[-w0, 0]]; for (let i = 0; i <= 6; i++) pts.push([-w0 + 2 * w0 * i / 6, h0 * (0.75 + 0.25 * Math.sin(t * 9 + i * 1.7 + seed % 7)) * (i % 2 ? 0.8 : 1)]); pts.push([w0, 0]); add(pts, col, dz, 0.03, 0.02); };
     fl(0.6, 3.6, PAL.red, 0); fl(0.45, 2.8, PAL.orange, 0.01); fl(0.28, 1.9, PAL.yellow, 0.02);
+  } else if (p.k === 'ladder') {   // a steel ladder: two rails and the rungs between
+    for (const sx of [-0.45, 0.45]) add([[sx - 0.07, -1.6], [sx + 0.07, -1.6], [sx + 0.07, 1.6], [sx - 0.07, 1.6]], PAL.steel, 0);
+    for (let i = 0; i < 6; i++) { const y = -1.35 + i * 0.54; add([[-0.42, y - 0.04], [0.42, y - 0.04], [0.42, y + 0.04], [-0.42, y + 0.04]], shade(PAL.steel, 0.82), -0.01); }
+  } else if (p.k === 'bat') {   // a wooden bat
+    add([[-0.05, -0.75], [0.05, -0.75], [0.11, 0.7], [0.08, 0.78], [-0.08, 0.78], [-0.11, 0.7]], PAL.wood, 0); add(ell(0, -0.78, 0.08, 0.05, 10), shade(PAL.wood, 0.7), 0.01);
+  } else if (p.k === 'steps') {   // the steel steps at the corner of the ring
+    for (let i = 0; i < 3; i++) add([[-0.9 + i * 0.3, -0.9 + i * 0.45], [0.9, -0.9 + i * 0.45], [0.9, -0.45 + i * 0.45], [-0.9 + i * 0.3, -0.45 + i * 0.45]], shade(PAL.steel, 1 - i * 0.08), i * 0.01);
+  } else if (p.k === 'bin') {   // a dented rubbish bin with its lid
+    add([[-0.45, -0.7], [0.45, -0.7], [0.52, 0.55], [-0.52, 0.55]], PAL.grey, 0); for (const x of [-0.25, 0, 0.25]) add([[x - 0.02, -0.6], [x + 0.02, -0.6], [x + 0.03, 0.45], [x - 0.03, 0.45]], shade(PAL.grey, 0.75), 0.01);
+    add(ell(0, 0.62, 0.6, 0.12, 14), shade(PAL.grey, 1.1), 0.02);
+  } else if (p.k === 'table_broken') {   // a table snapped in two, the halves folded in
+    add([[-1.6, -0.2], [-0.1, 0.25], [-0.05, 0.4], [-1.6, 0.0]], PAL.wood, 0.02); add([[0.1, 0.35], [1.6, -0.1], [1.6, 0.08], [0.15, 0.5]], PAL.wood, 0.02);
+    for (const [x, y] of [[-0.05, 0.4], [0.1, 0.42], [0.0, 0.55], [0.18, 0.6]] as Pt[]) add([[x, y], [x + 0.05, y + 0.18], [x - 0.04, y + 0.12]], shade(PAL.wood, 1.25), 0.03, 0.01, 0.002);   // splinters
+    for (const sx of [-1.3, 1.3]) add([[sx - 0.07, 0], [sx + 0.07, 0], [sx + 0.07, -1.0], [sx - 0.07, -1.0]], shade(PAL.wood, 0.6), 0);
+  } else if (p.k === 'cameras') {   // flashes going off all over the crowd, a different few each moment
+    for (let i = 0; i < 18; i++) { const h1 = ((seed >> (i % 11)) + i * 7919) % 1000 / 1000, h2 = ((seed >> (i % 7)) + i * 104729) % 1000 / 1000; if (((Math.floor(t * 6) + i) % 4) !== 0) continue;
+      add(star((h1 - 0.5) * 16, 0.5 + h2 * 3.5, 0.18, 6, 0.35), PAL.white, 0, 0.01, 0.002); }
+  } else if (p.k === 'motion') {   // speed lines behind something moving fast
+    for (let i = 0; i < 6; i++) { const y = -0.8 + i * 0.32, l = 1.2 + (i % 3) * 0.5; add([[-l, y - 0.03], [0, y - 0.02], [0, y + 0.02], [-l, y + 0.03]], p.col || PAL.white, 0, 0.01, 0.002); }
+  } else if (p.k === 'spray') {   // a spray of water, a fan of drops
+    for (let i = 0; i < 16; i++) { const a2 = -0.5 + i / 15, d = 0.4 + ((seed >> (i % 9)) % 10) / 10 * 1.4 + t * 0.6; add(ell(Math.cos(a2) * d, Math.sin(a2) * d, 0.07, 0.05, 8), p.col || '#bfe6ff', 0, 0.01, 0.002); }
   } else if (p.k === 'confetti') {
     const cols = [PAL.gold, PAL.red, PAL.white, PAL.sky, PAL.yellow];
     for (let i = 0; i < 40; i++) {

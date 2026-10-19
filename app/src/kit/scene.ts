@@ -57,7 +57,7 @@ export const STILL_WHEN: [string, string][] = [['hurt', 'Somebody hurt'], ['braw
 /** The sets, each drawn from its own angle: pick the one that suits the moment. Every set keeps feet on the same line
     (FOOT), so a pose works on all of them. */
 export const SETS: [string, string][] = [['ring', 'The ring: the hard camera'], ['ringlow', 'The ring: low at ringside'], ['ringcorner', 'The ring: from the corner'],
-  ['desk', 'The commentary desk'], ['ramp', 'The entrance ramp'], ['hall', 'Backstage: the hallway'], ['locker', 'Backstage: the locker room'], ['office', 'The office'], ['backstage', 'Backstage: the wall'], ['talk', 'A talk show'], ['plain', 'Plain card']];
+  ['desk', 'The commentary desk'], ['ramp', 'The entrance ramp'], ['hall', 'Backstage: the hallway'], ['locker', 'Backstage: the locker room'], ['office', 'The office'], ['backstage', 'Backstage: the wall'], ['talk', 'A talk show'], ['cage', 'A steel cage'], ['lot', 'The parking lot'], ['news', 'A news desk'], ['plain', 'Plain card']];
 export const W16 = 16, H9 = 9;   // a scene is 16 units wide and 9 high; x = 0 is the middle, y = 0 the middle
 export const FOOT = -2.9;          // where feet stand on the mat
 export const WAIST = FOOT + 2.52 + 0.7;   // the waist of a doll of standard height standing on the mat
@@ -83,7 +83,7 @@ function crowd(add: Add, rows: number, yTop: number, dy: number, sz0: number, ds
 }
 function setPieces(set: string): Piece[] {
   const o: Piece[] = []; let n = 0; const add = (pts: [number, number][], col: string, z: number, lift = 0.04, rough = 0.012) => o.push({ pts: snip(pts, 9000 + (n++) * 131, rough, 0.1), col, z, lift, layer: 'back' });
-  if (set === 'ring') {
+  if (set === 'ring' || set === 'cage') {
     // The ring as the hard camera sees it: the mat a floor that widens toward us, the far ropes and posts behind the
     // wrestlers at about their waist, the side ropes running back to them, the crowd rising past the barricade.
     const FAR = -0.9, NEAR = -3.75, FX = 6.2, NX = 9.2;
@@ -193,6 +193,19 @@ function setPieces(set: string): Piece[] {
     for (let k = 1; k <= 3; k++) add(rect(-11, 0.7 + 0.5 * k, 22, 0.07), PAL.white, -0.68, 0.02, 0.003);
     add(rect(-11, -7, 22, 6.5), '#1b1d2a', -0.6, 0.02, 0);                                            // the floor
     for (const cx of DESK_SEATS) { add(rect(cx - 0.9, -0.8, 1.8, 2.7), '#16161b', -0.4, 0.08, 0.008); add(rect(cx - 0.75, 1.6, 1.5, 0.25), '#2a2a32', -0.38, 0.02, 0.004); }
+  } else if (set === 'lot') {
+    // The parking lot at night: the back of the building, a lamp, a car, lines painted on the tarmac
+    add(rect(-11, -7, 22, 14), '#0a0c1a', -1, 0, 0);
+    add(rect(-11, -1.2, 22, 7), '#3a3036', -0.95, 0.03, 0.01); for (let i = 0; i < 6; i++) add(rect(-10 + i * 3.6, 1.6, 1.4, 1.0), i % 2 ? '#f0d878' : '#2a2a30', -0.93, 0.02, 0.004);   // the wall and its windows
+    add(rect(-11, -7, 22, 5.8), '#2a2c34', -0.85, 0.02, 0.01); for (let i = 0; i < 6; i++) add([[-9 + i * 3.6, -1.3], [-8.85 + i * 3.6, -1.3], [-9.6 + i * 3.6, -7], [-9.9 + i * 3.6, -7]], '#d8d4c0', -0.84, 0.01, 0.004);   // the tarmac and its lines
+    add(rect(6.8, -1.2, 0.2, 6.2), PAL.steel, -0.8, 0.04, 0.004); add([[6.0, 5.0], [7.8, 5.0], [7.4, 4.6], [6.4, 4.6]], '#1a1a1e', -0.79, 0.04, 0.004); add([[6.4, 4.6], [7.4, 4.6], [8.6, -2.0], [5.2, -2.0]], '#5a5640', -0.86, 0.01, 0.01);   // the lamp and its light
+    add([[-8.6, -2.6], [-3.4, -2.6], [-3.2, -1.4], [-4.4, -1.2], [-5.4, -0.2], [-7.6, -0.2], [-8.4, -1.2], [-8.8, -1.4]], '#7a1820', -0.7, 0.06, 0.008);   // a car
+    add([[-7.4, -0.4], [-5.6, -0.4], [-4.8, -1.2], [-8.0, -1.2]], '#9ab8d0', -0.68, 0.02, 0.004); for (const wx of [-7.6, -4.6]) add(ell(wx, -2.6, 0.55, 0.55, 14), '#111114', -0.66, 0.04, 0.004);
+  } else if (set === 'news') {
+    // A news desk: a blue backdrop with a globe, the desk in front (FRONT)
+    add(rect(-11, -7, 22, 14), '#0e1a40', -1, 0, 0); add(ell(2.5, 1.8, 3.4, 3.4, 40), '#1e3a7a', -0.95, 0.03, 0.01);
+    for (const r of [1, 2, 3]) add(strip([2.5 - 3.4, 1.8 + (r - 2) * 1.3], [2.5 + 3.4, 1.8 + (r - 2) * 1.3], 0.06, 0.06), '#3a5aa8', -0.94, 0.01, 0.004);
+    add(rect(-11, -7, 22, 5.6), '#121426', -0.8, 0.02, 0.01);
   } else if (set === 'talk') {
     // A talk show: a curtain in folds, the show's sign over it, a low stage, two chairs either side of a little table
     add(rect(-11, -7, 22, 14), '#3a0e14', -1, 0, 0);
@@ -219,6 +232,17 @@ function setPieces(set: string): Piece[] {
   return o;
 }
 const FRONT: Record<string, (o: Piece[]) => void> = {
+  cage: o => {   // the ring's front, then the steel mesh of the cage in front of everybody
+    FRONT.ring(o);
+    for (let i = -10; i <= 10; i++) o.push({ pts: snip(rect(i * 0.95 - 0.03, -3.8, 0.06, 9.5), 900 + i, 0.004, 0.1), col: '#8a8e9a', z: 2.6, lift: 0.02 });
+    for (let j = 0; j < 8; j++) o.push({ pts: snip(rect(-11, -3.6 + j * 1.15, 22, 0.06), 940 + j, 0.004, 0.1), col: '#8a8e9a', z: 2.61, lift: 0.02 });
+    o.push({ pts: snip(rect(-11, 5.4, 22, 0.25), 960, 0.006, 0.1), col: PAL.steel, z: 2.62, lift: 0.04 });
+  },
+  news: o => {   // the news desk, its front in the show's colours
+    let n = 0; const P = (pts: [number, number][], col: string, z: number) => o.push({ pts: snip(pts, 870 + (n++) * 7, 0.008, 0.1), col, z, lift: 0.06 });
+    P(rect(-6, -4.8, 12, 3.4), '#1c2a5a', 2.3); P(rect(-6.2, -1.5, 12.4, 0.35), '#d8dce8', 2.35); P(rect(-6, -2.4, 12, 0.18), PAL.red, 2.36);
+    o.push({ pts: [], col: '', z: 2.4, txt: { s: 'NEWS', x: 0, y: -2.95, size: 0.8, col: PAL.white } });
+  },
   desk: o => {   // the announce desk: its top, a front panel in the company's colours, monitors, notes and coffee
     let n = 0; const P = (pts: [number, number][], col: string, z: number, lift = 0.06) => o.push({ pts: snip(pts, 850 + (n++) * 7, 0.008, 0.1), col, z, lift });
     P(rect(-7.2, -4.8, 14.4, 3.65), '#1f2a52', 2.3, 0.1);
@@ -524,7 +548,7 @@ export const STILLS: Scene[] = [
 
 /* ---------- a new scene starts from a setup: the set and the people placed for it ---------- */
 export const SETUPS: [string, string][] = [['ring', 'The ring: two wrestlers and the referee'], ['desk', 'The commentary desk, its chairs and a guest seat'], ['ramp', 'The entrance ramp'],
-  ['hall', 'Backstage: two in the hallway'], ['locker', 'The locker room'], ['office', 'The office, across the desk'], ['talk', 'A talk show: a host and a guest'], ['plain', 'Plain card']];
+  ['hall', 'Backstage: two in the hallway'], ['locker', 'The locker room'], ['office', 'The office, across the desk'], ['talk', 'A talk show: a host and a guest'], ['cage', 'A steel cage: two wrestlers inside'], ['lot', 'The parking lot'], ['news', 'A news desk: the anchor'], ['plain', 'Plain card']];
 export function setupScene(id: string): Scene {
   const base = (set: string, slots: Slot[], figs: Record<string, Fig>, cam?: Cam): Scene => ({ v: 1, id: 'scene-' + Date.now().toString(36), name: 'My scene', when: 'any', set, slots, keys: [{ t: 0, figs, props: [], cam }] });
   const SEAT = { hip_n: 90, kn_n: -90, hip_f: 85, kn_f: -90, sh_n: 30, el_n: 80, sh_f: 30, el_f: 75 };
@@ -534,6 +558,9 @@ export function setupScene(id: string): Scene {
   if (id === 'office') return base('office', [{ id: 'A', n: 'Wrestler A', role: 'a' }], { A: STD(-0.8, 1, {}, 'talk', 0.6) }, { x: 0.6, y: 0.2, z: 1.2 });
   if (id === 'talk') return base('talk', [{ id: 'A', n: 'The host', role: 'c', dress: 'suit' }, { id: 'B', n: 'The guest', role: 'a' }],
     { A: { x: -2.6, y: -0.85, r: 0, f: 1, z: 0, p: SEAT, e: 'talk' }, B: { x: 2.6, y: -0.85, r: 0, f: -1, z: 0, p: SEAT, e: '' } }, { x: 0, y: 0, z: 1.25 });
+  if (id === 'cage') return base('cage', [{ id: 'A', n: 'Wrestler A', role: 'a' }, { id: 'B', n: 'Wrestler B', role: 'b' }], { A: STD(-2.0, 1, {}, '', 0), B: STD(2.0, -1, {}, '', 1.2) });
+  if (id === 'lot') return base('lot', [{ id: 'A', n: 'Wrestler A', role: 'a' }, { id: 'B', n: 'Wrestler B', role: 'b' }], { A: STD(0.6, 1, {}, '', 0.4), B: STD(3.4, -1, {}, '', 0.6) });
+  if (id === 'news') return base('news', [{ id: 'A', n: 'The anchor', role: 'c', dress: 'suit' }], { A: { x: -1.2, y: -0.75, r: 0, f: 1, z: 0, p: SEAT, e: 'talk' } }, { x: -0.4, y: 0.1, z: 1.15 });
   if (id === 'plain') return base('plain', [{ id: 'A', n: 'Wrestler A', role: 'a' }], { A: STD(0, 1, {}, '', 0.6) });
   return base('ring', [{ id: 'A', n: 'Wrestler A', role: 'a' }, { id: 'B', n: 'Wrestler B', role: 'b' }, { id: 'R', n: 'The referee', role: 'ref' }],
     { A: STD(-2.2, 1, {}, '', 0), B: STD(2.2, -1, {}, '', 1.2), R: STD(-5.4, 1, {}, '', -0.3) });

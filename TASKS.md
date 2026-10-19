@@ -127,9 +127,12 @@ Create a Wrestler:
 - [ ] A file per wrestler on disk on the desktop build (`/save/wrestlers/`).
 
 Create a Scene (with 0z):
-- [ ] More sets: a packed stadium, a steel cage, the rafters, a parking lot, a talk show, a news desk.
-- [ ] Effects: spotlights, smoke and pyro, motion lines, camera flashes, sparks, a spray of liquid.
-- [ ] Props: ladders, bats, steps, bins, a truck, broken tables; props that can be held and thrown.
+- [x] More sets: a steel cage, a parking lot, a talk show, a news desk (each a setup on the New tab).
+- [ ] Still to come: a packed stadium, the rafters.
+- [x] Effects: spotlights, coloured light, strobes, lights down, sparks, pyro fountains, a flash, columns of fire, camera flashes in the crowd, motion lines, a spray of water.
+- [ ] Smoke.
+- [x] Props: ladders, a bat, ring steps, a bin, a broken table.
+- [ ] A truck; props that can be thrown.
 - [ ] Frames: tall and square pictures for posters, magazine covers and portraits, with captions and mastheads.
 - [ ] Animation: more keyframes with a choice of easing, a timeline, sound cues, and moves that can be used again.
 - [ ] More hooks (the authority figure, the interviewer, the referee as a person) and canned scenes for them.
