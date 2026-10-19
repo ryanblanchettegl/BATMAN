@@ -186,3 +186,31 @@ html .grp.grp,.grp{border-image:none;border:1.5px solid rgba(35,35,42,.28);borde
 .dt{font-family:var(--marker);font-weight:400;color:#1d2a5c;text-shadow:none;letter-spacing:.03em;font-size:2em}
 .det .kv{color:#4a4a52}
 .ledb.logo.hand{flex:none;max-width:none;overflow:visible;padding:.15em;line-height:0;transform:none}
+/* the opening and the sign-off: a show poster on white card, nothing written straight on the board */
+.live1 .lv-log.mid{background:none;border:0;border-image:var(--lk-card) 30 fill / 22px / 6px;box-shadow:none;padding:.8em 3ch;margin:.4em 2ch;transform:rotate(-.4deg);color:var(--ink)}
+.live1 .lv-log.mid .card{color:var(--ink);font-family:var(--hand);font-size:1.08em}
+.live1 .lv-log.mid .card .rule{display:none}
+.live1 .lv-log.mid .card .show{font-family:var(--marker);color:#1d2a5c;text-shadow:.05em .06em 0 #ffd84a;font-size:clamp(2em,5vw,3.6em);text-transform:none;letter-spacing:.01em}
+.live1 .lv-log.mid .card .eyebrow{font-family:var(--marker);color:#c23a30;letter-spacing:.06em}
+.live1 .lv-log.mid .card b{color:var(--ink);font-family:var(--kalam);font-weight:700}
+.live1 .lv-log.mid .card .muted{color:#4a4a52} .live1 .lv-log.mid .card .gold{color:#a5730c} .live1 .lv-log.mid .card .good{color:#2f7a3a} .live1 .lv-log.mid .card .bad{color:#b8322a}
+.live1 .lv-log.mid .ln .tx{color:var(--ink)} .live1 .lv-log.mid .ln .sp{font-family:var(--marker);font-weight:400;color:#c23a30}
+.live1 .lv-log.mid .ln{font-family:var(--hand);font-size:1.1em}
+/* the call from the gorilla position and the matter on the desk: torn cream paper, a navy strip, answers cut from card */
+.live1 .callbox.paper,html body .win.ppop{border:0;border-radius:0;background:none;box-shadow:none;border-image:var(--lk-win) 30 fill / 14px / 5px stretch;color:var(--ink)}
+.callbox.paper .cbt,html body .win.ppop .wt{background:var(--lk-navy) 0 0/240px;margin:5px 6px 0;padding:.14em 1.2ch .18em;clip-path:polygon(0 8%,12% 0,40% 6%,70% 0,100% 7%,99% 92%,72% 100%,45% 93%,15% 100%,1% 92%);border:0}
+.callbox.paper .cbt h2,html body .win.ppop .wt h2{background:none;font-family:var(--marker);font-weight:400;color:#ffe48a;font-size:1.1em;letter-spacing:.02em}
+.callbox.paper .pbox,html body .win.ppop .pbox{background:#f3ebd6;border:0;border-radius:50%;box-shadow:inset -.1rem -.1rem 0 rgba(0,0,0,.25)}
+.callbox.paper .wnfo,html body .win.ppop .wnfo{font-family:var(--hand);color:#4a4a52}
+.live1 .callbox.paper .q{font-family:var(--hand);font-size:1.18em;color:var(--ink);line-height:1.22}
+.callbox.paper .muted,html body .win.ppop .muted{font-family:var(--hand);color:#55555e}
+.callbox.paper .callopt{border:0;border-radius:0;background:none;box-shadow:none;border-image:var(--b2) 22 fill / 13px / 4px;--b2:var(--lk-btn-blue);padding:.3em 1.6ch .4em;transition:transform .14s var(--ease),filter .14s}
+.callbox.paper .callopt.k0{--b2:var(--lk-btn-green)} .callbox.paper .callopt.kz{--b2:var(--lk-btn-navy)} .callbox.paper .callopt[disabled]{--b2:var(--lk-btn-off)}
+.callbox.paper .callopt:nth-child(odd){transform:rotate(-.4deg)}
+.callbox.paper .callopt .n,.callbox.paper .callopt .n b{font-family:var(--marker);font-weight:400;letter-spacing:.02em;color:#fff;text-shadow:0 1px 0 rgba(0,0,0,.3)}
+.callbox.paper .callopt .says{font-family:var(--hand);font-size:1.04em;color:#fbf6e6}
+.callbox.paper .callopt .bp{font-family:var(--marker);font-weight:400;background:#ffe48a;color:var(--ink);transform:rotate(3deg)}
+.callbox.paper .callopt:not([disabled]):hover,.callbox.paper .callopt:focus-visible,html.nav .callbox.paper .callopt:focus{background:none;filter:drop-shadow(0 .3em .3em rgba(0,0,0,.35)) brightness(1.06);transform:translateY(-2px);outline:3px dashed var(--ink);outline-offset:3px}
+html body .win.ppop .wb{font-family:var(--hand);font-size:1.06em}
+/* a picture's caption: a slip of paper written in hand, a touch off straight */
+.mcap{font-family:var(--hand);font-size:1.02em;border:0;background:#fbf8ee;color:var(--ink);box-shadow:.1em .16em .2em rgba(0,0,0,.3);transform:rotate(-1deg)}
