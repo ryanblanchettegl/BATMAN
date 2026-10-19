@@ -2401,12 +2401,13 @@ body{background:radial-gradient(130% 100% at 30% 10%,rgba(255,255,255,.04),rgba(
 .start .logo-box{border:0;background:none;padding:.4em 0 .2em;gap:.5em}
 .start .logo-box>i{display:none}
 .start .logo-top{font-family:var(--hand);font-size:1.25em;letter-spacing:.04em;text-transform:none;color:var(--ink);background:none;border-image:var(--lk-note) 30 fill / 14px / 4px;padding:.25em calc(2*var(--ch)) .3em;transform:rotate(-2deg);margin:0}
-.ransom{display:flex;justify-content:center;gap:.08em;margin:.15em 0;font-family:var(--marker);font-size:clamp(2.6em,7.4vw,6.2em);line-height:1}
-.ransom .rl{display:inline-block;padding:.06em .14em .1em;border-image:var(--lk-card) 30 fill / 10px / 3px;color:var(--ink);filter:drop-shadow(.05em .08em .06em rgba(0,0,0,.45))}
-.ransom .r0{border-image:var(--lk-btn-yellow) 22 fill / 10px / 3px;transform:rotate(-6deg) translateY(.04em)} .ransom .r1{border-image:var(--lk-btn-navy) 22 fill / 10px / 3px;color:#ffe48a;transform:rotate(4deg)}
-.ransom .r2{border-image:var(--lk-btn-red) 22 fill / 10px / 3px;color:#fff;transform:rotate(-3deg) translateY(-.06em)} .ransom .r3{border-image:var(--lk-btn-blue) 22 fill / 10px / 3px;color:#fff;transform:rotate(7deg)}
-.ransom .r4{border-image:var(--lk-btn-green) 22 fill / 10px / 3px;color:#fff;transform:rotate(-5deg) translateY(.05em)} .ransom .r5{transform:rotate(3deg) translateY(-.03em)}
-.ransom .r6{border-image:var(--lk-note) 30 fill / 10px / 3px;transform:rotate(-2deg)}
+.ransom{display:flex;justify-content:center;margin:.1em 0 .05em;font-family:var(--marker);font-size:clamp(2.8em,8vw,6.8em);line-height:1;transform:rotate(-2deg);
+  filter:drop-shadow(.06em .08em 0 rgba(0,0,0,.55))}
+/* the name is one word cut from yellow card: a thin pale core where the scissors went, then a thick black outline */
+.ransom .rl{display:inline-block;padding:0;border:0;border-image:none;color:#f6c93a;letter-spacing:.01em;transform:none;filter:none;
+  text-shadow:0 0 0 #fff3c4,.02em .02em 0 #fff3c4,-.02em -.02em 0 #fff3c4,
+    .055em 0 0 #16161a,-.055em 0 0 #16161a,0 .055em 0 #16161a,0 -.055em 0 #16161a,.04em .04em 0 #16161a,-.04em .04em 0 #16161a,.04em -.04em 0 #16161a,-.04em -.04em 0 #16161a}
+.ransom .rl:nth-child(odd){transform:translateY(.02em)} .ransom .rl:nth-child(3n){transform:translateY(-.02em) rotate(1deg)}
 .start .logo-sub{font-family:var(--marker);font-size:clamp(1.4em,3.2vw,2.6em);color:#ffe48a;-webkit-text-stroke:0;letter-spacing:.06em;margin:0;background:var(--lk-navy) 0 0/240px;padding:.12em calc(1.4*var(--ch)) .18em;transform:rotate(1.5deg);box-shadow:.12em .2em .25em rgba(0,0,0,.5)}
 .start .lede.c{font-family:var(--hand);font-size:1.2em;color:#fff;text-shadow:0 .1em .25em rgba(0,0,0,.8);margin:.4em auto .5em}
 .start .dbox{border:0;outline:0;border-image:var(--lk-card) 30 fill / 18px / 5px;padding:.6em calc(2*var(--ch));max-width:calc(60*var(--ch));transform:rotate(-.6deg)}
