@@ -4,3 +4,6 @@ node_modules/
 .claude/
 release/
 __pycache__/
+
+# concept builds of the hand-made look (EWF_LOOK with EWF_OUT); rebuilt from the source any time
+dist/look-*.html
