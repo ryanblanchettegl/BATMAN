@@ -168,7 +168,7 @@ The desk image (`docs/mockups/paper/desk.png`) is the art style: the whole game 
 - [x] Every promo and angle kind a player can book (`SEGK` in `src/93-segments.js`) has a scene of its own (`SEG_SCENES` and `SEG_WHEN` in `kit/scene.ts`, `when: 'seg_<kind>'`), cast from the people booked into it; Create a Scene lists them as The scenes of the show. The writers' pick plays whatever the writers wrote.
 - [ ] Storyline beats (the arcs, debuts, invasions, feud chapters and endings) each with a scene.
 - [x] The broadcast plays the scene of each booked segment.
-- [ ] Booking a segment shows its scene on the run sheet, so the card reads as the scenes of the show.
+- [x] Booking a segment shows its scene on the run sheet, so the card reads as the scenes of the show: the window that books it draws the scene once the first person is picked, and the picked promo or angle beside the sheet shows it with its cast (`SegPic`, `segPick()` in `shared/moment.tsx`, the same pick the broadcast plays).
 - [ ] Arc storylines and multi-week moments: a scene for each beat (the spark, each chapter, the payoff, a twist or turn).
 - [x] A check that fails when an angle or promo kind has no scene (`app/tests/scene.js`, through `EWF_DEBUG.segScenes()`); storyline beats join it as they get theirs.
 - [ ] The World Editor's story builder: an easy pop-up for a player's own storyline, angle or promo (who, what happens, which scene plays, what it does to heat and the people in it through `relBump()`), kept in the world package and played in a game.

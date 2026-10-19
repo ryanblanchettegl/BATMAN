@@ -6,6 +6,7 @@ import { E } from '../../engine';
 import { G, Modal, act, say, view, slice, openModal, closeModal } from '../../store';
 import { Btn, Window, Sel, Field, Tag, Opt } from '../../kit';
 import { sel } from './run';
+import { SegPic } from '../../shared/moment';
 
 type Cat = 'promo' | 'angle';
 interface Draft { slot: number; cat: Cat; k: string; who: (number | null)[]; pos: number; len: string }
@@ -57,6 +58,7 @@ export function SegWindow(_p: { m: Modal }) {
       return <Field label={role} key={d.k + i}><Sel id={'seg-who-' + i} t="seg-who" d={{ v: i }} value={d.who[i] == null ? '' : d.who[i]} disabled={!ready || !ids.length}
         options={[['', !ready ? 'Pick the one before first' : (ids.length ? 'Pick someone' : 'Nobody fits')] as Opt].concat(ids.map(id => [id, wlabel(id)] as Opt))} onChange={v => setWho(i, v)} /></Field>;
     })}</div>
+    {d.k !== 'writers' && d.who[0] != null ? <SegPic k={d.k} who={d.who.slice(0, K.roles.length)} t="segwin-pic" /> : null}
     {look ? (look.ok ? <>
       {look.mid != null
         ? <p class="mt2" data-t="seg-look"><span class={look.read.k === 'good' ? 'good' : (look.read.k === 'bad' ? 'bad' : undefined)}>{look.read.t}</span> It takes <b>{look.mins} minutes</b>.</p>

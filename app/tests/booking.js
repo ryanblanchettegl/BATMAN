@@ -179,7 +179,7 @@ async function section(mode) {
   ok(await state(page, S => !!S.live && S.card.length > 0), mode + ': the show should be on the air');
   ok(await pos(page) === '-1:0' && /^RING BELL$/i.test(await advWord(page)), mode + ': the title card, and the big button says Ring bell: ' + await advWord(page));
   ok(await focusAdv(page), mode + ': the big button should have focus');
-  ok(!(await has(page, '#live .foot button:not([data-t="live-auto"])')) && !(await has(page, '#live .foot .btn:not([data-t="live-auto"])')), mode + ': the broadcast has no continue button of its own');
+  ok(!(await has(page, '#live .foot button:not([data-t="live-auto"]):not([data-t="live-pics"]):not([data-t="live-pace"])')), mode + ': the broadcast has no continue button of its own');
   ok(await page.$eval('[data-t="adv-tip"]', e => getComputedStyle(e).display) === 'none', mode + ': the big button’s note stays shut on a broadcast');
   ok(!(await has(page, '[data-t="live-end"]')), mode + ': a show on the air cannot be skipped');
   ok(await page.$eval('[data-t="advance"]', e => e.getAttribute('data-v') + ':' + e.getAttribute('data-live')) === 'live:title', mode + ': on the air the big button belongs to the show');

@@ -15,7 +15,7 @@ import { scenesFor, allScenes, copy, Scene, dressEntrance } from '../../kit/scen
 import { finScene, threeMoves } from '../../kit/caw';
 import { recipeOf, Recipe, commentator } from '../../kit/puppet';
 import { book } from '../../flow';
-import { fillScene, MomentPic } from '../../shared/moment';
+import { fillScene, MomentPic, segPick } from '../../shared/moment';
 import { Btn, KV, Meter, Banner, BeltArt, Portrait, CheckLine, stars, grade } from '../../kit';
 import { Verdict, OddsLine, FxList, Crowd } from './Report';
 import { typer, preNote, liveSkip, liveEnd, liveDecide, liveCall, onAir, livePos, autoArm, autoStop, autoToggle, paceNext, PACE_N } from './run';
@@ -217,11 +217,7 @@ function scenePick(r: any, s: any, at: number, done: boolean): { sc: Scene; cast
   if (s.k !== 'match') {
     // a booked promo or angle plays its own kind's scene, with the people booked into it (rule 9c)
     if (s.booked && Array.isArray(s.ids) && s.ids.length) {
-      const sc0 = choose('seg_' + s.booked, 0), ids = (s.ids as number[]).filter(id => !!S.w[id]);
-      if (sc0 && ids.length) {
-        const hk = E.sceneHooks(S, { ids, a: ids[0], b: ids[1] }); hk.a = ids[0]; if (ids[1] != null) hk.b = ids[1]; else delete hk.b; if (ids[2] != null) hk.attacker = ids[2];
-        const sc = fillScene(sc0, hk, cast); if (sc) return { sc, cast, play: 'g' + i, label: sc.name + ': ' + Object.values(cast).map(nm).filter(Boolean).join(', ') };
-      }
+      const pk = segPick(s.booked, s.ids); if (pk) { Object.assign(cast, pk.cast); return { sc: pk.sc, cast, play: 'g' + i, label: pk.label }; }
     }
     // an attack: the first named does it to the second, and the villain's people come with them
     const txt = String(s.text || ''), named = S.w.filter((w: any) => w && w.promo === S.player && txt.indexOf(w.name) >= 0).sort((x: any, y: any) => txt.indexOf(x.name) - txt.indexOf(y.name)).map((w: any) => w.id as number);

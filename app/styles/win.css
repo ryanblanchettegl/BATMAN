@@ -872,3 +872,7 @@ html[data-screen="tablet"] .mkpage table th:nth-child(4),html[data-screen="table
 .live1[data-v="call"] .lv-main > :not(.callbox){display:none}
 .live1[data-v="call"] .callbox.paper{flex:1 1 auto;margin:.2em 0}
 .live1[data-v="call"] .callbox .cbb{grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);padding:.9em 1.6ch .6em;overflow:hidden}
+/* the scene of a promo or angle on the run sheet and in the window that books it (rule 9c) */
+.segfig{margin:.5em 0;max-width:min(100%,42vh)}
+.segfig .moment{transform:rotate(-.4deg)}
+.segfig .mcap{font-size:.85em}

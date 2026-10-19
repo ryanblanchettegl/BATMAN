@@ -77,3 +77,24 @@ export function MomentPic(p: { ev: any; call?: boolean; t?: string }) {
     <figcaption class="mcap">{label}</figcaption>
   </figure>;
 }
+
+/** The scene a booked promo or angle plays (rule 9c): its kind's own scene, with the people booked into it, in the
+    order the segment names them (the first is A, the second B, a third comes in as the attacker). The pick among a
+    world's scenes for the kind comes from who is in it, so the run sheet shows the scene the broadcast plays. */
+export function segPick(k: string, who: (number | null)[]): { sc: Scene; cast: Record<string, Recipe>; label: string } | null {
+  const S = G.S; if (!S) return null;
+  const ids = who.filter((id): id is number => id != null && !!S.w[id]); if (!ids.length) return null;
+  const list = scenesFor('seg_' + k, E.worldScenes(S) as Scene[]); if (!list.length) return null;
+  const sc0 = list[ids.reduce((a, id) => a * 7 + id, k.length) % list.length], cast: Record<string, Recipe> = {};
+  const hk = E.sceneHooks(S, { ids, a: ids[0], b: ids[1] }); hk.a = ids[0]; if (ids[1] != null) hk.b = ids[1]; else delete hk.b; if (ids[2] != null) hk.attacker = ids[2];
+  const sc = fillScene(sc0, hk, cast); if (!sc) return null;
+  return { sc, cast, label: sc.name + ': ' + Object.values(cast).map(r => r.name).filter(Boolean).join(', ') };
+}
+/** The picture of a promo or angle on the run sheet: the first moment of the scene it will play. */
+export function SegPic(p: { k: string; who: (number | null)[]; t?: string }) {
+  const pk = segPick(p.k, p.who); if (!pk) return null;
+  return <figure class="mfig segfig" data-t={p.t || 'seg-pic'} data-v={pk.sc.id}>
+    <div class="moment"><ScenePlayer sc={pk.sc} cast={pk.cast} play={'s' + p.k + p.who.join('.')} still t="seg-scene" label={pk.label} /></div>
+    <figcaption class="mcap">{pk.label}</figcaption>
+  </figure>;
+}
