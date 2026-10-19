@@ -137,7 +137,7 @@ Create a Scene (with 0z):
 - [ ] Frames: tall and square pictures for posters, magazine covers and portraits, with captions and mastheads.
 - [ ] Animation: more keyframes with a choice of easing, a timeline, sound cues, and moves that can be used again.
 - [ ] More hooks (the authority figure, the interviewer, the referee as a person) and canned scenes for them.
-- [ ] Presentation filters a scene can pick (Ryan, 19 October): scan lines, a CRT tube look and black and white, all off by default; for artistic promos and old-school companies.
+- [x] Presentation filters a scene can pick (Ryan, 19 October): scan lines, an old TV tube and black and white, all off by default (Look, on The scene tab; `sc.fx`); for artistic promos and old-school companies.
 - [ ] A background creator: make a backdrop for a scene (walls, banners, a skyline, a show's set) and keep it in the world like a scene.
 
 New creators, each a small file cut by code, played in the game and shared:

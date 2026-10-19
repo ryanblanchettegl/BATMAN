@@ -4,7 +4,7 @@
    Steam; where the machine cannot draw 3D it falls back to the flat paper renderer. With Reduce motion it shows the
    last keyframe straight away. */
 import { useEffect, useRef, useState } from 'preact/hooks';
-import { Scene, paint, lastT, at } from './scene';
+import { Scene, paint, lastT, at, fxClass } from './scene';
 import { Recipe } from './puppet';
 import { Diorama3D } from './diorama3d';
 
@@ -42,8 +42,15 @@ export function ScenePlayer(p: { sc: Scene; cast: Record<string, Recipe>; play: 
     const step = (now: number) => { let t = (now - t0) / 1000; if (sc.loop) t = t % (end + 0.32); try { paint(ctx, sc, t, props.current.cast); } catch (e) { return; } if (sc.loop || t < keepFor) raf = requestAnimationFrame(step); };
     raf = requestAnimationFrame(step); return () => cancelAnimationFrame(raf);
   }, [p.play, size[0], size[1], flat]);
-  return <div ref={box} class="lv-scene" data-t={p.t || 'live-scene'} data-v={p.sc.id} data-3d={eng.current ? 1 : 0} role="img" aria-label={p.label}>
+  const fx = fxClass(p.sc);
+  return <div ref={box} class={'lv-scene' + fx} data-t={p.t || 'live-scene'} data-v={p.sc.id} data-3d={eng.current ? 1 : 0} role="img" aria-label={p.label}>
     <canvas ref={c3} style={{ width: size[0] + 'px', height: size[1] + 'px', display: flat ? 'none' : 'block' }} />
     {flat && <canvas ref={cv} style={{ width: size[0] + 'px', height: size[1] + 'px' }} />}
+    {fx && <FxVeil w={size[0]} h={size[1]} />}
   </div>;
+}
+
+/** The veil over a picture that draws its scan lines and tube (the box it sits in has the fx- classes). */
+export function FxVeil(p: { w: number; h: number }) {
+  return <span class="scfx" data-t="scene-fx" aria-hidden="true" style={{ width: p.w + 'px', height: p.h + 'px' }} />;
 }

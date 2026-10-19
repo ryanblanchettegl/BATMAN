@@ -43,7 +43,14 @@ export interface Scene { v: 1; id: string; name: string; when: string; set: stri
       the desk, a call from the gorilla position); moving scenes go on the broadcast. Both are made in Create a Scene. */
   still?: boolean;
   /** Which outfit Create a Player wrestlers wear in it; left out, the set decides (ring gear in the ring, street clothes backstage). */
-  attire?: AttireKey }
+  attire?: AttireKey;
+  /** How the picture is presented (Ryan, 19 October): scan lines, an old television tube and black and white, all off
+      unless a scene asks. For artistic promos and old-school companies; the game's own scenes use none. */
+  fx?: { scan?: boolean; crt?: boolean; mono?: boolean } }
+/** The presentation filters a scene can pick, in the order Create a Scene lists them. */
+export const SCENE_FX: ['scan' | 'crt' | 'mono', string][] = [['scan', 'Scan lines'], ['crt', 'Old TV tube'], ['mono', 'Black and white']];
+/** The classes that draw a scene's filters (app/styles/scene.css), or '' when it has none. */
+export function fxClass(sc: Scene): string { const f = sc.fx || {}; return SCENE_FX.filter(([k]) => f[k]).map(([k]) => ' fx-' + k).join(''); }
 
 /** When the broadcast plays a scene. A scene made by a player can take any of these. */
 /** What a scene is for. The match moments play on the broadcast now; the rest are where scenes go next

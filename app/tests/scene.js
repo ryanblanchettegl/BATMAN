@@ -99,6 +99,12 @@ async function studio(mode) {
     const sets = await page.$$eval('[data-t="scene-set"] option', o => o.map(x => x.value));
     for (const st of sets) { await page.selectOption('[data-t="scene-set"]', st); await page.waitForTimeout(80); }
     ok(mode, 'every set draws (' + sets.length + ', each from its own angle)', sets.length >= 9 && !errs.length, sets.join(','));
+    ok(mode, 'a scene has no filters until it asks', !(await has(page, '[data-t="scene-fx"][aria-pressed="true"]')) && !(await has(page, '.sc-stage .scfx')));
+    await page.click('[data-t="scene-fx"][data-v="scan"]'); await page.click('[data-t="scene-fx"][data-v="mono"]'); await page.waitForTimeout(150);
+    ok(mode, 'scan lines and black and white lay over the stage', await has(page, '.sc-stage.fx-scan.fx-mono .scfx'));
+    if (process.env.SHOTS) await shot(page, 'scene-' + mode + '-fx');
+    await page.click('[data-t="scene-fx"][data-v="mono"]'); await page.waitForTimeout(80);
+    ok(mode, 'a filter comes off again', !(await has(page, '.sc-stage.fx-mono')) && await has(page, '.sc-stage.fx-scan'));
     await page.fill('[data-t="scene-name"]', 'Test scene'); await page.selectOption('[data-t="scene-when"]', 'news');
     await page.click('[data-t="scene-save"]');
     ok(mode, 'Save keeps the scene in the world', /kept in/.test(await page.$eval('[data-t="scene-msg"]', e => e.textContent)), await page.$eval('[data-t="scene-msg"]', e => e.textContent));
