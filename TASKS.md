@@ -166,7 +166,8 @@ The desk image (`docs/mockups/paper/desk.png`) is the art style: the whole game 
 ### 0u. Every booking choice is a scene (Ryan, 19 October: the core mechanic; next after 0v, 0z and Create a Wrestler)
 
 - [x] Every promo and angle kind a player can book (`SEGK` in `src/93-segments.js`) has a scene of its own (`SEG_SCENES` and `SEG_WHEN` in `kit/scene.ts`, `when: 'seg_<kind>'`), cast from the people booked into it; Create a Scene lists them as The scenes of the show. The writers' pick plays whatever the writers wrote.
-- [ ] Storyline beats (the arcs, debuts, invasions, feud chapters and endings) each with a scene.
+- [x] Storyline beats each with a scene: every angle the story director writes says its beat and who is in it (`beat`, `bids`; `BEATS` and `beatTag()` in `src/20-story.js`), and plays `beat_<beat>` (`BEAT_SCENES` in `kit/scene.ts`: words, mind games, the parking lot, a brawl, the partner pays, the signing, the video, the stakes, a betrayal, through the table, the handshake swerve, the match made, one last face-off, the mystery, its clue and its reveal, the return, a new group and one thrown out of it), or the booked kind's scene where it is the same moment. Create a Scene lists them with the scenes of the show; `app/tests/scene.js` fails if a beat has none.
+- [ ] Still to give scenes: debuts, invasions and the company arcs' chapters (these reach the desk as matters and calls, not as angles on a show).
 - [x] The broadcast plays the scene of each booked segment.
 - [x] Booking a segment shows its scene on the run sheet, so the card reads as the scenes of the show: the window that books it draws the scene once the first person is picked, and the picked promo or angle beside the sheet shows it with its cast (`SegPic`, `segPick()` in `shared/moment.tsx`, the same pick the broadcast plays).
 - [ ] Arc storylines and multi-week moments: a scene for each beat (the spark, each chapter, the payoff, a twist or turn).

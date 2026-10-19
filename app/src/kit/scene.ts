@@ -704,7 +704,73 @@ export const SEG_SCENES: Scene[] = [
     { t: 0, figs: { A: STD(-2.6, -1, CROSS, '', 0.4), B: STD(2.6, 1, CROSS, '', 0.4) }, props: [{ id: 'hd', k: 'headline', x: 0, y: 3.3, r: 0, z: 2, s: 1, txt: 'THE STORY SO FAR' }] },
     { t: 1.6, figs: { A: STD(-1.4, 1, CROSS, 'snarl', 0.4), B: STD(1.4, -1, CROSS, 'snarl', 0.4) }, props: [{ id: 'hd', k: 'headline', x: 0, y: 3.3, r: 0, z: 2, s: 1, txt: 'THE STORY SO FAR' }] }]),
 ];
-export function allScenes(world: Scene[]): Scene[] { const ids = new Set(world.map(s => s.id)); return world.concat(SCENES.concat(STILLS, SEG_SCENES).filter(s => !ids.has(s.id))); }
+/* Storyline beats (rule 9c): every beat the story director writes on a show is a scene too, 'beat_<beat>' (BEATS in
+   src/20-story.js). A beat that is the same moment as a booked kind (an interview, a call-out ambush, a title
+   challenge, a face-off, a save, a turn) plays that kind's scene. */
+export const BEAT_WHEN: [string, string][] = [['beat_feud_words', 'Story: words on the microphone'], ['beat_feud_stare', 'Story: mind games'], ['beat_feud_sneak', 'Story: jumped in the parking lot'],
+  ['beat_feud_brawl', 'Story: a brawl'], ['beat_feud_partner', 'Story: the partner pays for it'], ['beat_feud_signing', 'Story: the contract signing'], ['beat_feud_video', 'Story: the video package'],
+  ['beat_feud_stakes', 'Story: the stakes are raised'], ['beat_feud_betray', 'Story: a betrayal'], ['beat_feud_injury', 'Story: through the table'], ['beat_feud_swerve', 'Story: the handshake swerve'],
+  ['beat_feud_made', 'Story: the match is made'], ['beat_feud_final', 'Story: one last face-off'], ['beat_mystery', 'Story: found laid out'], ['beat_mystery_clue', 'Story: a clue'],
+  ['beat_mystery_reveal', 'Story: the attacker revealed'], ['beat_return', 'Story: the return'], ['beat_stable', 'Story: a new group'], ['beat_stable_out', 'Story: thrown out of the group']];
+const fromSeg = (kind: string, beat: string, name: string, set?: string): Scene => { const b: Scene = JSON.parse(JSON.stringify(SEG_SCENES.find(x => x.id === 'seg_' + kind))); b.id = b.when = 'beat_' + beat; b.name = name; if (set) b.set = set; return b; };
+const beatScene = (beat: string, name: string, set: string, slots: Slot[], keys: Key[], cam?: Cam): Scene => ({ ...segScene(beat, name, set, slots, keys, cam), id: 'beat_' + beat, when: 'beat_' + beat });
+const DOWN = { head: 14, sh_n: 70, el_n: 95, sh_f: 55, el_f: 110, hip_n: 55, kn_n: -110 }, ARMS_UP = { sh_n: 165, el_n: 10, sh_f: 165, el_f: 10, head: 8 }, POINT = { sh_n: 95, el_n: 5, sh_f: -15, el_f: -10, head: 4 };
+const HAND = { sh_n: 70, el_n: 15, sh_f: -10, el_f: 10 }, hd = (txt: string): Prop => ({ id: 'hd', k: 'headline', x: 0, y: 3.3, r: 0, z: 2, s: 1, txt });
+const ABC: Slot[] = [SAB[0], SAB[1], { id: 'C', n: 'The third named', role: 'c', hook: 'attacker' }];
+export const BEAT_SCENES: Scene[] = [
+  fromSeg('words', 'feud_words', 'Words on the microphone'),
+  beatScene('feud_stare', 'Mind games', 'ramp', [{ id: 'A', n: 'Who plays the mind games', role: 'a' }, { id: 'B', n: 'Who is talking', role: 'b' }], [
+    { t: 0, figs: { B: STD(-2.4, 1, MIC_UP, 'talk', 0.4), A: STD(8.4, -1, CROSS, '', 0.2) }, props: [mic('B')] },
+    { t: 1.2, figs: { B: STD(-2.4, 1, { ...MIC_UP, head: -4 }, 'hurt', 0.4), A: STD(3.2, -1, { ...CROSS, head: 4 }, 'smirk', 0.2) }, props: [mic('B')] },
+    { t: 2.4, figs: { B: STD(-2.4, 1, MIC_PT, 'shout', 0.4), A: { ...STD(6.2, 1, CROSS, '', 0.2), b: true } }, props: [mic('B')] }]),
+  fromSeg('ambush', 'feud_sneak', 'Jumped in the parking lot', 'lot'),
+  fromSeg('brawl', 'feud_brawl', 'Pulled apart backstage'),
+  beatScene('feud_partner', 'The partner pays for it', 'ring', [{ id: 'A', n: 'The attacker', role: 'a' }, { id: 'B', n: 'The partner', role: 'b' }, { id: 'C', n: 'Who arrives too late', role: 'c', hook: 'attacker' }], [
+    { t: 0, figs: { B: LAY(0.4, 1, 90, DOWN, 'pain', 0.4), A: STD(-1.4, 1, { hip_n: 70, kn_n: -40, sh_n: 30, el_n: 40 }, 'roar', 0.6), C: STD(8.6, -1, {}, 'shout', 0.2) }, props: [burst('b1', 'STOMP!', 2.6, 2.2, PAL.red)] },
+    { t: 1.0, figs: { B: LAY(0.4, 1, 90, DOWN, 'pain', 0.4), A: STD(-1.6, 1, ARMS_UP, 'roar', 0.6), C: STD(5.4, -1, {}, 'shout', 0.2) }, props: [] },
+    { t: 2.0, figs: { B: LAY(0.4, 1, 90, DOWN, 'pain', 0.4), A: STD(-6.4, 1, POINT, 'smirk', 0.6), C: STD(2.0, -1, { head: 16, sh_n: 30, el_n: 60, sh_f: 30, el_f: 60 }, 'hurt', 0.2) }, props: [burst('b2', 'TOO LATE!', 3.4, 2.8)] }]),
+  fromSeg('signing', 'feud_signing', 'The contract signing'),
+  fromSeg('recap', 'feud_video', 'The video package'),
+  beatScene('feud_stakes', 'The stakes are raised', 'ring', SAB, [
+    { t: 0, figs: { A: STD(-1.8, 1, MIC_UP, 'talk', 0.4), B: STD(1.8, -1, CROSS, '', 0.6) }, props: [mic('A'), hd('THE STAKES ARE RAISED')] },
+    { t: 1.4, figs: { A: STD(-1.6, 1, MIC_PT, 'shout', 0.4), B: STD(1.6, -1, { ...POINT, sh_n: 80 }, 'snarl', 0.6) }, props: [mic('A'), hd('THE STAKES ARE RAISED'), burst('b1', 'ACCEPTED!', 3.6, 2.2)] }], { x: 0, y: 0.4, z: 1.3 }),
+  beatScene('feud_betray', 'The betrayal', 'ring', [{ id: 'A', n: 'Who turns', role: 'a' }, { id: 'B', n: 'Who trusted them', role: 'b' }], [
+    { t: 0, figs: { A: STD(-2.0, 1, CROSS, '', 0.4), B: STD(0.8, 1, ARMS_UP, 'shout', 0.6) }, props: [] },
+    { t: 1.0, figs: { A: STD(-1.2, 1, { sh_n: 160, el_n: 40, sh_f: 150, el_f: 40 }, 'snarl', 0.4), B: STD(0.8, -1, { sh_n: 40, el_n: 30 }, 'hurt', 0.6) }, props: [] },
+    { t: 1.8, figs: { A: STD(-0.8, 1, { sh_n: 20, el_n: 20, sh_f: -10 }, 'smirk', 0.4), B: LAY(1.4, -1, 90, DOWN, 'pain', 0.6) }, props: [burst('b1', 'TRAITOR!', 2.8, 2.6, PAL.red)] }]),
+  beatScene('feud_injury', 'Through the announce table', 'ringlow', [{ id: 'A', n: 'The attacker', role: 'a' }, { id: 'B', n: 'Who goes through the table', role: 'b' }], [
+    { t: 0, figs: { A: STD(-1.6, 1, { sh_n: 120, el_n: 60, sh_f: 110, el_f: 60 }, 'roar', 0.6), B: { ...STD(0.6, -1, { torso: -20, head: -24, sh_n: 80, el_n: 40, sh_f: -60 }, 'hurt', 0.4), r: -12 } }, props: [{ id: 'tb', k: 'table', x: 1.4, y: -1.7, r: 0, z: 0.2, s: 1 }] },
+    { t: 0.9, figs: { A: STD(-1.4, 1, ARMS_UP, 'roar', 0.6), B: LAY(1.4, -1, 90, DOWN, 'pain', 0.4, -1.95) }, props: [{ id: 'tb', k: 'table', x: 1.4, y: -2.2, r: -18, z: 0.2, s: 1 }, burst('b1', 'CRASH!', 3.4, 2.4, PAL.red)] }]),
+  beatScene('feud_swerve', 'The handshake', 'ring', [{ id: 'A', n: 'Who swerves', role: 'a' }, { id: 'B', n: 'Who offers the hand', role: 'b' }], [
+    { t: 0, figs: { A: STD(-1.4, 1, CROSS, '', 0.4), B: STD(1.2, -1, HAND, 'talk', 0.6) }, props: [] },
+    { t: 1.0, figs: { A: STD(-0.9, 1, HAND, 'talk', 0.4), B: STD(0.8, -1, HAND, 'talk', 0.6) }, props: [] },
+    { t: 1.8, figs: { A: STD(-0.8, 1, { sh_n: 20, el_n: 20, sh_f: -10 }, 'smirk', 0.4), B: LAY(1.2, -1, 90, DOWN, 'pain', 0.6) }, props: [burst('b1', 'NO!', 3.0, 2.6, PAL.red)] }]),
+  beatScene('feud_made', 'The match is made', 'plain', SAB, [
+    { t: 0, figs: { A: STD(-2.6, 1, CROSS, '', 0.4), B: STD(2.6, -1, CROSS, '', 0.4) }, props: [hd('IT IS OFFICIAL')] },
+    { t: 1.4, figs: { A: STD(-2.3, 1, POINT, 'snarl', 0.4), B: STD(2.3, -1, POINT, 'snarl', 0.4) }, props: [hd('IT IS OFFICIAL')] }]),
+  fromSeg('faceoff', 'feud_final', 'One last face-off', 'ring'),
+  beatScene('mystery', 'Found laid out', 'locker', [{ id: 'A', n: 'Who was attacked', role: 'a' }], [
+    { t: 0, figs: { A: LAY(0, 1, 90, DOWN, 'pain', 0.4) }, props: [burst('b1', 'WHO DID THIS?', 0, 2.6)] }], { x: 0, y: -0.4, z: 1.4 }),
+  beatScene('mystery_clue', 'A clue', 'plain', [{ id: 'A', n: 'Who wants answers', role: 'a' }], [
+    { t: 0, figs: { A: STD(-1.8, 1, MIC_UP, 'talk', 0.4) }, props: [mic('A'), hd('WHO DID IT?')] },
+    { t: 1.2, figs: { A: STD(-1.8, 1, MIC_PT, 'shout', 0.4) }, props: [mic('A'), hd('WHO DID IT?'), burst('b1', '?', 2.4, 1.4)] }]),
+  beatScene('mystery_reveal', 'The attacker revealed', 'ring', [{ id: 'A', n: 'The attacker', role: 'a' }, { id: 'B', n: 'Who was attacked', role: 'b' }], [
+    { t: 0, figs: { A: { ...STD(-1.6, 1, CROSS, '', 0.4), b: true }, B: STD(2.2, -1, POINT, 'shout', 0.6) }, props: [] },
+    { t: 1.2, figs: { A: STD(-1.6, 1, { ...CROSS, head: 6 }, 'smirk', 0.4), B: STD(1.8, -1, POINT, 'roar', 0.6) }, props: [burst('b1', 'IT WAS YOU!', 4.0, 2.9, PAL.red)] }]),
+  beatScene('return', 'The return', 'ramp', [{ id: 'A', n: 'Who comes back', role: 'a' }], [
+    { t: 0, figs: { A: { ...STD(0, 1, CROSS, '', 0.4), b: true } }, props: [{ id: 'sp', k: 'spot', x: 0, y: 0, r: 0, z: -0.2, s: 1 }] },
+    { t: 1.2, figs: { A: STD(0, 1, ARMS_UP, 'roar', 0.4) }, props: [{ id: 'sp', k: 'spot', x: 0, y: 0, r: 0, z: -0.2, s: 1 }, burst('b1', 'THE RETURN!', 3.4, 2.8)] }]),
+  beatScene('stable', 'A new group', 'ring', ABC, [
+    { t: 0, figs: { B: STD(-2.6, 1, CROSS, '', 0.3), A: STD(0, 1, CROSS, '', 0.6), C: STD(2.6, -1, CROSS, '', 0.3) }, props: [] },
+    { t: 1.3, figs: { B: STD(-2.4, 1, ARMS_UP, 'roar', 0.3), A: STD(0, 1, MIC_UP, 'shout', 0.6), C: STD(2.4, -1, ARMS_UP, 'roar', 0.3) }, props: [mic('A'), burst('b1', 'ONE NAME!', 3.6, 3)] }], { x: 0, y: 0.4, z: 1.25 }),
+  beatScene('stable_out', 'Thrown out of the group', 'ring', [{ id: 'A', n: 'The leader', role: 'a' }, { id: 'B', n: 'Who is thrown out', role: 'b' }], [
+    { t: 0, figs: { A: STD(-1.6, 1, MIC_PT, 'shout', 0.4), B: STD(1.6, -1, { sh_n: 40, el_n: 30 }, 'hurt', 0.6) }, props: [mic('A')] },
+    { t: 1.2, figs: { A: STD(-1.2, 1, { sh_n: 20, el_n: 20, sh_f: -10 }, 'smirk', 0.4), B: LAY(1.4, -1, 90, DOWN, 'pain', 0.6) }, props: [burst('b1', 'OUT!', 2.8, 2.6, PAL.red)] }]),
+];
+/** Every scene of the show: the booked kinds and the storyline beats. */
+export const SHOW_SCENES: Scene[] = SEG_SCENES.concat(BEAT_SCENES);
+export const SHOW_WHEN: [string, string][] = SEG_WHEN.concat(BEAT_WHEN);
+export function allScenes(world: Scene[]): Scene[] { const ids = new Set(world.map(s => s.id)); return world.concat(SCENES.concat(STILLS, SEG_SCENES, BEAT_SCENES).filter(s => !ids.has(s.id))); }
 /** The scenes that can play for a moment of the broadcast. */
 export function scenesFor(when: string, world: Scene[]): Scene[] { return allScenes(world).filter(s => s.when === when); }
 export const copy = <T>(x: T): T => JSON.parse(JSON.stringify(x));

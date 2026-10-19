@@ -9,7 +9,7 @@
 import { useEffect, useRef, useState } from 'preact/hooks';
 import { W } from '../../engine';
 import { Btn, TextBox, Desktop, Win, Group, Tabs } from '../../kit';
-import { Scene, Key, Fig, Prop, SCENES, STILLS, WHEN, STILL_WHEN, SETS, SETUPS, setupScene, WAIST, CAM0, POSES, HOLDS, LIMBS, HOOKS, at, build, viewFor, tilt, paint, lastT, allScenes, ok, copy, SEG_WHEN, SEG_SCENES, SCENE_FX, fxClass, FRAMES, EASES, aspectOf, cropOf, fitIn } from '../../kit/scene';
+import { Scene, Key, Fig, Prop, SCENES, STILLS, WHEN, STILL_WHEN, SETS, SETUPS, setupScene, WAIST, CAM0, POSES, HOLDS, LIMBS, HOOKS, at, build, viewFor, tilt, paint, lastT, allScenes, ok, copy, SHOW_WHEN, SHOW_SCENES, SCENE_FX, fxClass, FRAMES, EASES, aspectOf, cropOf, fitIn } from '../../kit/scene';
 import { FxVeil } from '../../kit/sceneplayer';
 import { Backdrop, BG_PARTS, BG_COLS, newBackdrop, newPart, useBackdropSource, isBg, setKey } from '../../kit/backdrop';
 import { drawPaper, drawScene, fromPx, toPx, pick, Piece, PAL } from '../../kit/paper';
@@ -192,7 +192,7 @@ export function SceneStudio(pp: StudioProps) {
     raf = requestAnimationFrame(step); return () => cancelAnimationFrame(raf);
   }, [time == null]);
   const open = (s: Scene) => { setSc(copy(s)); setKi(0); setSel(null); setTime(null); };
-  const save = () => { if (pp.onSave(copy(sc))) say('"' + sc.name + '" is kept in ' + pp.world + '. ' + (sc.still ? 'It shows in games of this world' : 'It plays in games of this world') + ' (' + ((sc.still ? STILL_WHEN : WHEN.concat(SEG_WHEN)).find(w => w[0] === sc.when) || ['', 'by hand'])[1].toLowerCase() + ').'); else say('That scene could not be kept.', { err: true }); redraw(); };
+  const save = () => { if (pp.onSave(copy(sc))) say('"' + sc.name + '" is kept in ' + pp.world + '. ' + (sc.still ? 'It shows in games of this world' : 'It plays in games of this world') + ' (' + ((sc.still ? STILL_WHEN : WHEN.concat(SHOW_WHEN)).find(w => w[0] === sc.when) || ['', 'by hand'])[1].toLowerCase() + ').'); else say('That scene could not be kept.', { err: true }); redraw(); };
   const exportIt = () => {
     const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([JSON.stringify(sc, null, 1)], { type: 'application/json' }));
     a.download = (sc.name.replace(/[^a-z0-9]+/gi, '-').toLowerCase() || 'scene') + '.scene.json'; document.body.appendChild(a); a.click(); a.remove();
@@ -404,8 +404,8 @@ export function SceneStudio(pp: StudioProps) {
       {tab === 'file' && <>
         <Group title="The scene">
           <div class="sc-row"><TextBox value={sc.name} max={32} label="Name of the scene" t="scene-name" onInput={v => setSc({ ...sc, name: v })} width="18ch" /></div>
-          <div class="sc-row"><span class="sc-slot">Kind</span><select aria-label="Kind of scene" data-t="scene-kind" value={sc.still ? 'still' : 'moving'} onChange={e => { const still = (e.currentTarget as HTMLSelectElement).value === 'still'; const n = copy(sc); if (still) { n.still = true; n.keys = [n.keys[Math.min(ki, n.keys.length - 1)]]; n.keys[0].t = 0; n.loop = false; if (!STILL_WHEN.some(w => w[0] === n.when)) n.when = 'any'; } else { delete n.still; if (!WHEN.concat(SEG_WHEN).some(w => w[0] === n.when)) n.when = 'any'; } setSc(n); setKi(0); setTime(null); }}><option value="moving">Moving: keyframes that play</option><option value="still">A still picture</option></select></div>
-          <div class="sc-row"><span class="sc-slot">{sc.still ? 'Shown at' : 'Plays at'}</span><select aria-label="When it plays" data-t="scene-when" value={sc.when} onChange={e => setSc({ ...sc, when: (e.currentTarget as HTMLSelectElement).value })}>{(sc.still ? STILL_WHEN : WHEN.concat(SEG_WHEN)).map(w => <option value={w[0]}>{w[1]}</option>)}</select></div>
+          <div class="sc-row"><span class="sc-slot">Kind</span><select aria-label="Kind of scene" data-t="scene-kind" value={sc.still ? 'still' : 'moving'} onChange={e => { const still = (e.currentTarget as HTMLSelectElement).value === 'still'; const n = copy(sc); if (still) { n.still = true; n.keys = [n.keys[Math.min(ki, n.keys.length - 1)]]; n.keys[0].t = 0; n.loop = false; if (!STILL_WHEN.some(w => w[0] === n.when)) n.when = 'any'; } else { delete n.still; if (!WHEN.concat(SHOW_WHEN).some(w => w[0] === n.when)) n.when = 'any'; } setSc(n); setKi(0); setTime(null); }}><option value="moving">Moving: keyframes that play</option><option value="still">A still picture</option></select></div>
+          <div class="sc-row"><span class="sc-slot">{sc.still ? 'Shown at' : 'Plays at'}</span><select aria-label="When it plays" data-t="scene-when" value={sc.when} onChange={e => setSc({ ...sc, when: (e.currentTarget as HTMLSelectElement).value })}>{(sc.still ? STILL_WHEN : WHEN.concat(SHOW_WHEN)).map(w => <option value={w[0]}>{w[1]}</option>)}</select></div>
           <div class="sc-row"><span class="sc-slot">Shape</span><select aria-label="Shape of the picture" data-t="scene-frame" value={sc.frame || 'wide'} onChange={e => { const f = (e.currentTarget as HTMLSelectElement).value as any; const n = { ...sc }; if (f === 'wide') delete n.frame; else n.frame = f; setSc(n); }}>{FRAMES.map(x => <option value={x[0]}>{x[1]}</option>)}</select></div>
           <div class="sc-row"><span class="sc-slot">Look</span><span class="sc-fx">{SCENE_FX.map(([k, n]) => { const on = !!(sc.fx && sc.fx[k]); return <Btn key={k} t="scene-fx" d={{ v: k }} kind={on ? 'go' : 'less'} on={on} onClick={() => { const f = { ...(sc.fx || {}) }; if (on) delete f[k]; else f[k] = true; const n2 = { ...sc }; if (Object.keys(f).length) n2.fx = f; else delete n2.fx; setSc(n2); }}>{n}</Btn>; })}</span></div>
           <div class="sc-row"><span class="sc-slot">The set</span><select aria-label="The set" data-t="scene-set" value={sc.set} onChange={e => { const v = (e.currentTarget as HTMLSelectElement).value; if (isBg(v)) { const b = allBgs.find(x => 'bg_' + x.id === v); if (b) { setBg(copy(b) as any); setBgi(-1); } } setSc({ ...sc, set: v }); }}>{SETS.map(x => <option value={x[0]}>{x[1]}</option>)}{allBgs.map(b => <option value={'bg_' + b.id}>{'Backdrop: ' + b.name}</option>)}</select></div>
@@ -414,7 +414,7 @@ export function SceneStudio(pp: StudioProps) {
           <div class="sc-row">
             <select aria-label="Open a scene" data-t="scene-open" value="" onChange={e => { const v = (e.currentTarget as HTMLSelectElement).value; if (v === '__new') { setTab('new'); return; } else { const x = allScenes(mine).find(y => y.id === v); if (x) open(x); } }}>
               <option value="">Open...</option><option value="__new">A new, empty scene</option>
-              {mine.map(x => <option value={x.id}>{'This world: ' + x.name}</option>)}{SCENES.filter(x => !mine.some(m => m.id === x.id)).map(x => <option value={x.id}>{'The game: ' + x.name}</option>)}{STILLS.filter(x => !mine.some(m => m.id === x.id)).map(x => <option value={x.id}>{'A still: ' + x.name}</option>)}{SEG_SCENES.filter(x => !mine.some(m => m.id === x.id)).map(x => <option value={x.id}>{'The show: ' + x.name}</option>)}
+              {mine.map(x => <option value={x.id}>{'This world: ' + x.name}</option>)}{SCENES.filter(x => !mine.some(m => m.id === x.id)).map(x => <option value={x.id}>{'The game: ' + x.name}</option>)}{STILLS.filter(x => !mine.some(m => m.id === x.id)).map(x => <option value={x.id}>{'A still: ' + x.name}</option>)}{SHOW_SCENES.filter(x => !mine.some(m => m.id === x.id)).map(x => <option value={x.id}>{'The show: ' + x.name}</option>)}
             </select>
           </div>
           <div class="sc-row">

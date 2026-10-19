@@ -15,7 +15,7 @@ import { scenesFor, allScenes, copy, Scene, dressEntrance } from '../../kit/scen
 import { finScene, threeMoves } from '../../kit/caw';
 import { recipeOf, Recipe, commentator } from '../../kit/puppet';
 import { book } from '../../flow';
-import { fillScene, MomentPic, segPick } from '../../shared/moment';
+import { fillScene, MomentPic, segPick, beatPick } from '../../shared/moment';
 import { Btn, KV, Meter, Banner, BeltArt, Portrait, CheckLine, stars, grade } from '../../kit';
 import { Verdict, OddsLine, FxList, Crowd } from './Report';
 import { typer, preNote, liveSkip, liveEnd, liveDecide, liveCall, onAir, livePos, autoArm, autoStop, autoToggle, paceNext, PACE_N } from './run';
@@ -218,6 +218,10 @@ function scenePick(r: any, s: any, at: number, done: boolean): { sc: Scene; cast
     // a booked promo or angle plays its own kind's scene, with the people booked into it (rule 9c)
     if (s.booked && Array.isArray(s.ids) && s.ids.length) {
       const pk = segPick(s.booked, s.ids); if (pk) { Object.assign(cast, pk.cast); return { sc: pk.sc, cast, play: 'g' + i, label: pk.label }; }
+    }
+    // a beat of a storyline the writers wrote plays that beat's scene
+    if (s.beat && Array.isArray(s.bids) && s.bids.length) {
+      const pk = beatPick(s.beat, s.bids); if (pk) { Object.assign(cast, pk.cast); return { sc: pk.sc, cast, play: 'b' + i, label: pk.label }; }
     }
     // an attack: the first named does it to the second, and the villain's people come with them
     const txt = String(s.text || ''), named = S.w.filter((w: any) => w && w.promo === S.player && txt.indexOf(w.name) >= 0).sort((x: any, y: any) => txt.indexOf(x.name) - txt.indexOf(y.name)).map((w: any) => w.id as number);

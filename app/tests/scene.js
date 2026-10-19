@@ -123,6 +123,8 @@ async function studio(mode) {
     ok(mode, 'the set list offers the backdrop', (await page.$$eval('[data-t="scene-set"] option', o => o.filter(x => x.value.indexOf('bg_') === 0).length)) >= 1);
     await page.selectOption('[data-t="scene-set"]', 'plain');
     // rule 9c: every promo and angle a player can book has its scene
+    { const miss = await page.evaluate(() => { const w = window.EWF_DEBUG.segScenes(); return window.GP.BEATS.filter(b => w.indexOf('beat_' + b) < 0 && w.indexOf('seg_' + b) < 0); });
+      ok(mode, 'every beat of a storyline has its scene', !miss.length, miss.join(', ')); }
     { const miss = await page.evaluate(() => { const w = window.EWF_DEBUG.segScenes(), K = window.GP.SEGK; return Object.keys(K).filter(k => k !== 'writers' && w.indexOf('seg_' + k) < 0); });
       ok(mode, 'every kind of promo and angle has its scene', !miss.length, miss.join(',')); }
     // easing: how a keyframe is reached
@@ -224,6 +226,9 @@ async function broadcast(mode) {
     { const kinds = await state(page, S => { const r = (S.live && S.live.st && S.live.st.rep) || S.reports[0]; return (r && r.segs || []).filter(x => x && x.booked && x.booked !== 'writers').map(x => x.booked); });
       if (kinds.length) ok(mode, 'a booked promo or angle plays its own kind of scene', [...seen].some(x => x.indexOf('seg_') === 0), kinds.join(',') + ' / ' + [...seen].join(','));
       else console.log(mode.padEnd(6), 'note', 'no promo or angle was booked on this card'); }
+    { const beats = await state(page, S => { const r = (S.live && S.live.st && S.live.st.rep) || S.reports[0]; return (r && r.segs || []).filter(x => x && x.beat && (x.bids || []).length).map(x => x.beat); });
+      if (beats.length) ok(mode, 'a beat of a storyline the writers wrote plays its own scene', [...seen].some(x => x.indexOf('beat_') === 0 || beats.some(b => x === 'seg_' + b)), beats.join(',') + ' / ' + [...seen].join(','));
+      else console.log(mode.padEnd(6), 'note', 'the writers wrote no storyline beat on this card'); }
     ok(mode, 'the bell brings the lock-up', seen.has('lockup'), [...seen].join(','));
     ok(mode, 'a near fall brings the count', seen.has('nearfall'), [...seen].join(','));
     ok(mode, 'a win brings the three count', seen.has('finish'), [...seen].join(','));

@@ -78,18 +78,26 @@ export function MomentPic(p: { ev: any; call?: boolean; t?: string }) {
   </figure>;
 }
 
-/** The scene a booked promo or angle plays (rule 9c): its kind's own scene, with the people booked into it, in the
-    order the segment names them (the first is A, the second B, a third comes in as the attacker). The pick among a
-    world's scenes for the kind comes from who is in it, so the run sheet shows the scene the broadcast plays. */
-export function segPick(k: string, who: (number | null)[]): { sc: Scene; cast: Record<string, Recipe>; label: string } | null {
+/** The scene a promo, an angle or a storyline beat plays (rule 9c): the first of `whens` that has a scene, with the
+    people in it in the order they are named (the first is A, the second B, a third comes in as C). The pick among a
+    world's scenes for the moment comes from who is in it, so the run sheet shows the scene the broadcast plays. */
+export function storyPick(whens: string[], who: (number | null)[]): { sc: Scene; cast: Record<string, Recipe>; label: string } | null {
   const S = G.S; if (!S) return null;
   const ids = who.filter((id): id is number => id != null && !!S.w[id]); if (!ids.length) return null;
-  const list = scenesFor('seg_' + k, E.worldScenes(S) as Scene[]); if (!list.length) return null;
-  const sc0 = list[ids.reduce((a, id) => a * 7 + id, k.length) % list.length], cast: Record<string, Recipe> = {};
-  const hk = E.sceneHooks(S, { ids, a: ids[0], b: ids[1] }); hk.a = ids[0]; if (ids[1] != null) hk.b = ids[1]; else delete hk.b; if (ids[2] != null) hk.attacker = ids[2];
-  const sc = fillScene(sc0, hk, cast); if (!sc) return null;
-  return { sc, cast, label: sc.name + ': ' + Object.values(cast).map(r => r.name).filter(Boolean).join(', ') };
+  const world = E.worldScenes(S) as Scene[];
+  for (const when of whens) {
+    const list = scenesFor(when, world); if (!list.length) continue;
+    const sc0 = list[ids.reduce((a, id) => a * 7 + id, when.length) % list.length], cast: Record<string, Recipe> = {};
+    const hk = E.sceneHooks(S, { ids, a: ids[0], b: ids[1] }); hk.a = ids[0]; if (ids[1] != null) hk.b = ids[1]; else delete hk.b; if (ids[2] != null) hk.attacker = ids[2];
+    const sc = fillScene(sc0, hk, cast); if (!sc) continue;
+    return { sc, cast, label: sc.name + ': ' + Object.values(cast).map(r => r.name).filter(Boolean).join(', ') };
+  }
+  return null;
 }
+/** A booked promo or angle of kind `k`. */
+export const segPick = (k: string, who: (number | null)[]) => storyPick(['seg_' + k], who);
+/** A beat the story director wrote: its own scene, or the booked kind's where it is the same moment. */
+export const beatPick = (beat: string, who: (number | null)[]) => storyPick(['beat_' + beat, 'seg_' + beat], who);
 /** The picture of a promo or angle on the run sheet: the first moment of the scene it will play. */
 export function SegPic(p: { k: string; who: (number | null)[]; t?: string }) {
   const pk = segPick(p.k, p.who); if (!pk) return null;
