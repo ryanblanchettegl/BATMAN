@@ -1,0 +1,81 @@
+/* Concept B, the cardboard box. Everything is cut from corrugated kraft board: the windows are panels with the flutes
+   showing along their cut edges, the menu is a row of coloured paper tabs, titles are stamped in ink, the feed is a
+   row of manila tags strung on twine, the call is typed on a manila card, and the broadcast is a cardboard television
+   with its flaps folded open and two dials. Pieces from tools/creator/craft-kit.py (--lk-*). */
+:root{--typed:'Craft Typed','EWF Sans',monospace;--kalam:'Craft Kalam','EWF Sans',sans-serif;--marker:'Craft Marker','EWF Sans',sans-serif}
+body{background:radial-gradient(120% 100% at 30% 0%,rgba(255,235,200,.12),rgba(40,22,8,.35)),var(--lk-kraft-dark) 0 0/300px,#8a6338;color:#2a1d10}
+
+/* the menu: coloured paper tabs along a strip of board; the open one stands taller */
+.menu{background:var(--lk-kraft) 0 0/400px;border:0;box-shadow:0 .3em .5em rgba(40,22,8,.45);padding:.3em 1.2ch 0;align-items:flex-end}
+.menu button{font-family:var(--kalam);font-weight:700;font-size:1.06em;color:#2a1d10;border-radius:5px 5px 0 0;padding:.25em 1.6ch .3em;margin-right:.3ch;box-shadow:inset 0 -.2em 0 rgba(0,0,0,.12),.1em -.05em .2em rgba(0,0,0,.25)}
+.menu button:nth-of-type(1){background:#f1e3c0} .menu button:nth-of-type(2){background:#e3735a} .menu button:nth-of-type(3){background:#86b46b} .menu button:nth-of-type(4){background:#f0cf62} .menu button:nth-of-type(5){background:#f09a4e} .menu button:nth-of-type(6){background:#b49ad6}
+.menu button[aria-current="page"],.menu button[aria-current="page"]:hover{color:#1b130a;transform:translateY(-.25em);padding-bottom:.55em;box-shadow:.15em -.1em .3em rgba(0,0,0,.35)}
+.menu button[aria-current="page"]:nth-of-type(2){background:#e3735a}
+.menu .ttl{font-family:var(--typed);align-self:center}
+
+/* windows: panels of board, flutes along the cut edge; title strips stamped in ink */
+:is(html,body) :is(.wn,.win).wn,:is(html,body) .win.win,.wn,.win{border-image:var(--lk-win) 30 fill / 20px / 6px stretch;color:#2a1d10}
+.wn>.ttl,.win .wt{background:none;border:0;margin:4px 6px 0;border-bottom:2px dashed rgba(60,35,15,.35);padding:.25em 1ch .2em}
+.wn>.ttl h2,.win .wt>span{background:none;font-family:var(--typed);font-weight:400;font-size:1.14em;color:#7d2418;letter-spacing:.08em;text-transform:uppercase;
+  -webkit-mask:var(--lk-ink) 0 0/180px;mask:var(--lk-ink) 0 0/180px;transform:rotate(-.8deg)}
+.wn>.ttl>span:last-child{font-family:var(--typed);color:#4b3420;font-size:.95em}
+.wn>.ttl>span:first-child::before,.wn>.ttl>span:last-child::after{background:transparent;border:2px solid #4b3420;border-radius:50%;width:.6rem;height:.6rem;box-shadow:none}
+.wn>.bd{color:#2a1d10;font-family:var(--kalam);font-weight:400}
+
+/* buttons: die-cut from painted board, lettered with a thick marker */
+.btn,.wn .btn,.win .btn{border-image:var(--bi) 22 fill / 13px / 4px;--bi:var(--lk-btn-green);font-family:var(--kalam);font-weight:700;color:#fff8ea;text-shadow:0 1px 0 rgba(0,0,0,.3)}
+.btn.sm,.wn .btn.sm,.win .btn.sm{--bi:var(--lk-btn-blue)} .btn.less,.wn .btn.less,.win .btn.less{--bi:var(--lk-btn-navy)} .btn.danger,.wn .btn.danger{--bi:var(--lk-btn-red)}
+.btn.go,.btn.on,.wn .btn.go,.wn .btn.on,.win .btn.go,.win .btn.on,.btn.go:hover,.btn.on:hover,.wn .btn.on:hover{--bi:var(--lk-btn-yellow);color:#2a1d10;text-shadow:none}
+.btn[disabled],.wn .btn[disabled]{--bi:var(--lk-btn-off)}
+
+/* ---------- the broadcast ---------- */
+.live1 .bar{background:var(--lk-kraft) 0 0/400px;color:#2a1d10;font-family:var(--typed);border-radius:3px;box-shadow:.15em .25em .3em rgba(40,22,8,.45)}
+.live1 .bar>span:first-child::before{font-family:var(--kalam);background:#c4452f;border-radius:50%;padding:.15em .9ch;transform:rotate(-6deg);display:inline-block}
+.lv-rail .nt-r{background:var(--lk-kraft) 0 0/400px;border:0;border-radius:6px 6px 2px 2px;font-family:var(--kalam);color:#2a1d10;box-shadow:.12em .2em .25em rgba(40,22,8,.45),inset 0 -.15em 0 rgba(0,0,0,.15)}
+.lv-rail .nt-r .no{font-family:var(--typed);color:#7d2418}
+.lv-rail .nt-r.seen{filter:brightness(.82)}
+.lv-rail .nt-r.now{background:#f0cf62;transform:translateY(-2px)}
+/* the television: a box cut from board, its flaps folded open above it, two dials down the side */
+.tvframe{border:0;border-radius:0;border-image:var(--lk-tv) 36 fill / 26px 74px 26px 26px / 7px;background:none;box-shadow:none;overflow:visible;padding:16px 70px 16px 16px;margin-top:1.4em}
+.tvframe::before{content:'';position:absolute;left:8%;right:22%;top:-1.55em;height:1.7em;background:var(--lk-kraft) 0 0/400px;clip-path:polygon(4% 100%,0 0,100% 0,96% 100%);box-shadow:inset 0 -.3em .4em rgba(0,0,0,.25);filter:drop-shadow(.1em .2em .15em rgba(0,0,0,.45));z-index:-1}
+.tvframe::after{content:'';position:absolute;right:20px;top:34%;width:38px;height:38px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#d9b07a,#8a6338 70%);box-shadow:0 52px 0 0 #9b7244,.12em .2em .25em rgba(0,0,0,.5),0 54px .3em 0 rgba(0,0,0,.45);border:2px solid #5a3e20}
+.live1 .tvframe .lv-scene{background:#14110d;border-radius:10px;outline:4px solid #2a1d10}
+.tvframe .chyron{left:2ch;bottom:1.2em}
+.tvframe .chyron .lv-head{background:var(--lk-tag) 0 0/100% 100%;border:0;border-left:0;border-radius:4px;color:#2a1d10;box-shadow:.12em .2em .25em rgba(0,0,0,.5);padding:.3em 2ch .35em 3.4ch;transform:rotate(-1.2deg)}
+.tvframe .chyron .lv-head::before{content:'';position:absolute;left:.8ch;top:42%;width:.7em;height:.7em;border-radius:50%;background:#14110d;box-shadow:inset 0 0 0 2px #9b7244}
+.tvframe .chyron .lv-head h1{font-family:var(--typed);font-weight:400;color:#2a1d10;font-size:1.3em;letter-spacing:.03em}
+.tvframe .chyron .lv-head .eyebrow{font-family:var(--kalam);color:#7d2418}
+.tvframe .bug{font-family:var(--typed);background:#c4452f;border-radius:3px;transform:rotate(3deg)}
+/* the call: typed on a manila card */
+.live1 .tvframe~.lv-log{background:none;border:0;border-image:var(--lk-tag) 30 44 30 30 fill / 16px 22px 16px 16px / 4px stretch;box-shadow:none;padding:.35em 2ch .35em 3.2ch;max-height:7.4em}
+.live1 .lv-log .ln{font-family:var(--typed);font-size:1em;line-height:1.3}
+.live1 .lv-log .ln .tx{color:#2a1d10} .live1 .lv-log .ln.last .tx{color:#000}
+.live1 .lv-log .ln .sp{font-family:var(--typed);color:#7d2418}
+.live1 .lv-log .ln.hot .tx{color:#7d2418;font-weight:400}
+.live1 .ln.note{color:#3d6b2c;font-family:var(--typed)}
+.live1 .foot .keys-hint,.lv-side .nt-foot{font-family:var(--typed);color:#f3e2bf;font-size:.9em}
+/* the feed: manila tags hung on a length of twine */
+.lv-side .fdwin>.bd{background:none;position:relative}
+.lv-side .fd-list::before{content:'';position:absolute;left:1.6em;top:0;bottom:0;width:4px;background:var(--lk-twine) 0 0/16px 200px repeat-y;transform:rotate(90deg) scaleY(30) rotate(-90deg);display:none}
+.post{background:none;border:0;border-image:var(--lk-tag) 30 30 30 44 fill / 14px 14px 14px 22px / 4px stretch;box-shadow:none;padding:.35em 1.2ch .3em 2.8ch;color:#2a1d10}
+.post.k-w{filter:hue-rotate(-12deg) saturate(1.2)} .post.k-p{filter:brightness(1.05)}
+.post:nth-child(odd){transform:rotate(-1deg)} .post:nth-child(even){transform:rotate(.8deg) translateX(.4ch)}
+.post .ph b{font-family:var(--typed);font-weight:400;color:#2a1d10}
+.post .pt{font-family:var(--kalam);font-weight:400;font-size:1.04em;color:#2a1d10}
+.post .hn,.post .tm,.post .pm{font-family:var(--typed);color:#6b4e2e}
+.post .av{border:2px solid #5a3e20;border-radius:4px}
+/* the crowd: painted squares of board */
+.crowdm{background:var(--lk-kraft) 0 0/400px;border:0;border-radius:4px;color:#2a1d10;box-shadow:.14em .22em .3em rgba(40,22,8,.5)}
+.crowdm .cl{font-family:var(--typed);color:#4b3420}
+.crowdm .cm i{background:#8a6338;border-radius:2px;box-shadow:inset 0 .1em 0 rgba(255,255,255,.15)}
+.crowdm .cm i.on.g{background:#6aa356;box-shadow:inset 0 .1em 0 rgba(255,255,255,.3)} .crowdm .cm i.on.y{background:#e7b93c;box-shadow:inset 0 .1em 0 rgba(255,255,255,.3)} .crowdm .cm i.on.r{background:#c4452f;box-shadow:inset 0 .1em 0 rgba(255,255,255,.3)}
+.crowdm .cw{font-family:var(--kalam);color:#7d2418;font-size:1.1em}
+
+/* the bottom line: a strip of board with manila labels and the key */
+.status,.ffoot>.status{background:var(--lk-kraft) 0 0/400px;border:0;box-shadow:0 -.3em .5em rgba(40,22,8,.45);color:#2a1d10}
+.ffoot>.status>button[data-t="stat"]{border-image:var(--lk-tag) 30 30 30 30 fill / 12px / 3px stretch;font-family:var(--typed);color:#2a1d10}
+.status .nk i,.status .key .cap{font-family:var(--typed);background:#2a1d10;color:#f3e2bf}
+.status .nk em{border-image:var(--lk-btn-blue) 22 fill / 12px / 3px;font-family:var(--kalam);font-weight:700}
+.status .key .lab{--bi:var(--lk-btn-yellow);border-image:var(--bi) 22 fill / 14px / 4px;font-family:var(--kalam);font-weight:700;color:#2a1d10}
+.status .key.tone-air .lab{--bi:var(--lk-btn-green);color:#fff8ea} .status .key.tone-stop .lab{--bi:var(--lk-btn-red);color:#fff8ea} .status .key.tone-home .lab{--bi:var(--lk-btn-cream)} .status .key.tone-end .lab{--bi:var(--lk-btn-blue);color:#fff8ea}
+.live1 .result,.live1 .result *{color:#2a1d10} .live1 .result .good{color:#2f6a2a} .live1 .result .bad{color:#9a2a1a}

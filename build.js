@@ -19,6 +19,12 @@ if(fs.existsSync(path.join(appDir,'node_modules','esbuild'))){
   // the paper pieces rendered in Blender (tools/creator/ui-pieces.py), as variables the theme reads
   const uiDir=path.join(appDir,'ui');
   const ui=fs.existsSync(uiDir)?':root{'+fs.readdirSync(uiDir).filter(f=>f.endsWith('.png')).sort().map(f=>'--ui-'+f.slice(0,-4)+':url(data:image/png;base64,'+fs.readFileSync(path.join(uiDir,f)).toString('base64')+');').join('')+'}\n':'';
+  // EWF_LOOK=a|b|c: a concept of the hand-made look (tools/creator/craft-kit.py) layered on top: its pieces as --lk-*,
+  // the hand-lettering faces, and app/styles/looks/<look>.css last. Use it with EWF_OUT so the real build stays as it is.
+  const look=process.env.EWF_LOOK,lkDir=look?path.join(uiDir,look):null;
+  const lk=look&&fs.existsSync(lkDir)?':root{'+fs.readdirSync(lkDir).filter(f=>f.endsWith('.png')).sort().map(f=>'--lk-'+f.slice(0,-4)+':url(data:image/png;base64,'+fs.readFileSync(path.join(lkDir,f)).toString('base64')+');').join('')+'}\n'
+    +[['marker','Craft Marker'],['hand','Craft Hand'],['typed','Craft Typed'],['kalam','Craft Kalam'],['gochi','Craft Gochi']].map(x=>{const f=path.join(appDir,'fonts','hand',x[0]+'.woff2');return fs.existsSync(f)?"@font-face{font-family:'"+x[1]+"';font-display:swap;src:url(data:font/woff2;base64,"+fs.readFileSync(f).toString('base64')+") format('woff2')}\n":'';}).join('')
+    +fs.readFileSync(path.join(appDir,'styles','looks',look+'.css'),'utf8').replace(/(^|[^\w.#-])(-?\d*\.?\d+)ch\b/g,(m,pre,n)=>pre+'calc('+n+'*var(--ch))'):'';
   // the one typeface is embedded, so the game fetches nothing at all (VT323, SIL Open Font License 1.1)
   const fontFile=path.join(appDir,'node_modules','@fontsource','vt323','files','vt323-latin-400-normal.woff2');
   const font=fs.existsSync(fontFile)?"@font-face{font-family:'VT323';font-style:normal;font-weight:400;font-display:swap;src:url(data:font/woff2;base64,"+fs.readFileSync(fontFile).toString('base64')+") format('woff2')}\n":'';
@@ -29,7 +35,7 @@ if(fs.existsSync(path.join(appDir,'node_modules','esbuild'))){
   const addons=fs.existsSync(addDir)?fs.readdirSync(addDir).filter(f=>f.endsWith('.js')).sort().map(f=>'\n<script>\n'+fs.readFileSync(path.join(addDir,f),'utf8').replace(/<\/script/gi,'<\\/script')+'</script>').join(''):'';
   const next=`<title>EWF Wrestling Manager</title>
 <style>
-${font}${blocks}${sans}${ui}${css}</style>
+${font}${blocks}${sans}${ui}${css}${lk}</style>
 <div id="app"></div>
 <script>
 window.GP_UNIVERSE=${rd('universes/public_domain.json').replace(/<\//g,'<\\/')};
