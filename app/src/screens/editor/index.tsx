@@ -16,7 +16,7 @@ import { ScenesTab, keepScene, forgetScene } from './Scenes';
 import { SceneStudio, fromWorld } from '../scene';
 import { CreatePlayer, workerW } from '../player';
 import { companyCard } from '../../kit/paperportrait';
-import { SCENES, STILLS, copy } from '../../kit/scene';
+import { SCENES, STILLS, SEG_SCENES, copy } from '../../kit/scene';
 
 /* Back steps out one level at a time: the open record, then the world, then the title screen. */
 onBack(() => {
@@ -112,7 +112,7 @@ export function Editor() {
         }} />; }
   }
   if (st.id && st.scene) {   // Create a Scene, full screen, on the world being edited
-    const pkg = UNIS[st.id], mine = E.edScenes(pkg), start = st.scene === '__new' ? undefined : (mine.find((x: any) => x.id === st.scene) || (st.sceneStart && st.sceneStart.id === st.scene ? st.sceneStart : null) || SCENES.concat(STILLS).find(x => x.id === st.scene));
+    const pkg = UNIS[st.id], mine = E.edScenes(pkg), start = st.scene === '__new' ? undefined : (mine.find((x: any) => x.id === st.scene) || (st.sceneStart && st.sceneStart.id === st.scene ? st.sceneStart : null) || SCENES.concat(STILLS, SEG_SCENES).find(x => x.id === st.scene));
     const R = fromWorld(pkg), fr = st.sceneFor, castA = fr ? R.find(w => w.name === fr.cast) : undefined;
     // a custom entrance made from Create a Player: saving it picks it for them, and Done goes back to them
     return <SceneStudio key={st.scene} world={pkg.manifest.name || 'this world'} roster={R} saved={mine} start={start} blank={st.scene === '__new'} castA={castA ? castA.id : undefined}

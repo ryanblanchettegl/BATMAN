@@ -122,6 +122,9 @@ async function studio(mode) {
     await page.click('[data-t="scene-tab"][data-v="file"]');
     ok(mode, 'the set list offers the backdrop', (await page.$$eval('[data-t="scene-set"] option', o => o.filter(x => x.value.indexOf('bg_') === 0).length)) >= 1);
     await page.selectOption('[data-t="scene-set"]', 'plain');
+    // rule 9c: every promo and angle a player can book has its scene
+    { const miss = await page.evaluate(() => { const w = window.EWF_DEBUG.segScenes(), K = window.GP.SEGK; return Object.keys(K).filter(k => k !== 'writers' && w.indexOf('seg_' + k) < 0); });
+      ok(mode, 'every kind of promo and angle has its scene', !miss.length, miss.join(',')); }
     // easing: how a keyframe is reached
     await page.click('[data-t="scene-key"][data-v="1"]'); await page.waitForTimeout(100);
     await page.selectOption('[data-t="scene-ease"]', 'cut'); await page.waitForTimeout(100);
@@ -196,6 +199,10 @@ async function broadcast(mode) {
   const { browser, page, errs } = await open({ mode, promo: 'pdw', pics: true });
   try {
     await go(page, 'booking'); await page.click('[data-t="suggest"]');
+    // book a face-off, so a booked segment's own scene can be seen on the air
+    const bookedSeg = await page.evaluate(() => { const S = window.EWF_DEBUG.state(), E = window.GP; const ch = E.segChoices(S, 'faceoff', [], -1); const a = ch[0] && ch[0][0]; if (a == null) return 'no choices';
+      const ch2 = E.segChoices(S, 'faceoff', [a], -1); const b = ch2[1] && ch2[1].find(x => x !== a); if (b == null) return 'no second'; const r = E.setSeg(S, -1, { k: 'faceoff', who: [a, b], pos: 1, len: 'S' }); window.EWF_DEBUG.render(); return r.ok ? '' : r.msg; });
+    if (bookedSeg) console.log(mode.padEnd(6), 'note', 'could not book a face-off: ' + bookedSeg);
     for (let k = 0; k < 6 && !(await has(page, '#live')); k++) { if (await has(page, '[data-t="pre"]')) await page.click('[data-t="pre"][data-c="0"]'); else await page.click('[data-t="advance"]'); await page.waitForTimeout(50); }
     ok(mode, 'the show goes on the air', await has(page, '#live'));
     const seen = new Set(); let shots = 0, fitBad = null;
@@ -214,6 +221,9 @@ async function broadcast(mode) {
         if (process.env.SHOTS && shots++ < 8) await shot(page, 'scene-' + mode + '-live-' + v);
       }
     }
+    { const kinds = await state(page, S => { const r = (S.live && S.live.st && S.live.st.rep) || S.reports[0]; return (r && r.segs || []).filter(x => x && x.booked && x.booked !== 'writers').map(x => x.booked); });
+      if (kinds.length) ok(mode, 'a booked promo or angle plays its own kind of scene', [...seen].some(x => x.indexOf('seg_') === 0), kinds.join(',') + ' / ' + [...seen].join(','));
+      else console.log(mode.padEnd(6), 'note', 'no promo or angle was booked on this card'); }
     ok(mode, 'the bell brings the lock-up', seen.has('lockup'), [...seen].join(','));
     ok(mode, 'a near fall brings the count', seen.has('nearfall'), [...seen].join(','));
     ok(mode, 'a win brings the three count', seen.has('finish'), [...seen].join(','));

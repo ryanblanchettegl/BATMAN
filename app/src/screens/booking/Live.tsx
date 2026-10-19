@@ -215,6 +215,14 @@ function scenePick(r: any, s: any, at: number, done: boolean): { sc: Scene; cast
   // the canned entrance a wrestler picked in Create a Player, if they did
   const ownEnt = (id: number): Scene | null => { const w = S.w[id], v = w && w.look && w.look.entrance; return v ? allScenes(world).find(x => x.id === v && x.when === 'entrance') || null : null; };
   if (s.k !== 'match') {
+    // a booked promo or angle plays its own kind's scene, with the people booked into it (rule 9c)
+    if (s.booked && Array.isArray(s.ids) && s.ids.length) {
+      const sc0 = choose('seg_' + s.booked, 0), ids = (s.ids as number[]).filter(id => !!S.w[id]);
+      if (sc0 && ids.length) {
+        const hk = E.sceneHooks(S, { ids, a: ids[0], b: ids[1] }); hk.a = ids[0]; if (ids[1] != null) hk.b = ids[1]; else delete hk.b; if (ids[2] != null) hk.attacker = ids[2];
+        const sc = fillScene(sc0, hk, cast); if (sc) return { sc, cast, play: 'g' + i, label: sc.name + ': ' + Object.values(cast).map(nm).filter(Boolean).join(', ') };
+      }
+    }
     // an attack: the first named does it to the second, and the villain's people come with them
     const txt = String(s.text || ''), named = S.w.filter((w: any) => w && w.promo === S.player && txt.indexOf(w.name) >= 0).sort((x: any, y: any) => txt.indexOf(x.name) - txt.indexOf(y.name)).map((w: any) => w.id as number);
     if (/ambush|brawl|attack|beat|jump/i.test((s.head || '') + ' ' + txt.slice(0, 80)) && named.length >= 2) {

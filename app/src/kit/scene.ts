@@ -654,7 +654,57 @@ export function ok(x: any): x is Scene {
     x.keys.every((k: any) => typeof k.t === 'number' && k.figs && typeof k.figs === 'object' && Array.isArray(k.props));
 }
 /** Every scene the world can play: the world's own (which take the place of a game scene with the same id), then the game's. */
-export function allScenes(world: Scene[]): Scene[] { const ids = new Set(world.map(s => s.id)); return world.concat(SCENES.concat(STILLS).filter(s => !ids.has(s.id))); }
+/* ---------- the scenes of the show: one for every promo and angle a player can book (rule 9c) ---------- */
+/** Booked segments by kind, as their scenes' "Plays at": a scene with when "seg_" and a kind plays when that kind is on the air. */
+export const SEG_WHEN: [string, string][] = [['seg_interview', 'Booked: an interview'], ['seg_callout', 'Booked: a call-out'], ['seg_words', 'Booked: a war of words'], ['seg_challenge', 'Booked: a title challenge'],
+  ['seg_faceoff', 'Booked: a face-off'], ['seg_ambush', 'Booked: an ambush'], ['seg_brawl', 'Booked: a brawl'], ['seg_save', 'Booked: a save'], ['seg_turn', 'Booked: a turn'], ['seg_signing', 'Booked: a contract signing'], ['seg_recap', 'Booked: a video recap']];
+const SA: Slot[] = [{ id: 'A', n: 'Who it is about', role: 'a' }], SAB: Slot[] = [{ id: 'A', n: 'The first named', role: 'a' }, { id: 'B', n: 'The second named', role: 'b' }];
+const MIC_UP = { sh_n: 150, el_n: 120, sh_f: -20, el_f: -30, head: 4 }, MIC_PT = { sh_n: 150, el_n: 120, sh_f: 95, el_f: 5, head: 4 };
+const mic = (who: string, id = 'mic' + who): Prop => ({ id, k: 'mic', x: 0.1, y: 0.1, r: -30, z: 1.2, at: who + ':hand_n' });
+const segScene = (kind: string, name: string, set: string, slots: Slot[], keys: Key[], cam?: Cam): Scene => ({ v: 1, id: 'seg_' + kind, name, when: 'seg_' + kind, set, slots, keys: cam ? keys.map(k => ({ ...k, cam })) : keys });
+export const SEG_SCENES: Scene[] = [
+  segScene('interview', 'The interview', 'hall', [SA[0], { id: 'I', n: 'The interviewer', role: 'c', dress: 'suit', hook: 'interviewer' }], [
+    { t: 0, figs: { A: STD(-1.5, 1, { sh_n: 35, el_n: 100, sh_f: -12, el_f: 10, head: 4 }, 'talk', 0.4), I: STD(1.9, -1, { sh_n: 100, el_n: 30, sh_f: 8, el_f: 15 }, '', 0.6) }, props: [{ id: 'mic', k: 'mic', x: 0.05, y: 0.15, r: 70, z: 1.4, at: 'I:hand_n' }] },
+    { t: 1.2, figs: { A: STD(-1.5, 1, { sh_n: 95, el_n: 5, sh_f: -12, el_f: 10, head: 8 }, 'shout', 0.4), I: STD(1.9, -1, { sh_n: 100, el_n: 30, sh_f: 8, el_f: 15, head: -6 }, '', 0.6) }, props: [{ id: 'mic', k: 'mic', x: 0.05, y: 0.15, r: 70, z: 1.4, at: 'I:hand_n' }] }], { x: 0.2, y: 0.6, z: 1.3 }),
+  segScene('callout', 'The call-out', 'ring', SAB, [
+    { t: 0, figs: { A: STD(-2.2, 1, MIC_PT, 'shout', 0.5), B: STD(7.5, -1, {}, '', -0.6) }, props: [mic('A')] },
+    { t: 1.4, figs: { A: STD(-2.2, 1, MIC_UP, 'talk', 0.5), B: STD(4.6, -1, { sh_n: 20, el_n: 20, sh_f: -20 }, 'snarl', -0.6) }, props: [mic('A')] },
+    { t: 2.2, figs: { A: STD(-2.2, 1, MIC_PT, 'shout', 0.5), B: STD(4.0, -1, CROSS, 'snarl', -0.6) }, props: [mic('A')] }]),
+  segScene('words', 'A war of words', 'ring', SAB, [
+    { t: 0, figs: { A: STD(-1.5, 1, MIC_UP, 'shout', 0.4), B: STD(1.6, -1, { sh_n: 150, el_n: 120, sh_f: 30, el_f: 90 }, 'snarl', 0.6) }, props: [mic('A'), mic('B')] },
+    { t: 1.2, figs: { A: STD(-1.5, 1, { sh_n: 150, el_n: 120, sh_f: 30, el_f: 90 }, 'snarl', 0.4), B: STD(1.6, -1, MIC_PT, 'shout', 0.6) }, props: [mic('A'), mic('B')] },
+    { t: 2.0, figs: { A: STD(-1.0, 1, MIC_PT, 'roar', 0.4), B: STD(1.1, -1, MIC_UP, 'shout', 0.6) }, props: [mic('A'), mic('B')] }], { x: 0, y: 0.4, z: 1.3 }),
+  segScene('challenge', 'Laying claim to the title', 'ring', SAB, [
+    { t: 0, figs: { A: STD(-2.0, 1, MIC_UP, 'talk', 0.4), B: STD(1.8, -1, { sh_n: 160, el_n: 10, sh_f: -150, el_f: -10, head: 8 }, 'smirk', 0.6) }, props: [mic('A'), { id: 'belt', k: 'belt', x: 0, y: 0.1, r: 0, z: 2, s: 1, at: 'B:hands' }] },
+    { t: 1.4, figs: { A: STD(-1.2, 1, { sh_n: 150, el_n: 120, sh_f: 75, el_f: 5, head: 2 }, 'shout', 0.4), B: STD(1.4, -1, { sh_n: 40, el_n: 100, sh_f: 30, el_f: 100 }, 'snarl', 0.6) }, props: [mic('A'), { id: 'belt', k: 'belt', x: 0, y: 0.1, r: 0, z: 2, s: 1, at: 'B:hands' }] }], { x: 0, y: 0.4, z: 1.3 }),
+  segScene('faceoff', 'The face-off', 'ramp', SAB, [
+    { t: 0, figs: { A: STD(-2.6, 1, CROSS, '', 0.4), B: STD(2.6, -1, CROSS, '', 0.6) }, props: [] },
+    { t: 1.3, figs: { A: STD(-0.85, 1, { ...CROSS, head: 4 }, 'snarl', 0.4), B: STD(0.85, -1, { ...CROSS, head: 4 }, 'snarl', 0.6) }, props: [] }], { x: 0, y: 0.8, z: 1.35 }),
+  segScene('ambush', 'The ambush', 'hall', SAB, [
+    { t: 0, figs: { B: STD(1.2, 1, { hip_n: -14, kn_n: -10, hip_f: 16, kn_f: -16, sh_n: -18, sh_f: 20 }, '', 0.5), A: STD(-3.4, 1, { sh_n: 160, el_n: 40, sh_f: 150, el_f: 40 }, 'snarl', 0.4) }, props: [{ id: 'chair', k: 'chair', x: 0, y: 0.6, r: 90, z: 0.5, s: 1, at: 'A:hands' }] },
+    { t: 0.8, figs: { B: { ...STD(1.6, 1, { torso: 30, head: 30, sh_n: 120, sh_f: 110, hip_n: 20, kn_n: -40 }, 'pain', 0.5), r: -30 }, A: STD(-0.4, 1, { torso: 20, sh_n: 90, el_n: 10, sh_f: 80, el_f: 10 }, 'roar', 0.4) }, props: [{ id: 'chair', k: 'chair', x: 0, y: 0.6, r: 10, z: 0.5, s: 1, at: 'A:hands' }, burst('b1', 'WHAM!', 2.4, 2.6, PAL.red)] },
+    { t: 1.6, figs: { B: LAY(1.8, 1, 90, { head: 14, sh_n: 70, el_n: 95, sh_f: 55, el_f: 110, hip_n: 55, kn_n: -110 }, 'pain', 0.5), A: STD(-0.6, 1, { sh_n: 20, el_n: 20, sh_f: -10 }, 'snarl', 0.4) }, props: [] }]),
+  segScene('brawl', 'A brawl through the building', 'backstage', SAB, [
+    { t: 0, figs: { A: { ...STD(-1.2, 1, { torso: 12, sh_n: 95, el_n: 5, sh_f: 30, el_f: 90, hip_n: 30, kn_n: -20, hip_f: -24, kn_f: -10 }, 'roar', 0.6), r: -10 }, B: { ...STD(1.5, -1, { torso: -22, head: -24, sh_n: 80, el_n: 40, sh_f: -60, el_f: 30 }, 'hurt', 0.8), r: -14 } }, props: [burst('b1', 'POW!', 2.6, 2.4, PAL.red)] },
+    { t: 0.9, figs: { B: { ...STD(1.0, -1, { torso: 12, sh_n: 95, el_n: 5, sh_f: 30, el_f: 90, hip_n: 30, kn_n: -20 }, 'roar', 0.8), r: -10 }, A: { ...STD(-1.6, 1, { torso: -22, head: -24, sh_n: 80, el_n: 40, sh_f: -60, el_f: 30 }, 'hurt', 0.6), r: -14 } }, props: [burst('b2', 'BAM!', -2.8, 2.4)] },
+    { t: 1.8, figs: { A: { ...STD(-1.0, 1, { torso: 14, head: -6, sh_n: 105, el_n: 25, sh_f: 70, el_f: 50, hip_n: 30, kn_n: -30 }, 'roar', 0.5), r: -14 }, B: { ...STD(0.9, -1, { torso: 12, head: -4, sh_n: 100, el_n: 35, sh_f: 65, el_f: 55, hip_n: 26, kn_n: -26 }, 'snarl', 0.7), r: 12 } }, props: [] }]),
+  segScene('save', 'The save', 'ring', [{ id: 'A', n: 'Who gets attacked', role: 'a' }, { id: 'B', n: 'Who makes the save', role: 'b' }, { id: 'C', n: 'The attacker', role: 'c', hook: 'attacker' }], [
+    { t: 0, figs: { A: LAY(-0.8, 1, 90, { head: 14, sh_n: 70, el_n: 95, sh_f: 55, el_f: 110, hip_n: 55, kn_n: -110 }, 'pain', 0.4), C: STD(-2.4, 1, { hip_n: 70, kn_n: -40, sh_n: 30, el_n: 40 }, 'roar', 0.6), B: STD(7.4, -1, {}, 'shout', 0.2) }, props: [] },
+    { t: 1.0, figs: { A: LAY(-0.8, 1, 90, { head: 14, sh_n: 70, el_n: 95, sh_f: 55, el_f: 110, hip_n: 55, kn_n: -110 }, 'pain', 0.4), C: { ...STD(-2.8, 1, { torso: -20, head: -20, sh_n: 80, el_n: 40, sh_f: -60 }, 'hurt', 0.6), r: 14 }, B: STD(-0.8, -1, { torso: 12, sh_n: 95, el_n: 5, sh_f: 30, el_f: 90 }, 'roar', 0.9) }, props: [burst('b1', 'THE SAVE!', -3.6, 2.6)] },
+    { t: 2.0, figs: { A: STD(-1.4, 1, { sh_n: 80, el_n: 10 }, 'talk', 0.4), B: STD(1.2, -1, { sh_n: 80, el_n: 10 }, 'smirk', 0.6), C: STD(-7.4, 1, {}, 'snarl', 0.2) }, props: [] }]),
+  segScene('turn', 'The turn', 'ring', SA, [
+    { t: 0, figs: { A: { ...STD(0, 1, { sh_n: 165, el_n: 5, sh_f: -20, el_f: -20 }, '', 0.5), b: true } }, props: [] },
+    { t: 1.2, figs: { A: STD(0, 1, { ...CROSS, head: 6 }, 'smirk', 0.5) }, props: [] },
+    { t: 2.0, figs: { A: STD(0, 1, { sh_n: 95, el_n: 5, sh_f: -15, el_f: -10, head: 8 }, 'roar', 0.5) }, props: [burst('b1', 'BOO!', 3.2, 2.8, PAL.red)] }], { x: 0, y: 0.6, z: 1.3 }),
+  segScene('signing', 'The contract signing', 'ring', SAB, [
+    { t: 0, figs: { A: STD(-2.4, 1, CROSS, '', 0.2), B: STD(2.4, -1, CROSS, '', 0.2) }, props: [{ id: 'tb', k: 'table', x: 0, y: -1.7, r: 0, z: 0.9, s: 1 }] },
+    { t: 1.0, figs: { A: STD(-2.2, 1, { torso: 22, head: 10, sh_n: 60, el_n: 50 }, '', 0.2), B: STD(2.4, -1, CROSS, 'smirk', 0.2) }, props: [{ id: 'tb', k: 'table', x: 0, y: -1.7, r: 0, z: 0.9, s: 1 }] },
+    { t: 2.0, figs: { A: STD(-1.6, 1, { sh_n: 95, el_n: 5, sh_f: 30, el_f: 90 }, 'shout', 0.2), B: STD(1.6, -1, { sh_n: 95, el_n: 5, sh_f: 30, el_f: 90 }, 'roar', 0.2) }, props: [{ id: 'tb', k: 'table', x: 0.4, y: -2.1, r: -25, z: 0.9, s: 1 }, burst('b1', 'IT IS SIGNED!', 0, 3)] }], { x: 0, y: 0.3, z: 1.25 }),
+  segScene('recap', 'The story so far', 'plain', SAB, [
+    { t: 0, figs: { A: STD(-2.6, -1, CROSS, '', 0.4), B: STD(2.6, 1, CROSS, '', 0.4) }, props: [{ id: 'hd', k: 'headline', x: 0, y: 3.3, r: 0, z: 2, s: 1, txt: 'THE STORY SO FAR' }] },
+    { t: 1.6, figs: { A: STD(-1.4, 1, CROSS, 'snarl', 0.4), B: STD(1.4, -1, CROSS, 'snarl', 0.4) }, props: [{ id: 'hd', k: 'headline', x: 0, y: 3.3, r: 0, z: 2, s: 1, txt: 'THE STORY SO FAR' }] }]),
+];
+export function allScenes(world: Scene[]): Scene[] { const ids = new Set(world.map(s => s.id)); return world.concat(SCENES.concat(STILLS, SEG_SCENES).filter(s => !ids.has(s.id))); }
 /** The scenes that can play for a moment of the broadcast. */
 export function scenesFor(when: string, world: Scene[]): Scene[] { return allScenes(world).filter(s => s.when === when); }
 export const copy = <T>(x: T): T => JSON.parse(JSON.stringify(x));
