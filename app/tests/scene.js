@@ -95,6 +95,19 @@ async function studio(mode) {
     await page.click('[data-t="scene-tab"][data-v="cast"]');
     await page.selectOption('[data-t="scene-propkind"]', 'headline'); await page.fill('[data-t="scene-newwords"]', 'BREAKING NEWS'); await page.click('[data-t="scene-addprop"]');
     ok(mode, 'a headline is added and picked', /:prop$/.test((await attr(page, '[data-t="scene-stage"]', 'data-sel')) || ''));
+    // layers: everything in the keyframe, front first; reorder, hide and lock
+    await page.click('[data-t="scene-tab"][data-v="layers"]'); await page.waitForTimeout(150);
+    const order0 = await page.$$eval('[data-t="scene-lpick"]', b => b.map(x => x.getAttribute('data-v')));
+    ok(mode, 'the layers list everybody and every prop, front first', order0.length >= 3, order0.join(','));
+    const last = order0[order0.length - 1];
+    await page.click('[data-t="scene-lfwd"][data-v="' + last + '"]'); await page.waitForTimeout(150);
+    const order1 = await page.$$eval('[data-t="scene-lpick"]', b => b.map(x => x.getAttribute('data-v')));
+    ok(mode, 'Forward brings a layer in front of the one ahead of it', order1[order1.length - 2] === last, order1.join(','));
+    await page.click('[data-t="scene-lhide"][data-v="' + order1[0] + '"]'); await page.click('[data-t="scene-llock"][data-v="' + order1[1] + '"]'); await page.waitForTimeout(150);
+    ok(mode, 'a hidden or locked layer cannot be picked', (await attr(page, '[data-t="scene-lpick"][data-v="' + order1[0] + '"]', 'disabled')) != null && (await attr(page, '[data-t="scene-lpick"][data-v="' + order1[1] + '"]', 'disabled')) != null);
+    if (process.env.SHOTS) await shot(page, 'scene-' + mode + '-layers');
+    ok(mode, 'the studio fits with the layers open', !(await fits(page)), await fits(page));
+    await page.click('[data-t="scene-lhide"][data-v="' + order1[0] + '"]'); await page.click('[data-t="scene-llock"][data-v="' + order1[1] + '"]');
     await page.click('[data-t="scene-tab"][data-v="file"]');
     const sets = await page.$$eval('[data-t="scene-set"] option', o => o.map(x => x.value));
     for (const st of sets) { await page.selectOption('[data-t="scene-set"]', st); await page.waitForTimeout(80); }

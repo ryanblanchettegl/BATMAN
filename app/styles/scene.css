@@ -78,3 +78,13 @@ canvas.paperpt{image-rendering:auto}
 .fx-crt .scfx{border-radius:1.4em/1.1em;box-shadow:inset 0 0 3em rgba(0,0,0,.75),inset 0 0 .6em rgba(0,0,0,.6);background-color:rgba(120,255,200,.03)}
 .fx-crt.fx-scan .scfx{background-image:repeating-linear-gradient(to bottom,rgba(0,0,0,.26) 0,rgba(0,0,0,.26) 1px,transparent 1px,transparent 3px),radial-gradient(ellipse at center,rgba(255,255,255,.06),transparent 70%)}
 .sc-fx{display:flex;flex-wrap:wrap;gap:.2em .4em;flex:1;min-width:0}.sc-fx .btn{margin:0;padding:0 .7ch}
+/* the layers list in Create a Scene: one line a layer, front first */
+.sc-layers{display:flex;flex-direction:column;gap:.2em}
+.sc-layers{min-width:0;max-width:100%;max-height:58vh;overflow-y:auto}
+.sc-lrow{display:flex;flex-wrap:wrap;justify-content:flex-end;align-items:center;gap:.25em;padding:.15em .2em .25em;border-bottom:1px dashed rgba(0,0,0,.18);min-width:0}
+.sc-lrow .btn.sc-lname{flex:1 1 100%;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:left}
+.sc-lrow .btn:not(.sc-lname){flex:none}
+.sc-lrow .sp{flex:1}
+.sc-lrow .btn{margin:0;padding:0 .7ch}
+.sc-lrow.on{background:rgba(255,214,0,.18)}
+.sc-lset{opacity:.75}

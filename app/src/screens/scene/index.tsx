@@ -202,6 +202,17 @@ export function SceneStudio(pp: StudioProps) {
   const who = (id: string) => { const sl = sc.slots.find(s => s.id === id); return sl ? sl.n : id; };
   const mine = pp.saved;
   const [tab, setTab] = useState(pp.blank ? 'new' : 'pose'), [three, setThree] = useState(false);
+  // layers: everything in the keyframe, front first; a hidden layer is left off the stage while editing, a locked one cannot be picked there
+  const [hidden, setHidden] = useState<string[]>([]), [locked, setLocked] = useState<string[]>([]);
+  const vsc: Scene = hidden.length ? { ...sc, keys: sc.keys.map(k => ({ ...k, figs: Object.fromEntries(Object.entries(k.figs).filter(([id]) => hidden.indexOf(id) < 0)), props: k.props.filter(q => hidden.indexOf(q.id) < 0) })) } : sc;
+  const pickSel = (s2: Sel) => { if (s2 && locked.indexOf(s2.who) >= 0) return; setSel(s2); };
+  const zOf = (k: Key, id: string): number | null => k.figs[id] ? k.figs[id].z : (k.props.find(q => q.id === id) || { z: null } as any).z;
+  const setZ = (k: Key, id: string, z: number) => { if (k.figs[id]) k.figs[id].z = z; else { const q = k.props.find(x => x.id === id); if (q) q.z = z; } };
+  const layers = Object.keys(key.figs).map(id => ({ id, n: who(id), fig: true, z: key.figs[id].z })).concat(key.props.map(q => ({ id: q.id, n: (PROPS.find(x => x[0] === q.k) || ['', q.k])[1] + (q.txt ? ': ' + q.txt : ''), fig: false, z: q.z }))).sort((a, b) => b.z - a.z);
+  /** Bring one layer in front of the one ahead of it (or behind the one after), in every keyframe both are in. */
+  const restack = (i: number, d: -1 | 1) => { const a = layers[i], b = layers[i + d]; if (!a || !b) return; const n = copy(sc);
+    n.keys.forEach(k => { const za = zOf(k, a.id), zb = zOf(k, b.id); if (za == null || zb == null) return; setZ(k, a.id, za === zb ? zb - d * 0.05 : zb); setZ(k, b.id, za === zb ? za : za); }); setSc(n); };
+  const flip = (l: string[], set: (v: string[]) => void, id: string) => set(l.indexOf(id) >= 0 ? l.filter(x => x !== id) : l.concat([id]));
   // the camera of the keyframe being edited: pan, zoom (1 is the whole set, up to 4), tilt
   const cam = key.cam || CAM0;
   const onCam = (dx: number, dy: number, zoom: number) => edit(k => { const c = { ...CAM0, ...(k.cam || {}) }; c.z = Math.max(0.8, Math.min(4, Math.round(c.z * zoom * 100) / 100)); c.x = Math.round((c.x + dx) * 100) / 100; c.y = Math.round((c.y + dy) * 100) / 100;
@@ -225,7 +236,7 @@ export function SceneStudio(pp: StudioProps) {
     </div>
     <Desktop cls="scpage">
     <Win title={'Create a Scene: ' + sc.name} right={sc.keys.length + (sc.keys.length === 1 ? ' keyframe' : ' keyframes')} area="stage" t="scene-win">
-      {three ? <Stage3D sc={sc} ki={Math.min(ki, sc.keys.length - 1)} time={time} cast={cast} sel={sel} onSel={setSel} onDrag={onDrag} onKey={onKey} /> : <Stage sc={sc} ki={Math.min(ki, sc.keys.length - 1)} time={time} cast={cast} sel={sel} onSel={setSel} onDrag={onDrag} onCam={onCam} onKey={onKey} />}
+      {three ? <Stage3D sc={vsc} ki={Math.min(ki, sc.keys.length - 1)} time={time} cast={cast} sel={sel} onSel={pickSel} onDrag={onDrag} onKey={onKey} /> : <Stage sc={vsc} ki={Math.min(ki, sc.keys.length - 1)} time={time} cast={cast} sel={sel} onSel={pickSel} onDrag={onDrag} onCam={onCam} onKey={onKey} />}
       {sc.still ? <div class="sc-keys" role="group" aria-label="Keyframes" data-t="scene-stillnote"><span class="sc-gap">A still picture: one picture, nothing plays. It goes beside a moment the booker answers.</span></div>
       : <div class="sc-keys" role="group" aria-label="Keyframes">
         {sc.keys.map((k, i) => <Btn key={'k' + i} kind="sm" t="scene-key" d={{ v: i }} on={i === ki && time == null} onClick={() => { setKi(i); setTime(null); }}>{'Key ' + (i + 1)}</Btn>)}
@@ -248,8 +259,21 @@ export function SceneStudio(pp: StudioProps) {
         <Btn kind="sm" t="scene-snap" onClick={snap}>Take picture</Btn>
       </div>
     </Win>
-    <Win title={tab === 'pose' ? 'Pose' : tab === 'face' ? 'Face and marks' : tab === 'cast' ? 'Cast and props' : tab === 'new' ? 'A new scene' : 'The scene'} right={sel && (tab === 'pose' || tab === 'face') ? (sel.part === 'prop' ? 'a prop' : who(sel.who)) : ''} area="side" t="scene-side">
-      <Tabs label="What to change" value={tab} onPick={setTab} items={[{ id: 'pose', label: 'Pose', t: 'scene-tab' }, { id: 'face', label: 'Face and marks', t: 'scene-tab' }, { id: 'cast', label: 'Cast and props', t: 'scene-tab' }, { id: 'file', label: 'The scene', t: 'scene-tab' }, { id: 'new', label: 'New', t: 'scene-tab' }]} />
+    <Win title={tab === 'pose' ? 'Pose' : tab === 'face' ? 'Face and marks' : tab === 'cast' ? 'Cast and props' : tab === 'new' ? 'A new scene' : tab === 'layers' ? 'Layers' : 'The scene'} right={sel && (tab === 'pose' || tab === 'face') ? (sel.part === 'prop' ? 'a prop' : who(sel.who)) : ''} area="side" t="scene-side">
+      <Tabs label="What to change" value={tab} onPick={setTab} items={[{ id: 'pose', label: 'Pose', t: 'scene-tab' }, { id: 'face', label: 'Face and marks', t: 'scene-tab' }, { id: 'cast', label: 'Cast and props', t: 'scene-tab' }, { id: 'layers', label: 'Layers', t: 'scene-tab' }, { id: 'file', label: 'The scene', t: 'scene-tab' }, { id: 'new', label: 'New', t: 'scene-tab' }]} />
+      {tab === 'layers' && <Group title="Front to back">
+        <div class="sc-layers" data-t="scene-layers">
+          {layers.map((l, i) => { const hid = hidden.indexOf(l.id) >= 0, lk = locked.indexOf(l.id) >= 0; return <div class={'sc-lrow' + (sel && sel.who === l.id ? ' on' : '')} key={l.id}>
+            <Btn kind="less" cls="sc-lname" t="scene-lpick" d={{ v: l.id }} on={!!sel && sel.who === l.id} disabled={hid || lk} label={'Pick ' + l.n} onClick={() => setSel({ who: l.id, part: l.fig ? 'body' : 'prop' })}>{(l.fig ? '' : 'Prop: ') + l.n}</Btn>
+            <Btn kind="sm" t="scene-lfwd" d={{ v: l.id }} disabled={i === 0} label={'Bring ' + l.n + ' forward'} onClick={() => restack(i, -1)}>Forward</Btn>
+            <Btn kind="sm" t="scene-lback" d={{ v: l.id }} disabled={i === layers.length - 1} label={'Send ' + l.n + ' back'} onClick={() => restack(i, 1)}>Back</Btn>
+            <Btn kind="less" t="scene-lhide" d={{ v: l.id }} on={hid} onClick={() => { flip(hidden, setHidden, l.id); if (sel && sel.who === l.id) setSel(null); }}>{hid ? 'Show' : 'Hide'}</Btn>
+            <Btn kind="less" t="scene-llock" d={{ v: l.id }} on={lk} onClick={() => { flip(locked, setLocked, l.id); if (sel && sel.who === l.id) setSel(null); }}>{lk ? 'Unlock' : 'Lock'}</Btn>
+          </div>; })}
+          <div class="sc-lrow sc-lset"><span>{'The set: ' + ((SETS.find(x => x[0] === sc.set) || ['', sc.set])[1])}</span><span class="sp" /><span class="sc-gap">always at the back</span></div>
+        </div>
+        <p class="sc-gap">Hidden and locked layers are only for editing: the scene still plays with everything in it.</p>
+      </Group>}
       {tab === 'new' && <Group title="Start a new scene from">
         <div class="sc-setups">{SETUPS.map(([id, n]) => <Btn kind="less" t="scene-setup" d={{ v: id }} onClick={() => { open(setupScene(id)); setTab('pose'); say('A new scene: ' + n.toLowerCase() + '. Pose them, add props and keyframes.'); }}>{n}</Btn>)}</div>
         <p class="muted">Each puts the people where that set wants them. Anything can be moved after.</p>
