@@ -168,7 +168,8 @@ The desk image (`docs/mockups/paper/desk.png`) is the art style: the whole game 
 - [x] A in every build (`app/styles/craft.css`, `app/ui/craft/`): torn cream paper windows with navy title strips, cut card buttons, index cards and sticky notes, on black construction paper, no tape. Rule 2a rewritten. The zine is kept as concept C (`app/styles/looks/c.css`, `app/ui/c/`).
 - [x] The desk shows the state (or region) this week's city is in, cut from green card on blue paper with a pin and a label on the city (`SHAPES`, `src/91-shapes.js`, from `tools/build-maps.js`). Dot matrix is out: lettering that was in lights is marker on black card, the ring, bell and belt are painted card, and logos are painted with marker letters.
 - [x] Spread to: tables, old panels, group boxes, gauges and names in lists; the title screen and its cut-card logo; Select promotion; the broadcast's opening poster, the call from the gorilla position and the matter pop-up; After the show; tips and the SPACE key's note; the World Editor (its menu, hint strip, windows, lists) and Create a Player.
-- [ ] Still to check page by page: every Manage pop-up, Career's windows, Web's sites, History and Finances, the Scenes tab and Create a Scene, the logo creator, Help.
+- [x] Checked page by page: the Manage pop-ups, Career, Web, History, Finances, the Scenes tab, Create a Scene, the logo creator, Help and Options.
+- [ ] Blender renders of the workbench pieces (torn paper, card buttons) for more depth, as the paper look had.
 
 ### 0v2. The scrapbook zine was the core look for a day (Ryan, 19 October: "C is the winner")
 
