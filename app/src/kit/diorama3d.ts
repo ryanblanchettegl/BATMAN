@@ -58,12 +58,30 @@ function lit(col: string): THREE.Material[] {
 }
 const steel = new THREE.MeshStandardMaterial({ color: 0xb8bcc8, roughness: 0.35, metalness: 0.7 });
 
-/** A cut piece as a slab of card standing at depth `d`. */
-function slab(p: Piece, d: number): THREE.Mesh | null {
+/** A wrestler's card: flat colour that the lights do not shade, so they keep a clean look (Ryan, 19 October). Foil and
+    neon keep a little of their own glow. */
+const flats = new Map<string, THREE.Material[]>();
+function flatCard(col: string, fin?: string): THREE.Material[] {
+  const key = col + (fin || ''); let m = flats.get(key);
+  if (!m) { const c = new THREE.Color(fin === 'foil' || fin === 'neon' ? shade(col, 1.12) : col); m = [new THREE.MeshBasicMaterial({ color: c, map: grain() }), new THREE.MeshBasicMaterial({ color: new THREE.Color(shade(col, 1.25)) })]; flats.set(key, m); }
+  return m;
+}
+/** A cut piece as a slab of card standing at depth `d`. A wrestler's (`clean`) casts its shadow on the set but takes none. */
+function slab(p: Piece, d: number, clean = false): THREE.Mesh | null {
   if (p.pts.length < 3) return null;
   const sh = new THREE.Shape(p.pts.map(q => new THREE.Vector2(q[0], q[1] - FOOT)));
   const g = new THREE.ExtrudeGeometry(sh, { depth: CARD, bevelEnabled: false, steps: 1 });
-  const m = new THREE.Mesh(g, card(p.col, p.fin)); m.position.z = d; m.castShadow = true; m.receiveShadow = true; return m;
+  const m = new THREE.Mesh(g, clean ? flatCard(p.col, p.fin) : card(p.col, p.fin)); m.position.z = d; m.castShadow = true; m.receiveShadow = !clean; return m;
+}
+/** The white margin a paper doll is cut out with: the piece grown a little all round, in cream card, just behind it.
+    All a figure's margins together make the cut-out's border, so a person reads as cut card standing in the set. */
+const MARGIN = 0.07;
+function margin(p: Piece, d: number): THREE.Mesh | null {
+  if (p.pts.length < 3) return null;
+  let cx = 0, cy = 0; for (const q of p.pts) { cx += q[0]; cy += q[1]; } cx /= p.pts.length; cy /= p.pts.length;
+  const sh = new THREE.Shape(p.pts.map(q => { const dx = q[0] - cx, dy = q[1] - cy, l = Math.hypot(dx, dy) || 1; return new THREE.Vector2(q[0] + dx / l * MARGIN, q[1] + dy / l * MARGIN - FOOT); }));
+  const g = new THREE.ExtrudeGeometry(sh, { depth: CARD, bevelEnabled: false, steps: 1 });
+  const m = new THREE.Mesh(g, flatCard('#efe5cc')); m.position.z = d - 0.03; m.castShadow = false; m.receiveShadow = false; return m;
 }
 /** Words (a burst, a sign) as a flat card with the lettering printed on it. */
 function words(p: Piece, d: number): THREE.Mesh | null {
@@ -80,7 +98,7 @@ function arena(root: THREE.Group, near = true) {
   const box = (w: number, h: number, d: number, col: string | THREE.Material, x: number, y: number, z: number, shadow = true) => {
     const m = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), typeof col === 'string' ? card(col)[0] : col); m.position.set(x, y, z); m.receiveShadow = true; m.castShadow = shadow; root.add(m); return m;
   };
-  const H = 10, APRON = 4;
+  const H = 10, APRON = 3;
   box(200, 0.2, 200, '#141728', 0, -APRON - 0.1, 0, false);                              // the floor
   box(H * 2 + 0.6, 0.3, H * 2 + 0.6, PAL.mat, 0, -0.15, 0, false);                      // the mat
   const logo = new THREE.Mesh(new THREE.CylinderGeometry(4.2, 4.2, 0.04, 48), card(shade(PAL.blue, 1.05))[0]); logo.position.y = 0.02; logo.receiveShadow = true; root.add(logo);
@@ -98,8 +116,8 @@ function arena(root: THREE.Group, near = true) {
   for (let k = 0; k < 4; k++) { const [x0, z0] = corners[k], [x1, z1] = corners[(k + 1) % 4], L = Math.hypot(x1 - x0, z1 - z0);
     for (const y of [1.5, 3, 4.5]) { const r = new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.07, L, 8), rope); r.position.set((x0 + x1) / 2, y, (z0 + z1) / 2); r.rotation.z = Math.PI / 2; r.rotation.y = -Math.atan2(z1 - z0, x1 - x0); r.castShadow = true; root.add(r); } }
   // the barricade, and the stands behind it on three sides
-  const B = 16;
-  for (const [w, d, x, z] of ([[B * 2, 0.3, 0, -B], [0.3, B * 2, B, 0], [0.3, B * 2, -B, 0]] as number[][]).concat(near ? [[B * 2, 0.3, 0, B]] : [])) box(w, 3.4, d, '#1b1d28', x, -APRON + 1.7, z);   // the near side is left out where the camera sits inside it
+  const B = 14;
+  for (const [w, d, x, z] of ([[B * 2, 0.3, 0, -B], [0.3, B * 2, B, 0], [0.3, B * 2, -B, 0]] as number[][]).concat(near ? [[B * 2, 0.3, 0, B]] : [])) { box(w, 2.2, d, '#1b1d28', x, -APRON + 1.1, z); box(w + 0.1, 0.25, d + 0.1, '#2a3a8a', x, -APRON + 2.3, z, false); }   // the near side is left out where the camera sits inside it
   fans(root);
   for (const [x, z] of [[-8, -8], [8, -8], [8, 8], [-8, 8]]) { const s = new THREE.SpotLight(0xffe2b0, 140, 70, 0.5, 0.7, 1.6); s.position.set(x, 30, z); s.target.position.set(0, 0, 0); root.add(s, s.target); }   // the lights over the ring
 }
@@ -110,7 +128,7 @@ function fans(root: THREE.Group) {
   const spots: { x: number; y: number; z: number; ry: number; k: number }[] = [];
   const sides: [number, number][] = [[0, -1], [1, 0], [-1, 0]];
   for (const [sx, sz] of sides) for (let r = 0; r < 16; r++) {
-    const dist = 19 + r * 1.75, y = -2.6 + r * 1.15, half = dist + 4, n = Math.floor(half * 2 / 1.55);
+    const dist = 16.5 + r * 1.75, y = -1.9 + r * 1.15, half = dist + 4, n = Math.floor(half * 2 / 1.55);
     for (let i = 0; i < n; i++) {
       const t = -half + (i + 0.5) * half * 2 / n + (r % 2) * 0.4, x = sx ? sx * dist : t, z = sx ? t : sz * dist;
       spots.push({ x, y, z, ry: Math.atan2(-x, -z), k: r });
@@ -262,8 +280,10 @@ export class Diorama3D {
       let px = 0, n = 0; if (f) px = f.x; else { for (const p of ps) for (const q of p.pts) { px += q[0]; n++; } px = n ? px / n : (ps[0].txt ? ps[0].txt.x : 0); }
       const base = f ? f.z : Math.min(...ps.map(p => p.z)), g = new THREE.Group(); g.position.set(px, 0, base * DEPTH);
       g.userData = { who: id, prop: kind === 'p' };
+      const minD = Math.min(...ps.map(q => (q.z - base) * 0.06));   // a figure's margins all lie behind it
       for (const p of ps) {
-        const d = (p.z - base) * 0.06, m = p.txt ? words(p, d) : slab(p, d); if (!m) continue;
+        const d = (p.z - base) * 0.06, m = p.txt ? words(p, d) : slab(p, d, kind === 'f'); if (!m) continue;
+        if (kind === 'f' && !p.txt) { const mg = margin(p, minD); if (mg) { mg.position.x -= px; mg.userData = { who: kind === 'f' && p.own != null ? p.own : id, joint: p.joint }; g.add(mg); } }
         const pw = kind === 'f' && p.own != null ? p.own : id;   // a held person is cut on the card of the one holding them
         m.position.x -= px; m.userData = { who: pw, joint: p.joint, prop: kind === 'p' };
         if (sel && sel.who === pw && (sel.part === 'body' || sel.part === 'prop' || p.joint === sel.part) && !p.txt) m.material = lit(p.col);

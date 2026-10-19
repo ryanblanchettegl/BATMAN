@@ -9,7 +9,7 @@ export interface Prefs { snd: boolean; type: boolean; crt: boolean; boot: boolea
 function readPrefs(): Prefs {
   let o: any = {};
   try { o = JSON.parse(localStorage.getItem(PKEY) || '{}') || {}; } catch (e) { /* storage can be blocked */ }
-  return { snd: o.snd !== false, type: o.type !== false, crt: o.crt !== false, boot: o.boot !== false, letter: o.letter !== false, screen: o.screen || 'auto', zoom: +o.zoom || 1, speed: +o.speed || 1, auto: o.auto !== false, pace: o.pace === 'quick' || o.pace === 'results' ? o.pace : 'full', fxvol: +o.fxvol || 1, motion: o.motion === 'reduce' || o.motion === 'full' ? o.motion : 'auto', uni: o.u2 ? (o.uni || 'parody') : (!o.uni || o.uni === 'public_domain' ? 'parody' : o.uni), u2: true, pics: o.pics !== false };
+  return { snd: o.snd !== false, type: o.type !== false, crt: false, boot: o.boot !== false, letter: o.letter !== false, screen: o.screen || 'auto', zoom: +o.zoom || 1, speed: +o.speed || 1, auto: o.auto !== false, pace: o.pace === 'quick' || o.pace === 'results' ? o.pace : 'full', fxvol: +o.fxvol || 1, motion: o.motion === 'reduce' || o.motion === 'full' ? o.motion : 'auto', uni: o.u2 ? (o.uni || 'parody') : (!o.uni || o.uni === 'public_domain' ? 'parody' : o.uni), u2: true, pics: o.pics !== false };
 }
 export const pref: Prefs = readPrefs();
 /** Reduced motion: switched on in Options, or by the system when Options says Auto. Stops the typewriter and the blinking cursor. */

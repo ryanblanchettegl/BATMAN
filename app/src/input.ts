@@ -22,7 +22,7 @@ export function screenMode() { return pref.screen && pref.screen !== 'auto' && (
 export function applyScreen() {
   const de = document.documentElement, m = screenMode();
   de.setAttribute('data-screen', m); de.style.setProperty('--zoom', String(pref.zoom || 1));
-  de.classList.toggle('crtfx', !!pref.crt); de.classList.toggle('rm', reduceMotion());
+  de.classList.remove('crtfx'); de.classList.toggle('rm', reduceMotion());
   NAV.tv = m === 'tv'; NAV.on = NAV.tv || NAV.pad; de.classList.toggle('nav', NAV.on);
 }
 

@@ -57,7 +57,7 @@ export const STILL_WHEN: [string, string][] = [['hurt', 'Somebody hurt'], ['braw
 /** The sets, each drawn from its own angle: pick the one that suits the moment. Every set keeps feet on the same line
     (FOOT), so a pose works on all of them. */
 export const SETS: [string, string][] = [['ring', 'The ring: the hard camera'], ['ringlow', 'The ring: low at ringside'], ['ringcorner', 'The ring: from the corner'],
-  ['desk', 'The commentary desk'], ['ramp', 'The entrance ramp'], ['hall', 'Backstage: the hallway'], ['locker', 'Backstage: the locker room'], ['office', 'The office'], ['backstage', 'Backstage: the wall'], ['plain', 'Plain card']];
+  ['desk', 'The commentary desk'], ['ramp', 'The entrance ramp'], ['hall', 'Backstage: the hallway'], ['locker', 'Backstage: the locker room'], ['office', 'The office'], ['backstage', 'Backstage: the wall'], ['talk', 'A talk show'], ['plain', 'Plain card']];
 export const W16 = 16, H9 = 9;   // a scene is 16 units wide and 9 high; x = 0 is the middle, y = 0 the middle
 export const FOOT = -2.9;          // where feet stand on the mat
 export const WAIST = FOOT + 2.52 + 0.7;   // the waist of a doll of standard height standing on the mat
@@ -193,6 +193,15 @@ function setPieces(set: string): Piece[] {
     for (let k = 1; k <= 3; k++) add(rect(-11, 0.7 + 0.5 * k, 22, 0.07), PAL.white, -0.68, 0.02, 0.003);
     add(rect(-11, -7, 22, 6.5), '#1b1d2a', -0.6, 0.02, 0);                                            // the floor
     for (const cx of DESK_SEATS) { add(rect(cx - 0.9, -0.8, 1.8, 2.7), '#16161b', -0.4, 0.08, 0.008); add(rect(cx - 0.75, 1.6, 1.5, 0.25), '#2a2a32', -0.38, 0.02, 0.004); }
+  } else if (set === 'talk') {
+    // A talk show: a curtain in folds, the show's sign over it, a low stage, two chairs either side of a little table
+    add(rect(-11, -7, 22, 14), '#3a0e14', -1, 0, 0);
+    for (let i = 0; i < 12; i++) add(rect(-11 + i * 1.85, -1.6, 1.0, 8.6), i % 2 ? '#7a1420' : '#8e1a28', -0.95, 0.03, 0.01);   // the curtain's folds
+    add(rect(-3.6, 3.2, 7.2, 1.3), '#16182a', -0.9, 0.05, 0.006); add(rect(-3.4, 3.35, 6.8, 1.0), PAL.gold, -0.88, 0.02, 0.004);   // the sign
+    o.push({ pts: [], col: '', z: -0.87, txt: { s: 'TONIGHT', x: 0, y: 3.85, size: 0.8, col: PAL.red }, layer: 'back' });
+    add(rect(-11, -7, 22, 5.6), '#2a2234', -0.8, 0.02, 0.01); add(rect(-8, -2.0, 16, 0.4), '#4a3a54', -0.78, 0.03, 0.006);       // the stage
+    for (const cx of [-2.6, 2.6]) { add(rect(cx - 0.9, -1.65, 1.8, 2.4), '#5a3020', -0.7, 0.06, 0.008); add(rect(cx - 1.1, -1.9, 2.2, 0.5), '#6e3a26', -0.68, 0.05, 0.006); }   // the armchairs
+    add(rect(-0.45, -2.6, 0.9, 1.0), PAL.wood, -0.5, 0.05, 0.006); add(ell(0, -1.6, 0.7, 0.12, 14), shade(PAL.wood, 1.2), -0.49, 0.03, 0.004);   // the table
   } else if (set === 'office') {
     // The office: panelled walls, blinds, a belt framed on the wall, the big desk to one side
     add(rect(-11, -7, 22, 14), '#5a3d28', -1, 0, 0);
@@ -512,6 +521,23 @@ export const STILLS: Scene[] = [
     [{ id: 'mic', k: 'mic', x: 0.1, y: 0.1, r: -30, z: 1.2, at: 'A:hand_n' }], { x: 0, y: 0.6, z: 1.25 }),
   still('st_phone', 'The office phone', 'phone', 'office', [], {}, [cap('THE OFFICE')]),
 ];
+
+/* ---------- a new scene starts from a setup: the set and the people placed for it ---------- */
+export const SETUPS: [string, string][] = [['ring', 'The ring: two wrestlers and the referee'], ['desk', 'The commentary desk, its chairs and a guest seat'], ['ramp', 'The entrance ramp'],
+  ['hall', 'Backstage: two in the hallway'], ['locker', 'The locker room'], ['office', 'The office, across the desk'], ['talk', 'A talk show: a host and a guest'], ['plain', 'Plain card']];
+export function setupScene(id: string): Scene {
+  const base = (set: string, slots: Slot[], figs: Record<string, Fig>, cam?: Cam): Scene => ({ v: 1, id: 'scene-' + Date.now().toString(36), name: 'My scene', when: 'any', set, slots, keys: [{ t: 0, figs, props: [], cam }] });
+  const SEAT = { hip_n: 90, kn_n: -90, hip_f: 85, kn_f: -90, sh_n: 30, el_n: 80, sh_f: 30, el_f: 75 };
+  if (id === 'desk') { const d = deskScene('x', 'My scene', 'any', 'C1'); return { ...d, id: 'scene-' + Date.now().toString(36), loop: false, keys: [d.keys[0]] }; }
+  if (id === 'ramp') return base('ramp', [{ id: 'A', n: 'Wrestler A', role: 'a' }], { A: STD(0, 1, {}, '', 0.6) });
+  if (id === 'hall' || id === 'locker') return base(id, [{ id: 'A', n: 'Wrestler A', role: 'a' }, { id: 'B', n: 'Wrestler B', role: 'b' }], { A: STD(-1.5, 1, {}, '', 0.4), B: STD(1.5, -1, {}, '', 0.6) });
+  if (id === 'office') return base('office', [{ id: 'A', n: 'Wrestler A', role: 'a' }], { A: STD(-0.8, 1, {}, 'talk', 0.6) }, { x: 0.6, y: 0.2, z: 1.2 });
+  if (id === 'talk') return base('talk', [{ id: 'A', n: 'The host', role: 'c', dress: 'suit' }, { id: 'B', n: 'The guest', role: 'a' }],
+    { A: { x: -2.6, y: -0.85, r: 0, f: 1, z: 0, p: SEAT, e: 'talk' }, B: { x: 2.6, y: -0.85, r: 0, f: -1, z: 0, p: SEAT, e: '' } }, { x: 0, y: 0, z: 1.25 });
+  if (id === 'plain') return base('plain', [{ id: 'A', n: 'Wrestler A', role: 'a' }], { A: STD(0, 1, {}, '', 0.6) });
+  return base('ring', [{ id: 'A', n: 'Wrestler A', role: 'a' }, { id: 'B', n: 'Wrestler B', role: 'b' }, { id: 'R', n: 'The referee', role: 'ref' }],
+    { A: STD(-2.2, 1, {}, '', 0), B: STD(2.2, -1, {}, '', 1.2), R: STD(-5.4, 1, {}, '', -0.3) });
+}
 
 /* ---------- an entrance dressed with its pyro and lights (Create a Wrestler, Entrance tab) ---------- */
 export const PYRO: [string, string][] = [['', 'None'], ['sparks', 'A shower of sparks'], ['fountains', 'Fountains either side'], ['flash', 'A flash and a bang'], ['fire', 'Columns of fire']];

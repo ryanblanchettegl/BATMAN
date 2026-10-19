@@ -64,3 +64,6 @@ canvas.paperpt{image-rendering:auto}
 .caw-fsl{flex-wrap:nowrap}
 .caw-fsl small{flex:none;width:6.5ch;font-size:.78em;color:#5a5248;text-align:center}
 .caw-fsl .caw-lbl{min-width:10ch;flex:none}
+/* a new scene: the setups, one under another */
+.sc-setups{display:flex;flex-direction:column;align-items:stretch;gap:.1em}
+.sc-setups .btn{text-align:left}

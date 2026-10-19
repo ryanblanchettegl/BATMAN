@@ -152,14 +152,17 @@ function drawPieces(ctx: CanvasRenderingContext2D, list: Piece[], v: View) {
     if (p.soft) {   // a soft shadow on the floor
       ctx.save(); if (quality > 0) ctx.filter = 'blur(' + Math.round(v.s * 0.09) + 'px)'; path(ctx, v, p.pts); ctx.fillStyle = p.col; ctx.fill(); ctx.restore(); continue;
     }
-    const L = (p.lift == null ? 0.05 : p.lift) * v.s;
-    // the thickness of the card, with the shadow thrown under it
-    ctx.save(); ctx.translate(thick * 0.55, thick * 0.75); path(ctx, v, p.pts);
-    ctx.shadowColor = 'rgba(0,0,0,0.45)'; ctx.shadowOffsetX = L * 0.55; ctx.shadowOffsetY = L * 0.7; ctx.shadowBlur = L * 1.1;
-    ctx.fillStyle = shade(p.col, 0.55); ctx.fill(); ctx.restore();
+    const L = (p.lift == null ? 0.05 : p.lift) * v.s, clean = p.own != null;   // a wrestler is flat and clean: no shadow on them (Ryan, 19 October)
+    // the thickness of the card, with the shadow thrown under it (not on a wrestler: their shadow is thrown once, behind them, in drawScene)
+    if (!clean) {
+      ctx.save(); ctx.translate(thick * 0.55, thick * 0.75); path(ctx, v, p.pts);
+      ctx.shadowColor = 'rgba(0,0,0,0.45)'; ctx.shadowOffsetX = L * 0.55; ctx.shadowOffsetY = L * 0.7; ctx.shadowBlur = L * 1.1;
+      ctx.fillStyle = shade(p.col, 0.55); ctx.fill(); ctx.restore();
+    }
     // the face of the card, with the light across it
     path(ctx, v, p.pts); ctx.shadowColor = 'transparent';
-    if (quality > 0) {
+    if (clean && p.fin !== 'foil' && p.fin !== 'leather') ctx.fillStyle = p.col;
+    else if (quality > 0) {
       let x0 = 1e9, y0 = 1e9, x1 = -1e9, y1 = -1e9; for (const q of p.pts) { const r = toPx(v, q); if (r[0] < x0) x0 = r[0]; if (r[0] > x1) x1 = r[0]; if (r[1] < y0) y0 = r[1]; if (r[1] > y1) y1 = r[1]; }
       const g = ctx.createLinearGradient(x0, y0, x1, y1);
       if (p.fin === 'foil') { g.addColorStop(0, shade(p.col, 1.3)); g.addColorStop(0.38, shade(p.col, 0.78)); g.addColorStop(0.5, shade(p.col, 1.65)); g.addColorStop(0.62, shade(p.col, 0.8)); g.addColorStop(1, shade(p.col, 1.15)); }
@@ -197,6 +200,13 @@ export function drawScene(ctx: CanvasRenderingContext2D, pieces: Piece[], v: Vie
   });
   const Fr = layer(k + 'n', W, H, c => drawPieces(c, front.sort((a, b) => a.z - b.z), v));
   ctx.drawImage(B, 0, 0);
+  // each wrestler throws one shadow, down and to the right, onto whatever is behind them; they themselves stay clean
+  const figs = mid.filter(p => p.own != null && !p.soft && !p.txt && p.pts.length >= 3);
+  if (figs.length) {
+    const sh = v.s * 0.06; ctx.save(); ctx.translate(sh * 0.55, sh * 0.75); ctx.fillStyle = 'rgba(0,0,0,0.38)'; if (quality > 0) ctx.filter = 'blur(' + Math.max(1, Math.round(v.s * 0.025)) + 'px)';
+    ctx.beginPath(); for (const p of figs) { const q = p.pts.map(t => toPx(v, t)); ctx.moveTo(q[0][0], q[0][1]); for (let i = 1; i < q.length; i++) ctx.lineTo(q[i][0], q[i][1]); ctx.closePath(); }
+    ctx.fill('nonzero'); ctx.restore();
+  }
   drawPieces(ctx, mid, v);
   ctx.save(); ctx.filter = blur(v.s * 0.015); ctx.drawImage(Fr, 0, 0); ctx.restore();   // the very front, a touch soft
   // the light: a pool on the middle, the edges of the box dark

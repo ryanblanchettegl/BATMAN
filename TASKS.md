@@ -133,6 +133,8 @@ Create a Scene (with 0z):
 - [ ] Frames: tall and square pictures for posters, magazine covers and portraits, with captions and mastheads.
 - [ ] Animation: more keyframes with a choice of easing, a timeline, sound cues, and moves that can be used again.
 - [ ] More hooks (the authority figure, the interviewer, the referee as a person) and canned scenes for them.
+- [ ] Presentation filters a scene can pick (Ryan, 19 October): scan lines, a CRT tube look and black and white, all off by default; for artistic promos and old-school companies.
+- [ ] A background creator: make a backdrop for a scene (walls, banners, a skyline, a show's set) and keep it in the world like a scene.
 
 New creators, each a small file cut by code, played in the game and shared:
 - [ ] Create a Belt: plates, straps, gems, lettering and the company's logo in card and foil, worn by champions in every scene, portrait and title page.
@@ -162,9 +164,9 @@ The desk image (`docs/mockups/paper/desk.png`) is the art style: the whole game 
 
 ### 0z. Create a Scene, built out (later; Ryan, 18 October: "the bones are there and work")
 
-- [ ] Zoomed out, the front of the ring runs too long and does not look right (the apron and floor under the camera).
-- [ ] The people do not read as 2D paper figures in the 3D view; they should look like cut card standing in a diorama.
-- [ ] Starting a scene, choose the set and setup (the commentary desk with its chairs, the ramp, backstage rooms, a talk show) instead of always the ring.
+- [x] Zoomed out, the front of the ring runs too long and does not look right: the apron is lower, the barricade and stands closer, the barricade lower with a padded top.
+- [x] The people do not read as 2D paper figures in the 3D view: each wrestler now has a cream cut-card margin, and stays flat and clean (no shadow or shading on them; Ryan, 19 October), while still throwing a shadow on the set.
+- [x] Starting a scene, choose the set and setup (the New tab: the ring, the commentary desk, the ramp, the hallway, the locker room, the office, a talk show, plain card).
 - [ ] It should do a lot more over time: the toolkit in `docs/plans/papercraft-engine.md` (light and effects, more sets, props and clothes, tall and square frames).
 
 ### 0. The World Editor (Ryan's main next item)

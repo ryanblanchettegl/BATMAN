@@ -9,7 +9,7 @@
 import { useEffect, useRef, useState } from 'preact/hooks';
 import { W } from '../../engine';
 import { Btn, TextBox, Desktop, Win, Group, Tabs } from '../../kit';
-import { Scene, Key, Fig, Prop, SCENES, STILLS, WHEN, STILL_WHEN, SETS, WAIST, CAM0, POSES, HOLDS, LIMBS, HOOKS, at, build, viewFor, tilt, paint, lastT, allScenes, ok, copy } from '../../kit/scene';
+import { Scene, Key, Fig, Prop, SCENES, STILLS, WHEN, STILL_WHEN, SETS, SETUPS, setupScene, WAIST, CAM0, POSES, HOLDS, LIMBS, HOOKS, at, build, viewFor, tilt, paint, lastT, allScenes, ok, copy } from '../../kit/scene';
 import { drawPaper, drawScene, fromPx, toPx, pick, Piece, PAL } from '../../kit/paper';
 import { Diorama3D } from '../../kit/diorama3d';
 import { Recipe, recipeOf, JOINTS, PROPS, STAND, Rig, REF, blank, puppet, EXPR, Marks } from '../../kit/puppet';
@@ -198,7 +198,7 @@ export function SceneStudio(pp: StudioProps) {
   const selFig = sel && fig(key, sel.who), selProp = sel && sel.part === 'prop' ? propOf(key, sel.who) : null;
   const who = (id: string) => { const sl = sc.slots.find(s => s.id === id); return sl ? sl.n : id; };
   const mine = pp.saved;
-  const [tab, setTab] = useState('pose'), [three, setThree] = useState(false);
+  const [tab, setTab] = useState(pp.blank ? 'new' : 'pose'), [three, setThree] = useState(false);
   // the camera of the keyframe being edited: pan, zoom (1 is the whole set, up to 4), tilt
   const cam = key.cam || CAM0;
   const onCam = (dx: number, dy: number, zoom: number) => edit(k => { const c = { ...CAM0, ...(k.cam || {}) }; c.z = Math.max(0.8, Math.min(4, Math.round(c.z * zoom * 100) / 100)); c.x = Math.round((c.x + dx) * 100) / 100; c.y = Math.round((c.y + dy) * 100) / 100;
@@ -245,8 +245,12 @@ export function SceneStudio(pp: StudioProps) {
         <Btn kind="sm" t="scene-snap" onClick={snap}>Take picture</Btn>
       </div>
     </Win>
-    <Win title={tab === 'pose' ? 'Pose' : tab === 'face' ? 'Face and marks' : tab === 'cast' ? 'Cast and props' : 'The scene'} right={sel && (tab === 'pose' || tab === 'face') ? (sel.part === 'prop' ? 'a prop' : who(sel.who)) : ''} area="side" t="scene-side">
-      <Tabs label="What to change" value={tab} onPick={setTab} items={[{ id: 'pose', label: 'Pose', t: 'scene-tab' }, { id: 'face', label: 'Face and marks', t: 'scene-tab' }, { id: 'cast', label: 'Cast and props', t: 'scene-tab' }, { id: 'file', label: 'The scene', t: 'scene-tab' }]} />
+    <Win title={tab === 'pose' ? 'Pose' : tab === 'face' ? 'Face and marks' : tab === 'cast' ? 'Cast and props' : tab === 'new' ? 'A new scene' : 'The scene'} right={sel && (tab === 'pose' || tab === 'face') ? (sel.part === 'prop' ? 'a prop' : who(sel.who)) : ''} area="side" t="scene-side">
+      <Tabs label="What to change" value={tab} onPick={setTab} items={[{ id: 'pose', label: 'Pose', t: 'scene-tab' }, { id: 'face', label: 'Face and marks', t: 'scene-tab' }, { id: 'cast', label: 'Cast and props', t: 'scene-tab' }, { id: 'file', label: 'The scene', t: 'scene-tab' }, { id: 'new', label: 'New', t: 'scene-tab' }]} />
+      {tab === 'new' && <Group title="Start a new scene from">
+        <div class="sc-setups">{SETUPS.map(([id, n]) => <Btn kind="less" t="scene-setup" d={{ v: id }} onClick={() => { open(setupScene(id)); setTab('pose'); say('A new scene: ' + n.toLowerCase() + '. Pose them, add props and keyframes.'); }}>{n}</Btn>)}</div>
+        <p class="muted">Each puts the people where that set wants them. Anything can be moved after.</p>
+      </Group>}
       {tab === 'pose' && <>
         <div class="sc-row">
           <select aria-label="Who or what" data-t="scene-who" value={sel ? sel.who : ''} onChange={e => { const v = (e.currentTarget as HTMLSelectElement).value; setSel(v ? { who: v, part: key.figs[v] ? 'body' : 'prop' } : null); }}>
@@ -342,7 +346,7 @@ export function SceneStudio(pp: StudioProps) {
         </Group>
         <Group title="Files">
           <div class="sc-row">
-            <select aria-label="Open a scene" data-t="scene-open" value="" onChange={e => { const v = (e.currentTarget as HTMLSelectElement).value; if (v === '__new') open(blankScene()); else { const x = allScenes(mine).find(y => y.id === v); if (x) open(x); } }}>
+            <select aria-label="Open a scene" data-t="scene-open" value="" onChange={e => { const v = (e.currentTarget as HTMLSelectElement).value; if (v === '__new') { setTab('new'); return; } else { const x = allScenes(mine).find(y => y.id === v); if (x) open(x); } }}>
               <option value="">Open...</option><option value="__new">A new, empty scene</option>
               {mine.map(x => <option value={x.id}>{'This world: ' + x.name}</option>)}{SCENES.filter(x => !mine.some(m => m.id === x.id)).map(x => <option value={x.id}>{'The game: ' + x.name}</option>)}{STILLS.filter(x => !mine.some(m => m.id === x.id)).map(x => <option value={x.id}>{'A still: ' + x.name}</option>)}
             </select>
