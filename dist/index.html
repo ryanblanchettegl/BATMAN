@@ -2422,6 +2422,15 @@ body{background:radial-gradient(120% 100% at 30% 0%,rgba(255,240,210,.12),rgba(3
 .start .dbox .mi.on,.start .dbox .mi:focus-visible{background:linear-gradient(transparent 10%,#ffe066 10%,#ffd23f 90%,transparent 90%);color:#232027}
 .start .dbox .mi.on *,.start .dbox .mi:focus-visible *{color:#232027}
 .status.c{font-family:var(--hand);font-size:1.05em}
+
+/* ---------- room: the craft frames and the hand faces are taller than the plain ones, so windows give a little back ---------- */
+:is(html,body) :is(.wn,.win).wn,:is(html,body) .win.win,.wn,.win{border-image-width:12px;border-image-outset:5px}
+.wn>.ttl,.win .wt{margin:4px 5px 0;padding:.1em calc(1.2*var(--ch)) .14em}
+.wn>.ttl h2,.win .wt>span{font-size:1.04em}
+.wn>.bd,.win .wb{font-size:1.04em;line-height:1.17}
+.wn>.bd{padding-top:.32em;padding-bottom:.32em}
+.wn .btn{padding:.12em calc(1.4*var(--ch)) .2em;margin-bottom:.22em}
+.grp{margin-top:1em}
 </style>
 <div id="app"></div>
 <script>

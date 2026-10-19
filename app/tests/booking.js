@@ -176,6 +176,7 @@ async function section(mode) {
     ok(gone && await state(page, S => S.live.log.length) === nth && await state(page, S => S.bp) >= bp - cost, mode + ': the answer should be taken, logged and paid for (' + k + ', waiting ' + await state(page, S => S.live && S.live.ev && !S.live.ev.done ? S.live.ev.kind : 'nothing') + ', log ' + await state(page, S => S.live.log.length) + ' of ' + nth + ', bp ' + bp + ' - ' + cost + ' -> ' + await state(page, S => S.bp) + ')');
     ok(await has(page, '#live .ln.call'), mode + ': what the call led to should be on the broadcast');
   };
+  const partial = await typed(page);   // the line types itself out in under half a second, so read it before the checks below
   ok(await state(page, S => !!S.live && S.card.length > 0), mode + ': the show should be on the air');
   ok(await pos(page) === '-1:0' && /^RING BELL$/i.test(await advWord(page)), mode + ': the title card, and the big button says Ring bell: ' + await advWord(page));
   ok(await focusAdv(page), mode + ': the big button should have focus');
@@ -190,7 +191,7 @@ async function section(mode) {
   await shot(page, 'booking-' + mode + '-titlecard', true);
 
   /* ---- the broadcast: button, Enter, Space, Esc, Back ---- */
-  const partial = await typed(page); await page.waitForTimeout(1500);
+  await page.waitForTimeout(1500);
   const whole = await typed(page);
   ok(whole.length > partial.length && /main event/.test(whole), mode + ': the last line should type itself out (' + partial.length + ' then ' + whole.length + ')');
   await advance(page, 'click');
