@@ -4,7 +4,7 @@
    Steam; where the machine cannot draw 3D it falls back to the flat paper renderer. With Reduce motion it shows the
    last keyframe straight away. */
 import { useEffect, useRef, useState } from 'preact/hooks';
-import { Scene, paint, lastT, at, fxClass, aspectOf, fitIn } from './scene';
+import { Scene, Caption, paint, lastT, at, fxClass, aspectOf, fitIn, captionAt } from './scene';
 import { Recipe } from './puppet';
 import { Diorama3D } from './diorama3d';
 
@@ -14,7 +14,7 @@ export function scenePlays() { return plays; }
 
 export function ScenePlayer(p: { sc: Scene; cast: Record<string, Recipe>; play: string; still?: boolean; t?: string; label: string; orbit?: boolean; fill?: boolean }) {
   const box = useRef<HTMLDivElement>(null), cv = useRef<HTMLCanvasElement>(null), c3 = useRef<HTMLCanvasElement>(null), eng = useRef<Diorama3D | null>(null);
-  const [size, setSize] = useState([0, 0]), [flat, setFlat] = useState(false);
+  const [size, setSize] = useState([0, 0]), [flat, setFlat] = useState(false), [cap, setCap] = useState<Caption | null>(null);
   const props = useRef(p); props.current = p;
   useEffect(() => {
     const b = box.current; if (!b) return;
@@ -29,7 +29,7 @@ export function ScenePlayer(p: { sc: Scene; cast: Record<string, Recipe>; play: 
     const sc = props.current.sc, end = lastT(sc), E3 = eng.current; plays++;
     if (E3) {   // 3D: build the moment, a little over twelve times a second while it moves
       E3.size(size[0], size[1]);
-      const show = (t: number) => { const k = at(sc, t); E3.show(sc, k, props.current.cast, t); };
+      const show = (t: number) => { const k = at(sc, t); E3.show(sc, k, props.current.cast, t); const c = captionAt(sc, t); setCap(x => (x && c && x.t === c.t && x.s === c.s) || x === c ? x : c); };
       if (props.current.still || end <= 0) { show(end); return; }
       let raf = 0, last = -1; const t0 = performance.now(), keepFor = end + 0.2;
       const step = (now: number) => { let t = (now - t0) / 1000; if (sc.loop) t = t % (end + 0.3); if (now - last > 80) { last = now; try { show(t); } catch (e) { return; } } if (sc.loop || t < keepFor) raf = requestAnimationFrame(step); };
@@ -48,6 +48,17 @@ export function ScenePlayer(p: { sc: Scene; cast: Record<string, Recipe>; play: 
     <canvas ref={c3} style={{ width: size[0] + 'px', height: size[1] + 'px', display: flat ? 'none' : 'block' }} />
     {flat && <canvas ref={cv} style={{ width: size[0] + 'px', height: size[1] + 'px' }} />}
     {fx && <FxVeil w={size[0]} h={size[1]} />}
+    {cap && !flat && <CaptionBox cap={cap} w={size[0]} h={size[1]} who={capName(p.sc, p.cast, cap)} />}
+  </div>;
+}
+/** Who a caption names: the person playing that part, or the part's own name. */
+export function capName(sc: Scene, cast: Record<string, Recipe>, c: Caption): string { if (!c.who) return ''; const r = cast[c.who]; if (r && r.name) return r.name; const sl = sc.slots.find(x => x.id === c.who); return sl ? sl.n : ''; }
+/** The caption on a picture (Ryan, 19 October): a subtitle at the bottom, a lower third that names somebody, a title
+    card in the middle, or a line somebody says, written by hand on a slip of paper. Sized from the picture. */
+export function CaptionBox(p: { cap: Caption; w: number; h: number; who?: string }) {
+  const s = p.cap.s || 'sub', fs = Math.max(11, Math.round(p.w / (s === 'title' ? 22 : 42)));
+  return <div class={'sccap sccap-' + s} data-t="scene-caption" data-v={s} style={{ width: p.w + 'px', height: p.h + 'px', fontSize: fs + 'px' }}>
+    <span class="cb">{s === 'third' && p.who ? <b>{p.who}</b> : null}{s === 'quote' && p.who ? <b>{p.who}:</b> : null}<span class="ct">{s === 'quote' ? '“' + p.cap.t + '”' : p.cap.t}</span></span>
   </div>;
 }
 

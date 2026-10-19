@@ -19,7 +19,15 @@ export interface Fig { x: number; y: number; r: number; f: number; z: number; p:
       and z is in front of (or behind) the one holding, so the two move and turn together. */
   on?: string;
   /** A limb brought in front of everything else (3) or sent behind (-3): an arm round a neck, a leg hooked behind. */
-  lz?: Record<string, number> }
+  lz?: Record<string, number>;
+  /** Parts of the body left out of the picture (Ryan, 19 October), by joint: head, torso, sh_n (the near upper arm),
+      el_n (forearm), wr_n (hand), hip_n (thigh), kn_n (shin), an_n (foot), and the same for the far side. */
+  hide?: string[] }
+/** The parts of a body that can be hidden, grouped as Create a Scene shows them. */
+export const BODY_PARTS: [string, [string, string][]][] = [
+  ['Head and body', [['head', 'Head'], ['torso', 'Body']]],
+  ['Near arm', [['sh_n', 'Upper arm'], ['el_n', 'Forearm'], ['wr_n', 'Hand']]], ['Far arm', [['sh_f', 'Upper arm'], ['el_f', 'Forearm'], ['wr_f', 'Hand']]],
+  ['Near leg', [['hip_n', 'Thigh'], ['kn_n', 'Shin'], ['an_n', 'Foot']]], ['Far leg', [['hip_f', 'Thigh'], ['kn_f', 'Shin'], ['an_f', 'Foot']]]];
 /** Where one person can hold another. */
 export const HOLDS: [string, string][] = [['hands', 'hands'], ['shoulders', 'shoulders'], ['chest', 'chest'], ['waist', 'waist'], ['head', 'head']];
 /** The limbs that can come in front or go behind, and the parts of each. */
@@ -29,7 +37,15 @@ export interface Prop { id: string; k: string; x: number; y: number; r: number; 
     and a tilt in degrees. Left out, it shows the whole set. */
 export interface Cam { x: number; y: number; z: number; r?: number }
 export const CAM0: Cam = { x: 0, y: 0, z: 1, r: 0 };
-export interface Key { t: number; figs: Record<string, Fig>; props: Prop[]; cam?: Cam;
+/** A camera in the 3D model (Ryan, 19 October: "move the camera in scenes"): where it stands and what it looks at,
+    in the model's feet (the mat at height 0), and the lens (degrees of view: 18 a long lens, 30 normal, 45 wide).
+    A keyframe with one is shot from there; between two keyframes the camera glides from one to the other. */
+export interface Cam3 { p: [number, number, number]; t: [number, number, number]; fov?: number }
+/** Words on the picture for a keyframe (Ryan, 19 October): a subtitle, a lower third that names somebody, a title
+    card, or a line somebody says. It shows from its keyframe until the next. */
+export interface Caption { t: string; s?: 'sub' | 'third' | 'title' | 'quote'; who?: string }
+export const CAP_STYLES: [string, string][] = [['sub', 'Subtitle at the bottom'], ['third', 'Lower third: a name and a line'], ['title', 'Title card in the middle'], ['quote', 'A line somebody says']];
+export interface Key { t: number; figs: Record<string, Fig>; props: Prop[]; cam?: Cam; cam3?: Cam3; cap?: Caption;
   /** How the scene moves into this keyframe from the one before: smoothly (left out), evenly, speeding up, slowing down, or a cut. */
   ease?: 'even' | 'in' | 'out' | 'cut' }
 /** The ways into a keyframe, as Create a Scene lists them. */
@@ -80,7 +96,7 @@ export const STILL_WHEN: [string, string][] = [['hurt', 'Somebody hurt'], ['braw
 /** The sets, each drawn from its own angle: pick the one that suits the moment. Every set keeps feet on the same line
     (FOOT), so a pose works on all of them. */
 export const SETS: [string, string][] = [['ring', 'The ring: the hard camera'], ['ringlow', 'The ring: low at ringside'], ['ringcorner', 'The ring: from the corner'],
-  ['desk', 'The commentary desk'], ['ramp', 'The entrance ramp'], ['hall', 'Backstage: the hallway'], ['locker', 'Backstage: the locker room'], ['office', 'The office'], ['backstage', 'Backstage: the wall'], ['talk', 'A talk show'], ['cage', 'A steel cage'], ['lot', 'The parking lot'], ['news', 'A news desk'], ['stadium', 'A packed stadium'], ['rafters', 'Up in the rafters'], ['plain', 'Plain card']];
+  ['desk', 'The commentary desk'], ['ramp', 'The entrance ramp'], ['hall', 'Backstage: the hallway'], ['locker', 'Backstage: the locker room'], ['office', 'The office'], ['backstage', 'Backstage: the wall'], ['talk', 'A talk show'], ['cage', 'A steel cage'], ['lot', 'The parking lot'], ['news', 'A news desk'], ['stadium', 'A packed stadium'], ['rafters', 'Up in the rafters'], ['royal', 'The ring: ten wrestlers (a battle royal)'], ['plain', 'Plain card']];
 export const W16 = 16, H9 = 9;   // a scene is 16 units wide and 9 high; x = 0 is the middle, y = 0 the middle
 export const FOOT = -2.9;          // where feet stand on the mat
 export const WAIST = FOOT + 2.52 + 0.7;   // the waist of a doll of standard height standing on the mat
@@ -327,6 +343,10 @@ const FRONT: Record<string, (o: Piece[]) => void> = {
 const ease = (t: number, k?: string) => k === 'even' ? t : k === 'in' ? t * t : k === 'out' ? 1 - (1 - t) * (1 - t) : k === 'cut' ? 0 : t * t * (3 - 2 * t);   // a cut holds the last picture, then jumps
 const mix = (a: number, b: number, t: number) => a + (b - a) * t;
 export function lastT(sc: Scene) { return sc.keys.length ? sc.keys[sc.keys.length - 1].t : 0; }
+/** The caption on the picture at `time` seconds: the one on the last keyframe reached. */
+export function captionAt(sc: Scene, time: number): Caption | null {
+  let c: Caption | null = null; for (const k of sc.keys) { if (k.t <= time + 0.0001) c = k.cap && k.cap.t ? k.cap : null; else break; } return c;
+}
 /** The figures and props at `time` seconds: between two keyframes everything slides; props appear with their keyframe. */
 export function at(sc: Scene, time: number): Key {
   const ks = sc.keys; if (!ks.length) return { t: 0, figs: {}, props: [] };
@@ -339,11 +359,12 @@ export function at(sc: Scene, time: number): Key {
         const fa = a.figs[id], fb = b.figs[id]; if (!fb) { figs[id] = fa; continue; }
         const p: Record<string, number> = {}; for (const k of new Set([...Object.keys(fa.p), ...Object.keys(fb.p)])) p[k] = mix(fa.p[k] || 0, fb.p[k] || 0, t);
         const h = t < 0.5 ? fa : fb, same = (fa.on || '') === (fb.on || '');   // picked up or put down: the hold changes half way
-        figs[id] = { x: same ? mix(fa.x, fb.x, t) : h.x, y: same ? mix(fa.y, fb.y, t) : h.y, r: mix(fa.r, fb.r, t), f: h.f, z: same ? mix(fa.z, fb.z, t) : h.z, p, e: h.e, s: mix(fa.s || 1, fb.s || 1, t), m: h.m, on: h.on, lz: h.lz, b: h.b };
+        figs[id] = { x: same ? mix(fa.x, fb.x, t) : h.x, y: same ? mix(fa.y, fb.y, t) : h.y, r: mix(fa.r, fb.r, t), f: h.f, z: same ? mix(fa.z, fb.z, t) : h.z, p, e: h.e, s: mix(fa.s || 1, fb.s || 1, t), m: h.m, on: h.on, lz: h.lz, b: h.b, hide: h.hide };
       }
       const props = a.props.map(pa => { const pb = b.props.find(x => x.id === pa.id); return pb ? { ...pa, x: mix(pa.x, pb.x, t), y: mix(pa.y, pb.y, t), r: mix(pa.r, pb.r, t) } : pa; });
       const ca = a.cam || CAM0, cb = b.cam || CAM0, cam = { x: mix(ca.x, cb.x, t), y: mix(ca.y, cb.y, t), z: mix(ca.z, cb.z, t), r: mix(ca.r || 0, cb.r || 0, t) };
-      return { t: time, figs, props, cam };
+      const c3 = a.cam3 && b.cam3 ? { p: [0, 1, 2].map(i => mix(a.cam3!.p[i], b.cam3!.p[i], t)) as [number, number, number], t: [0, 1, 2].map(i => mix(a.cam3!.t[i], b.cam3!.t[i], t)) as [number, number, number], fov: mix(a.cam3.fov || 30, b.cam3.fov || 30, t) } : (a.cam3 || b.cam3);
+      return { t: time, figs, props, cam, cam3: c3, cap: a.cap };
     }
   }
   return ks[ks.length - 1];
@@ -364,7 +385,9 @@ export function build(sc: Scene, k: Key, cast: Record<string, Recipe>, time = 0)
     const di = sc.slots.filter(x => x.dress === 'suit').indexOf(sl), c = cast[sl.id];
     const c0 = c && c.kits ? wear(c, sc.attire || ATTIRE_OF[sc.set] || 'primary_ring') : c;   // a Create a Player wrestler dresses for the set
     const r = c0 ? (sl.dress === 'suit' ? dress(c0, di) : sl.role === 'ref' ? refDress(c0) : c0) : sl.role === 'ref' ? REF : sl.dress === 'suit' ? commentator(di) : blank(i);
+    const n0 = pieces.length;
     rigs[sl.id] = puppet(r, { x: f.x, y: f.y, r: f.r, f: f.f, z: f.z, s: f.s, lz: f.lz, b: f.b }, f.p, f.e || '', sl.id, pieces, f.m || {});
+    if (f.hide && f.hide.length) { const hid = f.hide, keep = pieces.slice(n0).filter(q => !(q.joint && hid.indexOf(q.joint) >= 0)); pieces.length = n0; pieces.push(...keep); }
     // a soft shadow on the floor where they stand or lie
     const rg = rigs[sl.id], lying = Math.abs(Math.sin(f.r * Math.PI / 180)) > 0.6, sz = f.s || 1;
     if (lying) { const c = rg.anchors.waist; pieces.push({ pts: ell(c[0], FOOT + 0.3, 2.0 * sz, 0.32, 20), col: 'rgba(0,0,0,0.32)', z: f.z - 0.05, soft: true }); }
@@ -619,6 +642,13 @@ export function setupScene(id: string): Scene {
   if (id === 'rafters') return base('rafters', [{ id: 'A', n: 'Wrestler A', role: 'a' }], { A: STD(-0.4, 1, { sh_n: 40, el_n: 30, sh_f: -30 }, '', 0.4) });
   if (id === 'lot') return base('lot', [{ id: 'A', n: 'Wrestler A', role: 'a' }, { id: 'B', n: 'Wrestler B', role: 'b' }], { A: STD(0.6, 1, {}, '', 0.4), B: STD(3.4, -1, {}, '', 0.6) });
   if (id === 'news') return base('news', [{ id: 'A', n: 'The anchor', role: 'c', dress: 'suit' }], { A: { x: -1.2, y: -0.75, r: 0, f: 1, z: 0, p: SEAT, e: 'talk' } }, { x: -0.4, y: 0.1, z: 1.15 });
+  if (id === 'royal') {   // ten in the ring, two rows of five, facing in toward the middle (Ryan, 19 October: "up to 10 people in the 3d ring")
+    const slots: Slot[] = [], figs: Record<string, Fig> = {};
+    for (let i = 0; i < 10; i++) { const id2 = String.fromCharCode(65 + i), row = i < 5 ? 0 : 1, col = i % 5, x = -6 + col * 3 + (row ? 1.5 : 0);
+      slots.push({ id: id2, n: 'Wrestler ' + id2, role: i === 0 ? 'a' : i === 1 ? 'b' : 'c' }); figs[id2] = STD(x, x < 0 ? 1 : -1, {}, '', row ? -3 : 3); }
+    slots.push({ id: 'R', n: 'The referee', role: 'ref' }); figs.R = STD(7.5, -1, {}, '', 0);
+    return { ...base('ring', slots, figs), keys: [{ t: 0, figs, props: [], cam3: { p: [0, 12, 26], t: [0, 2.5, 0], fov: 34 } }] };
+  }
   if (id === 'plain') return base('plain', [{ id: 'A', n: 'Wrestler A', role: 'a' }], { A: STD(0, 1, {}, '', 0.6) });
   return base('ring', [{ id: 'A', n: 'Wrestler A', role: 'a' }, { id: 'B', n: 'Wrestler B', role: 'b' }, { id: 'R', n: 'The referee', role: 'ref' }],
     { A: STD(-2.2, 1, {}, '', 0), B: STD(2.2, -1, {}, '', 1.2), R: STD(-5.4, 1, {}, '', -0.3) });

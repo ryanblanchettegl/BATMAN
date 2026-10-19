@@ -17,12 +17,12 @@ import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
 import { BokehPass } from 'three/examples/jsm/postprocessing/BokehPass.js';
 import { OutputPass } from 'three/examples/jsm/postprocessing/OutputPass.js';
-import { Scene, Key, build, FOOT, DESK_SEATS } from './scene';
+import { Scene, Key, Cam3, build, FOOT, DESK_SEATS } from './scene';
 import { Piece, PAL, shade, drawScene, View } from './paper';
 import { Recipe, Rig } from './puppet';
 
 const RINGS = ['ring', 'ringlow', 'ringcorner'];
-const DEPTH = 0.9;      // a layer step, in feet of depth
+export const DEPTH = 0.9;      // a layer step, in feet of depth
 const CARD = 0.035;     // how thick a piece of card is
 
 /* ---------- card: a matte colour with the grain of construction paper ---------- */
@@ -231,13 +231,20 @@ function flat(root: THREE.Group, sc: Scene) {
 }
 
 /* ---------- the camera for each set ---------- */
+const P: Record<string, [number[], number[]]> = { ring: [[0, 9, 21], [0, 3.2, 0]], ringlow: [[0, 2.2, 15], [0, 4.2, 0]], ringcorner: [[15, 9, 15], [0, 3.2, 0]],
+  desk: [[0, 4.3, 13.5], [0, 2.6, 0]], hall: [[0, 5.2, 13], [0, 3.8, -6]], office: [[0, 5, 14], [0, 3.6, 0]], locker: [[0, 5, 14], [0, 3.6, -1]] };
+/** The set's own camera: where it stands and what it looks at. */
+export function homeShot(set: string): Cam3 { const [pos, look] = P[set] || [[0, 5.5, 17], [0, 3.6, 0]]; return { p: pos.slice() as any, t: look.slice() as any, fov: 30 }; }
 function frame(set: string, cam: THREE.PerspectiveCamera, ctl: OrbitControls, k: Key) {
+  if (k.cam3) {   // the keyframe's own camera, placed in the model
+    const c3 = k.cam3; cam.position.set(c3.p[0], c3.p[1], c3.p[2]); ctl.target.set(c3.t[0], c3.t[1], c3.t[2]); cam.fov = c3.fov || 30; cam.zoom = 1; cam.updateProjectionMatrix(); ctl.update(); return;
+  }
   const c = k.cam || { x: 0, y: 0, z: 1, r: 0 };
-  const P: Record<string, [number[], number[]]> = { ring: [[0, 9, 21], [0, 3.2, 0]], ringlow: [[0, 2.2, 15], [0, 4.2, 0]], ringcorner: [[15, 9, 15], [0, 3.2, 0]],
-    desk: [[0, 4.3, 13.5], [0, 2.6, 0]], hall: [[0, 5.2, 13], [0, 3.8, -6]], office: [[0, 5, 14], [0, 3.6, 0]], locker: [[0, 5, 14], [0, 3.6, -1]] };
   const [pos, look] = P[set] || [[0, 5.5, 17], [0, 3.6, 0]];
-  cam.position.set(pos[0] + c.x, pos[1] + c.y, pos[2]); ctl.target.set(look[0] + c.x, look[1] + c.y, look[2]); cam.zoom = c.z; cam.rotation.z = 0; cam.updateProjectionMatrix(); ctl.update();
+  cam.position.set(pos[0] + c.x, pos[1] + c.y, pos[2]); ctl.target.set(look[0] + c.x, look[1] + c.y, look[2]); cam.fov = 30; cam.zoom = c.z; cam.rotation.z = 0; cam.updateProjectionMatrix(); ctl.update();
 }
+/** The shots Create a Scene offers: each worked out from the set's own camera, or from the person picked. */
+export const SHOTS: [string, string][] = [['home', 'The set camera'], ['low', 'Low angle'], ['high', 'High angle'], ['left', 'From the left'], ['right', 'From the right'], ['over', 'Straight down'], ['wide', 'Pull back wide'], ['close', 'Close-up on who is picked'], ['face', 'Face to face with who is picked']];
 
 /** A 3D stage on a canvas. `show(sc, key, cast)` puts a moment of a scene on it; the pointer orbits the camera. */
 export class Diorama3D {
@@ -255,7 +262,7 @@ export class Diorama3D {
     this.scene.add(key);
     this.scene.add(this.world, this.people);
     this.ctl = new OrbitControls(this.cam, canvas); this.ctl.enableDamping = false; this.ctl.addEventListener('change', () => this.ask());
-    if (!interactive) this.ctl.enabled = false; this.ctl.maxPolarAngle = Math.PI * 0.49; this.ctl.minDistance = 4; this.ctl.maxDistance = 60;
+    if (!interactive) this.ctl.enabled = false; this.ctl.maxPolarAngle = Math.PI * 0.49; this.ctl.minDistance = 1.5; this.ctl.maxDistance = 70;
     this.comp = new EffectComposer(this.r); this.comp.addPass(new RenderPass(this.scene, this.cam));
     this.bokeh = new BokehPass(this.scene, this.cam, { focus: 21, aperture: 0.0006, maxblur: 0.006 }); this.comp.addPass(this.bokeh); this.comp.addPass(new OutputPass());
     this.ask();
@@ -270,7 +277,7 @@ export class Diorama3D {
   groups: THREE.Group[] = []; rigs: Record<string, Rig> = {}; hold: Record<string, string> = {}; sel: { who: string; part: string } | null = null;
   show(sc: Scene, k: Key, cast: Record<string, Recipe>, time = 0, sel: { who: string; part: string } | null = null) {
     if (this.set !== setKey(sc.set)) { this.clear(this.world); const room = ROOMS[sc.set]; if (RINGS.includes(sc.set)) arena(this.world); else if (room) room(this.world); else flat(this.world, sc); this.mood(sc.set); this.set = setKey(sc.set); this.framed = ''; }
-    const fk = sc.set + JSON.stringify(k.cam || null); if (this.framed !== fk) { frame(sc.set, this.cam, this.ctl, k); this.framed = fk; }
+    const fk = sc.set + JSON.stringify(k.cam || null) + JSON.stringify(k.cam3 || null); if (this.framed !== fk) { frame(sc.set, this.cam, this.ctl, k); this.framed = fk; }
     this.clear(this.people); this.groups = []; this.sel = sel;
     const b = build(sc, k, cast, time); this.rigs = b.rigs; this.hold = b.hold;
     const byWho = new Map<string, Piece[]>();
@@ -298,6 +305,33 @@ export class Diorama3D {
     });
     this.ask();
   }
+  /** The camera as it stands now, to keep on a keyframe. */
+  view(): Cam3 { const r = (v: number) => Math.round(v * 100) / 100, p = this.cam.position, t = this.ctl.target; return { p: [r(p.x), r(p.y), r(p.z)], t: [r(t.x), r(t.y), r(t.z)], fov: Math.round(this.cam.fov) }; }
+  /** Put the camera somewhere without keeping it (looking round, or trying a shot before it is kept). */
+  look(c: Cam3) { this.cam.position.set(c.p[0], c.p[1], c.p[2]); this.ctl.target.set(c.t[0], c.t[1], c.t[2]); this.cam.fov = c.fov || 30; this.cam.zoom = 1; this.cam.updateProjectionMatrix(); this.ctl.update(); this.ask(); }
+  /** Where a person stands in the model (their waist), for shots that look at them. */
+  spot(who: string): [number, number, number] | null { const g = this.groups.find(x => x.userData.who === (this.hold[who] || who)), rg = this.rigs[who]; if (!g || !rg) return null; const c = rg.anchors.chest || rg.anchors.waist; return [g.position.x, c ? c[1] - FOOT : 3, g.position.z]; }
+  /** A named shot (SHOTS), worked out from the set's camera or the picked person. */
+  shot(set: string, kind: string, who?: string): Cam3 {
+    const h = homeShot(set), p = new THREE.Vector3(...h.p), t = new THREE.Vector3(...h.t), at = who ? this.spot(who) : null;
+    const turn = (deg: number) => { const d = p.clone().sub(t), a = deg * Math.PI / 180, x = d.x * Math.cos(a) - d.z * Math.sin(a), z = d.x * Math.sin(a) + d.z * Math.cos(a); p.set(t.x + x, p.y, t.z + z); };
+    if (kind === 'low') { p.y = Math.max(1.2, t.y * 0.4); t.y += 1.2; }
+    else if (kind === 'high') p.y += 12;
+    else if (kind === 'left') turn(-40);
+    else if (kind === 'right') turn(40);
+    else if (kind === 'over') { p.set(t.x, 32, t.z + 0.6); }
+    else if (kind === 'wide') { p.sub(t).multiplyScalar(1.7).add(t); return { p: p.toArray() as any, t: t.toArray() as any, fov: 40 }; }
+    else if ((kind === 'close' || kind === 'face') && at) {
+      const tt = new THREE.Vector3(at[0], at[1] + (kind === 'face' ? 0.8 : 0), at[2]), dir = this.cam.position.clone().sub(tt).setY(0).normalize();
+      const np = tt.clone().add(dir.multiplyScalar(kind === 'face' ? 5 : 8)); np.y = tt.y + (kind === 'face' ? 0.2 : 1);
+      return { p: np.toArray().map(v => Math.round(v * 100) / 100) as any, t: tt.toArray().map(v => Math.round(v * 100) / 100) as any, fov: kind === 'face' ? 24 : 28 };
+    }
+    return { p: p.toArray().map(v => Math.round(v * 100) / 100) as any, t: t.toArray().map(v => Math.round(v * 100) / 100) as any, fov: h.fov };
+  }
+  /** Where the pointer meets the floor at height `h` (feet; the mat is 0): [x, depth], for moving somebody round the model. */
+  toFloor(cx: number, cy: number, h = 0): [number, number] | null { const hit = new THREE.Vector3(); return this.ray(cx, cy).ray.intersectPlane(new THREE.Plane(new THREE.Vector3(0, 1, 0), -h), hit) ? [hit.x, hit.z] : null; }
+  /** The picture as it is now, as a PNG. */
+  picture(): Promise<Blob | null> { this.face(); this.comp.render(); return new Promise(res => this.r.domElement.toBlob(b => res(b), 'image/png')); }
   /** Where a figure's anchor (chest, hand_n, ...) is on the screen, in client pixels (for tests and for pointing). */
   where(who: string, anchor = 'chest'): [number, number] | null {
     const g = this.groups.find(x => x.userData.who === (this.hold[who] || who)), rg = this.rigs[who]; if (!g || !rg || !rg.anchors[anchor]) return null;
