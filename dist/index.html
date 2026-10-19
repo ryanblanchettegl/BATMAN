@@ -2502,6 +2502,67 @@ html .grp.grp,.grp{border-image:none;border:1.5px solid rgba(35,35,42,.28);borde
 html body .win.ppop .wb{font-family:var(--hand);font-size:1.06em}
 /* a picture's caption: a slip of paper written in hand, a touch off straight */
 .mcap{font-family:var(--hand);font-size:1.02em;border:0;background:#fbf8ee;color:var(--ink);box-shadow:.1em .16em .2em rgba(0,0,0,.3);transform:rotate(-1deg)}
+/* After the show: the verdict on a slip of card, what the night left on torn paper */
+.after1 .head p[data-t="after-verdict"]{background:#fbf8ee;color:var(--ink);font-family:var(--hand);font-size:1.08em;padding:.15em calc(1.6*var(--ch)) .2em;box-shadow:.12em .2em .25em rgba(0,0,0,.4);transform:rotate(-.5deg)}
+.after1 .head p[data-t="after-verdict"] b{color:var(--ink);font-family:var(--kalam);font-weight:700}
+.after1 .head p[data-t="after-verdict"] b.gold{font-family:var(--marker);font-weight:400;color:#c23a30;font-size:1.25em}
+.after1 .head p[data-t="after-verdict"] .muted{color:#4a4a52}
+.after1 .a1{border:0;border-image:var(--lk-win) 30 fill / 12px / 5px stretch;color:var(--ink);font-family:var(--hand);font-size:1.04em;padding:.3em calc(.4*var(--ch))}
+.after1 .a1-list{border-right:1.5px dashed rgba(35,35,42,.3)}
+.after1 .a1-list .eyebrow,.after1 .a1-pane .eyebrow{font-family:var(--marker);color:#1d2a5c;text-transform:none;letter-spacing:.02em}
+.after1 .a1-r button b{color:var(--ink);font-family:var(--kalam);font-weight:700}
+.after1 .a1-r button:hover,.after1 .a1-r button:focus-visible{background:#fff4c2}
+.after1 .a1-r.on button{background:linear-gradient(transparent 8%,#ffe066 8%,#ffd23f 92%,transparent 92%)}
+.after1 .a1 .muted{color:#55555e} .after1 .a1 .good{color:#2f7a3a} .after1 .a1 .bad{color:#b8322a} .after1 .a1 .gold{color:#8a6a10}
+.after1 > .row > .muted{background:#fbf8ee;color:var(--ink);font-family:var(--hand);padding:.1em calc(1.4*var(--ch));box-shadow:.1em .16em .2em rgba(0,0,0,.35)}
+/* tips: sticky notes in hand */
+.tipslip{background:#fff1a6;border:0;border-radius:0;font-family:var(--hand);font-size:1.04em;box-shadow:.15em .25em .3em rgba(0,0,0,.35)}
+.status .key .tip{background:#fff1a6;border:0;border-radius:0;font-family:var(--hand);font-size:1.04em;color:var(--ink);box-shadow:.15em .25em .3em rgba(0,0,0,.4);transform:rotate(-1deg)}
+.status .key .tip .th{background:none;color:#c23a30;font-family:var(--marker);font-weight:400}
+.status .key .tip .tl,.status .key .tip *{color:var(--ink)}
+
+/* ---------- the World Editor and Create a Player (app/styles/paper.css, scoped under .paper) on the workbench ---------- */
+.paper{background:radial-gradient(130% 100% at 30% 10%,rgba(255,255,255,.04),rgba(0,0,0,.3)),var(--lk-black) 0 0/480px 480px,#1e1d21}
+.paper .wn>.ttl{background:var(--lk-navy) 0 0/240px;border:0;margin:6px 6px 0;padding:.1em calc(1.2*var(--ch)) .14em;clip-path:polygon(0 8%,12% 0,40% 6%,70% 0,100% 7%,99% 92%,72% 100%,45% 93%,15% 100%,1% 92%)}
+.paper .wn>.ttl h2{background:none;font-family:var(--marker);font-weight:400;color:#ffe48a;letter-spacing:.02em}
+.paper .wn>.ttl>span:first-child::before,.paper .wn>.ttl>span:last-child::after{background:#f3ebd6;border:0;border-radius:50%;width:.7rem;height:.7rem;box-shadow:inset -.1rem -.1rem 0 rgba(0,0,0,.25)}
+.paper .wn>.ttl>span:last-child{font-family:var(--hand);color:#f3ebd6}
+.paper .wn>.bd{font-family:var(--hand)}
+.paper .wnfo{background:none;font-family:var(--hand);color:#4a4a52}
+.paper .grp{background:rgba(255,255,255,.32);border:1.5px solid rgba(35,35,42,.28);box-shadow:none}
+.paper .grp>h3{background:#fbf8ee;color:#c23a30;font-family:var(--marker);font-weight:400;border:1.5px solid rgba(35,35,42,.4);border-radius:2px;transform:rotate(-1deg)}
+.paper .edrow{font-family:var(--hand)}
+.paper .edrow.on{background:linear-gradient(transparent 6%,#ffe066 6%,#ffd23f 94%,transparent 94%);box-shadow:none}
+.paper .edrow.on .nm,.paper .edrow.on .st{color:var(--ink)}
+.paper .edrow.on::before{background:#d9443a;border-color:var(--ink)}
+.edsheet .eyebrow,.edsheet .panel>h2,.edsheet .panel>.ph{font-family:var(--marker);font-weight:400;color:#c23a30}
+.edsheet .f{font-family:var(--hand)}
+/* the editor's own menu: a strip of cream paper, the open tab a piece of navy card */
+.pmenu{background:var(--lk-paper) 0 0/360px;border:0;box-shadow:0 .25em .5em rgba(0,0,0,.4)}
+.pmenu .pm-app{background:var(--lk-navy) 0 0/240px;color:#ffe48a;font-family:var(--marker);transform:rotate(-1.5deg)}
+.pmenu .it{font-family:var(--marker);font-size:1.02em;color:var(--ink)}
+.pmenu .it:hover{background:#fff1a6}
+.pmenu .it.on{background:var(--lk-navy) 0 0/240px;color:#ffe48a;transform:rotate(-1.5deg);box-shadow:.12em .2em 0 rgba(0,0,0,.35)}
+.pmenu .pm-world,.pmenu .pm-ok{font-family:var(--hand)}
+/* its bottom line: cream paper with cards on it */
+.pstrip{background:var(--lk-paper) 0 0/360px;border:0;box-shadow:0 -.25em .5em rgba(0,0,0,.35)}
+.pstrip .tile{background:none;border:0;border-image:var(--lk-card) 30 fill / 12px / 3px;font-family:var(--hand);box-shadow:none}
+.pstrip kbd{font-family:var(--marker);font-weight:400;background:var(--ink);transform:rotate(-3deg)}
+.pmarquee{background:#1b1a1f;border:0;transform:rotate(-.5deg)}
+/* the editor's hint strip and Create a Player's top bar */
+.pnote{background:var(--lk-navy) 0 0/240px;color:#ffe48a;font-family:var(--hand);font-size:1.05em;border:0}
+.sc-menubar{background:var(--lk-paper) 0 0/360px;border:0;box-shadow:0 .25em .5em rgba(0,0,0,.4);font-family:var(--hand)}
+.sc-menubar b.on{background:var(--lk-navy) 0 0/240px;color:#ffe48a;font-family:var(--marker);font-weight:400;transform:rotate(-1.5deg);padding:.05em calc(1.2*var(--ch))}
+/* the editor's older tabs (Companies, Shows, Belts, Teams): the list on torn paper, the picked line in highlighter */
+.edlist{border:0;border-image:var(--lk-win) 30 fill / 12px / 5px stretch;padding:.4em calc(.6*var(--ch))}
+.edpage:not(.paper) .edrow{font-family:var(--hand);color:var(--ink)}
+.edpage:not(.paper) .edrow .nm{color:var(--ink);font-family:var(--kalam);font-weight:700}
+.edpage:not(.paper) .edrow .st{color:#55555e}
+.edpage:not(.paper) .edrow:hover,.edpage:not(.paper) .edrow:focus-visible{background:#fff4c2}
+.edpage:not(.paper) .edrow.on{background:linear-gradient(transparent 6%,#ffe066 6%,#ffd23f 94%,transparent 94%)}
+.edpage:not(.paper) .edrow.on .nm,.edpage:not(.paper) .edrow.on .st{color:var(--ink)}
+.edgrid>div>.muted:only-child,.edgrid>p.muted,.edtop .good{background:#fbf8ee;color:var(--ink);font-family:var(--hand);padding:.15em calc(1.4*var(--ch));box-shadow:.1em .16em .2em rgba(0,0,0,.35);display:inline-block}
+.start .lede,.edpage>.lede,.edpage .head+p{text-shadow:0 .1em .2em rgba(0,0,0,.7)}
 </style>
 <div id="app"></div>
 <script>

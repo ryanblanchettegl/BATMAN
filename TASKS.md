@@ -166,7 +166,9 @@ The desk image (`docs/mockups/paper/desk.png`) is the art style: the whole game 
 ### 0v3. The workbench is the art style (Ryan, 19 October: "we are switching to concept a"; "this is the new art style. make it the rule and start spreading it everywhere")
 
 - [x] A in every build (`app/styles/craft.css`, `app/ui/craft/`): torn cream paper windows with navy title strips, cut card buttons, index cards and sticky notes, on black construction paper, no tape. Rule 2a rewritten. The zine is kept as concept C (`app/styles/looks/c.css`, `app/ui/c/`).
-- [ ] Spread it everywhere: every page, every pop-up, the broadcast, After the show, the title screen and the World Editor, each checked for readability and fit at 1280 by 720.
+- [x] The desk shows the state (or region) this week's city is in, cut from green card on blue paper with a pin and a label on the city (`SHAPES`, `src/91-shapes.js`, from `tools/build-maps.js`). Dot matrix is out: lettering that was in lights is marker on black card, the ring, bell and belt are painted card, and logos are painted with marker letters.
+- [x] Spread to: tables, old panels, group boxes, gauges and names in lists; the title screen and its cut-card logo; Select promotion; the broadcast's opening poster, the call from the gorilla position and the matter pop-up; After the show; tips and the SPACE key's note; the World Editor (its menu, hint strip, windows, lists) and Create a Player.
+- [ ] Still to check page by page: every Manage pop-up, Career's windows, Web's sites, History and Finances, the Scenes tab and Create a Scene, the logo creator, Help.
 
 ### 0v2. The scrapbook zine was the core look for a day (Ryan, 19 October: "C is the winner")
 
