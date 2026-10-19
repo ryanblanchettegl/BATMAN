@@ -91,6 +91,9 @@ const msg = page => txt(page, '[data-t="caw-msg"]');
     await page.click('[data-t="caw-larch"][data-v="+"]'); await page.click('[data-t="caw-lmove"][data-v="u"]');
     await page.selectOption('[data-t="caw-shape"]', 'tactical_vest_straps'); await page.click('[data-t="caw-addshape"]');
     ok('a shape is added beside it', (await page.$$('[data-t="caw-layer"]')).length === 2);
+    { const names = async () => page.$$eval('[data-t="caw-layer"]', b => b.map(x => x.textContent)); const n0 = await names();
+      await page.click('[data-t="caw-layer"][data-v="0"]'); await page.click('[data-t="caw-lorder"][data-v="f"]'); const n1 = await names();
+      ok('Bring forward puts the lettering in front of the shape', n1[1] === n0[0] && n1[0] === n0[1], n0.join('|') + ' -> ' + n1.join('|')); }
     await page.click('[data-t="caw-ldrop"]');
     ok('and taken off again', (await page.$$('[data-t="caw-layer"]')).length === 1);
     if (process.env.SHOTS) { await page.waitForTimeout(2500); await shot(page, 'player-studio'); }
