@@ -3,6 +3,7 @@ import { App } from './app';
 import { G, ui, pref, setUniverse, DEFAULT_UNI } from './store';
 import { E } from './engine';
 import { initInput, setBootTimer } from './input';
+import { mountTips } from './shell/Tip';
 import { BOOT_STEPS } from './screens/start';
 
 setUniverse(pref.uni || DEFAULT_UNI);
@@ -23,6 +24,6 @@ function boot(d: any) {
   draw();
 }
 let mounted = false;
-function draw() { if (!mounted) { mounted = true; render(<App />, document.getElementById('app')!); } else (window as any).EWF_DEBUG.render(); }
+function draw() { if (!mounted) { mounted = true; render(<App />, document.getElementById('app')!); mountTips(); } else (window as any).EWF_DEBUG.render(); }
 if (hot && hot.snapshot) hot.snapshot(() => ({ S: G.S }));
 if (hot && hot.ready) hot.ready(boot); else boot((hot && hot.data) || {});

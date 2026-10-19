@@ -47,7 +47,7 @@ export function LogoMaker(p: { m: Modal }) {
         {st.note ? <p class="muted" data-t="logo-note">{st.note}</p> : null}
       </div>
       <div class="mm-mid">
-        <div class="mm-row"><span class="mm-l">Letters</span><span class="mm-opts"><input type="text" value={m.l} maxLength={3} aria-label="Two or three letters" style={{ width: '7ch' }} {...dataAttrs('logo-l')}
+        <div class="mm-row"><span class="mm-l">Letters</span><span class="mm-opts"><input type="text" value={m.l} maxLength={3} aria-label="Two or three letters" style={{ width: 'calc(7 * var(--ch))' }} {...dataAttrs('logo-l')}
           onInput={e => { const t = (e.currentTarget as HTMLInputElement).value.toUpperCase().replace(/[^A-Z0-9]/g, ''); if (t.length >= 2) set({ l: t }); }} />
           {P.styles.map((o: any) => <Btn kind="sm" t="logo-st" d={{ v: o[0] }} on={m.st === o[0]} onClick={() => set({ st: o[0] })}>{o[1]}</Btn>)}</span></div>
         {row('Layout', 'lay', P.lays)}
@@ -56,7 +56,7 @@ export function LogoMaker(p: { m: Modal }) {
         {row('Finish', 'fin', P.fins)}
         {sw('Shape colour', 'c1')}{sw('Trim colour', 'c2')}{sw('Letter colour', 'c3')}
         {row('One extra', 'ex', P.extras)}
-        {m.ex === 'tag' ? <div class="mm-row"><span class="mm-l">Second line</span><span class="mm-opts"><input type="text" value={m.tag} maxLength={8} aria-label="A second line, up to eight letters" style={{ width: '12ch' }} {...dataAttrs('logo-tag')}
+        {m.ex === 'tag' ? <div class="mm-row"><span class="mm-l">Second line</span><span class="mm-opts"><input type="text" value={m.tag} maxLength={8} aria-label="A second line, up to eight letters" style={{ width: 'calc(12 * var(--ch))' }} {...dataAttrs('logo-tag')}
           onInput={e => set({ tag: (e.currentTarget as HTMLInputElement).value })} /></span></div> : null}
         <div class="mm-right" role="group" aria-label="Ideas">
         <p class="mm-h"><span>Ideas from {m.l}</span><Btn kind="sm" t="logo-shuffle" onClick={() => view(() => { st.seed++; })}>Shuffle</Btn></p>

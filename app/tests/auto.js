@@ -112,4 +112,27 @@ async function results(mode) {
     ok(mode, 'no errors (results)', !errs.length, errs.slice(0, 3).join(' | '));
   } finally { await browser.close(); }
 }
-(async () => { for (const m of MODES) { await onePress(m); await results(m); await run(m); } console.log(fails.length ? 'FAILED: ' + fails.join('; ') : 'auto: all passed'); process.exit(fails.length ? 1 : 0); })().catch(e => { console.error(e); process.exit(1); });
+/** TV pace (Ryan, 19 October: "a 2 hour show to run about 2 minutes"): a segment gets a second per minute on the
+    clock. Scenes are off here: this machine draws them without a graphics card, which a player's machine has. */
+async function tv(mode) {
+  const { browser, page, errs } = await open({ mode, promo: 'pdw', auto: true, pace: 'tv' });
+  try {
+    await go(page, 'booking'); await page.click('[data-t="suggest"]');
+    const mins = await state(page, S => (S.card || []).length);
+    for (let k = 0; k < 6 && !(await has(page, '#live')); k++) { if (await has(page, '[data-t="pre"]')) await page.click('[data-t="pre"][data-c="0"]'); else await page.click('[data-t="advance"]'); await page.waitForTimeout(50); }
+    ok(mode, 'the pace button says TV', /TV/.test(await page.$eval('[data-t="live-pace"]', e => e.textContent).catch(() => '')));
+    ok(mode, 'the broadcast has the feed and the crowd meter at the right, and tonight as a rail', await has(page, '[data-t="live-feed"]') && await has(page, '[data-t="crowd-meter"]') && await has(page, '.lv-rail[data-t="night"]'));
+    await page.waitForTimeout(600); await page.click('[data-t="advance"]');
+    const t0 = Date.now(); let calls = 0, callT = 0, posts = 0;
+    while (Date.now() - t0 < 240000 && !(await has(page, '#live[data-v="signoff"]'))) {
+      if (await has(page, '[data-t="live-call"]')) { const c0 = Date.now(); calls++; await page.waitForTimeout(450); const safe = await state(page, S => (S.live.ev && S.live.ev.safe) || 0); await page.click('[data-t="live-pick"][data-c="' + safe + '"]'); callT += Date.now() - c0; continue; }
+      posts = Math.max(posts, await page.$$eval('[data-t="live-feed"] .post', L => L.length).catch(() => 0));
+      await page.waitForTimeout(200);
+    }
+    const secs = Math.round((Date.now() - t0 - callT) / 1000);
+    ok(mode, 'on TV pace a whole show reaches its sign-off on its own in about two minutes', await has(page, '#live[data-v="signoff"]') && secs >= 60 && secs <= 150, secs + ' s on the air, not counting ' + calls + ' calls (' + mins + ' on the card)');
+    ok(mode, 'people post as the show goes', posts >= 6, posts + ' posts');
+    ok(mode, 'no errors (tv)', !errs.length, errs.slice(0, 3).join(' | '));
+  } finally { await browser.close(); }
+}
+(async () => { for (const m of MODES) { await onePress(m); await results(m); await tv(m); await run(m); } console.log(fails.length ? 'FAILED: ' + fails.join('; ') : 'auto: all passed'); process.exit(fails.length ? 1 : 0); })().catch(e => { console.error(e); process.exit(1); });

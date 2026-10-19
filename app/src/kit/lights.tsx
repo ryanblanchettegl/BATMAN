@@ -105,7 +105,7 @@ function textBoard(parts: [string, string][]): Board {
 }
 
 /* ---------- one routine turns a board into lights on a canvas ---------- */
-const BASE_FS = 20.736;   // the type size the dot sizes are given for (a 1280 wide desk)
+const BASE_FS = 16.589;   // the type size the dot sizes are given for (a 1280 wide desk; the paper look sets type at .8 of --fs)
 let draws = 0;
 /** How many times any board has been drawn since the page loaded. A test watches it: a board is drawn once and kept. */
 export function lightDraws(): number { return draws; }

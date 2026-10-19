@@ -10,7 +10,15 @@ if(fs.existsSync(path.join(appDir,'node_modules','esbuild'))){
   const esbuild=require(path.join(appDir,'node_modules','esbuild'));
   const out=esbuild.buildSync({entryPoints:[path.join(appDir,'src','main.tsx')],bundle:true,write:false,format:'iife',target:'es2019',minify:!process.env.EWF_DEV,jsx:'automatic',jsxImportSource:'preact',legalComments:'none',absWorkingDir:appDir,logLevel:'warning'});
   const js=out.outputFiles[0].text.replace(/<\/script/gi,'<\\/script');
-  const css=['base','start','editor','office','booking','roster','stories','net','manage','company','win','scene','paper'].map(f=>fs.readFileSync(path.join(appDir,'styles',f+'.css'),'utf8')).join('\n');
+  // the styles; theme.css (the paper look over every page) comes last. Sizes written in ch were measured in VT323's
+  // character, so they become that width (--ch) whatever the face is now: the layouts keep their shape
+  const css=['base','start','editor','office','booking','roster','stories','net','manage','company','win','scene','paper','theme'].map(f=>fs.readFileSync(path.join(appDir,'styles',f+'.css'),'utf8')).join('\n')
+    .replace(/(^|[^\w.#-])(-?\d*\.?\d+)ch\b/g,(m,pre,n)=>pre+'calc('+n+'*var(--ch))');
+  // the interface face: Inter in three weights (SIL Open Font License 1.1; tools/build-ui-font.py)
+  const sans=[400,600,800].map(w=>{const f=path.join(appDir,'fonts','inter-'+w+'.woff2');return fs.existsSync(f)?"@font-face{font-family:'EWF Sans';font-style:normal;font-weight:"+w+";font-display:swap;src:url(data:font/woff2;base64,"+fs.readFileSync(f).toString('base64')+") format('woff2')}\n":'';}).join('');
+  // the paper pieces rendered in Blender (tools/creator/ui-pieces.py), as variables the theme reads
+  const uiDir=path.join(appDir,'ui');
+  const ui=fs.existsSync(uiDir)?':root{'+fs.readdirSync(uiDir).filter(f=>f.endsWith('.png')).sort().map(f=>'--ui-'+f.slice(0,-4)+':url(data:image/png;base64,'+fs.readFileSync(path.join(uiDir,f)).toString('base64')+');').join('')+'}\n':'';
   // the one typeface is embedded, so the game fetches nothing at all (VT323, SIL Open Font License 1.1)
   const fontFile=path.join(appDir,'node_modules','@fontsource','vt323','files','vt323-latin-400-normal.woff2');
   const font=fs.existsSync(fontFile)?"@font-face{font-family:'VT323';font-style:normal;font-weight:400;font-display:swap;src:url(data:font/woff2;base64,"+fs.readFileSync(fontFile).toString('base64')+") format('woff2')}\n":'';
@@ -21,7 +29,7 @@ if(fs.existsSync(path.join(appDir,'node_modules','esbuild'))){
   const addons=fs.existsSync(addDir)?fs.readdirSync(addDir).filter(f=>f.endsWith('.js')).sort().map(f=>'\n<script>\n'+fs.readFileSync(path.join(addDir,f),'utf8').replace(/<\/script/gi,'<\\/script')+'</script>').join(''):'';
   const next=`<title>EWF Wrestling Manager</title>
 <style>
-${font}${blocks}${css}</style>
+${font}${blocks}${sans}${ui}${css}</style>
 <div id="app"></div>
 <script>
 window.GP_UNIVERSE=${rd('universes/public_domain.json').replace(/<\//g,'<\\/')};

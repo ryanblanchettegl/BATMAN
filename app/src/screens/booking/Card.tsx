@@ -99,12 +99,12 @@ export function Card() {
         {show.rule && E.RULES[show.rule] ? <>{DOT}<span class="good">{E.RULES[show.rule]}</span></> : null}</p>
       <p class="showtime" data-t="clock" data-v={ck.over ? 'over' : (ck.short ? 'short' : (ck.light ? 'light' : 'ok'))}>Show time: <b class={'num ' + tcls}>{hm(ck.total)}</b> of <b class="num">{hm(ck.budget)}</b> <Meter v={Math.min(100, ck.total / ck.budget * 100)} kind="au" /> <span class={tcls}>{n || ck.total ? ck.words : (ck.budget / 60) + ' hours to fill.'}</span></p>
       <div class="row center b1-btns">
-        <Btn t="suggest" onClick={suggest}>Suggest a card</Btn>
-        <Btn t="add" onClick={addMatch}>Add a match</Btn>
-        <Btn t="add-promo" onClick={addPromo}>Add a promo</Btn>
-        <Btn t="add-angle" onClick={addAngle}>Add an angle</Btn>
-        {n > 0 && <Btn t="could" onClick={() => openModal({ kind: 'could' })}>What could happen?</Btn>}
-        {(n > 0 || ck.total > 0) && <Btn t="clear" onClick={clearCard}>Clear</Btn>}
+        <Btn t="suggest" tip="Fill the show with a card that fits the time: matches, and the writers' picks for the promo time." onClick={suggest}>Suggest</Btn>
+        <Btn t="add" tip="Put a new match on the run sheet." onClick={addMatch}>+ Match</Btn>
+        <Btn t="add-promo" kind="sm" tip="Book a promo: somebody on the microphone. Each kind plays its own scene." onClick={addPromo}>+ Promo</Btn>
+        <Btn t="add-angle" kind="sm" tip="Book an angle: an attack, a brawl, a save or a turn. Each kind plays its own scene." onClick={addAngle}>+ Angle</Btn>
+        {n > 0 && <Btn t="could" kind="less" tip="What could happen tonight: the moments, who is at risk, what the card sets up and what it leaves cold." onClick={() => openModal({ kind: 'could' })}>Risks</Btn>}
+        {(n > 0 || ck.total > 0) && <Btn t="clear" kind="less" tip="Take everything off the run sheet and start again." onClick={clearCard}>Clear</Btn>}
       </div>
     </Win>
     <div class="b1-body">

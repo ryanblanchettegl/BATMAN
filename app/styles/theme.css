@@ -1,0 +1,275 @@
+/* The paper look over every page (Ryan, 19 October: "redo ... all pages in the new construction paper art style that
+   looks like a mac/windows computer from the 90s ... the DOS days are over"). It comes last, so it dresses the window
+   kit and the older pages without changing their markup. The windows, buttons, group boxes and tiles are cut card
+   rendered in Blender (tools/creator/ui-pieces.py, embedded by build.js as --ui-*), drawn as border-image frames: the
+   corners keep their cut, the edges repeat, the middle is the card's own face. The face is Inter (EWF Sans,
+   tools/build-ui-font.py). Sizes written in ch keep VT323's old character width (--ch; build.js), so every layout
+   keeps its shape while the type gets smaller and cleaner. */
+:root{
+  --ch:.5em;
+  --f:'EWF Sans','EWF Blocks',system-ui,sans-serif;
+  /* the ring scene's colours, a little richer (TASKS.md 0x; C in tools/creator/paper-desk.py) */
+  --k:#17171b; --ink:#17171b; --navy:#2f3660; --navy2:#252b4f; --pin:#4f5a92; --cream:#f5ecd5; --card:#e3d6b8; --paperw:#fffdf0;
+  --red:#e64d40; --dred:#b8322a; --green:#48a151; --dgreen:#2f8a3a; --blue:#4d77c1; --yellow:#ffd449; --gold:#c99a18;
+  --grey:#e9e2cf; --white:#fff; --dgrey:#6b6457; --cyan:#9ccbf0; --dcyan:#7fa8c4; --mag:#e58ad0;
+  --grain:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 .1 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  --mottle:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='700' height='700'><filter id='m'><feTurbulence type='fractalNoise' baseFrequency='.008' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 .06 0'/></filter><rect width='100%' height='100%' filter='url(%23m)'/></svg>");
+  --ease:cubic-bezier(.2,.8,.3,1);
+}
+body{font-size:calc(var(--fs,21px) * var(--zoom,1) * .8);line-height:1.34;-webkit-font-smoothing:antialiased;color:var(--grey);
+  background:var(--grain),var(--mottle),radial-gradient(120% 90% at 18% 0%,#3a4270 0%,var(--navy) 45%,var(--navy2) 100%) fixed;background-color:var(--navy)}
+.crt,.main{background:transparent}
+b,strong{font-weight:600}
+h1,h2,h3{font-weight:800;letter-spacing:-.005em}
+h1{text-transform:none}
+
+/* ---------- the menu bar: white paper, a black rule, the open section shown inverted ---------- */
+.menu{background:var(--grain),#fbf8f0;color:var(--ink);border-bottom:3px solid var(--ink);box-shadow:0 .22em 0 rgba(0,0,0,.28);padding:.18em 1.2ch;align-items:center;gap:.2ch}
+.menu button{font-weight:600;font-size:1.02em;padding:.16em 1.3ch;border-radius:4px;color:var(--ink);transition:background .12s var(--ease),color .12s}
+.menu button u{color:inherit;text-decoration:none}
+.menu button:hover{background:#ebe4d2;color:var(--ink)}
+.menu button[aria-current="page"],.menu button[aria-current="page"]:hover{background:var(--ink);color:#fff}
+.menu button[aria-current="page"] u,.menu button:hover u{color:inherit}
+.menu .badge{color:var(--dred);font-weight:800}
+.menu button[aria-current="page"] .badge{color:var(--yellow)}
+.menu .ttl{color:var(--ink);text-transform:none;font-weight:600;display:flex;align-items:center;gap:1ch}
+.menu button:focus-visible{outline:3px solid var(--yellow);outline-offset:1px}
+
+/* the notification bar under it */
+.toast{background:var(--navy2);color:var(--yellow);border-bottom:2px solid var(--ink)}
+.toast b{color:#fff;font-weight:800}
+
+/* ---------- windows: cream card on a black sheet, a short crisp shadow, the navy bar in pinstripes ---------- */
+:is(html,body) :is(.wn,.win).wn,:is(html,body) .win.win,.wn,.win{border:0 solid transparent;border-image:var(--ui-win) 20 28 28 20 fill / 10px 14px 14px 10px / 4px 8px 8px 4px round;background:none;box-shadow:none;color:var(--ink)}
+.wn>.ttl,.win .wt{margin:2px 2px 0;border-radius:2px 2px 0 0;background:repeating-linear-gradient(180deg,transparent 0 .2em,var(--pin) .2em .33em),var(--navy);border-bottom:2px solid var(--ink);padding:.14em 1ch;align-items:center;color:var(--cream)}
+.wn>.ttl h2,.win .wt>span{background:var(--navy);color:var(--yellow);padding:0 1.2ch;font-weight:800;font-size:1.02em;letter-spacing:.01em;justify-self:center}
+.wn>.ttl>span:first-child{font-size:0;line-height:0}
+.wn>.ttl>span:first-child::before,.wn>.ttl>span:last-child::after{content:'';display:inline-block;width:.8rem;height:.8rem;background:var(--cream);border:2px solid var(--ink);border-radius:1px;vertical-align:middle;box-shadow:.08rem .1rem 0 rgba(0,0,0,.35)}
+.wn>.ttl>span:last-child{display:inline-flex;align-items:center;justify-content:flex-end;gap:1ch;color:var(--cream);font-weight:600}
+.wn>.ttl>span:last-child::after{box-shadow:inset .32rem .32rem 0 -.12rem var(--cream),inset .34rem .34rem 0 -.04rem var(--ink)}
+.wn.hot>.ttl{background:repeating-linear-gradient(180deg,transparent 0 .2em,#d8574c .2em .33em),var(--dred)} .wn.hot>.ttl h2{background:var(--dred);color:#fff}
+.wn.gold>.ttl{background:repeating-linear-gradient(180deg,transparent 0 .2em,#e2b73a .2em .33em),var(--gold)} .wn.gold>.ttl h2{background:var(--gold);color:var(--ink)}
+.wn>.bd{color:var(--ink);padding:.5em 1.3ch .5em}
+.wn .muted,.wn .empty,.win .muted{color:#6b6457}
+.wn .hl,.wn .bl,.wn .lnk{color:#2c4f9a} .wn .bad,.wn .rd,.win .bad{color:var(--dred)} .wn .good,.wn .gn,.win .good{color:#257a30} .wn .gold{color:#8a6a10}
+.wn .lnk:hover,.wn .lnk:focus-visible{background:var(--ink);color:var(--yellow);border-radius:2px}
+/* the Finder strip under a title bar: a count on the left, a state on the right */
+.wnfo{color:#5a5248;background:linear-gradient(#f9f2de,#efe5cb);border-bottom:1.5px solid var(--ink);margin:0 2px;font-size:.86em;padding:.12em 1.2ch}
+.wn :focus-visible{outline:3px solid var(--yellow);outline-offset:1px}
+
+/* ---------- group boxes: darker card lying on the window, a paper tab for the heading ---------- */
+html .grp.grp,.grp{border:0 solid transparent;border-image:var(--ui-grp) 20 28 28 20 fill / 10px 14px 14px 10px / 4px 8px 8px 4px;background:none;padding:.7em 1.2ch .35em;margin:1.05em 0 .3em}
+.grp>h3{top:-1.05em;left:.9ch;background:var(--grain),var(--cream);color:var(--dred);font-weight:800;font-size:.92em;padding:.06em 1ch;border-radius:4px 4px 0 0;box-shadow:.1em .12em 0 rgba(0,0,0,.28);border:1.5px solid rgba(0,0,0,.18);border-bottom:0}
+
+/* ---------- buttons: card stacked on card, a dark lip under a coloured face. They lift on hover and press down. ---------- */
+.btn,.wn .btn,.win .btn{--bi:var(--ui-btn-green);border:0 solid transparent;border-image:var(--bi) 28 36 36 28 fill / 9px 11px 12px 9px / 2px 5px 6px 2px;background:none;box-shadow:none;
+  color:#fff;font-weight:600;padding:.18em 1.5ch .38em;margin:0 .9ch .6em 0;border-radius:0;text-shadow:0 1px 0 rgba(0,0,0,.28);line-height:1.25;
+  transition:transform .12s var(--ease),filter .12s}
+.btn:hover,.wn .btn:hover,.win .btn:hover{background:none;color:#fff;transform:translateY(-1px);filter:brightness(1.06) saturate(1.05)}
+.btn:active,.wn .btn:active,.win .btn:active{transform:translateY(2px);filter:brightness(.97);box-shadow:none}
+.btn.sm,.wn .btn.sm,.win .btn.sm{--bi:var(--ui-btn-blue);color:#fff}
+.btn.less,.wn .btn.less,.win .btn.less{--bi:var(--ui-btn-navy);color:#fff}
+.btn.danger,.wn .btn.danger,.win .btn.danger{--bi:var(--ui-btn-red);color:#fff}
+.btn.go,.btn.on,.wn .btn.go,.wn .btn.on,.win .btn.go,.win .btn.on,.btn.go:hover,.btn.on:hover,.wn .btn.go:hover,.wn .btn.on:hover,.win .btn.go:hover,.win .btn.on:hover{--bi:var(--ui-btn-yellow);color:var(--ink);text-shadow:none}
+.btn.cream{--bi:var(--ui-btn-cream);color:var(--ink);text-shadow:none}
+.btn[disabled],.btn[disabled]:hover,.wn .btn[disabled],.wn .btn[disabled]:hover,.win .btn[disabled],.win .btn[disabled]:hover{--bi:var(--ui-btn-off);color:#6e6656;text-shadow:none;transform:none;filter:none;cursor:not-allowed}
+.btn>.cost{color:#e9ffe9;opacity:.9} .btn.go>.cost,.btn.on>.cost,.btn[disabled]>.cost{color:#5a5248}
+.btn:focus-visible{outline:3px solid var(--yellow);outline-offset:3px}
+.subnav{gap:.2em .3ch}
+
+/* ---------- answers: wide paper cards with a coloured tab at the left ---------- */
+.ans{background:var(--grain),var(--paperw);color:var(--ink);border:2px solid var(--ink);border-left:.9em solid var(--green);border-radius:4px;box-shadow:.14em .2em 0 rgba(0,0,0,.32);transition:transform .12s var(--ease),box-shadow .12s}
+.ans:hover,.ans:focus-visible{background:var(--grain),#fff;transform:translate(-1px,-1px);box-shadow:.22em .3em 0 rgba(0,0,0,.32)}
+.ans.go{border-left-color:var(--yellow)} .ans.danger{border-left-color:var(--red)} .ans.less{border-left-color:var(--dgrey)}
+.ans>small{color:#6b6457}
+.ans[disabled]{background:#e9e1cb;color:#857c6c;transform:none}
+
+/* ---------- tags: flat paper labels ---------- */
+.wn .tag,.win .tag{background:#6b6457;color:#fff;border-radius:3px;padding:.02em .8ch;font-size:.86em;font-weight:600;box-shadow:.06em .1em 0 rgba(0,0,0,.3)}
+.wn .tag.bad,.wn .tag.heel,.win .tag.bad,.win .tag.heel{background:var(--red)}
+.wn .tag.good,.win .tag.good{background:var(--green)}
+.wn .tag.info,.wn .tag.face,.win .tag.info,.win .tag.face{background:var(--blue)}
+.wn .tag.warn,.wn .tag.gold,.win .tag.warn,.win .tag.gold{background:var(--yellow);color:var(--ink)}
+
+/* ---------- fields: white card with a black edge ---------- */
+select,input[type=text],input[type=number],input[type=search],input:not([type]),textarea,
+.wn :is(select,input[type=text],input[type=number],input[type=search]),.win :is(select,input[type=text],input[type=number],input[type=search]){
+  background:var(--paperw);color:var(--ink);border:2px solid var(--ink);border-radius:4px;box-shadow:inset .08em .1em 0 rgba(0,0,0,.12),.08em .12em 0 rgba(0,0,0,.25);padding:0 .8ch;min-height:1.4em;line-height:1.25}
+select:focus-visible,input:focus-visible{outline:3px solid var(--yellow);outline-offset:1px}
+
+/* ---------- list boxes: lines of card, the picked one a green slip lifted off the page ---------- */
+.lb{background:var(--grain),#fbf5e4;border:2px solid var(--ink);border-radius:4px;box-shadow:inset .1em .14em 0 rgba(0,0,0,.1)}
+.lb .hd{background:linear-gradient(#efe5cb,#e5d9bb);color:var(--dred);font-weight:800;font-size:.86em;border-bottom:1.5px solid var(--ink)}
+.lb .rw{color:var(--ink);border-bottom:1px dashed rgba(0,0,0,.16);transition:background .1s}
+.lb button.rw:hover{background:#efe5cb}
+.lb .rw.sel,.lb button.rw.sel:hover{background:var(--grain),var(--green);color:#fff;box-shadow:0 .12em 0 #1e5a26,.1em .22em 0 rgba(0,0,0,.25);position:relative;z-index:1;border-radius:3px}
+.lb .rw.sel .tag{outline:1.5px solid #fff}
+.lb .bad{color:var(--dred)} .lb .good{color:#257a30}
+.lb .meter i{color:#c7bba0}
+
+/* ---------- pop-ups ---------- */
+.scrim{background:rgba(20,24,46,.5);backdrop-filter:blur(2px) saturate(.9)}
+@media (prefers-reduced-motion:no-preference){.scrim .win{animation:popin .16s var(--ease)}}
+@keyframes popin{from{transform:translateY(8px) scale(.985);opacity:0}to{transform:none;opacity:1}}
+.win .wb{color:var(--ink)}
+.win .wf{border-top:1.5px dashed rgba(0,0,0,.2);margin:0 2px}
+.win .wt button{color:var(--cream)}
+
+/* ---------- the flash note: a slip of yellow paper ---------- */
+.flash{background:var(--grain),#fff2b0;color:var(--ink);border:2px solid var(--ink);border-radius:3px;box-shadow:.18em .24em 0 rgba(0,0,0,.35)}
+.flash.err{background:var(--grain),#ffd3cc;color:var(--ink)} .flash.err b{color:var(--dred)}
+
+/* ---------- the bottom line: a control strip of tiles, the F keys, the yellow SPACE key ---------- */
+.status,.ffoot>.status{background:var(--grain),linear-gradient(var(--navy),var(--navy2));color:var(--cream);border-top:2px solid var(--ink);box-shadow:0 -.2em 0 rgba(0,0,0,.25);padding-block:.32em .38em;gap:0 1.1ch;align-items:center}
+.status button{color:var(--ink)}
+.ffoot>.status>button[data-t="stat"]{border:0 solid transparent;border-image:var(--ui-tile) 22 28 28 22 fill / 8px 10px 10px 8px / 2px 4px 4px 2px;padding:.1em 1.2ch .18em;color:var(--ink);font-weight:600}
+.status b{color:var(--dred)}
+.status .mv.up{color:#257a30} .status .mv.dn{color:var(--dred)} .status .mv.fl{color:#7a7262}
+.status button:hover{background:none;color:var(--ink);filter:brightness(1.04)}
+.status .nk{align-items:center;gap:.5ch}
+.status .nk i{background:var(--ink);color:#fff;border-radius:3px;padding:.06em .7ch;font-size:.82em;font-weight:800;box-shadow:.06em .1em 0 rgba(0,0,0,.5)}
+.status .nk em{border:0 solid transparent;border-image:var(--ui-btn-blue) 28 36 36 28 fill / 8px 10px 11px 8px / 2px 5px 5px 2px;background:none;color:#fff;font-weight:600;padding:.08em 1.3ch .26em;text-shadow:0 1px 0 rgba(0,0,0,.28)}
+.status .nk:hover em{background:none;filter:brightness(1.08)}
+html[data-music="on"] .status .nk.mus em::after{color:#d9ffd0} html[data-music="off"] .status .nk.mus em::after{color:#ffd0c8}
+.status .key{box-shadow:none;align-items:center;gap:.6ch;font-size:1.06em}
+.status .key .cap{background:var(--ink);color:#fff;border-radius:3px;padding:.12em 1ch;font-weight:800;font-size:.86em;align-self:center;box-shadow:.06em .1em 0 rgba(0,0,0,.5)}
+.status .key .lab{--bi:var(--ui-btn-yellow);border:0 solid transparent;border-image:var(--bi) 28 36 36 28 fill / 9px 12px 13px 9px / 2px 6px 7px 2px;background:none;color:var(--ink);font-weight:800;text-transform:uppercase;letter-spacing:.03em;padding:.16em 2ch .4em;transition:transform .12s var(--ease)}
+.status .key:hover .lab{transform:translateY(-1px)} .status .key:active .lab{transform:translateY(2px);box-shadow:none}
+.status .key.tone-stop .lab{--bi:var(--ui-btn-red);background:none;color:#fff}
+.status .key.tone-air .lab{--bi:var(--ui-btn-green);background:none;color:#fff}
+.status .key.tone-home .lab{--bi:var(--ui-btn-cream);background:none;color:var(--ink)}
+.status .key.tone-end .lab{--bi:var(--ui-btn-blue);background:none;color:#fff}
+.status .key:hover .cap{background:#3a3a40}
+
+/* ---------- the older pages that are not windows yet: their panels become cards on the desktop ---------- */
+html body .panel.panel,.panel{border:0 solid transparent;border-image:var(--ui-win) 20 28 28 20 fill / 10px 14px 14px 10px / 4px 8px 8px 4px round;background:none;color:var(--ink);padding:1.3em 1.6ch .8em}
+.panel>h2{background:var(--navy);color:var(--yellow);border-radius:3px;padding:.05em 1.1ch;box-shadow:.1em .14em 0 rgba(0,0,0,.35);border:1.5px solid var(--ink)}
+.panel b,.panel .who,.panel .nm{color:var(--ink)} .panel .muted,.panel .meta{color:#6b6457}
+table th{color:var(--dred);border-bottom:1.5px solid var(--ink)}
+tbody tr.pick:hover,tbody tr.on{background:var(--green);color:#fff}
+
+/* the page cards fill the width they did before the type got smaller (59 of the old em) */
+html .crt.crt{max-width:none}
+/* group-box tabs sit a little lower, clear of the line above */
+.grp>h3{top:-.92em} .grp{margin-top:1.2em}
+
+/* ---------- the run sheet: lines of card, the picked one a green slip ---------- */
+.book1 .b1-rows{background:var(--grain),#fbf5e4;border:2px solid var(--ink);border-radius:4px;box-shadow:inset .1em .14em 0 rgba(0,0,0,.1)}
+.book1 .b1-rows .seg{border-bottom:1px dashed rgba(0,0,0,.16)}
+.book1 .r1b .at,.book1 .r1b .meta{color:#6b6457} .book1 .r1b .no{color:#2c4f9a;font-weight:800} .book1 .r1b .who{color:var(--ink);font-weight:600}
+.book1 .b1-rows .seg.sg .no{color:#8a3a8a}
+.book1 .b1-rows .seg.me .no{background:var(--navy);color:var(--yellow);border-radius:3px}
+.book1 .b1-rows .seg.top .at{color:#2c4f9a;font-weight:600}
+.book1 .r1b:hover,.book1 .r1b:focus-visible{background:#efe5cb}
+.book1 .b1-rows .seg.sel .r1b{background:var(--grain),var(--green);border-radius:3px;box-shadow:0 .12em 0 #1e5a26,.1em .22em 0 rgba(0,0,0,.25)}
+.book1 .b1-cap,.book1 .b1-foot{color:var(--ink)} .book1 .b1-cap .gold{color:#2c4f9a;font-weight:600}
+.book1 .b1-pane>.panel,.book1 .b1-pane .panel{border-image:none;background:none;border:0;padding:0}
+.book1 .b1-pane>.panel>h2,.book1 .b1-pane .panel>h2{position:static;background:none;box-shadow:none;border:0;color:var(--dred);padding:0;margin:0 0 .2em}
+.book1 .b1-empty .muted{color:#6b6457}
+
+/* ---------- tables in windows (the roster): lines of card ---------- */
+.wn td .nm,.wn td{color:var(--ink)}
+.rspage .rsl th{background:linear-gradient(#efe5cb,#e5d9bb);color:var(--dred);border-bottom:1.5px solid var(--ink);font-weight:800;font-size:.86em}
+.rspage .rsl td{border-bottom:1px dashed rgba(0,0,0,.16)}
+.rspage .rsl tr.pick:hover{background:#efe5cb}
+.rspage .rsl tr.pick.on{background:var(--grain),var(--green)}
+.rspage .rsl tr.pick.on td,.rspage .rsl tr.pick.on td *{color:#fff}
+.rspage .rsl .meter i{color:#c7bba0}
+
+/* ---------- the dirt sheet keeps its own paper: a typed newsletter, not the navy desktop ---------- */
+.webpage .paper,[data-t="paper"].paper{background:var(--grain),#f4efe0;color:#111;padding:.6em 1.6ch 1em}
+[data-t="paper"].paper .mast .mt-name{font-family:'VT323',monospace;font-size:2.4em}
+[data-t="paper"].paper,[data-t="paper"].paper *{font-family:'VT323','EWF Blocks',monospace}
+[data-t="paper"].paper{font-size:1.15em}
+
+/* ---------- the tip: a slip of yellow paper with the longer words (shell/Tip.tsx) ---------- */
+.tipslip{position:fixed;z-index:200;left:0;top:0;max-width:34ch;padding:.32em 1.1ch .38em;background:var(--grain),#fff6c4;color:var(--ink);border:2px solid var(--ink);border-radius:3px;
+  box-shadow:.16em .22em 0 rgba(0,0,0,.35);font-size:.9em;line-height:1.3;pointer-events:none;opacity:0;transform:translateY(-3px) rotate(-.4deg);transition:opacity .12s,transform .14s var(--ease)}
+.tipslip.on{opacity:1;transform:rotate(-.4deg)}
+@media (prefers-reduced-motion:reduce){.tipslip{transition:none}}
+
+/* inside a window a button is a little more compact, so rows of them keep the window's height */
+.wn .btn{padding:.08em 1.3ch .3em;margin:0 .7ch .3em 0;line-height:1.2}
+.deskpage .wn .btn{padding:.04em 1.2ch .26em;margin-bottom:.2em}
+
+/* the SPACE key's note: a slip of paper over the bottom line */
+.key .tip{background:var(--grain),#fff6c4;color:var(--ink);border:2px solid var(--ink);border-radius:3px;box-shadow:.18em .24em 0 rgba(0,0,0,.35);text-transform:none;font-weight:400;letter-spacing:0}
+.key .tip .th{background:var(--navy);color:var(--yellow);font-weight:800;margin:-.1em -1ch .35em}
+.key.tone-stop .tip .th{background:var(--dred);color:#fff}
+.key .tip .hint{color:#6b6457}
+
+/* ---------- the broadcast as television (Ryan, 19 October: "look more like a broadcast since we have scenes now") ----------
+   The bar along the top with the show and the clock, tonight's order as a rail of chips, the picture in a set with a
+   chyron and the company's bug on it, the call of the match as captions under it, and the feed with the crowd meter
+   at the right. */
+.live.live1{background:transparent;border:0;padding:.3em 1.4ch .4em;gap:.35em;color:var(--cream)}
+.live1 .bar{background:var(--grain),var(--ink);color:#fff;border-radius:4px;padding:.18em 1.2ch;box-shadow:.12em .16em 0 rgba(0,0,0,.4);text-transform:none;font-weight:600;align-items:center}
+.live1 .bar>span:first-child::before{content:'ON AIR';display:inline-block;background:var(--red);color:#fff;font-weight:800;font-size:.78em;letter-spacing:.06em;padding:.04em .8ch;border-radius:3px;margin-right:1.2ch;vertical-align:.08em;box-shadow:0 0 .6em rgba(230,77,64,.6)}
+.lv-rail{flex:none;min-width:0;overflow:hidden}
+.lv-rail .nt{display:flex;gap:.45ch;margin:0;padding:0;list-style:none;min-width:0}
+.lv-rail .nt-r{flex:1 1 0;min-width:0;display:flex;align-items:center;gap:.6ch;padding:.08em .8ch;background:var(--grain),#e9dfc6;color:var(--ink);border:1.5px solid var(--ink);border-radius:3px;font-size:.8em;white-space:nowrap;overflow:hidden;box-shadow:.08em .12em 0 rgba(0,0,0,.3);transition:flex .25s var(--ease),background .2s}
+.lv-rail .nt-r .at{display:none}
+.lv-rail .nt-r .no{font-weight:800;color:#2c4f9a}
+.lv-rail .nt-r .who{min-width:0;overflow:hidden;text-overflow:ellipsis;flex:1 1 auto}
+.lv-rail .nt-r .st{font-weight:600;color:#8a6a10}
+.lv-rail .nt-r.seen{background:var(--grain),#cfc5ab;color:#5a5248}
+.lv-rail .nt-r.now{flex:3 1 0;background:var(--grain),var(--yellow);font-weight:600}
+.lv-rail .nt-r.now .st{color:var(--dred)}
+.lv-rail .nt-r.me .no{color:var(--dred)}
+.live1 .lv-body{grid-template-columns:minmax(0,1fr) clamp(30ch,29%,48ch);gap:0 1.6ch}
+.live1 .lv-main{gap:.35em}
+/* the picture: a set behind glass, a chyron along its foot, the bug in the corner */
+.tvframe{position:relative;flex:1 1 auto;min-height:8em;background:#0b0d1c;border:3px solid var(--ink);border-radius:6px;box-shadow:0 0 0 3px #3b3f52,.3em .4em 0 rgba(0,0,0,.45);overflow:hidden;display:flex}
+.live1 .tvframe .lv-scene{flex:1 1 auto;min-height:0;border:0;background:#0b0d1c}
+.tvframe .chyron{position:absolute;left:1.2ch;bottom:.7em;max-width:72%;pointer-events:none}
+.tvframe .chyron .lv-head{background:var(--grain),linear-gradient(90deg,var(--navy) 0,var(--navy2) 100%);color:#fff;border:2px solid var(--ink);border-left:.5em solid var(--yellow);border-radius:3px;padding:.2em 1.4ch .25em;box-shadow:.14em .2em 0 rgba(0,0,0,.45)}
+@media (prefers-reduced-motion:no-preference){.tvframe .chyron .lv-head{animation:chyin .35s var(--ease)}}
+@keyframes chyin{from{transform:translateX(-12px);opacity:0}to{transform:none;opacity:1}}
+.tvframe .chyron .lv-head h1{font-size:1.25em;color:#fff}
+.tvframe .chyron .lv-head .eyebrow{color:var(--yellow);font-weight:600;font-size:.82em;text-transform:none}
+.tvframe .chyron .vs{display:none}
+.tvframe .bug{position:absolute;right:1ch;top:.5em;display:flex;align-items:center;gap:.6ch;background:rgba(10,12,28,.55);color:#fff;font-weight:800;font-size:.75em;letter-spacing:.06em;padding:.15em .8ch;border-radius:3px;pointer-events:none}
+.tvframe .bug .dot{width:.6em;height:.6em;border-radius:50%;background:var(--red);box-shadow:0 0 .5em var(--red)}
+@media (prefers-reduced-motion:no-preference){.tvframe .bug .dot{animation:onair 1.2s ease-in-out infinite}}
+@keyframes onair{50%{opacity:.35}}
+.live1 .lv-head h1{color:#fff}
+/* the call of the match: captions on a black card under the picture */
+.live1 .tvframe~.lv-log{flex:0 0 auto;max-height:6.6em;background:var(--grain),#121420;border:2px solid var(--ink);border-radius:4px;padding:.25em 1.4ch;box-shadow:.12em .16em 0 rgba(0,0,0,.4)}
+.live1 .lv-log .ln .tx{color:#e8e2d0} .live1 .lv-log .ln.last .tx{color:#fff}
+.live1 .lv-log .ln .sp{color:var(--yellow);font-weight:600}
+.live1 .lv-log .ln.hot .tx{color:var(--yellow);font-weight:600}
+.live1 .ln.note{color:#9fe6a4}
+.live1 .foot{color:var(--cream)}
+.live1 .foot .keys-hint{color:#c8c0aa;font-size:.85em}
+/* the feed: posts on cards, the newest on top, each one sliding in */
+.lv-side{min-width:0;min-height:0;display:flex;flex-direction:column;gap:.5em}
+.fdwin{flex:1 1 0;min-height:0}
+.fdwin>.ttl>span:first-child{font-size:0}
+.fd-list{overflow-x:hidden;overflow-y:auto;scrollbar-width:thin;scrollbar-color:#b9ad90 transparent;display:flex;flex-direction:column;gap:.35em;padding:.45em .9ch !important}
+.post{display:grid;grid-template-columns:2.3em minmax(0,1fr);gap:0 .9ch;padding:.35em .8ch .3em;background:var(--grain),#fffdf0;border:1.5px solid rgba(0,0,0,.55);border-radius:5px;box-shadow:.08em .12em 0 rgba(0,0,0,.22);color:var(--ink)}
+@media (prefers-reduced-motion:no-preference){.post:first-child{animation:postin .4s var(--ease)}}
+@keyframes postin{from{transform:translateY(-10px);opacity:0}to{transform:none;opacity:1}}
+.post.k-w{background:var(--grain),#fff4d6} .post.k-p{background:var(--grain),#eef1f8} .post.k-c{background:var(--grain),#e8f4e6}
+.post .av{width:2.3em;height:2.3em;border-radius:50%;overflow:hidden;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;border:2px solid var(--ink);box-shadow:.06em .1em 0 rgba(0,0,0,.3);background:#ddd}
+.post .av canvas,.post .av .pp{width:100%!important;height:100%!important;border:0!important}
+.post .av.co{background:#fff;border-radius:6px}
+.post .ph{display:flex;align-items:baseline;gap:.5ch;margin:0;font-size:.86em;min-width:0;white-space:nowrap;overflow:hidden}
+.post .ph b{color:var(--ink);overflow:hidden;text-overflow:ellipsis}
+.post .vf{display:inline-block;background:var(--blue);color:#fff;border-radius:50%;width:1.05em;height:1.05em;font-size:.72em;line-height:1.05em;text-align:center;flex:none}
+.post .hn{color:#6b6457;overflow:hidden;text-overflow:ellipsis}
+.post .tm{color:#8a8270;margin-left:auto;flex:none}
+.post .pt{margin:.05em 0 .1em;font-size:.94em;line-height:1.28;color:var(--ink)}
+.post .pm{display:flex;gap:2ch;margin:0;font-size:.78em;color:#7a7262}
+.fd-empty{padding:.4em 0}
+/* the crowd meter: a row of lights on black card, and the word for how loud it is */
+.crowdm{flex:none;display:flex;align-items:center;gap:1ch;background:var(--grain),var(--ink);color:#fff;border-radius:5px;padding:.4em 1.2ch;box-shadow:.14em .2em 0 rgba(0,0,0,.4);border:2px solid #000}
+.crowdm .cl{font-size:.78em;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:#c8c0aa;flex:none}
+.crowdm .cm{flex:1 1 auto;display:flex;gap:2px;min-width:0}
+.crowdm .cm i{flex:1 1 0;height:.95em;border-radius:2px;background:#2a2c38;transition:background .25s,box-shadow .25s}
+.crowdm .cm i.on.g{background:#5ad16a;box-shadow:0 0 .4em rgba(90,209,106,.6)} .crowdm .cm i.on.y{background:#ffd449;box-shadow:0 0 .4em rgba(255,212,73,.6)} .crowdm .cm i.on.r{background:#ff5a4a;box-shadow:0 0 .45em rgba(255,90,74,.7)}
+.crowdm .cw{flex:none;min-width:7ch;text-align:right;color:var(--yellow);font-weight:800}
+.lv-side .nt-foot{display:flex;justify-content:space-between;gap:1ch;margin:0;font-size:.8em;color:#c8c0aa}
+.lv-side .nt-foot b{color:var(--yellow)}
+.bspage .wn .btn{padding:.04em 1.2ch .26em;margin-bottom:.2em}
+.lv-side .post{margin:0;padding-left:.8ch;text-indent:0}
+.tvframe .chyron .lv-crowd{display:none}

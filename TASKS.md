@@ -163,6 +163,14 @@ The desk image (`docs/mockups/paper/desk.png`) is the art style: the whole game 
 - [ ] Render the interface pieces in Blender as cut card (window frames and title bars, buttons in each colour, tags, group tabs, the menu bar, the control strip tiles and keys) so the paper has real thickness, light and shadow, and use them in the game as 9-slice images or baked textures.
 - [ ] Every page moved to the paper look, one at a time with Ryan's go-ahead.
 
+### 0w. Every page in the paper look (Ryan, 19 October: "the DOS days are over")
+
+- [x] The shared look over every page: windows, group boxes, buttons and tiles cut from card in Blender (`tools/creator/ui-pieces.py`), the white menu bar, the navy desktop with grain, the control strip and the yellow SPACE key, paper pop-ups, lists, tags and fields (`app/styles/theme.css`).
+- [x] The DOS face is gone: Inter (EWF Sans) in three weights, with the layouts kept in shape (`--ch`).
+- [x] Buttons say one or two words, with a tip for the rest on hover, focus or a long press (`Btn tip`, `shell/Tip.tsx`). Booking's top row is done; the other pages follow as each is redone.
+- [x] The broadcast as television: the picture in a set with a chyron and the bug, captions under it, tonight's order as a rail, a live feed of posts with the crowd meter at the right, and a TV pace that runs a two-hour show in about two minutes.
+- [ ] Page by page, with Ryan's go-ahead for each: the desk (a paper map, the characters on it), Backstage, Storylines, Roster, Web, Company, Manage, Career; the characters and scenes on each page (posts, pictures on the web sites, faces on the lists).
+
 ### 0u. Every booking choice is a scene (Ryan, 19 October: the core mechanic; next after 0v, 0z and Create a Wrestler)
 
 - [x] Every promo and angle kind a player can book (`SEGK` in `src/93-segments.js`) has a scene of its own (`SEG_SCENES` and `SEG_WHEN` in `kit/scene.ts`, `when: 'seg_<kind>'`), cast from the people booked into it; Create a Scene lists them as The scenes of the show. The writers' pick plays whatever the writers wrote.

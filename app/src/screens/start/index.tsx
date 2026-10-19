@@ -212,7 +212,7 @@ function DiffPanel() {
     <div class="row opts"><Btn kind="sm" on={!s.iron} t="iron" d={{ v: 0 }} onClick={() => view(() => { s.iron = false; })}>Off</Btn><Btn kind="sm" on={!!s.iron} t="iron" d={{ v: 1 }} onClick={() => view(() => { s.iron = true; })}>On</Btn></div>
     <p class="muted mt1 mb2">{s.iron ? 'One save, written after every action. You cannot copy it out, paste another in, or load it again once you are fired or broke.' : 'Off: the usual way to play. You can move a save between devices.'}</p>
     <p class="eyebrow">Fine tune (optional)</p>
-    {Object.keys(E.DPART).map((k: string) => <div class="row opts" key={k}><span class="muted" style={{ minWidth: '18ch' }}>{E.DPART[k]}</span>{W.map((w, i) => <Btn kind="sm" on={dp[k] === i} t="dpart" d={{ k, v: i }} onClick={() => view(() => { s.dpart = Object.assign({ money: 1, inj: 1, ego: 1, rival: 1 }, s.dpart || {}); s.dpart[k] = i; })}>{w}</Btn>)}</div>)}
+    {Object.keys(E.DPART).map((k: string) => <div class="row opts" key={k}><span class="muted" style={{ minWidth: 'calc(18 * var(--ch))' }}>{E.DPART[k]}</span>{W.map((w, i) => <Btn kind="sm" on={dp[k] === i} t="dpart" d={{ k, v: i }} onClick={() => view(() => { s.dpart = Object.assign({ money: 1, inj: 1, ego: 1, rival: 1 }, s.dpart || {}); s.dpart[k] = i; })}>{w}</Btn>)}</div>)}
   </Panel>;
 }
 function Begin(p: { label: string; block?: string }) {

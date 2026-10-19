@@ -18,7 +18,8 @@ import { book } from '../../flow';
 import { fillScene, MomentPic, segPick, beatPick } from '../../shared/moment';
 import { Btn, KV, Meter, Banner, BeltArt, Portrait, CheckLine, stars, grade } from '../../kit';
 import { Verdict, OddsLine, FxList, Crowd } from './Report';
-import { typer, preNote, liveSkip, liveEnd, liveDecide, liveCall, onAir, livePos, autoArm, autoStop, autoToggle, paceNext, PACE_N } from './run';
+import { typer, preNote, liveSkip, liveEnd, liveDecide, liveCall, onAir, livePos, autoArm, autoStop, autoToggle, paceNext, PACE_N, tvKeys } from './run';
+import { Logo } from '../../kit/logo';
 import { hm } from './Segments';
 
 /** Text that types itself out once, when it first appears. Esc, Back or the continue button finishes it at once.
@@ -31,7 +32,7 @@ function Typed(p: { text: string }) {
 interface Beat { t: string; x: string; h?: number; w?: string }
 /** One line of the broadcast. `tk` marks the newest line: it is drawn brighter and typed out. */
 function Line(p: { r: any; b: Beat; tk?: string }) {
-  const b = p.b, cls = 'ln ' + b.t + (p.tk ? ' last' : '') + (b.h ? ' hot' + (b.h > 1 ? ' hot2' : '') : ''), text = p.tk ? <Typed key={p.tk} text={b.x} /> : b.x;
+  const b = p.b, cls = 'ln ' + b.t + (p.tk ? ' last' : '') + (b.h ? ' hot' + (b.h > 1 ? ' hot2' : '') : ''), text = p.tk && pref.pace !== 'tv' ? <Typed key={p.tk} text={b.x} /> : b.x;
   if (b.t === 'note' || b.t === 'ent') return <p class={cls}>{text}</p>;
   const who = b.t === 'mic' ? String(b.w || '').split(' ').pop() : b.t === 'pbp' ? p.r.ann[0].split(' ').pop() : (b.t === 'col' ? p.r.ann[1].split(' ').pop() : (b.t === 'ear' ? 'Headset' : (b.t === 'call' ? 'Gorilla' : 'Ring')));
   return <p class={cls}><span class="sp">{who}:</span><span class="tx">{text}</span></p>;
@@ -135,16 +136,18 @@ function CrowdNow(p: { s: any; at: number }) {
   return <p class="lv-crowd" data-t="live-crowd" data-v={v}>The crowd <Meter v={v} kind="hot" n={12} /> {w}</p>;
 }
 /** The heading of what is on the air: what it is, who is in it, and their faces. */
+/** Who a promo or an angle is about, for its chyron: the people booked into it, or the people in the beat. */
+function segNames(s: any): string { const S = G.S, ids: number[] = (s.ids && s.ids.length ? s.ids : s.bids) || []; return ids.filter(id => S.w[id]).slice(0, 3).map(id => S.w[id].name).join(' and '); }
 function SegHead(p: { rows: NRow[]; si: number; s: any; eyebrow?: string; at?: number }) {
   const s = p.s, row = p.rows.find(x => x.si === p.si), nm = p.rows.filter(x => x.match).length, meta = [s.mt, s.mins + ' min']; if (s.stip) meta.push(s.stip);
   return <div class="lv-head">
     {s.k === 'match'
       ? <><div><p class="eyebrow">{p.eyebrow || ((row ? (row.main ? 'Main event' : 'Match ' + row.tag + ' of ' + nm) + ' · ' : '') + meta.join(' · '))}{s.title && !p.eyebrow ? <> {'·'} <span class="gold">{s.title}</span></> : null}</p><h1>{s.label}</h1>{p.at != null && p.at < (s.bc || []).length ? <CrowdNow s={s} at={p.at} /> : null}</div><VsStrip s={s} /></>
-      : <div><p class="eyebrow">{p.eyebrow || s.head}</p><h1>{p.eyebrow ? s.head : 'Meanwhile...'}</h1></div>}
+      : <div><p class="eyebrow">{p.eyebrow || s.head}</p><h1>{p.eyebrow ? s.head : (segNames(s) || 'Meanwhile...')}</h1></div>}
   </div>;
 }
 function SegLines(p: { r: any; s: any; at: number; done: boolean }) {
-  const s = p.s, bc: Beat[] = s.bc || [], shown = bc.slice(0, Math.min(bc.length, p.at + 1)), i = p.r.segs.indexOf(s);
+  const s = p.s, bc: Beat[] = s.bc || [], i = p.r.segs.indexOf(s), keys = pref.pace === 'tv' ? new Set(tvKeys(s)) : null, shown = bc.slice(0, Math.min(bc.length, p.at + 1)).filter((_, j) => !keys || keys.has(j) || j === p.at);
   // the best match so far: at least the second match of the night, and better than every one before it
   const before = i > 0 ? p.r.segs.slice(0, i).filter((x: any) => x.k === 'match') : [], best = s.k === 'match' && before.length > 0 && before.every((x: any) => s.ov > x.ov);
   return <>
@@ -188,17 +191,46 @@ function nightRows(r: any, info: any): NRow[] {
   return r.segs.map((s: any, j: number) => ({ key: 'k' + j, at: s.at == null ? null : s.at, tag: s.k === 'match' ? String(++n) : 'ANG', label: s.label || s.head, si: j, k: j, ran: true, ov: s.ov, main: j === last, match: s.k === 'match' }));
 }
 /** Beside the broadcast: everything booked tonight in running order. What has aired shows its stars, what is on now is marked. */
+/** Tonight's order as a rail of chips under the bar, the way a broadcast shows what is coming: what has been on with
+    its stars, what is on now, where the headset is waiting. The right side of the screen is the feed. */
 function Night(p: { rows: NRow[]; at: number; done: boolean; wait: number; call: boolean; info: any }) {
-  return <aside class="lv-night" data-t="night">
-    <h2>Tonight</h2>
+  return <nav class="lv-rail" data-t="night" aria-label="Tonight">
     <ol class="nt">{p.rows.map(x => {
       const now = p.wait >= 0 ? x.k === p.wait : (x.si >= 0 && x.si === p.at), seen = x.si >= 0 && x.ov != null && (x.si < p.at || (x.si === p.at && p.done));
-      return <li key={x.key} class={'nt-r' + (now ? ' now' : '') + (seen || x.cut ? ' seen' : '') + (x.main ? ' me' : '')} data-v={now ? 'now' : (seen ? 'seen' : 'next')}>
+      return <li key={x.key} class={'nt-r' + (now ? ' now' : '') + (seen || x.cut ? ' seen' : '') + (x.main ? ' me' : '')} data-v={now ? 'now' : (seen ? 'seen' : 'next')} data-tip={(x.at == null ? '' : hm(x.at) + '  ') + x.label}>
         <span class="at">{x.at == null ? '' : hm(x.at)}</span><span class="no">{x.tag}</span><span class="who">{x.label}</span>
         <span class="st">{now && p.call ? 'Your call' : (seen ? stars(x.ov as number) : (now ? 'On now' : (x.cut || (x.ran && x.si < 0) ? 'Cut' : '')))}</span>
       </li>;
     })}</ol>
-    {p.info ? <div class="muted nt-foot" data-t="night-calls"><p>Calls from the headset: <b>{p.info.calls}</b></p><p>Booking power: <b class="gold">{p.info.bp}</b></p></div> : null}
+  </nav>;
+}
+/** A fan's picture: a circle cut from coloured card with their first letter. */
+const FAN_COL = ['#e64d40', '#4d77c1', '#48a151', '#e2a52b', '#8a4fb0', '#2b8a8a', '#c2577a', '#6b6457'];
+function Avatar(p: { x: any }) {
+  const S = G.S, x = p.x, w = x.w != null ? S.w[x.w] : null;
+  if (w) return <span class="av wr"><Portrait w={w} /></span>;
+  if (x.k === 'c') return <span class="av co"><Logo of={S.promos[S.player]} size="chip" /></span>;
+  let h = 0; for (const c of String(x.u)) h = (h * 31 + c.charCodeAt(0)) | 0;
+  return <span class={'av ' + (x.k === 'p' ? 'press' : 'fan')} style={{ background: x.k === 'p' ? '#17171b' : FAN_COL[Math.abs(h) % FAN_COL.length] }} aria-hidden="true">{x.k === 'p' ? 'W' : String(x.n).replace(/[^A-Za-z]/g, '').charAt(0).toUpperCase()}</span>;
+}
+/** The right side of the broadcast: what people are posting as the show goes, and how loud the building is. */
+function LiveFeed(p: { r: any; si: number; b: number; info: any }) {
+  const S = G.S, F = E.liveFeed(S, p.r, p.si, p.b), v = F.crowd.v, n = 16, on = Math.round(v / 100 * n);
+  const P = S.promos[S.player], tag = '#' + String(p.r.name || '').replace(/[^A-Za-z0-9]/g, '');
+  return <aside class="lv-side">
+    <section class="wn fdwin" aria-label="The feed"><header class="ttl"><span aria-hidden="true" /><h2>Ringside</h2><span>{tag}</span></header>
+      <div class="bd fd-list" data-t="live-feed">{F.posts.length ? F.posts.slice(0, 12).map((x: any) => <article key={x.id} class={'post k-' + x.k} data-k={x.k}>
+        <Avatar x={x} />
+        <div class="pb"><p class="ph"><b>{x.n}</b>{x.k === 'w' || x.k === 'c' || x.k === 'p' ? <span class="vf" aria-label="verified">{'✓'}</span> : null}<span class="hn">{x.u}</span><span class="tm">{hm(x.at)}</span></p>
+          <p class="pt">{x.t}</p><p class="pm"><span>{'♥'} {x.l.toLocaleString('en-US')}</span><span>{'↻'} {x.r.toLocaleString('en-US')}</span></p></div>
+      </article>) : <p class="muted fd-empty">{P ? P.name : 'The company'} is on the air. The feed is waiting for the first bell.</p>}</div>
+    </section>
+    <section class="crowdm" data-t="crowd-meter" data-v={v} aria-label={'The crowd: ' + F.crowd.word}>
+      <span class="cl">The crowd</span>
+      <span class="cm" aria-hidden="true">{Array.from({ length: n }, (_, i) => <i key={i} class={(i < on ? 'on ' : '') + (i < n * 0.45 ? 'g' : (i < n * 0.75 ? 'y' : 'r'))} />)}</span>
+      <b class="cw">{F.crowd.word}</b>
+    </section>
+    {p.info ? <p class="nt-foot" data-t="night-calls"><span>Calls from the headset: <b>{p.info.calls}</b></span><span>Booking power: <b>{p.info.bp}</b></span></p> : null}
   </aside>;
 }
 const DOT = ' · ';
@@ -339,15 +371,16 @@ export function Live(p: { r: any }) {
   const now = rows.find(x => ev && !post ? x.k === info.step : (x.si >= 0 && x.si === (post ? ev.si : L.s)));
   return <div class="onescreen live live1" id="live" data-v={state}>
     <div class="bar"><span>{r.name}{air || L.aired ? '' : ' · replay'}</span><span data-t="live-where">{ev ? 'The headset is live' : (L.s < 0 ? 'On the air' : (!s ? 'Sign-off' : (air ? 'On the air' : 'Segment ' + (L.s + 1) + ' of ' + n) + (now && now.at != null ? DOT + hm(now.at) + ' into the show' : '')))}</span></div>
+    <Night rows={rows} at={post ? ev.si : L.s} done={done || !!post} wait={ev && !post ? info.step : -1} call={!!ev} info={info} />
     <div class="lv-body">
       <div class="lv-main">
-        {head}
-        {pref.pics && !ev && state === 'seg' ? (() => { const pk = scenePick(r, s, L.b, done); return pk ? <ScenePlayer key="scene" sc={pk.sc} cast={pk.cast} play={pk.play} label={pk.label} still={reduceMotion()} /> : null; })() : null}
+        {(() => { const pk = pref.pics && !ev && state === 'seg' ? scenePick(r, s, L.b, done) : null;
+          return pk ? <div class="tvframe" data-t="tv"><ScenePlayer key="scene" sc={pk.sc} cast={pk.cast} play={pk.play} label={pk.label} still={reduceMotion()} /><div class="chyron">{head}</div><span class="bug" aria-hidden="true"><Logo of={S.promos[S.player]} size="chip" /><i class="dot" />LIVE</span></div> : head; })()}
         <div class={'lv-log' + (state === 'title' || state === 'signoff' ? ' mid' : '')}><div class="lv-lines">{log}</div></div>
         {box}
         {ev ? null : <div class="foot">{foot}<Btn kind="sm" t="live-pics" on={!!pref.pics} onClick={picsToggle}>{pref.pics ? 'Scenes: on' : 'Scenes: off'}</Btn><Btn kind="sm" t="live-auto" on={!!pref.auto} onClick={autoToggle}>{pref.auto ? 'Auto-play: on' : 'Auto-play: off'}</Btn>{pref.auto ? <Btn kind="sm" t="live-pace" onClick={paceNext}>{'Pace: ' + PACE_N[pref.pace]}</Btn> : null}<span class="blink" aria-hidden="true">_</span><span class="keys-hint">{state === 'signoff' ? 'Space: after the show' : (pref.auto ? (state === 'title' ? 'Space: ring the bell. The show then runs itself and stops for your calls' : 'Running itself. Space: next now. P: pause') : 'Space or Enter: on with the show. P: auto-play')}</span></div>}
       </div>
-      <Night rows={rows} at={post ? ev.si : L.s} done={done || !!post} wait={ev && !post ? info.step : -1} call={!!ev} info={info} />
+      <LiveFeed r={r} si={post ? ev.si : L.s} b={post ? 9999 : L.b} info={info} />
     </div>
   </div>;
 }

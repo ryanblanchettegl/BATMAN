@@ -9,8 +9,9 @@ const fails = [];
 const ok = (mode, label, pass, detail) => { console.log(mode.padEnd(6), pass ? 'ok  ' : 'FAIL', label + (detail ? ': ' + detail : '')); if (!pass) fails.push(mode + ' ' + label); };
 const txt = (page, sel) => page.$eval(sel, e => e.innerText.replace(/\s+/g, ' ')).catch(() => '');
 const has = async (page, sel) => !!(await page.$(sel));
-const adv = page => page.$eval('[data-t="advance"]', e => ({ k: e.getAttribute('data-v'), tone: e.getAttribute('data-tone'), bg: getComputedStyle(e.querySelector('.lab')).backgroundColor, t: e.querySelector('b').innerText.replace(/\s+/g, ' ').trim(), tip: e.querySelector('[data-t="adv-tip"]').textContent })).catch(() => ({ k: '', tone: '', bg: '', t: '', tip: '' }));
-const COL = { go: 'rgb(255, 255, 85)', stop: 'rgb(170, 0, 0)', air: 'rgb(0, 170, 0)', home: 'rgb(255, 255, 255)', end: 'rgb(0, 170, 170)' };
+const adv = page => page.$eval('[data-t="advance"]', e => ({ k: e.getAttribute('data-v'), tone: e.getAttribute('data-tone'), bg: (() => { const bi = getComputedStyle(e.querySelector('.lab')).borderImageSource, rs = getComputedStyle(document.documentElement); const u = x => x.trim().replace(/^url\(["']?|["']?\)$/g, ''); return ['yellow', 'red', 'green', 'cream', 'blue'].find(c => u(bi) === u(rs.getPropertyValue('--ui-btn-' + c))) || 'none'; })(), t: e.querySelector('b').innerText.replace(/\s+/g, ' ').trim(), tip: e.querySelector('[data-t="adv-tip"]').textContent })).catch(() => ({ k: '', tone: '', bg: '', t: '', tip: '' }));
+// the key is a stacked card in the paper look (app/styles/theme.css): its colour is the card it is cut from
+const COL = { go: 'yellow', stop: 'red', air: 'green', home: 'cream', end: 'blue' };
 const toned = (a, tone) => a.tone === tone && a.bg === COL[tone];
 const pageId = page => page.evaluate(() => window.EWF_DEBUG.ui.page);
 const press = async page => { await page.click('[data-t="advance"]'); await page.waitForTimeout(40); };
@@ -51,7 +52,7 @@ async function run(mode) {
     ok(mode, 'the note is closed until the pointer or the highlight is on the key', await page.$eval('[data-t="adv-tip"]', e => getComputedStyle(e).display === 'none'));
     await page.hover('[data-t="advance"]');
     ok(mode, 'resting the pointer on it says what needs you, in a note that opens over the key and stays on the screen', await page.$eval('[data-t="adv-tip"]', e => { const r = e.getBoundingClientRect(), k = e.parentElement.getBoundingClientRect(); return getComputedStyle(e).display !== 'none' && /play-by-play voice/.test(e.innerText) && /sponsor/.test(e.innerText) && r.right <= window.innerWidth + 1 && r.left >= -1 && r.top >= 0 && r.bottom <= k.top + 1; }), await txt(page, '[data-t="adv-tip"]'));
-    ok(mode, 'the note is a grey window, not a black box', await page.$eval('[data-t="adv-tip"]', e => getComputedStyle(e).backgroundColor === 'rgb(170, 170, 170)' && getComputedStyle(e).color === 'rgb(0, 0, 0)'));
+    ok(mode, 'the note is a slip of paper with dark words, not a black box', await page.$eval('[data-t="adv-tip"]', e => { const c = getComputedStyle(e).backgroundColor.match(/\d+/g).map(Number), t = getComputedStyle(e).color.match(/\d+/g).map(Number); return c[0] > 200 && c[1] > 190 && t[0] < 80; }));
     await page.mouse.move(5, 5);
     ok(mode, 'it is the right end of the bottom line, and nothing floats over the menu', await page.evaluate(() => { const e = document.querySelector('.ffoot .status > [data-t="advance"]'); if (!e || document.querySelector('.ftop [data-t="advance"]') || document.querySelector('.adv')) return false; const b = e.getBoundingClientRect(), s = document.querySelector('.ffoot .status').getBoundingClientRect(); return Math.abs(b.right - s.right) <= 1 && b.top >= s.top - 1 && b.bottom <= s.bottom + 1 && e === document.querySelector('.ffoot .status').lastElementChild && b.width > 100; }));
     ok(mode, 'its cap names the key that presses it: ' + (mode === 'tv' ? 'Play on a remote' : 'the space bar'), (await txt(page, '[data-t="advance"] .cap')) === (mode === 'tv' ? 'PLAY' : 'SPACE'), await txt(page, '[data-t="advance"] .cap'));
@@ -59,7 +60,7 @@ async function run(mode) {
     ok(mode, 'the company and the date sit at the right end of the menu bar, with nothing over them', await page.evaluate(() => { const t = document.querySelector('.menu .ttl').getBoundingClientRect(), m = document.querySelector('.menu').getBoundingClientRect(), top = document.elementFromPoint(t.right - 4, (t.top + t.bottom) / 2); return m.right - t.right < 40 && !!top && !!top.closest('.menu'); }));
     ok(mode, 'its words are one or two', (a.t.split(' ').length <= 2));
     ok(mode, 'Help, Options and Music are small keys on the bottom line, beside the big one', await page.evaluate(() => { const k = document.querySelector('[data-t="advance"]').getBoundingClientRect(); return ['help', 'options', 'music'].every(n => { const e = document.querySelector('.ffoot .status .tools [data-t="' + n + '"]'); if (!e) return false; const r = e.getBoundingClientRect(); return r.left > window.innerWidth * 0.3 && r.right <= k.left + 1 && r.top > window.innerHeight * 0.6; }) && !document.querySelector('.menu [data-t="options"]'); }));
-    ok(mode, 'the bottom line is one line, and nothing on it is cut off or sticks out', await page.evaluate(() => { const s = document.querySelector('.ffoot .status'), r = s.getBoundingClientRect(); return s.scrollWidth - s.clientWidth <= 1 && r.height < parseFloat(getComputedStyle(s).fontSize) * 2.2 && [...s.querySelectorAll('[data-t="stat"], .tools button, [data-t="advance"]')].every(e => { const q = e.getBoundingClientRect(); return q.left >= r.left - 1 && q.right <= r.right + 1 && q.top >= r.top - 1 && q.bottom <= r.bottom + 1; }); }));
+    ok(mode, 'the bottom line is one line, and nothing on it is cut off or sticks out', await page.evaluate(() => { const s = document.querySelector('.ffoot .status'), r = s.getBoundingClientRect(); return s.scrollWidth - s.clientWidth <= 1 && r.height < parseFloat(getComputedStyle(s).fontSize) * 3 && [...s.querySelectorAll('[data-t="stat"], .tools button, [data-t="advance"]')].every(e => { const q = e.getBoundingClientRect(); return q.left >= r.left - 1 && q.right <= r.right + 1 && q.top >= r.top - 1 && q.bottom <= r.bottom + 1; }); }));
     ok(mode, 'before the first show the numbers say nothing about moving', !(await has(page, '[data-t="moved"]')));
     ok(mode, 'there is no strip of things to do at the bottom: only the one line', !(await has(page, '[data-t="dock"]')) && !(await has(page, '[data-t="adv-chip"]')) && await page.evaluate(() => document.querySelector('.ffoot').children.length === 1));
     const must = await page.$$eval('.tasks .task.must', L => L.map(e => e.getAttribute('data-task')));
@@ -86,7 +87,7 @@ async function run(mode) {
     await press(page);
     ok(mode, 'and takes you to the card', await pageId(page) === 'booking' && await has(page, '[data-t="suggest"]'));
     await press(page);
-    ok(mode, 'on an empty card it says how to start', /Suggest a card/.test(await flash(page)), await flash(page));
+    ok(mode, 'on an empty card it says how to start', /Suggest/.test(await flash(page)), await flash(page));
     await page.click('[data-t="suggest"]');
     a = await adv(page);
     ok(mode, 'with a card that can run, it says Run show, in green', a.k === 'run' && /^RUN SHOW$/i.test(a.t) && toned(a, 'air') && /Run Wednesday Night Folio/.test(a.tip), JSON.stringify(a));
@@ -101,7 +102,7 @@ async function run(mode) {
     ok(mode, 'the show ends on After the show, and the key points on to the Office, in white', await has(page, '[data-t="after-screen"]') && a.k === 'desk' && /^OFFICE$/i.test(a.t) && toned(a, 'home') && /Before the show/.test(a.tip), a.t + ' / ' + a.tip);
     ok(mode, 'the numbers now say how they have moved this week', await page.evaluate(() => { const L = [...document.querySelectorAll('.ffoot .status [data-t="moved"]')]; return L.length === 3 && L.every(e => /^(▲|▼) |^steady$/.test(e.textContent)) && /this week so far/.test(document.querySelector('[data-t="stat"][data-v="cash"]').getAttribute('aria-label')); }), await txt(page, '.ffoot .status'));
     ok(mode, 'and what they say is true of the game', await state(page, S => { const M = window.GP.moved(S), P = S.promos[S.player]; return !!M && M.now && Math.abs(M.cash.d - Math.round(P.cash - S.was.cash)) < 1 && S.was.w === S.week; }));
-    ok(mode, 'up is dark green, down dark red, steady grey', await page.$$eval('.ffoot .status [data-t="moved"]', L => L.every(e => getComputedStyle(e).color === ({ '1': 'rgb(0, 96, 0)', '-1': 'rgb(170, 0, 0)', '0': 'rgb(85, 85, 85)' })[e.getAttribute('data-v')])));
+    ok(mode, 'up is dark green, down dark red, steady grey', await page.$$eval('.ffoot .status [data-t="moved"]', L => L.every(e => getComputedStyle(e).color === ({ '1': 'rgb(37, 122, 48)', '-1': 'rgb(184, 50, 42)', '0': 'rgb(122, 114, 98)' })[e.getAttribute('data-v')])));
     await over('After the show, with the numbers moved');
     await press(page);
     ok(mode, 'pressing it goes to the Office, where Before the show comes first', await pageId(page) === 'desk' && !(await has(page, '[data-t="after-show"]')) && await has(page, '[data-t="night-recap"]'));

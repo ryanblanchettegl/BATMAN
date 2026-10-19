@@ -23,7 +23,7 @@ export function Group(p: { title: ComponentChildren; cls?: string; t?: string; c
 }
 /** A label and its value on one line. `w` is the label column's width in characters (11 if left out). */
 export function Line(p: { label: ComponentChildren; w?: number; children?: ComponentChildren }) {
-  return <p class="kvl" style={p.w ? { '--lw': p.w + 'ch' } as any : undefined}><span class="l">{p.label}</span><span class="v">{p.children}</span></p>;
+  return <p class="kvl" style={p.w ? { '--lw': 'calc(' + p.w + ' * var(--ch))' } as any : undefined}><span class="l">{p.label}</span><span class="v">{p.children}</span></p>;
 }
 /** The list box. `cols` is the grid every row shares (a CSS grid-template-columns value); `head` is the header cells. */
 export function ListBox(p: { cols: string; head?: ComponentChildren; label: string; cls?: string; t?: string; children?: ComponentChildren }) {

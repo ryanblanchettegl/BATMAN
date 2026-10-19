@@ -16,8 +16,9 @@ export function dataAttrs(t?: string, d?: Data): Record<string, string> {
 /* ---------- controls ---------- */
 /** A button. `kind`: 'go' moves things on (yellow), 'less' is the lesser choice (grey), 'danger' is the one that hurts
     (red), 'sm' is a small switch (teal). `cost` is shown at the right end of a button that costs something. */
-export function Btn(p: { t?: string; d?: Data; kind?: 'go' | 'sm' | 'danger' | 'less'; on?: boolean; disabled?: boolean; id?: string; label?: string; cls?: string; cost?: ComponentChildren; onClick?: () => void; children?: ComponentChildren }) {
-  return <button type="button" id={p.id} class={'btn' + (p.kind ? ' ' + p.kind : '') + (p.on ? ' on' : '') + (p.cls ? ' ' + p.cls : '')} disabled={p.disabled} aria-label={p.label} aria-pressed={p.on == null ? undefined : p.on} onClick={p.onClick} {...dataAttrs(p.t, p.d)}>{p.children}{p.cost != null && <span class="cost">{p.cost}</span>}</button>;
+/** A button. Its words are one or two (Ryan, 19 October); `tip` is the longer description, shown on hover, focus or a long press (shell/Tip.tsx). */
+export function Btn(p: { t?: string; d?: Data; kind?: 'go' | 'sm' | 'danger' | 'less'; on?: boolean; disabled?: boolean; id?: string; label?: string; cls?: string; cost?: ComponentChildren; tip?: string; onClick?: () => void; children?: ComponentChildren }) {
+  return <button type="button" id={p.id} class={'btn' + (p.kind ? ' ' + p.kind : '') + (p.on ? ' on' : '') + (p.cls ? ' ' + p.cls : '')} disabled={p.disabled} aria-label={p.label} aria-description={p.tip} data-tip={p.tip} aria-pressed={p.on == null ? undefined : p.on} onClick={p.onClick} {...dataAttrs(p.t, p.d)}>{p.children}{p.cost != null && <span class="cost">{p.cost}</span>}</button>;
 }
 export interface TabItem { id: string; label: ComponentChildren; t?: string; d?: Data }
 /** A row of buttons that switches between pages or views. One is always pressed. */
