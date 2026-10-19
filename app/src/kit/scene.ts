@@ -711,11 +711,12 @@ export const BEAT_WHEN: [string, string][] = [['beat_feud_words', 'Story: words 
   ['beat_feud_brawl', 'Story: a brawl'], ['beat_feud_partner', 'Story: the partner pays for it'], ['beat_feud_signing', 'Story: the contract signing'], ['beat_feud_video', 'Story: the video package'],
   ['beat_feud_stakes', 'Story: the stakes are raised'], ['beat_feud_betray', 'Story: a betrayal'], ['beat_feud_injury', 'Story: through the table'], ['beat_feud_swerve', 'Story: the handshake swerve'],
   ['beat_feud_made', 'Story: the match is made'], ['beat_feud_final', 'Story: one last face-off'], ['beat_mystery', 'Story: found laid out'], ['beat_mystery_clue', 'Story: a clue'],
-  ['beat_mystery_reveal', 'Story: the attacker revealed'], ['beat_return', 'Story: the return'], ['beat_stable', 'Story: a new group'], ['beat_stable_out', 'Story: thrown out of the group']];
+  ['beat_mystery_reveal', 'Story: the attacker revealed'], ['beat_return', 'Story: the return'], ['beat_stable', 'Story: a new group'], ['beat_stable_out', 'Story: thrown out of the group'],
+  ['beat_debut_vig', 'A debut after the teasers'], ['beat_debut_atk', 'A debut: the surprise attack'], ['beat_debut_match', 'A debut in a match'], ['beat_chapter', 'Story: a chapter closes'], ['beat_payoff', 'Story: the ending']];
 const fromSeg = (kind: string, beat: string, name: string, set?: string): Scene => { const b: Scene = JSON.parse(JSON.stringify(SEG_SCENES.find(x => x.id === 'seg_' + kind))); b.id = b.when = 'beat_' + beat; b.name = name; if (set) b.set = set; return b; };
 const beatScene = (beat: string, name: string, set: string, slots: Slot[], keys: Key[], cam?: Cam): Scene => ({ ...segScene(beat, name, set, slots, keys, cam), id: 'beat_' + beat, when: 'beat_' + beat });
 const DOWN = { head: 14, sh_n: 70, el_n: 95, sh_f: 55, el_f: 110, hip_n: 55, kn_n: -110 }, ARMS_UP = { sh_n: 165, el_n: 10, sh_f: 165, el_f: 10, head: 8 }, POINT = { sh_n: 95, el_n: 5, sh_f: -15, el_f: -10, head: 4 };
-const HAND = { sh_n: 70, el_n: 15, sh_f: -10, el_f: 10 }, hd = (txt: string): Prop => ({ id: 'hd', k: 'headline', x: 0, y: 3.3, r: 0, z: 2, s: 1, txt });
+const HAND = { sh_n: 70, el_n: 15, sh_f: -10, el_f: 10 }, hd = (txt: string, y = 3.95): Prop => ({ id: 'hd', k: 'headline', x: 0, y, r: 0, z: 2, s: 1, txt });
 const ABC: Slot[] = [SAB[0], SAB[1], { id: 'C', n: 'The third named', role: 'c', hook: 'attacker' }];
 export const BEAT_SCENES: Scene[] = [
   fromSeg('words', 'feud_words', 'Words on the microphone'),
@@ -732,8 +733,8 @@ export const BEAT_SCENES: Scene[] = [
   fromSeg('signing', 'feud_signing', 'The contract signing'),
   fromSeg('recap', 'feud_video', 'The video package'),
   beatScene('feud_stakes', 'The stakes are raised', 'ring', SAB, [
-    { t: 0, figs: { A: STD(-1.8, 1, MIC_UP, 'talk', 0.4), B: STD(1.8, -1, CROSS, '', 0.6) }, props: [mic('A'), hd('THE STAKES ARE RAISED')] },
-    { t: 1.4, figs: { A: STD(-1.6, 1, MIC_PT, 'shout', 0.4), B: STD(1.6, -1, { ...POINT, sh_n: 80 }, 'snarl', 0.6) }, props: [mic('A'), hd('THE STAKES ARE RAISED'), burst('b1', 'ACCEPTED!', 3.6, 2.2)] }], { x: 0, y: 0.4, z: 1.3 }),
+    { t: 0, figs: { A: STD(-1.8, 1, MIC_UP, 'talk', 0.4), B: STD(1.8, -1, CROSS, '', 0.6) }, props: [mic('A'), hd('THE STAKES ARE RAISED', 3.2)] },
+    { t: 1.4, figs: { A: STD(-1.6, 1, MIC_PT, 'shout', 0.4), B: STD(1.6, -1, { ...POINT, sh_n: 80 }, 'snarl', 0.6) }, props: [mic('A'), hd('THE STAKES ARE RAISED', 3.2), burst('b1', 'ACCEPTED!', 3.6, 2.2)] }], { x: 0, y: 0.4, z: 1.3 }),
   beatScene('feud_betray', 'The betrayal', 'ring', [{ id: 'A', n: 'Who turns', role: 'a' }, { id: 'B', n: 'Who trusted them', role: 'b' }], [
     { t: 0, figs: { A: STD(-2.0, 1, CROSS, '', 0.4), B: STD(0.8, 1, ARMS_UP, 'shout', 0.6) }, props: [] },
     { t: 1.0, figs: { A: STD(-1.2, 1, { sh_n: 160, el_n: 40, sh_f: 150, el_f: 40 }, 'snarl', 0.4), B: STD(0.8, -1, { sh_n: 40, el_n: 30 }, 'hurt', 0.6) }, props: [] },
@@ -747,7 +748,7 @@ export const BEAT_SCENES: Scene[] = [
     { t: 1.8, figs: { A: STD(-0.8, 1, { sh_n: 20, el_n: 20, sh_f: -10 }, 'smirk', 0.4), B: LAY(1.2, -1, 90, DOWN, 'pain', 0.6) }, props: [burst('b1', 'NO!', 3.0, 2.6, PAL.red)] }]),
   beatScene('feud_made', 'The match is made', 'plain', SAB, [
     { t: 0, figs: { A: STD(-2.6, 1, CROSS, '', 0.4), B: STD(2.6, -1, CROSS, '', 0.4) }, props: [hd('IT IS OFFICIAL')] },
-    { t: 1.4, figs: { A: STD(-2.3, 1, POINT, 'snarl', 0.4), B: STD(2.3, -1, POINT, 'snarl', 0.4) }, props: [hd('IT IS OFFICIAL')] }]),
+    { t: 1.4, figs: { A: STD(-1.5, 1, { ...CROSS, head: 6 }, 'snarl', 0.4), B: STD(1.5, -1, { ...CROSS, head: 6 }, 'snarl', 0.4) }, props: [hd('IT IS OFFICIAL')] }]),
   fromSeg('faceoff', 'feud_final', 'One last face-off', 'ring'),
   beatScene('mystery', 'Found laid out', 'locker', [{ id: 'A', n: 'Who was attacked', role: 'a' }], [
     { t: 0, figs: { A: LAY(0, 1, 90, DOWN, 'pain', 0.4) }, props: [burst('b1', 'WHO DID THIS?', 0, 2.6)] }], { x: 0, y: -0.4, z: 1.4 }),
@@ -766,6 +767,23 @@ export const BEAT_SCENES: Scene[] = [
   beatScene('stable_out', 'Thrown out of the group', 'ring', [{ id: 'A', n: 'The leader', role: 'a' }, { id: 'B', n: 'Who is thrown out', role: 'b' }], [
     { t: 0, figs: { A: STD(-1.6, 1, MIC_PT, 'shout', 0.4), B: STD(1.6, -1, { sh_n: 40, el_n: 30 }, 'hurt', 0.6) }, props: [mic('A')] },
     { t: 1.2, figs: { A: STD(-1.2, 1, { sh_n: 20, el_n: 20, sh_f: -10 }, 'smirk', 0.4), B: LAY(1.4, -1, 90, DOWN, 'pain', 0.6) }, props: [burst('b1', 'OUT!', 2.8, 2.6, PAL.red)] }]),
+  // the beats that are matches: a debut (at the newcomer's entrance) and a story's chapter or ending (after the bell)
+  beatScene('debut_vig', 'At last: the debut', 'ramp', [{ id: 'A', n: 'The newcomer', role: 'a' }], [
+    { t: 0, figs: { A: { ...STD(0, 1, CROSS, '', 0.4), b: true } }, props: [{ id: 'sp', k: 'spot', x: 0, y: 0, r: 0, z: -0.2, s: 1 }, hd('AT LAST')] },
+    { t: 1.3, figs: { A: STD(0, 1, { ...CROSS, head: 6 }, 'smirk', 0.4) }, props: [{ id: 'sp', k: 'spot', x: 0, y: 0, r: 0, z: -0.2, s: 1 }, hd('AT LAST')] }]),
+  beatScene('debut_atk', 'Out of nowhere', 'ring', [{ id: 'A', n: 'The newcomer', role: 'a' }, { id: 'B', n: 'Who they attack', role: 'b' }], [
+    { t: 0, figs: { B: STD(-0.8, 1, ARMS_UP, 'shout', 0.4), A: STD(8.6, -1, {}, 'roar', 0.6) }, props: [] },
+    { t: 0.8, figs: { B: { ...STD(-1.2, -1, { torso: -20, head: -24, sh_n: 80, el_n: 40, sh_f: -60 }, 'hurt', 0.4), r: 14 }, A: STD(0.6, -1, { torso: 12, sh_n: 95, el_n: 5, sh_f: 30, el_f: 90 }, 'roar', 0.6) }, props: [burst('b1', 'WHO IS THAT?', 3.4, 2.8)] },
+    { t: 1.8, figs: { B: LAY(-1.4, 1, 90, DOWN, 'pain', 0.4), A: STD(0.6, -1, ARMS_UP, 'roar', 0.6) }, props: [] }]),
+  beatScene('debut_match', 'The debut', 'ramp', [{ id: 'A', n: 'The newcomer', role: 'a' }], [
+    { t: 0, figs: { A: STD(0, 1, CROSS, '', 0.4) }, props: [hd('THE DEBUT')] },
+    { t: 1.2, figs: { A: STD(0, 1, POINT, 'shout', 0.4) }, props: [hd('THE DEBUT'), burst('b1', 'NEW!', 3.4, 2.8)] }]),
+  beatScene('chapter', 'Not over yet', 'ring', [{ id: 'A', n: 'Who won the round', role: 'a' }, { id: 'B', n: 'Who lost it', role: 'b' }], [
+    { t: 0, figs: { A: STD(-1.4, 1, POINT, 'shout', 0.4), B: LAY(1.4, -1, 90, DOWN, 'pain', 0.6) }, props: [hd('NOT OVER YET')] },
+    { t: 1.2, figs: { A: STD(-2.4, 1, POINT, 'snarl', 0.4), B: STD(2.2, -1, { head: 10, sh_n: 30, el_n: 40 }, 'hurt', 0.6) }, props: [hd('NOT OVER YET')] }]),
+  beatScene('payoff', 'The story ends', 'ring', [{ id: 'A', n: 'Who won it', role: 'a' }, { id: 'B', n: 'Who lost it', role: 'b' }], [
+    { t: 0, figs: { A: STD(-0.6, 1, ARMS_UP, 'roar', 0.4), B: LAY(1.6, -1, 90, DOWN, 'pain', 0.6) }, props: [hd('THE STORY ENDS'), { id: 'cf', k: 'confetti', x: 0, y: 2, r: 0, z: 2.5, s: 1 }] },
+    { t: 1.4, figs: { A: STD(-0.6, 1, { ...ARMS_UP, head: 12 }, 'shout', 0.4), B: LAY(1.6, -1, 90, DOWN, 'shut', 0.6) }, props: [hd('THE STORY ENDS'), { id: 'cf', k: 'confetti', x: 0, y: 1, r: 0, z: 2.5, s: 1 }] }]),
 ];
 /** Every scene of the show: the booked kinds and the storyline beats. */
 export const SHOW_SCENES: Scene[] = SEG_SCENES.concat(BEAT_SCENES);

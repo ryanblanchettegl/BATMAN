@@ -243,6 +243,10 @@ function scenePick(r: any, s: any, at: number, done: boolean): { sc: Scene; cast
   // the entrances: whoever is walking out, in their entrance gear, on their own entrance if they picked one
   if (!done && bc[now] && bc[now].t === 'ent') {
     const k = bc.slice(0, now + 1).filter(b => b.t === 'ent').length - 1, who = ids[Math.min(ids.length - 1, k * per)];
+    // a newcomer's first time out is the debut's own beat (rule 9c): the teasers paid off, the surprise attack, or just the debut
+    // (the broadcast joins a match at its last introduction, so the debut takes the entrance whoever is walking out)
+    const dbt = (s.debut || []).find((d: any) => d.id === who) || (s.debut || [])[0];
+    if (dbt) { const pk = beatPick('debut_' + dbt.k, [dbt.id].concat(ids.filter(id => sideOf(id) !== sideOf(dbt.id)).slice(0, 1))); if (pk) { Object.assign(cast, pk.cast); return { sc: pk.sc, cast, play: i + ':db' + dbt.id, label: pk.label }; } }
     const ent0 = ownEnt(who) || choose('entrance', k), fx = S.w[who] && S.w[who].look && S.w[who].look.entrance_fx, sc0 = ent0 && dressEntrance(ent0, fx), sc = sc0 && fillScene(sc0, { a: who }, cast);
     if (sc) return { sc, cast, play: i + ':e' + k, label: nm(cast.A) + ' comes out' };
   }
@@ -254,6 +258,10 @@ function scenePick(r: any, s: any, at: number, done: boolean): { sc: Scene; cast
       cast.C1 = { ...commentator(0), name: ann[0] || 'Play-by-play' }; cast.C2 = { ...commentator(1), name: ann[1] || 'Colour' };
       return { sc, cast, play: i + ':d' + now, label: 'At the desk: ' + (ann[1] || 'the colour voice') + ' talking, with ' + (ann[0] || 'the play-by-play voice') };
     }
+  }
+  // after the bell, a match that closed a chapter or ended a story plays that beat (a new title is still the champion's picture, unless the story ended)
+  if (done && s.story && (s.story.k === 'payoff' || !s.change) && (s.story.w || []).length) {
+    const pk = beatPick(s.story.k, [s.story.w[0]].concat((s.story.l || []).slice(0, 1))); if (pk) { Object.assign(cast, pk.cast); return { sc: pk.sc, cast, play: i + ':st', label: pk.label }; }
   }
   if (done && s.change && winner >= 0) { when = 'champion'; key = 'c'; a = winner; }
   else if (winner >= 0 && lastH >= 0 && now >= lastH) { when = 'finish'; key = 'f'; a = winner; }

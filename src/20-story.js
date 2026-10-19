@@ -4,7 +4,7 @@ function angle(head,text,ov){return {k:'angle',head:head,text:text,ov:clamp(Math
 /* Every storyline beat is a scene (rule 9c): an angle the story director writes says which beat it is (`beat`) and who
    is in it, in the order the scene casts them (`bids`: the first is A, the second B, a third C). The screens play the
    scene 'beat_<beat>' for it, or the booked kind's 'seg_<beat>' where the beat is the same thing. BEATS lists them all. */
-var BEATS=['feud_words','feud_stare','feud_sneak','feud_brawl','feud_partner','feud_signing','feud_video','feud_stakes','feud_betray','feud_injury','feud_swerve','feud_made','feud_final','interview','ambush','challenge','faceoff','save','turn','mystery','mystery_clue','mystery_reveal','return','stable','stable_out'];
+var BEATS=['feud_words','feud_stare','feud_sneak','feud_brawl','feud_partner','feud_signing','feud_video','feud_stakes','feud_betray','feud_injury','feud_swerve','feud_made','feud_final','interview','ambush','challenge','faceoff','save','turn','mystery','mystery_clue','mystery_reveal','return','stable','stable_out','debut_vig','debut_atk','debut_match','chapter','payoff'];   // the last five are matches: a debut (seg.debut) and a story's chapter or ending (seg.story)
 function beatTag(r,beat,ws){if(r){r.beat=beat;r.bids=ws.filter(function(w){return !!w;}).map(function(w){return w.id;});}return r;}
 /* who each feud beat is about, worked out before the beat runs (a betrayal moves people between sides) */
 var BEAT_WHO={
