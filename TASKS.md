@@ -120,7 +120,8 @@ Create a Wrestler:
 - [x] More hair (styles and a second colour), body hair, scars, freckles, more masks and mask designs.
 - [x] Face paint in layers: up to three designs painted over the first, each in its own colour (round the eyes, a tear, a painted grin, a cross, and the first list's designs).
 - [x] More gear: a satin ring jacket, a long coat, a baseball cap and a wool hat, bare feet taped at the ankle, a ring bodysuit and flared ring pants, a cape, a crown, a title belt round the waist or over the shoulder.
-- [ ] Lettering on the back of a jacket: it needs a picture from behind (a pose that turns away), which the paper doll does not have yet.
+- [x] A front and a back (Ryan, 19 October): every wrestler can be seen from behind (the back of the head and the hair, the back of a mask with its laces, the back of every top, a back tattoo, knee pads by their straps). Their back on Create a Wrestler, Show their back on a person in Create a Scene (`Fig.b`), and lettering Across the back.
+- [ ] Layers (Ryan, 19 October): a list of everything in a scene (people, props, the set) to pick, reorder, hide and lock; and the same list in Create a Wrestler for gear, lettering, shapes and paint.
 - [x] A move set: every wrestler has one finisher and two signature moves (Ryan, 19 October), each signature early, in the middle or late in a match; up to three taunts, played now and then by whoever is on top. Wrestlers with no file get signatures by style.
 - [x] An entrance built from parts: the walk (the five entrances, or a custom one), pyro (sparks, fountains, a flash, columns of fire), lights (a spotlight, lights down, red, blue or green, strobes) and the name of their music, which the announcers say as they come out.
 - [x] Paper portraits for everybody, not only the edited (`Portrait` draws every wrestler from their doll), and a quick random wrestler (Surprise me in the suite).

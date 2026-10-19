@@ -12,6 +12,8 @@ import { AttireKey, ATTIRE_OF, wear } from './caw';
 /** A person at a keyframe: where the waist is, the turn, which way they face, how far forward, the pose, the face,
     their size (1 as cut) and the marks on them. */
 export interface Fig { x: number; y: number; r: number; f: number; z: number; p: Record<string, number>; e?: string; s?: number; m?: Marks;
+  /** Seen from behind: the back of the head and the gear, and lettering made for the back. */
+  b?: boolean;
   /** Held by somebody: "A:hands", "A:shoulders", "A:chest", "A:waist" or "A:head". Then x and y are from that point
       and z is in front of (or behind) the one holding, so the two move and turn together. */
   on?: string;
@@ -309,7 +311,7 @@ export function at(sc: Scene, time: number): Key {
         const fa = a.figs[id], fb = b.figs[id]; if (!fb) { figs[id] = fa; continue; }
         const p: Record<string, number> = {}; for (const k of new Set([...Object.keys(fa.p), ...Object.keys(fb.p)])) p[k] = mix(fa.p[k] || 0, fb.p[k] || 0, t);
         const h = t < 0.5 ? fa : fb, same = (fa.on || '') === (fb.on || '');   // picked up or put down: the hold changes half way
-        figs[id] = { x: same ? mix(fa.x, fb.x, t) : h.x, y: same ? mix(fa.y, fb.y, t) : h.y, r: mix(fa.r, fb.r, t), f: h.f, z: same ? mix(fa.z, fb.z, t) : h.z, p, e: h.e, s: mix(fa.s || 1, fb.s || 1, t), m: h.m, on: h.on, lz: h.lz };
+        figs[id] = { x: same ? mix(fa.x, fb.x, t) : h.x, y: same ? mix(fa.y, fb.y, t) : h.y, r: mix(fa.r, fb.r, t), f: h.f, z: same ? mix(fa.z, fb.z, t) : h.z, p, e: h.e, s: mix(fa.s || 1, fb.s || 1, t), m: h.m, on: h.on, lz: h.lz, b: h.b };
       }
       const props = a.props.map(pa => { const pb = b.props.find(x => x.id === pa.id); return pb ? { ...pa, x: mix(pa.x, pb.x, t), y: mix(pa.y, pb.y, t), r: mix(pa.r, pb.r, t) } : pa; });
       const ca = a.cam || CAM0, cb = b.cam || CAM0, cam = { x: mix(ca.x, cb.x, t), y: mix(ca.y, cb.y, t), z: mix(ca.z, cb.z, t), r: mix(ca.r || 0, cb.r || 0, t) };
@@ -334,7 +336,7 @@ export function build(sc: Scene, k: Key, cast: Record<string, Recipe>, time = 0)
     const di = sc.slots.filter(x => x.dress === 'suit').indexOf(sl), c = cast[sl.id];
     const c0 = c && c.kits ? wear(c, sc.attire || ATTIRE_OF[sc.set] || 'primary_ring') : c;   // a Create a Player wrestler dresses for the set
     const r = c0 ? (sl.dress === 'suit' ? dress(c0, di) : sl.role === 'ref' ? refDress(c0) : c0) : sl.role === 'ref' ? REF : sl.dress === 'suit' ? commentator(di) : blank(i);
-    rigs[sl.id] = puppet(r, { x: f.x, y: f.y, r: f.r, f: f.f, z: f.z, s: f.s, lz: f.lz }, f.p, f.e || '', sl.id, pieces, f.m || {});
+    rigs[sl.id] = puppet(r, { x: f.x, y: f.y, r: f.r, f: f.f, z: f.z, s: f.s, lz: f.lz, b: f.b }, f.p, f.e || '', sl.id, pieces, f.m || {});
     // a soft shadow on the floor where they stand or lie
     const rg = rigs[sl.id], lying = Math.abs(Math.sin(f.r * Math.PI / 180)) > 0.6, sz = f.s || 1;
     if (lying) { const c = rg.anchors.waist; pieces.push({ pts: ell(c[0], FOOT + 0.3, 2.0 * sz, 0.32, 20), col: 'rgba(0,0,0,0.32)', z: f.z - 0.05, soft: true }); }
@@ -547,6 +549,8 @@ export const STILLS: Scene[] = [
     A: STD(-1.8, 1, { sh_n: 95, el_n: 5, sh_f: -15, el_f: -10 }, 'shout', 0.5), B: STD(0.6, 1, CROSS, 'snarl', 0.3) }, [], { x: 0.4, y: 0.2, z: 1.15 }),
   still('st_walkout', 'Out the door', 'walkout', 'hall', S1, {
     A: STD(1.6, 1, { torso: -4, head: -16, hip_n: -14, kn_n: -10, hip_f: 18, kn_f: -16, sh_n: 20, el_n: 10, sh_f: -25, el_f: 15 }, 'snarl', 0.8) }, [], { x: 1.0, y: 0.4, z: 1.2 }),
+  still('st_walkaway', 'Walking away down the hall', 'walkout', 'hall', S1, {
+    A: { ...STD(0.3, 1, { torso: 2, head: 4, hip_n: -16, kn_n: -12, hip_f: 16, kn_f: -18, sh_n: -18, el_n: 10, sh_f: 20, el_f: 15 }, '', -0.4), b: true } }, [], { x: 0.3, y: 0.5, z: 1.25 }),
   still('st_cheer', 'The crowd on its feet', 'cheer', 'ringlow', S1, {
     A: STD(-0.4, 1, { sh_n: 165, el_n: 5, sh_f: -20, el_f: -20, head: 10, hip_n: 6, hip_f: -6 }, 'roar', 0.5) }, [], { x: 0, y: 0.9, z: 1.0 }),
   still('st_title', 'Eyes on the belt', 'title', 'ring', S2, {

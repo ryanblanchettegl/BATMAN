@@ -59,7 +59,7 @@ export function CreatePlayer(pp: PlayerProps) {
     return n;
   });
   const w0 = pp.sign ? { ...startW, name: lk.name || 'New wrestler', g: d.g, align: d.align, style: d.style } : pp.w, base = recipeOf({ ...w0, look: null });
-  const [att, setAtt] = useState<AttireKey>('primary_ring'), [tab, setTab] = useState<Tab>(pp.sign ? 'sign' : pp.attire ? 'a_head' : 'body'), [pose, setPose] = useState('stand');
+  const [att, setAtt] = useState<AttireKey>('primary_ring'), [tab, setTab] = useState<Tab>(pp.sign ? 'sign' : pp.attire ? 'a_head' : 'body'), [pose, setPose] = useState('stand'), [back, setBack] = useState(false);
   const [lay, setLay] = useState(-1), [fi, setFi] = useState(-1), [acting, setActing] = useState(false), [msg, setMsg] = useState<{ t: string; err?: boolean } | null>(null);
   const [text, setText] = useState('CHAMP'), [font, setFont] = useState('block'), [shp, setShp] = useState('star'), file = useRef<HTMLInputElement>(null);
   const say = (t: string, err = false) => setMsg({ t, err });
@@ -84,8 +84,8 @@ export function CreatePlayer(pp: PlayerProps) {
   } else {
     const pd = (POSES.find(x => x[0] === pose) || POSES[0])[1];
     sc = { v: 1, id: 'caw', name: 'Create a Wrestler', when: 'any', set: SET_OF[att], attire: att, slots: [{ id: 'A', n: lk.name || w0.name, role: 'a' }],
-      keys: [{ t: 0, figs: { A: { x: 0, y: pd.y ?? WAIST, r: pd.r || 0, f: 1, z: 0.6, p: { ...pd.p }, e: pd.e || '' } }, props: pose === 'mic' ? [{ id: 'mic', k: 'mic', x: 0.1, y: 0.1, r: -30, z: 1.2, at: 'A:hand_n' }] : [], cam: (pp.attire && REGION_CAM[tab]) || CAM_OF[att] }] };
-    play = att + pose + (pp.attire ? tab : '') + JSON.stringify(lk);
+      keys: [{ t: 0, figs: { A: { x: 0, y: pd.y ?? WAIST, r: pd.r || 0, f: 1, z: 0.6, p: { ...pd.p }, e: pd.e || '', b: back || undefined } }, props: pose === 'mic' ? [{ id: 'mic', k: 'mic', x: 0.1, y: 0.1, r: -30, z: 1.2, at: 'A:hand_n' }] : [], cam: (pp.attire && REGION_CAM[tab]) || CAM_OF[att] }] };
+    play = att + pose + (back ? 'back' : '') + (pp.attire ? tab : '') + JSON.stringify(lk);
   }
 
   const save = () => { if (pp.sign) { setTab('sign'); say('Press Create on Who they are to make them.'); return; } const r0 = pp.onSave(lk); say(r0.msg, !r0.ok); };
@@ -138,6 +138,7 @@ export function CreatePlayer(pp: PlayerProps) {
         <div class="sc-keys" role="group" aria-label="Outfit">
           <span class="sc-lbl">Outfit</span>
           {ATTIRES.map(a => <Btn kind="sm" t="caw-attire" d={{ v: a[0] }} on={att === a[0]} onClick={() => { setAtt(a[0]); setActing(false); setLay(-1); }}>{a[1]}</Btn>)}
+          <span class="sp" /><Btn kind="less" t="caw-back" on={back} onClick={() => { setBack(!back); setActing(false); }}>{back ? 'Their front' : 'Their back'}</Btn>
         </div>
         <div class="caw-stagerow"><div class="sc-stage caw-stage"><ScenePlayer key="caw" sc={sc} cast={cast} play={play} still={!(acting && fin) && !(prevSc && (tab === 'scenes' || tab === 'fin'))} orbit fill={!(acting && fin) && !(prevSc && (tab === 'scenes' || tab === 'fin'))} t="caw-view" label={(lk.name || w0.name) + ' in ' + ATTIRES.find(a => a[0] === att)![1].toLowerCase() + '. Drag to walk round them.'} /></div>
           <div class="caw-ptcol"><button type="button" class={'caw-ptbtn' + (tab === 'portrait' ? ' on' : '')} data-t="caw-portrait" aria-label="Their portrait: press to change it" title="Their portrait: press to change it" onClick={() => setTab('portrait')}><PaperPortrait r={r} ps={pt} card={card} label={'Portrait of ' + (lk.name || w0.name)} /><span class="caw-ptlbl">Portrait</span></button></div></div>
@@ -177,10 +178,10 @@ export function CreatePlayer(pp: PlayerProps) {
               {lk.appearance && lk.appearance.face_paint && <select aria-label="Paint colour" data-t="caw-paintcol" value={lk.appearance.paint_colour || ''} onChange={e => { const v = (e.currentTarget as HTMLSelectElement).value; change(n => { n.appearance = n.appearance || {}; if (v) n.appearance.paint_colour = v; else delete n.appearance.paint_colour; }); }}>
                 <option value="">{lk.appearance.face_paint === 'skull' ? 'White' : 'Red'}</option>{SWATCHES.map(s2 => <option value={s2[0]}>{s2[1]}</option>)}</select>}</div>
             {(ap.paint_layers || []).map((l, i) => <div class="sc-row" key={'pl' + i}><span class="sc-slot">{'Over it, ' + (i + 1)}</span>
-              <select aria-label={'Paint layer ' + (i + 1)} data-t="caw-layer" data-v={i} value={l.k} onChange={e => { const v = (e.currentTarget as HTMLSelectElement).value; setAp(a => { a.paint_layers![i].k = v; }); }}>{PAINT_LAYERS.map(f => <option value={f[0]}>{f[1]}</option>)}</select>
-              <select aria-label={'Colour of layer ' + (i + 1)} data-t="caw-layercol" data-v={i} value={l.c || ''} onChange={e => { const v = (e.currentTarget as HTMLSelectElement).value; setAp(a => { if (v) a.paint_layers![i].c = v; else delete a.paint_layers![i].c; }); }}><option value="">Black</option>{SWATCHES.map(s2 => <option value={s2[0]}>{s2[1]}</option>)}</select>
-              <Btn kind="less" t="caw-layerdel" d={{ v: i }} onClick={() => setAp(a => { a.paint_layers!.splice(i, 1); if (!a.paint_layers!.length) delete a.paint_layers; })}>Wipe off</Btn></div>)}
-            {(ap.paint_layers || []).length < 3 && <div class="sc-row"><span class="sc-slot"></span><Btn kind="less" t="caw-layeradd" onClick={() => setAp(a => { a.paint_layers = (a.paint_layers || []).concat([{ k: 'eyes' }]); })}>Paint a layer over it</Btn></div>}
+              <select aria-label={'Paint layer ' + (i + 1)} data-t="caw-paintly" data-v={i} value={l.k} onChange={e => { const v = (e.currentTarget as HTMLSelectElement).value; setAp(a => { a.paint_layers![i].k = v; }); }}>{PAINT_LAYERS.map(f => <option value={f[0]}>{f[1]}</option>)}</select>
+              <select aria-label={'Colour of layer ' + (i + 1)} data-t="caw-paintlycol" data-v={i} value={l.c || ''} onChange={e => { const v = (e.currentTarget as HTMLSelectElement).value; setAp(a => { if (v) a.paint_layers![i].c = v; else delete a.paint_layers![i].c; }); }}><option value="">Black</option>{SWATCHES.map(s2 => <option value={s2[0]}>{s2[1]}</option>)}</select>
+              <Btn kind="less" t="caw-paintlydel" d={{ v: i }} onClick={() => setAp(a => { a.paint_layers!.splice(i, 1); if (!a.paint_layers!.length) delete a.paint_layers; })}>Wipe off</Btn></div>)}
+            {(ap.paint_layers || []).length < 3 && <div class="sc-row"><span class="sc-slot"></span><Btn kind="less" t="caw-paintlyadd" onClick={() => setAp(a => { a.paint_layers = (a.paint_layers || []).concat([{ k: 'eyes' }]); })}>Paint a layer over it</Btn></div>}
             <div class="sc-row"><span class="sc-slot">Tattoos</span>{TATTOOS.map(t => { const on = ((lk.appearance && lk.appearance.tattoos) || []).indexOf(t[0]) >= 0; return <Btn kind="less" t="caw-tat" d={{ v: t[0] }} on={on} onClick={() => change(n => { n.appearance = n.appearance || {}; const l = n.appearance.tattoos || []; n.appearance.tattoos = on ? l.filter(x => x !== t[0]) : l.concat([t[0]]); if (!n.appearance.tattoos.length) delete n.appearance.tattoos; })}>{t[1]}</Btn>; })}</div>
           </Group>
           <Group title="Scars, freckles and body hair">
@@ -284,8 +285,8 @@ export function CreatePlayer(pp: PlayerProps) {
               <div class="sc-row">
                 <select aria-label="Colour" data-t="caw-lcol" value={layers[lay].palette_slot || 'trim'} onChange={e => { const v = (e.currentTarget as HTMLSelectElement).value; setLayer(l => { l.palette_slot = v; }); }}>
                   {SLOTS.map(s => <option value={s[0]}>{'The outfit: ' + s[1].toLowerCase()}</option>)}{SWATCHES.map(s => <option value={s[0]}>{s[1]}</option>)}</select>
-                <select aria-label="Where it goes" data-t="caw-lon" value={layers[lay].on || 'upper_body'} onChange={e => { const v = (e.currentTarget as HTMLSelectElement).value; setLayer(l => { if (v === 'lower_body') l.on = 'lower_body'; else delete l.on; }); }}>
-                  <option value="upper_body">On the chest</option><option value="lower_body">Down the leg</option></select>
+                <select aria-label="Where it goes" data-t="caw-lon" value={layers[lay].on || 'upper_body'} onChange={e => { const v = (e.currentTarget as HTMLSelectElement).value; setLayer(l => { if (v === 'lower_body' || v === 'back') l.on = v; else delete l.on; }); setBack(v === 'back'); }}>
+                  <option value="upper_body">On the chest</option><option value="lower_body">Down the leg</option><option value="back">Across the back</option></select>
                 <Btn kind="danger" t="caw-ldrop" onClick={() => { change(n => { A(n).custom_layers!.splice(lay, 1); }); setLay(-1); }}>Remove</Btn>
               </div>
             </>}

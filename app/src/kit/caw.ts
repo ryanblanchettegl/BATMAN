@@ -10,7 +10,7 @@ import type { Recipe } from './puppet';
 
 /* ---------- the file ---------- */
 export interface Placement { x: number; y: number; z?: number }
-export interface Layer { type: 'text_decal' | 'shape_combiner'; string?: string; font?: string; shape_id?: string; placement: Placement; palette_slot?: string; on?: 'lower_body'; arch?: number; scale?: number; rot?: number }
+export interface Layer { type: 'text_decal' | 'shape_combiner'; string?: string; font?: string; shape_id?: string; placement: Placement; palette_slot?: string; on?: 'lower_body' | 'back'; arch?: number; scale?: number; rot?: number }
 export interface Attire { description?: string; equipped_assets: { head?: string; upper_body?: string; lower_body?: string; footwear?: string; accessories?: string[] }; palette_slots: { primary?: string; secondary?: string; trim?: string; hardware?: string }; custom_layers?: Layer[];
   /** Not in Ryan's first draft: a colour of its own for one part, over the palette slot it would take. */
   part_colours?: { upper_body?: string; lower_body?: string; footwear?: string } }
@@ -140,7 +140,7 @@ export const FEATURES: Record<'eyes' | 'nose' | 'mouth' | 'ears', [string, strin
 export const FACE_SLIDERS: [string, string, string, string][] = [['head_w', 'Head width', 'narrow', 'wide'], ['head_h', 'Head height', 'short', 'long'], ['jaw', 'Jaw', 'round', 'square'], ['chin', 'Chin', 'broad', 'pointed'],
   ['eye_size', 'Eye size', 'small', 'big'], ['eye_gap', 'Eyes apart', 'close', 'wide'], ['eye_height', 'Eyes', 'low', 'high'], ['brow_thick', 'Brows', 'thin', 'thick'], ['brow_angle', 'Brow angle', 'stern', 'worried'],
   ['nose_w', 'Nose width', 'narrow', 'wide'], ['nose_l', 'Nose length', 'short', 'long'], ['mouth_w', 'Mouth', 'small', 'wide'], ['ears', 'Ears', 'small', 'big']];
-export const TATTOOS: [string, string][] = [['sleeve_near', 'Sleeve, near arm'], ['sleeve_far', 'Sleeve, far arm'], ['shoulder', 'Shoulder piece'], ['chest', 'Chest piece'], ['neck', 'Neck']];   // facial hair, moustache in the face numbers
+export const TATTOOS: [string, string][] = [['sleeve_near', 'Sleeve, near arm'], ['sleeve_far', 'Sleeve, far arm'], ['shoulder', 'Shoulder piece'], ['chest', 'Chest piece'], ['back', 'Back piece'], ['neck', 'Neck']];   // facial hair, moustache in the face numbers
 const HAIR_OF: Record<string, string> = { hair_bald: 'bald', hair_buzz_01: 'buzz', hair_crew_01: 'crew', hair_short_01: 'cap', hair_flat_top: 'flat', hair_mohawk_01: 'mohawk', hair_curls_01: 'curls', hair_long_01: 'long',
   hair_slick_01: 'slick', hair_spiky_01: 'spiky', hair_afro_01: 'afro', hair_cornrows_01: 'braids', hair_dreads_01: 'dreads', hair_ponytail_01: 'ponytail', hair_mullet_01: 'mullet', hair_wild_01: 'wild',
   hair_bun_01: 'bun', hair_undercut_01: 'undercut', hair_pigtails_01: 'pigtails', hair_bob_01: 'bob' };

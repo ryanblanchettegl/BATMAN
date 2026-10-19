@@ -36,7 +36,7 @@ var ft=null;if(ap.features&&typeof ap.features==='object'){ft={};['eyes','nose',
     var lay=(Array.isArray(a.custom_layers)?a.custom_layers:[]).slice(0,16).map(function(l){
       if(!l||(l.type!=='text_decal'&&l.type!=='shape_combiner'))return null;var pl=l.placement||{};
       var c=lkPrune({type:l.type,string:l.type==='text_decal'?lkStr(l.string,20):undefined,font:lkId(l.font),shape_id:l.type==='shape_combiner'?lkId(l.shape_id):undefined,
-        placement:{x:lkNum(pl.x,-20,20)||0,y:lkNum(pl.y,-20,20)||0,z:lkNum(pl.z,0,20)||0},palette_slot:lkId(l.palette_slot),on:l.on==='lower_body'?'lower_body':undefined,
+        placement:{x:lkNum(pl.x,-20,20)||0,y:lkNum(pl.y,-20,20)||0,z:lkNum(pl.z,0,20)||0},palette_slot:lkId(l.palette_slot),on:l.on==='lower_body'||l.on==='back'?l.on:undefined,
         arch:lkNum(l.arch,-1,1),scale:lkNum(l.scale,0.2,4),rot:lkNum(l.rot,-180,180)});
       return (c.type==='text_decal'&&c.string)||(c.type==='shape_combiner'&&c.shape_id)?c:null;}).filter(function(l){return !!l;});
     var pcs={};['upper_body','lower_body','footwear'].forEach(function(q){var v=lkId((a.part_colours||{})[q]);if(v)pcs[q]=v;});

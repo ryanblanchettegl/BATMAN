@@ -46,11 +46,11 @@ const msg = page => txt(page, '[data-t="caw-msg"]');
     ok('the suite fits with the face sliders', !(await fits(page)), await fits(page));
     await page.click('[data-t="caw-tab"][data-v="ink"]');
     await page.selectOption('[data-t="caw-paint"]', 'war'); await page.selectOption('[data-t="caw-paintcol"]', 'swatch_neon_green');
-    await page.click('[data-t="caw-layeradd"]'); await page.click('[data-t="caw-layeradd"]'); await page.selectOption('[data-t="caw-layer"][data-v="1"]', 'grin'); await page.selectOption('[data-t="caw-layercol"][data-v="1"]', 'swatch_white_paper').catch(() => {});
-    ok('face paint takes layers over the first design', (await page.$$('[data-t="caw-layer"]')).length === 2 && (await page.$eval('[data-t="caw-layer"][data-v="1"]', e => e.value)) === 'grin');
+    await page.click('[data-t="caw-paintlyadd"]'); await page.click('[data-t="caw-paintlyadd"]'); await page.selectOption('[data-t="caw-paintly"][data-v="1"]', 'grin'); await page.selectOption('[data-t="caw-paintlycol"][data-v="1"]', 'swatch_white_paper').catch(() => {});
+    ok('face paint takes layers over the first design', (await page.$$('[data-t="caw-paintly"]')).length === 2 && (await page.$eval('[data-t="caw-paintly"][data-v="1"]', e => e.value)) === 'grin');
     if (process.env.SHOTS) await shot(page, 'player-paint-layers');
-    await page.click('[data-t="caw-layerdel"][data-v="0"]');
-    ok('a layer can be wiped off', (await page.$$('[data-t="caw-layer"]')).length === 1);
+    await page.click('[data-t="caw-paintlydel"][data-v="0"]');
+    ok('a layer can be wiped off', (await page.$$('[data-t="caw-paintly"]')).length === 1);
     await page.click('[data-t="caw-tat"][data-v="sleeve_near"]'); await page.click('[data-t="caw-tat"][data-v="chest"]');
     ok('hair, a beard, face paint and tattoos can be picked', hair0 === 'hair_dreads_01' && (await attr(page, '[data-t="caw-tat"][data-v="chest"]', 'aria-pressed')) === 'true');
     await page.click('[data-t="caw-scar"][data-v="cheek"]'); await page.click('[data-t="caw-freckles"]'); await page.click('[data-t="caw-bodyhair"][data-v="2"]');
@@ -94,6 +94,12 @@ const msg = page => txt(page, '[data-t="caw-msg"]');
     await page.click('[data-t="caw-ldrop"]');
     ok('and taken off again', (await page.$$('[data-t="caw-layer"]')).length === 1);
     if (process.env.SHOTS) { await page.waitForTimeout(2500); await shot(page, 'player-studio'); }
+    // the back: lettering across the back, and the doll turned round to show it
+    await page.click('[data-t="caw-layer"][data-v="0"]').catch(() => {}); await page.selectOption('[data-t="caw-lon"]', 'back'); await page.waitForTimeout(400);
+    ok('lettering can go across the back, and the doll turns round to show it', (await attr(page, '[data-t="caw-back"]', 'aria-pressed')) === 'true');
+    if (process.env.SHOTS) { await page.waitForTimeout(1500); await shot(page, 'player-back'); }
+    await page.click('[data-t="caw-back"]'); await page.waitForTimeout(300);
+    ok('Their front turns the doll back round', (await attr(page, '[data-t="caw-back"]', 'aria-pressed')) === 'false');
     ok('the suite still fits one screen', !(await fits(page)), await fits(page));
     // a finishing move, acted out on the dummy
     await page.click('[data-t="caw-tab"][data-v="fin"]'); await page.click('[data-t="caw-fin"][data-v="0"]');

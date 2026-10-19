@@ -289,7 +289,8 @@ export function SceneStudio(pp: StudioProps) {
           <Btn kind="less" t="scene-move" d={{ v: 'u' }} disabled={!sel} onClick={() => nudge(0, 0.25)}>Up</Btn><Btn kind="less" t="scene-move" d={{ v: 'd' }} disabled={!sel} onClick={() => nudge(0, -0.25)}>Down</Btn>
         </div>
         {selFig && <div class="sc-row">
-          <Btn kind="less" t="scene-face" onClick={() => edit(k => { const f = fig(k, sel!.who); if (f) f.f = -f.f; })}>Turn round</Btn>
+          <Btn kind="less" t="scene-face" onClick={() => edit(k => { const f = fig(k, sel!.who); if (f) f.f = -f.f; })}>Face the other way</Btn>
+          <Btn kind="less" t="scene-back" on={!!(fig(sc.keys[ki], sel!.who) || {} as any).b} onClick={() => edit(k => { const f = fig(k, sel!.who); if (f) { if (f.b) delete f.b; else f.b = true; } })}>Show their back</Btn>
           <Btn kind="less" t="scene-front" onClick={() => edit(k => { const f = fig(k, sel!.who); if (f) f.z = Math.round((f.z + 0.6) * 10) / 10; })}>Front</Btn>
           <Btn kind="less" t="scene-back" onClick={() => edit(k => { const f = fig(k, sel!.who); if (f) f.z = Math.round((f.z - 0.6) * 10) / 10; })}>Back</Btn>
           <Btn kind="less" t="scene-stand" onClick={() => edit(k => { const f = fig(k, sel!.who); if (f) { f.p = {}; f.r = 0; f.y = WAIST; } })}>Stand</Btn>
