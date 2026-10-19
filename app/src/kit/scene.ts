@@ -785,10 +785,14 @@ export const BEAT_SCENES: Scene[] = [
     { t: 0, figs: { A: STD(-0.6, 1, ARMS_UP, 'roar', 0.4), B: LAY(1.6, -1, 90, DOWN, 'pain', 0.6) }, props: [hd('THE STORY ENDS'), { id: 'cf', k: 'confetti', x: 0, y: 2, r: 0, z: 2.5, s: 1 }] },
     { t: 1.4, figs: { A: STD(-0.6, 1, { ...ARMS_UP, head: 12 }, 'shout', 0.4), B: LAY(1.6, -1, 90, DOWN, 'shut', 0.6) }, props: [hd('THE STORY ENDS'), { id: 'cf', k: 'confetti', x: 0, y: 1, r: 0, z: 2.5, s: 1 }] }]),
 ];
-/** Every scene of the show: the booked kinds and the storyline beats. */
-export const SHOW_SCENES: Scene[] = SEG_SCENES.concat(BEAT_SCENES);
+/** The poster for the next show (the desk): the two who headline it face to face, the show's name across the top (set
+    from the game, `E.posterPair`). A world can bring its own scene for 'poster'. */
+export const POSTERS: Scene[] = [{ v: 1, id: 'poster_show', name: 'The poster for the next show', when: 'poster', set: 'stadium', still: true, frame: 'square', slots: SAB, keys: [
+  { t: 0, figs: { A: STD(-1.45, 1, { ...CROSS, head: 4 }, 'snarl', 0.4), B: STD(1.45, -1, { ...CROSS, head: 4 }, 'snarl', 0.4) }, props: [burst('vs', 'VS', 0, 0.4, PAL.red), hd('TONIGHT', -2.35)], cam: { x: 0, y: 0.55, z: 1.38 } }] }];
+/** Every scene of the show: the booked kinds and the storyline beats, and the poster. */
+export const SHOW_SCENES: Scene[] = SEG_SCENES.concat(BEAT_SCENES, POSTERS);
 export const SHOW_WHEN: [string, string][] = SEG_WHEN.concat(BEAT_WHEN);
-export function allScenes(world: Scene[]): Scene[] { const ids = new Set(world.map(s => s.id)); return world.concat(SCENES.concat(STILLS, SEG_SCENES, BEAT_SCENES).filter(s => !ids.has(s.id))); }
+export function allScenes(world: Scene[]): Scene[] { const ids = new Set(world.map(s => s.id)); return world.concat(SCENES.concat(STILLS, SEG_SCENES, BEAT_SCENES, POSTERS).filter(s => !ids.has(s.id))); }
 /** The scenes that can play for a moment of the broadcast. */
 export function scenesFor(when: string, world: Scene[]): Scene[] { return allScenes(world).filter(s => s.when === when); }
 export const copy = <T>(x: T): T => JSON.parse(JSON.stringify(x));

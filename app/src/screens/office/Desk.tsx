@@ -11,7 +11,7 @@ import { go, weekDone, pending } from '../../nav';
 import { book, endWeek } from '../../flow';
 import { Btn, Meter, Name, CheckLine, Empty, Dial, dataAttrs, Txt, Tag, Tabs, Window, Desktop, Win, Group, Line, RoadMap, LightText, LightPic, brandName } from '../../kit';
 import { Portrait } from '../../kit/portrait';
-import { MomentPic } from '../../shared/moment';
+import { MomentPic, PosterPic } from '../../shared/moment';
 import { ScheduleList, QuestList } from '../../shared/week';
 import { openNight } from '../booking/run';
 import { Tasks } from './Tasks';
@@ -37,7 +37,7 @@ const CHIP: Record<string, string> = { past: '#ff5555', now: '#ffff55', next: '#
 /** The line of lights under the map: the city, the show, the building and the tickets, as much as there is room for. */
 function ticker(N: any): [string, string][] {
   const room = document.documentElement.getAttribute('data-screen') === 'tablet' ? 46 : 66, sep: [string, string] = [' · ', '#777777'];
-  const bits: [string, string][] = [[N.city, '#55ffff'], [N.show, '#ffff55'], [num(N.sold) + ' sold', '#55ff55'], [N.venue.slice(N.city.length + 1), '#ffffff'], ...(N.sold >= N.cap ? [['Sold out ★', '#ffff55'] as [string, string]] : [[num(N.cap - N.sold) + ' to a sell-out', '#ff5555'] as [string, string]])];
+  const bits: [string, string][] = [[N.city, '#55ffff'], [N.show, '#ffff55'], [num(N.sold) + ' sold', '#55ff55'], [String(N.venue).split(',')[0], '#ffffff'], ...(N.sold >= N.cap ? [['Sold out ★', '#ffff55'] as [string, string]] : [[num(N.cap - N.sold) + ' to a sell-out', '#ff5555'] as [string, string]])];
   const out: [string, string][] = []; let n = 0;
   for (const b of bits) { const add = b[0].length + (out.length ? 3 : 0); if (out.length && n + add > room) continue; if (out.length) out.push(sep); out.push([b[0].slice(0, room), b[1]]); n += add; }
   return out;
@@ -79,8 +79,8 @@ function Road() {
     </div>
     <div class="rfoot">
       <span class="tick"><LightText text={ticker(N)} dot={2} t="road-ticker" /></span>
-      <Btn t="road-year" onClick={() => openModal({ kind: 'roadyear' })}>The schedule</Btn>
-      <Btn t="road-tix" onClick={() => openModal({ kind: 'mng', k: 'manage', v: 'tix' })}>Ticket prices</Btn>
+      <Btn t="road-year" tip="The stops ahead: when, which show, where, and how many tickets are sold." onClick={() => openModal({ kind: 'roadyear' })}>Schedule</Btn>
+      <Btn kind="sm" t="road-tix" tip="Set what a seat costs. Higher prices make more per ticket and sell fewer." onClick={() => openModal({ kind: 'mng', k: 'manage', v: 'tix' })}>Tickets</Btn>
     </div>
   </Win>;
 }
@@ -96,11 +96,26 @@ export function RoadYearWindow() {
 }
 
 /* ---------- on your desk: what needs an answer ---------- */
+/** A quiet desk is not an empty one: somebody on the roster has been posting. Their picture, and what they said
+    (the Net's feed, src/94-net.js), or the champion in the building when nobody has posted yet. */
+function QuietPic() {
+  const S = G.S, P = me(), mine = (id: number | null) => id != null && S.w[id] && S.w[id].promo === P.id;
+  const post: any = (S.feed || []).find((f: any) => f.k === 'w' && mine((S.w as any[]).findIndex(w => w && w.name === f.n)));
+  const wid = post ? (S.w as any[]).findIndex(w => w && w.name === post.n) : (() => { const t = P.titles.find((t: any) => t.holders.length && S.w[t.holders[0]]); return t ? t.holders[0] : (E.rosterOf(S, P.id)[0] || {}).id; })();
+  if (wid == null || !S.w[wid]) return null;
+  return <div class="quiet" data-t="desk-quiet">
+    <MomentPic ev={{ type: post ? 'cheer' : 'meeting', w: wid, id: wid }} t="desk-pic" />
+    {post ? <p class="qpost"><b>{post.n}</b> <span class="muted">{post.u}</span><br />{post.t}</p> : <p class="qpost muted">{S.w[wid].name} is in the building.</p>}
+  </div>;
+}
 function OnDesk() {
   const S = G.S, open: any[] = S.inbox.filter((e: any) => !e.done), done = S.inbox.length - open.length, A = alerts();
   const room = open.length ? (open.length === 1 ? 2 : 0) : 4, more = (k: string) => openModal({ kind: 'deskmore', k });
   useFocusAfter();
   return <Win title={open.length ? 'On your desk: ' + open.length + ' to answer' : 'On your desk'} right={open.length ? '' : (done ? done + ' answered' : '')} tone={open.length ? 'hot' : undefined} cls="ondesk" area="fire" t="fire">
+    <div class="odp">
+    {open.length ? (open.length < 3 ? <MomentPic ev={open[0]} t="desk-pic" /> : null) : <QuietPic />}
+    <div class="odr">
     {open.slice(0, 3).map(e => <div class="mat" key={e.id} data-t="matter" data-id={e.id}>
       <p class={'clamp' + (open.length < 3 ? ' c3' : '')}>{e.night ? <Tag kind="bad">Last night</Tag> : null}<Txt>{e.text}</Txt></p>
       <Btn t="ev-open" d={{ id: e.id }} onClick={() => openModal({ kind: 'matter', id: e.id })}>Answer</Btn>
@@ -112,6 +127,7 @@ function OnDesk() {
       {A.slice(0, room).map((a, i) => <p class="one" key={i}>{a}</p>)}
       {A.length > room ? <p class="one"><Btn kind="sm" t="know-more" onClick={() => more('know')}>{A.length - room} more</Btn></p> : null}
     </div> : null}
+    </div></div>
   </Win>;
 }
 /** One matter from the inbox, in a pop-up: the whole of it, the chance of each attempt, and a button for each answer.
@@ -159,19 +175,18 @@ function NextShow() {
   const x = done ? null : E.expectWords(S), n = pending(), wk = E.taskGate(S, 'week'), recap = E.afterShow(S);
   const nc = S.court ? S.court.length : 0;
   return <Win title={done ? 'The week is booked' : 'Next show'} right={done ? '' : (gate.ok ? (left > 1 ? left + ' left this week' : 'the last this week') : <span data-t="book-wait">tasks first: {gate.left.length} to do</span>)} cls="nextwin" area="next" t="next">
-    {done ? <p class="lh"><LightText text="Week booked" color="#55ff55" dot={2} /></p> : <p class="lh"><LightText text={String(sh.name).slice(0, 26)} dot={2} label={sh.name} t="next-name" /></p>}
-    <div class="nx">
-      <div>
-        {done ? <p>Every show this week has run.</p> : <>
-          <p data-t="next-expect">{sh.brand ? <Tag>{brandName(me(), sh.brand)}</Tag> : null}The crowd expects <b>{x ? x.a : 'a show'}</b>{x ? <>: matches of <b>{x.bar}</b> or better.</> : '.'}</p></>}
+    <div class="nxp">
+      {done ? <LightPic name="bell" dot={1} t="next-pic" /> : (PosterPic({}) || <LightPic name="ring" dot={1} t="next-pic" />)}
+      <div class="nxr">
+        {done ? <p class="lh"><LightText text="Week booked" color="#55ff55" dot={2} /></p> : <p class="lh"><LightText text={String(sh.name).slice(0, 26)} dot={String(sh.name).length > 15 ? 1 : 2} label={sh.name} t="next-name" /></p>}
+        {done ? <p>Every show this week has run.</p> : <p data-t="next-expect">{sh.brand ? <Tag>{brandName(me(), sh.brand)}</Tag> : null}The crowd expects <b>{x ? x.a : 'a show'}</b>{x ? <>: matches of <b>{x.bar}</b> or better.</> : '.'}</p>}
         {done && (n || !wk.ok) ? <p class="bad one">{n ? 'Answer what is on your desk first.' : 'Finish this week’s tasks first.'}</p> : <p class="muted cu"><ComingUp /></p>}
       </div>
-      <LightPic name={done ? 'bell' : 'ring'} dot={1} t="next-pic" />
     </div>
-    <p class="bsl one" data-t="bs-line"><Btn t="to-backstage" onClick={() => go('backstage')}>Backstage</Btn><span class="num">{B.ap} of {B.max}</span> {plural(B.max, 'point')}{N.count ? <span class="bad"> {'·'} {N.count} waiting</span> : null}{nc ? <span class="bad"> {'·'} {nc} in court</span> : null}</p>
+    <p class="bsl one" data-t="bs-line"><Btn t="to-backstage" tip="Who is in the building and why. Spend an action point on a person." onClick={() => go('backstage')}>Backstage</Btn><span class="num">{B.ap} of {B.max}</span> {plural(B.max, 'point')}{N.count ? <span class="bad"> {'·'} {N.count} waiting</span> : null}{nc ? <span class="bad"> {'·'} {nc} in court</span> : null}</p>
     <div class="nbtn">
-      {done ? <Btn kind="go" t="endweek" disabled={!!n || !wk.ok} onClick={endWeek}>End the week</Btn>
-        : <Btn kind="go" t="book-next" d={{ home: '' }} disabled={!gate.ok} onClick={() => go('booking')}>Book the show</Btn>}
+      {done ? <Btn kind="go" t="endweek" tip="End the week: the money comes in, the world moves on, and next week opens." disabled={!!n || !wk.ok} onClick={endWeek}>End week</Btn>
+        : <Btn kind="go" t="book-next" d={{ home: '' }} tip="Build the card for the next show: matches, promos and angles." disabled={!gate.ok} onClick={() => go('booking')}>Book show</Btn>}
       {recap ? <Btn kind="less" t="night-recap" onClick={openNight} label="After the show recap">Recap</Btn> : null}
       <Btn kind="less" t="desk-more" onClick={() => openModal({ kind: 'deskmore', k: (office() as any).more || 'week' })} label="The week in full">The week</Btn>
     </div>

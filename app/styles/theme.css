@@ -245,7 +245,7 @@ html .crt.crt{max-width:none}
 .lv-side{min-width:0;min-height:0;display:flex;flex-direction:column;gap:.5em}
 .fdwin{flex:1 1 0;min-height:0}
 .fdwin>.ttl>span:first-child{font-size:0}
-.fd-list{overflow-x:hidden;overflow-y:auto;scrollbar-width:thin;scrollbar-color:#b9ad90 transparent;display:flex;flex-direction:column;gap:.35em;padding:.45em .9ch !important}
+.wn>.bd.fd-list,.fd-list{overflow-x:hidden;overflow-y:auto;scrollbar-width:thin;scrollbar-color:#b9ad90 transparent;display:flex;flex-direction:column;gap:.35em;padding:.45em .9ch !important}
 .post{display:grid;grid-template-columns:2.3em minmax(0,1fr);gap:0 .9ch;padding:.35em .8ch .3em;background:var(--grain),#fffdf0;border:1.5px solid rgba(0,0,0,.55);border-radius:5px;box-shadow:.08em .12em 0 rgba(0,0,0,.22);color:var(--ink)}
 @media (prefers-reduced-motion:no-preference){.post:first-child{animation:postin .4s var(--ease)}}
 @keyframes postin{from{transform:translateY(-10px);opacity:0}to{transform:none;opacity:1}}
@@ -273,3 +273,33 @@ html .crt.crt{max-width:none}
 .bspage .wn .btn{padding:.04em 1.2ch .26em;margin-bottom:.2em}
 .lv-side .post{margin:0;padding-left:.8ch;text-indent:0}
 .tvframe .chyron .lv-crowd{display:none}
+
+/* ---------- the desk ---------- */
+.rmap>canvas{border:2px solid var(--ink);border-radius:3px;box-shadow:.14em .2em 0 rgba(0,0,0,.35);background:#3a5a9a}
+.deskpage{grid-template-rows:minmax(0,1.22fr) minmax(0,1fr)}
+.nextwin .nxp{display:flex;gap:1.2ch;min-height:0;align-items:stretch;flex:1 1 auto}
+.nextwin .nxp>.poster{flex:0 0 36%;min-width:0;margin:0;display:flex}
+.nextwin .nxp>.poster .moment{width:100%;height:auto;aspect-ratio:1/1;max-height:100%;border:2px solid var(--ink);border-radius:3px;box-shadow:.14em .2em 0 rgba(0,0,0,.35);transform:rotate(-.6deg)}
+.nextwin .nxr{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:.15em}
+.nextwin .nxr .lh{text-align:left}
+.nextwin>.bd{display:flex;flex-direction:column}
+.ondesk>.bd{display:flex;flex-direction:column}
+.ondesk .odp{display:flex;gap:1.2ch;min-height:0;flex:1 1 auto;align-items:flex-start}
+.ondesk .odp>.mfig{flex:0 0 44%;margin:0}
+.ondesk .odp .moment{aspect-ratio:4/3;border:2px solid var(--ink);border-radius:3px;box-shadow:.14em .2em 0 rgba(0,0,0,.35);transform:rotate(.5deg)}
+.ondesk .odp .mcap{display:none}
+.ondesk .odr{flex:1 1 auto;min-width:0}
+.ondesk .quiet{flex:0 0 100%;display:flex;gap:1.2ch;align-items:flex-start;min-width:0}
+.ondesk .quiet>.mfig{flex:0 0 46%;margin:0}
+.ondesk .quiet .qpost{flex:1 1 auto;min-width:0;background:var(--grain),#fffdf0;border:1.5px solid rgba(0,0,0,.55);border-radius:5px;padding:.4em 1ch;box-shadow:.08em .12em 0 rgba(0,0,0,.22);font-size:.92em;margin:0}
+.ondesk .odp:has(.quiet){flex-direction:column;gap:.35em}
+.ondesk .quiet{flex:none;width:100%}
+.ondesk .quiet>.mfig{flex:0 0 40%}
+.nextwin .nxr .cu{white-space:normal;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+/* the desk: the tasks are a tall column at the right, from the top down, beside the road and the two windows under it */
+.deskpage{grid-template-columns:minmax(0,1fr) minmax(0,1fr) minmax(0,.86fr);grid-template-rows:minmax(0,1.2fr) minmax(0,1fr);grid-template-areas:"road road tasks" "fire next tasks"}
+.deskpage .road .r3{grid-template-columns:auto minmax(0,1fr) minmax(0,.85fr);gap:0 1.4ch}
+.taskwin .it{padding:.18em 0 .12em}
+.deskpage .taskwin .it{flex-wrap:wrap;gap:.1em 1ch;padding:.28em 0 .2em}
+.deskpage .taskwin .it .tx{flex:1 1 100%;white-space:normal;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.deskpage .taskwin .it .opts{margin-left:auto}

@@ -106,3 +106,17 @@ export function SegPic(p: { k: string; who: (number | null)[]; t?: string }) {
     <figcaption class="mcap">{pk.label}</figcaption>
   </figure>;
 }
+
+/** The poster for the next show on the desk: the two who headline it face to face, with the show's name on it. */
+export function PosterPic(p: { t?: string }) {
+  const S = G.S; if (!S) return null;
+  const pr = E.posterPair(S), sh = S.queue && S.queue[S.qi]; if (!pr || !sh) return null;
+  const list = scenesFor('poster', E.worldScenes(S) as Scene[]); if (!list.length) return null;
+  const sc0 = copy(list[(pr.a * 7 + pr.b) % list.length]), cast: Record<string, Recipe> = {};
+  sc0.keys.forEach(k => k.props.forEach(q => { if (q.k === 'headline') q.txt = String(sh.name).toUpperCase().slice(0, 24); }));
+  const sc = fillScene(sc0, { a: pr.a, b: pr.b }, cast); if (!sc) return null;
+  const label = S.w[pr.a].name + ' and ' + S.w[pr.b].name + (pr.why === 'main' ? ', the main event' : (pr.why === 'feud' ? ', the hottest story' : (pr.why === 'title' ? ', over the ' + pr.title : '')));
+  return <figure class="mfig poster" data-t={p.t || 'next-poster'} data-v={pr.why}>
+    <div class="moment"><ScenePlayer sc={sc} cast={cast} play={'poster' + pr.a + '.' + pr.b} still t="poster-scene" label={label} /></div>
+  </figure>;
+}

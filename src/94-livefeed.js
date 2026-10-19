@@ -75,3 +75,18 @@ E.liveFeed=function(S,rep,si,b){
   v=clamp(Math.round(v),0,100);
   return {posts:si<0?[]:liveFeed(S,rep,si,b),crowd:{v:v,word:crowdWord(v)}};
 };
+
+/* ---------- the poster for the next show (the desk) ----------
+   Who headlines it, so the desk can show them face to face: the main event once the card is booked, else the hottest
+   story on the roster, else the champion and the closest challenger. Only reads the game. */
+E.posterPair=function(S){
+  var P=S.promos[S.player],sh=S.queue&&S.queue[S.qi];if(!P||!sh)return null;
+  var card=S.card||[],m=card.length?card[card.length-1]:null;
+  if(m&&m.sides&&m.sides.length>=2&&m.sides[0].length&&m.sides[1].length)return {a:m.sides[0][0],b:m.sides[1][0],why:'main',title:m.title?(titleById(P,m.title)||{}).name||null:null};
+  var fs=activeFeuds(S).filter(function(f){return f.promo===P.id&&!f.res&&S.w[f.a[0]]&&S.w[f.b[0]];}).sort(function(x,y){return y.heat-x.heat;});
+  if(fs.length)return {a:fs[0].a[0],b:fs[0].b[0],why:'feud',title:fs[0].title?(titleById(P,fs[0].title)||{}).name||null:null};
+  var t=P.titles.filter(function(t){return !t.tag&&t.holders.length&&S.w[t.holders[0]];}).sort(function(x,y){return (y.lvl||0)-(x.lvl||0);})[0];
+  if(t){var c=S.w[t.holders[0]],ch=rosterOf(S,P.id).filter(function(w){return w.id!==c.id&&w.g===c.g&&w.inj<=0;}).sort(function(x,y){return y.ovr-x.ovr;})[0];if(ch)return {a:c.id,b:ch.id,why:'title',title:t.name};}
+  var top=rosterOf(S,P.id).filter(function(w){return w.inj<=0;}).sort(function(x,y){return y.ovr-x.ovr;});
+  return top.length>=2?{a:top[0].id,b:top[1].id,why:'top',title:null}:null;
+};
