@@ -19,8 +19,8 @@ export function cardOf(w: W): string {
   const bi = P.brands && w.brand ? P.brands.findIndex((b: any) => b.id === w.brand) : -1;
   return companyCard(E.logoOf(P), bi);
 }
-/** A wrestler's portrait. Somebody with a Create a Player file has their paper portrait (kit/paperportrait.tsx);
-    everybody else has the face drawn from their numbers, the card behind it the colour of their side. */
-export function Portrait(p: { w: W; cls?: string }) { const w = p.w;
-  if (w.look && typeof w.look === 'object') return <PaperPortrait r={recipeOf(w)} ps={w.look.portrait} card={cardOf(w)} cls={p.cls} label={'Portrait of ' + w.name} />;
-  return <FaceCanvas cls={'pt' + (p.cls ? ' ' + p.cls : '')} face={faceOf(w)} g={w.g} bg={w.twn ? 'N' : w.align} label={'Portrait of ' + w.name} />; }
+/** A wrestler's portrait: their paper portrait (kit/paperportrait.tsx), cut from their own doll, on the colour of
+    their company or brand. Somebody with a file is drawn from it, with the portrait settings they picked; everybody
+    else from what the game knows of them. */
+export function Portrait(p: { w: W; cls?: string }) { const w = p.w, lk = w.look && typeof w.look === 'object' ? w.look : null;
+  return <PaperPortrait r={recipeOf(w)} ps={lk ? lk.portrait : undefined} card={cardOf(w)} cls={p.cls} label={'Portrait of ' + w.name} />; }

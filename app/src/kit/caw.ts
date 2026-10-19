@@ -36,6 +36,30 @@ export function threeMoves(w: { name: string; style?: string; fin?: string }, ha
   const sig = (i: number, j: number, stage: string): Finisher => h[i] || { name: L[j][0], impact_damage: 50, kickout_difficulty: 'Easy', position: 'Standing', category: L[j][1] === 'sleeper' ? 'Submission' : 'Pinfall Impact', preview_pose_id: L[j][1], stage };
   return [fin, sig(1, a, 'early'), sig(2, b, 'late')];
 }
+/** A quick random wrestler (Surprise me in Create a Wrestler): a new body, head and three outfits, the name, sex,
+    moves, taunts and entrance kept. `r` gives numbers from 0 to 1 (Math.random on the screen; it never touches a game). */
+export function randomLook(lk: Look, r: () => number): Look {
+  const pick = <T,>(l: T[]): T => l[Math.floor(r() * l.length) % l.length], ids = (l: [string, string][]) => l.map(x => x[0]);
+  const fem = (lk.physical_attributes || {}).sex === 'F', A = pick(fem ? ARCHETYPES.filter(a => ['Cruiserweight', 'Technical', 'Heavyweight'].indexOf(a[0]) >= 0) : ARCHETYPES), j = () => 0.94 + r() * 0.12;
+  const bold = SWATCHES.filter(sw => sw[3] !== 'denim' && sw[3] !== 'corr').map(sw => sw[0]), metal = SWATCHES.filter(sw => sw[3] === 'foil').map(sw => sw[0]);
+  const hairs = ['#1a1410', '#3a2414', '#6a4422', '#a8742a', '#d8b860', '#8a8a8a', '#e8e4dc', '#7a1a10'];
+  const pal = () => ({ primary: pick(bold), secondary: pick(bold), trim: pick(bold), hardware: pick(metal) });
+  const head = r() < 0.15 ? pick(ids(PARTS.head).filter(h => /^mask/.test(h))) : pick(ids(PARTS.head).filter(h => /^hair/.test(h) && h !== 'hair_face'));
+  const ringTop = fem ? pick(['top_sports', 'top_crop', 'top_bodysuit', 'singlet_full']) : pick(['bare', 'bare', 'singlet_straps_up', 'singlet_straps_down', 'singlet_full', 'shirt_tank']);
+  const ringBottom = fem ? pick(['trunks_brief_01', 'tights_long_01', 'pants_flared', 'skirt_short', 'shorts_fight']) : pick(['trunks_brief_01', 'trunks_long', 'tights_long_01', 'shorts_fight', 'pants_flared']);
+  const extras = ids(PARTS.accessories).filter(a => ['belt_waist', 'belt_shoulder', 'crown', 'cape'].indexOf(a) < 0), some = (n: number) => { const o: string[] = []; for (let i = 0; i < n; i++) { const a = pick(extras); if (o.indexOf(a) < 0) o.push(a); } return o; };
+  const att = (top: string, bottom: string, feet: string, acc: string[]): Attire => ({ equipped_assets: { head, upper_body: top, lower_body: bottom, footwear: feet, accessories: acc }, palette_slots: pal(), custom_layers: [] });
+  const ap0 = lk.appearance || {}, F = FEATURES;
+  return { ...lk, archetype: A[0],
+    physical_attributes: { sex: fem ? 'F' : 'M', height_inches: Math.round(A[2].h * j()), weight_lbs: Math.round(A[2].w * j() / 5) * 5, body_archetype: A[0], proportional_scalers: { torso_width: A[2].s[0] * j(), torso_height: A[2].s[1], limb_length: A[2].s[2], muscle_mass: A[2].s[3] * j() } },
+    appearance: { face: ap0.face, skin_tone: ap0.skin_tone, hair_colour: pick(hairs), facial_hair: fem ? undefined : pick(ids(FACIAL)), features: { eyes: pick(ids(F.eyes)), nose: pick(ids(F.nose)), mouth: pick(ids(F.mouth)), ears: pick(ids(F.ears)) },
+      face_paint: r() < 0.12 ? pick(ids(PAINT).filter(x => x)) : undefined, paint_colour: pick(bold), tattoos: r() < 0.4 ? [pick(ids(TATTOOS))] : undefined, scars: r() < 0.2 ? [pick(ids(SCARS))] : undefined, freckles: r() < 0.15 ? true : undefined },
+    attires: {
+      primary_ring: att(ringTop, ringBottom, pick(['boots_knee', 'boots_laced_heavy', 'boots_short', 'kick_pads', 'ankle_wraps']), some(Math.floor(r() * 3))),
+      entrance_gear: att(pick(['robe_long', 'jacket_leather_biker', 'jacket_satin', 'coat_long', 'hoodie_01', 'vest_open']), ringBottom, pick(['boots_knee', 'boots_laced_heavy', 'boots_short']), r() < 0.3 ? ['sunglasses_aviator'] : []),
+      street_clothes: att(pick(['shirt_tshirt_base', 'hoodie_01', 'jacket_leather_biker', 'suit_jacket', 'shirt_tank']), pick(['jeans_distressed', 'trousers_suit']), pick(['sneakers_retro', 'boots_short', 'shoes_dress']), r() < 0.25 ? [pick(['hat_cap', 'hat_beanie', 'sunglasses_aviator'])] : []),
+    } };
+}
 /** When in a match a signature move comes out. */
 export const STAGES: [string, string][] = [['early', 'Early, to take control'], ['mid', 'In the middle'], ['late', 'Late, to set up the finish']];
 export type AttireKey = 'primary_ring' | 'entrance_gear' | 'street_clothes';

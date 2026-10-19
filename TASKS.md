@@ -122,7 +122,7 @@ Create a Wrestler:
 - [ ] Lettering on the back of a jacket: it needs a picture from behind (a pose that turns away), which the paper doll does not have yet.
 - [x] A move set: every wrestler has one finisher and two signature moves (Ryan, 19 October), each signature early, in the middle or late in a match; up to three taunts, played now and then by whoever is on top. Wrestlers with no file get signatures by style.
 - [x] An entrance built from parts: the walk (the five entrances, or a custom one), pyro (sparks, fountains, a flash, columns of fire), lights (a spotlight, lights down, red, blue or green, strobes) and the name of their music, which the announcers say as they come out.
-- [ ] Paper portraits for everybody, not only the edited, and a quick random wrestler.
+- [x] Paper portraits for everybody, not only the edited (`Portrait` draws every wrestler from their doll), and a quick random wrestler (Surprise me in the suite).
 - [ ] Parts made in Blender with sockets, and a parts format modders can add to.
 - [ ] A file per wrestler on disk on the desktop build (`/save/wrestlers/`).
 

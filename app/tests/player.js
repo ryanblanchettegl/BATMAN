@@ -150,6 +150,9 @@ const msg = page => txt(page, '[data-t="caw-msg"]');
     body.name = 'Opened From File'; await page.setInputFiles('[data-t="caw-file"]', { name: 'w.wrestler.json', mimeType: 'application/json', buffer: Buffer.from(JSON.stringify(body)) }); await page.waitForTimeout(200);
     ok('a wrestler file opens', /Opened From File/.test(await msg(page)) && /Opened From File/.test(await txt(page, '[data-t="caw-win"]')));
     if (process.env.SHOTS) await shot(page, 'player-file');
+    { await page.click('[data-t="caw-tab"][data-v="body"]'); const before = await page.$eval('[data-t="caw-heightv"]', e => e.textContent); let changed = false;
+      for (let i = 0; i < 4 && !changed; i++) { await page.click('[data-t="caw-random"]'); changed = (await page.$eval('[data-t="caw-heightv"]', e => e.textContent)) !== before; }
+      ok('Surprise me makes a new look at random', changed && /Opened From File/.test(await txt(page, '[data-t="caw-win"]'))); }
     await page.click('[data-t="caw-done"]'); await page.waitForTimeout(300);
     ok('Done goes back to the wrestler, drawn from their own look', /their own look/.test(await txt(page, '[data-t="ed-wdoll"]')));
     // Edit attire: the outfits a part of the body at a time
