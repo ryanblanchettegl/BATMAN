@@ -12,7 +12,7 @@ import { E } from '../../engine';
 import { G, ui, me, pref, savePrefs, redraw, reduceMotion } from '../../store';
 import { ScenePlayer } from '../../kit/sceneplayer';
 import { scenesFor, allScenes, copy, Scene } from '../../kit/scene';
-import { finScene } from '../../kit/caw';
+import { finScene, threeMoves } from '../../kit/caw';
 import { recipeOf, Recipe, commentator } from '../../kit/puppet';
 import { book } from '../../flow';
 import { fillScene, MomentPic } from '../../shared/moment';
@@ -256,8 +256,12 @@ function scenePick(r: any, s: any, at: number, done: boolean): { sc: Scene; cast
     else { key = 'm' + Math.floor(now / 4); const f = first((bc[now] || { x: '' }).x); if (f >= 0) a = f; }
   }
   let sc0 = choose(when, key.length); if (!sc0) return null;
-  const sigs = when === 'mid' && S.w[a] && S.w[a].look ? (S.w[a].look.finishing_moves || []).slice(1) : [];
-  if (sigs.length) { const sm = sigs[Math.abs((r.week || 0) + i * 3 + key.length * 7 + now) % sigs.length], fs = allScenes(world).find(x => x.id === finScene(sm));
+  // the one in control in the middle of a match: a signature move for this part of it (early, the middle, late), or now and then a taunt
+  const lkA = when === 'mid' && S.w[a] ? (S.w[a].look || {}) : null, part = now < bc.length * 0.35 ? 'early' : now < bc.length * 0.7 ? 'mid' : 'late', hsh = Math.abs((r.week || 0) + i * 3 + key.length * 7 + now);
+  const all = lkA ? threeMoves(S.w[a], lkA.finishing_moves).slice(1) : [], here = all.filter((m: any) => (m.stage || 'mid') === part), sigs = here.length ? here : all;
+  const tn = lkA ? (lkA.taunts || []).map((id: string) => allScenes(world).find(x => x.id === id && x.when === 'taunt')).filter(Boolean) as Scene[] : [];
+  if (tn.length && (!sigs.length || hsh % 3 === 0)) sc0 = tn[hsh % tn.length];
+  else if (sigs.length) { const sm = sigs[hsh % sigs.length], fs = allScenes(world).find(x => x.id === finScene(sm));
     if (fs) { sc0 = copy(fs); const lk0 = sc0.keys[sc0.keys.length - 1]; let named = false; lk0.props.forEach(q => { if (q.k === 'burst') { q.txt = sm.name.toUpperCase().slice(0, 16); named = true; } }); if (!named) lk0.props.push({ id: 'sig', k: 'burst', x: 3.6, y: 2.8, r: 0, z: 3, s: 1, txt: sm.name.toUpperCase().slice(0, 16) }); sc0.name = sm.name; } }
   // a winner made in Create a Player finishes with their own move: its picture, with its name in the burst
   const fm = when === 'finish' && S.w[a] && S.w[a].look && (S.w[a].look.finishing_moves || [])[0];

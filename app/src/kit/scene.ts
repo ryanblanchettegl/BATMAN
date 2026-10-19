@@ -48,7 +48,7 @@ export interface Scene { v: 1; id: string; name: string; when: string; set: stri
 /** When the broadcast plays a scene. A scene made by a player can take any of these. */
 /** What a scene is for. The match moments play on the broadcast now; the rest are where scenes go next
     (Ryan, 18 October: breaking news, talk show highlights, posters, magazine covers, portraits, everything). */
-export const WHEN: [string, string][] = [['start', 'The opening bell'], ['mid', 'Back and forth'], ['nearfall', 'A near fall'], ['finish', 'The finish'], ['champion', 'A new champion'], ['promo', 'A promo'], ['attack', 'An attack'], ['entrance', 'The entrance'],
+export const WHEN: [string, string][] = [['start', 'The opening bell'], ['mid', 'Back and forth'], ['nearfall', 'A near fall'], ['finish', 'The finish'], ['champion', 'A new champion'], ['promo', 'A promo'], ['attack', 'An attack'], ['entrance', 'The entrance'], ['taunt', 'A taunt'],
   ['desk1', 'The desk: play-by-play talking'], ['desk2', 'The desk: colour talking'], ['news', 'Breaking news'], ['talk', 'A talk show'], ['poster', 'A poster'], ['cover', 'A magazine cover'], ['portrait', 'A portrait'], ['any', 'Only by hand']];
 /** What a still picture is for: the moments the booker has to answer (Ryan, 18 October: "one static diorama image of
     the wrestler getting hurt, backstage fight"). The desk and the broadcast pick one by what the matter is about. */
@@ -446,6 +446,14 @@ export const SCENES: Scene[] = [
     [0, { hip_n: 14, kn_n: -10, hip_f: -12, sh_n: 30, el_n: 90, sh_f: 20, el_f: 95 }, 'smirk', 0],
     [0.8, { sh_n: 150, el_n: 120, sh_f: -20, el_f: -30, head: 10 }, 'smirk', 0.3],
     [1.6, { torso: 8, sh_n: 80, el_n: 60, sh_f: -80, el_f: -60, head: 12 }, 'snarl', 0.4]]),
+  ...[  // taunts: whoever is on top plays to the building, the other down on the mat. Wrestlers pick up to three in Create a Wrestler.
+    ['taunt_crowd', 'Plays to the crowd', [[0, { sh_n: 100, el_n: 20, sh_f: -100, el_f: -20, head: 6 }, 'smirk'], [0.8, { sh_n: 165, el_n: 10, sh_f: -165, el_f: -10, head: 12 }, 'roar']]],
+    ['taunt_point', 'Points down at them', [[0, { sh_n: 40, el_n: 30, sh_f: -10, head: -4 }, 'snarl'], [0.7, { torso: 10, sh_n: 75, el_n: 0, sh_f: -20, el_f: -20, head: -10 }, 'shout']]],
+    ['taunt_flex', 'Flexes over them', [[0, { sh_n: 60, el_n: 90, sh_f: -60, el_f: -90 }, ''], [0.8, { sh_n: 90, el_n: 120, sh_f: -90, el_f: -120, hip_n: 10, hip_f: -10 }, 'roar']]],
+    ['taunt_call', 'Calls for the finish', [[0, { sh_n: 160, el_n: 30, sh_f: -10, head: 8 }, 'shout'], [0.5, { sh_n: 150, el_n: -25, sh_f: -10, head: 10 }, 'shout'], [1.0, { sh_n: 165, el_n: 30, sh_f: -10, head: 8 }, 'roar']]],
+    ['taunt_mock', 'A foot on their chest', [[0, { sh_n: 40, el_n: 125, wr_n: 10, sh_f: 45, el_f: 120, hip_n: 20, kn_n: -20 }, 'smirk'], [0.8, { sh_n: 40, el_n: 125, wr_n: 10, sh_f: 45, el_f: 120, hip_n: 55, kn_n: -70, an_n: 20, head: -12 }, 'smirk']]],
+  ].map(([id, name, ks]) => ({ v: 1 as const, id: id as string, name: name as string, when: 'taunt', set: 'ring', slots: [{ id: 'A', n: 'Who taunts', role: 'a' as const }, { id: 'B', n: 'Who is down', role: 'b' as const }, { id: 'R', n: 'The referee', role: 'ref' as const }],
+    keys: (ks as [number, Record<string, number>, string][]).map(([t, p, e]) => ({ t, figs: { A: STD(id === 'taunt_mock' ? 0.2 : -0.9, 1, p, e, 0.6), B: LAY(id === 'taunt_mock' ? 1.9 : 1.8, -1, 90, { sh_n: 150, sh_f: 130, hip_n: 20, kn_n: -40 }, 'hurt', 0.2), R: STD(-4.6, 1, { sh_n: 20, el_n: 40 }, '', -0.3) }, props: [] })) } as Scene)),
   deskScene('desk1', 'At the desk: the call', 'desk1', 'C1'),
   deskScene('desk2', 'At the desk: the colour', 'desk2', 'C2'),
   { v: 1, id: 'promo', name: 'On the microphone', when: 'promo', set: 'ring', slots: [{ id: 'A', n: 'The talker', role: 'a' }], keys: [

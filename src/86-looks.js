@@ -41,10 +41,11 @@ var ft=null;if(ap.features&&typeof ap.features==='object'){ft={};['eyes','nose',
     var pcs={};['upper_body','lower_body','footwear'].forEach(function(q){var v=lkId((a.part_colours||{})[q]);if(v)pcs[q]=v;});
     at[k]=lkPrune({description:lkStr(a.description,40),equipped_assets:e,palette_slots:pal,custom_layers:lay,part_colours:Object.keys(pcs).length?pcs:undefined});});
     if(Object.keys(at).length)o.attires=at;}
-  if(Array.isArray(x.finishing_moves))o.finishing_moves=x.finishing_moves.slice(0,4).map(function(m){
+  if(Array.isArray(x.finishing_moves))o.finishing_moves=x.finishing_moves.slice(0,3).map(function(m){
     if(!m||typeof m!=='object'||!lkStr(m.name,32))return null;
     return lkPrune({name:lkStr(m.name,32),impact_damage:lkNum(m.impact_damage,1,100),kickout_difficulty:LOOK_KICK.indexOf(m.kickout_difficulty)>=0?m.kickout_difficulty:undefined,
-      position:LOOK_POS.indexOf(m.position)>=0?m.position:undefined,category:lkStr(m.category,24),preview_pose_id:lkId(m.preview_pose_id)});}).filter(function(m){return !!m;});
+      position:LOOK_POS.indexOf(m.position)>=0?m.position:undefined,category:lkStr(m.category,24),preview_pose_id:lkId(m.preview_pose_id),stage:['early','mid','late'].indexOf(m.stage)>=0?m.stage:undefined});}).filter(function(m){return !!m;});
+  if(Array.isArray(x.taunts)){var tn=x.taunts.map(lkId).filter(function(v,i,a){return !!v&&a.indexOf(v)===i;}).slice(0,3);if(tn.length)o.taunts=tn;}   // up to three taunts, each a scene id
   var en=lkId(x.entrance);if(en)o.entrance=en;   // one of the canned entrances
   if(x.portrait&&typeof x.portrait==='object'){var pt=x.portrait;o.portrait=lkPrune({attire:LOOK_ATTIRES.indexOf(pt.attire)>=0?pt.attire:undefined,expr:typeof pt.expr==='string'&&/^[a-z]{0,8}$/.test(pt.expr)?pt.expr:undefined,pose:lkId(pt.pose),bg:lkId(pt.bg),frame:pt.frame==='chest'||pt.frame==='head'?pt.frame:undefined});if(!Object.keys(o.portrait).length)delete o.portrait;}   // their portrait
   return Object.keys(o).length?o:null;

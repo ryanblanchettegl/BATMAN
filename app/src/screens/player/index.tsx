@@ -11,7 +11,7 @@ import { Btn, TextBox, Desktop, Win, Group, Tabs } from '../../kit';
 import { ScenePlayer } from '../../kit/sceneplayer';
 import { Scene, SCENES, POSES, WAIST, copy, scenesFor, allScenes, WHEN } from '../../kit/scene';
 import { Recipe, recipeOf, blank } from '../../kit/puppet';
-import { Look, Attire, AttireKey, Layer, Finisher, ATTIRES, PARTS, SWATCHES, SLOTS, FONTS, SHAPES, ARCHETYPES, FACIAL, PAINT, TATTOOS, HAIR_MIX, SCARS, MASK_DESIGNS, FACE_SLIDERS, FEATURES, KICKOUT, POSITIONS, CATEGORIES, FIN_SCENES, fromLook, blankLook, finScene, swatch } from '../../kit/caw';
+import { Look, Attire, AttireKey, Layer, Finisher, ATTIRES, PARTS, SWATCHES, SLOTS, FONTS, SHAPES, ARCHETYPES, FACIAL, PAINT, TATTOOS, HAIR_MIX, SCARS, MASK_DESIGNS, FACE_SLIDERS, FEATURES, KICKOUT, POSITIONS, CATEGORIES, FIN_SCENES, STAGES, threeMoves, fromLook, blankLook, finScene, swatch } from '../../kit/caw';
 import { derive, NAMES, FaceKey } from '../../lib/portrait';
 import { PaperPortrait, PT_POSES, PT_FRAMES, companyCard } from '../../kit/paperportrait';
 import { EXPR } from '../../kit/puppet';
@@ -52,8 +52,9 @@ export function CreatePlayer(pp: PlayerProps) {
   const startW = pp.sign ? { id: -1, name: '', g: 'M', align: 'F', style: 'A', face: derive(seed, 'M', 25), age: 25 } : pp.w;
   const [lk, setLk] = useState<Look>(() => {
     const had = pp.had ? E.lookClean(pp.had) : null;
-    if (had) return had;
+    if (had) { had.finishing_moves = threeMoves(startW, had.finishing_moves); return had; }   // one finisher and two signature moves, always
     const n = blankLook(startW, recipeOf({ ...startW, look: null })); n.appearance = { face: { ...derive(startW.name || seed, startW.g, startW.age || 25), ...(startW.face || {}) } };
+    n.finishing_moves = threeMoves(startW);
     if (pp.sign) { n.name = ''; n.id = undefined; }
     return n;
   });
@@ -78,6 +79,8 @@ export function CreatePlayer(pp: PlayerProps) {
     sc = { ...copy(src), attire: 'primary_ring', loop: true }; cast.B = { ...blank(1), name: 'The dummy' }; play = 'fin' + fi + JSON.stringify(lk) + sc.id;
   } else if (prevSc && tab === 'scenes') {   // the entrance they picked, with them in it
     sc = { ...copy(prevSc), loop: true }; play = 'sc' + prevSc.id + JSON.stringify(lk);
+  } else if (prevSc && prevSc.when === 'taunt' && tab === 'fin') {   // a taunt they picked, over the dummy
+    sc = { ...copy(prevSc), attire: 'primary_ring', loop: true }; cast.B = { ...blank(1), name: 'The dummy' }; play = 'tn' + prevSc.id + JSON.stringify(lk);
   } else {
     const pd = (POSES.find(x => x[0] === pose) || POSES[0])[1];
     sc = { v: 1, id: 'caw', name: 'Create a Wrestler', when: 'any', set: SET_OF[att], attire: att, slots: [{ id: 'A', n: lk.name || w0.name, role: 'a' }],
@@ -121,7 +124,7 @@ export function CreatePlayer(pp: PlayerProps) {
   const AN = ATTIRES.find(a => a[0] === att)![1];
   const pt = lk.portrait || {}, card = pp.card || companyCard(null);
   const setPt = (o: any) => change(n => { const q: any = { ...(n.portrait || {}), ...o }; Object.keys(q).forEach(k => { if (q[k] === undefined || q[k] === '') delete q[k]; }); if (Object.keys(q).length) n.portrait = q; else delete n.portrait; });
-  const titles: Record<Tab, string> = { face: 'Shape the face', ink: 'Paint and ink', portrait: 'Their portrait', a_head: 'Head: ' + AN, a_upper: 'Upper body: ' + AN, a_lower: 'Lower body: ' + AN, a_feet: 'Feet: ' + AN, sign: 'A new wrestler', body: 'The body', head: 'The head', gear: 'Gear: ' + ATTIRES.find(a => a[0] === att)![1], colour: 'Colours: ' + ATTIRES.find(a => a[0] === att)![1], studio: 'Gear studio: lettering and shapes', fin: 'Finishing moves', scenes: 'Their entrance', file: 'The file' };
+  const titles: Record<Tab, string> = { face: 'Shape the face', ink: 'Paint and ink', portrait: 'Their portrait', a_head: 'Head: ' + AN, a_upper: 'Upper body: ' + AN, a_lower: 'Lower body: ' + AN, a_feet: 'Feet: ' + AN, sign: 'A new wrestler', body: 'The body', head: 'The head', gear: 'Gear: ' + ATTIRES.find(a => a[0] === att)![1], colour: 'Colours: ' + ATTIRES.find(a => a[0] === att)![1], studio: 'Gear studio: lettering and shapes', fin: 'Their moves', scenes: 'Their entrance', file: 'The file' };
   return <div class="scfull paper" data-t="caw">
     <div class="sc-menubar" role="group" aria-label={pp.sign ? 'Create a Wrestler' : pp.attire ? 'Edit attire' : 'Edit wrestler'}>
       <b class="on">{pp.sign ? 'Create a Wrestler' : pp.attire ? 'Edit attire' : 'Edit wrestler'}</b><span>{pp.world}</span><span class="sp" />
@@ -135,7 +138,7 @@ export function CreatePlayer(pp: PlayerProps) {
           <span class="sc-lbl">Outfit</span>
           {ATTIRES.map(a => <Btn kind="sm" t="caw-attire" d={{ v: a[0] }} on={att === a[0]} onClick={() => { setAtt(a[0]); setActing(false); setLay(-1); }}>{a[1]}</Btn>)}
         </div>
-        <div class="caw-stagerow"><div class="sc-stage caw-stage"><ScenePlayer key="caw" sc={sc} cast={cast} play={play} still={!(acting && fin) && !(prevSc && tab === 'scenes')} orbit fill={!(acting && fin) && !(prevSc && tab === 'scenes')} t="caw-view" label={(lk.name || w0.name) + ' in ' + ATTIRES.find(a => a[0] === att)![1].toLowerCase() + '. Drag to walk round them.'} /></div>
+        <div class="caw-stagerow"><div class="sc-stage caw-stage"><ScenePlayer key="caw" sc={sc} cast={cast} play={play} still={!(acting && fin) && !(prevSc && (tab === 'scenes' || tab === 'fin'))} orbit fill={!(acting && fin) && !(prevSc && (tab === 'scenes' || tab === 'fin'))} t="caw-view" label={(lk.name || w0.name) + ' in ' + ATTIRES.find(a => a[0] === att)![1].toLowerCase() + '. Drag to walk round them.'} /></div>
           <div class="caw-ptcol"><button type="button" class={'caw-ptbtn' + (tab === 'portrait' ? ' on' : '')} data-t="caw-portrait" aria-label="Their portrait: press to change it" title="Their portrait: press to change it" onClick={() => setTab('portrait')}><PaperPortrait r={r} ps={pt} card={card} label={'Portrait of ' + (lk.name || w0.name)} /><span class="caw-ptlbl">Portrait</span></button></div></div>
         <div class="sc-keys" role="group" aria-label="Pose">
           <span class="sc-lbl">Pose</span>
@@ -145,7 +148,7 @@ export function CreatePlayer(pp: PlayerProps) {
       </Win>
       <Win title={titles[tab]} right={tab === 'gear' || tab === 'colour' || tab === 'studio' ? ATTIRES.find(a => a[0] === att)![1] : ''} area="side" t="caw-side">
         <Tabs label="What to change" value={tab} onPick={v => setTab(v as Tab)} items={pp.attire ? [{ id: 'a_head', label: 'Head', t: 'caw-tab' }, { id: 'a_upper', label: 'Upper body', t: 'caw-tab' }, { id: 'a_lower', label: 'Lower body', t: 'caw-tab' }, { id: 'a_feet', label: 'Feet', t: 'caw-tab' }, { id: 'studio', label: 'Lettering', t: 'caw-tab' }, { id: 'colour', label: 'Colours', t: 'caw-tab' }] : [...(pp.sign ? [{ id: 'sign', label: 'Who they are', t: 'caw-tab' }] : []), { id: 'body', label: 'Body', t: 'caw-tab' }, { id: 'head', label: 'Head', t: 'caw-tab' }, { id: 'face', label: 'Face shape', t: 'caw-tab' }, { id: 'ink', label: 'Paint and ink', t: 'caw-tab' }, { id: 'gear', label: 'Gear', t: 'caw-tab' },
-          { id: 'colour', label: 'Colours', t: 'caw-tab' }, { id: 'studio', label: 'Lettering', t: 'caw-tab' }, { id: 'fin', label: 'Finishers', t: 'caw-tab' }, { id: 'scenes', label: 'Entrance', t: 'caw-tab' }, { id: 'file', label: 'File', t: 'caw-tab' }]} />
+          { id: 'colour', label: 'Colours', t: 'caw-tab' }, { id: 'studio', label: 'Lettering', t: 'caw-tab' }, { id: 'fin', label: 'Moves', t: 'caw-tab' }, { id: 'scenes', label: 'Entrance', t: 'caw-tab' }, { id: 'file', label: 'File', t: 'caw-tab' }]} />
         {tab === 'sign' && info && pv && <>
           <div class="sc-row"><span class="sc-slot">Ring name</span><TextBox value={lk.name || ''} max={28} label="Ring name" t="caw-name" width="18ch" onInput={v => change(n => { n.name = v; })} /></div>
           {([['g', 'Division', [['M', 'Men'], ['F', 'Women']]], ['align', 'Side', [['F', 'Face'], ['H', 'Heel']]], ['style', 'Style', Object.keys(E.STYLE_NAME).map(k => [k, E.STYLE_NAME[k]])],
@@ -283,17 +286,21 @@ export function CreatePlayer(pp: PlayerProps) {
           </Group>
         </>}
         {tab === 'fin' && <>
-          <div class="sc-row">{fins.map((f, i) => <Btn kind="less" t="caw-fin" d={{ v: i }} on={i === fi} onClick={() => { setFi(i); setActing(false); }}>{(i ? 'Signature: ' : 'Finisher: ') + f.name}</Btn>)}
-            <Btn kind="sm" t="caw-addfin" disabled={fins.length >= 4} onClick={() => { change(n => { const F = n.finishing_moves = n.finishing_moves || []; F.push({ name: fins.length ? 'Signature move ' + fins.length : 'The finisher', impact_damage: 80, kickout_difficulty: 'Protected', position: 'Standing', category: 'Pinfall Impact', preview_pose_id: 'slam' }); }); setFi(fins.length); }}>Add a move</Btn></div>
+          <div class="sc-row">{fins.map((f, i) => <Btn kind="less" t="caw-fin" d={{ v: i }} on={i === fi} onClick={() => { setFi(i); setActing(false); }}>{(i ? 'Signature: ' : 'Finisher: ') + f.name}</Btn>)}</div>
           {fin ? <>
             <div class="sc-row"><TextBox value={fin.name} max={32} label="Name of the move" t="caw-finname" width="18ch" onInput={v => setFin(f => { f.name = v; })} /></div>
             <div class="sc-row"><span class="caw-lbl">Impact</span><input type="range" min={1} max={100} value={fin.impact_damage || 50} aria-label="Impact" data-t="caw-findmg" onInput={e => { const v = +(e.currentTarget as HTMLInputElement).value; setFin(f => { f.impact_damage = v; }); }} /><b>{fin.impact_damage || 50}</b></div>
             {([['kickout_difficulty', 'Kick out', KICKOUT], ['position', 'From', POSITIONS], ['category', 'How it wins', CATEGORIES], ['preview_pose_id', 'In the picture', FIN_SCENES]] as [keyof Finisher, string, [string, string][]][]).map(([k, n, opts]) =>
               <div class="sc-row"><span class="sc-slot">{n}</span><select aria-label={n} data-t="caw-finopt" data-v={k} value={(k === 'preview_pose_id' ? finScene(fin) : (fin[k] as string)) || ''} onChange={e => { const v = (e.currentTarget as HTMLSelectElement).value; setFin(f => { (f as any)[k] = v; }); }}>{opts.map(o => <option value={o[0]}>{o[1]}</option>)}</select></div>)}
+            {fi > 0 ? <div class="sc-row"><span class="sc-slot">When</span><select aria-label="When in a match" data-t="caw-finstage" value={fin.stage || 'mid'} onChange={e => { const v = (e.currentTarget as HTMLSelectElement).value; setFin(f => { if (v === 'mid') delete f.stage; else f.stage = v; }); }}>{STAGES.map(o => <option value={o[0]}>{o[1]}</option>)}</select></div> : null}
             <div class="sc-row"><Btn kind="go" t="caw-act" onClick={() => setActing(!acting)}>{acting ? 'Stop' : 'Act it out on the dummy'}</Btn>
-              <Btn kind="danger" t="caw-dropfin" onClick={() => { change(n => { (n.finishing_moves || []).splice(fi, 1); }); setFi(-1); setActing(false); }}>Remove</Btn></div>
-            <p class="muted">The first move is the finisher: its picture plays when it ends a match. The others are signature moves: their pictures play during the match. People do kick out of finishers: the more protected the move, the rarer and bigger the kick-out, and every kick-out wears it down a little until it rests. A clean win with it lands by how protected it is, how hard it hits and where it comes from.</p>
-          </> : <p class="empty">{fins.length ? 'Pick a move to change it.' : 'No finishing moves yet.'}</p>}
+</div>
+            <p class="muted">One finisher and two signature moves, each played when it says. The more protected a finisher, the rarer and bigger a kick-out.</p>
+          </> : <p class="empty">Pick a move to change it.</p>}
+          <Group title={'Taunts (' + (lk.taunts || []).length + ' of 3)'}>
+            <div class="sc-row">{scenesFor('taunt', world).map(o => { const on = (lk.taunts || []).indexOf(o.id) >= 0; return <Btn kind="less" t="caw-taunt" d={{ v: o.id }} on={on} disabled={!on && (lk.taunts || []).length >= 3} onClick={() => { change(n => { const l = n.taunts || []; n.taunts = on ? l.filter(x => x !== o.id) : l.concat([o.id]); if (!n.taunts.length) delete n.taunts; }); setActing(false); setPrev(on ? null : o.id); }}>{o.name}</Btn>; })}</div>
+            {prevSc && prevSc.when === 'taunt' ? <div class="sc-row"><Btn kind="sm" t="caw-tauntstop" onClick={() => setPrev(null)}>Stop</Btn><span class="muted">{prevSc.name}</span></div> : <p class="muted">Pick up to three. When they are on top in a match, the broadcast now and then shows one instead of a move.</p>}
+          </Group>
         </>}
         {tab === 'scenes' && <>
           <div class="sc-row" role="group" aria-label="Entrances">

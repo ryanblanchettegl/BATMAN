@@ -120,7 +120,7 @@ Create a Wrestler:
 - [ ] Face paint in layers.
 - [x] More gear: a satin ring jacket, a long coat, a baseball cap and a wool hat, bare feet taped at the ankle, a ring bodysuit and flared ring pants, a cape, a crown, a title belt round the waist or over the shoulder.
 - [ ] Lettering on the back of a jacket: it needs a picture from behind (a pose that turns away), which the paper doll does not have yet.
-- [ ] A move set: signature moves for each part of a match, taunts.
+- [x] A move set: every wrestler has one finisher and two signature moves (Ryan, 19 October), each signature early, in the middle or late in a match; up to three taunts, played now and then by whoever is on top. Wrestlers with no file get signatures by style.
 - [ ] An entrance built from parts: a music cue, pyro, lights, a walk.
 - [ ] Paper portraits for everybody, not only the edited, and a quick random wrestler.
 - [ ] Parts made in Blender with sockets, and a parts format modders can add to.

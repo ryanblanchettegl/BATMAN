@@ -14,10 +14,35 @@ export interface Layer { type: 'text_decal' | 'shape_combiner'; string?: string;
 export interface Attire { description?: string; equipped_assets: { head?: string; upper_body?: string; lower_body?: string; footwear?: string; accessories?: string[] }; palette_slots: { primary?: string; secondary?: string; trim?: string; hardware?: string }; custom_layers?: Layer[];
   /** Not in Ryan's first draft: a colour of its own for one part, over the palette slot it would take. */
   part_colours?: { upper_body?: string; lower_body?: string; footwear?: string } }
-export interface Finisher { name: string; impact_damage?: number; kickout_difficulty?: string; position?: string; category?: string; preview_pose_id?: string }
+export interface Finisher { name: string; impact_damage?: number; kickout_difficulty?: string; position?: string; category?: string; preview_pose_id?: string;
+  /** Not in Ryan's first draft: when a signature move comes out in a match (STAGES); the finisher has none. */
+  stage?: string }
+/** Signature moves a wrestler has before anybody edits them, by style (the codes in FINISH in src/00-core.js): a name and the picture it plays as. */
+const SIGS: Record<string, [string, string][]> = {
+  B: [['Running Clothesline', 'strike'], ['Big Boot', 'strike'], ['Back Body Drop', 'slam'], ['Headlock Punches', 'sleeper']],
+  T: [['Belly to Back Suplex', 'slam'], ['Sleeper Hold', 'sleeper'], ['Knee Bar', 'sleeper'], ['Snap Suplex', 'slam']],
+  H: [['Springboard Dropkick', 'strike'], ['Flying Crossbody', 'strike'], ['Hurricane Spin', 'carry'], ['Top Rope Moonsault', 'strike']],
+  P: [['Powerslam', 'slam'], ['Spinebuster', 'slam'], ['Gorilla Press', 'carry'], ['Bear Hug', 'sleeper']],
+  A: [['Swinging Neckbreaker', 'slam'], ['Spinning Back Kick', 'strike'], ['Fireman\'s Carry', 'carry'], ['Figure Four', 'sleeper']],
+  S: [['Spinning Heel Kick', 'strike'], ['Knee Strike', 'strike'], ['Rear Choke', 'sleeper'], ['Leg Sweep', 'slam']],
+  E: [['Showboat Elbow', 'strike'], ['Flying Shoulder Block', 'strike'], ['Bulldog', 'slam'], ['Abdominal Stretch', 'sleeper']],
+};
+const hsh = (t: string) => { let h = 2166136261; for (let i = 0; i < t.length; i++) { h ^= t.charCodeAt(i); h = Math.imul(h, 16777619); } return h >>> 0; };
+/** Every wrestler has one finisher and two signature moves (Ryan, 19 October). The moves they have, with any that are
+    missing filled in: the finisher from the game's name for it, the signatures by style, one early and one late. */
+export function threeMoves(w: { name: string; style?: string; fin?: string }, have?: Finisher[]): Finisher[] {
+  const h = have || [], L = SIGS[w.style || 'A'] || SIGS.A, k = hsh(w.name || 'x'), a = k % L.length, b = (a + 1 + (k >> 4) % (L.length - 1)) % L.length;
+  const fin: Finisher = h[0] || { name: w.fin || 'The finisher', impact_damage: 85, kickout_difficulty: 'Protected', position: 'Standing', category: w.style === 'T' ? 'Submission' : 'Pinfall Impact', preview_pose_id: w.style === 'T' ? 'sleeper' : 'slam' };
+  const sig = (i: number, j: number, stage: string): Finisher => h[i] || { name: L[j][0], impact_damage: 50, kickout_difficulty: 'Easy', position: 'Standing', category: L[j][1] === 'sleeper' ? 'Submission' : 'Pinfall Impact', preview_pose_id: L[j][1], stage };
+  return [fin, sig(1, a, 'early'), sig(2, b, 'late')];
+}
+/** When in a match a signature move comes out. */
+export const STAGES: [string, string][] = [['early', 'Early, to take control'], ['mid', 'In the middle'], ['late', 'Late, to set up the finish']];
 export type AttireKey = 'primary_ring' | 'entrance_gear' | 'street_clothes';
 export interface Look {
   id?: string; name?: string; moniker?: string; hometown?: string; archetype?: string;
+  /** Not in Ryan's first draft: up to three taunts, each a scene of the kind 'taunt' (the game's or a world's). */
+  taunts?: string[];
   physical_attributes?: { /** Not in Ryan's first draft: the body the doll is cut as, M or F. */ sex?: 'M' | 'F'; height_inches?: number; weight_lbs?: number; body_archetype?: string; proportional_scalers?: { torso_width?: number; torso_height?: number; limb_length?: number; muscle_mass?: number } };
   /** Not in Ryan's first draft: the head under the gear (the face numbers the game already keeps), so a file carries the whole person. */
   appearance?: { face?: Record<string, number>; /** Not in Ryan's first draft: face sliders, each -1 to 1 (0 is as the face shape cuts it). */ shape?: Record<string, number>; /** Not in Ryan's first draft: which eyes, nose, mouth and ears (FEATURES). */ features?: { eyes?: string; nose?: string; mouth?: string; ears?: string }; skin_tone?: number; hair_colour?: string; facial_hair?: string; face_paint?: string; paint_colour?: string; tattoos?: string[];

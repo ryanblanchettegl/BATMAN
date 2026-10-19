@@ -91,14 +91,27 @@ const msg = page => txt(page, '[data-t="caw-msg"]');
     if (process.env.SHOTS) { await page.waitForTimeout(2500); await shot(page, 'player-studio'); }
     ok('the suite still fits one screen', !(await fits(page)), await fits(page));
     // a finishing move, acted out on the dummy
-    await page.click('[data-t="caw-tab"][data-v="fin"]'); await page.click('[data-t="caw-addfin"]');
+    await page.click('[data-t="caw-tab"][data-v="fin"]'); await page.click('[data-t="caw-fin"][data-v="0"]');
     await page.fill('[data-t="caw-finname"]', 'State Line Slam');
     await page.selectOption('[data-t="caw-finopt"][data-v="kickout_difficulty"]', 'Instant');
+    await page.selectOption('[data-t="caw-finopt"][data-v="preview_pose_id"]', 'slam');
     await page.click('[data-t="caw-act"]'); await page.waitForTimeout(800);
     ok('the move is acted out on the dummy', (await attr(page, '[data-t="caw-view"]', 'data-v')) === 'slam' && /State Line Slam/.test(await txt(page, '[data-t="caw-win"]')));
     await page.selectOption('[data-t="caw-finopt"][data-v="preview_pose_id"]', 'sleeper'); await page.waitForTimeout(400);
     ok('a submission plays as a hold', (await attr(page, '[data-t="caw-view"]', 'data-v')) === 'sleeper');
     await page.click('[data-t="caw-act"]');
+    // a signature move for late in the match, and taunts
+    ok('every wrestler has one finisher and two signature moves', (await page.$$('[data-t="caw-fin"]')).length === 3 && !(await page.$('[data-t="caw-addfin"]'))); await page.click('[data-t="caw-fin"][data-v="2"]'); await page.fill('[data-t="caw-finname"]', 'Back Breaker');
+    ok('the second signature comes out late until told otherwise', (await page.$eval('[data-t="caw-finstage"]', e => e.value)) === 'late');
+    await page.selectOption('[data-t="caw-finstage"]', 'early');
+    ok('a signature move says when in a match it comes out', (await page.$eval('[data-t="caw-finstage"]', e => e.value)) === 'early');
+    await page.click('[data-t="caw-taunt"][data-v="taunt_call"]'); await page.waitForTimeout(600);
+    ok('a taunt plays on the dummy when picked', (await attr(page, '[data-t="caw-view"]', 'data-v')) === 'taunt_call');
+    await page.click('[data-t="caw-taunt"][data-v="taunt_flex"]'); await page.click('[data-t="caw-taunt"][data-v="taunt_crowd"]');
+    ok('three taunts at most', await page.$eval('[data-t="caw-taunt"][data-v="taunt_mock"]', e => e.disabled));
+    ok('the moves tab fits with its taunts', !(await fits(page)), await fits(page));
+    if (process.env.SHOTS) await shot(page, 'player-moves');
+    await page.click('[data-t="caw-tauntstop"]');
     // the entrance: one of the game's, or a custom one made in Create a Scene
     await page.click('[data-t="caw-tab"][data-v="scenes"]');
     ok('there are canned entrances to pick from', (await page.$$('[data-t="caw-ent"]')).length >= 6);
@@ -127,7 +140,7 @@ const msg = page => txt(page, '[data-t="caw-msg"]');
     ok('the file keeps the portrait', body.portrait && body.portrait.expr === 'snarl' && body.portrait.frame === 'chest');
     ok('the file keeps a part\'s own colour', body.attires.primary_ring.part_colours && body.attires.primary_ring.part_colours.footwear === 'swatch_gold_foil');
     ok('the file keeps the head: hair, beard, paint and tattoos', body.attires.primary_ring.equipped_assets.head === 'hair_dreads_01' && body.appearance.facial_hair === 'beard_braided' && body.appearance.shape && body.appearance.shape.jaw === 0.8 && body.appearance.features && body.appearance.features.ears === 'cauliflower' && body.appearance.features.nose === 'flat' && body.appearance.shape.eye_size === -0.4 && body.appearance.face_paint === 'war' && body.appearance.paint_colour === 'swatch_neon_green' && body.appearance.tattoos.join() === 'sleeve_near,chest' && body.appearance.scars.join() === 'cheek' && body.appearance.freckles === true && body.appearance.body_hair === 2 && body.appearance.hair_mix === 'streak' && body.appearance.mask_design === 'teeth');
-    ok('the file is the record: body, three outfits, the finisher', body.moniker === 'The Enforcer' && body.physical_attributes.height_inches === 81 && body.physical_attributes.sex === 'M' && Object.keys(body.attires).length === 3 && body.finishing_moves[0].kickout_difficulty === 'Instant');
+    ok('the file is the record: body, three outfits, the finisher', body.moniker === 'The Enforcer' && body.physical_attributes.height_inches === 81 && body.physical_attributes.sex === 'M' && Object.keys(body.attires).length === 3 && body.finishing_moves[0].kickout_difficulty === 'Instant' && body.finishing_moves.length === 3 && body.finishing_moves[2].name === 'Back Breaker' && body.finishing_moves[2].stage === 'early' && body.taunts.join() === 'taunt_call,taunt_flex,taunt_crowd');
     await page.setInputFiles('[data-t="caw-file"]', { name: 'x.json', mimeType: 'application/json', buffer: Buffer.from('{"hello":1}') }); await page.waitForTimeout(200);
     ok('a file that is not a wrestler is refused', /not a wrestler/.test(await msg(page)));
     body.name = 'Opened From File'; await page.setInputFiles('[data-t="caw-file"]', { name: 'w.wrestler.json', mimeType: 'application/json', buffer: Buffer.from(JSON.stringify(body)) }); await page.waitForTimeout(200);
