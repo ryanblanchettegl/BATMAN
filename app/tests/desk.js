@@ -10,11 +10,9 @@ const txt = (page, sel) => page.$eval(sel, e => e.innerText).catch(() => '');
 const playWeeks = (S, n) => { const E = window.GP, ans = () => S.inbox.forEach(e => { if (!e.done) E.resolveEvent(S, e.id, e.choices.length - 1); });
   for (let i = 0; i < n; i++) { ans(); while (S.qi < S.queue.length) { const c = E.suggest(S), pr = E.preShow(S, c); if (pr) { E.resolvePre(S, c, 0); E.fitShow(S, c); } E.runPlayerShow(S, c); } ans(); E.endWeek(S); } ans(); };
 /** How many dots of the map are lit in each colour, read off the canvas. */
-const mapColours = page => page.$eval('[data-t="road-map"]', cv => { const x = cv.getContext('2d'), p = +cv.getAttribute('data-dot'), d = x.getImageData(0, 0, cv.width, cv.height).data, n = { now: 0, next: 0, mine: 0, land: 0 };
-  for (let r = 0; r < cv.height / p; r++) for (let c = 0; c < cv.width / p; c++) { const i = ((r * p + Math.floor(p / 2)) * cv.width + c * p + Math.floor(p / 2)) * 4, k = d[i] + ',' + d[i + 1] + ',' + d[i + 2]; const R = d[i], G = d[i + 1], B = d[i + 2];
-    // the paper map (kit/roadmap.tsx): this week yellow card, the next stop pink, the touring land a light green, the rest green card, each a little lighter or darker than its neighbours
-    if (R > 230 && G > 190 && B < 110) n.now++; else if (R > 200 && G < 160 && B > 170) n.next++; else if (G > 175 && R > 130 && R < 200 && B < 130) n.mine++; else if (G > 120 && R < 130 && B < 110) n.land++; } return n; });
-
+const mapColours = page => page.$eval('[data-t="road-map"]', cv => { const x = cv.getContext('2d'), d = x.getImageData(0, 0, cv.width, cv.height).data, n = { green: 0, blue: 0, pin: 0, all: 0 };
+  // the state cut from green card on a sheet of blue paper, a red pin on this week's city (kit/roadmap.tsx)
+  for (let i = 0; i < d.length; i += 16) { const R = d[i], G = d[i + 1], B = d[i + 2]; n.all++; if (G > R + 25 && G > B + 15) n.green++; else if (B > R + 30 && B > 150) n.blue++; else if (R > 190 && G < 90 && B < 80) n.pin++; } return n; });
 async function run(mode, w, h, promo) {
   const id = mode + ' ' + w + 'x' + h, { browser, page, errs } = await open({ mode, promo });
   const fit = async label => { const f = await fits(page), o = await overflow(page); ok(id, label + ' fits one screen', !f && !o, f || o); };
@@ -27,19 +25,19 @@ async function run(mode, w, h, promo) {
     ok(id, 'no title is cut short', await page.$$eval('.deskpage .wn > .ttl h2', L => L.every(e => e.scrollWidth <= e.clientWidth + 1)));
     const R = await state(page, S => window.GP.road(S));
     ok(id, 'the map is the one the engine names, and the window says which', (await page.$eval('[data-t="road-map"]', e => e.getAttribute('data-map'))) === R.map && (await txt(page, '[data-t="road"] .ttl h2')).indexOf(R.mapName) > 0, R.mapName);
-    const dot = +(await page.$eval('[data-t="road-map"]', e => e.getAttribute('data-dot'))), box = await page.$eval('[data-t="road-map"]', e => { const r = e.getBoundingClientRect(), b = e.closest('.r3').getBoundingClientRect(); return { w: r.width, h: r.height, bh: b.height, cw: e.width, ch: e.height }; });
-    ok(id, 'the map is 59 by 32 square dots, each a whole number of pixels, and as tall as its window lets it be', box.cw === 59 * dot && box.ch === 32 * dot && dot >= 4 && box.h <= box.bh + 1 && box.bh - box.h < 34 + 32, dot + 'px dots, ' + Math.round(box.h) + ' of ' + Math.round(box.bh));
+    const box = await page.$eval('[data-t="road-map"]', e => { const r = e.getBoundingClientRect(), b = e.parentElement.getBoundingClientRect(), host = e.parentElement.parentElement; return { w: r.width, h: r.height, bh: b.height, hw: host ? host.clientWidth : 0, shape: e.getAttribute('data-shape') }; });
+    ok(id, 'the map is the state this week’s city is in, cut from paper, and fills its box (as tall as it, or 45% of the window wide)', box.shape === R.shape.n && R.shape.pins.some(q => q.k === 'now' && q.city === R.now.city) && box.h <= box.bh + 1 && (box.bh - box.h < 8 || box.w >= Math.floor(box.hw * 0.45 - 4) - 1), JSON.stringify(box));
     // the map redraws after a resize: sample until it has settled (up to two seconds) instead of trusting a fixed wait
     let col = await mapColours(page);
-    for (let k = 0; k < 20 && !(col.now > 0 && col.land > 20 && col.mine + col.next > 0); k++) { await page.waitForTimeout(100); col = await mapColours(page); }
-    ok(id, 'this week’s land is lit yellow, the places the company tours a lighter green, the rest green', col.now > 0 && col.land > 20 && col.mine + col.next > 0, JSON.stringify(col));
+    for (let k = 0; k < 20 && !(col.green > col.all * 0.03 && col.blue > col.all * 0.15 && col.pin > 0); k++) { await page.waitForTimeout(100); col = await mapColours(page); }
+    ok(id, 'the state is green card on blue paper, with a red pin on the city', col.green > col.all * 0.03 && col.blue > col.all * 0.15 && col.pin > 0, JSON.stringify(col));
     ok(id, 'the heading is this week’s city and its land', (await txt(page, '[data-t="road-city"]')).trim() === (R.now.city + ', ' + R.now.land).toUpperCase(), await txt(page, '[data-t="road-city"]'));
     ok(id, 'the building is named before the show is booked', (await txt(page, '[data-t="road-show"]')).indexOf(R.now.venue) >= 0);
     const bt = await txt(page, '[data-t="road-building"]');
     ok(id, 'it says how many tickets are sold of how many, how many this week, and the gate so far', bt.indexOf(R.now.sold.toLocaleString('en-US') + ' of ' + R.now.cap.toLocaleString('en-US')) >= 0 && bt.indexOf(R.now.wk.toLocaleString('en-US') + ' sold') >= 0 && bt.indexOf('$' + R.now.gate.toLocaleString('en-US')) >= 0, bt.replace(/\s+/g, ' '));
     ok(id, 'the crowd says how well this city knows you, in words', (await txt(page, '[data-t="road-mkt"]')).replace(/\.$/, '') === R.now.mkt.w, await txt(page, '[data-t="road-mkt"]'));
-    ok(id, 'the line of lights says the city, the show and the tickets', /sold/i.test(await page.$eval('[data-t="road-ticker"]', e => e.getAttribute('aria-label'))) && new RegExp(R.now.city + ' · ' + R.now.show.slice(0, 8), 'i').test(await page.$eval('[data-t="road-ticker"]', e => e.getAttribute('aria-label'))), await page.$eval('[data-t="road-ticker"]', e => e.getAttribute('aria-label')));
-    ok(id, 'the map says what it shows to a screen reader', new RegExp('A map of ' + R.mapName + '\\. This week: ' + R.now.city).test(await page.$eval('[data-t="road-map"]', e => e.getAttribute('aria-label'))));
+    ok(id, 'the strip under the map says the city, the show and the tickets', /sold/i.test(await page.$eval('[data-t="road-ticker"]', e => e.getAttribute('aria-label'))) && new RegExp(R.now.city + ' · ' + R.now.show.slice(0, 8), 'i').test(await page.$eval('[data-t="road-ticker"]', e => e.getAttribute('aria-label'))), await page.$eval('[data-t="road-ticker"]', e => e.getAttribute('aria-label')));
+    ok(id, 'the map says what it shows to a screen reader', new RegExp('A map of ' + R.shape.n + '\\. This week: ' + R.now.city).test(await page.$eval('[data-t="road-map"]', e => e.getAttribute('aria-label'))));
     ok(id, 'the road list has this week and the stops ahead, each with its colour', (await txt(page, '[data-t="road-list"]')).indexOf(R.now.city + ', this week') >= 0 && await page.$$eval('[data-t="road-list"] .chip', L => L.length >= 3));
     /* the map is drawn once and kept */
     const d0 = await page.evaluate(() => window.EWF_DEBUG.maps()); await redraw(page); await redraw(page); await page.waitForTimeout(60);

@@ -93,14 +93,90 @@ function draw(cv: HTMLCanvasElement, R: any, p: number, dpr: number, font: strin
   });
   mapDraws++;
 }
+/* ---------- a state cut from paper (Ryan, 19 October: "it can just be a state map ... with a dot on the city"; "I want
+   the new maps to look hand crafted, dot matrix is out of the game"). The area this week's city is in is a piece of
+   green card cut by hand from its real outline (E.road's `shape`, from src/91-shapes.js), its paler core showing along
+   the cut, lying on a sheet of blue paper with a soft shadow under it. Its name is written on a slip of paper, and every
+   stop of the road that falls inside it has a pin and a label. ---------- */
+function drawShape(cv: HTMLCanvasElement, R: any, cw: number, ch: number, dpr: number, font: string) {
+  const Z = R.shape, W = Math.round(cw * dpr), H = Math.round(ch * dpr);
+  cv.width = W; cv.height = H; cv.style.width = (W / dpr) + 'px'; cv.style.height = (H / dpr) + 'px';
+  const x = cv.getContext('2d'); if (!x) return;
+  const u = dpr * Math.max(1, Math.min(W, H) / dpr / 180);   // one unit of line and type, grown with the box
+  // the sheet: blue construction paper, blotchy, with flecks of fibre
+  x.fillStyle = '#7fa6cf'; x.fillRect(0, 0, W, H);
+  for (let i = 0; i < 26; i++) { const g = x.createRadialGradient(hh(i, 1) * W, hh(i, 2) * H, 0, hh(i, 1) * W, hh(i, 2) * H, (0.12 + hh(i, 3) * 0.25) * Math.max(W, H)); g.addColorStop(0, hh(i, 4) < .5 ? 'rgba(255,255,255,.07)' : 'rgba(20,40,80,.07)'); g.addColorStop(1, 'rgba(0,0,0,0)'); x.fillStyle = g; x.fillRect(0, 0, W, H); }
+  for (let i = 0; i < W * H / (900 * dpr); i++) { x.fillStyle = hh(i, 7) < .5 ? 'rgba(255,255,255,.18)' : 'rgba(20,40,80,.16)'; const fx = hh(i, 8) * W, fy = hh(i, 9) * H, a = hh(i, 10) * 6.3, l = (2 + hh(i, 11) * 6) * dpr; x.save(); x.translate(fx, fy); x.rotate(a); x.fillRect(0, 0, l, Math.max(1, dpr * .6)); x.restore(); }
+  // the outline, fitted to the sheet with room for the labels, and cut by hand: each edge in short pieces, a touch off the line
+  const m = 0.1, k = Math.min(W * (1 - 2 * m) / Z.w, H * (1 - 2 * m) / Z.h), ox = (W - Z.w * k) / 2, oy = (H - Z.h * k) / 2;
+  const at = (px: number, py: number): [number, number] => [ox + px * k, oy + py * k];
+  const loops: [number, number][][] = (Z.p as string[]).map(str => { const pts: [number, number][] = []; for (let i = 0; i + 1 < str.length; i += 2) pts.push(at(str.charCodeAt(i) - 40, str.charCodeAt(i + 1) - 40)); return pts; });
+  const cut = (L: [number, number][], seed: number) => { const out: [number, number][] = [], step = 5 * dpr;
+    for (let i = 0; i < L.length; i++) { const A = L[i], B = L[(i + 1) % L.length], d = Math.hypot(B[0] - A[0], B[1] - A[1]), n = Math.max(1, Math.round(d / step)), nx = -(B[1] - A[1]) / (d || 1), ny = (B[0] - A[0]) / (d || 1);
+      for (let j = 0; j < n; j++) { const t = j / n, w = (hh(i, j, seed) - .5) * 1.4 * dpr; out.push([A[0] + (B[0] - A[0]) * t + nx * w, A[1] + (B[1] - A[1]) * t + ny * w]); } }
+    return out; };
+  const pieces = loops.map((L, i) => cut(L, i + 3));
+  const trace = (dx = 0, dy = 0) => { x.beginPath(); pieces.forEach(P => { P.forEach((q, i) => i ? x.lineTo(q[0] + dx, q[1] + dy) : x.moveTo(q[0] + dx, q[1] + dy)); x.closePath(); }); };
+  // a soft shadow down and to the right, then the paler core of the card along the cut, then the green face
+  x.save(); x.shadowColor = 'rgba(10,20,45,.5)'; x.shadowBlur = 7 * dpr; x.shadowOffsetX = 4 * dpr; x.shadowOffsetY = 5 * dpr; trace(); x.fillStyle = '#e9e2c8'; x.fill(); x.restore();
+  trace(); x.fillStyle = '#e9e2c8'; x.fill();
+  x.save(); trace(); x.clip();
+  x.save(); x.translate(-1.2 * dpr, -1.2 * dpr); trace(); x.fillStyle = '#5c9e4c'; x.fill(); x.restore();
+  for (let i = 0; i < 18; i++) { const g = x.createRadialGradient(hh(i, 21) * W, hh(i, 22) * H, 0, hh(i, 21) * W, hh(i, 22) * H, (0.1 + hh(i, 23) * .2) * Math.max(W, H)); g.addColorStop(0, hh(i, 24) < .5 ? 'rgba(255,255,230,.09)' : 'rgba(0,40,0,.09)'); g.addColorStop(1, 'rgba(0,0,0,0)'); x.fillStyle = g; x.fillRect(0, 0, W, H); }
+  for (let i = 0; i < W * H / (1100 * dpr); i++) { x.fillStyle = hh(i, 27) < .5 ? 'rgba(255,255,220,.16)' : 'rgba(0,40,0,.14)'; x.fillRect(hh(i, 28) * W, hh(i, 29) * H, (1 + hh(i, 30) * 4) * dpr, Math.max(1, dpr * .6)); }
+  const lg = x.createLinearGradient(0, 0, W, H); lg.addColorStop(0, 'rgba(255,255,255,.14)'); lg.addColorStop(1, 'rgba(0,0,0,.12)'); x.fillStyle = lg; x.fillRect(0, 0, W, H);
+  x.restore();
+  // the name of the state, on a slip of paper in the top left corner
+  const nm = String(Z.n).replace(/^the /, 'The '), px = Math.round(12 * u);
+  x.font = '400 ' + px + "px 'Craft Marker', " + font; x.textBaseline = 'middle';
+  const tw = x.measureText(nm).width, sw = tw + 12 * u, sh = px * 1.5;
+  x.save(); x.translate(8 * u, 8 * u); x.rotate(-0.04);
+  x.fillStyle = 'rgba(0,0,0,.3)'; x.fillRect(2 * u, 3 * u, sw, sh); x.fillStyle = '#26314f'; x.fillRect(0, 0, sw, sh);
+  x.fillStyle = '#ffe48a'; x.fillText(nm, 6 * u, sh / 2 + u * .5); x.restore();
+  const boxes: number[][] = [[8 * u, 8 * u, 8 * u + sw, 8 * u + sh + 3 * u]];
+  // the pins and their labels, this week's first
+  const pins = (Z.pins as any[]).map(q => ({ k: q.k, city: q.city, P: at(q.x, q.y) })).sort((a, b) => rank(a.k) - rank(b.k));
+  pins.slice().reverse().forEach(st => { const P = st.P, big = st.k === 'now', r = (big ? 7 : 5) * u, hx = P[0] - r * .5, hy = P[1] - r * 1.6;
+    x.fillStyle = 'rgba(0,0,0,.35)'; x.beginPath(); x.ellipse(P[0] + r * .9, P[1] + r * .2, r * 1.1, r * .55, 0, 0, 7); x.fill();
+    x.strokeStyle = '#3a3a40'; x.lineWidth = Math.max(1, 1.1 * u); x.beginPath(); x.moveTo(P[0], P[1]); x.lineTo(hx, hy); x.stroke();
+    x.beginPath(); x.arc(hx, hy, r, 0, 7); x.fillStyle = big ? '#d9443a' : (st.k === 'next' ? '#e58ad0' : (st.k === 'past' ? '#f4ecd6' : '#ffd449')); x.fill();
+    x.lineWidth = Math.max(1, u); x.strokeStyle = '#17171b'; x.stroke();
+    x.beginPath(); x.arc(hx - r * .35, hy - r * .35, r * .32, 0, 7); x.fillStyle = 'rgba(255,255,255,.7)'; x.fill();
+    boxes.push([hx - r - 2, hy - r - 2, P[0] + r + 2, P[1] + r + 2]); });
+  pins.forEach(st => { const P = st.P, big = st.k === 'now', fs = Math.round((big ? 13 : 11) * u), text = st.city;
+    x.font = (big ? '700 ' : '400 ') + fs + "px 'Craft Hand', " + font;
+    const tw2 = x.measureText(text).width, pad = 5 * u, w = tw2 + pad * 2, h = fs * 1.4, g = (big ? 11 : 8) * u;
+    const tries: [number, number][] = [[P[0] + g, P[1] - g - h], [P[0] + g, P[1] + g * .4], [P[0] - g - w, P[1] + g * .4], [P[0] - g - w, P[1] - g - h], [P[0] - w / 2, P[1] + g], [P[0] - w / 2, P[1] - g * 2 - h]];
+    let best = tries[0], bs = 1e9;
+    tries.forEach((t, i) => { const b = [t[0], t[1], t[0] + w, t[1] + h]; let sc = i * .01;
+      if (b[0] < 2 || b[1] < 2 || b[2] > W - 2 || b[3] > H - 2) sc += 50;
+      boxes.forEach(q => { if (b[0] < q[2] && b[2] > q[0] && b[1] < q[3] && b[3] > q[1]) sc += 10; });
+      if (sc < bs) { bs = sc; best = t; } });
+    if (bs >= 10 && !big) return;
+    const tx = Math.max(2, Math.min(W - w - 2, best[0])), ty = Math.max(2, Math.min(H - h - 2, best[1]));
+    boxes.push([tx, ty, tx + w, ty + h]);
+    x.save(); x.translate(tx + w / 2, ty + h / 2); x.rotate((hh(tx | 0, ty | 0) - .5) * .06);
+    x.fillStyle = 'rgba(0,0,0,.32)'; x.fillRect(-w / 2 + 1.5 * u, -h / 2 + 2 * u, w, h);
+    x.fillStyle = big ? '#fff6c4' : '#fbf8ee'; x.fillRect(-w / 2, -h / 2, w, h);
+    x.fillStyle = '#17171b'; x.textBaseline = 'middle'; x.fillText(text, -w / 2 + pad, u * .5); x.restore(); });
+  mapDraws++;
+}
 function rank(k: string): number { return k === 'now' ? 0 : (k === 'next' ? 1 : (k === 'past' ? 2 : 3)); }
 
 /** The map for the road window. `road` is what E.road(S) returns. It fills its box, as large as whole dots allow. */
 export function RoadMap(p: { road: any; t?: string }) {
   const box = useRef<HTMLDivElement>(null), ref = useRef<HTMLCanvasElement>(null), R = p.road;
-  const label = R.map ? 'A map of ' + R.mapName + '. This week: ' + R.now.city + (R.now.land ? ', ' + R.now.land : '') + '.' + R.stops.filter((s: any) => s.k === 'next').map((s: any) => ' Next: ' + s.city + '.').join('') : 'No map for ' + R.now.city + '.';
+  const label = R.shape ? 'A map of ' + R.shape.n + '. This week: ' + R.now.city + '.' : R.map ? 'A map of ' + R.mapName + '. This week: ' + R.now.city + (R.now.land ? ', ' + R.now.land : '') + '.' + R.stops.filter((s: any) => s.k === 'next').map((s: any) => ' Next: ' + s.city + '.').join('') : 'No map for ' + R.now.city + '.';
   const check = () => {
     const cv = ref.current, bx = box.current; if (!cv || !bx || !R.map) return;
+    if (R.shape) {   // the state, cut from paper: as tall as the box and no more than 45% of the window wide
+      const dpr = window.devicePixelRatio || 1, host = bx.parentElement as HTMLElement, cw = Math.floor(Math.min((host ? host.clientWidth : bx.clientWidth) * 0.45 - 4, (bx.clientHeight - 4) * 1.5)), ch = Math.floor(bx.clientHeight - 4);
+      if (cw < 40 || ch < 40) return;
+      const sig = JSON.stringify([R.map, R.shape.n, R.shape.pins]) + '@' + cw + 'x' + ch + '@' + dpr;
+      if (cv.getAttribute('data-sig') === sig) return;
+      try { drawShape(cv, R, cw, ch, dpr, getComputedStyle(cv).fontFamily || 'sans-serif'); cv.setAttribute('data-sig', sig); cv.setAttribute('data-map', R.map); cv.setAttribute('data-shape', R.shape.n); } catch (e) { /* a map that cannot be drawn is not worth a crash */ }
+      return;
+    }
     const dpr = window.devicePixelRatio || 1, host = bx.parentElement as HTMLElement, w = (host ? host.clientWidth : bx.clientWidth) * 0.45 - 4, h = bx.clientHeight - 4;   // as tall as the box, and no more than 45% of the window's width; the frame is two pixels a side
     const px = Math.max(2, Math.floor(Math.min(w * dpr / E.MAP_W, h * dpr / E.MAP_H)));
     const sig = JSON.stringify([R.map, R.lit, R.stops.map((s: any) => [s.k, s.city, s.x, s.y])]) + '@' + px;

@@ -163,3 +163,26 @@ html .grp.grp,.grp{border-image:none;border:1.5px solid rgba(35,35,42,.28);borde
 /* a name in a list is a word written in blue ink, not a button */
 .wn .list .btn.sm[data-t="sel"],.panel .list .btn.sm[data-t="sel"]{border-image:none;background:none;padding:0 .2ch;margin:0;color:#2c4f9a;text-shadow:none;font-family:var(--hand);font-size:1em;letter-spacing:0;text-decoration:underline dotted rgba(44,79,154,.6);transform:none}
 .wn .list .btn.sm[data-t="sel"]:hover,.wn .list .btn.sm[data-t="sel"]:focus-visible{background:#ffe48a;filter:none;transform:none}
+/* the road window's two columns hold their groups a little tighter, so the hand faces fit at 1280 by 720 */
+.deskpage .road .grp{margin:.62em 0 .06em;padding:.22em 1ch .02em;line-height:1.12}
+.deskpage .road .rright .grp:first-child{margin-top:.5em}
+.deskpage .road .grp>h3{font-size:.86em}
+.deskpage [data-t="fire"] .bd{line-height:1.12}
+.deskpage .ondesk .know p{margin:0;line-height:1.14} .deskpage .ondesk .know .btn{margin:0 0 .1em;padding:0 1.2ch .06em}
+.deskpage .ondesk .qpost{line-height:1.15}
+/* the road map is a sheet of blue paper laid in the window, not a screen */
+.rmap>canvas{border:0;border-radius:0;background:none;box-shadow:.12em .2em .3em rgba(0,0,0,.35)}
+/* lettering that used to be in lights: marker on a strip of black card (no dot matrix: Ryan, 19 October) */
+.ledb.hand{display:inline-block;background:#1b1a1f;border:0;border-radius:2px;padding:.12em 1ch .16em;line-height:1.1;box-shadow:.1em .16em .2em rgba(0,0,0,.4);transform:rotate(-.6deg);max-width:100%;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;vertical-align:middle}
+.ledb.txt.hand{font-family:var(--marker);font-weight:400;font-size:1.02em;letter-spacing:.04em;color:#ffd84a}
+.ledb.txt.hand.big{font-size:1.5em}
+.ledb.pic.hand{background:#26314f;padding:.12em;line-height:0;transform:rotate(1deg)}
+.road .rfoot .tick,.nextwin .lh,.sn-led{line-height:1.1}
+.road .rfoot .tick .ledb.hand{display:block;text-align:left}
+/* old label text was light blue for dark screens; on paper it is dark blue ink (readable first) */
+:root{--cyan:#2c5f8a}
+.toast.note{background:#fff1a6;color:var(--ink)}
+/* a big heading on a sheet: navy marker */
+.dt{font-family:var(--marker);font-weight:400;color:#1d2a5c;text-shadow:none;letter-spacing:.03em;font-size:2em}
+.det .kv{color:#4a4a52}
+.ledb.logo.hand{flex:none;max-width:none;overflow:visible;padding:.15em;line-height:0;transform:none}

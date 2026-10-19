@@ -51,35 +51,30 @@ async function run(mode, w, h) {
     await page.keyboard.press('Escape');
     ok(id, 'Esc closes it', !(await page.$('.win')));
     ok(id, 'a disabled answer cannot be pressed', await page.$eval('[data-t="kit-ans-4"]', e => e.disabled));
-    /* lights: pictures and lettering in round lit dots on a black board */
-    const boards = () => page.$$eval('.ledb canvas', L => L.map(c => { const W = +c.getAttribute('data-w'), H = +c.getAttribute('data-h'), d = +c.getAttribute('data-dot'), x = c.getContext('2d'), lit = [];
-      for (let yy = 0; yy < H; yy++) for (let xx = 0; xx < W; xx++) { const q = x.getImageData(Math.floor(xx * d + d / 2), Math.floor(yy * d + d / 2), 1, 1).data; if (q[0] + q[1] + q[2] > 150) lit.push([q[0], q[1], q[2]]); }
-      const fs = parseFloat(getComputedStyle(c).fontSize), r = c.getBoundingClientRect(), box = c.parentElement, win = c.closest('.wn > .bd').getBoundingClientRect();
-      return { t: c.getAttribute('data-t'), label: c.getAttribute('aria-label'), role: c.getAttribute('role'), W, H, d, cw: c.width, ch: c.height, fs, dpr: window.devicePixelRatio || 1, css: r.width, lit, bg: getComputedStyle(box).backgroundColor, inside: r.left >= win.left - 1 && r.right <= win.right + 1 && r.top >= win.top - 1 && r.bottom <= win.bottom + 1 }; }));
-    let B = await boards();
-    const by = t => B.filter(b => b.t === t), most = (b, f) => b.lit.filter(f).length >= b.lit.length * 0.9;
-    ok(id, 'six boards of lights: a headline, three pictures and two short strips', B.length === 6 && by('kit-light-text').length === 1 && by('kit-light-pic').length === 3 && by('kit-light-call').length === 1 && by('kit-light-sold').length === 1, B.map(b => b.t).join(', '));
-    ok(id, 'whatever is in lights can also be read as words', B.every(b => b.role === 'img' && !!b.label) && by('kit-light-text')[0].label === 'New champion' && by('kit-light-sold')[0].label === 'Sold out' && by('kit-light-pic').map(b => b.label).join('|') === 'The ring, in lights|The bell, in lights|The belt, in lights', B.map(b => b.label).join(' | '));
-    ok(id, 'a light is a whole number of screen pixels, and grows with the type', B.every(b => Number.isInteger(b.d) && b.d >= 1 && b.cw === b.W * b.d && b.ch === b.H * b.d && Math.abs(b.css - b.cw / b.dpr) < 0.6) && by('kit-light-pic').every(b => b.d === Math.max(1, Math.round(2 * b.fs / 16.589 * b.dpr))) && by('kit-light-text')[0].d === Math.max(1, Math.round(3 * by('kit-light-text')[0].fs / 16.589 * by('kit-light-text')[0].dpr)), B.map(b => b.d).join(','));
-    ok(id, 'a picture is 64 lights by 48; lettering is six lights a letter and nine high', by('kit-light-pic').every(b => b.W === 64 && b.H === 48) && by('kit-light-text')[0].W === 12 * 6 + 1 && by('kit-light-text')[0].H === 9 && by('kit-light-call')[0].W === 9 * 6 + 1);
-    ok(id, 'the headline is lit in yellow, Your call in red, Sold out in green and white', by('kit-light-text')[0].lit.length > 120 && most(by('kit-light-text')[0], c => c[0] > 140 && c[1] > 140 && c[2] < 110) && most(by('kit-light-call')[0], c => c[0] > 140 && c[1] < 90 && c[2] < 90) && by('kit-light-sold')[0].lit.some(c => c[1] > 140 && c[0] < 90) && by('kit-light-sold')[0].lit.some(c => c[0] > 140 && c[1] > 140 && c[2] > 140), by('kit-light-text')[0].lit.length + ' lit');
-    ok(id, 'each picture is lit, in colour: a red apron on the ring, a gold bell, a gold belt with a red jewel', by('kit-light-pic').every(b => b.lit.length > 400 && b.lit.length < 64 * 48 * 0.8) && by('kit-light-pic')[0].lit.filter(c => c[0] > 120 && c[1] < 70 && c[2] < 70).length > 60 && by('kit-light-pic')[1].lit.filter(c => c[0] > 120 && c[1] > 90 && c[2] < 70).length > 150 && by('kit-light-pic')[2].lit.some(c => c[0] > 150 && c[1] < 110 && c[2] < 110) && by('kit-light-pic')[2].lit.filter(c => c[0] > 120 && c[1] > 90 && c[2] < 70).length > 150, by('kit-light-pic').map(b => b.lit.length).join(','));
-    ok(id, 'the board is black, set inside a grey window, and nothing of it is cut off', B.every(b => b.bg === 'rgb(5, 5, 5)' && b.inside));
+    /* what used to be lights: lettering in marker on black card, and pictures painted as cut card (no dot matrix) */
+    const words = await page.$$eval('.ledb.txt', L => L.map(e => ({ t: e.getAttribute('data-t'), label: e.getAttribute('aria-label'), role: e.getAttribute('role'), font: getComputedStyle(e).fontFamily, bg: getComputedStyle(e).backgroundColor, canvas: !!e.querySelector('canvas') })));
+    const pics = () => page.$$eval('.ledb.pic canvas', L => L.map(c => { const x = c.getContext('2d'), d = x.getImageData(0, 0, c.width, c.height).data; let gold = 0, red = 0, any = 0;
+      for (let i = 0; i < d.length; i += 16) { if (d[i + 3] < 200) continue; any++; if (d[i] > 170 && d[i + 1] > 140 && d[i + 2] < 110) gold++; if (d[i] > 160 && d[i + 1] < 110 && d[i + 2] < 110) red++; }
+      const r = c.getBoundingClientRect(), win = c.closest('.wn > .bd').getBoundingClientRect();
+      return { t: c.getAttribute('data-t'), label: c.getAttribute('aria-label'), w: r.width, any, gold, red, inside: r.left >= win.left - 1 && r.right <= win.right + 1 && r.top >= win.top - 1 && r.bottom <= win.bottom + 1 }; }));
+    let P = await pics();
+    ok(id, 'lettering is marker on black card, can be read as words, and has no dots', words.length === 3 && words.every(x => x.role === 'img' && !!x.label && !x.canvas && /Marker/.test(x.font) && x.bg === 'rgb(27, 26, 31)') && words.some(x => x.label === 'New champion') && words.some(x => x.label === 'Sold out'), JSON.stringify(words));
+    ok(id, 'three pictures painted as cut card: a red apron on the ring, a gold bell, a gold belt with a red jewel', P.length === 3 && P.map(b => b.label).join('|') === 'The ring|The bell|The belt' && P[0].red > 30 && P[1].gold > 60 && P[2].gold > 60 && P[2].red > 0 && P.every(b => b.inside), JSON.stringify(P));
     const d0 = await page.evaluate(() => window.EWF_DEBUG.lights());
     await page.evaluate(() => { for (let i = 0; i < 3; i++) window.EWF_DEBUG.render(); }); await rows[0].click(); await rows[3].click();
-    ok(id, 'a board is drawn once and kept: redrawing the page does not draw it again', await page.evaluate(() => window.EWF_DEBUG.lights()) === d0, d0 + ' draws');
+    ok(id, 'a picture is painted once and kept: redrawing the page does not paint it again', await page.evaluate(() => window.EWF_DEBUG.lights()) === d0, d0 + ' draws');
     if (w === 1280 && h === 720) {
       await shot(page, 'kit-sheet');
-      const before = B.map(b => b.d).join(',');
+      const before = P.map(b => Math.round(b.w)).join(',');
       await page.setViewportSize({ width: 1920, height: 1080 }); await page.waitForTimeout(400);
-      B = await boards();
+      P = await pics();
       const f3 = await fits(page);
-      ok(id, 'on a bigger window the lights grow with the type, are drawn again, and still fit', B.map(b => b.d).join(',') !== before && B.every(b => b.d === Math.max(1, Math.round((b.t === 'kit-light-text' ? 3 : 2) * b.fs / 16.589 * b.dpr))) && await page.evaluate(() => window.EWF_DEBUG.lights()) === d0 + 6 && !f3, before + ' -> ' + B.map(b => b.d).join(',') + ' ' + f3);
+      ok(id, 'on a bigger window the pictures grow with the type and still fit', P.map(b => Math.round(b.w)).join(',') !== before && !f3, before + ' -> ' + P.map(b => Math.round(b.w)).join(',') + ' ' + f3);
       await page.setViewportSize({ width: w, height: h }); await page.waitForTimeout(400);
     }
     /* an old page still looks like itself */
     await go(page, 'world');
-    ok(id, 'an old page shows its panels as cream card windows', (await cut(page, '.panel').catch(() => '')) === 'win');
+    ok(id, 'an old page shows its panels as torn cream paper', (await cut(page, '.panel').catch(() => '')) === 'lk-win');
     ok(id, 'no errors on the way', !errs.length, errs.join(' | '));
   } catch (e) { ok(id, 'ran to the end', false, e.message.split('\n')[0]); }
   await browser.close();

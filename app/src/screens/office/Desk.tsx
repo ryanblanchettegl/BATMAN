@@ -110,7 +110,7 @@ function QuietPic() {
 }
 function OnDesk() {
   const S = G.S, open: any[] = S.inbox.filter((e: any) => !e.done), done = S.inbox.length - open.length, A = alerts();
-  const room = open.length ? (open.length === 1 ? 2 : 0) : 4, more = (k: string) => openModal({ kind: 'deskmore', k });
+  const room = open.length ? (open.length === 1 ? 2 : 0) : 2, more = (k: string) => openModal({ kind: 'deskmore', k });
   useFocusAfter();
   return <Win title={open.length ? 'On your desk: ' + open.length + ' to answer' : 'On your desk'} right={open.length ? '' : (done ? done + ' answered' : '')} tone={open.length ? 'hot' : undefined} cls="ondesk" area="fire" t="fire">
     <div class="odp">
