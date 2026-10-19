@@ -108,6 +108,12 @@ async function studio(mode) {
     if (process.env.SHOTS) await shot(page, 'scene-' + mode + '-layers');
     ok(mode, 'the studio fits with the layers open', !(await fits(page)), await fits(page));
     await page.click('[data-t="scene-lhide"][data-v="' + order1[0] + '"]'); await page.click('[data-t="scene-llock"][data-v="' + order1[1] + '"]');
+    // easing: how a keyframe is reached
+    await page.click('[data-t="scene-key"][data-v="1"]'); await page.waitForTimeout(100);
+    await page.selectOption('[data-t="scene-ease"]', 'cut'); await page.waitForTimeout(100);
+    ok(mode, 'a keyframe can be reached in a cut', (await page.$eval('[data-t="scene-ease"]', e => e.value)) === 'cut');
+    ok(mode, 'the studio fits with the easing choice', !(await fits(page)), await fits(page));
+    await page.selectOption('[data-t="scene-ease"]', ''); await page.click('[data-t="scene-key"][data-v="0"]');
     await page.click('[data-t="scene-tab"][data-v="file"]');
     const sets = await page.$$eval('[data-t="scene-set"] option', o => o.map(x => x.value));
     for (const st of sets) { await page.selectOption('[data-t="scene-set"]', st); await page.waitForTimeout(80); }

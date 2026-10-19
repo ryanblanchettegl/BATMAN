@@ -28,7 +28,11 @@ export interface Prop { id: string; k: string; x: number; y: number; r: number; 
     and a tilt in degrees. Left out, it shows the whole set. */
 export interface Cam { x: number; y: number; z: number; r?: number }
 export const CAM0: Cam = { x: 0, y: 0, z: 1, r: 0 };
-export interface Key { t: number; figs: Record<string, Fig>; props: Prop[]; cam?: Cam }
+export interface Key { t: number; figs: Record<string, Fig>; props: Prop[]; cam?: Cam;
+  /** How the scene moves into this keyframe from the one before: smoothly (left out), evenly, speeding up, slowing down, or a cut. */
+  ease?: 'even' | 'in' | 'out' | 'cut' }
+/** The ways into a keyframe, as Create a Scene lists them. */
+export const EASES: [string, string][] = [['', 'Smoothly'], ['even', 'Evenly'], ['in', 'Speeding up'], ['out', 'Slowing down'], ['cut', 'In a cut']];
 /** A part in a scene. `dress` puts whoever plays it in a suit and a headset (the desk); `at` is where they go when
     brought in, for a slot that starts empty (the third chair at the desk). */
 export interface Slot { id: string; n: string; role: 'a' | 'b' | 'ref' | 'c'; dress?: 'suit'; at?: Fig; hook?: string }
@@ -296,7 +300,7 @@ const FRONT: Record<string, (o: Piece[]) => void> = {
 };
 
 /* ---------- where things are at a moment ---------- */
-const ease = (t: number) => t * t * (3 - 2 * t);
+const ease = (t: number, k?: string) => k === 'even' ? t : k === 'in' ? t * t : k === 'out' ? 1 - (1 - t) * (1 - t) : k === 'cut' ? 0 : t * t * (3 - 2 * t);   // a cut holds the last picture, then jumps
 const mix = (a: number, b: number, t: number) => a + (b - a) * t;
 export function lastT(sc: Scene) { return sc.keys.length ? sc.keys[sc.keys.length - 1].t : 0; }
 /** The figures and props at `time` seconds: between two keyframes everything slides; props appear with their keyframe. */
@@ -306,7 +310,7 @@ export function at(sc: Scene, time: number): Key {
   for (let i = 0; i < ks.length - 1; i++) {
     const a = ks[i], b = ks[i + 1];
     if (time < b.t) {
-      const t = ease((time - a.t) / Math.max(0.001, b.t - a.t)), figs: Record<string, Fig> = {};
+      const t = ease((time - a.t) / Math.max(0.001, b.t - a.t), b.ease), figs: Record<string, Fig> = {};
       for (const id in a.figs) {
         const fa = a.figs[id], fb = b.figs[id]; if (!fb) { figs[id] = fa; continue; }
         const p: Record<string, number> = {}; for (const k of new Set([...Object.keys(fa.p), ...Object.keys(fb.p)])) p[k] = mix(fa.p[k] || 0, fb.p[k] || 0, t);

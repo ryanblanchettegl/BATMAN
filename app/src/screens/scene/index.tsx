@@ -9,7 +9,7 @@
 import { useEffect, useRef, useState } from 'preact/hooks';
 import { W } from '../../engine';
 import { Btn, TextBox, Desktop, Win, Group, Tabs } from '../../kit';
-import { Scene, Key, Fig, Prop, SCENES, STILLS, WHEN, STILL_WHEN, SETS, SETUPS, setupScene, WAIST, CAM0, POSES, HOLDS, LIMBS, HOOKS, at, build, viewFor, tilt, paint, lastT, allScenes, ok, copy, SCENE_FX, fxClass, FRAMES, aspectOf, cropOf, fitIn } from '../../kit/scene';
+import { Scene, Key, Fig, Prop, SCENES, STILLS, WHEN, STILL_WHEN, SETS, SETUPS, setupScene, WAIST, CAM0, POSES, HOLDS, LIMBS, HOOKS, at, build, viewFor, tilt, paint, lastT, allScenes, ok, copy, SCENE_FX, fxClass, FRAMES, EASES, aspectOf, cropOf, fitIn } from '../../kit/scene';
 import { FxVeil } from '../../kit/sceneplayer';
 import { drawPaper, drawScene, fromPx, toPx, pick, Piece, PAL } from '../../kit/paper';
 import { Diorama3D } from '../../kit/diorama3d';
@@ -243,6 +243,7 @@ export function SceneStudio(pp: StudioProps) {
         <Btn kind="sm" t="scene-addkey" onClick={() => { const n = copy(sc), k = copy(n.keys[ki]); k.t = Math.round((lastT(n) + 0.8) * 10) / 10; n.keys.push(k); setSc(n); setKi(n.keys.length - 1); }}>+ Key</Btn>
         <Btn kind="danger" t="scene-dropkey" disabled={sc.keys.length < 2} onClick={() => { const n = copy(sc); n.keys.splice(ki, 1); n.keys.forEach((k, i) => { if (i === 0) k.t = 0; }); setSc(n); setKi(Math.max(0, ki - 1)); }}>Delete key</Btn>
         <span class="sc-gap">{ki > 0 ? <>Arrives after <Btn kind="less" t="scene-faster" onClick={() => edit((k, s) => { const gap = k.t - s.keys[ki - 1].t; if (gap <= 0.2) return; for (let i = ki; i < s.keys.length; i++) s.keys[i].t = Math.round((s.keys[i].t - 0.1) * 10) / 10; })}>-</Btn><b>{(key.t - sc.keys[ki - 1].t).toFixed(1)}s</b><Btn kind="less" t="scene-slower" onClick={() => edit((k, s) => { for (let i = ki; i < s.keys.length; i++) s.keys[i].t = Math.round((s.keys[i].t + 0.1) * 10) / 10; })}>+</Btn></> : 'The first picture'}</span>
+        {ki > 0 && <select aria-label="How it moves into this key" data-t="scene-ease" value={key.ease || ''} onChange={e => { const v = (e.currentTarget as HTMLSelectElement).value as any; edit(k => { if (v) k.ease = v; else delete k.ease; }); }}>{EASES.map(x => <option value={x[0]}>{x[1]}</option>)}</select>}
         <Btn kind="go" t="scene-play" onClick={() => setTime(time == null ? 0 : null)}>{time == null ? 'Play' : 'Stop'}</Btn>
       </div>}
       <div class="sc-keys sc-cam" role="group" aria-label="The camera">

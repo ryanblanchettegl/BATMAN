@@ -137,7 +137,8 @@ Create a Scene (with 0z):
 - [x] Props: ladders, a bat, ring steps, a bin, a broken table.
 - [ ] A truck; props that can be thrown.
 - [x] Frames: tall and square pictures for posters, magazine covers and portraits (Shape, on The scene tab; the picture is cut from the middle of the set), with a masthead prop for covers and the headline for captions.
-- [ ] Animation: more keyframes with a choice of easing, a timeline, sound cues, and moves that can be used again.
+- [x] Easing: each keyframe is reached smoothly, evenly, speeding up, slowing down, or in a cut (`Key.ease`); its timing is Arrives after.
+- [ ] Still to come in animation: a timeline view, sound cues, and moves that can be used again.
 - [x] More hooks (the authority figure: the boss of the hostile authority arc, else the owner or booker on the roster; the interviewer: an announcer; the referee as a person, dressed in stripes) and two stills for them (an interview backstage, called out by the boss).
 - [x] Presentation filters a scene can pick (Ryan, 19 October): scan lines, an old TV tube and black and white, all off by default (Look, on The scene tab; `sc.fx`); for artistic promos and old-school companies.
 - [ ] A background creator: make a backdrop for a scene (walls, banners, a skyline, a show's set) and keep it in the world like a scene.
