@@ -1,7 +1,9 @@
-/* Concept C, the scrapbook zine. A corkboard covered in construction paper cut with pinking shears, pinned up with
+/* The craft look, the core art style (Ryan, 19 October: concept C, the scrapbook zine, "is the winner"). A corkboard covered in construction paper cut with pinking shears, pinned up with
    pushpins and drawn on with markers: the broadcast is a Polaroid pinned to the board, the call is written in ink on
    torn notebook paper, the feed is a run of coloured scraps, and the doodles say what matters. Pieces from
-   tools/creator/craft-kit.py (--lk-*). */
+   tools/creator/craft-kit.py (--lk-*, app/ui/craft). Readable first: titles, buttons and labels are in marker, running
+   text in Patrick Hand (the clearest of the hand faces) at a comfortable size, and nothing sits on the cork without a
+   paper or a shadow under it. */
 :root{--marker:'Craft Marker','EWF Sans',sans-serif;--gochi:'Craft Gochi','EWF Sans',sans-serif;--hand:'Craft Hand','EWF Sans',sans-serif}
 body{background:radial-gradient(120% 100% at 30% 0%,rgba(255,240,210,.12),rgba(30,15,0,.35)),var(--lk-cork) 0 0/360px,#b98552}
 
@@ -21,7 +23,7 @@ body{background:radial-gradient(120% 100% at 30% 0%,rgba(255,240,210,.12),rgba(3
 .wn>.ttl>span:last-child{font-family:var(--gochi);font-size:1.08em;color:#ffd23f}
 .wn>.ttl>span:first-child::before,.wn>.ttl>span:last-child::after{display:none}
 .wn::before{content:'';position:absolute;z-index:5;left:calc(50% - 16px);top:-18px;width:32px;height:32px;background:var(--lk-pin) center/100%}
-.wn>.bd{font-family:var(--gochi);font-size:1.08em}
+.wn>.bd,.win .wb{font-family:var(--hand);font-size:1.1em;line-height:1.28}
 
 /* buttons: paper scraps lettered in marker */
 .btn,.wn .btn,.win .btn{border-image:var(--bi) 30 fill / 14px / 4px;--bi:var(--lk-zig-green);font-family:var(--marker);font-weight:400;color:#fff;text-shadow:0 1px 0 rgba(0,0,0,.35);padding:.25em 1.7ch .32em}
@@ -34,7 +36,7 @@ body{background:radial-gradient(120% 100% at 30% 0%,rgba(255,240,210,.12),rgba(3
 .live1 .bar{background:#232027;color:#fff;font-family:var(--marker);font-weight:400;border-radius:0;transform:rotate(-.4deg);box-shadow:.12em .2em .25em rgba(0,0,0,.45)}
 .live1 .bar>span:first-child::before{font-family:var(--marker);font-weight:400;background:#ff4f4f;border-radius:40% 55% 45% 60%;padding:.12em 1ch;transform:rotate(-8deg);display:inline-block}
 .live1 .bar>span:last-child{font-family:var(--gochi);font-size:1.08em;color:#ffd23f}
-.lv-rail .nt-r{border:0;background:none;border-image:var(--lk-zig-white) 30 fill / 12px / 3px;border-radius:0;font-family:var(--gochi);font-size:1em;box-shadow:none;color:#232027}
+.lv-rail .nt-r{border:0;background:none;border-image:var(--lk-zig-white) 30 fill / 12px / 3px;border-radius:0;font-family:var(--hand);font-size:1.02em;box-shadow:none;color:#232027}
 .lv-rail .nt-r:nth-child(3n){border-image-source:var(--lk-zig-blue)} .lv-rail .nt-r:nth-child(3n+1){border-image-source:var(--lk-zig-green)}
 .lv-rail .nt-r:nth-child(odd){transform:rotate(-1.5deg)} .lv-rail .nt-r:nth-child(even){transform:rotate(1.3deg)}
 .lv-rail .nt-r.now{border-image-source:var(--lk-zig-yellow);transform:rotate(-2.5deg) scale(1.05)}
@@ -53,7 +55,7 @@ body{background:radial-gradient(120% 100% at 30% 0%,rgba(255,240,210,.12),rgba(3
 .tvframe .bug>:first-child{display:none}
 /* the call: blue ink on torn notebook paper */
 .live1 .tvframe~.lv-log{background:none;border:0;border-image:var(--lk-notebook) 40 30 30 40 fill / 20px 15px 15px 20px / 5px;box-shadow:none;padding:.35em 2ch .35em 4ch;transform:rotate(.4deg);max-height:7.6em;margin-top:.4em}
-.live1 .lv-log .ln{font-family:var(--gochi);font-size:1.12em;line-height:1.24}
+.live1 .lv-log .ln{font-family:var(--hand);font-size:1.16em;line-height:1.24}
 .live1 .lv-log .ln .tx{color:#1f3f8f} .live1 .lv-log .ln.last .tx{color:#0f2a75}
 .live1 .lv-log .ln .sp{font-family:var(--marker);font-weight:400;color:#d03a3a}
 .live1 .lv-log .ln.hot .tx{color:#d03a3a;font-weight:400}
@@ -66,7 +68,7 @@ body{background:radial-gradient(120% 100% at 30% 0%,rgba(255,240,210,.12),rgba(3
 .post:nth-child(odd){transform:rotate(-1.4deg)} .post:nth-child(even){transform:rotate(1.1deg)}
 .post.k-w::after{content:'';position:absolute;right:-.4em;top:-.5em;width:2.2em;height:2.2em;background:var(--lk-star) center/100% no-repeat}
 .post .ph b{font-family:var(--marker);font-weight:400;color:#232027}
-.post .pt{font-family:var(--gochi);font-size:1.1em;color:#232027}
+.post .pt{font-family:var(--hand);font-size:1.12em;color:#232027}
 .post .hn,.post .tm,.post .pm{font-family:var(--gochi);color:#4a4550}
 .post .av{border:2px solid #232027;border-radius:50%}
 /* the crowd: hand-drawn bars */
@@ -85,3 +87,29 @@ body{background:radial-gradient(120% 100% at 30% 0%,rgba(255,240,210,.12),rgba(3
 .status .key .lab{--bi:var(--lk-zig-yellow);border-image:var(--bi) 30 fill / 14px / 4px;font-family:var(--marker);font-weight:400;font-size:1.12em;color:#232027;transform:rotate(-1.5deg)}
 .status .key.tone-air .lab{--bi:var(--lk-zig-green);color:#fff} .status .key.tone-stop .lab{--bi:var(--lk-zig-pink);color:#fff} .status .key.tone-home .lab{--bi:var(--lk-zig-white)} .status .key.tone-end .lab{--bi:var(--lk-zig-blue);color:#fff}
 .live1 .result,.live1 .result *{color:#2a1d10} .live1 .result .good{color:#2f6a2a} .live1 .result .bad{color:#9a2a1a}
+
+/* ---------- choices that open a pop-up (rule 6a): scraps of paper that lift and straighten when you point at them ---------- */
+.bsact{border:0;background:none;border-image:var(--lk-zig-white) 30 fill / 16px / 4px;padding:.55em 1.6ch .6em;color:#232027;transition:transform .16s var(--ease),filter .16s;gap:.15em}
+.bsacts>.bsact:nth-child(5n+1){border-image-source:var(--lk-zig-yellow)} .bsacts>.bsact:nth-child(5n+2){border-image-source:var(--lk-zig-blue)}
+.bsacts>.bsact:nth-child(5n+3){border-image-source:var(--lk-zig-pink)} .bsacts>.bsact:nth-child(5n+4){border-image-source:var(--lk-zig-green)}
+.bsacts>.bsact:nth-child(odd){transform:rotate(-.8deg)} .bsacts>.bsact:nth-child(even){transform:rotate(.7deg)}
+.bsact b{font-family:var(--marker);font-weight:400;color:#232027;text-transform:none;letter-spacing:.01em;font-size:1.08em}
+.bsact .eff{font-family:var(--hand);font-size:1.1em;color:#232027;font-weight:700}
+.bsact .muted,.bsact .ft,.bsact span{font-family:var(--hand);color:#3d3842}
+.bsact:hover,.bsact:focus-visible{background:none;transform:rotate(0) translateY(-3px) scale(1.02);filter:drop-shadow(0 .35em .4em rgba(0,0,0,.35));outline:0}
+.bsact:focus-visible{outline:3px dashed #232027;outline-offset:3px}
+.bsact.used{opacity:.55;filter:grayscale(.4)}
+/* the gauges on Overview: white paper with a black marker strip */
+.gp{border:0;border-image:var(--lk-zig-white) 30 fill / 16px / 4px;padding:.5em 1.6ch .6em;color:#232027}
+.gp h2{background:#232027;color:#fff;font-family:var(--marker);font-weight:400;text-transform:none;letter-spacing:.02em;display:inline-block;padding:.1em 1.4ch;transform:rotate(-1.2deg);margin-bottom:.3em}
+.gp .kv,.gp .kv *{font-family:var(--hand);color:#232027} .gp .kv b{font-family:var(--marker);font-weight:400;color:#c2244f}
+.gauge i{background:#e6e0d4;border-radius:2px} .gauge i.on{background:#4ea3e6}
+/* a page's own heading: a label of black paper, so it reads on the cork */
+.head h1,.head .eyebrow{display:inline-block;background:#232027;padding:.1em 1.4ch;transform:rotate(-1deg);box-shadow:.12em .2em .25em rgba(0,0,0,.45)}
+.head h1,.head h1 .hl{font-family:var(--marker);font-weight:400;color:#fff;text-transform:none;letter-spacing:.02em}
+.head .eyebrow{font-family:var(--hand);color:#ffd23f;margin-bottom:.2em}
+/* lists and tables in a window: lines of the notebook, the picked one a yellow highlighter stroke */
+.wn .lb,.win .lb{background:#fffdf6;border:2px solid #232027;border-radius:3px}
+.lb .rw.sel,.lb button.rw.sel:hover,.rspage .rsl tr.pick.on,.book1 .b1-rows .seg.sel .r1b{background:linear-gradient(transparent 8%,#ffe066 8%,#ffd23f 92%,transparent 92%);color:#232027;box-shadow:none}
+.lb .rw.sel *,.rspage .rsl tr.pick.on td,.rspage .rsl tr.pick.on td *,.book1 .b1-rows .seg.sel .r1b *{color:#232027}
+.lb .hd,.rspage .rsl th{background:none;color:#c2244f;font-family:var(--marker);font-weight:400;border-bottom:2px solid #232027}

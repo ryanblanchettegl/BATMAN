@@ -163,6 +163,12 @@ The desk image (`docs/mockups/paper/desk.png`) is the art style: the whole game 
 - [ ] Render the interface pieces in Blender as cut card (window frames and title bars, buttons in each colour, tags, group tabs, the menu bar, the control strip tiles and keys) so the paper has real thickness, light and shadow, and use them in the game as 9-slice images or baked textures.
 - [ ] Every page moved to the paper look, one at a time with Ryan's go-ahead.
 
+### 0v2. The scrapbook zine is the core look (Ryan, 19 October: "C is the winner")
+
+- [x] Three concepts for a hand-made match page: A the workbench, B the cardboard box, C the scrapbook zine (`tools/creator/craft-kit.py`, `app/styles/looks/`).
+- [x] C in every build (`app/styles/craft.css`, `app/ui/craft/`), with readable running text, option tiles as paper scraps that lift when pointed at, page headings on paper labels, the picked line as a highlighter stroke. Rule 2a rewritten.
+- [ ] Page by page, with Ryan's go-ahead for each: pop-ups, the desk, Backstage, Storylines, Roster, Web, Company, Manage, Career, the title screen and the World Editor, each checked for readability; the Polaroid and the pins as Blender renders for more depth.
+
 ### 0w. Every page in the paper look (Ryan, 19 October: "the DOS days are over")
 
 - [x] The shared look over every page: windows, group boxes, buttons and tiles cut from card in Blender (`tools/creator/ui-pieces.py`), the white menu bar, the navy desktop with grain, the control strip and the yellow SPACE key, paper pop-ups, lists, tags and fields (`app/styles/theme.css`).

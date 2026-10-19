@@ -3,7 +3,8 @@ are looking at was hand crafted by someone using art supplies"). Three concepts,
 
     a  the workbench: a green cutting mat, torn cream paper, washi and masking tape, navy card, cut card buttons
     b  the cardboard box: corrugated kraft board with cut edges, manila tags, twine, stamped ink
-    c  the scrapbook zine: cork, construction paper cut with pinking shears, notebook paper, a Polaroid, doodles
+    craft  the scrapbook zine, the core look (Ryan, 19 October): cork, construction paper cut with pinking shears,
+           notebook paper, a Polaroid, pushpins and marker doodles
 
 Everything is drawn here from noise and geometry, so it is repeatable (a fixed seed) and nothing is fetched (rule 2).
 A frame is a nine-slice image for CSS border-image: its corners keep their cut, its edges repeat. A texture tiles.
@@ -190,9 +191,9 @@ cd = ImageDraw.Draw(cork, 'RGBA')
 for _ in range(1800):
     x, y, r = R.random() * 360, R.random() * 360, R.random() * 2.2 + .5; c = (60, 35, 15, int(60 + R.random() * 90)) if R.random() < .6 else (230, 190, 140, 70)
     cd.ellipse([x - r, y - r, x + r, y + r], fill=c)
-out('c', 'cork', cork.convert('RGB'))
+out('craft', 'cork', cork.convert('RGB'))
 for n, c in [('white', '#fbf7ee'), ('yellow', '#ffd23f'), ('pink', '#ff7aa8'), ('blue', '#4ea3e6'), ('green', '#5cc46a'), ('purple', '#9a6bd6'), ('black', '#232027')]:
-    out('c', 'zig-' + n, light(piece(240, 240, sheet(240, 240, c, .1, .07, (120, 8, (255, 255, 255), 45)), edge_mask(240, 240, 10, 5, 'zig', hash(n) % 999), (5, 7, 4, .45)), .07))
+    out('craft', 'zig-' + n, light(piece(240, 240, sheet(240, 240, c, .1, .07, (120, 8, (255, 255, 255), 45)), edge_mask(240, 240, 10, 5, 'zig', hash(n) % 999), (5, 7, 4, .45)), .07))
 nb = sheet(240, 240, '#fdfcf6', .04, .03)
 nd = ImageDraw.Draw(nb, 'RGBA')
 for y in range(30, 240, 18): nd.line([(0, y), (240, y)], fill=(120, 165, 220, 110), width=1)
@@ -200,14 +201,14 @@ nd.line([(34, 0), (34, 240)], fill=(230, 90, 90, 140), width=2)
 nbp = piece(240, 240, nb, edge_mask(240, 240, 8, 3, 'torn', 11), (4, 6, 4, .4), core=(2, .3))
 ndd = ImageDraw.Draw(nbp)
 for y in range(30, 230, 34): ndd.ellipse([13, y, 23, y + 10], fill=(0, 0, 0, 0))
-out('c', 'notebook', light(nbp, .05))
+out('craft', 'notebook', light(nbp, .05))
 pol = Image.new('RGBA', (300, 300), (0, 0, 0, 0)); pm = edge_mask(300, 300, 8, .6, 'cut', 12)
-pol = light(piece(300, 300, sheet(300, 300, '#f9f7f1', .03, .03), pm, (6, 9, 7, .5)), .05); out('c', 'polaroid', pol)
+pol = light(piece(300, 300, sheet(300, 300, '#f9f7f1', .03, .03), pm, (6, 9, 7, .5)), .05); out('craft', 'polaroid', pol)
 pin = Image.new('RGBA', (64, 64), (0, 0, 0, 0)); pdr = ImageDraw.Draw(pin)
 pdr.ellipse([22, 30, 50, 44], fill=(0, 0, 0, 70)); pdr.line([(30, 34), (34, 50)], fill=(150, 150, 160, 255), width=3)
 pdr.ellipse([14, 8, 42, 36], fill=(220, 52, 52, 255), outline=(120, 20, 20, 255), width=2); pdr.ellipse([20, 13, 28, 21], fill=(255, 190, 190, 220))
-out('c', 'pin', pin.filter(ImageFilter.SMOOTH))
-out('c', 'star', doodle(80, 80, [[(40, 6), (50, 32), (76, 32), (55, 48), (63, 74), (40, 58), (17, 74), (25, 48), (4, 32), (30, 32), (40, 6)]], (255, 210, 63, 255), 2.4, 13))
-out('c', 'arrow', doodle(160, 70, [[(6, 50), (40, 30), (90, 24), (140, 30)], [(122, 14), (142, 30), (124, 46)]], (35, 32, 39, 255), 2.6, 14))
-out('c', 'circle', doodle(200, 90, [[(100 + 92 * math.cos(t / 20 * 2 * math.pi + .3), 45 + 38 * math.sin(t / 20 * 2 * math.pi + .3)) for t in range(23)]], (230, 60, 60, 255), 2.2, 15))
-out('c', 'tape-c', tape(150, 40, '#9fe0d0', .7, 16))
+out('craft', 'pin', pin.filter(ImageFilter.SMOOTH))
+out('craft', 'star', doodle(80, 80, [[(40, 6), (50, 32), (76, 32), (55, 48), (63, 74), (40, 58), (17, 74), (25, 48), (4, 32), (30, 32), (40, 6)]], (255, 210, 63, 255), 2.4, 13))
+out('craft', 'arrow', doodle(160, 70, [[(6, 50), (40, 30), (90, 24), (140, 30)], [(122, 14), (142, 30), (124, 46)]], (35, 32, 39, 255), 2.6, 14))
+out('craft', 'circle', doodle(200, 90, [[(100 + 92 * math.cos(t / 20 * 2 * math.pi + .3), 45 + 38 * math.sin(t / 20 * 2 * math.pi + .3)) for t in range(23)]], (230, 60, 60, 255), 2.2, 15))
+out('craft', 'tape-c', tape(150, 40, '#9fe0d0', .7, 16))
