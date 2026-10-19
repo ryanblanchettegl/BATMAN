@@ -4,7 +4,7 @@
    Steam; where the machine cannot draw 3D it falls back to the flat paper renderer. With Reduce motion it shows the
    last keyframe straight away. */
 import { useEffect, useRef, useState } from 'preact/hooks';
-import { Scene, paint, lastT, at, fxClass } from './scene';
+import { Scene, paint, lastT, at, fxClass, aspectOf, fitIn } from './scene';
 import { Recipe } from './puppet';
 import { Diorama3D } from './diorama3d';
 
@@ -18,11 +18,12 @@ export function ScenePlayer(p: { sc: Scene; cast: Record<string, Recipe>; play: 
   const props = useRef(p); props.current = p;
   useEffect(() => {
     const b = box.current; if (!b) return;
-    const fit = () => { const r = b.getBoundingClientRect(); if (props.current.fill) { setSize([Math.floor(r.width), Math.floor(r.height)]); return; } const w = Math.max(0, Math.floor(Math.min(r.width, r.height * 16 / 9))); setSize([w, Math.round(w * 9 / 16)]); };
+    const fit = () => { const r = b.getBoundingClientRect(); if (props.current.fill) { setSize([Math.floor(r.width), Math.floor(r.height)]); return; } setSize(fitIn(r.width, r.height, aspectOf(props.current.sc))); };
     fit(); const ro = new ResizeObserver(fit); ro.observe(b);
     if (c3.current) { try { eng.current = new Diorama3D(c3.current, !!p.orbit); } catch (e) { eng.current = null; setFlat(true); } }
     return () => { ro.disconnect(); if (eng.current) eng.current.dispose(); eng.current = null; };
   }, []);
+  useEffect(() => { const b = box.current; if (b && !p.fill) { const r = b.getBoundingClientRect(); setSize(fitIn(r.width, r.height, aspectOf(p.sc))); } }, [p.sc.frame]);
   useEffect(() => {
     if (!size[0]) return;
     const sc = props.current.sc, end = lastT(sc), E3 = eng.current; plays++;

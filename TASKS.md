@@ -134,7 +134,7 @@ Create a Scene (with 0z):
 - [x] Smoke rolling along the floor.
 - [x] Props: ladders, a bat, ring steps, a bin, a broken table.
 - [ ] A truck; props that can be thrown.
-- [ ] Frames: tall and square pictures for posters, magazine covers and portraits, with captions and mastheads.
+- [x] Frames: tall and square pictures for posters, magazine covers and portraits (Shape, on The scene tab; the picture is cut from the middle of the set), with a masthead prop for covers and the headline for captions.
 - [ ] Animation: more keyframes with a choice of easing, a timeline, sound cues, and moves that can be used again.
 - [x] More hooks (the authority figure: the boss of the hostile authority arc, else the owner or booker on the roster; the interviewer: an announcer; the referee as a person, dressed in stripes) and two stills for them (an interview backstage, called out by the boss).
 - [x] Presentation filters a scene can pick (Ryan, 19 October): scan lines, an old TV tube and black and white, all off by default (Look, on The scene tab; `sc.fx`); for artistic promos and old-school companies.

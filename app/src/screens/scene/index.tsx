@@ -9,7 +9,7 @@
 import { useEffect, useRef, useState } from 'preact/hooks';
 import { W } from '../../engine';
 import { Btn, TextBox, Desktop, Win, Group, Tabs } from '../../kit';
-import { Scene, Key, Fig, Prop, SCENES, STILLS, WHEN, STILL_WHEN, SETS, SETUPS, setupScene, WAIST, CAM0, POSES, HOLDS, LIMBS, HOOKS, at, build, viewFor, tilt, paint, lastT, allScenes, ok, copy, SCENE_FX, fxClass } from '../../kit/scene';
+import { Scene, Key, Fig, Prop, SCENES, STILLS, WHEN, STILL_WHEN, SETS, SETUPS, setupScene, WAIST, CAM0, POSES, HOLDS, LIMBS, HOOKS, at, build, viewFor, tilt, paint, lastT, allScenes, ok, copy, SCENE_FX, fxClass, FRAMES, aspectOf, cropOf, fitIn } from '../../kit/scene';
 import { FxVeil } from '../../kit/sceneplayer';
 import { drawPaper, drawScene, fromPx, toPx, pick, Piece, PAL } from '../../kit/paper';
 import { Diorama3D } from '../../kit/diorama3d';
@@ -32,13 +32,13 @@ function Stage(p: { sc: Scene; ki: number; time: number | null; cast: Record<str
   const [size, setSize] = useState([960, 540]);
   useEffect(() => {
     const b = box.current; if (!b) return;
-    const fit = () => { const r = b.getBoundingClientRect(), w = Math.max(160, Math.floor(Math.min(r.width, r.height * 16 / 9))); setSize([w, Math.round(w * 9 / 16)]); };
+    const fit = () => { const r = b.getBoundingClientRect(); setSize(fitIn(r.width, r.height, aspectOf(p.sc), 160)); };
     fit(); const ro = new ResizeObserver(fit); ro.observe(b); return () => ro.disconnect();
-  }, []);
+  }, [p.sc.frame]);
   useEffect(() => {
     const c = cv.current; if (!c) return; const dpr = Math.min(2, window.devicePixelRatio || 1);
     c.width = Math.round(size[0] * dpr); c.height = Math.round(size[1] * dpr);
-    const t = p.time == null ? p.sc.keys[p.ki].t : p.time, k = p.time == null ? p.sc.keys[p.ki] : at(p.sc, t), ctx = c.getContext('2d')!, v = viewFor(c.width, c.height, k.cam), b = build(p.sc, k, p.cast, t);
+    const t = p.time == null ? p.sc.keys[p.ki].t : p.time, k = p.time == null ? p.sc.keys[p.ki] : at(p.sc, t), ctx = c.getContext('2d')!, v = viewFor(c.width, c.height, k.cam, cropOf(p.sc)), b = build(p.sc, k, p.cast, t);
     ctx.fillStyle = PAL.navy; ctx.fillRect(0, 0, c.width, c.height); tilt(ctx, k.cam); drawScene(ctx, b.pieces, v, p.sc.set); ctx.restore();
     last.current = { ...b, v };
     if (p.sel && p.time == null) {   // outline what is picked, and mark its pin
@@ -84,7 +84,7 @@ function Stage3D(p: { sc: Scene; ki: number; time: number | null; cast: Record<s
     const b = box.current, c = cv.current; if (!b || !c) return;
     try { eng.current = new Diorama3D(c); } catch (e) { eng.current = null; }
     const dbg = (window as any).EWF_DEBUG; if (dbg) dbg.three = () => eng.current;
-    const fit = () => { const r = b.getBoundingClientRect(), w = Math.max(160, Math.floor(Math.min(r.width, r.height * 16 / 9))); setSize([w, Math.round(w * 9 / 16)]); if (eng.current) eng.current.size(w, Math.round(w * 9 / 16)); };
+    const fit = () => { const r = b.getBoundingClientRect(), [w, h] = fitIn(r.width, r.height, aspectOf(props.current.sc), 160); setSize([w, h]); if (eng.current) eng.current.size(w, h); };
     fit(); const ro = new ResizeObserver(fit); ro.observe(b);
     // the pointer: in the capture phase, so a press on a person stops the camera before it starts to turn
     const down = (e: PointerEvent) => {
@@ -103,6 +103,7 @@ function Stage3D(p: { sc: Scene; ki: number; time: number | null; cast: Record<s
     b.addEventListener('pointerdown', down, true); b.addEventListener('pointermove', move, true); b.addEventListener('pointerup', up, true); b.addEventListener('pointercancel', up, true);
     return () => { ro.disconnect(); b.removeEventListener('pointerdown', down, true); b.removeEventListener('pointermove', move, true); b.removeEventListener('pointerup', up, true); b.removeEventListener('pointercancel', up, true); if (eng.current) eng.current.dispose(); eng.current = null; };
   }, []);
+  useEffect(() => { const b = box.current; if (!b) return; const r = b.getBoundingClientRect(), [w, h] = fitIn(r.width, r.height, aspectOf(p.sc), 160); setSize([w, h]); if (eng.current) eng.current.size(w, h); }, [p.sc.frame]);
   useEffect(() => { const e = eng.current; if (!e) return; const t = p.time == null ? p.sc.keys[p.ki].t : p.time; e.show(p.sc, p.time == null ? p.sc.keys[p.ki] : at(p.sc, t), p.cast, t, p.time == null ? p.sel : null); });
   return <div ref={box} class={'sc-stage sc-3d' + fxClass(p.sc)}>{fxClass(p.sc) && <FxVeil w={size[0]} h={size[1]} />}<canvas ref={cv} tabIndex={0} data-t="scene-stage3d" data-sel={p.sel ? p.sel.who + ':' + p.sel.part : ''} style={{ width: size[0] + 'px', height: size[1] + 'px' }} onKeyDown={p.onKey as any}
     aria-label={'The scene in 3D: ' + p.sc.name + '. Press a person or a prop to pick it and drag it; drag anywhere else to walk round the model.'} /></div>;
@@ -196,7 +197,7 @@ export function SceneStudio(pp: StudioProps) {
     say('Written out as ' + a.download + '. Anybody can open it in Create a Scene.');
   };
   const importIt = (f: File) => f.text().then(txt => { let x: any = null; try { x = JSON.parse(txt); } catch (e) { /* not JSON */ } if (ok(x)) { open(x); say('Opened "' + x.name + '".'); } else say('That file is not a scene.', { err: true }); redraw(); });
-  const addProp = () => edit(k => { const id = addK + '-' + Date.now().toString(36); k.props.push({ id, k: addK, x: 0, y: ['burst', 'sign', 'headline'].includes(addK) ? 3 : addK === 'confetti' ? 0 : -1.6, r: 0, z: 2.6, s: 1, txt: ['burst', 'sign', 'headline'].includes(addK) ? words : undefined }); setSel({ who: id, part: 'prop' }); });
+  const addProp = () => edit(k => { const id = addK + '-' + Date.now().toString(36); k.props.push({ id, k: addK, x: 0, y: addK === 'masthead' ? 3.6 : ['burst', 'sign', 'headline'].includes(addK) ? 3 : addK === 'confetti' ? 0 : -1.6, r: 0, z: 2.6, s: 1, txt: ['burst', 'sign', 'headline', 'masthead'].includes(addK) ? words : undefined }); setSel({ who: id, part: 'prop' }); });
   const selFig = sel && fig(key, sel.who), selProp = sel && sel.part === 'prop' ? propOf(key, sel.who) : null;
   const who = (id: string) => { const sl = sc.slots.find(s => s.id === id); return sl ? sl.n : id; };
   const mine = pp.saved;
@@ -273,7 +274,7 @@ export function SceneStudio(pp: StudioProps) {
         {figR && sel && <div class="sc-row"><Btn kind="less" t="scene-pin" d={{ v: 'body' }} on={sel.part === 'body'} onClick={() => setSel({ who: sel.who, part: 'body' })}>The whole body</Btn><span class="muted">or a pin to pick a part</span></div>}
         {figR && sel && <DollMap r={figR} part={sel.part} onPart={j => setSel({ who: sel.who, part: j })} />}
         {selProp && <div class="sc-row">
-          {(['burst', 'sign', 'headline'].includes(selProp.k)) && <TextBox value={selProp.txt || ''} max={16} label="Words" t="scene-words" onInput={v => edit(k => { const q = propOf(k, sel!.who); if (q) q.txt = v.toUpperCase(); })} width="12ch" />}
+          {(['burst', 'sign', 'headline', 'masthead'].includes(selProp.k)) && <TextBox value={selProp.txt || ''} max={16} label="Words" t="scene-words" onInput={v => edit(k => { const q = propOf(k, sel!.who); if (q) q.txt = v.toUpperCase(); })} width="12ch" />}
           <Btn kind="sm" t="scene-bigger" onClick={() => edit(k => { const q = propOf(k, sel!.who); if (q) q.s = Math.min(3, Math.round(((q.s || 1) + 0.1) * 10) / 10); })}>Bigger</Btn>
           <Btn kind="sm" t="scene-smaller" onClick={() => edit(k => { const q = propOf(k, sel!.who); if (q) q.s = Math.max(0.3, Math.round(((q.s || 1) - 0.1) * 10) / 10); })}>Smaller</Btn>
           <Btn kind="danger" t="scene-dropprop" onClick={() => { edit(k => { k.props = k.props.filter(x => x.id !== sel!.who); }); setSel(null); }}>Remove</Btn>
@@ -335,7 +336,7 @@ export function SceneStudio(pp: StudioProps) {
         </Group>
         <Group title="Add a prop">
           <div class="sc-row"><select aria-label="Prop" data-t="scene-propkind" value={addK} onChange={e => setAddK((e.currentTarget as HTMLSelectElement).value)}>{PROPS.map(x => <option value={x[0]}>{x[1]}</option>)}</select>
-            {(['burst', 'sign', 'headline'].includes(addK)) && <TextBox value={words} max={16} label="Words on it" t="scene-newwords" onInput={v => setWords(v.toUpperCase())} width="10ch" />}
+            {(['burst', 'sign', 'headline', 'masthead'].includes(addK)) && <TextBox value={words} max={16} label="Words on it" t="scene-newwords" onInput={v => setWords(v.toUpperCase())} width="10ch" />}
             <Btn t="scene-addprop" onClick={() => { addProp(); setTab('pose'); }}>Add</Btn></div>
         </Group>
       </>}
@@ -344,6 +345,7 @@ export function SceneStudio(pp: StudioProps) {
           <div class="sc-row"><TextBox value={sc.name} max={32} label="Name of the scene" t="scene-name" onInput={v => setSc({ ...sc, name: v })} width="18ch" /></div>
           <div class="sc-row"><span class="sc-slot">Kind</span><select aria-label="Kind of scene" data-t="scene-kind" value={sc.still ? 'still' : 'moving'} onChange={e => { const still = (e.currentTarget as HTMLSelectElement).value === 'still'; const n = copy(sc); if (still) { n.still = true; n.keys = [n.keys[Math.min(ki, n.keys.length - 1)]]; n.keys[0].t = 0; n.loop = false; if (!STILL_WHEN.some(w => w[0] === n.when)) n.when = 'any'; } else { delete n.still; if (!WHEN.some(w => w[0] === n.when)) n.when = 'any'; } setSc(n); setKi(0); setTime(null); }}><option value="moving">Moving: keyframes that play</option><option value="still">A still picture</option></select></div>
           <div class="sc-row"><span class="sc-slot">{sc.still ? 'Shown at' : 'Plays at'}</span><select aria-label="When it plays" data-t="scene-when" value={sc.when} onChange={e => setSc({ ...sc, when: (e.currentTarget as HTMLSelectElement).value })}>{(sc.still ? STILL_WHEN : WHEN).map(w => <option value={w[0]}>{w[1]}</option>)}</select></div>
+          <div class="sc-row"><span class="sc-slot">Shape</span><select aria-label="Shape of the picture" data-t="scene-frame" value={sc.frame || 'wide'} onChange={e => { const f = (e.currentTarget as HTMLSelectElement).value as any; const n = { ...sc }; if (f === 'wide') delete n.frame; else n.frame = f; setSc(n); }}>{FRAMES.map(x => <option value={x[0]}>{x[1]}</option>)}</select></div>
           <div class="sc-row"><span class="sc-slot">Look</span><span class="sc-fx">{SCENE_FX.map(([k, n]) => { const on = !!(sc.fx && sc.fx[k]); return <Btn key={k} t="scene-fx" d={{ v: k }} kind={on ? 'go' : 'less'} on={on} onClick={() => { const f = { ...(sc.fx || {}) }; if (on) delete f[k]; else f[k] = true; const n2 = { ...sc }; if (Object.keys(f).length) n2.fx = f; else delete n2.fx; setSc(n2); }}>{n}</Btn>; })}</span></div>
           <div class="sc-row"><span class="sc-slot">The set</span><select aria-label="The set" data-t="scene-set" value={sc.set} onChange={e => setSc({ ...sc, set: (e.currentTarget as HTMLSelectElement).value })}>{SETS.map(x => <option value={x[0]}>{x[1]}</option>)}</select></div>
         </Group>

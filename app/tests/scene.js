@@ -104,6 +104,12 @@ async function studio(mode) {
     ok(mode, 'scan lines and black and white lay over the stage', await has(page, '.sc-stage.fx-scan.fx-mono .scfx'));
     if (process.env.SHOTS) await shot(page, 'scene-' + mode + '-fx');
     await page.click('[data-t="scene-fx"][data-v="mono"]'); await page.waitForTimeout(80);
+    await page.selectOption('[data-t="scene-frame"]', 'tall'); await page.waitForTimeout(300);
+    { const bb = await (await page.$('[data-t="scene-stage"]')).boundingBox(); ok(mode, 'a tall picture is taller than it is wide', bb && bb.height > bb.width * 1.2, bb && (bb.width + 'x' + bb.height)); }
+    if (process.env.SHOTS) await shot(page, 'scene-' + mode + '-tall');
+    await page.selectOption('[data-t="scene-frame"]', 'square'); await page.waitForTimeout(300);
+    { const bb = await (await page.$('[data-t="scene-stage"]')).boundingBox(); ok(mode, 'a square picture is square', bb && Math.abs(bb.height - bb.width) < 3, bb && (bb.width + 'x' + bb.height)); }
+    await page.selectOption('[data-t="scene-frame"]', 'wide'); await page.waitForTimeout(300);
     ok(mode, 'a filter comes off again', !(await has(page, '.sc-stage.fx-mono')) && await has(page, '.sc-stage.fx-scan'));
     await page.fill('[data-t="scene-name"]', 'Test scene'); await page.selectOption('[data-t="scene-when"]', 'news');
     await page.click('[data-t="scene-save"]');

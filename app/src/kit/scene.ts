@@ -48,6 +48,14 @@ export interface Scene { v: 1; id: string; name: string; when: string; set: stri
   /** How the picture is presented (Ryan, 19 October): scan lines, an old television tube and black and white, all off
       unless a scene asks. For artistic promos and old-school companies; the game's own scenes use none. */
   fx?: { scan?: boolean; crt?: boolean; mono?: boolean } }
+/** The shapes a picture can take (Ryan, 18 October): wide for the broadcast, tall for posters and covers, square for portraits. */
+export const FRAMES: ['wide' | 'tall' | 'square', string][] = [['wide', 'Wide (the broadcast)'], ['tall', 'Tall (a poster or a cover)'], ['square', 'Square (a portrait)']];
+/** Width over height of a scene's picture. */
+export function aspectOf(sc: Scene): number { return sc.frame === 'tall' ? 3 / 4 : sc.frame === 'square' ? 1 : 16 / 9; }
+/** A tall or square picture fills its height and cuts the sides of the set. */
+export function cropOf(sc: Scene): boolean { return sc.frame === 'tall' || sc.frame === 'square'; }
+/** The biggest picture of this shape that fits a box, in whole pixels. */
+export function fitIn(bw: number, bh: number, a: number, min = 0): [number, number] { const w = Math.max(min, Math.floor(Math.min(bw, bh * a))); return [w, Math.round(w / a)]; }
 /** The presentation filters a scene can pick, in the order Create a Scene lists them. */
 export const SCENE_FX: ['scan' | 'crt' | 'mono', string][] = [['scan', 'Scan lines'], ['crt', 'Old TV tube'], ['mono', 'Black and white']];
 /** The classes that draw a scene's filters (app/styles/scene.css), or '' when it has none. */
@@ -342,8 +350,8 @@ export function build(sc: Scene, k: Key, cast: Record<string, Recipe>, time = 0)
 }
 
 /** The view that fits a 16 by 9 scene into a canvas of this size, through the camera. */
-export function viewFor(w: number, h: number, cam?: Cam): View {
-  const c = cam || CAM0, s = Math.min(w / W16, h / H9) * Math.max(0.8, c.z);
+export function viewFor(w: number, h: number, cam?: Cam, crop = false): View {
+  const c = cam || CAM0, s = (crop ? Math.max : Math.min)(w / W16, h / H9) * Math.max(0.8, c.z);   // a tall or square picture is cut from the middle of the set
   return { s, ox: w / 2 - c.x * s, oy: h / 2 + c.y * s };
 }
 /** Tilt the canvas round its middle for the camera's tilt; call before drawing, and ctx.restore() after. */
@@ -352,7 +360,7 @@ export function tilt(ctx: CanvasRenderingContext2D, cam?: Cam) {
   const w = ctx.canvas.width, h = ctx.canvas.height; ctx.translate(w / 2, h / 2); ctx.rotate(-r); ctx.scale(1 + Math.abs(Math.sin(r)) * 0.9, 1 + Math.abs(Math.sin(r)) * 0.9); ctx.translate(-w / 2, -h / 2);
 }
 export function paint(ctx: CanvasRenderingContext2D, sc: Scene, time: number, cast: Record<string, Recipe>) {
-  const c = ctx.canvas, k = at(sc, time), v = viewFor(c.width, c.height, k.cam);
+  const c = ctx.canvas, k = at(sc, time), v = viewFor(c.width, c.height, k.cam, cropOf(sc));
   ctx.fillStyle = PAL.navy; ctx.fillRect(0, 0, c.width, c.height);
   const b = build(sc, k, cast, time); tilt(ctx, k.cam); drawScene(ctx, b.pieces, v, sc.set); ctx.restore(); return { ...b, v };
 }

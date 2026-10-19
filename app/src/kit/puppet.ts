@@ -575,7 +575,7 @@ export interface PropDraw { k: string; x: number; y: number; r: number; z: numbe
 const PR = (pts: Pt[], cx: number, cy: number, a: number, s: number): Pt[] => pts.map(([x, y]) => { const d = rot([x * s, y * s], a); return [cx + d[0], cy + d[1]] as Pt; });
 export const PROPS: [string, string][] = [['belt', 'Title belt'], ['chair', 'Chair'], ['table', 'Table'], ['mic', 'Microphone'], ['burst', 'Burst'], ['sign', 'Sign'], ['headline', 'Headline'], ['confetti', 'Confetti'],
   ['spot', 'Spotlight'], ['beams', 'Coloured lights'], ['strobe', 'Strobes'], ['dim', 'Lights down'], ['sparks', 'Sparks'], ['fountain', 'Pyro fountain'], ['flash', 'A flash'], ['fire', 'A column of fire'],
-  ['ladder', 'Ladder'], ['bat', 'Baseball bat'], ['steps', 'Ring steps'], ['bin', 'Rubbish bin'], ['table_broken', 'Broken table'], ['cameras', 'Camera flashes'], ['motion', 'Motion lines'], ['spray', 'A spray of water'], ['smoke', 'Smoke']];
+  ['ladder', 'Ladder'], ['bat', 'Baseball bat'], ['steps', 'Ring steps'], ['bin', 'Rubbish bin'], ['table_broken', 'Broken table'], ['cameras', 'Camera flashes'], ['motion', 'Motion lines'], ['spray', 'A spray of water'], ['smoke', 'Smoke'], ['masthead', 'Masthead (a cover title)']];
 /** Cut a prop. `t` (seconds) moves the things that move by themselves (confetti). */
 export function prop(p: PropDraw, out: Piece[], t = 0) {
   const a = p.r * Math.PI / 180, s = p.s || 1, z = p.z, own = p.id, seed = hash(p.id + p.k);
@@ -624,6 +624,11 @@ export function prop(p: PropDraw, out: Piece[], t = 0) {
   } else if (p.k === 'fire') {   // a column of fire: red, orange and yellow tongues of card, licking up
     const fl = (w0: number, h0: number, col: string, dz: number) => { const pts: Pt[] = [[-w0, 0]]; for (let i = 0; i <= 6; i++) pts.push([-w0 + 2 * w0 * i / 6, h0 * (0.75 + 0.25 * Math.sin(t * 9 + i * 1.7 + seed % 7)) * (i % 2 ? 0.8 : 1)]); pts.push([w0, 0]); add(pts, col, dz, 0.03, 0.02); };
     fl(0.6, 3.6, PAL.red, 0); fl(0.45, 2.8, PAL.orange, 0.01); fl(0.28, 1.9, PAL.yellow, 0.02);
+  } else if (p.k === 'masthead') {   // a magazine's name in big cut letters across the top of a cover, on a band of card
+    const txt = p.txt || 'RING NEWS', w = Math.max(4, txt.length * 0.62);
+    add([[-w / 2 - 0.3, -0.62], [w / 2 + 0.3, -0.62], [w / 2 + 0.3, 0.62], [-w / 2 - 0.3, 0.62]], p.col || PAL.red, 0, 0.06);
+    add([[-w / 2 - 0.3, -0.62], [w / 2 + 0.3, -0.62], [w / 2 + 0.3, -0.5], [-w / 2 - 0.3, -0.5]], PAL.yellow, 0.02, 0.02, 0.004);
+    out.push({ pts: [], col: '', z: z + 0.08, txt: { s: txt, x: p.x, y: p.y + 0.04, size: 1.05 * s, col: PAL.white } });
   } else if (p.k === 'smoke') {   // smoke rolling along the floor: pale puffs of tissue that drift and swell
     for (let i = 0; i < 14; i++) { const h1 = Math.abs((seed >> (i % 9)) + i * 7919) % 1000 / 1000, dr = ((t * 0.35 + h1) % 1), x = (i - 6.5) * 0.8 + dr * 0.9 * (i % 2 ? 1 : -1), r0 = 0.65 + h1 * 0.4 + dr * 0.25;
       add(ell(x, -0.3 + (i % 3) * 0.22 + dr * 0.3, r0 * 1.5, r0 * 0.6, 14), i % 3 ? '#d9dbe2' : '#eef0f4', 0.005 * i, 0.01, 0.02); }
