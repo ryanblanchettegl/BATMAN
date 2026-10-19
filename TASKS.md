@@ -118,7 +118,8 @@ Two more lists sit beside this one, both finished:
 Create a Wrestler:
 - [x] More hair (styles and a second colour), body hair, scars, freckles, more masks and mask designs.
 - [ ] Face paint in layers.
-- [ ] More gear: jackets with lettering on the back, coats, hats, kick pads and wraps in more cuts, women's gear sets, capes, crowns and chains, a title belt worn on the waist or the shoulder.
+- [x] More gear: a satin ring jacket, a long coat, a baseball cap and a wool hat, bare feet taped at the ankle, a ring bodysuit and flared ring pants, a cape, a crown, a title belt round the waist or over the shoulder.
+- [ ] Lettering on the back of a jacket: it needs a picture from behind (a pose that turns away), which the paper doll does not have yet.
 - [ ] A move set: signature moves for each part of a match, taunts.
 - [ ] An entrance built from parts: a music cue, pyro, lights, a walk.
 - [ ] Paper portraits for everybody, not only the edited, and a quick random wrestler.

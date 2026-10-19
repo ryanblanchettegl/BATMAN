@@ -29,10 +29,10 @@ It never makes a picture: it builds a paper doll from data, and every part is cu
 | Their portrait | Bottom right of the full-body window, beside the poses (Ryan, 18 October: one window to save space); pressing it opens its settings: the outfit, the face, the pose, the card behind them and the framing (head and shoulders, or to the chest). It is cut from their own doll (`kit/paperportrait.tsx`) and the game shows it wherever it shows a portrait (`Portrait` in `kit/portrait.tsx`) for anybody with a file; everybody else keeps the face drawn from their numbers | Yes |
 
 The parts library today is drawn by code in `app/src/kit/puppet.ts`: tops (bare chest, a singlet with the straps up
-or down, a full singlet to the thigh, a crop top, a T-shirt, a tank top, a sports top, an open vest, a biker jacket, an entrance robe, a hooded top, a suit and
-tie), bottoms (trunks, long trunks, long tights, fight shorts, a short ring skirt, torn jeans, suit trousers), footwear (boots with knee
-pads, kick pads, heavy laced boots, short boots, retro sneakers, dress shoes, bare feet) and extras (wrist tape, wrist wraps, knee pads and sleeves, elbow
-pads, fingerless gloves, an arm band, aviator sunglasses, a cowboy hat, a bandana, face paint, a chain). Parts made in
+or down, a full singlet to the thigh, a crop top, a T-shirt, a tank top, a sports top, a ring bodysuit, an open vest, a biker jacket, a satin ring jacket, a long coat, an entrance robe, a hooded top, a suit and
+tie), bottoms (trunks, long trunks, long tights, flared ring pants, fight shorts, a short ring skirt, torn jeans, suit trousers), footwear (boots with knee
+pads, kick pads, heavy laced boots, short boots, bare feet taped at the ankle, retro sneakers, dress shoes, bare feet) and extras (wrist tape, wrist wraps, knee pads and sleeves, elbow
+pads, fingerless gloves, an arm band, aviator sunglasses, a cowboy hat, a baseball cap, a wool hat, a bandana, a crown, face paint, a chain, a cape, a title belt round the waist or over the shoulder). Parts made in
 Blender come later and take the same ids (`papercraft-engine.md`, section 1).
 
 ## The file: `wrestler.json`

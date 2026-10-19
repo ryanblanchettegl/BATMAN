@@ -64,11 +64,13 @@ export const PARTS: Record<'head' | 'upper_body' | 'lower_body' | 'footwear' | '
     ['hair_bun_01', 'Top knot'], ['hair_undercut_01', 'Undercut'], ['hair_pigtails_01', 'Pigtails'], ['hair_bob_01', 'Bob'],
     ['mask_full_01', 'Mask, mouth open'], ['mask_closed_01', 'Full mask'], ['mask_half_01', 'Half mask'], ['mask_hood_01', 'Hood']],
   upper_body: [['bare', 'Bare chest'], ['singlet_straps_up', 'Singlet, straps up'], ['singlet_straps_down', 'Singlet, straps down'], ['singlet_full', 'Full singlet, to the thigh'], ['shirt_tshirt_base', 'T-shirt'], ['shirt_tank', 'Tank top'],
-    ['top_sports', 'Sports top'], ['top_crop', 'Crop top'], ['vest_open', 'Open vest'], ['jacket_leather_biker', 'Biker jacket'], ['robe_long', 'Entrance robe'], ['hoodie_01', 'Hooded top'], ['suit_jacket', 'Suit and tie']],
-  lower_body: [['trunks_brief_01', 'Trunks'], ['trunks_long', 'Long trunks'], ['tights_long_01', 'Long tights'], ['shorts_fight', 'Fight shorts'], ['skirt_short', 'Short ring skirt'], ['jeans_distressed', 'Torn jeans'], ['trousers_suit', 'Suit trousers']],
-  footwear: [['boots_knee', 'Boots and knee pads'], ['boots_laced_heavy', 'Heavy laced boots'], ['boots_short', 'Short boots'], ['kick_pads', 'Kick pads'], ['sneakers_retro', 'Retro sneakers'], ['shoes_dress', 'Dress shoes'], ['barefoot', 'Bare feet']],
+    ['top_sports', 'Sports top'], ['top_crop', 'Crop top'], ['top_bodysuit', 'Ring bodysuit'], ['vest_open', 'Open vest'], ['jacket_leather_biker', 'Biker jacket'], ['jacket_satin', 'Satin ring jacket'], ['coat_long', 'Long coat'],
+    ['robe_long', 'Entrance robe'], ['hoodie_01', 'Hooded top'], ['suit_jacket', 'Suit and tie']],
+  lower_body: [['trunks_brief_01', 'Trunks'], ['trunks_long', 'Long trunks'], ['tights_long_01', 'Long tights'], ['pants_flared', 'Flared ring pants'], ['shorts_fight', 'Fight shorts'], ['skirt_short', 'Short ring skirt'], ['jeans_distressed', 'Torn jeans'], ['trousers_suit', 'Suit trousers']],
+  footwear: [['boots_knee', 'Boots and knee pads'], ['boots_laced_heavy', 'Heavy laced boots'], ['boots_short', 'Short boots'], ['kick_pads', 'Kick pads'], ['ankle_wraps', 'Bare feet, taped'], ['sneakers_retro', 'Retro sneakers'], ['shoes_dress', 'Dress shoes'], ['barefoot', 'Bare feet']],
   accessories: [['wrist_tape_white', 'Wrist tape'], ['wrist_wraps', 'Wrist wraps'], ['knee_pads', 'Knee pads'], ['knee_sleeves', 'Knee sleeves'], ['elbow_pads', 'Elbow pads'], ['gloves_fingerless', 'Fingerless gloves'], ['armband', 'Arm band'],
-    ['sunglasses_aviator', 'Aviator sunglasses'], ['hat_cowboy', 'Cowboy hat'], ['bandana', 'Bandana'], ['chain_gold', 'Chain']],
+    ['sunglasses_aviator', 'Aviator sunglasses'], ['hat_cowboy', 'Cowboy hat'], ['hat_cap', 'Baseball cap'], ['hat_beanie', 'Wool hat'], ['bandana', 'Bandana'], ['crown', 'Crown'], ['chain_gold', 'Chain'], ['cape', 'Cape'],
+    ['belt_waist', 'Title belt, round the waist'], ['belt_shoulder', 'Title belt, over the shoulder']],
 };
 export const FACIAL: [string, string][] = [['', 'From the face'], ['none', 'Clean shaven'], ['stubble', 'Stubble'], ['goatee', 'Goatee'], ['chin_strap', 'Chin strap'], ['sideburns', 'Sideburns'], ['beard_short', 'Short beard'],
   ['beard_full', 'Full beard'], ['beard_braided', 'Braided beard'], ['mustache', 'Moustache'], ['handlebar', 'Handlebar moustache'], ['horseshoe', 'Horseshoe moustache']];
@@ -164,7 +166,7 @@ export const ARCHETYPES: [string, string, { h: number; w: number; s: [number, nu
 export interface Kit { top: string; bottom: string; feet: string; acc: string[]; head: string; pal: { p: Swatch; s: Swatch; t: Swatch; h: Swatch }; layers: Layer[];
   /** The colour each part is cut from: its own, or the slot it takes (ring tops and bottoms the main colour; tops worn over, and footwear, the second). */
   col: { top: Swatch; bottom: Swatch; feet: Swatch } }
-const RING_TOPS = ['bare', 'singlet_straps_up', 'singlet_straps_down', 'singlet_full', 'top_sports', 'top_crop'];
+const RING_TOPS = ['bare', 'singlet_straps_up', 'singlet_straps_down', 'singlet_full', 'top_sports', 'top_crop', 'top_bodysuit'];
 const DEF: Record<AttireKey, Attire> = {
   primary_ring: { equipped_assets: { upper_body: 'bare', lower_body: 'trunks_brief_01', footwear: 'boots_knee', accessories: ['wrist_tape_white'] }, palette_slots: {} },
   entrance_gear: { equipped_assets: { upper_body: 'robe_long', lower_body: 'trunks_brief_01', footwear: 'boots_knee', accessories: [] }, palette_slots: {} },
