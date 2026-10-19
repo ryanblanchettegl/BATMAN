@@ -163,6 +163,72 @@ The desk image (`docs/mockups/paper/desk.png`) is the art style: the whole game 
 - [ ] Render the interface pieces in Blender as cut card (window frames and title bars, buttons in each colour, tags, group tabs, the menu bar, the control strip tiles and keys) so the paper has real thickness, light and shadow, and use them in the game as 9-slice images or baked textures.
 - [ ] Every page moved to the paper look, one at a time with Ryan's go-ahead.
 
+### 0v3. The workbench is the art style (Ryan, 19 October: "we are switching to concept a"; "this is the new art style. make it the rule and start spreading it everywhere")
+
+- [x] A in every build (`app/styles/craft.css`, `app/ui/craft/`): torn cream paper windows with navy title strips, cut card buttons, index cards and sticky notes, on black construction paper, no tape. Rule 2a rewritten. The zine is kept as concept C (`app/styles/looks/c.css`, `app/ui/c/`).
+- [ ] Spread it everywhere: every page, every pop-up, the broadcast, After the show, the title screen and the World Editor, each checked for readability and fit at 1280 by 720.
+
+### 0v2. The scrapbook zine was the core look for a day (Ryan, 19 October: "C is the winner")
+
+- [x] Three concepts for a hand-made match page: A the workbench, B the cardboard box, C the scrapbook zine (`tools/creator/craft-kit.py`, `app/styles/looks/`).
+- [x] C in every build, later replaced by A (0v3).
+
+### 0w. Still pictures for the moments you answer (Ryan, 18 October)
+
+- [x] Every matter on the desk and every call from the gorilla position shows one still diorama picture of the moment (somebody hurt, a fight backstage, two people face to face, a meeting across your desk, a walkout, the crowd on its feet): the picture on the left of the pop-up, the answers on the right.
+- [x] Stills are made in Create a Scene like any other scene, marked as a still: one picture, no keyframes to play.
+- [x] Both pop-ups in the paper look (Ryan: "it should look like the new art style"): cream card, the navy bar in pinstripes, the info strip, answers as card buttons.
+- [ ] More stills: the trainer's room with the trainer, a parking lot, the owner in the office, a contract on the desk, the whole locker room for a mutiny.
+
+### 0v. The creator suite, built out (Ryan, 18 October: "add them to the queue"; `docs/plans/creator-suite-roadmap.md`)
+
+Create a Wrestler:
+- [x] More hair (styles and a second colour), body hair, scars, freckles, more masks and mask designs.
+- [x] Face paint in layers: up to three designs painted over the first, each in its own colour (round the eyes, a tear, a painted grin, a cross, and the first list's designs).
+- [x] More gear: a satin ring jacket, a long coat, a baseball cap and a wool hat, bare feet taped at the ankle, a ring bodysuit and flared ring pants, a cape, a crown, a title belt round the waist or over the shoulder.
+- [x] A front and a back (Ryan, 19 October): every wrestler can be seen from behind (the back of the head and the hair, the back of a mask with its laces, the back of every top, a back tattoo, knee pads by their straps). Their back on Create a Wrestler, Show their back on a person in Create a Scene (`Fig.b`), and lettering Across the back.
+- [x] Layers in Create a Scene (Ryan, 19 October): everything in the keyframe front to back (people, props, the set last), each with Forward, Back (in every keyframe both are in), Hide and Lock (for editing only).
+- [x] Layers in Create a Wrestler: the lettering and shapes on an outfit listed back to front with Bring forward and Send back, and face paint layers with Over.
+- [x] A move set: every wrestler has one finisher and two signature moves (Ryan, 19 October), each signature early, in the middle or late in a match; up to three taunts, played now and then by whoever is on top. Wrestlers with no file get signatures by style.
+- [x] An entrance built from parts: the walk (the five entrances, or a custom one), pyro (sparks, fountains, a flash, columns of fire), lights (a spotlight, lights down, red, blue or green, strobes) and the name of their music, which the announcers say as they come out.
+- [x] Paper portraits for everybody, not only the edited (`Portrait` draws every wrestler from their doll), and a quick random wrestler (Surprise me in the suite).
+- [ ] Parts made in Blender with sockets, and a parts format modders can add to.
+- [ ] A file per wrestler on disk on the desktop build (`/save/wrestlers/`).
+
+Create a Scene (with 0z):
+- [x] More sets: a steel cage, a parking lot, a talk show, a news desk (each a setup on the New tab).
+- [x] A packed stadium and up in the rafters (sets and setups).
+- [x] Effects: spotlights, coloured light, strobes, lights down, sparks, pyro fountains, a flash, columns of fire, camera flashes in the crowd, motion lines, a spray of water.
+- [x] Smoke rolling along the floor.
+- [x] Props: ladders, a bat, ring steps, a bin, a broken table.
+- [x] A truck.
+- [ ] Props that can be thrown.
+- [x] Frames: tall and square pictures for posters, magazine covers and portraits (Shape, on The scene tab; the picture is cut from the middle of the set), with a masthead prop for covers and the headline for captions.
+- [x] Easing: each keyframe is reached smoothly, evenly, speeding up, slowing down, or in a cut (`Key.ease`); its timing is Arrives after.
+- [ ] Still to come in animation: a timeline view, sound cues, and moves that can be used again.
+- [x] More hooks (the authority figure: the boss of the hostile authority arc, else the owner or booker on the roster; the interviewer: an announcer; the referee as a person, dressed in stripes) and two stills for them (an interview backstage, called out by the boss).
+- [x] Presentation filters a scene can pick (Ryan, 19 October): scan lines, an old TV tube and black and white, all off by default (Look, on The scene tab; `sc.fx`); for artistic promos and old-school companies.
+- [x] A background creator: the Backdrop tab in Create a Scene makes a wall of your own (wall and floor colours, banners, signs, a big screen, posters, windows, a door, curtains, a skyline, a stripe, a row of lights, plants) and keeps it in the world like a scene (`pkg.backdrops`, `E.edSetBackdrop`, `kit/backdrop.ts`); any scene can stand in front of it.
+
+New creators, each a small file cut by code, played in the game and shared:
+- [ ] Create a Belt: plates, straps, gems, lettering and the company's logo in card and foil, worn by champions in every scene, portrait and title page.
+- [ ] Create a Logo: the logo maker moved into the paper look, and logos on gear, rings, banners and portraits.
+- [ ] Create an Arena: the ring's colours and apron, the stage and ramp, banners, the crowd's size and signs.
+- [ ] Create a Prop: shapes, lettering and finishes put together into a prop with a place to hold it.
+- [ ] Create a Move: a short scene with two hooks (who does it, who takes it), the community's move library.
+- [ ] Create a Show: a show's lights, its marquee, its open and its desk team.
+- [ ] Create a Poster or Cover: scenes framed tall, with type, for big events, the dirt sheet and the Web pages.
+
+The Steam Workshop:
+- [ ] Upload and subscribe in the desktop build, for each kind of file (wrestler, scene, entrance, move, belt, logo, arena, prop) and for packs (a whole world).
+- [ ] A browser in the game for what is subscribed, a check on every file (`E.lookClean` is the pattern), versions so old files open, and a report button for a file that breaks rule 3.
+
+### 0x. The paper look built out in Blender (later; Ryan, 18 October)
+
+The desk image (`docs/mockups/paper/desk.png`) is the art style: the whole game looks made from construction paper. Pages are built to it now in CSS and canvas.
+- [ ] Render the interface pieces in Blender as cut card (window frames and title bars, buttons in each colour, tags, group tabs, the menu bar, the control strip tiles and keys) so the paper has real thickness, light and shadow, and use them in the game as 9-slice images or baked textures.
+- [ ] Every page moved to the paper look, one at a time with Ryan's go-ahead.
+
 ### 0v2. The scrapbook zine is the core look (Ryan, 19 October: "C is the winner")
 
 - [x] Three concepts for a hand-made match page: A the workbench, B the cardboard box, C the scrapbook zine (`tools/creator/craft-kit.py`, `app/styles/looks/`).

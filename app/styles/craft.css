@@ -137,3 +137,28 @@ body{background:radial-gradient(130% 100% at 30% 10%,rgba(255,255,255,.04),rgba(
 .wn>.bd{padding-top:.32em;padding-bottom:.32em}
 .wn .btn{padding:.12em 1.4ch .2em;margin-bottom:.22em}
 .grp{margin-top:1em}
+
+/* ---------- the older parts of every page, brought onto the workbench ---------- */
+/* tables: lines ruled on cream card, headings in red marker, the picked line a highlighter stroke */
+.main .panel .tw,.main .tw{background:#fbf8ee;border:2px solid var(--ink);border-radius:3px}
+.main .tw th{background:#efe7d2;color:#c23a30;font-family:var(--marker);font-weight:400;border-bottom:2px solid var(--ink)}
+.main .tw td{color:var(--ink);border-bottom:1px dashed rgba(35,35,42,.22);font-family:var(--hand)}
+.main .tw td .nm{color:var(--ink)}
+.main .tw .muted{color:#5a5a62} .main .tw .good{color:#2f7a3a} .main .tw .bad,.main .tw .heel{color:#b8322a} .main .tw .gold{color:#8a6a10} .main .tw .face{color:#2c4f9a}
+.main .tw .lnk{color:#2c4f9a} .main .tw .lnk.gold{color:#8a6a10} .main .tw .lnk.heel{color:#b8322a}
+.main .tw tbody tr.pick:hover{background:#fff4c2}
+.main .tw tbody tr.on{background:linear-gradient(transparent 6%,#ffe066 6%,#ffd23f 94%,transparent 94%)} .main .tw tbody tr.on>td,.main .tw tbody tr.on>td *{color:var(--ink)}
+/* the old panels: torn cream paper with a navy strip for a heading */
+html body .panel.panel,.panel{border-image:var(--lk-win) 30 fill / 12px / 5px stretch;color:var(--ink);font-family:var(--hand)}
+.panel>h2{background:var(--lk-navy) 0 0/240px;color:#ffe48a;font-family:var(--marker);font-weight:400;border:0;border-radius:0;letter-spacing:.02em;text-transform:none;clip-path:polygon(0 8%,12% 0,40% 6%,70% 0,100% 7%,99% 92%,72% 100%,45% 93%,15% 100%,1% 92%);box-shadow:none}
+/* group boxes: a lighter patch of card with a label of red marker */
+html .grp.grp,.grp{border-image:none;border:1.5px solid rgba(35,35,42,.28);border-radius:3px;background:rgba(255,255,255,.32)}
+.grp>h3{background:#fbf8ee;color:#c23a30;font-family:var(--marker);font-weight:400;border:1.5px solid rgba(35,35,42,.4);border-radius:2px;box-shadow:.08em .12em 0 rgba(0,0,0,.2);transform:rotate(-1deg)}
+/* the gauges on Overview */
+.main .gp{background:none;border:0;box-shadow:none;border-image:var(--lk-card) 30 fill / 14px / 4px;color:var(--ink);font-family:var(--hand);padding:.5em 1.6ch .6em}
+.main .gp h2{background:var(--lk-navy) 0 0/240px;color:#ffe48a;margin:0 0 .3em;font-family:var(--marker);font-weight:400;text-transform:none;letter-spacing:.02em}
+.main .gp .kv b,.main .gp b{color:#1d2a5c;font-family:var(--marker);font-weight:400}
+.main .gp .gauge i,.gauge i{background:#ddd5c2;border-radius:2px} .main .gp .gauge i.on,.gauge i.on{background:#3f7fd0}
+/* a name in a list is a word written in blue ink, not a button */
+.wn .list .btn.sm[data-t="sel"],.panel .list .btn.sm[data-t="sel"]{border-image:none;background:none;padding:0 .2ch;margin:0;color:#2c4f9a;text-shadow:none;font-family:var(--hand);font-size:1em;letter-spacing:0;text-decoration:underline dotted rgba(44,79,154,.6);transform:none}
+.wn .list .btn.sm[data-t="sel"]:hover,.wn .list .btn.sm[data-t="sel"]:focus-visible{background:#ffe48a;filter:none;transform:none}
