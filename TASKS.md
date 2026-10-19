@@ -131,11 +131,12 @@ Create a Wrestler:
 
 Create a Scene (with 0z):
 - [x] More sets: a steel cage, a parking lot, a talk show, a news desk (each a setup on the New tab).
-- [ ] Still to come: a packed stadium, the rafters.
+- [x] A packed stadium and up in the rafters (sets and setups).
 - [x] Effects: spotlights, coloured light, strobes, lights down, sparks, pyro fountains, a flash, columns of fire, camera flashes in the crowd, motion lines, a spray of water.
 - [x] Smoke rolling along the floor.
 - [x] Props: ladders, a bat, ring steps, a bin, a broken table.
-- [ ] A truck; props that can be thrown.
+- [x] A truck.
+- [ ] Props that can be thrown.
 - [x] Frames: tall and square pictures for posters, magazine covers and portraits (Shape, on The scene tab; the picture is cut from the middle of the set), with a masthead prop for covers and the headline for captions.
 - [x] Easing: each keyframe is reached smoothly, evenly, speeding up, slowing down, or in a cut (`Key.ease`); its timing is Arrives after.
 - [ ] Still to come in animation: a timeline view, sound cues, and moves that can be used again.

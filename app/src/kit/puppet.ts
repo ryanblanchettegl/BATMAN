@@ -666,7 +666,7 @@ export interface PropDraw { k: string; x: number; y: number; r: number; z: numbe
 const PR = (pts: Pt[], cx: number, cy: number, a: number, s: number): Pt[] => pts.map(([x, y]) => { const d = rot([x * s, y * s], a); return [cx + d[0], cy + d[1]] as Pt; });
 export const PROPS: [string, string][] = [['belt', 'Title belt'], ['chair', 'Chair'], ['table', 'Table'], ['mic', 'Microphone'], ['burst', 'Burst'], ['sign', 'Sign'], ['headline', 'Headline'], ['confetti', 'Confetti'],
   ['spot', 'Spotlight'], ['beams', 'Coloured lights'], ['strobe', 'Strobes'], ['dim', 'Lights down'], ['sparks', 'Sparks'], ['fountain', 'Pyro fountain'], ['flash', 'A flash'], ['fire', 'A column of fire'],
-  ['ladder', 'Ladder'], ['bat', 'Baseball bat'], ['steps', 'Ring steps'], ['bin', 'Rubbish bin'], ['table_broken', 'Broken table'], ['cameras', 'Camera flashes'], ['motion', 'Motion lines'], ['spray', 'A spray of water'], ['smoke', 'Smoke'], ['masthead', 'Masthead (a cover title)']];
+  ['ladder', 'Ladder'], ['bat', 'Baseball bat'], ['steps', 'Ring steps'], ['bin', 'Rubbish bin'], ['table_broken', 'Broken table'], ['cameras', 'Camera flashes'], ['motion', 'Motion lines'], ['spray', 'A spray of water'], ['smoke', 'Smoke'], ['truck', 'A truck'], ['masthead', 'Masthead (a cover title)']];
 /** Cut a prop. `t` (seconds) moves the things that move by themselves (confetti). */
 export function prop(p: PropDraw, out: Piece[], t = 0) {
   const a = p.r * Math.PI / 180, s = p.s || 1, z = p.z, own = p.id, seed = hash(p.id + p.k);
@@ -720,6 +720,10 @@ export function prop(p: PropDraw, out: Piece[], t = 0) {
     add([[-w / 2 - 0.3, -0.62], [w / 2 + 0.3, -0.62], [w / 2 + 0.3, 0.62], [-w / 2 - 0.3, 0.62]], p.col || PAL.red, 0, 0.06);
     add([[-w / 2 - 0.3, -0.62], [w / 2 + 0.3, -0.62], [w / 2 + 0.3, -0.5], [-w / 2 - 0.3, -0.5]], PAL.yellow, 0.02, 0.02, 0.004);
     out.push({ pts: [], col: '', z: z + 0.08, txt: { s: txt, x: p.x, y: p.y + 0.04, size: 1.05 * s, col: PAL.white } });
+  } else if (p.k === 'truck') {   // a box truck side on: the trailer, the cab, the wheels
+    add([[-3.2, -0.6], [1.6, -0.6], [1.6, 2.0], [-3.2, 2.0]], '#e8e4da', 0, 0.06); add([[-3.2, 1.0], [1.6, 1.0], [1.6, 1.25], [-3.2, 1.25]], p.col || PAL.red, 0.01, 0.02, 0.004);
+    add([[1.7, -0.6], [3.4, -0.6], [3.4, 0.8], [2.8, 1.4], [1.7, 1.4]], p.col || PAL.red, 0, 0.06); add([[2.2, 0.55], [3.05, 0.55], [2.75, 1.15], [2.2, 1.15]], '#9ab8d0', 0.01, 0.02, 0.004);
+    for (const wx of [-2.4, -1.1, 2.7]) { add(ell(wx, -0.65, 0.42, 0.42, 14), '#111114', 0.02, 0.04, 0.004); add(ell(wx, -0.65, 0.16, 0.16, 10), PAL.steel, 0.03, 0.01, 0.002); }
   } else if (p.k === 'smoke') {   // smoke rolling along the floor: pale puffs of tissue that drift and swell
     for (let i = 0; i < 14; i++) { const h1 = Math.abs((seed >> (i % 9)) + i * 7919) % 1000 / 1000, dr = ((t * 0.35 + h1) % 1), x = (i - 6.5) * 0.8 + dr * 0.9 * (i % 2 ? 1 : -1), r0 = 0.65 + h1 * 0.4 + dr * 0.25;
       add(ell(x, -0.3 + (i % 3) * 0.22 + dr * 0.3, r0 * 1.5, r0 * 0.6, 14), i % 3 ? '#d9dbe2' : '#eef0f4', 0.005 * i, 0.01, 0.02); }

@@ -84,7 +84,7 @@ export interface Look {
 }
 export const ATTIRES: [AttireKey, string, string][] = [['primary_ring', 'Ring gear', 'In-ring gear'], ['entrance_gear', 'Entrance', 'Ring walk and entrance'], ['street_clothes', 'Street clothes', 'Backstage and promos']];
 /** Which outfit a set calls for: ring gear in the ring, entrance gear on the ramp, street clothes backstage. */
-export const ATTIRE_OF: Record<string, AttireKey> = { ring: 'primary_ring', ringlow: 'primary_ring', ringcorner: 'primary_ring', plain: 'primary_ring', ramp: 'entrance_gear', hall: 'street_clothes', office: 'street_clothes', locker: 'street_clothes', backstage: 'street_clothes', desk: 'street_clothes' };
+export const ATTIRE_OF: Record<string, AttireKey> = { ring: 'primary_ring', ringlow: 'primary_ring', ringcorner: 'primary_ring', plain: 'primary_ring', ramp: 'entrance_gear', hall: 'street_clothes', office: 'street_clothes', locker: 'street_clothes', backstage: 'street_clothes', desk: 'street_clothes', stadium: 'primary_ring', rafters: 'entrance_gear', lot: 'street_clothes', cage: 'primary_ring' };
 
 /* ---------- swatches: card, foil, corrugated board, neon paper ---------- */
 export type Fin = 'matte' | 'foil' | 'corr' | 'neon' | 'denim' | 'leather';
