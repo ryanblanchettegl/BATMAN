@@ -571,7 +571,8 @@ function head(fr: F, r: Recipe, z: number, expr: string, cut: (f: F, poly: Pt[],
 /* ---------- props: things that stand in a scene ---------- */
 export interface PropDraw { k: string; x: number; y: number; r: number; z: number; s?: number; txt?: string; col?: string; id: string }
 const PR = (pts: Pt[], cx: number, cy: number, a: number, s: number): Pt[] => pts.map(([x, y]) => { const d = rot([x * s, y * s], a); return [cx + d[0], cy + d[1]] as Pt; });
-export const PROPS: [string, string][] = [['belt', 'Title belt'], ['chair', 'Chair'], ['table', 'Table'], ['mic', 'Microphone'], ['burst', 'Burst'], ['sign', 'Sign'], ['headline', 'Headline'], ['confetti', 'Confetti']];
+export const PROPS: [string, string][] = [['belt', 'Title belt'], ['chair', 'Chair'], ['table', 'Table'], ['mic', 'Microphone'], ['burst', 'Burst'], ['sign', 'Sign'], ['headline', 'Headline'], ['confetti', 'Confetti'],
+  ['spot', 'Spotlight'], ['beams', 'Coloured lights'], ['strobe', 'Strobes'], ['dim', 'Lights down'], ['sparks', 'Sparks'], ['fountain', 'Pyro fountain'], ['flash', 'A flash'], ['fire', 'A column of fire']];
 /** Cut a prop. `t` (seconds) moves the things that move by themselves (confetti). */
 export function prop(p: PropDraw, out: Piece[], t = 0) {
   const a = p.r * Math.PI / 180, s = p.s || 1, z = p.z, own = p.id, seed = hash(p.id + p.k);
@@ -599,6 +600,27 @@ export function prop(p: PropDraw, out: Piece[], t = 0) {
     const txt = p.txt || 'BREAKING NEWS', w = Math.max(2, txt.length * 0.36);
     add([[-w / 2 - 0.25, -0.42], [w / 2 + 0.25, -0.42], [w / 2 + 0.25, 0.42], [-w / 2 - 0.25, 0.42]], p.col || PAL.red, 0, 0.06);
     out.push({ pts: [], col: '', z: z + 0.08, txt: { s: txt, x: p.x, y: p.y, size: 0.62 * s, col: PAL.white } });
+  } else if (p.k === 'spot') {   // a beam of pale card from above, and the pool of light at the feet
+    add([[-0.28, 7], [0.28, 7], [1.5, -0.25], [-1.5, -0.25]], p.col || '#fff4c2', 0, 0.02, 0.01);
+    add(ell(0, -0.25, 1.6, 0.35, 20), shade(p.col || '#fff4c2', 1.05), 0.01, 0.01, 0.01);
+  } else if (p.k === 'beams') {   // two coloured beams from the trusses, crossing over whoever is under them
+    for (const sd of [-1, 1]) add([[sd * 5.6, 7], [sd * 4.6, 7], [-sd * 0.6, -0.3], [-sd * 2.8, -0.3]], p.col || PAL.red, 0, 0.02, 0.01);
+  } else if (p.k === 'strobe') {   // white flashes, a different few on at each moment
+    for (let i = 0; i < 6; i++) if (((Math.floor(t * 8) + i) % 3) === 0) add(star((i - 2.5) * 2.2, 3.4 + (i % 2) * 0.9, 0.55, 8, 0.35), PAL.white, 0.01, 0.02, 0.004);
+  } else if (p.k === 'dim') {   // the house lights down: dark card over the back of the set
+    add([[-12, -1.2], [12, -1.2], [12, 8], [-12, 8]], '#07081a', 0, 0.01, 0.004);
+  } else if (p.k === 'sparks') {   // a shower of sparks falling from above the stage
+    for (let i = 0; i < 26; i++) { const hx = ((seed >> (i % 11)) + i * 7919) % 1000 / 1000, hy = ((seed >> (i % 7)) + i * 104729) % 1000 / 1000, fy = 5 - ((t * 3 + hy * 6) % 6);
+      add([[-0.03, 0], [0.03, 0], [0.02, 0.32], [-0.02, 0.32]].map(([x, y]) => [x + (hx - 0.5) * 5, y + fy] as Pt), i % 3 ? PAL.yellow : PAL.white, 0.01, 0.01, 0.002); }
+  } else if (p.k === 'fountain') {   // a fountain of gold from the floor: flecks in a cone, the cone higher as it goes
+    const up = 1.2 + Math.min(1, t) * 2.4;
+    add([[-0.18, 0], [0.18, 0], [0.7, up], [-0.7, up]], PAL.gold, 0, 0.02, 0.02);
+    for (let i = 0; i < 14; i++) { const h1 = ((seed >> (i % 9)) + i * 7919) % 1000 / 1000, hh = (i / 14) * up; add(star((h1 - 0.5) * (0.3 + hh * 0.35), hh, 0.09, 4, 0.4), i % 2 ? PAL.white : PAL.yellow, 0.02, 0.01, 0.002); }
+  } else if (p.k === 'flash') {   // a flash and a bang behind them
+    add(star(0, 0, 2.6, 14, 0.55), PAL.white, 0, 0.03, 0.01); add(star(0, 0, 1.8, 14, 0.55), PAL.yellow, 0.01, 0.02, 0.01);
+  } else if (p.k === 'fire') {   // a column of fire: red, orange and yellow tongues of card, licking up
+    const fl = (w0: number, h0: number, col: string, dz: number) => { const pts: Pt[] = [[-w0, 0]]; for (let i = 0; i <= 6; i++) pts.push([-w0 + 2 * w0 * i / 6, h0 * (0.75 + 0.25 * Math.sin(t * 9 + i * 1.7 + seed % 7)) * (i % 2 ? 0.8 : 1)]); pts.push([w0, 0]); add(pts, col, dz, 0.03, 0.02); };
+    fl(0.6, 3.6, PAL.red, 0); fl(0.45, 2.8, PAL.orange, 0.01); fl(0.28, 1.9, PAL.yellow, 0.02);
   } else if (p.k === 'confetti') {
     const cols = [PAL.gold, PAL.red, PAL.white, PAL.sky, PAL.yellow];
     for (let i = 0; i < 40; i++) {

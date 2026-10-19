@@ -43,6 +43,8 @@ export interface Look {
   id?: string; name?: string; moniker?: string; hometown?: string; archetype?: string;
   /** Not in Ryan's first draft: up to three taunts, each a scene of the kind 'taunt' (the game's or a world's). */
   taunts?: string[];
+  /** Not in Ryan's first draft: their entrance built from parts: pyro and lights (PYRO, LIGHTS in kit/scene.ts) and the name of their music. */
+  entrance_fx?: { pyro?: string; lights?: string; music?: string };
   physical_attributes?: { /** Not in Ryan's first draft: the body the doll is cut as, M or F. */ sex?: 'M' | 'F'; height_inches?: number; weight_lbs?: number; body_archetype?: string; proportional_scalers?: { torso_width?: number; torso_height?: number; limb_length?: number; muscle_mass?: number } };
   /** Not in Ryan's first draft: the head under the gear (the face numbers the game already keeps), so a file carries the whole person. */
   appearance?: { face?: Record<string, number>; /** Not in Ryan's first draft: face sliders, each -1 to 1 (0 is as the face shape cuts it). */ shape?: Record<string, number>; /** Not in Ryan's first draft: which eyes, nose, mouth and ears (FEATURES). */ features?: { eyes?: string; nose?: string; mouth?: string; ears?: string }; skin_tone?: number; hair_colour?: string; facial_hair?: string; face_paint?: string; paint_colour?: string; tattoos?: string[];

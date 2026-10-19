@@ -35,7 +35,7 @@ function liveIntro(S,P,show,m,i,n){
     c.sides.forEach(function(s,k){
       var isCh=c.t&&k===c.champSide,lead=s[0],big=avg(s.map(function(w){return w.ovr;}))>=62||isCh;
       bc.push({t:'ring',x:(k===0?'Introducing first, ':(k===c.sides.length-1?'And the opponent'+(s.length>1?'s':'')+', ':'Next, '))+(isCh?'the '+c.t.name+' champion'+(s.length>1?'s':'')+', ':'')+names(s)+'!'});
-      bc.push({t:'ent',x:big?names(s)+' '+(s.length>1?'make their way out together':ENTR[lead.align==='F'?'F':'H'][lead.ent||0])+(isCh?', the title held high':'')+'. The reaction: '+pop(s)+'.':'The reaction: '+pop(s)+'.'});
+      bc.push({t:'ent',x:big?(s.length===1&&lead.look&&lead.look.entrance_fx&&lead.look.entrance_fx.music?'"'+lead.look.entrance_fx.music+'" hits, and ':'')+names(s)+' '+(s.length>1?'make their way out together':ENTR[lead.align==='F'?'F':'H'][lead.ent||0])+(isCh?', the title held high':'')+'. The reaction: '+pop(s)+'.':'The reaction: '+pop(s)+'.'});
     });
   }
   bc.push({t:'pbp',x:'The bell sounds, and this one is under way.'});

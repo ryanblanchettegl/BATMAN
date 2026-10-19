@@ -9,7 +9,7 @@ import { E } from '../../engine';
 import { G, act, full, say as note } from '../../store';
 import { Btn, TextBox, Desktop, Win, Group, Tabs } from '../../kit';
 import { ScenePlayer } from '../../kit/sceneplayer';
-import { Scene, SCENES, POSES, WAIST, copy, scenesFor, allScenes, WHEN } from '../../kit/scene';
+import { Scene, SCENES, POSES, WAIST, copy, scenesFor, allScenes, WHEN, PYRO, LIGHTS, dressEntrance } from '../../kit/scene';
 import { Recipe, recipeOf, blank } from '../../kit/puppet';
 import { Look, Attire, AttireKey, Layer, Finisher, ATTIRES, PARTS, SWATCHES, SLOTS, FONTS, SHAPES, ARCHETYPES, FACIAL, PAINT, TATTOOS, HAIR_MIX, SCARS, MASK_DESIGNS, FACE_SLIDERS, FEATURES, KICKOUT, POSITIONS, CATEGORIES, FIN_SCENES, STAGES, threeMoves, fromLook, blankLook, finScene, swatch } from '../../kit/caw';
 import { derive, NAMES, FaceKey } from '../../lib/portrait';
@@ -78,7 +78,7 @@ export function CreatePlayer(pp: PlayerProps) {
     const src = SCENES.find(x => x.id === finScene(fin)) || SCENES[0];
     sc = { ...copy(src), attire: 'primary_ring', loop: true }; cast.B = { ...blank(1), name: 'The dummy' }; play = 'fin' + fi + JSON.stringify(lk) + sc.id;
   } else if (prevSc && tab === 'scenes') {   // the entrance they picked, with them in it
-    sc = { ...copy(prevSc), loop: true }; play = 'sc' + prevSc.id + JSON.stringify(lk);
+    sc = { ...dressEntrance(copy(prevSc), lk.entrance_fx), loop: true }; play = 'sc' + prevSc.id + JSON.stringify(lk);
   } else if (prevSc && prevSc.when === 'taunt' && tab === 'fin') {   // a taunt they picked, over the dummy
     sc = { ...copy(prevSc), attire: 'primary_ring', loop: true }; cast.B = { ...blank(1), name: 'The dummy' }; play = 'tn' + prevSc.id + JSON.stringify(lk);
   } else {
@@ -307,9 +307,14 @@ export function CreatePlayer(pp: PlayerProps) {
             <Btn kind="less" t="caw-ent" d={{ v: '' }} on={!lk.entrance} onClick={() => { change(n => { delete n.entrance; }); setPrev(null); }}>Whatever the show picks</Btn>
             {scenesFor('entrance', world).map(o => <Btn kind="less" t="caw-ent" d={{ v: o.id }} on={lk.entrance === o.id} onClick={() => { change(n => { n.entrance = o.id; }); setPrev(o.id); }}>{o.name}</Btn>)}
           </div>
+          <Group title="Pyro, lights and their music">
+            <div class="sc-row"><span class="sc-slot">Pyro</span><select aria-label="Pyro" data-t="caw-pyro" value={(lk.entrance_fx || {}).pyro || ''} onChange={e => { const v = (e.currentTarget as HTMLSelectElement).value; change(n => { const f = n.entrance_fx = n.entrance_fx || {}; if (v) f.pyro = v; else delete f.pyro; if (!Object.keys(f).length) delete n.entrance_fx; }); setPrev(lk.entrance || 'entrance'); }}>{PYRO.map(o => <option value={o[0]}>{o[1]}</option>)}</select>
+              <span class="sc-slot">Lights</span><select aria-label="Lights" data-t="caw-lights" value={(lk.entrance_fx || {}).lights || ''} onChange={e => { const v = (e.currentTarget as HTMLSelectElement).value; change(n => { const f = n.entrance_fx = n.entrance_fx || {}; if (v) f.lights = v; else delete f.lights; if (!Object.keys(f).length) delete n.entrance_fx; }); setPrev(lk.entrance || 'entrance'); }}>{LIGHTS.map(o => <option value={o[0]}>{o[1]}</option>)}</select></div>
+            <div class="sc-row"><span class="sc-slot">Their music</span><TextBox value={(lk.entrance_fx || {}).music || ''} max={32} label="The name of their music" t="caw-music" width="20ch" onInput={v => change(n => { const f = n.entrance_fx = n.entrance_fx || {}; if (v) f.music = v; else delete f.music; if (!Object.keys(f).length) delete n.entrance_fx; })} /><span class="muted">The announcers name it as they come out.</span></div>
+          </Group>
           {pp.onNewEntrance && <div class="sc-row"><Btn kind="go" t="caw-newent" onClick={() => pp.onNewEntrance!(lk)}>Make a custom entrance</Btn><span class="muted">Saves them, and opens Create a Scene with them in it.</span></div>}
           {prevSc && <div class="sc-row"><Btn kind="sm" t="caw-entstop" onClick={() => setPrev(null)}>Stop</Btn><span class="muted">{prevSc.name}, in their entrance gear</span></div>}
-          <p class="muted">Pick an entrance, or make a custom one in the World Editor. Entrances are worn in entrance gear. Their own pictures are their moves: each finisher and signature move picks the picture it plays as, on the Finishers tab.</p>
+          <p class="muted">Pick an entrance, or make a custom one in the World Editor. Entrances are worn in entrance gear. Their own pictures are their moves: each finisher and signature move picks the picture it plays as, on the Moves tab.</p>
         </>}
         {tab === 'file' && <>
           <Group title="Who they are">

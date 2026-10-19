@@ -668,7 +668,7 @@ function callMatch(S,P,x){
   x.sides.forEach(function(s,k){
     var isCh=x.champ&&x.champ===s,lead=s[0],big=avg(s.map(function(w){return w.ovr;}))>=62||isCh;
     ring((k===0?'Introducing first, ':(k===x.sides.length-1?'And the opponent'+(s.length>1?'s':'')+', ':'Next, '))+(isCh?'the '+x.t.name+' champion'+(s.length>1?'s':'')+', ':'')+names(s)+'!');
-    bc.push({t:'ent',x:big?names(s)+' '+(s.length>1?'make their way out together':ENTR[lead.align==='F'?'F':'H'][lead.ent||0])+(isCh?', the title held high':'')+'. The reaction: '+pop(s)+'.':'The reaction: '+pop(s)+'.'});
+    bc.push({t:'ent',x:big?(s.length===1&&lead.look&&lead.look.entrance_fx&&lead.look.entrance_fx.music?'"'+lead.look.entrance_fx.music+'" hits, and ':'')+names(s)+' '+(s.length>1?'make their way out together':ENTR[lead.align==='F'?'F':'H'][lead.ent||0])+(isCh?', the title held high':'')+'. The reaction: '+pop(s)+'.':'The reaction: '+pop(s)+'.'});
   });
   // the hottest act in the match gets a chant; a wrestler with a fresh catchphrase hears it shouted back
   var hot=x.all.slice().sort(function(p,q){return q.ovr-p.ovr;})[0];
@@ -1785,7 +1785,7 @@ function liveIntro(S,P,show,m,i,n){
     c.sides.forEach(function(s,k){
       var isCh=c.t&&k===c.champSide,lead=s[0],big=avg(s.map(function(w){return w.ovr;}))>=62||isCh;
       bc.push({t:'ring',x:(k===0?'Introducing first, ':(k===c.sides.length-1?'And the opponent'+(s.length>1?'s':'')+', ':'Next, '))+(isCh?'the '+c.t.name+' champion'+(s.length>1?'s':'')+', ':'')+names(s)+'!'});
-      bc.push({t:'ent',x:big?names(s)+' '+(s.length>1?'make their way out together':ENTR[lead.align==='F'?'F':'H'][lead.ent||0])+(isCh?', the title held high':'')+'. The reaction: '+pop(s)+'.':'The reaction: '+pop(s)+'.'});
+      bc.push({t:'ent',x:big?(s.length===1&&lead.look&&lead.look.entrance_fx&&lead.look.entrance_fx.music?'"'+lead.look.entrance_fx.music+'" hits, and ':'')+names(s)+' '+(s.length>1?'make their way out together':ENTR[lead.align==='F'?'F':'H'][lead.ent||0])+(isCh?', the title held high':'')+'. The reaction: '+pop(s)+'.':'The reaction: '+pop(s)+'.'});
     });
   }
   bc.push({t:'pbp',x:'The bell sounds, and this one is under way.'});
@@ -8156,6 +8156,7 @@ var ft=null;if(ap.features&&typeof ap.features==='object'){ft={};['eyes','nose',
       position:LOOK_POS.indexOf(m.position)>=0?m.position:undefined,category:lkStr(m.category,24),preview_pose_id:lkId(m.preview_pose_id),stage:['early','mid','late'].indexOf(m.stage)>=0?m.stage:undefined});}).filter(function(m){return !!m;});
   if(Array.isArray(x.taunts)){var tn=x.taunts.map(lkId).filter(function(v,i,a){return !!v&&a.indexOf(v)===i;}).slice(0,3);if(tn.length)o.taunts=tn;}   // up to three taunts, each a scene id
   var en=lkId(x.entrance);if(en)o.entrance=en;   // one of the canned entrances
+  if(x.entrance_fx&&typeof x.entrance_fx==='object'){var ef=lkPrune({pyro:lkId(x.entrance_fx.pyro),lights:lkId(x.entrance_fx.lights),music:lkStr(x.entrance_fx.music,32)||undefined});if(Object.keys(ef).length)o.entrance_fx=ef;}   // pyro, lights and their music
   if(x.portrait&&typeof x.portrait==='object'){var pt=x.portrait;o.portrait=lkPrune({attire:LOOK_ATTIRES.indexOf(pt.attire)>=0?pt.attire:undefined,expr:typeof pt.expr==='string'&&/^[a-z]{0,8}$/.test(pt.expr)?pt.expr:undefined,pose:lkId(pt.pose),bg:lkId(pt.bg),frame:pt.frame==='chest'||pt.frame==='head'?pt.frame:undefined});if(!Object.keys(o.portrait).length)delete o.portrait;}   // their portrait
   return Object.keys(o).length?o:null;
 }

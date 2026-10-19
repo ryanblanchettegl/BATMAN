@@ -11,7 +11,7 @@ import { useEffect, useLayoutEffect, useState } from 'preact/hooks';
 import { E } from '../../engine';
 import { G, ui, me, pref, savePrefs, redraw, reduceMotion } from '../../store';
 import { ScenePlayer } from '../../kit/sceneplayer';
-import { scenesFor, allScenes, copy, Scene } from '../../kit/scene';
+import { scenesFor, allScenes, copy, Scene, dressEntrance } from '../../kit/scene';
 import { finScene, threeMoves } from '../../kit/caw';
 import { recipeOf, Recipe, commentator } from '../../kit/puppet';
 import { book } from '../../flow';
@@ -235,7 +235,7 @@ function scenePick(r: any, s: any, at: number, done: boolean): { sc: Scene; cast
   // the entrances: whoever is walking out, in their entrance gear, on their own entrance if they picked one
   if (!done && bc[now] && bc[now].t === 'ent') {
     const k = bc.slice(0, now + 1).filter(b => b.t === 'ent').length - 1, who = ids[Math.min(ids.length - 1, k * per)];
-    const sc0 = ownEnt(who) || choose('entrance', k), sc = sc0 && fillScene(sc0, { a: who }, cast);
+    const ent0 = ownEnt(who) || choose('entrance', k), fx = S.w[who] && S.w[who].look && S.w[who].look.entrance_fx, sc0 = ent0 && dressEntrance(ent0, fx), sc = sc0 && fillScene(sc0, { a: who }, cast);
     if (sc) return { sc, cast, play: i + ':e' + k, label: nm(cast.A) + ' comes out' };
   }
   let when = 'mid', key = 'm', a = ids[0];

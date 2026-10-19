@@ -513,6 +513,29 @@ export const STILLS: Scene[] = [
   still('st_phone', 'The office phone', 'phone', 'office', [], {}, [cap('THE OFFICE')]),
 ];
 
+/* ---------- an entrance dressed with its pyro and lights (Create a Wrestler, Entrance tab) ---------- */
+export const PYRO: [string, string][] = [['', 'None'], ['sparks', 'A shower of sparks'], ['fountains', 'Fountains either side'], ['flash', 'A flash and a bang'], ['fire', 'Columns of fire']];
+export const LIGHTS: [string, string][] = [['', 'The arena lights'], ['spot', 'A spotlight on them'], ['dark', 'Lights down, a spotlight'], ['red', 'Red light'], ['blue', 'Blue light'], ['green', 'Green light'], ['strobe', 'Strobes']];
+/** The entrance scene with their pyro and lights added: lights from the first moment, pyro from the second on (the
+    moment they hit their mark). Nothing else in the scene changes. */
+export function dressEntrance(sc: Scene, fx?: { pyro?: string; lights?: string }): Scene {
+  if (!fx || (!fx.pyro && !fx.lights)) return sc;
+  const o = copy(sc), L = fx.lights || '', P = fx.pyro || '', A = o.keys[0] && o.keys[0].figs.A;
+  const x0 = A ? A.x : 0;
+  o.keys.forEach((k, i) => {
+    const lx = (k.figs.A || A || { x: x0 }).x, add = (q: Prop) => k.props.push(q);
+    if (L === 'dark') add({ id: 'fx_dim', k: 'dim', x: 0, y: 0, r: 0, z: -0.45 });
+    if (L === 'spot' || L === 'dark') add({ id: 'fx_spot', k: 'spot', x: lx, y: FOOT, r: 0, z: -0.3 });
+    if (L === 'red' || L === 'blue' || L === 'green') add({ id: 'fx_beams', k: 'beams', x: lx, y: FOOT, r: 0, z: -0.3, col: L === 'red' ? PAL.red : L === 'blue' ? '#3a6ad8' : '#3aa84a' });
+    if (L === 'strobe') add({ id: 'fx_strobe', k: 'strobe', x: 0, y: 0, r: 0, z: -0.3 });
+    if (i === 0 && o.keys.length > 1) return;
+    if (P === 'sparks') add({ id: 'fx_sparks', k: 'sparks', x: 0, y: 0, r: 0, z: 2.2 });
+    if (P === 'fountains' || P === 'fire') for (const sd of [-1, 1]) add({ id: 'fx_py' + sd, k: P === 'fire' ? 'fire' : 'fountain', x: sd * 3.4, y: -0.3, r: 0, z: -0.25 });
+    if (P === 'flash') add({ id: 'fx_flash', k: 'flash', x: lx, y: 0.6, r: 0, z: -0.35 });
+  });
+  return o;
+}
+
 /* ---------- scenes in a world: made in Create a Scene in the World Editor, kept in the world package ---------- */
 /** Does this look like a scene file? Anything else is refused. */
 export function ok(x: any): x is Scene {
