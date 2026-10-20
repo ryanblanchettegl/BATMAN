@@ -4,7 +4,7 @@ require('./engine.js');
 const fs = require('fs'), E = globalThis.GP, fails = [];
 const ok = (id, label, pass, detail) => { console.log(id.padEnd(6), pass ? 'ok  ' : 'FAIL', label + (detail ? ': ' + detail : '')); if (!pass) fails.push(id + ' ' + label); };
 E.useUniverse(JSON.parse(fs.readFileSync('universes/public_domain.json', 'utf8'))); E.suggest = E.suggestSmart;
-const S = E.newGame('pdw', 3, { name: 'R' }); let errs = 0, credited = 0, calls = 0;
+const S = E.newGame('pdw', 3, { name: 'R', mid: false }); let errs = 0, credited = 0, calls = 0;
 const L0 = E.press(S);
 ok('cast', 'four reporters, each with a name, a beat and a word for how they feel', L0.length === 4 && L0.every(r => r.name && r.beat && r.word && !/\d/.test(r.word)), L0.map(r => r.name + ' (' + r.beat + ')').join(', '));
 for (let w = 0; w < 60; w++) {
@@ -27,11 +27,11 @@ const r1 = S.press.rep[1]; E.pressDo(S, 1, 'freeze');
 ok('freeze', 'freezing one out cools them, leaves a grudge, and they are frozen for eight weeks', r1.warm < 0 && r1.grudge >= 25 && E.press(S)[1].frozen);
 const h0 = S.hype || 0; ok('feed', 'feeding a story lifts the build, once a month at most', E.pressDo(S, 2, 'feed').ok && (S.hype || 0) > h0 && !E.pressDo(S, 2, 'feed').ok);
 // a friendly reporter calls before printing, and can be asked to sit on it
-{ const T = E.newGame('pdw', 4, { name: 'R' }); E.press(T).forEach(r => { T.press.rep[r.id].warm = 80; }); const w = E.rosterOf(T, 'pdw').filter(x => !x.nw).sort((a, b) => b.ovr - a.ovr)[0];
+{ const T = E.newGame('pdw', 4, { name: 'R', mid: false }); E.press(T).forEach(r => { T.press.rep[r.id].warm = 80; }); const w = E.rosterOf(T, 'pdw').filter(x => !x.nw).sort((a, b) => b.ovr - a.ovr)[0];
   let ev = null; for (let k = 0; k < 40 && !ev; k++) { w.morale = 20; T.trust = 20; T.qi = T.queue.length; E.endWeek(T); ev = T.inbox.find(e => e.type === 'leak' && !e.done); }
   ok('call', 'a friendly reporter calls before printing', ev && ev.calls != null && ev.choices.length === 4 && /called you before printing/.test(ev.text), ev && ev.text.slice(0, 100));
   if (ev) { const p0 = T.kf.prot, wm = T.press.rep[ev.calls].warm, r = E.resolveEvent(T, ev.id, 3); ok('call', 'asking them to sit on it keeps the secret and costs their goodwill', T.kf.prot > p0 && T.press.rep[ev.calls].warm < wm, r); } }
-const A = E.newGame('pdw', 7, { name: 'R' }), B = E.newGame('pdw', 7, { name: 'R' });
+const A = E.newGame('pdw', 7, { name: 'R', mid: false }), B = E.newGame('pdw', 7, { name: 'R', mid: false });
 for (const T of [A, B]) for (let w = 0; w < 30; w++) { T.inbox.filter(e => !e.done).forEach(e => E.resolveEvent(T, e.id, 1)); while (T.qi < T.queue.length) { const c = E.suggest(T); if (E.validate(T, c).errors.length) { T.qi++; continue; } E.runPlayerShow(T, c); } E.endWeek(T); }
 ok('same', 'the same seed gives the same press', JSON.stringify(A.press) === JSON.stringify(B.press));
 console.log(fails.length ? fails.length + ' failed' : 'test-press: all passed'); process.exit(fails.length ? 1 : 0);

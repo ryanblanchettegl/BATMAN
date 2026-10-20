@@ -16,5 +16,18 @@ E.useUniverse(JSON.parse(fs.readFileSync('universes/parody.json', 'utf8')));
   ok('hist', 'the running reign in the title line matches the title', w && w.hist.some(h => h.to == null && h.from === w.since));
 }
 
+// 2. the world starts mid-story: title chases and real heat already running, a few weeks old
+{
+  for (const pid of ['ewe', 'wpw', 'ddw']) {
+    const S = E.newGame(pid, 3, { name: 'R' }), F = S.feuds.filter(f => !f.res && f.promo === pid);
+    ok('mid-' + pid, 'stories already running at the start (2 to 4), each a few weeks old', F.length >= 2 && F.length <= 4 && F.every(f => f.start < 1 && f.fresh < 100 && f.heat > 20), F.length + ' stories');
+    ok('chase-' + pid, 'at least one is a challenger chasing a champion', F.some(f => f.title && S.promos[pid].titles.some(t => t.id === f.title && f.a.concat(f.b).some(id => t.holders.includes(id)))));
+    const ids = F.flatMap(f => f.a.concat(f.b));
+    ok('one-' + pid, 'nobody is in two of them', new Set(ids).size === ids.length);
+  }
+  const A = E.newGame('ewe', 3, { name: 'R' }), B = E.newGame('ewe', 3, { name: 'R' });
+  ok('same', 'the same world and seed open on the same stories', JSON.stringify(A.feuds) === JSON.stringify(B.feuds));
+}
+
 console.log(fails ? fails + ' failed' : 'test-living-world: all passed');
 process.exit(fails ? 1 : 0);

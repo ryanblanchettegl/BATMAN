@@ -11,7 +11,7 @@ const week = S => { S.inbox.filter(e => !e.done).forEach(e => E.resolveEvent(S, 
   while (S.qi < S.queue.length) { const c = E.suggest(S), pr = E.preShow(S, c); if (pr) { E.resolvePre(S, c, 0); E.fitShow(S, c); } if (E.validate(S, c).errors.length) { S.qi++; continue; } E.runPlayerShow(S, c); } E.endWeek(S); };
 let longest = 0, fizz = 0, rivalEnds = 0, stale = 0, ripe = 0;
 for (const pi of [0, 1, 2]) {
-  const S = E.newGame(E.universe().promotions[pi].id, 3, { name: 'R' }), seen = {};
+  const S = E.newGame(E.universe().promotions[pi].id, 3, { name: 'R', mid: false }), seen = {};
   for (let wk = 0; wk < 60 && !S.over; wk++) {
     week(S);
     S.feuds.forEach(f => { seen[f.id] = f; if (!f.res) { const p = E.feudPlan(S, f); if (p.phase === 'stale') stale++; if (p.ripe) ripe++; if (f.heat >= 50) longest = Math.max(longest, S.week - f.start); } });
@@ -25,7 +25,7 @@ ok(rivalEnds >= 3, 'rivals ended only ' + rivalEnds + ' feuds');
 ok(stale >= 1 && ripe >= 1, 'no feud ever went stale or ripe');
 // the booker ends one: a planned ending at the next big event pays off when the two meet on that show
 {
-  const S = E.newGame(E.universe().promotions[1].id, 3, { name: 'R' }); for (let i = 0; i < 6; i++) week(S);
+  const S = E.newGame(E.universe().promotions[1].id, 3, { name: 'R', mid: false }); for (let i = 0; i < 6; i++) week(S);
   const f = S.feuds.filter(x => !x.res && x.promo === S.player).sort((a, b) => b.heat - a.heat)[0];
   ok(!!f, 'no feud to end');
   if (f) { const r = E.storyPlanEnd(S, f.id); ok(r.ok && f.endAt != null, 'planning an ending did not take');
@@ -40,7 +40,7 @@ ok(stale >= 1 && ripe >= 1, 'no feud ever went stale or ripe');
 }
 // embers: two who finished a feud start the next one warmer
 {
-  const S = E.newGame(E.universe().promotions[1].id, 3, { name: 'R' }); for (let i = 0; i < 3; i++) week(S);
+  const S = E.newGame(E.universe().promotions[1].id, 3, { name: 'R', mid: false }); for (let i = 0; i < 3; i++) week(S);
   const R = E.storyPeople(S).filter(w => w.g === 'M' && !w.n && !w.hurt), a = R[2].id, b = R[5].id; S.bp = 10;
   const cold = E.storyStart(S, R[3].id, R[6].id); const h0 = S.feuds.find(f => f.id === cold.id).heat;
   const r = E.storyStart(S, a, b), f = S.feuds.find(x => x.id === r.id); f.heat = 80; E.storyEnd(S, f.id); GP_ember(S, f);
@@ -50,7 +50,7 @@ ok(stale >= 1 && ripe >= 1, 'no feud ever went stale or ripe');
 }
 // what the booker can do from Storylines: a sit-down heats it and costs one, raising the stakes freshens it, a champion's belt goes on it
 {
-  const S = E.newGame(E.universe().promotions[1].id, 3, { name: 'R' }); S.bp = 10;
+  const S = E.newGame(E.universe().promotions[1].id, 3, { name: 'R', mid: false }); S.bp = 10;
   const P = S.promos[S.player], t = P.titles.find(x => !x.tag && x.holders.length), ch = t.holders[0];
   const o = E.storyPeople(S).find(w => w.id !== ch && w.g === S.w[ch].g && !w.n && !w.hurt);
   const r = E.storyStart(S, ch, o.id), f = S.feuds.find(x => x.id === r.id), bp0 = S.bp, h0 = f.heat;
@@ -62,7 +62,7 @@ ok(stale >= 1 && ripe >= 1, 'no feud ever went stale or ripe');
 }
 // the back burner: a cold story set aside for four weeks does not fizzle, freshens, and the suggested card leaves it alone
 {
-  const S = E.newGame(E.universe().promotions[1].id, 3, { name: 'R' }); S.bp = 10;
+  const S = E.newGame(E.universe().promotions[1].id, 3, { name: 'R', mid: false }); S.bp = 10;
   const R = E.storyPeople(S).filter(w => w.g === 'M' && !w.n && !w.hurt), r = E.storyStart(S, R[4].id, R[7].id), f = S.feuds.find(x => x.id === r.id);
   f.heat = 10; f.fresh = 40; ok(E.storyDo(S, f.id, 'shelf').ok && f.bb === S.week + 4, 'the back burner did not take');
   for (let i = 0; i < 4; i++) { const c = E.suggest(S); ok(!c.some(m => m.sides && m.sides.length === 2 && ((m.sides[0][0] === f.a[0] && m.sides[1][0] === f.b[0]) || (m.sides[0][0] === f.b[0] && m.sides[1][0] === f.a[0]))), 'the suggested card booked a story on the back burner'); S.qi = S.queue.length; E.endWeek(S); }
@@ -70,7 +70,7 @@ ok(stale >= 1 && ripe >= 1, 'no feud ever went stale or ripe');
 }
 // a contract signing makes the match and plans the ending for the next big event
 {
-  const S = E.newGame(E.universe().promotions[1].id, 3, { name: 'R' }); S.bp = 10;
+  const S = E.newGame(E.universe().promotions[1].id, 3, { name: 'R', mid: false }); S.bp = 10;
   const R = E.storyPeople(S).filter(w => w.g === 'M' && !w.n && !w.hurt), r = E.storyStart(S, R[2].id, R[5].id), f = S.feuds.find(x => x.id === r.id), h0 = f.heat;
   const c = E.suggest(S).filter(m => !m.sides.some(sd => sd.includes(f.a[0]) || sd.includes(f.b[0]))); S.segs = [{ k: 'signing', who: [f.a[0], f.b[0]], pos: 0, len: 'M' }]; E.fitShow(S, c);
   const v = E.validate(S, c); ok(!v.errors.length, 'the signing could not be booked: ' + v.errors.join(' | '));
@@ -78,7 +78,7 @@ ok(stale >= 1 && ripe >= 1, 'no feud ever went stale or ripe');
 }
 // escalation: a cage is too soon for a cold feud and earned for a white hot one; a submission match fits early
 {
-  const S = E.newGame(E.universe().promotions[1].id, 3, { name: 'R' }); S.bp = 10;
+  const S = E.newGame(E.universe().promotions[1].id, 3, { name: 'R', mid: false }); S.bp = 10;
   const R = E.storyPeople(S).filter(w => w.g === 'M' && !w.n && !w.hurt), r = E.storyStart(S, R[1].id, R[4].id), f = S.feuds.find(x => x.id === r.id);
   const m = { sides: [[f.a[0]], [f.b[0]]] }; f.heat = 25; let o = E.stipFits(S, m);
   ok(o && o.cage === 'soon' && o.mask === 'soon' && o.sub !== 'soon', 'a cold feud: ' + JSON.stringify(o));
@@ -86,7 +86,7 @@ ok(stale >= 1 && ripe >= 1, 'no feud ever went stale or ripe');
 }
 // a turn inside the story: two heroes, the one less over turns, once a story, for two booking power
 {
-  const S = E.newGame(E.universe().promotions[1].id, 3, { name: 'R' }); S.bp = 10;
+  const S = E.newGame(E.universe().promotions[1].id, 3, { name: 'R', mid: false }); S.bp = 10;
   const fa = E.storyPeople(S).filter(w => w.g === 'M' && !w.n && S.w[w.id].align === 'F'), r = E.storyStart(S, fa[0].id, fa[1].id), f = S.feuds.find(x => x.id === r.id), bp = S.bp, h = f.heat;
   const d = E.storyDo(S, f.id, 'turn');
   ok(d.ok && S.w[f.a[0]].align !== S.w[f.b[0]].align && S.bp === bp - 2 && f.heat > h, 'a turn in the story did not take: ' + d.msg);
@@ -94,7 +94,7 @@ ok(stale >= 1 && ripe >= 1, 'no feud ever went stale or ripe');
 }
 // an ending in front of one of their home towns pays more, and they remember it
 {
-  const go = home => { const S = E.newGame(E.universe().promotions[1].id, 3, { name: 'R' }); S.bp = 10;
+  const go = home => { const S = E.newGame(E.universe().promotions[1].id, 3, { name: 'R', mid: false }); S.bp = 10;
     const R = E.storyPeople(S).filter(w => w.g === 'M' && !w.n && !w.hurt), a = R[3].id, b = R[6].id, r = E.storyStart(S, a, b), f = S.feuds.find(x => x.id === r.id); f.heat = 80;
     S.w[a].town = home ? E.road(S).now.city : 'Nowhere'; const c = E.suggest(S).filter(m => !m.sides.flat().some(id => id === a || id === b));
     c[c.length - 1] = { ...c[c.length - 1], sides: [[a], [b]], title: null, end: 1, call: null, stip: 'std' }; E.fitShow(S, c);

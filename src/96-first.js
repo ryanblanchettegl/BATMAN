@@ -48,6 +48,9 @@ E.welcome=function(S){
       'Nobody upstairs can save you either.',place.replace(/^We are/,'You are').replace(/I did not hire you to stay there\./,'That is not why you did this.')]
     :['Congratulations. The job is yours.','You are the booker of '+(P.full||P.name)+', '+modelOf(P).ph+'. From tonight every match, every promo and every finish goes out with your name on it.',place];
   if(ch)L.push(ch.name+' holds the '+top.name+'.'+(fav&&fav.id!==ch.id?' My money is on '+fav.name+'. You will hear from me about that.':(fav?' I like it that way.':'')));
+  // the stories already running when you arrive (src/99-midstory.js): the owner names the one that matters most
+  var mid=(S.feuds||[]).filter(function(f){return f.mid&&!f.res&&f.promo===P.id;});
+  if(mid.length){var f0=mid[0],A=S.w[f0.a[0]],B=S.w[f0.b[0]];if(A&&B)L.push(A.name+' and '+B.name+' have been at it for weeks'+(f0.title?', with the belt on the line':'')+'. '+(mid.length>1?(mid.length-1)+' more '+(mid.length===2?'story is':'stories are')+' already running. ':'')+'Do not let them go cold.');}
   L.push('Your first show is '+sh.name+'. The card is empty and the building is sold.');
   L.push(me?'Go and book it.':'Do not make me regret this.');
   return S.letter={from:me?S.booker.name:o.name,role:me?'Owner and booker':'Owner',company:P.full||P.name,short:P.name,to:S.booker.name,date:cal(S.week).label,lines:L,show:sh.name,
