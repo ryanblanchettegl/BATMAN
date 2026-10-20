@@ -14,7 +14,6 @@ import { ScenePlayer } from '../../kit/sceneplayer';
 import { scenesFor, allScenes, copy, Scene, dressEntrance } from '../../kit/scene';
 import { finScene, threeMoves } from '../../kit/caw';
 import { recipeOf, Recipe, commentator } from '../../kit/puppet';
-import { PaperPortrait } from '../../kit/paperportrait';
 import { book } from '../../flow';
 import { fillScene, MomentPic, segPick, beatPick } from '../../shared/moment';
 import { Btn, KV, Meter, Banner, BeltArt, Belt, Portrait, CheckLine, stars, grade } from '../../kit';
@@ -226,41 +225,11 @@ function LiveFeed(p: { r: any; si: number; b: number; info: any }) {
           <p class="pt">{x.t}</p><p class="pm"><span>{'♥'} {x.l.toLocaleString('en-US')}</span><span>{'↻'} {x.r.toLocaleString('en-US')}</span></p></div>
       </article>) : <p class="muted fd-empty">{P ? P.name : 'The company'} is on the air. The feed is waiting for the first bell.</p>}</div>
     </section>
-    <FanStand v={v} word={F.crowd.word} pop={(() => { const sg = p.r.segs[p.si], bt = sg && sg.bc ? sg.bc[Math.min(p.b, sg.bc.length - 1)] : null; return bt && bt.h ? bt.h : 0; })()} hot={(() => { const sg = p.r.segs[p.si], ids: number[] = (sg && (sg.ids || sg.bids)) || []; const w = ids.map((id: number) => S.w[id]).filter(Boolean).sort((a: any, b: any) => b.ovr - a.ovr)[0]; return w ? w.name : ''; })()} />
+    <p class={'crowdln' + (v >= 85 ? ' wild' : '')} data-t="live-crowd" data-v={v} aria-label={'The crowd: ' + F.crowd.word}><span>The crowd</span><i class="cbar" aria-hidden="true"><i style={{ width: v + '%' }} /></i><b>{F.crowd.word}</b></p>
     {p.info ? <p class="nt-foot" data-t="night-calls"><span>Calls from the headset: <b>{p.info.calls}</b></span><span>Booking power: <b>{p.info.bp}</b></span></p> : null}
   </aside>;
 }
 const DOT = ' · ';
-/* The crowd as people (Ryan, 20 October: "instead of a crowd meter I would like to see a screen of fans in the create a
-   player art style reacting to how the match is going"). Twelve fans in two rows, each a paper portrait cut the way
-   Create a Player cuts a wrestler, in a T-shirt. How loud the building is (the same reading the meter showed) sets
-   what they do: quiet sits still with a head or two down, into it sways, loud bounces, and electric jumps; a near
-   fall or a finish (a beat with h) makes the whole stand leap. Two hold up signs for the hottest act in the
-   segment. The fans are drawn once and kept; only their motion changes. */
-const SHIRTS = ['#d8453a', '#3f6fc0', '#3c9a4b', '#e1a52a', '#7f4fb0', '#2b8a8a', '#ece6d6', '#26262b', '#c2577a', '#e07b2a', '#5a6b7a', '#b8323a'];
-const FAN_NAMES = ['Ada', 'Bo', 'Cal', 'Dee', 'Eli', 'Fay', 'Gus', 'Hal', 'Ivy', 'Jo', 'Kit', 'Lou', 'Max', 'Nell', 'Oz', 'Pip', 'Quin', 'Rae', 'Sal', 'Tam', 'Uma', 'Vic', 'Wes', 'Xan', 'Yul', 'Zed', 'Abe', 'Bea', 'Cy', 'Dot', 'Ed', 'Flo'];
-/* a section of the stands, back row first: each row a little smaller and further into the dark */
-const ROWS = [9, 8, 8, 7];
-const FANS = FAN_NAMES.map((n, i) => ({ id: -9000 - i, name: 'Fan ' + n + i, g: (i * 5) % 3 === 1 ? 'F' : 'M', align: 'F', style: 'A', age: 19 + (i * 7) % 34 }));
-const SIGN_AT = [12, 27];   // who holds up a sign: one in the middle of the stand, one at the rail
-function FanStand(p: { v: number; word: string; pop: number; hot: string }) {
-  const mood = p.v >= 85 ? 'wild' : p.v >= 70 ? 'loud' : p.v >= 45 ? 'into' : 'quiet';
-  let k = 0;
-  return <section class={'fanstand stands m-' + mood + (p.pop ? ' pop' + (p.pop > 1 ? '2' : '') : '')} data-t="live-crowd" data-v={p.v} aria-label={'The crowd: ' + p.word}>
-    <div class="tiers" aria-hidden="true">
-      {ROWS.map((n, r) => <div key={r} class={'srow s' + r} style={{ ['--n' as any]: n }}>
-        {Array.from({ length: n }, () => { const i = k++, f = FANS[i]; return <span key={f.id} class={'fg' + (SIGN_AT.indexOf(i) >= 0 ? ' sign' : '')} style={{ ['--d' as any]: ((i * 37) % 11) / 10 + 's', ['--x' as any]: ((i * 13) % 7) - 3 + 'deg', ['--y' as any]: ((i * 29) % 5) * 2 + '%' }}>
-          <PaperPortrait r={{ ...recipeOf(f as any), shirt: SHIRTS[(i * 7) % SHIRTS.length] } as any} card="none" label="" />
-          {SIGN_AT.indexOf(i) >= 0 && p.hot ? <b class="fsign">{i === SIGN_AT[0] ? p.hot.split(' ')[0].toUpperCase() + '!' : (mood === 'quiet' ? 'ZZZ' : mood === 'wild' ? 'THIS IS AWESOME' : 'WE WANT MORE')}</b> : null}
-        </span>; })}
-      </div>)}
-      <i class="flashes">{[0, 1, 2, 3, 4, 5, 6].map(j => <b key={j} style={{ left: (j * 37 + 9) % 94 + '%', top: (j * 23 + 7) % 60 + '%', ['--d' as any]: (j * 0.37) % 1.3 + 's' }} />)}</i>
-      <div class="rail" />
-    </div>
-    <p class="fw"><span>The crowd</span> <b>{p.word}</b></p>
-  </section>;
-}
-
 /** An entrance for one, made into an entrance for a team: each partner a copy of the one walking out, a step
     behind and a little further back, in the same pose, so they come down the ramp together. */
 function withPartners(sc: Scene, n: number): Scene {
