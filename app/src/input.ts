@@ -1,6 +1,7 @@
 /* Input that is not a mouse: keyboard shortcuts, a TV remote, a gamepad. Also the screen mode (desk, tablet, TV). There is no phone or portrait layout: a tall narrow window is asked to turn sideways (styles/base.css).
    See docs/design.md, sections 4 and 5. */
-import { SHOW_SCENES, allScenes } from './kit/scene';
+import { SHOW_SCENES, allScenes, paint, Scene } from './kit/scene';
+import { blank } from './kit/puppet';
 import { beatPick } from './shared/moment';
 import { G, ui, pref, reduceMotion, redraw, closeModal, openModal, popCard } from './store';
 import { lightDraws } from './kit/lights';
@@ -213,5 +214,9 @@ export function initInput() {
     const k = e.key.length === 1 ? e.key.toLowerCase() : '';
     if (HOT[k]) { e.preventDefault(); go(HOT[k]); }
   });
-  (window as any).EWF_DEBUG = { state: () => G.S, render: redraw, go, pad: padPress, nav: NAV, ui, lights: lightDraws, maps: roadMapDraws, scenes: scenePlays, allScenes: () => allScenes([]), segScenes: () => SHOW_SCENES.map(s => s.when), beatPick };
+  (window as any).EWF_DEBUG = { state: () => G.S, render: redraw, go, pad: padPress, nav: NAV, ui, lights: lightDraws, maps: roadMapDraws, scenes: scenePlays, allScenes: () => allScenes([]), segScenes: () => SHOW_SCENES.map(s => s.when), beatPick,
+    /** A contact sheet for checking moves: each scene id painted (flat renderer) at each of its keyframes, as data URLs. */
+    sheet: (ids: string[], w = 320, h = 200) => { const all = allScenes([]); return ids.map(id => { const sc = all.find(x => x.id === id) as Scene | undefined; if (!sc) return { id, imgs: [] as string[] };
+      const cast: any = { A: { ...blank(0), name: 'A' }, B: { ...blank(1), name: 'B' } }, c = document.createElement('canvas'); c.width = w; c.height = h; const ctx = c.getContext('2d')!;
+      return { id, imgs: sc.keys.map(k => { paint(ctx, sc, k.t, cast); return c.toDataURL('image/png'); }) }; }); } };
 }

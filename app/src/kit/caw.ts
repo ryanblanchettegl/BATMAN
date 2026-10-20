@@ -64,7 +64,7 @@ export function randomLook(lk: Look, r: () => number): Look {
 export const STAGES: [string, string][] = [['early', 'Early, to take control'], ['mid', 'In the middle'], ['late', 'Late, to set up the finish']];
 export type AttireKey = 'primary_ring' | 'entrance_gear' | 'street_clothes';
 /** One move of a moveset: a name, its kind (E.MOVE_KINDS) and when in a match (early, mid, late). */
-export interface MoveRec { name: string; kind?: string; stage?: string }
+export interface MoveRec { name: string; kind?: string; stage?: string; /** the scene it plays as: move_<id> for one in E.MOVE_LIB, or a world's own move */ scene?: string }
 export interface Look {
   id?: string; name?: string; moniker?: string; hometown?: string; archetype?: string;
   /** Not in Ryan's first draft: up to three taunts, each a scene of the kind 'taunt' (the game's or a world's). */
@@ -314,4 +314,4 @@ export const FIN_SCENES: [string, string][] = [['slam', 'Lift and slam'], ['carr
   ['move_clothesline', 'A clothesline'], ['move_spear', 'A spear'], ['move_suplex', 'A vertical suplex'], ['move_powerbomb', 'A powerbomb'], ['move_ddt', 'A DDT'], ['move_topdive', 'A splash off the top'], ['move_moonsault', 'A moonsault'], ['move_tope', 'A dive to the outside'], ['move_cornerhit', 'A charge into the corner'], ['move_superplex', 'A superplex']];
 const FIN_ALIAS: Record<string, string> = { pose_slam_impact_01: 'slam', pose_submission_01: 'sleeper', pose_strike_01: 'strike', pose_carry_01: 'carry', pose_cover_01: 'finish' };
 /** The first move is the finisher; the rest are signature moves, played during the match. */
-export function finScene(f: Finisher): string { const p = f.preview_pose_id || ''; return FIN_SCENES.some(x => x[0] === p) || /^scene-/.test(p) ? p : FIN_ALIAS[p] || (f.category === 'Submission' ? 'sleeper' : 'slam'); }
+export function finScene(f: Finisher): string { const p = f.preview_pose_id || ''; return FIN_SCENES.some(x => x[0] === p) || /^(scene-|move_)/.test(p) ? p : FIN_ALIAS[p] || (f.category === 'Submission' ? 'sleeper' : 'slam'); }

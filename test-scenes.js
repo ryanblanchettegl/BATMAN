@@ -85,7 +85,7 @@ ok(!E.lookOk({ hello: 1 }) && !E.lookOk(null) && !E.lookOk([1, 2]) && !E.lookOk(
 const odd = E.lookClean({ name: '<b>Big</b>' + 'x'.repeat(80), physical_attributes: { height_inches: 400, weight_lbs: -5 }, attires: { primary_ring: { equipped_assets: { upper_body: 'robe; drop', accessories: new Array(30).fill('knee_pads') }, palette_slots: { primary: 'swatch_gold_foil' }, custom_layers: [{ type: 'evil' }, { type: 'text_decal', string: '' }] } } });
 ok(odd.name.length <= 32 && odd.name.indexOf('<') < 0, 'a name is trimmed and has no markup');
 ok(odd.physical_attributes.height_inches === 96 && odd.physical_attributes.weight_lbs === 100, 'numbers are held in range');
-ok(!odd.attires.primary_ring.equipped_assets.upper_body && odd.attires.primary_ring.equipped_assets.accessories.length === 8 && odd.attires.primary_ring.custom_layers.length === 0, 'bad parts and empty lettering are left out');
+ok(!odd.attires.primary_ring.equipped_assets.upper_body && odd.attires.primary_ring.equipped_assets.accessories.length === 10 && odd.attires.primary_ring.custom_layers.length === 0, 'bad parts and empty lettering are left out, and ten extras at most (one for each place on the body)');
 // kept on a worker in a world, carried into a game, written out again
 const pkg = JSON.parse(fs.readFileSync('universes/public_domain.json', 'utf8')), wk = pkg.workers.find(x => (pkg.contracts || []).some(c => c.worker_id === x.id && c.promotion_id === 'pdw'));
 ok(E.edSetLook(pkg, wk.id, RIP) && E.edLook(pkg, wk.id).name === 'Rip Jackson', 'a look is kept on a worker in the world');

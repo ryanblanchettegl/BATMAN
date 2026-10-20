@@ -31,7 +31,7 @@ var ft=null;if(ap.features&&typeof ap.features==='object'){ft={};['eyes','nose',
       scars:Array.isArray(ap.scars)?ap.scars.map(lkId).filter(function(v){return !!v;}).slice(0,6):undefined});}
   if(x.attires&&typeof x.attires==='object'){var at={};LOOK_ATTIRES.forEach(function(k){var a=x.attires[k];if(!a||typeof a!=='object')return;
     var eq=a.equipped_assets||{},e={};LOOK_PARTS.forEach(function(p){var v=lkId(eq[p]);if(v)e[p]=v;});
-    if(Array.isArray(eq.accessories))e.accessories=eq.accessories.map(lkId).filter(function(v){return !!v;}).slice(0,8);
+    if(Array.isArray(eq.accessories))e.accessories=eq.accessories.map(lkId).filter(function(v){return !!v;}).slice(0,10);
     var pal={};LOOK_SLOTS.forEach(function(s){var v=lkId((a.palette_slots||{})[s]);if(v)pal[s]=v;});
     var lay=(Array.isArray(a.custom_layers)?a.custom_layers:[]).slice(0,16).map(function(l){
       if(!l||(l.type!=='text_decal'&&l.type!=='shape_combiner'))return null;var pl=l.placement||{};
@@ -48,7 +48,7 @@ var ft=null;if(ap.features&&typeof ap.features==='object'){ft={};['eyes','nose',
       position:LOOK_POS.indexOf(m.position)>=0?m.position:undefined,category:lkStr(m.category,24),preview_pose_id:lkId(m.preview_pose_id),stage:['early','mid','late'].indexOf(m.stage)>=0?m.stage:undefined});}).filter(function(m){return !!m;});
   if(Array.isArray(x.taunts)){var tn=x.taunts.map(lkId).filter(function(v,i,a){return !!v&&a.indexOf(v)===i;}).slice(0,3);if(tn.length)o.taunts=tn;}   // up to three taunts, each a scene id
   if(Array.isArray(x.moveset)){var ms=x.moveset.slice(0,MOVESET_MAX).map(function(m){if(!m||typeof m!=='object'||!lkStr(m.name,32))return null;
-      return lkPrune({name:lkStr(m.name,32).trim()||undefined,kind:MOVE_KINDS.indexOf(m.kind)>=0?m.kind:undefined,stage:['early','mid','late'].indexOf(m.stage)>=0?m.stage:undefined});}).filter(function(m){return m&&m.name;});
+      return lkPrune({name:lkStr(m.name,32).trim()||undefined,kind:MOVE_KINDS.indexOf(m.kind)>=0?m.kind:undefined,stage:['early','mid','late'].indexOf(m.stage)>=0?m.stage:undefined,scene:lkId(m.scene)});}).filter(function(m){return m&&m.name;});
     if(ms.length)o.moveset=ms;}   // the rest of their moves, by part of the match
   var en=lkId(x.entrance);if(en)o.entrance=en;   // one of the canned entrances
   if(x.entrance_fx&&typeof x.entrance_fx==='object'){var ef=lkPrune({pyro:lkId(x.entrance_fx.pyro),lights:lkId(x.entrance_fx.lights),music:lkStr(x.entrance_fx.music,32)||undefined});if(Object.keys(ef).length)o.entrance_fx=ef;}   // pyro, lights and their music
@@ -60,26 +60,30 @@ var ft=null;if(ap.features&&typeof ap.features==='object'){ft={};['eyes','nose',
    commentators name them in the match's call (matchShape() in src/60-grammar.js: the opening, the middle spot, the late
    swing). Without one, the call names moves for the wrestler's style, as before. */
 var MOVESET_MAX=12,MOVE_KINDS=['strike','grapple','power','aerial','submission'];
+/** Every move a moveset can hold, by kind: an id (its animation is the scene move_<id>, app/src/kit/scene.ts) and its name.
+    None is only words (Ryan, 20 October): a move added here needs its scene, and app/tests/scene.js checks it. */
 var MOVE_LIB={
-  strike:['Chop to the chest','Forearm smash','Knife-edge chop','Spinning heel kick','Superkick','Jumping knee','Discus punch','Enzuigiri','Running elbow','Big boot','Headbutt','Flurry of kicks'],
-  grapple:['Snap suplex','German suplex','Vertical suplex','Northern lights suplex','DDT','Neckbreaker','Backbreaker','Arm drag','Hip toss','Bulldog','Snapmare','Exploder suplex'],
-  power:['Powerbomb','Spinebuster','Gorilla press','Chokeslam','Running powerslam','Sidewalk slam','Body slam','Fallaway slam','Military press','Lariat','Shoulder tackle','Bear hug'],
-  aerial:['Dropkick','Moonsault','Crossbody from the top','Dive to the floor','Springboard kick','Corkscrew press','Shooting star press','Frog splash','Flying elbow','Hurricanrana','Missile dropkick','Tope through the ropes'],
-  submission:['Armbar','Figure-four','Single-leg crab','Crossface','Sleeper hold','Camel clutch','Ankle lock','Boston crab','Triangle choke','Abdominal stretch','Kimura','Rear naked choke']
+  strike:[['chop','Knife-edge chop'],['forearm','Forearm smash'],['discus','Discus punch'],['elbowstrike','Running elbow'],['headbutt','Headbutt'],['bigboot','Big boot'],['superkick','Superkick'],['jumpknee','Jumping knee'],['enzuigiri','Enzuigiri'],['clothesline','Clothesline'],['cornerhit','Corner charge']],
+  grapple:[['armdrag','Arm drag'],['hiptoss','Hip toss'],['snapmare','Snapmare'],['bodyslam','Body slam'],['snapsuplex','Snap suplex'],['suplex','Vertical suplex'],['german','German suplex'],['northern','Northern lights suplex'],['neckbreaker','Neckbreaker'],['backbreaker','Backbreaker'],['bulldog','Bulldog'],['ddt','DDT'],['superplex','Superplex']],
+  power:[['sidewalk','Sidewalk slam'],['powerslam','Running powerslam'],['spinebuster','Spinebuster'],['fallaway','Fallaway slam'],['gorillapress','Gorilla press'],['chokeslam','Chokeslam'],['powerbomb','Powerbomb'],['spear','Spear']],
+  aerial:[['dropkick','Dropkick'],['hurricanrana','Hurricanrana'],['crossbody','Crossbody from the top'],['missile','Missile dropkick'],['flyingelbow','Flying elbow'],['topdive','Splash off the top'],['moonsault','Moonsault'],['tope','Dive to the outside']],
+  submission:[['armbar','Armbar'],['sleeper','Sleeper hold'],['abdominal','Abdominal stretch'],['camelclutch','Camel clutch'],['bostoncrab','Boston crab'],['crossface','Crossface'],['anklelock','Ankle lock'],['figurefour','Figure-four']]
 };
+/** The move in the library with this id or this name, as {id, n, k}, or null. */
+function moveLib(x){for(var k in MOVE_LIB)for(var i=0;i<MOVE_LIB[k].length;i++){var m=MOVE_LIB[k][i];if(m[0]===x||m[1]===x)return {id:m[0],n:m[1],k:k};}return null;}
 var MOVE_STYLE={B:['strike','power'],T:['grapple','submission'],H:['aerial','strike'],P:['power','grapple'],A:['grapple','strike'],S:['strike','submission'],E:['strike','aerial']};
 /** A starting moveset for a style: four moves for each part of the match, picked by a hash of the name. */
 function movesetFor(style,name){
   var ks=MOVE_STYLE[style]||MOVE_STYLE.A,out=[],seen={},k=0;
-  ['early','mid','late'].forEach(function(st,si){for(var i=0;i<4;i++){var kind=i<2?ks[0]:(i===2?ks[1]:MOVE_KINDS[(si+hash(String(name)+i))%MOVE_KINDS.length]),L=MOVE_LIB[kind],n=L[(hash(String(name)+':'+st+i)+k++)%L.length],g=0;
-    while(seen[n]&&g++<L.length)n=L[(L.indexOf(n)+1)%L.length];seen[n]=1;out.push({name:n,kind:kind,stage:st});}});
+  ['early','mid','late'].forEach(function(st,si){for(var i=0;i<4;i++){var kind=i<2?ks[0]:(i===2?ks[1]:MOVE_KINDS[(si+hash(String(name)+i))%MOVE_KINDS.length]),L=MOVE_LIB[kind],j=(hash(String(name)+':'+st+i)+k++)%L.length,g=0;
+    while(seen[L[j][0]]&&g++<L.length)j=(j+1)%L.length;seen[L[j][0]]=1;out.push({name:L[j][1],kind:kind,stage:st,scene:'move_'+L[j][0]});}});
   return out;
 }
 /** A move as the commentators say it: "a snap suplex" for one from the library, a move of their own as it is written. */
-function moveSaid(m){var n=String(m.name||'');for(var k in MOVE_LIB)if(MOVE_LIB[k].indexOf(n)>=0){n=n.charAt(0).toLowerCase()+n.slice(1);return (/^[aeiou]/i.test(n)?'an ':'a ')+n;}return /^(the|a|an) /i.test(n)?n.replace(/^The /,'the '):n;}
+function moveSaid(m){var n=String(m.name||'');if(moveLib(n)){if(!/^[A-Z]{2,}/.test(n))n=n.charAt(0).toLowerCase()+n.slice(1);return (/^[aeiou]/i.test(n)?'an ':'a ')+n;}return /^(the|a|an) /i.test(n)?n.replace(/^The /,'the '):n;}
 /** The move a wrestler does in this part of the match, from their moveset, or null when they have none. */
 function moveFrom(w,stage,key){var L=w&&w.look&&w.look.moveset;if(!L||!L.length)return null;var here=L.filter(function(m){return (m.stage||'mid')===stage;});if(!here.length)here=L;return moveSaid(here[Math.floor(h01(key)*here.length)%here.length]);}
-E.MOVE_LIB=MOVE_LIB;E.MOVE_KINDS=MOVE_KINDS;E.MOVESET_MAX=MOVESET_MAX;E.movesetFor=movesetFor;E.moveSaid=moveSaid;
+E.MOVE_LIB=MOVE_LIB;E.moveLib=moveLib;E.MOVE_KINDS=MOVE_KINDS;E.MOVESET_MAX=MOVESET_MAX;E.movesetFor=movesetFor;E.moveSaid=moveSaid;
 /** Is this a wrestler's look (a .wrestler.json file)? */
 E.lookOk=function(x){var c=lookClean(x);return !!(c&&(c.attires||c.physical_attributes||c.appearance));};
 E.lookClean=lookClean;

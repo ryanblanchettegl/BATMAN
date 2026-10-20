@@ -307,7 +307,10 @@ function scenePick(r: any, s: any, at: number, done: boolean): { sc: Scene; cast
   let sc0 = choose(when, key.length); if (!sc0) return null;
   // the one in control in the middle of a match: a signature move for this part of it (early, the middle, late), or now and then a taunt
   const lkA = when === 'mid' && S.w[a] ? (S.w[a].look || {}) : null, part = now < bc.length * 0.35 ? 'early' : now < bc.length * 0.7 ? 'mid' : 'late', hsh = Math.abs((r.week || 0) + i * 3 + key.length * 7 + now);
-  const all = lkA ? threeMoves(S.w[a], lkA.finishing_moves).slice(1) : [], here = all.filter((m: any) => (m.stage || 'mid') === part), sigs = here.length ? here : all;
+  const all = lkA ? threeMoves(S.w[a], lkA.finishing_moves).slice(1) : [], here = all.filter((m: any) => (m.stage || 'mid') === part), sig0 = here.length ? here : all;
+  // their moveset joins the signatures for this part of the match (each move plays its own animation); a signature still comes up twice as often
+  const msHere = lkA ? (lkA.moveset || []).filter((m: any) => (m.stage || 'mid') === part && m.scene).map((m: any) => ({ name: m.name, preview_pose_id: m.scene })) : [];
+  const sigs = sig0.concat(sig0, msHere);
   const tn = lkA ? (lkA.taunts || []).map((id: string) => allScenes(world).find(x => x.id === id && x.when === 'taunt')).filter(Boolean) as Scene[] : [];
   if (tn.length && (!sigs.length || hsh % 3 === 0)) sc0 = tn[hsh % tn.length];
   else if (sigs.length) { const sm = sigs[hsh % sigs.length], fs = allScenes(world).find(x => x.id === finScene(sm));

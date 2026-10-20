@@ -358,3 +358,31 @@ html body .win.ppop .wb{font-family:var(--hand);font-size:1.06em}
 .pick-cols.tmpl{grid-template-columns:2fr 1fr}
 .pick-cols.tmpl .btn b{display:block;font-size:1.05em}
 .pick-cols.tmpl .btn small{display:block;font-family:var(--hand);text-transform:none;font-size:.9em;opacity:.9;margin-top:.15em;letter-spacing:0}
+/* Step: ◀ the choice ▶, as the classic create-a-wrestler screens do it. The arrows are cut card, the count small. */
+.step{display:inline-flex;align-items:center;gap:.25em;max-width:100%}
+.step select{min-width:0;flex:1 1 auto}
+.step-b{font-family:'EWF Blocks',var(--marker);font-size:.9em;line-height:1;min-width:1.8em;height:1.9em;padding:0 .4em;border:0;border-radius:3px;cursor:pointer;color:#fff;background:#18264a;box-shadow:2px 2px 0 rgba(0,0,0,.35);transform:rotate(-1.5deg);transition:transform .12s,background .12s}
+.step-b:nth-of-type(2){transform:rotate(1.5deg)}
+.step-b:hover:not(:disabled),.step-b:focus-visible{background:#1f4fa3;transform:translateY(-1px) rotate(0)}
+.step-b:active:not(:disabled){transform:translateY(1px)}
+.step-b:disabled{opacity:.35;cursor:default}
+.step-n{font-family:var(--gochi);font-size:.75em;color:#5a5048;min-width:2.8em;white-space:nowrap;text-align:right}
+/* in Create a Wrestler a line with a Step is one line: the label, then ◀ the choice ▶ filling the rest; a note goes under it */
+.cawpage .sc-row:has(> .step){flex-wrap:wrap}
+.cawpage .sc-row:has(> .step) > .sc-slot{flex:0 0 30%;min-width:0}
+.cawpage .sc-row > .step{flex:1 1 60%;min-width:0}
+.cawpage .sc-row:has(> .step) > .muted{flex:1 1 100%}
+/* the choices take a little more of the width; the wrestler still has most of it */
+.cawpage{grid-template-columns:minmax(0,1.3fr) minmax(0,1fr)}
+/* the count shows on the line being used (focus or pointer), so the names have the room */
+.cawpage .sc-row .step-n{display:none}
+.cawpage .sc-row .step:focus-within .step-n,.cawpage .sc-row .step:hover .step-n{display:inline}
+.cawpage .sc-row .step:focus-within,.cawpage .sc-row .step:hover{position:relative}
+.cawpage .sc-row .step .step-n{position:absolute;right:2.4em;top:-1.05em;background:var(--lk-paper,#f4ecd8);padding:0 .3em;border-radius:3px}
+/* the middle of a Step: the full name, wrapping onto a second line rather than cut; the dropdown lies over it unseen */
+.step-mid{position:relative;flex:1 1 auto;min-width:0;display:flex;align-items:center;gap:.4em;padding:.25em .5em;background:#fffdf5;border:2px solid #1c1b1f;border-radius:4px;box-shadow:2px 2px 0 rgba(0,0,0,.25);min-height:2em}
+.step-txt{flex:1 1 auto;white-space:normal;overflow-wrap:anywhere;line-height:1.15;color:var(--ink)}
+.step-open{flex:0 0 auto;font-family:'EWF Blocks',var(--hand);font-size:.6em;opacity:.55}
+.step-mid select{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;margin:0}
+.step-mid:focus-within{outline:3px solid #e0b43a;outline-offset:1px}
+.step:has(select:disabled) .step-mid{opacity:.5}
