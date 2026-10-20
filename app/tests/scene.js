@@ -196,7 +196,7 @@ async function broadcast(mode) {
       const ch2 = E.segChoices(S, 'faceoff', [a], -1); const b = ch2[1] && ch2[1].find(x => x !== a); if (b == null) return 'no second'; const r = E.setSeg(S, -1, { k: 'faceoff', who: [a, b], pos: 1, len: 'S' }); window.EWF_DEBUG.render(); return r.ok ? '' : r.msg; });
     if (bookedSeg) console.log(mode.padEnd(6), 'note', 'could not book a face-off: ' + bookedSeg);
     // a steel cell match: it is played inside the cell
-    const cellAt = await page.evaluate(() => { const S = window.EWF_DEBUG.state(), E = window.GP, i = S.card.findIndex((m, j) => j > 0 && m && m.mt === '1v1'); if (i < 0) return -1; S.card[i].stip = 'cell'; E.fitShow(S, S.card); return i; });
+    const cellAt = await page.evaluate(() => { const S = window.EWF_DEBUG.state(), E = window.GP, i = S.card.findIndex((m, j) => m && m.mt === '1v1'); if (i < 0) return -1; S.card[i].stip = 'cell'; E.fitShow(S, S.card); return i; });
     // a newcomer on the card who debuts with a surprise attack: their entrance is the debut's own scene
     const debId = await page.evaluate(() => { const S = window.EWF_DEBUG.state(), m = S.card[0], id = m && m.sides[0][0]; if (id == null) return -1; S.w[id].deb = true; S.w[id].dk = 'atk'; return id; });
     for (let k = 0; k < 6 && !(await has(page, '#live')); k++) { if (await has(page, '[data-t="pre"]')) await page.click('[data-t="pre"][data-c="0"]'); else await page.click('[data-t="advance"]'); await page.waitForTimeout(50); }
