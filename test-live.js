@@ -313,5 +313,13 @@ if (found.network) { const F = found.network, net = S => { E.clocks(S); return S
   ok('nm8', 'a lost belt leaves a rematch to answer, and yes is a promise', !!got.clause && got.clause.n === 2 && got.clause.quest === 1 && got.clause.mem >= 1 && got.clause.done, got.clause && got.clause.text);
   ok('nm9', 'an upset nobody called leaves both of them wanting an answer', !!got.upset && got.upset.n === 3 && got.upset.quest === 1 && got.upset.mem >= 1, got.upset && got.upset.text);
   ok('nm10', 'a main event that was the weakest match leaves the blame to hand out', !!got.mainflop && got.mainflop.n === 3 && got.mainflop.mem >= 1 && got.mainflop.bad, got.mainflop && got.mainflop.text); }
+// the rules with a set of their own: a steel cell and a ring of fire are on the menu, play through, and say so on the call
+{ const S = E.newGame('pdw', 5, { name: 'R' }), card = desk(S), m = card.find(x => x.mt === '1v1');
+  ok('stp1', 'the steel cell and the ring of fire are rules a booker can pick', !!E.STIP.cell && !!E.STIP.fire && !!E.STIPNOTE.cell && !!E.STIPNOTE.fire);
+  if (m) { m.stip = 'cell'; const m2 = card.filter(x => x.mt === '1v1')[1]; if (m2) m2.stip = 'fire'; E.fitShow(S, card); }
+  E.liveBegin(S, card); const rep = air(S), segs = rep.segs.filter(x => x.k === 'match');
+  ok('stp2', 'a steel cell match goes on the air under its name', segs.some(x => x.stip === 'Steel cell'), segs.map(x => x.stip).join(','));
+  ok('stp3', 'a ring of fire match goes on the air under its name', segs.some(x => x.stip === 'Ring of fire'), segs.map(x => x.stip).join(','));
+  ok('stp4', 'no number in the report is broken', !JSON.stringify(rep).includes('NaN')); }
 if (fails.length) { console.log('\nFAILED: ' + fails.length + '\n' + fails.join('\n')); process.exit(1); }
 console.log('test-live: all passed');

@@ -7,7 +7,7 @@
 import { useRef, useState } from 'preact/hooks';
 import { E } from '../../engine';
 import { G, act, full, say as note } from '../../store';
-import { Btn, TextBox, Desktop, Win, Group, Tabs } from '../../kit';
+import { Btn, TextBox, Desktop, Win, Group, Sel, Opt } from '../../kit';
 import { ScenePlayer } from '../../kit/sceneplayer';
 import { Scene, SCENES, POSES, WAIST, copy, scenesFor, allScenes, WHEN, PYRO, LIGHTS, dressEntrance } from '../../kit/scene';
 import { Recipe, recipeOf, blank } from '../../kit/puppet';
@@ -41,6 +41,8 @@ export interface PlayerProps { world: string; w: any; had: Look | null; onSave: 
   /** The world's own scenes, besides the game's: its entrances are offered too. In the World Editor, onNewEntrance
       keeps the wrestler and opens Create a Scene to make them a custom entrance. */
   scenes?: Scene[]; onNewEntrance?: (look: Look) => void;
+  /** In the World Editor: keep the wrestler and open Create a Move on a copy of their move number `fi`, with them in it. */
+  onNewMove?: (look: Look, fi: number) => void;
   /** The card behind their portrait: their company's or brand's colour. */
   card?: string }   // sign: a new wrestler, made in a game, who goes to free agency
 /** The choices for a new signing, as the old Create a wrestler window had them (E.createWrestler). */
@@ -75,7 +77,7 @@ export function CreatePlayer(pp: PlayerProps) {
   let sc: Scene, cast: Record<string, Recipe> = { A: r }, play: string;
   const world = pp.scenes || [], [prev, setPrev] = useState<string | null>(null), prevSc = prev ? allScenes(world).find(x => x.id === prev) : null;
   if (acting && fin) {
-    const src = SCENES.find(x => x.id === finScene(fin)) || SCENES[0];
+    const src = allScenes(world).find(x => x.id === finScene(fin)) || SCENES[0];
     sc = { ...copy(src), attire: 'primary_ring', loop: true }; cast.B = { ...blank(1), name: 'The dummy' }; play = 'fin' + fi + JSON.stringify(lk) + sc.id;
   } else if (prevSc && tab === 'scenes') {   // the entrance they picked, with them in it
     sc = { ...dressEntrance(copy(prevSc), lk.entrance_fx), loop: true }; play = 'sc' + prevSc.id + JSON.stringify(lk);
@@ -126,31 +128,31 @@ export function CreatePlayer(pp: PlayerProps) {
   const setPt = (o: any) => change(n => { const q: any = { ...(n.portrait || {}), ...o }; Object.keys(q).forEach(k => { if (q[k] === undefined || q[k] === '') delete q[k]; }); if (Object.keys(q).length) n.portrait = q; else delete n.portrait; });
   const titles: Record<Tab, string> = { face: 'Shape the face', ink: 'Paint and ink', portrait: 'Their portrait', a_head: 'Head: ' + AN, a_upper: 'Upper body: ' + AN, a_lower: 'Lower body: ' + AN, a_feet: 'Feet: ' + AN, sign: 'A new wrestler', body: 'The body', head: 'The head', gear: 'Gear: ' + ATTIRES.find(a => a[0] === att)![1], colour: 'Colours: ' + ATTIRES.find(a => a[0] === att)![1], studio: 'Gear studio: lettering and shapes', fin: 'Their moves', scenes: 'Their entrance', file: 'The file' };
   return <div class="scfull paper" data-t="caw">
-    <div class="sc-menubar" role="group" aria-label={pp.sign ? 'Create a Wrestler' : pp.attire ? 'Edit attire' : 'Edit wrestler'}>
-      <b class="on">{pp.sign ? 'Create a Wrestler' : pp.attire ? 'Edit attire' : 'Edit wrestler'}</b><span>{pp.world}</span><span class="sp" />
-      <span class={'sc-hint' + (msg ? (msg.err ? ' bad' : ' good') : '')} role="status" data-t="caw-msg">{msg ? msg.t : 'Change anything on the right; the wrestler on the left changes with it'}</span>
+    <div class="pmenu sc-menubar" role="group" aria-label={pp.sign ? 'Create a Wrestler' : pp.attire ? 'Edit attire' : 'Edit wrestler'}>
+      <b class="pm-app">{pp.sign ? 'Create a Wrestler' : pp.attire ? 'Edit attire' : 'Edit wrestler'}</b><span class="pm-world">{pp.world}</span><span class="sp" />
       <Btn kind="sm" t="caw-random" onClick={() => { change(n => { Object.assign(n, randomLook(n, Math.random)); }); say('A new look, at random. Press it again for another, or change anything.'); }}>Surprise me</Btn>
       <Btn kind="go" t="caw-save" onClick={save}>Save</Btn>
       <Btn kind="sm" t="caw-done" onClick={pp.onDone}>Done</Btn>
     </div>
+    <div class={'pnote sc-hint' + (msg ? (msg.err ? ' bad' : ' good') : '')} role="status" data-t="caw-msg">{msg ? msg.t : 'Change anything on the right; the wrestler on the left changes with it.'}</div>
     <Desktop cls="scpage cawpage">
       <Win title={(lk.name || w0.name) + (lk.moniker ? ', ' + lk.moniker : '')} right={acting && fin ? fin.name : ATTIRES.find(a => a[0] === att)![2]} area="stage" t="caw-win">
         <div class="sc-keys" role="group" aria-label="Outfit">
           <span class="sc-lbl">Outfit</span>
-          {ATTIRES.map(a => <Btn kind="sm" t="caw-attire" d={{ v: a[0] }} on={att === a[0]} onClick={() => { setAtt(a[0]); setActing(false); setLay(-1); }}>{a[1]}</Btn>)}
+          <Sel t="caw-attire" label="Outfit" value={att} options={ATTIRES.map(a => [a[0], a[1]] as Opt)} onChange={v => { setAtt(v as any); setActing(false); setLay(-1); }} />
           <span class="sp" /><Btn kind="less" t="caw-back" on={back} onClick={() => { setBack(!back); setActing(false); }}>{back ? 'Their front' : 'Their back'}</Btn>
         </div>
         <div class="caw-stagerow"><div class="sc-stage caw-stage"><ScenePlayer key="caw" sc={sc} cast={cast} play={play} still={!(acting && fin) && !(prevSc && (tab === 'scenes' || tab === 'fin'))} orbit fill={!(acting && fin) && !(prevSc && (tab === 'scenes' || tab === 'fin'))} t="caw-view" label={(lk.name || w0.name) + ' in ' + ATTIRES.find(a => a[0] === att)![1].toLowerCase() + '. Drag to walk round them.'} /></div>
           <div class="caw-ptcol"><button type="button" class={'caw-ptbtn' + (tab === 'portrait' ? ' on' : '')} data-t="caw-portrait" aria-label="Their portrait: press to change it" title="Their portrait: press to change it" onClick={() => setTab('portrait')}><PaperPortrait r={r} ps={pt} card={card} label={'Portrait of ' + (lk.name || w0.name)} /><span class="caw-ptlbl">Portrait</span></button></div></div>
         <div class="sc-keys" role="group" aria-label="Pose">
           <span class="sc-lbl">Pose</span>
-          {VIEW_POSES.map(p => <Btn kind="less" t="caw-pose" d={{ v: p[0] }} on={pose === p[0] && !acting} onClick={() => { setPose(p[0]); setActing(false); }}>{p[1]}</Btn>)}
+          <Sel t="caw-pose" label="Pose" value={acting ? '' : pose} options={(acting ? [['', 'Doing their move'] as Opt] : []).concat(VIEW_POSES.map(p => [p[0], p[1]] as Opt))} onChange={v => { if (v) { setPose(v as any); setActing(false); } }} />
           <span class="sp" />
         </div>
       </Win>
       <Win title={titles[tab]} right={tab === 'gear' || tab === 'colour' || tab === 'studio' ? ATTIRES.find(a => a[0] === att)![1] : ''} area="side" t="caw-side">
-        <Tabs label="What to change" value={tab} onPick={v => setTab(v as Tab)} items={pp.attire ? [{ id: 'a_head', label: 'Head', t: 'caw-tab' }, { id: 'a_upper', label: 'Upper body', t: 'caw-tab' }, { id: 'a_lower', label: 'Lower body', t: 'caw-tab' }, { id: 'a_feet', label: 'Feet', t: 'caw-tab' }, { id: 'studio', label: 'Lettering', t: 'caw-tab' }, { id: 'colour', label: 'Colours', t: 'caw-tab' }] : [...(pp.sign ? [{ id: 'sign', label: 'Who they are', t: 'caw-tab' }] : []), { id: 'body', label: 'Body', t: 'caw-tab' }, { id: 'head', label: 'Head', t: 'caw-tab' }, { id: 'face', label: 'Face shape', t: 'caw-tab' }, { id: 'ink', label: 'Paint and ink', t: 'caw-tab' }, { id: 'gear', label: 'Gear', t: 'caw-tab' },
-          { id: 'colour', label: 'Colours', t: 'caw-tab' }, { id: 'studio', label: 'Lettering', t: 'caw-tab' }, { id: 'fin', label: 'Moves', t: 'caw-tab' }, { id: 'scenes', label: 'Entrance', t: 'caw-tab' }, { id: 'file', label: 'File', t: 'caw-tab' }]} />
+        {(() => { const its: { id: string; label: string; t?: string }[] = pp.attire ? [{ id: 'a_head', label: 'Head', t: 'caw-tab' }, { id: 'a_upper', label: 'Upper body', t: 'caw-tab' }, { id: 'a_lower', label: 'Lower body', t: 'caw-tab' }, { id: 'a_feet', label: 'Feet', t: 'caw-tab' }, { id: 'studio', label: 'Lettering', t: 'caw-tab' }, { id: 'colour', label: 'Colours', t: 'caw-tab' }] : [...(pp.sign ? [{ id: 'sign', label: 'Who they are', t: 'caw-tab' }] : []), { id: 'body', label: 'Body', t: 'caw-tab' }, { id: 'head', label: 'Head', t: 'caw-tab' }, { id: 'face', label: 'Face shape', t: 'caw-tab' }, { id: 'ink', label: 'Paint and ink', t: 'caw-tab' }, { id: 'gear', label: 'Gear', t: 'caw-tab' },
+          { id: 'colour', label: 'Colours', t: 'caw-tab' }, { id: 'studio', label: 'Lettering', t: 'caw-tab' }, { id: 'fin', label: 'Moves', t: 'caw-tab' }, { id: 'scenes', label: 'Entrance', t: 'caw-tab' }, { id: 'file', label: 'File', t: 'caw-tab' }]; return <div class="sc-row sc-section"><span class="sc-lbl">Change</span><Sel t="caw-tab" label="What to change" value={tab} options={its.map(x => [x.id, x.label] as Opt)} onChange={v => setTab(v as Tab)} /></div>; })()}
         {tab === 'sign' && info && pv && <>
           <div class="sc-row"><span class="sc-slot">Ring name</span><TextBox value={lk.name || ''} max={28} label="Ring name" t="caw-name" width="18ch" onInput={v => change(n => { n.name = v; })} /></div>
           {([['g', 'Division', [['M', 'Men'], ['F', 'Women']]], ['align', 'Side', [['F', 'Face'], ['H', 'Heel']]], ['style', 'Style', Object.keys(E.STYLE_NAME).map(k => [k, E.STYLE_NAME[k]])],
@@ -158,14 +160,14 @@ export function CreatePlayer(pp: PlayerProps) {
             ['gim', 'Gimmick', [['', 'Whatever suits them']].concat(E.GIMS.map((g: any) => [g.id, g.n]))]] as [keyof Draft, string, string[][]][]).map(([k, n, opts]) =>
             <div class="sc-row"><span class="sc-slot">{n}</span><select aria-label={n} data-t="caw-draft" data-v={k} value={d[k]} onChange={e => setDraft(k, (e.currentTarget as HTMLSelectElement).value)}>{opts.map(o => <option value={o[0]}>{o[1]}</option>)}</select></div>)}
           <p class="muted">{(info.bgs[d.bg] || info.bgs.indie).d}</p>
-          <Group title="What you get">
+          <Group title="Summary">
             <p>Overness <b>{pv.ovr}</b>{' · '}Work rate about <b>{pv.work}</b>{' · '}Charisma <b>{pv.mic}</b>{' · '}Potential <b>{pv.pot}</b></p>
             <p data-t="caw-cost">They will ask for about {full(pv.wage)} a week.</p>
           </Group>
           <div class="sc-row"><Btn kind="go" t="caw-create" onClick={signIt}>Create</Btn><span class="muted">They join the free agents, with their look, outfits and finisher. Sign them from Free agents like anybody else.</span></div>
         </>}
         {tab === 'face' && <>
-          <Group title="Shape the face">
+          <Group title="Face shape">
             {FACE_SLIDERS.map(([k, n, lo, hi]) => { const v = ((lk.appearance && lk.appearance.shape) || {})[k] || 0; return <div class="sc-row caw-fsl"><span class="caw-lbl">{n}</span><small>{lo}</small>
               <input type="range" min={-100} max={100} step={5} value={Math.round(v * 100)} aria-label={n + ': from ' + lo + ' to ' + hi} data-t="caw-fsl" data-v={k} onInput={e => { const x = +(e.currentTarget as HTMLInputElement).value / 100; change(n2 => { n2.appearance = n2.appearance || {}; const shp: any = n2.appearance.shape = { ...(n2.appearance.shape || {}) }; if (x) shp[k] = x; else delete shp[k]; if (!Object.keys(shp).length) delete n2.appearance.shape; }); }} /><small>{hi}</small></div>; })}
             <div class="sc-row"><Btn kind="less" t="caw-fslreset" disabled={!(lk.appearance && lk.appearance.shape)} onClick={() => change(n2 => { if (n2.appearance) delete n2.appearance.shape; })}>Back to the face shape</Btn></div>
@@ -177,7 +179,7 @@ export function CreatePlayer(pp: PlayerProps) {
               {PAINT.map(f => <option value={f[0]}>{f[1]}</option>)}</select>
               {lk.appearance && lk.appearance.face_paint && <select aria-label="Paint colour" data-t="caw-paintcol" value={lk.appearance.paint_colour || ''} onChange={e => { const v = (e.currentTarget as HTMLSelectElement).value; change(n => { n.appearance = n.appearance || {}; if (v) n.appearance.paint_colour = v; else delete n.appearance.paint_colour; }); }}>
                 <option value="">{lk.appearance.face_paint === 'skull' ? 'White' : 'Red'}</option>{SWATCHES.map(s2 => <option value={s2[0]}>{s2[1]}</option>)}</select>}</div>
-            {(ap.paint_layers || []).map((l, i) => <div class="sc-row" key={'pl' + i}><span class="sc-slot">{'Over it, ' + (i + 1)}</span>
+            {(ap.paint_layers || []).map((l, i) => <div class="sc-row" key={'pl' + i}><span class="sc-slot">{'Layer ' + (i + 1)}</span>
               <select aria-label={'Paint layer ' + (i + 1)} data-t="caw-paintly" data-v={i} value={l.k} onChange={e => { const v = (e.currentTarget as HTMLSelectElement).value; setAp(a => { a.paint_layers![i].k = v; }); }}>{PAINT_LAYERS.map(f => <option value={f[0]}>{f[1]}</option>)}</select>
               <select aria-label={'Colour of layer ' + (i + 1)} data-t="caw-paintlycol" data-v={i} value={l.c || ''} onChange={e => { const v = (e.currentTarget as HTMLSelectElement).value; setAp(a => { if (v) a.paint_layers![i].c = v; else delete a.paint_layers![i].c; }); }}><option value="">Black</option>{SWATCHES.map(s2 => <option value={s2[0]}>{s2[1]}</option>)}</select>
               <Btn kind="sm" t="caw-paintlyup" d={{ v: i }} disabled={i >= (ap.paint_layers || []).length - 1} label={'Paint layer ' + (i + 1) + ' over the next'} onClick={() => setAp(a => { const L = a.paint_layers!, x = L[i]; L[i] = L[i + 1]; L[i + 1] = x; })}>Over</Btn>
@@ -185,20 +187,20 @@ export function CreatePlayer(pp: PlayerProps) {
             {(ap.paint_layers || []).length < 3 && <div class="sc-row"><span class="sc-slot"></span><Btn kind="less" t="caw-paintlyadd" onClick={() => setAp(a => { a.paint_layers = (a.paint_layers || []).concat([{ k: 'eyes' }]); })}>Paint a layer over it</Btn></div>}
             <div class="sc-row"><span class="sc-slot">Tattoos</span>{TATTOOS.map(t => { const on = ((lk.appearance && lk.appearance.tattoos) || []).indexOf(t[0]) >= 0; return <Btn kind="less" t="caw-tat" d={{ v: t[0] }} on={on} onClick={() => change(n => { n.appearance = n.appearance || {}; const l = n.appearance.tattoos || []; n.appearance.tattoos = on ? l.filter(x => x !== t[0]) : l.concat([t[0]]); if (!n.appearance.tattoos.length) delete n.appearance.tattoos; })}>{t[1]}</Btn>; })}</div>
           </Group>
-          <Group title="Scars, freckles and body hair">
+          <Group title="Scars and marks">
             <div class="sc-row"><span class="sc-slot">Scars</span>{SCARS.map(t => { const on = (ap.scars || []).indexOf(t[0]) >= 0; return <Btn kind="less" t="caw-scar" d={{ v: t[0] }} on={on} onClick={() => setAp(a => { const l = a.scars || []; a.scars = on ? l.filter(x => x !== t[0]) : l.concat([t[0]]); if (!a.scars.length) delete a.scars; })}>{t[1]}</Btn>; })}</div>
             <div class="sc-row"><span class="sc-slot">Freckles</span><Btn kind="less" t="caw-freckles" on={!!ap.freckles} onClick={() => setAp(a => { if (a.freckles) delete a.freckles; else a.freckles = true; })}>{ap.freckles ? 'Freckles' : 'None'}</Btn>
-              <span class="sc-slot">Body hair</span>{(['None', 'The chest', 'Chest and belly']).map((n, i) => <Btn kind="less" t="caw-bodyhair" d={{ v: i }} on={(ap.body_hair || 0) === i} onClick={() => setAp(a => { if (i) a.body_hair = i; else delete a.body_hair; })}>{n}</Btn>)}</div>
+              <span class="sc-slot">Body hair</span><Sel t="caw-bodyhair" label="Body hair" value={String(ap.body_hair || 0)} options={[['0', 'None'], ['1', 'The chest'], ['2', 'Chest and belly']]} onChange={v => setAp(a => { const i = +v; if (i) a.body_hair = i; else delete a.body_hair; })} /></div>
             <p class="muted">Scars and body hair show only where skin does.</p>
           </Group>
         </>}
         {tab === 'body' && <>
           <Group title="Sex">
-            <div class="sc-row">{([['M', 'Men'], ['F', 'Women']] as ['M' | 'F', string][]).map(([g, n]) => <Btn kind="less" t="caw-sex" d={{ v: g }} on={(pa.sex || (w0.g === 'F' ? 'F' : 'M')) === g} onClick={() => { change(n2 => { const p2 = n2.physical_attributes = n2.physical_attributes || {}; p2.sex = g; const a = (n2.attires || {}).primary_ring; if (a) { if (g === 'F' && a.equipped_assets.upper_body === 'bare') a.equipped_assets.upper_body = 'top_sports'; if (g === 'M' && a.equipped_assets.upper_body === 'top_sports') a.equipped_assets.upper_body = 'bare'; } }); if (pp.sign) setD({ ...d, g }); }}>{n}</Btn>)}
+            <div class="sc-row"><Sel t="caw-sex" label="Sex" value={pa.sex || (w0.g === 'F' ? 'F' : 'M')} options={[['M', 'Men'], ['F', 'Women']]} onChange={gv => { const g = gv as 'M' | 'F';  change(n2 => { const p2 = n2.physical_attributes = n2.physical_attributes || {}; p2.sex = g; const a = (n2.attires || {}).primary_ring; if (a) { if (g === 'F' && a.equipped_assets.upper_body === 'bare') a.equipped_assets.upper_body = 'top_sports'; if (g === 'M' && a.equipped_assets.upper_body === 'top_sports') a.equipped_assets.upper_body = 'bare'; } }); if (pp.sign) setD({ ...d, g }); }} />
               <span class="muted">{pp.sign || pp.onNewEntrance ? 'Their division follows.' : 'In a running game this changes how they look; their division stays.'}</span></div>
           </Group>
           <Group title="Body type">
-            <div class="sc-row">{ARCHETYPES.map(a => <Btn kind="less" t="caw-arch" d={{ v: a[0] }} on={pa.body_archetype === a[0]} onClick={() => change(n => { n.archetype = a[0]; n.physical_attributes = { sex: (n.physical_attributes || {}).sex, height_inches: a[2].h, weight_lbs: a[2].w, body_archetype: a[0], proportional_scalers: { torso_width: a[2].s[0], torso_height: a[2].s[1], limb_length: a[2].s[2], muscle_mass: a[2].s[3] } }; })}>{a[1]}</Btn>)}</div>
+            <div class="sc-row"><Sel t="caw-arch" label="Body type" value={pa.body_archetype || ''} options={(pa.body_archetype ? [] : [['', 'Pick a body type'] as Opt]).concat(ARCHETYPES.map(a => [a[0], a[1]] as Opt))} onChange={v => { const a = ARCHETYPES.find(x => x[0] === v); if (a) change(n => { n.archetype = a[0]; n.physical_attributes = { sex: (n.physical_attributes || {}).sex, height_inches: a[2].h, weight_lbs: a[2].w, body_archetype: a[0], proportional_scalers: { torso_width: a[2].s[0], torso_height: a[2].s[1], limb_length: a[2].s[2], muscle_mass: a[2].s[3] } }; }); }} /></div>
           </Group>
           <Group title="Height and weight">
             <div class="sc-row"><span class="sc-slot">Height</span>
@@ -216,7 +218,7 @@ export function CreatePlayer(pp: PlayerProps) {
           </Group>
         </>}
         {tab === 'head' && <>
-          <Group title="Hair, or a mask">
+          <Group title="Hair or mask">
             <div class="sc-row"><select aria-label="Hair" data-t="caw-hair" value={cur.equipped_assets.head || 'hair_face'} onChange={e => { const v = (e.currentTarget as HTMLSelectElement).value; change(n => { ATTIRES.forEach(a => { const x = (n.attires = n.attires || {})[a[0]] || (n.attires[a[0]] = { equipped_assets: {}, palette_slots: {} }); x.equipped_assets.head = v; }); }); }}>
               {PARTS.head.map(p => <option value={p[0]}>{p[1]}</option>)}</select>
               <span class="muted">Worn with every outfit; a mask takes the main colour and the trim of each.</span></div>
@@ -231,7 +233,7 @@ export function CreatePlayer(pp: PlayerProps) {
             <div class="sc-row"><span class="sc-slot">Facial hair</span><select aria-label="Facial hair" data-t="caw-facial" value={(lk.appearance && lk.appearance.facial_hair) || ''} onChange={e => { const v = (e.currentTarget as HTMLSelectElement).value; change(n => { n.appearance = n.appearance || {}; if (v) n.appearance.facial_hair = v; else delete n.appearance.facial_hair; }); }}>
               {FACIAL.map(f => <option value={f[0]}>{f[1]}</option>)}</select></div>
           </Group>
-          <Group title="The face">
+          <Group title="Face">
             {FACE_PARTS.map(([k, n]) => { const v = face[k] ?? 0; return <div class="sc-row"><span class="sc-slot">{n}</span>
               <Btn kind="less" t="caw-face" d={{ k, v: -1 }} label={'Previous ' + n} onClick={() => setFace(k, (v + 9) % 10)}>{'<'}</Btn><b>{NAMES[k][v]}</b>
               <Btn kind="less" t="caw-face" d={{ k, v: 1 }} label={'Next ' + n} onClick={() => setFace(k, (v + 1) % 10)}>{'>'}</Btn></div>; })}
@@ -242,8 +244,8 @@ export function CreatePlayer(pp: PlayerProps) {
           </Group>
         </>}
         {tab === 'portrait' && <>
-          <div class="sc-row"><span class="sc-slot">Outfit</span>{ATTIRES.map(a => <Btn kind="less" t="caw-ptatt" d={{ v: a[0] }} on={(pt.attire || 'primary_ring') === a[0]} onClick={() => setPt({ attire: a[0] })}>{a[1]}</Btn>)}</div>
-          <Group title="Their face"><div class="sc-row">{EXPR.map(x => <Btn kind="less" t="caw-ptexpr" d={{ v: x[0] || 'calm' }} on={(pt.expr || '') === x[0]} onClick={() => setPt({ expr: x[0] })}>{x[1]}</Btn>)}</div></Group>
+          <div class="sc-row"><span class="sc-slot">Outfit</span><Sel t="caw-ptatt" label="Outfit" value={pt.attire || 'primary_ring'} options={ATTIRES.map(a => [a[0], a[1]] as Opt)} onChange={v => setPt({ attire: v })} /></div>
+          <Group title="Face"><div class="sc-row"><Sel t="caw-ptexpr" label="Their face" value={pt.expr || 'calm'} options={EXPR.map(x => [x[0] || 'calm', x[1]] as Opt)} onChange={v => setPt({ expr: v === 'calm' ? '' : v })} /></div></Group>
           <div class="sc-row"><span class="sc-slot">Pose</span><select aria-label="Pose" data-t="caw-ptpose" value={pt.pose || 'stand'} onChange={e => setPt({ pose: (e.currentTarget as HTMLSelectElement).value })}>{PT_POSES.map(x => <option value={x[0]}>{x[1]}</option>)}</select>
             <select aria-label="Framing" data-t="caw-ptframe" value={pt.frame || 'head'} onChange={e => setPt({ frame: (e.currentTarget as HTMLSelectElement).value as 'head' | 'chest' })}>{PT_FRAMES.map(x => <option value={x[0]}>{x[1]}</option>)}</select></div>
 
@@ -266,7 +268,7 @@ export function CreatePlayer(pp: PlayerProps) {
           <div class="sc-row">{ATTIRES.filter(a => a[0] !== att).map(a => <Btn kind="sm" t="caw-copycol" d={{ v: a[0] }} onClick={() => change(n => { const from = (n.attires || {})[a[0]]; if (from) A(n).palette_slots = { ...from.palette_slots }; })}>{'Colours from ' + a[1].toLowerCase()}</Btn>)}</div>
         </>}
         {tab === 'studio' && <>
-          <Group title="Add to this outfit">
+          <Group title="Outfit pieces">
             <div class="sc-row"><TextBox value={text} max={20} label="Lettering" t="caw-text" width="12ch" onInput={v => setText(v.toUpperCase())} />
               <select aria-label="Lettering style" data-t="caw-font" value={font} onChange={e => setFont((e.currentTarget as HTMLSelectElement).value)}>{FONTS.map(f => <option value={f[0]}>{f[1]}</option>)}</select>
               <Btn t="caw-addtext" disabled={!text.trim() || layers.length >= 16} onClick={() => { change(n => { A(n).custom_layers!.push({ type: 'text_decal', string: text.trim(), font, placement: { x: 0, y: -2, z: layers.length }, palette_slot: 'trim' }); }); setLay(layers.length); }}>Add lettering</Btn></div>
@@ -274,7 +276,7 @@ export function CreatePlayer(pp: PlayerProps) {
               <Btn t="caw-addshape" disabled={layers.length >= 16} onClick={() => { change(n => { A(n).custom_layers!.push({ type: 'shape_combiner', shape_id: shp, placement: { x: 0, y: shp === 'tactical_vest_straps' ? -3 : 0, z: layers.length }, palette_slot: 'secondary', scale: shp === 'tactical_vest_straps' || shp === 'bandolier' ? 1 : 0.5 }); }); setLay(layers.length); }}>Add shape</Btn></div>
           </Group>
           <Group title={'On this outfit, back to front (' + layers.length + ')'}>
-            <div class="sc-row">{layers.length ? layers.map((l, i) => <Btn kind="less" t="caw-layer" d={{ v: i }} on={i === lay} onClick={() => setLay(i)}>{l.type === 'text_decal' ? '"' + l.string + '"' : (SHAPES.find(s => s[0] === l.shape_id) || ['', l.shape_id])[1]}</Btn>) : <span class="muted">Nothing yet. Lettering and shapes are cut from card and stuck on the chest or down the leg.</span>}</div>
+            <div class="sc-row">{layers.length ? <Sel t="caw-layer" label="Which piece" value={String(lay)} options={[['-1', 'Pick a piece...'] as Opt].concat(layers.map((l, i) => [String(i), l.type === 'text_decal' ? '"' + l.string + '"' : (SHAPES.find(s => s[0] === l.shape_id) || ['', l.shape_id])[1]] as Opt))} onChange={v => setLay(+v)} /> : <span class="muted">Nothing yet. Lettering and shapes are cut from card and stuck on the chest or down the leg.</span>}</div>
             {layers[lay] && <>
               <div class="sc-row" role="group" aria-label="Order">
                 <Btn kind="sm" t="caw-lorder" d={{ v: 'f' }} disabled={lay >= layers.length - 1} onClick={() => { const j = lay + 1; change(n => { const L = A(n).custom_layers!, a = L[lay], b = L[j], z = a.placement.z || 0; a.placement.z = b.placement.z || 0; b.placement.z = z; L[lay] = b; L[j] = a; }); setLay(j); }}>Bring forward</Btn>
@@ -298,14 +300,15 @@ export function CreatePlayer(pp: PlayerProps) {
           </Group>
         </>}
         {tab === 'fin' && <>
-          <div class="sc-row">{fins.map((f, i) => <Btn kind="less" t="caw-fin" d={{ v: i }} on={i === fi} onClick={() => { setFi(i); setActing(false); }}>{(i ? 'Signature: ' : 'Finisher: ') + f.name}</Btn>)}</div>
+          <div class="sc-row"><Sel t="caw-fin" label="Which move" value={String(fi)} options={fins.map((f, i) => [String(i), (i ? 'Signature: ' : 'Finisher: ') + f.name] as Opt)} onChange={v => { setFi(+v); setActing(false); }} /></div>
           {fin ? <>
             <div class="sc-row"><TextBox value={fin.name} max={32} label="Name of the move" t="caw-finname" width="18ch" onInput={v => setFin(f => { f.name = v; })} /></div>
             <div class="sc-row"><span class="caw-lbl">Impact</span><input type="range" min={1} max={100} value={fin.impact_damage || 50} aria-label="Impact" data-t="caw-findmg" onInput={e => { const v = +(e.currentTarget as HTMLInputElement).value; setFin(f => { f.impact_damage = v; }); }} /><b>{fin.impact_damage || 50}</b></div>
-            {([['kickout_difficulty', 'Kick out', KICKOUT], ['position', 'From', POSITIONS], ['category', 'How it wins', CATEGORIES], ['preview_pose_id', 'In the picture', FIN_SCENES]] as [keyof Finisher, string, [string, string][]][]).map(([k, n, opts]) =>
+            {([['kickout_difficulty', 'Kick out', KICKOUT], ['position', 'From', POSITIONS], ['category', 'How it wins', CATEGORIES], ['preview_pose_id', 'In the picture', FIN_SCENES.concat(world.filter(x => x.when === 'move').map(x => [x.id, 'This world: ' + x.name] as [string, string]))]] as [keyof Finisher, string, [string, string][]][]).map(([k, n, opts]) =>
               <div class="sc-row"><span class="sc-slot">{n}</span><select aria-label={n} data-t="caw-finopt" data-v={k} value={(k === 'preview_pose_id' ? finScene(fin) : (fin[k] as string)) || ''} onChange={e => { const v = (e.currentTarget as HTMLSelectElement).value; setFin(f => { (f as any)[k] = v; }); }}>{opts.map(o => <option value={o[0]}>{o[1]}</option>)}</select></div>)}
             {fi > 0 ? <div class="sc-row"><span class="sc-slot">When</span><select aria-label="When in a match" data-t="caw-finstage" value={fin.stage || 'mid'} onChange={e => { const v = (e.currentTarget as HTMLSelectElement).value; setFin(f => { if (v === 'mid') delete f.stage; else f.stage = v; }); }}>{STAGES.map(o => <option value={o[0]}>{o[1]}</option>)}</select></div> : null}
             <div class="sc-row"><Btn kind="go" t="caw-act" onClick={() => setActing(!acting)}>{acting ? 'Stop' : 'Act it out on the dummy'}</Btn>
+              {pp.onNewMove ? <Btn kind="sm" t="caw-newmove" tip="Saves them, and opens Create a Move on this move with them in it" onClick={() => pp.onNewMove!(lk, fi)}>Make a custom move</Btn> : null}
 </div>
             <p class="muted">One finisher and two signature moves, each played when it says. The more protected a finisher, the rarer and bigger a kick-out.</p>
           </> : <p class="empty">Pick a move to change it.</p>}
@@ -316,23 +319,22 @@ export function CreatePlayer(pp: PlayerProps) {
         </>}
         {tab === 'scenes' && <>
           <div class="sc-row" role="group" aria-label="Entrances">
-            <Btn kind="less" t="caw-ent" d={{ v: '' }} on={!lk.entrance} onClick={() => { change(n => { delete n.entrance; }); setPrev(null); }}>Whatever the show picks</Btn>
-            {scenesFor('entrance', world).map(o => <Btn kind="less" t="caw-ent" d={{ v: o.id }} on={lk.entrance === o.id} onClick={() => { change(n => { n.entrance = o.id; }); setPrev(o.id); }}>{o.name}</Btn>)}
+            <Sel t="caw-ent" label="Their entrance" value={lk.entrance || ''} options={[['', 'Whatever the show picks'] as Opt].concat(scenesFor('entrance', world).map(o => [o.id, o.name] as Opt))} onChange={v => { if (v) { change(n => { n.entrance = v; }); setPrev(v); } else { change(n => { delete n.entrance; }); setPrev(null); } }} />
           </div>
-          <Group title="Pyro, lights and their music">
+          <Group title="Pyro, lights, music">
             <div class="sc-row"><span class="sc-slot">Pyro</span><select aria-label="Pyro" data-t="caw-pyro" value={(lk.entrance_fx || {}).pyro || ''} onChange={e => { const v = (e.currentTarget as HTMLSelectElement).value; change(n => { const f = n.entrance_fx = n.entrance_fx || {}; if (v) f.pyro = v; else delete f.pyro; if (!Object.keys(f).length) delete n.entrance_fx; }); setPrev(lk.entrance || 'entrance'); }}>{PYRO.map(o => <option value={o[0]}>{o[1]}</option>)}</select>
               <span class="sc-slot">Lights</span><select aria-label="Lights" data-t="caw-lights" value={(lk.entrance_fx || {}).lights || ''} onChange={e => { const v = (e.currentTarget as HTMLSelectElement).value; change(n => { const f = n.entrance_fx = n.entrance_fx || {}; if (v) f.lights = v; else delete f.lights; if (!Object.keys(f).length) delete n.entrance_fx; }); setPrev(lk.entrance || 'entrance'); }}>{LIGHTS.map(o => <option value={o[0]}>{o[1]}</option>)}</select></div>
-            <div class="sc-row"><span class="sc-slot">Their music</span><TextBox value={(lk.entrance_fx || {}).music || ''} max={32} label="The name of their music" t="caw-music" width="20ch" onInput={v => change(n => { const f = n.entrance_fx = n.entrance_fx || {}; if (v) f.music = v; else delete f.music; if (!Object.keys(f).length) delete n.entrance_fx; })} /><span class="muted">The announcers name it as they come out.</span></div>
+            <div class="sc-row"><span class="sc-slot">Music</span><TextBox value={(lk.entrance_fx || {}).music || ''} max={32} label="The name of their music" t="caw-music" width="20ch" onInput={v => change(n => { const f = n.entrance_fx = n.entrance_fx || {}; if (v) f.music = v; else delete f.music; if (!Object.keys(f).length) delete n.entrance_fx; })} /><span class="muted">The announcers name it as they come out.</span></div>
           </Group>
           {pp.onNewEntrance && <div class="sc-row"><Btn kind="go" t="caw-newent" onClick={() => pp.onNewEntrance!(lk)}>Make a custom entrance</Btn><span class="muted">Saves them, and opens Create a Scene with them in it.</span></div>}
           {prevSc && <div class="sc-row"><Btn kind="sm" t="caw-entstop" onClick={() => setPrev(null)}>Stop</Btn><span class="muted">{prevSc.name}, in their entrance gear</span></div>}
           <p class="muted">Pick an entrance, or make a custom one in the World Editor. Entrances are worn in entrance gear. Their own pictures are their moves: each finisher and signature move picks the picture it plays as, on the Moves tab.</p>
         </>}
         {tab === 'file' && <>
-          <Group title="Who they are">
+          <Group title="Identity">
             <div class="sc-row"><span class="sc-slot">Name</span><TextBox value={lk.name || ''} max={32} label="Ring name" t="caw-name" width="18ch" onInput={v => change(n => { n.name = v; })} /></div>
             <div class="sc-row"><span class="sc-slot">Nickname</span><TextBox value={lk.moniker || ''} max={40} label="Nickname" t="caw-moniker" width="18ch" onInput={v => change(n => { n.moniker = v; })} /></div>
-            <div class="sc-row"><span class="sc-slot">Home town</span><TextBox value={lk.hometown || ''} max={40} label="Home town" t="caw-town" width="18ch" onInput={v => change(n => { n.hometown = v; })} /></div>
+            <div class="sc-row"><span class="sc-slot">Hometown</span><TextBox value={lk.hometown || ''} max={40} label="Home town" t="caw-town" width="18ch" onInput={v => change(n => { n.hometown = v; })} /></div>
           </Group>
           <Group title="Files">
             <div class="sc-row"><Btn t="caw-save2" onClick={save}>{pp.sign ? 'Create them first' : 'Save'}</Btn><Btn kind="sm" t="caw-export" onClick={writeOut}>Write a file</Btn><Btn kind="sm" t="caw-import" onClick={() => file.current && file.current.click()}>Open a file</Btn>

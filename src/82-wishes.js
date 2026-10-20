@@ -516,6 +516,8 @@ E.STIPNOTE={
   hardcore:'Rewards brawlers. Heavy wear and hurts. Not for family shows.',
   ladder:'Rewards high flyers. The biggest risk of a hurt.',
   cage:'Rewards brawlers. Good for ending a feud.',
+  cell:'A cage with a roof. Rewards brawlers. Heavy wear and hurts. Needs the hottest feud, and ends it.',
+  fire:'The ring is ringed with flames. Rewards brawlers. Needs a hot feud. Not for family shows.',
   sub:'Rewards technicians.',
   iron:'Thirty minutes. Only the fittest should try it.',
   tables:'Rewards brawlers. A heavy risk of a hurt. Purist and family crowds hate it.',

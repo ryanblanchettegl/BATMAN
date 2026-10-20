@@ -17,7 +17,7 @@ var NET_TASTE={
   niche:{n:'Niche',d:'cares less about the numbers, and likes long, serious matches.'}
 };
 var NET_KEYS=['family','sport','late','niche'];
-function netTaste(name){if(/Sport/.test(name))return 'sport';if(/Gaslight|Midnight|Late/.test(name))return 'late';return NET_KEYS[hash('taste:'+name)%NET_KEYS.length];}
+function netTaste(name){if(/Sport/.test(name))return 'sport';if(/Family|Kids/.test(name))return 'family';if(/Indie|Underground|Cult/.test(name))return 'niche';if(/Gaslight|Midnight|Late/.test(name))return 'late';return NET_KEYS[hash('taste:'+name)%NET_KEYS.length];}
 /** The ratings target for a show's deal. Set when it is first asked for, and again when a deal is signed. */
 function netTarget(sh){if(!sh.tgt&&sh.va)sh.tgt=Math.round(sh.va*(netTaste(sh.net)==='niche'?0.85:0.97));return sh.tgt||0;}
 /** Did tonight go against the network's taste? Returns a short reason, or ''. */
@@ -91,8 +91,8 @@ EVR.netexec=function(S,ev,choice,P){
 /** Before the bell: will tonight's card go against the network's taste? A short line for Tonight's stakes, or ''. */
 function netCardClash(S,show,card){
   var P=S.promos[S.player],sh=show&&!show.big?airRec(P,show.id):null;if(!sh||!sh.net||!card.length)return '';
-  var t=netTaste(sh.net),talk=segRead(S).length,hc=card.filter(function(m){return m&&(m.stip==='hardcore'||m.stip==='tables'||m.stip==='ladder');}).length,st=card.some(function(m){return m&&m.stip&&m.stip!=='std';});
-  if(t==='family'&&hc)return sh.net+' is a family network, and a '+STIP[card.filter(function(m){return m&&(m.stip==='hardcore'||m.stip==='tables'||m.stip==='ladder');})[0].stip].n.toLowerCase()+' match will not go down well.';
+  var t=netTaste(sh.net),talk=segRead(S).length,hc=card.filter(function(m){return m&&(/^(hardcore|tables|ladder|fire|cell)$/.test(stipBase(m.stip)));}).length,st=card.some(function(m){return m&&m.stip&&m.stip!=='std';});
+  if(t==='family'&&hc)return sh.net+' is a family network, and a '+STIP[card.filter(function(m){return m&&(/^(hardcore|tables|ladder|fire|cell)$/.test(stipBase(m.stip)));})[0].stip].n.toLowerCase()+' match will not go down well.';
   if(t==='sport'&&talk>card.length)return sh.net+' is a sport network, and tonight has more talking than wrestling.';
   if(t==='late'&&!talk&&!st)return sh.net+' is a late night network, and tonight has nothing to talk about: no promo, no angle, no stipulation.';
   return '';

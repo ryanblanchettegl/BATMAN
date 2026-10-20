@@ -1,6 +1,6 @@
 /* Input that is not a mouse: keyboard shortcuts, a TV remote, a gamepad. Also the screen mode (desk, tablet, TV). There is no phone or portrait layout: a tall narrow window is asked to turn sideways (styles/base.css).
    See docs/design.md, sections 4 and 5. */
-import { SHOW_SCENES } from './kit/scene';
+import { SHOW_SCENES, allScenes } from './kit/scene';
 import { beatPick } from './shared/moment';
 import { G, ui, pref, reduceMotion, redraw, closeModal, openModal, popCard, save } from './store';
 import { lightDraws } from './kit/lights';
@@ -213,5 +213,5 @@ export function initInput() {
     const k = e.key.length === 1 ? e.key.toLowerCase() : '';
     if (HOT[k]) { e.preventDefault(); go(HOT[k]); }
   });
-  (window as any).EWF_DEBUG = { state: () => G.S, render: redraw, go, pad: padPress, nav: NAV, ui, lights: lightDraws, maps: roadMapDraws, scenes: scenePlays, segScenes: () => SHOW_SCENES.map(s => s.when), beatPick, save };
+  (window as any).EWF_DEBUG = { state: () => G.S, render: redraw, go, pad: padPress, nav: NAV, ui, lights: lightDraws, maps: roadMapDraws, scenes: scenePlays, allScenes: () => allScenes([]), segScenes: () => SHOW_SCENES.map(s => s.when), beatPick, save };
 }

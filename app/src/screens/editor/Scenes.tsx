@@ -3,39 +3,24 @@
    screen from here, and Done comes back. */
 import { E } from '../../engine';
 import { Btn, Panel } from '../../kit';
+import { ScrollMenu } from './parts';
 import { es, world, look, edit, editDel, note } from './state';
-import { SCENES, STILLS, SHOW_SCENES, WHEN, STILL_WHEN, SHOW_WHEN, Scene } from '../../kit/scene';
+import { SCENES, STILLS, SHOW_SCENES, WHEN, STILL_WHEN, SHOW_WHEN, Scene, STUDIOS, Studio, studioOf, MOVES } from '../../kit/scene';
 
 const use = (sc: Scene) => ((sc.still ? STILL_WHEN : WHEN.concat(SHOW_WHEN)).find(w => w[0] === sc.when) || ['', 'Only by hand'])[1];
 export function ScenesTab() {
   const st = es(), pkg = world(), mine: Scene[] = E.edScenes(pkg);
-  const openIt = (id: string) => look(() => { st.scene = id; });
+  const openIt = (id: string, mode: Studio) => look(() => { st.scene = id; st.sceneMode = mode; });
+  const game = SCENES.concat(STILLS, SHOW_SCENES, MOVES);
+  /* three studios (Ryan, 20 October): Animation, Create a Move, Create a Scene; each opens new, or opens a scene of its kind from a dropdown */
   return <>
-    <Panel cls="mb4" title="Create a Scene">
-      <p>Scenes are the pictures of this world: the lock-up at the bell, the count at a near fall, a new champion with the belt held high, and soon breaking news, talk shows, posters, magazine covers and portraits. Pose paper wrestlers, add props, set keyframes, and the game plays the scene with whoever is on the card. A still is one picture with no keyframes, for the moments you answer.</p>
-      <div class="row mt2"><Btn kind="go" t="ed-scene-new" onClick={() => openIt('__new')}>Create a new scene</Btn></div>
-    </Panel>
-    <Panel cls="mb4" title={'In this world (' + mine.length + ')'}>
-      {mine.length ? <ul class="list">{mine.map(sc => <li key={sc.id}><span><b>{sc.name}</b> <span class="muted">{'·'} {use(sc)} {'·'} {sc.still ? 'a still' : sc.keys.length + ' keyframes'}{SCENES.concat(STILLS, SHOW_SCENES).some(x => x.id === sc.id) ? ' · in place of the game’s' : ''}</span></span>
-        <span class="row opts"><Btn kind="sm" t="ed-scene-edit" d={{ id: sc.id }} onClick={() => openIt(sc.id)}>Edit</Btn>
-          <Btn kind="danger" t="ed-scene-drop" d={{ id: sc.id }} onClick={() => editDel(() => E.edRemoveScene(pkg, sc.id), '"' + sc.name + '"')}>Take out</Btn></span></li>)}</ul>
-        : <p class="empty">None yet. This world plays the game's own scenes until it has some.</p>}
-    </Panel>
-    <Panel cls="mb4" title="The game's scenes">
-      <p class="muted">Open one to change it for this world, or to start a new scene from it.</p>
-      <ul class="list">{SCENES.map(sc => <li key={sc.id}><span><b>{sc.name}</b> <span class="muted">{'·'} {use(sc)}</span></span>
-        <Btn kind="sm" t="ed-scene-open" d={{ id: sc.id }} onClick={() => openIt(sc.id)}>Open</Btn></li>)}</ul>
-    </Panel>
-    <Panel cls="mb4" title="The scenes of the show">
-      <p class="muted">One for every promo and angle you can book on a card, and one for every beat of a storyline. Each plays on the air when that kind is booked or that beat comes up, with the people in it. Make one of your own for a moment and it plays instead.</p>
-      <ul class="list">{SHOW_SCENES.map(sc => <li key={sc.id}><span><b>{sc.name}</b> <span class="muted">{'·'} {use(sc)}</span></span>
-        <Btn kind="sm" t="ed-scene-open" d={{ id: sc.id }} onClick={() => openIt(sc.id)}>Open</Btn></li>)}</ul>
-    </Panel>
-    <Panel cls="mb4" title="The game's stills">
-      <p class="muted">One picture each, no keyframes: they go beside the moments you answer, a matter on the desk or a call from the gorilla position.</p>
-      <ul class="list">{STILLS.map(sc => <li key={sc.id}><span><b>{sc.name}</b> <span class="muted">{'·'} {use(sc)}</span></span>
-        <Btn kind="sm" t="ed-scene-open" d={{ id: sc.id }} onClick={() => openIt(sc.id)}>Open</Btn></li>)}</ul>
-    </Panel>
+    <div class="edstudios">{STUDIOS.map(([mode, name, what]) => { const own = mine.filter(x => studioOf(x) === mode), theirs = game.filter(x => studioOf(x) === mode && !mine.some(m => m.id === x.id));
+      return <Panel cls="mb4 edstudio" title={name} key={mode}>
+        <p>{what}</p>
+        <div class="row mt2"><Btn kind="go" t="ed-scene-new" d={{ v: mode }} onClick={() => openIt('__new', mode)}>{mode === 'still' ? 'New from a template' : mode === 'move' ? 'New move' : 'New animation'}</Btn></div>
+        <ScrollMenu t="ed-scene-open" label={name} onPick={id => openIt(id, mode)} items={own.map(x => ({ id: x.id, label: x.name, sub: 'Made for this world · ' + use(x), mine: true })).concat(theirs.map(x => ({ id: x.id, label: x.name, sub: use(x), mine: false })))} />
+        <p class="muted mt2">{own.length ? own.length + ' made for this world.' : 'None made for this world yet; it plays the included ones.'} {theirs.length} included.</p>
+      </Panel>; })}</div>
   </>;
 }
 /** Keep a scene from the studio in the open world. */

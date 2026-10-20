@@ -15,8 +15,8 @@
    Nothing here touches the game. */
 import { useEffect, useRef, useState } from 'preact/hooks';
 import { W } from '../../engine';
-import { Btn, TextBox, Desktop, Win, Group, Tabs } from '../../kit';
-import { Scene, Key, Fig, Prop, SCENES, STILLS, WHEN, STILL_WHEN, SETS, SETUPS, setupScene, WAIST, POSES, HOLDS, LIMBS, HOOKS, at, build, lastT, allScenes, ok, copy, SHOW_WHEN, SHOW_SCENES, SCENE_FX, fxClass, FRAMES, EASES, aspectOf, fitIn, BODY_PARTS, CAP_STYLES, SPOTS, captionAt, camAt, CAM_MOVES } from '../../kit/scene';
+import { Btn, TextBox, Desktop, Win, Group, Sel as Drop, Opt } from '../../kit';
+import { MOVES, Scene, Key, Fig, Prop, Studio, STUDIOS, studioOf, setupsFor, TEMPLATES, templateScene, SCENES, STILLS, WHEN, STILL_WHEN, SETS, SETUPS, setupScene, WAIST, POSES, HOLDS, LIMBS, HOOKS, at, build, lastT, allScenes, ok, copy, SHOW_WHEN, SHOW_SCENES, SCENE_FX, fxClass, FRAMES, EASES, aspectOf, fitIn, BODY_PARTS, CAP_STYLES, SPOTS, captionAt, camAt, CAM_MOVES } from '../../kit/scene';
 import { FxVeil, CaptionBox, capName } from '../../kit/sceneplayer';
 import { Backdrop, BG_PARTS, BG_COLS, newBackdrop, newPart, useBackdropSource, isBg } from '../../kit/backdrop';
 import { drawPaper, toPx, Piece } from '../../kit/paper';
@@ -32,9 +32,14 @@ export const MAX_PEOPLE = 10;
 const LENSES: [number, string][] = [[18, 'Long lens'], [24, 'Close lens'], [30, 'Normal lens'], [38, 'Wide lens'], [48, 'Very wide lens']];
 /** The lens on the list nearest to a camera's own. */
 const lensOf = (fov: number) => LENSES.reduce((b, l) => Math.abs(l[0] - fov) < Math.abs(b[0] - fov) ? l : b)[0];
-const RINGSETS = ['ring', 'ringlow', 'ringcorner', 'cage', 'stadium'];
+const RINGSETS = ['ring', 'ringlow', 'ringcorner', 'cage', 'stadium', 'ringside', 'cell', 'inferno', 'ballroom', 'gym', 'bigstadium', 'ladder'];
 
-function blankScene(): Scene {
+/** The props that carry words, and the colours words can be in (Words has no background: Ryan, 20 October). */
+const TEXTED = ['burst', 'sign', 'headline', 'masthead', 'words'];
+const WORD_COLS: Opt[] = [['', 'Its own colour'], ['#ffffff', 'White'], ['#ffd84a', 'Yellow'], ['#e8402a', 'Red'], ['#2f6bd8', 'Blue'], ['#3ad06a', 'Green'], ['#ff6ec7', 'Pink'], ['#111111', 'Black']];
+function blankScene(mode?: Studio): Scene {
+  if (mode === 'still') return templateScene('poster');
+  if (mode === 'move') return { ...setupScene('ring'), name: 'My move', when: 'move' };
   return { v: 1, id: 'scene-' + Date.now().toString(36), name: 'My scene', when: 'any', set: 'ring', slots: [{ id: 'A', n: 'Wrestler A', role: 'a' }, { id: 'B', n: 'Wrestler B', role: 'b' }, { id: 'R', n: 'The referee', role: 'ref' }],
     keys: [{ t: 0, figs: { A: { x: -2.2, y: WAIST, r: 0, f: 1, z: 0, p: {} }, B: { x: 2.2, y: WAIST, r: 0, f: -1, z: 1.2, p: {} }, R: { x: -5.4, y: WAIST, r: 0, f: 1, z: -0.3, p: {} } }, props: [] }] };
 }
@@ -123,18 +128,20 @@ export function fromWorld(pkg: any): W[] {
   return (pkg && pkg.workers || []).filter((w: any) => !w.roles || w.roles.indexOf('wrestler') >= 0).map((w: any, i: number) => ({ id: i, name: w.ring_name || w.id, g: w.gender === 'F' ? 'F' : 'M',
     align: w.disposition === 'heel' ? 'H' : 'F', twn: w.disposition === 'tweener', style: STY[w.style] || 'A', face: w.face, age: w.age || 28, gim: (w.gimmick_category || '') + ' ' + (w.gimmick || ''), look: w.look || null }));
 }
-export interface StudioProps { world: string; roster: W[]; saved: Scene[]; start?: Scene; blank?: boolean; castA?: number; onSave: (sc: Scene) => boolean;
+export interface StudioProps { world: string; roster: W[]; saved: Scene[]; start?: Scene; blank?: boolean; castA?: number;
+  /** Which studio this is (Animation, Create a Move, Create a Scene); left out, it is the one the scene belongs in. */ mode?: Studio; onSave: (sc: Scene) => boolean;
   /** The world's backdrops, and how to keep one (the Set tab). */ backdrops?: Backdrop[]; onSaveBg?: (b: Backdrop) => boolean; onForget: (id: string) => void; onDone: () => void }
 
 /** Create a Scene, full screen, opened from the World Editor. The scene is kept in the world being edited. */
 export function SceneStudio(pp: StudioProps) {
   const roster = pp.roster, [msg, setMsg] = useState<{ t: string; err?: boolean } | null>(null);
   const say = (t: string, o?: { err?: boolean }) => setMsg({ t, err: !!(o && o.err) });
-  const [sc, setSc] = useState<Scene>(() => pp.blank ? blankScene() : copy(pp.start || SCENES[0])), [ki, setKi] = useState(0), [sel, setSel] = useState<Sel>({ who: 'A', part: 'body' });
+  const [mode] = useState<Studio>(() => pp.mode || studioOf(pp.blank ? blankScene() : (pp.start || SCENES[0])));
+  const [sc, setSc] = useState<Scene>(() => pp.blank ? blankScene(pp.mode) : copy(pp.start || SCENES[0])), [ki, setKi] = useState(0), [sel, setSel] = useState<Sel>({ who: 'A', part: 'body' });
   const [time, setTime] = useState<number | null>(null);
   // who plays each part here: the first two from the roster, everyone after them the next wrestlers along
   const [castIds, setCast] = useState<Record<string, number>>(() => { const o: Record<string, number> = {}; const ids = roster.map(w => w.id); let i = 0;
-    const start = pp.blank ? blankScene() : (pp.start || SCENES[0]); start.slots.forEach(sl => { if (sl.role === 'ref' || sl.dress) return; if (sl.id === 'A' && pp.castA != null) { o.A = pp.castA; return; } while (i < ids.length && ids[i] === pp.castA) i++; if (i < ids.length) o[sl.id] = ids[i++]; }); return o; });
+    const start = pp.blank ? blankScene(pp.mode) : (pp.start || SCENES[0]); start.slots.forEach(sl => { if (sl.role === 'ref' || sl.dress) return; if (sl.id === 'A' && pp.castA != null) { o.A = pp.castA; return; } while (i < ids.length && ids[i] === pp.castA) i++; if (i < ids.length) o[sl.id] = ids[i++]; }); return o; });
   const [addK, setAddK] = useState('belt'), [words, setWords] = useState('WOW!'), file = useRef<HTMLInputElement>(null);
   const cast: Record<string, Recipe> = {}; for (const id in castIds) { const w = roster.find(x => x.id === castIds[id]); if (w) cast[id] = recipeOf(w); }
   const kk = Math.min(ki, sc.keys.length - 1), key = sc.keys[kk];
@@ -176,8 +183,8 @@ export function SceneStudio(pp: StudioProps) {
   const cyclePart = (d: number) => { if (!sel || sel.part === 'prop') return; const i = parts.indexOf(sel.part); setSel({ who: sel.who, part: parts[(i + d + parts.length) % parts.length] }); };
   // play: slide through the keyframes once, then come back to the one being edited
   useEffect(() => {
-    if (time == null) return; let raf = 0, t0 = performance.now() - time * 1000;
-    const step = (now: number) => { let t = (now - t0) / 1000; if (sc.loop && lastT(sc) > 0) t = t % (lastT(sc) + 0.32); else if (t > lastT(sc) + 0.6) { setTime(null); setReframe(x => x + 1); return; } setTime(t); raf = requestAnimationFrame(step); };
+    if (time == null) return; let raf = 0, last = -1, run = time;   // a slow frame moves it on a tenth of a second at most, so nothing is skipped
+    const step = (now: number) => { if (last >= 0) run += Math.min(0.1, Math.max(0, (now - last) / 1000)); last = now; let t = run; if (sc.loop && lastT(sc) > 0) t = t % (lastT(sc) + 0.32); else if (t > lastT(sc) + 0.6) { setTime(null); setReframe(x => x + 1); return; } setTime(t); raf = requestAnimationFrame(step); };
     raf = requestAnimationFrame(step); return () => cancelAnimationFrame(raf);
   }, [time == null]);
   const open = (s: Scene) => { setSc(copy(s)); setKi(0); setSel(null); setTime(null); setReframe(x => x + 1);
@@ -189,7 +196,7 @@ export function SceneStudio(pp: StudioProps) {
     say('Written out as ' + a.download + '. Anybody can open it in Create a Scene.');
   };
   const importIt = (f: File) => f.text().then(txt => { let x: any = null; try { x = JSON.parse(txt); } catch (e) { /* not JSON */ } if (ok(x)) { open(x); say('Opened "' + x.name + '".'); } else say('That file is not a scene.', { err: true }); });
-  const addProp = () => edit(k => { const id = addK + '-' + Date.now().toString(36); k.props.push({ id, k: addK, x: 0, y: addK === 'masthead' ? 3.6 : ['burst', 'sign', 'headline'].includes(addK) ? 3 : addK === 'confetti' ? 0 : -1.6, r: 0, z: 2.6, s: 1, txt: ['burst', 'sign', 'headline', 'masthead'].includes(addK) ? words : undefined }); setSel({ who: id, part: 'prop' }); });
+  const addProp = () => edit(k => { const id = addK + '-' + Date.now().toString(36); k.props.push({ id, k: addK, x: 0, y: addK === 'masthead' ? 3.6 : ['burst', 'sign', 'headline', 'words'].includes(addK) ? 3 : addK === 'confetti' ? 0 : -1.6, r: 0, z: 2.6, s: 1, txt: TEXTED.includes(addK) ? words : undefined }); setSel({ who: id, part: 'prop' }); });
   const selFig = sel && fig(key, sel.who), selProp = sel && sel.part === 'prop' ? propOf(key, sel.who) : null;
   const who = (id: string) => { const sl = sc.slots.find(s => s.id === id); return sl ? sl.n : id; };
   const mine = pp.saved;
@@ -236,12 +243,12 @@ export function SceneStudio(pp: StudioProps) {
   const setCap = (c: { t?: string; s?: string; who?: string }) => edit(k => { const n: any = { ...(k.cap || { t: '', s: 'sub' }), ...c }; if (!n.who) delete n.who; if (n.t) k.cap = n; else delete k.cap; });
   const shotName = key.cam3 ? 'Its own shot' : key.cm === 'home' || !camAt(sc, kk) ? 'The set camera' : 'Holding the last shot';
   return <div class="scfull paper" data-t="scene">
-    <div class="sc-menubar" role="group" aria-label="Create a Scene">
-      <b class="on">Create a Scene</b><span class="sc-title">{sc.name}</span><span class="sp" />
-      <span class={'sc-hint' + (msg ? (msg.err ? ' bad' : ' good') : '')} role="status" data-t="scene-msg">{msg ? msg.t : 'Press somebody to pick them and drag them round the floor. Shift and drag lifts. Drag on nothing to walk the camera round.'}</span>
+    <div class="pmenu sc-menubar" role="group" aria-label={STUDIOS.find(x => x[0] === mode)![1]} data-v={mode}>
+      <b class="pm-app">{STUDIOS.find(x => x[0] === mode)![1]}</b><span class="pm-world sc-title">{sc.name}</span><span class="sp" />
       <Btn kind="sm" t="scene-save" tip="Keep this scene in the world" onClick={save}>Save</Btn>
       <Btn kind="go" t="scene-done" onClick={pp.onDone}>Done</Btn>
     </div>
+    <div class={'pnote sc-hint' + (msg ? (msg.err ? ' bad' : ' good') : '')} role="status" data-t="scene-msg">{msg ? msg.t : 'Press somebody to pick them and drag them round the floor. Shift and drag lifts. Drag on nothing to walk the camera round.'}</div>
     <Desktop cls="scpage">
     <Win title={'The picture: ' + sc.name} right={sc.keys.length + (sc.keys.length === 1 ? ' keyframe' : ' keyframes') + ' · ' + people.length + (people.length === 1 ? ' person' : ' people')} area="stage" t="scene-win">
       <Stage3D sc={vsc} ki={kk} time={time} cast={cast} sel={sel} onSel={pickSel} onDrag={onDrag} onFloor={onFloor} floorOf={floorOf} onKey={onKey} onEngine={e => { eng.current = e; }} reframe={reframe} />
@@ -267,7 +274,7 @@ export function SceneStudio(pp: StudioProps) {
       </div>
     </Win>
     <Win title={tab === 'sel' ? (sel ? (sel.part === 'prop' ? 'Selected: a prop' : 'Selected: ' + who(sel.who)) : 'Selected') : tab === 'people' ? 'People and props' : tab === 'cap' ? 'Caption' : tab === 'set' ? 'The set' : 'The scene'} right={tab === 'people' ? people.length + ' of ' + MAX_PEOPLE : ''} area="side" t="scene-side">
-      <Tabs label="What to change" value={tab} onPick={setTab} items={[{ id: 'sel', label: 'Selected', t: 'scene-tab' }, { id: 'people', label: 'People', t: 'scene-tab' }, { id: 'cap', label: 'Caption', t: 'scene-tab' }, { id: 'set', label: 'Set', t: 'scene-tab' }, { id: 'file', label: 'Scene', t: 'scene-tab' }]} />
+      <div class="sc-row sc-section"><span class="sc-lbl">Change</span><Drop t="scene-tab" label="What to change" value={tab} options={[['sel', 'The one selected'], ['people', 'The people in it'], ['cap', 'The caption'], ['set', 'The set'], ['file', 'The scene: new, open, save']]} onChange={v => setTab(v as any)} /></div>
       <div class="sc-panel">
       {tab === 'sel' && <>
         <div class="sc-row">
@@ -279,7 +286,7 @@ export function SceneStudio(pp: StudioProps) {
         </div>
         {!sel && <p class="empty">Press somebody on the picture, or pick them here.</p>}
         {selFig && sel && <>
-          <Group title="Where they are">
+          <Group title="Position">
             <div class="sc-row" role="group" aria-label="Move">
               <Btn kind="less" t="scene-move" d={{ v: 'l' }} onClick={() => nudge(-0.5, 0)}>Left</Btn><Btn kind="less" t="scene-move" d={{ v: 'r' }} onClick={() => nudge(0.5, 0)}>Right</Btn>
               <Btn kind="less" t="scene-move" d={{ v: 'f' }} tip="Away from the set camera" onClick={() => nudge(0, 0, -0.6)}>Away</Btn><Btn kind="less" t="scene-move" d={{ v: 'n' }} tip="Toward the set camera" onClick={() => nudge(0, 0, 0.6)}>Nearer</Btn>
@@ -317,27 +324,26 @@ export function SceneStudio(pp: StudioProps) {
               <Btn kind="sm" t="scene-turn" d={{ v: -5 }} onClick={() => turn(-5)}>{'-5'}</Btn><Btn kind="sm" t="scene-turn" d={{ v: -15 }} onClick={() => turn(-15)}>{'-15'}</Btn>
             </div>
             {LIMBS[sel.part] && <div class="sc-row" role="group" aria-label="This limb">
-              <span class="sc-lbl">This {LIMBS[sel.part].startsWith('arm') ? 'arm' : 'leg'}</span>
-              {([[3, 'In front'], [0, 'As cut'], [-3, 'Behind']] as [number, string][]).map(([v, n]) =>
-                <Btn kind="less" t="scene-limb" d={{ v }} on={((selFig.lz || {})[LIMBS[sel.part]] || 0) === v} onClick={() => edit(k => { const f = fig(k, sel.who); if (f) { const lz = { ...(f.lz || {}) }; if (v) lz[LIMBS[sel.part]] = v; else delete lz[LIMBS[sel.part]]; f.lz = lz; } })}>{n}</Btn>)}
+              <span class="sc-lbl">{LIMBS[sel.part].startsWith('arm') ? 'Arm' : 'Leg'} depth</span>
+              <Drop t="scene-limb" label="Where the limb sits" value={String((selFig.lz || {})[LIMBS[sel.part]] || 0)} options={[['3', 'In front'], ['0', 'As cut'], ['-3', 'Behind']]} onChange={sv => { const v = +sv; edit(k => { const f = fig(k, sel.who); if (f) { const lz = { ...(f.lz || {}) }; if (v) lz[LIMBS[sel.part]] = v; else delete lz[LIMBS[sel.part]]; f.lz = lz; } }); }} />
             </div>}
           </Group>
           <Group title="Face and marks">
             <span hidden data-t="scene-fig" data-v={JSON.stringify(selFig)} />
-            <div class="sc-row">{EXPR.map(x => <Btn kind="less" t="scene-expr" d={{ v: x[0] || 'calm' }} on={(selFig.e || '') === x[0]} onClick={() => edit(k => { const f = fig(k, sel.who); if (f) f.e = x[0]; })}>{x[1]}</Btn>)}</div>
-            <div class="sc-row"><span class="sc-lbl">Blood</span>{[[0, 'None'], [1, 'A cut'], [2, 'A trickle'], [3, 'Covered']].map(([v, n]) =>
-              <Btn kind="less" t="scene-blood" d={{ v: v as number }} on={((selFig.m && selFig.m.blood) || 0) === v} onClick={() => edit(k => { const f = fig(k, sel.who); if (f) f.m = { ...(f.m || {}), blood: v as number }; })}>{n as string}</Btn>)}</div>
+            <div class="sc-row"><span class="sc-lbl">Face</span><Drop t="scene-expr" label="Their face" value={selFig.e || 'calm'} options={EXPR.map(x => [x[0] || 'calm', x[1]] as Opt)} onChange={v => edit(k => { const f = fig(k, sel.who); if (f) f.e = v === 'calm' ? '' : v; })} /></div>
+            <div class="sc-row"><span class="sc-lbl">Blood</span><Drop t="scene-blood" label="Blood" value={String((selFig.m && selFig.m.blood) || 0)} options={[['0', 'None'], ['1', 'A cut'], ['2', 'A trickle'], ['3', 'Covered']]} onChange={v => edit(k => { const f = fig(k, sel.who); if (f) f.m = { ...(f.m || {}), blood: +v }; })} /></div>
             <div class="sc-row">{([['sweat', 'Sweat'], ['tears', 'Tears'], ['bruise', 'A bruise']] as [keyof Marks, string][]).map(([m, n]) =>
               <Btn kind="less" t="scene-mark" d={{ v: m }} on={!!(selFig.m && selFig.m[m])} onClick={() => edit(k => { const f = fig(k, sel.who); if (f) f.m = { ...(f.m || {}), [m]: !(f.m && f.m[m]) }; })}>{n}</Btn>)}</div>
           </Group>
-          <Group title="Hide parts of the body">
+          <Group title="Hidden parts">
             {BODY_PARTS.map(([g, ps]) => <div class="sc-row" key={g}><span class="sc-lbl">{g}</span>{ps.map(([j, n]) => <Btn kind={hideOf.indexOf(j) >= 0 ? 'danger' : 'less'} t="scene-hide" d={{ v: j }} on={hideOf.indexOf(j) >= 0} tip={hideOf.indexOf(j) >= 0 ? 'Hidden: press to show it' : 'Shown: press to hide it'} onClick={() => setHide(j)}>{n}</Btn>)}</div>)}
             <div class="sc-row"><Btn kind="less" t="scene-unhide" disabled={!hideOf.length} onClick={() => setHide(null)}>Show every part</Btn><span class="muted">For a close-up, a shadow on a wall, a hand coming into the picture.</span></div>
           </Group>
         </>}
-        {selProp && sel && <Group title="The prop">
+        {selProp && sel && <Group title="Prop">
           <div class="sc-row">
-            {(['burst', 'sign', 'headline', 'masthead'].includes(selProp.k)) && <TextBox value={selProp.txt || ''} max={16} label="Words" t="scene-words" onInput={v => edit(k => { const q = propOf(k, sel.who); if (q) q.txt = v.toUpperCase(); })} width="12ch" />}
+            {(TEXTED.includes(selProp.k)) && <TextBox value={selProp.txt || ''} max={selProp.k === 'words' ? 32 : 16} label="Words" t="scene-words" onInput={v => edit(k => { const q = propOf(k, sel.who); if (q) q.txt = selProp.k === 'words' ? v : v.toUpperCase(); })} width="12ch" />}
+            {TEXTED.includes(selProp.k) && <Drop t="scene-wordcol" label="Colour of the words" value={selProp.col || ''} options={WORD_COLS} onChange={v => edit(k => { const q = propOf(k, sel.who); if (q) { if (v) q.col = v; else delete q.col; } })} />}
             <Btn kind="sm" t="scene-bigger" onClick={() => edit(k => { const q = propOf(k, sel.who); if (q) q.s = Math.min(3, Math.round(((q.s || 1) + 0.1) * 10) / 10); })}>Bigger</Btn>
             <Btn kind="sm" t="scene-smaller" onClick={() => edit(k => { const q = propOf(k, sel.who); if (q) q.s = Math.max(0.3, Math.round(((q.s || 1) - 0.1) * 10) / 10); })}>Smaller</Btn>
           </div>
@@ -372,9 +378,9 @@ export function SceneStudio(pp: StudioProps) {
           </div>
           <div class="sc-row"><Btn kind="go" t="scene-addperson" disabled={people.length >= MAX_PEOPLE} onClick={addPerson}>Add a person</Btn><span class="muted">Up to {MAX_PEOPLE}, and the referee. Each is played by the next wrestler on the roster until you pick.</span></div>
         </Group>
-        <Group title="Add a prop">
+        <Group title="New prop">
           <div class="sc-row"><select aria-label="Prop" data-t="scene-propkind" value={addK} onChange={e => setAddK((e.currentTarget as HTMLSelectElement).value)}>{PROPS.map(x => <option value={x[0]}>{x[1]}</option>)}</select>
-            {(['burst', 'sign', 'headline', 'masthead'].includes(addK)) && <TextBox value={words} max={16} label="Words on it" t="scene-newwords" onInput={v => setWords(v.toUpperCase())} width="10ch" />}
+            {(TEXTED.includes(addK)) && <TextBox value={words} max={addK === 'words' ? 32 : 16} label="Words on it" t="scene-newwords" onInput={v => setWords(addK === 'words' ? v : v.toUpperCase())} width="10ch" />}
             <Btn t="scene-addprop" onClick={() => { addProp(); setTab('sel'); }}>Add</Btn></div>
           {key.props.length ? <div class="sc-row">{key.props.map(q => <Btn kind="less" t="scene-lpick" d={{ v: q.id }} on={!!sel && sel.who === q.id} onClick={() => pickSel({ who: q.id, part: 'prop' })}>{(PROPS.find(x => x[0] === q.k) || ['', q.k])[1] + (q.txt ? ': ' + q.txt : '')}</Btn>)}</div> : null}
         </Group>
@@ -390,26 +396,26 @@ export function SceneStudio(pp: StudioProps) {
         </Group>
       </>}
       {tab === 'set' && <>
-        <Group title="The set">
+        <Group title="Set">
           <div class="sc-row"><span class="sc-slot">Where</span><select aria-label="The set" data-t="scene-set" value={sc.set} onChange={e => { const v = (e.currentTarget as HTMLSelectElement).value; if (isBg(v)) { const b = allBgs.find(x => 'bg_' + x.id === v); if (b) { setBg(copy(b) as any); setBgi(-1); } } setSc({ ...sc, set: v }); setReframe(x => x + 1); }}>{SETS.map(x => <option value={x[0]}>{x[1]}</option>)}{allBgs.map(b => <option value={'bg_' + b.id}>{'Backdrop: ' + b.name}</option>)}</select></div>
           <div class="sc-row"><span class="sc-slot">Shape</span><select aria-label="Shape of the picture" data-t="scene-frame" value={sc.frame || 'wide'} onChange={e => { const f = (e.currentTarget as HTMLSelectElement).value as any; const n = { ...sc }; if (f === 'wide') delete n.frame; else n.frame = f; setSc(n); }}>{FRAMES.map(x => <option value={x[0]}>{x[1]}</option>)}</select></div>
           <div class="sc-row"><span class="sc-slot">Look</span><span class="sc-fx">{SCENE_FX.map(([k, n]) => { const on = !!(sc.fx && sc.fx[k]); return <Btn key={k} t="scene-fx" d={{ v: k }} kind={on ? 'go' : 'less'} on={on} onClick={() => { const f = { ...(sc.fx || {}) }; if (on) delete f[k]; else f[k] = true; const n2 = { ...sc }; if (Object.keys(f).length) n2.fx = f; else delete n2.fx; setSc(n2); }}>{n}</Btn>; })}</span></div>
         </Group>
-        {!(bg && isBg(sc.set)) ? <Group title="A backdrop of your own">
+        {!(bg && isBg(sc.set)) ? <Group title="Custom backdrop">
           <p class="sc-gap">Build the wall behind this scene: a colour for the wall and the floor, then banners, signs, windows, curtains, a skyline.</p>
           <div class="sc-row"><Btn kind="go" t="scene-bgnew" onClick={() => { const b = newBackdrop(); setBg(b); setBgi(-1); setSc({ ...sc, set: 'bg_' + b.id }); say('A new backdrop. Add parts to it, then Keep the backdrop.'); }}>A new backdrop</Btn>
             {savedBgs.map(b => <Btn kind="less" t="scene-bguse" d={{ v: b.id }} onClick={() => { setBg(copy(b) as any); setBgi(-1); setSc({ ...sc, set: 'bg_' + b.id }); }}>{b.name}</Btn>)}</div>
         </Group> : <>
-          <Group title="The backdrop">
+          <Group title="Backdrop">
             <div class="sc-row"><TextBox value={bg.name} max={40} label="Name of the backdrop" t="scene-bgname" onInput={v => editBg(b => { b.name = v; })} width="16ch" /></div>
             <div class="sc-row"><span class="sc-slot">Wall</span><select aria-label="Wall colour" data-t="scene-bgwall" value={bg.wall} onChange={e => { const v = (e.currentTarget as HTMLSelectElement).value; editBg(b => { b.wall = v; }); }}>{BG_COLS.map(c => <option value={c[0]}>{c[1]}</option>)}</select>
               <span class="sc-slot">Floor</span><select aria-label="Floor colour" data-t="scene-bgfloor" value={bg.floor} onChange={e => { const v = (e.currentTarget as HTMLSelectElement).value; editBg(b => { b.floor = v; }); }}>{BG_COLS.map(c => <option value={c[0]}>{c[1]}</option>)}</select></div>
             <div class="sc-row"><select aria-label="Part to add" data-t="scene-bgkind" value={bgAdd} onChange={e => setBgAdd((e.currentTarget as HTMLSelectElement).value)}>{BG_PARTS.map(x => <option value={x[0]}>{x[1]}</option>)}</select>
               {(BG_PARTS.find(x => x[0] === bgAdd) || [])[4] && <TextBox value={bgWords} max={24} label="Words on it" t="scene-bgwords" onInput={v => setBgWords(v.toUpperCase())} width="9ch" />}
               <Btn t="scene-bgadd" disabled={bg.parts.length >= 40} onClick={() => { editBg(b => { b.parts.push(newPart(bgAdd, bgWords)); }); setBgi(bg.parts.length); }}>Add</Btn></div>
-            <div class="sc-row">{bg.parts.map((q, i) => <Btn kind="less" t="scene-bgpart" d={{ v: i }} on={i === bgi} onClick={() => setBgi(i)}>{(BG_PARTS.find(x => x[0] === q.k) || ['', q.k])[1] + (q.txt ? ': ' + q.txt : '')}</Btn>)}</div>
+            <div class="sc-row">{bg.parts.length ? <Drop t="scene-bgpart" label="Which part" value={String(bgi)} options={[['-1', 'Pick a part...'] as Opt].concat(bg.parts.map((q, i) => [String(i), (BG_PARTS.find(x => x[0] === q.k) || ['', q.k])[1] + (q.txt ? ': ' + q.txt : '')] as Opt))} onChange={v => setBgi(+v)} /> : null}</div>
           </Group>
-          {bgPart && <Group title="The part picked">
+          {bgPart && <Group title="Picked part">
             <div class="sc-row" role="group" aria-label="Move it">{([['l', 'Left', -0.5, 0], ['r', 'Right', 0.5, 0], ['u', 'Up', 0, 0.3], ['d', 'Down', 0, -0.3]] as [string, string, number, number][]).map(([v, n, dx, dy]) => <Btn kind="less" t="scene-bgmove" d={{ v }} onClick={() => editBg(b => { const q = b.parts[bgi]; q.x = Math.max(-12, Math.min(12, Math.round((q.x + dx) * 10) / 10)); q.y = Math.max(-6, Math.min(8, Math.round((q.y + dy) * 10) / 10)); })}>{n}</Btn>)}</div>
             <div class="sc-row" role="group" aria-label="Size">{([['w+', 'Wider', 1.15, 1], ['w-', 'Narrower', 1 / 1.15, 1], ['h+', 'Taller', 1, 1.15], ['h-', 'Shorter', 1, 1 / 1.15]] as [string, string, number, number][]).map(([v, n, kw, kh]) => <Btn kind="less" t="scene-bgsize" d={{ v }} onClick={() => editBg(b => { const q = b.parts[bgi]; q.w = Math.max(0.2, Math.min(24, Math.round(q.w * kw * 100) / 100)); q.h = Math.max(0.1, Math.min(12, Math.round(q.h * kh * 100) / 100)); })}>{n}</Btn>)}</div>
             <div class="sc-row"><select aria-label="Colour of the part" data-t="scene-bgcol" value={bgPart.col} onChange={e => { const v = (e.currentTarget as HTMLSelectElement).value; editBg(b => { b.parts[bgi].col = v; }); }}>{BG_COLS.map(c => <option value={c[0]}>{c[1]}</option>)}</select>
@@ -421,28 +427,34 @@ export function SceneStudio(pp: StudioProps) {
         </>}
       </>}
       {tab === 'file' && <>
-        <Group title="The scene">
+        <Group title="Scene">
           <div class="sc-row"><TextBox value={sc.name} max={32} label="Name of the scene" t="scene-name" onInput={v => setSc({ ...sc, name: v })} width="18ch" /></div>
           <div class="sc-row"><span class="sc-slot">Kind</span><select aria-label="Kind of scene" data-t="scene-kind" value={sc.still ? 'still' : 'moving'} onChange={e => { const still = (e.currentTarget as HTMLSelectElement).value === 'still'; const n = copy(sc); if (still) { n.still = true; n.keys = [n.keys[kk]]; n.keys[0].t = 0; n.loop = false; if (!STILL_WHEN.some(w => w[0] === n.when)) n.when = 'any'; } else { delete n.still; if (!WHEN.concat(SHOW_WHEN).some(w => w[0] === n.when)) n.when = 'any'; } setSc(n); setKi(0); setTime(null); }}><option value="moving">Moving: keyframes that play</option><option value="still">A still picture</option></select></div>
-          <div class="sc-row"><span class="sc-slot">{sc.still ? 'Shown at' : 'Plays at'}</span><select aria-label="When it plays" data-t="scene-when" value={sc.when} onChange={e => setSc({ ...sc, when: (e.currentTarget as HTMLSelectElement).value })}>{(sc.still ? STILL_WHEN : WHEN.concat(SHOW_WHEN)).map(w => <option value={w[0]}>{w[1]}</option>)}</select></div>
+          <div class="sc-row"><span class="sc-slot">{sc.still ? 'Used for' : 'Plays at'}</span><select aria-label="When it plays" data-t="scene-when" value={sc.when} onChange={e => setSc({ ...sc, when: (e.currentTarget as HTMLSelectElement).value })}>{(sc.still ? STILL_WHEN : WHEN.concat(SHOW_WHEN)).map(w => <option value={w[0]}>{w[1]}</option>)}</select></div>
           <div class="sc-row"><span class="sc-slot">Plays</span><Btn kind="less" t="scene-loop" on={!!sc.loop} onClick={() => { const n = { ...sc }; if (n.loop) delete n.loop; else n.loop = true; setSc(n); }}>{sc.loop ? 'Round and round' : 'Once'}</Btn></div>
         </Group>
         <Group title="Files">
           <div class="sc-row">
-            <select aria-label="Open a scene" data-t="scene-open" value="" onChange={e => { const v = (e.currentTarget as HTMLSelectElement).value; const x = allScenes(mine).find(y => y.id === v); if (x) open(x); }}>
-              <option value="">Open a scene...</option>
-              {mine.map(x => <option value={x.id}>{'This world: ' + x.name}</option>)}{SCENES.filter(x => !mine.some(m => m.id === x.id)).map(x => <option value={x.id}>{'The game: ' + x.name}</option>)}{STILLS.filter(x => !mine.some(m => m.id === x.id)).map(x => <option value={x.id}>{'A still: ' + x.name}</option>)}{SHOW_SCENES.filter(x => !mine.some(m => m.id === x.id)).map(x => <option value={x.id}>{'The show: ' + x.name}</option>)}
-            </select>
+            {(() => { const kind = (x: Scene) => mine.some(m => m.id === x.id) ? 'This world: ' : x.still ? 'Included still: ' : SHOW_SCENES.some(y => y.id === x.id) ? 'Included, the show: ' : 'Included: ';
+              const all = mine.concat(SCENES.concat(STILLS, SHOW_SCENES, MOVES).filter(x => !mine.some(m => m.id === x.id))), here = all.filter(x => studioOf(x) === mode), other = all.filter(x => studioOf(x) !== mode);
+              return <select aria-label="Open a scene" data-t="scene-open" value="" onChange={e => { const v = (e.currentTarget as HTMLSelectElement).value; const x = allScenes(mine).find(y => y.id === v); if (x) open(x); }}>
+                <option value="">Open a scene...</option>
+                {here.map(x => <option value={x.id}>{kind(x) + x.name}</option>)}
+                {other.length ? <optgroup label="From the other studios">{other.map(x => <option value={x.id}>{kind(x) + x.name}</option>)}</optgroup> : null}
+              </select>; })()}
           </div>
           <div class="sc-row">
             <Btn kind="sm" t="scene-export" onClick={exportIt}>Write a file</Btn>
             <Btn kind="sm" t="scene-import" onClick={() => file.current && file.current.click()}>Open a file</Btn>
-            {mine.some(x => x.id === sc.id) && <Btn kind="danger" t="scene-delete" onClick={() => { pp.onForget(sc.id); say('"' + sc.name + '" is no longer in ' + pp.world + '.'); }}>Take it out</Btn>}
+            {mine.some(x => x.id === sc.id) && (() => { const inc = SCENES.concat(STILLS, SHOW_SCENES, MOVES).some(x => x.id === sc.id);   // a changed included scene goes back to the included one
+              return <Btn kind="danger" t="scene-delete" onClick={() => { pp.onForget(sc.id); say(inc ? '"' + sc.name + '" is back as included.' : '"' + sc.name + '" is no longer in ' + pp.world + '.'); }}>{inc ? 'Put back as included' : 'Take it out'}</Btn>; })()}
             <input ref={file} type="file" accept=".json,application/json" hidden data-t="scene-file" onChange={e => { const f = (e.currentTarget as HTMLInputElement).files; if (f && f[0]) importIt(f[0]); (e.currentTarget as HTMLInputElement).value = ''; }} />
           </div>
         </Group>
-        <Group title="Start a new scene">
-          <div class="sc-setups">{SETUPS.map(([id, n]) => <Btn kind="less" t="scene-setup" d={{ v: id }} onClick={() => { open(setupScene(id)); setTab('sel'); say('A new scene: ' + n.toLowerCase() + '. Press somebody to move or pose them; each keyframe can keep its own shot.'); }}>{n}</Btn>)}</div>
+        <Group title={mode === 'still' ? 'Start from a template' : mode === 'move' ? 'Start a new move' : 'Start a new scene'}>
+          <div class="sc-row"><span class="sc-lbl">Start from</span><Drop t="scene-setup" label="Start a new scene from" value="" options={[['', mode === 'still' ? 'Pick a template...' : 'Pick a setup...'] as Opt].concat(setupsFor(mode).map(([id, n]) => [id, n] as Opt))}
+            groups={[{ label: 'Other setups', options: SETUPS.filter(x => !setupsFor(mode).some(y => y[0] === x[0])).map(([id, n]) => [id, n] as Opt) }]}
+            onChange={id => { const tp = mode === 'still' && TEMPLATES.some(x => x[0] === id), n = ((tp ? TEMPLATES : SETUPS).find(x => x[0] === id) || ['', ''])[1]; if (!id) return; const ns = tp ? templateScene(id) : setupScene(id); if (mode === 'move' && ns.when === 'any') { ns.when = 'move'; ns.name = 'My move'; } open(ns); setTab('sel'); say('A new scene: ' + n.toLowerCase() + '. Press somebody to move or pose them; each keyframe can keep its own shot.'); }} /></div>
         </Group>
       </>}
       </div>

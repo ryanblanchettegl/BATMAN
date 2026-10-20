@@ -1,5 +1,6 @@
 /* World Editor building blocks: form fields bound to a record, the pick list and the two-step delete. */
 import { ComponentChildren } from 'preact';
+import { useState } from 'preact/hooks';
 import { Btn, Field, Sel, Opt, dataAttrs } from '../../kit';
 import { E } from '../../engine';
 import { es, edit, editDel, look, world, reId } from './state';
@@ -34,12 +35,12 @@ export function Rating(p: { label: string; obj: Rec; k: string; opt?: boolean })
     {p.opt && has ? <Btn kind="sm" t="ed-rate-auto" d={{ k: p.k }} label={'Let the game work out ' + p.label} onClick={() => edit(() => { delete p.obj[p.k]; })}>Auto</Btn> : null}</div>
     <input type="range" min={0} max={100} value={v} aria-label={p.label} {...dataAttrs('ed-rate', { k: p.k })} onInput={e => { const n = +(e.currentTarget as HTMLInputElement).value; edit(() => { p.obj[p.k] = n; }); }} /></div>;
 }
-export interface Pick { id: string; label: string; sub?: string; bad?: boolean }
+export interface Pick { id: string; label: string; sub?: string; bad?: boolean; pic?: ComponentChildren }
 /** The list on the left of a tab. One row is open at a time. */
 export function PickList(p: { items: Pick[]; sel: string | null | undefined; onPick: (id: string) => void; t: string; empty: string; more?: string; many?: Record<string, any> }) {
   if (!p.items.length) return <p class="empty">{p.empty}</p>;
   return <div class="edlist" role="list">{p.items.map(it => <button type="button" key={it.id} class={'edrow' + ((p.many ? !!p.many[it.id] : it.id === p.sel) ? ' on' : '') + (it.bad ? ' bad' : '')} aria-pressed={p.many ? !!p.many[it.id] : it.id === p.sel} {...dataAttrs(p.t, { id: it.id })}
-    onClick={() => look(() => p.onPick(it.id))}><span class="nm">{it.label}</span>{it.sub ? <span class="st">{it.sub}</span> : null}</button>)}
+    onClick={() => look(() => p.onPick(it.id))}>{it.pic ? <span class="pic">{it.pic}</span> : null}<span class="nm">{it.label}</span>{it.sub ? <span class="st">{it.sub}</span> : null}</button>)}
     {p.more ? <p class="muted mt1">{p.more}</p> : null}</div>;
 }
 /** Delete in two presses, because the page cannot ask "are you sure?" in a system box. */
@@ -63,4 +64,19 @@ export function BrandSel(p: { pkg: any; pid: string; rec: any; t?: string }) {
   const P = p.pkg.promotions.find((x: any) => x.id === p.pid), B: any[] = (P && P.brands) || [];
   if (!B.length) return null;
   return <Field label="Brand"><Sel t={p.t || 'ed-brand'} value={p.rec.brand || ''} options={[['', 'No brand'] as Opt].concat(B.map((b: any) => [b.id, b.name + (b.dev ? ' (developmental)' : '')] as Opt))} onChange={v => edit(() => { E.edPutBrand(p.rec, v || null); })} /></Field>;
+}
+export interface MenuItem { id: string; label: string; sub?: string; on?: boolean; mine?: boolean }
+/** A long list that will keep growing (Ryan, 20 October: the included scenes, and those people make): one list, a
+    search box over it, in a box that scrolls inside itself. What was made or changed for this world comes first,
+    marked. Each row is a button. */
+export function ScrollMenu(p: { t: string; items: MenuItem[]; onPick: (id: string) => void; label: string; tall?: boolean }) {
+  const [q, setQ] = useState(''), ql = q.trim().toLowerCase();
+  const items = ql ? p.items.filter(it => (it.label + ' ' + (it.sub || '')).toLowerCase().indexOf(ql) >= 0) : p.items;
+  return <div class={'edmenu' + (p.tall ? ' tall' : '')}>
+    <input type="search" value={q} placeholder={'Search ' + p.items.length} aria-label={'Search ' + p.label} {...dataAttrs(p.t + '-q')} onInput={e => setQ((e.currentTarget as HTMLInputElement).value)} />
+    <div class="edmenu-list" role="list" aria-label={p.label}>
+      {items.length ? items.map(it => <button type="button" key={it.id} class={'edrow' + (it.on ? ' on' : '') + (it.mine ? ' mine' : '')} aria-pressed={!!it.on} {...dataAttrs(p.t, { id: it.id })} onClick={() => p.onPick(it.id)}>
+        <span class="nm">{it.label}</span>{it.sub ? <span class="st">{it.sub}</span> : null}</button>) : <p class="muted edmenu-none">Nothing matches.</p>}
+    </div>
+  </div>;
 }

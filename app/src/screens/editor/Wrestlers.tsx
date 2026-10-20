@@ -8,7 +8,8 @@ import { ScenePlayer } from '../../kit/sceneplayer';
 import { WAIST } from '../../kit/scene';
 import { recipeOf } from '../../kit/puppet';
 import { workerW } from '../player';
-import { es, world, edit, look, note, report, keep, canUndo, undoDel, TABS, EdTab } from './state';
+import { es, world, edit, look, note, keep } from './state';
+import { EdShell } from './shell';
 import { Sheet, Many } from './People';
 import { plural } from '../../store';
 
@@ -16,7 +17,7 @@ const PER = 8;
 const PARTS: ['who' | 'work' | 'rates' | 'more', string][] = [['who', 'Biography'], ['work', 'Company'], ['rates', 'Attributes'], ['more', 'More']];
 
 export function WrestlersPage() {
-  const st = es(), pkg = world(), info = E.edInfo(pkg), v = report(), q = st.q.trim().toLowerCase();
+  const st = es(), pkg = world(), info = E.edInfo(pkg), q = st.q.trim().toLowerCase();
   const pname: Record<string, string> = {}; pkg.promotions.forEach((x: any) => { pname[x.id] = x.name; });
   const all: any[] = pkg.workers.filter((w: any) => (st.fp === '' || (st.fp === 'FA' ? !info.home[w.id] : info.home[w.id] === st.fp)) && (!q || String(w.ring_name).toLowerCase().indexOf(q) >= 0));
   const sorts = st.sort || (st.sort = {}), by = sorts[String(st.id)] || 'over', ov = (x: any) => (x.ratings && x.ratings.overness) || 0, nm = (x: any) => String(x.ring_name || '');
@@ -38,16 +39,9 @@ export function WrestlersPage() {
   const sc = { v: 1 as const, id: 'edw', name: 'The wrestler', when: 'any', set: 'ring', attire: 'primary_ring' as const, slots: [{ id: 'A', n: w ? w.ring_name : '', role: 'a' as const }],
     keys: [{ t: 0, figs: { A: { x: 0, y: WAIST, r: 0, f: 1, z: 0.6, p: {} } }, props: [], cam: { x: 0, y: 0.15, z: 1.4 } }] };
   const sideOf = (x: any) => x.disposition === 'heel' ? 'Heel' : x.disposition === 'tweener' ? 'Tweener' : 'Face';
-  return <div class="scfull paper edpage edwfull" data-t="ed-wpage">
-    <nav class="pmenu" aria-label="Parts of the world">
-      <b class="pm-app">World Editor</b>
-      {TABS.map(([id, n]) => <button type="button" class={'it' + (id === 'wrestlers' ? ' on' : '')} aria-current={id === 'wrestlers' ? 'page' : undefined} data-t="ed-tab" data-v={id} onClick={() => look(() => { st.tab = id as EdTab; })}>{n}</button>)}
-      <span class="sp" /><span class="pm-world">{pkg.manifest.name || 'My world'}</span>
-      {v.ok ? <span class="pm-ok" role="status">Ready to play</span> : <button type="button" class="it bad" data-t="ed-problems" onClick={() => look(() => { st.tab = 'share'; })}>{v.errors} {plural(v.errors, 'problem')}</button>}
-      <button type="button" class="it" data-t="ed-worlds" onClick={() => look(() => { keep(true); st.id = null; st.msg = ''; })}>All worlds</button>
-    </nav>
-    <div class={'pnote' + (st.err ? ' bad' : '')} role="status">{st.msg || (w ? w.ring_name + ': Edit wrestler opens Create a Wrestler, Edit attire their outfits.' : 'Pick a wrestler on the list, or add one.')}
-      {canUndo() ? <Btn kind="sm" t="ed-undo" onClick={undoDel}>Undo</Btn> : null}</div>
+  return <EdShell tab="wrestlers" t="ed-wpage" cls="edwfull" bad={st.err} note={st.msg || (w ? w.ring_name + ': Edit wrestler opens Create a Wrestler, Edit attire their outfits.' : 'Pick a wrestler on the list, or add one.')}
+    back={back} backLabel={w ? 'Back to the list' : 'All worlds'} main={<Btn kind="go" cls="pkey" t="ed-caw-key" disabled={!shownW} onClick={() => caw()}>EDIT WRESTLER</Btn>}
+    tiles={<><span class="tile">Wrestlers <b>{pkg.workers.length}</b></span><span class="tile">Companies <b>{pkg.promotions.length}</b></span><span class="tile">Free agents <b>{fa}</b></span>{con ? <span class="tile">{pname[con.promotion_id]}</span> : null}</>}>
     <Desktop cls="edwpage">
       <Win title="Wrestlers" area="list" t="ed-wlist" info={[all.length + (all.length === pkg.workers.length ? ' in this world' : ' of ' + pkg.workers.length), pages > 1 ? 'Page ' + (pg + 1) + ' of ' + pages : (st.many ? Object.keys(st.picked || {}).length + ' picked' : '')]}>
         <div class="sc-row">
@@ -80,19 +74,12 @@ export function WrestlersPage() {
           <div class="sc-row edw-acts"><Btn kind="go" t="ed-caw" onClick={() => caw()}>Edit wrestler</Btn><Btn kind="sm" t="ed-attire" onClick={() => caw(true)}>Edit attire</Btn></div>
         </> : <p class="empty">No wrestlers yet. Add one, and they stand here.</p>}
       </Win>
-      <Win title={w ? (PARTS.find(x => x[0] === part) || PARTS[0])[1] : 'Biography'} area="sheet" t="ed-wsheet" info={w ? [(w.age ? 'Age ' + w.age : 'Age unknown') + ' · ' + (w.gender === 'F' ? 'Women' : 'Men'), 'Over ' + ov(w)] : ['', '']}>
-        {w ? <>
-          <div class="sc-row edw-parts" role="group" aria-label="About them">{PARTS.map(([id, n]) => <Btn kind="sm" t="ed-sheet" d={{ v: id }} on={part === id} onClick={() => look(() => { st.sheet = id; })}>{n}</Btn>)}</div>
-          <div class="edsheet edcol-form" data-part={part}><Sheet key={w.id + part} w={w} part={part} /></div>
+      <Win title={shownW ? (PARTS.find(x => x[0] === part) || PARTS[0])[1] : 'Biography'} area="sheet" t="ed-wsheet" info={shownW ? [(shownW.age ? 'Age ' + shownW.age : 'Age unknown') + ' · ' + (shownW.gender === 'F' ? 'Women' : 'Men'), 'Over ' + ov(shownW)] : ['', '']}>
+        {shownW ? <>
+          <div class="sc-row edw-parts"><span class="sc-lbl">Show</span><Sel t="ed-sheet" label="Section" value={part} options={PARTS as Opt[]} onChange={v => look(() => { st.sheet = v as any; })} /></div>
+          <div class="edsheet edcol-form" data-part={part}><Sheet key={shownW.id + part} w={shownW} part={part} /></div>
         </> : <p class="empty">Their biography, their company and their attributes show here.</p>}
       </Win>
     </Desktop>
-    <div class="pstrip" role="group" aria-label="This world">
-      <span class="tile">Wrestlers <b>{pkg.workers.length}</b></span><span class="tile">Companies <b>{pkg.promotions.length}</b></span><span class="tile">Free agents <b>{fa}</b></span>
-      {con ? <span class="tile">{pname[con.promotion_id]}</span> : null}
-      <span class="sp" />
-      <kbd>ESC</kbd><Btn kind="less" t="ed-back" onClick={back}>{w ? 'Back to the list' : 'All worlds'}</Btn>
-      <Btn kind="go" cls="pkey" t="ed-caw-key" disabled={!shownW} onClick={() => caw()}>EDIT WRESTLER</Btn>
-    </div>
-  </div>;
+  </EdShell>;
 }

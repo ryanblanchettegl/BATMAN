@@ -112,4 +112,22 @@ async function ensure(page, sel) {
   for (const x of ids) { const [t, v] = x.split('|'); await page.click('[data-t="' + t + '"][data-v="' + v + '"]'); await page.waitForTimeout(40); if (await page.$(sel)) return true; await page.keyboard.press('Escape'); await page.waitForTimeout(40); }
   return false;
 }
-module.exports = { open, go, overflow, shot, flash, state, redraw, SHOTS, fits, airShow, toOffice, ensure };
+/** Choose value v of control t: a dropdown is set, a button is pressed (World Editor pages use dropdowns, Ryan 20 October). */
+async function pick(page, t, v) {
+  const sel = await page.$('select[data-t="' + t + '"]');
+  if (sel) { await sel.selectOption(String(v)); return; }
+  await page.click('[data-t="' + t + '"][data-v="' + v + '"]');
+}
+/** Whether value v of control t is the one chosen: the dropdown's value, or the pressed button. */
+async function picked(page, t, v) {
+  const sel = await page.$('select[data-t="' + t + '"]');
+  if (sel) return (await sel.evaluate(e => e.value)) === String(v);
+  return (await page.$eval('[data-t="' + t + '"][data-v="' + v + '"]', e => e.getAttribute('aria-pressed')).catch(() => null)) === 'true';
+}
+/** Open a scene by id from the World Editor's Scenes tab, in whichever studio's dropdown lists it. */
+async function openScene(page, id) {
+  const b = await page.$('[data-t="ed-scene-open"][data-id="' + id + '"]'); if (b) { await b.click(); return; }
+  for (const sel of await page.$$('select[data-t="ed-scene-pick"]')) if (await sel.evaluate((e, id) => [...e.options].some(o => o.value === id), id)) { await sel.selectOption(id); return; }
+  throw new Error('no studio lists the scene ' + id);
+}
+module.exports = { openScene, pick, picked, open, go, overflow, shot, flash, state, redraw, SHOTS, fits, airShow, toOffice, ensure };

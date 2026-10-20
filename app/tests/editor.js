@@ -1,11 +1,12 @@
 /* World Editor: build a world from scratch through the interface, check it, play it, and find it again after a reload.
    Run: NODE_PATH=<dir containing playwright> node app/tests/editor.js   (desk size; MODES picks others) */
-const { open, overflow, shot, fits } = require('./helper');
+const { open, overflow, shot, fits, pick } = require('./helper');
 const MODES = (process.env.MODES || 'desk').split(',');
 const fails = [];
 const ok = (mode, label, pass, detail) => { console.log(mode.padEnd(6), pass ? 'ok  ' : 'FAIL', label + (detail ? ': ' + detail : '')); if (!pass) fails.push(mode + ' ' + label); };
 const txt = (page, sel) => page.$eval(sel, e => e.innerText).catch(() => '');
 
+async function openRule(page, id) { await page.click('[data-t="ed-pick"][data-id="' + id + '"]').catch(async () => { await page.fill('.edmenu input', id); await page.click('[data-t="ed-pick"][data-id="' + id + '"]'); }); await page.waitForTimeout(150); }
 async function company(page, mode, short, full, model) {
   await page.click('[data-t="ed-tab"][data-v="companies"]');
   const back = await page.$('.edback [data-t="ed-list"]'); if (back && await back.isVisible()) await back.click();
@@ -19,7 +20,7 @@ async function company(page, mode, short, full, model) {
   await page.selectOption('[data-t="ed-fill-n"]', '12');
   await page.click('[data-t="ed-fill"]');
   ok(mode, short + ' says how it stands', /main eventer/.test(await txt(page, '[data-t="ed-health"]')) && /men and/.test(await txt(page, '[data-t="ed-health"]')));
-  ok(mode, 'filling ' + short + ' says what happened', /12 unknowns signed to/.test(await txt(page, '.ednote')), await txt(page, '.ednote'));
+  ok(mode, 'filling ' + short + ' says what happened', /12 unknowns signed to/.test(await txt(page, '.pnote')), await txt(page, '.pnote'));
 }
 
 async function run(mode) {
@@ -28,12 +29,12 @@ async function run(mode) {
   try {
     await page.click('[data-t="editor"]');
     await page.waitForSelector('.edpage');
-    ok(mode, 'World Editor opens from the title screen', /build your own world/i.test(await txt(page, '.edpage h1')));
+    ok(mode, 'World Editor opens from the title screen', /your worlds/i.test(await txt(page, '.pmenu')));
     await over('the list of worlds');
     await page.fill('#ed-newname', 'Test World');
     await page.click('[data-t="ed-new"]');
-    ok(mode, 'a new world opens on its World tab', /test world/i.test(await txt(page, '.edpage h1')) && !!(await page.$('[data-t="ed-wname"]')));
-    ok(mode, 'an empty world shows problems to fix', /to fix/.test(await txt(page, '[data-t="ed-problems"]')));
+    ok(mode, 'a new world opens on its World tab', /test world/i.test(await txt(page, '.pmenu')) && !!(await page.$('[data-t="ed-wname"]')));
+    ok(mode, 'an empty world shows problems to fix', /problem/.test(await txt(page, '[data-t="ed-problems"]')));
     await over('the World tab');
     if (mode === 'tv') {   // the remote moves a highlight that stays inside the page
       const seen = new Set();
@@ -42,18 +43,24 @@ async function run(mode) {
     }
 
     await page.click('[data-t="ed-tab"][data-v="world"]'); await page.fill('[data-t="ed-list"][data-v="sponsors"]', 'Test Cola\nRope Co'); await page.click('[data-t="ed-wname"]');
+    await page.fill('[data-t="ed-list"][data-v="net_major"]', 'Lantern Family One\nHarbour Broadcasting'); await page.click('[data-t="ed-wname"]');
     await company(page, mode, 'AAA', 'Alpha Wrestling', 'workrate');
     await over('a company form');
     await page.click('[data-t="ed-add-brand"]'); await page.fill('[data-t="ed-brand-name"]', 'Red Side');
     ok(mode, 'a company can have a brand', /Red Side/.test(await page.$eval('[data-t="ed-brand-name"]', e => e.value)));
     await company(page, mode, 'BBB', 'Beta Wrestling', 'outlaw');
-    ok(mode, 'two filled companies make the world ready to play', /ready to play/i.test(await txt(page, '.edtop')), await txt(page, '.edtop'));
+    ok(mode, 'two filled companies make the world ready to play', /ready to play/i.test(await txt(page, '.pmenu')), await txt(page, '.pmenu'));
 
     await page.click('[data-t="ed-tab"][data-v="shows"]');
     await page.click('[data-t="ed-add-show"]');
     const shows = await page.$$('[data-t="ed-show-name"]');
     await shows[shows.length - 1].fill('Saturday Slam');
     { const bs = await page.$$('[data-t="ed-show-brand"]'); ok(mode, 'a show of a company with brands can be put on one', bs.length >= 1); if (bs.length) await bs[0].selectOption({ index: 1 }); }
+    { const ns = await page.$$('[data-t="ed-show-net"]'), ys = await page.$$('[data-t="ed-show-years"]');
+      ok(mode, 'a show has a network and years on the air', ns.length >= 1 && ys.length >= 1);
+      if (ns.length && ys.length) { await ns[ns.length - 1].selectOption('2:Lantern Family One'); await ys[ys.length - 1].fill('12'); await ys[ys.length - 1].press('Tab');
+        const n2 = await page.$$('[data-t="ed-show-net"]'), y2 = await page.$$('[data-t="ed-show-years"]');
+        ok(mode, 'the world\'s own network can be picked for a show, and its years kept', (await n2[n2.length - 1].inputValue()) === '2:Lantern Family One' && (await y2[y2.length - 1].inputValue()) === '12'); } }
     await page.fill('[data-t="ed-ev-name"][data-v="3"]', 'Spring Clash');
     await page.selectOption('[data-t="ed-ev-rule"][data-v="3"]', 'all_titles');
     ok(mode, 'a second show and a named big event are kept', await page.evaluate(() => { const u = JSON.parse(localStorage.getItem('ewf9000-universes') || '{}'), w = u.test_world; return !!w; }) || true);
@@ -79,19 +86,36 @@ async function run(mode) {
     const art1 = await page.$eval('[data-t="ed-belt-art"]', c => c.getAttribute('data-sig'));
     ok(mode, 'Save the belt keeps it on the belt’s page', art1 !== art0 && /"pl":"crest"/.test(art1) && /design of its own/i.test(await txt(page, '.edbelt')));
 
+    // Stories: the world's own promos and angles, kept in the world
+    await page.click('[data-t="ed-tab"][data-v="stories"]'); await page.click('[data-t="ed-story-new"][data-v="angle"]'); await page.waitForTimeout(200);
+    await page.fill('[data-t="ed-story-name"]', 'Coffee in the face'); await page.selectOption('[data-t="ed-story-scene"]', 'seg_ambush'); await page.selectOption('[data-t="ed-story-bond"]', '-8');
+    await page.fill('[data-t="ed-story-line"]', '{a} throws coffee at {b}.'); await page.waitForTimeout(300);
+    ok(mode, 'Stories makes the world\'s own angle, with its scene and what it does', await page.evaluate(() => { const u = JSON.parse(localStorage.getItem('ewf9000-universes') || '{}'); return Object.values(u).some((w) => (w.segkinds || []).some((k) => k.n === 'Coffee in the face' && k.scene === 'seg_ambush' && k.bond === -8 && /coffee/.test(k.line))); }) || /Coffee in the face/.test(await txt(page, '.edcol-list')));
+    ok(mode, 'its scene plays beside the form', !!(await page.$('[data-t="ed-story-pic"]')));
+    await over('the Stories tab');
+    // Match rules: the world's own rule, built on an included one, played in a set of its own
+    await page.click('[data-t="ed-tab"][data-v="rules"]'); await page.click('[data-t="ed-rule-new"]'); await page.waitForTimeout(200);
+    await page.fill('[data-t="ed-rule-name"]', 'Shark tank'); await page.selectOption('[data-t="ed-rule-base"]', 'hardcore'); await page.selectOption('[data-t="ed-rule-set"]', 'inferno');
+    await page.fill('[data-t="ed-rule-line"][data-v="0"]', 'Nobody wants to fall in.'); await page.waitForTimeout(700);
+    ok(mode, 'Match rules makes the world\'s own rule, with its base, its set and its lines', await page.evaluate(() => { const u = JSON.parse(localStorage.getItem('ewf9000-universes') || '{}'); return Object.values(u).some((w) => (w.stips || []).some((k) => k.n === 'Shark tank' && k.base === 'hardcore' && k.set === 'inferno' && k.lines[0] === 'Nobody wants to fall in.')); }));
+    ok(mode, 'the rule\'s set is drawn beside the form', (await page.$eval('[data-t="ed-rule-pic"]', e => e.getAttribute('data-set')).catch(() => '')) === 'inferno');
+    if (process.env.SHOTS) await shot(page, 'editor-rules');
+    await openRule(page, 'cage'); await page.click('[data-t="ed-rule-over"]'); await page.fill('[data-t="ed-rule-name"]', 'Steel dome'); await page.waitForTimeout(700);
+    ok(mode, 'an included rule can be changed for the world', await page.evaluate(() => { const u = JSON.parse(localStorage.getItem('ewf9000-universes') || '{}'); return Object.values(u).some((w) => (w.stips || []).some((k) => k.id === 'cage' && k.over && k.n === 'Steel dome')); }));
+    await over('the Match rules tab');
     await page.click('[data-t="ed-tab"][data-v="wrestlers"]');
     await page.click('[data-t="ed-add-wrestler"]');
     await page.fill('[data-t="ed-wrname"]', 'Captain Thunder');
     await page.click('[data-t="ed-role"][data-v="manager"]');
     const named = /captain thunder/i.test(await txt(page, '[data-t="ed-wdoll"]'));
-    await page.click('[data-t="ed-sheet"][data-v="work"]'); await page.selectOption('[data-t="ed-sign"]', { index: 1 });
+    await pick(page, 'ed-sheet', 'work'); await page.selectOption('[data-t="ed-sign"]', { index: 1 });
     const signed = !!(await page.$('[data-t="ed-f"][data-k="push_level"]'));
-    await page.click('[data-t="ed-sheet"][data-v="rates"]'); await page.$eval('[data-t="ed-rate"][data-k="overness"]', e => { e.value = '88'; e.dispatchEvent(new Event('input', { bubbles: true })); });
+    await pick(page, 'ed-sheet', 'rates'); await page.$eval('[data-t="ed-rate"][data-k="overness"]', e => { e.value = '88'; e.dispatchEvent(new Event('input', { bubbles: true })); });
     const rated = /88/.test(await txt(page, '.edrates'));
-    await page.click('[data-t="ed-sheet"][data-v="more"]'); await page.click('[data-t="ed-face"][data-k="hr"][data-v="1"]');
+    await pick(page, 'ed-sheet', 'more'); await page.click('[data-t="ed-face"][data-k="hr"][data-v="1"]');
     ok(mode, 'a wrestler can be made, rated, signed and given a face', named && signed && rated, JSON.stringify({ named, signed, rated }));
     ok(mode, 'the Wrestlers page draws the wrestler in the middle', !!(await page.$('[data-t="ed-wview"]')) && !!(await page.$('[data-t="ed-caw"]')) && !!(await page.$('[data-t="ed-attire"]')));
-    await page.click('[data-t="ed-sheet"][data-v="who"]');
+    await pick(page, 'ed-sheet', 'who');
     await over('a wrestler form');
 
     await page.click('[data-t="ed-tab"][data-v="teams"]');
@@ -144,13 +168,13 @@ async function run(mode) {
       await page.click('[data-t="ed-undo"]'); await page.waitForTimeout(100);
       ok(mode, 'Undo puts both back', (await total()) === n1 && /is back/.test(await txt(page, '.edpage')) && !(await page.$('[data-t="ed-undo"]')));
       await page.click('[data-t="ed-many"]');
-      await page.click('.edlist .edrow'); await page.click('[data-t="ed-sheet"][data-v="more"]'); await page.waitForSelector('[data-t="ed-dup"]');
-      await page.click('[data-t="ed-dup"]'); await page.waitForTimeout(150); await page.click('[data-t="ed-sheet"][data-v="who"]');
+      await page.click('.edlist .edrow'); await pick(page, 'ed-sheet', 'more'); await page.waitForSelector('[data-t="ed-dup"]');
+      await page.click('[data-t="ed-dup"]'); await page.waitForTimeout(150); await pick(page, 'ed-sheet', 'who');
       ok(mode, 'Make a copy adds a wrestler and opens the copy', /\(copy\)/.test(await page.$eval('[data-t="ed-wrname"]', e => e.value).catch(() => '')), await page.$eval('[data-t="ed-wrname"]', e => e.value).catch(() => 'no form'));
       { const before = await page.$eval('[data-t="ed-wrname"]', e => e.value); await page.click('[data-t="ed-randname"]'); await page.waitForTimeout(120);
         const after = await page.$eval('[data-t="ed-wrname"]', e => e.value); ok(mode, 'Random name gives the wrestler a new name', after && after !== before, before + ' -> ' + after); }
-      await page.click('[data-t="ed-sheet"][data-v="work"]'); ok(mode, 'a wrestler has a Managed by choice', !!(await page.$('[data-t="ed-manager"]')));
-      await page.click('[data-t="ed-sheet"][data-v="rates"]'); await page.click('[data-t="ed-tier"][data-v="jobber"]'); await page.waitForTimeout(80);
+      await pick(page, 'ed-sheet', 'work'); ok(mode, 'a wrestler has a Managed by choice', !!(await page.$('[data-t="ed-manager"]')));
+      await pick(page, 'ed-sheet', 'rates'); await page.click('[data-t="ed-tier"][data-v="jobber"]'); await page.waitForTimeout(80);
       ok(mode, 'Set ratings for an opener says what it did', /Ratings set for an opener/.test(await txt(page, '.edpage')));
       await page.keyboard.press('Escape'); }
 
@@ -160,7 +184,7 @@ async function run(mode) {
     await page.keyboard.press('Escape');
     ok(mode, 'Back closes the open record first', !(await page.$('[data-t="ed-wrname"]')) && !!(await page.$('.edlist')));
     await page.keyboard.press('Escape');
-    ok(mode, 'Back again returns to the list of worlds', /build your own world/i.test(await txt(page, '.edpage h1')) && /test world/i.test(await txt(page, '.edpage')));
+    ok(mode, 'Back again returns to the list of worlds', /your worlds/i.test(await txt(page, '.pmenu')) && /test world/i.test(await txt(page, '.edpage')));
 
     /* the world is still there after a reload, and the game plays it */
     await page.waitForTimeout(600);
@@ -189,10 +213,10 @@ async function run(mode) {
     try {
       await page.click('[data-t="editor"]'); await page.waitForSelector('.edpage');
       await page.fill('#ed-newname', 'Quick Nine'); await page.click('[data-t="ed-new-nine"]'); await page.waitForTimeout(200);
-      ok('desk', 'a nine-company world of unknowns opens ready to play', /quick nine/i.test(await txt(page, '.edpage h1')) && /ready to play/i.test(await txt(page, '.edtop')), await txt(page, '.edtop'));
+      ok('desk', 'a nine-company world of unknowns opens ready to play', /quick nine/i.test(await txt(page, '.pmenu')) && /ready to play/i.test(await txt(page, '.pmenu')), await txt(page, '.pmenu'));
       await page.keyboard.press('Escape'); await page.waitForTimeout(100);
       await page.fill('#ed-newname', 'Quick Two'); await page.click('[data-t="ed-new-territory"]'); await page.waitForTimeout(200);
-      ok('desk', 'a two-company territory opens ready to play', /quick two/i.test(await txt(page, '.edpage h1')) && /ready to play/i.test(await txt(page, '.edtop')));
+      ok('desk', 'a two-company territory opens ready to play', /quick two/i.test(await txt(page, '.pmenu')) && /ready to play/i.test(await txt(page, '.pmenu')));
       ok('desk', 'no errors (quick starts)', !errs.length, errs.slice(0, 3).join(' | '));
     } finally { await browser.close(); } }
   if (fails.length) { console.log('FAILED: ' + fails.length); process.exit(1); }

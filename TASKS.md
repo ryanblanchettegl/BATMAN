@@ -256,7 +256,7 @@ The desk image (`docs/mockups/paper/desk.png`) is the art style: the whole game 
 - [x] Booking a segment shows its scene on the run sheet, so the card reads as the scenes of the show: the window that books it draws the scene once the first person is picked, and the picked promo or angle beside the sheet shows it with its cast (`SegPic`, `segPick()` in `shared/moment.tsx`, the same pick the broadcast plays).
 - [x] Feuds over several weeks: a scene for each beat (the spark, the words and brawls of each chapter, a twist or turn, the match being made, the payoff).
 - [x] A check that fails when an angle or promo kind has no scene (`app/tests/scene.js`, through `EWF_DEBUG.segScenes()`); storyline beats join it as they get theirs.
-- [ ] The World Editor's story builder: an easy pop-up for a player's own storyline, angle or promo (who, what happens, which scene plays, what it does to heat and the people in it through `relBump()`), kept in the world package and played in a game.
+- [x] The World Editor's story builder (Stories tab, Ryan 20 October): a world's own promos and angles (participants, the scene, what it does to a feud and to the two through `relBump()`, the report line), kept in the world package and booked and played in a game; the included ones can be changed for a world and put back.
 - [ ] Then redo the build-a-match screen and the show on the air in the paper look on top of the scenes, one at a time with Ryan's go-ahead.
 
 ### 0y. The World Editor rebuilt on Create a Wrestler and Create a Scene (Ryan, 18 October)
@@ -268,6 +268,11 @@ The desk image (`docs/mockups/paper/desk.png`) is the art style: the whole game 
 
 - [x] Create a Belt (Ryan, 20 October): a belt for every title, built from parts in one pop-up (plate, metal, strap, gem, side plates, trim, words), from the World Editor and from your own title in a game; every title in the parody world has its own design, and a belt in a scene is the real one.
 - [x] The logo creator has six lettering faces (Ryan, 20 October).
+- [x] One look for every World Editor page (Ryan, 20 October): the same menu bar, note strip and bottom strip on every tab and on the list of worlds; Create a Wrestler and Create a Scene wear the same bar.
+- [x] More dropdown menus than buttons on World Editor pages (Ryan, 20 October): the creators' choices in words, which part of a page shows, faces, poses, outfits, moves and entrances.
+- [x] Stock scenes move in at least four keyframes, with a wind-up at the start and an overshoot and settle at the end (Ryan, 20 October: "scenes should average 4 keys").
+- [x] 3D sets for a steel cage, the cell with a roof, an inferno, ringside on the floor, a ballroom, a gym and a stadium; 3D rooms for the entrance stage, the backstage wall, the parking lot, a talk show, a news desk and the rafters; chairs, tables, ladders, steps, bins and bats as 3D models.
+- [x] A ladder match set (the belt hung over the ring), and 3D catering, trainer's room and weight room; the Titles page shows each title's belt.
 
 ### 0z. Create a Scene, built out (later; Ryan, 18 October: "the bones are there and work")
 
@@ -288,8 +293,8 @@ Code: `src/86-editor.js` (the `E.ed*` functions; no screen code), `app/src/scree
 - [x] Works on desk, tablet and TV layouts. Back steps out one level at a time.
 - [ ] **Workshop upload and subscribed worlds.** Written in `desktop/main.js` and `desktop/preload.js` (`gpSteam.workshopUpload`, `gpSteam.workshopWorlds`) from the steamworks.js documentation. Never run. Needs the Steam wrapper working first (task 12).
 - [ ] Pictures: a world cannot carry portrait or belt images yet. Portraits are drawn from the face settings. The folder form with `graphics/` is the Workshop build's job.
-- [ ] Not in the editor yet: brands, sponsors, columnists, announcers and staff names, the name lists for rookies, managers tied to wrestlers.
-- [ ] Bulk tools: duplicate a wrestler, move several at once, sort the list by name or company.
+- [x] Not in the editor yet: brands, sponsors, columnists, announcers and staff names, the name lists for rookies, managers tied to wrestlers. (In the editor by 20 October.)
+- [x] Bulk tools: duplicate a wrestler, move several at once, sort the list by name or company. (In the editor by 20 October.)
 - [ ] A creator for each thing on its own from the title screen, if Ryan wants shortcuts (show creator, belt creator) beyond the tabs.
 - [ ] Try the remote and gamepad on real hardware.
 
@@ -318,7 +323,7 @@ Code: `src/87-create.js` (`E.makeShow`, `E.dropShow`, `E.makeTitle`, `E.dropTitl
   - An anniversary and a milestone episode (100, 250, every 500) are occasions: the desk hears as the week begins, the title card says it, the building is up for it. The title card always carries the episode number and the network.
   - The Weekly shows window lists each show's standing, years, episodes, network and when the deal runs out.
   - [ ] The player can still cancel one of their own shows. Ryan to say whether that goes too.
-  - [ ] Years on the air are worked out from a company's size. The World Editor should let a world set them, and name its own networks (`networks` in the world file is read already).
+  - [x] Years on the air are worked out from a company's size. The World Editor should let a world set them, and name its own networks. Done 20 October: the World tab's name lists (small, cable, major) and each show's Network and Years on air on the Shows tab.
   - [x] This is the first part of section 5 (TV deals). Still to come there: money by the hour, tastes, ratings targets, streaming, a rival's night. (16 October: tastes and ratings targets, `src/89-networks.js`; streaming, `src/89-streaming.js`; a rival's night and the network's offer to move, `src/88-nights.js`. Money by the hour was left: the deal's rate already scales with the network and the show's standing.)
 - [x] Measured over 32 weeks on three seeds: an extra show moved weekly profit between -$100K and +$214K and popularity by 0 to +1.6. It is a real choice, not free money.
 - [x] Big events (the monthly pay-per-view) cannot be added or renamed in a game yet. That belongs with the year planner in task 6. (Done 15 October: P.events per company, the Year planner renames them, src/42-events.js.)

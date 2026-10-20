@@ -233,3 +233,5 @@ SHOWX.push(function(S,P,show,rep){
   if(rep.sellout){S.soRun=(S.soRun||0)+1;rep.soRun=S.soRun;if(S.soRun>=3)S.hype=(S.hype||0)+0.02;if(S.soRun===5||S.soRun===10||S.soRun===20)news(S,'world',P.name+' has sold out '+S.soRun+' shows in a row.');}
   else{if((S.soRun||0)>=3)rep.soEnd=S.soRun;S.soRun=0;}
 });
+/** Every city the road can place, for the World Editor's city list. */
+E.knownCities=function(){return Object.keys(CITY_AT).sort();};

@@ -175,5 +175,20 @@ for (const k of ['territory', 'nine']) { const pkg = E.edQuick(k, '', 5), models
   ok('clearing a month gives it back to the world list', !pkg.promotions[1].events, JSON.stringify(pkg.promotions[1].events));
 }
 
+// television: a world names its own networks, and a weekly show its network and years on the air
+{ const pkg = JSON.parse(JSON.stringify(builtIn)), sh = pkg.shows.find(x => x.promotion_id === 'pdw');
+  E.edSetList(pkg, 'net_major', 'Lantern Family One\nHarbour Broadcasting\nHarbour Broadcasting'); E.edSetList(pkg, 'net_small', 'Only One');
+  ok('a network list keeps each name once', E.edListText(pkg, 'net_major').split('\n').length === 2 && pkg.networks.major.length === 2);
+  ok('the editor offers a world\'s own networks, and the game\'s own where a list is too short', E.edNetNames(pkg, 2)[0] === 'Lantern Family One' && E.edNetNames(pkg, 0).length > 2);
+  sh.network = 'Lantern Family One'; sh.network_size = 2; sh.years_on_air = 21;
+  ok('a world with networks and a show on one passes the check', E.edCheck(pkg).errors === 0);
+  E.useUniverse(pkg); const S = E.newGame('pdw', 1, { name: 'R' }), g = S.promos.pdw.shows.find(x => x.name === sh.name);
+  ok('the show is on the world\'s network, at its size', g && g.net === 'Lantern Family One' && g.tier === 2, g && g.net + ' ' + g.tier);
+  ok('and has been on the air as long as the world says', g && Math.floor((S.week - g.on) / 48) === 21, g && String(S.week - g.on));
+  ok('a family word in the name gives it a family taste', E.netInfo(S).some(x => x.net === 'Lantern Family One' && x.taste === E.NET_TASTE.family.n), JSON.stringify(E.netInfo(S)).slice(0, 160));
+  const out = E.exportUniverse(S, { name: 'TV', id: 'tv_kept' }), o = out.shows.find(x => x.name === sh.name);
+  ok('the world written back out keeps its networks and the show\'s time on the air', out.networks && out.networks.major[0] === 'Lantern Family One' && o && o.network === 'Lantern Family One' && o.network_size === 2 && o.years_on_air === 21, JSON.stringify(o));
+  E.useUniverse(builtIn); }
+
 if (fails.length) { console.log('FAILED: ' + fails.length); process.exit(1); }
 console.log('test-editor: all passed');

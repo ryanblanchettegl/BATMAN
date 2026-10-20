@@ -10,7 +10,7 @@ export interface Piece {
   pts: Pt[]; col: string; z: number;
   lift?: number;            // how far it stands off what is under it (scene units): the length of its shadow
   own?: string; joint?: string; prop?: string;   // who it belongs to, for picking it with a pointer
-  txt?: { s: string; x: number; y: number; size: number; col: string; align?: CanvasTextAlign };
+  txt?: { s: string; x: number; y: number; size: number; col: string; align?: CanvasTextAlign; edge?: string };   // edge: a thin outline round the letters, for words with nothing behind them
   glow?: boolean;           // lit lettering: no grain over it
   layer?: 'back' | 'front'; // part of the set: drawn once and kept (back behind everybody, front before them)
   soft?: boolean;           // a soft shadow on the floor, not a piece of card
@@ -105,7 +105,7 @@ export function drawPaper(ctx: CanvasRenderingContext2D, pieces: Piece[], v: Vie
     if (p.txt) {
       const q = toPx(v, [p.txt.x, p.txt.y]);
       ctx.shadowColor = 'transparent'; ctx.fillStyle = p.txt.col; ctx.textAlign = p.txt.align || 'center'; ctx.textBaseline = 'middle';
-      ctx.font = Math.round(p.txt.size * v.s) + "px 'VT323', monospace"; ctx.fillText(p.txt.s, q[0], q[1]);
+      ctx.font = Math.round(p.txt.size * v.s * 0.8) + "px 'Craft Marker', 'EWF Sans', sans-serif"; if (p.txt.edge) { ctx.lineWidth = Math.max(2, p.txt.size * v.s * 0.09); ctx.lineJoin = 'round'; ctx.strokeStyle = p.txt.edge; ctx.strokeText(p.txt.s, q[0], q[1]); } ctx.fillText(p.txt.s, q[0], q[1]);
       continue;
     }
     if (p.pts.length < 3) continue;
@@ -145,7 +145,7 @@ function drawPieces(ctx: CanvasRenderingContext2D, list: Piece[], v: View) {
     if (p.txt) {
       const q = toPx(v, [p.txt.x, p.txt.y]);
       ctx.shadowColor = 'transparent'; ctx.fillStyle = p.txt.col; ctx.textAlign = p.txt.align || 'center'; ctx.textBaseline = 'middle';
-      ctx.font = Math.round(p.txt.size * v.s) + "px 'VT323', monospace"; ctx.fillText(p.txt.s, q[0], q[1]);
+      ctx.font = Math.round(p.txt.size * v.s * 0.8) + "px 'Craft Marker', 'EWF Sans', sans-serif"; if (p.txt.edge) { ctx.lineWidth = Math.max(2, p.txt.size * v.s * 0.09); ctx.lineJoin = 'round'; ctx.strokeStyle = p.txt.edge; ctx.strokeText(p.txt.s, q[0], q[1]); } ctx.fillText(p.txt.s, q[0], q[1]);
       continue;
     }
     if (p.pts.length < 3) continue;

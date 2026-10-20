@@ -46,12 +46,14 @@ function airOf(S,P,sh){
   else{
     // a show that was running when the game began: the bigger the company, the longer it has been on the air
     var yrs=P.model==='startup'?0:clamp(Math.round((P.image0-32)/2.2)+k%4,1,40);if(!main)yrs=Math.max(1,Math.floor(yrs*m*0.5));
+    if(sh.wy!=null)yrs=sh.wy;   // the world says how long it has run
     sh.on=1-(yrs*AIR_YEAR+k%AIR_YEAR);
     sh.pr=clamp(Math.round((P.image0*(yrs<2?0.35:0.55)+yrs*1.1)*(main?1:0.8)),5,95);
     sh.tier=Math.max(0,airTier0(P)-(main||k%2?0:1));
   }
+  if(sh.wt!=null)sh.tier=sh.wt;
   sh.ep=Math.max(0,S.week-sh.on);sh.pr0=sh.pr;sh.prd=sh.pr;sh.tier0=sh.tier;sh.rate=1;sh.moves=0;sh.deals=0;
-  sh.net=airPickNet(S,P,sh,sh.tier,null);
+  sh.net=sh.wn||airPickNet(S,P,sh,sh.tier,null);
   sh.netOn=young?sh.on:Math.max(sh.on,S.week-((k>>>3)%7+1)*AIR_YEAR);
   sh.deal=young?sh.on+airDealWeeks(P,sh):S.week+24+(k>>>5)%120;
   airStep(sh);return sh;

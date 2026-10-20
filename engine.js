@@ -14,6 +14,8 @@ var STIP = {
   hardcore:{n:'Hardcore',w:[0.7,0.1,0.2],heat:4,inj:2.2,hc:0.45},
   ladder:{n:'Ladder',w:[0.25,0.15,0.6],heat:4,inj:2.6,hc:0.15},
   cage:{n:'Steel cage',w:[0.55,0.15,0.3],heat:4,inj:1.6,hc:0.25},
+  cell:{n:'Steel cell',w:[0.6,0.1,0.3],heat:6,inj:2.4,hc:0.35},
+  fire:{n:'Ring of fire',w:[0.6,0.15,0.25],heat:5,inj:2,hc:0.2},
   sub:{n:'Submission',w:[0.25,0.75,0],heat:2,inj:1},
   iron:{n:'Iron man',w:null,heat:3,inj:1.3},
   tables:{n:'Tables',w:[0.65,0.1,0.25],heat:4,inj:1.9,hc:0.3},
@@ -185,7 +187,7 @@ E.newGame=function(playerId,seed,opts){
     stats:{shows:0,matches:0,run:0,feudsDone:0,bestMatch:0,bestShow:0},said:[],h2h:{},trust:60,ledger:[],sponsors:[],spOffers:[],slotAsk:-99,hype:0,rateMod:0,reports:[],queue:[],qi:0,card:[],over:null,nid:1,recent:{},fin:null};
   var cur={promo:'FA',brand:null},byName={};
   CAL0={y:DB.startYear,m:DB.startMonth};
-  S.db={startYear:DB.startYear,startMonth:DB.startMonth,events:DB.events,rules:DB.rules||null,indie:DB.indie,sponsors:DB.sponsors||null,columnists:DB.columnists||null,scenes:DB.scenes||null,backdrops:DB.backdrops||null,uni:DB.uni||null,fictional:!!DB.fictional};
+  S.db={startYear:DB.startYear,startMonth:DB.startMonth,events:DB.events,rules:DB.rules||null,indie:DB.indie,sponsors:DB.sponsors||null,columnists:DB.columnists||null,scenes:DB.scenes||null,backdrops:DB.backdrops||null,segkinds:DB.segkinds||null,networks:DB.networks||null,stips:DB.stips||null,uni:DB.uni||null,fictional:!!DB.fictional};
   var preset=[];
   if(DB.rows)DB.rows.forEach(function(d){var w=addWrestler(S,d,d.promo||'FA',d.brand||null);byName[w.name]=w.id;byName['#'+d.uid]=w.id;if(d.wage||d.con||d.tw!=null)preset.push([w,d]);});
   else DB.roster.split('\n').forEach(function(line){
@@ -596,7 +598,7 @@ function expand(S,str,o,depth){
   return fill(str.replace(/#(\w+)#/g,function(_,k){return GR[k]?expand(S,sayPick(S,GR[k]),o,(depth||0)+1):'';}),o);
 }
 function say(S,sym,o){var t=expand(S,'#'+sym+'#',o);return t.charAt(0).toUpperCase()+t.slice(1);}
-var STIPLINE={tables:['A table is set up at ringside, and nobody is happy about it.','Somebody is going through a table tonight. The only question is who.'],lumber:['The lumberjacks line the ring and wait for somebody to roll out.','Nowhere to hide: the floor is full of angry colleagues.'],mask:['Everything they have built behind that mask is on the line tonight.','A mask is a promise. Tonight one of them breaks it.'],hair:['They have both put their hair on the line, and neither will step back.','Clippers are waiting at ringside for whoever loses.'],hardcore:['Chairs and tables come into play.','They have found a trash can, and it is not for recycling.','Weapons everywhere. The referee can only watch.'],ladder:['Both climb, and both crash off the ladder.','Somebody just went through a ladder. I felt that from here.','Fingertips on the prize... and the ladder goes over!'],cage:['The cage itself becomes a weapon.','Face first into the steel!','Nowhere to run inside that cage.'],sub:['Each hunts for the hold that ends it.','Hold, counter, hold. Somebody is going to have to give up.'],iron:['The falls go back and forth across the half hour.','Pacing is everything in a match like this, and they both know it.']};
+var STIPLINE={tables:['A table is set up at ringside, and nobody is happy about it.','Somebody is going through a table tonight. The only question is who.'],lumber:['The lumberjacks line the ring and wait for somebody to roll out.','Nowhere to hide: the floor is full of angry colleagues.'],mask:['Everything they have built behind that mask is on the line tonight.','A mask is a promise. Tonight one of them breaks it.'],hair:['They have both put their hair on the line, and neither will step back.','Clippers are waiting at ringside for whoever loses.'],hardcore:['Chairs and tables come into play.','They have found a trash can, and it is not for recycling.','Weapons everywhere. The referee can only watch.'],ladder:['Both climb, and both crash off the ladder.','Somebody just went through a ladder. I felt that from here.','Fingertips on the prize... and the ladder goes over!'],cage:['The cage itself becomes a weapon.','Face first into the steel!','Nowhere to run inside that cage.'],cell:['The roof is on. There is no way out of the cell.','Face first into the steel walls of the cell!','They are climbing the cell. Somebody stop them!'],fire:['The flames go up all round the ring.','Nobody wants to go near the edge of the ring tonight.','The heat from those flames reaches the front row.'],sub:['Each hunts for the hold that ends it.','Hold, counter, hold. Somebody is going to have to give up.'],iron:['The falls go back and forth across the half hour.','Pacing is everything in a match like this, and they both know it.']};
 var CHEAP=['{w} grabs a handful of tights to steal the pin on {l}.','{w} uses the ropes for leverage and pins {l}.','A low blow behind the referee’s back lets {w} pin {l}.'];
 var REACT={Interview:['Say what you like about that, it got the people talking.','Confident. Maybe too confident.'],Promo:['Strong words. Now go and back them up.','That one is going to sting.'],Brawl:['Somebody get security out here!','They cannot keep these two apart.'],Ambush:['From behind! That is how you send a message.','No warning at all. That is how it is going to be, then.'],Challenge:['Now that is a match I want to see.','The champion did not look happy about that.'],Mystery:['Who would do this? Somebody in that locker room knows something.','I have a few names in mind, {p}, and I am keeping them to myself.'],Reveal:['I do not believe it. It was right in front of us the whole time!','Of all the people. Of all the people!'],'Face-off':['Feel this building shake. Sign that match!','Neither one blinked.'],Return:['Welcome back! This place has come unglued!','Look who it is!'],Save:['A helping hand, and maybe the start of something.','The cavalry has arrived.'],Turn:['Everything just changed.','I did not see that coming, and neither did they.'],'Mind games':['That is going to play on somebody’s mind all week.','Just watching. Just letting them know.'],'Contract signing':['Has a contract signing ever ended well?','Well, the table did not survive.'],Video:['When you see it all laid out like that, you understand why they hate each other.','That is the story so far. The ending is still to be written.'],Stakes:['The stakes just went through the roof.','No going back now.'],Betrayal:['Betrayed by a friend! I feel sick, {p}.','You think you know somebody.'],Attack:['That was not wrestling. That was an assault.','We need help out here!'],Announcement:['Mark your calendar. That one is going to be special.','It is official, and it is going to be a war.']};
 
@@ -855,7 +857,7 @@ function doMatch(S,P,show,m,i,n,rep,used){
   if(bad)FX(false,'Somebody had an off night');
   var ea=avg(effs);if(ea>=92)FX(true,'Everybody worked hard');else if(ea<70)FX(false,'Low effort: morale or fatigue');
   var OV=clamp(Math.round(P.wq*MQ+(1-P.wq)*CR+fr+(rnd(S)*4-2)-(bad?6:0)),5,99);
-  var seg={k:'match',label:br?all.map(function(w){return w.name;}).join(', '):vsLabel(sides),mt:MT[m.mt].n,stip:stip==='std'?null:STIP[stip].n,title:t?t.name:null,mins:mins,mq:Math.round(MQ),cr:Math.round(CR),eff:Math.round(ea),ov:OV,lines:[],finish:'',notes:[],win:win>=0?names(winners):null,fin:fin,fx:fx,ids:all.map(function(w){return w.id;}),odds:od.p.map(function(p){return Math.round(p*100);}),called:called,sidesN:sides.map(names)};
+  var seg={k:'match',label:br?all.map(function(w){return w.name;}).join(', '):vsLabel(sides),mt:MT[m.mt].n,stip:stip==='std'?null:STIP[stip].n,sk:stip==='std'?undefined:stip,title:t?t.name:null,mins:mins,mq:Math.round(MQ),cr:Math.round(CR),eff:Math.round(ea),ov:OV,lines:[],finish:'',notes:[],win:win>=0?names(winners):null,fin:fin,fx:fx,ids:all.map(function(w){return w.id;}),odds:od.p.map(function(p){return Math.round(p*100);}),called:called,sidesN:sides.map(names)};
   // bookkeeping
   all.forEach(function(w){w.lu=S.week;used[w.id]=(used[w.id]||0)+1;w.cond=clamp(w.cond-mins*0.45*(STIP[stip].inj>1.5?1.35:1),5,100);});
   if(m.mt==='1v1')S.recent[P.id+':'+rkey(all[0].id,all[1].id)]=S.week;
@@ -1568,7 +1570,7 @@ E.storyDo=function(S,id,act){
 
 /* Escalation (idea 16): each stipulation needs the feud to be this hot before the crowd believes it.
    A submission or lumberjack match fits early; a cage needs a hot feud; a mask or hair match only a white hot one. */
-var STIP_NEED={sub:20,lumber:25,iron:30,tables:40,hardcore:45,ladder:50,cage:60,hair:70,mask:75};
+var STIP_NEED={sub:20,lumber:25,iron:30,tables:40,hardcore:45,ladder:50,cage:60,fire:65,hair:70,cell:80,mask:75};
 function stipNeed(k){return STIP_NEED[k]||40;}
 /** How a stipulation sits with a feud's heat: 4 earned with room, 1 just earned, -3 too soon (worse the bigger the gap). */
 function stipFitOf(feud,k){if(!feud||!k||k==='std')return 0;var n=stipNeed(k),h=feud.heat;return h>=n+15?4:(h>=n?1:(h>=n-15?-3:-6));}
@@ -5130,7 +5132,7 @@ WEEKX.push(function(S){
    owner's verdict when the player books here. */
 function mAvg(ws,k){return avg(ws.map(function(w){return w[k]==null?60:w[k];}));}
 function isMulti(m){return m.mt==='3way'||m.mt==='4way'||m.mt==='6man'||m.mt==='br';}
-function isGim(stip){return stip==='hardcore'||stip==='ladder'||stip==='cage';}
+function isGim(stip){return stip==='hardcore'||stip==='ladder'||stip==='cage'||stip==='cell'||stip==='fire';}
 function tenureW(S,w){return S.week-(w.jw==null?-104:w.jw);}
 var MGC={};   // main gender per promotion, counted once a week (the roster does not change its mind inside a week)
 function mainG(S,P){var k=S.seed+':'+S.week+':'+P.id,c=MGC[k];if(c)return c;var m=0,f=0;S.w.forEach(function(w){if(w.promo===P.id&&!w.nw){if(w.g==='F')f++;else m++;}});if(Object.keys(MGC).length>200)MGC={};return MGC[k]=f>m?'F':'M';}
@@ -6676,6 +6678,8 @@ E.STIPNOTE={
   hardcore:'Rewards brawlers. Heavy wear and hurts. Not for family shows.',
   ladder:'Rewards high flyers. The biggest risk of a hurt.',
   cage:'Rewards brawlers. Good for ending a feud.',
+  cell:'A cage with a roof. Rewards brawlers. Heavy wear and hurts. Needs the hottest feud, and ends it.',
+  fire:'The ring is ringed with flames. Rewards brawlers. Needs a hot feud. Not for family shows.',
   sub:'Rewards technicians.',
   iron:'Thirty minutes. Only the fittest should try it.',
   tables:'Rewards brawlers. A heavy risk of a hurt. Purist and family crowds hate it.',
@@ -7462,7 +7466,7 @@ var SCHEMAS={
   teams:{required:['id','name','member_ids','promotion_id'],fields:{id:'id',name:'str',kind:['tag','stable'],member_ids:'list',leader_id:'str?',experience:'num?',chemistry:'num?',finisher:'str?',promotion_id:'str'}},
   relationships:{required:['a','b','type'],fields:{a:'str',b:'str',type:REL_TYPES,strength:'num?',ring_chemistry:'num?',note:'str?'}},
   events:{required:['month','name'],fields:{month:'int',name:'str',rule:'str?'}},
-  shows:{required:['id','promotion_id','name'],fields:{id:'id',promotion_id:'str',name:'str',brand:'str?',weight:'num?'}}
+  shows:{required:['id','promotion_id','name'],fields:{id:'id',promotion_id:'str',name:'str',brand:'str?',weight:'num?',network:'str?',network_size:'int?',years_on_air:'int?'}}
 };
 function lev(a,b){var m=[],i,j;for(i=0;i<=a.length;i++){m[i]=[i];}for(j=1;j<=b.length;j++)m[0][j]=j;for(i=1;i<=a.length;i++)for(j=1;j<=b.length;j++)m[i][j]=Math.min(m[i-1][j]+1,m[i][j-1]+1,m[i-1][j-1]+(a[i-1]===b[j-1]?0:1));return m[a.length][b.length];}
 function nearest(f,names){var best=null,bd=3;names.forEach(function(n){var d=lev(f,n);if(d<bd){bd=d;best=n;}});return best?' (did you mean '+best+'?)':'';}
@@ -7542,6 +7546,8 @@ E.validateUniverse=function(pkg,fileList){
     if(p.model!=null&&!MODELS[p.model])warn(at,'unknown model '+JSON.stringify(p.model)+nearest(String(p.model),Object.keys(MODELS))+'; the promotion runs as an independent');
   });
   if((pkg.promotions||[]).length<2)err('promotions','a universe needs at least two promotions');
+  if(pkg.networks&&typeof pkg.networks==='object')['small','cable','major'].forEach(function(k){var L=pkg.networks[k];if(L!=null&&(!Array.isArray(L)||L.length<2))warn('networks',k+' needs two names or more; the game uses its own');});
+  (pkg.shows||[]).forEach(function(s,i){if(s.network_size!=null&&(s.network_size<0||s.network_size>2))warn('shows['+i+'] '+s.id,'network_size '+s.network_size+' clamped to 0 (small) to 2 (major)');});
   var ev=pkg.events||[];if(ev.length&&ev.length<12)warn('events',ev.length+' events listed; months without one use a default name');
   // media: safe relative paths, allowed types, then existence
   var miss=0;
@@ -7566,7 +7572,10 @@ function buildDB(pkg){
       cities:p.cities&&p.cities.length?p.cities.slice():['the city'],brands:p.brands&&p.brands.length?p.brands.map(function(b){return {id:b.id,name:b.name,dev:!!b.dev};}):null,shows:[],titles:[],teams:[],media:p.media||null};
     promos.push(d);PR[p.id]=d;
   });
-  (pkg.shows||[]).forEach(function(s){PR[s.promotion_id].shows.push({id:s.id,name:s.name,brand:s.brand||undefined,mult:s.weight!=null?clamp(s.weight,0.2,1):1});});
+  (pkg.shows||[]).forEach(function(s){var x={id:s.id,name:s.name,brand:s.brand||undefined,mult:s.weight!=null?clamp(s.weight,0.2,1):1};
+    // what the world says about its time on the air: the network, how big it is, how many years it has run (src/88-shows.js reads them once)
+    if(s.network)x.wn=String(s.network).slice(0,40);if(s.network_size!=null)x.wt=clamp(s.network_size|0,0,2);if(s.years_on_air!=null)x.wy=clamp(s.years_on_air|0,0,60);
+    PR[s.promotion_id].shows.push(x);});
   var home={},con={};(pkg.contracts||[]).forEach(function(c){if((c.contract_type||'exclusive')==='exclusive'||!home[c.worker_id]){home[c.worker_id]=c.promotion_id;con[c.worker_id]=c;}});
   (pkg.titles||[]).forEach(function(t){PR[t.promotion_id].titles.push({id:t.id,name:t.name,g:t.gender,lvl:clamp(t.level,1,3),tag:!!t.tag,brand:t.brand||undefined,belt:t.belt&&typeof t.belt==='object'?JSON.parse(JSON.stringify(t.belt)):undefined,holders:(t.holder_ids||[]).every(function(h){return home[h]===t.promotion_id;})?(t.holder_ids||[]).map(function(h){return '#'+h;}):[]});});
   var stables=[];
@@ -7586,10 +7595,12 @@ function buildDB(pkg){
   var ev=[];for(var m=0;m<12;m++)ev.push(MONTHS[m]+' Showcase');(pkg.events||[]).forEach(function(e){if(e.month>=1&&e.month<=12)ev[e.month-1]=e.name;});
   var nm=pkg.names||{};
   return {fictional:!!man.fictional,uni:{id:man.id,name:man.name,version:String(man.version||'1'),author:man.author||'',desc:man.description||''},startYear:man.start_year||2026,startMonth:clamp((man.start_month||10)-1,0,11),
-    events:ev,rules:(pkg.events||[]).reduce(function(o,e){if(e.rule)o[e.month-1]=e.rule;return o;},{}),sponsors:pkg.sponsors&&pkg.sponsors.length?pkg.sponsors:null,columnists:pkg.columnists&&pkg.columnists.length?pkg.columnists:null,scenes:Array.isArray(pkg.scenes)&&pkg.scenes.length?pkg.scenes:null,backdrops:Array.isArray(pkg.backdrops)&&pkg.backdrops.length?pkg.backdrops:null,
+    events:ev,rules:(pkg.events||[]).reduce(function(o,e){if(e.rule)o[e.month-1]=e.rule;return o;},{}),sponsors:pkg.sponsors&&pkg.sponsors.length?pkg.sponsors:null,columnists:pkg.columnists&&pkg.columnists.length?pkg.columnists:null,scenes:Array.isArray(pkg.scenes)&&pkg.scenes.length?pkg.scenes:null,backdrops:Array.isArray(pkg.backdrops)&&pkg.backdrops.length?pkg.backdrops:null,networks:netsOf(pkg.networks),stips:Array.isArray(pkg.stips)&&pkg.stips.length?pkg.stips:null,segkinds:Array.isArray(pkg.segkinds)&&pkg.segkinds.length?pkg.segkinds:null,
     indie:{firstM:nm.first_m&&nm.first_m.length>=8?nm.first_m:FALLBACK_NAMES.firstM,firstF:nm.first_f&&nm.first_f.length>=6?nm.first_f:FALLBACK_NAMES.firstF,last:nm.last&&nm.last.length>=8?nm.last:FALLBACK_NAMES.last},
     freeAgents:man.free_agents!=null?clamp(man.free_agents,0,120):36,promotions:promos,rows:rows,stables:stables,rels:(pkg.relationships||[]).filter(function(r){return W[r.a]&&W[r.b];})};
 }
+/** A world's own network names, by size (small, cable, major): a list of two or more is used, anything else keeps the game's own. */
+function netsOf(n){if(!n||typeof n!=='object')return null;var out=[null,null,null],any=false;['small','cable','major'].forEach(function(k,t){var L=Array.isArray(n[k])?n[k].map(function(x){return String(x).trim().slice(0,40);}).filter(Boolean):[];if(L.length>1){out[t]=L;any=true;}});return any?out:null;}
 var FALLBACK_NAMES={firstM:['Cass','Dex','Rowan','Milo','Jett','Bram','Niko','Tobin','Ozzy','Rafe','Koda','Lars','Emmett','Zeke','Idris','Mateo','Hollis','Ansel','Tycho','Wade','Remy','Stellan','Jonas','Caius','Boone','Cyrus','Ellis','Flint','Gideon','Hale','Kip','Magnus','Nash','Orrin','Pax','Quill','Ridley','Silas','Thane','Vaughn'],
   firstF:['Mara','Juno','Petra','Sable','Liv','Odessa','Rue','Tamsin','Noor','Vesper','Indra','Calla','Wren','Zora','Astrid','Bex','Cleo','Dahlia','Esme','Faye','Greta','Harlow','Ione','Kit','Lux','Nell','Opal','Quinn','Romy','Sloane','Thea','Willa'],
   last:['Harrow','Vale','Quist','Marlowe','Stroud','Bellamy','Thorne','Castellan','Rusk','Devane','Halloran','Maddox','Sorrell','Lindqvist','Rourke','Kessler','Brannigan','Whitlock','Drummond','Ferro','Pruitt','Ashdown','Barrowe','Calloway','Easton','Fairbanks','Galloway','Hathaway','Jessup','Mercer','Northcott','Pemberton','Radcliffe','Tillman','Underhill','Wexler','Zeller','Blackwood','Crane','Granger','Kincaid','Novak']};
@@ -7617,7 +7628,7 @@ E.exportUniverse=function(S,meta){
   S.w.forEach(function(w){if(w.rt)return;var u=w.uid&&ID_RE.test(w.uid)&&!used[w.uid]?w.uid:slug(w.name)||'worker';if(u.length<2)u='w_'+u;var b=u,n=2;while(used[u])u=(b.slice(0,36)+'_'+(n++));used[u]=1;uid[w.id]=u;});
   var c0=cal(S.week),pkg={manifest:{id:slug(meta.id||meta.name||'my_universe')||'my_universe',name:meta.name||'My universe',author:meta.author||(S.booker?S.booker.name:''),version:meta.version||'1.0',schema_version:SCHEMA_VERSION,fictional:!!d.fictional,start_year:c0.year,start_month:c0.month+1,free_agents:0,description:meta.description||'Exported from Elite Wrestling Federation 9000, '+c0.label+'.'},
     promotions:[],shows:[],titles:[],workers:[],contracts:[],teams:[],relationships:[],events:d.events.map(function(n,i){var o={month:i+1,name:n};if(d.rules&&d.rules[i])o.rule=d.rules[i];return o;}),names:{first_m:d.indie.firstM,first_f:d.indie.firstF,last:d.indie.last}};
-  if(d.sponsors)pkg.sponsors=d.sponsors;if(d.columnists)pkg.columnists=d.columnists;if(d.scenes)pkg.scenes=d.scenes;if(d.backdrops)pkg.backdrops=d.backdrops;
+  if(d.sponsors)pkg.sponsors=d.sponsors;if(d.columnists)pkg.columnists=d.columnists;if(d.scenes)pkg.scenes=d.scenes;if(d.backdrops)pkg.backdrops=d.backdrops;if(d.segkinds)pkg.segkinds=d.segkinds;if(d.stips)pkg.stips=d.stips;if(d.networks){pkg.networks={};['small','cable','major'].forEach(function(k,t){if(d.networks[t])pkg.networks[k]=d.networks[t].slice();});}
   S.order.forEach(function(id){
     var P=P0[id],own=id===S.player?{name:S.owner.name,style:S.owner.style,roots:S.owner.roots,pledge:S.owner.pledge}:(P.owner||{name:'The owner',style:P.style||'stars',roots:'tradition',pledge:'pay'});
     var o={id:pid(id),name:P.name,blurb:P.blurb||'',owner:own,staff:{road_agent:P.staff.agent,head_writer:P.staff.writer},announcers:P.ann.slice(),cities:P.cities.slice(),cash:Math.round(P.cash),popularity:r1(P.image),work_rate_weight:P.wq,angles_per_show:P.angles,wage_scale:P.wageMult,tv_rate:P.tvRate,production_cost:P.prod,target_weekly_net:P.net,flagship_month:P.flagship+1,production_level:P.prodLvl,risk_level:P.risk,tv_slot:P.slot};
@@ -7625,7 +7636,7 @@ E.exportUniverse=function(S,meta){
     if(P.model)o.model=P.model;if(P.logo)o.logo=JSON.parse(JSON.stringify(P.logo));
     if(P.events)o.events=P.events.map(function(e,i){var x={month:i+1,name:e.n,type:e.t};if(e.rule)x.rule=e.rule;return x;});
     pkg.promotions.push(o);
-    P.shows.forEach(function(s){var x={id:slug(id+'_'+s.id),promotion_id:pid(id),name:s.name,weight:s.mult==null?1:s.mult};if(s.brand)x.brand=s.brand;pkg.shows.push(x);});
+    P.shows.forEach(function(s){var x={id:slug(id+'_'+s.id),promotion_id:pid(id),name:s.name,weight:s.mult==null?1:s.mult};if(s.brand)x.brand=s.brand;if(s.net){x.network=s.net;x.network_size=s.tier;x.years_on_air=airYears(S,s);}pkg.shows.push(x);});
     P.titles.forEach(function(t){var x={id:slug(t.id),promotion_id:pid(id),name:t.name,gender:t.g,level:t.lvl,tag:!!t.tag,holder_ids:t.holders.map(function(h){return uid[h];}).filter(Boolean)};if(t.brand)x.brand=t.brand;if(t.belt)x.belt=JSON.parse(JSON.stringify(t.belt));pkg.titles.push(x);});
   });
   var push=S.order.reduce(function(o,id){var m=E.pushMap(S,id);Object.keys(m).forEach(function(k){o[k]=m[k];});return o;},{});
@@ -7958,16 +7969,20 @@ E.edRemoveBrand=function(pkg,pid,bid){
 /** Put a show, belt or contract on a brand ('' for none). */
 E.edPutBrand=function(rec,bid){if(!rec)return;if(bid)rec.brand=bid;else delete rec.brand;};
 /* ---------- the world's own lists: sponsors, columnists and the names newcomers are given ---------- */
-var ED_LISTS={sponsors:['sponsors'],columnists:['columnists'],first_m:['names','first_m'],first_f:['names','first_f'],last:['names','last']};
+var ED_LISTS={sponsors:['sponsors'],columnists:['columnists'],first_m:['names','first_m'],first_f:['names','first_f'],last:['names','last'],
+  net_small:['networks','small'],net_cable:['networks','cable'],net_major:['networks','major']};
 /** A world list as text, one name a line. */
-E.edListText=function(pkg,key){var k=ED_LISTS[key];if(!k)return '';var v=k.length===1?pkg[k[0]]:(pkg.names||{})[k[1]];return (v||[]).join('\n');};
+E.edListText=function(pkg,key){var k=ED_LISTS[key];if(!k)return '';var v=k.length===1?pkg[k[0]]:(pkg[k[0]]||{})[k[1]];return (v||[]).join('\n');};
 /** Set a world list from text, one name a line. Blank lines and repeats go; an empty list goes back to the game's own. */
 E.edSetList=function(pkg,key,text){
   var k=ED_LISTS[key];if(!k)return 0;var seen={},L=String(text||'').split(/\r?\n/).map(function(x){return x.trim().slice(0,40);}).filter(function(x){if(!x||seen[x])return false;seen[x]=1;return true;}).slice(0,200);
   if(k.length===1){if(L.length)pkg[k[0]]=L;else delete pkg[k[0]];}
-  else{var N=pkg.names||(pkg.names={});if(L.length)N[k[1]]=L;else delete N[k[1]];if(!Object.keys(N).length)delete pkg.names;}
+  else{var N=pkg[k[0]]||(pkg[k[0]]={});if(L.length)N[k[1]]=L;else delete N[k[1]];if(!Object.keys(N).length)delete pkg[k[0]];}
   return L.length;
 };
+/** The three sizes of network a show can be on, in order (0 small, 1 cable, 2 major), and the game's own names for each. */
+E.NET_SIZES=[['small','A small network'],['cable','A cable network'],['major','A major network']];
+E.edNetNames=function(pkg,t){var k=E.NET_SIZES[t]&&E.NET_SIZES[t][0],L=k&&pkg.networks&&pkg.networks[k];return L&&L.length>1?L.slice():AIR_NETS[t].slice();};
 /** A world ready to rename instead of build. 'territory': two companies sharing a region, one bigger than the other.
     'nine': nine companies, one of each model, from a national giant down to a small promotion, every roster filled with
     unknowns. Names are invented and plain, made to be changed. */
@@ -9638,12 +9653,14 @@ function airOf(S,P,sh){
   else{
     // a show that was running when the game began: the bigger the company, the longer it has been on the air
     var yrs=P.model==='startup'?0:clamp(Math.round((P.image0-32)/2.2)+k%4,1,40);if(!main)yrs=Math.max(1,Math.floor(yrs*m*0.5));
+    if(sh.wy!=null)yrs=sh.wy;   // the world says how long it has run
     sh.on=1-(yrs*AIR_YEAR+k%AIR_YEAR);
     sh.pr=clamp(Math.round((P.image0*(yrs<2?0.35:0.55)+yrs*1.1)*(main?1:0.8)),5,95);
     sh.tier=Math.max(0,airTier0(P)-(main||k%2?0:1));
   }
+  if(sh.wt!=null)sh.tier=sh.wt;
   sh.ep=Math.max(0,S.week-sh.on);sh.pr0=sh.pr;sh.prd=sh.pr;sh.tier0=sh.tier;sh.rate=1;sh.moves=0;sh.deals=0;
-  sh.net=airPickNet(S,P,sh,sh.tier,null);
+  sh.net=sh.wn||airPickNet(S,P,sh,sh.tier,null);
   sh.netOn=young?sh.on:Math.max(sh.on,S.week-((k>>>3)%7+1)*AIR_YEAR);
   sh.deal=young?sh.on+airDealWeeks(P,sh):S.week+24+(k>>>5)%120;
   airStep(sh);return sh;
@@ -10058,7 +10075,7 @@ var NET_TASTE={
   niche:{n:'Niche',d:'cares less about the numbers, and likes long, serious matches.'}
 };
 var NET_KEYS=['family','sport','late','niche'];
-function netTaste(name){if(/Sport/.test(name))return 'sport';if(/Gaslight|Midnight|Late/.test(name))return 'late';return NET_KEYS[hash('taste:'+name)%NET_KEYS.length];}
+function netTaste(name){if(/Sport/.test(name))return 'sport';if(/Family|Kids/.test(name))return 'family';if(/Indie|Underground|Cult/.test(name))return 'niche';if(/Gaslight|Midnight|Late/.test(name))return 'late';return NET_KEYS[hash('taste:'+name)%NET_KEYS.length];}
 /** The ratings target for a show's deal. Set when it is first asked for, and again when a deal is signed. */
 function netTarget(sh){if(!sh.tgt&&sh.va)sh.tgt=Math.round(sh.va*(netTaste(sh.net)==='niche'?0.85:0.97));return sh.tgt||0;}
 /** Did tonight go against the network's taste? Returns a short reason, or ''. */
@@ -10132,8 +10149,8 @@ EVR.netexec=function(S,ev,choice,P){
 /** Before the bell: will tonight's card go against the network's taste? A short line for Tonight's stakes, or ''. */
 function netCardClash(S,show,card){
   var P=S.promos[S.player],sh=show&&!show.big?airRec(P,show.id):null;if(!sh||!sh.net||!card.length)return '';
-  var t=netTaste(sh.net),talk=segRead(S).length,hc=card.filter(function(m){return m&&(m.stip==='hardcore'||m.stip==='tables'||m.stip==='ladder');}).length,st=card.some(function(m){return m&&m.stip&&m.stip!=='std';});
-  if(t==='family'&&hc)return sh.net+' is a family network, and a '+STIP[card.filter(function(m){return m&&(m.stip==='hardcore'||m.stip==='tables'||m.stip==='ladder');})[0].stip].n.toLowerCase()+' match will not go down well.';
+  var t=netTaste(sh.net),talk=segRead(S).length,hc=card.filter(function(m){return m&&(/^(hardcore|tables|ladder|fire|cell)$/.test(stipBase(m.stip)));}).length,st=card.some(function(m){return m&&m.stip&&m.stip!=='std';});
+  if(t==='family'&&hc)return sh.net+' is a family network, and a '+STIP[card.filter(function(m){return m&&(/^(hardcore|tables|ladder|fire|cell)$/.test(stipBase(m.stip)));})[0].stip].n.toLowerCase()+' match will not go down well.';
   if(t==='sport'&&talk>card.length)return sh.net+' is a sport network, and tonight has more talking than wrestling.';
   if(t==='late'&&!talk&&!st)return sh.net+' is a late night network, and tonight has nothing to talk about: no promo, no angle, no stipulation.';
   return '';
@@ -10197,7 +10214,7 @@ WEEKX.push(function(S){
 /* each region has a taste, and the wrong product plays flat there */
 function tasteVal(taste,ws,stips){
   if(!ws.length)return 0;
-  if(taste==='brawl')return (avg(ws.map(function(w){return w.brawl;}))-74)/10+(stips.filter(function(s){return s==='hardcore'||s==='cage'||s==='tables';}).length?0.3:0);
+  if(taste==='brawl')return (avg(ws.map(function(w){return w.brawl;}))-74)/10+(stips.filter(function(s){return /^(hardcore|cage|cell|fire|tables)$/.test(stipBase(s));}).length?0.3:0);
   if(taste==='work')return (avg(ws.map(workRate))-74)/10;
   return (avg(ws.map(function(w){return w.sq;}))-76)/10+(stips.filter(function(s){return s==='ladder'||s==='mask'||s==='hair';}).length?0.3:0);
 }
@@ -10220,7 +10237,7 @@ E.tasteForecast=function(S,card){
 CRX.push(function(ctx){
   var P=ctx.P;if(!ctx.isPl||ctx.S.cal)return null;
   var home=!P.tour,k=home?0.7:1,t=(home?REGIONS[homeReg(P)]:REGIONS[P.tour.reg]).taste,all=ctx.all,d=0,x=null;
-  if(t==='brawl'){var b=avg(all.map(function(w){return w.brawl;}));if(b>=62||ctx.stip==='hardcore'||ctx.stip==='cage'){d=1.5;x='A brawl, and this region likes a brawl';}else if(b<=48){d=-1.5;x='Too gentle for a region that likes a fight';}}
+  if(t==='brawl'){var b=avg(all.map(function(w){return w.brawl;}));if(b>=62||/^(hardcore|cage|cell|fire)$/.test(stipBase(ctx.stip))){d=1.5;x='A brawl, and this region likes a brawl';}else if(b<=48){d=-1.5;x='Too gentle for a region that likes a fight';}}
   else if(t==='work'){var wk=avg(all.map(workRate));if(wk>=65){d=1.5;x='Fine wrestling for a region that counts the holds';}else if(wk<50){d=-1.5;x='Sloppy work in front of a region that notices';}}
   else{var sq=avg(all.map(function(w){return w.sq;}));if(sq>=65||ctx.stip==='ladder'){d=1.5;x='Spectacle, and this region came for spectacle';}else if(sq<=45){d=-1.5;x='Plain stuff for a region that wants spectacle';}}
   return d?{d:d*k,x:x}:null;
@@ -11032,6 +11049,8 @@ SHOWX.push(function(S,P,show,rep){
   if(rep.sellout){S.soRun=(S.soRun||0)+1;rep.soRun=S.soRun;if(S.soRun>=3)S.hype=(S.hype||0)+0.02;if(S.soRun===5||S.soRun===10||S.soRun===20)news(S,'world',P.name+' has sold out '+S.soRun+' shows in a row.');}
   else{if((S.soRun||0)>=3)rep.soEnd=S.soRun;S.soRun=0;}
 });
+/** Every city the road can place, for the World Editor's city list. */
+E.knownCities=function(){return Object.keys(CITY_AT).sort();};
 
 /* ===== 91-shapes.js ===== */
 /* ---------- the shapes of the road: generated by tools/build-maps.js. Do not edit by hand. ----------
@@ -11835,6 +11854,151 @@ E.segSuggest=function(S,max,card){
   };
   E.runPlayerShow=function(S,card){var r=r0(S,card);if(!r.errors){S.segs=[];S.segKey=null;}return r;};
 })();
+
+/* ===== 93-segworld.js ===== */
+/* A world's own promos and angles (TASKS.md 0u, rule 9c): made in the World Editor's Stories tab, kept in the world
+   package (pkg.segkinds), carried into a game (S.db.segkinds) and booked on the run sheet like the game's own kinds.
+   Each says who is in it (one or two), which scene plays, and what it does: heats a feud or starts one, moves how
+   the two feel about each other (relBump), gives the one who leads it a lift. Ids start with c_. */
+var SEGFX=[['none','Nothing beyond the segment'],['heat','Heats the feud they have'],['start','Starts a feud, or heats theirs']];
+var SEGHEAT=[[4,'A little'],[8,'Some'],[12,'A lot']];
+var SEGBOND=[[8,'Closer friends'],[0,'No change'],[-8,'Worse enemies']];
+/** The game's own kinds as they ship, so a world can change one (its name, what the booker reads, the characters'
+    labels, the scene it plays, the report's line) and put it back. What it does in the game stays the game's. */
+var SEGK0={};Object.keys(SEGK).forEach(function(k){SEGK0[k]=SEGK[k];});
+function segoClean(k){
+  var txt=function(v,n){return String(v==null?'':v).replace(/\s+/g,' ').trim().slice(0,n);},B=SEGK0[k.id];
+  var roles=B.roles.map(function(r,i){return txt(Array.isArray(k.roles)?k.roles[i]:'',24)||r;});
+  return {id:k.id,over:1,n:txt(k.n,28)||B.n,t:B.t,roles:roles,d:txt(k.d,160),scene:txt(k.scene,60),line:txt(k.line,160)};
+}
+function segkClean(k){
+  if(!k||typeof k!=='object')return null;
+  var txt=function(v,n){return String(v==null?'':v).replace(/\s+/g,' ').trim().slice(0,n);},pick=function(L,v,d){for(var i=0;i<L.length;i++)if(String(L[i][0])===String(v))return L[i][0];return d;};
+  var id=String(k.id||'');if(SEGK0[id]&&id!=='writers')return segoClean(k);
+  if(!/^c_[a-z0-9_]{1,40}$/.test(id))id='c_'+(txt(k.n,28).toLowerCase().replace(/[^a-z0-9]+/g,'_').replace(/^_|_$/g,'')||'story');
+  var roles=(Array.isArray(k.roles)?k.roles:[]).map(function(r){return txt(r,24);}).filter(Boolean).slice(0,2);if(!roles.length)roles=['Who it is about'];
+  return {id:id,n:txt(k.n,28)||'My segment',t:k.t==='angle'?'angle':'promo',roles:roles,d:txt(k.d,160),fx:pick(SEGFX,k.fx,'none'),heat:pick(SEGHEAT,k.heat,8),bond:pick(SEGBOND,k.bond,0),
+    lift:k.lift?1:0,scene:txt(k.scene,60),line:txt(k.line,160)};
+}
+/** The world's own kinds into SEGK for this game (and out again when another game or world is loaded). */
+function segkSync(S){
+  var L=S&&S.db&&Array.isArray(S.db.segkinds)?S.db.segkinds:[],key=L.map(function(k){return k&&k.id;}).join(',');
+  if(SEGK.__key===key)return;
+  Object.keys(SEGK).forEach(function(k){if(SEGK[k]&&SEGK[k].custom)delete SEGK[k];});
+  Object.keys(SEGK0).forEach(function(k){SEGK[k]=SEGK0[k];});
+  L.forEach(function(k0){var k=segkClean(k0);if(!k)return;
+    if(k.over){var B=SEGK0[k.id],o={};Object.keys(B).forEach(function(x){o[x]=B[x];});o.n=k.n;o.roles=k.roles;if(k.d)o.d=k.d;o.over=k;SEGK[k.id]=o;return;}
+    if(SEGK[k.id])return;SEGK[k.id]={len:'M',n:k.n,t:k.t,roles:k.roles,d:k.d||(k.t==='promo'?'A promo made for this world.':'An angle made for this world.'),custom:k};});
+  Object.defineProperty(SEGK,'__key',{value:key,writable:true,configurable:true,enumerable:false});
+}
+(function(){
+  var list0=segList,read0=segRead,booked0=segBooked,choices0=segChoices,look0=segLook,label0=segLabel,run0=runSeg;
+  segList=function(S){segkSync(S);return list0(S);};
+  segRead=function(S){segkSync(S);return read0(S);};
+  segBooked=function(S,show,n){segkSync(S);return booked0(S,show,n);};
+  segChoices=function(S,kind,who,slot){var K=SEGK[kind];if(K&&K.custom)return choices0(S,K.roles.length>1?'callout':'interview',who,slot);return choices0(S,kind,who,slot);};
+  segLook=function(S,sg,slot){
+    var K=sg&&SEGK[sg.k];if(!K||!K.custom)return look0(S,sg,slot);
+    var why=segWhy(S,sg,slot);if(why)return {ok:false,why:why};
+    var c=K.custom,a=S.w[sg.who[0]],b=sg.who[1]!=null?S.w[sg.who[1]]:null,f=b?feudOf(S,a.id,b.id):null,notes=[],mid;
+    if(c.t==='promo')mid=segMean(S,b&&micOf(S,b)>micOf(S,a)?b:a,2);else mid=0.8*(a.ovr+(b?b.ovr:a.ovr))/2+6;
+    if(c.fx==='heat')notes.push(f?[1,'It heats the feud they have']:[-1,'They have no feud for it to heat']);
+    if(c.fx==='start')notes.push([1,f?'It heats the feud they have':'It starts a rivalry']);
+    if(c.bond>0&&b)notes.push([1,'They come out of it closer']);if(c.bond<0&&b)notes.push([-1,'They come out of it worse enemies']);
+    if(c.lift)notes.push([1,a.name+' looks good if it goes well']);
+    mid=clamp(Math.round(mid),5,99);return {ok:true,mid:mid,lo:clamp(mid-4,5,99),hi:clamp(mid+4,5,99),notes:notes,mins:segMins(sg)};
+  };
+  segLabel=function(S,sg){var K=SEGK[sg.k];if(!K||!K.custom)return label0(S,sg);var n=sg.who.map(function(id){return S.w[id]?S.w[id].name:'?';});return K.n+': '+n.join(' and ');};
+  runSeg=function(S,P,show,ctx,sg,slot,opens){
+    var K=sg&&SEGK[sg.k];
+    if(K&&K.over){var r0=run0(S,P,show,ctx,sg,slot,opens);if(r0&&K.over.line){var n0=sg.who.map(function(id){return S.w[id]?S.w[id].name:'';});r0.text=K.over.line.replace(/\{a\}/g,n0[0]||'').replace(/\{b\}/g,n0[1]||'').replace(/\{c\}/g,n0[2]||'')+(r0.ov>=72?' The crowd loves it.':(r0.ov<45?' It falls flat.':''));}return r0;}
+    if(!K||!K.custom)return run0(S,P,show,ctx,sg,slot,opens);
+    if(segWhy(S,sg,slot))return null;
+    var c=K.custom,L=segLook(S,sg,slot);if(!L.ok)return null;
+    var ln=segLen(sg),hm=(c.t==='angle'?(ln==='L'?1.25:(ln==='S'?0.8:1)):(ln==='S'?0.85:1)),a=S.w[sg.who[0]],b=sg.who[1]!=null?S.w[sg.who[1]]:null,f=b?feudOf(S,a.id,b.id):null;
+    sg.who.forEach(function(id){ctx.angled[id]=1;});
+    var ov=L.mid+rnd(S)*8-4+(sg.mod||0),why=c.n+': '+a.name+(b?' and '+b.name:'');
+    if(b&&c.fx==='start'&&!f)f=startFeud(S,P,b,a,20+c.heat,why,{force:true});
+    else if(b&&f&&c.fx!=='none')heatUp(S,f,c.heat*hm*clamp(0.6+(ov-50)/50,0.4,1.4),why);
+    if(b&&c.bond)relBump(S,a.id,b.id,{bond:c.bond},{t:why,k:'segment'});
+    if(c.lift&&ov>=60)addOvr(P,a,0.5);
+    var line=c.line?c.line.replace(/\{a\}/g,a.name).replace(/\{b\}/g,b?b.name:''):(b?a.name+' and '+b.name+': '+c.n.toLowerCase()+'.':a.name+': '+c.n.toLowerCase()+'.');
+    var r=angle(c.t==='promo'?'Promo':'Angle',line+(ov>=72?' The crowd loves it.':(ov<45?' It falls flat.':'')),ov);
+    r.booked=c.id;r.ids=sg.who.slice();if(f&&f.id!=null)r.feud=f.id;return r;
+  };
+})();
+E.SEGK0=SEGK0;E.SEGFX=SEGFX;E.SEGHEAT=SEGHEAT;E.SEGBOND=SEGBOND;E.segkClean=segkClean;
+/** The World Editor: a world's own promos and angles. */
+E.edSegKinds=function(pkg){return (pkg&&Array.isArray(pkg.segkinds)?pkg.segkinds:[]).map(segkClean).filter(Boolean);};
+E.edSetSegKind=function(pkg,k){var c=segkClean(k);if(!pkg||!c)return null;var L=E.edSegKinds(pkg).filter(function(x){return x.id!==c.id;});L.push(c);pkg.segkinds=L;return c;};
+E.edNewSegKind=function(pkg,t){var L=E.edSegKinds(pkg),n=1;while(L.some(function(x){return x.id==='c_story_'+n;}))n++;return E.edSetSegKind(pkg,{id:'c_story_'+n,n:(t==='angle'?'My angle ':'My promo ')+n,t:t==='angle'?'angle':'promo',roles:t==='angle'?['The attacker','Who gets attacked']:['Who talks','Who they talk to'],fx:'start',heat:8,bond:0});};
+/** Change one of the game's own kinds for this world: a copy that starts as the game ships it. */
+E.edOverSegKind=function(pkg,id){if(!SEGK0[id]||id==='writers')return null;var have=E.edSegKinds(pkg).find(function(x){return x.id===id;});return have||E.edSetSegKind(pkg,{id:id,n:SEGK0[id].n,roles:SEGK0[id].roles});};
+E.edRemoveSegKind=function(pkg,id){if(pkg&&Array.isArray(pkg.segkinds)){pkg.segkinds=pkg.segkinds.filter(function(x){return x&&x.id!==id;});if(!pkg.segkinds.length)delete pkg.segkinds;}};
+
+/* ===== 93-stipworld.js ===== */
+/* wraps: 78-models.js (it must sort after them; test-buildorder.js checks) */
+/* A world's own match rules: made in the World Editor's Match rules tab, kept in the world package (pkg.stips),
+   carried into a game (S.db.stips) and picked on the card like the included rules. A new rule is built on an
+   included one (its base): it fights like the base, wears and hurts like it and needs the same heat, and has its own
+   name, the set it is played in on the broadcast, the note the booker reads and the lines the commentators say.
+   An entry with the id of an included rule changes that rule for the world (name, set, note, lines) and can be put
+   back. Ids of new rules start with c_. Nothing here calls rnd(S). */
+var STIP_SETS=[['','The ring'],['cage','A steel cage'],['cell','The cell, with its roof'],['inferno','A ring of fire'],['ladder','A belt hung over the ring'],['ballroom','A ballroom'],['gym','A gym'],['bigstadium','A stadium']];
+/** The rules a new one can be built on: the ones whose effects are all in their numbers. */
+var STIP_BASES=['std','hardcore','tables','ladder','cage','cell','fire','sub'];
+STIP.cage.set='cage';STIP.cell.set='cell';STIP.fire.set='inferno';STIP.ladder.set='ladder';
+var STIP0={},STIPNOTE0={},STIPLINE0={},STIPNEED0={};
+Object.keys(STIP).forEach(function(k){STIP0[k]=STIP[k];STIPNOTE0[k]=E.STIPNOTE[k];STIPLINE0[k]=STIPLINE[k];STIPNEED0[k]=STIP_NEED[k];});
+/** The included rule a rule fights like. */
+function stipBase(k){var s=STIP[k];return (s&&s.base)||k;}
+function stipClean(k){
+  if(!k||typeof k!=='object')return null;
+  var txt=function(v,n){return String(v==null?'':v).replace(/\s+/g,' ').trim().slice(0,n);};
+  var set=STIP_SETS.some(function(x){return x[0]===k.set;})?k.set:'',lines=(Array.isArray(k.lines)?k.lines:[]).map(function(x){return txt(x,120);}).filter(Boolean).slice(0,3);
+  var id=String(k.id||'');
+  if(STIP0[id]&&id!=='std')return {id:id,over:1,n:txt(k.n,24)||STIP0[id].n,set:k.set==null?(STIP0[id].set||''):set,d:txt(k.d,160),lines:lines};
+  if(!/^c_[a-z0-9_]{1,40}$/.test(id))id='c_'+(txt(k.n,24).toLowerCase().replace(/[^a-z0-9]+/g,'_').replace(/^_|_$/g,'')||'rule');
+  return {id:id,n:txt(k.n,24)||'My match',base:STIP_BASES.indexOf(k.base)>=0?k.base:'std',set:set,d:txt(k.d,160),lines:lines};
+}
+/** The world's rules into STIP for this game, and out again when another game or world is loaded. */
+function stipSync(S){
+  var L=S&&S.db&&Array.isArray(S.db.stips)?S.db.stips:[],key=JSON.stringify(L);
+  if(stipSync.key===key)return;stipSync.key=key;
+  Object.keys(STIP).forEach(function(k){if(!STIP0[k]){delete STIP[k];delete E.STIPNOTE[k];delete STIPLINE[k];delete STIP_NEED[k];}});
+  Object.keys(STIP0).forEach(function(k){STIP[k]=STIP0[k];E.STIPNOTE[k]=STIPNOTE0[k];if(STIPLINE0[k])STIPLINE[k]=STIPLINE0[k];else delete STIPLINE[k];if(STIPNEED0[k]!=null)STIP_NEED[k]=STIPNEED0[k];});
+  L.forEach(function(k0){var k=stipClean(k0);if(!k)return;
+    var B=STIP0[k.over?k.id:k.base],o={};Object.keys(B).forEach(function(x){o[x]=B[x];});o.n=k.n;o.set=k.set||undefined;
+    if(k.over){o.over=1;STIP[k.id]=o;}else{if(STIP0[k.id])return;o.base=k.base;o.custom=1;STIP[k.id]=o;if(STIPNEED0[k.base]!=null)STIP_NEED[k.id]=STIPNEED0[k.base];}
+    E.STIPNOTE[k.id]=k.d||STIPNOTE0[k.over?k.id:k.base]||(k.over?'':'A match made for this world.');
+    var ln=k.lines.length?k.lines:STIPLINE0[k.over?k.id:k.base];if(ln)STIPLINE[k.id]=ln;else delete STIPLINE[k.id];});
+}
+(function(){
+  var attach0=E.attach,new0=E.newGame;
+  E.attach=function(S){var r=attach0.apply(this,arguments);stipSync(S);return r;};
+  E.newGame=function(){var S=new0.apply(this,arguments);stipSync(S);return S;};
+  // a rule built on a gimmick match counts as one
+  var gim0=isGim;isGim=function(k){return gim0(stipBase(k));};
+})();
+WEEKX.push(function(S){stipSync(S);});
+
+/* ---------- the World Editor ---------- */
+E.STIP0=STIP0;E.STIP_SETS=STIP_SETS;E.STIP_BASES=STIP_BASES;E.stipClean=stipClean;
+E.stipNote0=function(k){return STIPNOTE0[k]||'';};E.stipLines0=function(k){return (STIPLINE0[k]||[]).slice();};
+/** A world's rules, cleaned: its own and the included ones it has changed. */
+E.edStips=function(pkg){return (Array.isArray(pkg.stips)?pkg.stips:[]).map(stipClean).filter(Boolean);};
+function edStipPut(pkg,k){var L=Array.isArray(pkg.stips)?pkg.stips:(pkg.stips=[]),i=L.findIndex(function(x){return x&&x.id===k.id;});if(i>=0)L[i]=k;else L.push(k);}
+/** Keep one rule (a whole record). Returns it as kept. */
+E.edSetStip=function(pkg,k){var c=stipClean(k);if(!c)return null;edStipPut(pkg,c);return c;};
+/** A new rule for this world, built on an included one. */
+E.edNewStip=function(pkg,base){
+  var L=E.edStips(pkg),n=1,id;do{id='c_rule_'+n++;}while(L.some(function(x){return x.id===id;}));
+  var b=STIP_BASES.indexOf(base)>=0?base:'cage',k=stipClean({id:id,n:'New match',base:b,set:STIP0[b].set||''});edStipPut(pkg,k);return k;
+};
+/** Change an included rule for this world, starting from how it ships. */
+E.edOverStip=function(pkg,id){if(!STIP0[id]||id==='std')return null;var k=stipClean({id:id,n:STIP0[id].n,set:STIP0[id].set||'',d:'',lines:[]});edStipPut(pkg,k);return k;};
+/** Take a world's rule out, or put an included one back as it ships. */
+E.edRemoveStip=function(pkg,id){if(!Array.isArray(pkg.stips))return false;var n=pkg.stips.length;pkg.stips=pkg.stips.filter(function(x){return !x||x.id!==id;});if(!pkg.stips.length)delete pkg.stips;return n!==(pkg.stips||[]).length;};
 
 /* ===== 94-livefeed.js ===== */
 /* The live feed: what people post while your show is on the air (Ryan, 19 October: the broadcast's right side is "a
@@ -14089,7 +14253,7 @@ E.couldHappen=function(S){
     if(f&&f.heat>=60)out.moments.push(feudLabel(S,f)+' could boil over.');
     if(m.mt==='br'&&m.shot)out.moments.push('Somebody leaves the battle royal with a title shot.');
     if(m.mt==='br'&&m.surp)out.moments.push('A face from outside could walk through the curtain.');
-    if(m.int==='brutal'||m.stip==='ladder'||m.stip==='cage')flat(m.sides).forEach(function(id){var w=S.w[id];if(w.cond<65&&!seen[id]){seen[id]=1;out.risk.push(w.name+' is worn, in a match that hurts.');}});
+    if(m.int==='brutal'||m.stip==='ladder'||m.stip==='cage'||m.stip==='cell')flat(m.sides).forEach(function(id){var w=S.w[id];if(w.cond<65&&!seen[id]){seen[id]=1;out.risk.push(w.name+' is worn, in a match that hurts.');}});
     if(f)out.sets.push(m.end?feudLabel(S,f)+' ends here: the next story starts from what happens.':feudLabel(S,f)+' moves on.');
     if(m.title&&i<card.length-1)out.sets.push('A title match below the main event: a new champion would need a story.');
   });

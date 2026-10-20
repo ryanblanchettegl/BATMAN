@@ -44,7 +44,7 @@ export function ScenePlayer(p: { sc: Scene; cast: Record<string, Recipe>; play: 
     raf = requestAnimationFrame(step); return () => cancelAnimationFrame(raf);
   }, [p.play, size[0], size[1], flat]);
   const fx = fxClass(p.sc);
-  return <div ref={box} class={'lv-scene' + fx} data-t={p.t || 'live-scene'} data-v={p.sc.id} data-3d={eng.current ? 1 : 0} role="img" aria-label={p.label}>
+  return <div ref={box} class={'lv-scene' + fx} data-t={p.t || 'live-scene'} data-v={p.sc.id} data-set={p.sc.set} data-3d={eng.current ? 1 : 0} role="img" aria-label={p.label}>
     <canvas ref={c3} style={{ width: size[0] + 'px', height: size[1] + 'px', display: flat ? 'none' : 'block' }} />
     {flat && <canvas ref={cv} style={{ width: size[0] + 'px', height: size[1] + 'px' }} />}
     {fx && <FxVeil w={size[0]} h={size[1]} />}

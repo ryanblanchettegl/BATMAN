@@ -80,6 +80,9 @@ Everybody and everything has an id: short, lowercase, with underscores (`colt_hi
 - `brand`: the show books only that brand's roster. Leave it out and the show books everybody, the way one company with several shows does.
 - `weight`: how big the show is (1 is the main show, 0.4 a small one).
 - A show's night comes from its name (Monday, Wednesday, Sábado and so on). Two companies in the same region on the same night go head to head.
+- `network`, `network_size`, `years_on_air`: the network the show is on, how big it is (0 small, 1 cable, 2 major) and how many years it has run. Leave them out and the game works them out from the company's size. A show with years behind it starts with a standing to match.
+- The world's file can carry its own match rules: `"stips": [{ "id": "c_shark_tank", "n": "Shark tank", "base": "hardcore", "set": "inferno", "d": "Over a tank of water.", "lines": ["Nobody wants to fall in."] }]`. A rule fights like its `base` (`std`, `hardcore`, `tables`, `ladder`, `cage`, `cell`, `fire`, `sub`). `set` is where the broadcast shows it: empty for the ring, or `cage`, `cell`, `inferno`, `ladder`, `ballroom`, `gym`, `bigstadium`. An entry with the id of an included rule (`cage`, `ladder` and so on) renames it and changes its set, note and lines for the world.
+- The world's file can name its own networks by size: `"networks": { "small": [...], "cable": [...], "major": [...] }`, two names or more in a list. A word in a name says what the network wants: Sports, Family or Kids, Late or Midnight, Indie or Cult.
 
 ### titles
 

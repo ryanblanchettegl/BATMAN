@@ -84,7 +84,7 @@ export interface Look {
 }
 export const ATTIRES: [AttireKey, string, string][] = [['primary_ring', 'Ring gear', 'In-ring gear'], ['entrance_gear', 'Entrance', 'Ring walk and entrance'], ['street_clothes', 'Street clothes', 'Backstage and promos']];
 /** Which outfit a set calls for: ring gear in the ring, entrance gear on the ramp, street clothes backstage. */
-export const ATTIRE_OF: Record<string, AttireKey> = { ring: 'primary_ring', ringlow: 'primary_ring', ringcorner: 'primary_ring', plain: 'primary_ring', ramp: 'entrance_gear', hall: 'street_clothes', office: 'street_clothes', locker: 'street_clothes', backstage: 'street_clothes', desk: 'street_clothes', stadium: 'primary_ring', rafters: 'entrance_gear', lot: 'street_clothes', cage: 'primary_ring' };
+export const ATTIRE_OF: Record<string, AttireKey> = { ring: 'primary_ring', ringlow: 'primary_ring', ringcorner: 'primary_ring', plain: 'primary_ring', ramp: 'entrance_gear', hall: 'street_clothes', office: 'street_clothes', locker: 'street_clothes', backstage: 'street_clothes', desk: 'street_clothes', stadium: 'primary_ring', rafters: 'entrance_gear', lot: 'street_clothes', cage: 'primary_ring', cell: 'primary_ring', inferno: 'primary_ring', ringside: 'primary_ring', ballroom: 'primary_ring', gym: 'primary_ring', bigstadium: 'primary_ring', talk: 'street_clothes', news: 'street_clothes', ladder: 'primary_ring', catering: 'street_clothes', trainer: 'primary_ring', weights: 'street_clothes' };
 
 /* ---------- swatches: card, foil, corrugated board, neon paper ---------- */
 export type Fin = 'matte' | 'foil' | 'corr' | 'neon' | 'denim' | 'leather';
@@ -306,7 +306,8 @@ export const KICKOUT: [string, string][] = [['Easy', 'Easy: kicked out of often'
 export const POSITIONS: [string, string][] = [['Standing', 'Standing'], ['Running', 'Running'], ['Top Rope', 'From the top rope'], ['Counter', 'On the counter']];
 export const CATEGORIES: [string, string][] = [['Pinfall Impact', 'A big impact, then the pin'], ['Submission', 'A hold until they give up']];
 /** The scene a finisher plays as, by the pose it names (old names from the first draft still work). */
-export const FIN_SCENES: [string, string][] = [['slam', 'Lift and slam'], ['carry', 'Over the shoulders'], ['sleeper', 'A hold from behind'], ['strike', 'A big strike'], ['finish', 'Straight into the cover']];
+export const FIN_SCENES: [string, string][] = [['slam', 'Lift and slam'], ['carry', 'Over the shoulders'], ['sleeper', 'A hold from behind'], ['strike', 'A big strike'], ['finish', 'Straight into the cover'],
+  ['move_clothesline', 'A clothesline'], ['move_spear', 'A spear'], ['move_suplex', 'A vertical suplex'], ['move_powerbomb', 'A powerbomb'], ['move_ddt', 'A DDT'], ['move_topdive', 'A splash off the top'], ['move_moonsault', 'A moonsault'], ['move_tope', 'A dive to the outside'], ['move_cornerhit', 'A charge into the corner'], ['move_superplex', 'A superplex']];
 const FIN_ALIAS: Record<string, string> = { pose_slam_impact_01: 'slam', pose_submission_01: 'sleeper', pose_strike_01: 'strike', pose_carry_01: 'carry', pose_cover_01: 'finish' };
 /** The first move is the finisher; the rest are signature moves, played during the match. */
-export function finScene(f: Finisher): string { const p = f.preview_pose_id || ''; return FIN_SCENES.some(x => x[0] === p) ? p : FIN_ALIAS[p] || (f.category === 'Submission' ? 'sleeper' : 'slam'); }
+export function finScene(f: Finisher): string { const p = f.preview_pose_id || ''; return FIN_SCENES.some(x => x[0] === p) || /^scene-/.test(p) ? p : FIN_ALIAS[p] || (f.category === 'Submission' ? 'sleeper' : 'slam'); }

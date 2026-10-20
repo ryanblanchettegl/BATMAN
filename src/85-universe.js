@@ -18,7 +18,7 @@ var SCHEMAS={
   teams:{required:['id','name','member_ids','promotion_id'],fields:{id:'id',name:'str',kind:['tag','stable'],member_ids:'list',leader_id:'str?',experience:'num?',chemistry:'num?',finisher:'str?',promotion_id:'str'}},
   relationships:{required:['a','b','type'],fields:{a:'str',b:'str',type:REL_TYPES,strength:'num?',ring_chemistry:'num?',note:'str?'}},
   events:{required:['month','name'],fields:{month:'int',name:'str',rule:'str?'}},
-  shows:{required:['id','promotion_id','name'],fields:{id:'id',promotion_id:'str',name:'str',brand:'str?',weight:'num?'}}
+  shows:{required:['id','promotion_id','name'],fields:{id:'id',promotion_id:'str',name:'str',brand:'str?',weight:'num?',network:'str?',network_size:'int?',years_on_air:'int?'}}
 };
 function lev(a,b){var m=[],i,j;for(i=0;i<=a.length;i++){m[i]=[i];}for(j=1;j<=b.length;j++)m[0][j]=j;for(i=1;i<=a.length;i++)for(j=1;j<=b.length;j++)m[i][j]=Math.min(m[i-1][j]+1,m[i][j-1]+1,m[i-1][j-1]+(a[i-1]===b[j-1]?0:1));return m[a.length][b.length];}
 function nearest(f,names){var best=null,bd=3;names.forEach(function(n){var d=lev(f,n);if(d<bd){bd=d;best=n;}});return best?' (did you mean '+best+'?)':'';}
@@ -98,6 +98,8 @@ E.validateUniverse=function(pkg,fileList){
     if(p.model!=null&&!MODELS[p.model])warn(at,'unknown model '+JSON.stringify(p.model)+nearest(String(p.model),Object.keys(MODELS))+'; the promotion runs as an independent');
   });
   if((pkg.promotions||[]).length<2)err('promotions','a universe needs at least two promotions');
+  if(pkg.networks&&typeof pkg.networks==='object')['small','cable','major'].forEach(function(k){var L=pkg.networks[k];if(L!=null&&(!Array.isArray(L)||L.length<2))warn('networks',k+' needs two names or more; the game uses its own');});
+  (pkg.shows||[]).forEach(function(s,i){if(s.network_size!=null&&(s.network_size<0||s.network_size>2))warn('shows['+i+'] '+s.id,'network_size '+s.network_size+' clamped to 0 (small) to 2 (major)');});
   var ev=pkg.events||[];if(ev.length&&ev.length<12)warn('events',ev.length+' events listed; months without one use a default name');
   // media: safe relative paths, allowed types, then existence
   var miss=0;
@@ -122,7 +124,10 @@ function buildDB(pkg){
       cities:p.cities&&p.cities.length?p.cities.slice():['the city'],brands:p.brands&&p.brands.length?p.brands.map(function(b){return {id:b.id,name:b.name,dev:!!b.dev};}):null,shows:[],titles:[],teams:[],media:p.media||null};
     promos.push(d);PR[p.id]=d;
   });
-  (pkg.shows||[]).forEach(function(s){PR[s.promotion_id].shows.push({id:s.id,name:s.name,brand:s.brand||undefined,mult:s.weight!=null?clamp(s.weight,0.2,1):1});});
+  (pkg.shows||[]).forEach(function(s){var x={id:s.id,name:s.name,brand:s.brand||undefined,mult:s.weight!=null?clamp(s.weight,0.2,1):1};
+    // what the world says about its time on the air: the network, how big it is, how many years it has run (src/88-shows.js reads them once)
+    if(s.network)x.wn=String(s.network).slice(0,40);if(s.network_size!=null)x.wt=clamp(s.network_size|0,0,2);if(s.years_on_air!=null)x.wy=clamp(s.years_on_air|0,0,60);
+    PR[s.promotion_id].shows.push(x);});
   var home={},con={};(pkg.contracts||[]).forEach(function(c){if((c.contract_type||'exclusive')==='exclusive'||!home[c.worker_id]){home[c.worker_id]=c.promotion_id;con[c.worker_id]=c;}});
   (pkg.titles||[]).forEach(function(t){PR[t.promotion_id].titles.push({id:t.id,name:t.name,g:t.gender,lvl:clamp(t.level,1,3),tag:!!t.tag,brand:t.brand||undefined,belt:t.belt&&typeof t.belt==='object'?JSON.parse(JSON.stringify(t.belt)):undefined,holders:(t.holder_ids||[]).every(function(h){return home[h]===t.promotion_id;})?(t.holder_ids||[]).map(function(h){return '#'+h;}):[]});});
   var stables=[];
@@ -142,10 +147,12 @@ function buildDB(pkg){
   var ev=[];for(var m=0;m<12;m++)ev.push(MONTHS[m]+' Showcase');(pkg.events||[]).forEach(function(e){if(e.month>=1&&e.month<=12)ev[e.month-1]=e.name;});
   var nm=pkg.names||{};
   return {fictional:!!man.fictional,uni:{id:man.id,name:man.name,version:String(man.version||'1'),author:man.author||'',desc:man.description||''},startYear:man.start_year||2026,startMonth:clamp((man.start_month||10)-1,0,11),
-    events:ev,rules:(pkg.events||[]).reduce(function(o,e){if(e.rule)o[e.month-1]=e.rule;return o;},{}),sponsors:pkg.sponsors&&pkg.sponsors.length?pkg.sponsors:null,columnists:pkg.columnists&&pkg.columnists.length?pkg.columnists:null,scenes:Array.isArray(pkg.scenes)&&pkg.scenes.length?pkg.scenes:null,backdrops:Array.isArray(pkg.backdrops)&&pkg.backdrops.length?pkg.backdrops:null,
+    events:ev,rules:(pkg.events||[]).reduce(function(o,e){if(e.rule)o[e.month-1]=e.rule;return o;},{}),sponsors:pkg.sponsors&&pkg.sponsors.length?pkg.sponsors:null,columnists:pkg.columnists&&pkg.columnists.length?pkg.columnists:null,scenes:Array.isArray(pkg.scenes)&&pkg.scenes.length?pkg.scenes:null,backdrops:Array.isArray(pkg.backdrops)&&pkg.backdrops.length?pkg.backdrops:null,networks:netsOf(pkg.networks),stips:Array.isArray(pkg.stips)&&pkg.stips.length?pkg.stips:null,segkinds:Array.isArray(pkg.segkinds)&&pkg.segkinds.length?pkg.segkinds:null,
     indie:{firstM:nm.first_m&&nm.first_m.length>=8?nm.first_m:FALLBACK_NAMES.firstM,firstF:nm.first_f&&nm.first_f.length>=6?nm.first_f:FALLBACK_NAMES.firstF,last:nm.last&&nm.last.length>=8?nm.last:FALLBACK_NAMES.last},
     freeAgents:man.free_agents!=null?clamp(man.free_agents,0,120):36,promotions:promos,rows:rows,stables:stables,rels:(pkg.relationships||[]).filter(function(r){return W[r.a]&&W[r.b];})};
 }
+/** A world's own network names, by size (small, cable, major): a list of two or more is used, anything else keeps the game's own. */
+function netsOf(n){if(!n||typeof n!=='object')return null;var out=[null,null,null],any=false;['small','cable','major'].forEach(function(k,t){var L=Array.isArray(n[k])?n[k].map(function(x){return String(x).trim().slice(0,40);}).filter(Boolean):[];if(L.length>1){out[t]=L;any=true;}});return any?out:null;}
 var FALLBACK_NAMES={firstM:['Cass','Dex','Rowan','Milo','Jett','Bram','Niko','Tobin','Ozzy','Rafe','Koda','Lars','Emmett','Zeke','Idris','Mateo','Hollis','Ansel','Tycho','Wade','Remy','Stellan','Jonas','Caius','Boone','Cyrus','Ellis','Flint','Gideon','Hale','Kip','Magnus','Nash','Orrin','Pax','Quill','Ridley','Silas','Thane','Vaughn'],
   firstF:['Mara','Juno','Petra','Sable','Liv','Odessa','Rue','Tamsin','Noor','Vesper','Indra','Calla','Wren','Zora','Astrid','Bex','Cleo','Dahlia','Esme','Faye','Greta','Harlow','Ione','Kit','Lux','Nell','Opal','Quinn','Romy','Sloane','Thea','Willa'],
   last:['Harrow','Vale','Quist','Marlowe','Stroud','Bellamy','Thorne','Castellan','Rusk','Devane','Halloran','Maddox','Sorrell','Lindqvist','Rourke','Kessler','Brannigan','Whitlock','Drummond','Ferro','Pruitt','Ashdown','Barrowe','Calloway','Easton','Fairbanks','Galloway','Hathaway','Jessup','Mercer','Northcott','Pemberton','Radcliffe','Tillman','Underhill','Wexler','Zeller','Blackwood','Crane','Granger','Kincaid','Novak']};
@@ -173,7 +180,7 @@ E.exportUniverse=function(S,meta){
   S.w.forEach(function(w){if(w.rt)return;var u=w.uid&&ID_RE.test(w.uid)&&!used[w.uid]?w.uid:slug(w.name)||'worker';if(u.length<2)u='w_'+u;var b=u,n=2;while(used[u])u=(b.slice(0,36)+'_'+(n++));used[u]=1;uid[w.id]=u;});
   var c0=cal(S.week),pkg={manifest:{id:slug(meta.id||meta.name||'my_universe')||'my_universe',name:meta.name||'My universe',author:meta.author||(S.booker?S.booker.name:''),version:meta.version||'1.0',schema_version:SCHEMA_VERSION,fictional:!!d.fictional,start_year:c0.year,start_month:c0.month+1,free_agents:0,description:meta.description||'Exported from Elite Wrestling Federation 9000, '+c0.label+'.'},
     promotions:[],shows:[],titles:[],workers:[],contracts:[],teams:[],relationships:[],events:d.events.map(function(n,i){var o={month:i+1,name:n};if(d.rules&&d.rules[i])o.rule=d.rules[i];return o;}),names:{first_m:d.indie.firstM,first_f:d.indie.firstF,last:d.indie.last}};
-  if(d.sponsors)pkg.sponsors=d.sponsors;if(d.columnists)pkg.columnists=d.columnists;if(d.scenes)pkg.scenes=d.scenes;if(d.backdrops)pkg.backdrops=d.backdrops;
+  if(d.sponsors)pkg.sponsors=d.sponsors;if(d.columnists)pkg.columnists=d.columnists;if(d.scenes)pkg.scenes=d.scenes;if(d.backdrops)pkg.backdrops=d.backdrops;if(d.segkinds)pkg.segkinds=d.segkinds;if(d.stips)pkg.stips=d.stips;if(d.networks){pkg.networks={};['small','cable','major'].forEach(function(k,t){if(d.networks[t])pkg.networks[k]=d.networks[t].slice();});}
   S.order.forEach(function(id){
     var P=P0[id],own=id===S.player?{name:S.owner.name,style:S.owner.style,roots:S.owner.roots,pledge:S.owner.pledge}:(P.owner||{name:'The owner',style:P.style||'stars',roots:'tradition',pledge:'pay'});
     var o={id:pid(id),name:P.name,blurb:P.blurb||'',owner:own,staff:{road_agent:P.staff.agent,head_writer:P.staff.writer},announcers:P.ann.slice(),cities:P.cities.slice(),cash:Math.round(P.cash),popularity:r1(P.image),work_rate_weight:P.wq,angles_per_show:P.angles,wage_scale:P.wageMult,tv_rate:P.tvRate,production_cost:P.prod,target_weekly_net:P.net,flagship_month:P.flagship+1,production_level:P.prodLvl,risk_level:P.risk,tv_slot:P.slot};
@@ -181,7 +188,7 @@ E.exportUniverse=function(S,meta){
     if(P.model)o.model=P.model;if(P.logo)o.logo=JSON.parse(JSON.stringify(P.logo));
     if(P.events)o.events=P.events.map(function(e,i){var x={month:i+1,name:e.n,type:e.t};if(e.rule)x.rule=e.rule;return x;});
     pkg.promotions.push(o);
-    P.shows.forEach(function(s){var x={id:slug(id+'_'+s.id),promotion_id:pid(id),name:s.name,weight:s.mult==null?1:s.mult};if(s.brand)x.brand=s.brand;pkg.shows.push(x);});
+    P.shows.forEach(function(s){var x={id:slug(id+'_'+s.id),promotion_id:pid(id),name:s.name,weight:s.mult==null?1:s.mult};if(s.brand)x.brand=s.brand;if(s.net){x.network=s.net;x.network_size=s.tier;x.years_on_air=airYears(S,s);}pkg.shows.push(x);});
     P.titles.forEach(function(t){var x={id:slug(t.id),promotion_id:pid(id),name:t.name,gender:t.g,level:t.lvl,tag:!!t.tag,holder_ids:t.holders.map(function(h){return uid[h];}).filter(Boolean)};if(t.brand)x.brand=t.brand;if(t.belt)x.belt=JSON.parse(JSON.stringify(t.belt));pkg.titles.push(x);});
   });
   var push=S.order.reduce(function(o,id){var m=E.pushMap(S,id);Object.keys(m).forEach(function(k){o[k]=m[k];});return o;},{});

@@ -241,16 +241,20 @@ E.edRemoveBrand=function(pkg,pid,bid){
 /** Put a show, belt or contract on a brand ('' for none). */
 E.edPutBrand=function(rec,bid){if(!rec)return;if(bid)rec.brand=bid;else delete rec.brand;};
 /* ---------- the world's own lists: sponsors, columnists and the names newcomers are given ---------- */
-var ED_LISTS={sponsors:['sponsors'],columnists:['columnists'],first_m:['names','first_m'],first_f:['names','first_f'],last:['names','last']};
+var ED_LISTS={sponsors:['sponsors'],columnists:['columnists'],first_m:['names','first_m'],first_f:['names','first_f'],last:['names','last'],
+  net_small:['networks','small'],net_cable:['networks','cable'],net_major:['networks','major']};
 /** A world list as text, one name a line. */
-E.edListText=function(pkg,key){var k=ED_LISTS[key];if(!k)return '';var v=k.length===1?pkg[k[0]]:(pkg.names||{})[k[1]];return (v||[]).join('\n');};
+E.edListText=function(pkg,key){var k=ED_LISTS[key];if(!k)return '';var v=k.length===1?pkg[k[0]]:(pkg[k[0]]||{})[k[1]];return (v||[]).join('\n');};
 /** Set a world list from text, one name a line. Blank lines and repeats go; an empty list goes back to the game's own. */
 E.edSetList=function(pkg,key,text){
   var k=ED_LISTS[key];if(!k)return 0;var seen={},L=String(text||'').split(/\r?\n/).map(function(x){return x.trim().slice(0,40);}).filter(function(x){if(!x||seen[x])return false;seen[x]=1;return true;}).slice(0,200);
   if(k.length===1){if(L.length)pkg[k[0]]=L;else delete pkg[k[0]];}
-  else{var N=pkg.names||(pkg.names={});if(L.length)N[k[1]]=L;else delete N[k[1]];if(!Object.keys(N).length)delete pkg.names;}
+  else{var N=pkg[k[0]]||(pkg[k[0]]={});if(L.length)N[k[1]]=L;else delete N[k[1]];if(!Object.keys(N).length)delete pkg[k[0]];}
   return L.length;
 };
+/** The three sizes of network a show can be on, in order (0 small, 1 cable, 2 major), and the game's own names for each. */
+E.NET_SIZES=[['small','A small network'],['cable','A cable network'],['major','A major network']];
+E.edNetNames=function(pkg,t){var k=E.NET_SIZES[t]&&E.NET_SIZES[t][0],L=k&&pkg.networks&&pkg.networks[k];return L&&L.length>1?L.slice():AIR_NETS[t].slice();};
 /** A world ready to rename instead of build. 'territory': two companies sharing a region, one bigger than the other.
     'nine': nine companies, one of each model, from a national giant down to a small promotion, every roster filled with
     unknowns. Names are invented and plain, made to be changed. */
