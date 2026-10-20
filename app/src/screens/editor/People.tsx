@@ -3,7 +3,7 @@ import { E } from '../../engine';
 import { Btn, Panel, Sel, Field, Opt, FaceCanvas, dataAttrs, Group } from '../../kit';
 import { derive, NAMES, Face, FaceKey } from '../../lib/portrait';
 import { es, world, edit, editDel, look, note, reId } from './state';
-import { TextF, NameF, NumF, SelF, Rating, PickList, DelBtn, TwoPane, opts, BrandSel } from './parts';
+import { TextF, NameF, NumF, SelF, Rating, PickList, DelBtn, TwoPane, opts, BrandSel, MaybeStep } from './parts';
 
 const PARTS: [FaceKey, string][] = [['h', 'Head'], ['hr', 'Hair'], ['fh', 'Facial hair'], ['ms', 'Mustache'], ['ey', 'Eyes'], ['ns', 'Nose']];
 const SHOWN = 60;
@@ -53,10 +53,10 @@ export function Sheet(p: { w: any; part: 'who' | 'work' | 'rates' | 'more' }) {
   if (p.part === 'work') return <>
     <Group title="Company">
       <div class="editor plain">
-        <Field label="Company"><Sel t="ed-sign" value={con ? con.promotion_id : ''} options={companies} onChange={v => edit(() => { E.edSign(pkg, w.id, v || null, con ? con.push_level : undefined); })} /></Field>
+        <Field label="Company"><MaybeStep><Sel t="ed-sign" value={con ? con.promotion_id : ''} options={companies} onChange={v => edit(() => { E.edSign(pkg, w.id, v || null, con ? con.push_level : undefined); })} /></MaybeStep></Field>
         {con ? <SelF label="Card position" rec={con} k="push_level" options={opts(E.ED.push)} /> : null}
         {con ? <BrandSel pkg={pkg} pid={con.promotion_id} rec={con} t="ed-wr-brand" /> : null}
-        {roles.indexOf('wrestler') >= 0 ? <Field label="Manager"><Sel t="ed-manager" value={w.manager_id || ''} options={[['', 'Nobody'] as Opt].concat(E.edManagers(pkg, w.id).map((m: any) => [m.id, m.name + (m.same ? '' : ' (another company)')] as Opt))} onChange={v => edit(() => { E.edSetManager(pkg, w.id, v || null); })} /></Field> : null}
+        {roles.indexOf('wrestler') >= 0 ? <Field label="Manager"><MaybeStep><Sel t="ed-manager" value={w.manager_id || ''} options={[['', 'Nobody'] as Opt].concat(E.edManagers(pkg, w.id).map((m: any) => [m.id, m.name + (m.same ? '' : ' (another company)')] as Opt))} onChange={v => edit(() => { E.edSetManager(pkg, w.id, v || null); })} /></MaybeStep></Field> : null}
         {con ? <NumF label="Contract weeks left" rec={con} k="weeks_left" min={1} max={520} blank="the game decides" /> : null}
       </div>
       {con ? null : <p class="muted mt2">An unsigned wrestler starts the game as a free agent any company can sign.</p>}

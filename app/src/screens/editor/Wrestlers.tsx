@@ -108,7 +108,7 @@ export function WrestlersPage() {
       <Win title={shownW ? shownW.ring_name : 'Nobody yet'} area="doll" t="ed-wdoll" info={shownW ? [pname[info.home[shownW.id]] || 'Free agent', sideOf(shownW) + (lk ? ' · their own look' : ' · drawn by the game')] : ['', '']}>
         {shownW && ww ? <>
           <div class="sc-stage edw-stage"><ScenePlayer key="edw" sc={sc} cast={{ A: recipeOf(ww) }} play={shownW.id + JSON.stringify(shownW.look || null) + (shownW.face ? JSON.stringify(shownW.face) : '')} still orbit fill t="ed-wview" label={shownW.ring_name + ' in ring gear. Drag to walk round them.'} /></div>
-          <div class="pmarquee"><LightText text={(shownW.ring_name + (fin ? ' · ' + fin : '')).toUpperCase().slice(0, 40)} t="ed-wlights" /></div>
+          <div class="pmarquee"><LightText text={(shownW.ring_name + (fin ? ' · ' + fin : '')).toUpperCase()} t="ed-wlights" /></div>
           <div class="sc-row edw-acts"><Btn kind="go" t="ed-caw" onClick={() => caw()}>Edit wrestler</Btn><Btn kind="sm" t="ed-attire" onClick={() => caw(true)}>Edit attire</Btn></div>
         </> : <p class="empty">No wrestlers yet. Add one, and they stand here.</p>}
       </Win>

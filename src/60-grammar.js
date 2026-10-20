@@ -18,7 +18,7 @@ function gram(R,start,ctx,key,depth){
   var src=R[start]?gramPick(R[start],ctx,key+'|'+start):start;
   if(depth>8)return src;
   return src.replace(/#(\w+)(?:\.(\w+))?#/g,function(_,sym,mod){n++;return gramCase(gram(R,sym,ctx,key+'|'+n+sym,depth+1),mod);})
-    .replace(/\{(\w+)\}/g,function(_,k){return ctx[k]!=null?String(ctx[k]):'';});
+    .replace(/\{(\w+)\}/g,function(_,k){return ctx[k]!=null?String(ctx[k]):'';}).replace(/\b([Tt])he (The|the) /g,'$2 ');
 }
 
 /* ---------- the newsletter ---------- */

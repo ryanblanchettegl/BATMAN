@@ -5,19 +5,23 @@ import { E } from '../../engine';
 import { Btn, Panel, Sel, Field, Opt } from '../../kit';
 import { es, world, edit, look, note } from './state';
 import { TwoPane, ScrollMenu } from './parts';
+import { useState } from 'preact/hooks';
+import { ImportThings } from './importer';
 import { SHOW_SCENES, Scene } from '../../kit/scene';
 import { ScenePlayer } from '../../kit/sceneplayer';
 
 const opts = (L: any[]): Opt[] => L.map(x => [String(x[0]), x[1]] as Opt);
 const LETTER = ['A', 'B', 'C'];
 export function StoriesTab() {
+  const [imp, setImp] = useState(false);
   const st = es(), pkg = world(), L: any[] = E.edSegKinds(pkg), mine = L.filter(x => !x.over), over: Record<string, any> = {};
   L.filter(x => x.over).forEach(x => { over[x.id] = x; });
   const games = Object.keys(E.SEGK0).filter(id => id !== 'writers'), selId: string | null = st.sel.stories || null;
   const k = L.find(x => x.id === selId) || null, base = selId && E.SEGK0[selId] && !k ? E.SEGK0[selId] : null;
   const add = (t: string) => edit(() => { const n = E.edNewSegKind(pkg, t); if (n) { st.sel.stories = n.id; note('A new ' + (t === 'angle' ? 'angle' : 'promo') + ' for this world. Name it, pick its scene and what it does.'); } });
   const list = <>
-    <div class="row mb2"><Btn kind="go" t="ed-story-new" d={{ v: 'promo' }} onClick={() => add('promo')}>New promo</Btn><Btn t="ed-story-new" d={{ v: 'angle' }} onClick={() => add('angle')}>New angle</Btn></div>
+    <div class="row mb2"><Btn kind="go" t="ed-story-new" d={{ v: 'promo' }} onClick={() => add('promo')}>New promo</Btn><Btn t="ed-story-new" d={{ v: 'angle' }} onClick={() => add('angle')}>New angle</Btn><Btn kind="sm" t="ed-imp-open" d={{ v: 'segkinds' }} onClick={() => setImp(true)}>Import</Btn></div>
+    {imp ? <ImportThings kind="segkinds" onClose={() => setImp(false)} /> : null}
     <ScrollMenu t="ed-pick" label="Promos and angles" tall onPick={id => look(() => { st.sel.stories = id; })} items={
       mine.map(x => ({ id: x.id, label: x.n, on: x.id === selId, mine: true, sub: 'Made for this world · ' + (x.t === 'angle' ? 'Angle' : 'Promo') + ' · ' + x.roles.length + (x.roles.length > 1 ? ' characters' : ' character') }))
         .concat(games.map(id => ({ id, label: over[id] ? over[id].n : E.SEGK0[id].n, on: id === selId, mine: !!over[id], sub: (over[id] ? 'Changed for this world · ' : '') + (E.SEGK0[id].t === 'angle' ? 'Angle' : 'Promo') })))} />

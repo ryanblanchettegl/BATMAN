@@ -147,3 +147,17 @@ E.setLook=function(S,id,look){
 };
 /** Take the look off a wrestler on your roster: the game draws them again. */
 E.clearLook=function(S,id){var w=S.w[id];if(!w||w.promo!==S.player||!w.look)return {ok:false,msg:'Nothing to take off.'};delete w.look;return {ok:true,msg:w.name+' is drawn by the game again.'};};
+
+/* ---------- a wrestler file in a game (Ryan, 20 October: import and export wrestlers) ----------
+   A file written by the World Editor's Export (whole wrestlers) or Create a Wrestler's Write a file (a look) brings the
+   wrestler into a game as a free agent, through E.createWrestler: their name, division, side, style, finisher and look come
+   from the file; what they can do is worked out the way any wrestler made in a game is, so a file never brings a ready-made star. */
+E.importWrestlerFile=function(S,data){
+  var L=[];
+  if(data&&data.kind==='wrestlers'&&Array.isArray(data.workers))data.workers.forEach(function(w){if(!w||!w.ring_name)return;
+    L.push({name:w.ring_name,g:w.gender==='F'?'F':'M',style:STYLE_KEY[w.style]||'A',align:w.disposition==='heel'?'H':'F',fin:(w.look&&w.look.finishing_moves&&w.look.finishing_moves[0]&&w.look.finishing_moves[0].name)||w.finisher||'',look:w.look||null,face:w.face||null});});
+  else{var c=lookClean(data);if(c&&E.lookOk(c)){var pa=c.physical_attributes||{};L.push({name:c.name||'',g:pa.sex==='F'?'F':'M',style:'A',align:'F',fin:(c.finishing_moves&&c.finishing_moves[0]&&c.finishing_moves[0].name)||'',look:c});}}
+  if(!L.length)return {ok:false,msg:'That is not a wrestler file.',ids:[]};
+  var ids=[],msgs=[];L.forEach(function(o){var r=E.createWrestler(S,o);if(r.ok)ids.push(r.id);else msgs.push(r.msg);});
+  return {ok:ids.length>0,ids:ids,msg:ids.length?(ids.length===1?S.w[ids[0]].name+' is a free agent now. Sign them from Free agents, like anybody else.':ids.length+' wrestlers are free agents now.')+(msgs.length?' '+msgs[0]:''):msgs[0]||'Nobody came in.'};
+};

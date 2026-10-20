@@ -326,6 +326,22 @@ E.edImportWorkers=function(pkg,src,ids){
     edLookScenes(w.look).forEach(function(sid){if(have[sid])return;var sc=(src.scenes||[]).filter(function(x){return x&&x.id===sid;})[0];if(sc){(pkg.scenes||(pkg.scenes=[])).push(JSON.parse(JSON.stringify(sc)));have[sid]=1;}});});
   return out;
 };
+/* the rest of a world can be imported the same way: scenes and moves (pkg.scenes), promos and angles (pkg.segkinds),
+   match rules (pkg.stips). Something with an id the world already has comes in under a new one, so nothing is overwritten. */
+var ED_THINGS={scenes:{label:'Scenes and moves',name:function(x){return x.name||x.id;},sub:function(x){return x.when==='move'?'A move':(x.still?'A still picture':'An animation');}},
+  segkinds:{label:'Promos and angles',name:function(x){return x.n||x.id;},sub:function(x){return x.t==='angle'?'An angle':'A promo';}},
+  stips:{label:'Match rules',name:function(x){return x.n||x.id;},sub:function(x){return x.over?'Changes an included rule':'A rule of its own';}}};
+E.ED_THINGS=Object.keys(ED_THINGS).map(function(k){return [k,ED_THINGS[k].label];});
+/** What world `src` has of kind `k` (scenes, segkinds, stips), for the Import pop-up. */
+E.edThingList=function(src,k){var T=ED_THINGS[k];if(!T)return [];return (Array.isArray(src[k])?src[k]:[]).filter(function(x){return x&&x.id;}).map(function(x){return {id:x.id,name:T.name(x),sub:T.sub(x)};});};
+/** Bring things `ids` of kind `k` from `src` into `pkg`. Returns how many came in. */
+E.edImportThings=function(pkg,src,k,ids){
+  if(!ED_THINGS[k])return 0;var want={},have={},n=0,L=pkg[k]||(pkg[k]=[]);(ids||[]).forEach(function(i){want[i]=1;});L.forEach(function(x){if(x&&x.id)have[x.id]=1;});
+  (src[k]||[]).forEach(function(x){if(!x||!want[x.id])return;var c=JSON.parse(JSON.stringify(x));
+    if(have[c.id]){var b=String(c.id).replace(/_\d+$/,''),i=2;while(have[b+'_'+i])i++;c.id=b+'_'+i;if(k==='stips'&&c.over)return;}   // an included rule changed twice keeps the world's own change
+    have[c.id]=1;L.push(c);n++;});
+  if(!L.length)delete pkg[k];return n;
+};
 /** Wrestlers `ids` of world `pkg` as one file (.wrestler.json) to keep, share or put on the Steam Workshop: each whole
     record (biography, attributes, look, moves) and the world's own scenes their entrance, moves and taunts play. */
 E.edExportWorkers=function(pkg,ids){

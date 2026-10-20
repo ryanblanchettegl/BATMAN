@@ -14,7 +14,9 @@ function workOf(w,stip,mins){
 }
 function chem(S,a,b){var k0=rkey(a,b),x=S.chemX&&S.chemX[k0],bd=relChem(S,a,b);if(x!=null)return x+bd;var k=S.seed+':'+k0;return (h01('c'+k)+h01('d'+k)-1)*6+bd+styleBlend(S.w[a],S.w[b]);}
 function addOvr(P,w,d){var cap=ovrCap(P,w);if(d>0&&w.ovr>=cap)d*=0.2;w.ovr=clamp(w.ovr+d,1,100);}
-function fill(t,o){return t.replace(/\{(\w+)\}/g,function(_,k){return o[k]!=null?o[k]:'';});}
+/** A name that already starts with The (a finisher called The Mum's Orders) does not get another: "the The" reads "The". */
+function theOnce(t){return t.replace(/\b([Tt])he (The|the) /g,'$2 ');}
+function fill(t,o){return theOnce(t.replace(/\{(\w+)\}/g,function(_,k){return o[k]!=null?o[k]:'';}));}
 
 /* ---------- commentary grammar: lines are assembled from parts so calls rarely repeat ---------- */
 var GR={

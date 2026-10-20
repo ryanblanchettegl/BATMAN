@@ -198,7 +198,7 @@ async function broadcast(mode) {
     // a steel cell match: it is played inside the cell
     const cellAt = await page.evaluate(() => { const S = window.EWF_DEBUG.state(), E = window.GP, i = S.card.findIndex((m, j) => m && m.mt === '1v1'); if (i < 0) return -1; S.card[i].stip = 'cell'; E.fitShow(S, S.card); return i; });
     // a newcomer on the card who debuts with a surprise attack: their entrance is the debut's own scene
-    const debId = await page.evaluate(() => { const S = window.EWF_DEBUG.state(), m = S.card[0], id = m && m.sides[0][0]; if (id == null) return -1; S.w[id].deb = true; S.w[id].dk = 'atk'; return id; });
+    const debId = await page.evaluate(() => { const S = window.EWF_DEBUG.state(), m = S.card[0], seen = new Set([].concat(...(S.segs || []).map(g => g.who || []))), id = m && [].concat(...m.sides).find(x => !seen.has(x)); if (id == null) return -1; S.w[id].deb = true; S.w[id].dk = 'atk'; return id; });   // somebody not already in a booked segment before their debut
     for (let k = 0; k < 6 && !(await has(page, '#live')); k++) { if (await has(page, '[data-t="pre"]')) await page.click('[data-t="pre"][data-c="0"]'); else await page.click('[data-t="advance"]'); await page.waitForTimeout(50); }
     ok(mode, 'the show goes on the air', await has(page, '#live'));
     const seen = new Set(), sets = new Set(); let shots = 0, fitBad = null;

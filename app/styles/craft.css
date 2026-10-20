@@ -400,3 +400,14 @@ html body .win.ppop .wb{font-family:var(--hand);font-size:1.06em}
 .caw-wpage .editor.plain{display:grid;grid-template-columns:1fr;gap:.35em}
 .edimport{display:grid;grid-template-columns:repeat(auto-fill,minmax(16em,1fr));gap:.3em .6em;margin-top:.4em}
 .edimport .edrow{text-align:left}
+/* names are never cut short (Ryan, 20 October): a long one wraps onto a second line instead */
+.paper .edrow .nm,.edrow:has(.pic)>.nm{white-space:normal;overflow:visible;text-overflow:clip;overflow-wrap:anywhere}
+.paper .edrow{flex-wrap:wrap}
+.paper .edrow .st{white-space:normal;margin-left:auto}
+.pmarquee .ledb.txt.hand{white-space:normal;text-overflow:clip;text-align:center}
+/* the broadcast keeps one shape all show (Ryan, 20 October): the picture and the commentary under it never change size,
+   whatever the scene or however many lines are said; the picture fills its frame */
+.live1 .tvframe{flex:1 1 0;min-height:0}
+.live1 .tvframe .lv-scene{position:absolute;inset:14px}
+.live1 .tvframe~.lv-log{flex:0 0 7.6em;height:7.6em;max-height:none}
+.live1 .lv-log .ln{grid-template-columns:max-content minmax(0,1fr)}

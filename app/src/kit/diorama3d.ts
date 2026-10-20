@@ -22,9 +22,9 @@ import { Piece, PAL, shade, drawScene, View } from './paper';
 import { paintBelt } from './belt';
 import { Recipe, Rig } from './puppet';
 
-const RINGS = ['ring', 'ringlow', 'ringcorner', 'ringside', 'cage', 'cell', 'inferno', 'ladder', 'ballroom', 'gym', 'bigstadium'];
+const RINGS = ['ring', 'ringlow', 'ringcorner', 'ringside', 'cage', 'cell', 'inferno', 'ladder', 'ballroom', 'gym', 'bigstadium', 'stadium'];
 /** Where a ring set's show is held, and what stands round the ring (Ryan, 20 October). */
-const VENUE: Record<string, string> = { ballroom: 'ballroom', gym: 'gym', bigstadium: 'stadium' };
+const VENUE: Record<string, string> = { ballroom: 'ballroom', gym: 'gym', bigstadium: 'stadium', stadium: 'stadium' };
 const RIG: Record<string, string> = { cage: 'cage', cell: 'cell', inferno: 'inferno', ladder: 'ladder' };
 export const DEPTH = 0.9;      // a layer step, in feet of depth
 const CARD = 0.035;     // how thick a piece of card is
@@ -597,6 +597,8 @@ export class Diorama3D {
   }
   /** Draw on the next frame, once: the picture is only drawn again when something has changed (a Steam Deck on battery
       should not draw a still picture sixty times a second). */
+  /** Draw now, not on the next frame (the shared renderer for still pictures copies the picture straight after). */
+  now() { if (this.raf) { cancelAnimationFrame(this.raf); this.raf = 0; } this.face(); this.feed(); (this.bokeh.uniforms as any).focus.value = this.cam.position.distanceTo(this.ctl.target); this.comp.render(); this.drawn++; }
   ask() { if (this.raf) return; this.raf = requestAnimationFrame(() => { this.raf = 0; this.face(); if (this.drawn % 3 === 0) this.feed(); (this.bokeh.uniforms as any).focus.value = this.cam.position.distanceTo(this.ctl.target); this.comp.render(); this.drawn++; }); }
   /** The big screen in the arena shows what the camera sees, like the live feed in a real building (Ryan, 20 October).
       The picture is taken just before the real one, with the screen itself left out of it. */

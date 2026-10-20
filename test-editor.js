@@ -212,5 +212,15 @@ for (const k of ['territory', 'nine']) { const pkg = E.edQuick(k, '', 5), models
   ok('the file comes into a new world as free agents, ratings, look and moves', got && got.length === 2 && got[0].ratings.overness === w0.ratings.overness && !!got[0].look && (dst.scenes || []).some(x => x.id === 'scene-mine2'));
   ok('a file that is not a wrestler is refused', E.edImportFile(dst, { hello: 1 }) === null); }
 
+// import the rest: scenes and moves, promos and angles, match rules; nothing already there is overwritten
+{ const src = JSON.parse(JSON.stringify(builtIn)), dst = E.edQuick('territory', 'Things test', 4);
+  src.scenes = [{ v: 1, id: 'scene-a', name: 'A move', when: 'move', set: 'ring', slots: [], keys: [{ t: 0, figs: {}, props: [] }] }];
+  E.edNewSegKind(src, 'angle'); E.edNewStip(src, 'cage');
+  ok('a world lists its scenes, promos and rules to import', E.edThingList(src, 'scenes').length === 1 && E.edThingList(src, 'segkinds').length === 1 && E.edThingList(src, 'stips').length === 1);
+  const n = E.edImportThings(dst, src, 'scenes', ['scene-a']) + E.edImportThings(dst, src, 'segkinds', [src.segkinds[0].id]) + E.edImportThings(dst, src, 'stips', [src.stips[0].id]);
+  ok('they come into the other world', n === 3 && dst.scenes.length === 1 && dst.segkinds.length === 1 && dst.stips.length === 1);
+  E.edImportThings(dst, src, 'scenes', ['scene-a']); ok('importing one again gives it its own id', dst.scenes.length === 2 && dst.scenes[1].id !== 'scene-a');
+  ok('the world still passes the check', E.edCheck(dst).errors === 0); }
+
 if (fails.length) { console.log('FAILED: ' + fails.length); process.exit(1); }
 console.log('test-editor: all passed');

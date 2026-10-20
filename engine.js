@@ -517,7 +517,9 @@ function workOf(w,stip,mins){
 }
 function chem(S,a,b){var k0=rkey(a,b),x=S.chemX&&S.chemX[k0],bd=relChem(S,a,b);if(x!=null)return x+bd;var k=S.seed+':'+k0;return (h01('c'+k)+h01('d'+k)-1)*6+bd+styleBlend(S.w[a],S.w[b]);}
 function addOvr(P,w,d){var cap=ovrCap(P,w);if(d>0&&w.ovr>=cap)d*=0.2;w.ovr=clamp(w.ovr+d,1,100);}
-function fill(t,o){return t.replace(/\{(\w+)\}/g,function(_,k){return o[k]!=null?o[k]:'';});}
+/** A name that already starts with The (a finisher called The Mum's Orders) does not get another: "the The" reads "The". */
+function theOnce(t){return t.replace(/\b([Tt])he (The|the) /g,'$2 ');}
+function fill(t,o){return theOnce(t.replace(/\{(\w+)\}/g,function(_,k){return o[k]!=null?o[k]:'';}));}
 
 /* ---------- commentary grammar: lines are assembled from parts so calls rarely repeat ---------- */
 var GR={
@@ -3121,7 +3123,7 @@ function gram(R,start,ctx,key,depth){
   var src=R[start]?gramPick(R[start],ctx,key+'|'+start):start;
   if(depth>8)return src;
   return src.replace(/#(\w+)(?:\.(\w+))?#/g,function(_,sym,mod){n++;return gramCase(gram(R,sym,ctx,key+'|'+n+sym,depth+1),mod);})
-    .replace(/\{(\w+)\}/g,function(_,k){return ctx[k]!=null?String(ctx[k]):'';});
+    .replace(/\{(\w+)\}/g,function(_,k){return ctx[k]!=null?String(ctx[k]):'';}).replace(/\b([Tt])he (The|the) /g,'$2 ');
 }
 
 /* ---------- the newsletter ---------- */
@@ -8106,6 +8108,22 @@ E.edImportWorkers=function(pkg,src,ids){
     edLookScenes(w.look).forEach(function(sid){if(have[sid])return;var sc=(src.scenes||[]).filter(function(x){return x&&x.id===sid;})[0];if(sc){(pkg.scenes||(pkg.scenes=[])).push(JSON.parse(JSON.stringify(sc)));have[sid]=1;}});});
   return out;
 };
+/* the rest of a world can be imported the same way: scenes and moves (pkg.scenes), promos and angles (pkg.segkinds),
+   match rules (pkg.stips). Something with an id the world already has comes in under a new one, so nothing is overwritten. */
+var ED_THINGS={scenes:{label:'Scenes and moves',name:function(x){return x.name||x.id;},sub:function(x){return x.when==='move'?'A move':(x.still?'A still picture':'An animation');}},
+  segkinds:{label:'Promos and angles',name:function(x){return x.n||x.id;},sub:function(x){return x.t==='angle'?'An angle':'A promo';}},
+  stips:{label:'Match rules',name:function(x){return x.n||x.id;},sub:function(x){return x.over?'Changes an included rule':'A rule of its own';}}};
+E.ED_THINGS=Object.keys(ED_THINGS).map(function(k){return [k,ED_THINGS[k].label];});
+/** What world `src` has of kind `k` (scenes, segkinds, stips), for the Import pop-up. */
+E.edThingList=function(src,k){var T=ED_THINGS[k];if(!T)return [];return (Array.isArray(src[k])?src[k]:[]).filter(function(x){return x&&x.id;}).map(function(x){return {id:x.id,name:T.name(x),sub:T.sub(x)};});};
+/** Bring things `ids` of kind `k` from `src` into `pkg`. Returns how many came in. */
+E.edImportThings=function(pkg,src,k,ids){
+  if(!ED_THINGS[k])return 0;var want={},have={},n=0,L=pkg[k]||(pkg[k]=[]);(ids||[]).forEach(function(i){want[i]=1;});L.forEach(function(x){if(x&&x.id)have[x.id]=1;});
+  (src[k]||[]).forEach(function(x){if(!x||!want[x.id])return;var c=JSON.parse(JSON.stringify(x));
+    if(have[c.id]){var b=String(c.id).replace(/_\d+$/,''),i=2;while(have[b+'_'+i])i++;c.id=b+'_'+i;if(k==='stips'&&c.over)return;}   // an included rule changed twice keeps the world's own change
+    have[c.id]=1;L.push(c);n++;});
+  if(!L.length)delete pkg[k];return n;
+};
 /** Wrestlers `ids` of world `pkg` as one file (.wrestler.json) to keep, share or put on the Steam Workshop: each whole
     record (biography, attributes, look, moves) and the world's own scenes their entrance, moves and taunts play. */
 E.edExportWorkers=function(pkg,ids){
@@ -8365,6 +8383,20 @@ E.setLook=function(S,id,look){
 };
 /** Take the look off a wrestler on your roster: the game draws them again. */
 E.clearLook=function(S,id){var w=S.w[id];if(!w||w.promo!==S.player||!w.look)return {ok:false,msg:'Nothing to take off.'};delete w.look;return {ok:true,msg:w.name+' is drawn by the game again.'};};
+
+/* ---------- a wrestler file in a game (Ryan, 20 October: import and export wrestlers) ----------
+   A file written by the World Editor's Export (whole wrestlers) or Create a Wrestler's Write a file (a look) brings the
+   wrestler into a game as a free agent, through E.createWrestler: their name, division, side, style, finisher and look come
+   from the file; what they can do is worked out the way any wrestler made in a game is, so a file never brings a ready-made star. */
+E.importWrestlerFile=function(S,data){
+  var L=[];
+  if(data&&data.kind==='wrestlers'&&Array.isArray(data.workers))data.workers.forEach(function(w){if(!w||!w.ring_name)return;
+    L.push({name:w.ring_name,g:w.gender==='F'?'F':'M',style:STYLE_KEY[w.style]||'A',align:w.disposition==='heel'?'H':'F',fin:(w.look&&w.look.finishing_moves&&w.look.finishing_moves[0]&&w.look.finishing_moves[0].name)||w.finisher||'',look:w.look||null,face:w.face||null});});
+  else{var c=lookClean(data);if(c&&E.lookOk(c)){var pa=c.physical_attributes||{};L.push({name:c.name||'',g:pa.sex==='F'?'F':'M',style:'A',align:'F',fin:(c.finishing_moves&&c.finishing_moves[0]&&c.finishing_moves[0].name)||'',look:c});}}
+  if(!L.length)return {ok:false,msg:'That is not a wrestler file.',ids:[]};
+  var ids=[],msgs=[];L.forEach(function(o){var r=E.createWrestler(S,o);if(r.ok)ids.push(r.id);else msgs.push(r.msg);});
+  return {ok:ids.length>0,ids:ids,msg:ids.length?(ids.length===1?S.w[ids[0]].name+' is a free agent now. Sign them from Free agents, like anybody else.':ids.length+' wrestlers are free agents now.')+(msgs.length?' '+msgs[0]:''):msgs[0]||'Nobody came in.'};
+};
 
 /* ===== 86-rep.js ===== */
 /* ---------- 89. A reputation as a booker: traits earned by how you book, each with a small edge and a small cost (S.reps) ---------- */

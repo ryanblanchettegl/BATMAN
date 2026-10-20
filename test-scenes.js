@@ -131,5 +131,12 @@ const others = G2.w.filter(x => x && x.look && x.name !== wk.ring_name).length; 
   ok(kickLines.every(t => /KICKS OUT!$/.test(t)), 'a kick-out is called as one');
   ok(finLines.length > 0, 'a clean win with a finisher is called by its name');
 }
+// a wrestler file in a game: Export's whole wrestlers, or a look, come in as free agents with stats made the game's way
+{ const G3 = E.newGame('pdw', 8, { name: 'R' }), n0 = G3.w.length;
+  const f = { kind: 'wrestlers', v: 1, workers: [{ id: 'x1', ring_name: 'Import Person', gender: 'F', disposition: 'heel', style: 'technician', ratings: { overness: 99 }, look: { name: 'Import Person', physical_attributes: { sex: 'F' }, moveset: [{ name: 'Armbar', kind: 'submission', stage: 'late', scene: 'move_armbar' }] } }] };
+  const r = E.importWrestlerFile(G3, f), w = r.ids && G3.w[r.ids[0]];
+  ok(r.ok && w && w.name === 'Import Person' && w.promo === 'FA' && w.g === 'F' && w.align === 'H' && w.style === 'T' && w.look && w.look.moveset.length === 1, 'a wrestler file comes into a game as a free agent, look and moveset kept');
+  ok(w && w.ovr < 95, 'a file does not bring its ratings into a game: they are made the way any new wrestler is');
+  ok(!E.importWrestlerFile(G3, { hello: 1 }).ok && !E.importWrestlerFile(G3, f).ok && G3.w.length === n0 + 1, 'anything else is refused, and the same name twice is refused'); }
 console.log(fails.length ? 'FAIL\n' + fails.join('\n') : 'ok: scene hooks, Create a Player files, and finishers in the match');
 process.exit(fails.length ? 1 : 0);

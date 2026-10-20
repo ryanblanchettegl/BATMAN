@@ -382,7 +382,7 @@ export function Live(p: { r: any }) {
     <div class="lv-body">
       <div class="lv-main">
         {(() => { const pk = pref.pics && !ev && state === 'seg' ? scenePick(r, s, L.b, done) : null;
-          return pk ? <div class="tvframe" data-t="tv"><ScenePlayer key="scene" sc={pk.sc} cast={pk.cast} play={pk.play} label={pk.label} still={reduceMotion()} /><div class="chyron">{head}</div><span class="bug" aria-hidden="true"><Logo of={S.promos[S.player]} size="chip" /><i class="dot" />LIVE</span></div> : head; })()}
+          return pk ? <div class="tvframe" data-t="tv"><ScenePlayer key="scene" sc={pk.sc} cast={pk.cast} play={pk.play} label={pk.label} still={reduceMotion()} fill /><div class="chyron">{head}</div><span class="bug" aria-hidden="true"><Logo of={S.promos[S.player]} size="chip" /><i class="dot" />LIVE</span></div> : head; })()}
         <div class={'lv-log' + (state === 'title' || state === 'signoff' ? ' mid' : '')}><div class="lv-lines">{log}</div></div>
         {box}
         {ev ? null : <div class="foot">{foot}<Btn kind="sm" t="live-pics" on={!!pref.pics} onClick={picsToggle}>{pref.pics ? 'Scenes: on' : 'Scenes: off'}</Btn><Btn kind="sm" t="live-auto" on={!!pref.auto} onClick={autoToggle}>{pref.auto ? 'Auto-play: on' : 'Auto-play: off'}</Btn>{pref.auto ? <Btn kind="sm" t="live-pace" onClick={paceNext}>{'Pace: ' + PACE_N[pref.pace]}</Btn> : null}<span class="blink" aria-hidden="true">_</span><span class="keys-hint">{state === 'signoff' ? 'Space: after the show' : (pref.auto ? (state === 'title' ? 'Space: ring the bell. The show then runs itself and stops for your calls' : 'Running itself. Space: next now. P: pause') : 'Space or Enter: on with the show. P: auto-play')}</span></div>}
