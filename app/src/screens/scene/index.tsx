@@ -224,7 +224,7 @@ export function SceneStudio(pp: StudioProps) {
     setSel({ who: id, part: 'body' }); say('Wrestler ' + id + ' is in. ' + (people.length + 1) + ' of ' + MAX_PEOPLE + ' people.');
   };
   const dropPerson = (id: string) => { const n = copy(sc); n.slots = n.slots.filter(x => x.id !== id); n.keys.forEach(k => { delete k.figs[id]; for (const o in k.figs) if ((k.figs[o].on || '').startsWith(id + ':')) delete k.figs[o].on; k.props = k.props.filter(q => !(q.at || '').startsWith(id + ':')); }); setSc(n); if (sel && sel.who === id) setSel(null); };
-  const placeAt = (spot: string) => { const sp = SPOTS.find(x => x[0] === spot); if (!sp) return; edit(k => { if (!sel) return; const f = fig(k, sel.who); if (!f) return; delete f.on; f.x = sp[2]; f.z = sp[3]; f.lv = sp[4]; f.f = sp[5]; }); };
+  const placeAt = (spot: string) => { const sp = SPOTS.find(x => x[0] === spot); if (!sp) return; edit(k => { if (!sel) return; const f = fig(k, sel.who); if (!f) return; delete f.on; f.x = sp[2]; f.z = sp[3]; f.lv = sp[4]; f.f = sp[5]; }); const who = sel && sel.who; if (who) setTimeout(() => { if (eng.current) eng.current.follow(who); }, 60); };
   const slotRole = (id: string) => (sc.slots.find(x => x.id === id) || { role: 'a' }).role;
   const figR = sel && key.figs[sel.who] ? (cast[sel.who] || (slotRole(sel.who) === 'ref' ? REF : blank(Math.max(0, sc.slots.findIndex(x => x.id === sel.who))))) : null;
   const partName = sel ? (sel.part === 'body' ? 'The whole body' : sel.part === 'prop' ? 'The prop' : (JOINTS.find(j => j[0] === sel.part) || ['', sel.part])[1]) : '';

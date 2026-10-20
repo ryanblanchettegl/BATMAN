@@ -1,6 +1,7 @@
 /* World Editor: belts, tag teams, stables and who gets on with whom. */
 import { E } from '../../engine';
-import { Btn, Panel, Sel, Field, Opt, BeltArt } from '../../kit';
+import { Btn, Panel, Sel, Field, Opt, Belt } from '../../kit';
+import { openBeltMaker } from '../../shared/beltmaker';
 import { es, world, edit, look, note } from './state';
 import { TextF, NameF, NumF, SelF, PickList, DelBtn, TwoPane, opts, BrandSel } from './parts';
 import { companyOpts } from './Companies';
@@ -28,7 +29,9 @@ export function BeltsTab() {
   const setHolder = (i: number, v: string) => edit(() => { const h = slots.map(k => (k === i ? v : hold[k] || '')).filter((x, k, a) => x && a.indexOf(x) === k); t.holder_ids = h; });
   return <TwoPane open list={list} onBack={() => { st.sel.belts = null; }}>
     <Panel cls="mb4" title={t.name || 'Belt'}>
-      <div class="edbelt"><BeltArt name={t.name || 'Title'} top={pn[t.promotion_id] || ''} /></div>
+      <div class="edbelt"><Belt of={t} co={pkg.promotions.find((x: any) => x.id === t.promotion_id)} size="board" dot={3} t="ed-belt-art" />
+        <div class="row mt1"><Btn kind="go" t="ed-belt-open" onClick={() => { const co = pkg.promotions.find((x: any) => x.id === t.promotion_id); openBeltMaker({ title: t, co, belt: E.beltOf(t, co), onSave: b => { let r: any = null; edit(() => { r = E.edSetBelt(pkg, t.id, b); }); return r; } }); }}>Create a Belt</Btn>
+          <span class="muted">{t.belt ? 'A design of its own.' : 'The design the title gives itself.'}</span></div></div>
       <div class="editor plain">
         <NameF label="Name of the belt" table="titles" rec={t} max={40} t="ed-belt-name" />
         <Field label="Company"><Sel t="ed-belt-co" value={t.promotion_id} options={companyOpts(pkg)} onChange={v => edit(() => { t.promotion_id = v; t.holder_ids = []; st.sel.beltsFor = v; })} /></Field>

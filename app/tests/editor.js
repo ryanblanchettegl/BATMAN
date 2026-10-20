@@ -1,6 +1,6 @@
 /* World Editor: build a world from scratch through the interface, check it, play it, and find it again after a reload.
    Run: NODE_PATH=<dir containing playwright> node app/tests/editor.js   (desk size; MODES picks others) */
-const { open, overflow, shot } = require('./helper');
+const { open, overflow, shot, fits } = require('./helper');
 const MODES = (process.env.MODES || 'desk').split(',');
 const fails = [];
 const ok = (mode, label, pass, detail) => { console.log(mode.padEnd(6), pass ? 'ok  ' : 'FAIL', label + (detail ? ': ' + detail : '')); if (!pass) fails.push(mode + ' ' + label); };
@@ -66,6 +66,18 @@ async function run(mode) {
     await page.selectOption('[data-t="ed-holder"][data-v="0"]', opt);
     ok(mode, 'a new belt takes a champion from the roster', !!opt && /iron crown/i.test(await txt(page, '.edcol-form')));
     await over('a belt form');
+    // Create a Belt: the belt is painted on the belt's page; the pop-up builds a new one and keeps it only on Save
+    await page.waitForSelector('[data-t="ed-belt-art"][data-sig]');
+    const art0 = await page.$eval('[data-t="ed-belt-art"]', c => c.getAttribute('data-sig'));
+    await page.click('[data-t="ed-belt-open"]'); await page.waitForSelector('[data-t="belt-preview"][data-sig]');
+    ok(mode, 'Create a Belt opens with every part: ten plates, five metals, ten straps, six gems, six ideas', (await page.$$('[data-t="belt-pl"]')).length === 10 && (await page.$$('[data-t="belt-mt"]')).length === 5 && (await page.$$('[data-t="belt-st"]')).length === 10 && (await page.$$('[data-t="belt-gm"]')).length === 6 && (await page.$$('[data-t="belt-idea"]')).length === 6);
+    await page.click('[data-t="belt-pl"][data-v="crest"]'); await page.click('[data-t="belt-mt"][data-v="silver"]'); await page.fill('[data-t="belt-w"]', 'Iron');
+    const pv = await page.$eval('[data-t="belt-preview"]', c => c.getAttribute('data-sig'));
+    ok(mode, 'the belt redraws with every choice', /"pl":"crest"/.test(pv) && /"mt":"silver"/.test(pv) && /"w":"IRON"/.test(pv), pv);
+    ok(mode, 'the pop-up fits', !(await fits(page)), await fits(page));
+    await page.click('[data-t="belt-save"]'); await page.waitForTimeout(300);
+    const art1 = await page.$eval('[data-t="ed-belt-art"]', c => c.getAttribute('data-sig'));
+    ok(mode, 'Save the belt keeps it on the belt’s page', art1 !== art0 && /"pl":"crest"/.test(art1) && /design of its own/i.test(await txt(page, '.edbelt')));
 
     await page.click('[data-t="ed-tab"][data-v="wrestlers"]');
     await page.click('[data-t="ed-add-wrestler"]');

@@ -8,7 +8,7 @@ const { open, go, overflow, shot, state, redraw } = require('./helper');
     await go(page, 'titles'); await page.waitForTimeout(100);
     ok(await n('[data-t="title-card"]') >= 4, mode + ' title names are links');
     await page.click('[data-t="title-card"]'); await page.waitForSelector('.cards .win');
-    ok(/Title/.test(await title()) && await n('.cards .belt') === 1 && /Lineage/i.test(await page.$eval('.cards .wb', e => e.innerText)), mode + ' title card: ' + await title());
+    ok(/Title/.test(await title()) && await n('.cards [data-t="title-belt"]') === 1 && /Lineage/i.test(await page.$eval('.cards .wb', e => e.innerText)), mode + ' title card: ' + await title());
     ok((await overflow(page)) === '', mode + ' title card fits');
     await shot(page, 'card-' + mode + '-title');
     // champion's name inside it opens the wrestler on top

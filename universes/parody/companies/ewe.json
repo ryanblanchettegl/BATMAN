@@ -125,7 +125,18 @@
    "level": 3,
    "holder_ids": [
     "rodeo_regret"
-   ]
+   ],
+   "belt": {
+    "pl": "globe",
+    "mt": "gold",
+    "st": "#1c1b1f",
+    "gm": "blue",
+    "sd": 3,
+    "ss": "round",
+    "tr": "etched",
+    "w": "WORLD",
+    "top": "EWE"
+   }
   },
   {
    "id": "ewe_womens_world",
@@ -134,7 +145,18 @@
    "level": 3,
    "holder_ids": [
     "hollywood_hazel"
-   ]
+   ],
+   "belt": {
+    "pl": "oval",
+    "mt": "gold",
+    "st": "#ece6d6",
+    "gm": "purple",
+    "sd": 3,
+    "ss": "round",
+    "tr": "etched",
+    "w": "WORLD",
+    "top": "EWE"
+   }
   },
   {
    "id": "ewe_international",
@@ -143,7 +165,18 @@
    "level": 2,
    "holder_ids": [
     "billy_kestrel"
-   ]
+   ],
+   "belt": {
+    "pl": "star",
+    "mt": "gold",
+    "st": "#1f4fa3",
+    "gm": "none",
+    "sd": 2,
+    "ss": "square",
+    "tr": "none",
+    "w": "INTERNATIONAL",
+    "top": "EWE"
+   }
   },
   {
    "id": "ewe_continental",
@@ -152,7 +185,18 @@
    "level": 2,
    "holder_ids": [
     "reiji_ameda"
-   ]
+   ],
+   "belt": {
+    "pl": "star",
+    "mt": "gold",
+    "st": "#18264a",
+    "gm": "none",
+    "sd": 2,
+    "ss": "square",
+    "tr": "none",
+    "w": "CROWN",
+    "top": "EWE"
+   }
   },
   {
    "id": "ewe_cable",
@@ -161,7 +205,18 @@
    "level": 2,
    "holder_ids": [
     "kid_comet"
-   ]
+   ],
+   "belt": {
+    "pl": "bar",
+    "mt": "silver",
+    "st": "#a3221f",
+    "gm": "white",
+    "sd": 2,
+    "ss": "round",
+    "tr": "stitch",
+    "w": "TELEVISION",
+    "top": "EWE"
+   }
   },
   {
    "id": "ewe_basic_cable",
@@ -170,7 +225,18 @@
    "level": 2,
    "holder_ids": [
     "coco_capital"
-   ]
+   ],
+   "belt": {
+    "pl": "oval",
+    "mt": "silver",
+    "st": "#ece6d6",
+    "gm": "white",
+    "sd": 2,
+    "ss": "round",
+    "tr": "stitch",
+    "w": "WOMEN’S",
+    "top": "EWE"
+   }
   },
   {
    "id": "ewe_tag",
@@ -181,7 +247,18 @@
    "holder_ids": [
     "burt_bluecollar",
     "dex_diesel"
-   ]
+   ],
+   "belt": {
+    "pl": "shield",
+    "mt": "gold",
+    "st": "#1f4fa3",
+    "gm": "none",
+    "sd": 2,
+    "ss": "square",
+    "tr": "stitch",
+    "w": "TAG TEAM",
+    "top": "EWE"
+   }
   },
   {
    "id": "ror_world",
@@ -191,7 +268,18 @@
    "brand": "ror",
    "holder_ids": [
     "el_forajido"
-   ]
+   ],
+   "belt": {
+    "pl": "round",
+    "mt": "gold",
+    "st": "#2f7a3a",
+    "gm": "none",
+    "sd": 2,
+    "ss": "shield",
+    "tr": "none",
+    "w": "WORLD",
+    "top": "EWE"
+   }
   },
   {
    "id": "ror_womens",
@@ -201,7 +289,18 @@
    "brand": "ror",
    "holder_ids": [
     "minerva_forever"
-   ]
+   ],
+   "belt": {
+    "pl": "star",
+    "mt": "gold",
+    "st": "#5e2f86",
+    "gm": "none",
+    "sd": 2,
+    "ss": "shield",
+    "tr": "none",
+    "w": "WOMEN’S",
+    "top": "EWE"
+   }
   },
   {
    "id": "ror_tv",
@@ -211,7 +310,18 @@
    "brand": "ror",
    "holder_ids": [
     "shane_slabs"
-   ]
+   ],
+   "belt": {
+    "pl": "bar",
+    "mt": "bronze",
+    "st": "#1f4fa3",
+    "gm": "purple",
+    "sd": 2,
+    "ss": "square",
+    "tr": "stitch",
+    "w": "TELEVISION",
+    "top": "EWE"
+   }
   },
   {
    "id": "ror_pure",
@@ -221,7 +331,18 @@
    "brand": "ror",
    "holder_ids": [
     "leg_lock_lee"
-   ]
+   ],
+   "belt": {
+    "pl": "square",
+    "mt": "silver",
+    "st": "#5e2f86",
+    "gm": "none",
+    "sd": 1,
+    "ss": "shield",
+    "tr": "none",
+    "w": "PURE-ISH",
+    "top": "EWE"
+   }
   }
  ],
  "roster": [
@@ -261,7 +382,7 @@
    "finisher_description": "He springs off the top rope as his opponent stands, and clotheslines them out of their boots. Then he says sorry.",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 206250.0,
+    "monthly_salary": 206250,
     "weeks_left": 122,
     "push": "main_eventer"
    },
@@ -313,7 +434,7 @@
    "finisher_description": "A fireman's carry lifted high and dropped into a sit-out driver.",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 206250.0,
+    "monthly_salary": 206250,
     "weeks_left": 86,
     "push": "main_eventer"
    },
@@ -365,7 +486,7 @@
    "finisher_description": "A double underhook DDT, delivered after a twelve-hour shift.",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 206250.0,
+    "monthly_salary": 206250,
     "weeks_left": 32,
     "push": "main_eventer"
    },
@@ -417,7 +538,7 @@
    "finisher_description": "He hoists his opponent into a pumphandle and drives them into his knee.",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 206250.0,
+    "monthly_salary": 206250,
     "weeks_left": 92,
     "push": "main_eventer"
    },
@@ -469,7 +590,7 @@
    "finisher_description": "A cradled tombstone piledriver, finished with a wave to the cheap seats.",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 206250.0,
+    "monthly_salary": 206250,
     "weeks_left": 36,
     "push": "main_eventer"
    },
@@ -521,7 +642,7 @@
    "finisher_description": "A running elbow to the back of the head from out of a handspring.",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 206250.0,
+    "monthly_salary": 206250,
     "weeks_left": 124,
     "push": "main_eventer"
    },
@@ -573,7 +694,7 @@
    "finisher_description": "He spins his opponent by the wrist into a short-arm lariat that does not let go.",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 206250.0,
+    "monthly_salary": 206250,
     "weeks_left": 72,
     "push": "main_eventer"
    },
@@ -2922,7 +3043,7 @@
    "finisher_description": "A cradle piledriver, delivered with a fan's flutter.",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 206250.0,
+    "monthly_salary": 206250,
     "weeks_left": 26,
     "push": "main_eventer"
    },
@@ -2974,7 +3095,7 @@
    "finisher_description": "A short-arm, cross-legged crossface that stays until the shares change hands.",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 206250.0,
+    "monthly_salary": 206250,
     "weeks_left": 50,
     "push": "main_eventer"
    },

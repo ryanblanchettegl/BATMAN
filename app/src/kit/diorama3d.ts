@@ -402,6 +402,8 @@ export class Diorama3D {
   look(c: Cam3) { this.cam.position.set(c.p[0], c.p[1], c.p[2]); this.ctl.target.set(c.t[0], c.t[1], c.t[2]); this.cam.fov = c.fov || 30; this.cam.zoom = 1; this.cam.updateProjectionMatrix(); this.ctl.update(); this.ask(); }
   /** Where a person stands in the model (their waist), for shots that look at them. */
   spot(who: string): [number, number, number] | null { const g = this.groups.find(x => x.userData.who === (this.hold[who] || who)), rg = this.rigs[who]; if (!g || !rg) return null; const c = rg.anchors.chest || rg.anchors.waist; return [g.position.x, c ? c[1] - FOOT : 3, g.position.z]; }
+  /** Slide the camera, keeping its angle, until a person is in the middle of the picture (somebody just put on a turnbuckle out of view). */
+  follow(who: string) { const at = this.spot(who), g = this.groups.find(x => x.userData.who === (this.hold[who] || who)); if (!at || !g) return; const t = this.ctl.target, d = new THREE.Vector3(at[0] - t.x, at[1] + g.position.y - t.y, at[2] - t.z); this.cam.position.add(d); t.add(d); this.ctl.update(); this.ask(); }
   /** A named shot (SHOTS), worked out from the set's camera or the picked person. */
   shot(set: string, kind: string, who?: string): Cam3 {
     const h = homeShot(set), p = new THREE.Vector3(...h.p), t = new THREE.Vector3(...h.t), at = who ? this.spot(who) : null;

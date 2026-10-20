@@ -197,5 +197,10 @@ company = {
     'shows': [{'id': 'wpw_tnt', 'name': 'Tuesday Night Turmoil', 'weight': 1}],
     'titles': titles, 'roster': roster, 'teams': teams}
 out = os.path.join(ROOT, 'universes', 'parody', 'companies', 'wpw.json')
+# belts designed since (tools/design-belts.js, or by hand) are kept
+if os.path.exists(out):
+    old = {t['id']: t.get('belt') for t in json.load(open(out, encoding='utf-8')).get('titles', [])}
+    for t in titles:
+        if old.get(t['id']): t['belt'] = old[t['id']]
 json.dump(company, open(out, 'w', encoding='utf-8'), indent=1, ensure_ascii=False)
 print('wrote', out, len(roster), 'wrestlers,', len(titles), 'titles:', ', '.join(t['name'] + ' (' + (', '.join(t['holder_ids']) or 'vacant') + ')' for t in titles))

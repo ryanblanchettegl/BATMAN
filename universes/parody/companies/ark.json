@@ -98,7 +98,18 @@
    "level": 3,
    "holder_ids": [
     "young_ace_kazuma"
-   ]
+   ],
+   "belt": {
+    "pl": "round",
+    "mt": "gold",
+    "st": "#1c1b1f",
+    "gm": "green",
+    "sd": 3,
+    "ss": "square",
+    "tr": "etched",
+    "w": "GRAND",
+    "top": "ARK"
+   }
   },
   {
    "id": "ark_national",
@@ -107,7 +118,18 @@
    "level": 2,
    "holder_ids": [
     "kensei_kicker"
-   ]
+   ],
+   "belt": {
+    "pl": "shield",
+    "mt": "silver",
+    "st": "#5a3a22",
+    "gm": "purple",
+    "sd": 2,
+    "ss": "round",
+    "tr": "stitch",
+    "w": "NATIONAL",
+    "top": "ARK"
+   }
   },
   {
    "id": "ark_junior",
@@ -116,7 +138,18 @@
    "level": 2,
    "holder_ids": [
     "grinning_goro"
-   ]
+   ],
+   "belt": {
+    "pl": "star",
+    "mt": "gold",
+    "st": "#1f4fa3",
+    "gm": "none",
+    "sd": 2,
+    "ss": "square",
+    "tr": "none",
+    "w": "JUNIOR",
+    "top": "ARK"
+   }
   },
   {
    "id": "ark_tag",
@@ -127,7 +160,18 @@
    "holder_ids": [
     "northern_brute",
     "big_farmhand"
-   ]
+   ],
+   "belt": {
+    "pl": "shield",
+    "mt": "gold",
+    "st": "#ece6d6",
+    "gm": "none",
+    "sd": 2,
+    "ss": "square",
+    "tr": "none",
+    "w": "TAG TEAM",
+    "top": "ARK"
+   }
   }
  ],
  "roster": [

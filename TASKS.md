@@ -266,6 +266,9 @@ The desk image (`docs/mockups/paper/desk.png`) is the art style: the whole game 
 - [ ] Then the rest of the editor (companies, shows, belts, teams) in the same paper look, one at a time with Ryan's go-ahead.
 - [ ] The Roster page and Free agents in the game follow the same rule: the list on the left, the wrestler drawn full length in the middle at all times, the details on the right, as the World Editor's Wrestlers page (rule 5c).
 
+- [x] Create a Belt (Ryan, 20 October): a belt for every title, built from parts in one pop-up (plate, metal, strap, gem, side plates, trim, words), from the World Editor and from your own title in a game; every title in the parody world has its own design, and a belt in a scene is the real one.
+- [x] The logo creator has six lettering faces (Ryan, 20 October).
+
 ### 0z. Create a Scene, built out (later; Ryan, 18 October: "the bones are there and work")
 
 - [x] Zoomed out, the front of the ring runs too long and does not look right: the apron is lower, the barricade and stands closer, the barricade lower with a padded top.

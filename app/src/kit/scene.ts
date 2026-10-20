@@ -5,6 +5,7 @@
    figure from one keyframe to the next. The game's own scenes are made in Create a Scene like anybody else's
    (`SCENES` below is what it saved), so a player can open them, change them and share them. Nothing here touches
    the game state. */
+import type { BeltData } from './beltcols';
 import { bgPieces, isBg, backdropOf, setKey } from './backdrop';
 import { Piece, PAL, ell, rect, star, strip, drawScene, View, snip, shade } from './paper';
 import { Recipe, puppet, prop, Rig, blank, REF, Marks, commentator, dress, refDress } from './puppet';
@@ -43,7 +44,8 @@ export const BODY_PARTS: [string, [string, string][]][] = [
 export const HOLDS: [string, string][] = [['hands', 'hands'], ['shoulders', 'shoulders'], ['chest', 'chest'], ['waist', 'waist'], ['head', 'head']];
 /** The limbs that can come in front or go behind, and the parts of each. */
 export const LIMBS: Record<string, string> = { sh_n: 'arm_n', el_n: 'arm_n', wr_n: 'arm_n', sh_f: 'arm_f', el_f: 'arm_f', wr_f: 'arm_f', hip_n: 'leg_n', kn_n: 'leg_n', an_n: 'leg_n', hip_f: 'leg_f', kn_f: 'leg_f', an_f: 'leg_f' };
-export interface Prop { id: string; k: string; x: number; y: number; r: number; z: number; s?: number; txt?: string; col?: string; at?: string }
+/** bl: the design of the belt a belt prop shows (a title's own, src/89-belts.js), filled in when a scene is cast. */
+export interface Prop { id: string; k: string; x: number; y: number; r: number; z: number; s?: number; txt?: string; col?: string; at?: string; bl?: BeltData }
 /** The camera at a keyframe: where it looks (x, y in scene units), how close (z: 1 is the whole set, 3 is a close-up)
     and a tilt in degrees. Left out, it shows the whole set. */
 export interface Cam { x: number; y: number; z: number; r?: number }

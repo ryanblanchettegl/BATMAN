@@ -14,7 +14,7 @@ var SCHEMAS={
   promotions:{required:['id','name','popularity'],fields:{id:'id',name:'str',full_name:'str?',blurb:'str?',owner:'obj?',staff:'obj?',announcers:'list?',cities:'list?',cash:'num?',popularity:'num',work_rate_weight:'num?',angles_per_show:'int?',wage_scale:'num?',tv_rate:'num?',production_cost:'num?',target_weekly_net:'num?',flagship_month:'int?',production_level:'int?',risk_level:'int?',tv_slot:'int?',model:'str?',brands:'list?',media:'obj?',logo:'obj?',events:'list?'}},
   workers:{required:['id','ring_name','gender','disposition','style','ratings'],fields:{id:'id',ring_name:'str',real_name:'str?',birth_date:'str?',age:'int?',hometown:'str?',gender:['M','F'],weight_class:['cruiser','heavy','super_heavy'],disposition:['face','heel','tweener'],roles:'list?',style:Object.keys(STYLE_KEY),finisher:'str?',manager_id:'str?',locker_role:['mentor','diva','gatekeeper','leader','toxic'],ratings:'obj',peak_years:'list?',age_cliff:'int?',media:'obj?',face:'obj?',gimmick_category:'str?',gimmick:'str?',catchphrase:'str?',finisher_description:'str?',finisher_move:'str?',signatures:'list?',debut_year:'int?',legend:'bool?',height:'str?',weight:'str?',notes:'str?',look:'obj?'}},
   contracts:{required:['worker_id','promotion_id'],fields:{worker_id:'str',promotion_id:'str',contract_type:['exclusive','pwa'],monthly_salary:'num?',per_show_fee:'num?',weeks_left:'int?',tenure_weeks:'int?',push_level:PUSH,brand:'str?'}},
-  titles:{required:['id','promotion_id','name','gender','level'],fields:{id:'id',promotion_id:'str',name:'str',gender:['M','F'],level:'int',tag:'bool?',brand:'str?',holder_ids:'list?',media:'obj?'}},
+  titles:{required:['id','promotion_id','name','gender','level'],fields:{id:'id',promotion_id:'str',name:'str',gender:['M','F'],level:'int',tag:'bool?',brand:'str?',holder_ids:'list?',media:'obj?',belt:'obj?'}},
   teams:{required:['id','name','member_ids','promotion_id'],fields:{id:'id',name:'str',kind:['tag','stable'],member_ids:'list',leader_id:'str?',experience:'num?',chemistry:'num?',finisher:'str?',promotion_id:'str'}},
   relationships:{required:['a','b','type'],fields:{a:'str',b:'str',type:REL_TYPES,strength:'num?',ring_chemistry:'num?',note:'str?'}},
   events:{required:['month','name'],fields:{month:'int',name:'str',rule:'str?'}},
@@ -124,7 +124,7 @@ function buildDB(pkg){
   });
   (pkg.shows||[]).forEach(function(s){PR[s.promotion_id].shows.push({id:s.id,name:s.name,brand:s.brand||undefined,mult:s.weight!=null?clamp(s.weight,0.2,1):1});});
   var home={},con={};(pkg.contracts||[]).forEach(function(c){if((c.contract_type||'exclusive')==='exclusive'||!home[c.worker_id]){home[c.worker_id]=c.promotion_id;con[c.worker_id]=c;}});
-  (pkg.titles||[]).forEach(function(t){PR[t.promotion_id].titles.push({id:t.id,name:t.name,g:t.gender,lvl:clamp(t.level,1,3),tag:!!t.tag,brand:t.brand||undefined,holders:(t.holder_ids||[]).every(function(h){return home[h]===t.promotion_id;})?(t.holder_ids||[]).map(function(h){return '#'+h;}):[]});});
+  (pkg.titles||[]).forEach(function(t){PR[t.promotion_id].titles.push({id:t.id,name:t.name,g:t.gender,lvl:clamp(t.level,1,3),tag:!!t.tag,brand:t.brand||undefined,belt:t.belt&&typeof t.belt==='object'?JSON.parse(JSON.stringify(t.belt)):undefined,holders:(t.holder_ids||[]).every(function(h){return home[h]===t.promotion_id;})?(t.holder_ids||[]).map(function(h){return '#'+h;}):[]});});
   var stables=[];
   (pkg.teams||[]).forEach(function(t){
     if((t.kind||'tag')==='stable')stables.push({name:t.name,promo:t.promotion_id,leader:t.leader_id||t.member_ids[0],m:t.member_ids.slice()});
@@ -182,7 +182,7 @@ E.exportUniverse=function(S,meta){
     if(P.events)o.events=P.events.map(function(e,i){var x={month:i+1,name:e.n,type:e.t};if(e.rule)x.rule=e.rule;return x;});
     pkg.promotions.push(o);
     P.shows.forEach(function(s){var x={id:slug(id+'_'+s.id),promotion_id:pid(id),name:s.name,weight:s.mult==null?1:s.mult};if(s.brand)x.brand=s.brand;pkg.shows.push(x);});
-    P.titles.forEach(function(t){var x={id:slug(t.id),promotion_id:pid(id),name:t.name,gender:t.g,level:t.lvl,tag:!!t.tag,holder_ids:t.holders.map(function(h){return uid[h];}).filter(Boolean)};if(t.brand)x.brand=t.brand;pkg.titles.push(x);});
+    P.titles.forEach(function(t){var x={id:slug(t.id),promotion_id:pid(id),name:t.name,gender:t.g,level:t.lvl,tag:!!t.tag,holder_ids:t.holders.map(function(h){return uid[h];}).filter(Boolean)};if(t.brand)x.brand=t.brand;if(t.belt)x.belt=JSON.parse(JSON.stringify(t.belt));pkg.titles.push(x);});
   });
   var push=S.order.reduce(function(o,id){var m=E.pushMap(S,id);Object.keys(m).forEach(function(k){o[k]=m[k];});return o;},{});
   var PL={'Main event':'main_eventer','Upper midcard':'upper_midcarder','Midcard':'midcarder','Lower midcard':'lower_midcarder','Opener':'jobber'};

@@ -287,3 +287,11 @@ html body .win.ppop .wb{font-family:var(--hand);font-size:1.06em}
 .btn.lfo-brush{font-family:'Craft Gochi',cursive}
 .btn.lfo-neat{font-family:'Craft Hand',cursive}
 .btn.lfo-scrawl{font-family:'Craft Kalam',cursive;font-weight:700}
+
+/* Create a Belt: the belt on a sheet of black card, and the gem chip for none */
+.beltc{display:inline-block;line-height:0;background:var(--lk-black) center/cover;padding:.35em .5em;box-shadow:2px 3px 0 rgba(0,0,0,.35)}
+.mm-s .beltc{padding:.15em .25em;box-shadow:none}
+.tbelt{display:flex;align-items:center;gap:.6em;flex-wrap:wrap}
+.mm-c.none{background:repeating-linear-gradient(45deg,#ddd 0 4px,#fff 4px 8px)!important}
+.bm .mm-left{display:flex;flex-direction:column;gap:.4em;align-items:flex-start;width:auto}
+.edbelt{overflow:visible}

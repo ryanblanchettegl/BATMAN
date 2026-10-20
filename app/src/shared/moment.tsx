@@ -19,7 +19,16 @@ export function fillScene(sc: Scene, hk: Record<string, number>, cast: Record<st
     cast[sl.id] = recipeOf(S.w[id]); return true;
   });
   if (keep.filter(sl => sl.role !== 'ref').length < Math.min(2, sc.slots.filter(sl => sl.role !== 'ref').length)) return null;
-  return keep.length === sc.slots.length ? sc : { ...sc, slots: keep };
+  const out = keep.length === sc.slots.length ? sc : { ...sc, slots: keep };
+  return withBelt(out, keep.map(sl => hk[sl.hook || sl.role]).filter(id => id != null));
+}
+/** A belt in a scene is a real one: the belt of a title somebody in the scene holds, or else your company's top title. */
+export function withBelt(sc: Scene, ids: number[]): Scene {
+  if (!sc.keys.some(k => k.props.some(p => p.k === 'belt'))) return sc;
+  const S = G.S; let bl: any = null;
+  for (const pid of S.order) { const P = S.promos[pid]; for (const t of P.titles || []) if (!bl && t.holders.some((h: number) => ids.indexOf(h) >= 0)) bl = E.beltOf(t, P); }
+  if (!bl) { const P = S.promos[S.player], t = (P.titles || []).slice().sort((a: any, b: any) => b.lvl - a.lvl)[0]; if (t) bl = E.beltOf(t, P); }
+  return bl ? { ...sc, keys: sc.keys.map(k => ({ ...k, props: k.props.map(p => p.k === 'belt' ? { ...p, bl } : p) })) } : sc;
 }
 
 /** What each matter (by `type`) and each call (by `kind`) is a picture of. Anything not here: across your desk when it
