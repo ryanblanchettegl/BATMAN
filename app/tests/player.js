@@ -141,6 +141,12 @@ const msg = page => txt(page, '[data-t="caw-msg"]');
     await page.click('[data-t="scene-save"]'); await page.click('[data-t="scene-done"]'); await page.waitForSelector('[data-t="caw"]');
     await pick(page, 'caw-tab', 'scenes');
     { const ev = await page.$eval('[data-t="caw-ent"]', e => e.value + ' of ' + [...e.options].map(o => o.value).join(',')); ok('Done comes back to them with the custom entrance picked', /^scene-/.test(ev), ev); }
+    // a custom move: Create a Move opens on their finisher with them in it, and saving makes it the finisher's picture
+    await pick(page, 'caw-tab', 'fin'); await pick(page, 'caw-fin', '0'); await page.click('[data-t="caw-newmove"]'); await page.waitForSelector('[data-t="scene-stage"]');
+    { const who = await page.$eval('[data-t="scene-who"]', e => e.textContent).catch(() => ''); ok('Make a custom move opens Create a Move with them in it', /Create a Move/.test(await txt(page, '.sc-menubar')) && /Napoleon/.test(who), who); }
+    await page.click('[data-t="scene-save"]'); await page.click('[data-t="scene-done"]'); await page.waitForSelector('[data-t="caw"]');
+    await pick(page, 'caw-tab', 'fin'); await pick(page, 'caw-fin', '0');
+    ok('Done comes back with the custom move as the finisher\'s picture', /^scene-/.test(await page.$eval('[data-t="caw-finopt"][data-v="preview_pose_id"]', e => e.value)));
     // their portrait: bottom right, pressed to change it
     ok('their portrait is in the full-body window, bottom right', !!(await page.$('[data-t="caw-win"] [data-t="caw-portrait"] canvas')));
     await page.click('[data-t="caw-portrait"]');

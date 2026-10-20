@@ -41,6 +41,8 @@ export interface PlayerProps { world: string; w: any; had: Look | null; onSave: 
   /** The world's own scenes, besides the game's: its entrances are offered too. In the World Editor, onNewEntrance
       keeps the wrestler and opens Create a Scene to make them a custom entrance. */
   scenes?: Scene[]; onNewEntrance?: (look: Look) => void;
+  /** In the World Editor: keep the wrestler and open Create a Move on a copy of their move number `fi`, with them in it. */
+  onNewMove?: (look: Look, fi: number) => void;
   /** The card behind their portrait: their company's or brand's colour. */
   card?: string }   // sign: a new wrestler, made in a game, who goes to free agency
 /** The choices for a new signing, as the old Create a wrestler window had them (E.createWrestler). */
@@ -75,7 +77,7 @@ export function CreatePlayer(pp: PlayerProps) {
   let sc: Scene, cast: Record<string, Recipe> = { A: r }, play: string;
   const world = pp.scenes || [], [prev, setPrev] = useState<string | null>(null), prevSc = prev ? allScenes(world).find(x => x.id === prev) : null;
   if (acting && fin) {
-    const src = SCENES.find(x => x.id === finScene(fin)) || SCENES[0];
+    const src = allScenes(world).find(x => x.id === finScene(fin)) || SCENES[0];
     sc = { ...copy(src), attire: 'primary_ring', loop: true }; cast.B = { ...blank(1), name: 'The dummy' }; play = 'fin' + fi + JSON.stringify(lk) + sc.id;
   } else if (prevSc && tab === 'scenes') {   // the entrance they picked, with them in it
     sc = { ...dressEntrance(copy(prevSc), lk.entrance_fx), loop: true }; play = 'sc' + prevSc.id + JSON.stringify(lk);
@@ -302,10 +304,11 @@ export function CreatePlayer(pp: PlayerProps) {
           {fin ? <>
             <div class="sc-row"><TextBox value={fin.name} max={32} label="Name of the move" t="caw-finname" width="18ch" onInput={v => setFin(f => { f.name = v; })} /></div>
             <div class="sc-row"><span class="caw-lbl">Impact</span><input type="range" min={1} max={100} value={fin.impact_damage || 50} aria-label="Impact" data-t="caw-findmg" onInput={e => { const v = +(e.currentTarget as HTMLInputElement).value; setFin(f => { f.impact_damage = v; }); }} /><b>{fin.impact_damage || 50}</b></div>
-            {([['kickout_difficulty', 'Kick out', KICKOUT], ['position', 'From', POSITIONS], ['category', 'How it wins', CATEGORIES], ['preview_pose_id', 'In the picture', FIN_SCENES]] as [keyof Finisher, string, [string, string][]][]).map(([k, n, opts]) =>
+            {([['kickout_difficulty', 'Kick out', KICKOUT], ['position', 'From', POSITIONS], ['category', 'How it wins', CATEGORIES], ['preview_pose_id', 'In the picture', FIN_SCENES.concat(world.filter(x => x.when === 'move').map(x => [x.id, 'This world: ' + x.name] as [string, string]))]] as [keyof Finisher, string, [string, string][]][]).map(([k, n, opts]) =>
               <div class="sc-row"><span class="sc-slot">{n}</span><select aria-label={n} data-t="caw-finopt" data-v={k} value={(k === 'preview_pose_id' ? finScene(fin) : (fin[k] as string)) || ''} onChange={e => { const v = (e.currentTarget as HTMLSelectElement).value; setFin(f => { (f as any)[k] = v; }); }}>{opts.map(o => <option value={o[0]}>{o[1]}</option>)}</select></div>)}
             {fi > 0 ? <div class="sc-row"><span class="sc-slot">When</span><select aria-label="When in a match" data-t="caw-finstage" value={fin.stage || 'mid'} onChange={e => { const v = (e.currentTarget as HTMLSelectElement).value; setFin(f => { if (v === 'mid') delete f.stage; else f.stage = v; }); }}>{STAGES.map(o => <option value={o[0]}>{o[1]}</option>)}</select></div> : null}
             <div class="sc-row"><Btn kind="go" t="caw-act" onClick={() => setActing(!acting)}>{acting ? 'Stop' : 'Act it out on the dummy'}</Btn>
+              {pp.onNewMove ? <Btn kind="sm" t="caw-newmove" tip="Saves them, and opens Create a Move on this move with them in it" onClick={() => pp.onNewMove!(lk, fi)}>Make a custom move</Btn> : null}
 </div>
             <p class="muted">One finisher and two signature moves, each played when it says. The more protected a finisher, the rarer and bigger a kick-out.</p>
           </> : <p class="empty">Pick a move to change it.</p>}

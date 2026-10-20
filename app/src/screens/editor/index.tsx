@@ -16,7 +16,8 @@ import { ScenesTab, keepScene, forgetScene } from './Scenes';
 import { SceneStudio, fromWorld } from '../scene';
 import { CreatePlayer, workerW } from '../player';
 import { companyCard } from '../../kit/paperportrait';
-import { SCENES, STILLS, SHOW_SCENES, copy } from '../../kit/scene';
+import { SCENES, STILLS, SHOW_SCENES, MOVES, allScenes, copy } from '../../kit/scene';
+import { threeMoves, finScene } from '../../kit/caw';
 
 /* Back steps out one level at a time: the open record, then the world, then the title screen. */
 onBack(() => {
@@ -113,16 +114,23 @@ export function Editor() {
           const all = E.edScenes(pkg).concat(SCENES), src = all.find((x: any) => x.id === lk.entrance && x.when === 'entrance') || SCENES.find(x => x.when === 'entrance')!, sc = copy(src);
           sc.id = 'scene-' + Date.now().toString(36); sc.name = ((lk.name || wk.ring_name) + ' comes out').slice(0, 32);
           look(() => { st.player = null; st.scene = sc.id; st.sceneStart = sc; st.sceneFor = { who: wk.id, cast: wk.ring_name }; });
+        }} onNewMove={(lk, fi) => {   // keep the wrestler, then Create a Move on a copy of that move, with them in it
+          edit(() => { E.edSetLook(world(), wk.id, lk); });
+          const fins = threeMoves({ name: wk.ring_name }, lk.finishing_moves), fm = fins[fi], src = allScenes(E.edScenes(pkg)).find((x: any) => x.id === finScene(fm)) || MOVES[0], sc = copy(src);
+          sc.id = 'scene-' + Date.now().toString(36); sc.name = ((fm && fm.name) || 'A move').slice(0, 32); sc.when = 'move'; sc.still = false;
+          look(() => { st.player = null; st.scene = sc.id; st.sceneStart = sc; st.sceneMode = 'move'; st.sceneFor = { who: wk.id, cast: wk.ring_name, fin: fi }; });
         }} />; }
   }
   if (st.id && st.scene) {   // Create a Scene, full screen, on the world being edited
-    const pkg = UNIS[st.id], mine = E.edScenes(pkg), start = st.scene === '__new' ? undefined : (mine.find((x: any) => x.id === st.scene) || (st.sceneStart && st.sceneStart.id === st.scene ? st.sceneStart : null) || SCENES.concat(STILLS, SHOW_SCENES).find(x => x.id === st.scene));
+    const pkg = UNIS[st.id], mine = E.edScenes(pkg), start = st.scene === '__new' ? undefined : (mine.find((x: any) => x.id === st.scene) || (st.sceneStart && st.sceneStart.id === st.scene ? st.sceneStart : null) || SCENES.concat(STILLS, SHOW_SCENES, MOVES).find(x => x.id === st.scene));
     const R = fromWorld(pkg), fr = st.sceneFor, castA = fr ? R.find(w => w.name === fr.cast) : undefined;
     // a custom entrance made from Create a Player: saving it picks it for them, and Done goes back to them
-    return <SceneStudio key={st.scene} world={pkg.manifest.name || 'this world'} roster={R} saved={mine} start={start} blank={st.scene === '__new'} castA={castA ? castA.id : undefined}
+    return <SceneStudio key={st.scene + ':' + (st.sceneMode || '')} mode={st.sceneMode || undefined} world={pkg.manifest.name || 'this world'} roster={R} saved={mine} start={start} blank={st.scene === '__new'} castA={castA ? castA.id : undefined}
       backdrops={E.edBackdrops(pkg)} onSaveBg={b => { let okd = false; edit(() => { okd = E.edSetBackdrop(world(), b); }); return okd; }}
-      onSave={sc => { const ok = keepScene(sc); if (ok && fr && sc.when === 'entrance') edit(() => { const lk = E.edLook(world(), fr.who); if (lk) { lk.entrance = sc.id; E.edSetLook(world(), fr.who, lk); } }); return ok; }}
-      onForget={forgetScene} onDone={() => look(() => { st.scene = null; st.sceneStart = null; if (fr) { st.player = fr.who; st.sceneFor = null; } })} />;
+      onSave={sc => { const ok = keepScene(sc); if (ok && fr && fr.fin == null && sc.when === 'entrance') edit(() => { const lk = E.edLook(world(), fr.who); if (lk) { lk.entrance = sc.id; E.edSetLook(world(), fr.who, lk); } });
+        if (ok && fr && fr.fin != null) edit(() => { const lk = E.edLook(world(), fr.who); if (lk) { const fins = threeMoves({ name: fr.cast }, lk.finishing_moves); if (fins[fr.fin!]) { fins[fr.fin!].preview_pose_id = sc.id; lk.finishing_moves = fins; E.edSetLook(world(), fr.who, lk); } } });   // a custom move becomes the move's picture
+        return ok; }}
+      onForget={forgetScene} onDone={() => look(() => { st.scene = null; st.sceneStart = null; st.sceneMode = null; if (fr) { st.player = fr.who; st.sceneFor = null; } })} />;
   }
   if (st.id && st.tab === 'wrestlers') return <WrestlersPage />;   // the first page in the paper look (rule 2a): Create a Wrestler at its heart
   return st.id ? <Open /> : <Home />;

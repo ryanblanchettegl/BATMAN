@@ -16,7 +16,7 @@
 import { useEffect, useRef, useState } from 'preact/hooks';
 import { W } from '../../engine';
 import { Btn, TextBox, Desktop, Win, Group, Sel as Drop, Opt } from '../../kit';
-import { Scene, Key, Fig, Prop, SCENES, STILLS, WHEN, STILL_WHEN, SETS, SETUPS, setupScene, WAIST, POSES, HOLDS, LIMBS, HOOKS, at, build, lastT, allScenes, ok, copy, SHOW_WHEN, SHOW_SCENES, SCENE_FX, fxClass, FRAMES, EASES, aspectOf, fitIn, BODY_PARTS, CAP_STYLES, SPOTS, captionAt, camAt, CAM_MOVES } from '../../kit/scene';
+import { MOVES, Scene, Key, Fig, Prop, Studio, STUDIOS, studioOf, setupsFor, TEMPLATES, templateScene, SCENES, STILLS, WHEN, STILL_WHEN, SETS, SETUPS, setupScene, WAIST, POSES, HOLDS, LIMBS, HOOKS, at, build, lastT, allScenes, ok, copy, SHOW_WHEN, SHOW_SCENES, SCENE_FX, fxClass, FRAMES, EASES, aspectOf, fitIn, BODY_PARTS, CAP_STYLES, SPOTS, captionAt, camAt, CAM_MOVES } from '../../kit/scene';
 import { FxVeil, CaptionBox, capName } from '../../kit/sceneplayer';
 import { Backdrop, BG_PARTS, BG_COLS, newBackdrop, newPart, useBackdropSource, isBg } from '../../kit/backdrop';
 import { drawPaper, toPx, Piece } from '../../kit/paper';
@@ -34,7 +34,12 @@ const LENSES: [number, string][] = [[18, 'Long lens'], [24, 'Close lens'], [30, 
 const lensOf = (fov: number) => LENSES.reduce((b, l) => Math.abs(l[0] - fov) < Math.abs(b[0] - fov) ? l : b)[0];
 const RINGSETS = ['ring', 'ringlow', 'ringcorner', 'cage', 'stadium', 'ringside', 'cell', 'inferno', 'ballroom', 'gym', 'bigstadium'];
 
-function blankScene(): Scene {
+/** The props that carry words, and the colours words can be in (Words has no background: Ryan, 20 October). */
+const TEXTED = ['burst', 'sign', 'headline', 'masthead', 'words'];
+const WORD_COLS: Opt[] = [['', 'Its own colour'], ['#ffffff', 'White'], ['#ffd84a', 'Yellow'], ['#e8402a', 'Red'], ['#2f6bd8', 'Blue'], ['#3ad06a', 'Green'], ['#ff6ec7', 'Pink'], ['#111111', 'Black']];
+function blankScene(mode?: Studio): Scene {
+  if (mode === 'still') return templateScene('poster');
+  if (mode === 'move') return { ...setupScene('ring'), name: 'My move', when: 'move' };
   return { v: 1, id: 'scene-' + Date.now().toString(36), name: 'My scene', when: 'any', set: 'ring', slots: [{ id: 'A', n: 'Wrestler A', role: 'a' }, { id: 'B', n: 'Wrestler B', role: 'b' }, { id: 'R', n: 'The referee', role: 'ref' }],
     keys: [{ t: 0, figs: { A: { x: -2.2, y: WAIST, r: 0, f: 1, z: 0, p: {} }, B: { x: 2.2, y: WAIST, r: 0, f: -1, z: 1.2, p: {} }, R: { x: -5.4, y: WAIST, r: 0, f: 1, z: -0.3, p: {} } }, props: [] }] };
 }
@@ -123,18 +128,20 @@ export function fromWorld(pkg: any): W[] {
   return (pkg && pkg.workers || []).filter((w: any) => !w.roles || w.roles.indexOf('wrestler') >= 0).map((w: any, i: number) => ({ id: i, name: w.ring_name || w.id, g: w.gender === 'F' ? 'F' : 'M',
     align: w.disposition === 'heel' ? 'H' : 'F', twn: w.disposition === 'tweener', style: STY[w.style] || 'A', face: w.face, age: w.age || 28, gim: (w.gimmick_category || '') + ' ' + (w.gimmick || ''), look: w.look || null }));
 }
-export interface StudioProps { world: string; roster: W[]; saved: Scene[]; start?: Scene; blank?: boolean; castA?: number; onSave: (sc: Scene) => boolean;
+export interface StudioProps { world: string; roster: W[]; saved: Scene[]; start?: Scene; blank?: boolean; castA?: number;
+  /** Which studio this is (Animation, Create a Move, Create a Scene); left out, it is the one the scene belongs in. */ mode?: Studio; onSave: (sc: Scene) => boolean;
   /** The world's backdrops, and how to keep one (the Set tab). */ backdrops?: Backdrop[]; onSaveBg?: (b: Backdrop) => boolean; onForget: (id: string) => void; onDone: () => void }
 
 /** Create a Scene, full screen, opened from the World Editor. The scene is kept in the world being edited. */
 export function SceneStudio(pp: StudioProps) {
   const roster = pp.roster, [msg, setMsg] = useState<{ t: string; err?: boolean } | null>(null);
   const say = (t: string, o?: { err?: boolean }) => setMsg({ t, err: !!(o && o.err) });
-  const [sc, setSc] = useState<Scene>(() => pp.blank ? blankScene() : copy(pp.start || SCENES[0])), [ki, setKi] = useState(0), [sel, setSel] = useState<Sel>({ who: 'A', part: 'body' });
+  const [mode] = useState<Studio>(() => pp.mode || studioOf(pp.blank ? blankScene() : (pp.start || SCENES[0])));
+  const [sc, setSc] = useState<Scene>(() => pp.blank ? blankScene(pp.mode) : copy(pp.start || SCENES[0])), [ki, setKi] = useState(0), [sel, setSel] = useState<Sel>({ who: 'A', part: 'body' });
   const [time, setTime] = useState<number | null>(null);
   // who plays each part here: the first two from the roster, everyone after them the next wrestlers along
   const [castIds, setCast] = useState<Record<string, number>>(() => { const o: Record<string, number> = {}; const ids = roster.map(w => w.id); let i = 0;
-    const start = pp.blank ? blankScene() : (pp.start || SCENES[0]); start.slots.forEach(sl => { if (sl.role === 'ref' || sl.dress) return; if (sl.id === 'A' && pp.castA != null) { o.A = pp.castA; return; } while (i < ids.length && ids[i] === pp.castA) i++; if (i < ids.length) o[sl.id] = ids[i++]; }); return o; });
+    const start = pp.blank ? blankScene(pp.mode) : (pp.start || SCENES[0]); start.slots.forEach(sl => { if (sl.role === 'ref' || sl.dress) return; if (sl.id === 'A' && pp.castA != null) { o.A = pp.castA; return; } while (i < ids.length && ids[i] === pp.castA) i++; if (i < ids.length) o[sl.id] = ids[i++]; }); return o; });
   const [addK, setAddK] = useState('belt'), [words, setWords] = useState('WOW!'), file = useRef<HTMLInputElement>(null);
   const cast: Record<string, Recipe> = {}; for (const id in castIds) { const w = roster.find(x => x.id === castIds[id]); if (w) cast[id] = recipeOf(w); }
   const kk = Math.min(ki, sc.keys.length - 1), key = sc.keys[kk];
@@ -189,7 +196,7 @@ export function SceneStudio(pp: StudioProps) {
     say('Written out as ' + a.download + '. Anybody can open it in Create a Scene.');
   };
   const importIt = (f: File) => f.text().then(txt => { let x: any = null; try { x = JSON.parse(txt); } catch (e) { /* not JSON */ } if (ok(x)) { open(x); say('Opened "' + x.name + '".'); } else say('That file is not a scene.', { err: true }); });
-  const addProp = () => edit(k => { const id = addK + '-' + Date.now().toString(36); k.props.push({ id, k: addK, x: 0, y: addK === 'masthead' ? 3.6 : ['burst', 'sign', 'headline'].includes(addK) ? 3 : addK === 'confetti' ? 0 : -1.6, r: 0, z: 2.6, s: 1, txt: ['burst', 'sign', 'headline', 'masthead'].includes(addK) ? words : undefined }); setSel({ who: id, part: 'prop' }); });
+  const addProp = () => edit(k => { const id = addK + '-' + Date.now().toString(36); k.props.push({ id, k: addK, x: 0, y: addK === 'masthead' ? 3.6 : ['burst', 'sign', 'headline', 'words'].includes(addK) ? 3 : addK === 'confetti' ? 0 : -1.6, r: 0, z: 2.6, s: 1, txt: TEXTED.includes(addK) ? words : undefined }); setSel({ who: id, part: 'prop' }); });
   const selFig = sel && fig(key, sel.who), selProp = sel && sel.part === 'prop' ? propOf(key, sel.who) : null;
   const who = (id: string) => { const sl = sc.slots.find(s => s.id === id); return sl ? sl.n : id; };
   const mine = pp.saved;
@@ -236,8 +243,8 @@ export function SceneStudio(pp: StudioProps) {
   const setCap = (c: { t?: string; s?: string; who?: string }) => edit(k => { const n: any = { ...(k.cap || { t: '', s: 'sub' }), ...c }; if (!n.who) delete n.who; if (n.t) k.cap = n; else delete k.cap; });
   const shotName = key.cam3 ? 'Its own shot' : key.cm === 'home' || !camAt(sc, kk) ? 'The set camera' : 'Holding the last shot';
   return <div class="scfull paper" data-t="scene">
-    <div class="pmenu sc-menubar" role="group" aria-label="Create a Scene">
-      <b class="pm-app">Create a Scene</b><span class="pm-world sc-title">{sc.name}</span><span class="sp" />
+    <div class="pmenu sc-menubar" role="group" aria-label={STUDIOS.find(x => x[0] === mode)![1]} data-v={mode}>
+      <b class="pm-app">{STUDIOS.find(x => x[0] === mode)![1]}</b><span class="pm-world sc-title">{sc.name}</span><span class="sp" />
       <Btn kind="sm" t="scene-save" tip="Keep this scene in the world" onClick={save}>Save</Btn>
       <Btn kind="go" t="scene-done" onClick={pp.onDone}>Done</Btn>
     </div>
@@ -337,7 +344,8 @@ export function SceneStudio(pp: StudioProps) {
         </>}
         {selProp && sel && <Group title="The prop">
           <div class="sc-row">
-            {(['burst', 'sign', 'headline', 'masthead'].includes(selProp.k)) && <TextBox value={selProp.txt || ''} max={16} label="Words" t="scene-words" onInput={v => edit(k => { const q = propOf(k, sel.who); if (q) q.txt = v.toUpperCase(); })} width="12ch" />}
+            {(TEXTED.includes(selProp.k)) && <TextBox value={selProp.txt || ''} max={selProp.k === 'words' ? 32 : 16} label="Words" t="scene-words" onInput={v => edit(k => { const q = propOf(k, sel.who); if (q) q.txt = selProp.k === 'words' ? v : v.toUpperCase(); })} width="12ch" />}
+            {TEXTED.includes(selProp.k) && <Drop t="scene-wordcol" label="Colour of the words" value={selProp.col || ''} options={WORD_COLS} onChange={v => edit(k => { const q = propOf(k, sel.who); if (q) { if (v) q.col = v; else delete q.col; } })} />}
             <Btn kind="sm" t="scene-bigger" onClick={() => edit(k => { const q = propOf(k, sel.who); if (q) q.s = Math.min(3, Math.round(((q.s || 1) + 0.1) * 10) / 10); })}>Bigger</Btn>
             <Btn kind="sm" t="scene-smaller" onClick={() => edit(k => { const q = propOf(k, sel.who); if (q) q.s = Math.max(0.3, Math.round(((q.s || 1) - 0.1) * 10) / 10); })}>Smaller</Btn>
           </div>
@@ -374,7 +382,7 @@ export function SceneStudio(pp: StudioProps) {
         </Group>
         <Group title="Add a prop">
           <div class="sc-row"><select aria-label="Prop" data-t="scene-propkind" value={addK} onChange={e => setAddK((e.currentTarget as HTMLSelectElement).value)}>{PROPS.map(x => <option value={x[0]}>{x[1]}</option>)}</select>
-            {(['burst', 'sign', 'headline', 'masthead'].includes(addK)) && <TextBox value={words} max={16} label="Words on it" t="scene-newwords" onInput={v => setWords(v.toUpperCase())} width="10ch" />}
+            {(TEXTED.includes(addK)) && <TextBox value={words} max={addK === 'words' ? 32 : 16} label="Words on it" t="scene-newwords" onInput={v => setWords(addK === 'words' ? v : v.toUpperCase())} width="10ch" />}
             <Btn t="scene-addprop" onClick={() => { addProp(); setTab('sel'); }}>Add</Btn></div>
           {key.props.length ? <div class="sc-row">{key.props.map(q => <Btn kind="less" t="scene-lpick" d={{ v: q.id }} on={!!sel && sel.who === q.id} onClick={() => pickSel({ who: q.id, part: 'prop' })}>{(PROPS.find(x => x[0] === q.k) || ['', q.k])[1] + (q.txt ? ': ' + q.txt : '')}</Btn>)}</div> : null}
         </Group>
@@ -429,10 +437,13 @@ export function SceneStudio(pp: StudioProps) {
         </Group>
         <Group title="Files">
           <div class="sc-row">
-            <select aria-label="Open a scene" data-t="scene-open" value="" onChange={e => { const v = (e.currentTarget as HTMLSelectElement).value; const x = allScenes(mine).find(y => y.id === v); if (x) open(x); }}>
-              <option value="">Open a scene...</option>
-              {mine.map(x => <option value={x.id}>{'This world: ' + x.name}</option>)}{SCENES.filter(x => !mine.some(m => m.id === x.id)).map(x => <option value={x.id}>{'The game: ' + x.name}</option>)}{STILLS.filter(x => !mine.some(m => m.id === x.id)).map(x => <option value={x.id}>{'A still: ' + x.name}</option>)}{SHOW_SCENES.filter(x => !mine.some(m => m.id === x.id)).map(x => <option value={x.id}>{'The show: ' + x.name}</option>)}
-            </select>
+            {(() => { const kind = (x: Scene) => mine.some(m => m.id === x.id) ? 'This world: ' : x.still ? 'A still: ' : SHOW_SCENES.some(y => y.id === x.id) ? 'The show: ' : 'The game: ';
+              const all = mine.concat(SCENES.concat(STILLS, SHOW_SCENES, MOVES).filter(x => !mine.some(m => m.id === x.id))), here = all.filter(x => studioOf(x) === mode), other = all.filter(x => studioOf(x) !== mode);
+              return <select aria-label="Open a scene" data-t="scene-open" value="" onChange={e => { const v = (e.currentTarget as HTMLSelectElement).value; const x = allScenes(mine).find(y => y.id === v); if (x) open(x); }}>
+                <option value="">Open a scene...</option>
+                {here.map(x => <option value={x.id}>{kind(x) + x.name}</option>)}
+                {other.length ? <optgroup label="From the other studios">{other.map(x => <option value={x.id}>{kind(x) + x.name}</option>)}</optgroup> : null}
+              </select>; })()}
           </div>
           <div class="sc-row">
             <Btn kind="sm" t="scene-export" onClick={exportIt}>Write a file</Btn>
@@ -441,8 +452,10 @@ export function SceneStudio(pp: StudioProps) {
             <input ref={file} type="file" accept=".json,application/json" hidden data-t="scene-file" onChange={e => { const f = (e.currentTarget as HTMLInputElement).files; if (f && f[0]) importIt(f[0]); (e.currentTarget as HTMLInputElement).value = ''; }} />
           </div>
         </Group>
-        <Group title="Start a new scene">
-          <div class="sc-row"><span class="sc-lbl">Start from</span><Drop t="scene-setup" label="Start a new scene from" value="" options={[['', 'Pick a setup...'] as Opt].concat(SETUPS.map(([id, n]) => [id, n] as Opt))} onChange={id => { const n = (SETUPS.find(x => x[0] === id) || ['', ''])[1]; if (!id) return; open(setupScene(id)); setTab('sel'); say('A new scene: ' + n.toLowerCase() + '. Press somebody to move or pose them; each keyframe can keep its own shot.'); }} /></div>
+        <Group title={mode === 'still' ? 'Start from a template' : mode === 'move' ? 'Start a new move' : 'Start a new scene'}>
+          <div class="sc-row"><span class="sc-lbl">Start from</span><Drop t="scene-setup" label="Start a new scene from" value="" options={[['', mode === 'still' ? 'Pick a template...' : 'Pick a setup...'] as Opt].concat(setupsFor(mode).map(([id, n]) => [id, n] as Opt))}
+            groups={[{ label: 'Other setups', options: SETUPS.filter(x => !setupsFor(mode).some(y => y[0] === x[0])).map(([id, n]) => [id, n] as Opt) }]}
+            onChange={id => { const tp = mode === 'still' && TEMPLATES.some(x => x[0] === id), n = ((tp ? TEMPLATES : SETUPS).find(x => x[0] === id) || ['', ''])[1]; if (!id) return; const ns = tp ? templateScene(id) : setupScene(id); if (mode === 'move' && ns.when === 'any') { ns.when = 'move'; ns.name = 'My move'; } open(ns); setTab('sel'); say('A new scene: ' + n.toLowerCase() + '. Press somebody to move or pose them; each keyframe can keep its own shot.'); }} /></div>
         </Group>
       </>}
       </div>

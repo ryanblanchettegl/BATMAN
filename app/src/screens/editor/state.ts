@@ -16,7 +16,7 @@ export interface EdState {
   /** open Create a Player on Edit attire (the outfits, a part of the body at a time) */
   attire?: boolean;
   /** a custom entrance started from Create a Player, and the wrestler it is for (saving picks it; Done goes back to them) */
-  sceneStart?: any; sceneFor?: { who: string; cast: string } | null;
+  sceneStart?: any; sceneMode?: 'anim' | 'move' | 'still' | null; sceneFor?: { who: string; cast: string; fin?: number } | null;
   /** the Wrestlers page: the ring sheet's section, and the page of the list */
   sheet?: 'who' | 'work' | 'rates' | 'more'; wpg?: number;
   q: string; fp: string; sort: Record<string, string>; many: boolean; picked: Record<string, 1>; manyTo: string; newName: string; del: string | null; msg: string; err: boolean; text: string; copied: boolean; fill: number;

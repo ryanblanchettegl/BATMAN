@@ -322,3 +322,4 @@ html body .win.ppop .wb{font-family:var(--hand);font-size:1.06em}
 .pmenu.sc-menubar .btn{margin:0 0 0 .6ch;font-size:.95em}
 .scfull.paper{padding:0 0 .5em;border:0;box-shadow:none}
 .scfull.edshell{z-index:10}   /* the editor frame sits under its pop-ups (the logo and belt creators) */
+.edstudios{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0 1.6ch}.edstudios .panel p{min-height:3.2em}

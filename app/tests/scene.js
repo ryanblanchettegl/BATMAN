@@ -4,7 +4,7 @@
    file that is not a scene is refused, and the page fits one screen. The broadcast: with Scenes on, a match shows
    a scene at the bell, the count at a near fall and the three at the finish; Scenes off takes it away.
    Run: NODE_PATH=<dir containing playwright> node app/tests/scene.js   (SHOTS=<dir> keeps pictures) */
-const { open, go, state, fits, shot, pick } = require('./helper');
+const { open, go, state, fits, shot, pick, openScene } = require('./helper');
 const MODES = (process.env.MODES || 'desk').split(',');
 const fails = [];
 const ok = (mode, label, pass, detail) => { console.log(mode.padEnd(6), pass ? 'ok  ' : 'FAIL', label + (detail ? ': ' + detail : '')); if (!pass) fails.push(mode + ' ' + label); };
@@ -19,7 +19,17 @@ async function studio(mode) {
     await page.click('[data-t="scr"][data-v="editor"]'); await page.click('[data-t="ed-new-copy"]');
     await page.click('[data-t="ed-tab"][data-v="scenes"]');
     ok(mode, 'the World Editor has a Scenes tab', await has(page, '[data-t="ed-scene-new"]'));
-    await page.click('[data-t="ed-scene-open"][data-id="lockup"]'); await page.waitForTimeout(2500);
+    ok(mode, 'the Scenes tab has three studios: Animation, Create a Move, Create a Scene', (await page.$$('[data-t="ed-scene-new"]')).length === 3 && /Animation/.test(await page.textContent('.edstudios')) && /Create a Move/.test(await page.textContent('.edstudios')));
+    await page.click('[data-t="ed-scene-new"][data-v="move"]'); await page.waitForTimeout(1500); await pick(page, 'scene-tab', 'file');
+    ok(mode, 'Create a Move starts from moves, a powerbomb to a moonsault', /Create a Move/.test(await page.textContent('.sc-menubar')) && await page.$eval('[data-t="scene-setup"]', e => ['powerbomb', 'suplex', 'moonsault'].every(v => [...e.options].some(o => o.value === v))));
+    await page.selectOption('[data-t="scene-setup"]', 'powerbomb'); await page.waitForTimeout(600);
+    ok(mode, 'a powerbomb comes in four keyframes or more', (await page.$$('[data-t="scene-key"]')).length >= 4);
+    await page.click('[data-t="scene-done"]'); await page.waitForTimeout(300);
+    await page.click('[data-t="ed-scene-new"][data-v="still"]'); await page.waitForTimeout(1500); await pick(page, 'scene-tab', 'file');
+    ok(mode, 'Create a Scene makes stills from templates: a magazine cover, a video game cover, a poster', /Create a Scene/.test(await page.textContent('.sc-menubar')) && await page.$eval('[data-t="scene-setup"]', e => ['mag', 'game', 'poster'].every(v => [...e.options].some(o => o.value === v))) && (await page.$eval('[data-t="scene-kind"]', e => e.value)) === 'still');
+    await page.selectOption('[data-t="scene-setup"]', 'mag'); await page.waitForTimeout(600);
+    await page.click('[data-t="scene-done"]'); await page.waitForTimeout(300);
+    await openScene(page, 'lockup'); await page.waitForTimeout(2500);
     ok(mode, 'Create a Scene opens full screen on the 3D stage', await has(page, '[data-t="scene-stage"]') && !!(await page.evaluate(() => window.EWF_DEBUG.three && window.EWF_DEBUG.three())));
     ok(mode, 'the studio fits one screen', !(await fits(page)), await fits(page));
     if (process.env.SHOTS) await shot(page, 'scene-' + mode + '-studio');
@@ -32,7 +42,7 @@ async function studio(mode) {
     await pick(page, 'scene-tab', 'file'); await pick(page, 'scene-setup', 'talk'); await page.waitForTimeout(300);
     await pick(page, 'scene-tab', 'set');
     ok(mode, 'a talk show setup puts a host and a guest on the talk show set', (await page.$eval('[data-t="scene-set"]', e => e.value).catch(() => '')) === 'talk');
-    await page.click('[data-t="scene-done"]'); await page.waitForTimeout(300); await page.click('[data-t="ed-scene-open"][data-id="lockup"]'); await page.waitForTimeout(2000);
+    await page.click('[data-t="scene-done"]'); await page.waitForTimeout(300); await openScene(page, 'lockup'); await page.waitForTimeout(2000);
     // pick a person, then a part by its pin, turn it, and see the angle move
     await page.selectOption('[data-t="scene-who"]', 'A');
     ok(mode, 'the picked person has a pin at every joint', (await page.$$eval('[data-t="scene-pin"]', a => a.length)) === 15, 'pins: ' + (await page.$$eval('[data-t="scene-pin"]', a => a.length)));

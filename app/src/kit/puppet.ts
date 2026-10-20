@@ -664,10 +664,11 @@ function head(fr: F, r: Recipe, z: number, expr: string, cut: (f: F, poly: Pt[],
 /* ---------- props: things that stand in a scene ---------- */
 export interface PropDraw { k: string; x: number; y: number; r: number; z: number; s?: number; txt?: string; col?: string; id: string; bl?: BeltData }
 const PR = (pts: Pt[], cx: number, cy: number, a: number, s: number): Pt[] => pts.map(([x, y]) => { const d = rot([x * s, y * s], a); return [cx + d[0], cy + d[1]] as Pt; });
-export const PROPS: [string, string][] = [['belt', 'Title belt'], ['chair', 'Chair'], ['table', 'Table'], ['mic', 'Microphone'], ['burst', 'Burst'], ['sign', 'Sign'], ['headline', 'Headline'], ['confetti', 'Confetti'],
+export const PROPS: [string, string][] = [['belt', 'Title belt'], ['chair', 'Chair'], ['table', 'Table'], ['mic', 'Microphone'], ['burst', 'Burst'], ['sign', 'Sign'], ['headline', 'Headline'], ['words', 'Words, no background'], ['confetti', 'Confetti'],
   ['spot', 'Spotlight'], ['beams', 'Coloured lights'], ['strobe', 'Strobes'], ['dim', 'Lights down'], ['sparks', 'Sparks'], ['fountain', 'Pyro fountain'], ['flash', 'A flash'], ['fire', 'A column of fire'],
   ['ladder', 'Ladder'], ['bat', 'Baseball bat'], ['steps', 'Ring steps'], ['bin', 'Rubbish bin'], ['table_broken', 'Broken table'], ['cameras', 'Camera flashes'], ['motion', 'Motion lines'], ['spray', 'A spray of water'], ['smoke', 'Smoke'], ['truck', 'A truck'], ['masthead', 'Masthead (a cover title)']];
 /** Cut a prop. `t` (seconds) moves the things that move by themselves (confetti). */
+const lum = (h: string) => { const n = parseInt(h.slice(1), 16) || 0; return (0.3 * (n >> 16) + 0.59 * ((n >> 8) & 255) + 0.11 * (n & 255)) / 255; };
 export function prop(p: PropDraw, out: Piece[], t = 0) {
   const a = p.r * Math.PI / 180, s = p.s || 1, z = p.z, own = p.id, seed = hash(p.id + p.k);
   const add = (pts: Pt[], col: string, dz: number, lift = 0.05, rough = 0.008) => out.push({ pts: snip(PR(pts, p.x, p.y, a, s), seed + out.length * 31, rough, 0.08), col, z: z + dz, lift, prop: own });
@@ -704,6 +705,8 @@ export function prop(p: PropDraw, out: Piece[], t = 0) {
   } else if (p.k === 'sign') {
     add([[-0.9, -0.5], [0.9, -0.5], [0.9, 0.5], [-0.9, 0.5]], PAL.white, 0); add([[-0.04, -0.5], [0.04, -0.5], [0.04, -1.4], [-0.04, -1.4]], PAL.wood, -0.03);
     out.push({ pts: [], col: '', z: z + 0.06, txt: { s: p.txt || 'GO!', x: p.x, y: p.y, size: Math.min(0.45, 2.6 / Math.max(3, (p.txt || 'GO!').length * 0.62)) * s, col: p.col || PAL.red } });
+  } else if (p.k === 'words') {   // just the lettering, nothing behind it: words over the picture in any colour
+    out.push({ pts: [], col: '', z: z + 0.02, prop: own, txt: { s: p.txt || 'WORDS', x: p.x, y: p.y, size: 0.7 * s, col: p.col || PAL.white, edge: lum(p.col || PAL.white) > 0.5 ? '#111111' : '#ffffff' } });
   } else if (p.k === 'headline') {   // lettering cut from card on a strip: a headline, a masthead, a caption
     const txt = p.txt || 'BREAKING NEWS', w = Math.max(2, txt.length * 0.36);
     add([[-w / 2 - 0.25, -0.42], [w / 2 + 0.25, -0.42], [w / 2 + 0.25, 0.42], [-w / 2 - 0.25, 0.42]], p.col || PAL.red, 0, 0.06);

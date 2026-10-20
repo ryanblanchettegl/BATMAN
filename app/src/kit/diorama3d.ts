@@ -90,8 +90,8 @@ function margin(p: Piece, d: number): THREE.Mesh | null {
 /** Words (a burst, a sign) as a flat card with the lettering printed on it. */
 function words(p: Piece, d: number): THREE.Mesh | null {
   const t = p.txt; if (!t) return null;
-  const c = document.createElement('canvas'), px = 64, w = Math.max(1, Math.ceil(t.s.length * 0.62 * t.size * px)), h = Math.ceil(t.size * px * 1.3);
-  c.width = w; c.height = h; const x = c.getContext('2d')!; x.fillStyle = t.col; x.font = Math.round(t.size * px) + "px 'VT323', monospace"; x.textAlign = 'center'; x.textBaseline = 'middle'; x.fillText(t.s, w / 2, h / 2);
+  const c = document.createElement('canvas'), px = 64, w = Math.max(1, Math.ceil(t.s.length * 0.8 * t.size * px)), h = Math.ceil(t.size * px * 1.3);
+  c.width = w; c.height = h; const x = c.getContext('2d')!; x.fillStyle = t.col; x.font = Math.round(t.size * px * 0.8) + "px 'Craft Marker', 'EWF Sans', sans-serif"; x.textAlign = 'center'; x.textBaseline = 'middle'; if (t.edge) { x.lineWidth = Math.max(3, t.size * px * 0.09); x.lineJoin = 'round'; x.strokeStyle = t.edge; x.strokeText(t.s, w / 2, h / 2); } x.fillText(t.s, w / 2, h / 2);
   const tex = new THREE.CanvasTexture(c); tex.colorSpace = THREE.SRGBColorSpace;
   const m = new THREE.Mesh(new THREE.PlaneGeometry(w / px, h / px), new THREE.MeshBasicMaterial({ map: tex, transparent: true }));
   m.position.set(t.x, t.y - FOOT, d + CARD + 0.01); return m;
@@ -386,7 +386,7 @@ function bx(root: THREE.Object3D, w: number, h: number, d: number, col: string |
 function glow(col: number, i = 1): THREE.MeshStandardMaterial { return new THREE.MeshStandardMaterial({ color: col, emissive: col, emissiveIntensity: i, roughness: 1 }); }
 function plate(text: string, w: number, h: number, bg: string, fg: string): THREE.MeshStandardMaterial {
   const c = document.createElement('canvas'); c.width = Math.round(w * 64); c.height = Math.round(h * 64); const x = c.getContext('2d')!;
-  x.fillStyle = bg; x.fillRect(0, 0, c.width, c.height); x.fillStyle = fg; x.font = Math.round(h * 44) + "px 'VT323', monospace"; x.textAlign = 'center'; x.textBaseline = 'middle'; x.fillText(text, c.width / 2, c.height / 2);
+  x.fillStyle = bg; x.fillRect(0, 0, c.width, c.height); x.fillStyle = fg; x.font = Math.round(h * 36) + "px 'Craft Marker', 'EWF Sans', sans-serif"; x.textAlign = 'center'; x.textBaseline = 'middle'; x.fillText(text, c.width / 2, c.height / 2);
   const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; return new THREE.MeshStandardMaterial({ map: t, roughness: 0.9 });
 }
 const ROOMS: Record<string, (root: THREE.Group) => void> = {

@@ -124,4 +124,9 @@ async function picked(page, t, v) {
   if (sel) return (await sel.evaluate(e => e.value)) === String(v);
   return (await page.$eval('[data-t="' + t + '"][data-v="' + v + '"]', e => e.getAttribute('aria-pressed')).catch(() => null)) === 'true';
 }
-module.exports = { pick, picked, open, go, overflow, shot, flash, state, redraw, SHOTS, fits, airShow, toOffice, ensure };
+/** Open a scene by id from the World Editor's Scenes tab, in whichever studio's dropdown lists it. */
+async function openScene(page, id) {
+  for (const sel of await page.$$('select[data-t="ed-scene-pick"]')) if (await sel.evaluate((e, id) => [...e.options].some(o => o.value === id), id)) { await sel.selectOption(id); return; }
+  throw new Error('no studio lists the scene ' + id);
+}
+module.exports = { openScene, pick, picked, open, go, overflow, shot, flash, state, redraw, SHOTS, fits, airShow, toOffice, ensure };
