@@ -325,3 +325,12 @@ html body .win.ppop .wb{font-family:var(--hand);font-size:1.06em}
 .edstudios{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0 1.6ch}.edstudios .panel p{min-height:3.2em}
 .ttname .beltc{padding:.12em .2em;vertical-align:middle;box-shadow:none}.ttname{white-space:nowrap}
 .edrow .pic{flex:none;margin-right:.6ch;line-height:0}.edrow .pic .beltc{padding:.1em .15em;box-shadow:none}
+/* a list row with a picture: the picture, then the name over its line */
+.edshell .edgrid{grid-template-columns:minmax(24ch,34ch) minmax(0,1fr)}
+.edrow:has(.pic){display:grid;grid-template-columns:0 auto minmax(0,1fr);grid-template-rows:auto auto;column-gap:.6ch;align-items:center;text-align:left}
+.edrow:has(.pic)>.pic{grid-row:1/3;grid-column:2}
+.edrow:has(.pic)>.nm{grid-column:3;grid-row:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.edrow:has(.pic)>.st{grid-column:3;grid-row:2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.edrow:has(.pic){padding-left:2.6em}
+/* the note in an empty pane, on a slip of paper so it can be read on the board */
+.edshell .edcol-form>.empty{display:inline-block;background:var(--lk-paper) 0 0/360px;color:var(--ink);font-family:var(--hand);padding:.4em 1.4ch;box-shadow:.15em .2em .4em rgba(0,0,0,.45);transform:rotate(-.6deg)}
