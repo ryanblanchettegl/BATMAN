@@ -1,6 +1,5 @@
 /* The Locker room page: the mood of the room, who plays which part in it, who is under strain and who is hurt. */
 import { E, W } from '../../engine';
-import { useLayoutEffect } from 'preact/hooks';
 import { G, ui, me, act, say, plural, slice, view } from '../../store';
 import { onLeavePage } from '../../nav';
 import { Btn, Meter, Pie, Empty, Desktop, Win, stars } from '../../kit';
@@ -16,9 +15,8 @@ function Who(p: { id: number }) {
 
 export function Locker() {
   const S = G.S, P = me(), L = E.lockerRoom(S), R: W[] = E.rosterOf(S, P.id), mi = E.medInfo(S), sel = selected();
-  const flat = !!(window as any).EWF_FLAT, lim = slice<Record<string, number>>('lklim', () => ({})), cut = (n: number, k: string) => flat ? 99 : Math.min(n, lim[k] || n);
-  // each window shows as many lines as it holds: one that runs over shows one fewer and is drawn again
-  useLayoutEffect(() => { if (flat) return; let ch = false; ['who', 'cliques', 'camp', 'strain', 'hurt'].forEach(k => { const b = document.querySelector('[data-t="lk-' + k + '"] > .bd') as HTMLElement | null; if (b && b.scrollHeight > b.clientHeight + 1) { if ((lim[k] || 9) > 1) { lim[k] = (lim[k] || 9) - 1; ch = true; } else if (k === 'cliques' && (lim.cm || 9) > 2) { lim.cm = (lim.cm || 9) - 1; ch = true; } } }); if (ch) view(() => {}); });
+  // everybody, in windows that scroll inside themselves (Ryan, 20 October: "I want it scrollable")
+  const cut = (_n: number, _k: string) => 999;
   const D = E.devShow(S), C = E.cliques(S), ST = E.staff(S);
   return <div class="onescreen"><Desktop cls="lkpage" t="locker">
         <Win title="Mood of the room" area="mood" t="lk-mood">

@@ -2,7 +2,7 @@
    the bottom, and the full profile one press away. */
 import { E, W } from '../../engine';
 import { G, me, cash, view, openModal } from '../../store';
-import { useLayoutEffect } from 'preact/hooks';
+import { Ovr } from '../../shared/ovr';
 import { Head, Sel, TextBox, Tag, Side, Opt, Meter, Btn, Portrait, champOf, brandName, dataAttrs } from '../../kit';
 import { ScenePlayer } from '../../kit/sceneplayer';
 import { WAIST } from '../../kit/scene';
@@ -63,6 +63,7 @@ function Line_(p: { w: W; on: boolean; spot: string; champ: boolean; brand?: str
     {p.brand != null && <td>{p.brand}</td>}
     <td><Side w={w} /></td><td>{p.spot}</td>
     <td class="r num">{w.age}</td>
+    <td class="r"><Ovr w={w} /></td>
     <td><Meter v={w.ovr} n={5} /></td><td><Meter v={w.morale} n={5} kind={w.morale < 35 ? 'hot' : undefined} /></td><td><Meter v={w.cond} n={5} kind={w.cond < 50 ? 'hot' : undefined} /></td>
     <td class={'r num' + (w.con <= 4 ? ' bad' : '')}>{Math.max(0, w.con)}</td>
     <td class="stt"><div><Status w={w} champ={p.champ} /></div></td>
@@ -84,7 +85,7 @@ function File(p: { w: W | null; spot: string }) {
   return <Win title={w.name} area="file" t="roster-file" right={titles.length ? '★' : undefined}>
     {/* rule 5c: the wrestler is always on show, full length, drawn by the diorama engine */}
     <div class="sc-stage rs-stage"><ScenePlayer key="rsw" sc={STAND} cast={{ A: { ...recipeOf(w), belts: Math.min(3, titles.length), beltL: titles.slice().sort((a: any, b: any) => b.lvl - a.lvl).slice(0, 3).map((t: any) => E.beltOf(t, P)) } }} play={'rs' + w.id + ':' + titles.length + JSON.stringify((w as any).look || null)} still orbit fill t="roster-stage" label={w.name + ' in ring gear. Drag to walk round them.'} /></div>
-    <p class="big"><b>{w.name}</b> <Side w={w} /></p>
+    <p class="big"><Ovr w={w} big /> <b>{w.name}</b> <Side w={w} /></p>
     <p>{p.spot} {'·'} age {w.age}</p>
     {w.fin || titles.length ? <p class="muted">{w.fin ? 'Finisher: ' + w.fin : ''}{titles.length ? <> <Tag kind="gold">{titles.map((t: any) => t.name).join(', ')}</Tag></> : null}</p> : null}
     <Group title="In the ring">
@@ -124,28 +125,24 @@ export function Roster() {
   const S = G.S, P = me(), st = rs(), f = st.rf, q = f.q.toLowerCase(), sel = selected();
   const R: W[] = E.rosterOf(S, P.id), push = E.pushMap(S, P.id);
   const L = R.filter(w => (f.brand === 'all' || w.brand === f.brand) && (f.g === 'all' || w.g === f.g) && (f.al === 'all' || w.align === f.al) && (!q || w.name.toLowerCase().indexOf(q) >= 0));
-  const k = st.rs.k, d = st.rs.d, val = (w: W) => k === 'name' ? w.name : (k === 'work' ? E.workRate(w) : w[k]);
-  L.sort((a, b) => { const x = val(a), y = val(b); return (x < y ? -1 : x > y ? 1 : 0) * d || b.ovr - a.ovr; });
-  const flat = !!(window as any).EWF_FLAT, per = flat ? 999 : (st.per || 12);
-  const pages = Math.max(1, Math.ceil(L.length / per)), pg = Math.min(st.pg || 0, pages - 1), shown = L.slice(pg * per, pg * per + per);
-  // as many lines as the window holds: measured after drawing, and drawn again once if that is more or fewer
-  useLayoutEffect(() => { if (flat) return; const box = document.querySelector('.rspage .rsl') as HTMLElement | null, rw = box && box.querySelector('tbody tr') as HTMLElement | null, hd = box && box.querySelector('thead') as HTMLElement | null;
-    if (!box || !rw) return; const fit = Math.max(4, Math.floor((box.clientHeight - (hd ? hd.offsetHeight : 0) - 2) / rw.offsetHeight)); if (fit !== per && (fit < per || L.length > per)) view(() => { st.per = fit; }); });
+  const k = st.rs.k, d = st.rs.d, val = (w: W) => k === 'name' ? w.name : (k === 'work' ? E.workRate(w) : (k === 'all' ? E.overallOf(w) : w[k]));
+  L.sort((a, b) => { const x = val(a), y = val(b); return (x < y ? -1 : x > y ? 1 : 0) * d || E.overallOf(b) - E.overallOf(a); });
+  // the whole list, in a window that scrolls inside itself (Ryan, 20 October: "I don't want rosters and stuff like that on pages, I want it scrollable")
+  const shown = L;
   const pk = st.peek != null ? L.find(w => w.id === st.peek) : null, focus = pk || sel || (shown.length ? shown[0] : null);
   return <div class="onescreen"><Desktop cls="rspage" t="roster">
-    <Win title={'Roster: ' + R.length + ' under contract'} area="list" t="roster-list" right={pages > 1 ? 'Page ' + (pg + 1) + ' of ' + pages : undefined}>
+    <Win title={'Roster: ' + R.length + ' under contract'} area="list" t="roster-list">
       <Filters shown={L.length} of={R.length} />
-      <div class="lb rsl"><table>
+      <div class="lb rsl scroll"><table>
         <thead><tr>
           <th aria-label="Face" /><Th k="name" label="Name" />{P.brands && <Th k="brand" label="Brand" />}<Th k="align" label="Side" /><th>Spot</th>
-          <Th k="age" label="Age" r /><Th k="ovr" label="Crowd" /><Th k="morale" label="Mood" /><Th k="cond" label="Body" /><Th k="con" label="Deal" r /><th>Holds</th>
+          <Th k="age" label="Age" r /><Th k="all" label="Overall" r /><Th k="ovr" label="Crowd" /><Th k="morale" label="Mood" /><Th k="cond" label="Body" /><Th k="con" label="Deal" r /><th>Holds</th>
         </tr></thead>
         <tbody>
           {shown.map(w => <Line_ key={w.id} w={w} on={!!focus && focus.id === w.id} spot={push[w.id]} champ={champOf(P, w.id).length > 0} brand={P.brands ? brandName(P, w.brand) : undefined} />)}
-          {!L.length && <tr><td colSpan={11} class="muted">Nobody matches those filters.</td></tr>}
+          {!L.length && <tr><td colSpan={12} class="muted">Nobody matches those filters.</td></tr>}
         </tbody>
       </table></div>
-      {pages > 1 ? <p class="pgr"><Btn kind="sm" t="roster-page" d={{ v: 'prev' }} label="Earlier names" disabled={pg <= 0} onClick={() => view(() => { st.pg = pg - 1; })}>{'◄'}</Btn><span class="num">{pg + 1} of {pages}</span><Btn kind="sm" t="roster-page" d={{ v: 'next' }} label="More names" disabled={pg >= pages - 1} onClick={() => view(() => { st.pg = pg + 1; })}>{'►'}</Btn></p> : null}
     </Win>
     <File w={focus} spot={focus ? push[focus.id] : ''} />
     <Sums R={R} />
