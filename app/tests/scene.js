@@ -195,11 +195,13 @@ async function broadcast(mode) {
     const bookedSeg = await page.evaluate(() => { const S = window.EWF_DEBUG.state(), E = window.GP; const ch = E.segChoices(S, 'faceoff', [], -1); const a = ch[0] && ch[0][0]; if (a == null) return 'no choices';
       const ch2 = E.segChoices(S, 'faceoff', [a], -1); const b = ch2[1] && ch2[1].find(x => x !== a); if (b == null) return 'no second'; const r = E.setSeg(S, -1, { k: 'faceoff', who: [a, b], pos: 1, len: 'S' }); window.EWF_DEBUG.render(); return r.ok ? '' : r.msg; });
     if (bookedSeg) console.log(mode.padEnd(6), 'note', 'could not book a face-off: ' + bookedSeg);
+    // a steel cell match: it is played inside the cell
+    const cellAt = await page.evaluate(() => { const S = window.EWF_DEBUG.state(), E = window.GP, i = S.card.findIndex((m, j) => j > 0 && m && m.mt === '1v1'); if (i < 0) return -1; S.card[i].stip = 'cell'; E.fitShow(S, S.card); return i; });
     // a newcomer on the card who debuts with a surprise attack: their entrance is the debut's own scene
     const debId = await page.evaluate(() => { const S = window.EWF_DEBUG.state(), m = S.card[0], id = m && m.sides[0][0]; if (id == null) return -1; S.w[id].deb = true; S.w[id].dk = 'atk'; return id; });
     for (let k = 0; k < 6 && !(await has(page, '#live')); k++) { if (await has(page, '[data-t="pre"]')) await page.click('[data-t="pre"][data-c="0"]'); else await page.click('[data-t="advance"]'); await page.waitForTimeout(50); }
     ok(mode, 'the show goes on the air', await has(page, '#live'));
-    const seen = new Set(); let shots = 0, fitBad = null;
+    const seen = new Set(), sets = new Set(); let shots = 0, fitBad = null;
     for (let g = 0; g < 600; g++) {
       if (await has(page, '[data-t="live-call"]')) {
         ok(mode, 'a call takes the scene away', !(await has(page, '[data-t="live-scene"]')));
@@ -208,7 +210,8 @@ async function broadcast(mode) {
       }
       if (await has(page, '#live[data-v="signoff"]')) break;
       await page.click('[data-t="advance"]'); await page.waitForTimeout(40);
-      const v = await attr(page, '[data-t="live-scene"]', 'data-v');
+      const v = await attr(page, '[data-t="live-scene"]', 'data-v'), vs = await attr(page, '[data-t="live-scene"]', 'data-set');
+      if (vs) sets.add(vs);
       if (v && !seen.has(v)) {
         seen.add(v); await page.waitForTimeout(2600);
         if (fitBad == null) fitBad = await fits(page);
@@ -222,6 +225,7 @@ async function broadcast(mode) {
       if (beats.length) ok(mode, 'a beat of a storyline the writers wrote plays its own scene', [...seen].some(x => x.indexOf('beat_') === 0 || beats.some(b => x === 'seg_' + b)), beats.join(',') + ' / ' + [...seen].join(','));
       else console.log(mode.padEnd(6), 'note', 'the writers wrote no storyline beat on this card'); }
     if (debId >= 0) ok(mode, 'a newcomer debuting with a surprise attack comes out on its scene', seen.has('beat_debut_atk'), [...seen].join(','));
+    if (cellAt >= 0) ok(mode, 'a steel cell match is played inside the cell', sets.has('cell'), [...sets].join(','));
     ok(mode, 'the bell brings the lock-up', seen.has('lockup'), [...seen].join(','));
     ok(mode, 'a near fall brings the count', seen.has('nearfall'), [...seen].join(','));
     ok(mode, 'a win brings the three count', seen.has('finish'), [...seen].join(','));
@@ -235,7 +239,7 @@ async function broadcast(mode) {
   await browser.close();
 }
 (async () => {
-  for (const m of MODES) { await studio(m); await broadcast(m); }
+  for (const m of MODES) { if (process.env.ONLY !== "broadcast") await studio(m); await broadcast(m); }   // ONLY=broadcast runs just the show on the air
   console.log(fails.length ? 'FAILED: ' + fails.length : 'all scene checks passed');
   process.exit(fails.length ? 1 : 0);
 })();

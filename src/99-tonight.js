@@ -13,7 +13,7 @@ E.couldHappen=function(S){
     if(f&&f.heat>=60)out.moments.push(feudLabel(S,f)+' could boil over.');
     if(m.mt==='br'&&m.shot)out.moments.push('Somebody leaves the battle royal with a title shot.');
     if(m.mt==='br'&&m.surp)out.moments.push('A face from outside could walk through the curtain.');
-    if(m.int==='brutal'||m.stip==='ladder'||m.stip==='cage')flat(m.sides).forEach(function(id){var w=S.w[id];if(w.cond<65&&!seen[id]){seen[id]=1;out.risk.push(w.name+' is worn, in a match that hurts.');}});
+    if(m.int==='brutal'||m.stip==='ladder'||m.stip==='cage'||m.stip==='cell')flat(m.sides).forEach(function(id){var w=S.w[id];if(w.cond<65&&!seen[id]){seen[id]=1;out.risk.push(w.name+' is worn, in a match that hurts.');}});
     if(f)out.sets.push(m.end?feudLabel(S,f)+' ends here: the next story starts from what happens.':feudLabel(S,f)+' moves on.');
     if(m.title&&i<card.length-1)out.sets.push('A title match below the main event: a new champion would need a story.');
   });

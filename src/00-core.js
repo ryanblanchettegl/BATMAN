@@ -10,6 +10,8 @@ var STIP = {
   hardcore:{n:'Hardcore',w:[0.7,0.1,0.2],heat:4,inj:2.2,hc:0.45},
   ladder:{n:'Ladder',w:[0.25,0.15,0.6],heat:4,inj:2.6,hc:0.15},
   cage:{n:'Steel cage',w:[0.55,0.15,0.3],heat:4,inj:1.6,hc:0.25},
+  cell:{n:'Steel cell',w:[0.6,0.1,0.3],heat:6,inj:2.4,hc:0.35},
+  fire:{n:'Ring of fire',w:[0.6,0.15,0.25],heat:5,inj:2,hc:0.2},
   sub:{n:'Submission',w:[0.25,0.75,0],heat:2,inj:1},
   iron:{n:'Iron man',w:null,heat:3,inj:1.3},
   tables:{n:'Tables',w:[0.65,0.1,0.25],heat:4,inj:1.9,hc:0.3},

@@ -235,6 +235,7 @@ function LiveFeed(p: { r: any; si: number; b: number; info: any }) {
 }
 const DOT = ' · ';
 
+const RIG_OF: Record<string, string> = { cage: 'cage', cell: 'cell', fire: 'inferno', ladder: 'ladder' }, IN_RING = ['ring', 'ringlow', 'ringcorner'];
 /** Which scene from Create a Scene fits this moment of the broadcast, and who plays it. It only reads the show:
     the bell and the first exchanges get the lock-up, the middle a trade of blows, a near fall the count and the
     kick-out (the one named first in the line is the one covering), the deciding fall the three count, a new
@@ -314,6 +315,9 @@ function scenePick(r: any, s: any, at: number, done: boolean): { sc: Scene; cast
   // a winner made in Create a Player finishes with their own move: its picture, with its name in the burst
   const fm = when === 'finish' && S.w[a] && S.w[a].look && (S.w[a].look.finishing_moves || [])[0];
   if (fm) { const fs = allScenes(world).find(x => x.id === finScene(fm)); if (fs) { sc0 = copy(fs); sc0.keys.forEach(k => k.props.forEach(q => { if (q.k === 'burst' && k === sc0!.keys[sc0!.keys.length - 1]) q.txt = fm.name.toUpperCase().slice(0, 16); })); sc0.name = fm.name; } }
+  // a match under rules with a set of its own is played there: the cage, the cell with its roof, the ring of fire, the belt hung for the ladder
+  const rig = RIG_OF[Object.keys(E.STIP).find(k => E.STIP[k].n === s.stip) || ''];
+  if (rig && IN_RING.includes(sc0.set)) sc0 = { ...sc0, set: rig };
   const b = ids.find(id => sideOf(id) !== sideOf(a)), wins = winSide >= 0 ? ids.filter(id => sideOf(id) === winSide) : [];
   const sc = fillScene(sc0, E.sceneHooks(S, { ids, a, b, win: wins, title: s.title || null }), cast); if (!sc) return null;
   return { sc, cast, play: i + ':' + key, label: sc.name + ': ' + Object.values(cast).map(nm).join(' and ') };

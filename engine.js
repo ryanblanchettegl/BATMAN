@@ -14,6 +14,8 @@ var STIP = {
   hardcore:{n:'Hardcore',w:[0.7,0.1,0.2],heat:4,inj:2.2,hc:0.45},
   ladder:{n:'Ladder',w:[0.25,0.15,0.6],heat:4,inj:2.6,hc:0.15},
   cage:{n:'Steel cage',w:[0.55,0.15,0.3],heat:4,inj:1.6,hc:0.25},
+  cell:{n:'Steel cell',w:[0.6,0.1,0.3],heat:6,inj:2.4,hc:0.35},
+  fire:{n:'Ring of fire',w:[0.6,0.15,0.25],heat:5,inj:2,hc:0.2},
   sub:{n:'Submission',w:[0.25,0.75,0],heat:2,inj:1},
   iron:{n:'Iron man',w:null,heat:3,inj:1.3},
   tables:{n:'Tables',w:[0.65,0.1,0.25],heat:4,inj:1.9,hc:0.3},
@@ -589,7 +591,7 @@ function expand(S,str,o,depth){
   return fill(str.replace(/#(\w+)#/g,function(_,k){return GR[k]?expand(S,sayPick(S,GR[k]),o,(depth||0)+1):'';}),o);
 }
 function say(S,sym,o){var t=expand(S,'#'+sym+'#',o);return t.charAt(0).toUpperCase()+t.slice(1);}
-var STIPLINE={tables:['A table is set up at ringside, and nobody is happy about it.','Somebody is going through a table tonight. The only question is who.'],lumber:['The lumberjacks line the ring and wait for somebody to roll out.','Nowhere to hide: the floor is full of angry colleagues.'],mask:['Everything they have built behind that mask is on the line tonight.','A mask is a promise. Tonight one of them breaks it.'],hair:['They have both put their hair on the line, and neither will step back.','Clippers are waiting at ringside for whoever loses.'],hardcore:['Chairs and tables come into play.','They have found a trash can, and it is not for recycling.','Weapons everywhere. The referee can only watch.'],ladder:['Both climb, and both crash off the ladder.','Somebody just went through a ladder. I felt that from here.','Fingertips on the prize... and the ladder goes over!'],cage:['The cage itself becomes a weapon.','Face first into the steel!','Nowhere to run inside that cage.'],sub:['Each hunts for the hold that ends it.','Hold, counter, hold. Somebody is going to have to give up.'],iron:['The falls go back and forth across the half hour.','Pacing is everything in a match like this, and they both know it.']};
+var STIPLINE={tables:['A table is set up at ringside, and nobody is happy about it.','Somebody is going through a table tonight. The only question is who.'],lumber:['The lumberjacks line the ring and wait for somebody to roll out.','Nowhere to hide: the floor is full of angry colleagues.'],mask:['Everything they have built behind that mask is on the line tonight.','A mask is a promise. Tonight one of them breaks it.'],hair:['They have both put their hair on the line, and neither will step back.','Clippers are waiting at ringside for whoever loses.'],hardcore:['Chairs and tables come into play.','They have found a trash can, and it is not for recycling.','Weapons everywhere. The referee can only watch.'],ladder:['Both climb, and both crash off the ladder.','Somebody just went through a ladder. I felt that from here.','Fingertips on the prize... and the ladder goes over!'],cage:['The cage itself becomes a weapon.','Face first into the steel!','Nowhere to run inside that cage.'],cell:['The roof is on. There is no way out of the cell.','Face first into the steel walls of the cell!','They are climbing the cell. Somebody stop them!'],fire:['The flames go up all round the ring.','Nobody wants to go near the edge of the ring tonight.','The heat from those flames reaches the front row.'],sub:['Each hunts for the hold that ends it.','Hold, counter, hold. Somebody is going to have to give up.'],iron:['The falls go back and forth across the half hour.','Pacing is everything in a match like this, and they both know it.']};
 var CHEAP=['{w} grabs a handful of tights to steal the pin on {l}.','{w} uses the ropes for leverage and pins {l}.','A low blow behind the referee’s back lets {w} pin {l}.'];
 var REACT={Interview:['Say what you like about that, it got the people talking.','Confident. Maybe too confident.'],Promo:['Strong words. Now go and back them up.','That one is going to sting.'],Brawl:['Somebody get security out here!','They cannot keep these two apart.'],Ambush:['From behind! That is how you send a message.','No warning at all. That is how it is going to be, then.'],Challenge:['Now that is a match I want to see.','The champion did not look happy about that.'],Mystery:['Who would do this? Somebody in that locker room knows something.','I have a few names in mind, {p}, and I am keeping them to myself.'],Reveal:['I do not believe it. It was right in front of us the whole time!','Of all the people. Of all the people!'],'Face-off':['Feel this building shake. Sign that match!','Neither one blinked.'],Return:['Welcome back! This place has come unglued!','Look who it is!'],Save:['A helping hand, and maybe the start of something.','The cavalry has arrived.'],Turn:['Everything just changed.','I did not see that coming, and neither did they.'],'Mind games':['That is going to play on somebody’s mind all week.','Just watching. Just letting them know.'],'Contract signing':['Has a contract signing ever ended well?','Well, the table did not survive.'],Video:['When you see it all laid out like that, you understand why they hate each other.','That is the story so far. The ending is still to be written.'],Stakes:['The stakes just went through the roof.','No going back now.'],Betrayal:['Betrayed by a friend! I feel sick, {p}.','You think you know somebody.'],Attack:['That was not wrestling. That was an assault.','We need help out here!'],Announcement:['Mark your calendar. That one is going to be special.','It is official, and it is going to be a war.']};
 
@@ -1561,7 +1563,7 @@ E.storyDo=function(S,id,act){
 
 /* Escalation (idea 16): each stipulation needs the feud to be this hot before the crowd believes it.
    A submission or lumberjack match fits early; a cage needs a hot feud; a mask or hair match only a white hot one. */
-var STIP_NEED={sub:20,lumber:25,iron:30,tables:40,hardcore:45,ladder:50,cage:60,hair:70,mask:75};
+var STIP_NEED={sub:20,lumber:25,iron:30,tables:40,hardcore:45,ladder:50,cage:60,fire:65,hair:70,cell:80,mask:75};
 function stipNeed(k){return STIP_NEED[k]||40;}
 /** How a stipulation sits with a feud's heat: 4 earned with room, 1 just earned, -3 too soon (worse the bigger the gap). */
 function stipFitOf(feud,k){if(!feud||!k||k==='std')return 0;var n=stipNeed(k),h=feud.heat;return h>=n+15?4:(h>=n?1:(h>=n-15?-3:-6));}
@@ -5121,7 +5123,7 @@ WEEKX.push(function(S){
    owner's verdict when the player books here. */
 function mAvg(ws,k){return avg(ws.map(function(w){return w[k]==null?60:w[k];}));}
 function isMulti(m){return m.mt==='3way'||m.mt==='4way'||m.mt==='6man'||m.mt==='br';}
-function isGim(stip){return stip==='hardcore'||stip==='ladder'||stip==='cage';}
+function isGim(stip){return stip==='hardcore'||stip==='ladder'||stip==='cage'||stip==='cell'||stip==='fire';}
 function tenureW(S,w){return S.week-(w.jw==null?-104:w.jw);}
 var MGC={};   // main gender per promotion, counted once a week (the roster does not change its mind inside a week)
 function mainG(S,P){var k=S.seed+':'+S.week+':'+P.id,c=MGC[k];if(c)return c;var m=0,f=0;S.w.forEach(function(w){if(w.promo===P.id&&!w.nw){if(w.g==='F')f++;else m++;}});if(Object.keys(MGC).length>200)MGC={};return MGC[k]=f>m?'F':'M';}
@@ -6666,6 +6668,8 @@ E.STIPNOTE={
   hardcore:'Rewards brawlers. Heavy wear and hurts. Not for family shows.',
   ladder:'Rewards high flyers. The biggest risk of a hurt.',
   cage:'Rewards brawlers. Good for ending a feud.',
+  cell:'A cage with a roof. Rewards brawlers. Heavy wear and hurts. Needs the hottest feud, and ends it.',
+  fire:'The ring is ringed with flames. Rewards brawlers. Needs a hot feud. Not for family shows.',
   sub:'Rewards technicians.',
   iron:'Thirty minutes. Only the fittest should try it.',
   tables:'Rewards brawlers. A heavy risk of a hurt. Purist and family crowds hate it.',
@@ -10116,8 +10120,8 @@ EVR.netexec=function(S,ev,choice,P){
 /** Before the bell: will tonight's card go against the network's taste? A short line for Tonight's stakes, or ''. */
 function netCardClash(S,show,card){
   var P=S.promos[S.player],sh=show&&!show.big?airRec(P,show.id):null;if(!sh||!sh.net||!card.length)return '';
-  var t=netTaste(sh.net),talk=segRead(S).length,hc=card.filter(function(m){return m&&(m.stip==='hardcore'||m.stip==='tables'||m.stip==='ladder');}).length,st=card.some(function(m){return m&&m.stip&&m.stip!=='std';});
-  if(t==='family'&&hc)return sh.net+' is a family network, and a '+STIP[card.filter(function(m){return m&&(m.stip==='hardcore'||m.stip==='tables'||m.stip==='ladder');})[0].stip].n.toLowerCase()+' match will not go down well.';
+  var t=netTaste(sh.net),talk=segRead(S).length,hc=card.filter(function(m){return m&&(m.stip==='hardcore'||m.stip==='tables'||m.stip==='ladder'||m.stip==='fire'||m.stip==='cell');}).length,st=card.some(function(m){return m&&m.stip&&m.stip!=='std';});
+  if(t==='family'&&hc)return sh.net+' is a family network, and a '+STIP[card.filter(function(m){return m&&(m.stip==='hardcore'||m.stip==='tables'||m.stip==='ladder'||m.stip==='fire'||m.stip==='cell');})[0].stip].n.toLowerCase()+' match will not go down well.';
   if(t==='sport'&&talk>card.length)return sh.net+' is a sport network, and tonight has more talking than wrestling.';
   if(t==='late'&&!talk&&!st)return sh.net+' is a late night network, and tonight has nothing to talk about: no promo, no angle, no stipulation.';
   return '';
@@ -10181,7 +10185,7 @@ WEEKX.push(function(S){
 /* each region has a taste, and the wrong product plays flat there */
 function tasteVal(taste,ws,stips){
   if(!ws.length)return 0;
-  if(taste==='brawl')return (avg(ws.map(function(w){return w.brawl;}))-74)/10+(stips.filter(function(s){return s==='hardcore'||s==='cage'||s==='tables';}).length?0.3:0);
+  if(taste==='brawl')return (avg(ws.map(function(w){return w.brawl;}))-74)/10+(stips.filter(function(s){return s==='hardcore'||s==='cage'||s==='cell'||s==='fire'||s==='tables';}).length?0.3:0);
   if(taste==='work')return (avg(ws.map(workRate))-74)/10;
   return (avg(ws.map(function(w){return w.sq;}))-76)/10+(stips.filter(function(s){return s==='ladder'||s==='mask'||s==='hair';}).length?0.3:0);
 }
@@ -10204,7 +10208,7 @@ E.tasteForecast=function(S,card){
 CRX.push(function(ctx){
   var P=ctx.P;if(!ctx.isPl||ctx.S.cal)return null;
   var home=!P.tour,k=home?0.7:1,t=(home?REGIONS[homeReg(P)]:REGIONS[P.tour.reg]).taste,all=ctx.all,d=0,x=null;
-  if(t==='brawl'){var b=avg(all.map(function(w){return w.brawl;}));if(b>=62||ctx.stip==='hardcore'||ctx.stip==='cage'){d=1.5;x='A brawl, and this region likes a brawl';}else if(b<=48){d=-1.5;x='Too gentle for a region that likes a fight';}}
+  if(t==='brawl'){var b=avg(all.map(function(w){return w.brawl;}));if(b>=62||ctx.stip==='hardcore'||ctx.stip==='cage'||ctx.stip==='cell'||ctx.stip==='fire'){d=1.5;x='A brawl, and this region likes a brawl';}else if(b<=48){d=-1.5;x='Too gentle for a region that likes a fight';}}
   else if(t==='work'){var wk=avg(all.map(workRate));if(wk>=65){d=1.5;x='Fine wrestling for a region that counts the holds';}else if(wk<50){d=-1.5;x='Sloppy work in front of a region that notices';}}
   else{var sq=avg(all.map(function(w){return w.sq;}));if(sq>=65||ctx.stip==='ladder'){d=1.5;x='Spectacle, and this region came for spectacle';}else if(sq<=45){d=-1.5;x='Plain stuff for a region that wants spectacle';}}
   return d?{d:d*k,x:x}:null;
@@ -13373,7 +13377,7 @@ E.couldHappen=function(S){
     if(f&&f.heat>=60)out.moments.push(feudLabel(S,f)+' could boil over.');
     if(m.mt==='br'&&m.shot)out.moments.push('Somebody leaves the battle royal with a title shot.');
     if(m.mt==='br'&&m.surp)out.moments.push('A face from outside could walk through the curtain.');
-    if(m.int==='brutal'||m.stip==='ladder'||m.stip==='cage')flat(m.sides).forEach(function(id){var w=S.w[id];if(w.cond<65&&!seen[id]){seen[id]=1;out.risk.push(w.name+' is worn, in a match that hurts.');}});
+    if(m.int==='brutal'||m.stip==='ladder'||m.stip==='cage'||m.stip==='cell')flat(m.sides).forEach(function(id){var w=S.w[id];if(w.cond<65&&!seen[id]){seen[id]=1;out.risk.push(w.name+' is worn, in a match that hurts.');}});
     if(f)out.sets.push(m.end?feudLabel(S,f)+' ends here: the next story starts from what happens.':feudLabel(S,f)+' moves on.');
     if(m.title&&i<card.length-1)out.sets.push('A title match below the main event: a new champion would need a story.');
   });

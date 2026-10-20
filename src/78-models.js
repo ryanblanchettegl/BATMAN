@@ -7,7 +7,7 @@
    owner's verdict when the player books here. */
 function mAvg(ws,k){return avg(ws.map(function(w){return w[k]==null?60:w[k];}));}
 function isMulti(m){return m.mt==='3way'||m.mt==='4way'||m.mt==='6man'||m.mt==='br';}
-function isGim(stip){return stip==='hardcore'||stip==='ladder'||stip==='cage';}
+function isGim(stip){return stip==='hardcore'||stip==='ladder'||stip==='cage'||stip==='cell'||stip==='fire';}
 function tenureW(S,w){return S.week-(w.jw==null?-104:w.jw);}
 var MGC={};   // main gender per promotion, counted once a week (the roster does not change its mind inside a week)
 function mainG(S,P){var k=S.seed+':'+S.week+':'+P.id,c=MGC[k];if(c)return c;var m=0,f=0;S.w.forEach(function(w){if(w.promo===P.id&&!w.nw){if(w.g==='F')f++;else m++;}});if(Object.keys(MGC).length>200)MGC={};return MGC[k]=f>m?'F':'M';}
