@@ -2,7 +2,7 @@
 import { ComponentChildren } from 'preact';
 import { E, W } from '../../engine';
 import { G, me, act, say, plural, openModal, slice, view } from '../../store';
-import { Btn, Tag, Name, Meter, Empty, Desktop, Win, brandName, TitleName } from '../../kit';
+import { Btn, Tag, Name, Meter, Empty, Desktop, Win, brandName, TitleName, Sel, Opt } from '../../kit';
 
 /** Names joined the way a card reads: "A & B". */
 function joined(items: ComponentChildren[], sep: ComponentChildren): ComponentChildren[] { const out: ComponentChildren[] = []; items.forEach((x, i) => { if (i) out.push(sep); out.push(x); }); return out; }
@@ -99,7 +99,8 @@ export function Titles() {
       <div class="row"><Btn kind="sm" t="make-belts" onClick={() => openModal({ kind: 'makebelts' })}>Create or retire a belt</Btn><span class="muted">Put a title on the line when you book a match. Prestige follows the quality of title matches.</span></div>
     </Win>
     <Win title="Contenders" area="cont" t="contenders">
-      {singles.length > 1 ? <div class="row">{singles.map((t: any) => <Btn key={t.id} kind="sm" on={t.id === cur.id} t="cont-pick" d={{ k: t.id }} onClick={() => view(() => { st.k = t.id; })}>{t.name.replace(/ (World )?(Heavyweight )?(Title|Championship|Titles)$/, '')}</Btn>)}</div> : null}
+      {singles.length > 4 ? <Sel id="cont-pick" t="cont-sel" label="Title" value={cur.id} onChange={(v: string) => view(() => { st.k = v; })} options={singles.map((t: any) => [t.id, t.name] as Opt)} />
+        : singles.length > 1 ? <div class="row">{singles.map((t: any) => <Btn key={t.id} kind="sm" on={t.id === cur.id} t="cont-pick" d={{ k: t.id }} onClick={() => view(() => { st.k = t.id; })}>{t.name.replace(/ (World )?(Heavyweight )?(Title|Championship|Titles)$/, '')}</Btn>)}</div> : null}
       {cur ? <Contenders t={cur} busy={busy} /> : <Empty>No singles titles.</Empty>}
     </Win>
     {S.tourn ? <Tourn /> : <Lineage t={cur} />}

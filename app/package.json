@@ -1,7 +1,7 @@
 {
   "name": "ewf-wrestling-manager-app",
   "private": true,
-  "version": "0.86.0",
+  "version": "0.87.0",
   "scripts": {
     "build": "node ../build.js",
     "check": "tsc --noEmit -p ."
