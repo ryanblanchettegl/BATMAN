@@ -8,7 +8,7 @@
 
    The road is a loop through the company's cities, each stop the nearest one not yet visited, so the arcs on the map
    make a tour and not a scribble. Stop number S.rdn is the next show to go on the air. Nothing here uses rnd(S). */
-var CITY_AT={'Rome':[41.9,12.5],'Athens':[37.98,23.73],'Alexandria':[31.2,29.92],'Constantinople':[41.01,28.98],'London':[51.51,-0.13],'Paris':[48.86,2.35],'Vienna':[48.21,16.37],'Kyoto':[35.01,135.77],
+var CITY_AT={'Kingsport':[36.55,-82.56],'Knoxville':[35.96,-83.92],'Nashville':[36.16,-86.78],'Atlanta':[33.75,-84.39],'Jacksonville':[30.33,-81.66],'Orlando':[28.54,-81.38],'Tampa':[27.95,-82.46],'Miami':[25.76,-80.19],'Rome':[41.9,12.5],'Athens':[37.98,23.73],'Alexandria':[31.2,29.92],'Constantinople':[41.01,28.98],'London':[51.51,-0.13],'Paris':[48.86,2.35],'Vienna':[48.21,16.37],'Kyoto':[35.01,135.77],
   'Philadelphia':[39.95,-75.17,['Pennsylvania']],'Boston':[42.36,-71.06],'Chicago':[41.88,-87.63,['Illinois']],'St. Louis':[38.63,-90.2],'Edinburgh':[55.95,-3.19],'Dublin':[53.35,-6.26],'Verona':[45.44,10.99],'Nottingham':[52.95,-1.15],
   'Camelot':[51.02,-2.53],'Springfield':[39.8,-89.65],'New York':[40.71,-74,['New York']],'Baltimore':[39.29,-76.61],'New Orleans':[29.95,-90.07],'Sparta':[37.07,22.43],'Thebes':[38.32,23.32],'Corinth':[37.94,22.93],
   'Delphi':[38.48,22.5],'Troy':[39.96,26.24],'Memphis':[29.85,31.25],'Uppsala':[59.86,17.64],'Uruk':[31.32,45.64],'Tara':[53.58,-6.61,['Ireland']],'Whitby':[54.49,-0.61],'Sleepy Hollow':[41.09,-73.86],'Prague':[50.08,14.44],

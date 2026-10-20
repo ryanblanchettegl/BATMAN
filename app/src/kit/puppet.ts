@@ -240,7 +240,6 @@ export function puppet(r: Recipe, pl: Place, pose: Record<string, number>, expr:
   const muscles = () => {
     cut(to, [[0.05, 1.2 * H], [0.75 * bw, 1.25 * H], [0.6 * bw, 1.05 * H], [0.1, 1.08 * H]], dk, 0.45, 'torso', 0.02);
     cut(to, [[-0.75 * bw, 1.25 * H], [-0.05, 1.2 * H], [-0.1, 1.08 * H], [-0.6 * bw, 1.05 * H]], dk, 0.45, 'torso', 0.02);
-    cut(to, [[0.5 * bw + b * 0.6, 0.1], [0.62 * bw + b * 0.7, 0.1], [0.8 * bw, 1.4 * H], [0.68 * bw, 1.4 * H]], dk, 0.45, 'torso', 0.02);
   };
   const suitBits = (J: string, tie: string, sq?: string) => {   // the shirt and tie in the opening of the jacket, the lapels either side, a pocket square
     const lap = shade(J, 0.72);
@@ -348,7 +347,7 @@ export function puppet(r: Recipe, pl: Place, pose: Record<string, number>, expr:
   if (has('belt_shoulder')) { cut(to, strip([0.62 * bw, 1.88 * H], [-0.66 * bw, 0.25], 0.14, 0.14), { c: PAL.black, f: 'leather' }, 0.53, 'torso', 0.03, 0.004); if (!bk) plate(to, 0.02, 1.08 * H, 0.75, 0.535, 'torso'); }
   rig.anchors.waist = W_(root, [[0, 0.2]])[0]; rig.anchors.chest = W_(to, [[0, 1.4 * H]])[0];
   const nk = child(to, [0, 1.95 * H], P.head); note('head', nk, to, true);
-  cut(nk, [[-0.26 * w, -0.1], [0.26 * w, -0.1], [0.22 * w, 0.45], [-0.22 * w, 0.45]], dk, 0.5, 'head');
+  cut(nk, [[-0.26 * w, -0.1], [0.26 * w, -0.1], [0.22 * w, 0.45], [-0.22 * w, 0.45]], sk, 0.5, 'head');   // the neck in the skin's own colour: no shadow on it (Ryan, 20 October: "it will look cleaner")
   if ((r.tats || []).indexOf('neck') >= 0 && !(K && K.top === 'suit_jacket')) for (const yy of [0.05, 0.17, 0.29]) cut(nk, [[-0.2 * w, yy], [0.2 * w, yy + 0.03], [0.19 * w, yy + 0.07], [-0.19 * w, yy + 0.04]], inkOf(sk), 0.505, 'head', 0.005, 0.004);
   if (K && K.top === 'hoodie_01' && !bk) cut(nk, ell(-0.12, 0.85, 0.72, 0.8, 18), shade(K.pal.s.c, 0.8), 0.52, 'head', 0.04);   // the hood down behind the head
   if (bk) headBack(nk, r, 0.56, cut); else head(nk, r, 0.56, expr, cut, mk);
@@ -500,7 +499,7 @@ function head(fr: F, r: Recipe, z: number, expr: string, cut: (f: F, poly: Pt[],
       for (let k = 0; k < 6; k++) { const x = tq - 0.12 + k * 0.065; put([[x, hd.cy - 0.2], [x + 0.05, hd.cy - 0.2], [x + 0.025, hd.cy - 0.26]], PAL.white, 0.079, 0.002); put([[x, hd.cy - 0.29], [x + 0.05, hd.cy - 0.29], [x + 0.025, hd.cy - 0.23]], PAL.white, 0.079, 0.002); }
     }
   } else {
-    put(headPoly(hd, 1, -1.25, 1.1).concat(headPoly(hd, 0.86, 1.1, -1.25, 18, -0.01).map(([x, y]) => [x - 0.04, y] as Pt)), dk, 0.04);
+    // no shadow down the side of the face (Ryan, 20 October)
     if (r.beard === 1 || r.beard === 9) put(headPoly(hd, 1.0, Math.PI + 0.25, 2 * Math.PI - 0.25, 18), shade(sk, 0.82), 0.05);
   }
   const ey = hd.cy + 0.1 + (FS.eyeY || 0), shut = ['hurt', 'pain', 'cry', 'shut'].includes(expr), mad = ['shout', 'roar', 'snarl', 'pain', 'hurt'].includes(expr);

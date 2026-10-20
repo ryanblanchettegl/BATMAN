@@ -55,7 +55,12 @@ function Stage3D(p: { sc: Scene; ki: number; time: number | null; cast: Record<s
     // the pointer: in the capture phase, so a press on a person stops the camera before it starts to turn
     const down = (e: PointerEvent) => {
       const E3 = eng.current; if (!E3 || props.current.time != null || e.target !== c || e.button !== 0) return;
-      const hit = E3.pick(e.clientX, e.clientY); if (!hit) return;   // nothing there: the camera walks round
+      let hit = E3.pick(e.clientX, e.clientY); if (!hit) return;   // nothing there: the camera walks round
+      // the body moves the whole person; an arm, a leg or the head turns that part, or, with a joint already picked
+      // on the same limb (the shoulder, say), swings the limb from it
+      const cur = props.current.sel;
+      if (cur && cur.who === hit.who && cur.part !== 'body' && cur.part !== 'prop' && LIMBS[cur.part] && LIMBS[cur.part] === LIMBS[hit.part]) hit = { who: hit.who, part: cur.part };
+      else if (hit.part === 'torso') hit = { who: hit.who, part: 'body' };
       E3.ctl.enabled = false; props.current.onSel(hit);
       const fl = !e.shiftKey && (hit.part === 'body' || hit.part === 'prop') ? props.current.floorOf(hit) : null;
       const q = fl ? E3.toFloor(e.clientX, e.clientY, fl.h) : null;

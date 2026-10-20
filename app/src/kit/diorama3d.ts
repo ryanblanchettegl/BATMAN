@@ -141,7 +141,7 @@ function entrance(root: THREE.Group, box: BoxFn) {
   const wash = new THREE.SpotLight(0xd8e4ff, 70, 34, 0.5, 0.7, 1.3); wash.position.set(0, FL + SH + 12, -16); wash.target.position.set(0, FL, -19); root.add(wash, wash.target);
   // the screen: a big glowing board in a black frame, the show's lettering on it
   box(19, 11.4, 0.6, '#0d0e14', 0, FL + SH + 7.6, SZ - 8.6);
-  const scr = new THREE.Mesh(new THREE.PlaneGeometry(18, 10.4), tron()); scr.position.set(0, FL + SH + 7.6, SZ - 8.25); root.add(scr);
+  const scr = new THREE.Mesh(new THREE.PlaneGeometry(18, 10.4), tron()); scr.position.set(0, FL + SH + 7.6, SZ - 8.25); scr.name = 'tron'; root.add(scr);   // the camera's live feed is put on it (Diorama3D.feed)
   const glowL = new THREE.PointLight(0x7f6bff, 60, 30, 1.4); glowL.position.set(0, FL + SH + 6, SZ - 4); root.add(glowL);
   // two side screens and the trusses of lights over the stage
   for (const sx of [-1, 1]) { box(5.2, 7, 0.4, '#0d0e14', sx * 13.2, FL + SH + 5.6, SZ - 8); const ss = new THREE.Mesh(new THREE.PlaneGeometry(4.6, 6.4), glow(sx < 0 ? 0xc8322a : 0x2f6bd8, 0.9)); ss.position.set(sx * 13.2, FL + SH + 5.6, SZ - 7.78); root.add(ss); }
@@ -162,17 +162,43 @@ function tron(): THREE.Material {
   }
   return new THREE.MeshBasicMaterial({ map: tronTex });
 }
-/** The commentary desk at ringside: on the floor by the left side of the ring, facing in, with its chairs and monitors. */
+/** Ringside (Ryan, 20 October: "the blank dark area should be filled out and have the commentators desk"): padded mats
+    round the ring, steps at two corners, the commentary desk on the near side facing the ring with its chairs and
+    monitors, and rows of floor seats full of fans behind it. */
 function deskSide(root: THREE.Group, box: BoxFn) {
-  const FL = -3, X = -12.3, Z = 4.5;
-  box(1.6, 2.5, 6.2, '#1f2a52', X, FL + 1.25, Z);                        // the desk, its front to the ring
-  box(1.75, 0.14, 6.4, '#34405f', X, FL + 2.57, Z, false);
-  box(0.06, 0.3, 6.2, PAL.gold, X + 0.84, FL + 2.1, Z, false); box(0.06, 0.12, 6.2, PAL.red, X + 0.84, FL + 0.6, Z, false);
-  const live = new THREE.Mesh(new THREE.PlaneGeometry(2.2, 0.8), plate('LIVE', 2.2, 0.8, '#1f2a52', PAL.yellow)); live.position.set(X + 0.86, FL + 1.3, Z); live.rotation.y = Math.PI / 2; root.add(live);
-  for (const dz of [-1.8, 0, 1.8]) {
-    const sc = box(0.06, 0.45, 0.8, '#111116', X + 0.2, FL + 2.88, Z + dz); sc.rotation.z = 0.2;                         // a monitor
-    box(0.9, 2.6, 0.9, '#16161b', X - 1.4, FL + 1.3, Z + dz);                                                          // a chair
-  }
+  const FL = -3;
+  // the padded mats on the floor round the ring, out to the barricade
+  for (const [w, d, x, z] of [[28, 3.4, 0, 12.2], [28, 3.4, 0, -12.2], [3.4, 21, 12.2, 0], [3.4, 21, -12.2, 0]] as number[][]) box(w, 0.12, d, '#2b3a7a', x, FL + 0.06, z, false);
+  // steel steps at two corners
+  for (const [x, z, ry] of [[-11.4, 11.4, Math.PI / 4], [11.4, -11.4, -3 * Math.PI / 4]] as number[][]) for (let i = 0; i < 3; i++) { const st = box(2.4, 1, 1.1 - i * 0.3, steel, 0, 0, 0); st.position.set(x - Math.sin(ry) * i * 0.35, FL + 0.5 + i * 1, z - Math.cos(ry) * i * 0.35); st.rotation.y = ry; }
+  // the commentary desk: near side, its front to the ring
+  const X = -5, Z = 12.6;
+  box(7.2, 2.5, 1.6, '#1f2a52', X, FL + 1.25, Z);
+  box(7.4, 0.14, 1.75, '#34405f', X, FL + 2.57, Z, false);
+  box(7.2, 0.3, 0.06, PAL.gold, X, FL + 2.1, Z - 0.84, false); box(7.2, 0.12, 0.06, PAL.red, X, FL + 0.6, Z - 0.84, false);
+  const live = new THREE.Mesh(new THREE.PlaneGeometry(2.4, 0.8), plate('LIVE', 2.4, 0.8, '#1f2a52', PAL.yellow)); live.position.set(X, FL + 1.3, Z - 0.86); live.rotation.y = Math.PI; root.add(live);
+  for (const dx of [-2.2, 0, 2.2]) { const sc = box(0.8, 0.45, 0.06, '#111116', X + dx, FL + 2.88, Z - 0.2); sc.rotation.x = 0.2; box(0.9, 2.6, 0.9, '#16161b', X + dx, FL + 1.3, Z + 1.4); }
+  const lamp = new THREE.PointLight(0xffe2b8, 25, 10, 1.4); lamp.position.set(X, FL + 4.5, Z - 2); root.add(lamp);
+  // the timekeeper's table and the bell on the other side of the near mats
+  box(3, 2.3, 1.3, '#1b1d28', 5.5, FL + 1.15, 12.6); const bell = new THREE.Mesh(new THREE.SphereGeometry(0.3, 14, 10, 0, Math.PI * 2, 0, Math.PI / 2), card(PAL.gold, 'foil')[0]); bell.position.set(5.5, FL + 2.3, 12.4); root.add(bell);
+  floorFans(root);
+}
+/** Rows of folding chairs on the floor behind the near barricade, a fan in each, facing the ring. */
+function floorFans(root: THREE.Group) {
+  const spots: number[][] = [];
+  for (let r = 0; r < 4; r++) for (let i = 0; i < 18; i++) spots.push([-13.6 + i * 1.6 + (r % 2) * 0.4, -3, 15.6 + r * 1.5]);
+  const chairG = new THREE.BoxGeometry(1.1, 1.2, 0.9), bodyS = new THREE.Shape(); bodyS.ellipse(0, 0, 0.8, 0.7, 0, Math.PI, false, 0); bodyS.lineTo(-0.8, 0);
+  const bodyG = new THREE.ExtrudeGeometry(bodyS, { depth: 0.05, bevelEnabled: false }), headG = new THREE.CylinderGeometry(0.36, 0.36, 0.05, 14); headG.rotateX(Math.PI / 2);
+  const mc = new THREE.InstancedMesh(chairG, card('#3a3d4a')[0], spots.length), mb = new THREE.InstancedMesh(bodyG, new THREE.MeshStandardMaterial({ roughness: 1, map: grain() }), spots.length), mh = new THREE.InstancedMesh(headG, new THREE.MeshStandardMaterial({ roughness: 1 }), spots.length);
+  const shirts = [PAL.red, PAL.black, PAL.white, PAL.blue, PAL.grey, PAL.maroon, PAL.yellow, PAL.teal, PAL.green, PAL.orange], skins = ['#f3dccb', '#e8c09e', '#d5a07a', '#b07a52', '#7f5236', '#5a3a26'];
+  const o = new THREE.Object3D(), c = new THREE.Color(); let sd = 23; const r01 = () => { sd = (sd * 16807) % 2147483647; return sd / 2147483647; };
+  spots.forEach((p, i) => {
+    o.position.set(p[0], p[1] + 0.6, p[2] + 0.3); o.rotation.set(0, 0, 0); o.updateMatrix(); mc.setMatrixAt(i, o.matrix);
+    o.position.set(p[0] + (r01() - 0.5) * 0.2, p[1] + 1.25, p[2]); o.rotation.set(0, Math.PI + (r01() - 0.5) * 0.3, (r01() - 0.5) * 0.1); o.updateMatrix(); mb.setMatrixAt(i, o.matrix);
+    o.position.y = p[1] + 2.25 + r01() * 0.15; o.updateMatrix(); mh.setMatrixAt(i, o.matrix);
+    c.set(shirts[Math.floor(r01() * shirts.length)]); mb.setColorAt(i, c); c.set(skins[Math.floor(r01() * skins.length)]); mh.setColorAt(i, c);
+  });
+  root.add(mc, mb, mh);
 }
 function fans(root: THREE.Group) {
   // a fan is two cut cards: the shirt and the head, facing the ring
@@ -325,14 +351,23 @@ export class Diorama3D {
   }
   /** Draw on the next frame, once: the picture is only drawn again when something has changed (a Steam Deck on battery
       should not draw a still picture sixty times a second). */
-  ask() { if (this.raf) return; this.raf = requestAnimationFrame(() => { this.raf = 0; this.face(); (this.bokeh.uniforms as any).focus.value = this.cam.position.distanceTo(this.ctl.target); this.comp.render(); this.drawn++; }); }
+  ask() { if (this.raf) return; this.raf = requestAnimationFrame(() => { this.raf = 0; this.face(); this.feed(); (this.bokeh.uniforms as any).focus.value = this.cam.position.distanceTo(this.ctl.target); this.comp.render(); this.drawn++; }); }
+  /** The big screen in the arena shows what the camera sees, like the live feed in a real building (Ryan, 20 October).
+      The picture is taken just before the real one, with the screen itself left out of it. */
+  tronRT: THREE.WebGLRenderTarget | null = null; tronScr: THREE.Mesh | null = null;
+  feed() {
+    const s = this.tronScr; if (!s) return;
+    if (!this.tronRT) { this.tronRT = new THREE.WebGLRenderTarget(512, 296); this.tronRT.texture.colorSpace = THREE.SRGBColorSpace; s.material = new THREE.MeshBasicMaterial({ map: this.tronRT.texture, toneMapped: false }); }
+    s.visible = false; this.r.setRenderTarget(this.tronRT); this.r.render(this.scene, this.cam); this.r.setRenderTarget(null); s.visible = true;
+  }
   drawn = 0;
   size(w: number, h: number) { this.r.setSize(w, h, false); this.comp.setSize(w, h); this.cam.aspect = w / h; this.cam.updateProjectionMatrix(); this.ask(); }
   /** The people and props, each a group that turns to face the camera like a paper figure, so it never looks thin
       from the side. `rigs` are the last joints, for dragging a part in 3D. */
   groups: THREE.Group[] = []; rigs: Record<string, Rig> = {}; hold: Record<string, string> = {}; sel: { who: string; part: string } | null = null;
   show(sc: Scene, k: Key, cast: Record<string, Recipe>, time = 0, sel: { who: string; part: string } | null = null) {
-    if (this.set !== setKey(sc.set)) { this.clear(this.world); const room = ROOMS[sc.set]; if (RINGS.includes(sc.set)) arena(this.world); else if (room) room(this.world); else flat(this.world, sc); this.mood(sc.set); this.set = setKey(sc.set); this.framed = ''; }
+    if (this.set !== setKey(sc.set)) { this.clear(this.world); const room = ROOMS[sc.set]; if (RINGS.includes(sc.set)) arena(this.world); else if (room) room(this.world); else flat(this.world, sc); this.mood(sc.set); this.set = setKey(sc.set); this.framed = '';
+      this.tronScr = (this.world.getObjectByName('tron') as THREE.Mesh) || null; }
     const fk = sc.set + JSON.stringify(k.cam || null) + JSON.stringify(k.cam3 || null); if (this.framed !== fk) { frame(sc.set, this.cam, this.ctl, k); this.framed = fk; }
     this.clear(this.people); this.groups = []; this.sel = sel;
     const b = build(sc, k, cast, time); this.rigs = b.rigs; this.hold = b.hold;
@@ -420,5 +455,5 @@ export class Diorama3D {
     const l = g.worldToLocal(hit); return [l.x + g.position.x, l.y + FOOT];
   }
   clear(g: THREE.Group) { g.children.slice().forEach(c => { g.remove(c); c.traverse((o: any) => { if (o.geometry) o.geometry.dispose(); const m = o.material; if (m && !Array.isArray(m) && m.map && m.map.isTexture && m.map !== grainTex) { m.map.dispose(); m.dispose(); } }); }); }
-  dispose() { cancelAnimationFrame(this.raf); this.ctl.dispose(); this.clear(this.world); this.clear(this.people); this.r.dispose(); this.r.forceContextLoss(); }
+  dispose() { cancelAnimationFrame(this.raf); if (this.tronRT) this.tronRT.dispose(); this.ctl.dispose(); this.clear(this.world); this.clear(this.people); this.r.dispose(); this.r.forceContextLoss(); }
 }
