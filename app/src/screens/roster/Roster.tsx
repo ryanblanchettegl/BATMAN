@@ -83,7 +83,7 @@ function File(p: { w: W | null; spot: string }) {
   const feuds = E.feudsFor(S, w.id), titles = champOf(P, w.id);
   return <Win title={w.name} area="file" t="roster-file" right={titles.length ? '★' : undefined}>
     {/* rule 5c: the wrestler is always on show, full length, drawn by the diorama engine */}
-    <div class="sc-stage rs-stage"><ScenePlayer key="rsw" sc={STAND} cast={{ A: recipeOf(w) }} play={'rs' + w.id + JSON.stringify((w as any).look || null)} still orbit fill t="roster-stage" label={w.name + ' in ring gear. Drag to walk round them.'} /></div>
+    <div class="sc-stage rs-stage"><ScenePlayer key="rsw" sc={STAND} cast={{ A: { ...recipeOf(w), belts: Math.min(3, titles.length), beltL: titles.slice().sort((a: any, b: any) => b.lvl - a.lvl).slice(0, 3).map((t: any) => E.beltOf(t, P)) } }} play={'rs' + w.id + ':' + titles.length + JSON.stringify((w as any).look || null)} still orbit fill t="roster-stage" label={w.name + ' in ring gear. Drag to walk round them.'} /></div>
     <p class="big"><b>{w.name}</b> <Side w={w} /></p>
     <p>{p.spot} {'·'} age {w.age}</p>
     {w.fin || titles.length ? <p class="muted">{w.fin ? 'Finisher: ' + w.fin : ''}{titles.length ? <> <Tag kind="gold">{titles.map((t: any) => t.name).join(', ')}</Tag></> : null}</p> : null}

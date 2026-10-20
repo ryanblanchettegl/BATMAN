@@ -280,7 +280,12 @@ function scenePick(r: any, s: any, at: number, done: boolean): { sc: Scene; cast
     const dbt = (s.debut || []).find((d: any) => d.id === who) || (s.debut || [])[0];
     if (dbt) { const pk = beatPick('debut_' + dbt.k, [dbt.id].concat(ids.filter(id => sideOf(id) !== sideOf(dbt.id)).slice(0, 1))); if (pk) { Object.assign(cast, pk.cast); return { sc: pk.sc, cast, play: i + ':db' + dbt.id, label: pk.label }; } }
     const ent0 = ownEnt(who) || choose('entrance', k), fx = S.w[who] && S.w[who].look && S.w[who].look.entrance_fx, sc0 = ent0 && dressEntrance(ent0, fx), sc = sc0 && fillScene(sc0, { a: who }, cast);
-    if (sc) return { sc, cast, play: i + ':e' + k, label: nm(cast.A) + ' comes out' };
+    if (sc) {
+      // a champion wears their belts on the way out, up to three (Ryan, 20 October)
+      const P = S.promos[S.player], hold = P ? P.titles.filter((t: any) => t.holders.indexOf(who) >= 0).sort((a: any, b: any) => b.lvl - a.lvl).slice(0, 3) : [], held = hold.length, sl = sc.slots.find(x => (x.hook || x.role) === 'a');
+      if (held && sl && cast[sl.id]) cast[sl.id] = { ...cast[sl.id], belts: held, beltL: hold.map((t: any) => E.beltOf(t, P)) };
+      return { sc, cast, play: i + ':e' + k + (held ? 'b' + held : ''), label: nm(cast.A) + ' comes out' + (held ? ' with ' + (held === 1 ? 'the gold' : held + ' belts') : '') };
+    }
   }
   let when = 'mid', key = 'm', a = ids[0];
   // a line of colour from the desk, between the moves: cut to the two of them, the colour voice talking

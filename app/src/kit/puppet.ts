@@ -19,6 +19,9 @@ export interface Recipe {
   shirt?: string; pants?: string; stripes?: boolean;
   /** A suit: the jacket and trousers, the tie and the pocket square. */
   suit?: { jacket: string; tie: string; square?: string }; headset?: boolean;
+  /** Title belts worn for the entrance, up to 3 (over the shoulder, round the waist, over the other shoulder): each
+      title's own belt (Create a Belt), or a count for the plain gold one. */
+  belts?: number; beltL?: BeltData[];
   /** From a Create a Player file (src/kit/caw.ts): torso width and height, limb length and muscle (1 is as cut), the
       three outfits, and the one being worn. */
   tw?: number; th?: number; ll?: number; mm?: number; kits?: Record<AttireKey, Kit>; kit?: Kit;
@@ -340,12 +343,18 @@ export function puppet(r: Recipe, pl: Place, pose: Record<string, number>, expr:
     const ink = inkOf(sk); for (const sd of [-1, 1]) { cut(to, strip([sd * 0.06, 1.47 * H], [sd * 0.55 * bw, 1.62 * H], 0.07, 0.025, sd * 0.04), ink, 0.455, 'torso', 0.005, 0.003); cut(to, strip([sd * 0.08, 1.42 * H], [sd * 0.45 * bw, 1.46 * H], 0.05, 0.02, sd * 0.03), ink, 0.455, 'torso', 0.005, 0.003); }
     cut(to, [[0, 1.55 * H], [0.05, 1.45 * H], [0, 1.34 * H], [-0.05, 1.45 * H]], ink, 0.456, 'torso', 0.005, 0.003);
   }
-  const plate = (f: F, cx: number, cy: number, sc: number, z0: number, J: string) => {   // the plate of a title belt: gold on black, a red stone
-    cut(f, ell(cx, cy, 0.42 * sc, 0.32 * sc, 20), { c: PAL.gold, f: 'foil' }, z0, J, 0.04); cut(f, ell(cx, cy, 0.28 * sc, 0.2 * sc, 16), { c: PAL.yellow, f: 'foil' }, z0 + 0.004, J, 0.02);
-    cut(f, star(cx, cy, 0.12 * sc, 5, 0.45), PAL.red, z0 + 0.008, J, 0.01, 0.003);
+  const plate = (f: F, cx: number, cy: number, sc: number, z0: number, J: string, b?: BeltData) => {   // the plate of a title belt: its own metal and gem, or gold on black with a red stone
+    const m = b ? (METAL[b.mt] || METAL.gold) : null, rim = m ? m[0] : PAL.gold, face = m ? m[1] : PAL.yellow, gem = b ? (b.gm && b.gm !== 'none' ? GEM[b.gm] || PAL.red : null) : PAL.red;
+    cut(f, ell(cx, cy, 0.42 * sc, 0.32 * sc, 20), { c: rim, f: 'foil' }, z0, J, 0.04); cut(f, ell(cx, cy, 0.28 * sc, 0.2 * sc, 16), { c: face, f: 'foil' }, z0 + 0.004, J, 0.02);
+    if (gem) cut(f, star(cx, cy, 0.12 * sc, 5, 0.45), gem, z0 + 0.008, J, 0.01, 0.003);
   };
-  if (has('belt_waist')) { cut(root, [[-0.66 * w, 0.14], [0.66 * w, 0.14], [0.67 * w, -0.12], [-0.67 * w, -0.12]], { c: PAL.black, f: 'leather' }, 0.395, 'body', 0.03, 0.004); if (!bk) plate(root, 0.04, 0.01, 0.9, 0.4, 'body'); }
-  if (has('belt_shoulder')) { cut(to, strip([0.62 * bw, 1.88 * H], [-0.66 * bw, 0.25], 0.14, 0.14), { c: PAL.black, f: 'leather' }, 0.53, 'torso', 0.03, 0.004); if (!bk) plate(to, 0.02, 1.08 * H, 0.75, 0.535, 'torso'); }
+  // a champion walks out with their gold (Ryan, 20 October: up to three belts): the first over the shoulder, the second
+  // round the waist, the third over the other shoulder, each the title's own belt. Set by the entrance (and the Roster);
+  // a Create a Player outfit can carry its own.
+  const BL = (r.beltL || []).slice(0, 3), nb = Math.min(3, BL.length || r.belts || 0), strapOf = (i: number) => ({ c: BL[i] && BL[i].st ? BL[i].st : PAL.black, f: 'leather' as const });
+  if (nb >= 3) { cut(to, strip([-0.62 * bw, 1.88 * H], [0.66 * bw, 0.25], 0.14, 0.14), strapOf(2), 0.525, 'torso', 0.03, 0.004); if (!bk) plate(to, 0.28 * bw, 0.66 * H, 0.85, 0.528, 'torso', BL[2]); }
+  if (has('belt_waist') || nb >= 2) { cut(root, [[-0.66 * w, 0.14], [0.66 * w, 0.14], [0.67 * w, -0.12], [-0.67 * w, -0.12]], nb >= 2 ? strapOf(1) : { c: PAL.black, f: 'leather' }, 0.395, 'body', 0.03, 0.004); if (!bk) plate(root, 0.04, 0.01, 1.05, 0.4, 'body', nb >= 2 ? BL[1] : undefined); }
+  if (has('belt_shoulder') || nb >= 1) { cut(to, strip([0.62 * bw, 1.88 * H], [-0.66 * bw, 0.25], 0.14, 0.14), nb >= 1 ? strapOf(0) : { c: PAL.black, f: 'leather' }, 0.53, 'torso', 0.03, 0.004); if (!bk) plate(to, 0.02, 1.08 * H, 1, 0.535, 'torso', nb >= 1 ? BL[0] : undefined); }
   rig.anchors.waist = W_(root, [[0, 0.2]])[0]; rig.anchors.chest = W_(to, [[0, 1.4 * H]])[0];
   const nk = child(to, [0, 1.95 * H], P.head); note('head', nk, to, true);
   cut(nk, [[-0.26 * w, -0.1], [0.26 * w, -0.1], [0.22 * w, 0.45], [-0.22 * w, 0.45]], sk, 0.5, 'head');   // the neck in the skin's own colour: no shadow on it (Ryan, 20 October: "it will look cleaner")
