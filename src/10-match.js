@@ -167,7 +167,7 @@ function callMatch(S,P,x){
   x.sides.forEach(function(s,k){
     var isCh=x.champ&&x.champ===s,lead=s[0],big=avg(s.map(function(w){return w.ovr;}))>=62||isCh;
     ring((k===0?'Introducing first, ':(k===x.sides.length-1?'And the opponent'+(s.length>1?'s':'')+', ':'Next, '))+(isCh?'the '+x.t.name+' champion'+(s.length>1?'s':'')+', ':'')+names(s)+'!');
-    bc.push({t:'ent',x:big?(s.length===1&&lead.look&&lead.look.entrance_fx&&lead.look.entrance_fx.music?'"'+lead.look.entrance_fx.music+'" hits, and ':'')+names(s)+' '+(s.length>1?'make their way out together':ENTR[lead.align==='F'?'F':'H'][lead.ent||0])+(isCh?', the title held high':'')+'. The reaction: '+pop(s)+'.':'The reaction: '+pop(s)+'.'});
+    bc.push({t:'ent',side:s.map(function(x){return x.id;}),x:big?(s.length===1&&lead.look&&lead.look.entrance_fx&&lead.look.entrance_fx.music?'"'+lead.look.entrance_fx.music+'" hits, and ':'')+names(s)+' '+(s.length>1?'make their way out together':ENTR[lead.align==='F'?'F':'H'][lead.ent||0])+(isCh?', the title held high':'')+'. The reaction: '+pop(s)+'.':'The reaction: '+pop(s)+'.'});
   });
   // the hottest act in the match gets a chant; a wrestler with a fresh catchphrase hears it shouted back
   var hot=x.all.slice().sort(function(p,q){return q.ovr-p.ovr;})[0];

@@ -261,6 +261,17 @@ function FanStand(p: { v: number; word: string; pop: number; hot: string }) {
   </section>;
 }
 
+/** An entrance for one, made into an entrance for a team: each partner a copy of the one walking out, a step
+    behind and a little further back, in the same pose, so they come down the ramp together. */
+function withPartners(sc: Scene, n: number): Scene {
+  const lead = sc.slots.find(x => (x.hook || x.role) === 'a'); if (!lead) return sc;
+  const slots = sc.slots.concat(Array.from({ length: n }, (_, j) => ({ id: 'M' + j, n: 'Partner ' + (j + 1), role: 'b' as const, hook: 'mate' + j })));
+  const keys = sc.keys.map(kf => { const f = kf.figs[lead.id]; if (!f || f.on) return kf; const figs = { ...kf.figs };
+    for (let j = 0; j < n; j++) figs['M' + j] = { ...f, x: f.x - (j + 1) * 1.75 * (f.f || 1), z: f.z - (j + 1) * 0.25, e: j ? f.e : (f.e === 'shout' ? 'shout' : f.e) };
+    return { ...kf, figs }; });
+  return { ...sc, id: sc.id + '+' + n, slots, keys };
+}
+
 /** Which scene from Create a Scene fits this moment of the broadcast, and who plays it. It only reads the show:
     the bell and the first exchanges get the lock-up, the middle a trade of blows, a near fall the count and the
     kick-out (the one named first in the line is the one covering), the deciding fall the three count, a new
@@ -299,18 +310,29 @@ function scenePick(r: any, s: any, at: number, done: boolean): { sc: Scene; cast
   const winSide = s.win ? (s.sidesN as string[]).indexOf(s.win) : -1, winner = winSide >= 0 ? ids[winSide * per] : -1;
   let lastH = -1; bc.forEach((b, j) => { if (b.h) lastH = j; });
   // the entrances: whoever is walking out, in their entrance gear, on their own entrance if they picked one
-  if (!done && bc[now] && bc[now].t === 'ent') {
-    const k = bc.slice(0, now + 1).filter(b => b.t === 'ent').length - 1, who = ids[Math.min(ids.length - 1, k * per)];
+  // the ring announcer's line before an entrance plays that entrance (they are introduced, they come out)
+  let entAt = now;
+  if (!done && bc[now] && bc[now].t === 'ring') { const bell = bc.findIndex(b => b.t === 'pbp'); for (let j = now + 1; j < bc.length && (bell < 0 || j < bell); j++) if (bc[j].t === 'ent') { entAt = j; break; } }
+  if (!done && bc[entAt] && bc[entAt].t === 'ent') {
+    // the entrance line names its own side (the engine brings the champions out last); an old report falls back on the order of the card
+    const k = bc.slice(0, entAt + 1).filter(b => b.t === 'ent').length - 1, eb: any = bc[entAt], ew: number[] = Array.isArray(eb.side) ? eb.side.filter((id: number) => !!S.w[id]) : [];
+    const who = ew.length ? ew[0] : ids[Math.min(ids.length - 1, k * per)];
     // a newcomer's first time out is the debut's own beat (rule 9c): the teasers paid off, the surprise attack, or just the debut
     // (the broadcast joins a match at its last introduction, so the debut takes the entrance whoever is walking out)
     const dbt = (s.debut || []).find((d: any) => d.id === who) || (s.debut || [])[0];
     if (dbt) { const pk = beatPick('debut_' + dbt.k, [dbt.id].concat(ids.filter(id => sideOf(id) !== sideOf(dbt.id)).slice(0, 1))); if (pk) { Object.assign(cast, pk.cast); return { sc: pk.sc, cast, play: i + ':db' + dbt.id, label: pk.label }; } }
-    const ent0 = ownEnt(who) || choose('entrance', k), fx = S.w[who] && S.w[who].look && S.w[who].look.entrance_fx, sc0 = ent0 && dressEntrance(ent0, fx), sc = sc0 && fillScene(sc0, { a: who }, cast);
+    // a tag team (or a trio) comes out together: the partners walk a step behind on the same entrance (Ryan, 20 October)
+    const mates = ew.length ? ew.slice(1, 3) : (per > 1 ? ids.slice(k * per + 1, k * per + per).filter(id => !!S.w[id]).slice(0, 2) : []);
+    const ent0 = ownEnt(who) || choose('entrance', k), fx = S.w[who] && S.w[who].look && S.w[who].look.entrance_fx, sc1 = ent0 && dressEntrance(ent0, fx);
+    const sc0 = sc1 && mates.length ? withPartners(sc1, mates.length) : sc1, hk: Record<string, number> = { a: who }; mates.forEach((id, j) => { hk['mate' + j] = id; });
+    const sc = sc0 && fillScene(sc0, hk, cast);
     if (sc) {
-      // a champion wears their belts on the way out, up to three (Ryan, 20 October)
-      const P = S.promos[S.player], hold = P ? P.titles.filter((t: any) => t.holders.indexOf(who) >= 0).sort((a: any, b: any) => b.lvl - a.lvl).slice(0, 3) : [], held = hold.length, sl = sc.slots.find(x => (x.hook || x.role) === 'a');
-      if (held && sl && cast[sl.id]) cast[sl.id] = { ...cast[sl.id], belts: held, beltL: hold.map((t: any) => E.beltOf(t, P)) };
-      return { sc, cast, play: i + ':e' + k + (held ? 'b' + held : ''), label: nm(cast.A) + ' comes out' + (held ? ' with ' + (held === 1 ? 'the gold' : held + ' belts') : '') };
+      // a champion wears their belts on the way out, up to three (Ryan, 20 October); tag champions both wear theirs
+      const P = S.promos[S.player], beltsOf = (id: number) => P ? P.titles.filter((t: any) => t.holders.indexOf(id) >= 0).sort((a: any, b: any) => b.lvl - a.lvl).slice(0, 3) : [];
+      const wear = (id: number, slot: string) => { const h = beltsOf(id); if (h.length && cast[slot]) cast[slot] = { ...cast[slot], belts: h.length, beltL: h.map((t: any) => E.beltOf(t, P)) }; return h.length; };
+      const sl = sc.slots.find(x => (x.hook || x.role) === 'a'), held = sl ? wear(who, sl.id) : 0; mates.forEach((id, j) => wear(id, 'M' + j));
+      const names = mates.length ? [S.w[who].name].concat(mates.map(id => S.w[id].name)).join(' & ') : nm(cast.A);
+      return { sc, cast, play: i + ':e' + k + (held ? 'b' + held : '') + (mates.length ? 'm' + mates.length : ''), label: names + (mates.length ? ' come out' : ' comes out') + (held ? ' with ' + (held === 1 ? 'the gold' : held + ' belts') : '') };
     }
   }
   let when = 'mid', key = 'm', a = ids[0];

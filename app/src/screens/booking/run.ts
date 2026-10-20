@@ -136,7 +136,11 @@ export function liveCall(): any | null { const L = G.S && G.S.live; return L && 
 /** Ring introductions come out together: a segment opens on its last entrance line. */
 export function lead(seg: any): number { const bc = seg.bc || []; let i = 0; while (i < bc.length && (bc[i].t === 'ring' || bc[i].t === 'ent')) i++; return Math.max(0, i - 1); }
 /** Where a segment starts on screen: at the call that shaped it if there was one (the introductions were watched while the call came in), else after the introductions. */
-function startBeat(seg: any): number { const bc = seg.bc || [], k = bc.findIndex((x: any) => x.t === 'call'); return k >= 0 ? k : lead(seg); }
+function startBeat(seg: any): number { const bc = seg.bc || [], k = bc.findIndex((x: any) => x.t === 'call'); return k >= 0 ? k : opening(seg); }
+/** Where a segment opens on screen: a match at its first entrance, so every side walks out (Ryan, 20 October: a tag
+    team comes out together, a champion with the gold); a battle royal, whose ring fills at once, at its last line. */
+export function opening(seg: any): number { const bc = seg.bc || [], ents = bc.filter((x: any) => x.t === 'ent').length;
+  if (seg.k !== 'match' || ents < 2 || ents > 4) return lead(seg); const k = bc.findIndex((x: any) => x.t === 'ent'); return k >= 0 ? k : lead(seg); }
 /** When the call on screen came up. An answer in its first moments is not taken: a press meant for Continue must not answer a call nobody has read. */
 let callAt = 0;
 /** Ask the engine for the next thing on the show and put the screen on it. Must be called inside act(). */
@@ -167,7 +171,7 @@ export function liveNext() {
     return;
   }
   if (onAir()) { act(stepLive); return; }   // the next thing has not happened yet
-  look(() => { L.s++; L.b = r.segs[L.s] ? lead(r.segs[L.s]) : 0; });
+  look(() => { L.s++; L.b = r.segs[L.s] ? opening(r.segs[L.s]) : 0; });
 }
 /** Answer the call that is waiting. A call made in a match carries on into it. A call made after the bell shows what came of it first. */
 export function liveDecide(c: number) {
@@ -249,7 +253,7 @@ const TV_LINE = 2400, TV_SEC = 2600;   // each minute on the show's clock is abo
 export function tvKeys(sg: any): number[] {
   const bc = (sg && sg.bc) || [], n = bc.length; if (!n) return [];
   const T = (sg.mins || 5) * TV_SEC * 0.85, K = Math.max(2, Math.min(n, Math.round(T / TV_LINE))), keep = new Set<number>([0, n - 1]);
-  if (sg.k === 'match') keep.add(lead(sg) + 1);
+  if (sg.k === 'match') { keep.add(lead(sg) + 1); const o = opening(sg); bc.forEach((b: any, i: number) => { if (b.t === 'ent' && i >= o) keep.add(i); }); }
   bc.forEach((b: any, i: number) => { if (b.h || b.t === 'call' || b.t === 'ear') keep.add(i); });
   for (let j = 1; keep.size < K && j <= K; j++) keep.add(Math.round(j * (n - 1) / (K + 1)));
   return [...keep].filter(i => i >= 0 && i < n).sort((a, b) => a - b);

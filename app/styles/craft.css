@@ -389,3 +389,6 @@ html body .win.ppop .wb{font-family:var(--hand);font-size:1.06em}
 .stf-new .stf-tile{padding:.3em .45em}
 .stf-new .stf-tile span{font-size:.74em;line-height:1.15}
 .stf-new .row{flex-wrap:nowrap}
+/* Defended on (src/99-titleshow.js): a small select that leaves the row its height */
+.ttpage select[data-t="title-show"]{max-width:8.5em;padding:.05em .3em;font-size:.86em;min-height:0;height:auto}
+@media (max-width:1500px){.ttpage select[data-t="title-show"]{max-width:6.6em}}

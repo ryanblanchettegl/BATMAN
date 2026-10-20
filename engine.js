@@ -675,7 +675,7 @@ function callMatch(S,P,x){
   x.sides.forEach(function(s,k){
     var isCh=x.champ&&x.champ===s,lead=s[0],big=avg(s.map(function(w){return w.ovr;}))>=62||isCh;
     ring((k===0?'Introducing first, ':(k===x.sides.length-1?'And the opponent'+(s.length>1?'s':'')+', ':'Next, '))+(isCh?'the '+x.t.name+' champion'+(s.length>1?'s':'')+', ':'')+names(s)+'!');
-    bc.push({t:'ent',x:big?(s.length===1&&lead.look&&lead.look.entrance_fx&&lead.look.entrance_fx.music?'"'+lead.look.entrance_fx.music+'" hits, and ':'')+names(s)+' '+(s.length>1?'make their way out together':ENTR[lead.align==='F'?'F':'H'][lead.ent||0])+(isCh?', the title held high':'')+'. The reaction: '+pop(s)+'.':'The reaction: '+pop(s)+'.'});
+    bc.push({t:'ent',side:s.map(function(x){return x.id;}),x:big?(s.length===1&&lead.look&&lead.look.entrance_fx&&lead.look.entrance_fx.music?'"'+lead.look.entrance_fx.music+'" hits, and ':'')+names(s)+' '+(s.length>1?'make their way out together':ENTR[lead.align==='F'?'F':'H'][lead.ent||0])+(isCh?', the title held high':'')+'. The reaction: '+pop(s)+'.':'The reaction: '+pop(s)+'.'});
   });
   // the hottest act in the match gets a chant; a wrestler with a fresh catchphrase hears it shouted back
   var hot=x.all.slice().sort(function(p,q){return q.ovr-p.ovr;})[0];
@@ -1811,7 +1811,7 @@ function liveIntro(S,P,show,m,i,n){
     c.sides.forEach(function(s,k){
       var isCh=c.t&&k===c.champSide,lead=s[0],big=avg(s.map(function(w){return w.ovr;}))>=62||isCh;
       bc.push({t:'ring',x:(k===0?'Introducing first, ':(k===c.sides.length-1?'And the opponent'+(s.length>1?'s':'')+', ':'Next, '))+(isCh?'the '+c.t.name+' champion'+(s.length>1?'s':'')+', ':'')+names(s)+'!'});
-      bc.push({t:'ent',x:big?(s.length===1&&lead.look&&lead.look.entrance_fx&&lead.look.entrance_fx.music?'"'+lead.look.entrance_fx.music+'" hits, and ':'')+names(s)+' '+(s.length>1?'make their way out together':ENTR[lead.align==='F'?'F':'H'][lead.ent||0])+(isCh?', the title held high':'')+'. The reaction: '+pop(s)+'.':'The reaction: '+pop(s)+'.'});
+      bc.push({t:'ent',side:s.map(function(x){return x.id;}),x:big?(s.length===1&&lead.look&&lead.look.entrance_fx&&lead.look.entrance_fx.music?'"'+lead.look.entrance_fx.music+'" hits, and ':'')+names(s)+' '+(s.length>1?'make their way out together':ENTR[lead.align==='F'?'F':'H'][lead.ent||0])+(isCh?', the title held high':'')+'. The reaction: '+pop(s)+'.':'The reaction: '+pop(s)+'.'});
     });
   }
   bc.push({t:'pbp',x:'The bell sounds, and this one is under way.'});
@@ -14044,6 +14044,34 @@ E.staffSkill=function(S,id,k){var w=S.w[id];return w&&SROLES[k]?SROLES[k].skill(
   E.suggest=function(S){return topUp(S,flatS(S));};
   E.suggestSmart=function(S){return topUp(S,smartS(S));};
 })();
+
+/* ===== 99-titleshow.js ===== */
+/* wraps: 00-core.js (it must sort after them; test-buildorder.js checks) */
+/* A title for one show (Ryan, 20 October: "belts should have an option to be only for a specific show"). A title can
+   belong to one of the company's weekly shows (t.show, the show's id): on weekly television it is defended only there,
+   so a second show can have a belt of its own the way a brand does. Big events can still put it on, the way every
+   big night can. Left empty, the title goes where it went before (by brand). The belt itself is drawn in Create a
+   Belt; this only says where it is defended. No rnd(S). */
+(function(){
+  var st=showTitles;
+  showTitles=function(P,show){var L=st.apply(this,arguments);if(!show||show.big)return L;
+    return L.filter(function(t){return !t.show||!show.id||t.show===show.id;});};
+})();
+/** The weekly shows a title of yours could belong to, and the one it belongs to now. */
+E.titleShows=function(S,tid){
+  var P=S.promos[S.player],t=titleById(P,tid);
+  return {now:t&&t.show||null,shows:(P.shows||[]).filter(function(sh){return !sh.dead;}).map(function(sh){return {id:sh.id,name:sh.name};})};
+};
+/** Make a title of yours belong to one weekly show, or to none (show null). */
+E.setTitleShow=function(S,tid,show){
+  var P=S.promos[S.player],t=titleById(P,tid);if(!t)return {ok:false,msg:'That title is not yours.'};
+  if(show==null||show===''){delete t.show;return {ok:true,msg:'The '+t.name+' can be defended on any of your shows.'};}
+  var sh=(P.shows||[]).filter(function(x){return x.id===show&&!x.dead;})[0];if(!sh)return {ok:false,msg:'That show is not on the air.'};
+  t.show=sh.id;news(S,'title','The '+titleFull(P,t)+' is now defended on '+sh.name+'.');
+  return {ok:true,msg:'The '+t.name+' belongs to '+sh.name+' now. It is defended there, and on your big events.'};
+};
+/** The ids of the titles of yours a show can put on the line. */
+E.titlesOnShow=function(S,show){return showTitles(S.promos[S.player],show).map(function(t){return t.id;});};
 
 /* ===== 99-tonight.js ===== */
 /* What could happen tonight (roadmap 7, Ryan 16 October). A window on Book the show with four parts: moments that could

@@ -82,13 +82,19 @@ function trend(t: any) {
 export function Titles() {
   const S = G.S, P = me(), busy = !!E.tournActive(S), st = slice<{ k: string | null }>('titles', () => ({ k: null }));
   const singles = P.titles.filter((t: any) => !t.tag), cur = singles.find((t: any) => t.id === st.k) || singles[0];
+  // a title can belong to one weekly show (src/99-titleshow.js); the choice shows only when there is more than one
+  const shows: any[] = (P.shows || []).filter((x: any) => !x.dead), many = shows.length > 1;
+  const onShow = (t: any) => <Sel id={'tshow-' + t.id} t="title-show" d={{ k: t.id }} label={'Where the ' + t.name + ' is defended'} value={t.show || ''}
+    onChange={v => act(() => { const r = E.setTitleShow(S, t.id, v || null); say(r.msg, { err: !r.ok }); })}
+    options={[['', 'Any show'] as Opt].concat(shows.map((x: any) => [x.id, x.name.replace(/^(Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday) Night /, '')] as Opt))} />;
   return <div class="onescreen"><Desktop cls="ttpage" t="titles">
     <Win title={'Titles: ' + P.titles.length + ' belts'} area="belts" t="belts" right={P.titles.filter((t: any) => !t.holders.length).length + ' vacant'}>
       <div class="tw"><table>
-        <thead><tr><th>Title</th>{P.brands && <th>Brand</th>}<th>Champion</th><th class="r">Reign</th><th class="r">Defences</th><th>Prestige</th><th class="r">Last defended</th></tr></thead>
+        <thead><tr><th>Title</th>{P.brands && <th>Brand</th>}{many && <th>Defended on</th>}<th>Champion</th><th class="r">Reign</th><th class="r">Defences</th><th>Prestige</th><th class="r" title="Last defended">Last</th></tr></thead>
         <tbody>{P.titles.map((t: any) => <tr key={t.id}>
           <td><TitleName pid={P.id} t={t} /></td>
           {P.brands && <td>{brandName(P, t.brand)}</td>}
+          {many && <td>{onShow(t)}</td>}
           <td>{t.holders.length ? joined(t.holders.map((id: number) => <Name w={S.w[id]} />), ' & ') : <span class="mark">Vacant</span>}{!t.holders.length && !t.tag && !busy ? <> <Btn kind="sm" t="tourn-vacant" d={{ k: t.id }} disabled={!!E.tournOk(S, t.id, 'ko')} onClick={() => act(() => { const r = E.startTourn(S, t.id, 'ko'); if (r) say(r, { err: !/is set/.test(r) }); })}>Start a tournament</Btn></> : null}</td>
           <td class="r num">{t.holders.length ? (S.week - t.since) + ' wk' : '—'}</td>
           <td class="r num">{t.defs}</td>
