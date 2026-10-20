@@ -4,7 +4,7 @@ import { Btn, Panel, Sel, Field, Opt, Logo, dataAttrs } from '../../kit';
 import { openLogoMaker } from '../../shared/logomaker';
 import { ModelCard } from '../../shared/model';
 import { es, world, edit, look, note } from './state';
-import { TextF, NameF, NumF, SelF, PickList, DelBtn, TwoPane, BrandSel } from './parts';
+import { TextF, NameF, NumF, SelF, PickList, DelBtn, TwoPane, BrandSel, ScrollMenu } from './parts';
 
 const names = (t: Record<string, any>): Opt[] => Object.keys(t).map(k => [k, t[k].n] as Opt);
 export const companyOpts = (pkg: any): Opt[] => pkg.promotions.map((p: any) => [p.id, p.name + (p.full_name ? ' - ' + p.full_name : '')] as Opt);
@@ -79,6 +79,9 @@ export function CompaniesTab() {
       </div>
       <div class="editor plain"><Field label="Cities"><input type="text" {...dataAttrs('ed-cities')} value={(p.cities || []).join(', ')} maxLength={300} placeholder="Chicago, Boston, Memphis"
         onInput={e => { const v = (e.currentTarget as HTMLInputElement).value; edit(() => { p.cities = v.split(',').map(x => x.trim()).filter(Boolean); }); }} /></Field></div>
+      {(() => { const known: string[] = E.knownCities(), have: string[] = p.cities || [], off = have.filter(c => known.indexOf(c) < 0);
+        return <><p class="muted mt1" data-t="ed-cities-note">{have.length + (have.length === 1 ? ' city' : ' cities') + ' on the road.'}{off.length ? ' Not on the map (no pin on the desk): ' + off.join(', ') + '.' : ''}</p>
+          <ScrollMenu t="ed-city-add" label="Cities on the map" onPick={c => edit(() => { p.cities = have.concat([c]); })} items={known.filter(c => have.indexOf(c) < 0).map(c => ({ id: c, label: c, sub: 'Add to the road' }))} /></>; })()}
       <p class="muted mt2">Leave the money boxes empty and the game works them out from popularity.</p>
     </Panel>
     <Panel cls="mb4" title="Roster">
