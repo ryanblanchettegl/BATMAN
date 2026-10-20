@@ -252,9 +252,9 @@ export function CreatePlayer(pp: PlayerProps) {
 
           <p class="muted">This is the picture the game shows of them: on the roster, in lists, on cards and in their file. The card behind them is their company's colour, or their brand's.</p>
         </>}
-        {tab === 'a_head' && <>{hairRow}<Group title="On the head">{extras(['hat_cowboy', 'bandana', 'sunglasses_aviator'])}</Group><p class="muted">Hair is worn with every outfit; a mask takes this outfit's main colour and trim.</p></>}
-        {tab === 'a_upper' && <>{partRow('upper_body')}<Group title="Arms and chest">{extras(['wrist_tape_white', 'wrist_wraps', 'elbow_pads', 'gloves_fingerless', 'armband', 'chain_gold'])}</Group></>}
-        {tab === 'a_lower' && <>{partRow('lower_body')}<Group title="Knees">{extras(['knee_pads', 'knee_sleeves'])}</Group></>}
+        {tab === 'a_head' && <>{hairRow}<Group title="On the head">{extras(['hat_cowboy', 'hat_cap', 'hat_beanie', 'bandana', 'headband', 'antennae', 'crown', 'sunglasses_aviator', 'sunglasses_round', 'glasses_plain'])}</Group><p class="muted">Hair is worn with every outfit; a mask takes this outfit's main colour and trim.</p></>}
+        {tab === 'a_upper' && <>{partRow('upper_body')}<Group title="Arms and chest">{extras(['wrist_tape_white', 'wrist_wraps', 'elbow_pads', 'gloves_fingerless', 'armband', 'chain_gold', 'pearls', 'scarf', 'feather_boa', 'guitar', 'bat'])}</Group></>}
+        {tab === 'a_lower' && <>{partRow('lower_body')}<Group title="Knees">{extras(['knee_pads', 'knee_sleeves', 'fishnets'])}</Group></>}
         {tab === 'a_feet' && <>{partRow('footwear')}<p class="muted">Boots come up the shin; kick pads leave the foot bare.</p></>}
         {tab === 'gear' && <>
           {(['upper_body', 'lower_body', 'footwear'] as const).map(partRow)}

@@ -167,12 +167,15 @@ export const PARTS: Record<'head' | 'upper_body' | 'lower_body' | 'footwear' | '
     ['mask_full_01', 'Mask, mouth open'], ['mask_closed_01', 'Full mask'], ['mask_half_01', 'Half mask'], ['mask_hood_01', 'Hood']],
   upper_body: [['bare', 'Bare chest'], ['singlet_straps_up', 'Singlet, straps up'], ['singlet_straps_down', 'Singlet, straps down'], ['singlet_full', 'Full singlet, to the thigh'], ['shirt_tshirt_base', 'T-shirt'], ['shirt_tank', 'Tank top'],
     ['top_sports', 'Sports top'], ['top_crop', 'Crop top'], ['top_bodysuit', 'Ring bodysuit'], ['vest_open', 'Open vest'], ['jacket_leather_biker', 'Biker jacket'], ['jacket_satin', 'Satin ring jacket'], ['coat_long', 'Long coat'],
-    ['robe_long', 'Entrance robe'], ['hoodie_01', 'Hooded top'], ['suit_jacket', 'Suit and tie']],
+    ['robe_long', 'Entrance robe'], ['hoodie_01', 'Hooded top'], ['suit_jacket', 'Suit and tie'], ['jacket_denim', 'Denim jacket']],
   lower_body: [['trunks_brief_01', 'Trunks'], ['trunks_long', 'Long trunks'], ['tights_long_01', 'Long tights'], ['pants_flared', 'Flared ring pants'], ['shorts_fight', 'Fight shorts'], ['skirt_short', 'Short ring skirt'], ['jeans_distressed', 'Torn jeans'], ['trousers_suit', 'Suit trousers']],
   footwear: [['boots_knee', 'Boots and knee pads'], ['boots_laced_heavy', 'Heavy laced boots'], ['boots_short', 'Short boots'], ['kick_pads', 'Kick pads'], ['ankle_wraps', 'Bare feet, taped'], ['sneakers_retro', 'Retro sneakers'], ['shoes_dress', 'Dress shoes'], ['barefoot', 'Bare feet']],
   accessories: [['wrist_tape_white', 'Wrist tape'], ['wrist_wraps', 'Wrist wraps'], ['knee_pads', 'Knee pads'], ['knee_sleeves', 'Knee sleeves'], ['elbow_pads', 'Elbow pads'], ['gloves_fingerless', 'Fingerless gloves'], ['armband', 'Arm band'],
     ['sunglasses_aviator', 'Aviator sunglasses'], ['hat_cowboy', 'Cowboy hat'], ['hat_cap', 'Baseball cap'], ['hat_beanie', 'Wool hat'], ['bandana', 'Bandana'], ['crown', 'Crown'], ['chain_gold', 'Chain'], ['cape', 'Cape'],
-    ['belt_waist', 'Title belt, round the waist'], ['belt_shoulder', 'Title belt, over the shoulder']],
+    ['belt_waist', 'Title belt, round the waist'], ['belt_shoulder', 'Title belt, over the shoulder'],
+    // 20 October: pieces the real-life gear of the parody roster called for
+    ['sunglasses_round', 'Round sunglasses'], ['glasses_plain', 'Glasses'], ['headband', 'Sweatband'], ['antennae', 'Antennae'], ['scarf', 'Scarf'], ['pearls', 'Pearl necklace'], ['feather_boa', 'Feather boa'],
+    ['fishnets', 'Fishnet tights'], ['guitar', 'Guitar, slung across'], ['bat', 'Baseball bat, in hand']],
 };
 export const FACIAL: [string, string][] = [['', 'From the face'], ['none', 'Clean shaven'], ['stubble', 'Stubble'], ['goatee', 'Goatee'], ['chin_strap', 'Chin strap'], ['sideburns', 'Sideburns'], ['beard_short', 'Short beard'],
   ['beard_full', 'Full beard'], ['beard_braided', 'Braided beard'], ['mustache', 'Moustache'], ['handlebar', 'Handlebar moustache'], ['horseshoe', 'Horseshoe moustache']];

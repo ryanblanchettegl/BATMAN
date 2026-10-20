@@ -146,7 +146,7 @@ export function puppet(r: Recipe, pl: Place, pose: Record<string, number>, expr:
   const L = { up: 1.0 * h * ll, fore: 0.92 * h * ll, thigh: 1.3 * h * ll, shin: 1.22 * h * ll, torso: 1.95 * H };
   const note = (name: string, f: F, parent: F, up = false) => { rig.joints[name] = { x: f.x, y: f.y, pa: parent.a, up }; };
   const has = (a: string) => !!K && K.acc.indexOf(a) >= 0;
-  const OVER = ['shirt_tshirt_base', 'hoodie_01', 'jacket_leather_biker', 'jacket_satin', 'coat_long', 'robe_long', 'suit_jacket'];   // tops with sleeves to the wrist (the T-shirt only to the elbow)
+  const OVER = ['shirt_tshirt_base', 'hoodie_01', 'jacket_leather_biker', 'jacket_satin', 'coat_long', 'robe_long', 'suit_jacket', 'jacket_denim'];   // tops with sleeves to the wrist (the T-shirt only to the elbow)
   const to = child(root, [0, 0], P.torso);
   note('torso', to, root, true);
   if (has('cape') && bk) cut(to, [[-0.92 * bw, 1.98 * H], [0.92 * bw, 1.98 * H], [1.75 * bw, -2.15 * h * ll], [-1.95 * bw, -2.15 * h * ll]], K!.pal.s, 1.06, 'torso', 0.06);   // from behind, the cape hangs over everything
@@ -180,6 +180,7 @@ export function puppet(r: Recipe, pl: Place, pose: Record<string, number>, expr:
     const wr = child(el, [0, -L.fore], P['wr_' + s]); note('wr_' + s, wr, el);
     cut(wr, ell(0.02, -0.17, 0.17 * aw, 0.22, 12), sk, z + 0.08, 'wr_' + s);
     if (has('gloves_fingerless')) { cut(wr, ell(0.02, -0.12, 0.17 * aw, 0.15, 12), K!.pal.s, z + 0.09, 'wr_' + s, 0.02); cut(wr, [[-0.16 * aw, 0.02], [0.16 * aw, 0.02], [0.16 * aw, -0.06], [-0.16 * aw, -0.06]], K!.pal.t, z + 0.095, 'wr_' + s, 0.02, 0.004); }
+    if (s === 'n' && has('bat')) { cut(wr, [[-0.05, -0.08], [0.05, -0.08], [0.11, -1.55], [0.0, -1.62], [-0.11, -1.55]], '#1c1b1f', z + 0.085, 'wr_' + s, 0.05, 0.004); cut(wr, ell(0, -0.06, 0.07, 0.04, 8), '#1c1b1f', z + 0.086, 'wr_' + s, 0.02, 0.002); }   // a black baseball bat held by the handle
     const hand = W_(wr, [[0.02, -0.17]])[0]; rig.anchors['hand_' + s] = hand;
   };
   const LONG = ['tights_long_01', 'pants_flared', 'jeans_distressed', 'trousers_suit'];
@@ -195,9 +196,12 @@ export function puppet(r: Recipe, pl: Place, pose: Record<string, number>, expr:
       if (K.bottom === 'trousers_suit') cut(hp, strip([0.05, -0.1], [0.04, -L.thigh + 0.05], 0.025, 0.02), shade(K.col.bottom.c, 0.7), z + 0.015, 'hip_' + s, 0.01, 0.003);
       if (K.bottom === 'jeans_distressed' && s === 'n') cut(hp, [[-0.1, -0.55 * L.thigh], [0.12, -0.5 * L.thigh], [0.18, -0.6 * L.thigh], [0.05, -0.66 * L.thigh], [-0.12, -0.62 * L.thigh]], sk, z + 0.015, 'hip_' + s, 0.01, 0.02);   // a rip
     }
+    const net = (f: F, len: number, wd: number, z1: number, J: string) => { for (let i = -1; i < 7; i++) { const t0 = (i / 7) * len, t1 = t0 + len * 0.18; cut(f, strip([-wd, -t0], [wd, -t1], 0.012, 0.012), '#17161b', z1, J, 0.003, 0.002); cut(f, strip([wd, -t0], [-wd, -t1], 0.012, 0.012), '#17161b', z1 + 0.0005, J, 0.003, 0.002); } };   // fishnet tights: a diamond mesh over bare skin
+    if (has('fishnets') && thighC === sk) net(hp, L.thigh, 0.3 * aw, z + 0.012, 'hip_' + s);
     const kn = child(hp, [0, -L.thigh], P['kn_' + s]); note('kn_' + s, kn, hp);
     cut(kn, taper(0.47 * aw, 0.36 * aw, L.shin), shinC, z + 0.03, 'kn_' + s); pins.push([kn, z + 0.06]);
     if (K && (K.bottom === 'tights_long_01' || K.bottom === 'pants_flared')) cut(kn, strip([0, 0.02], [0, -L.shin + 0.1], 0.06, 0.05), K.pal.t, z + 0.035, 'kn_' + s, 0.02, 0.004);
+    if (has('fishnets') && shinC === sk) net(kn, L.shin * 0.9, 0.22 * aw, z + 0.032, 'kn_' + s);
     if (K && K.bottom === 'pants_flared') { cut(kn, [[-0.24 * aw, -L.shin * 0.45], [0.24 * aw, -L.shin * 0.45], [0.42 * aw, -L.shin - 0.08], [-0.4 * aw, -L.shin - 0.08]], K.col.bottom, z + 0.075, 'kn_' + s, 0.04); cut(kn, [[-0.41 * aw, -L.shin], [0.42 * aw, -L.shin], [0.42 * aw, -L.shin - 0.08], [-0.4 * aw, -L.shin - 0.08]], K.pal.t, z + 0.077, 'kn_' + s, 0.01, 0.003); }
     if (K && K.bottom === 'jeans_distressed' && s === 'n') cut(kn, [[-0.12, 0.05], [0.12, 0.08], [0.16, -0.06], [0.0, -0.1], [-0.14, -0.05]], sk, z + 0.035, 'kn_' + s, 0.01, 0.02);
     const kneeCap = (col: Swatch | string, z1: number) => cut(kn, bk ? [[-0.22 * aw, 0.03], [0.22 * aw, 0.03], [0.21 * aw, -0.09], [-0.21 * aw, -0.09]] : ell(0, -0.05, 0.21 * aw, 0.24 * aw, 14), col, z1, 'kn_' + s, 0.03);   // a knee pad; from behind, only its strap
@@ -238,7 +242,7 @@ export function puppet(r: Recipe, pl: Place, pose: Record<string, number>, expr:
   }
   const b = r.belly;
   const torsoPoly: Pt[] = [[-0.58 * bw - b, 0], [0.58 * bw + b, 0], [0.68 * bw + b * 0.8, 0.55], [0.86 * bw, 1.45 * H], [0.74 * bw, 1.86 * H], [0.28, 1.98 * H], [-0.28, 1.98 * H], [-0.74 * bw, 1.86 * H], [-0.86 * bw, 1.45 * H], [-0.68 * bw - b * 0.8, 0.55]];
-  const covered = K ? ['shirt_tshirt_base', 'shirt_tank', 'jacket_leather_biker', 'jacket_satin', 'coat_long', 'top_bodysuit', 'robe_long', 'hoodie_01', 'suit_jacket'].indexOf(K.top) >= 0 : !!r.shirt;
+  const covered = K ? ['shirt_tshirt_base', 'shirt_tank', 'jacket_leather_biker', 'jacket_satin', 'coat_long', 'top_bodysuit', 'robe_long', 'hoodie_01', 'suit_jacket', 'jacket_denim'].indexOf(K.top) >= 0 : !!r.shirt;
   cut(to, torsoPoly, K ? (covered ? K.col.top : sk) : r.shirt || sk, 0.42, 'torso');
   pins.push([to, 0.55]);
   const muscles = () => {
@@ -277,6 +281,7 @@ export function puppet(r: Recipe, pl: Place, pose: Record<string, number>, expr:
       else if (t === 'hoodie_01') { neckBand(shade(S.c, 0.75)); cut(to, ell(0, 1.62 * H, 0.42 * bw, 0.36 * H, 16), shade(S.c, 0.82), 0.47, 'torso', 0.04); }   // the hood down the back
       else if (t === 'shirt_tank') { cut(to, [[-0.86 * bw, 1.45 * H], [-0.48 * bw, 1.98 * H], [-0.36 * bw, 1.98 * H], [-0.3 * bw, 1.75 * H], [0.3 * bw, 1.75 * H], [0.36 * bw, 1.98 * H], [0.48 * bw, 1.98 * H], [0.86 * bw, 1.45 * H], [0.9 * bw, 1.5 * H], [0.86 * bw, 2.02 * H], [-0.86 * bw, 2.02 * H], [-0.9 * bw, 1.5 * H]], sk, 0.43, 'torso', 0.01); }
       else if (t === 'jacket_leather_biker') { neckBand(shade(S.c, 0.7), 0.1); waistBand(T); }
+      else if (t === 'jacket_denim') { neckBand(shade(S.c, 0.82), 0.1); waistBand(shade(S.c, 0.85)); cut(to, [[-0.7 * bw, 1.5 * H], [0.7 * bw, 1.5 * H], [0.6 * bw, 1.1 * H], [0, 1.0 * H], [-0.6 * bw, 1.1 * H]], shade(S.c, 0.9), 0.465, 'torso', 0.01, 0.004); }   // the yoke across the back
       else if (t === 'jacket_satin') { neckBand(T, 0.1); waistBand(T); for (const yy of [0.62, 1.15]) cut(to, [[-0.62 * bw, yy * H], [-0.2 * bw, yy * H + 0.02], [-0.2 * bw, yy * H - 0.06], [-0.62 * bw, yy * H - 0.08]], shade(S.c, 1.25), 0.465, 'torso', 0.005, 0.003); }
       else if (t === 'coat_long' || t === 'suit_jacket') { neckBand(shade(S.c, 0.72), 0.1); cut(to, strip([0, 1.9 * H], [0, 0.1], 0.02, 0.02), shade(S.c, 0.75), 0.46, 'torso', 0.01, 0.003); }
       else if (t === 'top_bodysuit') { neckBand(T, 0.07); for (const sd of [-1, 1]) cut(to, strip([sd * 0.7 * bw, 1.6 * H], [sd * 0.6 * bw, 0.05], 0.07, 0.06), T, 0.465, 'torso', 0.01, 0.003); }
@@ -316,6 +321,16 @@ export function puppet(r: Recipe, pl: Place, pose: Record<string, number>, expr:
       for (const sd of [-1, 1]) cut(to, [[sd * 0.32 * bw, 1.98 * H], [sd * 0.62 * bw, 1.9 * H], [sd * 0.5 * bw, 1.45 * H], [sd * 0.2 * bw, 1.2 * H]], shade(S.c, 0.7), 0.47, 'torso', 0.03, 0.004);   // the collar
       cut(to, strip([0.16 * bw, 0.25], [0.5 * bw, 1.5 * H], 0.04, 0.04), K.pal.h, 0.48, 'torso', 0.01, 0.002);   // the zip
       cut(to, [[-0.6 * bw - b, 0], [0.6 * bw + b, 0], [0.62 * bw + b, 0.16], [-0.62 * bw - b, 0.16]], T, 0.475, 'torso', 0.02, 0.004);
+    } else if (t === 'jacket_denim') {   // a denim jacket worn open: a pointed shirt collar, two chest pockets with flaps, buttons down each side
+      cut(to, [[-0.3 * bw, 1.98 * H], [0.3 * bw, 1.98 * H], [0.16, 0.2], [-0.16, 0.2]], sk, 0.45, 'torso', 0.02, 0.004);
+      for (const sd of [-1, 1]) {
+        cut(to, [[sd * 0.3 * bw, 1.98 * H], [sd * 0.66 * bw, 1.94 * H], [sd * 0.46 * bw, 1.62 * H], [sd * 0.22 * bw, 1.72 * H]], shade(S.c, 0.82), 0.47, 'torso', 0.03, 0.004);   // the collar points
+        cut(to, [[sd * 0.3 * bw, 1.42 * H], [sd * 0.66 * bw, 1.42 * H], [sd * 0.64 * bw, 1.12 * H], [sd * 0.32 * bw, 1.12 * H]], shade(S.c, 0.9), 0.465, 'torso', 0.01, 0.004);   // a pocket
+        cut(to, [[sd * 0.28 * bw, 1.46 * H], [sd * 0.68 * bw, 1.46 * H], [sd * 0.62 * bw, 1.34 * H], [sd * 0.48 * bw, 1.3 * H], [sd * 0.34 * bw, 1.34 * H]], shade(S.c, 0.78), 0.468, 'torso', 0.01, 0.003);   // its flap
+        for (const yy of [1.2, 0.85, 0.5, 0.18]) cut(to, ell(sd * 0.2 * bw, yy * H, 0.035, 0.035, 8), K.pal.h, 0.475, 'torso', 0.01, 0.002);
+        for (const yy of [1.6, 0.9]) cut(to, strip([sd * 0.18 * bw, yy * H], [sd * 0.82 * bw, yy * H - 0.02], 0.012, 0.012), K.pal.t, 0.466, 'torso', 0.003, 0.002);   // the orange stitching
+      }
+      cut(to, [[-0.6 * bw - b, 0], [0.6 * bw + b, 0], [0.62 * bw + b, 0.18], [-0.62 * bw - b, 0.18]], shade(S.c, 0.85), 0.475, 'torso', 0.02, 0.004);   // the waistband
     } else if (t === 'jacket_satin') {   // a ring jacket: a ribbed collar, cuffs and waistband in the trim, a zip
       cut(to, strip([-0.3 * bw, 1.97 * H], [0.3 * bw, 1.97 * H], 0.1, 0.1, -0.1 * H), T, 0.47, 'torso', 0.02, 0.003);
       cut(to, [[-0.6 * bw - b, 0], [0.6 * bw + b, 0], [0.62 * bw + b, 0.2], [-0.62 * bw - b, 0.2]], T, 0.475, 'torso', 0.02, 0.004);
@@ -332,6 +347,26 @@ export function puppet(r: Recipe, pl: Place, pose: Record<string, number>, expr:
       cut(to, [[-0.66 * bw - b, 0.5], [0.66 * bw + b, 0.5], [0.66 * bw + b, 0.66], [-0.66 * bw - b, 0.66]], T, 0.48, 'torso', 0.02, 0.004);   // the sash
     } else if (t === 'suit_jacket') suitBits(S.c, T.c, K.pal.h.c);
     if (has('chain_gold')) for (let i = 0; i <= 10; i++) { const a = Math.PI * (1.15 + 0.7 * i / 10); cut(to, ell(0.36 * bw * Math.cos(a), 1.9 * H + 0.55 * H * Math.sin(a), 0.05, 0.05, 8), K.pal.h, 0.495, 'torso', 0.02, 0.002); }
+  }
+  if (K) {   // pieces worn at the neck and across the body, front and back (20 October)
+    if (has('pearls') && !bk) for (const [rr, n0] of [[0.34, 12], [0.44, 14]] as [number, number][]) for (let i = 0; i <= n0; i++) { const a = Math.PI * (1.15 + 0.7 * i / n0); cut(to, ell(rr * bw * Math.cos(a), 1.92 * H + rr * 1.5 * H * Math.sin(a), 0.042, 0.042, 8), { c: '#f6f1e4', f: 'foil' }, 0.496, 'torso', 0.02, 0.002); }
+    if (has('scarf')) {   // a long scarf round the neck, its ends hanging down the front, fringed in the second colour
+      cut(to, strip([-0.4 * bw, 1.95 * H], [0.4 * bw, 1.95 * H], 0.22, 0.22, -0.08 * H), K.pal.t, 0.497, 'torso', 0.03, 0.004);
+      if (!bk) for (const [x0, x1, y1] of [[0.08, 0.14, 0.7], [0.3, 0.46, 0.95]] as [number, number, number][]) { cut(to, strip([x0 * bw, 1.9 * H], [x1 * bw, y1 * H], 0.22, 0.2, 0.02), K.pal.t, 0.498, 'torso', 0.03, 0.004); for (let q = -2; q <= 2; q++) cut(to, strip([x1 * bw + q * 0.04, y1 * H - 0.02], [x1 * bw + q * 0.045, y1 * H - 0.14], 0.02, 0.015), K.pal.s, 0.499, 'torso', 0.005, 0.004); }
+      else cut(to, strip([0.1 * bw, 1.9 * H], [0.18 * bw, 1.25 * H], 0.13, 0.12), K.pal.t, 0.498, 'torso', 0.03, 0.004);
+    }
+    if (has('feather_boa')) { const puff = (x: number, y: number, k: number) => cut(to, ell(x, y, 0.1 + 0.03 * (k % 2), 0.09, 9), k % 3 ? K.pal.s : shade(K.pal.s.c, 1.15), 0.5 + k * 0.0002, 'torso', 0.04, 0.03);   // a feather boa: soft puffs round the neck and down both sides
+      let k = 0; for (let i = 0; i <= 6; i++) { const a = Math.PI * (1.0 + i / 6); puff(0.42 * bw * Math.cos(a), 1.92 * H + 0.1 * Math.sin(a), k++); }
+      for (const sd of [-1, 1]) for (let i = 1; i <= (bk ? 3 : 6); i++) puff(sd * (0.44 - 0.02 * i) * bw, (1.92 - 0.16 * i) * H, k++); }
+    if (has('guitar')) {   // a guitar slung across the body on its strap: the neck up over the far shoulder
+      const gx = bk ? -1 : 1;
+      cut(to, strip([gx * 0.66 * bw, 1.85 * H], [-gx * 0.5 * bw, 0.2], 0.05, 0.05), PAL.black, 0.49, 'torso', 0.02, 0.003);   // the strap
+      cut(to, strip([-gx * 0.72 * bw, 2.3 * H], [gx * 0.2 * bw, 0.7 * H], 0.09, 0.11), '#6a3d1c', 0.5, 'torso', 0.03, 0.003);   // the neck
+      cut(to, [[-gx * 0.7 * bw, 2.25 * H], [-gx * 0.52 * bw, 2.32 * H], [-gx * 0.45 * bw, 2.18 * H], [-gx * 0.62 * bw, 2.12 * H]], '#2a1a10', 0.502, 'torso', 0.02, 0.003);   // the head
+      cut(to, ell(gx * 0.3 * bw, 0.55 * H, 0.6 * bw, 0.42 * H, 20), K.pal.s, 0.505, 'torso', 0.04);   // the body
+      cut(to, ell(gx * 0.5 * bw, 0.25 * H, 0.48 * bw, 0.34 * H, 18), K.pal.s, 0.506, 'torso', 0.04);
+      if (!bk) { cut(to, ell(gx * 0.3 * bw, 0.6 * H, 0.15, 0.15, 12), PAL.black, 0.508, 'torso', 0.01, 0.002); cut(to, strip([gx * 0.38 * bw, 0.28 * H], [gx * 0.66 * bw, 0.18 * H], 0.07, 0.07), K.pal.h, 0.509, 'torso', 0.01, 0.002); }   // the sound hole and bridge
+    }
   }
   if (!bk && (r.bodyHair || 0) > 0 && (K ? !covered : !r.shirt)) {   // body hair: a patch on the chest, and a line down the belly
     const bh = shade(r.hairCol, 0.95), tuft = (x: number, y: number, k: number) => cut(to, strip([x, y], [x + k * 0.035, y - 0.075], 0.028, 0.006), bh, 0.452, 'torso', 0.003, 0.003);
@@ -453,6 +488,8 @@ function headBack(fr: F, r: Recipe, z: number, cut: (f: F, poly: Pt[], col: stri
     put([[-hd.rx * 0.95, hd.cy + hd.ryt * 0.6], [hd.rx * 0.95, hd.cy + hd.ryt * 0.6], [hd.rx * 0.8, hd.cy + hd.ryt * 1.45], [0.1, hd.cy + hd.ryt * 1.3], [-0.1, hd.cy + hd.ryt * 1.3], [-hd.rx * 0.8, hd.cy + hd.ryt * 1.45]], K!.pal.s, 0.31, 0.008);
     put([[-hd.rx * 0.92, hd.cy + hd.ryt * 0.66], [hd.rx * 0.92, hd.cy + hd.ryt * 0.66], [hd.rx * 0.9, hd.cy + hd.ryt * 0.82], [-hd.rx * 0.9, hd.cy + hd.ryt * 0.82]], K!.pal.t, 0.315, 0.004);
   }
+  if (acc('headband')) put(strip([-hd.rx * 1.06, hd.cy + hd.ryt * 0.62], [hd.rx * 1.06, hd.cy + hd.ryt * 0.66], 0.15, 0.15, 0.03), K!.pal.t, 0.3, 0.006);
+  if (acc('antennae')) for (const sd of [-1, 1]) { put(strip([sd * 0.14, hd.cy + hd.ryt * 0.92], [sd * 0.34, hd.cy + hd.ryt * 1.9], 0.025, 0.02, sd * 0.04), K!.pal.h, 0.33, 0.002); put(ell(sd * 0.35, hd.cy + hd.ryt * 1.95, 0.075, 0.075, 12), K!.pal.t, 0.335, 0.003); }
   if (r.headset) { const band: Pt[] = []; for (let i = 0; i <= 12; i++) { const a = Math.PI * (0.02 + 0.96 * i / 12); band.push([hd.rx * 1.1 * Math.cos(a), hd.cy + hd.ryt * 1.1 * Math.sin(a)]); } for (let i = 12; i >= 0; i--) { const a = Math.PI * (0.02 + 0.96 * i / 12); band.push([hd.rx * 1.02 * Math.cos(a), hd.cy + hd.ryt * 1.02 * Math.sin(a)]); } put(band, '#18181c', 0.24, 0.004); }
 }
 function head(fr: F, r: Recipe, z: number, expr: string, cut: (f: F, poly: Pt[], col: string | Swatch, z: number, joint?: string, lift?: number, rough?: number) => void, mk: Marks = {}) {
@@ -565,6 +602,14 @@ function head(fr: F, r: Recipe, z: number, expr: string, cut: (f: F, poly: Pt[],
     for (const sd of [-1, 1]) { put(almond(sd * 0.16 + tq, ey - 0.01, 0.24, 0.13), K!.pal.h, 0.145, 0.003); put(almond(sd * 0.16 + tq, ey - 0.005, 0.2, 0.1), { c: '#141820', f: 'foil' }, 0.15, 0.003); }
     put(strip([tq - 0.05, ey + 0.03], [tq + 0.05, ey + 0.03], 0.025, 0.025, 0.02), K!.pal.h, 0.152, 0.002); put(strip([tq + 0.27, ey + 0.02], [hd.rx * 0.98, ey + 0.05], 0.025, 0.025), K!.pal.h, 0.152, 0.002);
   }
+  if (acc('sunglasses_round')) {   // small round shades
+    for (const sd of [-1, 1]) { put(ell(sd * 0.16 + tq, ey - 0.01, 0.13, 0.12, 14), K!.pal.h, 0.145, 0.003); put(ell(sd * 0.16 + tq, ey - 0.01, 0.105, 0.095, 14), { c: '#141820', f: 'foil' }, 0.15, 0.003); }
+    put(strip([tq - 0.05, ey + 0.02], [tq + 0.05, ey + 0.02], 0.02, 0.02, 0.02), K!.pal.h, 0.152, 0.002); put(strip([tq + 0.28, ey + 0.01], [hd.rx * 0.98, ey + 0.04], 0.02, 0.02), K!.pal.h, 0.152, 0.002);
+  }
+  if (acc('glasses_plain')) {   // everyday glasses: dark frames, the eyes showing through
+    for (const sd of [-1, 1]) { const cx = sd * 0.16 + tq; for (const [a0, a1] of [[[-0.12, 0.08], [0.12, 0.08]], [[-0.12, -0.09], [0.12, -0.09]], [[-0.12, 0.08], [-0.12, -0.09]], [[0.12, 0.08], [0.12, -0.09]]] as [Pt, Pt][]) put(strip([cx + a0[0], ey + a0[1]], [cx + a1[0], ey + a1[1]], 0.022, 0.022), '#1c1b20', 0.151, 0.002); }
+    put(strip([tq - 0.04, ey + 0.04], [tq + 0.04, ey + 0.04], 0.02, 0.02), '#1c1b20', 0.152, 0.002); put(strip([tq + 0.28, ey + 0.05], [hd.rx * 0.98, ey + 0.06], 0.02, 0.02), '#1c1b20', 0.152, 0.002);
+  }
   const nw = r.noseW * 0.25, nl = r.noseL * 0.4;
   const nk = FT.nose || 'straight';
   if (nk === 'button') { put(ell(tq + 0.02, ey - nl * 0.8, nw * 0.95, nw * 0.75, 12), dk, 0.13); put(ell(tq + 0.04, ey - nl * 0.86, 0.02, 0.015, 6), shade(sk, 0.5), 0.131, 0.002); }
@@ -660,6 +705,8 @@ function head(fr: F, r: Recipe, z: number, expr: string, cut: (f: F, poly: Pt[],
     put([[-hd.rx * 0.95, hd.cy + hd.ryt * 0.6], [hd.rx * 0.95, hd.cy + hd.ryt * 0.6], [hd.rx * 0.8, hd.cy + hd.ryt * 1.45], [0.1, hd.cy + hd.ryt * 1.3], [-0.1, hd.cy + hd.ryt * 1.3], [-hd.rx * 0.8, hd.cy + hd.ryt * 1.45]], K!.pal.s, 0.31, 0.008);   // the crown
     put([[-hd.rx * 0.92, hd.cy + hd.ryt * 0.66], [hd.rx * 0.92, hd.cy + hd.ryt * 0.66], [hd.rx * 0.9, hd.cy + hd.ryt * 0.82], [-hd.rx * 0.9, hd.cy + hd.ryt * 0.82]], K!.pal.t, 0.315, 0.004);   // the band
   }
+  if (acc('headband')) put(strip([-hd.rx * 1.06, hd.cy + hd.ryt * 0.62], [hd.rx * 1.06, hd.cy + hd.ryt * 0.66], 0.15, 0.15, 0.03), K!.pal.t, 0.3, 0.006);   // a sweatband across the brow
+  if (acc('antennae')) for (const sd of [-1, 1]) { put(strip([sd * 0.14, hd.cy + hd.ryt * 0.92], [sd * 0.34, hd.cy + hd.ryt * 1.9], 0.025, 0.02, sd * 0.04), K!.pal.h, 0.33, 0.002); put(ell(sd * 0.35, hd.cy + hd.ryt * 1.95, 0.075, 0.075, 12), K!.pal.t, 0.335, 0.003); }   // a headband with two antennae
   if (r.headset) {   // the band over the head, the cup on the near ear, the boom round to the mouth
     const band: Pt[] = []; for (let i = 0; i <= 12; i++) { const a = Math.PI * (0.02 + 0.96 * i / 12); band.push([hd.rx * 1.1 * Math.cos(a), hd.cy + hd.ryt * 1.1 * Math.sin(a)]); }
     for (let i = 12; i >= 0; i--) { const a = Math.PI * (0.02 + 0.96 * i / 12); band.push([hd.rx * 1.02 * Math.cos(a), hd.cy + hd.ryt * 1.02 * Math.sin(a)]); }
