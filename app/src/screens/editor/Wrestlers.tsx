@@ -10,13 +10,44 @@ import { recipeOf } from '../../kit/puppet';
 import { workerW } from '../player';
 import { es, world, edit, look, note, keep } from './state';
 import { EdShell } from './shell';
-import { Sheet, Many } from './People';
-import { plural } from '../../store';
+import { SheetView, Many } from './People';
+import { plural, UNIS, BUILT_IN, builtInUniverse } from '../../store';
+import { useRef, useState } from 'preact/hooks';
+import { Window } from '../../kit/window';
+import { saveFile } from '../../shared/savefile';
 
 const PER = 8;
+/** Import: pick wrestlers from another world (your others, the built-in ones, the Steam Workshop) or a wrestler file, and they come in as free agents. */
+function ImportWindow(p: { onClose: () => void }) {
+  const st = es(), pkg = world(), steam = (window as any).gpSteam, file = useRef<HTMLInputElement>(null);
+  const [src, setSrc] = useState(''), [q, setQ] = useState(''), [pk, setPk] = useState<Record<string, 1>>({}), [ws, setWs] = useState<any[] | null>(null);
+  const mine = Object.keys(UNIS).filter(id => id !== st.id).map(id => ['u:' + id, UNIS[id].manifest.name || id] as Opt);
+  const built = Object.keys(BUILT_IN).map(id => ['b:' + id, builtInUniverse(id).manifest.name] as Opt);
+  const wsO = (ws || []).map((x, i) => ['w:' + i, x.manifest.name || 'A Workshop world'] as Opt);
+  const srcPkg = src.startsWith('u:') ? UNIS[src.slice(2)] : src.startsWith('b:') ? builtInUniverse(src.slice(2)) : src.startsWith('w:') && ws ? ws[+src.slice(2)] : null;
+  const L: any[] = srcPkg ? E.edImportList(srcPkg) : [], ql = q.trim().toLowerCase(), shown = L.filter(x => !ql || (x.name + ' ' + x.co).toLowerCase().indexOf(ql) >= 0), n = Object.keys(pk).length;
+  const go = () => edit(() => { const got = E.edImportWorkers(pkg, srcPkg, Object.keys(pk)); if (got[0]) st.sel.wrestlers = got[0].id; st.fp = 'FA'; st.q = ''; note(got.length + ' ' + plural(got.length, 'wrestler') + ' came in as free agents: ' + got.slice(0, 3).map((w: any) => w.ring_name).join(', ') + (got.length > 3 ? ' and more.' : '.')); p.onClose(); });
+  const onFile = (e: Event) => { const t = e.currentTarget as HTMLInputElement, fl = t.files && t.files[0]; if (!fl) return; const fr = new FileReader();
+    fr.onload = () => { let x: any = null; try { x = JSON.parse(String(fr.result)); } catch (er) { x = null; } edit(() => { const got = x && E.edImportFile(pkg, x, { name: fl.name.replace(/\.wrestlers?\.json$|\.json$/i, '') }); if (got && got.length) { st.sel.wrestlers = got[0].id; st.fp = 'FA'; note(got.length === 1 ? got[0].ring_name + ' came in from a file as a free agent.' : got.length + ' wrestlers came in from a file as free agents.'); p.onClose(); } else note(fl.name + ' is not a wrestler file.', true); }); };
+    fr.readAsText(fl); t.value = ''; };
+  return <Window paper big esc title="Import wrestlers" info={['From another world, the Workshop or a file', n ? n + ' picked' : 'Pick some']} onClose={p.onClose} ok="Cancel" hint="Esc closes"
+    footer={<Btn kind="go" t="ed-import-go" disabled={!n || !srcPkg} onClick={go}>{n ? 'Import ' + n : 'Import'}</Btn>}>
+    <div class="sc-row"><span class="sc-lbl">From</span><Sel t="ed-import-src" label="Import from" value={src} options={[['', 'Pick a world'] as Opt]} groups={[{ label: 'Your other worlds', options: mine }, { label: 'Included', options: built }, { label: 'The Steam Workshop', options: wsO }]} onChange={v => { setSrc(v); setPk({}); }} />
+      {steam && steam.workshopWorlds && !ws ? <Btn kind="sm" t="ed-import-ws" onClick={() => Promise.resolve(steam.workshopWorlds()).then((l: any[]) => setWs((l || []).filter(x => x && x.manifest)), () => setWs([]))}>Load the Workshop</Btn> : null}
+      <Btn kind="sm" t="ed-import-file" onClick={() => file.current && file.current.click()}>A wrestler file</Btn><input ref={file} type="file" accept=".json,application/json" hidden data-t="ed-import-filein" onChange={onFile} /></div>
+    {srcPkg ? <>
+      <div class="sc-row"><input type="search" value={q} placeholder={'Search ' + L.length + ' wrestlers'} aria-label="Search the wrestlers" data-t="ed-import-q" onInput={e => setQ((e.currentTarget as HTMLInputElement).value)} />
+        <Btn kind="sm" t="ed-import-all" onClick={() => { const o: Record<string, 1> = { ...pk }; shown.forEach(x => { o[x.id] = 1; }); setPk(o); }}>Pick all shown</Btn><Btn kind="less" t="ed-import-none" disabled={!n} onClick={() => setPk({})}>Pick none</Btn></div>
+      <div class="edimport" role="list">{shown.map(x => { const on = !!pk[x.id]; return <button type="button" key={x.id} class={'edrow' + (on ? ' on' : '')} aria-pressed={on} data-t="ed-import-pick" data-id={x.id}
+        onClick={() => { const o = { ...pk }; if (on) delete o[x.id]; else o[x.id] = 1; setPk(o); }}><span class="nm">{x.name}</span><span class="st">{x.co + ' · Over ' + x.over + (x.look ? ' · their own look' : '')}</span></button>; })}
+        {shown.length ? null : <p class="muted">Nobody matches.</p>}</div>
+    </> : <p class="muted">Pick a world to see its wrestlers, or bring one in from a wrestler file (Create a Wrestler, File, Write a file). Each comes in as a free agent with their look, moves and attributes.</p>}
+  </Window>;
+}
 const PARTS: ['who' | 'work' | 'rates' | 'more', string][] = [['who', 'Biography'], ['work', 'Company'], ['rates', 'Attributes'], ['more', 'More']];
 
 export function WrestlersPage() {
+  const [imp, setImp] = useState(false);
   const st = es(), pkg = world(), info = E.edInfo(pkg), q = st.q.trim().toLowerCase();
   const pname: Record<string, string> = {}; pkg.promotions.forEach((x: any) => { pname[x.id] = x.name; });
   const all: any[] = pkg.workers.filter((w: any) => (st.fp === '' || (st.fp === 'FA' ? !info.home[w.id] : info.home[w.id] === st.fp)) && (!q || String(w.ring_name).toLowerCase().indexOf(q) >= 0));
@@ -34,6 +65,11 @@ export function WrestlersPage() {
   const back = () => look(() => { if (st.sel.wrestlers) st.sel.wrestlers = null; else { keep(true); st.id = null; st.msg = ''; } });
   const caw = (attire = false) => { if (shownW) look(() => { st.player = shownW.id; st.attire = attire; }); };
   const shownW = w || shown[0] || null;   // somebody is always on show: the picked one, else the first on the list (rule 5c)
+  // Export: the picked wrestlers (Pick several), or the one on show, as one .wrestler.json
+  const exportIt = () => { const ids = st.many ? Object.keys(st.picked || {}) : shownW ? [shownW.id] : []; if (!ids.length) return;
+    const f = E.edExportWorkers(pkg, ids), one = f.workers.length === 1, slug = (x: string) => String(x).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'wrestler';
+    const name = (one ? slug(f.workers[0].ring_name) : slug(pkg.manifest.name || 'world') + '-' + f.workers.length + '-wrestlers') + '.wrestler.json';
+    saveFile(name, JSON.stringify(f, null, 1)).then(r => look(() => note(r === 'saved' ? (one ? f.workers[0].ring_name : f.workers.length + ' wrestlers') + ' written to ' + name + '. Import brings them into any world.' : (r === 'declined' ? 'Not saved.' : 'The file could not be written here.'), r !== 'saved' && r !== 'declined'))); };
   const lk = shownW && shownW.look, fin = lk && lk.finishing_moves && lk.finishing_moves[0] ? lk.finishing_moves[0].name : shownW && shownW.finisher;
   const ww = shownW ? { ...workerW(shownW), look: shownW.look || null } : null;
   const sc = { v: 1 as const, id: 'edw', name: 'The wrestler', when: 'any', set: 'ring', attire: 'primary_ring' as const, slots: [{ id: 'A', n: w ? w.ring_name : '', role: 'a' as const }],
@@ -63,6 +99,8 @@ export function WrestlersPage() {
           <Btn kind="less" t="ed-wpg" d={{ v: 'prev' }} label="Earlier names" disabled={pg <= 0} onClick={() => look(() => { st.wpg = pg - 1; })}>{'<'}</Btn>
           <Btn kind="less" t="ed-wpg" d={{ v: 'next' }} label="Later names" disabled={pg >= pages - 1} onClick={() => look(() => { st.wpg = pg + 1; })}>{'>'}</Btn>
           <Btn kind="sm" t="ed-add-wrestler" onClick={add}>Add a wrestler</Btn>
+          <Btn kind="sm" t="ed-import-open" tip="Wrestlers from another world, the Steam Workshop or a wrestler file" onClick={() => setImp(true)}>Import</Btn>
+          <Btn kind="sm" t="ed-export" disabled={!(st.many ? Object.keys(st.picked || {}).length : shownW)} tip="Write a wrestler file: the whole wrestler, to keep, share, put on the Steam Workshop or bring into another world" onClick={exportIt}>{st.many && Object.keys(st.picked || {}).length > 1 ? 'Export ' + Object.keys(st.picked || {}).length : 'Export'}</Btn>
           {st.fp === 'FA' ? <Btn kind="sm" t="ed-unknowns" onClick={() => edit(() => { const m = E.edFillFree(pkg, 6, Date.now() & 0xffff); note('Six unknowns added to the free agents: ' + m.map((x: any) => x.ring_name).slice(0, 3).join(', ') + ' and three more.'); })}>Make unknowns</Btn> : null}
           <Btn kind="less" t="ed-many" on={!!st.many} onClick={() => look(() => { st.many = !st.many; st.picked = {}; st.del = null; })}>{st.many ? 'Pick several: on' : 'Pick several'}</Btn>{st.many ? <span class="muted">{Object.keys(st.picked || {}).length} picked</span> : null}
         </div>
@@ -77,9 +115,10 @@ export function WrestlersPage() {
       <Win title={shownW ? (PARTS.find(x => x[0] === part) || PARTS[0])[1] : 'Biography'} area="sheet" t="ed-wsheet" info={shownW ? [(shownW.age ? 'Age ' + shownW.age : 'Age unknown') + ' · ' + (shownW.gender === 'F' ? 'Women' : 'Men'), 'Over ' + ov(shownW)] : ['', '']}>
         {shownW ? <>
           <div class="sc-row edw-parts"><span class="sc-lbl">Show</span><Sel t="ed-sheet" label="Section" value={part} options={PARTS as Opt[]} onChange={v => look(() => { st.sheet = v as any; })} /></div>
-          <div class="edsheet edcol-form" data-part={part}><Sheet key={shownW.id + part} w={shownW} part={part} /></div>
+          <div class="edsheet edcol-form" data-part={part}><SheetView key={shownW.id + part} w={shownW} part={part} /></div>
         </> : <p class="empty">Their biography, their company and their attributes show here.</p>}
       </Win>
     </Desktop>
+    {imp ? <ImportWindow onClose={() => setImp(false)} /> : null}
   </EdShell>;
 }

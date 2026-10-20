@@ -68,5 +68,6 @@ export function reId(table: string, old: string, id: string) {
   if (old === id) return; const st = es();
   const keys = table === 'promotions' ? ['companies', 'showsFor', 'beltsFor', 'teamsFor'] : table === 'workers' ? ['wrestlers', 'bondA', 'bondB'] : table === 'titles' ? ['belts'] : table === 'teams' ? ['teams'] : [];
   keys.forEach(k => { if (st.sel[k] === old) st.sel[k] = id; });
+  if (table === 'workers' && (st as any).player === old) (st as any).player = id;   // Create a Wrestler stays open on them when their name (and so their id) changes
   if (table === 'promotions' && st.fp === old) st.fp = id;
 }

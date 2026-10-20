@@ -190,5 +190,27 @@ for (const k of ['territory', 'nine']) { const pkg = E.edQuick(k, '', 5), models
   ok('the world written back out keeps its networks and the show\'s time on the air', out.networks && out.networks.major[0] === 'Lantern Family One' && o && o.network === 'Lantern Family One' && o.network_size === 2 && o.years_on_air === 21, JSON.stringify(o));
   E.useUniverse(builtIn); }
 
+// import: wrestlers from another world, with the moves and scenes they use, and a wrestler from a file
+{ const src = JSON.parse(JSON.stringify(builtIn)), dst = E.edQuick('territory', 'Import test', 5), n0 = dst.workers.length;
+  const w0 = src.workers[0]; w0.look = { name: w0.ring_name, physical_attributes: { sex: 'M' }, moveset: [{ name: 'My move', stage: 'mid', scene: 'scene-mine' }] };
+  src.scenes = (src.scenes || []).concat([{ v: 1, id: 'scene-mine', name: 'My move', when: 'move', set: 'ring', slots: [], keys: [{ t: 0, figs: {}, props: [] }] }]);
+  const L = E.edImportList(src); ok('the import list names every wrestler in the other world', L.length === src.workers.length && L[0].name === w0.ring_name);
+  const got = E.edImportWorkers(dst, src, [w0.id, src.workers[1].id]);
+  ok('picked wrestlers come in as free agents', dst.workers.length === n0 + 2 && got.every(w => !E.edHome(dst, w.id)));
+  ok('the move they made in Create a Move comes with them', (dst.scenes || []).some(x => x.id === 'scene-mine'));
+  E.edImportWorkers(dst, src, [w0.id]); ok('importing the same wrestler twice gives the copy its own id', new Set(dst.workers.map(w => w.id)).size === dst.workers.length);
+  const f = E.edImportLook(dst, { name: 'File Person', physical_attributes: { sex: 'F' } }); ok('a wrestler file comes in as a free agent', f && f.ring_name === 'File Person' && f.gender === 'F' && !!f.look);
+  ok('a world with imported wrestlers passes the check', E.edCheck(dst).errors === 0, JSON.stringify(E.edCheck(dst).lines.slice(0, 2))); }
+
+// export: wrestlers to a file, and the file back into another world
+{ const src = JSON.parse(JSON.stringify(builtIn)), w0 = src.workers[0], w1 = src.workers[1];
+  w0.look = { name: w0.ring_name, physical_attributes: { sex: 'M' }, moveset: [{ name: 'My move', stage: 'mid', scene: 'scene-mine2' }] };
+  src.scenes = (src.scenes || []).concat([{ v: 1, id: 'scene-mine2', name: 'My move', when: 'move', set: 'ring', slots: [], keys: [{ t: 0, figs: {}, props: [] }] }]);
+  const f = JSON.parse(JSON.stringify(E.edExportWorkers(src, [w0.id, w1.id])));
+  ok('Export writes the whole wrestlers and the scenes their moves use', f.kind === 'wrestlers' && f.workers.length === 2 && f.workers[0].ratings && f.scenes.some(x => x.id === 'scene-mine2'));
+  const dst = E.edQuick('territory', 'Export test', 9), got = E.edImportFile(dst, f);
+  ok('the file comes into a new world as free agents, ratings, look and moves', got && got.length === 2 && got[0].ratings.overness === w0.ratings.overness && !!got[0].look && (dst.scenes || []).some(x => x.id === 'scene-mine2'));
+  ok('a file that is not a wrestler is refused', E.edImportFile(dst, { hello: 1 }) === null); }
+
 if (fails.length) { console.log('FAILED: ' + fails.length); process.exit(1); }
 console.log('test-editor: all passed');

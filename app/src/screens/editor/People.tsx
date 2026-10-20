@@ -74,6 +74,25 @@ export function Sheet(p: { w: any; part: 'who' | 'work' | 'rates' | 'more' }) {
     <div class="row mb4"><Btn kind="sm" t="ed-dup" onClick={() => edit(() => { const c = E.edDup(pkg, 'workers', w.id); if (c) { st.sel.wrestlers = c.id; note('Made a copy: ' + c.ring_name + '.'); } })}>Make a copy</Btn><DelBtn id={'worker:' + w.id} what={w.ring_name} onDelete={() => { E.edRemove(pkg, 'workers', w.id); st.sel.wrestlers = null; note(w.ring_name + ' has been removed from the world.'); }} /></div>
   </>;
 }
+/** The same sections, to read only: the wrestler's page shows them, and Edit wrestler (Create a Wrestler) is where they change. */
+export function SheetView(p: { w: any; part: 'who' | 'work' | 'rates' | 'more' }) {
+  const pkg = world(), w = p.w, r = w.ratings || {}, con = E.edContract(pkg, w.id), roles: string[] = w.roles && w.roles.length ? w.roles : ['wrestler'];
+  const L = (k: string, v: any) => <div class="edro-line" key={k}><small>{k}</small><span>{v == null || v === '' ? '-' : v}</span></div>;
+  const name = (tbl: string, id: string) => { const x = (pkg[tbl] || []).find((y: any) => y.id === id); return x ? (x.name || x.ring_name) : null; };
+  if (p.part === 'who') return <div class="edro-sheet" data-t="ed-wview-who">
+    {L('Ring name', w.ring_name)}{L('Division', w.gender === 'F' ? 'Women' : 'Men')}{L('Age', w.age)}{L('Side', E.ED.sides[w.disposition])}{L('Style', E.ED.styles[w.style])}
+    {L('Finishing move', (w.look && w.look.finishing_moves && w.look.finishing_moves[0] && w.look.finishing_moves[0].name) || w.finisher)}{L('Hometown', w.hometown)}
+    {L('Weight', w.weight_class ? E.ED.weights[w.weight_class] : null)}{L('Locker room role', w.locker_role ? E.ED.lockers[w.locker_role] : 'Nobody in particular')}{L('What they do', roles.map(x => E.ED.roles[x]).join(', '))}</div>;
+  if (p.part === 'work') return <div class="edro-sheet" data-t="ed-wview-work">
+    {L('Company', con ? name('promotions', con.promotion_id) : 'Free agent')}{con ? L('Card position', E.ED.push[con.push_level]) : null}{con && con.brand ? L('Brand', con.brand) : null}
+    {L('Manager', w.manager_id ? name('workers', w.manager_id) : 'Nobody')}{con ? L('Contract weeks left', con.weeks_left || 'The game decides') : null}</div>;
+  if (p.part === 'rates') return <div class="edro-sheet edro-rates" data-t="ed-wview-rates">{E.ED.ratings.map((x: any) => <div class="edro-rate" key={x[0]}><small>{x[1]}</small>
+    <span class="bar"><i style={{ width: (r[x[0]] != null ? r[x[0]] : 0) + '%' }} /></span><b>{r[x[0]] != null ? r[x[0]] : 'auto'}</b></div>)}</div>;
+  return <div class="edro-sheet" data-t="ed-wview-more">{L('Their look', w.look ? 'Made in Create a Wrestler' : 'Drawn by the game from their name')}{L('Moves in their moveset', w.look && w.look.moveset ? w.look.moveset.length : 0)}
+    <p class="muted mt2">Edit wrestler opens Create a Wrestler, where all of this is changed.</p>
+    <div class="row mt2"><Btn kind="sm" t="ed-dup" onClick={() => edit(() => { const c = E.edDup(pkg, 'workers', w.id); if (c) { es().sel.wrestlers = c.id; note('Made a copy: ' + c.ring_name + '.'); } })}>Make a copy</Btn>
+      <DelBtn id={'worker:' + w.id} what={w.ring_name} onDelete={() => { E.edRemove(pkg, 'workers', w.id); es().sel.wrestlers = null; }} /></div></div>;
+}
 function Form(p: { w: any }) {
   return <><Panel cls="mb4" title={p.w.ring_name || 'Wrestler'}><Sheet w={p.w} part="who" /></Panel><Sheet w={p.w} part="work" /><Sheet w={p.w} part="rates" /><Sheet w={p.w} part="more" /></>;
 }

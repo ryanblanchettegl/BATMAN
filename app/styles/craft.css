@@ -386,3 +386,17 @@ html body .win.ppop .wb{font-family:var(--hand);font-size:1.06em}
 .step-mid select{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;margin:0}
 .step-mid:focus-within{outline:3px solid #e0b43a;outline-offset:1px}
 .step:has(select:disabled) .step-mid{opacity:.5}
+/* the wrestler's page in the World Editor reads only: label and value, a bar for each attribute */
+.edro-sheet{display:flex;flex-direction:column;gap:.3em}
+.edro-line{display:flex;gap:.6em;align-items:baseline;border-bottom:1px dashed rgba(40,30,20,.22);padding:.12em 0}
+.edro-line small{flex:0 0 40%;color:#5a5048}
+.edro-line span{flex:1 1 auto;font-weight:600;color:var(--ink)}
+.edro-rate{display:grid;grid-template-columns:38% 1fr 2.6em;align-items:center;gap:.5em}
+.edro-rate .bar{height:.7em;background:#e6dcc4;border:1px solid #1c1b1f;border-radius:2px;overflow:hidden}
+.edro-rate .bar i{display:block;height:100%;background:#2f7a3a}
+.edro-rate b{text-align:right}
+.caw-mvstage{margin:.3em 0 .5em}
+.caw-mvstage .eyebrow{margin:.2em 0;font-family:var(--marker);color:#b3261e;font-size:.9em}
+.caw-wpage .editor.plain{display:grid;grid-template-columns:1fr;gap:.35em}
+.edimport{display:grid;grid-template-columns:repeat(auto-fill,minmax(16em,1fr));gap:.3em .6em;margin-top:.4em}
+.edimport .edrow{text-align:left}

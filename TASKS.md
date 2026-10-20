@@ -295,7 +295,9 @@ Code: `src/86-editor.js` (the `E.ed*` functions; no screen code), `app/src/scree
 - [ ] Pictures: a world cannot carry portrait or belt images yet. Portraits are drawn from the face settings. The folder form with `graphics/` is the Workshop build's job.
 - [x] Not in the editor yet: brands, sponsors, columnists, announcers and staff names, the name lists for rookies, managers tied to wrestlers. (In the editor by 20 October.)
 - [x] Bulk tools: duplicate a wrestler, move several at once, sort the list by name or company. (In the editor by 20 October.)
-- [ ] Import from another world (Ryan, 20 October): wrestlers, teams, belts, scenes, moves and the rest, picked from any of the player's worlds into the one being edited.
+- [x] Import wrestlers from another world, the Steam Workshop or a wrestler file, and Export them to a `.wrestler.json` (Ryan, 20 October). Done on the Wrestlers page.
+- [ ] Import the rest the same way: teams, belts, scenes, moves, promos and rules from another world.
+- [ ] A wrestler file on the Steam Workshop on its own (today a world goes up; a `.wrestler.json` is ready to).
 - [ ] A creator for each thing on its own from the title screen, if Ryan wants shortcuts (show creator, belt creator) beyond the tabs.
 - [ ] Try the remote and gamepad on real hardware.
 

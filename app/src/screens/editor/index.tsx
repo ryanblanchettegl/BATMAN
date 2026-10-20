@@ -11,7 +11,7 @@ import { DelBtn } from './parts';
 import { EdShell } from './shell';
 import { WorldTab, ShareTab } from './World';
 import { CompaniesTab, ShowsTab } from './Companies';
-import { WrestlersTab } from './People';
+import { WrestlersTab, Sheet } from './People';
 import { BeltsTab, TeamsTab } from './Belts';
 import { ScenesTab, keepScene, forgetScene } from './Scenes';
 import { RulesTab } from './Rules';
@@ -119,9 +119,11 @@ export function Editor() {
     if (wk) { const nm = pkg.manifest.name || 'this world';
       const con = E.edContract(pkg, wk.id), pr = con && pkg.promotions.find((x: any) => x.id === con.promotion_id), bi = pr && pr.brands && con.brand ? pr.brands.findIndex((b: any) => b.id === con.brand) : -1;
       const card = pr ? companyCard(E.logoOf({ logo: pr.logo, model: pr.model, name: pr.name, full: pr.full_name }), bi) : companyCard(null);
-      return <CreatePlayer key={st.player + (st.attire ? ':a' : '')} world={nm} w={workerW(wk)} had={wk.look || null} attire={!!st.attire} card={card}
+      const WPAGES: [string, string][] = [['w_who', 'Biography'], ['w_work', 'Company'], ['w_rates', 'Attributes'], ['w_more', 'More']];
+      return <CreatePlayer key={'caw' + (st.attire ? ':a' : '')} world={nm} w={workerW(wk)} had={wk.look || null} attire={!!st.attire} card={card} autosave note={st.msg || undefined}
+        pages={st.attire ? undefined : WPAGES} page={id => <Sheet w={wk} part={id === 'w_who' ? 'who' : id === 'w_work' ? 'work' : id === 'w_rates' ? 'rates' : 'more'} />}
         onSave={lk => { let ok = false; edit(() => { ok = E.edSetLook(world(), wk.id, lk); const sx = lk.physical_attributes && lk.physical_attributes.sex; if (ok && sx && wk.gender !== sx) wk.gender = sx; }); return { ok, msg: ok ? (lk.name || wk.ring_name) + ' is kept in ' + nm + '. Every scene in the game now draws them like this.' : 'That could not be kept.' }; }}
-        onForget={() => { edit(() => { E.edRemoveLook(world(), wk.id); }); return { ok: true, msg: wk.ring_name + ' is drawn by the game again.' }; }} onDone={() => look(() => { st.player = null; st.attire = false; })}
+        onForget={() => { edit(() => { E.edRemoveLook(world(), wk.id); }); return { ok: true, msg: wk.ring_name + ' is drawn by the game again.' }; }} onDone={() => look(() => { st.player = null; st.attire = false; st.msg = ''; })}
         scenes={E.edScenes(pkg)} onNewEntrance={lk => {   // keep the wrestler, then Create a Scene on a copy of their entrance, with them in it
           edit(() => { E.edSetLook(world(), wk.id, lk); });
           const all = E.edScenes(pkg).concat(SCENES), src = all.find((x: any) => x.id === lk.entrance && x.when === 'entrance') || SCENES.find(x => x.when === 'entrance')!, sc = copy(src);

@@ -5,6 +5,7 @@
    that wrestler in the world (E.edSetLook); Write a file gives the same record as a .wrestler.json to share. The
    screen only edits its own copy until Save (rule 1: the engine checks and keeps it). */
 import { useEffect, useRef, useState } from 'preact/hooks';
+import { ComponentChildren } from 'preact';
 import { E } from '../../engine';
 import { G, act, full, say as note } from '../../store';
 import { Btn, TextBox, Desktop, Win, Group, Sel, Opt } from '../../kit';
@@ -17,7 +18,7 @@ import { derive, NAMES, FaceKey } from '../../lib/portrait';
 import { PaperPortrait, PT_POSES, PT_FRAMES, companyCard } from '../../kit/paperportrait';
 import { EXPR } from '../../kit/puppet';
 
-type Tab = 'face' | 'ink' | 'portrait' | 'sign' | 'body' | 'head' | 'gear' | 'colour' | 'studio' | 'fin' | 'moveset' | 'scenes' | 'file' | 'a_head' | 'a_upper' | 'a_lower' | 'a_feet';
+type Tab = 'w_who' | 'w_work' | 'w_rates' | 'w_more' | 'face' | 'ink' | 'portrait' | 'sign' | 'body' | 'head' | 'gear' | 'colour' | 'studio' | 'fin' | 'moveset' | 'scenes' | 'file' | 'a_head' | 'a_upper' | 'a_lower' | 'a_feet';
 /** Edit attire's camera: in close on the part of the body being dressed. */
 const REGION_CAM: Record<string, { x: number; y: number; z: number }> = { a_head: { x: 0, y: 2.6, z: 3.8 }, a_upper: { x: 0, y: 1.1, z: 2.1 }, a_lower: { x: 0, y: -1.3, z: 2.1 }, a_feet: { x: 0, y: -2.5, z: 2.8 } };
 /** Which part of the body a control is about, for the camera. Anything not named keeps the whole wrestler in the shot. */
@@ -59,6 +60,12 @@ export interface PlayerProps { world: string; w: any; had: Look | null; onSave: 
   scenes?: Scene[]; onNewEntrance?: (look: Look) => void;
   /** In the World Editor: keep the wrestler and open Create a Move on a copy of their move number `fi`, with them in it. */
   onNewMove?: (look: Look, fi: number) => void;
+  /** The World Editor's own pages for the wrestler (Biography, Company, Attributes, More), shown first in the Change list; they change the world as you go. */
+  pages?: [string, string][]; page?: (id: string) => ComponentChildren;
+  /** Keep the look as it changes (the World Editor keeps everything as you make it); Save is still there. */
+  autosave?: boolean;
+  /** A note from the page around it (the World Editor's), shown in the strip when the suite has none of its own. */
+  note?: string;
   /** The card behind their portrait: their company's or brand's colour. */
   card?: string }   // sign: a new wrestler, made in a game, who goes to free agency
 /** The choices for a new signing, as the old Create a wrestler window had them (E.createWrestler). */
@@ -77,7 +84,7 @@ export function CreatePlayer(pp: PlayerProps) {
     return n;
   });
   const w0 = pp.sign ? { ...startW, name: lk.name || 'New wrestler', g: d.g, align: d.align, style: d.style } : pp.w, base = recipeOf({ ...w0, look: null });
-  const [att, setAtt] = useState<AttireKey>('primary_ring'), [tab, setTab] = useState<Tab>(pp.sign ? 'sign' : pp.attire ? 'a_head' : 'body'), [pose, setPose] = useState('stand'), [back, setBack] = useState(false);
+  const [att, setAtt] = useState<AttireKey>('primary_ring'), [tab, setTab] = useState<Tab>(pp.sign ? 'sign' : pp.attire ? 'a_head' : pp.pages && pp.pages.length ? pp.pages[0][0] as Tab : 'body'), [pose, setPose] = useState('stand'), [back, setBack] = useState(false);
   const [lay, setLay] = useState(-1), [fi, setFi] = useState(-1), [acting, setActing] = useState(false), [msg, setMsg] = useState<{ t: string; err?: boolean } | null>(null);
   const [text, setText] = useState('CHAMP'), [font, setFont] = useState('block'), [shp, setShp] = useState('star'), file = useRef<HTMLInputElement>(null);
   const say = (t: string, err = false) => setMsg({ t, err });
@@ -93,6 +100,8 @@ export function CreatePlayer(pp: PlayerProps) {
     window.addEventListener('keydown', on); return () => window.removeEventListener('keydown', on);
   }, []);
   const change = (fn: (n: Look) => void) => { const n = copy(lk); fn(n); put(n); setMsg(null); };
+  const first = useRef(true);
+  useEffect(() => { if (first.current) { first.current = false; return; } if (pp.autosave && !pp.sign) pp.onSave(lk); }, [lk]);
   const A = (n: Look): Attire => { n.attires = n.attires || {}; const a = n.attires[att] || (n.attires[att] = { equipped_assets: {}, palette_slots: {}, custom_layers: [] }); a.custom_layers = a.custom_layers || []; return a; };
   // the camera moves in on the part being changed (the classic create-a-wrestler screens do), and opens close on the face for the head
   const [zoom, setZoom] = useState(''), lastTab = useRef(tab);
@@ -112,7 +121,7 @@ export function CreatePlayer(pp: PlayerProps) {
     sc = { ...copy(src), attire: 'primary_ring', loop: true }; cast.B = { ...blank(1), name: 'The dummy' }; play = 'fin' + fi + JSON.stringify(lk) + sc.id;
   } else if (prevSc && tab === 'scenes') {   // the entrance they picked, with them in it
     sc = { ...dressEntrance(copy(prevSc), lk.entrance_fx), loop: true }; play = 'sc' + prevSc.id + JSON.stringify(lk);
-  } else if (prevSc && prevSc.when === 'move' && tab === 'moveset') {   // a move from their moveset, on the dummy
+  } else if (prevSc && prevSc.when === 'move' && tab === 'fin') {   // a move from their moveset, on the dummy
     sc = { ...copy(prevSc), attire: 'primary_ring', loop: true }; cast.B = { ...blank(1), name: 'The dummy' }; play = 'mv' + prevSc.id + JSON.stringify(lk);
   } else if (prevSc && prevSc.when === 'taunt' && tab === 'fin') {   // a taunt they picked, over the dummy
     sc = { ...copy(prevSc), attire: 'primary_ring', loop: true }; cast.B = { ...blank(1), name: 'The dummy' }; play = 'tn' + prevSc.id + JSON.stringify(lk);
@@ -164,7 +173,29 @@ export function CreatePlayer(pp: PlayerProps) {
   const AN = ATTIRES.find(a => a[0] === att)![1];
   const pt = lk.portrait || {}, card = pp.card || companyCard(null);
   const setPt = (o: any) => change(n => { const q: any = { ...(n.portrait || {}), ...o }; Object.keys(q).forEach(k => { if (q[k] === undefined || q[k] === '') delete q[k]; }); if (Object.keys(q).length) n.portrait = q; else delete n.portrait; });
-  const titles: Record<Tab, string> = { face: 'Shape the face', ink: 'Paint and ink', portrait: 'Their portrait', a_head: 'Head: ' + AN, a_upper: 'Upper body: ' + AN, a_lower: 'Lower body: ' + AN, a_feet: 'Feet: ' + AN, sign: 'A new wrestler', body: 'The body', head: 'The head', gear: 'Gear: ' + ATTIRES.find(a => a[0] === att)![1], colour: 'Colours: ' + ATTIRES.find(a => a[0] === att)![1], studio: 'Gear studio: lettering and shapes', fin: 'Their moves', moveset: 'Their moveset', scenes: 'Their entrance', file: 'The file' };
+  const pgT = (id: string) => ((pp.pages || []).find(x => x[0] === id) || ['', ''])[1];
+  const titles: Record<Tab, string> = { w_who: pgT('w_who'), w_work: pgT('w_work'), w_rates: pgT('w_rates'), w_more: pgT('w_more'), face: 'Shape the face', ink: 'Paint and ink', portrait: 'Their portrait', a_head: 'Head: ' + AN, a_upper: 'Upper body: ' + AN, a_lower: 'Lower body: ' + AN, a_feet: 'Feet: ' + AN, sign: 'A new wrestler', body: 'The body', head: 'The head', gear: 'Gear: ' + ATTIRES.find(a => a[0] === att)![1], colour: 'Colours: ' + ATTIRES.find(a => a[0] === att)![1], studio: 'Gear studio: lettering and shapes', fin: 'Their moves', moveset: 'Their moves', scenes: 'Their entrance', file: 'The file' };
+  const renderMoveset = () => {
+          // the moveset as lines, four for each part of a match, each stepping through the animated moves; the one picked plays on the dummy
+          const ms: MoveRec[] = lk.moveset || [], style = pp.sign ? d.style : (w0.style || 'A'), own = world.filter(x => x.when === 'move');
+          const groups = (E.MOVE_KINDS as string[]).map(k => ({ label: KIND_N[k], options: (E.MOVE_LIB[k] as [string, string][]).map(m => ['move_' + m[0], m[1]] as Opt) }))
+            .concat(own.length ? [{ label: 'Made for this world', options: own.map(x => [x.id, x.name] as Opt) }] : []);
+          const setMs = (fn: (L: MoveRec[]) => void) => change(n => { const L = (n.moveset || []).slice(); fn(L); if (L.length) n.moveset = L; else delete n.moveset; });
+          const recOf = (id: string, st: string): MoveRec | null => { if (!id) return null; const lib = E.moveLib(id.replace(/^move_/, '')), o = own.find(x => x.id === id);
+            return lib ? { name: lib.n, kind: lib.k, stage: st, scene: id } : o ? { name: o.name, stage: st, scene: id } : null; };
+          const sceneOf = (m: MoveRec) => m.scene || (E.moveLib(m.name) ? 'move_' + E.moveLib(m.name).id : '');
+          return <Group title="Moveset">
+            <div class="sc-row"><Btn kind="go" t="caw-move-fill" tip="Twelve moves to suit how they wrestle, four for each part of a match" onClick={() => { setMs(L => { L.splice(0, L.length, ...(E.movesetFor(style, lk.name || w0.name) as MoveRec[])); }); setPrev(null); say('A moveset to suit their style. Change any line of it.'); }}>Fill for their style</Btn>
+              <Btn kind="less" t="caw-move-clear" disabled={!ms.length} onClick={() => { setMs(L => { L.splice(0); }); setPrev(null); }}>Clear</Btn>
+              {prevSc && prevSc.when === 'move' ? <Btn kind="sm" t="caw-move-stop" onClick={() => setPrev(null)}>Stop</Btn> : null}</div>
+            {MS_STAGES.map(([st, stN]) => { const here = ms.map((m, i) => ({ m, i })).filter(x => (x.m.stage || 'mid') === st);
+              return <div class="caw-mvstage" key={st}><p class="eyebrow">{stN}</p>{[0, 1, 2, 3].map(j => { const cur0 = here[j], val = cur0 ? sceneOf(cur0.m) : '';
+                return <div class="sc-row" key={st + j}><span class="sc-slot">{stN + ' ' + (j + 1)}</span>
+                  <Step onZone={() => { if (val) setPrev(val); }}><Sel t="caw-mv" d={{ v: st + ':' + j }} label={stN + ' move ' + (j + 1)} value={val} options={[['', 'No move'] as Opt]} groups={groups}
+                    onChange={v => { const rec = recOf(v, st); setMs(L => { const at = cur0 ? cur0.i : -1; if (!rec) { if (at >= 0) L.splice(at, 1); } else if (at >= 0) L[at] = rec; else L.push(rec); }); setPrev(v || null); }} /></Step></div>; })}</div>; })}
+            <p class="muted">The move on a line plays on the dummy. The commentators name these in a match, and the broadcast shows them: the early ones in the opening, the middle ones in the middle, the late ones on the way to the finish. A move made in Create a Move joins the list.</p>
+          </Group>;
+  };
   return <div class="scfull paper" data-t="caw">
     <div class="pmenu sc-menubar" role="group" aria-label={pp.sign ? 'Create a Wrestler' : pp.attire ? 'Edit attire' : 'Edit wrestler'}>
       <b class="pm-app">{pp.sign ? 'Create a Wrestler' : pp.attire ? 'Edit attire' : 'Edit wrestler'}</b><span class="pm-world">{pp.world}</span><span class="sp" />
@@ -174,7 +205,7 @@ export function CreatePlayer(pp: PlayerProps) {
       <Btn kind="go" t="caw-save" onClick={save}>Save</Btn>
       <Btn kind="sm" t="caw-done" onClick={pp.onDone}>Done</Btn>
     </div>
-    <div class={'pnote sc-hint' + (msg ? (msg.err ? ' bad' : ' good') : '')} role="status" data-t="caw-msg">{msg ? msg.t : 'Change anything on the right; the wrestler on the left changes with it.'}</div>
+    <div class={'pnote sc-hint' + (msg ? (msg.err ? ' bad' : ' good') : '')} role="status" data-t="caw-msg">{msg ? msg.t : pp.note || 'Change anything on the right; the wrestler on the left changes with it.'}</div>
     <Desktop cls="scpage cawpage">
       <Win title={(lk.name || w0.name) + (lk.moniker ? ', ' + lk.moniker : '')} right={acting && fin ? fin.name : ATTIRES.find(a => a[0] === att)![2]} area="stage" t="caw-win">
         <div class="sc-keys" role="group" aria-label="Outfit">
@@ -191,8 +222,8 @@ export function CreatePlayer(pp: PlayerProps) {
         </div>
       </Win>
       <Win title={titles[tab]} right={tab === 'gear' || tab === 'colour' || tab === 'studio' ? ATTIRES.find(a => a[0] === att)![1] : ''} area="side" t="caw-side">
-        {(() => { const its: { id: string; label: string; t?: string }[] = pp.attire ? [{ id: 'a_head', label: 'Head', t: 'caw-tab' }, { id: 'a_upper', label: 'Upper body', t: 'caw-tab' }, { id: 'a_lower', label: 'Lower body', t: 'caw-tab' }, { id: 'a_feet', label: 'Feet', t: 'caw-tab' }, { id: 'studio', label: 'Lettering', t: 'caw-tab' }, { id: 'colour', label: 'Colours', t: 'caw-tab' }] : [...(pp.sign ? [{ id: 'sign', label: 'Who they are', t: 'caw-tab' }] : []), { id: 'body', label: 'Body', t: 'caw-tab' }, { id: 'head', label: 'Head', t: 'caw-tab' }, { id: 'face', label: 'Face shape', t: 'caw-tab' }, { id: 'ink', label: 'Paint and ink', t: 'caw-tab' }, { id: 'gear', label: 'Gear', t: 'caw-tab' },
-          { id: 'colour', label: 'Colours', t: 'caw-tab' }, { id: 'studio', label: 'Lettering', t: 'caw-tab' }, { id: 'fin', label: 'Finisher and signatures', t: 'caw-tab' }, { id: 'moveset', label: 'Moveset', t: 'caw-tab' }, { id: 'scenes', label: 'Entrance', t: 'caw-tab' }, { id: 'file', label: 'File', t: 'caw-tab' }]; return <div class="sc-row sc-section"><span class="sc-lbl">Change</span><Step onZone={zone}><Sel t="caw-tab" label="What to change" value={tab} options={its.map(x => [x.id, x.label] as Opt)} onChange={v => setTab(v as Tab)} /></Step></div>; })()}
+        {(() => { const its: { id: string; label: string; t?: string }[] = pp.attire ? [{ id: 'a_head', label: 'Head', t: 'caw-tab' }, { id: 'a_upper', label: 'Upper body', t: 'caw-tab' }, { id: 'a_lower', label: 'Lower body', t: 'caw-tab' }, { id: 'a_feet', label: 'Feet', t: 'caw-tab' }, { id: 'studio', label: 'Lettering', t: 'caw-tab' }, { id: 'colour', label: 'Colours', t: 'caw-tab' }] : [...(pp.sign ? [{ id: 'sign', label: 'Who they are', t: 'caw-tab' }] : []), ...(pp.pages || []).map(x => ({ id: x[0], label: x[1], t: 'caw-tab' })), { id: 'body', label: 'Body', t: 'caw-tab' }, { id: 'head', label: 'Head', t: 'caw-tab' }, { id: 'face', label: 'Face shape', t: 'caw-tab' }, { id: 'ink', label: 'Paint and ink', t: 'caw-tab' }, { id: 'gear', label: 'Gear', t: 'caw-tab' },
+          { id: 'colour', label: 'Colours', t: 'caw-tab' }, { id: 'studio', label: 'Lettering', t: 'caw-tab' }, { id: 'fin', label: 'Moves', t: 'caw-tab' }, { id: 'scenes', label: 'Entrance', t: 'caw-tab' }, { id: 'file', label: 'File', t: 'caw-tab' }]; return <div class="sc-row sc-section"><span class="sc-lbl">Change</span><Step onZone={zone}><Sel t="caw-tab" label="What to change" value={tab} options={its.map(x => [x.id, x.label] as Opt)} onChange={v => setTab(v as Tab)} /></Step></div>; })()}
         {tab === 'sign' && info && pv && <>
           <div class="sc-row"><span class="sc-slot">Ring name</span><TextBox value={lk.name || ''} max={28} label="Ring name" t="caw-name" width="18ch" onInput={v => change(n => { n.name = v; })} /></div>
           {([['g', 'Division', [['M', 'Men'], ['F', 'Women']]], ['align', 'Side', [['F', 'Face'], ['H', 'Heel']]], ['style', 'Style', Object.keys(E.STYLE_NAME).map(k => [k, E.STYLE_NAME[k]])],
@@ -338,45 +369,34 @@ export function CreatePlayer(pp: PlayerProps) {
             </>}
           </Group>
         </>}
-        {tab === 'fin' && <>
-          <div class="sc-row"><Step onZone={zone}><Sel t="caw-fin" label="Which move" value={String(fi)} options={fins.map((f, i) => [String(i), (i ? 'Signature: ' : 'Finisher: ') + f.name] as Opt)} onChange={v => { setFi(+v); setActing(false); }} /></Step></div>
-          {fin ? <>
-            <div class="sc-row"><TextBox value={fin.name} max={32} label="Name of the move" t="caw-finname" width="18ch" onInput={v => setFin(f => { f.name = v; })} /></div>
-            <div class="sc-row"><span class="caw-lbl">Impact</span><input type="range" min={1} max={100} value={fin.impact_damage || 50} aria-label="Impact" data-t="caw-findmg" onInput={e => { const v = +(e.currentTarget as HTMLInputElement).value; setFin(f => { f.impact_damage = v; }); }} /><b>{fin.impact_damage || 50}</b></div>
-            {([['kickout_difficulty', 'Kick out', KICKOUT], ['position', 'From', POSITIONS], ['category', 'How it wins', CATEGORIES], ['preview_pose_id', 'In the picture', FIN_SCENES.filter(x => !/^move_/.test(x[0])).concat(MOVES.map(x => [x.id, x.name] as [string, string]), world.filter(x => x.when === 'move').map(x => [x.id, 'This world: ' + x.name] as [string, string]))]] as [keyof Finisher, string, [string, string][]][]).map(([k, n, opts]) =>
-              <div class="sc-row"><span class="sc-slot">{n}</span><Step onZone={zone}><select aria-label={n} data-t="caw-finopt" data-v={k} value={(k === 'preview_pose_id' ? finScene(fin) : (fin[k] as string)) || ''} onChange={e => { const v = (e.currentTarget as HTMLSelectElement).value; setFin(f => { (f as any)[k] = v; }); }}>{opts.map(o => <option value={o[0]}>{o[1]}</option>)}</select></Step></div>)}
-            {fi > 0 ? <div class="sc-row"><span class="sc-slot">When</span><Step onZone={zone}><select aria-label="When in a match" data-t="caw-finstage" value={fin.stage || 'mid'} onChange={e => { const v = (e.currentTarget as HTMLSelectElement).value; setFin(f => { if (v === 'mid') delete f.stage; else f.stage = v; }); }}>{STAGES.map(o => <option value={o[0]}>{o[1]}</option>)}</select></Step></div> : null}
-            <div class="sc-row"><Btn kind="go" t="caw-act" onClick={() => setActing(!acting)}>{acting ? 'Stop' : 'Act it out on the dummy'}</Btn>
-              {pp.onNewMove ? <Btn kind="sm" t="caw-newmove" tip="Saves them, and opens Create a Move on this move with them in it" onClick={() => pp.onNewMove!(lk, fi)}>Make a custom move</Btn> : null}
-</div>
-            <p class="muted">One finisher and two signature moves, each played when it says. The more protected a finisher, the rarer and bigger a kick-out.</p>
-          </> : <p class="empty">Pick a move to change it.</p>}
-          <Group title={'Taunts (' + (lk.taunts || []).length + ' of 3)'}>
-            <div class="sc-row">{scenesFor('taunt', world).map(o => { const on = (lk.taunts || []).indexOf(o.id) >= 0; return <Btn kind="less" t="caw-taunt" d={{ v: o.id }} on={on} disabled={!on && (lk.taunts || []).length >= 3} onClick={() => { change(n => { const l = n.taunts || []; n.taunts = on ? l.filter(x => x !== o.id) : l.concat([o.id]); if (!n.taunts.length) delete n.taunts; }); setActing(false); setPrev(on ? null : o.id); }}>{o.name}</Btn>; })}</div>
-            {prevSc && prevSc.when === 'taunt' ? <div class="sc-row"><Btn kind="sm" t="caw-tauntstop" onClick={() => setPrev(null)}>Stop</Btn><span class="muted">{prevSc.name}</span></div> : <p class="muted">Pick up to three. When they are on top in a match, the broadcast now and then shows one instead of a move.</p>}
-          </Group>
-        </>}
-        {tab === 'moveset' && (() => {
-          // the moveset as lines, four for each part of a match, each stepping through the animated moves; the one picked plays on the dummy
-          const ms: MoveRec[] = lk.moveset || [], style = pp.sign ? d.style : (w0.style || 'A'), own = world.filter(x => x.when === 'move');
-          const groups = (E.MOVE_KINDS as string[]).map(k => ({ label: KIND_N[k], options: (E.MOVE_LIB[k] as [string, string][]).map(m => ['move_' + m[0], m[1]] as Opt) }))
-            .concat(own.length ? [{ label: 'Made for this world', options: own.map(x => [x.id, x.name] as Opt) }] : []);
-          const setMs = (fn: (L: MoveRec[]) => void) => change(n => { const L = (n.moveset || []).slice(); fn(L); if (L.length) n.moveset = L; else delete n.moveset; });
-          const recOf = (id: string, st: string): MoveRec | null => { if (!id) return null; const lib = E.moveLib(id.replace(/^move_/, '')), o = own.find(x => x.id === id);
-            return lib ? { name: lib.n, kind: lib.k, stage: st, scene: id } : o ? { name: o.name, stage: st, scene: id } : null; };
-          const sceneOf = (m: MoveRec) => m.scene || (E.moveLib(m.name) ? 'move_' + E.moveLib(m.name).id : '');
+        {tab === 'fin' && (() => {
+          // every move they have on one page (Ryan, 20 October): the finisher, the two signatures, the moveset, the taunts; each a line that steps
+          const own = world.filter(x => x.when === 'move'), lib = (E.MOVE_KINDS as string[]).map(k => ({ label: KIND_N[k], options: (E.MOVE_LIB[k] as [string, string][]).map(m => ['move_' + m[0], m[1]] as Opt) }));
+          const picGroups = [{ label: 'Finishing pictures', options: FIN_SCENES.filter(x => !/^move_/.test(x[0])) as Opt[] }].concat(lib, own.length ? [{ label: 'Made for this world', options: own.map(x => [x.id, x.name] as Opt) }] : []);
+          const setAt = (i: number, fn: (f: Finisher) => void) => change(n => { const F = n.finishing_moves || []; if (F[i]) fn(F[i]); n.finishing_moves = F; });
+          const act = (i: number) => { if (acting && fi === i) setActing(false); else { setFi(i); setActing(true); setPrev(null); } };
+          const block = (f: Finisher, i: number) => <Group key={'fm' + i} title={i ? 'Signature ' + i : 'Finisher'}>
+            <div class="sc-row"><span class="sc-slot">Name</span><TextBox value={f.name} max={32} label={(i ? 'Signature ' + i : 'Finisher') + ': name'} t="caw-finname" d={{ v: String(i) }} width="16ch" onInput={v => setAt(i, x => { x.name = v; })} /></div>
+            <div class="sc-row"><span class="sc-slot">Move</span><Step onZone={() => { setFi(i); }}><Sel t="caw-finopt" d={{ v: 'preview_pose_id', i: String(i) }} label={(i ? 'Signature ' + i : 'Finisher') + ': the move it plays'} value={finScene(f)} options={[]} groups={picGroups} onChange={v => { setAt(i, x => { x.preview_pose_id = v; }); setFi(i); setActing(true); setPrev(null); }} /></Step></div>
+            {i === 0 ? ([['kickout_difficulty', 'Kick out', KICKOUT], ['position', 'From', POSITIONS], ['category', 'How it wins', CATEGORIES]] as [keyof Finisher, string, [string, string][]][]).map(([k, n, opts]) =>
+              <div class="sc-row" key={k}><span class="sc-slot">{n}</span><Step onZone={zone}><select aria-label={n} data-t="caw-finopt" data-v={k} data-i="0" value={(f[k] as string) || ''} onChange={e => { const v = (e.currentTarget as HTMLSelectElement).value; setAt(0, x => { (x as any)[k] = v; }); }}>{opts.map(o => <option value={o[0]}>{o[1]}</option>)}</select></Step></div>)
+              : <div class="sc-row"><span class="sc-slot">When</span><Step onZone={zone}><select aria-label={'Signature ' + i + ': when in a match'} data-t="caw-finstage" data-v={String(i)} value={f.stage || 'mid'} onChange={e => { const v = (e.currentTarget as HTMLSelectElement).value; setAt(i, x => { if (v === 'mid') delete x.stage; else x.stage = v; }); }}>{STAGES.map(o => <option value={o[0]}>{o[1]}</option>)}</select></Step></div>}
+            {i === 0 ? <div class="sc-row"><span class="sc-slot">Impact</span><input type="range" min={1} max={100} value={f.impact_damage || 50} aria-label="Impact" data-t="caw-findmg" onInput={e => { const v = +(e.currentTarget as HTMLInputElement).value; setAt(0, x => { x.impact_damage = v; }); }} /><b>{f.impact_damage || 50}</b></div> : null}
+            <div class="sc-row"><Btn kind="go" t="caw-act" d={{ v: String(i) }} onClick={() => act(i)}>{acting && fi === i ? 'Stop' : 'Act it out'}</Btn>
+              {pp.onNewMove ? <Btn kind="sm" t="caw-newmove" d={{ v: String(i) }} tip="Keeps them, and opens Create a Move on this move with them in it" onClick={() => pp.onNewMove!(lk, i)}>Make a custom move</Btn> : null}</div>
+          </Group>;
+          const tn = lk.taunts || [], taunts = scenesFor('taunt', world);
           return <>
-            <div class="sc-row"><Btn kind="go" t="caw-move-fill" tip="Twelve moves to suit how they wrestle, four for each part of a match" onClick={() => { setMs(L => { L.splice(0, L.length, ...(E.movesetFor(style, lk.name || w0.name) as MoveRec[])); }); setPrev(null); say('A moveset to suit their style. Change any line of it.'); }}>Fill for their style</Btn>
-              <Btn kind="less" t="caw-move-clear" disabled={!ms.length} onClick={() => { setMs(L => { L.splice(0); }); setPrev(null); }}>Clear</Btn>
-              {prevSc && prevSc.when === 'move' ? <Btn kind="sm" t="caw-move-stop" onClick={() => setPrev(null)}>Stop</Btn> : null}</div>
-            {MS_STAGES.map(([st, stN]) => { const here = ms.map((m, i) => ({ m, i })).filter(x => (x.m.stage || 'mid') === st);
-              return <Group key={st} title={stN}>{[0, 1, 2, 3].map(j => { const cur0 = here[j], val = cur0 ? sceneOf(cur0.m) : '';
-                return <div class="sc-row" key={st + j}><span class="sc-slot">{stN + ' ' + (j + 1)}</span>
-                  <Step onZone={() => { if (val) setPrev(val); }}><Sel t="caw-mv" d={{ v: st + ':' + j }} label={stN + ' move ' + (j + 1)} value={val} options={[['', 'No move'] as Opt]} groups={groups}
-                    onChange={v => { const rec = recOf(v, st); setMs(L => { const at = cur0 ? cur0.i : -1; if (!rec) { if (at >= 0) L.splice(at, 1); } else if (at >= 0) L[at] = rec; else L.push(rec); }); setPrev(v || null); }} /></Step></div>; })}</Group>; })}
-            <p class="muted">The move on a line plays on the dummy. The commentators name these in a match, and the broadcast shows them: the early ones in the opening, the middle ones in the middle, the late ones on the way to the finish. A move made in Create a Move joins the list.</p>
+            {fins.map(block)}
+            {renderMoveset()}
+            <Group title="Taunts">{[0, 1, 2].map(i => <div class="sc-row" key={'tn' + i}><span class="sc-slot">{'Taunt ' + (i + 1)}</span><Step onZone={() => { if (tn[i]) { setActing(false); setPrev(tn[i]); } }}>
+              <Sel t="caw-tauntsel" d={{ v: String(i) }} label={'Taunt ' + (i + 1)} value={tn[i] || ''} options={[['', 'None'] as Opt].concat(taunts.filter(o => o.id === tn[i] || tn.indexOf(o.id) < 0).map(o => [o.id, o.name] as Opt))}
+                onChange={v => { change(n => { const l = (n.taunts || []).slice(); if (v) l[i] = v; else l.splice(i, 1); n.taunts = l.filter(Boolean); if (!n.taunts.length) delete n.taunts; }); setActing(false); setPrev(v || null); }} /></Step></div>)}
+              <p class="muted">When they are on top in a match, the broadcast now and then shows one instead of a move.</p></Group>
+            <p class="muted">The finisher ends the match on its picture; the more protected it is, the rarer and bigger a kick-out. Signatures and the moveset play during the match, each when it says, and the commentators name them.</p>
           </>;
         })()}
+        {/^w_/.test(tab) && pp.page ? <div class="caw-wpage edcol-form" data-part={tab}>{pp.page(tab)}</div> : null}
         {tab === 'scenes' && <>
           <div class="sc-row" role="group" aria-label="Entrances">
             <Step onZone={zone}><Sel t="caw-ent" label="Their entrance" value={lk.entrance || ''} options={[['', 'Whatever the show picks'] as Opt].concat(scenesFor('entrance', world).map(o => [o.id, o.name] as Opt))} onChange={v => { if (v) { change(n => { n.entrance = v; }); setPrev(v); } else { change(n => { delete n.entrance; }); setPrev(null); } }} /></Step>
