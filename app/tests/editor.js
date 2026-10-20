@@ -6,6 +6,7 @@ const fails = [];
 const ok = (mode, label, pass, detail) => { console.log(mode.padEnd(6), pass ? 'ok  ' : 'FAIL', label + (detail ? ': ' + detail : '')); if (!pass) fails.push(mode + ' ' + label); };
 const txt = (page, sel) => page.$eval(sel, e => e.innerText).catch(() => '');
 
+async function openRule(page, id) { await page.click('[data-t="ed-pick"][data-id="' + id + '"]').catch(async () => { await page.fill('.edmenu input', id); await page.click('[data-t="ed-pick"][data-id="' + id + '"]'); }); await page.waitForTimeout(150); }
 async function company(page, mode, short, full, model) {
   await page.click('[data-t="ed-tab"][data-v="companies"]');
   const back = await page.$('.edback [data-t="ed-list"]'); if (back && await back.isVisible()) await back.click();
@@ -92,6 +93,16 @@ async function run(mode) {
     ok(mode, 'Stories makes the world\'s own angle, with its scene and what it does', await page.evaluate(() => { const u = JSON.parse(localStorage.getItem('ewf9000-universes') || '{}'); return Object.values(u).some((w) => (w.segkinds || []).some((k) => k.n === 'Coffee in the face' && k.scene === 'seg_ambush' && k.bond === -8 && /coffee/.test(k.line))); }) || /Coffee in the face/.test(await txt(page, '.edcol-list')));
     ok(mode, 'its scene plays beside the form', !!(await page.$('[data-t="ed-story-pic"]')));
     await over('the Stories tab');
+    // Match rules: the world's own rule, built on an included one, played in a set of its own
+    await page.click('[data-t="ed-tab"][data-v="rules"]'); await page.click('[data-t="ed-rule-new"]'); await page.waitForTimeout(200);
+    await page.fill('[data-t="ed-rule-name"]', 'Shark tank'); await page.selectOption('[data-t="ed-rule-base"]', 'hardcore'); await page.selectOption('[data-t="ed-rule-set"]', 'inferno');
+    await page.fill('[data-t="ed-rule-line"][data-v="0"]', 'Nobody wants to fall in.'); await page.waitForTimeout(700);
+    ok(mode, 'Match rules makes the world\'s own rule, with its base, its set and its lines', await page.evaluate(() => { const u = JSON.parse(localStorage.getItem('ewf9000-universes') || '{}'); return Object.values(u).some((w) => (w.stips || []).some((k) => k.n === 'Shark tank' && k.base === 'hardcore' && k.set === 'inferno' && k.lines[0] === 'Nobody wants to fall in.')); }));
+    ok(mode, 'the rule\'s set is drawn beside the form', (await page.$eval('[data-t="ed-rule-pic"]', e => e.getAttribute('data-set')).catch(() => '')) === 'inferno');
+    if (process.env.SHOTS) await shot(page, 'editor-rules');
+    await openRule(page, 'cage'); await page.click('[data-t="ed-rule-over"]'); await page.fill('[data-t="ed-rule-name"]', 'Steel dome'); await page.waitForTimeout(700);
+    ok(mode, 'an included rule can be changed for the world', await page.evaluate(() => { const u = JSON.parse(localStorage.getItem('ewf9000-universes') || '{}'); return Object.values(u).some((w) => (w.stips || []).some((k) => k.id === 'cage' && k.over && k.n === 'Steel dome')); }));
+    await over('the Match rules tab');
     await page.click('[data-t="ed-tab"][data-v="wrestlers"]');
     await page.click('[data-t="ed-add-wrestler"]');
     await page.fill('[data-t="ed-wrname"]', 'Captain Thunder');

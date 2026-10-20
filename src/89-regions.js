@@ -51,7 +51,7 @@ WEEKX.push(function(S){
 /* each region has a taste, and the wrong product plays flat there */
 function tasteVal(taste,ws,stips){
   if(!ws.length)return 0;
-  if(taste==='brawl')return (avg(ws.map(function(w){return w.brawl;}))-74)/10+(stips.filter(function(s){return s==='hardcore'||s==='cage'||s==='cell'||s==='fire'||s==='tables';}).length?0.3:0);
+  if(taste==='brawl')return (avg(ws.map(function(w){return w.brawl;}))-74)/10+(stips.filter(function(s){return /^(hardcore|cage|cell|fire|tables)$/.test(stipBase(s));}).length?0.3:0);
   if(taste==='work')return (avg(ws.map(workRate))-74)/10;
   return (avg(ws.map(function(w){return w.sq;}))-76)/10+(stips.filter(function(s){return s==='ladder'||s==='mask'||s==='hair';}).length?0.3:0);
 }
@@ -74,7 +74,7 @@ E.tasteForecast=function(S,card){
 CRX.push(function(ctx){
   var P=ctx.P;if(!ctx.isPl||ctx.S.cal)return null;
   var home=!P.tour,k=home?0.7:1,t=(home?REGIONS[homeReg(P)]:REGIONS[P.tour.reg]).taste,all=ctx.all,d=0,x=null;
-  if(t==='brawl'){var b=avg(all.map(function(w){return w.brawl;}));if(b>=62||ctx.stip==='hardcore'||ctx.stip==='cage'||ctx.stip==='cell'||ctx.stip==='fire'){d=1.5;x='A brawl, and this region likes a brawl';}else if(b<=48){d=-1.5;x='Too gentle for a region that likes a fight';}}
+  if(t==='brawl'){var b=avg(all.map(function(w){return w.brawl;}));if(b>=62||/^(hardcore|cage|cell|fire)$/.test(stipBase(ctx.stip))){d=1.5;x='A brawl, and this region likes a brawl';}else if(b<=48){d=-1.5;x='Too gentle for a region that likes a fight';}}
   else if(t==='work'){var wk=avg(all.map(workRate));if(wk>=65){d=1.5;x='Fine wrestling for a region that counts the holds';}else if(wk<50){d=-1.5;x='Sloppy work in front of a region that notices';}}
   else{var sq=avg(all.map(function(w){return w.sq;}));if(sq>=65||ctx.stip==='ladder'){d=1.5;x='Spectacle, and this region came for spectacle';}else if(sq<=45){d=-1.5;x='Plain stuff for a region that wants spectacle';}}
   return d?{d:d*k,x:x}:null;

@@ -293,8 +293,8 @@ Code: `src/86-editor.js` (the `E.ed*` functions; no screen code), `app/src/scree
 - [x] Works on desk, tablet and TV layouts. Back steps out one level at a time.
 - [ ] **Workshop upload and subscribed worlds.** Written in `desktop/main.js` and `desktop/preload.js` (`gpSteam.workshopUpload`, `gpSteam.workshopWorlds`) from the steamworks.js documentation. Never run. Needs the Steam wrapper working first (task 12).
 - [ ] Pictures: a world cannot carry portrait or belt images yet. Portraits are drawn from the face settings. The folder form with `graphics/` is the Workshop build's job.
-- [ ] Not in the editor yet: brands, sponsors, columnists, announcers and staff names, the name lists for rookies, managers tied to wrestlers.
-- [ ] Bulk tools: duplicate a wrestler, move several at once, sort the list by name or company.
+- [x] Not in the editor yet: brands, sponsors, columnists, announcers and staff names, the name lists for rookies, managers tied to wrestlers. (In the editor by 20 October.)
+- [x] Bulk tools: duplicate a wrestler, move several at once, sort the list by name or company. (In the editor by 20 October.)
 - [ ] A creator for each thing on its own from the title screen, if Ryan wants shortcuts (show creator, belt creator) beyond the tabs.
 - [ ] Try the remote and gamepad on real hardware.
 

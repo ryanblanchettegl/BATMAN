@@ -13,6 +13,7 @@ import { CompaniesTab, ShowsTab } from './Companies';
 import { WrestlersTab } from './People';
 import { BeltsTab, TeamsTab } from './Belts';
 import { ScenesTab, keepScene, forgetScene } from './Scenes';
+import { RulesTab } from './Rules';
 import { StoriesTab } from './Stories';
 import { SceneStudio, fromWorld } from '../scene';
 import { CreatePlayer, workerW } from '../player';
@@ -80,7 +81,7 @@ function Home() {
 
 function Open() {
   const st = es(), pkg = world(), v = report();
-  const body = st.tab === 'world' ? <WorldTab /> : st.tab === 'companies' ? <CompaniesTab /> : st.tab === 'shows' ? <ShowsTab /> : st.tab === 'belts' ? <BeltsTab /> : st.tab === 'wrestlers' ? <WrestlersTab /> : st.tab === 'teams' ? <TeamsTab /> : st.tab === 'scenes' ? <ScenesTab /> : st.tab === 'stories' ? <StoriesTab /> : <ShareTab />;
+  const body = st.tab === 'world' ? <WorldTab /> : st.tab === 'companies' ? <CompaniesTab /> : st.tab === 'shows' ? <ShowsTab /> : st.tab === 'belts' ? <BeltsTab /> : st.tab === 'wrestlers' ? <WrestlersTab /> : st.tab === 'teams' ? <TeamsTab /> : st.tab === 'scenes' ? <ScenesTab /> : st.tab === 'stories' ? <StoriesTab /> : st.tab === 'rules' ? <RulesTab /> : <ShareTab />;
   const back = () => look(() => { if (st.sel[st.tab]) st.sel[st.tab] = null; else { keep(true); st.id = null; st.msg = ''; } });
   return <EdShell tab={st.tab} note={st.msg || TIPS[st.tab]} bad={st.err} back={back} backLabel={st.sel[st.tab] ? 'Back to the list' : 'All worlds'} t="ed-open"
     main={v.ok ? <Btn kind="go" cls="pkey" t="ed-play-key" onClick={() => look(() => { st.tab = 'share'; })}>CHECK AND SHARE</Btn> : <Btn kind="go" cls="pkey" t="ed-fix-key" onClick={() => look(() => { st.tab = 'share'; })}>{v.errors + ' TO FIX'}</Btn>}>
@@ -97,6 +98,7 @@ const TIPS: Record<string, string> = {
   teams: 'Tag teams and stables, and who gets on with whom.',
   scenes: 'Scenes made for this world: entrances, moves, stills and more.',
   stories: 'Your own promos and angles: who is in them, the scene they play, what they do. A booker can put them on the card.',
+  rules: 'Your own match rules: what each is called, the set it is played in, what the commentators say. Each fights like an included rule.',
   share: 'Every problem in plain words, then play the world or share it.',
 };
 

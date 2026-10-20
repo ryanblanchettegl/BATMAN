@@ -90,8 +90,8 @@ EVR.netexec=function(S,ev,choice,P){
 /** Before the bell: will tonight's card go against the network's taste? A short line for Tonight's stakes, or ''. */
 function netCardClash(S,show,card){
   var P=S.promos[S.player],sh=show&&!show.big?airRec(P,show.id):null;if(!sh||!sh.net||!card.length)return '';
-  var t=netTaste(sh.net),talk=segRead(S).length,hc=card.filter(function(m){return m&&(m.stip==='hardcore'||m.stip==='tables'||m.stip==='ladder'||m.stip==='fire'||m.stip==='cell');}).length,st=card.some(function(m){return m&&m.stip&&m.stip!=='std';});
-  if(t==='family'&&hc)return sh.net+' is a family network, and a '+STIP[card.filter(function(m){return m&&(m.stip==='hardcore'||m.stip==='tables'||m.stip==='ladder'||m.stip==='fire'||m.stip==='cell');})[0].stip].n.toLowerCase()+' match will not go down well.';
+  var t=netTaste(sh.net),talk=segRead(S).length,hc=card.filter(function(m){return m&&(/^(hardcore|tables|ladder|fire|cell)$/.test(stipBase(m.stip)));}).length,st=card.some(function(m){return m&&m.stip&&m.stip!=='std';});
+  if(t==='family'&&hc)return sh.net+' is a family network, and a '+STIP[card.filter(function(m){return m&&(/^(hardcore|tables|ladder|fire|cell)$/.test(stipBase(m.stip)));})[0].stip].n.toLowerCase()+' match will not go down well.';
   if(t==='sport'&&talk>card.length)return sh.net+' is a sport network, and tonight has more talking than wrestling.';
   if(t==='late'&&!talk&&!st)return sh.net+' is a late night network, and tonight has nothing to talk about: no promo, no angle, no stipulation.';
   return '';
