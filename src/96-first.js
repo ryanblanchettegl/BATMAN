@@ -41,7 +41,7 @@ TASKX.push(function(S,P,add){
 /** The letter a new game opens on. */
 E.welcome=function(S){
   if(S.letter)return S.letter;   // the letter is kept as it was written, so it can be read again later
-  var P=S.promos[S.player],o=S.owner,me=!!o.me,rank=S.order.slice().sort(function(a,b){return S.promos[b].image-S.promos[a].image;}).indexOf(P.id)+1,n=S.order.length,sh=S.queue[S.qi]||P.shows[0];
+  var P=S.promos[S.player],o=S.owner,me=!!o.me,rank=(typeof E.audience==='function'?E.audience(S).rank:S.order.slice().sort(function(a,b){return S.promos[b].image-S.promos[a].image;}).indexOf(P.id)+1),n=S.order.length,sh=S.queue[S.qi]||P.shows[0];
   var top=P.titles.filter(function(t){return !t.tag&&t.holders.length;}).sort(function(a,b){return b.lvl-a.lvl;})[0],ch=top?S.w[top.holders[0]]:null,fav=!me&&o.fav!=null?S.w[o.fav]:null;
   var place=rank===1?'We are the biggest company in the world, and everybody else gets up in the morning to change that.':(rank<=3?'We are number '+rank+' of '+n+'. I did not hire you to stay there.':(rank>=n-1?'We are near the bottom of '+n+' companies. Nobody expects anything from us. Good.':'We are number '+rank+' of '+n+'. There is room above us and people below who want our spot.'));
   var L=me?['It is yours. Your name is on the lease, the ring is paid for, and nobody upstairs can tell you no.',

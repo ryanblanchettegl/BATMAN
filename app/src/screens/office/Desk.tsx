@@ -249,7 +249,8 @@ const MORE: [string, string][] = [['week', 'This week'], ['world', 'Around the w
 function WorldWeek() {
   const WK = (E as any).worldWeek(G.S, 2) as any[];
   if (!WK.length) return <Empty>Nothing filed yet. At the end of the week you will see what every other company did.</Empty>;
-  return <div data-t="world-week">{WK.map((w, i) => <div key={w.w} class={i ? 'mt2' : ''}>
+  const AU = (E as any).audience(G.S);
+  return <div data-t="world-week"><p data-t="ww-rank"><b>Audience share:</b> you are number {AU.rank} of {AU.of}, with {AU.table.find((x: any) => x.mine).share.toFixed(1)}%. {AU.table[0].mine ? 'Nobody draws more.' : AU.table[0].name + ' leads with ' + AU.table[0].share.toFixed(1) + '%.'}</p>{WK.map((w, i) => <div key={w.w} class={i ? 'mt2' : ''}>
     <h3 class="ww-wk">{i ? 'The week before: ' : 'Last week: '}{w.label}</h3>
     {w.cos.length ? <ul class="list ww">{w.cos.map((c: any) => <li key={c.id} data-t="ww-co" data-v={c.id}>
       <span><b>{c.name}</b> {c.lead}

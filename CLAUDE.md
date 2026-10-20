@@ -53,6 +53,7 @@ node test-writers.js                                # the writers' room: three w
 node test-postmortem.js                             # post-mortems: a causal log, the month in review every four weeks, the season in review once a year
 node test-venues.js                                # buildings with quirks of their own, and trouble in the building as a call on the air
 node test-living-world.js                         # the living world: reigns carry their history, the world starts mid-story, rivals keep stories
+node test-audience.js                               # audience share: six groups of viewers, who wins them, the ranking, television money follows share
 node test-scenes.js                                 # scene hooks, and Create a Player files: checked, kept in a world, carried into a game, written out
 node tools/build-public-domain.js                   # rebuild universes/public_domain.json after editing rosters
 python3 tools/build-font.py                         # rebuild app/fonts/ewf-blocks.woff2 (needs fonttools, brotli)

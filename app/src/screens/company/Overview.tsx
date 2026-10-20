@@ -116,7 +116,19 @@ function Writers() {
     <ul class="list" data-t="writers">{L.map((w: any) => <li key={w.id}><span class="clamp"><b>{w.name}</b>{w.head ? ', head writer' : ''}{w.pen ? <span class="gold"> {'·'} has the pen</span> : null} <span class="muted">{'·'} writes {w.style} {'·'} {w.strong}, {w.mood} {'·'} {w.you >= 10 ? 'on your side' : (w.you <= -10 ? 'cool on you' : 'neutral')}</span></span></li>)}</ul>
   </Panel>;
 }
+/** Audience share (src/99-audience.js): every company ranked by its slice of the audience, and your six groups. Information only. */
+function Audience() {
+  const A = E.audience(G.S), mv = (x: number) => x > 0 ? <span class="good">{'▲ ' + x.toFixed(1)}</span> : x < 0 ? <span class="bad">{'▼ ' + (-x).toFixed(1)}</span> : <span class="muted">steady</span>;
+  return <><Panel title={'Audience share: you are number ' + A.rank + ' of ' + A.of}>
+    <div class="tw" data-t="aud-table"><table><thead><tr><th>#</th><th>Company</th><th class="r">Share</th><th class="r">Last 4 weeks</th><th class="r">Homes</th></tr></thead>
+      <tbody>{A.table.map((x: any, i: number) => <tr key={x.id} class={x.mine ? 'me' : undefined}><td class="num">{i + 1}</td><td>{x.mine ? <b>{x.name}</b> : x.name}</td><td class="r num">{x.share.toFixed(1)}%</td><td class="r">{mv(x.move)}</td><td class="r num">{x.homes.toFixed(1)}M</td></tr>)}</tbody></table></div>
+  </Panel>
+  <Panel title="Who watches you">
+    <ul class="list" data-t="aud-groups">{A.groups.map((g: any) => <li key={g.k}><span><b>{g.n}</b> <span class="num">{g.share.toFixed(1)}%</span> <Meter v={Math.min(100, g.share * 3)} n={10} /> <span class="muted">{g.lead ? 'You lead with them.' : 'Led by ' + g.leader + '.'} They want {g.want}.</span></span></li>)}</ul>
+  </Panel></>;
+}
 const PARTS: { id: string; n: string; body: () => ComponentChildren }[] = [
+  { id: 'audience', n: 'Audience share', body: () => <Audience /> },
   { id: 'setup', n: 'How it runs', body: () => <Setup /> },
   { id: 'income', n: 'Where the money came from', body: () => <IncomeBar /> },
   { id: 'model', n: 'How this company is run', body: () => <Panel title="How this company is run"><ModelCard id={me().model} /></Panel> },
