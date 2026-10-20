@@ -1,7 +1,7 @@
 {
  "rescue": {
   "start": "0b66abd838459d8721cac448fad46e64",
-  "end": "9f80f141cc0237107bc34a05e41fb30c",
+  "end": "c432624d64c8d6b2cb779fa01715cb71",
   "week": 11,
   "res": {
    "ok": false,
@@ -13,7 +13,7 @@
  },
  "champion": {
   "start": "0ae8d16145bd896df7301be2dfa62ab7",
-  "end": "030f5b543734d063b23b8c46b52fce40",
+  "end": "494e1498bb18413441a1055bdc17fcce",
   "week": 40,
   "res": {
    "ok": false,
@@ -25,7 +25,7 @@
  },
  "war": {
   "start": "7a329ff12192d8b9f4c0189669a1f94c",
-  "end": "d102704a00bc10bcd4bf2fa85f8ee49e",
+  "end": "7b1cc831923bf10530eb15b7e18181d5",
   "week": 27,
   "res": {
    "ok": false,

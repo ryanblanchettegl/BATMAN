@@ -301,3 +301,42 @@ html body .win.ppop .wb{font-family:var(--hand);font-size:1.06em}
 .mm-c.none{background:repeating-linear-gradient(45deg,#ddd 0 4px,#fff 4px 8px)!important}
 .bm .mm-left{display:flex;flex-direction:column;gap:.4em;align-items:flex-start;width:auto}
 .edbelt{overflow:visible}
+/* the crowd on the broadcast: paper fans in two rows who react to the match (Live.tsx, FanStand) */
+.live1 .fanstand{flex:none;margin-top:.5em;padding:.4em .6em .3em;background:#1d1a24;border-radius:6px;box-shadow:inset 0 0 0 3px #f2ead6,3px 4px 0 rgba(0,0,0,.4);overflow:hidden}
+.live1 .fanstand .fans{display:grid;grid-template-columns:repeat(6,1fr);gap:.1em .25em;align-items:end}
+.live1 .fanstand .fan{position:relative;display:block;transform-origin:50% 100%;animation:none}
+.live1 .fanstand .fan.r1{z-index:1;margin-bottom:-.9em}
+.live1 .fanstand .fan.r2{z-index:2}
+.live1 .fanstand .fan canvas{display:block;width:100%;height:auto;border-radius:4px}
+.live1 .fanstand .fsign{position:absolute;left:-10%;right:-10%;top:-.2em;background:#f7f1de;color:#1d1a24;font-family:var(--marker);font-size:.62em;line-height:1.05;text-align:center;padding:.1em .15em;border:2px solid #1d1a24;transform:rotate(var(--x));white-space:nowrap;overflow:hidden;z-index:3}
+.live1 .fanstand .fw{margin:.35em 0 0;display:flex;justify-content:space-between;color:#f2ead6;font-family:var(--marker)}
+.live1 .fanstand .fw b{color:#ffd23f;font-weight:400}
+.live1 .fanstand.m-quiet .fan:nth-child(3n){transform:rotate(8deg) translateY(.2em);filter:brightness(.8)}
+.live1 .fanstand.m-into .fan{animation:fsway 2.4s ease-in-out infinite;animation-delay:var(--d)}
+.live1 .fanstand.m-loud .fan{animation:fbounce .9s ease-in-out infinite;animation-delay:var(--d)}
+.live1 .fanstand.m-wild .fan{animation:fjump .6s ease-in-out infinite;animation-delay:var(--d)}
+.live1 .fanstand.pop .fan,.live1 .fanstand.pop2 .fan{animation:fleap .5s ease-out 3;animation-delay:calc(var(--d) / 6)}
+.live1 .fanstand.pop2{box-shadow:inset 0 0 0 3px #ffd23f,3px 4px 0 rgba(0,0,0,.4)}
+@keyframes fsway{0%,100%{transform:rotate(-3deg)}50%{transform:rotate(3deg)}}
+@keyframes fbounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-10%)}}
+@keyframes fjump{0%,100%{transform:translateY(0) rotate(0)}40%{transform:translateY(-22%) rotate(var(--x))}}
+@keyframes fleap{0%{transform:translateY(0)}35%{transform:translateY(-34%) scale(1.06)}100%{transform:translateY(0)}}
+@media (prefers-reduced-motion:reduce){.live1 .fanstand .fan{animation:none!important}}
+/* the call is easier to read while the match runs: the speaker on a line of their own, the line in a big readable hand */
+.live1 .lv-log .ln{display:block;margin:.15em 0}
+.live1 .lv-log .ln .sp{display:inline-block;margin-right:.6ch;font-size:.82em;letter-spacing:.02em}
+.live1 .lv-log .ln .tx{font-size:1.08em}
+.live1 .lv-log .ln:not(.last){opacity:.62}
+.live1 .lv-log .ln.last .tx{font-size:1.18em}
+.live1 .lv-side .fanstand{flex:0 0 44%;min-height:0;display:flex;flex-direction:column}
+.live1 .lv-side .fanstand .fans{flex:1 1 0;min-height:0;align-content:end}
+.live1 .fanstand .fan.r1{margin-bottom:-1.1em} .live1 .fanstand .fan.r2{z-index:2;margin-bottom:-1.1em} .live1 .fanstand .fan.r3{z-index:3}
+.live1 .fanstand .fsign{z-index:4}
+/* the stand: tiers of seats behind the fans, the rows packed so it reads as a crowd */
+.live1 .lv-side .fanstand{background:repeating-linear-gradient(#2a2433 0 34%,#211c29 34% 37%),#211c29}
+.live1 .lv-side .fanstand .fans{align-content:center;grid-template-columns:repeat(6,1fr);gap:0 .1em}
+.live1 .fanstand .fan canvas{border-radius:0;filter:drop-shadow(0 3px 0 rgba(0,0,0,.45))}
+.live1 .fanstand .fan.r1{margin-bottom:-1.6em} .live1 .fanstand .fan.r2{margin-bottom:-1.6em}
+.live1 .fanstand .fan.r1 canvas{filter:brightness(.82) drop-shadow(0 3px 0 rgba(0,0,0,.45))}
+.live1 .fanstand .fan canvas.paperpt{border:0!important;outline:0!important;box-shadow:none!important;background:none!important;padding:0!important}
+.live1 .fanstand .fan.r1,.live1 .fanstand .fan.r2{margin-bottom:-.5em}

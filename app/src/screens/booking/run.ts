@@ -207,6 +207,10 @@ export function liveGo() {
   if (st.k === 'call') { act(() => say('The gorilla position is waiting for your call.')); return; }
   liveNext();
 }
+/** Play the segment on screen again from its first moment (Ryan, 20 October). It only replays what was shown: nothing in the game changes. */
+export function liveReplaySeg() { typer.finish(); const r = liveReport(); if (r && !liveCall()) look(() => { const L = book().live!, sg = r.segs[L.s]; if (sg) L.b = sg.k === 'match' ? 0 : 0; }); }
+/** Is there a segment on screen to play again? */
+export function canReplaySeg(): boolean { const r = liveReport(); if (!r || liveCall()) return false; const L = livePos(r); return L.s >= 0 && L.s < r.segs.length && L.b > 0; }
 /** Finish the line being typed and jump to this segment's result. */
 export function liveSkip() { typer.finish(); const r = liveReport(); if (r && !liveCall()) look(() => { const L = book().live!; if (r.segs[L.s]) L.b = (r.segs[L.s].bc || []).length; }); }
 /** In a replay only: skip to the sign-off. A show on the air cannot be skipped. */
@@ -231,7 +235,8 @@ export const pickSide = (id: string) => look(() => { const b = book(); b.side = 
    sign-off: those wait for the player. SPACE still moves on at once, and P (or the button) pauses it. What is
    shown and when is all it changes: the show itself was decided by the engine, whatever the pace. */
 let autoT: any = null, autoKey = '';
-const autoHalt = (k: string | undefined) => !k || k === 'signoff' || k === 'title' || k === 'call';
+// auto-play stops when a segment is over (Ryan, 20 October: "the show screen needs to stop after every segment"): Next moves on, Replay plays it again
+const autoHalt = (k: string | undefined) => !k || k === 'signoff' || k === 'title' || k === 'call' || k === 'next' || k === 'off';
 export function autoStop() { if (autoT) { clearTimeout(autoT); autoT = null; } autoKey = ''; }
 const PACES: ('tv' | 'full' | 'quick' | 'results')[] = ['tv', 'full', 'quick', 'results'];
 export const PACE_N: Record<string, string> = { tv: 'TV', full: 'Full', quick: 'Quick', results: 'Results' };
@@ -239,11 +244,11 @@ export const PACE_N: Record<string, string> = { tv: 'TV', full: 'Full', quick: '
    it runs on the show's clock. In that time the broadcast shows the lines that matter: every big moment (a near
    fall, the finish, a new champion), the call of the bell, and lines spread evenly between, while the scene plays;
    the rest of the call is passed over, as a highlight package would. The result takes the last part of the time. */
-const TV_LINE = 1700;
+const TV_LINE = 2400, TV_SEC = 2600;   // each minute on the show's clock is about two and a half seconds on screen
 /** Which lines of a segment the TV pace shows, in order. */
 export function tvKeys(sg: any): number[] {
   const bc = (sg && sg.bc) || [], n = bc.length; if (!n) return [];
-  const T = (sg.mins || 5) * 1000 * 0.85, K = Math.max(2, Math.min(n, Math.round(T / TV_LINE))), keep = new Set<number>([0, n - 1]);
+  const T = (sg.mins || 5) * TV_SEC * 0.85, K = Math.max(2, Math.min(n, Math.round(T / TV_LINE))), keep = new Set<number>([0, n - 1]);
   if (sg.k === 'match') keep.add(lead(sg) + 1);
   bc.forEach((b: any, i: number) => { if (b.h || b.t === 'call' || b.t === 'ear') keep.add(i); });
   for (let j = 1; keep.size < K && j <= K; j++) keep.add(Math.round(j * (n - 1) / (K + 1)));
@@ -260,7 +265,7 @@ export function autoWait(): number {
   const L = livePos(r), s = r.segs[L.s], bc = (s && s.bc) || [], sp = Math.sqrt(pref.speed || 1);
   if (!s) return 0;
   if (pref.pace === 'tv') {   // the segment's seconds, shared between the lines shown, and the last part for its result
-    const T = (s.mins || 5) * 1000, keys = tvKeys(s);
+    const T = (s.mins || 5) * TV_SEC, keys = tvKeys(s);
     if (L.b >= bc.length) return Math.round(Math.max(1600, T * 0.15) / sp);
     const b = bc[L.b], hot = b && b.h ? (b.h > 1 ? 900 : 400) : 0;
     return Math.round(Math.max(900, T * 0.85 / Math.max(1, keys.length)) / sp + hot);

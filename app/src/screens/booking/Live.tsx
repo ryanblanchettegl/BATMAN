@@ -14,11 +14,12 @@ import { ScenePlayer } from '../../kit/sceneplayer';
 import { scenesFor, allScenes, copy, Scene, dressEntrance } from '../../kit/scene';
 import { finScene, threeMoves } from '../../kit/caw';
 import { recipeOf, Recipe, commentator } from '../../kit/puppet';
+import { PaperPortrait } from '../../kit/paperportrait';
 import { book } from '../../flow';
 import { fillScene, MomentPic, segPick, beatPick } from '../../shared/moment';
 import { Btn, KV, Meter, Banner, BeltArt, Belt, Portrait, CheckLine, stars, grade } from '../../kit';
 import { Verdict, OddsLine, FxList, Crowd } from './Report';
-import { typer, preNote, liveSkip, liveEnd, liveDecide, liveCall, onAir, livePos, autoArm, autoStop, autoToggle, paceNext, PACE_N, tvKeys } from './run';
+import { typer, preNote, liveSkip, liveEnd, liveDecide, liveCall, onAir, livePos, autoArm, autoStop, autoToggle, paceNext, PACE_N, tvKeys, liveReplaySeg, canReplaySeg } from './run';
 import { Logo } from '../../kit/logo';
 import { hm } from './Segments';
 
@@ -225,15 +226,29 @@ function LiveFeed(p: { r: any; si: number; b: number; info: any }) {
           <p class="pt">{x.t}</p><p class="pm"><span>{'♥'} {x.l.toLocaleString('en-US')}</span><span>{'↻'} {x.r.toLocaleString('en-US')}</span></p></div>
       </article>) : <p class="muted fd-empty">{P ? P.name : 'The company'} is on the air. The feed is waiting for the first bell.</p>}</div>
     </section>
-    <section class="crowdm" data-t="crowd-meter" data-v={v} aria-label={'The crowd: ' + F.crowd.word}>
-      <span class="cl">The crowd</span>
-      <span class="cm" aria-hidden="true">{Array.from({ length: n }, (_, i) => <i key={i} class={(i < on ? 'on ' : '') + (i < n * 0.45 ? 'g' : (i < n * 0.75 ? 'y' : 'r'))} />)}</span>
-      <b class="cw">{F.crowd.word}</b>
-    </section>
+    <FanStand v={v} word={F.crowd.word} pop={(() => { const sg = p.r.segs[p.si], bt = sg && sg.bc ? sg.bc[Math.min(p.b, sg.bc.length - 1)] : null; return bt && bt.h ? bt.h : 0; })()} hot={(() => { const sg = p.r.segs[p.si], ids: number[] = (sg && (sg.ids || sg.bids)) || []; const w = ids.map((id: number) => S.w[id]).filter(Boolean).sort((a: any, b: any) => b.ovr - a.ovr)[0]; return w ? w.name : ''; })()} />
     {p.info ? <p class="nt-foot" data-t="night-calls"><span>Calls from the headset: <b>{p.info.calls}</b></span><span>Booking power: <b>{p.info.bp}</b></span></p> : null}
   </aside>;
 }
 const DOT = ' · ';
+/* The crowd as people (Ryan, 20 October: "instead of a crowd meter I would like to see a screen of fans in the create a
+   player art style reacting to how the match is going"). Twelve fans in two rows, each a paper portrait cut the way
+   Create a Player cuts a wrestler, in a T-shirt. How loud the building is (the same reading the meter showed) sets
+   what they do: quiet sits still with a head or two down, into it sways, loud bounces, and electric jumps; a near
+   fall or a finish (a beat with h) makes the whole stand leap. Two hold up signs for the hottest act in the
+   segment. The fans are drawn once and kept; only their motion changes. */
+const SHIRTS = ['#d8453a', '#3f6fc0', '#3c9a4b', '#e1a52a', '#7f4fb0', '#2b8a8a', '#ece6d6', '#26262b', '#c2577a', '#e07b2a'];
+const FANS = Array.from({ length: 18 }, (_, i) => ({ id: -9000 - i, name: 'Fan ' + ['Ada', 'Bo', 'Cal', 'Dee', 'Eli', 'Fay', 'Gus', 'Hal', 'Ivy', 'Jo', 'Kit', 'Lou', 'Max', 'Nell', 'Oz', 'Pip', 'Quin', 'Rae'][i] + i, g: i % 3 === 1 ? 'F' : 'M', align: 'F', style: 'A', age: 20 + (i * 7) % 30 }));
+function FanStand(p: { v: number; word: string; pop: number; hot: string }) {
+  const mood = p.v >= 85 ? 'wild' : p.v >= 70 ? 'loud' : p.v >= 45 ? 'into' : 'quiet';
+  return <section class={'fanstand m-' + mood + (p.pop ? ' pop' + (p.pop > 1 ? '2' : '') : '')} data-t="live-crowd" data-v={p.v} aria-label={'The crowd: ' + p.word}>
+    <div class="fans" aria-hidden="true">{FANS.map((f, i) => <span key={f.id} class={'fan r' + (i < 6 ? 1 : i < 12 ? 2 : 3) + (i === 2 || i === 9 ? ' sign' : '')} style={{ ['--d' as any]: ((i * 37) % 11) / 10 + 's', ['--x' as any]: ((i * 13) % 7) - 3 + 'deg' }}>
+      <PaperPortrait r={{ ...recipeOf(f as any), shirt: SHIRTS[i % SHIRTS.length] } as any} card="none" label="" />
+      {(i === 2 || i === 9) && p.hot ? <b class="fsign">{i === 2 ? p.hot.split(' ')[0].toUpperCase() + '!' : (mood === 'quiet' ? 'ZZZ' : 'AWESOME!')}</b> : null}
+    </span>)}</div>
+    <p class="fw"><span>The crowd</span> <b>{p.word}</b></p>
+  </section>;
+}
 
 /** Which scene from Create a Scene fits this moment of the broadcast, and who plays it. It only reads the show:
     the bell and the first exchanges get the lock-up, the middle a trade of blows, a near fall the count and the
@@ -380,10 +395,10 @@ export function Live(p: { r: any }) {
     <div class="lv-body">
       <div class="lv-main">
         {(() => { const pk = pref.pics && !ev && state === 'seg' ? scenePick(r, s, L.b, done) : null;
-          return pk ? <div class="tvframe" data-t="tv"><ScenePlayer key="scene" sc={pk.sc} cast={pk.cast} play={pk.play} label={pk.label} still={reduceMotion()} /><div class="chyron">{head}</div><span class="bug" aria-hidden="true"><Logo of={S.promos[S.player]} size="chip" /><i class="dot" />LIVE</span></div> : head; })()}
+          return pk ? <div class="tvframe" data-t="tv"><ScenePlayer key="scene" sc={pk.sc} cast={pk.cast} play={pk.play} label={pk.label} still={reduceMotion()} fill /><div class="chyron">{head}</div><span class="bug" aria-hidden="true"><Logo of={S.promos[S.player]} size="chip" /><i class="dot" />LIVE</span></div> : head; })()}
         <div class={'lv-log' + (state === 'title' || state === 'signoff' ? ' mid' : '')}><div class="lv-lines">{log}</div></div>
         {box}
-        {ev ? null : <div class="foot">{foot}<Btn kind="sm" t="live-pics" on={!!pref.pics} onClick={picsToggle}>{pref.pics ? 'Scenes: on' : 'Scenes: off'}</Btn><Btn kind="sm" t="live-auto" on={!!pref.auto} onClick={autoToggle}>{pref.auto ? 'Auto-play: on' : 'Auto-play: off'}</Btn>{pref.auto ? <Btn kind="sm" t="live-pace" onClick={paceNext}>{'Pace: ' + PACE_N[pref.pace]}</Btn> : null}<span class="blink" aria-hidden="true">_</span><span class="keys-hint">{state === 'signoff' ? 'Space: after the show' : (pref.auto ? (state === 'title' ? 'Space: ring the bell. The show then runs itself and stops for your calls' : 'Running itself. Space: next now. P: pause') : 'Space or Enter: on with the show. P: auto-play')}</span></div>}
+        {ev ? null : <div class="foot">{foot}{canReplaySeg() ? <Btn kind="sm" t="live-replay" tip="Play this segment again from the start" onClick={liveReplaySeg}>Replay</Btn> : null}<Btn kind="sm" t="live-pics" on={!!pref.pics} onClick={picsToggle}>{pref.pics ? 'Scenes: on' : 'Scenes: off'}</Btn><Btn kind="sm" t="live-auto" on={!!pref.auto} onClick={autoToggle}>{pref.auto ? 'Auto-play: on' : 'Auto-play: off'}</Btn>{pref.auto ? <Btn kind="sm" t="live-pace" onClick={paceNext}>{'Pace: ' + PACE_N[pref.pace]}</Btn> : null}<span class="blink" aria-hidden="true">_</span><span class="keys-hint">{state === 'signoff' ? 'Space: after the show' : (pref.auto ? (state === 'title' ? 'Space: ring the bell. The show then runs itself and stops for your calls' : 'Running itself, and stops after each segment. Space: next. R: replay. P: pause') : 'Space or Enter: on with the show. R: replay. P: auto-play')}</span></div>}
       </div>
       <LiveFeed r={r} si={post ? ev.si : L.s} b={post ? 9999 : L.b} info={info} />
     </div>
