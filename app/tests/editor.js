@@ -42,6 +42,7 @@ async function run(mode) {
     }
 
     await page.click('[data-t="ed-tab"][data-v="world"]'); await page.fill('[data-t="ed-list"][data-v="sponsors"]', 'Test Cola\nRope Co'); await page.click('[data-t="ed-wname"]');
+    await page.fill('[data-t="ed-list"][data-v="net_major"]', 'Lantern Family One\nHarbour Broadcasting'); await page.click('[data-t="ed-wname"]');
     await company(page, mode, 'AAA', 'Alpha Wrestling', 'workrate');
     await over('a company form');
     await page.click('[data-t="ed-add-brand"]'); await page.fill('[data-t="ed-brand-name"]', 'Red Side');
@@ -54,6 +55,11 @@ async function run(mode) {
     const shows = await page.$$('[data-t="ed-show-name"]');
     await shows[shows.length - 1].fill('Saturday Slam');
     { const bs = await page.$$('[data-t="ed-show-brand"]'); ok(mode, 'a show of a company with brands can be put on one', bs.length >= 1); if (bs.length) await bs[0].selectOption({ index: 1 }); }
+    { const ns = await page.$$('[data-t="ed-show-net"]'), ys = await page.$$('[data-t="ed-show-years"]');
+      ok(mode, 'a show has a network and years on the air', ns.length >= 1 && ys.length >= 1);
+      if (ns.length && ys.length) { await ns[ns.length - 1].selectOption('2:Lantern Family One'); await ys[ys.length - 1].fill('12'); await ys[ys.length - 1].press('Tab');
+        const n2 = await page.$$('[data-t="ed-show-net"]'), y2 = await page.$$('[data-t="ed-show-years"]');
+        ok(mode, 'the world\'s own network can be picked for a show, and its years kept', (await n2[n2.length - 1].inputValue()) === '2:Lantern Family One' && (await y2[y2.length - 1].inputValue()) === '12'); } }
     await page.fill('[data-t="ed-ev-name"][data-v="3"]', 'Spring Clash');
     await page.selectOption('[data-t="ed-ev-rule"][data-v="3"]', 'all_titles');
     ok(mode, 'a second show and a named big event are kept', await page.evaluate(() => { const u = JSON.parse(localStorage.getItem('ewf9000-universes') || '{}'), w = u.test_world; return !!w; }) || true);

@@ -16,7 +16,7 @@ var NET_TASTE={
   niche:{n:'Niche',d:'cares less about the numbers, and likes long, serious matches.'}
 };
 var NET_KEYS=['family','sport','late','niche'];
-function netTaste(name){if(/Sport/.test(name))return 'sport';if(/Gaslight|Midnight|Late/.test(name))return 'late';return NET_KEYS[hash('taste:'+name)%NET_KEYS.length];}
+function netTaste(name){if(/Sport/.test(name))return 'sport';if(/Family|Kids/.test(name))return 'family';if(/Indie|Underground|Cult/.test(name))return 'niche';if(/Gaslight|Midnight|Late/.test(name))return 'late';return NET_KEYS[hash('taste:'+name)%NET_KEYS.length];}
 /** The ratings target for a show's deal. Set when it is first asked for, and again when a deal is signed. */
 function netTarget(sh){if(!sh.tgt&&sh.va)sh.tgt=Math.round(sh.va*(netTaste(sh.net)==='niche'?0.85:0.97));return sh.tgt||0;}
 /** Did tonight go against the network's taste? Returns a short reason, or ''. */

@@ -98,6 +98,14 @@ export function CompaniesTab() {
   </TwoPane>;
 }
 
+/** The network a show is on, from the world's lists by size; picking one sets its size too. Empty: the game picks one to suit the company. */
+function NetSel(p: { pkg: any; rec: any }) {
+  const r = p.rec, groups = (E.NET_SIZES as [string, string][]).map((z, t) => ({ label: z[1], options: (E.edNetNames(p.pkg, t) as string[]).map(n => [t + ':' + n, n] as Opt) }));
+  const cur = r.network ? (r.network_size != null ? r.network_size : 1) + ':' + r.network : '';
+  if (cur && !groups.some(g => g.options.some(o => o[0] === cur))) groups.push({ label: 'This show', options: [[cur, r.network] as Opt] });
+  return <Field label="Network"><Sel t="ed-show-net" value={cur} options={[['', 'Picked to suit the company'] as Opt]} groups={groups}
+    onChange={v => edit(() => { if (!v) { delete r.network; delete r.network_size; return; } const i = v.indexOf(':'); r.network_size = +v.slice(0, i); r.network = v.slice(i + 1); })} /></Field>;
+}
 const SIZES: [number, string][] = [[1, 'The main show'], [0.7, 'A second show'], [0.4, 'A small show']];
 export function ShowsTab() {
   const st = es(), pkg = world(), pid = st.sel.showsFor && pkg.promotions.some((x: any) => x.id === st.sel.showsFor) ? st.sel.showsFor : (pkg.promotions[0] ? pkg.promotions[0].id : null);
@@ -117,9 +125,11 @@ export function ShowsTab() {
           <NameF label="Name" table="shows" rec={s} max={32} t="ed-show-name" />
           <BrandSel pkg={pkg} pid={pid} rec={s} t="ed-show-brand" />
           <SelF label="Size" rec={s} k="weight" num options={(SIZES.some(z => z[0] === (s.weight == null ? 1 : s.weight)) ? SIZES : SIZES.concat([[s.weight, 'Size ' + s.weight]])) as Opt[]} />
+          <NetSel pkg={pkg} rec={s} />
+          <NumF label="Years on air" rec={s} k="years_on_air" min={0} max={60} blank="From the company's size" t="ed-show-years" />
         </div><span class="row opts"><DelBtn id={'show:' + s.id} what="this show" onDelete={() => { E.edRemove(pkg, 'shows', s.id); }} /></span></li>)}</ul>
           : <p class="bad mt2">This company has no weekly show. It needs one.</p>}
-        <p class="muted mt2">A company runs every one of its shows each week. Smaller shows draw less and count for less.</p>
+        <p class="muted mt2">A company runs every one of its shows each week. Smaller shows draw less and count for less. A bigger network pays more and reaches more people; a show with years on the air starts with a standing to match. The network's names are on the World tab.</p>
       </> : <p class="empty">Add a company first.</p>}
     </Panel>
     {pid ? (() => { const pr = pkg.promotions.find((x: any) => x.id === pid), own = (m: number) => (pr.events || []).find((e: any) => e.month === m) || {};
