@@ -39,7 +39,7 @@ function histApply(S){
     t.hist.push({ids:ids.slice().sort().join(','),h:ids.map(function(i){return S.w[i].name;}),from:wk(r.from),to:to,show:r.event||'Before your time',defs:r.defs||0});
     // the reign still running when the game begins is the champion's own: it keeps the weeks and defences it already has
     var cur=(t.holders||[]).slice().sort().join(',');
-    if(to==null&&cur&&cur===ids.slice().sort().join(',')&&wk(r.from)!=null&&wk(r.from)<1){t.since=wk(r.from);t.defs=r.defs||0;var gap=(1-t.since)/((r.defs||0)+1);t.last=Math.min(0,Math.round(t.since+gap*(r.defs||0)));}
+    if(to==null&&cur&&cur===ids.slice().sort().join(',')&&wk(r.from)!=null&&wk(r.from)<1){t.since=wk(r.from);t.defs=r.defs||0;t.defs0=t.defs;   /* the champion's edge in a title match counts only defences made in this game */ var gap=(1-t.since)/((r.defs||0)+1);t.last=Math.min(0,Math.round(t.since+gap*(r.defs||0)));}
     ids.forEach(function(i){var w=S.w[i];(w.tr||(w.tr=[])).push(t.name);});
   });
   Object.keys(tby).forEach(function(k){var t=tby[k];if(t.hist)t.hist.sort(function(a,b){return (a.from||0)-(b.from||0);});});

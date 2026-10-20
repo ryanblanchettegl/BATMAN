@@ -82,12 +82,15 @@ One line per file in `src/`, in build order: what it owns, then the `E.` functio
 - **99-debut.js**: Book a debut (roadmap 9, Ryan 16 October). `E.DEBUT`, `E.debuts`, `E.debutPlan`
 - **99-fog.js**: wraps: 90-api.js (it must sort after them; test-buildorder.js checks) `E.agentReads`, `E.fogInfo`, `E.segLook`, `E.segInfo`, `E.setSeg`, `E.cardFlags`, `E.validate`, `E.suggest`
 - **99-kayfabe.js**: The kayfabe layer (the add-ons run, item 3). `E.kayfabe`
+- **99-midstory.js**: wraps: 00-core.js, 86-history.js (it must sort after them; test-buildorder.js checks) `E.newGame`
 - **99-points.js**: wraps: 65-you.js (it must sort after them; test-buildorder.js checks) `E.pointsInfo`
 - **99-postmortem.js**: wraps: 00-core.js, 66-relations.js (it must sort after them; test-buildorder.js checks) `E.monthReview`, `E.readMonth`, `E.seasonReviews`
 - **99-press.js**: wraps: 99-kayfabe.js (it must sort after them; test-buildorder.js checks) `E.press`, `E.pressDo`
+- **99-reigns.js**: wraps: 10-match.js (it must sort after them; test-buildorder.js checks)
 - **99-royal.js**: wraps: 31-live.js (it must sort after them; test-buildorder.js checks) `E.brSize`, `E.brShot`, `E.brSurprise`, `E.brSurpriseInfo`, `E.liveBegin`, `E.lockMatch`, `E.moveMatchTo`, `E.suggestKeep`
 - **99-suggest-flat.js**: wraps: 90-api.js (it must sort after them; test-buildorder.js checks) `E.suggest`, `E.suggestSmart`
 - **99-suggest-short.js**: wraps: 99-suggest-flat.js, 55-preshow.js (it must sort after them; test-buildorder.js checks) `E.resolvePre`, `E.suggest`, `E.suggestSmart`
 - **99-tonight.js**: What could happen tonight (roadmap 7, Ryan 16 October). `E.couldHappen`
 - **99-venues.js**: wraps: 91-road.js (it must sort after them; test-buildorder.js checks) `E.venueQuirks`, `E.buildingWords`
+- **99-worldweek.js**: The week around the world (the week of 20 October, step 4). `E.worldWeek`
 - **99-writers.js**: The writers' room (the add-ons run, item 6). `E.writers`

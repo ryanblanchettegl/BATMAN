@@ -244,14 +244,28 @@ function Clocks() {
     <p class="muted mt1">Red clocks are trouble building. Green clocks pay out when they fill. Select one to see what moves it.</p>
   </>;
 }
-const MORE: [string, string][] = [['week', 'This week'], ['promises', 'Promises'], ['know', 'Worth knowing'], ['clocks', 'Clocks'], ['news', 'News'], ['answered', 'Answered']];
+const MORE: [string, string][] = [['week', 'This week'], ['world', 'Around the world'], ['promises', 'Promises'], ['know', 'Worth knowing'], ['clocks', 'Clocks'], ['news', 'News'], ['answered', 'Answered']];
+/** The week around the world (src/99-worldweek.js): what every other company did last week, one line each, the rest below it. */
+function WorldWeek() {
+  const WK = (E as any).worldWeek(G.S, 2) as any[];
+  if (!WK.length) return <Empty>Nothing filed yet. At the end of the week you will see what every other company did.</Empty>;
+  return <div data-t="world-week">{WK.map((w, i) => <div key={w.w} class={i ? 'mt2' : ''}>
+    <h3 class="ww-wk">{i ? 'The week before: ' : 'Last week: '}{w.label}</h3>
+    {w.cos.length ? <ul class="list ww">{w.cos.map((c: any) => <li key={c.id} data-t="ww-co" data-v={c.id}>
+      <span><b>{c.name}</b> {c.lead}
+        {c.titles.length > 1 ? <span class="muted"> Also: {c.titles.slice(1).map((x: any) => x.now + ' won the ' + x.title).join('; ')}.</span> : null}
+        {c.ended.length ? <span class="muted"> Ended: {c.ended.join('; ')}.</span> : null}
+        {c.begun.length && c.lead && c.lead.indexOf('A new story') < 0 ? <span class="muted"> New: {c.begun.join('; ')}.</span> : null}
+      </span></li>)}</ul> : <Empty>A quiet week everywhere else.</Empty>}
+  </div>)}</div>;
+}
 export function DeskMoreWindow(p: { m: Modal }) {
   const st = office() as any, k: string = MORE.some(x => x[0] === p.m.k) ? p.m.k : 'week', A = k === 'know' ? alerts() : [];
   const pick = (id: string) => view(() => { st.more = id; p.m.k = id; });
   return <Window title="The week in full" wide ok="Back to the desk">
     <Tabs label="The week in full" items={MORE.map(x => ({ id: x[0], label: x[1], t: 'more-tab', d: { v: x[0] } }))} value={k} onPick={pick} />
     <div class="dmore" data-t="desk-more-body" data-v={k} onClickCapture={(ev: any) => { if (ev.target && ev.target.closest && ev.target.closest('[data-t="book-show"],[data-t="report"]')) ui.modal = null; }}>
-      {k === 'week' ? <ScheduleList /> : k === 'promises' ? <QuestList /> : k === 'clocks' ? <Clocks /> : k === 'answered' ? <Answered />
+      {k === 'week' ? <ScheduleList /> : k === 'world' ? <WorldWeek /> : k === 'promises' ? <QuestList /> : k === 'clocks' ? <Clocks /> : k === 'answered' ? <Answered />
         : k === 'news' ? <><OfficeNews n={7} /><div class="row mt2"><Btn kind="sm" t="tab" d={{ v: 'world' }} onClick={() => { closeModal(); go('world'); }}>All the news</Btn></div></>
         : (A.length ? <ul class="list">{A.map((a, i) => <li key={i}><span>{a}</span></li>)}</ul> : <Empty>Nothing urgent.</Empty>)}
     </div>

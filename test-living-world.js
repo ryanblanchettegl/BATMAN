@@ -29,5 +29,24 @@ E.useUniverse(JSON.parse(fs.readFileSync('universes/parody.json', 'utf8')));
   ok('same', 'the same world and seed open on the same stories', JSON.stringify(A.feuds) === JSON.stringify(B.feuds));
 }
 
+// 3. the week around the world, and rival offices that plan their reigns (60 weeks)
+{
+  const S = E.newGame('ewe', 3, { name: 'R' }); let filed = 0, changes = 0, words = true, errs = 0;
+  for (let i = 0; i < 60 && !S.over; i++) {
+    S.inbox.filter(e => !e.done).forEach(e => E.resolveEvent(S, e.id, e.type === 'handover' ? 0 : 1));
+    if (S.owner.pending) E.setCreed(S, { style: 'merit', roots: 'tradition', pledge: 'stable' });
+    while (S.qi < S.queue.length) { const c = E.suggest(S); if (E.validate(S, c).errors.length) { errs++; S.qi++; continue; } E.runPlayerShow(S, c); }
+    E.endWeek(S);
+    const w = E.worldWeek(S, 1)[0]; if (w && w.w === S.week - 1) filed++;
+    if (w) w.cos.forEach(co => { co.titles.forEach(x => { if (!/vacant/.test(x.how)) changes++; }); if (co.lead && /NaN|undefined|null/.test(co.lead)) words = false; });
+  }
+  ok('filed', 'a week around the world is filed every week', filed >= 58, filed + ' of 60');
+  ok('kept', 'twelve weeks are kept', E.worldWeek(S).length === 12);
+  ok('words', 'every lead line reads as words', words);
+  const nt = S.order.filter(p => p !== 'ewe').reduce((a, p) => a + S.promos[p].titles.length, 0);
+  ok('reigns', 'rival belts change hands at a believable rate (reigns of about 20 weeks or more on average)', changes > 0 && changes < nt * 3, changes + ' changes, ' + nt + ' titles');
+  ok('errs', 'every show could run', errs === 0, errs + ' short cards');
+}
+
 console.log(fails ? fails + ' failed' : 'test-living-world: all passed');
 process.exit(fails ? 1 : 0);

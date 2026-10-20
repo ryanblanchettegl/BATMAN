@@ -242,7 +242,7 @@ function winOdds(S,P,show,m,sides,t,champSide,feud,big,isMain){
       if(w.fav)x+=3;
       return x;
     }));
-    if(k===champSide)v+=5-Math.min(6,(t?t.defs:0)*0.6);
+    if(k===champSide)v+=5-Math.min(6,(t?Math.max(0,t.defs-(t.defs0||0)):0)*0.6);
     if(feud){var heel=s[0].align==='H',end=big&&feud.heat>=60;v+=st==='drama'?(end?(heel?-4:4):(heel?4:-2)):(end?(heel?-2:2):(heel?1.5:0));}
     if(m.mt==='tag'&&s[0].team!=null&&s[0].team===s[1].team){var tm=teamOf(S,s[0]);if(tm)v+=tm.exp/40;}
     return v;
@@ -376,7 +376,7 @@ function doMatch(S,P,show,m,i,n,rep,used){
       t.holders.forEach(function(id){S.w[id].lt={n:t.name,id:t.id,w:S.week};});
       t.holders=m.sides[win].slice();t.since=S.week;t.defs=0;seg.change=true;seg.crown=!had;
       winners.forEach(function(w){w.mom=clamp(w.mom+2,-10,10);w.morale=clamp(w.morale+6,0,100);w.lt=null;});
-      news(S,'title',names(winners)+(had?' won the ':' won the vacant ')+P.name+' '+t.name+'.'+(had&&reign>=24?' The old reign lasted '+reign+' weeks'+(olds>=4?', with '+olds+' defences.':'.'):'')+(back?' It is not their first time with the belt.':''));
+      news(S,'title',names(winners)+(had?' won the ':' won the vacant ')+titleFull(P,t)+'.'+(had&&reign>=24?' The old reign lasted '+reign+' weeks'+(olds>=4?', with '+olds+' defences.':'.'):'')+(back?' It is not their first time with the belt.':''));
       seg.notes.push('New champion'+(t.tag?'s':'')+': '+names(winners)+'.');
       if(isPl)award(S,had?'ACH_TITLE_CHANGE':'ACH_CROWN');
     }else{t.defs++;if(win>=0&&champSide>=0)seg.notes.push(names(sides[champSide])+' retain'+(sides[champSide].length>1?'':'s')+'.');}
@@ -481,7 +481,7 @@ function settleFeud(S,P,show,feud,winners,losers,isPl){
   if(isPl){S.stats.feudsDone++;award(S,'ACH_BLOWOFF');if(S.stats.feudsDone>=5)award(S,'ACH_FEUDS_5');}
   return msg;
 }
-function vacateFor(S,P,w,why,quiet){P.titles.forEach(function(t){if(t.holders.indexOf(w.id)>=0){t.holders=[];t.since=S.week;if(!quiet)news(S,'title','The '+P.name+' '+t.name+' '+(t.tag?'are':'is')+' vacated ('+w.name+': '+why+').');}});}
+function vacateFor(S,P,w,why,quiet){P.titles.forEach(function(t){if(t.holders.indexOf(w.id)>=0){t.holders=[];t.since=S.week;if(!quiet)news(S,'title','The '+titleFull(P,t)+' '+(t.tag?'are':'is')+' vacated ('+w.name+': '+why+').');}});}
 
 function afterBell(S,P,show,m,sides,win,winners,losers,fin,runin,feud,t,OV,seg){
   if(runin){

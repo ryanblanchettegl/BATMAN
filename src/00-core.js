@@ -297,6 +297,8 @@ function turn(S,w,why){
   news(S,'story',w.name+' turns '+(w.align==='F'?'face':'heel')+(why?' — '+why:'')+'.'+note);if(w.promo===S.player)award(S,'ACH_TURN');}
 function holdLvl(P,id){var l=0;P.titles.forEach(function(t){if(t.holders.indexOf(id)>=0&&t.lvl>l)l=t.lvl;});return l;}
 function titleById(P,id){for(var i=0;i<P.titles.length;i++)if(P.titles[i].id===id)return P.titles[i];return null;}
+/** A title's full name in a sentence: the company's name in front, unless the title already starts with it. */
+function titleFull(P,t){var n=String(t.name||''),p=String(P.name||'');return n.toLowerCase().indexOf(p.toLowerCase())===0?n:p+' '+n;}
 function rkey(a,b){return a<b?a+'-'+b:b+'-'+a;}
 function titleFits(t,m){var d=MT[m.mt];return !!d&&(t.tag?m.mt==='tag':(d.per===1&&!(m.mt==='br'&&t.holders.length)));}
 
@@ -390,6 +392,11 @@ function autoBook(S,P,show){
   var worlds=mt.filter(function(t){return t.lvl===topLvl;}),mids=mt.filter(function(t){return t.lvl<topLvl;}).sort(stale);
   var wt=titles.filter(function(t){return !t.tag&&t.g===G2;}).sort(stale);
   var tt=titles.filter(function(t){return t.tag;}).sort(stale);
+  // a story on the night it is meant to end comes before everything else, so a main event or a request cannot take one of
+  // the two first (tag partners included: their story is the break-up)
+  activeFeuds(S).forEach(function(f){if(f.promo!==P.id||feudDue(S,f,show)!=='end'||card.length>=n)return;var a=S.w[f.a[0]],b=S.w[f.b[0]];
+    if(!a||!b||!free(a)||!free(b)||a.g!==b.g)return;single(a,b,{len:big?'L':'M',stip:big&&f.heat>=60?gimmickFor(S,a,b):'std'},70);
+    if(isPl){var lm=card[card.length-1];if(lm)lm.end=1;}});
   // tournament matches come first: they are owed to the bracket
   if(isPl&&S.tourn&&!S.tourn.done&&S.tourn.promo===P.id){
     var TT=S.tourn,tb=0,last=TT.fmt==='ko'&&TT.pend.length===1;

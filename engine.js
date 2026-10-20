@@ -301,6 +301,8 @@ function turn(S,w,why){
   news(S,'story',w.name+' turns '+(w.align==='F'?'face':'heel')+(why?' — '+why:'')+'.'+note);if(w.promo===S.player)award(S,'ACH_TURN');}
 function holdLvl(P,id){var l=0;P.titles.forEach(function(t){if(t.holders.indexOf(id)>=0&&t.lvl>l)l=t.lvl;});return l;}
 function titleById(P,id){for(var i=0;i<P.titles.length;i++)if(P.titles[i].id===id)return P.titles[i];return null;}
+/** A title's full name in a sentence: the company's name in front, unless the title already starts with it. */
+function titleFull(P,t){var n=String(t.name||''),p=String(P.name||'');return n.toLowerCase().indexOf(p.toLowerCase())===0?n:p+' '+n;}
 function rkey(a,b){return a<b?a+'-'+b:b+'-'+a;}
 function titleFits(t,m){var d=MT[m.mt];return !!d&&(t.tag?m.mt==='tag':(d.per===1&&!(m.mt==='br'&&t.holders.length)));}
 
@@ -394,6 +396,11 @@ function autoBook(S,P,show){
   var worlds=mt.filter(function(t){return t.lvl===topLvl;}),mids=mt.filter(function(t){return t.lvl<topLvl;}).sort(stale);
   var wt=titles.filter(function(t){return !t.tag&&t.g===G2;}).sort(stale);
   var tt=titles.filter(function(t){return t.tag;}).sort(stale);
+  // a story on the night it is meant to end comes before everything else, so a main event or a request cannot take one of
+  // the two first (tag partners included: their story is the break-up)
+  activeFeuds(S).forEach(function(f){if(f.promo!==P.id||feudDue(S,f,show)!=='end'||card.length>=n)return;var a=S.w[f.a[0]],b=S.w[f.b[0]];
+    if(!a||!b||!free(a)||!free(b)||a.g!==b.g)return;single(a,b,{len:big?'L':'M',stip:big&&f.heat>=60?gimmickFor(S,a,b):'std'},70);
+    if(isPl){var lm=card[card.length-1];if(lm)lm.end=1;}});
   // tournament matches come first: they are owed to the bracket
   if(isPl&&S.tourn&&!S.tourn.done&&S.tourn.promo===P.id){
     var TT=S.tourn,tb=0,last=TT.fmt==='ko'&&TT.pend.length===1;
@@ -743,7 +750,7 @@ function winOdds(S,P,show,m,sides,t,champSide,feud,big,isMain){
       if(w.fav)x+=3;
       return x;
     }));
-    if(k===champSide)v+=5-Math.min(6,(t?t.defs:0)*0.6);
+    if(k===champSide)v+=5-Math.min(6,(t?Math.max(0,t.defs-(t.defs0||0)):0)*0.6);
     if(feud){var heel=s[0].align==='H',end=big&&feud.heat>=60;v+=st==='drama'?(end?(heel?-4:4):(heel?4:-2)):(end?(heel?-2:2):(heel?1.5:0));}
     if(m.mt==='tag'&&s[0].team!=null&&s[0].team===s[1].team){var tm=teamOf(S,s[0]);if(tm)v+=tm.exp/40;}
     return v;
@@ -877,7 +884,7 @@ function doMatch(S,P,show,m,i,n,rep,used){
       t.holders.forEach(function(id){S.w[id].lt={n:t.name,id:t.id,w:S.week};});
       t.holders=m.sides[win].slice();t.since=S.week;t.defs=0;seg.change=true;seg.crown=!had;
       winners.forEach(function(w){w.mom=clamp(w.mom+2,-10,10);w.morale=clamp(w.morale+6,0,100);w.lt=null;});
-      news(S,'title',names(winners)+(had?' won the ':' won the vacant ')+P.name+' '+t.name+'.'+(had&&reign>=24?' The old reign lasted '+reign+' weeks'+(olds>=4?', with '+olds+' defences.':'.'):'')+(back?' It is not their first time with the belt.':''));
+      news(S,'title',names(winners)+(had?' won the ':' won the vacant ')+titleFull(P,t)+'.'+(had&&reign>=24?' The old reign lasted '+reign+' weeks'+(olds>=4?', with '+olds+' defences.':'.'):'')+(back?' It is not their first time with the belt.':''));
       seg.notes.push('New champion'+(t.tag?'s':'')+': '+names(winners)+'.');
       if(isPl)award(S,had?'ACH_TITLE_CHANGE':'ACH_CROWN');
     }else{t.defs++;if(win>=0&&champSide>=0)seg.notes.push(names(sides[champSide])+' retain'+(sides[champSide].length>1?'':'s')+'.');}
@@ -982,7 +989,7 @@ function settleFeud(S,P,show,feud,winners,losers,isPl){
   if(isPl){S.stats.feudsDone++;award(S,'ACH_BLOWOFF');if(S.stats.feudsDone>=5)award(S,'ACH_FEUDS_5');}
   return msg;
 }
-function vacateFor(S,P,w,why,quiet){P.titles.forEach(function(t){if(t.holders.indexOf(w.id)>=0){t.holders=[];t.since=S.week;if(!quiet)news(S,'title','The '+P.name+' '+t.name+' '+(t.tag?'are':'is')+' vacated ('+w.name+': '+why+').');}});}
+function vacateFor(S,P,w,why,quiet){P.titles.forEach(function(t){if(t.holders.indexOf(w.id)>=0){t.holders=[];t.since=S.week;if(!quiet)news(S,'title','The '+titleFull(P,t)+' '+(t.tag?'are':'is')+' vacated ('+w.name+': '+why+').');}});}
 
 function afterBell(S,P,show,m,sides,win,winners,losers,fin,runin,feud,t,OV,seg){
   if(runin){
@@ -4151,7 +4158,7 @@ function tournAdvance(S,T){
   }
   T.done=true;T.champ=champ;var w=S.w[champ];mile(S,w,'tourn','Won the '+T.name);w.mom=clamp(w.mom+3,-10,10);addOvr(P,w,1.5);
   if(t.holders[0]===champ){news(S,'story',w.name+' won the '+T.name+' as champion. Nobody is left to argue.');t.prestige=clamp(t.prestige+3,10,100);}
-  else if(!t.holders.length){t.holders=[champ];t.since=S.week;t.defs=0;ystat(S,w)[6]++;mile(S,w,'title','Won the vacant '+P.name+' '+t.name);news(S,'title',w.name+' won the '+T.name+' and the vacant '+P.name+' '+t.name+'.');}
+  else if(!t.holders.length){t.holders=[champ];t.since=S.week;t.defs=0;ystat(S,w)[6]++;mile(S,w,'title','Won the vacant '+titleFull(P,t));news(S,'title',w.name+' won the '+T.name+' and the vacant '+titleFull(P,t)+'.');}
   else{w.shot=t.id;startFeud(S,P,w,S.w[t.holders[0]],45,w.name+' won the '+T.name+' and a shot at the '+t.name,{title:t.id,force:true});news(S,'story',w.name+' won the '+T.name+' and a shot at the '+t.name+'.');}
   if(P.id===S.player){gainXp(S,25);award(S,'ACH_TOURN');}
 }
@@ -7014,7 +7021,7 @@ MOM.leaving={
       momLater(S,ev.wks,'leaveBad',{w:w.id,t:t.id});return rollText(r)+w.name+' smiles and says nothing. You have a bad feeling about the big show.';}
     if(c===1){r=rollCheck(S,ev.checks[1]);ev.roll=r;
       if(r.ok){momLater(S,ev.wks,'leaveForced',{w:w.id,t:t.id});return rollText(r)+'The new finish is in the booker’s head and nobody else’s. '+w.name+' suspects nothing. For now.';}
-      t.holders=[];t.since=S.week;t.prestige=clamp(t.prestige-8,10,100);S.trust=clamp(S.trust-4,0,100);momLose(S,w,'walked out');news(S,'title',w.name+' found out about the finish and walked out with the '+P.name+' '+t.name+'.');
+      t.holders=[];t.since=S.week;t.prestige=clamp(t.prestige-8,10,100);S.trust=clamp(S.trust-4,0,100);momLose(S,w,'walked out');news(S,'title',w.name+' found out about the finish and walked out with the '+titleFull(P,t)+'.');
       return rollText(r)+w.name+' found out and walked out of the building tonight with the title. It will be on every dirt sheet.';}
     if(c===2){t.holders=[];t.since=S.week;t.prestige=clamp(t.prestige-3,10,100);w.morale=clamp(w.morale-15,0,100);w.con=Math.min(w.con,2);news(S,'title',P.name+' stripped '+w.name+' of the '+t.name+'.');
       return 'You strip '+w.name+' of the title before anything can happen. Safe, and a little cold. They will not forget it.';}
@@ -8110,7 +8117,7 @@ function histApply(S){
     t.hist.push({ids:ids.slice().sort().join(','),h:ids.map(function(i){return S.w[i].name;}),from:wk(r.from),to:to,show:r.event||'Before your time',defs:r.defs||0});
     // the reign still running when the game begins is the champion's own: it keeps the weeks and defences it already has
     var cur=(t.holders||[]).slice().sort().join(',');
-    if(to==null&&cur&&cur===ids.slice().sort().join(',')&&wk(r.from)!=null&&wk(r.from)<1){t.since=wk(r.from);t.defs=r.defs||0;var gap=(1-t.since)/((r.defs||0)+1);t.last=Math.min(0,Math.round(t.since+gap*(r.defs||0)));}
+    if(to==null&&cur&&cur===ids.slice().sort().join(',')&&wk(r.from)!=null&&wk(r.from)<1){t.since=wk(r.from);t.defs=r.defs||0;t.defs0=t.defs;   /* the champion's edge in a title match counts only defences made in this game */ var gap=(1-t.since)/((r.defs||0)+1);t.last=Math.min(0,Math.round(t.since+gap*(r.defs||0)));}
     ids.forEach(function(i){var w=S.w[i];(w.tr||(w.tr=[])).push(t.name);});
   });
   Object.keys(tby).forEach(function(k){var t=tby[k];if(t.hist)t.hist.sort(function(a,b){return (a.from||0)-(b.from||0);});});
@@ -13425,6 +13432,28 @@ E.pressDo=function(S,id,k){
   return {ok:true,msg:r.name+' runs it. A little more buzz for your next show.'};
 };
 
+/* ===== 99-reigns.js ===== */
+/* wraps: 10-match.js (it must sort after them; test-buildorder.js checks) */
+/* Rival offices plan their reigns (the week of 20 October, step 4). A rival company's champion used to have the same
+   odds as anybody in every title match, so belts changed hands about every two months across the world. Real offices
+   decide how long a reign should run. Now each rival reign has a planned length, 16 to 51 weeks (a reign already running when the game begins goes on 8 to 31 weeks more), fixed by a hash of
+   the title and the day the reign began. Before it is up the champion is protected, most of all on weekly television;
+   after it, the title match is as open as any other. The player's own titles are untouched: the player books their own
+   finishes. No rnd(S) is added: the odds change, the draw that reads them does not. */
+(function(){
+  var w0=winOdds;
+  winOdds=function(S,P,show,m,sides,t,champSide){
+    var od=w0.apply(this,arguments);
+    if(!t||champSide<0||!P||P.id===S.player||S.cal||!od||!od.p)return od;
+    var h=hash(S.seed+':'+t.id+':'+t.since),plan=16+h%36,age=S.week-t.since;
+    if(t.since<1)plan=Math.max(plan,(1-t.since)+8+(h>>>6)%24);   // a reign carried from the world's history runs on for a while yet
+    if(age>=plan)return od;
+    var keep=show&&show.big?0.35:0.15,pc=od.p[champSide],room=1-od.draw,np=room-(room-pc)*keep,k=room-pc>0?(room-np)/(room-pc):0;
+    od.p=od.p.map(function(p,i){return i===champSide?np:p*k;});
+    return od;
+  };
+})();
+
 /* ===== 99-royal.js ===== */
 /* wraps: 31-live.js (it must sort after them; test-buildorder.js checks) */
 /* Battle royals (roadmap 2, Ryan 16 October). A battle royal takes 6 to 30 entrants and runs 30 minutes for every 15
@@ -13711,6 +13740,50 @@ LIVEK.disaster={n:'Trouble in the building',
 LIVE_ORDER.push('disaster');   // tried last: trouble in the building never takes the place of another call
 /** For the desk: the quirks of tonight's building, in words. */
 E.buildingWords=function(S){var R=E.road(S);if(!R||!R.now||!R.now.venue)return null;var q=venueQuirks(R.now.venue);return {words:q.words,short:q.short};};
+
+/* ===== 99-worldweek.js ===== */
+/* The week around the world (the week of 20 October, step 4). Rival companies already book shows, change titles and
+   keep feuds, but the player only saw it as loose lines in the news. Now, at the end of every week, the game files a
+   short digest of what every other company did: their shows and how each went against its own crowd, new champions
+   and how they got there, stories that started and stories that ended. It is kept for twelve weeks (S.ww) and read in
+   "The week in full" on the desk (the Around the world tab). It only reads the game and never calls rnd(S).
+   What it hands on (rule 7a): a rival who is hot right now, a champion crowned elsewhere, a star whose story just
+   ended and who may be looking for work. */
+var WW_KEEP=12;
+function wwCompany(S,P,wk){
+  var out={id:P.id,name:P.name,shows:[],titles:[],begun:[],ended:[],lead:null};
+  (S.wwShows||[]).forEach(function(r){if(r.p===P.id&&r.w===wk)out.shows.push(r);});
+  (P.titles||[]).forEach(function(t){(t.hist||[]).forEach(function(h,i){if(h.from!==wk||!h.h||!h.h.length)return;
+    var prev=t.hist[i-1],old=prev&&prev.to===wk?prev:null,how='';
+    if(old){var f=(S.feuds||[]).filter(function(x){return x.promo===P.id&&x.title===t.id;})[0];
+      how=f?'after weeks of chasing':(h.show?'at '+h.show:'');}
+    else how='for the vacant title';
+    out.titles.push({title:titleFull(P,t),now:h.h.join(' & '),old:old&&old.h?old.h.join(' & '):null,weeks:old&&old.from!=null?wk-old.from:null,how:how});});});
+  (S.feuds||[]).forEach(function(f){if(f.promo!==P.id)return;var nm=function(L){return L.map(function(id){return S.w[id]?S.w[id].name:'?';}).join(' & ');};
+    if(f.start===wk)out.begun.push(nm(f.a)+' and '+nm(f.b));
+    if(f.res&&f.end===wk&&!f.dead)out.ended.push(nm(f.a)+' and '+nm(f.b));});
+  // the line that leads: a new champion, then a story that ended, then the best show
+  var t0=out.titles[0],best=out.shows.slice().sort(function(a,b){return (b.big?1:0)-(a.big?1:0);})[0];
+  out.lead=t0?t0.now+' won the '+t0.title+(t0.how?' '+t0.how:'')+(t0.weeks&&t0.weeks>=12?', ending a reign of '+t0.weeks+' weeks':'')+'.'
+    :(out.ended[0]?'The story of '+out.ended[0]+' ended.':(best&&best.big?best.name+': '+best.word+', '+best.grade+'.':(out.begun[0]?'A new story: '+out.begun[0]+'.':(best?best.name+': '+best.word+', '+best.grade+'.':null))));
+  return out;
+}
+function wwFile(S){
+  if(S.cal)return;var wk=S.week,L=[];
+  S.order.forEach(function(pid){if(pid===S.player)return;var P=S.promos[pid];if(!P||P.dead)return;var c=wwCompany(S,P,wk);if(c.lead||c.begun.length)L.push(c);});
+  L.sort(function(a,b){return (b.titles.length*3+b.ended.length*2+b.shows.length)-(a.titles.length*3+a.ended.length*2+a.shows.length);});
+  var ww=S.ww||(S.ww=[]);ww.unshift({w:wk,label:cal(wk).label,cos:L});if(ww.length>WW_KEEP)ww.length=WW_KEEP;
+}
+// rival shows are not kept as reports, so each one is noted as it airs: its grade against its own crowd, and its main event
+SHOWX.push(function(S,P,show,rep){
+  if(S.cal||!P||P.id===S.player||!rep)return;var L=S.wwShows||(S.wwShows=[]),cs=repCS(rep),me=rep.lineup&&rep.lineup.length?rep.lineup[rep.lineup.length-1]:null;
+  L.push({p:P.id,w:S.week,name:show.name,big:!!show.big,grade:gradeG(cs),word:verdictWord(rep),main:typeof me==='string'?me:null});
+});
+// the verdict in the game's own words (rule 8c): the same ladder the letter and the dirt sheet use
+function verdictWord(rep){var v=rep.rating!=null&&rep.exp!=null?E.showVerdict(rep.rating,rep.exp):null;return v?v.head.toLowerCase():'';}
+WEEKX.push(function(S){wwFile(S);S.wwShows=[];});
+/** The week around the world: the latest filed weeks, newest first ({w, label, cos:[{name, lead, shows, titles, begun, ended}]}). */
+E.worldWeek=function(S,n){return (S.ww||[]).slice(0,n||WW_KEEP);};
 
 /* ===== 99-writers.js ===== */
 /* The writers' room (the add-ons run, item 6). Three named writers join your staff (people on the roster, nw, srole

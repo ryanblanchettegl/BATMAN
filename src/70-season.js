@@ -69,7 +69,7 @@ function tournAdvance(S,T){
   }
   T.done=true;T.champ=champ;var w=S.w[champ];mile(S,w,'tourn','Won the '+T.name);w.mom=clamp(w.mom+3,-10,10);addOvr(P,w,1.5);
   if(t.holders[0]===champ){news(S,'story',w.name+' won the '+T.name+' as champion. Nobody is left to argue.');t.prestige=clamp(t.prestige+3,10,100);}
-  else if(!t.holders.length){t.holders=[champ];t.since=S.week;t.defs=0;ystat(S,w)[6]++;mile(S,w,'title','Won the vacant '+P.name+' '+t.name);news(S,'title',w.name+' won the '+T.name+' and the vacant '+P.name+' '+t.name+'.');}
+  else if(!t.holders.length){t.holders=[champ];t.since=S.week;t.defs=0;ystat(S,w)[6]++;mile(S,w,'title','Won the vacant '+titleFull(P,t));news(S,'title',w.name+' won the '+T.name+' and the vacant '+titleFull(P,t)+'.');}
   else{w.shot=t.id;startFeud(S,P,w,S.w[t.holders[0]],45,w.name+' won the '+T.name+' and a shot at the '+t.name,{title:t.id,force:true});news(S,'story',w.name+' won the '+T.name+' and a shot at the '+t.name+'.');}
   if(P.id===S.player){gainXp(S,25);award(S,'ACH_TOURN');}
 }
