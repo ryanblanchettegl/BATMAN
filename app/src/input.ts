@@ -6,7 +6,7 @@ import { beatPick } from './shared/moment';
 import { G, ui, pref, reduceMotion, redraw, closeModal, openModal, popCard } from './store';
 import { lightDraws } from './kit/lights';
 import { roadMapDraws } from './kit/roadmap';
-import { scenePlays } from './kit/sceneplayer';
+import { scenePlays, snap3d } from './kit/sceneplayer';
 import { HOT, SECTIONS, sectionOf, go } from './nav';
 import { book } from './flow';
 
@@ -218,5 +218,10 @@ export function initInput() {
     /** A contact sheet for checking moves: each scene id painted (flat renderer) at each of its keyframes, as data URLs. */
     sheet: (ids: string[], w = 320, h = 200) => { const all = allScenes([]); return ids.map(id => { const sc = all.find(x => x.id === id) as Scene | undefined; if (!sc) return { id, imgs: [] as string[] };
       const cast: any = { A: { ...blank(0), name: 'A' }, B: { ...blank(1), name: 'B' } }, c = document.createElement('canvas'); c.width = w; c.height = h; const ctx = c.getContext('2d')!;
-      return { id, imgs: sc.keys.map(k => { paint(ctx, sc, k.t, cast); return c.toDataURL('image/png'); }) }; }); } };
+      return { id, imgs: sc.keys.map(k => { paint(ctx, sc, k.t, cast); return c.toDataURL('image/png'); }) }; }); },
+    /** The same in 3D, by the shared renderer: each keyframe, and the moment halfway to the next, so a pass-through shows. */
+    sheet3d: (ids: string[], w = 360, h = 220) => { const all = allScenes([]); return ids.map(id => { const sc = all.find(x => x.id === id) as Scene | undefined; if (!sc) return { id, imgs: [] as string[] };
+      const cast: any = { A: { ...blank(0), name: 'A' }, B: { ...blank(1), name: 'B' } }, ts: number[] = [];
+      sc.keys.forEach((k, i) => { ts.push(k.t); if (i + 1 < sc.keys.length) ts.push((k.t + sc.keys[i + 1].t) / 2); });
+      return { id, imgs: ts.map(t => snap3d(sc, t, cast, w, h) || '') }; }); } };
 }

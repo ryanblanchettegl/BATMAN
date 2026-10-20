@@ -563,13 +563,26 @@ const P: Record<string, [number[], number[]]> = { ring: [[0, 9, 21], [0, 3.2, 0]
   desk: [[0, 4.3, 13.5], [0, 2.6, 0]], ramp: [[0, 4.5, 18], [0, 3.4, 0]], backstage: [[0, 5, 14], [0, 3.6, 0]], lot: [[0, 5, 15], [0, 3.4, -2]], talk: [[0, 4.8, 14], [0, 3.4, 0]], news: [[0, 4.8, 13], [0, 3.4, 0]], rafters: [[0, 8, 16], [0, 1.5, -4]], hall: [[0, 5.2, 13], [0, 3.8, -6]], office: [[0, 5, 14], [0, 3.6, 0]], locker: [[0, 5, 14], [0, 3.6, -1]] };
 /** The set's own camera: where it stands and what it looks at. */
 export function homeShot(set: string): Cam3 { const [pos, look] = P[set] || [[0, 5.5, 17], [0, 3.6, 0]]; return { p: pos.slice() as any, t: look.slice() as any, fov: 30 }; }
-function frame(set: string, cam: THREE.PerspectiveCamera, ctl: OrbitControls, k: Key) {
+/** A camera outside the ropes looking at somebody in the ring sees over the top rope, as a real hard camera does (Ryan,
+    20 October: make it real): it is raised, keeping what it looks at, until the line from it to the wrestlers' knees clears
+    the top rope. Shots of the floor outside the ring, and cameras inside it, are left as they are. */
+function overRopes(set: string, cam: THREE.PerspectiveCamera, ctl: OrbitControls) {
+  if (!RINGS.includes(set) || set === 'ringside') return;
+  const p = cam.position, t = ctl.target, H = 10, TOP = 4.8;
+  if (Math.abs(t.x) > H - 0.3 || Math.abs(t.z) > H - 0.3) return;   // looking at the floor, or the corner from outside
+  if (Math.abs(p.x) < H && Math.abs(p.z) < H) return;               // inside the ring already
+  let sIn = 0; for (let k = 1; k <= 100; k++) { const u = k / 100, x = p.x + (t.x - p.x) * u, z = p.z + (t.z - p.z) * u; if (Math.abs(x) < H && Math.abs(z) < H) { sIn = u; break; } }
+  if (!sIn || sIn > 0.97) return;
+  const low = t.y - 2.2, need = (TOP - low * sIn) / (1 - sIn);
+  if (p.y < need) { p.y = Math.min(32, need); cam.updateProjectionMatrix(); ctl.update(); }
+}
+function frame(set: string, cam: THREE.PerspectiveCamera, ctl: OrbitControls, k: Key, real = false) {
   if (k.cam3) {   // the keyframe's own camera, placed in the model
-    const c3 = k.cam3; cam.position.set(c3.p[0], c3.p[1], c3.p[2]); ctl.target.set(c3.t[0], c3.t[1], c3.t[2]); cam.fov = c3.fov || 30; cam.zoom = 1; cam.updateProjectionMatrix(); ctl.update(); return;
+    const c3 = k.cam3; cam.position.set(c3.p[0], c3.p[1], c3.p[2]); ctl.target.set(c3.t[0], c3.t[1], c3.t[2]); cam.fov = c3.fov || 30; cam.zoom = 1; cam.updateProjectionMatrix(); ctl.update(); if (real) overRopes(set, cam, ctl); return;
   }
   const c = k.cam || { x: 0, y: 0, z: 1, r: 0 };
   const [pos, look] = P[set] || [[0, 5.5, 17], [0, 3.6, 0]];
-  cam.position.set(pos[0] + c.x, pos[1] + c.y, pos[2]); ctl.target.set(look[0] + c.x, look[1] + c.y, look[2]); cam.fov = 30; cam.zoom = c.z; cam.rotation.z = 0; cam.updateProjectionMatrix(); ctl.update();
+  cam.position.set(pos[0] + c.x, pos[1] + c.y, pos[2]); ctl.target.set(look[0] + c.x, look[1] + c.y, look[2]); cam.fov = 30; cam.zoom = c.z; cam.rotation.z = 0; cam.updateProjectionMatrix(); ctl.update(); if (real) overRopes(set, cam, ctl);
 }
 /** The shots Create a Scene offers: each worked out from the set's own camera, or from the person picked. */
 export const SHOTS: [string, string][] = [['home', 'The set camera'], ['low', 'Low angle'], ['high', 'High angle'], ['left', 'From the left'], ['right', 'From the right'], ['over', 'Straight down'], ['wide', 'Pull back wide'], ['close', 'Close-up on who is picked'], ['face', 'Face to face with who is picked']];
@@ -616,7 +629,7 @@ export class Diorama3D {
   show(sc: Scene, k: Key, cast: Record<string, Recipe>, time = 0, sel: { who: string; part: string } | null = null) {
     if (this.set !== setKey(sc.set)) { this.clear(this.world); const room = ROOMS[sc.set]; if (RINGS.includes(sc.set)) arena(this.world, true, sc.set); else if (room) room(this.world); else flat(this.world, sc); this.mood(sc.set); this.set = setKey(sc.set); this.framed = '';
       this.tronScr = (this.world.getObjectByName('tron') as THREE.Mesh) || null; }
-    const fk = sc.set + JSON.stringify(k.cam || null) + JSON.stringify(k.cam3 || null); if (this.framed !== fk) { frame(sc.set, this.cam, this.ctl, k); this.framed = fk; }
+    const fk = sc.set + JSON.stringify(k.cam || null) + JSON.stringify(k.cam3 || null); if (this.framed !== fk) { frame(sc.set, this.cam, this.ctl, k, !this.ctl.enabled); this.framed = fk; }
     this.clear(this.people); this.groups = []; this.sel = sel;
     const b = build(sc, k, cast, time); this.rigs = b.rigs; this.hold = b.hold;
     const byWho = new Map<string, Piece[]>();
@@ -634,8 +647,8 @@ export class Diorama3D {
       // the pivot: the figure's waist, or the middle of the prop; it stands at the depth of its layer
       let px = 0, n = 0; if (f) px = f.x; else { for (const p of ps) for (const q of p.pts) { px += q[0]; n++; } px = n ? px / n : (ps[0].txt ? ps[0].txt.x : 0); }
       const base = f ? f.z : Math.min(...ps.map(p => p.z)), g = new THREE.Group(); g.position.set(px, 0, base * DEPTH);
-      g.userData = { who: id, prop: kind === 'p' };
-      const minD = Math.min(...ps.map(q => (q.z - base) * 0.06));   // a figure's margins all lie behind it
+      const minD = Math.min(...ps.map(q => (q.z - base) * 0.06)), maxD = Math.max(...ps.map(q => (q.z - base) * 0.06));   // a figure's margins all lie behind it
+      g.userData = { who: id, prop: kind === 'p', fig: kind === 'f', minD: minD - 0.08, maxD: maxD + CARD, order: f ? Object.keys(k.figs).indexOf(id) : 99 };
       for (const p of ps) {
         const d = (p.z - base) * 0.06, m = p.txt ? words(p, d) : slab(p, d, kind === 'f'); if (!m) continue;
         if (kind === 'f' && !p.txt) { const mg = margin(p, minD); if (mg) { mg.position.x -= px; mg.userData = { who: kind === 'f' && p.own != null ? p.own : id, joint: p.joint }; g.add(mg); } }
@@ -650,7 +663,24 @@ export class Diorama3D {
       }
       this.people.add(g); this.groups.push(g);
     });
+    this.unstack();
     this.ask();
+  }
+  /** Two people side by side at the same depth would have their cards cut through each other (Ryan, 20 October: collision
+      that does not make sense). Front to back, a figure that overlaps one in front of it, across the picture and in depth,
+      is moved back until there is a sliver of air between them; who is in front stays as the scene has it. */
+  unstack() {
+    const figs = this.groups.filter(g => g.userData.fig), box = new THREE.Box3(), GAP = 0.04;
+    const span = figs.map(g => { g.updateMatrixWorld(true); box.setFromObject(g); return { g, x0: box.min.x, x1: box.max.x, y0: box.min.y, y1: box.max.y }; });
+    span.sort((a, b) => (b.g.position.z - a.g.position.z) || (a.g.userData.order - b.g.userData.order));
+    for (let j = 1; j < span.length; j++) {
+      const J = span[j];
+      for (let i = 0; i < j; i++) {
+        const I = span[i]; if (J.x1 <= I.x0 || J.x0 >= I.x1 || J.y1 <= I.y0 || J.y0 >= I.y1) continue;   // not in front of each other
+        const frontBack = I.g.position.z + I.g.userData.minD, myFront = J.g.position.z + J.g.userData.maxD;
+        if (myFront > frontBack - GAP) J.g.position.z -= myFront - (frontBack - GAP);
+      }
+    }
   }
   /** The camera as it stands now, to keep on a keyframe. */
   view(): Cam3 { const r = (v: number) => Math.round(v * 100) / 100, p = this.cam.position, t = this.ctl.target; return { p: [r(p.x), r(p.y), r(p.z)], t: [r(t.x), r(t.y), r(t.z)], fov: Math.round(this.cam.fov) }; }

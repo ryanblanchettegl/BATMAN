@@ -17,6 +17,10 @@ function shared(): { eng: Diorama3D; cv: HTMLCanvasElement } | null {
   return SHARED || null;
 }
 let plays = 0;
+/** A scene at time t drawn by the shared 3D renderer, as a PNG data URL (EWF_DEBUG.sheet3d, for checking moves and scenes). */
+export function snap3d(sc: Scene, t: number, cast: Record<string, Recipe>, w: number, h: number): string | null {
+  const SH = shared(); if (!SH) return null; SH.eng.size(w, h); SH.eng.show(sc, at(sc, t), cast, t); SH.eng.now(); return SH.cv.toDataURL('image/png');
+}
 /** How many scenes have started on the broadcast since the page loaded (EWF_DEBUG.scenes). */
 export function scenePlays() { return plays; }
 
