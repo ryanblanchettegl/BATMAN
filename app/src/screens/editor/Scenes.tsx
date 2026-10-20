@@ -17,7 +17,7 @@ export function ScenesTab() {
       return <Panel cls="mb4 edstudio" title={name} key={mode}>
         <p>{what}</p>
         <div class="row mt2"><Btn kind="go" t="ed-scene-new" d={{ v: mode }} onClick={() => openIt('__new', mode)}>{mode === 'still' ? 'New from a template' : mode === 'move' ? 'New move' : 'New animation'}</Btn></div>
-        <div class="row mt2"><Sel t="ed-scene-pick" d={{ v: mode }} label={'Open one in ' + name} value="" options={[['', 'Open one...'] as Opt].concat(own.map(x => [x.id, 'This world: ' + x.name] as Opt))} groups={[{ label: 'The game\'s', options: theirs.map(x => [x.id, x.name + ' (' + use(x) + ')'] as Opt) }]} onChange={v => { if (v) openIt(v, mode); }} /></div>
+        <div class="row mt2"><Sel t="ed-scene-pick" d={{ v: mode }} label={'Open one in ' + name} value="" options={[['', 'Open or change one...'] as Opt].concat(own.map(x => [x.id, 'This world: ' + x.name] as Opt))} groups={[{ label: 'The game\'s own (saving keeps a changed copy for this world)', options: theirs.map(x => [x.id, x.name + ' (' + use(x) + ')'] as Opt) }]} onChange={v => { if (v) openIt(v, mode); }} /></div>
         <p class="muted mt2">{own.length ? own.length + ' made for this world.' : 'None made for this world yet; it plays the game\'s own.'} {theirs.length} in the game.</p>
       </Panel>; })}</div>
     <Panel cls="mb4" title={'Made for this world (' + mine.length + ')'}>

@@ -2,8 +2,8 @@
 import { E } from '../../engine';
 import { UNIS, saveUnis, slice, redraw, ui } from '../../store';
 
-export type EdTab = 'world' | 'companies' | 'shows' | 'belts' | 'wrestlers' | 'teams' | 'scenes' | 'share';
-export const TABS: [EdTab, string][] = [['world', 'World'], ['companies', 'Companies'], ['shows', 'Shows'], ['belts', 'Belts'], ['wrestlers', 'Wrestlers'], ['teams', 'Teams'], ['scenes', 'Scenes'], ['share', 'Check and share']];
+export type EdTab = 'world' | 'companies' | 'shows' | 'belts' | 'wrestlers' | 'teams' | 'scenes' | 'stories' | 'share';
+export const TABS: [EdTab, string][] = [['world', 'World'], ['companies', 'Companies'], ['shows', 'Shows'], ['belts', 'Belts'], ['wrestlers', 'Wrestlers'], ['teams', 'Teams'], ['scenes', 'Scenes'], ['stories', 'Stories'], ['share', 'Check and share']];
 export interface EdState {
   /** the world open in the editor, or null on the list of worlds */
   id: string | null; tab: EdTab;

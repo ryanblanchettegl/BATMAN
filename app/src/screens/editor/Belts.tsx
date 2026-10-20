@@ -33,15 +33,15 @@ export function BeltsTab() {
         <div class="row mt1"><Btn kind="go" t="ed-belt-open" onClick={() => { const co = pkg.promotions.find((x: any) => x.id === t.promotion_id); openBeltMaker({ title: t, co, belt: E.beltOf(t, co), onSave: b => { let r: any = null; edit(() => { r = E.edSetBelt(pkg, t.id, b); }); return r; } }); }}>Create a Belt</Btn>
           <span class="muted">{t.belt ? 'A design of its own.' : 'The design the title gives itself.'}</span></div></div>
       <div class="editor plain">
-        <NameF label="Name of the belt" table="titles" rec={t} max={40} t="ed-belt-name" />
+        <NameF label="Name" table="titles" rec={t} max={40} t="ed-belt-name" />
         <Field label="Company"><Sel t="ed-belt-co" value={t.promotion_id} options={companyOpts(pkg)} onChange={v => edit(() => { t.promotion_id = v; t.holder_ids = []; st.sel.beltsFor = v; })} /></Field>
         <Field label="Division"><Sel t="ed-belt-g" value={t.gender} options={[['M', 'Men'], ['F', 'Women']]} onChange={v => edit(() => { t.gender = v; t.holder_ids = []; })} /></Field>
         <BrandSel pkg={pkg} pid={t.promotion_id} rec={t} t="ed-belt-brand" />
-        <SelF label="How big a prize" rec={t} k="level" num options={[[3, 'Top title'], [2, 'Second title'], [1, 'Third title']]} />
-        <Field label="Who fights for it"><Sel t="ed-belt-tag" value={t.tag ? '1' : ''} options={[['', 'One wrestler'], ['1', 'A tag team']]} onChange={v => edit(() => { t.tag = v === '1'; t.holder_ids = []; })} /></Field>
+        <SelF label="Level" rec={t} k="level" num options={[[3, 'Top title'], [2, 'Second title'], [1, 'Third title']]} />
+        <Field label="Holders"><Sel t="ed-belt-tag" value={t.tag ? '1' : ''} options={[['', 'One wrestler'], ['1', 'A tag team']]} onChange={v => edit(() => { t.tag = v === '1'; t.holder_ids = []; })} /></Field>
       </div>
     </Panel>
-    <Panel cls="mb4" title={t.tag ? 'The champions' : 'The champion'}>
+    <Panel cls="mb4" title={t.tag ? 'Champions' : 'Champion'}>
       <div class="editor plain">{slots.map(i => <Field key={i} label={t.tag ? 'Champion ' + (i + 1) : 'Champion'}><Sel t="ed-holder" d={{ v: i }} value={hold[i] || ''} options={people(ros, 'Vacant')} onChange={v => setHolder(i, v)} /></Field>)}</div>
       <p class="muted mt2">{ros.length ? 'Only ' + (t.gender === 'F' ? 'women' : 'men') + ' under contract to this company are listed. Leave it vacant and the first champion is crowned in the game.' : 'Nobody in this division is under contract here yet, so the belt starts vacant.'}</p>
     </Panel>
@@ -65,8 +65,8 @@ export function TeamsTab() {
       <Panel cls="mb4" title={t.name || 'Team'}>
         <div class="editor plain">
           <NameF label={stable ? 'Name of the stable' : 'Name of the team'} table="teams" rec={t} max={40} t="ed-team-name" />
-          {stable ? null : <NumF label="Experience together (0 to 100)" rec={t} k="experience" min={0} max={100} blank="the game decides" />}
-          {stable ? null : <TextF label="Team finishing move" rec={t} k="finisher" max={32} />}
+          {stable ? null : <NumF label="Experience together" rec={t} k="experience" min={0} max={100} blank="the game decides" />}
+          {stable ? null : <TextF label="Team finisher" rec={t} k="finisher" max={32} />}
         </div>
       </Panel>
       <Panel cls="mb4" title="Members">
@@ -74,7 +74,7 @@ export function TeamsTab() {
           {mem.length ? <ul class="list">{mem.map(id => <li key={id}><span>{wn[id] || id}{t.leader_id === id ? <span class="hl"> {'·'} Leader</span> : null}</span><span class="row opts">
             {t.leader_id === id ? null : <Btn kind="sm" t="ed-leader" d={{ id }} onClick={() => edit(() => { t.leader_id = id; })}>Make leader</Btn>}
             <Btn kind="sm" t="ed-member-out" d={{ id }} onClick={() => edit(() => { t.member_ids = mem.filter(x => x !== id); if (t.leader_id === id) delete t.leader_id; })}>Remove</Btn></span></li>)}</ul> : <p class="empty">Nobody in it yet.</p>}
-          <div class="row mt2"><Field label="Add a member"><Sel t="ed-member-in" value="" options={people(free, free.length ? 'Pick someone' : 'Nobody left to add')} onChange={v => { if (v) edit(() => { t.member_ids = mem.concat([v]); }); }} /></Field></div>
+          <div class="row mt2"><Field label="New member"><Sel t="ed-member-in" value="" options={people(free, free.length ? 'Pick someone' : 'Nobody left to add')} onChange={v => { if (v) edit(() => { t.member_ids = mem.concat([v]); }); }} /></Field></div>
         </> : <div class="editor plain">{[0, 1].map(i => <Field key={i} label={'Partner ' + (i + 1)}><Sel t="ed-member" d={{ v: i }} value={mem[i] || ''} options={people(ros.filter(w => w.id === mem[i] || mem.indexOf(w.id) < 0), 'Pick someone')} onChange={v => setM(i, v)} /></Field>)}</div>}
         <p class="muted mt2">{ros.length ? 'Only wrestlers under contract to this company are listed.' : 'Nobody is under contract to this company yet. Sign wrestlers first.'}</p>
       </Panel>
@@ -92,11 +92,11 @@ function Bonds(p: { wn: Record<string, string> }) {
   const st = es(), pkg = world(), all: Opt[] = people(pkg.workers.slice().sort((a: any, b: any) => String(a.ring_name).localeCompare(String(b.ring_name))), 'Pick someone');
   const a = st.sel.bondA || '', b = st.sel.bondB || '', type = st.sel.bondT || 'rivalry';
   const add = () => edit(() => { E.edAddRel(pkg, a, b, type); st.sel.bondA = null; st.sel.bondB = null; note(p.wn[a] + ' and ' + p.wn[b] + ': ' + E.ED.rels[type].toLowerCase() + '.'); });
-  return <Panel cls="mb4" title="Friends, rivals and family">
+  return <Panel cls="mb4" title="Relationships">
     <div class="editor plain">
-      <Field label="This person"><Sel t="ed-bond-a" value={a} options={all} onChange={v => look(() => { st.sel.bondA = v; })} /></Field>
-      <Field label="And this person"><Sel t="ed-bond-b" value={b} options={all} onChange={v => look(() => { st.sel.bondB = v; })} /></Field>
-      <Field label="Are"><Sel t="ed-bond-t" value={type} options={opts(E.ED.rels)} onChange={v => look(() => { st.sel.bondT = v; })} /></Field>
+      <Field label="Person A"><Sel t="ed-bond-a" value={a} options={all} onChange={v => look(() => { st.sel.bondA = v; })} /></Field>
+      <Field label="Person B"><Sel t="ed-bond-b" value={b} options={all} onChange={v => look(() => { st.sel.bondB = v; })} /></Field>
+      <Field label="Relationship"><Sel t="ed-bond-t" value={type} options={opts(E.ED.rels)} onChange={v => look(() => { st.sel.bondT = v; })} /></Field>
     </div>
     <div class="row mt2"><Btn t="ed-add-bond" disabled={!a || !b || a === b} onClick={add}>Add this tie</Btn></div>
     {pkg.relationships.length ? <ul class="list mt2">{pkg.relationships.slice(0, 80).map((r: any, i: number) => <li key={i}><span><b>{p.wn[r.a] || r.a}</b> and <b>{p.wn[r.b] || r.b}</b> <span class="muted">{'·'} {E.ED.rels[r.type] || r.type}</span></span>

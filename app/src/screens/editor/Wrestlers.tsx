@@ -76,7 +76,7 @@ export function WrestlersPage() {
       </Win>
       <Win title={shownW ? (PARTS.find(x => x[0] === part) || PARTS[0])[1] : 'Biography'} area="sheet" t="ed-wsheet" info={shownW ? [(shownW.age ? 'Age ' + shownW.age : 'Age unknown') + ' · ' + (shownW.gender === 'F' ? 'Women' : 'Men'), 'Over ' + ov(shownW)] : ['', '']}>
         {shownW ? <>
-          <div class="sc-row edw-parts"><span class="sc-lbl">Show</span><Sel t="ed-sheet" label="About them" value={part} options={PARTS as Opt[]} onChange={v => look(() => { st.sheet = v as any; })} /></div>
+          <div class="sc-row edw-parts"><span class="sc-lbl">Show</span><Sel t="ed-sheet" label="Section" value={part} options={PARTS as Opt[]} onChange={v => look(() => { st.sheet = v as any; })} /></div>
           <div class="edsheet edcol-form" data-part={part}><Sheet key={shownW.id + part} w={shownW} part={part} /></div>
         </> : <p class="empty">Their biography, their company and their attributes show here.</p>}
       </Win>

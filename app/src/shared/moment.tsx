@@ -5,7 +5,7 @@
 import { E } from '../engine';
 import { G } from '../store';
 import { ScenePlayer } from '../kit/sceneplayer';
-import { Scene, scenesFor, copy } from '../kit/scene';
+import { Scene, scenesFor, copy, allScenes } from '../kit/scene';
 import { recipeOf, Recipe } from '../kit/puppet';
 
 /** Who plays each part of a scene: a slot with a hook gets whoever the game says fills it (E.sceneHooks); a slot
@@ -104,7 +104,17 @@ export function storyPick(whens: string[], who: (number | null)[]): { sc: Scene;
   return null;
 }
 /** A booked promo or angle of kind `k`. */
-export const segPick = (k: string, who: (number | null)[]) => storyPick(['seg_' + k], who);
+export function segPick(k: string, who: (number | null)[]) {
+  const K = E.SEGK[k], own = K && (K.custom || K.over) ? (K.custom || K.over) : null;   // a world's own kind plays the scene it was made with (src/93-segworld.js)
+  if (own && own.scene) { const S = G.S, sc0 = S ? allScenes(E.worldScenes(S) as Scene[]).find(x => x.id === own.scene) : null; if (sc0) { const r = castPick(sc0, who); if (r) return r; } }
+  return storyPick(own && K.custom ? ['seg_' + (own.t === 'angle' ? (who.length > 1 ? 'ambush' : 'turn') : (who.length > 1 ? 'callout' : 'interview'))] : ['seg_' + k], who);
+}
+/** One scene cast with the people named, in order. */
+function castPick(sc0: Scene, who: (number | null)[]) {
+  const S = G.S; if (!S) return null; const ids = who.filter((id): id is number => id != null && !!S.w[id]); if (!ids.length) return null;
+  const cast: Record<string, Recipe> = {}, hk = E.sceneHooks(S, { ids, a: ids[0], b: ids[1] }); hk.a = ids[0]; if (ids[1] != null) hk.b = ids[1]; else delete hk.b;
+  const sc = fillScene(sc0, hk, cast); return sc ? { sc, cast, label: sc.name + ': ' + Object.values(cast).map(r => r.name).filter(Boolean).join(', ') } : null;
+}
 /** A beat the story director wrote: its own scene, or the booked kind's where it is the same moment. */
 export const beatPick = (beat: string, who: (number | null)[]) => storyPick(['beat_' + beat, 'seg_' + beat], who);
 /** The picture of a promo or angle on the run sheet: the first moment of the scene it will play. */

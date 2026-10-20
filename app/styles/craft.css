@@ -334,3 +334,5 @@ html body .win.ppop .wb{font-family:var(--hand);font-size:1.06em}
 .edrow:has(.pic){padding-left:2.6em}
 /* the note in an empty pane, on a slip of paper so it can be read on the board */
 .edshell .edcol-form>.empty{display:inline-block;background:var(--lk-paper) 0 0/360px;color:var(--ink);font-family:var(--hand);padding:.4em 1.4ch;box-shadow:.15em .2em .4em rgba(0,0,0,.45);transform:rotate(-.6deg)}
+.edstory-pic{height:14em;margin-top:.6em}.edstory-pic>*{height:100%}
+.edro{display:inline-block;padding:.2em 0;color:var(--ink);font-family:var(--hand)}

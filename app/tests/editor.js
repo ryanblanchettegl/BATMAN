@@ -79,6 +79,13 @@ async function run(mode) {
     const art1 = await page.$eval('[data-t="ed-belt-art"]', c => c.getAttribute('data-sig'));
     ok(mode, 'Save the belt keeps it on the belt’s page', art1 !== art0 && /"pl":"crest"/.test(art1) && /design of its own/i.test(await txt(page, '.edbelt')));
 
+    // Stories: the world's own promos and angles, kept in the world
+    await page.click('[data-t="ed-tab"][data-v="stories"]'); await page.click('[data-t="ed-story-new"][data-v="angle"]'); await page.waitForTimeout(200);
+    await page.fill('[data-t="ed-story-name"]', 'Coffee in the face'); await page.selectOption('[data-t="ed-story-scene"]', 'seg_ambush'); await page.selectOption('[data-t="ed-story-bond"]', '-8');
+    await page.fill('[data-t="ed-story-line"]', '{a} throws coffee at {b}.'); await page.waitForTimeout(300);
+    ok(mode, 'Stories makes the world\'s own angle, with its scene and what it does', await page.evaluate(() => { const u = JSON.parse(localStorage.getItem('ewf9000-universes') || '{}'); return Object.values(u).some((w) => (w.segkinds || []).some((k) => k.n === 'Coffee in the face' && k.scene === 'seg_ambush' && k.bond === -8 && /coffee/.test(k.line))); }) || /Coffee in the face/.test(await txt(page, '.edcol-list')));
+    ok(mode, 'its scene plays beside the form', !!(await page.$('[data-t="ed-story-pic"]')));
+    await over('the Stories tab');
     await page.click('[data-t="ed-tab"][data-v="wrestlers"]');
     await page.click('[data-t="ed-add-wrestler"]');
     await page.fill('[data-t="ed-wrname"]', 'Captain Thunder');

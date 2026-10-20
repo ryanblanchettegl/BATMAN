@@ -13,6 +13,7 @@ import { CompaniesTab, ShowsTab } from './Companies';
 import { WrestlersTab } from './People';
 import { BeltsTab, TeamsTab } from './Belts';
 import { ScenesTab, keepScene, forgetScene } from './Scenes';
+import { StoriesTab } from './Stories';
 import { SceneStudio, fromWorld } from '../scene';
 import { CreatePlayer, workerW } from '../player';
 import { companyCard } from '../../kit/paperportrait';
@@ -56,7 +57,7 @@ function Home() {
         : <p class="empty">No worlds yet. Start one below.</p>}
     </Panel>
     <Panel cls="mb4" title="Start a new world">
-      <div class="row"><Field label="Name of the world"><input type="text" id="ed-newname" data-t="ed-newname" value={st.newName} maxLength={40} placeholder="My world" onInput={e => { st.newName = (e.currentTarget as HTMLInputElement).value; }} /></Field></div>
+      <div class="row"><Field label="Name"><input type="text" id="ed-newname" data-t="ed-newname" value={st.newName} maxLength={40} placeholder="My world" onInput={e => { st.newName = (e.currentTarget as HTMLInputElement).value; }} /></Field></div>
       <div class="row mt2">
         <Btn kind="go" t="ed-new" onClick={() => look(() => { addWorld(E.edNew(st.newName)); st.newName = ''; })}>Start from scratch</Btn>
         <Btn t="ed-new-copy" onClick={() => look(() => { addWorld(E.edCopy(builtInUniverse(isBuiltIn(pref.uni) ? pref.uni : undefined), st.newName || undefined)); st.newName = ''; })}>Start from a copy of {builtInUniverse(isBuiltIn(pref.uni) ? pref.uni : undefined).manifest.name}</Btn>
@@ -79,7 +80,7 @@ function Home() {
 
 function Open() {
   const st = es(), pkg = world(), v = report();
-  const body = st.tab === 'world' ? <WorldTab /> : st.tab === 'companies' ? <CompaniesTab /> : st.tab === 'shows' ? <ShowsTab /> : st.tab === 'belts' ? <BeltsTab /> : st.tab === 'wrestlers' ? <WrestlersTab /> : st.tab === 'teams' ? <TeamsTab /> : st.tab === 'scenes' ? <ScenesTab /> : <ShareTab />;
+  const body = st.tab === 'world' ? <WorldTab /> : st.tab === 'companies' ? <CompaniesTab /> : st.tab === 'shows' ? <ShowsTab /> : st.tab === 'belts' ? <BeltsTab /> : st.tab === 'wrestlers' ? <WrestlersTab /> : st.tab === 'teams' ? <TeamsTab /> : st.tab === 'scenes' ? <ScenesTab /> : st.tab === 'stories' ? <StoriesTab /> : <ShareTab />;
   const back = () => look(() => { if (st.sel[st.tab]) st.sel[st.tab] = null; else { keep(true); st.id = null; st.msg = ''; } });
   return <EdShell tab={st.tab} note={st.msg || TIPS[st.tab]} bad={st.err} back={back} backLabel={st.sel[st.tab] ? 'Back to the list' : 'All worlds'} t="ed-open"
     main={v.ok ? <Btn kind="go" cls="pkey" t="ed-play-key" onClick={() => look(() => { st.tab = 'share'; })}>CHECK AND SHARE</Btn> : <Btn kind="go" cls="pkey" t="ed-fix-key" onClick={() => look(() => { st.tab = 'share'; })}>{v.errors + ' TO FIX'}</Btn>}>
@@ -95,6 +96,7 @@ const TIPS: Record<string, string> = {
   wrestlers: 'Pick a wrestler on the list, or add one.',
   teams: 'Tag teams and stables, and who gets on with whom.',
   scenes: 'Scenes made for this world: entrances, moves, stills and more.',
+  stories: 'Your own promos and angles: who is in them, the scene they play, what they do. A booker can put them on the card.',
   share: 'Every problem in plain words, then play the world or share it.',
 };
 

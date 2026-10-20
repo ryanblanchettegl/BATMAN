@@ -286,7 +286,7 @@ export function SceneStudio(pp: StudioProps) {
         </div>
         {!sel && <p class="empty">Press somebody on the picture, or pick them here.</p>}
         {selFig && sel && <>
-          <Group title="Where they are">
+          <Group title="Position">
             <div class="sc-row" role="group" aria-label="Move">
               <Btn kind="less" t="scene-move" d={{ v: 'l' }} onClick={() => nudge(-0.5, 0)}>Left</Btn><Btn kind="less" t="scene-move" d={{ v: 'r' }} onClick={() => nudge(0.5, 0)}>Right</Btn>
               <Btn kind="less" t="scene-move" d={{ v: 'f' }} tip="Away from the set camera" onClick={() => nudge(0, 0, -0.6)}>Away</Btn><Btn kind="less" t="scene-move" d={{ v: 'n' }} tip="Toward the set camera" onClick={() => nudge(0, 0, 0.6)}>Nearer</Btn>
@@ -324,7 +324,7 @@ export function SceneStudio(pp: StudioProps) {
               <Btn kind="sm" t="scene-turn" d={{ v: -5 }} onClick={() => turn(-5)}>{'-5'}</Btn><Btn kind="sm" t="scene-turn" d={{ v: -15 }} onClick={() => turn(-15)}>{'-15'}</Btn>
             </div>
             {LIMBS[sel.part] && <div class="sc-row" role="group" aria-label="This limb">
-              <span class="sc-lbl">This {LIMBS[sel.part].startsWith('arm') ? 'arm' : 'leg'}</span>
+              <span class="sc-lbl">{LIMBS[sel.part].startsWith('arm') ? 'Arm' : 'Leg'} depth</span>
               <Drop t="scene-limb" label="Where the limb sits" value={String((selFig.lz || {})[LIMBS[sel.part]] || 0)} options={[['3', 'In front'], ['0', 'As cut'], ['-3', 'Behind']]} onChange={sv => { const v = +sv; edit(k => { const f = fig(k, sel.who); if (f) { const lz = { ...(f.lz || {}) }; if (v) lz[LIMBS[sel.part]] = v; else delete lz[LIMBS[sel.part]]; f.lz = lz; } }); }} />
             </div>}
           </Group>
@@ -335,12 +335,12 @@ export function SceneStudio(pp: StudioProps) {
             <div class="sc-row">{([['sweat', 'Sweat'], ['tears', 'Tears'], ['bruise', 'A bruise']] as [keyof Marks, string][]).map(([m, n]) =>
               <Btn kind="less" t="scene-mark" d={{ v: m }} on={!!(selFig.m && selFig.m[m])} onClick={() => edit(k => { const f = fig(k, sel.who); if (f) f.m = { ...(f.m || {}), [m]: !(f.m && f.m[m]) }; })}>{n}</Btn>)}</div>
           </Group>
-          <Group title="Hide parts of the body">
+          <Group title="Hidden parts">
             {BODY_PARTS.map(([g, ps]) => <div class="sc-row" key={g}><span class="sc-lbl">{g}</span>{ps.map(([j, n]) => <Btn kind={hideOf.indexOf(j) >= 0 ? 'danger' : 'less'} t="scene-hide" d={{ v: j }} on={hideOf.indexOf(j) >= 0} tip={hideOf.indexOf(j) >= 0 ? 'Hidden: press to show it' : 'Shown: press to hide it'} onClick={() => setHide(j)}>{n}</Btn>)}</div>)}
             <div class="sc-row"><Btn kind="less" t="scene-unhide" disabled={!hideOf.length} onClick={() => setHide(null)}>Show every part</Btn><span class="muted">For a close-up, a shadow on a wall, a hand coming into the picture.</span></div>
           </Group>
         </>}
-        {selProp && sel && <Group title="The prop">
+        {selProp && sel && <Group title="Prop">
           <div class="sc-row">
             {(TEXTED.includes(selProp.k)) && <TextBox value={selProp.txt || ''} max={selProp.k === 'words' ? 32 : 16} label="Words" t="scene-words" onInput={v => edit(k => { const q = propOf(k, sel.who); if (q) q.txt = selProp.k === 'words' ? v : v.toUpperCase(); })} width="12ch" />}
             {TEXTED.includes(selProp.k) && <Drop t="scene-wordcol" label="Colour of the words" value={selProp.col || ''} options={WORD_COLS} onChange={v => edit(k => { const q = propOf(k, sel.who); if (q) { if (v) q.col = v; else delete q.col; } })} />}
@@ -378,7 +378,7 @@ export function SceneStudio(pp: StudioProps) {
           </div>
           <div class="sc-row"><Btn kind="go" t="scene-addperson" disabled={people.length >= MAX_PEOPLE} onClick={addPerson}>Add a person</Btn><span class="muted">Up to {MAX_PEOPLE}, and the referee. Each is played by the next wrestler on the roster until you pick.</span></div>
         </Group>
-        <Group title="Add a prop">
+        <Group title="New prop">
           <div class="sc-row"><select aria-label="Prop" data-t="scene-propkind" value={addK} onChange={e => setAddK((e.currentTarget as HTMLSelectElement).value)}>{PROPS.map(x => <option value={x[0]}>{x[1]}</option>)}</select>
             {(TEXTED.includes(addK)) && <TextBox value={words} max={addK === 'words' ? 32 : 16} label="Words on it" t="scene-newwords" onInput={v => setWords(addK === 'words' ? v : v.toUpperCase())} width="10ch" />}
             <Btn t="scene-addprop" onClick={() => { addProp(); setTab('sel'); }}>Add</Btn></div>
@@ -396,17 +396,17 @@ export function SceneStudio(pp: StudioProps) {
         </Group>
       </>}
       {tab === 'set' && <>
-        <Group title="The set">
+        <Group title="Set">
           <div class="sc-row"><span class="sc-slot">Where</span><select aria-label="The set" data-t="scene-set" value={sc.set} onChange={e => { const v = (e.currentTarget as HTMLSelectElement).value; if (isBg(v)) { const b = allBgs.find(x => 'bg_' + x.id === v); if (b) { setBg(copy(b) as any); setBgi(-1); } } setSc({ ...sc, set: v }); setReframe(x => x + 1); }}>{SETS.map(x => <option value={x[0]}>{x[1]}</option>)}{allBgs.map(b => <option value={'bg_' + b.id}>{'Backdrop: ' + b.name}</option>)}</select></div>
           <div class="sc-row"><span class="sc-slot">Shape</span><select aria-label="Shape of the picture" data-t="scene-frame" value={sc.frame || 'wide'} onChange={e => { const f = (e.currentTarget as HTMLSelectElement).value as any; const n = { ...sc }; if (f === 'wide') delete n.frame; else n.frame = f; setSc(n); }}>{FRAMES.map(x => <option value={x[0]}>{x[1]}</option>)}</select></div>
           <div class="sc-row"><span class="sc-slot">Look</span><span class="sc-fx">{SCENE_FX.map(([k, n]) => { const on = !!(sc.fx && sc.fx[k]); return <Btn key={k} t="scene-fx" d={{ v: k }} kind={on ? 'go' : 'less'} on={on} onClick={() => { const f = { ...(sc.fx || {}) }; if (on) delete f[k]; else f[k] = true; const n2 = { ...sc }; if (Object.keys(f).length) n2.fx = f; else delete n2.fx; setSc(n2); }}>{n}</Btn>; })}</span></div>
         </Group>
-        {!(bg && isBg(sc.set)) ? <Group title="A backdrop of your own">
+        {!(bg && isBg(sc.set)) ? <Group title="Custom backdrop">
           <p class="sc-gap">Build the wall behind this scene: a colour for the wall and the floor, then banners, signs, windows, curtains, a skyline.</p>
           <div class="sc-row"><Btn kind="go" t="scene-bgnew" onClick={() => { const b = newBackdrop(); setBg(b); setBgi(-1); setSc({ ...sc, set: 'bg_' + b.id }); say('A new backdrop. Add parts to it, then Keep the backdrop.'); }}>A new backdrop</Btn>
             {savedBgs.map(b => <Btn kind="less" t="scene-bguse" d={{ v: b.id }} onClick={() => { setBg(copy(b) as any); setBgi(-1); setSc({ ...sc, set: 'bg_' + b.id }); }}>{b.name}</Btn>)}</div>
         </Group> : <>
-          <Group title="The backdrop">
+          <Group title="Backdrop">
             <div class="sc-row"><TextBox value={bg.name} max={40} label="Name of the backdrop" t="scene-bgname" onInput={v => editBg(b => { b.name = v; })} width="16ch" /></div>
             <div class="sc-row"><span class="sc-slot">Wall</span><select aria-label="Wall colour" data-t="scene-bgwall" value={bg.wall} onChange={e => { const v = (e.currentTarget as HTMLSelectElement).value; editBg(b => { b.wall = v; }); }}>{BG_COLS.map(c => <option value={c[0]}>{c[1]}</option>)}</select>
               <span class="sc-slot">Floor</span><select aria-label="Floor colour" data-t="scene-bgfloor" value={bg.floor} onChange={e => { const v = (e.currentTarget as HTMLSelectElement).value; editBg(b => { b.floor = v; }); }}>{BG_COLS.map(c => <option value={c[0]}>{c[1]}</option>)}</select></div>
@@ -415,7 +415,7 @@ export function SceneStudio(pp: StudioProps) {
               <Btn t="scene-bgadd" disabled={bg.parts.length >= 40} onClick={() => { editBg(b => { b.parts.push(newPart(bgAdd, bgWords)); }); setBgi(bg.parts.length); }}>Add</Btn></div>
             <div class="sc-row">{bg.parts.length ? <Drop t="scene-bgpart" label="Which part" value={String(bgi)} options={[['-1', 'Pick a part...'] as Opt].concat(bg.parts.map((q, i) => [String(i), (BG_PARTS.find(x => x[0] === q.k) || ['', q.k])[1] + (q.txt ? ': ' + q.txt : '')] as Opt))} onChange={v => setBgi(+v)} /> : null}</div>
           </Group>
-          {bgPart && <Group title="The part picked">
+          {bgPart && <Group title="Picked part">
             <div class="sc-row" role="group" aria-label="Move it">{([['l', 'Left', -0.5, 0], ['r', 'Right', 0.5, 0], ['u', 'Up', 0, 0.3], ['d', 'Down', 0, -0.3]] as [string, string, number, number][]).map(([v, n, dx, dy]) => <Btn kind="less" t="scene-bgmove" d={{ v }} onClick={() => editBg(b => { const q = b.parts[bgi]; q.x = Math.max(-12, Math.min(12, Math.round((q.x + dx) * 10) / 10)); q.y = Math.max(-6, Math.min(8, Math.round((q.y + dy) * 10) / 10)); })}>{n}</Btn>)}</div>
             <div class="sc-row" role="group" aria-label="Size">{([['w+', 'Wider', 1.15, 1], ['w-', 'Narrower', 1 / 1.15, 1], ['h+', 'Taller', 1, 1.15], ['h-', 'Shorter', 1, 1 / 1.15]] as [string, string, number, number][]).map(([v, n, kw, kh]) => <Btn kind="less" t="scene-bgsize" d={{ v }} onClick={() => editBg(b => { const q = b.parts[bgi]; q.w = Math.max(0.2, Math.min(24, Math.round(q.w * kw * 100) / 100)); q.h = Math.max(0.1, Math.min(12, Math.round(q.h * kh * 100) / 100)); })}>{n}</Btn>)}</div>
             <div class="sc-row"><select aria-label="Colour of the part" data-t="scene-bgcol" value={bgPart.col} onChange={e => { const v = (e.currentTarget as HTMLSelectElement).value; editBg(b => { b.parts[bgi].col = v; }); }}>{BG_COLS.map(c => <option value={c[0]}>{c[1]}</option>)}</select>
@@ -427,10 +427,10 @@ export function SceneStudio(pp: StudioProps) {
         </>}
       </>}
       {tab === 'file' && <>
-        <Group title="The scene">
+        <Group title="Scene">
           <div class="sc-row"><TextBox value={sc.name} max={32} label="Name of the scene" t="scene-name" onInput={v => setSc({ ...sc, name: v })} width="18ch" /></div>
           <div class="sc-row"><span class="sc-slot">Kind</span><select aria-label="Kind of scene" data-t="scene-kind" value={sc.still ? 'still' : 'moving'} onChange={e => { const still = (e.currentTarget as HTMLSelectElement).value === 'still'; const n = copy(sc); if (still) { n.still = true; n.keys = [n.keys[kk]]; n.keys[0].t = 0; n.loop = false; if (!STILL_WHEN.some(w => w[0] === n.when)) n.when = 'any'; } else { delete n.still; if (!WHEN.concat(SHOW_WHEN).some(w => w[0] === n.when)) n.when = 'any'; } setSc(n); setKi(0); setTime(null); }}><option value="moving">Moving: keyframes that play</option><option value="still">A still picture</option></select></div>
-          <div class="sc-row"><span class="sc-slot">{sc.still ? 'Shown at' : 'Plays at'}</span><select aria-label="When it plays" data-t="scene-when" value={sc.when} onChange={e => setSc({ ...sc, when: (e.currentTarget as HTMLSelectElement).value })}>{(sc.still ? STILL_WHEN : WHEN.concat(SHOW_WHEN)).map(w => <option value={w[0]}>{w[1]}</option>)}</select></div>
+          <div class="sc-row"><span class="sc-slot">{sc.still ? 'Used for' : 'Plays at'}</span><select aria-label="When it plays" data-t="scene-when" value={sc.when} onChange={e => setSc({ ...sc, when: (e.currentTarget as HTMLSelectElement).value })}>{(sc.still ? STILL_WHEN : WHEN.concat(SHOW_WHEN)).map(w => <option value={w[0]}>{w[1]}</option>)}</select></div>
           <div class="sc-row"><span class="sc-slot">Plays</span><Btn kind="less" t="scene-loop" on={!!sc.loop} onClick={() => { const n = { ...sc }; if (n.loop) delete n.loop; else n.loop = true; setSc(n); }}>{sc.loop ? 'Round and round' : 'Once'}</Btn></div>
         </Group>
         <Group title="Files">

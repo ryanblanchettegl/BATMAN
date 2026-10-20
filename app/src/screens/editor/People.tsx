@@ -11,7 +11,7 @@ const faceOf = (w: any): Face => Object.assign(derive(w.ring_name || w.id, w.gen
 
 export function Looks(p: { w: any }) {
   const w = p.w, f = faceOf(w), set = (k: string, v: number) => edit(() => { w.face = Object.assign(faceOf(w), { [k]: v }); });
-  return <Panel cls="mb4" title="Their portrait in lists">
+  return <Panel cls="mb4" title="Portrait">
     <div class="edface">
       <FaceCanvas cls="pt" face={f} g={w.gender} bg={w.disposition === 'heel' ? 'H' : (w.disposition === 'tweener' ? 'N' : 'F')} label={'Portrait of ' + w.ring_name} />
       <div class="edparts">{PARTS.map(x => <div class="edpart" key={x[0]}>
@@ -37,15 +37,15 @@ export function Sheet(p: { w: any; part: 'who' | 'work' | 'rates' | 'more' }) {
   if (p.part === 'who') return <>
       <div class="editor plain">
         <NameF label="Ring name" table="workers" rec={w} max={32} t="ed-wrname" />
-        <Field label="Need a name?"><Btn kind="sm" t="ed-randname" onClick={() => { const old = w.id; edit(() => { const nm = E.edRandomName(pkg, w.gender, Date.now() & 0xffff); reId('workers', old, E.edRename(pkg, 'workers', old, nm)); }); }}>Random name</Btn></Field>
+        <Field label="Random name"><Btn kind="sm" t="ed-randname" onClick={() => { const old = w.id; edit(() => { const nm = E.edRandomName(pkg, w.gender, Date.now() & 0xffff); reId('workers', old, E.edRename(pkg, 'workers', old, nm)); }); }}>Random name</Btn></Field>
         <SelF label="Division" rec={w} k="gender" options={[['M', 'Men'], ['F', 'Women']]} />
         <NumF label="Age" rec={w} k="age" min={16} max={75} blank="unknown" />
         <SelF label="Side" rec={w} k="disposition" options={opts(E.ED.sides)} />
         <SelF label="Style" rec={w} k="style" options={opts(E.ED.styles)} />
         <TextF label="Finishing move" rec={w} k="finisher" max={32} />
-        <TextF label="Home town" rec={w} k="hometown" max={32} />
+        <TextF label="Hometown" rec={w} k="hometown" max={32} />
         <SelF label="Weight" rec={w} k="weight_class" options={[['', 'Not set'] as Opt].concat(opts(E.ED.weights))} none />
-        <SelF label="In the locker room" rec={w} k="locker_role" options={[['', 'Nobody in particular'] as Opt].concat(opts(E.ED.lockers))} none />
+        <SelF label="Locker room role" rec={w} k="locker_role" options={[['', 'Nobody in particular'] as Opt].concat(opts(E.ED.lockers))} none />
       </div>
       <p class="eyebrow mt2">What they do</p>
       <div class="row opts">{Object.keys(E.ED.roles).map(r => <Btn kind="sm" key={r} on={roles.indexOf(r) >= 0} t="ed-role" d={{ v: r }} onClick={() => role(r)}>{E.ED.roles[r]}</Btn>)}</div>
@@ -54,10 +54,10 @@ export function Sheet(p: { w: any; part: 'who' | 'work' | 'rates' | 'more' }) {
     <Group title="Company">
       <div class="editor plain">
         <Field label="Company"><Sel t="ed-sign" value={con ? con.promotion_id : ''} options={companies} onChange={v => edit(() => { E.edSign(pkg, w.id, v || null, con ? con.push_level : undefined); })} /></Field>
-        {con ? <SelF label="Place on the card" rec={con} k="push_level" options={opts(E.ED.push)} /> : null}
+        {con ? <SelF label="Card position" rec={con} k="push_level" options={opts(E.ED.push)} /> : null}
         {con ? <BrandSel pkg={pkg} pid={con.promotion_id} rec={con} t="ed-wr-brand" /> : null}
-        {roles.indexOf('wrestler') >= 0 ? <Field label="Managed by"><Sel t="ed-manager" value={w.manager_id || ''} options={[['', 'Nobody'] as Opt].concat(E.edManagers(pkg, w.id).map((m: any) => [m.id, m.name + (m.same ? '' : ' (another company)')] as Opt))} onChange={v => edit(() => { E.edSetManager(pkg, w.id, v || null); })} /></Field> : null}
-        {con ? <NumF label="Weeks left on the contract" rec={con} k="weeks_left" min={1} max={520} blank="the game decides" /> : null}
+        {roles.indexOf('wrestler') >= 0 ? <Field label="Manager"><Sel t="ed-manager" value={w.manager_id || ''} options={[['', 'Nobody'] as Opt].concat(E.edManagers(pkg, w.id).map((m: any) => [m.id, m.name + (m.same ? '' : ' (another company)')] as Opt))} onChange={v => edit(() => { E.edSetManager(pkg, w.id, v || null); })} /></Field> : null}
+        {con ? <NumF label="Contract weeks left" rec={con} k="weeks_left" min={1} max={520} blank="the game decides" /> : null}
       </div>
       {con ? null : <p class="muted mt2">An unsigned wrestler starts the game as a free agent any company can sign.</p>}
     </Group>
