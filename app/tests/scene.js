@@ -25,6 +25,11 @@ async function studio(mode) {
     await page.selectOption('[data-t="scene-setup"]', 'powerbomb'); await page.waitForTimeout(600);
     ok(mode, 'a powerbomb comes in four keyframes or more', (await page.$$('[data-t="scene-key"]')).length >= 4);
     await page.click('[data-t="scene-done"]'); await page.waitForTimeout(300);
+    // an included move can be opened, changed and saved: it is kept as a changed copy for this world
+    await openScene(page, 'move_powerbomb'); await page.waitForTimeout(1200);
+    ok(mode, 'an included move opens in Create a Move', /Create a Move/.test(await page.textContent('.sc-menubar')) && /powerbomb/i.test(await page.$eval('[data-t="scene-win"]', e => e.textContent)));
+    await page.click('[data-t="scene-addkey"]'); await page.click('[data-t="scene-save"]'); await page.waitForTimeout(200); await page.click('[data-t="scene-done"]'); await page.waitForTimeout(300);
+    ok(mode, 'saved, it is kept for this world and listed first', /Made for this world/.test(await page.$eval('[data-t="ed-scene-open"][data-id="move_powerbomb"]', e => e.textContent).catch(() => '')));
     await page.click('[data-t="ed-scene-new"][data-v="still"]'); await page.waitForTimeout(1500); await pick(page, 'scene-tab', 'file');
     ok(mode, 'Create a Scene makes stills from templates: a magazine cover, a video game cover, a poster', /Create a Scene/.test(await page.textContent('.sc-menubar')) && await page.$eval('[data-t="scene-setup"]', e => ['mag', 'game', 'poster'].every(v => [...e.options].some(o => o.value === v))) && (await page.$eval('[data-t="scene-kind"]', e => e.value)) === 'still');
     await page.selectOption('[data-t="scene-setup"]', 'mag'); await page.waitForTimeout(600);

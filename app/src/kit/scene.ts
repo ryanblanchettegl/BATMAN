@@ -965,7 +965,7 @@ export const STUDIOS: [Studio, string, string][] = [
   ['still', 'Create a Scene', 'One picture: a poster, an action shot, a magazine cover, a video game cover, a portrait.']];
 /** The moments of a match a move is made for. */
 export const MOVE_WHEN = ['start', 'mid', 'nearfall', 'finish', 'move'];
-if (!WHEN.some(w => w[0] === 'move')) WHEN.splice(WHEN.length - 1, 0, ['move', 'A move (for a wrestler\'s moves)']);
+if (!WHEN.some(w => w[0] === 'move')) WHEN.splice(WHEN.length - 1, 0, ['move', 'A wrestler\'s move']);
 /** Which studio a scene belongs in. */
 export function studioOf(sc: Scene): Studio { return sc.still ? 'still' : MOVE_WHEN.indexOf(sc.when) >= 0 ? 'move' : 'anim'; }
 /** The setups each studio starts a new scene from. */

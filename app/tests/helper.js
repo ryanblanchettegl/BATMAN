@@ -126,6 +126,7 @@ async function picked(page, t, v) {
 }
 /** Open a scene by id from the World Editor's Scenes tab, in whichever studio's dropdown lists it. */
 async function openScene(page, id) {
+  const b = await page.$('[data-t="ed-scene-open"][data-id="' + id + '"]'); if (b) { await b.click(); return; }
   for (const sel of await page.$$('select[data-t="ed-scene-pick"]')) if (await sel.evaluate((e, id) => [...e.options].some(o => o.value === id), id)) { await sel.selectOption(id); return; }
   throw new Error('no studio lists the scene ' + id);
 }

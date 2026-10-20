@@ -435,7 +435,7 @@ export function SceneStudio(pp: StudioProps) {
         </Group>
         <Group title="Files">
           <div class="sc-row">
-            {(() => { const kind = (x: Scene) => mine.some(m => m.id === x.id) ? 'This world: ' : x.still ? 'A still: ' : SHOW_SCENES.some(y => y.id === x.id) ? 'The show: ' : 'The game: ';
+            {(() => { const kind = (x: Scene) => mine.some(m => m.id === x.id) ? 'This world: ' : x.still ? 'Included still: ' : SHOW_SCENES.some(y => y.id === x.id) ? 'Included, the show: ' : 'Included: ';
               const all = mine.concat(SCENES.concat(STILLS, SHOW_SCENES, MOVES).filter(x => !mine.some(m => m.id === x.id))), here = all.filter(x => studioOf(x) === mode), other = all.filter(x => studioOf(x) !== mode);
               return <select aria-label="Open a scene" data-t="scene-open" value="" onChange={e => { const v = (e.currentTarget as HTMLSelectElement).value; const x = allScenes(mine).find(y => y.id === v); if (x) open(x); }}>
                 <option value="">Open a scene...</option>
@@ -446,7 +446,8 @@ export function SceneStudio(pp: StudioProps) {
           <div class="sc-row">
             <Btn kind="sm" t="scene-export" onClick={exportIt}>Write a file</Btn>
             <Btn kind="sm" t="scene-import" onClick={() => file.current && file.current.click()}>Open a file</Btn>
-            {mine.some(x => x.id === sc.id) && <Btn kind="danger" t="scene-delete" onClick={() => { pp.onForget(sc.id); say('"' + sc.name + '" is no longer in ' + pp.world + '.'); }}>Take it out</Btn>}
+            {mine.some(x => x.id === sc.id) && (() => { const inc = SCENES.concat(STILLS, SHOW_SCENES, MOVES).some(x => x.id === sc.id);   // a changed included scene goes back to the included one
+              return <Btn kind="danger" t="scene-delete" onClick={() => { pp.onForget(sc.id); say(inc ? '"' + sc.name + '" is back as included.' : '"' + sc.name + '" is no longer in ' + pp.world + '.'); }}>{inc ? 'Put back as included' : 'Take it out'}</Btn>; })()}
             <input ref={file} type="file" accept=".json,application/json" hidden data-t="scene-file" onChange={e => { const f = (e.currentTarget as HTMLInputElement).files; if (f && f[0]) importIt(f[0]); (e.currentTarget as HTMLInputElement).value = ''; }} />
           </div>
         </Group>
