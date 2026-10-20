@@ -640,7 +640,7 @@ export const STILLS: Scene[] = [
   still('st_hurt_ring', 'Down in the ring', 'hurt', 'ring', [...S1, { id: 'R', n: 'The referee', role: 'ref' }], {
     A: LAY(-0.8, 1, 90, { head: 14, sh_n: 70, el_n: 95, sh_f: 55, el_f: 110, hip_n: 55, kn_n: -110, an_n: 30, hip_f: 8, kn_f: -10 }, 'pain', 0.4),
     R: REFKN(1.6, -1, { torso: -10, sh_n: 165, el_n: 20, sh_f: 40, el_f: 60, head: 10 }) }, [], { x: 0.2, y: -1.4, z: 1.6 }),
-  still('st_hurt_back', 'In the trainer’s room', 'hurt', 'locker', S1, {
+  still('st_hurt_back', 'In the trainer’s room', 'hurt', 'trainer', S1, {
     A: { x: -3.2, y: -1.45, r: 0, f: 1, z: 0.3, p: { torso: 18, head: 22, hip_n: 90, kn_n: -90, hip_f: 85, kn_f: -95, sh_n: -10, el_n: 20, sh_f: 70, el_f: 120, wr_f: 20 }, e: 'pain' } }, [], { x: -2.2, y: -0.5, z: 1.35 }),
   still('st_brawl_hall', 'A fight in the hallway', 'brawl', 'hall', S2, {
     A: { ...STD(-1.2, 1, { torso: 12, sh_n: 95, el_n: 5, sh_f: 30, el_f: 90, hip_n: 30, kn_n: -20, hip_f: -24, kn_f: -10 }, 'roar', 0.6), r: -10 },
