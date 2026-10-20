@@ -113,7 +113,7 @@ export const STILL_WHEN: [string, string][] = [['hurt', 'Somebody hurt'], ['braw
 /** The sets, each drawn from its own angle: pick the one that suits the moment. Every set keeps feet on the same line
     (FOOT), so a pose works on all of them. */
 export const SETS: [string, string][] = [['ring', 'The ring: the hard camera'], ['ringlow', 'The ring: low at ringside'], ['ringcorner', 'The ring: from the corner'],
-  ['desk', 'The commentary desk'], ['ramp', 'The entrance ramp'], ['hall', 'Backstage: the hallway'], ['locker', 'Backstage: the locker room'], ['office', 'The office'], ['backstage', 'Backstage: the wall'], ['talk', 'A talk show'], ['cage', 'A steel cage'], ['cell', 'The cell: a roof of steel over ring and floor'], ['inferno', 'An inferno: flames round the ring'], ['ringside', 'Ringside: down on the floor'], ['ballroom', 'A ballroom show'], ['gym', 'A gym show'], ['bigstadium', 'A stadium show'], ['lot', 'The parking lot'], ['news', 'A news desk'], ['stadium', 'A packed stadium'], ['rafters', 'Up in the rafters'],  ['plain', 'Plain card']];
+  ['desk', 'The commentary desk'], ['ramp', 'The entrance ramp'], ['hall', 'Backstage: the hallway'], ['locker', 'Backstage: the locker room'], ['office', 'The office'], ['backstage', 'Backstage: the wall'], ['talk', 'A talk show'], ['cage', 'A steel cage'], ['ladder', 'A ladder match: the belt hung over the ring'], ['cell', 'The cell: a roof of steel over ring and floor'], ['inferno', 'An inferno: flames round the ring'], ['ringside', 'Ringside: down on the floor'], ['ballroom', 'A ballroom show'], ['gym', 'A gym show'], ['bigstadium', 'A stadium show'], ['catering', 'Backstage: catering'], ['trainer', 'Backstage: the trainer\'s room'], ['weights', 'Backstage: the weight room'], ['lot', 'The parking lot'], ['news', 'A news desk'], ['stadium', 'A packed stadium'], ['rafters', 'Up in the rafters'],  ['plain', 'Plain card']];
 export const W16 = 16, H9 = 9;   // a scene is 16 units wide and 9 high; x = 0 is the middle, y = 0 the middle
 export const FOOT = -2.9;          // where feet stand on the mat
 export const WAIST = FOOT + 2.52 + 0.7;   // the waist of a doll of standard height standing on the mat
@@ -140,7 +140,8 @@ function crowd(add: Add, rows: number, yTop: number, dy: number, sz0: number, ds
 function setPieces(set: string): Piece[] {
   if (isBg(set)) return bgPieces(backdropOf(set.slice(3)));   // a backdrop made in the Backdrop tab
   const o: Piece[] = []; let n = 0; const add = (pts: [number, number][], col: string, z: number, lift = 0.04, rough = 0.012) => o.push({ pts: snip(pts, 9000 + (n++) * 131, rough, 0.1), col, z, lift, layer: 'back' });
-  if (['ringside', 'cell', 'inferno', 'ballroom', 'gym', 'bigstadium'].includes(set)) set = 'ring';   // drawn flat, these are the ring
+  if (['ringside', 'cell', 'inferno', 'ladder', 'ballroom', 'gym', 'bigstadium'].includes(set)) set = 'ring';
+  if (['catering', 'trainer', 'weights'].includes(set)) set = 'locker';   // drawn flat, these are a room backstage   // drawn flat, these are the ring
   if (set === 'ring' || set === 'cage') {
     // The ring as the hard camera sees it: the mat a floor that widens toward us, the far ropes and posts behind the
     // wrestlers at about their waist, the side ropes running back to them, the crowd rising past the barricade.

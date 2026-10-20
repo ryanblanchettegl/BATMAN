@@ -19,12 +19,13 @@ import { BokehPass } from 'three/examples/jsm/postprocessing/BokehPass.js';
 import { OutputPass } from 'three/examples/jsm/postprocessing/OutputPass.js';
 import { Scene, Key, Cam3, build, FOOT, DESK_SEATS } from './scene';
 import { Piece, PAL, shade, drawScene, View } from './paper';
+import { paintBelt } from './belt';
 import { Recipe, Rig } from './puppet';
 
-const RINGS = ['ring', 'ringlow', 'ringcorner', 'ringside', 'cage', 'cell', 'inferno', 'ballroom', 'gym', 'bigstadium'];
+const RINGS = ['ring', 'ringlow', 'ringcorner', 'ringside', 'cage', 'cell', 'inferno', 'ladder', 'ballroom', 'gym', 'bigstadium'];
 /** Where a ring set's show is held, and what stands round the ring (Ryan, 20 October). */
 const VENUE: Record<string, string> = { ballroom: 'ballroom', gym: 'gym', bigstadium: 'stadium' };
-const RIG: Record<string, string> = { cage: 'cage', cell: 'cell', inferno: 'inferno' };
+const RIG: Record<string, string> = { cage: 'cage', cell: 'cell', inferno: 'inferno', ladder: 'ladder' };
 export const DEPTH = 0.9;      // a layer step, in feet of depth
 const CARD = 0.035;     // how thick a piece of card is
 
@@ -272,6 +273,12 @@ function rig(root: THREE.Group, box: BoxFn, kind: string) {
     const roof = new THREE.Mesh(new THREE.PlaneGeometry(E * 2, E * 2), chain(E * 2, E * 2)); roof.rotation.x = -Math.PI / 2; roof.position.set(0, FL + Hh, 0); root.add(roof);
     for (let i = -2; i <= 2; i++) { box(E * 2, 0.3, 0.3, '#2a2c33', 0, FL + Hh, i * E / 2.5, false); box(0.3, 0.3, E * 2, '#2a2c33', i * E / 2.5, FL + Hh, 0, false); }
     const red = new THREE.PointLight(0xff3a2a, 120, 60, 1.3); red.position.set(0, FL + Hh - 2, 0); root.add(red);
+  } else if (kind === 'ladder') {   // the belt hung on a cable high over the middle of the ring, and a ladder standing under it
+    const H = 12.5; box(0.06, 30 - H, 0.06, steel, 0, H + (30 - H) / 2, 0, false);
+    const bp = new THREE.Mesh(new THREE.PlaneGeometry(4.8, 2), new THREE.MeshBasicMaterial({ map: beltTex(), transparent: true, side: THREE.DoubleSide })); bp.position.set(0, H - 1, 0); root.add(bp);
+    const spot = new THREE.SpotLight(0xfff2c0, 160, 30, 0.25, 0.5, 1.2); spot.position.set(0, 28, 6); spot.target.position.set(0, H - 1, 0); root.add(spot, spot.target);
+    const lad = MODELS3.ladder(); lad.scale.setScalar(3.3); lad.position.set(-1.2, 5.4, -1); lad.rotation.z = 0.08; lad.traverse(o => { o.castShadow = true; }); root.add(lad);
+    const lad2 = MODELS3.ladder(); lad2.scale.setScalar(3.3); lad2.position.set(12.4, 2.6, -8); lad2.rotation.set(0, 0.6, 1.2); root.add(lad2);   // a spare against the barricade
   } else if (kind === 'inferno') {   // columns of flame along all four sides, outside the apron
     const flame = (x: number, z: number, k: number) => {
       const o = new THREE.Mesh(new THREE.ConeGeometry(0.75, 3.6 + k * 1.4, 7), glow(0xff5a12, 1.6)); o.position.set(x, FL + (3.6 + k * 1.4) / 2, z); root.add(o);
@@ -351,6 +358,14 @@ function skyline(): THREE.Material {
     for (let i = 0; i < 26; i++) { const w = 30 + r() * 50, h = 120 + r() * 260, bx0 = i * 40 - 10; x.fillStyle = '#120c26'; x.fillRect(bx0, 440 - h, w, h); x.fillStyle = 'rgba(255,214,120,.8)'; for (let yy = 440 - h + 10; yy < 430; yy += 14) for (let xx = bx0 + 5; xx < bx0 + w - 5; xx += 10) if (r() < 0.45) x.fillRect(xx, yy, 4, 6); }
     skyTex = new THREE.CanvasTexture(c); skyTex.colorSpace = THREE.SRGBColorSpace; }
   return new THREE.MeshBasicMaterial({ map: skyTex });
+}
+let beltT: THREE.Texture | null = null;
+/** The belt that hangs over a ladder match, painted the way Create a Belt paints one. */
+function beltTex(): THREE.Texture {
+  if (!beltT) { const c = document.createElement('canvas'); c.width = 96 * 6; c.height = 40 * 6; const x = c.getContext('2d')!; x.scale(6, 6);
+    paintBelt(x, { pl: 'crest', mt: 'gold', st: '#1c1b1f', gm: 'red', sd: 3, ss: 'round', tr: 'etched', w: 'WORLD', top: '' });
+    beltT = new THREE.CanvasTexture(c); beltT.colorSpace = THREE.SRGBColorSpace; }
+  return beltT;
 }
 /* ---------- props as models: in a prop's own units (a scene unit is about a foot), its middle at the origin, up is +y ---------- */
 function part(g: THREE.Group, geo: THREE.BufferGeometry, mat: THREE.Material, x: number, y: number, z: number, rx = 0, rz = 0): THREE.Mesh { const m = new THREE.Mesh(geo, mat); m.position.set(x, y, z); m.rotation.x = rx; m.rotation.z = rz; g.add(m); return m; }
@@ -476,6 +491,35 @@ const ROOMS: Record<string, (root: THREE.Group) => void> = {
     for (let i = -18; i <= 18; i += 6) { bx(root, 0.3, 0.3, 30, '#2a2c33', i, 9, -8, false); const sp = new THREE.SpotLight(0xffe2b0, 60, 60, 0.4, 0.6, 1.4); sp.position.set(i, 8, 0); sp.target.position.set(i * 0.2, -40, -20); root.add(sp, sp.target); }
     const ring = new THREE.Group(); arena(ring, true); ring.scale.setScalar(0.6); ring.position.set(0, -38, -24); root.add(ring);
   },
+  catering: root => {   // catering: long tables with cloths and trays of food, a coffee urn, folding chairs, a menu board
+    bx(root, 40, 0.2, 20, '#8a7a62', 0, -0.1, -2, false); bx(root, 40, 12, 0.3, '#c9b48a', 0, 6, -8); bx(root, 40, 1.2, 0.35, '#7a5a3a', 0, 1.2, -7.8, false);
+    for (const z of [-5.6, -2.8]) { bx(root, 12, 0.12, 2.2, PAL.white, 0, 2.5, z); bx(root, 12.1, 0.9, 2.3, '#e8e4d6', 0, 2.05, z, false);
+      for (let i = -2; i <= 2; i++) { bx(root, 1.6, 0.25, 1.1, steel, i * 2.4, 2.7, z); bx(root, 1.3, 0.2, 0.8, i % 2 ? '#c8622a' : '#5a8a3a', i * 2.4, 2.88, z, false); } }
+    const urn = new THREE.Mesh(C3(0.5, 0.55, 1.6, 16), steel); urn.position.set(9, 3.4, -5.6); root.add(urn);
+    for (let i = 0; i < 6; i++) { const ch = MODELS3.chair(); ch.scale.setScalar(1.2); ch.position.set(i < 3 ? -13 + i * 1.6 : 11 + (i - 3) * 1.6, 1.4, 0.4); ch.rotation.y = Math.PI; root.add(ch); }
+    bx(root, 6, 3.6, 0.2, '#1c1d22', -11, 7, -7.6); const mn = new THREE.Mesh(new THREE.PlaneGeometry(5.4, 3), plate("TONIGHT'S MENU", 5.4, 3, '#1c1d22', '#ffe48a')); mn.position.set(-11, 7, -7.48); root.add(mn);
+    const l = new THREE.PointLight(0xffe8c8, 120, 40, 1.2); l.position.set(0, 10, 4); root.add(l);
+  },
+  trainer: root => {   // the trainer's room: a padded table, shelves of tape and bottles, an ice tub, a curtain, a bright lamp
+    bx(root, 30, 0.2, 18, '#d8dcd4', 0, -0.1, -2, false); bx(root, 30, 12, 0.3, '#e8eef0', 0, 6, -7); bx(root, 0.3, 12, 18, '#dfe6e8', -12, 6, -2, false);
+    bx(root, 6.4, 0.6, 2.4, '#2f5f8a', 2.5, 2.6, -2.5); for (const sx of [-2.8, 2.8]) for (const sz of [-1, 1]) bx(root, 0.15, 2.4, 0.15, steel, 2.5 + sx, 1.2, -2.5 + sz, false);
+    for (let r = 0; r < 3; r++) { bx(root, 5, 0.12, 1, '#b8bcc4', -8, 2.6 + r * 2.2, -6.2); for (let i = 0; i < 6; i++) { const b = new THREE.Mesh(C3(0.18, 0.18, 0.6, 10), card(i % 3 ? '#e8e4d6' : '#c8322a')[0]); b.position.set(-10 + i * 0.8, 3 + r * 2.2, -6.1); root.add(b); } }
+    const tub = new THREE.Mesh(C3(1.2, 1.0, 1.6, 20), card('#7a8a9a')[0]); tub.position.set(-6, 0.8, 1); root.add(tub); const ice = new THREE.Mesh(C3(1.12, 1.12, 0.05, 20), card('#dff4ff')[0]); ice.position.set(-6, 1.58, 1); root.add(ice);
+    for (let i = 0; i < 6; i++) bx(root, 1.2, 9, 0.1, i % 2 ? '#6aa0b0' : '#7ab0c0', 9 + i * 0.9, 5, -3 + i * 0.25, false);   // the curtain
+    const lamp = new THREE.SpotLight(0xffffff, 80, 30, 0.6, 0.5, 1.2); lamp.position.set(2.5, 11, 2); lamp.target.position.set(2.5, 2.5, -2.5); root.add(lamp, lamp.target);
+  },
+  weights: root => {   // the weight room: a rubber floor, a bench and bar, a rack of dumbbells, a mirror wall
+    bx(root, 34, 0.2, 18, '#2a2b30', 0, -0.1, -2, false); bx(root, 34, 12, 0.3, '#5a5e66', 0, 6, -7);
+    const mir = new THREE.Mesh(new THREE.PlaneGeometry(20, 7), new THREE.MeshStandardMaterial({ color: 0x9aa8b6, roughness: 0.25, metalness: 0.2 })); mir.position.set(0, 5, -6.8); root.add(mir);
+    bx(root, 4.4, 0.4, 1.2, '#1a1a1e', -5, 1.6, -1); bx(root, 0.2, 1.4, 1.2, steel, -5, 0.7, -1, false);
+    for (const sx of [-1, 1]) bx(root, 0.15, 3.6, 0.15, steel, -3.6 * sx * 0 - 5 + sx * 1.6, 1.8, -2, false);
+    const bar = new THREE.Mesh(C3(0.06, 0.06, 7, 8), steel); bar.rotation.z = Math.PI / 2; bar.position.set(-5, 3.4, -2); root.add(bar);
+    for (const sx of [-1, 1]) for (let k = 0; k < 2; k++) { const pl = new THREE.Mesh(C3(0.9 - k * 0.2, 0.9 - k * 0.2, 0.18, 20), card('#111')[0]); pl.rotation.z = Math.PI / 2; pl.position.set(-5 + sx * (2.6 + k * 0.2), 3.4, -2); root.add(pl); }
+    bx(root, 8, 0.2, 1.4, steel, 7, 1.6, -4.8); bx(root, 8, 0.2, 1.4, steel, 7, 3, -4.8);
+    for (let i = 0; i < 6; i++) for (const yy of [1.95, 3.35]) { const db = new THREE.Mesh(C3(0.28, 0.28, 0.9, 10), card('#2a2a30')[0]); db.rotation.z = Math.PI / 2; db.position.set(4 + i * 1.2, yy, -4.8); root.add(db); }
+    for (let i = -2; i <= 2; i++) bx(root, 5, 0.15, 0.5, glow(0xeef4ff, 1.3) as any, i * 7, 11.6, -2, false);
+    const wl = new THREE.PointLight(0xeef4ff, 140, 40, 1.2); wl.position.set(0, 10, 5); root.add(wl);
+  },
   office: root => {
     bx(root, 30, 0.2, 30, '#3a3f5a', 0, -0.1, 0, false);                                                               // the carpet
     bx(root, 26, 12, 0.3, '#5a3d28', 0, 6, -4.6, false); for (let i = 0; i < 9; i++) bx(root, 0.08, 12, 0.32, '#4a3020', -11 + i * 2.75, 6, -4.55, false);
@@ -515,7 +559,7 @@ function flat(root: THREE.Group, sc: Scene) {
 
 /* ---------- the camera for each set ---------- */
 const P: Record<string, [number[], number[]]> = { ring: [[0, 9, 21], [0, 3.2, 0]], ringlow: [[0, 2.2, 15], [0, 4.2, 0]], ringcorner: [[15, 9, 15], [0, 3.2, 0]],
-  ringside: [[9, -1.2, 14.5], [0, 2.4, 2]], cage: [[0, 10, 23], [0, 3.6, 0]], cell: [[0, 13, 30], [0, 4, 0]], inferno: [[0, 10, 24], [0, 3.2, 0]], ballroom: [[0, 9, 21], [0, 3.2, 0]], gym: [[0, 9, 21], [0, 3.2, 0]], bigstadium: [[0, 11, 26], [0, 3.2, 0]],
+  ringside: [[9, -1.2, 14.5], [0, 2.4, 2]], ladder: [[0, 10, 27], [0, 6.5, 0]], catering: [[0, 5, 14], [0, 3.4, -1]], trainer: [[0, 5, 14], [0, 3.4, -1]], weights: [[0, 5, 14], [0, 3.4, -1]], cage: [[0, 10, 23], [0, 3.6, 0]], cell: [[0, 13, 30], [0, 4, 0]], inferno: [[0, 10, 24], [0, 3.2, 0]], ballroom: [[0, 9, 21], [0, 3.2, 0]], gym: [[0, 9, 21], [0, 3.2, 0]], bigstadium: [[0, 11, 26], [0, 3.2, 0]],
   desk: [[0, 4.3, 13.5], [0, 2.6, 0]], ramp: [[0, 4.5, 18], [0, 3.4, 0]], backstage: [[0, 5, 14], [0, 3.6, 0]], lot: [[0, 5, 15], [0, 3.4, -2]], talk: [[0, 4.8, 14], [0, 3.4, 0]], news: [[0, 4.8, 13], [0, 3.4, 0]], rafters: [[0, 8, 16], [0, 1.5, -4]], hall: [[0, 5.2, 13], [0, 3.8, -6]], office: [[0, 5, 14], [0, 3.6, 0]], locker: [[0, 5, 14], [0, 3.6, -1]] };
 /** The set's own camera: where it stands and what it looks at. */
 export function homeShot(set: string): Cam3 { const [pos, look] = P[set] || [[0, 5.5, 17], [0, 3.6, 0]]; return { p: pos.slice() as any, t: look.slice() as any, fov: 30 }; }
@@ -643,7 +687,7 @@ export class Diorama3D {
   }
   /** The air of the place: the dark of an arena, or a room lit from inside. */
   mood(set: string) {
-    const inside = ['hall', 'office', 'locker', 'ballroom', 'gym', 'backstage', 'talk', 'news'].includes(set), c = set === 'bigstadium' ? '#0b1838' : set === 'ballroom' ? '#1a110c' : inside ? '#14161e' : '#0a0c1c', far = set === 'bigstadium' ? 2.4 : 1;
+    const inside = ['hall', 'office', 'locker', 'ballroom', 'gym', 'backstage', 'talk', 'news', 'catering', 'trainer', 'weights'].includes(set), c = set === 'bigstadium' ? '#0b1838' : set === 'ballroom' ? '#1a110c' : inside ? '#14161e' : '#0a0c1c', far = set === 'bigstadium' ? 2.4 : 1;
     this.scene.background = new THREE.Color(c); this.scene.fog = new THREE.Fog(c, (inside ? 26 : 38) * far, (inside ? 70 : 95) * far);
   }
   /** Turn every figure and prop toward the camera, round its own upright. */

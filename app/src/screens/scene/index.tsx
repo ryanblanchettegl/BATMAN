@@ -32,7 +32,7 @@ export const MAX_PEOPLE = 10;
 const LENSES: [number, string][] = [[18, 'Long lens'], [24, 'Close lens'], [30, 'Normal lens'], [38, 'Wide lens'], [48, 'Very wide lens']];
 /** The lens on the list nearest to a camera's own. */
 const lensOf = (fov: number) => LENSES.reduce((b, l) => Math.abs(l[0] - fov) < Math.abs(b[0] - fov) ? l : b)[0];
-const RINGSETS = ['ring', 'ringlow', 'ringcorner', 'cage', 'stadium', 'ringside', 'cell', 'inferno', 'ballroom', 'gym', 'bigstadium'];
+const RINGSETS = ['ring', 'ringlow', 'ringcorner', 'cage', 'stadium', 'ringside', 'cell', 'inferno', 'ballroom', 'gym', 'bigstadium', 'ladder'];
 
 /** The props that carry words, and the colours words can be in (Words has no background: Ryan, 20 October). */
 const TEXTED = ['burst', 'sign', 'headline', 'masthead', 'words'];

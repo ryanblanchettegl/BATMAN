@@ -272,6 +272,7 @@ The desk image (`docs/mockups/paper/desk.png`) is the art style: the whole game 
 - [x] More dropdown menus than buttons on World Editor pages (Ryan, 20 October): the creators' choices in words, which part of a page shows, faces, poses, outfits, moves and entrances.
 - [x] Stock scenes move in at least four keyframes, with a wind-up at the start and an overshoot and settle at the end (Ryan, 20 October: "scenes should average 4 keys").
 - [x] 3D sets for a steel cage, the cell with a roof, an inferno, ringside on the floor, a ballroom, a gym and a stadium; 3D rooms for the entrance stage, the backstage wall, the parking lot, a talk show, a news desk and the rafters; chairs, tables, ladders, steps, bins and bats as 3D models.
+- [x] A ladder match set (the belt hung over the ring), and 3D catering, trainer's room and weight room; the Titles page shows each title's belt.
 
 ### 0z. Create a Scene, built out (later; Ryan, 18 October: "the bones are there and work")
 

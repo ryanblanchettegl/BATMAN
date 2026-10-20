@@ -2,7 +2,7 @@
 import { ComponentChildren } from 'preact';
 import { E, W } from '../../engine';
 import { G, me, act, say, plural, openModal, slice, view } from '../../store';
-import { Btn, Tag, Name, Meter, Empty, Desktop, Win, brandName, TitleName } from '../../kit';
+import { Btn, Tag, Name, Meter, Empty, Desktop, Win, brandName, TitleName, Belt } from '../../kit';
 
 /** Names joined the way a card reads: "A & B". */
 function joined(items: ComponentChildren[], sep: ComponentChildren): ComponentChildren[] { const out: ComponentChildren[] = []; items.forEach((x, i) => { if (i) out.push(sep); out.push(x); }); return out; }
@@ -87,7 +87,7 @@ export function Titles() {
       <div class="tw"><table>
         <thead><tr><th>Title</th>{P.brands && <th>Brand</th>}<th>Champion</th><th class="r">Reign</th><th class="r">Defences</th><th>Prestige</th><th class="r">Last defended</th></tr></thead>
         <tbody>{P.titles.map((t: any) => <tr key={t.id}>
-          <td><TitleName pid={P.id} t={t} /></td>
+          <td class="ttname"><Belt of={t} co={P} dot={0.42} t="title-row-belt" /> <TitleName pid={P.id} t={t} /></td>
           {P.brands && <td>{brandName(P, t.brand)}</td>}
           <td>{t.holders.length ? joined(t.holders.map((id: number) => <Name w={S.w[id]} />), ' & ') : <span class="mark">Vacant</span>}{!t.holders.length && !t.tag && !busy ? <> <Btn kind="sm" t="tourn-vacant" d={{ k: t.id }} disabled={!!E.tournOk(S, t.id, 'ko')} onClick={() => act(() => { const r = E.startTourn(S, t.id, 'ko'); if (r) say(r, { err: !/is set/.test(r) }); })}>Start a tournament</Btn></> : null}</td>
           <td class="r num">{t.holders.length ? (S.week - t.since) + ' wk' : '—'}</td>
