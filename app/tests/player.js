@@ -87,18 +87,18 @@ const msg = page => txt(page, '[data-t="caw-msg"]');
     // lettering and shapes
     await pick(page, 'caw-tab', 'studio');
     await page.fill('[data-t="caw-text"]', 'ENFORCE'); await page.click('[data-t="caw-addtext"]');
-    ok('lettering is added to the outfit', /ENFORCE/.test(await txt(page, '[data-t="caw-layer"][data-v="0"]')));
+    ok('lettering is added to the outfit', /ENFORCE/.test(await page.$eval('[data-t="caw-layer"] option[value="0"]', e => e.textContent).catch(() => '')));
     await page.click('[data-t="caw-larch"][data-v="+"]'); await page.click('[data-t="caw-lmove"][data-v="u"]');
     await page.selectOption('[data-t="caw-shape"]', 'tactical_vest_straps'); await page.click('[data-t="caw-addshape"]');
-    ok('a shape is added beside it', (await page.$$('[data-t="caw-layer"]')).length === 2);
-    { const names = async () => page.$$eval('[data-t="caw-layer"]', b => b.map(x => x.textContent)); const n0 = await names();
-      await page.click('[data-t="caw-layer"][data-v="0"]'); await page.click('[data-t="caw-lorder"][data-v="f"]'); const n1 = await names();
+    ok('a shape is added beside it', (await page.$$('[data-t="caw-layer"] option:not([value="-1"])')).length === 2);
+    { const names = async () => page.$$eval('[data-t="caw-layer"] option:not([value="-1"])', b => b.map(x => x.textContent)); const n0 = await names();
+      await pick(page, 'caw-layer', '0'); await page.click('[data-t="caw-lorder"][data-v="f"]'); const n1 = await names();
       ok('Bring forward puts the lettering in front of the shape', n1[1] === n0[0] && n1[0] === n0[1], n0.join('|') + ' -> ' + n1.join('|')); }
     await page.click('[data-t="caw-ldrop"]');
-    ok('and taken off again', (await page.$$('[data-t="caw-layer"]')).length === 1);
+    ok('and taken off again', (await page.$$('[data-t="caw-layer"] option:not([value="-1"])')).length === 1);
     if (process.env.SHOTS) { await page.waitForTimeout(2500); await shot(page, 'player-studio'); }
     // the back: lettering across the back, and the doll turned round to show it
-    await page.click('[data-t="caw-layer"][data-v="0"]').catch(() => {}); await page.selectOption('[data-t="caw-lon"]', 'back'); await page.waitForTimeout(400);
+    await pick(page, 'caw-layer', '0').catch(() => {}); await page.selectOption('[data-t="caw-lon"]', 'back'); await page.waitForTimeout(400);
     ok('lettering can go across the back, and the doll turns round to show it', (await attr(page, '[data-t="caw-back"]', 'aria-pressed')) === 'true');
     if (process.env.SHOTS) { await page.waitForTimeout(1500); await shot(page, 'player-back'); }
     await page.click('[data-t="caw-back"]'); await page.waitForTimeout(300);

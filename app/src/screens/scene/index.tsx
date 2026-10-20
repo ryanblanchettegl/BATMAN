@@ -325,15 +325,13 @@ export function SceneStudio(pp: StudioProps) {
             </div>
             {LIMBS[sel.part] && <div class="sc-row" role="group" aria-label="This limb">
               <span class="sc-lbl">This {LIMBS[sel.part].startsWith('arm') ? 'arm' : 'leg'}</span>
-              {([[3, 'In front'], [0, 'As cut'], [-3, 'Behind']] as [number, string][]).map(([v, n]) =>
-                <Btn kind="less" t="scene-limb" d={{ v }} on={((selFig.lz || {})[LIMBS[sel.part]] || 0) === v} onClick={() => edit(k => { const f = fig(k, sel.who); if (f) { const lz = { ...(f.lz || {}) }; if (v) lz[LIMBS[sel.part]] = v; else delete lz[LIMBS[sel.part]]; f.lz = lz; } })}>{n}</Btn>)}
+              <Drop t="scene-limb" label="Where the limb sits" value={String((selFig.lz || {})[LIMBS[sel.part]] || 0)} options={[['3', 'In front'], ['0', 'As cut'], ['-3', 'Behind']]} onChange={sv => { const v = +sv; edit(k => { const f = fig(k, sel.who); if (f) { const lz = { ...(f.lz || {}) }; if (v) lz[LIMBS[sel.part]] = v; else delete lz[LIMBS[sel.part]]; f.lz = lz; } }); }} />
             </div>}
           </Group>
           <Group title="Face and marks">
             <span hidden data-t="scene-fig" data-v={JSON.stringify(selFig)} />
             <div class="sc-row"><span class="sc-lbl">Face</span><Drop t="scene-expr" label="Their face" value={selFig.e || 'calm'} options={EXPR.map(x => [x[0] || 'calm', x[1]] as Opt)} onChange={v => edit(k => { const f = fig(k, sel.who); if (f) f.e = v === 'calm' ? '' : v; })} /></div>
-            <div class="sc-row"><span class="sc-lbl">Blood</span>{[[0, 'None'], [1, 'A cut'], [2, 'A trickle'], [3, 'Covered']].map(([v, n]) =>
-              <Btn kind="less" t="scene-blood" d={{ v: v as number }} on={((selFig.m && selFig.m.blood) || 0) === v} onClick={() => edit(k => { const f = fig(k, sel.who); if (f) f.m = { ...(f.m || {}), blood: v as number }; })}>{n as string}</Btn>)}</div>
+            <div class="sc-row"><span class="sc-lbl">Blood</span><Drop t="scene-blood" label="Blood" value={String((selFig.m && selFig.m.blood) || 0)} options={[['0', 'None'], ['1', 'A cut'], ['2', 'A trickle'], ['3', 'Covered']]} onChange={v => edit(k => { const f = fig(k, sel.who); if (f) f.m = { ...(f.m || {}), blood: +v }; })} /></div>
             <div class="sc-row">{([['sweat', 'Sweat'], ['tears', 'Tears'], ['bruise', 'A bruise']] as [keyof Marks, string][]).map(([m, n]) =>
               <Btn kind="less" t="scene-mark" d={{ v: m }} on={!!(selFig.m && selFig.m[m])} onClick={() => edit(k => { const f = fig(k, sel.who); if (f) f.m = { ...(f.m || {}), [m]: !(f.m && f.m[m]) }; })}>{n}</Btn>)}</div>
           </Group>
@@ -415,7 +413,7 @@ export function SceneStudio(pp: StudioProps) {
             <div class="sc-row"><select aria-label="Part to add" data-t="scene-bgkind" value={bgAdd} onChange={e => setBgAdd((e.currentTarget as HTMLSelectElement).value)}>{BG_PARTS.map(x => <option value={x[0]}>{x[1]}</option>)}</select>
               {(BG_PARTS.find(x => x[0] === bgAdd) || [])[4] && <TextBox value={bgWords} max={24} label="Words on it" t="scene-bgwords" onInput={v => setBgWords(v.toUpperCase())} width="9ch" />}
               <Btn t="scene-bgadd" disabled={bg.parts.length >= 40} onClick={() => { editBg(b => { b.parts.push(newPart(bgAdd, bgWords)); }); setBgi(bg.parts.length); }}>Add</Btn></div>
-            <div class="sc-row">{bg.parts.map((q, i) => <Btn kind="less" t="scene-bgpart" d={{ v: i }} on={i === bgi} onClick={() => setBgi(i)}>{(BG_PARTS.find(x => x[0] === q.k) || ['', q.k])[1] + (q.txt ? ': ' + q.txt : '')}</Btn>)}</div>
+            <div class="sc-row">{bg.parts.length ? <Drop t="scene-bgpart" label="Which part" value={String(bgi)} options={[['-1', 'Pick a part...'] as Opt].concat(bg.parts.map((q, i) => [String(i), (BG_PARTS.find(x => x[0] === q.k) || ['', q.k])[1] + (q.txt ? ': ' + q.txt : '')] as Opt))} onChange={v => setBgi(+v)} /> : null}</div>
           </Group>
           {bgPart && <Group title="The part picked">
             <div class="sc-row" role="group" aria-label="Move it">{([['l', 'Left', -0.5, 0], ['r', 'Right', 0.5, 0], ['u', 'Up', 0, 0.3], ['d', 'Down', 0, -0.3]] as [string, string, number, number][]).map(([v, n, dx, dy]) => <Btn kind="less" t="scene-bgmove" d={{ v }} onClick={() => editBg(b => { const q = b.parts[bgi]; q.x = Math.max(-12, Math.min(12, Math.round((q.x + dx) * 10) / 10)); q.y = Math.max(-6, Math.min(8, Math.round((q.y + dy) * 10) / 10)); })}>{n}</Btn>)}</div>

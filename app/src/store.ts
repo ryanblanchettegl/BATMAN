@@ -3,7 +3,7 @@ import { E, GameState } from './engine';
 import { useBackdropSource } from './kit/backdrop';
 
 export const KEY = 'ewf9000-save-4', UKEY = 'ewf9000-universes', PKEY = 'gorilla-position-prefs';
-export const VER = '0.75';
+export const VER = '0.76';
 
 /* ---------- preferences ---------- */
 export interface Prefs { snd: boolean; type: boolean; crt: boolean; boot: boolean; letter: boolean; screen: 'auto' | 'desk' | 'tablet' | 'tv'; zoom: number; speed: number; auto: boolean; pace: 'tv' | 'full' | 'quick' | 'results'; pv?: number; motion: 'auto' | 'reduce' | 'full'; fxvol: number; uni: string ; u2?: boolean; pics: boolean }

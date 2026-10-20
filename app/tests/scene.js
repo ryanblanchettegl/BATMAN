@@ -75,7 +75,7 @@ async function studio(mode) {
     await page.selectOption('[data-t="scene-poselib"]', 'kneel');
     await page.click('[data-t="scene-size"][data-v="+"]');
     ok(mode, 'the size goes up', (await page.$eval('[data-t="scene-sizev"]', e => e.textContent)) === '105%');
-    await pick(page, 'scene-expr', 'snarl'); await page.click('[data-t="scene-blood"][data-v="3"]'); await page.click('[data-t="scene-mark"][data-v="tears"]');
+    await pick(page, 'scene-expr', 'snarl'); await pick(page, 'scene-blood', '3'); await page.click('[data-t="scene-mark"][data-v="tears"]');
     await page.click('[data-t="scene-hide"][data-v="wr_f"]'); await page.click('[data-t="scene-hide"][data-v="head"]');
     const fg = await fig();
     ok(mode, 'a pose from the library is applied', fg.y === -1.33 && fg.p && fg.p.kn_n === -90, JSON.stringify(fg.p));
@@ -119,8 +119,8 @@ async function studio(mode) {
     await page.selectOption('[data-t="scene-bgwall"]', '#5c2430');
     await page.fill('[data-t="scene-bgwords"]', 'FIGHT NIGHT'); await page.click('[data-t="scene-bgadd"]');
     await page.selectOption('[data-t="scene-bgkind"]', 'skyline'); await page.click('[data-t="scene-bgadd"]');
-    await page.click('[data-t="scene-bgpart"][data-v="0"]'); await page.click('[data-t="scene-bgmove"][data-v="u"]'); await page.waitForTimeout(250);
-    ok(mode, 'a backdrop takes a banner and a skyline', (await page.$$('[data-t="scene-bgpart"]')).length === 2);
+    await pick(page, 'scene-bgpart', '0'); await page.click('[data-t="scene-bgmove"][data-v="u"]'); await page.waitForTimeout(250);
+    ok(mode, 'a backdrop takes a banner and a skyline', (await page.$$('[data-t="scene-bgpart"] option:not([value="-1"])')).length === 2);
     await page.click('[data-t="scene-bgsave"]'); await page.waitForTimeout(100);
     ok(mode, 'Keep the backdrop keeps it in the world', /kept in/.test(await page.$eval('[data-t="scene-msg"]', e => e.textContent)));
     ok(mode, 'the set list offers the backdrop', (await page.$$eval('[data-t="scene-set"] option', o => o.filter(x => x.value.indexOf('bg_') === 0).length)) >= 1);
@@ -169,7 +169,7 @@ async function studio(mode) {
     await page.selectOption('[data-t="scene-heldby"]', 'A:shoulders');
     ok(mode, 'and can be picked up again, by the shoulders', (await fig()).on === 'A:shoulders');
     await page.selectOption('[data-t="scene-who"]', 'A'); await page.click('[data-t="scene-pin"][data-v="el_n"]');
-    await page.click('[data-t="scene-limb"][data-v="3"]');
+    await pick(page, 'scene-limb', '3');
     const arm = await fig(); ok(mode, 'an arm can be brought in front of everyone', arm.lz && arm.lz.arm_n === 3, JSON.stringify(arm.lz));
     await pick(page, 'scene-tab', 'people');
     await page.selectOption('[data-t="scene-hook"][data-v="B"]', 'villain');
