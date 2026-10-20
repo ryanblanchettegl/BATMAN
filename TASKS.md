@@ -323,7 +323,7 @@ Code: `src/87-create.js` (`E.makeShow`, `E.dropShow`, `E.makeTitle`, `E.dropTitl
   - An anniversary and a milestone episode (100, 250, every 500) are occasions: the desk hears as the week begins, the title card says it, the building is up for it. The title card always carries the episode number and the network.
   - The Weekly shows window lists each show's standing, years, episodes, network and when the deal runs out.
   - [ ] The player can still cancel one of their own shows. Ryan to say whether that goes too.
-  - [ ] Years on the air are worked out from a company's size. The World Editor should let a world set them, and name its own networks (`networks` in the world file is read already).
+  - [x] Years on the air are worked out from a company's size. The World Editor should let a world set them, and name its own networks. Done 20 October: the World tab's name lists (small, cable, major) and each show's Network and Years on air on the Shows tab.
   - [x] This is the first part of section 5 (TV deals). Still to come there: money by the hour, tastes, ratings targets, streaming, a rival's night. (16 October: tastes and ratings targets, `src/89-networks.js`; streaming, `src/89-streaming.js`; a rival's night and the network's offer to move, `src/88-nights.js`. Money by the hour was left: the deal's rate already scales with the network and the show's standing.)
 - [x] Measured over 32 weeks on three seeds: an extra show moved weekly profit between -$100K and +$214K and popularity by 0 to +1.6. It is a real choice, not free money.
 - [x] Big events (the monthly pay-per-view) cannot be added or renamed in a game yet. That belongs with the year planner in task 6. (Done 15 October: P.events per company, the Year planner renames them, src/42-events.js.)
