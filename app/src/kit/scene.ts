@@ -22,7 +22,18 @@ export interface Fig { x: number; y: number; r: number; f: number; z: number; p:
   lz?: Record<string, number>;
   /** Parts of the body left out of the picture (Ryan, 19 October), by joint: head, torso, sh_n (the near upper arm),
       el_n (forearm), wr_n (hand), hip_n (thigh), kn_n (shin), an_n (foot), and the same for the far side. */
-  hide?: string[] }
+  hide?: string[];
+  /** The height of what they stand on, in feet above the mat (Ryan, 19 October: top rope moves, turnbuckles, dives
+      to the outside): 0 the mat or the apron, -3 the floor outside, 3.4 the second rope, 4.9 the top turnbuckle. The
+      pose's own height is added to it, so a person kneels the same way on the mat or on the top rope. */
+  lv?: number }
+/** Places in and around the ring a person can be put on (x, depth in layer units, the height of the surface, which way
+    they face). Depth: the model's feet divided by 0.9; near is toward the hard camera. */
+export const SPOTS: [string, string, number, number, number, number][] = [
+  ['mat', 'The middle of the ring', 0, 0, 0, 1], ['apron', 'On the apron', 10.9, 0, 0, -1], ['outside', 'The floor outside', 12.6, 0, -3, -1],
+  ['tb_fr', 'Top turnbuckle, far right', 9.5, -10.6, 4.9, -1], ['tb_fl', 'Top turnbuckle, far left', -9.5, -10.6, 4.9, 1],
+  ['tb_nr', 'Top turnbuckle, near right', 9.5, 10.6, 4.9, -1], ['tb_nl', 'Top turnbuckle, near left', -9.5, 10.6, 4.9, 1],
+  ['second', 'Second rope, far right', 9.0, -10.0, 3.2, -1], ['corner', 'In the far right corner', 8.9, -9.9, 0, -1], ['air', 'In the air over the ring', 0, 0, 5, 1]];
 /** The parts of a body that can be hidden, grouped as Create a Scene shows them. */
 export const BODY_PARTS: [string, [string, string][]][] = [
   ['Head and body', [['head', 'Head'], ['torso', 'Body']]],
@@ -46,6 +57,10 @@ export interface Cam3 { p: [number, number, number]; t: [number, number, number]
 export interface Caption { t: string; s?: 'sub' | 'third' | 'title' | 'quote'; who?: string }
 export const CAP_STYLES: [string, string][] = [['sub', 'Subtitle at the bottom'], ['third', 'Lower third: a name and a line'], ['title', 'Title card in the middle'], ['quote', 'A line somebody says']];
 export interface Key { t: number; figs: Record<string, Fig>; props: Prop[]; cam?: Cam; cam3?: Cam3; cap?: Caption;
+  /** How the camera reaches this keyframe (Ryan, 19 October: "lock them in per key and camera can float to the next
+      angle or reset"): left out it glides from the last shot to this one; 'cut' jumps to it; and for a keyframe with no
+      shot of its own, 'home' goes back to the set's camera, otherwise the last shot is held. */
+  cm?: 'cut' | 'home';
   /** How the scene moves into this keyframe from the one before: smoothly (left out), evenly, speeding up, slowing down, or a cut. */
   ease?: 'even' | 'in' | 'out' | 'cut' }
 /** The ways into a keyframe, as Create a Scene lists them. */
@@ -96,7 +111,7 @@ export const STILL_WHEN: [string, string][] = [['hurt', 'Somebody hurt'], ['braw
 /** The sets, each drawn from its own angle: pick the one that suits the moment. Every set keeps feet on the same line
     (FOOT), so a pose works on all of them. */
 export const SETS: [string, string][] = [['ring', 'The ring: the hard camera'], ['ringlow', 'The ring: low at ringside'], ['ringcorner', 'The ring: from the corner'],
-  ['desk', 'The commentary desk'], ['ramp', 'The entrance ramp'], ['hall', 'Backstage: the hallway'], ['locker', 'Backstage: the locker room'], ['office', 'The office'], ['backstage', 'Backstage: the wall'], ['talk', 'A talk show'], ['cage', 'A steel cage'], ['lot', 'The parking lot'], ['news', 'A news desk'], ['stadium', 'A packed stadium'], ['rafters', 'Up in the rafters'], ['royal', 'The ring: ten wrestlers (a battle royal)'], ['plain', 'Plain card']];
+  ['desk', 'The commentary desk'], ['ramp', 'The entrance ramp'], ['hall', 'Backstage: the hallway'], ['locker', 'Backstage: the locker room'], ['office', 'The office'], ['backstage', 'Backstage: the wall'], ['talk', 'A talk show'], ['cage', 'A steel cage'], ['lot', 'The parking lot'], ['news', 'A news desk'], ['stadium', 'A packed stadium'], ['rafters', 'Up in the rafters'],  ['plain', 'Plain card']];
 export const W16 = 16, H9 = 9;   // a scene is 16 units wide and 9 high; x = 0 is the middle, y = 0 the middle
 export const FOOT = -2.9;          // where feet stand on the mat
 export const WAIST = FOOT + 2.52 + 0.7;   // the waist of a doll of standard height standing on the mat
@@ -343,6 +358,12 @@ const FRONT: Record<string, (o: Piece[]) => void> = {
 const ease = (t: number, k?: string) => k === 'even' ? t : k === 'in' ? t * t : k === 'out' ? 1 - (1 - t) * (1 - t) : k === 'cut' ? 0 : t * t * (3 - 2 * t);   // a cut holds the last picture, then jumps
 const mix = (a: number, b: number, t: number) => a + (b - a) * t;
 export function lastT(sc: Scene) { return sc.keys.length ? sc.keys[sc.keys.length - 1].t : 0; }
+/** The ways the camera reaches a keyframe, as Create a Scene lists them. */
+export const CAM_MOVES: [string, string][] = [['', 'Glides from the last shot'], ['cut', 'Cuts straight to it'], ['home', 'Goes back to the set camera']];
+/** The shot a keyframe is seen from: its own, or the last one held, or none (the set's own camera). */
+export function camAt(sc: Scene, i: number): Cam3 | undefined {
+  let c: Cam3 | undefined; for (let j = 0; j <= i && j < sc.keys.length; j++) { const k = sc.keys[j]; if (k.cam3) c = k.cam3; else if (k.cm === 'home' || (!j && !k.cam3)) c = undefined; } return c;
+}
 /** The caption on the picture at `time` seconds: the one on the last keyframe reached. */
 export function captionAt(sc: Scene, time: number): Caption | null {
   let c: Caption | null = null; for (const k of sc.keys) { if (k.t <= time + 0.0001) c = k.cap && k.cap.t ? k.cap : null; else break; } return c;
@@ -351,6 +372,7 @@ export function captionAt(sc: Scene, time: number): Caption | null {
 export function at(sc: Scene, time: number): Key {
   const ks = sc.keys; if (!ks.length) return { t: 0, figs: {}, props: [] };
   if (time <= ks[0].t) return ks[0];
+
   for (let i = 0; i < ks.length - 1; i++) {
     const a = ks[i], b = ks[i + 1];
     if (time < b.t) {
@@ -359,15 +381,17 @@ export function at(sc: Scene, time: number): Key {
         const fa = a.figs[id], fb = b.figs[id]; if (!fb) { figs[id] = fa; continue; }
         const p: Record<string, number> = {}; for (const k of new Set([...Object.keys(fa.p), ...Object.keys(fb.p)])) p[k] = mix(fa.p[k] || 0, fb.p[k] || 0, t);
         const h = t < 0.5 ? fa : fb, same = (fa.on || '') === (fb.on || '');   // picked up or put down: the hold changes half way
-        figs[id] = { x: same ? mix(fa.x, fb.x, t) : h.x, y: same ? mix(fa.y, fb.y, t) : h.y, r: mix(fa.r, fb.r, t), f: h.f, z: same ? mix(fa.z, fb.z, t) : h.z, p, e: h.e, s: mix(fa.s || 1, fb.s || 1, t), m: h.m, on: h.on, lz: h.lz, b: h.b, hide: h.hide };
+        figs[id] = { x: same ? mix(fa.x, fb.x, t) : h.x, y: same ? mix(fa.y, fb.y, t) : h.y, r: mix(fa.r, fb.r, t), f: h.f, z: same ? mix(fa.z, fb.z, t) : h.z, p, e: h.e, s: mix(fa.s || 1, fb.s || 1, t), m: h.m, on: h.on, lz: h.lz, b: h.b, hide: h.hide, lv: same ? mix(fa.lv || 0, fb.lv || 0, t) : h.lv };
       }
       const props = a.props.map(pa => { const pb = b.props.find(x => x.id === pa.id); return pb ? { ...pa, x: mix(pa.x, pb.x, t), y: mix(pa.y, pb.y, t), r: mix(pa.r, pb.r, t) } : pa; });
       const ca = a.cam || CAM0, cb = b.cam || CAM0, cam = { x: mix(ca.x, cb.x, t), y: mix(ca.y, cb.y, t), z: mix(ca.z, cb.z, t), r: mix(ca.r || 0, cb.r || 0, t) };
-      const c3 = a.cam3 && b.cam3 ? { p: [0, 1, 2].map(i => mix(a.cam3!.p[i], b.cam3!.p[i], t)) as [number, number, number], t: [0, 1, 2].map(i => mix(a.cam3!.t[i], b.cam3!.t[i], t)) as [number, number, number], fov: mix(a.cam3.fov || 30, b.cam3.fov || 30, t) } : (a.cam3 || b.cam3);
+      // the camera: each keyframe's shot (its own, the one held, or the set's), gliding unless it cuts or goes home
+      const ca3 = camAt(sc, i), cb3 = camAt(sc, i + 1), raw = (time - a.t) / Math.max(0.001, b.t - a.t), tc = ease(raw, b.ease === 'cut' ? 'even' : b.ease);
+      const c3 = ca3 && cb3 && b.cm !== 'cut' ? { p: [0, 1, 2].map(n => mix(ca3.p[n], cb3.p[n], tc)) as [number, number, number], t: [0, 1, 2].map(n => mix(ca3.t[n], cb3.t[n], tc)) as [number, number, number], fov: mix(ca3.fov || 30, cb3.fov || 30, tc) } : ca3;
       return { t: time, figs, props, cam, cam3: c3, cap: a.cap };
     }
   }
-  return ks[ks.length - 1];
+  const L = ks[ks.length - 1]; return L.cam3 ? L : { ...L, cam3: camAt(sc, ks.length - 1) };
 }
 
 /** Everything in the picture at a moment, as pieces, with each figure's joints (for dragging) and anchors (for props). */
@@ -378,6 +402,7 @@ export function build(sc: Scene, k: Key, cast: Record<string, Recipe>, time = 0)
   order.sort((a, b) => deep(a.sl.id) - deep(b.sl.id));
   order.forEach(({ sl, i }) => {
     let f = k.figs[sl.id]; if (!f) return;
+    if (f.lv && !f.on) f = { ...f, y: f.y + f.lv };
     if (f.on) {
       const [hw, anc] = f.on.split(':'), hr = rigs[hw], q = hr && (hr.anchors[anc] || hr.anchors.hands), hf = k.figs[hw];
       if (q && hf) { f = { ...f, x: q[0] + f.x, y: q[1] + f.y, z: hf.z + f.z }; hold[sl.id] = hold[hw] || hw; }
@@ -442,6 +467,14 @@ export const POSES: [string, PoseDef][] = [
   ['back', { n: 'Flat on the back', p: { sh_n: 160, el_n: 5, sh_f: 140, el_f: -10, hip_n: 10 }, r: 90, y: -2.15, e: 'hurt' }],
   ['front', { n: 'Face down', p: { sh_n: -10, sh_f: 10, hip_n: 4 }, r: -90, y: -2.15, e: 'hurt' }],
   ['seated', { n: 'Seated at a desk', p: { hip_n: 90, kn_n: -90, an_n: 0, hip_f: 85, kn_f: -90, an_f: 0, sh_n: 30, el_n: 80, sh_f: 30, el_f: 75 }, y: -0.75 }],
+  ['crouch', { n: 'Crouched on the top rope', p: { torso: 35, head: -15, hip_n: 75, kn_n: -120, an_n: 45, hip_f: 65, kn_f: -115, an_f: 45, sh_n: 35, el_n: 45, sh_f: 25, el_f: 45 }, y: -1.75, e: 'roar' }],
+  ['leap', { n: 'Leaping, arms spread', p: { sh_n: 125, el_n: 5, sh_f: -125, el_f: -5, head: 12, hip_n: -15, kn_n: -35, hip_f: 12, kn_f: -45 }, e: 'shout' }],
+  ['dive', { n: 'Diving head first', p: { sh_n: 175, el_n: 0, sh_f: -175, el_f: 0, head: -12, hip_n: -6, hip_f: 6 }, r: -80, e: 'shout' }],
+  ['splash', { n: 'A splash, flat in the air', p: { sh_n: 100, el_n: 0, sh_f: -100, el_f: 0, hip_n: 12, hip_f: -12 }, r: -90, e: 'shout' }],
+  ['moonsault', { n: 'A backflip (moonsault)', p: { sh_n: 160, el_n: 10, sh_f: 150, el_f: 10, hip_n: 60, kn_n: -70, hip_f: 50, kn_f: -70, head: -20 }, r: 150, e: 'shout' }],
+  ['elbow', { n: 'An elbow drop', p: { sh_n: 100, el_n: 140, sh_f: -30, el_f: -20, hip_n: 40, kn_n: -60, hip_f: 10 }, r: -60, e: 'roar' }],
+  ['corner', { n: 'Slumped in the corner', p: { torso: -15, head: -25, sh_n: 115, el_n: 10, sh_f: -115, el_f: -10, hip_n: 20, kn_n: -30, hip_f: -10, kn_f: -30 }, e: 'hurt' }],
+  ['charge', { n: 'Charging', p: { torso: 25, head: -10, sh_n: 60, el_n: 70, sh_f: -40, el_f: 60, hip_n: 45, kn_n: -40, hip_f: -30, kn_f: -50 }, r: -15, e: 'roar' }],
   ['cover', { n: 'Covering', p: { sh_n: -120, el_n: -30, sh_f: -60, el_f: -40, kn_n: -10, kn_f: -20, an_n: -30, an_f: -30, head: 25 }, r: -65, y: -1.75 }],
 ];
 
@@ -625,9 +658,43 @@ export const STILLS: Scene[] = [
   still('st_phone', 'The office phone', 'phone', 'office', [], {}, [cap('THE OFFICE')]),
 ];
 
+/* ---------- classic moves in and around the ring, each with the camera moving (Ryan, 19 October: "how we make top
+   rope moves look good, turnbuckle moves, dives to the outside, and other classic scenes with the free camera") ----------
+   A move is a few keyframes: the set-up, the moment in the air, the landing; each with its own camera, so the shot
+   follows the move the way a director would cut it. Heights are what they stand on (Fig.lv). */
+const P_ = (k: string) => (POSES.find(x => x[0] === k) as [string, PoseDef])[1];
+const POSED = (k: string, x: number, z: number, f: number, lv = 0, e?: string): Fig => { const d = P_(k); return { x, y: d.y ?? WAIST, r: d.r || 0, f, z, p: { ...d.p }, e: e ?? d.e, lv }; };
+const C3 = (p: [number, number, number], t: [number, number, number], fov = 30): Cam3 => ({ p, t, fov });
+const MOVE_SLOTS: Slot[] = [{ id: 'A', n: 'Who does the move', role: 'a' }, { id: 'B', n: 'Who takes it', role: 'b' }, { id: 'R', n: 'The referee', role: 'ref' }];
+const move = (name: string, keys: Key[]): Scene => ({ v: 1, id: 'scene-' + Date.now().toString(36), name, when: 'any', set: 'ring', slots: MOVE_SLOTS, keys });
+const CLASSIC: Record<string, () => Scene> = {
+  topdive: () => move('A splash off the top', [
+    { t: 0, figs: { A: POSED('crouch', 9.5, 10.6, -1, 4.9), B: POSED('back', 3.2, 5.6, 1), R: POSED('point', -3, 2, 1) }, props: [], cam3: C3([17, 2.5, 19], [9, 6, 9.5], 28) },
+    { t: 1.0, figs: { A: POSED('leap', 9.3, 10.4, -1, 4.9), B: POSED('back', 3.2, 5.6, 1), R: POSED('point', -3, 2, 1) }, props: [], cam3: C3([15, 4, 18], [8, 7, 9], 32) },
+    { t: 1.8, ease: 'even', figs: { A: POSED('splash', 6.2, 8.2, -1, 5.2), B: POSED('back', 3.2, 5.6, 1), R: POSED('point', -3, 2, 1) }, props: [], cam3: C3([12, 6, 18], [5.5, 4.5, 7], 34) },
+    { t: 2.5, ease: 'in', figs: { A: POSED('splash', 3.4, 5.9, -1, 0.75), B: POSED('back', 3.2, 5.6, 1, 0, 'pain'), R: POSED('kneel', -1, 3, 1) }, props: [], cam3: C3([7, 4.5, 16], [3.2, 0.8, 5], 30) }]),
+  moonsault: () => move('A moonsault off the top', [
+    { t: 0, figs: { A: { ...POSED('stand', 9.5, -10.6, 1, 4.9), b: true }, B: POSED('back', 4, -6, 1), R: POSED('point', -2, -2, 1) }, props: [], cam3: C3([3, 3, 4], [9, 7, -10], 32) },
+    { t: 1.1, figs: { A: { ...POSED('moonsault', 7.5, -9.2, 1, 6.5), b: true }, B: POSED('back', 4, -6, 1), R: POSED('point', -2, -2, 1) }, props: [], cam3: C3([0, 5, 6], [7, 7, -9], 36) },
+    { t: 2.0, ease: 'in', figs: { A: POSED('splash', 4.2, -6.3, -1, 0.75), B: POSED('back', 4, -6, 1, 0, 'pain'), R: POSED('kneel', -2, -2, 1) }, props: [], cam3: C3([-2, 4, 4], [4, 0.8, -6], 30) }]),
+  tope: () => move('A dive to the outside', [
+    { t: 0, figs: { A: POSED('charge', 3, 0, 1), B: POSED('stagger', 12.6, 0.4, -1, -3), R: POSED('point', -4, 3, 1) }, props: [], cam3: C3([18, 3, 16], [8, 2, 0], 38) },
+    { t: 0.8, ease: 'even', figs: { A: POSED('dive', 10.4, 0.2, 1, 2.6), B: POSED('stagger', 12.6, 0.4, -1, -3), R: POSED('point', -4, 3, 1) }, props: [], cam3: C3([17, 2, 14], [11, 2, 0], 34) },
+    { t: 1.3, ease: 'in', figs: { A: POSED('dive', 12.2, 0.3, 1, -0.6), B: POSED('stagger', 12.9, 0.4, -1, -3), R: POSED('point', -4, 3, 1) }, props: [], cam3: C3([16, 0.5, 12], [12.4, -1, 0], 36) },
+    { t: 2.1, figs: { A: POSED('back', 12.0, 1.2, 1, -3), B: POSED('front', 13.0, -0.6, -1, -3), R: POSED('point', 9, 2, 1) }, props: [], cam3: C3([13, 4, 12.5], [12.5, -2.5, 0], 38) }]),
+  cornerhit: () => move('A charge into the corner', [
+    { t: 0, figs: { A: POSED('charge', 1, -3.5, 1), B: POSED('corner', 8.9, -9.9, -1), R: POSED('point', -3, 2, 1) }, props: [], cam3: C3([-6, 5, 8], [5, 3.5, -7], 30) },
+    { t: 0.9, ease: 'in', figs: { A: POSED('splash', 7.6, -8.7, 1, 2.6), B: POSED('corner', 8.9, -9.9, -1, 0, 'pain'), R: POSED('point', -3, 2, 1) }, props: [], cam3: C3([0, 4, 0], [8, 3.5, -9], 28) },
+    { t: 1.6, figs: { A: POSED('flex', 6, -6.5, 1), B: { ...POSED('sit', 8.6, -9.6, -1), e: 'hurt' }, R: POSED('point', -3, 2, 1) }, props: [], cam3: C3([1, 3, -1], [7, 2.5, -8], 32) }]),
+  superplex: () => move('A superplex off the top', [
+    { t: 0, figs: { A: POSED('lift', 8.7, -9.5, 1, 3.2), B: { ...POSED('sit', 9.4, -10.3, -1, 4.9), e: 'pain' }, R: POSED('point', 2, -3, 1) }, props: [], cam3: C3([0, 3, 2], [8.5, 6.5, -9.5], 32) },
+    { t: 1.0, figs: { A: { ...POSED('lift', 8.3, -9.1, 1, 4.6), r: 25 }, B: { ...POSED('back', 8.6, -9.4, -1, 7.5), r: 160 }, R: POSED('point', 2, -3, 1) }, props: [], cam3: C3([-1, 5, 4], [8, 8, -9], 36) },
+    { t: 1.9, ease: 'in', figs: { A: POSED('back', 5.6, -6.6, 1), B: POSED('back', 4.4, -5.8, -1, 0, 'pain'), R: POSED('kneel', 2, -3, 1) }, props: [], cam3: C3([-2, 6, 6], [5, 0.5, -6], 34) }]),
+};
 /* ---------- a new scene starts from a setup: the set and the people placed for it ---------- */
 export const SETUPS: [string, string][] = [['ring', 'The ring: two wrestlers and the referee'], ['desk', 'The commentary desk, its chairs and a guest seat'], ['ramp', 'The entrance ramp'],
-  ['hall', 'Backstage: two in the hallway'], ['locker', 'The locker room'], ['office', 'The office, across the desk'], ['talk', 'A talk show: a host and a guest'], ['cage', 'A steel cage: two wrestlers inside'], ['lot', 'The parking lot'], ['news', 'A news desk: the anchor'], ['stadium', 'A packed stadium: two wrestlers in the ring'], ['rafters', 'Up in the rafters'], ['plain', 'Plain card']];
+  ['hall', 'Backstage: two in the hallway'], ['locker', 'The locker room'], ['office', 'The office, across the desk'], ['talk', 'A talk show: a host and a guest'], ['cage', 'A steel cage: two wrestlers inside'], ['lot', 'The parking lot'], ['news', 'A news desk: the anchor'], ['stadium', 'A packed stadium: two wrestlers in the ring'], ['rafters', 'Up in the rafters'], ['royal', 'The ring: ten wrestlers (a battle royal)'], ['topdive', 'Classic: a splash off the top rope'], ['moonsault', 'Classic: a moonsault off the top'], ['tope', 'Classic: a dive to the outside'],
+  ['cornerhit', 'Classic: a charge into the corner'], ['superplex', 'Classic: a superplex off the top'], ['plain', 'Plain card']];
 export function setupScene(id: string): Scene {
   const base = (set: string, slots: Slot[], figs: Record<string, Fig>, cam?: Cam): Scene => ({ v: 1, id: 'scene-' + Date.now().toString(36), name: 'My scene', when: 'any', set, slots, keys: [{ t: 0, figs, props: [], cam }] });
   const SEAT = { hip_n: 90, kn_n: -90, hip_f: 85, kn_f: -90, sh_n: 30, el_n: 80, sh_f: 30, el_f: 75 };
@@ -642,6 +709,7 @@ export function setupScene(id: string): Scene {
   if (id === 'rafters') return base('rafters', [{ id: 'A', n: 'Wrestler A', role: 'a' }], { A: STD(-0.4, 1, { sh_n: 40, el_n: 30, sh_f: -30 }, '', 0.4) });
   if (id === 'lot') return base('lot', [{ id: 'A', n: 'Wrestler A', role: 'a' }, { id: 'B', n: 'Wrestler B', role: 'b' }], { A: STD(0.6, 1, {}, '', 0.4), B: STD(3.4, -1, {}, '', 0.6) });
   if (id === 'news') return base('news', [{ id: 'A', n: 'The anchor', role: 'c', dress: 'suit' }], { A: { x: -1.2, y: -0.75, r: 0, f: 1, z: 0, p: SEAT, e: 'talk' } }, { x: -0.4, y: 0.1, z: 1.15 });
+  if (CLASSIC[id]) return CLASSIC[id]();
   if (id === 'royal') {   // ten in the ring, two rows of five, facing in toward the middle (Ryan, 19 October: "up to 10 people in the 3d ring")
     const slots: Slot[] = [], figs: Record<string, Fig> = {};
     for (let i = 0; i < 10; i++) { const id2 = String.fromCharCode(65 + i), row = i < 5 ? 0 : 1, col = i % 5, x = -6 + col * 3 + (row ? 1.5 : 0);

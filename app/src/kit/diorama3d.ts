@@ -118,9 +118,61 @@ function arena(root: THREE.Group, near = true) {
     for (const y of [1.5, 3, 4.5]) { const r = new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.07, L, 8), rope); r.position.set((x0 + x1) / 2, y, (z0 + z1) / 2); r.rotation.z = Math.PI / 2; r.rotation.y = -Math.atan2(z1 - z0, x1 - x0); r.castShadow = true; root.add(r); } }
   // the barricade, and the stands behind it on three sides
   const B = 14;
-  for (const [w, d, x, z] of ([[B * 2, 0.3, 0, -B], [0.3, B * 2, B, 0], [0.3, B * 2, -B, 0]] as number[][]).concat(near ? [[B * 2, 0.3, 0, B]] : [])) { box(w, 2.2, d, '#1b1d28', x, -APRON + 1.1, z); box(w + 0.1, 0.25, d + 0.1, '#2a3a8a', x, -APRON + 2.3, z, false); }   // the near side is left out where the camera sits inside it
+  // the far barricade has a gap where the ramp comes down to the ring
+  for (const [w, d, x, z] of ([[B - 3.4, 0.3, -(B + 3.4) / 2, -B], [B - 3.4, 0.3, (B + 3.4) / 2, -B], [0.3, B * 2, B, 0], [0.3, B * 2, -B, 0]] as number[][]).concat(near ? [[B * 2, 0.3, 0, B]] : [])) { box(w, 2.2, d, '#1b1d28', x, -APRON + 1.1, z); box(w + 0.1, 0.25, d + 0.1, '#2a3a8a', x, -APRON + 2.3, z, false); }   // the near side is left out where the camera sits inside it
   fans(root);
+  entrance(root, box);
+  deskSide(root, box);
   for (const [x, z] of [[-8, -8], [8, -8], [8, 8], [-8, 8]]) { const s = new THREE.SpotLight(0xffe2b0, 140, 70, 0.5, 0.7, 1.6); s.position.set(x, 30, z); s.target.position.set(0, 0, 0); root.add(s, s.target); }   // the lights over the ring
+}
+/** The entrance (Ryan, 20 October: "the 3d arena is missing an entrance ramp, a commentary desk, a titantron"): a stage
+    across the far end with a big screen over it, light trusses, and a ramp down to the ring. */
+type BoxFn = (w: number, h: number, d: number, col: string | THREE.Material, x: number, y: number, z: number, shadow?: boolean) => THREE.Mesh;
+function entrance(root: THREE.Group, box: BoxFn) {
+  const FL = -3, SZ = -27, SH = 2.4;   // the floor, where the stage front stands, how high the stage is
+  box(30, SH, 9, '#1c1f2e', 0, FL + SH / 2, SZ - 4.5);                                  // the stage
+  box(30.2, 0.18, 9.2, '#2a2f45', 0, FL + SH + 0.09, SZ - 4.5, false);                  // its top
+  box(30.2, 0.3, 0.12, '#c8322a', 0, FL + SH - 0.15, SZ + 0.02, false);                 // a red edge along the front
+  // the ramp: from the stage down to the ring, a slope of card on posts, with a red skirt and a white edge
+  const len = Math.hypot(SZ - -11, SH), ang = Math.atan2(SH, -11 - SZ), cz = (SZ + -11) / 2;
+  const ramp = new THREE.Mesh(new THREE.BoxGeometry(6, 0.25, len), card('#59607e')[0]); ramp.position.set(0, FL + SH / 2 + 0.12, cz); ramp.rotation.x = ang; ramp.receiveShadow = true; ramp.castShadow = true; root.add(ramp);
+  for (const sx of [-1, 1]) { const sk = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.6, len), card(PAL.red)[0]); sk.position.set(sx * 3.05, FL + SH / 2 - 0.1, cz); sk.rotation.x = ang; root.add(sk);
+    const lt = new THREE.Mesh(new THREE.BoxGeometry(0.16, 0.08, len), glow(0x9fd0ff, 1.4)); lt.position.set(sx * 2.85, FL + SH / 2 + 0.28, cz); lt.rotation.x = ang; root.add(lt); }   // light strips along the edges
+  const wash = new THREE.SpotLight(0xd8e4ff, 70, 34, 0.5, 0.7, 1.3); wash.position.set(0, FL + SH + 12, -16); wash.target.position.set(0, FL, -19); root.add(wash, wash.target);
+  // the screen: a big glowing board in a black frame, the show's lettering on it
+  box(19, 11.4, 0.6, '#0d0e14', 0, FL + SH + 7.6, SZ - 8.6);
+  const scr = new THREE.Mesh(new THREE.PlaneGeometry(18, 10.4), tron()); scr.position.set(0, FL + SH + 7.6, SZ - 8.25); root.add(scr);
+  const glowL = new THREE.PointLight(0x7f6bff, 60, 30, 1.4); glowL.position.set(0, FL + SH + 6, SZ - 4); root.add(glowL);
+  // two side screens and the trusses of lights over the stage
+  for (const sx of [-1, 1]) { box(5.2, 7, 0.4, '#0d0e14', sx * 13.2, FL + SH + 5.6, SZ - 8); const ss = new THREE.Mesh(new THREE.PlaneGeometry(4.6, 6.4), glow(sx < 0 ? 0xc8322a : 0x2f6bd8, 0.9)); ss.position.set(sx * 13.2, FL + SH + 5.6, SZ - 7.78); root.add(ss); }
+  box(32, 0.5, 0.5, steel, 0, FL + SH + 14.2, SZ - 2.5, false); box(32, 0.5, 0.5, steel, 0, FL + SH + 14.2, SZ - 7, false);
+  for (const sx of [-15.5, 15.5]) box(0.5, 14.2, 0.5, steel, sx, FL + SH + 7.1, SZ - 2.5, false);
+  for (let i = 0; i < 7; i++) { const x = -12 + i * 4; box(0.7, 0.7, 0.9, '#15161c', x, FL + SH + 13.6, SZ - 2.5, false); const sp = new THREE.SpotLight(i % 2 ? 0xffd8a0 : 0x9fb8ff, 40, 40, 0.32, 0.6, 1.4); sp.position.set(x, FL + SH + 13.3, SZ - 2.3); sp.target.position.set(x * 0.3, FL + SH, SZ + 4); root.add(sp, sp.target); }
+}
+let tronTex: THREE.Texture | null = null;
+/** What the big screen shows: the company's lettering, stars and a burst of colour, as if lit from behind. */
+function tron(): THREE.Material {
+  if (!tronTex) {
+    const c = document.createElement('canvas'); c.width = 1024; c.height = 592; const x = c.getContext('2d')!;
+    const g = x.createRadialGradient(512, 296, 40, 512, 296, 620); g.addColorStop(0, '#5a3cc0'); g.addColorStop(0.55, '#1e1a5a'); g.addColorStop(1, '#07071a'); x.fillStyle = g; x.fillRect(0, 0, 1024, 592);
+    for (let i = 0; i < 18; i++) { x.save(); x.translate(512, 296); x.rotate(i * Math.PI / 9); x.fillStyle = i % 2 ? 'rgba(255,214,90,.10)' : 'rgba(255,255,255,.05)'; x.beginPath(); x.moveTo(0, 0); x.lineTo(700, -60); x.lineTo(700, 60); x.fill(); x.restore(); }
+    x.fillStyle = '#ffd84a'; x.font = "bold 150px 'Craft Marker', 'EWF Sans', sans-serif"; x.textAlign = 'center'; x.textBaseline = 'middle'; x.shadowColor = '#000'; x.shadowBlur = 18; x.fillText('LIVE!', 512, 270);
+    x.fillStyle = '#fff'; x.font = "64px 'Craft Marker', 'EWF Sans', sans-serif"; x.fillText('★  TONIGHT  ★', 512, 410);
+    tronTex = new THREE.CanvasTexture(c); tronTex.colorSpace = THREE.SRGBColorSpace;
+  }
+  return new THREE.MeshBasicMaterial({ map: tronTex });
+}
+/** The commentary desk at ringside: on the floor by the left side of the ring, facing in, with its chairs and monitors. */
+function deskSide(root: THREE.Group, box: BoxFn) {
+  const FL = -3, X = -12.3, Z = 4.5;
+  box(1.6, 2.5, 6.2, '#1f2a52', X, FL + 1.25, Z);                        // the desk, its front to the ring
+  box(1.75, 0.14, 6.4, '#34405f', X, FL + 2.57, Z, false);
+  box(0.06, 0.3, 6.2, PAL.gold, X + 0.84, FL + 2.1, Z, false); box(0.06, 0.12, 6.2, PAL.red, X + 0.84, FL + 0.6, Z, false);
+  const live = new THREE.Mesh(new THREE.PlaneGeometry(2.2, 0.8), plate('LIVE', 2.2, 0.8, '#1f2a52', PAL.yellow)); live.position.set(X + 0.86, FL + 1.3, Z); live.rotation.y = Math.PI / 2; root.add(live);
+  for (const dz of [-1.8, 0, 1.8]) {
+    const sc = box(0.06, 0.45, 0.8, '#111116', X + 0.2, FL + 2.88, Z + dz); sc.rotation.z = 0.2;                         // a monitor
+    box(0.9, 2.6, 0.9, '#16161b', X - 1.4, FL + 1.3, Z + dz);                                                          // a chair
+  }
 }
 function fans(root: THREE.Group) {
   // a fan is two cut cards: the shirt and the head, facing the ring
@@ -132,11 +184,15 @@ function fans(root: THREE.Group) {
     const dist = 16.5 + r * 1.75, y = -1.9 + r * 1.15, half = dist + 4, n = Math.floor(half * 2 / 1.55);
     for (let i = 0; i < n; i++) {
       const t = -half + (i + 0.5) * half * 2 / n + (r % 2) * 0.4, x = sx ? sx * dist : t, z = sx ? t : sz * dist;
+      if (!sx && Math.abs(x) < 16.5) continue;   // the stage and the screen stand where the middle of the far stand was
       spots.push({ x, y, z, ry: Math.atan2(-x, -z), k: r });
       // the step under the row
     }
-    const step = new THREE.Mesh(new THREE.BoxGeometry(sx ? 1.75 : half * 2, 1.15, sx ? half * 2 : 1.75), card('#262a3e')[0]);
-    step.position.set(sx ? sx * (dist + 0.4) : 0, y - 1.0, sx ? 0 : sz * (dist + 0.4)); step.receiveShadow = true; root.add(step);
+    for (const half2 of sx ? [0] : [-1, 1]) {   // the far stand in two halves, either side of the stage
+      const w = sx ? half * 2 : half - 16.5, cx = sx ? 0 : half2 * (16.5 + w / 2);
+      const step = new THREE.Mesh(new THREE.BoxGeometry(sx ? 1.75 : w, 1.15, sx ? half * 2 : 1.75), card('#262a3e')[0]);
+      step.position.set(sx ? sx * (dist + 0.4) : cx, y - 1.0, sx ? 0 : sz * (dist + 0.4)); step.receiveShadow = true; root.add(step);
+    }
   }
   const shirts = [PAL.red, PAL.black, PAL.white, PAL.blue, PAL.grey, PAL.maroon, PAL.yellow, PAL.teal, PAL.green, PAL.orange];
   const skins = ['#f3dccb', '#e8c09e', '#d5a07a', '#b07a52', '#7f5236', '#5a3a26'];

@@ -88,3 +88,38 @@ canvas.paperpt{image-rendering:auto}
 .sc-lrow .btn{margin:0;padding:0 .7ch}
 .sc-lrow.on{background:rgba(255,214,0,.18)}
 .sc-lset{opacity:.75}
+
+/* ---------- Create a Scene, 3D (Ryan, 19 October) ---------- */
+.scpage{grid-template-columns:minmax(0,2fr) minmax(0,1fr)}
+.scpage [data-t="scene-side"]>.bd{overflow:hidden}
+.sc-panel{flex:1 1 0;min-height:0;overflow-y:auto;padding-right:.6ch;display:flex;flex-direction:column;gap:.2em}
+.sc-panel .grp{margin-top:1.1em}
+.sc-panel .sc-map{flex:none;height:11em}
+.sc-stage canvas{cursor:grab}
+.sc-stage canvas:active{cursor:grabbing}
+.sc-shot{font-style:italic;opacity:.85;margin-right:.6ch;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:22ch}
+.sc-title{opacity:.8;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:24ch}
+.sc-lbl{font-weight:bold;margin-right:.3ch;white-space:nowrap}
+.sc-people{display:flex;flex-direction:column;gap:.15em}
+.sc-prow{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:.2em .5ch;align-items:center;padding:.2em .2em .3em;border-bottom:1px dashed rgba(0,0,0,.2)}
+.sc-prow .sc-pname{grid-column:1/-1;text-align:left;margin:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sc-prow select{min-width:0;width:100%;font:inherit;font-size:.9em}
+.sc-prow .sc-pbtns{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:.2em .4ch;justify-content:flex-end}
+.sc-prow .sc-pbtns .btn{margin:0;padding:0 .8ch}
+.sc-prow.on{background:rgba(255,214,0,.2)}
+.sc-capbox{display:flex;flex-direction:column;gap:.2em}
+.sc-capbox textarea{font:inherit;resize:vertical;min-height:3.6em;padding:.3em .6ch;border:2px solid #23232a;border-radius:3px;background:#fffdf6;color:#23232a}
+/* a caption on the picture: it lies exactly over it, like the filters' veil */
+.sccap{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);pointer-events:none;z-index:2;display:flex;align-items:flex-end;justify-content:center;padding:0 4% 4.5%;box-sizing:border-box;line-height:1.2}
+.sccap .cb{display:inline-flex;flex-direction:column;align-items:center;max-width:88%;text-align:center}
+.sccap-sub .ct{font-family:var(--hand,'EWF Sans');color:#fff;font-weight:700;text-shadow:0 0 .12em #000,0 0 .2em #000,.06em .08em 0 #000;padding:.1em .6em;background:rgba(0,0,0,.35);border-radius:.2em}
+.sccap-third{justify-content:flex-start;padding-left:4%}
+.sccap-third .cb{align-items:flex-start;text-align:left;transform:rotate(-1deg)}
+.sccap-third b{font-family:var(--marker,'EWF Sans');font-weight:400;background:#26314f;color:#ffe48a;padding:.08em .7em .12em;font-size:1.2em;box-shadow:.1em .14em .2em rgba(0,0,0,.45)}
+.sccap-third .ct{font-family:var(--hand,'EWF Sans');background:#fbf8ee;color:#23232a;padding:.1em .8em .14em;box-shadow:.1em .14em .2em rgba(0,0,0,.45)}
+.sccap-title{align-items:center;padding:0}
+.sccap-title .ct{font-family:var(--marker,'EWF Sans');color:#ffe48a;background:#1b1a1f;padding:.15em .8em .25em;transform:rotate(-1.5deg);box-shadow:.12em .18em .3em rgba(0,0,0,.55);letter-spacing:.02em}
+.sccap-quote .cb{background:#fbf8ee;color:#23232a;padding:.25em .9em .35em;box-shadow:.12em .18em .25em rgba(0,0,0,.45);transform:rotate(.6deg);align-items:flex-start;text-align:left}
+.sccap-quote b{font-family:var(--marker,'EWF Sans');font-weight:400;color:#c23a30}
+.sccap-quote .ct{font-family:var(--hand,'EWF Sans')}
+.lv-scene{position:relative}
