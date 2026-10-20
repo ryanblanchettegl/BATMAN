@@ -570,11 +570,12 @@ function overRopes(set: string, cam: THREE.PerspectiveCamera, ctl: OrbitControls
   if (!RINGS.includes(set) || set === 'ringside') return;
   const p = cam.position, t = ctl.target, H = 10, TOP = 4.8;
   if (Math.abs(t.x) > H - 0.3 || Math.abs(t.z) > H - 0.3) return;   // looking at the floor, or the corner from outside
+  if (t.y >= 4.5) return;   // looking up at somebody high (on the top rope, in the air): the low shot is the classic one
   if (Math.abs(p.x) < H && Math.abs(p.z) < H) return;               // inside the ring already
   let sIn = 0; for (let k = 1; k <= 100; k++) { const u = k / 100, x = p.x + (t.x - p.x) * u, z = p.z + (t.z - p.z) * u; if (Math.abs(x) < H && Math.abs(z) < H) { sIn = u; break; } }
   if (!sIn || sIn > 0.97) return;
   const low = t.y - 2.2, need = (TOP - low * sIn) / (1 - sIn);
-  if (p.y < need) { p.y = Math.min(32, need); cam.updateProjectionMatrix(); ctl.update(); }
+  if (p.y < need && need - p.y <= 6) { p.y = need; cam.updateProjectionMatrix(); ctl.update(); }   // a camera that would have to climb far is a shot made on purpose
 }
 function frame(set: string, cam: THREE.PerspectiveCamera, ctl: OrbitControls, k: Key, real = false) {
   if (k.cam3) {   // the keyframe's own camera, placed in the model
