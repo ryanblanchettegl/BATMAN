@@ -226,7 +226,9 @@ function matchShape(x,o,hk){
   var srt=[A,B].sort(function(p,q){return q.ovr-p.ovr;});
   var c={k:k,p:o.p,a:A.name,b:B.name,w:o.w||A.name,big:srt[0].name,small:srt[1].name,am:pk(MOVES[A.style]||MOVES.A,'am'),bm:pk(MOVES[B.style]||MOVES.A,'bm'),
     fa:A.fin||null,fb:B.fin||null,hot:x.MQ>=72&&x.mins>=12};
-  return {k:k,intro:gram(GR_SHAPE,'intro',c,hk+'i'),spot:x.mins>8&&k!=='squash'?gram(GR_SHAPE,'spot',c,hk+'s'):null,late:x.mins>=12&&k!=='squash'?gram(GR_SHAPE,'late',c,hk+'l'):null};
+  // a wrestler with a moveset of their own does the moves for that part of the match (src/86-looks.js)
+  var at=function(st){var o2={};Object.keys(c).forEach(function(q){o2[q]=c[q];});o2.am=moveFrom(A,st,hk+'am'+st)||c.am;o2.bm=moveFrom(B,st,hk+'bm'+st)||c.bm;return o2;};
+  return {k:k,intro:gram(GR_SHAPE,'intro',at('early'),hk+'i'),spot:x.mins>8&&k!=='squash'?gram(GR_SHAPE,'spot',at('mid'),hk+'s'):null,late:x.mins>=12&&k!=='squash'?gram(GR_SHAPE,'late',at('late'),hk+'l'):null};
 }
 
 /* ---------- the newsletter's feud watch: how the stories around the business stand ---------- */

@@ -1,7 +1,8 @@
 /* The World Editor: build a world from scratch, or change a copy of one, and share it. Reached from the title screen. */
-import { useRef } from 'preact/hooks';
+import { useRef, useState } from 'preact/hooks';
+import { Window } from '../../kit/window';
 import { E } from '../../engine';
-import { UNIS, ui, redraw, builtInUniverse, isBuiltIn, pref, plural } from '../../store';
+import { UNIS, ui, redraw, builtInUniverse, isBuiltIn, pref, plural, BUILT_IN } from '../../store';
 import { onBack } from '../../input';
 import { Btn, Panel, Field } from '../../kit';
 import { es, world, keep, edit, look, note, report, freeId, openWorld, EdTab, TABS } from './state';
@@ -36,6 +37,7 @@ let ws: any[] = [];
 function summary(pkg: any): string { const n = (pkg.promotions || []).length, w = (pkg.workers || []).length; return n + ' ' + plural(n, 'company', 'companies') + ', ' + w + ' ' + plural(w, 'wrestler'); }
 
 function Home() {
+  const [pick, setPick] = useState(false);
   const st = es(), ids = Object.keys(UNIS), file = useRef<HTMLInputElement>(null), steam = (window as any).gpSteam;
   const onFile = (e: Event) => {
     const t = e.currentTarget as HTMLInputElement, fl = t.files && t.files[0]; if (!fl) return;
@@ -58,17 +60,24 @@ function Home() {
         : <p class="empty">No worlds yet. Start one below.</p>}
     </Panel>
     <Panel cls="mb4" title="Start a new world">
-      <div class="row"><Field label="Name"><input type="text" id="ed-newname" data-t="ed-newname" value={st.newName} maxLength={40} placeholder="My world" onInput={e => { st.newName = (e.currentTarget as HTMLInputElement).value; }} /></Field></div>
-      <div class="row mt2">
-        <Btn kind="go" t="ed-new" onClick={() => look(() => { addWorld(E.edNew(st.newName)); st.newName = ''; })}>Start from scratch</Btn>
-        <Btn t="ed-new-copy" onClick={() => look(() => { addWorld(E.edCopy(builtInUniverse(isBuiltIn(pref.uni) ? pref.uni : undefined), st.newName || undefined)); st.newName = ''; })}>Start from a copy of {builtInUniverse(isBuiltIn(pref.uni) ? pref.uni : undefined).manifest.name}</Btn>
-        <Btn t="ed-new-territory" onClick={() => look(() => { addWorld(E.edQuick('territory', st.newName || undefined, Date.now() & 0xffff)); st.newName = ''; })}>A two-company territory</Btn>
-        <Btn t="ed-new-nine" onClick={() => look(() => { addWorld(E.edQuick('nine', st.newName || undefined, Date.now() & 0xffff)); st.newName = ''; })}>A nine-company world of unknowns</Btn>
+      <div class="row"><Btn kind="go" t="ed-new-world" tip="From a template, filled in and ready to play, or from scratch" onClick={() => setPick(true)}>New world</Btn>
         <Btn t="ed-import" onClick={() => file.current && file.current.click()}>Open a world file</Btn>
-        <input type="file" id="ed-file" ref={file} accept=".json,application/json" hidden onChange={onFile} />
-      </div>
-      <p class="muted mt2">From scratch gives you an empty world. A world needs at least two companies, each with a weekly show and six wrestlers, before it can be played.</p>
+        <input type="file" id="ed-file" ref={file} accept=".json,application/json" hidden onChange={onFile} /></div>
+      <p class="muted mt2">A template comes complete: companies, shows, belts, wrestlers, networks, big events and the rest, ready to play or change. From scratch is an empty world to build yourself.</p>
     </Panel>
+    {pick ? (() => { const uni = isBuiltIn(pref.uni) ? pref.uni : undefined, ids0 = Object.keys(BUILT_IN), bi = (uni ? [uni] : []).concat(ids0.filter(x => x !== uni)), made = (pkg: any) => look(() => { addWorld(pkg); st.newName = ''; setPick(false); });
+      return <Window paper big esc title="New world" info={['Pick where it starts', 'Everything can be changed after']} onClose={() => setPick(false)} ok="Cancel" hint="Esc closes">
+        <div class="row mb2"><Field label="Name"><input type="text" id="ed-newname" data-t="ed-newname" value={st.newName} maxLength={40} placeholder="My world" onInput={e => { st.newName = (e.currentTarget as HTMLInputElement).value; }} /></Field></div>
+        <div class="pick-cols tmpl">
+          <div class="pick-col"><h3>Templates</h3>
+            {bi.map(id => { const u = builtInUniverse(id); return <Btn key={id} kind="less" t="ed-new-copy" d={{ v: id }} onClick={() => made(E.edCopy(u, st.newName || undefined))}><b>A copy of {u.manifest.name}</b><small>{(u.promotions || []).length} companies, {(u.workers || []).length} wrestlers, with their history</small></Btn>; })}
+            {(E.ED_TEMPLATES as [string, string, string][]).map(([k, n, d]) => <Btn key={k} kind="less" t={'ed-new-' + k} onClick={() => made(E.edQuick(k, st.newName || undefined, Date.now() & 0xffff))}><b>{n}</b><small>{d}</small></Btn>)}
+          </div>
+          <div class="pick-col"><h3>From scratch</h3>
+            <Btn kind="less" t="ed-new" onClick={() => made(E.edNew(st.newName))}><b>An empty world</b><small>No companies and no wrestlers. A world needs at least two companies, each with a weekly show and six wrestlers, before it can be played.</small></Btn>
+          </div>
+        </div>
+      </Window>; })() : null}
     {steam && steam.workshopWorlds ? <Panel cls="mb4" title="From the Workshop">
       <div class="row"><Btn t="ed-ws-load" onClick={() => Promise.resolve(steam.workshopWorlds()).then((list: any[]) => look(() => { st.sel.ws = 'y'; ws = (list || []).filter(x => x && x.manifest); }), () => look(() => note('The Workshop could not be read.', true)))}>Look for worlds I have subscribed to</Btn></div>
       {st.sel.ws ? (ws.length ? <ul class="list mt2">{ws.map((pkg, i) => <li key={i}><span><b>{pkg.manifest.name}</b> <span class="muted">{'·'} {summary(pkg)}{pkg.manifest.author ? ' · by ' + pkg.manifest.author : ''}</span></span>

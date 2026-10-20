@@ -63,6 +63,8 @@ export function randomLook(lk: Look, r: () => number): Look {
 /** When in a match a signature move comes out. */
 export const STAGES: [string, string][] = [['early', 'Early, to take control'], ['mid', 'In the middle'], ['late', 'Late, to set up the finish']];
 export type AttireKey = 'primary_ring' | 'entrance_gear' | 'street_clothes';
+/** One move of a moveset: a name, its kind (E.MOVE_KINDS) and when in a match (early, mid, late). */
+export interface MoveRec { name: string; kind?: string; stage?: string }
 export interface Look {
   id?: string; name?: string; moniker?: string; hometown?: string; archetype?: string;
   /** Not in Ryan's first draft: up to three taunts, each a scene of the kind 'taunt' (the game's or a world's). */
@@ -76,6 +78,8 @@ export interface Look {
     hair_colour2?: string; hair_mix?: string; body_hair?: number; scars?: string[]; freckles?: boolean; mask_design?: string };
   attires?: Partial<Record<AttireKey, Attire>>;
   finishing_moves?: Finisher[];
+  /** Not in Ryan's first draft: the rest of their moves (up to twelve), each with its kind and the part of the match it comes out in; the commentators name them. */
+  moveset?: MoveRec[];
   /** Not in Ryan's first draft: which of the canned entrances they come out on (a scene id). Their own pictures are
       their moves': each finishing or signature move picks the canned scene it plays as. */
   entrance?: string;

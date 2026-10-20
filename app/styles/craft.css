@@ -344,3 +344,17 @@ html body .win.ppop .wb{font-family:var(--hand);font-size:1.06em}
 .edmenu-h{margin:.5em 0 .2em;font-family:var(--marker);color:#c23a30;font-size:.92em}
 .edmenu-none{margin:.1em 0 .3em 1ch}
 .edrow.mine .st{color:#2f6b2f}.edmenu-list .edrow{width:100%}
+/* Create a Wrestler: the moveset, each move a chip that takes it out */
+.caw-moves{display:flex;flex-wrap:wrap;gap:.25em .35em;margin:0 0 .35em}
+.caw-moves .btn{font-size:.82em;padding:.15em .55em}
+/* a big pop-up: as much of the screen as its choices need, the list inside it never cut */
+.win.big{width:min(1240px,96vw);max-height:92vh;display:flex;flex-direction:column}
+.win.big .wb{overflow-y:auto;flex:1 1 auto;min-height:0}
+/* the move and extras pickers: a column of index cards for each kind */
+.pick-cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:.8em 1em;align-items:start}
+.pick-col h3{font-family:var(--marker);font-size:1.05em;margin:0 0 .35em;color:#b3261e}
+.pick-col .btn{display:block;width:100%;text-align:left;margin:0 0 .3em;font-size:.95em;white-space:normal;line-height:1.15;height:auto}
+.pick-col .btn.on{outline:3px solid #2f7a3a;outline-offset:1px}
+.pick-cols.tmpl{grid-template-columns:2fr 1fr}
+.pick-cols.tmpl .btn b{display:block;font-size:1.05em}
+.pick-cols.tmpl .btn small{display:block;font-family:var(--hand);text-transform:none;font-size:.9em;opacity:.9;margin-top:.15em;letter-spacing:0}

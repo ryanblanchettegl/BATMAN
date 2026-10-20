@@ -36,7 +36,7 @@ async function editor(mode) {
     ok(mode, 'the company picker shows the logo of the company under the highlight', (await lit(page, '[data-t="pick-logo"]')).n > 150);
     await page.keyboard.press('Escape');
     await page.click('[data-t="editor"]'); await page.waitForSelector('.edpage');
-    await page.click('[data-t="ed-new-copy"]');
+    await page.click('[data-t="ed-new-world"]'); await page.click('[data-t="ed-new-copy"]');
     await page.click('[data-t="ed-tab"][data-v="companies"]');
     const back = await page.$('.edback [data-t="ed-list"]'); if (back && await back.isVisible()) await back.click();
     await page.click('[data-t="ed-pick"][data-v="whw"]').catch(async () => { const L = await page.$$('[data-t="ed-pick"]'); await L[0].click(); });

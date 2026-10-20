@@ -15,7 +15,7 @@ const msg = page => txt(page, '[data-t="caw-msg"]');
 (async () => {
   const { browser, page, errs } = await open({ promo: null });
   try {
-    await page.click('[data-t="scr"][data-v="editor"]'); await page.click('[data-t="ed-new-copy"]'); await page.click('[data-t="ed-tab"][data-v="wrestlers"]');
+    await page.click('[data-t="scr"][data-v="editor"]'); await page.click('[data-t="ed-new-world"]'); await page.click('[data-t="ed-new-copy"]'); await page.click('[data-t="ed-tab"][data-v="wrestlers"]');
     await (await page.$$('[data-t="ed-pick"]'))[2].click(); await page.waitForTimeout(200);
     ok('a wrestler\'s page has an Edit wrestler button', await has(page, '[data-t="ed-caw"]'));
     await page.click('[data-t="ed-caw"]'); await page.waitForTimeout(1500);
@@ -69,14 +69,20 @@ const msg = page => txt(page, '[data-t="caw-msg"]');
     // gear for the ring, then the street, each its own
     await pick(page, 'caw-tab', 'gear');
     await page.selectOption('[data-t="caw-part"][data-v="upper_body"]', 'singlet_straps_up');
+    await page.click('[data-t="caw-extras"]'); await page.waitForTimeout(150);
+    ok('Choose extras opens every extra in one big pop-up', await has(page, '.win.big [data-t="caw-acc"][data-v="crown"]') && await has(page, '.win.big [data-t="caw-acc"][data-v="wrist_tape_white"]'));
     await page.click('[data-t="caw-acc"][data-v="elbow_pads"]');
     await page.click('[data-t="caw-acc"][data-v="cape"]'); await page.click('[data-t="caw-acc"][data-v="belt_waist"]'); await page.click('[data-t="caw-acc"][data-v="crown"]');
     ok('a cape, a title belt and a crown can be worn', (await attr(page, '[data-t="caw-acc"][data-v="cape"]', 'aria-pressed')) === 'true' && (await attr(page, '[data-t="caw-acc"][data-v="belt_waist"]', 'aria-pressed')) === 'true');
-    ok('the gear tab still fits with every extra listed', !(await fits(page)), await fits(page));
+    ok('the extras pop-up fits the screen with every extra in it', !(await fits(page)), await fits(page));
     for (const v of ['cape', 'belt_waist', 'crown']) await page.click('[data-t="caw-acc"][data-v="' + v + '"]');
+    const elbowOn = (await attr(page, '[data-t="caw-acc"][data-v="elbow_pads"]', 'aria-pressed')) === 'true';
+    await page.keyboard.press('Escape'); await page.waitForTimeout(150);
+    ok('Esc closes the pop-up and stays in the suite', !(await has(page, '.win.big')) && await has(page, '[data-t="caw"]'));
+    ok('the gear tab says what is worn', /Elbow pads/.test(await txt(page, '[data-t="caw-extras-now"]')), await txt(page, '[data-t="caw-extras-now"]'));
     await page.selectOption('[data-t="caw-partcol"][data-v="footwear"]', 'swatch_gold_foil');
     ok('a part takes a colour of its own', (await page.$eval('[data-t="caw-partcol"][data-v="footwear"]', e => e.value)) === 'swatch_gold_foil');
-    ok('a part and an extra can be picked', (await page.$eval('[data-t="caw-part"][data-v="upper_body"]', e => e.value)) === 'singlet_straps_up' && (await attr(page, '[data-t="caw-acc"][data-v="elbow_pads"]', 'aria-pressed')) === 'true');
+    ok('a part and an extra can be picked', (await page.$eval('[data-t="caw-part"][data-v="upper_body"]', e => e.value)) === 'singlet_straps_up' && elbowOn);
     await pick(page, 'caw-attire', 'street_clothes');
     ok('street clothes are an outfit of their own', (await page.$eval('[data-t="caw-part"][data-v="upper_body"]', e => e.value)) === 'shirt_tshirt_base');
     await pick(page, 'caw-attire', 'primary_ring');
@@ -116,6 +122,20 @@ const msg = page => txt(page, '[data-t="caw-msg"]');
     await page.click('[data-t="caw-act"]');
     // a signature move for late in the match, and taunts
     ok('every wrestler has one finisher and two signature moves', (await page.$$('[data-t="caw-fin"] option')).length === 3 && !(await page.$('[data-t="caw-addfin"]'))); await pick(page, 'caw-fin', '2'); await page.fill('[data-t="caw-finname"]', 'Back Breaker');
+    // the moveset: filled for their style, changed in a big pop-up, a move of their own, and every change can be undone
+    await pick(page, 'caw-tab', 'moveset'); await page.click('[data-t="caw-move-fill"]'); await page.waitForTimeout(100);
+    ok('Fill for their style gives twelve moves', (await page.$$('[data-t="caw-move-drop"]')).length === 12, String((await page.$$('[data-t="caw-move-drop"]')).length));
+    await page.click('[data-t="caw-move-drop"]'); await page.click('[data-t="caw-move-add"][data-v="late"]'); await page.waitForTimeout(150);
+    ok('Add moves opens the whole move library in one big pop-up', (await page.$$('.win.big [data-t="caw-pickmove"]')).length >= 50);
+    await page.fill('[data-t="caw-move-own"]', 'The Last Word'); await page.click('[data-t="caw-move-ownadd"]');
+    ok('a move of their own goes in', /The Last Word/.test(await txt(page, '.cawpage')) || (await page.$$('[data-t="caw-move-drop"]')).length === 12);
+    await page.keyboard.press('Escape'); await page.waitForTimeout(100);
+    ok('the late moves show it', /The Last Word/.test(await txt(page, '[data-t="caw-win"]') + await txt(page, '.cawpage')), '');
+    await page.click('[data-t="caw-undo"]'); await page.waitForTimeout(80);
+    ok('Undo takes the last change back', !/The Last Word/.test(await txt(page, '.cawpage')) && (await page.$$('[data-t="caw-move-drop"]')).length === 11);
+    await page.click('[data-t="caw-redo"]'); await page.waitForTimeout(80);
+    ok('Redo puts it back', /The Last Word/.test(await txt(page, '.cawpage')));
+    ok('the moveset page fits one screen', !(await fits(page)), await fits(page));
     ok('the second signature comes out late until told otherwise', (await page.$eval('[data-t="caw-finstage"]', e => e.value)) === 'late');
     await page.selectOption('[data-t="caw-finstage"]', 'early');
     ok('a signature move says when in a match it comes out', (await page.$eval('[data-t="caw-finstage"]', e => e.value)) === 'early');

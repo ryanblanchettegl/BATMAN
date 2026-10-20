@@ -31,7 +31,7 @@ async function run(mode) {
     await page.waitForSelector('.edpage');
     ok(mode, 'World Editor opens from the title screen', /your worlds/i.test(await txt(page, '.pmenu')));
     await over('the list of worlds');
-    await page.fill('#ed-newname', 'Test World');
+    await page.click('[data-t="ed-new-world"]'); await page.fill('#ed-newname', 'Test World');
     await page.click('[data-t="ed-new"]');
     ok(mode, 'a new world opens on its World tab', /test world/i.test(await txt(page, '.pmenu')) && !!(await page.$('[data-t="ed-wname"]')));
     ok(mode, 'an empty world shows problems to fix', /problem/.test(await txt(page, '[data-t="ed-problems"]')));
@@ -212,10 +212,10 @@ async function run(mode) {
   { const { browser, page, errs } = await open({ mode: 'desk', promo: null });
     try {
       await page.click('[data-t="editor"]'); await page.waitForSelector('.edpage');
-      await page.fill('#ed-newname', 'Quick Nine'); await page.click('[data-t="ed-new-nine"]'); await page.waitForTimeout(200);
+      await page.click('[data-t="ed-new-world"]'); await page.fill('#ed-newname', 'Quick Nine'); await page.click('[data-t="ed-new-nine"]'); await page.waitForTimeout(200);
       ok('desk', 'a nine-company world of unknowns opens ready to play', /quick nine/i.test(await txt(page, '.pmenu')) && /ready to play/i.test(await txt(page, '.pmenu')), await txt(page, '.pmenu'));
       await page.keyboard.press('Escape'); await page.waitForTimeout(100);
-      await page.fill('#ed-newname', 'Quick Two'); await page.click('[data-t="ed-new-territory"]'); await page.waitForTimeout(200);
+      await page.click('[data-t="ed-new-world"]'); await page.fill('#ed-newname', 'Quick Two'); await page.click('[data-t="ed-new-territory"]'); await page.waitForTimeout(200);
       ok('desk', 'a two-company territory opens ready to play', /quick two/i.test(await txt(page, '.pmenu')) && /ready to play/i.test(await txt(page, '.pmenu')));
       ok('desk', 'no errors (quick starts)', !errs.length, errs.slice(0, 3).join(' | '));
     } finally { await browser.close(); } }

@@ -16,7 +16,7 @@ async function studio(mode) {
   const fig = async () => JSON.parse((await attr(page, '[data-t="scene-fig"]', 'data-v')) || '{}');
   try {
     // Create a Scene is in the World Editor: a copy of a world, its Scenes tab
-    await page.click('[data-t="scr"][data-v="editor"]'); await page.click('[data-t="ed-new-copy"]');
+    await page.click('[data-t="scr"][data-v="editor"]'); await page.click('[data-t="ed-new-world"]'); await page.click('[data-t="ed-new-copy"]');
     await page.click('[data-t="ed-tab"][data-v="scenes"]');
     ok(mode, 'the World Editor has a Scenes tab', await has(page, '[data-t="ed-scene-new"]'));
     ok(mode, 'the Scenes tab has three studios: Animation, Create a Move, Create a Scene', (await page.$$('[data-t="ed-scene-new"]')).length === 3 && /Animation/.test(await page.textContent('.edstudios')) && /Create a Move/.test(await page.textContent('.edstudios')));

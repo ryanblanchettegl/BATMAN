@@ -3329,7 +3329,9 @@ function matchShape(x,o,hk){
   var srt=[A,B].sort(function(p,q){return q.ovr-p.ovr;});
   var c={k:k,p:o.p,a:A.name,b:B.name,w:o.w||A.name,big:srt[0].name,small:srt[1].name,am:pk(MOVES[A.style]||MOVES.A,'am'),bm:pk(MOVES[B.style]||MOVES.A,'bm'),
     fa:A.fin||null,fb:B.fin||null,hot:x.MQ>=72&&x.mins>=12};
-  return {k:k,intro:gram(GR_SHAPE,'intro',c,hk+'i'),spot:x.mins>8&&k!=='squash'?gram(GR_SHAPE,'spot',c,hk+'s'):null,late:x.mins>=12&&k!=='squash'?gram(GR_SHAPE,'late',c,hk+'l'):null};
+  // a wrestler with a moveset of their own does the moves for that part of the match (src/86-looks.js)
+  var at=function(st){var o2={};Object.keys(c).forEach(function(q){o2[q]=c[q];});o2.am=moveFrom(A,st,hk+'am'+st)||c.am;o2.bm=moveFrom(B,st,hk+'bm'+st)||c.bm;return o2;};
+  return {k:k,intro:gram(GR_SHAPE,'intro',at('early'),hk+'i'),spot:x.mins>8&&k!=='squash'?gram(GR_SHAPE,'spot',at('mid'),hk+'s'):null,late:x.mins>=12&&k!=='squash'?gram(GR_SHAPE,'late',at('late'),hk+'l'):null};
 }
 
 /* ---------- the newsletter's feud watch: how the stories around the business stand ---------- */
@@ -8048,8 +8050,46 @@ E.edQuick=function(kind,name,seed){
     if(MODELS[p.model]&&MODELS[p.model].gender==='F')pkg.titles.forEach(function(t){if(t.promotion_id===p.id)t.gender='F';});
     E.edFill(pkg,p.id,x[4],k+i*7919);});
   E.edFillFree(pkg,kind==='nine'?12:6,k+104729);
+  return E.edComplete(pkg,k);
+};
+/* ---------- a world from a template comes complete (Ryan, 20 October: "new worlds come with templates or start from
+   scratch"; a template has everything filled in). edComplete fills only what is missing, so it never undoes a change. */
+var ED_EVENTS=['First Bell','Cold Steel','Spring Riot','The Grand Stage','Iron Bloom','Long Day Brawl','Scorcher','Dog Days','Harvest Moon Brawl','Fright Night Fight','Last Leaves','Year End Brawl'];
+var ED_COLUMNS=['The Ringside Wire','The Turnbuckle Times','Mat Talk Weekly'];
+var ED_SPONSORS=['Ironclad Tools','Blue Comet Energy','Harbor Lager','Pinnacle Insurance','Redline Auto Parts','Summit Sports Drinks','Big Sky Jerky','Voltage Games'];
+var ED_STAFF={agent:['Hank Doyle','Rita Vance','Moe Kessler','Lou Bramble','Dot Fairweather','Sal Ortega','Gus Whitley','Ida Crane','Vic Lorne'],
+  writer:['Penny Marsh','Theo Grant','Nadia Rook','Cliff Harlan','June Abbott','Rex Mallory','Ana Solis','Kit Darrow','Walt Emery'],
+  pbp:['Jim Calder','Rosa Delgado','Marty Kane','Sam Whitfield','Eve Langston','Tony Brisco','Max Ferrell','Lena Ward','Art Hollis'],
+  col:['Bobby Stroud','Dee Marlow','Chuck Rennick','Gail Torres','Vince Halloway','Frankie Moss','Nell Brody','Duke Carver','Tess Rowan']};
+/** The cities a company of this kind tours, from the places the road knows: Mexico for lucha, Japan for joshi, the USA for the rest. */
+function edCitiesFor(model,k,n){
+  var all=Object.keys(CITY_AT),inMx=function(c){var a=CITY_AT[c];return a[0]>14&&a[0]<29.5&&a[1]>-118&&a[1]<-86;},inJp=function(c){var a=CITY_AT[c];return a[1]>128&&a[1]<146&&a[0]>30;},inUs=function(c){var a=CITY_AT[c];return a[0]>24&&a[0]<50&&a[1]>-125&&a[1]<-66&&!inMx(c);};
+  var L=all.filter(model==='spectacle'||model==='tradition'?inMx:(model==='joshi'?inJp:inUs));if(L.length<4)L=all.filter(inUs);
+  L.sort(function(a,b){return CITY_AT[a][1]-CITY_AT[b][1];});var out=[],st=k%L.length;for(var i=0;i<Math.min(n,L.length);i++)out.push(L[(st+i)%L.length]);return out;
+}
+E.edComplete=function(pkg,seed){
+  edShape(pkg);var k=(seed>>>0)||1,pk=function(L,i){return L[(k+i*7)%L.length];};
+  if(!pkg.events||!pkg.events.length)pkg.events=ED_EVENTS.map(function(n,i){return {month:i+1,name:n};});
+  if(!pkg.networks)pkg.networks={small:AIR_NETS[0].slice(),cable:AIR_NETS[1].slice(),major:AIR_NETS[2].slice()};
+  if(!pkg.sponsors||!pkg.sponsors.length)pkg.sponsors=ED_SPONSORS.slice();
+  if(!pkg.columnists||!pkg.columnists.length)pkg.columnists=ED_COLUMNS.slice();
+  var N=pkg.names||(pkg.names={});if(!N.first_m||N.first_m.length<8)N.first_m=FALLBACK_NAMES.firstM.slice();if(!N.first_f||N.first_f.length<6)N.first_f=FALLBACK_NAMES.firstF.slice();if(!N.last||N.last.length<8)N.last=FALLBACK_NAMES.last.slice();
+  pkg.promotions.forEach(function(p,i){
+    var MD=MODELS[p.model]||MODELS.classic,g=MD.gender,mine=pkg.titles.filter(function(t){return t.promotion_id===p.id;}),has=function(f){return mine.some(f);};
+    if(!has(function(t){return t.level===2;}))E.edAddTitle(pkg,p.id,{name:p.name+(g==='F'?' International Title':' National Title'),level:2,gender:g||'M'});
+    if(!has(function(t){return t.tag;})&&(pkg.workers||[]).filter(function(w){return E.edHome(pkg,w.id)===p.id;}).length>=12)E.edAddTitle(pkg,p.id,{name:p.name+' Tag Team Titles',level:2,tag:true,gender:g||'M'});
+    if(!g&&!has(function(t){return t.gender==='F';}))E.edAddTitle(pkg,p.id,{name:p.name+' Women’s Title',level:3,gender:'F'});
+    if(!p.cities||!p.cities.length)p.cities=edCitiesFor(p.model,hash(p.id+':'+k),8);
+    if(!p.announcers||p.announcers.length<2)p.announcers=[pk(ED_STAFF.pbp,i),pk(ED_STAFF.col,i)];
+    var sf=p.staff||(p.staff={});if(!sf.road_agent)sf.road_agent=pk(ED_STAFF.agent,i);if(!sf.head_writer)sf.head_writer=pk(ED_STAFF.writer,i);
+    // the main show on a network to suit the company's size, with years on the air to match
+    var sh=pkg.shows.filter(function(x){return x.promotion_id===p.id;})[0],pop=p.popularity||50;
+    if(sh&&!sh.network){var t=pop>=68?2:(pop>=46?1:0),nets=pkg.networks[['small','cable','major'][t]]||AIR_NETS[t];sh.network=nets[(hash(p.id)+k)%nets.length];sh.network_size=t;if(sh.years_on_air==null)sh.years_on_air=p.model==='startup'?0:clamp(Math.round((pop-32)/2.2),1,40);}
+  });
   return pkg;
 };
+/** The templates a new world can start from, besides the built-in worlds: what each is, for the New world pop-up. */
+E.ED_TEMPLATES=[['territory','A two-company territory','Two companies sharing one region, one bigger than the other. Small rosters, ready to rename.'],['nine','Nine companies of unknowns','One company of each kind, from a national giant to a small joshi promotion, every roster filled with unknowns.']];
 /** How a company stands, in a few plain lines: the top of the card against its popularity, and its men and women
     against its belts. `warn` is set on a line that needs fixing before the world plays well. */
 E.edHealth=function(pkg,pid){
@@ -8190,11 +8230,39 @@ var ft=null;if(ap.features&&typeof ap.features==='object'){ft={};['eyes','nose',
     return lkPrune({name:lkStr(m.name,32),impact_damage:lkNum(m.impact_damage,1,100),kickout_difficulty:LOOK_KICK.indexOf(m.kickout_difficulty)>=0?m.kickout_difficulty:undefined,
       position:LOOK_POS.indexOf(m.position)>=0?m.position:undefined,category:lkStr(m.category,24),preview_pose_id:lkId(m.preview_pose_id),stage:['early','mid','late'].indexOf(m.stage)>=0?m.stage:undefined});}).filter(function(m){return !!m;});
   if(Array.isArray(x.taunts)){var tn=x.taunts.map(lkId).filter(function(v,i,a){return !!v&&a.indexOf(v)===i;}).slice(0,3);if(tn.length)o.taunts=tn;}   // up to three taunts, each a scene id
+  if(Array.isArray(x.moveset)){var ms=x.moveset.slice(0,MOVESET_MAX).map(function(m){if(!m||typeof m!=='object'||!lkStr(m.name,32))return null;
+      return lkPrune({name:lkStr(m.name,32).trim()||undefined,kind:MOVE_KINDS.indexOf(m.kind)>=0?m.kind:undefined,stage:['early','mid','late'].indexOf(m.stage)>=0?m.stage:undefined});}).filter(function(m){return m&&m.name;});
+    if(ms.length)o.moveset=ms;}   // the rest of their moves, by part of the match
   var en=lkId(x.entrance);if(en)o.entrance=en;   // one of the canned entrances
   if(x.entrance_fx&&typeof x.entrance_fx==='object'){var ef=lkPrune({pyro:lkId(x.entrance_fx.pyro),lights:lkId(x.entrance_fx.lights),music:lkStr(x.entrance_fx.music,32)||undefined});if(Object.keys(ef).length)o.entrance_fx=ef;}   // pyro, lights and their music
   if(x.portrait&&typeof x.portrait==='object'){var pt=x.portrait;o.portrait=lkPrune({attire:LOOK_ATTIRES.indexOf(pt.attire)>=0?pt.attire:undefined,expr:typeof pt.expr==='string'&&/^[a-z]{0,8}$/.test(pt.expr)?pt.expr:undefined,pose:lkId(pt.pose),bg:lkId(pt.bg),frame:pt.frame==='chest'||pt.frame==='head'?pt.frame:undefined});if(!Object.keys(o.portrait).length)delete o.portrait;}   // their portrait
   return Object.keys(o).length?o:null;
 }
+/* ---------- the moveset: the moves they do on the way to the finish ----------
+   Up to twelve moves, each with a kind and the part of the match it comes out in (early, the middle, late). The
+   commentators name them in the match's call (matchShape() in src/60-grammar.js: the opening, the middle spot, the late
+   swing). Without one, the call names moves for the wrestler's style, as before. */
+var MOVESET_MAX=12,MOVE_KINDS=['strike','grapple','power','aerial','submission'];
+var MOVE_LIB={
+  strike:['Chop to the chest','Forearm smash','Knife-edge chop','Spinning heel kick','Superkick','Jumping knee','Discus punch','Enzuigiri','Running elbow','Big boot','Headbutt','Flurry of kicks'],
+  grapple:['Snap suplex','German suplex','Vertical suplex','Northern lights suplex','DDT','Neckbreaker','Backbreaker','Arm drag','Hip toss','Bulldog','Snapmare','Exploder suplex'],
+  power:['Powerbomb','Spinebuster','Gorilla press','Chokeslam','Running powerslam','Sidewalk slam','Body slam','Fallaway slam','Military press','Lariat','Shoulder tackle','Bear hug'],
+  aerial:['Dropkick','Moonsault','Crossbody from the top','Dive to the floor','Springboard kick','Corkscrew press','Shooting star press','Frog splash','Flying elbow','Hurricanrana','Missile dropkick','Tope through the ropes'],
+  submission:['Armbar','Figure-four','Single-leg crab','Crossface','Sleeper hold','Camel clutch','Ankle lock','Boston crab','Triangle choke','Abdominal stretch','Kimura','Rear naked choke']
+};
+var MOVE_STYLE={B:['strike','power'],T:['grapple','submission'],H:['aerial','strike'],P:['power','grapple'],A:['grapple','strike'],S:['strike','submission'],E:['strike','aerial']};
+/** A starting moveset for a style: four moves for each part of the match, picked by a hash of the name. */
+function movesetFor(style,name){
+  var ks=MOVE_STYLE[style]||MOVE_STYLE.A,out=[],seen={},k=0;
+  ['early','mid','late'].forEach(function(st,si){for(var i=0;i<4;i++){var kind=i<2?ks[0]:(i===2?ks[1]:MOVE_KINDS[(si+hash(String(name)+i))%MOVE_KINDS.length]),L=MOVE_LIB[kind],n=L[(hash(String(name)+':'+st+i)+k++)%L.length],g=0;
+    while(seen[n]&&g++<L.length)n=L[(L.indexOf(n)+1)%L.length];seen[n]=1;out.push({name:n,kind:kind,stage:st});}});
+  return out;
+}
+/** A move as the commentators say it: "a snap suplex" for one from the library, a move of their own as it is written. */
+function moveSaid(m){var n=String(m.name||'');for(var k in MOVE_LIB)if(MOVE_LIB[k].indexOf(n)>=0){n=n.charAt(0).toLowerCase()+n.slice(1);return (/^[aeiou]/i.test(n)?'an ':'a ')+n;}return /^(the|a|an) /i.test(n)?n.replace(/^The /,'the '):n;}
+/** The move a wrestler does in this part of the match, from their moveset, or null when they have none. */
+function moveFrom(w,stage,key){var L=w&&w.look&&w.look.moveset;if(!L||!L.length)return null;var here=L.filter(function(m){return (m.stage||'mid')===stage;});if(!here.length)here=L;return moveSaid(here[Math.floor(h01(key)*here.length)%here.length]);}
+E.MOVE_LIB=MOVE_LIB;E.MOVE_KINDS=MOVE_KINDS;E.MOVESET_MAX=MOVESET_MAX;E.movesetFor=movesetFor;E.moveSaid=moveSaid;
 /** Is this a wrestler's look (a .wrestler.json file)? */
 E.lookOk=function(x){var c=lookClean(x);return !!(c&&(c.attires||c.physical_attributes||c.appearance));};
 E.lookClean=lookClean;

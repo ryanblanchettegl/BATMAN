@@ -12,7 +12,7 @@ let plays = 0;
 /** How many scenes have started on the broadcast since the page loaded (EWF_DEBUG.scenes). */
 export function scenePlays() { return plays; }
 
-export function ScenePlayer(p: { sc: Scene; cast: Record<string, Recipe>; play: string; still?: boolean; t?: string; label: string; orbit?: boolean; fill?: boolean }) {
+export function ScenePlayer(p: { sc: Scene; cast: Record<string, Recipe>; play: string; still?: boolean; t?: string; label: string; orbit?: boolean; fill?: boolean; /** Change it to draw the picture again (after a pop-up over it closes). */ redraw?: number }) {
   const box = useRef<HTMLDivElement>(null), cv = useRef<HTMLCanvasElement>(null), c3 = useRef<HTMLCanvasElement>(null), eng = useRef<Diorama3D | null>(null);
   const [size, setSize] = useState([0, 0]), [flat, setFlat] = useState(false), [cap, setCap] = useState<Caption | null>(null);
   const props = useRef(p); props.current = p;
@@ -42,7 +42,7 @@ export function ScenePlayer(p: { sc: Scene; cast: Record<string, Recipe>; play: 
     let raf = 0; const t0 = performance.now(), keepFor = end + 4;   // confetti keeps falling a while after the last keyframe
     const step = (now: number) => { let t = (now - t0) / 1000; if (sc.loop) t = t % (end + 0.32); try { paint(ctx, sc, t, props.current.cast); } catch (e) { return; } if (sc.loop || t < keepFor) raf = requestAnimationFrame(step); };
     raf = requestAnimationFrame(step); return () => cancelAnimationFrame(raf);
-  }, [p.play, size[0], size[1], flat]);
+  }, [p.play, size[0], size[1], flat, p.redraw]);
   const fx = fxClass(p.sc);
   return <div ref={box} class={'lv-scene' + fx} data-t={p.t || 'live-scene'} data-v={p.sc.id} data-set={p.sc.set} data-3d={eng.current ? 1 : 0} role="img" aria-label={p.label}>
     <canvas ref={c3} style={{ width: size[0] + 'px', height: size[1] + 'px', display: flat ? 'none' : 'block' }} />

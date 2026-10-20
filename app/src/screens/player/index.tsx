@@ -4,19 +4,20 @@
    out on a plain card dummy. It opens full screen from a wrestler's page in the World Editor and keeps the file on
    that wrestler in the world (E.edSetLook); Write a file gives the same record as a .wrestler.json to share. The
    screen only edits its own copy until Save (rule 1: the engine checks and keeps it). */
-import { useRef, useState } from 'preact/hooks';
+import { useEffect, useRef, useState } from 'preact/hooks';
 import { E } from '../../engine';
 import { G, act, full, say as note } from '../../store';
 import { Btn, TextBox, Desktop, Win, Group, Sel, Opt } from '../../kit';
+import { Window } from '../../kit/window';
 import { ScenePlayer } from '../../kit/sceneplayer';
 import { Scene, SCENES, POSES, WAIST, copy, scenesFor, allScenes, WHEN, PYRO, LIGHTS, dressEntrance } from '../../kit/scene';
 import { Recipe, recipeOf, blank } from '../../kit/puppet';
-import { Look, Attire, AttireKey, Layer, Finisher, ATTIRES, PARTS, SWATCHES, SLOTS, FONTS, SHAPES, ARCHETYPES, FACIAL, PAINT, PAINT_LAYERS, TATTOOS, HAIR_MIX, SCARS, MASK_DESIGNS, FACE_SLIDERS, FEATURES, KICKOUT, POSITIONS, CATEGORIES, FIN_SCENES, STAGES, threeMoves, randomLook, fromLook, blankLook, finScene, swatch } from '../../kit/caw';
+import { Look, Attire, AttireKey, Layer, Finisher, MoveRec, ATTIRES, PARTS, SWATCHES, SLOTS, FONTS, SHAPES, ARCHETYPES, FACIAL, PAINT, PAINT_LAYERS, TATTOOS, HAIR_MIX, SCARS, MASK_DESIGNS, FACE_SLIDERS, FEATURES, KICKOUT, POSITIONS, CATEGORIES, FIN_SCENES, STAGES, threeMoves, randomLook, fromLook, blankLook, finScene, swatch } from '../../kit/caw';
 import { derive, NAMES, FaceKey } from '../../lib/portrait';
 import { PaperPortrait, PT_POSES, PT_FRAMES, companyCard } from '../../kit/paperportrait';
 import { EXPR } from '../../kit/puppet';
 
-type Tab = 'face' | 'ink' | 'portrait' | 'sign' | 'body' | 'head' | 'gear' | 'colour' | 'studio' | 'fin' | 'scenes' | 'file' | 'a_head' | 'a_upper' | 'a_lower' | 'a_feet';
+type Tab = 'face' | 'ink' | 'portrait' | 'sign' | 'body' | 'head' | 'gear' | 'colour' | 'studio' | 'fin' | 'moveset' | 'scenes' | 'file' | 'a_head' | 'a_upper' | 'a_lower' | 'a_feet';
 /** Edit attire's camera: in close on the part of the body being dressed. */
 const REGION_CAM: Record<string, { x: number; y: number; z: number }> = { a_head: { x: 0, y: 2.6, z: 3.8 }, a_upper: { x: 0, y: 1.1, z: 2.1 }, a_lower: { x: 0, y: -1.3, z: 2.1 }, a_feet: { x: 0, y: -2.5, z: 2.8 } };
 const SET_OF: Record<AttireKey, string> = { primary_ring: 'ring', entrance_gear: 'ramp', street_clothes: 'hall' };
@@ -25,6 +26,10 @@ const STY: Record<string, string> = { brawler: 'B', technician: 'T', high_flyer:
 const VIEW_POSES: [string, string][] = [['stand', 'Standing'], ['fists', 'Fists up'], ['flex', 'Flexing'], ['armsup', 'Both arms up'], ['mic', 'On the microphone']];
 const FACE_PARTS: [FaceKey, string][] = [['h', 'Face shape']];
 const feet = (n: number) => Math.floor(n / 12) + "'" + (n % 12) + '"';
+/** The extras, by where on the body they go, for the Choose extras pop-up. Anything not named here goes under Over it all. */
+const EXTRA_GROUPS: [string, string[]][] = [['On the head', ['sunglasses_aviator', 'hat_cowboy', 'hat_cap', 'hat_beanie', 'bandana', 'crown']], ['Arms and hands', ['wrist_tape_white', 'wrist_wraps', 'elbow_pads', 'gloves_fingerless', 'armband']], ['Knees', ['knee_pads', 'knee_sleeves']]];
+const MS_STAGES: [string, string][] = [['early', 'Early'], ['mid', 'Middle'], ['late', 'Late']];
+const KIND_N: Record<string, string> = { strike: 'Strikes', grapple: 'Grapples', power: 'Power moves', aerial: 'High flying', submission: 'Holds' };
 const r2 = (v: number) => Math.round(v * 100) / 100;
 
 /** A wrestler from a world package, in the shape the paper doll is cut from. */
@@ -63,9 +68,22 @@ export function CreatePlayer(pp: PlayerProps) {
   const w0 = pp.sign ? { ...startW, name: lk.name || 'New wrestler', g: d.g, align: d.align, style: d.style } : pp.w, base = recipeOf({ ...w0, look: null });
   const [att, setAtt] = useState<AttireKey>('primary_ring'), [tab, setTab] = useState<Tab>(pp.sign ? 'sign' : pp.attire ? 'a_head' : 'body'), [pose, setPose] = useState('stand'), [back, setBack] = useState(false);
   const [lay, setLay] = useState(-1), [fi, setFi] = useState(-1), [acting, setActing] = useState(false), [msg, setMsg] = useState<{ t: string; err?: boolean } | null>(null);
+  const [pop, setPop] = useState<null | { k: 'moves'; st: string } | { k: 'extras' }>(null), [rd, setRd] = useState(0);
+  const closePop = () => { setPop(null); setRd(x => x + 1); };
   const [text, setText] = useState('CHAMP'), [font, setFont] = useState('block'), [shp, setShp] = useState('star'), file = useRef<HTMLInputElement>(null);
   const say = (t: string, err = false) => setMsg({ t, err });
-  const change = (fn: (n: Look) => void) => { const n = copy(lk); fn(n); setLk(n); setMsg(null); };
+  // every change can be taken back: Undo and Redo on the bar, Ctrl+Z and Ctrl+Y
+  const [past, setPast] = useState<Look[]>([]), [ahead, setAhead] = useState<Look[]>([]);
+  const put = (n: Look) => { setPast(p => p.concat([lk]).slice(-60)); setAhead([]); setLk(n); };
+  const undo = () => { if (!past.length) return; setAhead(a => [lk].concat(a)); setLk(past[past.length - 1]); setPast(p => p.slice(0, -1)); setMsg({ t: 'Taken back.' }); };
+  const redo = () => { if (!ahead.length) return; setPast(p => p.concat([lk])); setLk(ahead[0]); setAhead(a => a.slice(1)); setMsg({ t: 'Put back.' }); };
+  const keys = useRef({ undo, redo }); keys.current = { undo, redo };
+  useEffect(() => {
+    const on = (e: KeyboardEvent) => { if (!(e.ctrlKey || e.metaKey)) return; const t = e.target as HTMLElement; if (t && (t.tagName === 'TEXTAREA' || (t.tagName === 'INPUT' && (t as HTMLInputElement).type === 'text'))) return;
+      const k = e.key.toLowerCase(); if (k === 'z' && !e.shiftKey) { e.preventDefault(); keys.current.undo(); } else if (k === 'y' || (k === 'z' && e.shiftKey)) { e.preventDefault(); keys.current.redo(); } };
+    window.addEventListener('keydown', on); return () => window.removeEventListener('keydown', on);
+  }, []);
+  const change = (fn: (n: Look) => void) => { const n = copy(lk); fn(n); put(n); setMsg(null); };
   const A = (n: Look): Attire => { n.attires = n.attires || {}; const a = n.attires[att] || (n.attires[att] = { equipped_assets: {}, palette_slots: {}, custom_layers: [] }); a.custom_layers = a.custom_layers || []; return a; };
   const cur = (lk.attires && lk.attires[att]) || { equipped_assets: {}, palette_slots: {}, custom_layers: [] } as Attire, layers = cur.custom_layers || [];
   const pa = lk.physical_attributes || {}, ps = pa.proportional_scalers || {}, face = (lk.appearance && lk.appearance.face) || {};
@@ -105,7 +123,7 @@ export function CreatePlayer(pp: PlayerProps) {
     a.href = URL.createObjectURL(b); a.download = ((lk.name || w0.name).replace(/[^a-z0-9]+/gi, '-').toLowerCase() || 'wrestler') + '.wrestler.json'; document.body.appendChild(a); a.click(); a.remove();
     say('Written out as ' + a.download + '. Anybody can open it in Create a Wrestler.');
   };
-  const readIn = (f: File) => { f.text().then(t => { let x: any = null; try { x = JSON.parse(t); } catch (e) { x = null; } if (!x || !E.lookOk(x)) { say('That file is not a wrestler.', true); return; } setLk(E.lookClean(x)); setLay(-1); setFi(-1); say('Opened ' + (x.name || 'a wrestler') + '. Save to keep it on ' + w0.name + '.'); }); };
+  const readIn = (f: File) => { f.text().then(t => { let x: any = null; try { x = JSON.parse(t); } catch (e) { x = null; } if (!x || !E.lookOk(x)) { say('That file is not a wrestler.', true); return; } put(E.lookClean(x)); setLay(-1); setFi(-1); say('Opened ' + (x.name || 'a wrestler') + '. Save to keep it on ' + w0.name + '.'); }); };
 
   const setScale = (k: string, v: number) => change(n => { n.physical_attributes = n.physical_attributes || {}; const s = n.physical_attributes.proportional_scalers = n.physical_attributes.proportional_scalers || {}; (s as any)[k] = r2(v); });
   const setFace = (k: string, v: number) => change(n => { n.appearance = n.appearance || {}; n.appearance.face = { ...(n.appearance.face || {}), [k]: v }; });
@@ -126,11 +144,13 @@ export function CreatePlayer(pp: PlayerProps) {
   const AN = ATTIRES.find(a => a[0] === att)![1];
   const pt = lk.portrait || {}, card = pp.card || companyCard(null);
   const setPt = (o: any) => change(n => { const q: any = { ...(n.portrait || {}), ...o }; Object.keys(q).forEach(k => { if (q[k] === undefined || q[k] === '') delete q[k]; }); if (Object.keys(q).length) n.portrait = q; else delete n.portrait; });
-  const titles: Record<Tab, string> = { face: 'Shape the face', ink: 'Paint and ink', portrait: 'Their portrait', a_head: 'Head: ' + AN, a_upper: 'Upper body: ' + AN, a_lower: 'Lower body: ' + AN, a_feet: 'Feet: ' + AN, sign: 'A new wrestler', body: 'The body', head: 'The head', gear: 'Gear: ' + ATTIRES.find(a => a[0] === att)![1], colour: 'Colours: ' + ATTIRES.find(a => a[0] === att)![1], studio: 'Gear studio: lettering and shapes', fin: 'Their moves', scenes: 'Their entrance', file: 'The file' };
+  const titles: Record<Tab, string> = { face: 'Shape the face', ink: 'Paint and ink', portrait: 'Their portrait', a_head: 'Head: ' + AN, a_upper: 'Upper body: ' + AN, a_lower: 'Lower body: ' + AN, a_feet: 'Feet: ' + AN, sign: 'A new wrestler', body: 'The body', head: 'The head', gear: 'Gear: ' + ATTIRES.find(a => a[0] === att)![1], colour: 'Colours: ' + ATTIRES.find(a => a[0] === att)![1], studio: 'Gear studio: lettering and shapes', fin: 'Their moves', moveset: 'Their moveset', scenes: 'Their entrance', file: 'The file' };
   return <div class="scfull paper" data-t="caw">
     <div class="pmenu sc-menubar" role="group" aria-label={pp.sign ? 'Create a Wrestler' : pp.attire ? 'Edit attire' : 'Edit wrestler'}>
       <b class="pm-app">{pp.sign ? 'Create a Wrestler' : pp.attire ? 'Edit attire' : 'Edit wrestler'}</b><span class="pm-world">{pp.world}</span><span class="sp" />
       <Btn kind="sm" t="caw-random" onClick={() => { change(n => { Object.assign(n, randomLook(n, Math.random)); }); say('A new look, at random. Press it again for another, or change anything.'); }}>Surprise me</Btn>
+      <Btn kind="sm" t="caw-undo" disabled={!past.length} tip="Take back the last change (Ctrl+Z)" onClick={undo}>Undo</Btn>
+      <Btn kind="sm" t="caw-redo" disabled={!ahead.length} tip="Put back what Undo took (Ctrl+Y)" onClick={redo}>Redo</Btn>
       <Btn kind="go" t="caw-save" onClick={save}>Save</Btn>
       <Btn kind="sm" t="caw-done" onClick={pp.onDone}>Done</Btn>
     </div>
@@ -142,7 +162,7 @@ export function CreatePlayer(pp: PlayerProps) {
           <Sel t="caw-attire" label="Outfit" value={att} options={ATTIRES.map(a => [a[0], a[1]] as Opt)} onChange={v => { setAtt(v as any); setActing(false); setLay(-1); }} />
           <span class="sp" /><Btn kind="less" t="caw-back" on={back} onClick={() => { setBack(!back); setActing(false); }}>{back ? 'Their front' : 'Their back'}</Btn>
         </div>
-        <div class="caw-stagerow"><div class="sc-stage caw-stage"><ScenePlayer key="caw" sc={sc} cast={cast} play={play} still={!(acting && fin) && !(prevSc && (tab === 'scenes' || tab === 'fin'))} orbit fill={!(acting && fin) && !(prevSc && (tab === 'scenes' || tab === 'fin'))} t="caw-view" label={(lk.name || w0.name) + ' in ' + ATTIRES.find(a => a[0] === att)![1].toLowerCase() + '. Drag to walk round them.'} /></div>
+        <div class="caw-stagerow"><div class="sc-stage caw-stage"><ScenePlayer key="caw" sc={sc} cast={cast} play={play} redraw={rd} still={!(acting && fin) && !(prevSc && (tab === 'scenes' || tab === 'fin'))} orbit fill={!(acting && fin) && !(prevSc && (tab === 'scenes' || tab === 'fin'))} t="caw-view" label={(lk.name || w0.name) + ' in ' + ATTIRES.find(a => a[0] === att)![1].toLowerCase() + '. Drag to walk round them.'} /></div>
           <div class="caw-ptcol"><button type="button" class={'caw-ptbtn' + (tab === 'portrait' ? ' on' : '')} data-t="caw-portrait" aria-label="Their portrait: press to change it" title="Their portrait: press to change it" onClick={() => setTab('portrait')}><PaperPortrait r={r} ps={pt} card={card} label={'Portrait of ' + (lk.name || w0.name)} /><span class="caw-ptlbl">Portrait</span></button></div></div>
         <div class="sc-keys" role="group" aria-label="Pose">
           <span class="sc-lbl">Pose</span>
@@ -152,7 +172,7 @@ export function CreatePlayer(pp: PlayerProps) {
       </Win>
       <Win title={titles[tab]} right={tab === 'gear' || tab === 'colour' || tab === 'studio' ? ATTIRES.find(a => a[0] === att)![1] : ''} area="side" t="caw-side">
         {(() => { const its: { id: string; label: string; t?: string }[] = pp.attire ? [{ id: 'a_head', label: 'Head', t: 'caw-tab' }, { id: 'a_upper', label: 'Upper body', t: 'caw-tab' }, { id: 'a_lower', label: 'Lower body', t: 'caw-tab' }, { id: 'a_feet', label: 'Feet', t: 'caw-tab' }, { id: 'studio', label: 'Lettering', t: 'caw-tab' }, { id: 'colour', label: 'Colours', t: 'caw-tab' }] : [...(pp.sign ? [{ id: 'sign', label: 'Who they are', t: 'caw-tab' }] : []), { id: 'body', label: 'Body', t: 'caw-tab' }, { id: 'head', label: 'Head', t: 'caw-tab' }, { id: 'face', label: 'Face shape', t: 'caw-tab' }, { id: 'ink', label: 'Paint and ink', t: 'caw-tab' }, { id: 'gear', label: 'Gear', t: 'caw-tab' },
-          { id: 'colour', label: 'Colours', t: 'caw-tab' }, { id: 'studio', label: 'Lettering', t: 'caw-tab' }, { id: 'fin', label: 'Moves', t: 'caw-tab' }, { id: 'scenes', label: 'Entrance', t: 'caw-tab' }, { id: 'file', label: 'File', t: 'caw-tab' }]; return <div class="sc-row sc-section"><span class="sc-lbl">Change</span><Sel t="caw-tab" label="What to change" value={tab} options={its.map(x => [x.id, x.label] as Opt)} onChange={v => setTab(v as Tab)} /></div>; })()}
+          { id: 'colour', label: 'Colours', t: 'caw-tab' }, { id: 'studio', label: 'Lettering', t: 'caw-tab' }, { id: 'fin', label: 'Finisher and signatures', t: 'caw-tab' }, { id: 'moveset', label: 'Moveset', t: 'caw-tab' }, { id: 'scenes', label: 'Entrance', t: 'caw-tab' }, { id: 'file', label: 'File', t: 'caw-tab' }]; return <div class="sc-row sc-section"><span class="sc-lbl">Change</span><Sel t="caw-tab" label="What to change" value={tab} options={its.map(x => [x.id, x.label] as Opt)} onChange={v => setTab(v as Tab)} /></div>; })()}
         {tab === 'sign' && info && pv && <>
           <div class="sc-row"><span class="sc-slot">Ring name</span><TextBox value={lk.name || ''} max={28} label="Ring name" t="caw-name" width="18ch" onInput={v => change(n => { n.name = v; })} /></div>
           {([['g', 'Division', [['M', 'Men'], ['F', 'Women']]], ['align', 'Side', [['F', 'Face'], ['H', 'Heel']]], ['style', 'Style', Object.keys(E.STYLE_NAME).map(k => [k, E.STYLE_NAME[k]])],
@@ -257,7 +277,8 @@ export function CreatePlayer(pp: PlayerProps) {
         {tab === 'a_feet' && <>{partRow('footwear')}<p class="muted">Boots come up the shin; kick pads leave the foot bare.</p></>}
         {tab === 'gear' && <>
           {(['upper_body', 'lower_body', 'footwear'] as const).map(partRow)}
-          <Group title="Extras">{extras(PARTS.accessories.map(p => p[0]))}</Group>
+          <Group title="Extras"><div class="sc-row"><Btn kind="go" t="caw-extras" tip="Every extra there is, in one window" onClick={() => setPop({ k: 'extras' })}>Choose extras</Btn>
+            <span class="muted" data-t="caw-extras-now">{(cur.equipped_assets.accessories || []).map(id => (PARTS.accessories.find(p => p[0] === id) || [id, id])[1]).join(', ') || 'None'}</span></div></Group>
           <p class="muted">Each outfit is worn where it belongs: ring gear in the ring, entrance gear on the ramp, street clothes backstage and in promos.</p>
         </>}
         {tab === 'colour' && <>
@@ -317,6 +338,22 @@ export function CreatePlayer(pp: PlayerProps) {
             {prevSc && prevSc.when === 'taunt' ? <div class="sc-row"><Btn kind="sm" t="caw-tauntstop" onClick={() => setPrev(null)}>Stop</Btn><span class="muted">{prevSc.name}</span></div> : <p class="muted">Pick up to three. When they are on top in a match, the broadcast now and then shows one instead of a move.</p>}
           </Group>
         </>}
+        {tab === 'moveset' && (() => {
+          const ms: MoveRec[] = lk.moveset || [], full = ms.length >= E.MOVESET_MAX, style = pp.sign ? d.style : (w0.style || 'A');
+          const kinds = E.MOVE_KINDS as string[], groups = kinds.map(k => ({ label: KIND_N[k], options: (E.MOVE_LIB[k] as string[]).filter(n => !ms.some(m => m.name === n)).map(n => [k + ':' + n, n] as Opt) }));
+          const setMs = (fn: (L: MoveRec[]) => void) => change(n => { const L = (n.moveset || []).slice(); fn(L); if (L.length) n.moveset = L; else delete n.moveset; });
+          return <>
+            <div class="sc-row"><Btn kind="go" t="caw-move-fill" tip="Twelve moves to suit how they wrestle, four for each part of a match" onClick={() => { setMs(L => { L.splice(0, L.length, ...(E.movesetFor(style, lk.name || w0.name) as MoveRec[])); }); say('A moveset to suit their style. Change any of it.'); }}>Fill for their style</Btn>
+              <Btn kind="less" t="caw-move-clear" disabled={!ms.length} onClick={() => setMs(L => { L.splice(0); })}>Clear</Btn><span class="muted">{ms.length} of {E.MOVESET_MAX}</span></div>
+            {MS_STAGES.map(([st, stN]) => { const here = ms.map((m, i) => ({ m, i })).filter(x => (x.m.stage || 'mid') === st); return <Group key={st} title={stN}>
+              <div class="caw-moves">{here.map(({ m, i }) => <Btn key={i + m.name} kind="less" t="caw-move-drop" d={{ v: String(i) }} tip={(m.kind ? KIND_N[m.kind] : 'Their own move') + '. Press to take it out.'} onClick={() => setMs(L => { L.splice(i, 1); })}>{m.name} ×</Btn>)}
+                {here.length ? null : <span class="muted">None yet.</span>}</div>
+              <div class="sc-row"><Btn kind="sm" t="caw-move-add" d={{ v: st }} tip={'Every move there is, to pick ' + stN.toLowerCase() + ' ones from'} onClick={() => setPop({ k: 'moves', st })}>{full ? 'Change moves' : 'Add moves'}</Btn></div>
+            </Group>; })}
+            {full ? <p class="muted">The moveset is full. Take a move out to add another.</p> : null}
+            <p class="muted">The commentators name these in a match: the early ones in the opening, the middle ones in the middle, the late ones on the way to the finish. Without a moveset they name moves for the wrestler's style.</p>
+          </>;
+        })()}
         {tab === 'scenes' && <>
           <div class="sc-row" role="group" aria-label="Entrances">
             <Sel t="caw-ent" label="Their entrance" value={lk.entrance || ''} options={[['', 'Whatever the show picks'] as Opt].concat(scenesFor('entrance', world).map(o => [o.id, o.name] as Opt))} onChange={v => { if (v) { change(n => { n.entrance = v; }); setPrev(v); } else { change(n => { delete n.entrance; }); setPrev(null); } }} />
@@ -339,12 +376,28 @@ export function CreatePlayer(pp: PlayerProps) {
           <Group title="Files">
             <div class="sc-row"><Btn t="caw-save2" onClick={save}>{pp.sign ? 'Create them first' : 'Save'}</Btn><Btn kind="sm" t="caw-export" onClick={writeOut}>Write a file</Btn><Btn kind="sm" t="caw-import" onClick={() => file.current && file.current.click()}>Open a file</Btn>
               <input ref={file} type="file" accept=".json,application/json" hidden data-t="caw-file" onChange={e => { const f = (e.currentTarget as HTMLInputElement).files; if (f && f[0]) readIn(f[0]); (e.currentTarget as HTMLInputElement).value = ''; }} /></div>
-            <div class="sc-row"><Btn kind="less" t="caw-reset" onClick={() => { const n = blankLook(w0, base); n.appearance = { face: { ...derive(w0.name, w0.g, w0.age), ...(w0.face || {}) } }; setLk(n); setLay(-1); setFi(-1); say('Back to how the game drew them. Save to keep it.'); }}>Start again</Btn>
+            <div class="sc-row"><Btn kind="less" t="caw-reset" onClick={() => { const n = blankLook(w0, base); n.appearance = { face: { ...derive(w0.name, w0.g, w0.age), ...(w0.face || {}) } }; put(n); setLay(-1); setFi(-1); say('Back to how the game drew them. Save to keep it.'); }}>Start again</Btn>
               {pp.had && pp.onForget && <Btn kind="danger" t="caw-forget" onClick={() => { const r0 = pp.onForget!(); if (r0) say(r0.msg, !r0.ok); }}>Take the file off them</Btn>}</div>
           </Group>
           <p class="muted">A wrestler is one small file: the body, three outfits, lettering and shapes, and the finishing moves. No pictures, so it shares in a moment.</p>
         </>}
       </Win>
     </Desktop>
+    {pop && pop.k === 'moves' && (() => {
+      const st = pop.st, stN = (MS_STAGES.find(x => x[0] === st) || ['', ''])[1], ms: MoveRec[] = lk.moveset || [], full = ms.length >= E.MOVESET_MAX;
+      const setMs = (fn: (L: MoveRec[]) => void) => change(n => { const L = (n.moveset || []).slice(); fn(L); if (L.length) n.moveset = L; else delete n.moveset; });
+      return <Window paper big esc title={'Moves: ' + stN} info={[(lk.name || w0.name) + ': ' + stN.toLowerCase() + ' in a match', ms.length + ' of ' + E.MOVESET_MAX]} onClose={closePop} ok="Done" hint="Esc closes">
+        <p class="muted">Press a move to put it in, press it again to take it out. A move already in another part of the match moves here.</p>
+        <div class="pick-cols">{(E.MOVE_KINDS as string[]).map(k => <div class="pick-col" key={k}><h3>{KIND_N[k]}</h3>
+          {(E.MOVE_LIB[k] as string[]).map(n => { const i = ms.findIndex(m => m.name === n), on = i >= 0 && (ms[i].stage || 'mid') === st;
+            return <Btn key={n} kind="less" t="caw-pickmove" d={{ v: n }} on={on} disabled={!on && i < 0 && full} onClick={() => setMs(L => { const j = L.findIndex(m => m.name === n); if (j >= 0 && (L[j].stage || 'mid') === st) L.splice(j, 1); else if (j >= 0) L[j] = { ...L[j], stage: st }; else L.push({ name: n, kind: k, stage: st }); })}>{n}</Btn>; })}
+        </div>)}</div>
+        {full ? <p class="muted mt2">The moveset is full. Take a move out to add another.</p> : null}
+      </Window>;
+    })()}
+    {pop && pop.k === 'extras' && <Window paper big esc title={'Extras: ' + ATTIRES.find(a => a[0] === att)![1]} info={['Worn with this outfit', (cur.equipped_assets.accessories || []).length + ' of 8']} onClose={closePop} ok="Done" hint="Esc closes">
+      <p class="muted">Press one to put it on, press it again to take it off. Up to eight at a time.</p>
+      <div class="pick-cols">{EXTRA_GROUPS.concat([['Over it all', PARTS.accessories.map(p => p[0]).filter(id => !EXTRA_GROUPS.some(g => g[1].indexOf(id) >= 0))]]).map(([g, ids]) => <div class="pick-col" key={g}><h3>{g}</h3>{extras(ids)}</div>)}</div>
+    </Window>}
   </div>;
 }

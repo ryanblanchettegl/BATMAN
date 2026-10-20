@@ -47,11 +47,39 @@ var ft=null;if(ap.features&&typeof ap.features==='object'){ft={};['eyes','nose',
     return lkPrune({name:lkStr(m.name,32),impact_damage:lkNum(m.impact_damage,1,100),kickout_difficulty:LOOK_KICK.indexOf(m.kickout_difficulty)>=0?m.kickout_difficulty:undefined,
       position:LOOK_POS.indexOf(m.position)>=0?m.position:undefined,category:lkStr(m.category,24),preview_pose_id:lkId(m.preview_pose_id),stage:['early','mid','late'].indexOf(m.stage)>=0?m.stage:undefined});}).filter(function(m){return !!m;});
   if(Array.isArray(x.taunts)){var tn=x.taunts.map(lkId).filter(function(v,i,a){return !!v&&a.indexOf(v)===i;}).slice(0,3);if(tn.length)o.taunts=tn;}   // up to three taunts, each a scene id
+  if(Array.isArray(x.moveset)){var ms=x.moveset.slice(0,MOVESET_MAX).map(function(m){if(!m||typeof m!=='object'||!lkStr(m.name,32))return null;
+      return lkPrune({name:lkStr(m.name,32).trim()||undefined,kind:MOVE_KINDS.indexOf(m.kind)>=0?m.kind:undefined,stage:['early','mid','late'].indexOf(m.stage)>=0?m.stage:undefined});}).filter(function(m){return m&&m.name;});
+    if(ms.length)o.moveset=ms;}   // the rest of their moves, by part of the match
   var en=lkId(x.entrance);if(en)o.entrance=en;   // one of the canned entrances
   if(x.entrance_fx&&typeof x.entrance_fx==='object'){var ef=lkPrune({pyro:lkId(x.entrance_fx.pyro),lights:lkId(x.entrance_fx.lights),music:lkStr(x.entrance_fx.music,32)||undefined});if(Object.keys(ef).length)o.entrance_fx=ef;}   // pyro, lights and their music
   if(x.portrait&&typeof x.portrait==='object'){var pt=x.portrait;o.portrait=lkPrune({attire:LOOK_ATTIRES.indexOf(pt.attire)>=0?pt.attire:undefined,expr:typeof pt.expr==='string'&&/^[a-z]{0,8}$/.test(pt.expr)?pt.expr:undefined,pose:lkId(pt.pose),bg:lkId(pt.bg),frame:pt.frame==='chest'||pt.frame==='head'?pt.frame:undefined});if(!Object.keys(o.portrait).length)delete o.portrait;}   // their portrait
   return Object.keys(o).length?o:null;
 }
+/* ---------- the moveset: the moves they do on the way to the finish ----------
+   Up to twelve moves, each with a kind and the part of the match it comes out in (early, the middle, late). The
+   commentators name them in the match's call (matchShape() in src/60-grammar.js: the opening, the middle spot, the late
+   swing). Without one, the call names moves for the wrestler's style, as before. */
+var MOVESET_MAX=12,MOVE_KINDS=['strike','grapple','power','aerial','submission'];
+var MOVE_LIB={
+  strike:['Chop to the chest','Forearm smash','Knife-edge chop','Spinning heel kick','Superkick','Jumping knee','Discus punch','Enzuigiri','Running elbow','Big boot','Headbutt','Flurry of kicks'],
+  grapple:['Snap suplex','German suplex','Vertical suplex','Northern lights suplex','DDT','Neckbreaker','Backbreaker','Arm drag','Hip toss','Bulldog','Snapmare','Exploder suplex'],
+  power:['Powerbomb','Spinebuster','Gorilla press','Chokeslam','Running powerslam','Sidewalk slam','Body slam','Fallaway slam','Military press','Lariat','Shoulder tackle','Bear hug'],
+  aerial:['Dropkick','Moonsault','Crossbody from the top','Dive to the floor','Springboard kick','Corkscrew press','Shooting star press','Frog splash','Flying elbow','Hurricanrana','Missile dropkick','Tope through the ropes'],
+  submission:['Armbar','Figure-four','Single-leg crab','Crossface','Sleeper hold','Camel clutch','Ankle lock','Boston crab','Triangle choke','Abdominal stretch','Kimura','Rear naked choke']
+};
+var MOVE_STYLE={B:['strike','power'],T:['grapple','submission'],H:['aerial','strike'],P:['power','grapple'],A:['grapple','strike'],S:['strike','submission'],E:['strike','aerial']};
+/** A starting moveset for a style: four moves for each part of the match, picked by a hash of the name. */
+function movesetFor(style,name){
+  var ks=MOVE_STYLE[style]||MOVE_STYLE.A,out=[],seen={},k=0;
+  ['early','mid','late'].forEach(function(st,si){for(var i=0;i<4;i++){var kind=i<2?ks[0]:(i===2?ks[1]:MOVE_KINDS[(si+hash(String(name)+i))%MOVE_KINDS.length]),L=MOVE_LIB[kind],n=L[(hash(String(name)+':'+st+i)+k++)%L.length],g=0;
+    while(seen[n]&&g++<L.length)n=L[(L.indexOf(n)+1)%L.length];seen[n]=1;out.push({name:n,kind:kind,stage:st});}});
+  return out;
+}
+/** A move as the commentators say it: "a snap suplex" for one from the library, a move of their own as it is written. */
+function moveSaid(m){var n=String(m.name||'');for(var k in MOVE_LIB)if(MOVE_LIB[k].indexOf(n)>=0){n=n.charAt(0).toLowerCase()+n.slice(1);return (/^[aeiou]/i.test(n)?'an ':'a ')+n;}return /^(the|a|an) /i.test(n)?n.replace(/^The /,'the '):n;}
+/** The move a wrestler does in this part of the match, from their moveset, or null when they have none. */
+function moveFrom(w,stage,key){var L=w&&w.look&&w.look.moveset;if(!L||!L.length)return null;var here=L.filter(function(m){return (m.stage||'mid')===stage;});if(!here.length)here=L;return moveSaid(here[Math.floor(h01(key)*here.length)%here.length]);}
+E.MOVE_LIB=MOVE_LIB;E.MOVE_KINDS=MOVE_KINDS;E.MOVESET_MAX=MOVESET_MAX;E.movesetFor=movesetFor;E.moveSaid=moveSaid;
 /** Is this a wrestler's look (a .wrestler.json file)? */
 E.lookOk=function(x){var c=lookClean(x);return !!(c&&(c.attires||c.physical_attributes||c.appearance));};
 E.lookClean=lookClean;
