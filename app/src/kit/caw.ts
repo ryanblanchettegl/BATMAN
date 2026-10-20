@@ -41,7 +41,7 @@ export function threeMoves(w: { name: string; style?: string; fin?: string }, ha
 export function randomLook(lk: Look, r: () => number): Look {
   const pick = <T,>(l: T[]): T => l[Math.floor(r() * l.length) % l.length], ids = (l: [string, string][]) => l.map(x => x[0]);
   const fem = (lk.physical_attributes || {}).sex === 'F', A = pick(fem ? ARCHETYPES.filter(a => ['Cruiserweight', 'Technical', 'Heavyweight'].indexOf(a[0]) >= 0) : ARCHETYPES), j = () => 0.94 + r() * 0.12;
-  const bold = SWATCHES.filter(sw => sw[3] !== 'denim' && sw[3] !== 'corr').map(sw => sw[0]), metal = SWATCHES.filter(sw => sw[3] === 'foil').map(sw => sw[0]);
+  const bold = SWATCHES.filter(sw => sw[3] !== 'denim' && sw[3] !== 'corr' && !/^hair_/.test(sw[0])).map(sw => sw[0]), metal = SWATCHES.filter(sw => sw[3] === 'foil').map(sw => sw[0]);
   const hairs = ['#1a1410', '#3a2414', '#6a4422', '#a8742a', '#d8b860', '#8a8a8a', '#e8e4dc', '#7a1a10'];
   const pal = () => ({ primary: pick(bold), secondary: pick(bold), trim: pick(bold), hardware: pick(metal) });
   const head = r() < 0.15 ? pick(ids(PARTS.head).filter(h => /^mask/.test(h))) : pick(ids(PARTS.head).filter(h => /^hair/.test(h) && h !== 'hair_face'));
@@ -102,7 +102,58 @@ export const SWATCHES: [string, string, string, Fin][] = [
   ['swatch_neon_green', 'Neon green paper', '#5cff3a', 'neon'], ['swatch_neon_pink', 'Neon pink paper', '#ff3aa8', 'neon'], ['swatch_neon_orange', 'Neon orange paper', '#ff7a1a', 'neon'], ['swatch_neon_yellow', 'Neon yellow paper', '#f4ff3a', 'neon'],
   ['swatch_blue_denim', 'Blue denim', '#3d5a8a', 'denim'], ['swatch_black_denim', 'Black denim', '#2a2c33', 'denim'],
   ['swatch_leather_brown', 'Brown leather', '#5a3218', 'leather'], ['swatch_leather_black', 'Black leather', '#1a1a1e', 'leather'], ['swatch_leather_red', 'Red leather', '#6e1414', 'leather'],
+  // more shades (20 October), so every family has light to dark, and gear can match a real wrestler's colours
+  ['swatch_blush_paper', 'Blush paper', '#f2b8c6', 'matte'], ['swatch_hot_pink', 'Hot pink paper', '#e8337f', 'matte'], ['swatch_magenta_paper', 'Magenta paper', '#b0157a', 'matte'],
+  ['swatch_coral_paper', 'Coral paper', '#ee7660', 'matte'], ['swatch_burnt_orange', 'Burnt orange paper', '#c2561a', 'matte'], ['swatch_peach_paper', 'Peach paper', '#f6c49a', 'matte'],
+  ['swatch_lemon_paper', 'Lemon paper', '#f7ea6a', 'matte'], ['swatch_mustard_paper', 'Mustard paper', '#c99a1e', 'matte'],
+  ['swatch_mint_paper', 'Mint paper', '#a8e6c4', 'matte'], ['swatch_lime_paper', 'Lime paper', '#8ccf2e', 'matte'], ['swatch_emerald_paper', 'Emerald paper', '#13875a', 'matte'], ['swatch_forest_paper', 'Forest green paper', '#1e4d2b', 'matte'], ['swatch_olive_paper', 'Olive paper', '#6b6b2a', 'matte'],
+  ['swatch_turquoise_paper', 'Turquoise paper', '#2ec4c0', 'matte'],
+  ['swatch_baby_blue', 'Baby blue paper', '#a9d4f5', 'matte'], ['swatch_cobalt_paper', 'Cobalt paper', '#1f47b8', 'matte'], ['swatch_midnight_paper', 'Midnight blue paper', '#121a33', 'matte'],
+  ['swatch_lavender_paper', 'Lavender paper', '#c3a6e8', 'matte'], ['swatch_violet_paper', 'Violet paper', '#7b3fd0', 'matte'], ['swatch_plum_paper', 'Plum paper', '#4e1f4e', 'matte'],
+  ['swatch_tan_paper', 'Tan paper', '#c9a16e', 'matte'], ['swatch_chocolate_paper', 'Chocolate paper', '#4a2a16', 'matte'],
+  ['swatch_purple_foil', 'Purple foil', '#7a2fc0', 'foil'], ['swatch_pink_foil', 'Pink foil', '#e04a9a', 'foil'], ['swatch_black_foil', 'Black foil', '#24242a', 'foil'], ['swatch_rose_gold_foil', 'Rose gold foil', '#d89a86', 'foil'],
+  ['swatch_neon_blue', 'Neon blue paper', '#3ad8ff', 'neon'], ['swatch_neon_purple', 'Neon purple paper', '#b63aff', 'neon'],
+  ['swatch_white_denim', 'White denim', '#d8dde6', 'denim'], ['swatch_leather_white', 'White leather', '#ecebe6', 'leather'],
+  // natural hair, so hair can be any real shade
+  ['hair_jet_black', 'Jet black hair', '#14110f', 'matte'], ['hair_dark_brown', 'Dark brown hair', '#3a2414', 'matte'], ['hair_chestnut', 'Chestnut hair', '#6a3a1c', 'matte'], ['hair_auburn', 'Auburn hair', '#8a3418', 'matte'],
+  ['hair_ginger', 'Ginger hair', '#c0602a', 'matte'], ['hair_dirty_blonde', 'Dirty blonde hair', '#a8874e', 'matte'], ['hair_honey_blonde', 'Honey blonde hair', '#d4a85a', 'matte'], ['hair_platinum', 'Platinum blonde hair', '#ece2c4', 'matte'],
+  ['hair_silver', 'Silver hair', '#b8b8b4', 'matte'], ['hair_salt_pepper', 'Salt and pepper hair', '#6e6a66', 'matte'],
 ];
+/* ---------- swatches by family: every colour dropdown groups its swatches by colour and orders each group light to dark ---------- */
+const FIN_N: Record<Fin, string> = { matte: 'paper', foil: 'foil', corr: 'board', neon: 'neon', denim: 'denim', leather: 'leather' };
+function hsl(c: string): [number, number, number] {
+  const n = parseInt(c.slice(1), 16), r = (n >> 16 & 255) / 255, g = (n >> 8 & 255) / 255, b = (n & 255) / 255, mx = Math.max(r, g, b), mn = Math.min(r, g, b), l = (mx + mn) / 2, d = mx - mn;
+  if (!d) return [0, 0, l];
+  const s2 = d / (1 - Math.abs(2 * l - 1)); let h = mx === r ? ((g - b) / d) % 6 : mx === g ? (b - r) / d + 2 : (r - g) / d + 4; h *= 60; if (h < 0) h += 360;
+  return [h, s2, l];
+}
+/** The colour family a swatch belongs to, by its hue (a dull or very dark or light colour is a neutral; brown is a dark orange). */
+export function swatchFamily(c: string): string {
+  const [h, s2, l] = hsl(c);
+  if (s2 < 0.16 || l < 0.1 || l > 0.95 || (l > 0.88 && s2 < 0.7)) return 'Black, grey and white';
+  if (h >= 15 && h < 40 && (l < 0.42 || s2 < 0.5)) return 'Browns and tans';
+  if (h >= 40 && h < 70 && l < 0.34) return 'Greens';   // olive
+  if (h >= 305 && h < 335) return 'Pinks';
+  if ((h >= 335 || h < 5) && l > 0.62) return 'Pinks';   // pale reds read as pink
+  if (h >= 5 && h < 15 && l > 0.6) return 'Oranges';   // coral and salmon
+  if (h < 12 || h >= 335) return 'Reds';
+  if (h < 40) return 'Oranges';
+  if (h < 70) return 'Yellows and golds';
+  if (h < 165) return 'Greens';
+  if (h < 190) return 'Teals';
+  if (h < 250) return 'Blues';
+  return 'Purples';
+}
+export const SWATCH_FAMILIES = ['Reds', 'Pinks', 'Oranges', 'Yellows and golds', 'Greens', 'Teals', 'Blues', 'Purples', 'Browns and tans', 'Black, grey and white'];
+/** The swatches grouped by family, each group lightest first, with the kind of material in the name. */
+export function swatchGroups(only?: (s: [string, string, string, Fin]) => boolean): [string, [string, string, string, Fin][]][] {
+  const by: Record<string, [string, string, string, Fin][]> = {};
+  SWATCHES.filter(sw => !only || only(sw)).forEach(sw => { const f = swatchFamily(sw[2]); (by[f] = by[f] || []).push(sw); });
+  return SWATCH_FAMILIES.filter(f => by[f]).map(f => [f, by[f].sort((a, b) => hsl(b[2])[2] - hsl(a[2])[2])] as [string, [string, string, string, Fin][]]);
+}
+/** Ink that reads on a swatch: dark on light card, light on dark. */
+export function swatchInk(c: string): string { return hsl(c)[2] > 0.58 ? '#1d1a24' : '#ffffff'; }
+export { FIN_N };
 const SWM = new Map(SWATCHES.map(s => [s[0], { c: s[2], f: s[3] } as Swatch]));
 /** A swatch by id (or a colour written as #rrggbb), else the fallback. */
 export function swatch(id: string | undefined, fb: Swatch): Swatch { if (!id) return fb; if (/^#[0-9a-f]{6}$/i.test(id)) return { c: id, f: 'matte' }; return SWM.get(id) || fb; }
