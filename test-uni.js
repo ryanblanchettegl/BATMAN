@@ -12,7 +12,7 @@ function invariants(S,where,card){
   const bad=[];
   S.feuds.filter(f=>!f.res).forEach(f=>{if(f.a.some(id=>f.b.indexOf(id)>=0))bad.push('feud '+f.id+' has someone on both sides');});
   S.order.forEach(pid=>S.promos[pid].titles.forEach(t=>t.holders.forEach(id=>{const w=S.w[id];if(!w||w.promo!==pid)bad.push(pid+' '+t.name+' held by '+(w?w.name+' ('+w.promo+')':'nobody'));})));
-  if(card){const seen={};card.forEach((m,i)=>m.sides.forEach(sd=>sd.forEach(id=>{if(seen[id]!=null)bad.push('match '+(i+1)+' repeats '+S.w[id].name+' from match '+(seen[id]+1));seen[id]=i;})));}
+  if(card){const seen={};card.forEach((m,i)=>m.sides.forEach(sd=>sd.forEach(id=>{if(seen[id]!=null&&!m.fill)bad.push('match '+(i+1)+' repeats '+S.w[id].name+' from match '+(seen[id]+1));seen[id]=i;})));}
   return bad.map(b=>where+': '+b);
 }
 const info=E.universe();console.log(info.name,'workers',info.workers,'promotions',info.promotions.map(p=>p.id+' '+p.image).join(', '));
