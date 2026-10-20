@@ -10,8 +10,8 @@ import { range, sendScout } from './Profile';
 function Scouts() {
   const S = G.S, P = me();
   return <Win title="Your scouts" area="scouts" t="mk-scouts">
-    <div class="row"><Btn t="cw-open" onClick={() => openModal({ kind: 'player', id: 'new' })}>Create a wrestler</Btn></div>
-    <p class="muted">Create a Wrestler makes a new wrestler. They join the free agents, and you sign them like anybody else.</p>
+    <div class="row"><Btn t="cw-open" onClick={() => openModal({ kind: 'player', id: 'new' })}>Create a wrestler</Btn><Btn t="staff-open" onClick={() => openModal({ kind: 'staff' })}>Create staff</Btn></div>
+    <p class="muted">Create a Wrestler makes a new wrestler. They join the free agents, and you sign them like anybody else. Create staff hires a referee, commentator, interviewer or authority figure straight onto your books.</p>
     {!S.owner.me && <p>Wage budget <b>{cash(E.budget(S))}</b> a week, the bill is <b>{cash(E.rosterOf(S, P.id).reduce((a: number, w: W) => a + w.wage, 0))}</b>.</p>}
   </Win>;
 }

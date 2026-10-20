@@ -7,6 +7,7 @@ import { Titles } from './Titles';
 import { Market } from './Market';
 import { PlayerModal } from '../player/modal';
 import { ScoutWindow } from './Profile';
+import { StaffWindow, ToStaffWindow } from './Staff';
 
 export const pages: Record<string, () => ComponentChildren> = { roster: Roster, locker: Locker, titles: Titles, market: Market };
-export const modals: Record<string, (p: { m: Modal }) => ComponentChildren> = { scout: ScoutWindow, player: PlayerModal };
+export const modals: Record<string, (p: { m: Modal }) => ComponentChildren> = { scout: ScoutWindow, player: PlayerModal, staff: StaffWindow, tostaff: ToStaffWindow };

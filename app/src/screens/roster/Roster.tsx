@@ -1,9 +1,9 @@
 /* The Roster page as a desktop of windows: the list on the left, the picked file on the right, four sums along
    the bottom, and the full profile one press away. */
 import { E, W } from '../../engine';
-import { G, me, cash, view, openModal } from '../../store';
+import { G, me, cash, view, act, openModal } from '../../store';
 import { Ovr } from '../../shared/ovr';
-import { Head, Sel, TextBox, Tag, Side, Opt, Meter, Btn, Portrait, champOf, brandName, dataAttrs } from '../../kit';
+import { Head, Sel, TextBox, Tag, Side, Opt, Meter, Btn, Portrait, champOf, brandName, dataAttrs, showResult } from '../../kit';
 import { ScenePlayer } from '../../kit/sceneplayer';
 import { WAIST } from '../../kit/scene';
 import { recipeOf } from '../../kit/puppet';
@@ -26,6 +26,7 @@ function Filters(p: { shown: number; of: number }) {
     <Sel id="rf-g" t="rf" d={{ k: 'g' }} label="Division" value={f.g} onChange={set('g')} options={[['all', 'Men and women'], ['M', 'Men'], ['F', 'Women']]} />
     <Sel id="rf-al" t="rf" d={{ k: 'al' }} label="Alignment" value={f.al} onChange={set('al')} options={[['all', 'Faces and heels'], ['F', 'Faces'], ['H', 'Heels']]} />
     <span class="muted">{p.shown} of {p.of}</span>
+    <Btn kind="sm" t="staff-open" onClick={() => openModal({ kind: 'staff' })}>Staff</Btn>
   </div>;
 }
 
@@ -103,7 +104,9 @@ function File(p: { w: W | null; spot: string }) {
       <Line label="Contract"><span class={w.con <= 4 ? 'bad' : undefined}>{Math.max(0, w.con)} weeks left</span></Line>
     </Group>
     <div class="row mt1"><Btn kind="go" t="roster-full" d={{ id: w.id }} onClick={() => view(() => { const st = rs(); st.peek = w.id; st.sel = w.id; })}>Full profile</Btn>
-      <Btn t="roster-caw" d={{ id: w.id }} onClick={() => openModal({ kind: 'player', id: w.id })}>Edit wrestler</Btn></div>
+      <Btn t="roster-caw" d={{ id: w.id }} onClick={() => openModal({ kind: 'player', id: w.id })}>{w.nw ? 'Edit look' : 'Edit wrestler'}</Btn>
+      {w.nw ? (w.wasW ? <Btn t="roster-back" d={{ id: w.id }} onClick={() => { const r = act(() => E.fromStaff(G.S, w.id)); showResult('Back to wrestling', r.msg, !r.ok); }}>Wrestle again</Btn> : null)
+        : <Btn t="roster-tostaff" d={{ id: w.id }} onClick={() => openModal({ kind: 'tostaff', id: w.id })}>Move to staff</Btn>}</div>
   </Win>;
 }
 
@@ -123,7 +126,8 @@ function Sums(p: { R: W[] }) {
 
 export function Roster() {
   const S = G.S, P = me(), st = rs(), f = st.rf, q = f.q.toLowerCase(), sel = selected();
-  const R: W[] = E.rosterOf(S, P.id), push = E.pushMap(S, P.id);
+  const R: W[] = E.rosterOf(S, P.id), push = { ...E.pushMap(S, P.id) };
+  E.staffList(S).forEach((x: any) => { push[x.id] = x.role; });
   const L = R.filter(w => (f.brand === 'all' || w.brand === f.brand) && (f.g === 'all' || w.g === f.g) && (f.al === 'all' || w.align === f.al) && (!q || w.name.toLowerCase().indexOf(q) >= 0));
   const k = st.rs.k, d = st.rs.d, val = (w: W) => k === 'name' ? w.name : (k === 'work' ? E.workRate(w) : (k === 'all' ? E.overallOf(w) : w[k]));
   L.sort((a, b) => { const x = val(a), y = val(b); return (x < y ? -1 : x > y ? 1 : 0) * d || E.overallOf(b) - E.overallOf(a); });

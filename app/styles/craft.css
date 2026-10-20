@@ -369,3 +369,23 @@ html body .win.ppop .wb{font-family:var(--hand);font-size:1.06em}
 .lb.scroll{overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin}
 .lb.scroll thead th{position:sticky;top:0;z-index:2;background:#efe6cf}
 .lkpage .win > .bd{overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin}
+/* staff (screens/roster/Staff.tsx): the people on your books beside Create staff */
+.stf{display:grid;grid-template-columns:1fr 1.15fr;gap:1.2em;min-height:0}
+.stf h3{font-family:var(--marker);font-weight:400;color:#c23a30;margin:0 0 .3em}
+.stf-rows{max-height:52vh}
+.stf-row{display:grid;grid-template-columns:2.6em 1fr auto;gap:.6em;align-items:center;padding:.3em 0;border-bottom:1px dashed rgba(0,0,0,.18)}
+.stf-row canvas.pt{width:2.6em;height:2.6em}
+.stf-tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(11em,1fr));gap:.45em}
+.stf-tile{display:flex;flex-direction:column;gap:.15em;text-align:left;padding:.45em .6em;background:#fffbe9;border:2px solid #1d1a24;border-radius:3px;box-shadow:2px 3px 0 rgba(0,0,0,.3);cursor:pointer;font:inherit;color:var(--ink);transform:rotate(-.4deg);transition:transform .12s,box-shadow .12s}
+.stf-tile:nth-child(2n){transform:rotate(.5deg)}
+.stf-tile:hover,.stf-tile:focus-visible{transform:translateY(-2px) rotate(0);box-shadow:3px 5px 0 rgba(0,0,0,.3)}
+.stf-tile:focus-visible{outline:3px solid #3a6fd8;outline-offset:2px}
+.stf-tile.on{background:#ffe066}
+.stf-tile b{font-family:var(--marker);font-weight:400}
+.stf-tile span{font-size:.82em;line-height:1.2}
+.stf-tile i{font-size:.82em;color:#2f7d4a;font-style:normal}
+.stf{grid-template-columns:.8fr 1.3fr}
+.stf-new .stf-tiles{grid-template-columns:repeat(3,1fr);gap:.35em}
+.stf-new .stf-tile{padding:.3em .45em}
+.stf-new .stf-tile span{font-size:.74em;line-height:1.15}
+.stf-new .row{flex-wrap:nowrap}
