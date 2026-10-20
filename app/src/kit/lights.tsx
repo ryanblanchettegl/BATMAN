@@ -78,7 +78,7 @@ function picBoard(name: string): Board | null {
 /* ---------- lettering: a five by seven face, one light a pixel ---------- */
 /* Each letter is seven rows of five lights, a row as two hex digits. The game's own typeface does not survive being
    turned into dots at this size, so the board has a face of its own. */
-const FACE: Record<string, string> = {
+export const FACE: Record<string, string> = {
   A: '0E11111F111111', B: '1E11111E11111E', C: '0E11101010110E', D: '1E11111111111E', E: '1F10101E10101F', F: '1F10101E101010', G: '0E11101711110F',
   H: '1111111F111111', I: '0E04040404040E', J: '0702020202120C', K: '11121418141211', L: '1010101010101F', M: '111B1515111111', N: '11111915131111',
   O: '0E11111111110E', P: '1E11111E101010', Q: '0E11111115120D', R: '1E11111E141211', S: '0F10100E01011E', T: '1F040404040404', U: '1111111111110E',
@@ -105,10 +105,10 @@ function textBoard(parts: [string, string][]): Board {
 }
 
 /* ---------- one routine turns a board into lights on a canvas ---------- */
-const BASE_FS = 20.736;   // the type size the dot sizes are given for (a 1280 wide desk)
+const BASE_FS = 16.589;   // the type size the dot sizes are given for (a 1280 wide desk; the paper look sets type at .8 of --fs)
 let draws = 0;
 /** How many times any board has been drawn since the page loaded. A test watches it: a board is drawn once and kept. */
-export function lightDraws(): number { return draws; }
+export function lightDraws(): number { return draws + pics; }
 function drawBoard(cv: HTMLCanvasElement, B: Board, p: number, dpr: number) {
   cv.width = B.w * p; cv.height = B.h * p; cv.style.width = (B.w * p / dpr) + 'px'; cv.style.height = (B.h * p / dpr) + 'px';
   const x = cv.getContext('2d'); if (!x) return;
@@ -147,13 +147,43 @@ export function BoardCanvas(p: { sig: string; make: () => Board | null; dot: num
   return <span class={'ledb' + (p.cls ? ' ' + p.cls : '')}><canvas ref={ref} width={1} height={1} role="img" aria-label={p.label} {...dataAttrs(p.t)} /></span>;
 }
 
-/** Lettering in lights: a headline, a show's name, a count. `text` is a string, or pieces each with its own colour.
-    The words are also the board's label, so a screen reader and a test can read them. */
+/* Dot matrix is out of the game (Ryan, 19 October: "I want the new maps to look hand crafted, dot matrix is out of
+   the game"). Lettering that used to be in lights is written in marker on a strip of black card, each piece in its own
+   colour; a picture that used to be in lights is painted from the same drawing, smooth and at full size, as cut card
+   with a short shadow. The names and the props stay, so every page that used them changes at once. */
+const INKS: Record<string, string> = { '#ffff55': '#ffd84a', '#55ffff': '#7fd8f0', '#55ff55': '#7fd36a', '#ff5555': '#ff7a6e', '#ffffff': '#f4ecd6', '#aaaaaa': '#c9c2b0' };
+const ink = (c: string) => INKS[c.toLowerCase()] || c;
+/** A headline, a show's name, a count: marker on black card. `text` is a string, or pieces each with its own colour.
+    The words are also its label, so a screen reader and a test can read them. */
 export function LightText(p: { text: string | [string, string][]; color?: string; dot?: number; label?: string; t?: string }) {
   const parts: [string, string][] = typeof p.text === 'string' ? [[p.text, p.color || '#ffff55']] : p.text, words = parts.map(x => x[0]).join('');
-  return <BoardCanvas sig={'t:' + JSON.stringify(parts)} make={() => textBoard(parts)} dot={p.dot || 2} label={p.label || words} t={p.t} cls="txt" />;
+  return <span class={'ledb txt hand' + ((p.dot || 2) >= 3 ? ' big' : '')} role="img" aria-label={p.label || words} {...dataAttrs(p.t)}>
+    <span aria-hidden="true">{parts.map((x, i) => <span key={i} style={{ color: ink(x[1]) }}>{x[0]}</span>)}</span></span>;
 }
-/** A picture in lights: the ring, the bell or the belt. */
+let pics = 0;
+/** A picture: the ring, the bell or the belt, painted as cut card. `dot` sets its size as before (64 by 48 of them). */
 export function LightPic(p: { name: LightPicName; dot?: number; label?: string; t?: string }) {
-  return <BoardCanvas sig={'p:' + p.name} make={() => picBoard(p.name)} dot={p.dot || 2} label={p.label || (PICS[p.name] ? PICS[p.name].n + ', in lights' : 'A picture in lights')} t={p.t} />;
+  const ref = useRef<HTMLCanvasElement>(null);
+  const check = () => {
+    const cv = ref.current, pic = PICS[p.name]; if (!cv || !pic) return;
+    const fs = parseFloat(getComputedStyle(cv).fontSize) || BASE_FS, dpr = window.devicePixelRatio || 1, k = Math.max(1, (p.dot || 2) * fs / BASE_FS), sig = p.name + '@' + k.toFixed(2) + '@' + dpr;
+    if (cv.getAttribute('data-sig') === sig) return;
+    const W = Math.round(GW * k * dpr), H = Math.round(GH * k * dpr); cv.width = W; cv.height = H; cv.style.width = (W / dpr) + 'px'; cv.style.height = (H / dpr) + 'px';
+    const x = cv.getContext('2d'); if (!x) return;
+    x.clearRect(0, 0, W, H); x.save(); x.scale(W / GW, H / GH);
+    x.shadowColor = 'rgba(0,0,0,.45)'; x.shadowOffsetX = .7; x.shadowOffsetY = .9; x.shadowBlur = 1.2;
+    const col = (c: string) => ink(c);
+    const b: Brush = { x,
+      R: (a, bb, w, h, c) => { x.fillStyle = col(c); x.fillRect(a, bb, w, h); },
+      L: (a, bb, c, d, cl, w) => { x.strokeStyle = col(cl); x.lineWidth = w || 1.4; x.lineCap = 'round'; x.beginPath(); x.moveTo(a, bb); x.lineTo(c, d); x.stroke(); },
+      C: (a, bb, r, c) => { x.fillStyle = col(c); x.beginPath(); x.arc(a, bb, r, 0, 7); x.fill(); },
+      E: (a, bb, rx, ry, c) => { x.fillStyle = col(c); x.beginPath(); x.ellipse(a, bb, rx, ry, 0, 0, 7); x.fill(); },
+      P: (pts, c) => { x.fillStyle = col(c); x.beginPath(); pts.forEach((q, i) => i ? x.lineTo(q[0], q[1]) : x.moveTo(q[0], q[1])); x.closePath(); x.fill(); } };
+    try { pic.paint(b); } catch (e) { /* a picture that cannot be painted is not worth a crash */ }
+    x.restore(); cv.setAttribute('data-sig', sig); pics++;
+  };
+  const latest = useRef(check); latest.current = check;
+  useLayoutEffect(() => { check(); });
+  useEffect(() => { wire(); const fn = () => latest.current(); live.add(fn); return () => { live.delete(fn); }; }, []);
+  return <span class="ledb pic hand"><canvas ref={ref} width={1} height={1} role="img" aria-label={p.label || (PICS[p.name] ? PICS[p.name].n : 'A picture')} {...dataAttrs(p.t)} /></span>;
 }

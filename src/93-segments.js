@@ -192,7 +192,7 @@ function segBooked(S,show,n){
 }
 
 /* ---------- what the booking screen calls ---------- */
-E.SEGK=SEGK;
+E.SEGK=SEGK;E.BEATS=BEATS;
 E.SEGLEN=SEGLEN;E.SEGLENN=SEGLENN;
 /** The promos and angles booked for the show on the desk, in the order they were booked. slot is the place in the list. */
 E.segInfo=function(S){

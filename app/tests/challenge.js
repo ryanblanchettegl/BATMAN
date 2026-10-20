@@ -5,7 +5,7 @@ const { open, overflow, state, redraw } = require('./helper');
 const fails = [];
 function check(mode, label, ok, detail) { console.log(mode.padEnd(6), ok ? 'ok  ' : 'FAIL', label + (detail ? ': ' + detail : '')); if (!ok) fails.push(mode + ' ' + label); }
 (async () => {
-  for (const mode of ['desk', 'tablet']) {
+  for (const mode of (process.env.MODES || 'desk').split(',')) {
     const { browser, page, errs } = await open({ mode, promo: null, file: process.env.EWF_OUT || 'index' });
     await page.click('[data-t="challenge"]'); await page.waitForSelector('#chal-code');
     const txt = await page.$eval('.modal, [role="dialog"], .win', e => e.innerText).catch(() => '');

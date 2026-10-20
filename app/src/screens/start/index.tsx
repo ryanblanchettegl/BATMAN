@@ -89,15 +89,15 @@ export function Title() {
   items.push({ t: 'editor', pick: () => toScreen('editor'), label: <><span class="ab">WORLD EDITOR</span><span class="st">Build your own world: companies, shows, belts, wrestlers</span></> });
   items.push({ t: 'options', pick: () => openModal({ kind: 'options' }), label: <><span class="ab">OPTIONS</span><span class="st">Sound, text size, screen</span></> });
   return <div class="crt"><StartMenu /><div class="start">
-    <h1 class="sr">EWF Wrestling Manager. Elite Wrestling Federation Wrestling Manager.</h1>
+    <h1 class="sr">WrestleCraft: Be The Booker.</h1>
     <div class="logo-box"><i class="tl" /><i class="tr" /><i class="bl" /><i class="br" />
-      <p class="logo-top" aria-hidden="true">Elite Wrestling Federation</p>
-      <svg class="logo-main" aria-hidden="true" viewBox="0 0 500 112"><text class="sh" x="258" y="108" textLength="300" lengthAdjust="spacingAndGlyphs">EWF</text><text x="250" y="100" textLength="300" lengthAdjust="spacingAndGlyphs">EWF</text></svg>
-      <p class="logo-sub" aria-hidden="true">Wrestling Manager</p>
+      <p class="logo-top" aria-hidden="true">A wrestling booking game, made by hand</p>
+      <p class="ransom" aria-hidden="true">{'WRESTLECRAFT'.split('').map((c, i) => <span key={i} class={'rl r' + ((i * 5) % 7)}>{c}</span>)}</p>
+      <p class="logo-sub" aria-hidden="true">Be The Booker</p>
     </div>
     <p class="lede c">Whatcha gonna do, booker man?</p>
     <div class="dbox sm"><MenuList items={items} /></div>
-  </div><div class="status c"><span>Gorilla Position Engine v{VER}</span><span class="opt">|</span><span>(C) 1997 Elite Software</span></div></div>;
+  </div><div class="status c"><span>Gorilla Position Engine v{VER}</span><span class="opt">|</span><span>WrestleCraft: Be The Booker</span></div></div>;
 }
 
 /* ---------- select promotion ---------- */
@@ -212,7 +212,7 @@ function DiffPanel() {
     <div class="row opts"><Btn kind="sm" on={!s.iron} t="iron" d={{ v: 0 }} onClick={() => view(() => { s.iron = false; })}>Off</Btn><Btn kind="sm" on={!!s.iron} t="iron" d={{ v: 1 }} onClick={() => view(() => { s.iron = true; })}>On</Btn></div>
     <p class="muted mt1 mb2">{s.iron ? 'One save, written after every action. You cannot copy it out, paste another in, or load it again once you are fired or broke.' : 'Off: the usual way to play. You can move a save between devices.'}</p>
     <p class="eyebrow">Fine tune (optional)</p>
-    {Object.keys(E.DPART).map((k: string) => <div class="row opts" key={k}><span class="muted" style={{ minWidth: '18ch' }}>{E.DPART[k]}</span>{W.map((w, i) => <Btn kind="sm" on={dp[k] === i} t="dpart" d={{ k, v: i }} onClick={() => view(() => { s.dpart = Object.assign({ money: 1, inj: 1, ego: 1, rival: 1 }, s.dpart || {}); s.dpart[k] = i; })}>{w}</Btn>)}</div>)}
+    {Object.keys(E.DPART).map((k: string) => <div class="row opts" key={k}><span class="muted" style={{ minWidth: 'calc(18 * var(--ch))' }}>{E.DPART[k]}</span>{W.map((w, i) => <Btn kind="sm" on={dp[k] === i} t="dpart" d={{ k, v: i }} onClick={() => view(() => { s.dpart = Object.assign({ money: 1, inj: 1, ego: 1, rival: 1 }, s.dpart || {}); s.dpart[k] = i; })}>{w}</Btn>)}</div>)}
   </Panel>;
 }
 function Begin(p: { label: string; block?: string }) {
@@ -351,7 +351,6 @@ function Options() {
       {toggle('snd', 'Sound', 'Beeps, bells and fanfares.')}
       {toggle('type', 'Typewriter text', 'Commentary types itself out during a show.')}
       {toggle('auto', 'Auto-play the show', 'The broadcast moves on by itself at a reading pace and stops for every call. P turns it on or off during a show.')}
-      {toggle('crt', 'Monitor effect', 'Scanlines and a darkened edge, like a tube screen.')}
       {toggle('boot', 'Boot sequence', 'The loading screen when the game starts.')}
       {toggle('letter', 'The owner’s letter', 'A new game opens on a letter from the owner. It can be read again from the desk.')}
       {choice('screen', 'Screen', 'Auto picks from the device. TV is for the couch: larger text, edge margins, and a remote or gamepad moves the highlight.', [['auto', 'Auto (' + ({ desk: 'desk', tablet: 'tablet', tv: 'TV' } as any)[autoScreen()] + ')'], ['desk', 'Desk'], ['tablet', 'Tablet'], ['tv', 'TV']])}

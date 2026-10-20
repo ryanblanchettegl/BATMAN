@@ -1,4 +1,4 @@
-/* EWF Wrestling Manager portraits: a small procedural pixel-art face generator.
+/* WrestleCraft portraits: a small procedural pixel-art face generator.
    Every face is drawn from eight numbers (head, hair, facial hair, mustache, eyes, nose, skin tone, hair colour),
    so a portrait costs a few bytes in a save or a universe package and needs no image files. */
 
@@ -178,4 +178,6 @@ function draw(canvas, face, opt) {
   ctx.putImageData(img, 0, 0);
 }
 
-export { N, draw, derive, norm, NAMES, PARTS };
+function skinOf(t) { return pal(SKIN, t); }
+function hairOf(t) { return pal(HAIRC, t); }
+export { N, draw, derive, norm, NAMES, PARTS, skinOf, hairOf };

@@ -1,4 +1,4 @@
-/* EWF Wrestling Manager interface styles. One deliberate look: a 16-colour 1990s PC program (docs/design.md, section 6), so there is no light theme.
+/* WrestleCraft: Be The Booker, the interface's base styles (it began as EWF Wrestling Manager). One deliberate look: a 16-colour 1990s PC program (docs/design.md, section 6), so there is no light theme.
    Sizes are in em and ch so the whole screen scales from one type size (--fs). */
 :root{
   color-scheme:dark;
@@ -282,7 +282,7 @@ html:not(.rm) .blink{animation:bl 1.1s steps(1) infinite}
 .onews .h{color:var(--white);font-size:1.18em;line-height:1.05}
 .keys{display:grid;grid-template-columns:repeat(auto-fill,minmax(20ch,1fr));gap:0 2ch}
 .win .keys b{color:var(--dred)}
-.crtfx body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:60;background:repeating-linear-gradient(to bottom,rgba(0,0,0,.17) 0,rgba(0,0,0,.17) 1px,transparent 1px,transparent 3px),radial-gradient(ellipse at center,transparent 60%,rgba(0,0,0,.36) 100%)}
+/* no monitor effect: no scan lines and no dark edge (Ryan, 19 October: a cleaner look) */
 @media (max-width:860px){
   .onews li:nth-child(n+3){display:none}
   .onews li:nth-child(2){border-bottom:1px dashed var(--grey)}
@@ -470,7 +470,7 @@ html[data-music="off"] .mus::after{content:' off';color:var(--dred)}
 /* There is no portrait layout. A tall, narrow window gets one line asking for a wide one, and nothing else. */
 @media (orientation:portrait) and (max-width:520px){
   #app{display:none}
-  body::before{content:'EWF Wrestling Manager needs a wide screen. Turn your device sideways, or make the window wider.';position:fixed;inset:0;z-index:99;display:flex;align-items:center;justify-content:center;text-align:center;padding:2em;background:var(--blue);color:var(--yellow);font-size:1.3em;line-height:1.4}
+  body::before{content:'WrestleCraft needs a wide screen. Turn your device sideways, or make the window wider.';position:fixed;inset:0;z-index:99;display:flex;align-items:center;justify-content:center;text-align:center;padding:2em;background:var(--blue);color:var(--yellow);font-size:1.3em;line-height:1.4}
 }
 
 /* backstage as people, not rooms: a column a room, a face a person, and under each why they are there */

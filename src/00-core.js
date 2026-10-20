@@ -163,8 +163,8 @@ function addWrestler(S,d,promo,brand){
   w.pk=[p0,Math.max(p0+2,p1)];w.cl=num(d.cliff)?+d.cliff:w.pk[1]+3+(hs>>>11)%5;
   if(d.tweener)w.twn=true;if(d.roles&&(d.roles.length!==1||d.roles[0]!=='wrestler')){w.roles=d.roles.slice();if(d.roles.indexOf('wrestler')<0)w.nw=true;}
   w.pot=num(d.pot)?clamp(+d.pot,workRate(w),99):clamp(wk+Math.round(h01(d.name+'p')*(d.ovr<60?12:3)),Math.min(wk,99),99);
-  if(d.uid)w.uid=d.uid;if(d.real)w.real=d.real;if(d.town)w.town=d.town;if(d.wc)w.wc=d.wc;if(d.media)w.media=d.media;if(d.face)w.face=d.face;if(num(d.gr))w.gr=+d.gr;
-  var fp=FINISH[d.style]||FINISH.A;w.fin=d.fin||fp[hash(d.name+'f')%fp.length];w.ent=hash(d.name+'e')%ENTR.F.length;
+  if(d.uid)w.uid=d.uid;if(d.real)w.real=d.real;if(d.town)w.town=d.town;if(d.wc)w.wc=d.wc;if(d.media)w.media=d.media;if(d.face)w.face=d.face;if(d.look)w.look=d.look;if(num(d.gr))w.gr=+d.gr;
+  var fp=FINISH[d.style]||FINISH.A;w.fin=(d.look&&d.look.finishing_moves&&d.look.finishing_moves[0]&&d.look.finishing_moves[0].name)||d.fin||fp[hash(d.name+'f')%fp.length];w.ent=hash(d.name+'e')%ENTR.F.length;
   S.w.push(w);return w;
 }
 function buildPromo(S,d,byName){
@@ -181,7 +181,7 @@ E.newGame=function(playerId,seed,opts){
     stats:{shows:0,matches:0,run:0,feudsDone:0,bestMatch:0,bestShow:0},said:[],h2h:{},trust:60,ledger:[],sponsors:[],spOffers:[],slotAsk:-99,hype:0,rateMod:0,reports:[],queue:[],qi:0,card:[],over:null,nid:1,recent:{},fin:null};
   var cur={promo:'FA',brand:null},byName={};
   CAL0={y:DB.startYear,m:DB.startMonth};
-  S.db={startYear:DB.startYear,startMonth:DB.startMonth,events:DB.events,rules:DB.rules||null,indie:DB.indie,sponsors:DB.sponsors||null,columnists:DB.columnists||null,uni:DB.uni||null,fictional:!!DB.fictional};
+  S.db={startYear:DB.startYear,startMonth:DB.startMonth,events:DB.events,rules:DB.rules||null,indie:DB.indie,sponsors:DB.sponsors||null,columnists:DB.columnists||null,scenes:DB.scenes||null,backdrops:DB.backdrops||null,uni:DB.uni||null,fictional:!!DB.fictional};
   var preset=[];
   if(DB.rows)DB.rows.forEach(function(d){var w=addWrestler(S,d,d.promo||'FA',d.brand||null);byName[w.name]=w.id;byName['#'+d.uid]=w.id;if(d.wage||d.con||d.tw!=null)preset.push([w,d]);});
   else DB.roster.split('\n').forEach(function(line){

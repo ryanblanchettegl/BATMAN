@@ -22,6 +22,14 @@ Two more lists sit beside this one, both finished:
 
 | Topic | Decision |
 | --- | --- |
+| The wrestler always on show, 18 Oct | On the World Editor's Wrestlers page, the Roster page and Free agents the wrestler is always drawn full length beside the list, like the roster screens of SmackDown: Here Comes the Pain. The Wrestlers page as built is the pattern (rule 5c). |
+| The art style, 18 Oct | The desk image is the art style: everything looks made from construction paper. Built in CSS and canvas now; Blender renders of the pieces later to make it more 3D. |
+| The World Editor's foundation, 18 Oct | Create a Wrestler (Create a Player) and Create a Scene are the new foundation for the World Editor. Its other parts are built around them. |
+| Entrances and move pictures, 18 Oct | A wrestler's own picks are for their signature moves and finishers. Entrances: pick a canned one, or make a custom entrance through Create a Scene (World Editor). No other per-wrestler scenes. |
+| Create a Player in a game, 18 Oct | The roster says **Edit wrestler** and opens that wrestler's record. **Create a Player** makes someone new, and in an active game every new wrestler goes to free agency; you sign them like anybody else. Only the World Editor puts somebody into a company. |
+| Create a Player, 18 Oct | Ryan's blueprint (`docs/plans/create-a-player.md`): a SmackDown-style suite, the wrestler on the left and windows on the right; body by height, weight, type and four sliders; three outfits (ring, entrance, street) worn by context; paper swatches with finishes in four slots; lettering and shapes cut from card; finishers acted out on a dummy; one `wrestler.json` a wrestler, no pictures, read by the scene engine. Real names in the blueprint were examples only (rule 3). |
+| Platforms, 18 Oct | Steam first (the desktop from 1080p to 4K, and the Steam Deck), Android down the road. No more tablet or TV test runs or layout rules; browser tests run at desk size. Controls keep working by touch for Android later. |
+| The look, 18 Oct | Construction paper on a mid 90s Macintosh is the new rule, replacing the grey windows of 6 October: cut card in layers, navy pinstripe title bars, cream windows, bold red, green, blue and yellow buttons stacked from card, tight shadows down and to the right, no CRT filter. Portraits and wrestlers are construction paper and replace the pixel faces. Reference `docs/mockups/paper/desk.png`; rule 2a in `CLAUDE.md`. |
 | Booking, 16 Oct | No fast mode. Suggest a card gives a mediocre show: to win the game or keep the job the player has to decide well. Fog of war stays: the game never tells the player how to put on a good show; the road agent drops sly hints. Redo the booking screen: more buttons, matches dragged or moved up and down the card, match booking that looks better and is easier (pop-ups are fine), and what COULD happen on the show tonight from the player's choices. |
 | Battle royals, 16 Oct | Up to 30 people. 30 minutes for every 15: a 30-man battle royal lasts an hour. |
 | Buildings, 16 Oct | The player does not pick the building. Every city has its own list of buildings the road draws from. |
@@ -94,9 +102,176 @@ Two more lists sit beside this one, both finished:
 | The name | 7 October: the game is **EWF Wrestling Manager**, in full Elite Wrestling Federation Wrestling Manager. It was EWF 9000. The title card, the page title, the save message, the wide-screen message and the Steam wrapper say the new name. The stored keys (`ewf9000-save-4`, `ewf9000-universes`, `ewf9000-legacy`) keep the old name so nobody loses a save. |
 | The word is logo | 7 October: "its not marks. Its Logo." A company's icon is its logo, in the game, in the code and in the notes. |
 | The map | 7 October: "I like the USA map and want to keep it. You will need to create new maps for the other regions." So the road window keeps the USA drawn in dots with the week's state lit, and every other part of the world the default companies tour gets a map of its own in the same style, with its own areas to light: Britain and Ireland, Europe, the Mediterranean and the Near East, Mexico and Central America, South America, Japan, and a world map for a long trip. The window shows the map this week's city is on. `docs/plans/art-direction.md`, section 6.4. |
+| Scenes are the show | 19 October: storylines and building a card are hooked into scenes. Every storyline, and every angle or promo a player can put on a card, has a scene; building a show is building out its scenes. Arc storylines and multi-week moments have scenes for their beats. The World Editor gets an easy builder for players' own storylines, angles and promos. Start it once Create a Wrestler and Create a Scene are built out; the match builder and the broadcast are redone in the new look after. CLAUDE.md rule 9c. |
 | World Editor | The creation suite is its own page called **World Editor** on the title screen. A player builds a world from scratch (companies, shows, belts, wrestlers) and uploads it to the Workshop. This is the main next item. |
 
 ## Tasks
+
+### 0w. Still pictures for the moments you answer (Ryan, 18 October)
+
+- [x] Every matter on the desk and every call from the gorilla position shows one still diorama picture of the moment (somebody hurt, a fight backstage, two people face to face, a meeting across your desk, a walkout, the crowd on its feet): the picture on the left of the pop-up, the answers on the right.
+- [x] Stills are made in Create a Scene like any other scene, marked as a still: one picture, no keyframes to play.
+- [x] Both pop-ups in the paper look (Ryan: "it should look like the new art style"): cream card, the navy bar in pinstripes, the info strip, answers as card buttons.
+- [ ] More stills: the trainer's room with the trainer, a parking lot, the owner in the office, a contract on the desk, the whole locker room for a mutiny.
+
+### 0v. The creator suite, built out (Ryan, 18 October: "add them to the queue"; `docs/plans/creator-suite-roadmap.md`)
+
+Create a Wrestler:
+- [x] More hair (styles and a second colour), body hair, scars, freckles, more masks and mask designs.
+- [x] Face paint in layers: up to three designs painted over the first, each in its own colour (round the eyes, a tear, a painted grin, a cross, and the first list's designs).
+- [x] More gear: a satin ring jacket, a long coat, a baseball cap and a wool hat, bare feet taped at the ankle, a ring bodysuit and flared ring pants, a cape, a crown, a title belt round the waist or over the shoulder.
+- [x] A front and a back (Ryan, 19 October): every wrestler can be seen from behind (the back of the head and the hair, the back of a mask with its laces, the back of every top, a back tattoo, knee pads by their straps). Their back on Create a Wrestler, Show their back on a person in Create a Scene (`Fig.b`), and lettering Across the back.
+- [x] Layers in Create a Scene (Ryan, 19 October): everything in the keyframe front to back (people, props, the set last), each with Forward, Back (in every keyframe both are in), Hide and Lock (for editing only).
+- [x] Layers in Create a Wrestler: the lettering and shapes on an outfit listed back to front with Bring forward and Send back, and face paint layers with Over.
+- [x] A move set: every wrestler has one finisher and two signature moves (Ryan, 19 October), each signature early, in the middle or late in a match; up to three taunts, played now and then by whoever is on top. Wrestlers with no file get signatures by style.
+- [x] An entrance built from parts: the walk (the five entrances, or a custom one), pyro (sparks, fountains, a flash, columns of fire), lights (a spotlight, lights down, red, blue or green, strobes) and the name of their music, which the announcers say as they come out.
+- [x] Paper portraits for everybody, not only the edited (`Portrait` draws every wrestler from their doll), and a quick random wrestler (Surprise me in the suite).
+- [ ] Parts made in Blender with sockets, and a parts format modders can add to.
+- [ ] A file per wrestler on disk on the desktop build (`/save/wrestlers/`).
+
+Create a Scene (with 0z):
+- [x] More sets: a steel cage, a parking lot, a talk show, a news desk (each a setup on the New tab).
+- [x] A packed stadium and up in the rafters (sets and setups).
+- [x] Effects: spotlights, coloured light, strobes, lights down, sparks, pyro fountains, a flash, columns of fire, camera flashes in the crowd, motion lines, a spray of water.
+- [x] Smoke rolling along the floor.
+- [x] Props: ladders, a bat, ring steps, a bin, a broken table.
+- [x] A truck.
+- [ ] Props that can be thrown.
+- [x] Frames: tall and square pictures for posters, magazine covers and portraits (Shape, on The scene tab; the picture is cut from the middle of the set), with a masthead prop for covers and the headline for captions.
+- [x] Easing: each keyframe is reached smoothly, evenly, speeding up, slowing down, or in a cut (`Key.ease`); its timing is Arrives after.
+- [ ] Still to come in animation: a timeline view, sound cues, and moves that can be used again.
+- [x] More hooks (the authority figure: the boss of the hostile authority arc, else the owner or booker on the roster; the interviewer: an announcer; the referee as a person, dressed in stripes) and two stills for them (an interview backstage, called out by the boss).
+- [x] Presentation filters a scene can pick (Ryan, 19 October): scan lines, an old TV tube and black and white, all off by default (Look, on The scene tab; `sc.fx`); for artistic promos and old-school companies.
+- [x] A background creator: the Backdrop tab in Create a Scene makes a wall of your own (wall and floor colours, banners, signs, a big screen, posters, windows, a door, curtains, a skyline, a stripe, a row of lights, plants) and keeps it in the world like a scene (`pkg.backdrops`, `E.edSetBackdrop`, `kit/backdrop.ts`); any scene can stand in front of it.
+
+New creators, each a small file cut by code, played in the game and shared:
+- [ ] Create a Belt: plates, straps, gems, lettering and the company's logo in card and foil, worn by champions in every scene, portrait and title page.
+- [ ] Create a Logo: the logo maker moved into the paper look, and logos on gear, rings, banners and portraits.
+- [ ] Create an Arena: the ring's colours and apron, the stage and ramp, banners, the crowd's size and signs.
+- [ ] Create a Prop: shapes, lettering and finishes put together into a prop with a place to hold it.
+- [ ] Create a Move: a short scene with two hooks (who does it, who takes it), the community's move library.
+- [ ] Create a Show: a show's lights, its marquee, its open and its desk team.
+- [ ] Create a Poster or Cover: scenes framed tall, with type, for big events, the dirt sheet and the Web pages.
+
+The Steam Workshop:
+- [ ] Upload and subscribe in the desktop build, for each kind of file (wrestler, scene, entrance, move, belt, logo, arena, prop) and for packs (a whole world).
+- [ ] A browser in the game for what is subscribed, a check on every file (`E.lookClean` is the pattern), versions so old files open, and a report button for a file that breaks rule 3.
+
+### 0x. The paper look built out in Blender (later; Ryan, 18 October)
+
+The desk image (`docs/mockups/paper/desk.png`) is the art style: the whole game looks made from construction paper. Pages are built to it now in CSS and canvas.
+- [ ] Render the interface pieces in Blender as cut card (window frames and title bars, buttons in each colour, tags, group tabs, the menu bar, the control strip tiles and keys) so the paper has real thickness, light and shadow, and use them in the game as 9-slice images or baked textures.
+- [ ] Every page moved to the paper look, one at a time with Ryan's go-ahead.
+
+### 0v3. The workbench is the art style (Ryan, 19 October: "we are switching to concept a"; "this is the new art style. make it the rule and start spreading it everywhere")
+
+- [x] A in every build (`app/styles/craft.css`, `app/ui/craft/`): torn cream paper windows with navy title strips, cut card buttons, index cards and sticky notes, on black construction paper, no tape. Rule 2a rewritten. The zine is kept as concept C (`app/styles/looks/c.css`, `app/ui/c/`).
+- [x] The desk shows the state (or region) this week's city is in, cut from green card on blue paper with a pin and a label on the city (`SHAPES`, `src/91-shapes.js`, from `tools/build-maps.js`). Dot matrix is out: lettering that was in lights is marker on black card, the ring, bell and belt are painted card, and logos are painted with marker letters.
+- [x] Spread to: tables, old panels, group boxes, gauges and names in lists; the title screen and its cut-card logo; Select promotion; the broadcast's opening poster, the call from the gorilla position and the matter pop-up; After the show; tips and the SPACE key's note; the World Editor (its menu, hint strip, windows, lists) and Create a Player.
+- [x] Checked page by page: the Manage pop-ups, Career, Web, History, Finances, the Scenes tab, Create a Scene, the logo creator, Help and Options.
+- [ ] Blender renders of the workbench pieces (torn paper, card buttons) for more depth, as the paper look had.
+
+### 0v2. The scrapbook zine was the core look for a day (Ryan, 19 October: "C is the winner")
+
+- [x] Three concepts for a hand-made match page: A the workbench, B the cardboard box, C the scrapbook zine (`tools/creator/craft-kit.py`, `app/styles/looks/`).
+- [x] C in every build, later replaced by A (0v3).
+
+### 0w. Still pictures for the moments you answer (Ryan, 18 October)
+
+- [x] Every matter on the desk and every call from the gorilla position shows one still diorama picture of the moment (somebody hurt, a fight backstage, two people face to face, a meeting across your desk, a walkout, the crowd on its feet): the picture on the left of the pop-up, the answers on the right.
+- [x] Stills are made in Create a Scene like any other scene, marked as a still: one picture, no keyframes to play.
+- [x] Both pop-ups in the paper look (Ryan: "it should look like the new art style"): cream card, the navy bar in pinstripes, the info strip, answers as card buttons.
+- [ ] More stills: the trainer's room with the trainer, a parking lot, the owner in the office, a contract on the desk, the whole locker room for a mutiny.
+
+### 0v. The creator suite, built out (Ryan, 18 October: "add them to the queue"; `docs/plans/creator-suite-roadmap.md`)
+
+Create a Wrestler:
+- [x] More hair (styles and a second colour), body hair, scars, freckles, more masks and mask designs.
+- [x] Face paint in layers: up to three designs painted over the first, each in its own colour (round the eyes, a tear, a painted grin, a cross, and the first list's designs).
+- [x] More gear: a satin ring jacket, a long coat, a baseball cap and a wool hat, bare feet taped at the ankle, a ring bodysuit and flared ring pants, a cape, a crown, a title belt round the waist or over the shoulder.
+- [x] A front and a back (Ryan, 19 October): every wrestler can be seen from behind (the back of the head and the hair, the back of a mask with its laces, the back of every top, a back tattoo, knee pads by their straps). Their back on Create a Wrestler, Show their back on a person in Create a Scene (`Fig.b`), and lettering Across the back.
+- [x] Layers in Create a Scene (Ryan, 19 October): everything in the keyframe front to back (people, props, the set last), each with Forward, Back (in every keyframe both are in), Hide and Lock (for editing only).
+- [x] Layers in Create a Wrestler: the lettering and shapes on an outfit listed back to front with Bring forward and Send back, and face paint layers with Over.
+- [x] A move set: every wrestler has one finisher and two signature moves (Ryan, 19 October), each signature early, in the middle or late in a match; up to three taunts, played now and then by whoever is on top. Wrestlers with no file get signatures by style.
+- [x] An entrance built from parts: the walk (the five entrances, or a custom one), pyro (sparks, fountains, a flash, columns of fire), lights (a spotlight, lights down, red, blue or green, strobes) and the name of their music, which the announcers say as they come out.
+- [x] Paper portraits for everybody, not only the edited (`Portrait` draws every wrestler from their doll), and a quick random wrestler (Surprise me in the suite).
+- [ ] Parts made in Blender with sockets, and a parts format modders can add to.
+- [ ] A file per wrestler on disk on the desktop build (`/save/wrestlers/`).
+
+Create a Scene (with 0z):
+- [x] More sets: a steel cage, a parking lot, a talk show, a news desk (each a setup on the New tab).
+- [x] A packed stadium and up in the rafters (sets and setups).
+- [x] Effects: spotlights, coloured light, strobes, lights down, sparks, pyro fountains, a flash, columns of fire, camera flashes in the crowd, motion lines, a spray of water.
+- [x] Smoke rolling along the floor.
+- [x] Props: ladders, a bat, ring steps, a bin, a broken table.
+- [x] A truck.
+- [ ] Props that can be thrown.
+- [x] Frames: tall and square pictures for posters, magazine covers and portraits (Shape, on The scene tab; the picture is cut from the middle of the set), with a masthead prop for covers and the headline for captions.
+- [x] Easing: each keyframe is reached smoothly, evenly, speeding up, slowing down, or in a cut (`Key.ease`); its timing is Arrives after.
+- [ ] Still to come in animation: a timeline view, sound cues, and moves that can be used again.
+- [x] More hooks (the authority figure: the boss of the hostile authority arc, else the owner or booker on the roster; the interviewer: an announcer; the referee as a person, dressed in stripes) and two stills for them (an interview backstage, called out by the boss).
+- [x] Presentation filters a scene can pick (Ryan, 19 October): scan lines, an old TV tube and black and white, all off by default (Look, on The scene tab; `sc.fx`); for artistic promos and old-school companies.
+- [x] A background creator: the Backdrop tab in Create a Scene makes a wall of your own (wall and floor colours, banners, signs, a big screen, posters, windows, a door, curtains, a skyline, a stripe, a row of lights, plants) and keeps it in the world like a scene (`pkg.backdrops`, `E.edSetBackdrop`, `kit/backdrop.ts`); any scene can stand in front of it.
+
+New creators, each a small file cut by code, played in the game and shared:
+- [ ] Create a Belt: plates, straps, gems, lettering and the company's logo in card and foil, worn by champions in every scene, portrait and title page.
+- [ ] Create a Logo: the logo maker moved into the paper look, and logos on gear, rings, banners and portraits.
+- [ ] Create an Arena: the ring's colours and apron, the stage and ramp, banners, the crowd's size and signs.
+- [ ] Create a Prop: shapes, lettering and finishes put together into a prop with a place to hold it.
+- [ ] Create a Move: a short scene with two hooks (who does it, who takes it), the community's move library.
+- [ ] Create a Show: a show's lights, its marquee, its open and its desk team.
+- [ ] Create a Poster or Cover: scenes framed tall, with type, for big events, the dirt sheet and the Web pages.
+
+The Steam Workshop:
+- [ ] Upload and subscribe in the desktop build, for each kind of file (wrestler, scene, entrance, move, belt, logo, arena, prop) and for packs (a whole world).
+- [ ] A browser in the game for what is subscribed, a check on every file (`E.lookClean` is the pattern), versions so old files open, and a report button for a file that breaks rule 3.
+
+### 0x. The paper look built out in Blender (later; Ryan, 18 October)
+
+The desk image (`docs/mockups/paper/desk.png`) is the art style: the whole game looks made from construction paper. Pages are built to it now in CSS and canvas.
+- [ ] Render the interface pieces in Blender as cut card (window frames and title bars, buttons in each colour, tags, group tabs, the menu bar, the control strip tiles and keys) so the paper has real thickness, light and shadow, and use them in the game as 9-slice images or baked textures.
+- [ ] Every page moved to the paper look, one at a time with Ryan's go-ahead.
+
+### 0v2. The scrapbook zine is the core look (Ryan, 19 October: "C is the winner")
+
+- [x] Three concepts for a hand-made match page: A the workbench, B the cardboard box, C the scrapbook zine (`tools/creator/craft-kit.py`, `app/styles/looks/`).
+- [x] C in every build (`app/styles/craft.css`, `app/ui/craft/`), with readable running text, option tiles as paper scraps that lift when pointed at, page headings on paper labels, the picked line as a highlighter stroke. Rule 2a rewritten.
+- [ ] Page by page, with Ryan's go-ahead for each: pop-ups, the desk, Backstage, Storylines, Roster, Web, Company, Manage, Career, the title screen and the World Editor, each checked for readability; the Polaroid and the pins as Blender renders for more depth.
+
+### 0w. Every page in the paper look (Ryan, 19 October: "the DOS days are over")
+
+- [x] The shared look over every page: windows, group boxes, buttons and tiles cut from card in Blender (`tools/creator/ui-pieces.py`), the white menu bar, the navy desktop with grain, the control strip and the yellow SPACE key, paper pop-ups, lists, tags and fields (`app/styles/theme.css`).
+- [x] The DOS face is gone: Inter (EWF Sans) in three weights, with the layouts kept in shape (`--ch`).
+- [x] Buttons say one or two words, with a tip for the rest on hover, focus or a long press (`Btn tip`, `shell/Tip.tsx`). Booking's top row is done; the other pages follow as each is redone.
+- [x] The broadcast as television: the picture in a set with a chyron and the bug, captions under it, tonight's order as a rail, a live feed of posts with the crowd meter at the right, and a TV pace that runs a two-hour show in about two minutes.
+- [ ] Page by page, with Ryan's go-ahead for each: the desk (a paper map, the characters on it), Backstage, Storylines, Roster, Web, Company, Manage, Career; the characters and scenes on each page (posts, pictures on the web sites, faces on the lists).
+
+### 0u. Every booking choice is a scene (Ryan, 19 October: the core mechanic; next after 0v, 0z and Create a Wrestler)
+
+- [x] Every promo and angle kind a player can book (`SEGK` in `src/93-segments.js`) has a scene of its own (`SEG_SCENES` and `SEG_WHEN` in `kit/scene.ts`, `when: 'seg_<kind>'`), cast from the people booked into it; Create a Scene lists them as The scenes of the show. The writers' pick plays whatever the writers wrote.
+- [x] Storyline beats each with a scene: every angle the story director writes says its beat and who is in it (`beat`, `bids`; `BEATS` and `beatTag()` in `src/20-story.js`), and plays `beat_<beat>` (`BEAT_SCENES` in `kit/scene.ts`: words, mind games, the parking lot, a brawl, the partner pays, the signing, the video, the stakes, a betrayal, through the table, the handshake swerve, the match made, one last face-off, the mystery, its clue and its reveal, the return, a new group and one thrown out of it), or the booked kind's scene where it is the same moment. Create a Scene lists them with the scenes of the show; `app/tests/scene.js` fails if a beat has none.
+- [x] The beats that are matches: a debut plays at the newcomer's entrance (after the teasers, the surprise attack, or a plain debut; `seg.debut`), and a match that closes a chapter or ends a story plays that beat after the bell (`seg.story`: Not over yet, The story ends).
+- [ ] Still to give scenes: invasions and the company arcs' chapters (these reach the desk as matters and calls, and show the still pictures for now).
+- [x] The broadcast plays the scene of each booked segment.
+- [x] Booking a segment shows its scene on the run sheet, so the card reads as the scenes of the show: the window that books it draws the scene once the first person is picked, and the picked promo or angle beside the sheet shows it with its cast (`SegPic`, `segPick()` in `shared/moment.tsx`, the same pick the broadcast plays).
+- [x] Feuds over several weeks: a scene for each beat (the spark, the words and brawls of each chapter, a twist or turn, the match being made, the payoff).
+- [x] A check that fails when an angle or promo kind has no scene (`app/tests/scene.js`, through `EWF_DEBUG.segScenes()`); storyline beats join it as they get theirs.
+- [ ] The World Editor's story builder: an easy pop-up for a player's own storyline, angle or promo (who, what happens, which scene plays, what it does to heat and the people in it through `relBump()`), kept in the world package and played in a game.
+- [ ] Then redo the build-a-match screen and the show on the air in the paper look on top of the scenes, one at a time with Ryan's go-ahead.
+
+### 0y. The World Editor rebuilt on Create a Wrestler and Create a Scene (Ryan, 18 October)
+
+- [ ] A wrestler's page in the World Editor opens on Create a Wrestler (the body, outfits, entrance, finishers), with the ring-sheet details (ratings, contract, gimmick) beside it, instead of the old face panel.
+- [ ] The Scenes tab and Create a Scene sit beside it as the editor's other main tool; worlds are made of wrestlers and scenes first.
+- [ ] Then the rest of the editor (companies, shows, belts, teams) in the same paper look, one at a time with Ryan's go-ahead.
+- [ ] The Roster page and Free agents in the game follow the same rule: the list on the left, the wrestler drawn full length in the middle at all times, the details on the right, as the World Editor's Wrestlers page (rule 5c).
+
+### 0z. Create a Scene, built out (later; Ryan, 18 October: "the bones are there and work")
+
+- [x] Zoomed out, the front of the ring runs too long and does not look right: the apron is lower, the barricade and stands closer, the barricade lower with a padded top.
+- [x] The people do not read as 2D paper figures in the 3D view: each wrestler now has a cream cut-card margin, and stays flat and clean (no shadow or shading on them; Ryan, 19 October), while still throwing a shadow on the set.
+- [x] Starting a scene, choose the set and setup (the New tab: the ring, the commentary desk, the ramp, the hallway, the locker room, the office, a talk show, plain card).
+- [ ] It should do a lot more over time: the toolkit in `docs/plans/papercraft-engine.md` (light and effects, more sets, props and clothes, tall and square frames).
 
 ### 0. The World Editor (Ryan's main next item)
 Code: `src/86-editor.js` (the `E.ed*` functions; no screen code), `app/src/screens/editor/`, `app/styles/editor.css`. Tests: `node test-editor.js` and `app/tests/editor.js`.

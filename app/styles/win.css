@@ -804,3 +804,75 @@ html[data-screen="tablet"] .mkpage table th:nth-child(4),html[data-screen="table
 [data-t="year-list"] li{display:flex;flex-wrap:nowrap;justify-content:space-between;padding:.1em 0;align-items:center;gap:.6ch;min-width:0}
 [data-t="year-list"] li>span{min-width:0;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
 [data-t="year-list"] select{flex:none;width:auto;min-width:0;padding:0 .4ch;font-size:.9em}
+
+/* A moment you answer: its still picture on the left, what happened and the answers on the right (Ryan, 18 October).
+   The matter pop-up on the desk is a paper window (rule 2a); the call box on the broadcast splits the same way. */
+.mtwin{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:2ch;align-items:start}
+.mtwin:not(:has(.moment)){grid-template-columns:1fr}
+.mfig{margin:0;min-width:0}
+.mcap{margin:.7em 0 0;padding:.1em 1ch;display:inline-block;max-width:100%;background:#fbf6ea;color:#111;border:2px solid #111;box-shadow:.12em .16em 0 rgba(0,0,0,.35);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;transform:rotate(.5deg)}
+.moment{border:2px solid #111;background:#141826;box-shadow:.3em .4em 0 rgba(0,0,0,.4);aspect-ratio:16/9;width:100%;overflow:hidden}
+.moment .lv-scene{width:100%;height:100%;margin:0;display:flex;align-items:center;justify-content:center}
+.mtside{display:flex;flex-direction:column;gap:.4em;min-width:0}
+.mtopts{display:flex;flex-direction:column;gap:.15em;margin-top:.4em}
+.mtopt > .btn{width:100%;text-align:left;white-space:normal;margin-right:0}
+.callside{display:grid;gap:.25em;min-width:0}
+.live1.tight .callbox .moment{max-height:30vh}
+.live1 .moment .lv-scene,.live1.tight .moment .lv-scene{flex:none;width:100%;height:100%;min-height:0;border:0;display:flex}
+
+/* the paper pop-up (Window with paper): cream card, outlined, a tight shadow; the navy bar in pinstripes with a
+   close box at the left, the title in yellow in the middle, a zoom box at the right; the info strip under it */
+.win.ppop{padding:0;background:var(--p-grain),var(--p-mottle),var(--p-cream);color:var(--p-ink);border:2px solid #111;border-radius:2px;box-shadow:.4em .5em 0 rgba(0,0,0,.5)}
+.win.ppop.wide{width:min(150ch,94vw)}
+.win.ppop .wt{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:1ch;padding:.18em 1ch;text-transform:none;
+  background:repeating-linear-gradient(180deg,transparent 0 .18em,var(--p-pin) .18em .3em),var(--p-navy);border-bottom:2px solid #111}
+.win.ppop .wt h2{justify-self:center;margin:0;font:inherit;font-size:1.05em;background:var(--p-navy);color:var(--p-yellow);padding:0 1.4ch;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+.win.ppop .pbox{all:unset;display:inline-block;width:.85rem;height:.85rem;background:var(--p-cream);border:2px solid #111;cursor:pointer}
+.win.ppop .pbox.zoom{cursor:default;box-shadow:inset .34rem .34rem 0 -.12rem var(--p-cream),inset .36rem .36rem 0 -.04rem #111}
+.win.ppop .pbox:focus-visible{outline:3px solid var(--p-yellow);outline-offset:1px}
+.win.ppop .wnfo{color:#3a3530;background:transparent}
+.win.ppop .wb{padding:.8em 1.6ch .4em}
+.win.ppop .wf{padding:.3em 1.6ch .7em;border-top:2px solid rgba(17,17,17,.15)}
+.win.ppop b{color:var(--p-ink)} .win.ppop .muted{color:#5a5248} .win.ppop .good{color:#1e6b28} .win.ppop .bad{color:#a81e16}
+.win.ppop .moment{transform:rotate(-.6deg)}
+.win.ppop .mtwin .moment,.callbox .moment{display:block}
+.win.ppop .wt::before{content:none}
+.win.ppop .wt h2{text-transform:none}
+.win.ppop .btn,.win.ppop .btn:hover{background:var(--p-grain),var(--b);color:#fff}
+.win.ppop .btn.go,.win.ppop .btn.go:hover,.win.ppop .btn.on,.win.ppop .btn.on:hover{color:#111}
+.win.ppop .btn[disabled],.win.ppop .btn[disabled]:hover{color:#6b6355;box-shadow:0 .22em 0 var(--d)}
+
+/* the call from the gorilla position, as a paper window over the broadcast: the bar, the info strip, the still on the
+   left and the answers on the right, each a card stacked on card (the first green, the last navy, the rest blue) */
+.live1 .callbox.paper{padding:0;gap:0;border:2px solid #111;border-radius:2px;background:var(--p-grain),var(--p-mottle),var(--p-cream);color:var(--p-ink);box-shadow:.35em .45em 0 rgba(0,0,0,.5);display:flex;flex-direction:column;min-height:0}
+.callbox .cbt{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:1ch;padding:.15em 1ch;background:repeating-linear-gradient(180deg,transparent 0 .18em,var(--p-pin) .18em .3em),var(--p-navy);border-bottom:2px solid #111}
+.callbox .cbt h2{justify-self:center;margin:0;font:inherit;text-transform:none;background:var(--p-navy);color:var(--p-yellow);padding:0 1.4ch;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+.callbox .pbox{display:inline-block;width:.8rem;height:.8rem;background:var(--p-cream);border:2px solid #111}
+.callbox .pbox.zoom{box-shadow:inset .32rem .32rem 0 -.12rem var(--p-cream),inset .34rem .34rem 0 -.04rem #111}
+.callbox .wnfo{color:#3a3530}
+.callbox .cbb{display:grid;grid-template-columns:1fr;gap:2ch;padding:.6em 1.6ch .5em;align-items:start;min-height:0}
+.callbox .cbb:has(.moment){grid-template-columns:minmax(0,.95fr) minmax(0,1.05fr)}
+.callbox.paper .moment{transform:rotate(-.6deg)}
+.live1 .callbox.paper .q{color:var(--p-ink)}
+.callbox.paper .muted{color:#5a5248}
+.callbox.paper .callopts{gap:.5em}
+.callbox.paper .callopt{--b:var(--p-blue);--d:#22406f;background:var(--p-grain),var(--b);color:#fff;border:2px solid rgba(0,0,0,.6);border-radius:.55em;padding:.1em 1.2ch .2em;
+  box-shadow:0 .22em 0 var(--d),.24em .42em 0 rgba(0,0,0,.4);transition:transform .05s,box-shadow .05s}
+.callbox.paper .callopt.k0{--b:var(--p-green);--d:#1e5a26}
+.callbox.paper .callopt.kz{--b:var(--p-navy);--d:#1a1e33}
+.callbox.paper .callopt .n{color:#fff;text-transform:none}
+.callbox.paper .callopt .says{color:#f3ecd8}
+.callbox.paper .callopt .bp{background:var(--p-yellow);color:#111}
+.callbox.paper .callopt:hover,.callbox.paper .callopt:focus-visible,html.nav .callbox.paper .callopt:focus{background:var(--p-grain),var(--b);filter:brightness(1.1);outline:3px solid var(--p-yellow);outline-offset:1px}
+.callbox.paper .callopt:active{transform:translateY(.18em);box-shadow:0 .04em 0 var(--d),.1em .18em 0 rgba(0,0,0,.4)}
+.callbox.paper .callopt[disabled]{--b:var(--p-off);--d:#8a8270;color:#6b6355;filter:none}
+.live1.tight .callbox.paper .cbb{padding-block:.3em .25em}
+.callbox.paper .callopt .n b{color:#fff}
+/* on a call the paper window is a pop-up over the broadcast: it takes the whole left side, the run sheet stays */
+.live1[data-v="call"] .lv-main > :not(.callbox){display:none}
+.live1[data-v="call"] .callbox.paper{flex:1 1 auto;margin:.2em 0}
+.live1[data-v="call"] .callbox .cbb{grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);padding:.9em 1.6ch .6em;overflow:hidden}
+/* the scene of a promo or angle on the run sheet and in the window that books it (rule 9c) */
+.segfig{margin:.5em 0;max-width:min(100%,42vh)}
+.segfig .moment{transform:rotate(-.4deg)}
+.segfig .mcap{font-size:.85em}

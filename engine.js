@@ -167,8 +167,8 @@ function addWrestler(S,d,promo,brand){
   w.pk=[p0,Math.max(p0+2,p1)];w.cl=num(d.cliff)?+d.cliff:w.pk[1]+3+(hs>>>11)%5;
   if(d.tweener)w.twn=true;if(d.roles&&(d.roles.length!==1||d.roles[0]!=='wrestler')){w.roles=d.roles.slice();if(d.roles.indexOf('wrestler')<0)w.nw=true;}
   w.pot=num(d.pot)?clamp(+d.pot,workRate(w),99):clamp(wk+Math.round(h01(d.name+'p')*(d.ovr<60?12:3)),Math.min(wk,99),99);
-  if(d.uid)w.uid=d.uid;if(d.real)w.real=d.real;if(d.town)w.town=d.town;if(d.wc)w.wc=d.wc;if(d.media)w.media=d.media;if(d.face)w.face=d.face;if(num(d.gr))w.gr=+d.gr;
-  var fp=FINISH[d.style]||FINISH.A;w.fin=d.fin||fp[hash(d.name+'f')%fp.length];w.ent=hash(d.name+'e')%ENTR.F.length;
+  if(d.uid)w.uid=d.uid;if(d.real)w.real=d.real;if(d.town)w.town=d.town;if(d.wc)w.wc=d.wc;if(d.media)w.media=d.media;if(d.face)w.face=d.face;if(d.look)w.look=d.look;if(num(d.gr))w.gr=+d.gr;
+  var fp=FINISH[d.style]||FINISH.A;w.fin=(d.look&&d.look.finishing_moves&&d.look.finishing_moves[0]&&d.look.finishing_moves[0].name)||d.fin||fp[hash(d.name+'f')%fp.length];w.ent=hash(d.name+'e')%ENTR.F.length;
   S.w.push(w);return w;
 }
 function buildPromo(S,d,byName){
@@ -185,7 +185,7 @@ E.newGame=function(playerId,seed,opts){
     stats:{shows:0,matches:0,run:0,feudsDone:0,bestMatch:0,bestShow:0},said:[],h2h:{},trust:60,ledger:[],sponsors:[],spOffers:[],slotAsk:-99,hype:0,rateMod:0,reports:[],queue:[],qi:0,card:[],over:null,nid:1,recent:{},fin:null};
   var cur={promo:'FA',brand:null},byName={};
   CAL0={y:DB.startYear,m:DB.startMonth};
-  S.db={startYear:DB.startYear,startMonth:DB.startMonth,events:DB.events,rules:DB.rules||null,indie:DB.indie,sponsors:DB.sponsors||null,columnists:DB.columnists||null,uni:DB.uni||null,fictional:!!DB.fictional};
+  S.db={startYear:DB.startYear,startMonth:DB.startMonth,events:DB.events,rules:DB.rules||null,indie:DB.indie,sponsors:DB.sponsors||null,columnists:DB.columnists||null,scenes:DB.scenes||null,backdrops:DB.backdrops||null,uni:DB.uni||null,fictional:!!DB.fictional};
   var preset=[];
   if(DB.rows)DB.rows.forEach(function(d){var w=addWrestler(S,d,d.promo||'FA',d.brand||null);byName[w.name]=w.id;byName['#'+d.uid]=w.id;if(d.wage||d.con||d.tw!=null)preset.push([w,d]);});
   else DB.roster.split('\n').forEach(function(line){
@@ -668,7 +668,7 @@ function callMatch(S,P,x){
   x.sides.forEach(function(s,k){
     var isCh=x.champ&&x.champ===s,lead=s[0],big=avg(s.map(function(w){return w.ovr;}))>=62||isCh;
     ring((k===0?'Introducing first, ':(k===x.sides.length-1?'And the opponent'+(s.length>1?'s':'')+', ':'Next, '))+(isCh?'the '+x.t.name+' champion'+(s.length>1?'s':'')+', ':'')+names(s)+'!');
-    bc.push({t:'ent',x:big?names(s)+' '+(s.length>1?'make their way out together':ENTR[lead.align==='F'?'F':'H'][lead.ent||0])+(isCh?', the title held high':'')+'. The reaction: '+pop(s)+'.':'The reaction: '+pop(s)+'.'});
+    bc.push({t:'ent',x:big?(s.length===1&&lead.look&&lead.look.entrance_fx&&lead.look.entrance_fx.music?'"'+lead.look.entrance_fx.music+'" hits, and ':'')+names(s)+' '+(s.length>1?'make their way out together':ENTR[lead.align==='F'?'F':'H'][lead.ent||0])+(isCh?', the title held high':'')+'. The reaction: '+pop(s)+'.':'The reaction: '+pop(s)+'.'});
   });
   // the hottest act in the match gets a chant; a wrestler with a fresh catchphrase hears it shouted back
   var hot=x.all.slice().sort(function(p,q){return q.ovr-p.ovr;})[0];
@@ -697,13 +697,23 @@ function callMatch(S,P,x){
   if(x.mins>=20)pbp('late');
   if(x.mins>=18&&x.MQ>=70)hp('pbp','near2',1);
   if(shp&&shp.late)bc.push({t:'pbp',x:shp.late.charAt(0).toUpperCase()+shp.late.slice(1),h:1});
+  // a finisher kicked out of (src/86-looks.js); without a file, a long main event can still have one, in words only
+  if(x.fko){bc.push({t:'pbp',x:(x.fko.again?x.fko.who+' hits '+x.fko.f+'! This is it! One, two... ':'Out of nowhere, '+x.fko.who+' hits '+x.fko.f+'! One, two... ')+x.fko.by+' KICKS OUT!',h:1});
+    raw('col',x.fko.huge?'Nobody kicks out of that, {p}! Nobody! I have never seen that!':'{p}, I have seen that move finish bigger names than this. Not tonight!');}
+  else if(!x.fm&&x.win>=0&&x.lfin&&(x.main||x.big)&&x.mins>=18&&h01(hk+'fko')<0.3)bc.push({t:'pbp',x:x.lname+' hits '+(/^the /i.test(x.lfin)?'':'the ')+x.lfin+'! One, two... '+o.w+' kicks out!',h:1});
   col(x.bad?'q_off':(x.MQ>=88?'q_great':(x.MQ>=75?'q_good':(x.MQ>=60?'q_ok':(x.MQ>=45?'q_poor':'q_bad')))));
   if(x.mins>=14&&x.CR>=82)col('c_hot');
   // when the company model's bonus or penalty fired, the crowd sounds like that company's crowd
   var mf=(x.fx||[]).filter(function(q){return q.m;});
   if(mf.length&&MODEL_CROWD[P.model||'classic']){var cl=MODEL_CROWD[P.model||'classic'][mf[0].s>0?0:1];if(cl&&cl.length)raw('col',sayPick(S,cl));}
   var f=x.fin;
-  if(f==='clean'){pbp(x.sub?'f_sub':'f_clean',1);col('r_clean');}
+  if(f==='clean'&&x.fm&&!x.sub){   // a finisher from a wrestler's file: where it comes from, and how final it is
+    var fn=x.fm.name,pos=x.fm.position,ag=x.fko&&x.fko.again?'Again! ':'';
+    var fl=pos==='Top Rope'?ag+x.wname+' goes up top... '+fn+' from the top rope! Cover! One, two, three!':pos==='Running'?ag+x.wname+' hits the ropes... '+fn+'! Cover, and that is it!':pos==='Counter'?'{l} goes for it, but '+x.wname+' turns it into '+fn+'! One, two, three!':ag+x.wname+' hits '+fn+'! Cover! One, two, three!';
+    if(x.fm.kickout_difficulty==='Instant')fl+=' It was over the moment it landed.';
+    bc.push({t:'pbp',x:fill(fl,o),h:1});col('r_clean');
+  }
+  else if(f==='clean'){pbp(x.sub?'f_sub':'f_clean',1);col('r_clean');}
   else if(f==='flash'){pbp('f_flash',1);col('r_flash');}
   else if(f==='cheap'){pbp('f_cheap',1);col('r_cheap');}
   else if(f==='interf'){pbp('f_interf',1);col('r_interf');}
@@ -903,11 +913,12 @@ function doMatch(S,P,show,m,i,n,rep,used){
     var due=win>=0&&fin!=='dq'&&fin!=='co'?(m.end&&isPl?'end':feudDue(S,feud,show)):null;
     if(due==='chapter')feudMsg=closeChapter(S,P,show,feud,winners,losers,isPl);
     else if(due==='end')feudMsg=settleFeud(S,P,show,feud,winners,losers,isPl);
+    if(due&&isPl)seg.story={k:due==='end'?'payoff':'chapter',w:winners.map(function(w){return w.id;}),l:losers.map(function(w){return w.id;})};   // the beat this match was, for its scene (BEATS)
   }
   if(S.cal)return seg;
   // report text
   var lead=win>=0?winners[0]:sides[0][0],other=win>=0?losers.slice().sort(function(p,o){return br?o.ovr-p.ovr:p.ovr-o.ovr;})[0]:sides[1][0];
-  var ca=chance(S,0.55)?other:lead,cb=ca===lead?other:lead,o={a:ca.name,b:cb.name,w:names(winners),l:other.name,x:runin?runin.r.name:'',fin:(m.mt==='tag'&&win>=0&&teamFin(S,winners))||(lead.fin?'the '+lead.fin:'the finish')};
+  var ca=chance(S,0.55)?other:lead,cb=ca===lead?other:lead,o={a:ca.name,b:cb.name,w:names(winners),l:other.name,x:runin?runin.r.name:'',fin:(m.mt==='tag'&&win>=0&&teamFin(S,winners))||(lead.fin?(/^the /i.test(lead.fin)?lead.fin:'the '+lead.fin):'the finish')};
   if(isPl){
     var mk=m.mt==='4way'||m.mt==='3way'?'multi':(m.mt==='6man'?'six':null);   // matches with more than two people read differently from singles
     seg.lines.push(say(S,mk?'open_'+mk:(GR['open_'+ca.style]?'open_'+ca.style:'open_A'),o));
@@ -925,8 +936,9 @@ function doMatch(S,P,show,m,i,n,rep,used){
     (mins>=20?'The time limit expires with neither able to put the other away.':'Both are counted out brawling on the floor.'),o);
   if(isPl){
     var srt=all.slice().sort(function(p,q){return p.ovr-q.ovr;});
-    seg.bc=callMatch(S,P,{fx:fx,o:o,m:m,all:all,pre:pre,champ:champ,mt:MT[m.mt].n,stip:stip,stipName:stip==='std'?null:STIP[stip].n,t:t,sides:sides,feud:feud,feudHeat:heatWas,flog:flogWas,gap:srt[srt.length-1].ovr-srt[0].ovr,under:srt[0].name,CR:CR,MQ:MQ,mins:mins,ca:ca,bad:bad,fin:fin,sub:lead.style==='T'||stip==='sub',win:win,plural:winners.length>1,change:!!seg.change,retain:win>=0&&win===champSide,entrance:ctx.entrance,main:isMain&&n>2,big:big,show:show.name,upset:upset,streak:endedStreak});
+    seg.bc=callMatch(S,P,{fx:fx,o:o,m:m,all:all,pre:pre,champ:champ,mt:MT[m.mt].n,stip:stip,stipName:stip==='std'?null:STIP[stip].n,t:t,sides:sides,feud:feud,feudHeat:heatWas,flog:flogWas,gap:srt[srt.length-1].ovr-srt[0].ovr,under:srt[0].name,CR:CR,MQ:MQ,mins:mins,ca:ca,bad:bad,fin:fin,sub:lookFin(lead)?lookFin(lead).category==='Submission':(lead.style==='T'||stip==='sub'),fko:ctx.fko||null,fm:ctx.fm||null,lfin:other.fin||null,lname:other.name,wname:lead.name,win:win,plural:winners.length>1,change:!!seg.change,retain:win>=0&&win===champSide,entrance:ctx.entrance,main:isMain&&n>2,big:big,show:show.name,upset:upset,streak:endedStreak});
     if(m.mt==='1v1'){var hk=rkey(all[0].id,all[1].id),hh=(S.h2h||(S.h2h={}))[hk]||(S.h2h[hk]={n:0,a:0,b:0,lw:-1,w:0});hh.n++;hh.w=S.week;hh.lw=win>=0?winners[0].id:-1;if(win>=0){if(winners[0].id===Math.min(all[0].id,all[1].id))hh.a++;else hh.b++;}}
+    var dbt=all.filter(function(w){return w.deb;});if(dbt.length)seg.debut=dbt.map(function(w){return {id:w.id,k:w.dk||'match'};});   // a debut is a beat with its own scene (BEATS)
     all.forEach(function(w){w.deb=false;});
   }
   if(ccNote)seg.notes.push(ccNote+' used creative control and would not take the loss.');
@@ -1023,6 +1035,23 @@ function afterBell(S,P,show,m,sides,win,winners,losers,fin,runin,feud,t,OV,seg){
 /* ---------- angles: the story director ---------- */
 function promoScore(S,w,bonus){return clamp(Math.round(0.62*micOf(S,w)+0.38*w.ovr+(bonus||0)+(S.booker&&w.promo===S.player?S.booker.sk.creative:0)+rnd(S)*8-4),5,99);}
 function angle(head,text,ov){return {k:'angle',head:head,text:text,ov:clamp(Math.round(ov),5,99)};}
+/* Every storyline beat is a scene (rule 9c): an angle the story director writes says which beat it is (`beat`) and who
+   is in it, in the order the scene casts them (`bids`: the first is A, the second B, a third C). The screens play the
+   scene 'beat_<beat>' for it, or the booked kind's 'seg_<beat>' where the beat is the same thing. BEATS lists them all. */
+var BEATS=['feud_words','feud_stare','feud_sneak','feud_brawl','feud_partner','feud_signing','feud_video','feud_stakes','feud_betray','feud_injury','feud_swerve','feud_made','feud_final','interview','ambush','challenge','faceoff','save','turn','mystery','mystery_clue','mystery_reveal','return','stable','stable_out','debut_vig','debut_atk','debut_match','chapter','payoff'];   // the last five are matches: a debut (seg.debut) and a story's chapter or ending (seg.story)
+function beatTag(r,beat,ws){if(r){r.beat=beat;r.bids=ws.filter(function(w){return !!w;}).map(function(w){return w.id;});}return r;}
+/* who each feud beat is about, worked out before the beat runs (a betrayal moves people between sides) */
+var BEAT_WHO={
+  words:function(c){var sp=c.a.mic>=c.b.mic?c.a:c.b;return [sp,sp===c.a?c.b:c.a];},
+  stare:function(c){var x=c.h||c.a;return [x,x===c.a?c.b:c.a];},
+  sneak:function(c){return [c.h,c.o];},
+  brawl:function(c){return [c.h||c.a,c.o||c.b];},
+  partner:function(c){return [c.h,partnerOf(c.S,c.o),c.o];},
+  stakes:function(c){var sp=c.a.mic>=c.b.mic?c.a:c.b;return [sp,sp===c.a?c.b:c.a];},
+  betray:function(c){var A=c.f.a,B=c.f.b,from=(A.length>1&&B.indexOf(A[1])<0&&c.ok(A[1]))?A:B;return [c.S.w[from[1]],c.S.w[from[0]]];},
+  injury:function(c){return [c.h,c.o];},
+  swerve:function(c){var x=c.a.mic>=c.b.mic?c.b:c.a;return [x,x===c.a?c.b:c.a];}
+};
 var ACTN=['','Spark','Escalation','Twist','Blow-off'];
 function feudAct(f,S){if(S&&f.promo!=null)return feudActCal(S,f);return f.res?4:(f.heat>=60?(f.twist?4:3):(f.heat>=30?2:1));}
 function nextBigName(S,P){var w=S.week+(4-cal(S.week).wom);return P.name+' '+evName(S,P,cal(w).month);}
@@ -1095,16 +1124,16 @@ function genAngle(S,P,show,ctx){
     FEUDLETS.forEach(function(sl){
       if(sl.acts.indexOf(act)<0||!sl.ok(c))return;
       if(sl.twist&&f.tww!=null&&f.tww>=seg.s0)return;   // one twist to a stretch of the story
-      opts.push([sl.w*(1+f.heat/100)*(f.beat===sl.id?0.12:1),function(){mark(a,b);f.beat=sl.id;if(sl.twist)f.tww=S.week;var r=sl.run(c);r.feud=f.id;r.act=feudAct(f,S);return r;}]);
+      opts.push([sl.w*(1+f.heat/100)*(f.beat===sl.id?0.12:1),function(){mark(a,b);f.beat=sl.id;if(sl.twist)f.tww=S.week;var bw=BEAT_WHO[sl.id]?BEAT_WHO[sl.id](c):[a,b],r=sl.run(c);r.feud=f.id;r.act=feudAct(f,S);return beatTag(r,'feud_'+(r.head===sl.head?sl.id:'brawl'),r.head===sl.head?bw:[a,b]);}]);
     });
   });
   function interview(){
     var c=pool.filter(function(w){return !ang[w.id];}).sort(function(a,b){return (b.mic+b.ovr*0.5)-(a.mic+a.ovr*0.5);}).slice(0,4);
     if(!c.length)return null;var sp=pick(S,c),sc=promoScore(S,sp,0),lv=holdLvl(P,sp.id);mark(sp);
     if(sc>sp.ovr)addOvr(P,sp,0.25);
-    if(hasMouthpiece(S,sp))return angle('Interview',S.w[sp.mgr].name+' does the talking for '+sp.name+', and does it well: '+(lv?'the title is going nowhere.':'the best is still to come.'),sc);
+    if(hasMouthpiece(S,sp))return beatTag(angle('Interview',S.w[sp.mgr].name+' does the talking for '+sp.name+', and does it well: '+(lv?'the title is going nowhere.':'the best is still to come.'),sc),'interview',[sp]);
     var r0=angle('Interview',sp.name+' takes the microphone and '+(lv?'vows that the title is going nowhere.':(sp.ws>=3?'talks up a '+sp.ws+'-match winning streak.':'promises bigger things are coming.')),sc);
-    r0.text+=' '+promoSpeech(S,sp,null,'interview',sc,ctx.city||null,'wi'+S.week+':'+sp.id);return r0;
+    r0.text+=' '+promoSpeech(S,sp,null,'interview',sc,ctx.city||null,'wi'+S.week+':'+sp.id);return beatTag(r0,'interview',[sp]);
   }
   function callOut(){
     var hs=pool.filter(function(w){return w.align==='H'&&w.mic>=55&&!ang[w.id]&&!inFeud(S,w.id);});if(!hs.length)return null;
@@ -1112,7 +1141,7 @@ function genAngle(S,P,show,ctx){
     var ts=pool.filter(function(w){return w.align==='F'&&w.g===h.g&&!ang[w.id]&&!inFeud(S,w.id)&&Math.abs(w.ovr-h.ovr)<=10&&(h.team==null||w.team!==h.team);});
     if(!ts.length)return null;ts.sort(function(a,b){return Math.abs(a.ovr-h.ovr)-Math.abs(b.ovr-h.ovr);});
     var tg=ts[0];if(!startFeud(S,P,tg,h,24+ri(S,0,10),h.name+' attacked '+tg.name+' from behind'))return null;mark(h,tg);
-    return angle('Ambush',h.name+' interrupts '+tg.name+'’s interview and attacks from behind. A new rivalry begins.',promoScore(S,h,3));
+    return beatTag(angle('Ambush',h.name+' interrupts '+tg.name+'’s interview and attacks from behind. A new rivalry begins.',promoScore(S,h,3)),'ambush',[h,tg]);
   }
   function champChallenge(){
     var ts=showTitles(P,show).filter(function(t){return !t.tag&&t.holders.length&&ok(t.holders[0])&&!inFeud(S,t.holders[0]);});if(!ts.length)return null;
@@ -1121,18 +1150,18 @@ function genAngle(S,P,show,ctx){
     if(!cs.length)return null;cs.sort(function(a,b){return (b.ovr+b.mom*2+(b.align!==c.align?6:0))-(a.ovr+a.mom*2+(a.align!==c.align?6:0));});
     var ch=cs[0];if(!startFeud(S,P,ch,c,30,ch.name+' challenged for the '+t.name,{title:t.id}))return null;mark(c,ch);
     var r1=angle('Challenge',ch.name+' interrupts '+c.name+' and lays claim to the '+t.name+'.',promoScore(S,ch.mic>c.mic?ch:c,4)),k1='wc'+S.week+':'+ch.id;
-    r1.text+=' '+promoSpeech(S,ch,c,'challenge',ch.mic,ctx.city||null,k1)+' '+promoSpeech(S,c,ch,'words',c.mic,ctx.city||null,k1+'b');return r1;
+    r1.text+=' '+promoSpeech(S,ch,c,'challenge',ch.mic,ctx.city||null,k1)+' '+promoSpeech(S,c,ch,'words',c.mic,ctx.city||null,k1+'b');return beatTag(r1,'challenge',[ch,c]);
   }
   function mysteryStart(){
     var os=pool.map(function(w){return w.ovr;}).sort(function(a,b){return b-a;}),cut=os[Math.floor(os.length*0.3)]||0;
     var vs=pool.filter(function(w){return w.align==='F'&&w.ovr>=cut&&!ang[w.id]&&!inFeud(S,w.id);});if(!vs.length)return null;
     var v=pick(S,vs);S.mystery={v:v.id,left:ri(S,2,3),promo:P.id,start:S.week};mark(v);
     news(S,'story','Who attacked '+v.name+'? Nobody saw a thing.');
-    return angle('Mystery',v.name+' is found laid out in the locker room. Nobody saw the attacker.',0.8*v.ovr+8+rnd(S)*6-3);
+    return beatTag(angle('Mystery',v.name+' is found laid out in the locker room. Nobody saw the attacker.',0.8*v.ovr+8+rnd(S)*6-3),'mystery',[v]);
   }
   function mysteryClue(){
     var v=S.w[my.v];my.left--;mark(v);
-    return angle('Mystery',chance(S,0.5)?'Footage of the attack on '+v.name+' airs. The attacker’s face is hidden.':v.name+' demands answers and accuses half the locker room.',0.75*v.ovr+8+rnd(S)*6-3);
+    return beatTag(angle('Mystery',chance(S,0.5)?'Footage of the attack on '+v.name+' airs. The attacker’s face is hidden.':v.name+' demands answers and accuses half the locker room.',0.75*v.ovr+8+rnd(S)*6-3),'mystery_clue',[v]);
   }
   function mysteryReveal(){
     var v=S.w[my.v],pt=partnerOf(S,v),c=null,betray=false;
@@ -1144,7 +1173,7 @@ function genAngle(S,P,show,ctx){
     if(c.align==='F')turn(S,c,'revealed as the mystery attacker');
     var f=startFeud(S,P,v,c,65,c.name+' was revealed as the one who attacked '+v.name,{force:true});if(f)f.twist='reveal';
     award(S,'ACH_MYSTERY');mark(v,c);
-    return angle('Reveal','The attacker is revealed: '+c.name+'.'+(betray?' '+v.name+'’s own partner.':'')+' '+v.name+' wants revenge.',0.8*(v.ovr+c.ovr)/2+12);
+    return beatTag(angle('Reveal','The attacker is revealed: '+c.name+'.'+(betray?' '+v.name+'’s own partner.':'')+' '+v.name+' wants revenge.',0.8*(v.ovr+c.ovr)/2+12),'mystery_reveal',[c,v]);
   }
   function stareDown(){
     var GX=mainG(S,P),L=pool.filter(function(w){return !ang[w.id]&&!inFeud(S,w.id)&&w.g===GX;}).sort(function(a,b){return b.ovr-a.ovr;}).slice(0,6);
@@ -1153,7 +1182,7 @@ function genAngle(S,P,show,ctx){
       if(a.align!=='F'||b.align!=='F'||(a.team!=null&&a.team===b.team)||(rk&&S.week-rk<10))continue;
       if(!startFeud(S,P,a,b,30,a.name+' and '+b.name+' faced off',{kind:'dream'}))return null;mark(a,b);
       var r2=angle('Face-off',a.name+' and '+b.name+' cross paths on the stage. Neither backs down, and the crowd wants the match.',0.8*(a.ovr+b.ovr)/2+8),k2='wf'+S.week+':'+a.id;
-      r2.text+=' '+promoSpeech(S,a,b,'faceoff',a.mic,ctx.city||null,k2)+' '+promoSpeech(S,b,a,'faceoff',b.mic,ctx.city||null,k2+'b');return r2;
+      r2.text+=' '+promoSpeech(S,a,b,'faceoff',a.mic,ctx.city||null,k2)+' '+promoSpeech(S,b,a,'faceoff',b.mic,ctx.city||null,k2+'b');return beatTag(r2,'faceoff',[a,b]);
     }
     return null;
   }
@@ -1161,7 +1190,7 @@ function genAngle(S,P,show,ctx){
     var c=pool.filter(function(w){return w.ret&&!ang[w.id];});if(!c.length)return null;
     var w=c[0],f=feudsFor(S,w.id)[0],r=null;w.ret=false;w.mom=clamp(w.mom+3,-10,10);mark(w);
     if(f){r=S.w[(f.a.indexOf(w.id)>=0?f.b:f.a)[0]];heatUp(S,f,10,w.name+' returned and went after '+r.name);}
-    return angle('Return',w.name+' returns to a big reaction'+(r?' and goes straight after '+r.name+'.':'.'),0.9*w.ovr+8);
+    return beatTag(angle('Return',w.name+' returns to a big reaction'+(r?' and goes straight after '+r.name+'.':'.'),0.9*w.ovr+8),'return',[w,r]);
   }
   function teamUp(){
     var os=pool.map(function(w){return w.ovr;}).sort(function(a,b){return a-b;}),lo=os[Math.floor(os.length*0.3)]||0,hi=os[Math.floor(os.length*0.8)]||100;
@@ -1172,14 +1201,14 @@ function genAngle(S,P,show,ctx){
     var b=pick(S,bs),h=pick(S,hs);formTeam(S,P,a,b,8);mark(a,b,h);
     var f=startFeud(S,P,a,h,20,h.name+' attacked '+a.name+'; '+b.name+' made the save');if(f&&f.a.indexOf(a.id)>=0&&f.a.length<2)f.a.push(b.id);
     news(S,'story','New team: '+a.name+' & '+b.name+'.');
-    return angle('Save',h.name+' attacks '+a.name+' after an interview. '+b.name+' runs out to make the save, and the two shake hands. A new team is born.',0.75*(a.ovr+b.ovr+h.ovr)/3+6);
+    return beatTag(angle('Save',h.name+' attacks '+a.name+' after an interview. '+b.name+' runs out to make the save, and the two shake hands. A new team is born.',0.75*(a.ovr+b.ovr+h.ovr)/3+6),'save',[a,b,h]);
   }
   function crowdTurn(){
     var c=pool.filter(function(w){return !ang[w.id]&&!inFeud(S,w.id)&&((w.align==='H'&&w.mom>=4&&w.mic>=65)||(w.align==='F'&&w.mom<=-4&&w.mic>=60));});if(!c.length)return null;
     var w=pick(S,c),was=w.align;mark(w);
     turn(S,w,was==='H'?'the crowd got behind them':'turned on the fans');
     if(was==='H')addOvr(P,w,2);else w.mom=clamp(w.mom+3,-10,10);
-    return angle('Turn',was==='H'?'The crowd has been cheering '+w.name+' for weeks. Tonight '+w.name+' embraces it.':'After weeks of losses, '+w.name+' blames the fans and walks out to boos.',promoScore(S,w,6));
+    return beatTag(angle('Turn',was==='H'?'The crowd has been cheering '+w.name+' for weeks. Tonight '+w.name+' embraces it.':'After weeks of losses, '+w.name+' blames the fans and walks out to boos.',promoScore(S,w,6)),'turn',[w]);
   }
   if(my&&my.left<=0){var r=mysteryReveal();if(r)return r;}
   if(pool.some(function(w){return w.ret&&!ang[w.id];}))opts.push([7,comeback]);
@@ -1775,7 +1804,7 @@ function liveIntro(S,P,show,m,i,n){
     c.sides.forEach(function(s,k){
       var isCh=c.t&&k===c.champSide,lead=s[0],big=avg(s.map(function(w){return w.ovr;}))>=62||isCh;
       bc.push({t:'ring',x:(k===0?'Introducing first, ':(k===c.sides.length-1?'And the opponent'+(s.length>1?'s':'')+', ':'Next, '))+(isCh?'the '+c.t.name+' champion'+(s.length>1?'s':'')+', ':'')+names(s)+'!'});
-      bc.push({t:'ent',x:big?names(s)+' '+(s.length>1?'make their way out together':ENTR[lead.align==='F'?'F':'H'][lead.ent||0])+(isCh?', the title held high':'')+'. The reaction: '+pop(s)+'.':'The reaction: '+pop(s)+'.'});
+      bc.push({t:'ent',x:big?(s.length===1&&lead.look&&lead.look.entrance_fx&&lead.look.entrance_fx.music?'"'+lead.look.entrance_fx.music+'" hits, and ':'')+names(s)+' '+(s.length>1?'make their way out together':ENTR[lead.align==='F'?'F':'H'][lead.ent||0])+(isCh?', the title held high':'')+'. The reaction: '+pop(s)+'.':'The reaction: '+pop(s)+'.'});
     });
   }
   bc.push({t:'pbp',x:'The bell sounds, and this one is under way.'});
@@ -3413,7 +3442,7 @@ ANGX.push(function(S,P,show,ctx,h){
   return [9,function(){
     c.arc=null;h.mark(c);var sc=promoScore(S,c,8);addOvr(P,c,1);c.mom=clamp(c.mom+3,-10,10);
     S.quests.push({id:S.nid++,type:'win',w:c.id,due:S.week+3,text:'The crowd is behind '+c.name+' now: book them a win by '+cal(S.week+3).label});
-    return angle('Interview',c.name+' takes a live microphone and says the losing has gone on long enough. It sounds a little too real, and the crowd roars in agreement.',sc);
+    return beatTag(angle('Interview',c.name+' takes a live microphone and says the losing has gone on long enough. It sounds a little too real, and the crowd roars in agreement.',sc),'interview',[c]);
   }];
 });
 SHOWX.push(function(S,P,show,rep){
@@ -3543,7 +3572,7 @@ ANGX.push(function(S,P,show,ctx,h){
     var st={id:S.nid++,promo:P.id,name:pick(S,nm),leader:lead.id,m:[lead.id,ms[0].id,ms[1].id],formed:S.week,tension:0};
     S.stables.push(st);st.m.forEach(function(id){S.w[id].stable=st.id;});h.mark(lead,ms[0],ms[1]);
     news(S,'story','A new stable: '+st.name+' ('+lead.name+', '+ms[0].name+' and '+ms[1].name+').');
-    return angle('Announcement',lead.name+' steps out flanked by '+ms[0].name+' and '+ms[1].name+'. From tonight they answer to one name: '+st.name+'.',promoScore(S,lead,6));
+    return beatTag(angle('Announcement',lead.name+' steps out flanked by '+ms[0].name+' and '+ms[1].name+'. From tonight they answer to one name: '+st.name+'.',promoScore(S,lead,6)),'stable',[lead,ms[0],ms[1]]);
   }];
 });
 ANGX.push(function(S,P,show,ctx,h){
@@ -3553,7 +3582,7 @@ ANGX.push(function(S,P,show,ctx,h){
     var lead=S.w[st.leader],weakIds=E.stableWeak(S,st).map(function(x){return x.id;}).filter(function(id){return outs.indexOf(id)>=0;}),out=S.w[(weakIds.length?weakIds:outs).sort(function(a,b){return S.w[a].mom-S.w[b].mom;})[0]];
     h.mark(lead,out);leaveStable(S,out);if(out.align==='H')turn(S,out,'thrown out of '+st.name);
     var f=startFeud(S,P,out,lead,50,lead.name+' threw '+out.name+' out of '+st.name,{force:true});if(f)f.twist='expelled';memBetray(S,lead,out);st.tension=3;
-    return angle('Betrayal',lead.name+' blames '+out.name+' for everything going wrong in '+st.name+'. The rest of the group turns on '+out.name+' and leaves them lying in the ring.',0.8*(lead.ovr+out.ovr)/2+10);
+    return beatTag(angle('Betrayal',lead.name+' blames '+out.name+' for everything going wrong in '+st.name+'. The rest of the group turns on '+out.name+' and leaves them lying in the ring.',0.8*(lead.ovr+out.ovr)/2+10),'stable_out',[lead,out]);
   }];
 });
 POST.push(function(ctx){
@@ -5708,20 +5737,22 @@ function createStats(S,o){
   var P=S.promos[S.player],bg=BGS[o.bg]||BGS.indie,ovr=clamp(Math.round(P.image+bg.ovr+(o.emph==='look'?5:0)),5,90),work=bg.work+(o.emph==='ring'?8:0),mic=bg.mic+(o.emph==='mic'?10:0),wage=wageFor(ovr,P);
   return {ovr:ovr,work:work,mic:mic,pot:Math.min(99,work+bg.pot),wage:wage,fee:wage*8};
 }
-E.createInfo=function(S){var wait=(S.lastCreate==null?-99:S.lastCreate)+6-S.week;return {ok:wait<=0,wait:Math.max(0,wait),bgs:BGS,emph:EMPH};};
+E.createInfo=function(S){return {ok:true,wait:0,bgs:BGS,emph:EMPH};};
 E.createPreview=createStats;
+/** Create a Player in a game (Ryan, 18 October): a new wrestler made by the player goes to free agency, like
+    anybody else looking for work, and is signed from Free agents with an offer. Only the World Editor puts somebody
+    straight into a company. */
 E.createWrestler=function(S,o){
-  var P=S.promos[S.player],info=E.createInfo(S);if(!info.ok)return {ok:false,msg:'Your scouts need '+info.wait+' more week'+(info.wait===1?'':'s')+' before they bring you anyone new.'};
   var name=clean(o.name,28);if(name.length<2)return {ok:false,msg:'Give them a name first.'};
   if(S.w.some(function(w){return w.name.toLowerCase()===name.toLowerCase();}))return {ok:false,msg:'There is already a '+name+' in the business.'};
   var st=createStats(S,o);
-  if(wagesWeek(S,P)+st.wage>E.budget(S))return {ok:false,msg:S.owner.name+' will not sign off on another wage.'};
   var w=addWrestler(S,{name:name,g:o.g==='F'?'F':'M',ovr:st.ovr,style:STYLE[o.style]?o.style:'A',work:st.work,mic:st.mic,align:o.align==='H'?'H':'F',fin:clean(o.fin,24)||null},'FA',null);
   w.pot=clamp(st.pot,workRate(w),99);w.cr=true;assignGim(w);if(GIMBY[o.gim])w.gim=o.gim;
   if(o.face&&typeof o.face==='object'){w.face={};['h','hr','fh','ms','ey','ns'].forEach(function(k){w.face[k]=clamp(Math.round(+o.face[k]||0),0,9);});w.face.sk=clamp(Math.round(+o.face.sk||0),0,100);w.face.hc=clamp(Math.round(+o.face.hc||0),0,100);}
-  joinCompany(S,w,P,st.wage,96);P.cash-=st.fee;S.lastCreate=S.week;
-  mile(S,w,'debut','Discovered and signed by '+P.name);news(S,'contract',P.name+' signed newcomer '+w.name+'.');award(S,'ACH_CREATE');
-  return {ok:true,id:w.id,msg:w.name+' signs a two-year deal at '+money(st.wage)+' a week. Signing cost: '+money(st.fee)+'.'};
+  if(o.look){var lc=lookClean(o.look);if(lc&&E.lookOk(lc)){lc.name=w.name;w.look=lc;var lf=lookFin(w);if(lf)w.fin=lf.name;}}   // made in Create a Player (src/86-looks.js)
+  S.lastCreate=S.week;
+  mile(S,w,'debut','Made in Create a Wrestler');news(S,'contract','A new name is looking for work: '+w.name+'.');
+  return {ok:true,id:w.id,msg:w.name+' is a free agent now. Sign them from Free agents, like anybody else.'};
 };
 
 /* ---------- the opening promo: you choose who talks, about what, and how ---------- */
@@ -7418,7 +7449,7 @@ var ID_RE=/^[a-z0-9_]{2,40}$/;
 // field types: 'id', 'str', 'int', 'num', 'bool', 'obj', 'list', an array of allowed values, or 'ref:<table>'; a trailing ? makes it optional
 var SCHEMAS={
   promotions:{required:['id','name','popularity'],fields:{id:'id',name:'str',full_name:'str?',blurb:'str?',owner:'obj?',staff:'obj?',announcers:'list?',cities:'list?',cash:'num?',popularity:'num',work_rate_weight:'num?',angles_per_show:'int?',wage_scale:'num?',tv_rate:'num?',production_cost:'num?',target_weekly_net:'num?',flagship_month:'int?',production_level:'int?',risk_level:'int?',tv_slot:'int?',model:'str?',brands:'list?',media:'obj?',logo:'obj?',events:'list?'}},
-  workers:{required:['id','ring_name','gender','disposition','style','ratings'],fields:{id:'id',ring_name:'str',real_name:'str?',birth_date:'str?',age:'int?',hometown:'str?',gender:['M','F'],weight_class:['cruiser','heavy','super_heavy'],disposition:['face','heel','tweener'],roles:'list?',style:Object.keys(STYLE_KEY),finisher:'str?',manager_id:'str?',locker_role:['mentor','diva','gatekeeper','leader','toxic'],ratings:'obj',peak_years:'list?',age_cliff:'int?',media:'obj?',face:'obj?',gimmick_category:'str?',gimmick:'str?',catchphrase:'str?',finisher_description:'str?',finisher_move:'str?',signatures:'list?',debut_year:'int?',legend:'bool?',height:'str?',weight:'str?',notes:'str?'}},
+  workers:{required:['id','ring_name','gender','disposition','style','ratings'],fields:{id:'id',ring_name:'str',real_name:'str?',birth_date:'str?',age:'int?',hometown:'str?',gender:['M','F'],weight_class:['cruiser','heavy','super_heavy'],disposition:['face','heel','tweener'],roles:'list?',style:Object.keys(STYLE_KEY),finisher:'str?',manager_id:'str?',locker_role:['mentor','diva','gatekeeper','leader','toxic'],ratings:'obj',peak_years:'list?',age_cliff:'int?',media:'obj?',face:'obj?',gimmick_category:'str?',gimmick:'str?',catchphrase:'str?',finisher_description:'str?',finisher_move:'str?',signatures:'list?',debut_year:'int?',legend:'bool?',height:'str?',weight:'str?',notes:'str?',look:'obj?'}},
   contracts:{required:['worker_id','promotion_id'],fields:{worker_id:'str',promotion_id:'str',contract_type:['exclusive','pwa'],monthly_salary:'num?',per_show_fee:'num?',weeks_left:'int?',tenure_weeks:'int?',push_level:PUSH,brand:'str?'}},
   titles:{required:['id','promotion_id','name','gender','level'],fields:{id:'id',promotion_id:'str',name:'str',gender:['M','F'],level:'int',tag:'bool?',brand:'str?',holder_ids:'list?',media:'obj?'}},
   teams:{required:['id','name','member_ids','promotion_id'],fields:{id:'id',name:'str',kind:['tag','stable'],member_ids:'list',leader_id:'str?',experience:'num?',chemistry:'num?',finisher:'str?',promotion_id:'str'}},
@@ -7539,7 +7570,7 @@ function buildDB(pkg){
   (pkg.workers||[]).forEach(function(w){
     var r=w.ratings,c=con[w.id],d={uid:w.id,name:w.ring_name,g:w.gender,style:STYLE_KEY[w.style]||'A',align:w.disposition==='heel'?'H':'F',tweener:w.disposition==='tweener',fin:w.finisher||null,promo:c?c.promotion_id:'FA',brand:c&&c.brand?c.brand:null,
       roles:(w.roles&&w.roles.length?w.roles:['wrestler']).filter(function(x){return ROLES.indexOf(x)>=0;}),age:w.age!=null?w.age:(w.birth_date?Math.max(16,(man.start_year||2026)-(+String(w.birth_date).slice(0,4)||1990)):null),peak:w.peak_years&&w.peak_years.length===2?w.peak_years:null,cliff:w.age_cliff!=null?w.age_cliff:null,mgr:w.manager_id||null,
-      real:w.real_name||null,town:w.hometown||null,wc:w.weight_class||null,media:w.media||null,face:w.face||null};
+      real:w.real_name||null,town:w.hometown||null,wc:w.weight_class||null,media:w.media||null,face:w.face||null,look:w.look?lookClean(w.look):null};
     Object.keys(RMAP).forEach(function(k){if(r[k]!=null)d[RMAP[k]]=clamp(Math.round(r[k]),0,100);});
     if(w.locker_role)d.lrole=w.locker_role==='gatekeeper'?'gate':w.locker_role;
     if(c){d.con=c.weeks_left!=null?Math.max(1,c.weeks_left):null;d.tw=c.tenure_weeks!=null?Math.max(0,c.tenure_weeks):null;d.push=c.push_level||null;d.wage=c.monthly_salary?Math.round(c.monthly_salary*12/52/10)*10:(c.per_show_fee?Math.round(c.per_show_fee/10)*10:null);d.pwa=c.contract_type==='pwa';}
@@ -7548,7 +7579,7 @@ function buildDB(pkg){
   var ev=[];for(var m=0;m<12;m++)ev.push(MONTHS[m]+' Showcase');(pkg.events||[]).forEach(function(e){if(e.month>=1&&e.month<=12)ev[e.month-1]=e.name;});
   var nm=pkg.names||{};
   return {fictional:!!man.fictional,uni:{id:man.id,name:man.name,version:String(man.version||'1'),author:man.author||'',desc:man.description||''},startYear:man.start_year||2026,startMonth:clamp((man.start_month||10)-1,0,11),
-    events:ev,rules:(pkg.events||[]).reduce(function(o,e){if(e.rule)o[e.month-1]=e.rule;return o;},{}),sponsors:pkg.sponsors&&pkg.sponsors.length?pkg.sponsors:null,columnists:pkg.columnists&&pkg.columnists.length?pkg.columnists:null,
+    events:ev,rules:(pkg.events||[]).reduce(function(o,e){if(e.rule)o[e.month-1]=e.rule;return o;},{}),sponsors:pkg.sponsors&&pkg.sponsors.length?pkg.sponsors:null,columnists:pkg.columnists&&pkg.columnists.length?pkg.columnists:null,scenes:Array.isArray(pkg.scenes)&&pkg.scenes.length?pkg.scenes:null,backdrops:Array.isArray(pkg.backdrops)&&pkg.backdrops.length?pkg.backdrops:null,
     indie:{firstM:nm.first_m&&nm.first_m.length>=8?nm.first_m:FALLBACK_NAMES.firstM,firstF:nm.first_f&&nm.first_f.length>=6?nm.first_f:FALLBACK_NAMES.firstF,last:nm.last&&nm.last.length>=8?nm.last:FALLBACK_NAMES.last},
     freeAgents:man.free_agents!=null?clamp(man.free_agents,0,120):36,promotions:promos,rows:rows,stables:stables,rels:(pkg.relationships||[]).filter(function(r){return W[r.a]&&W[r.b];})};
 }
@@ -7579,7 +7610,7 @@ E.exportUniverse=function(S,meta){
   S.w.forEach(function(w){if(w.rt)return;var u=w.uid&&ID_RE.test(w.uid)&&!used[w.uid]?w.uid:slug(w.name)||'worker';if(u.length<2)u='w_'+u;var b=u,n=2;while(used[u])u=(b.slice(0,36)+'_'+(n++));used[u]=1;uid[w.id]=u;});
   var c0=cal(S.week),pkg={manifest:{id:slug(meta.id||meta.name||'my_universe')||'my_universe',name:meta.name||'My universe',author:meta.author||(S.booker?S.booker.name:''),version:meta.version||'1.0',schema_version:SCHEMA_VERSION,fictional:!!d.fictional,start_year:c0.year,start_month:c0.month+1,free_agents:0,description:meta.description||'Exported from Elite Wrestling Federation 9000, '+c0.label+'.'},
     promotions:[],shows:[],titles:[],workers:[],contracts:[],teams:[],relationships:[],events:d.events.map(function(n,i){var o={month:i+1,name:n};if(d.rules&&d.rules[i])o.rule=d.rules[i];return o;}),names:{first_m:d.indie.firstM,first_f:d.indie.firstF,last:d.indie.last}};
-  if(d.sponsors)pkg.sponsors=d.sponsors;if(d.columnists)pkg.columnists=d.columnists;
+  if(d.sponsors)pkg.sponsors=d.sponsors;if(d.columnists)pkg.columnists=d.columnists;if(d.scenes)pkg.scenes=d.scenes;if(d.backdrops)pkg.backdrops=d.backdrops;
   S.order.forEach(function(id){
     var P=P0[id],own=id===S.player?{name:S.owner.name,style:S.owner.style,roots:S.owner.roots,pledge:S.owner.pledge}:(P.owner||{name:'The owner',style:P.style||'stars',roots:'tradition',pledge:'pay'});
     var o={id:pid(id),name:P.name,blurb:P.blurb||'',owner:own,staff:{road_agent:P.staff.agent,head_writer:P.staff.writer},announcers:P.ann.slice(),cities:P.cities.slice(),cash:Math.round(P.cash),popularity:r1(P.image),work_rate_weight:P.wq,angles_per_show:P.angles,wage_scale:P.wageMult,tv_rate:P.tvRate,production_cost:P.prod,target_weekly_net:P.net,flagship_month:P.flagship+1,production_level:P.prodLvl,risk_level:P.risk,tv_slot:P.slot};
@@ -7596,7 +7627,7 @@ E.exportUniverse=function(S,meta){
     if(w.rt)return;var r={};Object.keys(RMAP).forEach(function(k){var v=w[RMAP[k]];if(k==='gimmick_rating')v=w.gim?gimFit(w):null;if(v!=null)r[k]=clamp(Math.round(v),0,100);});
     var o={id:uid[w.id],ring_name:w.name,age:w.age,gender:w.g,disposition:w.twn?'tweener':(w.align==='H'?'heel':'face'),roles:w.roles?w.roles.slice():['wrestler'],style:STYLE_OUT[w.style]||'all_rounder',finisher:w.fin||undefined,ratings:r,peak_years:w.pk.slice(),age_cliff:w.cl};
     if(w.role)o.locker_role=w.role==='gate'?'gatekeeper':w.role;
-    if(w.real)o.real_name=w.real;if(w.town)o.hometown=w.town;if(w.wc)o.weight_class=w.wc;if(w.media)o.media=w.media;if(w.face)o.face=w.face;if(w.mgr!=null&&uid[w.mgr])o.manager_id=uid[w.mgr];
+    if(w.real)o.real_name=w.real;if(w.town)o.hometown=w.town;if(w.wc)o.weight_class=w.wc;if(w.media)o.media=w.media;if(w.face)o.face=w.face;if(w.look)o.look=JSON.parse(JSON.stringify(w.look));if(w.mgr!=null&&uid[w.mgr])o.manager_id=uid[w.mgr];
     pkg.workers.push(o);
     if(w.promo!=='FA'&&P0[w.promo]){var c={worker_id:uid[w.id],promotion_id:pid(w.promo),contract_type:w.pwa?'pwa':'exclusive',monthly_salary:Math.round(w.wage*52/12),per_show_fee:0,weeks_left:Math.max(1,w.con),tenure_weeks:w.jw!=null?Math.max(0,S.week-w.jw):undefined,push_level:w.nw?'non_wrestler':(PL[push[w.id]]||'midcarder')};if(w.brand)c.brand=w.brand;pkg.contracts.push(c);}
   });
@@ -8098,6 +8129,125 @@ function histApply(S){
 /** A wrestler's persona from the world file: gimmick, catchphrase, finisher, debut year and whether they are a legend. */
 E.persona=function(S,id){var w=S.w[id];return w&&w.uid&&DB&&DB.persona?DB.persona[w.uid]||null:null;};
 
+/* ===== 86-looks.js ===== */
+/* ---------- Create a Player: a wrestler's look as a file (docs/plans/create-a-player.md) ----------
+   A wrestler made in Create a Player is a small record in the shape Ryan set out (18 October): who they are, their
+   body (height, weight, a body type and four sliders), three outfits (ring gear, entrance gear, street clothes),
+   each with the parts worn, the colours of its palette slots and the lettering and shapes stuck on it, and their
+   finishing moves. It is kept on the worker in a world package (`look`), carried onto the wrestler in a game
+   (`w.look`), and written out as its own .wrestler.json file to share. The interface draws it (app/src/kit/caw.ts);
+   nothing here plays a part in how a match goes yet, and nothing calls rnd(S). lookClean() keeps only what it knows,
+   so a file from anywhere is safe to load. */
+var LOOK_ATTIRES=['primary_ring','entrance_gear','street_clothes'],LOOK_SLOTS=['primary','secondary','trim','hardware'],LOOK_PARTS=['head','upper_body','lower_body','footwear'];
+var LOOK_KICK=['Easy','Medium','Protected','Instant'],LOOK_POS=['Standing','Top Rope','Running','Counter'];
+function lkStr(v,n){return typeof v==='string'?v.replace(/[\u0000-\u001f<>]/g,'').slice(0,n||40):undefined;}
+function lkId(v){return typeof v==='string'&&/^[#a-z0-9_ -]{1,48}$/i.test(v)?v:undefined;}
+function lkNum(v,a,b){return typeof v==='number'&&isFinite(v)?Math.max(a,Math.min(b,v)):undefined;}
+function lkPrune(o){Object.keys(o).forEach(function(k){if(o[k]===undefined)delete o[k];});return o;}
+/** A clean copy of a look, or null when it is not one. */
+function lookClean(x){
+  if(!x||typeof x!=='object'||Array.isArray(x))return null;
+  var o=lkPrune({id:lkId(x.id),name:lkStr(x.name,32),moniker:lkStr(x.moniker,40),hometown:lkStr(x.hometown,40),archetype:lkStr(x.archetype,32)});
+  var pa=x.physical_attributes;
+  if(pa&&typeof pa==='object'){var ps=pa.proportional_scalers||{};
+    o.physical_attributes=lkPrune({sex:pa.sex==='F'||pa.sex==='M'?pa.sex:undefined,height_inches:lkNum(pa.height_inches,58,96),weight_lbs:lkNum(pa.weight_lbs,100,600),body_archetype:lkId(pa.body_archetype),
+      proportional_scalers:lkPrune({torso_width:lkNum(ps.torso_width,0.7,1.5),torso_height:lkNum(ps.torso_height,0.8,1.25),limb_length:lkNum(ps.limb_length,0.8,1.25),muscle_mass:lkNum(ps.muscle_mass,0.6,1.6)})});}
+  var ap=x.appearance;
+  if(ap&&typeof ap==='object'){var f=null;if(ap.face&&typeof ap.face==='object'){f={};['h','hr','fh','ms','ey','ns','sk','hc'].forEach(function(k){var v=lkNum(ap.face[k],0,100);if(v!=null)f[k]=Math.round(v);});}
+    var shp=null;if(ap.shape&&typeof ap.shape==='object'){shp={};['head_w','head_h','jaw','chin','eye_size','eye_gap','eye_height','brow_thick','brow_angle','nose_w','nose_l','mouth_w','ears'].forEach(function(k){var v=lkNum(ap.shape[k],-1,1);if(v)shp[k]=Math.round(v*100)/100;});if(!Object.keys(shp).length)shp=null;}
+var ft=null;if(ap.features&&typeof ap.features==='object'){ft={};['eyes','nose','mouth','ears'].forEach(function(k){var v=lkId(ap.features[k]);if(v)ft[k]=v;});if(!Object.keys(ft).length)ft=null;}
+    o.appearance=lkPrune({features:ft||undefined,shape:shp||undefined,face:f&&Object.keys(f).length?f:undefined,skin_tone:lkNum(ap.skin_tone,0,100),hair_colour:lkId(ap.hair_colour),facial_hair:lkId(ap.facial_hair),face_paint:lkId(ap.face_paint),paint_colour:lkId(ap.paint_colour),
+      paint_layers:Array.isArray(ap.paint_layers)?ap.paint_layers.filter(function(l){return l&&lkId(l.k);}).slice(0,3).map(function(l){return lkPrune({k:lkId(l.k),c:lkId(l.c)});}):undefined,
+      tattoos:Array.isArray(ap.tattoos)?ap.tattoos.map(lkId).filter(function(v){return !!v;}).slice(0,8):undefined,
+      hair_colour2:lkId(ap.hair_colour2),hair_mix:lkId(ap.hair_mix),body_hair:lkNum(ap.body_hair,0,2),freckles:ap.freckles===true?true:undefined,mask_design:lkId(ap.mask_design),
+      scars:Array.isArray(ap.scars)?ap.scars.map(lkId).filter(function(v){return !!v;}).slice(0,6):undefined});}
+  if(x.attires&&typeof x.attires==='object'){var at={};LOOK_ATTIRES.forEach(function(k){var a=x.attires[k];if(!a||typeof a!=='object')return;
+    var eq=a.equipped_assets||{},e={};LOOK_PARTS.forEach(function(p){var v=lkId(eq[p]);if(v)e[p]=v;});
+    if(Array.isArray(eq.accessories))e.accessories=eq.accessories.map(lkId).filter(function(v){return !!v;}).slice(0,8);
+    var pal={};LOOK_SLOTS.forEach(function(s){var v=lkId((a.palette_slots||{})[s]);if(v)pal[s]=v;});
+    var lay=(Array.isArray(a.custom_layers)?a.custom_layers:[]).slice(0,16).map(function(l){
+      if(!l||(l.type!=='text_decal'&&l.type!=='shape_combiner'))return null;var pl=l.placement||{};
+      var c=lkPrune({type:l.type,string:l.type==='text_decal'?lkStr(l.string,20):undefined,font:lkId(l.font),shape_id:l.type==='shape_combiner'?lkId(l.shape_id):undefined,
+        placement:{x:lkNum(pl.x,-20,20)||0,y:lkNum(pl.y,-20,20)||0,z:lkNum(pl.z,0,20)||0},palette_slot:lkId(l.palette_slot),on:l.on==='lower_body'||l.on==='back'?l.on:undefined,
+        arch:lkNum(l.arch,-1,1),scale:lkNum(l.scale,0.2,4),rot:lkNum(l.rot,-180,180)});
+      return (c.type==='text_decal'&&c.string)||(c.type==='shape_combiner'&&c.shape_id)?c:null;}).filter(function(l){return !!l;});
+    var pcs={};['upper_body','lower_body','footwear'].forEach(function(q){var v=lkId((a.part_colours||{})[q]);if(v)pcs[q]=v;});
+    at[k]=lkPrune({description:lkStr(a.description,40),equipped_assets:e,palette_slots:pal,custom_layers:lay,part_colours:Object.keys(pcs).length?pcs:undefined});});
+    if(Object.keys(at).length)o.attires=at;}
+  if(Array.isArray(x.finishing_moves))o.finishing_moves=x.finishing_moves.slice(0,3).map(function(m){
+    if(!m||typeof m!=='object'||!lkStr(m.name,32))return null;
+    return lkPrune({name:lkStr(m.name,32),impact_damage:lkNum(m.impact_damage,1,100),kickout_difficulty:LOOK_KICK.indexOf(m.kickout_difficulty)>=0?m.kickout_difficulty:undefined,
+      position:LOOK_POS.indexOf(m.position)>=0?m.position:undefined,category:lkStr(m.category,24),preview_pose_id:lkId(m.preview_pose_id),stage:['early','mid','late'].indexOf(m.stage)>=0?m.stage:undefined});}).filter(function(m){return !!m;});
+  if(Array.isArray(x.taunts)){var tn=x.taunts.map(lkId).filter(function(v,i,a){return !!v&&a.indexOf(v)===i;}).slice(0,3);if(tn.length)o.taunts=tn;}   // up to three taunts, each a scene id
+  var en=lkId(x.entrance);if(en)o.entrance=en;   // one of the canned entrances
+  if(x.entrance_fx&&typeof x.entrance_fx==='object'){var ef=lkPrune({pyro:lkId(x.entrance_fx.pyro),lights:lkId(x.entrance_fx.lights),music:lkStr(x.entrance_fx.music,32)||undefined});if(Object.keys(ef).length)o.entrance_fx=ef;}   // pyro, lights and their music
+  if(x.portrait&&typeof x.portrait==='object'){var pt=x.portrait;o.portrait=lkPrune({attire:LOOK_ATTIRES.indexOf(pt.attire)>=0?pt.attire:undefined,expr:typeof pt.expr==='string'&&/^[a-z]{0,8}$/.test(pt.expr)?pt.expr:undefined,pose:lkId(pt.pose),bg:lkId(pt.bg),frame:pt.frame==='chest'||pt.frame==='head'?pt.frame:undefined});if(!Object.keys(o.portrait).length)delete o.portrait;}   // their portrait
+  return Object.keys(o).length?o:null;
+}
+/** Is this a wrestler's look (a .wrestler.json file)? */
+E.lookOk=function(x){var c=lookClean(x);return !!(c&&(c.attires||c.physical_attributes||c.appearance));};
+E.lookClean=lookClean;
+function lkWorker(pkg,id){return pkg&&Array.isArray(pkg.workers)?pkg.workers.filter(function(w){return w&&w.id===id;})[0]:null;}
+/** The look a worker in a world package wears, or null. */
+E.edLook=function(pkg,id){var w=lkWorker(pkg,id);return w&&w.look?lookClean(w.look):null;};
+/** Keep a look on a worker in the world. Returns false for anything that is not a look. */
+E.edSetLook=function(pkg,id,look){var w=lkWorker(pkg,id),c=lookClean(look);if(!w||!c||!E.lookOk(c))return false;w.look=c;return true;};
+E.edRemoveLook=function(pkg,id){var w=lkWorker(pkg,id);if(w)delete w.look;};
+/** The look a wrestler in a game wears, or null (somebody never made in Create a Player). */
+E.lookOf=function(S,id){var w=S&&S.w[id];return w&&w.look?w.look:null;};
+
+/* ---------- finishing moves in the match (docs/plans/create-a-player.md, next step 1) ----------
+   A finisher from a wrestler's file changes how a finish lands, never who wins (the booker still decides that).
+   People kick out of finishers: an easy one often, a medium one now and then on a big night, a protected one hardly
+   ever (and the building comes apart when it happens), an instant one almost never. Every kick-out wears the move
+   down (up to eight steps): it gets kicked out of a little more and lands a little lighter, and it comes back a step
+   every month. Whoever kicks out gains momentum. A clean win with the move pays by how protected it is,
+   how hard it hits and where it comes from. Kick-outs are picked by a hash of the match, never rnd(S). */
+function lookFin(w){var l=w&&w.look;return l&&l.finishing_moves&&l.finishing_moves[0]||null;}
+var FIN_KO={Easy:0.5,Medium:0.28,Protected:0.06,Instant:0.015},FIN_PAY={Easy:0.3,Medium:0.8,Protected:1.6,Instant:2.2};
+/** How much of its protection a wrestler's finisher still has, 1 when it has never been kicked out of. */
+function finProt(w){return 1/(1+(w.fko||0)*0.25);}
+FINX.push(function(ctx,fin,W,L,win){
+  if(win<0||!W.length||!L.length||ctx.m.mt==='br'||fin==='dq'||fin==='co')return null;
+  var S=ctx.S,w=W[0],l=L[0],d=0,xs=[],ko=null;
+  var weight=(ctx.isMain||ctx.big?1:0.4)*(ctx.mins>=14?1:(ctx.mins>=10?0.5:0.2)),key=S.week+':'+ctx.i+':'+w.id+':'+l.id+':'+(ctx.show&&ctx.show.name||'');
+  // the loser's finisher kicked out of by the winner, or the winner's own kicked out of before it finally lands
+  [[l,w],[w,l]].forEach(function(p,k){
+    if(ko)return;var who=p[0],by=p[1],f=lookFin(who);if(!f)return;
+    var pk=Math.min(0.85,(FIN_KO[f.kickout_difficulty]||FIN_KO.Medium)+Math.min(8,who.fko||0)*0.025)*weight*(by.ovr>=who.ovr+10?1.3:1);
+    if(h01(key+':fko'+k)<pk)ko={who:who,by:by,f:f,again:k===1};
+  });
+  if(ko){
+    var lv=ko.f.kickout_difficulty||'Medium',huge=lv==='Protected'||lv==='Instant';
+    d+=huge?3:1.5;xs.push(huge?ko.by.name+' kicked out of '+ko.f.name+', and nobody kicks out of that':'A kick-out from '+ko.f.name);
+    if(!S.cal){ko.who.fko=Math.min(8,(ko.who.fko||0)+1);ko.by.mom=clamp(ko.by.mom+(huge?2:1),-10,10);}
+    ctx.fko={who:ko.who.name,by:ko.by.name,f:ko.f.name,huge:huge,again:ko.again};
+  }
+  var fw=lookFin(w);
+  if(fw&&fin==='clean'){
+    var pay=(FIN_PAY[fw.kickout_difficulty]||FIN_PAY.Medium)*finProt(w)+((fw.impact_damage||0)>=85?0.5:0)+(fw.position==='Top Rope'?0.4:0);
+    d+=pay;if(pay>=1)xs.push(fw.name+' put it away');ctx.fm=fw;
+  }
+  if(!d)return null;
+  return {d:Math.min(4,Math.round(d*10)/10),x:xs.join('. ')};
+});
+WEEKX.push(function(S){if(S.week%4!==0)return;S.w.forEach(function(w){if(w&&w.fko)w.fko--;});});
+/** A wrestler's finisher as the screens show it: the move, and how much of its protection it still has. */
+E.finInfo=function(S,id){var w=S.w[id],f=lookFin(w);return f?{name:f.name,kick:f.kickout_difficulty||'Medium',kicked:w.fko||0,prot:Math.round(finProt(w)*100)}:null;};
+
+/* ---------- Create a Player in a game: a new look for somebody on your roster ---------- */
+/** Give a wrestler on your roster a new look (or their first). Their first finishing move becomes their finisher.
+    They remember it, once a week at most. */
+E.setLook=function(S,id,look){
+  var w=S.w[id];if(!w||w.promo!==S.player)return {ok:false,msg:'Only somebody on your roster can be changed.'};
+  var c=lookClean(look);if(!c||!E.lookOk(c))return {ok:false,msg:'That is not a wrestler\'s look.'};
+  var first=!w.look;w.look=c;var f=lookFin(w);if(f)w.fin=f.name;
+  if(w.lookW!==S.week){w.lookW=S.week;youRemember(S,w,'look',first?'You gave them a look of their own.':'You gave them a new look.',1);}
+  return {ok:true,msg:w.name+(first?' has a look of their own now.':' has a new look.')+' Every scene draws them like this.'};
+};
+/** Take the look off a wrestler on your roster: the game draws them again. */
+E.clearLook=function(S,id){var w=S.w[id];if(!w||w.promo!==S.player||!w.look)return {ok:false,msg:'Nothing to take off.'};delete w.look;return {ok:true,msg:w.name+' is drawn by the game again.'};};
+
 /* ===== 86-rep.js ===== */
 /* ---------- 89. A reputation as a booker: traits earned by how you book, each with a small edge and a small cost (S.reps) ---------- */
 var BTRAIT={
@@ -8549,6 +8699,84 @@ EVR.chant=function(S,ev,choice,P,w){
   var f=startFeud(S,P,w,lead,45,w.name+' answered the crowd’s call against '+lead.name,{force:true});return f?'The chant becomes a story: '+w.name+' against '+lead.name+'.':'They were already feuding, and the chant fed it.';
 };
 E.crowdCity=function(S,rep){var c=showCity(rep);return {city:c,diehard:diehard(S,c)};};
+
+/* ===== 86-scenes.js ===== */
+/* ---------- scenes in a world (Create a Scene, docs/plans/papercraft-engine.md, sections 4 and 5) ----------
+   A world package can carry `scenes`: the pictures of moments made in Create a Scene, which sits in the World
+   Editor. Each is plain data (a set, slots, keyframes; the interface in app/src/kit/scene.ts reads and draws it).
+   A new game keeps the world's scenes in S.db, so the broadcast plays them, and writing the world out keeps them.
+   Nothing here plays a part in how a game goes, and nothing calls rnd(S). */
+function sceneOk(sc){return !!sc&&sc.v===1&&typeof sc.id==='string'&&/^[a-z0-9_-]{1,48}$/i.test(sc.id)&&typeof sc.name==='string'&&Array.isArray(sc.slots)&&Array.isArray(sc.keys)&&sc.keys.length>0&&sc.keys.length<=40&&
+  sc.keys.every(function(k){return typeof k.t==='number'&&k.figs&&typeof k.figs==='object'&&Array.isArray(k.props);});}
+/** The scenes a world carries, made in Create a Scene. */
+E.edScenes=function(pkg){return (pkg&&Array.isArray(pkg.scenes)?pkg.scenes:[]).filter(sceneOk);};
+/** Keep a scene in the world, in place of one with the same id. Returns false for anything that is not a scene. */
+E.edSetScene=function(pkg,sc){if(!pkg||!sceneOk(sc))return false;var a=Array.isArray(pkg.scenes)?pkg.scenes.filter(function(x){return x&&x.id!==sc.id;}):[];a.push(JSON.parse(JSON.stringify(sc)));pkg.scenes=a;return true;};
+E.edRemoveScene=function(pkg,id){if(pkg&&Array.isArray(pkg.scenes))pkg.scenes=pkg.scenes.filter(function(x){return x&&x.id!==id;});if(pkg&&pkg.scenes&&!pkg.scenes.length)delete pkg.scenes;};
+/** The scenes the world of this game carries (none for a world without any, or an old save). */
+E.worldScenes=function(S){var d=(S&&S.db)||DB;return d&&Array.isArray(d.scenes)?d.scenes.filter(sceneOk):[];};
+E.sceneOk=sceneOk;
+
+/* ---------- backdrops: the walls behind a scene, made in Create a Scene's Backdrop tab ----------
+   A backdrop is plain data: a wall and a floor colour and up to 40 parts (banners, windows, a skyline, curtains).
+   A scene stands in front of one when its set is "bg_" and the backdrop's id. Kept in the world like scenes. */
+function bgOk(b){return !!b&&b.v===1&&typeof b.id==='string'&&/^[a-z0-9_-]{1,48}$/i.test(b.id)&&typeof b.name==='string'&&b.name.length<=40&&Array.isArray(b.parts)&&b.parts.length<=40&&
+  b.parts.every(function(q){return q&&typeof q.k==='string'&&/^[a-z_]{1,16}$/.test(q.k)&&[q.x,q.y,q.w,q.h].every(function(n){return typeof n==='number'&&isFinite(n)&&Math.abs(n)<=40;})&&(q.txt==null||(typeof q.txt==='string'&&q.txt.length<=24));});}
+/** The backdrops a world carries. */
+E.edBackdrops=function(pkg){return (pkg&&Array.isArray(pkg.backdrops)?pkg.backdrops:[]).filter(bgOk);};
+/** Keep a backdrop in the world, in place of one with the same id. Returns false for anything that is not a backdrop. */
+E.edSetBackdrop=function(pkg,b){if(!pkg||!bgOk(b))return false;var a=Array.isArray(pkg.backdrops)?pkg.backdrops.filter(function(x){return x&&x.id!==b.id;}):[];a.push(JSON.parse(JSON.stringify(b)));pkg.backdrops=a;return true;};
+E.edRemoveBackdrop=function(pkg,id){if(pkg&&Array.isArray(pkg.backdrops))pkg.backdrops=pkg.backdrops.filter(function(x){return x&&x.id!==id;});if(pkg&&pkg.backdrops&&!pkg.backdrops.length)delete pkg.backdrops;};
+/** The backdrops the world of this game carries. */
+E.worldBackdrops=function(S){var d=(S&&S.db)||DB;return d&&Array.isArray(d.backdrops)?d.backdrops.filter(bgOk):[];};
+E.backdropOk=bgOk;
+
+/* ---------- hooks: who a scene is about (docs/plans/papercraft-engine.md, "Hooks") ----------
+   A slot in a scene can name a part in the story instead of a fixed person: the hero, the villain, the villain's
+   group, the champion, the manager. E.sceneHooks fills every part it can from a moment of the show and what the
+   game knows (stables, tag teams, managers, titles, the face of the company). It only reads the game. */
+var HOOKS=['a','b','hero','villain','heel1','heel2','heel3','ally','manager','champ','challenger','winner','loser','talker','attacker','victim','face','authority','interviewer','referee'];
+/** o: {ids: everybody in the moment, in the order they appear; a: who does it (the attacker, the winner, the one
+    talking); b: who it is done to; win: the winners' ids; title: the title's name, if one is on the line}. Returns
+    {hook: wrestler id} for every part that could be filled. */
+E.sceneHooks=function(S,o){
+  o=o||{};var W=function(id){return id!=null&&S.w[id]?S.w[id]:null;},ids=(o.ids||[]).filter(function(id){return !!W(id);}),out={},used={};
+  var a=W(o.a)?o.a:ids[0],b=W(o.b)?o.b:ids.filter(function(x){return x!==a;})[0];
+  var put=function(k,id){if(W(id)&&out[k]==null)out[k]=id;};
+  put('a',a);put('b',b);put('attacker',a);put('victim',b);put('talker',a);
+  var all=[a,b].concat(ids).filter(function(x,i,l){return W(x)&&l.indexOf(x)===i;});
+  var hero=all.filter(function(id){return W(id).align!=='H';})[0],villain=all.filter(function(id){return W(id).align==='H'&&id!==hero;})[0];
+  if(hero==null&&villain!=null)hero=all.filter(function(id){return id!==villain;})[0];
+  if(villain==null&&hero!=null)villain=all.filter(function(id){return id!==hero;})[0];
+  put('hero',hero);put('villain',villain);
+  // the villain's people: the stable first (the leader before the rest), then a tag partner, then the manager
+  var v=W(villain),h=W(hero),grp=[];
+  if(v){var st=stableOf(S,v);if(st)[st.leader].concat(st.m).forEach(function(id){if(id!==villain&&id!==hero&&W(id)&&grp.indexOf(id)<0)grp.push(id);});
+    var tm=teamOf(S,v);if(tm&&tm.m)tm.m.forEach(function(id){if(id!==villain&&id!==hero&&W(id)&&grp.indexOf(id)<0)grp.push(id);});
+    if(v.mgr!=null&&W(v.mgr)&&grp.indexOf(v.mgr)<0&&v.mgr!==hero)grp.push(v.mgr);}
+  // whoever else in the moment is on the villain's side counts too
+  all.forEach(function(id){if(id!==villain&&id!==hero&&W(id).align==='H'&&grp.indexOf(id)<0)grp.push(id);});
+  grp.slice(0,3).forEach(function(id,i){put('heel'+(i+1),id);});
+  if(h){var ht=teamOf(S,h),al=ht&&ht.m?ht.m.filter(function(id){return id!==hero&&W(id);}):[];if(al.length)put('ally',al[0]);
+    else{var sh=stableOf(S,h);if(sh)put('ally',sh.m.filter(function(id){return id!==hero;})[0]);}}
+  put('manager',v&&v.mgr!=null?v.mgr:(h&&h.mgr!=null?h.mgr:null));
+  // the champion: whoever holds the title on the line; else the best title held by somebody in the moment
+  var P=S.promos&&S.promos[W(all[0])?W(all[0]).promo:S.player],best=null;
+  if(P&&P.titles)P.titles.forEach(function(t){var hd=t.holders[0];if(hd==null)return;if(o.title&&t.name===o.title){best={t:t,id:hd,on:1};return;}
+    if(all.indexOf(hd)>=0&&(!best||(!best.on&&t.lvl>best.t.lvl)))best={t:t,id:hd};});
+  if(best){put('champ',best.id);put('challenger',all.filter(function(id){return id!==best.id;})[0]);}
+  var win=(o.win||[]).filter(function(id){return !!W(id);});
+  if(win.length){put('winner',win[0]);put('loser',all.filter(function(id){return win.indexOf(id)<0;})[0]);}
+  var f=faceOf(S);if(f)put('face',f.id);
+  // people who are not wrestlers: whoever has power on screen, whoever holds the microphone, the referee
+  var pid=P?P.id:S.player,staff=function(r){return rosterOf(S,pid).filter(function(w){return w.roles&&w.roles.indexOf(r)>=0&&all.indexOf(w.id)<0;}).sort(function(x,y){return (y.mic||0)-(x.mic||0);})[0];};
+  var A=S.arc;if(A&&!A.done&&A.k==='authority'&&A.cast&&W(A.cast.lead))put('authority',A.cast.lead);
+  var ow=staff('owner')||staff('booker');if(ow)put('authority',ow.id);
+  var iv=staff('interviewer')||staff('announcer');if(iv)put('interviewer',iv.id);
+  var rf=staff('referee');if(rf)put('referee',rf.id);
+  return out;
+};
+E.SCENE_HOOKS=HOOKS;
 
 /* ===== 87-create.js ===== */
 /* A company grows: new weekly shows and new belts during a game, for the player and for rivals.
@@ -10118,7 +10346,7 @@ E.sign=function(S,id,wage,weeks){
   var from=w.promo;if(from!=='FA'){S.promos[from].rel=clamp((S.promos[from].rel||0)-12,-100,100);leaveCompany(S,w,'left for '+P.name);}
   joinCompany(S,w,P,wage,weeks||48);
   news(S,'contract',P.name+' signed '+w.name+(from!=='FA'?' away from '+S.promos[from].name:'')+'.');
-  award(S,from==='FA'?'ACH_SIGN':'ACH_POACH');
+  award(S,from==='FA'?'ACH_SIGN':'ACH_POACH');if(w.cr)award(S,'ACH_CREATE');   // a wrestler made in Create a Player
   return {ok:true,msg:w.name+' signs for '+money(wage)+' a week.'};
 };
 E.release=function(S,id){var w=S.w[id],P=S.promos[S.player];if(!w||w.promo!==P.id)return null;var pay=w.wage*4;P.cash-=pay;if(S.owner.pledge==='stable'){rosterOf(S,P.id).forEach(function(x){x.morale=clamp(x.morale-3,0,100);});S.trust=clamp(S.trust-4,0,100);}leaveCompany(S,w,'released');w.promo='FA';w.brand=null;news(S,'contract',P.name+' released '+w.name+'.');return w.name+' is released. Severance: '+money(pay)+'.';};
@@ -10487,7 +10715,7 @@ var MAPS=[
 
    The road is a loop through the company's cities, each stop the nearest one not yet visited, so the arcs on the map
    make a tour and not a scribble. Stop number S.rdn is the next show to go on the air. Nothing here uses rnd(S). */
-var CITY_AT={'Rome':[41.9,12.5],'Athens':[37.98,23.73],'Alexandria':[31.2,29.92],'Constantinople':[41.01,28.98],'London':[51.51,-0.13],'Paris':[48.86,2.35],'Vienna':[48.21,16.37],'Kyoto':[35.01,135.77],
+var CITY_AT={'Kingsport':[36.55,-82.56],'Knoxville':[35.96,-83.92],'Nashville':[36.16,-86.78],'Atlanta':[33.75,-84.39],'Jacksonville':[30.33,-81.66],'Orlando':[28.54,-81.38],'Tampa':[27.95,-82.46],'Miami':[25.76,-80.19],'Rome':[41.9,12.5],'Athens':[37.98,23.73],'Alexandria':[31.2,29.92],'Constantinople':[41.01,28.98],'London':[51.51,-0.13],'Paris':[48.86,2.35],'Vienna':[48.21,16.37],'Kyoto':[35.01,135.77],
   'Philadelphia':[39.95,-75.17,['Pennsylvania']],'Boston':[42.36,-71.06],'Chicago':[41.88,-87.63,['Illinois']],'St. Louis':[38.63,-90.2],'Edinburgh':[55.95,-3.19],'Dublin':[53.35,-6.26],'Verona':[45.44,10.99],'Nottingham':[52.95,-1.15],
   'Camelot':[51.02,-2.53],'Springfield':[39.8,-89.65],'New York':[40.71,-74,['New York']],'Baltimore':[39.29,-76.61],'New Orleans':[29.95,-90.07],'Sparta':[37.07,22.43],'Thebes':[38.32,23.32],'Corinth':[37.94,22.93],
   'Delphi':[38.48,22.5],'Troy':[39.96,26.24],'Memphis':[29.85,31.25],'Uppsala':[59.86,17.64],'Uruk':[31.32,45.64],'Tara':[53.58,-6.61,['Ireland']],'Whitby':[54.49,-0.61],'Sleepy Hollow':[41.09,-73.86],'Prague':[50.08,14.44],
@@ -10656,6 +10884,16 @@ function roadMap(S,cities){
   var Wd=mapById('world');                                      // the world map only when nothing closer will do
   return best||(Wd&&mapHas(Wd,here)&&mapArea(Wd,here)>=0?Wd:null);
 }
+/* The area this week's city is in, as a piece of cut paper (src/91-shapes.js), with a pin for every stop on the road
+   that falls inside it: the city this week always, the stops before and after when they are in the same state. */
+function roadShape(S,M,ai,stops){
+  if(!M||ai<0||typeof SHAPES==='undefined')return null;
+  var n=M.a[ai],Z=SHAPES[M.id+':'+n];if(!Z)return null;
+  var pins=[];stops.forEach(function(s){var p=placeOf(S,s.city);if(!p)return;if(s.k!=='now'&&mapArea(M,p)!==ai)return;
+    var x=p.lon-Z.f[0],y=(Z.f[2]-p.lat)/Z.f[3];x=x/Z.f[1];if(x<-1||y<-1||x>Z.w+1||y>Z.h+1)return;
+    if(pins.some(function(q){return q.city===s.city;}))return;pins.push({city:s.city,k:s.k,x:Math.round(x*10)/10,y:Math.round(y*10)/10});});
+  return {n:n,w:Z.w,h:Z.h,p:Z.p,pins:pins};
+}
 /** Everything the road window on the desk shows. It only reads the game.
     `map` is the board to draw (see E.MAPS), `lit` the areas that light, `stops` the road so far and the road ahead
     with each stop's dot, `now` this stop in full. */
@@ -10675,7 +10913,8 @@ E.road=function(S){
   }
   var cap=roadCap(S,P,A.show,city),mk=mktKnow(S,P,city),sale=stopSales(S,P,A.w,A.show,A.k,true),last=S.rdv&&S.rdv[city],bar=S.bar&&S.bar[city],reg=P.tour?REGIONS[P.tour.reg]:REGIONS[homeReg(P)];
   var home=rosterOf(S,P.id).filter(function(w){return !w.nw&&homeNear(S,w,city);}).sort(function(a,b){return (a.town===city?0:1)-(b.town===city?0:1)||b.ovr-a.ovr;}).slice(0,3).map(function(w){return {id:w.id,name:w.name,hurt:w.inj>0,town:w.town,near:w.town!==city,km:homeKm(S,w,city)};});
-  return {map:M?M.id:null,mapName:M?M.n:null,lit:lit,stops:stops,off:off,
+  var sh=roadShape(S,M,lit.now,stops);
+  return {map:M?M.id:null,mapName:M?M.n:null,lit:lit,stops:stops,off:off,shape:sh,
     now:{city:city,land:M&&lit.now>=0?M.a[lit.now]:null,show:A.show.name,big:!!A.show.big,kind:A.show.big?(A.show.flag?'Flagship':evTy(A.show).n):'',w:A.w,later:A.w>S.week,left:Math.max(0,(S.queue?S.queue.length:0)-(S.qi||0)),
       venue:venueName(city,cap),cap:cap,seat:Math.round(ticket(P,A.show)*TIX_P[P.tix]),tix:TIXN[P.tix],
       sold:sale.sold,wk:sale.wk,on:sale.on,opens:sale.opens,gate:Math.round(sale.sold*ticket(P,A.show)*TIX_P[P.tix]),
@@ -10700,6 +10939,187 @@ SHOWX.push(function(S,P,show,rep){
   if(rep.sellout){S.soRun=(S.soRun||0)+1;rep.soRun=S.soRun;if(S.soRun>=3)S.hype=(S.hype||0)+0.02;if(S.soRun===5||S.soRun===10||S.soRun===20)news(S,'world',P.name+' has sold out '+S.soRun+' shows in a row.');}
   else{if((S.soRun||0)>=3)rep.soEnd=S.soRun;S.soRun=0;}
 });
+
+/* ===== 91-shapes.js ===== */
+/* ---------- the shapes of the road: generated by tools/build-maps.js. Do not edit by hand. ----------
+   Every area of every map but the world, as cut paper: `f` is the frame (the longitude of the left edge, degrees of
+   longitude a unit, the latitude of the top edge, degrees of latitude a unit), `w` and `h` its size in units, and
+   `p` its outline, a loop of points for each piece of land, two characters a point (char code minus 40). Natural
+   Earth outlines, public domain. */
+var SHAPES={
+ "usa:Washington":{"f":[-124.803,0.08908,49.08,0.07015],"w":89,"h":51,"p":["?))TiTiU^V\\XUXUYIXGZ@Z=R;Q8R7P0P0K2M3I0J0G2F/E/B-A-<)8)204057576;5=7?5@:B9A<DAC:E7C6B2@3B5?5?3B1B,@-"]},
+ "usa:Idaho":{"f":[-117.322,0.09765,49.062,0.07689],"w":65,"h":93,"p":["+)5)57899><?BGCFGGFLELFRDRESDVGWKTMZP\\O^TaUeWcXddcdahch+,g)f)c-_.Y1U/R,Q,L+L"]},
+ "usa:Montana":{"f":[-116.174,0.11478,49.068,0.09038],"w":107,"h":53,"p":[")))UUUU[SZSXQXQZIZI[D\\CX@W@T=R<M9P6O7N6H7H8C5C3?0<.<,:,7)5"]},
+ "usa:North Dakota":{"f":[-104.156,0.08908,49.08,0.07015],"w":86,"h":46,"p":["))v)w7z<zF{F{N}O}U)U"]},
+ "usa:Minnesota":{"f":[-97.348,0.08052,49.428,0.0634],"w":97,"h":95,"p":["C)G)H.I.I3K4N3T6X6[4`5`6c6b8e8f;g9j9k;n;n=p>u=v;y;y==?>AxEqMiQiSgTg]b_ab_c_ebf`rbrdugugwjwl{q}tst^^33h1h.e2a2\\/V.C+>+6*6+3)/C/"]},
+ "usa:Michigan":{"f":[-90.475,0.08052,47.555,0.0634],"w":101,"h":93,"p":["qCtDrFvFxI{ILPQR[~\\~_z`ye}fea_ciioovwuuwwz{W]x]oYgZeY_[^\\Y]Y\\U^U_RbQcOeOeQgRgLjJlKkIlDrE","E)J)J*D-D/B/A4E1E2K3O9T8T:V:W8Y9]6l5k9s:w8w=u>x>x@~?Bp@oApCnCl@e?dAaAaB\\A[DXEXHWHWEYDYBVCUESERCRFPGPIKOJNKJHKIEEDFCEAAAA@>A6=.<,;+8)8+6.61334337381;1;/=/>-@-B*E*"]},
+ "usa:Maine":{"f":[-71.116,0.06339,47.495,0.04991],"w":66,"h":90,"p":["E)I)J.W+\\0\\;];\\L_NbNaUcWdVgWi[i_g_ebc`cbab`e^c\\d\\f[eYgVfViQhQjSkQjNkNhLhMdIeKiIhHoFoEqDo>r=t;r:t6u6w4w4z1{0.-}*{)T+S+U-U-Q0R.O1L3L3J6H5A7>9>:7@1@/D,"]},
+ "usa:Wisconsin":{"f":[-92.969,0.06339,46.985,0.04991],"w":95,"h":91,"p":["G)L*J+K-I,H0L.M0S1T4W6c8c9f9l<m;q=s<u=t@yAzCyI|H{J|PyQySvVvYxY|SRPOLJOPSSVW~a|a{c{kxpxxz|yMLIF}FzDxDuFtFrCoBe:a8\\3[3Y0Y+U+J-F*E)B+A-=3:3/5-7.?-"]},
+ "usa:Oregon":{"f":[-124.625,0.08908,46.333,0.07015],"w":93,"h":63,"p":["3)5)6+:*=.=2?3E3G1N1N2R2U0Z1\\/f.f--00349:>}>{B{EG}K}f,f*b+])[)X*X*U-O-I.I.=/=/404/*3*"]},
+ "usa:South Dakota":{"f":[-104.156,0.08908,45.983,0.07015],"w":87,"h":51,"p":["))})}+z.{0~1~K}K~T|V~W~Z|Y|WwVwUlVkThThS)S"]},
+ "usa:Wyoming":{"f":[-111.118,0.07195,45.052,0.05666],"w":99,"h":73,"p":[")))oopjpjo)p"]},
+ "usa:New York":{"f":[-79.85,0.07195,45.052,0.05666],"w":105,"h":81,"p":["k))69:BABKKTTX[l~m~qpnrtvvxvvyv{omhkfkbg^)^)Y.W0T2T6P3K3G7G7FFFGHSGUD[B[?Y=\\=\\<X:X8[7]4_4f,j+"]},
+ "usa:Vermont":{"f":[-73.492,0.04626,45.068,0.03642],"w":44,"h":65,"p":[".)R*S+R0Q0R6L<G=HCFEFHDIDLBM@Q@V?V@Y?Y?_>_?a<d>h-h,g-f-Q,P)Q+M)C*C*@,?,<+<,7*5+*.*"]},
+ "usa:New Hampshire":{"f":[-72.603,0.04626,45.323,0.03642],"w":42,"h":73,"p":["C)E*I)KXLXK^OaNdQgOkKkJmGmGoEp+o)k,f+e,\\-\\,Y.X/S1S2L4K4C9C9A<A?==7@4?1B,A*"]},
+ "usa:Iowa":{"f":[-96.728,0.07195,43.546,0.05666],"w":92,"h":57,"p":["*)t)u,w-u/v5w7|8|:=@AGHK}MwMvQxRxWvXv[r\\r`p`n\\H\\H]5\\4[5V3R4O1L0C.C-A-=,=-;)7,1,.*.+,"]},
+ "usa:Nebraska":{"f":[-104.108,0.09765,43.048,0.07689],"w":91,"h":41,"p":["))b)f,h*i+n*o,s,u/w/w2x2w4z6z<|=|C}C|GP=P=C)C"]},
+ "usa:Illinois":{"f":[-91.583,0.08052,42.572,0.0634],"w":52,"h":89,"p":["4)W)W/Y0Y4Z4Z[Y[Z]Y_Z_[eYfXjUlSyNzOK~J|H|FCBu?r<r7m:b8a3b3\\0[+V*Q)Q)K+J+G-G.C0B.;69:3:/7."]},
+ "usa:Massachusetts":{"f":[-73.538,0.04626,42.931,0.03642],"w":79,"h":40,"p":["`)c*c.e0f/h0f2b2b5_6`7_:b9c;e;e>g?eBiCiGkItHtDsDsAtAvEvKkLjNfOgIeIcL`M`O\\O\\KWGXEWA9A8B4@)@)<*<.-Y.[-[+^+"]},
+ "usa:California":{"f":[-124.512,0.11478,42.054,0.09038],"w":91,"h":106,"p":["+)O)OJRMTM\\V^Vngpg~u~xy|}}~hf`]]XVU}J{JtHtHqFqDmAkAi?h>d@b?`<`:^:Z9Z:X9V5U6S4O2O2M/K.@)<)8+6+1,1,-*+"]},
+ "usa:Nevada":{"f":[-120.109,0.08908,42.076,0.07015],"w":69,"h":102,"p":["))l)l}k~g|d}fElCl9a7a/X-X)T"]},
+ "usa:Utah":{"f":[-114.13,0.07195,42.041,0.05666],"w":72,"h":90,"p":["))S)S:o:obnbo)"]},
+ "usa:Indiana":{"f":[-88.147,0.06339,41.829,0.04991],"w":54,"h":82,"p":["=)])]Y\\Y\\_[_]dYeXgSfSjOmOoLoKuGuFrDqDsBt@x>w>u:v9y6x5v0u1x+w,y)y+o-o.k0k0h2g2d1d2a0_1Z2Z2+9,"]},
+ "usa:Ohio":{"f":[-84.88,0.05482,42,0.04317],"w":81,"h":84,"p":["u)x)xHuHvPtRtWrXr]ldjefddgbg`kao^p]mZoYwWwWzR{PxMwLsItHvDvAt?v<v;s4r3n0k.l,l+j)k)/B.B/I1J3N2R6V6\\3b4h.n+u*"]},
+ "usa:Pennsylvania":{"f":[-80.59,0.07195,42.324,0.05666],"w":82,"h":47,"p":["2)3)3.q.r0t0u6y8x<t?uBsCsGuGuJyMyOtQtSlTkV)V).--.+"]},
+ "usa:Connecticut":{"f":[-73.778,0.03769,42.095,0.02968],"w":54,"h":38,"p":["0)B*B+C*\\*]+]?[?\\ATBTCRBPDKCKD@D?E>C=F;F:H6H6I3I3K/K.M-L+M)I0F.D"]},
+ "usa:Colorado":{"f":[-109.135,0.07195,41.061,0.05666],"w":100,"h":73,"p":[")))p)p"]},
+ "usa:New Jersey":{"f":[-75.608,0.03769,41.374,0.02968],"w":46,"h":83,"p":[">)B)H.U4U8T8T;R<R?MAMDLDLGSHSPQTP_MeKfJjAqAs?t?w<z9z;r8r8q4r2n-l-j*i)b,`.\\5Z5W?R<L8H6H6C3C3<6;547490;0<+"]},
+ "usa:Kansas":{"f":[-102.1,0.08908,40.106,0.07015],"w":85,"h":45,"p":["))`)`*x+y-w.w1|6|T)T"]},
+ "usa:Missouri":{"f":[-95.844,0.07195,40.649,0.05666],"w":95,"h":83,"p":["))b)e-d/e6i:i<o@pGvFxHvJwLtPtSxWzWzY|X\\``dhgimopoqtv~vw~ztzxvwq9q9B7B5>2<3968552614/4"]},
+ "usa:Kentucky":{"f":[-89.608,0.08052,39.208,0.0634],"w":96,"h":44,"p":["d)i*k/p/p1r0y1|/|23:;>CDG~H|MyMxOsPsQRQRP>Q>P;P;S)S+Q-R-O.O-J/G5J7I6D;C:@;>=?=<@>A<H>H<J;N<P8R;V;V8Y7Y5\\3\\/^0d/c-"]},
+ "usa:Maryland":{"f":[-78.945,0.03769,39.756,0.02968],"w":104,"h":63,"p":["()|)~TTXZbce{dyfz^y_w^z[vZwWuXu[q[qYoXnOoNpOrNtPuOrNrLpKmLnGqHqDmFlDnArBpAo;p;p8w3v2w/t/s0t3q5o2o7m4m7l7m9k;h:h<k=kBgJiNhQlVlXjYlYl]n^m_nbmbk^i`g\\a[aY^Z^X\\X\\UUWTRVOXOXL[J[H^E[BXDUBU@O?N>O9M9M7H7H3D0F-@->*<*:-7,5010,-(1"]},
+ "usa:Delaware":{"f":[-75.812,0.02912,39.867,0.02293],"w":27,"h":63,"p":["/)5*4//2/4150;6B6K9N9R>WAVBf,e*>)>)-"]},
+ "usa:Arizona":{"f":[-114.903,0.08052,37.097,0.0634],"w":74,"h":92,"p":["T)q*qVROH|B{@y=y;w8w6u)q)n-m-h+h*b-`.W2U0R.R.N+K,C+C*8/7/9293*T*"]},
+ "usa:New Mexico":{"f":[-109.138,0.08052,37.033,0.0634],"w":77,"h":91,"p":["))t)swGwH{4{4)"]},
+ "usa:Oklahoma":{"f":[-103.08,0.09765,37.075,0.07689],"w":90,"h":46,"p":[")))66==U{SzQxRsQoSfQdS_P^R\\R[NVOVNPMPKJKHIH/)/"]},
+ "usa:Tennessee":{"f":[-90.389,0.08908,36.728,0.07015],"w":99,"h":26,"p":["B)*,/10132|3|5x6v9q9o=l=lA)A+?+:.8-6/604/2110/2/3+B+"]},
+ "usa:North Carolina":{"f":[-84.085,0.08052,36.653,0.0634],"w":105,"h":45,"p":["F)*-,.102232663399==;<==BACDDFFHGvNtTsSlTiQiO_EQEQBK?<?6B(B(>*:09366682<3=0A1B.E-"]},
+ "usa:Texas":{"f":[-106.803,0.13191,36.592,0.10387],"w":102,"h":104,"p":["E)\\)\\<]=a=b?e?e@j@kBmAoCqBqDrBwCwDzBBDEUUY\\klpoq}tyuwxtwtzqyr}o|q~opoqplhebb__~\\}\\zYxWpQjNjNiGjFoDqAq?n<n<l9k7b3`,Y,W)V)TDT"]},
+ "usa:Arkansas":{"f":[-94.679,0.05482,36.55,0.04317],"w":93,"h":83,"p":[")){)|/w3w55779~;@}?}B|AzB|CzE|F{G|IxKyNuOuRsQsSuSsTsZqZm^n`l_mcldjcjgkgihjkgjilgnjpiqjwhwiz4z4m.m.n,m,;+;"]},
+ "usa:Mississippi":{"f":[-91.732,0.07195,35.056,0.05666],"w":51,"h":87,"p":["<)Y)Z*Z5Y5WTVTV^U^V{NzK|I{I}F~BvDp*p)k+k,i*h+f-f-a/a2\\2[0\\0Z3Z2X3V1V2S0T1M/N2H2G0H1E/C0B/@2?1;4:3858366654848/:/:-9.8-9+:,=+"]},
+ "usa:Alabama":{"f":[-88.577,0.07195,35.056,0.05666],"w":52,"h":86,"p":["-)Q)WPXPXS[YX_XdYdXmZnZp6p5s8u8y9y6}3}3{1z1u/v/{.{/},z*z)_*_+J,J,@-@-6.6.,/,"]},
+ "usa:Georgia":{"f":[-85.657,0.07195,35.056,0.05666],"w":68,"h":84,"p":["))K)H/K0L2O2S<X?XB\\D]IbLcTfUg\\k]k_h`gfehelbocu[sZt[yZ{X{Xw3u2t1m0m0c/c0[2[2X1X2V.N"]},
+ "usa:South Carolina":{"f":[-83.427,0.05482,35.223,0.04317],"w":90,"h":75,"p":["9)Q)W,X1m2y>y@GyMuUvWr[n[n^kaiagedeah^g_i^l[mYkZoWpVrRpRkPgMeM_K[EWEUCTCP>M>J7E6A4@3:.9.7)4*1./.-9*"]},
+ "usa:Louisiana":{"f":[-94.124,0.06339,33.075,0.04991],"w":81,"h":83,"p":["))W)X*W2X2X5Z6Z9W9W;Y:Y<W<X>T@UCQERJQLOLPMORmRl[n\\pcnckfmhphperdrftgtjrjrmnmnoqrtrwtwwxwwzmsksfxexeubs]w_y]x[yZvWvTtTsWsVqTrToRpQmOmOkKkLiGjGmInFnFo?n8j0j,l+i/e.d/c.Z1V1N-G-B)>"]},
+ "usa:Florida":{"f":[-87.713,0.08052,31.05,0.0634],"w":96,"h":95,"p":["))J)J,N.k/m3o2o/n/o,v-x=OUUY[^^agvv|}zyzyx|ryppoqmqoolpnmnilligidfah]j\\jZh[hXfXg]dZeYdUfTfQgQfHeFbFbD`D[:V7S7R:O:O<N;L=J<I?E>F=E9@7>47372+4,.),"]},
+ "brit:Scotland":{"f":[-7.19,0.06924,58.677,0.0401],"w":79,"h":103,"p":["^)d)c/a2_2[7Y7V:V=X>U@TCYC^@b@bAqAr@vDvGtHrLpUlYk]h_b`baibiedfaj]j]kbkblelfjkjsoqsnunwkyk{h}fcc\\]b\\[XXQNJIFEGHLyLuIsInJlLlJhHkElEnDnEhBjBsErFxCxBsAs@z={=u>u>r@q?p@bEX@];]=^=a;c7c7d5c7b7^5]5[9[9];]:Z8Z8X=V<S?P?J<I<F>E=?>?><C<C;E<D9B8B5C3G3G0F0G+J*K,M+R,R+X+X*^*","5,6,62361637390:,?*?*=-:*9)4*3/4.14.","4A6A7C7J>K>M:Q9Q9M4M2I.H.F1F1C4C"]},
+ "brit:the North of England":{"f":[-3.616,0.04676,55.819,0.02708],"w":84,"h":94,"p":["I)K)M-S3VDWDXKYK[RfWiZi\\l^l`sfshqiqlrlrowyqwpululvpwt|v|y{:7744y6w6t4t4o8l8e1f.c.a)[)U3U3G9A9?>:>8A6A4D2D0I+"]},
+ "brit:Ireland":{"f":[-10.468,0.06474,55.413,0.0375],"w":70,"h":106,"p":["X)Z)^-W3U:P;R>M@LCPFPHTJYJ[H[D^C`E`HcIcLjKjNhMhQiQiUkXkblbmjjojufyh}f~a}`^}^UUSPPMHI@237-1330*)-/0*)~+|1}2|1w3w5t>sAp>o=r9r9s5r1t8m8h:g:e?d?b6b5_2`2^.^.Y2Y1U3S6S6Q1Q2L0L0I.I.G/F2G5E;F<H>FFGECGAJAL=E=B;H7H2L.R.R,T,U.T3U3V2U-V+Y+"]},
+ "brit:Northern Ireland":{"f":[-8.194,0.03327,55.253,0.01927],"w":83,"h":63,"p":["Y)g*g,i-j4l5m9s?sBoDnGvFzMzRwPvMtMtPuPtUwVv[o]lejfefdd`d^fVfV_R_R]P\\PXLTJTFXG]BaBc:b8_2^2[)R,N/N5K5I1G1D7D<A>:?:?6B2F1I3L0N+S,"]},
+ "brit:Wales":{"f":[-5.278,0.03776,53.462,0.02187],"w":64,"h":96,"p":["d)g)g-e,e.g/gdb`][[URROM}DD}GzCz=v9w7z3|,y+r)q*m@bA`C`E\\G[HUJSHQIJGGGABA8F8C:B:@@<A8F3N/W/Y-\\-_0a0`+c*e,","=*B*E/H/H1D3A7=5;2;+"]},
+ "brit:the Midlands":{"f":[-2.934,0.05125,53.339,0.02969],"w":92,"h":39,"p":["*)g)h0d3b7e8f:h:m4x5x6}7>HHN)N)*"]},
+ "brit:the West Country":{"f":[-5.688,0.04226,52.23,0.02448],"w":88,"h":91,"p":["j))jyjyirjqhmffffgcg]j[tYxVzKsKt>w<z:z7}520,)*{1y3u7r7p;m;k@g@eCbC\\JXJULRPRPQeRhOkHpDpBu=t<nCjD"]},
+ "brit:the South East":{"f":[-2.041,0.03776,52.212,0.02188],"w":98,"h":69,"p":[")))/339~;v;s=s?v@vEtGlHpNtNtONOX{\\x`xcrbpekffj`j`i[i[hPhLjFjCg9e;h9h7k)l"]},
+ "eur:Norway":{"f":[4.801,0.08914,63.013,0.05907],"w":92,"h":85,"p":["B(O(R+S*Q({(z)z0|3{?@EI|J}OQW~W~Z{]x]waubvltnrmrjlihbghdlam_kRxJ|@|@z>z=|<{=x8x0r0l3l5n9m9l6m4k5f8e9c7c5f0g/i,i,d-d-a/`3a4_7_7^2^2]7Y7W:T8T4X4Z1[1]-a+a,\\-\\,Z1Z2X-X,S.Q+P*I@HAJAHEHGFEFDDDG;F;H8H8G-H*F*C-A)>);1;1<9=9<2;2:,:+8,6/613=2=1728/@.@/H0G/H-D-D,>->+"]},
+ "eur:Sweden":{"f":[10.998,0.11036,63.013,0.07313],"w":73,"h":106,"p":["3(l(l*j+f*h.d0b/d3b5b:`:`EaEaHdHdJgIiLkLlOoPpUmVnWm[k[l^j]\\d]f\\fZ{Y{Y~URRJJHEFE>>9:66879977}4{2w2t0t/n,l,h*g*`)`)^,^,`/_.V0U0S6P6I5I4C8C9A9>3:3545412/"]},
+ "eur:Finland":{"f":[21.047,0.09975,63.013,0.0661],"w":106,"h":49,"p":[",((+/55zCxCsHqHmMkNeMcO^N^OZOYQTQTRMSKUFUFV?V>X<X>U<U;R9U6U7P5P5S4S3R4O0M*N,M+E-C->.>,9*8+2)1)+,*"]},
+ "eur:Russia":{"f":[27.2,0.29076,63.013,0.19267],"w":87,"h":114,"p":["7(~(~c|dxcxerhrlmjknlvpws|r~t~rnmkkmnnqqomlhhfa^SPNJD@>>:;>>BDELLOL}O}P{R{RzNzNxSwTnQlMlLjDiDf@eAb?a?_8a6[:[;Y8X8V6V6S4S5N3M/N/L.M+L*E)E*C)=,8.927.7-4,5*4016+"]},
+ "eur:Estonia":{"f":[22.297,0.0573,59.684,0.03797],"w":103,"h":58,"p":["`)t+w.././13:>PRWXZa}a{_v_v`qam_m]hXeX]S\\TWSUUQUKXNROKKJJMFMDKAK@F>F=B@A@@=@<>>4E3G2G0J0K.Q.T,`,","6C:C:F6E:I6I0N(O(E+E+D6E",",8/8/:4;4>2@0?.B+B*=(=(;+;"]},
+ "eur:Britain":{"f":[-8.222,0.13158,58.765,0.08719],"w":77,"h":101,"p":["M)O)O-M-K0H1I4G4G6K4O4O5X4Y7U?S@SBPBREPEOGKGKHSGWIZL]WaXf]e^gbfdifiigjgljlkjqksltqsqstpvpxmxm{k{l}q}qnnki\\^^\\[WWVSROOLKEEB@><<>DDFFII~OR{QzM}IzF{GyByBz?y@uCuHqGkClFiDhDeFeGhLgLfQgOePcO`Q_Q]N]KZKWMTJTIV?U?SCOCLAKBG=H>I=N;O<E??;B;D7D8C7@;B8?:?:=<<<8:7;7;3?2>.@.@*F+F*M*","5P9Q9T;U:W=X<\\:\\9^4^2Z0Z/],]+[)[)Y+X+V.U/R1S1Q5Q"]},
+ "eur:Denmark":{"f":[8.048,0.0573,57.768,0.03797],"w":81,"h":84,"p":["R)T)R+S7Q8O<OGRIYIZNWQSQQOOQNYIZJ^H^CcDlAnApEqFvEu<v:t3s2n1n3m2f*b*X+X)T*F4I4F6C8B<C=<9;5A5D.E,C,@29B7C4F2F0I-O,","qSwUvZwZxbvbv`qbqftgtjnlnvjwglekal_j_d[^b]dXgXhYg\\h^j^l[kW","MaQaQbVaVdXfXnVnUpQpIlHcKc","]r`rcuivizc{]x\\w"]},
+ "eur:Latvia":{"f":[20.928,0.07853,58.117,0.05203],"w":94,"h":48,"p":["\\)^*`)f-i-i/m3r3r2{3~77~@ALNO}R}UuTsWnWdN]M[IXIWKRKRLMKMJ5I)O)C*C*@.=.822=0E8F<M>T9S-V+\\*"]},
+ "eur:Lithuania":{"f":[20.973,0.06791,56.431,0.045],"w":86,"h":57,"p":["5)S*V,]+^)b)d-o0w8{9yA}A}C{C{EvEtIoJnRkVkWnWoYn[k[kXgXe[a[`_M`M[JXFWEUBVAPCNCJ@I?F5F+A,<)6)0"]},
+ "eur:Belarus":{"f":[23.099,0.08914,56.22,0.05907],"w":109,"h":85,"p":["_)a)b+f*g-l+o-n.o1s0t.x.366=~@BFGIMQQUWYY]][[]abklnn}r{v||z|xxnzlvhwgyfwbwbv`w]v]x[x[vVvUsRtRsNsJq7q3v-w.n)k)i,f1d1]0]0Y-T-O3O3N8O8N;N;K?K@ICICKFKFIDHDEFDECF?H=K=K:Q9P7N7O1R1S/[/[-"]},
+ "eur:Germany":{"f":[5.8,0.12097,54.98,0.08016],"w":77,"h":97,"p":["@)J*K+J.S0R4U4U5W5Y2]2`.d/f2j2m4m6k6k7n7n;o;o@mAmCqFpHrJqQtTtYr\\pYnYo[h]ca_a]d]f_f`mcnhtjtjxgxg{b}dbb`]]XTRNNLKF@>?::68x;u;s/p-m.i+g+c-a+`*Z)Z+X*W+R)Q)O/O0L2K2H0H/F2E3C4=2;48;8;;<;<:?:>9?6C6B1?0?/B/"]},
+ "eur:Poland":{"f":[13.986,0.11036,54.946,0.07313],"w":93,"h":82,"p":["N)Q*Q-S0Y0Y/z0~3~88;AG}I{M}MPXX[\\dffwpxysxotktksishuat_w^v\\w]uZsZqWtUtUrRpRmOmMkJlIjJhFhEfBfCi?j?h<f>e>c4a3^1^0`1X.U.Q/Q.O/M-L.I,F)E)C,A+9-9-7*7*6<1?-C-E+N*"]},
+ "eur:Ireland":{"f":[-10.455,0.06791,55.418,0.045],"w":66,"h":89,"p":["V)Y*[-U1S7N8P;M;J>NANCQCSETDVEXCX@[>]B`C`FeFeEgFdIhQgViZiagcggekcleocp[oZqTqQuNuLxIxHvFvGzEzD|A|;6~22}5{2{/}-|3w/y)x)v/s0q)q)o+n1o1j3h?f@d=c;f1g7b8\\>Y=X6Y4V1W1U-U.T-Q1Q0M5L5J0J1F0D-D-B.A/B:A;C=ADBC?H=J9D:D9A9A7F5F1H0H.R,S.R1S1T0S,V+"]},
+ "eur:Netherlands":{"f":[3.298,0.0573,53.473,0.03797],"w":69,"h":73,"p":["])f)h,l-l6j8i>d>c@dCiDiIfLdLeQaSYRVTWWYXY[[\\ZaXcYfUhUjXkWpSpQnQlSkTePdObIbG`G]E^B^B\\@^;];`8_8a3d1d0b*c)_0_0`6_7`7^,]+Z0Y6]9]6Z4Z4Y7Y7W4U4Q5O9M9K<I>EA6E7H4J4O-U*]*"]},
+ "eur:Ukraine":{"f":[21.894,0.17403,52.462,0.11532],"w":106,"h":64,"p":["d)e*m)p.n/o3t3v6v:z:z;:>=BDFGHLPPRRWW~Z}YxZv]t\\u_r^sbr`m_m^l_b_a]e[aZ`\\`Y_Y_[[[Z_WbTbUfReOgMfMdO`Q`P\\W]VYTXTURTROJKFKFLDKCMAMAO<O;Q9Q8O0O0N.O)K+F-F,A2:592/5/6-B-B.I/I1J0P1R/R1Z2Z.\\+c,"]},
+ "eur:France":{"f":[-4.865,0.1422,51.195,0.09422],"w":92,"h":95,"p":["[)]-a-a/c/d1g1h3g5k5l3l7t;w:{>?BCP|OzTwUwXuYu]v[z[z^{^zc}fyhyj|l{rsw}ww~p}p{nzj{jzey`~aXVRID@@|>|>z@y@uAuBeEfBcC`AaB\\<X;R=Q9R8Q9O7N,L+J)J,G,F)F)D-B2B2A5A7D@C=8A8B;K<M;K:L7Q6U3U,"]},
+ "eur:Belgium":{"f":[2.483,0.04669,51.517,0.03094],"w":84,"h":66,"p":["X)Z*Z,],_*b0i0j2o3p6n8n;l<l?nAtAxEwI{J{OwQvUrToXo[m^qdohhidcac_`[`[\\Z\\[TWVVZSZS[KZMWKULPJPINAOAJ:I8F8B6@/B*=)5-4.28-;-<1@/@0C0D2H2M.M,Q-Q*W+"]},
+ "eur:Bohemia":{"f":[12.014,0.07853,51.107,0.05203],"w":88,"h":50,"p":["E)H*J.M-N*P*R.X/Z1_1`3^4^6b9b;g9f5l8q7q:o;r>v=w?{?G{GxKvKuPsPqSoTiSgXfVbT^V^UZUYSUSTQNQMUKUJXCY<Q9Q9O6N4J0I-C.>+=)7,:.6557472F,"]},
+ "eur:Slovakia":{"f":[16.813,0.06791,49.636,0.045],"w":85,"h":43,"p":["N)P*Q-T.S2U1X2X0]-b.b/f/f-p-p.s.u2|4z;x?v@vDpEm@j@jA_@[GWITIQGMKFKDNEODQ=Q=R4Q/L,L)F+;-9/:6986;5;1?/B+G+H-K-K+M+"]},
+ "eur:Austria":{"f":[9.449,0.08914,49.039,0.05907],"w":87,"h":45,"p":["f)h*k)r-x,|.{4~8}?w>w@y@yCvDwJuJqNqPnOlQeQcT\\T\\SIPHMFLGICK;K:N3M3K1K1M.M,J*J)H*A/B0F3D3A6A9D;D;C>C?AM?MAPBO:M9M7T4U0X1Y-\\0c/f,"]},
+ "eur:Hungary":{"f":[16.07,0.07853,48.627,0.05203],"w":87,"h":56,"p":["b)c*m)p.w,w.{2~2}8w9v<s>sAqBqEoFmNkNhVcVcXTWQ[NZM\\I\\G_>_<^<\\8[2U1R/R,O+J)I-G-@0=-:.95:495484:7?8?9J8K3Q3T0[1\\/_.`*"]},
+ "eur:Moldova":{"f":[26.563,0.0573,48.525,0.03797],"w":63,"h":81,"p":["9)?+D0G0G2I3N2Q7V8UDYFYH\\I\\M[M\\QbTc]f_eaaa`_^`W_VaV]S]Q_QcSeRiNlNoJrIxCwCtDtCeEbEXCUCQ>M9C5?370402-/)/,,4,5*7+"]},
+ "eur:Switzerland":{"f":[5.902,0.0573,47.795,0.03797],"w":80,"h":53,"p":["T)X)Y+[*\\,b+c-h/i3g5f;l<m?qAsAu=w>wEvEwIsGqGpIrQpQoNgOfKcJbR^V^Y_Y^\\ZX[UXUTQTLRLNPOSMWJYCXAZ<Z;W7S8R7L0L.N.R)S)Q+Q,O+M,G1D1?5=6:;6;493;0>0?2A2C1D.V-T,"]},
+ "eur:Romania":{"f":[20.196,0.08914,48.314,0.05907],"w":108,"h":80,"p":["n)s)u+x4z5}<?BBX\\[YZ[bdb``uu~q}ryqvnooirdw\\v\\uQuMsFtFqHoFoBkBhDhDf@e?h=h<f9f8d6d5c7b5a6]/Y/V.V/T)O)M+L-M.K3J4E6D8=:<<8<5>5?2D1H,T.T/Y.\\2_2b/k.l*"]},
+ "eur:Italy":{"f":[6.507,0.15281,47.115,0.10126],"w":79,"h":104,"p":["G)M)N,W.U/U1W1V6N8M;O<NDPGVJZV`[g[f`mcofqfvkvptpsloknikkjrmsnyjzj~ggdda`b``\\[XTPOSUV]^ee|g{eoan_l_h\\h[fYfXbSbM]M[HVFWGUDSDQBQAH?F9C5C1I.I0E,E*B+>)>);,;,8*6+4.4.31432213/5/74:1:.;0@1?-B.A,F+","9b<c<f>i=s<s<w9v8y6y4x5w4v5k3i3e6f"]},
+ "eur:Slovenia":{"f":[13.324,0.04669,46.896,0.03094],"w":69,"h":48,"p":["b)h)h.j/j2l4g4f5g9b9a<^<Y?ZJRMSORWNWLUGVCRCP?V8V8U6U5W.V0R4R4Q/K-K.F,F+D/?*>);-7/704C8D6H4I1N1N0V1Y.a/"]},
+ "eur:Croatia":{"f":[13.441,0.0573,46.563,0.03797],"w":105,"h":96,"p":["Y)])a+e/e1k5l8p8q;u==<99<>CCGKMMLMSSUTOONwMvOtOsMpMpNhMfJdJcL]L\\OYQULQLPXSYS[W^Xf_marhykyk~qqokj]\\`cjjd{_z]xUyTtPrKlImJkFgFdKdKcIcHaGcEcC_A^@[B[B]FaG`B[BY@YASBSAO>L=N?O@R=R<P9O;N;L=L;I7H6N4O1V.T-P+O)D0F1D3E9D<@=C@EADIEH>J<O;N1T0V-Y-"]},
+ "eur:Serbia":{"f":[18.766,0.06791,46.215,0.045],"w":63,"h":89,"p":["3)7)7*<)?+A/C/D3F2F5E5F9J=P?NDPDQFNFNGRHRJVJYM[M]JbKbM_N_QbT`X]Z]`_b_edhfmbr^s_}]Z~ZQQ}TwPvOsLqLoHmFjCkDnApAs?s?q=q9m4l3i.e/b1c3b/Z4Z4X2W0S-R-N1F0E+F+E-E,@1?1=,;,7*6+4)0,-0-"]},
+ "eur:Bosnia":{"f":[15.688,0.0573,45.301,0.03797],"w":69,"h":73,"p":["=)?)A,C+G-L,M.O.P,R-V,X.].^3e3e2h3g9d<dBgClIkKfKjQjViUfUeWaVb]_[[`[dXeXjZmYpVpUnSnOiMiMgIgJcE_DY@W:Q8L2G0=,:,8)7).+*-*306*<+"]},
+ "eur:Bulgaria":{"f":[22.314,0.06791,44.258,0.045],"w":93,"h":68,"p":["-)2+2.0.01<1@3H2H3M3Q5Y5`.g,g+k+k*o*p,v-w/z.|2~33:};zAzJxJwMtOuQwQ|[t\\qXk[g[f^_a`faf_iYiUkSkPhKhIdAe<h1i2_0]0Z-Y)U+Q*G.G.E2A0=-:+:+7)5).,-"]},
+ "eur:Spain":{"f":[-9.364,0.13158,43.839,0.08719],"w":97,"h":91,"p":["4)7)8+B+C*C+G+K-P-P,U,U-Z,].b-d.d1i2j4t5u3w5z5z8|7~98:>ACE~FvHuJvLsMqSoTmXm^qckgipdp_y^xZzYyVyVzOyL|I|GDCA@{>z@w>x;t7t6n8m8k:k7e8e8b:a:^8^8[6X9X;U:S;G@C@A=A=>1?1<.<,>-8+4)3)0+./.0+"]},
+ "eur:Montenegro":{"f":[18.394,0.03608,43.564,0.02391],"w":55,"h":71,"p":["8):*>)>,F3F5J9U=W@Y@ZB^D^GZHZJUJWMVSRUNUMOIQGWEXA`AcCfBn>l9b.Y/W+W)T)R,P)A*?.?.9417184:3:07,"]},
+ "eur:Kosovo":{"f":[19.971,0.04669,43.304,0.03094],"w":39,"h":48,"p":["9):):,@/C5G7F:N<N?M?KFIGJIIKFKDOBM>M:O8W5W4L2I-G-D*A):-:-8083633706+8+"]},
+ "eur:Albania":{"f":[19.209,0.0573,42.694,0.03797],"w":33,"h":81,"p":["0)1)2.5,8,:2<2?5@>?>>NBTBWGXF[H]GbCdAm=m=o;o<t:x6w4n.k*f*d,e*\\,Y,P-P,H.E.?*>+8)5"]},
+ "eur:North Macedonia":{"f":[20.391,0.04669,42.399,0.03094],"w":57,"h":51,"p":["O)T-T/X3\\4^<`=_H^J[JZPIQGVDWCY=X;Z4Z4X/X.S,R+M*M)D+C+?*?+9/:026/8/;2;0>-D-H*M+"]},
+ "eur:Portugal":{"f":[-9.563,0.08914,42.171,0.05907],"w":39,"h":88,"p":["4)8*7.9-A.C+J,J1N2H8H:F:F?G?GEFEGGEHFODR?R?TAUB[E\\AdAhCkEkEnCn?t@}>}=88~/0t1t0r0l1l0g1f,g,c.c.`,c)b*W-U.O0M0D2A0,"]},
+ "eur:Greece":{"f":[20.081,0.08914,41.816,0.05907],"w":74,"h":92,"p":["l)q,q0n1m9j:i8d8d7_6^8X7V:Q:Q<S=R@U@XCWDVBQATGRGQCNCNBMDPHMGLCG@H=E>DGFHHNLRLVJVKSIRGSHWIXMWN[U]We[f[hZiWhUbPaPcTdUnSnSlPiNjOhIjJnMoNqMsJtJrFpFtHvI}J}I~JGF}D}DBB~?{?y=y=~:|9z:r6n4i6h7e:f;cEgFiHiHgKgKfGeCaAc@b7c7a4c3^0[0Y4Y4W/W*R*O)O+F/E/A3=28787798>3D4F3F0R/T-Y-Y,\\0_/b2g1g0j1l0l+k+"]},
+ "eur:Turkey":{"f":[25.888,0.17403,42.185,0.11532],"w":110,"h":56,"p":[".)4*5.7.:1=0=1D1D2H1H/J/L,Q+S)T*])]+_-b,d0g/h1l1n3r3u1x3{3./.-12:<?AAEIMNQSURSRTS|T{VvWvXrXqVmVkXfWeXf\\d\\c_a\\aZcYcVaV_Y\\WYWXZS]N]LYJYIWCVB[<\\:X8W4X5U0U1T1R/Q0L*J+G,I/I-H.?)@)>+;*8+9-7:897:5?5?4;4:21214+8,6)6)4+3+/,/++"]},
+ "med:Gaul":{"f":[3.075,0.06615,47.325,0.05385],"w":109,"h":111,"p":["(((--.0010557<<:;97=?DD~A?|?y<y8x8v;t;t?rApBjAgCcBbD`D`FeKeO^Q_UdWdYa[b]a_gcmcmfkgkjdmaq^r]uZuWwPvPuKtJrFrFp>q6m2q+t*w(x","xy}~|}{{}|}}~}|"]},
+ "med:Italy":{"f":[6.531,0.11542,47.137,0.09396],"w":105,"h":112,"p":["S)T*Y)[-f.c2f2d4g7g9f7a7]:Z9Y;Z>\\?ZA[H`JbMfOhWo^t_t`{_|ayczeikorvvqqooqxz{{wwvvssrtrnkgf`][\\`aenosuyy||xwxtqrqnlmlkikggdgdf`gW^U^T[PZPXKTGIDI>E:E5K0L2H,G+F,@)?)=-<*60504456351718/9/92<3<5>6=4@1@/B1F0G2G.J.J+O,P*S*","?gAgDlC|B}>|>~;:~89~8}9p6m6k;k"]},
+ "med:Illyria":{"f":[13.307,0.0943,46.941,0.07677],"w":103,"h":96,"p":["E)H)J.L.O2Q2S5V5W7`7b5i4j2q2w8w;y=?}AC}DDGGEFHJMNRRUX[]]bbdde~e}gyfwgwjtktsvtwwywz{w}vrsromhjjgjde]bY^T_V^V\\U]S]T[Q\\S[RYKZKYPYOWIYJXIVLVLWNVIUITDUDRBRAP>P<K?K?J=I;J<H:I;H;G9H:F8G9@7@8B4A4E3E3A5@5=2=3@1@0C-C-A+@*;.:.8+7*5+2)0+.6/9,@,@+D+"]},
+ "med:Pannonia":{"f":[15.742,0.05208,47.325,0.0424],"w":119,"h":38,"p":["((()-/237:>>BADCEyDyCxDqCoFkHhGfI_J\\MRMRLNLLIFHFF@C=>7<3633-3,4-7)7(6"]},
+ "med:Dacia":{"f":[20.139,0.08727,47.325,0.07104],"w":115,"h":52,"p":["<((-/356454534:<>>BBDECCEJLLIJLNPSTZZW{WxTnVh[GYIUCRCOFOFNAM@O>O<M7L7I6I7F1D/B/>):+8.9/737"]},
+ "med:Scythia":{"f":[28.021,0.22801,47.325,0.18563],"w":120,"h":34,"p":["Y((FCCF@@>>:8774232*+).0021}2z8}9~;}?EG}I{FuDvBtAmBm@j@i>b>`<\\=W8T8S6N4N2R3S/V/S,T+V,V*Y*","/(V(V)R)R*G-F.G2H3M2M4H4G6D6C8A8@4<3>0A0A/?.;/9-7.8,4,4.00/2)3*0,/,,1-"]},
+ "med:Thrace":{"f":[22.315,0.06615,44.306,0.05385],"w":96,"h":58,"p":["-)3,0/11;0;1@1@2N2N3S3S4Y4Y3\\3^0`0c-j,j+r+t-}.}022898}<|EyFyHwIwKzLzN|O~SvTsQnRnSiShVeVeXaXb^_`\\_\\`TaS_K^I[>]>^1_2W0S-R)N+K*C/B/@1@2>2<0</9+8*3)3).,-"]},
+ "med:the Caucasus":{"f":[39.954,0.0943,43.654,0.07677],"w":111,"h":69,"p":["))1*9.F.I1P3Q4P6T6V4Z4Z5^4a7e7e:d:e<l>n@q@uDuFxH|H~DCA@LPQTSVY\\`dcflljjh}g~ee~a`~\\z\\y^t`rcpcnfceab_b_`\\^\\\\WWPWORNRPPPMMJMHJHJFHFFCDCCE9D;A;<:<844341211/-/+,),"]},
+ "med:Macedon":{"f":[20.412,0.038,42.396,0.03094],"w":69,"h":51,"p":["W)\\+\\-a2h5j<l<jJfJeObQZQZPPQNUHYAX=Z6Z6X0X/S-S*M)C+C+?*?+:09138/</?2?0C-J-O*U+"]},
+ "med:Anatolia":{"f":[25.89,0.17172,42.221,0.13979],"w":111,"h":47,"p":[".)4*5-9.:0;/H0H.L-M+Q+S)T*^)_,c,e/h.i0n0n1t1t0}1-.-2689:<<@DGHLMKLKLLM|MwPsPqNlOlPfOgSeSdVbTbQdPdNbNaPZOWSSSSTNTKPDNCSBR<S;P9O5P4O5M0M1L/I0F+E+B,D.C-B.;)<):+8*5,43634:5:3?3?2404111/4-3)4,.++"]},
+ "med:Greece":{"f":[19.993,0.08727,41.802,0.07104],"w":77,"h":98,"p":["n)r)t+t.q/q4n7k5c4c3`5Z4X7S7T9S>V@VBR>O>O@RARBOBN>I<I9F:FBIDJHLHLJNKNNLNLKIKJPOOQSWTY[\\[]]\\^Y]WXRXVZWbUbR^O_Q]L^K`McPdPfLgLeGdJiLsHoFoEsCsCo@k>l>o;m:k;e7b7`5`5^7^8[<[<YD[H^J^J\\L[I[HYEYEX9Y7W5Y4T1R1P5Q5O0O-K+K+H)F+F-@0@1;4:35;5?1E2H/S.S-[,[+\\-b.d0m/o.","WY\\\\jjpp_^QQW"]},
+ "med:Persia":{"f":[43.919,0.16468,41.825,0.13406],"w":68,"h":115,"p":["e(k(kc[VNJG~H}G|FCC~A}Ay?y@r9k5j5f1c2b1_3^3[6Z5Y6U3U0R-L,F*E+B*B*<)<+8.8.:1=8>=9A8B9A<C<A=A?D@DBFAFEHHLHQMVNVOeMd<`;`9c9c8b6^6^/`0c/d1g/j/i,g,"]},
+ "med:Carthage":{"f":[7.413,0.08727,37.393,0.07104],"w":48,"h":102,"p":["@)H*I1L1L/R-R0O3O5K7L=Q@RHPIOMJRGSFXI\\N\\N_Q]TcWcWfVfWnQqOtLuKxGzIGEEA?;s2l1f.c,c+^)\\)V2N2H3H283614605.8.9,@*"]},
+ "med:Mesopotamia":{"f":[38.712,0.10134,37.48,0.0825],"w":97,"h":103,"p":["S)W+^*^.`.a,d,d/f1f4i6i9l:m<r<p>qEnFmKkKjSqZq_t_yd~e~hlww}{zubXVOzMzIuGuFs?p9k0j0i-i.h-f+g)Y0V1T8Q9O?MAIA@B@A5C3G3K/L,N,O*S*"]},
+ "med:Numidia":{"f":[3.075,0.14357,37.233,0.11688],"w":57,"h":117,"p":["?)B+D+E)H+N+L-M:L:L>I@IBGBGGHGHJLLMQRTRYSYTbUbTgWkWxXxWyWTTVXZ``((,5+6-9-;+>+"]},
+ "med:the Levant":{"f":[34.137,0.0943,37.393,0.07677],"w":88,"h":108,"p":["})*-y3u3s7u?sAsKqOlPhTdUcWY\\[e\\e\\j^j^l[oWoWpFuQMKCB=1*z)z)v,t.p3]8T8P<M;L;A9?:?:;><>:@:@7B7B0F0G2L2T.T/W/X1c1l,y,y+|+"]},
+ "med:Cyprus":{"f":[32.29,0.02393,35.195,0.01948],"w":75,"h":33,"p":["5):):+A-A.F+L*L)W*Y,Y2[0^0^1g0h.k-m/p/r3m3m4d3Y>R@RAIBGDGGCHBD@C8D8C.@*8)../"]},
+ "med:Libya":{"f":[9.196,0.1506,33.33,0.1226],"w":107,"h":80,"p":["7)<,C+C,J-K/O/Q1Q5S8_:c<d>f>hAlAp=q;o7p1s.x-z++--113357>@IIw:w7q/p-h*e*a-_,]-T,T,H)B,A/=.670"]},
+ "med:Arabia":{"f":[34.531,0.1506,32.274,0.1226],"w":114,"h":72,"p":["F)N*R,S.W/kAxB|::<;=>@@JKNNPTT_`cdfgiioBoBm;h9_7`8^6Z4Y.L,J)J)G*G+@3A7;<;<8?78.E+"]},
+ "med:Egypt":{"f":[24.592,0.10134,31.705,0.0825],"w":111,"h":99,"p":["-).*7);+@+@,C,D.P0T3X2]-`-a+e,h)k+q*r,p+o-r/u.w0x//->>BBEWX}N}JxCw=u?uCwDwIzOUZ_einq{,,E+E)9+8+5,5++"]},
+ "mex:Baja California":{"f":[-117.206,0.06773,32.766,0.06365],"w":68,"h":88,"p":["D)L)K+L-O-O.R.R/U/U0X0X1[1[2^2d5h5k7iNeJe@]?]<Z:X:W<Q:P8M8K:JBLCLFMFNR\\^\\`^a^dadafcfejes_v^xZySPP|M{KxIxHuJvSuSwVxTtVmWmVjI]F]E[C[BY>W=O:M9G5D5@0<16-4,0)-++8+8*D*"]},
+ "mex:Sonora":{"f":[-112.916,0.06052,31.854,0.05688],"w":89,"h":84,"p":[",)/)/*2*2+5+5,8,>/B/E1v1v))~1}1}5|5|8y>yBvHvLsRsVqYq]o`odndnhlkixeyd{`{`zPwNtOnFm?d<d<b9`9^5Z3[3^0^.\\/W3V3Y4Y4V1T1Q.O-K+J+F)C"]},
+ "mex:Chihuahua":{"f":[-109.034,0.06052,31.838,0.05688],"w":90,"h":93,"p":["@)S)W/[0e:l=pEpJtPxQ|UVs|p|p}m}m~j~jggd^VVNKGD~@~=|9|6z)w,j.g.c0`0\\2Y2U4R4N6K6G7G"]},
+ "mex:Coahuila":{"f":[-104.531,0.05332,29.923,0.0501],"w":92,"h":95,"p":["Q)W*W+`*`+c+d.f.h1j1j3q9r>wDwH~NRTvavccucwWUL;t;r)a+Y/Q/N1L2F4D5>7<86>:C:G6I.L+P+"]},
+ "mex:Baja California Sur":{"f":[-114.463,0.06052,28.019,0.05688],"w":85,"h":91,"p":["=)B)I0K0M7Q8P:S=TAUAT<X?XB\\I\\O^SaTaWg`fghkkklmmllioiuorpozmyluhtepcp`lXhVeTeSbO`PSOSOOLIJGEFCCAC>?>;<>6?2:/:-7)7*5405.7.","i3{7|8{?u?s<s8l7"]},
+ "mex:Sinaloa":{"f":[-109.982,0.04611,27.378,0.04333],"w":85,"h":100,"p":["=)A)D+H+K-S.V0Z0]2a2d4h4k6o6o7|:xtsnkygueucr]o^n]j\\kWjSgSdN_R]K[GWCVBR<T<R?Q@N<Q7Q5O4F6E8A;B8?8<495.","+w.z.}441)"]},
+ "mex:Durango":{"f":[-106.325,0.05332,27.135,0.0501],"w":70,"h":77,"p":["I)K)dBdDmLmNVeVgMoMqJt)t,3<.<-I*"]},
+ "mex:Nuevo León":{"f":[-102.215,0.05332,27.736,0.0501],"w":81,"h":73,"p":["W)[+\\7_9bBhCkFoFrIwIxKuNsNnTlTgZeZ_a]aNp;n)Z"]},
+ "mex:Tamaulipas":{"f":[-100.287,0.04611,26.099,0.04333],"w":69,"h":78,"p":["\\)b*e-l+l1d@aR`R_oIu;f9f+W)W)U,R.R5J7J=C?CE<G<L6N6S0U0"]},
+ "mex:Zacatecas":{"f":[-104.572,0.03891,25.302,0.03656],"w":88,"h":83,"p":["Y)f*l0l2E|P{P{TyWvfskimcp_pYsUsOvKvKwHwBz>z=w8r8p5n5l2j2h/f/d,b,`)]/X/V9M9KCBC@Q3Q1"]},
+ "mex:San Luis Potosí":{"f":[-101.628,0.03891,24.27,0.03656],"w":75,"h":73,"p":["3)L,nNrPqUjahhFpBm?m7h0f0c/c/`.`.]-]-Z,Z,W)Q)K*K*G,D-</9/505"]},
+ "mex:Nayarit":{"f":[-106.457,0.03891,23.384,0.03656],"w":73,"h":90,"p":[",)Z)\\-_/_1b3b5e7e9h;h=k?pIpUkZiZ^f\\fOtMtA?=xDwEuGuGr@nBnBlGgH[BX@R=O=D9<)-)+++"]},
+ "mex:Cuba":{"f":[-84.942,0.09655,23.318,0.09073],"w":113,"h":39,"p":["E)O*O+U*V,[,_._0b2k3s9v8|>@BEEIIKMNNMsNvJyIxEoEmBkBi;`;`:X8W6G4F2J1I/>/942527.9-7)8+6.6.21/8-8,E*","<7>7A;<=;<"]},
+ "mex:Aguascalientes":{"f":[-103.716,0.03891,22.901,0.03656],"w":63,"h":58,"p":["[)_)fA_G_IURUTHaF^D^?X=X8R6R1L/L*G)8-8357574D1J.N.T+X+"]},
+ "mex:Veracruz":{"f":[-99.185,0.06773,23.031,0.06365],"w":81,"h":109,"p":["9)=)<3>7=9?9>:?@A@ACEIFNOWQ^S`ScXgYkdlenioltstssxrxurppnnkliieeccaa__]]ZZ}X|XzStKtFcDaDR=Q)<)7,3.,9*"]},
+ "mex:Jalisco":{"f":[-105.601,0.04611,21.82,0.04333],"w":71,"h":49,"p":["R)U,W,\\2^2c8e8m@nJjMjOeSeUbXGUGT?T?S7S7R/R/Q)P<=>=I1K1"]},
+ "mex:Guanajuato":{"f":[-102.469,0.0317,22.034,0.02979],"w":66,"h":75,"p":["L)O)W.Z.b3i5h<g<gBfBfHeHeNdNdTcTcZbZb`a`_r\\rRm>g<e3c1a+`+]*])P4E4C=;=9G0G."]},
+ "mex:Querétaro":{"f":[-100.771,0.0317,21.974,0.02979],"w":55,"h":75,"p":["Z)]-^5]5]8\\8\\;[;[>Z>ZAYAYDXDXGUMUQTQNf*r)n*n*g+g+a,a,[-[3373:1>1>0B0B/F/F.J.J-N-N,R,R+V+"]},
+ "mex:Yucatán":{"f":[-90.546,0.04611,21.647,0.04333],"w":80,"h":50,"p":["[)a)a*f*f+o,o-q,q*p+n*t)w,w.s0o5m5i:g:c?a?]D[DVJTJOPMPDYBY@V>V<S7Q5N3N1K/K)F*<+<,6.6/4518180K.S*[*"]},
+ "mex:Hidalgo":{"f":[-99.621,0.0317,21.668,0.02979],"w":60,"h":63,"p":[":)cQbTWYV[R\\Q^M_LaHbGdCf=e9b6b2_/_)\\"]},
+ "mex:Quintana Roo":{"f":[-89.33,0.03891,21.458,0.03656],"w":67,"h":95,"p":["f)h)h,i,i0j0i5f;ZGXKYTUUTXRYS\\Y[Y^SaSdWcWeTjToQtO~ML{IzJqHpEsCzAy=z7541y1u0u)].X0X5R7R<L>LBGDGIAKAO<Q<U7W7[2]2a-c-"]},
+ "mex:Colima":{"f":[-105.538,0.0317,20.081,0.02979],"w":86,"h":67,"p":["))z3}jjcf_f]c[cY\\ROLLIFH<C8?6949/4/2,0"]},
+ "mex:Michoacán":{"f":[-102.969,0.03891,20.427,0.03656],"w":62,"h":76,"p":["7)>+@-I/K1Q2S4\\6c:eV^\\^^WdWfPlPnKsCk;l8j.i+g):03015-"]},
+ "mex:the Valley of Mexico":{"f":[-100.739,0.0317,20.141,0.02979],"w":62,"h":51,"p":["J)O)S,V,Z/]/e3eF^HXLULOPLPHSES8Z,V+@*@*5)4,4,3/3/222215150808/;/;.>.>-A-A,D,"]},
+ "mex:Tlaxcala":{"f":[-98.82,0.0317,20.439,0.02979],"w":49,"h":52,"p":["J)X+XFJMIOCQBS<U;W5Y4[1[/W,U,S)Q)="]},
+ "mex:Campeche":{"f":[-91.565,0.03891,20.353,0.03656],"w":72,"h":83,"p":["D)G*I-K-M0R2T5V5X8Z8[:]:_=c?eIfIfLiRiVl\\l`ofojlkkihhfifm7m7z6z)[/X/S-S.P-Q+P4L6I8I=D>9D3"]},
+ "mex:Hispaniola":{"f":[-73.992,0.04611,19.978,0.04333],"w":122,"h":55,"p":["=)G*I,P-P.Y.[*a*a+m*n,v-y0/4878::<?AE¡E¡LMQQNLLK}M{PuPuQrPqNhOgTcXa^[[ZVUQRQRPLPLQFQFR/P*U(S(H-H0JAKALCLEILHLFIEB>D4<04/6+=*"]},
+ "mex:Morelos":{"f":[-100.255,0.0317,19.299,0.02979],"w":63,"h":69,"p":["U)X+X-[/[1_5flbh`h^e\\eZbXbV_T_R\\P\\MXKXIUGUERCRAO?O=L;L9I7I5F3F1C/C-@)>,;68<4?4E0O-"]},
+ "mex:Puebla":{"f":[-98.526,0.0317,19.567,0.02979],"w":55,"h":79,"p":["M)O)P+P.S3^V[WV\\T\\S^Q^LcJcHfChAk<m6s0v+N*N)>3947:5;3A1B/H-I+"]},
+ "mex:Guerrero":{"f":[-101.647,0.04611,18.787,0.04333],"w":74,"h":59,"p":[">)B)B*I,K/M/O2Q2S5U5W8Y8[;];_>a>cAeAhEjElHnHqKnbkag\\c\\c[WYWXRXLSISBO9M6J4J2G.F,C)B*?0:087270"]},
+ "mex:Oaxaca":{"f":[-98.465,0.04611,18.267,0.04333],"w":79,"h":61,"p":["L)X*Z,Z.]0]2_3c;f=f?h@hBjCjElFlHnInKtRsVvVvWpXj]a_[cOdD^7]1X)V,@"]},
+ "mex:Tabasco":{"f":[-93.847,0.03891,18.765,0.03656],"w":74,"h":44,"p":["V)[+[-Y-Z/e1f6i:i=k?kBnFnIqO)S)3,3/1?1?0D/E,L+L*V*"]},
+ "mex:Jamaica":{"f":[-78.355,0.0317,18.546,0.02979],"w":68,"h":28,"p":["5)V-X0\\2g5k;k>a?a>[=[;W;U?O>M@MCKCJAF?;?8<8:4924)2).,+4+"]},
+ "mex:Chiapas":{"f":[-94.434,0.05332,17.385,0.0501],"w":76,"h":57,"p":["^)i)i+b+b,i3n5o:s;sBZBXHVIRQRTTUSZRZR]S]R`P`K[KY@N>N9H7H2B.C0A.B)A)@.A*?)=+<,8.7/3124,^*"]},
+ "mex:Guatemala":{"f":[-92.266,0.05332,17.886,0.0501],"w":76,"h":84,"p":["@)b)aPiPkRpPqRsRsToXmXi]b`bcacbj_m[mZn[qUtQxQ{Iw8v4t3r1r/o-o)k*a+a)[,X2LJLKFGDD>?<<9<79695@5"]},
+ "mex:Belize":{"f":[-89.278,0.0317,18.508,0.02979],"w":39,"h":89,"p":["A)G)E-L-N1L:J<IDHDHGJJGOGWHWGfDl@o@q>s;s8v8x5z4),:093<5<:6:4<3<1>0>-"]},
+ "mex:Honduras":{"f":[-89.39,0.06052,16.059,0.05688],"w":104,"h":55,"p":["a)e)h+n+r)r*w+x-y+},23244767569;;>>?>@}?zAvAt>p?pBnBmGkGgLeLdOaN`L]L[PTPSQTYQYQ\\O^J^GWBWCPDPCN>N<L7O7M/I.F)E)C,B+:08:.>.@+F+G-H,[-\\+_+"]},
+ "mex:Nicaragua":{"f":[-87.718,0.05332,15.048,0.0501],"w":86,"h":87,"p":["v)})|,y+y.{.|0}8{9wAwGvGwWuWuYwYw]u]uYsZtdrdrgqgtitmqoptqtrytzt}m~m}j}hy_x\\z\\yVxQuMwEnCn>i:a6_-U)S)Q*P,P,R5Q7O7L;K:B<ABBF<H<H>M@N=P=U7W7W4\\-_-a0f0l-q-s+v+"]},
+ "mex:El Salvador":{"f":[-90.142,0.0317,14.453,0.02979],"w":78,"h":44,"p":[";)B)B*K,K.N1P1R4T4V7\\8\\<_<`:e9e8i8k;s;u=tBsBtJqKqPnSbSbRYP\\R[SXQQPEI2F-A*A)</64561;/:."]},
+ "mex:Costa Rica":{"f":[-85.946,0.04611,11.214,0.04333],"w":74,"h":72,"p":[".)2)2*5*=.@.B,F,I.K-N0N2R2R3W3[0\\6^:`;`=c?cAjGjImLqMqOkNkPiPiZn\\j`khgjjmjoejeecc^b_ebgbi[hXeXc[`[\\YXUVTTPSOQENCF@E>B7?7B?G?I;M9M6H3H-E*?*;.7.2,2)/,.,+.+"]},
+ "mex:Panama":{"f":[-83.08,0.06773,9.649,0.06365],"w":88,"h":39,"p":["+)-*0)3,3/5/42;3:1<1=4A6H5L1R0U-Y,[)j+o.r.s0v1x5|7{;C}C|E}G{GzIvGwJuKuNtNrJpIoEmDmAoAp<r<r>v@r<r:m<n:l;l8j6f5c2]2X7Y8X:O>OBUGUJPKPMNNHNFDDDDHBH>E;?8?8>5?5=3>,=+?)>)<+;+5-4-2*1"]},
+ "sam:Colombia":{"f":[-79.237,0.16402,12.6,0.15313],"w":76,"h":109,"p":["U)X)Y,W.T.T0O4N;L=RCQJSJTMVL`McRmRmQpRm]qeoemhqjssrsqmnmnololmkoaoasesev`v`|c~cda\\`^\\XVTNMKKFF~D|?{<x9x9y3x2u,s)p*n,o,j.i0j2h1f3f5b3`4S0K1H3I4G3B7E6B8B;?;=>=>7B2G2G0L1M/S-"]},
+ "sam:Venezuela":{"f":[-73.532,0.14449,12.279,0.1349],"w":96,"h":87,"p":["?)B*C.I.J0L0M5[4_8e8g6k6h4t3v5r5r6s8u8u:w9|:|<=~?A{C|ECDCEIJNNP}R~U|V|X\\``b{bzdwdwetdshphofifidedfghgjqnqnsjtixfx`~_|Y}VzTqPnSkRgPfPbObRUOTOUDVDT@Q@O<O<N2O2M/L0E.D-?,>)?,;-33-305156372;4?7@9>996662=0?.B.B-?-"]},
+ "sam:Guyana":{"f":[-61.485,0.12497,8.633,0.11667],"w":41,"h":65,"p":["4):,@2@7E8G<I<K?JDIDJFEHELCOGUJUJZL[L^PbIaHcEcDeAd@g>h8e8c6b6^4]5S7R6L3K4F-E+A)@)>+=*917.1//5,"]},
+ "sam:Suriname":{"f":[-58.118,0.08591,6.11,0.08021],"w":49,"h":54,"p":["5)=*@,B,B*J*J)W+W1S4R9S9TCWEXJVKVQRWNVMTJTHVAU?XAYB]:\\8[2O2J-J-G+G+D)C)?+<*8,6162411"]},
+ "sam:Brazil":{"f":[-74.262,0.35928,5.688,0.33542],"w":111,"h":118,"p":["N)P*O,Q,P3R5[3]1_3d2f-h,i2j4l4k6l:n9p;u;x>{>z@|A}@ABACHHMMV[_`notw{{}~}~~|}tsqopolkhcbcaaWZZ\\^aa_`\\[{U{VmTmTjOiOdNdObJaF^C^A\\AV=V9Z2Z2V.W-U+U+R)Q)M+M,H2E4F5=6=4:47664644<3>7?6A7B5D5D3F3D2C-H.J,M,"]},
+ "sam:Ecuador":{"f":[-81.01,0.08591,1.495,0.08021],"w":68,"h":82,"p":["A)E+G.K0O0R6]8]6`5c7c9h:i;h?kAkGiFgOcRcT`W^W[[X[X\\U\\S^L`IfGeFkCpCtAt@x=y:w:t8r4r3p1p1r.r/q.l/m1l1d4c7Y5U5Z3[4Z3X3Z/\\,X)W)U+U)H.E.B/B.?3:30607.:.:-A,"]},
+ "sam:Peru":{"f":[-81.584,0.18354,0.113,0.17135],"w":71,"h":109,"p":["H)I*L)M+O+P/R/T3V3W7\\7^5^6c6g8c>c?f?gBbA`C\\C[EWFVORQSYW]V`[`[cacd`digighjijkllnpmxlxm|k~ljmijhhfc_POKIGG}DzEvBp@o@l=j=g:d:a9a9^6X4W2Q*L,K,I)C,@,>/=.A3C4F6F6D8C9=;=<:C8I2J+"]},
+ "sam:Bolivia":{"f":[-69.748,0.16402,-9.581,0.15313],"w":76,"h":88,"p":[">)C)C-B-C5E6E8H9H;Q<S?W?XB_BaDbL`MbNbTmTmZq\\saoipligcgchXjXmVnTzKyJ}H}Gz@z?x=x=z;z733y.o0h-f,_)\\)Y-U-S+S*Q*N+N*J-G,B-B-=.=.9+6)1022/5/6-"]},
+ "sam:Chile":{"f":[-75.887,0.35928,-17.194,0.33542],"w":26,"h":114,"p":["9);*;.=.<3>5>9A9A:?=<>=E9I9L8L9O7Q9[7]7a5b6h4i3t2t4w3y5y3z4121,,//23::<<434:8979676120..0/0-.**-.,++-,))+*+)),,.-))*}-|,y.z.|0{/x2s1q.q/u.v,u-u-q.q-o/l.d0c1^4Y4O5O4K5K5G7C6A7A79897+9+"]},
+ "sam:Paraguay":{"f":[-62.703,0.12497,-19.221,0.11667],"w":69,"h":72,"p":[":)F)J+M.L1N2N6O6NA_BaE`HaHbQfQhOlQj\\i\\hgejcjan\\m[oWoWnSoPmImIkLiLdQ_Q\\MYGXFVBU>Q6P)C)>+;+3///,:*"]},
+ "sam:Argentina":{"f":[-74.001,0.33975,-21.514,0.31719],"w":61,"h":98,"p":["?)D*D,E*J*K-N.O0R0S2X3X6V7V:X;\\;\\:^;a8a5d6d9`;XCXFWFVRXRYV[WZ[V^J_KeIfBeBiDiCjDlBmAr>r;t;w@y@|;~:6855.-*)++~-}-y/x.q0p.p/l-l-j/i.d1^0X3V2S4Q2F4D4?6;8:81<0<+"]},
+ "sam:Uruguay":{"f":[-58.583,0.10544,-29.98,0.09844],"w":53,"h":51,"p":["6)9)<->-@/@3C3E1G5N7R<V=XB\\CXGYOVUTURXOXMZGZGY=Z;X8X5U/V*Q)O*H-G,;.9-6/4/-1,1*5+"]},
+ "jap:Hokkaido":{"f":[139.998,0.06028,45.53,0.0475],"w":95,"h":75,"p":["G)I)R2R4U6U8Y<[<aBeCgFmFsJwJAD}J}PQWWVWZY}[|]j_`j^r[rQmPkLjKhGf>g=i8k3f/g)d0^0[.Y/V5Y?X?OAKCJCDDDE;F;E4B.C.C+"]},
+ "jap:Tohoku":{"f":[139.297,0.07614,42.74,0.06],"w":36,"h":100,"p":["==D?DLIPISKVKbJbJeGfGiEkEp@q>s=x>x>}?}?>><<99,)t*t+m/i/e2`2Y.X.V0V1T0K5H6A:B;H=FAGBA<B","0)6*7+5.61;2@8?9986=2>1:2:35/0"]},
+ "jap:Chubu":{"f":[135.883,0.0497,38.13,0.03917],"w":76,"h":91,"p":["m)o,sDTITKVLWP[T^[f_i_jnknkriti|ffcb}c}dv_u]yX}WTTDCBDD~?~>|<}<v9w8z5y5j)h,e+\\4S4Q9K9?;;E8D<@>?@=@=C?E?JFKHFY@`9d/h."]},
+ "jap:Kanto":{"f":[138.028,0.03384,37.067,0.02667],"w":85,"h":82,"p":["R)W)W*[*[+_+_,y2v8v;u;uBtBsI|[v\\q`qbocnnfr`y]x]u^u]t]q^q]j`i`febe_b\\_\\\\^\\bXfXj[lYpWpWnSjOjKlHQ:M)2+0<.<-G,G+R*"]},
+ "jap:Chugoku":{"f":[130.837,0.03913,35.576,0.03083],"w":97,"h":57,"p":["`)g)i,l*v+v0y3|:~;~=>@AD~DwKpKdQ]QZSUSRPNPKVJ`F_AZ8Z6\\1]0[,[*Y)R,N7M;GAEJ;L;P7P5R5V1X,\\*`*","vP~PTTZ[ZpWoSsS"]},
+ "jap:Kansai":{"f":[133.857,0.03384,35.78,0.02667],"w":90,"h":87,"p":["N)R*Q0S2`2d.x0xGzG{IxMwRySyU{UZ_tbpehwfxd|`~W|WzUyUvSuSsPqNmM_S\\SZVWVSURISCN7O5J3I3G1F.?)9*241;-E-E,I,"]},
+ "jap:Kyushu":{"f":[129.563,0.04442,33.97,0.035],"w":54,"h":85,"p":["A)G*I-I0L3S3U1X4X7V8U<Z=ZC]G]KYNU\\T\\SjRjQpPqJpIsKvHwC|A|DvCpBpBlDkCh@h>l>s@t@w6u6r5r9p9j6g7e6]:\\:Z<Y@Q@O=N>H;D;A9?6?5@6H9H:L7M6K3J/M/O-O.K*F*B-D/H1H1E/B-B)>*9/:.9/6:2</<,"]},
+ "jap:Shikoku":{"f":[131.716,0.03384,34.173,0.02667],"w":87,"h":54,"p":["a){.~8|8y<v=v?t@rDqJoJoHkEkCgA_A^CVFVIUIULRRNTM[K]E]E\\C]EZEW?W?S=R@I<H<D8D4G2F9CA;D:G/K+N+Q1U1X/[/[0^/a,",",J-J,P/R.V1W/[*R)K,K"]}
+};
 
 /* ===== 91-wishes-late.js ===== */
 /* wraps: 90-api.js (it must sort after them; test-buildorder.js checks) */
@@ -11261,7 +11681,7 @@ function segBooked(S,show,n){
 }
 
 /* ---------- what the booking screen calls ---------- */
-E.SEGK=SEGK;
+E.SEGK=SEGK;E.BEATS=BEATS;
 E.SEGLEN=SEGLEN;E.SEGLENN=SEGLENN;
 /** The promos and angles booked for the show on the desk, in the order they were booked. slot is the place in the list. */
 E.segInfo=function(S){
@@ -11322,6 +11742,100 @@ E.segSuggest=function(S,max,card){
   };
   E.runPlayerShow=function(S,card){var r=r0(S,card);if(!r.errors){S.segs=[];S.segKey=null;}return r;};
 })();
+
+/* ===== 94-livefeed.js ===== */
+/* The live feed: what people post while your show is on the air (Ryan, 19 October: the broadcast's right side is "a
+   twitter like feed, and below the crowd meter"). Fans, the wrestlers in the show, the company's own account and the
+   press post as the show goes: a match starting, a near fall, a finish, a new champion, a promo or an angle, and the
+   crowd itself. It only reads the report as far as the broadcast has shown it, and every pick is a hash of stable
+   values (h01), never rnd(S), so the feed can never change how a show plays out. A new kind of post is one more
+   block in liveFeed() and a line list below. */
+var LF={
+  start:['{a} vs {b}. Here we go!!','{a} and {b} right now. Locked in.','been waiting all week for {a} vs {b}','{a} vs {b} on {show}. lets go','ok {a} vs {b}, I am watching'],
+  feud:['{a} and {b} cannot stand each other and it SHOWS','this {a}/{b} thing is personal now','{a} vs {b}. finish it tonight please','the {a} {b} feud is the best thing going'],
+  title:['the {t} is on the line!!!','{t} match. this is the big one','title match time. {a} or {b}?'],
+  near:['HOW DID {x} KICK OUT','{x} WAS DONE. THAT WAS THREE','2.9!!! I am out of my chair','nearly!!! the whole place jumped','i thought that was it. {x} is unreal','NO NO NO. still going'],
+  win:['{w} wins it!','{w} gets the win. deserved','{w}!!!! yes!!!','{l} could not hang with {w} tonight','called it. {w}.','clean win for {w}. respect'],
+  upset:['WHAT. {w} BEAT {l}???','UPSET!!! nobody had {w} winning that','{l} lost to {w}?? i need a minute','biggest upset of the year. {w}!!'],
+  champ:['NEW CHAMPION!!! {w}!!!!','{w} with the {t}. I am crying','AND NEW. {w}. history.','{w} is the champ!!! what a night'],
+  retain:['{w} keeps the {t}. still the champ','and still... {w}','{w} survives. {t} stays put'],
+  promo:['{a} on the mic is must see','{a} cooked. no notes','that promo from {a} gave me chills','{a} talking. everybody shut up','{a} said what everybody was thinking'],
+  angle:['WHAT did {a} just do to {b}','{a} is out of control','oh {a} is EVIL for that','{b} did not see that coming. neither did i','this is going to be ugly. {a} vs {b} has to happen'],
+  dead:['this crowd is asleep','awful quiet in there tonight','can we get a reaction please','the building is dead. not their fault'],
+  hot:['listen to this crowd!!!','the building is SHAKING','best crowd of the year easily','you can hear them from outside'],
+  winF:['Thank you, {city}. That one was for you.','Told you I would do it. Done.','Listen to that crowd. I will never get used to it.'],
+  winH:['Nobody in that building is on my level.','Boo all you like. Same result.','That was a lesson, not a fight.'],
+  lose:['Not my night. It will not happen twice.','I heard the count. I will be back.','No excuses. Run it back.'],
+  taunt:['{b}, that was only the start.','I warned you, {b}.','Look at my face, {b}. Does it look sorry?'],
+  hurt:['You will pay for that, {a}.','Cheap. Even for you, {a}.','I am not done with you, {a}.']
+};
+var LF_PRESS='The Ringside Wire';
+/** The crowd in a word, from how loud the building is (0 to 100). */
+function crowdWord(v){return v<20?'Dead':(v<38?'Quiet':(v<55?'Warm':(v<70?'Loud':(v<85?'Electric':'Unglued'))));}
+/** What the feed shows when the broadcast is at segment `si`, beat `b` (b past the end means its result is up). */
+function liveFeed(S,rep,si,b){
+  var out=[],P=S.promos[rep.promo||S.player]||S.promos[S.player],key0=(rep.week||S.week)+':'+(rep.id||rep.name)+':',city=rep.venue?String(rep.venue).split(',').pop().trim().replace(/ (Armory|Civic Auditorium|Fieldhouse|Coliseum|Arena|Stadium)$/,''):'everybody';
+  var at=0,show=rep.name;
+  function nm(id){var w=S.w[id];return w?w.name:'';}
+  function fan(k,i){var f=FANS[Math.floor(h01(k+'f'+i)*FANS.length)%FANS.length];return f[0];}
+  function post(k,kind,u,n,txt,base,wid,mins){out.push({id:k,k:kind,u:u,n:n,t:txt,l:netLikes(base,k),r:Math.round(netLikes(base,k+'r')/6),w:wid==null?null:wid,at:mins});}
+  function fanPost(k,list,o,base,mins){var u=fan(k,0);post(k,'f','@'+u,u,fill(netPickH(list,k+'t'),o),base||90,null,mins);}
+  for(var i=0;i<=si&&i<rep.segs.length;i++){
+    var s=rep.segs[i],bc=s.bc||[],upto=i<si?bc.length:Math.min(b,bc.length),done=i<si||b>=bc.length,k=key0+i,mins=Math.round(at);
+    if(s.k==='match'){
+      var ids=s.ids||[],nsd=(s.sidesN||[]).length||2,per=Math.max(1,Math.floor(ids.length/nsd)),A=s.sidesN&&s.sidesN[0]||nm(ids[0]),B=s.sidesN&&s.sidesN[1]||nm(ids[per]);
+      var f=ids.length>=2?feudOf(S,ids[0],ids[per]):null;
+      fanPost(k+'s',s.title?LF.title:(f&&f.heat>=50?LF.feud:LF.start),{a:A,b:B,t:s.title,show:show},s.title?260:120,mins);
+      for(var j=0;j<upto;j++)if(bc[j].h===1&&h01(k+'n'+j)<0.75){var x='';ids.forEach(function(id){var w=S.w[id];if(w&&!x&&bc[j].x&&bc[j].x.indexOf(w.name)>=0)x=w.name;});fanPost(k+'n'+j,LF.near,{x:x||'they'},220,mins+Math.round((s.mins||10)*j/Math.max(1,bc.length)));}
+      if(done&&s.win){
+        var wi=(s.wi&&s.wi.length?s.wi:[]),lid=ids.filter(function(id){return wi.indexOf(id)<0;})[0],W=S.w[wi[0]],Lw=S.w[lid],L=lid!=null?nm(lid):B,end=mins+(s.mins||10);
+        var up=W&&Lw&&Lw.ovr-W.ovr>=12;
+        fanPost(k+'w',s.change?LF.champ:(up?LF.upset:(s.title?LF.retain:LF.win)),{w:s.win,l:L,t:s.title},s.change?900:(up?520:160),end);
+        if(W&&(s.change||i===rep.segs.length-1||h01(k+'ww')<0.35))post(k+'wp','w',netHandle(W.name),W.name,fill(netPickH(W.align==='H'?LF.winH:LF.winF,k+'wpt'),{city:city}),W.ovr*W.ovr*0.9,W.id,end);
+        if(Lw&&h01(k+'lp')<0.3)post(k+'lp','w',netHandle(Lw.name),Lw.name,netPickH(LF.lose,k+'lpt'),Lw.ovr*Lw.ovr*0.5,Lw.id,end);
+        if(s.ov!=null&&(i===rep.segs.length-1||s.ov>=70||h01(k+'pr')<0.4))post(k+'pr','p',netHandle(LF_PRESS),LF_PRESS,(s.label||A+' vs '+B)+': '+starG(s.ov)+'.',600,null,end);
+        if(s.cr!=null&&h01(k+'cr')<0.5)fanPost(k+'cr',s.cr>=75?LF.hot:(s.cr<35?LF.dead:LF.start),{a:A,b:B,show:show},110,end);
+      }
+    }else{
+      var who=(s.ids&&s.ids.length?s.ids:(s.bids||[])),a=nm(who[0]),bb=nm(who[1]);
+      if(done&&a){
+        var isA=s.booked?(SEGK[s.booked]&&SEGK[s.booked].t==='angle'):/Ambush|Brawl|Attack|Betrayal|Turn|Save|Reveal/.test(s.head||'');
+        fanPost(k+'g',isA&&bb?LF.angle:LF.promo,{a:a,b:bb},isA?300:150,mins+(s.mins||5));
+        var Aw=S.w[who[0]],Bw=S.w[who[1]];
+        if(isA&&Aw&&Bw&&h01(k+'gt')<0.6)post(k+'gt','w',netHandle(Aw.name),Aw.name,fill(netPickH(LF.taunt,k+'gtt'),{b:Bw.name}),Aw.ovr*Aw.ovr*0.7,Aw.id,mins+(s.mins||5));
+        if(isA&&Aw&&Bw&&h01(k+'gh')<0.4)post(k+'gh','w',netHandle(Bw.name),Bw.name,fill(netPickH(LF.hurt,k+'ght'),{a:Aw.name}),Bw.ovr*Bw.ovr*0.6,Bw.id,mins+(s.mins||5));
+      }
+    }
+    at+=s.mins||(s.k==='match'?12:6);
+  }
+  if(P&&si>=rep.segs.length-1&&b>=((rep.segs[rep.segs.length-1]||{}).bc||[]).length&&rep.segs.length)post(key0+'co','c',netHandle(P.name),P.full||P.name,'Thank you, '+city+'. See you next week.',P.image*P.image*1.5,null,Math.round(at));
+  return out.reverse();   // the newest first
+}
+/** The feed and the crowd for the broadcast at segment `si`, beat `b`: {posts, crowd: {v, word}}. */
+E.liveFeed=function(S,rep,si,b){
+  if(!rep||!rep.segs)return {posts:[],crowd:{v:50,word:crowdWord(50)}};
+  var s=rep.segs[Math.max(0,Math.min(si,rep.segs.length-1))],bc=(s&&s.bc)||[],done=s&&b>=bc.length;
+  // how loud the building is: the night's energy, lifted by a big moment on screen, and the match's own crowd once it is over
+  var v=rep.en==null?60:rep.en;if(s&&s.k==='match'&&done&&s.cr!=null)v=0.5*v+0.5*s.cr;
+  var hb=s&&bc[Math.min(b,bc.length-1)];if(hb&&hb.h)v=Math.min(100,v+(hb.h>1?25:12));
+  v=clamp(Math.round(v),0,100);
+  return {posts:si<0?[]:liveFeed(S,rep,si,b),crowd:{v:v,word:crowdWord(v)}};
+};
+
+/* ---------- the poster for the next show (the desk) ----------
+   Who headlines it, so the desk can show them face to face: the main event once the card is booked, else the hottest
+   story on the roster, else the champion and the closest challenger. Only reads the game. */
+E.posterPair=function(S){
+  var P=S.promos[S.player],sh=S.queue&&S.queue[S.qi];if(!P||!sh)return null;
+  var card=S.card||[],m=card.length?card[card.length-1]:null;
+  if(m&&m.sides&&m.sides.length>=2&&m.sides[0].length&&m.sides[1].length)return {a:m.sides[0][0],b:m.sides[1][0],why:'main',title:m.title?(titleById(P,m.title)||{}).name||null:null};
+  var fs=activeFeuds(S).filter(function(f){return f.promo===P.id&&!f.res&&S.w[f.a[0]]&&S.w[f.b[0]];}).sort(function(x,y){return y.heat-x.heat;});
+  if(fs.length)return {a:fs[0].a[0],b:fs[0].b[0],why:'feud',title:fs[0].title?(titleById(P,fs[0].title)||{}).name||null:null};
+  var t=P.titles.filter(function(t){return !t.tag&&t.holders.length&&S.w[t.holders[0]];}).sort(function(x,y){return (y.lvl||0)-(x.lvl||0);})[0];
+  if(t){var c=S.w[t.holders[0]],ch=rosterOf(S,P.id).filter(function(w){return w.id!==c.id&&w.g===c.g&&w.inj<=0;}).sort(function(x,y){return y.ovr-x.ovr;})[0];if(ch)return {a:c.id,b:ch.id,why:'title',title:t.name};}
+  var top=rosterOf(S,P.id).filter(function(w){return w.inj<=0;}).sort(function(x,y){return y.ovr-x.ovr;});
+  return top.length>=2?{a:top[0].id,b:top[1].id,why:'top',title:null}:null;
+};
 
 /* ===== 94-net.js ===== */
 /* The Net section: a weekly dirt sheet, a feed of short posts, and the fan boards (the boards live in S.net, from

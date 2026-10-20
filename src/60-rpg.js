@@ -93,7 +93,7 @@ ANGX.push(function(S,P,show,ctx,h){
   return [9,function(){
     c.arc=null;h.mark(c);var sc=promoScore(S,c,8);addOvr(P,c,1);c.mom=clamp(c.mom+3,-10,10);
     S.quests.push({id:S.nid++,type:'win',w:c.id,due:S.week+3,text:'The crowd is behind '+c.name+' now: book them a win by '+cal(S.week+3).label});
-    return angle('Interview',c.name+' takes a live microphone and says the losing has gone on long enough. It sounds a little too real, and the crowd roars in agreement.',sc);
+    return beatTag(angle('Interview',c.name+' takes a live microphone and says the losing has gone on long enough. It sounds a little too real, and the crowd roars in agreement.',sc),'interview',[c]);
   }];
 });
 SHOWX.push(function(S,P,show,rep){
@@ -223,7 +223,7 @@ ANGX.push(function(S,P,show,ctx,h){
     var st={id:S.nid++,promo:P.id,name:pick(S,nm),leader:lead.id,m:[lead.id,ms[0].id,ms[1].id],formed:S.week,tension:0};
     S.stables.push(st);st.m.forEach(function(id){S.w[id].stable=st.id;});h.mark(lead,ms[0],ms[1]);
     news(S,'story','A new stable: '+st.name+' ('+lead.name+', '+ms[0].name+' and '+ms[1].name+').');
-    return angle('Announcement',lead.name+' steps out flanked by '+ms[0].name+' and '+ms[1].name+'. From tonight they answer to one name: '+st.name+'.',promoScore(S,lead,6));
+    return beatTag(angle('Announcement',lead.name+' steps out flanked by '+ms[0].name+' and '+ms[1].name+'. From tonight they answer to one name: '+st.name+'.',promoScore(S,lead,6)),'stable',[lead,ms[0],ms[1]]);
   }];
 });
 ANGX.push(function(S,P,show,ctx,h){
@@ -233,7 +233,7 @@ ANGX.push(function(S,P,show,ctx,h){
     var lead=S.w[st.leader],weakIds=E.stableWeak(S,st).map(function(x){return x.id;}).filter(function(id){return outs.indexOf(id)>=0;}),out=S.w[(weakIds.length?weakIds:outs).sort(function(a,b){return S.w[a].mom-S.w[b].mom;})[0]];
     h.mark(lead,out);leaveStable(S,out);if(out.align==='H')turn(S,out,'thrown out of '+st.name);
     var f=startFeud(S,P,out,lead,50,lead.name+' threw '+out.name+' out of '+st.name,{force:true});if(f)f.twist='expelled';memBetray(S,lead,out);st.tension=3;
-    return angle('Betrayal',lead.name+' blames '+out.name+' for everything going wrong in '+st.name+'. The rest of the group turns on '+out.name+' and leaves them lying in the ring.',0.8*(lead.ovr+out.ovr)/2+10);
+    return beatTag(angle('Betrayal',lead.name+' blames '+out.name+' for everything going wrong in '+st.name+'. The rest of the group turns on '+out.name+' and leaves them lying in the ring.',0.8*(lead.ovr+out.ovr)/2+10),'stable_out',[lead,out]);
   }];
 });
 POST.push(function(ctx){

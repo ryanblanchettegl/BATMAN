@@ -81,20 +81,22 @@ function createStats(S,o){
   var P=S.promos[S.player],bg=BGS[o.bg]||BGS.indie,ovr=clamp(Math.round(P.image+bg.ovr+(o.emph==='look'?5:0)),5,90),work=bg.work+(o.emph==='ring'?8:0),mic=bg.mic+(o.emph==='mic'?10:0),wage=wageFor(ovr,P);
   return {ovr:ovr,work:work,mic:mic,pot:Math.min(99,work+bg.pot),wage:wage,fee:wage*8};
 }
-E.createInfo=function(S){var wait=(S.lastCreate==null?-99:S.lastCreate)+6-S.week;return {ok:wait<=0,wait:Math.max(0,wait),bgs:BGS,emph:EMPH};};
+E.createInfo=function(S){return {ok:true,wait:0,bgs:BGS,emph:EMPH};};
 E.createPreview=createStats;
+/** Create a Player in a game (Ryan, 18 October): a new wrestler made by the player goes to free agency, like
+    anybody else looking for work, and is signed from Free agents with an offer. Only the World Editor puts somebody
+    straight into a company. */
 E.createWrestler=function(S,o){
-  var P=S.promos[S.player],info=E.createInfo(S);if(!info.ok)return {ok:false,msg:'Your scouts need '+info.wait+' more week'+(info.wait===1?'':'s')+' before they bring you anyone new.'};
   var name=clean(o.name,28);if(name.length<2)return {ok:false,msg:'Give them a name first.'};
   if(S.w.some(function(w){return w.name.toLowerCase()===name.toLowerCase();}))return {ok:false,msg:'There is already a '+name+' in the business.'};
   var st=createStats(S,o);
-  if(wagesWeek(S,P)+st.wage>E.budget(S))return {ok:false,msg:S.owner.name+' will not sign off on another wage.'};
   var w=addWrestler(S,{name:name,g:o.g==='F'?'F':'M',ovr:st.ovr,style:STYLE[o.style]?o.style:'A',work:st.work,mic:st.mic,align:o.align==='H'?'H':'F',fin:clean(o.fin,24)||null},'FA',null);
   w.pot=clamp(st.pot,workRate(w),99);w.cr=true;assignGim(w);if(GIMBY[o.gim])w.gim=o.gim;
   if(o.face&&typeof o.face==='object'){w.face={};['h','hr','fh','ms','ey','ns'].forEach(function(k){w.face[k]=clamp(Math.round(+o.face[k]||0),0,9);});w.face.sk=clamp(Math.round(+o.face.sk||0),0,100);w.face.hc=clamp(Math.round(+o.face.hc||0),0,100);}
-  joinCompany(S,w,P,st.wage,96);P.cash-=st.fee;S.lastCreate=S.week;
-  mile(S,w,'debut','Discovered and signed by '+P.name);news(S,'contract',P.name+' signed newcomer '+w.name+'.');award(S,'ACH_CREATE');
-  return {ok:true,id:w.id,msg:w.name+' signs a two-year deal at '+money(st.wage)+' a week. Signing cost: '+money(st.fee)+'.'};
+  if(o.look){var lc=lookClean(o.look);if(lc&&E.lookOk(lc)){lc.name=w.name;w.look=lc;var lf=lookFin(w);if(lf)w.fin=lf.name;}}   // made in Create a Player (src/86-looks.js)
+  S.lastCreate=S.week;
+  mile(S,w,'debut','Made in Create a Wrestler');news(S,'contract','A new name is looking for work: '+w.name+'.');
+  return {ok:true,id:w.id,msg:w.name+' is a free agent now. Sign them from Free agents, like anybody else.'};
 };
 
 /* ---------- the opening promo: you choose who talks, about what, and how ---------- */

@@ -1,8 +1,11 @@
 /* Input that is not a mouse: keyboard shortcuts, a TV remote, a gamepad. Also the screen mode (desk, tablet, TV). There is no phone or portrait layout: a tall narrow window is asked to turn sideways (styles/base.css).
    See docs/design.md, sections 4 and 5. */
+import { SHOW_SCENES } from './kit/scene';
+import { beatPick } from './shared/moment';
 import { G, ui, pref, reduceMotion, redraw, closeModal, openModal, popCard, save } from './store';
 import { lightDraws } from './kit/lights';
 import { roadMapDraws } from './kit/roadmap';
+import { scenePlays } from './kit/sceneplayer';
 import { HOT, SECTIONS, sectionOf, go } from './nav';
 import { book } from './flow';
 
@@ -21,7 +24,7 @@ export function screenMode() { return pref.screen && pref.screen !== 'auto' && (
 export function applyScreen() {
   const de = document.documentElement, m = screenMode();
   de.setAttribute('data-screen', m); de.style.setProperty('--zoom', String(pref.zoom || 1));
-  de.classList.toggle('crtfx', !!pref.crt); de.classList.toggle('rm', reduceMotion());
+  de.classList.remove('crtfx'); de.classList.toggle('rm', reduceMotion());
   NAV.tv = m === 'tv'; NAV.on = NAV.tv || NAV.pad; de.classList.toggle('nav', NAV.on);
 }
 
@@ -35,7 +38,7 @@ export function onKey(fn: (e: KeyboardEvent) => boolean) { keys.push(fn); }
 
 /* ---------- focus by geometry ---------- */
 const app = () => document.getElementById('app')!;
-function navScope(): HTMLElement { return (document.querySelector('.win') || document.querySelector('.caw-win') || app()) as HTMLElement; }
+function navScope(): HTMLElement { return (document.querySelector('.win') || document.querySelector('.scfull') || app()) as HTMLElement; }
 function focusables(scope: HTMLElement): HTMLElement[] {
   return ([].slice.call(scope.querySelectorAll('button:not([disabled]),select:not([disabled]),input:not([disabled]):not([hidden]),textarea,tr.pick')) as HTMLElement[]).filter(e => { const r = e.getBoundingClientRect(); return r.width > 0 && r.height > 0; });
 }
@@ -210,5 +213,5 @@ export function initInput() {
     const k = e.key.length === 1 ? e.key.toLowerCase() : '';
     if (HOT[k]) { e.preventDefault(); go(HOT[k]); }
   });
-  (window as any).EWF_DEBUG = { state: () => G.S, render: redraw, go, pad: padPress, nav: NAV, ui, lights: lightDraws, maps: roadMapDraws, save };
+  (window as any).EWF_DEBUG = { state: () => G.S, render: redraw, go, pad: padPress, nav: NAV, ui, lights: lightDraws, maps: roadMapDraws, scenes: scenePlays, segScenes: () => SHOW_SCENES.map(s => s.when), beatPick, save };
 }

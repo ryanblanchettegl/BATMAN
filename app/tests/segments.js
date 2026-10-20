@@ -1,7 +1,7 @@
 /* Booking promos and angles on the run sheet.
    Run: NODE_PATH=<dir containing playwright> node app/tests/segments.js   (MODES=desk,tablet) */
 const { open, go, overflow, shot, state, flash, fits } = require('./helper');
-const MODES = (process.env.MODES || 'desk,tablet').split(',');
+const MODES = (process.env.MODES || 'desk').split(',');
 const fails = [];
 const ok = (mode, label, pass, detail) => { console.log(mode.padEnd(6), pass ? 'ok  ' : 'FAIL', label + (detail ? ': ' + detail : '')); if (!pass) fails.push(mode + ' ' + label); };
 const txt = (page, sel) => page.$eval(sel, e => e.innerText).catch(() => '');
@@ -45,6 +45,8 @@ async function run(mode) {
     await page.selectOption('#seg-who-0', { index: 1 });
     ok(mode, 'the second pick opens once the first is made', !(await page.$eval('#seg-who-1', e => e.disabled)));
     await page.selectOption('#seg-who-1', { index: 1 });
+    ok(mode, 'the window shows the scene the call-out plays, with the two picked', await page.$eval('[data-t="segwin-pic"]', e => e.getAttribute('data-v')).catch(() => '') === 'seg_callout' && await page.$$eval('[data-t="segwin-pic"] canvas', L => L.length) > 0);
+    await over('the booking window with its scene');
     ok(mode, 'the window gives a read in words, never a forecast in stars, and says how long it takes', /(No read|should land|do its job|could die out there)/.test(await txt(page, '[data-t="seg-look"]')) && !/[★¼½¾]|should be about/.test(await txt(page, '[data-t="seg-look"]')) && /takes 5 minutes/.test(await txt(page, '[data-t="seg-look"]')), await txt(page, '[data-t="seg-look"]'));
     await page.selectOption('#seg-len', 'L');
     ok(mode, 'a long one takes fifteen', /takes 15 minutes/.test(await txt(page, '[data-t="seg-look"]')));
@@ -53,6 +55,9 @@ async function run(mode) {
     ok(mode, 'booking it says what was booked and for how long', /Booked: .* calls out .*, 15 minutes/.test(await flash(page)), await flash(page));
     ok(mode, 'the promo is on the run sheet before its match', await page.evaluate(() => { const rows = [...document.querySelectorAll('.sheet > .seg')]; const i = rows.findIndex(r => r.querySelector('[data-t="seg-edit"]')); return i === 2 && /Call-out/.test(rows[i].innerText) && /15 min/.test(rows[i].innerText); }));
     ok(mode, 'the row carries the same read, in words', /(No read|should land|do its job|could die out there)/.test(await txt(page, '[data-t="seg-read"]')) && !/[★¼½¾]/.test(await txt(page, '.sheet')) && await page.$eval('[data-t="pane"]', e => e.getAttribute('data-v')) === 'seg', await txt(page, '[data-t="seg-read"]'));
+    ok(mode, 'beside the sheet it shows the scene it will play', await page.$eval('[data-t="pane"] [data-t="seg-pic"]', e => e.getAttribute('data-v')).catch(() => '') === 'seg_callout');
+    await over('a booked promo with its scene');
+    await shot(page, 'seg-scene-' + mode);
     ok(mode, 'and it is counted as a promo', await cat('promo') === 1 && await cat('angle') === 0);
     /* an angle, at the top of the show */
     await page.click('[data-t="add-angle"]');

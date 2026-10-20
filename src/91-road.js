@@ -9,7 +9,7 @@
 
    The road is a loop through the company's cities, each stop the nearest one not yet visited, so the arcs on the map
    make a tour and not a scribble. Stop number S.rdn is the next show to go on the air. Nothing here uses rnd(S). */
-var CITY_AT={'Rome':[41.9,12.5],'Athens':[37.98,23.73],'Alexandria':[31.2,29.92],'Constantinople':[41.01,28.98],'London':[51.51,-0.13],'Paris':[48.86,2.35],'Vienna':[48.21,16.37],'Kyoto':[35.01,135.77],
+var CITY_AT={'Kingsport':[36.55,-82.56],'Knoxville':[35.96,-83.92],'Nashville':[36.16,-86.78],'Atlanta':[33.75,-84.39],'Jacksonville':[30.33,-81.66],'Orlando':[28.54,-81.38],'Tampa':[27.95,-82.46],'Miami':[25.76,-80.19],'Rome':[41.9,12.5],'Athens':[37.98,23.73],'Alexandria':[31.2,29.92],'Constantinople':[41.01,28.98],'London':[51.51,-0.13],'Paris':[48.86,2.35],'Vienna':[48.21,16.37],'Kyoto':[35.01,135.77],
   'Philadelphia':[39.95,-75.17,['Pennsylvania']],'Boston':[42.36,-71.06],'Chicago':[41.88,-87.63,['Illinois']],'St. Louis':[38.63,-90.2],'Edinburgh':[55.95,-3.19],'Dublin':[53.35,-6.26],'Verona':[45.44,10.99],'Nottingham':[52.95,-1.15],
   'Camelot':[51.02,-2.53],'Springfield':[39.8,-89.65],'New York':[40.71,-74,['New York']],'Baltimore':[39.29,-76.61],'New Orleans':[29.95,-90.07],'Sparta':[37.07,22.43],'Thebes':[38.32,23.32],'Corinth':[37.94,22.93],
   'Delphi':[38.48,22.5],'Troy':[39.96,26.24],'Memphis':[29.85,31.25],'Uppsala':[59.86,17.64],'Uruk':[31.32,45.64],'Tara':[53.58,-6.61,['Ireland']],'Whitby':[54.49,-0.61],'Sleepy Hollow':[41.09,-73.86],'Prague':[50.08,14.44],
@@ -178,6 +178,16 @@ function roadMap(S,cities){
   var Wd=mapById('world');                                      // the world map only when nothing closer will do
   return best||(Wd&&mapHas(Wd,here)&&mapArea(Wd,here)>=0?Wd:null);
 }
+/* The area this week's city is in, as a piece of cut paper (src/91-shapes.js), with a pin for every stop on the road
+   that falls inside it: the city this week always, the stops before and after when they are in the same state. */
+function roadShape(S,M,ai,stops){
+  if(!M||ai<0||typeof SHAPES==='undefined')return null;
+  var n=M.a[ai],Z=SHAPES[M.id+':'+n];if(!Z)return null;
+  var pins=[];stops.forEach(function(s){var p=placeOf(S,s.city);if(!p)return;if(s.k!=='now'&&mapArea(M,p)!==ai)return;
+    var x=p.lon-Z.f[0],y=(Z.f[2]-p.lat)/Z.f[3];x=x/Z.f[1];if(x<-1||y<-1||x>Z.w+1||y>Z.h+1)return;
+    if(pins.some(function(q){return q.city===s.city;}))return;pins.push({city:s.city,k:s.k,x:Math.round(x*10)/10,y:Math.round(y*10)/10});});
+  return {n:n,w:Z.w,h:Z.h,p:Z.p,pins:pins};
+}
 /** Everything the road window on the desk shows. It only reads the game.
     `map` is the board to draw (see E.MAPS), `lit` the areas that light, `stops` the road so far and the road ahead
     with each stop's dot, `now` this stop in full. */
@@ -197,7 +207,8 @@ E.road=function(S){
   }
   var cap=roadCap(S,P,A.show,city),mk=mktKnow(S,P,city),sale=stopSales(S,P,A.w,A.show,A.k,true),last=S.rdv&&S.rdv[city],bar=S.bar&&S.bar[city],reg=P.tour?REGIONS[P.tour.reg]:REGIONS[homeReg(P)];
   var home=rosterOf(S,P.id).filter(function(w){return !w.nw&&homeNear(S,w,city);}).sort(function(a,b){return (a.town===city?0:1)-(b.town===city?0:1)||b.ovr-a.ovr;}).slice(0,3).map(function(w){return {id:w.id,name:w.name,hurt:w.inj>0,town:w.town,near:w.town!==city,km:homeKm(S,w,city)};});
-  return {map:M?M.id:null,mapName:M?M.n:null,lit:lit,stops:stops,off:off,
+  var sh=roadShape(S,M,lit.now,stops);
+  return {map:M?M.id:null,mapName:M?M.n:null,lit:lit,stops:stops,off:off,shape:sh,
     now:{city:city,land:M&&lit.now>=0?M.a[lit.now]:null,show:A.show.name,big:!!A.show.big,kind:A.show.big?(A.show.flag?'Flagship':evTy(A.show).n):'',w:A.w,later:A.w>S.week,left:Math.max(0,(S.queue?S.queue.length:0)-(S.qi||0)),
       venue:venueName(city,cap),cap:cap,seat:Math.round(ticket(P,A.show)*TIX_P[P.tix]),tix:TIXN[P.tix],
       sold:sale.sold,wk:sale.wk,on:sale.on,opens:sale.opens,gate:Math.round(sale.sold*ticket(P,A.show)*TIX_P[P.tix]),

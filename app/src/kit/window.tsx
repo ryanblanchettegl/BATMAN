@@ -3,8 +3,10 @@ import { useEffect, useRef } from 'preact/hooks';
 import { closeModal } from '../store';
 import { Btn } from './index';
 
-/** The grey DOS pop-up. One is open at a time (ui.modal). Esc and the Back button close it. */
-export function Window(p: { title: string; wide?: boolean; children: ComponentChildren; ok?: string; noOk?: boolean; hint?: string; footer?: ComponentChildren; onClose?: () => void }) {
+/** The grey DOS pop-up. One is open at a time (ui.modal). Esc and the Back button close it. `paper` dresses it in the
+    new look (rule 2a): cream card, a navy title bar in pinstripes with a close box and a zoom box, and an info strip
+    under it (`info`: what it is on the left, where it stands on the right). */
+export function Window(p: { title: string; wide?: boolean; children: ComponentChildren; ok?: string; noOk?: boolean; hint?: string; footer?: ComponentChildren; onClose?: () => void; paper?: boolean; info?: [ComponentChildren, ComponentChildren] }) {
   const close = p.onClose || closeModal;
   const box = useRef<HTMLDivElement>(null);
   // focus moves into the window when it opens and returns to where it was when it closes. It lands on the button that
@@ -24,8 +26,10 @@ export function Window(p: { title: string; wide?: boolean; children: ComponentCh
     else if (!e.shiftKey && (ae === last || !box.current.contains(ae))) { e.preventDefault(); first.focus(); }
   };
   return <div class="scrim">
-    <div ref={box} onKeyDown={trap} class={'win' + (p.wide ? ' wide' : '')} role="dialog" aria-modal="true" aria-label={p.title}>
-      <div class="wt"><span>{p.title}</span><button type="button" data-t="modal-close" aria-label="Close" onClick={close}>[{'■'}]</button></div>
+    <div ref={box} onKeyDown={trap} class={'win' + (p.wide ? ' wide' : '') + (p.paper ? ' paper ppop' : '')} role="dialog" aria-modal="true" aria-label={p.title}>
+      {p.paper ? <div class="wt"><button type="button" class="pbox" data-t="modal-close" aria-label="Close" onClick={close} /><h2>{p.title}</h2><span class="pbox zoom" aria-hidden="true" /></div>
+        : <div class="wt"><span>{p.title}</span><button type="button" data-t="modal-close" aria-label="Close" onClick={close}>[{'■'}]</button></div>}
+      {p.paper && p.info ? <div class="wnfo"><span>{p.info[0]}</span><span>{p.info[1]}</span></div> : null}
       <div class="wb">{p.children}</div>
       <div class="wf">{p.footer}{!p.noOk && <Btn kind="go" id="modal-ok" t="modal-close" onClick={close}>{p.ok || 'OK'}</Btn>}<span class="muted opt">{p.hint || 'Esc closes'}</span></div>
     </div>

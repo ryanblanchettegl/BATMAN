@@ -10,9 +10,10 @@ export function Desktop(p: { cls?: string; t?: string; children: ComponentChildr
 }
 /** A grey window: blue title bar with the title centred, a short status at its right end, and the body.
     `tone` is 'hot' for a window that wants attention (red bar) or 'gold' for a celebration. */
-export function Win(p: { title: ComponentChildren; right?: ComponentChildren; tone?: 'hot' | 'gold'; cls?: string; area?: string; t?: string; label?: string; children?: ComponentChildren }) {
+export function Win(p: { title: ComponentChildren; right?: ComponentChildren; tone?: 'hot' | 'gold'; cls?: string; area?: string; t?: string; label?: string; info?: [ComponentChildren, ComponentChildren]; children?: ComponentChildren }) {
   return <section class={'wn' + (p.tone ? ' ' + p.tone : '') + (p.cls ? ' ' + p.cls : '')} style={p.area ? { gridArea: p.area } : undefined} aria-label={p.label || (typeof p.title === 'string' ? p.title : undefined)} {...dataAttrs(p.t)}>
     <header class="ttl"><span aria-hidden="true">[{'■'}]</span><h2>{p.title}</h2><span>{p.right}</span></header>
+    {p.info ? <div class="wnfo"><span>{p.info[0]}</span><span>{p.info[1]}</span></div> : null}
     <div class="bd">{p.children}</div>
   </section>;
 }
@@ -22,7 +23,7 @@ export function Group(p: { title: ComponentChildren; cls?: string; t?: string; c
 }
 /** A label and its value on one line. `w` is the label column's width in characters (11 if left out). */
 export function Line(p: { label: ComponentChildren; w?: number; children?: ComponentChildren }) {
-  return <p class="kvl" style={p.w ? { '--lw': p.w + 'ch' } as any : undefined}><span class="l">{p.label}</span><span class="v">{p.children}</span></p>;
+  return <p class="kvl" style={p.w ? { '--lw': 'calc(' + p.w + ' * var(--ch))' } as any : undefined}><span class="l">{p.label}</span><span class="v">{p.children}</span></p>;
 }
 /** The list box. `cols` is the grid every row shares (a CSS grid-template-columns value); `head` is the header cells. */
 export function ListBox(p: { cols: string; head?: ComponentChildren; label: string; cls?: string; t?: string; children?: ComponentChildren }) {

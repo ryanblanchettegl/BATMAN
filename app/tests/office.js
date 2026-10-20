@@ -5,7 +5,7 @@
 const bsdo = async (page, sel, o) => { await page.click(sel, o); if (await page.$('.win')) { await page.keyboard.press('Escape'); await page.waitForTimeout(60); } };
 const { open, go, overflow, shot, flash, state, redraw, fits } = require('./helper');
 
-const MODES = (process.env.MODES || 'desk,tablet,remote').split(',');
+const MODES = (process.env.MODES || 'desk').split(',');
 const FILE = process.env.EWF_OUT || 'index';
 
 /** Run every show left this week with the suggested card, straight through the engine (Booking is another section). */

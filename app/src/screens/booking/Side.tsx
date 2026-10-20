@@ -13,6 +13,7 @@ import { Shape } from './Shape';
 import { Editor } from './Editor';
 import { hm, openSeg, CATN, TopTag } from './Segments';
 import { matchMeta } from './Card';
+import { SegPic } from '../../shared/moment';
 
 type OnCard = Record<number, 1>;
 const DOT = ' · ';
@@ -90,7 +91,7 @@ function SegPane(p: { slot: number; ck: any }) {
   return <Panel title={x.t === 'any' ? E.SEGK[x.k].n : CATN[x.t] + ': ' + E.SEGK[x.k].n} cls="d1">
     <p class="who">{x.why ? <span class="bad">{x.why}</span> : (x.who.length ? x.who.map((id: number, q: number) => <>{q ? ', ' : null}<Name w={S.w[id]} /></>) : 'The writers decide')}</p>
     <p class="meta">{it ? 'On at ' + hm(it.at) + DOT : ''}{E.SEGLENN[x.len]}, {x.mins} minutes{it && it.top ? <>{DOT}<TopTag top={it.top} /></> : null}</p>
-    <p class="muted mt1">{E.SEGK[x.k].d}</p>
+    {x.k !== 'writers' && x.who.length ? <SegPic k={x.k} who={x.who} /> : <p class="muted mt1">{E.SEGK[x.k].d}</p>}
     {x.look && x.look.read && x.k !== 'writers' ? <div class="agentsay" data-t="seg-read"><p class={x.look.read.k === 'good' ? 'good' : (x.look.read.k === 'bad' ? 'bad' : 'muted')}>{x.look.read.t}</p></div> : null}
     {x.look && x.look.notes && x.look.notes.length && x.k !== 'writers' ? <p class="muted">{x.look.notes.map((y: any, q: number) => <span key={q} class={y[0] > 0 ? 'good' : (y[0] < 0 ? 'bad' : undefined)}>{q ? DOT : ''}{y[0] > 0 ? '▲' : (y[0] < 0 ? '▼' : '')} {y[1]}</span>)}</p> : null}
     <div class="row d1-btns">

@@ -1,15 +1,16 @@
 /* One store: the game state (owned by the engine), the view state (owned by the interface), preferences and saving. */
 import { E, GameState } from './engine';
+import { useBackdropSource } from './kit/backdrop';
 
 export const KEY = 'ewf9000-save-4', UKEY = 'ewf9000-universes', PKEY = 'gorilla-position-prefs';
-export const VER = '0.85';
+export const VER = '0.86';
 
 /* ---------- preferences ---------- */
-export interface Prefs { snd: boolean; type: boolean; crt: boolean; boot: boolean; letter: boolean; screen: 'auto' | 'desk' | 'tablet' | 'tv'; zoom: number; speed: number; auto: boolean; pace: 'full' | 'quick' | 'results'; motion: 'auto' | 'reduce' | 'full'; fxvol: number; uni: string ; u2?: boolean }
+export interface Prefs { snd: boolean; type: boolean; crt: boolean; boot: boolean; letter: boolean; screen: 'auto' | 'desk' | 'tablet' | 'tv'; zoom: number; speed: number; auto: boolean; pace: 'tv' | 'full' | 'quick' | 'results'; pv?: number; motion: 'auto' | 'reduce' | 'full'; fxvol: number; uni: string ; u2?: boolean; pics: boolean }
 function readPrefs(): Prefs {
   let o: any = {};
   try { o = JSON.parse(localStorage.getItem(PKEY) || '{}') || {}; } catch (e) { /* storage can be blocked */ }
-  return { snd: o.snd !== false, type: o.type !== false, crt: o.crt !== false, boot: o.boot !== false, letter: o.letter !== false, screen: o.screen || 'auto', zoom: +o.zoom || 1, speed: +o.speed || 1, auto: o.auto !== false, pace: o.pace === 'quick' || o.pace === 'results' ? o.pace : 'full', fxvol: +o.fxvol || 1, motion: o.motion === 'reduce' || o.motion === 'full' ? o.motion : 'auto', uni: o.u2 ? (o.uni || 'parody') : (!o.uni || o.uni === 'public_domain' ? 'parody' : o.uni), u2: true };
+  return { snd: o.snd !== false, type: o.type !== false, crt: false, boot: o.boot !== false, letter: o.letter !== false, screen: o.screen || 'auto', zoom: +o.zoom || 1, speed: +o.speed || 1, auto: o.auto !== false, pace: o.pv === 2 && (o.pace === 'full' || o.pace === 'quick' || o.pace === 'results' || o.pace === 'tv') ? o.pace : 'tv', pv: 2, fxvol: +o.fxvol || 1, motion: o.motion === 'reduce' || o.motion === 'full' ? o.motion : 'auto', uni: o.u2 ? (o.uni || 'parody') : (!o.uni || o.uni === 'public_domain' ? 'parody' : o.uni), u2: true, pics: o.pics !== false };
 }
 export const pref: Prefs = readPrefs();
 /** Reduced motion: switched on in Options, or by the system when Options says Auto. Stops the typewriter and the blinking cursor. */
@@ -19,6 +20,8 @@ export function savePrefs() { try { localStorage.setItem(PKEY, JSON.stringify(pr
 /* ---------- game state ---------- */
 /** The live game. `G.S` is null on the start screens. Only the engine changes what is inside it. */
 export const G: { S: GameState | null } = { S: null };
+// scenes in a game stand in front of the backdrops its world carries
+useBackdropSource(() => G.S ? E.worldBackdrops(G.S) : []);
 export function me() { return G.S.promos[G.S.player]; }
 /* Saves live in IndexedDB (a career outgrows localStorage). A copy stays in localStorage while it fits, so a reload
    straight after a save, before the database has finished writing, still finds it; each copy carries a counter and the

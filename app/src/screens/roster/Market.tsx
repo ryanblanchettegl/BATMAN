@@ -8,10 +8,10 @@ import { range, sendScout } from './Profile';
 
 /** The scouts' window: the way in to the creator, and the wage budget. */
 function Scouts() {
-  const S = G.S, P = me(), info = E.createInfo(S);
+  const S = G.S, P = me();
   return <Win title="Your scouts" area="scouts" t="mk-scouts">
-    <div class="row"><Btn t="cw-open" onClick={() => openModal({ kind: 'caw' })}>Create a wrestler</Btn></div>
-    <p class="muted">{info.ok ? 'Your scouts have somebody for you to look at.' : 'Your scouts need ' + info.wait + ' more ' + plural(info.wait, 'week') + '. You can still design one.'}</p>
+    <div class="row"><Btn t="cw-open" onClick={() => openModal({ kind: 'player', id: 'new' })}>Create a wrestler</Btn></div>
+    <p class="muted">Create a Wrestler makes a new wrestler. They join the free agents, and you sign them like anybody else.</p>
     {!S.owner.me && <p>Wage budget <b>{cash(E.budget(S))}</b> a week, the bill is <b>{cash(E.rosterOf(S, P.id).reduce((a: number, w: W) => a + w.wage, 0))}</b>.</p>}
   </Win>;
 }

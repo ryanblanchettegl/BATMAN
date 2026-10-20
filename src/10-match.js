@@ -167,7 +167,7 @@ function callMatch(S,P,x){
   x.sides.forEach(function(s,k){
     var isCh=x.champ&&x.champ===s,lead=s[0],big=avg(s.map(function(w){return w.ovr;}))>=62||isCh;
     ring((k===0?'Introducing first, ':(k===x.sides.length-1?'And the opponent'+(s.length>1?'s':'')+', ':'Next, '))+(isCh?'the '+x.t.name+' champion'+(s.length>1?'s':'')+', ':'')+names(s)+'!');
-    bc.push({t:'ent',x:big?names(s)+' '+(s.length>1?'make their way out together':ENTR[lead.align==='F'?'F':'H'][lead.ent||0])+(isCh?', the title held high':'')+'. The reaction: '+pop(s)+'.':'The reaction: '+pop(s)+'.'});
+    bc.push({t:'ent',x:big?(s.length===1&&lead.look&&lead.look.entrance_fx&&lead.look.entrance_fx.music?'"'+lead.look.entrance_fx.music+'" hits, and ':'')+names(s)+' '+(s.length>1?'make their way out together':ENTR[lead.align==='F'?'F':'H'][lead.ent||0])+(isCh?', the title held high':'')+'. The reaction: '+pop(s)+'.':'The reaction: '+pop(s)+'.'});
   });
   // the hottest act in the match gets a chant; a wrestler with a fresh catchphrase hears it shouted back
   var hot=x.all.slice().sort(function(p,q){return q.ovr-p.ovr;})[0];
@@ -196,13 +196,23 @@ function callMatch(S,P,x){
   if(x.mins>=20)pbp('late');
   if(x.mins>=18&&x.MQ>=70)hp('pbp','near2',1);
   if(shp&&shp.late)bc.push({t:'pbp',x:shp.late.charAt(0).toUpperCase()+shp.late.slice(1),h:1});
+  // a finisher kicked out of (src/86-looks.js); without a file, a long main event can still have one, in words only
+  if(x.fko){bc.push({t:'pbp',x:(x.fko.again?x.fko.who+' hits '+x.fko.f+'! This is it! One, two... ':'Out of nowhere, '+x.fko.who+' hits '+x.fko.f+'! One, two... ')+x.fko.by+' KICKS OUT!',h:1});
+    raw('col',x.fko.huge?'Nobody kicks out of that, {p}! Nobody! I have never seen that!':'{p}, I have seen that move finish bigger names than this. Not tonight!');}
+  else if(!x.fm&&x.win>=0&&x.lfin&&(x.main||x.big)&&x.mins>=18&&h01(hk+'fko')<0.3)bc.push({t:'pbp',x:x.lname+' hits '+(/^the /i.test(x.lfin)?'':'the ')+x.lfin+'! One, two... '+o.w+' kicks out!',h:1});
   col(x.bad?'q_off':(x.MQ>=88?'q_great':(x.MQ>=75?'q_good':(x.MQ>=60?'q_ok':(x.MQ>=45?'q_poor':'q_bad')))));
   if(x.mins>=14&&x.CR>=82)col('c_hot');
   // when the company model's bonus or penalty fired, the crowd sounds like that company's crowd
   var mf=(x.fx||[]).filter(function(q){return q.m;});
   if(mf.length&&MODEL_CROWD[P.model||'classic']){var cl=MODEL_CROWD[P.model||'classic'][mf[0].s>0?0:1];if(cl&&cl.length)raw('col',sayPick(S,cl));}
   var f=x.fin;
-  if(f==='clean'){pbp(x.sub?'f_sub':'f_clean',1);col('r_clean');}
+  if(f==='clean'&&x.fm&&!x.sub){   // a finisher from a wrestler's file: where it comes from, and how final it is
+    var fn=x.fm.name,pos=x.fm.position,ag=x.fko&&x.fko.again?'Again! ':'';
+    var fl=pos==='Top Rope'?ag+x.wname+' goes up top... '+fn+' from the top rope! Cover! One, two, three!':pos==='Running'?ag+x.wname+' hits the ropes... '+fn+'! Cover, and that is it!':pos==='Counter'?'{l} goes for it, but '+x.wname+' turns it into '+fn+'! One, two, three!':ag+x.wname+' hits '+fn+'! Cover! One, two, three!';
+    if(x.fm.kickout_difficulty==='Instant')fl+=' It was over the moment it landed.';
+    bc.push({t:'pbp',x:fill(fl,o),h:1});col('r_clean');
+  }
+  else if(f==='clean'){pbp(x.sub?'f_sub':'f_clean',1);col('r_clean');}
   else if(f==='flash'){pbp('f_flash',1);col('r_flash');}
   else if(f==='cheap'){pbp('f_cheap',1);col('r_cheap');}
   else if(f==='interf'){pbp('f_interf',1);col('r_interf');}
@@ -402,11 +412,12 @@ function doMatch(S,P,show,m,i,n,rep,used){
     var due=win>=0&&fin!=='dq'&&fin!=='co'?(m.end&&isPl?'end':feudDue(S,feud,show)):null;
     if(due==='chapter')feudMsg=closeChapter(S,P,show,feud,winners,losers,isPl);
     else if(due==='end')feudMsg=settleFeud(S,P,show,feud,winners,losers,isPl);
+    if(due&&isPl)seg.story={k:due==='end'?'payoff':'chapter',w:winners.map(function(w){return w.id;}),l:losers.map(function(w){return w.id;})};   // the beat this match was, for its scene (BEATS)
   }
   if(S.cal)return seg;
   // report text
   var lead=win>=0?winners[0]:sides[0][0],other=win>=0?losers.slice().sort(function(p,o){return br?o.ovr-p.ovr:p.ovr-o.ovr;})[0]:sides[1][0];
-  var ca=chance(S,0.55)?other:lead,cb=ca===lead?other:lead,o={a:ca.name,b:cb.name,w:names(winners),l:other.name,x:runin?runin.r.name:'',fin:(m.mt==='tag'&&win>=0&&teamFin(S,winners))||(lead.fin?'the '+lead.fin:'the finish')};
+  var ca=chance(S,0.55)?other:lead,cb=ca===lead?other:lead,o={a:ca.name,b:cb.name,w:names(winners),l:other.name,x:runin?runin.r.name:'',fin:(m.mt==='tag'&&win>=0&&teamFin(S,winners))||(lead.fin?(/^the /i.test(lead.fin)?lead.fin:'the '+lead.fin):'the finish')};
   if(isPl){
     var mk=m.mt==='4way'||m.mt==='3way'?'multi':(m.mt==='6man'?'six':null);   // matches with more than two people read differently from singles
     seg.lines.push(say(S,mk?'open_'+mk:(GR['open_'+ca.style]?'open_'+ca.style:'open_A'),o));
@@ -424,8 +435,9 @@ function doMatch(S,P,show,m,i,n,rep,used){
     (mins>=20?'The time limit expires with neither able to put the other away.':'Both are counted out brawling on the floor.'),o);
   if(isPl){
     var srt=all.slice().sort(function(p,q){return p.ovr-q.ovr;});
-    seg.bc=callMatch(S,P,{fx:fx,o:o,m:m,all:all,pre:pre,champ:champ,mt:MT[m.mt].n,stip:stip,stipName:stip==='std'?null:STIP[stip].n,t:t,sides:sides,feud:feud,feudHeat:heatWas,flog:flogWas,gap:srt[srt.length-1].ovr-srt[0].ovr,under:srt[0].name,CR:CR,MQ:MQ,mins:mins,ca:ca,bad:bad,fin:fin,sub:lead.style==='T'||stip==='sub',win:win,plural:winners.length>1,change:!!seg.change,retain:win>=0&&win===champSide,entrance:ctx.entrance,main:isMain&&n>2,big:big,show:show.name,upset:upset,streak:endedStreak});
+    seg.bc=callMatch(S,P,{fx:fx,o:o,m:m,all:all,pre:pre,champ:champ,mt:MT[m.mt].n,stip:stip,stipName:stip==='std'?null:STIP[stip].n,t:t,sides:sides,feud:feud,feudHeat:heatWas,flog:flogWas,gap:srt[srt.length-1].ovr-srt[0].ovr,under:srt[0].name,CR:CR,MQ:MQ,mins:mins,ca:ca,bad:bad,fin:fin,sub:lookFin(lead)?lookFin(lead).category==='Submission':(lead.style==='T'||stip==='sub'),fko:ctx.fko||null,fm:ctx.fm||null,lfin:other.fin||null,lname:other.name,wname:lead.name,win:win,plural:winners.length>1,change:!!seg.change,retain:win>=0&&win===champSide,entrance:ctx.entrance,main:isMain&&n>2,big:big,show:show.name,upset:upset,streak:endedStreak});
     if(m.mt==='1v1'){var hk=rkey(all[0].id,all[1].id),hh=(S.h2h||(S.h2h={}))[hk]||(S.h2h[hk]={n:0,a:0,b:0,lw:-1,w:0});hh.n++;hh.w=S.week;hh.lw=win>=0?winners[0].id:-1;if(win>=0){if(winners[0].id===Math.min(all[0].id,all[1].id))hh.a++;else hh.b++;}}
+    var dbt=all.filter(function(w){return w.deb;});if(dbt.length)seg.debut=dbt.map(function(w){return {id:w.id,k:w.dk||'match'};});   // a debut is a beat with its own scene (BEATS)
     all.forEach(function(w){w.deb=false;});
   }
   if(ccNote)seg.notes.push(ccNote+' used creative control and would not take the loss.');

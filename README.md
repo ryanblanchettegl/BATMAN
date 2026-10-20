@@ -1,14 +1,14 @@
 <div align="center">
 
-# EWF WRESTLING MANAGER
+# WRESTLECRAFT: BE THE BOOKER
 
-**Elite Wrestling Federation. You hold the book.**
+**A wrestling booking game, made by hand. You hold the book.**
 
 ![The desk, where every week starts](docs/screens/desk.png)
 
-`Wrestling` `Management` `Simulation` `Text-Based` `Sports` `Singleplayer` `Retro` `Moddable`
+`Wrestling` `Management` `Simulation` `Sports` `Singleplayer` `Hand-Crafted` `Moddable`
 
-**Release:** Coming to Steam &nbsp;|&nbsp; **Version:** 0.85, early access build &nbsp;|&nbsp; **Developer:** Ryan
+**Release:** Coming to Steam &nbsp;|&nbsp; **Version:** 0.86, early access build &nbsp;|&nbsp; **Developer:** Ryan
 
 </div>
 
@@ -18,7 +18,7 @@
 
 You are the booker of a wrestling company, and the owner is watching. Build the card, set the running order, pick who wins, and stand at the gorilla position while the show goes out live. Every call you make, the locker room remembers.
 
-EWF Wrestling Manager is a text-based booking sim drawn as a 1990s PC program: grey windows on a blue desktop, a dot-matrix road map, and a broadcast in scrolling text. It plays on a desk, a tablet or a TV, with a mouse, touch, a keyboard or a gamepad.
+WrestleCraft: Be The Booker is a booking sim that looks made by hand: a scrapbook zine of cut paper pinned to a corkboard, marker lettering, and a broadcast of paper dioramas. It plays on a Steam desktop or a Steam Deck, with a mouse, touch, a keyboard or a gamepad.
 
 There is no clean place to stop. Every show leaves a problem or a chance for next week.
 

@@ -61,7 +61,7 @@ export function pressAdvance() {
     return;
   }
   // the card needs building or fixing, or there is a problem before the bell
-  if (ui.page === 'booking') { act(() => say(A.why[0] || (A.k === 'pre' ? 'Something needs an answer before the bell. It is at the top of the card.' : 'Build the card: Suggest a card, or Add a match.'), { err: !!A.why.length })); return; }
+  if (ui.page === 'booking') { act(() => say(A.why[0] || (A.k === 'pre' ? 'Something needs an answer before the bell. It is at the top of the card.' : 'Build the card: Suggest, or + Match.'), { err: !!A.why.length })); return; }
   go('booking');
 }
 

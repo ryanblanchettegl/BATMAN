@@ -69,18 +69,18 @@ export function ContractTaskWindow(p: { m: Modal }) {
 
 /** The body of the tasks window on the desk: four to a page, a line each, with the button that deals with it. */
 export function Tasks() {
-  const S = G.S, T = E.tasks(S), st = office() as any, per = (window as any).EWF_FLAT ? 99 : (document.documentElement.getAttribute('data-screen') === 'desk' ? 4 : 3), /* a test that wants every task on the page sets EWF_FLAT */ pages = Math.max(1, Math.ceil(T.list.length / per)), pg = Math.min(st.tpg || 0, pages - 1);
+  const S = G.S, T = E.tasks(S), st = office() as any, per = (window as any).EWF_FLAT ? 99 : (document.documentElement.getAttribute('data-screen') === 'desk' ? 8 : 3), /* a test that wants every task on the page sets EWF_FLAT */ pages = Math.max(1, Math.ceil(T.list.length / per)), pg = Math.min(st.tpg || 0, pages - 1);
   const L: any[] = T.list.slice(pg * per, pg * per + per);
   return <div class="tasks" data-t="tasks">
     {T.list.length ? L.map((t: any) => <div key={t.id} class={'it task ' + t.state + (t.state === 'todo' && T.strict ? ' must' : '')} data-task={t.id}>
       <span class="tx">{t.state === 'todo' && T.strict ? <span class="mark" aria-hidden="true">!</span> : null}<Tag kind={t.req || t.miss ? 'bad' : (TAG[t.state][1] || 'off')}>{t.req ? 'Required' : (t.miss ? (t.id === 'ap' ? 'Unspent' : 'Missed') : (t.hit ? 'Hit' : (t.state === 'todo' && !T.strict ? 'To do' : TAG[t.state][0])))}</Tag><span class={t.state === 'done' || t.state === 'waved' ? 'muted' : undefined} title={t.text}>{t.short && t.state !== 'done' ? t.short : <Txt>{t.text}</Txt>}</span></span>
       <span class="opts">
-        {t.state === 'todo' || t.state === 'optional' ? <Btn kind={t.state === 'optional' ? 'less' : undefined} t="task-go" d={{ v: t.id }} onClick={() => open(t)}>{t.label}</Btn> : null}
+        {t.state === 'todo' || t.state === 'optional' ? <Btn kind={t.state === 'optional' ? 'less' : undefined} t="task-go" d={{ v: t.id }} tip={t.text} onClick={() => open(t)}>{t.label}</Btn> : null}
         {t.state === 'todo' && t.waive ? <Btn kind="less" t="task-wave" d={{ v: t.id }} label={'Not this week: ' + t.text} onClick={() => act(() => { const r = E.taskWave(S, t.id); say(r.msg, { err: !r.ok }); })}>Later</Btn> : null}
         {t.state === 'waved' ? <Btn kind="less" t="task-unwave" d={{ v: t.id }} onClick={() => act(() => { E.taskUnwave(S, t.id); })}>Put it back</Btn> : null}
       </span></div>) : <p class="good">Nothing is waiting on your desk this week.</p>}
     <div class="tfoot">
-      <Btn kind="sm" t="open-voices" onClick={() => openVoices()}>Commentary desk</Btn><Btn kind="sm" t="open-letter" onClick={() => openModal({ kind: 'welcome', again: 1 })}>Owner{'’'}s letter</Btn>
+      <Btn kind="sm" t="open-voices" tip="Who calls your shows: the play-by-play voice and the colour voice." onClick={() => openVoices()}>Commentary</Btn><Btn kind="sm" t="open-letter" tip="Read the owner's letter again: what they want from you this year." onClick={() => openModal({ kind: 'welcome', again: 1 })}>Letter</Btn>
     </div>
     <div class="tnote">
       {pages > 1 ? <span class="pgr"><Btn kind="sm" t="tasks-page" d={{ v: 'prev' }} label="Earlier tasks" disabled={pg <= 0} onClick={() => view(() => { st.tpg = pg - 1; })}>{'◄'}</Btn><span class="num" data-t="tasks-pg">{pg + 1} of {pages}</span><Btn kind="sm" t="tasks-page" d={{ v: 'next' }} label="More tasks" disabled={pg >= pages - 1} onClick={() => view(() => { st.tpg = pg + 1; })}>{'►'}</Btn></span> : null}

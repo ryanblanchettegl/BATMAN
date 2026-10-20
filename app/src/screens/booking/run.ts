@@ -158,7 +158,7 @@ export function liveNext() {
   const L = book().live!, sg = r.segs[L.s], bc = (sg && sg.bc) || [];
   if (sg && L.b < bc.length) {
     look(() => {
-      L.b++; const nb = bc[L.b];
+      L.b = pref.pace === 'tv' ? tvNext(sg, L.b) : L.b + 1; const nb = bc[L.b];
       if (nb && COUNT.test(nb.x)) SFX.count();
       else if (nb && nb.h) SFX.crowd(nb.h > 1 ? 100 : 80);
       else if (!nb && sg.k === 'match') { SFX.bellEnd(); SFX.crowd(sg.cr); }
@@ -233,8 +233,24 @@ export const pickSide = (id: string) => look(() => { const b = book(); b.side = 
 let autoT: any = null, autoKey = '';
 const autoHalt = (k: string | undefined) => !k || k === 'signoff' || k === 'title' || k === 'call';
 export function autoStop() { if (autoT) { clearTimeout(autoT); autoT = null; } autoKey = ''; }
-const PACES: ('full' | 'quick' | 'results')[] = ['full', 'quick', 'results'];
-export const PACE_N: Record<string, string> = { full: 'Full', quick: 'Quick', results: 'Results' };
+const PACES: ('tv' | 'full' | 'quick' | 'results')[] = ['tv', 'full', 'quick', 'results'];
+export const PACE_N: Record<string, string> = { tv: 'TV', full: 'Full', quick: 'Quick', results: 'Results' };
+/* The TV pace (Ryan, 19 October: "a 2 hour show to run about 2 minutes"). A segment gets one second for every minute
+   it runs on the show's clock. In that time the broadcast shows the lines that matter: every big moment (a near
+   fall, the finish, a new champion), the call of the bell, and lines spread evenly between, while the scene plays;
+   the rest of the call is passed over, as a highlight package would. The result takes the last part of the time. */
+const TV_LINE = 1700;
+/** Which lines of a segment the TV pace shows, in order. */
+export function tvKeys(sg: any): number[] {
+  const bc = (sg && sg.bc) || [], n = bc.length; if (!n) return [];
+  const T = (sg.mins || 5) * 1000 * 0.85, K = Math.max(2, Math.min(n, Math.round(T / TV_LINE))), keep = new Set<number>([0, n - 1]);
+  if (sg.k === 'match') keep.add(lead(sg) + 1);
+  bc.forEach((b: any, i: number) => { if (b.h || b.t === 'call' || b.t === 'ear') keep.add(i); });
+  for (let j = 1; keep.size < K && j <= K; j++) keep.add(Math.round(j * (n - 1) / (K + 1)));
+  return [...keep].filter(i => i >= 0 && i < n).sort((a, b) => a - b);
+}
+/** The next line the TV pace shows after line `b`, or the result. */
+export function tvNext(sg: any, b: number): number { const k = tvKeys(sg).find(i => i > b); return k == null ? ((sg && sg.bc) || []).length : k; }
 /** Full, quick or results only. What is shown and how fast; never what happens. */
 export function paceNext() { look(() => { pref.pace = PACES[(PACES.indexOf(pref.pace) + 1) % PACES.length]; savePrefs(); }); }
 export function autoToggle() { look(() => { pref.auto = !pref.auto; savePrefs(); }); }
@@ -243,6 +259,12 @@ export function autoWait(): number {
   const r = liveReport(); if (!r) return 0;
   const L = livePos(r), s = r.segs[L.s], bc = (s && s.bc) || [], sp = Math.sqrt(pref.speed || 1);
   if (!s) return 0;
+  if (pref.pace === 'tv') {   // the segment's seconds, shared between the lines shown, and the last part for its result
+    const T = (s.mins || 5) * 1000, keys = tvKeys(s);
+    if (L.b >= bc.length) return Math.round(Math.max(1600, T * 0.15) / sp);
+    const b = bc[L.b], hot = b && b.h ? (b.h > 1 ? 900 : 400) : 0;
+    return Math.round(Math.max(900, T * 0.85 / Math.max(1, keys.length)) / sp + hot);
+  }
   const quick = pref.pace === 'quick' || pref.pace === 'results';
   if (L.b >= bc.length) return Math.round((quick ? 2400 : 3400) / sp);   // the result: stars, the scores, the belt
   if (pref.pace === 'results') return 500;   // straight on to the result

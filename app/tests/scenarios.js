@@ -5,7 +5,7 @@ const { open, overflow, state, redraw } = require('./helper');
 const fails = [];
 function check(mode, label, ok, detail) { console.log(mode.padEnd(6), ok ? 'ok  ' : 'FAIL', label + (detail ? ': ' + detail : '')); if (!ok) fails.push(mode + ' ' + label); }
 (async () => {
-  for (const mode of ['desk', 'tablet']) {
+  for (const mode of (process.env.MODES || 'desk').split(',')) {
     const { browser, page, errs } = await open({ mode, promo: null, file: process.env.EWF_OUT || 'index' });
     await page.click('[data-t="scenarios"]'); await page.waitForSelector('[data-t="scn-play"]');
     const n = await page.$$eval('[data-t="scn-play"]', L => L.length), want = await state(page, S => GP.SCENARIOS.length);

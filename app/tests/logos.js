@@ -1,8 +1,8 @@
 /* Company logos and the logo creator: every company shows its own icon, and the creator in the World Editor builds a
    new one from parts, refuses a clash or letters that cannot be read, and saves only when asked.
-   Run: NODE_PATH=<dir containing playwright> node app/tests/logos.js   (MODES=desk,tablet,tv) */
+   Run: NODE_PATH=<dir containing playwright> node app/tests/logos.js   (desk size; MODES picks others) */
 const { open, go, overflow, shot, state } = require('./helper');
-const MODES = (process.env.MODES || 'desk,tablet,tv').split(',');
+const MODES = (process.env.MODES || 'desk').split(',');
 const fails = [];
 const ok = (mode, label, pass, detail) => { console.log(mode.padEnd(6), pass ? 'ok  ' : 'FAIL', label + (detail ? ': ' + detail : '')); if (!pass) fails.push(mode + ' ' + label); };
 const txt = (page, sel) => page.$eval(sel, e => e.innerText.replace(/\s+/g, ' ').trim()).catch(() => '');

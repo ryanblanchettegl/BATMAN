@@ -1,0 +1,5575 @@
+{
+ "promotion": {
+  "id": "wpw",
+  "model": "classic",
+  "name": "WPW",
+  "full_name": "WrestlePower Wrestling",
+  "blurb": "The fed that grew out of PCW and took in everybody who ever signed up: four feds of history, one locker room, and a World title first held by a Shakespearean.",
+  "owner": {
+   "name": "Carlos Gonzalez",
+   "style": "stars",
+   "roots": "tradition",
+   "pledge": "stable"
+  },
+  "staff": {
+   "road_agent": "Ethan Frost",
+   "head_writer": "The Judge"
+  },
+  "announcers": [
+   "Daniel Justice",
+   "Max Stockton"
+  ],
+  "cities": [
+   "Kingsport",
+   "Knoxville",
+   "Nashville",
+   "Atlanta",
+   "Jacksonville",
+   "Orlando",
+   "Tampa",
+   "Miami"
+  ],
+  "cash": 9000000,
+  "popularity": 50,
+  "flagship_month": 4,
+  "tv_slot": 0,
+  "production_level": 1,
+  "events": [
+   {
+    "n": "When Worlds Collide",
+    "t": "tent"
+   },
+   {
+    "n": "Proving Ground",
+    "t": "arena"
+   },
+   {
+    "n": "Brawl For It All",
+    "t": "gimmick"
+   },
+   {
+    "n": "Redemption",
+    "t": "flag"
+   },
+   {
+    "n": "Payback",
+    "t": "arena"
+   },
+   {
+    "n": "Ruined Fate",
+    "t": "taped"
+   },
+   {
+    "n": "Greed",
+    "t": "arena"
+   },
+   {
+    "n": "Activation",
+    "t": "tent"
+   },
+   {
+    "n": "ReActivation",
+    "t": "arena"
+   },
+   {
+    "n": "Hallowicked",
+    "t": "gimmick"
+   },
+   {
+    "n": "Whiplash",
+    "t": "arena"
+   },
+   {
+    "n": "Mutiny",
+    "t": "taped"
+   }
+  ]
+ },
+ "shows": [
+  {
+   "id": "wpw_tnt",
+   "name": "Tuesday Night Turmoil",
+   "weight": 1
+  }
+ ],
+ "titles": [
+  {
+   "id": "wpw_world",
+   "name": "WPW World Heavyweight Championship",
+   "gender": "M",
+   "level": 3,
+   "holder_ids": [
+    "wpw_dan_murph"
+   ]
+  },
+  {
+   "id": "wpw_florida",
+   "name": "WPW Florida State Championship",
+   "gender": "M",
+   "level": 2,
+   "holder_ids": [
+    "wpw_dan_murph"
+   ]
+  },
+  {
+   "id": "wpw_tag",
+   "name": "WPW World Tag Team Championship",
+   "gender": "M",
+   "level": 2,
+   "holder_ids": [
+    "wpw_blade_the_future_lavigne",
+    "wpw_new_age_andrew_xavier"
+   ],
+   "tag": true
+  },
+  {
+   "id": "wpw_pure",
+   "name": "WPW Canadian Pure Championship",
+   "gender": "M",
+   "level": 2,
+   "holder_ids": [
+    "wpw_justin_dreamer"
+   ]
+  },
+  {
+   "id": "wpw_hardcore",
+   "name": "WPW Hardcore Championship",
+   "gender": "M",
+   "level": 1,
+   "holder_ids": [
+    "wpw_sky_ryder"
+   ]
+  },
+  {
+   "id": "pcw_world",
+   "name": "PCW World Heavyweight Championship",
+   "gender": "M",
+   "level": 3,
+   "holder_ids": [
+    "wpw_the_one"
+   ]
+  }
+ ],
+ "roster": [
+  {
+   "id": "wpw_james_moriarty_cassius",
+   "ring_name": "James Moriarty Cassius",
+   "gender": "M",
+   "disposition": "heel",
+   "style": "all_rounder",
+   "age": 37,
+   "hometown": "Bad Segeberg, Germany",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 69,
+    "technical": 70,
+    "aerial": 59,
+    "stamina": 65,
+    "charisma": 59,
+    "promo_skill": 76,
+    "overness": 85,
+    "star_quality": 80,
+    "potential": 54,
+    "durability": 62,
+    "consistency": 62
+   },
+   "gimmick_category": "Fast and not strong.",
+   "gimmick": "WPW's first World Champion. A former actor and PCW manager who speaks in Shakespearean verse and wrestles with his mind rather than his size.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2006,
+   "finisher": "The Soliloqui",
+   "finisher_move": "Neckbreaker",
+   "finisher_description": "A neckbreaker.",
+   "signatures": [
+    {
+     "name": "The Cassius Driver",
+     "move": "Driver"
+    },
+    {
+     "name": "The Royal Blood",
+     "move": "Signature move"
+    }
+   ],
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 60000,
+    "weeks_left": 64,
+    "push": "main_eventer"
+   }
+  },
+  {
+   "id": "wpw_the_one",
+   "ring_name": "The One",
+   "gender": "M",
+   "disposition": "face",
+   "style": "brawler",
+   "age": 25,
+   "hometown": "Saint Paul, Minnesota",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 80,
+    "technical": 67,
+    "aerial": 58,
+    "stamina": 63,
+    "charisma": 74,
+    "promo_skill": 80,
+    "overness": 81,
+    "star_quality": 77,
+    "potential": 73,
+    "durability": 62,
+    "consistency": 75
+   },
+   "gimmick_category": "(like the dudleys kind of)",
+   "gimmick": "WPW's second World Champion, who headlined the first Tuesday Night Turmoil and unified the PCW and WPW titles at Redemption 2007.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2006,
+   "finisher": "God Like Drop",
+   "finisher_move": "Driver",
+   "finisher_description": "A driver.",
+   "signatures": [
+    {
+     "name": "Run outside the ring and God Like Pose",
+     "move": "Signature move"
+    },
+    {
+     "name": "Spear",
+     "move": "Spear"
+    }
+   ],
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 60000,
+    "weeks_left": 51,
+    "push": "main_eventer"
+   }
+  },
+  {
+   "id": "wpw_scorch",
+   "ring_name": "Scorch",
+   "gender": "M",
+   "disposition": "face",
+   "style": "all_rounder",
+   "age": 25,
+   "hometown": "Kingsport",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 56,
+    "technical": 70,
+    "aerial": 62,
+    "stamina": 58,
+    "charisma": 67,
+    "promo_skill": 74,
+    "overness": 77,
+    "star_quality": 73,
+    "potential": 56,
+    "durability": 75,
+    "consistency": 55
+   },
+   "gimmick_category": "A WPW original",
+   "gimmick": "Third WPW World Champion and creator of the weekly Scorch Open Challenge.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2006,
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 60000,
+    "weeks_left": 66,
+    "push": "main_eventer"
+   }
+  },
+  {
+   "id": "wpw_dan_murph",
+   "ring_name": "Dan Murph",
+   "gender": "M",
+   "disposition": "heel",
+   "style": "powerhouse",
+   "age": 26,
+   "hometown": "Waterford, Ireland",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 81,
+    "technical": 60,
+    "aerial": 62,
+    "stamina": 73,
+    "charisma": 73,
+    "promo_skill": 70,
+    "overness": 81,
+    "star_quality": 76,
+    "potential": 76,
+    "durability": 75,
+    "consistency": 75
+   },
+   "gimmick_category": "A WPW original",
+   "gimmick": "An Irish teenager who went from WPW jobber to two-time World Champion, a defector to PCW, and the centre of WPW's biggest title controversy.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2006,
+   "finisher": "The Black Death",
+   "finisher_move": "Cobra clutch",
+   "finisher_description": "A cobra clutch.",
+   "signatures": [
+    {
+     "name": "Big Boot",
+     "move": "Signature move"
+    },
+    {
+     "name": "Sitdown Powerbomb",
+     "move": "Powerbomb"
+    }
+   ],
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 60000,
+    "weeks_left": 71,
+    "push": "main_eventer"
+   }
+  },
+  {
+   "id": "wpw_brock_goodman",
+   "ring_name": "Brock Goodman",
+   "gender": "M",
+   "disposition": "heel",
+   "style": "powerhouse",
+   "age": 33,
+   "hometown": "Sin City",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 69,
+    "technical": 56,
+    "aerial": 52,
+    "stamina": 62,
+    "charisma": 61,
+    "promo_skill": 71,
+    "overness": 71,
+    "star_quality": 57,
+    "potential": 50,
+    "durability": 63,
+    "consistency": 58
+   },
+   "gimmick_category": "A WPW original",
+   "gimmick": "The first wrestler to sign up for WPW. A heel who renounced religion after a drunk driver shattered his legs and claims Lucifer sent him to wipe out everything good in wrestling.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2006,
+   "finisher": "Repentance",
+   "signatures": [
+    {
+     "name": "Absolution",
+     "move": "Piledriver"
+    }
+   ],
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 34000,
+    "weeks_left": 127,
+    "push": "upper_midcarder"
+   }
+  },
+  {
+   "id": "wpw_dust",
+   "ring_name": "Dust",
+   "gender": "M",
+   "disposition": "face",
+   "style": "technician",
+   "age": 27,
+   "hometown": "Cork, Ireland",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 46,
+    "technical": 55,
+    "aerial": 43,
+    "stamina": 53,
+    "charisma": 53,
+    "promo_skill": 62,
+    "overness": 62,
+    "star_quality": 48,
+    "potential": 54,
+    "durability": 53,
+    "consistency": 63
+   },
+   "gimmick_category": "A WPW original",
+   "gimmick": "Undefeated through his first months in WPW, the People's King pinned the World Champion and main-evented Full Force.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2006,
+   "finisher": "To Dust",
+   "signatures": [
+    {
+     "name": "Cradle Piledriver",
+     "move": "Piledriver"
+    },
+    {
+     "name": "Arn Anderson Spinebuster",
+     "move": "Signature move"
+    }
+   ],
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 18000,
+    "weeks_left": 96,
+    "push": "midcarder"
+   }
+  },
+  {
+   "id": "wpw_the_royal_knight",
+   "ring_name": "The Royal Knight",
+   "gender": "M",
+   "disposition": "heel",
+   "style": "striker",
+   "age": 38,
+   "hometown": "Dallas, Texas",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 70,
+    "technical": 61,
+    "aerial": 47,
+    "stamina": 66,
+    "charisma": 70,
+    "promo_skill": 84,
+    "overness": 76,
+    "star_quality": 84,
+    "potential": 48,
+    "durability": 71,
+    "consistency": 75
+   },
+   "gimmick_category": "A WPW original",
+   "gimmick": "One of the few WPW originals who didn't come from PCW. Became Royalty's enforcer as the Royal Knight, then returned as The Stallion to win the World title in 2009.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2006,
+   "finisher": "The Showdown",
+   "finisher_move": "Moonsault",
+   "finisher_description": "A moonsault.",
+   "signatures": [
+    {
+     "name": "Dragon Sleeper",
+     "move": "Sleeper hold"
+    },
+    {
+     "name": "Razor's Edge",
+     "move": "Signature move"
+    }
+   ],
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 60000,
+    "weeks_left": 65,
+    "push": "main_eventer"
+   }
+  },
+  {
+   "id": "wpw_jesse_long",
+   "ring_name": "Jesse Long",
+   "gender": "M",
+   "disposition": "heel",
+   "style": "striker",
+   "age": 29,
+   "hometown": "Winter Park, Florida",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 67,
+    "technical": 56,
+    "aerial": 59,
+    "stamina": 57,
+    "charisma": 63,
+    "promo_skill": 66,
+    "overness": 62,
+    "star_quality": 66,
+    "potential": 75,
+    "durability": 71,
+    "consistency": 61
+   },
+   "gimmick_category": "A WPW original",
+   "gimmick": "Justin Dreamer's first rival. He won a famous RP battle to earn a World title shot in 2006, and later became EWE's General Manager of America.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2006,
+   "finisher": "The Real DDT",
+   "finisher_move": "DDT",
+   "finisher_description": "A ddt.",
+   "signatures": [
+    {
+     "name": "The Long Shot",
+     "move": "Frog splash"
+    },
+    {
+     "name": "K5",
+     "move": "Signature move"
+    }
+   ],
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 34000,
+    "weeks_left": 116,
+    "push": "upper_midcarder"
+   }
+  },
+  {
+   "id": "wpw_justin_dreamer",
+   "ring_name": "Justin Dreamer",
+   "gender": "M",
+   "disposition": "heel",
+   "style": "all_rounder",
+   "age": 38,
+   "hometown": "Los Angeles, California (billed); born Greenwich, Connecticut",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 55,
+    "technical": 78,
+    "aerial": 64,
+    "stamina": 63,
+    "charisma": 77,
+    "promo_skill": 81,
+    "overness": 74,
+    "star_quality": 84,
+    "potential": 48,
+    "durability": 62,
+    "consistency": 55
+   },
+   "gimmick_category": "A WPW original",
+   "gimmick": "A hot-tempered hardcore specialist who chased titles across every era, from the first Florida State match to the 2012 PCW Championship.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2006,
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 60000,
+    "weeks_left": 96,
+    "push": "main_eventer"
+   }
+  },
+  {
+   "id": "wpw_em_vee_pea",
+   "ring_name": "Em-Vee-Pea",
+   "gender": "M",
+   "disposition": "tweener",
+   "style": "powerhouse",
+   "age": 38,
+   "hometown": "Philadelphia, Pennsylvania",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 76,
+    "technical": 66,
+    "aerial": 48,
+    "stamina": 67,
+    "charisma": 53,
+    "promo_skill": 64,
+    "overness": 66,
+    "star_quality": 62,
+    "potential": 71,
+    "durability": 68,
+    "consistency": 54
+   },
+   "gimmick_category": "A WPW original",
+   "gimmick": "The first Florida State Champion, won with a Swanton Bomb off a ladder in the six-man hardcore match at Activation.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2006,
+   "signatures": [
+    {
+     "name": "Swantom Bomb",
+     "move": "Powerbomb"
+    },
+    {
+     "name": "Clothesline From Hell",
+     "move": "Lariat"
+    }
+   ],
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 34000,
+    "weeks_left": 85,
+    "push": "upper_midcarder"
+   }
+  },
+  {
+   "id": "wpw_nicky_comet",
+   "ring_name": "Nicky Comet",
+   "gender": "M",
+   "disposition": "face",
+   "style": "all_rounder",
+   "age": 26,
+   "hometown": "Trenton, New Jersey",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 57,
+    "technical": 70,
+    "aerial": 41,
+    "stamina": 68,
+    "charisma": 61,
+    "promo_skill": 61,
+    "overness": 65,
+    "star_quality": 71,
+    "potential": 50,
+    "durability": 61,
+    "consistency": 54
+   },
+   "gimmick_category": "A WPW original",
+   "gimmick": "Two-time Florida State Champion who held a ceremony to 'purify' the title of its hardcore roots.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2006,
+   "finisher": "Border City Stretch",
+   "finisher_move": "Submission hold",
+   "finisher_description": "A submission hold.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 34000,
+    "weeks_left": 55,
+    "push": "upper_midcarder"
+   }
+  },
+  {
+   "id": "wpw_mykal_adams",
+   "ring_name": "Mykal Adams",
+   "gender": "M",
+   "disposition": "tweener",
+   "style": "all_rounder",
+   "age": 36,
+   "hometown": "Destin, Florida",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 55,
+    "technical": 69,
+    "aerial": 52,
+    "stamina": 63,
+    "charisma": 53,
+    "promo_skill": 69,
+    "overness": 62,
+    "star_quality": 68,
+    "potential": 48,
+    "durability": 55,
+    "consistency": 66
+   },
+   "gimmick_category": "A WPW original",
+   "gimmick": "'The boy from Destin' who won a 12-man tournament and made Nick Comoroto tap out for the Florida title.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2006,
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 34000,
+    "weeks_left": 50,
+    "push": "upper_midcarder"
+   }
+  },
+  {
+   "id": "wpw_jamie_parker",
+   "ring_name": "Jamie Parker",
+   "gender": "M",
+   "disposition": "tweener",
+   "style": "powerhouse",
+   "age": 25,
+   "hometown": "Harchester, England",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 65,
+    "technical": 56,
+    "aerial": 45,
+    "stamina": 66,
+    "charisma": 71,
+    "promo_skill": 74,
+    "overness": 70,
+    "star_quality": 64,
+    "potential": 65,
+    "durability": 71,
+    "consistency": 52
+   },
+   "gimmick_category": "A WPW original",
+   "gimmick": "Written by WPW co-founder Duff. A tag team champion for five months who also won the Florida title, and whom the fans 'refused to cheer'.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2006,
+   "finisher": "Substitution-Canadian Destroyer",
+   "finisher_move": "Flipping piledriver",
+   "finisher_description": "A flipping piledriver.",
+   "signatures": [
+    {
+     "name": "Off the Line- Figure Four",
+     "move": "Signature move"
+    }
+   ],
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 34000,
+    "weeks_left": 115,
+    "push": "upper_midcarder"
+   }
+  },
+  {
+   "id": "wpw_gerard_carson",
+   "ring_name": "Gerard Carson",
+   "gender": "M",
+   "disposition": "face",
+   "style": "striker",
+   "age": 26,
+   "hometown": "Liverpool, England",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 71,
+    "technical": 56,
+    "aerial": 60,
+    "stamina": 52,
+    "charisma": 56,
+    "promo_skill": 72,
+    "overness": 74,
+    "star_quality": 68,
+    "potential": 67,
+    "durability": 72,
+    "consistency": 63
+   },
+   "gimmick_category": "A WPW original",
+   "gimmick": "A PCW multiple champion who became the longest-reigning Florida champion of his time, then was injured at Redemption 2007 and released.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2006,
+   "finisher": "Carsonator Crippler",
+   "signatures": [
+    {
+     "name": "Carsonator DDT",
+     "move": "DDT"
+    },
+    {
+     "name": "The Ultimatum",
+     "move": "Signature move"
+    }
+   ],
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 34000,
+    "weeks_left": 86,
+    "push": "upper_midcarder"
+   }
+  },
+  {
+   "id": "wpw_david_nicolls",
+   "ring_name": "David Nicolls",
+   "gender": "M",
+   "disposition": "face",
+   "style": "technician",
+   "age": 24,
+   "hometown": "Dubbo, Australia",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 75,
+    "technical": 66,
+    "aerial": 66,
+    "stamina": 69,
+    "charisma": 63,
+    "promo_skill": 85,
+    "overness": 83,
+    "star_quality": 73,
+    "potential": 72,
+    "durability": 53,
+    "consistency": 64
+   },
+   "gimmick_category": "Stupid",
+   "gimmick": "A metalhead from Dubbo who wrestles to get to concerts. Broke Royalty's grip on the tag titles and then beat JMC for the World title.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2006,
+   "finisher": "NicollBack",
+   "finisher_move": "Driver",
+   "finisher_description": "A driver.",
+   "signatures": [
+    {
+     "name": "Rolling power slam",
+     "move": "Slam"
+    },
+    {
+     "name": "Seated piledriver",
+     "move": "Piledriver"
+    }
+   ],
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 60000,
+    "weeks_left": 79,
+    "push": "main_eventer"
+   }
+  },
+  {
+   "id": "wpw_the_killing_joke",
+   "ring_name": "The Killing Joke",
+   "gender": "M",
+   "disposition": "heel",
+   "style": "all_rounder",
+   "age": 26,
+   "hometown": "Kingsport",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 68,
+    "technical": 79,
+    "aerial": 52,
+    "stamina": 62,
+    "charisma": 79,
+    "promo_skill": 68,
+    "overness": 86,
+    "star_quality": 71,
+    "potential": 59,
+    "durability": 54,
+    "consistency": 67
+   },
+   "gimmick_category": "A WPW original",
+   "gimmick": "Half of PCW's Dream Team, inducted into the Hall of Fame in 2008 while active, and WPW World Champion through the winter of 2008–09.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2006,
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 60000,
+    "weeks_left": 76,
+    "push": "main_eventer"
+   }
+  },
+  {
+   "id": "wpw_2",
+   "ring_name": "2",
+   "gender": "M",
+   "disposition": "heel",
+   "style": "brawler",
+   "age": 34,
+   "hometown": "Saint Paul, Minnesota",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 75,
+    "technical": 51,
+    "aerial": 56,
+    "stamina": 66,
+    "charisma": 70,
+    "promo_skill": 61,
+    "overness": 68,
+    "star_quality": 66,
+    "potential": 49,
+    "durability": 77,
+    "consistency": 69
+   },
+   "gimmick_category": "A WPW original",
+   "gimmick": "The One's former manager, 'the constant second best', who became the first man to hold the Hardcore and Florida titles together.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2006,
+   "catchphrase": "I have spoken, and you will be broken!",
+   "finisher": "2Die4",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 34000,
+    "weeks_left": 83,
+    "push": "upper_midcarder"
+   }
+  },
+  {
+   "id": "wpw_martin_cameron",
+   "ring_name": "Martin Cameron",
+   "gender": "M",
+   "disposition": "heel",
+   "style": "all_rounder",
+   "age": 30,
+   "hometown": "Kingsport",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 50,
+    "technical": 53,
+    "aerial": 48,
+    "stamina": 65,
+    "charisma": 70,
+    "promo_skill": 66,
+    "overness": 65,
+    "star_quality": 56,
+    "potential": 50,
+    "durability": 73,
+    "consistency": 58
+   },
+   "gimmick_category": "A WPW original",
+   "gimmick": "Shocked 2 for the Florida title and became its longest-reigning champion, ending the 'Florida title curse'.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2006,
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 34000,
+    "weeks_left": 81,
+    "push": "upper_midcarder"
+   }
+  },
+  {
+   "id": "wpw_gunnar_brian",
+   "ring_name": "Gunnar Brian",
+   "gender": "M",
+   "disposition": "tweener",
+   "style": "flyer",
+   "age": 33,
+   "hometown": "Manchester, England",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 65,
+    "technical": 59,
+    "aerial": 81,
+    "stamina": 49,
+    "charisma": 64,
+    "promo_skill": 65,
+    "overness": 70,
+    "star_quality": 62,
+    "potential": 68,
+    "durability": 59,
+    "consistency": 56
+   },
+   "gimmick_category": "Problems with authority",
+   "gimmick": "A PCW latecomer who won the opening match of When Worlds Collide for PCW, then built a 16-match win streak in WPW as the self-styled saviour of the company.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2006,
+   "finisher": "Gundanium",
+   "finisher_move": "DDT",
+   "finisher_description": "A ddt.",
+   "signatures": [
+    {
+     "name": "Brians Best",
+     "move": "Moonsault"
+    },
+    {
+     "name": "The Gun Slinger",
+     "move": "Kick"
+    }
+   ],
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 34000,
+    "weeks_left": 95,
+    "push": "upper_midcarder"
+   }
+  },
+  {
+   "id": "wpw_sal_karver",
+   "ring_name": "Sal Karver",
+   "gender": "M",
+   "disposition": "tweener",
+   "style": "all_rounder",
+   "age": 28,
+   "hometown": "St. Louis, Missouri",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 57,
+    "technical": 63,
+    "aerial": 55,
+    "stamina": 54,
+    "charisma": 66,
+    "promo_skill": 71,
+    "overness": 63,
+    "star_quality": 72,
+    "potential": 59,
+    "durability": 76,
+    "consistency": 63
+   },
+   "gimmick_category": "A WPW original",
+   "gimmick": "Record three-time Florida State Champion and the son of Michael Karver. Carried WPW's titles into the Wrestling Evolution era.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2006,
+   "finisher": "The Difference",
+   "finisher_move": "DDT",
+   "finisher_description": "A ddt.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 34000,
+    "weeks_left": 80,
+    "push": "upper_midcarder"
+   }
+  },
+  {
+   "id": "wpw_masterful_michael_karver",
+   "ring_name": "\"Masterful\" Michael Karver",
+   "gender": "M",
+   "disposition": "heel",
+   "style": "all_rounder",
+   "age": 25,
+   "hometown": "Kingsport",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 64,
+    "technical": 60,
+    "aerial": 55,
+    "stamina": 57,
+    "charisma": 57,
+    "promo_skill": 75,
+    "overness": 73,
+    "star_quality": 60,
+    "potential": 50,
+    "durability": 61,
+    "consistency": 68
+   },
+   "gimmick_category": "A WPW original",
+   "gimmick": "A PCW legend who returned in October 2007 and went straight into the Tournament of Champions.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2006,
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 34000,
+    "weeks_left": 118,
+    "push": "upper_midcarder"
+   }
+  },
+  {
+   "id": "wpw_michael_hayden",
+   "ring_name": "Michael Hayden",
+   "gender": "M",
+   "disposition": "heel",
+   "style": "all_rounder",
+   "age": 24,
+   "hometown": "San Diego, California (as Hayden)",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 51,
+    "technical": 69,
+    "aerial": 43,
+    "stamina": 69,
+    "charisma": 73,
+    "promo_skill": 62,
+    "overness": 63,
+    "star_quality": 69,
+    "potential": 73,
+    "durability": 65,
+    "consistency": 57
+   },
+   "gimmick_category": "A WPW original",
+   "gimmick": "Betrayed WPW for PCW in 2006, beat Scorch in an Open Challenge, and returned as Michael Hayden for EWE and PCW.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2006,
+   "catchphrase": "And you know this... MAN!",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 34000,
+    "weeks_left": 102,
+    "push": "upper_midcarder"
+   }
+  },
+  {
+   "id": "wpw_matthew_twizted_clark",
+   "ring_name": "Matthew \"Twizted\" Clark",
+   "gender": "M",
+   "disposition": "face",
+   "style": "powerhouse",
+   "age": 36,
+   "hometown": "Brooklyn, New York",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 73,
+    "technical": 59,
+    "aerial": 58,
+    "stamina": 63,
+    "charisma": 68,
+    "promo_skill": 73,
+    "overness": 64,
+    "star_quality": 58,
+    "potential": 67,
+    "durability": 63,
+    "consistency": 59
+   },
+   "gimmick_category": "High-Flyer",
+   "gimmick": "A long-time loser who finally won the Hardcore title at Payback 2007, a week before losing it to 2.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2006,
+   "finisher": "Greetings From the Bronx",
+   "signatures": [
+    {
+     "name": "Emo Kick",
+     "move": "Kick"
+    },
+    {
+     "name": "Goodbye 2 Breathing",
+     "move": "Signature move"
+    }
+   ],
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 34000,
+    "weeks_left": 95,
+    "push": "upper_midcarder"
+   }
+  },
+  {
+   "id": "wpw_van_risen",
+   "ring_name": "Van Risen",
+   "gender": "M",
+   "disposition": "heel",
+   "style": "technician",
+   "age": 33,
+   "hometown": "Los Angeles, California",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 52,
+    "technical": 64,
+    "aerial": 59,
+    "stamina": 54,
+    "charisma": 58,
+    "promo_skill": 65,
+    "overness": 63,
+    "star_quality": 61,
+    "potential": 56,
+    "durability": 77,
+    "consistency": 50
+   },
+   "gimmick_category": "Lots of experiance",
+   "gimmick": "Half of Darkness, the first WPW tag champions. Unmasked as SiNN at Whiplash 2006.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2006,
+   "finisher": "Passion",
+   "signatures": [
+    {
+     "name": "Lust",
+     "move": "Signature move"
+    },
+    {
+     "name": "Sadness",
+     "move": "Signature move"
+    }
+   ],
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 34000,
+    "weeks_left": 114,
+    "push": "upper_midcarder"
+   }
+  },
+  {
+   "id": "wpw_the_judge",
+   "ring_name": "The Judge",
+   "gender": "M",
+   "disposition": "heel",
+   "style": "technician",
+   "age": 29,
+   "hometown": "Los Angeles, California",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 73,
+    "technical": 67,
+    "aerial": 64,
+    "stamina": 69,
+    "charisma": 73,
+    "promo_skill": 80,
+    "overness": 86,
+    "star_quality": 81,
+    "potential": 64,
+    "durability": 77,
+    "consistency": 75
+   },
+   "gimmick_category": "Very, very smart.",
+   "gimmick": "Former PCW owner, WPW co-founder and head booker, and a main-event heel in Royalty.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2006,
+   "finisher": "Judgment DDT",
+   "finisher_move": "DDT",
+   "finisher_description": "A ddt.",
+   "signatures": [
+    {
+     "name": "Dark DDT",
+     "move": "DDT"
+    },
+    {
+     "name": "DDT onto ring apron",
+     "move": "DDT"
+    }
+   ],
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 60000,
+    "weeks_left": 61,
+    "push": "main_eventer"
+   }
+  },
+  {
+   "id": "wpw_unstoppable_mike_adams",
+   "ring_name": "\"Unstoppable\" Mike Adams",
+   "gender": "M",
+   "disposition": "tweener",
+   "style": "powerhouse",
+   "age": 25,
+   "hometown": "New York City",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 69,
+    "technical": 71,
+    "aerial": 58,
+    "stamina": 63,
+    "charisma": 75,
+    "promo_skill": 80,
+    "overness": 80,
+    "star_quality": 71,
+    "potential": 57,
+    "durability": 82,
+    "consistency": 75
+   },
+   "gimmick_category": "Hardcore and Strong",
+   "gimmick": "The PCW Champion who invaded Tuesday Night Turmoil in 2006, later joined WPW's Resistance, and became WPW's on-screen owner.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2006,
+   "finisher": "Unstoppabomb",
+   "finisher_move": "Powerbomb",
+   "finisher_description": "A powerbomb.",
+   "signatures": [
+    {
+     "name": "Spear",
+     "move": "Spear"
+    },
+    {
+     "name": "Spear",
+     "move": "Spear"
+    }
+   ],
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 60000,
+    "weeks_left": 60,
+    "push": "main_eventer"
+   }
+  },
+  {
+   "id": "wpw_the_inevitable_chris_cage",
+   "ring_name": "\"The Inevitable\" Chris Cage",
+   "gender": "M",
+   "disposition": "heel",
+   "style": "flyer",
+   "age": 29,
+   "hometown": "Las Vegas, Nevada",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 59,
+    "technical": 61,
+    "aerial": 67,
+    "stamina": 58,
+    "charisma": 60,
+    "promo_skill": 64,
+    "overness": 74,
+    "star_quality": 66,
+    "potential": 56,
+    "durability": 69,
+    "consistency": 65
+   },
+   "gimmick_category": "Quick",
+   "gimmick": "Innovators of Wrestling member and 2008 Florida and tag champion.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2006,
+   "finisher": "\"The Way It Goes\"",
+   "signatures": [
+    {
+     "name": "Superkick",
+     "move": "Superkick"
+    },
+    {
+     "name": "Slater Star Press",
+     "move": "Shooting star press"
+    }
+   ],
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 34000,
+    "weeks_left": 69,
+    "push": "upper_midcarder"
+   }
+  },
+  {
+   "id": "wpw_jokester",
+   "ring_name": "Jokester",
+   "gender": "M",
+   "disposition": "tweener",
+   "style": "entertainer",
+   "age": 28,
+   "hometown": "Chuckletown, New Mexico",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 50,
+    "technical": 43,
+    "aerial": 54,
+    "stamina": 52,
+    "charisma": 66,
+    "promo_skill": 72,
+    "overness": 61,
+    "star_quality": 48,
+    "potential": 52,
+    "durability": 54,
+    "consistency": 54
+   },
+   "gimmick_category": "A WPW original",
+   "gimmick": "A comedy wrestler and 2008 presidential candidate whose RPs beat Jamie Parker and The Royal Knight in the 2007 Tournament of Champions.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2006,
+   "finisher": "The Nuclear Option",
+   "finisher_move": "Powerbomb",
+   "finisher_description": "A powerbomb.",
+   "signatures": [
+    {
+     "name": "'Rejected by the Electorate'",
+     "move": "Signature move"
+    },
+    {
+     "name": "No Laughing Matter",
+     "move": "Signature move"
+    }
+   ],
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 18000,
+    "weeks_left": 104,
+    "push": "midcarder"
+   }
+  },
+  {
+   "id": "wpw_trent_james",
+   "ring_name": "Trent James",
+   "gender": "M",
+   "disposition": "heel",
+   "style": "all_rounder",
+   "age": 25,
+   "hometown": "Kingsport",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 67,
+    "technical": 58,
+    "aerial": 43,
+    "stamina": 51,
+    "charisma": 66,
+    "promo_skill": 77,
+    "overness": 65,
+    "star_quality": 70,
+    "potential": 56,
+    "durability": 60,
+    "consistency": 53
+   },
+   "gimmick_category": "A WPW original",
+   "gimmick": "A trainer who came to WPW at his students' request. His public row with 'WPW Management' over his push spilled into EWE.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2006,
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 34000,
+    "weeks_left": 59,
+    "push": "upper_midcarder"
+   }
+  },
+  {
+   "id": "wpw_sophie_cassius",
+   "ring_name": "Sophie Cassius",
+   "gender": "F",
+   "disposition": "heel",
+   "style": "striker",
+   "age": 30,
+   "hometown": "Hamburg, Germany",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 69,
+    "technical": 66,
+    "aerial": 48,
+    "stamina": 69,
+    "charisma": 57,
+    "promo_skill": 76,
+    "overness": 69,
+    "star_quality": 65,
+    "potential": 64,
+    "durability": 56,
+    "consistency": 49
+   },
+   "gimmick_category": "A WPW original",
+   "gimmick": "JMC's sister and manager, whose interference won him the World title.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2006,
+   "finisher": "Cassius Driver",
+   "finisher_move": "Driver",
+   "finisher_description": "A driver.",
+   "signatures": [
+    {
+     "name": "The Scotish Play",
+     "move": "Signature move"
+    },
+    {
+     "name": "Neckbreaker",
+     "move": "Neckbreaker"
+    }
+   ],
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 34000,
+    "weeks_left": 104,
+    "push": "upper_midcarder"
+   }
+  },
+  {
+   "id": "wpw_ryan_blanchette",
+   "ring_name": "Ryan Blanchette",
+   "gender": "M",
+   "disposition": "face",
+   "style": "all_rounder",
+   "age": 31,
+   "hometown": "Kingsport",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 54,
+    "technical": 52,
+    "aerial": 37,
+    "stamina": 57,
+    "charisma": 49,
+    "promo_skill": 62,
+    "overness": 56,
+    "star_quality": 55,
+    "potential": 74,
+    "durability": 68,
+    "consistency": 57
+   },
+   "gimmick_category": "A WPW original",
+   "gimmick": "The on-screen owner who bought EWE and turned it into POWER Championship Wrestling in 2012.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2005,
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 18000,
+    "weeks_left": 101,
+    "push": "midcarder"
+   }
+  },
+  {
+   "id": "wpw_airborn",
+   "ring_name": "Airborn",
+   "gender": "M",
+   "disposition": "heel",
+   "style": "all_rounder",
+   "age": 30,
+   "hometown": "Kingsport",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 44,
+    "technical": 49,
+    "aerial": 52,
+    "stamina": 54,
+    "charisma": 49,
+    "promo_skill": 60,
+    "overness": 62,
+    "star_quality": 61,
+    "potential": 68,
+    "durability": 68,
+    "consistency": 47
+   },
+   "gimmick_category": "A WPW original",
+   "gimmick": "Van Risen's former partner; kidnapped Amanda Rhyme with Brooke Baker in 2006.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2005,
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 18000,
+    "weeks_left": 95,
+    "push": "midcarder"
+   }
+  },
+  {
+   "id": "wpw_amanda_rhyme",
+   "ring_name": "Amanda Rhyme",
+   "gender": "F",
+   "disposition": "face",
+   "style": "all_rounder",
+   "age": 20,
+   "hometown": "Orlando, Florida",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 54,
+    "technical": 57,
+    "aerial": 47,
+    "stamina": 60,
+    "charisma": 58,
+    "promo_skill": 55,
+    "overness": 57,
+    "star_quality": 56,
+    "potential": 54,
+    "durability": 59,
+    "consistency": 54
+   },
+   "gimmick_category": "A WPW original",
+   "gimmick": "Manager of Darkness; her freedom was the stake of the Full Force tag title match.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2005,
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 18000,
+    "weeks_left": 61,
+    "push": "midcarder"
+   }
+  },
+  {
+   "id": "wpw_brooke_baker",
+   "ring_name": "Brooke Baker",
+   "gender": "F",
+   "disposition": "face",
+   "style": "all_rounder",
+   "age": 24,
+   "hometown": "Kingsport",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 61,
+    "technical": 56,
+    "aerial": 40,
+    "stamina": 49,
+    "charisma": 44,
+    "promo_skill": 67,
+    "overness": 56,
+    "star_quality": 49,
+    "potential": 57,
+    "durability": 61,
+    "consistency": 47
+   },
+   "gimmick_category": "A WPW original",
+   "gimmick": "Fought men as often as women; tag partner of Airborn and Hitman Mark.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2005,
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 18000,
+    "weeks_left": 48,
+    "push": "midcarder"
+   }
+  },
+  {
+   "id": "wpw_super_sexy_girl",
+   "ring_name": "Super Sexy Girl",
+   "gender": "F",
+   "disposition": "heel",
+   "style": "all_rounder",
+   "age": 27,
+   "hometown": "Kingsport",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 49,
+    "technical": 52,
+    "aerial": 51,
+    "stamina": 54,
+    "charisma": 61,
+    "promo_skill": 56,
+    "overness": 54,
+    "star_quality": 59,
+    "potential": 62,
+    "durability": 70,
+    "consistency": 48
+   },
+   "gimmick_category": "A WPW original",
+   "gimmick": "Hardcore Champion (Redemption 2007, pinning The Stallion); The Stallion's on- and off-screen girlfriend.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2005,
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 18000,
+    "weeks_left": 61,
+    "push": "midcarder"
+   }
+  },
+  {
+   "id": "wpw_ben_whyndam",
+   "ring_name": "Ben Whyndam",
+   "gender": "M",
+   "disposition": "tweener",
+   "style": "all_rounder",
+   "age": 25,
+   "hometown": "Kingsport",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 47,
+    "technical": 62,
+    "aerial": 44,
+    "stamina": 54,
+    "charisma": 52,
+    "promo_skill": 66,
+    "overness": 55,
+    "star_quality": 48,
+    "potential": 59,
+    "durability": 53,
+    "consistency": 49
+   },
+   "gimmick_category": "A WPW original",
+   "gimmick": "Australian wrestler whose storyline death in August 2007 led to a tribute show in Melbourne.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2005,
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 18000,
+    "weeks_left": 50,
+    "push": "midcarder"
+   }
+  },
+  {
+   "id": "wpw_ray_williams",
+   "ring_name": "Ray Williams",
+   "gender": "M",
+   "disposition": "face",
+   "style": "powerhouse",
+   "age": 37,
+   "hometown": "Hazard, Nebraska",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 60,
+    "technical": 51,
+    "aerial": 46,
+    "stamina": 47,
+    "charisma": 50,
+    "promo_skill": 48,
+    "overness": 63,
+    "star_quality": 55,
+    "potential": 48,
+    "durability": 63,
+    "consistency": 63
+   },
+   "gimmick_category": "A WPW original",
+   "gimmick": "Big man with the Old School Revolution (Stan Langford and Marty Smyth); lost a steel cage title match to JMC.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2005,
+   "finisher": "Powerbomb",
+   "finisher_move": "Powerbomb",
+   "finisher_description": "A powerbomb.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 18000,
+    "weeks_left": 49,
+    "push": "midcarder"
+   }
+  },
+  {
+   "id": "wpw_johnny_saxton",
+   "ring_name": "Johnny Saxton",
+   "gender": "M",
+   "disposition": "face",
+   "style": "all_rounder",
+   "age": 36,
+   "hometown": "Kingsport",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 58,
+    "technical": 52,
+    "aerial": 43,
+    "stamina": 61,
+    "charisma": 60,
+    "promo_skill": 47,
+    "overness": 56,
+    "star_quality": 50,
+    "potential": 59,
+    "durability": 59,
+    "consistency": 45
+   },
+   "gimmick_category": "A WPW original",
+   "gimmick": "Won his first two TNT matches in 2006; ranked last in the September 2006 rankings at 5–12.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2005,
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 18000,
+    "weeks_left": 59,
+    "push": "midcarder"
+   }
+  },
+  {
+   "id": "wpw_kaze",
+   "ring_name": "Kaze",
+   "gender": "M",
+   "disposition": "tweener",
+   "style": "powerhouse",
+   "age": 37,
+   "hometown": "Florida",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 52,
+    "technical": 51,
+    "aerial": 52,
+    "stamina": 44,
+    "charisma": 52,
+    "promo_skill": 55,
+    "overness": 57,
+    "star_quality": 55,
+    "potential": 60,
+    "durability": 83,
+    "consistency": 44
+   },
+   "gimmick_category": "A WPW original",
+   "gimmick": "Came through the WrestlePower forums and never left.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2005,
+   "finisher": "Unpreventable Force The End",
+   "finisher_move": "Spear",
+   "finisher_description": "A spear.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 18000,
+    "weeks_left": 96,
+    "push": "midcarder"
+   }
+  },
+  {
+   "id": "wpw_x_p_c",
+   "ring_name": "X-P*c",
+   "gender": "M",
+   "disposition": "heel",
+   "style": "all_rounder",
+   "age": 38,
+   "hometown": "Kingsport",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 45,
+    "technical": 52,
+    "aerial": 42,
+    "stamina": 51,
+    "charisma": 44,
+    "promo_skill": 65,
+    "overness": 56,
+    "star_quality": 58,
+    "potential": 51,
+    "durability": 53,
+    "consistency": 46
+   },
+   "gimmick_category": "A WPW original",
+   "gimmick": "Undefeated newcomer of late 2006, managed by legendaryken's rulebook-wielding character.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2005,
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 18000,
+    "weeks_left": 84,
+    "push": "midcarder"
+   }
+  },
+  {
+   "id": "wpw_michael_maddox",
+   "ring_name": "Michael Maddox",
+   "gender": "M",
+   "disposition": "tweener",
+   "style": "all_rounder",
+   "age": 25,
+   "hometown": "Kingsport",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 54,
+    "technical": 59,
+    "aerial": 55,
+    "stamina": 54,
+    "charisma": 57,
+    "promo_skill": 56,
+    "overness": 61,
+    "star_quality": 56,
+    "potential": 71,
+    "durability": 57,
+    "consistency": 49
+   },
+   "gimmick_category": "A WPW original",
+   "gimmick": "Tag champion with Jamie Parker; won the open invitational for Dust's ToC spot in 2007.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2005,
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 18000,
+    "weeks_left": 52,
+    "push": "midcarder"
+   }
+  },
+  {
+   "id": "wpw_new_age_andrew_xavier",
+   "ring_name": "\"New Age\" Andrew Xavier",
+   "gender": "M",
+   "disposition": "heel",
+   "style": "technician",
+   "age": 28,
+   "hometown": "Boston, MA",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 51,
+    "technical": 60,
+    "aerial": 52,
+    "stamina": 43,
+    "charisma": 53,
+    "promo_skill": 56,
+    "overness": 61,
+    "star_quality": 59,
+    "potential": 72,
+    "durability": 76,
+    "consistency": 59
+   },
+   "gimmick_category": "Smart",
+   "gimmick": "Former PCW Hardcore Champion; tag champion with Blade LaVigne in 2010.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2005,
+   "finisher": "The Xavier Experience",
+   "signatures": [
+    {
+     "name": "Trapped In The Past",
+     "move": "Submission hold"
+    }
+   ],
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 18000,
+    "weeks_left": 79,
+    "push": "midcarder"
+   }
+  },
+  {
+   "id": "wpw_blade_the_future_lavigne",
+   "ring_name": "Blade \"The Future\" LaVigne",
+   "gender": "M",
+   "disposition": "tweener",
+   "style": "all_rounder",
+   "age": 38,
+   "hometown": "Kingsport",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 47,
+    "technical": 67,
+    "aerial": 36,
+    "stamina": 54,
+    "charisma": 47,
+    "promo_skill": 64,
+    "overness": 52,
+    "star_quality": 47,
+    "potential": 68,
+    "durability": 64,
+    "consistency": 51
+   },
+   "gimmick_category": "A WPW original",
+   "gimmick": "God of Live Champion and leader of the LaVigne Dynasty; 2010 tag champion.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2005,
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 18000,
+    "weeks_left": 78,
+    "push": "midcarder"
+   }
+  },
+  {
+   "id": "wpw_el_pollo",
+   "ring_name": "El Pollo",
+   "gender": "M",
+   "disposition": "heel",
+   "style": "all_rounder",
+   "age": 25,
+   "hometown": "Kingsport",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 50,
+    "technical": 66,
+    "aerial": 47,
+    "stamina": 54,
+    "charisma": 59,
+    "promo_skill": 63,
+    "overness": 59,
+    "star_quality": 55,
+    "potential": 50,
+    "durability": 68,
+    "consistency": 51
+   },
+   "gimmick_category": "A WPW original",
+   "gimmick": "PCW's chicken-themed comedy wrestler; El Pollo Magnifico held the PCW Championship in 2013.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2005,
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 18000,
+    "weeks_left": 53,
+    "push": "midcarder"
+   }
+  },
+  {
+   "id": "wpw_forsaken",
+   "ring_name": "Forsaken",
+   "gender": "M",
+   "disposition": "face",
+   "style": "striker",
+   "age": 26,
+   "hometown": "A Small Island of the Coast of Japan",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 52,
+    "technical": 51,
+    "aerial": 46,
+    "stamina": 59,
+    "charisma": 53,
+    "promo_skill": 63,
+    "overness": 57,
+    "star_quality": 45,
+    "potential": 65,
+    "durability": 59,
+    "consistency": 51
+   },
+   "gimmick_category": "Extremely Agile",
+   "gimmick": "Hardcore Champion in 2008 and member of Domination.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2005,
+   "finisher": "Primary ->",
+   "signatures": [
+    {
+     "name": "Sorrow of the Outcast",
+     "move": "Signature move"
+    },
+    {
+     "name": "Wrath of the Dragon",
+     "move": "Signature move"
+    }
+   ],
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 18000,
+    "weeks_left": 50,
+    "push": "midcarder"
+   }
+  },
+  {
+   "id": "wpw_psymon_starks",
+   "ring_name": "Psymon Starks",
+   "gender": "M",
+   "disposition": "face",
+   "style": "flyer",
+   "age": 31,
+   "hometown": "Phoenix, AZ",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 46,
+    "technical": 46,
+    "aerial": 71,
+    "stamina": 49,
+    "charisma": 63,
+    "promo_skill": 67,
+    "overness": 59,
+    "star_quality": 57,
+    "potential": 69,
+    "durability": 56,
+    "consistency": 47
+   },
+   "gimmick_category": "A WPW original",
+   "gimmick": "Canadian Champion (ReActivation 2008); asylum-patient character.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2005,
+   "finisher": "PsychoKick",
+   "finisher_move": "Kick",
+   "finisher_description": "A kick.",
+   "signatures": [
+    {
+     "name": "5 Knuckle Shuffle",
+     "move": "Brass knuckle punch"
+    },
+    {
+     "name": "450 Splash",
+     "move": "450 splash"
+    }
+   ],
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 18000,
+    "weeks_left": 122,
+    "push": "midcarder"
+   }
+  },
+  {
+   "id": "wpw_raelis_shy",
+   "ring_name": "Raelis Shy",
+   "gender": "F",
+   "disposition": "tweener",
+   "style": "all_rounder",
+   "age": 27,
+   "hometown": "Kingsport",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 61,
+    "technical": 55,
+    "aerial": 54,
+    "stamina": 60,
+    "charisma": 51,
+    "promo_skill": 63,
+    "overness": 62,
+    "star_quality": 46,
+    "potential": 67,
+    "durability": 71,
+    "consistency": 43
+   },
+   "gimmick_category": "A WPW original",
+   "gimmick": "JMC's protégée, EWE Ironman Champion, and Evolution World Champion in PCW 2012.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2005,
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 18000,
+    "weeks_left": 87,
+    "push": "midcarder"
+   }
+  },
+  {
+   "id": "wpw_jacob_senn",
+   "ring_name": "Jacob Senn",
+   "gender": "M",
+   "disposition": "tweener",
+   "style": "all_rounder",
+   "age": 37,
+   "hometown": "Kingsport",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 58,
+    "technical": 53,
+    "aerial": 40,
+    "stamina": 57,
+    "charisma": 60,
+    "promo_skill": 49,
+    "overness": 56,
+    "star_quality": 53,
+    "potential": 67,
+    "durability": 59,
+    "consistency": 58
+   },
+   "gimmick_category": "A WPW original",
+   "gimmick": "\"The Saviour\"; last EWE Ironman Champion; Anarchy and Agents of Salvation.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2005,
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 18000,
+    "weeks_left": 56,
+    "push": "midcarder"
+   }
+  },
+  {
+   "id": "wpw_elijah_edwards",
+   "ring_name": "Elijah Edwards",
+   "gender": "M",
+   "disposition": "face",
+   "style": "all_rounder",
+   "age": 28,
+   "hometown": "Kingsport",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 58,
+    "technical": 65,
+    "aerial": 49,
+    "stamina": 61,
+    "charisma": 53,
+    "promo_skill": 47,
+    "overness": 58,
+    "star_quality": 52,
+    "potential": 52,
+    "durability": 60,
+    "consistency": 56
+   },
+   "gimmick_category": "A WPW original",
+   "gimmick": "PCW 2012's \"Savior\" champion and leader of the Agents of Salvation.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2005,
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 18000,
+    "weeks_left": 64,
+    "push": "midcarder"
+   }
+  },
+  {
+   "id": "wpw_the_incredible_harry_allanso",
+   "ring_name": "\"The Incredible\" Harry Allanson",
+   "gender": "M",
+   "disposition": "tweener",
+   "style": "technician",
+   "age": 37,
+   "hometown": "Trenton New Jersey",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 44,
+    "technical": 65,
+    "aerial": 35,
+    "stamina": 45,
+    "charisma": 57,
+    "promo_skill": 64,
+    "overness": 59,
+    "star_quality": 47,
+    "potential": 55,
+    "durability": 75,
+    "consistency": 48
+   },
+   "gimmick_category": "Agressive",
+   "gimmick": "Nick Comoroto's bodyguard and partner in The Incredibles.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2005,
+   "finisher": "Bearhug",
+   "signatures": [
+    {
+     "name": "Jackhammer",
+     "move": "Signature move"
+    },
+    {
+     "name": "Widow Maker",
+     "move": "Signature move"
+    }
+   ],
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 18000,
+    "weeks_left": 108,
+    "push": "midcarder"
+   }
+  },
+  {
+   "id": "wpw_chris_matthews",
+   "ring_name": "Chris Matthews",
+   "gender": "M",
+   "disposition": "tweener",
+   "style": "all_rounder",
+   "age": 37,
+   "hometown": "Kingsport",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 43,
+    "technical": 60,
+    "aerial": 36,
+    "stamina": 53,
+    "charisma": 46,
+    "promo_skill": 56,
+    "overness": 56,
+    "star_quality": 60,
+    "potential": 52,
+    "durability": 68,
+    "consistency": 49
+   },
+   "gimmick_category": "A WPW original",
+   "gimmick": "Unbeaten in his first seven matches in 2006; teamed with Twizted.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2005,
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 18000,
+    "weeks_left": 73,
+    "push": "midcarder"
+   }
+  },
+  {
+   "id": "wpw_boris_the_black_russian",
+   "ring_name": "Boris \"The Black Russian\"",
+   "gender": "M",
+   "disposition": "tweener",
+   "style": "powerhouse",
+   "age": 35,
+   "hometown": "Kingsport",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 65,
+    "technical": 46,
+    "aerial": 46,
+    "stamina": 47,
+    "charisma": 47,
+    "promo_skill": 48,
+    "overness": 53,
+    "star_quality": 49,
+    "potential": 59,
+    "durability": 79,
+    "consistency": 58
+   },
+   "gimmick_category": "Never speaks",
+   "gimmick": "Dust's silent enforcer; pinned The One on TNT in August 2006.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2005,
+   "finisher": "Dominator",
+   "signatures": [
+    {
+     "name": "Balda Bomb",
+     "move": "Powerbomb"
+    },
+    {
+     "name": "Fallaway Slam",
+     "move": "Slam"
+    }
+   ],
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 18000,
+    "weeks_left": 102,
+    "push": "midcarder"
+   }
+  },
+  {
+   "id": "wpw_asylum",
+   "ring_name": "Asylum",
+   "gender": "M",
+   "disposition": "heel",
+   "style": "technician",
+   "age": 31,
+   "hometown": "Originally from Limerick City, Ireland, now resides in his many homes around the world.",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 61,
+    "technical": 67,
+    "aerial": 47,
+    "stamina": 55,
+    "charisma": 45,
+    "promo_skill": 49,
+    "overness": 62,
+    "star_quality": 59,
+    "potential": 54,
+    "durability": 77,
+    "consistency": 59
+   },
+   "gimmick_category": "1. Sadistic",
+   "gimmick": "Dominant newcomer of late 2007 from Limerick.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2005,
+   "finisher": "Primary:",
+   "signatures": [
+    {
+     "name": "1. Shoulderlock",
+     "move": "Submission hold"
+    },
+    {
+     "name": "2. Bittersweet Anarchy",
+     "move": "Signature move"
+    }
+   ],
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 18000,
+    "weeks_left": 111,
+    "push": "midcarder"
+   }
+  },
+  {
+   "id": "wpw_darian_entreri",
+   "ring_name": "Darian Entreri",
+   "gender": "M",
+   "disposition": "heel",
+   "style": "striker",
+   "age": 24,
+   "hometown": "Kingsport",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 56,
+    "technical": 54,
+    "aerial": 49,
+    "stamina": 48,
+    "charisma": 50,
+    "promo_skill": 60,
+    "overness": 57,
+    "star_quality": 49,
+    "potential": 64,
+    "durability": 72,
+    "consistency": 49
+   },
+   "gimmick_category": "A WPW original",
+   "gimmick": "God of Live contender; part of the 2007 Florida number one contender four-way.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2005,
+   "finisher": "1.Inquisition",
+   "signatures": [
+    {
+     "name": "1. Flying High",
+     "move": "Signature move"
+    },
+    {
+     "name": "[Shooting Star Press]",
+     "move": "Shooting star press"
+    }
+   ],
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 18000,
+    "weeks_left": 69,
+    "push": "midcarder"
+   }
+  },
+  {
+   "id": "wpw_spaz",
+   "ring_name": "Spaz",
+   "gender": "M",
+   "disposition": "heel",
+   "style": "technician",
+   "age": 30,
+   "hometown": "Kingsport",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 53,
+    "technical": 70,
+    "aerial": 51,
+    "stamina": 55,
+    "charisma": 56,
+    "promo_skill": 64,
+    "overness": 60,
+    "star_quality": 49,
+    "potential": 67,
+    "durability": 63,
+    "consistency": 45
+   },
+   "gimmick_category": "A WPW original",
+   "gimmick": "Gerard Carson's long-time rival; number 23 on the 25 Greatest of the Decade.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2005,
+   "finisher": "[Canadian Destroyer]",
+   "finisher_move": "Flipping piledriver",
+   "finisher_description": "A flipping piledriver.",
+   "signatures": [
+    {
+     "name": "4. DDT",
+     "move": "DDT"
+    },
+    {
+     "name": "5. Ten punches in the corner",
+     "move": "Punch"
+    }
+   ],
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 18000,
+    "weeks_left": 106,
+    "push": "midcarder"
+   }
+  },
+  {
+   "id": "wpw_tank",
+   "ring_name": "Tank",
+   "gender": "M",
+   "disposition": "face",
+   "style": "powerhouse",
+   "age": 38,
+   "hometown": "Bronx, New york",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 59,
+    "technical": 50,
+    "aerial": 46,
+    "stamina": 60,
+    "charisma": 54,
+    "promo_skill": 47,
+    "overness": 63,
+    "star_quality": 50,
+    "potential": 53,
+    "durability": 59,
+    "consistency": 63
+   },
+   "gimmick_category": "A WPW original",
+   "gimmick": "Jokester's protégé; subject of the KFC spoof.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2005,
+   "finisher": "T.K.O",
+   "finisher_move": "Stunner",
+   "finisher_description": "A stunner.",
+   "signatures": [
+    {
+     "name": "Dayum!",
+     "move": "Superkick"
+    },
+    {
+     "name": "Super RKO",
+     "move": "Signature move"
+    }
+   ],
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 18000,
+    "weeks_left": 112,
+    "push": "midcarder"
+   }
+  },
+  {
+   "id": "wpw_jason_bennett",
+   "ring_name": "Jason Bennett",
+   "gender": "M",
+   "disposition": "heel",
+   "style": "technician",
+   "age": 37,
+   "hometown": "Canterbury, England",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 50,
+    "technical": 63,
+    "aerial": 42,
+    "stamina": 55,
+    "charisma": 60,
+    "promo_skill": 60,
+    "overness": 54,
+    "star_quality": 51,
+    "potential": 63,
+    "durability": 72,
+    "consistency": 54
+   },
+   "gimmick_category": "Pretty Quick",
+   "gimmick": "Two-time tag champion; number 22 on the 25 Greatest of the Decade.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2005,
+   "finisher": "Stunner",
+   "finisher_move": "Stunner",
+   "finisher_description": "A stunner.",
+   "signatures": [
+    {
+     "name": "One Arm Side Spine-Buster",
+     "move": "Signature move"
+    },
+    {
+     "name": "Cutter/Running Cutter",
+     "move": "Cutter"
+    }
+   ],
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 18000,
+    "weeks_left": 78,
+    "push": "midcarder"
+   }
+  },
+  {
+   "id": "wpw_phill_bennett",
+   "ring_name": "Phill Bennett",
+   "gender": "M",
+   "disposition": "heel",
+   "style": "technician",
+   "age": 29,
+   "hometown": "Canterbury, England",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 47,
+    "technical": 71,
+    "aerial": 35,
+    "stamina": 43,
+    "charisma": 47,
+    "promo_skill": 53,
+    "overness": 51,
+    "star_quality": 52,
+    "potential": 59,
+    "durability": 72,
+    "consistency": 45
+   },
+   "gimmick_category": "High flyer",
+   "gimmick": "God of Live Champion in 2007; Jason Bennett's brother.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2005,
+   "finisher": "RKO",
+   "signatures": [
+    {
+     "name": "Twist Of Fate",
+     "move": "Signature move"
+    },
+    {
+     "name": "Frog Splash, Eddie style",
+     "move": "Frog splash"
+    }
+   ],
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 18000,
+    "weeks_left": 56,
+    "push": "midcarder"
+   }
+  },
+  {
+   "id": "wpw_beno",
+   "ring_name": "Beno",
+   "gender": "M",
+   "disposition": "tweener",
+   "style": "powerhouse",
+   "age": 32,
+   "hometown": "Gwinn, Michigan. Now residing in Venice Beach, California",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 61,
+    "technical": 54,
+    "aerial": 36,
+    "stamina": 44,
+    "charisma": 60,
+    "promo_skill": 54,
+    "overness": 52,
+    "star_quality": 60,
+    "potential": 76,
+    "durability": 69,
+    "consistency": 59
+   },
+   "gimmick_category": "Is tough",
+   "gimmick": "Michigan powerhouse; Anarchy member in EWE.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2005,
+   "finisher": "Beno bomb",
+   "finisher_move": "Powerbomb",
+   "finisher_description": "A powerbomb.",
+   "signatures": [
+    {
+     "name": "Top Rope Moonsault",
+     "move": "Moonsault"
+    },
+    {
+     "name": "Beno Plex",
+     "move": "Suplex"
+    }
+   ],
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 18000,
+    "weeks_left": 75,
+    "push": "midcarder"
+   }
+  },
+  {
+   "id": "wpw_t_dog",
+   "ring_name": "T-Dog",
+   "gender": "M",
+   "disposition": "heel",
+   "style": "technician",
+   "age": 34,
+   "hometown": "- Calgary, Canada",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 43,
+    "technical": 61,
+    "aerial": 39,
+    "stamina": 52,
+    "charisma": 56,
+    "promo_skill": 58,
+    "overness": 53,
+    "star_quality": 51,
+    "potential": 60,
+    "durability": 70,
+    "consistency": 63
+   },
+   "gimmick_category": "Cocky",
+   "gimmick": "PCW wrestler with a 17-match win streak; EWE Champion; Desire Pain Inc.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2005,
+   "finisher": "Truth Hurts",
+   "signatures": [
+    {
+     "name": "Hail Canada",
+     "move": "Signature move"
+    },
+    {
+     "name": "Sharpshooter",
+     "move": "Sharpshooter"
+    }
+   ],
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 18000,
+    "weeks_left": 93,
+    "push": "midcarder"
+   }
+  },
+  {
+   "id": "wpw_the_dream",
+   "ring_name": "The Dream",
+   "gender": "M",
+   "disposition": "face",
+   "style": "technician",
+   "age": 32,
+   "hometown": "London",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 44,
+    "technical": 60,
+    "aerial": 41,
+    "stamina": 59,
+    "charisma": 46,
+    "promo_skill": 65,
+    "overness": 52,
+    "star_quality": 60,
+    "potential": 49,
+    "durability": 54,
+    "consistency": 47
+   },
+   "gimmick_category": "Ala",
+   "gimmick": "Two-time PCW World Champion; half of the Dream Team; Hall of Fame 2008.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2005,
+   "finisher": "'Dream Street Driver'",
+   "finisher_move": "Driver",
+   "finisher_description": "A driver.",
+   "signatures": [
+    {
+     "name": "'Nicaraguan Kick'",
+     "move": "Kick"
+    },
+    {
+     "name": "German suplex toss to outside",
+     "move": "Suplex"
+    }
+   ],
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 18000,
+    "weeks_left": 86,
+    "push": "midcarder"
+   }
+  },
+  {
+   "id": "wpw_desmond_troy",
+   "ring_name": "Desmond Troy",
+   "gender": "M",
+   "disposition": "tweener",
+   "style": "all_rounder",
+   "age": 28,
+   "hometown": "Kingsport",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 50,
+    "technical": 56,
+    "aerial": 39,
+    "stamina": 61,
+    "charisma": 57,
+    "promo_skill": 57,
+    "overness": 51,
+    "star_quality": 54,
+    "potential": 58,
+    "durability": 66,
+    "consistency": 43
+   },
+   "gimmick_category": "A WPW original",
+   "gimmick": "Half of D&D with David Nicolls; family-crisis storyline in 2008.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2005,
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 18000,
+    "weeks_left": 59,
+    "push": "midcarder"
+   }
+  },
+  {
+   "id": "wpw_main_event_mike_foxx",
+   "ring_name": "\"Main Event\" Mike Foxx",
+   "gender": "M",
+   "disposition": "heel",
+   "style": "powerhouse",
+   "age": 28,
+   "hometown": "North Richland Hills, Texas",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 54,
+    "technical": 44,
+    "aerial": 38,
+    "stamina": 43,
+    "charisma": 53,
+    "promo_skill": 66,
+    "overness": 59,
+    "star_quality": 61,
+    "potential": 71,
+    "durability": 67,
+    "consistency": 57
+   },
+   "gimmick_category": "A WPW original",
+   "gimmick": "Half of Mike & Mike and later the Cowboys with Billy James.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2005,
+   "finisher": "The Money Clip",
+   "signatures": [
+    {
+     "name": "The Silver Spoon",
+     "move": "Signature move"
+    },
+    {
+     "name": "Sharptshooter",
+     "move": "Signature move"
+    }
+   ],
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 18000,
+    "weeks_left": 105,
+    "push": "midcarder"
+   }
+  },
+  {
+   "id": "wpw_billy_montel",
+   "ring_name": "Billy Montel",
+   "gender": "M",
+   "disposition": "face",
+   "style": "all_rounder",
+   "age": 25,
+   "hometown": "Kingsport",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 58,
+    "technical": 53,
+    "aerial": 48,
+    "stamina": 52,
+    "charisma": 48,
+    "promo_skill": 62,
+    "overness": 52,
+    "star_quality": 47,
+    "potential": 54,
+    "durability": 57,
+    "consistency": 63
+   },
+   "gimmick_category": "A WPW original",
+   "gimmick": "Formerly 'Good Ole' Billy James and James Montel Cookiemonster; lost a loser-changes-name match.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2005,
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 18000,
+    "weeks_left": 60,
+    "push": "midcarder"
+   }
+  },
+  {
+   "id": "wpw_sky_ryder",
+   "ring_name": "Sky Ryder",
+   "gender": "M",
+   "disposition": "heel",
+   "style": "powerhouse",
+   "age": 33,
+   "hometown": ":Hometown::.",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 56,
+    "technical": 49,
+    "aerial": 53,
+    "stamina": 56,
+    "charisma": 58,
+    "promo_skill": 49,
+    "overness": 56,
+    "star_quality": 58,
+    "potential": 63,
+    "durability": 79,
+    "consistency": 63
+   },
+   "gimmick_category": "Very cocky",
+   "gimmick": "\"Lord of Shadows\"; tag champion in 2007, first Canadian Champion in 2008, Domination.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2005,
+   "finisher": ":Finishers::",
+   "signatures": [
+    {
+     "name": ":Signature moves::",
+     "move": "Signature move"
+    },
+    {
+     "name": "The J-S-K-O",
+     "move": "Signature move"
+    }
+   ],
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 18000,
+    "weeks_left": 115,
+    "push": "midcarder"
+   }
+  },
+  {
+   "id": "wpw_jeremiah_the_shocka_ranks",
+   "ring_name": "Jeremiah \"The Shocka\" Ranks",
+   "gender": "M",
+   "disposition": "face",
+   "style": "technician",
+   "age": 29,
+   "hometown": "New York City",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 49,
+    "technical": 67,
+    "aerial": 47,
+    "stamina": 61,
+    "charisma": 55,
+    "promo_skill": 65,
+    "overness": 52,
+    "star_quality": 54,
+    "potential": 64,
+    "durability": 70,
+    "consistency": 47
+   },
+   "gimmick_category": "A WPW original",
+   "gimmick": "Half of IOW with Chris Cage.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2005,
+   "finisher": "Shockattack- German of the top rope",
+   "signatures": [
+    {
+     "name": "Side Kick",
+     "move": "Kick"
+    },
+    {
+     "name": "Top Rope Lion Sault",
+     "move": "Signature move"
+    }
+   ],
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 18000,
+    "weeks_left": 60,
+    "push": "midcarder"
+   }
+  },
+  {
+   "id": "wpw_el_largo",
+   "ring_name": "El Largo",
+   "gender": "M",
+   "disposition": "face",
+   "style": "flyer",
+   "age": 28,
+   "hometown": "Jacksonville Beach, Fla",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 49,
+    "technical": 52,
+    "aerial": 63,
+    "stamina": 40,
+    "charisma": 55,
+    "promo_skill": 50,
+    "overness": 51,
+    "star_quality": 40,
+    "potential": 66,
+    "durability": 56,
+    "consistency": 36
+   },
+   "gimmick_category": "1. Don't",
+   "gimmick": "Dude really just likes Miss Nicaragua way too much. Not much else ya need to know",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2006,
+   "finisher": "Twist of Fate or The Reverse of Fate",
+   "signatures": [
+    {
+     "name": "Springboard Leg drop",
+     "move": "Signature move"
+    },
+    {
+     "name": "The 619",
+     "move": "Signature move"
+    }
+   ],
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 8000,
+    "weeks_left": 79,
+    "push": "lower_midcarder"
+   }
+  },
+  {
+   "id": "wpw_mac_daddy",
+   "ring_name": "Mac Daddy",
+   "gender": "M",
+   "disposition": "tweener",
+   "style": "technician",
+   "age": 26,
+   "hometown": "Washington, D.C.",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 50,
+    "technical": 56,
+    "aerial": 46,
+    "stamina": 38,
+    "charisma": 48,
+    "promo_skill": 58,
+    "overness": 41,
+    "star_quality": 46,
+    "potential": 75,
+    "durability": 62,
+    "consistency": 37
+   },
+   "gimmick_category": "A WPW hopeful",
+   "gimmick": "Activities backstage include drinking coffee from his blue and golden Democratic donkey mug and listening to his iPod.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2006,
+   "finisher": "The Talking Point",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 8000,
+    "weeks_left": 101,
+    "push": "lower_midcarder"
+   }
+  },
+  {
+   "id": "wpw_alex_pearce",
+   "ring_name": "Alex Pearce",
+   "gender": "M",
+   "disposition": "heel",
+   "style": "flyer",
+   "age": 30,
+   "hometown": "Detroit, Michigan",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 43,
+    "technical": 37,
+    "aerial": 58,
+    "stamina": 44,
+    "charisma": 36,
+    "promo_skill": 51,
+    "overness": 50,
+    "star_quality": 41,
+    "potential": 54,
+    "durability": 73,
+    "consistency": 38
+   },
+   "gimmick_category": "Hates smart fans",
+   "gimmick": "Came through the WrestlePower forums and never left.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2006,
+   "finisher": "The Future-Shock",
+   "signatures": [
+    {
+     "name": "Greetings from Michigan Mother' Fuck'er",
+     "move": "Signature move"
+    },
+    {
+     "name": "Swinging Inverted Russian Legsweep",
+     "move": "Signature move"
+    }
+   ],
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 8000,
+    "weeks_left": 91,
+    "push": "lower_midcarder"
+   }
+  },
+  {
+   "id": "wpw_jordan_reject",
+   "ring_name": "Jordan Reject",
+   "gender": "M",
+   "disposition": "tweener",
+   "style": "technician",
+   "age": 23,
+   "hometown": "Currently claims New Orleans, Louisiana.",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 53,
+    "technical": 58,
+    "aerial": 45,
+    "stamina": 56,
+    "charisma": 56,
+    "promo_skill": 48,
+    "overness": 50,
+    "star_quality": 33,
+    "potential": 64,
+    "durability": 73,
+    "consistency": 54
+   },
+   "gimmick_category": "Jordan Reject:",
+   "gimmick": "Character Rep: Jimmy rave Jordan Reject was a modern day drifter who got into wrestling as a means of not having to find a real job.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2006,
+   "finisher": "Negligent Homicide",
+   "signatures": [
+    {
+     "name": "Millennium Suplex",
+     "move": "Suplex"
+    },
+    {
+     "name": "A Crossface Chickenwing into a suplex",
+     "move": "Suplex"
+    }
+   ],
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 8000,
+    "weeks_left": 101,
+    "push": "lower_midcarder"
+   }
+  },
+  {
+   "id": "wpw_prankster",
+   "ring_name": "Prankster",
+   "gender": "M",
+   "disposition": "tweener",
+   "style": "technician",
+   "age": 24,
+   "hometown": "The Big Top",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 40,
+    "technical": 62,
+    "aerial": 35,
+    "stamina": 56,
+    "charisma": 39,
+    "promo_skill": 55,
+    "overness": 44,
+    "star_quality": 41,
+    "potential": 74,
+    "durability": 55,
+    "consistency": 41
+   },
+   "gimmick_category": "A WPW hopeful",
+   "gimmick": "Running away from home at the age of 16, Jack Grayson did what he had to do to survive, which included stealing food.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2006,
+   "finisher": "Jack-In-The-Box",
+   "signatures": [
+    {
+     "name": "The Concession Stand",
+     "move": "Signature move"
+    },
+    {
+     "name": "The Big Top",
+     "move": "Signature move"
+    }
+   ],
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 8000,
+    "weeks_left": 70,
+    "push": "lower_midcarder"
+   }
+  },
+  {
+   "id": "wpw_vincent_van_zandt",
+   "ring_name": "Vincent Van Zandt",
+   "gender": "M",
+   "disposition": "tweener",
+   "style": "technician",
+   "age": 31,
+   "hometown": "Miami, FL",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 49,
+    "technical": 60,
+    "aerial": 39,
+    "stamina": 37,
+    "charisma": 52,
+    "promo_skill": 49,
+    "overness": 39,
+    "star_quality": 36,
+    "potential": 71,
+    "durability": 74,
+    "consistency": 39
+   },
+   "gimmick_category": "2.  Very charismatic",
+   "gimmick": "Came through the WrestlePower forums and never left.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2006,
+   "finisher": "Purple Rain- Flying Elbow Drop",
+   "finisher_move": "Elbow drop",
+   "finisher_description": "A elbow drop.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 8000,
+    "weeks_left": 54,
+    "push": "lower_midcarder"
+   }
+  },
+  {
+   "id": "wpw_don_carlito",
+   "ring_name": "Don Carlito",
+   "gender": "M",
+   "disposition": "tweener",
+   "style": "technician",
+   "age": 37,
+   "hometown": "Palermo, Sicily",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 47,
+    "technical": 57,
+    "aerial": 40,
+    "stamina": 45,
+    "charisma": 40,
+    "promo_skill": 58,
+    "overness": 42,
+    "star_quality": 39,
+    "potential": 53,
+    "durability": 58,
+    "consistency": 38
+   },
+   "gimmick_category": "1.  Cocky",
+   "gimmick": "Came through the WrestlePower forums and never left.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2006,
+   "finisher": "Kiss Of Death",
+   "signatures": [
+    {
+     "name": "The Sicilian Drop",
+     "move": "Suplex"
+    },
+    {
+     "name": "The Carlito Effect",
+     "move": "Signature move"
+    }
+   ],
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 8000,
+    "weeks_left": 110,
+    "push": "lower_midcarder"
+   }
+  },
+  {
+   "id": "wpw_ivan_doherty",
+   "ring_name": "Ivan Doherty",
+   "gender": "M",
+   "disposition": "heel",
+   "style": "technician",
+   "age": 28,
+   "hometown": "Prague, Czech-Republic",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 42,
+    "technical": 46,
+    "aerial": 42,
+    "stamina": 42,
+    "charisma": 54,
+    "promo_skill": 50,
+    "overness": 40,
+    "star_quality": 33,
+    "potential": 48,
+    "durability": 75,
+    "consistency": 54
+   },
+   "gimmick_category": "A WPW hopeful",
+   "gimmick": "Ivan Doherty was born in 1978, in the city of Prague, Czech-Republic. Ivan is a mix of Russian and American blood.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2006,
+   "finisher": "The Manifesto",
+   "signatures": [
+    {
+     "name": "The Marxist",
+     "move": "Signature move"
+    },
+    {
+     "name": "STF",
+     "move": "Signature move"
+    }
+   ],
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 8000,
+    "weeks_left": 88,
+    "push": "lower_midcarder"
+   }
+  },
+  {
+   "id": "wpw_the_shadow",
+   "ring_name": "The Shadow",
+   "gender": "M",
+   "disposition": "heel",
+   "style": "technician",
+   "age": 27,
+   "hometown": "Unknown",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 45,
+    "technical": 54,
+    "aerial": 33,
+    "stamina": 46,
+    "charisma": 46,
+    "promo_skill": 57,
+    "overness": 50,
+    "star_quality": 36,
+    "potential": 54,
+    "durability": 73,
+    "consistency": 48
+   },
+   "gimmick_category": "A WPW hopeful",
+   "gimmick": "Came through the WrestlePower forums and never left.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2006,
+   "finisher": "Fade To Black",
+   "signatures": [
+    {
+     "name": "Dark DDT",
+     "move": "DDT"
+    },
+    {
+     "name": "DDT onto ring apron",
+     "move": "DDT"
+    }
+   ],
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 8000,
+    "weeks_left": 68,
+    "push": "lower_midcarder"
+   }
+  },
+  {
+   "id": "wpw_mike_t_nutts",
+   "ring_name": "Mike T. Nutts",
+   "gender": "M",
+   "disposition": "tweener",
+   "style": "technician",
+   "age": 30,
+   "hometown": "Las Vegas, Nevada",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 49,
+    "technical": 56,
+    "aerial": 46,
+    "stamina": 51,
+    "charisma": 43,
+    "promo_skill": 40,
+    "overness": 49,
+    "star_quality": 46,
+    "potential": 53,
+    "durability": 53,
+    "consistency": 36
+   },
+   "gimmick_category": "Hardcore is his element",
+   "gimmick": "Pre-wrestling: Mike grew up in Compton, L.A. He was arrested for drug and weapon offences in '89 and served until '98.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2006,
+   "finisher": "Drawing Dead",
+   "finisher_move": "Submission hold",
+   "finisher_description": "A submission hold.",
+   "signatures": [
+    {
+     "name": "The Nutt Flush",
+     "move": "Signature move"
+    },
+    {
+     "name": "Viva Las Vegas",
+     "move": "Signature move"
+    }
+   ],
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 8000,
+    "weeks_left": 95,
+    "push": "lower_midcarder"
+   }
+  },
+  {
+   "id": "wpw_big_red",
+   "ring_name": "Big Red",
+   "gender": "M",
+   "disposition": "face",
+   "style": "powerhouse",
+   "age": 24,
+   "hometown": "Perthshire, Mississippi",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 59,
+    "technical": 39,
+    "aerial": 44,
+    "stamina": 49,
+    "charisma": 43,
+    "promo_skill": 58,
+    "overness": 45,
+    "star_quality": 49,
+    "potential": 48,
+    "durability": 74,
+    "consistency": 41
+   },
+   "gimmick_category": "A WPW hopeful",
+   "gimmick": "Big Red is the youngest brother in a large family, yet over a foot taller than every one of his siblings. Big Red always stood out in his family and in his school, and thus never fit in.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2006,
+   "finisher": "Big Red Chokeslam",
+   "finisher_move": "Chokehold",
+   "finisher_description": "A chokehold.",
+   "signatures": [
+    {
+     "name": "Big Red Spinebuster",
+     "move": "Signature move"
+    }
+   ],
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 8000,
+    "weeks_left": 124,
+    "push": "lower_midcarder"
+   }
+  },
+  {
+   "id": "wpw_daniel_justice",
+   "ring_name": "Daniel Justice",
+   "gender": "M",
+   "disposition": "face",
+   "style": "all_rounder",
+   "age": 39,
+   "hometown": "Rimouski, Quebec",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 53,
+    "technical": 51,
+    "aerial": 40,
+    "stamina": 44,
+    "charisma": 46,
+    "promo_skill": 53,
+    "overness": 46,
+    "star_quality": 45,
+    "potential": 53,
+    "durability": 63,
+    "consistency": 40
+   },
+   "gimmick_category": "A WPW hopeful",
+   "gimmick": "Came through the WrestlePower forums and never left.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2006,
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 8000,
+    "weeks_left": 103,
+    "push": "lower_midcarder"
+   }
+  },
+  {
+   "id": "wpw_raymond_rover",
+   "ring_name": "Raymond Rover",
+   "gender": "M",
+   "disposition": "face",
+   "style": "all_rounder",
+   "age": 27,
+   "hometown": "St. Augustine, FL",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 53,
+    "technical": 48,
+    "aerial": 35,
+    "stamina": 37,
+    "charisma": 52,
+    "promo_skill": 54,
+    "overness": 43,
+    "star_quality": 39,
+    "potential": 51,
+    "durability": 75,
+    "consistency": 46
+   },
+   "gimmick_category": "A WPW hopeful",
+   "gimmick": "Came through the WrestlePower forums and never left.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2006,
+   "finisher": "Vertebrae Destroyer",
+   "finisher_move": "Flipping piledriver",
+   "finisher_description": "A flipping piledriver.",
+   "signatures": [
+    {
+     "name": "The Rover Effect",
+     "move": "Signature move"
+    }
+   ],
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 8000,
+    "weeks_left": 127,
+    "push": "lower_midcarder"
+   }
+  },
+  {
+   "id": "wpw_zachery_peg_leg_jemmy",
+   "ring_name": "Zachery \"Peg Leg\" Jemmy",
+   "gender": "M",
+   "disposition": "face",
+   "style": "powerhouse",
+   "age": 32,
+   "hometown": "Boise, Idaho",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 60,
+    "technical": 51,
+    "aerial": 41,
+    "stamina": 55,
+    "charisma": 54,
+    "promo_skill": 46,
+    "overness": 40,
+    "star_quality": 47,
+    "potential": 68,
+    "durability": 66,
+    "consistency": 38
+   },
+   "gimmick_category": "Kind but Short Tempered",
+   "gimmick": "Grew up in the wild wild west, and learned it's ways all his life. Was always told he wasn't good enough to make anything from himself, so he got into wrestling to prove the world wrong.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2006,
+   "finisher": "Wild Wild West Drop",
+   "finisher_move": "Piledriver",
+   "finisher_description": "A piledriver.",
+   "signatures": [
+    {
+     "name": "Powerslam",
+     "move": "Slam"
+    },
+    {
+     "name": "Overhead Belly to Belly Suplex",
+     "move": "Suplex"
+    }
+   ],
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 8000,
+    "weeks_left": 99,
+    "push": "lower_midcarder"
+   }
+  },
+  {
+   "id": "wpw_sean_canuxx",
+   "ring_name": "Sean Canuxx",
+   "gender": "M",
+   "disposition": "heel",
+   "style": "technician",
+   "age": 26,
+   "hometown": "Montreal, Quebec, Canada",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 55,
+    "technical": 66,
+    "aerial": 48,
+    "stamina": 46,
+    "charisma": 50,
+    "promo_skill": 55,
+    "overness": 45,
+    "star_quality": 41,
+    "potential": 48,
+    "durability": 55,
+    "consistency": 51
+   },
+   "gimmick_category": "A WPW hopeful",
+   "gimmick": "Sean Canuxx is back, the empire has been put to rest, no more Hellraiser, no more Prodigy, just Sean Canuxx and his anti-american attitude.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2006,
+   "finisher": "Choke Slam",
+   "finisher_move": "Chokehold",
+   "finisher_description": "A chokehold.",
+   "signatures": [
+    {
+     "name": "Low Blow",
+     "move": "Signature move"
+    },
+    {
+     "name": "Chair Shot",
+     "move": "Signature move"
+    }
+   ],
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 8000,
+    "weeks_left": 86,
+    "push": "lower_midcarder"
+   }
+  },
+  {
+   "id": "wpw_sigmund_the_protector_morton",
+   "ring_name": "Sigmund \"The Protector\" Morton",
+   "gender": "M",
+   "disposition": "face",
+   "style": "all_rounder",
+   "age": 27,
+   "hometown": "Cleveland, Oh.",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 49,
+    "technical": 57,
+    "aerial": 32,
+    "stamina": 44,
+    "charisma": 45,
+    "promo_skill": 51,
+    "overness": 40,
+    "star_quality": 40,
+    "potential": 69,
+    "durability": 61,
+    "consistency": 44
+   },
+   "gimmick_category": "A WPW hopeful",
+   "gimmick": "Came through the WrestlePower forums and never left.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2006,
+   "finisher": "Super Kick",
+   "finisher_move": "Kick",
+   "finisher_description": "A kick.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 8000,
+    "weeks_left": 89,
+    "push": "lower_midcarder"
+   }
+  },
+  {
+   "id": "wpw_vicious_jester",
+   "ring_name": "Vicious Jester",
+   "gender": "M",
+   "disposition": "heel",
+   "style": "all_rounder",
+   "age": 28,
+   "hometown": "Kingsport",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 48,
+    "technical": 60,
+    "aerial": 31,
+    "stamina": 47,
+    "charisma": 55,
+    "promo_skill": 55,
+    "overness": 44,
+    "star_quality": 33,
+    "potential": 53,
+    "durability": 62,
+    "consistency": 43
+   },
+   "gimmick_category": "A WPW hopeful",
+   "gimmick": "Came through the WrestlePower forums and never left.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2006,
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 8000,
+    "weeks_left": 50,
+    "push": "lower_midcarder"
+   }
+  },
+  {
+   "id": "wpw_masta_t",
+   "ring_name": "Masta-T",
+   "gender": "M",
+   "disposition": "heel",
+   "style": "flyer",
+   "age": 24,
+   "hometown": "Detroit, Michigan",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 54,
+    "technical": 39,
+    "aerial": 67,
+    "stamina": 48,
+    "charisma": 36,
+    "promo_skill": 60,
+    "overness": 39,
+    "star_quality": 48,
+    "potential": 65,
+    "durability": 54,
+    "consistency": 43
+   },
+   "gimmick_category": "Hip Hop influenced",
+   "gimmick": "Came through the WrestlePower forums and never left.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2006,
+   "signatures": [
+    {
+     "name": "2nd Rope Leg Drop",
+     "move": "Signature move"
+    },
+    {
+     "name": "Five Knuckle Shuffle",
+     "move": "Brass knuckle punch"
+    }
+   ],
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 8000,
+    "weeks_left": 49,
+    "push": "lower_midcarder"
+   }
+  },
+  {
+   "id": "wpw_michael_lansing",
+   "ring_name": "Michael Lansing",
+   "gender": "M",
+   "disposition": "heel",
+   "style": "all_rounder",
+   "age": 29,
+   "hometown": "LA",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 55,
+    "technical": 45,
+    "aerial": 40,
+    "stamina": 53,
+    "charisma": 49,
+    "promo_skill": 42,
+    "overness": 42,
+    "star_quality": 34,
+    "potential": 53,
+    "durability": 56,
+    "consistency": 41
+   },
+   "gimmick_category": "Loudmouth",
+   "gimmick": "Came through the WrestlePower forums and never left.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2006,
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 8000,
+    "weeks_left": 99,
+    "push": "lower_midcarder"
+   }
+  },
+  {
+   "id": "wpw_stan_langford",
+   "ring_name": "Stan Langford",
+   "gender": "M",
+   "disposition": "tweener",
+   "style": "powerhouse",
+   "age": 42,
+   "hometown": "Memphis, TN.",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 47,
+    "technical": 54,
+    "aerial": 44,
+    "stamina": 48,
+    "charisma": 42,
+    "promo_skill": 42,
+    "overness": 47,
+    "star_quality": 34,
+    "potential": 72,
+    "durability": 60,
+    "consistency": 47
+   },
+   "gimmick_category": "Straight ahead brawler",
+   "gimmick": "Came through the WrestlePower forums and never left.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2006,
+   "signatures": [
+    {
+     "name": "Crucifix bomb",
+     "move": "Powerbomb"
+    },
+    {
+     "name": "Finishers",
+     "move": "Lariat"
+    }
+   ],
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 8000,
+    "weeks_left": 106,
+    "push": "lower_midcarder"
+   }
+  },
+  {
+   "id": "wpw_ace_jameson",
+   "ring_name": "Ace Jameson",
+   "gender": "M",
+   "disposition": "face",
+   "style": "technician",
+   "age": 34,
+   "hometown": "San Diego, California",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 52,
+    "technical": 53,
+    "aerial": 42,
+    "stamina": 51,
+    "charisma": 36,
+    "promo_skill": 43,
+    "overness": 51,
+    "star_quality": 40,
+    "potential": 64,
+    "durability": 73,
+    "consistency": 54
+   },
+   "gimmick_category": "1. Hes charismatic",
+   "gimmick": "A former star RB in High School and College, Jameson was primed for a professional football career until in his second to last game of his senior season he tore his ACL.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2006,
+   "finisher": "1. The Heisman",
+   "signatures": [
+    {
+     "name": "1. Diving Headbutt",
+     "move": "Signature move"
+    },
+    {
+     "name": "2. Swanton Bomb",
+     "move": "Powerbomb"
+    }
+   ],
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 8000,
+    "weeks_left": 58,
+    "push": "lower_midcarder"
+   }
+  },
+  {
+   "id": "wpw_damian_wreck",
+   "ring_name": "Damian Wreck",
+   "gender": "M",
+   "disposition": "tweener",
+   "style": "brawler",
+   "age": 25,
+   "hometown": "Detroit Michigan",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 65,
+    "technical": 46,
+    "aerial": 31,
+    "stamina": 52,
+    "charisma": 45,
+    "promo_skill": 58,
+    "overness": 39,
+    "star_quality": 38,
+    "potential": 71,
+    "durability": 57,
+    "consistency": 52
+   },
+   "gimmick_category": "Just Frickin Crazy",
+   "gimmick": "D amian Wreck comes from a broken home where his mother left him and his father when he was a child. He grew up with only his father to learn from who was a alcholic and didn't pay much mind to Damian.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2006,
+   "finisher": "Wreck Effeck , Wreckless Cloverleaf",
+   "signatures": [
+    {
+     "name": "Calatoral Strike ,",
+     "move": "Signature move"
+    }
+   ],
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 8000,
+    "weeks_left": 54,
+    "push": "lower_midcarder"
+   }
+  },
+  {
+   "id": "wpw_alex_christopher_diamond",
+   "ring_name": "Alex Christopher Diamond",
+   "gender": "M",
+   "disposition": "face",
+   "style": "all_rounder",
+   "age": 36,
+   "hometown": "San Diego Califronia",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 55,
+    "technical": 54,
+    "aerial": 30,
+    "stamina": 38,
+    "charisma": 54,
+    "promo_skill": 59,
+    "overness": 44,
+    "star_quality": 35,
+    "potential": 72,
+    "durability": 69,
+    "consistency": 48
+   },
+   "gimmick_category": "Fast",
+   "gimmick": "Came through the WrestlePower forums and never left.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2006,
+   "signatures": [
+    {
+     "name": "Flying Inverted Bulldog",
+     "move": "Bulldog"
+    },
+    {
+     "name": "High Flying Leg drop",
+     "move": "Signature move"
+    }
+   ],
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 8000,
+    "weeks_left": 79,
+    "push": "lower_midcarder"
+   }
+  },
+  {
+   "id": "wpw_johnny_bad_blood",
+   "ring_name": "Johnny Bad Blood",
+   "gender": "M",
+   "disposition": "face",
+   "style": "technician",
+   "age": 33,
+   "hometown": "Bronx, New york",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 49,
+    "technical": 51,
+    "aerial": 44,
+    "stamina": 39,
+    "charisma": 44,
+    "promo_skill": 40,
+    "overness": 48,
+    "star_quality": 39,
+    "potential": 61,
+    "durability": 69,
+    "consistency": 37
+   },
+   "gimmick_category": "RISK TAKER",
+   "gimmick": "Johnny bad blood had a tragic childhood. He was born and raised in the bronx in a orphanage. His mom treated him badly, and his dad died in a tragic accident. His true passion was for wrestling.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2006,
+   "finisher": "The Blood Driver",
+   "finisher_move": "Piledriver",
+   "finisher_description": "A piledriver.",
+   "signatures": [
+    {
+     "name": "AA Spine Buster",
+     "move": "Signature move"
+    },
+    {
+     "name": "Ankle lock",
+     "move": "Submission hold"
+    }
+   ],
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 8000,
+    "weeks_left": 116,
+    "push": "lower_midcarder"
+   }
+  },
+  {
+   "id": "wpw_ricardo_cash",
+   "ring_name": "Ricardo Cash",
+   "gender": "M",
+   "disposition": "face",
+   "style": "all_rounder",
+   "age": 36,
+   "hometown": "Little Rock, Arkansas",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 56,
+    "technical": 43,
+    "aerial": 47,
+    "stamina": 53,
+    "charisma": 55,
+    "promo_skill": 43,
+    "overness": 47,
+    "star_quality": 46,
+    "potential": 71,
+    "durability": 59,
+    "consistency": 51
+   },
+   "gimmick_category": "A WPW hopeful",
+   "gimmick": "Ricardo Cash didn't grow up hard, and he didn't struggle through life like it seems most wrestlers have.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2006,
+   "finisher": "Bankrupt Slam",
+   "finisher_move": "Slam",
+   "finisher_description": "A slam.",
+   "signatures": [
+    {
+     "name": "Cashed In",
+     "move": "Slam"
+    }
+   ],
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 8000,
+    "weeks_left": 116,
+    "push": "lower_midcarder"
+   }
+  },
+  {
+   "id": "wpw_frederick_meyer_iii",
+   "ring_name": "Frederick Meyer III",
+   "gender": "M",
+   "disposition": "heel",
+   "style": "technician",
+   "age": 33,
+   "hometown": "La Jolla, California",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 39,
+    "technical": 48,
+    "aerial": 32,
+    "stamina": 45,
+    "charisma": 45,
+    "promo_skill": 59,
+    "overness": 45,
+    "star_quality": 35,
+    "potential": 69,
+    "durability": 61,
+    "consistency": 49
+   },
+   "gimmick_category": "A WPW hopeful",
+   "gimmick": "Freddy grew up in the rich suburb of San Diego of La Jolla. His dad grew up in Texas where he made a vast fortune as an oil tycoon before moving his family to La Jolla.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2006,
+   "finisher": "1. Money In The Bank- Swanton Bomb",
+   "finisher_move": "Powerbomb",
+   "finisher_description": "A powerbomb.",
+   "signatures": [
+    {
+     "name": "1. C.R.E.A.M.-Superplex",
+     "move": "Signature move"
+    },
+    {
+     "name": "3. Greener Pastures- Double Chickenwing",
+     "move": "Signature move"
+    }
+   ],
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 8000,
+    "weeks_left": 118,
+    "push": "lower_midcarder"
+   }
+  },
+  {
+   "id": "wpw_j_seck",
+   "ring_name": "J~Seck",
+   "gender": "M",
+   "disposition": "heel",
+   "style": "all_rounder",
+   "age": 24,
+   "hometown": "New Windsor, NY[/b]",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 37,
+    "technical": 57,
+    "aerial": 30,
+    "stamina": 49,
+    "charisma": 45,
+    "promo_skill": 55,
+    "overness": 44,
+    "star_quality": 35,
+    "potential": 76,
+    "durability": 57,
+    "consistency": 51
+   },
+   "gimmick_category": "A WPW hopeful",
+   "gimmick": "N/A[/b]",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2006,
+   "finisher": "End of Every Thing",
+   "finisher_move": "Shooting star press",
+   "finisher_description": "A shooting star press.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 8000,
+    "weeks_left": 116,
+    "push": "lower_midcarder"
+   }
+  },
+  {
+   "id": "wpw_tiffany_perez",
+   "ring_name": "Tiffany Perez",
+   "gender": "F",
+   "disposition": "face",
+   "style": "technician",
+   "age": 30,
+   "hometown": "Originally from Havana, Cuba",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 46,
+    "technical": 53,
+    "aerial": 41,
+    "stamina": 43,
+    "charisma": 37,
+    "promo_skill": 42,
+    "overness": 40,
+    "star_quality": 33,
+    "potential": 60,
+    "durability": 77,
+    "consistency": 55
+   },
+   "gimmick_category": "Well trained",
+   "gimmick": "Born in Havana, Cuba, Tiffany Perez moved with her family to the United States when she was 15, ending up in the Bronx! Tiffany met Johnny and his brother Tank! They introduced her to wrestling!",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2006,
+   "finisher": "Double arm DDT",
+   "finisher_move": "DDT",
+   "finisher_description": "A ddt.",
+   "signatures": [
+    {
+     "name": "A Huge slap across the face",
+     "move": "Signature move"
+    },
+    {
+     "name": "Diving Cross Body",
+     "move": "Signature move"
+    }
+   ],
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 8000,
+    "weeks_left": 107,
+    "push": "lower_midcarder"
+   }
+  },
+  {
+   "id": "wpw_connie",
+   "ring_name": "Connie Bee",
+   "gender": "F",
+   "disposition": "tweener",
+   "style": "technician",
+   "age": 34,
+   "hometown": "Brooklyn, NY",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 43,
+    "technical": 60,
+    "aerial": 47,
+    "stamina": 53,
+    "charisma": 45,
+    "promo_skill": 50,
+    "overness": 44,
+    "star_quality": 34,
+    "potential": 71,
+    "durability": 62,
+    "consistency": 46
+   },
+   "gimmick_category": "A WPW hopeful",
+   "gimmick": "Connie and Tina were schoolgirl friends who were expelled for putting dead mice in the tampon machine and sexually assaulting the History teacher.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2006,
+   "signatures": [
+    {
+     "name": "Buzz-Saw",
+     "move": "Signature move"
+    },
+    {
+     "name": "Fish Supper",
+     "move": "Signature move"
+    }
+   ],
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 8000,
+    "weeks_left": 72,
+    "push": "lower_midcarder"
+   }
+  },
+  {
+   "id": "wpw_tina",
+   "ring_name": "Tina Bee",
+   "gender": "F",
+   "disposition": "tweener",
+   "style": "technician",
+   "age": 27,
+   "hometown": "Brooklyn, NY",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 43,
+    "technical": 60,
+    "aerial": 47,
+    "stamina": 53,
+    "charisma": 45,
+    "promo_skill": 50,
+    "overness": 44,
+    "star_quality": 34,
+    "potential": 71,
+    "durability": 62,
+    "consistency": 46
+   },
+   "gimmick_category": "A WPW hopeful",
+   "gimmick": "Connie and Tina were schoolgirl friends who were expelled for putting dead mice in the tampon machine and sexually assaulting the History teacher.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2006,
+   "signatures": [
+    {
+     "name": "Buzz-Saw",
+     "move": "Signature move"
+    },
+    {
+     "name": "Fish Supper",
+     "move": "Signature move"
+    }
+   ],
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 8000,
+    "weeks_left": 59,
+    "push": "lower_midcarder"
+   }
+  },
+  {
+   "id": "wpw_amy_carson",
+   "ring_name": "Amy Carson",
+   "gender": "F",
+   "disposition": "tweener",
+   "style": "striker",
+   "age": 31,
+   "hometown": "Liverpool, England",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 62,
+    "technical": 45,
+    "aerial": 41,
+    "stamina": 50,
+    "charisma": 40,
+    "promo_skill": 47,
+    "overness": 46,
+    "star_quality": 43,
+    "potential": 75,
+    "durability": 57,
+    "consistency": 46
+   },
+   "gimmick_category": "A WPW hopeful",
+   "gimmick": "Amy was never with the in-crowd as a little girl, she’s always been quite a dark person, which shows in her current goth-like appearance and beliefs in the supernatural, the spiritual and life itself.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2006,
+   "finisher": "Desecration Kick",
+   "finisher_move": "Kick",
+   "finisher_description": "A kick.",
+   "signatures": [
+    {
+     "name": "Life of Woe",
+     "move": "Signature move"
+    },
+    {
+     "name": "Soulbreaker",
+     "move": "Signature move"
+    }
+   ],
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 8000,
+    "weeks_left": 104,
+    "push": "lower_midcarder"
+   }
+  },
+  {
+   "id": "wpw_oogie_boogie",
+   "ring_name": "Oogie Boogie",
+   "gender": "M",
+   "disposition": "face",
+   "style": "all_rounder",
+   "age": 23,
+   "hometown": "Mexico City, Mexico",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 38,
+    "technical": 56,
+    "aerial": 33,
+    "stamina": 45,
+    "charisma": 49,
+    "promo_skill": 47,
+    "overness": 39,
+    "star_quality": 46,
+    "potential": 71,
+    "durability": 64,
+    "consistency": 41
+   },
+   "gimmick_category": "A WPW hopeful",
+   "gimmick": "Came through the WrestlePower forums and never left.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2006,
+   "finisher": "Boogie Woogie",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 8000,
+    "weeks_left": 73,
+    "push": "lower_midcarder"
+   }
+  },
+  {
+   "id": "wpw_aurora_callisto",
+   "ring_name": "Aurora Callisto",
+   "gender": "F",
+   "disposition": "heel",
+   "style": "all_rounder",
+   "age": 38,
+   "hometown": "Miami, Florida",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 53,
+    "technical": 42,
+    "aerial": 38,
+    "stamina": 38,
+    "charisma": 46,
+    "promo_skill": 51,
+    "overness": 42,
+    "star_quality": 38,
+    "potential": 61,
+    "durability": 70,
+    "consistency": 54
+   },
+   "gimmick_category": "Beautiful",
+   "gimmick": "She has been a secretary since the age of 18. She worked under Ryan King, the owner of a wrestling organisation. She met and Andrew when she walked in on a meeting between him and Ryan King.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2006,
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 8000,
+    "weeks_left": 113,
+    "push": "lower_midcarder"
+   }
+  },
+  {
+   "id": "wpw_jeremy_lapalme",
+   "ring_name": "Jeremy Lapalme",
+   "gender": "M",
+   "disposition": "heel",
+   "style": "powerhouse",
+   "age": 28,
+   "hometown": "Toronto, Ontario",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 57,
+    "technical": 41,
+    "aerial": 28,
+    "stamina": 50,
+    "charisma": 40,
+    "promo_skill": 43,
+    "overness": 40,
+    "star_quality": 34,
+    "potential": 67,
+    "durability": 82,
+    "consistency": 43
+   },
+   "gimmick_category": "A WPW hopeful",
+   "gimmick": "Early in his life, Jeremy was always the brain. He won many awards and got good grades, but mostly kept to himself with the exception of a few close friends.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2006,
+   "finisher": "LapDance",
+   "signatures": [
+    {
+     "name": "Superkick",
+     "move": "Superkick"
+    },
+    {
+     "name": "LapTop",
+     "move": "DDT"
+    }
+   ],
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 8000,
+    "weeks_left": 77,
+    "push": "lower_midcarder"
+   }
+  },
+  {
+   "id": "wpw_crazy_camel_face",
+   "ring_name": "Crazy Camel Face",
+   "gender": "M",
+   "disposition": "heel",
+   "style": "all_rounder",
+   "age": 25,
+   "hometown": ": Unknown",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 36,
+    "technical": 40,
+    "aerial": 42,
+    "stamina": 42,
+    "charisma": 54,
+    "promo_skill": 60,
+    "overness": 47,
+    "star_quality": 42,
+    "potential": 60,
+    "durability": 73,
+    "consistency": 40
+   },
+   "gimmick_category": "He spits like a damn llama.",
+   "gimmick": "Came through the WrestlePower forums and never left.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2006,
+   "finisher": "Crucifix Bomb",
+   "finisher_move": "Powerbomb",
+   "finisher_description": "A powerbomb.",
+   "signatures": [
+    {
+     "name": "Swinging Neckbreaker",
+     "move": "Neckbreaker"
+    },
+    {
+     "name": "Diving Camel Headbutt",
+     "move": "Signature move"
+    }
+   ],
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 8000,
+    "weeks_left": 87,
+    "push": "lower_midcarder"
+   }
+  },
+  {
+   "id": "wpw_seto_uchiha",
+   "ring_name": "Seto Uchiha",
+   "gender": "M",
+   "disposition": "face",
+   "style": "technician",
+   "age": 29,
+   "hometown": "Uchiha: Hokkaido, Japan",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 53,
+    "technical": 53,
+    "aerial": 39,
+    "stamina": 45,
+    "charisma": 39,
+    "promo_skill": 44,
+    "overness": 43,
+    "star_quality": 40,
+    "potential": 71,
+    "durability": 54,
+    "consistency": 51
+   },
+   "gimmick_category": "A WPW hopeful",
+   "gimmick": "Seto Uchiha wasn't supposed to be a wrestler.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2006,
+   "finisher": "Seto:",
+   "signatures": [
+    {
+     "name": "Seto:",
+     "move": "Signature move"
+    },
+    {
+     "name": "Kabuki's Revnge",
+     "move": "Piledriver"
+    }
+   ],
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 8000,
+    "weeks_left": 74,
+    "push": "lower_midcarder"
+   }
+  },
+  {
+   "id": "wpw_vendetta",
+   "ring_name": "Vendetta",
+   "gender": "M",
+   "disposition": "face",
+   "style": "technician",
+   "age": 37,
+   "hometown": "Uchiha: Hokkaido, Japan",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 53,
+    "technical": 53,
+    "aerial": 39,
+    "stamina": 45,
+    "charisma": 39,
+    "promo_skill": 44,
+    "overness": 43,
+    "star_quality": 40,
+    "potential": 71,
+    "durability": 54,
+    "consistency": 51
+   },
+   "gimmick_category": "A WPW hopeful",
+   "gimmick": "Seto Uchiha wasn't supposed to be a wrestler.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2006,
+   "finisher": "Seto:",
+   "signatures": [
+    {
+     "name": "Seto:",
+     "move": "Signature move"
+    },
+    {
+     "name": "Kabuki's Revnge",
+     "move": "Piledriver"
+    }
+   ],
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 8000,
+    "weeks_left": 55,
+    "push": "lower_midcarder"
+   }
+  },
+  {
+   "id": "wpw_sinn",
+   "ring_name": "Sinn",
+   "gender": "M",
+   "disposition": "face",
+   "style": "technician",
+   "age": 31,
+   "hometown": "Kingsport",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 37,
+    "technical": 50,
+    "aerial": 33,
+    "stamina": 39,
+    "charisma": 44,
+    "promo_skill": 41,
+    "overness": 41,
+    "star_quality": 37,
+    "potential": 57,
+    "durability": 60,
+    "consistency": 37
+   },
+   "gimmick_category": "PCW legend",
+   "gimmick": "Came through the WrestlePower forums and never left.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2006,
+   "finisher": "The End",
+   "finisher_move": "Driver",
+   "finisher_description": "A driver.",
+   "signatures": [
+    {
+     "name": "SiNNdependence",
+     "move": "Signature move"
+    },
+    {
+     "name": "SiNNfestation",
+     "move": "Signature move"
+    }
+   ],
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 8000,
+    "weeks_left": 87,
+    "push": "lower_midcarder"
+   }
+  },
+  {
+   "id": "wpw_leon_the_lion_capri",
+   "ring_name": "Leon \"The Lion\" Capri",
+   "gender": "M",
+   "disposition": "face",
+   "style": "striker",
+   "age": 28,
+   "hometown": "Denver, Colorado",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 44,
+    "technical": 42,
+    "aerial": 44,
+    "stamina": 55,
+    "charisma": 39,
+    "promo_skill": 56,
+    "overness": 48,
+    "star_quality": 49,
+    "potential": 64,
+    "durability": 69,
+    "consistency": 40
+   },
+   "gimmick_category": "A WPW hopeful",
+   "gimmick": "Former mathmetician teacher turned wrestler. Went under the radar most of the time, and joined WPW.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2006,
+   "finisher": "Lion Tamer",
+   "signatures": [
+    {
+     "name": "450 Splash",
+     "move": "450 splash"
+    },
+    {
+     "name": "Side-Effect",
+     "move": "Signature move"
+    }
+   ],
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 8000,
+    "weeks_left": 82,
+    "push": "lower_midcarder"
+   }
+  },
+  {
+   "id": "wpw_the_human_hurricane_chris_ev",
+   "ring_name": "\"The Human Hurricane\" Chris Evans",
+   "gender": "M",
+   "disposition": "tweener",
+   "style": "technician",
+   "age": 33,
+   "hometown": "Atlanta, Georgia",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 48,
+    "technical": 58,
+    "aerial": 31,
+    "stamina": 39,
+    "charisma": 56,
+    "promo_skill": 58,
+    "overness": 45,
+    "star_quality": 37,
+    "potential": 71,
+    "durability": 69,
+    "consistency": 52
+   },
+   "gimmick_category": "High-Flyer",
+   "gimmick": "An Indy wrestler who didn't have the easiest life. Looks at WPW as a chance to wash away the last few years and start fresh.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2006,
+   "finisher": "Tiger Driver '99",
+   "finisher_move": "Driver",
+   "finisher_description": "A driver.",
+   "signatures": [
+    {
+     "name": "Wings of an Angel",
+     "move": "Signature move"
+    },
+    {
+     "name": "Fall From Heaven",
+     "move": "Powerbomb"
+    }
+   ],
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 8000,
+    "weeks_left": 101,
+    "push": "lower_midcarder"
+   }
+  },
+  {
+   "id": "wpw_l_a_riot",
+   "ring_name": "L.A. Riot",
+   "gender": "M",
+   "disposition": "tweener",
+   "style": "technician",
+   "age": 33,
+   "hometown": "Los Angeles, CA by way of Dublin, Ireland",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 36,
+    "technical": 61,
+    "aerial": 41,
+    "stamina": 48,
+    "charisma": 54,
+    "promo_skill": 53,
+    "overness": 41,
+    "star_quality": 45,
+    "potential": 59,
+    "durability": 55,
+    "consistency": 52
+   },
+   "gimmick_category": "Not afraid to get technical",
+   "gimmick": "The last graduate from the legendary Stu Hart dungeon, L.A. Riot decided to apply his abilities to wrestling.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2006,
+   "finisher": "Life on the Streets",
+   "finisher_move": "Cobra clutch",
+   "finisher_description": "A cobra clutch.",
+   "signatures": [
+    {
+     "name": "The Drive-By",
+     "move": "Signature move"
+    },
+    {
+     "name": "Grab Your Gun",
+     "move": "Sharpshooter"
+    }
+   ],
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 8000,
+    "weeks_left": 52,
+    "push": "lower_midcarder"
+   }
+  },
+  {
+   "id": "wpw_badboy",
+   "ring_name": "Badboy",
+   "gender": "M",
+   "disposition": "heel",
+   "style": "powerhouse",
+   "age": 26,
+   "hometown": ":Boston, Mass",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 47,
+    "technical": 52,
+    "aerial": 41,
+    "stamina": 51,
+    "charisma": 46,
+    "promo_skill": 47,
+    "overness": 43,
+    "star_quality": 46,
+    "potential": 56,
+    "durability": 82,
+    "consistency": 49
+   },
+   "gimmick_category": "A WPW hopeful",
+   "gimmick": ":Born to a poor town in the ghetto of Boston Massachusetts. Jason Barber, or Badboy as he is known as, was a very under-privlaged child.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2006,
+   "finisher": ":The Monster-Canadian Destroyer",
+   "finisher_move": "Flipping piledriver",
+   "finisher_description": "A flipping piledriver.",
+   "signatures": [
+    {
+     "name": ":Protobomb",
+     "move": "Powerbomb"
+    },
+    {
+     "name": "Backcracker",
+     "move": "Signature move"
+    }
+   ],
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 8000,
+    "weeks_left": 48,
+    "push": "lower_midcarder"
+   }
+  },
+  {
+   "id": "wpw_sexxiie_goregous",
+   "ring_name": "Sexxiie Goregous",
+   "gender": "F",
+   "disposition": "face",
+   "style": "all_rounder",
+   "age": 34,
+   "hometown": "Raleigh, North Carolina",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 48,
+    "technical": 47,
+    "aerial": 40,
+    "stamina": 36,
+    "charisma": 53,
+    "promo_skill": 44,
+    "overness": 43,
+    "star_quality": 47,
+    "potential": 59,
+    "durability": 55,
+    "consistency": 46
+   },
+   "gimmick_category": "Being Sexy and Goregous",
+   "gimmick": "At the age of 21, Sexxie modeled for many other men's magazines except for Playboy but really wants too. She entered a couple of runway shows modeling swimwear and other clothing.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2006,
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 8000,
+    "weeks_left": 102,
+    "push": "lower_midcarder"
+   }
+  },
+  {
+   "id": "wpw_kyle_sanders",
+   "ring_name": "Kyle Sanders",
+   "gender": "M",
+   "disposition": "face",
+   "style": "all_rounder",
+   "age": 28,
+   "hometown": "London, England",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 54,
+    "technical": 58,
+    "aerial": 33,
+    "stamina": 49,
+    "charisma": 41,
+    "promo_skill": 42,
+    "overness": 51,
+    "star_quality": 49,
+    "potential": 57,
+    "durability": 70,
+    "consistency": 52
+   },
+   "gimmick_category": "Funny",
+   "gimmick": "Came through the WrestlePower forums and never left.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2006,
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 8000,
+    "weeks_left": 58,
+    "push": "lower_midcarder"
+   }
+  },
+  {
+   "id": "wpw_ben_ten",
+   "ring_name": "Ben Ten",
+   "gender": "M",
+   "disposition": "tweener",
+   "style": "flyer",
+   "age": 37,
+   "hometown": "Long Island, NY",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 45,
+    "technical": 39,
+    "aerial": 67,
+    "stamina": 54,
+    "charisma": 39,
+    "promo_skill": 59,
+    "overness": 43,
+    "star_quality": 43,
+    "potential": 54,
+    "durability": 68,
+    "consistency": 49
+   },
+   "gimmick_category": "Focused",
+   "gimmick": "Ben Saslo was, a fun loving  kid. He did everything his parents asked of him. Although what Ben told nobody was that his father was an alcoholic.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2006,
+   "finisher": "Shut the Punk Up",
+   "signatures": [
+    {
+     "name": "Car Wreck",
+     "move": "Signature move"
+    },
+    {
+     "name": "Belly to Belly Moonsault Slam)",
+     "move": "Moonsault"
+    }
+   ],
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 8000,
+    "weeks_left": 94,
+    "push": "lower_midcarder"
+   }
+  },
+  {
+   "id": "wpw_bryson_b_ry_ryder",
+   "ring_name": "Bryson \"B-ry\" Ryder",
+   "gender": "M",
+   "disposition": "face",
+   "style": "all_rounder",
+   "age": 34,
+   "hometown": "The Hood",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 36,
+    "technical": 50,
+    "aerial": 44,
+    "stamina": 38,
+    "charisma": 53,
+    "promo_skill": 52,
+    "overness": 41,
+    "star_quality": 44,
+    "potential": 55,
+    "durability": 67,
+    "consistency": 41
+   },
+   "gimmick_category": "A WPW hopeful",
+   "gimmick": "Given his apperance, you'd think that Bryson just walked off the set of Malibu's Most Wanted. However, that is not the case. Believe it or not, Bryson was a shy individual.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2006,
+   "finisher": "The Gunnfinga",
+   "signatures": [
+    {
+     "name": "Axe-Kick",
+     "move": "Kick"
+    },
+    {
+     "name": "Lock 'n' Load",
+     "move": "Submission hold"
+    }
+   ],
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 8000,
+    "weeks_left": 85,
+    "push": "lower_midcarder"
+   }
+  },
+  {
+   "id": "wpw_mikala",
+   "ring_name": "Mikala",
+   "gender": "M",
+   "disposition": "face",
+   "style": "brawler",
+   "age": 36,
+   "hometown": "Daytona Beach, Florida",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 60,
+    "technical": 36,
+    "aerial": 36,
+    "stamina": 45,
+    "charisma": 37,
+    "promo_skill": 52,
+    "overness": 51,
+    "star_quality": 48,
+    "potential": 72,
+    "durability": 77,
+    "consistency": 40
+   },
+   "gimmick_category": "A WPW hopeful",
+   "gimmick": "TOK has been in the wrestling business for a long time. In his original fed he was injured in a brutal in ring fight. Weapons were involved. Four people started fighting, and only one walked out.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2006,
+   "finisher": "1) Splatterbuster",
+   "finisher_move": "Facebuster",
+   "finisher_description": "A facebuster.",
+   "signatures": [
+    {
+     "name": "Spear, Brainbuster, Bulldog",
+     "move": "Spear"
+    }
+   ],
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 8000,
+    "weeks_left": 68,
+    "push": "lower_midcarder"
+   }
+  },
+  {
+   "id": "wpw_diablo",
+   "ring_name": "Diablo",
+   "gender": "M",
+   "disposition": "face",
+   "style": "striker",
+   "age": 29,
+   "hometown": "New York,New York",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 44,
+    "technical": 46,
+    "aerial": 34,
+    "stamina": 48,
+    "charisma": 38,
+    "promo_skill": 53,
+    "overness": 42,
+    "star_quality": 40,
+    "potential": 52,
+    "durability": 56,
+    "consistency": 44
+   },
+   "gimmick_category": "A WPW hopeful",
+   "gimmick": "Came through the WrestlePower forums and never left.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2006,
+   "finisher": "The worst number",
+   "finisher_move": "Kick",
+   "finisher_description": "A kick.",
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 8000,
+    "weeks_left": 94,
+    "push": "lower_midcarder"
+   }
+  },
+  {
+   "id": "wpw_knicky",
+   "ring_name": "KnicKy",
+   "gender": "M",
+   "disposition": "face",
+   "style": "technician",
+   "age": 37,
+   "hometown": "(Now resides in) Brisbane, Australia",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 55,
+    "technical": 46,
+    "aerial": 30,
+    "stamina": 50,
+    "charisma": 42,
+    "promo_skill": 50,
+    "overness": 48,
+    "star_quality": 37,
+    "potential": 60,
+    "durability": 76,
+    "consistency": 55
+   },
+   "gimmick_category": "A WPW hopeful",
+   "gimmick": "Arising from the amatuer wrestling circuit in Australia, Nick Kington, now known as KnicKy, turned his sights to professional wrestling, something that has excited him since early school hood.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2006,
+   "finisher": "47-15",
+   "finisher_move": "Cutter",
+   "finisher_description": "A cutter.",
+   "signatures": [
+    {
+     "name": "Multiple german suplexes",
+     "move": "Suplex"
+    },
+    {
+     "name": "Diving headbutt",
+     "move": "Signature move"
+    }
+   ],
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 8000,
+    "weeks_left": 59,
+    "push": "lower_midcarder"
+   }
+  },
+  {
+   "id": "wpw_the_juan",
+   "ring_name": "The Juan",
+   "gender": "M",
+   "disposition": "heel",
+   "style": "all_rounder",
+   "age": 27,
+   "hometown": "The twizted mind of WPW fans and perfomers across the world",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 44,
+    "technical": 53,
+    "aerial": 42,
+    "stamina": 43,
+    "charisma": 47,
+    "promo_skill": 49,
+    "overness": 50,
+    "star_quality": 33,
+    "potential": 71,
+    "durability": 71,
+    "consistency": 54
+   },
+   "gimmick_category": "A WPW hopeful",
+   "gimmick": "Came through the WrestlePower forums and never left.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2006,
+   "finisher": "The Juan",
+   "signatures": [
+    {
+     "name": "The Juan",
+     "move": "Signature move"
+    },
+    {
+     "name": "Scratch",
+     "move": "Signature move"
+    }
+   ],
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 8000,
+    "weeks_left": 122,
+    "push": "lower_midcarder"
+   }
+  },
+  {
+   "id": "wpw_el_retardo",
+   "ring_name": "El Retardo",
+   "gender": "M",
+   "disposition": "face",
+   "style": "all_rounder",
+   "age": 28,
+   "hometown": "Meheeco Citi, Meheeco",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 43,
+    "technical": 59,
+    "aerial": 37,
+    "stamina": 46,
+    "charisma": 38,
+    "promo_skill": 53,
+    "overness": 50,
+    "star_quality": 41,
+    "potential": 71,
+    "durability": 65,
+    "consistency": 55
+   },
+   "gimmick_category": "A WPW hopeful",
+   "gimmick": "Came through the WrestlePower forums and never left.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2006,
+   "finisher": "Pardon My English",
+   "finisher_move": "Piledriver",
+   "finisher_description": "A piledriver.",
+   "signatures": [
+    {
+     "name": "A856 HJ92",
+     "move": "Suplex"
+    },
+    {
+     "name": "Pikachu Buster",
+     "move": "Signature move"
+    }
+   ],
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 8000,
+    "weeks_left": 69,
+    "push": "lower_midcarder"
+   }
+  },
+  {
+   "id": "wpw_ryan_patrick_cade",
+   "ring_name": "Ryan Patrick Cade",
+   "gender": "M",
+   "disposition": "heel",
+   "style": "all_rounder",
+   "age": 27,
+   "hometown": "Inver Grove Heights - Minnesota",
+   "roles": [
+    "wrestler"
+   ],
+   "ratings": {
+    "brawling": 53,
+    "technical": 52,
+    "aerial": 39,
+    "stamina": 44,
+    "charisma": 41,
+    "promo_skill": 52,
+    "overness": 47,
+    "star_quality": 44,
+    "potential": 62,
+    "durability": 60,
+    "consistency": 38
+   },
+   "gimmick_category": "A WPW hopeful",
+   "gimmick": "Not much is known about the new wrestler as he hits WPW, no prior experiance in any other federations and lacks the moral compass to have explained his past in great deal as of yet.",
+   "peak_years": [
+    27,
+    36
+   ],
+   "debut_year": 2006,
+   "finisher": "Sugarloaf Stunner",
+   "finisher_move": "Stunner",
+   "finisher_description": "A stunner.",
+   "signatures": [
+    {
+     "name": "Screw it",
+     "move": "Signature move"
+    },
+    {
+     "name": "That's the best you got?",
+     "move": "Signature move"
+    }
+   ],
+   "contract": {
+    "type": "exclusive",
+    "monthly_salary": 8000,
+    "weeks_left": 76,
+    "push": "lower_midcarder"
+   }
+  }
+ ],
+ "teams": [
+  {
+   "id": "wpw_tag_champs",
+   "name": "LaVigne and Xavier",
+   "kind": "tag",
+   "member_ids": [
+    "wpw_blade_the_future_lavigne",
+    "wpw_new_age_andrew_xavier"
+   ],
+   "experience": 60,
+   "chemistry": 7
+  },
+  {
+   "id": "wpw_the_bees",
+   "name": "The Bees",
+   "kind": "tag",
+   "member_ids": [
+    "wpw_connie",
+    "wpw_tina"
+   ],
+   "experience": 50,
+   "chemistry": 7
+  },
+  {
+   "id": "wpw_red_dragon",
+   "name": "Red Dragon",
+   "kind": "tag",
+   "member_ids": [
+    "wpw_seto_uchiha",
+    "wpw_vendetta"
+   ],
+   "experience": 50,
+   "chemistry": 6
+  }
+ ]
+}

@@ -1,6 +1,23 @@
 /* ---------- angles: the story director ---------- */
 function promoScore(S,w,bonus){return clamp(Math.round(0.62*micOf(S,w)+0.38*w.ovr+(bonus||0)+(S.booker&&w.promo===S.player?S.booker.sk.creative:0)+rnd(S)*8-4),5,99);}
 function angle(head,text,ov){return {k:'angle',head:head,text:text,ov:clamp(Math.round(ov),5,99)};}
+/* Every storyline beat is a scene (rule 9c): an angle the story director writes says which beat it is (`beat`) and who
+   is in it, in the order the scene casts them (`bids`: the first is A, the second B, a third C). The screens play the
+   scene 'beat_<beat>' for it, or the booked kind's 'seg_<beat>' where the beat is the same thing. BEATS lists them all. */
+var BEATS=['feud_words','feud_stare','feud_sneak','feud_brawl','feud_partner','feud_signing','feud_video','feud_stakes','feud_betray','feud_injury','feud_swerve','feud_made','feud_final','interview','ambush','challenge','faceoff','save','turn','mystery','mystery_clue','mystery_reveal','return','stable','stable_out','debut_vig','debut_atk','debut_match','chapter','payoff'];   // the last five are matches: a debut (seg.debut) and a story's chapter or ending (seg.story)
+function beatTag(r,beat,ws){if(r){r.beat=beat;r.bids=ws.filter(function(w){return !!w;}).map(function(w){return w.id;});}return r;}
+/* who each feud beat is about, worked out before the beat runs (a betrayal moves people between sides) */
+var BEAT_WHO={
+  words:function(c){var sp=c.a.mic>=c.b.mic?c.a:c.b;return [sp,sp===c.a?c.b:c.a];},
+  stare:function(c){var x=c.h||c.a;return [x,x===c.a?c.b:c.a];},
+  sneak:function(c){return [c.h,c.o];},
+  brawl:function(c){return [c.h||c.a,c.o||c.b];},
+  partner:function(c){return [c.h,partnerOf(c.S,c.o),c.o];},
+  stakes:function(c){var sp=c.a.mic>=c.b.mic?c.a:c.b;return [sp,sp===c.a?c.b:c.a];},
+  betray:function(c){var A=c.f.a,B=c.f.b,from=(A.length>1&&B.indexOf(A[1])<0&&c.ok(A[1]))?A:B;return [c.S.w[from[1]],c.S.w[from[0]]];},
+  injury:function(c){return [c.h,c.o];},
+  swerve:function(c){var x=c.a.mic>=c.b.mic?c.b:c.a;return [x,x===c.a?c.b:c.a];}
+};
 var ACTN=['','Spark','Escalation','Twist','Blow-off'];
 function feudAct(f,S){if(S&&f.promo!=null)return feudActCal(S,f);return f.res?4:(f.heat>=60?(f.twist?4:3):(f.heat>=30?2:1));}
 function nextBigName(S,P){var w=S.week+(4-cal(S.week).wom);return P.name+' '+evName(S,P,cal(w).month);}
@@ -73,16 +90,16 @@ function genAngle(S,P,show,ctx){
     FEUDLETS.forEach(function(sl){
       if(sl.acts.indexOf(act)<0||!sl.ok(c))return;
       if(sl.twist&&f.tww!=null&&f.tww>=seg.s0)return;   // one twist to a stretch of the story
-      opts.push([sl.w*(1+f.heat/100)*(f.beat===sl.id?0.12:1),function(){mark(a,b);f.beat=sl.id;if(sl.twist)f.tww=S.week;var r=sl.run(c);r.feud=f.id;r.act=feudAct(f,S);return r;}]);
+      opts.push([sl.w*(1+f.heat/100)*(f.beat===sl.id?0.12:1),function(){mark(a,b);f.beat=sl.id;if(sl.twist)f.tww=S.week;var bw=BEAT_WHO[sl.id]?BEAT_WHO[sl.id](c):[a,b],r=sl.run(c);r.feud=f.id;r.act=feudAct(f,S);return beatTag(r,'feud_'+(r.head===sl.head?sl.id:'brawl'),r.head===sl.head?bw:[a,b]);}]);
     });
   });
   function interview(){
     var c=pool.filter(function(w){return !ang[w.id];}).sort(function(a,b){return (b.mic+b.ovr*0.5)-(a.mic+a.ovr*0.5);}).slice(0,4);
     if(!c.length)return null;var sp=pick(S,c),sc=promoScore(S,sp,0),lv=holdLvl(P,sp.id);mark(sp);
     if(sc>sp.ovr)addOvr(P,sp,0.25);
-    if(hasMouthpiece(S,sp))return angle('Interview',S.w[sp.mgr].name+' does the talking for '+sp.name+', and does it well: '+(lv?'the title is going nowhere.':'the best is still to come.'),sc);
+    if(hasMouthpiece(S,sp))return beatTag(angle('Interview',S.w[sp.mgr].name+' does the talking for '+sp.name+', and does it well: '+(lv?'the title is going nowhere.':'the best is still to come.'),sc),'interview',[sp]);
     var r0=angle('Interview',sp.name+' takes the microphone and '+(lv?'vows that the title is going nowhere.':(sp.ws>=3?'talks up a '+sp.ws+'-match winning streak.':'promises bigger things are coming.')),sc);
-    r0.text+=' '+promoSpeech(S,sp,null,'interview',sc,ctx.city||null,'wi'+S.week+':'+sp.id);return r0;
+    r0.text+=' '+promoSpeech(S,sp,null,'interview',sc,ctx.city||null,'wi'+S.week+':'+sp.id);return beatTag(r0,'interview',[sp]);
   }
   function callOut(){
     var hs=pool.filter(function(w){return w.align==='H'&&w.mic>=55&&!ang[w.id]&&!inFeud(S,w.id);});if(!hs.length)return null;
@@ -90,7 +107,7 @@ function genAngle(S,P,show,ctx){
     var ts=pool.filter(function(w){return w.align==='F'&&w.g===h.g&&!ang[w.id]&&!inFeud(S,w.id)&&Math.abs(w.ovr-h.ovr)<=10&&(h.team==null||w.team!==h.team);});
     if(!ts.length)return null;ts.sort(function(a,b){return Math.abs(a.ovr-h.ovr)-Math.abs(b.ovr-h.ovr);});
     var tg=ts[0];if(!startFeud(S,P,tg,h,24+ri(S,0,10),h.name+' attacked '+tg.name+' from behind'))return null;mark(h,tg);
-    return angle('Ambush',h.name+' interrupts '+tg.name+'’s interview and attacks from behind. A new rivalry begins.',promoScore(S,h,3));
+    return beatTag(angle('Ambush',h.name+' interrupts '+tg.name+'’s interview and attacks from behind. A new rivalry begins.',promoScore(S,h,3)),'ambush',[h,tg]);
   }
   function champChallenge(){
     var ts=showTitles(P,show).filter(function(t){return !t.tag&&t.holders.length&&ok(t.holders[0])&&!inFeud(S,t.holders[0]);});if(!ts.length)return null;
@@ -99,18 +116,18 @@ function genAngle(S,P,show,ctx){
     if(!cs.length)return null;cs.sort(function(a,b){return (b.ovr+b.mom*2+(b.align!==c.align?6:0))-(a.ovr+a.mom*2+(a.align!==c.align?6:0));});
     var ch=cs[0];if(!startFeud(S,P,ch,c,30,ch.name+' challenged for the '+t.name,{title:t.id}))return null;mark(c,ch);
     var r1=angle('Challenge',ch.name+' interrupts '+c.name+' and lays claim to the '+t.name+'.',promoScore(S,ch.mic>c.mic?ch:c,4)),k1='wc'+S.week+':'+ch.id;
-    r1.text+=' '+promoSpeech(S,ch,c,'challenge',ch.mic,ctx.city||null,k1)+' '+promoSpeech(S,c,ch,'words',c.mic,ctx.city||null,k1+'b');return r1;
+    r1.text+=' '+promoSpeech(S,ch,c,'challenge',ch.mic,ctx.city||null,k1)+' '+promoSpeech(S,c,ch,'words',c.mic,ctx.city||null,k1+'b');return beatTag(r1,'challenge',[ch,c]);
   }
   function mysteryStart(){
     var os=pool.map(function(w){return w.ovr;}).sort(function(a,b){return b-a;}),cut=os[Math.floor(os.length*0.3)]||0;
     var vs=pool.filter(function(w){return w.align==='F'&&w.ovr>=cut&&!ang[w.id]&&!inFeud(S,w.id);});if(!vs.length)return null;
     var v=pick(S,vs);S.mystery={v:v.id,left:ri(S,2,3),promo:P.id,start:S.week};mark(v);
     news(S,'story','Who attacked '+v.name+'? Nobody saw a thing.');
-    return angle('Mystery',v.name+' is found laid out in the locker room. Nobody saw the attacker.',0.8*v.ovr+8+rnd(S)*6-3);
+    return beatTag(angle('Mystery',v.name+' is found laid out in the locker room. Nobody saw the attacker.',0.8*v.ovr+8+rnd(S)*6-3),'mystery',[v]);
   }
   function mysteryClue(){
     var v=S.w[my.v];my.left--;mark(v);
-    return angle('Mystery',chance(S,0.5)?'Footage of the attack on '+v.name+' airs. The attacker’s face is hidden.':v.name+' demands answers and accuses half the locker room.',0.75*v.ovr+8+rnd(S)*6-3);
+    return beatTag(angle('Mystery',chance(S,0.5)?'Footage of the attack on '+v.name+' airs. The attacker’s face is hidden.':v.name+' demands answers and accuses half the locker room.',0.75*v.ovr+8+rnd(S)*6-3),'mystery_clue',[v]);
   }
   function mysteryReveal(){
     var v=S.w[my.v],pt=partnerOf(S,v),c=null,betray=false;
@@ -122,7 +139,7 @@ function genAngle(S,P,show,ctx){
     if(c.align==='F')turn(S,c,'revealed as the mystery attacker');
     var f=startFeud(S,P,v,c,65,c.name+' was revealed as the one who attacked '+v.name,{force:true});if(f)f.twist='reveal';
     award(S,'ACH_MYSTERY');mark(v,c);
-    return angle('Reveal','The attacker is revealed: '+c.name+'.'+(betray?' '+v.name+'’s own partner.':'')+' '+v.name+' wants revenge.',0.8*(v.ovr+c.ovr)/2+12);
+    return beatTag(angle('Reveal','The attacker is revealed: '+c.name+'.'+(betray?' '+v.name+'’s own partner.':'')+' '+v.name+' wants revenge.',0.8*(v.ovr+c.ovr)/2+12),'mystery_reveal',[c,v]);
   }
   function stareDown(){
     var GX=mainG(S,P),L=pool.filter(function(w){return !ang[w.id]&&!inFeud(S,w.id)&&w.g===GX;}).sort(function(a,b){return b.ovr-a.ovr;}).slice(0,6);
@@ -131,7 +148,7 @@ function genAngle(S,P,show,ctx){
       if(a.align!=='F'||b.align!=='F'||(a.team!=null&&a.team===b.team)||(rk&&S.week-rk<10))continue;
       if(!startFeud(S,P,a,b,30,a.name+' and '+b.name+' faced off',{kind:'dream'}))return null;mark(a,b);
       var r2=angle('Face-off',a.name+' and '+b.name+' cross paths on the stage. Neither backs down, and the crowd wants the match.',0.8*(a.ovr+b.ovr)/2+8),k2='wf'+S.week+':'+a.id;
-      r2.text+=' '+promoSpeech(S,a,b,'faceoff',a.mic,ctx.city||null,k2)+' '+promoSpeech(S,b,a,'faceoff',b.mic,ctx.city||null,k2+'b');return r2;
+      r2.text+=' '+promoSpeech(S,a,b,'faceoff',a.mic,ctx.city||null,k2)+' '+promoSpeech(S,b,a,'faceoff',b.mic,ctx.city||null,k2+'b');return beatTag(r2,'faceoff',[a,b]);
     }
     return null;
   }
@@ -139,7 +156,7 @@ function genAngle(S,P,show,ctx){
     var c=pool.filter(function(w){return w.ret&&!ang[w.id];});if(!c.length)return null;
     var w=c[0],f=feudsFor(S,w.id)[0],r=null;w.ret=false;w.mom=clamp(w.mom+3,-10,10);mark(w);
     if(f){r=S.w[(f.a.indexOf(w.id)>=0?f.b:f.a)[0]];heatUp(S,f,10,w.name+' returned and went after '+r.name);}
-    return angle('Return',w.name+' returns to a big reaction'+(r?' and goes straight after '+r.name+'.':'.'),0.9*w.ovr+8);
+    return beatTag(angle('Return',w.name+' returns to a big reaction'+(r?' and goes straight after '+r.name+'.':'.'),0.9*w.ovr+8),'return',[w,r]);
   }
   function teamUp(){
     var os=pool.map(function(w){return w.ovr;}).sort(function(a,b){return a-b;}),lo=os[Math.floor(os.length*0.3)]||0,hi=os[Math.floor(os.length*0.8)]||100;
@@ -150,14 +167,14 @@ function genAngle(S,P,show,ctx){
     var b=pick(S,bs),h=pick(S,hs);formTeam(S,P,a,b,8);mark(a,b,h);
     var f=startFeud(S,P,a,h,20,h.name+' attacked '+a.name+'; '+b.name+' made the save');if(f&&f.a.indexOf(a.id)>=0&&f.a.length<2)f.a.push(b.id);
     news(S,'story','New team: '+a.name+' & '+b.name+'.');
-    return angle('Save',h.name+' attacks '+a.name+' after an interview. '+b.name+' runs out to make the save, and the two shake hands. A new team is born.',0.75*(a.ovr+b.ovr+h.ovr)/3+6);
+    return beatTag(angle('Save',h.name+' attacks '+a.name+' after an interview. '+b.name+' runs out to make the save, and the two shake hands. A new team is born.',0.75*(a.ovr+b.ovr+h.ovr)/3+6),'save',[a,b,h]);
   }
   function crowdTurn(){
     var c=pool.filter(function(w){return !ang[w.id]&&!inFeud(S,w.id)&&((w.align==='H'&&w.mom>=4&&w.mic>=65)||(w.align==='F'&&w.mom<=-4&&w.mic>=60));});if(!c.length)return null;
     var w=pick(S,c),was=w.align;mark(w);
     turn(S,w,was==='H'?'the crowd got behind them':'turned on the fans');
     if(was==='H')addOvr(P,w,2);else w.mom=clamp(w.mom+3,-10,10);
-    return angle('Turn',was==='H'?'The crowd has been cheering '+w.name+' for weeks. Tonight '+w.name+' embraces it.':'After weeks of losses, '+w.name+' blames the fans and walks out to boos.',promoScore(S,w,6));
+    return beatTag(angle('Turn',was==='H'?'The crowd has been cheering '+w.name+' for weeks. Tonight '+w.name+' embraces it.':'After weeks of losses, '+w.name+' blames the fans and walks out to boos.',promoScore(S,w,6)),'turn',[w]);
   }
   if(my&&my.left<=0){var r=mysteryReveal();if(r)return r;}
   if(pool.some(function(w){return w.ret&&!ang[w.id];}))opts.push([7,comeback]);

@@ -3,11 +3,9 @@ import { W } from '../../engine';
 import { G, me, ui, slice, view } from '../../store';
 import { onLeavePage } from '../../nav';
 import { onBack } from '../../input';
-import { Face, FaceKey } from '../../lib/portrait';
 
 export type ProfilePage = 'over' | 'deal' | 'room' | 'scout';
 /** The wrestler being designed in the creator window. Kept between visits until they are signed. */
-export interface Draft { name: string; g: string; style: string; align: string; bg: string; emph: string; fin: string; gim: string; face: Face }
 export interface RosterState {
   /** the open profile (a wrestler id), on the Roster and Locker room pages */
   sel: number | null;
@@ -28,12 +26,9 @@ export interface RosterState {
   cl?: string[];
   clFor?: number | null;
   weeks: string;
-  cw: Draft | null;
-  caw: { cat: 'head' | 'face' | 'body' | 'gear' | 'skills'; part: FaceKey; pick: number | null };
-  cawMsg: string | null;
 }
 export function rs(): RosterState {
-  return slice<RosterState>('roster', () => ({ sel: null, last: null, pt: 'over', rf: { brand: 'all', g: 'all', al: 'all', q: '' }, rs: { k: 'ovr', d: -1 }, repack: null, mq: '', offer: null, wage: '', weeks: '48', cw: null, caw: { cat: 'face', part: 'hr', pick: null }, cawMsg: null }));
+  return slice<RosterState>('roster', () => ({ sel: null, last: null, pt: 'over', rf: { brand: 'all', g: 'all', al: 'all', q: '' }, rs: { k: 'ovr', d: -1 }, repack: null, mq: '', offer: null, wage: '', weeks: '48' }));
 }
 
 /** The wrestler whose profile is open, if they are still on the player's roster. */
