@@ -237,15 +237,26 @@ const DOT = ' · ';
    what they do: quiet sits still with a head or two down, into it sways, loud bounces, and electric jumps; a near
    fall or a finish (a beat with h) makes the whole stand leap. Two hold up signs for the hottest act in the
    segment. The fans are drawn once and kept; only their motion changes. */
-const SHIRTS = ['#d8453a', '#3f6fc0', '#3c9a4b', '#e1a52a', '#7f4fb0', '#2b8a8a', '#ece6d6', '#26262b', '#c2577a', '#e07b2a'];
-const FANS = Array.from({ length: 18 }, (_, i) => ({ id: -9000 - i, name: 'Fan ' + ['Ada', 'Bo', 'Cal', 'Dee', 'Eli', 'Fay', 'Gus', 'Hal', 'Ivy', 'Jo', 'Kit', 'Lou', 'Max', 'Nell', 'Oz', 'Pip', 'Quin', 'Rae'][i] + i, g: i % 3 === 1 ? 'F' : 'M', align: 'F', style: 'A', age: 20 + (i * 7) % 30 }));
+const SHIRTS = ['#d8453a', '#3f6fc0', '#3c9a4b', '#e1a52a', '#7f4fb0', '#2b8a8a', '#ece6d6', '#26262b', '#c2577a', '#e07b2a', '#5a6b7a', '#b8323a'];
+const FAN_NAMES = ['Ada', 'Bo', 'Cal', 'Dee', 'Eli', 'Fay', 'Gus', 'Hal', 'Ivy', 'Jo', 'Kit', 'Lou', 'Max', 'Nell', 'Oz', 'Pip', 'Quin', 'Rae', 'Sal', 'Tam', 'Uma', 'Vic', 'Wes', 'Xan', 'Yul', 'Zed', 'Abe', 'Bea', 'Cy', 'Dot', 'Ed', 'Flo'];
+/* a section of the stands, back row first: each row a little smaller and further into the dark */
+const ROWS = [9, 8, 8, 7];
+const FANS = FAN_NAMES.map((n, i) => ({ id: -9000 - i, name: 'Fan ' + n + i, g: (i * 5) % 3 === 1 ? 'F' : 'M', align: 'F', style: 'A', age: 19 + (i * 7) % 34 }));
+const SIGN_AT = [12, 27];   // who holds up a sign: one in the middle of the stand, one at the rail
 function FanStand(p: { v: number; word: string; pop: number; hot: string }) {
   const mood = p.v >= 85 ? 'wild' : p.v >= 70 ? 'loud' : p.v >= 45 ? 'into' : 'quiet';
-  return <section class={'fanstand m-' + mood + (p.pop ? ' pop' + (p.pop > 1 ? '2' : '') : '')} data-t="live-crowd" data-v={p.v} aria-label={'The crowd: ' + p.word}>
-    <div class="fans" aria-hidden="true">{FANS.map((f, i) => <span key={f.id} class={'fan r' + (i < 6 ? 1 : i < 12 ? 2 : 3) + (i === 2 || i === 9 ? ' sign' : '')} style={{ ['--d' as any]: ((i * 37) % 11) / 10 + 's', ['--x' as any]: ((i * 13) % 7) - 3 + 'deg' }}>
-      <PaperPortrait r={{ ...recipeOf(f as any), shirt: SHIRTS[i % SHIRTS.length] } as any} card="none" label="" />
-      {(i === 2 || i === 9) && p.hot ? <b class="fsign">{i === 2 ? p.hot.split(' ')[0].toUpperCase() + '!' : (mood === 'quiet' ? 'ZZZ' : 'AWESOME!')}</b> : null}
-    </span>)}</div>
+  let k = 0;
+  return <section class={'fanstand stands m-' + mood + (p.pop ? ' pop' + (p.pop > 1 ? '2' : '') : '')} data-t="live-crowd" data-v={p.v} aria-label={'The crowd: ' + p.word}>
+    <div class="tiers" aria-hidden="true">
+      {ROWS.map((n, r) => <div key={r} class={'srow s' + r} style={{ ['--n' as any]: n }}>
+        {Array.from({ length: n }, () => { const i = k++, f = FANS[i]; return <span key={f.id} class={'fg' + (SIGN_AT.indexOf(i) >= 0 ? ' sign' : '')} style={{ ['--d' as any]: ((i * 37) % 11) / 10 + 's', ['--x' as any]: ((i * 13) % 7) - 3 + 'deg', ['--y' as any]: ((i * 29) % 5) * 2 + '%' }}>
+          <PaperPortrait r={{ ...recipeOf(f as any), shirt: SHIRTS[(i * 7) % SHIRTS.length] } as any} card="none" label="" />
+          {SIGN_AT.indexOf(i) >= 0 && p.hot ? <b class="fsign">{i === SIGN_AT[0] ? p.hot.split(' ')[0].toUpperCase() + '!' : (mood === 'quiet' ? 'ZZZ' : mood === 'wild' ? 'THIS IS AWESOME' : 'WE WANT MORE')}</b> : null}
+        </span>; })}
+      </div>)}
+      <i class="flashes">{[0, 1, 2, 3, 4, 5, 6].map(j => <b key={j} style={{ left: (j * 37 + 9) % 94 + '%', top: (j * 23 + 7) % 60 + '%', ['--d' as any]: (j * 0.37) % 1.3 + 's' }} />)}</i>
+      <div class="rail" />
+    </div>
     <p class="fw"><span>The crowd</span> <b>{p.word}</b></p>
   </section>;
 }
