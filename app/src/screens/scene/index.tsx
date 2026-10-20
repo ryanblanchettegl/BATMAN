@@ -15,7 +15,7 @@
    Nothing here touches the game. */
 import { useEffect, useRef, useState } from 'preact/hooks';
 import { W } from '../../engine';
-import { Btn, TextBox, Desktop, Win, Group, Tabs } from '../../kit';
+import { Btn, TextBox, Desktop, Win, Group, Sel as Drop, Opt } from '../../kit';
 import { Scene, Key, Fig, Prop, SCENES, STILLS, WHEN, STILL_WHEN, SETS, SETUPS, setupScene, WAIST, POSES, HOLDS, LIMBS, HOOKS, at, build, lastT, allScenes, ok, copy, SHOW_WHEN, SHOW_SCENES, SCENE_FX, fxClass, FRAMES, EASES, aspectOf, fitIn, BODY_PARTS, CAP_STYLES, SPOTS, captionAt, camAt, CAM_MOVES } from '../../kit/scene';
 import { FxVeil, CaptionBox, capName } from '../../kit/sceneplayer';
 import { Backdrop, BG_PARTS, BG_COLS, newBackdrop, newPart, useBackdropSource, isBg } from '../../kit/backdrop';
@@ -32,7 +32,7 @@ export const MAX_PEOPLE = 10;
 const LENSES: [number, string][] = [[18, 'Long lens'], [24, 'Close lens'], [30, 'Normal lens'], [38, 'Wide lens'], [48, 'Very wide lens']];
 /** The lens on the list nearest to a camera's own. */
 const lensOf = (fov: number) => LENSES.reduce((b, l) => Math.abs(l[0] - fov) < Math.abs(b[0] - fov) ? l : b)[0];
-const RINGSETS = ['ring', 'ringlow', 'ringcorner', 'cage', 'stadium'];
+const RINGSETS = ['ring', 'ringlow', 'ringcorner', 'cage', 'stadium', 'ringside', 'cell', 'inferno', 'ballroom', 'gym', 'bigstadium'];
 
 function blankScene(): Scene {
   return { v: 1, id: 'scene-' + Date.now().toString(36), name: 'My scene', when: 'any', set: 'ring', slots: [{ id: 'A', n: 'Wrestler A', role: 'a' }, { id: 'B', n: 'Wrestler B', role: 'b' }, { id: 'R', n: 'The referee', role: 'ref' }],
@@ -176,8 +176,8 @@ export function SceneStudio(pp: StudioProps) {
   const cyclePart = (d: number) => { if (!sel || sel.part === 'prop') return; const i = parts.indexOf(sel.part); setSel({ who: sel.who, part: parts[(i + d + parts.length) % parts.length] }); };
   // play: slide through the keyframes once, then come back to the one being edited
   useEffect(() => {
-    if (time == null) return; let raf = 0, t0 = performance.now() - time * 1000;
-    const step = (now: number) => { let t = (now - t0) / 1000; if (sc.loop && lastT(sc) > 0) t = t % (lastT(sc) + 0.32); else if (t > lastT(sc) + 0.6) { setTime(null); setReframe(x => x + 1); return; } setTime(t); raf = requestAnimationFrame(step); };
+    if (time == null) return; let raf = 0, last = -1, run = time;   // a slow frame moves it on a tenth of a second at most, so nothing is skipped
+    const step = (now: number) => { if (last >= 0) run += Math.min(0.1, Math.max(0, (now - last) / 1000)); last = now; let t = run; if (sc.loop && lastT(sc) > 0) t = t % (lastT(sc) + 0.32); else if (t > lastT(sc) + 0.6) { setTime(null); setReframe(x => x + 1); return; } setTime(t); raf = requestAnimationFrame(step); };
     raf = requestAnimationFrame(step); return () => cancelAnimationFrame(raf);
   }, [time == null]);
   const open = (s: Scene) => { setSc(copy(s)); setKi(0); setSel(null); setTime(null); setReframe(x => x + 1);
@@ -236,12 +236,12 @@ export function SceneStudio(pp: StudioProps) {
   const setCap = (c: { t?: string; s?: string; who?: string }) => edit(k => { const n: any = { ...(k.cap || { t: '', s: 'sub' }), ...c }; if (!n.who) delete n.who; if (n.t) k.cap = n; else delete k.cap; });
   const shotName = key.cam3 ? 'Its own shot' : key.cm === 'home' || !camAt(sc, kk) ? 'The set camera' : 'Holding the last shot';
   return <div class="scfull paper" data-t="scene">
-    <div class="sc-menubar" role="group" aria-label="Create a Scene">
-      <b class="on">Create a Scene</b><span class="sc-title">{sc.name}</span><span class="sp" />
-      <span class={'sc-hint' + (msg ? (msg.err ? ' bad' : ' good') : '')} role="status" data-t="scene-msg">{msg ? msg.t : 'Press somebody to pick them and drag them round the floor. Shift and drag lifts. Drag on nothing to walk the camera round.'}</span>
+    <div class="pmenu sc-menubar" role="group" aria-label="Create a Scene">
+      <b class="pm-app">Create a Scene</b><span class="pm-world sc-title">{sc.name}</span><span class="sp" />
       <Btn kind="sm" t="scene-save" tip="Keep this scene in the world" onClick={save}>Save</Btn>
       <Btn kind="go" t="scene-done" onClick={pp.onDone}>Done</Btn>
     </div>
+    <div class={'pnote sc-hint' + (msg ? (msg.err ? ' bad' : ' good') : '')} role="status" data-t="scene-msg">{msg ? msg.t : 'Press somebody to pick them and drag them round the floor. Shift and drag lifts. Drag on nothing to walk the camera round.'}</div>
     <Desktop cls="scpage">
     <Win title={'The picture: ' + sc.name} right={sc.keys.length + (sc.keys.length === 1 ? ' keyframe' : ' keyframes') + ' · ' + people.length + (people.length === 1 ? ' person' : ' people')} area="stage" t="scene-win">
       <Stage3D sc={vsc} ki={kk} time={time} cast={cast} sel={sel} onSel={pickSel} onDrag={onDrag} onFloor={onFloor} floorOf={floorOf} onKey={onKey} onEngine={e => { eng.current = e; }} reframe={reframe} />
@@ -267,7 +267,7 @@ export function SceneStudio(pp: StudioProps) {
       </div>
     </Win>
     <Win title={tab === 'sel' ? (sel ? (sel.part === 'prop' ? 'Selected: a prop' : 'Selected: ' + who(sel.who)) : 'Selected') : tab === 'people' ? 'People and props' : tab === 'cap' ? 'Caption' : tab === 'set' ? 'The set' : 'The scene'} right={tab === 'people' ? people.length + ' of ' + MAX_PEOPLE : ''} area="side" t="scene-side">
-      <Tabs label="What to change" value={tab} onPick={setTab} items={[{ id: 'sel', label: 'Selected', t: 'scene-tab' }, { id: 'people', label: 'People', t: 'scene-tab' }, { id: 'cap', label: 'Caption', t: 'scene-tab' }, { id: 'set', label: 'Set', t: 'scene-tab' }, { id: 'file', label: 'Scene', t: 'scene-tab' }]} />
+      <div class="sc-row sc-section"><span class="sc-lbl">Change</span><Drop t="scene-tab" label="What to change" value={tab} options={[['sel', 'The one selected'], ['people', 'The people in it'], ['cap', 'The caption'], ['set', 'The set'], ['file', 'The scene: new, open, save']]} onChange={v => setTab(v as any)} /></div>
       <div class="sc-panel">
       {tab === 'sel' && <>
         <div class="sc-row">
@@ -324,7 +324,7 @@ export function SceneStudio(pp: StudioProps) {
           </Group>
           <Group title="Face and marks">
             <span hidden data-t="scene-fig" data-v={JSON.stringify(selFig)} />
-            <div class="sc-row">{EXPR.map(x => <Btn kind="less" t="scene-expr" d={{ v: x[0] || 'calm' }} on={(selFig.e || '') === x[0]} onClick={() => edit(k => { const f = fig(k, sel.who); if (f) f.e = x[0]; })}>{x[1]}</Btn>)}</div>
+            <div class="sc-row"><span class="sc-lbl">Face</span><Drop t="scene-expr" label="Their face" value={selFig.e || 'calm'} options={EXPR.map(x => [x[0] || 'calm', x[1]] as Opt)} onChange={v => edit(k => { const f = fig(k, sel.who); if (f) f.e = v === 'calm' ? '' : v; })} /></div>
             <div class="sc-row"><span class="sc-lbl">Blood</span>{[[0, 'None'], [1, 'A cut'], [2, 'A trickle'], [3, 'Covered']].map(([v, n]) =>
               <Btn kind="less" t="scene-blood" d={{ v: v as number }} on={((selFig.m && selFig.m.blood) || 0) === v} onClick={() => edit(k => { const f = fig(k, sel.who); if (f) f.m = { ...(f.m || {}), blood: v as number }; })}>{n as string}</Btn>)}</div>
             <div class="sc-row">{([['sweat', 'Sweat'], ['tears', 'Tears'], ['bruise', 'A bruise']] as [keyof Marks, string][]).map(([m, n]) =>
@@ -442,7 +442,7 @@ export function SceneStudio(pp: StudioProps) {
           </div>
         </Group>
         <Group title="Start a new scene">
-          <div class="sc-setups">{SETUPS.map(([id, n]) => <Btn kind="less" t="scene-setup" d={{ v: id }} onClick={() => { open(setupScene(id)); setTab('sel'); say('A new scene: ' + n.toLowerCase() + '. Press somebody to move or pose them; each keyframe can keep its own shot.'); }}>{n}</Btn>)}</div>
+          <div class="sc-row"><span class="sc-lbl">Start from</span><Drop t="scene-setup" label="Start a new scene from" value="" options={[['', 'Pick a setup...'] as Opt].concat(SETUPS.map(([id, n]) => [id, n] as Opt))} onChange={id => { const n = (SETUPS.find(x => x[0] === id) || ['', ''])[1]; if (!id) return; open(setupScene(id)); setTab('sel'); say('A new scene: ' + n.toLowerCase() + '. Press somebody to move or pose them; each keyframe can keep its own shot.'); }} /></div>
         </Group>
       </>}
       </div>

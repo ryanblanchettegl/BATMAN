@@ -268,6 +268,10 @@ The desk image (`docs/mockups/paper/desk.png`) is the art style: the whole game 
 
 - [x] Create a Belt (Ryan, 20 October): a belt for every title, built from parts in one pop-up (plate, metal, strap, gem, side plates, trim, words), from the World Editor and from your own title in a game; every title in the parody world has its own design, and a belt in a scene is the real one.
 - [x] The logo creator has six lettering faces (Ryan, 20 October).
+- [x] One look for every World Editor page (Ryan, 20 October): the same menu bar, note strip and bottom strip on every tab and on the list of worlds; Create a Wrestler and Create a Scene wear the same bar.
+- [x] More dropdown menus than buttons on World Editor pages (Ryan, 20 October): the creators' choices in words, which part of a page shows, faces, poses, outfits, moves and entrances.
+- [x] Stock scenes move in at least four keyframes, with a wind-up at the start and an overshoot and settle at the end (Ryan, 20 October: "scenes should average 4 keys").
+- [x] 3D sets for a steel cage, the cell with a roof, an inferno, ringside on the floor, a ballroom, a gym and a stadium; 3D rooms for the entrance stage, the backstage wall, the parking lot, a talk show, a news desk and the rafters; chairs, tables, ladders, steps, bins and bats as 3D models.
 
 ### 0z. Create a Scene, built out (later; Ryan, 18 October: "the bones are there and work")
 

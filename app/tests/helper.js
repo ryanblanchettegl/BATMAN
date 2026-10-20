@@ -112,4 +112,16 @@ async function ensure(page, sel) {
   for (const x of ids) { const [t, v] = x.split('|'); await page.click('[data-t="' + t + '"][data-v="' + v + '"]'); await page.waitForTimeout(40); if (await page.$(sel)) return true; await page.keyboard.press('Escape'); await page.waitForTimeout(40); }
   return false;
 }
-module.exports = { open, go, overflow, shot, flash, state, redraw, SHOTS, fits, airShow, toOffice, ensure };
+/** Choose value v of control t: a dropdown is set, a button is pressed (World Editor pages use dropdowns, Ryan 20 October). */
+async function pick(page, t, v) {
+  const sel = await page.$('select[data-t="' + t + '"]');
+  if (sel) { await sel.selectOption(String(v)); return; }
+  await page.click('[data-t="' + t + '"][data-v="' + v + '"]');
+}
+/** Whether value v of control t is the one chosen: the dropdown's value, or the pressed button. */
+async function picked(page, t, v) {
+  const sel = await page.$('select[data-t="' + t + '"]');
+  if (sel) return (await sel.evaluate(e => e.value)) === String(v);
+  return (await page.$eval('[data-t="' + t + '"][data-v="' + v + '"]', e => e.getAttribute('aria-pressed')).catch(() => null)) === 'true';
+}
+module.exports = { pick, picked, open, go, overflow, shot, flash, state, redraw, SHOTS, fits, airShow, toOffice, ensure };

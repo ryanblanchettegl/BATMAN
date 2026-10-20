@@ -1,7 +1,7 @@
 /* Browser run of the Roster section: Roster, Locker room, Titles, Market, the scouting window and the creator.
    Build:  EWF_OUT=next-roster EWF_DEV=1 node build.js
    Run:    NODE_PATH=/opt/npm-tools/node_modules node app/tests/roster.js */
-const { open, go, overflow, shot, flash, state } = require('./helper');
+const { open, go, overflow, shot, flash, state, pick } = require('./helper');
 const FILE = process.env.EWF_OUT || 'index';
 
 function must(ok, what) { if (!ok) throw new Error(what); }
@@ -170,18 +170,18 @@ async function run(mode) {
   await page.waitForTimeout(800);
   must(await page.$('[data-t="caw-view"] canvas'), 'the new wrestler is not drawn');
   await ok(t, 'creator open');
-  await page.click('[data-t="caw-tab"][data-v="head"]');
+  await pick(page, 'caw-tab', 'head');
   const skin = await page.$eval('[data-t="caw-skin"]', e => { e.value = String(+e.value > 50 ? 12 : 88); e.dispatchEvent(new Event('input', { bubbles: true })); return +e.value; });
-  await page.click('[data-t="caw-tab"][data-v="sign"]');
+  await pick(page, 'caw-tab', 'sign');
   await page.click('[data-t="caw-create"]'); must(/name/.test(await page.$eval('[data-t="caw-msg"]', e => e.textContent)) && await page.$('[data-t="caw"]'), 'creating with no name was not refused');
   const cname = 'Test Dummy ' + mode;
   await page.fill('[data-t="caw-name"]', cname); await page.selectOption('[data-t="caw-draft"][data-v="align"]', 'H'); await page.selectOption('[data-t="caw-draft"][data-v="bg"]', 'rookie');
   must(/ask for about/.test(await page.$eval('[data-t="caw-cost"]', e => e.textContent)), 'no asking wage shown');
-  await page.click('[data-t="caw-tab"][data-v="fin"]'); await page.click('[data-t="caw-fin"][data-v="0"]'); await page.fill('[data-t="caw-finname"]', 'Unit Test');
-  await page.click('[data-t="caw-tab"][data-v="gear"]'); await page.selectOption('[data-t="caw-part"][data-v="upper_body"]', 'vest_open');
+  await pick(page, 'caw-tab', 'fin'); await pick(page, 'caw-fin', '0'); await page.fill('[data-t="caw-finname"]', 'Unit Test');
+  await pick(page, 'caw-tab', 'gear'); await page.selectOption('[data-t="caw-part"][data-v="upper_body"]', 'vest_open');
   await ok(t, 'creator choices');
   if (mode === 'desk') await shot(page, 'roster-creator-' + mode);
-  await page.click('[data-t="caw-tab"][data-v="sign"]'); await page.click('[data-t="caw-create"]');
+  await pick(page, 'caw-tab', 'sign'); await page.click('[data-t="caw-create"]');
   must(!await page.$('[data-t="caw"]'), 'Create a Player did not close: ' + await page.$eval('[data-t="caw-msg"]', e => e.textContent).catch(() => '?'));
   must(/is a free agent now/.test(await flash(page)), 'creating said: ' + await flash(page));
   const made = await state(page, (S, n) => { const w = S.w.find(x => x.name === n); return w && { id: w.id, fa: w.promo === 'FA', face: w.face, fin: w.fin, align: w.align, top: w.look && w.look.attires.primary_ring.equipped_assets.upper_body, lname: w.look && w.look.name }; }, cname);
@@ -196,7 +196,7 @@ async function run(mode) {
   await page.fill('#rq', other.name);
   await page.$eval('[data-t="roster-caw"][data-id="' + other.id + '"]', e => e.click()); await page.waitForSelector('[data-t="caw"]');
   must(!await page.$('[data-t="caw-sign"]'), 'editing a wrestler offered to sign them');
-  await page.click('[data-t="caw-tab"][data-v="gear"]'); await page.selectOption('[data-t="caw-part"][data-v="lower_body"]', 'tights_long_01');
+  await pick(page, 'caw-tab', 'gear'); await page.selectOption('[data-t="caw-part"][data-v="lower_body"]', 'tights_long_01');
   await page.click('[data-t="caw-save"]');
   must(/look of their own/.test(await page.$eval('[data-t="caw-msg"]', e => e.textContent)), 'saving said: ' + await page.$eval('[data-t="caw-msg"]', e => e.textContent));
   const ed = await state(page, (S, id) => ({ lo: S.w[id].look && S.w[id].look.attires.primary_ring.equipped_assets.lower_body, mem: ((S.rmY || {})[id] || { mem: [] }).mem[0] }), other.id);

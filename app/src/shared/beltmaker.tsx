@@ -4,7 +4,7 @@
    checks a belt (E.beltFill) and makes the ideas (E.beltIdeas). */
 import { E } from '../engine';
 import { view, openModal, closeModal, Modal } from '../store';
-import { Window, Btn, Belt, BeltData, dataAttrs, METAL, GEM } from '../kit';
+import { Window, Btn, Belt, BeltData, dataAttrs, METAL, GEM, Sel, Opt } from '../kit';
 
 export interface BeltJob {
   /** the title, as it is in the world or the game, and its company */
@@ -21,8 +21,9 @@ export function BeltMaker(p: { m: Modal }) {
   const set = (ch: Partial<BeltData>) => view(() => { st.hist.push({ ...b }); if (st.hist.length > 40) st.hist.shift(); st.b = E.beltFill({ ...b, ...ch }, job.title, job.co); st.note = ''; });
   const ideas: BeltData[] = E.beltIdeas(job.title, job.co, 6, st.seed);
   const save = (x: BeltData | null) => { const r = job.onSave(x); if (r.ok) closeModal(); else view(() => { st.note = r.msg || 'That belt could not be kept.'; }); };
-  const row = (label: string, k: keyof BeltData, L: any[]) => <div class="mm-row" role="group" aria-label={label}><span class="mm-l">{label}</span>
-    <span class="mm-opts">{L.map((o: any) => <Btn kind="sm" t={'belt-' + k} d={{ v: o[0] }} on={b[k] === o[0]} onClick={() => set({ [k]: o[0] } as any)}>{o[1]}</Btn>)}</span></div>;
+  /* a choice in words is a dropdown (Ryan, 20 October: more dropdown menus than buttons in the World Editor) */
+  const row = (label: string, k: keyof BeltData, L: any[]) => <div class="mm-row"><span class="mm-l">{label}</span>
+    <span class="mm-opts"><Sel t={'belt-' + k} label={label} value={String(b[k])} options={L.map((o: any) => [String(o[0]), o[1]] as Opt)} onChange={v => set({ [k]: k === 'sd' ? +v : v } as any)} /></span></div>;
   const chips = (label: string, k: 'mt' | 'gm' | 'st', L: any[], col: (v: string) => string) => <div class="mm-row" role="group" aria-label={label}><span class="mm-l">{label}</span>
     <span class="mm-sw">{L.map((c: any) => <button type="button" class={'mm-c' + (b[k] === c[0] ? ' on' : '') + (c[0] === 'none' ? ' none' : '')} style={{ background: col(c[0]) }} aria-label={label + ': ' + c[1]} title={c[1]} aria-pressed={b[k] === c[0]} {...dataAttrs('belt-' + k, { v: c[0] })} onClick={() => set({ [k]: c[0] } as any)} />)}</span></div>;
   return <Window title={'Create a Belt: ' + (job.title.name || 'a title')} wide noOk hint="Esc closes without saving"

@@ -21,7 +21,10 @@ import { Scene, Key, Cam3, build, FOOT, DESK_SEATS } from './scene';
 import { Piece, PAL, shade, drawScene, View } from './paper';
 import { Recipe, Rig } from './puppet';
 
-const RINGS = ['ring', 'ringlow', 'ringcorner'];
+const RINGS = ['ring', 'ringlow', 'ringcorner', 'ringside', 'cage', 'cell', 'inferno', 'ballroom', 'gym', 'bigstadium'];
+/** Where a ring set's show is held, and what stands round the ring (Ryan, 20 October). */
+const VENUE: Record<string, string> = { ballroom: 'ballroom', gym: 'gym', bigstadium: 'stadium' };
+const RIG: Record<string, string> = { cage: 'cage', cell: 'cell', inferno: 'inferno' };
 export const DEPTH = 0.9;      // a layer step, in feet of depth
 const CARD = 0.035;     // how thick a piece of card is
 
@@ -95,7 +98,8 @@ function words(p: Piece, d: number): THREE.Mesh | null {
 }
 
 /* ---------- the arena: a ring of card and steel, a barricade, tiered stands of cardboard fans ---------- */
-function arena(root: THREE.Group, near = true) {
+function arena(root: THREE.Group, near = true, set = 'ring') {
+  const venue = VENUE[set] || 'arena';
   const box = (w: number, h: number, d: number, col: string | THREE.Material, x: number, y: number, z: number, shadow = true) => {
     const m = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), typeof col === 'string' ? card(col)[0] : col); m.position.set(x, y, z); m.receiveShadow = true; m.castShadow = shadow; root.add(m); return m;
   };
@@ -120,9 +124,12 @@ function arena(root: THREE.Group, near = true) {
   const B = 14;
   // the far barricade has a gap where the ramp comes down to the ring
   for (const [w, d, x, z] of ([[B - 3.4, 0.3, -(B + 3.4) / 2, -B], [B - 3.4, 0.3, (B + 3.4) / 2, -B], [0.3, B * 2, B, 0], [0.3, B * 2, -B, 0]] as number[][]).concat(near ? [[B * 2, 0.3, 0, B]] : [])) { box(w, 2.2, d, '#1b1d28', x, -APRON + 1.1, z); box(w + 0.1, 0.25, d + 0.1, '#2a3a8a', x, -APRON + 2.3, z, false); }   // the near side is left out where the camera sits inside it
-  fans(root);
-  entrance(root, box);
+  if (venue === 'arena') { fans(root); entrance(root, box); }
+  else if (venue === 'ballroom') ballroom(root, box);
+  else if (venue === 'gym') gym(root, box);
+  else stadium(root, box);
   deskSide(root, box);
+  if (RIG[set]) rig(root, box, RIG[set]);
   for (const [x, z] of [[-8, -8], [8, -8], [8, 8], [-8, 8]]) { const s = new THREE.SpotLight(0xffe2b0, 140, 70, 0.5, 0.7, 1.6); s.position.set(x, 30, z); s.target.position.set(0, 0, 0); root.add(s, s.target); }   // the lights over the ring
 }
 /** The entrance (Ryan, 20 October: "the 3d arena is missing an entrance ramp, a commentary desk, a titantron"): a stage
@@ -231,6 +238,147 @@ function fans(root: THREE.Group) {
   });
   root.add(mb, mh);
 }
+/* ---------- what stands round the ring for a match of its own kind, and where else a show is held ---------- */
+let meshTex: THREE.Texture | null = null;
+/** Chain-link fence: a diamond mesh of steel wire, see-through between the wires. */
+function chain(w: number, h: number): THREE.Material {
+  if (!meshTex) {
+    const c = document.createElement('canvas'); c.width = c.height = 64; const x = c.getContext('2d')!;
+    x.strokeStyle = 'rgba(205,210,220,.95)'; x.lineWidth = 3; x.beginPath(); x.moveTo(0, 32); x.lineTo(32, 0); x.lineTo(64, 32); x.lineTo(32, 64); x.closePath(); x.stroke();
+    x.strokeStyle = 'rgba(90,95,105,.9)'; x.lineWidth = 1; x.beginPath(); x.moveTo(0, 33.5); x.lineTo(32, 1.5); x.lineTo(64, 33.5); x.lineTo(32, 65.5); x.closePath(); x.stroke();
+    meshTex = new THREE.CanvasTexture(c); meshTex.wrapS = meshTex.wrapT = THREE.RepeatWrapping; meshTex.colorSpace = THREE.SRGBColorSpace;
+  }
+  const t = meshTex.clone(); t.needsUpdate = true; t.repeat.set(w / 1.1, h / 1.1);
+  return new THREE.MeshStandardMaterial({ map: t, transparent: true, alphaTest: 0.35, side: THREE.DoubleSide, roughness: 0.4, metalness: 0.6 });
+}
+/** A wall of fence between two corners, from the floor `y0` up `h`, with a steel frame round it. */
+function fence(root: THREE.Group, box: BoxFn, x0: number, z0: number, x1: number, z1: number, y0: number, h: number) {
+  const L = Math.hypot(x1 - x0, z1 - z0), m = new THREE.Mesh(new THREE.PlaneGeometry(L, h), chain(L, h));
+  m.position.set((x0 + x1) / 2, y0 + h / 2, (z0 + z1) / 2); m.rotation.y = -Math.atan2(z1 - z0, x1 - x0); root.add(m);
+  for (const yy of [y0 + 0.1, y0 + h / 2, y0 + h]) { const r = box(L, 0.18, 0.18, steel, (x0 + x1) / 2, yy, (z0 + z1) / 2, false); r.rotation.y = -Math.atan2(z1 - z0, x1 - x0); }
+}
+/** The steel cage on the ring, the cell over ring and floor with a roof, or the flames of an inferno round the apron. */
+function rig(root: THREE.Group, box: BoxFn, kind: string) {
+  const FL = -3;
+  if (kind === 'cage') {   // on the edge of the ring, as high as three men, a door in the near side
+    const E = 10.9, Hh = 13; const c = [[-E, -E], [E, -E], [E, E], [-E, E]];
+    for (let k = 0; k < 4; k++) fence(root, box, c[k][0], c[k][1], c[(k + 1) % 4][0], c[(k + 1) % 4][1], 0, Hh);
+    for (const [x, z] of c) box(0.45, Hh + 0.4, 0.45, steel, x, Hh / 2, z);
+    box(2.6, 4.4, 0.2, '#6c707c', 6, 2.2, E + 0.15, false);   // the door, shut
+  } else if (kind === 'cell') {   // round the ring and the floor out to the barricade, with a roof of the same fence
+    const E = 14.6, Hh = 20; const c = [[-E, -E], [E, -E], [E, E], [-E, E]];
+    for (let k = 0; k < 4; k++) fence(root, box, c[k][0], c[k][1], c[(k + 1) % 4][0], c[(k + 1) % 4][1], FL, Hh);
+    for (const [x, z] of c) box(0.6, Hh, 0.6, '#2a2c33', x, FL + Hh / 2, z);
+    const roof = new THREE.Mesh(new THREE.PlaneGeometry(E * 2, E * 2), chain(E * 2, E * 2)); roof.rotation.x = -Math.PI / 2; roof.position.set(0, FL + Hh, 0); root.add(roof);
+    for (let i = -2; i <= 2; i++) { box(E * 2, 0.3, 0.3, '#2a2c33', 0, FL + Hh, i * E / 2.5, false); box(0.3, 0.3, E * 2, '#2a2c33', i * E / 2.5, FL + Hh, 0, false); }
+    const red = new THREE.PointLight(0xff3a2a, 120, 60, 1.3); red.position.set(0, FL + Hh - 2, 0); root.add(red);
+  } else if (kind === 'inferno') {   // columns of flame along all four sides, outside the apron
+    const flame = (x: number, z: number, k: number) => {
+      const o = new THREE.Mesh(new THREE.ConeGeometry(0.75, 3.6 + k * 1.4, 7), glow(0xff5a12, 1.6)); o.position.set(x, FL + (3.6 + k * 1.4) / 2, z); root.add(o);
+      const i = new THREE.Mesh(new THREE.ConeGeometry(0.42, 2.2 + k, 7), glow(0xffd23a, 2.2)); i.position.set(x, FL + (2.2 + k) / 2, z); root.add(i);
+    };
+    let n = 0; for (let t = -10.5; t <= 10.5; t += 1.5) { const k = ((n++ * 7) % 5) / 4; flame(t, 11.6, k); flame(t, -11.6, 1 - k); flame(11.6, t, k); flame(-11.6, t, 1 - k); }
+    for (const [x, z] of [[0, 12], [0, -12], [12, 0], [-12, 0]]) { const l = new THREE.PointLight(0xff7a20, 90, 30, 1.4); l.position.set(x, FL + 4, z); root.add(l); }
+    for (const [x, z] of [[-11.6, -11.6], [11.6, -11.6], [11.6, 11.6], [-11.6, 11.6]]) box(1.4, 1.2, 1.4, '#2a2c33', x, FL + 0.6, z);   // the burners at the corners
+  }
+}
+/** Rows of fans on steps, in a straight stand: from (x0, z) to (x1, z) facing the ring, `rows` deep, going back by `dz`. */
+function stand(root: THREE.Group, x0: number, x1: number, z0: number, dz: number, rows: number, y0: number, dy: number, rot: number, seed: number, step = '#262a3e') {
+  const g = new THREE.Group(), body = new THREE.Shape(); body.ellipse(0, 0, 0.95, 0.8, 0, Math.PI, false, 0); body.lineTo(-0.95, 0);
+  const bodyG = new THREE.ExtrudeGeometry(body, { depth: 0.05, bevelEnabled: false }), headG = new THREE.CylinderGeometry(0.42, 0.42, 0.05, 14); headG.rotateX(Math.PI / 2);
+  const spots: number[][] = []; for (let r = 0; r < rows; r++) { const n = Math.floor((x1 - x0) / 1.55); for (let i = 0; i < n; i++) spots.push([x0 + (i + 0.5) * (x1 - x0) / n + (r % 2) * 0.4, y0 + r * dy, z0 + r * dz]);
+    const st = new THREE.Mesh(new THREE.BoxGeometry(x1 - x0 + 1, dy, Math.abs(dz)), card(step)[0]); st.position.set((x0 + x1) / 2, y0 + r * dy - dy * 0.9, z0 + r * dz + dz * 0.25); st.receiveShadow = true; g.add(st); }
+  const shirts = [PAL.red, PAL.black, PAL.white, PAL.blue, PAL.grey, PAL.maroon, PAL.yellow, PAL.teal, PAL.green, PAL.orange], skins = ['#f3dccb', '#e8c09e', '#d5a07a', '#b07a52', '#7f5236', '#5a3a26'];
+  const mb = new THREE.InstancedMesh(bodyG, new THREE.MeshStandardMaterial({ roughness: 1, map: grain() }), spots.length), mh = new THREE.InstancedMesh(headG, new THREE.MeshStandardMaterial({ roughness: 1 }), spots.length);
+  const o = new THREE.Object3D(), c = new THREE.Color(); let s = seed; const r01 = () => { s = (s * 16807) % 2147483647; return s / 2147483647; };
+  spots.forEach((p, i) => { o.position.set(p[0] + (r01() - 0.5) * 0.3, p[1], p[2]); o.rotation.set(0, (dz > 0 ? 0 : Math.PI) + (r01() - 0.5) * 0.3, (r01() - 0.5) * 0.12); o.updateMatrix(); mb.setMatrixAt(i, o.matrix);
+    o.position.y = p[1] + 1.15 + r01() * 0.15; o.updateMatrix(); mh.setMatrixAt(i, o.matrix); c.set(shirts[Math.floor(r01() * shirts.length)]); mb.setColorAt(i, c); c.set(skins[Math.floor(r01() * skins.length)]); mh.setColorAt(i, c); });
+  g.add(mb, mh); g.rotation.y = rot; root.add(g);
+}
+/** A hotel ballroom: a patterned carpet, panelled walls close in, chandeliers, fans on folding chairs all round, a balcony. */
+function ballroom(root: THREE.Group, box: BoxFn) {
+  const FL = -3;
+  box(80, 0.1, 80, '#5a1a22', 0, FL + 0.02, 0, false);
+  for (let i = -6; i <= 6; i++) box(80, 0.02, 0.4, '#7a2a30', 0, FL + 0.08, i * 6, false);
+  for (const [w, d, x, z] of [[60, 1, 0, -30], [1, 60, 30, 0], [1, 60, -30, 0]] as number[][]) { box(w, 22, d, '#6b4a2e', x, FL + 11, z); box(w + 0.1, 1.2, d + 0.1, '#c9a24a', x, FL + 4, z, false); box(w + 0.1, 0.6, d + 0.1, '#c9a24a', x, FL + 16, z, false); }
+  for (const [x, z] of [[-10, -10], [10, -10], [-10, 10], [10, 10], [0, -20], [0, 0]]) { box(0.08, 4, 0.08, '#c9a24a', x, FL + 22, z, false);
+    const ch = new THREE.Mesh(new THREE.ConeGeometry(1.6, 1.8, 10, 1, true), card('#e8d29a', 'foil')[0]); ch.position.set(x, FL + 19.4, z); ch.rotation.x = Math.PI; root.add(ch);
+    for (let k = 0; k < 6; k++) { const b = new THREE.Mesh(new THREE.SphereGeometry(0.18, 8, 6), glow(0xfff0c0, 2)); b.position.set(x + Math.cos(k) * 1.4, FL + 19, z + Math.sin(k) * 1.4); root.add(b); }
+    const l = new THREE.PointLight(0xffd9a0, 60, 30, 1.4); l.position.set(x, FL + 18, z); root.add(l); }
+  stand(root, -24, 24, -17, -1.6, 3, FL + 0.6, 0.15, 0, 31, '#3a2a22');            // floor seats, the far side
+  stand(root, -24, 24, -17, -1.6, 3, FL + 0.6, 0.15, Math.PI / 2, 37, '#3a2a22');   // and the sides
+  stand(root, -24, 24, -17, -1.6, 3, FL + 0.6, 0.15, -Math.PI / 2, 41, '#3a2a22');
+  box(60, 1.2, 6, '#4a3020', 0, FL + 10, -26.5); box(60, 1.4, 0.3, '#c9a24a', 0, FL + 11.2, -23.6, false);   // the balcony
+  stand(root, -26, 26, -24.5, -1.4, 3, FL + 11.4, 0.9, 0, 43, '#4a3020');
+}
+/** A school gym: a wooden floor with court lines, block walls, bleachers on two sides, hoops at the ends, strip lights. */
+function gym(root: THREE.Group, box: BoxFn) {
+  const FL = -3;
+  box(70, 0.1, 50, '#c8955a', 0, FL + 0.02, 0, false);
+  for (const z of [-22, 22]) box(68, 0.02, 0.25, '#f2f2f2', 0, FL + 0.08, z, false);
+  for (const x of [-33, 33]) box(0.25, 0.02, 44, '#f2f2f2', x, FL + 0.08, 0, false);
+  const ctr = new THREE.Mesh(new THREE.RingGeometry(5.6, 5.9, 40), card('#f2f2f2')[0]); ctr.rotation.x = -Math.PI / 2; ctr.position.y = FL + 0.09; root.add(ctr);
+  for (const [w, d, x, z] of [[72, 1, 0, -25], [72, 1, 0, 25], [1, 50, 35, 0], [1, 50, -35, 0]] as number[][]) { box(w, 20, d, '#bfc3c8', x, FL + 10, z); box(w + 0.1, 3, d + 0.1, '#2f5fa8', x, FL + 1.5, z, false); }
+  for (const sx of [-1, 1]) { box(0.3, 9, 0.3, '#3a3d4a', sx * 33.5, FL + 4.5, 0); box(4, 2.6, 0.2, '#f2f2f2', sx * 33, FL + 10, 0); const rim = new THREE.Mesh(new THREE.TorusGeometry(0.7, 0.07, 6, 16), card('#e05a1a')[0]); rim.rotation.x = Math.PI / 2; rim.position.set(sx * 32.2, FL + 9, 0); root.add(rim); }
+  stand(root, -26, 26, -16, -1.6, 7, FL + 0.6, 0.95, 0, 51, '#8a6a42');
+  stand(root, -26, 26, -16, -1.6, 7, FL + 0.6, 0.95, Math.PI, 53, '#8a6a42');
+  for (let i = -3; i <= 3; i++) for (const z of [-8, 8]) { box(6, 0.2, 0.6, glow(0xeef4ff, 1.4) as any, i * 9, FL + 19, z, false); }
+  const fill = new THREE.HemisphereLight(0xeef2ff, 0x6a5030, 0.8); root.add(fill);
+}
+/** A stadium: grass under the floor, tiers of seats rising far away on every side, light towers, the night sky. */
+function stadium(root: THREE.Group, box: BoxFn) {
+  const FL = -3;
+  box(240, 0.1, 240, '#2f6a32', 0, FL - 0.05, 0, false);
+  for (let i = -5; i <= 5; i++) box(240, 0.02, 4, '#357a38', 0, FL + 0.01, i * 16, false);
+  box(30, 0.08, 34, '#2a2d38', 0, FL + 0.03, 0, false);   // the floor round the ring
+  stand(root, -60, 60, -44, -2.4, 18, FL + 0.5, 1.6, 0, 61);
+  stand(root, -60, 60, -44, -2.4, 18, FL + 0.5, 1.6, Math.PI / 2, 63);
+  stand(root, -60, 60, -44, -2.4, 18, FL + 0.5, 1.6, -Math.PI / 2, 67);
+  stand(root, -60, 60, -54, -2.4, 14, FL + 0.5, 1.6, Math.PI, 71);
+  for (const [x, z] of [[-48, -48], [48, -48], [48, 48], [-48, 48]]) { box(1.2, 46, 1.2, steel, x, FL + 23, z); box(8, 4, 1, '#15161c', x, FL + 47, z); const l = new THREE.SpotLight(0xffffff, 300, 140, 0.45, 0.6, 1.2); l.position.set(x, FL + 46, z); l.target.position.set(0, 0, 0); root.add(l, l.target); }
+  entrance(root, box);
+}
+/** A plain chain-link fence on posts (the parking lot). */
+function fenceFlat(root: THREE.Group, x0: number, z0: number, x1: number, z1: number, y0: number, h: number) {
+  const L = Math.hypot(x1 - x0, z1 - z0), m = new THREE.Mesh(new THREE.PlaneGeometry(L, h), chain(L, h)); m.position.set((x0 + x1) / 2, y0 + h / 2, (z0 + z1) / 2); m.rotation.y = -Math.atan2(z1 - z0, x1 - x0); root.add(m);
+  for (let x = x0; x <= x1; x += 6) bx(root, 0.18, h, 0.18, steel, x, y0 + h / 2, z0, false);
+}
+let skyTex: THREE.Texture | null = null;
+/** A city at night behind the talk show: towers of lit windows on a purple sky. */
+function skyline(): THREE.Material {
+  if (!skyTex) { const c = document.createElement('canvas'); c.width = 1024; c.height = 440; const x = c.getContext('2d')!, g = x.createLinearGradient(0, 0, 0, 440); g.addColorStop(0, '#1a1040'); g.addColorStop(1, '#6a3a7a'); x.fillStyle = g; x.fillRect(0, 0, 1024, 440);
+    let s = 5; const r = () => { s = (s * 16807) % 2147483647; return s / 2147483647; };
+    for (let i = 0; i < 26; i++) { const w = 30 + r() * 50, h = 120 + r() * 260, bx0 = i * 40 - 10; x.fillStyle = '#120c26'; x.fillRect(bx0, 440 - h, w, h); x.fillStyle = 'rgba(255,214,120,.8)'; for (let yy = 440 - h + 10; yy < 430; yy += 14) for (let xx = bx0 + 5; xx < bx0 + w - 5; xx += 10) if (r() < 0.45) x.fillRect(xx, yy, 4, 6); }
+    skyTex = new THREE.CanvasTexture(c); skyTex.colorSpace = THREE.SRGBColorSpace; }
+  return new THREE.MeshBasicMaterial({ map: skyTex });
+}
+/* ---------- props as models: in a prop's own units (a scene unit is about a foot), its middle at the origin, up is +y ---------- */
+function part(g: THREE.Group, geo: THREE.BufferGeometry, mat: THREE.Material, x: number, y: number, z: number, rx = 0, rz = 0): THREE.Mesh { const m = new THREE.Mesh(geo, mat); m.position.set(x, y, z); m.rotation.x = rx; m.rotation.z = rz; g.add(m); return m; }
+const B3 = (w: number, h: number, d: number) => new THREE.BoxGeometry(w, h, d), C3 = (r0: number, r1: number, h: number, n = 14) => new THREE.CylinderGeometry(r0, r1, h, n);
+const MODELS3: Record<string, () => THREE.Group> = {
+  chair: () => { const g = new THREE.Group(), m = steel;   // a folding chair: seat, back, two frames of legs
+    part(g, B3(0.9, 0.07, 0.85), m, 0, 0, 0); part(g, B3(0.9, 0.95, 0.06), m, 0, 0.55, -0.42);
+    for (const sx of [-0.42, 0.42]) { part(g, C3(0.035, 0.035, 1.2, 8), m, sx, -0.5, 0.25, 0.25); part(g, C3(0.035, 0.035, 1.25, 8), m, sx, -0.2, -0.3, -0.2); }
+    return g; },
+  table: () => { const g = new THREE.Group(), top = card(PAL.wood)[0], leg = card(shade(PAL.wood, 0.6))[0];
+    part(g, B3(3.2, 0.12, 1.4), top, 0, 0.06, 0); for (const sx of [-1.35, 1.35]) for (const sz of [-0.5, 0.5]) part(g, B3(0.08, 1.2, 0.08), leg, sx, -0.6, sz);
+    return g; },
+  table_broken: () => { const g = new THREE.Group(), top = card(PAL.wood)[0], leg = card(shade(PAL.wood, 0.6))[0];
+    part(g, B3(1.55, 0.12, 1.4), top, -0.8, 0.0, 0, 0, 0.32); part(g, B3(1.55, 0.12, 1.4), top, 0.8, 0.02, 0, 0, -0.3);
+    for (let i = 0; i < 5; i++) part(g, B3(0.05, 0.3, 0.05), card(shade(PAL.wood, 1.25))[0], -0.1 + i * 0.05, 0.35 + (i % 2) * 0.08, -0.4 + i * 0.2, 0, (i - 2) * 0.3);
+    for (const sx of [-1.35, 1.35]) part(g, B3(0.08, 1.0, 0.08), leg, sx, -0.5, 0.5); return g; },
+  ladder: () => { const g = new THREE.Group();   // two rails and six rungs, deep enough to read as steel
+    for (const sx of [-0.45, 0.45]) part(g, B3(0.12, 3.3, 0.22), steel, sx, 0, 0);
+    for (let i = 0; i < 6; i++) part(g, C3(0.045, 0.045, 0.84, 8), steel, 0, -1.35 + i * 0.54, 0, 0, Math.PI / 2);
+    return g; },
+  steps: () => { const g = new THREE.Group();
+    for (let i = 0; i < 3; i++) part(g, B3(1.8 - i * 0.3, 0.45, 1.2), steel, 0.15 * i, -0.675 + i * 0.45, 0);
+    return g; },
+  bin: () => { const g = new THREE.Group(), m = new THREE.MeshStandardMaterial({ color: 0x8a8e98, roughness: 0.45, metalness: 0.6 });
+    part(g, C3(0.52, 0.45, 1.25, 18), m, 0, -0.07, 0); part(g, C3(0.6, 0.6, 0.06, 18), m, 0, 0.6, 0); part(g, C3(0.05, 0.05, 0.25, 8), m, 0, 0.7, 0, 0, Math.PI / 2);
+    return g; },
+  bat: () => { const g = new THREE.Group(); part(g, C3(0.1, 0.05, 1.55, 12), card(PAL.wood)[0], 0, 0, 0); part(g, C3(0.08, 0.08, 0.04, 12), card(shade(PAL.wood, 0.7))[0], 0, -0.78, 0); return g; },
+};
 /* ---------- rooms: the desk, the hallway, the office, the locker room, built as models with their own light ---------- */
 function bx(root: THREE.Object3D, w: number, h: number, d: number, col: string | THREE.Material, x: number, y: number, z: number, cast = true): THREE.Mesh {
   const m = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), typeof col === 'string' ? card(col)[0] : col); m.position.set(x, y, z); m.castShadow = cast; m.receiveShadow = true; root.add(m); return m;
@@ -275,6 +423,59 @@ const ROOMS: Record<string, (root: THREE.Group) => void> = {
       bx(root, 2.0, h, w, '#18181c', -W + 1.2, h / 2, z); for (const yy of [0.15, h - 0.15]) bx(root, 2.05, 0.12, w + 0.05, steel, -W + 1.2, yy, z, false);
     }
   },
+  ramp: root => {   // the top of the entrance: a wide stage, the ramp running toward the camera, the big screen and trusses behind
+    bx(root, 26, 2.4, 9, '#1c1f2e', 0, -1.2, -1.5); bx(root, 26.2, 0.16, 9.2, '#2a2f45', 0, 0.02, -1.5, false); bx(root, 26.2, 0.28, 0.12, '#c8322a', 0, -0.16, 3.02, false);
+    const len = 22, ang = Math.atan2(2.4, len), ramp = bx(root, 6, 0.25, len, '#59607e', 0, -1.2, 3 + len / 2); ramp.rotation.x = ang;
+    for (const sx of [-1, 1]) { const lt = bx(root, 0.16, 0.08, len, glow(0x9fd0ff, 1.4) as any, sx * 2.85, -1.0, 3 + len / 2, false); lt.rotation.x = ang; }
+    bx(root, 19, 11.4, 0.6, '#0d0e14', 0, 7.6, -7.4);
+    const scr = new THREE.Mesh(new THREE.PlaneGeometry(18, 10.4), tron()); scr.position.set(0, 7.6, -7.05); scr.name = 'tron'; root.add(scr);
+    for (const sx of [-1, 1]) { bx(root, 5.2, 7, 0.4, '#0d0e14', sx * 12.6, 5.4, -6.8); const ss = new THREE.Mesh(new THREE.PlaneGeometry(4.6, 6.4), glow(sx < 0 ? 0xc8322a : 0x2f6bd8, 0.9)); ss.position.set(sx * 12.6, 5.4, -6.58); root.add(ss); }
+    bx(root, 30, 0.5, 0.5, steel, 0, 14, -2, false); for (const sx of [-14.5, 14.5]) bx(root, 0.5, 15.2, 0.5, steel, sx, 6.2, -2, false);
+    for (let i = 0; i < 6; i++) { const x = -10 + i * 4, sp = new THREE.SpotLight(i % 2 ? 0xffd8a0 : 0x9fb8ff, 45, 30, 0.35, 0.6, 1.4); sp.position.set(x, 13.6, -1.8); sp.target.position.set(x * 0.4, 0, 1); root.add(sp, sp.target); }
+    stand(root, -40, -9, 14, 1.6, 6, -2.4, 0.9, 0, 81); stand(root, 9, 40, 14, 1.6, 6, -2.4, 0.9, 0, 83);   // the fans down either side of the ramp
+    bx(root, 120, 0.1, 120, '#141728', 0, -2.5, 0, false);
+  },
+  backstage: root => {   // the wall behind the curtain: black drapes, road cases, a monitor, a door, cables on the floor
+    bx(root, 40, 0.2, 18, '#3a3a40', 0, -0.1, 0, false); bx(root, 40, 12, 0.3, '#121216', 0, 6, -4);
+    for (let i = 0; i < 20; i++) bx(root, 1.4, 11.6, 0.2, i % 2 ? '#16161b' : '#1d1d24', -19 + i * 2, 6, -3.7, false);   // folds of the drape
+    for (const [x, w, h] of [[-8, 2.6, 2.2], [-5.4, 2.0, 3.2], [7, 2.8, 1.8], [9.6, 2.2, 2.6]] as number[][]) { bx(root, w, h, 1.8, '#18181c', x, h / 2, -2.4); for (const yy of [0.15, h - 0.15]) bx(root, w + 0.05, 0.12, 1.85, steel, x, yy, -2.4, false); }
+    bx(root, 0.15, 6, 0.15, '#2a2a30', 4.2, 3, -2.6); const mon = bx(root, 2.2, 1.4, 0.2, '#111116', 4.2, 6.4, -2.6); const scr = new THREE.Mesh(new THREE.PlaneGeometry(2, 1.2), tron()); scr.position.set(4.2, 6.4, -2.48); root.add(scr); mon.castShadow = true;
+    for (let i = 0; i < 4; i++) { const c = new THREE.Mesh(new THREE.TorusGeometry(0.6 + i * 0.15, 0.04, 6, 24), card('#0e0e10')[0]); c.rotation.x = Math.PI / 2; c.position.set(-2 + i * 0.3, 0.05, 1 - i * 0.2); root.add(c); }
+    bx(root, 3.4, 7.4, 0.3, '#2b2f3c', 13.5, 3.7, -3.6); bx(root, 2.8, 0.7, 0.1, glow(0x3ad06a, 1.3) as any, 13.5, 8, -3.4, false);   // a door with a lit sign over it
+    const l = new THREE.SpotLight(0xffe8c8, 120, 34, 0.7, 0.6, 1.3); l.position.set(0, 14, 8); l.target.position.set(0, 2, -2); root.add(l, l.target);
+  },
+  lot: root => {   // the parking lot at night: tarmac with lines, two cars, a light pole, a chain-link fence and the building
+    bx(root, 70, 0.2, 40, '#2c2d31', 0, -0.1, -6, false);
+    for (let i = -4; i <= 4; i++) bx(root, 0.2, 0.03, 6, '#e8e4d6', i * 4.2, 0.02, -7, false);
+    const car = (x: number, z: number, col: string) => { bx(root, 7, 1.6, 3.2, col, x, 1.3, z); bx(root, 4, 1.2, 2.9, shade(col, 0.85), x - 0.4, 2.6, z); bx(root, 3.8, 1.0, 2.95, '#1a2230', x - 0.4, 2.6, z, false);
+      for (const wx of [-2.3, 2.3]) for (const wz of [-1.5, 1.5]) { const w = new THREE.Mesh(C3(0.7, 0.7, 0.4, 16), card('#111')[0]); w.rotation.x = Math.PI / 2; w.position.set(x + wx, 0.7, z + wz); root.add(w); } };
+    car(-9, -7, '#7a1f1f'); car(8.5, -7.4, '#2f4f7a');
+    bx(root, 0.35, 16, 0.35, steel, -15, 8, -2); bx(root, 3, 0.4, 1, '#222', -14, 16, -2); const pl = new THREE.SpotLight(0xffe2a8, 220, 40, 0.8, 0.6, 1.3); pl.position.set(-13.5, 15.6, -2); pl.target.position.set(-4, 0, -3); root.add(pl, pl.target);
+    for (const [x0, x1] of [[-30, 30]]) fenceFlat(root, x0, -14, x1, -14, 0, 7);
+    bx(root, 70, 20, 1, '#3b3f4a', 0, 10, -24); bx(root, 6, 7, 0.4, '#555a66', 16, 3.5, -23.4); bx(root, 6.4, 1.2, 0.3, glow(0xff5a3a, 1.2) as any, 16, 8, -23.3, false);   // the building, its stage door, a sign
+  },
+  talk: root => {   // a talk show: a desk on the left, two chairs, a skyline backdrop, a band stand of lights
+    bx(root, 30, 0.2, 16, '#3a2a40', 0, -0.1, 0, false); bx(root, 30, 0.1, 10, '#6a3a5a', 0, 0.02, 0, false);
+    const sky = new THREE.Mesh(new THREE.PlaneGeometry(30, 13), skyline()); sky.position.set(0, 6.5, -5); root.add(sky);
+    bx(root, 4.8, 2.6, 1.8, '#5a2a1e', -4.6, 1.3, -0.5); bx(root, 5, 0.14, 2, '#7a3a28', -4.6, 2.66, -0.5, false);
+    for (const x of [1.4, 4.2]) { bx(root, 1.8, 1.0, 1.6, '#c8322a', x, 1.4, -0.8); bx(root, 1.8, 2.0, 0.4, '#c8322a', x, 2.4, -1.5); bx(root, 0.25, 0.9, 0.25, '#2a2a30', x, 0.45, -0.8, false); }
+    for (let i = 0; i < 8; i++) { const b = new THREE.Mesh(new THREE.SphereGeometry(0.22, 10, 8), glow(i % 2 ? 0xffd84a : 0xff5aa0, 1.6)); b.position.set(-13 + i * 3.7, 12.4, -4.6); root.add(b); }
+    const l = new THREE.SpotLight(0xffe8d0, 150, 34, 0.75, 0.6, 1.3); l.position.set(0, 13, 10); l.target.position.set(0, 2, -1); root.add(l, l.target);
+  },
+  news: root => {   // a news desk: a curved desk, a wall of screens, blue light
+    bx(root, 30, 0.2, 16, '#20283a', 0, -0.1, 0, false);
+    for (let i = 0; i < 4; i++) for (let j = 0; j < 2; j++) { const sc = new THREE.Mesh(new THREE.PlaneGeometry(4.4, 2.6), (i + j) % 2 ? tron() : glow(0x2f6bd8, 0.8)); sc.position.set(-6.9 + i * 4.6, 4.2 + j * 2.8, -5); root.add(sc); }
+    bx(root, 19, 6, 0.3, '#0d0e14', 0, 5.6, -5.2);
+    const desk = new THREE.Mesh(new THREE.CylinderGeometry(6, 6, 2.6, 32, 1, true, -0.7, 1.4), card('#c8ccd6')[0]); desk.position.set(0, 1.3, -6.4); (desk.material as any).side = THREE.DoubleSide; root.add(desk);
+    bx(root, 9, 0.14, 1.6, '#e8ecf4', 0, 2.66, -0.4, false); bx(root, 8.6, 0.3, 0.1, '#c8322a', 0, 2.2, 0.39, false);
+    const l = new THREE.SpotLight(0xdde8ff, 150, 34, 0.75, 0.6, 1.3); l.position.set(0, 13, 10); l.target.position.set(0, 2, -1); root.add(l, l.target);
+  },
+  rafters: root => {   // up in the rafters: a catwalk of steel grating over a dark drop, lights and the ring far below
+    bx(root, 40, 0.2, 3, '#4a4e58', 0, -0.1, 0, false); for (let i = -20; i <= 20; i++) bx(root, 0.06, 0.24, 3, '#2a2c33', i, 0, 0, false);
+    for (const sz of [-1.5, 1.5]) { bx(root, 40, 0.1, 0.1, steel, 0, 3.4, sz, false); for (let i = -20; i <= 20; i += 4) bx(root, 0.1, 3.4, 0.1, steel, i, 1.7, sz, false); }
+    for (let i = -18; i <= 18; i += 6) { bx(root, 0.3, 0.3, 30, '#2a2c33', i, 9, -8, false); const sp = new THREE.SpotLight(0xffe2b0, 60, 60, 0.4, 0.6, 1.4); sp.position.set(i, 8, 0); sp.target.position.set(i * 0.2, -40, -20); root.add(sp, sp.target); }
+    const ring = new THREE.Group(); arena(ring, true); ring.scale.setScalar(0.6); ring.position.set(0, -38, -24); root.add(ring);
+  },
   office: root => {
     bx(root, 30, 0.2, 30, '#3a3f5a', 0, -0.1, 0, false);                                                               // the carpet
     bx(root, 26, 12, 0.3, '#5a3d28', 0, 6, -4.6, false); for (let i = 0; i < 9; i++) bx(root, 0.08, 12, 0.32, '#4a3020', -11 + i * 2.75, 6, -4.55, false);
@@ -314,7 +515,8 @@ function flat(root: THREE.Group, sc: Scene) {
 
 /* ---------- the camera for each set ---------- */
 const P: Record<string, [number[], number[]]> = { ring: [[0, 9, 21], [0, 3.2, 0]], ringlow: [[0, 2.2, 15], [0, 4.2, 0]], ringcorner: [[15, 9, 15], [0, 3.2, 0]],
-  desk: [[0, 4.3, 13.5], [0, 2.6, 0]], hall: [[0, 5.2, 13], [0, 3.8, -6]], office: [[0, 5, 14], [0, 3.6, 0]], locker: [[0, 5, 14], [0, 3.6, -1]] };
+  ringside: [[9, -1.2, 14.5], [0, 2.4, 2]], cage: [[0, 10, 23], [0, 3.6, 0]], cell: [[0, 13, 30], [0, 4, 0]], inferno: [[0, 10, 24], [0, 3.2, 0]], ballroom: [[0, 9, 21], [0, 3.2, 0]], gym: [[0, 9, 21], [0, 3.2, 0]], bigstadium: [[0, 11, 26], [0, 3.2, 0]],
+  desk: [[0, 4.3, 13.5], [0, 2.6, 0]], ramp: [[0, 4.5, 18], [0, 3.4, 0]], backstage: [[0, 5, 14], [0, 3.6, 0]], lot: [[0, 5, 15], [0, 3.4, -2]], talk: [[0, 4.8, 14], [0, 3.4, 0]], news: [[0, 4.8, 13], [0, 3.4, 0]], rafters: [[0, 8, 16], [0, 1.5, -4]], hall: [[0, 5.2, 13], [0, 3.8, -6]], office: [[0, 5, 14], [0, 3.6, 0]], locker: [[0, 5, 14], [0, 3.6, -1]] };
 /** The set's own camera: where it stands and what it looks at. */
 export function homeShot(set: string): Cam3 { const [pos, look] = P[set] || [[0, 5.5, 17], [0, 3.6, 0]]; return { p: pos.slice() as any, t: look.slice() as any, fov: 30 }; }
 function frame(set: string, cam: THREE.PerspectiveCamera, ctl: OrbitControls, k: Key) {
@@ -351,7 +553,7 @@ export class Diorama3D {
   }
   /** Draw on the next frame, once: the picture is only drawn again when something has changed (a Steam Deck on battery
       should not draw a still picture sixty times a second). */
-  ask() { if (this.raf) return; this.raf = requestAnimationFrame(() => { this.raf = 0; this.face(); this.feed(); (this.bokeh.uniforms as any).focus.value = this.cam.position.distanceTo(this.ctl.target); this.comp.render(); this.drawn++; }); }
+  ask() { if (this.raf) return; this.raf = requestAnimationFrame(() => { this.raf = 0; this.face(); if (this.drawn % 3 === 0) this.feed(); (this.bokeh.uniforms as any).focus.value = this.cam.position.distanceTo(this.ctl.target); this.comp.render(); this.drawn++; }); }
   /** The big screen in the arena shows what the camera sees, like the live feed in a real building (Ryan, 20 October).
       The picture is taken just before the real one, with the screen itself left out of it. */
   tronRT: THREE.WebGLRenderTarget | null = null; tronScr: THREE.Mesh | null = null;
@@ -366,7 +568,7 @@ export class Diorama3D {
       from the side. `rigs` are the last joints, for dragging a part in 3D. */
   groups: THREE.Group[] = []; rigs: Record<string, Rig> = {}; hold: Record<string, string> = {}; sel: { who: string; part: string } | null = null;
   show(sc: Scene, k: Key, cast: Record<string, Recipe>, time = 0, sel: { who: string; part: string } | null = null) {
-    if (this.set !== setKey(sc.set)) { this.clear(this.world); const room = ROOMS[sc.set]; if (RINGS.includes(sc.set)) arena(this.world); else if (room) room(this.world); else flat(this.world, sc); this.mood(sc.set); this.set = setKey(sc.set); this.framed = '';
+    if (this.set !== setKey(sc.set)) { this.clear(this.world); const room = ROOMS[sc.set]; if (RINGS.includes(sc.set)) arena(this.world, true, sc.set); else if (room) room(this.world); else flat(this.world, sc); this.mood(sc.set); this.set = setKey(sc.set); this.framed = '';
       this.tronScr = (this.world.getObjectByName('tron') as THREE.Mesh) || null; }
     const fk = sc.set + JSON.stringify(k.cam || null) + JSON.stringify(k.cam3 || null); if (this.framed !== fk) { frame(sc.set, this.cam, this.ctl, k); this.framed = fk; }
     this.clear(this.people); this.groups = []; this.sel = sel;
@@ -375,6 +577,14 @@ export class Diorama3D {
     for (const p of b.pieces) { if (p.layer || p.soft) continue; const w = p.own != null ? 'f:' + (b.hold[p.own] || p.own) : p.prop != null ? 'p:' + p.prop : 'x:' + byWho.size; (byWho.get(w) || byWho.set(w, []).get(w)!).push(p); }
     byWho.forEach((ps, w) => {
       const kind = w[0], id = w.slice(2), f = kind === 'f' ? k.figs[id] : null;
+      // a prop standing on its own is a real model (Ryan, 20 October: "better props ... that are 3d"); one in somebody's hands stays card
+      const pr = kind === 'p' ? k.props.find(q => q.id === id) : null, mk = pr && !pr.at ? MODELS3[pr.k] : null;
+      if (pr && mk) {
+        const g = mk(); g.position.set(pr.x, pr.y - FOOT, pr.z * DEPTH); g.rotation.z = (pr.r || 0) * Math.PI / 180; g.scale.setScalar(pr.s || 1);
+        g.userData = { who: id, prop: true, solid: true }; g.traverse(o => { if ((o as THREE.Mesh).isMesh) { o.userData = { who: id, prop: true }; o.castShadow = true; o.receiveShadow = true;
+          if (sel && sel.who === id) (o as THREE.Mesh).material = lit('#ffe14a')[0]; } });
+        this.people.add(g); this.groups.push(g); return;
+      }
       // the pivot: the figure's waist, or the middle of the prop; it stands at the depth of its layer
       let px = 0, n = 0; if (f) px = f.x; else { for (const p of ps) for (const q of p.pts) { px += q[0]; n++; } px = n ? px / n : (ps[0].txt ? ps[0].txt.x : 0); }
       const base = f ? f.z : Math.min(...ps.map(p => p.z)), g = new THREE.Group(); g.position.set(px, 0, base * DEPTH);
@@ -433,11 +643,11 @@ export class Diorama3D {
   }
   /** The air of the place: the dark of an arena, or a room lit from inside. */
   mood(set: string) {
-    const inside = ['hall', 'office', 'locker'].includes(set), c = inside ? '#14161e' : '#0a0c1c';
-    this.scene.background = new THREE.Color(c); this.scene.fog = new THREE.Fog(c, inside ? 26 : 38, inside ? 70 : 95);
+    const inside = ['hall', 'office', 'locker', 'ballroom', 'gym', 'backstage', 'talk', 'news'].includes(set), c = set === 'bigstadium' ? '#0b1838' : set === 'ballroom' ? '#1a110c' : inside ? '#14161e' : '#0a0c1c', far = set === 'bigstadium' ? 2.4 : 1;
+    this.scene.background = new THREE.Color(c); this.scene.fog = new THREE.Fog(c, (inside ? 26 : 38) * far, (inside ? 70 : 95) * far);
   }
   /** Turn every figure and prop toward the camera, round its own upright. */
-  face() { for (const g of this.groups) g.rotation.y = Math.atan2(this.cam.position.x - g.position.x, this.cam.position.z - g.position.z); }
+  face() { for (const g of this.groups) if (!g.userData.solid) g.rotation.y = Math.atan2(this.cam.position.x - g.position.x, this.cam.position.z - g.position.z); }
   private ray(cx: number, cy: number): THREE.Raycaster {
     const r = this.r.domElement.getBoundingClientRect(), rc = new THREE.Raycaster();
     rc.setFromCamera(new THREE.Vector2(((cx - r.left) / r.width) * 2 - 1, -((cy - r.top) / r.height) * 2 + 1), this.cam); return rc;

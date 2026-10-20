@@ -281,12 +281,13 @@ html body .win.ppop .wb{font-family:var(--hand);font-size:1.06em}
 .sc-setups .btn{font-family:var(--hand);font-size:1.08em;letter-spacing:0;text-align:left;white-space:normal;line-height:1.15}
 
 /* the logo maker's lettering buttons, each in its own face */
-.btn.lfo-marker{font-family:'Craft Marker',sans-serif}
-.btn.lfo-block{font-family:'EWF Sans',sans-serif;font-weight:800;letter-spacing:.02em}
-.btn.lfo-typed{font-family:'Craft Typed',monospace}
-.btn.lfo-brush{font-family:'Craft Gochi',cursive}
-.btn.lfo-neat{font-family:'Craft Hand',cursive}
-.btn.lfo-scrawl{font-family:'Craft Kalam',cursive;font-weight:700}
+.lfo-sample{font-size:1.4em;margin-left:1ch;color:var(--ink)}
+.lfo-sample.lfo-marker,.btn.lfo-marker{font-family:'Craft Marker',sans-serif}
+.lfo-sample.lfo-block,.btn.lfo-block{font-family:'EWF Sans',sans-serif;font-weight:800;letter-spacing:.02em}
+.lfo-sample.lfo-typed,.btn.lfo-typed{font-family:'Craft Typed',monospace}
+.lfo-sample.lfo-brush,.btn.lfo-brush{font-family:'Craft Gochi',cursive}
+.lfo-sample.lfo-neat,.btn.lfo-neat{font-family:'Craft Hand',cursive}
+.lfo-sample.lfo-scrawl,.btn.lfo-scrawl{font-family:'Craft Kalam',cursive;font-weight:700}
 
 /* Create a Belt: the belt on a sheet of black card, and the gem chip for none */
 .beltc{display:inline-block;line-height:0;background:var(--lk-black) center/cover;padding:.35em .5em;box-shadow:2px 3px 0 rgba(0,0,0,.35)}
@@ -295,3 +296,29 @@ html body .win.ppop .wb{font-family:var(--hand);font-size:1.06em}
 .mm-c.none{background:repeating-linear-gradient(45deg,#ddd 0 4px,#fff 4px 8px)!important}
 .bm .mm-left{display:flex;flex-direction:column;gap:.4em;align-items:flex-start;width:auto}
 .edbelt{overflow:visible}
+
+/* the World Editor's frame (shell.tsx): every page under the same bar, a page that scrolls inside itself where it is long */
+.edshell{gap:0;padding:0}
+.edshell .edbody{flex:1 1 0;min-height:0;overflow-y:auto;padding:.8em 1.6ch}
+.edshell .edbody-in{max-width:1500px;margin:0 auto}
+.edshell .edbody .edcol-list,.edshell .edbody .edcol-form{min-width:0}
+/* Create a Wrestler and Create a Scene wear the editor's bar */
+.sc-menubar{margin:0;border-radius:0;padding:.12em 1.2ch;min-height:2.2em}
+.sc-menubar b.on{margin-right:.8ch}
+.edshell .edbody .panel>h2:first-child{display:inline-block;background:var(--lk-navy) 0 0/240px;color:#ffe48a;font-family:var(--marker);font-weight:400;text-transform:none;letter-spacing:.02em;border:0;padding:.06em 1.4ch;margin:0 0 .5em;transform:rotate(-.6deg);clip-path:polygon(0 8%,12% 0,40% 6%,70% 0,100% 7%,99% 92%,72% 100%,38% 94%,10% 100%,1% 93%)}
+.edshell .edbody .panel{padding:.7em 1.4ch .8em;margin:0 0 1em}
+.pmenu .it,.pmenu .pm-app,.pmenu .pm-ok{white-space:nowrap}
+.pmenu .pm-world{max-width:14ch}
+.pmenu{font-size:.86em;flex-wrap:nowrap;overflow:hidden}
+.pmenu .it{padding:.08em .75ch}
+.pmenu .pm-app{margin-right:.5ch}
+.edshell .edbody .edcol-list{border-image:var(--lk-win) 30 fill / 12px / 5px stretch;color:var(--ink);font-family:var(--hand);padding:.7em 1.2ch;align-self:start}
+.edshell .edbody .edcol-list .field>span,.edshell .edbody .edcol-list label{color:var(--ink)}
+/* Create a Wrestler's and Create a Scene's bar: the same strip as the World Editor's menu bar */
+.scfull>.sc-menubar{margin:0!important;width:auto;border-radius:0;font-size:.86em;padding:.12em 1.2ch;min-height:0;box-shadow:0 .25em .5em rgba(0,0,0,.4);border:0}
+.scfull>.sc-menubar b.on{white-space:nowrap;padding:.08em 1.2ch;line-height:1.3}
+.scfull>.sc-menubar .btn{padding-top:.1em;padding-bottom:.1em}
+.pnote.sc-hint.good{color:#bff0a8}.pnote.sc-hint.bad{color:#ff9a8a}
+.pmenu.sc-menubar .btn{margin:0 0 0 .6ch;font-size:.95em}
+.scfull.paper{padding:0 0 .5em;border:0;box-shadow:none}
+.scfull.edshell{z-index:10}   /* the editor frame sits under its pop-ups (the logo and belt creators) */

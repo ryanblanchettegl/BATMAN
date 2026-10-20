@@ -174,7 +174,7 @@ function addWrestler(S,d,promo,brand){
 function buildPromo(S,d,byName){
     var P={id:d.id,name:d.name,blurb:d.blurb,cash:d.cash,cash0:d.cash,image:d.image,image0:d.image,wq:d.wq,angles:d.angles,style:(d.owner&&d.owner.style)||'stars',staff:d.staff||{agent:'The road agent',writer:'The head writer'},wageMult:d.wageMult,tvRate:d.tvRate,prod:d.prod,net:d.net,flagship:d.flagship,
       prodLvl:d.prodLvl==null?2:d.prodLvl,prod0:d.prodLvl==null?2:d.prodLvl,risk:d.risk==null?1:d.risk,risk0:d.risk==null?1:d.risk,tix:1,adv:0,slot:d.slot==null?1:d.slot,slot0:d.slot==null?1:d.slot,camp:d.image>=60?2:1,med:d.image>=80?3:(d.image>=60?2:(d.image>=45?1:0)),starB:{},ann:(d.announcers||['The play-by-play man','The colour man']).slice(),cities:(d.cities||['the city']).slice(),brands:d.brands?JSON.parse(JSON.stringify(d.brands)):null,shows:JSON.parse(JSON.stringify(d.shows)),titles:[],hist:[],led:{tv:0,gate:0,ppv:0,bonus:0,prod:0},base:{},mainB:{},trend:0,neg:0,fixed:0,varRate:0,last:null};
-    d.titles.forEach(function(t){P.titles.push({id:t.id,name:t.name,brand:t.brand||null,g:t.g,lvl:t.lvl,tag:!!t.tag,holders:t.holders.map(function(n){return byName[n];}).filter(function(x){return x!==undefined;}),prestige:t.lvl===3?85:(t.lvl===2?68:52),since:1,last:1,defs:0});});
+    d.titles.forEach(function(t){P.titles.push({id:t.id,name:t.name,brand:t.brand||null,g:t.g,lvl:t.lvl,tag:!!t.tag,holders:t.holders.map(function(n){return byName[n];}).filter(function(x){return x!==undefined;}),prestige:t.lvl===3?85:(t.lvl===2?68:52),since:1,last:1,defs:0});if(t.belt)P.titles[P.titles.length-1].belt=JSON.parse(JSON.stringify(t.belt));});
     if(d.full)P.full=d.full;if(d.owner)P.owner=d.owner;if(d.media)P.media=d.media;if(d.model&&MODELS[d.model]&&d.model!=='classic')P.model=d.model;if(d.events)P.evIn=d.events;if(d.logo&&typeof d.logo==='object')P.logo=JSON.parse(JSON.stringify(d.logo));S.promos[P.id]=P;S.order.push(P.id);if(d.draft)draftRoster(S,P,d);
     (d.teams||[]).forEach(function(tm){var a=byName[tm[0]],b=byName[tm[1]];if(a===undefined||b===undefined||S.w[a].promo!==P.id||S.w[b].promo!==P.id)return;var t=formTeam(S,P,S.w[a],S.w[b],tm[2]!=null?clamp(tm[2],0,100):35+Math.round(h01(tm[0]+tm[1])*50));if(tm[3])t.chem=clamp(tm[3],-10,10);if(tm[4])t.name=tm[4];});
   return P;
@@ -7508,7 +7508,7 @@ var SCHEMAS={
   promotions:{required:['id','name','popularity'],fields:{id:'id',name:'str',full_name:'str?',blurb:'str?',owner:'obj?',staff:'obj?',announcers:'list?',cities:'list?',cash:'num?',popularity:'num',work_rate_weight:'num?',angles_per_show:'int?',wage_scale:'num?',tv_rate:'num?',production_cost:'num?',target_weekly_net:'num?',flagship_month:'int?',production_level:'int?',risk_level:'int?',tv_slot:'int?',model:'str?',brands:'list?',media:'obj?',logo:'obj?',events:'list?'}},
   workers:{required:['id','ring_name','gender','disposition','style','ratings'],fields:{id:'id',ring_name:'str',real_name:'str?',birth_date:'str?',age:'int?',hometown:'str?',gender:['M','F'],weight_class:['cruiser','heavy','super_heavy'],disposition:['face','heel','tweener'],roles:'list?',style:Object.keys(STYLE_KEY),finisher:'str?',manager_id:'str?',locker_role:['mentor','diva','gatekeeper','leader','toxic'],ratings:'obj',peak_years:'list?',age_cliff:'int?',media:'obj?',face:'obj?',gimmick_category:'str?',gimmick:'str?',catchphrase:'str?',finisher_description:'str?',finisher_move:'str?',signatures:'list?',debut_year:'int?',legend:'bool?',height:'str?',weight:'str?',notes:'str?',look:'obj?'}},
   contracts:{required:['worker_id','promotion_id'],fields:{worker_id:'str',promotion_id:'str',contract_type:['exclusive','pwa'],monthly_salary:'num?',per_show_fee:'num?',weeks_left:'int?',tenure_weeks:'int?',push_level:PUSH,brand:'str?'}},
-  titles:{required:['id','promotion_id','name','gender','level'],fields:{id:'id',promotion_id:'str',name:'str',gender:['M','F'],level:'int',tag:'bool?',brand:'str?',holder_ids:'list?',media:'obj?'}},
+  titles:{required:['id','promotion_id','name','gender','level'],fields:{id:'id',promotion_id:'str',name:'str',gender:['M','F'],level:'int',tag:'bool?',brand:'str?',holder_ids:'list?',media:'obj?',belt:'obj?'}},
   teams:{required:['id','name','member_ids','promotion_id'],fields:{id:'id',name:'str',kind:['tag','stable'],member_ids:'list',leader_id:'str?',experience:'num?',chemistry:'num?',finisher:'str?',promotion_id:'str'}},
   relationships:{required:['a','b','type'],fields:{a:'str',b:'str',type:REL_TYPES,strength:'num?',ring_chemistry:'num?',note:'str?'}},
   events:{required:['month','name'],fields:{month:'int',name:'str',rule:'str?'}},
@@ -7618,7 +7618,7 @@ function buildDB(pkg){
   });
   (pkg.shows||[]).forEach(function(s){PR[s.promotion_id].shows.push({id:s.id,name:s.name,brand:s.brand||undefined,mult:s.weight!=null?clamp(s.weight,0.2,1):1});});
   var home={},con={};(pkg.contracts||[]).forEach(function(c){if((c.contract_type||'exclusive')==='exclusive'||!home[c.worker_id]){home[c.worker_id]=c.promotion_id;con[c.worker_id]=c;}});
-  (pkg.titles||[]).forEach(function(t){PR[t.promotion_id].titles.push({id:t.id,name:t.name,g:t.gender,lvl:clamp(t.level,1,3),tag:!!t.tag,brand:t.brand||undefined,holders:(t.holder_ids||[]).every(function(h){return home[h]===t.promotion_id;})?(t.holder_ids||[]).map(function(h){return '#'+h;}):[]});});
+  (pkg.titles||[]).forEach(function(t){PR[t.promotion_id].titles.push({id:t.id,name:t.name,g:t.gender,lvl:clamp(t.level,1,3),tag:!!t.tag,brand:t.brand||undefined,belt:t.belt&&typeof t.belt==='object'?JSON.parse(JSON.stringify(t.belt)):undefined,holders:(t.holder_ids||[]).every(function(h){return home[h]===t.promotion_id;})?(t.holder_ids||[]).map(function(h){return '#'+h;}):[]});});
   var stables=[];
   (pkg.teams||[]).forEach(function(t){
     if((t.kind||'tag')==='stable')stables.push({name:t.name,promo:t.promotion_id,leader:t.leader_id||t.member_ids[0],m:t.member_ids.slice()});
@@ -7676,7 +7676,7 @@ E.exportUniverse=function(S,meta){
     if(P.events)o.events=P.events.map(function(e,i){var x={month:i+1,name:e.n,type:e.t};if(e.rule)x.rule=e.rule;return x;});
     pkg.promotions.push(o);
     P.shows.forEach(function(s){var x={id:slug(id+'_'+s.id),promotion_id:pid(id),name:s.name,weight:s.mult==null?1:s.mult};if(s.brand)x.brand=s.brand;pkg.shows.push(x);});
-    P.titles.forEach(function(t){var x={id:slug(t.id),promotion_id:pid(id),name:t.name,gender:t.g,level:t.lvl,tag:!!t.tag,holder_ids:t.holders.map(function(h){return uid[h];}).filter(Boolean)};if(t.brand)x.brand=t.brand;pkg.titles.push(x);});
+    P.titles.forEach(function(t){var x={id:slug(t.id),promotion_id:pid(id),name:t.name,gender:t.g,level:t.lvl,tag:!!t.tag,holder_ids:t.holders.map(function(h){return uid[h];}).filter(Boolean)};if(t.brand)x.brand=t.brand;if(t.belt)x.belt=JSON.parse(JSON.stringify(t.belt));pkg.titles.push(x);});
   });
   var push=S.order.reduce(function(o,id){var m=E.pushMap(S,id);Object.keys(m).forEach(function(k){o[k]=m[k];});return o;},{});
   var PL={'Main event':'main_eventer','Upper midcard':'upper_midcarder','Midcard':'midcarder','Lower midcard':'lower_midcarder','Opener':'jobber'};
@@ -9773,6 +9773,87 @@ E.airInfo=function(S,pid){return airInfo(S,S.promos[pid||S.player]);};
   E.makeInfo=function(S){var o=was(S),A=airInfo(S,S.promos[S.player]);o.shows.forEach(function(s){var a=A.filter(function(x){return x.id===s.id;})[0];if(a)s.air=a;});return o;};
 })();
 
+/* ===== 89-belts.js ===== */
+/* Title belts: every title has a belt of its own, built from parts (Create a Belt). A belt is data on the title,
+   t.belt = {pl, mt, st, gm, sd, ss, tr, w, top}: the centre plate's shape, its metal, the strap's colour, the gem,
+   side plates on each side and their shape, the trim, the word on the plate (14 letters at most) and the small line above it. Anything
+   missing comes from the title itself (how big a prize, tag or not, its name), so E.beltOf always answers and old
+   saves and worlds need nothing. Picks are hashed (h01), never rnd(S). */
+var BELT_PLATES=[['round','Round'],['oval','Oval'],['shield','Shield'],['crest','Winged crest'],['globe','Globe'],['star','Star'],['diamond','Diamond'],['square','Square'],['bar','Long bar'],['crown','Crown']];
+var BELT_METALS=[['gold','Gold'],['silver','Silver'],['bronze','Bronze'],['black','Black chrome'],['rose','Rose gold']];
+var BELT_STRAPS=[['#1c1b1f','Black'],['#5a3a22','Brown'],['#a3221f','Red'],['#1f4fa3','Blue'],['#18264a','Navy'],['#ece6d6','White'],['#2f7a3a','Green'],['#5e2f86','Purple'],['#d06aa0','Pink'],['#e0b43a','Gold']];
+var BELT_GEMS=[['none','None'],['red','Ruby'],['blue','Sapphire'],['green','Emerald'],['white','Diamond'],['purple','Amethyst']];
+var BELT_SIDES=[[0,'None'],[1,'One'],[2,'Two'],[3,'Three']];
+var BELT_SIDE_SHAPES=[['round','Round'],['square','Square'],['shield','Shield']];
+var BELT_TRIMS=[['none','Plain'],['stitch','Stitched'],['studs','Studded'],['rope','Rope edge'],['etched','Etched']];
+function beltHas(L,v){for(var i=0;i<L.length;i++)if(L[i][0]===v)return true;return false;}
+function beltWordClean(s,max){return String(s||'').toUpperCase().replace(/[^A-Z0-9 '’&.-]/g,'').replace(/\s+/g,' ').trim().slice(0,max);}
+/** The word on the plate from the title's name: what is left once the company and "championship" are gone. */
+function beltWordOf(t,P){
+  var n=String((t&&t.name)||'').replace(/[’']s\b/g,'').replace(/\b(championships?|titles?|champions?|belts?|the|of)\b/gi,' ');
+  var co=P?[P.name,P.full,P.full_name]:[];co.forEach(function(c){if(c)n=n.split(c).join(' ');});
+  var ws=n.split(/\s+/).filter(function(w){return w&&(w==='TV'||!/^[A-Z]{2,4}$/.test(w));});
+  if(t&&t.tag)return 'TAG TEAM';
+  var pick=ws.filter(function(w){return /^(world|hardcore|television|tv|women|cruiserweight|heavyweight|national|international|united|intercontinental|pure|state|global|grand|crown|junior|internet|openweight|tag)/i.test(w);});
+  var fit=function(L){return L.filter(function(x){return x.replace(/-ish$/i,'').length<=14;});};
+  var w=(fit(pick)[0]||fit(ws)[0]||'CHAMPION');if(/^women/i.test(w)&&pick[1])w=pick[1];
+  if(/^tv$/i.test(w))w='TELEVISION';if(/^wom[ae]n$/i.test(w))w='WOMEN’S';
+  w=beltWordClean(w,40);if(w.length>14&&w.indexOf('-')>0)w=w.split('-')[0];
+  return beltWordClean(w,14)||'CHAMPION';
+}
+/** A whole belt from whatever is given, for title t of company P. */
+function beltFill(b,t,P){
+  b=b&&typeof b==='object'?b:{};t=t||{};var id=String(t.id||t.name||'belt'),lvl=t.lvl||t.level||2,h=function(k){return h01(id+':'+k);},nm=String(t.name||'');
+  var pk=function(L,k){return L[Math.floor(h(k)*L.length)%L.length][0];};
+  var hard=/hardcore|extreme|street|ultra/i.test(nm),tv=/television|\btv\b/i.test(nm),fem=(t.g||t.gender)==='F'||/women/i.test(nm),light=/cruiser|junior|light|x[- ]?div/i.test(nm);
+  var D={pl:lvl>=3?['crest','globe','round','crown'][Math.floor(h('pl')*4)]:(lvl===2?['shield','oval','star','round'][Math.floor(h('pl')*4)]:['square','diamond','bar','oval'][Math.floor(h('pl')*4)]),
+    mt:lvl>=3?'gold':(lvl===2?(h('mt')<0.5?'silver':'gold'):(h('mt')<0.5?'bronze':'silver')),
+    st:lvl>=3?(h('st')<0.6?'#1c1b1f':'#5a3a22'):pk(BELT_STRAPS.slice(0,8),'st'),
+    gm:lvl>=3?pk(BELT_GEMS.slice(1),'gm'):(h('gm')<0.4?pk(BELT_GEMS.slice(1),'gm2'):'none'),
+    sd:lvl>=3?3:(lvl===2?2:1),ss:pk(BELT_SIDE_SHAPES,'ss'),tr:lvl>=3?'etched':(h('tr')<0.5?'stitch':'none'),w:beltWordOf(t,P),
+    top:P?String(E.logoOf(P).l||''):''};
+  if(t.tag){D.pl='shield';D.sd=2;}
+  if(hard){D.mt='black';D.st='#1c1b1f';D.tr='studs';D.gm='red';D.pl=lvl>=3?D.pl:'square';}
+  if(tv){D.pl='bar';D.sd=2;}
+  if(fem){D.st=h('fs')<0.5?'#ece6d6':(h('fs')<0.75?'#5e2f86':'#d06aa0');if(lvl>=3&&D.pl==='crest')D.pl='oval';}
+  if(light){D.st='#1f4fa3';D.pl='star';}
+  var col=function(v,d){v=String(v||'').toLowerCase();return beltHas(BELT_STRAPS,v)?v:d;};
+  return {pl:beltHas(BELT_PLATES,b.pl)?b.pl:D.pl,mt:beltHas(BELT_METALS,b.mt)?b.mt:D.mt,st:col(b.st,D.st),gm:beltHas(BELT_GEMS,b.gm)?b.gm:D.gm,
+    sd:b.sd!=null&&beltHas(BELT_SIDES,b.sd|0)?b.sd|0:D.sd,ss:beltHas(BELT_SIDE_SHAPES,b.ss)?b.ss:D.ss,tr:beltHas(BELT_TRIMS,b.tr)?b.tr:D.tr,
+    w:b.w!=null?beltWordClean(b.w,14):D.w,top:b.top!=null?beltWordClean(b.top,6):D.top};
+}
+/** A title's belt, every part filled in. t is a title in a game or a world package; P its company (or a world's promotion). */
+E.beltOf=function(t,P){return beltFill(t&&t.belt,t,P);};
+E.BELT={plates:BELT_PLATES,metals:BELT_METALS,straps:BELT_STRAPS,gems:BELT_GEMS,sides:BELT_SIDES,sideShapes:BELT_SIDE_SHAPES,trims:BELT_TRIMS};
+/** n ideas for a belt, each different, from a seed (Shuffle moves it). They keep the words on the plate. */
+E.beltIdeas=function(t,P,n,seed){
+  var base=E.beltOf(t,P),out=[],seen={},k=0;n=clamp(n|0||6,1,24);seed=seed|0;var id=String((t&&t.id)||'b');
+  var pk=function(L,s){return L[Math.floor(h01(id+':'+seed+':'+k+':'+s)*L.length)%L.length][0];};
+  while(out.length<n&&k<300){
+    var b={pl:pk(BELT_PLATES,'pl'),mt:pk(BELT_METALS,'mt'),st:pk(BELT_STRAPS,'st'),gm:pk(BELT_GEMS,'gm'),sd:pk(BELT_SIDES,'sd'),ss:pk(BELT_SIDE_SHAPES,'ss'),tr:pk(BELT_TRIMS,'tr'),w:base.w,top:base.top};
+    k++;if(b.mt==='gold'&&b.st==='#e0b43a')continue;var key=JSON.stringify(b);if(seen[key])continue;seen[key]=1;out.push(b);
+  }
+  return out;
+};
+/** The World Editor: set a title's belt (null puts back the one the title gives itself). */
+E.edSetBelt=function(pkg,tid,belt){
+  var t=(pkg.titles||[]).filter(function(x){return x.id===tid;})[0];if(!t)return {ok:false,msg:'There is no such belt.'};
+  var P=(pkg.promotions||[]).filter(function(p){return p.id===t.promotion_id;})[0]||null;
+  if(belt==null){delete t.belt;return {ok:true,belt:E.beltOf(t,P),msg:'The '+t.name+' is back to the belt it gives itself.'};}
+  t.belt=beltFill(belt,t,P);return {ok:true,belt:t.belt,msg:'A new design for the '+t.name+'.'};
+};
+/** In a game: give one of your own titles a new belt. It is a moment, and the news says so. */
+E.setBelt=function(S,tid,belt){
+  var P=S.promos[S.player],t=(P.titles||[]).filter(function(x){return x.id===tid;})[0];if(!t)return {ok:false,msg:'That is not one of your titles.'};
+  if(belt==null){delete t.belt;return {ok:true,belt:E.beltOf(t,P),msg:'The '+t.name+' is back to its old belt.'};}
+  t.belt=beltFill(belt,t,P);news(S,'you','The '+t.name+' has a new belt.');return {ok:true,belt:t.belt,msg:'The '+t.name+' has a new belt.'};
+};
+/** The belt of a title found by id anywhere in the game, with its company: for a scene that shows somebody's belt. */
+E.beltById=function(S,tid){
+  for(var i=0;i<S.order.length;i++){var P=S.promos[S.order[i]];for(var j=0;j<(P.titles||[]).length;j++)if(P.titles[j].id===tid)return E.beltOf(P.titles[j],P);}return null;
+};
+E.beltFill=function(b,t,P){return beltFill(b,t,P);};
+
 /* ===== 89-board.js ===== */
 /* ---------- the fan board grows up: stars, replies, and a critic's list ---------- */
 
@@ -9860,6 +9941,8 @@ var LOGO_SHAPES=[['none','Letters only'],['shield','Shield'],['ring','Ring'],['l
 var LOGO_STYLES=[['block','Block'],['slant','Slanted'],['wide','Wide'],['tall','Tall'],['outline','Outlined'],['shadow','Shadowed']];
 var LOGO_LAYS=[['row','In a row'],['stack','Stacked'],['stair','Stairs'],['big','Big middle']];
 var LOGO_FINS=[['flat','Flat'],['split','Two-tone'],['stripe','Striped']];
+/** The lettering a logo is drawn in: marker, a heavy block face, a typewriter, a brush, a neat hand, a scrawl. */
+var LOGO_FONTS=[['marker','Marker'],['block','Heavy print'],['typed','Typewriter'],['brush','Brush'],['neat','Neat hand'],['scrawl','Scrawl']];
 var LOGO_EXTRAS=[['none','Nothing'],['stars','Three stars'],['bar','A bar'],['tag','A second line'],['edge','Edge lights']];
 var LOGO_COLS=[['#0000aa','Blue'],['#00aa00','Green'],['#00aaaa','Teal'],['#aa0000','Red'],['#aa00aa','Purple'],['#aa5500','Brown'],['#aaaaaa','Silver'],['#555555','Grey'],
   ['#5555ff','Bright blue'],['#55ff55','Bright green'],['#55ffff','Cyan'],['#ff5555','Bright red'],['#ff55ff','Pink'],['#ffff55','Yellow'],['#ffffff','White'],['#000000','Black']];
@@ -9891,16 +9974,16 @@ function logoFix(m){
 function logoFill(m,model,name,full){
   m=m&&typeof m==='object'?m:{};var D=LOGO_MODEL[model]||LOGO_MODEL.classic,col=function(v,d){return logoHas(LOGO_COLS,String(v).toLowerCase())?String(v).toLowerCase():d;};
   var o={l:m.l?logoLetters(m.l,''):logoLetters(name,full),st:logoHas(LOGO_STYLES,m.st)?m.st:'block',lay:logoHas(LOGO_LAYS,m.lay)?m.lay:'row',sh:logoHas(LOGO_SHAPES,m.sh)?m.sh:D[0],
-    fin:logoHas(LOGO_FINS,m.fin)?m.fin:'flat',c1:col(m.c1,D[1]),c2:col(m.c2,D[2]),c3:col(m.c3,D[3]),ex:logoHas(LOGO_EXTRAS,m.ex)?m.ex:'none',tag:logoTag(m.tag)};
+    fin:logoHas(LOGO_FINS,m.fin)?m.fin:'flat',c1:col(m.c1,D[1]),c2:col(m.c2,D[2]),c3:col(m.c3,D[3]),ex:logoHas(LOGO_EXTRAS,m.ex)?m.ex:'none',tag:logoTag(m.tag),fo:logoHas(LOGO_FONTS,m.fo)?m.fo:'marker'};
   if(o.ex==='tag'&&!o.tag)o.ex='none';
   return o;
 }
-function logoKey(m){return [m.l,m.st,m.lay,m.sh,m.fin,m.c1,m.c2,m.c3,m.ex,m.ex==='tag'?m.tag:''].join('|');}
+function logoKey(m){return [m.l,m.st,m.lay,m.sh,m.fin,m.c1,m.c2,m.c3,m.ex,m.ex==='tag'?m.tag:'',m.fo&&m.fo!=='marker'?m.fo:''].join('|');}
 /** A company's logo, in full. Works on a company in a game (P.name, P.full, P.model) and on one in a world package
     (name, full_name, model). */
 E.logoOf=function(P){return P?logoFill(P.logo,P.model||'classic',P.name,P.full||P.full_name):logoFill(null,'classic','EWF','');};
 /** The parts a logo can be made of, for the creator: each list is [id, name] pairs. */
-E.LOGO={shapes:LOGO_SHAPES,styles:LOGO_STYLES,lays:LOGO_LAYS,fins:LOGO_FINS,extras:LOGO_EXTRAS,cols:LOGO_COLS};
+E.LOGO={shapes:LOGO_SHAPES,styles:LOGO_STYLES,lays:LOGO_LAYS,fins:LOGO_FINS,fonts:LOGO_FONTS,extras:LOGO_EXTRAS,cols:LOGO_COLS};
 /** Fill in and tidy a logo that is being worked on. */
 E.logoFill=function(m,model,name,full){return logoFill(m,model,name,full);};
 /** Finished logos to choose from, made from the same letters: n of them, the same every time for the same letters and seed. */
@@ -9908,7 +9991,7 @@ E.logoIdeas=function(letters,n,seed){
   var l=logoLetters(letters,''),out=[],seen={},k=0;n=clamp(n|0||6,1,24);seed=seed|0;
   var pickOf=function(L,salt){return L[Math.floor(h01(l+':'+seed+':'+k+':'+salt)*L.length)%L.length][0];};
   while(out.length<n&&k<400){
-    var m={l:l,st:pickOf(LOGO_STYLES,'st'),lay:l.length===3||h01(l+seed+k+'lay2')<0.6?pickOf(LOGO_LAYS,'lay'):'row',sh:pickOf(LOGO_SHAPES,'sh'),fin:pickOf(LOGO_FINS,'fin'),c1:pickOf(LOGO_COLS,'c1'),c2:pickOf(LOGO_COLS,'c2'),c3:pickOf(LOGO_COLS,'c3'),ex:pickOf(LOGO_EXTRAS.filter(function(x){return x[0]!=='tag';}),'ex'),tag:''};
+    var m={l:l,st:pickOf(LOGO_STYLES,'st'),lay:l.length===3||h01(l+seed+k+'lay2')<0.6?pickOf(LOGO_LAYS,'lay'):'row',sh:pickOf(LOGO_SHAPES,'sh'),fin:pickOf(LOGO_FINS,'fin'),c1:pickOf(LOGO_COLS,'c1'),c2:pickOf(LOGO_COLS,'c2'),c3:pickOf(LOGO_COLS,'c3'),ex:pickOf(LOGO_EXTRAS.filter(function(x){return x[0]!=='tag';}),'ex'),tag:'',fo:h01(l+seed+k+'fo')<0.5?'marker':pickOf(LOGO_FONTS,'fo')};
     k++;
     if(m.c1==='#000000'||m.c2===m.c1)continue;
     m.c3=logoFix(m);var key=logoKey(m);if(seen[key])continue;seen[key]=1;out.push(m);

@@ -3,11 +3,11 @@ import { useRef } from 'preact/hooks';
 import { E } from '../../engine';
 import { UNIS, ui, redraw, builtInUniverse, isBuiltIn, pref, plural } from '../../store';
 import { onBack } from '../../input';
-import { Btn, Panel, Head, Tabs, Field } from '../../kit';
-import { StartMenu } from '../start';
-import { es, world, keep, edit, look, note, report, freeId, openWorld, EdTab, TABS, canUndo, undoDel } from './state';
+import { Btn, Panel, Field } from '../../kit';
+import { es, world, keep, edit, look, note, report, freeId, openWorld, EdTab, TABS } from './state';
 import { WrestlersPage } from './Wrestlers';
 import { DelBtn } from './parts';
+import { EdShell } from './shell';
 import { WorldTab, ShareTab } from './World';
 import { CompaniesTab, ShowsTab } from './Companies';
 import { WrestlersTab } from './People';
@@ -42,10 +42,9 @@ function Home() {
     fr.onerror = () => look(() => note('That file could not be read.', true));
     fr.readAsText(fl); t.value = '';
   };
-  return <>
-    <Head eyebrow="World Editor" title="Build your own world" />
-    <p class="lede c mb3">Companies, shows, belts and wrestlers. Make them all, then play it or share it.</p>
-    {st.msg ? <p class={'ednote ' + (st.err ? 'bad' : 'good') + ' mb2'} role="status">{st.msg}{canUndo() ? <> <Btn kind="sm" t="ed-undo" onClick={undoDel}>Undo</Btn></> : null}</p> : (canUndo() ? <p class="ednote mb2"><Btn kind="sm" t="ed-undo" onClick={undoDel}>Undo the delete</Btn></p> : null)}
+  const exit = () => look(() => { ui.scr = 'title'; ui.mi = 0; });
+  return <EdShell note={st.msg || 'Companies, shows, belts and wrestlers. Make them all, then play it or share it.'} bad={st.err} back={exit} backLabel="Title screen" t="ed-home">
+    <div class="edbody"><div class="edbody-in">
     <Panel cls="mb4" title="Your worlds">
       {ids.length ? <ul class="list">{ids.map(id => { const pkg = UNIS[id], v = E.edCheck(pkg); return <li class="col" key={id}>
         <span><b>{pkg.manifest.name || id}</b> <span class="muted">{'·'} {summary(pkg)}</span><br />
@@ -72,26 +71,31 @@ function Home() {
       {st.sel.ws ? (ws.length ? <ul class="list mt2">{ws.map((pkg, i) => <li key={i}><span><b>{pkg.manifest.name}</b> <span class="muted">{'·'} {summary(pkg)}{pkg.manifest.author ? ' · by ' + pkg.manifest.author : ''}</span></span>
         <Btn kind="sm" t="ed-ws-add" d={{ v: i }} onClick={() => look(() => addWorld(E.edCopy(pkg, pkg.manifest.name)))}>Add to my worlds</Btn></li>)}</ul> : <p class="empty mt2">No subscribed worlds found.</p>) : null}
     </Panel> : null}
-    <div class="row"><Btn t="ed-exit" onClick={() => look(() => { ui.scr = 'title'; ui.mi = 0; })}>{'◄'} Back to the title screen</Btn></div>
-  </>;
+    <div class="row"><Btn t="ed-exit" onClick={exit}>{'◄'} Back to the title screen</Btn></div>
+    </div></div>
+  </EdShell>;
 }
 
 function Open() {
   const st = es(), pkg = world(), v = report();
   const body = st.tab === 'world' ? <WorldTab /> : st.tab === 'companies' ? <CompaniesTab /> : st.tab === 'shows' ? <ShowsTab /> : st.tab === 'belts' ? <BeltsTab /> : st.tab === 'wrestlers' ? <WrestlersTab /> : st.tab === 'teams' ? <TeamsTab /> : st.tab === 'scenes' ? <ScenesTab /> : <ShareTab />;
-  return <>
-    <Head eyebrow="World Editor" title={pkg.manifest.name || 'My world'} />
-    <div class="row edtop mb2">
-      <Btn kind="sm" t="ed-worlds" onClick={() => look(() => { keep(true); st.id = null; st.msg = ''; })}>{'◄'} All worlds</Btn>
-      <span class="sp" />
-      {v.ok ? <span class="good" role="status">Ready to play{v.warnings ? ' · ' + v.warnings + ' ' + plural(v.warnings, 'note') : ''}</span>
-        : <Btn kind="sm" t="ed-problems" onClick={() => look(() => { st.tab = 'share'; })}>{v.errors} {plural(v.errors, 'problem')} to fix</Btn>}
-    </div>
-    <Tabs label="Parts of the world" items={TABS.map(x => ({ id: x[0], label: x[1], t: 'ed-tab' }))} value={st.tab} onPick={id => look(() => { st.tab = id as EdTab; window.scrollTo(0, 0); })} />
-    {st.msg ? <p class={'ednote ' + (st.err ? 'bad' : 'good') + ' mt2'} role="status">{st.msg}{canUndo() ? <> <Btn kind="sm" t="ed-undo" onClick={undoDel}>Undo</Btn></> : null}</p> : (canUndo() ? <p class="ednote mt2"><Btn kind="sm" t="ed-undo" onClick={undoDel}>Undo the delete</Btn></p> : null)}
-    <div class="mt2">{body}</div>
-  </>;
+  const back = () => look(() => { if (st.sel[st.tab]) st.sel[st.tab] = null; else { keep(true); st.id = null; st.msg = ''; } });
+  return <EdShell tab={st.tab} note={st.msg || TIPS[st.tab]} bad={st.err} back={back} backLabel={st.sel[st.tab] ? 'Back to the list' : 'All worlds'} t="ed-open"
+    main={v.ok ? <Btn kind="go" cls="pkey" t="ed-play-key" onClick={() => look(() => { st.tab = 'share'; })}>CHECK AND SHARE</Btn> : <Btn kind="go" cls="pkey" t="ed-fix-key" onClick={() => look(() => { st.tab = 'share'; })}>{v.errors + ' TO FIX'}</Btn>}>
+    <div class="edbody" key={st.tab}><div class="edbody-in">{body}</div></div>
+  </EdShell>;
 }
+/** What each tab is for, on the note strip until there is something to say. */
+const TIPS: Record<string, string> = {
+  world: 'The world’s name, when it starts, and its lists of names. Work left to right along the tabs.',
+  companies: 'Each company: its name, size, model, owner, money, cities and logo.',
+  shows: 'Weekly shows and each company’s twelve big events.',
+  belts: 'Every belt: who holds it, how big a prize it is, and its design in Create a Belt.',
+  wrestlers: 'Pick a wrestler on the list, or add one.',
+  teams: 'Tag teams and stables, and who gets on with whom.',
+  scenes: 'Scenes made for this world: entrances, moves, stills and more.',
+  share: 'Every problem in plain words, then play the world or share it.',
+};
 
 export function Editor() {
   const st = es();
@@ -121,6 +125,5 @@ export function Editor() {
       onForget={forgetScene} onDone={() => look(() => { st.scene = null; st.sceneStart = null; if (fr) { st.player = fr.who; st.sceneFor = null; } })} />;
   }
   if (st.id && st.tab === 'wrestlers') return <WrestlersPage />;   // the first page in the paper look (rule 2a): Create a Wrestler at its heart
-  return <div class="crt"><StartMenu /><div class="start edpage">{st.id ? <Open /> : <Home />}</div>
-    <div class="status"><span>World Editor</span><span class="opt">|</span><span class="opt">Changes are kept as you make them</span><span>Esc: back</span></div></div>;
+  return st.id ? <Open /> : <Home />;
 }
