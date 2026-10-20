@@ -256,7 +256,7 @@ The desk image (`docs/mockups/paper/desk.png`) is the art style: the whole game 
 - [x] Booking a segment shows its scene on the run sheet, so the card reads as the scenes of the show: the window that books it draws the scene once the first person is picked, and the picked promo or angle beside the sheet shows it with its cast (`SegPic`, `segPick()` in `shared/moment.tsx`, the same pick the broadcast plays).
 - [x] Feuds over several weeks: a scene for each beat (the spark, the words and brawls of each chapter, a twist or turn, the match being made, the payoff).
 - [x] A check that fails when an angle or promo kind has no scene (`app/tests/scene.js`, through `EWF_DEBUG.segScenes()`); storyline beats join it as they get theirs.
-- [ ] The World Editor's story builder: an easy pop-up for a player's own storyline, angle or promo (who, what happens, which scene plays, what it does to heat and the people in it through `relBump()`), kept in the world package and played in a game.
+- [x] The World Editor's story builder (Stories tab, Ryan 20 October): a world's own promos and angles (participants, the scene, what it does to a feud and to the two through `relBump()`, the report line), kept in the world package and booked and played in a game; the included ones can be changed for a world and put back.
 - [ ] Then redo the build-a-match screen and the show on the air in the paper look on top of the scenes, one at a time with Ryan's go-ahead.
 
 ### 0y. The World Editor rebuilt on Create a Wrestler and Create a Scene (Ryan, 18 October)

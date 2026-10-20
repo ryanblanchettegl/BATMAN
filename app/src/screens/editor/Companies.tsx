@@ -77,12 +77,14 @@ export function CompaniesTab() {
         <NumF label="Weekly target ($)" rec={p} k="target_weekly_net" min={-5000000} max={20000000} step={10000} blank="worked out" />
         <SelF label="Flagship month" rec={p} k="flagship_month" options={[['', 'April (the usual)'] as Opt].concat(months)} num none />
       </div>
+      <p class="muted mt2">Leave the money boxes empty and the game works them out from popularity.</p>
+    </Panel>
+    <Panel cls="mb4" title="Road">
       <div class="editor plain"><Field label="Cities"><input type="text" {...dataAttrs('ed-cities')} value={(p.cities || []).join(', ')} maxLength={300} placeholder="Chicago, Boston, Memphis"
         onInput={e => { const v = (e.currentTarget as HTMLInputElement).value; edit(() => { p.cities = v.split(',').map(x => x.trim()).filter(Boolean); }); }} /></Field></div>
       {(() => { const known: string[] = E.knownCities(), have: string[] = p.cities || [], off = have.filter(c => known.indexOf(c) < 0);
         return <><p class="muted mt1" data-t="ed-cities-note">{have.length + (have.length === 1 ? ' city' : ' cities') + ' on the road.'}{off.length ? ' Not on the map (no pin on the desk): ' + off.join(', ') + '.' : ''}</p>
           <ScrollMenu t="ed-city-add" label="Cities on the map" onPick={c => edit(() => { p.cities = have.concat([c]); })} items={known.filter(c => have.indexOf(c) < 0).map(c => ({ id: c, label: c, sub: 'Add to the road' }))} /></>; })()}
-      <p class="muted mt2">Leave the money boxes empty and the game works them out from popularity.</p>
     </Panel>
     <Panel cls="mb4" title="Roster">
       <p>{c.roster} {c.roster === 1 ? 'wrestler' : 'wrestlers'} under contract ({c.men} men, {c.women} women), {c.titles} {c.titles === 1 ? 'belt' : 'belts'}, {c.shows} weekly {c.shows === 1 ? 'show' : 'shows'}.
