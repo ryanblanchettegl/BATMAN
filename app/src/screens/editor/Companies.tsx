@@ -15,7 +15,7 @@ export function CompaniesTab() {
   const list = <>
     <div class="row mb2"><Btn kind="go" t="ed-add-company" onClick={add}>Add a company</Btn></div>
     <PickList t="ed-pick" sel={st.sel.companies} onPick={id => { st.sel.companies = id; }} empty="No companies yet. A world needs at least two."
-      items={pkg.promotions.map((x: any) => { const c = info.per[x.id]; return { id: x.id, label: x.name, sub: 'Pop ' + x.popularity + ' · ' + c.roster + ' wrestlers', bad: c.roster < 6 || !c.shows }; })} />
+      items={pkg.promotions.map((x: any) => { const c = info.per[x.id]; return { id: x.id, pic: <Logo of={x} size="chip" />, label: x.name, sub: 'Pop ' + x.popularity + ' · ' + c.roster + ' wrestlers', bad: c.roster < 6 || !c.shows }; })} />
   </>;
   if (!p) return <TwoPane open={false} list={list} onBack={() => { }}><p class="empty">Pick a company on the left, or add one.</p></TwoPane>;
   const c = info.per[p.id], own = p.owner || (p.owner = {}), staff = p.staff || (p.staff = {}), months: Opt[] = E.MONTHS.map((n: string, i: number) => [i + 1, n] as Opt);

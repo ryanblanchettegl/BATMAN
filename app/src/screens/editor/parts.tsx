@@ -34,12 +34,12 @@ export function Rating(p: { label: string; obj: Rec; k: string; opt?: boolean })
     {p.opt && has ? <Btn kind="sm" t="ed-rate-auto" d={{ k: p.k }} label={'Let the game work out ' + p.label} onClick={() => edit(() => { delete p.obj[p.k]; })}>Auto</Btn> : null}</div>
     <input type="range" min={0} max={100} value={v} aria-label={p.label} {...dataAttrs('ed-rate', { k: p.k })} onInput={e => { const n = +(e.currentTarget as HTMLInputElement).value; edit(() => { p.obj[p.k] = n; }); }} /></div>;
 }
-export interface Pick { id: string; label: string; sub?: string; bad?: boolean }
+export interface Pick { id: string; label: string; sub?: string; bad?: boolean; pic?: ComponentChildren }
 /** The list on the left of a tab. One row is open at a time. */
 export function PickList(p: { items: Pick[]; sel: string | null | undefined; onPick: (id: string) => void; t: string; empty: string; more?: string; many?: Record<string, any> }) {
   if (!p.items.length) return <p class="empty">{p.empty}</p>;
   return <div class="edlist" role="list">{p.items.map(it => <button type="button" key={it.id} class={'edrow' + ((p.many ? !!p.many[it.id] : it.id === p.sel) ? ' on' : '') + (it.bad ? ' bad' : '')} aria-pressed={p.many ? !!p.many[it.id] : it.id === p.sel} {...dataAttrs(p.t, { id: it.id })}
-    onClick={() => look(() => p.onPick(it.id))}><span class="nm">{it.label}</span>{it.sub ? <span class="st">{it.sub}</span> : null}</button>)}
+    onClick={() => look(() => p.onPick(it.id))}>{it.pic ? <span class="pic">{it.pic}</span> : null}<span class="nm">{it.label}</span>{it.sub ? <span class="st">{it.sub}</span> : null}</button>)}
     {p.more ? <p class="muted mt1">{p.more}</p> : null}</div>;
 }
 /** Delete in two presses, because the page cannot ask "are you sure?" in a system box. */

@@ -22,7 +22,7 @@ export function BeltsTab() {
     <div class="row mb2"><Field label="Company"><Sel t="ed-belts-for" value={pid} options={companyOpts(pkg)} onChange={v => look(() => { st.sel.beltsFor = v; st.sel.belts = null; })} /></Field>
       <Btn kind="go" t="ed-add-belt" onClick={() => edit(() => { const n = E.edAddTitle(pkg, pid, { name: 'New title' }); st.sel.belts = n.id; })}>Add a belt</Btn></div>
     <PickList t="ed-pick" sel={st.sel.belts} onPick={id => { st.sel.belts = id; }} empty="This company has no belts yet."
-      items={pkg.titles.filter((x: any) => x.promotion_id === pid).sort((a: any, b: any) => b.level - a.level).map((x: any) => ({ id: x.id, label: x.name, sub: (x.gender === 'F' ? 'Women' : 'Men') + ' · ' + (E.ED.levels[x.level] || 'Title') + (x.tag ? ' · Tag team' : '') + ((x.holder_ids || []).length ? '' : ' · Vacant') }))} />
+      items={pkg.titles.filter((x: any) => x.promotion_id === pid).sort((a: any, b: any) => b.level - a.level).map((x: any) => ({ id: x.id, pic: <Belt of={x} co={pkg.promotions.find((c: any) => c.id === x.promotion_id)} dot={0.4} />, label: x.name, sub: (x.gender === 'F' ? 'Women' : 'Men') + ' · ' + (E.ED.levels[x.level] || 'Title') + (x.tag ? ' · Tag team' : '') + ((x.holder_ids || []).length ? '' : ' · Vacant') }))} />
   </> : <p class="empty">Add a company first.</p>;
   if (!t) return <TwoPane open={false} list={list} onBack={() => { }}><p class="empty">Pick a belt on the left, or add one.</p></TwoPane>;
   const ros = roster(pkg, t.promotion_id, t.gender), hold: string[] = t.holder_ids || [], slots = t.tag ? [0, 1] : [0];
