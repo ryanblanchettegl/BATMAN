@@ -10,6 +10,8 @@ var LOGO_SHAPES=[['none','Letters only'],['shield','Shield'],['ring','Ring'],['l
 var LOGO_STYLES=[['block','Block'],['slant','Slanted'],['wide','Wide'],['tall','Tall'],['outline','Outlined'],['shadow','Shadowed']];
 var LOGO_LAYS=[['row','In a row'],['stack','Stacked'],['stair','Stairs'],['big','Big middle']];
 var LOGO_FINS=[['flat','Flat'],['split','Two-tone'],['stripe','Striped']];
+/** The lettering a logo is drawn in: marker, a heavy block face, a typewriter, a brush, a neat hand, a scrawl. */
+var LOGO_FONTS=[['marker','Marker'],['block','Heavy print'],['typed','Typewriter'],['brush','Brush'],['neat','Neat hand'],['scrawl','Scrawl']];
 var LOGO_EXTRAS=[['none','Nothing'],['stars','Three stars'],['bar','A bar'],['tag','A second line'],['edge','Edge lights']];
 var LOGO_COLS=[['#0000aa','Blue'],['#00aa00','Green'],['#00aaaa','Teal'],['#aa0000','Red'],['#aa00aa','Purple'],['#aa5500','Brown'],['#aaaaaa','Silver'],['#555555','Grey'],
   ['#5555ff','Bright blue'],['#55ff55','Bright green'],['#55ffff','Cyan'],['#ff5555','Bright red'],['#ff55ff','Pink'],['#ffff55','Yellow'],['#ffffff','White'],['#000000','Black']];
@@ -41,16 +43,16 @@ function logoFix(m){
 function logoFill(m,model,name,full){
   m=m&&typeof m==='object'?m:{};var D=LOGO_MODEL[model]||LOGO_MODEL.classic,col=function(v,d){return logoHas(LOGO_COLS,String(v).toLowerCase())?String(v).toLowerCase():d;};
   var o={l:m.l?logoLetters(m.l,''):logoLetters(name,full),st:logoHas(LOGO_STYLES,m.st)?m.st:'block',lay:logoHas(LOGO_LAYS,m.lay)?m.lay:'row',sh:logoHas(LOGO_SHAPES,m.sh)?m.sh:D[0],
-    fin:logoHas(LOGO_FINS,m.fin)?m.fin:'flat',c1:col(m.c1,D[1]),c2:col(m.c2,D[2]),c3:col(m.c3,D[3]),ex:logoHas(LOGO_EXTRAS,m.ex)?m.ex:'none',tag:logoTag(m.tag)};
+    fin:logoHas(LOGO_FINS,m.fin)?m.fin:'flat',c1:col(m.c1,D[1]),c2:col(m.c2,D[2]),c3:col(m.c3,D[3]),ex:logoHas(LOGO_EXTRAS,m.ex)?m.ex:'none',tag:logoTag(m.tag),fo:logoHas(LOGO_FONTS,m.fo)?m.fo:'marker'};
   if(o.ex==='tag'&&!o.tag)o.ex='none';
   return o;
 }
-function logoKey(m){return [m.l,m.st,m.lay,m.sh,m.fin,m.c1,m.c2,m.c3,m.ex,m.ex==='tag'?m.tag:''].join('|');}
+function logoKey(m){return [m.l,m.st,m.lay,m.sh,m.fin,m.c1,m.c2,m.c3,m.ex,m.ex==='tag'?m.tag:'',m.fo&&m.fo!=='marker'?m.fo:''].join('|');}
 /** A company's logo, in full. Works on a company in a game (P.name, P.full, P.model) and on one in a world package
     (name, full_name, model). */
 E.logoOf=function(P){return P?logoFill(P.logo,P.model||'classic',P.name,P.full||P.full_name):logoFill(null,'classic','EWF','');};
 /** The parts a logo can be made of, for the creator: each list is [id, name] pairs. */
-E.LOGO={shapes:LOGO_SHAPES,styles:LOGO_STYLES,lays:LOGO_LAYS,fins:LOGO_FINS,extras:LOGO_EXTRAS,cols:LOGO_COLS};
+E.LOGO={shapes:LOGO_SHAPES,styles:LOGO_STYLES,lays:LOGO_LAYS,fins:LOGO_FINS,fonts:LOGO_FONTS,extras:LOGO_EXTRAS,cols:LOGO_COLS};
 /** Fill in and tidy a logo that is being worked on. */
 E.logoFill=function(m,model,name,full){return logoFill(m,model,name,full);};
 /** Finished logos to choose from, made from the same letters: n of them, the same every time for the same letters and seed. */
@@ -58,7 +60,7 @@ E.logoIdeas=function(letters,n,seed){
   var l=logoLetters(letters,''),out=[],seen={},k=0;n=clamp(n|0||6,1,24);seed=seed|0;
   var pickOf=function(L,salt){return L[Math.floor(h01(l+':'+seed+':'+k+':'+salt)*L.length)%L.length][0];};
   while(out.length<n&&k<400){
-    var m={l:l,st:pickOf(LOGO_STYLES,'st'),lay:l.length===3||h01(l+seed+k+'lay2')<0.6?pickOf(LOGO_LAYS,'lay'):'row',sh:pickOf(LOGO_SHAPES,'sh'),fin:pickOf(LOGO_FINS,'fin'),c1:pickOf(LOGO_COLS,'c1'),c2:pickOf(LOGO_COLS,'c2'),c3:pickOf(LOGO_COLS,'c3'),ex:pickOf(LOGO_EXTRAS.filter(function(x){return x[0]!=='tag';}),'ex'),tag:''};
+    var m={l:l,st:pickOf(LOGO_STYLES,'st'),lay:l.length===3||h01(l+seed+k+'lay2')<0.6?pickOf(LOGO_LAYS,'lay'):'row',sh:pickOf(LOGO_SHAPES,'sh'),fin:pickOf(LOGO_FINS,'fin'),c1:pickOf(LOGO_COLS,'c1'),c2:pickOf(LOGO_COLS,'c2'),c3:pickOf(LOGO_COLS,'c3'),ex:pickOf(LOGO_EXTRAS.filter(function(x){return x[0]!=='tag';}),'ex'),tag:'',fo:h01(l+seed+k+'fo')<0.5?'marker':pickOf(LOGO_FONTS,'fo')};
     k++;
     if(m.c1==='#000000'||m.c2===m.c1)continue;
     m.c3=logoFix(m);var key=logoKey(m);if(seen[key])continue;seen[key]=1;out.push(m);

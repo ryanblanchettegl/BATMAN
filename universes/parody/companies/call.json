@@ -100,7 +100,18 @@
    "level": 3,
    "holder_ids": [
     "ultimo_soldado"
-   ]
+   ],
+   "belt": {
+    "pl": "crown",
+    "mt": "gold",
+    "st": "#5a3a22",
+    "gm": "purple",
+    "sd": 3,
+    "ss": "shield",
+    "tr": "etched",
+    "w": "WORLD",
+    "top": "CAL"
+   }
   },
   {
    "id": "call_middle",
@@ -109,7 +120,18 @@
    "level": 2,
    "holder_ids": [
     "el_sagrado_celestial"
-   ]
+   ],
+   "belt": {
+    "pl": "star",
+    "mt": "silver",
+    "st": "#1f4fa3",
+    "gm": "red",
+    "sd": 2,
+    "ss": "square",
+    "tr": "stitch",
+    "w": "WORLD",
+    "top": "CAL"
+   }
   },
   {
    "id": "call_historic",
@@ -118,7 +140,18 @@
    "level": 1,
    "holder_ids": [
     "monarca_jr"
-   ]
+   ],
+   "belt": {
+    "pl": "oval",
+    "mt": "silver",
+    "st": "#2f7a3a",
+    "gm": "none",
+    "sd": 1,
+    "ss": "shield",
+    "tr": "none",
+    "w": "HISTORIC",
+    "top": "CAL"
+   }
   },
   {
    "id": "call_women",
@@ -127,14 +160,36 @@
    "level": 3,
    "holder_ids": [
     "la_duquesa"
-   ]
+   ],
+   "belt": {
+    "pl": "oval",
+    "mt": "gold",
+    "st": "#d06aa0",
+    "gm": "purple",
+    "sd": 3,
+    "ss": "round",
+    "tr": "etched",
+    "w": "WORLD",
+    "top": "CAL"
+   }
   },
   {
    "id": "call_trios",
    "name": "CALL World Trios Championship",
    "gender": "M",
    "level": 1,
-   "holder_ids": []
+   "holder_ids": [],
+   "belt": {
+    "pl": "shield",
+    "mt": "silver",
+    "st": "#2f7a3a",
+    "gm": "none",
+    "sd": 1,
+    "ss": "shield",
+    "tr": "none",
+    "w": "WORLD",
+    "top": "CAL"
+   }
   }
  ],
  "roster": [
@@ -174,7 +229,7 @@
    "finisher_description": "A spinning, rolling sunset flip into a pin.",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 206250.0,
+    "monthly_salary": 206250,
     "weeks_left": 66,
     "push": "main_eventer"
    },

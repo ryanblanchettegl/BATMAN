@@ -104,7 +104,18 @@
    "level": 3,
    "holder_ids": [
     "santo_santiago"
-   ]
+   ],
+   "belt": {
+    "pl": "round",
+    "mt": "gold",
+    "st": "#5a3a22",
+    "gm": "purple",
+    "sd": 3,
+    "ss": "shield",
+    "tr": "etched",
+    "w": "WORLD",
+    "top": "TBA"
+   }
   },
   {
    "id": "tba_x",
@@ -113,7 +124,18 @@
    "level": 2,
    "holder_ids": [
     "leon_launchpad"
-   ]
+   ],
+   "belt": {
+    "pl": "shield",
+    "mt": "gold",
+    "st": "#5e2f86",
+    "gm": "none",
+    "sd": 2,
+    "ss": "round",
+    "tr": "none",
+    "w": "X-FACTOR",
+    "top": "TBA"
+   }
   },
   {
    "id": "tba_knockouts",
@@ -122,7 +144,18 @@
    "level": 3,
    "holder_ids": [
     "masha_meanslam"
-   ]
+   ],
+   "belt": {
+    "pl": "globe",
+    "mt": "gold",
+    "st": "#ece6d6",
+    "gm": "blue",
+    "sd": 3,
+    "ss": "square",
+    "tr": "etched",
+    "w": "WORLD",
+    "top": "TBA"
+   }
   },
   {
    "id": "tba_tag",
@@ -133,7 +166,18 @@
    "holder_ids": [
     "brother_ladder",
     "brother_ladder_b"
-   ]
+   ],
+   "belt": {
+    "pl": "shield",
+    "mt": "silver",
+    "st": "#a3221f",
+    "gm": "purple",
+    "sd": 2,
+    "ss": "square",
+    "tr": "stitch",
+    "w": "TAG TEAM",
+    "top": "TBA"
+   }
   },
   {
    "id": "tba_ko_tag",
@@ -141,7 +185,18 @@
    "gender": "F",
    "level": 1,
    "tag": true,
-   "holder_ids": []
+   "holder_ids": [],
+   "belt": {
+    "pl": "shield",
+    "mt": "bronze",
+    "st": "#ece6d6",
+    "gm": "white",
+    "sd": 2,
+    "ss": "round",
+    "tr": "stitch",
+    "w": "TAG TEAM",
+    "top": "TBA"
+   }
   },
   {
    "id": "tba_digital",
@@ -150,7 +205,18 @@
    "level": 1,
    "holder_ids": [
     "mitt_rebooted"
-   ]
+   ],
+   "belt": {
+    "pl": "oval",
+    "mt": "silver",
+    "st": "#5e2f86",
+    "gm": "none",
+    "sd": 1,
+    "ss": "shield",
+    "tr": "none",
+    "w": "DIGITAL",
+    "top": "TBA"
+   }
   }
  ],
  "roster": [

@@ -165,4 +165,5 @@ export * from './window';
 export * from './win';
 export * from './lights';
 export * from './logo';
+export * from './belt';
 export * from './roadmap';

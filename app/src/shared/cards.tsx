@@ -2,11 +2,12 @@
    They stack: a name inside a pop-up opens another on top, Back steps out one at a time, and the close box shuts them all. */
 import { ComponentChildren } from 'preact';
 import { E, W } from '../engine';
-import { G, ui, me, Card, openCard, popCard, closeCards, cash, full, plural, openModal, slice, view } from '../store';
+import { G, ui, me, Card, openCard, popCard, closeCards, cash, full, plural, openModal, slice, view, act } from '../store';
+import { openBeltMaker } from './beltmaker';
 import { go } from '../nav';
 import { rs } from '../screens/roster/state';
 import { sendScout } from '../screens/roster/Profile';
-import { Window, Btn, Tag, Name, Side, Meter, Portrait, BeltArt, TitleName, TeamName, PromoName, Empty, Logo, champOf, teamName, stars, grade, Txt } from '../kit';
+import { Window, Btn, Tag, Name, Side, Meter, Portrait, Belt, TitleName, TeamName, PromoName, Empty, Logo, champOf, teamName, stars, grade, Txt } from '../kit';
 
 const promoName = (pid: string) => pid === 'FA' ? 'Free agent' : (G.S.promos[pid] ? G.S.promos[pid].name : pid);
 /** Every title in the world this wrestler holds, with the promotion that owns it. */
@@ -138,7 +139,7 @@ function TitleCard(p: { pid: string; id: string }) {
   (t.hist || []).forEach((h: any) => { if (!longest || len(h) > len(longest)) longest = h; if (!most || h.defs > most.defs) most = h; });
   const who = (h: any) => list(String(h.ids).split(',').filter(Boolean).map((id: string) => S.w[+id] ? <Name w={S.w[+id]} /> : null));
   return <>
-    <BeltArt name={t.name} top={P.full || P.name} />
+    <div class="tbelt"><Belt of={t} co={P} size="board" dot={2.5} t="title-belt" />{p.pid === S.player ? <Btn kind="sm" t="title-belt-design" tip="Create a Belt: a new design for this title" onClick={() => openBeltMaker({ title: t, co: P, belt: E.beltOf(t, P), onSave: b => act(() => E.setBelt(G.S, t.id, b)) })}>New belt</Btn> : null}</div>
     <div class="kv mt1">
       <div><small>Promotion</small><span>{P.name}</span></div>
       <div><small>Division</small><span>{t.tag ? 'Tag team' : (t.g === 'F' ? 'Women' : 'Men')} {'·'} {t.lvl === 3 ? 'top title' : (t.lvl === 2 ? 'secondary' : 'third tier')}</span></div>

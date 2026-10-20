@@ -100,7 +100,18 @@
    "level": 3,
    "holder_ids": [
     "wpw_dan_murph"
-   ]
+   ],
+   "belt": {
+    "pl": "globe",
+    "mt": "gold",
+    "st": "#1c1b1f",
+    "gm": "blue",
+    "sd": 3,
+    "ss": "square",
+    "tr": "etched",
+    "w": "WORLD",
+    "top": "WPW"
+   }
   },
   {
    "id": "wpw_florida",
@@ -109,7 +120,18 @@
    "level": 2,
    "holder_ids": [
     "wpw_dan_murph"
-   ]
+   ],
+   "belt": {
+    "pl": "round",
+    "mt": "gold",
+    "st": "#2f7a3a",
+    "gm": "none",
+    "sd": 2,
+    "ss": "shield",
+    "tr": "none",
+    "w": "STATE",
+    "top": "WPW"
+   }
   },
   {
    "id": "wpw_tag",
@@ -120,7 +142,18 @@
     "wpw_blade_the_future_lavigne",
     "wpw_new_age_andrew_xavier"
    ],
-   "tag": true
+   "tag": true,
+   "belt": {
+    "pl": "shield",
+    "mt": "gold",
+    "st": "#18264a",
+    "gm": "none",
+    "sd": 2,
+    "ss": "square",
+    "tr": "none",
+    "w": "TAG TEAM",
+    "top": "WPW"
+   }
   },
   {
    "id": "wpw_pure",
@@ -129,7 +162,18 @@
    "level": 2,
    "holder_ids": [
     "wpw_justin_dreamer"
-   ]
+   ],
+   "belt": {
+    "pl": "oval",
+    "mt": "silver",
+    "st": "#a3221f",
+    "gm": "green",
+    "sd": 2,
+    "ss": "round",
+    "tr": "stitch",
+    "w": "PURE",
+    "top": "WPW"
+   }
   },
   {
    "id": "wpw_hardcore",
@@ -138,7 +182,18 @@
    "level": 1,
    "holder_ids": [
     "wpw_sky_ryder"
-   ]
+   ],
+   "belt": {
+    "pl": "square",
+    "mt": "black",
+    "st": "#1c1b1f",
+    "gm": "red",
+    "sd": 1,
+    "ss": "shield",
+    "tr": "studs",
+    "w": "HARDCORE",
+    "top": "WPW"
+   }
   },
   {
    "id": "pcw_world",
@@ -147,7 +202,18 @@
    "level": 3,
    "holder_ids": [
     "wpw_the_one"
-   ]
+   ],
+   "belt": {
+    "pl": "round",
+    "mt": "gold",
+    "st": "#5a3a22",
+    "gm": "white",
+    "sd": 3,
+    "ss": "square",
+    "tr": "etched",
+    "w": "WORLD",
+    "top": "WPW"
+   }
   }
  ],
  "roster": [

@@ -7,7 +7,7 @@ import { useEffect, useLayoutEffect, useRef } from 'preact/hooks';
 import { onBoardResize } from './lights';
 import { dataAttrs } from './index';
 
-export interface LogoData { l: string; st: string; lay: string; sh: string; fin: string; c1: string; c2: string; c3: string; ex: string; tag: string }
+export interface LogoData { l: string; st: string; lay: string; sh: string; fin: string; c1: string; c2: string; c3: string; ex: string; tag: string; fo?: string }
 const GW = 40, GH = 32;
 const dark = (h: string, k?: number) => { const n = parseInt(h.slice(1), 16); return '#' + [n >> 16, (n >> 8) & 255, n & 255].map(v => Math.round(v * (k || .42)).toString(16).padStart(2, '0')).join(''); };
 
@@ -16,6 +16,8 @@ const dark = (h: string, k?: number) => { const n = parseInt(h.slice(1), 16); re
    32 drawing), so a test can still read it unit by unit. */
 let logoPaints = 0;
 export function logoDraws(): number { return logoPaints; }
+/** The face and weight each lettering choice draws in. */
+const FACES: Record<string, [string, string, number]> = { marker: ['400', 'Craft Marker', 1], block: ['800', 'EWF Sans', 0.92], typed: ['400', 'Craft Typed', 0.95], brush: ['400', 'Craft Gochi', 1.1], neat: ['400', 'Craft Hand', 1.1], scrawl: ['700', 'Craft Kalam', 1] };
 function paintLogo(x: CanvasRenderingContext2D, m: LogoData, font: string) {
   const c1 = m.c1, c2 = m.c2, c3 = m.c3, s = m.sh, band = dark(c1);
   const poly = (pts: number[][], col: string) => { x.fillStyle = col; x.beginPath(); pts.forEach((q, i) => i ? x.lineTo(q[0], q[1]) : x.moveTo(q[0], q[1])); x.closePath(); x.fill(); };
@@ -48,15 +50,15 @@ function paintLogo(x: CanvasRenderingContext2D, m: LogoData, font: string) {
     if (m.fin === 'split') x.fillRect(0, cy, 40, 32 - cy); else for (let yy = 0; yy < 32; yy += 3) x.fillRect(0, yy, 40, 1);
     x.restore(); }
   // the letters, in marker
-  const str = m.l.slice(0, 3), st = m.st, lay = m.lay;
+  const str = m.l.slice(0, 3), st = m.st, lay = m.lay, F = FACES[m.fo || ''] || FACES.marker, face = (sz: number) => F[0] + ' ' + sz * F[2] + "px '" + F[1] + "', " + font;
   const put = (ch: string, cx: number, by: number, sz: number, sx: number, sy: number) => {
     x.save(); x.translate(cx, by); if (s === 'slash') x.rotate(-0.12); x.scale(sx, sy); if (st === 'slant') x.transform(1, 0, -0.25, 1, 0, 0);
-    x.font = '400 ' + sz + "px 'Craft Marker', " + font; x.textAlign = 'center'; x.textBaseline = 'alphabetic';
+    x.font = face(sz); x.textAlign = 'center'; x.textBaseline = 'alphabetic';
     if (st === 'outline') { x.lineWidth = 1.6; x.strokeStyle = '#000'; x.lineJoin = 'round'; x.strokeText(ch, 0, 0); }
     if (st === 'shadow') { x.fillStyle = '#000'; x.fillText(ch, .9, .9); }
     x.fillStyle = c3; x.fillText(ch, 0, 0); x.restore(); };
   // the letters' size: as big as fits about two thirds of the logo's width
-  let sz0 = 0; if (str) { const n0 = str.length; sz0 = n0 === 1 ? 15 : (n0 === 2 ? 11 : 9); x.font = '400 ' + sz0 + "px 'Craft Marker', " + font; const mw = x.measureText(str).width * (st === 'wide' ? 1.5 : 1); if (mw > 24) sz0 = sz0 * 24 / mw; }
+  let sz0 = 0; if (str) { const n0 = str.length; sz0 = n0 === 1 ? 15 : (n0 === 2 ? 11 : 9); x.font = face(sz0); const mw = x.measureText(str).width * (st === 'wide' ? 1.5 : 1); if (mw > 24) sz0 = sz0 * 24 / mw; }
   if (str) { const sx = st === 'wide' ? 1.5 : 1, sy = st === 'tall' ? 1.5 : 1, n = str.length, sz = sz0, adv = (24 / Math.max(1, n)) * Math.min(1, sz / 8) * (n === 1 ? 0 : 1);
     if (lay === 'stack') { for (let i = 0; i < n; i++) put(str[i], 20, 16 - (n * 8) / 2 + i * 8 + 7.2, 8.5, 1, 1); }
     else if (lay === 'big' && n === 3) { put(str[0], 11, cy + 4.5, 8, 1, 1); put(str[1], 20, cy + 6.5, 15, 1, 1); put(str[2], 29, cy + 4.5, 8, 1, 1); }

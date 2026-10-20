@@ -24,6 +24,8 @@ const whole = m => /^[A-Z0-9]{2,3}$/.test(m.l) && ids(M.styles).includes(m.st) &
   const odd = E.logoOf({ name: 'ABC', model: 'corporate', logo: { sh: 'banana', c1: '#123456', st: 'wide', ex: 'tag', tag: '' } });
   ok('fill', 'anything missing or unknown falls back to the model’s own', whole(odd) && odd.sh === 'shield' && odd.c1 === '#5555ff' && odd.st === 'wide' && odd.ex === 'none', key(odd));
   ok('fill', 'a second line is capitals and numbers, eight at most', E.logoOf({ name: 'ABC', logo: { ex: 'tag', tag: 'est. nineteen 97!' } }).tag === 'EST NINE');
+  ok('font', 'six lettering faces, marker unless one is picked, and an unknown one falls back to marker', M.fonts.length === 6 && E.logoOf({ name: 'ABC' }).fo === 'marker' && E.logoOf({ name: 'ABC', logo: { fo: 'typed' } }).fo === 'typed' && E.logoOf({ name: 'ABC', logo: { fo: 'comic' } }).fo === 'marker');
+  ok('font', 'ideas use more than one face', new Set(E.logoIdeas('WHW', 12, 0).map(m => m.fo)).size > 1);
   /* the creator's two rules */
   const same = E.logoOk(L, Object.assign({}, logos[1], { l: logos[1].l }), 'whw');
   ok('rule', 'a logo another company already has is refused, and it says who', !same.ok && same.errors.some(e => e.indexOf(L[1].name) >= 0), same.errors.join(' '));

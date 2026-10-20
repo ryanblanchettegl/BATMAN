@@ -100,7 +100,18 @@
    "level": 3,
    "holder_ids": [
     "phoenix_fumika"
-   ]
+   ],
+   "belt": {
+    "pl": "round",
+    "mt": "gold",
+    "st": "#ece6d6",
+    "gm": "green",
+    "sd": 3,
+    "ss": "square",
+    "tr": "etched",
+    "w": "WORLD",
+    "top": "SJ"
+   }
   },
   {
    "id": "nova_wonder",
@@ -109,7 +120,18 @@
    "level": 3,
    "holder_ids": [
     "twinkle_mask"
-   ]
+   ],
+   "belt": {
+    "pl": "crown",
+    "mt": "gold",
+    "st": "#d06aa0",
+    "gm": "purple",
+    "sd": 3,
+    "ss": "shield",
+    "tr": "etched",
+    "w": "WONDER",
+    "top": "SJ"
+   }
   },
   {
    "id": "nova_tag",
@@ -120,14 +142,36 @@
    "holder_ids": [
     "summer_sprite",
     "ticktock_tomoe"
-   ]
+   ],
+   "belt": {
+    "pl": "shield",
+    "mt": "gold",
+    "st": "#5e2f86",
+    "gm": "none",
+    "sd": 2,
+    "ss": "square",
+    "tr": "none",
+    "w": "TAG TEAM",
+    "top": "SJ"
+   }
   },
   {
    "id": "nova_artist",
    "name": "Artistes of Supernova Trios Championship",
    "gender": "F",
    "level": 1,
-   "holder_ids": []
+   "holder_ids": [],
+   "belt": {
+    "pl": "oval",
+    "mt": "silver",
+    "st": "#d06aa0",
+    "gm": "none",
+    "sd": 1,
+    "ss": "shield",
+    "tr": "none",
+    "w": "ARTISTES",
+    "top": "SJ"
+   }
   },
   {
    "id": "nova_future",
@@ -136,7 +180,18 @@
    "level": 1,
    "holder_ids": [
     "rookie_rei"
-   ]
+   ],
+   "belt": {
+    "pl": "bar",
+    "mt": "silver",
+    "st": "#5e2f86",
+    "gm": "none",
+    "sd": 1,
+    "ss": "shield",
+    "tr": "none",
+    "w": "FUTURE",
+    "top": "SJ"
+   }
   }
  ],
  "roster": [
@@ -176,7 +231,7 @@
    "finisher_description": "A 450 splash with a flame-coloured robe flourish.",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 206250.0,
+    "monthly_salary": 206250,
     "weeks_left": 38,
     "push": "main_eventer"
    },

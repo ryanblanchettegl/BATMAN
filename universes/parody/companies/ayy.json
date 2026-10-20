@@ -103,7 +103,18 @@
    "level": 3,
    "holder_ids": [
     "hijo_del_drakkar"
-   ]
+   ],
+   "belt": {
+    "pl": "crown",
+    "mt": "gold",
+    "st": "#5a3a22",
+    "gm": "purple",
+    "sd": 3,
+    "ss": "shield",
+    "tr": "etched",
+    "w": "MEGA",
+    "top": "AYY"
+   }
   },
   {
    "id": "ayy_latino",
@@ -112,7 +123,18 @@
    "level": 2,
    "holder_ids": [
     "el_senoron"
-   ]
+   ],
+   "belt": {
+    "pl": "round",
+    "mt": "gold",
+    "st": "#2f7a3a",
+    "gm": "none",
+    "sd": 2,
+    "ss": "shield",
+    "tr": "none",
+    "w": "CAMPEONATO",
+    "top": "AYY"
+   }
   },
   {
    "id": "ayy_cruiser",
@@ -121,7 +143,18 @@
    "level": 2,
    "holder_ids": [
     "nino_de_la_frontera"
-   ]
+   ],
+   "belt": {
+    "pl": "round",
+    "mt": "gold",
+    "st": "#1c1b1f",
+    "gm": "none",
+    "sd": 2,
+    "ss": "round",
+    "tr": "stitch",
+    "w": "PESO",
+    "top": "AYY"
+   }
   },
   {
    "id": "ayy_reina",
@@ -130,7 +163,18 @@
    "level": 3,
    "holder_ids": [
     "dama_serpiente"
-   ]
+   ],
+   "belt": {
+    "pl": "round",
+    "mt": "gold",
+    "st": "#5e2f86",
+    "gm": "green",
+    "sd": 3,
+    "ss": "square",
+    "tr": "etched",
+    "w": "REINA",
+    "top": "AYY"
+   }
   },
   {
    "id": "ayy_tag",
@@ -141,7 +185,18 @@
    "holder_ids": [
     "dodecaedro_jr",
     "senor_lagartija"
-   ]
+   ],
+   "belt": {
+    "pl": "shield",
+    "mt": "silver",
+    "st": "#1c1b1f",
+    "gm": "blue",
+    "sd": 2,
+    "ss": "round",
+    "tr": "stitch",
+    "w": "TAG TEAM",
+    "top": "AYY"
+   }
   }
  ],
  "roster": [
@@ -181,7 +236,7 @@
    "finisher_description": "A springboard 630 senton from the top rope.",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 206250.0,
+    "monthly_salary": 206250,
     "weeks_left": 122,
     "push": "main_eventer"
    },

@@ -3,6 +3,7 @@
    waist, the head at the neck, and each arm and leg at three pins. The doll is cut from a recipe; `recipeOf()`
    makes one from what the game already knows about a wrestler (the face numbers, gender, style, side and gimmick),
    so everybody in both worlds has a body with nothing added to the save. It only reads the game. */
+import { METAL, GEM, BeltData } from './beltcols';
 import { W, E } from '../engine';
 import { G } from '../store';
 import { faceOf } from './portrait';
@@ -661,7 +662,7 @@ function head(fr: F, r: Recipe, z: number, expr: string, cut: (f: F, poly: Pt[],
 }
 
 /* ---------- props: things that stand in a scene ---------- */
-export interface PropDraw { k: string; x: number; y: number; r: number; z: number; s?: number; txt?: string; col?: string; id: string }
+export interface PropDraw { k: string; x: number; y: number; r: number; z: number; s?: number; txt?: string; col?: string; id: string; bl?: BeltData }
 const PR = (pts: Pt[], cx: number, cy: number, a: number, s: number): Pt[] => pts.map(([x, y]) => { const d = rot([x * s, y * s], a); return [cx + d[0], cy + d[1]] as Pt; });
 export const PROPS: [string, string][] = [['belt', 'Title belt'], ['chair', 'Chair'], ['table', 'Table'], ['mic', 'Microphone'], ['burst', 'Burst'], ['sign', 'Sign'], ['headline', 'Headline'], ['confetti', 'Confetti'],
   ['spot', 'Spotlight'], ['beams', 'Coloured lights'], ['strobe', 'Strobes'], ['dim', 'Lights down'], ['sparks', 'Sparks'], ['fountain', 'Pyro fountain'], ['flash', 'A flash'], ['fire', 'A column of fire'],
@@ -670,7 +671,21 @@ export const PROPS: [string, string][] = [['belt', 'Title belt'], ['chair', 'Cha
 export function prop(p: PropDraw, out: Piece[], t = 0) {
   const a = p.r * Math.PI / 180, s = p.s || 1, z = p.z, own = p.id, seed = hash(p.id + p.k);
   const add = (pts: Pt[], col: string, dz: number, lift = 0.05, rough = 0.008) => out.push({ pts: snip(PR(pts, p.x, p.y, a, s), seed + out.length * 31, rough, 0.08), col, z: z + dz, lift, prop: own });
-  if (p.k === 'belt') {
+  if (p.k === 'belt' && p.bl) {   // a title's own belt (src/89-belts.js): its strap, its plates, its metal, its gem
+    const b = p.bl, [rim, face, shine] = METAL[b.mt] || METAL.gold, n = b.sd | 0;
+    add([[-1.0, -0.14], [1.0, -0.14], [1.0, 0.14], [-1.0, 0.14]], b.st || PAL.black, 0);
+    for (let i = 0; i < n; i++) for (const d of [-1, 1]) { const sx = d * (0.58 + i * 0.13); add(b.ss === 'round' ? ell(sx, 0, 0.065, 0.11, 10) : [[sx - 0.06, -0.11], [sx + 0.06, -0.11], [sx + 0.06, 0.08], [sx, 0.12], [sx - 0.06, 0.08]], face, 0.04); }
+    const plate = (k: number): Pt[] => b.pl === 'shield' ? [[-0.36 * k, -0.34 * k], [0.36 * k, -0.34 * k], [0.36 * k, 0.08 * k], [0, 0.38 * k], [-0.36 * k, 0.08 * k]]
+      : b.pl === 'diamond' ? [[0, -0.38 * k], [0.46 * k, 0], [0, 0.38 * k], [-0.46 * k, 0]]
+      : b.pl === 'square' || b.pl === 'crown' ? [[-0.36 * k, -0.3 * k], [0.36 * k, -0.3 * k], [0.36 * k, 0.3 * k], [-0.36 * k, 0.3 * k]]
+      : b.pl === 'bar' ? [[-0.52 * k, -0.2 * k], [0.52 * k, -0.2 * k], [0.52 * k, 0.2 * k], [-0.52 * k, 0.2 * k]]
+      : b.pl === 'star' ? star(0, 0, 0.42 * k, 5, 0.5)
+      : ell(0, 0, (b.pl === 'oval' ? 0.48 : 0.38) * k, (b.pl === 'oval' ? 0.34 : 0.36) * k, 20);
+    if (b.pl === 'crest') for (const d of [-1, 1]) add([[d * 0.2, -0.16], [d * 0.72, -0.28], [d * 0.7, -0.1], [d * 0.2, 0.08]], face, 0.03);
+    if (b.pl === 'crown') add([[-0.36, -0.3], [-0.36, -0.52], [-0.18, -0.38], [0, -0.56], [0.18, -0.38], [0.36, -0.52], [0.36, -0.3]], face, 0.04);
+    add(plate(1), rim, 0.04); add(plate(0.84), face, 0.08); add(ell(-0.12, -0.12, 0.12, 0.06, 10), shine, 0.1, 0.02, 0.004);
+    if (b.gm && b.gm !== 'none') add(ell(0, 0, 0.08, 0.08, 10), GEM[b.gm] || PAL.red, 0.12, 0.02, 0.003);
+  } else if (p.k === 'belt') {
     add([[-1.0, -0.14], [1.0, -0.14], [1.0, 0.14], [-1.0, 0.14]], PAL.black, 0);
     add(ell(0, 0, 0.48, 0.36, 20), PAL.gold, 0.04); add(ell(0, 0, 0.3, 0.22, 16), PAL.yellow, 0.08); add(star(0, 0, 0.14, 5, 0.45), PAL.red, 0.12, 0.02, 0.004);
     for (const sx of [-0.7, 0.7]) add(ell(sx, 0, 0.16, 0.13, 12), PAL.gold, 0.04);

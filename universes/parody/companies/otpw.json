@@ -102,7 +102,18 @@
    "level": 3,
    "holder_ids": [
     "simon_submission"
-   ]
+   ],
+   "belt": {
+    "pl": "crest",
+    "mt": "gold",
+    "st": "#1c1b1f",
+    "gm": "red",
+    "sd": 3,
+    "ss": "round",
+    "tr": "etched",
+    "w": "WORLD",
+    "top": "OTP"
+   }
   },
   {
    "id": "otpw_global",
@@ -111,7 +122,18 @@
    "level": 2,
    "holder_ids": [
     "tsubasa_tomorrow"
-   ]
+   ],
+   "belt": {
+    "pl": "round",
+    "mt": "gold",
+    "st": "#2f7a3a",
+    "gm": "none",
+    "sd": 2,
+    "ss": "shield",
+    "tr": "none",
+    "w": "GLOBAL-ISH",
+    "top": "OTP"
+   }
   },
   {
    "id": "otpw_junior",
@@ -120,7 +142,18 @@
    "level": 2,
    "holder_ids": [
     "el_solitario"
-   ]
+   ],
+   "belt": {
+    "pl": "star",
+    "mt": "silver",
+    "st": "#1f4fa3",
+    "gm": "none",
+    "sd": 2,
+    "ss": "square",
+    "tr": "stitch",
+    "w": "JUNIOR",
+    "top": "OTP"
+   }
   },
   {
    "id": "otpw_never",
@@ -129,7 +162,18 @@
    "level": 1,
    "holder_ids": [
     "grudge_gallagher"
-   ]
+   ],
+   "belt": {
+    "pl": "square",
+    "mt": "bronze",
+    "st": "#1c1b1f",
+    "gm": "none",
+    "sd": 1,
+    "ss": "shield",
+    "tr": "stitch",
+    "w": "OPENWEIGHT",
+    "top": "OTP"
+   }
   },
   {
    "id": "otpw_tag",
@@ -140,7 +184,18 @@
    "holder_ids": [
     "drill_sergeant_dorsey",
     "nurlan_ironarm"
-   ]
+   ],
+   "belt": {
+    "pl": "shield",
+    "mt": "silver",
+    "st": "#1c1b1f",
+    "gm": "red",
+    "sd": 2,
+    "ss": "round",
+    "tr": "stitch",
+    "w": "TAG TEAM",
+    "top": "OTP"
+   }
   },
   {
    "id": "otpw_women",
@@ -149,7 +204,18 @@
    "level": 2,
    "holder_ids": [
     "lady_khaos"
-   ]
+   ],
+   "belt": {
+    "pl": "shield",
+    "mt": "silver",
+    "st": "#ece6d6",
+    "gm": "red",
+    "sd": 2,
+    "ss": "round",
+    "tr": "stitch",
+    "w": "WOMEN’S",
+    "top": "OTP"
+   }
   }
  ],
  "roster": [
@@ -189,7 +255,7 @@
    "finisher_description": "A pretzel of arms and legs that changes shape every match.",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 206250.0,
+    "monthly_salary": 206250,
     "weeks_left": 66,
     "push": "main_eventer"
    },

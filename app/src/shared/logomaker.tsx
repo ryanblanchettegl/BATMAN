@@ -34,7 +34,7 @@ export function LogoMaker(p: { m: Modal }) {
   const v = E.logoOk(job.list, m, job.self), ideas: LogoData[] = E.logoIdeas(m.l, 6, st.seed);
   const save = () => { if (!v.ok) return; const r = job.onSave(m); if (r.ok) closeModal(); else view(() => { st.note = r.msg || 'That logo could not be kept.'; }); };
   const row = (label: string, k: keyof LogoData, L: any[]) => <div class="mm-row" role="group" aria-label={label}><span class="mm-l">{label}</span>
-    <span class="mm-opts">{L.map((o: any) => <Btn kind="sm" t={'logo-' + k} d={{ v: o[0] }} on={m[k] === o[0]} onClick={() => set({ [k]: o[0] } as any)}>{o[1]}</Btn>)}</span></div>;
+    <span class="mm-opts">{L.map((o: any) => <Btn kind="sm" t={'logo-' + k} d={{ v: o[0] }} cls={k === 'fo' ? 'lfo-' + o[0] : undefined} on={m[k] === o[0]} onClick={() => set({ [k]: o[0] } as any)}>{o[1]}</Btn>)}</span></div>;
   const sw = (label: string, k: 'c1' | 'c2' | 'c3') => <div class="mm-row" role="group" aria-label={label}><span class="mm-l">{label}</span>
     <span class="mm-sw">{P.cols.map((c: any) => <button type="button" class={'mm-c' + (m[k] === c[0] ? ' on' : '')} style={{ background: c[0] }} aria-label={label + ': ' + c[1]} aria-pressed={m[k] === c[0]} {...dataAttrs('logo-' + k, { v: c[0] })} onClick={() => set({ [k]: c[0] } as any)} />)}</span></div>;
   return <Window title={'The logo of ' + job.name} wide noOk hint="Esc closes without saving"
@@ -50,6 +50,7 @@ export function LogoMaker(p: { m: Modal }) {
         <div class="mm-row"><span class="mm-l">Letters</span><span class="mm-opts"><input type="text" value={m.l} maxLength={3} aria-label="Two or three letters" style={{ width: 'calc(7 * var(--ch))' }} {...dataAttrs('logo-l')}
           onInput={e => { const t = (e.currentTarget as HTMLInputElement).value.toUpperCase().replace(/[^A-Z0-9]/g, ''); if (t.length >= 2) set({ l: t }); }} />
           {P.styles.map((o: any) => <Btn kind="sm" t="logo-st" d={{ v: o[0] }} on={m.st === o[0]} onClick={() => set({ st: o[0] })}>{o[1]}</Btn>)}</span></div>
+        {row('Lettering', 'fo', P.fonts)}
         {row('Layout', 'lay', P.lays)}
         <div class="mm-row" role="group" aria-label="Shape"><span class="mm-l">Shape</span><span class="mm-shapes">{P.shapes.map((o: any) => <button type="button" class={'mm-s' + (m.sh === o[0] ? ' on' : '')} aria-label={'Shape: ' + o[1]} aria-pressed={m.sh === o[0]} title={o[1]} {...dataAttrs('logo-sh', { v: o[0] })} onClick={() => set({ sh: o[0] })}>
           <Logo of={{ ...m, sh: o[0], ex: 'none', l: m.l }} dot={1} label={o[1]} /></button>)}</span></div>

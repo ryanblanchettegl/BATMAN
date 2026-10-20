@@ -16,7 +16,7 @@ import { finScene, threeMoves } from '../../kit/caw';
 import { recipeOf, Recipe, commentator } from '../../kit/puppet';
 import { book } from '../../flow';
 import { fillScene, MomentPic, segPick, beatPick } from '../../shared/moment';
-import { Btn, KV, Meter, Banner, BeltArt, Portrait, CheckLine, stars, grade } from '../../kit';
+import { Btn, KV, Meter, Banner, BeltArt, Belt, Portrait, CheckLine, stars, grade } from '../../kit';
 import { Verdict, OddsLine, FxList, Crowd } from './Report';
 import { typer, preNote, liveSkip, liveEnd, liveDecide, liveCall, onAir, livePos, autoArm, autoStop, autoToggle, paceNext, PACE_N, tvKeys } from './run';
 import { Logo } from '../../kit/logo';
@@ -114,7 +114,7 @@ function Result(p: { s: any; best?: boolean }) {
   if (s.k !== 'match') return <div class="result"><p>The segment: <span class="gold">{stars(s.ov)}</span></p></div>;
   const score = (label: string, v: number, kind?: 'hot' | 'cool' | 'au') => <div class={kind === 'au' ? 'ov' : undefined}><span>{label}</span><span><Meter v={v} kind={kind} /></span></div>;
   return <>
-    {s.change ? <BeltArt name={s.title} /> : null}
+    {s.change ? (() => { const P = me(), t = (P.titles || []).find((x: any) => x.name === s.title); return t ? <Belt of={t} co={P} dot={2} /> : <BeltArt name={s.title} />; })() : null}
     <div class="result">
       <p><b>{s.win ? 'Winner: ' + s.win : 'Draw'}</b> {'·'} <span class="gold">{stars(s.ov)}</span>{p.best ? <> {'·'} <span class="gold" data-t="live-best">The best match of the night so far</span></> : null}</p>
       <OddsLine s={s} />

@@ -19,11 +19,12 @@ import * as manage from './screens/manage';
 import * as company from './screens/company';
 import * as kit from './screens/kit';
 import { LogoMaker } from './shared/logomaker';
+import { BeltMaker } from './shared/beltmaker';
 
 type Page = () => ComponentChildren;
 type ModalView = (p: { m: Modal }) => ComponentChildren;
 const PAGES: Record<string, Page> = { ...office.pages, ...booking.pages, ...roster.pages, ...stories.pages, ...net.pages, ...manage.pages, ...company.pages, ...kit.pages };
-const MODALS: Record<string, ModalView> = { ...start.modals, ...office.modals, ...booking.modals, ...roster.modals, ...stories.modals, ...net.modals, ...manage.modals, ...company.modals, logo: LogoMaker };
+const MODALS: Record<string, ModalView> = { ...start.modals, ...office.modals, ...booking.modals, ...roster.modals, ...stories.modals, ...net.modals, ...manage.modals, ...company.modals, belt: BeltMaker, logo: LogoMaker };
 
 /** The open pop-up. `{kind:'info', title, body}` shows any content; other kinds are registered by the sections. */
 function ModalHost() {

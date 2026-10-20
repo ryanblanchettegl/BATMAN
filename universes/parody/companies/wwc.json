@@ -137,7 +137,18 @@
    "brand": "slap",
    "holder_ids": [
     "colt_highway"
-   ]
+   ],
+   "belt": {
+    "pl": "round",
+    "mt": "gold",
+    "st": "#5a3a22",
+    "gm": "purple",
+    "sd": 3,
+    "ss": "shield",
+    "tr": "etched",
+    "w": "UNDISPUTED-ISH",
+    "top": "WWC"
+   }
   },
   {
    "id": "wwc_heavyish",
@@ -147,7 +158,18 @@
    "brand": "rawr",
    "holder_ids": [
     "wilt_wellness"
-   ]
+   ],
+   "belt": {
+    "pl": "globe",
+    "mt": "gold",
+    "st": "#1c1b1f",
+    "gm": "green",
+    "sd": 3,
+    "ss": "square",
+    "tr": "etched",
+    "w": "WORLD",
+    "top": "WWC"
+   }
   },
   {
    "id": "wwc_ic",
@@ -157,7 +179,18 @@
    "brand": "rawr",
    "holder_ids": [
     "dirty_junior"
-   ]
+   ],
+   "belt": {
+    "pl": "shield",
+    "mt": "silver",
+    "st": "#1c1b1f",
+    "gm": "purple",
+    "sd": 2,
+    "ss": "round",
+    "tr": "stitch",
+    "w": "BREAKFAST",
+    "top": "WWC"
+   }
   },
   {
    "id": "wwc_us",
@@ -167,7 +200,18 @@
    "brand": "slap",
    "holder_ids": [
     "silent_sione"
-   ]
+   ],
+   "belt": {
+    "pl": "star",
+    "mt": "gold",
+    "st": "#18264a",
+    "gm": "none",
+    "sd": 2,
+    "ss": "square",
+    "tr": "none",
+    "w": "UNITED",
+    "top": "WWC"
+   }
   },
   {
    "id": "wwc_womens_world",
@@ -177,7 +221,18 @@
    "brand": "rawr",
    "holder_ids": [
     "kumo_cloud"
-   ]
+   ],
+   "belt": {
+    "pl": "globe",
+    "mt": "gold",
+    "st": "#ece6d6",
+    "gm": "blue",
+    "sd": 3,
+    "ss": "square",
+    "tr": "etched",
+    "w": "WORLD-ISH",
+    "top": "WWC"
+   }
   },
   {
    "id": "wwc_womens",
@@ -187,7 +242,18 @@
    "brand": "slap",
    "holder_ids": [
     "tiara_orbit"
-   ]
+   ],
+   "belt": {
+    "pl": "crown",
+    "mt": "gold",
+    "st": "#ece6d6",
+    "gm": "purple",
+    "sd": 3,
+    "ss": "round",
+    "tr": "etched",
+    "w": "WOMEN’S",
+    "top": "WWC"
+   }
   },
   {
    "id": "wwc_tag_rawr",
@@ -199,7 +265,18 @@
    "holder_ids": [
     "kojo_crown",
     "xerxes_woodwind"
-   ]
+   ],
+   "belt": {
+    "pl": "shield",
+    "mt": "silver",
+    "st": "#5e2f86",
+    "gm": "white",
+    "sd": 2,
+    "ss": "shield",
+    "tr": "stitch",
+    "w": "TAG TEAM",
+    "top": "WWC"
+   }
   },
   {
    "id": "wwc_tag_slap",
@@ -211,7 +288,18 @@
    "holder_ids": [
     "block_party_ace",
     "block_party_deuce"
-   ]
+   ],
+   "belt": {
+    "pl": "shield",
+    "mt": "gold",
+    "st": "#ece6d6",
+    "gm": "none",
+    "sd": 2,
+    "ss": "shield",
+    "tr": "none",
+    "w": "TAG TEAM",
+    "top": "WWC"
+   }
   },
   {
    "id": "wwc_notyet",
@@ -221,7 +309,18 @@
    "brand": "notyet",
    "holder_ids": [
     "king_kayode"
-   ]
+   ],
+   "belt": {
+    "pl": "oval",
+    "mt": "silver",
+    "st": "#1f4fa3",
+    "gm": "none",
+    "sd": 2,
+    "ss": "square",
+    "tr": "stitch",
+    "w": "CHAMPION",
+    "top": "WWC"
+   }
   },
   {
    "id": "wwc_notyet_w",
@@ -231,7 +330,18 @@
    "brand": "notyet",
    "holder_ids": [
     "la_primera_paloma"
-   ]
+   ],
+   "belt": {
+    "pl": "star",
+    "mt": "gold",
+    "st": "#5e2f86",
+    "gm": "none",
+    "sd": 2,
+    "ss": "square",
+    "tr": "none",
+    "w": "WOMEN’S",
+    "top": "WWC"
+   }
   }
  ],
  "roster": [
@@ -271,7 +381,7 @@
    "finisher_description": "A charging tackle through the midsection, finished with a breath-freshening point to the crowd.",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 206250.0,
+    "monthly_salary": 206250,
     "weeks_left": 78,
     "push": "main_eventer",
     "brand": "rawr"
@@ -324,7 +434,7 @@
    "finisher_description": "A stiff, perfectly vertical powerbomb, followed by a lecture on posture.",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 206250.0,
+    "monthly_salary": 206250,
     "weeks_left": 48,
     "push": "main_eventer",
     "brand": "rawr"
@@ -430,7 +540,7 @@
    "finisher_description": "He drapes his opponent over his shoulders and drops them face-first onto his rising knee, then tucks them in.",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 206250.0,
+    "monthly_salary": 206250,
     "weeks_left": 136,
     "push": "main_eventer",
     "brand": "rawr"
@@ -483,7 +593,7 @@
    "finisher_description": "A running curb stomp, sold at full price.",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 206250.0,
+    "monthly_salary": 206250,
     "weeks_left": 140,
     "push": "main_eventer",
     "brand": "rawr"
@@ -1172,7 +1282,7 @@
    "finisher_description": "A pumphandle lift into a sit-out powerbomb, with a card.",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 206250.0,
+    "monthly_salary": 206250,
     "weeks_left": 124,
     "push": "main_eventer",
     "brand": "rawr"
@@ -1384,7 +1494,7 @@
    "finisher_description": "A seated armbar so tight it hands back a receipt.",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 206250.0,
+    "monthly_salary": 206250,
     "weeks_left": 94,
     "push": "main_eventer",
     "brand": "rawr"
@@ -1543,7 +1653,7 @@
    "finisher_description": "He spins his opponent into a falling cutter, then points at the eagle on his shirt.",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 206250.0,
+    "monthly_salary": 206250,
     "weeks_left": 40,
     "push": "main_eventer",
     "brand": "slap"
@@ -1649,7 +1759,7 @@
    "finisher_description": "A jumping cutter from out of nowhere. Nowhere is the corner.",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 206250.0,
+    "monthly_salary": 206250,
     "weeks_left": 140,
     "push": "main_eventer",
     "brand": "slap"
@@ -2179,7 +2289,7 @@
    "finisher_description": "A forward somersault into a cutter, then a ten-minute strut.",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 206250.0,
+    "monthly_salary": 206250,
     "weeks_left": 128,
     "push": "main_eventer",
     "brand": "slap"
@@ -3400,7 +3510,7 @@
    "legend": true,
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 206250.0,
+    "monthly_salary": 206250,
     "weeks_left": 134,
     "push": "main_eventer"
    },
