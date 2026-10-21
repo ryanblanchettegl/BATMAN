@@ -26,6 +26,7 @@ A seed is an event that happens anyway in the game. When one happens, the game c
 | A veteran announces a final year | The last year (wish 10, `src/82-wishes.js`) | **The last run** |
 | Two members of a wrestling family fall out | Family ties in the world's relationships | **Blood feud** |
 | A student passes the teacher | `src/76-student.js` | **The student and the master** |
+| You raid a rival's star, beat their big night in the same city, or win a ratings war week by a mile | `src/80-world.js`, `src/88-nights.js`, rival owners (wish 59) | **The rival booker** (section 4b) |
 
 If the month after the flagship ends with no seed taken, the game offers today's list as it does now, so a year is never without an arc.
 
@@ -68,7 +69,18 @@ The game watches for these while an arc is running. When one involves the arc's 
 
 A shape says what kinds of beat an arc needs and in what order: a seed, two to four rises or setbacks, at most one twist, the stakes, then the payoff at the flagship. Any beat that fits the shape and the cast can fill a slot. The same shape plays differently every year because the beats come from what happened.
 
-New shapes this makes possible, beyond today's three: the invasion, the comeback, the chosen one, the last run, civil war, blood feud, the student and the master.
+New shapes this makes possible, beyond today's three: the invasion, the comeback, the chosen one, the last run, civil war, blood feud, the student and the master, and the rival booker.
+
+## 4b. The rival booker (Bill, 21 October: "R5 - this should be a story arc")
+
+From the killer features research (idea R5, "a rival booker who knows you"). One rival company's booker becomes your career rival, and their year-long war with you is a company arc, not a background number.
+
+- **The seed.** You hurt a rival company in a way that is personal: you raid their star, put your big night against theirs in the same city and win, or beat them in the ratings by a mile. Their booker takes it personally, and the desk offers it as the story of the year.
+- **The booker as a person.** A name, a temperament (from the rival owner's, wish 59), habits (the shelved idea E17: likes stars, likes stunts, books the same finish), and a record of what you did to them, kept as memories like a wrestler's (`youRemember()`).
+- **Beats, fired by what happens** (section 3): they raid one of your people (a setback); they run their big show against yours (stakes); they talk about you in the dirt sheet and the magazine (0af); one of your people with a grievance (P3) turns up on their show (a twist); you win a ratings week (a rise); a working agreement or a peace offer (a twist); a leak from your room reaches them (Backstage Politics).
+- **The payoff at the flagship.** The war is decided by your flagship against their biggest night of the year: ratings, crowd, who signed whom. Beat them and their owner fires them; lose and your owner hears about it.
+- **It does not end with the year.** The booker is kept in the history. A fired booker turns up at another company, or as a rival booker again a year later, remembering. If you change jobs (wish 90), they can follow you. Their replacement has heard of you.
+- **Not the Nemesis system.** It is a rivalry between two companies' bookers through business decisions, kept clear of that patent (see `docs/plans/come-back-changed.md`).
 
 ## 5. The Director, scenes and modders
 
@@ -85,7 +97,7 @@ Ryan, 16 October: "Company Arcs, picked once a year." Still one arc a year endin
 1. **The beat format.** `BEATS` and shapes as data; today's three arcs ported onto them with the same chapters as offered beats. Headless test: the three arcs still start, run and pay off over 60 weeks with errs 0 and NaN 0.
 2. **Seeds.** The watcher that turns the events in section 1 into an offer on the desk, with the old list as the fallback after the month following the flagship.
 3. **Beats fired by events.** The events in section 3, the fallback timer, and more credit for beats the player booked. Test how often beats fire on their own over 60 weeks of every company and say so in the commit.
-4. **New shapes**, one at a time, each shown to Bill: the invasion, the comeback, the chosen one, the last run, civil war, blood feud, the student and the master.
+4. **New shapes**, one at a time, each shown to Bill: the rival booker first (section 4b, Bill asked for it), then the invasion, the comeback, the chosen one, the last run, civil war, blood feud, the student and the master.
 5. **Beats in the World Editor**, for modders.
 
 ## Open questions for Bill
