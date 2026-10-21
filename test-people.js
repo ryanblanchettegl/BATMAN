@@ -96,7 +96,7 @@ const spare = (S, n) => E.rosterOf(S, S.player).filter(w => !w.nw && !all(S).som
   let S = quiet(22), w = E.rosterOf(S, 'pdw').filter(x => !x.nw && !all(S).some(q => q.id === x.id || q.with === x.id)).sort((x, y) => x.ovr - y.ovr)[0]; w.mom = 3; w.con = 30; w.wage = 100;
   let p = find(S, w.id);
   ok('b1', 'somebody underpaid and winning asks for more money, and yes pays it', !!p && p.k === 'askraise' && /\$/.test(p.acts[0].d) && E.peopleDo(S, w.id, 'raise_yes').ok && w.wage > 100 && S.rmY[w.id].v > 0, p ? p.k + ' ' + p.acts[0].d : 'not there');
-  S = quiet(22); w = spare(S, 6); w.stress = 80; p = find(S, w.id);
+  S = quiet(22); w = E.rosterOf(S, S.player).filter(x => !x.nw && !all(S).some(q => q.id === x.id || q.with === x.id) && !S.promos[S.player].titles.some(t => t.holders.indexOf(x.id) >= 0)).sort((a, b) => b.ovr - a.ovr)[6]; w.stress = 80; p = find(S, w.id);   // a champion does not ask for time at home
   const r1 = p && p.k === 'askoff' ? E.peopleDo(S, w.id, 'off_yes') : null;
   ok('b2', 'somebody worn out asks for two weeks at home, and is off the card when you say yes', !!r1 && r1.ok && w.away === S.week + 2 && !find(S, w.id), p ? p.k : 'not there');
   S = quiet(23); const T = S.teams.find(t => t.promo === 'pdw' && t.m.every(id => !S.w[id].nw)); T.ls = 3; const a = S.w[T.m[0]], b = S.w[T.m[1]];

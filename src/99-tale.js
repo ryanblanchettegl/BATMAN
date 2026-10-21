@@ -60,7 +60,7 @@ var TALES={
         {n:'A chair to the back after a win',d:'Ugly and loud. The crowd will not forgive {T} for a long time.',turn:'T',feud:['T','H',45],split:1,hurtH:1,bond:[['T','H',-35]],s:9,beat:'feud_betray'},
         {n:'Walks out on {H} mid-match',d:'{T} leaves {H} alone, two against one. Colder, and it stings.',turn:'T',feud:['T','H',35],split:1,bond:[['T','H',-25]],s:6,safe:1},
         {n:'Reveals a deal with {c}',d:'{T} was working with {c} all along. A twist the crowd did not see coming.',turn:'T',feud:['T','H',40],split:1,bond:[['T','H',-30],['T','c',25]],s:8,beat:'feud_swerve'}],nextAll:'fallout'},
-      united:{n:'Two against one',beat:'feud_brawl',who:['a','b','c'],t:'{c} wants revenge on the team that ran them off, and has brought trouble.',q:'How do {a} and {b} answer?',o:[
+      united:{n:'Two against one',beat:'feud_brawl',who:['a','b','c'],t:'{c} wants revenge on {a} and {b}, the team that ran them off, and has brought trouble.',q:'How do {a} and {b} answer?',o:[
         {n:'They take {c} apart',d:'The team looks better than ever. A title shot looks closer.',next:'payoff_team',heat:8,s:5,safe:1},
         {n:'{a} takes a beating for {b}',d:'{a} is left lying. {b} owes them now, and the crowd knows it.',next:'payoff_team',hurt:'a',bond:[['a','b',12]],s:6},
         {n:'{b} is too slow to help',d:'{a} is left alone. Doubt creeps in.',next:'turn',set:{T:'b',H:'a'},bond:[['a','b',-15]],s:6}]},
@@ -123,8 +123,9 @@ function taleRun(S,P,show,ctx,sg){
   if(who.some(function(w){return !here(w);})){return angle(K.n,'The writers had a chapter of '+K.n.toLowerCase()+' ready, but '+who.filter(function(w){return !here(w);}).map(function(w){return w?w.name:'somebody';}).join(' and ')+' is not here. It waits.',40);}
   var byYou=A.ch!=null,ci=taleChoice(N,A.ch),o=N.o[ci];
   who.forEach(function(w){ctx.angled[w.id]=1;});
-  var talk=who.reduce(function(s,w){return s+0.55*micOf(S,w)+0.45*w.ovr;},0)/who.length;
-  var ov=clamp(talk*0.8+A.heat/6+(o.s||0)+(rnd(S)*6-3),5,99);
+  // scored the way the other angles are (segLook): the people in it, on the microphone and in the ring, and how hooked the crowd is on the story
+  var talk=who.reduce(function(s,w){return s+segMean(S,w,0);},0)/who.length,stand=0.8*who.reduce(function(s,w){return s+w.ovr;},0)/who.length+8;
+  var ov=clamp(0.5*talk+0.5*stand+A.heat/8+(o.s||0)/2+2+(rnd(S)*6-3),5,99);
   var r=angle(K.n,taleFill(S,A,N.t)+' '+taleFill(S,A,o.d),ov);
   taleApply(S,P,A,o);
   A.heat=clamp(A.heat+6+(o.s||0)/2+(o.heat||0)/2+(ov-55)/8,0,100);
@@ -155,10 +156,11 @@ function taleFeud(S,A){var f=A.feud!=null?S.feuds.filter(function(x){return x.id
 /** The end of an arc: how it landed, by how much the crowd came to care (A.heat), and what the last answer was. */
 function taleEnd(S,P,A,o,show,r){
   var K=TALES[A.k],res=o.res||'ended',land=A.heat>=65?'big':(A.heat>=40?'ok':'flat');
-  var img=land==='big'?3:(land==='ok'?1:-1),bp=land==='big'?2:(land==='ok'?1:0);
-  P.image=clamp(P.image+img,1,100);S.bp=(S.bp||0)+bp;if(S.owner&&!S.owner.me&&land!=='flat')S.owner.trust=clamp(S.owner.trust+(land==='big'?3:1),0,100);
+  // a few arcs a year: each pays a little (the year's company arc, src/99-arcs.js, is the big one). Popularity raises what every crowd expects, so it is paid sparingly
+  var img=land==='big'?1:(land==='flat'?-1:0),bp=land==='big'?2:(land==='ok'?1:0);
+  P.image=clamp(P.image+img,1,100);S.bp=(S.bp||0)+bp;if(S.owner&&!S.owner.me&&land!=='flat')S.owner.trust=clamp(S.owner.trust+(land==='big'?2:1),0,100);
   A.done=1;A.res=res;(S.sas||(S.sas=[])).push({k:A.k,n:K.n,res:res,land:land,y:cal(S.week).label,cast:Object.keys(A.cast).filter(function(x){return x==='T'||x==='H'||(!A.cast.T&&(x==='a'||x==='b'));}).map(function(x){return A.cast[x];})});
-  S.sa=null;S.saNext=S.week+4;
+  S.sa=null;S.saNext=S.week+6;
   if(r)r.text+=' '+K.n+' '+res+(land==='big'?', and the crowd will remember it.':(land==='ok'?'.':', but the crowd had stopped caring a while ago.'));
   news(S,'story',K.n+' '+res+' at '+show.name+'.');note(S,'The arc is over',K.n+' '+res+'.',land==='flat'?'bad':'good');
 }
@@ -240,12 +242,14 @@ SEGNEW.push(function(S,L){locksNow(S).forEach(function(l){if(l.kind==='promo'&&l
   E.suggest=function(S){
     var c=s0(S),L=locksNow(S).filter(function(l){return l.kind==='match';});if(!L.length)return c;
     var saved=S.card;S.card=[];lockSeed(S);var put=S.card.filter(function(m){return m&&m!=='wait';});S.card=saved;
-    put.forEach(function(m){var ids=flat(m.sides).filter(function(x){return x!=null;});
-      c=c.filter(function(x){return !flat(x.sides).some(function(id){return ids.indexOf(id)>=0;})&&!(m.title&&x.title===m.title);});
+    put.forEach(function(m){var ids=flat(m.sides).filter(function(x){return x!=null;}),clash=function(x){return flat(x.sides).some(function(id){return ids.indexOf(id)>=0;})||(m.title&&x.title===m.title);};
+      // it takes the place of the match it replaces (often the main event, with the same champion in it); else it goes before the main event
+      var at=-1;c.forEach(function(x,k){if(at<0&&clash(x))at=k;});var wasMain=at>=0&&at===c.length-1;
+      c=c.filter(function(x,k){return !clash(x);});
       // fill an open spot with somebody fresh on the roster of the right kind
       m.sides.forEach(function(sd,k){sd.forEach(function(id,q){if(id!=null)return;var used={};c.concat([m]).forEach(function(x){flat(x.sides).forEach(function(y){used[y]=1;});});
         var a=S.w[flat(m.sides).filter(function(x){return x!=null;})[0]],pick=eligible(S,S.promos[S.player],S.queue[S.qi]).filter(function(w){return !used[w.id]&&w.g===a.g;}).sort(function(x,y){return Math.abs(x.ovr-a.ovr)-Math.abs(y.ovr-a.ovr);})[0];if(pick)sd[q]=pick.id;});});
-      c.splice(Math.max(0,c.length-1),0,m);});
+      if(wasMain)c.push(m);else c.splice(at>=0?Math.min(at,c.length):Math.max(0,c.length-1),0,m);});
     fitShow(S,c);return c;
   };
 })();
