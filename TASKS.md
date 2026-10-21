@@ -889,13 +889,12 @@ The relationship web as a board of Polaroids and string, built by itself on the 
 
 ### 14. Later: careers and the long game (Bill, 21 October: "I like ideas 1-5 add those to long term planning")
 
-Five features from the genre research (career, sports management and dynasty games). Plan: `docs/plans/careers-and-long-game.md`. Not before the balance and first-hour work above (Bill paused new features until then).
+Four features from the genre research (free agency week was dropped: wrestling has none) (career, sports management and dynasty games). Plan: `docs/plans/careers-and-long-game.md`. Not before the balance and first-hour work above (Bill paused new features until then).
 
 - [ ] Wrestler career mode, "Road to the Main Event": play one wrestler in the living world while that company's AI booker books you; the asks at Your office become your moves (L).
 - [ ] One life in wrestling: the same save goes on from wrestler to manager, commentator or agent, then booker, then owner, and on to the student you trained (M, after the career mode).
 - [ ] The owner's five-year vision: goals for each company model in the welcome letter, a checkpoint each wrestling year after the flagship, trust that follows the plan (M).
 - [ ] The recruiting pitch: every free agent wants three things and may have a dealbreaker; the Offer window says in words how well you offer each; rivals pitch too (M).
-- [ ] Free agency week: a wave of contracts ends together in the week after the flagship, with a live ticker of rumours and signings on the Net (M).
 
 ## After each task
 

@@ -1,6 +1,6 @@
-# Careers and the long game: five features from other genres
+# Careers and the long game: four features from other genres
 
-Bill, 21 October 2026: "I like ideas 1-5 add those to long term planning", then "one life in wrestling is awesome too". These come from the genre research doc (career, sports management, dynasty, 4X, grand strategy and simulation games): https://claude.ai/artifact/VGDEmfsJv4LgCXPwn8TyUQ. Nothing here is built. They sit in `TASKS.md` section 14, after the balance and first-hour work (Bill paused new features until that is done).
+Bill, 21 October 2026: "I like ideas 1-5 add those to long term planning", then "one life in wrestling is awesome too", and dropped free agency week ("wrestling doesn't have a free agency week, lets not do that"). These come from the genre research doc (career, sports management, dynasty, 4X, grand strategy and simulation games): https://claude.ai/artifact/VGDEmfsJv4LgCXPwn8TyUQ. Nothing here is built. They sit in `TASKS.md` section 14, after the balance and first-hour work (Bill paused new features until that is done).
 
 Sizes follow `WISHLIST.md`: S is one commit, M is two or three, L is a week with this plan as its start.
 
@@ -66,17 +66,3 @@ Steps:
 1. Priorities per wrestler, from goals, age, hometown and mood; how each company meets each, read from the game.
 2. The Offer window shows the three and the dealbreaker; a signing depends on them as well as the wage.
 3. Rivals compete for the same free agent, and After the show or the Net says who went where and why.
-
-## 5. Free agency week (M)
-
-Borrowed from the opening of NBA free agency and deadline day in Football Manager.
-
-Once a year, at the end of the business year (the week after the flagship, when a new wrestling year starts), a wave of contracts across the world run out together. For one week the Net is a live ticker of rumours, offers and signings. Rivals bid, the press leaks names, and the reporter with the best sources (`src/99-press.js`) gets it right first.
-
-What it uses: the Net (`src/94-net.js`), the press, raids (wish 60), the indies (`src/88-indies.js`), contract lengths (roadmap 28) and the recruiting pitch (4).
-
-Steps:
-
-1. Contract ends bunched toward the business year's end for new deals (some, not all).
-2. The week itself: rivals' bids and signings run day by day, headless first.
-3. The ticker on the Net, and a summary on the desk when the week ends.
