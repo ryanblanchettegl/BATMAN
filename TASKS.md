@@ -129,12 +129,12 @@ The parody world's past comes from real wrestling history, as fixed anchors unde
 
 ### 0ac. The last booker's mess (Bill, 21 October: "perfect for the main new game mode when we walk through people how to play the game")
 
-Two ways to start: the **main game** opens six to eight weeks before the flagship in the previous booker's office, whose documents (a title promise, an unhappy star, a napkin main event, the owner's memo, a leak, unpaid bills) are real matters that teach the game; **sandbox** is a free start, as today. Plan: `docs/plans/last-booker.md`.
+Two ways to start: the **main game** opens in the week of the flagship, in the previous booker's office, whose documents (a title promise, an unhappy star, the advertised main event, the owner's memo, a leak, unpaid bills) are real matters that teach the game. The player's first job is to book the biggest show of the year; the week after, a new year begins. **A wrestling year ends at the big show** (Bill, 21 October). **Sandbox** is a free start, as today. Plan: `docs/plans/last-booker.md`.
 
-- [ ] Step 1: the mode choice, and the main game starting weeks before the flagship (headless test).
+- [ ] Step 1: the mode choice, and the main game starting in the flagship's week with year one starting the week after (headless test).
 - [ ] Step 2: the mess built from what is true of the company, by hash.
 - [ ] Step 3: the office screen with the drawers and documents, opening onto the desk's tasks.
-- [ ] Step 4: the first year's required actions re-ordered around an early flagship (section 0h).
+- [ ] Step 4: the first year's required actions start the week after the flagship (section 0h), and yearly systems (awards, annual report, the owner's verdict) close at the flagship.
 - [ ] Step 5: the last booker as a person in the history, once pre-history (0ab) exists.
 
 ### 0w. Still pictures for the moments you answer (Ryan, 18 October)
