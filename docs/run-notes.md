@@ -17,7 +17,7 @@ Versions 0.64 to 0.68. Ryan: "Lets knock it all out in this go." The queue is wo
 
 ## Left for Ryan
 
-- **5.4 and 5.7:** a new slot screen and booking the whole week ahead. Both rework the card builder, which already fits one screen.
+- **5.4:** a new slot screen. It reworks the card builder, which already fits one screen. (5.7, booking the whole week ahead, was dropped by Ryan on 21 October.)
 - **5.9 Fast mode:** not built, because running a show without the broadcast breaks his rule that a show on the air cannot be skipped.
 - **Job 4:** scripted storyline templates. Not built; he chose living storylines.
 - **Building by hand:** the road books the building, so picking the town and building by hand (TASKS) is ticked as done another way. He may still want it.
