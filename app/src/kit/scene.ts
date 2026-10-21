@@ -104,7 +104,7 @@ export function fxClass(sc: Scene): string { const f = sc.fx || {}; return SCENE
 /** When the broadcast plays a scene. A scene made by a player can take any of these. */
 /** What a scene is for. The match moments play on the broadcast now; the rest are where scenes go next
     (Ryan, 18 October: breaking news, talk show highlights, posters, magazine covers, portraits, everything). */
-export const WHEN: [string, string][] = [['start', 'The opening bell'], ['mid', 'Back and forth'], ['nearfall', 'A near fall'], ['finish', 'The finish'], ['champion', 'A new champion'], ['promo', 'A promo'], ['attack', 'An attack'], ['entrance', 'The entrance'], ['taunt', 'A taunt'], ['tag', 'A tag team match'],
+export const WHEN: [string, string][] = [['start', 'The opening bell'], ['mid', 'Back and forth'], ['nearfall', 'A near fall'], ['finish', 'The finish'], ['champion', 'A new champion'], ['promo', 'A promo'], ['attack', 'An attack'], ['entrance', 'The entrance'], ['taunt', 'A taunt'], ['tag', 'A tag team match'], ['finish_sub', 'The finish: a tap-out'], ['finish_flash', 'The finish: a roll-up'], ['finish_cheap', 'The finish: a cheap win'], ['finish_dq', 'The finish: a disqualification'],
   ['desk1', 'The desk: play-by-play talking'], ['desk2', 'The desk: colour talking'], ['news', 'Breaking news'], ['talk', 'A talk show'], ['poster', 'A poster'], ['cover', 'A magazine cover'], ['portrait', 'A portrait'], ['any', 'Only by hand']];
 /** What a still picture is for: the moments the booker has to answer (Ryan, 18 October: "one static diorama image of
     the wrestler getting hurt, backstage fight"). The desk and the broadcast pick one by what the matter is about. */
@@ -1046,6 +1046,53 @@ const MORE2: Record<string, () => Scene> = {
   senton: () => offTop('A senton bomb', 'SENTON!', { ...POSED('back', 6.4, 8.2, -1, 5.6), r: 200, p: { hip_n: 80, kn_n: -100, hip_f: 75, kn_f: -100, sh_n: 160, sh_f: 150 } }, { ...POSED('back', 3.5, 5.9, -1, 0.6), p: { hip_n: 70, kn_n: -60 } }),
   shootingstar: () => offTop('A shooting star press', 'SHOOTING STAR!', { ...POSED('moonsault', 7.6, 9.2, -1, 6.5), r: 120 }, POSED('splash', 3.5, 5.9, -1, 0.75), { ...POSED('splash', 5.2, 7.4, -1, 4), r: 300 }),
 };
+/* ---------- more of the back and forth: on the floor, the referee down, the comeback ---------- */
+const FL = (k: string, x: number, z: number, f: number, e?: string) => POSED(k, x, z, f, -3, e);   // standing on the floor outside the ring
+const FLCAM = C3([13, 3, 12], [12.4, -2.4, 0], 40), FLCAM2 = C3([17, 2, 6], [12.4, -2, 0], 38);
+export const MID_MORE: Scene[] = flourishAll([
+  { v: 1, id: 'floor_brawl', name: 'A fight on the floor', when: 'mid', set: 'ring', slots: MOVE_SLOTS, keys: [
+    { t: 0, figs: { A: FL('fists', 11.6, 0.6, 1), B: FL('fists', 13.4, 0.2, -1), R: POSED('point', 9, 0, 1) }, props: [], cam3: FLCAM },
+    { t: 0.5, figs: { A: FL('punch', 12.2, 0.6, 1, 'roar'), B: FL('stagger', 13.6, 0.2, -1), R: { ...POSED('point', 9, 0, 1), p: { sh_n: 160, el_n: 10, sh_f: 30 }, e: 'shout' } }, props: [burst('b1', 'POW!', 14, -0.6)], cam3: FLCAM2 },
+    { t: 1.0, figs: { A: FL('fists', 12.0, 0.6, 1), B: FL('punch', 13.0, 0.2, -1, 'roar'), R: { ...POSED('point', 9, 0, 1), p: { sh_n: 160, el_n: 10, sh_f: 30 }, e: 'shout' } }, props: [burst('b2', 'WHACK!', 11.2, -0.6)], cam3: FLCAM },
+    { t: 1.6, figs: { A: FL('charge', 12.8, 0.6, 1, 'roar'), B: { ...FL('stagger', 14.4, 0.2, -1), r: -25 }, R: POSED('point', 9, 0, 1) }, props: [], cam3: FLCAM2 },
+    { t: 2.2, figs: { A: FL('point', 13, 0.6, 1), B: { ...FL('corner', 14.8, 0.2, -1), y: -3 + W_ - 0.8 }, R: POSED('point', 9, 0, 1) }, props: [burst('b3', 'INTO THE BARRIER!', 14, 1.4, PAL.red)], cam3: FLCAM }] },
+  { v: 1, id: 'ref_bump', name: 'The referee goes down', when: 'mid', set: 'ring', slots: MOVE_SLOTS, keys: [
+    { t: 0, figs: { A: FG('charge', -3.4, 1), B: FG('stand', 1.6, -1), R: STD(0.4, -1, { sh_n: 100, el_n: 10 }, 'shout', 0.2) }, props: [], cam3: CM.wide },
+    { t: 0.5, figs: { A: FG('charge', -1.2, 1, {}, { e: 'roar' }), B: FG('doubled', 2.6, -1), R: STD(0.4, -1, { sh_n: 100, el_n: 10 }, 'shout', 0.2) }, props: [], cam3: CM.close },
+    { t: 0.8, ease: 'in', figs: { A: FG('stand', -0.2, 1, { torso: 16, sh_n: 100, el_n: 0, hip_n: 34, kn_n: -24 }), B: FG('doubled', 2.6, -1), R: { ...POSED('back', 1.4, 0.2, -1, 0, 'pain'), y: W_ + 0.4, r: 120 } }, props: [burst('b1', 'NO! THE REFEREE!', 3, 3.4, PAL.red)], cam3: CM.low },
+    { t: 1.5, figs: { A: FG('stand', -0.4, 1, { sh_n: 60, el_n: 100, sh_f: 60, el_f: 100, head: -10 }, { e: 'shout' }), B: FG('stand', 2.6, -1, { sh_n: 100, el_n: 120 }, { e: 'shout' }), R: POSED('back', 1.8, 0.2, -1, 0, 'pain') }, props: [], cam3: CM.high }] },
+  { v: 1, id: 'comeback', name: 'Fired up', when: 'mid', set: 'ring', slots: MOVE_SLOTS, keys: [
+    { t: 0, figs: { A: FG('kneel', -0.4, 1, { head: -20, sh_n: 20, el_n: 90, sh_f: 20, el_f: 90 }, { e: 'pain' }), B: FG('fists', 1.6, -1, {}, { e: 'smirk' }), R: REF_(-4.5, -4, 1) }, props: [], cam3: CM.close },
+    { t: 0.8, figs: { A: FG('stand', -0.4, 1, { sh_n: 80, el_n: 110, sh_f: 80, el_f: 110, head: 10 }, { e: 'roar' }), B: FG('fists', 1.5, -1, { sh_n: 95, el_n: 5 }), R: REF_(-4.5, -4, 1) }, props: [burst('b1', 'FIRED UP!', -3, 4.4)], cam3: CM.low },
+    { t: 1.2, figs: { A: FG('punch', 0.2, 1, {}, { e: 'roar' }), B: FG('stagger', 1.6, -1), R: REF_(-4.5, -4, 1) }, props: [], cam3: CM.close },
+    { t: 1.6, figs: { A: { ...FG('punch', 0.6, 1, {}, { e: 'roar' }), p: { torso: 12, sh_f: 95, el_f: 5, sh_n: 30, el_n: 90, hip_n: 30, kn_n: -20 } }, B: FG('stagger', 2.2, -1), R: REF_(-4.5, -4, 1) }, props: [burst('b2', 'POW! POW!', 3.6, 3.6)], cam3: CM.close },
+    { t: 2.1, figs: { A: FG('flex', 0.6, 1), B: FG('back', 3, -1, {}, { e: 'pain' }), R: REF_(-4.5, -4, 1) }, props: [], cam3: CM.wide }] },
+]);
+/* ---------- how a match ends: a tap-out, a roll-up out of nowhere, a handful of tights, a disqualification ---------- */
+const finScene2 = (id: string, name: string, when: string, keys: Key[]): Scene => ({ v: 1, id, name, when, set: 'ring', slots: MOVE_SLOTS, keys });
+export const FIN_MORE: Scene[] = flourishAll([
+  finScene2('fin_tap', 'Tapping out', 'finish_sub', [
+    { t: 0, figs: { A: FG('kneel', -0.2, 1, { sh_n: 95, el_n: 135, sh_f: 95, el_f: 135 }, { e: 'roar' }), B: FG('sit', 0.4, 1, { head: -20, sh_n: 40, el_n: 90 }, { e: 'pain' }), R: REFK_(3, -2, -1) }, props: [], cam3: CM.close },
+    { t: 0.7, figs: { A: FG('kneel', -0.2, 1, { sh_n: 95, el_n: 140, sh_f: 95, el_f: 140 }, { e: 'roar' }), B: FG('sit', 0.4, 1, { head: -25, sh_n: 90, el_n: 10 }, { e: 'pain' }), R: { ...REFK_(3, -2, -1), e: 'shout' } }, props: [burst('b1', 'TAP!', 2.6, 2.4)], cam3: CM.low },
+    { t: 1.1, figs: { A: FG('kneel', -0.2, 1, { sh_n: 95, el_n: 140, sh_f: 95, el_f: 140 }), B: FG('sit', 0.4, 1, { head: -25, sh_n: 70, el_n: 10 }, { e: 'pain' }), R: { ...REFK_(3, -2, -1), e: 'shout' } }, props: [burst('b1', 'TAP! TAP!', 2.6, 2.4)], cam3: CM.low },
+    { t: 1.8, figs: { A: FG('stand', -0.6, 1, { sh_n: 160, el_n: 10, sh_f: -150 }, { e: 'shout' }), B: FG('back', 1.4, -1, {}, { e: 'pain' }), R: STD(0.6, -1, { sh_n: 150, el_n: 10, sh_f: 10 }, 'shout', 0.3) }, props: [burst('b2', 'IT\'S OVER!', 3.4, 3.4, PAL.red)], cam3: CM.wide }]),
+  finScene2('fin_rollup', 'A roll-up out of nowhere', 'finish_flash', [
+    { t: 0, figs: { A: FG('stagger', -0.8, 1), B: FG('charge', 1.6, -1, {}, { e: 'roar' }), R: REF_(4, -4, -1) }, props: [], cam3: CM.wide },
+    { t: 0.5, figs: { A: FG('kneel', -0.2, 1, { sh_n: 90, el_n: 60, sh_f: 90, el_f: 60, torso: 30 }), B: FG('doubled', 0.5, -1, {}, { e: 'hurt' }), R: REF_(4, -4, -1) }, props: [], cam3: CM.close },
+    { t: 0.9, ease: 'in', figs: { A: FG('cover', 0.1, 1), B: FG('back', 0.6, -1, { hip_n: 70, kn_n: -60, hip_f: 65, kn_f: -60 }, { e: 'shout' }), R: POSED('kneel', 3.2, -1.5, -1) }, props: [burst('b1', 'ONE, TWO...', 3.4, 3)], cam3: CM.low },
+    { t: 1.6, figs: { A: FG('cover', 0.1, 1), B: FG('back', 0.6, -1, { hip_n: 70, kn_n: -60, hip_f: 65, kn_f: -60 }, { e: 'shout' }), R: POSED('kneel', 3.2, -1.5, -1) }, props: [burst('b1', 'THREE!', 3.4, 3, PAL.red)], cam3: CM.low },
+    { t: 2.3, figs: { A: FG('point', -0.6, 1, { sh_n: 160 }, { e: 'smirk' }), B: FG('sit', 1.0, -1, { sh_n: 100, el_n: 120 }, { e: 'shout' }), R: STD(2.6, -1, { sh_n: 100, el_n: 10 }, 'shout', 0.3) }, props: [], cam3: CM.wide }]),
+  finScene2('fin_tights', 'A handful of tights', 'finish_cheap', [
+    { t: 0, figs: { A: FG('kneel', -0.3, 1, { sh_n: 60, el_n: 40 }), B: FG('back', 0.8, -1, {}, { e: 'pain' }), R: REF_(4, -5, -1) }, props: [], cam3: CM.close },
+    { t: 0.6, figs: { A: FG('cover', 0.2, 1, { sh_f: -150 }, { e: 'smirk' }), B: FG('back', 0.8, -1, {}, { e: 'pain' }), R: POSED('kneel', 3, -1.5, -1) }, props: [burst('b1', 'TIGHTS!', -2.4, 3.2)], cam3: CM.low },
+    { t: 1.2, figs: { A: FG('cover', 0.2, 1, { sh_f: -150 }, { e: 'smirk' }), B: FG('back', 0.8, -1, {}, { e: 'shout' }), R: POSED('kneel', 3, -1.5, -1) }, props: [burst('b1', 'THREE!', 3.4, 3, PAL.red)], cam3: CM.low },
+    { t: 1.9, figs: { A: FG('stand', -1.2, 1, { sh_n: 160, el_n: 10 }, { e: 'smirk' }), B: FG('sit', 0.8, -1, { sh_n: 95, el_n: 5 }, { e: 'shout' }), R: STD(2.4, -1, { sh_n: 60, el_n: 100, sh_f: 60, el_f: 100 }, '', 0.3) }, props: [], cam3: CM.wide }]),
+  finScene2('fin_dq', 'Disqualified', 'finish_dq', [
+    { t: 0, figs: { A: FG('lift', -0.6, 1, {}, { e: 'roar' }), B: FG('back', 1.2, -1, {}, { e: 'pain' }), R: REF_(3.6, -4, -1) }, props: [{ id: 'chair', k: 'chair', x: 0, y: 0.4, r: 20, z: 1.1, s: 1, at: 'A:hands' }], cam3: CM.wide },
+    { t: 0.6, ease: 'in', figs: { A: FG('stand', 0, 1, { torso: 40, sh_n: 120, el_n: 10, sh_f: 110, el_f: 10, hip_n: 25, kn_n: -20 }, { e: 'roar' }), B: FG('back', 1.2, -1, {}, { e: 'pain' }), R: REF_(3.6, -4, -1) }, props: [{ id: 'chair', k: 'chair', x: 0.3, y: -0.3, r: 120, z: 1.1, s: 1, at: 'A:hands' }, burst('b1', 'CLANG!', 2.4, 2.2, PAL.red)], cam3: CM.low },
+    { t: 1.2, figs: { A: FG('stand', -0.4, 1, { sh_n: 40, el_n: 30 }), B: FG('back', 1.2, -1, {}, { e: 'pain' }), R: STD(2.2, -1, { sh_n: 165, el_n: 5, sh_f: -165, el_f: -5 }, 'shout', 0.3) }, props: [{ id: 'chair', k: 'chair', x: 0.3, y: -0.6, r: 160, z: 1.1, s: 1, at: 'A:hands' }, burst('b2', 'DISQUALIFIED!', 3.6, 4, PAL.red)], cam3: CM.close },
+    { t: 1.9, figs: { A: FG('point', -1, 1, { sh_n: 100 }, { e: 'snarl' }), B: FG('back', 1.2, -1, {}, { e: 'pain' }), R: STD(2.2, -1, { sh_n: 100, el_n: 10, sh_f: -100, el_f: -10 }, 'shout', 0.3) }, props: [{ id: 'chair', k: 'chair', x: 0.3, y: -0.6, r: 160, z: 1.1, s: 1, at: 'A:hands' }], cam3: CM.wide }]),
+]);
 /* ---------- tag team matches (Ryan, 20 October): the hot tag, a double team, the ring cut in half. Four wrestlers: A and
    their partner C, B and their partner D (hooks pa and pb, filled from the match's sides). A partner stands on the apron
    outside the ropes, by their corner, until they are tagged in. ---------- */
@@ -1270,9 +1317,9 @@ export const BEAT_SCENES: Scene[] = flourishAll([
 export const POSTERS: Scene[] = [{ v: 1, id: 'poster_show', name: 'The poster for the next show', when: 'poster', set: 'stadium', still: true, frame: 'square', slots: SAB, keys: [
   { t: 0, figs: { A: STD(-1.45, 1, { ...CROSS, head: 4 }, 'snarl', 0.4), B: STD(1.45, -1, { ...CROSS, head: 4 }, 'snarl', 0.4) }, props: [burst('vs', 'VS', 0, 0.4, PAL.red), hd('TONIGHT', -2.35)], cam: { x: 0, y: 0.55, z: 1.38 } }] }];
 /** Every scene of the show: the booked kinds and the storyline beats, and the poster. */
-export const SHOW_SCENES: Scene[] = SEG_SCENES.concat(BEAT_SCENES, POSTERS, TAG_SCENES);
+export const SHOW_SCENES: Scene[] = SEG_SCENES.concat(BEAT_SCENES, POSTERS, TAG_SCENES, FIN_MORE, MID_MORE);
 export const SHOW_WHEN: [string, string][] = SEG_WHEN.concat(BEAT_WHEN);
-export function allScenes(world: Scene[]): Scene[] { const ids = new Set(world.map(s => s.id)); return world.concat(SCENES.concat(STILLS, SEG_SCENES, BEAT_SCENES, POSTERS, MOVES, TAG_SCENES).filter(s => !ids.has(s.id))); }
+export function allScenes(world: Scene[]): Scene[] { const ids = new Set(world.map(s => s.id)); return world.concat(SCENES.concat(STILLS, SEG_SCENES, BEAT_SCENES, POSTERS, MOVES, TAG_SCENES, FIN_MORE, MID_MORE).filter(s => !ids.has(s.id))); }
 /** The scenes that can play for a moment of the broadcast. */
 export function scenesFor(when: string, world: Scene[]): Scene[] { return allScenes(world).filter(s => s.when === when); }
 export const copy = <T>(x: T): T => JSON.parse(JSON.stringify(x));

@@ -297,7 +297,7 @@ function scenePick(r: any, s: any, at: number, done: boolean): { sc: Scene; cast
     const pk = beatPick(s.story.k, [s.story.w[0]].concat((s.story.l || []).slice(0, 1))); if (pk) { Object.assign(cast, pk.cast); return { sc: pk.sc, cast, play: i + ':st', label: pk.label }; }
   }
   if (done && s.change && winner >= 0) { when = 'champion'; key = 'c'; a = winner; }
-  else if (winner >= 0 && lastH >= 0 && now >= lastH) { when = 'finish'; key = 'f'; a = winner; }
+  else if (winner >= 0 && lastH >= 0 && now >= lastH) { when = s.sub ? 'finish_sub' : s.fk === 'flash' ? 'finish_flash' : s.fk === 'cheap' || s.fk === 'interf' ? 'finish_cheap' : s.fk === 'dq' ? 'finish_dq' : 'finish'; key = 'f'; a = winner; }
   else {
     let h = -1; for (let j = now; j >= Math.max(0, now - 1); j--) if (bc[j] && bc[j].h) { h = j; break; }
     if (h >= 0) { when = 'nearfall'; key = 'n' + h; const f = first(bc[h].x); if (f >= 0) a = f; }
@@ -317,7 +317,8 @@ function scenePick(r: any, s: any, at: number, done: boolean): { sc: Scene; cast
     if (fs) { sc0 = copy(fs); const lk0 = sc0.keys[sc0.keys.length - 1]; let named = false; lk0.props.forEach(q => { if (q.k === 'burst') { q.txt = sm.name.toUpperCase().slice(0, 16); named = true; } }); if (!named) lk0.props.push({ id: 'sig', k: 'burst', x: 3.6, y: 2.8, r: 0, z: 3, s: 1, txt: sm.name.toUpperCase().slice(0, 16) }); sc0.name = sm.name; } }
   // a winner made in Create a Player finishes with their own move: its picture, with its name in the burst
   // the winner's finisher: from their own file, or the real move the world gives them (a parody wrestler's own finisher)
-  const fm = when === 'finish' && S.w[a] ? ((S.w[a].look && (S.w[a].look.finishing_moves || [])[0]) || (E.worldMoves(S, a) || [])[0]) : null;
+  const fm0 = (when === 'finish' || when === 'finish_sub') && S.w[a] ? ((S.w[a].look && (S.w[a].look.finishing_moves || [])[0]) || (E.worldMoves(S, a) || [])[0]) : null;
+  const fm = fm0 && (when === 'finish' || fm0.category === 'Submission') ? fm0 : null;   // a tap-out plays their finisher only when it is a hold
   if (fm) { const fs = allScenes(world).find(x => x.id === finScene(fm)); if (fs) { sc0 = copy(fs); sc0.keys.forEach(k => k.props.forEach(q => { if (q.k === 'burst' && k === sc0!.keys[sc0!.keys.length - 1]) q.txt = fm.name.toUpperCase().slice(0, 16); })); sc0.name = fm.name; } }
   // a match under rules with a set of its own is played there: the cage, the cell with its roof, the ring of fire, the belt hung for the ladder
   const sk = s.sk || Object.keys(E.STIP).find(k => E.STIP[k].n === s.stip) || '', rig = E.STIP[sk] && E.STIP[sk].set;

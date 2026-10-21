@@ -3673,6 +3673,7 @@ function doMatch(S,P,show,m,i,n,rep,used){
     seg.lines.push((MQ>=88?'This is something special. ':(MQ>=75?'A very good match. ':(MQ>=60?'Solid work. ':(MQ>=45?'It never finds a rhythm. ':'It falls apart in places. '))))+(CR>=88?'The crowd is molten.':(CR>=72?'The crowd is loud throughout.':(CR>=55?'The crowd is into it.':(CR>=40?'The crowd is polite but quiet.':'The crowd sits on its hands.')))));
   }
   seg.finish=fill(br?'{w} throws {l} over the top rope and is the last one standing.':fin==='clean'?(lead.style==='T'||stip==='sub'?'{w} forces {l} to submit clean in the middle of the ring.':stip==='tables'?'{w} drives {l} through a table for the win.':stip==='mask'?'{w} wins, and {l} has to take off the mask.':stip==='hair'?'{w} wins, and the clippers come out for {l}.':'{w} hits {fin} and pins {l} clean.'):
+  seg.fk=fin;if(fin==='clean'&&(lead.style==='T'||stip==='sub'))seg.sub=1;   // how it ended, for the broadcast's last picture
     fin==='flash'?'{w} catches {l} in a roll-up out of nowhere.':
     fin==='cheap'?pick(S,CHEAP):
     fin==='interf'?'{x} runs in and distracts {l}; {w} takes advantage for the win.':

@@ -228,7 +228,7 @@ async function broadcast(mode) {
     if (cellAt >= 0) ok(mode, 'a steel cell match is played inside the cell', sets.has('cell'), [...sets].join(','));
     ok(mode, 'the bell brings the lock-up', seen.has('lockup'), [...seen].join(','));
     ok(mode, 'a near fall brings the count', seen.has('nearfall'), [...seen].join(','));
-    ok(mode, 'a win brings the three count', seen.has('finish'), [...seen].join(','));
+    ok(mode, 'a win brings its finish: the three count, a tap-out, a roll-up, a cheap win or a disqualification', [...seen].some(x => x === 'finish' || /^fin_/.test(x) || /^move_/.test(x)), [...seen].join(','));
     ok(mode, 'each wrestler comes out on an entrance', [...seen].some(x => x === 'entrance' || x.startsWith('ent_')), [...seen].join(','));
     ok(mode, 'a line of colour cuts to the commentary desk', seen.has('desk2'), [...seen].join(','));
     ok(mode, 'the broadcast draws its scenes in 3D', (await attr(page, '[data-t="live-scene"]', 'data-3d').catch(() => null)) !== '0');
