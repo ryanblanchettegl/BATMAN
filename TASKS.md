@@ -769,6 +769,15 @@ From the table in `docs/feature-list.md`. Check each against the engine first; s
 - [x] Portraits: Ryan decided to keep the code-drawn faces.
 - [x] The built-in world is named The EWF World (Ryan's decision).
 
+### 13. Later: the corkboard (Bill, 21 October: "add that for later on on tasks, not a top one")
+
+The relationship web as a board of Polaroids and string, built by itself on the Storylines page from the feuds that are running. Concept image: project file `killer-features/corkboard-concept.png`. Plan: `docs/plans/corkboard.md`. Not before the work above it.
+
+- [ ] A weekly snapshot of the bond for every pair worth a string, so the board can say what moved and for how long.
+- [ ] The board on Storylines: a string for each live feud (thickness for heat, fraying for freshness), with partners, stable mates, managers, the champion and the arc's cast pulled in; a finished feud stays as a faint ember.
+- [ ] Positions placed once by seed, cliques together, moved only when someone joins or leaves; about 20 people at most, and a focus mode for one person.
+- [ ] The Backstage switch: real feelings from the relationship matrix laid over the on-screen strings, with jealousy as an arrow and known secrets as folded notes.
+
 ## After each task
 
 1. `node build.js`
