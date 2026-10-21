@@ -63,11 +63,48 @@ var MOVESET_MAX=12,MOVE_KINDS=['strike','grapple','power','aerial','submission']
 /** Every move a moveset can hold, by kind: an id (its animation is the scene move_<id>, app/src/kit/scene.ts) and its name.
     None is only words (Ryan, 20 October): a move added here needs its scene, and app/tests/scene.js checks it. */
 var MOVE_LIB={
-  strike:[['chop','Knife-edge chop'],['forearm','Forearm smash'],['discus','Discus punch'],['elbowstrike','Running elbow'],['headbutt','Headbutt'],['bigboot','Big boot'],['superkick','Superkick'],['jumpknee','Jumping knee'],['enzuigiri','Enzuigiri'],['clothesline','Clothesline'],['cornerhit','Corner charge']],
-  grapple:[['armdrag','Arm drag'],['hiptoss','Hip toss'],['snapmare','Snapmare'],['bodyslam','Body slam'],['snapsuplex','Snap suplex'],['suplex','Vertical suplex'],['german','German suplex'],['northern','Northern lights suplex'],['neckbreaker','Neckbreaker'],['backbreaker','Backbreaker'],['bulldog','Bulldog'],['ddt','DDT'],['superplex','Superplex']],
-  power:[['sidewalk','Sidewalk slam'],['powerslam','Running powerslam'],['spinebuster','Spinebuster'],['fallaway','Fallaway slam'],['gorillapress','Gorilla press'],['chokeslam','Chokeslam'],['powerbomb','Powerbomb'],['spear','Spear']],
-  aerial:[['dropkick','Dropkick'],['hurricanrana','Hurricanrana'],['crossbody','Crossbody from the top'],['missile','Missile dropkick'],['flyingelbow','Flying elbow'],['topdive','Splash off the top'],['moonsault','Moonsault'],['tope','Dive to the outside']],
-  submission:[['armbar','Armbar'],['sleeper','Sleeper hold'],['abdominal','Abdominal stretch'],['camelclutch','Camel clutch'],['bostoncrab','Boston crab'],['crossface','Crossface'],['anklelock','Ankle lock'],['figurefour','Figure-four']]
+  strike:[['chop','Knife-edge chop'],['forearm','Forearm smash'],['discus','Discus punch'],['elbowstrike','Running elbow'],['headbutt','Headbutt'],['bigboot','Big boot'],['superkick','Superkick'],['jumpknee','Jumping knee'],['enzuigiri','Enzuigiri'],['clothesline','Clothesline'],['cornerhit','Corner charge'],['spinkick','Spinning heel kick'],['punch','Superman punch'],['hipattack','Hip attack'],['stomp','Curb stomp'],['weapon','Chair shot'],['cheapshot','Cheap shot']],
+  grapple:[['armdrag','Arm drag'],['hiptoss','Hip toss'],['snapmare','Snapmare'],['bodyslam','Body slam'],['snapsuplex','Snap suplex'],['suplex','Vertical suplex'],['german','German suplex'],['northern','Northern lights suplex'],['neckbreaker','Neckbreaker'],['backbreaker','Backbreaker'],['bulldog','Bulldog'],['ddt','DDT'],['superplex','Superplex'],['facebuster','Facebuster'],['cutter','Cutter'],['stunner','Stunner'],['brainbuster','Brainbuster']],
+  power:[['sidewalk','Sidewalk slam'],['powerslam','Running powerslam'],['spinebuster','Spinebuster'],['fallaway','Fallaway slam'],['gorillapress','Gorilla press'],['chokeslam','Chokeslam'],['powerbomb','Powerbomb'],['spear','Spear'],['sitout','Sit-out powerbomb'],['piledriver','Piledriver'],['driver','Fireman\'s carry driver']],
+  aerial:[['dropkick','Dropkick'],['hurricanrana','Hurricanrana'],['crossbody','Crossbody from the top'],['missile','Missile dropkick'],['flyingelbow','Flying elbow'],['topdive','Splash off the top'],['moonsault','Moonsault'],['tope','Dive to the outside'],['frogsplash','Frog splash'],['splash450','450 splash'],['shootingstar','Shooting star press'],['senton','Senton bomb'],['legdrop','Leg drop']],
+  submission:[['armbar','Armbar'],['sleeper','Sleeper hold'],['abdominal','Abdominal stretch'],['camelclutch','Camel clutch'],['bostoncrab','Boston crab'],['crossface','Crossface'],['anklelock','Ankle lock'],['figurefour','Figure-four'],['bearhug','Bear hug']]
+};
+/** Which animation a move's name plays (Ryan, 20 October: every move animated, and the parody roster's real finishers).
+    Read in order, the most particular first: "cradle tombstone piledriver" is a piledriver, "springboard cutter" a cutter,
+    "sit-out powerbomb" its own move before "powerbomb". Anything it cannot place plays as a slam (or a hold for a submission). */
+var MOVE_RULES=[
+  [/chair|pipe|guitar|kendo|stick|tube|bulb|jar|mic stand|shot$/,'weapon'],[/low blow|rake|bite|slap|hair|eye|mist|spit/,'cheapshot'],
+  [/taunt|strut|hulking|air guitar|kip-up|flop|bridge dodge|back spin/,'=taunt_crowd'],[/falcon arrow|muscle buster|spanish fly/,'brainbuster'],[/giant swing/,'fallaway'],[/lungblower/,'jumpknee'],[/fist drop|knee drop/,'legdrop'],
+  [/full nelson|grounded|leg tangle|leg-lift|leg-trap|submission hold/,'=sleeper'],
+  [/450|phoenix|inverted 450/,'splash450'],[/shooting star|corkscrew ssp/,'shootingstar'],[/frog splash/,'frogsplash'],[/senton|swanton|630|coffin drop/,'senton'],
+  [/moonsault/,'moonsault'],[/leg drop|legdrop|guillotine leg/,'legdrop'],[/elbow drop|diving elbow|flying elbow|top-rope elbow|shooting star elbow/,'flyingelbow'],
+  [/missile dropkick/,'missile'],[/crossbody|thesz press/,'crossbody'],[/splash/,'topdive'],[/tope|suicide dive|dive through|dive to the floor|plancha/,'tope'],[/superplex/,'superplex'],
+  [/piledriver|tombstone|package|spike pile/,'piledriver'],[/sit-?out|jackknife|tiger driver|pumphandle sit|buckle bomb|crucifix|sunset/,'sitout'],
+  [/powerbomb|chokebomb|bomb\b/,'powerbomb'],[/death valley|fireman.?s carry|michinoku|driver|samoan drop|f-?5|dominator/,'driver'],[/brainbuster|vertical suplex powerslam/,'brainbuster'],
+  [/chokeslam|choke slam|throat/,'chokeslam'],[/spinebuster/,'spinebuster'],[/powerslam|sto\b|uranage|side ?slam|sidewalk/,'sidewalk'],[/fallaway/,'fallaway'],[/gorilla press|military press/,'gorillapress'],
+  [/german|tiger suplex|dragon suplex|bridging/,'german'],[/northern lights/,'northern'],[/snap suplex|exploder|belly-to-belly|fisherman/,'snapsuplex'],[/suplex/,'suplex'],
+  [/cutter|diamond|flatliner|backstabber/,'cutter'],[/stunner|jawbreaker/,'stunner'],[/facebuster|face-first|curb|stomp/,'facebuster'],[/ddt/,'ddt'],[/neckbreaker/,'neckbreaker'],[/backbreaker|torture rack/,'backbreaker'],[/bulldog/,'bulldog'],
+  [/body slam|bodyslam|\bslam\b|scoop/,'bodyslam'],[/spear|pounce/,'spear'],[/hurricanrana|rana|headscissors/,'hurricanrana'],[/arm drag|armdrag/,'armdrag'],[/hip toss/,'hiptoss'],[/snapmare/,'snapmare'],
+  [/superkick/,'superkick'],[/enzuigiri/,'enzuigiri'],[/spinning (heel|back) kick|roundhouse|head kick|axe kick|spin kick|spinning kick|side kick|mule kick/,'spinkick'],[/big boot|boot/,'bigboot'],
+  [/knee|shining wizard/,'jumpknee'],[/hip attack/,'hipattack'],[/dropkick/,'dropkick'],[/lariat|clothesline|drive-by/,'clothesline'],[/headbutt|glasgow/,'headbutt'],[/chop/,'chop'],
+  [/forearm|uppercut|elbow/,'forearm'],[/backfist|discus/,'discus'],[/punch|left hand|right hand|knuckle/,'punch'],[/kick/,'superkick'],
+  [/bear ?hug/,'bearhug'],[/sleeper|rear naked|choke|cobra|dragon sleeper|clutch|claw|mandible/,'sleeper'],[/crossface|stf|cross-legged/,'crossface'],[/ankle lock|leg lock|leg submission|figure-eight|pretzel|cloverleaf/,'anklelock'],
+  [/figure-?four/,'figurefour'],[/armbar|kimura|arm-trap|arm snap|octopus|anaconda|chickenwing/,'armbar'],[/boston crab|sharpshooter|crab/,'bostoncrab'],[/camel clutch/,'camelclutch']
+];
+function moveSceneOf(txt,sub){
+  var t=String(txt||'').toLowerCase();
+  for(var i=0;i<MOVE_RULES.length;i++)if(MOVE_RULES[i][0].test(t)){var r=MOVE_RULES[i][1];return r.charAt(0)==='='?r.slice(1):'move_'+r;}
+  return sub||/submission|hold|lock/.test(t)?'sleeper':'slam';
+}
+E.moveSceneOf=moveSceneOf;
+/** A wrestler's three moves from their world file (the finisher and the signatures, by the move each is), for a wrestler
+    with no file of their own: their finisher plays its real move, and so do their signatures. Null when the world says nothing. */
+E.worldMoves=function(S,id){
+  var per=E.persona(S,id),w=S.w[id];if(!per||!w||(!per.move&&!per.sigs))return null;
+  var sub=function(m){return /submission|lock|hold|choke|clutch|crab|sharpshooter|armbar|crossface|stf|claw/i.test(m||'');};
+  var out=[{name:w.fin||'The finisher',impact_damage:85,kickout_difficulty:'Protected',position:/top|rope|springboard|450|splash|senton|moonsault/i.test(per.move||'')?'Top Rope':'Standing',category:sub(per.move)?'Submission':'Pinfall Impact',preview_pose_id:moveSceneOf(per.move||w.fin,sub(per.move))}];
+  (per.sigs||[]).slice(0,2).forEach(function(g,i){if(!g||!g.name)return;out.push({name:g.name,impact_damage:50,kickout_difficulty:'Easy',position:'Standing',category:sub(g.move)?'Submission':'Pinfall Impact',preview_pose_id:moveSceneOf(g.move&&!/^signature move$/i.test(g.move)?g.move:g.name,sub(g.move)),stage:i?'late':'early'});});
+  return out;
 };
 /** The move in the library with this id or this name, as {id, n, k}, or null. */
 function moveLib(x){for(var k in MOVE_LIB)for(var i=0;i<MOVE_LIB[k].length;i++){var m=MOVE_LIB[k][i];if(m[0]===x||m[1]===x)return {id:m[0],n:m[1],k:k};}return null;}

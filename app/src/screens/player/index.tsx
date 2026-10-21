@@ -44,10 +44,19 @@ const MS_STAGES: [string, string][] = [['early', 'Early'], ['mid', 'Middle'], ['
 const KIND_N: Record<string, string> = { strike: 'Strikes', grapple: 'Grapples', power: 'Power moves', aerial: 'High flying', submission: 'Holds' };
 const r2 = (v: number) => Math.round(v * 100) / 100;
 
+/** The finisher and signatures a world gives a wrestler (finisher_move, signatures), each playing the move it is. */
+function worldFins(w: any): Finisher[] | undefined {
+  if (!w || (!w.fmv && !(w.sigs && w.sigs.length))) return undefined;
+  const sub = (m: string) => /submission|lock|hold|choke|clutch|crab|sharpshooter|armbar|crossface|stf|claw/i.test(m || '');
+  const out: Finisher[] = [{ name: w.fin || 'The finisher', impact_damage: 85, kickout_difficulty: 'Protected', position: /top|rope|springboard|450|splash|senton|moonsault/i.test(w.fmv || '') ? 'Top Rope' : 'Standing', category: sub(w.fmv) ? 'Submission' : 'Pinfall Impact', preview_pose_id: E.moveSceneOf(w.fmv || w.fin, sub(w.fmv)) }];
+  (w.sigs || []).slice(0, 2).forEach((g: any, i: number) => { if (g && g.name) out.push({ name: g.name, impact_damage: 50, kickout_difficulty: 'Easy', position: 'Standing', category: sub(g.move) ? 'Submission' : 'Pinfall Impact', preview_pose_id: E.moveSceneOf(g.move && !/^signature move$/i.test(g.move) ? g.move : g.name, sub(g.move)), stage: i ? 'late' : 'early' }); });
+  return out;
+}
 /** A wrestler from a world package, in the shape the paper doll is cut from. */
 export function workerW(w: any) {
   return { id: 0, name: w.ring_name || w.id, g: w.gender === 'F' ? 'F' : 'M', align: w.disposition === 'heel' ? 'H' : 'F', twn: w.disposition === 'tweener', style: STY[w.style] || 'A',
-    face: w.face, age: w.age || 28, gim: (w.gimmick_category || '') + ' ' + (w.gimmick || ''), uid: w.id, town: w.hometown, height: w.height, weight: w.weight };
+    face: w.face, age: w.age || 28, gim: (w.gimmick_category || '') + ' ' + (w.gimmick || ''), uid: w.id, town: w.hometown, height: w.height, weight: w.weight,
+    fin: w.finisher, fmv: w.finisher_move, sigs: w.signatures };
 }
 
 /** What the suite is open on: a wrestler (from a world package through workerW, or from the game), the file they
@@ -79,7 +88,7 @@ export function CreatePlayer(pp: PlayerProps) {
     const had = pp.had ? E.lookClean(pp.had) : null;
     if (had) { had.finishing_moves = threeMoves(startW, had.finishing_moves); return had; }   // one finisher and two signature moves, always
     const n = blankLook(startW, recipeOf({ ...startW, look: null })); n.appearance = { face: { ...derive(startW.name || seed, startW.g, startW.age || 25), ...(startW.face || {}) } };
-    n.finishing_moves = threeMoves(startW);
+    n.finishing_moves = threeMoves(startW, worldFins(startW));   // a wrestler the world describes starts from their real moves
     if (pp.sign) { n.name = ''; n.id = undefined; }
     return n;
   });

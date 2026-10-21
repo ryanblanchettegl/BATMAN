@@ -125,6 +125,10 @@ const msg = page => txt(page, '[data-t="caw-msg"]');
     // the moveset: twelve lines, four for each part of a match, each stepping through the animated moves; every change can be undone
     await page.click('[data-t="caw-move-fill"]'); await page.waitForTimeout(100);
     ok('Fill for their style fills all twelve lines', (await page.$$eval('[data-t="caw-mv"]', L => L.filter(e => e.value).length)) === 12);
+    { const d = JSON.parse(require('fs').readFileSync(require('path').join(__dirname, '../../universes/parody.json'), 'utf8')), moves = [];
+      d.workers.forEach(w => { if (w.finisher_move) moves.push(w.finisher_move); (w.signatures || []).forEach(g => { if (g.move && !/^signature move$/i.test(g.move)) moves.push(g.move); }); });
+      const miss = await page.evaluate(L => { const ids = new Set(window.EWF_DEBUG.allScenes().map(s => s.id)); return L.map(m => [m, window.GP.moveSceneOf(m)]).filter(x => !ids.has(x[1]) || x[1] === 'slam').map(x => x[0] + '>' + x[1]); }, moves);
+      ok('every parody finisher and signature plays a real animation of its own', !miss.length, miss.slice(0, 8).join(' | ')); }
     ok('every move on the list has its animation', await page.evaluate(() => { const ids = new Set(window.EWF_DEBUG.allScenes().map(s => s.id)); return [...document.querySelectorAll('[data-t="caw-mv"] option')].every(o => !o.value || ids.has(o.value)); }));
     const was = await page.$eval('[data-t="caw-mv"][data-v="late:0"]', e => e.value);
     await page.click('.step:has([data-t="caw-mv"][data-v="late:0"]) [data-t="step-next"]'); await page.waitForTimeout(600);

@@ -138,5 +138,11 @@ const others = G2.w.filter(x => x && x.look && x.name !== wk.ring_name).length; 
   ok(r.ok && w && w.name === 'Import Person' && w.promo === 'FA' && w.g === 'F' && w.align === 'H' && w.style === 'T' && w.look && w.look.moveset.length === 1, 'a wrestler file comes into a game as a free agent, look and moveset kept');
   ok(w && w.ovr < 95, 'a file does not bring its ratings into a game: they are made the way any new wrestler is');
   ok(!E.importWrestlerFile(G3, { hello: 1 }).ok && !E.importWrestlerFile(G3, f).ok && G3.w.length === n0 + 1, 'anything else is refused, and the same name twice is refused'); }
+// a parody wrestler's real finisher and signatures reach the game as their moves
+{ E.useUniverse(JSON.parse(fs.readFileSync('universes/parody.json', 'utf8')));
+  const G4 = E.newGame(Object.keys(E.newGame ? {} : {})[0] || 'ewe', 2, { name: 'R' });
+  const w = G4.w.find(x => x && x.name === 'Long Island Lux'), m = w && E.worldMoves(G4, w.id);
+  ok(m && m[0].preview_pose_id === 'move_piledriver' && m.length === 3 && m[1].preview_pose_id === 'move_superkick', 'a parody wrestler\'s finisher plays its real move: ' + JSON.stringify(m && m.map(x => x.preview_pose_id)));
+  E.useUniverse(JSON.parse(fs.readFileSync('universes/public_domain.json', 'utf8'))); }
 console.log(fails.length ? 'FAIL\n' + fails.join('\n') : 'ok: scene hooks, Create a Player files, and finishers in the match');
 process.exit(fails.length ? 1 : 0);
