@@ -21,7 +21,7 @@ function birthday(S,w){
   if(w.age<=w.pk[1])return;
   // past the peak: decline can be slowed by staying active and healthy, never stopped
   var over=w.age-w.pk[1],d=(w.age>=w.cl?2.2:1)*(act>=20?0.7:(act<6?1.25:1))*((w.yi||0)>=8?1.25:1);w.yi=0;
-  var dn=function(k,n){w[k]=clamp(w[k]-Math.max(0,Math.round(n)),15,99);};
+  var dn=function(k,n){w[k]=Math.max(Math.min(w[k],15),w[k]-Math.max(0,Math.round(n)));};   // never below 15, and never lifted up to it
   dn('speed',(w.style==='H'?1.7:1.4)*d+over*0.3);dn('stam',1.1*d+over*0.2);dn('brawl',0.6*d);dn('tech',0.3*d);dn('dur',1.5*d);
   w.pot=Math.max(workRate(w),w.pot-2);
   if(w.promo===S.player&&!w.slow){w.slow=true;news(S,'story',w.name+' is '+w.age+' and starting to slow down.');mile(S,w,'age','Began to slow down at '+w.age);}
@@ -67,7 +67,7 @@ function rookieClass(S,year){
   if(made.length)news(S,'world','The class of '+year+' has turned professional: '+made.length+' rookies. The one everybody is talking about is '+made[0].name+'.');
 }
 /* scouting: hidden ratings show as a range until you know the wrestler well */
-var HIDDEN={pot:'Potential',sq:'Star quality',dur:'Durability',safe:'Safety',cons:'Consistency'};
+var HIDDEN={pot:'Potential',sq:'Star quality',dur:'Durability',safe:'Injury',cons:'Consistency'};
 function margin(S,w){var eye=S.booker?S.booker.sk.eye:0,m=(w.promo===S.player?10:18)-3*eye;if(w.sc)m-=8;return Math.max(0,m);}
 E.intel=function(S,id){
   var w=S.w[id];if(!w)return null;var m=margin(S,w),out={m:m,exact:m<=1,stats:{}};

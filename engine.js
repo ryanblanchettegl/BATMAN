@@ -2683,7 +2683,7 @@ function joinCompany(S,w,P,wage,weeks){
 function settle(S,P){
   var mine=P.id===S.player,sp=0;if(mine)S.sponsors.forEach(function(x){sp+=x.pay;});
   var adv=Math.round(ADV_C[P.adv]*P.inc0)+(mine?evSpendCost(P):0),camp=campCost(P),med=medCost(P),trv=travelCost(P);
-  var L=P.led,merch=merchWeek(S,P),wages=wagesWeek(S,P),inc=L.tv+L.gate+L.ppv+L.bonus+merch+sp,over=P.fixed+P.varRate*0.96*(inc-sp),exp=wages+L.prod+over+adv+camp+med+trv;var fnc=mine?financeCost(S,P,inc-exp):0;exp+=fnc;
+  var L=P.led,merch=merchWeek(S,P),wages=payWeek(S,P),inc=L.tv+L.gate+L.ppv+L.bonus+merch+sp,over=P.fixed+P.varRate*0.96*(inc-sp),exp=wages+L.prod+over+adv+camp+med+trv;var fnc=mine?financeCost(S,P,inc-exp):0;exp+=fnc;
   // a publicly traded company pays its shareholders out of a week well above the board's target (NEXT.md 12.2)
   var dv=0;if(P.model==='corporate'&&P.net>0&&inc-exp>P.net*1.2){dv=Math.round((inc-exp-P.net*1.2)*0.6);exp+=dv;}
   var row={w:S.week,div:dv,spons:sp,adv:adv,camp:camp,med:med,trv:trv,fin:fnc,tv:Math.round(L.tv),gate:Math.round(L.gate),ppv:Math.round(L.ppv),bonus:Math.round(L.bonus),merch:Math.round(merch),wages:Math.round(wages),prod:Math.round(L.prod),over:Math.round(over),inc:Math.round(inc),exp:Math.round(exp),net:Math.round(inc-exp),image:r1(P.image)};
@@ -4353,7 +4353,7 @@ function birthday(S,w){
   if(w.age<=w.pk[1])return;
   // past the peak: decline can be slowed by staying active and healthy, never stopped
   var over=w.age-w.pk[1],d=(w.age>=w.cl?2.2:1)*(act>=20?0.7:(act<6?1.25:1))*((w.yi||0)>=8?1.25:1);w.yi=0;
-  var dn=function(k,n){w[k]=clamp(w[k]-Math.max(0,Math.round(n)),15,99);};
+  var dn=function(k,n){w[k]=Math.max(Math.min(w[k],15),w[k]-Math.max(0,Math.round(n)));};   // never below 15, and never lifted up to it
   dn('speed',(w.style==='H'?1.7:1.4)*d+over*0.3);dn('stam',1.1*d+over*0.2);dn('brawl',0.6*d);dn('tech',0.3*d);dn('dur',1.5*d);
   w.pot=Math.max(workRate(w),w.pot-2);
   if(w.promo===S.player&&!w.slow){w.slow=true;news(S,'story',w.name+' is '+w.age+' and starting to slow down.');mile(S,w,'age','Began to slow down at '+w.age);}
@@ -4399,7 +4399,7 @@ function rookieClass(S,year){
   if(made.length)news(S,'world','The class of '+year+' has turned professional: '+made.length+' rookies. The one everybody is talking about is '+made[0].name+'.');
 }
 /* scouting: hidden ratings show as a range until you know the wrestler well */
-var HIDDEN={pot:'Potential',sq:'Star quality',dur:'Durability',safe:'Safety',cons:'Consistency'};
+var HIDDEN={pot:'Potential',sq:'Star quality',dur:'Durability',safe:'Injury',cons:'Consistency'};
 function margin(S,w){var eye=S.booker?S.booker.sk.eye:0,m=(w.promo===S.player?10:18)-3*eye;if(w.sc)m-=8;return Math.max(0,m);}
 E.intel=function(S,id){
   var w=S.w[id];if(!w)return null;var m=margin(S,w),out={m:m,exact:m<=1,stats:{}};
@@ -7732,7 +7732,7 @@ var ED_PUSH_N={main_eventer:'Main event',upper_midcarder:'Upper mid-card',midcar
 var ED_STYLE_N={brawler:'Brawler',technician:'Technician',flyer:'High flyer',powerhouse:'Powerhouse',all_rounder:'All-rounder',striker:'Striker',entertainer:'Entertainer'};
 var ED_ROLE_N={wrestler:'Wrestler',manager:'Manager',announcer:'Announcer',referee:'Referee',road_agent:'Road agent',owner:'Owner',booker:'Booker'};
 var ED_REL_N={rivalry:'Rivals',friendship:'Friends',mentor:'Mentor and student',family:'Family',partners:'Partners',dislike:'Dislike each other'};
-var ED_RATINGS=[['overness','Overness',1],['brawling','Brawling',1],['technical','Technical',1],['aerial','Aerial',1],['stamina','Stamina',1],['promo_skill','Promo',1],
+var ED_RATINGS=[['overness','Overness',1],['brawling','Brawling',1],['technical','Technical',1],['aerial','Agility',1],['stamina','Stamina',1],['promo_skill','Promo',1],
   ['charisma','Charisma',0],['hardcore','Hardcore',0],['star_quality','Star quality',0],['consistency','Consistency',0],['potential','Potential',0]];
 var ED_TABLES=['promotions','shows','titles','workers','contracts','teams','relationships','events'];
 var ED_TABLE_N={promotions:'Companies',shows:'Shows',titles:'Belts',workers:'Wrestlers',contracts:'Wrestlers',teams:'Teams',relationships:'Relationships',events:'Shows',manifest:'World',package:'World',media:'World'};
@@ -13280,6 +13280,88 @@ E.shareOf=function(S,pid){audInit(S);return Math.round(audTotal(S,pid)*1000)/10;
   var at=r.items.findIndex(function(x){return x.k==='next';});if(at<0)r.items.push(it);else r.items.splice(at,0,it);if(!seen)r.unseen=(r.unseen||0)+1;
   return r;};})();
 
+/* ===== 99-contracts.js ===== */
+/* wraps: 90-api.js, 97-clauses.js (it must sort after them; test-buildorder.js checks) */
+/* Contracts by the size of the company (Ryan, 21 October: "realistic contracts. Big companies do yearly contracts,
+   indies do per show appearance"). Two kinds of deal:
+     - a yearly deal (w.dl 'year'): one to three years, a salary every week whether they are booked or not. The big
+       companies put everybody on one, and a mid-sized company puts the top of its card on one.
+     - per appearance (w.dl 'show'): a fee for each show they are on (w.fee), nothing in a week they are not. No long
+       deal: a handshake that rolls on (w.con stays at 12), so anybody can make them an offer. The small companies
+       put everybody on one, and a mid-sized company the rest of its card. A world can mark a deal as per appearance
+       (contract_type 'pwa').
+   The week's wage bill (settle() in src/40-week.js) pays a fee for each show a per-appearance wrestler was on
+   (payWeek()); the wage budget still reads w.wage, what a deal costs in an ordinary week. No rnd(S). */
+var CT_BIG=65,CT_INDIE=50,CT_ROLL=12;
+function ctWeekly(P){return Math.max(1,(P.shows||[]).length);}
+/** What deal a company gives this person. */
+function ctPolicy(S,P,w){
+  if(!P)return 'year';if(w.pwa)return 'show';if(w.nw)return P.image<CT_INDIE?'show':'year';
+  if(P.image>=CT_BIG)return 'year';if(P.image<CT_INDIE)return 'show';
+  // a mid-sized company: the top third of its card (by how over they are) on yearly deals, the rest per appearance
+  var R=rosterOf(S,P.id).filter(function(x){return !x.nw&&x.id!==w.id;}),above=R.filter(function(x){return (x.ovr||0)>(w.ovr||0);}).length;
+  return above<Math.ceil((R.length+1)/3)?'year':'show';
+}
+/** Fee a show: a quarter more than a salaried week spread over the shows, since nothing is promised. */
+function ctFee(P,wage){var v=wage*1.25/ctWeekly(P);return Math.max(50,v<1000?Math.round(v/10)*10:Math.round(v/50)*50);}
+function ctAssign(S,w,fee){
+  var P=S.promos[w.promo];if(!P)return;w.dl=ctPolicy(S,P,w);w.dlP=w.promo;
+  if(w.dl==='show'){w.fee=fee||ctFee(P,w.wage||wageFor(w.ovr,P));w.con=CT_ROLL;}else w.fee=null;
+  w.dlc=w.con;
+}
+/* every week: anybody new to a company gets its kind of deal, a renewal is a new deal, and a handshake rolls on */
+function ctWeek(S){
+  S.w.forEach(function(w){
+    if(!w||w.rt||w.promo==='FA'||!S.promos[w.promo]){if(w&&w.promo==='FA'){w.dl=null;w.dlP=null;}return;}
+    if(w.dlP!==w.promo||w.dl==null||(w.dl==='year'&&w.con>(w.dlc||0)+1)){ctAssign(S,w,w.dlP===w.promo?w.fee:null);return;}
+    if(w.dl==='show')w.con=CT_ROLL;
+    w.dlc=w.con;
+  });
+}
+NEWX.push(ctWeek);WEEKX.push(ctWeek);
+/* who appeared on a show this week, and how many times: a fee is paid for each */
+SHOWX.push(function(S,P,show,rep){
+  if(S.cal||!rep||!rep.segs||!P)return;var seen={};
+  rep.segs.forEach(function(s){(s.ids||s.bids||[]).forEach(function(id){var w=S.w[id];if(!w||w.promo!==P.id||seen[id])return;seen[id]=1;if(w.shw!==S.week){w.shw=S.week;w.shn=0;}w.shn++;});});
+});
+/** What the week's wages come to: salaries, and a fee for each show a per-appearance wrestler was on. */
+function payWeek(S,P){
+  var s=0;S.w.forEach(function(w){if(w.promo!==P.id)return;s+=w.dl==='show'&&w.fee!=null?(w.shw===S.week?w.fee*(w.shn||1):0):w.wage;});
+  return s+deskWage(S,P);
+}
+/** A deal in words, for the screens. */
+E.contractOf=function(S,w){
+  if(typeof w==='number')w=S.w[w];if(!w||w.promo==='FA')return null;
+  if(w.dl==='show')return {ct:'show',n:'Per appearance',pay:w.fee,short:'Per show',line:money(w.fee||0)+' a show, paid only when they are booked. A handshake: other companies can make them an offer.'};
+  var y=Math.floor(Math.max(0,w.con)/48),r=Math.max(0,w.con)%48,left=(y?y+(y===1?' year':' years'):'')+(y&&r?' and ':'')+(r||!y?r+(r===1?' week':' weeks'):'');
+  return {ct:'year',n:'Yearly deal',pay:w.wage,short:Math.max(0,w.con)+'w',line:money(w.wage)+' a week, '+left+' left.'};
+};
+/** The terms the player can offer this person: the kind of deal, the ask, and the lengths. */
+E.offerTerms=function(S,id){
+  var w=S.w[id],P=S.promos[S.player];if(!w||!P)return null;var ct=ctPolicy(S,P,w),ask=E.ask(S,w);
+  return ct==='show'?{ct:'show',n:'Per appearance',ask:ask,fee:ctFee(P,ask),lens:null,why:P.name+' pays per appearance: a fee for each show they are on, nothing promised beyond that.'}
+    :{ct:'year',n:'Yearly deal',ask:ask,fee:null,lens:[[48,'1 year'],[96,'2 years'],[144,'3 years']],why:P.name+' signs people to yearly deals: a salary every week, booked or not.'};
+};
+/* signing: the deal takes the company's kind at once; a fee offered for a per-appearance deal is turned into its
+   ordinary week for the wage budget and the asking price */
+(function(){
+  var s0=E.sign;
+  E.sign=function(S,id,wage,weeks,cl){var r=s0.apply(this,arguments);var w=S.w[id];if(r&&r.ok&&w&&w.promo===S.player)ctAssign(S,w);return r;};
+  E.signFee=function(S,id,fee,cl){
+    var P=S.promos[S.player],w=S.w[id];if(!w||!P)return {ok:false,msg:'Not available.'};
+    var wage=Math.round(fee*ctWeekly(P)/1.25/50)*50,r=E.sign(S,id,wage,CT_ROLL,cl);
+    if(r&&r.ok&&w.promo===S.player){w.fee=fee;r.msg=w.name+' will work for '+money(fee)+' a show.';}
+    return r;
+  };
+})();
+/* a handshake costs nothing to end, and a per-appearance deal is not renewed (it rolls on by itself) */
+(function(){
+  var r0=E.release,n0=E.renew;
+  E.release=function(S,id){var w=S.w[id],P=S.promos[S.player];if(w&&P&&w.promo===P.id&&w.dl==='show'){var keep=w.wage;w.wage=0;var r=r0.apply(this,arguments);w.wage=keep;return r;}return r0.apply(this,arguments);};
+  E.renew=function(S,id,weeks){var w=S.w[id];if(w&&w.dl==='show')return w.name+' works per appearance: there is nothing to renew.';var r=n0.apply(this,arguments);if(w)w.dlc=w.con;return r;};
+})();
+E.__payWeek=payWeek;E.__ctWeek=ctWeek;   // for test-staff.js
+
 /* ===== 99-debut.js ===== */
 /* Book a debut (roadmap 9, Ryan 16 October). When somebody new joins, the booker picks how they are introduced:
    vignettes (a teaser airs every week until they first appear, so the crowd knows the name), a surprise attack (they
@@ -13778,12 +13860,18 @@ function midStory(S){
    then how over they are with the crowd, then the microphone and their presence, then stamina, how steady they are
    and how safe they are to work with. It moves as they do, since it is worked out from them each time and never
    kept. It is a rating of the person, not a forecast of a match: a match is still told in stars after the bell. */
-function overallOf(w){
+function overallRaw(w){
   if(!w)return 0;
   var ring=workRate(w),mic=((w.mic||50)+(w.cha||w.mic||50))/2;
   var v=ring*0.38+(w.ovr||0)*0.27+mic*0.17+(w.stam||50)*0.08+(w.cons||60)*0.05+(w.safe||55)*0.05;
-  // a light stretch so the best in the world reach the low 90s and nobody sits on 99
-  return clamp(Math.round(70+(v-70)*1.1),1,99);
+  return clamp(Math.round(70+(v-70)*1.1),1,99);   // the scale wages, signings and levels were set on: kept as it was
+}
+/* The number shown (Ryan, 21 October: "realistic ratings, not a bunch of 90 overall guys to start"): the way the sports
+   games spread it. A handful in the world reach 90, a main-eventer is in the low to high 80s, the middle of a card sits
+   in the 60s and low 70s, a rookie in the 50s. The curve bends the old scale down in the middle and keeps its top. */
+function overallOf(w){
+  if(!w)return 0;var v=70+(overallRaw(w)-70)/1.1,d=v-48;
+  return clamp(Math.round(d>0?48+d*0.6056+d*d*0.00971:v),1,99);
 }
 /** The overall rating of a wrestler, 1 to 99 (a wrestler, or an id). */
 E.overall=function(S,w){if(typeof w==='number')w=S.w[w];return overallOf(w);};
@@ -13961,8 +14049,8 @@ E.pressDo=function(S,id,k){
    Money: the asking wage counts the overall rating as well as popularity, so a rich company can buy the finished
    article and a small one signs the raw and builds them up. No rnd(S): everything here is worked out. */
 var PROG_ATTR=[
-  {k:'brawl',n:'Brawling',g:'ring'},{k:'tech',n:'Technical',g:'ring'},{k:'speed',n:'Speed and air',g:'body'},{k:'stam',n:'Stamina',g:'body'},
-  {k:'hc',n:'Hardcore',g:'ring'},{k:'dur',n:'Toughness',g:'body'},{k:'safe',n:'Safety',g:'ring'},{k:'cons',n:'Consistency',g:'ring'},
+  {k:'brawl',n:'Brawling',g:'ring'},{k:'tech',n:'Technical',g:'ring'},{k:'speed',n:'Agility',g:'body'},{k:'stam',n:'Stamina',g:'body'},
+  {k:'hc',n:'Hardcore',g:'ring'},{k:'dur',n:'Toughness',g:'body'},{k:'safe',n:'Injury',g:'ring',d:'How safely they work: high means fewer injuries, to them and to the people they work with.'},{k:'cons',n:'Consistency',g:'ring'},
   {k:'mic',n:'Microphone',g:'mic'},{k:'cha',n:'Charisma',g:'mic'},{k:'sq',n:'Star quality',g:'mic'}
 ];
 var PROG_BY={};PROG_ATTR.forEach(function(a){PROG_BY[a.k]=a;});
@@ -13975,7 +14063,7 @@ function progNeed(lv){return 300+60*lv;}   // a young prospect levels every mont
 function progAgeX(w){var a=w.age||28;return a<=23?1.35:a<=27?1.15:a<=31?1:a<=35?0.85:0.7;}
 function progInit(S,w){
   if(!w||w.lv!=null)return;
-  var ov=overallOf(w),a=w.age||28,sq=w.sq==null?50:w.sq,pot=w.pot||workRate(w);
+  var ov=overallRaw(w),a=w.age||28,sq=w.sq==null?50:w.sq,pot=w.pot||workRate(w);
   w.lv=clamp(Math.round(1+Math.max(0,a-19)*0.9+(ov-55)/5),1,45);
   w.pxp=Math.floor(h01(w.name+'pxp')*progNeed(w.lv)*0.8);w.ap=0;w.gx={};
   var sc=(pot-60)*0.6+(sq-50)*0.4-Math.max(0,a-27)*3;
@@ -14041,16 +14129,64 @@ function progShow(S,P,show,rep,card){
         if((s.mins||0)>=20)progUse(w,'stam',0.35,o);
         if(st>=4)progUse(w,'cons',0.2,o);
         if(s===last)progUse(w,'sq',0.15,o);
+        // regression: three poor matches in a row and they lose their touch a little
+        if(st<=1.5){w.cold=(w.cold||0)+1;if(w.cold>=3){w.cold=0;w.pxp=Math.max(0,(w.pxp||0)-Math.round(progNeed(w.lv)*0.25));progLose(S,w,'cons',1,'a cold streak',o);}}else w.cold=0;
       });
     }else if(s.k==='angle'||s.k==='promo'){
       ids.forEach(function(id){var w=S.w[id],o=row(w);progGain(S,w,(5+4*st*st)*(big?1.2:1)+(five?120:0),o);if(five)o.why.push('a five-star promo');
         progUse(w,'mic',five?1:0.35,o);progUse(w,'cha',0.25,o);});
     }
   });
-  if(isPl)rep.prog=Object.keys(acc).map(function(k){return acc[k];}).filter(function(o){return o.xp>0;}).sort(function(a,b){return (b.lv1?1:0)-(a.lv1?1:0)||b.xp-a.xp;});
+  if(isPl)rep.prog=Object.keys(acc).map(function(k){return acc[k];}).filter(function(o){return o.xp>0||(o.lost&&o.lost.length);}).sort(function(a,b){return (b.lv1?1:0)-(a.lv1?1:0)||b.xp-a.xp;});
 }
 SHOWX.push(progShow);
 E.__progShow=progShow;   // for test-progress.js
+/* ---------- regression (Ryan, 21 October: "they should be a system for regression as well") ----------
+   What can take an attribute down, the way the sports games do it, worked out and never drawn at random:
+     - age: past the peak the body goes first (the yearly decline in src/75-people.js), and in steep decline
+       consistency and how safely they work go too; the microphone never does;
+     - ring rust: eight weeks without a match takes the edge off stamina and consistency, a point every four weeks,
+       up to three a spell; matches give it back (long matches teach Stamina, good ones Consistency);
+     - a cold streak: three poor matches in a row costs consistency and a quarter of a level's experience;
+     - a long injury: six weeks out or more costs agility and stamina when they come back, more after twelve.
+   Every loss is kept on the wrestler (w.rgx, the last eight), named on the notification bar for the player's own
+   people, listed after the show and shown in the Attributes pop-up. */
+function progLose(S,w,k,n,why,out){
+  if(!w||!PROG_BY[k]||n<=0)return 0;var v0=w[k]||1,v1=clamp(v0-n,15,99),d=v0-v1;if(!d)return 0;w[k]=v1;
+  var R=w.rgx||(w.rgx=[]);R.unshift({w:S.week,k:k,n:d,why:why});if(R.length>8)R.length=8;
+  if(out)(out.lost=out.lost||[]).push(PROG_BY[k].n+' -'+d+' ('+why+')');
+  else if(w.promo===S.player&&!w.nw){var q=S.regQ||(S.regQ={});(q[w.id]=q[w.id]||[]).push(PROG_BY[k].n+' -'+d+' ('+why+')');}
+  return d;
+}
+/* age: the existing yearly decline, written down; past the cliff consistency and safety go too */
+(function(){
+  var bd=birthday;
+  birthday=function(S,w){
+    var before={};PROG_ATTR.forEach(function(a){before[a.k]=w[a.k];});bd.apply(this,arguments);if(w.rt||w.nw)return;
+    var R=w.rgx||(w.rgx=[]),lost=[];
+    PROG_ATTR.forEach(function(a){var d=(before[a.k]||0)-(w[a.k]||0);if(d>0){R.unshift({w:S.week,k:a.k,n:d,why:'age'});lost.push(a.n+' -'+d);}});
+    if(R.length>8)R.length=8;
+    if(w.cl&&w.age>=w.cl){progLose(S,w,'cons',1,'age',{lost:lost});progLose(S,w,'safe',1,'age',{lost:lost});}
+    if(lost.length&&w.promo===S.player)note(S,'Regression',w.name+' turned '+w.age+': '+lost.join(', ')+'.','bad');
+  };
+})();
+function regWeek(S){
+  if(S.cal)return;
+  S.w.forEach(function(w){
+    if(!w||w.nw||w.rt||w.promo==='FA')return;
+    if(w.wk0==null)w.wk0=S.week;
+    // a long injury: back in the ring a step slower
+    if(w.rwl>=6&&w.rgI!==w.rw){w.rgI=w.rw;var big=w.rwl>=12?2:1;progLose(S,w,'speed',big,w.rwl+' weeks out injured');progLose(S,w,'stam',big,w.rwl+' weeks out injured');}
+    // ring rust: weeks without a match, not counting time out hurt
+    if(w.inj>0)return;var idle=S.week-(w.wk!=null?w.wk:w.wk0);
+    if(idle<8){w.rustN=0;return;}
+    if(idle%4===0&&(w.rustN||0)<3){w.rustN=(w.rustN||0)+1;progLose(S,w,w.rustN%2?'stam':'cons',1,'ring rust: '+idle+' weeks without a match');}
+  });
+  var q=S.regQ;S.regQ=null;
+  if(q)Object.keys(q).forEach(function(id){var w=S.w[id];if(w)note(S,'Regression',w.name+': '+q[id].join(', ')+'.','bad');});
+}
+WEEKX.push(regWeek);
+E.__regWeek=regWeek;E.__birthday=function(S,w){birthday(S,w);};   // for test-progress.js
 /* points left unspent for eight weeks: the wrestler trains on their own and spends them (they do not wait forever) */
 WEEKX.push(function(S){
   if(S.cal)return;var n=0;
@@ -14079,8 +14215,8 @@ NEWX.push(function(S){progAll(S);});
 /* money: what a wrestler asks counts how good they are as well as how popular, so the best cost the most */
 (function(){
   var a0=E.ask,c0=E.canSign;
-  E.ask=function(S,w){var a=a0.apply(this,arguments);if(!w||w.nw)return a;var ov=overallOf(w),m=clamp(Math.pow(1.045,ov-(w.ovr||50)),0.7,1.6);return Math.round(a*m/50)*50;};
-  E.canSign=function(S,w){if(!c0.apply(this,arguments))return false;var P=S.promos[S.player];return !w||overallOf(w)<=P.image+45;};
+  E.ask=function(S,w){var a=a0.apply(this,arguments);if(!w||w.nw)return a;var ov=overallRaw(w),m=clamp(Math.pow(1.045,ov-(w.ovr||50)),0.7,1.6);return Math.round(a*m/50)*50;};
+  E.canSign=function(S,w){if(!c0.apply(this,arguments))return false;var P=S.promos[S.player];return !w||overallRaw(w)<=P.image+45;};
 })();
 /* the player's wrestlers with points waiting: a reminder on the desk, never a stop */
 TASKX.push(function(S,P,add){
@@ -14092,10 +14228,10 @@ TASKX.push(function(S,P,add){
 (function(){var af=E.afterShow;E.afterShow=function(S){var r=af.apply(this,arguments);if(!r||!r.items)return r;
   var rep=null;for(var i=0;i<S.reports.length;i++){if(S.reports[i].week===S.week&&S.reports[i].left&&S.reports[i].left.key===r.key){rep=S.reports[i];break;}}
   if(!rep||!rep.prog||!rep.prog.length)return r;
-  var P=rep.prog,ups=P.filter(function(o){return o.lv1;}),five=P.filter(function(o){return o.why.length;}),learned=P.filter(function(o){return o.learned&&o.learned.length;});
+  var P=rep.prog,lostP=P.filter(function(o){return o.lost&&o.lost.length;}),ups=P.filter(function(o){return o.lv1;}),five=P.filter(function(o){return o.why.length;}),learned=P.filter(function(o){return o.learned&&o.learned.length;});
   var nm=function(o){return S.w[o.id]?S.w[o.id].name:'Somebody';};
-  var line=(ups.length?ups.slice(0,2).map(nm).join(' and ')+(ups.length>2?' and '+(ups.length-2)+' more':'')+' levelled up':'Nobody levelled up')+(five.length?'; '+nm(five[0])+' earned a five-star bonus':'')+'.';
-  var detail=P.slice(0,24).map(function(o){var w=S.w[o.id];return nm(o)+': +'+o.xp+' XP'+(o.why.length?' ('+o.why[0]+')':'')+(o.lv1?'. Level '+o.lv0+' to '+o.lv1+', '+o.pts+' point'+(o.pts===1?'':'s')+' to spend':(w?', level '+w.lv:''))+(o.learned&&o.learned.length?'. Learned: '+o.learned.join(', ')+' +1':'')+'.';});
+  var line=(ups.length?ups.slice(0,2).map(nm).join(' and ')+(ups.length>2?' and '+(ups.length-2)+' more':'')+' levelled up':'Nobody levelled up')+(five.length?'; '+nm(five[0])+' earned a five-star bonus':'')+(lostP.length?'; '+nm(lostP[0])+' slipped':'')+'.';
+  var detail=P.slice(0,24).map(function(o){var w=S.w[o.id];return nm(o)+': +'+o.xp+' XP'+(o.why.length?' ('+o.why[0]+')':'')+(o.lv1?'. Level '+o.lv0+' to '+o.lv1+', '+o.pts+' point'+(o.pts===1?'':'s')+' to spend':(w?', level '+w.lv:''))+(o.learned&&o.learned.length?'. Learned: '+o.learned.join(', ')+' +1':'')+(o.lost&&o.lost.length?'. Lost: '+o.lost.join(', '):'')+'.';});
   if(learned.length)detail.push('Doing it grows it: hardcore matches teach Hardcore, submission and iron man matches Technical, long matches Stamina, promos the Microphone.');
   var seen=!!(S.nightSeen&&S.nightSeen.key===r.key&&S.nightSeen.k&&S.nightSeen.k.prog),it={k:'prog',n:'Progress',line:line,detail:detail,tone:ups.length||five.length?'good':'',seen:seen};
   var at=r.items.findIndex(function(x){return x.k==='next';});if(at<0)r.items.push(it);else r.items.splice(at,0,it);if(!seen)r.unseen=(r.unseen||0)+1;
@@ -14103,7 +14239,8 @@ TASKX.push(function(S,P,add){
 /** A wrestler's progression for the screens: level, experience, trait, points, and every attribute with its cap and cost. */
 E.progInfo=function(S,id){var w=S.w[id];if(!w)return null;progInit(S,w);
   return {lv:w.lv,xp:w.pxp,need:progNeed(w.lv),ap:w.ap||0,dev:w.dev,devN:DEV[w.dev].n,devD:DEV[w.dev].d,overall:overallOf(w),
-    attrs:PROG_ATTR.map(function(a){var v=w[a.k]||1,cap=progCap(w,a.k);return {k:a.k,n:a.n,g:a.g,v:v,cap:cap,cost:progCost(v),can:v<cap&&(w.ap||0)>=progCost(v),grow:+((w.gx||{})[a.k]||0).toFixed(2)};})};};
+    reg:(w.rgx||[]).map(function(r){return {k:r.k,n:PROG_BY[r.k]?PROG_BY[r.k].n:r.k,by:r.n,why:r.why,when:cal(r.w).label};}),
+    attrs:PROG_ATTR.map(function(a){var v=w[a.k]||1,cap=progCap(w,a.k),fall=(w.rgx||[]).filter(function(r){return r.k===a.k&&S.week-r.w<48;}).reduce(function(t,r){return t+r.n;},0);return {k:a.k,n:a.n,d:a.d||'',g:a.g,fall:fall,v:v,cap:cap,cost:progCost(v),can:v<cap&&(w.ap||0)>=progCost(v),grow:+((w.gx||{})[a.k]||0).toFixed(2)};})};};
 /** Spend a point (the player's own wrestlers). */
 E.spendPoint=function(S,id,k){var w=S.w[id];if(!w||w.promo!==S.player)return {ok:false,msg:'Not one of yours.'};progInit(S,w);var why=progSpend(w,k);return why?{ok:false,msg:why}:{ok:true,msg:w.name+': '+PROG_BY[k].n+' '+w[k]+'.'};};
 /** Let them choose where their points go. */

@@ -414,6 +414,8 @@ html body .win.ppop .wb{font-family:var(--hand);font-size:1.06em}
 .attr-cols h3{font-family:var(--marker);font-weight:400;color:#c23a30;margin:0 0 .3em}
 .attr-row{display:grid;grid-template-columns:7.5em 1fr 2.2em auto;align-items:center;gap:.4em;padding:.15em 0;border-bottom:1px dashed rgba(0,0,0,.15)}
 .attr-row .acap{grid-column:1/-1;font-size:.78em;margin-top:-.2em}
+.attr-row .afall{color:#c23a30;font-weight:700}
+.reg-box{background:#fde4df;transform:rotate(.3deg)}
 .attr-row .av{font-family:var(--marker);font-weight:400;text-align:right}
 .abar{position:relative;height:.65em;background:#e8dfc8;border:1.5px solid #1d1a24;border-radius:3px;overflow:hidden}
 .abar .cap{position:absolute;left:0;top:0;bottom:0;background:repeating-linear-gradient(45deg,#d8cba8 0 4px,#cdbf98 4px 8px)}

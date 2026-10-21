@@ -193,6 +193,9 @@ export function puppet(r: Recipe, pl: Place, pose: Record<string, number>, expr:
       cut(wr, [[-0.3, -1.42], [0.3, -1.42], [0.3, -1.75], [-0.3, -1.75]], { c: '#5c626b', f: 'foil' }, z + 0.087, 'wr_' + s, 0.06, 0.004);
       for (const sd of [-1, 1]) cut(wr, [[sd * 0.3, -1.44], [sd * 0.34, -1.47], [sd * 0.34, -1.7], [sd * 0.3, -1.73]], '#3c4048', z + 0.088, 'wr_' + s, 0.02, 0.002);
     }
+    if (s === 'n' && r.beltL && r.beltL.length && !has('bat') && !has('sword') && !has('sledgehammer') && !has('belt_waist') && !has('belt_shoulder')) {   // a champion carries their belt, the title's own design, hanging from the hand
+      const k = 0.75; beltPieces(r.beltL[0], (pts, col, dz, rough) => cut(wr, pts.map(([u, v]) => [v * k, -0.06 - (u + 1) * k] as Pt), col, z + 0.084 + dz * 0.02, 'wr_' + s, 0.03, rough == null ? 0.004 : rough));
+    }
     const hand = W_(wr, [[0.02, -0.17]])[0]; rig.anchors['hand_' + s] = hand;
   };
   const LONG = ['tights_long_01', 'pants_flared', 'jeans_distressed', 'trousers_suit'];
@@ -430,10 +433,9 @@ export function puppet(r: Recipe, pl: Place, pose: Record<string, number>, expr:
     cut(f, ell(cx, cy, 0.42 * sc, 0.32 * sc, 20), { c: rim, f: 'foil' }, z0, J, 0.04); cut(f, ell(cx, cy, 0.28 * sc, 0.2 * sc, 16), { c: face, f: 'foil' }, z0 + 0.004, J, 0.02);
     if (gem) cut(f, star(cx, cy, 0.12 * sc, 5, 0.45), gem, z0 + 0.008, J, 0.01, 0.003);
   };
-  // a champion walks out with their gold (Ryan, 20 October: up to three belts): the first over the shoulder, the second
-  // round the waist, the third over the other shoulder, each the title's own belt. Set by the entrance (and the Roster);
-  // a Create a Player outfit can carry its own.
-  const BL = (r.beltL || []).slice(0, 3), nb = Math.min(3, BL.length || r.belts || 0), strapOf = (i: number) => ({ c: BL[i] && BL[i].st ? BL[i].st : PAL.black, f: 'leather' as const });
+  // title belts are no longer worn across the body (Ryan, 21 October: "get rid of those belts on their chests"): a
+  // champion carries their belt in the hand (in arm() above). A Create a Player outfit can still put one on.
+  const BL = (r.beltL || []).slice(0, 3), nb = 0, strapOf = (i: number) => ({ c: BL[i] && BL[i].st ? BL[i].st : PAL.black, f: 'leather' as const });
   if (nb >= 3) { cut(to, strip([-0.62 * bw, 1.88 * H], [0.66 * bw, 0.25], 0.14, 0.14), strapOf(2), 0.525, 'torso', 0.03, 0.004); if (!bk) plate(to, 0.28 * bw, 0.66 * H, 0.85, 0.528, 'torso', BL[2]); }
   if (has('belt_waist') || nb >= 2) { cut(root, [[-0.66 * w, 0.14], [0.66 * w, 0.14], [0.67 * w, -0.12], [-0.67 * w, -0.12]], nb >= 2 ? strapOf(1) : { c: PAL.black, f: 'leather' }, 0.395, 'body', 0.03, 0.004); if (!bk) plate(root, 0.04, 0.01, 1.05, 0.4, 'body', nb >= 2 ? BL[1] : undefined); }
   if (has('belt_shoulder') || nb >= 1) { cut(to, strip([0.62 * bw, 1.88 * H], [-0.66 * bw, 0.25], 0.14, 0.14), nb >= 1 ? strapOf(0) : { c: PAL.black, f: 'leather' }, 0.53, 'torso', 0.03, 0.004); if (!bk) plate(to, 0.02, 1.08 * H, 1, 0.535, 'torso', nb >= 1 ? BL[0] : undefined); }
@@ -767,6 +769,69 @@ function head(fr: F, r: Recipe, z: number, expr: string, cut: (f: F, poly: Pt[],
   }
 }
 
+/* ---------- a title belt, the way Create a Belt paints it ---------- */
+/** The belt a scene's belt prop shows when nobody in it holds a title: set by the game to the company's top title. */
+let sceneBelt: BeltData = { pl: 'round', mt: 'gold', st: '#1c1b1f', gm: 'red', sd: 2, ss: 'round', tr: 'none', w: 'CHAMPION', top: '' };
+export function setSceneBelt(b: BeltData | null) { if (b) sceneBelt = b; }
+/** With nobody's own belt to show, the player's top title (its Create a Belt design), else a plain gold belt. */
+function topBelt(): BeltData {
+  try { const S: any = G.S; const P = S && S.promos && S.promos[S.player]; const t = P && (P.titles || []).slice().sort((x: any, y: any) => y.lvl - x.lvl)[0]; if (t) return E.beltOf(t, P); } catch (e) { /* no game: the plain belt */ }
+  return sceneBelt;
+}
+/** Every piece of a belt as paintBelt() in kit/belt.tsx draws it on its 96 by 42 drawing, turned into scene units: the
+    strap two units across, y up. `put` cuts a piece; `say` places lettering (left out when the belt is small). */
+export function beltPieces(b: BeltData, put: (pts: Pt[], col: string, dz: number, rough?: number) => void, say?: (s: string, u: number, v: number, size: number, col: string, dz: number) => void) {
+  const K = 1 / 45, U = (px: number) => (px - 48) * K, V = (py: number) => -(py - 21) * K;
+  const P = (pts: number[][]): Pt[] => pts.map(q => [U(q[0]), V(q[1])] as Pt);
+  const C = (cx: number, cy: number, r: number, n = 16): Pt[] => ell(U(cx), V(cy), r * K, r * K, n);
+  const EL = (cx: number, cy: number, rx: number, ry: number, n = 18): Pt[] => ell(U(cx), V(cy), rx * K, ry * K, n);
+  const R = (x0: number, y0: number, w: number, h: number): Pt[] => P([[x0, y0], [x0 + w, y0], [x0 + w, y0 + h], [x0, y0 + h]]);
+  const [rim, face, shine] = METAL[b.mt] || METAL.gold, strap = b.st || PAL.black, edge = shade(strap, 0.55);
+  const top = (u: number) => 13 + Math.sin(u * Math.PI) * 1.2, bot = (u: number) => 29 + Math.sin(u * Math.PI) * 1.2;
+  const band = (inset: number): Pt[] => { const q: number[][] = []; for (let i = 0; i <= 24; i++) { const u = i / 24; q.push([3 + u * 90, top(u) + inset]); } for (let i = 24; i >= 0; i--) { const u = i / 24; q.push([3 + u * 90, bot(u) - inset]); } return P(q); };
+  put(band(0), edge, 0); put(band(0.9), strap, 0.01);
+  for (let i = 0; i < 3; i++) put(C(7 + i * 3.2, 21, 0.75, 8), shade(strap, 0.3), 0.015, 0.002);   // the holes at the tip
+  // the trim along both edges
+  const lum = (() => { const n = parseInt(strap.slice(1), 16) || 0; return 0.3 * (n >> 16) + 0.59 * ((n >> 8) & 255) + 0.11 * (n & 255); })();
+  if (b.tr && b.tr !== 'none') for (let i = 1; i < 30; i++) { const u = i / 30, x0 = 3 + u * 90;
+    if (b.tr === 'studs') { put(C(x0, top(u) + 2.2, 0.75, 8), face, 0.02, 0.002); put(C(x0, bot(u) - 2.2, 0.75, 8), face, 0.02, 0.002); }
+    else { const col = b.tr === 'stitch' ? (lum > 150 ? '#6a5a40' : '#e8dcc0') : face, d = b.tr === 'stitch' ? 2.2 : 1.6, w = b.tr === 'rope' ? 0.55 : 0.25;
+      for (const [y, sg] of [[top(u) + d, 1], [bot(u) - d, -1]] as [number, number][]) put(P([[x0 - 1, y - w * sg], [x0 + 0.6, y - w * sg], [x0 + 0.6, y + w * sg], [x0 - 1, y + w * sg]]), col, 0.02, 0.001); } }
+  // the side plates, clear of the centre plate and smaller when crowded
+  const side = (cx: number, k: number) => { const cy = 21 + Math.sin((cx - 3) / 90 * Math.PI) * 1.2;
+    if (b.ss === 'square') { put(R(cx - 4.4 * k, cy - 5 * k, 8.8 * k, 10 * k), rim, 0.03); put(R(cx - 3.5 * k, cy - 4.1 * k, 7 * k, 8.2 * k), face, 0.04); }
+    else if (b.ss === 'shield') { put(P([[cx - 4.4 * k, cy - 5.2 * k], [cx + 4.4 * k, cy - 5.2 * k], [cx + 4.4 * k, cy + k], [cx, cy + 5.6 * k], [cx - 4.4 * k, cy + k]]), rim, 0.03); put(P([[cx - 3.5 * k, cy - 4.3 * k], [cx + 3.5 * k, cy - 4.3 * k], [cx + 3.5 * k, cy + 0.6 * k], [cx, cy + 4.4 * k], [cx - 3.5 * k, cy + 0.6 * k]]), face, 0.04); }
+    else { put(C(cx, cy, 5 * k, 12), rim, 0.03); put(C(cx, cy, 4.1 * k, 12), face, 0.04); }
+    const st: number[][] = []; for (let j = 0; j < 10; j++) { const an = -Math.PI / 2 + j * Math.PI / 5, r = (j % 2 ? 0.9 : 2.1) * k; st.push([cx + Math.cos(an) * r, cy - 0.3 * k + Math.sin(an) * r]); } put(P(st), shine, 0.05, 0.002); };
+  const n = b.sd | 0, s0 = ({ crest: 35, bar: 29, oval: 26, diamond: 26, star: 25 } as Record<string, number>)[b.pl] || 23.5, gap = n > 1 ? Math.min(10.5, (41 - s0) / (n - 1)) : 0, sc = n > 1 ? Math.min(1, gap / 10.5 + 0.12) : 1;
+  for (let i = 0; i < n; i++) { const off = s0 + i * gap; side(48 - off, sc); side(48 + off, sc); }
+  // the centre plate: a rim, then its face
+  const cx = 48, cy = 21; let tY = 14, wY = 26, wW = 30;
+  const plate = (q: number, col: string, dz: number) => {
+    if (b.pl === 'oval') put(EL(cx, cy, 20 * q, 14.5 * q), col, dz);
+    else if (b.pl === 'globe') put(C(cx, cy, 16 * q, 22), col, dz);
+    else if (b.pl === 'shield') put(P([[cx - 16 * q, cy - 15 * q], [cx + 16 * q, cy - 15 * q], [cx + 16 * q, cy + 3 * q], [cx, cy + 17 * q], [cx - 16 * q, cy + 3 * q]]), col, dz);
+    else if (b.pl === 'diamond') put(P([[cx, cy - 17 * q], [cx + 21 * q, cy], [cx, cy + 17 * q], [cx - 21 * q, cy]]), col, dz);
+    else if (b.pl === 'square') put(R(cx - 16 * q, cy - 13 * q, 32 * q, 26 * q), col, dz);
+    else if (b.pl === 'bar') put(R(cx - 23 * q, cy - 9 * q, 46 * q, 18 * q), col, dz);
+    else if (b.pl === 'star') { const st: number[][] = []; for (let j = 0; j < 10; j++) { const an = -Math.PI / 2 + j * Math.PI / 5, r = (j % 2 ? 9 : 18.5) * q; st.push([cx + Math.cos(an) * r * 1.15, cy + 1 + Math.sin(an) * r]); } put(P(st), col, dz); }
+    else if (b.pl === 'crown') { put(P([[cx - 15 * q, cy - 5 * q], [cx - 15 * q, cy - 17 * q], [cx - 8 * q, cy - 10 * q], [cx, cy - 19 * q], [cx + 8 * q, cy - 10 * q], [cx + 15 * q, cy - 17 * q], [cx + 15 * q, cy - 5 * q]]), col, dz); put(R(cx - 16 * q, cy - 6 * q, 32 * q, 21 * q), col, dz + 0.001); }
+    else if (b.pl === 'crest') { for (const d of [-1, 1]) for (let j = 0; j < 4; j++) put(P([[cx + d * 10 * q, cy - 8 * q + j * 4 * q], [cx + d * (31 - j * 3) * q, cy - 13 * q + j * 5.5 * q], [cx + d * (30 - j * 3) * q, cy - 9.5 * q + j * 5.5 * q], [cx + d * 10 * q, cy - 3 * q + j * 4 * q]]), col, dz);
+      put(C(cx, cy, 13.5 * q, 20), col, dz + 0.001); }
+    else put(C(cx, cy, 15 * q, 20), col, dz);
+  };
+  plate(1, rim, 0.06); plate(0.86, face, 0.08);
+  if (b.pl === 'globe') for (const rx of [6, 11]) { put(EL(cx, cy, rx, 13.6, 20).concat(EL(cx, cy, rx - 0.5, 13.1, 20).reverse()), rim, 0.085, 0.001); }
+  put(EL(cx - 7, cy - 7, 6, 2.6, 12), shine, 0.09, 0.003);   // a shine across the upper left of the face
+  if (b.pl === 'bar') { tY = 15.5; wY = 25; wW = 40; } else if (b.pl === 'crown') { tY = 18; wY = 28; wW = 26; } else if (b.pl === 'diamond') { wW = 26; } else if (b.pl === 'star') { wW = 24; tY = 15.5; }
+  if (b.gm && b.gm !== 'none') { const g = GEM[b.gm] || GEM.red || PAL.red, gy = b.pl === 'crown' ? cy - 12 : (b.pl === 'bar' ? cy - 2.5 : cy - 3);
+    put(C(cx, gy, 3.2, 12), rim, 0.1, 0.002); put(C(cx, gy, 2.5, 12), g, 0.11, 0.002); put(P([[cx - 1.6, gy - 0.6], [cx - 0.2, gy - 1.9], [cx + 0.4, gy - 0.9]]), '#ffffff', 0.12, 0.001); }
+  if (b.w) { const bw = Math.min(wW + 6, Math.max(18, b.w.length * 3.6 + 6));
+    put(P([[cx - bw / 2 - 2.5, wY - 3.6], [cx + bw / 2 + 2.5, wY - 3.6], [cx + bw / 2, wY], [cx + bw / 2 + 2.5, wY + 3.6], [cx - bw / 2 - 2.5, wY + 3.6], [cx - bw / 2, wY]]), rim, 0.1);
+    if (say) say(b.w, U(cx), V(wY + 0.3), Math.min(5, (bw - 1) / Math.max(1, b.w.length * 0.62)) * K, shine, 0.13); }
+  if (b.top && say) say(b.top, U(cx), V(b.gm && b.gm !== 'none' && b.pl !== 'crown' && b.pl !== 'bar' ? tY - 3 : tY), Math.min(4.2, 18 / Math.max(1, b.top.length * 0.62)) * K, rim, 0.13);
+}
+
 /* ---------- props: things that stand in a scene ---------- */
 export interface PropDraw { k: string; x: number; y: number; r: number; z: number; s?: number; txt?: string; col?: string; id: string; bl?: BeltData }
 const PR = (pts: Pt[], cx: number, cy: number, a: number, s: number): Pt[] => pts.map(([x, y]) => { const d = rot([x * s, y * s], a); return [cx + d[0], cy + d[1]] as Pt; });
@@ -778,24 +843,9 @@ const lum = (h: string) => { const n = parseInt(h.slice(1), 16) || 0; return (0.
 export function prop(p: PropDraw, out: Piece[], t = 0) {
   const a = p.r * Math.PI / 180, s = p.s || 1, z = p.z, own = p.id, seed = hash(p.id + p.k);
   const add = (pts: Pt[], col: string, dz: number, lift = 0.05, rough = 0.008) => out.push({ pts: snip(PR(pts, p.x, p.y, a, s), seed + out.length * 31, rough, 0.08), col, z: z + dz, lift, prop: own });
-  if (p.k === 'belt' && p.bl) {   // a title's own belt (src/89-belts.js): its strap, its plates, its metal, its gem
-    const b = p.bl, [rim, face, shine] = METAL[b.mt] || METAL.gold, n = b.sd | 0;
-    add([[-1.0, -0.14], [1.0, -0.14], [1.0, 0.14], [-1.0, 0.14]], b.st || PAL.black, 0);
-    for (let i = 0; i < n; i++) for (const d of [-1, 1]) { const sx = d * (0.58 + i * 0.13); add(b.ss === 'round' ? ell(sx, 0, 0.065, 0.11, 10) : [[sx - 0.06, -0.11], [sx + 0.06, -0.11], [sx + 0.06, 0.08], [sx, 0.12], [sx - 0.06, 0.08]], face, 0.04); }
-    const plate = (k: number): Pt[] => b.pl === 'shield' ? [[-0.36 * k, -0.34 * k], [0.36 * k, -0.34 * k], [0.36 * k, 0.08 * k], [0, 0.38 * k], [-0.36 * k, 0.08 * k]]
-      : b.pl === 'diamond' ? [[0, -0.38 * k], [0.46 * k, 0], [0, 0.38 * k], [-0.46 * k, 0]]
-      : b.pl === 'square' || b.pl === 'crown' ? [[-0.36 * k, -0.3 * k], [0.36 * k, -0.3 * k], [0.36 * k, 0.3 * k], [-0.36 * k, 0.3 * k]]
-      : b.pl === 'bar' ? [[-0.52 * k, -0.2 * k], [0.52 * k, -0.2 * k], [0.52 * k, 0.2 * k], [-0.52 * k, 0.2 * k]]
-      : b.pl === 'star' ? star(0, 0, 0.42 * k, 5, 0.5)
-      : ell(0, 0, (b.pl === 'oval' ? 0.48 : 0.38) * k, (b.pl === 'oval' ? 0.34 : 0.36) * k, 20);
-    if (b.pl === 'crest') for (const d of [-1, 1]) add([[d * 0.2, -0.16], [d * 0.72, -0.28], [d * 0.7, -0.1], [d * 0.2, 0.08]], face, 0.03);
-    if (b.pl === 'crown') add([[-0.36, -0.3], [-0.36, -0.52], [-0.18, -0.38], [0, -0.56], [0.18, -0.38], [0.36, -0.52], [0.36, -0.3]], face, 0.04);
-    add(plate(1), rim, 0.04); add(plate(0.84), face, 0.08); add(ell(-0.12, -0.12, 0.12, 0.06, 10), shine, 0.1, 0.02, 0.004);
-    if (b.gm && b.gm !== 'none') add(ell(0, 0, 0.08, 0.08, 10), GEM[b.gm] || PAL.red, 0.12, 0.02, 0.003);
-  } else if (p.k === 'belt') {
-    add([[-1.0, -0.14], [1.0, -0.14], [1.0, 0.14], [-1.0, 0.14]], PAL.black, 0);
-    add(ell(0, 0, 0.48, 0.36, 20), PAL.gold, 0.04); add(ell(0, 0, 0.3, 0.22, 16), PAL.yellow, 0.08); add(star(0, 0, 0.14, 5, 0.45), PAL.red, 0.12, 0.02, 0.004);
-    for (const sx of [-0.7, 0.7]) add(ell(sx, 0, 0.16, 0.13, 12), PAL.gold, 0.04);
+  if (p.k === 'belt') {   // a title's own belt, as Create a Belt paints it (Ryan, 21 October)
+    beltPieces(p.bl || topBelt(), (pts, col, dz, rough) => add(pts, col, dz, 0.05, rough == null ? 0.006 : rough),
+      (str, u, v, size, col, dz) => { const q = PR([[u, v]], p.x, p.y, a, s)[0]; out.push({ pts: [], col: '', z: z + dz, prop: own, txt: { s: str, x: q[0], y: q[1], size: size * s, col } }); });
   } else if (p.k === 'chair') {
     add([[-0.45, 0.0], [0.45, 0.0], [0.4, 1.1], [-0.4, 1.1]], PAL.steel, 0); add([[-0.5, -0.08], [0.5, -0.08], [0.5, 0.06], [-0.5, 0.06]], shade(PAL.steel, 0.8), 0.04);
     add([[-0.42, -0.08], [-0.32, -0.08], [-0.5, -1.1], [-0.6, -1.1]], shade(PAL.steel, 0.7), -0.02); add([[0.32, -0.08], [0.42, -0.08], [0.6, -1.1], [0.5, -1.1]], shade(PAL.steel, 0.7), -0.02);

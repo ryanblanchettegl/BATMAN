@@ -108,11 +108,12 @@ for (let w = 0; w < 50 && !S.over; w++) {
 }
 // the tournament month: its winner is promised the top title match at the flagship
 {
-  const S = E.newGame('ocw', 1, { name: 'R' }); let q = null;
-  for (let w = 0; w < 48 && !q; w++) { S.inbox.filter(e => !e.done).forEach(e => E.resolveEvent(S, e.id, 0));
+  const S = E.newGame('ocw', 1, { name: 'R' }); let q = null, champWon = null;
+  for (let w = 0; w < 48 && !q && !champWon; w++) { S.inbox.filter(e => !e.done).forEach(e => E.resolveEvent(S, e.id, 0));
     while (S.qi < S.queue.length) { const c = E.suggest(S), pr = E.preShow(S, c); if (pr) { E.resolvePre(S, c, 0); E.fitShow(S, c); } if (E.validate(S, c).errors.length) { S.qi++; continue; } E.runPlayerShow(S, c); }
-    q = S.quests.find(x => x.type === 'shot' && /won the tournament/.test(x.text)); E.endWeek(S); }
-  ok(q && E.cal(q.due).month === S.promos.ocw.flagship, 'no tournament winner was promised the flagship: ' + JSON.stringify(q));
+    q = q || S.quests.find(x => x.type === 'shot' && /won the tournament/.test(x.text)); if (!q && !champWon) champWon = S.news.find(n => /won the .* tournament\.$/.test(n.t)); E.endWeek(S); }
+  // a champion who wins the tournament has no title match to be promised
+  ok((q && E.cal(q.due).month === S.promos.ocw.flagship) || champWon, 'no tournament winner was promised the flagship: ' + JSON.stringify(q));
 }
 if (fails) { console.log('FAILED: ' + fails); process.exit(1); }
 console.log('test-events: all passed');

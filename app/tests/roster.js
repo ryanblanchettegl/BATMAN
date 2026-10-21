@@ -63,7 +63,7 @@ async function run(mode) {
   must(await page.$$eval('.prof .kv > div', L => L.length) === 10, 'overview does not show ten stats');
   await ok(t, 'profile overview', first.name);
   if (mode === 'desk' || mode === 'phone') await shot(page, 'roster-profile-' + mode, mode === 'phone');
-  await profTab(page, 'deal'); must(/a week, \d+ weeks left/.test(await page.$eval('.prof', e => e.innerText)), 'contract page has no terms'); await ok(t, 'profile contract');
+  await profTab(page, 'deal'); must(/(Yearly deal\. .* a week, .*left|Per appearance\. .* a show)/.test(await page.$eval('.prof', e => e.innerText)), 'contract page has no terms'); await ok(t, 'profile contract');
   await profTab(page, 'room'); must(await page.$('.prof .ego') && await page.$('.prof pre.body'), 'locker page lacks the ego grid or body figure'); await ok(t, 'profile locker room');
   await profTab(page, 'scout'); must(await page.$$eval('.prof .scout > div', L => L.length) >= 3, 'scouting page has no ranges'); await ok(t, 'profile scouting and career');
   const second = await page.$eval('tr.pick:not(.on)', e => +e.dataset.id);

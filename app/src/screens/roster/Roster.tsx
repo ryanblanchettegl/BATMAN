@@ -67,7 +67,7 @@ function Line_(p: { w: W; on: boolean; spot: string; champ: boolean; brand?: str
     <td class="r num">{w.age}</td>
     <td class="r"><Ovr w={w} /></td>
     <td><Meter v={w.ovr} n={5} /></td><td><Meter v={w.morale} n={5} kind={w.morale < 35 ? 'hot' : undefined} /></td><td><Meter v={w.cond} n={5} kind={w.cond < 50 ? 'hot' : undefined} /></td>
-    <td class={'r num' + (w.con <= 4 ? ' bad' : '')}>{Math.max(0, w.con)}</td>
+    <td class={'r num' + (w.dl !== 'show' && w.con <= 4 ? ' bad' : '')}>{w.dl === 'show' ? <span title="Per appearance: paid for each show they are on">Per show</span> : Math.max(0, w.con)}</td>
     <td class="stt"><div><Status w={w} champ={p.champ} /></div></td>
   </tr>;
 }
@@ -86,7 +86,7 @@ function File(p: { w: W | null; spot: string }) {
   const feuds = E.feudsFor(S, w.id), titles = champOf(P, w.id);
   return <Win title={w.name} area="file" t="roster-file" right={titles.length ? '★' : undefined}>
     {/* rule 5c: the wrestler is always on show, full length, drawn by the diorama engine */}
-    <div class="sc-stage rs-stage"><ScenePlayer key="rsw" sc={STAND} cast={{ A: { ...recipeOf(w), belts: Math.min(3, titles.length), beltL: titles.slice().sort((a: any, b: any) => b.lvl - a.lvl).slice(0, 3).map((t: any) => E.beltOf(t, P)) } }} play={'rs' + w.id + ':' + titles.length + JSON.stringify((w as any).look || null)} still orbit fill t="roster-stage" label={w.name + ' in ring gear. Drag to walk round them.'} /></div>
+    <div class="sc-stage rs-stage"><ScenePlayer key="rsw" sc={STAND} cast={{ A: recipeOf(w) }} play={'rs' + w.id + ':' + titles.length + JSON.stringify((w as any).look || null)} still orbit fill t="roster-stage" label={w.name + ' in ring gear. Drag to walk round them.'} /></div>
     <p class="big"><Ovr w={w} big /> <b>{w.name}</b> <Side w={w} /></p>
     <p>{p.spot} {'·'} age {w.age}</p>
     {!w.nw ? <LevelLine w={w} /> : null}
@@ -102,8 +102,7 @@ function File(p: { w: W | null; spot: string }) {
       <Line label="Story">{feuds.length ? feuds.map((f: any) => S.w[f.a === w.id ? f.b : f.a].name).join(', ') : <span class="muted">None</span>}</Line>
     </Group>
     <Group title="The deal">
-      <Line label="Pay">{cash(w.wage)} a week</Line>
-      <Line label="Contract"><span class={w.con <= 4 ? 'bad' : undefined}>{Math.max(0, w.con)} weeks left</span></Line>
+      {(() => { const c = E.contractOf(S, w); return c ? <><Line label="Contract">{c.n}</Line><Line label="Pay"><span class={c.ct === 'year' && w.con <= 4 ? 'bad' : undefined} title={c.line}>{c.ct === 'show' ? cash(c.pay) + ' a show' : cash(c.pay) + ' a week, ' + Math.max(0, w.con) + ' weeks left'}</span></Line></> : null; })()}
     </Group>
     <div class="row mt1">{!w.nw ? <Btn kind="go" t="roster-attrs" d={{ id: w.id }} onClick={() => openModal({ kind: 'attrs', id: w.id })}>Attributes</Btn> : null}
       <Btn t="roster-full" d={{ id: w.id }} onClick={() => view(() => { const st = rs(); st.peek = w.id; st.sel = w.id; })}>Full profile</Btn>
