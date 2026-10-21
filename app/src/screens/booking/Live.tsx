@@ -305,8 +305,9 @@ function scenePick(r: any, s: any, at: number, done: boolean): { sc: Scene; cast
       return { sc, cast, play: i + ':e' + k + (held ? 'b' + held : '') + (mates.length ? 'm' + mates.length : ''), label: names + (mates.length ? ' come out' : ' comes out') + (held ? ' with ' + (held === 1 ? 'the gold' : held + ' belts') : '') };
     }
   }
-  // a match told with no entrances (a tag match): a newcomer's debut is the picture at the bell
-  if (!done && (s.debut || []).length && !bc.some(b => b.t === 'ent') && bc.slice(0, now + 1).filter(b => b.t === 'pbp' || b.t === 'col').length <= 2) {
+  // a newcomer's debut is also the picture at the bell (the broadcast may join a match past its entrances, as a tag match does);
+  // the same play key as the entrance's, so one already showing carries on rather than starting again
+  if (!done && (s.debut || []).length && bc.slice(0, now + 1).filter(b => b.t === 'pbp' || b.t === 'col').length <= 2) {
     const dbt = s.debut[0], pk = beatPick('debut_' + dbt.k, [dbt.id].concat(ids.filter(id => sideOf(id) !== sideOf(dbt.id)).slice(0, 1)));
     if (pk) { Object.assign(cast, pk.cast); return { sc: pk.sc, cast, play: i + ':db' + dbt.id, label: pk.label }; }
   }
