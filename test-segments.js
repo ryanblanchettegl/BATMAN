@@ -25,7 +25,7 @@ const mins = (S, card) => E.clock(S, card);
 const clear = S => { S.sa = null; S.saNext = 1e9; while (E.segInfo(S).booked) E.setSeg(S, 0, null); };   // no arc on these shows: this tests what the booker books by hand (test-tale.js tests the arcs)
 const fx = (r, re) => r.segs.filter(s => s.k === 'match' && (s.fx || []).some(f => re.test(f.x)));
 
-{ const S = E.newGame('pdw', 3, { name: 'R' }), P = S.promos.pdw;
+{ const S = E.newGame('pdw', 3, { name: 'R', mid: false }), P = S.promos.pdw;
   ok('pdw', 'nothing is booked before the card is built, and there is no fixed number of slots', E.segInfo(S).booked === 0 && E.segInfo(S).slots === undefined);
   /* the suggested card is a whole show that fits its two hours */
   house(S); S.card = E.suggest(S);
@@ -139,7 +139,7 @@ const fx = (r, re) => r.segs.filter(s => s.k === 'match' && (s.fx || []).some(f 
   tryKind('words', { label: 'the feud is still going', post: who => true });
   /* a call on the headset that cuts a match short does not leave the show unable to run */
   { let cases = 0, stuck = 0, kept = 0, cut = 0;
-    for (let seed = 1; seed <= 24; seed++) { const S0 = E.newGame('pdw', seed, { name: 'R' }); house(S0); S0.card = E.suggest(S0);
+    for (let seed = 1; seed <= 24; seed++) { const S0 = E.newGame('pdw', seed, { name: 'R', mid: false }); house(S0); S0.card = E.suggest(S0);
       let got = false; for (let i = 0; i < 400 && !got; i++) { S0.chs = null; got = !!E.chaos(S0, S0.card); } if (!got) continue;
       for (let c = 0; c < 3; c++) { const T = JSON.parse(JSON.stringify(S0)), mi = T.chs.mi, was = T.card[mi] ? T.card[mi].len : null; E.resolveChaos(T, T.card, c); cases++; if (E.validate(T, T.card).errors.length) stuck++; if (T.card[mi] && was !== 'S' && T.card[mi].len === 'S') { cut++; kept++; } } }
     ok('pdw', 'after any headset call the show still fits its time, and a match that was cut stays cut', cases > 30 && stuck === 0 && cut === kept, cases + ' calls, ' + stuck + ' left the show unable to run, ' + cut + ' cut a match short'); }
@@ -152,7 +152,7 @@ const fx = (r, re) => r.segs.filter(s => s.k === 'match' && (s.fx || []).some(f 
 
 /* suggestions on every show for 40 weeks, three companies: no errors, and the same seed gives the same game */
 function longRun(id, seed) {
-  const S = E.newGame(id, seed, { name: 'R' }); let errs = 0, booked = 0, shows = 0, why = '';
+  const S = E.newGame(id, seed, { name: 'R', mid: false }); let errs = 0, booked = 0, shows = 0, why = '';
   for (let wk = 0; wk < 40 && !S.over; wk++) {
     while (S.qi < S.queue.length) { try { const r = show(S, S => { booked += E.segInfo(S).list.filter(x => x.k !== 'writers').length; }); if (r) shows++; else break; } catch (x) { errs++; why = why || x.message; S.qi++; } }
     try { house(S); E.endWeek(S); } catch (x) { errs++; why = why || x.message; }
@@ -172,7 +172,7 @@ function longRun(id, seed) {
 /* ---- a promo or an angle on the air is a scene: an entrance, the words in pieces, a quoted line said by its speaker, the crowd and the desk ---- */
 { let n = 0, mic = 0, bad = [];
   for (const sd of [1, 2, 3, 4, 5, 6]) {
-    const S = E.newGame('pdw', sd, { name: 'R' }); S.inbox.forEach(e => E.resolveEvent(S, e.id, 0));
+    const S = E.newGame('pdw', sd, { name: 'R', mid: false }); S.inbox.forEach(e => E.resolveEvent(S, e.id, 0));
     const c = E.suggest(S), pr = E.preShow(S, c); if (pr) { E.resolvePre(S, c, 0); E.fitShow(S, c); }
     const r = E.runPlayerShow(S, c).rep, names = new Set(S.w.map(w => w.name));
     r.segs.filter(s => s.k !== 'match' && s.bc && !s.rub).forEach(s => {

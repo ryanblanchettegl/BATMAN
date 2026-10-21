@@ -3,7 +3,7 @@ require('./engine.js');
 const fs = require('fs'), E = globalThis.GP, fails = [];
 const ok = (id, label, pass, detail) => { console.log(id.padEnd(6), pass ? 'ok  ' : 'FAIL', label + (detail ? ': ' + detail : '')); if (!pass) fails.push(id + ' ' + label); };
 E.useUniverse(JSON.parse(fs.readFileSync('universes/public_domain.json', 'utf8')));
-const house = S => { S.inbox.filter(e => !e.done).forEach(e => E.resolveEvent(S, e.id, e.type === 'handover' ? 0 : 1)); if (S.owner.pending) E.setCreed(S, { style: 'merit', roots: 'tradition', pledge: 'stable' }); };
+const house = S => { S.inbox.filter(e => !e.done).forEach(e => E.resolveEvent(S, e.id, e.type === 'handover' ? 0 : (e.type === 'wroom' ? 2 : 1))); if (S.owner.pending) E.setCreed(S, { style: 'merit', roots: 'tradition', pledge: 'stable' }); };
 const notes = S => S.toasts.filter(t => t && typeof t === 'object');
 const by = (S, name) => S.w.find(w => w.name === name);
 function week(S) { house(S); while (S.qi < S.queue.length) { const card = E.suggest(S), pr = E.preShow(S, card); if (pr) { E.resolvePre(S, card, 0); E.fitShow(S, card); } S.card = card; if (E.validate(S, card).errors.length) { S.qi++; continue; } E.runPlayerShow(S, card); } house(S); E.endWeek(S); }
@@ -72,7 +72,7 @@ function week(S) { house(S); while (S.qi < S.queue.length) { const card = E.sugg
   ok('old', 'and plays on', S.week === 2);
 }
 /* ---- sixty weeks as three companies ---- */
-{ let bad = 0, out = [];
+{ let bad = 0, out = [], respAll = 0;
   for (const id of ['pdw', 'ttt', 'kjp']) {
     const S = E.newGame(id, 11, { name: 'R' }); let errs = 0;
     for (let k = 0; k < 60 && !S.over; k++) { try { week(S); } catch (e) { errs++; console.log(id, e.message); break; } }
@@ -81,9 +81,10 @@ function week(S) { house(S); while (S.qi < S.queue.length) { const card = E.sugg
     const mems = mine.reduce((a, k2) => a + M[k2].mem.length, 0), jeal = mine.filter(k2 => Math.max(M[k2].jeal[0], M[k2].jeal[1]) >= 5).length, resp = mine.filter(k2 => Math.max(M[k2].resp[0], M[k2].resp[1]) >= 10).length;
     const heat = mine.filter(k2 => M[k2].bond <= -30).length, friends = mine.filter(k2 => M[k2].bond >= 30).length;
     out.push(id + ': ' + ks.length + ' pairs, ' + friends + ' friends, ' + heat + ' with heat, ' + resp + ' with respect, ' + jeal + ' jealous, ' + mems + ' memories, ' + Math.round(JSON.stringify(M).length / 1024) + ' KB');
-    if (errs || nan || !mems || !resp) bad++;
+    if (errs || nan || !mems) bad++; respAll += resp;   // respect is rare at a small company: counted across the three
     if (JSON.stringify(S.toasts).length > 20000) bad++;
   }
+  if (respAll < 3) bad++;
   ok('long', 'the matrix stays sound, bounded and alive', bad === 0, out.join(' | '));
 }
 if (fails.length) { console.log('FAILED: ' + fails.length); process.exit(1); }

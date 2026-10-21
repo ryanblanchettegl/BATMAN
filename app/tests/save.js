@@ -14,6 +14,11 @@ const snap = page => state(page, S => ({ week: S.week, cash: S.promos[S.player].
     const a = await snap(page); await cont(page); const b = await snap(page);
     ok(JSON.stringify(a) === JSON.stringify(b), 'reload and Continue keep the game: ' + JSON.stringify(a) + ' / ' + JSON.stringify(b));
     ok(errs.length === 0, 'no errors (reload): ' + errs.join(' | '));
+    // the database holds the save on its own: with localStorage emptied, Continue still finds the game
+    await page.evaluate(() => window.EWF_DEBUG.save && window.EWF_DEBUG.save()); await page.waitForTimeout(300);
+    await page.evaluate(k => { localStorage.removeItem(k); localStorage.removeItem(k + '-n'); }, KEY);
+    await cont(page); const c = await snap(page);
+    ok(JSON.stringify(a) === JSON.stringify(c), 'with localStorage empty the save comes back from IndexedDB: ' + JSON.stringify(c));
     await browser.close();
   }
   {

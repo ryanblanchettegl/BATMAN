@@ -405,14 +405,14 @@ html.nav .caw :is(button,select,input):focus{outline:.2em solid #d00000;outline-
 /* the top of the screen: the menu, and under it the notification bar */
 .ftop{position:sticky;top:env(safe-area-inset-top,0px);z-index:6}
 .ftop>.menu{position:static}
-.toast{all:unset;box-sizing:border-box;display:flex;flex-wrap:wrap;gap:0 2ch;align-items:center;width:100%;padding:2px 2ch;background:var(--yellow);color:var(--k);cursor:pointer}
+.toast{all:unset;box-sizing:border-box;display:flex;flex-wrap:nowrap;overflow:hidden;white-space:nowrap;gap:0 2ch;align-items:center;width:100%;padding:2px 2ch;background:var(--yellow);color:var(--k);cursor:pointer}
 .toast b{color:var(--dred)}
 .toast .sp{flex:1}
 .toast .tn{color:var(--k);text-transform:uppercase}
 .toast.note{background:var(--cyan)}
 .toast.note.bad{background:var(--red)}
 .toast.note.good{background:var(--green)}
-.toast .td{min-width:0;color:var(--k)}
+.toast .td{min-width:0;color:var(--k);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}   /* one line always: a wrapped note would take height from every page */
 .toast:focus-visible{outline:2px solid var(--k);outline-offset:-2px}
 /* the bottom of the screen: one line, with the numbers on the left and the keys on the right */
 .ffoot{position:sticky;bottom:0;z-index:5}

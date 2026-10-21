@@ -36,11 +36,13 @@ export function drawPortrait(r: Recipe, ps: PortraitSet = {}, card = '#8a8478', 
     keys: [{ t: 0, figs: { A: { x: 0, y: pd.y ?? WAIST, r: pd.r || 0, f: 1, z: 0.6, p: { ...pd.p }, e: ps.expr != null ? ps.expr : pd.e || '' } },
       props: ps.pose === 'mic' ? [{ id: 'mic', k: 'mic', x: 0.1, y: 0.1, r: -30, z: 1.2, at: 'A:hand_n' }] : [], cam: chest ? { x: 0.1, y: headY - 1.0, z: 4.4 } : { x: 0.12, y: headY - 0.35, z: 6.6 } }] };
   const bg = card, k = sc.keys[0], v = viewFor(px, px, k.cam);
-  ctx.fillStyle = bg; ctx.fillRect(0, 0, px, px);
-  // a second card, a shade lighter, cut on the slant behind them
-  ctx.fillStyle = 'rgba(255,255,255,0.12)'; ctx.beginPath(); ctx.moveTo(0, px * 0.62); ctx.lineTo(px, px * 0.3); ctx.lineTo(px, px); ctx.lineTo(0, px); ctx.closePath(); ctx.fill();
+  if (bg !== 'none') {   // 'none': no card at all, for people drawn on something else (the crowd on the broadcast)
+    ctx.fillStyle = bg; ctx.fillRect(0, 0, px, px);
+    // a second card, a shade lighter, cut on the slant behind them
+    ctx.fillStyle = 'rgba(255,255,255,0.12)'; ctx.beginPath(); ctx.moveTo(0, px * 0.62); ctx.lineTo(px, px * 0.3); ctx.lineTo(px, px); ctx.lineTo(0, px); ctx.closePath(); ctx.fill();
+  }
   const b = build(sc, k, { A: r }, 0);
-  drawScene(ctx, b.pieces.filter(p => !p.layer), v, 'portrait');
+  drawScene(ctx, b.pieces.filter(p => !p.layer), v, 'portrait', bg === 'none');
   if (cache.size > 300) cache.clear();
   cache.set(key, c);
   return c;

@@ -169,7 +169,7 @@ function callMatch(S,P,x){
   x.sides.forEach(function(s,k){
     var isCh=x.champ&&x.champ===s,lead=s[0],big=avg(s.map(function(w){return w.ovr;}))>=62||isCh;
     ring((k===0?'Introducing first, ':(k===x.sides.length-1?'And the opponent'+(s.length>1?'s':'')+', ':'Next, '))+(isCh?'the '+x.t.name+' champion'+(s.length>1?'s':'')+', ':'')+names(s)+'!');
-    bc.push({t:'ent',x:big?(s.length===1&&lead.look&&lead.look.entrance_fx&&lead.look.entrance_fx.music?'"'+lead.look.entrance_fx.music+'" hits, and ':'')+names(s)+' '+(s.length>1?'make their way out together':ENTR[lead.align==='F'?'F':'H'][lead.ent||0])+(isCh?', the title held high':'')+'. The reaction: '+pop(s)+'.':'The reaction: '+pop(s)+'.'});
+    bc.push({t:'ent',side:s.map(function(x){return x.id;}),x:big?(s.length===1&&lead.look&&lead.look.entrance_fx&&lead.look.entrance_fx.music?'"'+lead.look.entrance_fx.music+'" hits, and ':'')+names(s)+' '+(s.length>1?'make their way out together':ENTR[lead.align==='F'?'F':'H'][lead.ent||0])+(isCh?', the title held high':'')+'. The reaction: '+pop(s)+'.':'The reaction: '+pop(s)+'.'});
   });
   // the hottest act in the match gets a chant; a wrestler with a fresh catchphrase hears it shouted back
   var hot=x.all.slice().sort(function(p,q){return q.ovr-p.ovr;})[0];
@@ -244,7 +244,7 @@ function winOdds(S,P,show,m,sides,t,champSide,feud,big,isMain){
       if(w.fav)x+=3;
       return x;
     }));
-    if(k===champSide)v+=5-Math.min(6,(t?t.defs:0)*0.6);
+    if(k===champSide)v+=5-Math.min(6,(t?Math.max(0,t.defs-(t.defs0||0)):0)*0.6);
     if(feud){var heel=s[0].align==='H',end=big&&feud.heat>=60;v+=st==='drama'?(end?(heel?-4:4):(heel?4:-2)):(end?(heel?-2:2):(heel?1.5:0));}
     if(m.mt==='tag'&&s[0].team!=null&&s[0].team===s[1].team){var tm=teamOf(S,s[0]);if(tm)v+=tm.exp/40;}
     return v;
@@ -378,7 +378,7 @@ function doMatch(S,P,show,m,i,n,rep,used){
       t.holders.forEach(function(id){S.w[id].lt={n:t.name,id:t.id,w:S.week};});
       t.holders=m.sides[win].slice();t.since=S.week;t.defs=0;seg.change=true;seg.crown=!had;
       winners.forEach(function(w){w.mom=clamp(w.mom+2,-10,10);w.morale=clamp(w.morale+6,0,100);w.lt=null;});
-      news(S,'title',names(winners)+(had?' won the ':' won the vacant ')+P.name+' '+t.name+'.'+(had&&reign>=24?' The old reign lasted '+reign+' weeks'+(olds>=4?', with '+olds+' defences.':'.'):'')+(back?' It is not their first time with the belt.':''));
+      news(S,'title',names(winners)+(had?' won the ':' won the vacant ')+titleFull(P,t)+'.'+(had&&reign>=24?' The old reign lasted '+reign+' weeks'+(olds>=4?', with '+olds+' defences.':'.'):'')+(back?' It is not their first time with the belt.':''));
       seg.notes.push('New champion'+(t.tag?'s':'')+': '+names(winners)+'.');
       if(isPl)award(S,had?'ACH_TITLE_CHANGE':'ACH_CROWN');
     }else{t.defs++;if(win>=0&&champSide>=0)seg.notes.push(names(sides[champSide])+' retain'+(sides[champSide].length>1?'':'s')+'.');}
@@ -399,7 +399,7 @@ function doMatch(S,P,show,m,i,n,rep,used){
       news(S,'injury',w.name+' ('+P.name+') is injured ('+ZONES[hz].n.toLowerCase()+'): out about '+w.inj+' weeks.');
       if(w.inj>=8)vacateFor(S,P,w,'injury');
     }
-    if(workRate(w)<w.pot){w.xp+=0.06+(Math.max.apply(null,perfs)>perfs[ix]?0.1:0)+(big?0.05:0);if(w.xp>=1){w.xp-=1;w.brawl=Math.min(99,w.brawl+1);w.tech=Math.min(99,w.tech+1);w.speed=Math.min(99,w.speed+1);if(isPl)seg.notes.push(w.name+' is improving in the ring.');}}
+    // experience from the match is src/99-progress.js: levels, points and what they learned by doing it
   });
   if(m.mt==='tag')sides.forEach(function(s,k){var tm=(s[0].team!=null&&s[0].team===s[1].team)?teamOf(S,s[0]):null;if(tm){tm.exp=Math.min(100,tm.exp+2+(k===win?1:0));tm.ls=(win>=0&&k!==win)?tm.ls+1:0;if(win>=0){if(k===win)tm.w=(tm.w|0)+1;else tm.l=(tm.l|0)+1;}}});
   // feud progress
@@ -484,7 +484,7 @@ function settleFeud(S,P,show,feud,winners,losers,isPl){
   if(isPl){S.stats.feudsDone++;award(S,'ACH_BLOWOFF');if(S.stats.feudsDone>=5)award(S,'ACH_FEUDS_5');}
   return msg;
 }
-function vacateFor(S,P,w,why,quiet){P.titles.forEach(function(t){if(t.holders.indexOf(w.id)>=0){t.holders=[];t.since=S.week;if(!quiet)news(S,'title','The '+P.name+' '+t.name+' '+(t.tag?'are':'is')+' vacated ('+w.name+': '+why+').');}});}
+function vacateFor(S,P,w,why,quiet){P.titles.forEach(function(t){if(t.holders.indexOf(w.id)>=0){t.holders=[];t.since=S.week;if(!quiet)news(S,'title','The '+titleFull(P,t)+' '+(t.tag?'are':'is')+' vacated ('+w.name+': '+why+').');}});}
 
 function afterBell(S,P,show,m,sides,win,winners,losers,fin,runin,feud,t,OV,seg){
   if(runin){

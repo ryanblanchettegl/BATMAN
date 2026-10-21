@@ -3,7 +3,7 @@
 import { SHOW_SCENES, allScenes, paint, Scene, at } from './kit/scene';
 import { blank } from './kit/puppet';
 import { beatPick } from './shared/moment';
-import { G, ui, pref, reduceMotion, redraw, closeModal, openModal, popCard } from './store';
+import { G, ui, pref, reduceMotion, redraw, closeModal, openModal, popCard, save } from './store';
 import { lightDraws } from './kit/lights';
 import { roadMapDraws } from './kit/roadmap';
 import { scenePlays, snap3d } from './kit/sceneplayer';
@@ -214,7 +214,7 @@ export function initInput() {
     const k = e.key.length === 1 ? e.key.toLowerCase() : '';
     if (HOT[k]) { e.preventDefault(); go(HOT[k]); }
   });
-  (window as any).EWF_DEBUG = { state: () => G.S, render: redraw, go, pad: padPress, nav: NAV, ui, lights: lightDraws, maps: roadMapDraws, scenes: scenePlays, allScenes: () => allScenes([]), segScenes: () => SHOW_SCENES.map(s => s.when), beatPick,
+  (window as any).EWF_DEBUG = { state: () => G.S, render: redraw, go, pad: padPress, nav: NAV, ui, lights: lightDraws, maps: roadMapDraws, scenes: scenePlays, allScenes: () => allScenes([]), segScenes: () => SHOW_SCENES.map(s => s.when), beatPick, save,
     /** A contact sheet for checking moves: each scene id painted (flat renderer) at each of its keyframes, as data URLs. */
     sheet: (ids: string[], w = 320, h = 200) => { const all = allScenes([]); return ids.map(id => { const sc = all.find(x => x.id === id) as Scene | undefined; if (!sc) return { id, imgs: [] as string[] };
       const cast: any = { A: { ...blank(0), name: 'A' }, B: { ...blank(1), name: 'B' } }, c = document.createElement('canvas'); c.width = w; c.height = h; const ctx = c.getContext('2d')!;

@@ -1,3 +1,4 @@
+/* wraps: 00-core.js, 40-week.js (it must sort after them; test-buildorder.js checks) */
 /* ---------- the road: where every city is, the map it is on, and where the next shows are ----------
    (docs/plans/art-direction.md, sections 6.4 and 6.5)
 

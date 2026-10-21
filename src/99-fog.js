@@ -1,3 +1,4 @@
+/* wraps: 90-api.js (it must sort after them; test-buildorder.js checks) */
 /* ---------- Fog of war ----------
    The game does not tell the booker how a match or a promo will go. The road agent comments on every match on the
    sheet, and what the agent can say depends on three things:

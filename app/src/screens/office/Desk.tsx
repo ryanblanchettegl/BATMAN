@@ -29,6 +29,9 @@ function alerts(): ComponentChildren[] {
   R.filter(w => w.con <= 8).sort(byOvr).slice(0, 5).forEach(w => out.push(<><Name w={w} />{'’'}s contract ends in {Math.max(0, w.con)} {w.con === 1 ? 'week' : 'weeks'}.</>));
   R.filter(w => (w.stress || 0) >= 60).slice(0, 4).forEach(w => out.push(<><Name w={w} /> is under strain (stress {Math.round(w.stress)}).</>));
   R.filter(w => w.morale < 40).slice(0, 4).forEach(w => out.push(<><Name w={w} /> is unhappy (morale {Math.round(w.morale)}).</>));
+  { const M = E.monthReview(S); if (M && M.unread) out.unshift(<button type="button" class="lnk" data-t="pm-open" onClick={() => { act(() => { E.readMonth(S); }); openModal({ kind: 'pmmonth' }); }}><span data-t="pm-line">{M.r.label} in review: what went well, what went badly, and why.</span></button>); }
+  // the secrets come first among what is worth knowing: they change quietly and nothing else says so
+  { const K = E.kayfabe(S); if (K.kept.length || K.prot < 60) out.unshift(<span class={K.prot < 40 ? 'bad' : undefined} data-t="kf-line">Secrets: {K.line}</span>); }
   return out;
 }
 
@@ -54,7 +57,7 @@ function Road() {
       <div class="rmid">
         <p class="bl big one" data-t="road-city">{N.city.toUpperCase()}{N.land ? ', ' + N.land.toUpperCase() : ''}</p>
         <p class="one" data-t="road-show"><b>{N.venue}</b>{N.big ? <> <Tag kind="gold">{N.kind || 'Big event'}</Tag></> : null} <span class="muted">{'·'} {N.later ? 'next week. Every show this week has run.' : (N.left > 1 ? 'the first of ' + N.left + ' shows left this week' : 'the last show this week')}</span></p>
-        <Group title={(G.S.soRun || 0) >= 2 ? 'The building: ' + G.S.soRun + ' sell-outs running' : 'The building'} t="road-building">
+        <Group title={(G.S.soRun || 0) >= 2 ? 'The building: ' + G.S.soRun + ' sell-outs running' : 'The building' + ((() => { const B = E.buildingWords(G.S); return B && B.short !== 'nothing special' ? ': ' + B.short : ''; })())} t="road-building">
           <Line label="Sold" w={12}><b class="bl">{num(N.sold)}</b> of {num(N.cap)} <Meter v={N.sold / N.cap * 100} n={8} kind={N.sold >= N.cap ? 'au' : 'cool'} />{N.sold >= N.cap ? <b class="good"> Sold out</b> : null}</Line>
           <Line label="This week" w={12}>{N.wk > 0 ? <span class="good">{'▲'} {num(N.wk)} sold</span> : <span class="muted">Nothing sold yet</span>}</Line>
           <Line label="Gate so far" w={12}>${num(N.gate)} <span class="muted">at ${num(N.seat)} a seat</span></Line>
@@ -85,6 +88,20 @@ function Road() {
   </Win>;
 }
 /** The stops ahead, in a pop-up: when, which show, where, and how big a building it is. */
+/** The month in review (post-mortems): what went well, what went badly, and why. Read once, it leaves the desk. */
+export function ReviewBody(p: { r: any }) {
+  const r = p.r, part = (h: string, L: any[], k: string) => <div class="mt1"><p class="eyebrow">{h}</p>{L.slice(0, 4).map((x: any, i: number) => <p key={i} class={'clamp ' + k}><Txt>{x.t + (x.why ? '. ' + x.why : '')}</Txt></p>)}</div>;
+  return <div data-t="pm-body">
+    {r.money ? <p class={r.money.good ? 'good' : 'bad'}><Txt>{r.money.lines.join(' ')}</Txt></p> : null}
+    {r.owner ? <p class="mt1"><Txt>{r.owner}</Txt></p> : null}
+    {part('What went well', r.well, 'good')}{part('What went badly', r.badly, 'bad')}
+  </div>;
+}
+export function MonthWindow(_p: { m: Modal }) {
+  const S = G.S, M = E.monthReview(S);
+  if (!M) return <Window title="The month in review"><Empty>The first month is not over yet.</Empty></Window>;
+  return <Window title={M.r.label + ' in review'} wide ok="Done"><ReviewBody r={M.r} /></Window>;
+}
 export function RoadYearWindow() {
   const S = G.S, L: any[] = E.roadAhead(S, 16), R: string[] = E.roadRoute(S);
   return <Window title="The schedule" wide ok="Done">
@@ -227,14 +244,29 @@ function Clocks() {
     <p class="muted mt1">Red clocks are trouble building. Green clocks pay out when they fill. Select one to see what moves it.</p>
   </>;
 }
-const MORE: [string, string][] = [['week', 'This week'], ['promises', 'Promises'], ['know', 'Worth knowing'], ['clocks', 'Clocks'], ['news', 'News'], ['answered', 'Answered']];
+const MORE: [string, string][] = [['week', 'This week'], ['world', 'Around the world'], ['promises', 'Promises'], ['know', 'Worth knowing'], ['clocks', 'Clocks'], ['news', 'News'], ['answered', 'Answered']];
+/** The week around the world (src/99-worldweek.js): what every other company did last week, one line each, the rest below it. */
+function WorldWeek() {
+  const WK = (E as any).worldWeek(G.S, 2) as any[];
+  if (!WK.length) return <Empty>Nothing filed yet. At the end of the week you will see what every other company did.</Empty>;
+  const AU = (E as any).audience(G.S);
+  return <div data-t="world-week"><p data-t="ww-rank"><b>Audience share:</b> you are number {AU.rank} of {AU.of}, with {AU.table.find((x: any) => x.mine).share.toFixed(1)}%. {AU.table[0].mine ? 'Nobody draws more.' : AU.table[0].name + ' leads with ' + AU.table[0].share.toFixed(1) + '%.'}</p>{WK.map((w, i) => <div key={w.w} class={i ? 'mt2' : ''}>
+    <h3 class="ww-wk">{i ? 'The week before: ' : 'Last week: '}{w.label}</h3>
+    {w.cos.length ? <ul class="list ww">{w.cos.map((c: any) => <li key={c.id} data-t="ww-co" data-v={c.id}>
+      <span><b>{c.name}</b> {c.lead}
+        {c.titles.length > 1 ? <span class="muted"> Also: {c.titles.slice(1).map((x: any) => x.now + ' won the ' + x.title).join('; ')}.</span> : null}
+        {c.ended.length ? <span class="muted"> Ended: {c.ended.join('; ')}.</span> : null}
+        {c.begun.length && c.lead && c.lead.indexOf('A new story') < 0 ? <span class="muted"> New: {c.begun.join('; ')}.</span> : null}
+      </span></li>)}</ul> : <Empty>A quiet week everywhere else.</Empty>}
+  </div>)}</div>;
+}
 export function DeskMoreWindow(p: { m: Modal }) {
   const st = office() as any, k: string = MORE.some(x => x[0] === p.m.k) ? p.m.k : 'week', A = k === 'know' ? alerts() : [];
   const pick = (id: string) => view(() => { st.more = id; p.m.k = id; });
   return <Window title="The week in full" wide ok="Back to the desk">
     <Tabs label="The week in full" items={MORE.map(x => ({ id: x[0], label: x[1], t: 'more-tab', d: { v: x[0] } }))} value={k} onPick={pick} />
     <div class="dmore" data-t="desk-more-body" data-v={k} onClickCapture={(ev: any) => { if (ev.target && ev.target.closest && ev.target.closest('[data-t="book-show"],[data-t="report"]')) ui.modal = null; }}>
-      {k === 'week' ? <ScheduleList /> : k === 'promises' ? <QuestList /> : k === 'clocks' ? <Clocks /> : k === 'answered' ? <Answered />
+      {k === 'week' ? <ScheduleList /> : k === 'world' ? <WorldWeek /> : k === 'promises' ? <QuestList /> : k === 'clocks' ? <Clocks /> : k === 'answered' ? <Answered />
         : k === 'news' ? <><OfficeNews n={7} /><div class="row mt2"><Btn kind="sm" t="tab" d={{ v: 'world' }} onClick={() => { closeModal(); go('world'); }}>All the news</Btn></div></>
         : (A.length ? <ul class="list">{A.map((a, i) => <li key={i}><span>{a}</span></li>)}</ul> : <Empty>Nothing urgent.</Empty>)}
     </div>

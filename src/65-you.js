@@ -109,7 +109,8 @@ SHOWX.push(function(S,P,show,rep){
   if(o.me){rep.owner={me:true,like:like};if(d>=3)S.bp+=1;return;}
   // the company's model colours the verdict: a board cares less about the reviews, a founder who is a fan cares more
   var MD=modelOf(P),mv=MD.show?MD.show(S,P,show,rep):null;
-  var dt=(clamp(d*0.5,-3,3)*(MD.ownShow||1)+(like?0.5:(show.big?-0.5:0)))*2/(P.shows.length+1)+(mv?mv.d:0);
+  var vb0=verdictBand(d),dd=vb0===-1?-0.25:(vb0<=-2?clamp(d*0.35,-2,0):clamp(d*0.5,-3,3));   // balance 0.73: a middling show (a C) costs the owner's trust only a little; a dud or worse costs it in full
+  var dt=(dd*(MD.ownShow||1)+(like?0.5:(show.big?-0.5:0)))*2/(P.shows.length+1)+(mv?mv.d:0);
   var t0=o.trust,why=[];
   o.trust=clamp(o.trust+dt,0,100);if(d>=3)S.bp+=1;
   // the reasons, in the order they weighed (After the show lists them)

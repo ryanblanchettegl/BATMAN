@@ -1,3 +1,4 @@
+/* wraps: 00-core.js, 88-shows.js (it must sort after them; test-buildorder.js checks) */
 /* Cancellation (roadmap 4, Ryan 16 October). A network can cancel a weekly show after warnings: every meeting the
    network calls (netmeet, when its patience runs out) is a warning, and the third in a year cancels the weakest
    weekly show. A cancelled show is not gone: it runs on as a house show (sh.off), with no television money and a

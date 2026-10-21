@@ -267,7 +267,7 @@ export function Setup() {
     </Panel>
     <Panel cls="mb4" title="How this company is run"><ModelCard id={d.model} /></Panel>
     <HowBtn body={() => <>
-      <p>You set the card. Every match has odds, and the odds decide the winner on the night.</p>
+      <p>You set the card. Each match is played out on the night, and you can call the finish with booking power.</p>
       <p class="mt1">Each week {o.name} grants you <b>booking power</b>. Spend it to call a finish: 1 point for the favourite, 2 for an underdog, 3 for a long shot, and 1 more to change a title.</p>
       <p class="mt1">Good shows and met directives raise the owner{'’'}s trust, which raises your allowance. Lose that trust and you are out. Earn enough of it and the company is yours.</p>
     </>} />
@@ -293,7 +293,7 @@ function Help() {
     <p class="mt1"><b>The bottom line.</b> Your booking power, action points, cash, popularity and the owner’s trust, each with how it has moved since the last show went on the air or the last week ended. F1 is Help, F2 Options, F3 Music.</p>
       </> : null}
       {k === 'book' ? <>
-    <p class="mt1"><b>Booking.</b> A show is matches, promos and angles. You pick who is in each. The odds decide the matches unless you spend booking power. Where a match sits matters: open with something quick, keep two long matches apart, and put the biggest match on last. The Running order notes beside the card read your card against those rules. Matches and segments are rated in stars, up to five.</p>
+    <p class="mt1"><b>Booking.</b> A show is matches, promos and angles. You pick who is in each. Each match is played out on the night unless you spend booking power to call the finish. Where a match sits matters: open with something quick, keep two long matches apart, and put the biggest match on last. The Running order notes beside the card read your card against those rules. Matches and segments are rated in stars, up to five.</p>
     <ul class="list mt1 helpsecs">
       <li><span><b>Office.</b> The desk, Backstage, Storylines and your career. It opens on what needs doing before the show.</span></li>
       <li><span><b>Booking.</b> Build the card. Spend booking power to call a finish.</span></li>

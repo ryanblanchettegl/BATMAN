@@ -306,6 +306,8 @@ function turn(S,w,why){
   news(S,'story',w.name+' turns '+(w.align==='F'?'face':'heel')+(why?' — '+why:'')+'.'+note);if(w.promo===S.player)award(S,'ACH_TURN');}
 function holdLvl(P,id){var l=0;P.titles.forEach(function(t){if(t.holders.indexOf(id)>=0&&t.lvl>l)l=t.lvl;});return l;}
 function titleById(P,id){for(var i=0;i<P.titles.length;i++)if(P.titles[i].id===id)return P.titles[i];return null;}
+/** A title's full name in a sentence: the company's name in front, unless the title already starts with it. */
+function titleFull(P,t){var n=String(t.name||''),p=String(P.name||'');return n.toLowerCase().indexOf(p.toLowerCase())===0?n:p+' '+n;}
 function rkey(a,b){return a<b?a+'-'+b:b+'-'+a;}
 function titleFits(t,m){var d=MT[m.mt];return !!d&&(t.tag?m.mt==='tag':(d.per===1&&!(m.mt==='br'&&t.holders.length)));}
 
@@ -399,6 +401,11 @@ function autoBook(S,P,show){
   var worlds=mt.filter(function(t){return t.lvl===topLvl;}),mids=mt.filter(function(t){return t.lvl<topLvl;}).sort(stale);
   var wt=titles.filter(function(t){return !t.tag&&t.g===G2;}).sort(stale);
   var tt=titles.filter(function(t){return t.tag;}).sort(stale);
+  // a story on the night it is meant to end comes before everything else, so a main event or a request cannot take one of
+  // the two first (tag partners included: their story is the break-up)
+  activeFeuds(S).forEach(function(f){if(f.promo!==P.id||feudDue(S,f,show)!=='end'||card.length>=n)return;var a=S.w[f.a[0]],b=S.w[f.b[0]];
+    if(!a||!b||!free(a)||!free(b)||a.g!==b.g)return;single(a,b,{len:big?'L':'M',stip:big&&f.heat>=60?gimmickFor(S,a,b):'std'},70);
+    if(isPl){var lm=card[card.length-1];if(lm)lm.end=1;}});
   // tournament matches come first: they are owed to the bracket
   if(isPl&&S.tourn&&!S.tourn.done&&S.tourn.promo===P.id){
     var TT=S.tourn,tb=0,last=TT.fmt==='ko'&&TT.pend.length===1;
@@ -675,7 +682,7 @@ function callMatch(S,P,x){
   x.sides.forEach(function(s,k){
     var isCh=x.champ&&x.champ===s,lead=s[0],big=avg(s.map(function(w){return w.ovr;}))>=62||isCh;
     ring((k===0?'Introducing first, ':(k===x.sides.length-1?'And the opponent'+(s.length>1?'s':'')+', ':'Next, '))+(isCh?'the '+x.t.name+' champion'+(s.length>1?'s':'')+', ':'')+names(s)+'!');
-    bc.push({t:'ent',x:big?(s.length===1&&lead.look&&lead.look.entrance_fx&&lead.look.entrance_fx.music?'"'+lead.look.entrance_fx.music+'" hits, and ':'')+names(s)+' '+(s.length>1?'make their way out together':ENTR[lead.align==='F'?'F':'H'][lead.ent||0])+(isCh?', the title held high':'')+'. The reaction: '+pop(s)+'.':'The reaction: '+pop(s)+'.'});
+    bc.push({t:'ent',side:s.map(function(x){return x.id;}),x:big?(s.length===1&&lead.look&&lead.look.entrance_fx&&lead.look.entrance_fx.music?'"'+lead.look.entrance_fx.music+'" hits, and ':'')+names(s)+' '+(s.length>1?'make their way out together':ENTR[lead.align==='F'?'F':'H'][lead.ent||0])+(isCh?', the title held high':'')+'. The reaction: '+pop(s)+'.':'The reaction: '+pop(s)+'.'});
   });
   // the hottest act in the match gets a chant; a wrestler with a fresh catchphrase hears it shouted back
   var hot=x.all.slice().sort(function(p,q){return q.ovr-p.ovr;})[0];
@@ -750,7 +757,7 @@ function winOdds(S,P,show,m,sides,t,champSide,feud,big,isMain){
       if(w.fav)x+=3;
       return x;
     }));
-    if(k===champSide)v+=5-Math.min(6,(t?t.defs:0)*0.6);
+    if(k===champSide)v+=5-Math.min(6,(t?Math.max(0,t.defs-(t.defs0||0)):0)*0.6);
     if(feud){var heel=s[0].align==='H',end=big&&feud.heat>=60;v+=st==='drama'?(end?(heel?-4:4):(heel?4:-2)):(end?(heel?-2:2):(heel?1.5:0));}
     if(m.mt==='tag'&&s[0].team!=null&&s[0].team===s[1].team){var tm=teamOf(S,s[0]);if(tm)v+=tm.exp/40;}
     return v;
@@ -884,7 +891,7 @@ function doMatch(S,P,show,m,i,n,rep,used){
       t.holders.forEach(function(id){S.w[id].lt={n:t.name,id:t.id,w:S.week};});
       t.holders=m.sides[win].slice();t.since=S.week;t.defs=0;seg.change=true;seg.crown=!had;
       winners.forEach(function(w){w.mom=clamp(w.mom+2,-10,10);w.morale=clamp(w.morale+6,0,100);w.lt=null;});
-      news(S,'title',names(winners)+(had?' won the ':' won the vacant ')+P.name+' '+t.name+'.'+(had&&reign>=24?' The old reign lasted '+reign+' weeks'+(olds>=4?', with '+olds+' defences.':'.'):'')+(back?' It is not their first time with the belt.':''));
+      news(S,'title',names(winners)+(had?' won the ':' won the vacant ')+titleFull(P,t)+'.'+(had&&reign>=24?' The old reign lasted '+reign+' weeks'+(olds>=4?', with '+olds+' defences.':'.'):'')+(back?' It is not their first time with the belt.':''));
       seg.notes.push('New champion'+(t.tag?'s':'')+': '+names(winners)+'.');
       if(isPl)award(S,had?'ACH_TITLE_CHANGE':'ACH_CROWN');
     }else{t.defs++;if(win>=0&&champSide>=0)seg.notes.push(names(sides[champSide])+' retain'+(sides[champSide].length>1?'':'s')+'.');}
@@ -905,7 +912,7 @@ function doMatch(S,P,show,m,i,n,rep,used){
       news(S,'injury',w.name+' ('+P.name+') is injured ('+ZONES[hz].n.toLowerCase()+'): out about '+w.inj+' weeks.');
       if(w.inj>=8)vacateFor(S,P,w,'injury');
     }
-    if(workRate(w)<w.pot){w.xp+=0.06+(Math.max.apply(null,perfs)>perfs[ix]?0.1:0)+(big?0.05:0);if(w.xp>=1){w.xp-=1;w.brawl=Math.min(99,w.brawl+1);w.tech=Math.min(99,w.tech+1);w.speed=Math.min(99,w.speed+1);if(isPl)seg.notes.push(w.name+' is improving in the ring.');}}
+    // experience from the match is src/99-progress.js: levels, points and what they learned by doing it
   });
   if(m.mt==='tag')sides.forEach(function(s,k){var tm=(s[0].team!=null&&s[0].team===s[1].team)?teamOf(S,s[0]):null;if(tm){tm.exp=Math.min(100,tm.exp+2+(k===win?1:0));tm.ls=(win>=0&&k!==win)?tm.ls+1:0;if(win>=0){if(k===win)tm.w=(tm.w|0)+1;else tm.l=(tm.l|0)+1;}}});
   // feud progress
@@ -990,7 +997,7 @@ function settleFeud(S,P,show,feud,winners,losers,isPl){
   if(isPl){S.stats.feudsDone++;award(S,'ACH_BLOWOFF');if(S.stats.feudsDone>=5)award(S,'ACH_FEUDS_5');}
   return msg;
 }
-function vacateFor(S,P,w,why,quiet){P.titles.forEach(function(t){if(t.holders.indexOf(w.id)>=0){t.holders=[];t.since=S.week;if(!quiet)news(S,'title','The '+P.name+' '+t.name+' '+(t.tag?'are':'is')+' vacated ('+w.name+': '+why+').');}});}
+function vacateFor(S,P,w,why,quiet){P.titles.forEach(function(t){if(t.holders.indexOf(w.id)>=0){t.holders=[];t.since=S.week;if(!quiet)news(S,'title','The '+titleFull(P,t)+' '+(t.tag?'are':'is')+' vacated ('+w.name+': '+why+').');}});}
 
 function afterBell(S,P,show,m,sides,win,winners,losers,fin,runin,feud,t,OV,seg){
   if(runin){
@@ -1814,7 +1821,7 @@ function liveIntro(S,P,show,m,i,n){
     c.sides.forEach(function(s,k){
       var isCh=c.t&&k===c.champSide,lead=s[0],big=avg(s.map(function(w){return w.ovr;}))>=62||isCh;
       bc.push({t:'ring',x:(k===0?'Introducing first, ':(k===c.sides.length-1?'And the opponent'+(s.length>1?'s':'')+', ':'Next, '))+(isCh?'the '+c.t.name+' champion'+(s.length>1?'s':'')+', ':'')+names(s)+'!'});
-      bc.push({t:'ent',x:big?(s.length===1&&lead.look&&lead.look.entrance_fx&&lead.look.entrance_fx.music?'"'+lead.look.entrance_fx.music+'" hits, and ':'')+names(s)+' '+(s.length>1?'make their way out together':ENTR[lead.align==='F'?'F':'H'][lead.ent||0])+(isCh?', the title held high':'')+'. The reaction: '+pop(s)+'.':'The reaction: '+pop(s)+'.'});
+      bc.push({t:'ent',side:s.map(function(x){return x.id;}),x:big?(s.length===1&&lead.look&&lead.look.entrance_fx&&lead.look.entrance_fx.music?'"'+lead.look.entrance_fx.music+'" hits, and ':'')+names(s)+' '+(s.length>1?'make their way out together':ENTR[lead.align==='F'?'F':'H'][lead.ent||0])+(isCh?', the title held high':'')+'. The reaction: '+pop(s)+'.':'The reaction: '+pop(s)+'.'});
     });
   }
   bc.push({t:'pbp',x:'The bell sounds, and this one is under way.'});
@@ -2433,6 +2440,7 @@ LIVEK.overtime={n:'They are not going home',
 LIVE_ORDER=['chaos','botch','titlecall','owner','sponsor','network','overtime','audible','runin','hotmic'];
 
 /* ===== 34-night.js ===== */
+/* wraps: 31-live.js (it must sort after them; test-buildorder.js checks) */
 /* ---------- what the night left behind ----------
    Ryan, 4 October: "After a show, it should go back to the Office or your desk, so you can work through any new
    events or decisions that need to be made after the show." A show does not end on its report. It ends on the
@@ -2683,7 +2691,7 @@ function joinCompany(S,w,P,wage,weeks){
 function settle(S,P){
   var mine=P.id===S.player,sp=0;if(mine)S.sponsors.forEach(function(x){sp+=x.pay;});
   var adv=Math.round(ADV_C[P.adv]*P.inc0)+(mine?evSpendCost(P):0),camp=campCost(P),med=medCost(P),trv=travelCost(P);
-  var L=P.led,merch=merchWeek(S,P),wages=wagesWeek(S,P),inc=L.tv+L.gate+L.ppv+L.bonus+merch+sp,over=P.fixed+P.varRate*(inc-sp),exp=wages+L.prod+over+adv+camp+med+trv;var fnc=mine?financeCost(S,P,inc-exp):0;exp+=fnc;
+  var L=P.led,merch=merchWeek(S,P),wages=wagesWeek(S,P),inc=L.tv+L.gate+L.ppv+L.bonus+merch+sp,over=P.fixed+P.varRate*0.96*(inc-sp),exp=wages+L.prod+over+adv+camp+med+trv;var fnc=mine?financeCost(S,P,inc-exp):0;exp+=fnc;
   // a publicly traded company pays its shareholders out of a week well above the board's target (NEXT.md 12.2)
   var dv=0;if(P.model==='corporate'&&P.net>0&&inc-exp>P.net*1.2){dv=Math.round((inc-exp-P.net*1.2)*0.6);exp+=dv;}
   var row={w:S.week,div:dv,spons:sp,adv:adv,camp:camp,med:med,trv:trv,fin:fnc,tv:Math.round(L.tv),gate:Math.round(L.gate),ppv:Math.round(L.ppv),bonus:Math.round(L.bonus),merch:Math.round(merch),wages:Math.round(wages),prod:Math.round(L.prod),over:Math.round(over),inc:Math.round(inc),exp:Math.round(exp),net:Math.round(inc-exp),image:r1(P.image)};
@@ -3717,7 +3725,8 @@ SHOWX.push(function(S,P,show,rep){
   if(o.me){rep.owner={me:true,like:like};if(d>=3)S.bp+=1;return;}
   // the company's model colours the verdict: a board cares less about the reviews, a founder who is a fan cares more
   var MD=modelOf(P),mv=MD.show?MD.show(S,P,show,rep):null;
-  var dt=(clamp(d*0.5,-3,3)*(MD.ownShow||1)+(like?0.5:(show.big?-0.5:0)))*2/(P.shows.length+1)+(mv?mv.d:0);
+  var vb0=verdictBand(d),dd=vb0===-1?-0.25:(vb0<=-2?clamp(d*0.35,-2,0):clamp(d*0.5,-3,3));   // balance 0.73: a middling show (a C) costs the owner's trust only a little; a dud or worse costs it in full
+  var dt=(dd*(MD.ownShow||1)+(like?0.5:(show.big?-0.5:0)))*2/(P.shows.length+1)+(mv?mv.d:0);
   var t0=o.trust,why=[];
   o.trust=clamp(o.trust+dt,0,100);if(d>=3)S.bp+=1;
   // the reasons, in the order they weighed (After the show lists them)
@@ -4161,7 +4170,7 @@ function tournAdvance(S,T){
   }
   T.done=true;T.champ=champ;var w=S.w[champ];mile(S,w,'tourn','Won the '+T.name);w.mom=clamp(w.mom+3,-10,10);addOvr(P,w,1.5);
   if(t.holders[0]===champ){news(S,'story',w.name+' won the '+T.name+' as champion. Nobody is left to argue.');t.prestige=clamp(t.prestige+3,10,100);}
-  else if(!t.holders.length){t.holders=[champ];t.since=S.week;t.defs=0;ystat(S,w)[6]++;mile(S,w,'title','Won the vacant '+P.name+' '+t.name);news(S,'title',w.name+' won the '+T.name+' and the vacant '+P.name+' '+t.name+'.');}
+  else if(!t.holders.length){t.holders=[champ];t.since=S.week;t.defs=0;ystat(S,w)[6]++;mile(S,w,'title','Won the vacant '+titleFull(P,t));news(S,'title',w.name+' won the '+T.name+' and the vacant '+titleFull(P,t)+'.');}
   else{w.shot=t.id;startFeud(S,P,w,S.w[t.holders[0]],45,w.name+' won the '+T.name+' and a shot at the '+t.name,{title:t.id,force:true});news(S,'story',w.name+' won the '+T.name+' and a shot at the '+t.name+'.');}
   if(P.id===S.player){gainXp(S,25);award(S,'ACH_TOURN');}
 }
@@ -5089,7 +5098,7 @@ EVR.mutiny=function(S,ev,choice,P){
     S.trust=clamp(S.trust-5,0,100);all(function(w){w.morale=clamp(w.morale-3,0,100);});return rollText(r)+'It turns into a shouting match. You leave with less than you walked in with.';}
   if(choice===1){
     if(S.owner.me){all(function(w){w.wage=Math.round(w.wage*1.05/10)*10;w.morale=clamp(w.morale+6,0,100);stressAdd(S,w,-6);});S.clocks.mutiny.v=0;return 'Everybody gets five per cent. It is expensive, and it works.';}
-    S.owner.trust=clamp(S.owner.trust-6,0,100);all(function(w){w.morale=clamp(w.morale+3,0,100);stressAdd(S,w,-6);});return S.owner.name+' calms them down, and reminds you afterwards whose job that was.';}
+    S.owner.trust=clamp(S.owner.trust-6,0,100);S.clocks.mutiny.v=0;all(function(w){w.morale=clamp(w.morale+7,0,100);stressAdd(S,w,-10);});return S.owner.name+' calms them down, and reminds you afterwards whose job that was.';}
   S.trust=clamp(S.trust-10,0,100);all(function(w){w.morale=clamp(w.morale-4,0,100);stressAdd(S,w,8);});return 'You carry on as if nothing happened. They notice.';
 };
 EVR.netmeet=function(S,ev,choice,P){
@@ -6127,6 +6136,7 @@ E.sagaInfo=function(S){
 };
 
 /* ===== 81-invasion.js ===== */
+/* wraps: 80-world.js (it must sort after them; test-buildorder.js checks) */
 /* ===== Invasions: who wins is agreed, and a bad one costs a year (NEXT.md 11.2, WISHLIST 66) =====
    A war with a rival (src/80-world.js, S.xf kind 'war') now starts with a phone call between the two offices about
    the finishes:
@@ -7028,7 +7038,7 @@ MOM.leaving={
       momLater(S,ev.wks,'leaveBad',{w:w.id,t:t.id});return rollText(r)+w.name+' smiles and says nothing. You have a bad feeling about the big show.';}
     if(c===1){r=rollCheck(S,ev.checks[1]);ev.roll=r;
       if(r.ok){momLater(S,ev.wks,'leaveForced',{w:w.id,t:t.id});return rollText(r)+'The new finish is in the booker’s head and nobody else’s. '+w.name+' suspects nothing. For now.';}
-      t.holders=[];t.since=S.week;t.prestige=clamp(t.prestige-8,10,100);S.trust=clamp(S.trust-4,0,100);momLose(S,w,'walked out');news(S,'title',w.name+' found out about the finish and walked out with the '+P.name+' '+t.name+'.');
+      t.holders=[];t.since=S.week;t.prestige=clamp(t.prestige-8,10,100);S.trust=clamp(S.trust-4,0,100);momLose(S,w,'walked out');news(S,'title',w.name+' found out about the finish and walked out with the '+titleFull(P,t)+'.');
       return rollText(r)+w.name+' found out and walked out of the building tonight with the title. It will be on every dirt sheet.';}
     if(c===2){t.holders=[];t.since=S.week;t.prestige=clamp(t.prestige-3,10,100);w.morale=clamp(w.morale-15,0,100);w.con=Math.min(w.con,2);news(S,'title',P.name+' stripped '+w.name+' of the '+t.name+'.');
       return 'You strip '+w.name+' of the title before anything can happen. Safe, and a little cold. They will not forget it.';}
@@ -7343,66 +7353,6 @@ E.sift=function(S){
   return rank.sort(function(a,b){return a.r-b.r||b.x.score-a.x.score;}).map(function(q){return q.x;}).slice(0,6);
 };
 
-
-/* ===== 85-history.js ===== */
-/* ===== A world's history: what happened before the game begins (Ryan, 16 October: the parody world's 2020 to 2025) =====
-   A world package can carry an optional `history` table, so a new game opens on years that already happened:
-     reigns    [{title, holders:[ids], from:'2021-03', to:'2022-04' or null, defs, event}]  the line of champions
-     matches   [{a, b, winner, date:'2023-04', event, stars, note}]  head to head records; a famous one is in both careers
-     feuds     [{a:[ids], b:[ids], from:'2022-01', to:'2022-08', heat, ended, note}]  old rivalries: real heat between
-               them, and if it ended in the last year, an ember, so the same two start again with a head start
-     moments   [{who, date, text}]  a line in a wrestler's career (a debut, a return, an injury, a turn)
-   Dates are a year and a month. Everything before the world's start date is turned into game weeks before week 1.
-   It is read once, when a game starts, and never calls rnd(S), so a world with history plays the same seed the
-   same way every time. */
-function histWeek(date,y0,m0){var p=String(date||'').split('-'),y=+p[0],m=(+p[1]||1)-1;if(!y)return null;return 1+((y-y0)*12+(m-m0))*4;}
-(function(){
-  var build=buildDB;
-  buildDB=function(pkg){
-    var d=build(pkg),H=pkg.history;
-    // the persona each wrestler carries in the world file (gimmick, catchphrase, finisher, debut, legend). Kept with
-    // the world, not in the save: the save stays small however many people a world has.
-    d.persona={};(pkg.workers||[]).forEach(function(w){if(w.gimmick||w.catchphrase||w.finisher_description||w.gimmick_category||w.debut_year||w.legend||w.signatures)
-      d.persona[w.id]={cat:w.gimmick_category||null,d:w.gimmick||null,say:w.catchphrase||null,fin:w.finisher_description||null,move:w.finisher_move||null,sigs:Array.isArray(w.signatures)?w.signatures:null,debut:w.debut_year||null,legend:!!w.legend,ht:w.height||null,wt:w.weight||null};});
-    if(!H||typeof H!=='object')return d;d.history=H;
-    // an old feud is real heat between the people in it, written into the relationships the game starts from
-    var W={};(pkg.workers||[]).forEach(function(w){W[w.id]=1;});
-    (H.feuds||[]).forEach(function(f){(f.a||[]).forEach(function(a){(f.b||[]).forEach(function(b){if(W[a]&&W[b]&&!d.rels.some(function(r){return (r.a===a&&r.b===b)||(r.a===b&&r.b===a);}))
-      d.rels.push({a:a,b:b,type:'rivalry',strength:-Math.min(90,Math.max(30,f.heat||60)),ring_chemistry:f.chem!=null?f.chem:4,note:f.note||'They have history.'});});});});
-    return d;
-  };
-})();
-/** Lay a world's history into a new game. */
-function histApply(S){
-  var H=DB&&DB.history;if(!H)return;var y0=DB.startYear,m0=DB.startMonth,id={};S.w.forEach(function(w){if(w.uid)id[w.uid]=w.id;});
-  var wk=function(d){return histWeek(d,y0,m0);},nm=function(u){var w=S.w[id[u]];return w?w.name:u;};
-  var tby={};S.order.forEach(function(pid){(S.promos[pid].titles||[]).forEach(function(t){tby[t.id]=t;});});
-  // the line of champions, oldest first; the reign still running joins the one the title already has
-  (H.reigns||[]).slice().sort(function(a,b){return (wk(a.from)||0)-(wk(b.from)||0);}).forEach(function(r){var t=tby[r.title];if(!t)return;
-    var ids=(r.holders||[]).map(function(u){return id[u];}).filter(function(x){return x!=null;});if(!ids.length)return;
-    t.hist=t.hist||[];var to=r.to?wk(r.to):null;if(to!=null&&to>0)to=0;
-    if(to==null){t.hist=t.hist.filter(function(h){return !(h.ids===ids.slice().sort().join(',')&&h.to==null);});}
-    t.hist.push({ids:ids.slice().sort().join(','),h:ids.map(function(i){return S.w[i].name;}),from:wk(r.from),to:to,show:r.event||'Before your time',defs:r.defs||0});
-    ids.forEach(function(i){var w=S.w[i];(w.tr||(w.tr=[])).push(t.name);});
-  });
-  Object.keys(tby).forEach(function(k){var t=tby[k];if(t.hist)t.hist.sort(function(a,b){return (a.from||0)-(b.from||0);});});
-  // head to head, and the famous nights in both careers
-  (H.matches||[]).forEach(function(m){var a=id[m.a],b=id[m.b];if(a==null||b==null)return;var k=rkey(a,b),h=S.h2h[k]||(S.h2h[k]={n:0,a:0,b:0,lw:-1,w:0});
-    var win=m.winner!=null?id[m.winner]:null;h.n++;h.w=Math.min(0,wk(m.date)||0);if(win!=null){h.lw=win;if(win===Math.min(a,b))h.a++;else h.b++;}
-    if((m.stars||0)>=4.5||m.note){var t=(m.event?m.event+', ':'')+String(m.date||'').slice(0,4)+': '+(win!=null?nm(m.winner)+' beat '+(win===a?nm(m.b):nm(m.a)):nm(m.a)+' and '+nm(m.b)+' fought to a draw')+(m.note?'. '+m.note:'');
-      [a,b].forEach(function(i){var w=S.w[i];(w.log||(w.log=[])).push({w:Math.min(0,wk(m.date)||0),k:'classic',t:t});});}
-  });
-  // old feuds that ended in the last year leave an ember: the same two start again with a head start
-  (H.feuds||[]).forEach(function(f){var a=id[(f.a||[])[0]],b=id[(f.b||[])[0]],end=wk(f.to);if(a==null||b==null||end==null||end<-47)return;
-    (S.embers||(S.embers={}))[rkey(a,b)]={w:end,h:Math.round(f.heat||60),n:1};});
-  // moments in a career
-  (H.moments||[]).forEach(function(x){var w=S.w[id[x.who]];if(w)(w.log||(w.log=[])).push({w:Math.min(0,wk(x.date)||0),k:x.k||'moment',t:x.text});});
-  S.w.forEach(function(w){if(w.log&&w.log.length){w.log.sort(function(p,q){return p.w-q.w;});if(w.log.length>16)w.log=w.log.slice(-16);}});
-  S.histFrom=H.from||null;
-}
-(function(){var ng=E.newGame;E.newGame=function(){var S=ng.apply(this,arguments);if(S&&S.w)histApply(S);return S;};})();
-/** A wrestler's persona from the world file: gimmick, catchphrase, finisher, debut year and whether they are a legend. */
-E.persona=function(S,id){var w=S.w[id];return w&&w.uid&&DB&&DB.persona?DB.persona[w.uid]||null:null;};
 
 /* ===== 85-second.js ===== */
 /* ---------- second careers ----------
@@ -8241,6 +8191,70 @@ E.edPromoEvent=function(pkg,pid,month,o){
   if(!p.events.length)delete p.events;
   return true;
 };
+
+/* ===== 86-history.js ===== */
+/* wraps: 00-core.js, 85-universe.js (it must sort after them; test-buildorder.js checks) */
+/* ===== A world's history: what happened before the game begins (Ryan, 16 October: the parody world's 2020 to 2025) =====
+   A world package can carry an optional `history` table, so a new game opens on years that already happened:
+     reigns    [{title, holders:[ids], from:'2021-03', to:'2022-04' or null, defs, event}]  the line of champions
+     matches   [{a, b, winner, date:'2023-04', event, stars, note}]  head to head records; a famous one is in both careers
+     feuds     [{a:[ids], b:[ids], from:'2022-01', to:'2022-08', heat, ended, note}]  old rivalries: real heat between
+               them, and if it ended in the last year, an ember, so the same two start again with a head start
+     moments   [{who, date, text}]  a line in a wrestler's career (a debut, a return, an injury, a turn)
+   Dates are a year and a month. Everything before the world's start date is turned into game weeks before week 1.
+   It is read once, when a game starts, and never calls rnd(S), so a world with history plays the same seed the
+   same way every time. */
+function histWeek(date,y0,m0){var p=String(date||'').split('-'),y=+p[0],m=(+p[1]||1)-1;if(!y)return null;return 1+((y-y0)*12+(m-m0))*4;}
+(function(){
+  var build=buildDB;
+  buildDB=function(pkg){
+    var d=build(pkg),H=pkg.history;
+    // the persona each wrestler carries in the world file (gimmick, catchphrase, finisher, debut, legend). Kept with
+    // the world, not in the save: the save stays small however many people a world has.
+    d.persona={};(pkg.workers||[]).forEach(function(w){if(w.gimmick||w.catchphrase||w.finisher_description||w.gimmick_category||w.debut_year||w.legend||w.signatures)
+      d.persona[w.id]={cat:w.gimmick_category||null,d:w.gimmick||null,say:w.catchphrase||null,fin:w.finisher_description||null,move:w.finisher_move||null,sigs:Array.isArray(w.signatures)?w.signatures:null,debut:w.debut_year||null,legend:!!w.legend,ht:w.height||null,wt:w.weight||null};});
+    if(!H||typeof H!=='object')return d;d.history=H;
+    // an old feud is real heat between the people in it, written into the relationships the game starts from
+    var W={};(pkg.workers||[]).forEach(function(w){W[w.id]=1;});
+    (H.feuds||[]).forEach(function(f){(f.a||[]).forEach(function(a){(f.b||[]).forEach(function(b){if(W[a]&&W[b]&&!d.rels.some(function(r){return (r.a===a&&r.b===b)||(r.a===b&&r.b===a);}))
+      d.rels.push({a:a,b:b,type:'rivalry',strength:-Math.min(90,Math.max(30,f.heat||60)),ring_chemistry:f.chem!=null?f.chem:4,note:f.note||'They have history.'});});});});
+    return d;
+  };
+})();
+/** Lay a world's history into a new game. */
+function histApply(S){
+  var H=DB&&DB.history;if(!H)return;var y0=DB.startYear,m0=DB.startMonth,id={};S.w.forEach(function(w){if(w.uid)id[w.uid]=w.id;});
+  var wk=function(d){return histWeek(d,y0,m0);},nm=function(u){var w=S.w[id[u]];return w?w.name:u;};
+  var tby={};S.order.forEach(function(pid){(S.promos[pid].titles||[]).forEach(function(t){tby[t.id]=t;});});
+  // the line of champions, oldest first; the reign still running joins the one the title already has
+  (H.reigns||[]).slice().sort(function(a,b){return (wk(a.from)||0)-(wk(b.from)||0);}).forEach(function(r){var t=tby[r.title];if(!t)return;
+    var ids=(r.holders||[]).map(function(u){return id[u];}).filter(function(x){return x!=null;});if(!ids.length)return;
+    t.hist=t.hist||[];var to=r.to?wk(r.to):null;if(to!=null&&to>0)to=0;
+    if(to==null){t.hist=t.hist.filter(function(h){return !(h.ids===ids.slice().sort().join(',')&&h.to==null);});}
+    t.hist.push({ids:ids.slice().sort().join(','),h:ids.map(function(i){return S.w[i].name;}),from:wk(r.from),to:to,show:r.event||'Before your time',defs:r.defs||0});
+    // the reign still running when the game begins is the champion's own: it keeps the weeks and defences it already has
+    var cur=(t.holders||[]).slice().sort().join(',');
+    if(to==null&&cur&&cur===ids.slice().sort().join(',')&&wk(r.from)!=null&&wk(r.from)<1){t.since=wk(r.from);t.defs=r.defs||0;t.defs0=t.defs;   /* the champion's edge in a title match counts only defences made in this game */ var gap=(1-t.since)/((r.defs||0)+1);t.last=Math.min(0,Math.round(t.since+gap*(r.defs||0)));}
+    ids.forEach(function(i){var w=S.w[i];(w.tr||(w.tr=[])).push(t.name);});
+  });
+  Object.keys(tby).forEach(function(k){var t=tby[k];if(t.hist)t.hist.sort(function(a,b){return (a.from||0)-(b.from||0);});});
+  // head to head, and the famous nights in both careers
+  (H.matches||[]).forEach(function(m){var a=id[m.a],b=id[m.b];if(a==null||b==null)return;var k=rkey(a,b),h=S.h2h[k]||(S.h2h[k]={n:0,a:0,b:0,lw:-1,w:0});
+    var win=m.winner!=null?id[m.winner]:null;h.n++;h.w=Math.min(0,wk(m.date)||0);if(win!=null){h.lw=win;if(win===Math.min(a,b))h.a++;else h.b++;}
+    if((m.stars||0)>=4.5||m.note){var t=(m.event?m.event+', ':'')+String(m.date||'').slice(0,4)+': '+(win!=null?nm(m.winner)+' beat '+(win===a?nm(m.b):nm(m.a)):nm(m.a)+' and '+nm(m.b)+' fought to a draw')+(m.note?'. '+m.note:'');
+      [a,b].forEach(function(i){var w=S.w[i];(w.log||(w.log=[])).push({w:Math.min(0,wk(m.date)||0),k:'classic',t:t});});}
+  });
+  // old feuds that ended in the last year leave an ember: the same two start again with a head start
+  (H.feuds||[]).forEach(function(f){var a=id[(f.a||[])[0]],b=id[(f.b||[])[0]],end=wk(f.to);if(a==null||b==null||end==null||end<-47)return;
+    (S.embers||(S.embers={}))[rkey(a,b)]={w:end,h:Math.round(f.heat||60),n:1};});
+  // moments in a career
+  (H.moments||[]).forEach(function(x){var w=S.w[id[x.who]];if(w)(w.log||(w.log=[])).push({w:Math.min(0,wk(x.date)||0),k:x.k||'moment',t:x.text});});
+  S.w.forEach(function(w){if(w.log&&w.log.length){w.log.sort(function(p,q){return p.w-q.w;});if(w.log.length>16)w.log=w.log.slice(-16);}});
+  S.histFrom=H.from||null;
+}
+(function(){var ng=E.newGame;E.newGame=function(){var S=ng.apply(this,arguments);if(S&&S.w)histApply(S);return S;};})();
+/** A wrestler's persona from the world file: gimmick, catchphrase, finisher, debut year and whether they are a legend. */
+E.persona=function(S,id){var w=S.w[id];return w&&w.uid&&DB&&DB.persona?DB.persona[w.uid]||null:null;};
 
 /* ===== 86-looks.js ===== */
 /* ---------- Create a Player: a wrestler's look as a file (docs/plans/create-a-player.md) ----------
@@ -9777,6 +9791,7 @@ EVR.nightmove=function(S,ev,choice,P){
 };
 
 /* ===== 88-shows.js ===== */
+/* wraps: 87-create.js (it must sort after them; test-buildorder.js checks) */
 /* ---------- a weekly show lasts ----------
    Ryan, 4 October: "Shows exist and can gain prestige the longer they are on and based on viewership and growth."
    A weekly show is not opened and shut. It stays on the air for years, and the years are part of what it is worth.
@@ -10227,6 +10242,7 @@ E.setLogo=function(S,logo){
 };
 
 /* ===== 89-networks.js ===== */
+/* wraps: 88-shows.js (it must sort after them; test-buildorder.js checks) */
 /* ===== Networks and what they want (NEXT.md 7.1 and 7.3) =====
    Every network a weekly show can be on has a taste, worked out from its name with a hash (never rnd(S)):
      family  wants a clean show: hardcore, tables and ladder matches and a lot of shouting go down badly
@@ -10567,6 +10583,7 @@ E.classReport=function(S,year){
 };
 
 /* ===== 89-streaming.js ===== */
+/* wraps: 88-shows.js (it must sort after them; test-buildorder.js checks) */
 /* ===== Streaming (NEXT.md 7.4) =====
    A company can open its own streaming service (Manage, Deals). It costs money to open and a little every week to
    run. Subscribers pay every week. How many there can be depends on the company's popularity and its tape library
@@ -10653,6 +10670,7 @@ E.feudAct=function(f,S){return feudAct(f,S);};E.ACTN=ACTN;E.RISKN=RISKN;E.TIXN=T
 E.MT=MT;E.STIP=STIP;E.ACH=ACH;E.STYLE_NAME=STYLE_NAME;E.MONTHS=MONTHS;
 
 /* ===== 90-cancel.js ===== */
+/* wraps: 00-core.js, 88-shows.js (it must sort after them; test-buildorder.js checks) */
 /* Cancellation (roadmap 4, Ryan 16 October). A network can cancel a weekly show after warnings: every meeting the
    network calls (netmeet, when its patience runs out) is a warning, and the third in a year cancels the weakest
    weekly show. A cancelled show is not gone: it runs on as a house show (sh.off), with no television money and a
@@ -10982,6 +11000,7 @@ var MAPS=[
 ];
 
 /* ===== 91-road.js ===== */
+/* wraps: 00-core.js, 40-week.js (it must sort after them; test-buildorder.js checks) */
 /* ---------- the road: where every city is, the map it is on, and where the next shows are ----------
    (docs/plans/art-direction.md, sections 6.4 and 6.5)
 
@@ -11401,6 +11420,7 @@ var SHAPES={
 };
 
 /* ===== 91-wishes-late.js ===== */
+/* wraps: 90-api.js (it must sort after them; test-buildorder.js checks) */
 /* ---------- depth systems that wrap the player API in 90-api.js ---------- */
 
 /* speaking out: a released wrestler may give an interview. It can sour the room, give away a rival's plans, or settle a score */
@@ -11484,6 +11504,7 @@ E.applyJobTerms=function(S,terms){
 })();
 
 /* ===== 92-challenge.js ===== */
+/* wraps: 00-core.js (it must sort after them; test-buildorder.js checks) */
 /* ---------- 100. The weekly challenge: a dated seed, the same world for everyone, twelve weeks, one score, and a short code to share (S.chal) ---------- */
 function isoParts(id){var m=/^(\d{4})-?W(\d{1,2})$/.exec(String(id||''));return m?{y:+m[1],w:+m[2]}:null;}
 E.challengeInfo=function(id){
@@ -11528,49 +11549,95 @@ WEEKX.push(function(S){
 });
 
 /* ===== 92-scenarios.js ===== */
-/* ---------- 95. Scenarios: a problem and a deadline, each ending with a result (S.scn) ---------- */
-var SCN={
-  rescue:{n:'Save the company',promo:'ttt',weeks:26,d:'A small company with the wage bill too high and almost no cash. Keep it open for 26 weeks and end with $1.5M in the bank.',
-    setup:function(S){var P=S.promos[S.player];P.cash=Math.round(P.inc0*0.8);rosterOf(S,P.id).forEach(function(w){w.wage=Math.round(w.wage*1.25/50)*50;});},
-    check:function(S){var P=S.promos[S.player],ok=P.cash>=1500000;return {ok:ok,text:ok?'The company is safe: '+money(P.cash)+' in the bank after 26 weeks.':'The company is still open, but only '+money(P.cash)+' is in the bank. The target was $1.5M.'};},
-    figures:function(S){var P=S.promos[S.player];return ['Cash '+money(P.cash)+' (target $1.5M)'];}},
-  champion:{n:'A champion from the bottom',promo:'ocw',weeks:39,d:'One of the least known men on the roster has been picked as your project. Have them hold the top title when 39 weeks are up.',
-    setup:function(S){var P=S.promos[S.player],R=rosterOf(S,P.id).filter(function(w){return !w.nw&&w.g==='M'&&w.age<=30;}).sort(function(a,b){return a.ovr-b.ovr;});var tg=R[Math.min(2,R.length-1)];S.scn.target=tg.id;tg.mom=0;},
-    check:function(S){var P=S.promos[S.player],w=S.w[S.scn.target],top=P.titles.filter(function(t){return !t.tag&&t.g===w.g;}).sort(function(a,b){return b.lvl-a.lvl;})[0],ok=!!(top&&top.holders.indexOf(w.id)>=0&&w.promo===P.id);
-      return {ok:ok,text:ok?w.name+' holds the '+top.name+'. From the bottom of the roster to the top of the company.':w.name+' does not hold the '+(top?top.name:'top title')+' after 39 weeks. They are now rated '+Math.round(w.ovr)+'.'};},
-    figures:function(S){var w=S.w[S.scn.target];return [w.name+' rated '+Math.round(w.ovr)+' (started at '+Math.round(S.scn.o0)+')'];}},
-  war:{n:'Win the ratings war',promo:'ocw',weeks:26,d:'PDW has come after your audience, and a war is on. For 26 weeks, your shows must beat what the audience expects by more than theirs do.',
-    setup:function(S){var rv=S.promos.pdw;S.scn.rival='pdw';S.scn.me=[];S.scn.rv=[];S.promos[S.player].image=60;rv.image=66;
-      if(!S.xf)startXf(S,'pdw','war');},
-    check:function(S){var m=avg(S.scn.me||[0]),r=avg(S.scn.rv||[0]),ok=m>r+0.3;return {ok:ok,text:(ok?'You won the ratings war':'You lost the ratings war')+': your shows averaged '+(m>=0?'+':'')+m.toFixed(1)+' against expectations, theirs '+(r>=0?'+':'')+r.toFixed(1)+'.'};},
-    figures:function(S){return ['Your shows: '+((S.scn.me&&S.scn.me.length)?(avg(S.scn.me)>=0?'+':'')+avg(S.scn.me).toFixed(1):'0')+' against expectations','Theirs: '+((S.scn.rv&&S.scn.rv.length)?(avg(S.scn.rv)>=0?'+':'')+avg(S.scn.rv).toFixed(1):'0')];}}
+/* wraps: 00-core.js, 40-week.js, 85-universe.js (it must sort after them; test-buildorder.js checks) */
+/* ---------- 95. Scenarios: a problem and a deadline, each ending with a result (S.scn) ----------
+   A scenario is data (docs/modding.md, "Scenarios"): who you play, how many weeks, a list of setup steps, one win
+   condition, the words for winning and losing, the figures shown at the end, and a score from 0 to 100. The steps and
+   conditions it can use are SCN_OPS and SCN_WIN below; a new kind is one more entry there. A world package can bring
+   its own scenarios in "scenarios", in the same shape. A scenario also ends, lost, if the booker is fired or the money
+   runs out before the deadline. */
+var SCN_BUILT=[
+  {id:'rescue',name:'Save the company',promotion:'ttt',weeks:26,
+   description:'A small company with the wage bill too high and almost no cash. Keep it open for 26 weeks and end with $1.5M in the bank.',
+   setup:[{op:'cash',inc0:0.8},{op:'wages',mult:1.25,round:50}],
+   win:{type:'cash',atLeast:1500000},
+   text:{win:'The company is safe: {cash} in the bank after 26 weeks.',lose:'The company is still open, but only {cash} is in the bank. The target was $1.5M.'},
+   figures:['Cash {cash} (target $1.5M)']},
+  {id:'champion',name:'A champion from the bottom',promotion:'ocw',weeks:39,
+   description:'One of the least known men on the roster has been picked as your project. Have them hold the top title when 39 weeks are up.',
+   setup:[{op:'target',g:'M',maxAge:30,nth:2}],
+   win:{type:'holdsTop',who:'target'},
+   text:{win:'{name} holds the {title}. From the bottom of the roster to the top of the company.',lose:'{name} does not hold the {title} after 39 weeks. They are now rated {ovr}.'},
+   figures:['{name} rated {ovr} (started at {o0})']},
+  {id:'war',name:'Win the ratings war',promotion:'ocw',weeks:26,
+   description:'PDW has come after your audience, and a war is on. For 26 weeks, your shows must beat what the audience expects by more than theirs do.',
+   setup:[{op:'rival',id:'pdw'},{op:'image',who:'player',v:60},{op:'image',who:'pdw',v:66},{op:'war',with:'pdw'}],
+   win:{type:'beatRival',by:0.3},
+   text:{win:'You won the ratings war: your shows averaged {m} against expectations, theirs {r}.',lose:'You lost the ratings war: your shows averaged {m} against expectations, theirs {r}.'},
+   figures:['Your shows: {mFig} against expectations','Theirs: {rFig}']}
+];
+/** Setup steps: each changes the new game once, before the first week. */
+var SCN_OPS={
+  cash:function(S,o){var P=S.promos[S.player];P.cash=Math.round(P.inc0*o.inc0);},
+  wages:function(S,o){var P=S.promos[S.player],r=o.round||50;rosterOf(S,P.id).forEach(function(w){w.wage=Math.round(w.wage*o.mult/r)*r;});},
+  target:function(S,o){var P=S.promos[S.player],R=rosterOf(S,P.id).filter(function(w){return !w.nw&&(!o.g||w.g===o.g)&&(!o.maxAge||w.age<=o.maxAge);}).sort(function(a,b){return a.ovr-b.ovr;});var tg=R[Math.min(o.nth||0,R.length-1)];S.scn.target=tg.id;tg.mom=0;},
+  image:function(S,o){var P=o.who==='player'?S.promos[S.player]:S.promos[o.who];if(P)P.image=o.v;},
+  rival:function(S,o){S.scn.rival=o.id;S.scn.me=[];S.scn.rv=[];},
+  war:function(S,o){if(!S.xf)startXf(S,o['with'],'war');}
 };
-E.SCENARIOS=Object.keys(SCN).map(function(k){return {id:k,n:SCN[k].n,d:SCN[k].d,weeks:SCN[k].weeks,promo:SCN[k].promo};});
+function scnSign(x){return (x>=0?'+':'')+x.toFixed(1);}
+/** Win conditions: whether it is met, the words that fill the texts, and a score from 0 to 100. */
+var SCN_WIN={
+  cash:{vars:function(S,c){var P=S.promos[S.player];return {ok:P.cash>=c.atLeast,cash:money(P.cash),score:clamp(Math.round(P.cash/c.atLeast*100),0,100)};}},
+  holdsTop:{vars:function(S,c){var P=S.promos[S.player],w=S.w[S.scn[c.who||'target']],top=P.titles.filter(function(t){return !t.tag&&t.g===w.g;}).sort(function(a,b){return b.lvl-a.lvl;})[0],ok=!!(top&&top.holders.indexOf(w.id)>=0&&w.promo===P.id);
+    return {ok:ok,name:w.name,title:top?top.name:'top title',ovr:Math.round(w.ovr),o0:Math.round(S.scn.o0),score:ok?100:clamp(Math.round(w.ovr-(S.scn.o0||0)+50),0,99)};}},
+  beatRival:{vars:function(S,c){var C=S.scn,m=avg(C.me||[0]),r=avg(C.rv||[0]);return {ok:m>r+c.by,m:scnSign(m),r:scnSign(r),mFig:(C.me&&C.me.length)?scnSign(avg(C.me)):'0',rFig:(C.rv&&C.rv.length)?scnSign(avg(C.rv)):'0',score:clamp(Math.round(50+(m-r)*20),0,100)};}}
+};
+var SCN={};
+function scnFill(t,v){return String(t).replace(/\{(\w+)\}/g,function(_,k){return v[k]!=null?String(v[k]):'{'+k+'}';});}
+function scnLoad(list){
+  SCN={};(list||[]).forEach(function(d){if(d&&d.id&&SCN_WIN[d.win&&d.win.type])SCN[d.id]=d;});
+  E.SCENARIOS=Object.keys(SCN).map(function(k){var d=SCN[k];return {id:k,n:d.name,d:d.description,weeks:d.weeks,promo:d.promotion};});
+}
+/** What a scenario's win condition says about a state: {ok, text, figures, score}. It ends nothing. */
+function scnJudge(S){var C=S.scn,D=SCN[C.id];if(!D)return null;var v=SCN_WIN[D.win.type].vars(S,D.win);
+  return {ok:!!v.ok,text:scnFill(v.ok?D.text.win:D.text.lose,v),figures:(D.figures||[]).map(function(f){return scnFill(f,v);}),score:v.score};}
+/** Problems with a list of scenarios from a world package, as messages. */
+E.scenarioProblems=function(list,promoIds){var out=[];(list||[]).forEach(function(d,i){var at='scenarios['+i+']';
+  if(!d||!d.id)out.push(at+': no id');else{if(!SCN_WIN[d.win&&d.win.type])out.push(at+' '+d.id+': unknown win type');if(!(d.weeks>0))out.push(at+' '+d.id+': weeks must be more than 0');
+    if(promoIds&&promoIds.indexOf(d.promotion)<0)out.push(at+' '+d.id+': unknown promotion '+d.promotion);(d.setup||[]).forEach(function(o){if(!SCN_OPS[o.op])out.push(at+' '+d.id+': unknown setup step '+o.op);});
+    if(!d.text||!d.text.win||!d.text.lose)out.push(at+' '+d.id+': needs text.win and text.lose');}});return out;};
+E.SCENARIO_FORMAT={ops:Object.keys(SCN_OPS),win:Object.keys(SCN_WIN)};
+scnLoad(SCN_BUILT);
+/* a world package can bring its own scenarios; they sit beside the built-in ones, and the package check reads them */
+(function(){var val=E.validateUniverse;E.validateUniverse=function(pkg){var v=val.apply(this,arguments);if(pkg&&pkg.scenarios){var ids=(pkg.promotions||[]).map(function(p){return p.id;});
+  E.scenarioProblems(pkg.scenarios,ids).forEach(function(m){v.errors.push({at:'scenarios',msg:m});});v.ok=v.ok&&!v.errors.length;}return v;};})();
+(function(){var use=E.useUniverse;E.useUniverse=function(pkg){var r=use.apply(this,arguments);var own=pkg&&Array.isArray(pkg.scenarios)?pkg.scenarios:[];scnLoad(SCN_BUILT.concat(own));return r;};})();
 E.scenarioStart=function(id){
-  var D=SCN[id];if(!D)return null;var U=E.universe();if(!U.promotions.some(function(p){return p.id===D.promo;}))return null;
-  return E.newGame(D.promo,5000+hash('scn'+id)%1000000,{name:'Booker',diff:'normal',fed:null,scn:id});
+  var D=SCN[id];if(!D)return null;var U=E.universe();if(!U.promotions.some(function(p){return p.id===D.promotion;}))return null;
+  return E.newGame(D.promotion,5000+hash('scn'+id)%1000000,{name:'Booker',diff:'normal',fed:null,scn:id});
 };
 (function(){
   var ng=E.newGame;
   E.newGame=function(pid,seed,opts){
     var S=ng(pid,seed,opts);
-    if(opts&&opts.scn&&SCN[opts.scn]){S.scn={id:opts.scn,weeks:SCN[opts.scn].weeks,done:false};var t=S.promos[S.player];S.scn.o0=0;SCN[opts.scn].setup(S);if(S.scn.target!=null)S.scn.o0=S.w[S.scn.target].ovr;}
+    if(opts&&opts.scn&&SCN[opts.scn]){var D=SCN[opts.scn];S.scn={id:opts.scn,weeks:D.weeks,done:false};S.scn.o0=0;(D.setup||[]).forEach(function(o){SCN_OPS[o.op](S,o);});if(S.scn.target!=null)S.scn.o0=S.w[S.scn.target].ovr;}
     return S;
   };
 })();
 SHOWX.push(function(S,P,show,rep){
-  var C=S.scn;if(S.cal||!C||C.done||C.id!=='war')return;
+  var C=S.scn;if(S.cal||!C||C.done||!C.rival)return;
   if(P.id===S.player)C.me.push(rep.rating-rep.exp);else if(P.id===C.rival)C.rv.push(rep.rating-rep.exp);
 });
 WEEKX.push(function(S){
   var C=S.scn;if(S.cal||!C||C.done||S.over)return;
-  if(S.week>=C.weeks){C.done=true;C.res=SCN[C.id].check(S);C.res.figures=SCN[C.id].figures(S);S.over={why:'scenario',week:S.week};}
+  if(S.week>=C.weeks){C.done=true;C.res=scnJudge(S);S.over={why:'scenario',week:S.week};}
 });
 /* a scenario that ends early, with the company broke or the booker fired, is a scenario lost: it gets the scenario's own ending */
 function scnCut(S){
   var C=S.scn;if(!C||C.done||!S.over||S.over.why==='scenario')return;
-  var why=S.over.why;C.done=true;
-  C.res={ok:false,text:why==='fired'?'You were let go before the '+C.weeks+' weeks were up.':'The company ran out of money before the '+C.weeks+' weeks were up.',figures:SCN[C.id].figures(S)};
+  var why=S.over.why,J=scnJudge(S);C.done=true;
+  C.res={ok:false,text:why==='fired'?'You were let go before the '+C.weeks+' weeks were up.':'The company ran out of money before the '+C.weeks+' weeks were up.',figures:J?J.figures:[],score:0};
   S.over={why:'scenario',week:S.over.week,cut:why};
 }
 (function(){
@@ -11578,6 +11645,8 @@ function scnCut(S){
   E.endWeek=function(S){var r=ew.apply(this,arguments);scnCut(S);return r;};
   E.runPlayerShow=function(S){var r=rs.apply(this,arguments);scnCut(S);return r;};
 })();
+/** For tests: what a scenario's check says about a state, without ending anything. */
+E.scnCheck=function(S){var C=S.scn;if(!C||!SCN[C.id])return null;var r=scnJudge(S);delete r.score;return r;};
 
 /* ===== 92-shape.js ===== */
 /* ---------- The shape of a show ----------
@@ -12059,6 +12128,7 @@ E.edOverSegKind=function(pkg,id){if(!SEGK0[id]||id==='writers')return null;var h
 E.edRemoveSegKind=function(pkg,id){if(pkg&&Array.isArray(pkg.segkinds)){pkg.segkinds=pkg.segkinds.filter(function(x){return x&&x.id!==id;});if(!pkg.segkinds.length)delete pkg.segkinds;}};
 
 /* ===== 93-stipworld.js ===== */
+/* wraps: 78-models.js (it must sort after them; test-buildorder.js checks) */
 /* A world's own match rules: made in the World Editor's Match rules tab, kept in the world package (pkg.stips),
    carried into a game (S.db.stips) and picked on the card like the included rules. A new rule is built on an
    included one (its base): it fights like the base, wears and hurts like it and needs the same heat, and has its own
@@ -12629,13 +12699,16 @@ TASKX.push(function(S,P,add){
 /** The letter a new game opens on. */
 E.welcome=function(S){
   if(S.letter)return S.letter;   // the letter is kept as it was written, so it can be read again later
-  var P=S.promos[S.player],o=S.owner,me=!!o.me,rank=S.order.slice().sort(function(a,b){return S.promos[b].image-S.promos[a].image;}).indexOf(P.id)+1,n=S.order.length,sh=S.queue[S.qi]||P.shows[0];
+  var P=S.promos[S.player],o=S.owner,me=!!o.me,rank=(typeof E.audience==='function'?E.audience(S).rank:S.order.slice().sort(function(a,b){return S.promos[b].image-S.promos[a].image;}).indexOf(P.id)+1),n=S.order.length,sh=S.queue[S.qi]||P.shows[0];
   var top=P.titles.filter(function(t){return !t.tag&&t.holders.length;}).sort(function(a,b){return b.lvl-a.lvl;})[0],ch=top?S.w[top.holders[0]]:null,fav=!me&&o.fav!=null?S.w[o.fav]:null;
   var place=rank===1?'We are the biggest company in the world, and everybody else gets up in the morning to change that.':(rank<=3?'We are number '+rank+' of '+n+'. I did not hire you to stay there.':(rank>=n-1?'We are near the bottom of '+n+' companies. Nobody expects anything from us. Good.':'We are number '+rank+' of '+n+'. There is room above us and people below who want our spot.'));
   var L=me?['It is yours. Your name is on the lease, the ring is paid for, and nobody upstairs can tell you no.',
       'Nobody upstairs can save you either.',place.replace(/^We are/,'You are').replace(/I did not hire you to stay there\./,'That is not why you did this.')]
     :['Congratulations. The job is yours.','You are the booker of '+(P.full||P.name)+', '+modelOf(P).ph+'. From tonight every match, every promo and every finish goes out with your name on it.',place];
   if(ch)L.push(ch.name+' holds the '+top.name+'.'+(fav&&fav.id!==ch.id?' My money is on '+fav.name+'. You will hear from me about that.':(fav?' I like it that way.':'')));
+  // the stories already running when you arrive (src/99-midstory.js): the owner names the one that matters most
+  var mid=(S.feuds||[]).filter(function(f){return f.mid&&!f.res&&f.promo===P.id;});
+  if(mid.length){var f0=mid[0],A=S.w[f0.a[0]],B=S.w[f0.b[0]];if(A&&B)L.push(A.name+' and '+B.name+' have been at it for weeks'+(f0.title?', with the belt on the line':'')+'. '+(mid.length>1?(mid.length-1)+' more '+(mid.length===2?'story is':'stories are')+' already running. ':'')+'Do not let them go cold.');}
   if(S.flagStart&&sh.big)L.push('Your first show is '+sh.name+', the biggest night of our year, and it is this week. The building has been sold out for months. A match on it was promised before you got here, and the writers have the ending of a story ready for after the main event.');
   else L.push('Your first show is '+sh.name+'. The card is empty and the building is sold.');
   L.push(me?'Go and book it.':'Do not make me regret this.');
@@ -12644,6 +12717,7 @@ E.welcome=function(S){
 };
 
 /* ===== 97-clauses.js ===== */
+/* wraps: 90-api.js (it must sort after them; test-buildorder.js checks) */
 /* ===== Contract clauses (docs/plans/contract-clauses.md, NEXT.md 11.1) =====
    A wrestler cares about at most three clauses, chosen by who they are. Each one they want and get lowers what they
    ask for. A clause is kept on the wrestler (w.cl) for the length of the deal and does what it says:
@@ -12923,6 +12997,7 @@ function showFill(S,card){
 })();
 
 /* ===== 98-plot.js ===== */
+/* wraps: 90-api.js (it must sort after them; test-buildorder.js checks) */
 /* ---------- booking power on the Storylines page ----------
    Ryan, 6 October: "Storylines will also start interacting with booking points and you can use booking points to
    do various things on the Storylines screen besides start the top feud. Like tag team break up, push a wrestler,
@@ -13070,6 +13145,45 @@ WEEKX.push(function(S){
   (S.sponsors||[]).concat(S.spOffers||[]).forEach(function(o){if(o&&o.type==='rating'&&/%/.test(o.text||''))o.text='No show graded under '+gradeG(o.val);});
   (S.quests||[]).forEach(function(q){if(q.type==='sponsor'&&/%/.test(q.text||''))q.text='Sponsor: big event graded '+gradeG(q.target)+' or better ('+money(q.bonus)+')';});
 });
+
+/* ===== 99-archive.js ===== */
+/* wraps: 80-world.js (it must sort after them; test-buildorder.js checks) */
+/* Career-scale saves (the add-ons run, item 9). Once a game year the state is compacted so a thirty-year career stays
+   small: yearly match records older than two years fold into one "earlier years" row (w.ysOld), career logs keep the
+   first line and the newest fifteen, and free agents nobody has signed in two years and who are 36 or older retire
+   quietly, and so do the weakest unused ones when the free-agent pool passes 350. Somebody retired over two years ago
+   keeps only their name, their record and a few career lines. Old reports, feeds and dirt sheets are kept short elsewhere (src/70-season.js, src/94-net.js). Nothing here
+   calls rnd(S), and it runs at the same week in every game, so it cannot change how a game plays out. */
+var ARCH_KEEP=['id','name','g','promo','ovr','align','age','uid','town','face','log','rt','rtp','ysOld','ysTo','ys','wins','losses','nw','inj','arch','hof','con','morale','cond'],ARCH_YEARS=2,ARCH_LOG=10,FA_CAP=350,ROSTER_CAP=60,TITLE_KEEP=40;
+function archYear(S){
+  var y=cal(S.week).year,keep=y-ARCH_YEARS+1;
+  S.w.forEach(function(w){
+    for(var k in w){var v=w[k];if(typeof v==='number'&&v!==Math.round(v))w[k]=Math.round(v*100)/100;}   // two places is plenty for a number nobody reads to the third
+    if(w.ys){var old=w.ysOld||[0,0,0,0,0,0,0],moved=0;Object.keys(w.ys).forEach(function(k){if(+k<keep){var a=w.ys[k];for(var i=0;i<7;i++)old[i]=i===4?Math.max(old[i],a[i]||0):old[i]+(a[i]||0);delete w.ys[k];moved=1;}});
+      if(moved){w.ysOld=old;w.ysTo=keep-1;}}
+    if(w.log&&w.log.length>ARCH_LOG)w.log=w.log.slice(0,1).concat(w.log.slice(-(ARCH_LOG-1)));
+    if(w.promo==='FA'&&w.rt==null&&!w.nw&&w.age>=36&&S.week-(w.lu||0)>96)retire(S,w,'never signed again');
+  });
+  // a rival roster that only grows lets its least-used people go (never a champion, never somebody in a feud)
+  S.order.forEach(function(pid){if(pid===S.player)return;var P=S.promos[pid],R=rosterOf(S,pid).filter(function(w){return !w.nw;});if(R.length<=ROSTER_CAP)return;
+    R.filter(function(w){return holdLvl(P,w.id)===0&&!inFeud(S,w.id);}).sort(function(a,b){return (a.lu||0)-(b.lu||0)||a.ovr-b.ovr||a.id-b.id;}).slice(0,R.length-ROSTER_CAP)
+      .forEach(function(w){leaveCompany(S,w,'released');w.promo='FA';w.brand=null;w.cut={w:S.week,from:pid,img:P.image};});});
+  // a pool that only grows: past the cap, the weakest free agents unused for two years leave the business
+  var fa=S.w.filter(function(w){return w.promo==='FA'&&w.rt==null&&!w.nw&&S.week-(w.lu||0)>96;}).sort(function(a,b){return a.ovr-b.ovr||a.id-b.id;}),n=S.w.filter(function(w){return w.promo==='FA'&&w.rt==null&&!w.nw;}).length;
+  var gone=0;for(var i=0;i<fa.length&&n>FA_CAP;i++,n--){retire(S,fa[i],'left the business');gone++;}
+  // and somebody who left the business long ago and was never a champion keeps only a name and a line
+  S.w.forEach(function(w){if(w.rt!=null&&S.week-w.rt>96&&!w.arch&&w.promo==='FA'&&!w.srole){
+    Object.keys(w).forEach(function(k){if(ARCH_KEEP.indexOf(k)<0)delete w[k];});if(w.log&&w.log.length>3)w.log=w.log.slice(0,1).concat(w.log.slice(-2));w.arch=1;}});
+  // title lines: an old reign keeps who, when and how long; past forty reigns the first one and the newest stay, and the count of the rest
+  S.order.forEach(function(pid){S.promos[pid].titles.forEach(function(t){var H=t.hist;if(!H)return;
+    H.forEach(function(h){if(h.to!=null&&S.week-h.to>96)delete h.show;});
+    if(H.length>TITLE_KEEP){t.histCut=(t.histCut||0)+H.length-TITLE_KEEP;t.hist=H.slice(0,1).concat(H.slice(-(TITLE_KEEP-1)));}});});
+  news(S,'world','The office files away the year. Records from before '+keep+' are kept as one line per career'+(gone?', and '+gone+' free agents nobody had used in two years have left the business':'')+'.');
+  S.archived=S.week;
+}
+WEEKX.push(function(S){if(S.week>0&&S.week%48===0)archYear(S);});
+/* the career page shows the folded years as one row */
+(function(){var was=E.career;E.career=function(S,id){var c=was(S,id),w=S.w[id];if(c&&w&&w.ysOld){var a=w.ysOld;c.years.push({y:'Up to '+w.ysTo,m:a[0],w:a[1],l:a[2],d:a[3],best:a[4],main:a[5],titles:a[6],old:1});}return c;};})();
 
 /* ===== 99-arcs.js ===== */
 /* Company arcs (roadmap 11, Ryan 16 October). One arc a year: picked on Storylines, it runs until the next flagship
@@ -13223,6 +13337,145 @@ SHOWX.push(function(S,P,show,rep,card){
   news(S,'story',K.n+' '+res+' at '+show.name+'.');note(S,'The arc',K.n+' '+res+'.',img>0?'good':(img<0?'bad':''));
 });
 
+/* ===== 99-audience.js ===== */
+/* wraps: 00-core.js, 34-night.js (it must sort after them; test-buildorder.js checks) */
+/* Audience share (Ryan, 20 October: "I want the companies fighting for audience share. Build out a full demographic
+   system that changes who watches what based on the shows you run, star power, storyline and other tangible things
+   ... Audience share is how we rank the companies, start the companies based on real world companies").
+   The wrestling audience is six groups, each a number of homes and a taste of its own:
+     casual    tunes in for stars, hot stories and big nights
+     diehard   wants great matches and is put off by gimmicks
+     family    wants the heroes to win and no hardcore
+     young     likes villains, edge, hardcore and the women's division
+     lucha     likes high flyers, masks and spectacle
+     oldschool likes veterans, title matches and tradition
+   Every show any company runs is read for what it offered each group (SHOWX): how it went against its own crowd (the
+   letter), the stars on it, the heat of its stories, who won the main event, hardcore and gimmick matches, high flyers
+   and masks, women's matches, veterans and titles. Each company's model has its own lean too. Once a week (WEEKX) each
+   group drifts toward the companies that offered it most, weighted by how far each company reaches; a group never
+   jumps all at once. A company's audience share is its slice of all six. It ranks the companies (E.audience), and it
+   moves television money: viewers follow share, measured against where a company began, so a new game draws what
+   it drew before. The world starts where the world is: the shares at the start come from each company's size and
+   lean, and the parody world's companies are sized like the ones they parody. Nothing here calls rnd(S).
+   What it hands on (rule 7a): a group slipping away, and a rival gaining on you, named on the desk and After the show. */
+var AUD=[
+  {k:'casual',n:'Casual fans',size:4.2,want:'stars, hot stories and big nights'},
+  {k:'diehard',n:'Diehards',size:1.6,want:'great matches, given time'},
+  {k:'family',n:'Families',size:2.4,want:'heroes who win, and nothing too rough'},
+  {k:'young',n:'Young adults',size:2.6,want:'villains, edge, hardcore and the women’s division'},
+  {k:'lucha',n:'Lucha and high-flyer fans',size:1.0,want:'high flyers, masks and spectacle'},
+  {k:'oldschool',n:'Old-school fans',size:1.2,want:'veterans, title matches and tradition'}
+];
+/* how each kind of company leans with each group (1 is no lean) */
+var AUD_MODEL={
+  corporate:{casual:1.25,family:1.3,young:0.9,diehard:0.75,lucha:0.85,oldschool:0.95},
+  workrate:{diehard:1.4,casual:0.9,family:0.85,young:1.05,oldschool:1.05},
+  purist:{diehard:1.35,oldschool:1.25,family:0.9,casual:0.85,lucha:0.85},
+  underdog:{young:1.15,diehard:1.1,casual:0.95},
+  startup:{casual:1.1,young:1.15,oldschool:0.8},
+  outlaw:{young:1.45,family:0.55,diehard:1.05,oldschool:0.8},
+  spectacle:{lucha:1.6,family:1.15,casual:1.0,oldschool:0.85},
+  tradition:{lucha:1.45,oldschool:1.25,family:1.05},
+  joshi:{diehard:1.25,young:1.2,casual:0.9},
+  classic:{}
+};
+var AUD_DRIFT=0.06;   // how much of the gap a group closes in a week
+function audInit(S){
+  if(S.aud&&S.aud.sh)return S.aud;
+  var A=S.aud={sh:{},wk:{},hist:{}};
+  AUD.forEach(function(g){var t=audTarget(S,g.k,null);A.sh[g.k]=t;});
+  S.order.forEach(function(pid){var P=S.promos[pid];if(P){P.aud0=audTotal(S,pid);P.audM=1;}});
+  return A;
+}
+function audReach(P){return Math.pow(Math.max(5,P.image||50)/100,2.2)*(P.dead?0:1);}
+function audLean(P,k){var m=AUD_MODEL[P.model||'classic']||{};return m[k]||1;}
+/** Where group k would settle: every live company's pull (its reach, its lean, and what it offered this week). */
+function audTarget(S,k,offer){
+  var t={},sum=0;
+  S.order.forEach(function(pid){var P=S.promos[pid];if(!P||P.dead)return;var o=offer&&offer[pid]&&offer[pid][k]!=null?offer[pid][k]:1;
+    var v=audReach(P)*audLean(P,k)*Math.pow(Math.max(0.2,o),2.4);t[pid]=v;sum+=v;});
+  Object.keys(t).forEach(function(pid){t[pid]=sum?t[pid]/sum:0;});
+  return t;
+}
+/** The share a company would hold if every company's shows offered the same: its reach and its lean alone. */
+function audBase(S,pid){var tot=0,all=0;AUD.forEach(function(g){all+=g.size;tot+=g.size*(audTarget(S,g.k,null)[pid]||0);});return all?tot/all:0;}
+/** A company's slice of the whole audience, 0 to 1. */
+function audTotal(S,pid){var A=S.aud,tot=0,all=0;if(!A||!A.sh)return 0;AUD.forEach(function(g){all+=g.size;tot+=g.size*((A.sh[g.k]||{})[pid]||0);});return all?tot/all:0;}
+/* what one show offered each group, from what was on it */
+function audOffer(S,P,show,rep,card){
+  if(!rep)return null;
+  var cs=repCS(rep),grade=0.55+0.9*clamp((cs-45)/45,0,1.3);
+  var ms=(card||[]).filter(function(m){return m&&m.sides;}),n=Math.max(1,ms.length),ids=[];ms.forEach(function(m){flat(m.sides).forEach(function(id){if(ids.indexOf(id)<0)ids.push(id);});});
+  var ws=ids.map(function(id){return S.w[id];}).filter(Boolean),top=ws.map(function(w){return w.ovr;}).sort(function(a,b){return b-a;}).slice(0,3);
+  var star=clamp((avg(top.length?top:[50])-55)/35,0,1.2);
+  var heat=0,fs=(S.feuds||[]).filter(function(f){return !f.res&&f.promo===P.id&&f.a.concat(f.b).some(function(id){return ids.indexOf(id)>=0;});});fs.forEach(function(f){heat=Math.max(heat,f.heat||0);});heat=heat/100;
+  var share=function(fn){return ms.filter(fn).length/n;};
+  var hard=share(function(m){return /hardcore|tables|cage|ladder|street|barbed|weapons|no_dq|nodq|lumber/i.test(m.stip||'');});
+  var multi=share(function(m){return m.mt==='3way'||m.mt==='4way'||m.mt==='6man'||m.mt==='br';});
+  var women=share(function(m){var w=S.w[flat(m.sides)[0]];return w&&w.g==='F';});
+  var titles=share(function(m){return !!m.title;});
+  var fly=ws.length?ws.filter(function(w){return w.style==='H';}).length/ws.length:0;
+  var mask=ws.length?ws.filter(function(w){return typeof masked==='function'&&masked(w)===1;}).length/ws.length:0;
+  var vets=ws.length?ws.filter(function(w){return (w.age||30)>=38;}).length/ws.length:0;
+  var segs=(rep.segs||[]).filter(function(s){return s.k==='match';}),mq=segs.length?avg(segs.map(function(s){return s.ov||0;}))/5:0.5;
+  var main=segs[segs.length-1],heroWon=0,heelWon=0;if(main&&main.wi&&main.wi.length){var w0=S.w[main.wi[0]];if(w0){if(w0.align==='F')heroWon=1;else heelWon=1;}}
+  var big=show&&show.big?1:0;
+  var o={
+    casual:grade*(0.75+0.45*star+0.3*heat+0.15*big),
+    diehard:grade*(0.6+0.75*mq-0.25*multi-0.15*hard*(hard>0.4?1:0)),
+    family:grade*(0.8+0.35*heroWon-0.2*heelWon-0.7*hard+0.2*star),
+    young:grade*(0.7+0.5*hard+0.3*heat+0.2*heelWon+0.3*women),
+    lucha:grade*(0.65+0.8*fly+0.4*mask+0.25*multi),
+    oldschool:grade*(0.7+0.6*vets+0.35*titles-0.35*hard+0.15*mq)
+  };
+  Object.keys(o).forEach(function(k){o[k]=clamp(o[k],0.2,2.2);});
+  return o;
+}
+SHOWX.push(function(S,P,show,rep,card){
+  if(S.cal||!P||!rep)return;var A=audInit(S),o=audOffer(S,P,show,rep,card||rep.card);if(!o)return;
+  var w=A.wk[P.id]||(A.wk[P.id]={n:0});w.n++;Object.keys(o).forEach(function(k){w[k]=(w[k]||0)+o[k]*(show&&show.big?1.6:1);});
+  if(P.id===S.player)rep.aud=o;   // what this show offered each group, for After the show
+});
+WEEKX.push(function(S){
+  if(S.cal||S.over)return;var A=audInit(S),offer={};
+  S.order.forEach(function(pid){var w=A.wk[pid],P=S.promos[pid];if(!P)return;offer[pid]={};AUD.forEach(function(g){offer[pid][g.k]=w&&w.n?w[g.k]/w.n:0.85;});});   // a company that ran nothing this week offers a little less
+  var was={};S.order.forEach(function(pid){was[pid]=audTotal(S,pid);});
+  AUD.forEach(function(g){var t=audTarget(S,g.k,offer),cur=A.sh[g.k]||(A.sh[g.k]={}),sum=0;
+    S.order.forEach(function(pid){var v=(cur[pid]||0)+AUD_DRIFT*((t[pid]||0)-(cur[pid]||0));cur[pid]=Math.max(0,v);sum+=cur[pid];});
+    if(sum>0)S.order.forEach(function(pid){cur[pid]/=sum;});});
+  S.order.forEach(function(pid){var P=S.promos[pid];if(!P)return;var now=audTotal(S,pid),h=A.hist[pid]||(A.hist[pid]=[]);h.push(Math.round(now*10000)/10000);if(h.length>24)h.shift();
+    // television follows the audience. Popularity already moves viewers, so the share is measured against what a
+    // company of this popularity and kind would hold with ordinary shows: only what its shows offer moves the money.
+    // A rival office has nobody to react to a slide, so a falling share costs it less than it costs the player.
+    var base=audBase(S,pid),lo=pid===S.player?0.8:0.9;P.audM=base>0?clamp(Math.pow(now/base,0.6),lo,1.6):1;});
+  A.wk={};
+  // the player hears where they stand when it moves
+  var P=S.promos[S.player],me=audTotal(S,S.player),d=me-(was[S.player]||me),rk=E.audience(S).rank;
+  if(P&&Math.abs(d)>=0.002)news(S,'world','AUDIENCE: '+P.name+' '+(d>0?'gained':'lost')+' '+(Math.abs(d)*100).toFixed(1)+' points of audience share, now '+(me*100).toFixed(1)+'% (number '+rk+' in the world).');
+});
+(function(){var vk=viewersK;viewersK=function(P,show,qf){return vk.apply(this,arguments)*(P&&P.audM?P.audM:1);};})();
+/** Audience share for the screens: every company ranked, and the player's six groups with what each wants. */
+E.audience=function(S){
+  var A=audInit(S),L=S.order.filter(function(pid){return S.promos[pid]&&!S.promos[pid].dead;}).map(function(pid){var P=S.promos[pid],h=(A.hist[pid]||[]),now=audTotal(S,pid),then=h.length>4?h[h.length-5]:(P.aud0||now);
+    return {id:pid,name:P.name,share:Math.round(now*1000)/10,move:Math.round((now-then)*1000)/10,mine:pid===S.player,homes:Math.round(now*AUD.reduce(function(a,g){return a+g.size;},0)*100)/100};}).sort(function(a,b){return b.share-a.share;});
+  var rank=L.findIndex(function(x){return x.mine;})+1;
+  var groups=AUD.map(function(g){var s=(A.sh[g.k]||{})[S.player]||0,lead=Object.keys(A.sh[g.k]||{}).sort(function(a,b){return A.sh[g.k][b]-A.sh[g.k][a];})[0];
+    return {k:g.k,n:g.n,size:g.size,share:Math.round(s*1000)/10,want:g.want,leader:lead&&S.promos[lead]?S.promos[lead].name:'',lead:lead===S.player};});
+  return {rank:rank,of:L.length,table:L,groups:groups};
+};
+/** A company's audience share, 0 to 100. */
+E.shareOf=function(S,pid){audInit(S);return Math.round(audTotal(S,pid)*1000)/10;};
+/* After the show says which groups the night pleased and which it put off (rule 7a: a group slipping away is next week's problem) */
+(function(){var af=E.afterShow;E.afterShow=function(S){var r=af.apply(this,arguments);if(!r||!r.items)return r;
+  var rep=null;for(var i=0;i<S.reports.length;i++){if(S.reports[i].week===S.week&&S.reports[i].left&&S.reports[i].left.key===r.key){rep=S.reports[i];break;}}
+  if(!rep||!rep.aud)return r;
+  var L=AUD.map(function(g){return {g:g,v:rep.aud[g.k]||1};}).sort(function(a,b){return b.v-a.v;}),best=L[0],worst=L[L.length-1],A=E.audience(S);
+  var line=best.g.n+' loved it'+(worst.v<0.85?'; '+worst.g.n.toLowerCase()+' were put off':'')+'. You are number '+A.rank+' in audience share.';
+  var detail=L.map(function(x){return x.g.n+': '+(x.v>=1.25?'loved it':x.v>=1?'liked it':x.v>=0.8?'so-so':'put off')+'. They want '+x.g.want+'.';}).concat(['Groups drift a little every week toward whoever gives them what they want. Television money follows your share.']);
+  var seen=!!(S.nightSeen&&S.nightSeen.key===r.key&&S.nightSeen.k&&S.nightSeen.k.aud),it={k:'aud',n:'The audience',line:line,detail:detail,tone:worst.v<0.8?'warn':'good',seen:seen};
+  var at=r.items.findIndex(function(x){return x.k==='next';});if(at<0)r.items.push(it);else r.items.splice(at,0,it);if(!seen)r.unseen=(r.unseen||0)+1;
+  return r;};})();
+
 /* ===== 99-debut.js ===== */
 /* Book a debut (roadmap 9, Ryan 16 October). When somebody new joins, the booker picks how they are introduced:
    vignettes (a teaser airs every week until they first appear, so the crowd knows the name), a surprise attack (they
@@ -13260,6 +13513,7 @@ TASKX.push(function(S,P,add){E.debuts(S).filter(function(d){return !d.k;}).slice
   add('deb-'+d.id,d.name+' has not appeared yet. Plan how they are introduced.','booking','Plan it',{need:false,short:'Plan a debut: '+d.name,done:'Debut planned.'});});});
 
 /* ===== 99-fog.js ===== */
+/* wraps: 90-api.js (it must sort after them; test-buildorder.js checks) */
 /* ---------- Fog of war ----------
    The game does not tell the booker how a match or a promo will go. The road agent comments on every match on the
    sheet, and what the agent can say depends on three things:
@@ -13497,7 +13751,242 @@ E.cardFlags=function(S,card){card=card||S.card||[];return card.map(function(m,i)
   };
 })();
 
+/* ===== 99-gimmicks.js ===== */
+/* wraps: 00-core.js, 60-rpg.js, 93-segments.js (it must sort after them; test-buildorder.js checks) */
+/* A smart gimmick system (Ryan, 20 October: "make sure each wrestler has a gimmick that has benefits for certain
+   matches, pairings, feuds, promos, storylines"). The fourteen gimmicks of src/60-rpg.js each say what they are good
+   for:
+     - best: the match rules they shine in (a brute in a street fight, a technician in a submission match), and the
+       kinds of match (a daredevil in a ladder or multi-man match, a workhorse in a long one);
+     - hot: the gimmicks they make a hot pairing with (the hero against the cocky heel, the underdog against the
+       monster), and flat: the ones that fall flat (two comedy acts, a technician against a monster);
+     - promo: how good the gimmick is on the microphone, from a mumble to a show-stealer;
+     - main: whether the crowd buys them at the top of the card;
+     - grow: the attributes the character grows fastest in (src/99-progress.js lets them choose by it).
+   What it does: a match is louder when the gimmicks fit it and the pairing is hot (CRX); a feud between a hot pairing
+   heats faster and a flat one slower (heatUp); a promo is better or worse by the gimmick (segMean). When a game
+   begins, everybody gets the gimmick their character's own words point to (the world's gimmick category and text),
+   or the one their ratings fit best. Nothing here calls rnd(S). */
+var GFX={
+  brute:{d:'A brawler who hurts people.',best:['hardcore','street','tables','nodq','cage','lumber'],mt:['1v1'],hot:['hero','underdog','technician'],flat:['comedy'],promo:-1,main:0},
+  cocky:{d:'A loudmouth who thinks they are better than you.',best:['std'],mt:['1v1'],hot:['hero','underdog','oldhand','rebel'],flat:['comedy','cocky'],promo:4,main:1},
+  underdog:{d:'The one nobody expects to win, and the crowd wants to.',best:['ladder','cage'],mt:['3way','4way','br'],hot:['monster','brute','cocky'],flat:['underdog'],promo:0,main:0},
+  daredevil:{d:'Throws themselves off anything high.',best:['ladder','tables','cell'],mt:['3way','4way','tag','6man','br'],hot:['daredevil','technician'],flat:['monster'],promo:-1,main:0},
+  technician:{d:'Knows every hold there is.',best:['sub','iron'],mt:['1v1'],hot:['technician','brute','workhorse'],flat:['comedy','monster'],promo:-1,main:0},
+  monster:{d:'A giant who walks through people.',best:['cage','nodq','street','cell'],mt:['1v1'],hot:['hero','underdog'],flat:['monster','daredevil'],promo:-2,main:1},
+  oldhand:{d:'A veteran who has seen it all and makes others look good.',best:['std','iron'],mt:['1v1','tag'],hot:['cocky','rebel','underdog'],flat:['oldhand'],promo:2,main:0},
+  rebel:{d:'Answers to nobody, least of all the boss.',best:['street','hardcore','nodq'],mt:['1v1'],hot:['cocky','hero','oldhand'],flat:['rebel'],promo:3,main:1},
+  hero:{d:'The clean-cut good guy the crowd believes in.',best:['std','ladder','cage'],mt:['1v1','tag'],hot:['cocky','monster','outlaw','brute','mystic'],flat:['hero'],promo:1,main:1},
+  showman:{d:'Lives for the spotlight and the entrance.',best:['ladder','std'],mt:['1v1','3way','4way'],hot:['cocky','mystic','hero'],flat:['technician'],promo:4,main:1},
+  mystic:{d:'Dark, strange and hard to read.',best:['cell','fire','cage'],mt:['1v1'],hot:['hero','showman'],flat:['comedy'],promo:2,main:0},
+  workhorse:{d:'Gives you a great match every single night.',best:['iron','std'],mt:['1v1','tag','3way'],hot:['workhorse','technician'],flat:['comedy'],promo:-1,main:0,long:1},
+  outlaw:{d:'A lawless brawler with a gang behind them.',best:['hardcore','street','tables','nodq'],mt:['tag','6man','1v1'],hot:['hero','technician','oldhand'],flat:['outlaw'],promo:2,main:0},
+  comedy:{d:'Here to make the crowd laugh, and sometimes win.',best:['lumber'],mt:['6man','tag','br'],hot:['cocky'],flat:['comedy','monster','technician','mystic'],promo:3,main:-1}
+};
+var GIM_WORDS=[
+  [/skate|daredevil|stunt|flyer|high-fly|highlight|jet|lightning|luchador|rope|sky|air|flash|speed|kick|bounce/i,'daredevil'],
+  [/showman|flamboyant|starlet|glamour|peacock|rapper|glitter|singing|sequin|timeless|hollywood|pinup|goddess|pop star/i,'showman'],
+  [/cocky|smug|better than|ceo|boss|rich|salt of the earth|mogul|pitchman|patriarch|realest|alpha|executive|vice president/i,'cocky'],
+  [/lazy|comedy|bubblegum|jingle|clown|pocket|laugh|laziest/i,'comedy'],
+  [/goth|witch|mystic|alien|outer space|galaxy|phantom|dark|gloom|ghost/i,'mystic'],
+  [/technician|submission|holds|best bout|professor|wizard|pretzel|catch|grappl|leg lock|technical/i,'technician'],
+  [/workhorse|machine|strongman|swiss|clockwork|best wrestler|union/i,'workhorse'],
+  [/monster|giant|beast|megasaurus|destroyer|landslide|mountain|island choke|powerhouse/i,'monster'],
+  [/outlaw|cowboy gang|biker|gang|violence|bleeding|street fighter|purveyor/i,'outlaw'],
+  [/hardcore|brawler|hurt|backbreaker|nastiest|rock-hard|knife|bronx|backhand/i,'brute'],
+  [/rebel|punk|answers to nobody|riot/i,'rebel'],
+  [/veteran|legend|ageless|forever|icon|\bdad\b|natural/i,'oldhand'],
+  [/underdog|organic|rising|prodigy|teen|prospect|kid/i,'underdog'],
+  [/hero|clean-cut|patriot|babe with the power|power|cowboy|sorry/i,'hero']
+];
+/* the gimmick a character's own words point to, or null */
+function gimFromWords(S,w){
+  var ps=typeof E.persona==='function'?E.persona(S,w.id):null;if(!ps)return null;
+  // the character's category says it best; the longer description only when the category says nothing
+  var tries=[ps.cat||'',ps.d||''];
+  for(var t=0;t<tries.length;t++){if(!tries[t])continue;for(var i=0;i<GIM_WORDS.length;i++)if(GIM_WORDS[i][0].test(tries[t]))return GIM_WORDS[i][1];}
+  return null;
+}
+/* the gimmick the ratings fit best of all fourteen */
+function gimBestFit(w){var best=null,bs=-1;GIMS.forEach(function(g){var s=g.f(w);if(s>bs){bs=s;best=g.id;}});return best;}
+function gimSmart(S){S.w.forEach(function(w){if(w.nw)return;var gw=gimFromWords(S,w),g=gw||gimBestFit(w);if(g&&GIMBY[g]){w.gim=g;w.gw=0;if(gw)w.gwd=g;}});}
+/* a gimmick that is who the character is fits them, whatever the numbers say */
+(function(){var gf=gimFit;gimFit=function(w){var v=gf.apply(this,arguments);return w&&w.gwd&&w.gwd===w.gim?Math.max(v,72):v;};})();
+NEWX.push(function(S){if(!S.custom)gimSmart(S);});
+function gfx(w){return w&&w.gim?GFX[w.gim]:null;}
+function gimStip(stip){var s=String(stip||'std').toLowerCase().replace(/[^a-z]/g,'');return s==='standard'?'std':(s==='steelcage'?'cage':(s==='steelcell'?'cell':(s==='ringoffire'?'fire':(s==='ironman'?'iron':(s==='submission'?'sub':(s==='lumberjack'?'lumber':s))))));}
+/** How a pairing of two gimmicks reads: 1 hot, -1 flat, 0 neither. */
+function gimPair(a,b){var A=gfx(a),B=gfx(b);if(!A||!B)return 0;if(A.hot.indexOf(b.gim)>=0||B.hot.indexOf(a.gim)>=0)return 1;if(A.flat.indexOf(b.gim)>=0||B.flat.indexOf(a.gim)>=0)return -1;return 0;}
+/* the match: gimmicks that fit the rules, the kind of match and the spot on the card, and a hot or flat pairing */
+CRX.push(function(ctx){
+  if(!ctx||!ctx.all||!ctx.all.length)return null;var st=gimStip(ctx.stip),mt=ctx.m&&ctx.m.mt||'1v1',d=0,fit=null,pair=0;
+  ctx.all.forEach(function(w){var G=gfx(w);if(!G)return;
+    if(st!=='std'&&G.best.indexOf(st)>=0){d+=0.9;fit=fit||w;}
+    if(G.mt.indexOf(mt)>=0)d+=0.25;
+    if(G.long&&ctx.mins>=20)d+=0.6;
+    if(ctx.isMain)d+=0.35*G.main;
+  });
+  d/=Math.max(1,ctx.all.length)/2;
+  if(ctx.sides&&ctx.sides.length>=2){var a=ctx.sides[0][0],b=ctx.sides[1][0];pair=gimPair(a,b);d+=pair*0.8;}
+  d=clamp(d,-1.5,2);if(Math.abs(d)<0.3)return null;
+  var x=pair>0&&ctx.sides?GIMBY[ctx.sides[0][0].gim].n+' against '+GIMBY[ctx.sides[1][0].gim].n.toLowerCase()+': a pairing the crowd wants':(fit?fit.name+' is in their element':(pair<0?'The characters did not mesh':null));
+  return {d:d,x:x};
+});
+/* a feud: a hot pairing heats faster, a flat one slower */
+(function(){
+  var hu=heatUp;
+  heatUp=function(S,f,amt,txt){
+    if(amt>0&&f&&f.a&&f.b&&S.w[f.a[0]]&&S.w[f.b[0]]){var p=gimPair(S.w[f.a[0]],S.w[f.b[0]]);if(p)amt*=p>0?1.2:0.8;}
+    return hu.call(this,S,f,amt,txt);
+  };
+})();
+/* a promo: the gimmick decides how much the microphone matters */
+(function(){
+  var sm=segMean;
+  segMean=function(S,w,bonus){var v=sm.apply(this,arguments),G=gfx(w);return G?v+G.promo*0.9:v;};
+})();
+/** What a wrestler's gimmick is good for, for the screens. */
+E.gimInfo=function(S,id){var w=S.w[id];if(!w||!w.gim||!GFX[w.gim])return null;var G=GFX[w.gim],nm=function(k){return GIMBY[k]?GIMBY[k].n.toLowerCase():k;};
+  var SN={std:'standard matches',hardcore:'hardcore matches',street:'street fights',tables:'tables matches',nodq:'no disqualification',cage:'cage matches',cell:'the steel cell',fire:'the ring of fire',ladder:'ladder matches',sub:'submission matches',iron:'iron man matches',lumber:'lumberjack matches'};
+  var MN={'1v1':'one on one','tag':'tag matches','3way':'triple threats','4way':'four-ways','6man':'six-man tags','br':'battle royals'};
+  return {id:w.gim,n:GIMBY[w.gim].n,d:G.d,fit:gimFit(w),best:G.best.map(function(k){return SN[k]||k;}),mt:G.mt.map(function(k){return MN[k]||k;}),hot:G.hot.map(nm),flat:G.flat.map(nm),
+    promo:G.promo>=3?'a show-stealer on the microphone':G.promo>=1?'good on the microphone':G.promo<=-2?'lets their fists talk':G.promo<0?'better in the ring than on the microphone':'fine on the microphone',
+    main:G.main>0?'The crowd buys them at the top of the card.':G.main<0?'Hard to take seriously in a main event.':''};};
+E.GFX=GFX;
+
+/* ===== 99-kayfabe.js ===== */
+/* The kayfabe layer (the add-ons run, item 3). The public believes one thing; insiders know another. The game keeps
+   the secrets that are true of your company (S.kf.sec): two people the crowd thinks are friends who really cannot stand
+   each other, somebody whose contract runs out and who is leaving, and the ending planned for a big night. Each week a
+   secret can leak: an unhappy person talks, a locker room that does not trust you is loose-lipped, and the longer a
+   secret is kept the harder it is to keep. A leak reaches the dirt sheet and comes to the desk as a matter (deny it,
+   work it into the story, or let it go). How well the business is protected (S.kf.prot, 0 to 100, said only in words)
+   falls with every leak and mends slowly: a crowd that knows too much is harder to fool on the night, and the owner
+   notices. Nothing here calls rnd(S): a leak is decided by a hash of the week and the secret. */
+var KF_WORDS=[[80,'Airtight: the public believes what it sees'],[60,'Mostly kept: a rumour here and there'],[40,'Leaking: the smart fans know more than they should'],[20,'Wide open: half the crowd reads the dirt sheet first'],[0,'Exposed: nothing on the show is a surprise any more']];
+function kfWord(p){for(var i=0;i<KF_WORDS.length;i++)if(p>=KF_WORDS[i][0])return KF_WORDS[i][1];return KF_WORDS[KF_WORDS.length-1][1];}
+function kfInit(S){if(!S.kf)S.kf={sec:{},prot:75,leaks:[]};return S.kf;}
+/** The secrets that are true this week, by key: {k, ids, t (what the public believes), real (what is true), since}. */
+function kfFind(S){
+  var P=S.promos[S.player],out={},add=function(key,o){out[key]=o;};
+  // partners on screen who really cannot stand each other
+  (S.teams||[]).forEach(function(tm){if(tm.promo!==P.id||!tm.m||tm.m.length<2)return;var a=S.w[tm.m[0]],b=S.w[tm.m[1]];if(!a||!b)return;
+    if(bondOf(S,a.id,b.id)<=-40)add('heat:'+a.id+'-'+b.id,{k:'heat',ids:[a.id,b.id],t:a.name+' and '+b.name+' are a team the crowd loves',real:a.name+' and '+b.name+' cannot stand each other in real life'});});
+  // somebody leaving: a contract running out that has not been renewed
+  rosterOf(S,P.id).forEach(function(w){if(!w.nw&&w.con>0&&w.con<=4&&w.ovr>=P.image-15)add('leave:'+w.id,{k:'leave',ids:[w.id],t:w.name+' is part of the future of '+P.name,real:w.name+'’s contract runs out in '+w.con+' weeks, and nothing is signed'});});
+  // a star who smiles on television and is miserable in the locker room
+  rosterOf(S,P.id).filter(function(w){return !w.nw&&w.ovr>=P.image-8;}).forEach(function(w){if(w.morale<38)add('unh:'+w.id,{k:'unh',ids:[w.id],t:w.name+' is happy in '+P.name,real:w.name+' is miserable and talking about leaving'});});
+  // somebody working hurt: the public sees them every week and thinks nothing of it
+  rosterOf(S,P.id).forEach(function(w){if(w.nw||w.inj>0)return;var z=E.zones(S,w.id).sort(function(a,b){return b.v-a.v;})[0];if(z&&z.v>=70&&w.ovr>=P.image-15)add('hurt:'+w.id,{k:'hurt',ids:[w.id],t:w.name+' is fit and ready',real:w.name+' is wrestling hurt: their '+z.n.toLowerCase()+(z.k==='n'||z.k==='b'?' is':' are')+' in a bad way'});});
+  // the ending planned for a big night
+  activeFeuds(S).forEach(function(f){if(f.promo!==P.id||!f.endAt||f.endAt<S.week)return;add('end:'+f.id,{k:'end',ids:f.a.concat(f.b),t:feudLabel(S,f)+' has a long way to run',real:feudLabel(S,f)+' is planned to end on '+cal(f.endAt).label});});
+  return out;
+}
+/** The chance this week that a secret gets out: what helps and what hurts, as an attempt (rule 4). */
+function kfLeakP(S,s){
+  var K=kfInit(S),age=S.week-(s.since||S.week),p=0.03+Math.min(0.08,age*0.006);
+  s.ids.forEach(function(id){var w=S.w[id];if(w&&w.morale<35)p+=0.05;});
+  if((S.trust||50)<40)p+=0.04;if(hasRule(S,'kayfabe'))p-=0.03;
+  return clamp(p,0.01,0.3);
+}
+/* each week: keep the list of secrets, and see whether one gets out */
+WEEKX.push(function(S){
+  if(S.cal||S.over)return;var K=kfInit(S),now=kfFind(S),leaked=null;
+  Object.keys(K.sec).forEach(function(k){if(!now[k])delete K.sec[k];});
+  Object.keys(now).forEach(function(k){if(!K.sec[k]){now[k].since=S.week;K.sec[k]=now[k];}else{K.sec[k].real=now[k].real;}});
+  Object.keys(K.sec).sort().forEach(function(k){var s=K.sec[k];if(leaked||s.out)return;if(h01(S.seed+':kf:'+S.week+':'+k)<kfLeakP(S,s))leaked=s;});
+  K.prot=clamp(K.prot+(leaked?-12:1),0,100);
+  if(!leaked)return;
+  leaked.out=S.week;var who=leaked.ids.map(function(id){return S.w[id];}).filter(Boolean);
+  K.leaks.unshift({w:S.week,k:leaked.k,t:leaked.real});if(K.leaks.length>12)K.leaks.length=12;
+  news(S,'world','RUMOUR: '+leaked.real+'. The office has not commented.');
+  who.forEach(function(w){youRemember(S,w,'leak','What was said about them reached the dirt sheet.',-1);});
+  if(!S.owner.me)S.owner.trust=clamp(S.owner.trust-1,0,100);
+  pushEv(S,{type:'leak',key:leaked.k,ids:leaked.ids,text:'It got out. The dirt sheet says: '+leaked.real+'. Until now the public believed: '+leaked.t+'.',
+    choices:['Deny it, loudly','Work it into the story','Let it go']});
+  note(S,'A secret got out',leaked.real+'.','bad');
+});
+EVR.leak=function(S,ev,choice,P){
+  var K=kfInit(S),who=(ev.ids||[]).map(function(id){return S.w[id];}).filter(Boolean),n=who.map(function(w){return w.name;}).join(' and ');
+  if(choice===0){var ok=h01(S.seed+':kfd:'+ev.id)<0.5;if(ok){K.prot=clamp(K.prot+8,0,100);return 'You deny it on every channel. Most people believe you. The secret is safer than it was.';}
+    K.prot=clamp(K.prot-5,0,100);if(!S.owner.me)S.owner.trust=clamp(S.owner.trust-2,0,100);return 'You deny it, and then it turns out to be true in front of everybody. That costs more than the leak did.';}
+  if(choice===1){who.forEach(function(w){youRemember(S,w,'leakstory','You turned the rumour about them into a story.',ev.key==='heat'?1:0);});
+    if(ev.key==='heat'&&who.length===2){relBump(S,who[0].id,who[1].id,{bond:-5},{k:'leakstory',t:'The rumour became the story.'});}
+    K.prot=clamp(K.prot+3,0,100);return 'The rumour becomes the angle: '+n+(who.length>1?' are':' is')+' written into a story about it. The smart fans feel clever, and the rest never knew.';}
+  return 'You say nothing. It fades in a week or two, and so does a little of the mystery.';
+};
+/* a crowd that knows too much is harder to fool */
+CRX.push(function(ctx){if(!ctx.isPl||!ctx.S.kf)return null;var p=ctx.S.kf.prot;return p<40?{d:-1,x:'A crowd that reads the dirt sheet saw it coming'}:null;});
+/** For the screens: how well the business keeps its secrets, what is being kept, and what got out. */
+E.kayfabe=function(S){
+  var K=kfInit(S),sec=Object.keys(K.sec).map(function(k){return K.sec[k];}).filter(function(s){return !s.out;});
+  return {prot:K.prot,word:kfWord(K.prot),kept:sec.map(function(s){return {k:s.k,t:s.t,real:s.real,since:s.since,risk:Math.round(kfLeakP(S,s)*100)};}),leaks:K.leaks.slice(0,6).map(function(l){return {w:l.w,when:cal(l.w).label,t:l.t};}),
+    line:sec.length?sec.length+' '+(sec.length===1?'secret':'secrets')+' kept. '+kfWord(K.prot)+'.':kfWord(K.prot)+'.'};
+};
+
+/* ===== 99-midstory.js ===== */
+/* wraps: 00-core.js, 86-history.js (it must sort after them; test-buildorder.js checks) */
+/* The world starts mid-story (the week of 20 October, step 3). A new game used to open with no story running and
+   every champion without a challenger, as if the company had been switched on that morning. Now the company you take
+   over is already in the middle of things:
+   - each singles champion has a challenger chasing them, the best fit on the same brand and in the same division,
+     with the other alignment where there is one;
+   - the worst real-life rivalries on the roster (the relationship matrix, which the world's history and relationships
+     feed) are already running as feuds;
+   - each of these began a few weeks before you arrived, so it has some heat and has used a little of its freshness.
+   At most four stories, so the first week has something to book without being full. It runs once, when the game
+   starts, picks people by a hash and never calls rnd(S), so the same world and seed open the same way. What it hands
+   on (rule 7a): a title match the crowd is waiting for, and a feud that wants its next chapter. */
+var MID_MAX=4;
+function midStory(S){
+  var P=S.promos[S.player];if(!P||S.mid||S.custom)return;S.mid=1;   // a federation you start yourself has no past yet
+  var key='mid'+S.seed,busy={},made=0,R=rosterOf(S,P.id).filter(function(w){return !w.nw&&w.inj<=0;});
+  var age=function(k){return 3+hash(key+k)%6;};   // three to eight weeks old
+  function open(f,weeks,why){
+    if(!f)return;f.start=1-weeks;f.last=0;f.fresh=clamp(100-weeks*4,60,95);
+    f.log=[{w:f.start,t:why}];f.mid=1;made++;
+    f.a.concat(f.b).forEach(function(id){busy[id]=1;});
+  }
+  // 1. a challenger for every singles champion
+  P.titles.filter(function(t){return !t.tag&&t.holders.length===1;}).sort(function(a,b){return b.lvl-a.lvl;}).forEach(function(t){
+    if(made>=MID_MAX-1)return;var ch=S.w[t.holders[0]];if(!ch||busy[ch.id])return;
+    var pool=R.filter(function(w){return w.id!==ch.id&&!busy[w.id]&&w.g===ch.g&&(!t.brand||w.brand===t.brand)&&!holdLvl(P,w.id);});
+    if(!pool.length)return;
+    pool.sort(function(a,b){var s=function(w){return w.ovr+(w.align!==ch.align?6:0)+(hash(key+t.id+w.id)%5);};return s(b)-s(a);});
+    var c=pool[0],wk=age(t.id);
+    open(startFeud(S,P,c,ch,30+wk*4,c.name+' has been chasing the '+t.name,{title:t.id,force:true}),wk,c.name+' has been chasing '+ch.name+' and the '+t.name+' for weeks');
+  });
+  // 2. the worst real heat on the roster
+  var pairs=[];
+  R.forEach(function(a,i){R.slice(i+1).forEach(function(b){if(a.g!==b.g||(a.brand&&b.brand&&a.brand!==b.brand))return;var v=bondOf(S,a.id,b.id);if(v<=-40)pairs.push({a:a,b:b,v:v});});});
+  pairs.sort(function(x,y){return x.v-y.v||hash(key+x.a.id+'-'+x.b.id)-hash(key+y.a.id+'-'+y.b.id);});
+  pairs.forEach(function(p){
+    if(made>=MID_MAX||busy[p.a.id]||busy[p.b.id])return;var wk=age(p.a.id+'-'+p.b.id);
+    open(startFeud(S,P,p.a,p.b,35+Math.min(25,-p.v/4),'Real heat between '+p.a.name+' and '+p.b.name+' spilled onto the show',{force:true}),wk,p.a.name+' and '+p.b.name+' cannot stand each other, and it is on the show now');
+  });
+}
+// a test of one mechanic can start from a blank slate: E.newGame(pid, seed, {mid: false})
+(function(){var ng=E.newGame;E.newGame=function(){var S=ng.apply(this,arguments),o=arguments[2];if(S&&S.w&&!S.cal&&!(o&&o.mid===false))midStory(S);return S;};})();
+
+/* ===== 99-overall.js ===== */
+/* The overall rating (Ryan, 20 October: "add overall rating to wrestlers for easy sorting"). One number from 1 to 99
+   that says how good a wrestler is all round, for sorting a list at a glance: their work in the ring weighs most,
+   then how over they are with the crowd, then the microphone and their presence, then stamina, how steady they are
+   and how safe they are to work with. It moves as they do, since it is worked out from them each time and never
+   kept. It is a rating of the person, not a forecast of a match: a match is still told in stars after the bell. */
+function overallOf(w){
+  if(!w)return 0;
+  var ring=workRate(w),mic=((w.mic||50)+(w.cha||w.mic||50))/2;
+  var v=ring*0.38+(w.ovr||0)*0.27+mic*0.17+(w.stam||50)*0.08+(w.cons||60)*0.05+(w.safe||55)*0.05;
+  // a light stretch so the best in the world reach the low 90s and nobody sits on 99
+  return clamp(Math.round(70+(v-70)*1.1),1,99);
+}
+/** The overall rating of a wrestler, 1 to 99 (a wrestler, or an id). */
+E.overall=function(S,w){if(typeof w==='number')w=S.w[w];return overallOf(w);};
+E.overallOf=overallOf;
+
 /* ===== 99-points.js ===== */
+/* wraps: 65-you.js (it must sort after them; test-buildorder.js checks) */
 /* Booking power and action points refill after every show of yours, not once a week (roadmap 10, Ryan 16 October).
    Each show brings its share of the week's booking power and one more point, plus up to two points left unspent from
    before; action points come back in full after every show, and one unspent point carries over. A week with several
@@ -13514,6 +14003,332 @@ SHOWX.push(function(S,P){
 });
 /** For the screens: how the points come back. */
 E.pointsInfo=function(S){return {bp:S.bp||0,perShow:bpPerShow(S),bpCarry:BP_CARRY,ap:S.ap||0,apMax:apMax(S),apCarry:AP_CARRY};};
+
+/* ===== 99-postmortem.js ===== */
+/* wraps: 00-core.js, 66-relations.js (it must sort after them; test-buildorder.js checks) */
+/* Post-mortems (the add-ons run, item 17). First a causal log (S.clog): what happened, what caused it and who was
+   involved, kept short (the newest 200 lines). It is fed through hooks: every line on the notification bar, the news
+   that matters (titles, injuries, contracts, rumours), each of your shows (its grade and why the owner felt as they
+   did) and the money each week. From it, every four weeks, a month in review in plain words: what went well, what went
+   badly, and the chain of causes behind each. Once a year a season in review. They read only what already happened:
+   no hidden score, no forecast (fog of war). The month goes to the desk; the season is kept in History. No rnd(S). */
+var CLOG_MAX=200,CLOG_SKIP={'Refilled':1,'The month in review':1};
+function clog(S,k,t,why,ids,v){if(S.cal||!S.w)return;var L=S.clog||(S.clog=[]);L.unshift({w:S.week,k:k,t:t,why:why||'',ids:ids||[],v:v||0});if(L.length>CLOG_MAX)L.length=CLOG_MAX;}
+(function(){
+  var nt=note;note=function(S,head,text,kind){nt.apply(this,arguments);if(S&&!S.cal&&S.w&&!CLOG_SKIP[head])clog(S,'note',head,text||'',[],kind==='good'?1:(kind==='bad'?-1:0));};
+  var nw=news;news=function(S,kind,text){nw.apply(this,arguments);var P=S&&S.promos&&S.promos[S.player];if(S&&!S.cal&&S.w&&P&&((kind==='title'||kind==='contract')&&text.indexOf(P.name)>=0||kind==='injury'||/^RUMOUR/.test(text)))clog(S,kind,text,'',[],kind==='injury'||/^RUMOUR/.test(text)?-1:0);};
+})();
+SHOWX.push(function(S,P,show,rep){
+  if(S.cal||P.id!==S.player)return;var o=rep.owner,cs=repCS(rep),g=gradeG(cs);
+  clog(S,'show',show.name+' was graded '+g,o&&o.why?o.why.join(' '):'',[],cs>=75?1:(cs<60?-1:0));
+});
+WEEKX.push(function(S){
+  if(S.cal||S.over)return;var P=S.promos[S.player],r=P.hist&&P.hist[P.hist.length-1];if(!r||r.w!==S.week)return;
+  var parts=[['tv','television'],['gate','the gate'],['ppv','big-event buys'],['merch','merchandise']],big=parts.slice().sort(function(a,b){return (r[b[0]]||0)-(r[a[0]]||0);})[0];
+  clog(S,'money',r.net>=0?'The week made '+money(r.net):'The week lost '+money(-r.net),'Most of the money came from '+big[1]+'; wages were '+money(r.wages)+'.',[],r.net>=0?0:-1);
+});
+/* the review: a month or a season, from the log and the books */
+function pmMoney(S,from,to){
+  var P=S.promos[S.player],H=(P.hist||[]).filter(function(r){return r.w>from&&r.w<=to;});if(!H.length)return null;
+  var sum=function(k){return H.reduce(function(a,r){return a+(r[k]||0);},0);},net=sum('net'),bigs=H.filter(function(r){return (r.ppv||0)>0;}).length;
+  var lines=[(net>=0?'The company made ':'The company lost ')+money(Math.abs(net))+' over '+H.length+' weeks.'];
+  var inc=[['television',sum('tv')],['the gate',sum('gate')],['big-event buys',sum('ppv')],['merchandise',sum('merch')],['sponsors',sum('spons')]].sort(function(a,b){return b[1]-a[1];});
+  lines.push('Most of it came from '+inc[0][0]+(inc[1][1]>0?', then '+inc[1][0]:'')+'. Wages took '+money(sum('wages'))+'.');
+  if(net<0&&!bigs)lines.push('There was no big event in these weeks to carry them.');
+  return {good:net>=0,lines:lines};
+}
+function pmReview(S,from,to,label){
+  var L=(S.clog||[]).filter(function(x){return x.w>from&&x.w<=to;}),P=S.promos[S.player],out={label:label,from:from,to:to,well:[],badly:[],money:null,owner:null};
+  out.money=pmMoney(S,from,to);
+  var shows=L.filter(function(x){return x.k==='show';}),good=shows.filter(function(x){return x.v>0;}),bad=shows.filter(function(x){return x.v<0;});
+  if(good.length)out.well.push({t:good.length+' of '+shows.length+' shows beat what the crowd expected',why:good[0].t+'. '+good[0].why});
+  if(bad.length)out.badly.push({t:bad.length+' of '+shows.length+' shows fell short',why:bad[0].t+'. '+bad[0].why});
+  L.filter(function(x){return x.k==='note'&&x.v>0;}).slice(0,3).forEach(function(x){out.well.push({t:x.t,why:x.why});});
+  L.filter(function(x){return (x.k==='note'||x.k==='injury'||/^RUMOUR/.test(x.t))&&x.v<0;}).slice(0,4).forEach(function(x){out.badly.push({t:x.t.replace(/^RUMOUR(\s\([^)]*\))?:\s*/,'A leak: '),why:x.why});});
+  L.filter(function(x){return x.k==='title';}).slice(0,2).forEach(function(x){out.well.push({t:x.t,why:''});});
+  L.filter(function(x){return x.k==='contract'&&/released|can no longer afford|has left|let go/i.test(x.t);}).slice(0,2).forEach(function(x){out.badly.push({t:x.t,why:''});});
+  if(!S.owner.me){var w=(S.ownWas||{})[from]!=null?S.ownWas[from]:null,now=S.owner.trust;
+    if(w!=null)out.owner=Math.abs(now-w)<2?S.owner.name+'’s trust held steady.':(now>w?S.owner.name+' trusts you more than a month ago'+(good.length?': the shows did it.':'.'):S.owner.name+' trusts you less than a month ago'+(bad.length?': the shows did it.':'.'));}
+  if(!out.well.length)out.well.push({t:'Nothing stood out on the good side',why:''});
+  if(!out.badly.length)out.badly.push({t:'Nothing went badly wrong',why:''});
+  return out;
+}
+WEEKX.push(function(S){
+  if(S.cal||S.over)return;var c=cal(S.week),pm=S.pm||(S.pm={month:[],season:[]});
+  var OW=S.ownWas||(S.ownWas={});if(c.wom===1)OW[S.week-1]=S.owner.trust;
+  Object.keys(OW).forEach(function(k){if(S.week-k>60)delete OW[k];});
+  if(c.wom===4){var m=pmReview(S,S.week-4,S.week,MONTHS[c.month]+' '+c.year);pm.month.unshift(m);if(pm.month.length>3)pm.month.length=3;pm.unread=S.week;
+    note(S,'The month in review','How '+MONTHS[c.month]+' went, and why. It is on your desk.','');}
+  if(c.wom===4&&c.month===(P0month(S)+11)%12){var y=pmReview(S,S.week-48,S.week,'The season to '+MONTHS[c.month]+' '+c.year);pm.season.unshift(y);if(pm.season.length>4)pm.season.length=4;}
+});
+function P0month(S){return S.db&&S.db.startMonth!=null?S.db.startMonth:9;}
+/** The latest month in review, and whether it has been read. */
+E.monthReview=function(S){var pm=S.pm;return pm&&pm.month[0]?{r:pm.month[0],unread:pm.unread!=null&&pm.read!==pm.unread}:null;};
+E.readMonth=function(S){if(S.pm)S.pm.read=S.pm.unread;return {ok:true};};
+E.seasonReviews=function(S){return S.pm?S.pm.season.slice():[];};
+
+/* ===== 99-press.js ===== */
+/* wraps: 99-kayfabe.js (it must sort after them; test-buildorder.js checks) */
+/* Journalists as characters (the add-ons run, item 15). Four reporters, each with a name, a beat (the ring, the money,
+   backstage), a lean for or against your company (bias), how they feel about you (warm, -100 to 100), a grudge (0 to
+   100), and sources among your people. What reaches the dirt sheet depends on who has it and who they like: a reporter
+   with a source near a secret makes it likelier to leak and gets the credit, a reporter who likes you calls before
+   printing, and every week one of them writes a column about your last show, coloured by how they feel. The booker can
+   court one (dinner on the company), freeze one out, or feed one a story. The world's dirt sheet writers
+   (DB.columnists) are the first reporters; the rest are made from original names. No rnd(S): everything is hashed. */
+var PRESS_FIRST=['Mona','Lewis','Dot','Hank','Rosa','Vern','Ida','Clem','Nell','Otis','Fay','Gus'];
+var PRESS_LAST=['Pickering','Crane','Haddow','Vance','Mulgrew','Talbot','Okafor','Lindqvist','Barrow','Esposito','Quill','Ferris'];
+var PRESS_BEAT={ring:{n:'in the ring',d:'Match quality and who is getting better.'},money:{n:'the money',d:'Ratings, gates, contracts and deals.'},back:{n:'backstage',d:'Who is unhappy, who is feuding for real, who is leaving.'}};
+var PRESS_ACT={
+  court:{n:'Take them to dinner',d:'On the company. They warm to you, and a grudge softens.',cost:function(S){var P=S.promos[S.player];return Math.max(2000,Math.round(P.inc0*0.004/500)*500);}},
+  freeze:{n:'Freeze them out',d:'No access, no comment. Their sources talk more, and the columns turn.'},
+  feed:{n:'Feed them a story',d:'Give them something good about your next show. A lift in the build, once a month at most.'}
+};
+function pressInit(S){
+  if(S.press)return S.press;var cols=(dbOf(S).columnists||[]).slice(0,2),L=[],beats=['back','ring','money','back'];
+  for(var i=0;i<4;i++){var nm=cols[i]||(PRESS_FIRST[hash(S.seed+'pf'+i)%PRESS_FIRST.length]+' '+PRESS_LAST[hash(S.seed+'pl'+i)%PRESS_LAST.length]);
+    L.push({id:i,name:nm,beat:beats[i],bias:Math.round((h01(S.seed+':pb'+i)*2-1)*60),warm:0,grudge:0,src:[],frozen:0,fed:-99});}
+  S.press={rep:L,last:-1};return S.press;
+}
+function pressWord(r){var v=r.warm+r.bias*0.5;return v>=40?'friendly':(v>=10?'fair to you':(v>-20?'neutral':(v>-50?'cool on you':'hostile')));}
+/* each reporter keeps one or two sources among your people: the unhappy and the talkative first */
+function pressSources(S,X){
+  var P=S.promos[S.player],R=rosterOf(S,P.id).filter(function(w){return !w.nw;}).sort(function(a,b){return (a.morale-(a.mic||50)*0.2)-(b.morale-(b.mic||50)*0.2)||a.id-b.id;});
+  X.rep.forEach(function(r,i){r.src=r.src.filter(function(id){var w=S.w[id];return w&&w.promo===P.id;});if(r.src.length<2&&R.length){var w=R[(i*3+S.week)%Math.min(R.length,8)];if(w&&r.src.indexOf(w.id)<0)r.src.push(w.id);}});
+}
+/* a source near a secret makes it likelier to get out; a frozen-out reporter's sources talk more */
+(function(){var lp=kfLeakP;kfLeakP=function(S,s){var p=lp(S,s);if(!S.press)return p;S.press.rep.forEach(function(r){if(s.ids.some(function(id){return r.src.indexOf(id)>=0;}))p+=r.frozen>S.week?0.05:0.03;});return clamp(p,0.01,0.35);};})();
+/* who broke it: the reporter with a source in it, else the one whose beat it is */
+function pressWho(S,s){var X=pressInit(S),beat=s.k==='leave'?'money':(s.k==='hurt'?'ring':'back');
+  return X.rep.filter(function(r){return s.ids.some(function(id){return r.src.indexOf(id)>=0;});})[0]||X.rep.filter(function(r){return r.beat===beat;})[0]||X.rep[0];}
+/* the leak names its reporter; a reporter who likes you calls before printing */
+(function(){var ev=EVR.leak;EVR.leak=function(S,e,choice,P){
+  if(e.calls!=null&&choice===3){var r=S.press.rep[e.calls];r.warm=clamp(r.warm-15,-100,100);S.kf.prot=clamp(S.kf.prot+12,0,100);youRemember(S,S.w[e.ids[0]],'kill','You had the story about them killed before it ran.',1);
+    return r.name+' sits on it, as a favour. It costs you some of their goodwill, and the secret is safe for now.';}
+  return ev(S,e,choice,P);};})();
+WEEKX.push(function(S){
+  if(S.cal||S.over)return;var X=pressInit(S);pressSources(S,X);
+  // credit the leak this week to a reporter, and let a friendly one call first
+  var e=S.inbox.filter(function(x){return x.type==='leak'&&!x.done&&x.week===undefined;})[0];
+  if(e){e.week=S.week;var s={k:e.key,ids:e.ids},r=pressWho(S,s);e.by=r.id;e.text=r.name+' ('+PRESS_BEAT[r.beat].n+') has it. '+e.text;
+    var n0=S.news.filter(function(x){return x.w===S.week&&/^RUMOUR:/.test(x.t);})[0];if(n0)n0.t=n0.t.replace(/^RUMOUR:/,'RUMOUR ('+r.name+'):');
+    if(r.warm+r.bias*0.5>=40){e.calls=r.id;e.choices=e.choices.concat(['Ask '+r.name+' to sit on it']);e.text+=' '+r.name+' called you before printing.';}}
+  // the weekly column on your last show, coloured by how its writer feels about you
+  var rep=(S.reports||[]).filter(function(x){return x.promo===S.player&&x.week===S.week;})[0];if(!rep)return;
+  var c=X.rep[S.week%X.rep.length],tone=c.warm+c.bias*0.5+(repCS(rep)-70)*1.5,g=gradeG(repCS(rep)),line;
+  var pk=function(L){return L[Math.floor(h01(S.seed+':col:'+S.week+':'+c.id+rep.name)*L.length)];};
+  if(tone>=25){line=c.name+' on '+rep.name+' ('+g+'): '+pk(['"The office knows what it is doing."','"Whoever books this has a plan, and it shows."','"Worth the ticket. Worth the next one too."']);S.hype=(S.hype||0)+0.02;}
+  else if(tone<=-25){line=c.name+' on '+rep.name+' ('+g+'): '+pk(['"Somebody should be asking who books this."','"Three hours I will not get back."','"The talent deserves better than this office."']);S.hype=(S.hype||0)-0.02;if(c.grudge>=60&&!S.owner.me)S.owner.trust=clamp(S.owner.trust-1,0,100);}
+  else line=c.name+' on '+rep.name+' ('+g+'): '+pk(['"It was a wrestling show."','"Some of it worked. Some of it was filler."','"Nothing to write home about, nothing to complain about."']);
+  news(S,'world','COLUMN: '+line);X.last=S.week;
+});
+/** For the screens: the reporters, how each feels about you, and what each answer costs. */
+E.press=function(S){var X=pressInit(S);pressSources(S,X);return X.rep.map(function(r){return {id:r.id,name:r.name,beat:PRESS_BEAT[r.beat].n,beatD:PRESS_BEAT[r.beat].d,word:pressWord(r),grudge:r.grudge>=60?'holds a grudge':(r.grudge>=30?'remembers being snubbed':''),
+  frozen:r.frozen>S.week,sources:r.src.length,acts:Object.keys(PRESS_ACT).map(function(k){var A=PRESS_ACT[k];return {k:k,n:A.n,d:A.d,cost:A.cost?A.cost(S):0,can:k!=='feed'||S.week-r.fed>=4,why:k==='feed'&&S.week-r.fed<4?'You fed them a story '+(S.week-r.fed)+' weeks ago.':''};})};});};
+E.pressDo=function(S,id,k){
+  var X=pressInit(S),r=X.rep[id],P=S.promos[S.player];if(!r||!PRESS_ACT[k])return {ok:false,msg:'Nobody to talk to.'};
+  if(k==='court'){var c=PRESS_ACT.court.cost(S);if(P.cash<c)return {ok:false,msg:'The company cannot cover dinner.'};P.cash-=c;r.warm=clamp(r.warm+20,-100,100);r.grudge=clamp(r.grudge-15,0,100);r.frozen=0;return {ok:true,msg:'Dinner with '+r.name+'. They are '+pressWord(r)+' now.'};}
+  if(k==='freeze'){r.warm=clamp(r.warm-30,-100,100);r.grudge=clamp(r.grudge+25,0,100);r.frozen=S.week+8;return {ok:true,msg:r.name+' is frozen out for eight weeks. Their sources will talk more, and they will remember it.'};}
+  if(S.week-r.fed<4)return {ok:false,msg:'You fed them a story a few weeks ago. Too often and it stops being news.'};
+  r.fed=S.week;r.warm=clamp(r.warm+8,-100,100);S.hype=(S.hype||0)+0.05;news(S,'world','SCOOP ('+r.name+'): big plans for '+P.name+'’s next show, sources say.');
+  return {ok:true,msg:r.name+' runs it. A little more buzz for your next show.'};
+};
+
+/* ===== 99-progress.js ===== */
+/* wraps: 75-people.js, 90-api.js, 34-night.js (it must sort after them; test-buildorder.js checks) */
+/* Progression (Ryan, 20 October: "each wrestler levels up and each level they are able to add 1 or 2 attribute points,
+   similar to how Madden does progression ... older wrestlers get worse in the ring but keep their mic skills,
+   hardcore matches help your hardcore skill"). After Madden's franchise mode and NBA 2K's career modes:
+     - Experience (w.pxp) comes from what happens on the night: how many stars a match or a promo got (squared, so a
+       great match is worth far more than two average ones), the main event, a big show, a title, a win. A five-star
+       match or promo pays a bonus of its own.
+     - Experience fills levels (w.lv). Each level gives two attribute points, some give three (w.ap). Raising an attribute
+       that is already high costs more, the way Madden's skill points do.
+     - A development trait (w.dev: Normal, Rising star, Blue-chip, Generational) speeds learning and adds points, and
+       can move up or down at the end of a year by how the year went.
+     - Use it to grow it (NBA 2K's badges): a hardcore match teaches Hardcore, a submission or iron man match Technical,
+       a long match Stamina, a promo the Microphone and Charisma, a main event Star quality. These come on their own,
+       a little at a time (w.gx), over and above the points.
+     - Caps: ring skills stop at what the wrestler's potential allows; speed, stamina and toughness stop growing once
+       they are past their peak (the yearly decline in src/75-people.js still takes them down); the microphone and
+       charisma keep growing with age, and a veteran gains a little on the microphone each year.
+   Rival companies spend their points at once, by style and gimmick. The player's go into a pop-up on the Roster
+   (or let them choose), and After the show says who gained, who levelled up and who earned a five-star bonus.
+   Money: the asking wage counts the overall rating as well as popularity, so a rich company can buy the finished
+   article and a small one signs the raw and builds them up. No rnd(S): everything here is worked out. */
+var PROG_ATTR=[
+  {k:'brawl',n:'Brawling',g:'ring'},{k:'tech',n:'Technical',g:'ring'},{k:'speed',n:'Speed and air',g:'body'},{k:'stam',n:'Stamina',g:'body'},
+  {k:'hc',n:'Hardcore',g:'ring'},{k:'dur',n:'Toughness',g:'body'},{k:'safe',n:'Safety',g:'ring'},{k:'cons',n:'Consistency',g:'ring'},
+  {k:'mic',n:'Microphone',g:'mic'},{k:'cha',n:'Charisma',g:'mic'},{k:'sq',n:'Star quality',g:'mic'}
+];
+var PROG_BY={};PROG_ATTR.forEach(function(a){PROG_BY[a.k]=a;});
+var DEV=[{n:'Normal',x:1,d:'Learns at the usual rate.'},{n:'Rising star',x:1.2,d:'Learns a little faster than most.'},
+  {n:'Blue-chip',x:1.45,d:'Learns fast, and earns an extra point every fourth level.'},{n:'Generational',x:1.75,d:'Learns fastest of all, and earns an extra point every other level.'}];
+/* which attributes each style and gimmick works on first, when the wrestler chooses */
+var STYLE_PRI={B:['brawl','hc','dur'],T:['tech','cons','safe'],H:['speed','stam','tech'],P:['brawl','dur','stam'],A:['tech','brawl','speed'],S:['brawl','tech','speed'],E:['cha','mic','sq']};
+var GIM_PRI={brute:['brawl','hc'],cocky:['mic','cha'],underdog:['speed','stam'],daredevil:['speed','hc'],technician:['tech','cons'],monster:['brawl','dur'],oldhand:['tech','mic'],rebel:['mic','brawl'],hero:['cha','stam'],showman:['cha','mic'],mystic:['cha','sq'],workhorse:['stam','cons'],outlaw:['hc','brawl'],comedy:['mic','cha']};
+function progNeed(lv){return 300+60*lv;}   // a young prospect levels every month or two; an established star three or four times a year
+function progAgeX(w){var a=w.age||28;return a<=23?1.35:a<=27?1.15:a<=31?1:a<=35?0.85:0.7;}
+function progInit(S,w){
+  if(!w||w.lv!=null)return;
+  var ov=overallOf(w),a=w.age||28,sq=w.sq==null?50:w.sq,pot=w.pot||workRate(w);
+  w.lv=clamp(Math.round(1+Math.max(0,a-19)*0.9+(ov-55)/5),1,45);
+  w.pxp=Math.floor(h01(w.name+'pxp')*progNeed(w.lv)*0.8);w.ap=0;w.gx={};
+  var sc=(pot-60)*0.6+(sq-50)*0.4-Math.max(0,a-27)*3;
+  w.dev=sc>=28&&a<=26?3:sc>=20?2:sc>=9?1:0;
+}
+function progAll(S){S.w.forEach(function(w){progInit(S,w);});}
+/** How far an attribute can go for this wrestler now. */
+function progCap(w,k){
+  var A=PROG_BY[k];if(!A)return 99;var cur=w[k]||1,pri=(STYLE_PRI[w.style]||[]).indexOf(k)>=0?4:0;
+  if(A.g==='mic')return 99;
+  var cap=clamp((w.pot||workRate(w))+6+pri,cur,99);
+  if(A.g==='body'&&w.pk&&w.age>w.pk[1])cap=cur;   // past the peak the body does not come back
+  if(A.g==='ring'&&w.cl&&w.age>=w.cl)cap=cur;     // in steep decline nothing new is learned in the ring
+  return cap;
+}
+/** What a point costs at this value, the way Madden's skill points cost more near the top. */
+function progCost(v){return v<80?1:v<90?2:3;}
+/* add experience; levels go up; points are earned (and spent at once for anybody but the player) */
+function progGain(S,w,n,out){
+  progInit(S,w);n=Math.round(n*(DEV[w.dev]||DEV[0]).x*progAgeX(w));if(n<=0)return;
+  w.pxp+=n;w.yxp=(w.yxp||0)+n;var lv0=w.lv,pts=0;
+  while(w.pxp>=progNeed(w.lv)&&w.lv<99){w.pxp-=progNeed(w.lv);w.lv++;var p=2+(w.lv%5===0?1:0)+(w.dev===2&&w.lv%4===0?1:0)+(w.dev===3&&w.lv%2===0?1:0);pts+=p;}
+  if(pts){w.ap=(w.ap||0)+pts;if(w.promo!==S.player)progAuto(S,w);else if(w.lv>lv0)youRemember(S,w,'levelup','They reached level '+w.lv+' on your shows',1);}
+  if(out){out.xp+=n;if(w.lv>lv0){out.lv0=out.lv0||lv0;out.lv1=w.lv;out.pts=(out.pts||0)+pts;}}
+}
+/* use it to grow it: a little of one attribute, kept until it adds up to a whole point */
+function progUse(w,k,amt,out){
+  if(!PROG_BY[k]||amt<=0)return;var gx=w.gx||(w.gx={});gx[k]=(gx[k]||0)+amt;
+  if(gx[k]>=1){gx[k]-=1;if((w[k]||1)<progCap(w,k)){w[k]=clamp((w[k]||1)+1,1,99);if(out)(out.learned=out.learned||[]).push(PROG_BY[k].n);}}
+}
+/** Spend one point on an attribute. Returns null on success, or why not. */
+function progSpend(w,k){
+  var A=PROG_BY[k];if(!A)return 'That is not an attribute.';var v=w[k]||1,c=progCost(v);
+  if((w.ap||0)<c)return 'Not enough points: that takes '+c+'.';if(v>=progCap(w,k))return A.n+' is as high as it can go for them right now.';
+  w.ap-=c;w[k]=v+1;return null;
+}
+/** Let them choose: points go to their style's and gimmick's strengths first, then wherever is cheapest to grow. */
+function progAuto(S,w){
+  var pri=(STYLE_PRI[w.style]||[]).concat(GIM_PRI[w.gim]||[]),guard=0;
+  if(w.age>=34)pri=['mic','cha'].concat(pri);   // a veteran puts it into the microphone
+  while((w.ap||0)>0&&guard++<40){
+    var opts=PROG_ATTR.map(function(a){var v=w[a.k]||1,i=pri.indexOf(a.k);return {k:a.k,v:v,c:progCost(v),s:(i>=0?30-i*4:0)-(v-50)*0.3};})
+      .filter(function(o){return o.v<progCap(w,o.k)&&o.c<=w.ap;}).sort(function(a,b){return b.s-a.s;});
+    if(!opts.length)break;progSpend(w,opts[0].k);
+  }
+}
+var PROG_HC=/hardcore|tables|street|nodq|no_dq|barbed|weapons|cell|lumber|fire|cage|ladder/;
+/* every show of every company: experience for the people on it, and what they used */
+function progShow(S,P,show,rep,card){
+  if(S.cal||!rep||!rep.segs)return;var isPl=P&&P.id===S.player,big=!!(show&&show.big),acc={};
+  var ms=rep.segs.filter(function(s){return s.k==='match';}),last=ms[ms.length-1];
+  var row=function(w){var o=acc[w.id];if(!o)o=acc[w.id]={id:w.id,xp:0,why:[]};return o;};
+  rep.segs.forEach(function(s){
+    var ids=(s.ids||s.bids||[]).filter(function(id){var w=S.w[id];return w&&!w.nw&&w.promo===P.id;});if(!ids.length)return;
+    var q=starQ(s.ov||0),st=q/4,five=q>=20;
+    if(s.k==='match'){
+      var base=(6+5*st*st)*(s===last?1.3:1)*(big?1.3:1),stip=String(s.stip||'').toLowerCase().replace(/[^a-z]/g,'');
+      ids.forEach(function(id){var w=S.w[id],o=row(w),won=s.win&&String(s.win).indexOf(w.name)>=0;
+        progGain(S,w,base*(won?1.2:1)+(s.title&&won?30:0)+(five?150:0),o);if(five)o.why.push('a five-star match');
+        if(PROG_HC.test(stip))progUse(w,'hc',0.45,o);
+        if(/submission|iron/.test(stip))progUse(w,'tech',0.35,o);
+        if(/ladder/.test(stip)||w.style==='H')progUse(w,'speed',0.2,o);
+        if((s.mins||0)>=20)progUse(w,'stam',0.35,o);
+        if(st>=4)progUse(w,'cons',0.2,o);
+        if(s===last)progUse(w,'sq',0.15,o);
+      });
+    }else if(s.k==='angle'||s.k==='promo'){
+      ids.forEach(function(id){var w=S.w[id],o=row(w);progGain(S,w,(5+4*st*st)*(big?1.2:1)+(five?120:0),o);if(five)o.why.push('a five-star promo');
+        progUse(w,'mic',five?1:0.35,o);progUse(w,'cha',0.25,o);});
+    }
+  });
+  if(isPl)rep.prog=Object.keys(acc).map(function(k){return acc[k];}).filter(function(o){return o.xp>0;}).sort(function(a,b){return (b.lv1?1:0)-(a.lv1?1:0)||b.xp-a.xp;});
+}
+SHOWX.push(progShow);
+E.__progShow=progShow;   // for test-progress.js
+/* points left unspent for eight weeks: the wrestler trains on their own and spends them (they do not wait forever) */
+WEEKX.push(function(S){
+  if(S.cal)return;var n=0;
+  rosterOf(S,S.player).forEach(function(w){if(!(w.ap>0)||w.nw){w.apw=null;return;}if(w.apw==null){w.apw=S.week;return;}if(S.week-w.apw>=8){progAuto(S,w);w.apw=null;n++;}});
+  if(n)note(S,'Progress',n+(n===1?' wrestler':' wrestlers')+' spent points you left waiting on what suits them.','');
+});
+/* a year ends: the development trait moves with the year they had (Madden's dev trait changes) */
+WEEKX.push(function(S){
+  if(S.cal||S.week%48!==0)return;
+  S.w.forEach(function(w){if(w.lv==null||w.nw||w.rt)return;var y=w.yxp||0;w.yxp=0;
+    var up=y>=6500&&w.age<=30&&w.dev<3,down=y<1200&&w.dev>0&&(w.age>=30||w.promo!=='FA');
+    if(up){w.dev++;if(w.promo===S.player)note(S,'Progress',w.name+' is now '+DEV[w.dev].n.toLowerCase()+': a big year.','good');}
+    else if(down){w.dev--;if(w.promo===S.player)note(S,'Progress',w.name+' has slowed to '+DEV[w.dev].n.toLowerCase()+': a quiet year.','bad');}
+  });
+});
+/* a birthday: the yearly decline still takes the body; a veteran's microphone and presence keep growing */
+(function(){
+  var bd=birthday;
+  birthday=function(S,w){bd.apply(this,arguments);if(w.rt||w.nw)return;
+    if(w.age>=30&&w.mic<92)w.mic=Math.min(99,w.mic+1);
+    if(w.age>=32&&w.age%2===0&&(w.cha||50)<92)w.cha=Math.min(99,(w.cha||50)+1);
+  };
+})();
+/* the first time a game is opened, everybody gets a level and a trait */
+NEWX.push(function(S){progAll(S);});
+/* money: what a wrestler asks counts how good they are as well as how popular, so the best cost the most */
+(function(){
+  var a0=E.ask,c0=E.canSign;
+  E.ask=function(S,w){var a=a0.apply(this,arguments);if(!w||w.nw)return a;var ov=overallOf(w),m=clamp(Math.pow(1.045,ov-(w.ovr||50)),0.7,1.6);return Math.round(a*m/50)*50;};
+  E.canSign=function(S,w){if(!c0.apply(this,arguments))return false;var P=S.promos[S.player];return !w||overallOf(w)<=P.image+45;};
+})();
+/* the player's wrestlers with points waiting: a reminder on the desk, never a stop */
+TASKX.push(function(S,P,add){
+  var n=rosterOf(S,S.player).filter(function(w){return (w.ap||0)>0&&!w.nw;});if(!n.length)return;
+  var t=n.reduce(function(a,w){return a+w.ap;},0);
+  add('points',t+' attribute point'+(t===1?'':'s')+' to spend across '+n.length+(n.length===1?' wrestler':' wrestlers')+'. Spend them on the Roster, or let them choose.','roster','Spend points',{need:false,done:'Points spent.',short:'Points to spend ('+t+')'});
+});
+/* After the show: who gained, who levelled up, who earned a bonus, what they learned */
+(function(){var af=E.afterShow;E.afterShow=function(S){var r=af.apply(this,arguments);if(!r||!r.items)return r;
+  var rep=null;for(var i=0;i<S.reports.length;i++){if(S.reports[i].week===S.week&&S.reports[i].left&&S.reports[i].left.key===r.key){rep=S.reports[i];break;}}
+  if(!rep||!rep.prog||!rep.prog.length)return r;
+  var P=rep.prog,ups=P.filter(function(o){return o.lv1;}),five=P.filter(function(o){return o.why.length;}),learned=P.filter(function(o){return o.learned&&o.learned.length;});
+  var nm=function(o){return S.w[o.id]?S.w[o.id].name:'Somebody';};
+  var line=(ups.length?ups.slice(0,2).map(nm).join(' and ')+(ups.length>2?' and '+(ups.length-2)+' more':'')+' levelled up':'Nobody levelled up')+(five.length?'; '+nm(five[0])+' earned a five-star bonus':'')+'.';
+  var detail=P.slice(0,24).map(function(o){var w=S.w[o.id];return nm(o)+': +'+o.xp+' XP'+(o.why.length?' ('+o.why[0]+')':'')+(o.lv1?'. Level '+o.lv0+' to '+o.lv1+', '+o.pts+' point'+(o.pts===1?'':'s')+' to spend':(w?', level '+w.lv:''))+(o.learned&&o.learned.length?'. Learned: '+o.learned.join(', ')+' +1':'')+'.';});
+  if(learned.length)detail.push('Doing it grows it: hardcore matches teach Hardcore, submission and iron man matches Technical, long matches Stamina, promos the Microphone.');
+  var seen=!!(S.nightSeen&&S.nightSeen.key===r.key&&S.nightSeen.k&&S.nightSeen.k.prog),it={k:'prog',n:'Progress',line:line,detail:detail,tone:ups.length||five.length?'good':'',seen:seen};
+  var at=r.items.findIndex(function(x){return x.k==='next';});if(at<0)r.items.push(it);else r.items.splice(at,0,it);if(!seen)r.unseen=(r.unseen||0)+1;
+  return r;};})();
+/** A wrestler's progression for the screens: level, experience, trait, points, and every attribute with its cap and cost. */
+E.progInfo=function(S,id){var w=S.w[id];if(!w)return null;progInit(S,w);
+  return {lv:w.lv,xp:w.pxp,need:progNeed(w.lv),ap:w.ap||0,dev:w.dev,devN:DEV[w.dev].n,devD:DEV[w.dev].d,overall:overallOf(w),
+    attrs:PROG_ATTR.map(function(a){var v=w[a.k]||1,cap=progCap(w,a.k);return {k:a.k,n:a.n,g:a.g,v:v,cap:cap,cost:progCost(v),can:v<cap&&(w.ap||0)>=progCost(v),grow:+((w.gx||{})[a.k]||0).toFixed(2)};})};};
+/** Spend a point (the player's own wrestlers). */
+E.spendPoint=function(S,id,k){var w=S.w[id];if(!w||w.promo!==S.player)return {ok:false,msg:'Not one of yours.'};progInit(S,w);var why=progSpend(w,k);return why?{ok:false,msg:why}:{ok:true,msg:w.name+': '+PROG_BY[k].n+' '+w[k]+'.'};};
+/** Let them choose where their points go. */
+E.autoSpend=function(S,id){var w=S.w[id];if(!w||w.promo!==S.player)return {ok:false,msg:'Not one of yours.'};var a=w.ap||0;progAuto(S,w);return {ok:true,msg:w.name+' spent '+(a-(w.ap||0))+' point'+(a-(w.ap||0)===1?'':'s')+' on what suits them.'};};
+/** Let every wrestler of yours with points choose. */
+E.autoSpendAll=function(S){var n=0;rosterOf(S,S.player).forEach(function(w){if((w.ap||0)>0){var a=w.ap;progAuto(S,w);n+=a-(w.ap||0);}});return {ok:true,msg:n+' point'+(n===1?'':'s')+' spent across the roster.'};};
+E.PROG_ATTR=PROG_ATTR;E.DEV=DEV;
+
+/* ===== 99-reigns.js ===== */
+/* wraps: 10-match.js (it must sort after them; test-buildorder.js checks) */
+/* Rival offices plan their reigns (the week of 20 October, step 4). A rival company's champion used to have the same
+   odds as anybody in every title match, so belts changed hands about every two months across the world. Real offices
+   decide how long a reign should run. Now each rival reign has a planned length, 16 to 51 weeks (a reign already running when the game begins goes on 8 to 31 weeks more), fixed by a hash of
+   the title and the day the reign began. Before it is up the champion is protected, most of all on weekly television;
+   after it, the title match is as open as any other. The player's own titles are untouched: the player books their own
+   finishes. No rnd(S) is added: the odds change, the draw that reads them does not. */
+(function(){
+  var w0=winOdds;
+  winOdds=function(S,P,show,m,sides,t,champSide){
+    var od=w0.apply(this,arguments);
+    if(!t||champSide<0||!P||P.id===S.player||S.cal||!od||!od.p)return od;
+    var h=hash(S.seed+':'+t.id+':'+t.since),plan=16+h%36,age=S.week-t.since;
+    if(t.since<1)plan=Math.max(plan,(1-t.since)+8+(h>>>6)%24);   // a reign carried from the world's history runs on for a while yet
+    if(age>=plan)return od;
+    var keep=show&&show.big?0.35:0.15,pc=od.p[champSide],room=1-od.draw,np=room-(room-pc)*keep,k=room-pc>0?(room-np)/(room-pc):0;
+    od.p=od.p.map(function(p,i){return i===champSide?np:p*k;});
+    return od;
+  };
+})();
 
 /* ===== 99-ringside.js ===== */
 /* Guest commentary and run-ins, on every match (Ryan, 21 October: "so people can easily add feud members", and run-in
@@ -13639,7 +14454,77 @@ LIVE_ORDER.unshift('bookrun');
   };
 })();
 
+/* ===== 99-ringwork.js ===== */
+/* wraps: 10-match.js (it must sort after them; test-buildorder.js checks) */
+/* Ring work: a match on the broadcast is a match, not a summary (Ryan, 20 October: "each match and segment needs to
+   last longer with more back and forth and use of moves"). After the bell, callMatch() used to say a handful of
+   lines. Now a run of exchanges goes in between: who has control, the moves they use (their own signature moves from
+   the world file or Create a Player first, then moves of their style), the cut-off, the comeback, a near fall that
+   builds late, and the colour voice reacting now and then. The number grows with the match's length: a short opener
+   gets a few, a long main event a lot. The winner's side has the better of the closing stretch. It is picked by a
+   hash of the match, never rnd(S), so it changes what is said and never what happens. */
+var RW_MOVES={
+  B:['a running clothesline','a flurry of right hands','a headbutt','a back body drop','a stiff elbow','a sit-out slam','a spinebuster','a chop that echoes round the building'],
+  T:['a snap suplex','a hammerlock','a German suplex','a short-arm clothesline','a single-leg crab','a fisherman suplex','a drop toehold','a cross armbar','a belly-to-back suplex'],
+  H:['a springboard dropkick','a hurricanrana','a tope through the ropes','a missile dropkick','a moonsault press','a handspring elbow','a diving crossbody','a corkscrew plancha'],
+  P:['a scoop slam','a shoulder tackle that flattens','a delayed vertical suplex','a bearhug','a big boot','a gorilla press','a powerslam','a running splash in the corner'],
+  S:['a spinning back kick','a knee to the jaw','a superkick','a rolling elbow','a flurry of kicks','a jumping knee','a discus lariat'],
+  E:['a swinging neckbreaker','a showboating elbow drop','a Russian leg sweep','a running bulldog','a sunset flip','a rope-assisted leg drop'],
+  A:['a dropkick','a DDT','a backbreaker','an inverted atomic drop','a neckbreaker','a suplex','a bulldog','a clothesline off the top']
+};
+var RW_LINES={
+  open:['{a} takes control with {m}.','{a} gets the upper hand early with {m}.','{a} sets the pace: {m}.'],
+  press:['{a} keeps the pressure on with {m}.','{a} stays on top of it: {m}.','{a} follows up with {m}.','{a} grinds {b} down with {m}.'],
+  cut:['{b} tries to fight back, but {a} cuts it off with {m}.','{b} goes for a comeback and runs straight into {m}.','Not so fast: {a} stops {b} cold with {m}.'],
+  swing:['{a} reverses it and hits {m}!','Out of nowhere, {a} turns it round with {m}!','{a} counters and lands {m}!','{a} fights out of it and connects with {m}!'],
+  sig:['{a} hits {s}! The crowd knows what that is!','{a} goes to the well: {s}!','That is {s}, {a}’s signature, and it lands clean!'],
+  near:['Cover! One, two... {b} kicks out!','{a} hooks the leg! One, two... no! {b} gets a shoulder up!','One, two... so close! {b} is still in this!'],
+  col:['{p}, {b} is fighting from underneath, but you can never count them out.','These two know each other, {p}. Every move is answered.','The crowd is right in this one, {p}.','{a} is controlling the tempo, {p}. Smart wrestling.','Listen to this place, {p}! They are hanging on every move.','You can feel the momentum going back and forth, {p}.']
+};
+function rwMoves(S,w){
+  var L=[],ps=typeof E.persona==='function'?E.persona(S,w.id):null;
+  if(w.look&&Array.isArray(w.look.finishing_moves))w.look.finishing_moves.slice(1).forEach(function(m){if(m&&m.name)L.push({n:m.name,sig:1});});
+  if(ps&&ps.sigs)ps.sigs.forEach(function(m){if(m&&m.name)L.push({n:m.name,sig:1});});
+  (RW_MOVES[w.style]||RW_MOVES.A).forEach(function(n){L.push({n:n});});
+  return L;
+}
+(function(){
+  var cm=callMatch;
+  callMatch=function(S,P,x){
+    var bc=cm.apply(this,arguments);
+    if(!bc||!x||!x.sides||x.m.mt==='br'||x.sides.length<2)return bc;
+    var at=-1;for(var i=0;i<bc.length;i++){if(bc[i].t==='pbp'){at=i;break;}}   // the bell
+    if(at<0)return bc;
+    var hk='rw|'+(x.o&&x.o.a||'')+'|'+(x.o&&x.o.b||'')+'|'+x.mins+'|'+S.week+'|'+(x.show||''),k=0,h=function(){return (hash((k++)+'#'+hk)>>>0)%100003/100003;};
+    // nothing said twice in one match while there is something else to say
+    var said={},pick=function(L){var f=L.filter(function(v){return !said[v.n||v];}),Q=f.length?f:L,v=Q[Math.floor(h()*Q.length)%Q.length];said[v.n||v]=1;return v;};
+    var cap=function(t){return t.charAt(0).toUpperCase()+t.slice(1);};
+    var lead=function(s){return s[Math.floor(h()*s.length)%s.length];};
+    var ws=x.win>=0&&x.win<x.sides.length?x.win:0;
+    var n=Math.max(3,Math.min(16,Math.round((x.mins||10)/1.4))),out=[],side=h()<0.5?0:1,sigUsed={};
+    var p=x.o&&x.o.p||'partner';
+    for(var j=0;j<n;j++){
+      var late=j>=n*0.6,other=function(s){return (s+1+Math.floor(h()*(x.sides.length-1)))%x.sides.length;};
+      // the closing stretch leans to the side that wins; early on it swings either way
+      var swap=j===0?false:(late?(side!==ws?h()<0.55:h()<0.3):h()<0.4);
+      if(swap)side=other(side);
+      var A=lead(x.sides[side]),B=lead(x.sides[other(side)]),M=rwMoves(S,A),sigs=M.filter(function(m){return m.sig&&!sigUsed[A.id+m.n];});
+      var ctx={a:A.name,b:B.name,p:p},kind;
+      if(late&&sigs.length&&h()<0.45){var s=pick(sigs);sigUsed[A.id+s.n]=1;ctx.s=s.n;out.push({t:'pbp',x:fill(pick(RW_LINES.sig),ctx),h:1});
+        if(h()<0.6)out.push({t:'pbp',x:fill(pick(RW_LINES.near),ctx),h:1});continue;}
+      ctx.m=pick(M.filter(function(m){return !m.sig;})).n;
+      kind=j===0?'open':(swap?'swing':(h()<0.35?'cut':'press'));
+      out.push({t:'pbp',x:cap(fill(pick(RW_LINES[kind]),ctx))});
+      if(late&&h()<0.25)out.push({t:'pbp',x:fill(pick(RW_LINES.near),ctx),h:1});
+      else if(h()<0.22)out.push({t:'col',x:cap(fill(pick(RW_LINES.col),ctx))});
+    }
+    bc.splice.apply(bc,[at+1,0].concat(out));
+    return bc;
+  };
+})();
+
 /* ===== 99-royal.js ===== */
+/* wraps: 31-live.js (it must sort after them; test-buildorder.js checks) */
 /* Battle royals (roadmap 2, Ryan 16 October). A battle royal takes 6 to 30 entrants and runs 30 minutes for every 15
    in it (brMins() in src/97-time.js). The booker can hold one spot for a surprise: somebody nobody on the roster, a free
    agent, a legend first, who walks out when the bell has rung and is paid for the night. The winner earns a title match
@@ -13729,7 +14614,118 @@ E.suggestKeep=function(S){
   return c;
 };
 
+/* ===== 99-staff.js ===== */
+/* wraps: 85-second.js, 93-segments.js (it must sort after them; test-buildorder.js checks) */
+/* Create staff (Ryan, 20 October: "we also need to have create staff for referees and commentators, authority
+   figures, where wrestlers can easily be ported in"). Staff are people on your books who do not wrestle (w.nw) with a
+   job (w.srole). They used to come only from second careers. Now:
+     - Create staff makes a new one straight onto your books: a name, a job and how seasoned they are.
+     - Move to staff takes a wrestler off the card and gives them a job; Back to wrestling undoes it.
+     - Two new jobs join the five of second careers: the referee and the interviewer. The on-screen boss is the
+       authority figure.
+   Every job carries the tag scenes look for (E.sceneHooks): a referee of yours works the scenes, the interviewer
+   holds the microphone, the boss is the authority. A commentator also takes a seat in the pool for the commentary
+   desk (S.voices), paid by their contract, so they can be put in a chair like a hired voice.
+   What it hands on (rule 7a): a wrestler moved to staff remembers how it was done (youRemember), and the desk and the
+   scenes change with who is on the books. No rnd(S): the choices here are the player's. */
+SROLES.referee={n:'Referee',skill:function(w){return ((w.cons||60)+(w.safe||55))/2;},d:'Keeps the matches safe and on time: the action lands a little cleaner, and they work the scenes as the official.'};
+SROLES.interviewer={n:'Interviewer',skill:function(w){return ((w.mic||50)+(w.cha||50))/2;},d:'Holds the microphone backstage: promos read a little better, and they are the face of the interviews.'};
+E.SROLES=Object.keys(SROLES).map(function(k){return {id:k,n:SROLES[k].n,d:SROLES[k].d};});
+/* the tag each job carries, the one scenes and the editor read (src/86-scenes.js, ROLES in src/85-universe.js) */
+var STAFF_TAG={agent:'road_agent',trainer:'trainer',commentator:'announcer',manager:'manager',boss:'booker',referee:'referee',interviewer:'interviewer'};
+/* how seasoned a new hire is: their skill at the job, and what a week of it costs */
+var STAFF_LVL={rookie:{n:'Green',s:52,wage:400},solid:{n:'Solid',s:66,wage:900},veteran:{n:'Veteran',s:80,wage:1800}};
+E.STAFF_LVL=Object.keys(STAFF_LVL).map(function(k){return {id:k,n:STAFF_LVL[k].n,wage:STAFF_LVL[k].wage};});
+function staffTag(w,k){w.roles=[STAFF_TAG[k]||k];}
+/* a commentator gets a seat in the pool for the desk, paid by their contract rather than as a hired voice */
+function staffVoice(S,w){
+  if(w.srole!=='commentator')return;S.voices=S.voices||[];
+  if(S.voices.some(function(v){return v.wid===w.id;}))return;
+  var st=['hot','dry','warm'][hash(w.name+'vs')%3];
+  S.voices.push({id:S.nid++,name:w.name,g:w.g,pbp:clamp(Math.round(w.mic||50),30,95),col:clamp(Math.round(w.cha||w.mic||50),30,95),style:st,wage:0,hired:null,added:S.week,wid:w.id});
+}
+function staffUnvoice(S,w){
+  var P=S.promos[S.player],L=S.voices||[];
+  L.filter(function(v){return v.wid===w.id;}).forEach(function(v){if(P&&P.desk){['pbp','col'].forEach(function(k){if(P.desk[k]===v.id)P.desk[k]=null;});}});
+  S.voices=L.filter(function(v){return v.wid!==w.id;});
+}
+/* second careers carry the tag too, and a commentator from one gets a seat at the desk */
+(function(){
+  var sc=EVR.secondcareer;
+  EVR.secondcareer=function(S,ev,choice,P,w){var r=sc.apply(this,arguments);if(w&&w.srole){staffTag(w,w.srole);staffVoice(S,w);}return r;};
+})();
+/** Make a new member of staff straight onto your books: {name, g, role, lvl}. */
+E.createStaff=function(S,o){
+  o=o||{};var P=S.promos[S.player],k=o.role,L=STAFF_LVL[o.lvl]||STAFF_LVL.solid;
+  if(!SROLES[k])return {ok:false,msg:'Pick a job for them.'};
+  var name=clean(o.name,28);if(name.length<2)return {ok:false,msg:'Give them a name first.'};
+  if(S.w.some(function(w){return w.name.toLowerCase()===name.toLowerCase();}))return {ok:false,msg:'There is already a '+name+' in the business.'};
+  var s=L.s,ovr=k==='boss'?clamp(s-10,20,80):(k==='referee'?20:clamp(s-30,15,60));
+  var w=addWrestler(S,{name:name,g:o.g==='F'?'F':'M',ovr:ovr,style:'A',work:clamp(s-25,20,70),mic:k==='referee'?clamp(s-20,20,70):s,align:o.align==='H'?'H':'F',cons:k==='referee'?s+6:s,safe:k==='referee'?s+6:s,cha:s},P.id,null);
+  w.nw=true;w.srole=k;staffTag(w,k);w.wage=L.wage;w.con=48;w.morale=80;w.cr=true;w.age=clamp(+o.age||(k==='referee'?34:40),18,75);
+  if(o.look){var lc=lookClean(o.look);if(lc&&E.lookOk(lc)){lc.name=w.name;w.look=lc;}}
+  staffVoice(S,w);
+  news(S,'contract',P.name+' hires '+name+' as '+SROLES[k].n.toLowerCase()+'.');
+  return {ok:true,id:w.id,msg:name+' joins the staff as '+SROLES[k].n.toLowerCase()+' at '+money(L.wage)+' a week. '+SROLES[k].d};
+};
+/** Can this wrestler of yours move to staff? {ok, why}. */
+function toStaffOk(S,w){
+  var P=S.promos[S.player];
+  if(!w||w.promo!==P.id)return {ok:false,why:'They are not on your books.'};
+  if(w.nw)return {ok:false,why:'They are on the staff already.'};
+  if(P.titles.some(function(t){return t.holders.indexOf(w.id)>=0;}))return {ok:false,why:'They hold a title. Get the belt off them first.'};
+  if((S.feuds||[]).some(function(f){return !f.res&&f.promo===P.id&&f.a.concat(f.b).indexOf(w.id)>=0;}))return {ok:false,why:'They are in a story. End it first.'};
+  if(w.team!=null||(S.teams||[]).some(function(t){return t.promo===P.id&&!t.dead&&t.m&&t.m.indexOf(w.id)>=0;}))return {ok:false,why:'They are in a tag team. Break it up first.'};
+  if(S.card&&S.card.some(function(m){return m&&m.sides&&flat(m.sides).indexOf(w.id)>=0;}))return {ok:false,why:'They are on this week’s card. Take them off it first.'};
+  return {ok:true};
+}
+E.toStaffOk=function(S,id){return toStaffOk(S,S.w[id]);};
+/** Move a wrestler of yours to staff, in a job: they stop wrestling, keep their deal, and remember how it was done. */
+E.toStaff=function(S,id,k){
+  var w=S.w[id],ok=toStaffOk(S,w);if(!ok.ok)return {ok:false,msg:ok.why};
+  if(!SROLES[k])return {ok:false,msg:'Pick a job for them.'};
+  w.nw=true;w.srole=k;w.wasW=1;staffTag(w,k);staffVoice(S,w);
+  var keen=SROLES[k].skill(w)>=60||w.age>=36;
+  youRemember(S,w,'staff',keen?'You found them a job when the ring was getting harder':'You took them off the card and gave them a desk job',keen?4:-6);
+  w.morale=clamp(w.morale+(keen?4:-8),0,100);
+  note(S,'Staff',w.name+' moves to '+SROLES[k].n.toLowerCase()+(keen?'. They are glad of it.':'. They wanted to wrestle.'),keen?'good':'bad');
+  news(S,'contract',w.name+' steps away from the ring to become '+S.promos[S.player].name+'’s '+SROLES[k].n.toLowerCase()+'.');
+  return {ok:true,msg:w.name+' is your '+SROLES[k].n.toLowerCase()+' now. '+SROLES[k].d+(keen?'':' They are not happy about leaving the ring.')};
+};
+/** Bring somebody who used to wrestle back to the ring. */
+E.fromStaff=function(S,id){
+  var w=S.w[id],P=S.promos[S.player];if(!w||w.promo!==P.id||!w.nw)return {ok:false,msg:'They are not on the staff.'};
+  if(!w.wasW)return {ok:false,msg:w.name+' has never wrestled.'};
+  staffUnvoice(S,w);w.nw=false;delete w.srole;delete w.wasW;w.roles=null;delete w.roles;
+  youRemember(S,w,'staff','You gave them their spot in the ring back',5);w.morale=clamp(w.morale+6,0,100);
+  note(S,'Staff',w.name+' is back on the active roster.','good');
+  return {ok:true,msg:w.name+' is back on the active roster.'};
+};
+/** Everybody on your staff, with the job and what it does. */
+E.staffList=function(S){
+  var TAGN={announcer:'Commentator',referee:'Referee',owner:'Owner',booker:'Booker',manager:'Manager',road_agent:'Road agent',interviewer:'Interviewer',trainer:'Trainer'};
+  return rosterOf(S,S.player).filter(function(w){return w.nw&&!w.rt;}).map(function(w){var k=w.srole,R=SROLES[k],tg=w.roles&&w.roles[0];
+    return {id:w.id,name:w.name,role:R?R.n:(TAGN[tg]||'Staff'),k:k||null,d:R?R.d:'',skill:R?Math.round(R.skill(w)):null,wage:w.wage,back:!!w.wasW,
+      desk:(S.voices||[]).some(function(v){return v.wid===w.id&&v.hired;})};});
+};
+/* the new jobs do something: a referee keeps the action clean, an interviewer lifts the talking */
+CRX.push(function(ctx){
+  if(!ctx.isPl||ctx.S.cal)return null;var S=ctx.S,r=staffOf(S,'referee').sort(function(a,b){return SROLES.referee.skill(b)-SROLES.referee.skill(a);})[0];
+  if(!r)return null;var sk=SROLES.referee.skill(r);if(sk<60)return null;
+  return {d:clamp((sk-60)/40,0,0.5),x:r.name+' kept the match clean'};
+});
+/* a promo of yours reads a little better with a good interviewer holding the microphone */
+(function(){
+  var sm=segMean;
+  segMean=function(S,w,bonus){var v=sm.apply(this,arguments);if(!w||w.promo!==S.player||S.cal)return v;
+    var iv=staffOf(S,'interviewer').map(function(x){return SROLES.interviewer.skill(x);}).sort(function(a,b){return b-a;})[0];
+    return iv>=60?v+clamp((iv-60)/8,0,2.5):v;};
+})();
+/** How good this person would be at a job, 0 to 100 (for the Move to staff pop-up). */
+E.staffSkill=function(S,id,k){var w=S.w[id];return w&&SROLES[k]?SROLES[k].skill(w):0;};
+
 /* ===== 99-suggest-flat.js ===== */
+/* wraps: 90-api.js (it must sort after them; test-buildorder.js checks) */
 /* ===== Suggest a card is safe and flat (Ryan, 16 October; docs/roadmap.md change 1) =====
    "I want suggest a card to give a mediocre show, so you have to have smart decision making if you want to win the
    game or keep your job." The suggested card still fills the clock and breaks no rule, but it does none of the
@@ -13741,8 +14737,9 @@ E.suggestKeep=function(S){
   var smart=E.suggest;
   E.suggest=function(S){
     var card=smart(S);if(!card||card.length<2)return card;
-    var key='flat'+S.seed+':'+S.week+':'+S.qi;
+    var key='flat'+S.seed+':'+S.week+':'+S.qi,show=S.queue&&S.queue[S.qi];
     card.forEach(function(m){m.call=null;delete m.end;});
+
     // the right people, but who faces whom by the hash: no eye for chemistry or story. A champion stays in their
     // title match. (Ryan: it should still be helpful, it just cannot play the game for you.)
     var P=S.promos[S.player],held={};(P.titles||[]).forEach(function(t){(t.holders||[]).forEach(function(id){held[id]=1;});});
@@ -13758,6 +14755,58 @@ E.suggestKeep=function(S){
   };
   /** The thinking suggest did before it was made flat, for rival-free tools and tests that want a good card. */
   E.suggestSmart=function(S){return smart(S);};
+})();
+
+/* ===== 99-suggest-short.js ===== */
+/* wraps: 99-suggest-flat.js, 55-preshow.js (it must sort after them; test-buildorder.js checks) */
+/* Suggest a card never comes up short (the week of 20 October, step 1). On a brand show whose roster has run thin
+   (injuries, people on the week off, worn bodies kept back), the suggestion could leave two matches and empty time,
+   and the show could not run. Now, when it is short, it fills from the people who are still able to work on that
+   brand: first anybody it held back for being worn down, then, as a last resort, somebody working twice tonight
+   ("double duty", which the run sheet already warns about). Then the clock is filled again. It never takes a person
+   from another brand (that breaks the brand) and never calls rnd(S): the picks come from a hash. */
+(function(){
+  function short(S,card){
+    var v=E.validate(S,card).errors;
+    return v.some(function(e){return /at least 3 matches|still empty/.test(e);});
+  }
+  function topUp(S,card){
+    var show=S.queue&&S.queue[S.qi],P=S.promos[S.player];
+    if(!show||!card||!P||!short(S,card))return card;
+    var key='fill'+S.seed+':'+S.week+':'+S.qi,used={};
+    card.forEach(function(m){flat(m.sides).forEach(function(id){used[id]=(used[id]||0)+1;});});
+    var able=S.w.filter(function(w){return w.promo===P.id&&!w.nw&&w.inj<=0&&!w.camp&&w.rest!==S.week&&!(w.away>=S.week)&&(show.big||!show.brand||w.brand===show.brand);});
+    function order(a,b){return (used[a.id]||0)-(used[b.id]||0)||b.cond-a.cond||hash(key+a.id)-hash(key+b.id);}
+    var max=show.big?10:SLOT_MAX[P.slot],tries=0;
+    // first people not yet on the card, while the show is short; then, only to reach three matches, double duty
+    while(short(S,card)&&card.length<max&&tries++<8){
+      var added=false;
+      // fresh people in either division first; somebody twice tonight only to reach three matches
+      [true,false].forEach(function(fresh){
+        if(added||(!fresh&&card.length>=3))return;
+        ['M','F'].forEach(function(g){
+          if(added||card.length>=max)return;
+          var L=able.filter(function(w){return w.g===g&&(!fresh||!used[w.id]);}).sort(order);if(L.length<2)return;
+          var a=L[0],b=null;
+          for(var i=1;i<L.length;i++){if(L[i].team==null||L[i].team!==a.team){b=L[i];break;}}
+          if(!b)return;
+          card.push({mt:'1v1',sides:[[a.id],[b.id]],win:-2,title:null,stip:'std',len:'M',fill:1});
+          used[a.id]=(used[a.id]||0)+1;used[b.id]=(used[b.id]||0)+1;added=true;
+        });
+      });
+      if(!added)break;
+      E.fitShow(S,card);
+    }
+    // nobody left who can work: the writers fill the rest of the night with backstage segments
+    var L=segList(S),k=0;
+    while(short(S,card)&&card.length>=3&&k++<6){L.push({k:'writers',who:[],pos:k%card.length,len:'L'});E.fitShow(S,card);}
+    return card;
+  }
+  var flatS=E.suggest,smartS=E.suggestSmart,pre=E.resolvePre;
+  // a pre-show problem (somebody does not turn up) can take a match off the card: the office fills the hole
+  E.resolvePre=function(S,card){var r=pre.apply(this,arguments);if(card&&S.queue&&S.queue[S.qi])topUp(S,card);return r;};
+  E.suggest=function(S){return topUp(S,flatS(S));};
+  E.suggestSmart=function(S){return topUp(S,smartS(S));};
 })();
 
 /* ===== 99-tale.js ===== */
@@ -14056,6 +15105,34 @@ E.promisePromo=function(S,id){var w=S.w[id];if(!w)return {ok:false,msg:''};var l
 E.cardRemove=function(S,i){var m=S.card&&S.card[i];if(!m)return {ok:false,msg:''};if(m.pm!=null&&locksNow(S).some(function(l){return l.id===m.pm;}))return {ok:false,msg:'This match was promised for tonight. It stays on the card.'};S.card.splice(i,1);return {ok:true,msg:'That match is off the card.'};};
 E.cardClear=function(S){var keep=(S.card||[]).filter(function(m){return m.pm!=null&&locksNow(S).some(function(l){return l.id===m.pm;});});S.card=keep;E.segClear(S);return {ok:true,msg:keep.length?'The card is clear, but for what was promised.':'The card is clear.'};};
 
+/* ===== 99-titleshow.js ===== */
+/* wraps: 00-core.js (it must sort after them; test-buildorder.js checks) */
+/* A title for one show (Ryan, 20 October: "belts should have an option to be only for a specific show"). A title can
+   belong to one of the company's weekly shows (t.show, the show's id): on weekly television it is defended only there,
+   so a second show can have a belt of its own the way a brand does. Big events can still put it on, the way every
+   big night can. Left empty, the title goes where it went before (by brand). The belt itself is drawn in Create a
+   Belt; this only says where it is defended. No rnd(S). */
+(function(){
+  var st=showTitles;
+  showTitles=function(P,show){var L=st.apply(this,arguments);if(!show||show.big)return L;
+    return L.filter(function(t){return !t.show||!show.id||t.show===show.id;});};
+})();
+/** The weekly shows a title of yours could belong to, and the one it belongs to now. */
+E.titleShows=function(S,tid){
+  var P=S.promos[S.player],t=titleById(P,tid);
+  return {now:t&&t.show||null,shows:(P.shows||[]).filter(function(sh){return !sh.dead;}).map(function(sh){return {id:sh.id,name:sh.name};})};
+};
+/** Make a title of yours belong to one weekly show, or to none (show null). */
+E.setTitleShow=function(S,tid,show){
+  var P=S.promos[S.player],t=titleById(P,tid);if(!t)return {ok:false,msg:'That title is not yours.'};
+  if(show==null||show===''){delete t.show;return {ok:true,msg:'The '+t.name+' can be defended on any of your shows.'};}
+  var sh=(P.shows||[]).filter(function(x){return x.id===show&&!x.dead;})[0];if(!sh)return {ok:false,msg:'That show is not on the air.'};
+  t.show=sh.id;news(S,'title','The '+titleFull(P,t)+' is now defended on '+sh.name+'.');
+  return {ok:true,msg:'The '+t.name+' belongs to '+sh.name+' now. It is defended there, and on your big events.'};
+};
+/** The ids of the titles of yours a show can put on the line. */
+E.titlesOnShow=function(S,show){return showTitles(S.promos[S.player],show).map(function(t){return t.id;});};
+
 /* ===== 99-tonight.js ===== */
 /* What could happen tonight (roadmap 7, Ryan 16 October). A window on Book the show with four parts: moments that could
    happen, who is at risk, what the card sets up and what it leaves cold, and one gut line from the road agent. All of it
@@ -14190,6 +15267,195 @@ function tutSetup(S){
 (function(){var ng=E.newGame;E.newGame=function(){var S=ng.apply(this,arguments);if(S&&S.flagStart&&S.promos)tutSetup(S);return S;};})();
 /* once the first show is off the air the tutorial is over */
 SHOWX.push(function(S,P,show){if(!S.cal&&P.id===S.player&&S.tut&&S.tut.on){S.tut.on=0;S.tut.done=S.week;note(S,'Your first show is done','From here the week is yours: the desk, backstage, and the next show.','good');}});
+
+/* ===== 99-venues.js ===== */
+/* wraps: 91-road.js (it must sort after them; test-buildorder.js checks) */
+/* Venue personality and disasters (the add-ons run, item 12). Every building (cityBuildings() in src/91-road.js) has
+   quirks of its own, fixed by its name: how it feels full or half empty, how it sounds, its sightlines, the local crowd's
+   temper, and whether it is open to the weather. They lift or dampen the crowd on the night (CRX) and are said on the
+   desk. Now and then something goes wrong in the building: the power, the ring, the weather (open-air buildings only),
+   trouble in the crowd (worse where the crowd runs rowdy). It comes as a call from the gorilla position before the
+   first match (LIVEK.disaster), and every answer has its price. Nothing here calls rnd(S): quirks and disasters come from
+   hashes of the building and the night. */
+var VQ_FEEL={intimate:'intimate: every seat is close',cavernous:'cavernous: hard to fill, hard to warm up',right:''},VQ_SOUND={loud:'the roof keeps the noise in',dead:'the sound dies in the rafters',plain:''};
+var VQ_CROWD={rowdy:'a rowdy local crowd',smart:'a crowd that knows its wrestling',polite:'a polite crowd that needs warming up',plain:''};
+function venueQuirks(vname){
+  var v=String(vname||''),h=function(k){return h01('vq:'+k+':'+v);},open=/ (Stadium|Bowl|Field)\b/.test(v),small=/ (Armory|Union Hall|Legion Hall|Rec Center|Ballroom|Music Hall)\b/.test(v);
+  var q={feel:small||h('f')<0.25?'intimate':(h('f')>0.8&&!small?'cavernous':'right'),sound:h('s')<0.3?'loud':(h('s')>0.82?'dead':'plain'),crowd:h('c')<0.25?'rowdy':(h('c')<0.45?'smart':(h('c')>0.85?'polite':'plain')),sight:h('g')>0.85?'poor':'fine',open:open};
+  var w=[];if(VQ_FEEL[q.feel])w.push(VQ_FEEL[q.feel]);if(VQ_SOUND[q.sound])w.push(VQ_SOUND[q.sound]);if(VQ_CROWD[q.crowd])w.push(VQ_CROWD[q.crowd]);if(q.sight==='poor')w.push('poor sightlines from the cheap seats');if(q.open)w.push('open to the sky');
+  q.words=w;q.short=w.length?w[0].split(':')[0]:'nothing special';return q;
+}
+E.venueQuirks=function(v){return venueQuirks(v);};
+/* the building on the night */
+CRX.push(function(ctx){
+  if(!ctx.isPl||!ctx.rep||!ctx.rep.venue)return null;var q=venueQuirks(ctx.rep.venue),d=0,x=[];
+  if(q.feel==='intimate'){d+=1;x.push('an intimate building');}
+  if(q.feel==='cavernous'&&ctx.rep.att&&ctx.rep.cap&&ctx.rep.att<ctx.rep.cap*0.7){d-=1;x.push('a cavernous building half full');}
+  if(q.sound==='loud'){d+=1;x.push('a loud building');}else if(q.sound==='dead'){d-=1;x.push('a building where the sound dies');}
+  if(q.crowd==='rowdy'&&ctx.all.some(function(w){return w.align==='H';})){d+=1;x.push('a rowdy crowd that loves to boo');}
+  if(q.crowd==='smart'&&ctx.isMain){d+=1;x.push('a crowd that knows good wrestling');}
+  if(q.crowd==='polite'&&ctx.isMain===false&&d>=0){d-=0.5;}
+  return d?{d:d,x:x.join(', ')}:null;
+});
+/* something goes wrong in the building */
+var DISASTER={
+  power:{n:'The power goes out',text:'The lights die halfway through the entrances. The building is black and the crowd is getting restless.',choices:[
+    {n:'Keep going under the emergency lights',says:'It is grim to look at, and the crowd sings to keep itself warm.',cr:-2},
+    {n:'Stop the show until the power is back',says:'Twenty minutes of nothing. The show runs short, and the crowd is cold when it comes back.',cr:-3,cut:1},
+    {n:'Send your biggest name out with a microphone',says:'One voice in the dark, and the crowd hangs on every word.',cr:1,star:1,cost:'They will remember you threw them out there.'}]},
+  ring:{n:'The ring is broken',text:'A turnbuckle has snapped in warm-ups and the bottom rope is loose. The crew say ten minutes, maybe more.',choices:[
+    {n:'Work around it',says:'They wrestle away from the bad corner. It shows, and somebody could get hurt.',cr:-1,hurt:1},
+    {n:'Fix it properly',says:'The crew fix it right. The show runs late and loses a segment.',cr:-1,cut:1},
+    {n:'Make it part of the show: a no-ropes match',says:'The announcers sell it as a special attraction. It is a risk, and it might be remembered.',cr:2,hurt:1}]},
+  weather:{n:'The weather turns',text:'Rain is coming in sideways over the open end of the building. Half the floor seats are getting wet.',choices:[
+    {n:'Carry on in the rain',says:'They wrestle in the rain. Some love it. Some go home.',cr:1,hurt:1,mkt:-1},
+    {n:'Wait it out',says:'An hour under ponchos. The show is cut short, and the people who stayed are cold.',cr:-2,cut:1},
+    {n:'Refund the floor seats',says:'Every wet seat gets its money back. It costs, and the city will remember the gesture.',cr:0,refund:1,mkt:2}]},
+  crowd:{n:'Trouble in the crowd',text:'A fight has broken out in the cheap seats and it is spreading. Security is stretched thin.',choices:[
+    {n:'Stop the show until it is cleared',says:'Security clears it. The show runs short, and the city talks about it for a week.',cr:-1,cut:1,mkt:-1},
+    {n:'Keep the show going and let security handle it',says:'The show goes on over the noise. A few people get hurt in the stands.',cr:-2,mkt:-2},
+    {n:'Send a hero out to calm them down',says:'They walk to the barricade and the fight stops. The crowd chants their name.',cr:2,star:1,face:1}]}
+};
+LIVEK.disaster={n:'Trouble in the building',
+  pre:function(S,L,step){
+    if(step.t!=='match'||L.had.disaster)return null;var rep=L.st&&L.st.rep;if(!rep||!rep.venue)return null;var q=venueQuirks(rep.venue);
+    var p=0.025+(q.open?0.04:0)+(q.crowd==='rowdy'?0.02:0)+(q.feel==='cavernous'?0.01:0);
+    if(h01(S.seed+':dis:'+S.week+':'+S.qi)>=p)return null;
+    var kinds=['power','ring'].concat(q.open?['weather']:[]).concat(q.crowd==='rowdy'?['crowd','crowd']:['crowd']),k=kinds[Math.floor(h01(S.seed+':disk:'+S.week+':'+S.qi)*kinds.length)],D=DISASTER[k];
+    var M=liveMatch(S,L,step.i),R=rosterOf(S,S.player).filter(function(w){return !w.nw&&!(w.inj>0);}).sort(function(a,b){return b.ovr-a.ovr;}),star=(D.choices.some(function(c){return c.face;})?R.filter(function(w){return w.align!=='H';})[0]:R[0])||R[0];
+    return {phase:'mid',mi:step.i,dk:k,who:star?star.id:null,text:D.text+' ('+rep.venue+')',why:q.words.length?['The building: '+q.words.join('; ')]:[],safe:1,
+      choices:D.choices.map(function(c){return {n:c.star&&star?c.n.replace(/your biggest name|a hero/,star.name):c.n,says:c.says,who:c.star&&star?star.id:null};})};
+  },
+  run:function(S,L,ev,c){
+    var D=DISASTER[ev.dk],o=D.choices[c],M=liveMatch(S,L,ev.mi),P=S.promos[S.player],rep=L.st.rep,city=cityOfVenue(rep.venue);if(!o)return '';
+    if(M&&o.cr)livePut(M.m,{cr:o.cr,x:D.n.toLowerCase()+': '+o.n.toLowerCase()});
+    if(o.cut)rep.short=1;
+    if(o.hurt&&M){var w=flat(M.c.sides)[0];if(w&&h01(S.seed+':dish:'+S.week)<0.35){w.inj=Math.max(w.inj||0,2);news(S,'injury',w.name+' was hurt when '+D.n.toLowerCase()+' at '+rep.venue+'.');youRemember(S,w,'venuehurt','Got hurt in a broken building because the show went on.',-3);}}
+    if(o.refund){var cost=Math.round((rep.gate||0)*0.25);P.cash-=cost;o.says+=' It costs '+money(cost)+'.';}
+    if(o.mkt&&S.mkt&&S.mkt[city])S.mkt[city].k=clamp((S.mkt[city].k||50)+o.mkt*3,0,100);
+    if(o.star&&ev.who!=null&&S.w[ev.who]){var s=S.w[ev.who];youRemember(S,s,'venuesave','You sent them out to save the night when '+D.n.toLowerCase()+'.',o.face?3:1);s.mom=clamp((s.mom||0)+1,-10,10);}
+    note(S,D.n,o.says,o.cr>0?'good':(o.cr<0?'bad':''));
+    return o.says;
+  }
+};
+LIVE_ORDER.push('disaster');   // tried last: trouble in the building never takes the place of another call
+/** For the desk: the quirks of tonight's building, in words. */
+E.buildingWords=function(S){var R=E.road(S);if(!R||!R.now||!R.now.venue)return null;var q=venueQuirks(R.now.venue);return {words:q.words,short:q.short};};
+
+/* ===== 99-worldweek.js ===== */
+/* The week around the world (the week of 20 October, step 4). Rival companies already book shows, change titles and
+   keep feuds, but the player only saw it as loose lines in the news. Now, at the end of every week, the game files a
+   short digest of what every other company did: their shows and how each went against its own crowd, new champions
+   and how they got there, stories that started and stories that ended. It is kept for twelve weeks (S.ww) and read in
+   "The week in full" on the desk (the Around the world tab). It only reads the game and never calls rnd(S).
+   What it hands on (rule 7a): a rival who is hot right now, a champion crowned elsewhere, a star whose story just
+   ended and who may be looking for work. */
+var WW_KEEP=12;
+function wwCompany(S,P,wk){
+  var out={id:P.id,name:P.name,shows:[],titles:[],begun:[],ended:[],lead:null};
+  (S.wwShows||[]).forEach(function(r){if(r.p===P.id&&r.w===wk)out.shows.push(r);});
+  (P.titles||[]).forEach(function(t){(t.hist||[]).forEach(function(h,i){if(h.from!==wk||!h.h||!h.h.length)return;
+    var prev=t.hist[i-1],old=prev&&prev.to===wk?prev:null,how='';
+    if(old){var f=(S.feuds||[]).filter(function(x){return x.promo===P.id&&x.title===t.id;})[0];
+      how=f?'after weeks of chasing':(h.show?'at '+h.show:'');}
+    else how='for the vacant title';
+    out.titles.push({title:titleFull(P,t),now:h.h.join(' & '),old:old&&old.h?old.h.join(' & '):null,weeks:old&&old.from!=null?wk-old.from:null,how:how});});});
+  (S.feuds||[]).forEach(function(f){if(f.promo!==P.id)return;var nm=function(L){return L.map(function(id){return S.w[id]?S.w[id].name:'?';}).join(' & ');};
+    if(f.start===wk)out.begun.push(nm(f.a)+' and '+nm(f.b));
+    if(f.res&&f.end===wk&&!f.dead)out.ended.push(nm(f.a)+' and '+nm(f.b));});
+  // the line that leads: a new champion, then a story that ended, then the best show
+  var t0=out.titles[0],best=out.shows.slice().sort(function(a,b){return (b.big?1:0)-(a.big?1:0);})[0];
+  out.lead=t0?t0.now+' won the '+t0.title+(t0.how?' '+t0.how:'')+(t0.weeks&&t0.weeks>=12?', ending a reign of '+t0.weeks+' weeks':'')+'.'
+    :(out.ended[0]?'The story of '+out.ended[0]+' ended.':(best&&best.big?best.name+': '+best.word+', '+best.grade+'.':(out.begun[0]?'A new story: '+out.begun[0]+'.':(best?best.name+': '+best.word+', '+best.grade+'.':null))));
+  return out;
+}
+function wwFile(S){
+  if(S.cal)return;var wk=S.week,L=[];
+  S.order.forEach(function(pid){if(pid===S.player)return;var P=S.promos[pid];if(!P||P.dead)return;var c=wwCompany(S,P,wk);if(c.lead||c.begun.length)L.push(c);});
+  L.sort(function(a,b){return (b.titles.length*3+b.ended.length*2+b.shows.length)-(a.titles.length*3+a.ended.length*2+a.shows.length);});
+  var ww=S.ww||(S.ww=[]);ww.unshift({w:wk,label:cal(wk).label,cos:L});if(ww.length>WW_KEEP)ww.length=WW_KEEP;
+}
+// rival shows are not kept as reports, so each one is noted as it airs: its grade against its own crowd, and its main event
+SHOWX.push(function(S,P,show,rep){
+  if(S.cal||!P||P.id===S.player||!rep)return;var L=S.wwShows||(S.wwShows=[]),cs=repCS(rep),me=rep.lineup&&rep.lineup.length?rep.lineup[rep.lineup.length-1]:null;
+  L.push({p:P.id,w:S.week,name:show.name,big:!!show.big,grade:gradeG(cs),word:verdictWord(rep),main:typeof me==='string'?me:null});
+});
+// the verdict in the game's own words (rule 8c): the same ladder the letter and the dirt sheet use
+function verdictWord(rep){var v=rep.rating!=null&&rep.exp!=null?E.showVerdict(rep.rating,rep.exp):null;return v?v.head.toLowerCase():'';}
+WEEKX.push(function(S){wwFile(S);S.wwShows=[];});
+/** The week around the world: the latest filed weeks, newest first ({w, label, cos:[{name, lead, shows, titles, begun, ended}]}). */
+E.worldWeek=function(S,n){return (S.ww||[]).slice(0,n||WW_KEEP);};
+
+/* ===== 99-writers.js ===== */
+/* The writers' room (the add-ons run, item 6). Three named writers join your staff (people on the roster, nw, srole
+   'writer', so they can like and resent each other and remember you): the head writer from the company's staff list
+   and two more. Each has a style (comedy, drama, grit, spectacle) and a strength. Most weeks two of them pitch at the
+   desk: a storyline built from what has happened (E.sift), or a spotlight for a star. They argue, the road agent takes a
+   side, and the pitch you run is remembered by both writers (relBump between them, youRemember with you). A head
+   writer passed over twice running sulks. The head writer's style shows in the words of the segments the writers fill
+   on the night (GR_WROOM through gram()). Nothing here calls rnd(S). */
+var WR_STYLE={
+  comedy:{n:'comedy',slur:'a joke that writes itself',likes:'a laugh'},
+  drama:{n:'drama',slur:'a soap opera',likes:'a story with tears in it'},
+  grit:{n:'grit',slur:'too dark for television',likes:'something that feels real'},
+  spectacle:{n:'spectacle',slur:'all fireworks, no story',likes:'a big moment'}
+};
+var GR_WROOM={
+  comedy:['The crowd laughs in all the right places: #hw# wrote this one.','A line lands so well the announcers lose it. #hw#’s room, no doubt.','It is silly, and the building loves it.'],
+  drama:['Somebody in the front row is crying. #hw# got what #hw# wanted.','It plays like the last scene of a long film.','Quiet, then loud, then quiet again. A drama writer’s segment.'],
+  grit:['No music, no smiles. It feels like it really happened.','#hw# wrote it rough, and the crowd believes every word.','It is uncomfortable to watch, which is the point.'],
+  spectacle:['Pyro, lights, a lot of noise. #hw# never wrote a small thing.','Everything is bigger than it needs to be, and nobody minds.','The kind of moment that ends up in the opening video.']
+};
+var WR_FIRST=['Abel','Bette','Cyril','Delia','Ezra','Flo','Gideon','Hester','Ivo','June','Kit','Lorna'],WR_LAST=['Ashdown','Bramble','Corrie','Dunmore','Elwood','Fenn','Garnet','Holloway','Inchley','Jessop','Kell','Larkin'];
+function wrInit(S){
+  if(S.wr&&S.wr.ids.every(function(id){return S.w[id];}))return S.wr;
+  var P=S.promos[S.player],styles=Object.keys(WR_STYLE),ids=[];
+  for(var i=0;i<3;i++){
+    var nm=i===0&&P.staff&&P.staff.writer&&P.staff.writer!=='The head writer'?P.staff.writer:WR_FIRST[hash(S.seed+'wf'+i)%WR_FIRST.length]+' '+WR_LAST[hash(S.seed+'wl'+i)%WR_LAST.length];
+    var w=addWrestler(S,{name:nm,g:hash(nm)%2?'F':'M',style:'E',ovr:40,mic:55,align:'F',roles:['writer'],age:30+hash(nm)%25},P.id);
+    w.srole='writer';w.wst=styles[hash(S.seed+'ws'+i)%styles.length];w.wsk=55+hash(S.seed+'wk'+i)%40;w.wage=0;w.con=999;ids.push(w.id);
+  }
+  S.wr={ids:ids,head:ids[0],passed:0,last:-1};return S.wr;
+}
+function wrName(S,id){return S.w[id]?S.w[id].name:'A writer';}
+/** The pitches two writers might make this week: a storyline found in what has happened, or a spotlight. */
+function wrPitch(S,id,k){
+  var P=S.promos[S.player],w=S.w[id],st=WR_STYLE[w.wst],F=E.sift(S)||[],off=hash(S.seed+':wp:'+S.week+':'+id)+k,f=null;
+  var many=activeFeuds(S).filter(function(x){return x.promo===P.id;}).length>=8;   // a full slate of stories: the room pitches a spotlight instead
+  for(var i=0;i<F.length&&!many&&!f;i++){var c=F[(off+i)%F.length];if(c&&S.w[c.a]&&S.w[c.b]&&!inFeud(S,c.a)&&!inFeud(S,c.b))f=c;}
+  if(f)return {k:'feud',a:f.a,b:f.b,t:S.w[f.a].name+' against '+S.w[f.b].name+', played as '+st.likes};
+  var R=rosterOf(S,P.id).filter(function(x){return !x.nw&&!(x.inj>0);}).sort(function(a,b){return b.ovr-a.ovr;}),star=R[(k*2+hash(S.seed+':wq:'+S.week))%Math.max(1,Math.min(R.length,6))];
+  return star?{k:'spot',a:star.id,t:'a spotlight on '+star.name+': '+st.likes}:null;
+}
+WEEKX.push(function(S){
+  if(S.cal||S.over||S.week%2)return;var X=wrInit(S);
+  if(S.inbox.some(function(e){return !e.done&&e.type==='wroom';}))return;
+  var n=Math.floor(S.week/2)%3,a=X.ids[n],b=X.ids[(n+1)%3],pa=wrPitch(S,a,0),pb=wrPitch(S,b,1);if(!pa||!pb)return;
+  var A=S.w[a],B=S.w[b],P=S.promos[S.player],ag=P.staff&&P.staff.agent?P.staff.agent:'The road agent',side=(A.wsk+(a===X.head?10:0))>=(B.wsk+(b===X.head?10:0))?A:B;
+  pushEv(S,{type:'wroom',a:a,b:b,pa:pa,pb:pb,text:'The writers’ room. '+A.name+' ('+WR_STYLE[A.wst].n+(a===X.head?', head writer':'')+') pitches '+pa.t+'. '+B.name+' calls it '+WR_STYLE[A.wst].slur+' and pitches '+pb.t+'. '+ag+' sides with '+side.name+'.',
+    choices:['Run '+A.name+'’s pitch','Run '+B.name+'’s pitch','Neither: the room can try again']});
+});
+EVR.wroom=function(S,ev,choice,P){
+  var X=wrInit(S),A=S.w[ev.a],B=S.w[ev.b];if(!A||!B)return 'The room has moved on.';
+  if(choice===2){youRemember(S,A,'pitchno','You turned their pitch down.',-1);youRemember(S,B,'pitchno','You turned their pitch down.',-1);return 'Neither. The room goes quiet, and both of them go back to their desks a little smaller.';}
+  var W=choice===0?A:B,L=choice===0?B:A,pt=choice===0?ev.pa:ev.pb,msg;
+  relBump(S,W.id,L.id,{bond:-8},{k:'room',t:W.name+' won the argument in the writers’ room.'});
+  youRemember(S,W,'pitchyes','You ran their pitch.',2);youRemember(S,L,'pitchno','You ran the other pitch.',-1);
+  if(L.id===X.head){X.passed++;if(X.passed>=2){L.morale=clamp(L.morale-12,0,100);note(S,'The head writer is sulking',L.name+' has been passed over twice running.','bad');}}else if(W.id===X.head)X.passed=0;
+  X.style=W.wst;X.by=W.id;X.until=S.week+4;
+  if(pt.k==='feud'&&S.w[pt.a]&&S.w[pt.b]&&!feudOf(S,pt.a,pt.b)){var f=startFeud(S,P,S.w[pt.a],S.w[pt.b],24,W.name+' wrote '+S.w[pt.a].name+' and '+S.w[pt.b].name+' into a story',{force:true});msg=f?'The story starts: '+pt.t+'.':'The story would not take.';}
+  else{var s=S.w[pt.a];if(s){s.mom=clamp((s.mom||0)+2,-10,10);youRemember(S,s,'spot','The writers built a week around them.',1);}msg='Next week belongs to '+(s?s.name:'them')+'.';}
+  return W.name+'’s pitch it is. '+msg+' For a month the writers’ segments carry '+W.name+'’s touch.';
+};
+/* the style shows in the words: a segment the writers fill carries a line in their voice, and a strong writer lifts it */
+ANGDONE.push(function(S,P,ba){
+  var X=S.wr;if(!X||P.id!==S.player||!ba.wr)return;
+  var id=X.until>=S.week&&X.by!=null?X.by:X.head,w=S.w[id];if(!w||!WR_STYLE[w.wst])return;
+  var L=GR_WROOM[w.wst],line=L[Math.floor(h01(S.seed+':wl:'+S.week+':'+(ba.text||'').length)*L.length)].replace(/#hw#/g,w.name);
+  ba.text=(ba.text||'')+' '+line;if(w.wsk>=80)ba.ov=Math.min(100,(ba.ov||0)+1);
+});
+/** For the screens: the writers, their styles and strengths, and who has the pen this month. */
+E.writers=function(S){var X=wrInit(S);return X.ids.map(function(id){var w=S.w[id];return {id:id,name:w.name,style:WR_STYLE[w.wst].n,likes:WR_STYLE[w.wst].likes,strong:w.wsk>=80?'a strong writer':(w.wsk>=65?'a good writer':'still learning'),head:id===X.head,pen:X.by===id&&X.until>=S.week,mood:w.morale<40?'unhappy':'content',you:(S.rmY&&S.rmY[id]?S.rmY[id].v:0)};});};
 
 root.GP=E;
 })(typeof window !== 'undefined' ? window : globalThis);

@@ -1,3 +1,4 @@
+/* wraps: 78-models.js (it must sort after them; test-buildorder.js checks) */
 /* A world's own match rules: made in the World Editor's Match rules tab, kept in the world package (pkg.stips),
    carried into a game (S.db.stips) and picked on the card like the included rules. A new rule is built on an
    included one (its base): it fights like the base, wears and hurts like it and needs the same heat, and has its own

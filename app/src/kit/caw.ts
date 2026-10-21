@@ -41,7 +41,7 @@ export function threeMoves(w: { name: string; style?: string; fin?: string }, ha
 export function randomLook(lk: Look, r: () => number): Look {
   const pick = <T,>(l: T[]): T => l[Math.floor(r() * l.length) % l.length], ids = (l: [string, string][]) => l.map(x => x[0]);
   const fem = (lk.physical_attributes || {}).sex === 'F', A = pick(fem ? ARCHETYPES.filter(a => ['Cruiserweight', 'Technical', 'Heavyweight'].indexOf(a[0]) >= 0) : ARCHETYPES), j = () => 0.94 + r() * 0.12;
-  const bold = SWATCHES.filter(sw => sw[3] !== 'denim' && sw[3] !== 'corr').map(sw => sw[0]), metal = SWATCHES.filter(sw => sw[3] === 'foil').map(sw => sw[0]);
+  const bold = SWATCHES.filter(sw => sw[3] !== 'denim' && sw[3] !== 'corr' && !/^hair_/.test(sw[0])).map(sw => sw[0]), metal = SWATCHES.filter(sw => sw[3] === 'foil').map(sw => sw[0]);
   const hairs = ['#1a1410', '#3a2414', '#6a4422', '#a8742a', '#d8b860', '#8a8a8a', '#e8e4dc', '#7a1a10'];
   const pal = () => ({ primary: pick(bold), secondary: pick(bold), trim: pick(bold), hardware: pick(metal) });
   const head = r() < 0.15 ? pick(ids(PARTS.head).filter(h => /^mask/.test(h))) : pick(ids(PARTS.head).filter(h => /^hair/.test(h) && h !== 'hair_face'));
@@ -106,7 +106,58 @@ export const SWATCHES: [string, string, string, Fin][] = [
   ['swatch_neon_green', 'Neon green paper', '#5cff3a', 'neon'], ['swatch_neon_pink', 'Neon pink paper', '#ff3aa8', 'neon'], ['swatch_neon_orange', 'Neon orange paper', '#ff7a1a', 'neon'], ['swatch_neon_yellow', 'Neon yellow paper', '#f4ff3a', 'neon'],
   ['swatch_blue_denim', 'Blue denim', '#3d5a8a', 'denim'], ['swatch_black_denim', 'Black denim', '#2a2c33', 'denim'],
   ['swatch_leather_brown', 'Brown leather', '#5a3218', 'leather'], ['swatch_leather_black', 'Black leather', '#1a1a1e', 'leather'], ['swatch_leather_red', 'Red leather', '#6e1414', 'leather'],
+  // more shades (20 October), so every family has light to dark, and gear can match a real wrestler's colours
+  ['swatch_blush_paper', 'Blush paper', '#f2b8c6', 'matte'], ['swatch_hot_pink', 'Hot pink paper', '#e8337f', 'matte'], ['swatch_magenta_paper', 'Magenta paper', '#b0157a', 'matte'],
+  ['swatch_coral_paper', 'Coral paper', '#ee7660', 'matte'], ['swatch_burnt_orange', 'Burnt orange paper', '#c2561a', 'matte'], ['swatch_peach_paper', 'Peach paper', '#f6c49a', 'matte'],
+  ['swatch_lemon_paper', 'Lemon paper', '#f7ea6a', 'matte'], ['swatch_mustard_paper', 'Mustard paper', '#c99a1e', 'matte'],
+  ['swatch_mint_paper', 'Mint paper', '#a8e6c4', 'matte'], ['swatch_lime_paper', 'Lime paper', '#8ccf2e', 'matte'], ['swatch_emerald_paper', 'Emerald paper', '#13875a', 'matte'], ['swatch_forest_paper', 'Forest green paper', '#1e4d2b', 'matte'], ['swatch_olive_paper', 'Olive paper', '#6b6b2a', 'matte'],
+  ['swatch_turquoise_paper', 'Turquoise paper', '#2ec4c0', 'matte'],
+  ['swatch_baby_blue', 'Baby blue paper', '#a9d4f5', 'matte'], ['swatch_cobalt_paper', 'Cobalt paper', '#1f47b8', 'matte'], ['swatch_midnight_paper', 'Midnight blue paper', '#121a33', 'matte'],
+  ['swatch_lavender_paper', 'Lavender paper', '#c3a6e8', 'matte'], ['swatch_violet_paper', 'Violet paper', '#7b3fd0', 'matte'], ['swatch_plum_paper', 'Plum paper', '#4e1f4e', 'matte'],
+  ['swatch_tan_paper', 'Tan paper', '#c9a16e', 'matte'], ['swatch_chocolate_paper', 'Chocolate paper', '#4a2a16', 'matte'],
+  ['swatch_purple_foil', 'Purple foil', '#7a2fc0', 'foil'], ['swatch_pink_foil', 'Pink foil', '#e04a9a', 'foil'], ['swatch_black_foil', 'Black foil', '#24242a', 'foil'], ['swatch_rose_gold_foil', 'Rose gold foil', '#d89a86', 'foil'],
+  ['swatch_neon_blue', 'Neon blue paper', '#3ad8ff', 'neon'], ['swatch_neon_purple', 'Neon purple paper', '#b63aff', 'neon'],
+  ['swatch_white_denim', 'White denim', '#d8dde6', 'denim'], ['swatch_leather_white', 'White leather', '#ecebe6', 'leather'],
+  // natural hair, so hair can be any real shade
+  ['hair_jet_black', 'Jet black hair', '#14110f', 'matte'], ['hair_dark_brown', 'Dark brown hair', '#3a2414', 'matte'], ['hair_chestnut', 'Chestnut hair', '#6a3a1c', 'matte'], ['hair_auburn', 'Auburn hair', '#8a3418', 'matte'],
+  ['hair_ginger', 'Ginger hair', '#c0602a', 'matte'], ['hair_dirty_blonde', 'Dirty blonde hair', '#a8874e', 'matte'], ['hair_honey_blonde', 'Honey blonde hair', '#d4a85a', 'matte'], ['hair_platinum', 'Platinum blonde hair', '#ece2c4', 'matte'],
+  ['hair_silver', 'Silver hair', '#b8b8b4', 'matte'], ['hair_salt_pepper', 'Salt and pepper hair', '#6e6a66', 'matte'],
 ];
+/* ---------- swatches by family: every colour dropdown groups its swatches by colour and orders each group light to dark ---------- */
+const FIN_N: Record<Fin, string> = { matte: 'paper', foil: 'foil', corr: 'board', neon: 'neon', denim: 'denim', leather: 'leather' };
+function hsl(c: string): [number, number, number] {
+  const n = parseInt(c.slice(1), 16), r = (n >> 16 & 255) / 255, g = (n >> 8 & 255) / 255, b = (n & 255) / 255, mx = Math.max(r, g, b), mn = Math.min(r, g, b), l = (mx + mn) / 2, d = mx - mn;
+  if (!d) return [0, 0, l];
+  const s2 = d / (1 - Math.abs(2 * l - 1)); let h = mx === r ? ((g - b) / d) % 6 : mx === g ? (b - r) / d + 2 : (r - g) / d + 4; h *= 60; if (h < 0) h += 360;
+  return [h, s2, l];
+}
+/** The colour family a swatch belongs to, by its hue (a dull or very dark or light colour is a neutral; brown is a dark orange). */
+export function swatchFamily(c: string): string {
+  const [h, s2, l] = hsl(c);
+  if (s2 < 0.16 || l < 0.1 || l > 0.95 || (l > 0.88 && s2 < 0.7)) return 'Black, grey and white';
+  if (h >= 15 && h < 40 && (l < 0.42 || s2 < 0.5)) return 'Browns and tans';
+  if (h >= 40 && h < 70 && l < 0.34) return 'Greens';   // olive
+  if (h >= 305 && h < 335) return 'Pinks';
+  if ((h >= 335 || h < 5) && l > 0.62) return 'Pinks';   // pale reds read as pink
+  if (h >= 5 && h < 15 && l > 0.6) return 'Oranges';   // coral and salmon
+  if (h < 12 || h >= 335) return 'Reds';
+  if (h < 40) return 'Oranges';
+  if (h < 70) return 'Yellows and golds';
+  if (h < 165) return 'Greens';
+  if (h < 190) return 'Teals';
+  if (h < 250) return 'Blues';
+  return 'Purples';
+}
+export const SWATCH_FAMILIES = ['Reds', 'Pinks', 'Oranges', 'Yellows and golds', 'Greens', 'Teals', 'Blues', 'Purples', 'Browns and tans', 'Black, grey and white'];
+/** The swatches grouped by family, each group lightest first, with the kind of material in the name. */
+export function swatchGroups(only?: (s: [string, string, string, Fin]) => boolean): [string, [string, string, string, Fin][]][] {
+  const by: Record<string, [string, string, string, Fin][]> = {};
+  SWATCHES.filter(sw => !only || only(sw)).forEach(sw => { const f = swatchFamily(sw[2]); (by[f] = by[f] || []).push(sw); });
+  return SWATCH_FAMILIES.filter(f => by[f]).map(f => [f, by[f].sort((a, b) => hsl(b[2])[2] - hsl(a[2])[2])] as [string, [string, string, string, Fin][]]);
+}
+/** Ink that reads on a swatch: dark on light card, light on dark. */
+export function swatchInk(c: string): string { return hsl(c)[2] > 0.58 ? '#1d1a24' : '#ffffff'; }
+export { FIN_N };
 const SWM = new Map(SWATCHES.map(s => [s[0], { c: s[2], f: s[3] } as Swatch]));
 /** A swatch by id (or a colour written as #rrggbb), else the fallback. */
 export function swatch(id: string | undefined, fb: Swatch): Swatch { if (!id) return fb; if (/^#[0-9a-f]{6}$/i.test(id)) return { c: id, f: 'matte' }; return SWM.get(id) || fb; }
@@ -116,16 +167,21 @@ export const PARTS: Record<'head' | 'upper_body' | 'lower_body' | 'footwear' | '
   head: [['hair_face', 'From the face'], ['hair_bald', 'Bald'], ['hair_buzz_01', 'Buzz cut'], ['hair_crew_01', 'Crew cut'], ['hair_short_01', 'Short'], ['hair_flat_top', 'Flat top'], ['hair_slick_01', 'Slicked back'],
     ['hair_spiky_01', 'Spiky'], ['hair_mohawk_01', 'Mohawk'], ['hair_curls_01', 'Curls'], ['hair_afro_01', 'Afro'], ['hair_cornrows_01', 'Cornrows'], ['hair_dreads_01', 'Dreadlocks'],
     ['hair_ponytail_01', 'Ponytail'], ['hair_mullet_01', 'Mullet'], ['hair_long_01', 'Long'], ['hair_wild_01', 'Long and wild'],
-    ['hair_bun_01', 'Top knot'], ['hair_undercut_01', 'Undercut'], ['hair_pigtails_01', 'Pigtails'], ['hair_bob_01', 'Bob'],
+    ['hair_bun_01', 'Top knot'], ['hair_undercut_01', 'Undercut'], ['hair_pigtails_01', 'Pigtails'], ['hair_bob_01', 'Bob'], ['hair_braid_long', 'One long braid'],
     ['mask_full_01', 'Mask, mouth open'], ['mask_closed_01', 'Full mask'], ['mask_half_01', 'Half mask'], ['mask_hood_01', 'Hood']],
   upper_body: [['bare', 'Bare chest'], ['singlet_straps_up', 'Singlet, straps up'], ['singlet_straps_down', 'Singlet, straps down'], ['singlet_full', 'Full singlet, to the thigh'], ['shirt_tshirt_base', 'T-shirt'], ['shirt_tank', 'Tank top'],
     ['top_sports', 'Sports top'], ['top_crop', 'Crop top'], ['top_bodysuit', 'Ring bodysuit'], ['vest_open', 'Open vest'], ['jacket_leather_biker', 'Biker jacket'], ['jacket_satin', 'Satin ring jacket'], ['coat_long', 'Long coat'],
-    ['robe_long', 'Entrance robe'], ['hoodie_01', 'Hooded top'], ['suit_jacket', 'Suit and tie']],
-  lower_body: [['trunks_brief_01', 'Trunks'], ['trunks_long', 'Long trunks'], ['tights_long_01', 'Long tights'], ['pants_flared', 'Flared ring pants'], ['shorts_fight', 'Fight shorts'], ['skirt_short', 'Short ring skirt'], ['jeans_distressed', 'Torn jeans'], ['trousers_suit', 'Suit trousers']],
+    ['robe_long', 'Entrance robe'], ['hoodie_01', 'Hooded top'], ['suit_jacket', 'Suit and tie'], ['jacket_denim', 'Denim jacket'], ['vest_tactical', 'Tactical vest'], ['coat_fur', 'Coat with a fur collar']],
+  lower_body: [['trunks_brief_01', 'Trunks'], ['trunks_long', 'Long trunks'], ['tights_long_01', 'Long tights'], ['pants_flared', 'Flared ring pants'], ['shorts_fight', 'Fight shorts'], ['skirt_short', 'Short ring skirt'], ['jeans_distressed', 'Torn jeans'], ['trousers_suit', 'Suit trousers'], ['kilt', 'Kilt'], ['shorts_jean', 'Jean shorts']],
   footwear: [['boots_knee', 'Boots and knee pads'], ['boots_laced_heavy', 'Heavy laced boots'], ['boots_short', 'Short boots'], ['kick_pads', 'Kick pads'], ['ankle_wraps', 'Bare feet, taped'], ['sneakers_retro', 'Retro sneakers'], ['shoes_dress', 'Dress shoes'], ['barefoot', 'Bare feet']],
   accessories: [['wrist_tape_white', 'Wrist tape'], ['wrist_wraps', 'Wrist wraps'], ['knee_pads', 'Knee pads'], ['knee_sleeves', 'Knee sleeves'], ['elbow_pads', 'Elbow pads'], ['gloves_fingerless', 'Fingerless gloves'], ['armband', 'Arm band'],
     ['sunglasses_aviator', 'Aviator sunglasses'], ['hat_cowboy', 'Cowboy hat'], ['hat_cap', 'Baseball cap'], ['hat_beanie', 'Wool hat'], ['bandana', 'Bandana'], ['crown', 'Crown'], ['chain_gold', 'Chain'], ['cape', 'Cape'],
-    ['belt_waist', 'Title belt, round the waist'], ['belt_shoulder', 'Title belt, over the shoulder']],
+    ['belt_waist', 'Title belt, round the waist'], ['belt_shoulder', 'Title belt, over the shoulder'],
+    // 20 October: pieces the real-life gear of the parody roster called for
+    ['sunglasses_round', 'Round sunglasses'], ['glasses_plain', 'Glasses'], ['headband', 'Sweatband'], ['antennae', 'Antennae'], ['scarf', 'Scarf'], ['pearls', 'Pearl necklace'], ['feather_boa', 'Feather boa'],
+    ['fishnets', 'Fishnet tights'], ['guitar', 'Guitar, slung across'], ['bat', 'Baseball bat, in hand'],
+    // 21 October: more for the WWC roster
+    ['collar_spiked', 'Spiked collar'], ['whistle', 'Whistle on a cord'], ['headset', 'Headset'], ['trombone', 'Trombone'], ['sword', 'Sword, in hand'], ['sledgehammer', 'Sledgehammer, in hand']],
 };
 export const FACIAL: [string, string][] = [['', 'From the face'], ['none', 'Clean shaven'], ['stubble', 'Stubble'], ['goatee', 'Goatee'], ['chin_strap', 'Chin strap'], ['sideburns', 'Sideburns'], ['beard_short', 'Short beard'],
   ['beard_full', 'Full beard'], ['beard_braided', 'Braided beard'], ['mustache', 'Moustache'], ['handlebar', 'Handlebar moustache'], ['horseshoe', 'Horseshoe moustache']];
@@ -147,7 +203,7 @@ export const FACE_SLIDERS: [string, string, string, string][] = [['head_w', 'Hea
 export const TATTOOS: [string, string][] = [['sleeve_near', 'Sleeve, near arm'], ['sleeve_far', 'Sleeve, far arm'], ['shoulder', 'Shoulder piece'], ['chest', 'Chest piece'], ['back', 'Back piece'], ['neck', 'Neck']];   // facial hair, moustache in the face numbers
 const HAIR_OF: Record<string, string> = { hair_bald: 'bald', hair_buzz_01: 'buzz', hair_crew_01: 'crew', hair_short_01: 'cap', hair_flat_top: 'flat', hair_mohawk_01: 'mohawk', hair_curls_01: 'curls', hair_long_01: 'long',
   hair_slick_01: 'slick', hair_spiky_01: 'spiky', hair_afro_01: 'afro', hair_cornrows_01: 'braids', hair_dreads_01: 'dreads', hair_ponytail_01: 'ponytail', hair_mullet_01: 'mullet', hair_wild_01: 'wild',
-  hair_bun_01: 'bun', hair_undercut_01: 'undercut', hair_pigtails_01: 'pigtails', hair_bob_01: 'bob' };
+  hair_bun_01: 'bun', hair_undercut_01: 'undercut', hair_pigtails_01: 'pigtails', hair_bob_01: 'bob', hair_braid_long: 'braid' };
 const MASK_OF: Record<string, 'open' | 'full' | 'half' | 'hood'> = { mask_full_01: 'open', mask_closed_01: 'full', mask_half_01: 'half', mask_hood_01: 'hood' };
 /** How a second hair colour goes in. */
 export const HAIR_MIX: [string, string][] = [['', 'One colour'], ['tips', 'Frosted tips'], ['streak', 'A streak'], ['fringe', 'The front'], ['under', 'Underneath and the back']];

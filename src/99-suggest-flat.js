@@ -1,3 +1,4 @@
+/* wraps: 90-api.js (it must sort after them; test-buildorder.js checks) */
 /* ===== Suggest a card is safe and flat (Ryan, 16 October; docs/roadmap.md change 1) =====
    "I want suggest a card to give a mediocre show, so you have to have smart decision making if you want to win the
    game or keep your job." The suggested card still fills the clock and breaks no rule, but it does none of the
@@ -9,8 +10,9 @@
   var smart=E.suggest;
   E.suggest=function(S){
     var card=smart(S);if(!card||card.length<2)return card;
-    var key='flat'+S.seed+':'+S.week+':'+S.qi;
+    var key='flat'+S.seed+':'+S.week+':'+S.qi,show=S.queue&&S.queue[S.qi];
     card.forEach(function(m){m.call=null;delete m.end;});
+
     // the right people, but who faces whom by the hash: no eye for chemistry or story. A champion stays in their
     // title match. (Ryan: it should still be helpful, it just cannot play the game for you.)
     var P=S.promos[S.player],held={};(P.titles||[]).forEach(function(t){(t.holders||[]).forEach(function(id){held[id]=1;});});

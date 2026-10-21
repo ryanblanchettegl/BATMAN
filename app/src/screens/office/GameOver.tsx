@@ -52,6 +52,7 @@ function ScenarioDone() {
     <Panel>
       <p class={R.ok ? 'good' : 'bad'}>{R.text}</p>
       <ul class="list mt2">{(R.figures || []).map((f: string) => <li><span>{f}</span></li>)}</ul>
+      {R.score != null ? <p class="mt1" data-t="scn-score">Score: <b>{R.score}</b> out of 100</p> : null}
       <p class="muted mt2">{C.weeks} weeks with {P.name}.</p>
       <div class="row mt3"><Btn kind="go" t="newgame-yes" onClick={fresh}>Back to the menu</Btn></div>
     </Panel>

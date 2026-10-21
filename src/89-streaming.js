@@ -1,3 +1,4 @@
+/* wraps: 88-shows.js (it must sort after them; test-buildorder.js checks) */
 /* ===== Streaming (NEXT.md 7.4) =====
    A company can open its own streaming service (Manage, Deals). It costs money to open and a little every week to
    run. Subscribers pay every week. How many there can be depends on the company's popularity and its tape library

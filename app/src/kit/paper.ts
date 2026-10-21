@@ -188,7 +188,7 @@ function layer(key: string, w: number, h: number, draw: (c: CanvasRenderingConte
   return c;
 }
 /** Draw a scene as a diorama. `key` names the set, so its layers are drawn once and kept. */
-export function drawScene(ctx: CanvasRenderingContext2D, pieces: Piece[], v: View, key: string) {
+export function drawScene(ctx: CanvasRenderingContext2D, pieces: Piece[], v: View, key: string, bare = false) {
   const W = ctx.canvas.width, H = ctx.canvas.height, k = key + '|' + W + 'x' + H + '|' + Math.round(v.s * 100) + ',' + Math.round(v.ox) + ',' + Math.round(v.oy) + '|q' + quality;
   const back = pieces.filter(p => p.layer === 'back'), front = pieces.filter(p => p.layer === 'front'), mid = pieces.filter(p => !p.layer).sort((a, b) => a.z - b.z);
   const far = back.filter(p => p.z < -0.75).sort((a, b) => a.z - b.z), near = back.filter(p => p.z >= -0.75).sort((a, b) => a.z - b.z);
@@ -214,8 +214,11 @@ export function drawScene(ctx: CanvasRenderingContext2D, pieces: Piece[], v: Vie
     const g = c.createRadialGradient(W * 0.48, H * 0.38, H * 0.15, W * 0.5, H * 0.5, Math.hypot(W, H) * 0.6);
     g.addColorStop(0, 'rgba(255,244,214,0.10)'); g.addColorStop(0.55, 'rgba(0,0,0,0)'); g.addColorStop(1, 'rgba(4,6,20,0.55)'); c.fillStyle = g; c.fillRect(0, 0, W, H);
   });
+  // `bare`: a figure on nothing (a fan in the crowd): the light and the paper grain go on the figure only, never on empty space
+  if (bare) ctx.globalCompositeOperation = 'source-atop';
   ctx.drawImage(L, 0, 0);
-  ctx.save(); ctx.globalCompositeOperation = 'multiply'; ctx.fillStyle = ctx.createPattern(grain(), 'repeat')!; ctx.fillRect(0, 0, W, H); ctx.restore();
+  ctx.save(); ctx.globalCompositeOperation = bare ? 'source-atop' : 'multiply'; if (!bare) { ctx.fillStyle = ctx.createPattern(grain(), 'repeat')!; ctx.fillRect(0, 0, W, H); } ctx.restore();
+  ctx.globalCompositeOperation = 'source-over';
 }
 
 /** Which piece is under a point (pixels), from the top down. */

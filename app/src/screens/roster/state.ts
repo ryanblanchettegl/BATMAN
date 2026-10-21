@@ -28,7 +28,7 @@ export interface RosterState {
   weeks: string;
 }
 export function rs(): RosterState {
-  return slice<RosterState>('roster', () => ({ sel: null, last: null, pt: 'over', rf: { brand: 'all', g: 'all', al: 'all', q: '' }, rs: { k: 'ovr', d: -1 }, repack: null, mq: '', offer: null, wage: '', weeks: '48' }));
+  return slice<RosterState>('roster', () => ({ sel: null, last: null, pt: 'over', rf: { brand: 'all', g: 'all', al: 'all', q: '' }, rs: { k: 'all', d: -1 }, repack: null, mq: '', offer: null, wage: '', weeks: '48' }));
 }
 
 /** The wrestler whose profile is open, if they are still on the player's roster. */
