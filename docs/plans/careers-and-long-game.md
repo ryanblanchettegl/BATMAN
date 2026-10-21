@@ -1,6 +1,6 @@
-# Careers and the long game: eight features from other genres
+# Careers and the long game: nine features from other genres
 
-Bill, 21 October 2026: "I like ideas 1-5 add those to long term planning", then "one life in wrestling is awesome too", and dropped free agency week ("wrestling doesn't have a free agency week, lets not do that"), then added "Path to the Hall of Fame i like" "i like wrestling families" "I like coalitions" and "love 13" (company mission trees). He turned down power blocs. These come from the genre research doc (career, sports management, dynasty, 4X, grand strategy and simulation games): https://claude.ai/artifact/VGDEmfsJv4LgCXPwn8TyUQ. Nothing here is built. They sit in `TASKS.md` section 14, after the balance and first-hour work (Bill paused new features until that is done).
+Bill, 21 October 2026: "I like ideas 1-5 add those to long term planning", then "one life in wrestling is awesome too", and dropped free agency week ("wrestling doesn't have a free agency week, lets not do that"), then added "Path to the Hall of Fame i like" "i like wrestling families" "I like coalitions" "love 13" (company mission trees) and the territory map coloured by the most popular company in each region. He turned down power blocs. These come from the genre research doc (career, sports management, dynasty, 4X, grand strategy and simulation games): https://claude.ai/artifact/VGDEmfsJv4LgCXPwn8TyUQ. Nothing here is built. They sit in `TASKS.md` section 14, after the balance and first-hour work (Bill paused new features until that is done).
 
 Sizes follow `WISHLIST.md`: S is one commit, M is two or three, L is a week with this plan as its start.
 
@@ -121,3 +121,20 @@ Steps:
 1. Trees as data, one per model, each goal a `SCN_WIN`-style test and a bonus; the player's place in the tree kept on `S`; a headless test that every tree's first goals can be met in 60 weeks.
 2. A page of the tree on Company (the goals done, the ones open, what each gives), with a note when one is finished.
 3. Rival companies follow their trees, and the Net reports a rival close to a big goal.
+
+## 9. The territory map (M to L)
+
+Bill, 21 October 2026: "14. I love this too, but it should be the color of the current most popular company in that region". Borrowed from Civilization's culture borders: one map, coloured by who holds what, that tells the state of the world at a glance.
+
+One cut-paper map of the world. Each region is coloured by the company that is most popular there right now, in that company's own colour (from its logo). The colour changes when another company overtakes it, so the map shows the war as it moves. A region where two companies are close is striped in both colours. A region the player takes over gets a pin and a line on the desk, and a region the player loses is a matter. Pressing a region shows each company's standing there, in words, and its last few months.
+
+Popularity by region comes from what each company draws there: its markets in the region's cities, its shows and tours there, its television reach and its hometown stars. The player's markets already exist (`S.mkt`, where "Your territory" is the top word); rival companies need the same, kept the same way, before the map can be honest.
+
+What it uses: the road's maps and shapes (`src/91-shapes.js`, `drawShape()` in `kit/roadmap.tsx`), regions (`regionOf()`, `src/89-regions.js`), markets (`S.mkt`, `mktMult()`), tours abroad (wish 55), networks and their size (`src/88-shows.js`) and company logos (`src/89-logos.js`) for the colours. It feeds coalitions (7), since a company that holds too many regions is the one others band against.
+
+Steps:
+
+1. Markets for rival companies, moved by their own shows the same way the player's are; a headless test over 60 weeks that regions change hands sometimes and not every week.
+2. `E.territory(S)`: the most popular company in each region, how close the next one is, and how it has moved. Only reads the game.
+3. The map: a page of its own reached from the World page and the desk's road window, regions filled in company colours, stripes for close ones, a region's standings on press.
+4. Lines on the desk and the Net when a region changes hands.
