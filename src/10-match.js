@@ -397,7 +397,7 @@ function doMatch(S,P,show,m,i,n,rep,used){
       news(S,'injury',w.name+' ('+P.name+') is injured ('+ZONES[hz].n.toLowerCase()+'): out about '+w.inj+' weeks.');
       if(w.inj>=8)vacateFor(S,P,w,'injury');
     }
-    if(workRate(w)<w.pot){w.xp+=0.06+(Math.max.apply(null,perfs)>perfs[ix]?0.1:0)+(big?0.05:0);if(w.xp>=1){w.xp-=1;w.brawl=Math.min(99,w.brawl+1);w.tech=Math.min(99,w.tech+1);w.speed=Math.min(99,w.speed+1);if(isPl)seg.notes.push(w.name+' is improving in the ring.');}}
+    // experience from the match is src/99-progress.js: levels, points and what they learned by doing it
   });
   if(m.mt==='tag')sides.forEach(function(s,k){var tm=(s[0].team!=null&&s[0].team===s[1].team)?teamOf(S,s[0]):null;if(tm){tm.exp=Math.min(100,tm.exp+2+(k===win?1:0));tm.ls=(win>=0&&k!==win)?tm.ls+1:0;if(win>=0){if(k===win)tm.w=(tm.w|0)+1;else tm.l=(tm.l|0)+1;}}});
   // feud progress

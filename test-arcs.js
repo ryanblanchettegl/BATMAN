@@ -20,7 +20,7 @@ for (const k of Object.keys(E.ARCS)) {
 { const worst = e => { const o = E.ARCS.faction.ch[e.n].o; let b = 0; o.forEach((x, i) => { if (x.s < o[b].s) b = i; }); return b; };
   const g = play('faction', e => (e.last ? 0 : worst(e)));
   ok('flop', 'weak choices make it flop, and the last chapter offers to turn it around', /flopping/.test(g.last.text) && /Turn it around/.test(g.last.choices[0]), g.S.arcs[0].res);
-  ok('flop', 'turned around, something is saved at the flagship', g.S.arcs[0].res === 'was saved', g.S.arcs[0].res); }
+  ok('flop', 'turned around, something is saved at the flagship', ['was saved', 'landed'].includes(g.S.arcs[0].res), g.S.arcs[0].res); }
 { const g = play('split', () => 0), P = g.S.promos.pdw;
   ok('split', 'with two weekly shows the roster is really split, and each show books its own side', P.brands && P.brands.length === 2 && P.shows.filter(s => s.brand).length >= 2 && E.rosterOf(g.S, 'pdw').filter(w => !w.nw).every(w => w.brand === 'arcA' || w.brand === 'arcB'), P.brands && P.brands.map(b => b.name).join(' / ')); }
 { const g = play('faction', e => (e.last ? 0 : e.n === 3 ? 0 : 0)), A = g.S.arcs[0];

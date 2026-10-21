@@ -3,6 +3,7 @@
 import { E, W } from '../../engine';
 import { G, me, cash, view, act, openModal } from '../../store';
 import { Ovr } from '../../shared/ovr';
+import { LevelLine } from './Attrs';
 import { Head, Sel, TextBox, Tag, Side, Opt, Meter, Btn, Portrait, champOf, brandName, dataAttrs, showResult } from '../../kit';
 import { ScenePlayer } from '../../kit/sceneplayer';
 import { WAIST } from '../../kit/scene';
@@ -88,6 +89,7 @@ function File(p: { w: W | null; spot: string }) {
     <div class="sc-stage rs-stage"><ScenePlayer key="rsw" sc={STAND} cast={{ A: { ...recipeOf(w), belts: Math.min(3, titles.length), beltL: titles.slice().sort((a: any, b: any) => b.lvl - a.lvl).slice(0, 3).map((t: any) => E.beltOf(t, P)) } }} play={'rs' + w.id + ':' + titles.length + JSON.stringify((w as any).look || null)} still orbit fill t="roster-stage" label={w.name + ' in ring gear. Drag to walk round them.'} /></div>
     <p class="big"><Ovr w={w} big /> <b>{w.name}</b> <Side w={w} /></p>
     <p>{p.spot} {'·'} age {w.age}</p>
+    {!w.nw ? <LevelLine w={w} /> : null}
     {w.fin || titles.length ? <p class="muted">{w.fin ? 'Finisher: ' + w.fin : ''}{titles.length ? <> <Tag kind="gold">{titles.map((t: any) => t.name).join(', ')}</Tag></> : null}</p> : null}
     <Group title="In the ring">
       <Line label="Crowd"><Meter v={w.ovr} n={8} /> <span class="muted">{lvlWord(w.ovr)}</span></Line>
@@ -103,7 +105,8 @@ function File(p: { w: W | null; spot: string }) {
       <Line label="Pay">{cash(w.wage)} a week</Line>
       <Line label="Contract"><span class={w.con <= 4 ? 'bad' : undefined}>{Math.max(0, w.con)} weeks left</span></Line>
     </Group>
-    <div class="row mt1"><Btn kind="go" t="roster-full" d={{ id: w.id }} onClick={() => view(() => { const st = rs(); st.peek = w.id; st.sel = w.id; })}>Full profile</Btn>
+    <div class="row mt1">{!w.nw ? <Btn kind="go" t="roster-attrs" d={{ id: w.id }} onClick={() => openModal({ kind: 'attrs', id: w.id })}>Attributes</Btn> : null}
+      <Btn t="roster-full" d={{ id: w.id }} onClick={() => view(() => { const st = rs(); st.peek = w.id; st.sel = w.id; })}>Full profile</Btn>
       <Btn t="roster-caw" d={{ id: w.id }} onClick={() => openModal({ kind: 'player', id: w.id })}>{w.nw ? 'Edit look' : 'Edit wrestler'}</Btn>
       {w.nw ? (w.wasW ? <Btn t="roster-back" d={{ id: w.id }} onClick={() => { const r = act(() => E.fromStaff(G.S, w.id)); showResult('Back to wrestling', r.msg, !r.ok); }}>Wrestle again</Btn> : null)
         : <Btn t="roster-tostaff" d={{ id: w.id }} onClick={() => openModal({ kind: 'tostaff', id: w.id })}>Move to staff</Btn>}</div>
