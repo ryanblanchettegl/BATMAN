@@ -889,7 +889,7 @@ The relationship web as a board of Polaroids and string, built by itself on the 
 
 ### 14. Later: careers and the long game (Bill, 21 October: "I like ideas 1-5 add those to long term planning")
 
-Ten features from the genre research (career, sports management, dynasty, grand strategy and 4X games). Free agency week was dropped (wrestling has none), and so were power blocs. Plan: `docs/plans/careers-and-long-game.md`. Not before the balance and first-hour work above (Bill paused new features until then).
+Eleven features from the genre research (career, sports management, dynasty, grand strategy and 4X games). Free agency week was dropped (wrestling has none), and so were power blocs. Plan: `docs/plans/careers-and-long-game.md`. Not before the balance and first-hour work above (Bill paused new features until then).
 
 - [ ] Wrestler career mode, "Road to the Main Event": play one wrestler in the living world while that company's AI booker books you; the asks at Your office become your moves (L).
 - [ ] One life in wrestling: the same save goes on from wrestler to manager, commentator or agent, then booker, then owner, and on to the student you trained (M, after the career mode).
@@ -901,6 +901,7 @@ Ten features from the genre research (career, sports management, dynasty, grand 
 - [ ] Company mission trees: each of the nine models gets a tree of goals that take years, each one finished opening the next and leaving a lasting bonus; rivals follow theirs too (M).
 - [ ] The territory map: a world map where each region is coloured by the company most popular there right now, striped where two are close; needs markets for rival companies first (M to L).
 - [ ] Rival owners with agendas: each owner has an agenda the world knows and a hidden one found out through the press, sources and people who leave; both decide how they treat you (S to M).
+- [ ] Rival plans: each month the office hears of two or three moves rivals are preparing (a raid, a show on your big night, a bid, a tour into your region); stop one with booking power or a source, the rest happen (M).
 
 ## After each task
 

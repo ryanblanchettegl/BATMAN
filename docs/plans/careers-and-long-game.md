@@ -1,6 +1,6 @@
-# Careers and the long game: ten features from other genres
+# Careers and the long game: eleven features from other genres
 
-Bill, 21 October 2026: "I like ideas 1-5 add those to long term planning", then "one life in wrestling is awesome too", and dropped free agency week ("wrestling doesn't have a free agency week, lets not do that"), then added "Path to the Hall of Fame i like" "i like wrestling families" "I like coalitions" "love 13" (company mission trees) the territory map coloured by the most popular company in each region, and "16 i like" (rival owners with agendas). He turned down power blocs. These come from the genre research doc (career, sports management, dynasty, 4X, grand strategy and simulation games): https://claude.ai/artifact/VGDEmfsJv4LgCXPwn8TyUQ. Nothing here is built. They sit in `TASKS.md` section 14, after the balance and first-hour work (Bill paused new features until that is done).
+Bill, 21 October 2026: "I like ideas 1-5 add those to long term planning", then "one life in wrestling is awesome too", and dropped free agency week ("wrestling doesn't have a free agency week, lets not do that"), then added "Path to the Hall of Fame i like" "i like wrestling families" "I like coalitions" "love 13" (company mission trees) the territory map coloured by the most popular company in each region, "16 i like" (rival owners with agendas) and "18 i like" (rival plans). He turned down power blocs. These come from the genre research doc (career, sports management, dynasty, 4X, grand strategy and simulation games): https://claude.ai/artifact/VGDEmfsJv4LgCXPwn8TyUQ. Nothing here is built. They sit in `TASKS.md` section 14, after the balance and first-hour work (Bill paused new features until that is done).
 
 Sizes follow `WISHLIST.md`: S is one commit, M is two or three, L is a week with this plan as its start.
 
@@ -152,3 +152,17 @@ Steps:
 1. Agendas as data (`AGENDA`: what each wants, what it makes the owner do, the signs it leaves); each owner gets one known and one hidden; rival decisions read them. A headless test that each agenda changes what its owner does over 60 weeks.
 2. Clues: the press, the player's sources and wrestlers who arrive from that company give hints; "rumoured" then "known".
 3. The rival owner's file shows both agendas as far as they are known, and a line on the desk when one is found out.
+
+## 11. Rival plans (M)
+
+Bill, 21 October 2026: "18 i like". Borrowed from XCOM 2's Dark Events: each month you see what the enemy is preparing, and you can stop only one.
+
+At the start of each month the office hears of two or three moves rival companies are getting ready to make: a raid on the player's champion, a show on the night of the player's flagship, a bid for the hottest free agent, a tour into the player's best region, a story that copies the player's hottest feud. Each comes with who is behind it and when it will land, as far as the player's sources can tell (a weak source says less, as the road agent does in fog of war). The player can stop one by spending booking power or calling in a favour or a source: re-sign the champion early, move the show, outbid, tour there first. The rest happen, and After the show or the Net says so when they do.
+
+What it uses: fog of war (`src/99-fog.js`) for how much the player is told, the press and its sources (`src/99-press.js`), rival booking and rival growth (`rivalGrow()`), raids (wish 60), head-to-head nights (`src/88-nights.js`), the territory map (9) for tours into a region, and rival owners' agendas (10), which decide what each rival plans. Backstage Politics (TASKS 0ak) favours can be one way to stop a plan.
+
+Steps:
+
+1. Rivals choose their moves a month ahead and keep them on `S` (so the plan is real, not made up for the player); a headless test that the moves happen when not stopped.
+2. What the player hears, filtered by sources, and the ways to stop one, each with its cost.
+3. A monthly matter on the desk listing the plans, and a line when each lands or is stopped.
