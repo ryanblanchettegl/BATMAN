@@ -34,7 +34,7 @@ export function Editor(p: { m: Match; i: number }) {
   // picking a regular team fills the side, then the list goes back to its heading so it can be used again
   const pickTeam = (k: number, id: string) => (v: string) => { setMatch(i, 'team', v, { s: k }); const el = document.getElementById(id) as HTMLSelectElement | null; if (el) el.value = ''; };
   // a match promised for tonight (src/99-tale.js): the promised wrestler, the kind of match and the title stay as promised
-  // a guest at the commentary desk and a run-in at the curtain: the ones with a story with somebody in the match come first
+  // a guest at the commentary desk and a run-in at the curtain: the ones with a story with somebody in the match come first (not for a battle royal, which has its own surprise entrant)
   const rs: any[] = E.ringsideChoices(S, i), rsOpt = (x: any): Opt => [x.id, x.n + (x.why ? ' · ' + x.why : '')];
   const pm = m.pm != null ? (E.locksNow(S) as any[]).find(l => l.id === m.pm) : null, held = pm ? m.sides[0][0] : null;
   return <div class="editor">
@@ -58,8 +58,8 @@ export function Editor(p: { m: Match; i: number }) {
       options={[['', 'Let the story decide'], ...Object.keys(E.HOWS).filter(k => !(['cheap', 'dq', 'co'].includes(k) && E.hasRule(S, 'clean'))).map(k => [k, E.HOWS[k].n] as Opt)]} /></Field>
     {E.hasBoss(S) && <Field label="By the boss"><Sel id={'m' + i + '-boss'} t="boss" d={{ i }} value={m.boss ? '1' : ''} onChange={v => setMatch(i, 'boss', v)} options={[['', 'No'], ['1', 'Yes: it reads well if a story explains it']]} /></Field>}
     {E.agents(S).length > 0 && <Field label="Agent"><Sel id={'m' + i + '-agent'} t="agent" d={{ i }} value={m.agent == null ? '' : m.agent} onChange={v => setMatch(i, 'agent', v)} options={[['', 'No agent'], ...E.agents(S).map((a: any) => [a.id, a.name + ' · skill ' + a.skill + (S.card.filter((x: any) => x.agent === a.id).length >= 2 && m.agent !== a.id ? ' · covering two' : '')] as Opt)]} /></Field>}
-    <Field label="Commentary"><Sel id={'m' + i + '-gc'} t="gc" d={{ i }} value={m.gc == null ? '' : m.gc} onChange={v => setRingside(i, 'gc', v)} options={[['', 'No guest'], ...rs.map(rsOpt)]} /></Field>
-    <Field label="Run-in"><Sel id={'m' + i + '-ri'} t="ri" d={{ i }} value={m.ri == null ? '' : m.ri} onChange={v => setRingside(i, 'ri', v)} options={[['', 'Nobody'], ...rs.map(rsOpt)]} /></Field>
+    {m.mt !== 'br' && <Field label="Commentary"><Sel id={'m' + i + '-gc'} t="gc" d={{ i }} value={m.gc == null ? '' : m.gc} onChange={v => setRingside(i, 'gc', v)} options={[['', 'No guest'], ...rs.map(rsOpt)]} /></Field>}
+    {m.mt !== 'br' && <Field label="Run-in"><Sel id={'m' + i + '-ri'} t="ri" d={{ i }} value={m.ri == null ? '' : m.ri} onChange={v => setRingside(i, 'ri', v)} options={[['', 'Nobody'], ...rs.map(rsOpt)]} /></Field>}
     <Field label="Title"><Sel id={'m' + i + '-title'} t="title" d={{ i }} disabled={!!pm && !!m.title} value={m.title} onChange={v => setMatch(i, 'title', v)}
       options={[['', 'No title'], ...titles.map((t: any) => [t.id, t.name + (t.holders.length ? '' : ' (vacant)')] as Opt)]} /></Field>
     <Field label="Rules"><Sel id={'m' + i + '-stip'} t="stip" d={{ i }} value={m.stip} onChange={v => setMatch(i, 'stip', v)} options={Object.keys(E.STIP).map(k => { const sf = E.stipFits(S, m), w = sf && sf[k]; return [k, E.STIP[k].n + (w === 'good' ? ' (earned)' : w === 'soon' ? ' (too soon)' : '')] as Opt; })} /></Field>

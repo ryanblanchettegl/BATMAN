@@ -262,7 +262,8 @@ SEGNEW.push(function(S,L){locksNow(S).forEach(function(l){if(l.kind==='promo'&&l
       if(l.kind!=='match')return;var who=l.sides[0][0];if(who==null||!inE[who])return;   // they cannot work tonight: nothing to be done about it on the card
       var t=l.title?titleById(P,l.title):null;if(t&&t.holders.indexOf(who)>=0)return;if(t&&!t.tag&&t.holders.length&&!inE[t.holders[0]])return;   // no champion tonight: it waits
       // a title match is the promised wrestler for that title, whoever holds it by then; any other match is the two of them
-      var on=card.some(function(m){return flat(m.sides).indexOf(who)>=0&&(l.title?m.title===l.title:l.sides[1].every(function(id){return id==null||!inE[id]||flat(m.sides).indexOf(id)>=0;}));});
+      // the promised match itself is on the card (m.pm), even if trouble before the bell changed it: whether the promise was kept is for the promise to say
+      var on=card.some(function(m){return m.pm===l.id&&flat(m.sides).indexOf(who)>=0;})||card.some(function(m){return flat(m.sides).indexOf(who)>=0&&(l.title?m.title===l.title:l.sides[1].every(function(id){return id==null||!inE[id]||flat(m.sides).indexOf(id)>=0;}));});
       if(!on)v.errors.push('Promised for tonight: '+lockLabel(S,l)+(l.why?' ('+l.why+')':'')+'. It has to be on the card.');
     });
     // a story planned to end tonight, with one of the two promised a different match: both cannot happen

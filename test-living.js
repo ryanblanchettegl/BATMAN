@@ -34,7 +34,7 @@ ok(stale >= 1 && ripe >= 1, 'no feud ever went stale or ripe');
     for (let i = 0; i < 6 && !f.res; i++) { noPromises(); week(S); }
     ok(f.res && !f.dead, 'the planned ending did not settle the feud with a payoff (res ' + f.res + ', dead ' + f.dead + ')'); }
   // a match marked as the ending ends it on a weekly show
-  const g = S.feuds.filter(x => !x.res && x.promo === S.player)[0];
+  const g = S.feuds.filter(x => !x.res && x.promo === S.player && x.a.concat(x.b).every(id => !(S.w[id].inj > 0)))[0];   // two who can work: an injured one cannot be booked to end it
   // (a disqualification or a count-out is not an ending, so it may take a second try)
   if (g) { for (let t = 0; t < 4 && !g.res; t++) { if (S.qi >= S.queue.length) E.endWeek(S); noPromises(); const c = E.suggest(S); c.unshift({ mt: '1v1', sides: [[g.a[0]], [g.b[0]]], len: 'M', stip: 'std', end: 1 }); E.fitShow(S, c);
     if (!E.validate(S, c).errors.length) E.runPlayerShow(S, c); else S.qi++; }

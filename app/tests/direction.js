@@ -81,7 +81,7 @@ async function run(mode) {
         main.id = who.id; main.name = who.name;
         const q = await whole(page, '.callbox .q');
         ok(mode, 'after the main event the truck asks who the company is built around', q.includes(main.name) && /who is this company built around/.test(q), q);
-        ok(mode, 'with nobody at the centre yet there are two answers', (await page.$$('[data-t="live-pick"]')).length === 2 && (await txt(page, '[data-t="live-pick"][data-c="1"]')).includes('BUILD THE COMPANY AROUND ' + main.name.toUpperCase()), await txt(page, '[data-t="live-pick"][data-c="1"]'));
+        ok(mode, 'with nobody at the centre yet there are two answers', (await page.$$('[data-t="live-pick"]')).length === 2 && (await txt(page, '[data-t="live-pick"][data-c="1"]')).toUpperCase().includes('BUILD THE COMPANY AROUND ' + main.name.toUpperCase()), await txt(page, '[data-t="live-pick"][data-c="1"]'));
         ok(mode, 'the match that led to it is still on screen', (await page.$$('#live .lv-log .ln')).length >= 3 && /After the bell|Who the show is built around/i.test(await txt(page, '#live .lv-head .eyebrow')));
         await fit('the call about who the show is built around');
         await shot(page, 'direction-' + mode + '-face');

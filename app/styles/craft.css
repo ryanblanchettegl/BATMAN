@@ -229,7 +229,7 @@ html body .win.ppop .wb{font-family:var(--hand);font-size:1.06em}
 .after1 > .row > .muted{background:#fbf8ee;color:var(--ink);font-family:var(--hand);padding:.1em 1.4ch;box-shadow:.1em .16em .2em rgba(0,0,0,.35)}
 /* tips: sticky notes in hand */
 .tipslip{background:#fff1a6;border:0;border-radius:0;font-family:var(--hand);font-size:1.04em;box-shadow:.15em .25em .3em rgba(0,0,0,.35)}
-.status .key .tip{background:#fff1a6;border:0;border-radius:0;font-family:var(--hand);font-size:1.04em;color:var(--ink);box-shadow:.15em .25em .3em rgba(0,0,0,.4);transform:rotate(-1deg)}
+.status .key .tip{background:#fff1a6;border:0;border-radius:0;font-family:var(--hand);font-size:1.04em;color:var(--ink);box-shadow:.15em .25em .3em rgba(0,0,0,.4);transform:rotate(-1deg);right:.5em}   /* set in from the edge: the tilt would push a corner off the window */
 .status .key .tip .th{background:none;color:#c23a30;font-family:var(--marker);font-weight:400}
 .status .key .tip .tl,.status .key .tip *{color:var(--ink)}
 
