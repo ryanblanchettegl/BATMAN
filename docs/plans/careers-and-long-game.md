@@ -1,6 +1,6 @@
-# Careers and the long game: six features from other genres
+# Careers and the long game: seven features from other genres
 
-Bill, 21 October 2026: "I like ideas 1-5 add those to long term planning", then "one life in wrestling is awesome too", and dropped free agency week ("wrestling doesn't have a free agency week, lets not do that"), then added "Path to the Hall of Fame i like" and "i like wrestling families". These come from the genre research doc (career, sports management, dynasty, 4X, grand strategy and simulation games): https://claude.ai/artifact/VGDEmfsJv4LgCXPwn8TyUQ. Nothing here is built. They sit in `TASKS.md` section 14, after the balance and first-hour work (Bill paused new features until that is done).
+Bill, 21 October 2026: "I like ideas 1-5 add those to long term planning", then "one life in wrestling is awesome too", and dropped free agency week ("wrestling doesn't have a free agency week, lets not do that"), then added "Path to the Hall of Fame i like" "i like wrestling families" and "I like coalitions". These come from the genre research doc (career, sports management, dynasty, 4X, grand strategy and simulation games): https://claude.ai/artifact/VGDEmfsJv4LgCXPwn8TyUQ. Nothing here is built. They sit in `TASKS.md` section 14, after the balance and first-hour work (Bill paused new features until that is done).
 
 Sizes follow `WISHLIST.md`: S is one commit, M is two or three, L is a week with this plan as its start.
 
@@ -93,3 +93,17 @@ Steps:
 1. Family links on wrestlers (`w.fam`: parent, siblings) kept in a world package and made by the rookie class, with a headless test over a long save.
 2. What the name does: the early lift, expectations, the parent's history in the commentary and promos.
 3. The family tree on the file, and dynasties on the Net and in the magazine.
+
+## 7. Coalitions (M)
+
+Bill, 21 October 2026: "I like coalitions". Borrowed from Europa Universalis IV's aggressive expansion: grow too fast and your neighbours band together against you.
+
+Raid rivals too often, take over too many markets, or sign every hot free agent, and the rival owners team up against the player. A coalition shares talent among its members, books against the player's big nights, and refuses working agreements until things cool down. How close the world is to one is said in words on the World page ("They are watching you", "Talk of a pact", "A pact against you"), and the press reports it as it forms. It cools on its own over time, faster if the player makes peace (a working agreement, a talent loan, a fair invasion deal). A coalition can also form against a rival that grows too fast, and the player can join it.
+
+What it uses: rival owners as people (wish 59), working agreements (wish 61), raids (wish 60), markets (`S.mkt`), invasions (`src/81-invasion.js`), head-to-head nights (`src/88-nights.js`) and the press (`src/99-press.js`). No `rnd(S)` outside the rivals' own decisions.
+
+Steps:
+
+1. A world measure of how aggressive each company has been (raids, markets taken, signings over the last year), headless, with a test that a calm game never forms a coalition.
+2. The coalition itself: who joins (rival owners' attitudes), what it does each week, how it cools.
+3. The line on the World page, the press, and a matter on the desk when one forms or breaks up.
