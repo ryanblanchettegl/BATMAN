@@ -1,6 +1,6 @@
 /* Input that is not a mouse: keyboard shortcuts, a TV remote, a gamepad. Also the screen mode (desk, tablet, TV). There is no phone or portrait layout: a tall narrow window is asked to turn sideways (styles/base.css).
    See docs/design.md, sections 4 and 5. */
-import { SHOW_SCENES, allScenes, paint, Scene } from './kit/scene';
+import { SHOW_SCENES, allScenes, paint, Scene, at } from './kit/scene';
 import { blank } from './kit/puppet';
 import { beatPick } from './shared/moment';
 import { G, ui, pref, reduceMotion, redraw, closeModal, openModal, popCard } from './store';
@@ -219,9 +219,12 @@ export function initInput() {
     sheet: (ids: string[], w = 320, h = 200) => { const all = allScenes([]); return ids.map(id => { const sc = all.find(x => x.id === id) as Scene | undefined; if (!sc) return { id, imgs: [] as string[] };
       const cast: any = { A: { ...blank(0), name: 'A' }, B: { ...blank(1), name: 'B' } }, c = document.createElement('canvas'); c.width = w; c.height = h; const ctx = c.getContext('2d')!;
       return { id, imgs: sc.keys.map(k => { paint(ctx, sc, k.t, cast); return c.toDataURL('image/png'); }) }; }); },
+    /** How one value of one figure moves through a scene (for checking motion is smooth): n samples of x, y, r or a joint. */
+    curve: (id: string, who: string, k: string, n = 40) => { const sc = allScenes([]).find(x => x.id === id) as Scene | undefined; if (!sc) return []; const end = sc.keys[sc.keys.length - 1].t, out: number[] = [];
+      for (let i = 0; i <= n; i++) { const f = at(sc, end * i / n).figs[who] as any; out.push(f ? Math.round((k in f ? f[k] : f.p[k] || 0) * 100) / 100 : NaN); } return out; },
     /** The same in 3D, by the shared renderer: each keyframe, and the moment halfway to the next, so a pass-through shows. */
     sheet3d: (ids: string[], w = 360, h = 220) => { const all = allScenes([]); return ids.map(id => { const sc = all.find(x => x.id === id) as Scene | undefined; if (!sc) return { id, imgs: [] as string[] };
-      const cast: any = { A: { ...blank(0), name: 'A' }, B: { ...blank(1), name: 'B' } }, ts: number[] = [];
+      const cast: any = { A: { ...blank(0), name: 'A' }, B: { ...blank(1), name: 'B' }, C: { ...blank(2), name: 'C' }, D: { ...blank(3), name: 'D' } }, ts: number[] = [];
       sc.keys.forEach((k, i) => { ts.push(k.t); if (i + 1 < sc.keys.length) ts.push((k.t + sc.keys[i + 1].t) / 2); });
       return { id, imgs: ts.map(t => snap3d(sc, t, cast, w, h) || '') }; }); } };
 }

@@ -104,7 +104,7 @@ export function fxClass(sc: Scene): string { const f = sc.fx || {}; return SCENE
 /** When the broadcast plays a scene. A scene made by a player can take any of these. */
 /** What a scene is for. The match moments play on the broadcast now; the rest are where scenes go next
     (Ryan, 18 October: breaking news, talk show highlights, posters, magazine covers, portraits, everything). */
-export const WHEN: [string, string][] = [['start', 'The opening bell'], ['mid', 'Back and forth'], ['nearfall', 'A near fall'], ['finish', 'The finish'], ['champion', 'A new champion'], ['promo', 'A promo'], ['attack', 'An attack'], ['entrance', 'The entrance'], ['taunt', 'A taunt'],
+export const WHEN: [string, string][] = [['start', 'The opening bell'], ['mid', 'Back and forth'], ['nearfall', 'A near fall'], ['finish', 'The finish'], ['champion', 'A new champion'], ['promo', 'A promo'], ['attack', 'An attack'], ['entrance', 'The entrance'], ['taunt', 'A taunt'], ['tag', 'A tag team match'],
   ['desk1', 'The desk: play-by-play talking'], ['desk2', 'The desk: colour talking'], ['news', 'Breaking news'], ['talk', 'A talk show'], ['poster', 'A poster'], ['cover', 'A magazine cover'], ['portrait', 'A portrait'], ['any', 'Only by hand']];
 /** What a still picture is for: the moments the booker has to answer (Ryan, 18 October: "one static diorama image of
     the wrestler getting hurt, backstage fight"). The desk and the broadcast pick one by what the matter is about. */
@@ -380,12 +380,24 @@ export function at(sc: Scene, time: number): Key {
   for (let i = 0; i < ks.length - 1; i++) {
     const a = ks[i], b = ks[i + 1];
     if (time < b.t) {
-      const t = ease((time - a.t) / Math.max(0.001, b.t - a.t), b.ease), figs: Record<string, Fig> = {};
+      const u = (time - a.t) / Math.max(0.001, b.t - a.t), t = ease(u, b.ease), figs: Record<string, Fig> = {};
+      // fluid motion (Ryan, 20 October): with no ease of its own a move flows through its keyframes on a curve instead of
+      // stopping at each one; a joint that turns back at a keyframe still settles there (its tangent is flat)
+      const k0 = ks[i - 1], k3 = ks[i + 2], flow = !b.ease, dt = b.t - a.t;
+      const herm = (va: number, vb: number, v0: number | undefined, v3: number | undefined) => {
+        if (!flow) return mix(va, vb, t);
+        const tan = (prev: number | undefined, here: number, next: number, span: number) => { if (prev == null) return 0; const d1 = here - prev, d2 = next - here; return d1 * d2 <= 0 ? 0 : (next - prev) / span * dt; };
+        const m1 = k0 ? tan(v0, va, vb, b.t - k0.t) : 0, m2 = k3 ? tan(va, vb, v3 == null ? vb : v3, k3.t - a.t) : 0;
+        const u2 = u * u, u3 = u2 * u;
+        return (2 * u3 - 3 * u2 + 1) * va + (u3 - 2 * u2 + u) * m1 + (-2 * u3 + 3 * u2) * vb + (u3 - u2) * m2;
+      };
       for (const id in a.figs) {
         const fa = a.figs[id], fb = b.figs[id]; if (!fb) { figs[id] = fa; continue; }
-        const p: Record<string, number> = {}; for (const k of new Set([...Object.keys(fa.p), ...Object.keys(fb.p)])) p[k] = mix(fa.p[k] || 0, fb.p[k] || 0, t);
+        const f0 = k0 && k0.figs[id] && (k0.figs[id].on || '') === (fa.on || '') ? k0.figs[id] : undefined, f3 = k3 && k3.figs[id] && (k3.figs[id].on || '') === (fb.on || '') ? k3.figs[id] : undefined;
+        const p: Record<string, number> = {}; for (const k of new Set([...Object.keys(fa.p), ...Object.keys(fb.p)])) p[k] = herm(fa.p[k] || 0, fb.p[k] || 0, f0 ? f0.p[k] || 0 : undefined, f3 ? f3.p[k] || 0 : undefined);
         const h = t < 0.5 ? fa : fb, same = (fa.on || '') === (fb.on || '');   // picked up or put down: the hold changes half way
-        figs[id] = { x: same ? mix(fa.x, fb.x, t) : h.x, y: same ? mix(fa.y, fb.y, t) : h.y, r: mix(fa.r, fb.r, t), f: h.f, z: same ? mix(fa.z, fb.z, t) : h.z, p, e: h.e, s: mix(fa.s || 1, fb.s || 1, t), m: h.m, on: h.on, lz: h.lz, b: h.b, hide: h.hide, lv: same ? mix(fa.lv || 0, fb.lv || 0, t) : h.lv };
+        const ch = (k: 'x' | 'y' | 'z' | 'r') => herm(fa[k], fb[k], f0 ? f0[k] : undefined, f3 ? f3[k] : undefined);
+        figs[id] = { x: same ? ch('x') : h.x, y: same ? ch('y') : h.y, r: ch('r'), f: h.f, z: same ? ch('z') : h.z, p, e: h.e, s: mix(fa.s || 1, fb.s || 1, t), m: h.m, on: h.on, lz: h.lz, b: h.b, hide: h.hide, lv: same ? mix(fa.lv || 0, fb.lv || 0, t) : h.lv };
       }
       const props = a.props.map(pa => { const pb = b.props.find(x => x.id === pa.id); return pb ? { ...pa, x: mix(pa.x, pb.x, t), y: mix(pa.y, pb.y, t), r: mix(pa.r, pb.r, t) } : pa; });
       const ca = a.cam || CAM0, cb = b.cam || CAM0, cam = { x: mix(ca.x, cb.x, t), y: mix(ca.y, cb.y, t), z: mix(ca.z, cb.z, t), r: mix(ca.r || 0, cb.r || 0, t) };
@@ -495,8 +507,8 @@ const COVER_A = { sh_n: -120, el_n: -30, sh_f: -60, el_f: -40, kn_n: -10, kn_f: 
 
 /** A canned entrance on the ramp: who comes out walks toward the camera through a few poses. Wrestlers pick one in
     Create a Player (their `entrance`); the show picks for anybody who has not. */
-function ent(id: string, name: string, ks: [number, Record<string, number>, string, number][]): Scene {
-  return { v: 1, id, name, when: 'entrance', set: 'ramp', slots: [{ id: 'A', n: 'Who comes out', role: 'a' }], keys: ks.map(([t, p, e, x]) => ({ t, figs: { A: STD(x, 1, p, e, 0.6) }, props: [] })) };
+function ent(id: string, name: string, ks: ([number, Record<string, number>, string, number] | [number, Record<string, number>, string, number, number])[]): Scene {
+  return { v: 1, id, name, when: 'entrance', set: 'ramp', slots: [{ id: 'A', n: 'Who comes out', role: 'a' }], keys: ks.map(([t, p, e, x, y]) => ({ t, figs: { A: { ...STD(x, 1, p, e, 0.6), ...(y != null ? { y: WAIST + y } : {}) } }, props: [] })) };
 }
 /** The commentary desk: two in suits and headsets, the one with the line talking (the mouth moving, a hand going),
     the other listening and turning to them, and the third chair open for a guest. It loops while the line is on. */
@@ -611,6 +623,36 @@ export const SCENES: Scene[] = flourishAll([
     [0, { hip_n: 14, kn_n: -10, hip_f: -12, sh_n: 30, el_n: 90, sh_f: 20, el_f: 95 }, 'smirk', 0],
     [0.8, { sh_n: 150, el_n: 120, sh_f: -20, el_f: -30, head: 10 }, 'smirk', 0.3],
     [1.6, { torso: 8, sh_n: 80, el_n: 60, sh_f: -80, el_f: -60, head: 12 }, 'snarl', 0.4]]),
+  ent('ent_run', 'Sprints out', [
+    [0, { torso: 20, sh_n: 60, el_n: 80, sh_f: -40, el_f: 70, hip_n: 45, kn_n: -50, hip_f: -30, kn_f: -60 }, 'roar', -1.5],
+    [0.5, { torso: 20, sh_n: -40, el_n: 70, sh_f: 60, el_f: 80, hip_n: -30, kn_n: -60, hip_f: 45, kn_f: -50 }, 'roar', -0.5],
+    [1.0, { torso: 20, sh_n: 60, el_n: 80, sh_f: -40, el_f: 70, hip_n: 45, kn_n: -50, hip_f: -30, kn_f: -60 }, 'roar', 0.5],
+    [1.6, { sh_n: 165, el_n: 10, sh_f: -165, el_f: -10, head: 10 }, 'shout', 1.0]]),
+  ent('ent_kneel', 'Kneels in the lights', [
+    [0, { head: -20, sh_n: 10, sh_f: -10 }, '', 0],
+    [0.9, { ...KN, head: -25, sh_n: 20, el_n: 90, sh_f: -20, el_f: -90 }, '', 0, -1.33],
+    [1.8, { ...KN, head: 15, sh_n: 160, el_n: 10, sh_f: -160, el_f: -10 }, 'roar', 0, -1.33],
+    [2.6, { sh_n: 160, el_n: 10, sh_f: -160, el_f: -10, head: 12 }, 'shout', 0.2]]),
+  ent('ent_salute', 'Salutes the crowd', [
+    [0, { sh_n: 10, sh_f: -10 }, '', -0.6],
+    [0.8, { sh_n: 150, el_n: 130, head: 4 }, 'smirk', -0.2],
+    [1.5, { sh_n: 150, el_n: 130, head: 4, sh_f: -40 }, 'smirk', 0.2],
+    [2.2, { sh_n: 100, el_n: 10, sh_f: -100, el_f: -10, head: 6 }, 'shout', 0.4]]),
+  ent('ent_highfive', 'Slaps hands with the fans', [
+    [0, { sh_n: 80, el_n: 10, sh_f: -20 }, 'shout', -1.4],
+    [0.6, { sh_n: 20, sh_f: -80, el_f: -10 }, 'shout', -0.6],
+    [1.2, { sh_n: 80, el_n: 10, sh_f: -20 }, 'shout', 0.2],
+    [1.8, { sh_n: 165, el_n: 10, sh_f: -165, el_f: -10, head: 8 }, 'roar', 0.8]]),
+  ent('ent_dance', 'Dances to the music', [
+    [0, { hip_n: 20, kn_n: -30, sh_n: 120, el_n: 60, sh_f: -40, el_f: -60, torso: 8 }, 'smirk', -0.4],
+    [0.5, { hip_f: -20, kn_f: -30, sh_n: 40, el_n: 60, sh_f: -120, el_f: -60, torso: -8 }, 'smirk', 0],
+    [1.0, { hip_n: 20, kn_n: -30, sh_n: 120, el_n: 60, sh_f: -40, el_f: -60, torso: 8 }, 'shout', 0.4],
+    [1.5, { hip_f: -20, kn_f: -30, sh_n: 40, el_n: 60, sh_f: -120, el_f: -60, torso: -8 }, 'smirk', 0.6]]),
+  ent('ent_slow', 'Head down, slow and cold', [
+    [0, { head: -25, sh_n: 5, sh_f: -5, torso: 5 }, '', 0],
+    [1.2, { head: -20, sh_n: 5, sh_f: -5, torso: 5, hip_n: 10, hip_f: -10 }, '', 0.2],
+    [2.4, { head: 10, sh_n: 5, sh_f: -5 }, 'snarl', 0.4],
+    [3.0, { head: 10, sh_n: 90, el_n: 120, sh_f: -5 }, 'snarl', 0.5]]),
   ...[  // taunts: whoever is on top plays to the building, the other down on the mat. Wrestlers pick up to three in Create a Wrestler.
     ['taunt_crowd', 'Plays to the crowd', [[0, { sh_n: 100, el_n: 20, sh_f: -100, el_f: -20, head: 6 }, 'smirk'], [0.8, { sh_n: 165, el_n: 10, sh_f: -165, el_f: -10, head: 12 }, 'roar']]],
     ['taunt_point', 'Points down at them', [[0, { sh_n: 40, el_n: 30, sh_f: -10, head: -4 }, 'snarl'], [0.7, { torso: 10, sh_n: 75, el_n: 0, sh_f: -20, el_f: -20, head: -10 }, 'shout']]],
@@ -1004,6 +1046,31 @@ const MORE2: Record<string, () => Scene> = {
   senton: () => offTop('A senton bomb', 'SENTON!', { ...POSED('back', 6.4, 8.2, -1, 5.6), r: 200, p: { hip_n: 80, kn_n: -100, hip_f: 75, kn_f: -100, sh_n: 160, sh_f: 150 } }, { ...POSED('back', 3.5, 5.9, -1, 0.6), p: { hip_n: 70, kn_n: -60 } }),
   shootingstar: () => offTop('A shooting star press', 'SHOOTING STAR!', { ...POSED('moonsault', 7.6, 9.2, -1, 6.5), r: 120 }, POSED('splash', 3.5, 5.9, -1, 0.75), { ...POSED('splash', 5.2, 7.4, -1, 4), r: 300 }),
 };
+/* ---------- tag team matches (Ryan, 20 October): the hot tag, a double team, the ring cut in half. Four wrestlers: A and
+   their partner C, B and their partner D (hooks pa and pb, filled from the match's sides). A partner stands on the apron
+   outside the ropes, by their corner, until they are tagged in. ---------- */
+const TAG_SLOTS: Slot[] = [{ id: 'A', n: 'Wrestler A', role: 'a' }, { id: 'B', n: 'Wrestler B', role: 'b' }, { id: 'C', n: 'Partner of A', role: 'c', hook: 'pa' }, { id: 'D', n: 'Partner of B', role: 'c', hook: 'pb' }, { id: 'R', n: 'The referee', role: 'ref' }];
+const APRON = (x: number, f: number, p: Record<string, number> = {}, e?: string): Fig => ({ ...POSED('stand', x, 0.2, f), p: { sh_n: 40, el_n: 20, ...p }, e });
+const TAGCAM = C3([-3, 7, 26], [-3, 3, 0], 40), TAGCAM2 = C3([2, 6, 22], [-1, 3, 0], 38);
+const tagScene = (id: string, name: string, keys: Key[]): Scene => ({ v: 1, id, name, when: 'tag', set: 'ring', slots: TAG_SLOTS, keys });
+export const TAG_SCENES: Scene[] = flourishAll([
+  tagScene('tag_hot', 'The hot tag', [
+    { t: 0, figs: { A: POSED('front', -4.5, 0, 1, 0, 'pain'), B: FG('doubled', -2.2, -1, { sh_n: 80, el_n: 20 }), C: APRON(-10.8, 1, { sh_n: 100, el_n: 0 }, 'shout'), D: APRON(10.8, -1), R: REF_(0, -4, -1) }, props: [], cam3: TAGCAM },
+    { t: 0.8, figs: { A: { ...POSED('dive', -7.4, 0, -1), y: W_ - 1.2, e: 'shout' }, B: FG('stand', -3.4, -1, { sh_n: 90, el_n: 0 }, { e: 'shout' }), C: APRON(-10.8, 1, { sh_n: 110, el_n: 0 }, 'shout'), D: APRON(10.8, -1), R: REF_(0, -4, -1) }, props: [], cam3: TAGCAM },
+    { t: 1.2, figs: { A: POSED('front', -8.6, 0, -1, 0, 'pain'), B: FG('fists', -3, -1), C: { ...POSED('leap', -8.4, 0.6, 1), y: W_ + 1.6, e: 'roar' }, D: APRON(10.8, -1), R: { ...REF_(0, -4, -1), p: { sh_n: 100, el_n: 0 } } }, props: [burst('b1', 'TAG!', -8, 5)], cam3: TAGCAM },
+    { t: 1.7, figs: { A: APRON(-10.8, 1, {}, 'hurt'), B: FG('fists', -1.6, -1), C: POSED('charge', -4.4, 0.4, 1), D: APRON(10.8, -1), R: REF_(0, -4, -1) }, props: [], cam3: TAGCAM2 },
+    { t: 2.1, ease: 'in', figs: { A: APRON(-10.8, 1, { sh_n: 160 }, 'shout'), B: FG('back', 0.2, -1, {}, { e: 'pain' }), C: { ...FG('stand', -1.6, 1, { torso: 16, sh_n: 100, el_n: 0, sh_f: -40, hip_n: 34, kn_n: -24, hip_f: -28 }, { e: 'roar' }), z: 0.4 }, D: APRON(10.8, -1, { sh_n: 60 }, 'shout'), R: REF_(0, -4, -1) }, props: [burst('b2', 'HOT TAG!', 1.6, 3.4, PAL.red)], cam3: TAGCAM2 }]),
+  tagScene('tag_double', 'A double team', [
+    { t: 0, figs: { A: FG('fists', -2.2, 1), C: { ...FG('fists', -3.8, 1), z: -0.8 }, B: FG('stagger', 0.6, -1), D: APRON(10.8, -1), R: REF_(3.5, -4, -1) }, props: [], cam3: CM.wide },
+    { t: 0.6, figs: { A: FG('charge', -1.2, 1), C: { ...FG('charge', -2.8, 1), z: -0.8 }, B: FG('stagger', 0.6, -1), D: APRON(10.8, -1, { sh_n: 100 }, 'shout'), R: { ...REF_(3.5, -4, -1), p: { sh_n: 100, el_n: 0 }, e: 'shout' } }, props: [], cam3: CM.close },
+    { t: 1.0, ease: 'in', figs: { A: FG('stand', 0, 1, { torso: 14, sh_n: 95, el_n: 0, hip_n: 30, kn_n: -20 }, { e: 'roar' }), C: { ...FG('stand', -1.4, 1, { torso: 14, sh_n: 95, el_n: 0, hip_n: 30, kn_n: -20 }, { e: 'roar' }), z: -0.8 }, B: FG('back', 1.0, -1, {}, { y: W_ + 0.6, r: 140, e: 'pain' }), D: APRON(10.8, -1), R: REF_(3.5, -4, -1) }, props: [burst('b1', 'DOUBLE TEAM!', 3.6, 3.4, PAL.red)], cam3: CM.low },
+    { t: 1.7, figs: { A: FG('point', 0.2, 1, { sh_n: 165 }), C: { ...FG('point', -1.6, 1, { sh_n: 165 }), z: -0.8 }, B: FG('back', 2, -1, {}, { e: 'pain' }), D: APRON(10.8, -1), R: REF_(3.5, -4, -1) }, props: [], cam3: CM.high }]),
+  tagScene('tag_cutoff', 'Cutting the ring in half', [
+    { t: 0, figs: { B: FG('stand', 6.2, -1, { sh_n: 60, el_n: 40 }, { e: 'snarl' }), A: POSED('sit', 7.6, 0.2, -1, 0, 'pain'), D: APRON(10.8, -1, { sh_n: 60, el_n: 90 }, 'snarl'), C: APRON(-10.8, 1, { sh_n: 110, el_n: 0 }, 'shout'), R: REF_(0, -4, 1) }, props: [], cam3: C3([3, 7, 26], [3, 3, 0], 40) },
+    { t: 0.6, figs: { B: FG('kick', 6.4, -1, { hip_n: 50, kn_n: -40 }, { e: 'roar' }), A: POSED('sit', 7.8, 0.2, -1, 0, 'pain'), D: APRON(10.8, -1, { sh_n: 160 }, 'roar'), C: APRON(-10.8, 1, { sh_n: 110, el_n: 0 }, 'shout'), R: { ...REF_(0, -4, 1), p: { sh_n: 100, el_n: 0 }, e: 'shout' } }, props: [burst('b1', 'STOMP!', 8.6, 2.6)], cam3: C3([5, 5, 19], [6, 2.6, 0], 36) },
+    { t: 1.2, figs: { B: FG('stand', 6.6, -1, { sh_n: 100, el_n: 0 }, { e: 'shout' }), A: POSED('back', 7.8, 0.2, -1, 0, 'pain'), D: APRON(10.8, -1, { sh_n: 100, el_n: 0 }, 'shout'), C: APRON(-10.8, 1, { sh_n: 165, el_n: 0 }, 'shout'), R: REF_(0, -4, 1) }, props: [], cam3: C3([3, 7, 26], [3, 3, 0], 40) },
+    { t: 1.8, figs: { B: FG('stand', 8.6, 1, { sh_n: 100, el_n: 0 }, { b: true }), A: POSED('back', 7.8, 0.2, -1, 0, 'pain'), D: APRON(10.8, -1, { sh_n: 110, el_n: 0 }, 'smirk'), C: APRON(-10.8, 1, { sh_n: 60 }, 'snarl'), R: REF_(0, -4, 1) }, props: [burst('b2', 'TAG!', 9.6, 5)], cam3: C3([3, 7, 26], [3, 3, 0], 40) }]),
+]);
 /** The moves as scenes of their own, kind 'move', so a wrestler can take one as a finisher or a signature (Create a Wrestler, Moves). */
 export const MOVES: Scene[] = Object.keys(CLASSIC).map(k => flourish({ ...CLASSIC[k](), id: 'move_' + k, when: 'move' })).concat(Object.keys(MORE).map(k => flourish({ ...MORE[k](), id: 'move_' + k, when: 'move' })), Object.keys(MORE2).map(k => flourish({ ...MORE2[k](), id: 'move_' + k, when: 'move' })));
 /* ---------- a new scene starts from a setup: the set and the people placed for it ---------- */
@@ -1203,9 +1270,9 @@ export const BEAT_SCENES: Scene[] = flourishAll([
 export const POSTERS: Scene[] = [{ v: 1, id: 'poster_show', name: 'The poster for the next show', when: 'poster', set: 'stadium', still: true, frame: 'square', slots: SAB, keys: [
   { t: 0, figs: { A: STD(-1.45, 1, { ...CROSS, head: 4 }, 'snarl', 0.4), B: STD(1.45, -1, { ...CROSS, head: 4 }, 'snarl', 0.4) }, props: [burst('vs', 'VS', 0, 0.4, PAL.red), hd('TONIGHT', -2.35)], cam: { x: 0, y: 0.55, z: 1.38 } }] }];
 /** Every scene of the show: the booked kinds and the storyline beats, and the poster. */
-export const SHOW_SCENES: Scene[] = SEG_SCENES.concat(BEAT_SCENES, POSTERS);
+export const SHOW_SCENES: Scene[] = SEG_SCENES.concat(BEAT_SCENES, POSTERS, TAG_SCENES);
 export const SHOW_WHEN: [string, string][] = SEG_WHEN.concat(BEAT_WHEN);
-export function allScenes(world: Scene[]): Scene[] { const ids = new Set(world.map(s => s.id)); return world.concat(SCENES.concat(STILLS, SEG_SCENES, BEAT_SCENES, POSTERS, MOVES).filter(s => !ids.has(s.id))); }
+export function allScenes(world: Scene[]): Scene[] { const ids = new Set(world.map(s => s.id)); return world.concat(SCENES.concat(STILLS, SEG_SCENES, BEAT_SCENES, POSTERS, MOVES, TAG_SCENES).filter(s => !ids.has(s.id))); }
 /** The scenes that can play for a moment of the broadcast. */
 export function scenesFor(when: string, world: Scene[]): Scene[] { return allScenes(world).filter(s => s.when === when); }
 export const copy = <T>(x: T): T => JSON.parse(JSON.stringify(x));

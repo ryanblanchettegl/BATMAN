@@ -618,7 +618,7 @@ export class Diorama3D {
       The picture is taken just before the real one, with the screen itself left out of it. */
   tronRT: THREE.WebGLRenderTarget | null = null; tronScr: THREE.Mesh | null = null;
   feed() {
-    const s = this.tronScr; if (!s) return;
+    const s = this.tronScr; if (!s || this.set === 'ramp') return;   // on the entrance stage the camera looks straight at the screen: it keeps its own graphic
     if (!this.tronRT) { this.tronRT = new THREE.WebGLRenderTarget(512, 296); this.tronRT.texture.colorSpace = THREE.SRGBColorSpace; s.material = new THREE.MeshBasicMaterial({ map: this.tronRT.texture, toneMapped: false }); }
     s.visible = false; this.r.setRenderTarget(this.tronRT); this.r.render(this.scene, this.cam); this.r.setRenderTarget(null); s.visible = true;
   }

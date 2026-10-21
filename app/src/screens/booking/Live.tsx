@@ -322,6 +322,11 @@ function scenePick(r: any, s: any, at: number, done: boolean): { sc: Scene; cast
   // a match under rules with a set of its own is played there: the cage, the cell with its roof, the ring of fire, the belt hung for the ladder
   const sk = s.sk || Object.keys(E.STIP).find(k => E.STIP[k].n === s.stip) || '', rig = E.STIP[sk] && E.STIP[sk].set;
   if (rig && IN_RING.includes(sc0.set)) sc0 = { ...sc0, set: rig };
+  // a tag match: now and then the middle plays a tag team moment (the hot tag, a double team, the ring cut in half), with both partners in it
+  const tagged = when === 'mid' && ns === 2 && per >= 2 && hsh % 3 === 1 ? choose('tag', now) : null;
+  if (tagged) { const sa = sideOf(a), pa = ids.find(id => sideOf(id) === sa && id !== a), bb = ids.find(id => sideOf(id) !== sa)!, pb = ids.find(id => sideOf(id) !== sa && id !== bb);
+    const scT = fillScene(tagged, { ...E.sceneHooks(S, { ids, a, b: bb }), pa: pa as number, pb: pb as number }, cast);
+    if (scT) return { sc: scT, cast, play: i + ':tag' + key, label: scT.name + ': ' + Object.values(cast).map(nm).join(', ') }; }
   const b = ids.find(id => sideOf(id) !== sideOf(a)), wins = winSide >= 0 ? ids.filter(id => sideOf(id) === winSide) : [];
   const sc = fillScene(sc0, E.sceneHooks(S, { ids, a, b, win: wins, title: s.title || null }), cast); if (!sc) return null;
   return { sc, cast, play: i + ':' + key, label: sc.name + ': ' + Object.values(cast).map(nm).join(' and ') };
