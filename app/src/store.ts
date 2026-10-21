@@ -6,11 +6,11 @@ export const KEY = 'ewf9000-save-4', UKEY = 'ewf9000-universes', PKEY = 'gorilla
 export const VER = '0.77';
 
 /* ---------- preferences ---------- */
-export interface Prefs { snd: boolean; type: boolean; crt: boolean; boot: boolean; letter: boolean; screen: 'auto' | 'desk' | 'tablet' | 'tv'; zoom: number; speed: number; auto: boolean; pace: 'tv' | 'full' | 'quick' | 'results'; pv?: number; motion: 'auto' | 'reduce' | 'full'; fxvol: number; uni: string ; u2?: boolean; pics: boolean }
+export interface Prefs { snd: boolean; type: boolean; crt: boolean; boot: boolean; letter: boolean; tut: boolean; screen: 'auto' | 'desk' | 'tablet' | 'tv'; zoom: number; speed: number; auto: boolean; pace: 'tv' | 'full' | 'quick' | 'results'; pv?: number; motion: 'auto' | 'reduce' | 'full'; fxvol: number; uni: string ; u2?: boolean; pics: boolean }
 function readPrefs(): Prefs {
   let o: any = {};
   try { o = JSON.parse(localStorage.getItem(PKEY) || '{}') || {}; } catch (e) { /* storage can be blocked */ }
-  return { snd: o.snd !== false, type: o.type !== false, crt: false, boot: o.boot !== false, letter: o.letter !== false, screen: o.screen || 'auto', zoom: +o.zoom || 1, speed: +o.speed || 1, auto: o.auto !== false, pace: o.pv === 2 && (o.pace === 'full' || o.pace === 'quick' || o.pace === 'results' || o.pace === 'tv') ? o.pace : 'tv', pv: 2, fxvol: +o.fxvol || 1, motion: o.motion === 'reduce' || o.motion === 'full' ? o.motion : 'auto', uni: o.u2 ? (o.uni || 'parody') : (!o.uni || o.uni === 'public_domain' ? 'parody' : o.uni), u2: true, pics: o.pics !== false };
+  return { snd: o.snd !== false, type: o.type !== false, crt: false, boot: o.boot !== false, letter: o.letter !== false, tut: o.tut !== false, screen: o.screen || 'auto', zoom: +o.zoom || 1, speed: +o.speed || 1, auto: o.auto !== false, pace: o.pv === 2 && (o.pace === 'full' || o.pace === 'quick' || o.pace === 'results' || o.pace === 'tv') ? o.pace : 'tv', pv: 2, fxvol: +o.fxvol || 1, motion: o.motion === 'reduce' || o.motion === 'full' ? o.motion : 'auto', uni: o.u2 ? (o.uni || 'parody') : (!o.uni || o.uni === 'public_domain' ? 'parody' : o.uni), u2: true, pics: o.pics !== false };
 }
 export const pref: Prefs = readPrefs();
 /** Reduced motion: switched on in Options, or by the system when Options says Auto. Stops the typewriter and the blinking cursor. */

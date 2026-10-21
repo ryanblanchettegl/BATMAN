@@ -8,7 +8,7 @@ import { G, act, say, view, slice, openModal, closeModal, Modal } from '../../st
 import { book } from '../../flow';
 import { go } from '../../nav';
 import { Window, Panel, Tabs, Sel, Field, Tag, Name, Meter, CheckLine, Empty, Btn, Txt, Opt, Group, LightPic } from '../../kit';
-import { Match, pickSide, setPlan, sel, pickMatch, pickSeg, moveMatch, removeMatch, run, lockMatch } from './run';
+import { Match, pickSide, setPlan, sel, pickMatch, pickSeg, moveMatch, removeMatch, run, lockMatch, suggest } from './run';
 import { Shape } from './Shape';
 import { Editor } from './Editor';
 import { hm, openSeg, CATN, TopTag } from './Segments';
@@ -138,6 +138,24 @@ function PreShow(p: { pre: any }) {
   </Panel>;
 }
 
+/* ---------- the first show (the tutorial, src/99-tutorial.js) ---------- */
+const TUT_ACT: Record<string, string> = { titles: 'Title matches', suggest: 'Suggest', arc: 'Open the arc', promise: 'Show me' };
+function Tutorial() {
+  const S = G.S, T = E.tutInfo(S);
+  if (!T.on) return <Notes />;
+  const go1 = (a: string) => {
+    if (a === 'titles') act(() => { const r = E.suggestTitles(S); say(r.msg, { err: !r.ok }); });
+    else if (a === 'suggest') suggest();
+    else if (a === 'arc') { const i = E.segInfo(S).list.findIndex((x: any) => x.k === 'arc'); if (i >= 0) pickSeg(i); }
+    else if (a === 'promise') { const i = S.card.findIndex((m: any) => m.pm != null); if (i >= 0) pickMatch(i); }
+  };
+  return <Panel title={'Your first show: ' + T.show}>
+    <ol class="tutsteps" data-t="tut-steps">{T.steps.map((s: any) => <li key={s.k} class={s.done ? 'done' : (s.need ? 'need' : '')} data-t="tut-step" data-v={s.k} data-done={s.done ? 1 : 0}>
+      <span class="tick" aria-hidden="true">{s.done ? '✔' : '•'}</span><span class="tx clamp2">{s.t}</span>
+      {s.act && !(s.done && s.act === 'titles') ? <Btn kind="sm" t={'tut-' + s.act} onClick={() => go1(s.act)}>{TUT_ACT[s.act]}</Btn> : null}</li>)}</ol>
+  </Panel>;
+}
+
 /* ---------- the booking notes ---------- */
 /** What stands in the way of the show, then what the writers and the announcers think of the card. */
 const STK: Record<string, [string, any]> = { due: ['Due', 'bad'], story: ['Story', 'good'], title: ['Title', 'face'], ripe: ['Ripe', 'gold'], face: ['Face', 'warn'], war: ['Night', 'bad'], net: ['Network', 'bad'], weak: ['Weak', 'bad'] };
@@ -228,8 +246,8 @@ function Targets() {
 export function Side(p: { on: OnCard; ck: any }) {
   const S = G.S, b = book(), s = sel(), show = S.queue[S.qi], T = E.tournActive(S);
   const pre = S.pre && !S.pre.done && S.pre.key === S.week + ':' + show.id ? S.pre : null;
-  const k = b.side || 'advice', picked = b.edit >= 0 && b.edit < S.card.length ? 'm' : (s.seg >= 0 && s.seg < E.segInfo(S).booked ? 's' : '');
-  const tabs = [['advice', 'Notes'], ['order', 'Order'], ['clock', 'Clock'], ['promo', 'Promo'], ['feuds', 'Stories'], ['targets', 'Targets']];
+  const tut = E.tutInfo(S), k = b.side || (tut.on ? 'tut' : 'advice'), picked = b.edit >= 0 && b.edit < S.card.length ? 'm' : (s.seg >= 0 && s.seg < E.segInfo(S).booked ? 's' : '');
+  const tabs = (tut.on ? [['tut', 'First show']] : []).concat([['advice', 'Notes'], ['order', 'Order'], ['clock', 'Clock'], ['promo', 'Promo'], ['feuds', 'Stories'], ['targets', 'Targets']]);
   if (T && T.pend.length) tabs.push(['tourn', 'Cup']);
   return <div class="b1-side">
     <Tabs label="Booking notes" value={pre || picked ? '' : k} onPick={pickSide} items={tabs.map(t => ({ id: t[0], label: t[1], t: 'bk', d: { v: t[0] } }))} />
@@ -243,6 +261,7 @@ export function Side(p: { on: OnCard; ck: any }) {
         : k === 'feuds' ? <Panel title="Storylines in play"><Feuds on={p.on} per={4} /></Panel>
         : k === 'targets' ? <Targets />
         : k === 'tourn' ? <TournOwed on={p.on} />
+        : k === 'tut' ? <Tutorial />
         : <Notes />}
     </div>
   </div>;

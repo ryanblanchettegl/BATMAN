@@ -76,10 +76,13 @@ E.moveMatchTo=function(S,from,to){
 };
 /** Suggest a card that keeps the locked matches where they are: the suggestion fills the places around them. */
 E.suggestKeep=function(S){
-  var keep=(S.card||[]).map(function(m,i){return m.lock?{m:m,i:i}:null;}).filter(Boolean),c=E.suggest(S);
+  var n0=(S.card||[]).length,keep=(S.card||[]).map(function(m,i){return m.lock?{m:m,i:i,last:i===n0-1&&n0>1}:null;}).filter(Boolean),c=E.suggest(S);
   if(!keep.length)return c;
   var used={};keep.forEach(function(k){flat(k.m.sides).forEach(function(id){used[id]=1;});});
   c=c.filter(function(m){return !flat(m.sides).some(function(id){return used[id];});});
-  keep.forEach(function(k){c.splice(Math.min(k.i,c.length),0,k.m);});
-  fitShow(S,c);return c;
+  keep.forEach(function(k){if(!k.last)c.splice(Math.min(k.i,c.length),0,k.m);});keep.forEach(function(k){if(k.last)c.push(k.m);});   // a locked main event stays the main event
+  // the locked matches take room: unlocked ones go, the least of them first, until the show fits its slots and its time
+  var P=S.promos[S.player],show=S.queue[S.qi],mx=show&&show.big?10:SLOT_MAX[P.slot];fitShow(S,c);
+  for(var g=0;g<20;g++){if(c.length<=mx&&!showClock(S,c).over)break;var j=-1,q;for(q=0;q<c.length-1;q++)if(!c[q].lock&&!c[q].title){j=q;break;}if(j<0)for(q=0;q<c.length-1;q++)if(!c[q].lock){j=q;break;}if(j<0)break;c.splice(j,1);fitShow(S,c);}
+  return c;
 };

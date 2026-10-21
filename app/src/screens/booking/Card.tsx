@@ -4,7 +4,7 @@
    The sheet turns pages if a show ever has more lines than fit. */
 import { ComponentChildren } from 'preact';
 import { E } from '../../engine';
-import { G, me, openModal, view, slice } from '../../store';
+import { G, me, openModal, view, slice, act, say } from '../../store';
 import { book } from '../../flow';
 import { roleOf } from './Shape';
 import { Btn, Meter, Win, brandName, teamName } from '../../kit';
@@ -106,6 +106,7 @@ export function Card() {
       <p class="showtime" data-t="clock" data-v={ck.over ? 'over' : (ck.short ? 'short' : (ck.light ? 'light' : 'ok'))}>Show time: <b class={'num ' + tcls}>{hm(ck.total)}</b> of <b class="num">{hm(ck.budget)}</b> <Meter v={Math.min(100, ck.total / ck.budget * 100)} kind="au" /> <span class={tcls}>{n || ck.total ? ck.words : (ck.budget / 60) + ' hours to fill.'}</span></p>
       <div class="row center b1-btns">
         <Btn t="suggest" tip="Fill the show with a card that fits the time: matches, and the writers' picks for the promo time." onClick={suggest}>Suggest</Btn>
+        <Btn t="suggest-titles" kind="sm" tip="Book every champion in a match for their title, against the best challenger free tonight. The matches are locked in place, so Suggest fills the show around them." onClick={() => act(() => { const r = E.suggestTitles(G.S); say(r.msg, { err: !r.ok }); })}>Title matches</Btn>
         <Btn t="add" tip="Put a new match on the run sheet." onClick={addMatch}>+ Match</Btn>
         <Btn t="add-promo" kind="sm" tip="Book a promo: somebody on the microphone. Each kind plays its own scene." onClick={addPromo}>+ Promo</Btn>
         <Btn t="add-angle" kind="sm" tip="Book an angle: an attack, a brawl, a save or a turn. Each kind plays its own scene." onClick={addAngle}>+ Angle</Btn>

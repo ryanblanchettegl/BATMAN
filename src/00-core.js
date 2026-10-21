@@ -136,7 +136,8 @@ function r1(v){return Math.round(v*10)/10;}
 function names(ws){var n=ws.map(function(w){return w.name;});if(n.length<2)return n[0]||'';return n.slice(0,-1).join(', ')+' & '+n[n.length-1];}
 function vsLabel(sides){return sides.map(names).join(' vs ');}
 
-function cal(week){var w=week-1;var mi=CAL0.m+Math.floor(w/4);return {wom:w%4+1,month:mi%12,year:CAL0.y+Math.floor(mi/12),label:'Week '+(w%4+1)+', '+MONTHS[mi%12]+' '+(CAL0.y+Math.floor(mi/12))};}
+function cal(week){var w=week-1+(CAL0.o||0);   // CAL0.o: weeks into the first month the game began (a game that opens on the flagship begins in its fourth week)
+  var mi=CAL0.m+Math.floor(w/4);return {wom:w%4+1,month:mi%12,year:CAL0.y+Math.floor(mi/12),label:'Week '+(w%4+1)+', '+MONTHS[mi%12]+' '+(CAL0.y+Math.floor(mi/12))};}
 function wageFor(ovr,P){var v=110*Math.pow(1.072,ovr)*P.wageMult;return Math.max(100,v<1000?Math.round(v/10)*10:Math.round(v/50)*50);}
 function workRate(w){var a=[w.brawl,w.tech,w.speed].sort(function(x,y){return y-x;});return Math.round(a[0]*0.5+a[1]*0.35+a[2]*0.15);}
 function isDev(P,brand){if(!P.brands)return false;for(var i=0;i<P.brands.length;i++)if(P.brands[i].id===brand)return !!P.brands[i].dev;return false;}
@@ -206,6 +207,8 @@ E.newGame=function(playerId,seed,opts){
   if(opts.fed){var fd=mkFedDef(opts.fed,clean(opts.name,24)||'The Booker');defs.push(fd);S.custom=fd;S.player=playerId=fd.id;}
   defs.forEach(function(d){buildPromo(S,d,byName);
   });
+  // a game can open in the week of the company's biggest show of the year (Ryan, 21 October: the first show is the tutorial)
+  var FP=S.promos[playerId];if(opts.start==='flag'&&FP&&FP.flagship!=null){var sy=DB.startYear+(FP.flagship<DB.startMonth?1:0);CAL0={y:sy,m:FP.flagship,o:3};S.db.startYear=sy;S.db.startMonth=FP.flagship;S.db.startOff=3;S.flagStart=1;}
   S.w.forEach(function(w){if(w.promo!=='FA'&&!S.promos[w.promo]){w.promo='FA';w.brand=null;}if(w.promo!=='FA'){w.wage=wageFor(w.ovr,S.promos[w.promo]);w.con=ri(S,14,140);}});
   preset.forEach(function(x){if(x[0].promo==='FA')return;if(x[1].wage)x[0].wage=x[1].wage;if(x[1].con)x[0].con=x[1].con;if(x[1].tw!=null)x[0].jw=S.week-x[1].tw;});
   S.columnist=pick(S,DB.columnists||['The Ringside Wire']);S.uni=DB.uni?{id:DB.uni.id,name:DB.uni.name,version:DB.uni.version}:null;S.stables=[];

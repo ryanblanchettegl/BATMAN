@@ -31,11 +31,13 @@ E.cardStories=function(S,card){return (card||S.card||[]).map(function(m){return 
    more entry in TALES with a cast() and its chapters. */
 SEGK.arc={len:'M',fix:1,arc:1,n:'Arc',t:'angle',roles:[],d:'A chapter of a story the writers are telling. They put it on the show; you decide where the story goes.'};
 function taleFree(S,P,w){return !!w&&w.promo===P.id&&!w.nw&&!(w.inj>0)&&!(w.away>=S.week)&&!w.camp;}
+/** Who was at the centre of the last two arcs: a new arc finds somebody else. */
+function taleRecent(S){var o={};(S.sas||[]).slice(-2).forEach(function(a){(a.cast||[]).forEach(function(id){o[id]=1;});});return o;}
 function taleBond(S,a,b){return typeof bondOf==='function'?bondOf(S,a,b):0;}
 var TALES={
   betrayal:{n:'The betrayal',d:'Two partners. One of them is going to turn on the other, and the crowd will pick a side.',
     cast:function(S){
-      var P=S.promos[S.player],ok=function(w){return taleFree(S,P,w);},a=null,b=null;
+      var P=S.promos[S.player],was=taleRecent(S),ok=function(w){return taleFree(S,P,w)&&!was[w.id];},a=null,b=null;
       var tm=S.teams.filter(function(t){return t.promo===P.id&&t.m.length===2&&t.m.every(function(id){return ok(S.w[id]);});}).sort(function(x,y){return (y.exp||0)-(x.exp||0);})[0];
       if(tm){a=S.w[tm.m[0]];b=S.w[tm.m[1]];}
       else{var R=rosterOf(S,P.id).filter(ok).sort(function(x,y){return y.ovr-x.ovr;}).slice(0,14),best=-1e9,i,j,v;
@@ -116,8 +118,9 @@ function taleChoice(N,ch){if(ch!=null&&N.o[ch])return ch;for(var i=0;i<N.o.lengt
 /** A chapter on the air: the scene, what the answer does to the people in it, and where the story goes next. */
 function taleRun(S,P,show,ctx,sg){
   var A=S.sa;if(!A||A.done||A.node!==sg.node)return null;var K=TALES[A.k],N=taleNode(A);if(!N)return null;
-  var who=N.who.map(function(r){return S.w[A.cast[r]];});
-  if(who.some(function(w){return !w||!taleFree(S,P,w);})){return angle(K.n,'The writers had a chapter of '+K.n.toLowerCase()+' ready, but '+who.filter(function(w){return !w||!taleFree(S,P,w);}).map(function(w){return w?w.name:'somebody';}).join(' and ')+' is not here. It waits.',40);}
+  // they were here when the chapter went on the show (taleWant); hurt or sent home since, they are still in the building tonight. Only somebody who has left the company holds it back
+  var who=N.who.map(function(r){return S.w[A.cast[r]];}),here=function(w){return !!w&&w.promo===P.id;};
+  if(who.some(function(w){return !here(w);})){return angle(K.n,'The writers had a chapter of '+K.n.toLowerCase()+' ready, but '+who.filter(function(w){return !here(w);}).map(function(w){return w?w.name:'somebody';}).join(' and ')+' is not here. It waits.',40);}
   var byYou=A.ch!=null,ci=taleChoice(N,A.ch),o=N.o[ci];
   who.forEach(function(w){ctx.angled[w.id]=1;});
   var talk=who.reduce(function(s,w){return s+0.55*micOf(S,w)+0.45*w.ovr;},0)/who.length;
@@ -181,7 +184,7 @@ E.taleInfo=function(S){
     hist:A.hist.map(function(h){var M=K.nodes[h.node],o=M&&M.o[h.ch];return {cn:M?M.n:h.node,n:o?taleFill(S,A,o.n):'',w:cal(h.w).label,you:!!h.you,pre:!!h.pre};})};
 };
 /* the arc on this show needs an answer before it can run (the screens stop; a game nobody plays never waits) */
-TASKX.push(function(S,P,add){var I=E.taleInfo(S);if(I.on&&I.tonight&&I.ch==null)add('arc',I.n+' is on tonight’s show. Decide where it goes: '+I.q,'booking','Decide',{card:true,waive:false,short:'Decide the arc',done:'The arc is decided.'});});
+TASKX.push(function(S,P,add){var I=E.taleInfo(S);if(I.on&&I.tonight&&I.ch==null)add('arc','The arc on tonight’s show, '+I.n+', needs your decision: '+I.q,'booking','Decide',{card:true,waive:false,short:'Decide the arc',done:'The arc is decided.'});});
 
 /* ---------- locks: what is promised for a show is on its card already ----------
    A lock is a match or a promo promised for a later show: a title match or a rematch at the next big event, a match an
@@ -194,6 +197,9 @@ TASKX.push(function(S,P,add){var I=E.taleInfo(S);if(I.on&&I.tonight&&I.ch==null)
 function nextBigShow(S){var ranBig=(S.queue||[]).slice(0,S.qi).some(function(sh){return sh.big;});return isBigWeek(S.week,S)&&!ranBig?S.week:nextBigFrom(S.week+1,S);}
 /** The next show of the player's after the one on the desk: {w, sid}. */
 function nextShowAfter(S){var q=S.queue||[];if(S.qi+1<q.length)return {w:S.week,sid:q[S.qi+1].id};var P=S.promos[S.player],L=weekShows(S,P,S.week+1);return L.length?{w:S.week+1,sid:L[0].id}:{w:S.week+1,sid:'big'};}
+/** Move a promise for a big event to the one after it: the clash is nobody's fault, but the wrestler hears about it. */
+function lockPut(S,l,why){var nw=nextBigFrom(l.w+1,S),q=l.q!=null?S.quests.filter(function(x){return x.id===l.q;})[0]:null,w=S.w[l.sides[0][0]];l.w=nw;if(q){q.due=nw;q.at=nw;q.text=q.text.replace(/ at .*$/,' at '+bigNameAt(S,nw));}
+  if(w){note(S,'A promise moves',w.name+'’s match moves to '+bigNameAt(S,nw)+': '+(why||'the one they face cannot be in it tonight')+'.','');youRemember(S,w,'moved','Their promised match was moved back a month.',-2);}}
 function lockAdd(S,o){
   var L=S.locks||(S.locks=[]),at=o.big?{w:o.w!=null?o.w:nextBigShow(S),sid:'big'}:(o.w!=null?{w:o.w,sid:o.sid}:nextShowAfter(S));
   var lk={id:S.nid++,kind:o.kind||'match',w:at.w,big:o.big?1:0,sid:at.sid,sides:o.sides||null,title:o.title||null,why:o.why||'',q:o.q==null?null:o.q,who:o.who==null?null:o.who,arc:o.arc?1:0};
@@ -212,6 +218,7 @@ function lockMatch(S,l){
   var P=S.promos[S.player],show=S.queue[S.qi],t=l.title?titleById(P,l.title):null,sides=l.sides.map(function(sd){return sd.slice();});
   if(t&&!t.tag&&t.holders.length){var hold=t.holders[0];if(sides[0].indexOf(hold)>=0)return null;sides[1]=[hold];}   // the champion now, whoever it is; a promised wrestler who has since won it needs no shot
   var ok=eligible(S,P,show),inE={};ok.forEach(function(w){inE[w.id]=1;});
+  if(t&&!t.tag&&t.holders.length&&!inE[t.holders[0]])return 'wait';   // the champion cannot work tonight: the title match waits for the next big event
   sides=sides.map(function(sd){return sd.map(function(id){return id!=null&&inE[id]?id:null;});});
   if(sides[0][0]==null)return null;   // the promised wrestler cannot work tonight
   return {mt:'1v1',sides:sides,win:-2,call:null,title:t?t.id:null,stip:'std',len:'M',lock:1,pm:l.id};
@@ -220,7 +227,9 @@ function lockMatch(S,l){
 function lockSeed(S){
   var c=S.card||(S.card=[]);
   locksNow(S).forEach(function(l){
-    if(l.kind==='match'){if(c.some(function(m){return m.pm===l.id;}))return;var m=lockMatch(S,l);if(!m)return;var at=l.arc?c.length:Math.max(0,c.length-1);c.splice(Math.min(at,c.length),0,m);}
+    if(l.kind==='match'){if(c.some(function(m){return m.pm===l.id;}))return;var m=lockMatch(S,l);if(m==='wait'&&l.big){lockPut(S,l);return;}if(!m||m==='wait')return;
+      // somebody in it is in another promised match tonight (a champion of two belts, a belt that changed hands): this one moves to the next big event
+      var ids=flat(m.sides).filter(function(x){return x!=null;});if(l.big&&c.some(function(x){return x.pm!=null&&flat(x.sides).some(function(id){return ids.indexOf(id)>=0;});})){lockPut(S,l);return;}var at=l.arc?c.length:Math.max(0,c.length-1);c.splice(Math.min(at,c.length),0,m);}
   });
 }
 SHOWON.push(function(S){if(S.player&&!S.cal)lockSeed(S);});
@@ -230,7 +239,7 @@ SEGNEW.push(function(S,L){locksNow(S).forEach(function(l){if(l.kind==='promo'&&l
   var s0=E.suggest;
   E.suggest=function(S){
     var c=s0(S),L=locksNow(S).filter(function(l){return l.kind==='match';});if(!L.length)return c;
-    var saved=S.card;S.card=[];lockSeed(S);var put=S.card;S.card=saved;
+    var saved=S.card;S.card=[];lockSeed(S);var put=S.card.filter(function(m){return m&&m!=='wait';});S.card=saved;
     put.forEach(function(m){var ids=flat(m.sides).filter(function(x){return x!=null;});
       c=c.filter(function(x){return !flat(x.sides).some(function(id){return ids.indexOf(id)>=0;})&&!(m.title&&x.title===m.title);});
       // fill an open spot with somebody fresh on the roster of the right kind
@@ -247,7 +256,7 @@ SEGNEW.push(function(S,L){locksNow(S).forEach(function(l){if(l.kind==='promo'&&l
     var v=v0(S,card),P=S.promos[S.player],show=S.queue&&S.queue[S.qi];if(!show)return v;var inE={};eligible(S,P,show).forEach(function(w){inE[w.id]=1;});
     locksNow(S).forEach(function(l){
       if(l.kind!=='match')return;var who=l.sides[0][0];if(who==null||!inE[who])return;   // they cannot work tonight: nothing to be done about it on the card
-      var t=l.title?titleById(P,l.title):null;if(t&&t.holders.indexOf(who)>=0)return;
+      var t=l.title?titleById(P,l.title):null;if(t&&t.holders.indexOf(who)>=0)return;if(t&&!t.tag&&t.holders.length&&!inE[t.holders[0]])return;   // no champion tonight: it waits
       // a title match is the promised wrestler for that title, whoever holds it by then; any other match is the two of them
       var on=card.some(function(m){return flat(m.sides).indexOf(who)>=0&&(l.title?m.title===l.title:l.sides[1].every(function(id){return id==null||!inE[id]||flat(m.sides).indexOf(id)>=0;}));});
       if(!on)v.errors.push('Promised for tonight: '+lockLabel(S,l)+(l.why?' ('+l.why+')':'')+'. It has to be on the card.');
@@ -263,7 +272,8 @@ function bigNameAt(S,w){var P=S.promos[S.player];return P.name+' '+evName(S,P,ca
 /** Promise a wrestler a title match (a shot, or the rematch) at the next big event: the promise, and the match locked on that card. */
 function promiseShot(S,w,t,o,what){
   // somebody else has that title match at that event already: this one is promised for the big event after it
-  var at=nextBigShow(S);while((S.locks||[]).some(function(l){return l.big&&l.w===at&&l.title===t.id;}))at=nextBigFrom(at+1,S);
+  var hold=t.holders.slice(),busy=function(l){return l.big&&l.w===at&&(l.title===t.id||flat(l.sides||[]).some(function(id){return id===w.id||hold.indexOf(id)>=0;})||(l.title&&(titleById(S.promos[S.player],l.title)||{holders:[]}).holders.some(function(id){return hold.indexOf(id)>=0||id===w.id;})));};
+  var at=nextBigShow(S);while((S.locks||[]).some(busy))at=nextBigFrom(at+1,S);   // the champion (or the challenger) is promised a match that night already
   var q={id:S.nid++,type:'shot',w:w.id,title:t.id,due:at,at:at,text:'Promise: '+w.name+' gets '+(what||'a match')+' for the '+t.name+' at '+bigNameAt(S,at)};
   S.quests.push(q);lockAdd(S,{kind:'match',sides:[[w.id],[o?o.id:null]],title:t.id,big:1,w:at,why:'You promised it',q:q.id});return q;
 }

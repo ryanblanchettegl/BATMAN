@@ -115,7 +115,8 @@ function fitShow(S,card,keep){
     for(i=L.length-1;i>=0;i--)if(L[i].k==='writers'){L.splice(i,1);return true;}
     for(i=L.length-1;i>=0;i--)if(!L[i].forced){L.splice(i,1);return true;}
     if(lenOf(card[n-1])==='L'&&card[n-1].stip!=='iron'){card[n-1].len='M';return true;}
-    if(n>3){i=choose(function(k){return k<n-1&&!card[k].title;},true);if(i>=0){card.splice(i,1);L.forEach(function(sg){if(sg.pos>i)sg.pos--;});return true;}}
+    // a match locked in its place (or promised) is never the one cut
+    if(n>3){i=choose(function(k){return k<n-1&&!card[k].title&&!card[k].lock;},true);if(i>=0){card.splice(i,1);L.forEach(function(sg){if(sg.pos>i)sg.pos--;});return true;}}
     return false;
   };
   var grow=function(){

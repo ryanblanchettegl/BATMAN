@@ -107,6 +107,19 @@ Two more lists sit beside this one, both finished:
 
 ## Tasks
 
+### 0aa. Storylines on the card (Ryan, 21 October: "this is a new core feature"; `docs/plans/arcs-on-the-card.md`)
+
+- [x] Arcs: segments the writers put on the show; the booker decides where each chapter goes, and each answer branches the story.
+- [x] The first arc: The betrayal (seven chapters, five endings).
+- [x] A new game opens in the week of the biggest show of the year, and that show is the tutorial: book the champions (Title matches), the promise on the card, the arc's ending after the main event.
+- [x] A match with two people in a storyline together is red on the run sheet.
+- [x] Guest commentary on every match.
+- [x] Run-ins on every match; the finish stays with the writers or a call on the air.
+- [x] A rematch or title match promised at the next big event is locked on that card; promised promos are locked on the next show.
+- [ ] More arcs.
+- [ ] An arc builder in the World Editor.
+
+
 ### 0w. Still pictures for the moments you answer (Ryan, 18 October)
 
 - [x] Every matter on the desk and every call from the gorilla position shows one still diorama picture of the moment (somebody hurt, a fight backstage, two people face to face, a meeting across your desk, a walkout, the crowd on its feet): the picture on the left of the pop-up, the answers on the right.

@@ -430,3 +430,9 @@ html body .win.ppop .wb{font-family:var(--hand);font-size:1.06em}
 .arcopt.on{border-image-source:none;background:#cfe9c8;border:3px solid #2f8a3a;border-radius:4px;padding:calc(.4em - 3px) calc(1.4ch - 3px)}
 .arcopt.on b::before{content:'✔ ';color:#2f8a3a}
 .arcopt .tag{justify-self:start}
+/* the first show's steps (the tutorial) */
+.tutsteps{list-style:none;margin:0;padding:0;display:grid;gap:.3em}
+.tutsteps li{display:grid;grid-template-columns:1.4em 1fr auto;gap:.2em .6ch;align-items:center;font-family:var(--hand);line-height:1.2}
+.tutsteps li .tick{font-family:var(--marker);color:#8a8070;text-align:center}
+.tutsteps li.done .tick{color:#2f8a3a} .tutsteps li.done .tx{color:#5c5850}
+.tutsteps li.need:not(.done) .tick{color:#c8312a}
