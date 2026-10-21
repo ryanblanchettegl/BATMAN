@@ -1,6 +1,6 @@
-# Careers and the long game: five features from other genres
+# Careers and the long game: six features from other genres
 
-Bill, 21 October 2026: "I like ideas 1-5 add those to long term planning", then "one life in wrestling is awesome too", and dropped free agency week ("wrestling doesn't have a free agency week, lets not do that"), then added "Path to the Hall of Fame i like". These come from the genre research doc (career, sports management, dynasty, 4X, grand strategy and simulation games): https://claude.ai/artifact/VGDEmfsJv4LgCXPwn8TyUQ. Nothing here is built. They sit in `TASKS.md` section 14, after the balance and first-hour work (Bill paused new features until that is done).
+Bill, 21 October 2026: "I like ideas 1-5 add those to long term planning", then "one life in wrestling is awesome too", and dropped free agency week ("wrestling doesn't have a free agency week, lets not do that"), then added "Path to the Hall of Fame i like" and "i like wrestling families". These come from the genre research doc (career, sports management, dynasty, 4X, grand strategy and simulation games): https://claude.ai/artifact/VGDEmfsJv4LgCXPwn8TyUQ. Nothing here is built. They sit in `TASKS.md` section 14, after the balance and first-hour work (Bill paused new features until that is done).
 
 Sizes follow `WISHLIST.md`: S is one commit, M is two or three, L is a week with this plan as its start.
 
@@ -79,3 +79,17 @@ Steps:
 
 1. `E.hallPath(S, id)`: the career line and the words, from what the game already keeps; a headless test that a long career climbs the words and a short one does not.
 2. The line on the wrestler's file, and the Hall of Fame night names who was "A lock" when they went in.
+
+## 6. Wrestling families (M)
+
+Bill, 21 October 2026: "i like wrestling families". Borrowed from Crusader Kings III's dynasties, where a family name carries renown across generations, and College Football 25's legacy recruits.
+
+Second- and third-generation wrestlers. A rookie class can include a legend's son or daughter, with some of the parent's look, style and finisher. The family name brings an early lift with the crowd and early expectations: a second-generation wrestler who flops is a story too. Each file shows a family tree, the crowd remembers the parent's great nights in that wrestler's matches, and a family that keeps winning titles becomes a dynasty the commentary, the Net and the magazine talk about. A world package can name families, so a world's history carries them.
+
+What it uses: the rookie class (wish 67), Create a Wrestler's looks, finishers (wish 4), the Hall of Fame, the world's history (`src/86-history.js`), the relationship matrix's family bond (gold in the corkboard plan) and the path to the Hall (5). It grows IDEAS A19 ("Family ties").
+
+Steps:
+
+1. Family links on wrestlers (`w.fam`: parent, siblings) kept in a world package and made by the rookie class, with a headless test over a long save.
+2. What the name does: the early lift, expectations, the parent's history in the commentary and promos.
+3. The family tree on the file, and dynasties on the Net and in the magazine.
