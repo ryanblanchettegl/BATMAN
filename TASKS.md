@@ -107,6 +107,16 @@ Two more lists sit beside this one, both finished:
 
 ## Tasks
 
+### 0aa. The Director (Bill, 21 October: "I like this feature add it to the plan")
+
+A pacing layer that decides when trouble reaches the desk: it reads how tense the company already is and chooses which of this week's possible events happen, and how big. The player picks a style (The Promoter, The Carny, The Purist). Plan: `docs/plans/director.md`.
+
+- [ ] Step 1: the tension reading and its eight-week history, headless only (`test-director.js`). Nothing in play changes.
+- [ ] Step 2: `genEvents()` asks the Director how many events this week; compare 60 weeks before and after.
+- [ ] Step 3: tag every event maker as a problem, a chance or colour, and let tension pick between them.
+- [ ] Step 4: the three styles, chosen at the start of a game and shown on Career; old saves get The Promoter.
+- [ ] Step 5: event sizes and the rhythm around big nights.
+
 ### 0w. Still pictures for the moments you answer (Ryan, 18 October)
 
 - [x] Every matter on the desk and every call from the gorilla position shows one still diorama picture of the moment (somebody hurt, a fight backstage, two people face to face, a meeting across your desk, a walkout, the crowd on its feet): the picture on the left of the pop-up, the answers on the right.
