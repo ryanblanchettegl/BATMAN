@@ -1,6 +1,6 @@
-# Careers and the long game: seven features from other genres
+# Careers and the long game: eight features from other genres
 
-Bill, 21 October 2026: "I like ideas 1-5 add those to long term planning", then "one life in wrestling is awesome too", and dropped free agency week ("wrestling doesn't have a free agency week, lets not do that"), then added "Path to the Hall of Fame i like" "i like wrestling families" and "I like coalitions". These come from the genre research doc (career, sports management, dynasty, 4X, grand strategy and simulation games): https://claude.ai/artifact/VGDEmfsJv4LgCXPwn8TyUQ. Nothing here is built. They sit in `TASKS.md` section 14, after the balance and first-hour work (Bill paused new features until that is done).
+Bill, 21 October 2026: "I like ideas 1-5 add those to long term planning", then "one life in wrestling is awesome too", and dropped free agency week ("wrestling doesn't have a free agency week, lets not do that"), then added "Path to the Hall of Fame i like" "i like wrestling families" "I like coalitions" and "love 13" (company mission trees). He turned down power blocs. These come from the genre research doc (career, sports management, dynasty, 4X, grand strategy and simulation games): https://claude.ai/artifact/VGDEmfsJv4LgCXPwn8TyUQ. Nothing here is built. They sit in `TASKS.md` section 14, after the balance and first-hour work (Bill paused new features until that is done).
 
 Sizes follow `WISHLIST.md`: S is one commit, M is two or three, L is a week with this plan as its start.
 
@@ -107,3 +107,17 @@ Steps:
 1. A world measure of how aggressive each company has been (raids, markets taken, signings over the last year), headless, with a test that a calm game never forms a coalition.
 2. The coalition itself: who joins (rival owners' attitudes), what it does each week, how it cools.
 3. The line on the World page, the press, and a matter on the desk when one forms or breaks up.
+
+## 8. Company mission trees (M)
+
+Bill, 21 October 2026: "love 13" (idea 13 in the genre doc). Borrowed from Europa Universalis IV's mission trees and Endless Legend's faction quests: each side has its own chain of long goals, and each one finished opens the next.
+
+Each of the nine company models gets its own tree of goals that take years. The startup's tree is about surviving the first year and landing a television deal. The outlaw's is about getting banned in one state and selling out the next town over. The lucha traditionalist's runs through a mask against mask main event at the anniversary show. The all-women company's ends in a stadium main event. Each goal finished opens the next ones and leaves a lasting bonus that fits the model (a better crowd for one kind of match, a cheaper building, a network that trusts you more). A company the player founds picks a tree from the model it is closest to. Rival companies follow their own trees too, so the world can see a rival closing in on its big goal.
+
+What it uses: the nine models (`src/78-models.js`), company arcs (`src/99-arcs.js`, so a goal can start an arc), the `SCN_WIN` checks in `src/92-scenarios.js`, the milestone wall (wish 91) and the owner's five-year vision (3), whose yearly goals can be drawn from the tree.
+
+Steps:
+
+1. Trees as data, one per model, each goal a `SCN_WIN`-style test and a bonus; the player's place in the tree kept on `S`; a headless test that every tree's first goals can be met in 60 weeks.
+2. A page of the tree on Company (the goals done, the ones open, what each gives), with a note when one is finished.
+3. Rival companies follow their trees, and the Net reports a rival close to a big goal.

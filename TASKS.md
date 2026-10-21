@@ -889,7 +889,7 @@ The relationship web as a board of Polaroids and string, built by itself on the 
 
 ### 14. Later: careers and the long game (Bill, 21 October: "I like ideas 1-5 add those to long term planning")
 
-Seven features from the genre research (career, sports management, dynasty and grand strategy games). Free agency week was dropped: wrestling has none. Plan: `docs/plans/careers-and-long-game.md`. Not before the balance and first-hour work above (Bill paused new features until then).
+Eight features from the genre research (career, sports management, dynasty and grand strategy games). Free agency week was dropped (wrestling has none), and so were power blocs. Plan: `docs/plans/careers-and-long-game.md`. Not before the balance and first-hour work above (Bill paused new features until then).
 
 - [ ] Wrestler career mode, "Road to the Main Event": play one wrestler in the living world while that company's AI booker books you; the asks at Your office become your moves (L).
 - [ ] One life in wrestling: the same save goes on from wrestler to manager, commentator or agent, then booker, then owner, and on to the student you trained (M, after the career mode).
@@ -898,6 +898,7 @@ Seven features from the genre research (career, sports management, dynasty and g
 - [ ] The path to the Hall: a career line and a line in words on every file ("Building a case", "On the path", "A lock"), feeding the Hall of Fame night and the magazine (S).
 - [ ] Wrestling families: second- and third-generation wrestlers in the rookie class, the family name as an early lift and early pressure, a family tree on the file, dynasties the Net and the magazine follow (M).
 - [ ] Coalitions: grow too fast (raids, markets, signings) and rival owners band together, sharing talent and booking against your big nights until it cools; you can join one against a rival too (M).
+- [ ] Company mission trees: each of the nine models gets a tree of goals that take years, each one finished opening the next and leaving a lasting bonus; rivals follow theirs too (M).
 
 ## After each task
 
