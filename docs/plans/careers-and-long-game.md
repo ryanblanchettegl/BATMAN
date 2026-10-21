@@ -1,6 +1,6 @@
-# Careers and the long game: eleven features from other genres
+# Careers and the long game: twelve features from other genres
 
-Bill, 21 October 2026: "I like ideas 1-5 add those to long term planning", then "one life in wrestling is awesome too", and dropped free agency week ("wrestling doesn't have a free agency week, lets not do that"), then added "Path to the Hall of Fame i like" "i like wrestling families" "I like coalitions" "love 13" (company mission trees) the territory map coloured by the most popular company in each region, "16 i like" (rival owners with agendas) and "18 i like" (rival plans). He turned down power blocs. These come from the genre research doc (career, sports management, dynasty, 4X, grand strategy and simulation games): https://claude.ai/artifact/VGDEmfsJv4LgCXPwn8TyUQ. Nothing here is built. They sit in `TASKS.md` section 14, after the balance and first-hour work (Bill paused new features until that is done).
+Bill, 21 October 2026: "I like ideas 1-5 add those to long term planning", then "one life in wrestling is awesome too", and dropped free agency week ("wrestling doesn't have a free agency week, lets not do that"), then added "Path to the Hall of Fame i like" "i like wrestling families" "I like coalitions" "love 13" (company mission trees) the territory map coloured by the most popular company in each region, "16 i like" (rival owners with agendas) "18 i like" (rival plans) and "21 yes" (trends). He turned down power blocs. These come from the genre research doc (career, sports management, dynasty, 4X, grand strategy and simulation games): https://claude.ai/artifact/VGDEmfsJv4LgCXPwn8TyUQ. Nothing here is built. They sit in `TASKS.md` section 14, after the balance and first-hour work (Bill paused new features until that is done).
 
 Sizes follow `WISHLIST.md`: S is one commit, M is two or three, L is a week with this plan as its start.
 
@@ -166,3 +166,19 @@ Steps:
 1. Rivals choose their moves a month ahead and keep them on `S` (so the plan is real, not made up for the player); a headless test that the moves happen when not stopped.
 2. What the player hears, filtered by sources, and the ways to stop one, each with its cost.
 3. A monthly matter on the desk listing the plans, and a line when each lands or is stopped.
+
+## 12. Trends (S to M)
+
+Bill, 21 October 2026: "21 yes". Borrowed from Game Dev Tycoon: what the market wants shifts every few years, and the first to catch a trend earns the most.
+
+Fads sweep the whole world for a year or two at a time: a hardcore craze, a high-flying boom, a reality-show era, a tag-team revival, a return to straight wrestling, a monster heel era. While one runs, crowds everywhere reward that kind of match or act a little more. The first company to ride it gets the most from it, late arrivals get less, and a company that was doing it before it was cool gets a lift and a line in the press ("they were doing this years ago"). Then it fades, and anyone who leaned on it too hard is left looking dated. A new trend is hinted at months ahead by the Net, the magazine and the indies, so a sharp booker can see it coming.
+
+Check first: wish 68 ("The bar moves") is about a rival's great night raising the bar in a shared city, not a world trend, so this is new. Regional tastes (wish 64) and the four kinds of fan (wish 69) stay as they are; a trend sits on top of them for a while.
+
+What it uses: crowd reactions (`CRX`), match types (wish 16) and gimmicks (`GFX` in `src/99-gimmicks.js`) for what a trend favours, the company models (`src/78-models.js`) for who is already doing it, the indies (`src/88-indies.js`), the Net (`src/94-net.js`) and the magazine (TASKS 0af) for the hints. Trends are picked by a hash of the world seed and the year, never `rnd(S)`.
+
+Steps:
+
+1. Trends as data (`TREND`: what it favours, how long it runs, the signs before it); one at a time, with gaps; a crowd lift that is small and fair; a headless test over a long save.
+2. First mover, late arrival and "before it was cool", read from each company's last year of cards.
+3. The hints on the Net, in the magazine and from the indies, and a line on the World page naming the trend of the day.
