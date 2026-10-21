@@ -1,3 +1,4 @@
+/* wraps: 00-core.js (it must sort after them; test-buildorder.js checks) */
 /* The first show is the tutorial (Ryan, 21 October). A new game opens in the week of the company's biggest show of
    the year (E.newGame with start: 'flag', src/00-core.js), with only that show to book. The card is not empty: a
    match was promised before the booker arrived (a lock, src/99-tale.js), and the arc that has run all year is at its

@@ -80,6 +80,7 @@ var MOVE_RULES=[
   [/moonsault/,'moonsault'],[/leg drop|legdrop|guillotine leg/,'legdrop'],[/elbow drop|diving elbow|flying elbow|top-rope elbow|shooting star elbow/,'flyingelbow'],
   [/missile dropkick/,'missile'],[/crossbody|thesz press/,'crossbody'],[/splash/,'topdive'],[/tope|suicide dive|dive through|dive to the floor|plancha/,'tope'],[/superplex/,'superplex'],
   [/small package|roll-?up|schoolboy|inside cradle/,'rollup'],[/guillotine choke|guillotine$/,'guillotine'],[/samoan drop/,'samoandrop'],[/uranage/,'uranage'],
+  [/destroyer/,'piledriver'],[/cannonball/,'cornerhit'],
   [/piledriver|tombstone|package|spike pile/,'piledriver'],[/sit-?out|jackknife|tiger driver|pumphandle sit|buckle bomb|crucifix|sunset/,'sitout'],
   [/powerbomb|chokebomb|bomb\b/,'powerbomb'],[/death valley|fireman.?s carry|michinoku|driver|f-?5|dominator/,'driver'],[/brainbuster|vertical suplex powerslam/,'brainbuster'],
   [/chokeslam|choke slam|throat/,'chokeslam'],[/spinebuster/,'spinebuster'],[/powerslam|sto\b|side ?slam|sidewalk/,'sidewalk'],[/fallaway/,'fallaway'],[/gorilla press|military press/,'gorillapress'],
