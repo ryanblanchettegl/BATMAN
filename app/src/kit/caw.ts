@@ -163,12 +163,12 @@ export const PARTS: Record<'head' | 'upper_body' | 'lower_body' | 'footwear' | '
   head: [['hair_face', 'From the face'], ['hair_bald', 'Bald'], ['hair_buzz_01', 'Buzz cut'], ['hair_crew_01', 'Crew cut'], ['hair_short_01', 'Short'], ['hair_flat_top', 'Flat top'], ['hair_slick_01', 'Slicked back'],
     ['hair_spiky_01', 'Spiky'], ['hair_mohawk_01', 'Mohawk'], ['hair_curls_01', 'Curls'], ['hair_afro_01', 'Afro'], ['hair_cornrows_01', 'Cornrows'], ['hair_dreads_01', 'Dreadlocks'],
     ['hair_ponytail_01', 'Ponytail'], ['hair_mullet_01', 'Mullet'], ['hair_long_01', 'Long'], ['hair_wild_01', 'Long and wild'],
-    ['hair_bun_01', 'Top knot'], ['hair_undercut_01', 'Undercut'], ['hair_pigtails_01', 'Pigtails'], ['hair_bob_01', 'Bob'], ['hair_braid_long', 'One long braid'],
+    ['hair_bun_01', 'Top knot'], ['hair_undercut_01', 'Undercut'], ['hair_pigtails_01', 'Pigtails'], ['hair_bob_01', 'Bob'], ['hair_braid_long', 'One long braid'], ['hair_tower', 'Piled up high'],
     ['mask_full_01', 'Mask, mouth open'], ['mask_closed_01', 'Full mask'], ['mask_half_01', 'Half mask'], ['mask_hood_01', 'Hood']],
   upper_body: [['bare', 'Bare chest'], ['singlet_straps_up', 'Singlet, straps up'], ['singlet_straps_down', 'Singlet, straps down'], ['singlet_full', 'Full singlet, to the thigh'], ['shirt_tshirt_base', 'T-shirt'], ['shirt_tank', 'Tank top'],
     ['top_sports', 'Sports top'], ['top_crop', 'Crop top'], ['top_bodysuit', 'Ring bodysuit'], ['vest_open', 'Open vest'], ['jacket_leather_biker', 'Biker jacket'], ['jacket_satin', 'Satin ring jacket'], ['coat_long', 'Long coat'],
-    ['robe_long', 'Entrance robe'], ['hoodie_01', 'Hooded top'], ['suit_jacket', 'Suit and tie'], ['jacket_denim', 'Denim jacket'], ['vest_tactical', 'Tactical vest'], ['coat_fur', 'Coat with a fur collar']],
-  lower_body: [['trunks_brief_01', 'Trunks'], ['trunks_long', 'Long trunks'], ['tights_long_01', 'Long tights'], ['pants_flared', 'Flared ring pants'], ['shorts_fight', 'Fight shorts'], ['skirt_short', 'Short ring skirt'], ['jeans_distressed', 'Torn jeans'], ['trousers_suit', 'Suit trousers'], ['kilt', 'Kilt'], ['shorts_jean', 'Jean shorts']],
+    ['robe_long', 'Entrance robe'], ['hoodie_01', 'Hooded top'], ['suit_jacket', 'Suit and tie'], ['jacket_denim', 'Denim jacket'], ['vest_tactical', 'Tactical vest'], ['coat_fur', 'Coat with a fur collar'], ['jacket_fringe', 'Fringed jacket']],
+  lower_body: [['trunks_brief_01', 'Trunks'], ['trunks_long', 'Long trunks'], ['tights_long_01', 'Long tights'], ['pants_flared', 'Flared ring pants'], ['shorts_fight', 'Fight shorts'], ['skirt_short', 'Short ring skirt'], ['jeans_distressed', 'Torn jeans'], ['trousers_suit', 'Suit trousers'], ['kilt', 'Kilt'], ['shorts_jean', 'Jean shorts'], ['mawashi', 'Sumo belt']],
   footwear: [['boots_knee', 'Boots and knee pads'], ['boots_laced_heavy', 'Heavy laced boots'], ['boots_short', 'Short boots'], ['kick_pads', 'Kick pads'], ['ankle_wraps', 'Bare feet, taped'], ['sneakers_retro', 'Retro sneakers'], ['shoes_dress', 'Dress shoes'], ['barefoot', 'Bare feet']],
   accessories: [['wrist_tape_white', 'Wrist tape'], ['wrist_wraps', 'Wrist wraps'], ['knee_pads', 'Knee pads'], ['knee_sleeves', 'Knee sleeves'], ['elbow_pads', 'Elbow pads'], ['gloves_fingerless', 'Fingerless gloves'], ['armband', 'Arm band'],
     ['sunglasses_aviator', 'Aviator sunglasses'], ['hat_cowboy', 'Cowboy hat'], ['hat_cap', 'Baseball cap'], ['hat_beanie', 'Wool hat'], ['bandana', 'Bandana'], ['crown', 'Crown'], ['chain_gold', 'Chain'], ['cape', 'Cape'],
@@ -177,7 +177,9 @@ export const PARTS: Record<'head' | 'upper_body' | 'lower_body' | 'footwear' | '
     ['sunglasses_round', 'Round sunglasses'], ['glasses_plain', 'Glasses'], ['headband', 'Sweatband'], ['antennae', 'Antennae'], ['scarf', 'Scarf'], ['pearls', 'Pearl necklace'], ['feather_boa', 'Feather boa'],
     ['fishnets', 'Fishnet tights'], ['guitar', 'Guitar, slung across'], ['bat', 'Baseball bat, in hand'],
     // 21 October: more for the WWC roster
-    ['collar_spiked', 'Spiked collar'], ['whistle', 'Whistle on a cord'], ['headset', 'Headset'], ['trombone', 'Trombone'], ['sword', 'Sword, in hand'], ['sledgehammer', 'Sledgehammer, in hand']],
+    ['collar_spiked', 'Spiked collar'], ['whistle', 'Whistle on a cord'], ['headset', 'Headset'], ['trombone', 'Trombone'], ['sword', 'Sword, in hand'], ['sledgehammer', 'Sledgehammer, in hand'],
+    // 21 October: more for the legends
+    ['arm_tassels', 'Arm tassels'], ['snake', 'A snake round the neck'], ['shoulder_pads_spiked', 'Spiked shoulder pads'], ['hat_campaign', 'Drill sergeant hat'], ['kendo_stick', 'Kendo stick, in hand']],
 };
 export const FACIAL: [string, string][] = [['', 'From the face'], ['none', 'Clean shaven'], ['stubble', 'Stubble'], ['goatee', 'Goatee'], ['chin_strap', 'Chin strap'], ['sideburns', 'Sideburns'], ['beard_short', 'Short beard'],
   ['beard_full', 'Full beard'], ['beard_braided', 'Braided beard'], ['mustache', 'Moustache'], ['handlebar', 'Handlebar moustache'], ['horseshoe', 'Horseshoe moustache']];
@@ -199,7 +201,7 @@ export const FACE_SLIDERS: [string, string, string, string][] = [['head_w', 'Hea
 export const TATTOOS: [string, string][] = [['sleeve_near', 'Sleeve, near arm'], ['sleeve_far', 'Sleeve, far arm'], ['shoulder', 'Shoulder piece'], ['chest', 'Chest piece'], ['back', 'Back piece'], ['neck', 'Neck']];   // facial hair, moustache in the face numbers
 const HAIR_OF: Record<string, string> = { hair_bald: 'bald', hair_buzz_01: 'buzz', hair_crew_01: 'crew', hair_short_01: 'cap', hair_flat_top: 'flat', hair_mohawk_01: 'mohawk', hair_curls_01: 'curls', hair_long_01: 'long',
   hair_slick_01: 'slick', hair_spiky_01: 'spiky', hair_afro_01: 'afro', hair_cornrows_01: 'braids', hair_dreads_01: 'dreads', hair_ponytail_01: 'ponytail', hair_mullet_01: 'mullet', hair_wild_01: 'wild',
-  hair_bun_01: 'bun', hair_undercut_01: 'undercut', hair_pigtails_01: 'pigtails', hair_bob_01: 'bob', hair_braid_long: 'braid' };
+  hair_bun_01: 'bun', hair_undercut_01: 'undercut', hair_pigtails_01: 'pigtails', hair_bob_01: 'bob', hair_braid_long: 'braid', hair_tower: 'tower' };
 const MASK_OF: Record<string, 'open' | 'full' | 'half' | 'hood'> = { mask_full_01: 'open', mask_closed_01: 'full', mask_half_01: 'half', mask_hood_01: 'hood' };
 /** How a second hair colour goes in. */
 export const HAIR_MIX: [string, string][] = [['', 'One colour'], ['tips', 'Frosted tips'], ['streak', 'A streak'], ['fringe', 'The front'], ['under', 'Underneath and the back']];

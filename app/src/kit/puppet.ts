@@ -146,7 +146,7 @@ export function puppet(r: Recipe, pl: Place, pose: Record<string, number>, expr:
   const L = { up: 1.0 * h * ll, fore: 0.92 * h * ll, thigh: 1.3 * h * ll, shin: 1.22 * h * ll, torso: 1.95 * H };
   const note = (name: string, f: F, parent: F, up = false) => { rig.joints[name] = { x: f.x, y: f.y, pa: parent.a, up }; };
   const has = (a: string) => !!K && K.acc.indexOf(a) >= 0;
-  const OVER = ['shirt_tshirt_base', 'hoodie_01', 'jacket_leather_biker', 'jacket_satin', 'coat_long', 'robe_long', 'suit_jacket', 'jacket_denim', 'coat_fur'];   // tops with sleeves to the wrist (the T-shirt only to the elbow)
+  const OVER = ['shirt_tshirt_base', 'hoodie_01', 'jacket_leather_biker', 'jacket_satin', 'coat_long', 'robe_long', 'suit_jacket', 'jacket_denim', 'coat_fur', 'jacket_fringe'];   // tops with sleeves to the wrist (the T-shirt only to the elbow)
   const to = child(root, [0, 0], P.torso);
   note('torso', to, root, true);
   if (has('cape') && bk) cut(to, [[-0.92 * bw, 1.98 * H], [0.92 * bw, 1.98 * H], [1.75 * bw, -2.15 * h * ll], [-1.95 * bw, -2.15 * h * ll]], K!.pal.s, 1.06, 'torso', 0.06);   // from behind, the cape hangs over everything
@@ -172,6 +172,9 @@ export function puppet(r: Recipe, pl: Place, pose: Record<string, number>, expr:
     const el = child(sh, [0, -L.up], P['el_' + s]); note('el_' + s, el, sh);
     cut(el, taper(0.36 * aw * rw, 0.29 * aw * rw * (robe ? 1.3 : 1), L.fore), fore, z + 0.04, 'el_' + s); pins.push([el, z + 0.07]);
     if (fore === sk && sleeve) for (const t of [0.25, 0.55]) cut(el, [[-0.17 * aw, -t * L.fore], [0.17 * aw, -t * L.fore + 0.03], [0.16 * aw, -t * L.fore - 0.05], [-0.16 * aw, -t * L.fore - 0.08]], ink, z + 0.045, 'el_' + s, 0.005, 0.004);
+    if (K && K.top === 'jacket_fringe') for (let q = 0; q < 6; q++) { const t = 0.15 + q * 0.14; cut(sh, strip([-0.3 * aw, -t * L.up], [-0.42 * aw, -t * L.up - 0.22], 0.03, 0.02), K.pal.t, z + 0.023, 'sh_' + s, 0.005, 0.004); cut(el, strip([-0.26 * aw, -t * L.fore], [-0.38 * aw, -t * L.fore - 0.2], 0.03, 0.02), K.pal.t, z + 0.046, 'el_' + s, 0.005, 0.004); }   // fringe hanging under each sleeve
+    if (has('arm_tassels')) { cut(sh, [[-0.27 * aw, -0.42 * L.up], [0.27 * aw, -0.42 * L.up], [0.26 * aw, -0.55 * L.up], [-0.26 * aw, -0.55 * L.up]], K!.pal.t, z + 0.026, 'sh_' + s, 0.02, 0.004); for (let q = -2; q <= 2; q++) cut(sh, strip([q * 0.09 * aw, -0.52 * L.up], [q * 0.12 * aw - 0.04, -0.52 * L.up - 0.42], 0.035, 0.02), q % 2 ? K!.pal.s : K!.pal.t, z + 0.027 + q * 0.0001, 'sh_' + s, 0.01, 0.008); }   // tassels tied round the biceps
+    if (has('shoulder_pads_spiked')) { cut(sh, ell(0, 0.02, 0.42 * aw, 0.3 * aw, 14), { c: PAL.black, f: 'leather' }, z + 0.03, 'sh_' + s, 0.05, 0.004); for (let q = -2; q <= 2; q++) { const a0 = Math.PI * (0.5 + q * 0.22), x0 = Math.cos(a0) * 0.36 * aw, y0 = 0.02 + Math.sin(a0) * 0.26 * aw; cut(sh, [[x0 - 0.05, y0 - 0.02], [x0 + 0.05, y0 - 0.02], [x0 + Math.cos(a0) * 0.2, y0 + Math.sin(a0) * 0.2]], { c: '#d8dde4', f: 'foil' }, z + 0.031, 'sh_' + s, 0.01, 0.001); } }   // a spiked shoulder pad
     if (has('elbow_pads')) cut(el, ell(0, -0.02, 0.22 * aw, 0.2 * aw, 12), K!.pal.s, z + 0.065, 'el_' + s, 0.04);
     if (r.suit) cut(el, [[-0.16 * aw, -L.fore + 0.16], [0.16 * aw, -L.fore + 0.16], [0.15 * aw, -L.fore + 0.02], [-0.15 * aw, -L.fore + 0.02]], PAL.white, z + 0.06, 'el_' + s, 0.02, 0.004);   // the shirt cuff
     else if (K && OVER.indexOf(K.top) >= 0 && K.top !== 'shirt_tshirt_base') cut(el, [[-0.17 * aw * rw, -L.fore + 0.18], [0.17 * aw * rw * (robe ? 1.3 : 1), -L.fore + 0.18], [0.16 * aw * rw * (robe ? 1.3 : 1), -L.fore + 0.02], [-0.16 * aw * rw, -L.fore + 0.02]], K.pal.t, z + 0.06, 'el_' + s, 0.02, 0.004);   // a cuff in the trim
@@ -181,6 +184,7 @@ export function puppet(r: Recipe, pl: Place, pose: Record<string, number>, expr:
     cut(wr, ell(0.02, -0.17, 0.17 * aw, 0.22, 12), sk, z + 0.08, 'wr_' + s);
     if (has('gloves_fingerless')) { cut(wr, ell(0.02, -0.12, 0.17 * aw, 0.15, 12), K!.pal.s, z + 0.09, 'wr_' + s, 0.02); cut(wr, [[-0.16 * aw, 0.02], [0.16 * aw, 0.02], [0.16 * aw, -0.06], [-0.16 * aw, -0.06]], K!.pal.t, z + 0.095, 'wr_' + s, 0.02, 0.004); }
     if (s === 'n' && has('bat')) { cut(wr, [[-0.05, -0.08], [0.05, -0.08], [0.11, -1.55], [0.0, -1.62], [-0.11, -1.55]], '#1c1b1f', z + 0.085, 'wr_' + s, 0.05, 0.004); cut(wr, ell(0, -0.06, 0.07, 0.04, 8), '#1c1b1f', z + 0.086, 'wr_' + s, 0.02, 0.002); }   // a black baseball bat held by the handle
+    if (s === 'n' && has('kendo_stick')) { cut(wr, [[-0.035, -0.04], [0.035, -0.04], [0.04, -1.75], [-0.04, -1.75]], '#d8b46a', z + 0.085, 'wr_' + s, 0.04, 0.003); for (const t of [0.0, 0.55, 1.1, 1.62]) cut(wr, [[-0.045, -0.06 - t], [0.045, -0.06 - t], [0.045, -0.13 - t], [-0.045, -0.13 - t]], '#1c1b1f', z + 0.086, 'wr_' + s, 0.01, 0.002); }   // a bamboo kendo stick, taped
     if (s === 'n' && has('sword')) {   // a long sword held by the grip: a leather grip, a cross guard and a blade with a point
       cut(wr, ell(0, -0.02, 0.07, 0.06, 8), { c: '#c9a54a', f: 'foil' }, z + 0.084, 'wr_' + s, 0.02, 0.002);
       cut(wr, [[-0.045, -0.04], [0.045, -0.04], [0.045, -0.3], [-0.045, -0.3]], { c: '#3a2414', f: 'leather' }, z + 0.085, 'wr_' + s, 0.03, 0.003);
@@ -262,6 +266,12 @@ export function puppet(r: Recipe, pl: Place, pose: Record<string, number>, expr:
       cut(root, [[-0.69 * w, 0.1], [0.69 * w, 0.1], [0.7 * w, -0.06], [-0.7 * w, -0.06]], { c: '#2a1a10', f: 'leather' }, 0.388, 'body', 0.02, 0.004);
       if (!bk) { cut(root, [[-0.2, -0.08], [0.2, -0.08], [0.24, -0.58], [0, -0.66], [-0.24, -0.58]], { c: '#3a2414', f: 'leather' }, 0.389, 'body', 0.04, 0.006); for (let q = 0; q < 3; q++) cut(root, strip([-0.1 + q * 0.1, -0.3], [-0.1 + q * 0.1, -0.6], 0.04, 0.03), PAL.white, 0.39, 'body', 0.01, 0.006); cut(root, ell(0, -0.16, 0.1, 0.06, 10), K.pal.h, 0.3905, 'body', 0.01, 0.002); }
     }
+    if (K.bottom === 'mawashi') {   // a sumo belt: a thick twisted band round the waist and a strap down between the legs
+      cut(root, [[-0.68 * w, 0.14], [0.68 * w, 0.14], [0.7 * w, -0.2], [-0.7 * w, -0.2]], K.col.bottom, 0.39, 'body', 0.04, 0.005);
+      for (let q = 0; q < 6; q++) cut(root, strip([-0.66 * w + q * 0.26 * w, 0.12], [-0.56 * w + q * 0.26 * w, -0.18], 0.03, 0.03), shade(K.col.bottom.c, 0.75), 0.391, 'body', 0.005, 0.003);   // the twists
+      cut(root, [[-0.14, -0.15], [0.14, -0.15], [0.1, -0.62], [-0.1, -0.62]], K.col.bottom, 0.392, 'body', 0.03, 0.004);
+      if (!bk) for (let q = -2; q <= 2; q++) cut(root, strip([q * 0.08, -0.2], [q * 0.08, -0.72], 0.025, 0.02), K.pal.t, 0.393, 'body', 0.005, 0.004);   // the hanging strings at the front
+    }
     if (K.bottom === 'shorts_jean') { cut(root, [[-0.63 * w, 0.06], [0.63 * w, 0.06], [0.64 * w, -0.08], [-0.64 * w, -0.08]], { c: '#3a2414', f: 'leather' }, 0.37, 'body', 0.02, 0.004); cut(root, [[0.1, 0.07], [0.32, 0.07], [0.32, -0.09], [0.1, -0.09]], K.pal.h, 0.375, 'body', 0.02, 0.003); }
     if ((K.top === 'coat_long' || K.top === 'coat_fur') && bk) cut(root, [[-0.74 * bw, 0.1], [0.74 * bw, 0.1], [0.98 * bw, -1.55 * h * ll], [-0.98 * bw, -1.55 * h * ll]], K.col.top, 0.385, 'body', 0.05);   // the back of the coat in one piece
     else if (K.top === 'coat_long' || K.top === 'coat_fur') for (const sd of [-1, 1]) { cut(root, [[sd * 0.08 * bw, 0.1], [sd * 0.74 * bw, 0.1], [sd * 0.98 * bw, -1.55 * h * ll], [sd * 0.18 * bw, -1.55 * h * ll]], K.col.top, 0.385, 'body', 0.05); cut(root, [[sd * 0.08 * bw, 0.1], [sd * 0.2 * bw, 0.1], [sd * 0.3 * bw, -1.55 * h * ll], [sd * 0.18 * bw, -1.55 * h * ll]], shade(K.col.top.c, 0.72), 0.387, 'body', 0.01, 0.004); }
@@ -269,7 +279,7 @@ export function puppet(r: Recipe, pl: Place, pose: Record<string, number>, expr:
   }
   const b = r.belly;
   const torsoPoly: Pt[] = [[-0.58 * bw - b, 0], [0.58 * bw + b, 0], [0.68 * bw + b * 0.8, 0.55], [0.86 * bw, 1.45 * H], [0.74 * bw, 1.86 * H], [0.28, 1.98 * H], [-0.28, 1.98 * H], [-0.74 * bw, 1.86 * H], [-0.86 * bw, 1.45 * H], [-0.68 * bw - b * 0.8, 0.55]];
-  const covered = K ? ['shirt_tshirt_base', 'shirt_tank', 'jacket_leather_biker', 'jacket_satin', 'coat_long', 'top_bodysuit', 'robe_long', 'hoodie_01', 'suit_jacket', 'jacket_denim', 'vest_tactical', 'coat_fur'].indexOf(K.top) >= 0 : !!r.shirt;
+  const covered = K ? ['shirt_tshirt_base', 'shirt_tank', 'jacket_leather_biker', 'jacket_satin', 'coat_long', 'top_bodysuit', 'robe_long', 'hoodie_01', 'suit_jacket', 'jacket_denim', 'vest_tactical', 'coat_fur', 'jacket_fringe'].indexOf(K.top) >= 0 : !!r.shirt;
   cut(to, torsoPoly, K ? (covered ? K.col.top : sk) : r.shirt || sk, 0.42, 'torso');
   pins.push([to, 0.55]);
   const muscles = () => {
@@ -308,6 +318,7 @@ export function puppet(r: Recipe, pl: Place, pose: Record<string, number>, expr:
       else if (t === 'hoodie_01') { neckBand(shade(S.c, 0.75)); cut(to, ell(0, 1.62 * H, 0.42 * bw, 0.36 * H, 16), shade(S.c, 0.82), 0.47, 'torso', 0.04); }   // the hood down the back
       else if (t === 'shirt_tank') { cut(to, [[-0.86 * bw, 1.45 * H], [-0.48 * bw, 1.98 * H], [-0.36 * bw, 1.98 * H], [-0.3 * bw, 1.75 * H], [0.3 * bw, 1.75 * H], [0.36 * bw, 1.98 * H], [0.48 * bw, 1.98 * H], [0.86 * bw, 1.45 * H], [0.9 * bw, 1.5 * H], [0.86 * bw, 2.02 * H], [-0.86 * bw, 2.02 * H], [-0.9 * bw, 1.5 * H]], sk, 0.43, 'torso', 0.01); }
       else if (t === 'jacket_leather_biker') { neckBand(shade(S.c, 0.7), 0.1); waistBand(T); }
+      else if (t === 'jacket_fringe') { cut(to, [[-0.86 * bw, 1.9 * H], [0.86 * bw, 1.9 * H], [0.8 * bw, 1.45 * H], [-0.8 * bw, 1.45 * H]], T, 0.465, 'torso', 0.02, 0.004); for (let q = 0; q < 14; q++) { const x0 = (-0.78 + q * 0.12) * bw; cut(to, strip([x0, 1.48 * H], [x0, 1.12 * H], 0.025, 0.018), T, 0.466 + q * 0.0001, 'torso', 0.005, 0.006); } }
       else if (t === 'jacket_denim') { neckBand(shade(S.c, 0.82), 0.1); waistBand(shade(S.c, 0.85)); cut(to, [[-0.7 * bw, 1.5 * H], [0.7 * bw, 1.5 * H], [0.6 * bw, 1.1 * H], [0, 1.0 * H], [-0.6 * bw, 1.1 * H]], shade(S.c, 0.9), 0.465, 'torso', 0.01, 0.004); }   // the yoke across the back
       else if (t === 'jacket_satin') { neckBand(T, 0.1); waistBand(T); for (const yy of [0.62, 1.15]) cut(to, [[-0.62 * bw, yy * H], [-0.2 * bw, yy * H + 0.02], [-0.2 * bw, yy * H - 0.06], [-0.62 * bw, yy * H - 0.08]], shade(S.c, 1.25), 0.465, 'torso', 0.005, 0.003); }
       else if (t === 'vest_tactical') { cut(to, [[-0.66 * bw, 1.7 * H], [0.66 * bw, 1.7 * H], [0.62 * bw, 0.3], [-0.62 * bw, 0.3]], shade(S.c, 0.86), 0.46, 'torso', 0.03, 0.006); neckBand(shade(S.c, 0.7), 0.16); for (const sd of [-1, 1]) cut(to, strip([sd * 0.42 * bw, 1.98 * H], [sd * 0.5 * bw, 0.1], 0.13, 0.13), shade(S.c, 0.7), 0.465, 'torso', 0.02, 0.004); cut(to, strip([-0.66 * bw, 0.75 * H], [0.66 * bw, 0.75 * H], 0.1, 0.1), shade(S.c, 0.7), 0.466, 'torso', 0.02, 0.004); }
@@ -350,6 +361,10 @@ export function puppet(r: Recipe, pl: Place, pose: Record<string, number>, expr:
       for (const sd of [-1, 1]) cut(to, [[sd * 0.32 * bw, 1.98 * H], [sd * 0.62 * bw, 1.9 * H], [sd * 0.5 * bw, 1.45 * H], [sd * 0.2 * bw, 1.2 * H]], shade(S.c, 0.7), 0.47, 'torso', 0.03, 0.004);   // the collar
       cut(to, strip([0.16 * bw, 0.25], [0.5 * bw, 1.5 * H], 0.04, 0.04), K.pal.h, 0.48, 'torso', 0.01, 0.002);   // the zip
       cut(to, [[-0.6 * bw - b, 0], [0.6 * bw + b, 0], [0.62 * bw + b, 0.16], [-0.62 * bw - b, 0.16]], T, 0.475, 'torso', 0.02, 0.004);
+    } else if (t === 'jacket_fringe') {   // a fringed jacket worn open: a yoke across the chest in the trim with fringe hanging from it
+      cut(to, [[-0.32 * bw, 1.98 * H], [0.32 * bw, 1.98 * H], [0.12, 0.2], [-0.12, 0.2]], sk, 0.45, 'torso', 0.02, 0.004);
+      for (const sd of [-1, 1]) { cut(to, [[sd * 0.32 * bw, 1.98 * H], [sd * 0.86 * bw, 1.86 * H], [sd * 0.86 * bw, 1.5 * H], [sd * 0.25 * bw, 1.42 * H]], K.pal.t, 0.47, 'torso', 0.02, 0.004);
+        for (let q = 0; q < 7; q++) { const x0 = sd * (0.3 + q * 0.08) * bw; cut(to, strip([x0, 1.46 * H], [x0 + sd * 0.02, 1.12 * H], 0.025, 0.018), K.pal.t, 0.471 + q * 0.0001, 'torso', 0.005, 0.006); } }
     } else if (t === 'jacket_denim') {   // a denim jacket worn open: a pointed shirt collar, two chest pockets with flaps, buttons down each side
       cut(to, [[-0.3 * bw, 1.98 * H], [0.3 * bw, 1.98 * H], [0.16, 0.2], [-0.16, 0.2]], sk, 0.45, 'torso', 0.02, 0.004);
       for (const sd of [-1, 1]) {
@@ -397,6 +412,11 @@ export function puppet(r: Recipe, pl: Place, pose: Record<string, number>, expr:
     if (has('feather_boa')) { const puff = (x: number, y: number, k: number) => cut(to, ell(x, y, 0.1 + 0.03 * (k % 2), 0.09, 9), k % 3 ? K.pal.s : shade(K.pal.s.c, 1.15), 0.5 + k * 0.0002, 'torso', 0.04, 0.03);   // a feather boa: soft puffs round the neck and down both sides
       let k = 0; for (let i = 0; i <= 6; i++) { const a = Math.PI * (1.0 + i / 6); puff(0.42 * bw * Math.cos(a), 1.92 * H + 0.1 * Math.sin(a), k++); }
       for (const sd of [-1, 1]) for (let i = 1; i <= (bk ? 3 : 6); i++) puff(sd * (0.44 - 0.02 * i) * bw, (1.92 - 0.16 * i) * H, k++); }
+    if (has('snake')) {   // a python draped round the neck and over both shoulders, its head resting on the chest
+      const P0: Pt[] = []; for (let i = 0; i <= 14; i++) { const u = i / 14, a = Math.PI * (1.05 + 0.9 * u); P0.push([0.62 * bw * Math.cos(a) * (bk ? -1 : 1), 1.78 * H + 0.28 * H * Math.sin(a) - (u > 0.75 ? (u - 0.75) * 2.4 * H : 0)]); }
+      P0.forEach(([x, y], i) => { cut(to, ell(x, y, 0.13, 0.11, 10), i % 2 ? '#6b8f2a' : '#c9a23a', 0.5 + i * 0.0003, 'torso', 0.04, 0.004); });
+      if (!bk) { const [hx, hy] = P0[P0.length - 1]; cut(to, ell(hx, hy - 0.1, 0.12, 0.16, 12), '#6b8f2a', 0.506, 'torso', 0.04, 0.004); for (const d of [-1, 1]) cut(to, ell(hx + d * 0.05, hy - 0.05, 0.02, 0.02, 6), '#1c1b1f', 0.507, 'torso', 0.005, 0.001); }
+    }
     if (has('whistle')) {   // a whistle on a cord round the neck
       if (bk) cut(to, strip([-0.3 * bw, 1.95 * H], [0.3 * bw, 1.95 * H], 0.03, 0.03, -0.08 * H), K.pal.t, 0.497, 'torso', 0.005, 0.002);
       else { for (const sd of [-1, 1]) cut(to, strip([sd * 0.3 * bw, 1.97 * H], [0.02, 1.42 * H], 0.025, 0.025), K.pal.t, 0.497, 'torso', 0.005, 0.002); cut(to, [[-0.06, 1.44 * H], [0.16, 1.44 * H], [0.16, 1.32 * H], [-0.06, 1.32 * H]], { c: '#d8dde4', f: 'foil' }, 0.498, 'torso', 0.02, 0.002); cut(to, ell(0.0, 1.38 * H, 0.06, 0.06, 10), { c: '#d8dde4', f: 'foil' }, 0.4985, 'torso', 0.02, 0.002); }
@@ -525,6 +545,7 @@ function headBack(fr: F, r: Recipe, z: number, cut: (f: F, poly: Pt[], col: stri
       if (h === 'dreads') for (let i = 0; i < 7; i++) { const x0 = (i - 3) * hd.rx * 0.3; put(strip([x0, hd.cy + 0.2], [x0 * 1.2, hd.cy - hd.ryb * (1.1 + (i % 3) * 0.25)], 0.09, 0.07, 0.03), shade(HB, i % 2 ? 0.85 : 1), 0.2 + i * 0.0005, 0.015); }
       if (h === 'braids') { for (let i = 0; i < 4; i++) { const x = hd.rx * (-0.66 + i * 0.44); put(strip([x, hd.cy + hd.ryt * 0.9], [x * 0.8, nape], 0.03, 0.03), shade(HC, 0.55), 0.195, 0.003); } for (const sd of [-1, 1]) put(strip([sd * 0.12, nape], [sd * 0.15, hd.cy - hd.ryb * 1.2], 0.07, 0.05), HB, 0.2, 0.01); }
       if (h === 'bun') put(ell(0, hd.cy + hd.ryt * 1.1, 0.17, 0.14, 14), HC, 0.2, 0.015);
+      if (h === 'tower') put([[-hd.rx * 0.8, hd.cy + hd.ryt * 0.7], [hd.rx * 0.8, hd.cy + hd.ryt * 0.7], [hd.rx * 0.7, hd.cy + hd.ryt * 3.2], [hd.rx * 0.3, hd.cy + hd.ryt * 3.5], [-hd.rx * 0.3, hd.cy + hd.ryt * 3.5], [-hd.rx * 0.7, hd.cy + hd.ryt * 3.2]], HC, 0.2, 0.03);
       if (h === 'braid') { for (let i = 0; i < 12; i++) { const t = i / 11; put(ell(i % 2 ? 0.035 : -0.035, hd.cy - t * 3.0, 0.14 - 0.05 * t, 0.16, 10), shade(HB, i % 2 ? 0.8 : 1), 0.2 + i * 0.0005, 0.01); } put(ell(0, hd.cy - 3.1, 0.05, 0.05, 8), shade(HB, 0.5), 0.207, 0.003); }
       if (h === 'curls') for (let i = 0; i < 7; i++) { const a = Math.PI * (0.05 + 0.9 * i / 6); put(ell(hd.rx * 1.05 * Math.cos(a), hd.cy + hd.ryt * 1.05 * Math.sin(a), 0.11, 0.11, 10), HC, 0.2, 0.02); }
     }
@@ -534,6 +555,12 @@ function headBack(fr: F, r: Recipe, z: number, cut: (f: F, poly: Pt[], col: stri
   if (acc('hat_cap')) { put(headPoly(hd, 1.08, 0.05, Math.PI - 0.05, 18).concat([[-hd.rx * 1.04, hd.cy + hd.ryt * 0.5], [hd.rx * 1.04, hd.cy + hd.ryt * 0.5]] as Pt[]), K!.pal.s, 0.3, 0.006); put(ell(0, hd.cy + hd.ryt * 0.58, 0.12, 0.06, 10), shade(K!.pal.s.c, 0.7), 0.305, 0.002); }   // the strap gap at the back
   if (acc('hat_beanie')) { put(headPoly(hd, 1.1, -0.02, Math.PI + 0.02, 18, 0.04).concat([[-hd.rx * 1.06, hd.cy + hd.ryt * 0.45], [hd.rx * 1.06, hd.cy + hd.ryt * 0.45]] as Pt[]), K!.pal.s, 0.3, 0.012); put(strip([-hd.rx * 1.08, hd.cy + hd.ryt * 0.52], [hd.rx * 1.08, hd.cy + hd.ryt * 0.52], 0.16, 0.16), K!.pal.t, 0.31, 0.01); }
   if (acc('crown')) { const cr: Pt[] = [[-hd.rx * 0.78, hd.cy + hd.ryt * 0.82]]; for (let i = 0; i <= 8; i++) cr.push([-hd.rx * 0.78 + 1.56 * hd.rx * i / 8, hd.cy + hd.ryt * (i % 2 ? 1.12 : 1.42)]); cr.push([hd.rx * 0.78, hd.cy + hd.ryt * 0.82]); put(cr, { c: PAL.gold, f: 'foil' }, 0.32, 0.006); }
+  if (acc('hat_campaign')) {   // a drill sergeant's hat: a wide flat brim and a crown pinched into four dents
+    put(strip([-hd.rx * 1.8, hd.cy + hd.ryt * 0.66], [hd.rx * 1.8, hd.cy + hd.ryt * 0.66], 0.08, 0.08), K!.pal.s, 0.3, 0.004);
+    put([[-hd.rx * 0.9, hd.cy + hd.ryt * 0.66], [hd.rx * 0.9, hd.cy + hd.ryt * 0.66], [hd.rx * 0.55, hd.cy + hd.ryt * 1.4], [0, hd.cy + hd.ryt * 1.62], [-hd.rx * 0.55, hd.cy + hd.ryt * 1.4]], K!.pal.s, 0.31, 0.006);
+    put([[-hd.rx * 0.88, hd.cy + hd.ryt * 0.7], [hd.rx * 0.88, hd.cy + hd.ryt * 0.7], [hd.rx * 0.86, hd.cy + hd.ryt * 0.82], [-hd.rx * 0.86, hd.cy + hd.ryt * 0.82]], shade(K!.pal.s.c, 0.6), 0.315, 0.004);
+    for (const d of [-0.3, 0.3]) put(strip([d * hd.rx, hd.cy + hd.ryt * 1.45], [d * hd.rx * 1.3, hd.cy + hd.ryt * 0.95], 0.03, 0.02), shade(K!.pal.s.c, 0.75), 0.316, 0.003);
+  }
   if (acc('hat_cowboy')) {
     put(strip([-hd.rx * 1.75, hd.cy + hd.ryt * 0.62], [hd.rx * 1.75, hd.cy + hd.ryt * 0.62], 0.1, 0.1, 0.12), K!.pal.s, 0.3, 0.006);
     put([[-hd.rx * 0.95, hd.cy + hd.ryt * 0.6], [hd.rx * 0.95, hd.cy + hd.ryt * 0.6], [hd.rx * 0.8, hd.cy + hd.ryt * 1.45], [0.1, hd.cy + hd.ryt * 1.3], [-0.1, hd.cy + hd.ryt * 1.3], [-hd.rx * 0.8, hd.cy + hd.ryt * 1.45]], K!.pal.s, 0.31, 0.008);
@@ -730,6 +757,7 @@ function head(fr: F, r: Recipe, z: number, expr: string, cut: (f: F, poly: Pt[],
       const fr: Pt[] = []; for (let i = 0; i <= 8; i++) fr.push([hd.rx * 0.98 - 2 * hd.rx * 0.98 * i / 8, hd.cy + hd.ryt * ((r.hair === 'buzz' ? 0.62 : 0.5) + 0.15 * Math.sin(Math.PI * i / 8))]);
       put(top.concat(fr.reverse()), r.hairCol, 0.19, r.hair === 'curls' ? 0.03 : 0.012);
       if (r.hair === 'curls') for (let i = 0; i < 7; i++) { const a = Math.PI * (0.1 + 0.8 * i / 6); put(ell(hd.rx * 1.02 * Math.cos(a), hd.cy + hd.ryt * 1.02 * Math.sin(a), 0.11, 0.11, 10), r.hairCol, 0.2, 0.02); }
+      if (r.hair === 'tower') { put([[-hd.rx * 0.8, hd.cy + hd.ryt * 0.7], [hd.rx * 0.8, hd.cy + hd.ryt * 0.7], [hd.rx * 0.7, hd.cy + hd.ryt * 3.2], [hd.rx * 0.3, hd.cy + hd.ryt * 3.5], [-hd.rx * 0.3, hd.cy + hd.ryt * 3.5], [-hd.rx * 0.7, hd.cy + hd.ryt * 3.2]], r.hairCol, 0.185, 0.03); for (let q = 1; q < 5; q++) put(strip([-hd.rx * 0.6, hd.cy + hd.ryt * (0.7 + q * 0.6)], [hd.rx * 0.6, hd.cy + hd.ryt * (0.75 + q * 0.6)], 0.03, 0.02), shade(r.hairCol, 0.75), 0.186, 0.005); }   // hair piled up like a tower
       if (r.hair === 'bun') { put(ell(bx * 0.45, hd.cy + hd.ryt * 1.13, 0.17, 0.14, 14), r.hairCol, 0.2, 0.015); put(strip([bx * 0.62, hd.cy + hd.ryt * 1.05], [bx * 0.3, hd.cy + hd.ryt * 1.08], 0.03, 0.03), shade(r.hairCol, 0.5), 0.205, 0.003); }
     }
     const C2 = r.hairCol2;
@@ -751,6 +779,12 @@ function head(fr: F, r: Recipe, z: number, expr: string, cut: (f: F, poly: Pt[],
   if (acc('crown')) {   // a crown: a band with five points, a stone in the middle
     const cr: Pt[] = [[-hd.rx * 0.78, hd.cy + hd.ryt * 0.82]]; for (let i = 0; i <= 8; i++) cr.push([-hd.rx * 0.78 + 1.56 * hd.rx * i / 8, hd.cy + hd.ryt * (i % 2 ? 1.12 : 1.42)]); cr.push([hd.rx * 0.78, hd.cy + hd.ryt * 0.82]);
     put(cr, { c: PAL.gold, f: 'foil' }, 0.32, 0.006); put(ell(0, hd.cy + hd.ryt * 0.98, 0.06, 0.06, 10), PAL.red, 0.325, 0.002);
+  }
+  if (acc('hat_campaign')) {   // a drill sergeant's hat: a wide flat brim and a crown pinched into four dents
+    put(strip([-hd.rx * 1.8, hd.cy + hd.ryt * 0.66], [hd.rx * 1.8, hd.cy + hd.ryt * 0.66], 0.08, 0.08), K!.pal.s, 0.3, 0.004);
+    put([[-hd.rx * 0.9, hd.cy + hd.ryt * 0.66], [hd.rx * 0.9, hd.cy + hd.ryt * 0.66], [hd.rx * 0.55, hd.cy + hd.ryt * 1.4], [0, hd.cy + hd.ryt * 1.62], [-hd.rx * 0.55, hd.cy + hd.ryt * 1.4]], K!.pal.s, 0.31, 0.006);
+    put([[-hd.rx * 0.88, hd.cy + hd.ryt * 0.7], [hd.rx * 0.88, hd.cy + hd.ryt * 0.7], [hd.rx * 0.86, hd.cy + hd.ryt * 0.82], [-hd.rx * 0.86, hd.cy + hd.ryt * 0.82]], shade(K!.pal.s.c, 0.6), 0.315, 0.004);
+    for (const d of [-0.3, 0.3]) put(strip([d * hd.rx, hd.cy + hd.ryt * 1.45], [d * hd.rx * 1.3, hd.cy + hd.ryt * 0.95], 0.03, 0.02), shade(K!.pal.s.c, 0.75), 0.316, 0.003);
   }
   if (acc('hat_cowboy')) {
     put(strip([-hd.rx * 1.75, hd.cy + hd.ryt * 0.62], [hd.rx * 1.75, hd.cy + hd.ryt * 0.62], 0.1, 0.1, 0.12), K!.pal.s, 0.3, 0.006);   // the brim
