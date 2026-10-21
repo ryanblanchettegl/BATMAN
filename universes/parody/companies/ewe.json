@@ -12503,16 +12503,7 @@
       }
      }
     },
-    "finishing_moves": [
-     {
-      "name": "The finisher",
-      "impact_damage": 88,
-      "kickout_difficulty": "Protected",
-      "position": "Standing",
-      "category": "Pinfall Impact",
-      "preview_pose_id": "slam"
-     }
-    ]
+    "finishing_moves": []
    }
   },
   {
@@ -12643,16 +12634,7 @@
       }
      }
     },
-    "finishing_moves": [
-     {
-      "name": "The finisher",
-      "impact_damage": 88,
-      "kickout_difficulty": "Protected",
-      "position": "Standing",
-      "category": "Pinfall Impact",
-      "preview_pose_id": "slam"
-     }
-    ]
+    "finishing_moves": []
    }
   },
   {
@@ -12777,16 +12759,7 @@
       }
      }
     },
-    "finishing_moves": [
-     {
-      "name": "The finisher",
-      "impact_damage": 88,
-      "kickout_difficulty": "Protected",
-      "position": "Standing",
-      "category": "Pinfall Impact",
-      "preview_pose_id": "slam"
-     }
-    ]
+    "finishing_moves": []
    }
   },
   {
@@ -12910,16 +12883,7 @@
       }
      }
     },
-    "finishing_moves": [
-     {
-      "name": "The finisher",
-      "impact_damage": 88,
-      "kickout_difficulty": "Protected",
-      "position": "Standing",
-      "category": "Pinfall Impact",
-      "preview_pose_id": "slam"
-     }
-    ]
+    "finishing_moves": []
    }
   },
   {
@@ -13050,16 +13014,7 @@
       }
      }
     },
-    "finishing_moves": [
-     {
-      "name": "The finisher",
-      "impact_damage": 88,
-      "kickout_difficulty": "Protected",
-      "position": "Standing",
-      "category": "Pinfall Impact",
-      "preview_pose_id": "slam"
-     }
-    ]
+    "finishing_moves": []
    }
   },
   {
