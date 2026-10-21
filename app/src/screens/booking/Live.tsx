@@ -283,6 +283,11 @@ function scenePick(r: any, s: any, at: number, done: boolean): { sc: Scene; cast
     const ent0 = ownEnt(who) || choose('entrance', k), fx = S.w[who] && S.w[who].look && S.w[who].look.entrance_fx, sc0 = ent0 && dressEntrance(ent0, fx), sc = sc0 && fillScene(sc0, { a: who }, cast);
     if (sc) return { sc, cast, play: i + ':e' + k, label: nm(cast.A) + ' comes out' };
   }
+  // a match told with no entrances (a tag match): a newcomer's debut is the picture at the bell
+  if (!done && (s.debut || []).length && !bc.some(b => b.t === 'ent') && bc.slice(0, now + 1).filter(b => b.t === 'pbp' || b.t === 'col').length <= 2) {
+    const dbt = s.debut[0], pk = beatPick('debut_' + dbt.k, [dbt.id].concat(ids.filter(id => sideOf(id) !== sideOf(dbt.id)).slice(0, 1)));
+    if (pk) { Object.assign(cast, pk.cast); return { sc: pk.sc, cast, play: i + ':db' + dbt.id, label: pk.label }; }
+  }
   let when = 'mid', key = 'm', a = ids[0];
   // a line of colour from the desk, between the moves: cut to the two of them, the colour voice talking
   const line = bc[now];
