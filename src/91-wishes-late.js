@@ -1,3 +1,4 @@
+/* wraps: 90-api.js (it must sort after them; test-buildorder.js checks) */
 /* ---------- depth systems that wrap the player API in 90-api.js ---------- */
 
 /* speaking out: a released wrestler may give an interview. It can sour the room, give away a rival's plans, or settle a score */

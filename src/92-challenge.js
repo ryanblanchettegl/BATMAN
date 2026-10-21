@@ -1,3 +1,4 @@
+/* wraps: 00-core.js (it must sort after them; test-buildorder.js checks) */
 /* ---------- 100. The weekly challenge: a dated seed, the same world for everyone, twelve weeks, one score, and a short code to share (S.chal) ---------- */
 function isoParts(id){var m=/^(\d{4})-?W(\d{1,2})$/.exec(String(id||''));return m?{y:+m[1],w:+m[2]}:null;}
 E.challengeInfo=function(id){

@@ -3,7 +3,7 @@ import { E, GameState } from './engine';
 import { useBackdropSource } from './kit/backdrop';
 
 export const KEY = 'ewf9000-save-4', UKEY = 'ewf9000-universes', PKEY = 'gorilla-position-prefs';
-export const VER = '0.76';
+export const VER = '0.88';
 
 /* ---------- preferences ---------- */
 export interface Prefs { snd: boolean; type: boolean; crt: boolean; boot: boolean; letter: boolean; screen: 'auto' | 'desk' | 'tablet' | 'tv'; zoom: number; speed: number; auto: boolean; pace: 'tv' | 'full' | 'quick' | 'results'; pv?: number; motion: 'auto' | 'reduce' | 'full'; fxvol: number; uni: string ; u2?: boolean; pics: boolean }
@@ -23,11 +23,38 @@ export const G: { S: GameState | null } = { S: null };
 // scenes in a game stand in front of the backdrops its world carries
 useBackdropSource(() => G.S ? E.worldBackdrops(G.S) : []);
 export function me() { return G.S.promos[G.S.player]; }
-export function save(): boolean { try { localStorage.setItem(KEY, JSON.stringify(G.S)); return true; } catch (e) { return false; } }
-export function loadSave(): GameState | null {
-  try { const t = localStorage.getItem(KEY); if (!t) return null; const o = JSON.parse(t); return o && o.v === 4 && o.promos ? o : null; } catch (e) { return null; }
+/* Saves live in IndexedDB (a career outgrows localStorage). A copy stays in localStorage while it fits, so a reload
+   straight after a save, before the database has finished writing, still finds it; each copy carries a counter and the
+   newer one wins at start-up. An old save found only in localStorage is moved into the database. */
+const IDB = 'ewf-wm', IST = 'saves', NKEY = KEY + '-n';
+let cache: string | null = null, cacheN = 0, db: IDBDatabase | null = null;
+function idbOpen(): Promise<IDBDatabase | null> {
+  return new Promise(res => { try { const r = indexedDB.open(IDB, 1); r.onupgradeneeded = () => { r.result.createObjectStore(IST); }; r.onsuccess = () => res(r.result); r.onerror = () => res(null); } catch (e) { res(null); } });
 }
-export function clearSave() { try { localStorage.removeItem(KEY); } catch (e) { /* ignore */ } }
+function idbGet(k: string): Promise<any> { return new Promise(res => { if (!db) return res(null); try { const q = db.transaction(IST).objectStore(IST).get(k); q.onsuccess = () => res(q.result || null); q.onerror = () => res(null); } catch (e) { res(null); } }); }
+function idbPut(k: string, v: any) { if (!db) return; try { db.transaction(IST, 'readwrite').objectStore(IST).put(v, k); } catch (e) { /* ignore */ } }
+function idbDel(k: string) { if (!db) return; try { db.transaction(IST, 'readwrite').objectStore(IST).delete(k); } catch (e) { /* ignore */ } }
+/** Called once before the first screen: opens the database and picks the newest save. */
+export async function initSaves() {
+  db = await idbOpen();
+  const d = await idbGet(KEY);
+  let lt: string | null = null, ln = 0; try { lt = localStorage.getItem(KEY); ln = +(localStorage.getItem(NKEY) || '0') || 0; } catch (e) { /* ignore */ }
+  // every save writes both copies alike, so a localStorage copy that differs is the newer one (the database had not
+  // finished writing, or it came from an older version of the game); a missing one means it outgrew localStorage
+  if (lt && (!d || lt !== d.text)) { cache = lt; cacheN = Math.max(ln, d ? d.n || 0 : 0) + 1; idbPut(KEY, { n: cacheN, text: lt }); }
+  else if (d && d.text) { cache = d.text; cacheN = d.n || 0; }
+}
+export function save(): boolean {
+  try { const text = JSON.stringify(G.S); cache = text; cacheN++; idbPut(KEY, { n: cacheN, text });
+    try { localStorage.setItem(KEY, text); localStorage.setItem(NKEY, String(cacheN)); } catch (e) { try { localStorage.removeItem(KEY); } catch (e2) { /* full: the database holds it */ } }
+    return !!db || true; } catch (e) { return false; }
+}
+export function loadSave(): GameState | null {
+  try { const t = cache; if (!t) return null; const o = JSON.parse(t); return o && o.v === 4 && o.promos ? o : null; } catch (e) { return null; }
+}
+export function clearSave() { cache = null; idbDel(KEY); try { localStorage.removeItem(KEY); localStorage.removeItem(NKEY); } catch (e) { /* ignore */ } }
+/** The save as text, for a backup file. */
+export function saveText(): string | null { return G.S ? JSON.stringify(G.S) : cache; }
 
 /* ---------- universes: the built-in default plus anything the player imported ---------- */
 export const UNIS: Record<string, any> = (() => { try { return JSON.parse(localStorage.getItem(UKEY) || '{}') || {}; } catch (e) { return {}; } })();

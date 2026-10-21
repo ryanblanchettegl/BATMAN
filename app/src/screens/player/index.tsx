@@ -11,6 +11,7 @@ import { Btn, TextBox, Desktop, Win, Group, Sel, Opt } from '../../kit';
 import { ScenePlayer } from '../../kit/sceneplayer';
 import { Scene, SCENES, POSES, WAIST, copy, scenesFor, allScenes, WHEN, PYRO, LIGHTS, dressEntrance } from '../../kit/scene';
 import { Recipe, recipeOf, blank } from '../../kit/puppet';
+import { SwatchOpts } from '../../kit/swatchopts';
 import { Look, Attire, AttireKey, Layer, Finisher, ATTIRES, PARTS, SWATCHES, SLOTS, FONTS, SHAPES, ARCHETYPES, FACIAL, PAINT, PAINT_LAYERS, TATTOOS, HAIR_MIX, SCARS, MASK_DESIGNS, FACE_SLIDERS, FEATURES, KICKOUT, POSITIONS, CATEGORIES, FIN_SCENES, STAGES, threeMoves, randomLook, fromLook, blankLook, finScene, swatch } from '../../kit/caw';
 import { derive, NAMES, FaceKey } from '../../lib/portrait';
 import { PaperPortrait, PT_POSES, PT_FRAMES, companyCard } from '../../kit/paperportrait';
@@ -119,7 +120,7 @@ export function CreatePlayer(pp: PlayerProps) {
               {PARTS[slot].map(p => <option value={p[0]}>{p[1]}</option>)}</select>
             {chip((cur.part_colours || {})[slot] || undefined)}<select aria-label={'Colour of the ' + (slot === 'upper_body' ? 'top' : slot === 'lower_body' ? 'bottoms' : 'footwear')} data-t="caw-partcol" data-v={slot} value={(cur.part_colours || {})[slot] || ''}
               onChange={e => { const v = (e.currentTarget as HTMLSelectElement).value; change(n => { const a2 = A(n), pc: any = a2.part_colours = a2.part_colours || {}; if (v) pc[slot] = v; else delete pc[slot]; if (!Object.keys(pc).length) delete a2.part_colours; }); }}>
-              <option value="">The outfit's colours</option>{SWATCHES.map(s2 => <option value={s2[0]}>{s2[1]}</option>)}</select></div>;
+              <option value="">The outfit's colours</option><SwatchOpts /></select></div>;
   const extras = (ids: string[]) => <div class="sc-row">{PARTS.accessories.filter(p => ids.indexOf(p[0]) >= 0).map(p => { const on = (cur.equipped_assets.accessories || []).indexOf(p[0]) >= 0; return <Btn kind="less" t="caw-acc" d={{ v: p[0] }} on={on} onClick={() => change(n => { const e = A(n).equipped_assets, l = e.accessories || []; e.accessories = on ? l.filter(x => x !== p[0]) : l.concat([p[0]]).slice(0, 8); })}>{p[1]}</Btn>; })}</div>;
   const hairRow = <div class="sc-row"><span class="sc-slot">Hair or mask</span><select aria-label="Hair" data-t="caw-hair" value={cur.equipped_assets.head || 'hair_face'} onChange={e => { const v = (e.currentTarget as HTMLSelectElement).value; change(n => { ATTIRES.forEach(a => { const x = (n.attires = n.attires || {})[a[0]] || (n.attires[a[0]] = { equipped_assets: {}, palette_slots: {} }); x.equipped_assets.head = v; }); }); }}>
     {PARTS.head.map(p => <option value={p[0]}>{p[1]}</option>)}</select></div>;
@@ -178,10 +179,10 @@ export function CreatePlayer(pp: PlayerProps) {
             <div class="sc-row"><span class="sc-slot">Face paint</span><select aria-label="Face paint" data-t="caw-paint" value={(lk.appearance && lk.appearance.face_paint) || ''} onChange={e => { const v = (e.currentTarget as HTMLSelectElement).value; change(n => { n.appearance = n.appearance || {}; if (v) n.appearance.face_paint = v; else delete n.appearance.face_paint; }); }}>
               {PAINT.map(f => <option value={f[0]}>{f[1]}</option>)}</select>
               {lk.appearance && lk.appearance.face_paint && <select aria-label="Paint colour" data-t="caw-paintcol" value={lk.appearance.paint_colour || ''} onChange={e => { const v = (e.currentTarget as HTMLSelectElement).value; change(n => { n.appearance = n.appearance || {}; if (v) n.appearance.paint_colour = v; else delete n.appearance.paint_colour; }); }}>
-                <option value="">{lk.appearance.face_paint === 'skull' ? 'White' : 'Red'}</option>{SWATCHES.map(s2 => <option value={s2[0]}>{s2[1]}</option>)}</select>}</div>
+                <option value="">{lk.appearance.face_paint === 'skull' ? 'White' : 'Red'}</option><SwatchOpts /></select>}</div>
             {(ap.paint_layers || []).map((l, i) => <div class="sc-row" key={'pl' + i}><span class="sc-slot">{'Layer ' + (i + 1)}</span>
               <select aria-label={'Paint layer ' + (i + 1)} data-t="caw-paintly" data-v={i} value={l.k} onChange={e => { const v = (e.currentTarget as HTMLSelectElement).value; setAp(a => { a.paint_layers![i].k = v; }); }}>{PAINT_LAYERS.map(f => <option value={f[0]}>{f[1]}</option>)}</select>
-              <select aria-label={'Colour of layer ' + (i + 1)} data-t="caw-paintlycol" data-v={i} value={l.c || ''} onChange={e => { const v = (e.currentTarget as HTMLSelectElement).value; setAp(a => { if (v) a.paint_layers![i].c = v; else delete a.paint_layers![i].c; }); }}><option value="">Black</option>{SWATCHES.map(s2 => <option value={s2[0]}>{s2[1]}</option>)}</select>
+              <select aria-label={'Colour of layer ' + (i + 1)} data-t="caw-paintlycol" data-v={i} value={l.c || ''} onChange={e => { const v = (e.currentTarget as HTMLSelectElement).value; setAp(a => { if (v) a.paint_layers![i].c = v; else delete a.paint_layers![i].c; }); }}><option value="">Black</option><SwatchOpts /></select>
               <Btn kind="sm" t="caw-paintlyup" d={{ v: i }} disabled={i >= (ap.paint_layers || []).length - 1} label={'Paint layer ' + (i + 1) + ' over the next'} onClick={() => setAp(a => { const L = a.paint_layers!, x = L[i]; L[i] = L[i + 1]; L[i + 1] = x; })}>Over</Btn>
               <Btn kind="less" t="caw-paintlydel" d={{ v: i }} onClick={() => setAp(a => { a.paint_layers!.splice(i, 1); if (!a.paint_layers!.length) delete a.paint_layers; })}>Wipe off</Btn></div>)}
             {(ap.paint_layers || []).length < 3 && <div class="sc-row"><span class="sc-slot"></span><Btn kind="less" t="caw-paintlyadd" onClick={() => setAp(a => { a.paint_layers = (a.paint_layers || []).concat([{ k: 'eyes' }]); })}>Paint a layer over it</Btn></div>}
@@ -223,10 +224,10 @@ export function CreatePlayer(pp: PlayerProps) {
               {PARTS.head.map(p => <option value={p[0]}>{p[1]}</option>)}</select>
               <span class="muted">Worn with every outfit; a mask takes the main colour and the trim of each.</span></div>
             <div class="sc-row"><span class="sc-slot">Hair colour</span><select aria-label="Hair colour" data-t="caw-haircol" value={(lk.appearance && lk.appearance.hair_colour) || ''} onChange={e => { const v = (e.currentTarget as HTMLSelectElement).value; change(n => { n.appearance = n.appearance || {}; if (v) n.appearance.hair_colour = v; else delete n.appearance.hair_colour; }); }}>
-              <option value="">From the face</option>{SWATCHES.map(s => <option value={s[0]}>{s[1]}</option>)}</select></div>
+              <option value="">From the face</option><SwatchOpts hair /></select></div>
             {!/^mask/.test(cur.equipped_assets.head || '') ? <div class="sc-row"><span class="sc-slot">Second colour</span><select aria-label="A second hair colour" data-t="caw-hairmix" value={ap.hair_mix || ''} onChange={e => { const v = (e.currentTarget as HTMLSelectElement).value; setAp(a => { if (v) { a.hair_mix = v; a.hair_colour2 = a.hair_colour2 || 'swatch_yellow_paper'; } else { delete a.hair_mix; delete a.hair_colour2; } }); }}>
               {HAIR_MIX.map(m => <option value={m[0]}>{m[1]}</option>)}</select>
-              {ap.hair_mix ? <select aria-label="Second hair colour" data-t="caw-haircol2" value={ap.hair_colour2 || ''} onChange={e => { const v = (e.currentTarget as HTMLSelectElement).value; setAp(a => { a.hair_colour2 = v; }); }}>{SWATCHES.map(s => <option value={s[0]}>{s[1]}</option>)}</select> : null}</div>
+              {ap.hair_mix ? <select aria-label="Second hair colour" data-t="caw-haircol2" value={ap.hair_colour2 || ''} onChange={e => { const v = (e.currentTarget as HTMLSelectElement).value; setAp(a => { a.hair_colour2 = v; }); }}><SwatchOpts hair /></select> : null}</div>
             : <div class="sc-row"><span class="sc-slot">Mask design</span><select aria-label="Mask design" data-t="caw-maskdesign" value={ap.mask_design || ''} onChange={e => { const v = (e.currentTarget as HTMLSelectElement).value; setAp(a => { if (v) a.mask_design = v; else delete a.mask_design; }); }}>
               <option value="">{cur.equipped_assets.head === 'mask_hood_01' ? 'Plain' : 'Flames round the eyes'}</option>{MASK_DESIGNS.filter(m => m[0] !== 'flames').map(m => <option value={m[0]}>{m[1]}</option>)}</select>
               <span class="muted">Cut in the trim colour.</span></div>}
@@ -251,9 +252,9 @@ export function CreatePlayer(pp: PlayerProps) {
 
           <p class="muted">This is the picture the game shows of them: on the roster, in lists, on cards and in their file. The card behind them is their company's colour, or their brand's.</p>
         </>}
-        {tab === 'a_head' && <>{hairRow}<Group title="On the head">{extras(['hat_cowboy', 'bandana', 'sunglasses_aviator'])}</Group><p class="muted">Hair is worn with every outfit; a mask takes this outfit's main colour and trim.</p></>}
-        {tab === 'a_upper' && <>{partRow('upper_body')}<Group title="Arms and chest">{extras(['wrist_tape_white', 'wrist_wraps', 'elbow_pads', 'gloves_fingerless', 'armband', 'chain_gold'])}</Group></>}
-        {tab === 'a_lower' && <>{partRow('lower_body')}<Group title="Knees">{extras(['knee_pads', 'knee_sleeves'])}</Group></>}
+        {tab === 'a_head' && <>{hairRow}<Group title="On the head">{extras(['hat_cowboy', 'hat_cap', 'hat_beanie', 'bandana', 'headband', 'antennae', 'crown', 'sunglasses_aviator', 'sunglasses_round', 'glasses_plain', 'headset'])}</Group><p class="muted">Hair is worn with every outfit; a mask takes this outfit's main colour and trim.</p></>}
+        {tab === 'a_upper' && <>{partRow('upper_body')}<Group title="Arms and chest">{extras(['wrist_tape_white', 'wrist_wraps', 'elbow_pads', 'gloves_fingerless', 'armband', 'chain_gold', 'pearls', 'scarf', 'feather_boa', 'guitar', 'bat', 'collar_spiked', 'whistle', 'trombone', 'sword', 'sledgehammer'])}</Group></>}
+        {tab === 'a_lower' && <>{partRow('lower_body')}<Group title="Knees">{extras(['knee_pads', 'knee_sleeves', 'fishnets'])}</Group></>}
         {tab === 'a_feet' && <>{partRow('footwear')}<p class="muted">Boots come up the shin; kick pads leave the foot bare.</p></>}
         {tab === 'gear' && <>
           {(['upper_body', 'lower_body', 'footwear'] as const).map(partRow)}
@@ -263,7 +264,7 @@ export function CreatePlayer(pp: PlayerProps) {
         {tab === 'colour' && <>
           {SLOTS.map(([k, n]) => <div class="sc-row"><span class="sc-slot">{n}</span>{chip((cur.palette_slots as any)[k])}
             <select aria-label={n} data-t="caw-swatch" data-v={k} value={(cur.palette_slots as any)[k] || ''} onChange={e => { const v = (e.currentTarget as HTMLSelectElement).value; change(n2 => { (A(n2).palette_slots as any)[k] = v; }); }}>
-              <option value="">Their own colour</option>{SWATCHES.map(s => <option value={s[0]}>{s[1]}</option>)}</select></div>)}
+              <option value="">Their own colour</option><SwatchOpts /></select></div>)}
           <p class="muted">Main colour: trunks, tights, jeans and ring tops. Second colour: shirts and jackets worn over, boots, pads and gloves. Trim: stripes, edges, laces and soles. Buckles and metal: zips, buckles, chains and glasses. Foil shines, neon glows, corrugated board has ridges.</p>
           <div class="sc-row">{ATTIRES.filter(a => a[0] !== att).map(a => <Btn kind="sm" t="caw-copycol" d={{ v: a[0] }} onClick={() => change(n => { const from = (n.attires || {})[a[0]]; if (from) A(n).palette_slots = { ...from.palette_slots }; })}>{'Colours from ' + a[1].toLowerCase()}</Btn>)}</div>
         </>}
@@ -291,7 +292,7 @@ export function CreatePlayer(pp: PlayerProps) {
               </div>
               <div class="sc-row">
                 <select aria-label="Colour" data-t="caw-lcol" value={layers[lay].palette_slot || 'trim'} onChange={e => { const v = (e.currentTarget as HTMLSelectElement).value; setLayer(l => { l.palette_slot = v; }); }}>
-                  {SLOTS.map(s => <option value={s[0]}>{'The outfit: ' + s[1].toLowerCase()}</option>)}{SWATCHES.map(s => <option value={s[0]}>{s[1]}</option>)}</select>
+                  {SLOTS.map(s => <option value={s[0]}>{'The outfit: ' + s[1].toLowerCase()}</option>)}<SwatchOpts /></select>
                 <select aria-label="Where it goes" data-t="caw-lon" value={layers[lay].on || 'upper_body'} onChange={e => { const v = (e.currentTarget as HTMLSelectElement).value; setLayer(l => { if (v === 'lower_body' || v === 'back') l.on = v; else delete l.on; }); setBack(v === 'back'); }}>
                   <option value="upper_body">On the chest</option><option value="lower_body">Down the leg</option><option value="back">Across the back</option></select>
                 <Btn kind="danger" t="caw-ldrop" onClick={() => { change(n => { A(n).custom_layers!.splice(lay, 1); }); setLay(-1); }}>Remove</Btn>

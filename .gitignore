@@ -5,5 +5,7 @@ node_modules/
 release/
 __pycache__/
 
+# notes on who each parody character is based on: kept out of the repository (docs/decisions-needed.md)
+private/
 # concept builds of the hand-made look (EWF_LOOK with EWF_OUT); rebuilt from the source any time
 dist/look-*.html

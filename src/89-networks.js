@@ -1,3 +1,4 @@
+/* wraps: 88-shows.js (it must sort after them; test-buildorder.js checks) */
 /* ===== Networks and what they want (NEXT.md 7.1 and 7.3) =====
    Every network a weekly show can be on has a taste, worked out from its name with a hash (never rnd(S)):
      family  wants a clean show: hardcore, tables and ladder matches and a lot of shouting go down badly

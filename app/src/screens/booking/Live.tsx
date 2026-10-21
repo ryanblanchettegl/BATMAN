@@ -18,7 +18,7 @@ import { book } from '../../flow';
 import { fillScene, MomentPic, segPick, beatPick } from '../../shared/moment';
 import { Btn, KV, Meter, Banner, BeltArt, Belt, Portrait, CheckLine, stars, grade } from '../../kit';
 import { Verdict, OddsLine, FxList, Crowd } from './Report';
-import { typer, preNote, liveSkip, liveEnd, liveDecide, liveCall, onAir, livePos, autoArm, autoStop, autoToggle, paceNext, PACE_N, tvKeys } from './run';
+import { typer, preNote, liveSkip, liveEnd, liveDecide, liveCall, onAir, livePos, autoArm, autoStop, autoToggle, paceNext, PACE_N, tvKeys, liveReplaySeg, canReplaySeg } from './run';
 import { Logo } from '../../kit/logo';
 import { hm } from './Segments';
 
@@ -225,15 +225,21 @@ function LiveFeed(p: { r: any; si: number; b: number; info: any }) {
           <p class="pt">{x.t}</p><p class="pm"><span>{'♥'} {x.l.toLocaleString('en-US')}</span><span>{'↻'} {x.r.toLocaleString('en-US')}</span></p></div>
       </article>) : <p class="muted fd-empty">{P ? P.name : 'The company'} is on the air. The feed is waiting for the first bell.</p>}</div>
     </section>
-    <section class="crowdm" data-t="crowd-meter" data-v={v} aria-label={'The crowd: ' + F.crowd.word}>
-      <span class="cl">The crowd</span>
-      <span class="cm" aria-hidden="true">{Array.from({ length: n }, (_, i) => <i key={i} class={(i < on ? 'on ' : '') + (i < n * 0.45 ? 'g' : (i < n * 0.75 ? 'y' : 'r'))} />)}</span>
-      <b class="cw">{F.crowd.word}</b>
-    </section>
+    <p class={'crowdln' + (v >= 85 ? ' wild' : '')} data-t="live-crowd" data-v={v} aria-label={'The crowd: ' + F.crowd.word}><span>The crowd</span><i class="cbar" aria-hidden="true"><i style={{ width: v + '%' }} /></i><b>{F.crowd.word}</b></p>
     {p.info ? <p class="nt-foot" data-t="night-calls"><span>Calls from the headset: <b>{p.info.calls}</b></span><span>Booking power: <b>{p.info.bp}</b></span></p> : null}
   </aside>;
 }
 const DOT = ' · ';
+/** An entrance for one, made into an entrance for a team: each partner a copy of the one walking out, a step
+    behind and a little further back, in the same pose, so they come down the ramp together. */
+function withPartners(sc: Scene, n: number): Scene {
+  const lead = sc.slots.find(x => (x.hook || x.role) === 'a'); if (!lead) return sc;
+  const slots = sc.slots.concat(Array.from({ length: n }, (_, j) => ({ id: 'M' + j, n: 'Partner ' + (j + 1), role: 'b' as const, hook: 'mate' + j })));
+  const keys = sc.keys.map(kf => { const f = kf.figs[lead.id]; if (!f || f.on) return kf; const figs = { ...kf.figs };
+    for (let j = 0; j < n; j++) figs['M' + j] = { ...f, x: f.x - (j + 1) * 1.75 * (f.f || 1), z: f.z - (j + 1) * 0.25, e: j ? f.e : (f.e === 'shout' ? 'shout' : f.e) };
+    return { ...kf, figs }; });
+  return { ...sc, id: sc.id + '+' + n, slots, keys };
+}
 
 const IN_RING = ['ring', 'ringlow', 'ringcorner'];
 /** Which scene from Create a Scene fits this moment of the broadcast, and who plays it. It only reads the show:
@@ -274,14 +280,30 @@ function scenePick(r: any, s: any, at: number, done: boolean): { sc: Scene; cast
   const winSide = s.win ? (s.sidesN as string[]).indexOf(s.win) : -1, winner = winSide >= 0 ? ids[winSide * per] : -1;
   let lastH = -1; bc.forEach((b, j) => { if (b.h) lastH = j; });
   // the entrances: whoever is walking out, in their entrance gear, on their own entrance if they picked one
-  if (!done && bc[now] && bc[now].t === 'ent') {
-    const k = bc.slice(0, now + 1).filter(b => b.t === 'ent').length - 1, who = ids[Math.min(ids.length - 1, k * per)];
+  // the ring announcer's line before an entrance plays that entrance (they are introduced, they come out)
+  let entAt = now;
+  if (!done && bc[now] && bc[now].t === 'ring') { const bell = bc.findIndex(b => b.t === 'pbp'); for (let j = now + 1; j < bc.length && (bell < 0 || j < bell); j++) if (bc[j].t === 'ent') { entAt = j; break; } }
+  if (!done && bc[entAt] && bc[entAt].t === 'ent') {
+    // the entrance line names its own side (the engine brings the champions out last); an old report falls back on the order of the card
+    const k = bc.slice(0, entAt + 1).filter(b => b.t === 'ent').length - 1, eb: any = bc[entAt], ew: number[] = Array.isArray(eb.side) ? eb.side.filter((id: number) => !!S.w[id]) : [];
+    const who = ew.length ? ew[0] : ids[Math.min(ids.length - 1, k * per)];
     // a newcomer's first time out is the debut's own beat (rule 9c): the teasers paid off, the surprise attack, or just the debut
     // (the broadcast joins a match at its last introduction, so the debut takes the entrance whoever is walking out)
     const dbt = (s.debut || []).find((d: any) => d.id === who) || (s.debut || [])[0];
     if (dbt) { const pk = beatPick('debut_' + dbt.k, [dbt.id].concat(ids.filter(id => sideOf(id) !== sideOf(dbt.id)).slice(0, 1))); if (pk) { Object.assign(cast, pk.cast); return { sc: pk.sc, cast, play: i + ':db' + dbt.id, label: pk.label }; } }
-    const ent0 = ownEnt(who) || choose('entrance', k), fx = S.w[who] && S.w[who].look && S.w[who].look.entrance_fx, sc0 = ent0 && dressEntrance(ent0, fx), sc = sc0 && fillScene(sc0, { a: who }, cast);
-    if (sc) return { sc, cast, play: i + ':e' + k, label: nm(cast.A) + ' comes out' };
+    // a tag team (or a trio) comes out together: the partners walk a step behind on the same entrance (Ryan, 20 October)
+    const mates = ew.length ? ew.slice(1, 3) : (per > 1 ? ids.slice(k * per + 1, k * per + per).filter(id => !!S.w[id]).slice(0, 2) : []);
+    const ent0 = ownEnt(who) || choose('entrance', k), fx = S.w[who] && S.w[who].look && S.w[who].look.entrance_fx, sc1 = ent0 && dressEntrance(ent0, fx);
+    const sc0 = sc1 && mates.length ? withPartners(sc1, mates.length) : sc1, hk: Record<string, number> = { a: who }; mates.forEach((id, j) => { hk['mate' + j] = id; });
+    const sc = sc0 && fillScene(sc0, hk, cast);
+    if (sc) {
+      // a champion wears their belts on the way out, up to three (Ryan, 20 October); tag champions both wear theirs
+      const P = S.promos[S.player], beltsOf = (id: number) => P ? P.titles.filter((t: any) => t.holders.indexOf(id) >= 0).sort((a: any, b: any) => b.lvl - a.lvl).slice(0, 3) : [];
+      const wear = (id: number, slot: string) => { const h = beltsOf(id); if (h.length && cast[slot]) cast[slot] = { ...cast[slot], belts: h.length, beltL: h.map((t: any) => E.beltOf(t, P)) }; return h.length; };
+      const sl = sc.slots.find(x => (x.hook || x.role) === 'a'), held = sl ? wear(who, sl.id) : 0; mates.forEach((id, j) => wear(id, 'M' + j));
+      const names = mates.length ? [S.w[who].name].concat(mates.map(id => S.w[id].name)).join(' & ') : nm(cast.A);
+      return { sc, cast, play: i + ':e' + k + (held ? 'b' + held : '') + (mates.length ? 'm' + mates.length : ''), label: names + (mates.length ? ' come out' : ' comes out') + (held ? ' with ' + (held === 1 ? 'the gold' : held + ' belts') : '') };
+    }
   }
   let when = 'mid', key = 'm', a = ids[0];
   // a line of colour from the desk, between the moves: cut to the two of them, the colour voice talking
@@ -379,10 +401,10 @@ export function Live(p: { r: any }) {
     <div class="lv-body">
       <div class="lv-main">
         {(() => { const pk = pref.pics && !ev && state === 'seg' ? scenePick(r, s, L.b, done) : null;
-          return pk ? <div class="tvframe" data-t="tv"><ScenePlayer key="scene" sc={pk.sc} cast={pk.cast} play={pk.play} label={pk.label} still={reduceMotion()} /><div class="chyron">{head}</div><span class="bug" aria-hidden="true"><Logo of={S.promos[S.player]} size="chip" /><i class="dot" />LIVE</span></div> : head; })()}
+          return pk ? <div class="tvframe" data-t="tv"><ScenePlayer key="scene" sc={pk.sc} cast={pk.cast} play={pk.play} label={pk.label} still={reduceMotion()} fill /><div class="chyron">{head}</div><span class="bug" aria-hidden="true"><Logo of={S.promos[S.player]} size="chip" /><i class="dot" />LIVE</span></div> : head; })()}
         <div class={'lv-log' + (state === 'title' || state === 'signoff' ? ' mid' : '')}><div class="lv-lines">{log}</div></div>
         {box}
-        {ev ? null : <div class="foot">{foot}<Btn kind="sm" t="live-pics" on={!!pref.pics} onClick={picsToggle}>{pref.pics ? 'Scenes: on' : 'Scenes: off'}</Btn><Btn kind="sm" t="live-auto" on={!!pref.auto} onClick={autoToggle}>{pref.auto ? 'Auto-play: on' : 'Auto-play: off'}</Btn>{pref.auto ? <Btn kind="sm" t="live-pace" onClick={paceNext}>{'Pace: ' + PACE_N[pref.pace]}</Btn> : null}<span class="blink" aria-hidden="true">_</span><span class="keys-hint">{state === 'signoff' ? 'Space: after the show' : (pref.auto ? (state === 'title' ? 'Space: ring the bell. The show then runs itself and stops for your calls' : 'Running itself. Space: next now. P: pause') : 'Space or Enter: on with the show. P: auto-play')}</span></div>}
+        {ev ? null : <div class="foot">{foot}{canReplaySeg() ? <Btn kind="sm" t="live-replay" tip="Play this segment again from the start" onClick={liveReplaySeg}>Replay</Btn> : null}<Btn kind="sm" t="live-pics" on={!!pref.pics} onClick={picsToggle}>{pref.pics ? 'Scenes: on' : 'Scenes: off'}</Btn><Btn kind="sm" t="live-auto" on={!!pref.auto} onClick={autoToggle}>{pref.auto ? 'Auto-play: on' : 'Auto-play: off'}</Btn>{pref.auto ? <Btn kind="sm" t="live-pace" onClick={paceNext}>{'Pace: ' + PACE_N[pref.pace]}</Btn> : null}<span class="blink" aria-hidden="true">_</span><span class="keys-hint">{state === 'signoff' ? 'Space: after the show' : (pref.auto ? (state === 'title' ? 'Space: ring the bell. The show then runs itself and stops for your calls' : 'Running itself, and stops after each segment. Space: next. R: replay. P: pause') : 'Space or Enter: on with the show. R: replay. P: auto-play')}</span></div>}
       </div>
       <LiveFeed r={r} si={post ? ev.si : L.s} b={post ? 9999 : L.b} info={info} />
     </div>

@@ -35,7 +35,7 @@ MOM.leaving={
       momLater(S,ev.wks,'leaveBad',{w:w.id,t:t.id});return rollText(r)+w.name+' smiles and says nothing. You have a bad feeling about the big show.';}
     if(c===1){r=rollCheck(S,ev.checks[1]);ev.roll=r;
       if(r.ok){momLater(S,ev.wks,'leaveForced',{w:w.id,t:t.id});return rollText(r)+'The new finish is in the booker’s head and nobody else’s. '+w.name+' suspects nothing. For now.';}
-      t.holders=[];t.since=S.week;t.prestige=clamp(t.prestige-8,10,100);S.trust=clamp(S.trust-4,0,100);momLose(S,w,'walked out');news(S,'title',w.name+' found out about the finish and walked out with the '+P.name+' '+t.name+'.');
+      t.holders=[];t.since=S.week;t.prestige=clamp(t.prestige-8,10,100);S.trust=clamp(S.trust-4,0,100);momLose(S,w,'walked out');news(S,'title',w.name+' found out about the finish and walked out with the '+titleFull(P,t)+'.');
       return rollText(r)+w.name+' found out and walked out of the building tonight with the title. It will be on every dirt sheet.';}
     if(c===2){t.holders=[];t.since=S.week;t.prestige=clamp(t.prestige-3,10,100);w.morale=clamp(w.morale-15,0,100);w.con=Math.min(w.con,2);news(S,'title',P.name+' stripped '+w.name+' of the '+t.name+'.');
       return 'You strip '+w.name+' of the title before anything can happen. Safe, and a little cold. They will not forget it.';}

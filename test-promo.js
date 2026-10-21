@@ -8,7 +8,7 @@ E.suggest = E.suggestSmart;
 E.useUniverse(JSON.parse(fs.readFileSync('universes/public_domain.json', 'utf8')));
 let fails = 0, all = []; const bad = (m) => { if (fails++ < 12) console.log('  FAIL ' + m); };
 for (const pi of [0, 1, 2]) {
-  const S = E.newGame(E.universe().promotions[pi].id, 3, { name: 'R' });
+  const S = E.newGame(E.universe().promotions[pi].id, 3, { name: 'R', mid: false });
   for (let wk = 0; wk < 20 && !S.over; wk++) {
     S.inbox.filter(e => !e.done).forEach(e => E.resolveEvent(S, e.id, 0));
     if (S.owner.pending) E.setCreed(S, { style: 'merit', roots: 'tradition', pledge: 'stable' });

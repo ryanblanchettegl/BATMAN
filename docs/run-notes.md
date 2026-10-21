@@ -75,3 +75,29 @@ What this run of `NEXT.md` built, what it skipped, and what the next run should 
 - `tools/balance.js` answers every inbox matter with its second choice. On PDW, one of those answers gives up the broadcast slot and drains the money. That is the harness, not the game.
 - `app/tests/roster.js` used to time out picking a style in the wrestler creator (the preview lay over the pick). Fixed 16 October: the test presses the pick through the page.
 - A version takes five changes before its number moves. This run put the number up once too early and took it back.
+
+# Run notes: the add-ons run, Phase 0 (fixes), versions 0.73 to 0.77
+
+Built:
+- 0.73 Balance (TASKS 11). The biggest cause was a bug: the mutiny meeting's clock was never reset when the owner calmed the room, so it fired every few weeks and cost 6 owner trust each time. Fixed; the owner also takes a middling show calmly, and income-linked overheads are 4% lower. Before and after tables: `docs/balance-0.73.txt`. The underdog now survives 100 weeks on suggested cards on all three seeds; no company more than about triples its cash (the underdog 3.7x).
+- 0.74 One version number: `VER` in `app/src/store.ts`; the build writes it into both package.json files and the README.
+- 0.75 Build order: every file that wraps another file's functions has a `wraps:` header; `test-buildorder.js` reads it and also finds wraps in the code, and fails when one sorts too early. It found a real one: `85-history.js` wrapped `buildDB` from `85-universe.js` while sorting before it (it only worked by hoisting); renamed `86-history.js`. Added to `npm run check`.
+- 0.76 `docs/INDEX.md`: what each planning file is for and which is current. Nothing deleted.
+- 0.77 Legal housekeeping: the notes on who each parody character is based on moved to `private/` (gitignored); history still has them (decisions-needed). The modding guide asks for legal review before sharing a real-life roster. No licence chosen; options listed for the owner.
+
+Skipped or left: on suggested cards the giant is still fired on two seeds of three, and two companies go broke on one seed each (decisions-needed). Nothing published.
+
+# Run notes: the add-ons run, Phases 1 and 2, versions 0.78 to 0.83
+
+Built:
+- 0.78 Career-scale saves (item 9). The game is kept in IndexedDB with a copy in localStorage while it fits; an old localStorage save moves across by itself; a copy that differs from the database is the newer one. Once a game year `src/99-archive.js` folds yearly records older than two years into one row, keeps career logs short, retires free agents nobody used in two years when the pool passes 350, caps rival rosters at 60 by releasing their least-used people, and cuts somebody retired over two years ago to a short stub. A 30-year career measured 3.0 MB, about 0.9 KB a week in its last ten years (the first years grow faster). `test-archive.js`.
+- 0.79 Scenarios as data (item 16): a JSON format with setup steps, a deadline, a win condition, words, figures and a score. The three built-in scenarios were converted and proved to play out identically (`tests/scenario-reference.json`). A world package can bring its own and the world check reads them. `docs/modding.md` section 7. The fingerprint has to be renewed (`node tools/scn-ref.js > tests/scenario-reference.json`) whenever a new system changes how a game plays; do it only after checking that test-scenarios fails on nothing but the fingerprint.
+- Eras (item 1): built, then cut by the owner mid-run. Nothing of it was committed.
+- 0.80 The kayfabe layer (item 3): secrets that are true of the company (real heat inside a team, somebody leaving, an unhappy star, somebody working hurt, a planned ending), weekly leaks by hash, a matter on the desk (deny, work it into the story, let it go), protection in words, a line on the desk, Company, Overview, Behind the curtain. Without eras, secrets matter the same in every year.
+- 0.81 Journalists (item 15): four reporters (the world's dirt sheet writers first), beats, leanings, sources, grudges; leaks credited; a friendly one calls before printing; a weekly column; court, freeze, feed on Manage, Deals, The press.
+- 0.82 The writers' room (item 6): three writers as staff people (nw, srole writer), styles, pitches every other week at the desk, the road agent takes a side, memories and heat between writers, a head writer who sulks, and the style in the words of the writers' segments.
+- 0.83 Post-mortems (item 17): a causal log (200 lines), the month in review every four weeks on the desk, the season in review in History, Season chronicles.
+
+Fixed on the way: the notification bar could wrap to two lines and take height from every page (tablet journey); it is one line now. Two older tests were stale (test-create read `rep.net` as a name; test-promo needed the smart suggestion).
+
+Next run should know: test-relations, test-living ask the writers' room to stand down (each tests something else); test-relations counts respect across its three companies. On the parody world Suggest a card sometimes cannot fill a brand's weekly show (test-uni parody, 100 weeks): not fixed yet.

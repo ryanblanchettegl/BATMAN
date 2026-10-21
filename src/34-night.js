@@ -1,3 +1,4 @@
+/* wraps: 31-live.js (it must sort after them; test-buildorder.js checks) */
 /* ---------- what the night left behind ----------
    Ryan, 4 October: "After a show, it should go back to the Office or your desk, so you can work through any new
    events or decisions that need to be made after the show." A show does not end on its report. It ends on the

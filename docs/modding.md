@@ -2,6 +2,8 @@
 
 A world is every company, wrestler, title and year of history the game starts from. The game ships two: the public-domain world and the parody world. This guide shows how to make your own, a real-life roster for example, starting from the parody world.
 
+**Get legal review before you ship or share a world built on real people.** Names, likenesses, nicknames and catchphrases can be protected. What you make for yourself is up to you; what you share is your responsibility.
+
 ## 1. Where a world lives
 
 A world is kept as a folder, one file for each part, so you can change one company without touching the rest:
@@ -182,7 +184,39 @@ One file a year. Every list is optional. Dates are a year and a month, before th
 
 History does not stop when the game starts. Every title change, match, feud and career line from your games is written into the same records, so the world's story carries on from where the files leave off.
 
-## 7. The parody world's rules
+## 7. Scenarios
+
+A world can bring its own scenarios: a company, a deadline, a problem, and one way to win. Put a list in `scenarios` at the top of the packed world (or in a `scenarios.json` beside `manifest.json` if you pack with your own tool). They sit beside the built-in ones on the title screen.
+
+```json
+{
+ "id": "rescue", "name": "Save the company", "promotion": "ttt", "weeks": 26,
+ "description": "What the player reads before they start.",
+ "setup": [ { "op": "cash", "inc0": 0.8 }, { "op": "wages", "mult": 1.25, "round": 50 } ],
+ "win": { "type": "cash", "atLeast": 1500000 },
+ "text": { "win": "The company is safe: {cash} in the bank.", "lose": "Only {cash} is in the bank." },
+ "figures": [ "Cash {cash} (target $1.5M)" ]
+}
+```
+
+| setup step | what it does |
+| --- | --- |
+| `cash` | sets the money to `inc0` times a normal week's income |
+| `wages` | multiplies every wage by `mult`, rounded to `round` |
+| `target` | picks the player's project: `g` (M or F), `maxAge`, `nth` from the bottom of the roster |
+| `image` | sets a company's popularity: `who` is `player` or a company id, `v` the value |
+| `rival` | names a rival company whose shows are measured against yours |
+| `war` | starts a ratings war with the company in `with` |
+
+| win type | met when | words it fills |
+| --- | --- | --- |
+| `cash` | the money is at least `atLeast` | `{cash}` |
+| `holdsTop` | the project holds the company's top title | `{name}`, `{title}`, `{ovr}`, `{o0}` |
+| `beatRival` | your shows beat expectations by `by` more than the rival's | `{m}`, `{r}`, `{mFig}`, `{rFig}` |
+
+Every scenario ends with a score from 0 to 100. It is also lost if the booker is fired or the money runs out first. The world check reports a scenario with an unknown company, step or win type.
+
+## 8. The parody world's rules
 
 The parody world parodies real companies and people under changed names. If you add to it, keep to the rules it was built on:
 
@@ -191,10 +225,10 @@ The parody world parodies real companies and people under changed names. If you 
 - the plain move name (`finisher_move`, `signatures[].move`) is the generic name of the move, never someone's named version of it;
 - the joke comments on the original.
 
-The design team keeps a note of who each character parodies in `docs/parody/`. It is never part of the world file.
+The design team keeps a note of who each character parodies outside the repository. It is never part of the world file.
 
 A world you make for yourself can follow whatever rules you choose. What you share is your responsibility.
 
-## 8. Sharing a world
+## 9. Sharing a world
 
 A packed world is one file. It can be loaded from the title screen (World Editor, Load), and later shared on the Steam Workshop. The World Editor in the game can also open any packed world, change it and save it again.

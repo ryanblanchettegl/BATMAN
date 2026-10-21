@@ -279,6 +279,12 @@ html body .win.ppop .wb{font-family:var(--hand);font-size:1.06em}
 .empty,.wn .empty,.panel .empty{color:#55555e}
 /* a long list of choices reads in the hand, not in capitals */
 .sc-setups .btn{font-family:var(--hand);font-size:1.08em;letter-spacing:0;text-align:left;white-space:normal;line-height:1.15}
+/* the picked line on the Roster keeps its bars readable: the ink colour above would turn them into black blocks */
+.rspage .rsl tr.pick.on td .meter{color:#1f6f2a}
+.rspage .rsl tr.pick.on td .meter.hot{color:var(--red)}
+.rspage .rsl tr.pick.on td .meter i{color:#b8a46a}
+/* on a narrow screen (a Steam Deck) the Holds column has room for one tag: the one that matters most comes first */
+@media (max-width:1500px){.rspage .rsl .hold2{display:none}}
 
 /* the logo maker's lettering buttons, each in its own face */
 .lfo-sample{font-size:1.4em;margin-left:1ch;color:var(--ink)}
@@ -296,6 +302,58 @@ html body .win.ppop .wb{font-family:var(--hand);font-size:1.06em}
 .mm-c.none{background:repeating-linear-gradient(45deg,#ddd 0 4px,#fff 4px 8px)!important}
 .bm .mm-left{display:flex;flex-direction:column;gap:.4em;align-items:flex-start;width:auto}
 .edbelt{overflow:visible}
+/* the call is easier to read while the match runs: the speaker on a line of their own, the line in a big readable hand */
+.live1 .lv-log .ln{display:block;margin:.15em 0}
+.live1 .lv-log .ln .sp{display:inline-block;margin-right:.6ch;font-size:.82em;letter-spacing:.02em}
+.live1 .lv-log .ln .tx{font-size:1.08em}
+.live1 .lv-log .ln:not(.last){opacity:.62}
+.live1 .lv-log .ln.last .tx{font-size:1.18em}
+/* the chyron is a small lower third, not a banner (Ryan, 20 October: "way too big") */
+.tvframe .chyron{left:1ch;bottom:.6em;max-width:46%;font-size:.62em;opacity:.94}
+.tvframe .chyron .lv-head{padding:.2em 1.2ch .25em;transform:rotate(-.6deg)}
+.tvframe .chyron .lv-head h1{font-size:1.15em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tvframe .chyron .lv-head .eyebrow{font-size:.85em}
+
+/* the overall rating: a small card with the number in marker, its colour by tier (shared/ovr.tsx) */
+.ovrb{display:inline-block;min-width:2.1em;padding:.05em .3em;text-align:center;font-family:var(--marker);font-weight:400;font-size:.95em;line-height:1.25;color:#fff;background:#6b6f78;border:2px solid #1d1a24;border-radius:3px;transform:rotate(-2deg);box-shadow:1px 2px 0 rgba(0,0,0,.35)}
+.ovrb.o-low{background:#8a8579}.ovrb.o-mid{background:#4d6b8f}.ovrb.o-good{background:#2f7d4a}.ovrb.o-top{background:#c2402f}.ovrb.o-gold{background:#e2b23a;color:#1d1a24}
+.ovrb,.rspage .rsl tr.pick.on td .ovrb{color:#fff}.ovrb.o-gold,.rspage .rsl tr.pick.on td .ovrb.o-gold{color:#1d1a24}
+@media (max-width:1500px){.mkl .wide{display:none}}
+.ovrb.big{font-size:1.5em;min-width:2.3em}
+/* lists that scroll inside their window, headings kept in view (Ryan, 20 October: "I want it scrollable") */
+.lb.scroll{overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin}
+.lb.scroll thead th{position:sticky;top:0;z-index:2;background:#efe6cf}
+.lkpage .win > .bd{overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin}
+/* staff (screens/roster/Staff.tsx): the people on your books beside Create staff */
+.stf{display:grid;grid-template-columns:1fr 1.15fr;gap:1.2em;min-height:0}
+.stf h3{font-family:var(--marker);font-weight:400;color:#c23a30;margin:0 0 .3em}
+.stf-rows{max-height:52vh}
+.stf-row{display:grid;grid-template-columns:2.6em 1fr auto;gap:.6em;align-items:center;padding:.3em 0;border-bottom:1px dashed rgba(0,0,0,.18)}
+.stf-row canvas.pt{width:2.6em;height:2.6em}
+.stf-tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(11em,1fr));gap:.45em}
+.stf-tile{display:flex;flex-direction:column;gap:.15em;text-align:left;padding:.45em .6em;background:#fffbe9;border:2px solid #1d1a24;border-radius:3px;box-shadow:2px 3px 0 rgba(0,0,0,.3);cursor:pointer;font:inherit;color:var(--ink);transform:rotate(-.4deg);transition:transform .12s,box-shadow .12s}
+.stf-tile:nth-child(2n){transform:rotate(.5deg)}
+.stf-tile:hover,.stf-tile:focus-visible{transform:translateY(-2px) rotate(0);box-shadow:3px 5px 0 rgba(0,0,0,.3)}
+.stf-tile:focus-visible{outline:3px solid #3a6fd8;outline-offset:2px}
+.stf-tile.on{background:#ffe066}
+.stf-tile b{font-family:var(--marker);font-weight:400}
+.stf-tile span{font-size:.82em;line-height:1.2}
+.stf-tile i{font-size:.82em;color:#2f7d4a;font-style:normal}
+.stf{grid-template-columns:.8fr 1.3fr}
+.stf-new .stf-tiles{grid-template-columns:repeat(3,1fr);gap:.35em}
+.stf-new .stf-tile{padding:.3em .45em}
+.stf-new .stf-tile span{font-size:.74em;line-height:1.15}
+.stf-new .row{flex-wrap:nowrap}
+/* Defended on (src/99-titleshow.js): a small select that leaves the row its height */
+.ttpage select[data-t="title-show"]{max-width:8.5em;padding:.05em .3em;font-size:.86em;min-height:0;height:auto}
+@media (max-width:1500px){.ttpage select[data-t="title-show"]{max-width:6.6em}}
+/* the crowd in one line under the feed (Ryan, 20 October: the stand of fans is gone, the feed gets the room) */
+.live1 .lv-side .fdwin{flex:1 1 auto;min-height:0}
+.live1 .crowdln{flex:none;display:flex;align-items:center;gap:.7ch;margin:0;padding:.3em .8em;background:#16131b;border-radius:4px;color:#f2ead6;font-family:var(--marker);box-shadow:inset 0 0 0 2px #f2ead6}
+.live1 .crowdln b{color:#ffd23f;font-weight:400;margin-left:auto}
+.live1 .crowdln .cbar{flex:1 1 auto;height:.55em;background:#2c2636;border-radius:3px;overflow:hidden}
+.live1 .crowdln .cbar i{display:block;height:100%;background:linear-gradient(90deg,#3c9a4b,#e1a52a 60%,#d8453a);transition:width .6s}
+.live1 .crowdln.wild{box-shadow:inset 0 0 0 2px #ffd23f}
 
 /* the World Editor's frame (shell.tsx): every page under the same bar, a page that scrolls inside itself where it is long */
 .edshell{gap:0;padding:0}
@@ -344,3 +402,30 @@ html body .win.ppop .wb{font-family:var(--hand);font-size:1.06em}
 .edmenu-h{margin:.5em 0 .2em;font-family:var(--marker);color:#c23a30;font-size:.92em}
 .edmenu-none{margin:.1em 0 .3em 1ch}
 .edrow.mine .st{color:#2f6b2f}.edmenu-list .edrow{width:100%}
+/* progression (screens/roster/Attrs.tsx): the level line in the file, and the attributes pop-up */
+.lvl-line{display:flex;align-items:center;gap:.6ch;flex-wrap:nowrap}
+.lvl-line .lvl-n b{font-family:var(--marker);font-weight:400;font-size:1.15em}
+.lvl-line .lvl-dev{font-size:.85em;color:#6b4e9b}
+.lvl-line .lvl-pts{color:#fff;background:#2f7d4a;border-radius:3px;padding:0 .4em;font-weight:400;font-family:var(--marker);font-size:.9em;white-space:nowrap}
+.xpbar{flex:1 1 auto;display:inline-block;min-width:4em;height:.55em;background:#d9cfb5;border:1.5px solid #1d1a24;border-radius:3px;overflow:hidden;vertical-align:middle}
+.xpbar.wide{width:14em;flex:none}
+.xpbar>i{display:block;height:100%;background:linear-gradient(90deg,#3a6fd8,#7fb0ff)}
+.attr-cols{display:grid;grid-template-columns:repeat(3,1fr);gap:1em;margin-top:.6em}
+.attr-cols h3{font-family:var(--marker);font-weight:400;color:#c23a30;margin:0 0 .3em}
+.attr-row{display:grid;grid-template-columns:7.5em 1fr 2.2em auto;align-items:center;gap:.4em;padding:.15em 0;border-bottom:1px dashed rgba(0,0,0,.15)}
+.attr-row .acap{grid-column:1/-1;font-size:.78em;margin-top:-.2em}
+.attr-row .av{font-family:var(--marker);font-weight:400;text-align:right}
+.abar{position:relative;height:.65em;background:#e8dfc8;border:1.5px solid #1d1a24;border-radius:3px;overflow:hidden}
+.abar .cap{position:absolute;left:0;top:0;bottom:0;background:repeating-linear-gradient(45deg,#d8cba8 0 4px,#cdbf98 4px 8px)}
+.abar .val{position:absolute;left:0;top:0;bottom:0;background:linear-gradient(90deg,#2f7d4a,#59b36f)}
+.rspage [data-t="roster-file"] > .bd{overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin}
+.attr-title{font-size:1.15em;margin:0 0 .2em}
+.attr-title b{font-family:var(--marker);font-weight:400;font-size:1.25em}
+.attr-cols{gap:1.2em}
+.attr-row{grid-template-columns:minmax(5.5em,7em) minmax(3em,1fr) 2em 3.4em}
+.attr-row .btn,.attr-row button{padding:.05em .2em;font-size:.82em;min-width:0;width:100%}
+.attr-cols{grid-template-columns:repeat(3,minmax(0,1fr));gap:.9em}
+.attr-row{grid-template-columns:minmax(4.5em,6.5em) minmax(2em,1fr) 1.8em 3em}
+.gim-box{margin-top:.6em;padding:.4em .7em;background:#fff6d6;border:2px solid #1d1a24;border-radius:3px;box-shadow:2px 3px 0 rgba(0,0,0,.25);transform:rotate(-.3deg)}
+.gim-box p{margin:.1em 0}
+.gim-box b{font-family:var(--marker);font-weight:400;color:#c23a30}

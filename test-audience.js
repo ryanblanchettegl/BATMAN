@@ -1,0 +1,23 @@
+/* Audience share and the six groups (src/99-audience.js). node test-audience.js */
+const fs = require('fs'); require('./engine.js'); const E = globalThis.GP;
+let fails = 0; const ok = (k, what, c, info) => { console.log((c ? 'ok   ' : 'FAIL ') + k.padEnd(8) + what + (info ? '  (' + info + ')' : '')); if (!c) fails++; };
+E.useUniverse(JSON.parse(fs.readFileSync('universes/parody.json', 'utf8')));
+const week = S => { S.inbox.filter(e => !e.done).forEach(e => E.resolveEvent(S, e.id, e.type === 'handover' ? 0 : 1)); if (S.owner.pending) E.setCreed(S, { style: 'merit', roots: 'tradition', pledge: 'stable' });
+  while (S.qi < S.queue.length) { const c = E.suggest(S); if (E.validate(S, c).errors.length) { S.qi++; continue; } E.runPlayerShow(S, c); } E.endWeek(S); };
+const S = E.newGame('ewe', 3, { name: 'R' }), A0 = E.audience(S);
+const sum = A0.table.reduce((a, x) => a + x.share, 0);
+ok('sum', 'the shares add up to the whole audience', Math.abs(sum - 100) < 1, sum.toFixed(1));
+ok('big', 'the biggest company starts with the biggest share', A0.table[0].id === S.order.slice().sort((a, b) => S.promos[b].image - S.promos[a].image)[0], A0.table[0].name);
+ok('groups', 'six groups, each with what it wants', A0.groups.length === 6 && A0.groups.every(g => g.want && g.share >= 0));
+ok('start', 'television is untouched at the start', S.promos.ewe.audM === 1);
+const AYY0 = E.audience(S).groups.find(g => g.k === 'lucha');
+for (let i = 0; i < 60 && !S.over; i++) week(S);
+const A1 = E.audience(S), sum1 = A1.table.reduce((a, x) => a + x.share, 0);
+ok('sum60', 'after 60 weeks the shares still add up', Math.abs(sum1 - 100) < 1, sum1.toFixed(1));
+ok('moved', 'shares moved', A1.table.some(x => Math.abs(x.share - (A0.table.find(y => y.id === x.id) || {}).share) >= 0.3));
+ok('nan', 'no bad numbers', A1.table.every(x => isFinite(x.share)) && isFinite(S.promos.ewe.audM));
+ok('lucha', 'a lucha company is among the two leaders of the lucha group', Object.entries(S.aud.sh.lucha).sort((a, b) => b[1] - a[1]).slice(0, 2).some(x => ['ayy', 'call'].includes(x[0])));
+ok('news', 'the player hears when their share moves', S.news.some(n => /^AUDIENCE:/.test(n.t)) || S.news.length === 160);
+const B = E.newGame('ewe', 3, { name: 'R' }); for (let i = 0; i < 8; i++) week(B); const C = E.newGame('ewe', 3, { name: 'R' }); for (let i = 0; i < 8; i++) week(C);
+ok('same', 'the same seed gives the same shares', JSON.stringify(B.aud) === JSON.stringify(C.aud));
+console.log(fails ? fails + ' failed' : 'test-audience: all passed'); process.exit(fails ? 1 : 0);

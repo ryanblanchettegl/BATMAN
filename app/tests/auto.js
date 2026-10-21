@@ -101,13 +101,14 @@ async function results(mode) {
     ok(mode, 'the pace button says Results', /Results/.test(await page.$eval('[data-t="live-pace"]', e => e.textContent).catch(() => '')));
     await page.waitForTimeout(1200); await page.click('[data-t="advance"]');
     await page.waitForTimeout(1500); if (await has(page, '#live[data-v="seg"]')) ok(mode, 'a segment with skip, auto-play and pace fits', !(await fits(page)), await fits(page));
-    const t0 = Date.now(); let calls = 0, waitedOk = true;
-    while (Date.now() - t0 < 180000 && !(await has(page, '#live[data-v="signoff"]'))) {
+    const t0 = Date.now(); let calls = 0, waitedOk = true, nexts = 0;
+    while (Date.now() - t0 < 240000 && !(await has(page, '#live[data-v="signoff"]'))) {
+      if (/Next|Sign off/i.test(await page.$eval('[data-t="advance"]', e => e.textContent).catch(() => '')) && !(await has(page, '[data-t="live-call"]'))) { await page.waitForTimeout(700); if (/Next|Sign off/i.test(await page.$eval('[data-t="advance"]', e => e.textContent).catch(() => ''))) { nexts++; await page.click('[data-t="advance"]'); continue; } }
       if (await has(page, '[data-t="live-call"]')) { calls++; const n = await state(page, S => S.live.ev.id); await page.waitForTimeout(1500); if (!(await state(page, (S, n) => !!S.live.ev && S.live.ev.id === n && !S.live.ev.done, n))) waitedOk = false; const safe = await state(page, S => (S.live.ev && S.live.ev.safe) || 0); await page.click('[data-t="live-pick"][data-c="' + safe + '"]'); continue; }
       await page.waitForTimeout(200);
     }
     const secs = Math.round((Date.now() - t0) / 1000);
-    ok(mode, 'on Results pace the night reaches its sign-off with no press but the answers', await has(page, '#live[data-v="signoff"]'), secs + ' s, ' + calls + ' calls');
+    ok(mode, 'on Results pace the night reaches its sign-off with no press but the answers and Next after each segment', await has(page, '#live[data-v="signoff"]') && nexts >= 2, secs + ' s, ' + calls + ' calls, ' + nexts + ' presses of Next');
     ok(mode, 'and it still waits on every call', waitedOk && calls > 0, calls + ' calls');
     ok(mode, 'no errors (results)', !errs.length, errs.slice(0, 3).join(' | '));
   } finally { await browser.close(); }
@@ -121,16 +122,18 @@ async function tv(mode) {
     const mins = await state(page, S => (S.card || []).length);
     for (let k = 0; k < 6 && !(await has(page, '#live')); k++) { if (await has(page, '[data-t="pre"]')) await page.click('[data-t="pre"][data-c="0"]'); else await page.click('[data-t="advance"]'); await page.waitForTimeout(50); }
     ok(mode, 'the pace button says TV', /TV/.test(await page.$eval('[data-t="live-pace"]', e => e.textContent).catch(() => '')));
-    ok(mode, 'the broadcast has the feed and the crowd meter at the right, and tonight as a rail', await has(page, '[data-t="live-feed"]') && await has(page, '[data-t="crowd-meter"]') && await has(page, '.lv-rail[data-t="night"]'));
+    ok(mode, 'the broadcast has the feed and the crowd meter at the right, and tonight as a rail', await has(page, '[data-t="live-feed"]') && await has(page, '[data-t="live-crowd"]') && await has(page, '.lv-rail[data-t="night"]'));
     await page.waitForTimeout(600); await page.click('[data-t="advance"]');
-    const t0 = Date.now(); let calls = 0, callT = 0, posts = 0;
-    while (Date.now() - t0 < 240000 && !(await has(page, '#live[data-v="signoff"]'))) {
+    const t0 = Date.now(); let calls = 0, callT = 0, posts = 0, nexts = 0;
+    while (Date.now() - t0 < 600000 && !(await has(page, '#live[data-v="signoff"]'))) {
+      if (/Next|Sign off/i.test(await page.$eval('[data-t="advance"]', e => e.textContent).catch(() => '')) && !(await has(page, '[data-t="live-call"]'))) { await page.waitForTimeout(700); if (/Next|Sign off/i.test(await page.$eval('[data-t="advance"]', e => e.textContent).catch(() => ''))) { nexts++; await page.click('[data-t="advance"]'); continue; } }
       if (await has(page, '[data-t="live-call"]')) { const c0 = Date.now(); calls++; await page.waitForTimeout(450); const safe = await state(page, S => (S.live.ev && S.live.ev.safe) || 0); await page.click('[data-t="live-pick"][data-c="' + safe + '"]'); callT += Date.now() - c0; continue; }
       posts = Math.max(posts, await page.$$eval('[data-t="live-feed"] .post', L => L.length).catch(() => 0));
       await page.waitForTimeout(200);
     }
     const secs = Math.round((Date.now() - t0 - callT) / 1000);
-    ok(mode, 'on TV pace a whole show reaches its sign-off on its own in about two minutes', await has(page, '#live[data-v="signoff"]') && secs >= 60 && secs <= 150, secs + ' s on the air, not counting ' + calls + ' calls (' + mins + ' on the card)');
+    // Ryan, 20 October: longer segments, and the show stops after each one for Next
+    ok(mode, 'on TV pace a whole show plays out at about two and a half seconds a minute, stopping after each segment for Next', await has(page, '#live[data-v="signoff"]') && secs >= 120 && secs <= 480 && nexts >= mins - 1, secs + ' s on the air, not counting ' + calls + ' calls (' + mins + ' on the card), ' + nexts + ' presses of Next');
     ok(mode, 'people post as the show goes', posts >= 6, posts + ' posts');
     ok(mode, 'no errors (tv)', !errs.length, errs.slice(0, 3).join(' | '));
   } finally { await browser.close(); }

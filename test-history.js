@@ -1,4 +1,4 @@
-/* A world's history (src/85-history.js): reigns, matches, feuds and moments from before the game begins. */
+/* A world's history (src/86-history.js): reigns, matches, feuds and moments from before the game begins. */
 require('./engine.js');
 const fs = require('fs'), E = globalThis.GP;
 let fails = 0; const ok = (c, m) => { if (!c) { fails++; console.log('  FAIL ' + m); } };

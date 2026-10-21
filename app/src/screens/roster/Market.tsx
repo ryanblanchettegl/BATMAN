@@ -1,5 +1,5 @@
 /* The Free agents page (page id `market`): free agents and rivals' talent near the end of their deals, offers, and the way in to the creator. */
-import { useLayoutEffect } from 'preact/hooks';
+import { Ovr } from '../../shared/ovr';
 import { E, W } from '../../engine';
 import { G, me, act, view, say, cash, full, openModal, plural, slice } from '../../store';
 import { Btn, Sel, TextBox, Tag, Side, Name, Field, Empty, Desktop, Win, showResult } from '../../kit';
@@ -10,8 +10,8 @@ import { range, sendScout } from './Profile';
 function Scouts() {
   const S = G.S, P = me();
   return <Win title="Your scouts" area="scouts" t="mk-scouts">
-    <div class="row"><Btn t="cw-open" onClick={() => openModal({ kind: 'player', id: 'new' })}>Create a wrestler</Btn></div>
-    <p class="muted">Create a Wrestler makes a new wrestler. They join the free agents, and you sign them like anybody else.</p>
+    <div class="row"><Btn t="cw-open" onClick={() => openModal({ kind: 'player', id: 'new' })}>Create a wrestler</Btn><Btn t="staff-open" onClick={() => openModal({ kind: 'staff' })}>Create staff</Btn></div>
+    <p class="muted">Create a Wrestler makes a new wrestler. They join the free agents, and you sign them like anybody else. Create staff hires a referee, commentator, interviewer or authority figure straight onto your books.</p>
     {!S.owner.me && <p>Wage budget <b>{cash(E.budget(S))}</b> a week, the bill is <b>{cash(E.rosterOf(S, P.id).reduce((a: number, w: W) => a + w.wage, 0))}</b>.</p>}
   </Win>;
 }
@@ -35,7 +35,7 @@ function Offer(p: { w: W; ask: number }) {
   </Win>;
 }
 
-const SORTS: [string, string][] = [['ovr', 'Overness'], ['fit', 'Fit'], ['ask', 'Asking wage'], ['age', 'Youngest']];
+const SORTS: [string, string][] = [['all', 'Overall'], ['ovr', 'Overness'], ['fit', 'Fit'], ['ask', 'Asking wage'], ['age', 'Youngest']];
 /** Each January's class of rookies: where they came from and what they might become. Pick a year to look back. */
 function ClassPanel() {
   const S = G.S, yrs: number[] = E.classYears(S), cs = slice<{ y: number }>('class', () => ({ y: 0 })), H: any[] = E.indieHot(S, 3);
@@ -53,26 +53,23 @@ function ClassPanel() {
 }
 
 export function Market() {
-  const S = G.S, st = rs(), q = st.mq.toLowerCase(), mk = slice<{ sort: string; will: boolean; pg: number; key: string; per?: number }>('market', () => ({ sort: 'ovr', will: false, pg: 0, key: '' }));
+  const S = G.S, st = rs(), q = st.mq.toLowerCase(), mk = slice<{ sort: string; will: boolean; pg: number; key: string; per?: number }>('market', () => ({ sort: 'all', will: false, pg: 0, key: '' }));
   const fitV = (w: W) => { const f = E.fit(S, w.id); return f ? f.v : -999; };
-  const key: Record<string, (w: W) => number> = { ovr: w => -w.ovr, fit: w => -fitV(w), ask: w => E.ask(S, w), age: w => w.age };
-  const L: W[] = E.market(S).filter((w: W) => (!q || w.name.toLowerCase().indexOf(q) >= 0) && (!mk.will || (E.canSign(S, w) && !(w.lock > S.week)))).sort((a: W, b: W) => (key[mk.sort](a) - key[mk.sort](b)) || b.ovr - a.ovr).slice(0, 120);
-  // as many to a page as the window holds, never more than twenty; the page goes back to the first whenever the search, sort or filter changes
-  const flat = !!(window as any).EWF_FLAT, PER = flat ? 20 : Math.min(20, mk.per || 14), fk = q + '|' + mk.sort + '|' + mk.will; if (mk.key !== fk) { mk.key = fk; mk.pg = 0; }
-  const pages = Math.max(1, Math.ceil(L.length / PER)), pg = Math.min(mk.pg || 0, pages - 1), shown = L.slice(pg * PER, pg * PER + PER);
-  useLayoutEffect(() => { if (flat) return; const box = document.querySelector('.mkpage .mkl') as HTMLElement | null, rw = box && box.querySelector('tbody tr') as HTMLElement | null, hd = box && box.querySelector('thead') as HTMLElement | null;
-    if (!box || !rw) return; const fit = Math.max(4, Math.min(20, Math.floor((box.clientHeight - (hd ? hd.offsetHeight : 0) - 2) / rw.offsetHeight))); if (fit !== PER && (fit < PER || L.length > PER)) view(() => { mk.per = fit; }); });
+  const key: Record<string, (w: W) => number> = { all: w => -E.overallOf(w), ovr: w => -w.ovr, fit: w => -fitV(w), ask: w => E.ask(S, w), age: w => w.age };
+  const L: W[] = E.market(S).filter((w: W) => (!q || w.name.toLowerCase().indexOf(q) >= 0) && (!mk.will || (E.canSign(S, w) && !(w.lock > S.week)))).sort((a: W, b: W) => ((key[mk.sort] || key.all)(a) - (key[mk.sort] || key.all)(b)) || b.ovr - a.ovr);
+  // the whole list, in a window that scrolls inside itself (Ryan, 20 October: "I want it scrollable")
+  const shown = L;
   const toggle = (w: W, ask: number) => view(() => { if (st.offer === w.id) st.offer = null; else { st.offer = w.id; st.wage = String(ask); st.weeks = '48'; } });
   const ow = st.offer != null ? S.w[st.offer] : null, offerOpen = ow && L.indexOf(ow) >= 0 && !(ow.lock > S.week) && E.canSign(S, ow);
   return <div class="onescreen"><Desktop cls="mkpage" t="market">
-    <Win title={'Free agents: ' + L.length + ' available'} area="list" t="mk-list" right={pages > 1 ? 'Page ' + (pg + 1) + ' of ' + pages : undefined}>
+    <Win title={'Free agents: ' + L.length + ' available'} area="list" t="mk-list">
       <div class="row nowrap">
         <TextBox type="search" id="mq" t="mq" label="Search market" placeholder="Search by name" value={st.mq} onInput={v => view(() => { st.mq = v; })} />
         {SORTS.map(o => <Btn kind="sm" on={mk.sort === o[0]} t="mksort" d={{ v: o[0] }} onClick={() => view(() => { mk.sort = o[0]; })}>{o[1]}</Btn>)}
         <Btn kind="sm" on={mk.will} t="mkwill" onClick={() => view(() => { mk.will = !mk.will; })}>Would sign with us</Btn>
       </div>
-      <div class="tw mkt mkl"><table>
-        <thead><tr><th>Name</th><th>Status</th><th>Side</th><th>Style</th><th class="r">Age</th><th class="r">Over</th><th class="r">Potential</th><th>Fit</th><th class="r">Asking</th><th /></tr></thead>
+      <div class="tw mkt mkl lb scroll"><table>
+        <thead><tr><th>Name</th><th>Status</th><th>Side</th><th class="wide">Style</th><th class="r">Age</th><th class="r">Overall</th><th class="r wide">Over</th><th class="r">Potential</th><th>Fit</th><th class="r">Asking</th><th /></tr></thead>
         <tbody>
           {shown.map(w => {
             const ask = E.ask(S, w), locked = w.lock > S.week, can = E.canSign(S, w);
@@ -80,17 +77,16 @@ export function Market() {
               <td><span class="nm">{w.name}</span></td>
               <td>{w.promo === 'FA' ? (w.cut && S.promos[w.cut.from] && S.week - (w.cut.w || 0) < 6 ? 'Released by ' + S.promos[w.cut.from].name : (E.indieOf(S, w.id) ? <span title={'Working dates for ' + E.indieOf(S, w.id).n}>{E.indieOf(S, w.id).n.split(' ').slice(0, 2).join(' ')}{E.indieOf(S, w.id).weeks >= 3 ? ', ' + E.indieOf(S, w.id).weeks + ' wk' : ''}</span> : 'Free agent')) : S.promos[w.promo].name + ', ' + Math.max(0, w.con) + ' wk'}</td>
               <td><Side w={w} /></td>
-              <td>{E.STYLE_NAME[w.style] || ''}{w.rk ? <> <Tag kind="gold">Rookie</Tag></> : null}</td>
-              <td class="r num">{w.age}</td><td class="r num">{Math.round(w.ovr)}</td>
+              <td class="wide">{E.STYLE_NAME[w.style] || ''}{w.rk ? <> <Tag kind="gold">Rookie</Tag></> : null}</td>
+              <td class="r num">{w.age}</td><td class="r"><Ovr w={w} /></td><td class="r num wide">{Math.round(w.ovr)}</td>
               <td class="r num">{range(E.intel(S, w.id).stats.pot)}</td><td>{(() => { const f = E.fit(S, w.id); return f ? <span class={f.v >= 1 ? 'good' : (f.v <= -2 ? 'bad' : 'muted')}>{f.n}</span> : null; })()}</td><td class="r num">{cash(ask)}</td>
               <td>{!can ? <span class="muted">{E.modelOf(S).gender && w.g !== E.modelOf(S).gender ? 'Not for us' : 'Out of reach'}</span> : locked ? <span class="muted">Not talking</span>
                 : <Btn kind="sm" t="offer" d={{ id: w.id }} onClick={() => toggle(w, ask)}>{st.offer === w.id ? 'Cancel' : 'Offer'}</Btn>}</td>
             </tr>;
           })}
-          {!L.length && <tr><td colSpan={12} class="muted">Nobody available.</td></tr>}
+          {!L.length && <tr><td colSpan={13} class="muted">Nobody available.</td></tr>}
         </tbody>
       </table></div>
-      {pages > 1 ? <p class="pgr"><Btn kind="sm" t="mkpage-prev" label="Earlier names" disabled={pg === 0} onClick={() => view(() => { mk.pg = pg - 1; })}>{'◄'}</Btn><span class="num">Page {pg + 1} of {pages}</span><Btn kind="sm" t="mkpage-next" label="More names" disabled={pg >= pages - 1} onClick={() => view(() => { mk.pg = pg + 1; })}>{'►'}</Btn></p> : null}
     </Win>
     <Scouts />
     {offerOpen && ow ? <Offer w={ow} ask={E.ask(S, ow)} /> : <ClassPanel />}

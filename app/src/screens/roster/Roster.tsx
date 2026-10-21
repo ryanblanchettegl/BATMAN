@@ -1,9 +1,13 @@
 /* The Roster page as a desktop of windows: the list on the left, the picked file on the right, four sums along
    the bottom, and the full profile one press away. */
 import { E, W } from '../../engine';
-import { G, me, cash, view, openModal } from '../../store';
-import { useLayoutEffect } from 'preact/hooks';
-import { Head, Sel, TextBox, Tag, Side, Opt, Meter, Btn, Portrait, champOf, brandName, dataAttrs } from '../../kit';
+import { G, me, cash, view, act, openModal } from '../../store';
+import { Ovr } from '../../shared/ovr';
+import { LevelLine } from './Attrs';
+import { Head, Sel, TextBox, Tag, Side, Opt, Meter, Btn, Portrait, champOf, brandName, dataAttrs, showResult } from '../../kit';
+import { ScenePlayer } from '../../kit/sceneplayer';
+import { WAIST } from '../../kit/scene';
+import { recipeOf } from '../../kit/puppet';
 import { Desktop, Win, Group, Line } from '../../kit';
 import { rs, selected } from './state';
 import { Profile } from './Profile';
@@ -23,6 +27,7 @@ function Filters(p: { shown: number; of: number }) {
     <Sel id="rf-g" t="rf" d={{ k: 'g' }} label="Division" value={f.g} onChange={set('g')} options={[['all', 'Men and women'], ['M', 'Men'], ['F', 'Women']]} />
     <Sel id="rf-al" t="rf" d={{ k: 'al' }} label="Alignment" value={f.al} onChange={set('al')} options={[['all', 'Faces and heels'], ['F', 'Faces'], ['H', 'Heels']]} />
     <span class="muted">{p.shown} of {p.of}</span>
+    <Btn kind="sm" t="staff-open" onClick={() => openModal({ kind: 'staff' })}>Staff</Btn>
   </div>;
 }
 
@@ -36,18 +41,18 @@ function Th(p: { k: string; label: string; r?: boolean }) {
 }
 
 function Status(p: { w: W; champ: boolean }) {
-  const w = p.w;
-  return <>
-    {w.chip >= G.S.week ? <><Tag kind="good">Point to prove</Tag> </> : null}
-    {w.camp ? <><Tag kind="warn">Camp</Tag> </> : null}
-    {w.inj > 0 ? <><Tag kind="bad">Out {w.inj} wk</Tag> </> : null}
-    {p.champ ? <><Tag kind="gold">Champion</Tag> </> : null}
-    {w.nw ? <><Tag>{(w.roles || ['staff'])[0].replace('_', ' ')}</Tag> </> : null}
-    {w.retiring ? <><Tag kind="bad">Retiring</Tag> </> : null}
-    {w.team != null ? <><Tag>Team</Tag> </> : null}
-    {w.stable != null ? <><Tag kind="warn">Stable</Tag> </> : null}
-    {E.feudsFor(G.S, w.id).length ? <Tag kind="heel">Feud</Tag> : null}
-  </>;
+  // the two that matter most, shortest words first: the column is narrow on a Steam Deck. The file says the rest.
+  const w = p.w, L: [string, string][] = [];
+  if (w.inj > 0) L.push(['bad', 'Out ' + w.inj + ' wk']);
+  if (w.retiring) L.push(['bad', 'Retiring']);
+  if (p.champ) L.push(['gold', 'Champ']);
+  if (E.feudsFor(G.S, w.id).length) L.push(['heel', 'Feud']);
+  if (w.chip >= G.S.week) L.push(['good', 'To prove']);
+  if (w.camp) L.push(['warn', 'Camp']);
+  if (w.nw) L.push(['', (w.roles || ['staff'])[0].replace('_', ' ')]);
+  if (w.stable != null) L.push(['warn', 'Stable']);
+  if (w.team != null) L.push(['', 'Team']);
+  return <>{L.slice(0, 2).map(([k, s], i) => <span key={s} class={i ? "hold2" : undefined}><Tag kind={(k || undefined) as any}>{s}</Tag> </span>)}</>;
 }
 
 /** One line of the roster: the face, the name, where they stand and how they are. A press picks it; a press on
@@ -60,6 +65,7 @@ function Line_(p: { w: W; on: boolean; spot: string; champ: boolean; brand?: str
     {p.brand != null && <td>{p.brand}</td>}
     <td><Side w={w} /></td><td>{p.spot}</td>
     <td class="r num">{w.age}</td>
+    <td class="r"><Ovr w={w} /></td>
     <td><Meter v={w.ovr} n={5} /></td><td><Meter v={w.morale} n={5} kind={w.morale < 35 ? 'hot' : undefined} /></td><td><Meter v={w.cond} n={5} kind={w.cond < 50 ? 'hot' : undefined} /></td>
     <td class={'r num' + (w.con <= 4 ? ' bad' : '')}>{Math.max(0, w.con)}</td>
     <td class="stt"><div><Status w={w} champ={p.champ} /></div></td>
@@ -67,33 +73,43 @@ function Line_(p: { w: W; on: boolean; spot: string; champ: boolean; brand?: str
 }
 
 /** The picked wrestler in short, as the right-hand window of the page. The full profile is one press away. */
+/* the stand the picked wrestler is drawn on: one figure at the waist line, the camera a little above the ring */
+const STAND = { v: 1 as const, id: 'rsw', name: 'The wrestler', when: 'any', set: 'ring', attire: 'primary_ring' as const, slots: [{ id: 'A', n: '', role: 'a' as const }],
+  keys: [{ t: 0, figs: { A: { x: 0, y: WAIST, r: 0, f: 1, z: 0.6, p: {} } }, props: [], cam: { x: 0, y: 0.15, z: 1.4 } }] } as any;
+/* a word beside each bar, so two bars that look alike still say how far apart they are */
+const lvlWord = (v: number) => v >= 88 ? 'one of the best' : v >= 78 ? 'main event' : v >= 68 ? 'upper card' : v >= 55 ? 'solid' : v >= 42 ? 'getting there' : 'raw';
+const moodWord = (v: number) => v >= 75 ? 'happy' : v >= 55 ? 'steady' : v >= 35 ? 'low' : 'furious';
+const bodyWord = (v: number) => v >= 85 ? 'fresh' : v >= 65 ? 'fine' : v >= 45 ? 'worn' : 'hurting';
 function File(p: { w: W | null; spot: string }) {
   const S = G.S, P = me(), w = p.w;
   if (!w) return <Win title="Their file" area="file" t="roster-file"><p class="muted">Pick somebody on the list.</p></Win>;
   const feuds = E.feudsFor(S, w.id), titles = champOf(P, w.id);
   return <Win title={w.name} area="file" t="roster-file" right={titles.length ? '★' : undefined}>
-    <div class="row top nowrap gap2"><Portrait w={w} /><div>
-      <p class="big"><b>{w.name}</b></p>
-      <p><Side w={w} /> {p.spot} {'·'} age {w.age}</p>
-      {w.fin ? <p class="muted">Finisher: {w.fin}</p> : null}
-      {titles.length ? <p><Tag kind="gold">{titles.map((t: any) => t.name).join(', ')}</Tag></p> : null}
-    </div></div>
+    {/* rule 5c: the wrestler is always on show, full length, drawn by the diorama engine */}
+    <div class="sc-stage rs-stage"><ScenePlayer key="rsw" sc={STAND} cast={{ A: { ...recipeOf(w), belts: Math.min(3, titles.length), beltL: titles.slice().sort((a: any, b: any) => b.lvl - a.lvl).slice(0, 3).map((t: any) => E.beltOf(t, P)) } }} play={'rs' + w.id + ':' + titles.length + JSON.stringify((w as any).look || null)} still orbit fill t="roster-stage" label={w.name + ' in ring gear. Drag to walk round them.'} /></div>
+    <p class="big"><Ovr w={w} big /> <b>{w.name}</b> <Side w={w} /></p>
+    <p>{p.spot} {'·'} age {w.age}</p>
+    {!w.nw ? <LevelLine w={w} /> : null}
+    {w.fin || titles.length ? <p class="muted">{w.fin ? 'Finisher: ' + w.fin : ''}{titles.length ? <> <Tag kind="gold">{titles.map((t: any) => t.name).join(', ')}</Tag></> : null}</p> : null}
     <Group title="In the ring">
-      <Line label="Crowd"><Meter v={w.ovr} n={8} /></Line>
-      <Line label="Work rate"><Meter v={E.workRate(w)} n={8} /></Line>
-      <Line label="On the mic"><Meter v={w.mic} n={8} /></Line>
+      <Line label="Crowd"><Meter v={w.ovr} n={8} /> <span class="muted">{lvlWord(w.ovr)}</span></Line>
+      <Line label="Work rate"><Meter v={E.workRate(w)} n={8} /> <span class="muted">{lvlWord(E.workRate(w))}</span></Line>
+      <Line label="On the mic"><Meter v={w.mic} n={8} /> <span class="muted">{lvlWord(w.mic)}</span></Line>
     </Group>
     <Group title="Right now">
-      <Line label="Mood"><Meter v={w.morale} n={8} kind={w.morale < 35 ? 'hot' : undefined} /></Line>
-      <Line label="Body"><Meter v={w.cond} n={8} kind={w.cond < 50 ? 'hot' : undefined} />{w.inj > 0 ? <> <Tag kind="bad">Out {w.inj} wk</Tag></> : null}</Line>
+      <Line label="Mood"><Meter v={w.morale} n={8} kind={w.morale < 35 ? 'hot' : undefined} /> <span class="muted">{moodWord(w.morale)}</span></Line>
+      <Line label="Body"><Meter v={w.cond} n={8} kind={w.cond < 50 ? 'hot' : undefined} /> <span class="muted">{bodyWord(w.cond)}</span>{w.inj > 0 ? <> <Tag kind="bad">Out {w.inj} wk</Tag></> : null}</Line>
       <Line label="Story">{feuds.length ? feuds.map((f: any) => S.w[f.a === w.id ? f.b : f.a].name).join(', ') : <span class="muted">None</span>}</Line>
     </Group>
     <Group title="The deal">
       <Line label="Pay">{cash(w.wage)} a week</Line>
       <Line label="Contract"><span class={w.con <= 4 ? 'bad' : undefined}>{Math.max(0, w.con)} weeks left</span></Line>
     </Group>
-    <div class="row mt1"><Btn kind="go" t="roster-full" d={{ id: w.id }} onClick={() => view(() => { const st = rs(); st.peek = w.id; st.sel = w.id; })}>Full profile</Btn>
-      <Btn t="roster-caw" d={{ id: w.id }} onClick={() => openModal({ kind: 'player', id: w.id })}>Edit wrestler</Btn></div>
+    <div class="row mt1">{!w.nw ? <Btn kind="go" t="roster-attrs" d={{ id: w.id }} onClick={() => openModal({ kind: 'attrs', id: w.id })}>Attributes</Btn> : null}
+      <Btn t="roster-full" d={{ id: w.id }} onClick={() => view(() => { const st = rs(); st.peek = w.id; st.sel = w.id; })}>Full profile</Btn>
+      <Btn t="roster-caw" d={{ id: w.id }} onClick={() => openModal({ kind: 'player', id: w.id })}>{w.nw ? 'Edit look' : 'Edit wrestler'}</Btn>
+      {w.nw ? (w.wasW ? <Btn t="roster-back" d={{ id: w.id }} onClick={() => { const r = act(() => E.fromStaff(G.S, w.id)); showResult('Back to wrestling', r.msg, !r.ok); }}>Wrestle again</Btn> : null)
+        : <Btn t="roster-tostaff" d={{ id: w.id }} onClick={() => openModal({ kind: 'tostaff', id: w.id })}>Move to staff</Btn>}</div>
   </Win>;
 }
 
@@ -113,30 +129,27 @@ function Sums(p: { R: W[] }) {
 
 export function Roster() {
   const S = G.S, P = me(), st = rs(), f = st.rf, q = f.q.toLowerCase(), sel = selected();
-  const R: W[] = E.rosterOf(S, P.id), push = E.pushMap(S, P.id);
+  const R: W[] = E.rosterOf(S, P.id), push = { ...E.pushMap(S, P.id) };
+  E.staffList(S).forEach((x: any) => { push[x.id] = x.role; });
   const L = R.filter(w => (f.brand === 'all' || w.brand === f.brand) && (f.g === 'all' || w.g === f.g) && (f.al === 'all' || w.align === f.al) && (!q || w.name.toLowerCase().indexOf(q) >= 0));
-  const k = st.rs.k, d = st.rs.d, val = (w: W) => k === 'name' ? w.name : (k === 'work' ? E.workRate(w) : w[k]);
-  L.sort((a, b) => { const x = val(a), y = val(b); return (x < y ? -1 : x > y ? 1 : 0) * d || b.ovr - a.ovr; });
-  const flat = !!(window as any).EWF_FLAT, per = flat ? 999 : (st.per || 12);
-  const pages = Math.max(1, Math.ceil(L.length / per)), pg = Math.min(st.pg || 0, pages - 1), shown = L.slice(pg * per, pg * per + per);
-  // as many lines as the window holds: measured after drawing, and drawn again once if that is more or fewer
-  useLayoutEffect(() => { if (flat) return; const box = document.querySelector('.rspage .rsl') as HTMLElement | null, rw = box && box.querySelector('tbody tr') as HTMLElement | null, hd = box && box.querySelector('thead') as HTMLElement | null;
-    if (!box || !rw) return; const fit = Math.max(4, Math.floor((box.clientHeight - (hd ? hd.offsetHeight : 0) - 2) / rw.offsetHeight)); if (fit !== per && (fit < per || L.length > per)) view(() => { st.per = fit; }); });
+  const k = st.rs.k, d = st.rs.d, val = (w: W) => k === 'name' ? w.name : (k === 'work' ? E.workRate(w) : (k === 'all' ? E.overallOf(w) : w[k]));
+  L.sort((a, b) => { const x = val(a), y = val(b); return (x < y ? -1 : x > y ? 1 : 0) * d || E.overallOf(b) - E.overallOf(a); });
+  // the whole list, in a window that scrolls inside itself (Ryan, 20 October: "I don't want rosters and stuff like that on pages, I want it scrollable")
+  const shown = L;
   const pk = st.peek != null ? L.find(w => w.id === st.peek) : null, focus = pk || sel || (shown.length ? shown[0] : null);
   return <div class="onescreen"><Desktop cls="rspage" t="roster">
-    <Win title={'Roster: ' + R.length + ' under contract'} area="list" t="roster-list" right={pages > 1 ? 'Page ' + (pg + 1) + ' of ' + pages : undefined}>
+    <Win title={'Roster: ' + R.length + ' under contract'} area="list" t="roster-list">
       <Filters shown={L.length} of={R.length} />
-      <div class="lb rsl"><table>
+      <div class="lb rsl scroll"><table>
         <thead><tr>
           <th aria-label="Face" /><Th k="name" label="Name" />{P.brands && <Th k="brand" label="Brand" />}<Th k="align" label="Side" /><th>Spot</th>
-          <Th k="age" label="Age" r /><Th k="ovr" label="Crowd" /><Th k="morale" label="Mood" /><Th k="cond" label="Body" /><Th k="con" label="Deal" r /><th>Holds</th>
+          <Th k="age" label="Age" r /><Th k="all" label="Overall" r /><Th k="ovr" label="Crowd" /><Th k="morale" label="Mood" /><Th k="cond" label="Body" /><Th k="con" label="Deal" r /><th>Holds</th>
         </tr></thead>
         <tbody>
           {shown.map(w => <Line_ key={w.id} w={w} on={!!focus && focus.id === w.id} spot={push[w.id]} champ={champOf(P, w.id).length > 0} brand={P.brands ? brandName(P, w.brand) : undefined} />)}
-          {!L.length && <tr><td colSpan={11} class="muted">Nobody matches those filters.</td></tr>}
+          {!L.length && <tr><td colSpan={12} class="muted">Nobody matches those filters.</td></tr>}
         </tbody>
       </table></div>
-      {pages > 1 ? <p class="pgr"><Btn kind="sm" t="roster-page" d={{ v: 'prev' }} label="Earlier names" disabled={pg <= 0} onClick={() => view(() => { st.pg = pg - 1; })}>{'◄'}</Btn><span class="num">{pg + 1} of {pages}</span><Btn kind="sm" t="roster-page" d={{ v: 'next' }} label="More names" disabled={pg >= pages - 1} onClick={() => view(() => { st.pg = pg + 1; })}>{'►'}</Btn></p> : null}
     </Win>
     <File w={focus} spot={focus ? push[focus.id] : ''} />
     <Sums R={R} />

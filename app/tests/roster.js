@@ -119,13 +119,16 @@ async function run(mode) {
   /* ----- market: scouting window ----- */
   await go(page, 'market'); await page.waitForSelector('#mq');
   const mk = await state(page, S => { const E = window.GP, P = S.promos[S.player], room = E.budget(S) - S.w.filter(w => w.promo === S.player && !w.rt).reduce((a, w) => a + w.wage, 0);
-    const L = E.market(S).sort((a, b) => b.ovr - a.ovr).slice(0, 120).filter(w => E.canSign(S, w) && !(w.lock > S.week) && !w.sc).map(w => ({ id: w.id, name: w.name, ask: E.ask(S, w), fa: w.promo === 'FA' }));
+    const L = E.market(S).sort((a, b) => b.ovr - a.ovr).filter(w => E.canSign(S, w) && !(w.lock > S.week) && !w.sc).map(w => ({ id: w.id, name: w.name, ask: E.ask(S, w), fa: w.promo === 'FA' }));
     const cheap = L.filter(w => w.fa).sort((a, b) => a.ask - b.ask)[0]; return { n: E.market(S).length, room, scout: L[0], buy: cheap, cash: P.cash }; });
   must(mk.scout && mk.buy, 'nobody on the market to talk to');
   await ok(t, 'market', mk.n + ' in the market');
-  if (mk.n > 20) { must((await page.$$eval('.tw tbody tr', L => L.length)) <= 20, 'the market shows more than twenty at once');
-    await page.click('[data-t="mkpage-next"]'); must(/Page 2 of/.test(await page.$eval('.main', e => e.textContent)), 'Next 20 did not turn the page');
-    await page.click('[data-t="mkpage-prev"]'); await ok(t, 'market pages', 'twenty to a page'); }
+  // every name in one list that scrolls inside its window, best overall first (Ryan, 20 October)
+  { const rows = await page.$$eval('.mkl tbody tr', L => L.length), sc = await page.$eval('.mkl', e => getComputedStyle(e).overflowY);
+    const ov = await page.$$eval('.mkl tbody .ovrb', L => L.map(e => +e.textContent));
+    must(rows >= Math.min(mk.n, 21) && sc === 'auto', 'the market should list everybody in a scrolling window (' + rows + ' rows, ' + sc + ')');
+    must(ov.length > 2 && ov.every((v, i) => !i || ov[i - 1] >= v), 'the market should start sorted by overall');
+    await ok(t, 'market scrolls', rows + ' names, best overall first'); }
   await page.click('[data-t="offer"][data-id="' + mk.scout.id + '"]'); await page.waitForSelector('#offer-wage');
   must(await page.$eval('#offer-wage', e => +e.value) === mk.scout.ask, 'offer does not start at the asking wage');
   await ok(t, 'offer row');

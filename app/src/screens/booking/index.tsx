@@ -15,7 +15,7 @@ import { MatchWindow, CouldWindow } from './Side';
 import { Live } from './Live';
 import { After } from './After';
 import { Report, Ladder } from './Report';
-import { typer, liveReport, liveSkip, liveCall, liveDecide, liveGo, closeReport, autoToggle, autoStop } from './run';
+import { typer, liveReport, liveSkip, liveCall, liveDecide, liveGo, closeReport, autoToggle, autoStop, liveReplaySeg, canReplaySeg } from './run';
 
 function WeekBooked() {
   return <>
@@ -41,6 +41,7 @@ onKey(e => {
   if (liveCall() && /^[1-9]$/.test(e.key)) { liveDecide(+e.key - 1); return true; }   // the number keys answer a call
   if (e.key === 'Escape') { liveSkip(); return true; }
   if (e.key === 'p' || e.key === 'P') { autoToggle(); return true; }   // auto-play on or off
+  if ((e.key === 'r' || e.key === 'R') && canReplaySeg()) { liveReplaySeg(); return true; }   // play the segment again
   if ((e.key === 'Enter' || e.key === ' ') && tag !== 'BUTTON') { liveGo(); return true; }
   return e.key.length === 1 && !!HOT[e.key.toLowerCase()];
 });

@@ -1,0 +1,52 @@
+{
+ "rescue": {
+  "lose": {
+   "ok": false,
+   "text": "The company is still open, but only $416,813 is in the bank. The target was $1.5M.",
+   "figures": [
+    "Cash $416,813 (target $1.5M)"
+   ]
+  },
+  "win": {
+   "ok": true,
+   "text": "The company is safe: $2,000,000 in the bank after 26 weeks.",
+   "figures": [
+    "Cash $2,000,000 (target $1.5M)"
+   ]
+  }
+ },
+ "champion": {
+  "lose": {
+   "ok": false,
+   "text": "Paris does not hold the Olympian World Title after 39 weeks. They are now rated 70.",
+   "figures": [
+    "Paris rated 70 (started at 70)"
+   ]
+  },
+  "win": {
+   "ok": true,
+   "text": "Paris holds the Olympian World Title. From the bottom of the roster to the top of the company.",
+   "figures": [
+    "Paris rated 70 (started at 70)"
+   ]
+  }
+ },
+ "war": {
+  "lose": {
+   "ok": false,
+   "text": "You lost the ratings war: your shows averaged +0.0 against expectations, theirs +0.0.",
+   "figures": [
+    "Your shows: 0 against expectations",
+    "Theirs: 0"
+   ]
+  },
+  "win": {
+   "ok": true,
+   "text": "You won the ratings war: your shows averaged +2.5 against expectations, theirs +0.0.",
+   "figures": [
+    "Your shows: +2.5 against expectations",
+    "Theirs: +0.0"
+   ]
+  }
+ }
+}

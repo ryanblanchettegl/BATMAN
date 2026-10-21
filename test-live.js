@@ -33,7 +33,7 @@ const feud = (S, a, b) => S.feuds.find(f => !f.res && ((f.a.includes(a) && f.b.i
 const DICE = /\b(roll|rolls|rolled|dice|die roll|d20|saving throw)\b/i;
 
 /* ---- on and off the air ---- */
-{ const S = E.newGame('pdw', 3, { name: 'R' }); const card = desk(S), bp0 = S.bp;
+{ const S = E.newGame('pdw', 3, { name: 'R', mid: false }); const card = desk(S), bp0 = S.bp;
   ok('air1', 'a card that cannot run does not go on the air', !!E.liveBegin(S, []).errors && !S.live);
   const b = E.liveBegin(S, card);
   ok('air2', 'a good card goes on the air, and the card is closed', b.ok && !!S.live && S.live.card !== card && S.live.card.length === card.length && E.advance(S).k === 'live', JSON.stringify(E.advance(S).k));
@@ -50,7 +50,7 @@ const DICE = /\b(roll|rolls|rolled|dice|die roll|d20|saving throw)\b/i;
 }
 
 /* ---- the same night three ways: in one go, step by step, and through a save taken at every stop ---- */
-{ const run = how => { const S0 = E.newGame('pdw', 11, { name: 'R' }); let S = S0;
+{ const run = how => { const S0 = E.newGame('pdw', 11, { name: 'R', mid: false }); let S = S0;
     for (let wk = 0; wk < 4; wk++) { while (desk(S)) { if (how === 'whole') { E.runPlayerShow(S, S.card); continue; }
         E.liveBegin(S, S.card);
         for (let g = 0; g < 400; g++) { if (how === 'saved') S = clone(S); const r = E.liveNext(S); if (r.event) { if (how === 'saved') S = clone(S); E.liveDecide(S, r.event.safe || 0); } else if (r.done) break; } }
@@ -64,7 +64,7 @@ const DICE = /\b(roll|rolls|rolled|dice|die roll|d20|saving throw)\b/i;
 /* ---- every kind of call, and what each answer does ---- */
 const found = {}, byPick = {}, counts = { shows: 0, calls: 0, max: 0, kinds: {} }, texts = [];
 for (const pid of E.universe().promotions.map(p => p.id).slice(0, 3)) for (const seed of [3, 7, 11]) {
-  const S = E.newGame(pid, seed, { name: 'R' });
+  const S = E.newGame(pid, seed, { name: 'R', mid: false });
   for (let wk = 0; wk < 10 && !S.over; wk++) {
     while (desk(S)) {
       S.bp = Math.max(S.bp, 6);   // enough in hand that every answer is open
@@ -98,7 +98,9 @@ if (found.titlecall) { const F = found.titlecall, P0 = F.S.promos[F.S.player], m
   const holders = R => R.S.promos[R.S.player].titles.find(t => t.id === m.title).holders;
   ok('tc1', 'call the title change: the title changes hands, it costs booking power, and both remember who made the call', holders(swap).includes(F.ev.who) && !holders(swap).includes(champ[0]) && swap.S.bp === F.S.bp - 2 && lean(swap.S, champ[0]) < lean(F.S, champ[0]) && lean(swap.S, F.ev.who) > lean(F.S, F.ev.who), 'new holder ' + holders(swap).join(','));
   ok('tc2', 'protect the champion: a disqualification, and the title stays', holders(dq).join() === champ.join() && dq.seg.fin === 'dq' && dq.S.bp === F.S.bp - 1 && lean(dq.S, F.ev.who) < lean(F.S, F.ev.who), dq.seg.fin);
-  ok('tc3', 'stay with the plan: nothing is spent and nobody holds it against you', stay.S.bp === F.S.bp && lean(stay.S, champ[0]) === lean(F.S, champ[0]));
+  // what the match itself leaves (a round of a feud) is not the call: only memories of the call count here
+  const callMem = (S2, id) => ((S2.rmY || {})[id] || { mem: [] }).mem.filter(m => m.k !== 'chapter' && m.k !== 'homewin' && m.k !== 'homeloss').length;
+  ok('tc3', 'stay with the plan: nothing is spent and nobody holds it against you', stay.S.bp === F.S.bp && callMem(stay.S, champ[0]) === callMem(F.S, champ[0]));
   const poor = clone(F.S); poor.bp = 0; const no = E.liveDecide(poor, 1);
   ok('tc4', 'a call that costs more booking power than is in hand is not taken', !no.ok && /booking power/.test(no.msg) && !poor.live.ev.done);
   ok('tc5', 'the answer is on the broadcast and on the segment', swap.seg.bc.some(b => b.t === 'call' && /Your call: Call the title change/.test(b.x)) && swap.seg.calls.length === 1);
@@ -133,7 +135,7 @@ function through(F, c) {
 }
 /* somebody is hurt: a road-worn wrestler in a brutal match */
 { let F = null;
-  for (const seed of [2, 3, 4, 5, 6, 7, 8, 9]) { if (F) break; const S = E.newGame('pdw', seed, { name: 'R' }); desk(S); const m = S.card.find(x => x.mt === '1v1'); if (!m) continue;
+  for (const seed of [2, 3, 4, 5, 6, 7, 8, 9]) { if (F) break; const S = E.newGame('pdw', seed, { name: 'R', mid: false }); desk(S); const m = S.card.find(x => x.mt === '1v1'); if (!m) continue;
     const w = S.w[m.sides[0][0]]; w.rd = 95; m.int = 'brutal'; S.chs = { key: 'x', done: true };
     if (!E.liveBegin(S, S.card).ok) continue;
     for (let g = 0; g < 200 && !F; g++) { const r = E.liveNext(S); if (r.event) { if (r.event.kind === 'botch') F = { S: clone(S), ev: JSON.parse(JSON.stringify(r.event)), w: w.id }; else E.liveDecide(S, r.event.safe || 0); } else if (r.done) break; } }
@@ -172,7 +174,7 @@ if (found.overtime) { const F = found.overtime, home = through(F, 0);
   if (mn) { const base = through(mn, 0), a = through(mn, mn.c), last = r => r.segs.filter(x => x.k === 'match').pop(), mainId = mn.S.live.card[mn.S.live.card.length - 1].sides[0][0];
     ok('ot5', 'take it out of the main event: this match is longer, the main event is shorter, and they know whose time it was', a.seg.mins > base.seg.mins && last(a.rep).mins < last(base.rep).mins && lean(a.S, mainId) < lean(mn.S, mainId), last(a.rep).mins + ' minutes against ' + last(base.rep).mins); }
   let ov2 = ov;   // a main event on weekly television, booked at less than full length, with somebody who has creative control
-  for (const seed of [2, 3, 5, 8, 9, 10]) { if (ov2) break; const S = E.newGame('pdw', seed, { name: 'R' }); desk(S);
+  for (const seed of [2, 3, 5, 8, 9, 10]) { if (ov2) break; const S = E.newGame('pdw', seed, { name: 'R', mid: false }); desk(S);
     const m = S.card[S.card.length - 1], other = S.card.find(x => x !== m && x.len === 'M'); if (m.mt !== '1v1' || !other) continue;
     m.len = 'M'; other.len = 'L'; S.w[m.sides[0][0]].cc = 1;   // the time taken off the main event goes to another match, so the show still fits
     if (!E.liveBegin(S, S.card).ok) continue;
@@ -222,7 +224,7 @@ if (found.network) { const F = found.network, net = S => { E.clocks(S); return S
 }
 /* the sponsor at ringside: a deal that is nearly up */
 { let F = null;
-  for (const seed of [3, 4, 5, 6]) { if (F) break; const S = E.newGame('pdw', seed, { name: 'R' }); desk(S);
+  for (const seed of [3, 4, 5, 6]) { if (F) break; const S = E.newGame('pdw', seed, { name: 'R', mid: false }); desk(S);
     S.sponsors.push({ name: 'Harbor Lager', weeks: 3, type: 'image', val: 0, text: 'Popularity stays at 0 or better', pay: 20000 });
     if (!E.liveBegin(S, S.card).ok) continue;
     for (let g = 0; g < 200 && !F; g++) { const r = E.liveNext(S); if (r.event) { if (r.event.kind === 'sponsor') F = { S: clone(S), ev: JSON.parse(JSON.stringify(r.event)) }; else E.liveDecide(S, r.event.safe || 0); } else if (r.done) break; } }
@@ -236,7 +238,7 @@ if (found.network) { const F = found.network, net = S => { E.clocks(S); return S
   }
 }
 /* a company that already has a face: the third answer takes the place away from everyone */
-{ const S = E.newGame('pdw', 4, { name: 'R' }); let third = null;
+{ const S = E.newGame('pdw', 4, { name: 'R', mid: false }); let third = null;
   for (let wk = 0; wk < 60 && !third && !S.over; wk++) { while (!third && desk(S)) { S.bp = Math.max(S.bp, 6); E.liveBegin(S, S.card); air(S, ev => ev.kind === 'face' ? 1 : (ev.safe || 0), (ev, S) => { if (ev.kind === 'face' && ev.choices.length === 3 && !third) third = { S: clone(S), ev: JSON.parse(JSON.stringify(ev)) }; }); } if (!third) week(S); }
   ok('fc7', 'with someone already at the centre, the question comes again when a rival earns it', !!third, third ? third.ev.why.join(' | ') : 'never came up in 60 weeks');
   if (third) { const old = third.S.fc.id, nw = third.ev.who;
@@ -247,7 +249,7 @@ if (found.network) { const F = found.network, net = S => { E.clocks(S); return S
   }
 }
 /* trouble on the air comes up in the match it happens in */
-{ const S = E.newGame('pdw', 5, { name: 'R' }); desk(S);
+{ const S = E.newGame('pdw', 5, { name: 'R', mid: false }); desk(S);
   let ch = null; for (let i = 0; i < 400 && !ch; i++) { S.chs = null; ch = E.chaos(S, S.card); }
   const mi = ch && ch.mi; E.liveBegin(S, S.card);
   let ev = null, at = -1; air(S, null, (e, S) => { if (e.kind === 'chaos') { ev = e; at = S.live.st.steps[S.live.st.k].i; } });
@@ -255,11 +257,11 @@ if (found.network) { const F = found.network, net = S => { E.clocks(S); return S
   ok('ch2', 'trouble does not count against the night’s other calls', !!ev && (S.reports[0].calls || []).some(c => c.k === 'chaos'));
 }
 /* the same answers on the same night give the same night */
-{ const run = () => { const S = E.newGame('pdw', 7, { name: 'R' }); for (let wk = 0; wk < 3; wk++) { while (desk(S)) { E.liveBegin(S, S.card); air(S, (ev, k) => (k + 1) % ev.choices.length); } week(S); } return JSON.stringify(S); };
+{ const run = () => { const S = E.newGame('pdw', 7, { name: 'R', mid: false }); for (let wk = 0; wk < 3; wk++) { while (desk(S)) { E.liveBegin(S, S.card); air(S, (ev, k) => (k + 1) % ev.choices.length); } week(S); } return JSON.stringify(S); };
   ok('det1', 'the same answers give the same game', run() === run());
 }
 /* what the night left behind: filed with the report, laid out for the desk */
-{ const S = E.newGame('pdw', 12, { name: 'R' });
+{ const S = E.newGame('pdw', 12, { name: 'R', mid: false });
   ok('nt1', 'before the first show the desk has nothing from a night', E.afterShow(S) === null);
   const card = desk(S), w = S.w[card[0].sides[0][0]];
   E.liveBegin(S, card); w.inj = 3; w.morale = Math.max(0, w.morale - 20); air(S, ev => ev.safe || 0);
@@ -274,7 +276,7 @@ if (found.network) { const F = found.network, net = S => { E.clocks(S); return S
   week(S);
   ok('nt7', 'a new week starts with a clear desk', E.afterShow(S) === null); }
 /* the night ends on a named problem: one matter in the inbox, caused by the show */
-{ const S = E.newGame('pdw', 13, { name: 'R' }), P = S.promos.pdw, t = P.titles.find(x => !x.tag && x.holders.length), ch = S.w[t.holders[0]];
+{ const S = E.newGame('pdw', 13, { name: 'R', mid: false }), P = S.promos.pdw, t = P.titles.find(x => !x.tag && x.holders.length), ch = S.w[t.holders[0]];
   S.inbox.forEach(e => { e.done = true; });
   const card = desk(S); E.liveBegin(S, card); ch.inj = 5; air(S, ev => ev.safe || 0);
   let ev = S.inbox.find(e => !e.done && e.type === 'champout'), A = E.afterShow(S);
@@ -282,27 +284,27 @@ if (found.network) { const F = found.network, net = S => { E.clocks(S); return S
   ok('nm2', 'it holds the week: the inbox has to be answered', E.tasks(S).list.some(x => x.id === 'inbox' && x.state === 'todo'));
   const pr = t.prestige, lean = ((S.rmY || {})[ch.id] || { v: 0 }).v; E.resolveEvent(S, ev.id, 1);
   ok('nm3', 'keeping the belt on them costs the belt standing, and they remember it', t.holders[0] === ch.id && t.prestige < pr && S.rmY[ch.id].v > lean && E.afterShow(S).matter.done);
-  const S2 = E.newGame('pdw', 13, { name: 'R' }), P2 = S2.promos.pdw, t2 = P2.titles.find(x => !x.tag && x.holders.length), c2 = S2.w[t2.holders[0]];
+  const S2 = E.newGame('pdw', 13, { name: 'R', mid: false }), P2 = S2.promos.pdw, t2 = P2.titles.find(x => !x.tag && x.holders.length), c2 = S2.w[t2.holders[0]];
   E.liveBegin(S2, desk(S2)); c2.inj = 5; air(S2, e => e.safe || 0); E.resolveEvent(S2, S2.inbox.find(e => !e.done && e.type === 'champout').id, 0);
   ok('nm4', 'vacating it empties the belt, and they remember that too', t2.holders.length === 0 && S2.rmY[c2.id].v < 0);
   /* somebody who went home furious */
-  const S3 = E.newGame('pdw', 14, { name: 'R' }); S3.inbox.forEach(e => { e.done = true; }); const k3 = desk(S3), w3 = S3.w[k3[1].sides[0][0]];
+  const S3 = E.newGame('pdw', 14, { name: 'R', mid: false }); S3.inbox.forEach(e => { e.done = true; }); const k3 = desk(S3), w3 = S3.w[k3[1].sides[0][0]];
   E.liveBegin(S3, k3); w3.morale = Math.max(0, w3.morale - 30); air(S3, e => e.safe || 0);
   const f = S3.inbox.find(e => !e.done && e.type === 'furious');
   ok('nm5', 'somebody who went home furious is a matter with four answers, one of them an attempt', !!f && f.w === w3.id && f.choices.length === 4 && !!f.checks[0] && f.checks[0].p > 0, f ? f.text : (S3.inbox.filter(e => !e.done).map(e => e.type).join(',') || 'none'));
   if (f) { const q0 = S3.quests.length; E.resolveEvent(S3, f.id, 1); ok('nm6', 'a promised win is a promise the game holds you to', S3.quests.length === q0 + 1 && S3.quests[q0].type === 'win' && S3.quests[q0].w === w3.id); }
   /* at most one matter from a show, and not the same person again for weeks */
-  const S4 = E.newGame('pdw', 15, { name: 'R' }); let most = 0, total = 0, shows = 0, kinds = {};
+  const S4 = E.newGame('pdw', 15, { name: 'R', mid: false }); let most = 0, total = 0, shows = 0, kinds = {};
   for (let wk = 0; wk < 8; wk++) { while (desk(S4)) { const n0 = S4.inbox.length; E.liveBegin(S4, S4.card); air(S4, e => e.safe || 0); shows++; const nw = S4.inbox.slice(n0).filter(e => e.night); most = Math.max(most, nw.length); total += nw.length; nw.forEach(e => { kinds[e.type] = 1; E.resolveEvent(S4, e.id, e.choices.length - 1); }); } week(S4); }
   ok('nm7', 'a show leaves one matter at most, and over eight weeks some shows do', most <= 1 && total >= 1 && total < shows, total + ' from ' + shows + ' shows: ' + Object.keys(kinds).join(', ')); }
 /* more causes: a belt that changed hands, an upset nobody called, a main event that fell flat */
 { const got = {};
-  for (let seed = 15; seed < 40 && !(got.clause && got.upset); seed++) { const S = E.newGame('pdw', seed, { name: 'R' });
+  for (let seed = 15; seed < 40 && !(got.clause && got.upset); seed++) { const S = E.newGame('pdw', seed, { name: 'R', mid: false });
     for (let wk = 0; wk < 8; wk++) { while (desk(S)) { const n0 = S.inbox.length; E.liveBegin(S, S.card); air(S, e => e.safe || 0);
       S.inbox.slice(n0).filter(e => e.night).forEach(e => { if (/clause|upset|mainflop/.test(e.type) && !got[e.type]) { const w = S.w[e.w], q0 = S.quests.length, m0 = ((S.rmY || {})[w.id] || { mem: [] }).mem.length; const r = E.resolveEvent(S, e.id, 0);
         got[e.type] = { n: e.choices.length, text: e.text, quest: S.quests.length - q0, mem: ((S.rmY || {})[w.id] || { mem: [] }).mem.length - m0, done: e.done }; } else E.resolveEvent(S, e.id, e.choices.length - 1); }); } week(S); } }
   /* a main event given to the two weakest people on the roster, off the card otherwise */
-  for (let seed = 15; seed < 30 && !got.mainflop; seed++) { const S = E.newGame('pdw', seed, { name: 'R' }); const c = desk(S); if (!c) continue;
+  for (let seed = 15; seed < 30 && !got.mainflop; seed++) { const S = E.newGame('pdw', seed, { name: 'R', mid: false }); const c = desk(S); if (!c) continue;
     const main = c.filter(x => x && x.mt).pop(), on = {}; c.forEach(x => { if (x && x.sides && x !== main) x.sides.forEach(sd => sd.forEach(id => { on[id] = 1; })); });
     const low = E.rosterOf(S, 'pdw').filter(w => !w.nw && !(w.inj > 0) && w.g === S.w[main.sides[0][0]].g && !on[w.id]).sort((x, y) => x.ovr - y.ovr);
     if (main.mt !== '1v1' || low.length < 2) continue; main.sides = [[low[0].id], [low[1].id]]; main.title = null; E.fitShow(S, c); if (E.validate(S, c).errors.length) continue;

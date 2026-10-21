@@ -1,3 +1,4 @@
+/* wraps: 65-you.js (it must sort after them; test-buildorder.js checks) */
 /* Booking power and action points refill after every show of yours, not once a week (roadmap 10, Ryan 16 October).
    Each show brings its share of the week's booking power and one more point, plus up to two points left unspent from
    before; action points come back in full after every show, and one unspent point carries over. A week with several

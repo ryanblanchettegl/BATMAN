@@ -1,3 +1,4 @@
+/* wraps: 31-live.js (it must sort after them; test-buildorder.js checks) */
 /* Battle royals (roadmap 2, Ryan 16 October). A battle royal takes 6 to 30 entrants and runs 30 minutes for every 15
    in it (brMins() in src/97-time.js). The booker can hold one spot for a surprise: somebody nobody on the roster, a free
    agent, a legend first, who walks out when the bell has rung and is paid for the night. The winner earns a title match

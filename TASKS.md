@@ -727,8 +727,8 @@ From the table in `docs/feature-list.md`. Check each against the engine first; s
 - [ ] Rivals competing for time slots, cities and talent (finishes feature list item 8).
 
 ### 11. Balance and known problems
-- [ ] **The underdog is too hard.** Playing the underdog company on autopilot, owner trust fell until the booker was fired around week 73. Suggested cards score about 1 to 1.5 points under the crowd's expectation there.
-- [ ] **Big companies bank too much.** The corporate giant went from $110M to about $400M in 80 weeks against a planned $1.5M a week.
+- [x] **The underdog is too hard.** (0.73: the mutiny meeting now settles the room; see docs/balance-0.73.txt) Playing the underdog company on autopilot, owner trust fell until the booker was fired around week 73. Suggested cards score about 1 to 1.5 points under the crowd's expectation there.
+- [x] **Big companies bank too much.** (0.73: the giant goes 110M to 120M in 100 weeks) The corporate giant went from $110M to about $400M in 80 weeks against a planned $1.5M a week.
 - [ ] **The startup is too easy once it gets a better slot** (about +$470K a week), and bleeds as intended while it does not (about -$340K a week).
 - [ ] Watch roster churn among rivals after 100+ weeks (releases and signings by fit are new).
 - [ ] The first-day screens grew; keep them readable (design goal: easy to read and quick to do).

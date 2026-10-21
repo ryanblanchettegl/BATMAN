@@ -113,7 +113,7 @@ export function Card() {
         <div class="sheet b1-rows" style={{ '--rows': Math.max(10, Math.min(PER, L.length)) } as any}>
           {shown.map(l => <Row key={l.key} l={l} />)}
           {L.length ? null : <div class="b1-empty"><p><b>The card is empty.</b> You have {ck.budget / 60} hours to fill. Add matches, promos and angles one at a time, or start from a suggested card and change what you like.</p>
-            <p class="muted mt1">You choose who wrestles. The odds decide who wins, unless you spend booking power to call a finish. Everything on the run sheet takes time off the clock, and the show cannot run until the time is filled.</p></div>}
+            <p class="muted mt1">You choose who wrestles. Each match is played out on the night, unless you spend booking power to call the finish. Everything on the run sheet takes time off the clock, and the show cannot run until the time is filled.</p></div>}
         </div>
         <div class="b1-foot">
           <span class="cats">{cat('match', 'match', 'matches')}{cat('promo', 'promo', 'promos')}{cat('angle', 'angle', 'angles')}</span>
