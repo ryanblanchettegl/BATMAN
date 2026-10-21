@@ -39,6 +39,7 @@ export function matchMeta(m: Match, i: number, n: number, it: any): [string, Com
   if (m.stip !== 'std') meta.push(['stip', E.STIP[m.stip].n]);
   if (m.int && m.int !== 'normal') meta.push(['int', <span class={m.int === 'brutal' ? 'bad' : 'good'}>{E.INTN[m.int].n}</span>]);
   if (t) meta.push(['title', <span class="gold">{t.name}</span>]);
+  const st = E.storyOfMatch(G.S, m); if (st) meta.push(['story', <span class="bad" data-t="meta-story">Storyline: {st.n}</span>]);
   if ((m as any).end) meta.push(['end', <span class="gold" data-t="ends-story">Ends the story</span>]);
   meta.push(['odds', odds(m, i, n)]);
   if (it && it.top) meta.push(['top', <TopTag top={it.top} />]);
@@ -66,24 +67,29 @@ export function Card() {
   const L: Line[] = [];
   const pl = S.plan && S.w[S.plan.sp] ? S.plan : null, pit = itemOf((x: any) => x.t === 'plan');
   if (pl && pit) L.push({ key: 'plan', cls: 'sg' + (pit.top ? ' top' : ''), at: pit.at, no: 'MIC', who: S.w[pl.sp].name + ' opens the show', meta: <><TopTag top={pit.top} /> Promo: {E.PKIND[pl.kind || 'interview'].n}{DOT}{pit.mins} min</>, t: 'plan-row', v: 0, on: false, pick: () => pickSide('promo') });
-  const segsAt = (i: number, m: number) => I.list.filter((x: any) => Math.max(0, Math.min(x.pos, m - 1)) === i).forEach((x: any) => {
+  // i is the match it comes before; -1 is after the main event
+  const segsAt = (i: number, m: number) => I.list.filter((x: any) => i < 0 ? x.post : !x.post && Math.max(0, Math.min(x.pos, m - 1)) === i).forEach((x: any) => {
     const it = itemOf((q: any) => q.t === 'seg' && q.slot === x.slot);
-    L.push({ key: 'sg' + x.slot, cls: 'sg' + (x.why ? ' bad' : '') + (it && it.top ? ' top' : ''), at: it ? it.at : null, no: x.t === 'promo' ? 'MIC' : (x.t === 'angle' ? 'ANG' : 'WRI'), ds: x.slot,
+    const arc = x.k === 'arc', A = arc ? E.taleInfo(S) : null;
+    L.push({ key: 'sg' + x.slot, cls: 'sg' + (x.why ? ' bad' : '') + (it && it.top ? ' top' : '') + (arc ? ' story arc' : '') + (x.forced ? ' forced' : ''), at: it ? it.at : null, no: arc ? 'ARC' : x.t === 'promo' ? 'MIC' : (x.t === 'angle' ? 'ANG' : 'WRI'), ds: x.slot,
       who: x.why ? x.why : (x.who.length ? x.who.map((id: number) => S.w[id].name).join(', ') : 'The writers decide'),
-      meta: <>{it && it.top ? <><TopTag top={it.top} /> </> : null}{x.t === 'any' ? '' : CATN[x.t] + ': '}{E.SEGK[x.k].n}{DOT}{x.mins} min</>,
+      meta: arc ? <><span class={A && A.ch == null ? 'bad' : 'good'} data-t="row-arc">{A && A.ch == null ? '[Decide] ' : '[Decided] '}</span>{A ? A.n + ': ' + A.cn : 'Arc'}{x.post ? DOT + 'after the main event' : ''}{DOT}{x.mins} min</>
+        : <>{it && it.top ? <><TopTag top={it.top} /> </> : null}{x.forced ? <span class="warn">[Promised] </span> : null}{x.t === 'any' ? '' : CATN[x.t] + ': '}{E.SEGK[x.k].n}{DOT}{x.mins} min</>,
       t: 'seg-edit', v: x.slot, on: s.seg === x.slot, pick: () => pickSeg(x.slot) });
   });
   const FL: any[][] = n ? E.cardFlags(S) : [];
+  const ST: any[] = n ? E.cardStories(S) : [];   // a match with two people in a storyline together shows red
   if (n) S.card.forEach((m: Match, i: number) => {
     segsAt(i, n);
     const it = itemOf((x: any) => x.t === 'match' && x.i === i), t = m.title ? P.titles.find((x: any) => x.id === m.title) : null, done = !!E.matchOdds(S, m, i, n);
     // the line on the sheet is short: what the spot is, the kind of match, the minutes, and the things that stand out
     const fl: any[] = done ? (FL[i] || []) : [];
-    const meta = <>{fl.length ? <span data-t="row-flags">{fl.map((f: any, k: number) => <span key={k} class={f.k === 'bad' ? 'bad' : (f.k === 'good' ? 'good' : 'warn')}>[{f.t}] </span>)}</span> : null}{it && it.top ? <><TopTag top={it.top} /> </> : null}{roleOf(i, n) ? roleOf(i, n) + DOT : ''}{E.MT[m.mt].n}{m.stip !== 'std' ? DOT + E.STIP[m.stip].n : ''}{it ? DOT + it.mins + ' min' : ''}
-      {!done ? <>{DOT}<span class="warn">Unfinished</span></> : null}{m.call != null ? <>{DOT}<span class="gold">Your call</span></> : null}{(m as any).end ? <>{DOT}<span class="gold">Ends the story</span></> : null}{(m as any).lock ? <>{DOT}<span class="warn" data-t="row-lock">Locked</span></> : null}{t ? <>{DOT}<span class="gold">{t.name}</span></> : null}</>;
-    L.push({ key: 'm' + i, cls: (i === n - 1 ? 'me' : '') + (it && it.top ? ' top' : ''), at: it ? it.at : null, no: String(i + 1), dm: i, who: matchLabel(m),
+    const meta = <>{ST[i] ? <span class="bad" data-t="row-story" title={ST[i].n}>[Storyline] </span> : null}{fl.length ? <span data-t="row-flags">{fl.map((f: any, k: number) => <span key={k} class={f.k === 'bad' ? 'bad' : (f.k === 'good' ? 'good' : 'warn')}>[{f.t}] </span>)}</span> : null}{it && it.top ? <><TopTag top={it.top} /> </> : null}{roleOf(i, n) ? roleOf(i, n) + DOT : ''}{E.MT[m.mt].n}{m.stip !== 'std' ? DOT + E.STIP[m.stip].n : ''}{it ? DOT + it.mins + ' min' : ''}
+      {!done ? <>{DOT}<span class="warn">Unfinished</span></> : null}{m.call != null ? <>{DOT}<span class="gold">Your call</span></> : null}{(m as any).end ? <>{DOT}<span class="gold">Ends the story</span></> : null}{(m as any).pm != null ? <>{DOT}<span class="warn" data-t="row-promised">Promised</span></> : (m as any).lock ? <>{DOT}<span class="warn" data-t="row-lock">Locked</span></> : null}{t ? <>{DOT}<span class="gold">{t.name}</span></> : null}</>;
+    L.push({ key: 'm' + i, cls: (i === n - 1 ? 'me' : '') + (it && it.top ? ' top' : '') + (ST[i] ? ' story' : ''), at: it ? it.at : null, no: String(i + 1), dm: i, who: matchLabel(m),
       meta: meta, t: 'edit', v: i, on: b.edit === i, pick: () => pickMatch(i) });
   }); else segsAt(0, 1);
+  segsAt(-1, n);
   // pages, when a show has more lines than the sheet holds
   const pg = pager(), pages = Math.max(1, Math.ceil(L.length / PER)), want = L.findIndex(l => l.on);
   if (want >= 0 && Math.floor(want / PER) !== pg.p && pg.p < pages) pg.p = Math.floor(want / PER);

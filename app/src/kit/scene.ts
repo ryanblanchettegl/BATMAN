@@ -518,7 +518,9 @@ function deskScene(id: string, name: string, when: string, talker: string): Scen
   const talk = (t: number, open: boolean, arm: number, head: number): Key => {
     const tk = (who: string) => who === talker, side = (who: string) => who === 'C1' ? 1 : -1, x = (who: string) => who === 'C1' ? DESK_SEATS[0] : DESK_SEATS[1];
     const fig = (who: string): Fig => tk(who) ? seat(x(who), side(who), { sh_n: arm, el_n: 75, wr_n: 10, sh_f: 30, el_f: 75, head }, open ? 'talk' : '') : seat(x(who), side(who), { sh_n: 30, el_n: 80, sh_f: 30, el_f: 75, head: 8 }, '');
-    return { t, figs: { C1: fig('C1'), C2: fig('C2') }, props: [], cam: { x: -0.9, y: 0.7, z: 1.15 } };
+    const figs: Record<string, Fig> = { C1: fig('C1'), C2: fig('C2') };
+    if (talker === 'C3') figs.C3 = seat(DESK_SEATS[2], -1, { sh_n: arm, el_n: 75, wr_n: 10, sh_f: 30, el_f: 75, head }, open ? 'talk' : '');   // a guest in the third chair, talking
+    return { t, figs, props: [], cam: talker === 'C3' ? { x: 0.6, y: 0.7, z: 1.15 } : { x: -0.9, y: 0.7, z: 1.15 } };
   };
   return { v: 1, id, name, when, set: 'desk', loop: true,
     slots: [{ id: 'C1', n: 'Play-by-play', role: 'c', dress: 'suit' }, { id: 'C2', n: 'Colour', role: 'c', dress: 'suit' }, { id: 'C3', n: 'A guest', role: 'c', dress: 'suit', at: { x: DESK_SEATS[2], y: Y, r: 0, f: -1, z: 0, p: { ...SEAT, sh_n: 30, el_n: 80, sh_f: 30, el_f: 75 } } }],
@@ -690,6 +692,7 @@ export const SCENES: Scene[] = flourishAll([
     keys: (ks as [number, Record<string, number>, string][]).map(([t, p, e]) => ({ t, figs: { A: STD(id === 'taunt_mock' ? 0.2 : -2.2, 1, p, e, 0.6), B: LAY(id === 'taunt_mock' ? 1.9 : 3.2, -1, 90, { sh_n: 150, sh_f: 130, hip_n: 20, kn_n: -40 }, 'hurt', 0.2), R: STD(-4.6, 1, { sh_n: 20, el_n: 40 }, '', -0.3) }, props: [] })) } as Scene)),
   deskScene('desk1', 'At the desk: the call', 'desk1', 'C1'),
   deskScene('desk2', 'At the desk: the colour', 'desk2', 'C2'),
+  deskScene('desk3', 'At the desk: a guest on commentary', 'desk3', 'C3'),
   { v: 1, id: 'promo', name: 'On the microphone', when: 'promo', set: 'ring', slots: [{ id: 'A', n: 'The talker', role: 'a' }], keys: [
     { t: 0, figs: { A: STD(-0.6, 1, { sh_n: 150, el_n: 120, sh_f: -20, el_f: -30, head: 4 }, '') }, props: [{ id: 'mic', k: 'mic', x: 0.1, y: 0.35, r: -20, z: 2.2, s: 1.2, at: 'A:hand_n' }] },
     { t: 0.8, figs: { A: STD(-0.6, 1, { sh_n: 150, el_n: 120, sh_f: -100, el_f: -20, head: 10 }, 'shout') }, props: [{ id: 'mic', k: 'mic', x: 0.1, y: 0.35, r: -20, z: 2.2, s: 1.2, at: 'A:hand_n' }] },
@@ -1303,6 +1306,8 @@ export const SEG_SCENES: Scene[] = flourishAll([
     { t: 0, figs: { A: STD(-2.6, -1, CROSS, '', 0.4), B: STD(2.6, 1, CROSS, '', 0.4) }, props: [{ id: 'hd', k: 'headline', x: 0, y: 3.3, r: 0, z: 2, s: 1, txt: 'THE STORY SO FAR' }] },
     { t: 1.6, figs: { A: STD(-1.4, 1, CROSS, 'snarl', 0.4), B: STD(1.4, -1, CROSS, 'snarl', 0.4) }, props: [{ id: 'hd', k: 'headline', x: 0, y: 3.3, r: 0, z: 2, s: 1, txt: 'THE STORY SO FAR' }] }]),
 ]);
+/* an arc's chapter plays its own beat (src/99-tale.js); this is the picture when a beat has none: the two face to face */
+SEG_SCENES.push({ ...JSON.parse(JSON.stringify(SEG_SCENES.find(x => x.id === 'seg_faceoff'))), id: 'seg_arc', when: 'seg_arc', name: 'A chapter of an arc' });
 /* Storyline beats (rule 9c): every beat the story director writes on a show is a scene too, 'beat_<beat>' (BEATS in
    src/20-story.js). A beat that is the same moment as a booked kind (an interview, a call-out ambush, a title
    challenge, a face-off, a save, a turn) plays that kind's scene. */

@@ -83,10 +83,11 @@ function peopleNow(S){
     else if(f&&f.heat<32&&S.week-f.start>=6)asks.push({w:w,k:'askout',why:'Came in to ask out of the rivalry with '+pplOther(S,f,w.id).name+'. It is going nowhere',acts:['out_yes','ask_no'],o:{with:pplOther(S,f,w.id).id,story:'The rivalry has gone cold'}});
     else if(w.align==='F'&&w.morale<50&&(w.mom||0)<=-2&&!f)asks.push({w:w,k:'askturn',why:'Came in to ask for a change. Wants to turn villain',acts:['turn_yes','ask_no'],o:{story:'Losing, and the crowd has stopped caring'}});
     else if(holdLvl(P,w.id)===0&&!f&&((w.stress||0)>=60||w.cond<50))asks.push({w:w,k:'askoff',why:'Came in to ask for two weeks at home. Worn out',acts:['off_yes','ask_no'],o:{story:'Has not had a break in a long time'}});
+    else if(holdLvl(P,w.id)===0&&!f&&micOf(S,w)>=70&&w.morale>=45&&!(S.locks||[]).some(function(l){return l.who===w.id;}))asks.push({w:w,k:'askpromo',why:'Came in to ask for time on the microphone on the next show. Has something to say',acts:['promo_yes','ask_no'],o:{story:'Good on the microphone, and nobody has handed them one lately'}});
     else if(w.team==null&&!f&&holdLvl(P,w.id)===0){var fr=byOvr.filter(function(x){return x.id!==w.id&&x.g===w.g&&x.team==null&&free(x)&&holdLvl(P,x.id)===0&&bondOf(S,w.id,x.id)>=REL_ON;})[0];
       if(fr)asks.push({w:w,k:'askteam',why:'Came in to ask to team with '+fr.name+'. They are friends',acts:['team_yes','ask_no'],o:{with:fr.id,story:'Neither has much going on alone'}});}
   });
-  var pri={askshot:0,askend:1,askraise:2,askout:3,askturn:4,askoff:5,askteam:6};
+  var pri={askshot:0,askend:1,askraise:2,askout:3,askturn:4,askoff:5,askpromo:6,askteam:7};
   asks.sort(function(a,b){return pri[a.k]-pri[b.k]||wkh(a.w)-wkh(b.w);}).slice(0,2).forEach(function(q){put('truck',q.w,q.k,q.why,'warn',q.acts,q.o);});
   var face=typeof faceOf==='function'?faceOf(S):null;
   if(here(face)&&!(face.inj>0))put('truck',face,'face','The shows are built around them. Came in to see the run sheet','good',['run'],{});
@@ -145,10 +146,10 @@ var PPL_ACT={
     run:function(S,P,w){w.morale=clamp(w.morale+5,0,100);stressAdd(S,w,-4);S.hype=(S.hype||0)+0.02;youRemember(S,w,'plan','You sat down and told them where the title was going.',5);return {ok:true,msg:w.name+' leaves knowing the plan, and likes being told first. A champion who believes in the story sells it.'};}},
   word:{n:'Ask them to put in a word',d:'The owner listens to this one. A little more trust upstairs. They will expect to be looked after.',
     run:function(S,P,w){S.owner.trust=clamp(S.owner.trust+3,0,100);youRemember(S,w,'favour','You asked them for a favour with '+S.owner.name+'. They will want one back.',2);return {ok:true,msg:w.name+' has a word with '+S.owner.name+'. It lands. You owe them one now.'};}},
-  shot_yes:{n:'Say yes: promise the title match',free:1,d:'You give your word: a match for the belt within six weeks. They will hold you to it.',
+  shot_yes:{n:'Say yes: promise the title match',free:1,d:'You give your word: a match for the belt at the next big event. It goes on that card, and they will hold you to it.',
     run:function(S,P,w,o,r,p){var t=titleById(P,p.tid);if(!t)return {ok:false,stop:true,msg:'That belt is no longer there to promise.'};
-      S.quests.push({id:S.nid++,type:'shot',w:w.id,title:t.id,due:S.week+6,text:'Promise: give '+w.name+' a match for the '+t.name+' by '+cal(S.week+6).label});w.morale=clamp(w.morale+8,0,100);youRemember(S,w,'saidyes','They asked for a title shot and you said yes to their face.',6);
-      return {ok:true,msg:'You gave your word. '+w.name+' gets a match for the '+t.name+' by '+cal(S.week+6).label+'.'};}},
+      var q=promiseShot(S,w,t,null);w.morale=clamp(w.morale+8,0,100);youRemember(S,w,'saidyes','They asked for a title shot and you said yes to their face.',6);
+      return {ok:true,msg:'You gave your word. '+w.name+' gets a match for the '+t.name+' at '+bigNameAt(S,q.at)+'. It is on that card already.'};}},
   out_yes:{n:'Say yes: end the rivalry',free:1,d:'The rivalry is dropped where it stands. Both of them are free for something new.',
     run:function(S,P,w,o){var f=o?feudOf(S,w.id,o.id):null;if(!f)return {ok:false,stop:true,msg:'That rivalry is already over.'};f.res=true;f.dead=true;f.end=S.week;w.morale=clamp(w.morale+5,0,100);youRemember(S,w,'listened','They asked out of a rivalry that was going nowhere, and you listened.',5);
       return {ok:true,msg:'The rivalry between '+w.name+' and '+o.name+' is over, quietly. '+w.name+' is grateful, and free for something new.'};}},
@@ -165,6 +166,8 @@ var PPL_ACT={
   raise_yes:{n:'Say yes: pay them more',free:1,d:function(S,P,w){return 'Their wage goes from '+money(w.wage)+' to '+money(pplRaise(w))+' a week, for the rest of the contract.';},
     run:function(S,P,w){var to=pplRaise(w);w.wage=to;w.morale=clamp(w.morale+9,0,100);youRemember(S,w,'raise','They asked for more money and you paid it without a fight.',6);
       return {ok:true,msg:w.name+' is on '+money(to)+' a week now. They shake your hand twice on the way out.'};}},
+  promo_yes:{n:'Say yes: a promo on the next show',free:1,d:'You promise them a promo. It goes on the next show’s run sheet and stays there.',
+    run:function(S,P,w){var r=E.promisePromo(S,w.id);w.morale=clamp(w.morale+5,0,100);youRemember(S,w,'promo','They asked for the microphone and you promised it.',5);return {ok:true,msg:r.msg};}},
   off_yes:{n:'Say yes: two weeks at home',free:1,d:'They are off the card for two weeks and come back rested.',
     run:function(S,P,w){w.away=S.week+2;w.cond=clamp(w.cond+25,5,100);stressAdd(S,w,-20);w.morale=clamp(w.morale+7,0,100);youRemember(S,w,'rested','They asked for time at home and you gave it.',6);
       return {ok:true,msg:w.name+' goes home for two weeks. They are off the card until '+cal(S.week+3).label+', and they will come back rested.'};}},

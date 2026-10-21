@@ -28,13 +28,15 @@ ok(stale >= 1 && ripe >= 1, 'no feud ever went stale or ripe');
   const S = E.newGame(E.universe().promotions[1].id, 3, { name: 'R' }); for (let i = 0; i < 6; i++) week(S);
   const f = S.feuds.filter(x => !x.res && x.promo === S.player).sort((a, b) => b.heat - a.heat)[0];
   ok(!!f, 'no feud to end');
+  // promises made in the inbox lock matches onto the big event (src/99-tale.js); kept out here, so the two feuding are free for their ending
+  const noPromises = () => { S.locks = []; S.quests = S.quests.filter(q => q.type !== 'shot'); };
   if (f) { const r = E.storyPlanEnd(S, f.id); ok(r.ok && f.endAt != null, 'planning an ending did not take');
-    for (let i = 0; i < 6 && !f.res; i++) week(S);
+    for (let i = 0; i < 6 && !f.res; i++) { noPromises(); week(S); }
     ok(f.res && !f.dead, 'the planned ending did not settle the feud with a payoff (res ' + f.res + ', dead ' + f.dead + ')'); }
   // a match marked as the ending ends it on a weekly show
   const g = S.feuds.filter(x => !x.res && x.promo === S.player)[0];
   // (a disqualification or a count-out is not an ending, so it may take a second try)
-  if (g) { for (let t = 0; t < 4 && !g.res; t++) { if (S.qi >= S.queue.length) E.endWeek(S); const c = E.suggest(S); c.unshift({ mt: '1v1', sides: [[g.a[0]], [g.b[0]]], len: 'M', stip: 'std', end: 1 }); E.fitShow(S, c);
+  if (g) { for (let t = 0; t < 4 && !g.res; t++) { if (S.qi >= S.queue.length) E.endWeek(S); noPromises(); const c = E.suggest(S); c.unshift({ mt: '1v1', sides: [[g.a[0]], [g.b[0]]], len: 'M', stip: 'std', end: 1 }); E.fitShow(S, c);
     if (!E.validate(S, c).errors.length) E.runPlayerShow(S, c); else S.qi++; }
     ok(g.res && !g.dead, 'a match marked as the ending did not end it'); }
 }

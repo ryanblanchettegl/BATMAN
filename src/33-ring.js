@@ -105,7 +105,7 @@ LIVEK.overtime={n:'They are not going home',
     if(f&&f.heat>=60&&wr>=72)why.push('The feud is hot and the crowd is with them');
     if(!why.length)return null;
     var ch=[{n:'Tell the referee to take it home',says:'The match ends in its time. Nothing is lost, and nothing is gained.'}],q,mi=L.card.length-1;
-    for(q=st.k+1;q<st.steps.length;q++)if(st.steps[q].t==='seg'&&!st.steps[q].cut){
+    for(q=st.k+1;q<st.steps.length;q++)if(st.steps[q].t==='seg'&&!st.steps[q].cut&&!st.steps[q].sg.forced){
       var sg=st.steps[q].sg,who=(sg.who||[]).map(function(id){return S.w[id];}).filter(Boolean),lab=who.length?segLabel(S,sg):'the writers’ segment';
       ch.push({n:'Give them five more minutes. Cut '+lab,k:'seg',q:q,says:'The match gets longer, and a good one gets better. '+(who.length?names(who)+' will not thank you for losing their time on the show.':'The writers lose their time on the show.')});break;
     }

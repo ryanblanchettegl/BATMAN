@@ -31,9 +31,10 @@ function showClock(S,card){
   var put=function(o){o.at=t;t+=o.mins;items.push(o);};
   if(hasPlan(S))put({t:'plan',mins:PLAN_MINS});
   for(i=0;i<Math.max(n,1);i++){
-    L.forEach(function(sg,slot){if(clamp(sg.pos|0,0,Math.max(0,n-1))===i)put({t:'seg',slot:slot,k:sg.k,mins:segMins(sg)});});
+    L.forEach(function(sg,slot){if(!sg.post&&clamp(sg.pos|0,0,Math.max(0,n-1))===i)put({t:'seg',slot:slot,k:sg.k,mins:segMins(sg)});});
     if(i<n)put({t:'match',i:i,mins:matchSlot(show,card[i],i===n-1)});
   }
+  L.forEach(function(sg,slot){if(sg.post)put({t:'seg',slot:slot,k:sg.k,mins:segMins(sg),post:1});});   // after the main event
   var tops=[],h;for(h=0;h*60<B;h++){for(i=0;i<items.length;i++)if(items[i].at<=h*60&&h*60<items[i].at+items[i].mins){items[i].top=h+1;tops.push({hour:h+1,at:h*60,k:i});break;}}
   return {budget:B,total:t,left:B-t,items:items,tops:tops,over:t-B>TIME_OVER,short:B-t>TIME_LIGHT,light:B-t>TIME_FREE&&B-t<=TIME_LIGHT};
 }
@@ -111,7 +112,8 @@ function fitShow(S,card,keep){
     i=choose(function(k){return k<n-1&&lenOf(card[k])==='L'&&card[k].stip!=='iron';},true);if(i>=0){card[i].len='M';return true;}
     if(n>1&&lenOf(card[0])==='M'&&!card[0].title&&card[0].stip!=='iron'){card[0].len='S';return true;}
     i=choose(function(k){return k<n-1&&lenOf(card[k])==='M'&&!card[k].title&&card[k].stip!=='iron';},true);if(i>=0){card[i].len='S';return true;}
-    if(L.length){for(i=L.length-1;i>=0;i--)if(L[i].k==='writers'){L.splice(i,1);return true;}L.pop();return true;}
+    for(i=L.length-1;i>=0;i--)if(L[i].k==='writers'){L.splice(i,1);return true;}
+    for(i=L.length-1;i>=0;i--)if(!L[i].forced){L.splice(i,1);return true;}
     if(lenOf(card[n-1])==='L'&&card[n-1].stip!=='iron'){card[n-1].len='M';return true;}
     if(n>3){i=choose(function(k){return k<n-1&&!card[k].title;},true);if(i>=0){card.splice(i,1);L.forEach(function(sg){if(sg.pos>i)sg.pos--;});return true;}}
     return false;
@@ -167,7 +169,8 @@ E.OPEN_GUIDE=['match','promo','angle','recap','writers'].map(function(k){return 
 function showFill(S,card){
   var show=S.queue&&S.queue[S.qi];if(!show||!card.length)return card;
   var P=S.promos[S.player],n=card.length,want=segSlots(P,show),L,k,spots=[Math.min(1,n-1),n-1,Math.min(2,n-1)];
-  S.segs=[];S.segKey=showKey(S);L=S.segs;
+  var kept=S.segKey===showKey(S)?(S.segs||[]).filter(function(sg){return sg&&sg.forced;}):null;
+  S.segs=[];S.segKey=showKey(S);L=S.segs;if(kept)kept.forEach(function(sg){L.push(sg);});else SEGNEW.forEach(function(fn){fn(S,L);});
   if(want>0)E.segSuggest(S,1,card);
   for(k=L.length;k<want;k++)L.push({k:'writers',who:[],pos:spots[k%spots.length],len:'M'});
   fitShow(S,card);

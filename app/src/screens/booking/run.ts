@@ -23,8 +23,9 @@ export function onCard(skip?: number): Record<number, 1> {
 /** A suggested card is a whole show: matches, promos and angles, fitted to the show's time. */
 export const suggest = () => act(() => { const b = book(); G.S.card = E.suggestKeep(G.S); b.edit = -1; sel().seg = -1; b.tried = false; });
 export const addMatch = () => act(() => { const c = G.S.card; c.push({ mt: '1v1', sides: [[null], [null]], win: -2, call: null, title: null, stip: 'std', len: 'M' }); book().edit = c.length - 1; sel().seg = -1; });
-export const clearCard = () => act(() => { const b = book(); G.S.card = []; E.segClear(G.S); b.edit = -1; sel().seg = -1; b.tried = false; });
-export const removeMatch = (i: number) => act(() => { G.S.card.splice(i, 1); book().edit = -1; });
+export const clearCard = () => act(() => { const b = book(); const r = E.cardClear(G.S); if (r.msg) say(r.msg); b.edit = -1; sel().seg = -1; b.tried = false; });
+/** Take a match off the card. A match promised for tonight stays (E.cardRemove says why). */
+export const removeMatch = (i: number) => act(() => { const r = E.cardRemove(G.S, i); if (!r.ok) say(r.msg, { err: true }); else book().edit = -1; });
 /** What is selected on the run sheet besides a match: a promo or an angle, by its place in the list (-1 for none). */
 export const sel = () => slice<{ seg: number }>('booksel', () => ({ seg: -1 }));
 /** Select a match on the run sheet (its details show beside the sheet), or let go of it. */
@@ -67,6 +68,8 @@ export function setMatch(i: number, c: string, v: string, at?: { s: number; p?: 
     else if (c === 'how') { if (v) m.how = v; else delete m.how; }
   });
 }
+/** A guest at the commentary desk (k 'gc') or a run-in at the curtain (k 'ri') for match i (src/99-ringside.js). */
+export const setRingside = (i: number, k: 'gc' | 'ri', v: string) => act(() => { const r = E.setRingside(G.S, i, k, v); if (r.msg) say(r.msg, { err: !r.ok }); });
 /** The opening promo: who speaks, about what, and how tightly scripted. */
 export function setPlan(k: 'sp' | 'topic' | 'del' | 'kind', v: string) {
   act(() => {

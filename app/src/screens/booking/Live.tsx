@@ -29,7 +29,7 @@ function Typed(p: { text: string }) {
   useEffect(() => n < 0 ? undefined : typer.start(p.text.length, setN, () => setN(-1)), []);
   return <>{n < 0 ? p.text : p.text.slice(0, n)}{n < 0 ? null : <span class="untyped">{p.text.slice(n)}</span>}</>;
 }
-interface Beat { t: string; x: string; h?: number; w?: string }
+interface Beat { t: string; x: string; h?: number; w?: string; g?: number }
 /** One line of the broadcast. `tk` marks the newest line: it is drawn brighter and typed out. */
 function Line(p: { r: any; b: Beat; tk?: string }) {
   const b = p.b, cls = 'ln ' + b.t + (p.tk ? ' last' : '') + (b.h ? ' hot' + (b.h > 1 ? ' hot2' : '') : ''), text = p.tk && pref.pace !== 'tv' ? <Typed key={p.tk} text={b.x} /> : b.x;
@@ -291,6 +291,13 @@ function scenePick(r: any, s: any, at: number, done: boolean): { sc: Scene; cast
   let when = 'mid', key = 'm', a = ids[0];
   // a line of colour from the desk, between the moves: cut to the two of them, the colour voice talking
   const line = bc[now];
+  // a guest on commentary (src/99-ringside.js): the guest in the third chair, saying their piece
+  if (!done && line && line.t === 'col' && line.g != null && S.w[line.g]) {
+    const sc = choose('desk3', now); if (sc) { const ann: string[] = r.ann || [];
+      cast.C1 = { ...commentator(0), name: ann[0] || 'Play-by-play' }; cast.C2 = { ...commentator(1), name: ann[1] || 'Colour' }; cast.C3 = recipeOf(S.w[line.g]);
+      return { sc, cast, play: i + ':g' + now, label: 'At the desk: ' + S.w[line.g].name + ', a guest on commentary' };
+    }
+  }
   if (!done && line && line.t === 'col' && !line.h && now !== lastH) {
     const sc = choose('desk2', now); if (sc) { const ann: string[] = r.ann || [];
       cast.C1 = { ...commentator(0), name: ann[0] || 'Play-by-play' }; cast.C2 = { ...commentator(1), name: ann[1] || 'Colour' };

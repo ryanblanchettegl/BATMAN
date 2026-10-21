@@ -4,7 +4,7 @@ function weekShows(S,P,w){
   if(c.wom===4&&evList(S,P)[c.month].t!=='dark')out.push({id:'big',big:true,flag:c.month===P.flagship,brand:null,name:P.name+' '+evName(S,P,c.month),rule:evRule(S,P,c.month),ty:evList(S,P)[c.month].t});
   return out;
 }
-function startWeek(S){var P=S.promos[S.player];S.queue=weekShows(S,P);S.qi=0;S.card=[];grantBP(S);S.inbox=S.inbox.filter(function(e){return !e.done;});genEvents(S);}
+function startWeek(S){var P=S.promos[S.player];S.queue=weekShows(S,P);S.qi=0;S.card=[];grantBP(S);S.inbox=S.inbox.filter(function(e){return !e.done;});genEvents(S);SHOWON.forEach(function(fn){fn(S);});}
 function leaveCompany(S,w,why,quiet){
   var P=S.promos[w.promo];if(!P)return;
   vacateFor(S,P,w,why,quiet);var tm=teamOf(S,w);if(tm)dissolveTeam(S,tm);leaveStable(S,w);w.mgr=null;S.w.forEach(function(x){if(x.mgr===w.id)x.mgr=null;});
@@ -93,7 +93,7 @@ var EV={
     var c=R.filter(function(w){return w.mom>=2&&holdLvl(P,w.id)===0&&!hasQuest(S,w.id);}).sort(function(a,b){return b.mom-a.mom;});
     for(var i=0;i<c.length;i++){var w=c[i],t=null;
       P.titles.forEach(function(x){if(x.tag||x.g!==w.g||!x.holders.length||(x.brand&&x.brand!==w.brand))return;var ch=S.w[x.holders[0]];if(w.ovr>=ch.ovr-25&&w.ovr<=ch.ovr+12&&(!t||x.lvl>t.lvl))t=x;});
-      if(t)return {type:'shot',w:w.id,title:t.id,text:w.name+' is on a roll and asks for a shot at the '+t.name+'.',choices:['Promise the shot within 6 weeks','Not yet']};}
+      if(t)return {type:'shot',w:w.id,title:t.id,text:w.name+' is on a roll and asks for a shot at the '+t.name+'.',choices:['Promise the shot at '+bigNameAt(S,nextBigShow(S)),'Not yet']};}
     return null;
   },
   losing:function(S,P,R){
@@ -170,7 +170,7 @@ E.resolveEvent=function(S,id,choice){
   var P=S.promos[S.player],w=ev.w!=null?S.w[ev.w]:null,o=ev.o!=null?S.w[ev.o]:null,res='',roll;
   if(EVR[ev.type]){res=EVR[ev.type](S,ev,choice,P,w,o);ev.done=true;ev.result=res;return res;}
   if(ev.type==='shot'){
-    if(choice===0){var t=titleById(P,ev.title);S.quests.push({id:S.nid++,type:'shot',w:w.id,title:ev.title,due:S.week+6,text:'Promise: give '+w.name+' a '+t.name+' match by '+cal(S.week+6).label});w.morale=clamp(w.morale+8,0,100);res='You gave your word. '+w.name+' is fired up.';}
+    if(choice===0){var t=titleById(P,ev.title),q=promiseShot(S,w,t,null);w.morale=clamp(w.morale+8,0,100);res='You gave your word. '+w.name+' is fired up: the '+t.name+' match is on the card at '+bigNameAt(S,q.at)+'.';}
     else{w.morale=clamp(w.morale-6,0,100);res=w.name+' is not happy, but accepts it for now.';}
   }else if(ev.type==='losing'){
     if(choice===0){S.quests.push({id:S.nid++,type:'win',w:w.id,due:S.week+2,text:'Promise: book a win for '+w.name+' by '+cal(S.week+2).label});w.morale=clamp(w.morale+5,0,100);res='You promised a win. '+w.name+' will hold you to it.';}

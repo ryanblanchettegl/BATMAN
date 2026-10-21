@@ -133,7 +133,7 @@ function nightMatter(S,P,rep){
   if(tc){var lw=loserOf(tc),nw=S.w[tc.wi[0]],tt=P.titles.filter(function(x){return x.name===tc.title;})[0];
     if(lw&&nw&&tt&&lw.promo===P.id&&nw.promo===P.id&&!(lw.inj>0)&&nightFree(S,'nt',lw.id)){nightMark(S,'nt',lw.id);
       return {type:'clause',w:lw.id,o:nw.id,tid:tt.id,text:lw.name+' lost the '+tt.name+' to '+nw.name+' on '+rep.name+'. They want their rematch, and they want your word on it tonight.',
-        choices:['Promise the rematch within four weeks','No rematch. '+nw.name+' moves on to somebody new']};}}
+        choices:['Promise the rematch at '+bigNameAt(S,nextBigShow(S)),'No rematch. '+nw.name+' moves on to somebody new']};}}
   var hot=ms.slice(0,-1).filter(function(s){return main&&s.cr>=main.cr-4&&s.cr>=58&&s.win&&s.wi&&s.wi.length===1;}).sort(function(a,b){return b.cr-a.cr;})[0];
   if(hot){w=S.w[hot.wi[0]];
     if(w&&w.promo===P.id&&holdLvl(P,w.id)===0&&!(w.inj>0)&&nightFree(S,'nh',w.id)){nightMark(S,'nh',w.id);
@@ -160,8 +160,8 @@ function nightMatter(S,P,rep){
 }
 EVR.clause=function(S,ev,choice,P,w,o){
   var t=titleById(P,ev.tid);if(!w||w.promo!==P.id||!t)return 'It no longer matters.';
-  if(choice===0){S.quests.push({id:S.nid++,type:'shot',w:w.id,title:t.id,due:S.week+4,text:'Promise: give '+w.name+' the rematch for the '+t.name+' by '+cal(S.week+4).label});w.morale=clamp(w.morale+6,0,100);youRemember(S,w,'clause','They lost the belt and you gave them your word on a rematch.',6);
-    return 'You gave your word. '+w.name+' gets the rematch for the '+t.name+' by '+cal(S.week+4).label+'.';}
+  if(choice===0){var q=promiseShot(S,w,t,o,'the rematch');w.morale=clamp(w.morale+6,0,100);youRemember(S,w,'clause','They lost the belt and you gave them your word on a rematch.',6);
+    return 'You gave your word. '+w.name+' gets the rematch for the '+t.name+' at '+bigNameAt(S,q.at)+'. It is on that card already.';}
   w.morale=clamp(w.morale-8,0,100);w.mom=clamp((w.mom||0)-1,-10,10);youRemember(S,w,'noclause','They lost the belt and you told them there would be no rematch.',-7);
   if(o&&o.promo===P.id){o.morale=clamp(o.morale+4,0,100);youRemember(S,o,'newera','You let them start their run as champion with somebody new.',3);}
   return 'No rematch. '+w.name+' takes it badly.'+(o?' '+o.name+' gets a clean start as champion.':'');

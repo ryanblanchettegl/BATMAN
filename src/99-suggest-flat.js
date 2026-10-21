@@ -20,7 +20,7 @@
     card.forEach(function(m){if(m.mt==='br')return;m.sides=m.sides.map(function(sd){return sd.map(function(id){var w=S.w[id];if(!w||(m.title&&held[id]))return id;var L=pool[w.g];return L&&L.length?L.shift():id;});});});
     if(E.validate(S,card).errors.length){var back=JSON.parse(was);card.forEach(function(m,i){m.sides=back[i];});}
     // the promos and angles go to the writers, who write whatever comes to mind on the night
-    segRead(S).forEach(function(sg){if(!sg.tape){sg.k='writers';sg.who=[];sg.ids=[];}});
+    segRead(S).forEach(function(sg){if(!sg.tape&&!sg.forced){sg.k='writers';sg.who=[];sg.ids=[];}});
     E.fitShow(S,card);
     return card;
   };
