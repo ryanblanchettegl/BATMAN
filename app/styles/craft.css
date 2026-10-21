@@ -521,3 +521,5 @@ html body .win.ppop .wb{font-family:var(--hand);font-size:1.06em}
 .gim-box{margin-top:.6em;padding:.4em .7em;background:#fff6d6;border:2px solid #1d1a24;border-radius:3px;box-shadow:2px 3px 0 rgba(0,0,0,.25);transform:rotate(-.3deg)}
 .gim-box p{margin:.1em 0}
 .gim-box b{font-family:var(--marker);font-weight:400;color:#c23a30}
+/* on a short window (a 720-line laptop) a call's answers are tighter, so three long ones still fit beside the picture */
+@media (max-height:780px){.live1 .callbox.paper .callopt{padding:.18em 1.3ch .24em;line-height:1.12}.live1 .callbox.paper .callopt .says{font-size:.95em}.live1 .callbox.paper .q{font-size:1.06em;line-height:1.16}}
