@@ -382,7 +382,7 @@
    "finisher_description": "He springs off the top rope as his opponent stands, and clotheslines them out of their boots. Then he says sorry.",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 206250,
+    "monthly_salary": 137500,
     "weeks_left": 122,
     "push": "main_eventer"
    },
@@ -559,7 +559,7 @@
    "finisher_description": "A fireman's carry lifted high and dropped into a sit-out driver.",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 206250,
+    "monthly_salary": 137500,
     "weeks_left": 86,
     "push": "main_eventer"
    },
@@ -732,7 +732,7 @@
    "finisher_description": "A double underhook DDT, delivered after a twelve-hour shift.",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 206250,
+    "monthly_salary": 137500,
     "weeks_left": 32,
     "push": "main_eventer"
    },
@@ -909,7 +909,7 @@
    "finisher_description": "He hoists his opponent into a pumphandle and drives them into his knee.",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 206250,
+    "monthly_salary": 137500,
     "weeks_left": 92,
     "push": "main_eventer"
    },
@@ -1093,7 +1093,7 @@
    "finisher_description": "A cradled tombstone piledriver, finished with a wave to the cheap seats.",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 206250,
+    "monthly_salary": 137500,
     "weeks_left": 36,
     "push": "main_eventer"
    },
@@ -1269,7 +1269,7 @@
    "finisher_description": "A running elbow to the back of the head from out of a handspring.",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 206250,
+    "monthly_salary": 137500,
     "weeks_left": 124,
     "push": "main_eventer"
    },
@@ -1444,7 +1444,7 @@
    "finisher_description": "He spins his opponent by the wrist into a short-arm lariat that does not let go.",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 206250,
+    "monthly_salary": 137500,
     "weeks_left": 72,
     "push": "main_eventer"
    },
@@ -1616,7 +1616,7 @@
    "finisher_description": "A falling senton off the top rope, feet first, eyes closed.",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 165000,
+    "monthly_salary": 110000,
     "weeks_left": 62,
     "push": "main_eventer"
    },
@@ -1794,7 +1794,7 @@
    "finisher_description": "A running punch thrown with his hands still almost in his pockets.",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 70000,
+    "monthly_salary": 46650,
     "weeks_left": 96,
     "push": "upper_midcarder"
    },
@@ -1969,7 +1969,7 @@
    "finisher_description": "A double-arm-trap twisting slam, the switch flipped off.",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 165000,
+    "monthly_salary": 110000,
     "weeks_left": 116,
     "push": "main_eventer"
    },
@@ -2145,7 +2145,7 @@
    "finisher_description": "A running tackle so hard it leaves a crater.",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 165000,
+    "monthly_salary": 110000,
     "weeks_left": 28,
     "push": "main_eventer"
    },
@@ -2325,7 +2325,7 @@
    "finisher_description": "A single-leg crab with a knee in the back, and a definition read aloud.",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 70000,
+    "monthly_salary": 46650,
     "weeks_left": 68,
     "push": "upper_midcarder"
    },
@@ -2506,7 +2506,7 @@
    "finisher_description": "He spins his opponent by the ankles for as long as the crowd counts.",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 70000,
+    "monthly_salary": 46650,
     "weeks_left": 136,
     "push": "upper_midcarder"
    },
@@ -2677,7 +2677,7 @@
    "finisher_description": "A trapped-arm rear submission he learned in school.",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 38000,
+    "monthly_salary": 25350,
     "weeks_left": 36,
     "push": "midcarder"
    },
@@ -2849,7 +2849,7 @@
    "finisher_description": "A corkscrew senton from the top rope.",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 70000,
+    "monthly_salary": 46650,
     "weeks_left": 114,
     "push": "upper_midcarder"
    },
@@ -3021,7 +3021,7 @@
    "finisher_description": "A lifting knee to the jaw from a man who should not jump that high.",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 165000,
+    "monthly_salary": 110000,
     "weeks_left": 50,
     "push": "main_eventer"
    },
@@ -3193,7 +3193,7 @@
    "finisher_description": "A spinning tombstone into the mat.",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 70000,
+    "monthly_salary": 46650,
     "weeks_left": 64,
     "push": "upper_midcarder"
    },
@@ -3365,7 +3365,7 @@
    "finisher_description": "A springboard 630 senton, the full turn and a bit.",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 70000,
+    "monthly_salary": 46650,
     "weeks_left": 88,
     "push": "upper_midcarder"
    },
@@ -3544,7 +3544,7 @@
    "finisher_description": "A rear naked choke, delivered gently, until it isn't.",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 165000,
+    "monthly_salary": 110000,
     "weeks_left": 126,
     "push": "main_eventer"
    },
@@ -3721,7 +3721,7 @@
    "finisher_description": "A spinebuster from twice the usual height.",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 70000,
+    "monthly_salary": 46650,
     "weeks_left": 86,
     "push": "upper_midcarder"
    },
@@ -3893,7 +3893,7 @@
    "finisher_description": "A sleeper hold from behind, until the lights go out.",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 38000,
+    "monthly_salary": 25350,
     "weeks_left": 98,
     "push": "midcarder"
    },
@@ -4064,7 +4064,7 @@
    "finisher_description": "A shooting star elbow drop.",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 70000,
+    "monthly_salary": 46650,
     "weeks_left": 36,
     "push": "upper_midcarder",
     "brand": "ror"
@@ -4242,7 +4242,7 @@
    "finisher_description": "A thrust kick to the jaw, usually in a set of six.",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 70000,
+    "monthly_salary": 46650,
     "weeks_left": 132,
     "push": "upper_midcarder"
    },
@@ -4418,7 +4418,7 @@
    "finisher_description": "A springboard into a spinning kick, then a bow.",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 70000,
+    "monthly_salary": 46650,
     "weeks_left": 76,
     "push": "upper_midcarder"
    },
@@ -4594,7 +4594,7 @@
    "finisher_description": "A full nelson that squeezes until a contract is signed.",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 165000,
+    "monthly_salary": 110000,
     "weeks_left": 84,
     "push": "main_eventer"
    },
@@ -4770,7 +4770,7 @@
    "finisher_description": "A step-up knee to the face.",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 70000,
+    "monthly_salary": 46650,
     "weeks_left": 130,
     "push": "upper_midcarder"
    },
@@ -4945,7 +4945,7 @@
    "finisher_description": "A running knee in the corner while his clients hold you.",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 38000,
+    "monthly_salary": 25350,
     "weeks_left": 62,
     "push": "midcarder"
    },
@@ -5127,7 +5127,7 @@
    "finisher_description": "A spinning reverse STO.",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 70000,
+    "monthly_salary": 46650,
     "weeks_left": 112,
     "push": "upper_midcarder"
    },
@@ -5300,7 +5300,7 @@
    "finisher_description": "A left-handed punch from the top rope.",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 38000,
+    "monthly_salary": 25350,
     "weeks_left": 26,
     "push": "midcarder"
    },
@@ -5479,7 +5479,7 @@
    "finisher_description": "A top-rope elbow, then the microphone.",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 38000,
+    "monthly_salary": 25350,
     "weeks_left": 74,
     "push": "midcarder"
    },
@@ -5657,7 +5657,7 @@
    "finisher_description": "A sit-out powerbomb from a fireman's carry.",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 38000,
+    "monthly_salary": 25350,
     "weeks_left": 112,
     "push": "midcarder"
    },
@@ -5835,7 +5835,7 @@
    "finisher_description": "A fireman's carry into a jumping neckbreaker.",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 22000,
+    "monthly_salary": 14650,
     "weeks_left": 38,
     "push": "lower_midcarder"
    },
@@ -6010,7 +6010,7 @@
    "finisher_description": "A double-team bulldog into a backbreaker.",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 70000,
+    "monthly_salary": 46650,
     "weeks_left": 24,
     "push": "upper_midcarder"
    },
@@ -6181,7 +6181,7 @@
    "finisher_description": "A double-team neckbreaker.",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 70000,
+    "monthly_salary": 46650,
     "weeks_left": 114,
     "push": "upper_midcarder"
    },
@@ -6356,7 +6356,7 @@
    "finisher_description": "A spinning backfist, the size of a bin lid.",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 70000,
+    "monthly_salary": 46650,
     "weeks_left": 88,
     "push": "upper_midcarder"
    },
@@ -6527,7 +6527,7 @@
    "finisher_description": "A falling facebuster, guitar optional.",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 22000,
+    "monthly_salary": 14650,
     "weeks_left": 82,
     "push": "lower_midcarder"
    },
@@ -6704,7 +6704,7 @@
    "finisher_description": "A bulldog off the ropes.",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 22000,
+    "monthly_salary": 14650,
     "weeks_left": 62,
     "push": "lower_midcarder"
    },
@@ -6876,7 +6876,7 @@
    "finisher_description": "A sit-out powerbomb from a cutter position.",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 38000,
+    "monthly_salary": 25350,
     "weeks_left": 90,
     "push": "midcarder"
    },
@@ -7054,7 +7054,7 @@
    "finisher_description": "A cradled, spinning driver after a flurry of kicks.",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 70000,
+    "monthly_salary": 46650,
     "weeks_left": 96,
     "push": "upper_midcarder"
    },
@@ -7224,7 +7224,7 @@
    "finisher_description": "A frog splash from the far corner.",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 38000,
+    "monthly_salary": 25350,
     "weeks_left": 48,
     "push": "midcarder"
    },
@@ -7396,7 +7396,7 @@
    "finisher_description": "A frog splash from the top rope.",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 38000,
+    "monthly_salary": 25350,
     "weeks_left": 54,
     "push": "midcarder"
    },
@@ -7571,7 +7571,7 @@
    "finisher_description": "A corkscrew shooting star press.",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 22000,
+    "monthly_salary": 14650,
     "weeks_left": 94,
     "push": "lower_midcarder"
    },
@@ -7743,7 +7743,7 @@
    "finisher_description": "He traps one arm with his legs, cranks the face back with a forearm, and asks politely whether they would like to tap before he composts them.",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 70000,
+    "monthly_salary": 46650,
     "weeks_left": 36,
     "push": "upper_midcarder"
    },
@@ -7914,7 +7914,7 @@
    "finisher_description": "A handstand into a lifted bridging suplex.",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 165000,
+    "monthly_salary": 110000,
     "weeks_left": 52,
     "push": "main_eventer",
     "brand": "ror"
@@ -8088,7 +8088,7 @@
    "finisher_description": "A springboard shooting star press.",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 70000,
+    "monthly_salary": 46650,
     "weeks_left": 104,
     "push": "upper_midcarder",
     "brand": "ror"
@@ -8262,7 +8262,7 @@
    "finisher_description": "A rope-walk into a moonsault.",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 38000,
+    "monthly_salary": 25350,
     "weeks_left": 126,
     "push": "midcarder",
     "brand": "ror"
@@ -8436,7 +8436,7 @@
    "finisher_description": "A backbreaker into a powerbomb.",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 70000,
+    "monthly_salary": 46650,
     "weeks_left": 58,
     "push": "upper_midcarder",
     "brand": "ror"
@@ -8608,7 +8608,7 @@
    "finisher_description": "A pretzel-shaped leg lock.",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 38000,
+    "monthly_salary": 25350,
     "weeks_left": 90,
     "push": "midcarder",
     "brand": "ror"
@@ -8780,7 +8780,7 @@
    "finisher_description": "A package piledriver.",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 38000,
+    "monthly_salary": 25350,
     "weeks_left": 134,
     "push": "midcarder",
     "brand": "ror"
@@ -8952,7 +8952,7 @@
    "finisher_description": "A Northern lights suplex into a German.",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 22000,
+    "monthly_salary": 14650,
     "weeks_left": 70,
     "push": "lower_midcarder",
     "brand": "ror"
@@ -9127,7 +9127,7 @@
    "finisher_description": "A spinning cutter from the top rope.",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 38000,
+    "monthly_salary": 25350,
     "weeks_left": 76,
     "push": "midcarder",
     "brand": "ror"
@@ -9300,7 +9300,7 @@
    "finisher_description": "A cradle piledriver, delivered with a fan's flutter.",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 206250,
+    "monthly_salary": 137500,
     "weeks_left": 26,
     "push": "main_eventer"
    },
@@ -9475,7 +9475,7 @@
    "finisher_description": "A short-arm, cross-legged crossface that stays until the shares change hands.",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 206250,
+    "monthly_salary": 137500,
     "weeks_left": 50,
     "push": "main_eventer"
    },
@@ -9651,7 +9651,7 @@
    "finisher_description": "A lifting powerbomb with a spin.",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 165000,
+    "monthly_salary": 110000,
     "weeks_left": 120,
     "push": "main_eventer"
    },
@@ -9829,7 +9829,7 @@
    "finisher_description": "A lifting sit-out powerbomb.",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 70000,
+    "monthly_salary": 46650,
     "weeks_left": 24,
     "push": "upper_midcarder"
    },
@@ -10000,7 +10000,7 @@
    "finisher_description": "A running lariat to the back of the head.",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 70000,
+    "monthly_salary": 46650,
     "weeks_left": 60,
     "push": "upper_midcarder"
    },
@@ -10173,7 +10173,7 @@
    "finisher_description": "A Michinoku driver.",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 70000,
+    "monthly_salary": 46650,
     "weeks_left": 124,
     "push": "upper_midcarder"
    },
@@ -10346,7 +10346,7 @@
    "finisher_description": "A running knee to the face.",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 70000,
+    "monthly_salary": 46650,
     "weeks_left": 114,
     "push": "upper_midcarder"
    },
@@ -10521,7 +10521,7 @@
    "finisher_description": "A diving crossbody.",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 38000,
+    "monthly_salary": 25350,
     "weeks_left": 140,
     "push": "midcarder"
    },
@@ -10690,7 +10690,7 @@
    "finisher_description": "A kick to the head that she calls a diagnosis.",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 38000,
+    "monthly_salary": 25350,
     "weeks_left": 66,
     "push": "midcarder"
    },
@@ -10861,7 +10861,7 @@
    "finisher_description": "A seated arm-trap lock.",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 70000,
+    "monthly_salary": 46650,
     "weeks_left": 24,
     "push": "upper_midcarder"
    },
@@ -11033,7 +11033,7 @@
    "finisher_description": "A rear naked choke from behind.",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 38000,
+    "monthly_salary": 25350,
     "weeks_left": 94,
     "push": "midcarder"
    },
@@ -11203,7 +11203,7 @@
    "finisher_description": "A running knee strike.",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 70000,
+    "monthly_salary": 46650,
     "weeks_left": 92,
     "push": "upper_midcarder"
    },
@@ -11373,7 +11373,7 @@
    "finisher_description": "A sit-out powerbomb into a leg lock.",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 38000,
+    "monthly_salary": 25350,
     "weeks_left": 124,
     "push": "midcarder"
    },
@@ -11547,7 +11547,7 @@
    "finisher_description": "A DDT from the corner.",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 70000,
+    "monthly_salary": 46650,
     "weeks_left": 24,
     "push": "upper_midcarder"
    },
@@ -11725,7 +11725,7 @@
    "finisher_description": "A lifting cutter into a powerbomb.",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 70000,
+    "monthly_salary": 46650,
     "weeks_left": 136,
     "push": "upper_midcarder"
    },
@@ -11896,7 +11896,7 @@
    "finisher_description": "A swinging side slam.",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 38000,
+    "monthly_salary": 25350,
     "weeks_left": 28,
     "push": "midcarder"
    },
@@ -12069,7 +12069,7 @@
    "finisher_description": "A lifting powerbomb into a neckbreaker.",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 165000,
+    "monthly_salary": 110000,
     "weeks_left": 28,
     "push": "main_eventer",
     "brand": "ror"
@@ -12243,7 +12243,7 @@
    "finisher_description": "A running bulldog.",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 38000,
+    "monthly_salary": 25350,
     "weeks_left": 98,
     "push": "midcarder",
     "brand": "ror"
@@ -12416,7 +12416,7 @@
    "debut_year": 2004,
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 28000,
+    "monthly_salary": 18650,
     "weeks_left": 74,
     "push": "non_wrestler"
    },
@@ -12541,7 +12541,7 @@
    "debut_year": 1995,
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 28000,
+    "monthly_salary": 18650,
     "weeks_left": 64,
     "push": "non_wrestler"
    },
@@ -12671,7 +12671,7 @@
    "debut_year": 2002,
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 28000,
+    "monthly_salary": 18650,
     "weeks_left": 74,
     "push": "non_wrestler"
    },
@@ -12796,7 +12796,7 @@
    "debut_year": 1995,
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 28000,
+    "monthly_salary": 18650,
     "weeks_left": 114,
     "push": "non_wrestler"
    },
@@ -12921,7 +12921,7 @@
    "legend": true,
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 28000,
+    "monthly_salary": 18650,
     "weeks_left": 84,
     "push": "non_wrestler"
    },
@@ -13054,7 +13054,7 @@
    "legend": true,
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 165000,
+    "monthly_salary": 110000,
     "weeks_left": 34,
     "push": "main_eventer"
    },

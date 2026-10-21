@@ -229,7 +229,7 @@
    "finisher_description": "A spinning, rolling sunset flip into a pin.",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 206250,
+    "monthly_salary": 6500,
     "weeks_left": 66,
     "push": "main_eventer"
    },
@@ -282,7 +282,7 @@
    "legend": true,
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 70000,
+    "monthly_salary": 2200,
     "weeks_left": 28,
     "push": "upper_midcarder"
    },
@@ -334,7 +334,7 @@
    "finisher_description": "A sit-out powerbomb from the top rope.",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 165000,
+    "monthly_salary": 5200,
     "weeks_left": 98,
     "push": "main_eventer"
    },
@@ -386,7 +386,7 @@
    "finisher_description": "A spinning shooting star press.",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 70000,
+    "monthly_salary": 2200,
     "weeks_left": 36,
     "push": "upper_midcarder"
    },
@@ -438,7 +438,7 @@
    "finisher_description": "A piledriver.",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 38000,
+    "monthly_salary": 1200,
     "weeks_left": 120,
     "push": "midcarder"
    },
@@ -490,7 +490,7 @@
    "finisher_description": "A spear.",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 38000,
+    "monthly_salary": 1200,
     "weeks_left": 22,
     "push": "midcarder"
    },
@@ -542,7 +542,7 @@
    "finisher_description": "A springboard moonsault.",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 70000,
+    "monthly_salary": 2200,
     "weeks_left": 82,
     "push": "upper_midcarder"
    },
@@ -594,7 +594,7 @@
    "finisher_description": "A rolling hurricanrana.",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 70000,
+    "monthly_salary": 2200,
     "weeks_left": 52,
     "push": "upper_midcarder"
    },
@@ -646,7 +646,7 @@
    "finisher_description": "A twisted leg submission.",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 70000,
+    "monthly_salary": 2200,
     "weeks_left": 78,
     "push": "upper_midcarder"
    },
@@ -698,7 +698,7 @@
    "finisher_description": "A top-rope splash.",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 38000,
+    "monthly_salary": 1200,
     "weeks_left": 102,
     "push": "midcarder"
    },
@@ -750,7 +750,7 @@
    "finisher_description": "A hurricanrana.",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 38000,
+    "monthly_salary": 1200,
     "weeks_left": 62,
     "push": "midcarder"
    },
@@ -802,7 +802,7 @@
    "finisher_description": "A shooting star press.",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 38000,
+    "monthly_salary": 1200,
     "weeks_left": 48,
     "push": "midcarder"
    },
@@ -854,7 +854,7 @@
    "finisher_description": "A diving crossbody.",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 38000,
+    "monthly_salary": 1200,
     "weeks_left": 118,
     "push": "midcarder"
    },
@@ -906,7 +906,7 @@
    "finisher_description": "A cross armbar.",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 22000,
+    "monthly_salary": 700,
     "weeks_left": 30,
     "push": "lower_midcarder"
    },
@@ -958,7 +958,7 @@
    "finisher_description": "A spinning neckbreaker.",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 165000,
+    "monthly_salary": 5200,
     "weeks_left": 54,
     "push": "main_eventer"
    },
@@ -1010,7 +1010,7 @@
    "finisher_description": "A moonsault.",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 70000,
+    "monthly_salary": 2200,
     "weeks_left": 76,
     "push": "upper_midcarder"
    },
@@ -1062,7 +1062,7 @@
    "finisher_description": "A lifting powerbomb.",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 70000,
+    "monthly_salary": 2200,
     "weeks_left": 32,
     "push": "upper_midcarder"
    },
@@ -1114,7 +1114,7 @@
    "finisher_description": "A spinning heel kick.",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 70000,
+    "monthly_salary": 2200,
     "weeks_left": 88,
     "push": "upper_midcarder"
    },

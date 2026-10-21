@@ -124,7 +124,7 @@ E.__progShow=progShow;   // for test-progress.js
    people, listed after the show and shown in the Attributes pop-up. */
 function progLose(S,w,k,n,why,out){
   if(!w||!PROG_BY[k]||n<=0)return 0;var v0=w[k]||1,v1=clamp(v0-n,15,99),d=v0-v1;if(!d)return 0;w[k]=v1;
-  var R=w.rgx||(w.rgx=[]);R.unshift({w:S.week,k:k,n:d,why:why});if(R.length>8)R.length=8;
+  var R=w.rgx||(w.rgx=[]);R.unshift({w:S.week,k:k,n:d,why:why});if(R.length>4)R.length=4;
   if(out)(out.lost=out.lost||[]).push(PROG_BY[k].n+' -'+d+' ('+why+')');
   else if(w.promo===S.player&&!w.nw){var q=S.regQ||(S.regQ={});(q[w.id]=q[w.id]||[]).push(PROG_BY[k].n+' -'+d+' ('+why+')');}
   return d;
@@ -136,7 +136,7 @@ function progLose(S,w,k,n,why,out){
     var before={};PROG_ATTR.forEach(function(a){before[a.k]=w[a.k];});bd.apply(this,arguments);if(w.rt||w.nw)return;
     var R=w.rgx||(w.rgx=[]),lost=[];
     PROG_ATTR.forEach(function(a){var d=(before[a.k]||0)-(w[a.k]||0);if(d>0){R.unshift({w:S.week,k:a.k,n:d,why:'age'});lost.push(a.n+' -'+d);}});
-    if(R.length>8)R.length=8;
+    if(R.length>4)R.length=4;
     if(w.cl&&w.age>=w.cl){progLose(S,w,'cons',1,'age',{lost:lost});progLose(S,w,'safe',1,'age',{lost:lost});}
     if(lost.length&&w.promo===S.player)note(S,'Regression',w.name+' turned '+w.age+': '+lost.join(', ')+'.','bad');
   };

@@ -141,7 +141,15 @@ function names(ws){var n=ws.map(function(w){return w.name;});if(n.length<2)retur
 function vsLabel(sides){return sides.map(names).join(' vs ');}
 
 function cal(week){var w=week-1;var mi=CAL0.m+Math.floor(w/4);return {wom:w%4+1,month:mi%12,year:CAL0.y+Math.floor(mi/12),label:'Week '+(w%4+1)+', '+MONTHS[mi%12]+' '+(CAL0.y+Math.floor(mi/12))};}
-function wageFor(ovr,P){var v=110*Math.pow(1.072,ovr)*P.wageMult;return Math.max(100,v<1000?Math.round(v/10)*10:Math.round(v/50)*50);}
+/* Pay by the size of the company (Ryan, 21 October: realistic wages). What the top of the card earns in a year, by how
+   big the company is: about $3M at the biggest, $2M at a strong number two, $700k at a big company abroad, $150k at a
+   mid-sized one and $25k at a small indie, drawn between those points on a log scale. Everybody else is paid down from
+   that by how over they are. A world's own salaries stand as they are. */
+var PAY_TOP=[[20,8e3],[30,15e3],[37,25e3],[50,60e3],[58,150e3],[70,700e3],[74,2e6],[82,2.5e6],[92,3e6],[100,4e6]];
+function payTop(img){var T=PAY_TOP;if(img<=T[0][0])return T[0][1];for(var i=1;i<T.length;i++)if(img<=T[i][0]){var a=T[i-1],b=T[i],u=(img-a[0])/(b[0]-a[0]);return a[1]*Math.pow(b[1]/a[1],u);}return T[T.length-1][1];}
+/** How a company's pay compares with the biggest company's (1 at the top of the business). */
+function payRatio(P){return payTop(P&&P.image!=null?P.image:50)/3e6;}
+function wageFor(ovr,P){var v=104*Math.pow(1.072,ovr)*payRatio(P);return Math.max(100,v<1000?Math.round(v/10)*10:Math.round(v/50)*50);}
 function workRate(w){var a=[w.brawl,w.tech,w.speed].sort(function(x,y){return y-x;});return Math.round(a[0]*0.5+a[1]*0.35+a[2]*0.15);}
 function isDev(P,brand){if(!P.brands)return false;for(var i=0;i<P.brands.length;i++)if(P.brands[i].id===brand)return !!P.brands[i].dev;return false;}
 function rosterOf(S,pid){return S.w.filter(function(w){return w.promo===pid;});}
@@ -260,7 +268,10 @@ function calibrateShows(S,C,pid){
 }
 function calibrateCosts(S,pid){
   var P=S.promos[pid],inc=baselineIncome(S,P);
-  var over=Math.max(0,inc-wagesWeek(S,P)-P.prod*P.shows.length-P.prod-P.net-CAMP_C[P.camp||0]*inc-MED_C[P.med||0]*inc);
+  // a small company's overheads leave it a margin (Ryan, 21 October: realistic wages): its wrestlers cost little now,
+  // and an ordinary week of a small company falls short of its average week more often than a big one's does
+  var margin=clamp((60-P.image)/200,0,0.08);
+  var over=Math.max(0,inc*(1-margin)-wagesWeek(S,P)-P.prod*P.shows.length-P.prod-P.net-CAMP_C[P.camp||0]*inc-MED_C[P.med||0]*inc);
   P.fixed=Math.round(over*0.4);P.varRate=over*0.6/inc;P.inc0=inc;
 }
 function restAll(S,pid){S.w.forEach(function(w){if(w.promo===pid){w.cond=100;w.inj=0;}});}
@@ -12548,7 +12559,7 @@ var CLAUSE={
 /** The clauses this wrestler wants, best first, at most three. */
 /* a corporate company does not let its people work outside dates (NEXT.md 10.2) */
 function clausesWanted(S,w){var P=S.promos[S.player],corp=P&&P.model==='corporate';return Object.keys(CLAUSE).filter(function(k){return !(corp&&k==='outside')&&CLAUSE[k].wants(S,w);}).slice(0,3);}
-E.clauses=function(S,id){var w=S.w[id];if(!w)return [];var ask=E.ask(S,w);return clausesWanted(S,w).map(function(k){var c=CLAUSE[k];return {k:k,n:c.n,d:c.d,save:Math.round(ask*c.save/50)*50};});};
+E.clauses=function(S,id){var w=S.w[id];if(!w)return [];var ask=E.ask(S,w);return clausesWanted(S,w).map(function(k){var c=CLAUSE[k];return {k:k,n:c.n,d:c.d,save:(function(v){return v<1000?Math.max(10,Math.round(v/10)*10):Math.round(v/50)*50;})(ask*c.save)};});};
 /* signing with clauses: the asking price comes down by what each clause is worth to them */
 (function(){
   var sign0=E.sign,rel0=E.release;
@@ -13360,6 +13371,8 @@ E.offerTerms=function(S,id){
   E.release=function(S,id){var w=S.w[id],P=S.promos[S.player];if(w&&P&&w.promo===P.id&&w.dl==='show'){var keep=w.wage;w.wage=0;var r=r0.apply(this,arguments);w.wage=keep;return r;}return r0.apply(this,arguments);};
   E.renew=function(S,id,weeks){var w=S.w[id];if(w&&w.dl==='show')return w.name+' works per appearance: there is nothing to renew.';var r=n0.apply(this,arguments);if(w)w.dlc=w.con;return r;};
 })();
+/* somebody under contract elsewhere does not leave for less than half of what they earn there; a free agent asks what the signing company pays */
+(function(){var a0=E.ask;E.ask=function(S,w){var a=a0.apply(this,arguments);if(!w||w.nw||w.promo===S.player||w.promo==='FA'||!(w.wage>0))return a;return Math.max(a,Math.round(w.wage*0.5/50)*50);};})();
 E.__payWeek=payWeek;E.__ctWeek=ctWeek;   // for test-staff.js
 
 /* ===== 99-debut.js ===== */
@@ -14153,7 +14166,7 @@ E.__progShow=progShow;   // for test-progress.js
    people, listed after the show and shown in the Attributes pop-up. */
 function progLose(S,w,k,n,why,out){
   if(!w||!PROG_BY[k]||n<=0)return 0;var v0=w[k]||1,v1=clamp(v0-n,15,99),d=v0-v1;if(!d)return 0;w[k]=v1;
-  var R=w.rgx||(w.rgx=[]);R.unshift({w:S.week,k:k,n:d,why:why});if(R.length>8)R.length=8;
+  var R=w.rgx||(w.rgx=[]);R.unshift({w:S.week,k:k,n:d,why:why});if(R.length>4)R.length=4;
   if(out)(out.lost=out.lost||[]).push(PROG_BY[k].n+' -'+d+' ('+why+')');
   else if(w.promo===S.player&&!w.nw){var q=S.regQ||(S.regQ={});(q[w.id]=q[w.id]||[]).push(PROG_BY[k].n+' -'+d+' ('+why+')');}
   return d;
@@ -14165,7 +14178,7 @@ function progLose(S,w,k,n,why,out){
     var before={};PROG_ATTR.forEach(function(a){before[a.k]=w[a.k];});bd.apply(this,arguments);if(w.rt||w.nw)return;
     var R=w.rgx||(w.rgx=[]),lost=[];
     PROG_ATTR.forEach(function(a){var d=(before[a.k]||0)-(w[a.k]||0);if(d>0){R.unshift({w:S.week,k:a.k,n:d,why:'age'});lost.push(a.n+' -'+d);}});
-    if(R.length>8)R.length=8;
+    if(R.length>4)R.length=4;
     if(w.cl&&w.age>=w.cl){progLose(S,w,'cons',1,'age',{lost:lost});progLose(S,w,'safe',1,'age',{lost:lost});}
     if(lost.length&&w.promo===S.player)note(S,'Regression',w.name+' turned '+w.age+': '+lost.join(', ')+'.','bad');
   };

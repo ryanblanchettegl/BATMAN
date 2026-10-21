@@ -77,4 +77,6 @@ E.offerTerms=function(S,id){
   E.release=function(S,id){var w=S.w[id],P=S.promos[S.player];if(w&&P&&w.promo===P.id&&w.dl==='show'){var keep=w.wage;w.wage=0;var r=r0.apply(this,arguments);w.wage=keep;return r;}return r0.apply(this,arguments);};
   E.renew=function(S,id,weeks){var w=S.w[id];if(w&&w.dl==='show')return w.name+' works per appearance: there is nothing to renew.';var r=n0.apply(this,arguments);if(w)w.dlc=w.con;return r;};
 })();
+/* somebody under contract elsewhere does not leave for less than half of what they earn there; a free agent asks what the signing company pays */
+(function(){var a0=E.ask;E.ask=function(S,w){var a=a0.apply(this,arguments);if(!w||w.nw||w.promo===S.player||w.promo==='FA'||!(w.wage>0))return a;return Math.max(a,Math.round(w.wage*0.5/50)*50);};})();
 E.__payWeek=payWeek;E.__ctWeek=ctWeek;   // for test-staff.js

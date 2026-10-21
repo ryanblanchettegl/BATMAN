@@ -1,19 +1,19 @@
 {
  "rescue": {
-  "start": "1db755953a93b8f2a8e55578ea4fb30c",
-  "end": "fad0b3bac087a4f19d4631b2a075915b",
+  "start": "f90099b6c5d079ad2b31044793574f3f",
+  "end": "44c2002e5c039fc571c18fbeb2a4fe81",
   "week": 27,
   "res": {
    "ok": true,
-   "text": "The company is safe: $4,687,358 in the bank after 26 weeks.",
+   "text": "The company is safe: $2,611,660 in the bank after 26 weeks.",
    "figures": [
-    "Cash $4,687,358 (target $1.5M)"
+    "Cash $2,611,660 (target $1.5M)"
    ]
   }
  },
  "champion": {
-  "start": "2cd3abfc246139a34526c0441c9559d0",
-  "end": "654a7a22859779c1145044855a1d670b",
+  "start": "0f98af96d24ce143d3f0acdac77d38a6",
+  "end": "ba05443e438f9fab647fa13dcf1870a7",
   "week": 40,
   "res": {
    "ok": false,
@@ -24,15 +24,15 @@
   }
  },
  "war": {
-  "start": "3c59b500763ae8dd22340499050ab7a8",
-  "end": "06641c6a417dacd4436d0a45fb135774",
+  "start": "017b52c78a11603de73f8259b9a94a36",
+  "end": "1c8c58c5a96384fa034c6c546efe3251",
   "week": 27,
   "res": {
    "ok": false,
-   "text": "You lost the ratings war: your shows averaged -1.0 against expectations, theirs +3.2.",
+   "text": "You lost the ratings war: your shows averaged -1.2 against expectations, theirs +3.1.",
    "figures": [
-    "Your shows: -1.0 against expectations",
-    "Theirs: +3.2"
+    "Your shows: -1.2 against expectations",
+    "Theirs: +3.1"
    ]
   }
  }

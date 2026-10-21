@@ -242,7 +242,7 @@ async function tv() {
   a = await at(); must(a.prof && a.t === 'ptab', 'tv: the highlight did not move to the profile: ' + JSON.stringify(a));
   await ok(t, 'profile opened with arrows and Enter', n + 1 + ' presses down, then Enter');
   await page.keyboard.press('ArrowRight'); await page.keyboard.press('Enter');
-  must(/a week, \d+ weeks left/.test(await page.$eval('.prof', e => e.innerText)), 'tv: Right and Enter did not open the Contract page');
+  must(/(Yearly deal\. .* a week, .*left|Per appearance\. .* a show)/.test(await page.$eval('.prof', e => e.innerText)), 'tv: Right and Enter did not open the Contract page');
   await ok(t, 'profile page changed with arrows and Enter');
   await shot(page, 'roster-profile-tv');
   await page.evaluate(() => window.EWF_DEBUG.pad('b'));
