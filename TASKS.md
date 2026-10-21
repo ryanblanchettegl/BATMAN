@@ -117,6 +117,16 @@ A pacing layer that decides when trouble reaches the desk: it reads how tense th
 - [ ] Step 4: the three styles, chosen at the start of a game and shown on Career; old saves get The Promoter.
 - [ ] Step 5: event sizes and the rhythm around big nights.
 
+### 0ab. Pre-history (Bill, 21 October: "prehistory from real history, and a option for new companies to have a simulated prehistory for 10 years")
+
+The parody world's past comes from real wrestling history, as fixed anchors under parody names, with the simulation filling in between. A company with no past can start with ten simulated years. On-screen record only, and a lawyer check before shipping. Plan: `docs/plans/pre-history.md`.
+
+- [ ] Step 1: the headless runner, `E.preHistory()`, writing a `history` table (`test-prehistory.js`).
+- [ ] Step 2: anchors that must happen as written.
+- [ ] Step 3: "Start with a history: none, or ten years" in Create a federation, the World Editor and quick-made worlds, with the story-so-far scroll.
+- [ ] Step 4: the parody world's anchors, one company at a time, EWE first.
+- [ ] Step 5: legends for the anchors that need them.
+
 ### 0w. Still pictures for the moments you answer (Ryan, 18 October)
 
 - [x] Every matter on the desk and every call from the gorilla position shows one still diorama picture of the moment (somebody hurt, a fight backstage, two people face to face, a meeting across your desk, a walkout, the crowd on its feet): the picture on the left of the pop-up, the answers on the right.
