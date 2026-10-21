@@ -224,7 +224,9 @@ async function broadcast(mode) {
     { const beats = await state(page, S => { const r = (S.live && S.live.st && S.live.st.rep) || S.reports[0]; return (r && r.segs || []).filter(x => x && x.beat && (x.bids || []).length).map(x => x.beat); });
       if (beats.length) ok(mode, 'a beat of a storyline the writers wrote plays its own scene', [...seen].some(x => x.indexOf('beat_') === 0 || beats.some(b => x === 'seg_' + b)), beats.join(',') + ' / ' + [...seen].join(','));
       else console.log(mode.padEnd(6), 'note', 'the writers wrote no storyline beat on this card'); }
-    if (debId >= 0) ok(mode, 'a newcomer debuting with a surprise attack comes out on its scene', seen.has('beat_debut_atk'), [...seen].join(','));
+    { const deb = await state(page, S => { const r = (S.live && S.live.st && S.live.st.rep) || S.reports[0]; return JSON.stringify((r && r.segs || []).filter(x => x && x.debut).map(x => x.debut)); });
+      if (debId >= 0 && deb !== '[]') ok(mode, 'a newcomer debuting with a surprise attack comes out on its scene', seen.has('beat_debut_atk'), [...seen].join(',') + ' / ' + deb);
+      else console.log(mode.padEnd(6), 'note', 'the newcomer did not debut on this card (' + deb + ')'); }
     if (cellAt >= 0) ok(mode, 'a steel cell match is played inside the cell', sets.has('cell'), [...sets].join(','));
     ok(mode, 'the bell brings the lock-up', seen.has('lockup'), [...seen].join(','));
     ok(mode, 'a near fall brings the count', seen.has('nearfall'), [...seen].join(','));
