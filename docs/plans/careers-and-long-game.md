@@ -1,6 +1,6 @@
-# Careers and the long game: nine features from other genres
+# Careers and the long game: ten features from other genres
 
-Bill, 21 October 2026: "I like ideas 1-5 add those to long term planning", then "one life in wrestling is awesome too", and dropped free agency week ("wrestling doesn't have a free agency week, lets not do that"), then added "Path to the Hall of Fame i like" "i like wrestling families" "I like coalitions" "love 13" (company mission trees) and the territory map coloured by the most popular company in each region. He turned down power blocs. These come from the genre research doc (career, sports management, dynasty, 4X, grand strategy and simulation games): https://claude.ai/artifact/VGDEmfsJv4LgCXPwn8TyUQ. Nothing here is built. They sit in `TASKS.md` section 14, after the balance and first-hour work (Bill paused new features until that is done).
+Bill, 21 October 2026: "I like ideas 1-5 add those to long term planning", then "one life in wrestling is awesome too", and dropped free agency week ("wrestling doesn't have a free agency week, lets not do that"), then added "Path to the Hall of Fame i like" "i like wrestling families" "I like coalitions" "love 13" (company mission trees) the territory map coloured by the most popular company in each region, and "16 i like" (rival owners with agendas). He turned down power blocs. These come from the genre research doc (career, sports management, dynasty, 4X, grand strategy and simulation games): https://claude.ai/artifact/VGDEmfsJv4LgCXPwn8TyUQ. Nothing here is built. They sit in `TASKS.md` section 14, after the balance and first-hour work (Bill paused new features until that is done).
 
 Sizes follow `WISHLIST.md`: S is one commit, M is two or three, L is a week with this plan as its start.
 
@@ -138,3 +138,17 @@ Steps:
 2. `E.territory(S)`: the most popular company in each region, how close the next one is, and how it has moved. Only reads the game.
 3. The map: a page of its own reached from the World page and the desk's road window, regions filled in company colours, stripes for close ones, a region's standings on press.
 4. Lines on the desk and the Net when a region changes hands.
+
+## 10. Rival owners with agendas (S to M)
+
+Bill, 21 October 2026: "16 i like". Borrowed from Civilization VI, where each leader has an agenda you know and a hidden one you learn over time, and both decide how they treat you.
+
+Every rival owner has an agenda the world knows ("hates losing a night", "spends on stars", "loyal to old friends") and one the player has to find out ("is quietly looking for a buyer", "wants your champion at any price", "is grooming a child to take over", "cannot stand your owner"). The known agenda is on the rival's file from the start. The hidden one shows itself through what they do and what the press, the player's sources and people who leave that company say. It reads as "rumoured" first and "known" once two things point the same way. Each agenda moves how that owner treats the player: who they raid, which deals they take, when they go head to head, whether they join a coalition (7) against the player.
+
+What it uses: rival owners as people (wish 59), the press and its sources (`src/99-press.js`), the kayfabe layer (`src/99-kayfabe.js`) for what is known and what is only believed, raids (wish 60), working agreements (wish 61), invasions (`src/81-invasion.js`) and head-to-head nights (`src/88-nights.js`). Agendas are fixed by a hash of the owner and the world seed, so they never use `rnd(S)`.
+
+Steps:
+
+1. Agendas as data (`AGENDA`: what each wants, what it makes the owner do, the signs it leaves); each owner gets one known and one hidden; rival decisions read them. A headless test that each agenda changes what its owner does over 60 weeks.
+2. Clues: the press, the player's sources and wrestlers who arrive from that company give hints; "rumoured" then "known".
+3. The rival owner's file shows both agendas as far as they are known, and a line on the desk when one is found out.
