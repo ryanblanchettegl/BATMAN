@@ -19,7 +19,7 @@ Bill, 21 October 2026: "This is perfect for the main new game mode when we walk 
 | --- | --- | --- |
 | A contract with a title promise in it | A promise (`S.quests`) to a wrestler, due before the flagship | Promises, booking power, the titles |
 | A letter from an unhappy star | A wrestler with low morale and a holdout clock running | Morale, Backstage, talking to people |
-| A half-planned main event on a napkin | The flagship's main event pencilled in (`E.setPlan`), with a feud that is not hot enough yet | Feuds, heat, the long plan |
+| A half-planned main event on a napkin | The flagship's main event pencilled in as the long plan (`S.lp`, wish 26), with a feud that is not hot enough yet | Feuds, heat, the long plan |
 | The owner's last memo | An owner directive with a deadline | The owner, trust, directives |
 | A dirt sheet with a leak circled | A kayfabe secret already out (`src/99-kayfabe.js`) | The Net, kayfabe, rumours |
 | Unpaid bills | Cash lower than it should be, a sponsor unhappy | Money, sponsors |
