@@ -20,7 +20,7 @@ function ctPolicy(S,P,w){
   return above<Math.ceil((R.length+1)/3)?'year':'show';
 }
 /** Fee a show: a quarter more than a salaried week spread over the shows, since nothing is promised. */
-function ctFee(P,wage){var v=wage*1.25/ctWeekly(P);return Math.max(50,v<1000?Math.round(v/10)*10:Math.round(v/50)*50);}
+function ctFee(P,wage){var v=wage*1.25/ctWeekly(P);return Math.max(25,v<1000?Math.round(v/10)*10:Math.round(v/50)*50);}
 function ctAssign(S,w,fee){
   var P=S.promos[w.promo];if(!P)return;w.dl=ctPolicy(S,P,w);w.dlP=w.promo;
   if(w.dl==='show'){w.fee=fee||ctFee(P,w.wage||wageFor(w.ovr,P));w.con=CT_ROLL;}else w.fee=null;
@@ -39,7 +39,7 @@ NEWX.push(ctWeek);WEEKX.push(ctWeek);
 /* who appeared on a show this week, and how many times: a fee is paid for each */
 SHOWX.push(function(S,P,show,rep){
   if(S.cal||!rep||!rep.segs||!P)return;var seen={};
-  rep.segs.forEach(function(s){(s.ids||s.bids||[]).forEach(function(id){var w=S.w[id];if(!w||w.promo!==P.id||seen[id])return;seen[id]=1;if(w.shw!==S.week){w.shw=S.week;w.shn=0;}w.shn++;});});
+  rep.segs.forEach(function(s){(s.ids||s.bids||[]).forEach(function(id){var w=S.w[id];if(!w||w.promo!==P.id||seen[id])return;seen[id]=1;if(w.shw!==S.week){w.shw=S.week;delete w.shn;}else w.shn=(w.shn||1)+1;});});
 });
 /** What the week's wages come to: salaries, and a fee for each show a per-appearance wrestler was on. */
 function payWeek(S,P){

@@ -149,7 +149,7 @@ var PAY_TOP=[[20,8e3],[30,15e3],[37,25e3],[50,60e3],[58,150e3],[70,700e3],[74,2e
 function payTop(img){var T=PAY_TOP;if(img<=T[0][0])return T[0][1];for(var i=1;i<T.length;i++)if(img<=T[i][0]){var a=T[i-1],b=T[i],u=(img-a[0])/(b[0]-a[0]);return a[1]*Math.pow(b[1]/a[1],u);}return T[T.length-1][1];}
 /** How a company's pay compares with the biggest company's (1 at the top of the business). */
 function payRatio(P){return payTop(P&&P.image!=null?P.image:50)/3e6;}
-function wageFor(ovr,P){var v=104*Math.pow(1.072,ovr)*payRatio(P);return Math.max(100,v<1000?Math.round(v/10)*10:Math.round(v/50)*50);}
+function wageFor(ovr,P){var v=104*Math.pow(1.072,ovr)*payRatio(P);return Math.max(payRatio(P)<0.02?40:100,v<1000?Math.round(v/10)*10:Math.round(v/50)*50);}   // the smallest companies pay as little as $40, a $50 night
 function workRate(w){var a=[w.brawl,w.tech,w.speed].sort(function(x,y){return y-x;});return Math.round(a[0]*0.5+a[1]*0.35+a[2]*0.15);}
 function isDev(P,brand){if(!P.brands)return false;for(var i=0;i<P.brands.length;i++)if(P.brands[i].id===brand)return !!P.brands[i].dev;return false;}
 function rosterOf(S,pid){return S.w.filter(function(w){return w.promo===pid;});}
@@ -184,6 +184,7 @@ function addWrestler(S,d,promo,brand){
 function buildPromo(S,d,byName){
     var P={id:d.id,name:d.name,blurb:d.blurb,cash:d.cash,cash0:d.cash,image:d.image,image0:d.image,wq:d.wq,angles:d.angles,style:(d.owner&&d.owner.style)||'stars',staff:d.staff||{agent:'The road agent',writer:'The head writer'},wageMult:d.wageMult,tvRate:d.tvRate,prod:d.prod,net:d.net,flagship:d.flagship,
       prodLvl:d.prodLvl==null?2:d.prodLvl,prod0:d.prodLvl==null?2:d.prodLvl,risk:d.risk==null?1:d.risk,risk0:d.risk==null?1:d.risk,tix:1,adv:0,slot:d.slot==null?1:d.slot,slot0:d.slot==null?1:d.slot,camp:d.image>=60?2:1,med:d.image>=80?3:(d.image>=60?2:(d.image>=45?1:0)),starB:{},ann:(d.announcers||['The play-by-play man','The colour man']).slice(),cities:(d.cities||['the city']).slice(),brands:d.brands?JSON.parse(JSON.stringify(d.brands)):null,shows:JSON.parse(JSON.stringify(d.shows)),titles:[],hist:[],led:{tv:0,gate:0,ppv:0,bonus:0,prod:0},base:{},mainB:{},trend:0,neg:0,fixed:0,varRate:0,last:null};
+    P.ms=1;var m0=msc(P),mi=Math.pow(m0,0.75);P.cash=Math.round(P.cash*mi);P.cash0=P.cash;P.prod=Math.round(P.prod*mi);P.net=Math.round(P.net*mi);P.tvRate=Math.round(P.tvRate*Math.sqrt(m0)*100)/100;   // money on the company's own scale: cash, production and profit go down as its income does (about m^0.75)
     d.titles.forEach(function(t){P.titles.push({id:t.id,name:t.name,brand:t.brand||null,g:t.g,lvl:t.lvl,tag:!!t.tag,holders:t.holders.map(function(n){return byName[n];}).filter(function(x){return x!==undefined;}),prestige:t.lvl===3?85:(t.lvl===2?68:52),since:1,last:1,defs:0});if(t.belt)P.titles[P.titles.length-1].belt=JSON.parse(JSON.stringify(t.belt));});
     if(d.full)P.full=d.full;if(d.owner)P.owner=d.owner;if(d.media)P.media=d.media;if(d.model&&MODELS[d.model]&&d.model!=='classic')P.model=d.model;if(d.events)P.evIn=d.events;if(d.logo&&typeof d.logo==='object')P.logo=JSON.parse(JSON.stringify(d.logo));S.promos[P.id]=P;S.order.push(P.id);if(d.draft)draftRoster(S,P,d);
     (d.teams||[]).forEach(function(tm){var a=byName[tm[0]],b=byName[tm[1]];if(a===undefined||b===undefined||S.w[a].promo!==P.id||S.w[b].promo!==P.id)return;var t=formTeam(S,P,S.w[a],S.w[b],tm[2]!=null?clamp(tm[2],0,100):35+Math.round(h01(tm[0]+tm[1])*50));if(tm[3])t.chem=clamp(tm[3],-10,10);if(tm[4])t.name=tm[4];});
@@ -236,12 +237,18 @@ function partnerOf(S,w){var t=teamOf(S,w);if(!t)return null;return S.w[t.m[0]===
 
 /* ---------- money model ---------- */
 function showMult(show){return show.big?1:(show.mult||1);}
-function viewersK(P,show,qf){return 2200*Math.pow(P.image/100,3)*showMult(show)*qf;}
-function demand(P,show,hype){return (show.big?60000*(show.flag?1.7:1)*evTy(show).cap:20000*showMult(show))*Math.pow(P.image/100,3)*hype;}
-function ticket(P,show){return (15+P.image*0.85)*(show.big?1.6*evTy(show).price:1);}
-function buysK(P,show,hype){return 700*Math.pow(P.image/100,4)*hype*(show.flag?1.8:1)*(show.big?evTy(show).buys:1);}
+/* The size of a company's money (Ryan, 21 October: a realistic economy). The biggest company takes about $35M a week,
+   a strong number two about $5M, a big company abroad about $1.5M, a mid-sized one a few hundred thousand, a small indie
+   about $25k. The audience and the crowd shrink more gently than the money: an indie still draws a few hundred people
+   at about $20 a ticket. 1 at the top of the business, never below 0.05, and set by the size the company started at. A game saved before this (no P.ms) keeps the
+   old money, since its costs were set on it. */
+function msc(P){if(!P||P.ms==null)return 1;var i=P.image0!=null?P.image0:(P.image==null?50:P.image);return clamp(Math.exp((i-92)*0.0506),0.05,1);}   // set by where a company started: popularity moves the money the usual way on top
+function viewersK(P,show,qf){return 2200*Math.pow(P.image/100,3)*Math.sqrt(msc(P))*showMult(show)*qf;}
+function demand(P,show,hype){return (show.big?60000*(show.flag?1.7:1)*evTy(show).cap:20000*showMult(show))*Math.pow(P.image/100,3)*Math.pow(msc(P),0.25)*hype;}
+function ticket(P,show){return (15+P.image*0.85)*Math.pow(msc(P),0.3)*(show.big?1.6*evTy(show).price:1);}
+function buysK(P,show,hype){return 700*Math.pow(P.image/100,4)*msc(P)*hype*(show.flag?1.8:1)*(show.big?evTy(show).buys:1);}
 function capFor(d){for(var i=0;i<CAPS.length;i++)if(CAPS[i]>=d)return CAPS[i];return CAPS[CAPS.length-1];}
-function merchWeek(S,P){var r=rosterOf(S,P.id).map(function(w){return w.ovr;}).sort(function(a,b){return b-a;}).slice(0,10);return 2.5e6*Math.pow(P.image/100,3)*Math.pow(avg(r)/100,2)*mixOf(P).merch*(1+catchBoost(S,P))+linesWeek(S,P);}
+function merchWeek(S,P){var r=rosterOf(S,P.id).map(function(w){return w.ovr;}).sort(function(a,b){return b-a;}).slice(0,10);return 2.5e6*Math.pow(P.image/100,3)*msc(P)*Math.pow(avg(r)/100,2)*mixOf(P).merch*(1+catchBoost(S,P))+linesWeek(S,P);}
 function wagesWeek(S,P){var s=0;S.w.forEach(function(w){if(w.promo===P.id)s+=w.wage;});return s+deskWage(S,P);}
 function baselineIncome(S,P){
   // what an on-expectation month brings in, per week (big events run a little hot: feuds peak there)
@@ -3009,7 +3016,7 @@ function mkOffer(S,P){
   else{var lo=99;Object.keys(P.base).forEach(function(k){if(P.base[k]<lo)lo=P.base[k];});o.val=Math.round(crowdScoreD(-ri(S,5,10)));o.cg=1;o.text='No show graded under '+gradeG(o.val);}
   // a tier, picked by a hash so the seeded draws stay in step: national sponsors only talk to a popular company (TASKS 6)
   var hv=h01('sp'+S.seed+o.name+S.week),tr=P.image>=65&&hv<0.3?2:(P.image>=45&&hv<0.65?1:0);o.tier=tr;o.tn=SP_TIER[tr];mult*=[1,1.35,1.8][tr];
-  o.pay=Math.max(1000,Math.round(P.inc0*(0.012+rnd(S)*0.02)*mult*mixOf(P).sp/1000)*1000);
+  o.pay=(function(v){return v<5000?Math.max(100,Math.round(v/100)*100):Math.round(v/1000)*1000;})(P.inc0*(0.012+rnd(S)*0.02)*mult*mixOf(P).sp);
   return o;
 }
 function refreshOffers(S){var P=S.promos[S.player];S.spOffers=[];for(var i=0;i<3;i++){var o=mkOffer(S,P);if(o)S.spOffers.push(o);}}
@@ -7059,8 +7066,8 @@ MOM.beltElsewhere={
   },
   res:function(S,ev,c,P,w){
     var t=titleById(P,ev.title),RV=S.promos[ev.rv],r;t.holders=[];t.since=S.week;momLose(S,w,'walked out with the belt');joinCompany(S,w,RV,null,48);news(S,'title',w.name+' walked out of '+P.name+' with the '+t.name+' and appeared on '+RV.name+'’s show.');
-    if(c===0){r=rollCheck(S,ev.checks[0]);ev.roll=r;P.cash-=90000;if(r.ok){t.prestige=clamp(t.prestige+3,10,100);RV.rel=clamp((RV.rel||0)-10,-100,100);return rollText(r)+'The lawyers get the belt back inside the week. It costs '+money(90000)+' and you are the injured party for once. The title is vacant and its prestige is up.';}
-      P.image=clamp(P.image-0.3,5,100);P.cash-=60000;return rollText(r)+'The case drags. You spend '+money(150000)+' and the papers call you petty.';}
+    if(c===0){r=rollCheck(S,ev.checks[0]);ev.roll=r;var lw=Math.round(90000*msc(P)/100)*100;P.cash-=lw;if(r.ok){t.prestige=clamp(t.prestige+3,10,100);RV.rel=clamp((RV.rel||0)-10,-100,100);return rollText(r)+'The lawyers get the belt back inside the week. It costs '+money(lw)+' and you are the injured party for once. The title is vacant and its prestige is up.';}
+      P.image=clamp(P.image-0.3,5,100);P.cash-=Math.round(60000*msc(P)/100)*100;return rollText(r)+'The case drags. You spend '+money(Math.round(150000*msc(P)/100)*100)+' and the papers call you petty.';}
     if(c===1){r=rollCheck(S,ev.checks[1]);ev.roll=r;if(r.ok){S.hype=(S.hype||0)+0.06;P.image=clamp(P.image+0.2,5,100);return rollText(r)+'Your next show opens with a joke at their expense. The crowd loves it and the story is yours now.';}
       S.rateMod=(S.rateMod||0)-2;return rollText(r)+'The joke dies on air. The belt is still on their show and you look small.';}
     momMine(S).filter(function(x){return x.g===w.g;}).sort(function(a,b){return b.ovr-a.ovr;}).slice(0,4).forEach(function(x){x.morale=clamp(x.morale+4,0,100);});
@@ -7125,7 +7132,7 @@ MOM.handed={
 MOM.arrival={
   make:function(S,P){
     var rv=S.order.filter(function(id){return id!==S.player;}).map(function(id){return S.promos[id];}).sort(function(a,b){return b.image-a.image;})[0];if(!rv)return null;
-    var star=rosterOf(S,rv.id).filter(function(w){return !w.nw&&holdLvl(rv,w.id)>0;}).sort(function(a,b){return b.ovr-a.ovr;})[0];if(!star||star.ovr<P.image)return null;var fee=Math.min(Math.round(star.wage*10/1000)*1000+25000,Math.max(25000,Math.round(Math.max(0,P.cash)*0.35/1000)*1000));   // never more than a third of what the company has
+    var star=rosterOf(S,rv.id).filter(function(w){return !w.nw&&holdLvl(rv,w.id)>0;}).sort(function(a,b){return b.ovr-a.ovr;})[0];if(!star||star.ovr<P.image)return null;var fee=(function(b){return Math.min(Math.round(star.wage*10/100)*100+b,Math.max(b,Math.round(Math.max(0,P.cash)*0.35/100)*100));})(Math.round(25000*msc(P)/100)*100);   // never more than a third of what the company has
     return {w:star.id,rv:rv.id,fee:fee,text:rv.name+'’s biggest star, '+star.name+', has a free night and is willing to walk onto your show unannounced for '+money(fee)+'. Your locker room is watching what you do.',
       choices:['Pay '+money(fee)+' and spring it','Decline','Tease it on the air and decide later'],checks:{2:mkCheck(7,skillMods(S,'creative'))}};
   },
@@ -8560,7 +8567,7 @@ EVR.carfight=function(S,ev,choice,P,w){
     if(r.ok){relBump(S,w.id,o.id,{bond:20},{k:'shook',t:w.name+' and '+o.name+' fought on the road, then shook hands and meant it.'});return rollText(r)+'They shake hands and mean it, mostly.';}
     relBump(S,w.id,o.id,{bond:-15},{k:'carfight',t:w.name+' and '+o.name+' came to blows on the road.'});w.morale=clamp(w.morale-3,0,100);o.morale=clamp(o.morale-3,0,100);return rollText(r)+'They shake hands for the cameras and go back to glaring.';
   }
-  w.morale=clamp(w.morale-5,0,100);o.morale=clamp(o.morale-5,0,100);P.cash-=5000;relBump(S,w.id,o.id,{bond:-5},{k:'carfight',t:w.name+' and '+o.name+' came to blows on the road, and were both fined for it.'});youRemember(S,w,'fined','You fined them for the fight on the road.',-8);youRemember(S,o,'fined','You fined them for the fight on the road.',-8);return 'You fined them both. Nobody argued, and nobody forgot.';
+  w.morale=clamp(w.morale-5,0,100);o.morale=clamp(o.morale-5,0,100);P.cash-=Math.round(5000*msc(P)/50)*50;relBump(S,w.id,o.id,{bond:-5},{k:'carfight',t:w.name+' and '+o.name+' came to blows on the road, and were both fined for it.'});youRemember(S,w,'fined','You fined them for the fight on the road.',-8);youRemember(S,o,'fined','You fined them for the fight on the road.',-8);return 'You fined them both. Nobody argued, and nobody forgot.';
 };
 MQX.push(function(ctx){
   if(!ctx.isPl||ctx.S.cal)return null;var v=avg(ctx.all.map(function(w){return w.rd||0;}));
@@ -13314,7 +13321,7 @@ function ctPolicy(S,P,w){
   return above<Math.ceil((R.length+1)/3)?'year':'show';
 }
 /** Fee a show: a quarter more than a salaried week spread over the shows, since nothing is promised. */
-function ctFee(P,wage){var v=wage*1.25/ctWeekly(P);return Math.max(50,v<1000?Math.round(v/10)*10:Math.round(v/50)*50);}
+function ctFee(P,wage){var v=wage*1.25/ctWeekly(P);return Math.max(25,v<1000?Math.round(v/10)*10:Math.round(v/50)*50);}
 function ctAssign(S,w,fee){
   var P=S.promos[w.promo];if(!P)return;w.dl=ctPolicy(S,P,w);w.dlP=w.promo;
   if(w.dl==='show'){w.fee=fee||ctFee(P,w.wage||wageFor(w.ovr,P));w.con=CT_ROLL;}else w.fee=null;
@@ -13333,7 +13340,7 @@ NEWX.push(ctWeek);WEEKX.push(ctWeek);
 /* who appeared on a show this week, and how many times: a fee is paid for each */
 SHOWX.push(function(S,P,show,rep){
   if(S.cal||!rep||!rep.segs||!P)return;var seen={};
-  rep.segs.forEach(function(s){(s.ids||s.bids||[]).forEach(function(id){var w=S.w[id];if(!w||w.promo!==P.id||seen[id])return;seen[id]=1;if(w.shw!==S.week){w.shw=S.week;w.shn=0;}w.shn++;});});
+  rep.segs.forEach(function(s){(s.ids||s.bids||[]).forEach(function(id){var w=S.w[id];if(!w||w.promo!==P.id||seen[id])return;seen[id]=1;if(w.shw!==S.week){w.shw=S.week;delete w.shn;}else w.shn=(w.shn||1)+1;});});
 });
 /** What the week's wages come to: salaries, and a fee for each show a per-appearance wrestler was on. */
 function payWeek(S,P){
@@ -14104,8 +14111,8 @@ function progGain(S,w,n,out){
 }
 /* use it to grow it: a little of one attribute, kept until it adds up to a whole point */
 function progUse(w,k,amt,out){
-  if(!PROG_BY[k]||amt<=0)return;var gx=w.gx||(w.gx={});gx[k]=(gx[k]||0)+amt;
-  if(gx[k]>=1){gx[k]-=1;if((w[k]||1)<progCap(w,k)){w[k]=clamp((w[k]||1)+1,1,99);if(out)(out.learned=out.learned||[]).push(PROG_BY[k].n);}}
+  if(!PROG_BY[k]||amt<=0)return;var gx=w.gx||(w.gx={});gx[k]=Math.round(((gx[k]||0)+amt)*100)/100;
+  if(gx[k]>=1){gx[k]=Math.round((gx[k]-1)*100)/100;if(!gx[k])delete gx[k];if((w[k]||1)<progCap(w,k)){w[k]=clamp((w[k]||1)+1,1,99);if(out)(out.learned=out.learned||[]).push(PROG_BY[k].n);}}
 }
 /** Spend one point on an attribute. Returns null on success, or why not. */
 function progSpend(w,k){
@@ -14143,7 +14150,7 @@ function progShow(S,P,show,rep,card){
         if(st>=4)progUse(w,'cons',0.2,o);
         if(s===last)progUse(w,'sq',0.15,o);
         // regression: three poor matches in a row and they lose their touch a little
-        if(st<=1.5){w.cold=(w.cold||0)+1;if(w.cold>=3){w.cold=0;w.pxp=Math.max(0,(w.pxp||0)-Math.round(progNeed(w.lv)*0.25));progLose(S,w,'cons',1,'a cold streak',o);}}else w.cold=0;
+        if(st<=1.5){w.cold=(w.cold||0)+1;if(w.cold>=3){delete w.cold;w.pxp=Math.max(0,(w.pxp||0)-Math.round(progNeed(w.lv)*0.25));progLose(S,w,'cons',1,'c',o);}}else delete w.cold;
       });
     }else if(s.k==='angle'||s.k==='promo'){
       ids.forEach(function(id){var w=S.w[id],o=row(w);progGain(S,w,(5+4*st*st)*(big?1.2:1)+(five?120:0),o);if(five)o.why.push('a five-star promo');
@@ -14162,11 +14169,14 @@ E.__progShow=progShow;   // for test-progress.js
        up to three a spell; matches give it back (long matches teach Stamina, good ones Consistency);
      - a cold streak: three poor matches in a row costs consistency and a quarter of a level's experience;
      - a long injury: six weeks out or more costs agility and stamina when they come back, more after twelve.
-   Every loss is kept on the wrestler (w.rgx, the last eight), named on the notification bar for the player's own
+   Every loss is kept on the wrestler (w.rgx, the last four, each [week, attribute, points, reason code] to keep saves small), named on the notification bar for the player's own
    people, listed after the show and shown in the Attributes pop-up. */
-function progLose(S,w,k,n,why,out){
-  if(!w||!PROG_BY[k]||n<=0)return 0;var v0=w[k]||1,v1=clamp(v0-n,15,99),d=v0-v1;if(!d)return 0;w[k]=v1;
-  var R=w.rgx||(w.rgx=[]);R.unshift({w:S.week,k:k,n:d,why:why});if(R.length>4)R.length=4;
+/** A reason code in words: a age, c a cold streak, rN ring rust after N weeks, iN back from N weeks injured. */
+function rgWhy(c){c=String(c||'');var n=c.slice(1);return c[0]==='a'?'age':c[0]==='c'?'a cold streak':c[0]==='r'?'ring rust: '+n+' weeks without a match':c[0]==='i'?n+' weeks out injured':c;}
+function rgRow(r){return Array.isArray(r)?{w:r[0],k:r[1],n:r[2],why:rgWhy(r[3])}:r;}   // an older save kept them as objects
+function progLose(S,w,k,n,code,out){
+  if(!w||!PROG_BY[k]||n<=0)return 0;var v0=w[k]||1,v1=clamp(v0-n,15,99),d=v0-v1;if(!d)return 0;w[k]=v1;var why=rgWhy(code);
+  var R=w.rgx||(w.rgx=[]);R.unshift([S.week,k,d,code]);if(R.length>4)R.length=4;
   if(out)(out.lost=out.lost||[]).push(PROG_BY[k].n+' -'+d+' ('+why+')');
   else if(w.promo===S.player&&!w.nw){var q=S.regQ||(S.regQ={});(q[w.id]=q[w.id]||[]).push(PROG_BY[k].n+' -'+d+' ('+why+')');}
   return d;
@@ -14177,9 +14187,9 @@ function progLose(S,w,k,n,why,out){
   birthday=function(S,w){
     var before={};PROG_ATTR.forEach(function(a){before[a.k]=w[a.k];});bd.apply(this,arguments);if(w.rt||w.nw)return;
     var R=w.rgx||(w.rgx=[]),lost=[];
-    PROG_ATTR.forEach(function(a){var d=(before[a.k]||0)-(w[a.k]||0);if(d>0){R.unshift({w:S.week,k:a.k,n:d,why:'age'});lost.push(a.n+' -'+d);}});
+    PROG_ATTR.forEach(function(a){var d=(before[a.k]||0)-(w[a.k]||0);if(d>0){R.unshift([S.week,a.k,d,'a']);lost.push(a.n+' -'+d);}});
     if(R.length>4)R.length=4;
-    if(w.cl&&w.age>=w.cl){progLose(S,w,'cons',1,'age',{lost:lost});progLose(S,w,'safe',1,'age',{lost:lost});}
+    if(w.cl&&w.age>=w.cl){progLose(S,w,'cons',1,'a',{lost:lost});progLose(S,w,'safe',1,'a',{lost:lost});}
     if(lost.length&&w.promo===S.player)note(S,'Regression',w.name+' turned '+w.age+': '+lost.join(', ')+'.','bad');
   };
 })();
@@ -14187,19 +14197,21 @@ function regWeek(S){
   if(S.cal)return;
   S.w.forEach(function(w){
     if(!w||w.nw||w.rt||w.promo==='FA')return;
-    if(w.wk0==null)w.wk0=S.week;
+    if(w.wk==null)w.wk=S.week;   // nobody starts a game rusty
     // a long injury: back in the ring a step slower
-    if(w.rwl>=6&&w.rgI!==w.rw){w.rgI=w.rw;var big=w.rwl>=12?2:1;progLose(S,w,'speed',big,w.rwl+' weeks out injured');progLose(S,w,'stam',big,w.rwl+' weeks out injured');}
+    if(w.rwl>=6&&w.rgI!==w.rw){w.rgI=w.rw;var big=w.rwl>=12?2:1;progLose(S,w,'speed',big,'i'+w.rwl);progLose(S,w,'stam',big,'i'+w.rwl);}
     // ring rust: weeks without a match, not counting time out hurt
-    if(w.inj>0)return;var idle=S.week-(w.wk!=null?w.wk:w.wk0);
-    if(idle<8){w.rustN=0;return;}
-    if(idle%4===0&&(w.rustN||0)<3){w.rustN=(w.rustN||0)+1;progLose(S,w,w.rustN%2?'stam':'cons',1,'ring rust: '+idle+' weeks without a match');}
+    if(w.inj>0)return;var idle=S.week-w.wk;
+    if(idle<8){delete w.rustN;return;}
+    if(idle%4===0&&(w.rustN||0)<3){w.rustN=(w.rustN||0)+1;progLose(S,w,w.rustN%2?'stam':'cons',1,'r'+idle);}
   });
   var q=S.regQ;S.regQ=null;
   if(q)Object.keys(q).forEach(function(id){var w=S.w[id];if(w)note(S,'Regression',w.name+': '+q[id].join(', ')+'.','bad');});
 }
 WEEKX.push(regWeek);
 E.__regWeek=regWeek;E.__birthday=function(S,w){birthday(S,w);};   // for test-progress.js
+/* somebody who leaves you for a rival with points still to spend spends them at once, as the rival's people do */
+WEEKX.push(function(S){if(S.cal)return;S.w.forEach(function(w){if(w&&(w.ap||0)>0&&!w.nw&&w.promo!==S.player&&w.promo!=='FA')progAuto(S,w);});});
 /* points left unspent for eight weeks: the wrestler trains on their own and spends them (they do not wait forever) */
 WEEKX.push(function(S){
   if(S.cal)return;var n=0;
@@ -14252,8 +14264,8 @@ TASKX.push(function(S,P,add){
 /** A wrestler's progression for the screens: level, experience, trait, points, and every attribute with its cap and cost. */
 E.progInfo=function(S,id){var w=S.w[id];if(!w)return null;progInit(S,w);
   return {lv:w.lv,xp:w.pxp,need:progNeed(w.lv),ap:w.ap||0,dev:w.dev,devN:DEV[w.dev].n,devD:DEV[w.dev].d,overall:overallOf(w),
-    reg:(w.rgx||[]).map(function(r){return {k:r.k,n:PROG_BY[r.k]?PROG_BY[r.k].n:r.k,by:r.n,why:r.why,when:cal(r.w).label};}),
-    attrs:PROG_ATTR.map(function(a){var v=w[a.k]||1,cap=progCap(w,a.k),fall=(w.rgx||[]).filter(function(r){return r.k===a.k&&S.week-r.w<48;}).reduce(function(t,r){return t+r.n;},0);return {k:a.k,n:a.n,d:a.d||'',g:a.g,fall:fall,v:v,cap:cap,cost:progCost(v),can:v<cap&&(w.ap||0)>=progCost(v),grow:+((w.gx||{})[a.k]||0).toFixed(2)};})};};
+    reg:(w.rgx||[]).map(rgRow).map(function(r){return {k:r.k,n:PROG_BY[r.k]?PROG_BY[r.k].n:r.k,by:r.n,why:r.why,when:cal(r.w).label};}),
+    attrs:PROG_ATTR.map(function(a){var v=w[a.k]||1,cap=progCap(w,a.k),fall=(w.rgx||[]).map(rgRow).filter(function(r){return r.k===a.k&&S.week-r.w<48;}).reduce(function(t,r){return t+r.n;},0);return {k:a.k,n:a.n,d:a.d||'',g:a.g,fall:fall,v:v,cap:cap,cost:progCost(v),can:v<cap&&(w.ap||0)>=progCost(v),grow:+((w.gx||{})[a.k]||0).toFixed(2)};})};};
 /** Spend a point (the player's own wrestlers). */
 E.spendPoint=function(S,id,k){var w=S.w[id];if(!w||w.promo!==S.player)return {ok:false,msg:'Not one of yours.'};progInit(S,w);var why=progSpend(w,k);return why?{ok:false,msg:why}:{ok:true,msg:w.name+': '+PROG_BY[k].n+' '+w[k]+'.'};};
 /** Let them choose where their points go. */

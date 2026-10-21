@@ -2,9 +2,9 @@
  "rescue": {
   "lose": {
    "ok": false,
-   "text": "The company is still open, but only $416,813 is in the bank. The target was $1.5M.",
+   "text": "The company is still open, but only $49,541 is in the bank. The target was $1.5M.",
    "figures": [
-    "Cash $416,813 (target $1.5M)"
+    "Cash $49,541 (target $1.5M)"
    ]
   },
   "win": {

@@ -149,7 +149,7 @@ EVR.carfight=function(S,ev,choice,P,w){
     if(r.ok){relBump(S,w.id,o.id,{bond:20},{k:'shook',t:w.name+' and '+o.name+' fought on the road, then shook hands and meant it.'});return rollText(r)+'They shake hands and mean it, mostly.';}
     relBump(S,w.id,o.id,{bond:-15},{k:'carfight',t:w.name+' and '+o.name+' came to blows on the road.'});w.morale=clamp(w.morale-3,0,100);o.morale=clamp(o.morale-3,0,100);return rollText(r)+'They shake hands for the cameras and go back to glaring.';
   }
-  w.morale=clamp(w.morale-5,0,100);o.morale=clamp(o.morale-5,0,100);P.cash-=5000;relBump(S,w.id,o.id,{bond:-5},{k:'carfight',t:w.name+' and '+o.name+' came to blows on the road, and were both fined for it.'});youRemember(S,w,'fined','You fined them for the fight on the road.',-8);youRemember(S,o,'fined','You fined them for the fight on the road.',-8);return 'You fined them both. Nobody argued, and nobody forgot.';
+  w.morale=clamp(w.morale-5,0,100);o.morale=clamp(o.morale-5,0,100);P.cash-=Math.round(5000*msc(P)/50)*50;relBump(S,w.id,o.id,{bond:-5},{k:'carfight',t:w.name+' and '+o.name+' came to blows on the road, and were both fined for it.'});youRemember(S,w,'fined','You fined them for the fight on the road.',-8);youRemember(S,o,'fined','You fined them for the fight on the road.',-8);return 'You fined them both. Nobody argued, and nobody forgot.';
 };
 MQX.push(function(ctx){
   if(!ctx.isPl||ctx.S.cal)return null;var v=avg(ctx.all.map(function(w){return w.rd||0;}));

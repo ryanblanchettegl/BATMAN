@@ -1,38 +1,38 @@
 {
  "rescue": {
-  "start": "f90099b6c5d079ad2b31044793574f3f",
-  "end": "44c2002e5c039fc571c18fbeb2a4fe81",
+  "start": "778c0615b81216f6165e336414eb2ba1",
+  "end": "e80178ea7deb46907f2d7ab57d098231",
   "week": 27,
   "res": {
-   "ok": true,
-   "text": "The company is safe: $2,611,660 in the bank after 26 weeks.",
+   "ok": false,
+   "text": "The company is still open, but only $185,239 is in the bank. The target was $1.5M.",
    "figures": [
-    "Cash $2,611,660 (target $1.5M)"
+    "Cash $185,239 (target $1.5M)"
    ]
   }
  },
  "champion": {
-  "start": "0f98af96d24ce143d3f0acdac77d38a6",
-  "end": "ba05443e438f9fab647fa13dcf1870a7",
+  "start": "4379f385187fbe4b75324e3a13be7a83",
+  "end": "0a7193ea334ee0f76eea6ecd419faf2c",
   "week": 40,
   "res": {
    "ok": false,
-   "text": "Paris does not hold the Olympian World Title after 39 weeks. They are now rated 65.",
+   "text": "Paris does not hold the Olympian World Title after 39 weeks. They are now rated 64.",
    "figures": [
-    "Paris rated 65 (started at 70)"
+    "Paris rated 64 (started at 70)"
    ]
   }
  },
  "war": {
-  "start": "017b52c78a11603de73f8259b9a94a36",
-  "end": "1c8c58c5a96384fa034c6c546efe3251",
+  "start": "11ea5b29968f21bbb1477ffa46c32446",
+  "end": "36dd5da537c5098b7e024b79401714c6",
   "week": 27,
   "res": {
    "ok": false,
-   "text": "You lost the ratings war: your shows averaged -1.2 against expectations, theirs +3.1.",
+   "text": "You lost the ratings war: your shows averaged -0.8 against expectations, theirs +2.7.",
    "figures": [
-    "Your shows: -1.2 against expectations",
-    "Theirs: +3.1"
+    "Your shows: -0.8 against expectations",
+    "Theirs: +2.7"
    ]
   }
  }

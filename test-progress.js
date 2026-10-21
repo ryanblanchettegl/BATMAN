@@ -35,17 +35,17 @@ E.autoSpend(S, w.id); ok('auto', 'let them choose spends what they can', E.progI
 // regression: a cold streak, ring rust, a long injury, and age, each written down
 { const P = S.promos.ewe, a = mine.find(x => x.promo === 'ewe' && x.inj <= 0 && x.cons > 30), c0 = a.cons, x0 = a.pxp;
   for (let i = 0; i < 3; i++) E.__progShow(S, P, { big: false }, { segs: [{ k: 'match', ids: [a.id], ov: 5, mins: 8 }] });
-  ok('cold', 'three poor matches in a row cost consistency and experience', a.cons === c0 - 1 && a.rgx[0].why === 'a cold streak' && (a.pxp < x0 + 200), c0 + ' to ' + a.cons);
+  ok('cold', 'three poor matches in a row cost consistency and experience', a.cons === c0 - 1 && E.progInfo(S, a.id).reg[0].why === 'a cold streak' && (a.pxp < x0 + 200), c0 + ' to ' + a.cons);
   const rep = { segs: [{ k: 'match', ids: [a.id], ov: 5, mins: 8 }] }; a.cold = 2; E.__progShow(S, P, { big: false }, rep);
   ok('coldrep', 'the night lists what was lost', rep.prog && rep.prog.some(o => o.lost && o.lost.length)); }
 { const b = mine.find(x => x.promo === 'ewe' && !(x.inj > 0) && x.stam > 30 && x.cons > 30), s0 = b.stam + b.cons; b.wk = S.week - 8; b.rustN = 0;
-  E.__regWeek(S); ok('rust', 'eight weeks without a match is ring rust', b.stam + b.cons === s0 - 1 && /ring rust/.test(b.rgx[0].why), b.rgx && b.rgx[0] && b.rgx[0].why);
+  E.__regWeek(S); ok('rust', 'eight weeks without a match is ring rust', b.stam + b.cons === s0 - 1 && /ring rust/.test(E.progInfo(S, b.id).reg[0].why), E.progInfo(S, b.id).reg[0] && E.progInfo(S, b.id).reg[0].why);
   b.wk = S.week; E.__regWeek(S); ok('rustoff', 'back in the ring, no more rust', b.stam + b.cons === s0 - 1); }
 { const c = mine.find(x => x.promo === 'ewe' && x.speed > 30 && x.stam > 30), v0 = c.speed + c.stam; c.rwl = 13; c.rw = S.week + 1; c.wk = S.week;
   E.__regWeek(S); ok('injury', 'a long injury costs agility and stamina on the way back', c.speed + c.stam === v0 - 4, (v0 - c.speed - c.stam) + ' lost');
   E.__regWeek(S); ok('injonce', 'only once for the same injury', c.speed + c.stam === v0 - 4); }
 { const d = mine.filter(x => x.speed > 30 && x.stam > 30 && x.dur > 30).sort((a, b) => b.age - a.age)[0]; d.age = d.pk[1] + 3; const t0 = ['speed', 'stam', 'dur'].reduce((t, k) => t + d[k], 0); E.__birthday(S, d);
-  ok('aged', 'a birthday past the peak takes the body down and writes it down', ['speed', 'stam', 'dur'].reduce((t, k) => t + d[k], 0) < t0 && d.rgx.some(r => r.why === 'age'));
+  ok('aged', 'a birthday past the peak takes the body down and writes it down', ['speed', 'stam', 'dur'].reduce((t, k) => t + d[k], 0) < t0 && E.progInfo(S, d.id).reg.some(r => r.why === 'age'));
   const pi2 = E.progInfo(S, d.id); ok('reginfo', 'the Attributes pop-up gets what they lost and why', pi2.reg.length > 0 && pi2.attrs.some(a => a.fall > 0)); }
 console.log(fails ? fails + ' failed' : 'test-progress: all passed');
 process.exit(fails ? 1 : 0);
