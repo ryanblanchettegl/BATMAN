@@ -117,6 +117,36 @@ A pacing layer that decides when trouble reaches the desk: it reads how tense th
 - [ ] Step 4: the three styles, chosen at the start of a game and shown on Career; old saves get The Promoter.
 - [ ] Step 5: event sizes and the rhythm around big nights.
 
+### 0ad. Company arcs that start from what happens (Bill, 21 October: "This is a key feature, Company Arcs need to start from beats that happen from specific events happening")
+
+An arc starts from an event (a betrayal, an authority figure on screen, a rival folding, a comeback, a breakout) offered on the desk as the story of the year, and moves through beats fired by what happens in the game, with chapters on the desk only as a fallback. Arc types become shapes, not scripts. Still one a year, paid off at the flagship. Plan: `docs/plans/arc-beats.md`.
+
+- [ ] Step 1: the beat format and shapes as data; today's three arcs ported with no change in play.
+- [ ] Step 2: seeds, the events that can start an arc, offered on the desk; the old list as the fallback.
+- [ ] Step 3: beats fired by events (live calls, results, titles, injuries, leaks, bonds), the fallback timer, more credit for beats the player booked.
+- [ ] Step 4: new shapes, one at a time: the invasion, the comeback, the chosen one, the last run, civil war, blood feud, the student and the master.
+- [ ] Step 5: beats and shapes in the World Editor.
+
+### 0ae. Catching fire, and forty calls for the live show (Bill, 21 October: "we also need to have like 40 events that could happen on a show to give the director")
+
+Catching fire (a lower-card act beating the card's prediction is called out live) and forty new calls for the gorilla position, each caused by something true of the night and tagged problem, chance or colour, so the Director can pace them through a show. Plan and the full list: `docs/plans/live-events.md`.
+
+- [ ] Step 1: catching fire as a `LIVEK` entry (headless test).
+- [ ] Step 2: today's thirteen kinds of call tagged problem, chance or colour.
+- [ ] Step 3: the Director on the night, after the Director's weekly steps 1 to 3; it replaces the flat chances in `E.chaos` and `LIVEK.disaster`.
+- [ ] Step 4: the forty, a few at a time, each batch shown to Bill.
+- [ ] Step 5: stills for the new calls as the scene work reaches them.
+
+### 0af. The monthly wrestling magazine (Bill, 21 October: "I want A monthly wrestling magazine")
+
+An invented magazine every game month covering the whole world, telling the on-screen stories as if they were real (the dirt sheet tells the truth): a cover star drawn by the scene engine, the big story, rankings, match of the month, an interview, rumours, letters, a readers' poll, history. Being on the cover matters; the player can pitch a story or buy an ad. After each flagship, an annual issue that can be saved and shared. Plan: `docs/plans/magazine.md`.
+
+- [ ] Step 1: the issue built in the engine at each month's end (headless test).
+- [ ] Step 2: the desk line, the magazine spread in a pop-up, past issues in the Net section.
+- [ ] Step 3: the cover's lift, the editor, pitching a story, buying an ad.
+- [ ] Step 4: letters and the readers' poll.
+- [ ] Step 5: the annual issue after each flagship, and saving an issue to share.
+
 ### 0ab. Pre-history (Bill, 21 October: "prehistory from real history, and a option for new companies to have a simulated prehistory for 10 years")
 
 The parody world's past comes from real wrestling history, as fixed anchors under parody names, with the simulation filling in between. A company with no past can start with ten simulated years. On-screen record only, and a lawyer check before shipping. Plan: `docs/plans/pre-history.md`.
