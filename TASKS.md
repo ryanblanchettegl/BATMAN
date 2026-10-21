@@ -127,6 +127,16 @@ The parody world's past comes from real wrestling history, as fixed anchors unde
 - [ ] Step 4: the parody world's anchors, one company at a time, EWE first.
 - [ ] Step 5: legends for the anchors that need them.
 
+### 0ac. The last booker's mess (Bill, 21 October: "perfect for the main new game mode when we walk through people how to play the game")
+
+Two ways to start: the **main game** opens six to eight weeks before the flagship in the previous booker's office, whose documents (a title promise, an unhappy star, a napkin main event, the owner's memo, a leak, unpaid bills) are real matters that teach the game; **sandbox** is a free start, as today. Plan: `docs/plans/last-booker.md`.
+
+- [ ] Step 1: the mode choice, and the main game starting weeks before the flagship (headless test).
+- [ ] Step 2: the mess built from what is true of the company, by hash.
+- [ ] Step 3: the office screen with the drawers and documents, opening onto the desk's tasks.
+- [ ] Step 4: the first year's required actions re-ordered around an early flagship (section 0h).
+- [ ] Step 5: the last booker as a person in the history, once pre-history (0ab) exists.
+
 ### 0w. Still pictures for the moments you answer (Ryan, 18 October)
 
 - [x] Every matter on the desk and every call from the gorilla position shows one still diorama picture of the moment (somebody hurt, a fight backstage, two people face to face, a meeting across your desk, a walkout, the crowd on its feet): the picture on the left of the pop-up, the answers on the right.
