@@ -5527,7 +5527,7 @@ function peopleNow(S){
     else if(f&&f.heat<32&&S.week-f.start>=6)asks.push({w:w,k:'askout',why:'Came in to ask out of the rivalry with '+pplOther(S,f,w.id).name+'. It is going nowhere',acts:['out_yes','ask_no'],o:{with:pplOther(S,f,w.id).id,story:'The rivalry has gone cold'}});
     else if(w.align==='F'&&w.morale<50&&(w.mom||0)<=-2&&!f)asks.push({w:w,k:'askturn',why:'Came in to ask for a change. Wants to turn villain',acts:['turn_yes','ask_no'],o:{story:'Losing, and the crowd has stopped caring'}});
     else if(holdLvl(P,w.id)===0&&!f&&((w.stress||0)>=60||w.cond<50))asks.push({w:w,k:'askoff',why:'Came in to ask for two weeks at home. Worn out',acts:['off_yes','ask_no'],o:{story:'Has not had a break in a long time'}});
-    else if(holdLvl(P,w.id)===0&&!f&&micOf(S,w)>=70&&w.morale>=45&&!(S.locks||[]).some(function(l){return l.who===w.id;}))asks.push({w:w,k:'askpromo',why:'Came in to ask for time on the microphone on the next show. Has something to say',acts:['promo_yes','ask_no'],o:{story:'Good on the microphone, and nobody has handed them one lately'}});
+    else if(holdLvl(P,w.id)===0&&!f&&micOf(S,w)>=75&&w.morale>=45&&wkh(w)%5===0&&!(S.locks||[]).some(function(l){return l.who===w.id;}))asks.push({w:w,k:'askpromo',why:'Came in to ask for time on the microphone on the next show. Has something to say',acts:['promo_yes','ask_no'],o:{story:'Good on the microphone, and nobody has handed them one lately'}});
     else if(w.team==null&&!f&&holdLvl(P,w.id)===0){var fr=byOvr.filter(function(x){return x.id!==w.id&&x.g===w.g&&x.team==null&&free(x)&&holdLvl(P,x.id)===0&&bondOf(S,w.id,x.id)>=REL_ON;})[0];
       if(fr)asks.push({w:w,k:'askteam',why:'Came in to ask to team with '+fr.name+'. They are friends',acts:['team_yes','ask_no'],o:{with:fr.id,story:'Neither has much going on alone'}});}
   });
@@ -14025,7 +14025,8 @@ SEGNEW.push(function(S,L){locksNow(S).forEach(function(l){if(l.kind==='promo'&&l
       if(l.kind!=='match')return;var who=l.sides[0][0];if(who==null||!inE[who])return;   // they cannot work tonight: nothing to be done about it on the card
       var t=l.title?titleById(P,l.title):null;if(t&&t.holders.indexOf(who)>=0)return;if(t&&!t.tag&&t.holders.length&&!inE[t.holders[0]])return;   // no champion tonight: it waits
       // a title match is the promised wrestler for that title, whoever holds it by then; any other match is the two of them
-      var on=card.some(function(m){return flat(m.sides).indexOf(who)>=0&&(l.title?m.title===l.title:l.sides[1].every(function(id){return id==null||!inE[id]||flat(m.sides).indexOf(id)>=0;}));});
+      // the promised match itself is on the card (m.pm), even if trouble before the bell changed it: whether the promise was kept is for the promise to say
+      var on=card.some(function(m){return m.pm===l.id&&flat(m.sides).indexOf(who)>=0;})||card.some(function(m){return flat(m.sides).indexOf(who)>=0&&(l.title?m.title===l.title:l.sides[1].every(function(id){return id==null||!inE[id]||flat(m.sides).indexOf(id)>=0;}));});
       if(!on)v.errors.push('Promised for tonight: '+lockLabel(S,l)+(l.why?' ('+l.why+')':'')+'. It has to be on the card.');
     });
     // a story planned to end tonight, with one of the two promised a different match: both cannot happen
