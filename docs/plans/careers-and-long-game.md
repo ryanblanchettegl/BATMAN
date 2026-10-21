@@ -1,6 +1,6 @@
-# Careers and the long game: twelve features from other genres
+# Careers and the long game: thirteen features from other genres
 
-Bill, 21 October 2026: "I like ideas 1-5 add those to long term planning", then "one life in wrestling is awesome too", and dropped free agency week ("wrestling doesn't have a free agency week, lets not do that"), then added "Path to the Hall of Fame i like" "i like wrestling families" "I like coalitions" "love 13" (company mission trees) the territory map coloured by the most popular company in each region, "16 i like" (rival owners with agendas) "18 i like" (rival plans) and "21 yes" (trends). He turned down power blocs. These come from the genre research doc (career, sports management, dynasty, 4X, grand strategy and simulation games): https://claude.ai/artifact/VGDEmfsJv4LgCXPwn8TyUQ. Nothing here is built. They sit in `TASKS.md` section 14, after the balance and first-hour work (Bill paused new features until that is done).
+Bill, 21 October 2026: "I like ideas 1-5 add those to long term planning", then "one life in wrestling is awesome too", and dropped free agency week ("wrestling doesn't have a free agency week, lets not do that"), then added "Path to the Hall of Fame i like" "i like wrestling families" "I like coalitions" "love 13" (company mission trees) the territory map coloured by the most popular company in each region, "16 i like" (rival owners with agendas) "18 i like" (rival plans) "21 yes" (trends) and world firsts with a glowing pop-up like Civilization's. He turned down power blocs. These come from the genre research doc (career, sports management, dynasty, 4X, grand strategy and simulation games): https://claude.ai/artifact/VGDEmfsJv4LgCXPwn8TyUQ. Nothing here is built. They sit in `TASKS.md` section 14, after the balance and first-hour work (Bill paused new features until that is done).
 
 Sizes follow `WISHLIST.md`: S is one commit, M is two or three, L is a week with this plan as its start.
 
@@ -182,3 +182,19 @@ Steps:
 1. Trends as data (`TREND`: what it favours, how long it runs, the signs before it); one at a time, with gaps; a crowd lift that is small and fair; a headless test over a long save.
 2. First mover, late arrival and "before it was cool", read from each company's last year of cards.
 3. The hints on the Net, in the magazine and from the indies, and a line on the World page naming the trend of the day.
+
+## 13. World firsts, and the moment that glows (S to M)
+
+Bill, 21 October 2026: "I like world firsts too. I like how civ has glowing popups after something good happens". Borrowed from Civilization's wonders (only one civilization can build each one, so everyone races) and the full-screen moment Civilization shows when one is finished.
+
+A list of firsts that only one company in the world can ever claim: the first stadium show over 50,000, the first national television deal, the first million-dollar gate, the first women's main event at a flagship, the first show abroad, the first streaming service, the first ten-year title reign. When a rival claims one, it is gone from the player's list for good, and the Net and the magazine say who got there. Each first the player claims is a plaque on the Company page, kept in History. A world package can add its own firsts.
+
+**The moment that glows.** When the player claims a first, the game stops for a celebration pop-up: the plaque cut from card and foil, lit from behind with a warm glow that blooms in, the company's logo, the night and the people who made it, one line of what it means, and a crowd swell on the soundtrack. It is built so other big good moments can use it too: a title won at the flagship, a Hall of Fame entry, a mission-tree goal (8), a level for the booker (roadmap 21, which already asks for notifications that celebrate). It shows rarely, at most once a week, so it keeps its weight. It is drawn in the workbench look in code (no image files), fits a 1080p screen, and respects reduced motion with a plain fade.
+
+What it uses: the milestone wall (wish 91), which already tracks the player's own firsts, the week around the world (`src/99-worldweek.js`) for rivals' claims, History, the logos (`src/89-logos.js`) and Create a Belt's card-and-foil drawing for the plaque, and the soundtrack add-on in `app/addons/`.
+
+Steps:
+
+1. `FIRSTS` as data (what counts, how it is checked, the words); claims checked for every company each week; a headless test that each can be claimed and only once in a world.
+2. The plaques on Company and in History, and the lines on the Net and in the magazine.
+3. The glowing pop-up as a shared piece of the kit, first for world firsts, then offered to the other big moments one at a time with Bill's go-ahead.

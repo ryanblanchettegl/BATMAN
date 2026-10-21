@@ -889,7 +889,7 @@ The relationship web as a board of Polaroids and string, built by itself on the 
 
 ### 14. Later: careers and the long game (Bill, 21 October: "I like ideas 1-5 add those to long term planning")
 
-Twelve features from the genre research (career, sports management, dynasty, grand strategy, 4X and simulation games). Free agency week was dropped (wrestling has none), and so were power blocs. Plan: `docs/plans/careers-and-long-game.md`. Not before the balance and first-hour work above (Bill paused new features until then).
+Thirteen features from the genre research (career, sports management, dynasty, grand strategy, 4X and simulation games). Free agency week was dropped (wrestling has none), and so were power blocs. Plan: `docs/plans/careers-and-long-game.md`. Not before the balance and first-hour work above (Bill paused new features until then).
 
 - [ ] Wrestler career mode, "Road to the Main Event": play one wrestler in the living world while that company's AI booker books you; the asks at Your office become your moves (L).
 - [ ] One life in wrestling: the same save goes on from wrestler to manager, commentator or agent, then booker, then owner, and on to the student you trained (M, after the career mode).
@@ -903,6 +903,7 @@ Twelve features from the genre research (career, sports management, dynasty, gra
 - [ ] Rival owners with agendas: each owner has an agenda the world knows and a hidden one found out through the press, sources and people who leave; both decide how they treat you (S to M).
 - [ ] Rival plans: each month the office hears of two or three moves rivals are preparing (a raid, a show on your big night, a bid, a tour into your region); stop one with booking power or a source, the rest happen (M).
 - [ ] Trends: world fads for a year or two (a hardcore craze, a high-flying boom, a tag-team revival); the first to ride one gets the most, and the Net and the magazine hint at the next one (S to M).
+- [ ] World firsts: firsts only one company in the world can claim (stadium show, national TV deal, million-dollar gate), with a glowing celebration pop-up like Civilization's when you claim one, reusable for other big good moments (S to M).
 
 ## After each task
 
