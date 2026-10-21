@@ -1048,7 +1048,7 @@ const MORE2: Record<string, () => Scene> = {
 };
 /* ---------- more of the back and forth: on the floor, the referee down, the comeback ---------- */
 const FL = (k: string, x: number, z: number, f: number, e?: string) => POSED(k, x, z, f, -3, e);   // standing on the floor outside the ring
-const FLCAM = C3([13, 3, 12], [12.4, -2.4, 0], 40), FLCAM2 = C3([17, 2, 6], [12.4, -2, 0], 38);
+const FLCAM = C3([12.6, 4, 21], [12.6, 0, 0], 40), FLCAM2 = C3([16, 3, 18], [12.8, 0, 0], 38);
 export const MID_MORE: Scene[] = flourishAll([
   { v: 1, id: 'floor_brawl', name: 'A fight on the floor', when: 'mid', set: 'ring', slots: MOVE_SLOTS, keys: [
     { t: 0, figs: { A: FL('fists', 11.6, 0.6, 1), B: FL('fists', 13.4, 0.2, -1), R: POSED('point', 9, 0, 1) }, props: [], cam3: FLCAM },

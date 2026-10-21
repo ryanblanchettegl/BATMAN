@@ -428,7 +428,6 @@ function doMatch(S,P,show,m,i,n,rep,used){
     seg.lines.push((MQ>=88?'This is something special. ':(MQ>=75?'A very good match. ':(MQ>=60?'Solid work. ':(MQ>=45?'It never finds a rhythm. ':'It falls apart in places. '))))+(CR>=88?'The crowd is molten.':(CR>=72?'The crowd is loud throughout.':(CR>=55?'The crowd is into it.':(CR>=40?'The crowd is polite but quiet.':'The crowd sits on its hands.')))));
   }
   seg.finish=fill(br?'{w} throws {l} over the top rope and is the last one standing.':fin==='clean'?(lead.style==='T'||stip==='sub'?'{w} forces {l} to submit clean in the middle of the ring.':stip==='tables'?'{w} drives {l} through a table for the win.':stip==='mask'?'{w} wins, and {l} has to take off the mask.':stip==='hair'?'{w} wins, and the clippers come out for {l}.':'{w} hits {fin} and pins {l} clean.'):
-  seg.fk=fin;if(fin==='clean'&&(lead.style==='T'||stip==='sub'))seg.sub=1;   // how it ended, for the broadcast's last picture
     fin==='flash'?'{w} catches {l} in a roll-up out of nowhere.':
     fin==='cheap'?pick(S,CHEAP):
     fin==='interf'?'{x} runs in and distracts {l}; {w} takes advantage for the win.':
@@ -436,6 +435,7 @@ function doMatch(S,P,show,m,i,n,rep,used){
     fin==='dq'?'{l} is disqualified for ignoring the referee; {w} wins by DQ.':
     fin==='co'?'{l} is counted out on the floor; {w} wins by count-out.':
     (mins>=20?'The time limit expires with neither able to put the other away.':'Both are counted out brawling on the floor.'),o);
+  seg.fk=fin;if(fin==='clean'&&(lead.style==='T'||stip==='sub'))seg.sub=1;   // how it ended, for the broadcast's last picture
   if(isPl){
     var srt=all.slice().sort(function(p,q){return p.ovr-q.ovr;});
     seg.bc=callMatch(S,P,{fx:fx,o:o,m:m,all:all,pre:pre,champ:champ,mt:MT[m.mt].n,stip:stip,stipName:stip==='std'?null:STIP[stip].n,t:t,sides:sides,feud:feud,feudHeat:heatWas,flog:flogWas,gap:srt[srt.length-1].ovr-srt[0].ovr,under:srt[0].name,CR:CR,MQ:MQ,mins:mins,ca:ca,bad:bad,fin:fin,sub:lookFin(lead)?lookFin(lead).category==='Submission':(lead.style==='T'||stip==='sub'),fko:ctx.fko||null,fm:ctx.fm||null,lfin:other.fin||null,lname:other.name,wname:lead.name,win:win,plural:winners.length>1,change:!!seg.change,retain:win>=0&&win===champSide,entrance:ctx.entrance,main:isMain&&n>2,big:big,show:show.name,upset:upset,streak:endedStreak});
