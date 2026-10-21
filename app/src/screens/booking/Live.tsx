@@ -109,7 +109,7 @@ function SignOff(p: { r: any; ms: any[] }) {
     <Line r={r} tk="close" b={{ t: 'pbp', x: 'For ' + r.ann[1] + ' and everyone at ' + me().name + ', I am ' + r.ann[0] + '. Good night from ' + cityOf(r) + '!' }} />
   </>;
 }
-function Result(p: { s: any; best?: boolean }) {
+function Result(p: { s: any; best?: boolean; fx?: number }) {
   const s = p.s;
   if (s.k !== 'match') return <div class="result"><p>The segment: <span class="gold">{stars(s.ov)}</span></p></div>;
   const score = (label: string, v: number, kind?: 'hot' | 'cool' | 'au') => <div class={kind === 'au' ? 'ov' : undefined}><span>{label}</span><span><Meter v={v} kind={kind} /></span></div>;
@@ -119,7 +119,7 @@ function Result(p: { s: any; best?: boolean }) {
       <p><b>{s.win ? 'Winner: ' + s.win : 'Draw'}</b> {'·'} <span class="gold">{stars(s.ov)}</span>{p.best ? <> {'·'} <span class="gold" data-t="live-best">The best match of the night so far</span></> : null}</p>
       <OddsLine s={s} />
       <div class="scores">{score('The work', s.mq)}{score('The crowd', s.cr, 'hot')}{score('Effort', s.eff, 'cool')}<div class="ov"><span>Overall</span><span class="gold">{stars(s.ov)}</span></div></div>
-      <FxList s={s} max={4} />
+      <FxList s={s} max={p.fx || 4} />
     </div>
   </>;
 }
@@ -146,14 +146,29 @@ function SegHead(p: { rows: NRow[]; si: number; s: any; eyebrow?: string; at?: n
       : <div><p class="eyebrow">{p.eyebrow || s.head}</p><h1>{p.eyebrow ? s.head : (segNames(s) || 'Meanwhile...')}</h1></div>}
   </div>;
 }
+/** The lines of a segment shown so far (at TV pace only its big moments, its finish and evenly spaced lines). */
+function shownBeats(s: any, at: number): Beat[] {
+  const bc: Beat[] = s.bc || [], keys = pref.pace === 'tv' ? new Set(tvKeys(s)) : null;
+  return bc.slice(0, Math.min(bc.length, at + 1)).filter((_, j) => !keys || keys.has(j) || j === at);
+}
+/** The best match so far: at least the second match of the night, and better than every one before it. */
+function bestSoFar(r: any, s: any): boolean {
+  const i = r.segs.indexOf(s), before = i > 0 ? r.segs.slice(0, i).filter((x: any) => x.k === 'match') : [];
+  return s.k === 'match' && before.length > 0 && before.every((x: any) => s.ov > x.ov);
+}
 function SegLines(p: { r: any; s: any; at: number; done: boolean }) {
-  const s = p.s, bc: Beat[] = s.bc || [], i = p.r.segs.indexOf(s), keys = pref.pace === 'tv' ? new Set(tvKeys(s)) : null, shown = bc.slice(0, Math.min(bc.length, p.at + 1)).filter((_, j) => !keys || keys.has(j) || j === p.at);
-  // the best match so far: at least the second match of the night, and better than every one before it
-  const before = i > 0 ? p.r.segs.slice(0, i).filter((x: any) => x.k === 'match') : [], best = s.k === 'match' && before.length > 0 && before.every((x: any) => s.ov > x.ov);
+  const shown = shownBeats(p.s, p.at);
   return <>
     {shown.map((b, i) => <Line r={p.r} b={b} tk={!p.done && i === shown.length - 1 ? 'b' + i : undefined} />)}
-    {p.done ? <Result s={s} best={best} /> : null}
+    {p.done ? <Result s={p.s} best={bestSoFar(p.r, p.s)} /> : null}
   </>;
+}
+/** The commentary as closed captions over the picture (Ryan, 21 October: the eye stays on the scene). The newest
+    line, with the one before it above it, rolling up as on television. */
+function Captions(p: { r: any; s: any; at: number; done: boolean }) {
+  const shown = shownBeats(p.s, p.at), from = Math.max(0, shown.length - 2);
+  if (!shown.length) return null;
+  return <div class="cc" data-t="live-cc" aria-live="polite">{shown.slice(from).map((b, k) => { const i = from + k; return <Line key={'c' + i} r={p.r} b={b} tk={!p.done && i === shown.length - 1 ? 'b' + i : undefined} />; })}</div>;
 }
 
 /** The call from the gorilla position: what is happening, why now, and the choices. Each choice is one big button
@@ -394,15 +409,17 @@ export function Live(p: { r: any }) {
       {!air && (L.s < n - 1 || !done) && <Btn kind="sm" t="live-end" onClick={liveEnd}>Skip the rest of the replay</Btn>}
     </>;
   }
+  // with the scenes on, the commentary runs as captions over the picture, and when the segment ends the result pops up over its last moment
+  const pk = pref.pics && !ev && state === 'seg' && s ? scenePick(r, s, L.b, done) : null;
   const now = rows.find(x => ev && !post ? x.k === info.step : (x.si >= 0 && x.si === (post ? ev.si : L.s)));
   return <div class="onescreen live live1" id="live" data-v={state}>
     <div class="bar"><span>{r.name}{air || L.aired ? '' : ' · replay'}</span><span data-t="live-where">{ev ? 'The headset is live' : (L.s < 0 ? 'On the air' : (!s ? 'Sign-off' : (air ? 'On the air' : 'Segment ' + (L.s + 1) + ' of ' + n) + (now && now.at != null ? DOT + hm(now.at) + ' into the show' : '')))}</span></div>
     <Night rows={rows} at={post ? ev.si : L.s} done={done || !!post} wait={ev && !post ? info.step : -1} call={!!ev} info={info} />
     <div class="lv-body">
       <div class="lv-main">
-        {(() => { const pk = pref.pics && !ev && state === 'seg' ? scenePick(r, s, L.b, done) : null;
-          return pk ? <div class="tvframe" data-t="tv"><ScenePlayer key="scene" sc={pk.sc} cast={pk.cast} play={pk.play} label={pk.label} still={reduceMotion()} fill /><div class="chyron">{head}</div><span class="bug" aria-hidden="true"><Logo of={S.promos[S.player]} size="chip" /><i class="dot" />LIVE</span></div> : head; })()}
-        <div class={'lv-log' + (state === 'title' || state === 'signoff' ? ' mid' : '')}><div class="lv-lines">{log}</div></div>
+        {pk ? <div class="tvframe" data-t="tv"><ScenePlayer key="scene" sc={pk.sc} cast={pk.cast} play={pk.play} label={pk.label} still={reduceMotion()} fill /><div class="chyron">{head}</div><span class="bug" aria-hidden="true"><Logo of={S.promos[S.player]} size="chip" /><i class="dot" />LIVE</span>{done ? <div class="lv-res" data-t="live-res" role="dialog" aria-label="The result"><Result s={s} best={bestSoFar(r, s)} fx={3} /></div> : <Captions key={L.s} r={r} s={s} at={L.b} done={done} />}</div> : head}
+        {pk ? null
+          : <div class={'lv-log' + (state === 'title' || state === 'signoff' ? ' mid' : '')}><div class="lv-lines">{log}</div></div>}
         {box}
         {ev ? null : <div class="foot">{foot}{canReplaySeg() ? <Btn kind="sm" t="live-replay" tip="Play this segment again from the start" onClick={liveReplaySeg}>Replay</Btn> : null}<Btn kind="sm" t="live-pics" on={!!pref.pics} onClick={picsToggle}>{pref.pics ? 'Scenes: on' : 'Scenes: off'}</Btn><Btn kind="sm" t="live-auto" on={!!pref.auto} onClick={autoToggle}>{pref.auto ? 'Auto-play: on' : 'Auto-play: off'}</Btn>{pref.auto ? <Btn kind="sm" t="live-pace" onClick={paceNext}>{'Pace: ' + PACE_N[pref.pace]}</Btn> : null}<span class="blink" aria-hidden="true">_</span><span class="keys-hint">{state === 'signoff' ? 'Space: after the show' : (pref.auto ? (state === 'title' ? 'Space: ring the bell. The show then runs itself and stops for your calls' : 'Running itself, and stops after each segment. Space: next. R: replay. P: pause') : 'Space or Enter: on with the show. R: replay. P: auto-play')}</span></div>}
       </div>
