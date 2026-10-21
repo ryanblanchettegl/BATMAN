@@ -61,8 +61,9 @@ E.matchOdds=function(S,m,i,n){
   var c=matchSetup(S,m);if(!c)return null;
   var od=winOdds(S,c.P,c.show,m,c.sides,c.t,c.champSide,c.feud,!!c.show.big,i===n-1),fav=0;
   od.p.forEach(function(p,k){if(p>od.p[fav])fav=k;});
-  var cost=od.p.map(function(p,k){return (p>=0.5?1:(p>=0.25?2:3))+(c.t&&c.t.holders.length&&k!==c.champSide?1:0)+ccCost(S,m,k);});
-  return {p:od.p,draw:od.draw,fav:fav,cost:cost,drawCost:2,chem:null};
+  // picking the winner is free (Bill, 21 October): booking power pays for the extras, and a star with creative control is one of them
+  var cost=od.p.map(function(p,k){return ccCost(S,m,k);});
+  return {p:od.p,draw:od.draw,fav:fav,cost:cost,drawCost:1,chem:null};
 };
 function cardCost(S,card){
   var tot=0,n=card.length;
@@ -70,10 +71,11 @@ function cardCost(S,card){
   return tot;
 }
 function spendBP(S,card){
-  var c=cardCost(S,card),n=card.length,long=false;if(!c)return;
-  card.forEach(function(m,i){if(m.call!=null&&m.call>=0){var o=E.matchOdds(S,m,i,n);if(o&&o.p[m.call]<0.25)long=true;}});
+  var c=cardCost(S,card),n=card.length,long=false,called=card.filter(function(m){return m.call!=null;}).length;if(!called)return;
+  // the price of a long shot is paid in people: the favourite who was told to lose remembers it
+  card.forEach(function(m,i){if(m.call!=null&&m.call>=0){var o=E.matchOdds(S,m,i,n);if(o&&o.p[m.call]<0.25){long=true;m.sides[o.fav].forEach(function(id){var w=S.w[id];if(!w)return;w.morale=clamp(w.morale-3,0,100);youRemember(S,w,'longshot','You booked them to lose a match they were expected to win.',-6);});}}});
   if(c>S.bp){S.trust=clamp(S.trust-2*(c-S.bp),0,100);S.bp=0;}else S.bp-=c;
-  S.stats.calls+=card.filter(function(m){return m.call!=null;}).length;award(S,'ACH_CALL');if(long)award(S,'ACH_LONGSHOT');
+  S.stats.calls+=called;award(S,'ACH_CALL');if(long)award(S,'ACH_LONGSHOT');
 }
 E.cardCost=cardCost;
 

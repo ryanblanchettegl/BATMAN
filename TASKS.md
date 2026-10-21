@@ -107,6 +107,18 @@ Two more lists sit beside this one, both finished:
 
 ## Tasks
 
+### A1. The road to A+, phase 1: balance (Bill, 21 October; the review at https://claude.ai/artifact/KQmaYcSgaUeVtEWWhWGGUx)
+
+Bill's decisions of 21 October: picking the winner is free and booking power buys the extras; Suggest a card lands around a C; both worlds ship, the parody world is the Steam default and a world switch sits at the top right of the title screen; the licence is all rights reserved; no new systems until balance, the first hour and the screens are done; Booker Mode starts at the grand show a week before the business year ends, Sandbox Mode is the free start; the long broadcasts stay; the game is built for 1080p only (no tablet, no Steam Deck).
+
+- [x] Picking a winner costs no booking power. A draw costs 1, and a loss called on a star with creative control still costs 2. A long shot is paid for in people: the favourite told to lose loses morale and remembers it.
+- [ ] Suggest a card lands around a C.
+- [ ] Coasting fails: the owner sets a goal for the year, and the handover is harder to reach.
+- [ ] Popularity follows the grades: good shows grow the company, or the desk says why not.
+- [ ] EWE's money: the starting company does not lose money every week by default.
+- [ ] A balance test with targets for every company model.
+- [ ] The licence: all rights reserved.
+
 ### 0w. Still pictures for the moments you answer (Ryan, 18 October)
 
 - [x] Every matter on the desk and every call from the gorilla position shows one still diorama picture of the moment (somebody hurt, a fight backstage, two people face to face, a meeting across your desk, a walkout, the crowd on its feet): the picture on the left of the pop-up, the answers on the right.

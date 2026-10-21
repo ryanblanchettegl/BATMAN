@@ -64,7 +64,7 @@ var ACH = [
   {id:'ACH_IMAGE_UP',name:'On the Rise',desc:'Raise your promotion’s popularity by 5 points.'},
   {id:'ACH_NO1',name:'Top of the Mountain',desc:'Be the most popular promotion in the world.'},
   {id:'ACH_YEAR',name:'Year One',desc:'Complete 48 weeks in charge.'},
-  {id:'ACH_CALL',name:'Calling the Shot',desc:'Spend booking power to call a finish.'},
+  {id:'ACH_CALL',name:'Calling the Shot',desc:'Call the finish of a match yourself.'},
   {id:'ACH_LONGSHOT',name:'Against the Odds',desc:'Call a finish for a long shot (under 25%).'},
   {id:'ACH_DIRECTIVE',name:'Company Man',desc:'Deliver on one of the owner\u2019s directives.'},
   {id:'ACH_OWNER_TRUST',name:'Right Hand',desc:'Reach 90 trust with the owner.'},
@@ -466,7 +466,7 @@ function autoBook(S,P,show){
   var mx=big?10:SLOT_MAX[P.slot];while(card.length>mx){var lw=card.filter(function(m){return !m.title;}).sort(function(a,b){return a._p-b._p;})[0]||card[card.length-1];card.splice(card.indexOf(lw),1);}
   card.sort(function(a,b){return a._p-b._p;});
   shapeAuto(S,P,card);   // the running order: a quick opener first, no two of a kind together (src/92-shape.js)
-  // calls cost booking power: drop the ones the player cannot afford, last asked first
+  // a call on a star with creative control costs booking power: drop the ones the player cannot afford, last asked first
   if(isPl){var g2=0;while(g2++<8&&cardCost(S,card)>S.bp){var pm=card.filter(function(m){return m._q&&m.call!=null;})[0];if(!pm)break;delete pm.call;}}
   card.forEach(function(m){delete m._p;delete m._q;m.win=-2;});
   return card;
@@ -738,7 +738,7 @@ function callMatch(S,P,x){
   return bc;
 }
 
-/* Who wins? Unless the booker spends booking power to call it, the match is decided by the odds:
+/* Who wins? Unless the booker calls it (free since 21 October), the match is decided by the odds:
    overness, work rate, momentum, condition, the champion's advantage, traits, feud story logic and the house style. */
 function winOdds(S,P,show,m,sides,t,champSide,feud,big,isMain){
   var st=P.style||'stars',T=st==='drama'?10:7.5,MD=modelOf(P);
@@ -3667,8 +3667,9 @@ E.matchOdds=function(S,m,i,n){
   var c=matchSetup(S,m);if(!c)return null;
   var od=winOdds(S,c.P,c.show,m,c.sides,c.t,c.champSide,c.feud,!!c.show.big,i===n-1),fav=0;
   od.p.forEach(function(p,k){if(p>od.p[fav])fav=k;});
-  var cost=od.p.map(function(p,k){return (p>=0.5?1:(p>=0.25?2:3))+(c.t&&c.t.holders.length&&k!==c.champSide?1:0)+ccCost(S,m,k);});
-  return {p:od.p,draw:od.draw,fav:fav,cost:cost,drawCost:2,chem:null};
+  // picking the winner is free (Bill, 21 October): booking power pays for the extras, and a star with creative control is one of them
+  var cost=od.p.map(function(p,k){return ccCost(S,m,k);});
+  return {p:od.p,draw:od.draw,fav:fav,cost:cost,drawCost:1,chem:null};
 };
 function cardCost(S,card){
   var tot=0,n=card.length;
@@ -3676,10 +3677,11 @@ function cardCost(S,card){
   return tot;
 }
 function spendBP(S,card){
-  var c=cardCost(S,card),n=card.length,long=false;if(!c)return;
-  card.forEach(function(m,i){if(m.call!=null&&m.call>=0){var o=E.matchOdds(S,m,i,n);if(o&&o.p[m.call]<0.25)long=true;}});
+  var c=cardCost(S,card),n=card.length,long=false,called=card.filter(function(m){return m.call!=null;}).length;if(!called)return;
+  // the price of a long shot is paid in people: the favourite who was told to lose remembers it
+  card.forEach(function(m,i){if(m.call!=null&&m.call>=0){var o=E.matchOdds(S,m,i,n);if(o&&o.p[m.call]<0.25){long=true;m.sides[o.fav].forEach(function(id){var w=S.w[id];if(!w)return;w.morale=clamp(w.morale-3,0,100);youRemember(S,w,'longshot','You booked them to lose a match they were expected to win.',-6);});}}});
   if(c>S.bp){S.trust=clamp(S.trust-2*(c-S.bp),0,100);S.bp=0;}else S.bp-=c;
-  S.stats.calls+=card.filter(function(m){return m.call!=null;}).length;award(S,'ACH_CALL');if(long)award(S,'ACH_LONGSHOT');
+  S.stats.calls+=called;award(S,'ACH_CALL');if(long)award(S,'ACH_LONGSHOT');
 }
 E.cardCost=cardCost;
 
@@ -7693,7 +7695,7 @@ function asstBook(S){
     var cand=card.filter(function(m,i){return i<card.length-1&&m.mt==='1v1'&&!m.title&&m.sides.every(function(s){return s.length===1;});});
     for(var c=0;c<cand.length;c++){var m=cand[c],ix=m.sides.findIndex(function(s){var w=S.w[s[0]];return w&&w.g===f.g&&w.ovr<=f.ovr+6;});if(ix>=0&&!(show.brand&&f.brand!==show.brand&&!show.big)){on[m.sides[ix][0]]=0;m.sides[ix]=[id];on[id]=1;done++;break;}}
   });
-  // the same share of calls as you make, spent on the likelier winner, within the booking power in hand
+  // the same share of calls as you make, on the likelier winner, within the booking power in hand
   card.forEach(function(m){if(m.call==null&&chance(S,H.call*(0.4+lv*0.2))){var o=E.matchOdds(S,m,0,card.length);if(o&&o.fav!=null&&o.p[o.fav]>=0.5)m.call=o.fav;}});
   var g=0;while(g++<10&&cardCost(S,card)>S.bp){var last=card.slice().reverse().filter(function(m){return m.call!=null;})[0];if(!last)break;delete last.call;}
   return card;
@@ -8497,7 +8499,7 @@ WEEKX.push(function(S){
     checks:{1:mkCheck(7,[moraleMod(w),trustMod(S)].concat(skillMods(S,'talk')))}});
 });
 EVR.ccask=function(S,ev,choice,P,w){
-  if(choice===0){w.cc=1;w.ccUntil=S.week+Math.max(6,w.con|0);w.morale=clamp(w.morale+10,0,100);return w.name+' has creative control until the contract ends. Leaving them to play out can end in a win they asked for, and calling a loss on them costs 2 more booking power.';}
+  if(choice===0){w.cc=1;w.ccUntil=S.week+Math.max(6,w.con|0);w.morale=clamp(w.morale+10,0,100);return w.name+' has creative control until the contract ends. Leaving them to play out can end in a win they asked for, and calling a loss on them costs 2 booking power.';}
   if(choice===1){
     var r=rollCheck(S,ev.checks[1]);ev.roll=r;
     if(r.ok){w.wage=Math.round(w.wage*1.1/50)*50;w.morale=clamp(w.morale+3,0,100);return rollText(r)+w.name+' takes the money, now '+money(w.wage)+' a week, and drops the clause.';}
@@ -8509,7 +8511,7 @@ POST.push(function(ctx){
   var S=ctx.S,m=ctx.m,r=ctx.res;if(!ctx.isPl||S.cal||m.call==null||m.call<0||r.win<0)return;
   ctx.sides.forEach(function(s,k){if(k===m.call)return;s.forEach(function(w){if(w.cc){w.morale=clamp(w.morale-5,0,100);S.trust=clamp(S.trust-1,0,100);youRemember(S,w,'overruled','You overrode their creative control.',-20);r.seg.notes.push(w.name+' has creative control, and you overrode it. They remember.');}});});
 });
-E.controlWord=function(w){return w.cc?'Can refuse to lose. Calling a loss on them costs 2 more booking power and a little trust.':null;};
+E.controlWord=function(w){return w.cc?'Can refuse to lose. Calling a loss on them costs 2 booking power and a little trust.':null;};
 
 /* ---------- 44. The road: wear from the schedule (w.rd), travel partners, and a bus or a charter (P.trv) ---------- */
 var TRVN=['Vans and cars','Tour bus','Charter flights'],TRV_C=[0,0.004,0.011],TRV_R=[0,0.3,0.6];
@@ -13538,7 +13540,7 @@ E.cardFlags=function(S,card){card=card||S.card||[];return card.map(function(m,i)
     var f=typeof faceOf==='function'?faceOf(S):null;
     if(f){var at=-1;card.forEach(function(m,i){if(m.sides.some(function(s){return s.indexOf(f.id)>=0;}))at=i;});
       if(at>=0&&at!==n-1&&(!card[n-1].title||card[at].title)){var t=card[at];card[at]=card[n-1];card[n-1]=t;if(card[at].len==='L'&&card[n-1].len!=='L'){var l=card[at].len;card[at].len=card[n-1].len;card[n-1].len=l;}ch=true;}}
-    // a promised win is called, as far as the booking power goes
+    // a promised win is called (free unless a star with creative control is on the other side)
     S.quests.forEach(function(q){if(q.type!=='win')return;
       card.forEach(function(m){if(m.call!=null)return;var si=-1;m.sides.forEach(function(s,k){if(s.indexOf(q.w)>=0)si=k;});if(si<0)return;
         m.call=si;if(E.cardCost(S,card)>S.bp)m.call=null;else ch=true;});});
