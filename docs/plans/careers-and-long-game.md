@@ -1,6 +1,6 @@
-# Careers and the long game: four features from other genres
+# Careers and the long game: five features from other genres
 
-Bill, 21 October 2026: "I like ideas 1-5 add those to long term planning", then "one life in wrestling is awesome too", and dropped free agency week ("wrestling doesn't have a free agency week, lets not do that"). These come from the genre research doc (career, sports management, dynasty, 4X, grand strategy and simulation games): https://claude.ai/artifact/VGDEmfsJv4LgCXPwn8TyUQ. Nothing here is built. They sit in `TASKS.md` section 14, after the balance and first-hour work (Bill paused new features until that is done).
+Bill, 21 October 2026: "I like ideas 1-5 add those to long term planning", then "one life in wrestling is awesome too", and dropped free agency week ("wrestling doesn't have a free agency week, lets not do that"), then added "Path to the Hall of Fame i like". These come from the genre research doc (career, sports management, dynasty, 4X, grand strategy and simulation games): https://claude.ai/artifact/VGDEmfsJv4LgCXPwn8TyUQ. Nothing here is built. They sit in `TASKS.md` section 14, after the balance and first-hour work (Bill paused new features until that is done).
 
 Sizes follow `WISHLIST.md`: S is one commit, M is two or three, L is a week with this plan as its start.
 
@@ -66,3 +66,16 @@ Steps:
 1. Priorities per wrestler, from goals, age, hometown and mood; how each company meets each, read from the game.
 2. The Offer window shows the three and the dealbreaker; a signing depends on them as well as the wage.
 3. Rivals compete for the same free agent, and After the show or the Net says who went where and why.
+
+## 5. The path to the Hall (S)
+
+Bill, 21 October 2026: "Path to the Hall of Fame i like". Borrowed from Baseball-Reference's Hall of Fame Monitor and the career pages in Out of the Park Baseball.
+
+Every wrestler's file gets a career line (days as champion, main events, average stars, match-of-the-year awards, flagship wins) and one line in words on their case for the Hall: "Building a case", "On the path", "A lock". Never a number or a percentage. It feeds the Hall of Fame night (wish 76), the magazine's rankings (TASKS 0af) and the pictures planned for champions and the top ten.
+
+What it uses: the record book (wish 98), title histories, awards (wish 75), the ranking in `src/70-season.js` and the Hall of Fame itself. It only reads the game and never calls `rnd(S)`.
+
+Steps:
+
+1. `E.hallPath(S, id)`: the career line and the words, from what the game already keeps; a headless test that a long career climbs the words and a short one does not.
+2. The line on the wrestler's file, and the Hall of Fame night names who was "A lock" when they went in.
