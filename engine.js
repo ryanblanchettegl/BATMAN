@@ -140,7 +140,8 @@ function r1(v){return Math.round(v*10)/10;}
 function names(ws){var n=ws.map(function(w){return w.name;});if(n.length<2)return n[0]||'';return n.slice(0,-1).join(', ')+' & '+n[n.length-1];}
 function vsLabel(sides){return sides.map(names).join(' vs ');}
 
-function cal(week){var w=week-1;var mi=CAL0.m+Math.floor(w/4);return {wom:w%4+1,month:mi%12,year:CAL0.y+Math.floor(mi/12),label:'Week '+(w%4+1)+', '+MONTHS[mi%12]+' '+(CAL0.y+Math.floor(mi/12))};}
+function cal(week){var w=week-1+(CAL0.o||0);   // CAL0.o: weeks into the first month the game began (a game that opens on the flagship begins in its fourth week)
+  var mi=CAL0.m+Math.floor(w/4);return {wom:w%4+1,month:mi%12,year:CAL0.y+Math.floor(mi/12),label:'Week '+(w%4+1)+', '+MONTHS[mi%12]+' '+(CAL0.y+Math.floor(mi/12))};}
 function wageFor(ovr,P){var v=110*Math.pow(1.072,ovr)*P.wageMult;return Math.max(100,v<1000?Math.round(v/10)*10:Math.round(v/50)*50);}
 function workRate(w){var a=[w.brawl,w.tech,w.speed].sort(function(x,y){return y-x;});return Math.round(a[0]*0.5+a[1]*0.35+a[2]*0.15);}
 function isDev(P,brand){if(!P.brands)return false;for(var i=0;i<P.brands.length;i++)if(P.brands[i].id===brand)return !!P.brands[i].dev;return false;}
@@ -210,6 +211,8 @@ E.newGame=function(playerId,seed,opts){
   if(opts.fed){var fd=mkFedDef(opts.fed,clean(opts.name,24)||'The Booker');defs.push(fd);S.custom=fd;S.player=playerId=fd.id;}
   defs.forEach(function(d){buildPromo(S,d,byName);
   });
+  // a game can open in the week of the company's biggest show of the year (Ryan, 21 October: the first show is the tutorial)
+  var FP=S.promos[playerId];if(opts.start==='flag'&&FP&&FP.flagship!=null){var sy=DB.startYear+(FP.flagship<DB.startMonth?1:0);CAL0={y:sy,m:FP.flagship,o:3};S.db.startYear=sy;S.db.startMonth=FP.flagship;S.db.startOff=3;S.flagStart=1;}
   S.w.forEach(function(w){if(w.promo!=='FA'&&!S.promos[w.promo]){w.promo='FA';w.brand=null;}if(w.promo!=='FA'){w.wage=wageFor(w.ovr,S.promos[w.promo]);w.con=ri(S,14,140);}});
   preset.forEach(function(x){if(x[0].promo==='FA')return;if(x[1].wage)x[0].wage=x[1].wage;if(x[1].con)x[0].con=x[1].con;if(x[1].tw!=null)x[0].jw=S.week-x[1].tw;});
   S.columnist=pick(S,DB.columnists||['The Ringside Wire']);S.uni=DB.uni?{id:DB.uni.id,name:DB.uni.name,version:DB.uni.version}:null;S.stables=[];
@@ -503,8 +506,8 @@ function validate(S,P,show,card){
 /* ===== 10-match.js ===== */
 /* ---------- extension hooks: later systems plug into the match engine here ---------- */
 // EFX(ctx,w) -> effort delta; MQX/CRX(ctx) -> {d,x} quality / crowd delta with an optional dirt-sheet label;
-// POST(ctx) after a match is settled; SHOWX(S,P,show,rep) after a show; WEEKX(S) at week end; NEWX(S) on a new game.
-var MODEL_CROWD={},ANGDONE=[],EFX=[],MQX=[],CRX=[],FINX=[],POST=[],SHOWX=[],WEEKX=[],NEWX=[],ANGX=[],EVMAKE=[],EVR={},QEND={},PREX=[],TASKX=[];
+// SHOWON(S) when a show of the player's becomes the one being booked; POST(ctx) after a match is settled; SHOWX(S,P,show,rep) after a show; WEEKX(S) at week end; NEWX(S) on a new game.
+var MODEL_CROWD={},ANGDONE=[],EFX=[],MQX=[],CRX=[],FINX=[],POST=[],SHOWX=[],WEEKX=[],NEWX=[],ANGX=[],EVMAKE=[],EVR={},QEND={},PREX=[],TASKX=[],SHOWON=[];
 
 /* ---------- match engine ---------- */
 function workOf(w,stip,mins){
@@ -826,9 +829,9 @@ function doMatch(S,P,show,m,i,n,rep,used){
     winners=sides[win];losers=flat(sides.filter(function(s,k){return k!==win;}));
     var heelWin=winners[0].align==='H';
     // a run-in the booker called from the headset (src/31-live.js)
-    if(isPl&&m.runin&&S.w[m.runin.r]&&S.w[m.runin.p]){var rf=feudOf(S,m.runin.r,m.runin.p);if(rf)runin={r:S.w[m.runin.r],p:S.w[m.runin.p],f:rf};}
+    if(isPl&&m.runin&&!m.runin.after&&S.w[m.runin.r]&&S.w[m.runin.p]){var rf=feudOf(S,m.runin.r,m.runin.p);if(rf)runin={r:S.w[m.runin.r],p:S.w[m.runin.p],f:rf};}
     if(isPl&&!br)all.forEach(function(p){feudsFor(S,p.id).forEach(function(f){
-      if(runin||m.norun||f.kind==='dream')return;
+      if(runin||m.norun||m.runin||f.kind==='dream')return;   // m.runin.after: a booked run-in after the bell (src/99-ringside.js)
       var rs=(f.a.indexOf(p.id)>=0?f.b:f.a).map(function(id){return S.w[id];}).filter(function(r){return all.indexOf(r)<0&&r.inj<=0&&r.promo===P.id&&!(r.away>=S.week);});
       rs=rs.concat(stableMates(S,rs,all));
       if(rs.length&&chance(S,0.10+f.heat/400+(rs.length>1?0.06:0)))runin={r:pick(S,rs),p:p,f:f};
@@ -1600,15 +1603,17 @@ function dirtSheet(S,P,show,rep,pool){
 function showPool(S,P,show){return eligible(S,P,show).filter(function(w){return w.promo===P.id&&!(show.big&&isDev(P,w.brand));});}
 /* the advertised card sells the tickets: star power in the main event, the hottest feud, advertising, anything
    done this week to talk the show up, and the face of the company on the card. The desk's ticket sales use it too. */
+/** How big the main event's names are. A spot still open (a promised match waiting for its opponent) does not count. */
+function mainStar(S,card){var n=card.length,L=n?flat(card[n-1].sides).filter(function(id){return id!=null&&S.w[id];}):[];return L.length?avg(L.map(function(id){return S.w[id].ovr;})):50;}
 function cardHype(S,P,show,card,isPl){
-  var n=card.length,key=show.big?'big':show.id,star=n?avg(flat(card[n-1].sides).map(function(id){return S.w[id].ovr;})):50,heat=0;
-  card.forEach(function(m){var ids=flat(m.sides);for(var x=0;x<ids.length;x++)for(var y=x+1;y<ids.length;y++){var f=feudOf(S,ids[x],ids[y]);if(f&&f.heat>heat)heat=f.heat;}});
+  var n=card.length,key=show.big?'big':show.id,star=mainStar(S,card),heat=0;
+  card.forEach(function(m){var ids=flat(m.sides).filter(function(id){return id!=null;});for(var x=0;x<ids.length;x++)for(var y=x+1;y<ids.length;y++){var f=feudOf(S,ids[x],ids[y]);if(f&&f.heat>heat)heat=f.heat;}});
   return clamp(1+(star-(P.starB[key]||star))/80+heat/500+ADV_H[P.adv]+(isPl&&S.hype?S.hype:0)+(isPl&&show.big&&P.evHype?P.evHype:0)+(isPl?faceHype(S,P,card)+homeHype(S,P,flat(card.map(function(m){return flat(m.sides);}))):0),0.8,1.4)*(isPl&&show.big&&evAfterDark(S,P)?1.08:1);
 }
 /** What moved a big night's hype, in words, for the buy rate report. Reads the same parts as cardHype. */
 function hypeParts(S,P,show,card){
-  var n=card.length,key=show.big?'big':show.id,star=n?avg(flat(card[n-1].sides).map(function(id){return S.w[id].ovr;})):50,heat=0,out=[];
-  card.forEach(function(m){var ids=flat(m.sides);for(var x=0;x<ids.length;x++)for(var y=x+1;y<ids.length;y++){var f=feudOf(S,ids[x],ids[y]);if(f&&f.heat>heat)heat=f.heat;}});
+  var n=card.length,key=show.big?'big':show.id,star=mainStar(S,card),heat=0,out=[];
+  card.forEach(function(m){var ids=flat(m.sides).filter(function(id){return id!=null;});for(var x=0;x<ids.length;x++)for(var y=x+1;y<ids.length;y++){var f=feudOf(S,ids[x],ids[y]);if(f&&f.heat>heat)heat=f.heat;}});
   var sd=(star-(P.starB[key]||star))/80;if(Math.abs(sd)>=0.02)out.push({t:sd>0?'A main event bigger than usual':'A main event smaller than usual',v:sd});
   if(heat>=40)out.push({t:'A hot feud on the card',v:heat/500});
   if(ADV_H[P.adv])out.push({t:'Advertising',v:ADV_H[P.adv]});
@@ -1624,7 +1629,7 @@ function showStart(S,P,show,card){
   var isPl=P.id===S.player&&!S.cal,big=!!show.big,n=card.length,i,key=big?'big':show.id;
   var rep={promo:P.id,id:show.id,name:show.name,big:big,week:S.week,segs:[],gim:false};
   var pool=showPool(S,P,show);
-  var star=n?avg(flat(card[n-1].sides).map(function(id){return S.w[id].ovr;})):50;
+  var star=mainStar(S,card);
   rep.mainStar=star;
   if(!S.cal){
     var hype=cardHype(S,P,show,card,isPl),dm=TIX_D[P.tix],d0=demand(P,show,1)*(isPl?tourBoost(S,P)*roadMktNow(S,P):1),d=d0*(isPl?tasteDraw(S,P,card,rep)*weatherMult(S,show,roadCity(S,P,S.rdn||0)):1),cap=capFor(d0);if(isPl&&coldNight(S,show,roadCity(S,P,S.rdn||0)))rep.cold=1;   // the building was booked before the card was
@@ -1641,7 +1646,7 @@ function showStart(S,P,show,card){
     // the player books every promo and angle, and decides how much time the writers get (src/93-segments.js, src/97-time.js)
     var bk=segBooked(S,show,n);rep.open={k:'match'};
     if(S.plan)st.steps.push({t:'plan'});
-    for(i=0;i<n;i++){(bk.at[i]||[]).forEach(function(x){st.steps.push({t:'seg',i:i,slot:x.slot,sg:JSON.parse(JSON.stringify(x.sg))});});st.steps.push({t:'match',i:i});}
+    for(i=0;i<=n;i++){(bk.at[i]||[]).forEach(function(x){st.steps.push({t:'seg',i:i,slot:x.slot,sg:JSON.parse(JSON.stringify(x.sg))});});if(i<n)st.steps.push({t:'match',i:i});}   // at n: after the main event
   }else{for(i=0;i<n;i++)st.steps.push({t:'match',i:i});st.pool=pool;}
   return st;
 }
@@ -2019,7 +2024,7 @@ function liveFinish(S){
   if(L.log.length)rep.calls=L.log.slice();
   // what the booker did with their action points since the last show goes on the report too
   rep.prep=(S.apLog||[]).filter(function(l){return !l.sh;}).map(function(l){l.sh=1;return {place:l.place,act:l.act,ok:l.ok,msg:l.msg};});
-  S.qi++;S.card=[];S.live=null;S.segs=[];S.segKey=null;scnCut(S);
+  S.qi++;S.card=[];S.live=null;S.segs=[];S.segKey=null;scnCut(S);if(S.qi<S.queue.length)SHOWON.forEach(function(fn){fn(S);});
   return rep;
 }
 /** Put the show on the air. After this the card cannot be changed, only answered for. */
@@ -2396,7 +2401,7 @@ LIVEK.overtime={n:'They are not going home',
     if(f&&f.heat>=60&&wr>=72)why.push('The feud is hot and the crowd is with them');
     if(!why.length)return null;
     var ch=[{n:'Tell the referee to take it home',says:'The match ends in its time. Nothing is lost, and nothing is gained.'}],q,mi=L.card.length-1;
-    for(q=st.k+1;q<st.steps.length;q++)if(st.steps[q].t==='seg'&&!st.steps[q].cut){
+    for(q=st.k+1;q<st.steps.length;q++)if(st.steps[q].t==='seg'&&!st.steps[q].cut&&!st.steps[q].sg.forced){
       var sg=st.steps[q].sg,who=(sg.who||[]).map(function(id){return S.w[id];}).filter(Boolean),lab=who.length?segLabel(S,sg):'the writers’ segment';
       ch.push({n:'Give them five more minutes. Cut '+lab,k:'seg',q:q,says:'The match gets longer, and a good one gets better. '+(who.length?names(who)+' will not thank you for losing their time on the show.':'The writers lose their time on the show.')});break;
     }
@@ -2563,7 +2568,7 @@ function nightMatter(S,P,rep){
   if(tc){var lw=loserOf(tc),nw=S.w[tc.wi[0]],tt=P.titles.filter(function(x){return x.name===tc.title;})[0];
     if(lw&&nw&&tt&&lw.promo===P.id&&nw.promo===P.id&&!(lw.inj>0)&&nightFree(S,'nt',lw.id)){nightMark(S,'nt',lw.id);
       return {type:'clause',w:lw.id,o:nw.id,tid:tt.id,text:lw.name+' lost the '+tt.name+' to '+nw.name+' on '+rep.name+'. They want their rematch, and they want your word on it tonight.',
-        choices:['Promise the rematch within four weeks','No rematch. '+nw.name+' moves on to somebody new']};}}
+        choices:['Promise the rematch at '+bigNameAt(S,nextBigShow(S)),'No rematch. '+nw.name+' moves on to somebody new']};}}
   var hot=ms.slice(0,-1).filter(function(s){return main&&s.cr>=main.cr-4&&s.cr>=58&&s.win&&s.wi&&s.wi.length===1;}).sort(function(a,b){return b.cr-a.cr;})[0];
   if(hot){w=S.w[hot.wi[0]];
     if(w&&w.promo===P.id&&holdLvl(P,w.id)===0&&!(w.inj>0)&&nightFree(S,'nh',w.id)){nightMark(S,'nh',w.id);
@@ -2590,8 +2595,8 @@ function nightMatter(S,P,rep){
 }
 EVR.clause=function(S,ev,choice,P,w,o){
   var t=titleById(P,ev.tid);if(!w||w.promo!==P.id||!t)return 'It no longer matters.';
-  if(choice===0){S.quests.push({id:S.nid++,type:'shot',w:w.id,title:t.id,due:S.week+4,text:'Promise: give '+w.name+' the rematch for the '+t.name+' by '+cal(S.week+4).label});w.morale=clamp(w.morale+6,0,100);youRemember(S,w,'clause','They lost the belt and you gave them your word on a rematch.',6);
-    return 'You gave your word. '+w.name+' gets the rematch for the '+t.name+' by '+cal(S.week+4).label+'.';}
+  if(choice===0){var q=promiseShot(S,w,t,o,'the rematch');w.morale=clamp(w.morale+6,0,100);youRemember(S,w,'clause','They lost the belt and you gave them your word on a rematch.',6);
+    return 'You gave your word. '+w.name+' gets the rematch for the '+t.name+' at '+bigNameAt(S,q.at)+'. It is on that card already.';}
   w.morale=clamp(w.morale-8,0,100);w.mom=clamp((w.mom||0)-1,-10,10);youRemember(S,w,'noclause','They lost the belt and you told them there would be no rematch.',-7);
   if(o&&o.promo===P.id){o.morale=clamp(o.morale+4,0,100);youRemember(S,o,'newera','You let them start their run as champion with somebody new.',3);}
   return 'No rematch. '+w.name+' takes it badly.'+(o?' '+o.name+' gets a clean start as champion.':'');
@@ -2661,7 +2666,7 @@ function weekShows(S,P,w){
   if(c.wom===4&&evList(S,P)[c.month].t!=='dark')out.push({id:'big',big:true,flag:c.month===P.flagship,brand:null,name:P.name+' '+evName(S,P,c.month),rule:evRule(S,P,c.month),ty:evList(S,P)[c.month].t});
   return out;
 }
-function startWeek(S){var P=S.promos[S.player];S.queue=weekShows(S,P);S.qi=0;S.card=[];grantBP(S);S.inbox=S.inbox.filter(function(e){return !e.done;});genEvents(S);}
+function startWeek(S){var P=S.promos[S.player];S.queue=weekShows(S,P);S.qi=0;S.card=[];grantBP(S);S.inbox=S.inbox.filter(function(e){return !e.done;});genEvents(S);SHOWON.forEach(function(fn){fn(S);});}
 function leaveCompany(S,w,why,quiet){
   var P=S.promos[w.promo];if(!P)return;
   vacateFor(S,P,w,why,quiet);var tm=teamOf(S,w);if(tm)dissolveTeam(S,tm);leaveStable(S,w);w.mgr=null;S.w.forEach(function(x){if(x.mgr===w.id)x.mgr=null;});
@@ -2750,7 +2755,7 @@ var EV={
     var c=R.filter(function(w){return w.mom>=2&&holdLvl(P,w.id)===0&&!hasQuest(S,w.id);}).sort(function(a,b){return b.mom-a.mom;});
     for(var i=0;i<c.length;i++){var w=c[i],t=null;
       P.titles.forEach(function(x){if(x.tag||x.g!==w.g||!x.holders.length||(x.brand&&x.brand!==w.brand))return;var ch=S.w[x.holders[0]];if(w.ovr>=ch.ovr-25&&w.ovr<=ch.ovr+12&&(!t||x.lvl>t.lvl))t=x;});
-      if(t)return {type:'shot',w:w.id,title:t.id,text:w.name+' is on a roll and asks for a shot at the '+t.name+'.',choices:['Promise the shot within 6 weeks','Not yet']};}
+      if(t)return {type:'shot',w:w.id,title:t.id,text:w.name+' is on a roll and asks for a shot at the '+t.name+'.',choices:['Promise the shot at '+bigNameAt(S,nextBigShow(S)),'Not yet']};}
     return null;
   },
   losing:function(S,P,R){
@@ -2827,7 +2832,7 @@ E.resolveEvent=function(S,id,choice){
   var P=S.promos[S.player],w=ev.w!=null?S.w[ev.w]:null,o=ev.o!=null?S.w[ev.o]:null,res='',roll;
   if(EVR[ev.type]){res=EVR[ev.type](S,ev,choice,P,w,o);ev.done=true;ev.result=res;return res;}
   if(ev.type==='shot'){
-    if(choice===0){var t=titleById(P,ev.title);S.quests.push({id:S.nid++,type:'shot',w:w.id,title:ev.title,due:S.week+6,text:'Promise: give '+w.name+' a '+t.name+' match by '+cal(S.week+6).label});w.morale=clamp(w.morale+8,0,100);res='You gave your word. '+w.name+' is fired up.';}
+    if(choice===0){var t=titleById(P,ev.title),q=promiseShot(S,w,t,null);w.morale=clamp(w.morale+8,0,100);res='You gave your word. '+w.name+' is fired up: the '+t.name+' match is on the card at '+bigNameAt(S,q.at)+'.';}
     else{w.morale=clamp(w.morale-6,0,100);res=w.name+' is not happy, but accepts it for now.';}
   }else if(ev.type==='losing'){
     if(choice===0){S.quests.push({id:S.nid++,type:'win',w:w.id,due:S.week+2,text:'Promise: book a win for '+w.name+' by '+cal(S.week+2).label});w.morale=clamp(w.morale+5,0,100);res='You promised a win. '+w.name+' will hold you to it.';}
@@ -5522,10 +5527,11 @@ function peopleNow(S){
     else if(f&&f.heat<32&&S.week-f.start>=6)asks.push({w:w,k:'askout',why:'Came in to ask out of the rivalry with '+pplOther(S,f,w.id).name+'. It is going nowhere',acts:['out_yes','ask_no'],o:{with:pplOther(S,f,w.id).id,story:'The rivalry has gone cold'}});
     else if(w.align==='F'&&w.morale<50&&(w.mom||0)<=-2&&!f)asks.push({w:w,k:'askturn',why:'Came in to ask for a change. Wants to turn villain',acts:['turn_yes','ask_no'],o:{story:'Losing, and the crowd has stopped caring'}});
     else if(holdLvl(P,w.id)===0&&!f&&((w.stress||0)>=60||w.cond<50))asks.push({w:w,k:'askoff',why:'Came in to ask for two weeks at home. Worn out',acts:['off_yes','ask_no'],o:{story:'Has not had a break in a long time'}});
+    else if(holdLvl(P,w.id)===0&&!f&&micOf(S,w)>=70&&w.morale>=45&&!(S.locks||[]).some(function(l){return l.who===w.id;}))asks.push({w:w,k:'askpromo',why:'Came in to ask for time on the microphone on the next show. Has something to say',acts:['promo_yes','ask_no'],o:{story:'Good on the microphone, and nobody has handed them one lately'}});
     else if(w.team==null&&!f&&holdLvl(P,w.id)===0){var fr=byOvr.filter(function(x){return x.id!==w.id&&x.g===w.g&&x.team==null&&free(x)&&holdLvl(P,x.id)===0&&bondOf(S,w.id,x.id)>=REL_ON;})[0];
       if(fr)asks.push({w:w,k:'askteam',why:'Came in to ask to team with '+fr.name+'. They are friends',acts:['team_yes','ask_no'],o:{with:fr.id,story:'Neither has much going on alone'}});}
   });
-  var pri={askshot:0,askend:1,askraise:2,askout:3,askturn:4,askoff:5,askteam:6};
+  var pri={askshot:0,askend:1,askraise:2,askout:3,askturn:4,askoff:5,askpromo:6,askteam:7};
   asks.sort(function(a,b){return pri[a.k]-pri[b.k]||wkh(a.w)-wkh(b.w);}).slice(0,2).forEach(function(q){put('truck',q.w,q.k,q.why,'warn',q.acts,q.o);});
   var face=typeof faceOf==='function'?faceOf(S):null;
   if(here(face)&&!(face.inj>0))put('truck',face,'face','The shows are built around them. Came in to see the run sheet','good',['run'],{});
@@ -5584,10 +5590,10 @@ var PPL_ACT={
     run:function(S,P,w){w.morale=clamp(w.morale+5,0,100);stressAdd(S,w,-4);S.hype=(S.hype||0)+0.02;youRemember(S,w,'plan','You sat down and told them where the title was going.',5);return {ok:true,msg:w.name+' leaves knowing the plan, and likes being told first. A champion who believes in the story sells it.'};}},
   word:{n:'Ask them to put in a word',d:'The owner listens to this one. A little more trust upstairs. They will expect to be looked after.',
     run:function(S,P,w){S.owner.trust=clamp(S.owner.trust+3,0,100);youRemember(S,w,'favour','You asked them for a favour with '+S.owner.name+'. They will want one back.',2);return {ok:true,msg:w.name+' has a word with '+S.owner.name+'. It lands. You owe them one now.'};}},
-  shot_yes:{n:'Say yes: promise the title match',free:1,d:'You give your word: a match for the belt within six weeks. They will hold you to it.',
+  shot_yes:{n:'Say yes: promise the title match',free:1,d:'You give your word: a match for the belt at the next big event. It goes on that card, and they will hold you to it.',
     run:function(S,P,w,o,r,p){var t=titleById(P,p.tid);if(!t)return {ok:false,stop:true,msg:'That belt is no longer there to promise.'};
-      S.quests.push({id:S.nid++,type:'shot',w:w.id,title:t.id,due:S.week+6,text:'Promise: give '+w.name+' a match for the '+t.name+' by '+cal(S.week+6).label});w.morale=clamp(w.morale+8,0,100);youRemember(S,w,'saidyes','They asked for a title shot and you said yes to their face.',6);
-      return {ok:true,msg:'You gave your word. '+w.name+' gets a match for the '+t.name+' by '+cal(S.week+6).label+'.'};}},
+      var q=promiseShot(S,w,t,null);w.morale=clamp(w.morale+8,0,100);youRemember(S,w,'saidyes','They asked for a title shot and you said yes to their face.',6);
+      return {ok:true,msg:'You gave your word. '+w.name+' gets a match for the '+t.name+' at '+bigNameAt(S,q.at)+'. It is on that card already.'};}},
   out_yes:{n:'Say yes: end the rivalry',free:1,d:'The rivalry is dropped where it stands. Both of them are free for something new.',
     run:function(S,P,w,o){var f=o?feudOf(S,w.id,o.id):null;if(!f)return {ok:false,stop:true,msg:'That rivalry is already over.'};f.res=true;f.dead=true;f.end=S.week;w.morale=clamp(w.morale+5,0,100);youRemember(S,w,'listened','They asked out of a rivalry that was going nowhere, and you listened.',5);
       return {ok:true,msg:'The rivalry between '+w.name+' and '+o.name+' is over, quietly. '+w.name+' is grateful, and free for something new.'};}},
@@ -5604,6 +5610,8 @@ var PPL_ACT={
   raise_yes:{n:'Say yes: pay them more',free:1,d:function(S,P,w){return 'Their wage goes from '+money(w.wage)+' to '+money(pplRaise(w))+' a week, for the rest of the contract.';},
     run:function(S,P,w){var to=pplRaise(w);w.wage=to;w.morale=clamp(w.morale+9,0,100);youRemember(S,w,'raise','They asked for more money and you paid it without a fight.',6);
       return {ok:true,msg:w.name+' is on '+money(to)+' a week now. They shake your hand twice on the way out.'};}},
+  promo_yes:{n:'Say yes: a promo on the next show',free:1,d:'You promise them a promo. It goes on the next show’s run sheet and stays there.',
+    run:function(S,P,w){var r=E.promisePromo(S,w.id);w.morale=clamp(w.morale+5,0,100);youRemember(S,w,'promo','They asked for the microphone and you promised it.',5);return {ok:true,msg:r.msg};}},
   off_yes:{n:'Say yes: two weeks at home',free:1,d:'They are off the card for two weeks and come back rested.',
     run:function(S,P,w){w.away=S.week+2;w.cond=clamp(w.cond+25,5,100);stressAdd(S,w,-20);w.morale=clamp(w.morale+7,0,100);youRemember(S,w,'rested','They asked for time at home and you gave it.',6);
       return {ok:true,msg:w.name+' goes home for two weeks. They are off the card until '+cal(S.week+3).label+', and they will come back rested.'};}},
@@ -7664,7 +7672,7 @@ E.useUniverse=function(pkg,fileList){
   DB=buildDB(pkg);CAL0={y:DB.startYear,m:DB.startMonth};v.info=E.universe();return v;
 };
 E.universe=function(){var n=0,count={},cur=null;if(DB.rows){n=DB.rows.length;DB.rows.forEach(function(d){if(d.promo)count[d.promo]=(count[d.promo]||0)+1;});}else DB.roster.split('\n').forEach(function(l){l=l.trim();if(!l)return;if(l[0]==='#'){cur=l.slice(1).trim().split(/\s+/)[0];return;}n++;count[cur]=(count[cur]||0)+1;});return {count:count,start:MONTHS[DB.startMonth]+' '+DB.startYear,id:DB.uni?DB.uni.id:'legacy',name:DB.uni?DB.uni.name:'Built-in roster',version:DB.uni?DB.uni.version:'1',author:DB.uni?DB.uni.author:'',desc:DB.uni?DB.uni.desc:'',workers:n,promotions:DB.promotions};};
-E.attach=function(S){var d=S&&S.db;CAL0=d?{y:d.startYear,m:d.startMonth}:{y:DB.startYear,m:DB.startMonth};};
+E.attach=function(S){var d=S&&S.db;CAL0=d?{y:d.startYear,m:d.startMonth,o:d.startOff||0}:{y:DB.startYear,m:DB.startMonth};};
 /* what a package told us that the world builder cannot express row by row */
 NEWX.push(function(S){
   var by={};S.w.forEach(function(w){if(w.uid)by[w.uid]=w;});
@@ -11735,12 +11743,16 @@ function segSlots(P,show){return show&&show.big?2:clamp(P.angles==null?2:P.angle
 /** The segments booked for the show on the desk. Starts a fresh list when the show changes. */
 function segList(S){
   var show=S.queue&&S.queue[S.qi];if(!show)return [];
-  if(S.segKey!==showKey(S)){S.segs=[];S.segKey=showKey(S);}
-  var L=S.segs||(S.segs=[]);for(var i=L.length-1;i>=0;i--)if(!L[i]||!SEGK[L[i].k])L.splice(i,1);
+  if(S.segKey!==showKey(S)){S.segs=[];S.segKey=showKey(S);SEGNEW.forEach(function(fn){fn(S,S.segs);});}
+  var L=S.segs||(S.segs=[]);for(var i=L.length-1;i>=0;i--)if(!L[i]||!SEGK[L[i].k]||segStale(S,L[i]))L.splice(i,1);
   return L;
 }
+/** A segment the writers or a promise put there, whose reason has gone: an arc that has moved on, a promise no longer owed. */
+function segStale(S,sg){if(sg.k==='arc')return !(S.sa&&!S.sa.done&&S.sa.node===sg.node);if(sg.pm!=null)return !(S.locks||[]).some(function(l){return l.id===sg.pm;});return false;}
 /** The same list, read only (for anything that must not change the game, like the ADVANCE button). */
-function segRead(S){return S.segKey===showKey(S)?(S.segs||[]).filter(function(sg){return sg&&SEGK[sg.k];}):[];}
+function segRead(S){if(S.segKey!==showKey(S)){var L=[];SEGNEW.forEach(function(fn){fn(S,L,1);});return L;}return (S.segs||[]).filter(function(sg){return sg&&SEGK[sg.k]&&!segStale(S,sg);});}
+/** What the writers put on a show before the booker does (the arc, a promised promo): fn(S, list, readOnly) adds to the list. */
+var SEGNEW=[];
 function segPool(S){var P=S.promos[S.player],show=S.queue[S.qi];return show?eligible(S,P,show).filter(function(w){return w.promo===P.id&&!(show.big&&isDev(P,w.brand));}):[];}
 function segTitleOf(S,P,show,w){return showTitles(P,show).filter(function(t){return !t.tag&&t.holders.length&&t.holders[0]===w.id;}).sort(function(a,b){return b.lvl-a.lvl;})[0]||null;}
 /** Who may fill each role of a kind, given the roles already picked. Returns one list of wrestlers per role. */
@@ -11893,10 +11905,10 @@ function runSeg(S,P,show,ctx,sg,slot,opens){
 /** Tonight's booked segments, grouped by the match they come before. Called by runShow for the player's shows. */
 function segBooked(S,show,n){
   var out={count:0,at:{}};if(S.cal||!n)return out;
-  if(S.segKey!==showKey(S))return out;
+  segList(S);
   (S.segs||[]).forEach(function(sg,i){
     if(!sg||!SEGK[sg.k]||segWhy(S,sg,i))return;
-    var p=clamp(sg.pos|0,0,n-1);(out.at[p]||(out.at[p]=[])).push({sg:sg,slot:i});out.count++;
+    var p=sg.post?n:clamp(sg.pos|0,0,n-1);(out.at[p]||(out.at[p]=[])).push({sg:sg,slot:i});out.count++;   // sg.post: after the main event
   });
   return out;
 }
@@ -11910,7 +11922,7 @@ E.segInfo=function(S){
   var L=segList(S),mins=0;
   var list=L.map(function(sg,i){
     var why=segWhy(S,sg,i),look=why?null:segLook(S,sg,i),K=SEGK[sg.k];mins+=segMins(sg);
-    return {slot:i,k:sg.k,t:K.t,who:sg.who.slice(),pos:sg.pos|0,len:segLen(sg),mins:segMins(sg),label:why?K.n:segLabel(S,sg),why:why,look:look};
+    return {slot:i,k:sg.k,t:K.t,who:sg.who.slice(),pos:sg.pos|0,post:!!sg.post,forced:!!sg.forced,pm:sg.pm==null?null:sg.pm,len:segLen(sg),mins:segMins(sg),label:why?K.n:segLabel(S,sg),why:why,look:look};
   });
   return {booked:L.length,list:list,mins:mins};
 };
@@ -11919,6 +11931,7 @@ E.segLook=function(S,sg,slot){return segLook(S,sg,slot==null?-1:slot);};
 /** Book, change or remove a segment. A slot past the end of the list (or -1) adds a new one. sg null removes it. */
 E.setSeg=function(S,slot,sg){
   var L=segList(S),isNew=slot==null||slot<0||slot>=L.length;
+  if(!isNew&&L[slot]&&L[slot].forced)return {ok:false,msg:L[slot].k==='arc'?'The writers put this arc on the show. It stays: decide where it goes instead.':'You promised this. It stays on the show.'};
   if(!sg){if(isNew)return {ok:true,msg:'Nothing was booked there.'};L.splice(slot,1);return {ok:true,msg:'That segment is off the show.'};}
   var K=SEGK[sg.k];if(!K)return {ok:false,msg:'Pick what kind of segment it is.'};
   var clean={k:sg.k,who:(sg.who||[]).slice(0,K.roles.length).map(function(x){return +x;}),pos:Math.max(0,sg.pos|0),len:K.fix?K.len:(SEGLEN[sg.len]?sg.len:K.len)},why=segWhy(S,clean,isNew?-1:slot);
@@ -11928,7 +11941,7 @@ E.setSeg=function(S,slot,sg){
   return {ok:true,slot:isNew?L.length-1:slot,msg:clean.k==='writers'?'Booked: '+mins+' minutes for the writers.':'Booked: '+segLabel(S,clean)+', '+mins+' minutes. It should be about '+starG(lk.mid)+'.'};
 };
 /** Take every promo and angle off the show on the desk. */
-E.segClear=function(S){var L=segList(S);L.length=0;return {ok:true,msg:'The run sheet is clear.'};};
+E.segClear=function(S){var L=segList(S),keep=L.filter(function(sg){return sg&&sg.forced;});L.length=0;keep.forEach(function(sg){L.push(sg);});return {ok:true,msg:keep.length?'The run sheet is clear, but for what the writers put on it.':'The run sheet is clear.'};};
 /** Add sensible segments: the hottest feud first, then a champion who needs a challenger, then the best talker.
     `max` is how many to add (one unless told). `card` is the card they sit on (the draft card unless told). */
 E.segSuggest=function(S,max,card){
@@ -12623,7 +12636,8 @@ E.welcome=function(S){
       'Nobody upstairs can save you either.',place.replace(/^We are/,'You are').replace(/I did not hire you to stay there\./,'That is not why you did this.')]
     :['Congratulations. The job is yours.','You are the booker of '+(P.full||P.name)+', '+modelOf(P).ph+'. From tonight every match, every promo and every finish goes out with your name on it.',place];
   if(ch)L.push(ch.name+' holds the '+top.name+'.'+(fav&&fav.id!==ch.id?' My money is on '+fav.name+'. You will hear from me about that.':(fav?' I like it that way.':'')));
-  L.push('Your first show is '+sh.name+'. The card is empty and the building is sold.');
+  if(S.flagStart&&sh.big)L.push('Your first show is '+sh.name+', the biggest night of our year, and it is this week. The building has been sold out for months. A match on it was promised before you got here, and the writers have the ending of a story ready for after the main event.');
+  else L.push('Your first show is '+sh.name+'. The card is empty and the building is sold.');
   L.push(me?'Go and book it.':'Do not make me regret this.');
   return S.letter={from:me?S.booker.name:o.name,role:me?'Owner and booker':'Owner',company:P.full||P.name,short:P.name,to:S.booker.name,date:cal(S.week).label,lines:L,show:sh.name,
     ps:'Before the show, the Office is where the week starts. The key at the bottom right always says what is next.'};
@@ -12736,9 +12750,10 @@ function showClock(S,card){
   var put=function(o){o.at=t;t+=o.mins;items.push(o);};
   if(hasPlan(S))put({t:'plan',mins:PLAN_MINS});
   for(i=0;i<Math.max(n,1);i++){
-    L.forEach(function(sg,slot){if(clamp(sg.pos|0,0,Math.max(0,n-1))===i)put({t:'seg',slot:slot,k:sg.k,mins:segMins(sg)});});
+    L.forEach(function(sg,slot){if(!sg.post&&clamp(sg.pos|0,0,Math.max(0,n-1))===i)put({t:'seg',slot:slot,k:sg.k,mins:segMins(sg)});});
     if(i<n)put({t:'match',i:i,mins:matchSlot(show,card[i],i===n-1)});
   }
+  L.forEach(function(sg,slot){if(sg.post)put({t:'seg',slot:slot,k:sg.k,mins:segMins(sg),post:1});});   // after the main event
   var tops=[],h;for(h=0;h*60<B;h++){for(i=0;i<items.length;i++)if(items[i].at<=h*60&&h*60<items[i].at+items[i].mins){items[i].top=h+1;tops.push({hour:h+1,at:h*60,k:i});break;}}
   return {budget:B,total:t,left:B-t,items:items,tops:tops,over:t-B>TIME_OVER,short:B-t>TIME_LIGHT,light:B-t>TIME_FREE&&B-t<=TIME_LIGHT};
 }
@@ -12816,9 +12831,11 @@ function fitShow(S,card,keep){
     i=choose(function(k){return k<n-1&&lenOf(card[k])==='L'&&card[k].stip!=='iron';},true);if(i>=0){card[i].len='M';return true;}
     if(n>1&&lenOf(card[0])==='M'&&!card[0].title&&card[0].stip!=='iron'){card[0].len='S';return true;}
     i=choose(function(k){return k<n-1&&lenOf(card[k])==='M'&&!card[k].title&&card[k].stip!=='iron';},true);if(i>=0){card[i].len='S';return true;}
-    if(L.length){for(i=L.length-1;i>=0;i--)if(L[i].k==='writers'){L.splice(i,1);return true;}L.pop();return true;}
+    for(i=L.length-1;i>=0;i--)if(L[i].k==='writers'){L.splice(i,1);return true;}
+    for(i=L.length-1;i>=0;i--)if(!L[i].forced){L.splice(i,1);return true;}
     if(lenOf(card[n-1])==='L'&&card[n-1].stip!=='iron'){card[n-1].len='M';return true;}
-    if(n>3){i=choose(function(k){return k<n-1&&!card[k].title;},true);if(i>=0){card.splice(i,1);L.forEach(function(sg){if(sg.pos>i)sg.pos--;});return true;}}
+    // a match locked in its place (or promised) is never the one cut
+    if(n>3){i=choose(function(k){return k<n-1&&!card[k].title&&!card[k].lock;},true);if(i>=0){card.splice(i,1);L.forEach(function(sg){if(sg.pos>i)sg.pos--;});return true;}}
     return false;
   };
   var grow=function(){
@@ -12872,7 +12889,8 @@ E.OPEN_GUIDE=['match','promo','angle','recap','writers'].map(function(k){return 
 function showFill(S,card){
   var show=S.queue&&S.queue[S.qi];if(!show||!card.length)return card;
   var P=S.promos[S.player],n=card.length,want=segSlots(P,show),L,k,spots=[Math.min(1,n-1),n-1,Math.min(2,n-1)];
-  S.segs=[];S.segKey=showKey(S);L=S.segs;
+  var kept=S.segKey===showKey(S)?(S.segs||[]).filter(function(sg){return sg&&sg.forced;}):null;
+  S.segs=[];S.segKey=showKey(S);L=S.segs;if(kept)kept.forEach(function(sg){L.push(sg);});else SEGNEW.forEach(function(fn){fn(S,L);});
   if(want>0)E.segSuggest(S,1,card);
   for(k=L.length;k<want;k++)L.push({k:'writers',who:[],pos:spots[k%spots.length],len:'M'});
   fitShow(S,card);
@@ -13497,6 +13515,130 @@ SHOWX.push(function(S,P){
 /** For the screens: how the points come back. */
 E.pointsInfo=function(S){return {bp:S.bp||0,perShow:bpPerShow(S),bpCarry:BP_CARRY,ap:S.ap||0,apMax:apMax(S),apCarry:AP_CARRY};};
 
+/* ===== 99-ringside.js ===== */
+/* Guest commentary and run-ins, on every match (Ryan, 21 October: "so people can easily add feud members", and run-in
+   participants "to keep shows going"). docs/plans/arcs-on-the-card.md.
+   m.gc is the guest at the commentary desk for the match, m.ri the one booked to run in. Neither is in the match.
+   A guest who has a story with somebody in the match lifts the crowd and heats the feud, and says their piece on the
+   call (beats of type 'col' with g: their id, played at the desk's third chair). A booked run-in does not decide the
+   finish: the writers or a call on the air do. When the match comes up the run-in is at the curtain and the gorilla
+   position decides when they go (LIVEK.bookrun): after the bell (a beat-down, the finish untouched; what a game nobody
+   plays does), during the match to cost somebody it, during it and fought off, or not at all. Either way they are now
+   in a story with the one they went after, through startFeud(), relBump() and youRemember(). Picks of words come from
+   h01(), never rnd(S). */
+function rsIn(S,show,id,m){var P=S.promos[S.player];if(id==null||!S.w[id]||(m&&flat(m.sides).indexOf(id)>=0))return false;return eligible(S,P,show).some(function(w){return w.id===id;});}
+/** The one in the match a guest or a run-in has the most story with: a feud first, then the worst blood. */
+function rsTarget(S,m,id){
+  var ids=flat(m.sides).filter(function(x){return x!=null&&S.w[x];}),best=null,bs=-1e9;
+  ids.forEach(function(x){var f=feudOf(S,id,x),v=(f?200+f.heat:0)-(typeof bondOf==='function'?bondOf(S,id,x):0);if(v>bs){bs=v;best=x;}});
+  return best;
+}
+/** Why somebody fits a match's desk or curtain, in a few words, or ''. */
+function rsWhy(S,m,id){return rsAbout(S,m,id).t;}
+/** Why, and who in the match it is about: {t, id}. */
+function rsAbout(S,m,id){
+  var ids=flat(m.sides).filter(function(x){return x!=null&&S.w[x];}),f=null,fr=null,i;
+  for(i=0;i<ids.length;i++){var g=feudOf(S,id,ids[i]);if(g&&(!f||g.heat>f.heat)){f=g;fr=ids[i];}}
+  if(f)return {t:'feuding with '+S.w[fr].name,id:fr};
+  var A=S.sa;if(A&&!A.done){var cast=Object.keys(A.cast).map(function(r){return A.cast[r];});var ia=ids.filter(function(x){return cast.indexOf(x)>=0;})[0];if(cast.indexOf(id)>=0&&ia!=null)return {t:'in the arc',id:ia};}
+  for(i=0;i<ids.length;i++){var b=typeof bondOf==='function'?bondOf(S,id,ids[i]):0;if(b>=40)return {t:S.w[ids[i]].name+'’s friend',id:ids[i]};if(b<=-40)return {t:'bad blood with '+S.w[ids[i]].name,id:ids[i]};}
+  return {t:'',id:rsTarget(S,m,id)};
+}
+/** Who can sit in on commentary for match i, or run in: everybody working tonight who is not in it, the ones with a story first. */
+E.ringsideChoices=function(S,i){
+  var m=S.card&&S.card[i],show=S.queue&&S.queue[S.qi],P=S.promos[S.player];if(!m||!show)return [];
+  var ids=flat(m.sides);
+  return eligible(S,P,show).filter(function(w){return ids.indexOf(w.id)<0;}).map(function(w){return {id:w.id,n:w.name,why:rsWhy(S,m,w.id),ovr:w.ovr};})
+    .sort(function(a,b){return (b.why?1:0)-(a.why?1:0)||b.ovr-a.ovr;});
+};
+/** Put somebody at the desk (k 'gc') or at the curtain (k 'ri') for match i. v '' takes them away. */
+E.setRingside=function(S,i,k,v){
+  var m=S.card&&S.card[i];if(!m||(k!=='gc'&&k!=='ri'))return {ok:false,msg:''};
+  if(v===''||v==null){delete m[k];return {ok:true,msg:k==='gc'?'No guest on commentary.':'Nobody runs in.'};}
+  var id=+v,w=S.w[id];if(!w)return {ok:false,msg:''};
+  if(flat(m.sides).indexOf(id)>=0)return {ok:false,msg:w.name+' is in the match.'};
+  if(m[k==='gc'?'ri':'gc']===id)return {ok:false,msg:w.name+' cannot be at the desk and at the curtain.'};
+  m[k]=id;var why=rsWhy(S,m,id);
+  return {ok:true,msg:k==='gc'?w.name+' joins the commentary desk for this match'+(why?' ('+why+').':'.'):w.name+' will be at the curtain. When they go is your call on the night.'};
+};
+/* a guest with a story with somebody in the match lifts the crowd; a run-in after the bell gets a pop */
+CRX.push(function(ctx){
+  if(!ctx.isPl)return null;var S=ctx.S,m=ctx.m,d=0,x=null;
+  if(m.gc!=null&&rsIn(S,ctx.show,m.gc,m)){var g=S.w[m.gc],why=rsWhy(S,m,g.id);if(/^feuding|arc/.test(why)){d+=1.5;x=g.name+' on commentary, with a score to settle';}else{d+=0.4;x=x||g.name+' joined the commentary desk';}}
+  if(m.runin&&m.runin.after){d+=1;x=x||'A run-in after the bell';}
+  return d?{d:d,x:x}:null;
+});
+var GC_LINES={
+  feud:['{g}: “I am not here to call the match. I am here to watch {t} lose.”','{g}: “Look at {t}. That is somebody who knows I am sitting right here.”','{g}: “Enjoy it, {t}. Next time it is me in there.”','{g}: “Every move {t} makes tonight, I am taking notes.”'],
+  friend:['{g}: “Come on, {t}! That is my friend in there, and I will say so on live television.”','{g}: “I have known {t} for years. Nobody works harder.”','{g}: “Get up, {t}! Get up!”'],
+  bad:['{g}: “I would not cross the street to help {t}. Just saying.”','{g}: “Somebody had to say it: {t} is overrated.”'],
+  any:['{g}: “Thanks for having me. Great match so far.”','{g}: “I could do that. I have done that, better.”','{g}: “This crowd is hot tonight. You can feel it from here.”']
+};
+/* the guest's piece on the call, the heat it adds, and the run-in after the bell or during the match */
+POST.push(function(ctx){
+  var S=ctx.S,m=ctx.m,seg=ctx.res&&ctx.res.seg,P=ctx.P;if(!ctx.isPl||S.cal||!seg)return;
+  var bc=seg.bc||(seg.bc=[]);
+  if(m.gc!=null&&rsIn(S,ctx.show,m.gc,m)){
+    var g=S.w[m.gc],ab=rsAbout(S,m,g.id),t=ab.id,tw=t!=null?S.w[t]:null,why=ab.t,set=/^feuding|arc/.test(why)?'feud':(/friend/.test(why)?'friend':(/bad blood/.test(why)?'bad':'any'));
+    var cols=[];bc.forEach(function(b,k){if(b.t==='col')cols.push(k);});
+    var L=GC_LINES[set],key='gc'+S.week+':'+g.id+':'+(ctx.i||0),k0=Math.floor(h01(key)*L.length)%L.length,line=function(n){return fill(L[(k0+n)%L.length],{g:g.name,t:tw?tw.name:'them'});};   // two different lines
+    var at=[cols.length?cols[Math.floor(cols.length/3)]+1:2,cols.length>1?cols[cols.length-1]+1:bc.length];
+    bc.splice(Math.min(at[1],bc.length),0,{t:'col',g:g.id,x:line(1)});bc.splice(Math.min(at[0],bc.length),0,{t:'col',g:g.id,x:line(0)});
+    seg.gc=g.id;
+    if(set==='feud'&&tw){var f=feudOf(S,g.id,tw.id);if(f)heatUp(S,f,3,g.name+' sat in on commentary for '+tw.name+'’s match');relBump(S,g.id,tw.id,{bond:-3},{k:'gc',t:g.name+' ran '+tw.name+' down on commentary.'});}
+    else if(set==='friend'&&tw)relBump(S,g.id,tw.id,{bond:2},{k:'gc',t:g.name+' cheered '+tw.name+' on from the desk.'});
+    youRemember(S,g,'gc','You put them on the commentary desk for a match.',1);
+  }
+  var R=m.runin;
+  if(R&&R.booked&&S.w[R.r]&&S.w[R.p]){
+    var r=S.w[R.r],p=S.w[R.p],f2=feudOf(S,r.id,p.id),nf=!f2;
+    if(!f2)f2=startFeud(S,P,p,r,R.after?32:28,r.name+' ran in on '+p.name,{force:true});else heatUp(S,f2,R.after?7:4,r.name+' ran in on '+p.name);
+    relBump(S,r.id,p.id,{bond:-8},{k:'runin',t:r.name+' ran in on '+p.name+'.'});
+    if(R.after){bc.push({t:'note',x:'The bell has barely gone when '+r.name+' hits the ring and lays '+p.name+' out. Officials pour down the ramp.'});seg.notes.push(r.name+' ran in after the bell and laid out '+p.name+'.'+(nf&&f2?' A new rivalry begins.':''));}
+    seg.ri=r.id;youRemember(S,r,'runin','You sent them out on '+p.name+'.',2);
+  }
+});
+/* a booked run-in is at the curtain when the match comes up, every time: a call of its own, outside the night's limit */
+LIVEK.bookrun={n:'At the curtain',free:true,
+  pre:function(S,L,step){
+    if(step.t!=='match')return null;var M=liveMatch(S,L,step.i);if(!M||M.m.ri==null||M.m.runin||M.m.norun||M.m.rasked)return null;
+    var show=S.queue[S.qi],r=S.w[M.m.ri];if(!r||!rsIn(S,show,r.id,M.m))return null;
+    M.m.rasked=1;
+    var pid=rsAbout(S,M.m,r.id).id,p=S.w[pid];if(!p)return null;
+    var side=M.m.sides[0].indexOf(p.id)>=0?0:1,two=M.c.sides.length===2&&M.m.mt!=='br',why=rsWhy(S,M.m,r.id);
+    var ch=[{n:'After the bell: '+r.name+' lays '+p.name+' out',says:'The match ends the way it was going to. Then '+r.name+' hits the ring. The story gets hotter, and the finish is left alone.'}];
+    if(two){ch.push({n:'During the match: '+r.name+' costs '+p.name+' the match',bp:1,says:p.name+' loses on the interference. The story gets much hotter. '+p.name+' may not thank you.'});
+      ch.push({n:'During the match: '+p.name+' fights '+r.name+' off',bp:1,says:p.name+' wins and looks strong. The story gets a little hotter.'});}
+    ch.push({n:'Keep '+r.name+' in the back',says:'Nothing happens. '+r.name+' was told to be ready for nothing.'});
+    return {phase:'mid',mi:step.i,who:r.id,other:p.id,side:side,
+      text:r.name+' is at the curtain, booked to run in on '+p.name+'. When do they go?',
+      why:[why?r.name+': '+why:r.name+' has no story with anybody in the match yet','How the match ends stays with the writers unless you send them in during it'],safe:0,choices:ch};
+  },
+  run:function(S,L,ev,c){
+    var M=liveMatch(S,L,ev.mi),p=S.w[ev.other],r=S.w[ev.who],pick=ev.choices[c];if(!M||!p||!r||!pick)return 'The moment passes.';
+    if(/^Keep /.test(pick.n)){M.m.norun=1;youRemember(S,r,'benched','You booked them to run in, then kept them in the back.',-2);return r.name+' stays in the back.';}
+    var f=feudOf(S,r.id,p.id);if(!f&&c!==0)f=startFeud(S,S.promos[S.player],p,r,26,r.name+' ran in on '+p.name,{force:true});   // the match needs a story for the run-in to be part of
+    M.m.runin={r:r.id,p:p.id,f:f?f.id:null,booked:1};
+    if(c===0){M.m.runin.after=1;return r.name+' waits for the bell. Then '+r.name+' goes.';}
+    if(/costs/.test(pick.n)){M.m.call=1-ev.side;M.m.ff='interf';if(p.align==='F'&&p.mom>=2)youRemember(S,p,'screwed','You sent '+r.name+' out to cost them a match.',-6);return r.name+' hits the ring behind the referee’s back.';}
+    M.m.call=ev.side;M.m.ff='foiled';youRemember(S,p,'strong','You let them fight off '+r.name+' and win anyway.',6);
+    return r.name+' comes down the ramp, and '+p.name+' is ready.';
+  }
+};
+LIVE_ORDER.unshift('bookrun');
+/* someone at the desk or the curtain who cannot be there tonight is simply not there; the booker is told */
+(function(){
+  var v0=E.validate;
+  E.validate=function(S,card){
+    var v=v0(S,card),show=S.queue&&S.queue[S.qi];if(!show)return v;
+    (card||[]).forEach(function(m,i){
+      if(m.gc!=null&&!rsIn(S,show,m.gc,m))v.warnings.push((S.w[m.gc]?S.w[m.gc].name:'The guest')+' cannot be at the desk tonight, so match '+(i+1)+' has no guest on commentary.');
+      if(m.ri!=null&&!rsIn(S,show,m.ri,m))v.warnings.push((S.w[m.ri]?S.w[m.ri].name:'The run-in')+' cannot be here tonight, so nobody runs in during match '+(i+1)+'.');
+    });
+    return v;
+  };
+})();
+
 /* ===== 99-royal.js ===== */
 /* Battle royals (roadmap 2, Ryan 16 October). A battle royal takes 6 to 30 entrants and runs 30 minutes for every 15
    in it (brMins() in src/97-time.js). The booker can hold one spot for a surprise: somebody nobody on the roster, a free
@@ -13576,12 +13718,15 @@ E.moveMatchTo=function(S,from,to){
 };
 /** Suggest a card that keeps the locked matches where they are: the suggestion fills the places around them. */
 E.suggestKeep=function(S){
-  var keep=(S.card||[]).map(function(m,i){return m.lock?{m:m,i:i}:null;}).filter(Boolean),c=E.suggest(S);
+  var n0=(S.card||[]).length,keep=(S.card||[]).map(function(m,i){return m.lock?{m:m,i:i,last:i===n0-1&&n0>1}:null;}).filter(Boolean),c=E.suggest(S);
   if(!keep.length)return c;
   var used={};keep.forEach(function(k){flat(k.m.sides).forEach(function(id){used[id]=1;});});
   c=c.filter(function(m){return !flat(m.sides).some(function(id){return used[id];});});
-  keep.forEach(function(k){c.splice(Math.min(k.i,c.length),0,k.m);});
-  fitShow(S,c);return c;
+  keep.forEach(function(k){if(!k.last)c.splice(Math.min(k.i,c.length),0,k.m);});keep.forEach(function(k){if(k.last)c.push(k.m);});   // a locked main event stays the main event
+  // the locked matches take room: unlocked ones go, the least of them first, until the show fits its slots and its time
+  var P=S.promos[S.player],show=S.queue[S.qi],mx=show&&show.big?10:SLOT_MAX[P.slot];fitShow(S,c);
+  for(var g=0;g<20;g++){if(c.length<=mx&&!showClock(S,c).over)break;var j=-1,q;for(q=0;q<c.length-1;q++)if(!c[q].lock&&!c[q].title){j=q;break;}if(j<0)for(q=0;q<c.length-1;q++)if(!c[q].lock){j=q;break;}if(j<0)break;c.splice(j,1);fitShow(S,c);}
+  return c;
 };
 
 /* ===== 99-suggest-flat.js ===== */
@@ -13607,13 +13752,308 @@ E.suggestKeep=function(S){
     card.forEach(function(m){if(m.mt==='br')return;m.sides=m.sides.map(function(sd){return sd.map(function(id){var w=S.w[id];if(!w||(m.title&&held[id]))return id;var L=pool[w.g];return L&&L.length?L.shift():id;});});});
     if(E.validate(S,card).errors.length){var back=JSON.parse(was);card.forEach(function(m,i){m.sides=back[i];});}
     // the promos and angles go to the writers, who write whatever comes to mind on the night
-    segRead(S).forEach(function(sg){if(!sg.tape){sg.k='writers';sg.who=[];sg.ids=[];}});
+    segRead(S).forEach(function(sg){if(!sg.tape&&!sg.forced){sg.k='writers';sg.who=[];sg.ids=[];}});
     E.fitShow(S,card);
     return card;
   };
   /** The thinking suggest did before it was made flat, for rival-free tools and tests that want a good card. */
   E.suggestSmart=function(S){return smart(S);};
 })();
+
+/* ===== 99-tale.js ===== */
+/* Storylines on the card (Ryan, 21 October: a new core feature). docs/plans/arcs-on-the-card.md is the plan.
+   A match with two people in a storyline together is a storyline match: the run sheet shows it in red, so the booker
+   sees at once which matches tell a story. Two people are in a storyline together when they are on the same running
+   feud (either side of it) or both in the arc that is running. Nothing here calls rnd(S). */
+/** The storyline a match tells, or null: {k: 'feud' | 'arc', n: its name, ids: the two (or more) in it}. */
+function storyOfMatch(S,m){
+  if(!m||!m.sides)return null;
+  var ids=flat(m.sides).filter(function(x){return x!=null&&S.w[x];}),i,j,f;
+  for(i=0;i<ids.length;i++)for(j=i+1;j<ids.length;j++){
+    f=feudsFor(S,ids[i]).filter(function(x){return x.a.concat(x.b).indexOf(ids[j])>=0;})[0];
+    if(f)return {k:'feud',n:feudLabel(S,f),ids:[ids[i],ids[j]],feud:f.id};
+  }
+  var A=S.sa;if(A&&!A.done){var cast=Object.keys(A.cast).map(function(r){return A.cast[r];}),inA=ids.filter(function(x){return cast.indexOf(x)>=0;});
+    if(inA.length>=2)return {k:'arc',n:taleName(A),ids:inA};}
+  return null;
+}
+E.storyOfMatch=function(S,m){return storyOfMatch(S,m);};
+/** For the run sheet: the storyline of every match on the card, by place (null where it tells none). */
+E.cardStories=function(S,card){return (card||S.card||[]).map(function(m){return storyOfMatch(S,m);});};
+
+/* ---------- arcs: stories the writers put on the show ----------
+   An arc is a story told in chapters. Each chapter is a segment the writers put on the run sheet themselves (sg.k
+   'arc', sg.forced): the booker cannot take it off, and does not book it. The booker's job there is to decide where the
+   story goes: every chapter asks one question, and each answer leads to a different chapter (TALES[k].nodes, `next`).
+   The answer is kept on the arc (S.sa.ch), so suggesting or clearing the card never loses it; a chapter that airs with
+   no answer goes the way the writers would have taken it (the option marked `safe`, else the first). A chapter can wait
+   for a big event (`at: 'big'`) and can come after the main event (`post`). It plays a storyline beat's scene (rule 9c:
+   `beat` on the chapter or the answer). An answer moves the people in it through relBump() and youRemember(), and can
+   start a feud, turn somebody, form or break a team, and lock a match onto a later show (a lock, below).
+   S.sa = {k, cast: {role: id}, node, ch, heat, due, hist: [{node, ch, w}], start}. One runs at a time. A new arc is one
+   more entry in TALES with a cast() and its chapters. */
+SEGK.arc={len:'M',fix:1,arc:1,n:'Arc',t:'angle',roles:[],d:'A chapter of a story the writers are telling. They put it on the show; you decide where the story goes.'};
+function taleFree(S,P,w){return !!w&&w.promo===P.id&&!w.nw&&!(w.inj>0)&&!(w.away>=S.week)&&!w.camp;}
+/** Who was at the centre of the last two arcs: a new arc finds somebody else. */
+function taleRecent(S){var o={};(S.sas||[]).slice(-2).forEach(function(a){(a.cast||[]).forEach(function(id){o[id]=1;});});return o;}
+function taleBond(S,a,b){return typeof bondOf==='function'?bondOf(S,a,b):0;}
+var TALES={
+  betrayal:{n:'The betrayal',d:'Two partners. One of them is going to turn on the other, and the crowd will pick a side.',
+    cast:function(S){
+      var P=S.promos[S.player],was=taleRecent(S),ok=function(w){return taleFree(S,P,w)&&!was[w.id];},a=null,b=null;
+      var tm=S.teams.filter(function(t){return t.promo===P.id&&t.m.length===2&&t.m.every(function(id){return ok(S.w[id]);});}).sort(function(x,y){return (y.exp||0)-(x.exp||0);})[0];
+      if(tm){a=S.w[tm.m[0]];b=S.w[tm.m[1]];}
+      else{var R=rosterOf(S,P.id).filter(ok).sort(function(x,y){return y.ovr-x.ovr;}).slice(0,14),best=-1e9,i,j,v;
+        for(i=0;i<R.length;i++)for(j=i+1;j<R.length;j++){if(R[i].g!==R[j].g||R[i].align!==R[j].align)continue;v=taleBond(S,R[i].id,R[j].id)*2+(R[i].ovr+R[j].ovr)/10;if(v>best){best=v;a=R[i];b=R[j];}}}
+      if(!a||!b)return null;
+      var c=rosterOf(S,P.id).filter(function(w){return ok(w)&&w.id!==a.id&&w.id!==b.id&&w.align==='H';}).sort(function(x,y){return (y.g===a.g)-(x.g===a.g)||y.ovr-x.ovr;})[0];
+      if(!c)return null;
+      return {a:a.id,b:b.id,c:c.id};},
+    start:'cracks',
+    nodes:{
+      cracks:{n:'Cracks',beat:'feud_words',who:['a','b'],t:'{a} and {b} lost a match they should have won. Tonight, in the ring, it boils over between them.',q:'Who takes the blame?',o:[
+        {n:'{a} blames {b}',d:'{a} says {b} cost them. {b} takes it quietly, and the crowd starts to feel for them.',next:'turn',set:{T:'a',H:'b'},bond:[['a','b',-15]],s:6},
+        {n:'{b} blames {a}',d:'{b} snaps at {a} in front of everybody. {a} looks hurt.',next:'turn',set:{T:'b',H:'a'},bond:[['a','b',-15]],s:6},
+        {n:'They shake it off',d:'A hug, a laugh, and the crowd breathes again. For now.',next:'mended',bond:[['a','b',8]],s:2,safe:1}]},
+      mended:{n:'An offer',beat:'feud_stare',who:['c','a','b'],t:'{a} and {b} look fine again. Then {c} comes out with an offer for one of them: leave the team and be somebody on your own.',q:'Who listens to {c}?',o:[
+        {n:'{a} listens',d:'{a} does not say no. {b} sees it.',next:'turn',set:{T:'a',H:'b'},bond:[['a','c',10],['a','b',-10]],s:5},
+        {n:'{b} listens',d:'{b} hesitates a second too long.',next:'turn',set:{T:'b',H:'a'},bond:[['b','c',10],['a','b',-10]],s:5},
+        {n:'Neither: they run {c} off',d:'The team stands together. {c} has two enemies now, and the crowd loves it.',next:'united',feud:['a','c',30],bond:[['a','b',10]],s:4,safe:1}]},
+      turn:{n:'The turn',beat:'feud_betray',who:['T','H'],t:'The night it happens. {T} turns on {H}.',q:'How does {T} do it?',o:[
+        {n:'A chair to the back after a win',d:'Ugly and loud. The crowd will not forgive {T} for a long time.',turn:'T',feud:['T','H',45],split:1,hurtH:1,bond:[['T','H',-35]],s:9,beat:'feud_betray'},
+        {n:'Walks out on {H} mid-match',d:'{T} leaves {H} alone, two against one. Colder, and it stings.',turn:'T',feud:['T','H',35],split:1,bond:[['T','H',-25]],s:6,safe:1},
+        {n:'Reveals a deal with {c}',d:'{T} was working with {c} all along. A twist the crowd did not see coming.',turn:'T',feud:['T','H',40],split:1,bond:[['T','H',-30],['T','c',25]],s:8,beat:'feud_swerve'}],nextAll:'fallout'},
+      united:{n:'Two against one',beat:'feud_brawl',who:['a','b','c'],t:'{c} wants revenge on {a} and {b}, the team that ran them off, and has brought trouble.',q:'How do {a} and {b} answer?',o:[
+        {n:'They take {c} apart',d:'The team looks better than ever. A title shot looks closer.',next:'payoff_team',heat:8,s:5,safe:1},
+        {n:'{a} takes a beating for {b}',d:'{a} is left lying. {b} owes them now, and the crowd knows it.',next:'payoff_team',hurt:'a',bond:[['a','b',12]],s:6},
+        {n:'{b} is too slow to help',d:'{a} is left alone. Doubt creeps in.',next:'turn',set:{T:'b',H:'a'},bond:[['a','b',-15]],s:6}]},
+      fallout:{n:'The answer',beat:'feud_words',who:['H','T'],t:'{H} comes to the ring to answer what {T} did.',q:'What does {H} want?',o:[
+        {n:'A match at the next big event',d:'It is made: {H} against {T}, locked on the card for the next big event.',next:'payoff',lock:{sides:[['H'],['T']],big:1},heat:6,s:6,safe:1,beat:'feud_made'},
+        {n:'A fight, right now',d:'They brawl all over the building. Security needs ten people.',next:'payoff',heat:12,s:7,beat:'feud_brawl'},
+        {n:'Nothing: {H} walks away',d:'The crowd is left wanting more. It can go cold.',next:'payoff',heat:-6,s:-4}]},
+      payoff:{n:'The last word',beat:'payoff',who:['H','T'],at:'big',post:1,t:'After the main event, {H} and {T} meet in the ring one last time. Everybody stayed in their seats for this.',q:'How does it end?',end:1,o:[
+        {n:'{H} gets the last word',d:'{H} stands tall over {T}. Closure, and the crowd goes home happy.',res:'paid off',push:'H',endFeud:1,s:8,safe:1},
+        {n:'{T} lays {H} out again',d:'The villain wins the night. It is not over, and the crowd wants more.',res:'goes on',push:'T',heat:10,s:5},
+        {n:'They shake hands',d:'Partners again, after all of it. A reunion they will be talking about all week.',res:'ended in a reunion',reunite:1,endFeud:1,bond:[['T','H',40]],s:6}]},
+      payoff_team:{n:'Standing tall',beat:'payoff',who:['a','b','c'],at:'big',post:1,t:'After the main event, {a} and {b} come out for {c}, one last time.',q:'How does it end?',end:1,o:[
+        {n:'The team stands tall',d:'{a} and {b} send {c} home. The tag titles are next.',res:'paid off',push:'a',endFeud:1,bond:[['a','b',15]],s:7,safe:1},
+        {n:'{c} gets the last laugh',d:'{c} escapes with a cheap shot. There is more to this.',res:'goes on',push:'c',heat:8,s:4},
+        {n:'{c} joins them',d:'A handshake nobody expected. Three now, and a group is born.',res:'ended with a new group',endFeud:1,bond:[['a','c',20],['b','c',20]],s:5}]}
+    }}
+};
+E.TALES=TALES;
+function taleRole(A,r){return A.cast[r];}
+function taleFill(S,A,t){return String(t).replace(/\{(\w+)\}/g,function(_,k){var id=A.cast[k];return id!=null&&S.w[id]?S.w[id].name:k;});}
+function taleName(A){var K=TALES[A.k];return K?K.n:'The arc';}
+function taleNode(A){var K=TALES[A&&A.k];return K&&K.nodes[A.node]||null;}
+/** Begin an arc: at its start, or (the tutorial) at a chapter, with what came before it already written. */
+function taleStart(S,k,o){
+  o=o||{};var K=TALES[k];if(!K)return null;var cs=o.cast||K.cast(S);if(!cs)return null;
+  S.sa={k:k,cast:cs,node:o.node||K.start,ch:null,heat:o.heat==null?30:o.heat,due:o.due==null?S.week:o.due,hist:(o.hist||[]).slice(),start:S.week};
+  if(o.set)Object.keys(o.set).forEach(function(r){S.sa.cast[r]=cs[o.set[r]];});
+  if(!o.quiet){news(S,'story','The writers begin a new story: '+K.n.toLowerCase()+'.');note(S,'A new arc',K.n+'. The writers will put its chapters on your shows. You decide where it goes.','good');}
+  return S.sa;
+}
+E.taleStart=function(S,k,o){return taleStart(S,k,o);};
+/** The chapter the writers want on this show, as a segment, or null. Reads only. */
+function taleWant(S){
+  var A=S.sa,show=S.queue&&S.queue[S.qi],P=S.promos[S.player];if(!A||A.done||!show||S.week<A.due)return null;
+  var N=taleNode(A);if(!N)return null;
+  if(N.at==='big'&&!show.big)return null;
+  if(A.aired===showKey(S))return null;
+  var who=N.who.map(function(r){return A.cast[r];});
+  if(who.some(function(id){return id==null||!taleFree(S,P,S.w[id]);}))return null;   // somebody is not here: the chapter waits
+  return {k:'arc',who:who,pos:1,len:'M',forced:1,node:A.node,post:N.post?1:0};
+}
+SEGNEW.push(function(S,L){var sg=taleWant(S);if(sg&&!L.some(function(x){return x&&x.k==='arc';}))L.push(sg);});
+/* what the segment rules say about an arc chapter */
+(function(){
+  var why0=segWhy,look0=segLook,lab0=segLabel,run0=runSeg,ch0=segChoices;
+  segWhy=function(S,sg,slot){return sg&&sg.k==='arc'?'':why0(S,sg,slot);};
+  segChoices=function(S,kind,who,slot){return kind==='arc'?[]:ch0(S,kind,who,slot);};
+  segLook=function(S,sg,slot){if(!sg||sg.k!=='arc')return look0(S,sg,slot);var A=S.sa,N=A&&taleNode(A);
+    return {ok:true,mid:null,lo:null,hi:null,notes:[[0,N?taleFill(S,A,N.q):'The writers decide']],mins:segMins(sg),read:{k:'',t:N?taleFill(S,A,N.t):''}};};
+  segLabel=function(S,sg){if(!sg||sg.k!=='arc')return lab0(S,sg);var A=S.sa,N=A&&taleNode(A);return A?taleName(A)+': '+(N?N.n:''):'Arc';};
+  runSeg=function(S,P,show,ctx,sg,slot,opens){return sg&&sg.k==='arc'?taleRun(S,P,show,ctx,sg):run0(S,P,show,ctx,sg,slot,opens);};
+})();
+/** The answer the booker gave for this chapter, or the writers' own. */
+function taleChoice(N,ch){if(ch!=null&&N.o[ch])return ch;for(var i=0;i<N.o.length;i++)if(N.o[i].safe)return i;return 0;}
+/** A chapter on the air: the scene, what the answer does to the people in it, and where the story goes next. */
+function taleRun(S,P,show,ctx,sg){
+  var A=S.sa;if(!A||A.done||A.node!==sg.node)return null;var K=TALES[A.k],N=taleNode(A);if(!N)return null;
+  // they were here when the chapter went on the show (taleWant); hurt or sent home since, they are still in the building tonight. Only somebody who has left the company holds it back
+  var who=N.who.map(function(r){return S.w[A.cast[r]];}),here=function(w){return !!w&&w.promo===P.id;};
+  if(who.some(function(w){return !here(w);})){return angle(K.n,'The writers had a chapter of '+K.n.toLowerCase()+' ready, but '+who.filter(function(w){return !here(w);}).map(function(w){return w?w.name:'somebody';}).join(' and ')+' is not here. It waits.',40);}
+  var byYou=A.ch!=null,ci=taleChoice(N,A.ch),o=N.o[ci];
+  who.forEach(function(w){ctx.angled[w.id]=1;});
+  // scored the way the other angles are (segLook): the people in it, on the microphone and in the ring, and how hooked the crowd is on the story
+  var talk=who.reduce(function(s,w){return s+segMean(S,w,0);},0)/who.length,stand=0.8*who.reduce(function(s,w){return s+w.ovr;},0)/who.length+8;
+  var ov=clamp(0.5*talk+0.5*stand+A.heat/8+(o.s||0)/2+2+(rnd(S)*6-3),5,99);
+  var r=angle(K.n,taleFill(S,A,N.t)+' '+taleFill(S,A,o.d),ov);
+  taleApply(S,P,A,o);
+  A.heat=clamp(A.heat+6+(o.s||0)/2+(o.heat||0)/2+(ov-55)/8,0,100);
+  A.hist.push({node:A.node,ch:ci,w:S.week,you:byYou?1:0,ov:Math.round(ov)});A.aired=showKey(S);
+  r.beat=o.beat||N.beat;r.bids=N.who.map(function(rr){return A.cast[rr];});r.arc={k:A.k,node:A.node,ch:ci,you:byYou?1:0};r.ids=r.bids.slice();
+  if(!byYou)note(S,'The writers decided',K.n+': '+taleFill(S,A,o.n)+'.','');
+  var nx=o.next||N.nextAll;A.ch=null;
+  if(N.end||!nx)taleEnd(S,P,A,o,show,r);else{A.node=nx;A.due=S.week+1;}
+  return r;
+}
+function taleApply(S,P,A,o){
+  var W=function(r){return S.w[A.cast[r]];},why=taleFill(S,A,o.n);
+  if(o.set)Object.keys(o.set).forEach(function(r){A.cast[r]=A.cast[o.set[r]];});
+  (o.bond||[]).forEach(function(b){var x=W(b[0]),y=W(b[1]);if(x&&y)relBump(S,x.id,y.id,{bond:b[2]},{k:'arc',t:why+'.',keep:Math.abs(b[2])>=25});});
+  if(o.turn){var t=W(o.turn);if(t)turn(S,t,'the story called for it');}
+  if(o.split){var a=W('a'),b=W('b'),tm=a&&teamOf(S,a);if(tm&&b&&tm.m.indexOf(b.id)>=0){dissolveTeam(S,tm);news(S,'story',a.name+' and '+b.name+' are a team no more.');}}
+  if(o.reunite){var x=W('T'),y=W('H');if(x&&y){if(x.align!==y.align)turn(S,x,'came home to their partner');if(!teamOf(S,x)&&!teamOf(S,y))formTeam(S,P,x,y,30);}}
+  if(o.feud){var f1=W(o.feud[0]),f2=W(o.feud[1]);if(f1&&f2){var f=startFeud(S,P,f2,f1,o.feud[2],why,{force:true});if(f)A.feud=f.id;}}
+  if(o.heat){var ff=taleFeud(S,A);if(ff)heatUp(S,ff,o.heat,why);}
+  if(o.hurt){var h=W(o.hurt);if(h)h.cond=clamp(h.cond-8,5,100);}
+  if(o.hurtH){var hh=W('H');if(hh)hh.cond=clamp(hh.cond-10,5,100);}
+  if(o.push){var pw=W(o.push);if(pw){pw.mom=clamp((pw.mom||0)+3,-10,10);addOvr(P,pw,0.5);}}
+  if(o.lock){var sides=o.lock.sides.map(function(sd){return sd.map(function(r){return A.cast[r];});});lockAdd(S,{kind:'match',sides:sides,big:o.lock.big?1:0,why:taleName(A),arc:1});}
+  if(o.endFeud){var fe=taleFeud(S,A);if(fe){fe.res=true;fe.end=S.week;fe.done=1;if((fe.peak||0)>=50&&typeof feudFile==='function')feudFile(S,fe,'end');}}
+  var seen={};Object.keys(A.cast).forEach(function(r){var id=A.cast[r],w=S.w[id];if(!w||seen[id])return;seen[id]=1;youRemember(S,w,'arc',taleName(A)+': '+why+'.',o.s>=6?1:0);});
+}
+function taleFeud(S,A){var f=A.feud!=null?S.feuds.filter(function(x){return x.id===A.feud&&!x.res;})[0]:null;if(f)return f;var x=A.cast.T!=null?A.cast.T:A.cast.a,y=A.cast.H!=null?A.cast.H:A.cast.c;return x!=null&&y!=null?feudOf(S,x,y):null;}
+/** The end of an arc: how it landed, by how much the crowd came to care (A.heat), and what the last answer was. */
+function taleEnd(S,P,A,o,show,r){
+  var K=TALES[A.k],res=o.res||'ended',land=A.heat>=65?'big':(A.heat>=40?'ok':'flat');
+  // a few arcs a year: each pays a little (the year's company arc, src/99-arcs.js, is the big one). Popularity raises what every crowd expects, so it is paid sparingly
+  var img=land==='big'?1:(land==='flat'?-1:0),bp=land==='big'?2:(land==='ok'?1:0);
+  P.image=clamp(P.image+img,1,100);S.bp=(S.bp||0)+bp;if(S.owner&&!S.owner.me&&land!=='flat')S.owner.trust=clamp(S.owner.trust+(land==='big'?2:1),0,100);
+  A.done=1;A.res=res;(S.sas||(S.sas=[])).push({k:A.k,n:K.n,res:res,land:land,y:cal(S.week).label,cast:Object.keys(A.cast).filter(function(x){return x==='T'||x==='H'||(!A.cast.T&&(x==='a'||x==='b'));}).map(function(x){return A.cast[x];})});
+  S.sa=null;S.saNext=S.week+6;
+  if(r)r.text+=' '+K.n+' '+res+(land==='big'?', and the crowd will remember it.':(land==='ok'?'.':', but the crowd had stopped caring a while ago.'));
+  news(S,'story',K.n+' '+res+' at '+show.name+'.');note(S,'The arc is over',K.n+' '+res+'.',land==='flat'?'bad':'good');
+}
+/* a new arc begins a few weeks after the last one ended, with whoever fits it now */
+WEEKX.push(function(S){
+  if(S.cal||S.sa||S.week<(S.saNext==null?3:S.saNext))return;
+  var ks=Object.keys(TALES),k=ks[(S.sas||[]).length%ks.length];
+  if(!taleStart(S,k,{due:S.week+1}))S.saNext=S.week+2;
+});
+/** Decide where the arc goes on this show (the booker's answer). i null takes the answer back. */
+E.taleDecide=function(S,i){var A=S.sa,N=A&&taleNode(A);if(!N)return {ok:false,msg:'No arc is waiting for an answer.'};
+  if(i==null){A.ch=null;return {ok:true,msg:'Undecided again.'};}if(!N.o[i])return {ok:false,msg:'That is not one of the answers.'};
+  A.ch=i;return {ok:true,msg:taleFill(S,A,N.o[i].n)+'. It plays out on the show.'};};
+/** Everything the screens show about the arc: its chapter, the question and the answers, what came before. */
+E.taleInfo=function(S){
+  var A=S.sa;if(!A||A.done)return {on:false,past:(S.sas||[]).slice(-3)};
+  var K=TALES[A.k],N=taleNode(A),seg=segRead(S).filter(function(sg){return sg.k==='arc';})[0]||null,nx=N.at==='big'?nextBigFrom(S.week,S):A.due;
+  return {on:true,k:A.k,n:K.n,d:K.d,node:A.node,cn:N.n,t:taleFill(S,A,N.t),q:taleFill(S,A,N.q),end:!!N.end,post:!!N.post,big:N.at==='big',
+    tonight:!!seg,ch:A.ch,heat:Math.round(A.heat),word:A.heat>=65?'The crowd is hooked':(A.heat>=40?'The crowd is following it':'The crowd has not caught on yet'),
+    when:seg?'Tonight':cal(Math.max(nx,S.week)).label,
+    who:N.who.map(function(r){return A.cast[r];}),cast:Object.keys(A.cast).filter(function(r){return ['a','b','c'].indexOf(r)>=0;}).map(function(r){return A.cast[r];}),
+    o:N.o.map(function(o,i){return {i:i,n:taleFill(S,A,o.n),d:taleFill(S,A,o.d),safe:!!o.safe,lock:!!o.lock,end:!!N.end};}),
+    hist:A.hist.map(function(h){var M=K.nodes[h.node],o=M&&M.o[h.ch];return {cn:M?M.n:h.node,n:o?taleFill(S,A,o.n):'',w:cal(h.w).label,you:!!h.you,pre:!!h.pre};})};
+};
+/* the arc on this show needs an answer before it can run (the screens stop; a game nobody plays never waits) */
+TASKX.push(function(S,P,add){var I=E.taleInfo(S);if(I.on&&I.tonight&&I.ch==null)add('arc','The arc on tonight’s show, '+I.n+', needs your decision: '+I.q,'booking','Decide',{card:true,waive:false,short:'Decide the arc',done:'The arc is decided.'});});
+
+/* ---------- locks: what is promised for a show is on its card already ----------
+   A lock is a match or a promo promised for a later show: a title match or a rematch at the next big event, a match an
+   arc made, a promo promised to somebody. When that show comes up, the match is on the card already (m.pm, and
+   m.lock so it keeps its place) or the promo is on the run sheet (sg.forced), with at least the promised wrestler in
+   it. The booker fills the rest. Suggest keeps it, Clear keeps it, and the show cannot run without it.
+   S.locks = [{id, kind: 'match' | 'promo', w: the week, big: 1 for the big event, sid: the show's id otherwise, sides,
+   title, why, q: the promise it keeps, who (a promo)}]. */
+/** The week and show of the next big event the booker can still book (this week's, if it has not run). */
+function nextBigShow(S){var ranBig=(S.queue||[]).slice(0,S.qi).some(function(sh){return sh.big;});return isBigWeek(S.week,S)&&!ranBig?S.week:nextBigFrom(S.week+1,S);}
+/** The next show of the player's after the one on the desk: {w, sid}. */
+function nextShowAfter(S){var q=S.queue||[];if(S.qi+1<q.length)return {w:S.week,sid:q[S.qi+1].id};var P=S.promos[S.player],L=weekShows(S,P,S.week+1);return L.length?{w:S.week+1,sid:L[0].id}:{w:S.week+1,sid:'big'};}
+/** Move a promise for a big event to the one after it: the clash is nobody's fault, but the wrestler hears about it. */
+function lockPut(S,l,why){var nw=nextBigFrom(l.w+1,S),q=l.q!=null?S.quests.filter(function(x){return x.id===l.q;})[0]:null,w=S.w[l.sides[0][0]];l.w=nw;if(q){q.due=nw;q.at=nw;q.text=q.text.replace(/ at .*$/,' at '+bigNameAt(S,nw));}
+  if(w){note(S,'A promise moves',w.name+'’s match moves to '+bigNameAt(S,nw)+': '+(why||'the one they face cannot be in it tonight')+'.','');youRemember(S,w,'moved','Their promised match was moved back a month.',-2);}}
+function lockAdd(S,o){
+  var L=S.locks||(S.locks=[]),at=o.big?{w:o.w!=null?o.w:nextBigShow(S),sid:'big'}:(o.w!=null?{w:o.w,sid:o.sid}:nextShowAfter(S));
+  var lk={id:S.nid++,kind:o.kind||'match',w:at.w,big:o.big?1:0,sid:at.sid,sides:o.sides||null,title:o.title||null,why:o.why||'',q:o.q==null?null:o.q,who:o.who==null?null:o.who,arc:o.arc?1:0};
+  L.push(lk);return lk;
+}
+E.lockAdd=function(S,o){return lockAdd(S,o);};
+function lockHere(S,l){var show=S.queue&&S.queue[S.qi];if(!show||l.w!==S.week)return false;return l.big?!!show.big:show.id===l.sid;}
+/** The locks for the show on the desk. */
+function locksNow(S){return (S.locks||[]).filter(function(l){return lockHere(S,l);});}
+E.locksNow=function(S){return locksNow(S).map(function(l){return {id:l.id,kind:l.kind,why:l.why,label:lockLabel(S,l)};});};
+function lockLabel(S,l){var P=S.promos[S.player],t=l.title?titleById(P,l.title):null,nm=function(id){return id!=null&&S.w[id]?S.w[id].name:'an opponent you pick';};
+  if(l.kind==='promo')return nm(l.who)+' gets a promo';
+  return l.sides.map(function(sd){return sd.map(nm).join(' & ');}).join(' vs ')+(t?' for the '+t.name:'');}
+/** The match a lock puts on the card: the promised wrestler in, the champion against them for a title, the rest open. */
+function lockMatch(S,l){
+  var P=S.promos[S.player],show=S.queue[S.qi],t=l.title?titleById(P,l.title):null,sides=l.sides.map(function(sd){return sd.slice();});
+  if(t&&!t.tag&&t.holders.length){var hold=t.holders[0];if(sides[0].indexOf(hold)>=0)return null;sides[1]=[hold];}   // the champion now, whoever it is; a promised wrestler who has since won it needs no shot
+  var ok=eligible(S,P,show),inE={};ok.forEach(function(w){inE[w.id]=1;});
+  if(t&&!t.tag&&t.holders.length&&!inE[t.holders[0]])return 'wait';   // the champion cannot work tonight: the title match waits for the next big event
+  sides=sides.map(function(sd){return sd.map(function(id){return id!=null&&inE[id]?id:null;});});
+  if(sides[0][0]==null)return null;   // the promised wrestler cannot work tonight
+  return {mt:'1v1',sides:sides,win:-2,call:null,title:t?t.id:null,stip:'std',len:'M',lock:1,pm:l.id};
+}
+/** Put this show's locks on the card and the run sheet. */
+function lockSeed(S){
+  var c=S.card||(S.card=[]);
+  locksNow(S).forEach(function(l){
+    if(l.kind==='match'){if(c.some(function(m){return m.pm===l.id;}))return;var m=lockMatch(S,l);if(m==='wait'&&l.big){lockPut(S,l);return;}if(!m||m==='wait')return;
+      // somebody in it is in another promised match tonight (a champion of two belts, a belt that changed hands): this one moves to the next big event
+      var ids=flat(m.sides).filter(function(x){return x!=null;});if(l.big&&c.some(function(x){return x.pm!=null&&flat(x.sides).some(function(id){return ids.indexOf(id)>=0;});})){lockPut(S,l);return;}var at=l.arc?c.length:Math.max(0,c.length-1);c.splice(Math.min(at,c.length),0,m);}
+  });
+}
+SHOWON.push(function(S){if(S.player&&!S.cal)lockSeed(S);});
+SEGNEW.push(function(S,L){locksNow(S).forEach(function(l){if(l.kind==='promo'&&l.who!=null&&S.w[l.who]&&!L.some(function(x){return x&&x.pm===l.id;})){var P=S.promos[S.player];if(taleFree(S,P,S.w[l.who]))L.push({k:'interview',who:[l.who],pos:1,len:'M',forced:1,pm:l.id});}});});
+/* a suggested card keeps what is promised for the show */
+(function(){
+  var s0=E.suggest;
+  E.suggest=function(S){
+    var c=s0(S),L=locksNow(S).filter(function(l){return l.kind==='match';});if(!L.length)return c;
+    var saved=S.card;S.card=[];lockSeed(S);var put=S.card.filter(function(m){return m&&m!=='wait';});S.card=saved;
+    put.forEach(function(m){var ids=flat(m.sides).filter(function(x){return x!=null;}),clash=function(x){return flat(x.sides).some(function(id){return ids.indexOf(id)>=0;})||(m.title&&x.title===m.title);};
+      // it takes the place of the match it replaces (often the main event, with the same champion in it); else it goes before the main event
+      var at=-1;c.forEach(function(x,k){if(at<0&&clash(x))at=k;});var wasMain=at>=0&&at===c.length-1;
+      c=c.filter(function(x,k){return !clash(x);});
+      // fill an open spot with somebody fresh on the roster of the right kind
+      m.sides.forEach(function(sd,k){sd.forEach(function(id,q){if(id!=null)return;var used={};c.concat([m]).forEach(function(x){flat(x.sides).forEach(function(y){used[y]=1;});});
+        var a=S.w[flat(m.sides).filter(function(x){return x!=null;})[0]],pick=eligible(S,S.promos[S.player],S.queue[S.qi]).filter(function(w){return !used[w.id]&&w.g===a.g;}).sort(function(x,y){return Math.abs(x.ovr-a.ovr)-Math.abs(y.ovr-a.ovr);})[0];if(pick)sd[q]=pick.id;});});
+      if(wasMain)c.push(m);else c.splice(at>=0?Math.min(at,c.length):Math.max(0,c.length-1),0,m);});
+    fitShow(S,c);return c;
+  };
+})();
+/* the show cannot run without what was promised for it */
+(function(){
+  var v0=E.validate;
+  E.validate=function(S,card){
+    var v=v0(S,card),P=S.promos[S.player],show=S.queue&&S.queue[S.qi];if(!show)return v;var inE={};eligible(S,P,show).forEach(function(w){inE[w.id]=1;});
+    locksNow(S).forEach(function(l){
+      if(l.kind!=='match')return;var who=l.sides[0][0];if(who==null||!inE[who])return;   // they cannot work tonight: nothing to be done about it on the card
+      var t=l.title?titleById(P,l.title):null;if(t&&t.holders.indexOf(who)>=0)return;if(t&&!t.tag&&t.holders.length&&!inE[t.holders[0]])return;   // no champion tonight: it waits
+      // a title match is the promised wrestler for that title, whoever holds it by then; any other match is the two of them
+      var on=card.some(function(m){return flat(m.sides).indexOf(who)>=0&&(l.title?m.title===l.title:l.sides[1].every(function(id){return id==null||!inE[id]||flat(m.sides).indexOf(id)>=0;}));});
+      if(!on)v.errors.push('Promised for tonight: '+lockLabel(S,l)+(l.why?' ('+l.why+')':'')+'. It has to be on the card.');
+    });
+    // a story planned to end tonight, with one of the two promised a different match: both cannot happen
+    if(show.big)locksNow(S).forEach(function(l){if(l.kind!=='match')return;var ids=flat(l.sides).filter(function(x){return x!=null;});
+      ids.forEach(function(id){feudsFor(S,id).forEach(function(f){if(f.promo!==P.id||f.endAt!==S.week)return;var o=f.a.concat(f.b).filter(function(x){return f.a.indexOf(id)>=0?f.b.indexOf(x)>=0:f.a.indexOf(x)>=0;})[0];
+        if(o!=null&&ids.indexOf(o)<0&&S.w[o])v.warnings.push(S.w[id].name+'’s story with '+S.w[o].name+' was planned to end tonight, but '+S.w[id].name+' is promised another match: '+lockLabel(S,l)+'. Only one of them can happen.');});});});
+    return v;
+  };
+})();
+/* once the show has run, its locks are spent */
+SHOWX.push(function(S,P,show){if(S.cal||P.id!==S.player||!S.locks)return;S.locks=S.locks.filter(function(l){return !(l.w===S.week&&(l.big?show.big:l.sid===show.id));});});
+WEEKX.push(function(S){if(S.locks)S.locks=S.locks.filter(function(l){return l.w>=S.week;});});
+/** The name of the big event in week w, and when: "EWF Night of Champions (Week 4, May 2027)". */
+function bigNameAt(S,w){var P=S.promos[S.player];return P.name+' '+evName(S,P,cal(w).month)+' ('+cal(w).label+')';}
+/** Promise a wrestler a title match (a shot, or the rematch) at the next big event: the promise, and the match locked on that card. */
+function promiseShot(S,w,t,o,what){
+  // somebody else has that title match at that event already: this one is promised for the big event after it
+  var hold=t.holders.slice(),busy=function(l){return l.big&&l.w===at&&(l.title===t.id||flat(l.sides||[]).some(function(id){return id===w.id||hold.indexOf(id)>=0;})||(l.title&&(titleById(S.promos[S.player],l.title)||{holders:[]}).holders.some(function(id){return hold.indexOf(id)>=0||id===w.id;})));};
+  var at=nextBigShow(S);while((S.locks||[]).some(busy))at=nextBigFrom(at+1,S);   // the champion (or the challenger) is promised a match that night already
+  var q={id:S.nid++,type:'shot',w:w.id,title:t.id,due:at,at:at,text:'Promise: '+w.name+' gets '+(what||'a match')+' for the '+t.name+' at '+bigNameAt(S,at)};
+  S.quests.push(q);lockAdd(S,{kind:'match',sides:[[w.id],[o?o.id:null]],title:t.id,big:1,w:at,why:'You promised it',q:q.id});return q;
+}
+/** Promise a wrestler a promo on the next show: it goes on that run sheet, and stays there. */
+function promisePromo(S,w){var nx=nextShowAfter(S),lk=lockAdd(S,{kind:'promo',who:w.id,w:nx.w,sid:nx.sid,why:'You promised it'});return lk;}
+E.promisePromo=function(S,id){var w=S.w[id];if(!w)return {ok:false,msg:''};var lk=promisePromo(S,w);return {ok:true,msg:w.name+' gets a promo on the next show. It is on that run sheet already.',lock:lk.id};};
+/** Take a match off the card, unless it was promised. Clearing the card keeps what was promised. */
+E.cardRemove=function(S,i){var m=S.card&&S.card[i];if(!m)return {ok:false,msg:''};if(m.pm!=null&&locksNow(S).some(function(l){return l.id===m.pm;}))return {ok:false,msg:'This match was promised for tonight. It stays on the card.'};S.card.splice(i,1);return {ok:true,msg:'That match is off the card.'};};
+E.cardClear=function(S){var keep=(S.card||[]).filter(function(m){return m.pm!=null&&locksNow(S).some(function(l){return l.id===m.pm;});});S.card=keep;E.segClear(S);return {ok:true,msg:keep.length?'The card is clear, but for what was promised.':'The card is clear.'};};
 
 /* ===== 99-tonight.js ===== */
 /* What could happen tonight (roadmap 7, Ryan 16 October). A window on Book the show with four parts: moments that could
@@ -13654,6 +14094,101 @@ E.couldHappen=function(S){
   ['moments','risk','sets','cold'].forEach(function(k){out[k]=out[k].slice(0,4);});
   return out;
 };
+
+/* ===== 99-tutorial.js ===== */
+/* The first show is the tutorial (Ryan, 21 October). A new game opens in the week of the company's biggest show of
+   the year (E.newGame with start: 'flag', src/00-core.js), with only that show to book. The card is not empty: a
+   match was promised before the booker arrived (a lock, src/99-tale.js), and the arc that has run all year is at its
+   last chapter, booked after the main event, waiting for the booker to decide how it ends. The tutorial asks for every
+   champion to be booked in a match for their title (Title matches does that in one press, E.suggestTitles), points at
+   the promise and the arc, and has the rest filled to time. Its steps are E.tutInfo(S); the ones that must be done are
+   tasks (card: true, no waving them off), so the screens stop for them and a game nobody plays never waits.
+   S.tut = {on, show, used: {titles, suggest}}. Nothing here calls rnd(S). */
+function tutShowNow(S){return !!(S.tut&&S.tut.on&&S.tut.show===showKey(S));}
+/** Titles on this show whose champion can work tonight, and whether each has its match on the card. */
+function tutTitles(S,card){
+  var P=S.promos[S.player],show=S.queue&&S.queue[S.qi];if(!show)return [];var inE={};eligible(S,P,show).forEach(function(w){inE[w.id]=1;});
+  return showTitles(P,show).filter(function(t){return t.holders.length&&t.holders.every(function(id){return inE[id];});}).map(function(t){
+    return {id:t.id,n:t.name,on:(card||[]).some(function(m){return m.title===t.id&&t.holders.every(function(id){return flat(m.sides).indexOf(id)>=0;});})};});
+}
+/** A match for every title on this show that has none on the card: the champion against the best challenger free
+    tonight (one with a story with the champion first). Keeps everything already on the card, and locks the matches it
+    makes in their places, so Suggest fills the show around them. */
+E.suggestTitles=function(S){
+  var P=S.promos[S.player],show=S.queue&&S.queue[S.qi];if(!show)return {ok:false,msg:'No show to book.'};
+  var card=S.card||(S.card=[]),made=0,full=0,L=tutCands(S,card);
+  L.forEach(function(x){
+    var used=tutUsed(S,card);if(x.m.sides.some(function(sd){return sd.some(function(id){return used[id];});}))return;   // a challenger taken by a match made just now
+    var lenOk=['M','S'].filter(function(l){x.m.len=l;return tutFits(S,card,x.m);})[0];if(!lenOk){full++;return;}x.m.len=lenOk;
+    // the top title closes the show when nothing else does; the others go before the main event
+    var main=card.length?card[card.length-1]:null;
+    if(x.t.lvl>=3&&(!main||!main.title))card.push(x.m);else card.splice(Math.max(0,card.length-(main?1:0)),0,x.m);
+    made++;
+  });
+  if(S.tut&&S.tut.on)(S.tut.used||(S.tut.used={})).titles=1;
+  if(made)fitShow(S,card);
+  return {ok:made>0,msg:(made?(made===1?'A title match is on the card.':made+' title matches are on the card.')+' Change the challengers if you like.':'Every champion who can work tonight is booked already.')+(full?' '+full+' more '+(full===1?'title does':'titles do')+' not fit: the show has no more room.':'')};
+};
+/** Who is booked on the card or in the arc tonight. */
+function tutUsed(S,card){var used={};card.forEach(function(m){flat(m.sides).forEach(function(id){if(id!=null)used[id]=1;});});segRead(S).forEach(function(sg){if(sg.k==='arc')(sg.who||[]).forEach(function(id){used[id]=1;});});return used;}
+/** A title match for every title on this show that has none on the card, most important first: the champion against
+    the best challenger free tonight (one with a story with the champion first). */
+function tutCands(S,card){
+  var P=S.promos[S.player],show=S.queue[S.qi],inE={},el=eligible(S,P,show),used=tutUsed(S,card),held={},out=[];el.forEach(function(w){inE[w.id]=1;});
+  P.titles.forEach(function(t){t.holders.forEach(function(id){held[id]=1;});});
+  showTitles(P,show).filter(function(t){return t.holders.length&&t.holders.every(function(id){return inE[id];});}).sort(function(a,b){return b.lvl-a.lvl||(a.tag?1:0)-(b.tag?1:0);}).forEach(function(t){
+    if(card.some(function(m){return m.title===t.id;}))return;
+    if(t.holders.some(function(id){return used[id];}))return;   // the champion is booked already: put the belt on that match by hand
+    var ch=t.holders.map(function(id){return S.w[id];}),c0=ch[0],m=null;
+    if(t.tag){var tm=S.teams.filter(function(x){return x.promo===P.id&&x.m.length===ch.length&&x.m.every(function(id){return inE[id]&&!used[id]&&!held[id];})&&x.m.indexOf(c0.id)<0;}).sort(function(a,b){return (b.exp||0)-(a.exp||0);})[0];
+      if(tm)m={mt:'tag',sides:[ch.map(function(w){return w.id;}),tm.m.slice()],win:-2,call:null,title:t.id,stip:'std',len:'M',lock:1};}
+    else{var cs=el.filter(function(w){return !used[w.id]&&!held[w.id]&&w.g===c0.g&&w.id!==c0.id;}).sort(function(a,b){var fa=feudOf(S,a.id,c0.id)?20:0,fb=feudOf(S,b.id,c0.id)?20:0;return (fb+b.ovr+(b.mom||0)*2)-(fa+a.ovr+(a.mom||0)*2);});
+      if(cs[0])m={mt:'1v1',sides:[[c0.id],[cs[0].id]],win:-2,call:null,title:t.id,stip:'std',len:'M',lock:1};}
+    if(m){out.push({t:t,m:m});m.sides.forEach(function(sd){sd.forEach(function(id){used[id]=1;});});}
+  });
+  return out;
+}
+/** Would one more match fit the show: its slots, and its time with a little left for the rest of the night? */
+function tutFits(S,card,m){var P=S.promos[S.player],show=S.queue[S.qi],mx=show.big?10:SLOT_MAX[P.slot];if(card.length+1>mx-1)return false;var k=showClock(S,card.concat([m]));return k.total<=k.budget-10;}
+/** The tutorial's steps for the show on the desk, or {on: false}. */
+E.tutInfo=function(S){
+  if(!tutShowNow(S))return {on:false};
+  var show=S.queue[S.qi],T=tutTitles(S,S.card),A=E.taleInfo(S),ck=E.clock(S),L=locksNow(S),u=S.tut.used||{};
+  var room=tutCands(S,S.card).some(function(x){x.m.len='S';return tutFits(S,S.card,x.m);}),on=T.filter(function(x){return x.on;}).length;
+  var steps=[
+    {k:'show',t:show.name+' is the biggest show of the year, and it is your first night in charge. Everything you book here goes out with your name on it.',done:true},
+    {k:'champs',t:'Book every champion in a match for their title ('+on+' of '+T.length+' booked'+(T.length>6?', or as many as the show has room for':'')+'). Title matches books them, the biggest titles first.',done:T.every(function(x){return x.on;})||(on>0&&!room),act:'titles',need:true},
+    {k:'promise',t:L.length?'One match was promised before you arrived: '+lockLabel(S,L[0])+'. It is locked on the card and cannot come off.':'Nothing was promised for tonight.',done:true,act:L.length?'promise':null},
+    {k:'arc',t:A.on&&A.tonight?'After the main event the writers end '+A.n.toLowerCase()+'. Open it on the run sheet and decide how it ends.':'There is no arc on tonight’s show.',done:!(A.on&&A.tonight)||A.ch!=null,act:A.on&&A.tonight?'arc':null,need:true},
+    {k:'storyline',t:'A match in red is a storyline match: two people in a story together. Each match can also have a guest on commentary and a run-in.',done:true},
+    {k:'fill',t:'Fill the rest of the three hours. Suggest fills it around what is there; then change what you like.',done:!ck.over&&!ck.short&&S.card.length>0,act:'suggest'},
+    {k:'air',t:'When the steps above are done, the key at the bottom right puts the show on the air.',done:false}
+  ];
+  return {on:true,show:show.name,steps:steps,left:steps.filter(function(x){return x.need&&!x.done;}).length};
+};
+TASKX.push(function(S,P,add){var I=E.tutInfo(S);if(!I.on)return;var c=I.steps.filter(function(x){return x.k==='champs';})[0];if(c&&!c.done)add('tut-champs','Your first show: book every champion in a match for their title.','booking','Book',{card:true,waive:false,short:'Book every champion',done:'Every champion is booked.'});});
+/* a new game that opens on the flagship: that show alone, the promise on its card, and the year's arc at its ending */
+function tutSetup(S){
+  var P=S.promos[S.player];S.queue=S.queue.filter(function(sh){return sh.big;});if(!S.queue.length)return;
+  S.qi=0;S.card=[];S.segs=[];S.segKey=null;S.tut={on:1,show:showKey(S),used:{}};
+  var K=TALES.betrayal,cs=K&&K.cast(S);
+  if(cs){
+    var T=S.w[cs.a],H=S.w[cs.b],tm=teamOf(S,T);if(tm&&tm.m.indexOf(H.id)>=0)dissolveTeam(S,tm);
+    T.align='H';H.align='F';T.tw=S.week-6;
+    relBump(S,T.id,H.id,{bond:-45},{k:'arc',keep:true,t:T.name+' turned on '+H.name+'.'});
+    var f=startFeud(S,P,H,T,72,T.name+' turned on '+H.name,{force:true});
+    taleStart(S,'betrayal',{cast:cs,set:{T:'a',H:'b'},node:'payoff',heat:62,due:S.week,quiet:1,
+      hist:[{node:'cracks',ch:0,w:S.week,pre:1},{node:'turn',ch:0,w:S.week,pre:1},{node:'fallout',ch:0,w:S.week,pre:1}]});
+    if(f&&S.sa)S.sa.feud=f.id;
+    lockAdd(S,{kind:'match',sides:[[H.id],[T.id]],big:1,w:S.week,why:K.n+': '+H.name+' asked for it',arc:1});
+  }
+  S.saNext=S.week+6;
+  SHOWON.forEach(function(fn){fn(S);});
+  news(S,'story','This week: '+S.queue[0].name+', the biggest show of the year.');
+}
+(function(){var ng=E.newGame;E.newGame=function(){var S=ng.apply(this,arguments);if(S&&S.flagStart&&S.promos)tutSetup(S);return S;};})();
+/* once the first show is off the air the tutorial is over */
+SHOWX.push(function(S,P,show){if(!S.cal&&P.id===S.player&&S.tut&&S.tut.on){S.tut.on=0;S.tut.done=S.week;note(S,'Your first show is done','From here the week is yours: the desk, backstage, and the next show.','good');}});
 
 root.GP=E;
 })(typeof window !== 'undefined' ? window : globalThis);

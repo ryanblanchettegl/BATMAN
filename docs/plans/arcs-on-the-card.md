@@ -38,6 +38,7 @@ Two people on the same running feud, or both in the arc, make a storyline match.
 - `S.locks`: a match or a promo promised for a later show. A title shot asked for, a rematch after a title change, a title shot said yes to backstage, and an arc's "a match at the next big event" all make one. A wrestler can now ask Backstage for a promo on the next show (`askpromo`), and yes makes a locked promo.
 - When the show comes (`SHOWON`), the match is on the card already (`m.pm`, `m.lock`) with the promised wrestler in it; for a title, the champion of the night. The booker fills any open spot. Remove refuses, Clear keeps it, Suggest keeps it, and the show cannot run without it.
 - Clashes move a promise to the big event after it, and the wrestler is told: the same title promised twice for one night, a champion promised to two challengers, a champion who cannot work that night.
+- When a story was planned to end on the night (`f.endAt`) and one of the two is promised another match there, the card warns that only one can happen.
 
 ### The first show (`src/99-tutorial.js`)
 
@@ -50,5 +51,4 @@ Two people on the same running feud, or both in the arc, make a storyline match.
 
 - More arcs (Ryan: "we will create more later"). Each is one entry in `TALES`. Company arcs (`src/99-arcs.js`, the desk's yearly arc) could move onto this system: chapters on the run sheet instead of the desk.
 - A World Editor builder for arcs, beside the Stories and Rules tabs (rule 9c asks for one).
-- The booking notes should warn when a planned feud ending and a promise want the same wrestler on the same night.
 - A promised promo could carry what it is about (a title, a rival).

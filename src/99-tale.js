@@ -265,6 +265,10 @@ SEGNEW.push(function(S,L){locksNow(S).forEach(function(l){if(l.kind==='promo'&&l
       var on=card.some(function(m){return flat(m.sides).indexOf(who)>=0&&(l.title?m.title===l.title:l.sides[1].every(function(id){return id==null||!inE[id]||flat(m.sides).indexOf(id)>=0;}));});
       if(!on)v.errors.push('Promised for tonight: '+lockLabel(S,l)+(l.why?' ('+l.why+')':'')+'. It has to be on the card.');
     });
+    // a story planned to end tonight, with one of the two promised a different match: both cannot happen
+    if(show.big)locksNow(S).forEach(function(l){if(l.kind!=='match')return;var ids=flat(l.sides).filter(function(x){return x!=null;});
+      ids.forEach(function(id){feudsFor(S,id).forEach(function(f){if(f.promo!==P.id||f.endAt!==S.week)return;var o=f.a.concat(f.b).filter(function(x){return f.a.indexOf(id)>=0?f.b.indexOf(x)>=0:f.a.indexOf(x)>=0;})[0];
+        if(o!=null&&ids.indexOf(o)<0&&S.w[o])v.warnings.push(S.w[id].name+'’s story with '+S.w[o].name+' was planned to end tonight, but '+S.w[id].name+' is promised another match: '+lockLabel(S,l)+'. Only one of them can happen.');});});});
     return v;
   };
 })();
