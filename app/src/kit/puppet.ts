@@ -514,8 +514,14 @@ export function puppet(r: Recipe, pl: Place, pose: Record<string, number>, expr:
 function inkOf(sk: string) { const a = parseInt(sk.slice(1), 16), b = 0x16203a, m = (sh: number) => Math.round(((a >> sh) & 255) * 0.25 + ((b >> sh) & 255) * 0.75); return '#' + [16, 8, 0].map(sh => m(sh).toString(16).padStart(2, '0')).join(''); }
 /** The face at body size, cut from the same recipe as the portrait, turned three quarters toward the way the doll faces. */
 /** The back of the head: the hair, the back of a mask, the ears at the sides, a hat; no face. */
+/** The head's outline from the recipe. The jaw tapers to a defined chin, as in the construction-paper portrait
+    (Ryan, 21 October), a little more for women. The front and the back are cut from the same shape. */
+function headOf(r: Recipe): Head {
+  const s = 0.47;
+  return { cx: 0, cy: 0.98, rx: r.head.rx * s, ryt: r.head.ryt * s, ryb: r.head.ryb * s * 1.04, sq: r.fem ? Math.min(r.head.sq, 2.4) : r.head.sq, chin: Math.min(0.55, r.head.chin + (r.fem ? 0.16 : 0.08)) };
+}
 function headBack(fr: F, r: Recipe, z: number, cut: (f: F, poly: Pt[], col: string | Swatch, z: number, joint?: string, lift?: number, rough?: number) => void) {
-  const s = 0.47, hd: Head = { cx: 0, cy: 0.98, rx: r.head.rx * s, ryt: r.head.ryt * s, ryb: r.head.ryb * s, sq: r.head.sq, chin: r.head.chin }, J = 'head', sk = r.skin;
+  const hd = headOf(r), J = 'head', sk = r.skin;
   const put = (poly: Pt[], col: string | Swatch, dz: number, rough = 0.008) => cut(fr, poly, col, z + dz, J, 0.03, rough);
   const K = r.kit, acc = (a: string) => !!K && K.acc.indexOf(a) >= 0, HC = r.hairCol, HB = r.hairMix === 'under' && r.hairCol2 ? r.hairCol2 : HC;
   for (const sd of [-1, 1]) put(ell(sd * hd.rx * 0.97, hd.cy - 0.04, 0.07, 0.12, 10), shade(sk, 0.92), 0.015);   // the ears, just showing at the sides
@@ -580,7 +586,7 @@ function mixc(a: string, b: string, t: number): string {
   return '#' + A.map((v, i) => Math.round(v + (B[i] - v) * t).toString(16).padStart(2, '0')).join('');
 }
 function head(fr: F, r: Recipe, z: number, expr: string, cut: (f: F, poly: Pt[], col: string | Swatch, z: number, joint?: string, lift?: number, rough?: number) => void, mk: Marks = {}) {
-  const s = 0.47, hd: Head = { cx: 0, cy: 0.98, rx: r.head.rx * s, ryt: r.head.ryt * s, ryb: r.head.ryb * s, sq: r.head.sq, chin: r.head.chin }, tq = 0.09;
+  const hd = headOf(r), tq = 0.09;
   const sk = r.skin, dk = shade(sk, 0.74), deep = shade(sk, 0.5), J = 'head';
   const put = (poly: Pt[], col: string | Swatch, dz: number, rough = 0.008) => cut(fr, poly, col, z + dz, J, 0.03, rough);
   const K = r.kit, acc = (a: string) => !!K && K.acc.indexOf(a) >= 0;
