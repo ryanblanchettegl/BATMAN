@@ -1,4 +1,4 @@
-/* Charts and block lettering. The pie and the column chart are cut card in SVG; the rest is still drawn with characters. */
+/* Charts and lettering. The pie, the column chart, the dial and the range bar are cut card in SVG. */
 import { ComponentChildren } from 'preact';
 import { GLYPH } from './glyphs';
 
@@ -38,25 +38,24 @@ export function ColChart(p: { vals: number[]; labels?: (string | number)[]; titl
     {p.labels ? <div class="cl" aria-hidden="true">{p.labels.map((l, i) => <span key={i}>{l}</span>)}</div> : null}
   </div>;
 }
-/** A 20-cell bar that shows a range, for scouting reports. */
+/** A bar that shows a range, for scouting reports: a card strip with the likely range cut in gold. */
 export function RangeBar(p: { lo: number; hi: number }) {
-  let s = ''; for (let i = 0; i < 20; i++) { const v = i * 5 + 2.5; s += v >= p.lo - 2.5 && v <= p.hi + 2.5 ? '█' : '░'; }
-  return <span class="meter au" aria-hidden="true">{s}</span>;
+  const lo = Math.max(0, Math.min(100, p.lo)), hi = Math.max(lo + 2, Math.min(100, p.hi));
+  return <svg class="rangebar" viewBox="0 0 100 10" preserveAspectRatio="none" aria-hidden="true">
+    <rect x="0" y="1" width="100" height="8" rx="1.5" fill="#3a3540" />
+    <rect x={lo} y="1" width={hi - lo} height="8" rx="1.5" fill="#d9a52a" />
+  </svg>;
 }
-/** A progress clock: a small pie of `n` segments with `v` filled. Red for trouble, green for a pay-out. */
+/** A progress clock: a card disc of `n` wedges with `v` filled. Red for trouble, green for a pay-out. */
 export function Dial(p: { v: number; n: number; bad?: boolean }) {
-  const W = 11, H = 5, rows: ComponentChildren[] = [];
-  for (let y = 0; y < H; y++) {
-    const cells: ComponentChildren[] = [];
-    for (let x = 0; x < W; x++) {
-      const dx = (x - (W - 1) / 2) / ((W - 1) / 2), dy = (y - (H - 1) / 2) / ((H - 1) / 2);
-      if (dx * dx + dy * dy > 1.12) { cells.push(' '); continue; }
-      let a = Math.atan2(dx, -dy) / (2 * Math.PI); if (a < 0) a += 1;
-      cells.push(Math.min(p.n - 1, Math.floor(a * p.n)) < p.v ? <span class="on">{'█'}</span> : <span class="off">{'░'}</span>);
-    }
-    rows.push(cells, '\n');
+  const n = Math.max(1, p.n), on = p.bad ? '#c23a30' : '#3c8a3c', r = 46, c = 50, out: ComponentChildren[] = [];
+  for (let i = 0; i < n; i++) {
+    const a0 = -Math.PI / 2 + i / n * Math.PI * 2, a1 = -Math.PI / 2 + (i + 1) / n * Math.PI * 2, fill = i < p.v ? on : '#e8dcc0';
+    const d = n === 1 ? 'M 50 4 A 46 46 0 1 1 49.99 4 Z'
+      : 'M 50 50 L ' + (c + r * Math.cos(a0)).toFixed(2) + ' ' + (c + r * Math.sin(a0)).toFixed(2) + ' A 46 46 0 ' + (1 / n > 0.5 ? 1 : 0) + ' 1 ' + (c + r * Math.cos(a1)).toFixed(2) + ' ' + (c + r * Math.sin(a1)).toFixed(2) + ' Z';
+    out.push(<path key={i} d={d} fill={fill} stroke="#23232a" stroke-width="2.5" stroke-linejoin="round" />);
   }
-  return <pre class={'dial ' + (p.bad ? 'bad' : 'good')} aria-hidden="true">{rows}</pre>;
+  return <svg class={'dial ' + (p.bad ? 'bad' : 'good')} viewBox="0 0 100 100" aria-hidden="true">{out}</svg>;
 }
 function blockRows(word: string, zeroAsO?: boolean): string[] {
   const rows = ['', '', '', '', ''];
@@ -75,7 +74,7 @@ export function BigText(p: { text: string; scale?: number; one?: boolean; cls?: 
   return <pre class={'ascii logo' + (p.cls ? ' ' + p.cls : '')} role={p.label ? 'img' : undefined} aria-label={p.label ? p.text : undefined} aria-hidden={p.label ? undefined : true} style={{ fontSize: size }}>{out.join('\n')}</pre>;
 }
 /** The gold banner used for big-event title cards. */
-export function Banner(p: { text: string }) { return <BigText text={p.text} cls="gold" label />; }
+export function Banner(p: { text: string }) { return <div class="evbanner" role="img" aria-label={p.text}><span aria-hidden="true">{p.text}</span></div>; }
 /** The "new champion" belt drawn when a title changes hands. */
 export function BeltArt(p: { name: string; top?: string }) {
   const n = String(p.name).toUpperCase(), top = '★ ' + String(p.top || 'NEW CHAMPION').toUpperCase() + ' ★', w = Math.max(19, n.length + 4, top.length + 2), bar = '═'.repeat(w);

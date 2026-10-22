@@ -504,3 +504,9 @@ html body .win.ppop .wb{font-family:var(--hand);font-size:1.06em}
 .colchart svg{display:block;width:100%;height:clamp(6em,24vh,16em);filter:drop-shadow(.08em .12em .08em rgba(0,0,0,.3))}
 .colchart .cl{display:flex;justify-content:space-around;font-family:var(--hand);font-size:.85em;color:#55555e}
 .lkpage .piebox svg.pie{width:clamp(3.5em,13vh,8em)}
+
+/* The clock dial, the scouting range and the big-event banner are cut card and marker (rule 2a: no dot matrix). */
+svg.dial{width:2.6em;height:2.6em;flex:none;filter:drop-shadow(.08em .1em 0 rgba(0,0,0,.35))}
+svg.rangebar{width:9em;height:.8em;vertical-align:middle;margin:0 .4em}
+.evbanner{display:block;text-align:center;margin:.1em 0 .2em}
+.evbanner span{display:inline-block;font-family:var(--marker);font-size:clamp(1.6em,4.2vh,2.8em);line-height:1.1;color:#ffd84a;background:#151318;padding:.1em .6em;transform:rotate(-1.2deg);text-shadow:.06em .07em 0 #8a1f18;box-shadow:.12em .14em 0 rgba(0,0,0,.4)}
