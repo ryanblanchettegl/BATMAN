@@ -4617,8 +4617,8 @@ function showEnd(S,P,show,card,st){
         else qt='Sponsor target missed: needed '+gradeA(q.target)+' show, got '+gradeA(rep.cs)+'.';
         rep.quest.push(qt);(rep.targets=rep.targets||[]).push({ok:sok,t:qt});dropQuest(S,q,sok,qt);}
       if(q.type==='network'&&q.show===show.id){
-        if(q.hit){P.led.bonus+=q.bonus;qt='Network target hit: a main event of '+starG(q.got||q.target)+', '+starG(q.target)+' was needed. +$'+q.bonus.toLocaleString('en-US')+'.';award(S,'ACH_QUEST');}
-        else qt='Network target missed: needed a main event of '+starG(q.target)+(q.got!=null?', got '+starG(q.got):'')+'.';
+        if(q.hit){P.led.bonus+=q.bonus;qt='Network bonus earned: a main event of '+starG(q.got||q.target)+', '+starG(q.target)+' was needed. +$'+q.bonus.toLocaleString('en-US')+'.';award(S,'ACH_QUEST');}
+        else qt='Network bonus missed: needed a main event of '+starG(q.target)+(q.got!=null?', got '+starG(q.got):'')+'.';
         rep.quest.push(qt);(rep.targets=rep.targets||[]).push({ok:!!q.hit,t:qt});dropQuest(S,q,!!q.hit,qt);}
     });
     rep.sheet=dirtSheet(S,P,show,rep,inP);
@@ -5674,7 +5674,8 @@ var EV={
   },
   network:function(S,P){
     if(S.quests.some(function(q){return q.type==='network';}))return null;
-    var sh=pick(S,P.shows),target=Math.round((P.mainB[sh.id]||75)+4),bonus=Math.round(P.inc0*0.04/1000)*1000;
+    var sh=pick(S,P.shows),target=Math.min(92,Math.round((P.mainB[sh.id]||75)+4)),   // a stretch, never more than four and a half stars: five is all but out of reach
+      bonus=Math.round(P.inc0*0.04/1000)*1000;
     S.quests.push({id:S.nid++,type:'network',show:sh.id,target:target,bonus:bonus,due:S.week,text:'Network: a main event of '+starG(target)+' or better on '+sh.name+' this week ('+money(bonus)+')'});
     return {type:'network',text:'The network wants a big main event on '+sh.name+' this week. '+starG(target)+' or better pays a '+money(bonus)+' bonus.'};
   },
