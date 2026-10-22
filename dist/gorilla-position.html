@@ -17973,8 +17973,8 @@ SHOWON.push(function(S){if(S.player&&!S.cal)lockSeed(S);});
 SEGNEW.push(function(S,L){locksNow(S).forEach(function(l){if(l.kind==='promo'&&l.who!=null&&S.w[l.who]&&!L.some(function(x){return x&&x.pm===l.id;})){var P=S.promos[S.player];if(taleFree(S,P,S.w[l.who]))L.push({k:'interview',who:[l.who],pos:1,len:'M',forced:1,pm:l.id});}});});
 /* a suggested card keeps what is promised for the show */
 (function(){
-  var s0=E.suggest;
-  E.suggest=function(S){
+  // both suggests keep it: the flat one the player presses and the thinking one tests and tools book with
+  var keep=function(s0){return function(S){
     var c=s0(S),L=locksNow(S).filter(function(l){return l.kind==='match';});if(!L.length)return c;
     var saved=S.card;S.card=[];lockSeed(S);var put=S.card.filter(function(m){return m&&m!=='wait';});S.card=saved;
     put.forEach(function(m){var ids=flat(m.sides).filter(function(x){return x!=null;}),clash=function(x){return flat(x.sides).some(function(id){return ids.indexOf(id)>=0;})||(m.title&&x.title===m.title);};
@@ -17986,7 +17986,8 @@ SEGNEW.push(function(S,L){locksNow(S).forEach(function(l){if(l.kind==='promo'&&l
         var a=S.w[flat(m.sides).filter(function(x){return x!=null;})[0]],pick=eligible(S,S.promos[S.player],S.queue[S.qi]).filter(function(w){return !used[w.id]&&w.g===a.g;}).sort(function(x,y){return Math.abs(x.ovr-a.ovr)-Math.abs(y.ovr-a.ovr);})[0];if(pick)sd[q]=pick.id;});});
       if(wasMain)c.push(m);else c.splice(at>=0?Math.min(at,c.length):Math.max(0,c.length-1),0,m);});
     fitShow(S,c);return c;
-  };
+  };};
+  E.suggest=keep(E.suggest);if(E.suggestSmart)E.suggestSmart=keep(E.suggestSmart);
 })();
 /* the show cannot run without what was promised for it */
 (function(){
