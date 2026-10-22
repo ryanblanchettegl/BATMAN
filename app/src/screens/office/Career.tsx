@@ -2,13 +2,13 @@
    assistant, the season saga, and your legacy, achievements and milestones behind buttons. */
 import { E } from '../../engine';
 import { G, me, act, plural, openModal } from '../../store';
-import { Btn, Tag, Meter, Desktop, Win, Line } from '../../kit';
+import { Btn, Tag, Meter, Desktop, Win, Line, Window } from '../../kit';
 import { LegacyPanel } from './GameOver';
 
 const role = () => G.S.owner.me ? 'owner and booker' : 'booker';
 
 function You() {
-  const S = G.S, b = S.booker, o = S.owner, P = me(), need = E.xpNeed(b.lvl), style = E.STYLES[o.style];
+  const S = G.S, b = S.booker, o = S.owner, P = me(), need = E.xpNeed(b.lvl), style = E.STYLES[o.style], Y = E.ownerYear(S);
   return <Win title={b.name} area="you" t="career-you" right={'Level ' + b.lvl}>
     <p>{role().charAt(0).toUpperCase() + role().slice(1)} of {P.name}</p>
     <p class="muted">Difficulty: {(E.DIFF[S.diff] || E.DIFF.normal).n}{E.diffSummary(S) ? ' (' + E.diffSummary(S) + ')' : ''}</p>
@@ -18,6 +18,7 @@ function You() {
     {o.me ? <p class="good">The company is yours. House style: {style.n}.</p>
       : <p>{o.name}{'’'}s trust <Meter v={o.trust} kind={o.trust < 25 ? 'hot' : 'cool'} /> <span class="num">{Math.round(o.trust)}</span>{o.trust < 20 ? <> <span class="bad">Your job is in danger.</span></> : null}<br />
         <span class="muted">House style: {style.n}. {o.name} wants {style.likes}.</span></p>}
+    {Y ? <p data-t="career-year">Goals for the year <b class={Y.met === 3 ? 'good' : (Y.met <= 1 ? 'bad' : undefined)}>{Y.met} of 3</b> <span class="muted">on course</span> <Btn kind="sm" t="career-goals" onClick={() => openModal({ kind: 'ownyear' })}>Goals</Btn></p> : null}
     <ul class="list sklist">{Object.keys(E.SKILLS).map(k => {
       const sk = E.SKILLS[k], lv = b.sk[k] || 0;
       return <li>
@@ -26,6 +27,17 @@ function You() {
       </li>;
     })}</ul>
   </Win>;
+}
+
+/** The owner's three goals for the year, judged at the flagship (src/66-owner-year.js). */
+export function OwnerYearWindow() {
+  const S = G.S, o = S.owner, Y = E.ownerYear(S);
+  if (!Y) return <Window title="Goals for the year" ok="Done"><p>The company is yours. Nobody sets you goals now.</p></Window>;
+  return <Window title={o.name + '’s goals for the year'} ok="Done">
+    <p>{o.name} judges the year at the flagship{Y.end ? ', ' + Y.end : ''}{Y.left != null ? ' (' + Y.left + ' ' + plural(Y.left, 'week') + ' away)' : ''}. All three met raises trust by 12; one or none costs up to 15.</p>
+    <ul class="list mt1" data-t="year-goals">{Y.asks.map((x: any) => <li key={x.k}><span><b>{x.n}</b><br /><span class="muted">{x.now}</span></span><Tag kind={x.ok ? 'good' : 'bad'}>{x.ok ? 'On course' : 'Behind'}</Tag></li>)}</ul>
+    <p class="muted mt1">Meet all three for two years and {o.name} can hand you the company. Years with all three met: {Y.years} of 2.</p>
+  </Window>;
 }
 
 /** Locker-room trust and the last few promises, kept or broken. */

@@ -110,7 +110,7 @@ for (let w = 0; w < 50 && !S.over; w++) {
 {
   const S = E.newGame('ocw', 1, { name: 'R' }); let q = null;
   for (let w = 0; w < 48 && !q; w++) { S.inbox.filter(e => !e.done).forEach(e => E.resolveEvent(S, e.id, 0));
-    while (S.qi < S.queue.length) { const c = E.suggest(S), pr = E.preShow(S, c); if (pr) { E.resolvePre(S, c, 0); E.fitShow(S, c); } if (E.validate(S, c).errors.length) { S.qi++; continue; } E.runPlayerShow(S, c); }
+    while (S.qi < S.queue.length) { const c = E.suggestSmart(S), pr = E.preShow(S, c); if (pr) { E.resolvePre(S, c, 0); E.fitShow(S, c); } if (E.validate(S, c).errors.length) { S.qi++; continue; } E.runPlayerShow(S, c); }
     q = S.quests.find(x => x.type === 'shot' && /won the tournament/.test(x.text)); E.endWeek(S); }
   ok(q && E.cal(q.due).month === S.promos.ocw.flagship, 'no tournament winner was promised the flagship: ' + JSON.stringify(q));
 }
