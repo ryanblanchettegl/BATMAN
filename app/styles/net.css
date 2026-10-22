@@ -31,20 +31,21 @@
 .podcast .pod-foot{margin:0;color:var(--ink-soft,#555)}
 
 /* The podcast player: the whole 1080p screen (Bill, 21 October: use the screen real estate) */
-.win.wide:has(.podplayer){width:min(97vw,1860px);max-height:95vh;height:95vh}
+/* 1080p is the base and it scales up to every main resolution (Bill, 22 October): sizes follow the screen, never a fixed cap */
+.win.wide:has(.podplayer){width:97vw;max-width:none;max-height:95vh;height:95vh}
 .win.wide:has(.podplayer)>.wb{flex:1 1 0;min-height:0;overflow:hidden}
-.podplayer{display:grid;grid-template-columns:minmax(0,1fr) minmax(320px,26%);gap:18px;height:100%;min-height:0}
+.podplayer{display:grid;grid-template-columns:minmax(0,1fr) minmax(320px,26%);gap:1.1em;height:100%;min-height:0}
 .podplayer .pp-main{display:flex;flex-direction:column;gap:10px;min-height:0;min-width:0}
-.podplayer .pp-tv{position:relative;width:100%;max-height:calc(95vh - 230px);aspect-ratio:16/9;margin:0 auto;background:#121318}
+.podplayer .pp-tv{position:relative;flex:none;width:min(100%,calc((95vh - 10em) * 16 / 9));height:auto;max-height:none;aspect-ratio:16/9;margin:0 auto;background:#121318}
 .podplayer .pp-tv .lv-scene{position:absolute;inset:14px}
 .podplayer .pp-seg{position:absolute;left:28px;top:24px;background:#1b1d26;color:#fff;padding:.25em 1.4ch;font-weight:700;transform:rotate(-1deg);z-index:2}
-.podplayer .pp-cap{position:absolute;left:6%;right:6%;bottom:8%;z-index:2;text-align:center;font-size:clamp(18px,1.55vw,30px);line-height:1.3;color:#fff;text-shadow:0 0 3px #000,0 2px 4px #000,0 0 10px #000}
+.podplayer .pp-cap{position:absolute;left:6%;right:6%;bottom:8%;z-index:2;text-align:center;font-size:max(18px,min(1.55vw,2.75vh));line-height:1.3;color:#fff;text-shadow:0 0 3px #000,0 2px 4px #000,0 0 10px #000}
 .podplayer .pp-cap.box{background:rgba(10,10,14,.85);padding:.35em .8em;text-shadow:none;border-radius:3px}
 .podplayer .k-a{color:#ffd75e}
 .podplayer .k-b{color:#8fe3ff}
 .podplayer .pp-tx .k-a{color:#8a5d00}
 .podplayer .pp-tx .k-b{color:#0b5f82}
-.podplayer .pp-ctl{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.podplayer .pp-ctl{display:flex;flex-wrap:wrap;gap:.5em;align-items:center}
 .podplayer .pp-speed{display:flex;gap:.6ch;align-items:center}
 .podplayer .pp-pos{margin-left:auto}
 .podplayer .pp-bar{height:6px;background:#d8d4c8;border-radius:3px;overflow:hidden}

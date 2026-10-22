@@ -66,6 +66,14 @@ async function run(mode) {
     ok(mode, 'the arrow keys move a line', (await cap()).indexOf(P.lines[2]) >= 0);
     await over('the player');
     await shot(page, 'net-' + mode + '-podcast', true);
+    // 1080p is the base and the game scales up to every main resolution (Bill, 22 October)
+    const vp0 = page.viewportSize();
+    for (const [w, h] of [[2560, 1440], [3440, 1440], [3840, 2160]]) {
+      await page.setViewportSize({ width: w, height: h }); await page.waitForTimeout(400);
+      const g = await page.evaluate(() => { const r = s => document.querySelector(s).getBoundingClientRect(), tv = r('[data-t="pod-tv"]'), win = r('.win:has(.podplayer)'), wb = document.querySelector('.win:has(.podplayer)>.wb'); return { ar: tv.width / tv.height, fill: win.width / window.innerWidth, over: wb.scrollHeight - wb.clientHeight }; });
+      ok(mode, 'at ' + w + ' by ' + h + ' the player fills the screen and the picture stays 16 by 9', g.fill >= 0.9 && Math.abs(g.ar - 16 / 9) < 0.03 && g.over <= 1, JSON.stringify(g));
+    }
+    await page.setViewportSize(vp0); await page.waitForTimeout(400);
     await page.keyboard.press('Escape');
     ok(mode, 'Esc closes the player', await count(page, '[data-t="pod-player"]') === 0);
     await go(page, 'boards');
