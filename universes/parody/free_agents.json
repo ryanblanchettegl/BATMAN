@@ -44,7 +44,139 @@
     "name": "Big Boot of Destiny",
     "move": "Big boot"
    }
-  ]
+  ],
+  "look": {
+   "id": "brother_bronzer",
+   "name": "Brother Bronzer",
+   "hometown": "Tampa",
+   "archetype": "Powerhouse",
+   "physical_attributes": {
+    "sex": "M",
+    "height_inches": 79,
+    "weight_lbs": 302,
+    "body_archetype": "Powerhouse",
+    "proportional_scalers": {
+     "torso_width": 1.14,
+     "torso_height": 1.04,
+     "limb_length": 1.04,
+     "muscle_mass": 1.2
+    }
+   },
+   "appearance": {
+    "face": {
+     "sk": 40
+    },
+    "hair_colour": "hair_platinum",
+    "facial_hair": "horseshoe",
+    "mood": "happy",
+    "cheeks": "tan"
+   },
+   "attires": {
+    "primary_ring": {
+     "description": "In-ring gear",
+     "equipped_assets": {
+      "head": "hair_long_01",
+      "upper_body": "shirt_tank",
+      "lower_body": "tights_long_01",
+      "footwear": "boots_knee",
+      "accessories": [
+       "bandana",
+       "wrist_tape_white"
+      ]
+     },
+     "palette_slots": {
+      "primary": "swatch_red_paper",
+      "secondary": "swatch_yellow_paper",
+      "trim": "swatch_yellow_paper",
+      "hardware": "swatch_gold_foil"
+     },
+     "custom_layers": [],
+     "part_colours": {
+      "upper_body": "swatch_yellow_paper"
+     }
+    },
+    "entrance_gear": {
+     "description": "Ring walk and entrance",
+     "equipped_assets": {
+      "head": "hair_long_01",
+      "upper_body": "shirt_tshirt_base",
+      "lower_body": "tights_long_01",
+      "footwear": "boots_knee",
+      "accessories": [
+       "bandana",
+       "chain_gold"
+      ]
+     },
+     "palette_slots": {
+      "primary": "swatch_red_paper",
+      "secondary": "swatch_yellow_paper",
+      "trim": "swatch_yellow_paper",
+      "hardware": "swatch_gold_foil"
+     },
+     "custom_layers": [],
+     "part_colours": {
+      "upper_body": "swatch_yellow_paper"
+     }
+    },
+    "street_clothes": {
+     "description": "Backstage and promos",
+     "equipped_assets": {
+      "head": "hair_long_01",
+      "upper_body": "shirt_tshirt_base",
+      "lower_body": "jeans_distressed",
+      "footwear": "boots_short",
+      "accessories": [
+       "bandana",
+       "sunglasses_aviator"
+      ]
+     },
+     "palette_slots": {
+      "primary": "swatch_black_matte",
+      "secondary": "swatch_red_paper",
+      "trim": "swatch_yellow_paper",
+      "hardware": "swatch_gold_foil"
+     },
+     "custom_layers": [],
+     "part_colours": {
+      "upper_body": "swatch_red_paper"
+     }
+    }
+   },
+   "finishing_moves": [
+    {
+     "name": "The Thirty-Year Leg Drop",
+     "impact_damage": 88,
+     "kickout_difficulty": "Protected",
+     "position": "Standing",
+     "category": "Pinfall Impact",
+     "preview_pose_id": "slam"
+    },
+    {
+     "name": "Ear Cup",
+     "impact_damage": 40,
+     "kickout_difficulty": "Easy",
+     "position": "Standing",
+     "category": "Pinfall Impact",
+     "preview_pose_id": "strike",
+     "stage": "early"
+    },
+    {
+     "name": "Big Boot of Destiny",
+     "impact_damage": 55,
+     "kickout_difficulty": "Easy",
+     "position": "Standing",
+     "category": "Pinfall Impact",
+     "preview_pose_id": "strike",
+     "stage": "late"
+    }
+   ],
+   "entrance": "ent_flex",
+   "entrance_fx": {
+    "pyro": "sparks",
+    "lights": "spot",
+    "music": "Real American Bronze"
+   }
+  }
  },
  {
   "id": "tepid_tex_granite",
@@ -91,7 +223,132 @@
     "name": "Middle Finger Salute",
     "move": "Taunt"
    }
-  ]
+  ],
+  "look": {
+   "id": "tepid_tex_granite",
+   "name": "Tepid Tex Granite",
+   "hometown": "Victoria, Texas",
+   "archetype": "Brawler",
+   "physical_attributes": {
+    "sex": "M",
+    "height_inches": 74,
+    "weight_lbs": 252,
+    "body_archetype": "Brawler",
+    "proportional_scalers": {
+     "torso_width": 1.08,
+     "torso_height": 1.0,
+     "limb_length": 1.0,
+     "muscle_mass": 1.1
+    }
+   },
+   "appearance": {
+    "face": {
+     "sk": 14
+    },
+    "hair_colour": "hair_dirty_blonde",
+    "facial_hair": "goatee",
+    "mood": "fierce"
+   },
+   "attires": {
+    "primary_ring": {
+     "description": "In-ring gear",
+     "equipped_assets": {
+      "head": "hair_bald",
+      "upper_body": "bare",
+      "lower_body": "trunks_brief_01",
+      "footwear": "boots_knee",
+      "accessories": [
+       "knee_pads",
+       "elbow_pads"
+      ]
+     },
+     "palette_slots": {
+      "primary": "swatch_black_matte",
+      "secondary": "swatch_black_matte",
+      "trim": "swatch_white_paper",
+      "hardware": "swatch_silver_foil"
+     },
+     "custom_layers": []
+    },
+    "entrance_gear": {
+     "description": "Ring walk and entrance",
+     "equipped_assets": {
+      "head": "hair_bald",
+      "upper_body": "vest_open",
+      "lower_body": "trunks_brief_01",
+      "footwear": "boots_knee",
+      "accessories": [
+       "knee_pads",
+       "elbow_pads"
+      ]
+     },
+     "palette_slots": {
+      "primary": "swatch_black_matte",
+      "secondary": "swatch_black_matte",
+      "trim": "swatch_white_paper",
+      "hardware": "swatch_silver_foil"
+     },
+     "custom_layers": [],
+     "part_colours": {
+      "upper_body": "swatch_leather_black"
+     }
+    },
+    "street_clothes": {
+     "description": "Backstage and promos",
+     "equipped_assets": {
+      "head": "hair_bald",
+      "upper_body": "shirt_tshirt_base",
+      "lower_body": "jeans_distressed",
+      "footwear": "boots_laced_heavy",
+      "accessories": []
+     },
+     "palette_slots": {
+      "primary": "swatch_black_matte",
+      "secondary": "swatch_blue_denim",
+      "trim": "swatch_white_paper",
+      "hardware": "swatch_silver_foil"
+     },
+     "custom_layers": [],
+     "part_colours": {
+      "upper_body": "swatch_black_matte"
+     }
+    }
+   },
+   "finishing_moves": [
+    {
+     "name": "Tepid Stunner",
+     "impact_damage": 88,
+     "kickout_difficulty": "Protected",
+     "position": "Standing",
+     "category": "Pinfall Impact",
+     "preview_pose_id": "move_ddt"
+    },
+    {
+     "name": "Mudhole Stomp",
+     "impact_damage": 50,
+     "kickout_difficulty": "Easy",
+     "position": "Standing",
+     "category": "Pinfall Impact",
+     "preview_pose_id": "strike",
+     "stage": "early"
+    },
+    {
+     "name": "Middle Finger Salute",
+     "impact_damage": 30,
+     "kickout_difficulty": "Easy",
+     "position": "Standing",
+     "category": "Pinfall Impact",
+     "preview_pose_id": "strike",
+     "stage": "mid"
+    }
+   ],
+   "entrance": "ent_stare",
+   "entrance_fx": {
+    "pyro": "flash",
+    "lights": "red",
+    "music": "Glass Breaking Somewhere"
+   }
+  }
  },
  {
   "id": "chairman_mcstrut",
@@ -138,7 +395,129 @@
     "name": "Severance",
     "move": "Slap"
    }
-  ]
+  ],
+  "look": {
+   "id": "chairman_mcstrut",
+   "name": "Chairman Moneybags McStrut",
+   "hometown": "Greenwich",
+   "archetype": "Heavyweight",
+   "physical_attributes": {
+    "sex": "M",
+    "height_inches": 74,
+    "weight_lbs": 240,
+    "body_archetype": "Heavyweight",
+    "proportional_scalers": {
+     "torso_width": 1.06,
+     "torso_height": 1.02,
+     "limb_length": 1.0,
+     "muscle_mass": 1.0
+    }
+   },
+   "appearance": {
+    "face": {
+     "sk": 16
+    },
+    "hair_colour": "hair_salt_pepper",
+    "facial_hair": "none",
+    "mood": "cocky",
+    "cheeks": "flush"
+   },
+   "attires": {
+    "primary_ring": {
+     "description": "In-ring gear",
+     "equipped_assets": {
+      "head": "hair_slick_01",
+      "upper_body": "suit_jacket",
+      "lower_body": "trousers_suit",
+      "footwear": "shoes_dress",
+      "accessories": []
+     },
+     "palette_slots": {
+      "primary": "swatch_navy_paper",
+      "secondary": "swatch_navy_paper",
+      "trim": "swatch_white_paper",
+      "hardware": "swatch_silver_foil"
+     },
+     "custom_layers": [],
+     "part_colours": {
+      "upper_body": "swatch_navy_paper"
+     }
+    },
+    "entrance_gear": {
+     "description": "Ring walk and entrance",
+     "equipped_assets": {
+      "head": "hair_slick_01",
+      "upper_body": "suit_jacket",
+      "lower_body": "trousers_suit",
+      "footwear": "shoes_dress",
+      "accessories": []
+     },
+     "palette_slots": {
+      "primary": "swatch_charcoal_paper",
+      "secondary": "swatch_charcoal_paper",
+      "trim": "swatch_white_paper",
+      "hardware": "swatch_silver_foil"
+     },
+     "custom_layers": [],
+     "part_colours": {
+      "upper_body": "swatch_charcoal_paper"
+     }
+    },
+    "street_clothes": {
+     "description": "Backstage and promos",
+     "equipped_assets": {
+      "head": "hair_slick_01",
+      "upper_body": "suit_jacket",
+      "lower_body": "trousers_suit",
+      "footwear": "shoes_dress",
+      "accessories": []
+     },
+     "palette_slots": {
+      "primary": "swatch_black_matte",
+      "secondary": "swatch_black_matte",
+      "trim": "swatch_white_paper",
+      "hardware": "swatch_silver_foil"
+     },
+     "custom_layers": [],
+     "part_colours": {
+      "upper_body": "swatch_black_matte"
+     }
+    }
+   },
+   "finishing_moves": [
+    {
+     "name": "The Strut",
+     "impact_damage": 40,
+     "kickout_difficulty": "Protected",
+     "position": "Standing",
+     "category": "Pinfall Impact",
+     "preview_pose_id": "strike"
+    },
+    {
+     "name": "Severance",
+     "impact_damage": 35,
+     "kickout_difficulty": "Easy",
+     "position": "Standing",
+     "category": "Pinfall Impact",
+     "preview_pose_id": "strike",
+     "stage": "early"
+    },
+    {
+     "name": "Board Vote",
+     "impact_damage": 45,
+     "kickout_difficulty": "Easy",
+     "position": "Standing",
+     "category": "Pinfall Impact",
+     "preview_pose_id": "strike",
+     "stage": "late"
+    }
+   ],
+   "entrance": "ent_point",
+   "entrance_fx": {
+    "lights": "spot",
+    "music": "No Chance in Accounting"
+   }
+  }
  },
  {
   "id": "mr_lastrites",
@@ -185,7 +564,140 @@
     "name": "Last Breath",
     "move": "Chokeslam"
    }
-  ]
+  ],
+  "look": {
+   "id": "mr_lastrites",
+   "name": "Mr. Lastrites, the Funeral Director",
+   "hometown": "Houston",
+   "archetype": "Giant",
+   "physical_attributes": {
+    "sex": "M",
+    "height_inches": 82,
+    "weight_lbs": 309,
+    "body_archetype": "Giant",
+    "proportional_scalers": {
+     "torso_width": 1.1,
+     "torso_height": 1.08,
+     "limb_length": 1.08,
+     "muscle_mass": 1.08
+    }
+   },
+   "appearance": {
+    "face": {
+     "sk": 4
+    },
+    "hair_colour": "hair_jet_black",
+    "facial_hair": "none",
+    "mood": "fierce",
+    "tattoos": [
+     "sleeve_near",
+     "sleeve_far"
+    ]
+   },
+   "attires": {
+    "primary_ring": {
+     "description": "In-ring gear",
+     "equipped_assets": {
+      "head": "hair_long_01",
+      "upper_body": "shirt_tank",
+      "lower_body": "tights_long_01",
+      "footwear": "boots_laced_heavy",
+      "accessories": [
+       "gloves_fingerless"
+      ]
+     },
+     "palette_slots": {
+      "primary": "swatch_black_matte",
+      "secondary": "swatch_charcoal_paper",
+      "trim": "swatch_grey_paper",
+      "hardware": "swatch_silver_foil"
+     },
+     "custom_layers": [],
+     "part_colours": {
+      "upper_body": "swatch_charcoal_paper"
+     }
+    },
+    "entrance_gear": {
+     "description": "Ring walk and entrance",
+     "equipped_assets": {
+      "head": "hair_long_01",
+      "upper_body": "coat_long",
+      "lower_body": "tights_long_01",
+      "footwear": "boots_laced_heavy",
+      "accessories": [
+       "hat_cowboy",
+       "gloves_fingerless"
+      ]
+     },
+     "palette_slots": {
+      "primary": "swatch_black_matte",
+      "secondary": "swatch_black_matte",
+      "trim": "swatch_purple_paper",
+      "hardware": "swatch_silver_foil"
+     },
+     "custom_layers": [],
+     "part_colours": {
+      "upper_body": "swatch_leather_black"
+     }
+    },
+    "street_clothes": {
+     "description": "Backstage and promos",
+     "equipped_assets": {
+      "head": "hair_long_01",
+      "upper_body": "coat_long",
+      "lower_body": "trousers_suit",
+      "footwear": "boots_laced_heavy",
+      "accessories": [
+       "hat_cowboy"
+      ]
+     },
+     "palette_slots": {
+      "primary": "swatch_black_matte",
+      "secondary": "swatch_black_matte",
+      "trim": "swatch_grey_paper",
+      "hardware": "swatch_silver_foil"
+     },
+     "custom_layers": [],
+     "part_colours": {
+      "upper_body": "swatch_black_matte"
+     }
+    }
+   },
+   "finishing_moves": [
+    {
+     "name": "The Last Rites Piledriver",
+     "impact_damage": 88,
+     "kickout_difficulty": "Protected",
+     "position": "Standing",
+     "category": "Pinfall Impact",
+     "preview_pose_id": "move_powerbomb"
+    },
+    {
+     "name": "Old School Rope Walk",
+     "impact_damage": 50,
+     "kickout_difficulty": "Easy",
+     "position": "Top Rope",
+     "category": "Pinfall Impact",
+     "preview_pose_id": "move_topdive",
+     "stage": "mid"
+    },
+    {
+     "name": "Last Breath",
+     "impact_damage": 60,
+     "kickout_difficulty": "Easy",
+     "position": "Standing",
+     "category": "Pinfall Impact",
+     "preview_pose_id": "slam",
+     "stage": "late"
+    }
+   ],
+   "entrance": "ent_stare",
+   "entrance_fx": {
+    "pyro": "fire",
+    "lights": "dark",
+    "music": "The Bell Tolls Eleven Times"
+   }
+  }
  },
  {
   "id": "the_electrifying_eyebrow",
@@ -232,7 +744,137 @@
     "name": "Matinee Slam",
     "move": "Sideslam"
    }
-  ]
+  ],
+  "look": {
+   "id": "the_electrifying_eyebrow",
+   "name": "The Electrifying Eyebrow",
+   "hometown": "Hayward",
+   "archetype": "Heavyweight",
+   "physical_attributes": {
+    "sex": "M",
+    "height_inches": 77,
+    "weight_lbs": 260,
+    "body_archetype": "Heavyweight",
+    "proportional_scalers": {
+     "torso_width": 1.14,
+     "torso_height": 1.02,
+     "limb_length": 1.02,
+     "muscle_mass": 1.22
+    }
+   },
+   "appearance": {
+    "face": {
+     "sk": 48
+    },
+    "hair_colour": "hair_jet_black",
+    "facial_hair": "none",
+    "mood": "cocky",
+    "tattoos": [
+     "shoulder"
+    ]
+   },
+   "attires": {
+    "primary_ring": {
+     "description": "In-ring gear",
+     "equipped_assets": {
+      "head": "hair_bald",
+      "upper_body": "bare",
+      "lower_body": "trunks_brief_01",
+      "footwear": "boots_knee",
+      "accessories": [
+       "knee_pads",
+       "elbow_pads"
+      ]
+     },
+     "palette_slots": {
+      "primary": "swatch_black_matte",
+      "secondary": "swatch_black_matte",
+      "trim": "swatch_white_paper",
+      "hardware": "swatch_silver_foil"
+     },
+     "custom_layers": []
+    },
+    "entrance_gear": {
+     "description": "Ring walk and entrance",
+     "equipped_assets": {
+      "head": "hair_bald",
+      "upper_body": "vest_open",
+      "lower_body": "trunks_brief_01",
+      "footwear": "boots_knee",
+      "accessories": [
+       "sunglasses_aviator",
+       "chain_gold"
+      ]
+     },
+     "palette_slots": {
+      "primary": "swatch_black_matte",
+      "secondary": "swatch_gold_foil",
+      "trim": "swatch_gold_foil",
+      "hardware": "swatch_gold_foil"
+     },
+     "custom_layers": [],
+     "part_colours": {
+      "upper_body": "swatch_leather_black"
+     }
+    },
+    "street_clothes": {
+     "description": "Backstage and promos",
+     "equipped_assets": {
+      "head": "hair_bald",
+      "upper_body": "suit_jacket",
+      "lower_body": "trousers_suit",
+      "footwear": "shoes_dress",
+      "accessories": [
+       "sunglasses_aviator"
+      ]
+     },
+     "palette_slots": {
+      "primary": "swatch_charcoal_paper",
+      "secondary": "swatch_charcoal_paper",
+      "trim": "swatch_white_paper",
+      "hardware": "swatch_silver_foil"
+     },
+     "custom_layers": [],
+     "part_colours": {
+      "upper_body": "swatch_charcoal_paper"
+     }
+    }
+   },
+   "finishing_moves": [
+    {
+     "name": "The People’s Premiere",
+     "impact_damage": 88,
+     "kickout_difficulty": "Protected",
+     "position": "Standing",
+     "category": "Pinfall Impact",
+     "preview_pose_id": "slam"
+    },
+    {
+     "name": "Eyebrow Raise",
+     "impact_damage": 30,
+     "kickout_difficulty": "Easy",
+     "position": "Standing",
+     "category": "Pinfall Impact",
+     "preview_pose_id": "strike",
+     "stage": "early"
+    },
+    {
+     "name": "Matinee Slam",
+     "impact_damage": 60,
+     "kickout_difficulty": "Easy",
+     "position": "Standing",
+     "category": "Pinfall Impact",
+     "preview_pose_id": "slam",
+     "stage": "late"
+    }
+   ],
+   "entrance": "ent_taunt",
+   "entrance_fx": {
+    "pyro": "fountains",
+    "lights": "spot",
+    "music": "If You Smell the Popcorn"
+   }
+  }
  },
  {
   "id": "the_robe_collector",
@@ -279,7 +921,132 @@
     "name": "Face-First Flop",
     "move": "Flop"
    }
-  ]
+  ],
+  "look": {
+   "id": "the_robe_collector",
+   "name": "The Robe Collector",
+   "hometown": "Charlotte",
+   "archetype": "Technical",
+   "physical_attributes": {
+    "sex": "M",
+    "height_inches": 73,
+    "weight_lbs": 236,
+    "body_archetype": "Technical",
+    "proportional_scalers": {
+     "torso_width": 1.0,
+     "torso_height": 1.0,
+     "limb_length": 1.0,
+     "muscle_mass": 0.94
+    }
+   },
+   "appearance": {
+    "face": {
+     "sk": 22
+    },
+    "hair_colour": "hair_platinum",
+    "facial_hair": "none",
+    "mood": "cocky",
+    "cheeks": "flush"
+   },
+   "attires": {
+    "primary_ring": {
+     "description": "In-ring gear",
+     "equipped_assets": {
+      "head": "hair_slick_01",
+      "upper_body": "bare",
+      "lower_body": "trunks_brief_01",
+      "footwear": "boots_knee",
+      "accessories": []
+     },
+     "palette_slots": {
+      "primary": "swatch_maroon_paper",
+      "secondary": "swatch_black_matte",
+      "trim": "swatch_gold_foil",
+      "hardware": "swatch_gold_foil"
+     },
+     "custom_layers": []
+    },
+    "entrance_gear": {
+     "description": "Ring walk and entrance",
+     "equipped_assets": {
+      "head": "hair_slick_01",
+      "upper_body": "robe_long",
+      "lower_body": "trunks_brief_01",
+      "footwear": "boots_knee",
+      "accessories": [
+       "feather_boa"
+      ]
+     },
+     "palette_slots": {
+      "primary": "swatch_purple_foil",
+      "secondary": "swatch_black_matte",
+      "trim": "swatch_gold_foil",
+      "hardware": "swatch_gold_foil"
+     },
+     "custom_layers": [],
+     "part_colours": {
+      "upper_body": "swatch_purple_foil"
+     }
+    },
+    "street_clothes": {
+     "description": "Backstage and promos",
+     "equipped_assets": {
+      "head": "hair_slick_01",
+      "upper_body": "suit_jacket",
+      "lower_body": "trousers_suit",
+      "footwear": "shoes_dress",
+      "accessories": [
+       "chain_gold",
+       "sunglasses_aviator"
+      ]
+     },
+     "palette_slots": {
+      "primary": "swatch_royal_blue",
+      "secondary": "swatch_royal_blue",
+      "trim": "swatch_white_paper",
+      "hardware": "swatch_gold_foil"
+     },
+     "custom_layers": [],
+     "part_colours": {
+      "upper_body": "swatch_royal_blue"
+     }
+    }
+   },
+   "finishing_moves": [
+    {
+     "name": "Forty-Thousand-Dollar Figure Four",
+     "impact_damage": 88,
+     "kickout_difficulty": "Protected",
+     "position": "Standing",
+     "category": "Submission",
+     "preview_pose_id": "sleeper"
+    },
+    {
+     "name": "Strut and Chop",
+     "impact_damage": 45,
+     "kickout_difficulty": "Easy",
+     "position": "Standing",
+     "category": "Pinfall Impact",
+     "preview_pose_id": "strike",
+     "stage": "early"
+    },
+    {
+     "name": "Face-First Flop",
+     "impact_damage": 20,
+     "kickout_difficulty": "Easy",
+     "position": "Standing",
+     "category": "Pinfall Impact",
+     "preview_pose_id": "strike",
+     "stage": "mid"
+    }
+   ],
+   "entrance": "ent_point",
+   "entrance_fx": {
+    "pyro": "sparks",
+    "lights": "strobe",
+    "music": "Also Sprach Robe-athustra"
+   }
+  }
  },
  {
   "id": "showstopping_preacher",
@@ -326,7 +1093,133 @@
     "name": "Kip-Up",
     "move": "Kip-up"
    }
-  ]
+  ],
+  "look": {
+   "id": "showstopping_preacher",
+   "name": "The Showstopping Preacher",
+   "hometown": "San Antonio",
+   "archetype": "High Flyer",
+   "physical_attributes": {
+    "sex": "M",
+    "height_inches": 73,
+    "weight_lbs": 225,
+    "body_archetype": "High Flyer",
+    "proportional_scalers": {
+     "torso_width": 0.98,
+     "torso_height": 1.0,
+     "limb_length": 1.02,
+     "muscle_mass": 0.96
+    }
+   },
+   "appearance": {
+    "face": {
+     "sk": 15
+    },
+    "hair_colour": "hair_dirty_blonde",
+    "facial_hair": "beard_short",
+    "mood": "happy"
+   },
+   "attires": {
+    "primary_ring": {
+     "description": "In-ring gear",
+     "equipped_assets": {
+      "head": "hair_long_01",
+      "upper_body": "bare",
+      "lower_body": "tights_long_01",
+      "footwear": "boots_knee",
+      "accessories": [
+       "knee_pads"
+      ]
+     },
+     "palette_slots": {
+      "primary": "swatch_black_matte",
+      "secondary": "swatch_hot_pink",
+      "trim": "swatch_hot_pink",
+      "hardware": "swatch_silver_foil"
+     },
+     "custom_layers": []
+    },
+    "entrance_gear": {
+     "description": "Ring walk and entrance",
+     "equipped_assets": {
+      "head": "hair_long_01",
+      "upper_body": "vest_open",
+      "lower_body": "jeans_distressed",
+      "footwear": "boots_short",
+      "accessories": [
+       "hat_cowboy",
+       "sunglasses_aviator"
+      ]
+     },
+     "palette_slots": {
+      "primary": "swatch_black_matte",
+      "secondary": "swatch_hot_pink",
+      "trim": "swatch_hot_pink",
+      "hardware": "swatch_silver_foil"
+     },
+     "custom_layers": [],
+     "part_colours": {
+      "upper_body": "swatch_leather_black"
+     }
+    },
+    "street_clothes": {
+     "description": "Backstage and promos",
+     "equipped_assets": {
+      "head": "hair_long_01",
+      "upper_body": "shirt_tshirt_base",
+      "lower_body": "jeans_distressed",
+      "footwear": "boots_short",
+      "accessories": [
+       "hat_cowboy"
+      ]
+     },
+     "palette_slots": {
+      "primary": "swatch_black_matte",
+      "secondary": "swatch_blue_denim",
+      "trim": "swatch_white_paper",
+      "hardware": "swatch_silver_foil"
+     },
+     "custom_layers": [],
+     "part_colours": {
+      "upper_body": "swatch_white_paper"
+     }
+    }
+   },
+   "finishing_moves": [
+    {
+     "name": "Sermon on the Chin",
+     "impact_damage": 88,
+     "kickout_difficulty": "Protected",
+     "position": "Running",
+     "category": "Pinfall Impact",
+     "preview_pose_id": "strike"
+    },
+    {
+     "name": "Elbow From Heaven",
+     "impact_damage": 55,
+     "kickout_difficulty": "Easy",
+     "position": "Top Rope",
+     "category": "Pinfall Impact",
+     "preview_pose_id": "move_topdive",
+     "stage": "mid"
+    },
+    {
+     "name": "Kip-Up",
+     "impact_damage": 20,
+     "kickout_difficulty": "Easy",
+     "position": "Standing",
+     "category": "Pinfall Impact",
+     "preview_pose_id": "strike",
+     "stage": "late"
+    }
+   ],
+   "entrance": "ent_taunt",
+   "entrance_fx": {
+    "pyro": "fountains",
+    "lights": "strobe",
+    "music": "Sexy Boy (Saved Version)"
+   }
+  }
  },
  {
   "id": "hardcore_uncle_mittens",
@@ -373,7 +1266,133 @@
     "name": "Elbow Off the Apron",
     "move": "Apron elbow"
    }
-  ]
+  ],
+  "look": {
+   "id": "hardcore_uncle_mittens",
+   "name": "Hardcore Uncle Mittens",
+   "hometown": "Long Island",
+   "archetype": "Brawler",
+   "physical_attributes": {
+    "sex": "M",
+    "height_inches": 74,
+    "weight_lbs": 287,
+    "body_archetype": "Brawler",
+    "proportional_scalers": {
+     "torso_width": 1.12,
+     "torso_height": 1.04,
+     "limb_length": 1.0,
+     "muscle_mass": 1.0
+    }
+   },
+   "appearance": {
+    "face": {
+     "sk": 12
+    },
+    "hair_colour": "hair_chestnut",
+    "facial_hair": "beard_full",
+    "mood": "happy",
+    "scars": [
+     "brow"
+    ]
+   },
+   "attires": {
+    "primary_ring": {
+     "description": "In-ring gear",
+     "equipped_assets": {
+      "head": "hair_wild_01",
+      "upper_body": "shirt_tshirt_base",
+      "lower_body": "trousers_suit",
+      "footwear": "boots_laced_heavy",
+      "accessories": []
+     },
+     "palette_slots": {
+      "primary": "swatch_chocolate_paper",
+      "secondary": "swatch_white_paper",
+      "trim": "swatch_red_paper",
+      "hardware": "swatch_silver_foil"
+     },
+     "custom_layers": [],
+     "part_colours": {
+      "upper_body": "swatch_white_paper"
+     }
+    },
+    "entrance_gear": {
+     "description": "Ring walk and entrance",
+     "equipped_assets": {
+      "head": "hair_wild_01",
+      "upper_body": "shirt_tshirt_base",
+      "lower_body": "trousers_suit",
+      "footwear": "boots_laced_heavy",
+      "accessories": [
+       "bat"
+      ]
+     },
+     "palette_slots": {
+      "primary": "swatch_chocolate_paper",
+      "secondary": "swatch_red_paper",
+      "trim": "swatch_black_matte",
+      "hardware": "swatch_silver_foil"
+     },
+     "custom_layers": [],
+     "part_colours": {
+      "upper_body": "swatch_red_paper"
+     }
+    },
+    "street_clothes": {
+     "description": "Backstage and promos",
+     "equipped_assets": {
+      "head": "hair_wild_01",
+      "upper_body": "shirt_tshirt_base",
+      "lower_body": "jeans_distressed",
+      "footwear": "sneakers_retro",
+      "accessories": []
+     },
+     "palette_slots": {
+      "primary": "swatch_red_paper",
+      "secondary": "swatch_blue_denim",
+      "trim": "swatch_white_paper",
+      "hardware": "swatch_silver_foil"
+     },
+     "custom_layers": [],
+     "part_colours": {
+      "upper_body": "swatch_red_paper"
+     }
+    }
+   },
+   "finishing_moves": [
+    {
+     "name": "Mittens’ Mandible Claw",
+     "impact_damage": 88,
+     "kickout_difficulty": "Protected",
+     "position": "Standing",
+     "category": "Submission",
+     "preview_pose_id": "sleeper"
+    },
+    {
+     "name": "Over-the-Top Hug",
+     "impact_damage": 55,
+     "kickout_difficulty": "Easy",
+     "position": "Standing",
+     "category": "Pinfall Impact",
+     "preview_pose_id": "move_clothesline",
+     "stage": "early"
+    },
+    {
+     "name": "Elbow Off the Apron",
+     "impact_damage": 55,
+     "kickout_difficulty": "Easy",
+     "position": "Standing",
+     "category": "Pinfall Impact",
+     "preview_pose_id": "move_topdive",
+     "stage": "mid"
+    }
+   ],
+   "entrance": "ent_stare",
+   "entrance_fx": {
+    "lights": "dark",
+    "music": "Have a Nice Day, Partner"
+   }
+  }
  },
  {
   "id": "olympic_ollie",
@@ -420,7 +1439,135 @@
     "name": "Medal Slam",
     "move": "Fireman's carry slam"
    }
-  ]
+  ],
+  "look": {
+   "id": "olympic_ollie",
+   "name": "Olympic Ollie",
+   "hometown": "Pittsburgh",
+   "archetype": "Technical",
+   "physical_attributes": {
+    "sex": "M",
+    "height_inches": 72,
+    "weight_lbs": 220,
+    "body_archetype": "Technical",
+    "proportional_scalers": {
+     "torso_width": 1.06,
+     "torso_height": 0.98,
+     "limb_length": 0.98,
+     "muscle_mass": 1.1
+    }
+   },
+   "appearance": {
+    "face": {
+     "sk": 14
+    },
+    "hair_colour": "hair_dirty_blonde",
+    "facial_hair": "none",
+    "mood": "fierce"
+   },
+   "attires": {
+    "primary_ring": {
+     "description": "In-ring gear",
+     "equipped_assets": {
+      "head": "hair_bald",
+      "upper_body": "singlet_full",
+      "lower_body": "trunks_brief_01",
+      "footwear": "boots_knee",
+      "accessories": [
+       "knee_pads"
+      ]
+     },
+     "palette_slots": {
+      "primary": "swatch_red_paper",
+      "secondary": "swatch_white_paper",
+      "trim": "swatch_royal_blue",
+      "hardware": "swatch_gold_foil"
+     },
+     "custom_layers": [],
+     "part_colours": {
+      "upper_body": "swatch_red_paper"
+     }
+    },
+    "entrance_gear": {
+     "description": "Ring walk and entrance",
+     "equipped_assets": {
+      "head": "hair_bald",
+      "upper_body": "jacket_satin",
+      "lower_body": "trunks_brief_01",
+      "footwear": "boots_knee",
+      "accessories": [
+       "chain_gold"
+      ]
+     },
+     "palette_slots": {
+      "primary": "swatch_royal_blue",
+      "secondary": "swatch_white_paper",
+      "trim": "swatch_red_paper",
+      "hardware": "swatch_gold_foil"
+     },
+     "custom_layers": [],
+     "part_colours": {
+      "upper_body": "swatch_royal_blue"
+     }
+    },
+    "street_clothes": {
+     "description": "Backstage and promos",
+     "equipped_assets": {
+      "head": "hair_bald",
+      "upper_body": "shirt_tshirt_base",
+      "lower_body": "jeans_distressed",
+      "footwear": "sneakers_retro",
+      "accessories": [
+       "chain_gold"
+      ]
+     },
+     "palette_slots": {
+      "primary": "swatch_white_paper",
+      "secondary": "swatch_blue_denim",
+      "trim": "swatch_red_paper",
+      "hardware": "swatch_gold_foil"
+     },
+     "custom_layers": [],
+     "part_colours": {
+      "upper_body": "swatch_white_paper"
+     }
+    }
+   },
+   "finishing_moves": [
+    {
+     "name": "Ankle Lock, Ankle Lock, Ankle Lock",
+     "impact_damage": 88,
+     "kickout_difficulty": "Protected",
+     "position": "Standing",
+     "category": "Submission",
+     "preview_pose_id": "sleeper"
+    },
+    {
+     "name": "Gold Suplexes",
+     "impact_damage": 60,
+     "kickout_difficulty": "Easy",
+     "position": "Standing",
+     "category": "Pinfall Impact",
+     "preview_pose_id": "move_suplex",
+     "stage": "mid"
+    },
+    {
+     "name": "Medal Slam",
+     "impact_damage": 70,
+     "kickout_difficulty": "Easy",
+     "position": "Standing",
+     "category": "Pinfall Impact",
+     "preview_pose_id": "carry",
+     "stage": "late"
+    }
+   ],
+   "entrance": "ent_flex",
+   "entrance_fx": {
+    "pyro": "fountains",
+    "lights": "blue",
+    "music": "Medal, Medal, Medal"
+   }
+  }
  },
  {
   "id": "streak_stallworth",
@@ -467,7 +1614,132 @@
     "name": "Steam",
     "move": "Taunt"
    }
-  ]
+  ],
+  "look": {
+   "id": "streak_stallworth",
+   "name": "Streak Stallworth",
+   "hometown": "Tulsa",
+   "archetype": "Powerhouse",
+   "physical_attributes": {
+    "sex": "M",
+    "height_inches": 76,
+    "weight_lbs": 285,
+    "body_archetype": "Powerhouse",
+    "proportional_scalers": {
+     "torso_width": 1.16,
+     "torso_height": 1.02,
+     "limb_length": 1.0,
+     "muscle_mass": 1.26
+    }
+   },
+   "appearance": {
+    "face": {
+     "sk": 18
+    },
+    "hair_colour": "hair_jet_black",
+    "facial_hair": "goatee",
+    "mood": "fierce",
+    "tattoos": [
+     "shoulder"
+    ]
+   },
+   "attires": {
+    "primary_ring": {
+     "description": "In-ring gear",
+     "equipped_assets": {
+      "head": "hair_bald",
+      "upper_body": "bare",
+      "lower_body": "trunks_brief_01",
+      "footwear": "boots_laced_heavy",
+      "accessories": [
+       "gloves_fingerless",
+       "knee_pads"
+      ]
+     },
+     "palette_slots": {
+      "primary": "swatch_black_matte",
+      "secondary": "swatch_black_matte",
+      "trim": "swatch_black_matte",
+      "hardware": "swatch_silver_foil"
+     },
+     "custom_layers": []
+    },
+    "entrance_gear": {
+     "description": "Ring walk and entrance",
+     "equipped_assets": {
+      "head": "hair_bald",
+      "upper_body": "bare",
+      "lower_body": "trunks_brief_01",
+      "footwear": "boots_laced_heavy",
+      "accessories": [
+       "gloves_fingerless",
+       "knee_pads"
+      ]
+     },
+     "palette_slots": {
+      "primary": "swatch_black_matte",
+      "secondary": "swatch_black_matte",
+      "trim": "swatch_black_matte",
+      "hardware": "swatch_silver_foil"
+     },
+     "custom_layers": []
+    },
+    "street_clothes": {
+     "description": "Backstage and promos",
+     "equipped_assets": {
+      "head": "hair_bald",
+      "upper_body": "shirt_tshirt_base",
+      "lower_body": "jeans_distressed",
+      "footwear": "boots_laced_heavy",
+      "accessories": []
+     },
+     "palette_slots": {
+      "primary": "swatch_black_matte",
+      "secondary": "swatch_black_denim",
+      "trim": "swatch_white_paper",
+      "hardware": "swatch_silver_foil"
+     },
+     "custom_layers": [],
+     "part_colours": {
+      "upper_body": "swatch_black_matte"
+     }
+    }
+   },
+   "finishing_moves": [
+    {
+     "name": "Streak Breaker",
+     "impact_damage": 88,
+     "kickout_difficulty": "Protected",
+     "position": "Standing",
+     "category": "Pinfall Impact",
+     "preview_pose_id": "move_powerbomb"
+    },
+    {
+     "name": "Streak",
+     "impact_damage": 70,
+     "kickout_difficulty": "Easy",
+     "position": "Running",
+     "category": "Pinfall Impact",
+     "preview_pose_id": "move_spear",
+     "stage": "late"
+    },
+    {
+     "name": "Steam",
+     "impact_damage": 20,
+     "kickout_difficulty": "Easy",
+     "position": "Standing",
+     "category": "Pinfall Impact",
+     "preview_pose_id": "strike",
+     "stage": "early"
+    }
+   ],
+   "entrance": "ent_stare",
+   "entrance_fx": {
+    "pyro": "sparks",
+    "lights": "spot",
+    "music": "Who's Counting"
+   }
+  }
  },
  {
   "id": "five_time_felix",
@@ -514,7 +1786,135 @@
     "name": "Uptown Kick",
     "move": "Side kick"
    }
-  ]
+  ],
+  "look": {
+   "id": "five_time_felix",
+   "name": "Five-Time Felix",
+   "hometown": "Houston",
+   "archetype": "Brawler",
+   "physical_attributes": {
+    "sex": "M",
+    "height_inches": 75,
+    "weight_lbs": 256,
+    "body_archetype": "Brawler",
+    "proportional_scalers": {
+     "torso_width": 1.06,
+     "torso_height": 1.0,
+     "limb_length": 1.04,
+     "muscle_mass": 1.06
+    }
+   },
+   "appearance": {
+    "face": {
+     "sk": 72
+    },
+    "hair_colour": "hair_jet_black",
+    "facial_hair": "goatee",
+    "mood": "happy"
+   },
+   "attires": {
+    "primary_ring": {
+     "description": "In-ring gear",
+     "equipped_assets": {
+      "head": "hair_dreads_01",
+      "upper_body": "shirt_tank",
+      "lower_body": "tights_long_01",
+      "footwear": "boots_knee",
+      "accessories": [
+       "wrist_tape_white"
+      ]
+     },
+     "palette_slots": {
+      "primary": "swatch_gold_foil",
+      "secondary": "swatch_black_matte",
+      "trim": "swatch_black_matte",
+      "hardware": "swatch_gold_foil"
+     },
+     "custom_layers": [],
+     "part_colours": {
+      "upper_body": "swatch_black_matte"
+     }
+    },
+    "entrance_gear": {
+     "description": "Ring walk and entrance",
+     "equipped_assets": {
+      "head": "hair_dreads_01",
+      "upper_body": "jacket_satin",
+      "lower_body": "tights_long_01",
+      "footwear": "boots_knee",
+      "accessories": [
+       "sunglasses_round"
+      ]
+     },
+     "palette_slots": {
+      "primary": "swatch_gold_foil",
+      "secondary": "swatch_black_matte",
+      "trim": "swatch_black_matte",
+      "hardware": "swatch_gold_foil"
+     },
+     "custom_layers": [],
+     "part_colours": {
+      "upper_body": "swatch_gold_foil"
+     }
+    },
+    "street_clothes": {
+     "description": "Backstage and promos",
+     "equipped_assets": {
+      "head": "hair_dreads_01",
+      "upper_body": "suit_jacket",
+      "lower_body": "trousers_suit",
+      "footwear": "shoes_dress",
+      "accessories": [
+       "headset"
+      ]
+     },
+     "palette_slots": {
+      "primary": "swatch_charcoal_paper",
+      "secondary": "swatch_charcoal_paper",
+      "trim": "swatch_gold_foil",
+      "hardware": "swatch_gold_foil"
+     },
+     "custom_layers": [],
+     "part_colours": {
+      "upper_body": "swatch_charcoal_paper"
+     }
+    }
+   },
+   "finishing_moves": [
+    {
+     "name": "The Fifth-Time Axe Kick",
+     "impact_damage": 88,
+     "kickout_difficulty": "Protected",
+     "position": "Standing",
+     "category": "Pinfall Impact",
+     "preview_pose_id": "strike"
+    },
+    {
+     "name": "Floor Spin",
+     "impact_damage": 20,
+     "kickout_difficulty": "Easy",
+     "position": "Standing",
+     "category": "Pinfall Impact",
+     "preview_pose_id": "strike",
+     "stage": "mid"
+    },
+    {
+     "name": "Uptown Kick",
+     "impact_damage": 55,
+     "kickout_difficulty": "Easy",
+     "position": "Standing",
+     "category": "Pinfall Impact",
+     "preview_pose_id": "strike",
+     "stage": "early"
+    }
+   ],
+   "entrance": "ent_taunt",
+   "entrance_fx": {
+    "pyro": "sparks",
+    "lights": "strobe",
+    "music": "Can You Dig It, Sucka (Five Times)"
+   }
+  }
  },
  {
   "id": "stratosphere_tess",
@@ -561,7 +1961,132 @@
     "name": "Toronto Kick",
     "move": "Roundhouse kick"
    }
-  ]
+  ],
+  "look": {
+   "id": "stratosphere_tess",
+   "name": "Stratosphere Tess",
+   "hometown": "Toronto",
+   "archetype": "High Flyer",
+   "physical_attributes": {
+    "sex": "F",
+    "height_inches": 64,
+    "weight_lbs": 125,
+    "body_archetype": "High Flyer",
+    "proportional_scalers": {
+     "torso_width": 0.92,
+     "torso_height": 0.98,
+     "limb_length": 1.0,
+     "muscle_mass": 1.04
+    }
+   },
+   "appearance": {
+    "face": {
+     "sk": 10
+    },
+    "hair_colour": "hair_honey_blonde",
+    "facial_hair": "none",
+    "mood": "happy",
+    "eye_colour": "#3f6c94"
+   },
+   "attires": {
+    "primary_ring": {
+     "description": "In-ring gear",
+     "equipped_assets": {
+      "head": "hair_long_01",
+      "upper_body": "top_sports",
+      "lower_body": "shorts_fight",
+      "footwear": "boots_knee",
+      "accessories": [
+       "knee_pads"
+      ]
+     },
+     "palette_slots": {
+      "primary": "swatch_hot_pink",
+      "secondary": "swatch_black_matte",
+      "trim": "swatch_white_paper",
+      "hardware": "swatch_silver_foil"
+     },
+     "custom_layers": [],
+     "part_colours": {
+      "upper_body": "swatch_hot_pink"
+     }
+    },
+    "entrance_gear": {
+     "description": "Ring walk and entrance",
+     "equipped_assets": {
+      "head": "hair_long_01",
+      "upper_body": "jacket_satin",
+      "lower_body": "shorts_fight",
+      "footwear": "boots_knee",
+      "accessories": []
+     },
+     "palette_slots": {
+      "primary": "swatch_hot_pink",
+      "secondary": "swatch_black_matte",
+      "trim": "swatch_white_paper",
+      "hardware": "swatch_silver_foil"
+     },
+     "custom_layers": [],
+     "part_colours": {
+      "upper_body": "swatch_hot_pink"
+     }
+    },
+    "street_clothes": {
+     "description": "Backstage and promos",
+     "equipped_assets": {
+      "head": "hair_long_01",
+      "upper_body": "top_sports",
+      "lower_body": "jeans_distressed",
+      "footwear": "sneakers_retro",
+      "accessories": []
+     },
+     "palette_slots": {
+      "primary": "swatch_white_paper",
+      "secondary": "swatch_blue_denim",
+      "trim": "swatch_hot_pink",
+      "hardware": "swatch_silver_foil"
+     },
+     "custom_layers": [],
+     "part_colours": {
+      "upper_body": "swatch_white_paper"
+     }
+    }
+   },
+   "finishing_moves": [
+    {
+     "name": "Stratusphere DDT",
+     "impact_damage": 88,
+     "kickout_difficulty": "Protected",
+     "position": "Running",
+     "category": "Pinfall Impact",
+     "preview_pose_id": "move_ddt"
+    },
+    {
+     "name": "Bend Back Dodge",
+     "impact_damage": 20,
+     "kickout_difficulty": "Easy",
+     "position": "Standing",
+     "category": "Pinfall Impact",
+     "preview_pose_id": "strike",
+     "stage": "early"
+    },
+    {
+     "name": "Toronto Kick",
+     "impact_damage": 55,
+     "kickout_difficulty": "Easy",
+     "position": "Standing",
+     "category": "Pinfall Impact",
+     "preview_pose_id": "strike",
+     "stage": "late"
+    }
+   ],
+   "entrance": "ent_point",
+   "entrance_fx": {
+    "pyro": "fountains",
+    "lights": "spot",
+    "music": "Time to Rock-a-Bye"
+   }
+  }
  },
  {
   "id": "lady_lightning_rod",
@@ -608,7 +2133,136 @@
     "name": "Twist",
     "move": "DDT"
    }
-  ]
+  ],
+  "look": {
+   "id": "lady_lightning_rod",
+   "name": "Lady Lightning Rod",
+   "hometown": "Fort Lauderdale",
+   "archetype": "High Flyer",
+   "physical_attributes": {
+    "sex": "F",
+    "height_inches": 66,
+    "weight_lbs": 135,
+    "body_archetype": "High Flyer",
+    "proportional_scalers": {
+     "torso_width": 0.94,
+     "torso_height": 1.0,
+     "limb_length": 1.02,
+     "muscle_mass": 1.0
+    }
+   },
+   "appearance": {
+    "face": {
+     "sk": 8
+    },
+    "hair_colour": "hair_ginger",
+    "facial_hair": "none",
+    "mood": "cocky",
+    "tattoos": [
+     "sleeve_near"
+    ]
+   },
+   "attires": {
+    "primary_ring": {
+     "description": "In-ring gear",
+     "equipped_assets": {
+      "head": "hair_long_01",
+      "upper_body": "top_crop",
+      "lower_body": "pants_flared",
+      "footwear": "boots_laced_heavy",
+      "accessories": [
+       "wrist_wraps"
+      ]
+     },
+     "palette_slots": {
+      "primary": "swatch_black_matte",
+      "secondary": "swatch_red_paper",
+      "trim": "swatch_red_paper",
+      "hardware": "swatch_silver_foil"
+     },
+     "custom_layers": [],
+     "part_colours": {
+      "upper_body": "swatch_black_matte"
+     }
+    },
+    "entrance_gear": {
+     "description": "Ring walk and entrance",
+     "equipped_assets": {
+      "head": "hair_long_01",
+      "upper_body": "jacket_leather_biker",
+      "lower_body": "pants_flared",
+      "footwear": "boots_laced_heavy",
+      "accessories": [
+       "fishnets"
+      ]
+     },
+     "palette_slots": {
+      "primary": "swatch_black_matte",
+      "secondary": "swatch_red_paper",
+      "trim": "swatch_red_paper",
+      "hardware": "swatch_silver_foil"
+     },
+     "custom_layers": [],
+     "part_colours": {
+      "upper_body": "swatch_leather_black"
+     }
+    },
+    "street_clothes": {
+     "description": "Backstage and promos",
+     "equipped_assets": {
+      "head": "hair_long_01",
+      "upper_body": "shirt_tank",
+      "lower_body": "jeans_distressed",
+      "footwear": "boots_laced_heavy",
+      "accessories": []
+     },
+     "palette_slots": {
+      "primary": "swatch_black_matte",
+      "secondary": "swatch_black_denim",
+      "trim": "swatch_red_paper",
+      "hardware": "swatch_silver_foil"
+     },
+     "custom_layers": [],
+     "part_colours": {
+      "upper_body": "swatch_black_matte"
+     }
+    }
+   },
+   "finishing_moves": [
+    {
+     "name": "Lightning Moonsault",
+     "impact_damage": 88,
+     "kickout_difficulty": "Protected",
+     "position": "Top Rope",
+     "category": "Pinfall Impact",
+     "preview_pose_id": "move_moonsault"
+    },
+    {
+     "name": "Huracan",
+     "impact_damage": 55,
+     "kickout_difficulty": "Easy",
+     "position": "Standing",
+     "category": "Pinfall Impact",
+     "preview_pose_id": "move_ddt",
+     "stage": "mid"
+    },
+    {
+     "name": "Twist",
+     "impact_damage": 50,
+     "kickout_difficulty": "Easy",
+     "position": "Standing",
+     "category": "Pinfall Impact",
+     "preview_pose_id": "move_ddt",
+     "stage": "early"
+    }
+   ],
+   "entrance": "ent_taunt",
+   "entrance_fx": {
+    "pyro": "flash",
+    "lights": "red",
+    "music": "Lose Control (Again)"
+   }
+  }
  },
  {
   "id": "rapidfire_remy",
