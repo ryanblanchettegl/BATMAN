@@ -34,7 +34,7 @@ REC = [
     ('mozart40', 'Symphony No. 40, Andante', 'W. A. Mozart', 'Czech National Symphony Orchestra, for Musopen', 'Orchestra', PD, MCOL),
     ('scottish', 'Scottish Symphony, Adagio', 'Felix Mendelssohn', 'Czech National Symphony Orchestra, for Musopen', 'Orchestra', PD, MCOL),
     ('suk', 'Meditation on an Old Czech Chorale', 'Josef Suk', 'Musopen String Quartet', 'Strings', PD, MCOL),
-    ('borodin', 'String Quartet No. 2, Nocturne', 'Alexander Borodin', 'Czech National Symphony Orchestra players, for Musopen', 'Strings', PD, MCOL),
+    ('borodin', 'String Quartet No. 2, Nocturne', 'Alexander Borodin', 'Czech National Symphony Orchestra, for Musopen', 'Strings', PD, MCOL),
     ('dvorak', 'String Quartet "American", Lento', 'Antonin Dvorak', 'Musopen String Quartet', 'Strings', PD, MCOL),
     ('haydn', 'String Quartet "The Lark", Adagio cantabile', 'Joseph Haydn', 'Musopen String Quartet', 'Strings', PD, MCOL),
     ('nocturne', 'Nocturne Op. 9 No. 2', 'Frederic Chopin', 'Frank Levy', 'Piano', PD, 'https://archive.org/details/nocturneineflatmajorop.9no.2'),

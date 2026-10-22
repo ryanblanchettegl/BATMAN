@@ -65,8 +65,8 @@ function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&
 function jukeHtml() {
   var volb = LEVELS.map(function (o) { var on = Math.abs(MP.vol - o[0]) < 0.01; return '<button class="btn sm' + (on ? ' on' : '') + '" data-jk="vol" data-v="' + o[0] + '"' + (on ? ' aria-pressed="true"' : '') + '>' + o[1] + '</button>'; }).join('');
   var cur = MUS.tr && MP.on && MUS.playing ? MUS.tr.id : '';
-  return '<div class="row"><button class="btn' + (MP.on ? ' on' : '') + '" data-jk="toggle" aria-pressed="' + (MP.on ? 'true' : 'false') + '">Music ' + (MP.on ? 'On' : 'Off') + '</button><button class="btn sm" data-jk="next">Next piece</button></div>' +
-    '<div class="row" style="margin-top:6px"><span>Volume</span>' + volb + '</div>' +
+  return '<div class="row"><button class="btn' + (MP.on ? ' on' : '') + '" data-jk="toggle" aria-pressed="' + (MP.on ? 'true' : 'false') + '">Music ' + (MP.on ? 'On' : 'Off') + '</button><button class="btn sm" data-jk="next">Next piece</button>' +
+    '<span class="row" style="margin-left:18px"><span>Volume</span>' + volb + '</span></div>' +
         '<div class="jk-list">' + GROUPS.map(function (g) {
       var L = TRACKS.filter(function (t) { return t.mood === g; }); if (!L.length) return '';
       return '<p class="eyebrow" style="margin:8px 0 2px">' + esc(g) + '</p><ul class="list">' + L.map(function (t) {
@@ -98,7 +98,7 @@ function jkAct(a, v) {
 }
 function jkBoot() {
   var st = document.createElement('style');
-  st.textContent = '.jk.scrim{z-index:40}.jk .btn.on{background:var(--yellow);color:var(--k)}.jk .list li{align-items:center}.jk .jk-list{max-height:58vh;overflow-y:auto}';
+  st.textContent = '.jk.scrim{z-index:40}.jk .btn.on{background:var(--yellow);color:var(--k)}.jk .list li{align-items:center}.jk .win{width:min(1500px,94vw);max-width:none}.jk .jk-list{max-height:calc(100vh - 230px);overflow-y:auto}.jk .jk-list ul.list{display:grid;grid-template-columns:1fr 1fr;column-gap:16px;margin:0}.jk .jk-list li{display:flex;justify-content:space-between;gap:10px;padding:3px 0;line-height:1.15}.jk .jk-list li .btn{font-size:.74em;padding:2px 8px;min-height:0}.jk .jk-list li>span.row{gap:6px;flex:none}.jk .jk-list li .muted{white-space:nowrap}.jk .jk-list .eyebrow{margin:6px 0 0!important}';
   document.head.appendChild(st);
   JK.root = document.createElement('div'); document.body.appendChild(JK.root);
   document.addEventListener('click', function (e) { var t = e.target.closest && e.target.closest('[data-jk]'); if (t) { e.stopPropagation(); jkAct(t.getAttribute('data-jk'), t.getAttribute('data-v')); } else if (JK.open && e.target.classList && e.target.classList.contains('scrim')) jkOpen(false); }, true);

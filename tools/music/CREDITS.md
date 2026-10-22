@@ -16,7 +16,7 @@ government. The jukebox names who recorded each piece; where the performer is no
 | Symphony No. 40, Andante | W. A. Mozart | Czech National Symphony Orchestra, for Musopen | Public domain | same |
 | Scottish Symphony, Adagio | Felix Mendelssohn | Czech National Symphony Orchestra, for Musopen | Public domain | same |
 | Meditation on an Old Czech Chorale | Josef Suk | Musopen String Quartet | Public domain | same |
-| String Quartet No. 2, Nocturne | Alexander Borodin | Czech National Symphony Orchestra players, for Musopen | Public domain | same |
+| String Quartet No. 2, Nocturne | Alexander Borodin | Czech National Symphony Orchestra, for Musopen | Public domain | same |
 | String Quartet "American", Lento | Antonin Dvorak | Musopen String Quartet | Public domain | same |
 | String Quartet "The Lark", Adagio cantabile | Joseph Haydn | Musopen String Quartet | Public domain | same |
 | Goldberg Variations, Aria | J. S. Bach | Shelley Katz, for Musopen | Public domain | same |
