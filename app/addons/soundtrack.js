@@ -1,140 +1,171 @@
-/* Soundtrack add-on. Self-contained: its own audio and its own Jukebox window. build.js appends this file to the page as it is.
-   The Music button is drawn by the interface, at the right-hand end of the top bar: any element with data-jk="open" opens the Jukebox. */
+/* Soundtrack add-on. Self-contained: its own audio and its own Jukebox window. build.js appends this file to the page as it is,
+   after music-data.js, a file of its own beside the page that holds the music (window.EWF_MUSIC_DATA, written by
+   tools/music/build-music.py into app/music/).
+   Fourteen mellow classical pieces from real scores (the Mutopia Project), played note by note by recorded piano, harpsichord
+   and string samples (Musyng Kite, CC BY-SA 3.0) through a concert-hall reverb. Ryan, 22 October: the old rock band is gone; quiet
+   background music by default, louder as a choice; the pieces play in a random order, the first one too. Credits: tools/music/CREDITS.md.
+   The Music button is drawn by the interface: any element with data-jk="open" opens the Jukebox. */
 (function () {
+var D = window.EWF_MUSIC_DATA || { inst: {}, pieces: [] };
 var AC = null;
-/* ---------- soundtrack: a small rock band synthesised in the browser, sequenced like a MIDI file ---------- */
 var MKEY = 'gorilla-position-music';
-var MP = (function () { var o = {}; try { o = JSON.parse(localStorage.getItem(MKEY) || '{}') || {}; } catch (e) {} return { on: o.on !== false, vol: o.vol != null ? +o.vol : 0.6, off: o.off || {}, cur: o.cur || '', shuf: !!o.shuf }; })();
+/* Ryan, 22 October: quiet background music by default; louder is a choice. A level kept from the old soundtrack (no v2) starts Low. */
+var LEVELS = [[0.15, 'Low'], [0.4, 'Medium'], [1, 'Loud']];
+var MP = (function () { var o = {}; try { o = JSON.parse(localStorage.getItem(MKEY) || '{}') || {}; } catch (e) {} return { on: o.on !== false, vol: o.v2 && o.vol != null ? +o.vol : 0.15, off: o.v2 ? (o.off || {}) : {}, cur: '' }; })();
 function musMark() { try { document.documentElement.setAttribute('data-music', MP.on ? 'on' : 'off'); } catch (e) {} }
-function saveMus() { try { localStorage.setItem(MKEY, JSON.stringify(MP)); } catch (e) {} musMark(); }
-var STD_S = '....x.......x...', H8 = 'x.x.x.x.x.x.x.x.';
-var TRACKS = [
-  { id: 'main', n: 'Main Event', d: 'Driving hard rock', bpm: 144, root: 40, sc: 'min', form: 'AABBAABBCCBB', sec: {
-    A: { ch: [0, 0, 3, -2], g: 'x.xxX-x.xxX-x.xx', k: 'x.....x.x.x.....', s: STD_S, h: H8 },
-    B: { ch: [-4, -2, 0, 0], g: 'X-----X-X-----xx', k: 'x.....x.x.....x.', s: STD_S, h: H8, l: ['8-8-7-8-', '9-7---4-', '8---5-7-', '8-----..'] },
-    C: { ch: [0, -4, 3, -2], g: 'X---X---X-x-X-x-', k: 'x.....x.x.....x.', s: STD_S, h: H8, l: ['5-8-a-8-', '8-a-8-6-', 'a-9-a-c-', 'b-9-7-9-'] } } },
-  { id: 'heel', n: 'Heel Turn', d: 'Slow, heavy and mean', bpm: 96, root: 38, sc: 'min', form: 'AABBAACCBB', sec: {
-    A: { ch: [0, 0, 1, 0], g: 'X--.x.x.X--.xxx.', k: 'x.....x...x.....', s: '........x.......', h: H8 },
-    B: { ch: [0, -2, -4, -5], g: 'X-------X---x.x.', k: 'x.....x...x.....', s: '........x.......', h: H8, l: ['5---8---', '7---4---', '6---8-6-', '5-------'] },
-    C: { ch: [0, 3, 5, 1], g: 'x.x.x.x.X---X---', k: 'x...x...x...x...', s: STD_S, h: H8, l: ['1-3-5-3-', '3-5-7-5-', '4-6-8-6-', '6-4-6-4-'] } } },
-  { id: 'runin', n: 'Run-In', d: 'Fast punk sprint', bpm: 176, root: 45, sc: 'min', form: 'AABBAABBCCBB', sec: {
-    A: { ch: [0, 0, -4, -2], g: 'x.x.x.x.x.x.x.x.', k: 'x.....x.x.....x.', s: STD_S, h: H8 },
-    B: { ch: [3, -2, 0, -4], g: 'X-x.X-x.X-x.X-x.', k: 'x.....x.x.....x.', s: STD_S, h: H8, l: ['5-7-a-7-', '9-7-9-b-', '8-a-c-a-', '8---6---'] },
-    C: { ch: [0, -2, -4, -5], g: 'X-------X-------', k: 'x.......x.x.....', s: STD_S, h: 'x...x...x...x...', l: ['8-7-5-7-', '7-5-4-5-', '6-5-3-5-', '5---7---'] } } },
-  { id: 'pop', n: 'Saturday Night Pop', d: 'Arena anthem, major key', bpm: 128, root: 43, sc: 'maj', form: 'AABBAACCBB', sec: {
-    A: { ch: [0, 5, 0, 7], g: 'X-x.x.X-x.x.X-x.', k: 'x.......x.x.....', s: STD_S, h: H8 },
-    B: { ch: [5, 7, 0, -3], g: 'X-----x.X-----x.', k: 'x.....x.x.....x.', s: STD_S, h: H8, l: ['8-8-6-8-', '9-9-7-5-', '8-a-8-5-', '6---8---'] },
-    C: { ch: [0, 7, 5, 7], g: 'X---X---X-x-X-x-', k: 'x.....x.x.....x.', s: STD_S, h: H8, l: ['5-6-8-6-', '5-7-9-7-', '8-9-a-8-', '9-------'] } } },
-  { id: 'cage', n: 'Steel Cage', d: 'Galloping metal', bpm: 152, root: 40, sc: 'min', form: 'AABBAACCBB', sec: {
-    A: { ch: [0, 0, 0, 1], g: 'x.xxx.xxx.xxx.xx', k: 'x.x.x.x.x.x.x.x.', s: STD_S, h: 'x...x...x...x...' },
-    B: { ch: [0, 3, 5, 3], g: 'X--x..X--x..X-x-', k: 'x..x..x.x..x..x.', s: STD_S, h: H8, l: ['8-a-c-a-', 'a-9-a-c-', '8-b-8-6-', '7-9-a-9-'] },
-    C: { ch: [-4, -2, -4, -2], g: 'X-----x.X-----x.', k: 'x.....x.x.....x.', s: STD_S, h: H8, l: ['8---a---', '9---b---', '8-a-c-a-', 'b-9-7---'] } } },
-  { id: 'come', n: 'Comeback Kid', d: 'Bright, uplifting rocker', bpm: 136, root: 45, sc: 'maj', form: 'AABBAACCBB', sec: {
-    A: { ch: [0, -3, 5, 7], g: 'x.x.x.x.x.x.X-x.', k: 'x.....x.x.x.....', s: STD_S, h: H8 },
-    B: { ch: [5, 7, 0, 0], g: 'X-----X-X-----xx', k: 'x.....x.x.....x.', s: STD_S, h: H8, l: ['6-8-6-4-', '5-7-9-7-', '8---5-8-', 'a-9-8---'] },
-    C: { ch: [-3, 5, 0, 7], g: 'X---X---X-x-X-x-', k: 'x.....x.x.....x.', s: STD_S, h: H8, l: ['6-8-a-8-', '6-8-b-8-', '5-8-a-8-', '9-7-5---'] } } }
-];
-var SCALES = { min: [0, 2, 3, 5, 7, 8, 10], maj: [0, 2, 4, 5, 7, 9, 11] };
-var MUS = { playing: false, tr: null, pos: 0, nt: 0, timer: null, out: null };
-function mhz(m) { return 440 * Math.pow(2, (m - 69) / 12); }
+function saveMus() { try { localStorage.setItem(MKEY, JSON.stringify({ on: MP.on, vol: MP.vol, off: MP.off, v2: 1 })); } catch (e) {} musMark(); }
+var TRACKS = D.pieces;
+var MOODS = ['Strings', 'Piano', 'Harpsichord'];
+var MUS = { playing: false, tr: null, t0: 0, ix: 0, timer: null, out: null, bus: null, parts: [], voices: [], played: [], gen: 0 };
+var BUF = {};    // instrument -> decoded AudioBuffer (or a promise while it decodes)
+var NOTES = {};  // piece id -> its notes, unpacked
+
 function musTrack(id) { for (var i = 0; i < TRACKS.length; i++) if (TRACKS[i].id === id) return TRACKS[i]; return null; }
 function musList() { var l = TRACKS.filter(function (t) { return !MP.off[t.id]; }); return l.length ? l : TRACKS; }
+/* the next piece: always at random, never the one just heard, and not one of the last few while others are left */
+function musNextId() {
+  var l = musList(); if (!l.length) return null;
+  var fresh = l.filter(function (t) { return MUS.played.indexOf(t.id) < 0 && t !== MUS.tr; });
+  if (!fresh.length) { MUS.played = MUS.tr ? [MUS.tr.id] : []; fresh = l.filter(function (t) { return t !== MUS.tr; }); }
+  if (!fresh.length) fresh = l;
+  return fresh[Math.floor(Math.random() * fresh.length)].id;
+}
+
+/* ---------- the hall: every part has its own level and place, all into one bus, a dry path and a reverb ---------- */
+function hallIR(sec) {
+  var n = Math.floor(AC.sampleRate * sec), b = AC.createBuffer(2, n, AC.sampleRate);
+  for (var c = 0; c < 2; c++) {
+    var d = b.getChannelData(c), lp = 0;
+    for (var i = 0; i < n; i++) { var t = i / n, x = (Math.random() * 2 - 1) * Math.pow(1 - t, 2.6); lp += (x - lp) * (0.28 + 0.5 * (1 - t)); d[i] = i < AC.sampleRate * 0.012 ? 0 : lp; }
+  }
+  return b;
+}
 function musSetup() {
   AC = AC || new (window.AudioContext || window.webkitAudioContext)();
   if (MUS.out) return;
-  var comp = AC.createDynamicsCompressor(); comp.threshold.value = -16; comp.ratio.value = 5; comp.connect(AC.destination);
-  MUS.out = AC.createGain(); MUS.out.gain.value = MP.vol * 0.55; MUS.out.connect(comp);
-  var curve = new Float32Array(1024), i; for (i = 0; i < 1024; i++) curve[i] = Math.tanh(7 * (i / 511.5 - 1));
-  var sh = AC.createWaveShaper(); sh.curve = curve; sh.oversample = '2x';
-  var lp = AC.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 3200;
-  var hp = AC.createBiquadFilter(); hp.type = 'highpass'; hp.frequency.value = 90;
-  var gg = AC.createGain(); gg.gain.value = 0.17; sh.connect(hp); hp.connect(lp); lp.connect(gg); gg.connect(MUS.out); MUS.gtr = sh;
-  var n = AC.sampleRate, buf = AC.createBuffer(1, n, n), ch = buf.getChannelData(0); for (i = 0; i < n; i++) ch[i] = Math.random() * 2 - 1; MUS.noise = buf;
+  var comp = AC.createDynamicsCompressor(); comp.threshold.value = -14; comp.ratio.value = 3; comp.attack.value = 0.01; comp.release.value = 0.3; comp.connect(AC.destination);
+  MUS.out = AC.createGain(); MUS.out.gain.value = MP.vol * 0.9; MUS.out.connect(comp);
+  MUS.bus = AC.createGain(); MUS.bus.gain.value = 1;
+  var dry = AC.createGain(); dry.gain.value = 0.82; MUS.bus.connect(dry); dry.connect(MUS.out);
+  var rv = AC.createConvolver(); rv.buffer = hallIR(2.6); var wet = AC.createGain(); wet.gain.value = 0.34; MUS.bus.connect(rv); rv.connect(wet); wet.connect(MUS.out);
 }
-function mVoice(type, f, t, dur, vol, dest, det) {
-  var o = AC.createOscillator(), g = AC.createGain(); o.type = type; o.frequency.value = f; if (det) o.detune.value = det;
-  g.gain.setValueAtTime(0.0001, t); g.gain.linearRampToValueAtTime(vol, t + 0.006); g.gain.setValueAtTime(vol, t + Math.max(0.01, dur - 0.03)); g.gain.linearRampToValueAtTime(0.0001, t + dur);
-  o.connect(g); g.connect(dest); o.start(t); o.stop(t + dur + 0.02); return o;
+
+/* ---------- instruments: one packed Opus file each, decoded the first time a piece needs it ---------- */
+function b64bytes(s) { var bin = atob(s), u = new Uint8Array(bin.length); for (var i = 0; i < bin.length; i++) u[i] = bin.charCodeAt(i); return u.buffer; }
+function loadInst(k) {
+  if (BUF[k]) return Promise.resolve(BUF[k]);
+  var I = D.inst[k]; if (!I) return Promise.resolve(null);
+  return new Promise(function (ok) {
+    try { var p = AC.decodeAudioData(b64bytes(I.b64), function (b) { BUF[k] = b; ok(b); }, function () { ok(null); }); if (p && p.then) p.then(function (b) { BUF[k] = b; ok(b); }, function () { ok(null); }); }
+    catch (e) { ok(null); }
+  });
 }
-function mNoise(t, dur, vol, type, freq) {
-  var s = AC.createBufferSource(), f = AC.createBiquadFilter(), g = AC.createGain(); s.buffer = MUS.noise; f.type = type; f.frequency.value = freq;
-  g.gain.setValueAtTime(vol, t); g.gain.exponentialRampToValueAtTime(0.0001, t + dur); s.connect(f); f.connect(g); g.connect(MUS.out); s.start(t, Math.random() * 0.5); s.stop(t + dur + 0.02);
+function unpack(tr) {
+  if (NOTES[tr.id]) return NOTES[tr.id];
+  var by = new Uint8Array(b64bytes(tr.notes)), n = tr.count, T = new Float32Array(n), L = new Float32Array(n), K = new Uint8Array(n), V = new Uint8Array(n), P = new Uint8Array(n), i = 0, j = 0, t = 0;
+  function vi() { var v = 0, s = 0, b; do { b = by[i++]; v |= (b & 127) << s; s += 7; } while (b & 128); return v; }
+  for (j = 0; j < n; j++) { t += vi(); T[j] = t / 100; L[j] = vi() / 100; K[j] = by[i++]; V[j] = by[i++]; P[j] = by[i++]; }
+  return (NOTES[tr.id] = { t: T, l: L, k: K, v: V, p: P, n: n });
 }
-function mKick(t) { var o = AC.createOscillator(), g = AC.createGain(); o.frequency.setValueAtTime(160, t); o.frequency.exponentialRampToValueAtTime(42, t + 0.11); g.gain.setValueAtTime(0.95, t); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.2); o.connect(g); g.connect(MUS.out); o.start(t); o.stop(t + 0.22); }
-function mSnare(t, v) { mNoise(t, 0.16, 0.5 * v, 'bandpass', 1900); var o = AC.createOscillator(), g = AC.createGain(); o.type = 'triangle'; o.frequency.setValueAtTime(220, t); o.frequency.exponentialRampToValueAtTime(140, t + 0.08); g.gain.setValueAtTime(0.35 * v, t); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.1); o.connect(g); g.connect(MUS.out); o.start(t); o.stop(t + 0.12); }
-function runLen(p, i, unit) { var n = 1; while (i + n < p.length && p.charAt(i + n) === '-') n++; return n * unit; }
-function musStep(t) {
-  var tr = MUS.tr, sd = 60 / tr.bpm / 4, pos = MUS.pos, s = pos % 16, bar = Math.floor(pos / 16), si = Math.floor(bar / 4), sec = tr.sec[tr.form.charAt(si)], b = bar % 4;
-  var nextSec = tr.form.charAt(si + 1) || tr.form.charAt(0), fill = b === 3 && s >= 12 && nextSec !== tr.form.charAt(si), root = tr.root + sec.ch[b], c;
-  if (s === 0 && b === 0) mNoise(t, 1.1, 0.22, 'highpass', 5000);
-  if (sec.k.charAt(s) === 'x') mKick(t);
-  if (fill) mSnare(t, 0.7 + 0.1 * (s - 12)); else if (sec.s.charAt(s) === 'x') mSnare(t, 1);
-  c = sec.h.charAt(s); if (c === 'x') mNoise(t, 0.045, 0.13, 'highpass', 7500);
-  c = sec.g.charAt(s);
-  if (c === 'x' || c === 'X') {
-    var d = c === 'X' ? runLen(sec.g, s, sd) * 0.96 : sd * 0.8, f = mhz(root);
-    mVoice('sawtooth', f, t, d, 0.5, MUS.gtr, -4); mVoice('sawtooth', f * 1.4983, t, d, 0.42, MUS.gtr, 5); if (c === 'X') mVoice('sawtooth', f * 2, t, d, 0.3, MUS.gtr, 3);
+
+/* ---------- one note: the nearest sample, tuned, shaped, held by looping its middle when the note is long ---------- */
+function playNote(part, k, vel, t, len) {
+  var I = D.inst[part.i], buf = BUF[part.i]; if (!I || !buf || !part.node) return;
+  var S = I.notes, best = S[0];
+  for (var i = 1; i < S.length; i++) if (Math.abs(S[i][0] - k) < Math.abs(best[0] - k)) best = S[i];
+  var rate = Math.pow(2, (k - best[0]) / 12), off = best[1], src = AC.createBufferSource(), g = AC.createGain();
+  src.buffer = buf; src.playbackRate.value = rate;
+  // played by people: a few milliseconds either side of the beat, a little louder or softer, each section a hair apart in tune
+  t += (Math.random() - 0.5) * 0.014; vel = Math.min(127, vel * (0.93 + Math.random() * 0.14));
+  if (src.detune) src.detune.value = (part.det || 0) + (part.i === 'piano' ? 0 : (Math.random() - 0.5) * 4);
+  var lvl = Math.pow(vel / 127, 1.4) * part.g * 0.34 / Math.max(0.25, best[2]), att = I.att * (0.85 + Math.random() * 0.3), rel = I.rel, end = t + len;
+  g.gain.setValueAtTime(0.0001, t); g.gain.linearRampToValueAtTime(lvl, t + att);
+  if (I.hold) {
+    var natural = (I.loop[1]) / rate;
+    if (len > natural) { src.loop = true; src.loopStart = off + I.loop[0]; src.loopEnd = off + I.loop[1]; }
+    g.gain.setValueAtTime(lvl, Math.max(t + att, end)); g.gain.exponentialRampToValueAtTime(0.0001, end + rel);
+    src.connect(g); g.connect(part.node); src.start(t, off, src.loop ? undefined : I.len); src.stop(end + rel + 0.05);
+  } else {
+    var ring = Math.min(I.len / rate, len + rel);
+    g.gain.setValueAtTime(lvl, Math.max(t + att, Math.min(end, t + ring - 0.02))); g.gain.exponentialRampToValueAtTime(0.0001, t + ring);
+    src.connect(g); g.connect(part.node); src.start(t, off, I.len); src.stop(t + ring + 0.05);
   }
-  if (s % 2 === 0) {
-    var bo = mVoice('triangle', mhz(root - 12), t, sd * 1.8, 0.5, MUS.out); mVoice('square', mhz(root - 12), t, sd * 1.8, 0.07, MUS.out);
-    if (sec.l) {
-      c = sec.l[b].charAt(s / 2);
-      if (c !== '.' && c !== '-') {
-        var deg = parseInt(c, 36) - 1, sc = SCALES[tr.sc], m = tr.root + 24 + sc[deg % 7] + 12 * Math.floor(deg / 7), ld = runLen(sec.l[b], s / 2, sd * 2) * 0.94;
-        var lo = mVoice('square', mhz(m), t, ld, 0.085, MUS.out); mVoice('sawtooth', mhz(m), t, ld, 0.05, MUS.out, 9);
-        if (ld > sd * 3) { var v = AC.createOscillator(), vg = AC.createGain(); v.frequency.value = 5.5; vg.gain.setValueAtTime(0, t); vg.gain.linearRampToValueAtTime(14, t + ld); v.connect(vg); vg.connect(lo.detune); v.start(t); v.stop(t + ld + 0.02); }
-      }
+  MUS.voices.push(src); if (MUS.voices.length > 400) MUS.voices.splice(0, 100);
+}
+
+/* ---------- the score: notes are put on the clock a quarter of a second ahead ---------- */
+function musTick() {
+  if (!MUS.playing || !MUS.tr || MUS.loading) return;
+  var N = unpack(MUS.tr), now = AC.currentTime, until = now + 0.25 - MUS.t0;
+  try {
+    while (MUS.ix < N.n && N.t[MUS.ix] < until) {
+      var j = MUS.ix++, part = MUS.parts[N.p[j]];
+      if (part && MUS.t0 + N.t[j] >= now - 0.05) playNote(part, N.k[j], N.v[j], MUS.t0 + N.t[j], N.l[j]);
     }
-  }
-  MUS.pos++;
-  if (MUS.pos >= tr.form.length * 64) { MUS.pos = 0; var l = musList(); if (l.length > 1 || l[0] !== tr) { musPick(musNextId()); return sd; } }
-  return sd;
+  } catch (e) {}
+  if (MUS.ix >= N.n && now > MUS.t0 + MUS.tr.dur + 3) musPlay(musNextId());
 }
-function musNextId() {
-  var l = musList(), i = l.indexOf(MUS.tr);
-  if (MP.shuf && l.length > 1) { var o = l.filter(function (x) { return x !== MUS.tr; }); return o[Math.floor(Math.random() * o.length)].id; }
-  return l[(i + 1) % l.length].id;
-}
-function musPick(id) {
-  MUS.tr = musTrack(id) || musList()[0]; MUS.pos = 0; MP.cur = MUS.tr.id; saveMus();
-  try { window.dispatchEvent(new CustomEvent('ewf-track', { detail: { name: MUS.tr.n } })); } catch (e) {}
+function musPlay(id) {
+  var tr = musTrack(id) || musTrack(musNextId()); if (!tr) return;
+  musSilence();
+  MUS.tr = tr; MP.cur = tr.id; MUS.ix = 0; MUS.played.push(tr.id); if (MUS.played.length > 8) MUS.played.shift();
+  MUS.parts = tr.parts.map(function (p) { var g = AC.createGain(), pan = AC.createStereoPanner ? AC.createStereoPanner() : null; g.gain.value = 1; if (pan) { pan.pan.value = p.p; g.connect(pan); pan.connect(MUS.bus); } else g.connect(MUS.bus); return { i: p.i, g: p.g, node: g, det: p.i === 'piano' ? 0 : (Math.random() - 0.5) * 8 }; });
+  var gen = ++MUS.gen, need = []; tr.parts.forEach(function (p) { if (need.indexOf(p.i) < 0) need.push(p.i); });
+  MUS.loading = true;
+  Promise.all(need.map(loadInst)).then(function () {
+    if (gen !== MUS.gen) return;
+    MUS.loading = false; MUS.t0 = AC.currentTime + 0.3; musTick();
+    // instruments this piece does not use are let go, so memory holds only what is playing
+    Object.keys(BUF).forEach(function (k) { if (need.indexOf(k) < 0) delete BUF[k]; });
+  });
+  try { window.dispatchEvent(new CustomEvent('ewf-track', { detail: { name: tr.n + ' (' + tr.c + ')' } })); } catch (e) {}
   if (JK.open) setTimeout(jkRender, 0);
 }
-function musTick() {
-  if (!MUS.playing) return;
-  try { if (MUS.nt < AC.currentTime) MUS.nt = AC.currentTime + 0.05; while (MUS.nt < AC.currentTime + 0.18) MUS.nt += musStep(MUS.nt); } catch (e) {}
+function musSilence() {
+  MUS.voices.forEach(function (v) { try { v.stop(); } catch (e) {} }); MUS.voices = [];
+  MUS.parts.forEach(function (p) { try { p.node.disconnect(); } catch (e) {} }); MUS.parts = [];
 }
 function musStart(id) {
   try {
     musSetup(); if (AC.state === 'suspended') AC.resume();
-    if (id || !MUS.tr) musPick(id || (musTrack(MP.cur) && !MP.off[MP.cur] ? MP.cur : musList()[0].id));
-    MUS.out.gain.cancelScheduledValues(AC.currentTime); MUS.out.gain.setValueAtTime(MP.vol * 0.55, AC.currentTime);
-    MUS.nt = AC.currentTime + 0.08; MUS.playing = true; clearInterval(MUS.timer); MUS.timer = setInterval(musTick, 25); musTick();
+    MUS.out.gain.cancelScheduledValues(AC.currentTime); MUS.out.gain.setValueAtTime(MP.vol * 0.9, AC.currentTime);
+    MUS.playing = true; clearInterval(MUS.timer); MUS.timer = setInterval(musTick, 30);
+    if (id || !MUS.tr) musPlay(id || musNextId());
+    else { MUS.t0 = AC.currentTime + 0.2 - (MUS.tr && MUS.ix ? unpack(MUS.tr).t[MUS.ix] : 0); musTick(); }
   } catch (e) {}
 }
-function musStop() { MUS.playing = false; clearInterval(MUS.timer); try { if (MUS.out) { MUS.out.gain.cancelScheduledValues(AC.currentTime); MUS.out.gain.setTargetAtTime(0, AC.currentTime, 0.04); } } catch (e) {} }
-function musGesture() { if (MP.on && !MUS.playing && !document.hidden) musStart(); }
+function musStop() { MUS.playing = false; clearInterval(MUS.timer); musSilence(); try { if (MUS.out) { MUS.out.gain.cancelScheduledValues(AC.currentTime); MUS.out.gain.setTargetAtTime(0, AC.currentTime, 0.05); } } catch (e) {} }
+function musGesture() { if (MP.on && !MUS.playing && !document.hidden && TRACKS.length) musStart(); }
 document.addEventListener('pointerdown', musGesture, true);
 document.addEventListener('keydown', musGesture, true);
 document.addEventListener('visibilitychange', function () { if (document.hidden) { if (MUS.playing) musStop(); } else if (MP.on && MUS.out) musStart(); });
 
+/* ---------- the Jukebox ---------- */
 var JK = { open: false, root: null, last: null };
 function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+function mins(s) { s = Math.round(s); return Math.floor(s / 60) + ':' + ('0' + (s % 60)).slice(-2); }
 function jukeHtml() {
-  var volb = [[0.3, 'Low'], [0.6, 'Medium'], [1, 'High']].map(function (o) { var on = Math.abs(MP.vol - o[0]) < 0.01; return '<button class="btn sm' + (on ? ' on' : '') + '" data-jk="vol" data-v="' + o[0] + '"' + (on ? ' aria-pressed="true"' : '') + '>' + o[1] + '</button>'; }).join('');
+  var volb = LEVELS.map(function (o) { var on = Math.abs(MP.vol - o[0]) < 0.01; return '<button class="btn sm' + (on ? ' on' : '') + '" data-jk="vol" data-v="' + o[0] + '"' + (on ? ' aria-pressed="true"' : '') + '>' + o[1] + '</button>'; }).join('');
   var cur = MUS.tr && MP.on ? MUS.tr.id : '';
-  return '<div class="row"><button class="btn' + (MP.on ? ' on' : '') + '" data-jk="toggle" aria-pressed="' + (MP.on ? 'true' : 'false') + '">Music ' + (MP.on ? 'On' : 'Off') + '</button><button class="btn sm" data-jk="next">Next track</button><button class="btn sm' + (MP.shuf ? ' on' : '') + '" data-jk="shuf" aria-pressed="' + (MP.shuf ? 'true' : 'false') + '">Shuffle ' + (MP.shuf ? 'On' : 'Off') + '</button></div>' +
+  return '<div class="row"><button class="btn' + (MP.on ? ' on' : '') + '" data-jk="toggle" aria-pressed="' + (MP.on ? 'true' : 'false') + '">Music ' + (MP.on ? 'On' : 'Off') + '</button><button class="btn sm" data-jk="next">Next piece</button></div>' +
     '<div class="row" style="margin-top:6px"><span>Volume</span>' + volb + '</div>' +
-    '<p class="muted" style="margin-top:8px">Play any track now, or switch tracks in and out of the rotation. Only tracks in the rotation come up on their own.</p>' +
-    '<ul class="list" style="margin-top:6px">' + TRACKS.map(function (t, i) {
-      var inr = !MP.off[t.id], now = t.id === cur;
-      return '<li><span><b>' + (now ? '♫ ' : '') + (i + 1) + '. ' + esc(t.n) + '</b>' + (now ? ' <span class="good">now playing</span>' : '') + '<br><span class="muted">' + esc(t.d) + ' · ' + t.bpm + ' BPM</span></span><span class="row"><button class="btn sm" data-jk="play" data-v="' + t.id + '">Play</button><button class="btn sm' + (inr ? ' on' : '') + '" data-jk="rot" data-v="' + t.id + '" aria-pressed="' + (inr ? 'true' : 'false') + '">' + (inr ? 'In rotation' : 'Skipped') + '</button></span></li>';
-    }).join('') + '</ul>';
+    '<p class="muted" style="margin-top:8px">The pieces play in a random order. Play any one now, or take it out of the rotation.</p>' +
+    '<div class="jk-list">' + MOODS.map(function (m) {
+      var L = TRACKS.filter(function (t) { return t.mood === m; }); if (!L.length) return '';
+      return '<p class="eyebrow" style="margin:8px 0 2px">' + esc(m) + '</p><ul class="list">' + L.map(function (t) {
+        var inr = !MP.off[t.id], now = t.id === cur;
+        return '<li><span><b>' + (now ? '♫ ' : '') + esc(t.n) + '</b> <span class="muted">' + esc(t.c) + ' · ' + mins(t.dur) + '</span>' + (now ? ' <span class="good">now playing</span>' : '') +
+          '<br><span class="muted" style="font-size:.85em">Score typeset by ' + esc(t.by) + '</span></span><span class="row"><button class="btn sm" data-jk="play" data-v="' + t.id + '">Play</button><button class="btn sm' + (inr ? ' on' : '') + '" data-jk="rot" data-v="' + t.id + '" aria-pressed="' + (inr ? 'true' : 'false') + '">' + (inr ? 'In rotation' : 'Left out') + '</button></span></li>';
+      }).join('') + '</ul>';
+    }).join('') + '</div>' +
+    '<p class="muted" style="margin-top:8px;font-size:.85em">Scores from the Mutopia Project (mutopiaproject.org). Instruments: ' + esc(D.samples || '') + '.</p>';
 }
 function jkRender() {
   if (!JK.root) return;
   var foc = document.activeElement && JK.root.contains(document.activeElement) ? document.activeElement : null, key = foc ? [foc.getAttribute('data-jk'), foc.getAttribute('data-v')] : null;
-  JK.root.innerHTML = JK.open ? '<div class="scrim jk"><div class="win" role="dialog" aria-modal="true" aria-label="Jukebox"><div class="wt"><span>Jukebox</span><button data-jk="close" aria-label="Close">[■]</button></div><div class="wb">' + jukeHtml() + '</div><div class="wf"><button class="btn go" data-jk="close">Done</button><span class="muted opt">Esc closes</span></div></div></div>' : '';
+  var sc = JK.root.querySelector('.jk-list'), top = sc ? sc.scrollTop : 0;
+  JK.root.innerHTML = JK.open ? '<div class="scrim jk"><div class="win" role="dialog" aria-modal="true" aria-label="Jukebox"><div class="wt"><span>Jukebox</span><button data-jk="close" aria-label="Close">[■]</button></div><div class="wb">' + jukeHtml() + '</div><div class="wf"><button class="btn" data-jk="close">Done</button></div></div></div>' : '';
+  sc = JK.root.querySelector('.jk-list'); if (sc) sc.scrollTop = top;
   if (JK.open) { var el = key && JK.root.querySelector('[data-jk="' + key[0] + '"]' + (key[1] != null ? '[data-v="' + key[1] + '"]' : '')); (el || JK.root.querySelector('.wf .btn')).focus(); }
 }
 function jkOpen(on) { if (on === JK.open) return; JK.open = on; if (on) JK.last = document.activeElement; jkRender(); if (!on && JK.last && JK.last.focus) try { JK.last.focus(); } catch (e) {} }
@@ -143,21 +174,20 @@ function jkAct(a, v) {
   if (a === 'close') { jkOpen(false); return; }
   if (a === 'toggle') { MP.on = !MP.on; if (MP.on) musStart(); else musStop(); }
   else if (a === 'play') { MP.on = true; musStart(v); }
-  else if (a === 'next') { MP.on = true; if (!MUS.tr) musStart(); else musStart(musNextId()); }
+  else if (a === 'next') { MP.on = true; musStart(musNextId()); }
   else if (a === 'rot') { if (MP.off[v]) delete MP.off[v]; else MP.off[v] = 1; }
-  else if (a === 'shuf') { MP.shuf = !MP.shuf; }
-  else if (a === 'vol') { MP.vol = +v; try { if (MUS.out && MUS.playing) MUS.out.gain.setTargetAtTime(MP.vol * 0.55, AC.currentTime, 0.03); } catch (e) {} }
+  else if (a === 'vol') { MP.vol = +v; try { if (MUS.out && MUS.playing) MUS.out.gain.setTargetAtTime(MP.vol * 0.9, AC.currentTime, 0.03); } catch (e) {} }
   saveMus(); jkRender();
 }
 function jkBoot() {
   var st = document.createElement('style');
-  st.textContent = '.jk.scrim{z-index:40}.jk .btn.on{background:var(--yellow);color:var(--k)}.jk .list li{align-items:center}';
+  st.textContent = '.jk.scrim{z-index:40}.jk .btn.on{background:var(--yellow);color:var(--k)}.jk .list li{align-items:center}.jk .jk-list{max-height:58vh;overflow-y:auto}';
   document.head.appendChild(st);
   JK.root = document.createElement('div'); document.body.appendChild(JK.root);
-  document.addEventListener('click', function (e) { var t = e.target.closest && e.target.closest('[data-jk]'); if (t) { e.stopPropagation(); jkAct(t.getAttribute('data-jk'), t.getAttribute('data-v')); } else if (JK.open && e.target.classList && e.target.classList.contains('jk')) jkOpen(false); }, true);
+  document.addEventListener('click', function (e) { var t = e.target.closest && e.target.closest('[data-jk]'); if (t) { e.stopPropagation(); jkAct(t.getAttribute('data-jk'), t.getAttribute('data-v')); } else if (JK.open && e.target.classList && e.target.classList.contains('scrim')) jkOpen(false); }, true);
   document.addEventListener('keydown', function (e) {
     if (!JK.open) return;
-    if (e.key === 'Escape' || e.key === 'Backspace' || e.key === 'BrowserBack' || e.key === 'GoBack') { e.preventDefault(); e.stopPropagation(); jkOpen(false); return; }   // Back on a TV remote closes it too
+    if (e.key === 'Escape' || e.key === 'Backspace' || e.key === 'BrowserBack' || e.key === 'GoBack') { e.preventDefault(); e.stopPropagation(); jkOpen(false); return; }
     var bs = Array.prototype.slice.call(JK.root.querySelectorAll('button')), i = bs.indexOf(document.activeElement);
     if (e.key === 'Tab') { e.preventDefault(); e.stopPropagation(); bs[(i + (e.shiftKey ? bs.length - 1 : 1)) % bs.length].focus(); return; }
     if (e.key === 'ArrowDown' || e.key === 'ArrowRight') { e.preventDefault(); bs[(i + 1) % bs.length].focus(); }
@@ -166,8 +196,34 @@ function jkBoot() {
     e.stopPropagation();
   }, true);
 }
+/* Render a stretch of a piece offline, through the same instruments and hall, into a 16-bit stereo WAV (tests and
+   listening copies use it; the game never calls it). */
+function musRender(id, secs) {
+  var tr = musTrack(id); if (!tr) return Promise.resolve(null);
+  var keep = { AC: AC, out: MUS.out, bus: MUS.bus, parts: MUS.parts, voices: MUS.voices, buf: BUF };
+  var rate = 48000, len = Math.min(secs || tr.dur + 3, tr.dur + 3);
+  AC = new OfflineAudioContext(2, Math.ceil(rate * len), rate); MUS.out = null; BUF = {}; MUS.voices = [];
+  musSetup();
+  var parts = tr.parts.map(function (p) { var g = AC.createGain(), pan = AC.createStereoPanner(); pan.pan.value = p.p; g.connect(pan); pan.connect(MUS.bus); return { i: p.i, g: p.g, node: g, det: p.i === 'piano' ? 0 : (Math.random() - 0.5) * 8 }; });
+  var need = []; tr.parts.forEach(function (p) { if (need.indexOf(p.i) < 0) need.push(p.i); });
+  var ctx = AC;
+  return Promise.all(need.map(loadInst)).then(function () {
+    var N = unpack(tr);
+    for (var j = 0; j < N.n && N.t[j] < len; j++) playNote(parts[N.p[j]], N.k[j], N.v[j], 0.2 + N.t[j], N.l[j]);
+    return ctx.startRendering();
+  }).then(function (b) {
+    AC = keep.AC; MUS.out = keep.out; MUS.bus = keep.bus; MUS.parts = keep.parts; MUS.voices = keep.voices; BUF = keep.buf;
+    var n = b.length, L = b.getChannelData(0), R = b.getChannelData(1), pk = 0, i;
+    for (i = 0; i < n; i++) pk = Math.max(pk, Math.abs(L[i]), Math.abs(R[i]));
+    var sc = pk > 0.98 ? 0.98 / pk : 1, out = new DataView(new ArrayBuffer(44 + n * 4)), w = function (o, s) { for (var k = 0; k < s.length; k++) out.setUint8(o + k, s.charCodeAt(k)); };
+    w(0, 'RIFF'); out.setUint32(4, 36 + n * 4, true); w(8, 'WAVEfmt '); out.setUint32(16, 16, true); out.setUint16(20, 1, true); out.setUint16(22, 2, true); out.setUint32(24, rate, true); out.setUint32(28, rate * 4, true); out.setUint16(32, 4, true); out.setUint16(34, 16, true); w(36, 'data'); out.setUint32(40, n * 4, true);
+    for (i = 0; i < n; i++) { out.setInt16(44 + i * 4, Math.max(-1, Math.min(1, L[i] * sc)) * 32767, true); out.setInt16(46 + i * 4, Math.max(-1, Math.min(1, R[i] * sc)) * 32767, true); }
+    return { wav: out.buffer, peak: pk };
+  });
+}
+
 jkBoot(); musMark();
 // the interface's Options window reads and sets the music level through this
 window.EWF_MUSIC_VOL = { vol: function () { return MP.vol; }, setVol: function (v) { jkAct('vol', v); } };
-window.EWF_MUSIC = { tracks: TRACKS, state: MUS, start: musStart, stop: musStop, setup: musSetup, ctx: function () { return AC; } };
+window.EWF_MUSIC = { tracks: TRACKS, state: MUS, start: musStart, stop: musStop, setup: musSetup, ctx: function () { return AC; }, play: musPlay, render: musRender };
 })();

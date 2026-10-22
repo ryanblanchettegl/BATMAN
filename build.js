@@ -43,7 +43,10 @@ if(fs.existsSync(path.join(appDir,'node_modules','esbuild'))){
   const blocks=fs.existsSync(blocksFile)?"@font-face{font-family:'EWF Blocks';font-style:normal;font-weight:400;font-display:swap;src:url(data:font/woff2;base64,"+fs.readFileSync(blocksFile).toString('base64')+") format('woff2')}\n":'';
   // add-ons: self-contained scripts appended after the interface (app/addons/*.js), each in its own script tag
   const addDir=path.join(appDir,'addons');
-  const addons=fs.existsSync(addDir)?fs.readdirSync(addDir).filter(f=>f.endsWith('.js')).sort().map(f=>'\n<script>\n'+fs.readFileSync(path.join(addDir,f),'utf8').replace(/<\/script/gi,'<\\/script')+'</script>').join(''):'';
+  // the soundtrack's music (app/music/music-data.js, tools/music/build-music.py) is several megabytes, so it is a file of its own
+  // beside the page, loaded by a plain script tag before the add-ons; the page stays small and nothing is fetched from elsewhere
+  const musicFile=path.join(appDir,'music','music-data.js'),music=fs.existsSync(musicFile)?'\n<script src="music-data.js"></script>':'';
+  const addons=music+(fs.existsSync(addDir)?fs.readdirSync(addDir).filter(f=>f.endsWith('.js')).sort().map(f=>'\n<script>\n'+fs.readFileSync(path.join(addDir,f),'utf8').replace(/<\/script/gi,'<\\/script')+'</script>').join(''):'');
   const next=`<title>WrestleCraft: Be The Booker</title>
 <style>
 ${font}${blocks}${sans}${ui}${css}${lk}</style>
@@ -60,6 +63,7 @@ ${js}</script>${addons}
   // EWF_OUT=name writes dist/name.html and dist/name-fragment.html instead, so a work-in-progress build does not replace the real one.
   const outName=process.env.EWF_OUT||'index',fragName=process.env.EWF_OUT?process.env.EWF_OUT+'-fragment':'gorilla-position';
   fs.mkdirSync(path.join(__dirname,'dist'),{recursive:true});
+  if(music)fs.copyFileSync(musicFile,path.join(__dirname,'dist','music-data.js'));
   fs.writeFileSync(path.join(__dirname,'dist',fragName+'.html'),next);
   fs.writeFileSync(path.join(__dirname,'dist',outName+'.html'),'<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><style>body{margin:0}[hidden]{display:none!important}</style></head><body>'+next+'</body></html>');
   console.log('built',parts.length,'engine parts and the interface:',(js.length/1024).toFixed(0)+' KB script,',(next.length/1024).toFixed(0)+' KB page');
