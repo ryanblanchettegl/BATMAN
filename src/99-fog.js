@@ -219,7 +219,7 @@ E.cardFlags=function(S,card){card=card||S.card||[];return card.map(function(m,i)
     var f=typeof faceOf==='function'?faceOf(S):null;
     if(f){var at=-1;card.forEach(function(m,i){if(m.sides.some(function(s){return s.indexOf(f.id)>=0;}))at=i;});
       if(at>=0&&at!==n-1&&(!card[n-1].title||card[at].title)){var t=card[at];card[at]=card[n-1];card[n-1]=t;if(card[at].len==='L'&&card[n-1].len!=='L'){var l=card[at].len;card[at].len=card[n-1].len;card[n-1].len=l;}ch=true;}}
-    // a promised win is called, as far as the booking power goes
+    // a promised win is called (free unless a star with creative control is on the other side)
     S.quests.forEach(function(q){if(q.type!=='win')return;
       card.forEach(function(m){if(m.call!=null)return;var si=-1;m.sides.forEach(function(s,k){if(s.indexOf(q.w)>=0)si=k;});if(si<0)return;
         m.call=si;if(E.cardCost(S,card)>S.bp)m.call=null;else ch=true;});});

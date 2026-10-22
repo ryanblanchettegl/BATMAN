@@ -87,6 +87,7 @@ function showStep(S,P,show,card,st){
   ba.bc=stageSeg(S,ba,segPeople(S,P,ba.text),react);rep.segs.push(ba);
   return ba;
 }
+var POP_EDGE=1;   // rating points over the crowd's bar that a show on expectation counts for, for your popularity
 /* ---------- a promo or an angle on the air, as a scene ----------
    The segment's text is the record of what happened. On the air it is told in pieces: who comes out, what happens a
    sentence at a time, a quoted line said by the person who says it, how the building takes it, and the desk's word.
@@ -147,11 +148,12 @@ function showEnd(S,P,show,card,st){
   rep.buys=big?Math.round(buysK(P,show,rep.hype)*1000):0;rep.ppv=Math.round(rep.buys*22*mx.ppv);
   P.led.tv+=rep.tv;P.led.gate+=rep.gate;P.led.ppv+=rep.ppv;P.led.prod+=P.prod*(big?4*evTy(show).prod:1)*PRODF[P.prodLvl]/PRODF[P.prod0]*airProd(P,show);
   var before=P.image;
-  P.image=clamp(P.image+(rep.rating-exp)*(big?0.08:0.03*showMult(show)*airReach(P,show)),5,modelOf(P).cap||100);rep.dImage=r1(P.image-before);
+  // a show that gives the crowd what it came for (a B) grows the company a little; it has to fall short to shrink it (Bill, 21 October)
+  P.image=clamp(P.image+(rep.rating-exp+(isPl?POP_EDGE:0))*(big?0.08:0.03*showMult(show)*airReach(P,show)),5,modelOf(P).cap||100);rep.dImage=r1(P.image-before);
   P.trend=(P.trend||0)*0.6+(rep.rating-exp)*0.4;P.mainB[key]=(P.mainB[key]||rep.mainOv)*0.9+rep.mainOv*0.1;
   P.last={name:show.name,rating:rep.rating,cs:rep.cs,week:S.week};
-  // the crowd gets used to about half of whatever you keep giving it, good or bad
-  if(isPl){var raw=rep.rating-(exp-(P.expA||0)-(P.expB||0));P.expA=clamp((P.expA||0)+(0.5*raw-(P.expA||0))*0.16/(P.shows.length+1),-4,8);}
+  // the crowd gets used to about half of whatever you keep giving it; it lowers its sights only a little after poor shows
+  if(isPl){var raw=rep.rating-(exp-(P.expA||0)-(P.expB||0));P.expA=clamp((P.expA||0)+(0.5*raw-(P.expA||0))*0.16/(P.shows.length+1),-1.5,8);}
   if(isPl){
     S.stats.shows++;if(rep.rating>S.stats.bestShow)S.stats.bestShow=rep.rating;if(rep.cs>(S.stats.bestCS||0))S.stats.bestCS=rep.cs;
     S.stats.run=rep.rating>exp?S.stats.run+1:0;

@@ -26,9 +26,9 @@ export function Editor(p: { m: Match; i: number }) {
   const teams = m.mt === 'tag' ? S.teams.filter((t: any) => t.promo === P.id && inE[t.m[0]] && inE[t.m[1]]) : [];
   const od = E.matchOdds(S, m, i, S.card.length), mm = E.matchMins(S, m, i, S.card.length);
   const titles = E.showTitles(S).filter((t: any) => t.tag ? m.mt === 'tag' : (E.MT[m.mt].per === 1 && !(m.mt === 'br' && t.holders.length)));
-  const calls: Opt[] = [['', 'Let it play out (free)']];
+  const calls: Opt[] = [['', 'Let it play out']];
   if (od) {
-    m.sides.forEach((s: any[], k: number) => calls.push([k, sideText(s) + ' wins · ' + Math.round(od.p[k] * 100) + '% · ' + od.cost[k] + ' BP']));
+    m.sides.forEach((s: any[], k: number) => calls.push([k, sideText(s) + ' wins · ' + Math.round(od.p[k] * 100) + '%' + (od.cost[k] ? ' · ' + od.cost[k] + ' BP' : '')]));
     if (m.sides.length === 2) calls.push([-1, 'Draw · ' + od.drawCost + ' BP']);
   }
   // picking a regular team fills the side, then the list goes back to its heading so it can be used again

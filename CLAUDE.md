@@ -14,6 +14,7 @@ npm run test:browser                                # every file in app/tests, o
 node test-models.js                                 # 60 weeks as each company model; checks what makes it that model
 node test-wording.js                                # no dice wording anywhere in 60 weeks of text
 node test-determinism.js                            # same seed twice gives identical state
+node test-balance.js                                # a year as every company model: Suggest a card lands around a C and risks the job, a thinking booker keeps it and grows
 node test-editor.js                                 # the World Editor's engine parts: build a world from nothing, check it, play it
 node test-create.js                                 # shows and belts made during a game: the occasions, the limits, and how rarely rivals add them
 node test-segments.js                               # promos and angles the player books, the show clock, and how a show opens

@@ -29,7 +29,7 @@ export function matchLabel(m: Match): string { return (m.mt === 'br' ? 'Battle r
 export function odds(m: Match, i: number, n: number) {
   const o = E.matchOdds(G.S, m, i, n);
   if (!o) return <span class="warn">Unfinished</span>;
-  if (m.call != null) return <span class="gold">Your call: {m.call < 0 ? 'a draw' : sideText(m.sides[m.call]) + ' wins'} ({m.call < 0 ? o.drawCost : o.cost[m.call]} BP)</span>;
+  if (m.call != null) { const bp = m.call < 0 ? o.drawCost : o.cost[m.call]; return <span class="gold">Your call: {m.call < 0 ? 'a draw' : sideText(m.sides[m.call]) + ' wins'}{bp ? ' (' + bp + ' BP)' : ''}</span>; }
   return <span>Favourite: <b>{sideText(m.sides[o.fav])}</b> {Math.round(o.p[o.fav] * 100)}%</span>;
 }
 /** Everything the sheet says about a match after its names. The line may be cut short on screen; the detail pane has it in full. */
@@ -101,7 +101,7 @@ export function Card() {
     <Win cls="b1-head head" title={<>Book the show: <span class="hl">{show.name}</span></>} label={'Book the show: ' + show.name} right={<>{c.label}{DOT}show {S.qi + 1} of {S.queue.length}</>}>
       <h1 class="sr">{show.name}</h1>
       <p class="muted b1-info">{show.big ? 'Big event' + (show.flag ? ', the biggest of the year' : (show.ty && show.ty !== 'arena' && E.EV_TYPES[show.ty] ? ', a ' + E.EV_TYPES[show.ty].n.toLowerCase() : '')) + '. Whole roster available.' : 'Weekly TV' + (show.brand ? ', ' + brandName(P, show.brand) + ' brand roster' : '') + '.'} This crowd expects <b class="gold" data-t="expect">{E.expectWords(S, show).a}</b>, matches of <b class="gold" data-t="expect-bar">{E.expectWords(S, show).bar}</b> or better. <button type="button" class="lnk" data-t="ladder" onClick={() => openModal({ kind: 'ladder' })}>What that means</button>
-        {DOT}Booking power: <b class="gold">{S.bp}</b> {cost ? <span class={cost > S.bp ? 'bad' : 'muted'}>({cost} committed on this card)</span> : <span class="muted">(nothing called yet)</span>}
+        {DOT}Booking power: <b class="gold">{S.bp}</b> {cost ? <span class={cost > S.bp ? 'bad' : 'muted'}>({cost} committed on this card)</span> : <span class="muted">(none spent on this card)</span>}
         {show.rule && E.RULES[show.rule] ? <>{DOT}<span class="good">{E.RULES[show.rule]}</span></> : null}</p>
       <p class="showtime" data-t="clock" data-v={ck.over ? 'over' : (ck.short ? 'short' : (ck.light ? 'light' : 'ok'))}>Show time: <b class={'num ' + tcls}>{hm(ck.total)}</b> of <b class="num">{hm(ck.budget)}</b> <Meter v={Math.min(100, ck.total / ck.budget * 100)} kind="au" /> <span class={tcls}>{n || ck.total ? ck.words : (ck.budget / 60) + ' hours to fill.'}</span></p>
       <div class="row center b1-btns">
@@ -120,7 +120,7 @@ export function Card() {
         <div class="sheet b1-rows" style={{ '--rows': Math.max(10, Math.min(PER, L.length)) } as any}>
           {shown.map(l => <Row key={l.key} l={l} />)}
           {L.length ? null : <div class="b1-empty"><p><b>The card is empty.</b> You have {ck.budget / 60} hours to fill. Add matches, promos and angles one at a time, or start from a suggested card and change what you like.</p>
-            <p class="muted mt1">You choose who wrestles. Each match is played out on the night, unless you spend booking power to call the finish. Everything on the run sheet takes time off the clock, and the show cannot run until the time is filled.</p></div>}
+            <p class="muted mt1">You choose who wrestles. Each match is played out on the night, unless you call the winner yourself. Everything on the run sheet takes time off the clock, and the show cannot run until the time is filled.</p></div>}
         </div>
         <div class="b1-foot">
           <span class="cats">{cat('match', 'match', 'matches')}{cat('promo', 'promo', 'promos')}{cat('angle', 'angle', 'angles')}</span>
