@@ -6,8 +6,6 @@ import { G, ui, pref, reduceMotion, redraw, closeModal, openModal, popCard, save
 import { lightDraws } from './kit/lights';
 import { roadMapDraws } from './kit/roadmap';
 import { scenePlays } from './kit/sceneplayer';
-import { drawPortrait } from './kit/paperportrait';
-import { recipeOf } from './kit/puppet';
 import { HOT, SECTIONS, sectionOf, go } from './nav';
 import { book } from './flow';
 
@@ -215,7 +213,5 @@ export function initInput() {
     const k = e.key.length === 1 ? e.key.toLowerCase() : '';
     if (HOT[k]) { e.preventDefault(); go(HOT[k]); }
   });
-  (window as any).EWF_DEBUG = { state: () => G.S, render: redraw, go, pad: padPress, nav: NAV, ui, lights: lightDraws, maps: roadMapDraws, scenes: scenePlays, allScenes: () => allScenes([]), segScenes: () => SHOW_SCENES.map(s => s.when), beatPick, save,
-    // a wrestler's paper portrait as a picture, at any size (for close-up checks of faces)
-    portrait: (id: number, px = 512) => { const w = G.S && G.S.w[id]; return w ? drawPortrait(recipeOf(w), (w.look && w.look.portrait) || {}, '#5f8f7a', px).toDataURL() : ''; } };
+  (window as any).EWF_DEBUG = { state: () => G.S, render: redraw, go, pad: padPress, nav: NAV, ui, lights: lightDraws, maps: roadMapDraws, scenes: scenePlays, allScenes: () => allScenes([]), segScenes: () => SHOW_SCENES.map(s => s.when), beatPick, save };
 }

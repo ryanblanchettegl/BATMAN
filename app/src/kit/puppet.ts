@@ -14,8 +14,6 @@ import { Kit, Swatch, AttireKey, layerSwatch, letters, shape, fromLook, Look } f
 export interface Recipe {
   key: string; name: string; skin: string; h: number; w: number; belly: number; fem: boolean;
   head: { rx: number; ryt: number; ryb: number; sq: number; chin: number };
-  /** The colour of the eyes (a dark brown when not set). */
-  eyeCol?: string;
   hair: string; hairCol: string; beard: number; mus: number; brow: number; browAng: number; browCol: string; noseW: number; noseL: number;
   mask?: { base: string; trim: string; kind?: 'open' | 'full' | 'half' | 'hood' }; gear: string; gear2: string; straps: boolean; tape: boolean;
   shirt?: string; pants?: string; stripes?: boolean;
@@ -572,13 +570,6 @@ function headBack(fr: F, r: Recipe, z: number, cut: (f: F, poly: Pt[], col: stri
   if (acc('antennae')) for (const sd of [-1, 1]) { put(strip([sd * 0.14, hd.cy + hd.ryt * 0.92], [sd * 0.34, hd.cy + hd.ryt * 1.9], 0.025, 0.02, sd * 0.04), K!.pal.h, 0.33, 0.002); put(ell(sd * 0.35, hd.cy + hd.ryt * 1.95, 0.075, 0.075, 12), K!.pal.t, 0.335, 0.003); }
   if (r.headset || acc('headset')) { const band: Pt[] = []; for (let i = 0; i <= 12; i++) { const a = Math.PI * (0.02 + 0.96 * i / 12); band.push([hd.rx * 1.1 * Math.cos(a), hd.cy + hd.ryt * 1.1 * Math.sin(a)]); } for (let i = 12; i >= 0; i--) { const a = Math.PI * (0.02 + 0.96 * i / 12); band.push([hd.rx * 1.02 * Math.cos(a), hd.cy + hd.ryt * 1.02 * Math.sin(a)]); } put(band, '#18181c', 0.24, 0.004); }
 }
-/** A lighter sheet for a lock of hair: lighter in its own colour, or for very dark hair a warm brown, so it never reads as grey. */
-function hiLock(c: string): string { const n = parseInt(c.slice(1), 16), l = ((n >> 16) + ((n >> 8) & 255) + (n & 255)) / 3; return l < 60 ? mixc(c, '#6a4b3c', 0.32) : shade(c, 1.14); }
-/** Two colours mixed, `t` of the way from a to b. */
-function mixc(a: string, b: string, t: number): string {
-  const p = (h: string) => { const n = parseInt(h.slice(1), 16); return [n >> 16, (n >> 8) & 255, n & 255]; }, A = p(a), B = p(b);
-  return '#' + A.map((v, i) => Math.round(v + (B[i] - v) * t).toString(16).padStart(2, '0')).join('');
-}
 function head(fr: F, r: Recipe, z: number, expr: string, cut: (f: F, poly: Pt[], col: string | Swatch, z: number, joint?: string, lift?: number, rough?: number) => void, mk: Marks = {}) {
   const s = 0.47, hd: Head = { cx: 0, cy: 0.98, rx: r.head.rx * s, ryt: r.head.ryt * s, ryb: r.head.ryb * s, sq: r.head.sq, chin: r.head.chin }, tq = 0.09;
   const sk = r.skin, dk = shade(sk, 0.74), deep = shade(sk, 0.5), J = 'head';
@@ -597,13 +588,6 @@ function head(fr: F, r: Recipe, z: number, expr: string, cut: (f: F, poly: Pt[],
     if (r.hair === 'braids') for (const dy of [0.1, -0.12]) put(strip([bx * 0.95, hd.cy + dy], [bx * 1.2, hd.cy - hd.ryb * 1.2 + dy], 0.07, 0.05, 0.05), HB, -0.03, 0.01);
     if (r.hair === 'braid') { put(ell(bx * 0.9, hd.cy + hd.ryt * 0.2, 0.14, 0.16, 10), HB, -0.03, 0.01); for (let i = 0; i < 12; i++) { const t = i / 11; put(ell(bx * (1.0 + 0.25 * t) + (i % 2 ? 0.035 : -0.035), hd.cy - t * 3.0, 0.14 - 0.05 * t, 0.16, 10), shade(HB, i % 2 ? 0.8 : 1), -0.17 - i * 0.0005, 0.01); } put(ell(bx * 1.25, hd.cy - 3.1, 0.05, 0.05, 8), shade(HB, 0.5), -0.165, 0.003); }   // one long braid down the back, tied off at the end
   }
-  if ((r.hair === 'long' || r.hair === 'wild' || r.hair === 'bob') && !r.mask) {
-    const end = r.hair === 'bob' ? 0.8 : r.hair === 'wild' ? 1.35 : 1.5;
-    // locks that fall past the cheeks and frame the face, each its own sheet, a shade lighter or darker
-    for (const [sd, t, w0] of [[-1, 1.1, 0.17], [1, 0.88, 0.15]] as [number, number, number][]) {
-      put(strip([sd * hd.rx * 0.78, hd.cy + hd.ryt * 0.62], [sd * hd.rx * 1.02, hd.cy - hd.ryb * (end - 0.1)], w0, 0.05, sd * 0.07), t > 1 ? hiLock(HB) : shade(HB, t), 0.196, 0.01);
-    }
-  }
   const FS = r.fs || {}, eS = FS.eyeS || 1, eG = FS.eyeG || 1, earS = FS.earS || 1, mW = FS.mouthW || 1;
   const FT = r.feat || {}, ex = -hd.rx * 0.74 + tq * 0.4, eyy = hd.cy - 0.04;
   // the ear, on the side of the head toward the back, over the skin and under the hair
@@ -612,7 +596,7 @@ function head(fr: F, r: Recipe, z: number, expr: string, cut: (f: F, poly: Pt[],
     if (FT.ears === 'pointed') put([[ex + 0.05 * es, eyy - 0.12 * es], [ex - 0.07 * es, eyy - 0.08 * es], [ex - 0.1 * es, eyy + 0.22 * es], [ex + 0.06 * es, eyy + 0.1 * es]], shade(sk, 0.92), dz);
     else if (FT.ears === 'cauliflower') { put(ell(ex - 0.01, eyy, 0.115 * es, 0.135 * es, 12), shade(sk, 0.92), dz, 0.035); for (const [ax, ay] of [[-0.03, 0.05], [0.01, -0.05], [-0.05, -0.01]] as [number, number][]) put(ell(ex + ax * es, eyy + ay * es, 0.035 * es, 0.03 * es, 8), dk, dz + 0.004, 0.01); }
     else put(ell(ex, eyy, ew, eh, 12), shade(sk, 0.92), dz);
-    if (FT.ears !== 'cauliflower') put(ell(ex + 0.01, eyy - 0.01, ew * 0.4, eh * 0.5, 10), shade(sk, 0.82), dz + 0.003, 0.004);   // the hollow of the ear, a sheet a little darker
+    if (FT.ears !== 'cauliflower') put(ell(ex + 0.01, eyy, ew * 0.45, eh * 0.55, 10), dk, dz + 0.003, 0.004);   // the hollow of the ear
   };
   put(headPoly(hd), sk, 0.02);
   if (!r.mask || r.mask.kind === 'half') ear(0.035);
@@ -682,22 +666,15 @@ function head(fr: F, r: Recipe, z: number, expr: string, cut: (f: F, poly: Pt[],
     const cx = sd * 0.16 * eG + tq;
     if (shut) put(strip([cx - 0.08, ey + 0.01], [cx + 0.08, ey - 0.02], 0.035, 0.03, expr === 'pain' ? -0.04 : expr === 'shut' ? 0.02 : -0.03), PAL.black, 0.1);
     else {
-      const ek = FT.eyes || 'almond', W0 = (ek === 'narrow' ? 0.21 : 0.2) * eS, H0 = (ek === 'narrow' ? 0.045 : ek === 'round' ? 0.1 : 0.094) * eS;
+      const ek = FT.eyes || 'almond', pu = ek === 'narrow' ? 0.03 : ek === 'round' ? 0.042 : 0.038;
       if (ek === 'deep') put(ell(cx, ey - 0.005, 0.12 * eS, 0.07 * eS, 12), dk, 0.098, 0.004);   // the shadow of a deep socket
-      put(ek === 'round' ? ell(cx, ey, 0.1 * eS, 0.09 * eS, 12) : almond(cx, ey, W0, H0), PAL.white, 0.1, 0.003);
-      // the iris, the pupil and a light in it, looking the way the face turns
-      const ir = (ek === 'narrow' ? 0.038 : 0.052) * eS, ix = cx + 0.022 * eS, iy = ey + (ek === 'narrow' ? 0.004 : 0.012) * eS;
-      put(ell(ix, iy, ir, ek === 'narrow' ? ir * 0.8 : ir, 12), r.eyeCol || '#4a2c1c', 0.112, 0.002);
-      put(ell(ix + 0.004, iy, ir * 0.5, ir * 0.5, 10), '#120c0e', 0.118, 0.001);
-      put(ell(ix + ir * 0.4, iy + ir * 0.42, ir * 0.24, ir * 0.24, 6), PAL.white, 0.121, 0.001);
-      // the upper lid: a dark strip along the top of the eye, heavier at the outer corner, where it flicks out
-      const ox = cx + sd * W0 * 0.52, lw = r.fem ? 0.03 : 0.022;
-      put(strip([cx - sd * W0 * 0.5, ey + 0.004], [ox, ey + 0.012], lw * 0.5 * eS, lw * eS, sd * H0 * 0.95), '#1d1418', 0.124, 0.002);
-      if (r.fem || ek === 'lashes') { put(strip([ox - sd * 0.012, ey + 0.016], [ox + sd * 0.05 * eS, ey + 0.05 * eS], 0.022 * eS, 0.004), '#1d1418', 0.125, 0.002); if (ek === 'lashes') put(strip([ox - sd * 0.03, ey + 0.03], [ox + sd * 0.02 * eS, ey + 0.07 * eS], 0.018 * eS, 0.004), '#1d1418', 0.125, 0.002); }
-      if (ek === 'hooded') put(strip([cx - 0.1 * eS, ey + 0.012], [cx + 0.1 * eS, ey + 0.022], 0.07 * eS, 0.06 * eS, 0.01), shade(sk, 0.86), 0.126, 0.003);   // a heavy lid
+      put(ek === 'round' ? ell(cx, ey, 0.095 * eS, 0.082 * eS, 12) : almond(cx, ey, (ek === 'narrow' ? 0.19 : 0.17) * eS, (ek === 'narrow' ? 0.034 : 0.075) * eS), PAL.white, 0.1, 0.003);
+      put(ell(cx + 0.03 * eS, ey + 0.005, pu * eS, pu * eS, 8), PAL.black, 0.12, 0.002);
+      if (ek === 'hooded') put(strip([cx - 0.1 * eS, ey + 0.005], [cx + 0.1 * eS, ey + 0.015], 0.07 * eS, 0.06 * eS, 0.01), dk, 0.125, 0.003);   // a heavy lid
+      if (ek === 'lashes') for (const k of [-1, 0, 1]) put(strip([cx + k * 0.05 * eS, ey + 0.035 * eS], [cx + k * 0.065 * eS + 0.01 * sd, ey + 0.075 * eS], 0.018, 0.008), PAL.black, 0.125, 0.002);
     }
     if (mk.tears || expr === 'cry') put(strip([cx + 0.02, ey - 0.04], [cx + 0.03, ey - 0.3], 0.035, 0.05), WET, 0.135, 0.004);
-    if (!r.mask && r.brow > 0 && !(r.paint && r.paint.k === 'skull')) { const a = mad ? -0.07 : expr === 'cry' ? 0.06 : expr === 'smirk' && sd > 0 ? 0.06 : r.browAng; put(strip([cx - 0.1 * sd, ey + 0.1 + a * sd], [cx + 0.12 * sd, ey + 0.095 - a * sd], r.brow * 0.62, r.brow * 0.16, 0.024 * sd), r.browCol, 0.14); }
+    if (!r.mask && r.brow > 0 && !(r.paint && r.paint.k === 'skull')) { const a = mad ? -0.07 : expr === 'cry' ? 0.06 : expr === 'smirk' && sd > 0 ? 0.06 : r.browAng; put(strip([cx - 0.1 * sd, ey + 0.1 + a * sd], [cx + 0.1 * sd, ey + 0.11 - a * sd], r.brow * 0.5, r.brow * 0.3), r.browCol, 0.14); }
   }
   if (acc('face_paint') && !r.mask) for (const sd of [-1, 1]) put(strip([sd * 0.16 + tq - 0.1, ey - 0.08], [sd * 0.16 + tq + 0.08, ey - 0.3], 0.07, 0.03), K!.pal.s, 0.105, 0.004);
   if (acc('sunglasses_aviator')) {
@@ -714,15 +691,12 @@ function head(fr: F, r: Recipe, z: number, expr: string, cut: (f: F, poly: Pt[],
   }
   const nw = r.noseW * 0.25, nl = r.noseL * 0.4;
   const nk = FT.nose || 'straight';
-  { const dk = shade(sk, 0.84);   // the side of the nose in shadow: one sheet a shade darker than the face
   if (nk === 'button') { put(ell(tq + 0.02, ey - nl * 0.8, nw * 0.95, nw * 0.75, 12), dk, 0.13); put(ell(tq + 0.04, ey - nl * 0.86, 0.02, 0.015, 6), shade(sk, 0.5), 0.131, 0.002); }
   else if (nk === 'broad') put([[tq - 0.03, ey - 0.02], [tq + 0.03, ey - 0.02], [tq + nw * 1.5, ey - nl], [tq + 0.02, ey - nl - 0.06], [tq - nw * 1.3, ey - nl]], dk, 0.13);
   else if (nk === 'hooked') put([[tq - 0.02, ey - 0.02], [tq + 0.07, ey - nl * 0.4], [tq + nw * 1.25, ey - nl * 0.88], [tq + 0.03, ey - nl - 0.05], [tq - nw * 0.6, ey - nl]], dk, 0.13);
   else if (nk === 'flat') put([[tq - 0.04, ey - 0.06], [tq + 0.05, ey - 0.04], [tq + nw * 1.45 + 0.02, ey - nl * 0.8], [tq + 0.03, ey - nl * 0.8 - 0.05], [tq - nw * 1.2, ey - nl * 0.78]], dk, 0.13);   // broken and flattened
   else if (nk === 'pointed') put([[tq - 0.02, ey - 0.02], [tq + 0.02, ey - 0.02], [tq + nw * 0.8 + 0.06, ey - nl * 1.12], [tq - nw * 0.4, ey - nl * 1.05]], dk, 0.13);
-  else put([[tq - 0.012, ey + 0.07], [tq + 0.018, ey + 0.05], [tq + nw * 0.95, ey - nl * 0.9], [tq + nw * 0.35, ey - nl - 0.035], [tq - nw * 0.8, ey - nl], [tq - nw * 0.25, ey - nl * 0.55]], dk, 0.13);   // a long bridge from between the brows
-  if (nk !== 'button' && nk !== 'straight') put([[tq - 0.012, ey + 0.07], [tq + 0.016, ey + 0.05], [tq + nw * 0.5, ey - nl * 0.5], [tq - nw * 0.2, ey - nl * 0.45]], dk, 0.1295, 0.003);   // the bridge, from between the brows
-  if (nk !== 'button') put(ell(tq - nw * 0.15, ey - nl - 0.005, nw * 0.4, 0.016, 8), shade(sk, 0.6), 0.131, 0.002); }   // the nostril
+  else put([[tq - 0.03, ey - 0.02], [tq + 0.03, ey - 0.02], [tq + nw, ey - nl], [tq + 0.02, ey - nl - 0.04], [tq - nw * 0.8, ey - nl]], dk, 0.13);
   if (!r.mask && SC.indexOf('brow') >= 0) scar([tq + 0.24, ey + 0.24], [tq + 0.12, ey + 0.0], 0.145);
   const my = ey - nl - 0.14, open = ['shout', 'hurt', 'roar', 'snarl', 'pain', 'cry', 'talk'].includes(expr);
   if (!fullMask && [2, 4, 5, 7, 8].includes(r.beard)) {
@@ -740,16 +714,13 @@ function head(fr: F, r: Recipe, z: number, expr: string, cut: (f: F, poly: Pt[],
   if (expr === 'smirk') put(strip([tq - 0.1, my - 0.01], [tq + 0.11, my + 0.04], 0.035, 0.03, 0.02), deep, 0.17, 0.004);
   else if (open) put(almond(tq, my, mw, mh), PAL.black, 0.17, 0.004);
   else {   // a closed mouth, in its own shape
-    const mk2 = FT.mouth || 'plain', lip = r.beard >= 4 && r.beard <= 5 ? shade(sk, 0.55) : mixc(deep, '#a8384c', r.fem ? 0.55 : 0.2);
-    const lipLo = mixc(sk, '#d4687a', r.fem ? 0.5 : 0.14), lipW = (mk2 === 'wide' ? 0.17 : mk2 === 'thin' ? 0.11 : 0.135) * mW, lipH = mk2 === 'full' ? 1.45 : mk2 === 'thin' ? 0.65 : r.fem ? 1.3 : 0.9;
-    const lips = () => {
-      put([[tq - lipW, my], [tq - lipW * 0.45, my + 0.034 * lipH], [tq, my + 0.02 * lipH], [tq + lipW * 0.45, my + 0.034 * lipH], [tq + lipW, my], [tq + lipW * 0.4, my - 0.006], [tq - lipW * 0.4, my - 0.006]], lip, 0.17, 0.003);
-      put(ell(tq, my - 0.004, lipW * 0.82, 0.042 * lipH, 14, Math.PI, 2 * Math.PI), lipLo, 0.169, 0.003);
-    };
-    if (mk2 === 'thin' || mk2 === 'full') lips();
+    const mk2 = FT.mouth || 'plain', lip = r.beard >= 4 && r.beard <= 5 ? shade(sk, 0.55) : deep;
+    if (mk2 === 'thin') put(strip([tq - 0.09 * mW, my], [tq + 0.09 * mW, my], 0.018, 0.018), lip, 0.17, 0.003);
+    else if (mk2 === 'full') { put(almond(tq, my, 0.2 * mW, 0.065), shade(sk, 0.62), 0.17, 0.004); put(strip([tq - 0.09 * mW, my], [tq + 0.09 * mW, my], 0.012, 0.012), lip, 0.171, 0.002); }
     else if (mk2 === 'frown') put(strip([tq - 0.1 * mW, my - 0.03], [tq + 0.1 * mW, my - 0.03], 0.03, 0.03, 0.035), lip, 0.17, 0.003);
     else if (mk2 === 'smile') put(strip([tq - 0.1 * mW, my + 0.02], [tq + 0.1 * mW, my + 0.02], 0.03, 0.03, -0.04), lip, 0.17, 0.003);
-    else lips();
+    else if (mk2 === 'wide') put(almond(tq, my, 0.28 * mW, 0.035), lip, 0.17, 0.004);
+    else put(almond(tq, my, 0.2 * mW, 0.035), lip, 0.17, 0.004);
   }
   if (pt && pt.k === 'skull') for (let i = -2; i <= 2; i++) put(strip([tq + i * 0.05, my + 0.07], [tq + i * 0.05, my - 0.07], 0.012, 0.012), PAL.black, 0.172, 0.001);   // the skull's teeth
   if (expr === 'snarl' || expr === 'pain') put([[tq - mw * 0.4, my + 0.02], [tq + mw * 0.4, my + 0.02], [tq + mw * 0.38, my - 0.015], [tq - mw * 0.38, my - 0.015]], PAL.white, 0.175, 0.002);   // gritted teeth
@@ -792,7 +763,6 @@ function head(fr: F, r: Recipe, z: number, expr: string, cut: (f: F, poly: Pt[],
     const C2 = r.hairCol2;
     if (C2 && r.hairMix === 'tips') for (let i = 0; i <= 8; i++) { const a = Math.PI * (0.06 + 0.88 * i / 8), k = r.hair === 'spiky' ? 1.3 : r.hair === 'afro' ? 1.12 : 1.06; put(ell(hd.rx * k * Math.cos(a), hd.cy + hd.ryt * k * Math.sin(a), 0.075, 0.055, 8), C2, 0.205, 0.012); }
     if (C2 && r.hairMix === 'streak') put(strip([hd.rx * 0.6, hd.cy + hd.ryt * 0.92], [bx * 0.75, hd.cy + hd.ryt * 0.82], 0.08, 0.05, 0.14), C2, 0.205, 0.006);
-    if (['long', 'wild', 'bob'].includes(r.hair)) put(strip([hd.rx * 0.5, hd.cy + hd.ryt * 1.02], [bx * 0.75, hd.cy + hd.ryt * 0.62], 0.05, 0.13, 0.09), hiLock(r.hairCol), 0.197, 0.008);   // a lighter lock swept across the top
     if (C2 && r.hairMix === 'fringe') put(headPoly(hd, 1.08, 0.08, 0.95, 8).concat([[hd.rx * 0.45, hd.cy + hd.ryt * 0.55], [hd.rx * 0.98, hd.cy + hd.ryt * 0.45]] as Pt[]), C2, 0.205, 0.01);
   }
   if (SC.indexOf('head') >= 0 && !r.mask && ['bald', 'buzz', 'crew', 'undercut'].indexOf(r.hair) >= 0) scar([hd.rx * 0.35, hd.cy + hd.ryt * 0.98], [bx * 0.45, hd.cy + hd.ryt * 0.7], 0.21);
