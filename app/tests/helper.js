@@ -13,8 +13,11 @@ function serve() {
   if (server) return Promise.resolve(port);
   return new Promise(resolve => {
     server = http.createServer((req, res) => {
-      const f = path.join(__dirname, '..', '..', 'dist', path.basename(decodeURIComponent(req.url.split('?')[0])));
-      fs.readFile(f, (err, buf) => { if (err) { res.writeHead(404); res.end('not found'); } else { res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' }); res.end(buf); } });
+      // files in dist/ and its folders (the soundtrack's instruments are dist/music/<instrument>.js), never outside it
+      const dist = path.join(__dirname, '..', '..', 'dist'), rel = path.normalize(decodeURIComponent(req.url.split('?')[0])).replace(/^([/\\]|\.\.)+/, ''), f = path.join(dist, rel);
+      const type = f.endsWith('.js') ? 'text/javascript; charset=utf-8' : 'text/html; charset=utf-8';
+      if (!f.startsWith(dist + path.sep)) { res.writeHead(404); res.end('not found'); return; }
+      fs.readFile(f, (err, buf) => { if (err) { res.writeHead(404); res.end('not found'); } else { res.writeHead(200, { 'Content-Type': type }); res.end(buf); } });
     });
     server.listen(0, '127.0.0.1', () => { port = server.address().port; server.unref(); resolve(port); });
   });

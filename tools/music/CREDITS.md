@@ -2,13 +2,17 @@
 
 The game's music is fourteen mellow classical pieces, quiet background music by default (Ryan, 22 October 2026). The
 compositions are all in the public domain. The notes come from scores typeset by volunteers for the Mutopia Project
-(https://www.mutopiaproject.org), turned into MIDI with LilyPond, and are played in the game by recorded piano,
-harpsichord and string samples from the Musyng Kite sound set.
+(https://www.mutopiaproject.org), turned into MIDI with LilyPond, and are played in the game by recorded instruments:
+string sections and a grand piano recorded note by note at several loudness levels, and a harpsichord and solo cello.
 
 ## Instrument samples
 
-Musyng Kite sound set, rendered by Benjamin Gleitzman (https://github.com/gleitz/midi-js-soundfonts), licensed under
-Creative Commons Attribution-ShareAlike 3.0 (https://creativecommons.org/licenses/by-sa/3.0/).
+- Strings (violin, viola and cello sections, double bass, solo violin): Versilian Studios Chamber Orchestra 2, Community
+  Edition (https://github.com/sgossner/VSCO-2-CE), released under CC0 1.0. Credit to Versilian Studios, as they ask.
+- Grand piano: Salamander Grand Piano by Alexander Holm (https://github.com/sfzinstruments/SalamanderGrandPiano),
+  licensed under Creative Commons Attribution 3.0 (https://creativecommons.org/licenses/by/3.0/).
+- Harpsichord and solo cello: the Musyng Kite sound set, rendered by Benjamin Gleitzman
+  (https://github.com/gleitz/midi-js-soundfonts), licensed under Creative Commons Attribution-ShareAlike 3.0.
 
 ## Scores
 
@@ -31,16 +35,16 @@ Creative Commons Attribution-ShareAlike 3.0 (https://creativecommons.org/license
 
 ## What is under which licence
 
-The MIDI files in `tools/music/midi/` and the note data the build writes into `app/music/music-data.js` are derived
+The MIDI files in `tools/music/midi/` and the note data the build writes into `app/addons/music-notes.js` are derived
 from the scores above, and each piece's notes carry that score's licence: share-alike pieces (CC BY-SA) stay free for
-anyone to reuse under the same licence, with this credit. The instrument samples in `app/music/music-data.js` carry
-CC BY-SA 3.0. The game's own code, including the player in `app/addons/soundtrack.js` and the arrangements in
+anyone to reuse under the same licence, with this credit. The instrument files in `app/music/` carry their sample set's licence: CC0 (strings), CC BY 3.0 (piano), CC BY-SA 3.0
+(harpsichord, solo cello). The game's own code, including the player in `app/addons/soundtrack.js` and the arrangements in
 `tools/music/build-music.py`, stays all rights reserved (Ryan, 22 October 2026). The jukebox in the game names the
 typesetter and licence of each piece and the sample set.
 
 ## Rebuilding
 
 The MIDI files were made with LilyPond 2.25 (`pip install lilypond`, then `convert-ly` and `lilypond` on each Mutopia
-score). The samples come from a clone of https://github.com/gleitz/midi-js-soundfonts (`MusyngKite/<instrument>-mp3`).
-`SF_DIR=<that folder> python3 tools/music/build-music.py` writes `app/music/music-data.js`; `node build.js` copies it
-beside the page as `dist/music-data.js`.
+score). The samples come from clones of the three sets above; `tools/music/build-music.py` says which folders it reads. It writes
+`app/addons/music-notes.js` and `app/music/<instrument>.js`; `node build.js` copies the instruments beside the page as
+`dist/music/`. Publish that folder with the page.

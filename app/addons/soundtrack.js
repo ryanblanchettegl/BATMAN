@@ -1,12 +1,14 @@
 /* Soundtrack add-on. Self-contained: its own audio and its own Jukebox window. build.js appends this file to the page as it is,
-   after music-data.js, a file of its own beside the page that holds the music (window.EWF_MUSIC_DATA, written by
-   tools/music/build-music.py into app/music/).
-   Fourteen mellow classical pieces from real scores (the Mutopia Project), played note by note by recorded piano, harpsichord
-   and string samples (Musyng Kite, CC BY-SA 3.0) through a concert-hall reverb. Ryan, 22 October: the old rock band is gone; quiet
-   background music by default, louder as a choice; the pieces play in a random order, the first one too. Credits: tools/music/CREDITS.md.
-   The Music button is drawn by the interface: any element with data-jk="open" opens the Jukebox. */
+   after music-notes.js (the pieces, window.EWF_MUSIC_DATA). Each instrument is a file of its own beside the page,
+   music/<instrument>.js, loaded the first time a piece needs it. Both are written by tools/music/build-music.py.
+   Fourteen mellow classical pieces from real scores (the Mutopia Project), each with the instruments it was written for,
+   played note by note by recorded players: the string sections, double bass and solo violin of the Versilian Studios
+   Chamber Orchestra 2 (held, short and plucked, at two loudness levels, with alternate takes), the Salamander grand piano
+   at four loudness levels, and a harpsichord and solo cello, through a concert-hall reverb. Ryan, 22 October: quiet
+   background music by default, louder as a choice; the pieces play in a random order, the first one too.
+   Credits: tools/music/CREDITS.md. The Music button is drawn by the interface: any element with data-jk="open" opens the Jukebox. */
 (function () {
-var D = window.EWF_MUSIC_DATA || { inst: {}, pieces: [] };
+var D = window.EWF_MUSIC_DATA || { inst: [], pieces: [] };
 var AC = null;
 var MKEY = 'gorilla-position-music';
 /* Ryan, 22 October: quiet background music by default; louder is a choice. A level kept from the old soundtrack (no v2) starts Low. */
@@ -17,7 +19,8 @@ function saveMus() { try { localStorage.setItem(MKEY, JSON.stringify({ on: MP.on
 var TRACKS = D.pieces;
 var MOODS = ['Strings', 'Piano', 'Harpsichord'];
 var MUS = { playing: false, tr: null, t0: 0, ix: 0, timer: null, out: null, bus: null, parts: [], voices: [], played: [], gen: 0 };
-var BUF = {};    // instrument -> decoded AudioBuffer (or a promise while it decodes)
+var BUF = {};    // instrument -> decoded AudioBuffer
+var IM = {};     // instrument -> what its samples are (from music/<instrument>.js)
 var NOTES = {};  // piece id -> its notes, unpacked
 
 function musTrack(id) { for (var i = 0; i < TRACKS.length; i++) if (TRACKS[i].id === id) return TRACKS[i]; return null; }
@@ -50,47 +53,62 @@ function musSetup() {
   var rv = AC.createConvolver(); rv.buffer = hallIR(2.6); var wet = AC.createGain(); wet.gain.value = 0.34; MUS.bus.connect(rv); rv.connect(wet); wet.connect(MUS.out);
 }
 
-/* ---------- instruments: one packed Opus file each, decoded the first time a piece needs it ---------- */
+/* ---------- instruments: a script beside the page each, one packed Opus file inside, decoded the first time a piece needs it ---------- */
 function b64bytes(s) { var bin = atob(s), u = new Uint8Array(bin.length); for (var i = 0; i < bin.length; i++) u[i] = bin.charCodeAt(i); return u.buffer; }
+function fetchInst(k) {
+  return new Promise(function (ok) {
+    var have = window.EWF_MUSIC_INST && window.EWF_MUSIC_INST[k]; if (have || IM[k]) { ok(have || null); return; }
+    var sc = document.createElement('script'); sc.src = 'music/' + k + '.js'; sc.onload = function () { ok(window.EWF_MUSIC_INST && window.EWF_MUSIC_INST[k]); }; sc.onerror = function () { ok(null); };
+    document.head.appendChild(sc);
+  });
+}
 function loadInst(k) {
   if (BUF[k]) return Promise.resolve(BUF[k]);
-  var I = D.inst[k]; if (!I) return Promise.resolve(null);
-  return new Promise(function (ok) {
-    try { var p = AC.decodeAudioData(b64bytes(I.b64), function (b) { BUF[k] = b; ok(b); }, function () { ok(null); }); if (p && p.then) p.then(function (b) { BUF[k] = b; ok(b); }, function () { ok(null); }); }
-    catch (e) { ok(null); }
+  return fetchInst(k).then(function (raw) {
+    if (raw) IM[k] = { n: raw.n, att: raw.att, rel: raw.rel, arts: raw.arts, b64: raw.b64 };
+    var I = IM[k]; if (!I || !I.b64) return null;
+    return new Promise(function (ok) {
+      var done = function (b) { if (b) BUF[k] = b; ok(b || null); };
+      try { var p = AC.decodeAudioData(b64bytes(I.b64), done, function () { ok(null); }); if (p && p.then) p.then(done, function () { ok(null); }); }
+      catch (e) { ok(null); }
+    });
   });
 }
 function unpack(tr) {
   if (NOTES[tr.id]) return NOTES[tr.id];
-  var by = new Uint8Array(b64bytes(tr.notes)), n = tr.count, T = new Float32Array(n), L = new Float32Array(n), K = new Uint8Array(n), V = new Uint8Array(n), P = new Uint8Array(n), i = 0, j = 0, t = 0;
+  var by = new Uint8Array(b64bytes(tr.notes)), n = tr.count, T = new Float32Array(n), L = new Float32Array(n), K = new Uint8Array(n), V = new Uint8Array(n), P = new Uint8Array(n), Z = new Uint8Array(n), i = 0, j = 0, t = 0;
   function vi() { var v = 0, s = 0, b; do { b = by[i++]; v |= (b & 127) << s; s += 7; } while (b & 128); return v; }
-  for (j = 0; j < n; j++) { t += vi(); T[j] = t / 100; L[j] = vi() / 100; K[j] = by[i++]; V[j] = by[i++]; P[j] = by[i++]; }
-  return (NOTES[tr.id] = { t: T, l: L, k: K, v: V, p: P, n: n });
+  for (j = 0; j < n; j++) { t += vi(); T[j] = t / 100; L[j] = vi() / 100; K[j] = by[i++]; V[j] = by[i++]; P[j] = by[i++]; Z[j] = by[i++]; }
+  return (NOTES[tr.id] = { t: T, l: L, k: K, v: V, p: P, z: Z, n: n });
 }
 
-/* ---------- one note: the nearest sample, tuned, shaped, held by looping its middle when the note is long ---------- */
-function playNote(part, k, vel, t, len) {
-  var I = D.inst[part.i], buf = BUF[part.i]; if (!I || !buf || !part.node) return;
-  var S = I.notes, best = S[0];
-  for (var i = 1; i < S.length; i++) if (Math.abs(S[i][0] - k) < Math.abs(best[0] - k)) best = S[i];
-  var rate = Math.pow(2, (k - best[0]) / 12), off = best[1], src = AC.createBufferSource(), g = AC.createGain();
-  src.buffer = buf; src.playbackRate.value = rate;
+/* ---------- one note, the way a player plays it: plucked where the score says pizzicato, short notes bowed short (spiccato),
+   the rest held; the recording made at the loudness asked for; the nearest recorded note, tuned the rest of the way; a
+   different take each time a short note repeats; a long note held by looping the steady middle of the recording ---------- */
+function playNote(part, k, vel, t, len, pz) {
+  var I = IM[part.i], buf = BUF[part.i]; if (!I || !buf || !part.node) return;
+  var arts = I.arts, art = pz && arts.pizz ? 'pizz' : (len < 0.3 && arts.spic ? 'spic' : 'sus'), A = arts[art];
   // played by people: a few milliseconds either side of the beat, a little louder or softer, each section a hair apart in tune
-  t += (Math.random() - 0.5) * 0.014; vel = Math.min(127, vel * (0.93 + Math.random() * 0.14));
-  if (src.detune) src.detune.value = (part.det || 0) + (part.i === 'piano' ? 0 : (Math.random() - 0.5) * 4);
-  var lvl = Math.pow(vel / 127, 1.4) * part.g * 0.34 / Math.max(0.25, best[2]), att = I.att * (0.85 + Math.random() * 0.3), rel = I.rel, end = t + len;
+  t += (Math.random() - 0.5) * 0.014; vel = Math.max(1, Math.min(127, vel * (0.93 + Math.random() * 0.14)));
+  var li = Math.min(A.nl - 1, Math.floor(Math.pow(vel / 127, 1.15) * A.nl)), S = A.s, best = null, bd = 99, i;
+  for (i = 0; i < S.length; i++) { var d = Math.abs(S[i][0] - k) + (S[i][1] === li ? 0 : 0.6 + Math.abs(S[i][1] - li)); if (d < bd) { bd = d; best = S[i]; } }
+  var takes = S.filter(function (x) { return x[0] === best[0] && x[1] === best[1]; });
+  if (takes.length > 1) { part.rr = (part.rr || 0) + 1; best = takes[part.rr % takes.length]; }
+  var rate = Math.pow(2, (k - best[0]) / 12), off = best[3], src = AC.createBufferSource(), g = AC.createGain();
+  src.buffer = buf; src.playbackRate.value = rate;
+  if (src.detune) src.detune.value = (part.det || 0) + (part.i === 'piano' || part.i === 'harpsichord' ? 0 : (Math.random() - 0.5) * 4);
+  var lvl = Math.pow(vel / 127, 0.9) * part.g * 0.3 / Math.max(0.2, best[4]), att = (art === 'sus' ? I.att : 0.004) * (0.85 + Math.random() * 0.3), rel = art === 'sus' ? I.rel : 0.12, end = t + len;
   g.gain.setValueAtTime(0.0001, t); g.gain.linearRampToValueAtTime(lvl, t + att);
-  if (I.hold) {
-    var natural = (I.loop[1]) / rate;
-    if (len > natural) { src.loop = true; src.loopStart = off + I.loop[0]; src.loopEnd = off + I.loop[1]; }
+  if (A.loop) {
+    if (len > A.loop[1] / rate) { src.loop = true; src.loopStart = off + A.loop[0]; src.loopEnd = off + A.loop[1]; }
     g.gain.setValueAtTime(lvl, Math.max(t + att, end)); g.gain.exponentialRampToValueAtTime(0.0001, end + rel);
-    src.connect(g); g.connect(part.node); src.start(t, off, src.loop ? undefined : I.len); src.stop(end + rel + 0.05);
+    src.connect(g); g.connect(part.node); src.start(t, off, src.loop ? undefined : A.len); src.stop(end + rel + 0.05);
   } else {
-    var ring = Math.min(I.len / rate, len + rel);
+    var ring = Math.min(A.len / rate, Math.max(len, art === 'sus' ? 0 : 0.2) + rel);
     g.gain.setValueAtTime(lvl, Math.max(t + att, Math.min(end, t + ring - 0.02))); g.gain.exponentialRampToValueAtTime(0.0001, t + ring);
-    src.connect(g); g.connect(part.node); src.start(t, off, I.len); src.stop(t + ring + 0.05);
+    src.connect(g); g.connect(part.node); src.start(t, off, A.len); src.stop(t + ring + 0.05);
   }
-  MUS.voices.push(src); if (MUS.voices.length > 400) MUS.voices.splice(0, 100);
+  MUS.voices.push(src); if (MUS.voices.length > 500) MUS.voices.splice(0, 100);
 }
 
 /* ---------- the score: notes are put on the clock a quarter of a second ahead ---------- */
@@ -100,7 +118,7 @@ function musTick() {
   try {
     while (MUS.ix < N.n && N.t[MUS.ix] < until) {
       var j = MUS.ix++, part = MUS.parts[N.p[j]];
-      if (part && MUS.t0 + N.t[j] >= now - 0.05) playNote(part, N.k[j], N.v[j], MUS.t0 + N.t[j], N.l[j]);
+      if (part && MUS.t0 + N.t[j] >= now - 0.05) playNote(part, N.k[j], N.v[j], MUS.t0 + N.t[j], N.l[j], N.z[j]);
     }
   } catch (e) {}
   if (MUS.ix >= N.n && now > MUS.t0 + MUS.tr.dur + 3) musPlay(musNextId());
@@ -109,7 +127,7 @@ function musPlay(id) {
   var tr = musTrack(id) || musTrack(musNextId()); if (!tr) return;
   musSilence();
   MUS.tr = tr; MP.cur = tr.id; MUS.ix = 0; MUS.played.push(tr.id); if (MUS.played.length > 8) MUS.played.shift();
-  MUS.parts = tr.parts.map(function (p) { var g = AC.createGain(), pan = AC.createStereoPanner ? AC.createStereoPanner() : null; g.gain.value = 1; if (pan) { pan.pan.value = p.p; g.connect(pan); pan.connect(MUS.bus); } else g.connect(MUS.bus); return { i: p.i, g: p.g, node: g, det: p.i === 'piano' ? 0 : (Math.random() - 0.5) * 8 }; });
+  MUS.parts = tr.parts.map(function (p) { var g = AC.createGain(), pan = AC.createStereoPanner ? AC.createStereoPanner() : null; g.gain.value = 1; if (pan) { pan.pan.value = p.p; g.connect(pan); pan.connect(MUS.bus); } else g.connect(MUS.bus); return { i: p.i, g: p.g, node: g, det: p.i === 'piano' || p.i === 'harpsichord' ? 0 : (Math.random() - 0.5) * 8 }; });
   var gen = ++MUS.gen, need = []; tr.parts.forEach(function (p) { if (need.indexOf(p.i) < 0) need.push(p.i); });
   MUS.loading = true;
   Promise.all(need.map(loadInst)).then(function () {
@@ -158,7 +176,7 @@ function jukeHtml() {
           '<br><span class="muted" style="font-size:.85em">Score typeset by ' + esc(t.by) + '</span></span><span class="row"><button class="btn sm" data-jk="play" data-v="' + t.id + '">Play</button><button class="btn sm' + (inr ? ' on' : '') + '" data-jk="rot" data-v="' + t.id + '" aria-pressed="' + (inr ? 'true' : 'false') + '">' + (inr ? 'In rotation' : 'Left out') + '</button></span></li>';
       }).join('') + '</ul>';
     }).join('') + '</div>' +
-    '<p class="muted" style="margin-top:8px;font-size:.85em">Scores from the Mutopia Project (mutopiaproject.org). Instruments: ' + esc(D.samples || '') + '.</p>';
+    '<p class="muted" style="margin-top:8px;font-size:.85em">' + esc(D.credit || '') + '</p>';
 }
 function jkRender() {
   if (!JK.root) return;
@@ -204,12 +222,12 @@ function musRender(id, secs) {
   var rate = 48000, len = Math.min(secs || tr.dur + 3, tr.dur + 3);
   AC = new OfflineAudioContext(2, Math.ceil(rate * len), rate); MUS.out = null; BUF = {}; MUS.voices = [];
   musSetup();
-  var parts = tr.parts.map(function (p) { var g = AC.createGain(), pan = AC.createStereoPanner(); pan.pan.value = p.p; g.connect(pan); pan.connect(MUS.bus); return { i: p.i, g: p.g, node: g, det: p.i === 'piano' ? 0 : (Math.random() - 0.5) * 8 }; });
+  var parts = tr.parts.map(function (p) { var g = AC.createGain(), pan = AC.createStereoPanner(); pan.pan.value = p.p; g.connect(pan); pan.connect(MUS.bus); return { i: p.i, g: p.g, node: g, det: p.i === 'piano' || p.i === 'harpsichord' ? 0 : (Math.random() - 0.5) * 8 }; });
   var need = []; tr.parts.forEach(function (p) { if (need.indexOf(p.i) < 0) need.push(p.i); });
   var ctx = AC;
   return Promise.all(need.map(loadInst)).then(function () {
     var N = unpack(tr);
-    for (var j = 0; j < N.n && N.t[j] < len; j++) playNote(parts[N.p[j]], N.k[j], N.v[j], 0.2 + N.t[j], N.l[j]);
+    for (var j = 0; j < N.n && N.t[j] < len; j++) playNote(parts[N.p[j]], N.k[j], N.v[j], 0.2 + N.t[j], N.l[j], N.z[j]);
     return ctx.startRendering();
   }).then(function (b) {
     AC = keep.AC; MUS.out = keep.out; MUS.bus = keep.bus; MUS.parts = keep.parts; MUS.voices = keep.voices; BUF = keep.buf;
