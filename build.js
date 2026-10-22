@@ -43,9 +43,9 @@ if(fs.existsSync(path.join(appDir,'node_modules','esbuild'))){
   const blocks=fs.existsSync(blocksFile)?"@font-face{font-family:'EWF Blocks';font-style:normal;font-weight:400;font-display:swap;src:url(data:font/woff2;base64,"+fs.readFileSync(blocksFile).toString('base64')+") format('woff2')}\n":'';
   // add-ons: self-contained scripts appended after the interface (app/addons/*.js), each in its own script tag
   const addDir=path.join(appDir,'addons');
-  // the soundtrack's instruments (app/music/<instrument>.js, tools/music/build-music.py) are megabytes each, so they are files of
-  // their own beside the page (dist/music/), loaded by the soundtrack when a piece needs them; the pieces themselves are an add-on
-  const musicDir=path.join(appDir,'music'),music=fs.existsSync(musicDir)?fs.readdirSync(musicDir).filter(f=>f.endsWith('.js')):[];
+  // the soundtrack's recordings (app/music/<id>.ogg, tools/music/build-recordings.py) are megabytes each, so they are files of their
+  // own beside the page (dist/music/), streamed when a piece plays; the list of pieces is an add-on (app/addons/music-list.js)
+  const musicDir=path.join(appDir,'music'),music=fs.existsSync(musicDir)?fs.readdirSync(musicDir).filter(f=>f.endsWith('.ogg')):[];
   const addons=(fs.existsSync(addDir)?fs.readdirSync(addDir).filter(f=>f.endsWith('.js')).sort().map(f=>'\n<script>\n'+fs.readFileSync(path.join(addDir,f),'utf8').replace(/<\/script/gi,'<\\/script')+'</script>').join(''):'');
   const next=`<title>WrestleCraft: Be The Booker</title>
 <style>

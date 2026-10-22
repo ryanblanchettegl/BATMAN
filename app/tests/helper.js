@@ -13,9 +13,9 @@ function serve() {
   if (server) return Promise.resolve(port);
   return new Promise(resolve => {
     server = http.createServer((req, res) => {
-      // files in dist/ and its folders (the soundtrack's instruments are dist/music/<instrument>.js), never outside it
+      // files in dist/ and its folders (the soundtrack's recordings are dist/music/<id>.ogg), never outside it
       const dist = path.join(__dirname, '..', '..', 'dist'), rel = path.normalize(decodeURIComponent(req.url.split('?')[0])).replace(/^([/\\]|\.\.)+/, ''), f = path.join(dist, rel);
-      const type = f.endsWith('.js') ? 'text/javascript; charset=utf-8' : 'text/html; charset=utf-8';
+      const type = f.endsWith('.js') ? 'text/javascript; charset=utf-8' : (f.endsWith('.ogg') ? 'audio/ogg' : 'text/html; charset=utf-8');
       if (!f.startsWith(dist + path.sep)) { res.writeHead(404); res.end('not found'); return; }
       fs.readFile(f, (err, buf) => { if (err) { res.writeHead(404); res.end('not found'); } else { res.writeHead(200, { 'Content-Type': type }); res.end(buf); } });
     });

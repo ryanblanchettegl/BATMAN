@@ -1,50 +1,41 @@
-# The soundtrack: sources and credits
+# The soundtrack: recordings and credits
 
-The game's music is fourteen mellow classical pieces, quiet background music by default (Ryan, 22 October 2026). The
-compositions are all in the public domain. The notes come from scores typeset by volunteers for the Mutopia Project
-(https://www.mutopiaproject.org), turned into MIDI with LilyPond, and are played in the game by recorded instruments:
-string sections and a grand piano recorded note by note at several loudness levels, and a harpsichord and solo cello.
+The game's music is twenty mellow classical recordings by real orchestras, string quartets and pianists (Ryan,
+22 October 2026: all real music, quiet background music by default, in a random order). Every recording is free to use
+in the game: released into the public domain or under CC0 by the people who made it, or made by the United States
+government. The jukebox names who recorded each piece; where the performer is not named by the source, the credit is
+"Parts Unknown" (Ryan's choice).
 
-## Instrument samples
+| Piece | Composer | Recorded by | Licence | Source |
+| --- | --- | --- | --- | --- |
+| Air (Orchestral Suite No. 3) | J. S. Bach | United States Air Force Band | Public domain (US government work) | https://archive.org/details/AirSuiteNo.3InDMajor |
+| Morning Mood (Peer Gynt) | Edvard Grieg | Czech National Symphony Orchestra, for Musopen | Public domain | https://archive.org/details/MusopenCollectionAsFlac |
+| The Death of Ase (Peer Gynt) | Edvard Grieg | Czech National Symphony Orchestra, for Musopen | Public domain | same |
+| Symphony No. 3, Poco allegretto | Johannes Brahms | Czech National Symphony Orchestra, for Musopen | Public domain | same |
+| Symphony No. 2, Adagio non troppo | Johannes Brahms | Czech National Symphony Orchestra, for Musopen | Public domain | same |
+| Symphony No. 40, Andante | W. A. Mozart | Czech National Symphony Orchestra, for Musopen | Public domain | same |
+| Scottish Symphony, Adagio | Felix Mendelssohn | Czech National Symphony Orchestra, for Musopen | Public domain | same |
+| Meditation on an Old Czech Chorale | Josef Suk | Musopen String Quartet | Public domain | same |
+| String Quartet No. 2, Nocturne | Alexander Borodin | Czech National Symphony Orchestra players, for Musopen | Public domain | same |
+| String Quartet "American", Lento | Antonin Dvorak | Musopen String Quartet | Public domain | same |
+| String Quartet "The Lark", Adagio cantabile | Joseph Haydn | Musopen String Quartet | Public domain | same |
+| Goldberg Variations, Aria | J. S. Bach | Shelley Katz, for Musopen | Public domain | same |
+| Sonata in A major D. 664, Andante | Franz Schubert | Paul Pitman, for Musopen | Public domain | same |
+| Nocturne Op. 9 No. 2 | Frederic Chopin | Frank Levy | Public domain (marked by the YIVO Institute, which uploaded it) | https://archive.org/details/nocturneineflatmajorop.9no.2 |
+| Nocturne Op. 27 No. 2 | Frederic Chopin | Parts Unknown | CC0 (Musopen) | https://archive.org/details/musopen-chopin |
+| Nocturne Op. 72 No. 1 | Frederic Chopin | Parts Unknown | CC0 (Musopen) | same |
+| Prelude Op. 28 No. 15 "Raindrop" | Frederic Chopin | Parts Unknown | CC0 (Musopen) | same |
+| Waltz Op. 69 No. 1 | Frederic Chopin | Parts Unknown | CC0 (Musopen) | same |
+| Prelude in C (The Well-Tempered Clavier) | J. S. Bach | Kimiko Ishizaka | Public domain | https://archive.org/details/bach-well-tempered-clavier-book-1 |
+| Sonata No. 15 "Pastoral", Andante | Ludwig van Beethoven | Karine Gilanyan | Public domain | https://archive.org/details/karine-gilanyan-beethoven-piano-sonata-nr.-15-in-d-major-op.-28-pastoral |
 
-- Strings (violin, viola and cello sections, double bass, solo violin): Versilian Studios Chamber Orchestra 2, Community
-  Edition (https://github.com/sgossner/VSCO-2-CE), released under CC0 1.0. Credit to Versilian Studios, as they ask.
-- Grand piano: Salamander Grand Piano by Alexander Holm (https://github.com/sfzinstruments/SalamanderGrandPiano),
-  licensed under Creative Commons Attribution 3.0 (https://creativecommons.org/licenses/by/3.0/).
-- Harpsichord and solo cello: the Musyng Kite sound set, rendered by Benjamin Gleitzman
-  (https://github.com/gleitz/midi-js-soundfonts), licensed under Creative Commons Attribution-ShareAlike 3.0.
-
-## Scores
-
-| Piece | Composer | Typeset by (Mutopia) | Licence of the score |
-| --- | --- | --- | --- |
-| Air (Orchestral Suite No. 3, BWV 1068) | J. S. Bach | Jeff Covey, Mutopia-2008/10/28-242 | CC BY-SA 3.0 |
-| Canon in D for three violins and bass | Johann Pachelbel | Michael Fischer v. Mollard, Mutopia-2015/09/02-2047 | CC BY 4.0 |
-| Eine kleine Nachtmusik, first movement (K. 525) | W. A. Mozart | Anonymous, Mutopia-2007/01/01-900 | Public domain |
-| The Death of Ase (Peer Gynt) | Edvard Grieg | Deborah Lowrey, Mutopia-2014/03/24-247 | Public domain |
-| Cello Suite No. 1, Prelude (BWV 1007) | J. S. Bach | Andreas Scherer, Mutopia-2018/01/19-517 | Public domain |
-| Moonlight Sonata, first movement (Op. 27 No. 2) | Ludwig van Beethoven | Stewart Holmes, Mutopia-2007/02/11-276 | CC BY-SA 2.5 |
-| Gymnopedie No. 1 | Erik Satie | Evin Robertson, Mutopia-2014/12/14-37 | Public domain |
-| Gymnopedie No. 2 | Erik Satie | Evin Robertson, Mutopia-2012/12/23-38 | Public domain |
-| Gymnopedie No. 3 | Erik Satie | Evin Robertson, Mutopia-2012/12/23-39 | Public domain |
-| Gnossienne No. 1 | Erik Satie | Knute Snortum, Mutopia-2015/07/23-2035 | CC BY-SA 4.0 |
-| Prelude in C (The Well-Tempered Clavier, BWV 846) | J. S. Bach | Tobias Erbsland, Mutopia-2011/09/12-5 | Public domain |
-| Nocturne Op. 9 No. 2 | Frederic Chopin | Renato Biolcati Rinaldi, Mutopia-2014/12/18-1590 | CC BY-SA 3.0 |
-| Fur Elise (WoO 59) | Ludwig van Beethoven | Stelios Samelis, Mutopia-2015/08/18-931 | Public domain |
-| Traumerei (Scenes from Childhood, Op. 15 No. 7) | Robert Schumann | Ying-Chun Liu, Mutopia-2005/12/27-504 | Public domain |
-
-## What is under which licence
-
-The MIDI files in `tools/music/midi/` and the note data the build writes into `app/addons/music-notes.js` are derived
-from the scores above, and each piece's notes carry that score's licence: share-alike pieces (CC BY-SA) stay free for
-anyone to reuse under the same licence, with this credit. The instrument files in `app/music/` carry their sample set's licence: CC0 (strings), CC BY 3.0 (piano), CC BY-SA 3.0
-(harpsichord, solo cello). The game's own code, including the player in `app/addons/soundtrack.js` and the arrangements in
-`tools/music/build-music.py`, stays all rights reserved (Ryan, 22 October 2026). The jukebox in the game names the
-typesetter and licence of each piece and the sample set.
+Musopen asks, as a courtesy and not a condition, that its recordings be credited and not sold on their own. The game
+credits them in the jukebox and does not sell the recordings.
 
 ## Rebuilding
 
-The MIDI files were made with LilyPond 2.25 (`pip install lilypond`, then `convert-ly` and `lilypond` on each Mutopia
-score). The samples come from clones of the three sets above; `tools/music/build-music.py` says which folders it reads. It writes
-`app/addons/music-notes.js` and `app/music/<instrument>.js`; `node build.js` copies the instruments beside the page as
-`dist/music/`. Publish that folder with the page.
+`tools/music/build-recordings.py` brings every recording to the same loudness, adds a short fade in and out, and writes
+`app/music/<id>.ogg` (Opus) and `app/addons/music-list.js`. The originals are not kept in the repository: download them
+from the sources above into a folder, named `<id>.mp3` or `<id>.ogg` with the ids in the script, and run
+`REC_DIR=<that folder> python3 tools/music/build-recordings.py`. `node build.js` copies the recordings beside the page as
+`dist/music/`; publish that folder with the page.
