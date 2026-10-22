@@ -129,6 +129,12 @@ export function Meter(p: { v: number; kind?: 'hot' | 'cool' | 'au'; n?: number }
   const w = p.n || 10, n = Math.max(0, Math.min(w, Math.round(p.v / 100 * w)));
   return <span class={'meter' + (p.kind ? ' ' + p.kind : '')} role="img" aria-label={Math.round(p.v) + ' out of 100'}>{'█'.repeat(n)}<i>{'░'.repeat(w - n)}</i></span>;
 }
+/** A bar that grows smoothly with the value and changes colour by band, with the number beside it, for tables where a
+    five-step meter made every row look the same (the roster). */
+export function Bar(p: { v: number; t?: string }) {
+  const v = Math.max(0, Math.min(100, Math.round(p.v))), band = v >= 80 ? 'b4' : (v >= 65 ? 'b3' : (v >= 45 ? 'b2' : 'b1'));
+  return <span class={'mbar ' + band} role="img" aria-label={(p.t ? p.t + ' ' : '') + v + ' out of 100'}><span class="mtrk"><i style={{ width: v + '%' }} /></span><b class="num">{v}</b></span>;
+}
 /** The 18-segment gauge from the Office dashboard. `frac` is 0 to 1. */
 export function Gauge(p: { frac: number }) {
   const n = 18, f = Math.max(0, Math.min(n, Math.round(p.frac * n)));

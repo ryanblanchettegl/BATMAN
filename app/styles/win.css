@@ -371,7 +371,7 @@ html[data-screen="tablet"]:has(.stpage){--fs:min(clamp(18px,1.8vw,30px),2.4vh)}
 html[data-screen="tv"]:has(.stpage){--fs:min(clamp(22px,1.9vw,84px),2.32vh)}
 .crt:has(.stpage){max-width:72em}
 .sn-wrap{display:flex;flex-direction:column;height:100%;min-height:0}
-.sn{display:grid;grid-template-columns:minmax(0,4.4fr) repeat(12,minmax(0,1fr));gap:2px;align-content:start;flex:1 1 auto;min-height:0;font-size:.92em}
+.sn{display:grid;grid-template-columns:minmax(0,7fr) repeat(12,minmax(0,1fr));gap:2px;align-content:start;flex:1 1 auto;min-height:0;font-size:.92em}
 .sn>*{min-width:0;display:flex;align-items:center;white-space:nowrap;overflow:hidden}
 .sn .mh{background:var(--blue);color:var(--yellow);justify-content:center;font-size:.9em}
 .sn .h,.sn .h0{background:var(--grey);color:var(--blue);justify-content:center;font-size:.86em;border:1px solid var(--dgrey)}

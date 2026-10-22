@@ -169,15 +169,15 @@ export function RoadMap(p: { road: any; t?: string }) {
   const label = R.shape ? 'A map of ' + R.shape.n + '. This week: ' + R.now.city + '.' : R.map ? 'A map of ' + R.mapName + '. This week: ' + R.now.city + (R.now.land ? ', ' + R.now.land : '') + '.' + R.stops.filter((s: any) => s.k === 'next').map((s: any) => ' Next: ' + s.city + '.').join('') : 'No map for ' + R.now.city + '.';
   const check = () => {
     const cv = ref.current, bx = box.current; if (!cv || !bx || !R.map) return;
-    if (R.shape) {   // the state, cut from paper: as tall as the box and no more than 45% of the window wide
-      const dpr = window.devicePixelRatio || 1, host = bx.parentElement as HTMLElement, cw = Math.floor(Math.min((host ? host.clientWidth : bx.clientWidth) * 0.45 - 4, (bx.clientHeight - 4) * 1.5)), ch = Math.floor(bx.clientHeight - 4);
+    if (R.shape) {   // the state, cut from paper: as tall as the box and no more than 36% of the window wide, so the words beside it are not cut short
+      const dpr = window.devicePixelRatio || 1, host = bx.parentElement as HTMLElement, cw = Math.floor(Math.min((host ? host.clientWidth : bx.clientWidth) * 0.36 - 4, (bx.clientHeight - 4) * 1.2)), ch = Math.floor(bx.clientHeight - 4);
       if (cw < 40 || ch < 40) return;
       const sig = JSON.stringify([R.map, R.shape.n, R.shape.pins]) + '@' + cw + 'x' + ch + '@' + dpr;
       if (cv.getAttribute('data-sig') === sig) return;
       try { drawShape(cv, R, cw, ch, dpr, getComputedStyle(cv).fontFamily || 'sans-serif'); cv.setAttribute('data-sig', sig); cv.setAttribute('data-map', R.map); cv.setAttribute('data-shape', R.shape.n); } catch (e) { /* a map that cannot be drawn is not worth a crash */ }
       return;
     }
-    const dpr = window.devicePixelRatio || 1, host = bx.parentElement as HTMLElement, w = (host ? host.clientWidth : bx.clientWidth) * 0.45 - 4, h = bx.clientHeight - 4;   // as tall as the box, and no more than 45% of the window's width; the frame is two pixels a side
+    const dpr = window.devicePixelRatio || 1, host = bx.parentElement as HTMLElement, w = (host ? host.clientWidth : bx.clientWidth) * 0.38 - 4, h = bx.clientHeight - 4;   // as tall as the box, and no more than 38% of the window's width; the frame is two pixels a side
     const px = Math.max(2, Math.floor(Math.min(w * dpr / E.MAP_W, h * dpr / E.MAP_H)));
     const sig = JSON.stringify([R.map, R.lit, R.stops.map((s: any) => [s.k, s.city, s.x, s.y])]) + '@' + px;
     if (cv.getAttribute('data-sig') === sig) return;
