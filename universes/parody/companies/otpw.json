@@ -1363,7 +1363,130 @@
      "name": "Air Guitar",
      "move": "Air guitar taunt"
     }
-   ]
+   ],
+   "look": {
+    "id": "sunny_ace",
+    "name": "Sunny Ace, the Ace of Everything",
+    "hometown": "Gifu",
+    "archetype": "Technical",
+    "physical_attributes": {
+     "sex": "M",
+     "height_inches": 71,
+     "weight_lbs": 225,
+     "body_archetype": "Technical",
+     "proportional_scalers": {
+      "torso_width": 1.0,
+      "torso_height": 1.0,
+      "limb_length": 1.02,
+      "muscle_mass": 1.04
+     }
+    },
+    "appearance": {
+     "face": {
+      "sk": 20
+     },
+     "hair_colour": "hair_chestnut",
+     "facial_hair": "none",
+     "mood": "happy"
+    },
+    "attires": {
+     "primary_ring": {
+      "description": "In-ring gear",
+      "equipped_assets": {
+       "head": "hair_long_01",
+       "upper_body": "bare",
+       "lower_body": "tights_long_01",
+       "footwear": "boots_knee",
+       "accessories": [
+        "knee_pads"
+       ]
+      },
+      "palette_slots": {
+       "primary": "swatch_hot_pink",
+       "secondary": "swatch_white_paper",
+       "trim": "swatch_gold_foil",
+       "hardware": "swatch_gold_foil"
+      },
+      "custom_layers": []
+     },
+     "entrance_gear": {
+      "description": "Ring walk and entrance",
+      "equipped_assets": {
+       "head": "hair_long_01",
+       "upper_body": "vest_open",
+       "lower_body": "tights_long_01",
+       "footwear": "boots_knee",
+       "accessories": [
+        "guitar"
+       ]
+      },
+      "palette_slots": {
+       "primary": "swatch_hot_pink",
+       "secondary": "swatch_white_paper",
+       "trim": "swatch_gold_foil",
+       "hardware": "swatch_gold_foil"
+      },
+      "custom_layers": [],
+      "part_colours": {
+       "upper_body": "swatch_white_paper"
+      }
+     },
+     "street_clothes": {
+      "description": "Backstage and promos",
+      "equipped_assets": {
+       "head": "hair_long_01",
+       "upper_body": "suit_jacket",
+       "lower_body": "trousers_suit",
+       "footwear": "shoes_dress",
+       "accessories": []
+      },
+      "palette_slots": {
+       "primary": "swatch_white_paper",
+       "secondary": "swatch_white_paper",
+       "trim": "swatch_hot_pink",
+       "hardware": "swatch_silver_foil"
+      },
+      "custom_layers": [],
+      "part_colours": {
+       "upper_body": "swatch_white_paper"
+      }
+     }
+    },
+    "finishing_moves": [
+     {
+      "name": "High Fly Sunshine",
+      "impact_damage": 88,
+      "kickout_difficulty": "Protected",
+      "position": "Top Rope",
+      "category": "Pinfall Impact",
+      "preview_pose_id": "move_topdive"
+     },
+     {
+      "name": "Sunny Spin",
+      "impact_damage": 55,
+      "kickout_difficulty": "Easy",
+      "position": "Standing",
+      "category": "Pinfall Impact",
+      "preview_pose_id": "move_ddt",
+      "stage": "mid"
+     },
+     {
+      "name": "Air Guitar",
+      "impact_damage": 20,
+      "kickout_difficulty": "Easy",
+      "position": "Standing",
+      "category": "Pinfall Impact",
+      "preview_pose_id": "strike",
+      "stage": "early"
+     }
+    ],
+    "entrance": "ent_taunt",
+    "entrance_fx": {
+     "pyro": "sparks",
+     "lights": "spot",
+     "music": "Go Ace (Air Guitar Mix)"
+    }
+   }
   }
  ],
  "teams": [
