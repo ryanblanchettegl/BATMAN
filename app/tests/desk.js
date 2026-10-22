@@ -3,7 +3,7 @@
    and is drawn once; everything the old desk held is one pop-up away.
    Run: NODE_PATH=<dir containing playwright> node app/tests/desk.js */
 const { open, go, overflow, shot, fits, state, redraw } = require('./helper');
-const SIZES = [['desk', 1280, 720, 'nmw'], ['desk', 1280, 860, 'whw'], ['desk', 1920, 1080, 'kjp'], ['tablet', 1024, 768, 'ocw'], ['tv', 1920, 1080, 'ldd']];
+const SIZES = [['desk', 1280, 720, 'nmw'], ['desk', 1280, 860, 'whw'], ['desk', 1920, 1080, 'kjp'], ['desk', 2560, 1440, 'ocw'], ['desk', 3840, 2160, 'ocw'], ['tv', 1920, 1080, 'ldd']];
 const fails = [];
 const ok = (id, label, pass, detail) => { console.log(id.padEnd(15), pass ? 'ok  ' : 'FAIL', label + (detail ? ': ' + detail : '')); if (!pass) fails.push(id + ' ' + label); };
 const txt = (page, sel) => page.$eval(sel, e => e.innerText).catch(() => '');
@@ -59,7 +59,7 @@ async function run(mode, w, h, promo) {
     await redraw(page); await page.waitForTimeout(120);
     await fit('the fullest desk');
     ok(id, 'with something to answer the desk window is red and counts them', await page.$eval('[data-t="fire"]', e => e.classList.contains('hot')) && /4 to answer/.test(await txt(page, '[data-t="fire"] .ttl')) && await page.$$eval('[data-t="ev-open"]', L => L.length) === 3 && /1 more/.test(await txt(page, '[data-t="fire"]')));
-    ok(id, 'the hometown names, the last night here and the rival in town are all said', await page.$$eval('[data-t="road-home"] .hm', L => L.length) === (/tablet/.test(id) ? 1 : 2) && /9 weeks ago, an A-, sold out/.test(await txt(page, '[data-t="road-crowd"]')) && /had a great night here 2 weeks ago/.test((await page.$eval('[data-t="road-crowd"]', e => e.textContent))));
+    ok(id, 'the hometown names, the last night here and the rival in town are all said', await page.$$eval('[data-t="road-home"] .hm', L => L.length) === 2 && /9 weeks ago, an A-, sold out/.test(await txt(page, '[data-t="road-crowd"]')) && /had a great night here 2 weeks ago/.test((await page.$eval('[data-t="road-crowd"]', e => e.textContent))));
     ok(id, 'the tasks turn pages and never scroll', await page.$$eval('.tasks .task', L => L.length) <= 8 && /1 of \d/.test(await txt(page, '[data-t="tasks-pg"]')));
     await page.click('[data-t="tasks-page"][data-v="next"]'); ok(id, 'the next page of tasks', /2 of \d/.test(await txt(page, '[data-t="tasks-pg"]'))); await fit('the second page of tasks');
     await shot(page, 'desk-' + mode + '-' + w, false);

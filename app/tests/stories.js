@@ -1,4 +1,4 @@
-/* Browser run of the Stories section: Storylines, History, The Net. Desk and tablet.
+/* Browser run of the Stories section: Storylines, History, The Net. Desk.
    Build first:  EWF_OUT=next-company EWF_DEV=1 node build.js
    Run:          NODE_PATH=/opt/npm-tools/node_modules node app/tests/stories.js */
 const { open, go, overflow, shot, state, redraw, fits: fitsOne } = require('./helper');

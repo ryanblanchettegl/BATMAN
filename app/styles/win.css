@@ -281,7 +281,7 @@ html:not(.rm) .wn .tasks.hit .task.must{animation:taskhit .7s ease-in-out 3}
 /* the week in full */
 .dmore{margin-top:.7em;min-height:11em}
 /* the desk holds more than other one-screen pages, so its type is a little smaller for the same window */
-html[data-screen="desk"]:has(.deskpage){--fs:min(clamp(19px,1.62vw,32px),2.6vh)}
+html[data-screen="desk"]:has(.deskpage){--fs:max(19px,min(1.62vw,2.6vh))}
 html[data-screen="tablet"]:has(.deskpage){--fs:min(clamp(18px,1.8vw,30px),2.4vh)}
 html[data-screen="tv"]:has(.deskpage){--fs:min(clamp(22px,1.9vw,84px),2.32vh)}
 .crt:has(.deskpage){max-width:72em}
@@ -332,7 +332,7 @@ html[data-screen="tablet"] .nextwin .nx .ledb{display:none}
 .dz-who i{font-style:normal;font-size:.9em}
 .dz-who canvas.pt{width:1.6em!important;height:1.6em!important;margin:0 0 .1em!important;vertical-align:0!important}
 .dz .ans{margin:.2em 0;padding-block:.05em}
-html[data-screen="desk"]:has(.bspage){--fs:min(clamp(19px,1.62vw,32px),2.6vh)}
+html[data-screen="desk"]:has(.bspage){--fs:max(19px,min(1.62vw,2.6vh))}
 html[data-screen="tablet"]:has(.bspage){--fs:min(clamp(18px,1.8vw,30px),2.4vh)}
 html[data-screen="tv"]:has(.bspage){--fs:min(clamp(22px,1.9vw,84px),2.32vh)}
 .crt:has(.bspage){max-width:72em}
@@ -366,12 +366,12 @@ html[data-screen="tablet"] .bspage{grid-template-columns:minmax(0,1.1fr) minmax(
 
 /* Storylines as windows (screens/stories/Season.tsx) */
 .stpage{grid-template-columns:minmax(0,1.05fr) minmax(0,1fr) minmax(0,.8fr) minmax(0,1.15fr);grid-template-rows:minmax(0,1.3fr) minmax(0,1fr);grid-template-areas:"season season season story" "says power more story";line-height:1.18;gap:.95em 2.2ch}
-html[data-screen="desk"]:has(.stpage){--fs:min(clamp(19px,1.62vw,32px),2.6vh)}
+html[data-screen="desk"]:has(.stpage){--fs:max(19px,min(1.62vw,2.6vh))}
 html[data-screen="tablet"]:has(.stpage){--fs:min(clamp(18px,1.8vw,30px),2.4vh)}
 html[data-screen="tv"]:has(.stpage){--fs:min(clamp(22px,1.9vw,84px),2.32vh)}
 .crt:has(.stpage){max-width:72em}
 .sn-wrap{display:flex;flex-direction:column;height:100%;min-height:0}
-.sn{display:grid;grid-template-columns:minmax(0,4.4fr) repeat(12,minmax(0,1fr));gap:2px;align-content:start;flex:1 1 auto;min-height:0;font-size:.92em}
+.sn{display:grid;grid-template-columns:minmax(0,7fr) repeat(12,minmax(0,1fr));gap:2px;align-content:start;flex:1 1 auto;min-height:0;font-size:.92em}
 .sn>*{min-width:0;display:flex;align-items:center;white-space:nowrap;overflow:hidden}
 .sn .mh{background:var(--blue);color:var(--yellow);justify-content:center;font-size:.9em}
 .sn .h,.sn .h0{background:var(--grey);color:var(--blue);justify-content:center;font-size:.86em;border:1px solid var(--dgrey)}
@@ -418,7 +418,7 @@ html[data-screen="tablet"] .stpage .st-pws{gap:.15em}html[data-screen="tablet"] 
 
 /* ---------- the Roster page (final-6): the list, the picked file, four sums along the bottom ---------- */
 .rspage{grid-template-columns:minmax(0,1fr) minmax(0,1fr) minmax(0,1fr) minmax(0,1fr) minmax(0,1.5fr);grid-template-rows:minmax(0,1fr) auto;grid-template-areas:"list list list list file" "wages mood bodies deals file";line-height:1.18;gap:.95em 2.2ch}
-html[data-screen="desk"]:has(.rspage){--fs:min(clamp(19px,1.62vw,32px),2.6vh)}
+html[data-screen="desk"]:has(.rspage){--fs:max(19px,min(1.62vw,2.6vh))}
 html[data-screen="tablet"]:has(.rspage){--fs:min(clamp(18px,1.8vw,30px),2.4vh)}
 html[data-screen="tv"]:has(.rspage){--fs:min(clamp(22px,1.9vw,84px),2.32vh)}
 .crt:has(.rspage){max-width:76em}
@@ -487,7 +487,7 @@ html[data-screen="tv"]:has(.rspage){--fs:min(clamp(22px,1.9vw,84px),2.32vh)}
 .book1 .tag{color:var(--k)} .book1 .tag.face{color:var(--blue)} .book1 .tag.heel,.book1 .tag.bad{color:var(--dred)} .book1 .tag.good{color:#006000} .book1 .tag.gold{color:#5a4000} .book1 .tag.warn{color:#6a006a}
 .book1 .face{color:var(--blue)} .book1 .heel{color:var(--dred)}
 .book1 .lnk{color:var(--blue)}
-html[data-screen="desk"]:has(.book1){--fs:min(clamp(19px,1.62vw,32px),2.75vh)}
+html[data-screen="desk"]:has(.book1){--fs:max(19px,min(1.62vw,2.75vh))}
 html[data-screen="tablet"]:has(.book1){--fs:min(clamp(18px,1.85vw,30px),2.45vh)}
 html[data-screen="tv"]:has(.book1){--fs:min(clamp(22px,1.9vw,84px),2.6vh)}
 .crt:has(.book1){max-width:76em}
@@ -544,7 +544,7 @@ html[data-screen="tv"]:has(.book1){--fs:min(clamp(22px,1.9vw,84px),2.6vh)}
 .ttpage .wn>.ttl .btn{margin:0;padding:0 .8ch;box-shadow:none}
 .ttpage .tw{margin-bottom:.3em}
 .ttpage .bracket{font-size:.8em;line-height:1;white-space:pre;overflow:hidden}
-html[data-screen="desk"]:has(.ttpage){--fs:min(clamp(19px,1.62vw,32px),2.6vh)}
+html[data-screen="desk"]:has(.ttpage){--fs:max(19px,min(1.62vw,2.6vh))}
 html[data-screen="tablet"]:has(.ttpage){--fs:min(clamp(18px,1.8vw,30px),2.4vh)}
 html[data-screen="tv"]:has(.ttpage){--fs:min(clamp(22px,1.9vw,84px),2.32vh)}
 .crt:has(.ttpage){max-width:76em}
@@ -558,7 +558,7 @@ html[data-screen="tv"]:has(.ttpage){--fs:min(clamp(22px,1.9vw,84px),2.32vh)}
 .lkpage .btn.sm{padding:0 .7ch;margin:0 .3ch .2em 0}
 .lkpage .piebox{margin-top:2px}
 .lkpage .pie{font-size:.62em}
-html[data-screen="desk"]:has(.lkpage){--fs:min(clamp(19px,1.62vw,32px),2.6vh)}
+html[data-screen="desk"]:has(.lkpage){--fs:max(19px,min(1.62vw,2.6vh))}
 html[data-screen="tablet"]:has(.lkpage){--fs:min(clamp(17px,1.7vw,30px),2.3vh)}
 html[data-screen="tv"]:has(.lkpage){--fs:min(clamp(22px,1.9vw,84px),2.32vh)}
 .crt:has(.lkpage){max-width:78em}
@@ -583,7 +583,7 @@ html[data-screen="tv"]:has(.lkpage){--fs:min(clamp(22px,1.9vw,84px),2.32vh)}
 .mkpage .row.nowrap input{width:14ch}
 .mkpage .pgr{display:flex;gap:.6ch;align-items:center;justify-content:flex-end;margin:0}
 .mkpage input.wage{width:10ch}
-html[data-screen="desk"]:has(.mkpage){--fs:min(clamp(18px,1.5vw,32px),2.6vh)}
+html[data-screen="desk"]:has(.mkpage){--fs:max(18px,min(1.5vw,2.6vh))}
 html[data-screen="tablet"]:has(.mkpage){--fs:min(clamp(15px,1.45vw,30px),2.4vh)}
 html[data-screen="tv"]:has(.mkpage){--fs:min(clamp(20px,1.6vw,84px),2.32vh)}
 .crt:has(.mkpage){max-width:84em}
@@ -704,7 +704,7 @@ html[data-screen="tv"]:has(.mkpage){--fs:min(clamp(20px,1.6vw,84px),2.32vh)}
 .webpage ::-webkit-scrollbar-thumb{background:var(--grey);border:2px solid var(--white);border-right-color:var(--dgrey);border-bottom-color:var(--dgrey)}
 .webpage ::-webkit-scrollbar-button:single-button{background:var(--grey);border:2px solid var(--white);border-right-color:var(--dgrey);border-bottom-color:var(--dgrey);height:1.05em}
 .webpage *{scrollbar-color:var(--grey) #d8d8d8}
-html[data-screen="desk"]:has(.webpage){--fs:min(clamp(18px,1.5vw,32px),2.6vh)}
+html[data-screen="desk"]:has(.webpage){--fs:max(18px,min(1.5vw,2.6vh))}
 html[data-screen="tablet"]:has(.webpage){--fs:min(clamp(16px,1.6vw,30px),2.4vh)}
 html[data-screen="tv"]:has(.webpage){--fs:min(clamp(20px,1.7vw,84px),2.32vh)}
 .crt:has(.webpage){max-width:84em}
@@ -738,7 +738,7 @@ html[data-screen="tv"]:has(.webpage){--fs:min(clamp(20px,1.7vw,84px),2.32vh)}
 .crpage{grid-template-columns:minmax(0,1.15fr) minmax(0,1fr) minmax(0,1fr);grid-template-rows:minmax(0,1.25fr) minmax(0,1fr);grid-template-areas:"you rep saga" "word asst troph";line-height:1.18;gap:.95em 2.2ch}
 .crpage .wn>.bd{overflow-y:auto}
 .crpage .list li{padding:2px 0}
-html[data-screen="desk"]:has(.crpage){--fs:min(clamp(19px,1.62vw,32px),2.6vh)}
+html[data-screen="desk"]:has(.crpage){--fs:max(19px,min(1.62vw,2.6vh))}
 html[data-screen="tablet"]:has(.crpage){--fs:min(clamp(17px,1.7vw,30px),2.35vh)}
 html[data-screen="tv"]:has(.crpage){--fs:min(clamp(22px,1.9vw,84px),2.32vh)}
 .crt:has(.crpage){max-width:78em}

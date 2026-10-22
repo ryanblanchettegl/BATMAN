@@ -353,7 +353,7 @@ function Options() {
       {toggle('auto', 'Auto-play the show', 'The broadcast moves on by itself at a reading pace and stops for every call. P turns it on or off during a show.')}
       {toggle('boot', 'Boot sequence', 'The loading screen when the game starts.')}
       {toggle('letter', 'The owner’s letter', 'A new game opens on a letter from the owner. It can be read again from the desk.')}
-      {choice('screen', 'Screen', 'Auto picks from the device. TV is for the couch: larger text, edge margins, and a remote or gamepad moves the highlight.', [['auto', 'Auto (' + ({ desk: 'desk', tablet: 'tablet', tv: 'TV' } as any)[autoScreen()] + ')'], ['desk', 'Desk'], ['tablet', 'Tablet'], ['tv', 'TV']])}
+      {choice('screen', 'Screen', 'Auto picks from the device. TV is for the couch: larger text, edge margins, and a remote or gamepad moves the highlight.', [['auto', 'Auto (' + ({ desk: 'desk', tv: 'TV' } as any)[autoScreen()] + ')'], ['desk', 'Desk'], ['tv', 'TV']])}
       {choice('fxvol', 'Effects volume', 'Bells, beeps and the crowd.', [[0.4, 'Low'], [1, 'Normal'], [1.8, 'High']])}
       {(window as any).EWF_MUSIC_VOL ? <li class="col"><span><b>Music volume</b><br /><span class="muted">The soundtrack. The Jukebox on the Music button has the rest.</span></span>
         <span class="row">{[[0.3, 'Low'], [0.6, 'Medium'], [1, 'High']].map(o => <Btn kind="sm" on={Math.abs((window as any).EWF_MUSIC_VOL.vol() - (o[0] as number)) < 0.01} t="musvol" d={{ v: o[0] }} onClick={() => { (window as any).EWF_MUSIC_VOL.setVol(o[0]); redraw(); }}>{o[1]}</Btn>)}</span></li> : null}
