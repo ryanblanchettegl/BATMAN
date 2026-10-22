@@ -196,7 +196,7 @@ function NextShow() {
       {done ? <LightPic name="bell" dot={1} t="next-pic" /> : (PosterPic({}) || <LightPic name="ring" dot={1} t="next-pic" />)}
       <div class="nxr">
         {done ? <p class="lh"><LightText text="Week booked" color="#55ff55" dot={2} /></p> : <p class="lh"><LightText text={String(sh.name).slice(0, 26)} dot={String(sh.name).length > 15 ? 1 : 2} label={sh.name} t="next-name" /></p>}
-        {done ? <p>Every show this week has run.</p> : <p data-t="next-expect">{sh.brand ? <Tag>{brandName(me(), sh.brand)}</Tag> : null}The crowd expects <b>{x ? x.a : 'a show'}</b>{x ? <>: matches of <b>{x.bar}</b> or better.</> : '.'}</p>}
+        {done ? <p>Every show this week has run.</p> : <p data-t="next-expect">{sh.brand ? <Tag>{brandName(me(), sh.brand)}</Tag> : null}The crowd expects <b>{x ? x.a : 'a show'}</b>{x ? <>: matches of <b>{x.bar}</b> or better.</> : '.'}{x && x.first ? <> <span class="good">{x.first}</span></> : null}</p>}
         {done && (n || !wk.ok) ? <p class="bad one">{n ? 'Answer what is on your desk first.' : 'Finish this week’s tasks first.'}</p> : <p class="muted cu"><ComingUp /></p>}
       </div>
     </div>

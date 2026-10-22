@@ -1666,7 +1666,11 @@ function showStep(S,P,show,card,st){
   ba.bc=stageSeg(S,ba,segPeople(S,P,ba.text),react);rep.segs.push(ba);
   return ba;
 }
-var POP_EDGE=1;   // rating points over the crowd's bar that a show on expectation counts for, for your popularity
+var POP_EDGE=1;
+/* a new booker's first show plays to a crowd that gives them a chance (Bill, 21 October: the first hour should be won).
+   A scenario or a challenge keeps its own bar. */
+var FIRST_NIGHT=4;
+function firstNight(S){return !(S.stats&&S.stats.shows>0)&&!S.scn&&!S.chal;}   // rating points over the crowd's bar that a show on expectation counts for, for your popularity
 /* ---------- a promo or an angle on the air, as a scene ----------
    The segment's text is the record of what happened. On the air it is told in pieces: who comes out, what happens a
    sentence at a time, a quoted line said by the person who says it, how the building takes it, and the desk's word.
@@ -1720,6 +1724,7 @@ function showEnd(S,P,show,card,st){
   if(S.cal)return rep;
   var exp=expected(P,show);
   if(isPl&&rep.venue){var bar=barCity(S,rep.venue);if(bar){exp+=bar.d;rep.barNote=bar.note;}}
+  if(isPl&&firstNight(S)){exp-=FIRST_NIGHT;rep.barNote=(rep.barNote?rep.barNote+' ':'')+'Your first night: the crowd gave a new booker the benefit of the doubt.';}
   var qf=clamp(1+(P.trend||0)/60,0.85,1.15)*(SLOT_V[P.slot]/SLOT_V[P.slot0])*(1+0.03*(P.prodLvl-P.prod0))*airPF(P,show);
   rep.exp=r1(exp);rep.cs=crowdScore(rep.rating,rep.exp);
   var mx=mixOf(P);
@@ -10528,7 +10533,7 @@ E.validate=function(S,card){var P=S.promos[S.player],show=S.queue[S.qi];if(!show
 E.eligible=function(S){var P=S.promos[S.player],show=S.queue[S.qi];return show?eligible(S,P,show):[];};
 E.showTitles=function(S){var P=S.promos[S.player],show=S.queue[S.qi];return show?(show.big?P.titles:showTitles(P,show)):[];};
 E.nextBig=function(S){var w=nextBigFrom(S.week,S),c=cal(w);return {week:w,name:evName(S,S.promos[S.player],c.month)||'the next big show',label:c.label};};
-E.expected=function(S,show){return r1(expected(S.promos[S.player],show));};
+E.expected=function(S,show){return r1(expected(S.promos[S.player],show)-(firstNight(S)?FIRST_NIGHT:0));};   // a new booker's first night (src/30-show.js)
 E.cal=cal;E.workRate=workRate;E.rosterOf=rosterOf;E.teamOf=teamOf;E.partnerOf=partnerOf;E.feudOf=feudOf;E.feudsFor=feudsFor;E.activeFeuds=activeFeuds;E.feudLabel=feudLabel;E.feudStage=feudStage;
 E.holdLvl=holdLvl;E.isDev=isDev;E.wageFor=wageFor;E.money=money;E.autoBook=autoBook;E.runShow=runShow;E.weekShows=weekShows;
 E.feudAct=function(f,S){return feudAct(f,S);};E.ACTN=ACTN;E.RISKN=RISKN;E.TIXN=TIXN;E.ADVN=ADVN;E.SLOTN=SLOTN;E.PRODN=PRODN;E.SLOT_MAX=SLOT_MAX;
@@ -12570,6 +12575,9 @@ E.welcome=function(S){
   var mid=(S.feuds||[]).filter(function(f){return f.mid&&!f.res&&f.promo===P.id;});
   if(mid.length){var f0=mid[0],A=S.w[f0.a[0]],B=S.w[f0.b[0]];if(A&&B)L.push(A.name+' and '+B.name+' have been at it for weeks'+(f0.title?', with the belt on the line':'')+'. '+(mid.length>1?(mid.length-1)+' more '+(mid.length===2?'story is':'stories are')+' already running. ':'')+'Do not let them go cold.');}
   L.push('Your first show is '+sh.name+'. The card is empty and the building is sold.');
+  // the owner's goals for the year (src/66-owner-year.js), in the owner's words
+  var Y=!me&&typeof E.ownerYear==='function'?E.ownerYear(S):null;
+  if(Y)L.push('By '+(Y.end?'the flagship, '+Y.end:'the end of the year')+', I want three things: popularity up to '+Y.asks[0].n.replace(/^Popularity | or more$/g,'')+', at least half our shows giving the crowd what it came for, and no losses I have to cover. Do that two years running and we can talk about who owns this place.');
   L.push(me?'Go and book it.':'Do not make me regret this.');
   return S.letter={from:me?S.booker.name:o.name,role:me?'Owner and booker':'Owner',company:P.full||P.name,short:P.name,to:S.booker.name,date:cal(S.week).label,lines:L,show:sh.name,
     ps:'Before the show, the Office is where the week starts. The key at the bottom right always says what is next.'};
@@ -12988,8 +12996,8 @@ E.showVerdict=function(rating,exp){return showVerdict(rating,exp);};
 /** What the crowd expects of the show on the desk (or the one given), in words. */
 E.expectWords=function(S,show){
   show=show||(S.queue&&S.queue[S.qi]);if(!show)return null;
-  var e=expected(S.promos[S.player],show),w=showWord(e);
-  return {i:w.i,w:w.w,a:w.a,bar:starG(e),text:'This crowd expects '+w.a+'.'};
+  var fn=firstNight(S),e=expected(S.promos[S.player],show)-(fn?FIRST_NIGHT:0),w=showWord(e);
+  return {i:w.i,w:w.w,a:w.a,bar:starG(e),text:'This crowd expects '+w.a+'.',first:fn?'It is your first night, so they will give you the benefit of the doubt.':null};
 };
 /** The ladder, best first, for the guide window. */
 E.SHOW_LADDER=SHOW_WORDS.map(function(x){return {w:x.w,a:x.a,d:x.d};});

@@ -119,6 +119,14 @@ Bill's decisions of 21 October: picking the winner is free and booking power buy
 - [x] A balance test with targets for every company model (`node test-balance.js`).
 - [x] The licence: all rights reserved (`LICENSE`).
 
+### A2. The road to A+, phase 2: the first hour (Bill, 21 and 22 October)
+
+- [x] Commentary: play-by-play and colour each have their own menu, not steps (Bill, 22 October). The chairs are a list (`CHAIRS` in `app/src/screens/office/Windows.tsx`), so a third voice can be added later.
+- [ ] A third commentator (later; Bill: "pretty standard now").
+- [x] The owner's letter in the workbench look, naming the goals for the year.
+- [x] A loading card while a new game is set up.
+- [x] A new booker's first show plays to a forgiving crowd (`FIRST_NIGHT`), and the desk says so.
+
 ### 0w. Still pictures for the moments you answer (Ryan, 18 October)
 
 - [x] Every matter on the desk and every call from the gorilla position shows one still diorama picture of the moment (somebody hurt, a fight backstage, two people face to face, a meeting across your desk, a walkout, the crowd on its feet): the picture on the left of the pop-up, the answers on the right.
