@@ -127,6 +127,17 @@ Bill's decisions of 21 October: picking the winner is free and booking power buy
 - [x] A loading card while a new game is set up.
 - [x] A new booker's first show plays to a forgiving crowd (`FIRST_NIGHT`), and the desk says so.
 
+### A3. The road to A+, phase 3: the screens (Bill, 22 October)
+
+- [x] 1080p is the base and every layout scales up with no cap: type follows the tighter of the window's width and height, so 1440p, 4K and ultrawide get the 1080p layout, bigger. No tablet or Steam Deck size.
+- [x] Tests run 1440p (`MODES=desk,big`) and 4K (`onescreen.js`) in place of the tablet size.
+- [x] No cut-off text on the desk's road window, the storylines chart or After the show.
+- [x] Readable labels: figures on paper in dark ink (the sign-off), the achievement strip in dark ink.
+- [x] Roster bars that differ: smooth, coloured by band, with the number.
+- [x] The header counts the time into the show while on the air.
+- [ ] The broadcast camera clipping through the referee (a pass on the scenes in Create a Scene).
+- [ ] A limit on interruptions a week: rank matters and calls, show the top few, let the rest wait (its own phase).
+
 ### 0w. Still pictures for the moments you answer (Ryan, 18 October)
 
 - [x] Every matter on the desk and every call from the gorilla position shows one still diorama picture of the moment (somebody hurt, a fight backstage, two people face to face, a meeting across your desk, a walkout, the crowd on its feet): the picture on the left of the pop-up, the answers on the right.
