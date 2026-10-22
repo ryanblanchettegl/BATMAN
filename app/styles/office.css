@@ -29,3 +29,17 @@ html:not(.rm) .tasks.hit .task.must{animation:taskhit .7s ease-in-out 3}
 .coming .lnk{all:unset;cursor:pointer;color:var(--cyan);border-bottom:1px dotted var(--cyan)}
 .coming .lnk:focus-visible{outline:2px solid var(--yellow)}
 html.nav .coming .lnk:focus{background:var(--yellow);color:var(--k)}
+
+/* the commentary desk: each chair has its own menu (src/screens/office/Windows.tsx) */
+.win:has(.vpick){width:min(132ch,94vw)}
+.vpick .vabout{margin:0 0 .5em;max-width:110ch}
+.vpick .vnow{margin:0 0 .8em}
+.vpick .vmsg{margin:0 0 .6em}
+.vpick .vcards{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1em 1.5ch}
+.vpick .vcard{border:2px solid var(--dcyan);padding:.6em 1.2ch;display:flex;flex-direction:column;gap:.25em}
+.vpick .vcard p{margin:0}
+.vpick .vname{font-size:1.15em}
+.vpick .vskill{font-size:1.1em}
+.vpick .vskill .num{font-size:1.3em}
+.vpick .vfoot{margin-top:auto !important;padding-top:.4em;display:flex;justify-content:space-between;align-items:center;gap:1ch;flex-wrap:wrap}
+.vpick .vtip{margin:.9em 0 0}

@@ -64,7 +64,7 @@ var ACH = [
   {id:'ACH_IMAGE_UP',name:'On the Rise',desc:'Raise your promotion’s popularity by 5 points.'},
   {id:'ACH_NO1',name:'Top of the Mountain',desc:'Be the most popular promotion in the world.'},
   {id:'ACH_YEAR',name:'Year One',desc:'Complete 48 weeks in charge.'},
-  {id:'ACH_CALL',name:'Calling the Shot',desc:'Spend booking power to call a finish.'},
+  {id:'ACH_CALL',name:'Calling the Shot',desc:'Call the finish of a match yourself.'},
   {id:'ACH_LONGSHOT',name:'Against the Odds',desc:'Call a finish for a long shot (under 25%).'},
   {id:'ACH_DIRECTIVE',name:'Company Man',desc:'Deliver on one of the owner\u2019s directives.'},
   {id:'ACH_OWNER_TRUST',name:'Right Hand',desc:'Reach 90 trust with the owner.'},
@@ -466,7 +466,7 @@ function autoBook(S,P,show){
   var mx=big?10:SLOT_MAX[P.slot];while(card.length>mx){var lw=card.filter(function(m){return !m.title;}).sort(function(a,b){return a._p-b._p;})[0]||card[card.length-1];card.splice(card.indexOf(lw),1);}
   card.sort(function(a,b){return a._p-b._p;});
   shapeAuto(S,P,card);   // the running order: a quick opener first, no two of a kind together (src/92-shape.js)
-  // calls cost booking power: drop the ones the player cannot afford, last asked first
+  // a call on a star with creative control costs booking power: drop the ones the player cannot afford, last asked first
   if(isPl){var g2=0;while(g2++<8&&cardCost(S,card)>S.bp){var pm=card.filter(function(m){return m._q&&m.call!=null;})[0];if(!pm)break;delete pm.call;}}
   card.forEach(function(m){delete m._p;delete m._q;m.win=-2;});
   return card;
@@ -738,7 +738,7 @@ function callMatch(S,P,x){
   return bc;
 }
 
-/* Who wins? Unless the booker spends booking power to call it, the match is decided by the odds:
+/* Who wins? Unless the booker calls it (free since 21 October), the match is decided by the odds:
    overness, work rate, momentum, condition, the champion's advantage, traits, feud story logic and the house style. */
 function winOdds(S,P,show,m,sides,t,champSide,feud,big,isMain){
   var st=P.style||'stars',T=st==='drama'?10:7.5,MD=modelOf(P);
@@ -1666,6 +1666,11 @@ function showStep(S,P,show,card,st){
   ba.bc=stageSeg(S,ba,segPeople(S,P,ba.text),react);rep.segs.push(ba);
   return ba;
 }
+var POP_EDGE=1;
+/* a new booker's first show plays to a crowd that gives them a chance (Bill, 21 October: the first hour should be won).
+   A scenario or a challenge keeps its own bar. */
+var FIRST_NIGHT=4;
+function firstNight(S){return !(S.stats&&S.stats.shows>0)&&!S.scn&&!S.chal;}   // rating points over the crowd's bar that a show on expectation counts for, for your popularity
 /* ---------- a promo or an angle on the air, as a scene ----------
    The segment's text is the record of what happened. On the air it is told in pieces: who comes out, what happens a
    sentence at a time, a quoted line said by the person who says it, how the building takes it, and the desk's word.
@@ -1719,6 +1724,7 @@ function showEnd(S,P,show,card,st){
   if(S.cal)return rep;
   var exp=expected(P,show);
   if(isPl&&rep.venue){var bar=barCity(S,rep.venue);if(bar){exp+=bar.d;rep.barNote=bar.note;}}
+  if(isPl&&firstNight(S)){exp-=FIRST_NIGHT;rep.barNote=(rep.barNote?rep.barNote+' ':'')+'Your first night: the crowd gave a new booker the benefit of the doubt.';}
   var qf=clamp(1+(P.trend||0)/60,0.85,1.15)*(SLOT_V[P.slot]/SLOT_V[P.slot0])*(1+0.03*(P.prodLvl-P.prod0))*airPF(P,show);
   rep.exp=r1(exp);rep.cs=crowdScore(rep.rating,rep.exp);
   var mx=mixOf(P);
@@ -1726,11 +1732,12 @@ function showEnd(S,P,show,card,st){
   rep.buys=big?Math.round(buysK(P,show,rep.hype)*1000):0;rep.ppv=Math.round(rep.buys*22*mx.ppv);
   P.led.tv+=rep.tv;P.led.gate+=rep.gate;P.led.ppv+=rep.ppv;P.led.prod+=P.prod*(big?4*evTy(show).prod:1)*PRODF[P.prodLvl]/PRODF[P.prod0]*airProd(P,show);
   var before=P.image;
-  P.image=clamp(P.image+(rep.rating-exp)*(big?0.08:0.03*showMult(show)*airReach(P,show)),5,modelOf(P).cap||100);rep.dImage=r1(P.image-before);
+  // a show that gives the crowd what it came for (a B) grows the company a little; it has to fall short to shrink it (Bill, 21 October)
+  P.image=clamp(P.image+(rep.rating-exp+(isPl?POP_EDGE:0))*(big?0.08:0.03*showMult(show)*airReach(P,show)),5,modelOf(P).cap||100);rep.dImage=r1(P.image-before);
   P.trend=(P.trend||0)*0.6+(rep.rating-exp)*0.4;P.mainB[key]=(P.mainB[key]||rep.mainOv)*0.9+rep.mainOv*0.1;
   P.last={name:show.name,rating:rep.rating,cs:rep.cs,week:S.week};
-  // the crowd gets used to about half of whatever you keep giving it, good or bad
-  if(isPl){var raw=rep.rating-(exp-(P.expA||0)-(P.expB||0));P.expA=clamp((P.expA||0)+(0.5*raw-(P.expA||0))*0.16/(P.shows.length+1),-4,8);}
+  // the crowd gets used to about half of whatever you keep giving it; it lowers its sights only a little after poor shows
+  if(isPl){var raw=rep.rating-(exp-(P.expA||0)-(P.expB||0));P.expA=clamp((P.expA||0)+(0.5*raw-(P.expA||0))*0.16/(P.shows.length+1),-1.5,8);}
   if(isPl){
     S.stats.shows++;if(rep.rating>S.stats.bestShow)S.stats.bestShow=rep.rating;if(rep.cs>(S.stats.bestCS||0))S.stats.bestCS=rep.cs;
     S.stats.run=rep.rating>exp?S.stats.run+1:0;
@@ -3742,19 +3749,21 @@ E.matchOdds=function(S,m,i,n){
   var c=matchSetup(S,m);if(!c)return null;
   var od=winOdds(S,c.P,c.show,m,c.sides,c.t,c.champSide,c.feud,!!c.show.big,i===n-1),fav=0;
   od.p.forEach(function(p,k){if(p>od.p[fav])fav=k;});
-  var cost=od.p.map(function(p,k){return (p>=0.5?1:(p>=0.25?2:3))+(c.t&&c.t.holders.length&&k!==c.champSide?1:0)+ccCost(S,m,k);});
-  return {p:od.p,draw:od.draw,fav:fav,cost:cost,drawCost:2,chem:null};
+  // picking the winner is free (Bill, 21 October): booking power pays for the extras, and a star with creative control is one of them
+  var cost=od.p.map(function(p,k){return ccCost(S,m,k);});
+  return {p:od.p,draw:od.draw,fav:fav,cost:cost,drawCost:1,chem:null};
 };
 function cardCost(S,card){
   var tot=0,n=card.length;
-  card.forEach(function(m,i){if(m.call==null)return;var o=E.matchOdds(S,m,i,n);if(!o)return;tot+=m.call<0?o.drawCost:(o.cost[m.call]||1);});
+  card.forEach(function(m,i){if(m.call==null)return;var o=E.matchOdds(S,m,i,n);if(!o)return;tot+=m.call<0?o.drawCost:(o.cost[m.call]!=null?o.cost[m.call]:0);});
   return tot;
 }
 function spendBP(S,card){
-  var c=cardCost(S,card),n=card.length,long=false;if(!c)return;
-  card.forEach(function(m,i){if(m.call!=null&&m.call>=0){var o=E.matchOdds(S,m,i,n);if(o&&o.p[m.call]<0.25)long=true;}});
+  var c=cardCost(S,card),n=card.length,long=false,called=card.filter(function(m){return m.call!=null;}).length;if(!called)return;
+  // the price of a long shot is paid in people: the favourite who was told to lose remembers it
+  card.forEach(function(m,i){if(m.call!=null&&m.call>=0){var o=E.matchOdds(S,m,i,n);if(o&&o.p[m.call]<0.25){long=true;m.sides[o.fav].forEach(function(id){var w=S.w[id];if(!w)return;w.morale=clamp(w.morale-3,0,100);youRemember(S,w,'longshot','You booked them to lose a match they were expected to win.',-6);});}}});
   if(c>S.bp){S.trust=clamp(S.trust-2*(c-S.bp),0,100);S.bp=0;}else S.bp-=c;
-  S.stats.calls+=card.filter(function(m){return m.call!=null;}).length;award(S,'ACH_CALL');if(long)award(S,'ACH_LONGSHOT');
+  S.stats.calls+=called;award(S,'ACH_CALL');if(long)award(S,'ACH_LONGSHOT');
 }
 E.cardCost=cardCost;
 
@@ -3809,6 +3818,10 @@ WEEKX.push(function(S){
   if(S.owner.pledge==='chance')rosterOf(S,P.id).forEach(function(w){if(w.inj<=0&&!w.nw&&!w.camp&&S.week-w.lu>=4&&w.morale>30)w.morale-=1;});
   if(o.me)return;
   if(S.fin)o.trust=clamp(o.trust+(S.fin.net<0&&cal(S.week).wom===4?-2:0)+(o.trust>55?-0.3:(o.trust<45?0.2:0)),0,100);
+  // the owner covers the losses (Bill, 21 October): a booker cannot sink the company, but every bail-out costs trust.
+  // A scenario or a challenge keeps its own rules: there the money running out is the test.
+  if(P.cash<0&&!S.scn&&!S.chal){var top=Math.round(-P.cash+(P.inc0||0)*2);P.cash+=top;P.neg=0;o.bail=(o.bail||0)+1;o.trust=clamp(o.trust-12,0,100);
+    news(S,'money',o.name+' put '+money(top)+' into '+P.name+' to cover the losses.');note(S,o.name+' covered the losses','The company ran out of money and '+o.name+' paid '+money(top)+' to keep it going. Trust falls by 12.','bad');}
   if(o.trust<=5+dif(S).fire&&!S.over){S.over={why:'fired',week:S.week};award(S,'ACH_FIRED');news(S,'you',o.name+' has let you go.');}
 });
 
@@ -3871,7 +3884,7 @@ QEND.o_elevate=function(S,q){directiveDone(S,q,false,S.w[q.w].name+' did not get
 
 /* taking over the company */
 EVMAKE.push(function(S){
-  var o=S.owner,b=S.booker;if(o.me||b.lvl<5||o.trust<80||S.week<30||S.week-o.asked<12)return null;o.asked=S.week;
+  var o=S.owner,b=S.booker;if(o.me||b.lvl<5||o.trust<80||(o.goals||0)<2||S.week-o.asked<12)return null;   // two years with every goal met (src/66-owner-year.js)o.asked=S.week;
   return {type:'handover',text:o.name+' calls you in. “I am stepping back. You have earned this. The company is yours if you want it.”',choices:['Take the keys','Not yet']};
 });
 EVR.handover=function(S,ev,choice){
@@ -3965,6 +3978,48 @@ E.questNow=function(S,q){
   if(q.type==='win'&&w)return S.card.some(function(m){return m.sides.some(function(sd){return sd.indexOf(w.id)>=0;});})?'On tonight’s card':'Not booked yet';
   return null;
 };
+
+/* ===== 66-owner-year.js ===== */
+/* ---------- The owner's goal for the year (Bill, 21 October: grades, popularity and money answer to the owner) ----------
+   A year runs to the flagship. The owner asks for three things: grow the company's popularity, give the crowd what it
+   came for at least half the time (a B- or better), and never need the owner to cover the losses. At the flagship the
+   owner judges the year, and the company is only handed over after two years with all three met. Nothing here rolls
+   a number, so it cannot change how a seed plays out. */
+var YEAR_GROW=1.5,YEAR_MIN_SHOWS=8;
+function yearNew(S){
+  var P=S.promos[S.player],o=S.owner;if(!P||!o)return null;
+  var cap=modelOf(P).cap||100,pop=Math.min(cap-0.5,P.image+YEAR_GROW);
+  o.yr={w0:S.week,pop0:r1(P.image),pop:r1(Math.max(P.image,pop)),shows:0,good:0,bail0:o.bail||0};
+  return o.yr;
+}
+/** The three asks, where each stands, and whether the year is on course. */
+function yearInfo(S){
+  var P=S.promos[S.player],o=S.owner;if(!P||!o||o.me)return null;var Y=o.yr||yearNew(S);if(!Y)return null;
+  var fw=flagWeekFrom({week:S.week-1},P),bails=(o.bail||0)-Y.bail0;
+  var L=[
+    {k:'pop',n:'Popularity '+Y.pop+' or more',now:'now '+r1(P.image),ok:P.image>=Y.pop},
+    {k:'shows',n:'Half the shows a B- or better',now:Y.good+' of '+Y.shows,ok:Y.good*2>=Y.shows},
+    {k:'money',n:'No losses for '+o.name+' to cover',now:bails?bails+' so far':'none so far',ok:!bails}
+  ];
+  return {asks:L,met:L.filter(function(x){return x.ok;}).length,end:fw!=null?cal(fw).label:null,left:fw!=null?fw-S.week:null,years:o.goals||0,short:o.yr.shows<YEAR_MIN_SHOWS};
+}
+E.ownerYear=function(S){return yearInfo(S);};
+NEWX.push(function(S){if(S.owner&&!S.owner.me)yearNew(S);});
+SHOWX.push(function(S,P,show,rep){
+  var o=S.owner;if(P.id!==S.player||!o||o.me||S.cal)return;var Y=o.yr||yearNew(S);
+  Y.shows++;if(gradeMeets(repCS(rep),'B-'))Y.good++;
+  if(!show.big||!show.flag)return;
+  // the flagship closes the year. A year of fewer than eight shows is too short to judge: it starts again.
+  if(Y.shows<YEAR_MIN_SHOWS){yearNew(S);return;}
+  var I=yearInfo(S),k=I.met,dt=[-15,-8,3,12][k],miss=I.asks.filter(function(x){return !x.ok;}).map(function(x){return x.n.toLowerCase();});
+  o.trust=clamp(o.trust+dt,0,100);o.years=(o.years||0)+1;
+  if(k===3){o.goals=(o.goals||0)+1;S.bp+=3;gainXp(S,40);}
+  var head=k===3?o.name+' is pleased with the year':(k===2?o.name+' calls the year a pass':o.name+' is unhappy with the year');
+  var text=(k===3?'Every goal for the year was met. ':'Missed: '+miss.join('; ')+'. ')+'Trust '+(dt>=0?'rises by '+dt:'falls by '+(-dt))+'.'+(k===3?' Three more booking power.':'');
+  news(S,'you',head+'. '+text);note(S,head,text,k>=2?'good':'bad');
+  rep.year={met:k,dt:dt,text:head+'. '+text};
+  yearNew(S);
+});
 
 /* ===== 66-relations.js ===== */
 /* ---------- The relationship matrix (S.rm) and what people remember ----------
@@ -7768,7 +7823,7 @@ function asstBook(S){
     var cand=card.filter(function(m,i){return i<card.length-1&&m.mt==='1v1'&&!m.title&&m.sides.every(function(s){return s.length===1;});});
     for(var c=0;c<cand.length;c++){var m=cand[c],ix=m.sides.findIndex(function(s){var w=S.w[s[0]];return w&&w.g===f.g&&w.ovr<=f.ovr+6;});if(ix>=0&&!(show.brand&&f.brand!==show.brand&&!show.big)){on[m.sides[ix][0]]=0;m.sides[ix]=[id];on[id]=1;done++;break;}}
   });
-  // the same share of calls as you make, spent on the likelier winner, within the booking power in hand
+  // the same share of calls as you make, on the likelier winner, within the booking power in hand
   card.forEach(function(m){if(m.call==null&&chance(S,H.call*(0.4+lv*0.2))){var o=E.matchOdds(S,m,0,card.length);if(o&&o.fav!=null&&o.p[o.fav]>=0.5)m.call=o.fav;}});
   var g=0;while(g++<10&&cardCost(S,card)>S.bp){var last=card.slice().reverse().filter(function(m){return m.call!=null;})[0];if(!last)break;delete last.call;}
   return card;
@@ -8260,6 +8315,7 @@ var ft=null;if(ap.features&&typeof ap.features==='object'){ft={};['eyes','nose',
       paint_layers:Array.isArray(ap.paint_layers)?ap.paint_layers.filter(function(l){return l&&lkId(l.k);}).slice(0,3).map(function(l){return lkPrune({k:lkId(l.k),c:lkId(l.c)});}):undefined,
       tattoos:Array.isArray(ap.tattoos)?ap.tattoos.map(lkId).filter(function(v){return !!v;}).slice(0,8):undefined,
       hair_colour2:lkId(ap.hair_colour2),hair_mix:lkId(ap.hair_mix),body_hair:lkNum(ap.body_hair,0,2),freckles:ap.freckles===true?true:undefined,mask_design:lkId(ap.mask_design),
+      cheeks:lkId(ap.cheeks),eye_colour:lkId(ap.eye_colour),mood:lkId(ap.mood),hair_shine:ap.hair_shine===false?false:undefined,
       scars:Array.isArray(ap.scars)?ap.scars.map(lkId).filter(function(v){return !!v;}).slice(0,6):undefined});}
   if(x.attires&&typeof x.attires==='object'){var at={};LOOK_ATTIRES.forEach(function(k){var a=x.attires[k];if(!a||typeof a!=='object')return;
     var eq=a.equipped_assets||{},e={};LOOK_PARTS.forEach(function(p){var v=lkId(eq[p]);if(v)e[p]=v;});
@@ -8572,7 +8628,7 @@ WEEKX.push(function(S){
     checks:{1:mkCheck(7,[moraleMod(w),trustMod(S)].concat(skillMods(S,'talk')))}});
 });
 EVR.ccask=function(S,ev,choice,P,w){
-  if(choice===0){w.cc=1;w.ccUntil=S.week+Math.max(6,w.con|0);w.morale=clamp(w.morale+10,0,100);return w.name+' has creative control until the contract ends. Leaving them to play out can end in a win they asked for, and calling a loss on them costs 2 more booking power.';}
+  if(choice===0){w.cc=1;w.ccUntil=S.week+Math.max(6,w.con|0);w.morale=clamp(w.morale+10,0,100);return w.name+' has creative control until the contract ends. Leaving them to play out can end in a win they asked for, and calling a loss on them costs 2 booking power.';}
   if(choice===1){
     var r=rollCheck(S,ev.checks[1]);ev.roll=r;
     if(r.ok){w.wage=Math.round(w.wage*1.1/50)*50;w.morale=clamp(w.morale+3,0,100);return rollText(r)+w.name+' takes the money, now '+money(w.wage)+' a week, and drops the clause.';}
@@ -8584,7 +8640,7 @@ POST.push(function(ctx){
   var S=ctx.S,m=ctx.m,r=ctx.res;if(!ctx.isPl||S.cal||m.call==null||m.call<0||r.win<0)return;
   ctx.sides.forEach(function(s,k){if(k===m.call)return;s.forEach(function(w){if(w.cc){w.morale=clamp(w.morale-5,0,100);S.trust=clamp(S.trust-1,0,100);youRemember(S,w,'overruled','You overrode their creative control.',-20);r.seg.notes.push(w.name+' has creative control, and you overrode it. They remember.');}});});
 });
-E.controlWord=function(w){return w.cc?'Can refuse to lose. Calling a loss on them costs 2 more booking power and a little trust.':null;};
+E.controlWord=function(w){return w.cc?'Can refuse to lose. Calling a loss on them costs 2 booking power and a little trust.':null;};
 
 /* ---------- 44. The road: wear from the schedule (w.rd), travel partners, and a bus or a charter (P.trv) ---------- */
 var TRVN=['Vans and cars','Tour bus','Charter flights'],TRV_C=[0,0.004,0.011],TRV_R=[0,0.3,0.6];
@@ -10552,7 +10608,7 @@ E.validate=function(S,card){var P=S.promos[S.player],show=S.queue[S.qi];if(!show
 E.eligible=function(S){var P=S.promos[S.player],show=S.queue[S.qi];return show?eligible(S,P,show):[];};
 E.showTitles=function(S){var P=S.promos[S.player],show=S.queue[S.qi];return show?(show.big?P.titles:showTitles(P,show)):[];};
 E.nextBig=function(S){var w=nextBigFrom(S.week,S),c=cal(w);return {week:w,name:evName(S,S.promos[S.player],c.month)||'the next big show',label:c.label};};
-E.expected=function(S,show){return r1(expected(S.promos[S.player],show));};
+E.expected=function(S,show){return r1(expected(S.promos[S.player],show)-(firstNight(S)?FIRST_NIGHT:0));};   // a new booker's first night (src/30-show.js)
 E.cal=cal;E.workRate=workRate;E.rosterOf=rosterOf;E.teamOf=teamOf;E.partnerOf=partnerOf;E.feudOf=feudOf;E.feudsFor=feudsFor;E.activeFeuds=activeFeuds;E.feudLabel=feudLabel;E.feudStage=feudStage;
 E.holdLvl=holdLvl;E.isDev=isDev;E.wageFor=wageFor;E.money=money;E.autoBook=autoBook;E.runShow=runShow;E.weekShows=weekShows;
 E.feudAct=function(f,S){return feudAct(f,S);};E.ACTN=ACTN;E.RISKN=RISKN;E.TIXN=TIXN;E.ADVN=ADVN;E.SLOTN=SLOTN;E.PRODN=PRODN;E.SLOT_MAX=SLOT_MAX;
@@ -12594,6 +12650,9 @@ E.welcome=function(S){
   var mid=(S.feuds||[]).filter(function(f){return f.mid&&!f.res&&f.promo===P.id;});
   if(mid.length){var f0=mid[0],A=S.w[f0.a[0]],B=S.w[f0.b[0]];if(A&&B)L.push(A.name+' and '+B.name+' have been at it for weeks'+(f0.title?', with the belt on the line':'')+'. '+(mid.length>1?(mid.length-1)+' more '+(mid.length===2?'story is':'stories are')+' already running. ':'')+'Do not let them go cold.');}
   L.push('Your first show is '+sh.name+'. The card is empty and the building is sold.');
+  // the owner's goals for the year (src/66-owner-year.js), in the owner's words
+  var Y=!me&&typeof E.ownerYear==='function'?E.ownerYear(S):null;
+  if(Y)L.push('By '+(Y.end?'the flagship, '+Y.end:'the end of the year')+', I want three things: popularity up to '+Y.asks[0].n.replace(/^Popularity | or more$/g,'')+', at least half our shows giving the crowd what it came for, and no losses I have to cover. Do that two years running and we can talk about who owns this place.');
   L.push(me?'Go and book it.':'Do not make me regret this.');
   return S.letter={from:me?S.booker.name:o.name,role:me?'Owner and booker':'Owner',company:P.full||P.name,short:P.name,to:S.booker.name,date:cal(S.week).label,lines:L,show:sh.name,
     ps:'Before the show, the Office is where the week starts. The key at the bottom right always says what is next.'};
@@ -13012,8 +13071,8 @@ E.showVerdict=function(rating,exp){return showVerdict(rating,exp);};
 /** What the crowd expects of the show on the desk (or the one given), in words. */
 E.expectWords=function(S,show){
   show=show||(S.queue&&S.queue[S.qi]);if(!show)return null;
-  var e=expected(S.promos[S.player],show),w=showWord(e);
-  return {i:w.i,w:w.w,a:w.a,bar:starG(e),text:'This crowd expects '+w.a+'.'};
+  var fn=firstNight(S),e=expected(S.promos[S.player],show)-(fn?FIRST_NIGHT:0),w=showWord(e);
+  return {i:w.i,w:w.w,a:w.a,bar:starG(e),text:'This crowd expects '+w.a+'.',first:fn?'It is your first night, so they will give you the benefit of the doubt.':null};
 };
 /** The ladder, best first, for the guide window. */
 E.SHOW_LADDER=SHOW_WORDS.map(function(x){return {w:x.w,a:x.a,d:x.d};});
@@ -13613,7 +13672,7 @@ E.cardFlags=function(S,card){card=card||S.card||[];return card.map(function(m,i)
     var f=typeof faceOf==='function'?faceOf(S):null;
     if(f){var at=-1;card.forEach(function(m,i){if(m.sides.some(function(s){return s.indexOf(f.id)>=0;}))at=i;});
       if(at>=0&&at!==n-1&&(!card[n-1].title||card[at].title)){var t=card[at];card[at]=card[n-1];card[n-1]=t;if(card[at].len==='L'&&card[n-1].len!=='L'){var l=card[at].len;card[at].len=card[n-1].len;card[n-1].len=l;}ch=true;}}
-    // a promised win is called, as far as the booking power goes
+    // a promised win is called (free unless a star with creative control is on the other side)
     S.quests.forEach(function(q){if(q.type!=='win')return;
       card.forEach(function(m){if(m.call!=null)return;var si=-1;m.sides.forEach(function(s,k){if(s.indexOf(q.w)>=0)si=k;});if(si<0)return;
         m.call=si;if(E.cardCost(S,card)>S.bp)m.call=null;else ch=true;});});
@@ -14482,9 +14541,10 @@ E.staffSkill=function(S,id,k){var w=S.w[id];return w&&SROLES[k]?SROLES[k].skill(
    "I want suggest a card to give a mediocre show, so you have to have smart decision making if you want to win the
    game or keep your job." The suggested card still fills the clock and breaks no rule, but it does none of the
    thinking: no finishes called, no story ended on the right night, pairings not tuned for chemistry, and the segments
-   handed to the writers. The people and the running order are sensible, so it helps. It lands around a B- or C+. Every choice here comes from a hash,
+   handed to the writers. The people and the running order are sensible, so it helps. It lands around a C. Every choice here comes from a hash,
    never rnd(S), so asking for a suggestion cannot change how the game plays out. Rival companies book themselves
    and are not touched. */
+var SUG_FLAT=10;   // how much flatter the crowd is for a match left as suggested
 (function(){
   var smart=E.suggest;
   E.suggest=function(S){
@@ -14503,8 +14563,17 @@ E.staffSkill=function(S,id,k){var w=S.w[id];return w&&SROLES[k]?SROLES[k].skill(
     // the promos and angles go to the writers, who write whatever comes to mind on the night
     segRead(S).forEach(function(sg){if(!sg.tape){sg.k='writers';sg.who=[];sg.ids=[];}});
     E.fitShow(S,card);
+    S.sug={w:S.week,qi:S.qi,k:card.map(sugKey)};
     return card;
   };
+  /* the crowd can tell a card booked by the numbers (Bill, 21 October: Suggest a card lands around a C). A match left
+     just as Suggest a card put it, same people, same kind, same title, works in front of a flat crowd. Change who is
+     in it and it is your match. */
+  function sugKey(m){return m.mt+'|'+(m.title||'')+'|'+m.sides.map(function(sd){return sd.slice().sort(function(a,b){return a-b;}).join(',');}).sort().join('/');}
+  CRX.push(function(ctx){
+    var S=ctx.S,G=S.sug;if(!ctx.isPl||!G||G.w!==S.week||G.qi!==S.qi||G.k.indexOf(sugKey(ctx.m))<0)return null;
+    return {d:-SUG_FLAT,x:'Booked by the numbers: the crowd has seen this one before'};
+  });
   /** The thinking suggest did before it was made flat, for rival-free tools and tests that want a good card. */
   E.suggestSmart=function(S){return smart(S);};
 })();

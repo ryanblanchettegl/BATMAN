@@ -58,8 +58,8 @@ E.showVerdict=function(rating,exp){return showVerdict(rating,exp);};
 /** What the crowd expects of the show on the desk (or the one given), in words. */
 E.expectWords=function(S,show){
   show=show||(S.queue&&S.queue[S.qi]);if(!show)return null;
-  var e=expected(S.promos[S.player],show),w=showWord(e);
-  return {i:w.i,w:w.w,a:w.a,bar:starG(e),text:'This crowd expects '+w.a+'.'};
+  var fn=firstNight(S),e=expected(S.promos[S.player],show)-(fn?FIRST_NIGHT:0),w=showWord(e);
+  return {i:w.i,w:w.w,a:w.a,bar:starG(e),text:'This crowd expects '+w.a+'.',first:fn?'It is your first night, so they will give you the benefit of the doubt.':null};
 };
 /** The ladder, best first, for the guide window. */
 E.SHOW_LADDER=SHOW_WORDS.map(function(x){return {w:x.w,a:x.a,d:x.d};});

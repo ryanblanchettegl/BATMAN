@@ -296,7 +296,126 @@
      "name": "Trident",
      "move": "Armbar"
     }
-   ]
+   ],
+   "look": {
+    "id": "poseidon_viejo",
+    "name": "Poseidón Viejo",
+    "hometown": "Mexico City",
+    "archetype": "Technical",
+    "physical_attributes": {
+     "sex": "M",
+     "height_inches": 70,
+     "weight_lbs": 210,
+     "body_archetype": "Technical",
+     "proportional_scalers": {
+      "torso_width": 1.0,
+      "torso_height": 1.0,
+      "limb_length": 1.0,
+      "muscle_mass": 0.95
+     }
+    },
+    "appearance": {
+     "face": {
+      "sk": 30
+     },
+     "hair_colour": "hair_silver",
+     "facial_hair": "none",
+     "mood": "face",
+     "mask_design": "plain"
+    },
+    "attires": {
+     "primary_ring": {
+      "description": "In-ring gear",
+      "equipped_assets": {
+       "head": "mask_full_01",
+       "upper_body": "bare",
+       "lower_body": "tights_long_01",
+       "footwear": "boots_knee",
+       "accessories": []
+      },
+      "palette_slots": {
+       "primary": "swatch_silver_foil",
+       "secondary": "swatch_blue_foil",
+       "trim": "swatch_royal_blue",
+       "hardware": "swatch_silver_foil"
+      },
+      "custom_layers": []
+     },
+     "entrance_gear": {
+      "description": "Ring walk and entrance",
+      "equipped_assets": {
+       "head": "mask_full_01",
+       "upper_body": "cape",
+       "lower_body": "tights_long_01",
+       "footwear": "boots_knee",
+       "accessories": [
+        "cape"
+       ]
+      },
+      "palette_slots": {
+       "primary": "swatch_silver_foil",
+       "secondary": "swatch_blue_foil",
+       "trim": "swatch_royal_blue",
+       "hardware": "swatch_silver_foil"
+      },
+      "custom_layers": []
+     },
+     "street_clothes": {
+      "description": "Backstage and promos",
+      "equipped_assets": {
+       "head": "mask_full_01",
+       "upper_body": "suit_jacket",
+       "lower_body": "trousers_suit",
+       "footwear": "shoes_dress",
+       "accessories": []
+      },
+      "palette_slots": {
+       "primary": "swatch_navy_paper",
+       "secondary": "swatch_navy_paper",
+       "trim": "swatch_silver_foil",
+       "hardware": "swatch_silver_foil"
+      },
+      "custom_layers": [],
+      "part_colours": {
+       "upper_body": "swatch_navy_paper"
+      }
+     }
+    },
+    "finishing_moves": [
+     {
+      "name": "Rack of the Deep",
+      "impact_damage": 88,
+      "kickout_difficulty": "Protected",
+      "position": "Standing",
+      "category": "Submission",
+      "preview_pose_id": "carry"
+     },
+     {
+      "name": "Tide",
+      "impact_damage": 50,
+      "kickout_difficulty": "Easy",
+      "position": "Running",
+      "category": "Pinfall Impact",
+      "preview_pose_id": "move_tope",
+      "stage": "early"
+     },
+     {
+      "name": "Trident",
+      "impact_damage": 55,
+      "kickout_difficulty": "Easy",
+      "position": "Standing",
+      "category": "Submission",
+      "preview_pose_id": "sleeper",
+      "stage": "mid"
+     }
+    ],
+    "entrance": "ent_point",
+    "entrance_fx": {
+     "pyro": "fountains",
+     "lights": "blue",
+     "music": "Bajo el Mar Viejo"
+    }
+   }
   },
   {
    "id": "ultimo_soldado",

@@ -228,7 +228,7 @@ function callMatch(S,P,x){
   return bc;
 }
 
-/* Who wins? Unless the booker spends booking power to call it, the match is decided by the odds:
+/* Who wins? Unless the booker calls it (free since 21 October), the match is decided by the odds:
    overness, work rate, momentum, condition, the champion's advantage, traits, feud story logic and the house style. */
 function winOdds(S,P,show,m,sides,t,champSide,feud,big,isMain){
   var st=P.style||'stars',T=st==='drama'?10:7.5,MD=modelOf(P);
