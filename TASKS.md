@@ -112,12 +112,12 @@ Two more lists sit beside this one, both finished:
 Bill's decisions of 21 October: picking the winner is free and booking power buys the extras; Suggest a card lands around a C; both worlds ship, the parody world is the Steam default and a world switch sits at the top right of the title screen; the licence is all rights reserved; no new systems until balance, the first hour and the screens are done; Booker Mode starts at the grand show a week before the business year ends, Sandbox Mode is the free start; the long broadcasts stay; the game is built for 1080p only (no tablet, no Steam Deck).
 
 - [x] Picking a winner costs no booking power. A draw costs 1, and a loss called on a star with creative control still costs 2. A long shot is paid for in people: the favourite told to lose loses morale and remembers it.
-- [ ] Suggest a card lands around a C.
-- [ ] Coasting fails: the owner sets a goal for the year, and the handover is harder to reach.
-- [ ] Popularity follows the grades: good shows grow the company, or the desk says why not.
-- [ ] EWE's money: the starting company does not lose money every week by default.
-- [ ] A balance test with targets for every company model.
-- [ ] The licence: all rights reserved.
+- [x] Suggest a card lands around a C. A match left just as suggested works in front of a flat crowd ("Booked by the numbers", `SUG_FLAT` in `src/99-suggest-flat.js`), and the crowd lowers its sights only a little after poor shows.
+- [x] Coasting fails: the owner sets three goals for each year, judged at the flagship (`src/66-owner-year.js`, shown on Career), and hands over the company only after two years with all three met. When a booker runs out of money the owner covers it, for 12 trust; bankruptcy is for owners, scenarios and challenges.
+- [x] Popularity follows the grades: a show that gives the crowd what it came for (a B) grows the company a little (`POP_EDGE` in `src/30-show.js`).
+- [x] EWE's money: checked. With a thinking booker EWE grows its cash over two years; it loses money only on weak shows, which is the point.
+- [x] A balance test with targets for every company model (`node test-balance.js`).
+- [x] The licence: all rights reserved (`LICENSE`).
 
 ### 0w. Still pictures for the moments you answer (Ryan, 18 October)
 

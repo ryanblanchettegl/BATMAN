@@ -8,7 +8,7 @@ import { LegacyPanel } from './GameOver';
 const role = () => G.S.owner.me ? 'owner and booker' : 'booker';
 
 function You() {
-  const S = G.S, b = S.booker, o = S.owner, P = me(), need = E.xpNeed(b.lvl), style = E.STYLES[o.style];
+  const S = G.S, b = S.booker, o = S.owner, P = me(), need = E.xpNeed(b.lvl), style = E.STYLES[o.style], Y = E.ownerYear(S);
   return <Win title={b.name} area="you" t="career-you" right={'Level ' + b.lvl}>
     <p>{role().charAt(0).toUpperCase() + role().slice(1)} of {P.name}</p>
     <p class="muted">Difficulty: {(E.DIFF[S.diff] || E.DIFF.normal).n}{E.diffSummary(S) ? ' (' + E.diffSummary(S) + ')' : ''}</p>
@@ -18,6 +18,11 @@ function You() {
     {o.me ? <p class="good">The company is yours. House style: {style.n}.</p>
       : <p>{o.name}{'’'}s trust <Meter v={o.trust} kind={o.trust < 25 ? 'hot' : 'cool'} /> <span class="num">{Math.round(o.trust)}</span>{o.trust < 20 ? <> <span class="bad">Your job is in danger.</span></> : null}<br />
         <span class="muted">House style: {style.n}. {o.name} wants {style.likes}.</span></p>}
+    {Y ? <div class="mt1" data-t="career-year">
+      <p><b>{o.name}{'’'}s goals for the year</b> <span class="muted">{Y.end ? '(judged at the flagship, ' + Y.end + ')' : ''}</span></p>
+      <ul class="list">{Y.asks.map((x: any) => <li key={x.k}><span>{x.n} <span class="muted">{'·'} {x.now}</span></span><Tag kind={x.ok ? 'good' : 'bad'}>{x.ok ? 'On course' : 'Behind'}</Tag></li>)}</ul>
+      <p class="muted">Meet all three in two years and the company can be yours. Years met so far: {Y.years}.</p>
+    </div> : null}
     <ul class="list sklist">{Object.keys(E.SKILLS).map(k => {
       const sk = E.SKILLS[k], lv = b.sk[k] || 0;
       return <li>

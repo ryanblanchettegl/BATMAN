@@ -1666,6 +1666,7 @@ function showStep(S,P,show,card,st){
   ba.bc=stageSeg(S,ba,segPeople(S,P,ba.text),react);rep.segs.push(ba);
   return ba;
 }
+var POP_EDGE=1;   // rating points over the crowd's bar that a show on expectation counts for, for your popularity
 /* ---------- a promo or an angle on the air, as a scene ----------
    The segment's text is the record of what happened. On the air it is told in pieces: who comes out, what happens a
    sentence at a time, a quoted line said by the person who says it, how the building takes it, and the desk's word.
@@ -1726,11 +1727,12 @@ function showEnd(S,P,show,card,st){
   rep.buys=big?Math.round(buysK(P,show,rep.hype)*1000):0;rep.ppv=Math.round(rep.buys*22*mx.ppv);
   P.led.tv+=rep.tv;P.led.gate+=rep.gate;P.led.ppv+=rep.ppv;P.led.prod+=P.prod*(big?4*evTy(show).prod:1)*PRODF[P.prodLvl]/PRODF[P.prod0]*airProd(P,show);
   var before=P.image;
-  P.image=clamp(P.image+(rep.rating-exp)*(big?0.08:0.03*showMult(show)*airReach(P,show)),5,modelOf(P).cap||100);rep.dImage=r1(P.image-before);
+  // a show that gives the crowd what it came for (a B) grows the company a little; it has to fall short to shrink it (Bill, 21 October)
+  P.image=clamp(P.image+(rep.rating-exp+(isPl?POP_EDGE:0))*(big?0.08:0.03*showMult(show)*airReach(P,show)),5,modelOf(P).cap||100);rep.dImage=r1(P.image-before);
   P.trend=(P.trend||0)*0.6+(rep.rating-exp)*0.4;P.mainB[key]=(P.mainB[key]||rep.mainOv)*0.9+rep.mainOv*0.1;
   P.last={name:show.name,rating:rep.rating,cs:rep.cs,week:S.week};
-  // the crowd gets used to about half of whatever you keep giving it, good or bad
-  if(isPl){var raw=rep.rating-(exp-(P.expA||0)-(P.expB||0));P.expA=clamp((P.expA||0)+(0.5*raw-(P.expA||0))*0.16/(P.shows.length+1),-4,8);}
+  // the crowd gets used to about half of whatever you keep giving it; it lowers its sights only a little after poor shows
+  if(isPl){var raw=rep.rating-(exp-(P.expA||0)-(P.expB||0));P.expA=clamp((P.expA||0)+(0.5*raw-(P.expA||0))*0.16/(P.shows.length+1),-1.5,8);}
   if(isPl){
     S.stats.shows++;if(rep.rating>S.stats.bestShow)S.stats.bestShow=rep.rating;if(rep.cs>(S.stats.bestCS||0))S.stats.bestCS=rep.cs;
     S.stats.run=rep.rating>exp?S.stats.run+1:0;
@@ -3736,6 +3738,10 @@ WEEKX.push(function(S){
   if(S.owner.pledge==='chance')rosterOf(S,P.id).forEach(function(w){if(w.inj<=0&&!w.nw&&!w.camp&&S.week-w.lu>=4&&w.morale>30)w.morale-=1;});
   if(o.me)return;
   if(S.fin)o.trust=clamp(o.trust+(S.fin.net<0&&cal(S.week).wom===4?-2:0)+(o.trust>55?-0.3:(o.trust<45?0.2:0)),0,100);
+  // the owner covers the losses (Bill, 21 October): a booker cannot sink the company, but every bail-out costs trust.
+  // A scenario or a challenge keeps its own rules: there the money running out is the test.
+  if(P.cash<0&&!S.scn&&!S.chal){var top=Math.round(-P.cash+(P.inc0||0)*2);P.cash+=top;P.neg=0;o.bail=(o.bail||0)+1;o.trust=clamp(o.trust-12,0,100);
+    news(S,'money',o.name+' put '+money(top)+' into '+P.name+' to cover the losses.');note(S,o.name+' covered the losses','The company ran out of money and '+o.name+' paid '+money(top)+' to keep it going. Trust falls by 12.','bad');}
   if(o.trust<=5+dif(S).fire&&!S.over){S.over={why:'fired',week:S.week};award(S,'ACH_FIRED');news(S,'you',o.name+' has let you go.');}
 });
 
@@ -3798,7 +3804,7 @@ QEND.o_elevate=function(S,q){directiveDone(S,q,false,S.w[q.w].name+' did not get
 
 /* taking over the company */
 EVMAKE.push(function(S){
-  var o=S.owner,b=S.booker;if(o.me||b.lvl<5||o.trust<80||S.week<30||S.week-o.asked<12)return null;o.asked=S.week;
+  var o=S.owner,b=S.booker;if(o.me||b.lvl<5||o.trust<80||(o.goals||0)<2||S.week-o.asked<12)return null;   // two years with every goal met (src/66-owner-year.js)o.asked=S.week;
   return {type:'handover',text:o.name+' calls you in. “I am stepping back. You have earned this. The company is yours if you want it.”',choices:['Take the keys','Not yet']};
 });
 EVR.handover=function(S,ev,choice){
@@ -3892,6 +3898,48 @@ E.questNow=function(S,q){
   if(q.type==='win'&&w)return S.card.some(function(m){return m.sides.some(function(sd){return sd.indexOf(w.id)>=0;});})?'On tonight’s card':'Not booked yet';
   return null;
 };
+
+/* ===== 66-owner-year.js ===== */
+/* ---------- The owner's goal for the year (Bill, 21 October: grades, popularity and money answer to the owner) ----------
+   A year runs to the flagship. The owner asks for three things: grow the company's popularity, give the crowd what it
+   came for at least half the time (a B- or better), and never need the owner to cover the losses. At the flagship the
+   owner judges the year, and the company is only handed over after two years with all three met. Nothing here rolls
+   a number, so it cannot change how a seed plays out. */
+var YEAR_GROW=1.5,YEAR_MIN_SHOWS=8;
+function yearNew(S){
+  var P=S.promos[S.player],o=S.owner;if(!P||!o)return null;
+  var cap=modelOf(P).cap||100,pop=Math.min(cap-0.5,P.image+YEAR_GROW);
+  o.yr={w0:S.week,pop0:r1(P.image),pop:r1(Math.max(P.image,pop)),shows:0,good:0,bail0:o.bail||0};
+  return o.yr;
+}
+/** The three asks, where each stands, and whether the year is on course. */
+function yearInfo(S){
+  var P=S.promos[S.player],o=S.owner;if(!P||!o||o.me)return null;var Y=o.yr||yearNew(S);if(!Y)return null;
+  var fw=flagWeekFrom({week:S.week-1},P),bails=(o.bail||0)-Y.bail0;
+  var L=[
+    {k:'pop',n:'Popularity '+Y.pop+' or more',now:'now '+r1(P.image),ok:P.image>=Y.pop},
+    {k:'shows',n:'Half the shows a B- or better',now:Y.good+' of '+Y.shows,ok:Y.shows>0&&Y.good*2>=Y.shows},
+    {k:'money',n:'No losses for '+o.name+' to cover',now:bails?bails+' so far':'none so far',ok:!bails}
+  ];
+  return {asks:L,met:L.filter(function(x){return x.ok;}).length,end:fw!=null?cal(fw).label:null,left:fw!=null?fw-S.week:null,years:o.goals||0,short:o.yr.shows<YEAR_MIN_SHOWS};
+}
+E.ownerYear=function(S){return yearInfo(S);};
+NEWX.push(function(S){if(S.owner&&!S.owner.me)yearNew(S);});
+SHOWX.push(function(S,P,show,rep){
+  var o=S.owner;if(P.id!==S.player||!o||o.me||S.cal)return;var Y=o.yr||yearNew(S);
+  Y.shows++;if(gradeMeets(repCS(rep),'B-'))Y.good++;
+  if(!show.big||!show.flag)return;
+  // the flagship closes the year. A year of fewer than eight shows is too short to judge: it starts again.
+  if(Y.shows<YEAR_MIN_SHOWS){yearNew(S);return;}
+  var I=yearInfo(S),k=I.met,dt=[-15,-8,3,12][k],miss=I.asks.filter(function(x){return !x.ok;}).map(function(x){return x.n.toLowerCase();});
+  o.trust=clamp(o.trust+dt,0,100);o.years=(o.years||0)+1;
+  if(k===3){o.goals=(o.goals||0)+1;S.bp+=3;gainXp(S,40);}
+  var head=k===3?o.name+' is pleased with the year':(k===2?o.name+' calls the year a pass':o.name+' is unhappy with the year');
+  var text=(k===3?'Every goal for the year was met. ':'Missed: '+miss.join('; ')+'. ')+'Trust '+(dt>=0?'rises by '+dt:'falls by '+(-dt))+'.'+(k===3?' Three more booking power.':'');
+  news(S,'you',head+'. '+text);note(S,head,text,k>=2?'good':'bad');
+  rep.year={met:k,dt:dt,text:head+'. '+text};
+  yearNew(S);
+});
 
 /* ===== 66-relations.js ===== */
 /* ---------- The relationship matrix (S.rm) and what people remember ----------
@@ -14409,9 +14457,10 @@ E.staffSkill=function(S,id,k){var w=S.w[id];return w&&SROLES[k]?SROLES[k].skill(
    "I want suggest a card to give a mediocre show, so you have to have smart decision making if you want to win the
    game or keep your job." The suggested card still fills the clock and breaks no rule, but it does none of the
    thinking: no finishes called, no story ended on the right night, pairings not tuned for chemistry, and the segments
-   handed to the writers. The people and the running order are sensible, so it helps. It lands around a B- or C+. Every choice here comes from a hash,
+   handed to the writers. The people and the running order are sensible, so it helps. It lands around a C. Every choice here comes from a hash,
    never rnd(S), so asking for a suggestion cannot change how the game plays out. Rival companies book themselves
    and are not touched. */
+var SUG_FLAT=10;   // how much flatter the crowd is for a match left as suggested
 (function(){
   var smart=E.suggest;
   E.suggest=function(S){
@@ -14430,8 +14479,17 @@ E.staffSkill=function(S,id,k){var w=S.w[id];return w&&SROLES[k]?SROLES[k].skill(
     // the promos and angles go to the writers, who write whatever comes to mind on the night
     segRead(S).forEach(function(sg){if(!sg.tape){sg.k='writers';sg.who=[];sg.ids=[];}});
     E.fitShow(S,card);
+    S.sug={w:S.week,qi:S.qi,k:card.map(sugKey)};
     return card;
   };
+  /* the crowd can tell a card booked by the numbers (Bill, 21 October: Suggest a card lands around a C). A match left
+     just as Suggest a card put it, same people, same kind, same title, works in front of a flat crowd. Change who is
+     in it and it is your match. */
+  function sugKey(m){return m.mt+'|'+(m.title||'')+'|'+m.sides.map(function(sd){return sd.slice().sort(function(a,b){return a-b;}).join(',');}).sort().join('/');}
+  CRX.push(function(ctx){
+    var S=ctx.S,G=S.sug;if(!ctx.isPl||!G||G.w!==S.week||G.qi!==S.qi||G.k.indexOf(sugKey(ctx.m))<0)return null;
+    return {d:-SUG_FLAT,x:'Booked by the numbers: the crowd has seen this one before'};
+  });
   /** The thinking suggest did before it was made flat, for rival-free tools and tests that want a good card. */
   E.suggestSmart=function(S){return smart(S);};
 })();

@@ -3,9 +3,10 @@
    "I want suggest a card to give a mediocre show, so you have to have smart decision making if you want to win the
    game or keep your job." The suggested card still fills the clock and breaks no rule, but it does none of the
    thinking: no finishes called, no story ended on the right night, pairings not tuned for chemistry, and the segments
-   handed to the writers. The people and the running order are sensible, so it helps. It lands around a B- or C+. Every choice here comes from a hash,
+   handed to the writers. The people and the running order are sensible, so it helps. It lands around a C. Every choice here comes from a hash,
    never rnd(S), so asking for a suggestion cannot change how the game plays out. Rival companies book themselves
    and are not touched. */
+var SUG_FLAT=10;   // how much flatter the crowd is for a match left as suggested
 (function(){
   var smart=E.suggest;
   E.suggest=function(S){
@@ -24,8 +25,17 @@
     // the promos and angles go to the writers, who write whatever comes to mind on the night
     segRead(S).forEach(function(sg){if(!sg.tape){sg.k='writers';sg.who=[];sg.ids=[];}});
     E.fitShow(S,card);
+    S.sug={w:S.week,qi:S.qi,k:card.map(sugKey)};
     return card;
   };
+  /* the crowd can tell a card booked by the numbers (Bill, 21 October: Suggest a card lands around a C). A match left
+     just as Suggest a card put it, same people, same kind, same title, works in front of a flat crowd. Change who is
+     in it and it is your match. */
+  function sugKey(m){return m.mt+'|'+(m.title||'')+'|'+m.sides.map(function(sd){return sd.slice().sort(function(a,b){return a-b;}).join(',');}).sort().join('/');}
+  CRX.push(function(ctx){
+    var S=ctx.S,G=S.sug;if(!ctx.isPl||!G||G.w!==S.week||G.qi!==S.qi||G.k.indexOf(sugKey(ctx.m))<0)return null;
+    return {d:-SUG_FLAT,x:'Booked by the numbers: the crowd has seen this one before'};
+  });
   /** The thinking suggest did before it was made flat, for rival-free tools and tests that want a good card. */
   E.suggestSmart=function(S){return smart(S);};
 })();

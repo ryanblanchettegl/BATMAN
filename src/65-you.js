@@ -130,6 +130,10 @@ WEEKX.push(function(S){
   if(S.owner.pledge==='chance')rosterOf(S,P.id).forEach(function(w){if(w.inj<=0&&!w.nw&&!w.camp&&S.week-w.lu>=4&&w.morale>30)w.morale-=1;});
   if(o.me)return;
   if(S.fin)o.trust=clamp(o.trust+(S.fin.net<0&&cal(S.week).wom===4?-2:0)+(o.trust>55?-0.3:(o.trust<45?0.2:0)),0,100);
+  // the owner covers the losses (Bill, 21 October): a booker cannot sink the company, but every bail-out costs trust.
+  // A scenario or a challenge keeps its own rules: there the money running out is the test.
+  if(P.cash<0&&!S.scn&&!S.chal){var top=Math.round(-P.cash+(P.inc0||0)*2);P.cash+=top;P.neg=0;o.bail=(o.bail||0)+1;o.trust=clamp(o.trust-12,0,100);
+    news(S,'money',o.name+' put '+money(top)+' into '+P.name+' to cover the losses.');note(S,o.name+' covered the losses','The company ran out of money and '+o.name+' paid '+money(top)+' to keep it going. Trust falls by 12.','bad');}
   if(o.trust<=5+dif(S).fire&&!S.over){S.over={why:'fired',week:S.week};award(S,'ACH_FIRED');news(S,'you',o.name+' has let you go.');}
 });
 
@@ -192,7 +196,7 @@ QEND.o_elevate=function(S,q){directiveDone(S,q,false,S.w[q.w].name+' did not get
 
 /* taking over the company */
 EVMAKE.push(function(S){
-  var o=S.owner,b=S.booker;if(o.me||b.lvl<5||o.trust<80||S.week<30||S.week-o.asked<12)return null;o.asked=S.week;
+  var o=S.owner,b=S.booker;if(o.me||b.lvl<5||o.trust<80||(o.goals||0)<2||S.week-o.asked<12)return null;   // two years with every goal met (src/66-owner-year.js)o.asked=S.week;
   return {type:'handover',text:o.name+' calls you in. “I am stepping back. You have earned this. The company is yours if you want it.”',choices:['Take the keys','Not yet']};
 });
 EVR.handover=function(S,ev,choice){
