@@ -54,27 +54,48 @@ export function ClockWindow(p: { m: Modal }) {
   </Window>;
 }
 
-/** The commentary desk, picked from the Office. `m.k` is the chair to fill first. The first of the desk pop-ups:
-    a task is answered where it stands, and the player never has to leave the Office for it. */
-export function VoicesWindow(p: { m: Modal }) {
+/** The chairs at the commentary desk, in the order they are picked. A third voice later is one more entry here
+    (Bill, 21 October: three in the booth is standard now). `f` is the skill on the voice that this chair uses. */
+const CHAIRS: { k: string; n: string; skill: string; f: string; d: string }[] = [
+  { k: 'pbp', n: 'Play-by-play', skill: 'Calling', f: 'pbp', d: 'The play-by-play voice calls the action: every move, every near fall and the finish. Better calling makes every match play better on television.' },
+  { k: 'col', n: 'Colour', skill: 'Colour', f: 'col', d: 'The colour voice explains why it matters: the story, the grudge, what each wrestler wants. Better colour helps your stories get across.' }
+];
+const STYLE_SAYS: Record<string, string> = { Excitable: 'big energy, loudest on the big moments', Dry: 'calm and exact, a straight voice', Warm: 'friendly, gets on with anyone' };
+const skillWord = (v: number) => v >= 80 ? 'Excellent' : (v >= 70 ? 'Very good' : (v >= 60 ? 'Good' : (v >= 50 ? 'Average' : 'Weak')));
+
+/** The commentary desk, picked from the Office: one screen for each chair, so a new player picks one voice at a
+    time. `st.seat` is the chair on screen. A task is answered where it stands, without leaving the Office. */
+export function VoicesWindow(_p: { m: Modal }) {
   const S = G.S, V = E.voices(S), st = slice<{ seat: string; msg: string; err: boolean }>('voices', () => ({ seat: 'pbp', msg: '', err: false }));
-  const seat = st.seat === 'col' ? 'col' : 'pbp', word = seat === 'pbp' ? 'play-by-play' : 'colour';
+  const at = Math.max(0, CHAIRS.findIndex(c => c.k === st.seat)), C = CHAIRS[at], sat: any = V[C.k], other = CHAIRS.find(c => c.k !== C.k), with_: any = other ? V[other.k] : null;
+  const empty = CHAIRS.find(c => !V[c.k] && c.k !== C.k);
   const run = (fn: () => any, next?: string) => act(() => { const r = fn(); st.msg = r.text; st.err = !r.ok; say(r.text, { err: !r.ok }); if (r.ok && next) st.seat = next; });
-  const chair = (k: string, label: string, v: any, skill: string) => <li class={seat === k ? 'on' : undefined} data-t="voice-chair" data-v={k} data-full={v ? '1' : '0'}>
-    <span><b>{label}</b> {v ? <><span>{v.name}</span> <span class="muted">{'·'} {skill} {v[k]} {'·'} {'$' + v.wage.toLocaleString('en-US')} a week</span></> : <span class="muted">Empty</span>}{seat === k ? <> <Tag kind="warn">Picking</Tag></> : null}</span>
-    <span class="row opts">{seat !== k ? <Btn kind="sm" t="voice-seat" d={{ v: k }} onClick={() => view(() => { st.seat = k; })}>Pick for this chair</Btn> : null}
-      {v ? <Btn kind="sm" t="voice-drop" d={{ v: k }} onClick={() => run(() => E.dropVoice(S, k))}>Let go</Btn> : null}</span></li>;
-  const pool: any[] = V.pool.slice().sort((a: any, b: any) => b[seat] - a[seat]).slice(0, 6);
+  const pool: any[] = V.pool.slice().sort((a: any, b: any) => b[C.f] - a[C.f]).slice(0, 6);
+  const done = CHAIRS.every(c => V[c.k]);
   return <Window title="The commentary desk" wide ok="Done">
-    {st.msg ? <p class={(st.err ? 'bad' : 'good') + ' mb1'} role="status" data-t="voice-msg">{st.msg}</p> : null}
-    <ul class="list">{chair('pbp', 'Play-by-play', V.pbp, 'calling')}{chair('col', 'Colour', V.col, 'colour')}</ul>
-    {V.chem != null ? <p class="mt1">Together: <b class={V.chem >= 1.5 ? 'good' : (V.chem <= -1.5 ? 'bad' : undefined)}>{E.chemWord(V.chem)}</b>. A good desk lifts every match and helps stories get across.</p>
-      : <p class="muted mt1">Two voices that work well together lift every match and help stories get across. A weak desk drags them down.</p>}
-    <p class="eyebrow mt2">Available for the {word} chair</p>
-    {pool.length ? <ul class="list" data-t="voice-pool">{pool.map((v: any) => { const ch = seat === 'pbp' ? v.chemPbp : v.chemCol; return <li key={v.id}>
-      <span><b>{v.name}</b> <span class="muted">{'·'} {v.style} {'·'} calling {v.pbp}, colour {v.col} {'·'} {'$' + v.wage.toLocaleString('en-US')} a week</span>{ch != null ? <> <span class={ch >= 1.5 ? 'good' : (ch <= -1.5 ? 'bad' : 'muted')}>{'·'} {E.chemWord(ch)} with your other voice</span></> : null}</span>
-      <span class="row opts"><Btn kind="sm" t="desk-hire" d={{ id: v.id }} onClick={() => run(() => E.hireVoice(S, v.id, seat), (seat === 'pbp' ? V.col : V.pbp) ? undefined : (seat === 'pbp' ? 'col' : 'pbp'))}>Sign</Btn></span></li>; })}</ul>
-      : <Empty>Nobody is available right now. New voices come on the market each year.</Empty>}
+    <div class="vpick" data-t="voice-screen" data-v={C.k}>
+      <ol class="vsteps">{CHAIRS.map((c, i) => <li key={c.k} class={c.k === C.k ? 'on' : undefined} data-t="voice-chair" data-v={c.k} data-full={V[c.k] ? '1' : '0'}>
+        <button type="button" class="vstep" data-t="voice-seat" data-v={c.k} aria-current={c.k === C.k ? 'step' : undefined} onClick={() => view(() => { st.seat = c.k; st.msg = ''; })}>
+          <span class="vnum">{V[c.k] ? '✓' : i + 1}</span><span><b>{c.n}</b><br /><span class="muted">{V[c.k] ? V[c.k].name : 'Empty'}</span></span></button></li>)}</ol>
+      {st.msg ? <p class={(st.err ? 'bad' : 'good') + ' vmsg'} role="status" data-t="voice-msg">{st.msg}</p> : null}
+      <h3 class="vhead">Step {at + 1} of {CHAIRS.length}: pick your {C.n.toLowerCase()} voice</h3>
+      <p class="vabout">{C.d}</p>
+      <p class="vnow" data-t="voice-now">{sat ? <>In the chair: <b>{sat.name}</b>, {C.skill.toLowerCase()} {sat[C.f]} ({skillWord(sat[C.f]).toLowerCase()}), ${sat.wage.toLocaleString('en-US')} a week. <Btn kind="sm" t="voice-drop" d={{ v: C.k }} onClick={() => run(() => E.dropVoice(S, C.k))}>Let go</Btn></>
+        : <span class="muted">Nobody is in this chair yet. Pick one of the voices below.</span>}</p>
+      {pool.length ? <ul class="vcards" data-t="voice-pool">{pool.map((v: any, i: number) => {
+        const ch = C.k === 'pbp' ? v.chemPbp : v.chemCol;
+        return <li key={v.id} class="vcard">
+          <p class="vname"><b>{v.name}</b>{i === 0 ? <> <Tag kind="gold">Best {C.skill.toLowerCase()}</Tag></> : null}</p>
+          <p class="vskill"><span>{C.skill}</span> <b class="num">{v[C.f]}</b> <span class={v[C.f] >= 70 ? 'good' : (v[C.f] < 50 ? 'bad' : undefined)}>{skillWord(v[C.f])}</span></p>
+          <p class="muted">Style: {v.style}, {STYLE_SAYS[v.style] || ''}</p>
+          {ch != null ? <p class={ch >= 1.5 ? 'good' : (ch <= -1.5 ? 'bad' : undefined)}>With {with_.name}: {E.chemWord(ch)}</p> : null}
+          <p class="vfoot"><span>${v.wage.toLocaleString('en-US')} a week</span>
+            <Btn kind="go" t="desk-hire" d={{ id: v.id }} onClick={() => run(() => E.hireVoice(S, v.id, C.k), empty ? empty.k : undefined)}>Sign as {C.n.toLowerCase()}</Btn></p>
+        </li>; })}</ul>
+        : <Empty>Nobody is available right now. New voices come on the market each year.</Empty>}
+      <p class="muted vtip">{done && V.chem != null ? <>Your desk: <b>{V.pbp.name}</b> and <b>{V.col.name}</b>. {E.chemWord(V.chem)}. A good desk lifts every match.</>
+        : 'Tip: an excitable voice and a dry one work best together. Two of the same style tend to talk over each other.'}</p>
+    </div>
   </Window>;
 }
 /** Open the commentary desk pop-up on one chair. */
