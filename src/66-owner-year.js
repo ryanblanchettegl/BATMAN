@@ -16,7 +16,7 @@ function yearInfo(S){
   var fw=flagWeekFrom({week:S.week-1},P),bails=(o.bail||0)-Y.bail0;
   var L=[
     {k:'pop',n:'Popularity '+Y.pop+' or more',now:'now '+r1(P.image),ok:P.image>=Y.pop},
-    {k:'shows',n:'Half the shows a B- or better',now:Y.good+' of '+Y.shows,ok:Y.shows>0&&Y.good*2>=Y.shows},
+    {k:'shows',n:'Half the shows a B- or better',now:Y.good+' of '+Y.shows,ok:Y.good*2>=Y.shows},
     {k:'money',n:'No losses for '+o.name+' to cover',now:bails?bails+' so far':'none so far',ok:!bails}
   ];
   return {asks:L,met:L.filter(function(x){return x.ok;}).length,end:fw!=null?cal(fw).label:null,left:fw!=null?fw-S.week:null,years:o.goals||0,short:o.yr.shows<YEAR_MIN_SHOWS};

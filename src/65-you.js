@@ -67,7 +67,7 @@ E.matchOdds=function(S,m,i,n){
 };
 function cardCost(S,card){
   var tot=0,n=card.length;
-  card.forEach(function(m,i){if(m.call==null)return;var o=E.matchOdds(S,m,i,n);if(!o)return;tot+=m.call<0?o.drawCost:(o.cost[m.call]||1);});
+  card.forEach(function(m,i){if(m.call==null)return;var o=E.matchOdds(S,m,i,n);if(!o)return;tot+=m.call<0?o.drawCost:(o.cost[m.call]!=null?o.cost[m.call]:0);});
   return tot;
 }
 function spendBP(S,card){
