@@ -1,6 +1,6 @@
 /* ---------- 1. Career goals: each wrestler of yours chases one or two goals; meeting one lifts them; one blocked for a year starts a clock (w.goals) ---------- */
 function goalTier(S,P,w){return w.ovr>=P.image-5?'star':'mid';}
-function topTitleFor(P,w){return P.titles.filter(function(t){return !t.tag&&t.g===w.g&&t.lvl>=3;})[0]||null;}
+function topTitleFor(P,w){return P.titles.filter(function(t){return !t.tag&&divOk(P,t,w)&&t.lvl>=3;})[0]||null;}
 var GOALK={
   title:{n:'Hold the top title',ok:function(S,P,w){return holdLvl(P,w.id)>=3;},prog:function(S,P,w){return holdLvl(P,w.id)>=3?1:clamp(w.ovr/Math.max(1,P.image+8),0,0.95);}},
   midtitle:{n:'Win a title',ok:function(S,P,w){return holdLvl(P,w.id)>=1;},prog:function(S,P,w){return holdLvl(P,w.id)>=1?1:clamp(w.ovr/Math.max(1,P.image),0,0.9)*0.8;}},

@@ -5,26 +5,12 @@ import { useEffect, useRef, useState } from 'preact/hooks';
 import { E } from '../../engine';
 import { G, ui, pref, Modal, VER, UNIS, saveUnis, savePrefs, setUniverse, builtInUniverse, basePackage, isBuiltIn, DEFAULT_UNI, cut, loadSave, cash, view, redraw, openModal, plural, slice, act } from '../../store';
 import { HOT, pageName } from '../../nav';
-import { autoScreen, skipBoot, onKey } from '../../input';
+import { autoScreen, onKey } from '../../input';
 import { startGame, continueGame, loadSaveText, startChallenge, startScenario, isoWeekId } from '../../flow';
 import { Btn, Panel, Head, Sel, Field, TextBox, Window, Logo, Data, dataAttrs } from '../../kit';
 import { MusicBtn } from '../../shell/Frame';
 import { ModelCard } from '../../shared/model';
 import { SFX } from '../../sfx';
-
-/* ---------- boot ---------- */
-function bootLines(): string[] { const info = E.universe(); return ['LOADING ROSTER... ' + info.workers + ' WORKERS', 'INITIALIZING BOOKING SYSTEM...', 'CHECKING MEMORY... 640K OK', 'READING SAVE... ' + (loadSave() ? 'FOUND' : 'NONE')]; }
-export const BOOT_STEPS = 5;
-export function Boot() {
-  const L = bootLines(), n = ui.boot ? ui.boot.step : 0, W = 22, f = Math.min(W, Math.round(W * n / BOOT_STEPS));
-  return <div class="bootscr" data-t="boot-skip" onClick={skipBoot}><div class="bootin">
-    <p class="bt">GORILLA POSITION ENGINE <span>v</span>{VER}</p>
-    <p class="rule" aria-hidden="true">{'─'.repeat(26)}</p>
-    {L.map((l, k) => <p style={{ visibility: k < n ? 'visible' : 'hidden' }}>{l}</p>)}
-    <p class="bar" role="img" aria-label="Loading">[<span>{'█'.repeat(f)}</span><i>{'░'.repeat(W - f)}</i>]</p>
-    <p class="skip">Press any key</p>
-  </div></div>;
-}
 
 /* ---------- the list menus of the start screens ---------- */
 interface MenuItem { t: string; d?: Data; cls?: string; label: ComponentChildren; pick: () => void }
@@ -351,7 +337,6 @@ function Options() {
       {toggle('snd', 'Sound', 'Beeps, bells and fanfares.')}
       {toggle('type', 'Typewriter text', 'Commentary types itself out during a show.')}
       {toggle('auto', 'Auto-play the show', 'The broadcast moves on by itself at a reading pace and stops for every call. P turns it on or off during a show.')}
-      {toggle('boot', 'Boot sequence', 'The loading screen when the game starts.')}
       {toggle('letter', 'The owner’s letter', 'A new game opens on a letter from the owner. It can be read again from the desk.')}
       {choice('screen', 'Screen', 'Auto picks from the device. TV is for the couch: larger text, edge margins, and a remote or gamepad moves the highlight.', [['auto', 'Auto (' + ({ desk: 'desk', tv: 'TV' } as any)[autoScreen()] + ')'], ['desk', 'Desk'], ['tv', 'TV']])}
       {choice('fxvol', 'Effects volume', 'Bells, beeps and the crowd.', [[0.4, 'Low'], [1, 'Normal'], [1.8, 'High']])}

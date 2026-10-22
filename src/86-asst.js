@@ -64,3 +64,17 @@ E.assistantRun=function(S){
   }
   return out;
 };
+/* The assistant's window on the desk (Ryan, 22 October): who it is, one tip that is true of the game this week, and
+   the house shows it will book. A placeholder for now; it only reads the game and never calls rnd(S). */
+E.assistantDesk=function(S){
+  var A=E.assistant(S),P=S.promos[S.player],tips=[];
+  var worn=rosterOf(S,P.id).filter(function(w){return !w.nw&&w.inj<=0&&w.cond<50;}).sort(function(a,b){return a.cond-b.cond;})[0];
+  if(worn)tips.push(worn.name+' is worn down. A week off now saves a bad night later.');
+  var low=rosterOf(S,P.id).filter(function(w){return !w.nw&&w.morale!=null&&w.morale<35;}).sort(function(a,b){return a.morale-b.morale;})[0];
+  if(low)tips.push(low.name+' is unhappy. Sitting down with them backstage costs one point.');
+  try{(E.season(S).says||[]).slice(0,2).forEach(function(x){if(x&&x.t)tips.push(x.t);});}catch(e){}
+  if(S.bp>=6)tips.push('You have '+S.bp+' booking power. It stops growing at the cap, so spend some.');
+  if(!tips.length)tips.push('Nothing is on fire. A good week to start a story or push somebody new.');
+  return {word:A.word,lvl:A.lvl,shows:A.shows,next:A.next,tip:tips[S.week%tips.length],tips:tips.length,
+    house:'House shows are coming. When they do, I will book them the way you book television, and tell you who I used.'};
+};

@@ -62,8 +62,8 @@ E.universe().promotions.forEach(d => {
   const after = net(S);
   /* retire and cancel */
   if (made && !S.over) { const t = P.titles.find(x => x.name === 'Test Lantern Title'), r = E.dropTitle(S, t.id); ok(id, 'the belt can be retired, or the game says why not', r.ok ? !P.titles.some(x => x.id === t.id) && P.oldTitles[0].name === 'Test Lantern Title' : r.msg.length > 10, r.ok ? '' : r.msg); }
-  if (added && !S.over) { const sh = P.shows.find(x => x.name === 'Test Night Lantern'), r = E.dropShow(S, sh.id); ok(id, 'the show can be cancelled', r.ok && P.shows.length === s0, r.msg); }
-  ok(id, 'a company cannot cancel its last show', P.shows.length > 1 || !E.dropShow(S, P.shows[0].id).ok);
+  if (added && !S.over) { const sh = P.shows.find(x => x.name === 'Test Night Lantern'), n = P.shows.length, r = E.dropShow(S, sh.id); ok(id, 'the booker cannot quit a show under its network deal', !r.ok && P.shows.length === n, r.msg); }
+  ok(id, 'a company cannot cancel its last show', !E.dropShow(S, P.shows[0].id).ok);
   for (let i = 0; i < 6 && !S.over; i++) week(S, st);
   ok(id, 'no errors and no bad numbers over ' + S.week + ' weeks', st.errs === 0 && JSON.stringify(S).indexOf('NaN') < 0 && isFinite(P.cash), st.errs ? st.errs + ' errors: ' + st.why : 'weekly net before ' + before + ', with the extras ' + after + (S.over ? ', game over: ' + S.over : ''));
 });

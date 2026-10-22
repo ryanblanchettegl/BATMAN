@@ -172,20 +172,23 @@ T = {c['id']: c for c in D['championships']}
 TITLES = [('title-wpw-world', 'wpw_world', 'WPW World Heavyweight Championship', 3, False), ('title-florida', 'wpw_florida', 'WPW Florida State Championship', 2, False),
           ('title-wpw-tag', 'wpw_tag', 'WPW World Tag Team Championship', 2, True), ('title-canadian', 'wpw_pure', 'WPW Canadian Pure Championship', 2, False),
           ('title-hardcore', 'wpw_hardcore', 'WPW Hardcore Championship', 1, False), ('title-pcw-world', 'pcw_world', 'PCW World Heavyweight Championship', 3, False)]
+# Ryan's champions for the start of a game (22 October); the rest come from the last recorded reign
+CHAMPS = {'wpw_world': ['wpw_the_judge'], 'wpw_florida': ['wpw_unstoppable_mike_adams'], 'wpw_tag': ['wpw_the_dream', 'wpw_jokester'],
+          'wpw_pure': ['wpw_raelis_shy'], 'wpw_hardcore': ['wpw_dan_murph'], 'pcw_world': ['wpw_the_one']}
 titles = []
 for src, tid, name, lvl, tag in TITLES:
-    c = T[src]; hold = holder(c['reigns'][-1]) if c['reigns'] else []
+    c = T[src]; hold = CHAMPS.get(tid) or (holder(c['reigns'][-1]) if c['reigns'] else [])
     t = {'id': tid, 'name': name, 'gender': 'M', 'level': lvl, 'holder_ids': hold[:2] if tag else hold[:1]}
     if tag: t['tag'] = True
     titles.append(t)
 teams = []
 tagt = next(t for t in titles if t['id'] == 'wpw_tag')
-if len(tagt['holder_ids']) == 2: teams.append({'id': 'wpw_tag_champs', 'name': 'LaVigne and Xavier', 'kind': 'tag', 'member_ids': tagt['holder_ids'], 'experience': 60, 'chemistry': 7})
+if len(tagt['holder_ids']) == 2: teams.append({'id': 'wpw_tag_champs', 'name': 'The Dream and Jokester', 'kind': 'tag', 'member_ids': tagt['holder_ids'], 'experience': 60, 'chemistry': 7})
 teams.append({'id': 'wpw_the_bees', 'name': 'The Bees', 'kind': 'tag', 'member_ids': ['wpw_connie', 'wpw_tina'], 'experience': 50, 'chemistry': 7})
 teams.append({'id': 'wpw_red_dragon', 'name': 'Red Dragon', 'kind': 'tag', 'member_ids': ['wpw_seto_uchiha', 'wpw_vendetta'], 'experience': 50, 'chemistry': 6})
 
 company = {
-    'promotion': {'id': 'wpw', 'model': 'classic', 'name': 'WPW', 'full_name': 'WrestlePower Wrestling',
+    'promotion': {'id': 'wpw', 'model': 'classic', 'name': 'WPW', 'full_name': 'WrestlePower Wrestling', 'intergender': True,
                   'blurb': 'The fed that grew out of PCW and took in everybody who ever signed up: four feds of history, one locker room, and a World title first held by a Shakespearean.',
                   'owner': {'name': 'Carlos Gonzalez', 'style': 'stars', 'roots': 'tradition', 'pledge': 'stable'},
                   'staff': {'road_agent': 'Ethan Frost', 'head_writer': 'The Judge'}, 'announcers': ['Daniel Justice', 'Max Stockton'],
