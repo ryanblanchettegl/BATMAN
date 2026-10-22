@@ -319,6 +319,8 @@ html body .win.ppop .wb{font-family:var(--hand);font-size:1.06em}
 .ovrb.o-low{background:#8a8579}.ovrb.o-mid{background:#4d6b8f}.ovrb.o-good{background:#2f7d4a}.ovrb.o-top{background:#c2402f}.ovrb.o-gold{background:#e2b23a;color:#1d1a24}
 .ovrb,.rspage .rsl tr.pick.on td .ovrb{color:#fff}.ovrb.o-gold,.rspage .rsl tr.pick.on td .ovrb.o-gold{color:#1d1a24}
 @media (max-width:1500px){.mkl .wide{display:none}}
+/* the list narrows when an offer is open beside it: the two optional columns go, so the names never scroll out of sight */
+@container (max-width:1400px){.mkl .wide{display:none}}
 .ovrb.big{font-size:1.5em;min-width:2.3em}
 /* lists that scroll inside their window, headings kept in view (Ryan, 20 October: "I want it scrollable") */
 .lb.scroll{overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin}

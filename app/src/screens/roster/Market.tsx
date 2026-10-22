@@ -78,14 +78,14 @@ export function Market() {
         <thead><tr><th>Name</th><th>Status</th><th>Side</th><th class="wide">Style</th><th class="r">Age</th><th class="r">Overall</th><th class="r wide">Over</th><th class="r">Potential</th><th>Fit</th><th class="r">Asking</th><th /></tr></thead>
         <tbody>
           {shown.map(w => {
-            const ask = E.ask(S, w), locked = w.lock > S.week, can = E.canSign(S, w);
+            const ask = E.ask(S, w), locked = w.lock > S.week, can = E.canSign(S, w), T = E.offerTerms(S, w.id);   // a company that pays per appearance shows the fee for a show
             return <tr key={w.id} class={st.offer === w.id ? 'on' : undefined}>
               <td><span class="nm">{w.name}</span></td>
               <td>{w.promo === 'FA' ? (w.cut && S.promos[w.cut.from] && S.week - (w.cut.w || 0) < 6 ? 'Released by ' + S.promos[w.cut.from].name : (E.indieOf(S, w.id) ? <span title={'Working dates for ' + E.indieOf(S, w.id).n}>{E.indieOf(S, w.id).n.split(' ').slice(0, 2).join(' ')}{E.indieOf(S, w.id).weeks >= 3 ? ', ' + E.indieOf(S, w.id).weeks + ' wk' : ''}</span> : 'Free agent')) : S.promos[w.promo].name + ', ' + Math.max(0, w.con) + ' wk'}</td>
               <td><Side w={w} /></td>
               <td class="wide">{E.STYLE_NAME[w.style] || ''}{w.rk ? <> <Tag kind="gold">Rookie</Tag></> : null}</td>
               <td class="r num">{w.age}</td><td class="r"><Ovr w={w} /></td><td class="r num wide">{Math.round(w.ovr)}</td>
-              <td class="r num">{range(E.intel(S, w.id).stats.pot)}</td><td>{(() => { const f = E.fit(S, w.id); return f ? <span class={f.v >= 1 ? 'good' : (f.v <= -2 ? 'bad' : 'muted')}>{f.n}</span> : null; })()}</td><td class="r num">{cash(ask)}</td>
+              <td class="r num">{range(E.intel(S, w.id).stats.pot)}</td><td>{(() => { const f = E.fit(S, w.id); return f ? <span class={f.v >= 1 ? 'good' : (f.v <= -2 ? 'bad' : 'muted')}>{f.n}</span> : null; })()}</td><td class="r num">{T && T.ct === 'show' ? cash(T.fee) + ' a show' : cash(ask)}</td>
               <td>{!can ? <span class="muted">{E.modelOf(S).gender && w.g !== E.modelOf(S).gender ? 'Not for us' : 'Out of reach'}</span> : locked ? <span class="muted">Not talking</span>
                 : <Btn kind="sm" t="offer" d={{ id: w.id }} onClick={() => toggle(w, ask)}>{st.offer === w.id ? 'Cancel' : 'Offer'}</Btn>}</td>
             </tr>;
