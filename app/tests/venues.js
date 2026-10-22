@@ -3,7 +3,7 @@
 const { open, go, fits } = require('./helper');
 (async () => {
   const fails = [], ok = (c, m) => { console.log((c ? 'ok   ' : 'FAIL ') + m); if (!c) fails.push(m); };
-  for (const mode of (process.env.MODES || 'desk,tablet,tv').split(',')) {
+  for (const mode of (process.env.MODES || 'desk,big,tv').split(',')) {
     const { browser, page, errs } = await open({ mode, letter: false });
     await go(page, 'desk'); await page.waitForTimeout(100);
     const B = await page.evaluate(() => window.GP.buildingWords(window.EWF_DEBUG.state()));

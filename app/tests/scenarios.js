@@ -1,4 +1,4 @@
-/* Browser run of the scenarios: the title card entry, starting each one, and the result screen when the weeks run out. Desk and tablet.
+/* Browser run of the scenarios: the title card entry, starting each one, and the result screen when the weeks run out. Desk.
    Build first:  node build.js
    Run:          NODE_PATH=/opt/npm-tools/node_modules node app/tests/scenarios.js */
 const { open, overflow, state, redraw } = require('./helper');

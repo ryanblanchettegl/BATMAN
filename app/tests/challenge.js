@@ -1,4 +1,4 @@
-/* Browser run of the weekly challenge: the title card entry, the code checker, twelve weeks, and the finished screen with its code. Desk and tablet.
+/* Browser run of the weekly challenge: the title card entry, the code checker, twelve weeks, and the finished screen with its code. Desk.
    Build first:  node build.js
    Run:          NODE_PATH=/opt/npm-tools/node_modules node app/tests/challenge.js */
 const { open, overflow, state, redraw } = require('./helper');

@@ -358,7 +358,7 @@ html body .win.ppop .wb{font-family:var(--hand);font-size:1.06em}
 /* the World Editor's frame (shell.tsx): every page under the same bar, a page that scrolls inside itself where it is long */
 .edshell{gap:0;padding:0}
 .edshell .edbody{flex:1 1 0;min-height:0;overflow-y:auto;padding:.8em 1.6ch}
-.edshell .edbody-in{max-width:1500px;margin:0 auto}
+.edshell .edbody-in{max-width:48em;margin:0 auto}
 .edshell .edbody .edcol-list,.edshell .edbody .edcol-form{min-width:0}
 /* Create a Wrestler and Create a Scene wear the editor's bar */
 .sc-menubar{margin:0;border-radius:0;padding:.12em 1.2ch;min-height:2.2em}

@@ -11,16 +11,12 @@ import { book } from './flow';
 
 /* ---------- screen mode ---------- */
 export const NAV = { on: false, pad: false, tv: false };
-export function autoScreen(): 'desk' | 'tablet' | 'tv' {
-  const w = window.innerWidth, ua = navigator.userAgent || ''; let coarse = false;
-  try { coarse = window.matchMedia('(pointer: coarse)').matches; } catch (e) { /* ignore */ }
-  if (/SmartTV|SMART-TV|Tizen|Web0S|webOS|\bAFT[A-Z]|GoogleTV|Android TV|BRAVIA|HbbTV|CrKey|Roku|Xbox|PlayStation|\bTV\b/i.test(ua)) return 'tv';
-  if (w <= 640) return 'tablet';   // a small landscape screen: the touch-sized layout
-  // Steam Deck: 1280 by 800 on a 7 inch screen. Desk type is too small there, so it gets the tablet size.
-  if (/Steam ?Deck|SteamOS/i.test(ua) || (w <= 1366 && window.innerHeight <= 800 && NAV.pad)) return 'tablet';
-  return coarse ? 'tablet' : 'desk';
+export function autoScreen(): 'desk' | 'tv' {
+  const ua = navigator.userAgent || '';
+  // a PC screen of any size is the desk layout, scaled from 1080p (Bill, 22 October: no tablet, no Steam Deck size)
+  return /SmartTV|SMART-TV|Tizen|Web0S|webOS|\bAFT[A-Z]|GoogleTV|Android TV|BRAVIA|HbbTV|CrKey|Roku|Xbox|PlayStation|\bTV\b/i.test(ua) ? 'tv' : 'desk';
 }
-export function screenMode() { return pref.screen && pref.screen !== 'auto' && (pref.screen as string) !== 'phone' ? pref.screen : autoScreen(); }
+export function screenMode() { return pref.screen === 'desk' || pref.screen === 'tv' ? pref.screen : autoScreen(); }
 export function applyScreen() {
   const de = document.documentElement, m = screenMode();
   de.setAttribute('data-screen', m); de.style.setProperty('--zoom', String(pref.zoom || 1));
