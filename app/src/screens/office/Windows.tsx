@@ -101,18 +101,19 @@ export function VoicesWindow(_p: { m: Modal }) {
 /** Open the commentary desk pop-up on one chair. */
 export function openVoices(seat?: string) { const st = slice<{ seat: string; msg: string; err: boolean }>('voices', () => ({ seat: 'pbp', msg: '', err: false })); st.seat = seat === 'col' ? 'col' : 'pbp'; st.msg = ''; openModal({ kind: 'voices' }); }
 
-/** A new game opens on this: the owner's letter. Typed out line by line on a black screen, like a telex. */
+/** A new game opens on this: the owner's letter, written by hand on cream paper laid on the black board (rule 2a).
+    The lines appear one after another, as if read down the page. */
 export function WelcomeWindow(_p: { m: Modal }) {
   const S = G.S, W = E.welcome(S);
   return <div class="scrim intro" role="dialog" aria-modal="true" aria-label={'A letter from ' + W.from} data-t="welcome">
-    <div class={'telex' + (_p.m.again ? ' again' : '')}>
-      <pre class="tx-head" aria-hidden="true">{'╔' + '═'.repeat(46) + '╗\n║' + (' ' + W.company.toUpperCase()).padEnd(46).slice(0, 46) + '║\n║' + (' OFFICE OF THE OWNER').padEnd(46) + '║\n╚' + '═'.repeat(46) + '╝'}</pre>
-      <p class="tx-meta"><span>TO: {W.to.toUpperCase()}</span><span>{W.date.toUpperCase()}</span></p>
-      <p class="tx-meta"><span>RE: THE JOB</span><span>*** URGENT ***</span></p>
-      <div class="tx-body">{W.lines.map((x: string, i: number) => <p key={i} class={'tx-l' + (i === 0 ? ' first' : '')} style={{ animationDelay: (0.5 + i * 0.9) + 's' }}><Txt>{x}</Txt></p>)}
-        <p class="tx-l tx-sig" style={{ animationDelay: (0.5 + W.lines.length * 0.9) + 's' }}>{'—'.length ? '' : ''}{W.from}<br /><span class="muted">{W.role}, {W.short}</span></p>
-        <p class="tx-l tx-ps" style={{ animationDelay: (1.1 + W.lines.length * 0.9) + 's' }}>P.S. {W.ps}</p></div>
-      <div class="tx-foot"><Btn kind="go" id="modal-ok" t="welcome-go" onClick={closeModal}>{_p.m.again ? 'Put it away' : 'Get to work'}</Btn><span class="blink" aria-hidden="true">_</span></div>
+    <div class={'letter' + (_p.m.again ? ' again' : '')}>
+      <div class="lt-head"><b>{W.company}</b><span>Office of the owner</span></div>
+      <p class="lt-meta"><span>To: {W.to}</span><span>{W.date}</span></p>
+      <p class="lt-meta"><span>About: the job</span></p>
+      <div class="lt-body">{W.lines.map((x: string, i: number) => <p key={i} class={'lt-l' + (i === 0 ? ' first' : '')} style={{ animationDelay: (0.3 + i * 0.6) + 's' }}><Txt>{x}</Txt></p>)}
+        <p class="lt-l lt-sig" style={{ animationDelay: (0.3 + W.lines.length * 0.6) + 's' }}>{W.from}<br /><span class="lt-role">{W.role}, {W.short}</span></p>
+        <p class="lt-l lt-ps" style={{ animationDelay: (0.7 + W.lines.length * 0.6) + 's' }}>P.S. {W.ps}</p></div>
+      <div class="lt-foot"><Btn kind="go" id="modal-ok" t="welcome-go" onClick={closeModal}>{_p.m.again ? 'Put it away' : 'Get to work'}</Btn></div>
     </div>
   </div>;
 }

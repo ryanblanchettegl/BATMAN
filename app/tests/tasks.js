@@ -82,7 +82,7 @@ async function run(mode) {
     ok(mode, 'and the desk is still the page', await page.evaluate(() => window.EWF_DEBUG.ui.page) === 'desk' && (await rows(page, 'done')).indexOf('con-' + cid) >= 0);
     /* the owner's letter can be read again from the desk */
     await page.click('[data-t="open-letter"]'); await page.waitForSelector('[data-t="welcome"]');
-    ok(mode, 'the owner’s letter opens again from the desk, already written out', /the job/i.test(await txt(page, '[data-t="welcome"]')) && /Put it away/.test(await txt(page, '[data-t="welcome-go"]')) && await page.$eval('[data-t="welcome"] .tx-l', e => getComputedStyle(e).opacity === '1'));
+    ok(mode, 'the owner’s letter opens again from the desk, already written out', /the job/i.test(await txt(page, '[data-t="welcome"]')) && /Put it away/.test(await txt(page, '[data-t="welcome-go"]')) && await page.$eval('[data-t="welcome"] .lt-l', e => getComputedStyle(e).opacity === '1'));
     await page.click('[data-t="welcome-go"]'); await page.waitForTimeout(60);
     await page.click('[data-t^="task-wave"][data-v^="title-"]');
     /* the rule can be turned off in Options */
