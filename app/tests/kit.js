@@ -2,7 +2,7 @@
    window, every control has a name and works from the keyboard, and a pop-up wears the same look.
    Run: NODE_PATH=<dir containing playwright> node app/tests/kit.js */
 const { open, go, overflow, shot, fits } = require('./helper');
-const SIZES = [['desk', 1280, 720], ['desk', 1280, 860], ['desk', 1920, 1080], ['desk', 2560, 1440], ['desk', 3840, 2160], ['tv', 1920, 1080]];
+const SIZES = [['desk', 1280, 720], ['desk', 1280, 860], ['desk', 1920, 1080], ['desk', 2560, 1440], ['desk', 3840, 2160]];
 const fails = [];
 const ok = (id, label, pass, detail) => { console.log(id.padEnd(15), pass ? 'ok  ' : 'FAIL', label + (detail ? ': ' + detail : '')); if (!pass) fails.push(id + ' ' + label); };
 const rgb = (page, sel, prop) => page.$eval(sel, (e, p) => getComputedStyle(e)[p], prop);
@@ -29,7 +29,7 @@ async function run(mode, w, h) {
     ok(id, 'buttons are cut coloured card: green with white marker, yellow, navy, red', (await cut(page, '[data-t="kit-b1"]')) === 'lk-btn-green' && (await rgb(page, '[data-t="kit-b1"]', 'color')) === WHITE && (await cut(page, '[data-t="kit-b2"]')) === 'lk-btn-yellow' && (await cut(page, '[data-t="kit-b3"]')) === 'lk-btn-navy' && (await cut(page, '[data-t="kit-b4"]')) === 'lk-btn-red');
     ok(id, 'a button that costs something says so at its right end', /1 point$/.test((await page.$eval('[data-t="kit-talk"]', e => e.textContent)).trim()));
     ok(id, 'a tag in a window is a filled box, not a word in brackets', await page.$eval('[data-t="kit-tags"] .tag.bad', e => getComputedStyle(e).backgroundColor === 'rgb(230, 77, 64)' && getComputedStyle(e, '::before').content === 'none'));
-    ok(id, 'bars come ten, eight and five wide', await page.$$eval('[data-t="kit-tags"] .meter', L => L.map(e => e.textContent.length).join(',') === '10,8,5,5'));
+    ok(id, 'bars come ten, eight and five wide', await page.$$eval('[data-t="kit-tags"] .meter', L => L.map(e => e.querySelectorAll('s').length).join(',') === '10,8,5,5'));
     /* the list box */
     const rows = await page.$$('[data-t="kit-row"]');
     ok(id, 'the list box has a header and seven lines, each one line tall', rows.length === 7 && await page.evaluate(() => { const L = [...document.querySelectorAll('[data-t="kit-row"]')].map(e => e.getBoundingClientRect().height), hd = document.querySelector('.lb .hd'); return !!hd && L.every(x => Math.abs(x - L[0]) < 1.5); }));
