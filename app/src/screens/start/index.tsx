@@ -187,7 +187,7 @@ const WORDS: [string, string, string][] = [
   ['streak', 'Sell-out streak', 'Shows sold out in a row. From the third, the next show draws a little more, and a city that sold out gets a bigger building next time.'],
   ['workrate', 'Work rate', 'How good a wrestler is in the ring: brawling, technical skill and speed together. It lifts match quality, but the crowd also needs a reason to care.'],
   ['momentum', 'Momentum', 'Whether a wrestler is hot or cold right now. Wins and big moments raise it, losses lower it. A hot wrestler gets the benefit of the doubt on the night.'],
-  ['bp', 'Booking power', 'What you spend to call a finish yourself. The owner grants some each week. The favourite costs 1, an underdog 2, a long shot 3, and a title change 1 more.'],
+  ['bp', 'Booking power', 'What you spend on the extras: calls from the headset during a show, a feud, a twist in a story. The owner grants some each week. Picking a winner is free.'],
   ['prestige', 'Prestige', 'How much a title is worth, from 10 to 100. Good title matches raise it. A title with high prestige adds to the matches that carry it.']
 ];
 /** The glossary: the words in a list, and the picked one beside it, so it fits one screen however many words there are. */
@@ -267,8 +267,8 @@ export function Setup() {
     </Panel>
     <Panel cls="mb4" title="How this company is run"><ModelCard id={d.model} /></Panel>
     <HowBtn body={() => <>
-      <p>You set the card. Each match is played out on the night, and you can call the finish with booking power.</p>
-      <p class="mt1">Each week {o.name} grants you <b>booking power</b>. Spend it to call a finish: 1 point for the favourite, 2 for an underdog, 3 for a long shot, and 1 more to change a title.</p>
+      <p>You set the card. Each match is played out on the night, or you pick the winner yourself.</p>
+      <p class="mt1">Each week {o.name} grants you <b>booking power</b>. Picking a winner costs nothing. Spend it on the extras: a call from the headset during the show, a new feud, a twist in a story. A long shot has a price of its own: the favourite you told to lose will remember it.</p>
       <p class="mt1">Good shows and met directives raise the owner{'’'}s trust, which raises your allowance. Lose that trust and you are out. Earn enough of it and the company is yours.</p>
     </>} />
     <p class="muted mb2">Words used in the game: <Term id="overness">overness</Term>, <Term id="heat">heat</Term>, <Term id="workrate">work rate</Term>, <Term id="momentum">momentum</Term>, <Term id="bp">booking power</Term>, <Term id="prestige">prestige</Term>.</p>
@@ -293,10 +293,10 @@ function Help() {
     <p class="mt1"><b>The bottom line.</b> Your booking power, action points, cash, popularity and the owner’s trust, each with how it has moved since the last show went on the air or the last week ended. F1 is Help, F2 Options, F3 Music.</p>
       </> : null}
       {k === 'book' ? <>
-    <p class="mt1"><b>Booking.</b> A show is matches, promos and angles. You pick who is in each. Each match is played out on the night unless you spend booking power to call the finish. Where a match sits matters: open with something quick, keep two long matches apart, and put the biggest match on last. The Running order notes beside the card read your card against those rules. Matches and segments are rated in stars, up to five.</p>
+    <p class="mt1"><b>Booking.</b> A show is matches, promos and angles. You pick who is in each. Each match is played out on the night unless you pick the winner yourself. Where a match sits matters: open with something quick, keep two long matches apart, and put the biggest match on last. The Running order notes beside the card read your card against those rules. Matches and segments are rated in stars, up to five.</p>
     <ul class="list mt1 helpsecs">
       <li><span><b>Office.</b> The desk, Backstage, Storylines and your career. It opens on what needs doing before the show.</span></li>
-      <li><span><b>Booking.</b> Build the card. Spend booking power to call a finish.</span></li>
+      <li><span><b>Booking.</b> Build the card and pick your winners.</span></li>
       <li><span><b>Roster.</b> Wrestlers, the locker room, titles and free agents.</span></li>
       <li><span><b>Web.</b> The dirt sheet, the weekly podcast and the wrestling sites.</span></li>
       <li><span><b>Manage.</b> Every choice: operations, house rules, deals.</span></li>

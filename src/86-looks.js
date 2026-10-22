@@ -28,6 +28,7 @@ var ft=null;if(ap.features&&typeof ap.features==='object'){ft={};['eyes','nose',
       paint_layers:Array.isArray(ap.paint_layers)?ap.paint_layers.filter(function(l){return l&&lkId(l.k);}).slice(0,3).map(function(l){return lkPrune({k:lkId(l.k),c:lkId(l.c)});}):undefined,
       tattoos:Array.isArray(ap.tattoos)?ap.tattoos.map(lkId).filter(function(v){return !!v;}).slice(0,8):undefined,
       hair_colour2:lkId(ap.hair_colour2),hair_mix:lkId(ap.hair_mix),body_hair:lkNum(ap.body_hair,0,2),freckles:ap.freckles===true?true:undefined,mask_design:lkId(ap.mask_design),
+      cheeks:lkId(ap.cheeks),eye_colour:lkId(ap.eye_colour),mood:lkId(ap.mood),hair_shine:ap.hair_shine===false?false:undefined,
       scars:Array.isArray(ap.scars)?ap.scars.map(lkId).filter(function(v){return !!v;}).slice(0,6):undefined});}
   if(x.attires&&typeof x.attires==='object'){var at={};LOOK_ATTIRES.forEach(function(k){var a=x.attires[k];if(!a||typeof a!=='object')return;
     var eq=a.equipped_assets||{},e={};LOOK_PARTS.forEach(function(p){var v=lkId(eq[p]);if(v)e[p]=v;});

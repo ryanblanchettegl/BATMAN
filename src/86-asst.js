@@ -33,7 +33,7 @@ function asstBook(S){
     var cand=card.filter(function(m,i){return i<card.length-1&&m.mt==='1v1'&&!m.title&&m.sides.every(function(s){return s.length===1;});});
     for(var c=0;c<cand.length;c++){var m=cand[c],ix=m.sides.findIndex(function(s){var w=S.w[s[0]];return w&&w.g===f.g&&w.ovr<=f.ovr+6;});if(ix>=0&&!(show.brand&&f.brand!==show.brand&&!show.big)){on[m.sides[ix][0]]=0;m.sides[ix]=[id];on[id]=1;done++;break;}}
   });
-  // the same share of calls as you make, spent on the likelier winner, within the booking power in hand
+  // the same share of calls as you make, on the likelier winner, within the booking power in hand
   card.forEach(function(m){if(m.call==null&&chance(S,H.call*(0.4+lv*0.2))){var o=E.matchOdds(S,m,0,card.length);if(o&&o.fav!=null&&o.p[o.fav]>=0.5)m.call=o.fav;}});
   var g=0;while(g++<10&&cardCost(S,card)>S.bp){var last=card.slice().reverse().filter(function(m){return m.call!=null;})[0];if(!last)break;delete last.call;}
   return card;

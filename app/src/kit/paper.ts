@@ -207,6 +207,11 @@ export function drawScene(ctx: CanvasRenderingContext2D, pieces: Piece[], v: Vie
     ctx.beginPath(); for (const p of figs) { const q = p.pts.map(t => toPx(v, t)); ctx.moveTo(q[0][0], q[0][1]); for (let i = 1; i < q.length; i++) ctx.lineTo(q[i][0], q[i][1]); ctx.closePath(); }
     ctx.fill('nonzero'); ctx.restore();
   }
+  if (figs.length) {   // each person is cut out with a margin of cream card round them, like a paper doll off the sheet
+    ctx.save(); ctx.fillStyle = ctx.strokeStyle = '#f2e8cf'; ctx.lineJoin = 'round'; ctx.lineWidth = v.s * 0.1;
+    ctx.beginPath(); for (const p of figs) { const q = p.pts.map(t => toPx(v, t)); ctx.moveTo(q[0][0], q[0][1]); for (let i = 1; i < q.length; i++) ctx.lineTo(q[i][0], q[i][1]); ctx.closePath(); }
+    ctx.stroke(); ctx.fill('nonzero'); ctx.restore();
+  }
   drawPieces(ctx, mid, v);
   ctx.save(); ctx.filter = blur(v.s * 0.015); ctx.drawImage(Fr, 0, 0); ctx.restore();   // the very front, a touch soft
   // the light: a pool on the middle, the edges of the box dark
