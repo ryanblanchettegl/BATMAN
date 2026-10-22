@@ -117,12 +117,13 @@ function Sums(p: { R: W[] }) {
   const S = G.S, R = p.R, n = R.length || 1, wages = R.reduce((a, w) => a + (w.wage || 0), 0), bud = E.budget(S);
   const mood = Math.round(R.reduce((a, w) => a + w.morale, 0) / n), low = R.filter(w => w.morale < 35).length, high = R.filter(w => w.morale >= 70).length;
   const hurt = R.filter(w => w.inj > 0).length, worn = R.filter(w => !(w.inj > 0) && w.cond < 50).length;
-  const soon = R.filter(w => w.con <= 4).length, year = R.filter(w => w.con <= 48).length;
+  // a per-appearance handshake rolls on by itself, so only yearly deals can end
+  const yr = R.filter(w => w.dl !== 'show'), hs = R.length - yr.length, soon = yr.filter(w => w.con <= 4).length, year = yr.filter(w => w.con <= 48).length;
   return <>
     <Win title="Wages" area="wages" t="roster-wages"><p class="big"><b>{cash(wages)}</b></p><p class="muted">a week{isFinite(bud) ? ', ' + Math.round(wages / bud * 100) + '% of the budget' : ''}</p></Win>
     <Win title="Mood" area="mood" t="roster-mood"><p><Meter v={mood} n={8} /></p><p class="muted">{low} unhappy, {high} happy</p></Win>
     <Win title="Bodies" area="bodies" t="roster-bodies" tone={hurt ? 'hot' : undefined}><p><b>{hurt}</b> hurt</p><p class="muted">{worn} worn down</p></Win>
-    <Win title="Deals" area="deals" t="roster-deals" tone={soon ? 'hot' : undefined}><p><b>{soon}</b> end this month</p><p class="muted">{year} this year</p></Win>
+    <Win title="Deals" area="deals" t="roster-deals" tone={soon ? 'hot' : undefined}><p><b>{soon}</b> end this month</p><p class="muted">{year} this year{hs ? ', ' + hs + ' on a handshake' : ''}</p></Win>
   </>;
 }
 
