@@ -527,3 +527,9 @@ html[data-screen="tablet"] .bsacts{grid-template-columns:repeat(3,minmax(0,1fr))
 /* a panel shown inside a pop-up loses its own frame and heading: the window has both */
 .win .wb > .panel,.win .wb .inwin > .panel{border:0;padding:0;margin:0 0 .8em;box-shadow:none;background:none}
 .win .wb > .panel > h2,.win .wb .inwin > .panel > h2{position:static;display:block;background:none;padding:0;margin:0 0 .3em;color:var(--yellow)}
+
+/* a new game being set up: one paper card on the board until the desk is ready (flow.ts startGame) */
+.scrim.starting{background:var(--lk-black,#111) 0 0/480px 480px,#1e1d21;display:flex;align-items:center;justify-content:center;z-index:70}
+.starting .stcard{font-family:var(--hand);color:var(--ink,#23232a);background:var(--lk-paper,#f3ead2) 0 0/360px,#f3ead2;padding:1.2em 3ch;width:min(46ch,90vw);transform:rotate(-1deg);box-shadow:.3em .5em 1.2em rgba(0,0,0,.6);text-align:center}
+.starting .stcard b{display:block;font-family:var(--marker);font-weight:400;font-size:1.5em;margin-bottom:.3em}
+.starting .stcard p{margin:0}

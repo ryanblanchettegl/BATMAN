@@ -1666,7 +1666,11 @@ function showStep(S,P,show,card,st){
   ba.bc=stageSeg(S,ba,segPeople(S,P,ba.text),react);rep.segs.push(ba);
   return ba;
 }
-var POP_EDGE=1;   // rating points over the crowd's bar that a show on expectation counts for, for your popularity
+var POP_EDGE=1;
+/* a new booker's first show plays to a crowd that gives them a chance (Bill, 21 October: the first hour should be won).
+   A scenario or a challenge keeps its own bar. */
+var FIRST_NIGHT=4;
+function firstNight(S){return !(S.stats&&S.stats.shows>0)&&!S.scn&&!S.chal;}   // rating points over the crowd's bar that a show on expectation counts for, for your popularity
 /* ---------- a promo or an angle on the air, as a scene ----------
    The segment's text is the record of what happened. On the air it is told in pieces: who comes out, what happens a
    sentence at a time, a quoted line said by the person who says it, how the building takes it, and the desk's word.
@@ -1720,6 +1724,7 @@ function showEnd(S,P,show,card,st){
   if(S.cal)return rep;
   var exp=expected(P,show);
   if(isPl&&rep.venue){var bar=barCity(S,rep.venue);if(bar){exp+=bar.d;rep.barNote=bar.note;}}
+  if(isPl&&firstNight(S)){exp-=FIRST_NIGHT;rep.barNote=(rep.barNote?rep.barNote+' ':'')+'Your first night: the crowd gave a new booker the benefit of the doubt.';}
   var qf=clamp(1+(P.trend||0)/60,0.85,1.15)*(SLOT_V[P.slot]/SLOT_V[P.slot0])*(1+0.03*(P.prodLvl-P.prod0))*airPF(P,show);
   rep.exp=r1(exp);rep.cs=crowdScore(rep.rating,rep.exp);
   var mx=mixOf(P);
@@ -12990,8 +12995,8 @@ E.showVerdict=function(rating,exp){return showVerdict(rating,exp);};
 /** What the crowd expects of the show on the desk (or the one given), in words. */
 E.expectWords=function(S,show){
   show=show||(S.queue&&S.queue[S.qi]);if(!show)return null;
-  var e=expected(S.promos[S.player],show),w=showWord(e);
-  return {i:w.i,w:w.w,a:w.a,bar:starG(e),text:'This crowd expects '+w.a+'.'};
+  var fn=firstNight(S),e=expected(S.promos[S.player],show)-(fn?FIRST_NIGHT:0),w=showWord(e);
+  return {i:w.i,w:w.w,a:w.a,bar:starG(e),text:'This crowd expects '+w.a+'.'+(fn?' It is your first night, so they will give you the benefit of the doubt.':'')};
 };
 /** The ladder, best first, for the guide window. */
 E.SHOW_LADDER=SHOW_WORDS.map(function(x){return {w:x.w,a:x.a,d:x.d};});
