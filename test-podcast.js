@@ -6,11 +6,12 @@ const fs = require('fs'), E = globalThis.GP, fails = [];
 const ok = (id, label, pass, detail) => { console.log(id.padEnd(6), pass ? 'ok  ' : 'FAIL', label + (detail ? ': ' + detail : '')); if (!pass) fails.push(id + ' ' + label); };
 E.useUniverse(JSON.parse(fs.readFileSync('universes/public_domain.json', 'utf8')));
 const WEEKS = +process.argv[2] || 60;
+// a thinking booker: Suggest alone books by the numbers and can get the booker fired since phase 1 of the balance work
 function play(S, weeks, each) {
   for (let wk = 0; wk < weeks && !S.over; wk++) {
     S.inbox.filter(e => !e.done).forEach(e => E.resolveEvent(S, e.id, e.type === 'handover' ? 0 : 1));
     if (S.owner.pending) E.setCreed(S, { style: 'merit', roots: 'tradition', pledge: 'stable' });
-    while (S.qi < S.queue.length) { const c = E.suggest(S), pr = E.preShow(S, c); if (pr) { E.resolvePre(S, c, 0); E.fitShow(S, c); } if (E.validate(S, c).errors.length) { S.qi++; continue; } E.runPlayerShow(S, c); }
+    while (S.qi < S.queue.length) { const c = E.suggestSmart(S), pr = E.preShow(S, c); if (pr) { E.resolvePre(S, c, 0); E.fitShow(S, c); } if (E.validate(S, c).errors.length) { S.qi++; continue; } E.runPlayerShow(S, c); }
     E.endWeek(S); if (each) each(S);
   }
 }
