@@ -61,19 +61,21 @@ E.matchOdds=function(S,m,i,n){
   var c=matchSetup(S,m);if(!c)return null;
   var od=winOdds(S,c.P,c.show,m,c.sides,c.t,c.champSide,c.feud,!!c.show.big,i===n-1),fav=0;
   od.p.forEach(function(p,k){if(p>od.p[fav])fav=k;});
-  var cost=od.p.map(function(p,k){return (p>=0.5?1:(p>=0.25?2:3))+(c.t&&c.t.holders.length&&k!==c.champSide?1:0)+ccCost(S,m,k);});
-  return {p:od.p,draw:od.draw,fav:fav,cost:cost,drawCost:2,chem:null};
+  // picking the winner is free (Bill, 21 October): booking power pays for the extras, and a star with creative control is one of them
+  var cost=od.p.map(function(p,k){return ccCost(S,m,k);});
+  return {p:od.p,draw:od.draw,fav:fav,cost:cost,drawCost:1,chem:null};
 };
 function cardCost(S,card){
   var tot=0,n=card.length;
-  card.forEach(function(m,i){if(m.call==null)return;var o=E.matchOdds(S,m,i,n);if(!o)return;tot+=m.call<0?o.drawCost:(o.cost[m.call]||1);});
+  card.forEach(function(m,i){if(m.call==null)return;var o=E.matchOdds(S,m,i,n);if(!o)return;tot+=m.call<0?o.drawCost:(o.cost[m.call]!=null?o.cost[m.call]:0);});
   return tot;
 }
 function spendBP(S,card){
-  var c=cardCost(S,card),n=card.length,long=false;if(!c)return;
-  card.forEach(function(m,i){if(m.call!=null&&m.call>=0){var o=E.matchOdds(S,m,i,n);if(o&&o.p[m.call]<0.25)long=true;}});
+  var c=cardCost(S,card),n=card.length,long=false,called=card.filter(function(m){return m.call!=null;}).length;if(!called)return;
+  // the price of a long shot is paid in people: the favourite who was told to lose remembers it
+  card.forEach(function(m,i){if(m.call!=null&&m.call>=0){var o=E.matchOdds(S,m,i,n);if(o&&o.p[m.call]<0.25){long=true;m.sides[o.fav].forEach(function(id){var w=S.w[id];if(!w)return;w.morale=clamp(w.morale-3,0,100);youRemember(S,w,'longshot','You booked them to lose a match they were expected to win.',-6);});}}});
   if(c>S.bp){S.trust=clamp(S.trust-2*(c-S.bp),0,100);S.bp=0;}else S.bp-=c;
-  S.stats.calls+=card.filter(function(m){return m.call!=null;}).length;award(S,'ACH_CALL');if(long)award(S,'ACH_LONGSHOT');
+  S.stats.calls+=called;award(S,'ACH_CALL');if(long)award(S,'ACH_LONGSHOT');
 }
 E.cardCost=cardCost;
 
@@ -128,6 +130,10 @@ WEEKX.push(function(S){
   if(S.owner.pledge==='chance')rosterOf(S,P.id).forEach(function(w){if(w.inj<=0&&!w.nw&&!w.camp&&S.week-w.lu>=4&&w.morale>30)w.morale-=1;});
   if(o.me)return;
   if(S.fin)o.trust=clamp(o.trust+(S.fin.net<0&&cal(S.week).wom===4?-2:0)+(o.trust>55?-0.3:(o.trust<45?0.2:0)),0,100);
+  // the owner covers the losses (Bill, 21 October): a booker cannot sink the company, but every bail-out costs trust.
+  // A scenario or a challenge keeps its own rules: there the money running out is the test.
+  if(P.cash<0&&!S.scn&&!S.chal){var top=Math.round(-P.cash+(P.inc0||0)*2);P.cash+=top;P.neg=0;o.bail=(o.bail||0)+1;o.trust=clamp(o.trust-12,0,100);
+    news(S,'money',o.name+' put '+money(top)+' into '+P.name+' to cover the losses.');note(S,o.name+' covered the losses','The company ran out of money and '+o.name+' paid '+money(top)+' to keep it going. Trust falls by 12.','bad');}
   if(o.trust<=5+dif(S).fire&&!S.over){S.over={why:'fired',week:S.week};award(S,'ACH_FIRED');news(S,'you',o.name+' has let you go.');}
 });
 
@@ -190,7 +196,7 @@ QEND.o_elevate=function(S,q){directiveDone(S,q,false,S.w[q.w].name+' did not get
 
 /* taking over the company */
 EVMAKE.push(function(S){
-  var o=S.owner,b=S.booker;if(o.me||b.lvl<5||o.trust<80||S.week<30||S.week-o.asked<12)return null;o.asked=S.week;
+  var o=S.owner,b=S.booker;if(o.me||b.lvl<5||o.trust<80||(o.goals||0)<2||S.week-o.asked<12)return null;   // two years with every goal met (src/66-owner-year.js)o.asked=S.week;
   return {type:'handover',text:o.name+' calls you in. “I am stepping back. You have earned this. The company is yours if you want it.”',choices:['Take the keys','Not yet']};
 });
 EVR.handover=function(S,ev,choice){

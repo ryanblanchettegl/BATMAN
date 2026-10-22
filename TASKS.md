@@ -107,6 +107,18 @@ Two more lists sit beside this one, both finished:
 
 ## Tasks
 
+### A1. The road to A+, phase 1: balance (Bill, 21 October; the review at https://claude.ai/artifact/KQmaYcSgaUeVtEWWhWGGUx)
+
+Bill's decisions of 21 October: picking the winner is free and booking power buys the extras; Suggest a card lands around a C; both worlds ship, the parody world is the Steam default and a world switch sits at the top right of the title screen; the licence is all rights reserved; no new systems until balance, the first hour and the screens are done; Booker Mode starts at the grand show a week before the business year ends, Sandbox Mode is the free start; the long broadcasts stay; the game is built for 1080p only (no tablet, no Steam Deck).
+
+- [x] Picking a winner costs no booking power. A draw costs 1, and a loss called on a star with creative control still costs 2. A long shot is paid for in people: the favourite told to lose loses morale and remembers it.
+- [x] Suggest a card lands around a C. A match left just as suggested works in front of a flat crowd ("Booked by the numbers", `SUG_FLAT` in `src/99-suggest-flat.js`), and the crowd lowers its sights only a little after poor shows.
+- [x] Coasting fails: the owner sets three goals for each year, judged at the flagship (`src/66-owner-year.js`, shown on Career), and hands over the company only after two years with all three met. When a booker runs out of money the owner covers it, for 12 trust; bankruptcy is for owners, scenarios and challenges.
+- [x] Popularity follows the grades: a show that gives the crowd what it came for (a B) grows the company a little (`POP_EDGE` in `src/30-show.js`).
+- [x] EWE's money: checked. With a thinking booker EWE grows its cash over two years; it loses money only on weak shows, which is the point.
+- [x] A balance test with targets for every company model (`node test-balance.js`).
+- [x] The licence: all rights reserved (`LICENSE`).
+
 ### 0w. Still pictures for the moments you answer (Ryan, 18 October)
 
 - [x] Every matter on the desk and every call from the gorilla position shows one still diorama picture of the moment (somebody hurt, a fight backstage, two people face to face, a meeting across your desk, a walkout, the crowd on its feet): the picture on the left of the pop-up, the answers on the right.
@@ -270,6 +282,7 @@ The desk image (`docs/mockups/paper/desk.png`) is the art style: the whole game 
 - [x] The logo creator has six lettering faces (Ryan, 20 October).
 - [x] One look for every World Editor page (Ryan, 20 October): the same menu bar, note strip and bottom strip on every tab and on the list of worlds; Create a Wrestler and Create a Scene wear the same bar.
 - [x] More dropdown menus than buttons on World Editor pages (Ryan, 20 October): the creators' choices in words, which part of a page shows, faces, poses, outfits, moves and entrances.
+- [x] The characters polished (Bill, 22 October, after three rounds of concepts): no ears; eyes with an iris, a catch of light and a lash line; brows and a resting face from the gimmick (friendly, stern, grinning, sad, cocky, fierce); a raised paper nose; lips; a pointed hairline, a crescent of shine on the hair, long hair as one curtain behind the far shoulder; beards a shade darker than the hair with torn tufts, stubble that follows the jaw; a little bigger head, mitten hands, heavier wrestlers fill out; a cream cut-out edge round every figure. Create a Player choices for all of it: eye colour, classic dot eyes, cheeks (none unless picked), the face at rest, hair shine. Every EWE and WWC wrestler checked, and the seventeen legends with no look given one.
 - [x] Stock scenes move in at least four keyframes, with a wind-up at the start and an overshoot and settle at the end (Ryan, 20 October: "scenes should average 4 keys").
 - [x] 3D sets for a steel cage, the cell with a roof, an inferno, ringside on the floor, a ballroom, a gym and a stadium; 3D rooms for the entrance stage, the backstage wall, the parking lot, a talk show, a news desk and the rafters; chairs, tables, ladders, steps, bins and bats as 3D models.
 - [x] A ladder match set (the belt hung over the ring), and 3D catering, trainer's room and weight room; the Titles page shows each title's belt.
