@@ -489,3 +489,7 @@ html body .win.ppop .wb{font-family:var(--hand);font-size:1.06em}
 .tvframe .lv-res pre.belt{display:none}
 /* the Attributes pop-up: a raise you cannot pay for is a pale chip with its cost in dark ink, not faded blue on blue */
 .attr-row .btn[disabled],.attr-row button[disabled]{background:#ddd5c2;border-image:none;border:1px dashed rgba(35,35,42,.4);box-shadow:none;color:#55555e;opacity:1;filter:none;transform:none}
+/* the roster list: when it is too narrow for every column, the brand column goes (the Brand filter still picks a brand),
+   so Deal and Holds stay on screen */
+.rsl{container-type:inline-size}
+@container (max-width:1900px){.rsl .bcol{display:none}}
