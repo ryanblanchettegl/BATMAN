@@ -42,7 +42,7 @@ E.validate=function(S,card){var P=S.promos[S.player],show=S.queue[S.qi];if(!show
 E.eligible=function(S){var P=S.promos[S.player],show=S.queue[S.qi];return show?eligible(S,P,show):[];};
 E.showTitles=function(S){var P=S.promos[S.player],show=S.queue[S.qi];return show?(show.big?P.titles:showTitles(P,show)):[];};
 E.nextBig=function(S){var w=nextBigFrom(S.week,S),c=cal(w);return {week:w,name:evName(S,S.promos[S.player],c.month)||'the next big show',label:c.label};};
-E.expected=function(S,show){return r1(expected(S.promos[S.player],show));};
+E.expected=function(S,show){return r1(expected(S.promos[S.player],show)-(firstNight(S)?FIRST_NIGHT:0));};   // a new booker's first night (src/30-show.js)
 E.cal=cal;E.workRate=workRate;E.rosterOf=rosterOf;E.teamOf=teamOf;E.partnerOf=partnerOf;E.feudOf=feudOf;E.feudsFor=feudsFor;E.activeFeuds=activeFeuds;E.feudLabel=feudLabel;E.feudStage=feudStage;
 E.holdLvl=holdLvl;E.isDev=isDev;E.wageFor=wageFor;E.money=money;E.autoBook=autoBook;E.runShow=runShow;E.weekShows=weekShows;
 E.feudAct=function(f,S){return feudAct(f,S);};E.ACTN=ACTN;E.RISKN=RISKN;E.TIXN=TIXN;E.ADVN=ADVN;E.SLOTN=SLOTN;E.PRODN=PRODN;E.SLOT_MAX=SLOT_MAX;
