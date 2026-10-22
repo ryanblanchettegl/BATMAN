@@ -510,3 +510,23 @@ svg.dial{width:2.6em;height:2.6em;flex:none;filter:drop-shadow(.08em .1em 0 rgba
 svg.rangebar{width:9em;height:.8em;vertical-align:middle;margin:0 .4em}
 .evbanner{display:block;text-align:center;margin:.1em 0 .2em}
 .evbanner span{display:inline-block;font-family:var(--marker);font-size:clamp(1.6em,4.2vh,2.8em);line-height:1.1;color:#ffd84a;background:#151318;padding:.1em .6em;transform:rotate(-1.2deg);text-shadow:.06em .07em 0 #8a1f18;box-shadow:.12em .14em 0 rgba(0,0,0,.4)}
+/* the notification bar: a coloured note with dark ink. Trouble is a pink note, good news a green one;
+   the old dark theme's red and green backgrounds hid the red heading, and the list arrows of .note leaked in. */
+.toast span::before{content:none}
+.toast.note.bad{background:#f7cfc4} .toast.note.good{background:#cfe6b4}
+.toast.note .tn b{font-family:var(--marker);font-weight:400;text-transform:none;letter-spacing:.02em}
+.toast.note.good .tn b{color:#1d6b2a}
+.toast{padding-inline:6ch}
+/* a long window title ends in "…" inside its own column instead of running under the label at the right */
+.wn>.ttl h2{justify-self:stretch;min-width:0;max-width:100%;overflow:hidden;text-overflow:ellipsis}
+/* a meter is a row of small card blocks: filled ones in the meter's colour, the rest pale */
+.meter{display:inline-flex;align-items:center;gap:.09em;vertical-align:-.05em;letter-spacing:0}
+.meter i{display:inline-flex;gap:.09em}
+.meter s{display:inline-block;width:.4em;height:.72em;background:currentColor;border-radius:1px;text-decoration:none;box-shadow:.04em .05em 0 rgba(0,0,0,.18)}
+.meter i s{opacity:.35;box-shadow:none}
+.meter.skp{color:#b8860b;margin-left:.3ch} .meter.skp s{width:.6em;height:.6em}
+/* on paper a plain meter fills in green ink and its empty blocks are always pale card, whatever colour the row is */
+.meter{color:#2f7a3a}
+.meter i s,.win .meter i s,.wn .meter i s,.lb .meter i s{background:#bfb49a;opacity:.7}
+/* the note's torn ends grow with the screen: keep the words clear of them */
+.toast{padding-inline:max(6ch,4.6vw)}

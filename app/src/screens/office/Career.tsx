@@ -22,7 +22,7 @@ function You() {
     <ul class="list sklist">{Object.keys(E.SKILLS).map(k => {
       const sk = E.SKILLS[k], lv = b.sk[k] || 0;
       return <li>
-        <span title={sk.d}><b>{sk.n}</b> <span class="num gold" role="img" aria-label={lv + ' of ' + sk.max}>{'■'.repeat(lv)}<span class="muted">{'□'.repeat(Math.max(0, sk.max - lv))}</span></span></span>
+        <span title={sk.d}><b>{sk.n}</b> <span class="meter au skp" role="img" aria-label={lv + ' of ' + sk.max}>{Array.from({ length: lv }, (_, k) => <s key={k} />)}<i>{Array.from({ length: Math.max(0, sk.max - lv) }, (_, k) => <s key={k} />)}</i></span></span>
         {b.pts > 0 && lv < sk.max && <Btn kind="sm" t="skill" d={{ k }} label={'Add a point to ' + sk.n} onClick={() => act(() => E.spendPoint(S, k))}>+1</Btn>}
       </li>;
     })}</ul>
