@@ -19,7 +19,7 @@ export function LevelLine(p: { w: W }) {
 
 export function AttrWindow(p: { m: Modal }) {
   const S = G.S, w: W = S.w[p.m.id], pi = E.progInfo(S, w.id), mine = w.promo === S.player;
-  const spend = (k: string) => { const r = act(() => E.spendPoint(S, w.id, k)); if (!r.ok) showResult('Attributes', r.msg, true); };
+  const spend = (k: string) => { const r = act(() => E.spendAttr(S, w.id, k)); if (!r.ok) showResult('Attributes', r.msg, true); };
   return <Window title={'Attributes: ' + w.name} wide>
     <div class="row top nowrap gap2 attr-head"><Portrait w={w} />
       <div><p class="attr-title">Level <b>{pi.lv}</b> <span class="muted">{'·'} {pi.devN} {'·'}</span> Overall <b>{pi.overall}</b></p>

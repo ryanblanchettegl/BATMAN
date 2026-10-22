@@ -22,7 +22,7 @@ ok('points', 'your wrestlers keep their points to spend', mine.some(w => w.promo
 ok('rivals', 'rival companies spend theirs', S.w.filter(w => w.promo !== 'ewe' && w.promo !== 'FA' && !w.nw).every(w => !(w.ap > 0)));
 // spending: cost rises above 80 and 90, and a spent point raises the attribute by one
 const w = mine.find(x => x.promo === 'ewe' && x.ap > 0), k = E.progInfo(S, w.id).attrs.find(a => a.can).k, v0 = w[k], ap0 = w.ap;
-const r = E.spendPoint(S, w.id, k); ok('spend', 'a point raises the attribute by one and costs its price', r.ok && w[k] === v0 + 1 && w.ap === ap0 - (v0 < 80 ? 1 : v0 < 90 ? 2 : 3));
+const r = E.spendAttr(S, w.id, k); ok('spend', 'a point raises the attribute by one and costs its price', r.ok && w[k] === v0 + 1 && w.ap === ap0 - (v0 < 80 ? 1 : v0 < 90 ? 2 : 3));
 E.autoSpend(S, w.id); ok('auto', 'let them choose spends what they can', E.progInfo(S, w.id).attrs.every(a => !a.can));
 // doing it grows it: a hardcore match teaches Hardcore
 { const a = mine.find(x => x.promo === 'ewe' && x.inj <= 0 && E.progInfo(S, x.id).attrs.find(z => z.k === 'hc').v < E.progInfo(S, x.id).attrs.find(z => z.k === 'hc').cap); const hc0 = (a.gx && a.gx.hc || 0) + a.hc;

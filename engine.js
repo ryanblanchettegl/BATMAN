@@ -14411,7 +14411,7 @@ E.progInfo=function(S,id){var w=S.w[id];if(!w)return null;progInit(S,w);
     reg:(w.rgx||[]).map(rgRow).map(function(r){return {k:r.k,n:PROG_BY[r.k]?PROG_BY[r.k].n:r.k,by:r.n,why:r.why,when:cal(r.w).label};}),
     attrs:PROG_ATTR.map(function(a){var v=w[a.k]||1,cap=progCap(w,a.k),fall=(w.rgx||[]).map(rgRow).filter(function(r){return r.k===a.k&&S.week-r.w<48;}).reduce(function(t,r){return t+r.n;},0);return {k:a.k,n:a.n,d:a.d||'',g:a.g,fall:fall,v:v,cap:cap,cost:progCost(v),can:v<cap&&(w.ap||0)>=progCost(v),grow:+((w.gx||{})[a.k]||0).toFixed(2)};})};};
 /** Spend a point (the player's own wrestlers). */
-E.spendPoint=function(S,id,k){var w=S.w[id];if(!w||w.promo!==S.player)return {ok:false,msg:'Not one of yours.'};progInit(S,w);var why=progSpend(w,k);return why?{ok:false,msg:why}:{ok:true,msg:w.name+': '+PROG_BY[k].n+' '+w[k]+'.'};};
+E.spendAttr=function(S,id,k){var w=S.w[id];if(!w||w.promo!==S.player)return {ok:false,msg:'Not one of yours.'};progInit(S,w);var why=progSpend(w,k);return why?{ok:false,msg:why}:{ok:true,msg:w.name+': '+PROG_BY[k].n+' '+w[k]+'.'};};
 /** Let them choose where their points go. */
 E.autoSpend=function(S,id){var w=S.w[id];if(!w||w.promo!==S.player)return {ok:false,msg:'Not one of yours.'};var a=w.ap||0;progAuto(S,w);return {ok:true,msg:w.name+' spent '+(a-(w.ap||0))+' point'+(a-(w.ap||0)===1?'':'s')+' on what suits them.'};};
 /** Let every wrestler of yours with points choose. */

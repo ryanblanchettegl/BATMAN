@@ -325,7 +325,7 @@ html body .win.ppop .wb{font-family:var(--hand);font-size:1.06em}
 /* lists that scroll inside their window, headings kept in view (Ryan, 20 October: "I want it scrollable") */
 .lb.scroll{overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin}
 .lb.scroll thead th{position:sticky;top:0;z-index:2;background:#efe6cf}
-.lkpage .win > .bd{overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin}
+.lkpage .wn > .bd{overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin}
 /* staff (screens/roster/Staff.tsx): the people on your books beside Create staff */
 .stf{display:grid;grid-template-columns:1fr 1.15fr;gap:1.2em;min-height:0}
 .stf h3{font-family:var(--marker);font-weight:400;color:#c23a30;margin:0 0 .3em}
@@ -503,3 +503,4 @@ html body .win.ppop .wb{font-family:var(--hand);font-size:1.06em}
 .colchart{width:100%}
 .colchart svg{display:block;width:100%;height:clamp(6em,24vh,16em);filter:drop-shadow(.08em .12em .08em rgba(0,0,0,.3))}
 .colchart .cl{display:flex;justify-content:space-around;font-family:var(--hand);font-size:.85em;color:#55555e}
+.lkpage .piebox svg.pie{width:clamp(3.5em,13vh,8em)}
