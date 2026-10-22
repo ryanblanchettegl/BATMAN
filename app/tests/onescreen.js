@@ -1,7 +1,7 @@
 /* One screen, no scrolling: the card builder and the broadcast must fit the window at every size, whatever is on them.
    Run: NODE_PATH=<dir containing playwright> node app/tests/onescreen.js */
 const { open, go, overflow, shot, state, fits } = require('./helper');
-const SIZES = [['desk', 1280, 720], ['desk', 1280, 800], ['desk', 1920, 1080], ['desk', 2560, 1080], ['tablet', 1024, 768], ['tv', 1920, 1080]];
+const SIZES = [['desk', 1280, 720], ['desk', 1280, 800], ['desk', 1920, 1080], ['desk', 2560, 1080], ['desk', 2560, 1440], ['desk', 3840, 2160], ['tv', 1920, 1080]];
 const fails = [];
 const ok = (id, label, pass, detail) => { console.log(id.padEnd(15), pass ? 'ok  ' : 'FAIL', label + (detail ? ': ' + detail : '')); if (!pass) fails.push(id + ' ' + label); };
 const has = async (page, sel) => !!(await page.$(sel));

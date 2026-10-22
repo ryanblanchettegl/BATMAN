@@ -58,7 +58,7 @@ export function Sheet() {
   return <>
     <Tabs label="Issues" items={tabs} value={cur} onPick={id => view(() => { st.k = id; })} cls="mb2" />
     <div class="paper" data-t="paper">
-      <div class="mast"><p class="mt-name">{paper.toUpperCase()}</p><p class="mt-line">{'Edited by ' + ed + ' · ' + issue.label + (cur === 'now' ? ' · so far' : '') + ' · subscribers only'}</p></div>
+      <div class="mast"><p class="mt-name">{paper.toUpperCase()}</p><p class="mt-line">{(ed ? 'Edited by ' + ed + ' · ' : '') + issue.label + (cur === 'now' ? ' · so far' : '') + ' · subscribers only'}</p></div>
       <Issue s={issue} live={cur === 'now'} />
     </div>
   </>;

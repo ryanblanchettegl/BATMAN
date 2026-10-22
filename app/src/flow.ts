@@ -12,10 +12,19 @@ export function openReport(i: number) { go('booking'); const b = book(); b.repor
 
 const seed = () => (Date.now() % 2000000000) | 0;
 export function startGame(pid: string | null, opts: { name: string; diff: string; fed: any | null; dpart?: any; iron?: boolean }) {
-  setUniverse(pref.uni || DEFAULT_UNI, true);   // keeps any companies the player left out
-  G.S = E.newGame(pid, seed(), pref.tut ? { ...opts, start: 'flag' } : opts);   // the first show is the biggest of the year, and the tutorial (src/99-tutorial.js)
-  resetUi(); save(); redraw(); window.scrollTo(0, 0);
-  if (pref.letter && G.S) openModal({ kind: 'welcome' });   // the owner's letter. It has its own switch in Options, and can be read again from the desk.
+  // a new game takes a few seconds to set up: a card on the board says so first, then the work runs once it is drawn
+  const card = document.createElement('div');
+  card.className = 'scrim starting'; card.setAttribute('role', 'status'); card.setAttribute('data-t', 'starting');
+  card.innerHTML = '<div class="stcard"><b>Getting the company ready</b><p>The roster, the year on the road and what every crowd expects. This takes a few seconds.</p></div>';
+  document.body.appendChild(card);
+  requestAnimationFrame(() => setTimeout(() => {
+    try {
+      setUniverse(pref.uni || DEFAULT_UNI, true);   // keeps any companies the player left out
+      G.S = E.newGame(pid, seed(), pref.tut ? { ...opts, start: 'flag' } : opts);   // the first show is the biggest of the year, and the tutorial (src/99-tutorial.js)
+      resetUi(); save(); redraw(); window.scrollTo(0, 0);
+      if (pref.letter && G.S) openModal({ kind: 'welcome' });   // the owner's letter. It has its own switch in Options, and can be read again from the desk.
+    } finally { card.remove(); }
+  }, 30));
 }
 /** The weekly challenge: the same world and seed for everyone this week, twelve weeks to run. */
 export function isoWeekId(d: Date): string {

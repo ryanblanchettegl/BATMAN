@@ -245,3 +245,78 @@ var GR_FEUD={
   fw_done:['{f} came to an end in {co} this week.','That is a wrap on {f} in {co}.'],
   fw_fizz:['{f} in {co} never caught on, and it is over.','{co} quietly let {f} die. Nobody noticed.']
 };
+
+/* ---------- the podcast: two hosts talk through the week (src/99-zpodcast.js) ----------
+   Host A is a writer from the press, sure of the facts. Host B is a retired wrestler with dry jokes. {a} and {b} are
+   their first names, {show} the podcast, {co} your company. `tone` is how warm the writer is to your company:
+   1 friendly, 0 fair, -1 cool. */
+var GR_POD={
+  hello:['Welcome to {show}. I am {a}, here with {b}, and we have a lot to get to this week.','Hello and welcome to {show}. {a} here, and {b} is with me as always.','It is {wk}, this is {show}, I am {a}, and across the desk is {b}.','Welcome, everybody. This is {show}. I am {a}, that is {b}, and there is plenty to talk about.'],
+  hi_b:['We always have a lot to get to.','Hello, everybody. Get comfortable. {a} will be a while.','Good to be here. I think.','Hello. I have notes this week. Two of them.','Hi, all. I have had three coffees, so let us go.'],
+  lead:['The big story this week. {lead}','Let us start with the news everybody is talking about. {lead}','First things first. {lead}'],
+  lead_b:['That is a big one.','I did not see that coming.','People in the locker room will have opinions about that.','Well. That changes things.','I saw that and said a word I cannot say here.'],
+  // your company's shows
+  grade:[
+    {t:'#grade_up#',if:function(c){return c.band>0;},w:3},{t:'#grade_par#',if:function(c){return c.band===0;},w:3},{t:'#grade_down#',if:function(c){return c.band<0;},w:3}],
+  grade_up:[{t:'{sh} from {co}. I had it at {g}, and that crowd got more than they came for.',w:2},{t:'{sh} was a good night for {co}. I graded it {g}, better than that crowd expected.',if:function(c){return c.tone>=0;}},{t:'Fine. {sh} was good. I had it at {g}. I will give {co} that one.',if:function(c){return c.tone<0;},w:3},{t:'Credit where it is due. {sh} gets {ag} from me, and {co} earned it.',if:function(c){return c.tone>0;},w:2}],
+  grade_par:['{sh} from {co} gets {ag} from me. About what that crowd came for.','I had {sh} at {g}. Nothing wrong with it, nothing special either.',{t:'I graded {sh} {g}. A solid night, and {co} has done worse.',if:function(c){return c.tone>=0;}},{t:'I graded {sh} {g}. Middle of the road, as {co} so often is.',if:function(c){return c.tone<0;},w:2}],
+  grade_down:['I graded {sh} {g}, and that crowd wanted more.','I have to be honest. {sh} gets {ag}. It came up short.',{t:'I had {sh} at {g}. Not their best, and they will know it.',if:function(c){return c.tone>0;},w:2},{t:'{sh} gets {ag} from me. I am not surprised. {co} has been coasting.',if:function(c){return c.tone<0;},w:3}],
+  grade_b:[{t:'#gb_up#',if:function(c){return c.band>0;}},{t:'#gb_par#',if:function(c){return c.band===0;}},{t:'#gb_down#',if:function(c){return c.band<0;}}],
+  gb_up:['I watched it twice. That is how you know.','The crowd was hot all night. That makes everybody look good.','I agree, and I hate agreeing with you.','The people in the back will be happy with that one.'],
+  gb_par:['It was fine. Fine is not a bad word.','I fell asleep in the middle and woke up for the main event. So it did its job.','A television show. Not every week has to be a classic.'],
+  gb_down:['The middle of that show was a long walk.','I kept checking the clock.','Somebody in the office is having a bad week.','You can feel when a crowd stops caring. They stopped caring.'],
+  best:['The match of the night was {best}. {stars}.','Best thing on the show: {best}. I had it at {stars}.','{best} stole the night. {stars}, and I might go higher on a second watch.'],
+  best_b:['You always go higher on a second watch.','Those two have chemistry. You cannot teach that.','That match was worked the right way. Nothing wasted.','Was it a good match, though? Yes. Yes it was.','I would have cut a minute out of the middle. Still great.','They told a story. People forget that is the job.'],
+  main:['In the main event, {win} beat {lose}.','The main event went to {win} over {lose}.','{win} won the main event against {lose}.'],
+  main_b:['Right result.','I would have gone the other way, but nobody asks me.','{lose} looked good in losing. That matters.','{win} needed that one.','Big win for {win}. Now do something with it.'],
+  champ:['And we have a new champion. {win} won the {title}.','The {title} changed hands. {win} is the new champion.','{win} walked out with the {title}. A new champion.'],
+  champ_b:['Look at {win} with the belt on the shoulder. That is a picture.','About time.','I give it three months. Prove me wrong, {win}.','The right person at the right time.','Good for {win}. I remember when nobody would book them.'],
+  crowd:['{att} people were in the building for it.','The crowd was {att}.','{att} paid to get in.'],
+  sellout:['A sell-out, too.','And it was sold out.'],
+  post:['After the show, {n} posted this. “{t}”','{n} had something to say afterwards. “{t}”','{n} posted after the show. “{t}”'],
+  post_b:['Somebody take the phone away.','I like it. Short and to the point.','They wrote that one themselves. You can tell.','The fans will love that.','That is a wrestler who knows how to stay in the news.'],
+  // the other companies
+  world_in:['Around the rest of the business.','Let us go around the other companies.','What else happened out there this week.'],
+  world:['Over at {co}. {t}','{co} news. {t}','From {co}. {t}'],
+  world_b:['Good for them.','I hear their locker room is happy right now.','Nobody watches that.','They are coming for the top spot. Watch.','I would have liked to see that one.'],
+  // feuds
+  feud_in:['Feud watch.','Time for the feuds.','Let us talk stories.'],
+  feud_b:[{t:'#fb_hot#',if:function(c){return c.fk==='hot';}},{t:'#fb_stale#',if:function(c){return c.fk==='stale';}},{t:'#fb_new#',if:function(c){return c.fk==='new';}},{t:'#fb_end#',if:function(c){return c.fk==='end';}}],
+  fb_hot:['That one has legs.','Feuds are why people buy tickets.','That is the best thing in wrestling right now.','Every week they top the last one.'],
+  fb_stale:['I am tired of that one, to be honest.','The fans tell you when it is over. Listen to them.','Put it out of its misery.'],
+  fb_new:['Give it a month and we will know.','I like how it started.','Early days. Do not rush it.'],
+  fb_end:['A good run.','They ended it at the right time.','I will miss that one.','About time.'],
+  // business
+  money_in:['Some business news.','The money side.','Now the boring part. Business.'],
+  money_b:['That is the boring part, everybody.','Money talks.','I only understand about half of that.','Follow the money. Always.'],
+  // the rumour mill
+  rum_in:['Now, the rumour mill.','A few things I am hearing.','Let us get to what people are saying behind the curtain.'],
+  rum_sure:['This one is solid. {t}','I am sure of this one. {t}','You can take this to the bank. {t}'],
+  rum_likely:['I am fairly sure of this. {t}','Good sources on this one. {t}','I believe this. {t}'],
+  rum_thin:['This one is thin, so do not quote me. {t}','I heard this, but I have not confirmed it. {t}','Take this with a pinch of salt. {t}'],
+  rum_b:['I will believe that when I see it.','You said the same thing last year.','Where do you get these?','I heard the same thing, actually.','Somebody is talking. Somebody always is.'],
+  fix_ok:['An update on something we said. {t}','We called this one. {t}','Remember this? {t}'],
+  fix_no:['A correction. {t}','I got one wrong, and I will say so. {t}','We have to fix one from before. {t}'],
+  fix_ok_b:['Put that on your record.','Even a broken clock.','{a} will be talking about that one for weeks.'],
+  fix_no_b:['There it is.','I am writing this down.','The great one gets one wrong.','Your sources need sources.'],
+  // the title picture
+  title_in:['The title picture in {co}.','Let us go through the champions in {co}.','Who holds the gold in {co} right now.'],
+  hold:['{w} {hv} the {title}, {n} weeks now.','{w} {hs} held the {title} for {n} weeks.','{w} still {hv} the {title}. {n} weeks.'],
+  hold_new:['{w} {is} the new holder of the {title}.','{w} {hv} the {title}, and it is brand new.'],
+  vacant:['The {title} is vacant right now.','Nobody holds the {title} at the moment.'],
+  next:['I think {c} is next in line.','{c} is the one I would book against them.','If it is not {c} next, I do not know who it is.','{c} has earned a shot.'],
+  // mail
+  mail_in:['Into the mailbag.','Time for your emails.','We got some mail.'],
+  mail:['An email from {u}. “{t}”','From {u}. “{t}”','This one is from {u}. “{t}”','Next, {u} writes. “{t}”'],
+  mail_re:['Thank you for writing.','A fair point.','I do not agree, but thank you.','Strong feelings this week.','Keep them coming.','We read every one.'],
+  // picks and the scorecard
+  pick:['My pick for {big}. {p} over {o}.','At {big}, I am taking {p} over {o}.','For {big}, I like {p} to beat {o}.'],
+  pick_same:['Same. {p} wins.','I am with you. {p}.','No argument from me.'],
+  pick_diff:['No. {o} wins it.','I am going the other way. {o}.','You are wrong. {o} takes it.'],
+  score_ok:['My pick on {f} came in. That makes me {r} right and {x} wrong.','I was right about {f}. {r} and {x} on my picks now.'],
+  score_no:['I got {f} wrong. That makes me {r} right and {x} wrong.','I missed on {f}. {r} and {x} now.'],
+  month:[{t:'It is the end of the month, so a quick look back at {co}. What went well: {good}. What did not: {bad}.',if:function(c){return !!c.bad;}},{t:'Month in review for {co}. The good: {good}. The bad: {bad}.',if:function(c){return !!c.bad;}},{t:'It is the end of the month in {co}. {good}.',if:function(c){return !c.bad;}}],
+  // sign off
+  bye:['That is the show. Thank you for listening to {show}. We will be back next week.','That is all for this week. Thanks for listening, and see you next week on {show}.','We are out of time. This has been {show}. See you next week.'],
+  bye_b:['Bye, everybody. Be nice to each other.','See you next week. Bring snacks.','That is it. Go outside.','Goodbye. {a} will keep talking after we stop recording.']
+};

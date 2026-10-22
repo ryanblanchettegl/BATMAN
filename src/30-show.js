@@ -87,7 +87,11 @@ function showStep(S,P,show,card,st){
   ba.bc=stageSeg(S,ba,segPeople(S,P,ba.text),react);rep.segs.push(ba);
   return ba;
 }
-var POP_EDGE=1;   // rating points over the crowd's bar that a show on expectation counts for, for your popularity
+var POP_EDGE=1;
+/* a new booker's first show plays to a crowd that gives them a chance (Bill, 21 October: the first hour should be won).
+   A scenario or a challenge keeps its own bar. */
+var FIRST_NIGHT=4;
+function firstNight(S){return !(S.stats&&S.stats.shows>0)&&!S.scn&&!S.chal;}   // rating points over the crowd's bar that a show on expectation counts for, for your popularity
 /* ---------- a promo or an angle on the air, as a scene ----------
    The segment's text is the record of what happened. On the air it is told in pieces: who comes out, what happens a
    sentence at a time, a quoted line said by the person who says it, how the building takes it, and the desk's word.
@@ -141,8 +145,11 @@ function showEnd(S,P,show,card,st){
   if(S.cal)return rep;
   var exp=expected(P,show);
   if(isPl&&rep.venue){var bar=barCity(S,rep.venue);if(bar){exp+=bar.d;rep.barNote=bar.note;}}
+  // the first night lowers the bar for the grade only; popularity and what the crowd learns still follow the real bar
+  var fn=isPl&&firstNight(S)?FIRST_NIGHT:0;
+  if(fn){rep.barNote=(rep.barNote?rep.barNote+' ':'')+'Your first night: the crowd gave a new booker the benefit of the doubt.';}
   var qf=clamp(1+(P.trend||0)/60,0.85,1.15)*(SLOT_V[P.slot]/SLOT_V[P.slot0])*(1+0.03*(P.prodLvl-P.prod0))*airPF(P,show);
-  rep.exp=r1(exp);rep.cs=crowdScore(rep.rating,rep.exp);
+  rep.exp=r1(exp-fn);rep.cs=crowdScore(rep.rating,rep.exp);
   var mx=mixOf(P);
   rep.viewers=Math.round(viewersK(P,show,qf)*1000);rep.gate=Math.round(rep.att*ticket(P,show)*TIX_P[P.tix]*mx.gate);rep.tv=Math.round(rep.viewers/1000*P.tvRate*mx.tv*airRate(P,show));
   rep.buys=big?Math.round(buysK(P,show,rep.hype)*1000):0;rep.ppv=Math.round(rep.buys*22*mx.ppv);

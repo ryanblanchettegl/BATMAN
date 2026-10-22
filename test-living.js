@@ -30,8 +30,13 @@ ok(stale >= 1 && ripe >= 1, 'no feud ever went stale or ripe');
   ok(!!f, 'no feud to end');
   // promises made in the inbox lock matches onto the big event (src/99-tale.js); kept out here, so the two feuding are free for their ending
   const noPromises = () => { S.locks = []; S.quests = S.quests.filter(q => q.type !== 'shot'); };
-  if (f) { const r = E.storyPlanEnd(S, f.id); ok(r.ok && f.endAt != null, 'planning an ending did not take');
-    for (let i = 0; i < 6 && !f.res; i++) { noPromises(); week(S); }
+  // a match stopped for an injury is not an ending, and a headless show always takes the safe call; so here, when somebody is hurt mid-match, they go straight to the finish
+  const hurtGoesOn = () => { const run = E.runPlayerShow; E.runPlayerShow = (S, c) => { const b = E.liveBegin(S, c); if (b.errors) return b;
+    for (let g = 0; g < 400; g++) { const r = E.liveNext(S); if (r.event) E.liveDecide(S, r.event.choices && r.event.choices[1] && /straight to the finish/.test(r.event.choices[1].n || r.event.choices[1]) ? 1 : (r.event.safe || 0)); else if (r.done) return { rep: r.rep }; }
+    return { errors: ['The show did not finish.'] }; }; return () => { E.runPlayerShow = run; }; };
+  if (f) { const r = E.storyPlanEnd(S, f.id); ok(r.ok && f.endAt != null, 'planning an ending did not take'); const back = hurtGoesOn();
+    for (let t = 0; t < 2 && !f.res; t++) { if (t) E.storyPlanEnd(S, f.id); for (let i = 0; i < 8 && !f.res && S.week <= f.endAt; i++) { noPromises(); week(S); } }
+    back();
     ok(f.res && !f.dead, 'the planned ending did not settle the feud with a payoff (res ' + f.res + ', dead ' + f.dead + ')'); }
   // a match marked as the ending ends it on a weekly show
   const g = S.feuds.filter(x => !x.res && x.promo === S.player && x.a.concat(x.b).every(id => !(S.w[id].inj > 0)))[0];   // two who can work: an injured one cannot be booked to end it

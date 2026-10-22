@@ -163,13 +163,13 @@ html .grp.grp,.grp{border-image:none;border:1.5px solid rgba(35,35,42,.28);borde
 /* a name in a list is a word written in blue ink, not a button */
 .wn .list .btn.sm[data-t="sel"],.panel .list .btn.sm[data-t="sel"]{border-image:none;background:none;padding:0 .2ch;margin:0;color:#2c4f9a;text-shadow:none;font-family:var(--hand);font-size:1em;letter-spacing:0;text-decoration:underline dotted rgba(44,79,154,.6);transform:none}
 .wn .list .btn.sm[data-t="sel"]:hover,.wn .list .btn.sm[data-t="sel"]:focus-visible{background:#ffe48a;filter:none;transform:none}
-/* the road window's two columns hold their groups a little tighter, so the hand faces fit at 1280 by 720 */
-.deskpage .road .grp{margin:.62em 0 .06em;padding:.22em 1ch .02em;line-height:1.12}
+/* the road window's two columns hold their groups a little tighter; the label sits above the first line, never on it */
+.deskpage .road .grp{margin:.74em 0 .04em;padding:.44em 1ch .02em;line-height:1.12}
 .deskpage .road .rright .grp:first-child{margin-top:.5em}
 .deskpage .road .grp>h3{font-size:.86em}
 .deskpage [data-t="fire"] .bd{line-height:1.12}
-.deskpage .ondesk .know p{margin:0;line-height:1.14} .deskpage .ondesk .know .btn{margin:0 0 .1em;padding:0 1.2ch .06em}
-.deskpage .ondesk .qpost{line-height:1.15}
+.deskpage .ondesk .know p{margin:0;line-height:1.1} .deskpage .ondesk .know .btn{margin:0 0 .1em;padding:0 1.2ch .06em}
+.deskpage .ondesk .qpost{line-height:1.1}
 /* the road map is a sheet of blue paper laid in the window, not a screen */
 .rmap>canvas{border:0;border-radius:0;background:none;box-shadow:.12em .2em .3em rgba(0,0,0,.35)}
 /* lettering that used to be in lights: marker on a strip of black card (no dot matrix: Ryan, 19 October) */
@@ -358,7 +358,7 @@ html body .win.ppop .wb{font-family:var(--hand);font-size:1.06em}
 /* the World Editor's frame (shell.tsx): every page under the same bar, a page that scrolls inside itself where it is long */
 .edshell{gap:0;padding:0}
 .edshell .edbody{flex:1 1 0;min-height:0;overflow-y:auto;padding:.8em 1.6ch}
-.edshell .edbody-in{max-width:1500px;margin:0 auto}
+.edshell .edbody-in{max-width:48em;margin:0 auto}
 .edshell .edbody .edcol-list,.edshell .edbody .edcol-form{min-width:0}
 /* Create a Wrestler and Create a Scene wear the editor's bar */
 .sc-menubar{margin:0;border-radius:0;padding:.12em 1.2ch;min-height:2.2em}
@@ -523,3 +523,31 @@ html body .win.ppop .wb{font-family:var(--hand);font-size:1.06em}
 .gim-box b{font-family:var(--marker);font-weight:400;color:#c23a30}
 /* on a short window (a 720-line laptop) a call's answers are tighter, so three long ones still fit beside the picture */
 @media (max-height:780px){.live1 .callbox.paper .callopt{padding:.18em 1.3ch .24em;line-height:1.12}.live1 .callbox.paper .callopt .says{font-size:.95em}.live1 .callbox.paper .q{font-size:1.06em;line-height:1.16}}
+/* figures on paper: a label in blue marker over a value in dark ink. The old dark look painted every value white,
+   which vanished on the cream paper (the sign-off's attendance, viewers and best match). */
+.kv small,.kv div small{font-family:var(--marker);text-transform:none;color:#2c4f9a;letter-spacing:.02em}
+.kv div span{color:var(--ink)} .kv div span .good{color:#1d6b2a} .kv div span .bad{color:#b02a20}
+/* the achievement strip is a yellow note: every word on it in dark ink */
+.toast b,.toast .tn,.toast .opt,.toast .td{color:var(--ink)} .toast b{color:#b02a20}
+/* After the show: a line that is too long for one row takes a second, instead of being cut off */
+.after1 .a1-r button{white-space:normal;align-items:baseline}
+.after1 .a1-r button span{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;text-overflow:clip}
+/* a call with four answers on a short window: two answers to a row, so the last one is never under the edge */
+.live1.tight .callbox.paper .callopts{gap:.2em}
+.live1.tight .callbox.paper .callopts:has(>.callopt:nth-child(4)){grid-template-columns:repeat(2,minmax(0,1fr))}
+/* the road window: a hometown line takes a second line instead of being cut off (the right-hand column has the room) */
+@media (min-height:761px){.deskpage .road .hm{white-space:normal;text-overflow:clip;overflow:visible}}
+/* the roster's bars: they grow with the value and change colour by band, with the number beside them */
+.mbar{display:inline-flex;align-items:center;gap:.5ch;white-space:nowrap}
+.mbar .mtrk{display:inline-block;width:3.6em;height:.62em;background:#ddd5c2;border-radius:2px;box-shadow:inset 0 0 0 1px rgba(35,35,42,.25);overflow:hidden}
+.mbar .mtrk i{display:block;height:100%}
+.mbar.b4 .mtrk i{background:#1f7a32} .mbar.b3 .mtrk i{background:#7aa83a} .mbar.b2 .mtrk i{background:#d39a1c} .mbar.b1 .mtrk i{background:#c2362b}
+.mbar .num{font-family:var(--hand);font-weight:400;color:var(--ink);font-size:.86em;min-width:2ch;text-align:right}
+/* the note's torn ends are see-through: keep the words on the paper */
+.toast{padding-inline:4.5ch}
+/* the sign-off: its headings in marker and its figures in hand, like the rest of the card */
+.live1 .moments .eyebrow{font-family:var(--marker);font-weight:400;color:#c23a30;text-transform:none;letter-spacing:.04em}
+.live1 .kv div span{font-family:var(--hand);font-size:1.12em}
+.live1 .moments .muted{color:#55555e}
+/* below the 1080p base the window is too short for the building's own line; its words are in What could happen tonight */
+@media (max-height:760px){.deskpage .road .kvl:has([data-t="road-quirk"]){display:none}}

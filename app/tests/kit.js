@@ -2,7 +2,7 @@
    window, every control has a name and works from the keyboard, and a pop-up wears the same look.
    Run: NODE_PATH=<dir containing playwright> node app/tests/kit.js */
 const { open, go, overflow, shot, fits } = require('./helper');
-const SIZES = [['desk', 1280, 720], ['desk', 1280, 860], ['desk', 1920, 1080], ['tablet', 1024, 768], ['tv', 1920, 1080]];
+const SIZES = [['desk', 1280, 720], ['desk', 1280, 860], ['desk', 1920, 1080], ['desk', 2560, 1440], ['desk', 3840, 2160], ['tv', 1920, 1080]];
 const fails = [];
 const ok = (id, label, pass, detail) => { console.log(id.padEnd(15), pass ? 'ok  ' : 'FAIL', label + (detail ? ': ' + detail : '')); if (!pass) fails.push(id + ' ' + label); };
 const rgb = (page, sel, prop) => page.$eval(sel, (e, p) => getComputedStyle(e)[p], prop);

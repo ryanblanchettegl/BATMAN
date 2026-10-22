@@ -1,5 +1,5 @@
 /* Leaving companies out of a new game, from the Federations screen.
-   Run: NODE_PATH=<dir containing playwright> node app/tests/leaveout.js   (MODES=desk,tablet) */
+   Run: NODE_PATH=<dir containing playwright> node app/tests/leaveout.js   (MODES=desk,big) */
 const { open, overflow, state } = require('./helper');
 const MODES = (process.env.MODES || 'desk').split(',');
 const fails = [];
