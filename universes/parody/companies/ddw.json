@@ -194,7 +194,7 @@
    "finisher_description": "A piledriver onto a pile of light tubes.",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 165000,
+    "monthly_salary": 1300,
     "weeks_left": 140,
     "push": "main_eventer"
    },
@@ -246,7 +246,7 @@
    "finisher_description": "A sit-out powerbomb through a door.",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 70000,
+    "monthly_salary": 550,
     "weeks_left": 60,
     "push": "upper_midcarder"
    },
@@ -298,7 +298,7 @@
    "finisher_description": "A running knee.",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 70000,
+    "monthly_salary": 550,
     "weeks_left": 116,
     "push": "upper_midcarder"
    },
@@ -350,7 +350,7 @@
    "finisher_description": "A powerbomb onto a truck tyre.",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 70000,
+    "monthly_salary": 550,
     "weeks_left": 70,
     "push": "upper_midcarder"
    },
@@ -402,7 +402,7 @@
    "finisher_description": "A diving elbow from the venue's balcony.",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 70000,
+    "monthly_salary": 550,
     "weeks_left": 28,
     "push": "upper_midcarder"
    },
@@ -454,7 +454,7 @@
    "finisher_description": "A springboard cutter.",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 38000,
+    "monthly_salary": 450,
     "weeks_left": 50,
     "push": "midcarder"
    },
@@ -506,7 +506,7 @@
    "finisher_description": "A 450 splash from the top.",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 38000,
+    "monthly_salary": 450,
     "weeks_left": 44,
     "push": "midcarder"
    },
@@ -558,7 +558,7 @@
    "finisher_description": "A brainbuster onto glass.",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 38000,
+    "monthly_salary": 450,
     "weeks_left": 68,
     "push": "midcarder"
    },
@@ -610,7 +610,7 @@
    "finisher_description": "A lariat with a barbed-wire wrapped arm.",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 38000,
+    "monthly_salary": 450,
     "weeks_left": 54,
     "push": "midcarder"
    },
@@ -662,7 +662,7 @@
    "finisher_description": "A running lariat.",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 38000,
+    "monthly_salary": 450,
     "weeks_left": 20,
     "push": "midcarder"
    },
@@ -714,7 +714,7 @@
    "finisher_description": "A 450 splash.",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 22000,
+    "monthly_salary": 450,
     "weeks_left": 80,
     "push": "lower_midcarder"
    },
@@ -766,7 +766,7 @@
    "finisher_description": "A DDT into thumbtacks.",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 38000,
+    "monthly_salary": 450,
     "weeks_left": 62,
     "push": "midcarder"
    },
@@ -818,7 +818,7 @@
    "finisher_description": "A piledriver onto a filing cabinet.",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 22000,
+    "monthly_salary": 450,
     "weeks_left": 124,
     "push": "lower_midcarder"
    },
@@ -870,7 +870,7 @@
    "finisher_description": "A suicide dive into the crowd.",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 38000,
+    "monthly_salary": 450,
     "weeks_left": 102,
     "push": "midcarder"
    },
@@ -922,7 +922,7 @@
    "finisher_description": "A cutter.",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 22000,
+    "monthly_salary": 450,
     "weeks_left": 136,
     "push": "lower_midcarder"
    },
@@ -974,7 +974,7 @@
    "finisher_description": "A piledriver.",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 70000,
+    "monthly_salary": 550,
     "weeks_left": 66,
     "push": "upper_midcarder"
    },
@@ -1025,7 +1025,7 @@
    "debut_year": 2006,
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 28000,
+    "monthly_salary": 450,
     "weeks_left": 72,
     "push": "non_wrestler"
    }

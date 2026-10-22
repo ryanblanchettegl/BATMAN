@@ -63,7 +63,7 @@ async function run(mode) {
   must(await page.$$eval('.prof .kv > div', L => L.length) === 10, 'overview does not show ten stats');
   await ok(t, 'profile overview', first.name);
   if (mode === 'desk' || mode === 'phone') await shot(page, 'roster-profile-' + mode, mode === 'phone');
-  await profTab(page, 'deal'); must(/a week, \d+ weeks left/.test(await page.$eval('.prof', e => e.innerText)), 'contract page has no terms'); await ok(t, 'profile contract');
+  await profTab(page, 'deal'); must(/(Yearly deal\. .* a week, .*left|Per appearance\. .* a show)/.test(await page.$eval('.prof', e => e.innerText)), 'contract page has no terms'); await ok(t, 'profile contract');
   await profTab(page, 'room'); must(await page.$('.prof .ego') && await page.$('.prof pre.body'), 'locker page lacks the ego grid or body figure'); await ok(t, 'profile locker room');
   await profTab(page, 'scout'); must(await page.$$eval('.prof .scout > div', L => L.length) >= 3, 'scouting page has no ranges'); await ok(t, 'profile scouting and career');
   const second = await page.$eval('tr.pick:not(.on)', e => +e.dataset.id);
@@ -242,7 +242,7 @@ async function tv() {
   a = await at(); must(a.prof && a.t === 'ptab', 'tv: the highlight did not move to the profile: ' + JSON.stringify(a));
   await ok(t, 'profile opened with arrows and Enter', n + 1 + ' presses down, then Enter');
   await page.keyboard.press('ArrowRight'); await page.keyboard.press('Enter');
-  must(/a week, \d+ weeks left/.test(await page.$eval('.prof', e => e.innerText)), 'tv: Right and Enter did not open the Contract page');
+  must(/(Yearly deal\. .* a week, .*left|Per appearance\. .* a show)/.test(await page.$eval('.prof', e => e.innerText)), 'tv: Right and Enter did not open the Contract page');
   await ok(t, 'profile page changed with arrows and Enter');
   await shot(page, 'roster-profile-tv');
   await page.evaluate(() => window.EWF_DEBUG.pad('b'));

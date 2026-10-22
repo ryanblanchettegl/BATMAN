@@ -20,8 +20,8 @@
    Money: the asking wage counts the overall rating as well as popularity, so a rich company can buy the finished
    article and a small one signs the raw and builds them up. No rnd(S): everything here is worked out. */
 var PROG_ATTR=[
-  {k:'brawl',n:'Brawling',g:'ring'},{k:'tech',n:'Technical',g:'ring'},{k:'speed',n:'Speed and air',g:'body'},{k:'stam',n:'Stamina',g:'body'},
-  {k:'hc',n:'Hardcore',g:'ring'},{k:'dur',n:'Toughness',g:'body'},{k:'safe',n:'Safety',g:'ring'},{k:'cons',n:'Consistency',g:'ring'},
+  {k:'brawl',n:'Brawling',g:'ring'},{k:'tech',n:'Technical',g:'ring'},{k:'speed',n:'Agility',g:'body'},{k:'stam',n:'Stamina',g:'body'},
+  {k:'hc',n:'Hardcore',g:'ring'},{k:'dur',n:'Toughness',g:'body'},{k:'safe',n:'Injury',g:'ring',d:'How safely they work: high means fewer injuries, to them and to the people they work with.'},{k:'cons',n:'Consistency',g:'ring'},
   {k:'mic',n:'Microphone',g:'mic'},{k:'cha',n:'Charisma',g:'mic'},{k:'sq',n:'Star quality',g:'mic'}
 ];
 var PROG_BY={};PROG_ATTR.forEach(function(a){PROG_BY[a.k]=a;});
@@ -34,7 +34,7 @@ function progNeed(lv){return 300+60*lv;}   // a young prospect levels every mont
 function progAgeX(w){var a=w.age||28;return a<=23?1.35:a<=27?1.15:a<=31?1:a<=35?0.85:0.7;}
 function progInit(S,w){
   if(!w||w.lv!=null)return;
-  var ov=overallOf(w),a=w.age||28,sq=w.sq==null?50:w.sq,pot=w.pot||workRate(w);
+  var ov=overallRaw(w),a=w.age||28,sq=w.sq==null?50:w.sq,pot=w.pot||workRate(w);
   w.lv=clamp(Math.round(1+Math.max(0,a-19)*0.9+(ov-55)/5),1,45);
   w.pxp=Math.floor(h01(w.name+'pxp')*progNeed(w.lv)*0.8);w.ap=0;w.gx={};
   var sc=(pot-60)*0.6+(sq-50)*0.4-Math.max(0,a-27)*3;
@@ -62,8 +62,8 @@ function progGain(S,w,n,out){
 }
 /* use it to grow it: a little of one attribute, kept until it adds up to a whole point */
 function progUse(w,k,amt,out){
-  if(!PROG_BY[k]||amt<=0)return;var gx=w.gx||(w.gx={});gx[k]=(gx[k]||0)+amt;
-  if(gx[k]>=1){gx[k]-=1;if((w[k]||1)<progCap(w,k)){w[k]=clamp((w[k]||1)+1,1,99);if(out)(out.learned=out.learned||[]).push(PROG_BY[k].n);}}
+  if(!PROG_BY[k]||amt<=0)return;var gx=w.gx||(w.gx={});gx[k]=Math.round(((gx[k]||0)+amt)*100)/100;
+  if(gx[k]>=1){gx[k]=Math.round((gx[k]-1)*100)/100;if(!gx[k])delete gx[k];if((w[k]||1)<progCap(w,k)){w[k]=clamp((w[k]||1)+1,1,99);if(out)(out.learned=out.learned||[]).push(PROG_BY[k].n);}}
 }
 /** Spend one point on an attribute. Returns null on success, or why not. */
 function progSpend(w,k){
@@ -100,16 +100,69 @@ function progShow(S,P,show,rep,card){
         if((s.mins||0)>=20)progUse(w,'stam',0.35,o);
         if(st>=4)progUse(w,'cons',0.2,o);
         if(s===last)progUse(w,'sq',0.15,o);
+        // regression: three poor matches in a row and they lose their touch a little
+        if(st<=1.5){w.cold=(w.cold||0)+1;if(w.cold>=3){delete w.cold;w.pxp=Math.max(0,(w.pxp||0)-Math.round(progNeed(w.lv)*0.25));progLose(S,w,'cons',1,'c',o);}}else delete w.cold;
       });
     }else if(s.k==='angle'||s.k==='promo'){
       ids.forEach(function(id){var w=S.w[id],o=row(w);progGain(S,w,(5+4*st*st)*(big?1.2:1)+(five?120:0),o);if(five)o.why.push('a five-star promo');
         progUse(w,'mic',five?1:0.35,o);progUse(w,'cha',0.25,o);});
     }
   });
-  if(isPl)rep.prog=Object.keys(acc).map(function(k){return acc[k];}).filter(function(o){return o.xp>0;}).sort(function(a,b){return (b.lv1?1:0)-(a.lv1?1:0)||b.xp-a.xp;});
+  if(isPl)rep.prog=Object.keys(acc).map(function(k){return acc[k];}).filter(function(o){return o.xp>0||(o.lost&&o.lost.length);}).sort(function(a,b){return (b.lv1?1:0)-(a.lv1?1:0)||b.xp-a.xp;});
 }
 SHOWX.push(progShow);
 E.__progShow=progShow;   // for test-progress.js
+/* ---------- regression (Ryan, 21 October: "they should be a system for regression as well") ----------
+   What can take an attribute down, the way the sports games do it, worked out and never drawn at random:
+     - age: past the peak the body goes first (the yearly decline in src/75-people.js), and in steep decline
+       consistency and how safely they work go too; the microphone never does;
+     - ring rust: eight weeks without a match takes the edge off stamina and consistency, a point every four weeks,
+       up to three a spell; matches give it back (long matches teach Stamina, good ones Consistency);
+     - a cold streak: three poor matches in a row costs consistency and a quarter of a level's experience;
+     - a long injury: six weeks out or more costs agility and stamina when they come back, more after twelve.
+   Every loss is kept on the wrestler (w.rgx, the last four, each [week, attribute, points, reason code] to keep saves small), named on the notification bar for the player's own
+   people, listed after the show and shown in the Attributes pop-up. */
+/** A reason code in words: a age, c a cold streak, rN ring rust after N weeks, iN back from N weeks injured. */
+function rgWhy(c){c=String(c||'');var n=c.slice(1);return c[0]==='a'?'age':c[0]==='c'?'a cold streak':c[0]==='r'?'ring rust: '+n+' weeks without a match':c[0]==='i'?n+' weeks out injured':c;}
+function rgRow(r){return Array.isArray(r)?{w:r[0],k:r[1],n:r[2],why:rgWhy(r[3])}:r;}   // an older save kept them as objects
+function progLose(S,w,k,n,code,out){
+  if(!w||!PROG_BY[k]||n<=0)return 0;var v0=w[k]||1,v1=clamp(v0-n,15,99),d=v0-v1;if(!d)return 0;w[k]=v1;var why=rgWhy(code);
+  var R=w.rgx||(w.rgx=[]);R.unshift([S.week,k,d,code]);if(R.length>4)R.length=4;
+  if(out)(out.lost=out.lost||[]).push(PROG_BY[k].n+' -'+d+' ('+why+')');
+  else if(w.promo===S.player&&!w.nw){var q=S.regQ||(S.regQ={});(q[w.id]=q[w.id]||[]).push(PROG_BY[k].n+' -'+d+' ('+why+')');}
+  return d;
+}
+/* age: the existing yearly decline, written down; past the cliff consistency and safety go too */
+(function(){
+  var bd=birthday;
+  birthday=function(S,w){
+    var before={};PROG_ATTR.forEach(function(a){before[a.k]=w[a.k];});bd.apply(this,arguments);if(w.rt||w.nw)return;
+    var R=w.rgx||(w.rgx=[]),lost=[];
+    PROG_ATTR.forEach(function(a){var d=(before[a.k]||0)-(w[a.k]||0);if(d>0){R.unshift([S.week,a.k,d,'a']);lost.push(a.n+' -'+d);}});
+    if(R.length>4)R.length=4;
+    if(w.cl&&w.age>=w.cl){progLose(S,w,'cons',1,'a',{lost:lost});progLose(S,w,'safe',1,'a',{lost:lost});}
+    if(lost.length&&w.promo===S.player)note(S,'Regression',w.name+' turned '+w.age+': '+lost.join(', ')+'.','bad');
+  };
+})();
+function regWeek(S){
+  if(S.cal)return;
+  S.w.forEach(function(w){
+    if(!w||w.nw||w.rt||w.promo==='FA')return;
+    if(w.wk==null)w.wk=S.week;   // nobody starts a game rusty
+    // a long injury: back in the ring a step slower
+    if(w.rwl>=6&&w.rgI!==w.rw){w.rgI=w.rw;var big=w.rwl>=12?2:1;progLose(S,w,'speed',big,'i'+w.rwl);progLose(S,w,'stam',big,'i'+w.rwl);}
+    // ring rust: weeks without a match, not counting time out hurt
+    if(w.inj>0)return;var idle=S.week-w.wk;
+    if(idle<8){delete w.rustN;return;}
+    if(idle%4===0&&(w.rustN||0)<3){w.rustN=(w.rustN||0)+1;progLose(S,w,w.rustN%2?'stam':'cons',1,'r'+idle);}
+  });
+  var q=S.regQ;S.regQ=null;
+  if(q)Object.keys(q).forEach(function(id){var w=S.w[id];if(w)note(S,'Regression',w.name+': '+q[id].join(', ')+'.','bad');});
+}
+WEEKX.push(regWeek);
+E.__regWeek=regWeek;E.__birthday=function(S,w){birthday(S,w);};   // for test-progress.js
+/* somebody who leaves you for a rival with points still to spend spends them at once, as the rival's people do */
+WEEKX.push(function(S){if(S.cal)return;S.w.forEach(function(w){if(w&&(w.ap||0)>0&&!w.nw&&w.promo!==S.player&&w.promo!=='FA')progAuto(S,w);});});
 /* points left unspent for eight weeks: the wrestler trains on their own and spends them (they do not wait forever) */
 WEEKX.push(function(S){
   if(S.cal)return;var n=0;
@@ -138,8 +191,8 @@ NEWX.push(function(S){progAll(S);});
 /* money: what a wrestler asks counts how good they are as well as how popular, so the best cost the most */
 (function(){
   var a0=E.ask,c0=E.canSign;
-  E.ask=function(S,w){var a=a0.apply(this,arguments);if(!w||w.nw)return a;var ov=overallOf(w),m=clamp(Math.pow(1.045,ov-(w.ovr||50)),0.7,1.6);return Math.round(a*m/50)*50;};
-  E.canSign=function(S,w){if(!c0.apply(this,arguments))return false;var P=S.promos[S.player];return !w||overallOf(w)<=P.image+45;};
+  E.ask=function(S,w){var a=a0.apply(this,arguments);if(!w||w.nw)return a;var ov=overallRaw(w),m=clamp(Math.pow(1.045,ov-(w.ovr||50)),0.7,1.6);return Math.round(a*m/50)*50;};
+  E.canSign=function(S,w){if(!c0.apply(this,arguments))return false;var P=S.promos[S.player];return !w||overallRaw(w)<=P.image+45;};
 })();
 /* the player's wrestlers with points waiting: a reminder on the desk, never a stop */
 TASKX.push(function(S,P,add){
@@ -151,10 +204,10 @@ TASKX.push(function(S,P,add){
 (function(){var af=E.afterShow;E.afterShow=function(S){var r=af.apply(this,arguments);if(!r||!r.items)return r;
   var rep=null;for(var i=0;i<S.reports.length;i++){if(S.reports[i].week===S.week&&S.reports[i].left&&S.reports[i].left.key===r.key){rep=S.reports[i];break;}}
   if(!rep||!rep.prog||!rep.prog.length)return r;
-  var P=rep.prog,ups=P.filter(function(o){return o.lv1;}),five=P.filter(function(o){return o.why.length;}),learned=P.filter(function(o){return o.learned&&o.learned.length;});
+  var P=rep.prog,lostP=P.filter(function(o){return o.lost&&o.lost.length;}),ups=P.filter(function(o){return o.lv1;}),five=P.filter(function(o){return o.why.length;}),learned=P.filter(function(o){return o.learned&&o.learned.length;});
   var nm=function(o){return S.w[o.id]?S.w[o.id].name:'Somebody';};
-  var line=(ups.length?ups.slice(0,2).map(nm).join(' and ')+(ups.length>2?' and '+(ups.length-2)+' more':'')+' levelled up':'Nobody levelled up')+(five.length?'; '+nm(five[0])+' earned a five-star bonus':'')+'.';
-  var detail=P.slice(0,24).map(function(o){var w=S.w[o.id];return nm(o)+': +'+o.xp+' XP'+(o.why.length?' ('+o.why[0]+')':'')+(o.lv1?'. Level '+o.lv0+' to '+o.lv1+', '+o.pts+' point'+(o.pts===1?'':'s')+' to spend':(w?', level '+w.lv:''))+(o.learned&&o.learned.length?'. Learned: '+o.learned.join(', ')+' +1':'')+'.';});
+  var line=(ups.length?ups.slice(0,2).map(nm).join(' and ')+(ups.length>2?' and '+(ups.length-2)+' more':'')+' levelled up':'Nobody levelled up')+(five.length?'; '+nm(five[0])+' earned a five-star bonus':'')+(lostP.length?'; '+nm(lostP[0])+' slipped':'')+'.';
+  var detail=P.slice(0,24).map(function(o){var w=S.w[o.id];return nm(o)+': +'+o.xp+' XP'+(o.why.length?' ('+o.why[0]+')':'')+(o.lv1?'. Level '+o.lv0+' to '+o.lv1+', '+o.pts+' point'+(o.pts===1?'':'s')+' to spend':(w?', level '+w.lv:''))+(o.learned&&o.learned.length?'. Learned: '+o.learned.join(', ')+' +1':'')+(o.lost&&o.lost.length?'. Lost: '+o.lost.join(', '):'')+'.';});
   if(learned.length)detail.push('Doing it grows it: hardcore matches teach Hardcore, submission and iron man matches Technical, long matches Stamina, promos the Microphone.');
   var seen=!!(S.nightSeen&&S.nightSeen.key===r.key&&S.nightSeen.k&&S.nightSeen.k.prog),it={k:'prog',n:'Progress',line:line,detail:detail,tone:ups.length||five.length?'good':'',seen:seen};
   var at=r.items.findIndex(function(x){return x.k==='next';});if(at<0)r.items.push(it);else r.items.splice(at,0,it);if(!seen)r.unseen=(r.unseen||0)+1;
@@ -162,7 +215,8 @@ TASKX.push(function(S,P,add){
 /** A wrestler's progression for the screens: level, experience, trait, points, and every attribute with its cap and cost. */
 E.progInfo=function(S,id){var w=S.w[id];if(!w)return null;progInit(S,w);
   return {lv:w.lv,xp:w.pxp,need:progNeed(w.lv),ap:w.ap||0,dev:w.dev,devN:DEV[w.dev].n,devD:DEV[w.dev].d,overall:overallOf(w),
-    attrs:PROG_ATTR.map(function(a){var v=w[a.k]||1,cap=progCap(w,a.k);return {k:a.k,n:a.n,g:a.g,v:v,cap:cap,cost:progCost(v),can:v<cap&&(w.ap||0)>=progCost(v),grow:+((w.gx||{})[a.k]||0).toFixed(2)};})};};
+    reg:(w.rgx||[]).map(rgRow).map(function(r){return {k:r.k,n:PROG_BY[r.k]?PROG_BY[r.k].n:r.k,by:r.n,why:r.why,when:cal(r.w).label};}),
+    attrs:PROG_ATTR.map(function(a){var v=w[a.k]||1,cap=progCap(w,a.k),fall=(w.rgx||[]).map(rgRow).filter(function(r){return r.k===a.k&&S.week-r.w<48;}).reduce(function(t,r){return t+r.n;},0);return {k:a.k,n:a.n,d:a.d||'',g:a.g,fall:fall,v:v,cap:cap,cost:progCost(v),can:v<cap&&(w.ap||0)>=progCost(v),grow:+((w.gx||{})[a.k]||0).toFixed(2)};})};};
 /** Spend a point (the player's own wrestlers). */
 E.spendPoint=function(S,id,k){var w=S.w[id];if(!w||w.promo!==S.player)return {ok:false,msg:'Not one of yours.'};progInit(S,w);var why=progSpend(w,k);return why?{ok:false,msg:why}:{ok:true,msg:w.name+': '+PROG_BY[k].n+' '+w[k]+'.'};};
 /** Let them choose where their points go. */

@@ -135,8 +135,9 @@ export const onAir = (): boolean => !!(G.S && G.S.live);
 export function liveCall(): any | null { const L = G.S && G.S.live; return L && L.ev && !L.ev.done ? L.ev : null; }
 /** Ring introductions come out together: a segment opens on its last entrance line. */
 export function lead(seg: any): number { const bc = seg.bc || []; let i = 0; while (i < bc.length && (bc[i].t === 'ring' || bc[i].t === 'ent')) i++; return Math.max(0, i - 1); }
-/** Where a segment starts on screen: at the call that shaped it if there was one (the introductions were watched while the call came in), else after the introductions. */
-function startBeat(seg: any): number { const bc = seg.bc || [], k = bc.findIndex((x: any) => x.t === 'call'); return k >= 0 ? k : opening(seg); }
+/** Where a segment starts on screen: at the call that shaped it if there was one (the introductions were watched while the call came in), else after the introductions.
+    A match with somebody's debut in it always opens on the entrances: the debut is the moment, and it has its own scene. */
+function startBeat(seg: any): number { const bc = seg.bc || [], k = bc.findIndex((x: any) => x.t === 'call'); return k >= 0 && !(seg.debut && seg.debut.length) ? k : opening(seg); }
 /** Where a segment opens on screen: a match at its first entrance, so every side walks out (Ryan, 20 October: a tag
     team comes out together, a champion with the gold); a battle royal, whose ring fills at once, at its last line. */
 export function opening(seg: any): number { const bc = seg.bc || [], ents = bc.filter((x: any) => x.t === 'ent').length;
@@ -249,10 +250,15 @@ export const PACE_N: Record<string, string> = { tv: 'TV', full: 'Full', quick: '
    fall, the finish, a new champion), the call of the bell, and lines spread evenly between, while the scene plays;
    the rest of the call is passed over, as a highlight package would. The result takes the last part of the time. */
 const TV_LINE = 2400, TV_SEC = 2600;   // each minute on the show's clock is about two and a half seconds on screen
+/* A match runs longer (Ryan, 21 October: "matches to last longer if it supports better animations and a smoother,
+   more entertaining show"): about four seconds a minute, and each line held long enough for its move to play out
+   and settle before the next one, so a twelve-minute match is close to a minute on screen. */
+const TV_LINE_M = 3400, TV_SEC_M = 4200;
+const tvSec = (sg: any) => sg && sg.k === 'match' ? TV_SEC_M : TV_SEC, tvLine = (sg: any) => sg && sg.k === 'match' ? TV_LINE_M : TV_LINE;
 /** Which lines of a segment the TV pace shows, in order. */
 export function tvKeys(sg: any): number[] {
   const bc = (sg && sg.bc) || [], n = bc.length; if (!n) return [];
-  const T = (sg.mins || 5) * TV_SEC * 0.85, K = Math.max(2, Math.min(n, Math.round(T / TV_LINE))), keep = new Set<number>([0, n - 1]);
+  const T = (sg.mins || 5) * tvSec(sg) * 0.85, K = Math.max(2, Math.min(n, Math.round(T / tvLine(sg)))), keep = new Set<number>([0, n - 1]);
   if (sg.k === 'match') { keep.add(lead(sg) + 1); const o = opening(sg); bc.forEach((b: any, i: number) => { if (b.t === 'ent' && i >= o) keep.add(i); }); }
   bc.forEach((b: any, i: number) => { if (b.h || b.t === 'call' || b.t === 'ear') keep.add(i); });
   for (let j = 1; keep.size < K && j <= K; j++) keep.add(Math.round(j * (n - 1) / (K + 1)));
@@ -269,10 +275,10 @@ export function autoWait(): number {
   const L = livePos(r), s = r.segs[L.s], bc = (s && s.bc) || [], sp = Math.sqrt(pref.speed || 1);
   if (!s) return 0;
   if (pref.pace === 'tv') {   // the segment's seconds, shared between the lines shown, and the last part for its result
-    const T = (s.mins || 5) * TV_SEC, keys = tvKeys(s);
+    const T = (s.mins || 5) * tvSec(s), keys = tvKeys(s);
     if (L.b >= bc.length) return Math.round(Math.max(1600, T * 0.15) / sp);
     const b = bc[L.b], hot = b && b.h ? (b.h > 1 ? 900 : 400) : 0;
-    return Math.round(Math.max(900, T * 0.85 / Math.max(1, keys.length)) / sp + hot);
+    return Math.round(Math.max(s.k === 'match' ? 2600 : 900, T * 0.85 / Math.max(1, keys.length)) / sp + hot);
   }
   const quick = pref.pace === 'quick' || pref.pace === 'results';
   if (L.b >= bc.length) return Math.round((quick ? 2400 : 3400) / sp);   // the result: stars, the scores, the belt
@@ -283,9 +289,11 @@ export function autoWait(): number {
 }
 /** Arm auto-play for what is on screen now. `key` names that moment; a new moment re-arms it. */
 export function autoArm(key: string) {
-  autoStop(); if (!pref.auto) return;
+  autoStop();
   autoKey = key;
-  const still = () => pref.auto && autoKey === key && !ui.modal && !!liveReport() && !liveCall();
+  // a promo or an angle plays through on one press, auto-play or not (Ryan, 21 October); it stops on its result like everything else
+  const segOn = () => { const r = liveReport(); if (!r) return false; const L = livePos(r), s = r.segs[L.s]; return !!s && s.k !== 'match' && L.b < (s.bc || []).length; };
+  const still = () => (pref.auto || segOn()) && autoKey === key && !ui.modal && !!liveReport() && !liveCall();
   const wait = () => {
     autoT = null; if (!still()) return;
     if (typer.active() || (typeof document !== 'undefined' && document.hidden)) { autoT = setTimeout(wait, 150); return; }

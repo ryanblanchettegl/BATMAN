@@ -58,8 +58,8 @@ MOM.beltElsewhere={
   },
   res:function(S,ev,c,P,w){
     var t=titleById(P,ev.title),RV=S.promos[ev.rv],r;t.holders=[];t.since=S.week;momLose(S,w,'walked out with the belt');joinCompany(S,w,RV,null,48);news(S,'title',w.name+' walked out of '+P.name+' with the '+t.name+' and appeared on '+RV.name+'’s show.');
-    if(c===0){r=rollCheck(S,ev.checks[0]);ev.roll=r;P.cash-=90000;if(r.ok){t.prestige=clamp(t.prestige+3,10,100);RV.rel=clamp((RV.rel||0)-10,-100,100);return rollText(r)+'The lawyers get the belt back inside the week. It costs '+money(90000)+' and you are the injured party for once. The title is vacant and its prestige is up.';}
-      P.image=clamp(P.image-0.3,5,100);P.cash-=60000;return rollText(r)+'The case drags. You spend '+money(150000)+' and the papers call you petty.';}
+    if(c===0){r=rollCheck(S,ev.checks[0]);ev.roll=r;var lw=Math.round(90000*msc(P)/100)*100;P.cash-=lw;if(r.ok){t.prestige=clamp(t.prestige+3,10,100);RV.rel=clamp((RV.rel||0)-10,-100,100);return rollText(r)+'The lawyers get the belt back inside the week. It costs '+money(lw)+' and you are the injured party for once. The title is vacant and its prestige is up.';}
+      P.image=clamp(P.image-0.3,5,100);P.cash-=Math.round(60000*msc(P)/100)*100;return rollText(r)+'The case drags. You spend '+money(Math.round(150000*msc(P)/100)*100)+' and the papers call you petty.';}
     if(c===1){r=rollCheck(S,ev.checks[1]);ev.roll=r;if(r.ok){S.hype=(S.hype||0)+0.06;P.image=clamp(P.image+0.2,5,100);return rollText(r)+'Your next show opens with a joke at their expense. The crowd loves it and the story is yours now.';}
       S.rateMod=(S.rateMod||0)-2;return rollText(r)+'The joke dies on air. The belt is still on their show and you look small.';}
     momMine(S).filter(function(x){return x.g===w.g;}).sort(function(a,b){return b.ovr-a.ovr;}).slice(0,4).forEach(function(x){x.morale=clamp(x.morale+4,0,100);});
@@ -124,7 +124,7 @@ MOM.handed={
 MOM.arrival={
   make:function(S,P){
     var rv=S.order.filter(function(id){return id!==S.player;}).map(function(id){return S.promos[id];}).sort(function(a,b){return b.image-a.image;})[0];if(!rv)return null;
-    var star=rosterOf(S,rv.id).filter(function(w){return !w.nw&&holdLvl(rv,w.id)>0;}).sort(function(a,b){return b.ovr-a.ovr;})[0];if(!star||star.ovr<P.image)return null;var fee=Math.min(Math.round(star.wage*10/1000)*1000+25000,Math.max(25000,Math.round(Math.max(0,P.cash)*0.35/1000)*1000));   // never more than a third of what the company has
+    var star=rosterOf(S,rv.id).filter(function(w){return !w.nw&&holdLvl(rv,w.id)>0;}).sort(function(a,b){return b.ovr-a.ovr;})[0];if(!star||star.ovr<P.image)return null;var fee=(function(b){return Math.min(Math.round(star.wage*10/100)*100+b,Math.max(b,Math.round(Math.max(0,P.cash)*0.35/100)*100));})(Math.round(25000*msc(P)/100)*100);   // never more than a third of what the company has
     return {w:star.id,rv:rv.id,fee:fee,text:rv.name+'’s biggest star, '+star.name+', has a free night and is willing to walk onto your show unannounced for '+money(fee)+'. Your locker room is watching what you do.',
       choices:['Pay '+money(fee)+' and spring it','Decline','Tease it on the air and decide later'],checks:{2:mkCheck(7,skillMods(S,'creative'))}};
   },

@@ -47,7 +47,7 @@ Two more lists sit beside this one, both finished:
 | Action points | Every action point spent leaves a note of what happened, on the desk and on the next show report. |
 | Booking screen | Replaces the current card editor. Card size is set by show length: 1 hour is 3 matches and 3 promos, 2 hours is 4 and 4, 3 hours or pay-per-view is 5 and 5. |
 | Promos | The player picks who and what kind; the game writes and grades it. |
-| The week | The player can pre-book every show of the week. Each show affects the next one. |
+| The week | Each show is booked on its own, one at a time; there is no booking the whole week ahead (Ryan, 21 October). Each show affects the next one. |
 | The goal | Open-ended, like a tycoon game: a world top 500 of every wrestler (yearly, with a weekly top ten), level-up pop-ups after shows, yearly awards, numbers that visibly climb, more dynamic events. |
 | Events | Backstage incidents, the business calling, wrestler life events, fan and internet moments, and situations modelled on famous moments in wrestling history. |
 | Storylines | Templates modelled on famous and infamous real storylines. The player spends booking power to start the epic ones. |

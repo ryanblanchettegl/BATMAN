@@ -9,7 +9,7 @@ function mkOffer(S,P){
   else{var lo=99;Object.keys(P.base).forEach(function(k){if(P.base[k]<lo)lo=P.base[k];});o.val=Math.round(crowdScoreD(-ri(S,5,10)));o.cg=1;o.text='No show graded under '+gradeG(o.val);}
   // a tier, picked by a hash so the seeded draws stay in step: national sponsors only talk to a popular company (TASKS 6)
   var hv=h01('sp'+S.seed+o.name+S.week),tr=P.image>=65&&hv<0.3?2:(P.image>=45&&hv<0.65?1:0);o.tier=tr;o.tn=SP_TIER[tr];mult*=[1,1.35,1.8][tr];
-  o.pay=Math.max(1000,Math.round(P.inc0*(0.012+rnd(S)*0.02)*mult*mixOf(P).sp/1000)*1000);
+  o.pay=(function(v){return v<5000?Math.max(100,Math.round(v/100)*100):Math.round(v/1000)*1000;})(P.inc0*(0.012+rnd(S)*0.02)*mult*mixOf(P).sp);
   return o;
 }
 function refreshOffers(S){var P=S.promos[S.player];S.spOffers=[];for(var i=0;i<3;i++){var o=mkOffer(S,P);if(o)S.spOffers.push(o);}}

@@ -263,7 +263,7 @@
    ],
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 60000,
+    "monthly_salary": 1200,
     "weeks_left": 64,
     "push": "main_eventer"
    }
@@ -314,7 +314,7 @@
    ],
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 60000,
+    "monthly_salary": 1200,
     "weeks_left": 51,
     "push": "main_eventer"
    }
@@ -352,7 +352,7 @@
    "debut_year": 2006,
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 60000,
+    "monthly_salary": 1200,
     "weeks_left": 66,
     "push": "main_eventer"
    }
@@ -403,7 +403,7 @@
    ],
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 60000,
+    "monthly_salary": 1200,
     "weeks_left": 71,
     "push": "main_eventer"
    }
@@ -448,7 +448,7 @@
    ],
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 34000,
+    "monthly_salary": 700,
     "weeks_left": 127,
     "push": "upper_midcarder"
    }
@@ -497,7 +497,7 @@
    ],
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 18000,
+    "monthly_salary": 450,
     "weeks_left": 96,
     "push": "midcarder"
    }
@@ -548,7 +548,7 @@
    ],
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 60000,
+    "monthly_salary": 1200,
     "weeks_left": 65,
     "push": "main_eventer"
    }
@@ -599,7 +599,7 @@
    ],
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 34000,
+    "monthly_salary": 700,
     "weeks_left": 116,
     "push": "upper_midcarder"
    }
@@ -637,7 +637,7 @@
    "debut_year": 2006,
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 60000,
+    "monthly_salary": 1200,
     "weeks_left": 96,
     "push": "main_eventer"
    }
@@ -685,7 +685,7 @@
    ],
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 34000,
+    "monthly_salary": 700,
     "weeks_left": 85,
     "push": "upper_midcarder"
    }
@@ -726,7 +726,7 @@
    "finisher_description": "A submission hold.",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 34000,
+    "monthly_salary": 700,
     "weeks_left": 55,
     "push": "upper_midcarder"
    }
@@ -764,7 +764,7 @@
    "debut_year": 2006,
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 34000,
+    "monthly_salary": 700,
     "weeks_left": 50,
     "push": "upper_midcarder"
    }
@@ -811,7 +811,7 @@
    ],
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 34000,
+    "monthly_salary": 700,
     "weeks_left": 115,
     "push": "upper_midcarder"
    }
@@ -860,7 +860,7 @@
    ],
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 34000,
+    "monthly_salary": 700,
     "weeks_left": 86,
     "push": "upper_midcarder"
    }
@@ -911,7 +911,7 @@
    ],
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 60000,
+    "monthly_salary": 1200,
     "weeks_left": 79,
     "push": "main_eventer"
    }
@@ -949,7 +949,7 @@
    "debut_year": 2006,
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 60000,
+    "monthly_salary": 1200,
     "weeks_left": 76,
     "push": "main_eventer"
    }
@@ -989,7 +989,7 @@
    "finisher": "2Die4",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 34000,
+    "monthly_salary": 700,
     "weeks_left": 83,
     "push": "upper_midcarder"
    }
@@ -1027,7 +1027,7 @@
    "debut_year": 2006,
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 34000,
+    "monthly_salary": 700,
     "weeks_left": 81,
     "push": "upper_midcarder"
    }
@@ -1078,7 +1078,7 @@
    ],
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 34000,
+    "monthly_salary": 700,
     "weeks_left": 95,
     "push": "upper_midcarder"
    }
@@ -1119,7 +1119,7 @@
    "finisher_description": "A ddt.",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 34000,
+    "monthly_salary": 700,
     "weeks_left": 80,
     "push": "upper_midcarder"
    }
@@ -1157,7 +1157,7 @@
    "debut_year": 2006,
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 34000,
+    "monthly_salary": 700,
     "weeks_left": 118,
     "push": "upper_midcarder"
    }
@@ -1196,7 +1196,7 @@
    "catchphrase": "And you know this... MAN!",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 34000,
+    "monthly_salary": 700,
     "weeks_left": 102,
     "push": "upper_midcarder"
    }
@@ -1245,7 +1245,7 @@
    ],
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 34000,
+    "monthly_salary": 700,
     "weeks_left": 95,
     "push": "upper_midcarder"
    }
@@ -1294,7 +1294,7 @@
    ],
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 34000,
+    "monthly_salary": 700,
     "weeks_left": 114,
     "push": "upper_midcarder"
    }
@@ -1345,7 +1345,7 @@
    ],
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 60000,
+    "monthly_salary": 1200,
     "weeks_left": 61,
     "push": "main_eventer"
    }
@@ -1396,7 +1396,7 @@
    ],
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 60000,
+    "monthly_salary": 1200,
     "weeks_left": 60,
     "push": "main_eventer"
    }
@@ -1445,7 +1445,7 @@
    ],
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 34000,
+    "monthly_salary": 700,
     "weeks_left": 69,
     "push": "upper_midcarder"
    }
@@ -1496,7 +1496,7 @@
    ],
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 18000,
+    "monthly_salary": 450,
     "weeks_left": 104,
     "push": "midcarder"
    }
@@ -1534,7 +1534,7 @@
    "debut_year": 2006,
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 34000,
+    "monthly_salary": 700,
     "weeks_left": 59,
     "push": "upper_midcarder"
    }
@@ -1585,7 +1585,7 @@
    ],
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 34000,
+    "monthly_salary": 700,
     "weeks_left": 104,
     "push": "upper_midcarder"
    }
@@ -1623,7 +1623,7 @@
    "debut_year": 2005,
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 18000,
+    "monthly_salary": 450,
     "weeks_left": 101,
     "push": "midcarder"
    }
@@ -1661,7 +1661,7 @@
    "debut_year": 2005,
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 18000,
+    "monthly_salary": 450,
     "weeks_left": 95,
     "push": "midcarder"
    }
@@ -1699,7 +1699,7 @@
    "debut_year": 2005,
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 18000,
+    "monthly_salary": 450,
     "weeks_left": 61,
     "push": "midcarder"
    }
@@ -1737,7 +1737,7 @@
    "debut_year": 2005,
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 18000,
+    "monthly_salary": 450,
     "weeks_left": 48,
     "push": "midcarder"
    }
@@ -1775,7 +1775,7 @@
    "debut_year": 2005,
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 18000,
+    "monthly_salary": 450,
     "weeks_left": 61,
     "push": "midcarder"
    }
@@ -1813,7 +1813,7 @@
    "debut_year": 2005,
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 18000,
+    "monthly_salary": 450,
     "weeks_left": 50,
     "push": "midcarder"
    }
@@ -1854,7 +1854,7 @@
    "finisher_description": "A powerbomb.",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 18000,
+    "monthly_salary": 450,
     "weeks_left": 49,
     "push": "midcarder"
    }
@@ -1892,7 +1892,7 @@
    "debut_year": 2005,
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 18000,
+    "monthly_salary": 450,
     "weeks_left": 59,
     "push": "midcarder"
    }
@@ -1933,7 +1933,7 @@
    "finisher_description": "A spear.",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 18000,
+    "monthly_salary": 450,
     "weeks_left": 96,
     "push": "midcarder"
    }
@@ -1971,7 +1971,7 @@
    "debut_year": 2005,
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 18000,
+    "monthly_salary": 450,
     "weeks_left": 84,
     "push": "midcarder"
    }
@@ -2009,7 +2009,7 @@
    "debut_year": 2005,
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 18000,
+    "monthly_salary": 450,
     "weeks_left": 52,
     "push": "midcarder"
    }
@@ -2054,7 +2054,7 @@
    ],
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 18000,
+    "monthly_salary": 450,
     "weeks_left": 79,
     "push": "midcarder"
    }
@@ -2092,7 +2092,7 @@
    "debut_year": 2005,
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 18000,
+    "monthly_salary": 450,
     "weeks_left": 78,
     "push": "midcarder"
    }
@@ -2130,7 +2130,7 @@
    "debut_year": 2005,
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 18000,
+    "monthly_salary": 450,
     "weeks_left": 53,
     "push": "midcarder"
    }
@@ -2179,7 +2179,7 @@
    ],
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 18000,
+    "monthly_salary": 450,
     "weeks_left": 50,
     "push": "midcarder"
    }
@@ -2230,7 +2230,7 @@
    ],
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 18000,
+    "monthly_salary": 450,
     "weeks_left": 122,
     "push": "midcarder"
    }
@@ -2268,7 +2268,7 @@
    "debut_year": 2005,
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 18000,
+    "monthly_salary": 450,
     "weeks_left": 87,
     "push": "midcarder"
    }
@@ -2306,7 +2306,7 @@
    "debut_year": 2005,
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 18000,
+    "monthly_salary": 450,
     "weeks_left": 56,
     "push": "midcarder"
    }
@@ -2344,7 +2344,7 @@
    "debut_year": 2005,
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 18000,
+    "monthly_salary": 450,
     "weeks_left": 64,
     "push": "midcarder"
    }
@@ -2393,7 +2393,7 @@
    ],
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 18000,
+    "monthly_salary": 450,
     "weeks_left": 108,
     "push": "midcarder"
    }
@@ -2431,7 +2431,7 @@
    "debut_year": 2005,
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 18000,
+    "monthly_salary": 450,
     "weeks_left": 73,
     "push": "midcarder"
    }
@@ -2480,7 +2480,7 @@
    ],
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 18000,
+    "monthly_salary": 450,
     "weeks_left": 102,
     "push": "midcarder"
    }
@@ -2529,7 +2529,7 @@
    ],
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 18000,
+    "monthly_salary": 450,
     "weeks_left": 111,
     "push": "midcarder"
    }
@@ -2578,7 +2578,7 @@
    ],
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 18000,
+    "monthly_salary": 450,
     "weeks_left": 69,
     "push": "midcarder"
    }
@@ -2629,7 +2629,7 @@
    ],
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 18000,
+    "monthly_salary": 450,
     "weeks_left": 106,
     "push": "midcarder"
    }
@@ -2680,7 +2680,7 @@
    ],
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 18000,
+    "monthly_salary": 450,
     "weeks_left": 112,
     "push": "midcarder"
    }
@@ -2731,7 +2731,7 @@
    ],
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 18000,
+    "monthly_salary": 450,
     "weeks_left": 78,
     "push": "midcarder"
    }
@@ -2780,7 +2780,7 @@
    ],
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 18000,
+    "monthly_salary": 450,
     "weeks_left": 56,
     "push": "midcarder"
    }
@@ -2831,7 +2831,7 @@
    ],
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 18000,
+    "monthly_salary": 450,
     "weeks_left": 75,
     "push": "midcarder"
    }
@@ -2880,7 +2880,7 @@
    ],
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 18000,
+    "monthly_salary": 450,
     "weeks_left": 93,
     "push": "midcarder"
    }
@@ -2931,7 +2931,7 @@
    ],
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 18000,
+    "monthly_salary": 450,
     "weeks_left": 86,
     "push": "midcarder"
    }
@@ -2969,7 +2969,7 @@
    "debut_year": 2005,
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 18000,
+    "monthly_salary": 450,
     "weeks_left": 59,
     "push": "midcarder"
    }
@@ -3018,7 +3018,7 @@
    ],
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 18000,
+    "monthly_salary": 450,
     "weeks_left": 105,
     "push": "midcarder"
    }
@@ -3056,7 +3056,7 @@
    "debut_year": 2005,
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 18000,
+    "monthly_salary": 450,
     "weeks_left": 60,
     "push": "midcarder"
    }
@@ -3105,7 +3105,7 @@
    ],
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 18000,
+    "monthly_salary": 450,
     "weeks_left": 115,
     "push": "midcarder"
    }
@@ -3154,7 +3154,7 @@
    ],
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 18000,
+    "monthly_salary": 450,
     "weeks_left": 60,
     "push": "midcarder"
    }
@@ -3203,7 +3203,7 @@
    ],
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 8000,
+    "monthly_salary": 450,
     "weeks_left": 79,
     "push": "lower_midcarder"
    }
@@ -3242,7 +3242,7 @@
    "finisher": "The Talking Point",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 8000,
+    "monthly_salary": 450,
     "weeks_left": 101,
     "push": "lower_midcarder"
    }
@@ -3291,7 +3291,7 @@
    ],
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 8000,
+    "monthly_salary": 450,
     "weeks_left": 91,
     "push": "lower_midcarder"
    }
@@ -3340,7 +3340,7 @@
    ],
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 8000,
+    "monthly_salary": 450,
     "weeks_left": 101,
     "push": "lower_midcarder"
    }
@@ -3389,7 +3389,7 @@
    ],
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 8000,
+    "monthly_salary": 450,
     "weeks_left": 70,
     "push": "lower_midcarder"
    }
@@ -3430,7 +3430,7 @@
    "finisher_description": "A elbow drop.",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 8000,
+    "monthly_salary": 450,
     "weeks_left": 54,
     "push": "lower_midcarder"
    }
@@ -3479,7 +3479,7 @@
    ],
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 8000,
+    "monthly_salary": 450,
     "weeks_left": 110,
     "push": "lower_midcarder"
    }
@@ -3528,7 +3528,7 @@
    ],
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 8000,
+    "monthly_salary": 450,
     "weeks_left": 88,
     "push": "lower_midcarder"
    }
@@ -3577,7 +3577,7 @@
    ],
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 8000,
+    "monthly_salary": 450,
     "weeks_left": 68,
     "push": "lower_midcarder"
    }
@@ -3628,7 +3628,7 @@
    ],
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 8000,
+    "monthly_salary": 450,
     "weeks_left": 95,
     "push": "lower_midcarder"
    }
@@ -3675,7 +3675,7 @@
    ],
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 8000,
+    "monthly_salary": 450,
     "weeks_left": 124,
     "push": "lower_midcarder"
    }
@@ -3713,7 +3713,7 @@
    "debut_year": 2006,
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 8000,
+    "monthly_salary": 450,
     "weeks_left": 103,
     "push": "lower_midcarder"
    }
@@ -3760,7 +3760,7 @@
    ],
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 8000,
+    "monthly_salary": 450,
     "weeks_left": 127,
     "push": "lower_midcarder"
    }
@@ -3811,7 +3811,7 @@
    ],
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 8000,
+    "monthly_salary": 450,
     "weeks_left": 99,
     "push": "lower_midcarder"
    }
@@ -3862,7 +3862,7 @@
    ],
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 8000,
+    "monthly_salary": 450,
     "weeks_left": 86,
     "push": "lower_midcarder"
    }
@@ -3903,7 +3903,7 @@
    "finisher_description": "A kick.",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 8000,
+    "monthly_salary": 450,
     "weeks_left": 89,
     "push": "lower_midcarder"
    }
@@ -3941,7 +3941,7 @@
    "debut_year": 2006,
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 8000,
+    "monthly_salary": 450,
     "weeks_left": 50,
     "push": "lower_midcarder"
    }
@@ -3989,7 +3989,7 @@
    ],
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 8000,
+    "monthly_salary": 450,
     "weeks_left": 49,
     "push": "lower_midcarder"
    }
@@ -4027,7 +4027,7 @@
    "debut_year": 2006,
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 8000,
+    "monthly_salary": 450,
     "weeks_left": 99,
     "push": "lower_midcarder"
    }
@@ -4075,7 +4075,7 @@
    ],
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 8000,
+    "monthly_salary": 450,
     "weeks_left": 106,
     "push": "lower_midcarder"
    }
@@ -4124,7 +4124,7 @@
    ],
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 8000,
+    "monthly_salary": 450,
     "weeks_left": 58,
     "push": "lower_midcarder"
    }
@@ -4169,7 +4169,7 @@
    ],
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 8000,
+    "monthly_salary": 450,
     "weeks_left": 54,
     "push": "lower_midcarder"
    }
@@ -4217,7 +4217,7 @@
    ],
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 8000,
+    "monthly_salary": 450,
     "weeks_left": 79,
     "push": "lower_midcarder"
    }
@@ -4268,7 +4268,7 @@
    ],
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 8000,
+    "monthly_salary": 450,
     "weeks_left": 116,
     "push": "lower_midcarder"
    }
@@ -4315,7 +4315,7 @@
    ],
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 8000,
+    "monthly_salary": 450,
     "weeks_left": 116,
     "push": "lower_midcarder"
    }
@@ -4366,7 +4366,7 @@
    ],
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 8000,
+    "monthly_salary": 450,
     "weeks_left": 118,
     "push": "lower_midcarder"
    }
@@ -4407,7 +4407,7 @@
    "finisher_description": "A shooting star press.",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 8000,
+    "monthly_salary": 450,
     "weeks_left": 116,
     "push": "lower_midcarder"
    }
@@ -4458,7 +4458,7 @@
    ],
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 8000,
+    "monthly_salary": 450,
     "weeks_left": 107,
     "push": "lower_midcarder"
    }
@@ -4506,7 +4506,7 @@
    ],
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 8000,
+    "monthly_salary": 450,
     "weeks_left": 72,
     "push": "lower_midcarder"
    }
@@ -4554,7 +4554,7 @@
    ],
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 8000,
+    "monthly_salary": 450,
     "weeks_left": 59,
     "push": "lower_midcarder"
    }
@@ -4605,7 +4605,7 @@
    ],
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 8000,
+    "monthly_salary": 450,
     "weeks_left": 104,
     "push": "lower_midcarder"
    }
@@ -4644,7 +4644,7 @@
    "finisher": "Boogie Woogie",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 8000,
+    "monthly_salary": 450,
     "weeks_left": 73,
     "push": "lower_midcarder"
    }
@@ -4682,7 +4682,7 @@
    "debut_year": 2006,
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 8000,
+    "monthly_salary": 450,
     "weeks_left": 113,
     "push": "lower_midcarder"
    }
@@ -4731,7 +4731,7 @@
    ],
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 8000,
+    "monthly_salary": 450,
     "weeks_left": 77,
     "push": "lower_midcarder"
    }
@@ -4782,7 +4782,7 @@
    ],
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 8000,
+    "monthly_salary": 450,
     "weeks_left": 87,
     "push": "lower_midcarder"
    }
@@ -4831,7 +4831,7 @@
    ],
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 8000,
+    "monthly_salary": 450,
     "weeks_left": 74,
     "push": "lower_midcarder"
    }
@@ -4880,7 +4880,7 @@
    ],
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 8000,
+    "monthly_salary": 450,
     "weeks_left": 55,
     "push": "lower_midcarder"
    }
@@ -4931,7 +4931,7 @@
    ],
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 8000,
+    "monthly_salary": 450,
     "weeks_left": 87,
     "push": "lower_midcarder"
    }
@@ -4980,7 +4980,7 @@
    ],
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 8000,
+    "monthly_salary": 450,
     "weeks_left": 82,
     "push": "lower_midcarder"
    }
@@ -5031,7 +5031,7 @@
    ],
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 8000,
+    "monthly_salary": 450,
     "weeks_left": 101,
     "push": "lower_midcarder"
    }
@@ -5082,7 +5082,7 @@
    ],
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 8000,
+    "monthly_salary": 450,
     "weeks_left": 52,
     "push": "lower_midcarder"
    }
@@ -5133,7 +5133,7 @@
    ],
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 8000,
+    "monthly_salary": 450,
     "weeks_left": 48,
     "push": "lower_midcarder"
    }
@@ -5171,7 +5171,7 @@
    "debut_year": 2006,
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 8000,
+    "monthly_salary": 450,
     "weeks_left": 102,
     "push": "lower_midcarder"
    }
@@ -5209,7 +5209,7 @@
    "debut_year": 2006,
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 8000,
+    "monthly_salary": 450,
     "weeks_left": 58,
     "push": "lower_midcarder"
    }
@@ -5258,7 +5258,7 @@
    ],
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 8000,
+    "monthly_salary": 450,
     "weeks_left": 94,
     "push": "lower_midcarder"
    }
@@ -5307,7 +5307,7 @@
    ],
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 8000,
+    "monthly_salary": 450,
     "weeks_left": 85,
     "push": "lower_midcarder"
    }
@@ -5354,7 +5354,7 @@
    ],
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 8000,
+    "monthly_salary": 450,
     "weeks_left": 68,
     "push": "lower_midcarder"
    }
@@ -5395,7 +5395,7 @@
    "finisher_description": "A kick.",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 8000,
+    "monthly_salary": 450,
     "weeks_left": 94,
     "push": "lower_midcarder"
    }
@@ -5446,7 +5446,7 @@
    ],
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 8000,
+    "monthly_salary": 450,
     "weeks_left": 59,
     "push": "lower_midcarder"
    }
@@ -5495,7 +5495,7 @@
    ],
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 8000,
+    "monthly_salary": 450,
     "weeks_left": 122,
     "push": "lower_midcarder"
    }
@@ -5546,7 +5546,7 @@
    ],
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 8000,
+    "monthly_salary": 450,
     "weeks_left": 69,
     "push": "lower_midcarder"
    }
@@ -5597,7 +5597,7 @@
    ],
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 8000,
+    "monthly_salary": 450,
     "weeks_left": 76,
     "push": "lower_midcarder"
    }

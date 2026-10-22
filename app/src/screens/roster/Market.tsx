@@ -21,14 +21,20 @@ function Offer(p: { w: W; ask: number }) {
   const S = G.S, st = rs(), w = p.w;
   if (st.clFor !== w.id) { st.clFor = w.id; st.cl = []; }
   const C: any[] = E.clauses(S, w.id), on = (k: string) => (st.cl || []).indexOf(k) >= 0, save = C.filter(c => on(c.k)).reduce((a, c) => a + c.save, 0);
-  const send = () => act(() => { const r = E.sign(S, w.id, +st.wage || 0, +st.weeks || 48, st.cl || []); say(r.msg, { err: !r.ok }); st.offer = null; });
+  // the kind of deal is the company's: a yearly salary at a big company, a fee for each show at a small one
+  const T = E.offerTerms(S, w.id), perShow = !!T && T.ct === 'show';
+  if (perShow && st.feeFor !== w.id) { st.feeFor = w.id; st.wage = String(T.fee); }
+  const toFee = (weekly: number) => perShow ? Math.max(50, Math.round(T.fee * weekly / Math.max(1, p.ask) / 10) * 10) : weekly;
+  const send = () => act(() => { const r = perShow ? E.signFee(S, w.id, +st.wage || 0, st.cl || []) : E.sign(S, w.id, +st.wage || 0, +st.weeks || 48, st.cl || []); say(r.msg, { err: !r.ok }); st.offer = null; });
   return <Win title={'Offer to ' + w.name} area="side" t="mk-offer" tone="gold">
-    <p class="muted">They are asking about {full(p.ask)} a week. A lowball ends talks for a month.</p>
+    {T ? <p data-t="offer-kind"><b>{T.n}.</b> <span class="muted">{T.why}</span></p> : null}
+    <p class="muted">They are asking about {perShow ? full(T.fee) + ' a show' : full(p.ask) + ' a week'}. A lowball ends talks for a month.</p>
     {/* the kit text box has no min or step, and the wage moves in fifties */}
-    <label class="row mt1">Weekly wage <input type="number" id="offer-wage" class="wage" data-t="offer-wage" min={0} step={50} value={st.wage} onInput={e => { st.wage = (e.currentTarget as HTMLInputElement).value; }} /></label>
-    <label class="row mt1">Length <Sel id="offer-weeks" t="offer-weeks" value={st.weeks} options={[['48', '48 weeks'], ['96', '96 weeks']]} onChange={v => view(() => { st.weeks = v; })} /></label>
+    <label class="row mt1">{perShow ? 'Fee per show' : 'Weekly wage'} <input type="number" id="offer-wage" class="wage" data-t="offer-wage" min={0} step={50} value={st.wage} onInput={e => { st.wage = (e.currentTarget as HTMLInputElement).value; }} /></label>
+    {perShow ? <p class="muted mt1" data-t="offer-weeks">Length: a handshake. It rolls on, and either side can walk away.</p>
+      : <label class="row mt1">Length <Sel id="offer-weeks" t="offer-weeks" value={st.weeks} options={(T && T.lens ? T.lens : [[48, '1 year'], [96, '2 years']]).map((x: any) => [String(x[0]), x[1]] as [string, string])} onChange={v => view(() => { st.weeks = v; })} /></label>}
     {C.length ? <div class="mt1" data-t="offer-clauses"><p class="muted">They would like it in the contract:{save ? ' with these, about ' + full(p.ask - save) + ' a week.' : ''}</p>
-      <div class="row">{C.map(c => <Btn key={c.k} kind="sm" on={on(c.k)} t="offer-clause" d={{ k: c.k }} label={c.n + '. ' + c.d} onClick={() => view(() => { st.cl = on(c.k) ? (st.cl || []).filter(x => x !== c.k) : (st.cl || []).concat([c.k]); st.wage = String(p.ask - C.filter(x => (st.cl || []).indexOf(x.k) >= 0).reduce((a, x) => a + x.save, 0)); })}>{c.n}, saves {cash(c.save)}</Btn>)}</div></div> : null}
+      <div class="row">{C.map(c => <Btn key={c.k} kind="sm" on={on(c.k)} t="offer-clause" d={{ k: c.k }} label={c.n + '. ' + c.d} onClick={() => view(() => { st.cl = on(c.k) ? (st.cl || []).filter(x => x !== c.k) : (st.cl || []).concat([c.k]); st.wage = String(toFee(p.ask - C.filter(x => (st.cl || []).indexOf(x.k) >= 0).reduce((a, x) => a + x.save, 0))); })}>{c.n}, saves {cash(c.save)}</Btn>)}</div></div> : null}
     <div class="row mt1"><Btn kind="go" t="sign" d={{ id: w.id }} onClick={send}>Send offer</Btn><Btn kind="sm" t="offer-cancel" onClick={() => view(() => { st.offer = null; })}>Cancel</Btn></div>
     <div class="row mt1"><Btn kind="sm" t="askroom" d={{ id: w.id }} onClick={() => showResult('Ask the room', E.askRoom(S, w.id).text)}>Ask the room</Btn>
       {!w.sc && <Btn kind="sm" t="scout" d={{ id: w.id }} onClick={() => sendScout(w.id)}>Scout first ({full(E.scoutInfo(S).cost)})</Btn>}</div>
@@ -59,7 +65,7 @@ export function Market() {
   const L: W[] = E.market(S).filter((w: W) => (!q || w.name.toLowerCase().indexOf(q) >= 0) && (!mk.will || (E.canSign(S, w) && !(w.lock > S.week)))).sort((a: W, b: W) => ((key[mk.sort] || key.all)(a) - (key[mk.sort] || key.all)(b)) || b.ovr - a.ovr);
   // the whole list, in a window that scrolls inside itself (Ryan, 20 October: "I want it scrollable")
   const shown = L;
-  const toggle = (w: W, ask: number) => view(() => { if (st.offer === w.id) st.offer = null; else { st.offer = w.id; st.wage = String(ask); st.weeks = '48'; } });
+  const toggle = (w: W, ask: number) => view(() => { if (st.offer === w.id) st.offer = null; else { st.offer = w.id; st.wage = String(ask); st.weeks = '48'; st.feeFor = null; } });
   const ow = st.offer != null ? S.w[st.offer] : null, offerOpen = ow && L.indexOf(ow) >= 0 && !(ow.lock > S.week) && E.canSign(S, ow);
   return <div class="onescreen"><Desktop cls="mkpage" t="market">
     <Win title={'Free agents: ' + L.length + ' available'} area="list" t="mk-list">

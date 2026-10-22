@@ -29,7 +29,9 @@ ok(stale >= 1 && ripe >= 1, 'no feud ever went stale or ripe');
   const f = S.feuds.filter(x => !x.res && x.promo === S.player).sort((a, b) => b.heat - a.heat)[0];
   ok(!!f, 'no feud to end');
   if (f) { const r = E.storyPlanEnd(S, f.id); ok(r.ok && f.endAt != null, 'planning an ending did not take');
-    for (let i = 0; i < 6 && !f.res; i++) week(S);
+    // up to fourteen weeks: if one of them is hurt on the planned night, or the match ends on a disqualification or a
+    // count-out, the ending carries to the next big night
+    for (let i = 0; i < 14 && !f.res; i++) week(S);
     ok(f.res && !f.dead, 'the planned ending did not settle the feud with a payoff (res ' + f.res + ', dead ' + f.dead + ')'); }
   // a match marked as the ending ends it on a weekly show
   const g = S.feuds.filter(x => !x.res && x.promo === S.player)[0];

@@ -137,7 +137,15 @@ function names(ws){var n=ws.map(function(w){return w.name;});if(n.length<2)retur
 function vsLabel(sides){return sides.map(names).join(' vs ');}
 
 function cal(week){var w=week-1;var mi=CAL0.m+Math.floor(w/4);return {wom:w%4+1,month:mi%12,year:CAL0.y+Math.floor(mi/12),label:'Week '+(w%4+1)+', '+MONTHS[mi%12]+' '+(CAL0.y+Math.floor(mi/12))};}
-function wageFor(ovr,P){var v=110*Math.pow(1.072,ovr)*P.wageMult;return Math.max(100,v<1000?Math.round(v/10)*10:Math.round(v/50)*50);}
+/* Pay by the size of the company (Ryan, 21 October: realistic wages). What the top of the card earns in a year, by how
+   big the company is: about $3M at the biggest, $2M at a strong number two, $700k at a big company abroad, $150k at a
+   mid-sized one and $25k at a small indie, drawn between those points on a log scale. Everybody else is paid down from
+   that by how over they are. A world's own salaries stand as they are. */
+var PAY_TOP=[[20,8e3],[30,15e3],[37,25e3],[50,60e3],[58,150e3],[70,700e3],[74,2e6],[82,2.5e6],[92,3e6],[100,4e6]];
+function payTop(img){var T=PAY_TOP;if(img<=T[0][0])return T[0][1];for(var i=1;i<T.length;i++)if(img<=T[i][0]){var a=T[i-1],b=T[i],u=(img-a[0])/(b[0]-a[0]);return a[1]*Math.pow(b[1]/a[1],u);}return T[T.length-1][1];}
+/** How a company's pay compares with the biggest company's (1 at the top of the business). */
+function payRatio(P){return payTop(P&&P.image!=null?P.image:50)/3e6;}
+function wageFor(ovr,P){var v=104*Math.pow(1.072,ovr)*payRatio(P);return Math.max(payRatio(P)<0.02?40:100,v<1000?Math.round(v/10)*10:Math.round(v/50)*50);}   // the smallest companies pay as little as $40, a $50 night
 function workRate(w){var a=[w.brawl,w.tech,w.speed].sort(function(x,y){return y-x;});return Math.round(a[0]*0.5+a[1]*0.35+a[2]*0.15);}
 function isDev(P,brand){if(!P.brands)return false;for(var i=0;i<P.brands.length;i++)if(P.brands[i].id===brand)return !!P.brands[i].dev;return false;}
 function rosterOf(S,pid){return S.w.filter(function(w){return w.promo===pid;});}
@@ -172,6 +180,7 @@ function addWrestler(S,d,promo,brand){
 function buildPromo(S,d,byName){
     var P={id:d.id,name:d.name,blurb:d.blurb,cash:d.cash,cash0:d.cash,image:d.image,image0:d.image,wq:d.wq,angles:d.angles,style:(d.owner&&d.owner.style)||'stars',staff:d.staff||{agent:'The road agent',writer:'The head writer'},wageMult:d.wageMult,tvRate:d.tvRate,prod:d.prod,net:d.net,flagship:d.flagship,
       prodLvl:d.prodLvl==null?2:d.prodLvl,prod0:d.prodLvl==null?2:d.prodLvl,risk:d.risk==null?1:d.risk,risk0:d.risk==null?1:d.risk,tix:1,adv:0,slot:d.slot==null?1:d.slot,slot0:d.slot==null?1:d.slot,camp:d.image>=60?2:1,med:d.image>=80?3:(d.image>=60?2:(d.image>=45?1:0)),starB:{},ann:(d.announcers||['The play-by-play man','The colour man']).slice(),cities:(d.cities||['the city']).slice(),brands:d.brands?JSON.parse(JSON.stringify(d.brands)):null,shows:JSON.parse(JSON.stringify(d.shows)),titles:[],hist:[],led:{tv:0,gate:0,ppv:0,bonus:0,prod:0},base:{},mainB:{},trend:0,neg:0,fixed:0,varRate:0,last:null};
+    P.ms=1;var m0=msc(P),mi=Math.pow(m0,0.75);P.cash=Math.round(P.cash*mi);P.cash0=P.cash;P.prod=Math.round(P.prod*mi);P.net=Math.round(P.net*mi);P.tvRate=Math.round(P.tvRate*Math.sqrt(m0)*100)/100;   // money on the company's own scale: cash, production and profit go down as its income does (about m^0.75)
     d.titles.forEach(function(t){P.titles.push({id:t.id,name:t.name,brand:t.brand||null,g:t.g,lvl:t.lvl,tag:!!t.tag,holders:t.holders.map(function(n){return byName[n];}).filter(function(x){return x!==undefined;}),prestige:t.lvl===3?85:(t.lvl===2?68:52),since:1,last:1,defs:0});if(t.belt)P.titles[P.titles.length-1].belt=JSON.parse(JSON.stringify(t.belt));});
     if(d.full)P.full=d.full;if(d.owner)P.owner=d.owner;if(d.media)P.media=d.media;if(d.model&&MODELS[d.model]&&d.model!=='classic')P.model=d.model;if(d.events)P.evIn=d.events;if(d.logo&&typeof d.logo==='object')P.logo=JSON.parse(JSON.stringify(d.logo));S.promos[P.id]=P;S.order.push(P.id);if(d.draft)draftRoster(S,P,d);
     (d.teams||[]).forEach(function(tm){var a=byName[tm[0]],b=byName[tm[1]];if(a===undefined||b===undefined||S.w[a].promo!==P.id||S.w[b].promo!==P.id)return;var t=formTeam(S,P,S.w[a],S.w[b],tm[2]!=null?clamp(tm[2],0,100):35+Math.round(h01(tm[0]+tm[1])*50));if(tm[3])t.chem=clamp(tm[3],-10,10);if(tm[4])t.name=tm[4];});
@@ -224,12 +233,18 @@ function partnerOf(S,w){var t=teamOf(S,w);if(!t)return null;return S.w[t.m[0]===
 
 /* ---------- money model ---------- */
 function showMult(show){return show.big?1:(show.mult||1);}
-function viewersK(P,show,qf){return 2200*Math.pow(P.image/100,3)*showMult(show)*qf;}
-function demand(P,show,hype){return (show.big?60000*(show.flag?1.7:1)*evTy(show).cap:20000*showMult(show))*Math.pow(P.image/100,3)*hype;}
-function ticket(P,show){return (15+P.image*0.85)*(show.big?1.6*evTy(show).price:1);}
-function buysK(P,show,hype){return 700*Math.pow(P.image/100,4)*hype*(show.flag?1.8:1)*(show.big?evTy(show).buys:1);}
+/* The size of a company's money (Ryan, 21 October: a realistic economy). The biggest company takes about $35M a week,
+   a strong number two about $5M, a big company abroad about $1.5M, a mid-sized one a few hundred thousand, a small indie
+   about $25k. The audience and the crowd shrink more gently than the money: an indie still draws a few hundred people
+   at about $20 a ticket. 1 at the top of the business, never below 0.05, and set by the size the company started at. A game saved before this (no P.ms) keeps the
+   old money, since its costs were set on it. */
+function msc(P){if(!P||P.ms==null)return 1;var i=P.image0!=null?P.image0:(P.image==null?50:P.image);return clamp(Math.exp((i-92)*0.0506),0.05,1);}   // set by where a company started: popularity moves the money the usual way on top
+function viewersK(P,show,qf){return 2200*Math.pow(P.image/100,3)*Math.sqrt(msc(P))*showMult(show)*qf;}
+function demand(P,show,hype){return (show.big?60000*(show.flag?1.7:1)*evTy(show).cap:20000*showMult(show))*Math.pow(P.image/100,3)*Math.pow(msc(P),0.25)*hype;}
+function ticket(P,show){return (15+P.image*0.85)*Math.pow(msc(P),0.3)*(show.big?1.6*evTy(show).price:1);}
+function buysK(P,show,hype){return 700*Math.pow(P.image/100,4)*msc(P)*hype*(show.flag?1.8:1)*(show.big?evTy(show).buys:1);}
 function capFor(d){for(var i=0;i<CAPS.length;i++)if(CAPS[i]>=d)return CAPS[i];return CAPS[CAPS.length-1];}
-function merchWeek(S,P){var r=rosterOf(S,P.id).map(function(w){return w.ovr;}).sort(function(a,b){return b-a;}).slice(0,10);return 2.5e6*Math.pow(P.image/100,3)*Math.pow(avg(r)/100,2)*mixOf(P).merch*(1+catchBoost(S,P))+linesWeek(S,P);}
+function merchWeek(S,P){var r=rosterOf(S,P.id).map(function(w){return w.ovr;}).sort(function(a,b){return b-a;}).slice(0,10);return 2.5e6*Math.pow(P.image/100,3)*msc(P)*Math.pow(avg(r)/100,2)*mixOf(P).merch*(1+catchBoost(S,P))+linesWeek(S,P);}
 function wagesWeek(S,P){var s=0;S.w.forEach(function(w){if(w.promo===P.id)s+=w.wage;});return s+deskWage(S,P);}
 function baselineIncome(S,P){
   // what an on-expectation month brings in, per week (big events run a little hot: feuds peak there)
@@ -256,7 +271,10 @@ function calibrateShows(S,C,pid){
 }
 function calibrateCosts(S,pid){
   var P=S.promos[pid],inc=baselineIncome(S,P);
-  var over=Math.max(0,inc-wagesWeek(S,P)-P.prod*P.shows.length-P.prod-P.net-CAMP_C[P.camp||0]*inc-MED_C[P.med||0]*inc);
+  // a small company's overheads leave it a margin (Ryan, 21 October: realistic wages): its wrestlers cost little now,
+  // and an ordinary week of a small company falls short of its average week more often than a big one's does
+  var margin=clamp((60-P.image)/200,0,0.08);
+  var over=Math.max(0,inc*(1-margin)-wagesWeek(S,P)-P.prod*P.shows.length-P.prod-P.net-CAMP_C[P.camp||0]*inc-MED_C[P.med||0]*inc);
   P.fixed=Math.round(over*0.4);P.varRate=over*0.6/inc;P.inc0=inc;
 }
 function restAll(S,pid){S.w.forEach(function(w){if(w.promo===pid){w.cond=100;w.inj=0;}});}

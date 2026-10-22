@@ -133,7 +133,7 @@ async function finances(page, mode, weeks) {
   check(mode, 'the chart fits its panel without scrolling', pre.s <= pre.c + 1, pre.s + ' of ' + pre.c + 'px at ' + pre.px.toFixed(1) + 'px type');
   check(mode, 'ledger adds up', await page.evaluate(() => { const f = window.EWF_DEBUG.state().fin; return Math.abs(f.inc - f.exp - f.net) < 2; }));
   const net = await page.evaluate(() => { const b = [...document.querySelectorAll('.ledger li')].pop().querySelector('.num b'); return { v: window.EWF_DEBUG.state().fin.net, c: getComputedStyle(b).color }; });
-  check(mode, 'the net figure is green or red by its sign', net.c === (net.v < 0 ? 'rgb(170, 0, 0)' : 'rgb(0, 96, 0)'), net.v + ' in ' + net.c);
+  { const [r, g] = (net.c.match(/\d+/g) || []).map(Number); check(mode, 'the net figure is green or red by its sign', net.v < 0 ? r > g + 40 : g > r + 20, net.v + ' in ' + net.c); }
   check(mode, 'week table', await count(page, '.tw tbody tr') === Math.min(weeks, 12), await count(page, '.tw tbody tr') + ' rows');
   await fits(page, mode, 'finances after ' + weeks + ' weeks');
 }
