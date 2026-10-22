@@ -169,8 +169,8 @@ export function RoadMap(p: { road: any; t?: string }) {
   const label = R.shape ? 'A map of ' + R.shape.n + '. This week: ' + R.now.city + '.' : R.map ? 'A map of ' + R.mapName + '. This week: ' + R.now.city + (R.now.land ? ', ' + R.now.land : '') + '.' + R.stops.filter((s: any) => s.k === 'next').map((s: any) => ' Next: ' + s.city + '.').join('') : 'No map for ' + R.now.city + '.';
   const check = () => {
     const cv = ref.current, bx = box.current; if (!cv || !bx || !R.map) return;
-    if (R.shape) {   // the state, cut from paper: as tall as the box and no more than 36% of the window wide, so the words beside it are not cut short
-      const dpr = window.devicePixelRatio || 1, host = bx.parentElement as HTMLElement, cw = Math.floor(Math.min((host ? host.clientWidth : bx.clientWidth) * 0.36 - 4, (bx.clientHeight - 4) * 1.2)), ch = Math.floor(bx.clientHeight - 4);
+    if (R.shape) {   // the state, cut from paper: as tall as the box and no more than 45% of the window wide
+      const dpr = window.devicePixelRatio || 1, host = bx.parentElement as HTMLElement, cw = Math.floor(Math.min((host ? host.clientWidth : bx.clientWidth) * 0.45 - 4, (bx.clientHeight - 4) * 1.5)), ch = Math.floor(bx.clientHeight - 4);
       if (cw < 40 || ch < 40) return;
       const sig = JSON.stringify([R.map, R.shape.n, R.shape.pins]) + '@' + cw + 'x' + ch + '@' + dpr;
       if (cv.getAttribute('data-sig') === sig) return;
