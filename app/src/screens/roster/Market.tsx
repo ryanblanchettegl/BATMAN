@@ -80,8 +80,8 @@ export function Market() {
           {shown.map(w => {
             const ask = E.ask(S, w), locked = w.lock > S.week, can = E.canSign(S, w), T = E.offerTerms(S, w.id);   // a company that pays per appearance shows the fee for a show
             return <tr key={w.id} class={st.offer === w.id ? 'on' : undefined}>
-              <td><span class="nm">{w.name}</span></td>
-              <td>{w.promo === 'FA' ? (w.cut && S.promos[w.cut.from] && S.week - (w.cut.w || 0) < 6 ? 'Released by ' + S.promos[w.cut.from].name : (E.indieOf(S, w.id) ? <span title={'Working dates for ' + E.indieOf(S, w.id).n}>{E.indieOf(S, w.id).n.split(' ').slice(0, 2).join(' ')}{E.indieOf(S, w.id).weeks >= 3 ? ', ' + E.indieOf(S, w.id).weeks + ' wk' : ''}</span> : 'Free agent')) : S.promos[w.promo].name + ', ' + Math.max(0, w.con) + ' wk'}</td>
+              <td><span class="nm" title={w.name}>{w.name}</span></td>
+              <td>{w.promo === 'FA' ? (w.cut && S.promos[w.cut.from] && S.week - (w.cut.w || 0) < 6 ? 'Released by ' + S.promos[w.cut.from].name : (E.indieOf(S, w.id) ? <span title={'Working dates for ' + E.indieOf(S, w.id).n}>{E.indieOf(S, w.id).n.split(' ').slice(0, 2).join(' ')}{E.indieOf(S, w.id).weeks >= 3 ? ', ' + E.indieOf(S, w.id).weeks + ' wk' : ''}</span> : 'Free agent')) : S.promos[w.promo].name + (w.dl === 'show' ? ', per show' : ', ' + Math.max(0, w.con) + ' wk')}</td>
               <td><Side w={w} /></td>
               <td class="wide">{E.STYLE_NAME[w.style] || ''}{w.rk ? <> <Tag kind="gold">Rookie</Tag></> : null}</td>
               <td class="r num">{w.age}</td><td class="r"><Ovr w={w} /></td><td class="r num wide">{Math.round(w.ovr)}</td>
