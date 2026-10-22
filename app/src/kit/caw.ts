@@ -75,7 +75,9 @@ export interface Look {
   /** Not in Ryan's first draft: the head under the gear (the face numbers the game already keeps), so a file carries the whole person. */
   appearance?: { face?: Record<string, number>; /** Not in Ryan's first draft: face sliders, each -1 to 1 (0 is as the face shape cuts it). */ shape?: Record<string, number>; /** Not in Ryan's first draft: which eyes, nose, mouth and ears (FEATURES). */ features?: { eyes?: string; nose?: string; mouth?: string; ears?: string }; skin_tone?: number; hair_colour?: string; facial_hair?: string; face_paint?: string; paint_colour?: string; /** Not in Ryan's first draft: up to three more designs painted over the first, each in its own colour. */ paint_layers?: { k: string; c?: string }[]; tattoos?: string[];
     /** Not in Ryan's first draft: a second hair colour and how it goes in (HAIR_MIX), body hair (0 none, 1 the chest, 2 chest and belly), scars (SCARS), freckles, and the design on a mask (MASK_DESIGNS). */
-    hair_colour2?: string; hair_mix?: string; body_hair?: number; scars?: string[]; freckles?: boolean; mask_design?: string };
+    hair_colour2?: string; hair_mix?: string; body_hair?: number; scars?: string[]; freckles?: boolean; mask_design?: string;
+    /** Not in Ryan's first draft: cheeks (CHEEKS, none unless picked), eye colour (EYE_COLOURS, left out: one from the name), the hair's shine (on unless false) and the face they wear at rest (MOODS, left out: from the gimmick). */
+    cheeks?: string; eye_colour?: string; hair_shine?: boolean; mood?: string };
   attires?: Partial<Record<AttireKey, Attire>>;
   finishing_moves?: Finisher[];
   /** Not in Ryan's first draft: the rest of their moves (up to twelve), each with its kind and the part of the match it comes out in; the commentators name them. */
@@ -189,9 +191,9 @@ const FACIAL_N: Record<string, [number, number]> = { none: [0, 0], stubble: [1, 
 export const PAINT: [string, string][] = [['', 'None'], ['stripes', 'Stripes under the eyes'], ['war', 'War paint'], ['half', 'The upper half'], ['full', 'The whole face'], ['skull', 'A skull']];
 /** Designs that can be painted over the first: the first list's designs, and some that only make sense on top. */
 export const PAINT_LAYERS: [string, string][] = [['eyes', 'Round the eyes'], ['tear', 'A tear'], ['grin', 'A painted grin'], ['cross', 'A cross'], ['stripes', 'Stripes under the eyes'], ['war', 'War paint'], ['half', 'The upper half']];
-/** Eyes, noses, mouths and ears to choose from (drawn in head() in kit/puppet.ts). */
+/** Eyes, noses and mouths to choose from (drawn in head() in kit/puppet.ts). Heads have no ears now (22 October); the list stays so old files still read. */
 export const FEATURES: Record<'eyes' | 'nose' | 'mouth' | 'ears', [string, string][]> = {
-  eyes: [['almond', 'Almond'], ['round', 'Round'], ['narrow', 'Narrow'], ['hooded', 'Hooded'], ['deep', 'Deep set'], ['lashes', 'With lashes']],
+  eyes: [['almond', 'Almond'], ['round', 'Round'], ['narrow', 'Narrow'], ['hooded', 'Hooded'], ['deep', 'Deep set'], ['lashes', 'With lashes'], ['dot', 'Classic dots']],
   nose: [['straight', 'Straight'], ['button', 'Button'], ['broad', 'Broad'], ['hooked', 'Hooked'], ['flat', 'Flat and broken'], ['pointed', 'Long and pointed']],
   mouth: [['plain', 'Plain'], ['thin', 'Thin'], ['full', 'Full lips'], ['wide', 'Wide'], ['frown', 'A frown'], ['smile', 'A smile']],
   ears: [['round', 'Round'], ['pointed', 'Pointed'], ['cauliflower', 'Cauliflower'], ['small', 'Small'], ['big', 'Big'], ['flat', 'Flat to the head']],
@@ -199,7 +201,11 @@ export const FEATURES: Record<'eyes' | 'nose' | 'mouth' | 'ears', [string, strin
 /** The face sliders: key, name, the low end and the high end. */
 export const FACE_SLIDERS: [string, string, string, string][] = [['head_w', 'Head width', 'narrow', 'wide'], ['head_h', 'Head height', 'short', 'long'], ['jaw', 'Jaw', 'round', 'square'], ['chin', 'Chin', 'broad', 'pointed'],
   ['eye_size', 'Eye size', 'small', 'big'], ['eye_gap', 'Eyes apart', 'close', 'wide'], ['eye_height', 'Eyes', 'low', 'high'], ['brow_thick', 'Brows', 'thin', 'thick'], ['brow_angle', 'Brow angle', 'stern', 'worried'],
-  ['nose_w', 'Nose width', 'narrow', 'wide'], ['nose_l', 'Nose length', 'short', 'long'], ['mouth_w', 'Mouth', 'small', 'wide'], ['ears', 'Ears', 'small', 'big']];
+  ['nose_w', 'Nose width', 'narrow', 'wide'], ['nose_l', 'Nose length', 'short', 'long'], ['mouth_w', 'Mouth', 'small', 'wide']];
+/** Cheeks, eye colours and the face worn at rest, for Create a Player (22 October). The first of each is the default. */
+export const CHEEKS: [string, string][] = [['', 'None'], ['rosy', 'Rosy'], ['flush', 'Flushed'], ['tan', 'Sun-browned']];
+export const EYE_COLOURS: [string, string][] = [['', 'From the name'], ['#5a3a22', 'Brown'], ['#3d2a1c', 'Dark brown'], ['#4f6a3a', 'Green'], ['#3f6c94', 'Blue'], ['#6b5530', 'Hazel'], ['#6f7a86', 'Grey']];
+export const MOODS: [string, string][] = [['', 'From the gimmick'], ['face', 'Friendly'], ['heel', 'Stern'], ['happy', 'Grinning'], ['sad', 'Sad'], ['cocky', 'Cocky'], ['fierce', 'Fierce']];
 export const TATTOOS: [string, string][] = [['sleeve_near', 'Sleeve, near arm'], ['sleeve_far', 'Sleeve, far arm'], ['shoulder', 'Shoulder piece'], ['chest', 'Chest piece'], ['back', 'Back piece'], ['neck', 'Neck']];   // facial hair, moustache in the face numbers
 const HAIR_OF: Record<string, string> = { hair_bald: 'bald', hair_buzz_01: 'buzz', hair_crew_01: 'crew', hair_short_01: 'cap', hair_flat_top: 'flat', hair_mohawk_01: 'mohawk', hair_curls_01: 'curls', hair_long_01: 'long',
   hair_slick_01: 'slick', hair_spiky_01: 'spiky', hair_afro_01: 'afro', hair_cornrows_01: 'braids', hair_dreads_01: 'dreads', hair_ponytail_01: 'ponytail', hair_mullet_01: 'mullet', hair_wild_01: 'wild',
@@ -323,6 +329,10 @@ export function fromLook(lk: Look, base: Recipe): Recipe {
   if (ap.freckles) r.freckles = true;
   if (ap.mask_design) r.maskDesign = ap.mask_design;
   if (ap.features) r.feat = { ...ap.features };
+  if (ap.cheeks === 'rosy' || ap.cheeks === 'flush' || ap.cheeks === 'tan') r.cheeks = ap.cheeks;
+  if (ap.eye_colour && /^#[0-9a-f]{6}$/i.test(ap.eye_colour)) r.eyeCol = ap.eye_colour;
+  if (ap.hair_shine === false) r.shine = false;
+  if (ap.mood && MOODS.some(m => m[0] && m[0] === ap.mood)) r.mood = ap.mood as Recipe['mood'];
   const sh = ap.shape || {}, v = (k: string) => Math.max(-1, Math.min(1, +sh[k] || 0));
   if (Object.keys(sh).length) {   // the face sliders, over the face shape the numbers gave
     const hd = r.head; r.head = { rx: hd.rx * (1 + 0.18 * v('head_w')), ryt: hd.ryt * (1 + 0.15 * v('head_h')), ryb: hd.ryb * (1 + 0.15 * v('head_h')), sq: Math.max(1.6, Math.min(5, hd.sq + 1.5 * v('jaw'))), chin: Math.max(0, Math.min(0.6, hd.chin + 0.3 * v('chin'))) };

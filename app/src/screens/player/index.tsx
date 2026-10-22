@@ -14,7 +14,7 @@ import { ScenePlayer } from '../../kit/sceneplayer';
 import { Scene, SCENES, MOVES, POSES, WAIST, copy, scenesFor, allScenes, WHEN, PYRO, LIGHTS, dressEntrance } from '../../kit/scene';
 import { Recipe, recipeOf, blank } from '../../kit/puppet';
 import { SwatchOpts } from '../../kit/swatchopts';
-import { Look, Attire, AttireKey, Layer, Finisher, MoveRec, ATTIRES, PARTS, SWATCHES, SLOTS, FONTS, SHAPES, ARCHETYPES, FACIAL, PAINT, PAINT_LAYERS, TATTOOS, HAIR_MIX, SCARS, MASK_DESIGNS, FACE_SLIDERS, FEATURES, KICKOUT, POSITIONS, CATEGORIES, FIN_SCENES, STAGES, threeMoves, randomLook, fromLook, blankLook, finScene, swatch } from '../../kit/caw';
+import { Look, Attire, AttireKey, Layer, Finisher, MoveRec, ATTIRES, PARTS, SWATCHES, SLOTS, FONTS, SHAPES, ARCHETYPES, FACIAL, PAINT, PAINT_LAYERS, TATTOOS, HAIR_MIX, SCARS, MASK_DESIGNS, FACE_SLIDERS, FEATURES, CHEEKS, EYE_COLOURS, MOODS, KICKOUT, POSITIONS, CATEGORIES, FIN_SCENES, STAGES, threeMoves, randomLook, fromLook, blankLook, finScene, swatch } from '../../kit/caw';
 import { derive, NAMES, FaceKey } from '../../lib/portrait';
 import { PaperPortrait, PT_POSES, PT_FRAMES, companyCard } from '../../kit/paperportrait';
 import { EXPR } from '../../kit/puppet';
@@ -319,9 +319,16 @@ export function CreatePlayer(pp: PlayerProps) {
           <Group title="Face">
             {FACE_PARTS.map(([k, n]) => { const v = face[k] ?? 0; return <div class="sc-row"><span class="sc-slot">{n}</span>
               <Step onZone={zone}><select aria-label={n} data-t="caw-faceshape" data-v={k} value={String(v)} onChange={e => setFace(k, +(e.currentTarget as HTMLSelectElement).value)}>{(NAMES[k] as string[]).map((nm, i) => <option value={String(i)}>{nm}</option>)}</select></Step></div>; })}
-            {(['eyes', 'nose', 'mouth', 'ears'] as const).map(k => <div class="sc-row"><span class="sc-slot">{k === 'eyes' ? 'Eyes' : k === 'nose' ? 'Nose' : k === 'mouth' ? 'Mouth' : 'Ears'}</span>
+            {(['eyes', 'nose', 'mouth'] as const).map(k => <div class="sc-row"><span class="sc-slot">{k === 'eyes' ? 'Eyes' : k === 'nose' ? 'Nose' : 'Mouth'}</span>
               <Step onZone={zone}><select aria-label={k} data-t="caw-feat" data-v={k} value={((lk.appearance && lk.appearance.features) || {})[k] || FEATURES[k][0][0]} onChange={e => { const v = (e.currentTarget as HTMLSelectElement).value; change(n2 => { n2.appearance = n2.appearance || {}; const f: any = n2.appearance.features = { ...(n2.appearance.features || {}) }; if (v === FEATURES[k][0][0]) delete f[k]; else f[k] = v; if (!Object.keys(f).length) delete n2.appearance.features; }); }}>
                 {FEATURES[k].map(o => <option value={o[0]}>{o[1]}</option>)}</select></Step></div>)}
+            <div class="sc-row"><span class="sc-slot">Eye colour</span><Step onZone={zone}><select aria-label="Eye colour" data-t="caw-eyecol" value={ap.eye_colour || ''} onChange={e => { const v = (e.currentTarget as HTMLSelectElement).value; setAp(a => { if (v) a.eye_colour = v; else delete a.eye_colour; }); }}>
+              {EYE_COLOURS.map(o => <option value={o[0]}>{o[1]}</option>)}</select></Step></div>
+            <div class="sc-row"><span class="sc-slot">Cheeks</span><Step onZone={zone}><select aria-label="Cheeks" data-t="caw-cheeks" value={ap.cheeks || ''} onChange={e => { const v = (e.currentTarget as HTMLSelectElement).value; setAp(a => { if (v) a.cheeks = v; else delete a.cheeks; }); }}>
+              {CHEEKS.map(o => <option value={o[0]}>{o[1]}</option>)}</select></Step></div>
+            <div class="sc-row"><span class="sc-slot">Face at rest</span><Step onZone={zone}><select aria-label="Face at rest" data-t="caw-mood" value={ap.mood || ''} onChange={e => { const v = (e.currentTarget as HTMLSelectElement).value; setAp(a => { if (v) a.mood = v; else delete a.mood; }); }}>
+              {MOODS.map(o => <option value={o[0]}>{o[1]}</option>)}</select></Step></div>
+            <div class="sc-row"><span class="sc-slot">Hair shine</span><Btn kind="less" t="caw-shine" on={ap.hair_shine !== false} onClick={() => setAp(a => { if (a.hair_shine === false) delete a.hair_shine; else a.hair_shine = false; })}>{ap.hair_shine !== false ? 'Shine' : 'Matte'}</Btn></div>
             <div class="sc-row"><span class="caw-lbl">Skin tone</span><input type="range" min={0} max={100} value={face.sk ?? 50} aria-label="Skin tone" data-t="caw-skin" onInput={e => setFace('sk', +(e.currentTarget as HTMLInputElement).value)} /></div>
           </Group>
         </>}
