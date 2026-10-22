@@ -47,9 +47,8 @@ export const STAND: Record<string, number> = { torso: 0, head: 0, sh_n: 10, el_n
 const hash = (s: string) => { let h = 2166136261; for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); } return h >>> 0; };
 const rgb = (c: number[]) => '#' + c.map(v => Math.round(v).toString(16).padStart(2, '0')).join('');
 const HEADS: [number, number, number, number, number][] = [   // rx, ryb, sq, chin, ryt: Oval, Square, Long, Round, Heart, Lantern, Narrow, Wide, Diamond, Block
-  // far enough apart to tell at a glance (Ryan, 21 October: "all the heads look the same")
-  [1.12, 1.66, 2.4, 0.26, 1.44], [1.3, 1.5, 5.0, 0.0, 1.34], [1.0, 1.98, 2.5, 0.3, 1.56], [1.38, 1.4, 2.0, 0.1, 1.42], [1.24, 1.66, 2.0, 0.62, 1.52],
-  [1.16, 1.86, 5.0, 0.0, 1.3], [0.96, 1.78, 2.4, 0.34, 1.5], [1.44, 1.46, 3.0, 0.06, 1.32], [1.12, 1.76, 1.8, 0.6, 1.24], [1.42, 1.58, 6.0, 0.0, 1.26]];
+  [1.16, 1.62, 2.4, 0.25, 1.42], [1.22, 1.58, 4.0, 0.05, 1.4], [1.1, 1.78, 2.4, 0.28, 1.5], [1.26, 1.5, 2.0, 0.15, 1.42], [1.18, 1.6, 2.2, 0.42, 1.45],
+  [1.2, 1.66, 4.2, 0.0, 1.38], [1.04, 1.66, 2.4, 0.3, 1.45], [1.32, 1.55, 3.0, 0.1, 1.38], [1.14, 1.64, 2.0, 0.45, 1.4], [1.28, 1.6, 4.5, 0.02, 1.36]];
 const HAIRS = ['bald', 'buzz', 'crew', 'cap', 'cap', 'flat', 'mohawk', 'curls', 'long', 'long'];
 
 /** A recipe from a wrestler in the game (or from a world file's worker, put in the same shape, with its gimmick as
@@ -515,16 +514,17 @@ export function puppet(r: Recipe, pl: Place, pose: Record<string, number>, expr:
 function inkOf(sk: string) { const a = parseInt(sk.slice(1), 16), b = 0x16203a, m = (sh: number) => Math.round(((a >> sh) & 255) * 0.25 + ((b >> sh) & 255) * 0.75); return '#' + [16, 8, 0].map(sh => m(sh).toString(16).padStart(2, '0')).join(''); }
 /** The face at body size, cut from the same recipe as the portrait, turned three quarters toward the way the doll faces. */
 /** The back of the head: the hair, the back of a mask, the ears at the sides, a hat; no face. */
-/** The head's outline from the recipe, a little more pointed at the chin for women. The front and the back are cut from the same shape. */
+/** The head's outline from the recipe. The jaw tapers to a defined chin, as in the construction-paper portrait
+    (Ryan, 21 October), a little more for women. The front and the back are cut from the same shape. */
 function headOf(r: Recipe): Head {
   const s = 0.47;
-  return { cx: 0, cy: 0.98, rx: r.head.rx * s, ryt: r.head.ryt * s, ryb: r.head.ryb * s, sq: r.head.sq, chin: Math.min(0.65, r.head.chin + (r.fem ? 0.08 : 0)) };
+  return { cx: 0, cy: 0.98, rx: r.head.rx * s, ryt: r.head.ryt * s, ryb: r.head.ryb * s * 1.04, sq: r.fem ? Math.min(r.head.sq, 2.4) : r.head.sq, chin: Math.min(0.55, r.head.chin + (r.fem ? 0.16 : 0.08)) };
 }
 function headBack(fr: F, r: Recipe, z: number, cut: (f: F, poly: Pt[], col: string | Swatch, z: number, joint?: string, lift?: number, rough?: number) => void) {
   const hd = headOf(r), J = 'head', sk = r.skin;
   const put = (poly: Pt[], col: string | Swatch, dz: number, rough = 0.008) => cut(fr, poly, col, z + dz, J, 0.03, rough);
   const K = r.kit, acc = (a: string) => !!K && K.acc.indexOf(a) >= 0, HC = r.hairCol, HB = r.hairMix === 'under' && r.hairCol2 ? r.hairCol2 : HC;
-  // no ears (Ryan, 21 October)
+  for (const sd of [-1, 1]) put(ell(sd * hd.rx * 0.97, hd.cy - 0.04, 0.07, 0.12, 10), shade(sk, 0.92), 0.015);   // the ears, just showing at the sides
   put(headPoly(hd), sk, 0.02);
   const nape = hd.cy - hd.ryb * 0.45, cap = (k: number, low = nape): Pt[] => headPoly(hd, k, -0.3, Math.PI + 0.3, 20).concat([[-hd.rx * 0.92 * k, low], [hd.rx * 0.92 * k, low]] as Pt[]);
   if (r.mask) {
@@ -610,20 +610,18 @@ function head(fr: F, r: Recipe, z: number, expr: string, cut: (f: F, poly: Pt[],
       put(strip([sd * hd.rx * 0.78, hd.cy + hd.ryt * 0.62], [sd * hd.rx * 1.02, hd.cy - hd.ryb * (end - 0.1)], w0, 0.05, sd * 0.07), t > 1 ? hiLock(HB) : shade(HB, t), 0.196, 0.01);
     }
   }
-  // a face with nothing chosen still gets features of its own, picked from its name, so no two look the same (Ryan, 21 October)
-  const hk = hash(r.key + '|' + r.name), hp = (k: number, n: number) => Math.floor(hk / k) % n;
-  const FS = r.fs || {}, eS = FS.eyeS || (0.9 + hp(7, 5) * 0.06), eG = FS.eyeG || (0.94 + hp(11, 4) * 0.04), mW = FS.mouthW || (0.88 + hp(13, 5) * 0.06);
-  const FT0 = r.feat || {}, FT = {
-    ...FT0,
-    eyes: FT0.eyes || ['almond', 'round', 'narrow', 'hooded', 'deep', 'almond', 'round'][hp(17, 7)],
-    nose: FT0.nose || ['straight', 'button', 'broad', 'hooked', 'pointed', 'straight', 'broad'][hp(19, 7)],
-    mouth: FT0.mouth || (r.fem ? ['full', 'plain', 'smile', 'full'] : ['plain', 'thin', 'wide', 'frown', 'plain'])[hp(23, r.fem ? 4 : 5)],
+  const FS = r.fs || {}, eS = FS.eyeS || 1, eG = FS.eyeG || 1, earS = FS.earS || 1, mW = FS.mouthW || 1;
+  const FT = r.feat || {}, ex = -hd.rx * 0.74 + tq * 0.4, eyy = hd.cy - 0.04;
+  // the ear, on the side of the head toward the back, over the skin and under the hair
+  const ear = (dz: number) => {
+    const es = earS * (FT.ears === 'small' ? 0.72 : FT.ears === 'big' ? 1.35 : 1), ew = (FT.ears === 'flat' ? 0.055 : 0.085) * es, eh = 0.13 * es;
+    if (FT.ears === 'pointed') put([[ex + 0.05 * es, eyy - 0.12 * es], [ex - 0.07 * es, eyy - 0.08 * es], [ex - 0.1 * es, eyy + 0.22 * es], [ex + 0.06 * es, eyy + 0.1 * es]], shade(sk, 0.92), dz);
+    else if (FT.ears === 'cauliflower') { put(ell(ex - 0.01, eyy, 0.115 * es, 0.135 * es, 12), shade(sk, 0.92), dz, 0.035); for (const [ax, ay] of [[-0.03, 0.05], [0.01, -0.05], [-0.05, -0.01]] as [number, number][]) put(ell(ex + ax * es, eyy + ay * es, 0.035 * es, 0.03 * es, 8), dk, dz + 0.004, 0.01); }
+    else put(ell(ex, eyy, ew, eh, 12), shade(sk, 0.92), dz);
+    if (FT.ears !== 'cauliflower') put(ell(ex + 0.01, eyy - 0.01, ew * 0.4, eh * 0.5, 10), shade(sk, 0.82), dz + 0.003, 0.004);   // the hollow of the ear, a sheet a little darker
   };
-  // eyes: dark brown most often; lighter skin and hair now and then hazel, green, blue or grey
-  const light = (c: string) => { const n = parseInt(c.slice(1), 16); return ((n >> 16) + ((n >> 8) & 255) + (n & 255)) / 3; };
-  const eyeCol = r.eyeCol || (light(r.skin) > 170 && hp(29, 3) > 0 ? ['#4a2c1c', '#6b4a22', '#3f6a4a', '#3a5f8f', '#5f6a72', '#2f4f7a'][hp(31, 6)] : ['#3a2216', '#4a2c1c', '#2b1a12'][hp(31, 3)]);
   put(headPoly(hd), sk, 0.02);
-  // no ears (Ryan, 21 October: "get rid of the ears")
+  if (!r.mask || r.mask.kind === 'half') ear(0.035);
   const mkind = r.mask ? r.mask.kind || 'open' : '', fullMask = !!r.mask && mkind !== 'half';
   if (r.mask) {
     if (mkind === 'half') put(headPoly(hd, 1.04, -0.12, Math.PI + 0.12, 22).concat([[-hd.rx * 1.02, hd.cy - 0.12], [hd.rx * 1.02, hd.cy - 0.12]] as Pt[]), r.mask.base, 0.04);   // over the head and eyes, the mouth and jaw bare
@@ -695,7 +693,7 @@ function head(fr: F, r: Recipe, z: number, expr: string, cut: (f: F, poly: Pt[],
       put(ek === 'round' ? ell(cx, ey, 0.1 * eS, 0.09 * eS, 12) : almond(cx, ey, W0, H0), PAL.white, 0.1, 0.003);
       // the iris, the pupil and a light in it, looking the way the face turns
       const ir = (ek === 'narrow' ? 0.038 : 0.052) * eS, ix = cx + 0.022 * eS, iy = ey + (ek === 'narrow' ? 0.004 : 0.012) * eS;
-      put(ell(ix, iy, ir, ek === 'narrow' ? ir * 0.8 : ir, 12), eyeCol, 0.112, 0.002);
+      put(ell(ix, iy, ir, ek === 'narrow' ? ir * 0.8 : ir, 12), r.eyeCol || '#4a2c1c', 0.112, 0.002);
       put(ell(ix + 0.004, iy, ir * 0.5, ir * 0.5, 10), '#120c0e', 0.118, 0.001);
       put(ell(ix + ir * 0.4, iy + ir * 0.42, ir * 0.24, ir * 0.24, 6), PAL.white, 0.121, 0.001);
       // the upper lid: a dark strip along the top of the eye, heavier at the outer corner, where it flicks out
