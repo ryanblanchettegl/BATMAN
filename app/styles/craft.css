@@ -487,3 +487,5 @@ html body .win.ppop .wb{font-family:var(--hand);font-size:1.06em}
 .tvframe .lv-res .beltc canvas{display:block;height:clamp(3.2em,9vh,6em);width:auto}
 @media (prefers-reduced-motion:no-preference){.tvframe .lv-res .beltc{animation:respop .4s var(--ease)}}
 .tvframe .lv-res pre.belt{display:none}
+/* the Attributes pop-up: a raise you cannot pay for is a pale chip with its cost in dark ink, not faded blue on blue */
+.attr-row .btn[disabled],.attr-row button[disabled]{background:#ddd5c2;border-image:none;border:1px dashed rgba(35,35,42,.4);box-shadow:none;color:#55555e;opacity:1;filter:none;transform:none}
