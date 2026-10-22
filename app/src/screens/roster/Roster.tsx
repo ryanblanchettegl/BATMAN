@@ -4,7 +4,7 @@ import { E, W } from '../../engine';
 import { G, me, cash, view, act, openModal } from '../../store';
 import { Ovr } from '../../shared/ovr';
 import { LevelLine } from './Attrs';
-import { Head, Sel, TextBox, Tag, Side, Opt, Meter, Btn, Portrait, champOf, brandName, dataAttrs, showResult } from '../../kit';
+import { Head, Sel, TextBox, Tag, Side, Opt, Meter, Bar, Btn, Portrait, champOf, brandName, dataAttrs, showResult } from '../../kit';
 import { ScenePlayer } from '../../kit/sceneplayer';
 import { WAIST } from '../../kit/scene';
 import { recipeOf } from '../../kit/puppet';
@@ -66,7 +66,7 @@ function Line_(p: { w: W; on: boolean; spot: string; champ: boolean; brand?: str
     <td><Side w={w} /></td><td>{p.spot}</td>
     <td class="r num">{w.age}</td>
     <td class="r"><Ovr w={w} /></td>
-    <td><Meter v={w.ovr} n={5} /></td><td><Meter v={w.morale} n={5} kind={w.morale < 35 ? 'hot' : undefined} /></td><td><Meter v={w.cond} n={5} kind={w.cond < 50 ? 'hot' : undefined} /></td>
+    <td><Bar v={w.ovr} t="Crowd" /></td><td><Bar v={w.morale} t="Mood" /></td><td><Bar v={w.cond} t="Body" /></td>
     <td class={'r num' + (w.con <= 4 ? ' bad' : '')}>{Math.max(0, w.con)}</td>
     <td class="stt"><div><Status w={w} champ={p.champ} /></div></td>
   </tr>;

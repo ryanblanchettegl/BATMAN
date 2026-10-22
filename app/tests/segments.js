@@ -1,5 +1,5 @@
 /* Booking promos and angles on the run sheet.
-   Run: NODE_PATH=<dir containing playwright> node app/tests/segments.js   (MODES=desk,tablet) */
+   Run: NODE_PATH=<dir containing playwright> node app/tests/segments.js   (MODES=desk,big) */
 const { open, go, overflow, shot, state, flash, fits } = require('./helper');
 const MODES = (process.env.MODES || 'desk').split(',');
 const fails = [];

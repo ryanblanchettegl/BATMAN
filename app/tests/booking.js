@@ -351,4 +351,4 @@ async function tv() {
   await browser.close();
 }
 
-(async () => { await section('desk'); await section('tablet'); if (process.env.TV) await tv(); else console.log('tv: the remote walk is parked while the booking screen is rebuilt (run with TV=1)'); console.log('booking: all passed'); })().catch(e => { console.error('FAIL', e.message); process.exit(1); });
+(async () => { await section('desk'); await section('big'); if (process.env.TV) await tv(); else console.log('tv: the remote walk is parked while the booking screen is rebuilt (run with TV=1)'); console.log('booking: all passed'); })().catch(e => { console.error('FAIL', e.message); process.exit(1); });

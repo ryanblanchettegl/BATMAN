@@ -3,7 +3,7 @@
 const { open, go, fits, redraw } = require('./helper');
 (async () => {
   const fails = [], ok = (c, m) => { console.log((c ? 'ok   ' : 'FAIL ') + m); if (!c) fails.push(m); };
-  for (const mode of (process.env.MODES || 'desk,tablet,tv').split(',')) {
+  for (const mode of (process.env.MODES || 'desk,big,tv').split(',')) {
     const { browser, page, errs } = await open({ mode, letter: false });
     await page.evaluate(() => { const S = window.EWF_DEBUG.state(), E = window.GP; for (let k = 0; k < 4; k++) { S.qi = S.queue.length; E.endWeek(S); } S.inbox.forEach(e => { e.done = true; }); });
     await redraw(page); await go(page, 'desk'); await page.waitForTimeout(150);
