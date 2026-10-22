@@ -56,7 +56,6 @@ export function App() {
   onRedraw(() => force(0));
   applyScreen();
   useEffect(() => { afterDraw(); drainToasts(); });
-  if (ui.boot) return <start.Boot />;
   const S = G.S;
   if (!S) return <>{ui.setup ? <start.Setup /> : (ui.scr === 'editor' ? <Editor /> : (ui.scr === 'select' ? <start.Select /> : <start.Title />))}<ModalHost /></>;
   const P = PAGES[ui.page] || PAGES.desk;

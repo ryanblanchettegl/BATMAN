@@ -530,3 +530,7 @@ svg.rangebar{width:9em;height:.8em;vertical-align:middle;margin:0 .4em}
 .meter i s,.win .meter i s,.wn .meter i s,.lb .meter i s{background:#bfb49a;opacity:.7}
 /* the note's torn ends grow with the screen: keep the words clear of them */
 .toast{padding-inline:max(6ch,4.6vw)}
+/* the desk: the assistant sits under this week's tasks (Ryan, 22 October); Career gives its spot to Your word */
+.deskpage{grid-template-rows:minmax(0,1.27fr) minmax(0,1fr);grid-template-areas:"road road tasks" "fire next asst"}
+.deskpage .asstwin .bd p{margin:0;line-height:1.18}
+.crpage{grid-template-areas:"you rep saga" "word word troph"}

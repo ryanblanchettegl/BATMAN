@@ -61,6 +61,7 @@ Everybody and everything has an id: short, lowercase, with underscores (`colt_hi
 | field | what it is |
 | --- | --- |
 | `id`, `name`, `full_name` | the short name on menus, and the long one |
+| `intergender` | true when men and women share the titles: anybody on the roster can hold and defend any of the company's titles (WPW). Leave it out for a company with men's and women's divisions. |
 | `model` | how the company is run: `corporate`, `workrate`, `purist`, `outlaw`, `underdog`, `startup`, `spectacle`, `tradition`, `joshi` (women only). It decides what its crowds reward and where its money comes from. |
 | `popularity` | 5 to 100. Sets the company's money, TV deal and crowds. Rough guide: 90 or more for the giant, 70s for the big rival, 50s for national companies, 30s for an indie. |
 | `cash` | money in the bank on day one |

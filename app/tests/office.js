@@ -32,7 +32,7 @@ async function run(mode) {
   /* ---- the desk, week 1 ---- */
   ok(/Office - Week 1/.test(await txt('h1')), 'desk heading');
   ok(await count('.gp') === 0 && await count('.gauge') === 0, 'no gauges on the desk: they are on Company');
-  ok((await page.$$eval('.deskpage > .wn', L => L.map(e => e.getAttribute('data-t')).join())) === 'road,fire,task-win,next' && await count('[data-t="next"] [data-t="book-next"]') === 1, 'the desk is four windows: the road, what needs an answer, the tasks and the next show with its booking button');
+  ok((await page.$$eval('.deskpage > .wn', L => L.map(e => e.getAttribute('data-t')).join())) === 'road,fire,task-win,next,desk-asst' && await count('[data-t="next"] [data-t="book-next"]') === 1, 'the desk is five windows: the road, what needs an answer, the tasks, the next show with its booking button, and your assistant');
   ok(await count('.main .panel') === 0 && await count('[data-t="endweek"]') === 0, 'no old panels on the desk, and no end-week button yet');
   /* everything else the desk keeps is in one pop-up */
   const moreTab = async id => { if (!(await page.$('[data-t="more-tab"]'))) { await page.click('[data-t="desk-more"]'); await page.waitForSelector('[data-t="more-tab"]'); } await page.click('[data-t="more-tab"][data-v="' + id + '"]'); };

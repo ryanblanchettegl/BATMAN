@@ -182,7 +182,7 @@ function buildPromo(S,d,byName){
       prodLvl:d.prodLvl==null?2:d.prodLvl,prod0:d.prodLvl==null?2:d.prodLvl,risk:d.risk==null?1:d.risk,risk0:d.risk==null?1:d.risk,tix:1,adv:0,slot:d.slot==null?1:d.slot,slot0:d.slot==null?1:d.slot,camp:d.image>=60?2:1,med:d.image>=80?3:(d.image>=60?2:(d.image>=45?1:0)),starB:{},ann:(d.announcers||['The play-by-play man','The colour man']).slice(),cities:(d.cities||['the city']).slice(),brands:d.brands?JSON.parse(JSON.stringify(d.brands)):null,shows:JSON.parse(JSON.stringify(d.shows)),titles:[],hist:[],led:{tv:0,gate:0,ppv:0,bonus:0,prod:0},base:{},mainB:{},trend:0,neg:0,fixed:0,varRate:0,last:null};
     P.ms=1;var m0=msc(P),mi=Math.pow(m0,0.75);P.cash=Math.round(P.cash*mi);P.cash0=P.cash;P.prod=Math.round(P.prod*mi);P.net=Math.round(P.net*mi);P.tvRate=Math.round(P.tvRate*Math.sqrt(m0)*100)/100;   // money on the company's own scale: cash, production and profit go down as its income does (about m^0.75)
     d.titles.forEach(function(t){P.titles.push({id:t.id,name:t.name,brand:t.brand||null,g:t.g,lvl:t.lvl,tag:!!t.tag,holders:t.holders.map(function(n){return byName[n];}).filter(function(x){return x!==undefined;}),prestige:t.lvl===3?85:(t.lvl===2?68:52),since:1,last:1,defs:0});if(t.belt)P.titles[P.titles.length-1].belt=JSON.parse(JSON.stringify(t.belt));});
-    if(d.full)P.full=d.full;if(d.owner)P.owner=d.owner;if(d.media)P.media=d.media;if(d.model&&MODELS[d.model]&&d.model!=='classic')P.model=d.model;if(d.events)P.evIn=d.events;if(d.logo&&typeof d.logo==='object')P.logo=JSON.parse(JSON.stringify(d.logo));S.promos[P.id]=P;S.order.push(P.id);if(d.draft)draftRoster(S,P,d);
+    if(d.full)P.full=d.full;if(d.ig)P.ig=1;if(d.owner)P.owner=d.owner;if(d.media)P.media=d.media;if(d.model&&MODELS[d.model]&&d.model!=='classic')P.model=d.model;if(d.events)P.evIn=d.events;if(d.logo&&typeof d.logo==='object')P.logo=JSON.parse(JSON.stringify(d.logo));S.promos[P.id]=P;S.order.push(P.id);if(d.draft)draftRoster(S,P,d);
     (d.teams||[]).forEach(function(tm){var a=byName[tm[0]],b=byName[tm[1]];if(a===undefined||b===undefined||S.w[a].promo!==P.id||S.w[b].promo!==P.id)return;var t=formTeam(S,P,S.w[a],S.w[b],tm[2]!=null?clamp(tm[2],0,100):35+Math.round(h01(tm[0]+tm[1])*50));if(tm[3])t.chem=clamp(tm[3],-10,10);if(tm[4])t.name=tm[4];});
   return P;
 }
@@ -315,6 +315,8 @@ function turn(S,w,why){
   }
   w.align=w.align==='F'?'H':'F';w.tw=S.week;w.gs=S.week;mile(S,w,'turn','Turned '+(w.align==='F'?'face':'heel')+(why?': '+why:'')+(tired?' (too soon after the last turn)':(built?' (well built)':'')));
   news(S,'story',w.name+' turns '+(w.align==='F'?'face':'heel')+(why?' — '+why:'')+'.'+note);if(w.promo===S.player)award(S,'ACH_TURN');}
+/* Who may fight for a title: its own division, or anybody at an intergender company (P.ig, Ryan 22 October: WPW). */
+function divOk(P,t,w){return !!(P&&P.ig)||!t.g||t.g===w.g;}
 function holdLvl(P,id){var l=0;P.titles.forEach(function(t){if(t.holders.indexOf(id)>=0&&t.lvl>l)l=t.lvl;});return l;}
 function titleById(P,id){for(var i=0;i<P.titles.length;i++)if(P.titles[i].id===id)return P.titles[i];return null;}
 /** A title's full name in a sentence: the company's name in front, unless the title already starts with it. */
@@ -369,7 +371,7 @@ function autoBook(S,P,show){
   function single(a,b,o,pos){o=o||{};var p=clamp(0.5+(a.ovr-b.ovr)/40+(a.mom-b.mom)*0.02+(o.bias||0),0.12,0.9);
     take({mt:'1v1',sides:[[a.id],[b.id]],win:chance(S,p)?0:1,title:o.title||null,stip:o.stip||'std',len:o.len||'M'},pos);}
   function contenders(t){
-    var L=(t.g==='F'?women:men).filter(function(w){return free(w)&&!resv[w.id]&&holdLvl(P,w.id)===0&&(!t.brand||big||w.brand===t.brand);});
+    var L=(P.ig?men.concat(women):(t.g==='F'?women:men)).filter(function(w){return free(w)&&!resv[w.id]&&holdLvl(P,w.id)===0&&(!t.brand||big||w.brand===t.brand);});
     var skip=t.lvl===3?0:(t.lvl===2?3:8);skip=Math.max(0,Math.min(skip,L.length-2));
     return L.slice(skip);
   }
@@ -512,7 +514,7 @@ function validate(S,P,show,card){
       var t=titleById(P,m.title);
       if(!t){err.push('Match '+n+': unknown title.');return;}
       if(!titleFits(t,m))err.push('Match '+n+': the '+t.name+' '+(t.tag?'need a tag team match.':(m.mt==='br'?'can only be decided in a battle royal when vacant.':'can’t be defended in a tag match.')));
-      if(ws.some(function(w){return w.g!==t.g;}))err.push('Match '+n+': wrong division for the '+t.name+'.');
+      if(ws.some(function(w){return !divOk(P,t,w);}))err.push('Match '+n+': wrong division for the '+t.name+'.');
       if(ws.some(function(w){return w.promo!==P.id;}))err.push('Match '+n+': a visiting wrestler cannot challenge for your titles.');
       if(t.holders.length&&!m.sides.some(function(s){return t.holders.every(function(h){return s.indexOf(h)>=0;});}))err.push('Match '+n+': the '+t.name+' champion'+(t.tag?'s are':' is')+' not in this match.');
     }

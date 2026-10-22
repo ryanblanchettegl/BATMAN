@@ -4,6 +4,7 @@
   "model": "classic",
   "name": "WPW",
   "full_name": "WrestlePower Wrestling",
+  "intergender": true,
   "blurb": "The fed that grew out of PCW and took in everybody who ever signed up: four feds of history, one locker room, and a World title first held by a Shakespearean.",
   "owner": {
    "name": "Carlos Gonzalez",
@@ -99,7 +100,7 @@
    "gender": "M",
    "level": 3,
    "holder_ids": [
-    "wpw_dan_murph"
+    "wpw_the_judge"
    ],
    "belt": {
     "pl": "globe",
@@ -119,7 +120,7 @@
    "gender": "M",
    "level": 2,
    "holder_ids": [
-    "wpw_dan_murph"
+    "wpw_unstoppable_mike_adams"
    ],
    "belt": {
     "pl": "round",
@@ -139,8 +140,8 @@
    "gender": "M",
    "level": 2,
    "holder_ids": [
-    "wpw_blade_the_future_lavigne",
-    "wpw_new_age_andrew_xavier"
+    "wpw_the_dream",
+    "wpw_jokester"
    ],
    "tag": true,
    "belt": {
@@ -161,7 +162,7 @@
    "gender": "M",
    "level": 2,
    "holder_ids": [
-    "wpw_justin_dreamer"
+    "wpw_raelis_shy"
    ],
    "belt": {
     "pl": "oval",
@@ -181,7 +182,7 @@
    "gender": "M",
    "level": 1,
    "holder_ids": [
-    "wpw_sky_ryder"
+    "wpw_dan_murph"
    ],
    "belt": {
     "pl": "square",
@@ -5606,11 +5607,11 @@
  "teams": [
   {
    "id": "wpw_tag_champs",
-   "name": "LaVigne and Xavier",
+   "name": "The Dream and Jokester",
    "kind": "tag",
    "member_ids": [
-    "wpw_blade_the_future_lavigne",
-    "wpw_new_age_andrew_xavier"
+    "wpw_the_dream",
+    "wpw_jokester"
    ],
    "experience": 60,
    "chemistry": 7

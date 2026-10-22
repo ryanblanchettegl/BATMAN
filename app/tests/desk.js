@@ -1,4 +1,4 @@
-/* The desk in four windows: the road with its map, what needs an answer, this week's tasks and the next show.
+/* The desk in five windows: the road with its map, what needs an answer, this week's tasks, the next show and your assistant.
    It fits one screen at every size, with a quiet week and with the fullest week there can be; the map is the right one
    and is drawn once; everything the old desk held is one pop-up away.
    Run: NODE_PATH=<dir containing playwright> node app/tests/desk.js */
@@ -21,7 +21,7 @@ async function run(mode, w, h, promo) {
     await go(page, 'desk'); await page.waitForSelector('[data-t="road-map"]'); await page.waitForTimeout(150);
     /* week one */
     await fit('the desk in week one');
-    ok(id, 'four windows: the road across the top, the desk and the next show under it, the tasks a tall column at the right', await page.evaluate(() => { const g = t => document.querySelector('.deskpage > [data-t="' + t + '"]').getBoundingClientRect(), r = g('road'), a = g('fire'), b = g('task-win'), c = g('next'); return document.querySelectorAll('.deskpage > .wn').length === 4 && r.bottom < a.top && Math.abs(a.top - c.top) < 2 && a.right < c.left && b.left > r.right && b.left > c.right && Math.abs(b.top - r.top) < 2 && Math.abs(b.bottom - c.bottom) < 2 && r.width > a.width * 1.8; }));
+    ok(id, 'five windows: the road across the top, the desk and the next show under it, the tasks at the right with the assistant under them', await page.evaluate(() => { const g = t => document.querySelector('.deskpage > [data-t="' + t + '"]').getBoundingClientRect(), r = g('road'), a = g('fire'), b = g('task-win'), c = g('next'), d = g('desk-asst'); return document.querySelectorAll('.deskpage > .wn').length === 5 && r.bottom < a.top && Math.abs(a.top - c.top) < 2 && a.right < c.left && b.left > r.right && b.left > c.right && Math.abs(b.top - r.top) < 2 && Math.abs(d.top - c.top) < 2 && Math.abs(d.bottom - c.bottom) < 2 && Math.abs(d.left - b.left) < 2 && r.width > a.width * 1.8; }));
     ok(id, 'no title is cut short', await page.$$eval('.deskpage .wn > .ttl h2', L => L.every(e => e.scrollWidth <= e.clientWidth + 1)));
     const R = await state(page, S => window.GP.road(S));
     ok(id, 'the map is the one the engine names, and the window says which', (await page.$eval('[data-t="road-map"]', e => e.getAttribute('data-map'))) === R.map && (await txt(page, '[data-t="road"] .ttl h2')).indexOf(R.mapName) > 0, R.mapName);

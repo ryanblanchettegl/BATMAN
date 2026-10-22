@@ -87,16 +87,6 @@ function Achievements() {
   </>;
 }
 
-/** The assistant who learns how you book and can run the small shows. */
-function Assistant() {
-  const S = G.S, A = E.assistant(S);
-  return <Win title="Your assistant" area="asst" t="career-asst">
-    <p><b class={A.lvl >= 2 ? 'gold' : undefined}>{A.word}</b> <span class="muted">{'·'} learned from {A.shows} {plural(A.shows, 'show')}{A.next ? ', ' + A.next + ' more to the next level' : ''}</span></p>
-    <ul class="list mt1">{A.habits.slice(0, 3).map((h: string) => <li><span>{h}</span></li>)}</ul>
-    <p class="muted mt1">It books the small shows the way you do, never a big event.{A.own ? ' It has run ' + A.own + ' ' + plural(A.own, 'show') + '.' : ''}</p>
-  </Win>;
-}
-
 /** What your booking has earned you a name for. */
 function Reputation() {
   const S = G.S, L = E.bookerRep(S);
@@ -109,6 +99,6 @@ function Reputation() {
 export function Career() {
   const S = G.S, P = me();
   return <div class="onescreen"><div class="head sr"><h1>Career</h1><p>{S.booker.name}, {role()} of {P.name}</p></div>
-    <Desktop cls="crpage" t="career"><You /><Reputation /><Saga /><YourWord /><Assistant /><Trophies /></Desktop>
+    <Desktop cls="crpage" t="career"><You /><Reputation /><Saga /><YourWord /><Trophies /></Desktop>
   </div>;
 }

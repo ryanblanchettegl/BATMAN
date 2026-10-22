@@ -186,7 +186,7 @@ function buildPromo(S,d,byName){
       prodLvl:d.prodLvl==null?2:d.prodLvl,prod0:d.prodLvl==null?2:d.prodLvl,risk:d.risk==null?1:d.risk,risk0:d.risk==null?1:d.risk,tix:1,adv:0,slot:d.slot==null?1:d.slot,slot0:d.slot==null?1:d.slot,camp:d.image>=60?2:1,med:d.image>=80?3:(d.image>=60?2:(d.image>=45?1:0)),starB:{},ann:(d.announcers||['The play-by-play man','The colour man']).slice(),cities:(d.cities||['the city']).slice(),brands:d.brands?JSON.parse(JSON.stringify(d.brands)):null,shows:JSON.parse(JSON.stringify(d.shows)),titles:[],hist:[],led:{tv:0,gate:0,ppv:0,bonus:0,prod:0},base:{},mainB:{},trend:0,neg:0,fixed:0,varRate:0,last:null};
     P.ms=1;var m0=msc(P),mi=Math.pow(m0,0.75);P.cash=Math.round(P.cash*mi);P.cash0=P.cash;P.prod=Math.round(P.prod*mi);P.net=Math.round(P.net*mi);P.tvRate=Math.round(P.tvRate*Math.sqrt(m0)*100)/100;   // money on the company's own scale: cash, production and profit go down as its income does (about m^0.75)
     d.titles.forEach(function(t){P.titles.push({id:t.id,name:t.name,brand:t.brand||null,g:t.g,lvl:t.lvl,tag:!!t.tag,holders:t.holders.map(function(n){return byName[n];}).filter(function(x){return x!==undefined;}),prestige:t.lvl===3?85:(t.lvl===2?68:52),since:1,last:1,defs:0});if(t.belt)P.titles[P.titles.length-1].belt=JSON.parse(JSON.stringify(t.belt));});
-    if(d.full)P.full=d.full;if(d.owner)P.owner=d.owner;if(d.media)P.media=d.media;if(d.model&&MODELS[d.model]&&d.model!=='classic')P.model=d.model;if(d.events)P.evIn=d.events;if(d.logo&&typeof d.logo==='object')P.logo=JSON.parse(JSON.stringify(d.logo));S.promos[P.id]=P;S.order.push(P.id);if(d.draft)draftRoster(S,P,d);
+    if(d.full)P.full=d.full;if(d.ig)P.ig=1;if(d.owner)P.owner=d.owner;if(d.media)P.media=d.media;if(d.model&&MODELS[d.model]&&d.model!=='classic')P.model=d.model;if(d.events)P.evIn=d.events;if(d.logo&&typeof d.logo==='object')P.logo=JSON.parse(JSON.stringify(d.logo));S.promos[P.id]=P;S.order.push(P.id);if(d.draft)draftRoster(S,P,d);
     (d.teams||[]).forEach(function(tm){var a=byName[tm[0]],b=byName[tm[1]];if(a===undefined||b===undefined||S.w[a].promo!==P.id||S.w[b].promo!==P.id)return;var t=formTeam(S,P,S.w[a],S.w[b],tm[2]!=null?clamp(tm[2],0,100):35+Math.round(h01(tm[0]+tm[1])*50));if(tm[3])t.chem=clamp(tm[3],-10,10);if(tm[4])t.name=tm[4];});
   return P;
 }
@@ -319,6 +319,8 @@ function turn(S,w,why){
   }
   w.align=w.align==='F'?'H':'F';w.tw=S.week;w.gs=S.week;mile(S,w,'turn','Turned '+(w.align==='F'?'face':'heel')+(why?': '+why:'')+(tired?' (too soon after the last turn)':(built?' (well built)':'')));
   news(S,'story',w.name+' turns '+(w.align==='F'?'face':'heel')+(why?' — '+why:'')+'.'+note);if(w.promo===S.player)award(S,'ACH_TURN');}
+/* Who may fight for a title: its own division, or anybody at an intergender company (P.ig, Ryan 22 October: WPW). */
+function divOk(P,t,w){return !!(P&&P.ig)||!t.g||t.g===w.g;}
 function holdLvl(P,id){var l=0;P.titles.forEach(function(t){if(t.holders.indexOf(id)>=0&&t.lvl>l)l=t.lvl;});return l;}
 function titleById(P,id){for(var i=0;i<P.titles.length;i++)if(P.titles[i].id===id)return P.titles[i];return null;}
 /** A title's full name in a sentence: the company's name in front, unless the title already starts with it. */
@@ -373,7 +375,7 @@ function autoBook(S,P,show){
   function single(a,b,o,pos){o=o||{};var p=clamp(0.5+(a.ovr-b.ovr)/40+(a.mom-b.mom)*0.02+(o.bias||0),0.12,0.9);
     take({mt:'1v1',sides:[[a.id],[b.id]],win:chance(S,p)?0:1,title:o.title||null,stip:o.stip||'std',len:o.len||'M'},pos);}
   function contenders(t){
-    var L=(t.g==='F'?women:men).filter(function(w){return free(w)&&!resv[w.id]&&holdLvl(P,w.id)===0&&(!t.brand||big||w.brand===t.brand);});
+    var L=(P.ig?men.concat(women):(t.g==='F'?women:men)).filter(function(w){return free(w)&&!resv[w.id]&&holdLvl(P,w.id)===0&&(!t.brand||big||w.brand===t.brand);});
     var skip=t.lvl===3?0:(t.lvl===2?3:8);skip=Math.max(0,Math.min(skip,L.length-2));
     return L.slice(skip);
   }
@@ -516,7 +518,7 @@ function validate(S,P,show,card){
       var t=titleById(P,m.title);
       if(!t){err.push('Match '+n+': unknown title.');return;}
       if(!titleFits(t,m))err.push('Match '+n+': the '+t.name+' '+(t.tag?'need a tag team match.':(m.mt==='br'?'can only be decided in a battle royal when vacant.':'can’t be defended in a tag match.')));
-      if(ws.some(function(w){return w.g!==t.g;}))err.push('Match '+n+': wrong division for the '+t.name+'.');
+      if(ws.some(function(w){return !divOk(P,t,w);}))err.push('Match '+n+': wrong division for the '+t.name+'.');
       if(ws.some(function(w){return w.promo!==P.id;}))err.push('Match '+n+': a visiting wrestler cannot challenge for your titles.');
       if(t.holders.length&&!m.sides.some(function(s){return t.holders.every(function(h){return s.indexOf(h)>=0;});}))err.push('Match '+n+': the '+t.name+' champion'+(t.tag?'s are':' is')+' not in this match.');
     }
@@ -1049,7 +1051,7 @@ function afterBell(S,P,show,m,sides,win,winners,losers,fin,runin,feud,t,OV,seg){
   }
   if(m.mt==='1v1'&&!t&&!feud&&fin!=='dq'&&fin!=='co'&&holdLvl(P,l0.id)>0&&holdLvl(P,w0.id)===0){
     var ht=null;P.titles.forEach(function(tt){if(!tt.tag&&tt.holders[0]===l0.id&&(!ht||tt.lvl>ht.lvl))ht=tt;});
-    if(ht&&ht.g===w0.g&&startFeud(S,P,w0,l0,35,w0.name+' beat the champion in a non-title match',{title:ht.id})){
+    if(ht&&divOk(P,ht,w0)&&startFeud(S,P,w0,l0,35,w0.name+' beat the champion in a non-title match',{title:ht.id})){
       seg.notes.push(w0.name+' just beat the champion and wants a shot at the '+ht.name+'.');return;
     }
   }
@@ -4240,7 +4242,7 @@ E.youRemember=function(S,id,k,text,v){youRemember(S,S.w[id],k,text,v);};
 /* ===== 70-season.js ===== */
 /* ---------- contender rankings ---------- */
 function rankFor(S,P,t,n){
-  var L=rosterOf(S,P.id).filter(function(w){return w.g===t.g&&t.holders.indexOf(w.id)<0&&w.inj<=0&&!w.camp&&!w.nw&&(!t.brand||w.brand===t.brand)&&isDev(P,w.brand)===isDev(P,t.brand)&&holdLvl(P,w.id)<t.lvl;});
+  var L=rosterOf(S,P.id).filter(function(w){return divOk(P,t,w)&&t.holders.indexOf(w.id)<0&&w.inj<=0&&!w.camp&&!w.nw&&(!t.brand||w.brand===t.brand)&&isDev(P,w.brand)===isDev(P,t.brand)&&holdLvl(P,w.id)<t.lvl;});
   if(t.lvl<3&&L.length){var top=Math.max.apply(null,L.map(function(w){return w.ovr;}));L=L.filter(function(w){return w.ovr<=top-(t.lvl===2?3:10);});}
   return L.map(function(w){return {w:w,s:(w.pts||0)+w.ovr*0.12+w.mom*0.3+(w.shot===t.id?50:0)};}).sort(function(a,b){return b.s-a.s;}).slice(0,n||5).map(function(x){return x.w;});
 }
@@ -5943,7 +5945,7 @@ function promoParts(S,P,w,topic,kind){
   else if(topic==='title'){
     var lv=holdLvl(P,w.id),rk=-1,tn=null;
     if(lv>0){P.titles.forEach(function(t){if(t.holders.indexOf(w.id)>=0&&(!tn||t.lvl>tn.lvl))tn=t;});C=tn&&tn.defs>=3?9:8;why='Speaks as '+tn.name+' champion';}
-    else{P.titles.forEach(function(t){if(t.tag||t.g!==w.g)return;var ix=rankFor(S,P,t,5).map(function(x){return x.id;}).indexOf(w.id);if(ix>=0&&(rk<0||ix<rk)){rk=ix;tn=t;}});
+    else{P.titles.forEach(function(t){if(t.tag||!divOk(P,t,w))return;var ix=rankFor(S,P,t,5).map(function(x){return x.id;}).indexOf(w.id);if(ix>=0&&(rk<0||ix<rk)){rk=ix;tn=t;}});
       C=w.shot?9:(rk<0?3:(rk<=2?8:6));why=w.shot?'Has a title shot in hand':(rk<0?'Has not earned the right to talk about a title':'Ranked number '+(rk+1)+' for the '+tn.name);}
     fit=7;
   }else if(topic==='crowd'){C=6;why='Always something to say about the town';fit=8;}
@@ -7610,7 +7612,7 @@ var REL_TYPES=['rivalry','friendship','mentor','family','partners','dislike'];
 var ID_RE=/^[a-z0-9_]{2,40}$/;
 // field types: 'id', 'str', 'int', 'num', 'bool', 'obj', 'list', an array of allowed values, or 'ref:<table>'; a trailing ? makes it optional
 var SCHEMAS={
-  promotions:{required:['id','name','popularity'],fields:{id:'id',name:'str',full_name:'str?',blurb:'str?',owner:'obj?',staff:'obj?',announcers:'list?',cities:'list?',cash:'num?',popularity:'num',work_rate_weight:'num?',angles_per_show:'int?',wage_scale:'num?',tv_rate:'num?',production_cost:'num?',target_weekly_net:'num?',flagship_month:'int?',production_level:'int?',risk_level:'int?',tv_slot:'int?',model:'str?',brands:'list?',media:'obj?',logo:'obj?',events:'list?'}},
+  promotions:{required:['id','name','popularity'],fields:{id:'id',name:'str',full_name:'str?',blurb:'str?',owner:'obj?',staff:'obj?',announcers:'list?',cities:'list?',cash:'num?',popularity:'num',work_rate_weight:'num?',angles_per_show:'int?',wage_scale:'num?',tv_rate:'num?',production_cost:'num?',target_weekly_net:'num?',flagship_month:'int?',production_level:'int?',risk_level:'int?',tv_slot:'int?',model:'str?',brands:'list?',media:'obj?',logo:'obj?',events:'list?',intergender:'bool?'}},
   workers:{required:['id','ring_name','gender','disposition','style','ratings'],fields:{id:'id',ring_name:'str',real_name:'str?',birth_date:'str?',age:'int?',hometown:'str?',gender:['M','F'],weight_class:['cruiser','heavy','super_heavy'],disposition:['face','heel','tweener'],roles:'list?',style:Object.keys(STYLE_KEY),finisher:'str?',manager_id:'str?',locker_role:['mentor','diva','gatekeeper','leader','toxic'],ratings:'obj',peak_years:'list?',age_cliff:'int?',media:'obj?',face:'obj?',gimmick_category:'str?',gimmick:'str?',catchphrase:'str?',finisher_description:'str?',finisher_move:'str?',signatures:'list?',debut_year:'int?',legend:'bool?',height:'str?',weight:'str?',notes:'str?',look:'obj?'}},
   contracts:{required:['worker_id','promotion_id'],fields:{worker_id:'str',promotion_id:'str',contract_type:['exclusive','pwa'],monthly_salary:'num?',per_show_fee:'num?',weeks_left:'int?',tenure_weeks:'int?',push_level:PUSH,brand:'str?'}},
   titles:{required:['id','promotion_id','name','gender','level'],fields:{id:'id',promotion_id:'str',name:'str',gender:['M','F'],level:'int',tag:'bool?',brand:'str?',holder_ids:'list?',media:'obj?',belt:'obj?'}},
@@ -7715,7 +7717,7 @@ function econ(pop){var x=clamp(pop,5,100)/100;return {wageMult:Math.max(0.15,r1(
 function buildDB(pkg){
   var man=pkg.manifest,W={},rows=[],promos=[],PR={};(pkg.workers||[]).forEach(function(w){W[w.id]=w;});
   (pkg.promotions||[]).forEach(function(p){
-    var e=econ(p.popularity),own=p.owner||{},MD=MODELS[p.model]||MODELS.classic,d={id:p.id,logo:p.logo||null,events:Array.isArray(p.events)?p.events:null,model:MODELS[p.model]?p.model:null,name:p.name,full:p.full_name||null,blurb:p.blurb||'',cash:p.cash!=null?p.cash:e.cash,image:clamp(p.popularity,5,100),wq:p.work_rate_weight!=null?clamp(p.work_rate_weight,0.2,0.8):(MD.wq||0.5),
+    var e=econ(p.popularity),own=p.owner||{},MD=MODELS[p.model]||MODELS.classic,d={id:p.id,ig:!!p.intergender,logo:p.logo||null,events:Array.isArray(p.events)?p.events:null,model:MODELS[p.model]?p.model:null,name:p.name,full:p.full_name||null,blurb:p.blurb||'',cash:p.cash!=null?p.cash:e.cash,image:clamp(p.popularity,5,100),wq:p.work_rate_weight!=null?clamp(p.work_rate_weight,0.2,0.8):(MD.wq||0.5),
       angles:p.angles_per_show!=null?clamp(p.angles_per_show,0,3):2,wageMult:p.wage_scale!=null?p.wage_scale:e.wageMult,tvRate:p.tv_rate!=null?p.tv_rate:e.tvRate,prod:p.production_cost!=null?p.production_cost:e.prod,net:p.target_weekly_net!=null?p.target_weekly_net:e.net,
       flagship:p.flagship_month!=null?clamp(p.flagship_month-1,0,11):3,prodLvl:p.production_level!=null?clamp(p.production_level,0,4):2,risk:p.risk_level!=null?clamp(p.risk_level,0,3):1,slot:p.tv_slot!=null?clamp(p.tv_slot,0,2):1,
       owner:{name:own.name||'The owner',style:STYLES[own.style]?own.style:'stars',roots:ROOTS[own.roots]?own.roots:'tradition',pledge:PLEDGE[own.pledge]?own.pledge:'pay'},
@@ -7783,7 +7785,7 @@ E.exportUniverse=function(S,meta){
   S.order.forEach(function(id){
     var P=P0[id],own=id===S.player?{name:S.owner.name,style:S.owner.style,roots:S.owner.roots,pledge:S.owner.pledge}:(P.owner||{name:'The owner',style:P.style||'stars',roots:'tradition',pledge:'pay'});
     var o={id:pid(id),name:P.name,blurb:P.blurb||'',owner:own,staff:{road_agent:P.staff.agent,head_writer:P.staff.writer},announcers:P.ann.slice(),cities:P.cities.slice(),cash:Math.round(P.cash),popularity:r1(P.image),work_rate_weight:P.wq,angles_per_show:P.angles,wage_scale:P.wageMult,tv_rate:P.tvRate,production_cost:P.prod,target_weekly_net:P.net,flagship_month:P.flagship+1,production_level:P.prodLvl,risk_level:P.risk,tv_slot:P.slot};
-    if(P.full)o.full_name=P.full;if(P.brands)o.brands=P.brands.map(function(b){var x={id:b.id,name:b.name};if(b.dev)x.dev=true;return x;});
+    if(P.full)o.full_name=P.full;if(P.ig)o.intergender=true;if(P.brands)o.brands=P.brands.map(function(b){var x={id:b.id,name:b.name};if(b.dev)x.dev=true;return x;});
     if(P.model)o.model=P.model;if(P.logo)o.logo=JSON.parse(JSON.stringify(P.logo));
     if(P.events)o.events=P.events.map(function(e,i){var x={month:i+1,name:e.n,type:e.t};if(e.rule)x.rule=e.rule;return x;});
     pkg.promotions.push(o);
@@ -7874,6 +7876,20 @@ E.assistantRun=function(S){
     A.own++;out.push({show:show.name,rating:r.rep.rating,exp:r.rep.exp});
   }
   return out;
+};
+/* The assistant's window on the desk (Ryan, 22 October): who it is, one tip that is true of the game this week, and
+   the house shows it will book. A placeholder for now; it only reads the game and never calls rnd(S). */
+E.assistantDesk=function(S){
+  var A=E.assistant(S),P=S.promos[S.player],tips=[];
+  var worn=rosterOf(S,P.id).filter(function(w){return !w.nw&&w.inj<=0&&w.cond<50;}).sort(function(a,b){return a.cond-b.cond;})[0];
+  if(worn)tips.push(worn.name+' is worn down. A week off now saves a bad night later.');
+  var low=rosterOf(S,P.id).filter(function(w){return !w.nw&&w.morale!=null&&w.morale<35;}).sort(function(a,b){return a.morale-b.morale;})[0];
+  if(low)tips.push(low.name+' is unhappy. Sitting down with them backstage costs one point.');
+  try{(E.season(S).says||[]).slice(0,2).forEach(function(x){if(x&&x.t)tips.push(x.t);});}catch(e){}
+  if(S.bp>=6)tips.push('You have '+S.bp+' booking power. It stops growing at the cap, so spend some.');
+  if(!tips.length)tips.push('Nothing is on fire. A good week to start a story or push somebody new.');
+  return {word:A.word,lvl:A.lvl,shows:A.shows,next:A.next,tip:tips[S.week%tips.length],tips:tips.length,
+    house:'House shows are coming. When they do, I will book them the way you book television, and tell you who I used.'};
 };
 
 /* ===== 86-editor.js ===== */
@@ -9047,16 +9063,12 @@ E.makeShow=function(S,o){
   note(S,'A new weekly show',name+' starts next week. Its first night is an occasion.','good');
   return {ok:true,roll:r,msg:rollText(r)+name+' starts next week as a small show, and its first night is an occasion: the building will be up for it. Launching it cost '+money(cost)+'. It brings television and gate money every week, and your roster now works one more night. '+P.name+' will not get another for two years.'};
 };
+/* The booker cannot quit a weekly show: it runs out its network deal, and only the network can cancel it
+   (src/90-cancel.js). Ryan, 22 October. */
 E.dropShow=function(S,id){
   var P=S.promos[S.player],sh=P.shows.filter(function(x){return x.id===id;})[0];
   if(!sh)return {ok:false,msg:'That show is not on your schedule.'};
-  if(P.shows.length<=1)return {ok:false,msg:'A company needs one weekly show.'};
-  // a show still to run this week comes off the schedule too; a card half booked for it is dropped
-  var cur=S.queue[S.qi];if(cur&&cur.id===id)S.card=[];
-  S.queue=S.queue.filter(function(q,i){return i<S.qi||q.id!==id;});
-  removeShow(S,P,sh);P.image=clamp(P.image-0.5,5,100);
-  news(S,'money',P.name+' cancelled '+sh.name+'.');
-  return {ok:true,msg:sh.name+' is off the schedule. The network is not pleased: popularity down half a point.'};
+  return {ok:false,msg:sh.name+' is under contract to its network. You play out the deal; only the network can cancel a show.'};
 };
 E.renameShow=function(S,id,name){
   var P=S.promos[S.player],sh=P.shows.filter(function(x){return x.id===id;})[0];name=makeCleanName(name,32);
@@ -9408,7 +9420,7 @@ WEEKX.push(function(S){
 /* ===== 87-goals.js ===== */
 /* ---------- 1. Career goals: each wrestler of yours chases one or two goals; meeting one lifts them; one blocked for a year starts a clock (w.goals) ---------- */
 function goalTier(S,P,w){return w.ovr>=P.image-5?'star':'mid';}
-function topTitleFor(P,w){return P.titles.filter(function(t){return !t.tag&&t.g===w.g&&t.lvl>=3;})[0]||null;}
+function topTitleFor(P,w){return P.titles.filter(function(t){return !t.tag&&divOk(P,t,w)&&t.lvl>=3;})[0]||null;}
 var GOALK={
   title:{n:'Hold the top title',ok:function(S,P,w){return holdLvl(P,w.id)>=3;},prog:function(S,P,w){return holdLvl(P,w.id)>=3?1:clamp(w.ovr/Math.max(1,P.image+8),0,0.95);}},
   midtitle:{n:'Win a title',ok:function(S,P,w){return holdLvl(P,w.id)>=1;},prog:function(S,P,w){return holdLvl(P,w.id)>=1?1:clamp(w.ovr/Math.max(1,P.image),0,0.9)*0.8;}},
@@ -11156,6 +11168,18 @@ function roadShape(S,M,ai,stops){
     if(pins.some(function(q){return q.city===s.city;}))return;pins.push({city:s.city,k:s.k,x:Math.round(x*10)/10,y:Math.round(y*10)/10});});
   return {n:n,w:Z.w,h:Z.h,p:Z.p,pins:pins};
 }
+/* A place that falls in no area on any map (an island of a world's own, a town out at sea): the nearest of the world's
+   continents, cut from card, with this week's pin pulled to its edge (Ryan, 22 October: the country or continent when
+   a city has no area of its own). */
+var CONT_AT={'North America':[45,-100],'South America':[-15,-60],'Europe':[50,15],'Africa':[5,20],'Asia':[40,95],'Oceania':[-25,135]};
+function roadNearest(S,here,city){
+  if(!here||typeof SHAPES==='undefined')return null;var best=null,bd=1e9,r=Math.PI/180;
+  Object.keys(CONT_AT).forEach(function(n){var Z=SHAPES['world:'+n],c=CONT_AT[n];if(!Z)return;
+    var d=Math.acos(Math.max(-1,Math.min(1,Math.sin(here.lat*r)*Math.sin(c[0]*r)+Math.cos(here.lat*r)*Math.cos(c[0]*r)*Math.cos((here.lon-c[1])*r))));
+    if(d<bd){bd=d;best={n:n,Z:Z};}});
+  if(!best)return null;var Z=best.Z,mid=Z.f[0]+Z.w*Z.f[1]/2,dl=((here.lon-mid+540)%360)-180,x=Math.max(0,Math.min(Z.w,(mid+dl-Z.f[0])/Z.f[1])),y=Math.max(0,Math.min(Z.h,(Z.f[2]-here.lat)/Z.f[3]));
+  return {n:best.n,w:Z.w,h:Z.h,p:Z.p,far:1,pins:[{city:city,k:'now',x:Math.round(x*10)/10,y:Math.round(y*10)/10}]};
+}
 /** Everything the road window on the desk shows. It only reads the game.
     `map` is the board to draw (see E.MAPS), `lit` the areas that light, `stops` the road so far and the road ahead
     with each stop's dot, `now` this stop in full. */
@@ -11175,7 +11199,7 @@ E.road=function(S){
   }
   var cap=roadCap(S,P,A.show,city),mk=mktKnow(S,P,city),sale=stopSales(S,P,A.w,A.show,A.k,true),last=S.rdv&&S.rdv[city],bar=S.bar&&S.bar[city],reg=P.tour?REGIONS[P.tour.reg]:REGIONS[homeReg(P)];
   var home=rosterOf(S,P.id).filter(function(w){return !w.nw&&homeNear(S,w,city);}).sort(function(a,b){return (a.town===city?0:1)-(b.town===city?0:1)||b.ovr-a.ovr;}).slice(0,3).map(function(w){return {id:w.id,name:w.name,hurt:w.inj>0,town:w.town,near:w.town!==city,km:homeKm(S,w,city)};});
-  var sh=roadShape(S,M,lit.now,stops);
+  var sh=roadShape(S,M,lit.now,stops)||roadNearest(S,here,city);
   return {map:M?M.id:null,mapName:M?M.n:null,lit:lit,stops:stops,off:off,shape:sh,
     now:{city:city,land:M&&lit.now>=0?M.a[lit.now]:null,show:A.show.name,big:!!A.show.big,kind:A.show.big?(A.show.flag?'Flagship':evTy(A.show).n):'',w:A.w,later:A.w>S.week,left:Math.max(0,(S.queue?S.queue.length:0)-(S.qi||0)),
       venue:venueName(city,cap),cap:cap,seat:Math.round(ticket(P,A.show)*TIX_P[P.tix]),tix:TIXN[P.tix],
@@ -13790,7 +13814,7 @@ E.cardFlags=function(S,card){card=card||S.card||[];return card.map(function(m,i)
         m.call=si;if(E.cardCost(S,card)>S.bp)m.call=null;else ch=true;});});
     // a promised title shot falling due is booked: the champion against them, the belt on the line, in a match that is not the main event
     var fm=function(m){return m.sides.length===2&&m.sides[0][0]!=null&&m.sides[1][0]!=null&&!!feudOf(S,m.sides[0][0],m.sides[1][0]);},show=S.queue[S.qi],el=show?eligible(S,P,show).map(function(w){return w.id;}):[],on=function(id){return card.some(function(m){return flat(m.sides).indexOf(id)>=0;});};
-    S.quests.forEach(function(q){if(q.type!=='shot'||q.due-S.week>1||el.indexOf(q.w)<0)return;var t=titleById(P,q.title);if(!t||t.tag||t.holders.length!==1||t.holders[0]===q.w||(t.g&&S.w[q.w].g!==t.g))return;
+    S.quests.forEach(function(q){if(q.type!=='shot'||q.due-S.week>1||el.indexOf(q.w)<0)return;var t=titleById(P,q.title);if(!t||t.tag||t.holders.length!==1||t.holders[0]===q.w||!divOk(P,t,S.w[q.w]))return;
       if(card.some(function(m){return m.title===t.id&&flat(m.sides).indexOf(q.w)>=0;}))return;var c=t.holders[0];if(el.indexOf(c)<0)return;
       var at=-1;card.forEach(function(m,i){if(m.title===t.id&&m.sides.length===2&&m.sides[0].length===1&&m.sides[1].length===1&&flat(m.sides).indexOf(c)>=0)at=i;});
       if(at>=0){if(on(q.w)||fm(card[at]))return;var m=card[at];m.sides=[[c],[q.w]];m.call=null;ch=true;return;}

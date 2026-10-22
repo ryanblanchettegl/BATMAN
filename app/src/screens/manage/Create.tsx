@@ -46,7 +46,7 @@ export function ShowsWindow(_p: { m: Modal }) {
         <span class="muted">{s.size} {'·'} about {cash(s.income)} a week from television and the gate{s.since ? ' · added in week ' + s.since : ''}</span>
         {s.air ? <><br /><span class="muted" data-t="show-air">{s.air.yearsSay[0].toUpperCase() + s.air.yearsSay.slice(1)} {'·'} {s.air.ep.toLocaleString('en-US')} episodes {'·'} on {s.air.net}, {s.air.tier}, {s.air.netSay} {'·'} the deal runs to {s.air.dealTo}{s.air.next ? ' · ' + s.air.next : ''}</span></> : null}{(() => { const n = (E.netInfo(S) as any[]).filter((x: any) => x.id === s.id)[0]; return n ? <><br /><span class="muted" data-t="show-net">{n.net} is a {n.taste.toLowerCase()} network: it {n.want} The target is about {n.tgt.toLocaleString('en-US')} watching.</span></> : null; })()}</span>
       <span class="row opts"><Rename id={s.id} name={s.name} max={32} save={v => E.renameShow(S, s.id, v)} />
-        {I.shows.length > 1 ? <Remove id={s.id} label="Cancel this show" yes={'Yes, cancel ' + s.name} go={() => E.dropShow(S, s.id)} /> : null}</span></li>)}</ul>
+</span></li>)}</ul>
     <p class="muted mt1" data-t="show-lasts">A show lasts. It gains standing the longer it is on the air, when it beats what its crowd expects, and as its audience grows, and standing brings viewers. When a network deal is up, the show is worth what it has become, and it may change network.</p>
     <p class="eyebrow mt2">A new weekly show</p>
     <p class="muted">A new weekly show comes along once in years. A network gives a company another night when something calls for it.</p>
