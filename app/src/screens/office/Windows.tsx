@@ -63,22 +63,24 @@ const CHAIRS: { k: string; n: string; skill: string; f: string; d: string }[] = 
 const STYLE_SAYS: Record<string, string> = { Excitable: 'big energy, loudest on the big moments', Dry: 'calm and exact, a straight voice', Warm: 'friendly, gets on with anyone' };
 const skillWord = (v: number) => v >= 80 ? 'Excellent' : (v >= 70 ? 'Very good' : (v >= 60 ? 'Good' : (v >= 50 ? 'Average' : 'Weak')));
 
-/** The commentary desk, picked from the Office: one screen for each chair, so a new player picks one voice at a
-    time. `st.seat` is the chair on screen. A task is answered where it stands, without leaving the Office. */
-export function VoicesWindow(_p: { m: Modal }) {
-  const S = G.S, V = E.voices(S), st = slice<{ seat: string; msg: string; err: boolean }>('voices', () => ({ seat: 'pbp', msg: '', err: false }));
-  const at = Math.max(0, CHAIRS.findIndex(c => c.k === st.seat)), C = CHAIRS[at], sat: any = V[C.k], other = CHAIRS.find(c => c.k !== C.k), with_: any = other ? V[other.k] : null;
-  const empty = CHAIRS.find(c => !V[c.k] && c.k !== C.k);
-  const run = (fn: () => any, next?: string) => act(() => { const r = fn(); st.msg = r.text; st.err = !r.ok; say(r.text, { err: !r.ok }); if (r.ok && next) st.seat = next; });
+/** The commentary desk, picked from the Office. Each chair has its own menu (Bill, 22 October: not steps), opened
+    by `m.k`; with no chair given it opens a short menu of the chairs. A task is answered where it stands. */
+export function VoicesWindow(p: { m: Modal }) {
+  const S = G.S, V = E.voices(S), st = slice<{ msg: string; err: boolean }>('voices', () => ({ msg: '', err: false }));
+  const C = CHAIRS.find(c => c.k === p.m.k);
+  if (!C) return <Window title="The commentary desk" ok="Done">
+    <p>Who calls your shows. Pick a chair to see the voices you can sign for it.</p>
+    <ul class="list mt1" data-t="voice-chairs">{CHAIRS.map(c => <li key={c.k} data-t="voice-chair" data-v={c.k} data-full={V[c.k] ? '1' : '0'}>
+      <span><b>{c.n}</b> <span class="muted">{'·'} {V[c.k] ? V[c.k].name + ', ' + c.skill.toLowerCase() + ' ' + V[c.k][c.f] : 'Empty'}</span></span>
+      <Btn kind="sm" t="voice-open" d={{ v: c.k }} onClick={() => openVoices(c.k)}>{V[c.k] ? 'Change' : 'Pick'}</Btn></li>)}</ul>
+    {V.chem != null ? <p class="mt1">Together: <b class={V.chem >= 1.5 ? 'good' : (V.chem <= -1.5 ? 'bad' : undefined)}>{E.chemWord(V.chem)}</b>. A good desk lifts every match.</p> : null}
+  </Window>;
+  const sat: any = V[C.k], other = CHAIRS.find(c => c.k !== C.k), with_: any = other ? V[other.k] : null;
+  const run = (fn: () => any) => act(() => { const r = fn(); st.msg = r.text; st.err = !r.ok; say(r.text, { err: !r.ok }); });
   const pool: any[] = V.pool.slice().sort((a: any, b: any) => b[C.f] - a[C.f]).slice(0, 6);
-  const done = CHAIRS.every(c => V[c.k]);
-  return <Window title="The commentary desk" wide ok="Done">
+  return <Window title={C.n + ' voice'} wide ok="Done">
     <div class="vpick" data-t="voice-screen" data-v={C.k}>
-      <ol class="vsteps">{CHAIRS.map((c, i) => <li key={c.k} class={c.k === C.k ? 'on' : undefined} data-t="voice-chair" data-v={c.k} data-full={V[c.k] ? '1' : '0'}>
-        <button type="button" class="vstep" data-t="voice-seat" data-v={c.k} aria-current={c.k === C.k ? 'step' : undefined} onClick={() => view(() => { st.seat = c.k; st.msg = ''; })}>
-          <span class="vnum">{V[c.k] ? '✓' : i + 1}</span><span><b>{c.n}</b><br /><span class="muted">{V[c.k] ? V[c.k].name : 'Empty'}</span></span></button></li>)}</ol>
       {st.msg ? <p class={(st.err ? 'bad' : 'good') + ' vmsg'} role="status" data-t="voice-msg">{st.msg}</p> : null}
-      <h3 class="vhead">Step {at + 1} of {CHAIRS.length}: pick your {C.n.toLowerCase()} voice</h3>
       <p class="vabout">{C.d}</p>
       <p class="vnow" data-t="voice-now">{sat ? <>In the chair: <b>{sat.name}</b>, {C.skill.toLowerCase()} {sat[C.f]} ({skillWord(sat[C.f]).toLowerCase()}), ${sat.wage.toLocaleString('en-US')} a week. <Btn kind="sm" t="voice-drop" d={{ v: C.k }} onClick={() => run(() => E.dropVoice(S, C.k))}>Let go</Btn></>
         : <span class="muted">Nobody is in this chair yet. Pick one of the voices below.</span>}</p>
@@ -90,16 +92,15 @@ export function VoicesWindow(_p: { m: Modal }) {
           <p class="muted">Style: {v.style}, {STYLE_SAYS[v.style] || ''}</p>
           {ch != null ? <p class={ch >= 1.5 ? 'good' : (ch <= -1.5 ? 'bad' : undefined)}>With {with_.name}: {E.chemWord(ch)}</p> : null}
           <p class="vfoot"><span>${v.wage.toLocaleString('en-US')} a week</span>
-            <Btn kind="go" t="desk-hire" d={{ id: v.id }} onClick={() => run(() => E.hireVoice(S, v.id, C.k), empty ? empty.k : undefined)}>Sign as {C.n.toLowerCase()}</Btn></p>
+            <Btn kind="go" t="desk-hire" d={{ id: v.id }} onClick={() => run(() => E.hireVoice(S, v.id, C.k))}>Sign</Btn></p>
         </li>; })}</ul>
         : <Empty>Nobody is available right now. New voices come on the market each year.</Empty>}
-      <p class="muted vtip">{done && V.chem != null ? <>Your desk: <b>{V.pbp.name}</b> and <b>{V.col.name}</b>. {E.chemWord(V.chem)}. A good desk lifts every match.</>
-        : 'Tip: an excitable voice and a dry one work best together. Two of the same style tend to talk over each other.'}</p>
+      <p class="muted vtip">Tip: an excitable voice and a dry one work best together. Two of the same style tend to talk over each other.</p>
     </div>
   </Window>;
 }
-/** Open the commentary desk pop-up on one chair. */
-export function openVoices(seat?: string) { const st = slice<{ seat: string; msg: string; err: boolean }>('voices', () => ({ seat: 'pbp', msg: '', err: false })); st.seat = seat === 'col' ? 'col' : 'pbp'; st.msg = ''; openModal({ kind: 'voices' }); }
+/** Open one chair's menu, or with no chair the menu of chairs. */
+export function openVoices(seat?: string) { const st = slice<{ msg: string; err: boolean }>('voices', () => ({ msg: '', err: false })); st.msg = ''; openModal({ kind: 'voices', k: seat }); }
 
 /** A new game opens on this: the owner's letter, written by hand on cream paper laid on the black board (rule 2a).
     The lines appear one after another, as if read down the page. */
