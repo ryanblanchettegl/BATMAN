@@ -32,10 +32,10 @@ function Filters(p: { shown: number; of: number }) {
 }
 
 /** A column heading that sorts the table. Text columns start ascending, numbers start with the biggest. */
-function Th(p: { k: string; label: string; r?: boolean }) {
+function Th(p: { k: string; label: string; r?: boolean; c?: string }) {
   const st = rs(), on = st.rs.k === p.k, up = st.rs.d > 0;
   const sort = () => view(() => { if (on) st.rs.d = -st.rs.d; else st.rs = { k: p.k, d: p.k === 'name' || p.k === 'brand' || p.k === 'align' ? 1 : -1 }; });
-  return <th class={p.r ? 'r' : undefined} aria-sort={on ? (up ? 'ascending' : 'descending') : undefined}>
+  return <th class={[p.r ? 'r' : '', p.c || ''].join(' ').trim() || undefined} aria-sort={on ? (up ? 'ascending' : 'descending') : undefined}>
     <button type="button" onClick={sort} {...dataAttrs('sort', { v: p.k })}>{p.label}{on ? (up ? ' ▲' : ' ▼') : ''}</button>
   </th>;
 }
@@ -62,7 +62,7 @@ function Line_(p: { w: W; on: boolean; spot: string; champ: boolean; brand?: str
   return <tr class={'pick' + (p.on ? ' on' : '')} data-home={st.sel == null && (st.last ?? st.peek) === w.id ? '' : undefined} onClick={() => view(() => { if (p.on) st.sel = w.id; st.peek = w.id; })} {...dataAttrs('sel', { id: w.id })}>
     <td class="pf"><Portrait w={w} /></td>
     <td><span class="nm">{w.name}</span></td>
-    {p.brand != null && <td>{p.brand}</td>}
+    {p.brand != null && <td class="bcol">{p.brand}</td>}
     <td><Side w={w} /></td><td>{p.spot}</td>
     <td class="r num">{w.age}</td>
     <td class="r"><Ovr w={w} /></td>
@@ -117,12 +117,13 @@ function Sums(p: { R: W[] }) {
   const S = G.S, R = p.R, n = R.length || 1, wages = R.reduce((a, w) => a + (w.wage || 0), 0), bud = E.budget(S);
   const mood = Math.round(R.reduce((a, w) => a + w.morale, 0) / n), low = R.filter(w => w.morale < 35).length, high = R.filter(w => w.morale >= 70).length;
   const hurt = R.filter(w => w.inj > 0).length, worn = R.filter(w => !(w.inj > 0) && w.cond < 50).length;
-  const soon = R.filter(w => w.con <= 4).length, year = R.filter(w => w.con <= 48).length;
+  // a per-appearance handshake rolls on by itself, so only yearly deals can end
+  const yr = R.filter(w => w.dl !== 'show'), hs = R.length - yr.length, soon = yr.filter(w => w.con <= 4).length, year = yr.filter(w => w.con <= 48).length;
   return <>
     <Win title="Wages" area="wages" t="roster-wages"><p class="big"><b>{cash(wages)}</b></p><p class="muted">a week{isFinite(bud) ? ', ' + Math.round(wages / bud * 100) + '% of the budget' : ''}</p></Win>
     <Win title="Mood" area="mood" t="roster-mood"><p><Meter v={mood} n={8} /></p><p class="muted">{low} unhappy, {high} happy</p></Win>
     <Win title="Bodies" area="bodies" t="roster-bodies" tone={hurt ? 'hot' : undefined}><p><b>{hurt}</b> hurt</p><p class="muted">{worn} worn down</p></Win>
-    <Win title="Deals" area="deals" t="roster-deals" tone={soon ? 'hot' : undefined}><p><b>{soon}</b> end this month</p><p class="muted">{year} this year</p></Win>
+    <Win title="Deals" area="deals" t="roster-deals" tone={soon ? 'hot' : undefined}><p><b>{soon}</b> end this month</p><p class="muted">{year} this year{hs ? ', ' + hs + ' on a handshake' : ''}</p></Win>
   </>;
 }
 
@@ -141,7 +142,7 @@ export function Roster() {
       <Filters shown={L.length} of={R.length} />
       <div class="lb rsl scroll"><table>
         <thead><tr>
-          <th aria-label="Face" /><Th k="name" label="Name" />{P.brands && <Th k="brand" label="Brand" />}<Th k="align" label="Side" /><th>Spot</th>
+          <th aria-label="Face" /><Th k="name" label="Name" />{P.brands && <Th k="brand" label="Brand" c="bcol" />}<Th k="align" label="Side" /><th>Spot</th>
           <Th k="age" label="Age" r /><Th k="all" label="Overall" r /><Th k="ovr" label="Crowd" /><Th k="morale" label="Mood" /><Th k="cond" label="Body" /><Th k="con" label="Deal" r /><th>Holds</th>
         </tr></thead>
         <tbody>

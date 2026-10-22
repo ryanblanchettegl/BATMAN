@@ -1,7 +1,7 @@
 {
  "rescue": {
   "start": "7ad469505376354149bac6cdc6e91e73",
-  "end": "fc76ce16a254e8d2921e3ae2837461f2",
+  "end": "495c110d5a3a36ec90ab7a97898ee9d4",
   "week": 27,
   "res": {
    "ok": false,
@@ -13,7 +13,7 @@
  },
  "champion": {
   "start": "e7260b6f96232c935ee10c94ad4a0bf8",
-  "end": "58b8061022c3fcb13454a23dd8c4dd0d",
+  "end": "347532f3caf22778d9bb886c672722b1",
   "week": 40,
   "res": {
    "ok": false,
