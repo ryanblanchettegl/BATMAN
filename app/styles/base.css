@@ -337,15 +337,15 @@ canvas.pt{width:6.1em;height:6.1em;flex:none;image-rendering:crisp-edges;image-r
 .subnav .btn{margin-bottom:.32em}
 @media (max-width:860px){.menu .ttl{display:none}}
 
-/* ---------- screens: one layout, scaled. desk, tablet, TV, phone ---------- */
-html[data-screen="desk"]{--fs:clamp(19px,1.62vw,32px)}
+/* ---------- screens: one layout, scaled. 1080p is the base (Bill, 22 October) ----------
+   Type follows the window's width and height, whichever is tighter, with no upper limit, so 1440p, 4K and
+   ultrawide screens get the same layout as 1080p, only bigger. At 1920 by 1080 this is about 31px. */
+html[data-screen="desk"]{--fs:max(19px,min(1.62vw,2.92vh))}
 html[data-screen="tablet"]{--fs:clamp(21px,2.15vw,30px)}
 html[data-screen="tv"]{--fs:clamp(22px,1.9vw,84px)}
-/* on a one-screen page type follows the window's height as well as its width, so that 29 lines always fit.
-   Pages that still scroll keep the sizes above until they are converted. */
-html[data-screen="desk"]:has(.onescreen){--fs:min(clamp(19px,1.62vw,32px),2.92vh)}
+/* on a one-screen page type follows the window's height as well as its width, so that 29 lines always fit. */
 html[data-screen="tablet"]:has(.onescreen){--fs:min(clamp(21px,2.15vw,30px),2.7vh)}
-html[data-screen="tv"]:has(.onescreen){--fs:min(clamp(22px,1.9vw,84px),2.78vh)}
+html[data-screen="tv"]:has(.onescreen){--fs:max(22px,min(1.9vw,2.78vh))}
 .main,.start{padding-inline:max(2ch,env(safe-area-inset-left,0px)) max(2ch,env(safe-area-inset-right,0px))}
 /* touch: controls a finger can hit */
 html[data-screen="tablet"] .btn{padding:.44em 1.5ch;margin-bottom:.55em}
@@ -489,21 +489,24 @@ html[data-music="off"] .mus::after{content:' off';color:var(--dred)}
 .bsmap.small{grid-template-columns:repeat(7,minmax(0,1fr))}
 .bsmap.small .room{padding:4px .5ch}.bsmap.small .room pre{display:none}.bsmap.small .room:nth-child(7){grid-column:auto}
 
-/* a new game opens on the owner's letter: a telex on a black screen, typed out a line at a time */
-.scrim.intro{background:#000;display:flex;align-items:center;justify-content:center;z-index:60}
-.telex{font-size:min(1em,2.5vh);width:min(64ch,94vw);max-height:98vh;overflow:hidden;color:#33ff66;text-shadow:0 0 6px rgba(51,255,102,.55);padding:1em 2ch}
-.telex .tx-head{font-family:var(--f);line-height:1.05;margin:0 0 .6em;color:#ffcc33;text-shadow:0 0 6px rgba(255,204,51,.5);overflow:hidden}
-.telex .tx-meta{display:flex;justify-content:space-between;color:#22aa44;margin:0}
-.telex .tx-body{margin-top:1em;border-top:1px dashed #22aa44;padding-top:.8em}
-.telex .tx-l{margin:0 0 .7em;opacity:0;animation:txin .45s steps(6) forwards}
-.telex .tx-l.first{font-size:1.5em;color:#ffff66;text-shadow:0 0 8px rgba(255,255,102,.6)}
-.telex .tx-l a,.telex .tx-l button.lnk{color:inherit}
-.telex .tx-sig{margin-top:1.2em;color:#ffcc33}
-.telex .tx-ps{color:#22aa44}
-.telex .tx-foot{display:flex;gap:2ch;align-items:center;margin-top:1em}
-@keyframes txin{from{opacity:0;transform:translateY(.3em)}to{opacity:1;transform:none}}
-@media (prefers-reduced-motion:reduce){.telex .tx-l{animation:none;opacity:1}}
-.telex.again .tx-l{animation:none;opacity:1}
+/* a new game opens on the owner's letter: cream paper on the black board, written by hand, read a line at a time */
+.scrim.intro{background:var(--lk-black,#111) 0 0/480px 480px,#1e1d21;display:flex;align-items:center;justify-content:center;z-index:60}
+.letter{font-family:var(--hand);font-size:min(1.15em,2.6vh);line-height:1.35;width:min(70ch,92vw);max-height:96vh;overflow:hidden;color:var(--ink,#23232a);background:var(--lk-paper,#f3ead2) 0 0/360px,#f3ead2;padding:1.6em 3.5ch 1.4em;transform:rotate(-.6deg);box-shadow:.3em .5em 1.2em rgba(0,0,0,.6);clip-path:polygon(0 1%,8% 0,30% .8%,55% 0,80% .9%,100% 0,99.4% 30%,100% 62%,99.3% 100%,70% 99.2%,42% 100%,15% 99.3%,0 100%,.6% 60%)}
+.letter .lt-head{display:flex;justify-content:space-between;align-items:baseline;gap:2ch;background:var(--lk-navy,#22305a) 0 0/240px;color:#ffe48a;font-family:var(--marker);padding:.45em 1.5ch .4em;margin:0 0 .8em;transform:rotate(.8deg);clip-path:polygon(0 8%,12% 0,40% 6%,70% 0,100% 7%,99% 92%,72% 100%,45% 93%,15% 100%,1% 92%)}
+.letter .lt-head b{font-weight:400;font-size:1.45em;letter-spacing:.02em}
+.letter .lt-head span{font-size:.85em;color:#fff}
+.letter .lt-meta{display:flex;justify-content:space-between;margin:0;color:var(--dgrey,#6b6457)}
+.letter .lt-body{margin-top:.8em;border-top:2px dashed rgba(35,35,42,.25);padding-top:.8em}
+.letter .lt-l{margin:0 0 .65em;opacity:0;animation:ltin .5s ease-out forwards}
+.letter .lt-l.first{font-family:var(--marker);font-size:1.35em;line-height:1.2}
+.letter .lt-l a,.letter .lt-l button.lnk{color:inherit}
+.letter .lt-sig{margin-top:1.1em;font-family:var(--gochi);font-size:1.3em}
+.letter .lt-role{font-family:var(--hand);font-size:.75em;color:var(--dgrey,#6b6457)}
+.letter .lt-ps{font-family:var(--gochi);color:#4a4a55}
+.letter .lt-foot{display:flex;justify-content:flex-end;margin-top:.8em}
+@keyframes ltin{from{opacity:0;transform:translateY(.25em)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.letter .lt-l{animation:none;opacity:1}}
+.letter.again .lt-l{animation:none;opacity:1}
 
 /* the fire: what needs an answer, first on the desk */
 .fire{border:2px solid var(--red,#ff5555);padding:.4em 1ch;margin:.6em 0}
@@ -524,3 +527,9 @@ html[data-screen="tablet"] .bsacts{grid-template-columns:repeat(3,minmax(0,1fr))
 /* a panel shown inside a pop-up loses its own frame and heading: the window has both */
 .win .wb > .panel,.win .wb .inwin > .panel{border:0;padding:0;margin:0 0 .8em;box-shadow:none;background:none}
 .win .wb > .panel > h2,.win .wb .inwin > .panel > h2{position:static;display:block;background:none;padding:0;margin:0 0 .3em;color:var(--yellow)}
+
+/* a new game being set up: one paper card on the board until the desk is ready (flow.ts startGame) */
+.scrim.starting{background:var(--lk-black,#111) 0 0/480px 480px,#1e1d21;display:flex;align-items:center;justify-content:center;z-index:70}
+.starting .stcard{font-family:var(--hand);color:var(--ink,#23232a);background:var(--lk-paper,#f3ead2) 0 0/360px,#f3ead2;padding:1.2em 3ch;width:min(46ch,90vw);transform:rotate(-1deg);box-shadow:.3em .5em 1.2em rgba(0,0,0,.6);text-align:center}
+.starting .stcard b{display:block;font-family:var(--marker);font-weight:400;font-size:1.5em;margin-bottom:.3em}
+.starting .stcard p{margin:0}

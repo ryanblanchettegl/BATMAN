@@ -177,7 +177,7 @@ export function RoadMap(p: { road: any; t?: string }) {
       try { drawShape(cv, R, cw, ch, dpr, getComputedStyle(cv).fontFamily || 'sans-serif'); cv.setAttribute('data-sig', sig); cv.setAttribute('data-map', R.map); cv.setAttribute('data-shape', R.shape.n); } catch (e) { /* a map that cannot be drawn is not worth a crash */ }
       return;
     }
-    const dpr = window.devicePixelRatio || 1, host = bx.parentElement as HTMLElement, w = (host ? host.clientWidth : bx.clientWidth) * 0.45 - 4, h = bx.clientHeight - 4;   // as tall as the box, and no more than 45% of the window's width; the frame is two pixels a side
+    const dpr = window.devicePixelRatio || 1, host = bx.parentElement as HTMLElement, w = (host ? host.clientWidth : bx.clientWidth) * 0.38 - 4, h = bx.clientHeight - 4;   // as tall as the box, and no more than 38% of the window's width; the frame is two pixels a side
     const px = Math.max(2, Math.floor(Math.min(w * dpr / E.MAP_W, h * dpr / E.MAP_H)));
     const sig = JSON.stringify([R.map, R.lit, R.stops.map((s: any) => [s.k, s.city, s.x, s.y])]) + '@' + px;
     if (cv.getAttribute('data-sig') === sig) return;

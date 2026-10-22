@@ -1,4 +1,4 @@
-/* Overflow sweep: every page on desk, tablet and TV at week 30 of a game advanced headless. Nothing may scroll sideways.
+/* Overflow sweep: every page on desk, 1440p and TV at week 30 of a game advanced headless. Nothing may scroll sideways.
    Run:  NODE_PATH=<dir containing playwright> node app/tests/sweep.js   (build first). MODES= and PROMO= work as in journey.js */
 const { open, go, overflow, state, redraw } = require('./helper');
 const PAGES = ['desk', 'backstage', 'career', 'booking', 'roster', 'locker', 'titles', 'market', 'storylines', 'history', 'sheet', 'feed', 'boards', 'manage', 'house', 'deals', 'overview', 'finances', 'world'];

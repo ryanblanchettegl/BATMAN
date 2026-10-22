@@ -1416,7 +1416,125 @@
      "name": "Paperwork",
      "move": "Arm drag"
     }
-   ]
+   ],
+   "look": {
+    "id": "director_santo",
+    "name": "Director Santiago Mirella",
+    "hometown": "Mississauga",
+    "archetype": "Brawler",
+    "physical_attributes": {
+     "sex": "M",
+     "height_inches": 73,
+     "weight_lbs": 230,
+     "body_archetype": "Brawler",
+     "proportional_scalers": {
+      "torso_width": 1.02,
+      "torso_height": 1.0,
+      "limb_length": 1.0,
+      "muscle_mass": 1.0
+     }
+    },
+    "appearance": {
+     "face": {
+      "sk": 22
+     },
+     "hair_colour": "hair_jet_black",
+     "facial_hair": "stubble",
+     "mood": "happy"
+    },
+    "attires": {
+     "primary_ring": {
+      "description": "In-ring gear",
+      "equipped_assets": {
+       "head": "hair_slick_01",
+       "upper_body": "bare",
+       "lower_body": "trunks_brief_01",
+       "footwear": "boots_knee",
+       "accessories": []
+      },
+      "palette_slots": {
+       "primary": "swatch_green_paper",
+       "secondary": "swatch_white_paper",
+       "trim": "swatch_red_paper",
+       "hardware": "swatch_silver_foil"
+      },
+      "custom_layers": []
+     },
+     "entrance_gear": {
+      "description": "Ring walk and entrance",
+      "equipped_assets": {
+       "head": "hair_slick_01",
+       "upper_body": "jacket_satin",
+       "lower_body": "trunks_brief_01",
+       "footwear": "boots_knee",
+       "accessories": []
+      },
+      "palette_slots": {
+       "primary": "swatch_green_paper",
+       "secondary": "swatch_white_paper",
+       "trim": "swatch_red_paper",
+       "hardware": "swatch_silver_foil"
+      },
+      "custom_layers": [],
+      "part_colours": {
+       "upper_body": "swatch_green_paper"
+      }
+     },
+     "street_clothes": {
+      "description": "Backstage and promos",
+      "equipped_assets": {
+       "head": "hair_slick_01",
+       "upper_body": "suit_jacket",
+       "lower_body": "trousers_suit",
+       "footwear": "shoes_dress",
+       "accessories": []
+      },
+      "palette_slots": {
+       "primary": "swatch_charcoal_paper",
+       "secondary": "swatch_charcoal_paper",
+       "trim": "swatch_white_paper",
+       "hardware": "swatch_silver_foil"
+      },
+      "custom_layers": [],
+      "part_colours": {
+       "upper_body": "swatch_charcoal_paper"
+      }
+     }
+    },
+    "finishing_moves": [
+     {
+      "name": "The Cobra Strike",
+      "impact_damage": 88,
+      "kickout_difficulty": "Protected",
+      "position": "Standing",
+      "category": "Pinfall Impact",
+      "preview_pose_id": "strike"
+     },
+     {
+      "name": "Salute",
+      "impact_damage": 40,
+      "kickout_difficulty": "Easy",
+      "position": "Standing",
+      "category": "Pinfall Impact",
+      "preview_pose_id": "slam",
+      "stage": "early"
+     },
+     {
+      "name": "Paperwork",
+      "impact_damage": 40,
+      "kickout_difficulty": "Easy",
+      "position": "Standing",
+      "category": "Pinfall Impact",
+      "preview_pose_id": "slam",
+      "stage": "mid"
+     }
+    ],
+    "entrance": "ent_point",
+    "entrance_fx": {
+     "lights": "green",
+     "music": "Milan Is Calling"
+    }
+   }
   },
   {
    "id": "gail_goldstandard",
@@ -1470,7 +1588,131 @@
      "name": "Legend Lock",
      "move": "Figure-four"
     }
-   ]
+   ],
+   "look": {
+    "id": "gail_goldstandard",
+    "name": "Gail Goldstandard",
+    "hometown": "Toronto",
+    "archetype": "High Flyer",
+    "physical_attributes": {
+     "sex": "F",
+     "height_inches": 64,
+     "weight_lbs": 125,
+     "body_archetype": "High Flyer",
+     "proportional_scalers": {
+      "torso_width": 0.92,
+      "torso_height": 0.98,
+      "limb_length": 1.0,
+      "muscle_mass": 1.0
+     }
+    },
+    "appearance": {
+     "face": {
+      "sk": 22
+     },
+     "hair_colour": "hair_jet_black",
+     "facial_hair": "none",
+     "mood": "cocky"
+    },
+    "attires": {
+     "primary_ring": {
+      "description": "In-ring gear",
+      "equipped_assets": {
+       "head": "hair_long_01",
+       "upper_body": "top_crop",
+       "lower_body": "shorts_fight",
+       "footwear": "boots_knee",
+       "accessories": [
+        "knee_pads"
+       ]
+      },
+      "palette_slots": {
+       "primary": "swatch_black_matte",
+       "secondary": "swatch_gold_foil",
+       "trim": "swatch_gold_foil",
+       "hardware": "swatch_gold_foil"
+      },
+      "custom_layers": [],
+      "part_colours": {
+       "upper_body": "swatch_black_matte"
+      }
+     },
+     "entrance_gear": {
+      "description": "Ring walk and entrance",
+      "equipped_assets": {
+       "head": "hair_long_01",
+       "upper_body": "jacket_satin",
+       "lower_body": "shorts_fight",
+       "footwear": "boots_knee",
+       "accessories": []
+      },
+      "palette_slots": {
+       "primary": "swatch_gold_foil",
+       "secondary": "swatch_black_matte",
+       "trim": "swatch_gold_foil",
+       "hardware": "swatch_gold_foil"
+      },
+      "custom_layers": [],
+      "part_colours": {
+       "upper_body": "swatch_gold_foil"
+      }
+     },
+     "street_clothes": {
+      "description": "Backstage and promos",
+      "equipped_assets": {
+       "head": "hair_long_01",
+       "upper_body": "suit_jacket",
+       "lower_body": "trousers_suit",
+       "footwear": "shoes_dress",
+       "accessories": []
+      },
+      "palette_slots": {
+       "primary": "swatch_black_matte",
+       "secondary": "swatch_black_matte",
+       "trim": "swatch_gold_foil",
+       "hardware": "swatch_gold_foil"
+      },
+      "custom_layers": [],
+      "part_colours": {
+       "upper_body": "swatch_black_matte"
+      }
+     }
+    },
+    "finishing_moves": [
+     {
+      "name": "Gold Standard Facebuster",
+      "impact_damage": 88,
+      "kickout_difficulty": "Protected",
+      "position": "Running",
+      "category": "Pinfall Impact",
+      "preview_pose_id": "move_ddt"
+     },
+     {
+      "name": "Gold Kick",
+      "impact_damage": 55,
+      "kickout_difficulty": "Easy",
+      "position": "Standing",
+      "category": "Pinfall Impact",
+      "preview_pose_id": "strike",
+      "stage": "late"
+     },
+     {
+      "name": "Legend Lock",
+      "impact_damage": 55,
+      "kickout_difficulty": "Easy",
+      "position": "Standing",
+      "category": "Submission",
+      "preview_pose_id": "sleeper",
+      "stage": "mid"
+     }
+    ],
+    "entrance": "ent_point",
+    "entrance_fx": {
+     "pyro": "sparks",
+     "lights": "strobe",
+     "music": "Twenty-Four Karat"
+    }
+   }
   },
   {
    "id": "thomas_hanniford",

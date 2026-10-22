@@ -60,7 +60,7 @@ var ACH = [
   {id:'ACH_IMAGE_UP',name:'On the Rise',desc:'Raise your promotion’s popularity by 5 points.'},
   {id:'ACH_NO1',name:'Top of the Mountain',desc:'Be the most popular promotion in the world.'},
   {id:'ACH_YEAR',name:'Year One',desc:'Complete 48 weeks in charge.'},
-  {id:'ACH_CALL',name:'Calling the Shot',desc:'Spend booking power to call a finish.'},
+  {id:'ACH_CALL',name:'Calling the Shot',desc:'Call the finish of a match yourself.'},
   {id:'ACH_LONGSHOT',name:'Against the Odds',desc:'Call a finish for a long shot (under 25%).'},
   {id:'ACH_DIRECTIVE',name:'Company Man',desc:'Deliver on one of the owner\u2019s directives.'},
   {id:'ACH_OWNER_TRUST',name:'Right Hand',desc:'Reach 90 trust with the owner.'},
@@ -480,7 +480,7 @@ function autoBook(S,P,show){
   var mx=big?10:SLOT_MAX[P.slot];while(card.length>mx){var lw=card.filter(function(m){return !m.title;}).sort(function(a,b){return a._p-b._p;})[0]||card[card.length-1];card.splice(card.indexOf(lw),1);}
   card.sort(function(a,b){return a._p-b._p;});
   shapeAuto(S,P,card);   // the running order: a quick opener first, no two of a kind together (src/92-shape.js)
-  // calls cost booking power: drop the ones the player cannot afford, last asked first
+  // a call on a star with creative control costs booking power: drop the ones the player cannot afford, last asked first
   if(isPl){var g2=0;while(g2++<8&&cardCost(S,card)>S.bp){var pm=card.filter(function(m){return m._q&&m.call!=null;})[0];if(!pm)break;delete pm.call;}}
   card.forEach(function(m){delete m._p;delete m._q;m.win=-2;});
   return card;

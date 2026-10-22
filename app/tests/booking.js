@@ -96,8 +96,8 @@ async function section(mode) {
   await check('stipulation');
   await state(page, S => { S.card.forEach((m, i) => { if (i) delete m.call; }); });   // a suggested card may already hold a call; this check is about the one made here
   await page.selectOption('#m0-call', '0');
-  ok(await state(page, S => S.card[0].call) === 0 && /Your call: .* wins \(\d BP\)/.test(await txt(page, '.d1-meta')) && /Your call/.test(await txt(page, seg(0) + ' .meta')), mode + ': called finish');
-  ok(/committed on this card/.test(await txt(page, '.head')), mode + ': booking power committed');
+  ok(await state(page, S => S.card[0].call) === 0 && /Your call: .* wins/.test(await txt(page, '.d1-meta')) && !/BP/.test(await txt(page, '.d1-meta')) && /Your call/.test(await txt(page, seg(0) + ' .meta')), mode + ': called finish');
+  ok(await state(page, S => GP.cardCost(S, S.card)) === 0 && /none spent on this card/.test(await txt(page, '.head')), mode + ': picking a winner costs no booking power');
   ok(await state(page, S => GP.cardCost(S, S.card) <= S.bp), mode + ': the call should be affordable: ' + await state(page, S => GP.cardCost(S, S.card) + ' of ' + S.bp + ' BP, ' + S.card.map(m => m.call).join(',')));
   ok(await page.$eval('#m0-call', e => e.value) === '0', mode + ': the select should show the call');
   await check('called finish');
@@ -351,4 +351,4 @@ async function tv() {
   await browser.close();
 }
 
-(async () => { await section('desk'); await section('tablet'); if (process.env.TV) await tv(); else console.log('tv: the remote walk is parked while the booking screen is rebuilt (run with TV=1)'); console.log('booking: all passed'); })().catch(e => { console.error('FAIL', e.message); process.exit(1); });
+(async () => { await section('desk'); await section('big'); if (process.env.TV) await tv(); else console.log('tv: the remote walk is parked while the booking screen is rebuilt (run with TV=1)'); console.log('booking: all passed'); })().catch(e => { console.error('FAIL', e.message); process.exit(1); });

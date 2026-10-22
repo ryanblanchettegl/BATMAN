@@ -107,6 +107,176 @@ Two more lists sit beside this one, both finished:
 
 ## Tasks
 
+### 0aa. The Director (Bill, 21 October: "I like this feature add it to the plan")
+
+A pacing layer that decides when trouble reaches the desk: it reads how tense the company already is and chooses which of this week's possible events happen, and how big. The player picks a style (The Promoter, The Carny, The Purist). Plan: `docs/plans/director.md`.
+
+- [ ] Step 1: the tension reading and its eight-week history, headless only (`test-director.js`). Nothing in play changes.
+- [ ] Step 2: `genEvents()` asks the Director how many events this week; compare 60 weeks before and after.
+- [ ] Step 3: tag every event maker as a problem, a chance or colour, and let tension pick between them.
+- [ ] Step 4: the three styles, chosen at the start of a game and shown on Career; old saves get The Promoter.
+- [ ] Step 5: event sizes and the rhythm around big nights.
+
+### 0ad. Company arcs that start from what happens (Bill, 21 October: "This is a key feature, Company Arcs need to start from beats that happen from specific events happening")
+
+An arc starts from an event (a betrayal, an authority figure on screen, a rival folding, a comeback, a breakout) offered on the desk as the story of the year, and moves through beats fired by what happens in the game, with chapters on the desk only as a fallback. Arc types become shapes, not scripts. Still one a year, paid off at the flagship. Plan: `docs/plans/arc-beats.md`.
+
+- [ ] Step 1: the beat format and shapes as data; today's three arcs ported with no change in play.
+- [ ] Step 2: seeds, the events that can start an arc, offered on the desk; the old list as the fallback.
+- [ ] Step 3: beats fired by events (live calls, results, titles, injuries, leaks, bonds), the fallback timer, more credit for beats the player booked.
+- [ ] Step 4: new shapes, one at a time: the rival booker first (Bill, 21 October: "R5 - this should be a story arc"; section 4b), then the invasion, the comeback, the chosen one, the last run, civil war, blood feud, the student and the master.
+- [ ] Step 5: beats and shapes in the World Editor.
+
+### 0ae. Catching fire, and forty calls for the live show (Bill, 21 October: "we also need to have like 40 events that could happen on a show to give the director")
+
+Catching fire (a lower-card act beating the card's prediction is called out live) and forty new calls for the gorilla position, each caused by something true of the night and tagged problem, chance or colour, so the Director can pace them through a show. Plan and the full list: `docs/plans/live-events.md`.
+
+- [ ] Step 1: catching fire as a `LIVEK` entry (headless test).
+- [ ] Step 2: today's thirteen kinds of call tagged problem, chance or colour.
+- [ ] Step 3: the Director on the night, after the Director's weekly steps 1 to 3; it replaces the flat chances in `E.chaos` and `LIVEK.disaster`.
+- [ ] Step 4: the forty, a few at a time, each batch shown to Bill.
+- [ ] Step 5: stills for the new calls as the scene work reaches them.
+
+### 0af. The monthly wrestling magazine (Bill, 21 October: "I want A monthly wrestling magazine")
+
+An invented magazine every game month covering the whole world, telling the on-screen stories as if they were real (the dirt sheet tells the truth): a cover star drawn by the scene engine, the big story, rankings, match of the month, an interview, rumours, letters, a readers' poll, history. Being on the cover matters; the player can pitch a story or buy an ad. After each flagship, an annual issue that can be saved and shared. Plan: `docs/plans/magazine.md`.
+
+- [ ] Step 1: the issue built in the engine at each month's end (headless test).
+- [ ] Step 2: the desk line, the magazine spread in a pop-up, past issues in the Net section.
+- [ ] Step 3: the cover's lift, the editor, pitching a story, buying an ad.
+- [ ] Step 4: letters and the readers' poll.
+- [ ] Step 5: the annual issue after each flagship, and saving an issue to share.
+
+### 0ag. Promos written from everything that is going on (Bill, 21 October: "p4 = This is a main idea. Since it will make promos much better")
+
+Promos built from what is true tonight (the match, the feud's history, last week, a title, the big event coming, wants, grievances, moods, partners, betrayals, the crowd, the arc, history), each with a weight, and said in the wrestler's own voice (a lexicon from gimmick, personality, home town and backstory). No line or topic repeats inside eight weeks; a war of words is an exchange where each answers the other; a promo about what the crowd cares about grades higher. Plan: `docs/plans/promos.md`.
+
+- [ ] Step 1: `promoTopics()`, every fact a wrestler can talk about with weights (headless test).
+- [ ] Step 2: lines for each topic, a few at a time.
+- [ ] Step 3: the voice: a lexicon per wrestler and per-character grammar symbols; show Bill three wrestlers saying the same thing.
+- [ ] Step 4: no repeats.
+- [ ] Step 5: war of words as an exchange.
+- [ ] Step 6: relevance in the grade, and catchphrases from the lexicon.
+- [ ] Step 7: the magazine, the hallway, returns and the feed use it.
+
+### 0ah. Traits, and perks at 60, 70, 80 and 90 (Bill, 21 October: "each character should have traits, that defines what they want, how they react and their personality"; "a perk at level 60, 70, 80, and 90 ... specific benefits to specific style")
+
+Modelled on Madden (motivations and tags in 26, the Persona Engine in 27, ability slots by rating and archetype in 23 and 24, X-Factors). Every wrestler has wants (what they want), two personality traits (how they react), a mood for a while after something happens, and today's earned traits shown as reputations. A perk slot opens at overall 60, 70, 80 and 90, with two choices per tier for each of the seven styles; the 90 perk is a signature that switches on and off inside a match. A perk sleeps if the overall falls below its tier. Plan: `docs/plans/traits-and-perks.md`.
+
+- [ ] Step 1: wants and personality in the backstory block, generated by hash, shown in the file (headless test).
+- [ ] Step 2: reactions through `relBump()` and `youRemember()`; wants move morale and contract prices.
+- [ ] Step 3: moods (`w.chip` becomes Proving it).
+- [ ] Step 4: perk slots at 60, 70, 80, 90, the pick on screen, the computer's pick, sleeping perks.
+- [ ] Step 5: signature perks at 90 inside the match.
+- [ ] Step 6: wants in contract talks, and rivals that meet them.
+
+### 0ai. Word travels (Bill, 21 October: "r4 - i like too")
+
+How you treat one person reaches their friends, partners, teacher, family and clique, weighted by closeness and the person's standing, one step only, each with a reason in the file ("cooler on you since you buried their friend"). Small. Plan: `docs/plans/word-travels.md`.
+
+- [ ] Step 1: passing it on in `youRemember()` (headless test).
+- [ ] Step 2: reasons in the file and a line in the notification bar.
+- [ ] Step 3: personality shaping it, after 0ah.
+
+### 0aj. The hallway, on the desk (Bill, 21 October: "r2 - should be on the main desk screen")
+
+Three to five exchanges overheard each week, picked by priority from what just happened, shown in a strip on the main desk, each used once, names that open the file. Replaces the shelved E11. Plan: `docs/plans/hallway.md`.
+
+- [ ] Step 1: `E.hallway()`, candidates and priority (headless test).
+- [ ] Step 2: lines, in the voices of 0ag when they exist.
+- [ ] Step 3: the strip on the desk.
+- [ ] Step 4: the rest of the candidates.
+
+### 0ak. Backstage Politics (Bill, 21 October: "R1 - But I want it called Backstage Politics")
+
+Secrets you learn and favours owed both ways, held and spent: a secret makes a star take the loss or a holdout sign, at a risk to trust if it gets out; wrestlers call in what you owe them at the worst time. Standing in the room, and moves that shift it. Plan: `docs/plans/backstage-politics.md`.
+
+- [ ] Step 1: secrets you know, from the kayfabe layer and the press (headless test).
+- [ ] Step 2: the Backstage Politics page.
+- [ ] Step 3: spending a secret.
+- [ ] Step 4: favours both ways.
+- [ ] Step 5: standing in the room.
+
+### 0al. They come back changed (Bill, 21 October: "p3 - Yes!")
+
+Grievances kept on wrestlers (released, fired on screen, lost a loser-leaves-town match, buried, a broken promise, screwed, replaced, hurt and dropped). Months later they can return at a rival, on the indies or at your door, as a new character made from the grievance, with a target, a mood and a price to sign back. Kept clear of the Nemesis patent; a lawyer check before release. Plan: `docs/plans/come-back-changed.md`.
+
+- [ ] Step 1: grievances (headless test).
+- [ ] Step 2: the return.
+- [ ] Step 3: the new character from the grievance.
+- [ ] Step 4: signing them back.
+- [ ] Step 5: the feud, the arc seed, the magazine story.
+
+### 0am. The locker room as a place (Bill, 21 October: "V2 yes")
+
+A diorama where seating is the relationship matrix: cliques on one bench, the veteran's corner, the rookie by the door, enemies at opposite ends, an empty locker with a nameplate after a release, tonight's card taped to the wall. No numbers. Built as the scene renderer allows. Plan: `docs/plans/locker-room.md`.
+
+- [ ] Step 1: `E.lockerRoom()`, the seating by hash, stable week to week (headless test).
+- [ ] Step 2: the room as a scene set.
+- [ ] Step 3: the objects.
+- [ ] Step 4: pressing things, and hallway lines as bubbles.
+
+### 0an. Buildings that remember (Bill, 21 October: "v3")
+
+Every venue keeps its own short history (title changes, betrayals, great matches, record gates, riots, debuts and farewells). A rematch in the building where it started gets heat and a line in the commentary; the crowd brings signs about it (takes in E7); a banner for a famous night; the road map lists what happened here. Small. Plan: `docs/plans/buildings-remember.md`.
+
+- [ ] Step 1: memories per building (headless test).
+- [ ] Step 2: heat from the past in the match.
+- [ ] Step 3: signs in the crowd.
+- [ ] Step 4: the road map list, and "what happened here" when booking.
+- [ ] Step 5: banners in the venue scene.
+
+### 0ab. Pre-history (Bill, 21 October: "prehistory from real history, and a option for new companies to have a simulated prehistory for 10 years")
+
+The parody world's past comes from real wrestling history, as fixed anchors under parody names, with the simulation filling in between. A company with no past can start with ten simulated years. On-screen record only, and a lawyer check before shipping. Plan: `docs/plans/pre-history.md`.
+
+- [ ] Step 1: the headless runner, `E.preHistory()`, writing a `history` table (`test-prehistory.js`).
+- [ ] Step 2: anchors that must happen as written.
+- [ ] Step 3: "Start with a history: none, or ten years" in Create a federation, the World Editor and quick-made worlds, with the story-so-far scroll.
+- [ ] Step 4: the parody world's anchors, one company at a time, EWE first.
+- [ ] Step 5: legends for the anchors that need them.
+
+### 0ac. The last booker's mess (Bill, 21 October: "perfect for the main new game mode when we walk through people how to play the game")
+
+Two ways to start: the **main game** opens in the week of the flagship, in the previous booker's office, whose documents (a title promise, an unhappy star, the advertised main event, the owner's memo, a leak, unpaid bills) are real matters that teach the game. The player's first job is to book the biggest show of the year; the week after, a new year begins. **A wrestling year ends at the big show** (Bill, 21 October). **Sandbox** is a free start, as today. Plan: `docs/plans/last-booker.md`.
+
+- [ ] Step 1: the mode choice, and the main game starting in the flagship's week with year one starting the week after (headless test).
+- [ ] Step 2: the mess built from what is true of the company, by hash.
+- [ ] Step 3: the office screen with the drawers and documents, opening onto the desk's tasks.
+- [ ] Step 4: the first year's required actions start the week after the flagship (section 0h), and yearly systems (awards, annual report, the owner's verdict) close at the flagship.
+- [ ] Step 5: the last booker as a person in the history, once pre-history (0ab) exists.
+
+### A1. The road to A+, phase 1: balance (Bill, 21 October; the review at https://claude.ai/artifact/KQmaYcSgaUeVtEWWhWGGUx)
+
+Bill's decisions of 21 October: picking the winner is free and booking power buys the extras; Suggest a card lands around a C; both worlds ship, the parody world is the Steam default and a world switch sits at the top right of the title screen; the licence is all rights reserved; no new systems until balance, the first hour and the screens are done; Booker Mode starts at the grand show a week before the business year ends, Sandbox Mode is the free start; the long broadcasts stay; the game is built for 1080p only (no tablet, no Steam Deck).
+
+- [x] Picking a winner costs no booking power. A draw costs 1, and a loss called on a star with creative control still costs 2. A long shot is paid for in people: the favourite told to lose loses morale and remembers it.
+- [x] Suggest a card lands around a C. A match left just as suggested works in front of a flat crowd ("Booked by the numbers", `SUG_FLAT` in `src/99-suggest-flat.js`), and the crowd lowers its sights only a little after poor shows.
+- [x] Coasting fails: the owner sets three goals for each year, judged at the flagship (`src/66-owner-year.js`, shown on Career), and hands over the company only after two years with all three met. When a booker runs out of money the owner covers it, for 12 trust; bankruptcy is for owners, scenarios and challenges.
+- [x] Popularity follows the grades: a show that gives the crowd what it came for (a B) grows the company a little (`POP_EDGE` in `src/30-show.js`).
+- [x] EWE's money: checked. With a thinking booker EWE grows its cash over two years; it loses money only on weak shows, which is the point.
+- [x] A balance test with targets for every company model (`node test-balance.js`).
+- [x] The licence: all rights reserved (`LICENSE`).
+
+### A2. The road to A+, phase 2: the first hour (Bill, 21 and 22 October)
+
+- [x] Commentary: play-by-play and colour each have their own menu, not steps (Bill, 22 October). The chairs are a list (`CHAIRS` in `app/src/screens/office/Windows.tsx`), so a third voice can be added later.
+- [ ] A third commentator (later; Bill: "pretty standard now").
+- [x] The owner's letter in the workbench look, naming the goals for the year.
+- [x] A loading card while a new game is set up.
+- [x] A new booker's first show plays to a forgiving crowd (`FIRST_NIGHT`), and the desk says so.
+
+### A3. The road to A+, phase 3: the screens (Bill, 22 October)
+
+- [x] 1080p is the base and every layout scales up with no cap: type follows the tighter of the window's width and height, so 1440p, 4K and ultrawide get the 1080p layout, bigger. No tablet or Steam Deck size.
+- [x] Tests run 1440p (`MODES=desk,big`) and 4K (`onescreen.js`) in place of the tablet size.
+- [x] No cut-off text on the desk's road window, the storylines chart or After the show.
+- [x] Readable labels: figures on paper in dark ink (the sign-off), the achievement strip in dark ink.
+- [x] Roster bars that differ: smooth, coloured by band, with the number.
+- [x] The header counts the time into the show while on the air.
+- [ ] The broadcast camera clipping through the referee (a pass on the scenes in Create a Scene).
+- [ ] A limit on interruptions a week: rank matters and calls, show the top few, let the rest wait (its own phase).
+
 ### 0w. Still pictures for the moments you answer (Ryan, 18 October)
 
 - [x] Every matter on the desk and every call from the gorilla position shows one still diorama picture of the moment (somebody hurt, a fight backstage, two people face to face, a meeting across your desk, a walkout, the crowd on its feet): the picture on the left of the pop-up, the answers on the right.
@@ -270,6 +440,7 @@ The desk image (`docs/mockups/paper/desk.png`) is the art style: the whole game 
 - [x] The logo creator has six lettering faces (Ryan, 20 October).
 - [x] One look for every World Editor page (Ryan, 20 October): the same menu bar, note strip and bottom strip on every tab and on the list of worlds; Create a Wrestler and Create a Scene wear the same bar.
 - [x] More dropdown menus than buttons on World Editor pages (Ryan, 20 October): the creators' choices in words, which part of a page shows, faces, poses, outfits, moves and entrances.
+- [x] The characters polished (Bill, 22 October, after three rounds of concepts): no ears; eyes with an iris, a catch of light and a lash line; brows and a resting face from the gimmick (friendly, stern, grinning, sad, cocky, fierce); a raised paper nose; lips; a pointed hairline, a crescent of shine on the hair, long hair as one curtain behind the far shoulder; beards a shade darker than the hair with torn tufts, stubble that follows the jaw; a little bigger head, mitten hands, heavier wrestlers fill out; a cream cut-out edge round every figure. Create a Player choices for all of it: eye colour, classic dot eyes, cheeks (none unless picked), the face at rest, hair shine. Every EWE and WWC wrestler checked, and the seventeen legends with no look given one.
 - [x] Stock scenes move in at least four keyframes, with a wind-up at the start and an overshoot and settle at the end (Ryan, 20 October: "scenes should average 4 keys").
 - [x] 3D sets for a steel cage, the cell with a roof, an inferno, ringside on the floor, a ballroom, a gym and a stadium; 3D rooms for the entrance stage, the backstage wall, the parking lot, a talk show, a news desk and the rafters; chairs, tables, ladders, steps, bins and bats as 3D models.
 - [x] A ladder match set (the belt hung over the ring), and 3D catering, trainer's room and weight room; the Titles page shows each title's belt.
@@ -738,6 +909,33 @@ From the table in `docs/feature-list.md`. Check each against the engine first; s
 - [ ] TV and gamepad input were tested with simulated keys only, never on hardware.
 - [x] Portraits: Ryan decided to keep the code-drawn faces.
 - [x] The built-in world is named The EWF World (Ryan's decision).
+
+### 13. Later: the corkboard (Bill, 21 October: "add that for later on on tasks, not a top one")
+
+The relationship web as a board of Polaroids and string, built by itself on the Storylines page from the feuds that are running. Concept image: project file `killer-features/corkboard-concept.png`. Plan: `docs/plans/corkboard.md`. Not before the work above it.
+
+- [ ] A weekly snapshot of the bond for every pair worth a string, so the board can say what moved and for how long.
+- [ ] The board on Storylines: a string for each live feud (thickness for heat, fraying for freshness), with partners, stable mates, managers, the champion and the arc's cast pulled in; a finished feud stays as a faint ember.
+- [ ] Positions placed once by seed, cliques together, moved only when someone joins or leaves; about 20 people at most, and a focus mode for one person.
+- [ ] The Backstage switch: real feelings from the relationship matrix laid over the on-screen strings, with jealousy as an arrow and known secrets as folded notes.
+
+### 14. Later: careers and the long game (Bill, 21 October: "I like ideas 1-5 add those to long term planning")
+
+Thirteen features from the genre research (career, sports management, dynasty, grand strategy, 4X and simulation games). Free agency week was dropped (wrestling has none), and so were power blocs. Plan: `docs/plans/careers-and-long-game.md`. Not before the balance and first-hour work above (Bill paused new features until then).
+
+- [ ] Wrestler career mode, "Road to the Main Event": play one wrestler in the living world while that company's AI booker books you; the asks at Your office become your moves (L).
+- [ ] One life in wrestling: the same save goes on from wrestler to manager, commentator or agent, then booker, then owner, and on to the student you trained (M, after the career mode).
+- [ ] The owner's five-year vision: goals for each company model in the welcome letter, a checkpoint each wrestling year after the flagship, trust that follows the plan (M).
+- [ ] The recruiting pitch: every free agent wants three things and may have a dealbreaker; the Offer window says in words how well you offer each; rivals pitch too (M).
+- [ ] The path to the Hall: a career line and a line in words on every file ("Building a case", "On the path", "A lock"), feeding the Hall of Fame night and the magazine (S).
+- [ ] Wrestling families: second- and third-generation wrestlers in the rookie class, the family name as an early lift and early pressure, a family tree on the file, dynasties the Net and the magazine follow (M).
+- [ ] Coalitions: grow too fast (raids, markets, signings) and rival owners band together, sharing talent and booking against your big nights until it cools; you can join one against a rival too (M).
+- [ ] Company mission trees: each of the nine models gets a tree of goals that take years, each one finished opening the next and leaving a lasting bonus; rivals follow theirs too (M).
+- [ ] The territory map: a world map where each region is coloured by the company most popular there right now, striped where two are close; needs markets for rival companies first (M to L).
+- [ ] Rival owners with agendas: each owner has an agenda the world knows and a hidden one found out through the press, sources and people who leave; both decide how they treat you (S to M).
+- [ ] Rival plans: each month the office hears of two or three moves rivals are preparing (a raid, a show on your big night, a bid, a tour into your region); stop one with booking power or a source, the rest happen (M).
+- [ ] Trends: world fads for a year or two (a hardcore craze, a high-flying boom, a tag-team revival); the first to ride one gets the most, and the Net and the magazine hint at the next one (S to M).
+- [ ] World firsts: firsts only one company in the world can claim (stadium show, national TV deal, million-dollar gate), with a glowing celebration pop-up like Civilization's when you claim one, reusable for other big good moments (S to M).
 
 ## After each task
 

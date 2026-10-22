@@ -412,8 +412,10 @@ export function Live(p: { r: any }) {
   // with the scenes on, the commentary runs as captions over the picture, and when the segment ends the result pops up over its last moment
   const pk = pref.pics && !ev && state === 'seg' && s ? scenePick(r, s, L.b, done) : null;
   const now = rows.find(x => ev && !post ? x.k === info.step : (x.si >= 0 && x.si === (post ? ev.si : L.s)));
+  // on the air the clock runs through the segment as its lines are read, up to where the next one starts
+  const nxt = now && now.at != null ? rows.find(x => x.at != null && x.at > (now.at as number)) : null, span = nxt && now && now.at != null ? (nxt.at as number) - now.at : 0;
   return <div class="onescreen live live1" id="live" data-v={state}>
-    <div class="bar"><span>{r.name}{air || L.aired ? '' : ' · replay'}</span><span data-t="live-where">{ev ? 'The headset is live' : (L.s < 0 ? 'On the air' : (!s ? 'Sign-off' : (air ? 'On the air' : 'Segment ' + (L.s + 1) + ' of ' + n) + (now && now.at != null ? DOT + hm(now.at) + ' into the show' : '')))}</span></div>
+    <div class="bar"><span>{r.name}{air || L.aired ? '' : ' · replay'}</span><span data-t="live-where">{ev ? 'The headset is live' : (L.s < 0 ? 'On the air' : (!s ? 'Sign-off' : (air ? 'On the air' : 'Segment ' + (L.s + 1) + ' of ' + n) + (now && now.at != null ? DOT + hm(Math.round(now.at + span * (air ? Math.min(1, Math.max(0, ((L.b || 0) + 1) / Math.max(1, ((s && s.bc) || []).length))) : 0))) + ' into the show' : '')))}</span></div>
     <Night rows={rows} at={post ? ev.si : L.s} done={done || !!post} wait={ev && !post ? info.step : -1} call={!!ev} info={info} />
     <div class="lv-body">
       <div class="lv-main">

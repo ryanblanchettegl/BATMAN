@@ -51,13 +51,15 @@ function Road() {
   // a tablet's window is shorter: one hometown name and one stop fewer
   const tab = document.documentElement.getAttribute('data-screen') === 'tablet', N = R.now, h = Math.min(tab ? 1 : 2, N.home.length), past: any[] = R.stops.filter((s: any) => s.k === 'past').slice(h === 2 ? -2 : -3), ahead: any[] = R.stops.filter((s: any) => s.k !== 'past').slice(0, Math.min(4, (h === 2 ? 5 : 6) - past.length - (tab ? 1 : 0)));
   const offMap = (s: any) => R.map && s.x == null ? <span class="muted"> {'·'} off this map</span> : null;
+  const bw = (() => { const B = E.buildingWords(G.S); return B && B.short !== 'nothing special' ? String(B.short) : ''; })();
   return <Win title={R.mapName ? 'The road: ' + R.mapName : 'The road'} right={date} cls="road" area="road" t="road">
     <div class="r3">
       <RoadMap road={R} t="road-map" />
       <div class="rmid">
         <p class="bl big one" data-t="road-city">{N.city.toUpperCase()}{N.land ? ', ' + N.land.toUpperCase() : ''}</p>
         <p class="one" data-t="road-show"><b>{N.venue}</b>{N.big ? <> <Tag kind="gold">{N.kind || 'Big event'}</Tag></> : null} <span class="muted">{'·'} {N.later ? 'next week. Every show this week has run.' : (N.left > 1 ? 'the first of ' + N.left + ' shows left this week' : 'the last show this week')}</span></p>
-        <Group title={(G.S.soRun || 0) >= 2 ? 'The building: ' + G.S.soRun + ' sell-outs running' : 'The building' + ((() => { const B = E.buildingWords(G.S); return B && B.short !== 'nothing special' ? ': ' + B.short : ''; })())} t="road-building">
+        <Group title={(G.S.soRun || 0) >= 2 ? 'The building: ' + G.S.soRun + ' sell-outs running' : 'The building'} t="road-building">
+          {bw ? <Line label="Inside" w={12}><span data-t="road-quirk">{bw[0].toUpperCase() + bw.slice(1)}.</span></Line> : null}
           <Line label="Sold" w={12}><b class="bl">{num(N.sold)}</b> of {num(N.cap)} <Meter v={N.sold / N.cap * 100} n={8} kind={N.sold >= N.cap ? 'au' : 'cool'} />{N.sold >= N.cap ? <b class="good"> Sold out</b> : null}</Line>
           <Line label="This week" w={12}>{N.wk > 0 ? <span class="good">{'▲'} {num(N.wk)} sold</span> : <span class="muted">Nothing sold yet</span>}</Line>
           <Line label="Gate so far" w={12}>${num(N.gate)} <span class="muted">at ${num(N.seat)} a seat</span></Line>
@@ -196,7 +198,7 @@ function NextShow() {
       {done ? <LightPic name="bell" dot={1} t="next-pic" /> : (PosterPic({}) || <LightPic name="ring" dot={1} t="next-pic" />)}
       <div class="nxr">
         {done ? <p class="lh"><LightText text="Week booked" color="#55ff55" dot={2} /></p> : <p class="lh"><LightText text={String(sh.name).slice(0, 26)} dot={String(sh.name).length > 15 ? 1 : 2} label={sh.name} t="next-name" /></p>}
-        {done ? <p>Every show this week has run.</p> : <p data-t="next-expect">{sh.brand ? <Tag>{brandName(me(), sh.brand)}</Tag> : null}The crowd expects <b>{x ? x.a : 'a show'}</b>{x ? <>: matches of <b>{x.bar}</b> or better.</> : '.'}</p>}
+        {done ? <p>Every show this week has run.</p> : <p data-t="next-expect">{sh.brand ? <Tag>{brandName(me(), sh.brand)}</Tag> : null}The crowd expects <b>{x ? x.a : 'a show'}</b>{x ? <>: matches of <b>{x.bar}</b> or better.</> : '.'}{x && x.first ? <> <span class="good">{x.first}</span></> : null}</p>}
         {done && (n || !wk.ok) ? <p class="bad one">{n ? 'Answer what is on your desk first.' : 'Finish this week’s tasks first.'}</p> : <p class="muted cu"><ComingUp /></p>}
       </div>
     </div>

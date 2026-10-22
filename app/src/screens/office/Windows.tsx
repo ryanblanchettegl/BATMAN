@@ -54,44 +54,67 @@ export function ClockWindow(p: { m: Modal }) {
   </Window>;
 }
 
-/** The commentary desk, picked from the Office. `m.k` is the chair to fill first. The first of the desk pop-ups:
-    a task is answered where it stands, and the player never has to leave the Office for it. */
+/** The chairs at the commentary desk, in the order they are picked. A third voice later is one more entry here
+    (Bill, 21 October: three in the booth is standard now). `f` is the skill on the voice that this chair uses. */
+const CHAIRS: { k: string; n: string; skill: string; f: string; d: string }[] = [
+  { k: 'pbp', n: 'Play-by-play', skill: 'Calling', f: 'pbp', d: 'The play-by-play voice calls the action: every move, every near fall and the finish. Better calling makes every match play better on television.' },
+  { k: 'col', n: 'Colour', skill: 'Colour', f: 'col', d: 'The colour voice explains why it matters: the story, the grudge, what each wrestler wants. Better colour helps your stories get across.' }
+];
+const STYLE_SAYS: Record<string, string> = { Excitable: 'big energy, loudest on the big moments', Dry: 'calm and exact, a straight voice', Warm: 'friendly, gets on with anyone' };
+const skillWord = (v: number) => v >= 80 ? 'Excellent' : (v >= 70 ? 'Very good' : (v >= 60 ? 'Good' : (v >= 50 ? 'Average' : 'Weak')));
+
+/** The commentary desk, picked from the Office. Each chair has its own menu (Bill, 22 October: not steps), opened
+    by `m.k`; with no chair given it opens a short menu of the chairs. A task is answered where it stands. */
 export function VoicesWindow(p: { m: Modal }) {
-  const S = G.S, V = E.voices(S), st = slice<{ seat: string; msg: string; err: boolean }>('voices', () => ({ seat: 'pbp', msg: '', err: false }));
-  const seat = st.seat === 'col' ? 'col' : 'pbp', word = seat === 'pbp' ? 'play-by-play' : 'colour';
-  const run = (fn: () => any, next?: string) => act(() => { const r = fn(); st.msg = r.text; st.err = !r.ok; say(r.text, { err: !r.ok }); if (r.ok && next) st.seat = next; });
-  const chair = (k: string, label: string, v: any, skill: string) => <li class={seat === k ? 'on' : undefined} data-t="voice-chair" data-v={k} data-full={v ? '1' : '0'}>
-    <span><b>{label}</b> {v ? <><span>{v.name}</span> <span class="muted">{'·'} {skill} {v[k]} {'·'} {'$' + v.wage.toLocaleString('en-US')} a week</span></> : <span class="muted">Empty</span>}{seat === k ? <> <Tag kind="warn">Picking</Tag></> : null}</span>
-    <span class="row opts">{seat !== k ? <Btn kind="sm" t="voice-seat" d={{ v: k }} onClick={() => view(() => { st.seat = k; })}>Pick for this chair</Btn> : null}
-      {v ? <Btn kind="sm" t="voice-drop" d={{ v: k }} onClick={() => run(() => E.dropVoice(S, k))}>Let go</Btn> : null}</span></li>;
-  const pool: any[] = V.pool.slice().sort((a: any, b: any) => b[seat] - a[seat]).slice(0, 6);
-  return <Window title="The commentary desk" wide ok="Done">
-    {st.msg ? <p class={(st.err ? 'bad' : 'good') + ' mb1'} role="status" data-t="voice-msg">{st.msg}</p> : null}
-    <ul class="list">{chair('pbp', 'Play-by-play', V.pbp, 'calling')}{chair('col', 'Colour', V.col, 'colour')}</ul>
-    {V.chem != null ? <p class="mt1">Together: <b class={V.chem >= 1.5 ? 'good' : (V.chem <= -1.5 ? 'bad' : undefined)}>{E.chemWord(V.chem)}</b>. A good desk lifts every match and helps stories get across.</p>
-      : <p class="muted mt1">Two voices that work well together lift every match and help stories get across. A weak desk drags them down.</p>}
-    <p class="eyebrow mt2">Available for the {word} chair</p>
-    {pool.length ? <ul class="list" data-t="voice-pool">{pool.map((v: any) => { const ch = seat === 'pbp' ? v.chemPbp : v.chemCol; return <li key={v.id}>
-      <span><b>{v.name}</b> <span class="muted">{'·'} {v.style} {'·'} calling {v.pbp}, colour {v.col} {'·'} {'$' + v.wage.toLocaleString('en-US')} a week</span>{ch != null ? <> <span class={ch >= 1.5 ? 'good' : (ch <= -1.5 ? 'bad' : 'muted')}>{'·'} {E.chemWord(ch)} with your other voice</span></> : null}</span>
-      <span class="row opts"><Btn kind="sm" t="desk-hire" d={{ id: v.id }} onClick={() => run(() => E.hireVoice(S, v.id, seat), (seat === 'pbp' ? V.col : V.pbp) ? undefined : (seat === 'pbp' ? 'col' : 'pbp'))}>Sign</Btn></span></li>; })}</ul>
-      : <Empty>Nobody is available right now. New voices come on the market each year.</Empty>}
+  const S = G.S, V = E.voices(S), st = slice<{ msg: string; err: boolean }>('voices', () => ({ msg: '', err: false }));
+  const C = CHAIRS.find(c => c.k === p.m.k);
+  if (!C) return <Window title="The commentary desk" ok="Done">
+    <p>Who calls your shows. Pick a chair to see the voices you can sign for it.</p>
+    <ul class="list mt1" data-t="voice-chairs">{CHAIRS.map(c => <li key={c.k} data-t="voice-chair" data-v={c.k} data-full={V[c.k] ? '1' : '0'}>
+      <span><b>{c.n}</b> <span class="muted">{'·'} {V[c.k] ? V[c.k].name + ', ' + c.skill.toLowerCase() + ' ' + V[c.k][c.f] : 'Empty'}</span></span>
+      <Btn kind="sm" t="voice-open" d={{ v: c.k }} onClick={() => openVoices(c.k)}>{V[c.k] ? 'Change' : 'Pick'}</Btn></li>)}</ul>
+    {V.chem != null ? <p class="mt1">Together: <b class={V.chem >= 1.5 ? 'good' : (V.chem <= -1.5 ? 'bad' : undefined)}>{E.chemWord(V.chem)}</b>. A good desk lifts every match.</p> : null}
+  </Window>;
+  const sat: any = V[C.k], other = CHAIRS.find(c => c.k !== C.k), with_: any = other ? V[other.k] : null;
+  const run = (fn: () => any) => act(() => { const r = fn(); st.msg = r.text; st.err = !r.ok; say(r.text, { err: !r.ok }); });
+  const pool: any[] = V.pool.slice().sort((a: any, b: any) => b[C.f] - a[C.f]).slice(0, 6);
+  return <Window title={C.n + ' voice'} wide ok="Done">
+    <div class="vpick" data-t="voice-screen" data-v={C.k}>
+      {st.msg ? <p class={(st.err ? 'bad' : 'good') + ' vmsg'} role="status" data-t="voice-msg">{st.msg}</p> : null}
+      <p class="vabout">{C.d}</p>
+      <p class="vnow" data-t="voice-now">{sat ? <>In the chair: <b>{sat.name}</b>, {C.skill.toLowerCase()} {sat[C.f]} ({skillWord(sat[C.f]).toLowerCase()}), ${sat.wage.toLocaleString('en-US')} a week. <Btn kind="sm" t="voice-drop" d={{ v: C.k }} onClick={() => run(() => E.dropVoice(S, C.k))}>Let go</Btn></>
+        : <span class="muted">Nobody is in this chair yet. Pick one of the voices below.</span>}</p>
+      {pool.length ? <ul class="vcards" data-t="voice-pool">{pool.map((v: any, i: number) => {
+        const ch = C.k === 'pbp' ? v.chemPbp : v.chemCol;
+        return <li key={v.id} class="vcard">
+          <p class="vname"><b>{v.name}</b>{i === 0 ? <> <Tag kind="gold">Best {C.skill.toLowerCase()}</Tag></> : null}</p>
+          <p class="vskill"><span>{C.skill}</span> <b class="num">{v[C.f]}</b> <span class={v[C.f] >= 70 ? 'good' : (v[C.f] < 50 ? 'bad' : undefined)}>{skillWord(v[C.f])}</span></p>
+          <p class="muted">Style: {v.style}, {STYLE_SAYS[v.style] || ''}</p>
+          {ch != null ? <p class={ch >= 1.5 ? 'good' : (ch <= -1.5 ? 'bad' : undefined)}>With {with_.name}: {E.chemWord(ch)}</p> : null}
+          <p class="vfoot"><span>${v.wage.toLocaleString('en-US')} a week</span>
+            <Btn kind="go" t="desk-hire" d={{ id: v.id }} onClick={() => run(() => E.hireVoice(S, v.id, C.k))}>Sign</Btn></p>
+        </li>; })}</ul>
+        : <Empty>Nobody is available right now. New voices come on the market each year.</Empty>}
+      <p class="muted vtip">Tip: an excitable voice and a dry one work best together. Two of the same style tend to talk over each other.</p>
+    </div>
   </Window>;
 }
-/** Open the commentary desk pop-up on one chair. */
-export function openVoices(seat?: string) { const st = slice<{ seat: string; msg: string; err: boolean }>('voices', () => ({ seat: 'pbp', msg: '', err: false })); st.seat = seat === 'col' ? 'col' : 'pbp'; st.msg = ''; openModal({ kind: 'voices' }); }
+/** Open one chair's menu, or with no chair the menu of chairs. */
+export function openVoices(seat?: string) { const st = slice<{ msg: string; err: boolean }>('voices', () => ({ msg: '', err: false })); st.msg = ''; openModal({ kind: 'voices', k: seat }); }
 
-/** A new game opens on this: the owner's letter. Typed out line by line on a black screen, like a telex. */
+/** A new game opens on this: the owner's letter, written by hand on cream paper laid on the black board (rule 2a).
+    The lines appear one after another, as if read down the page. */
 export function WelcomeWindow(_p: { m: Modal }) {
   const S = G.S, W = E.welcome(S);
   return <div class="scrim intro" role="dialog" aria-modal="true" aria-label={'A letter from ' + W.from} data-t="welcome">
-    <div class={'telex' + (_p.m.again ? ' again' : '')}>
-      <pre class="tx-head" aria-hidden="true">{'╔' + '═'.repeat(46) + '╗\n║' + (' ' + W.company.toUpperCase()).padEnd(46).slice(0, 46) + '║\n║' + (' OFFICE OF THE OWNER').padEnd(46) + '║\n╚' + '═'.repeat(46) + '╝'}</pre>
-      <p class="tx-meta"><span>TO: {W.to.toUpperCase()}</span><span>{W.date.toUpperCase()}</span></p>
-      <p class="tx-meta"><span>RE: THE JOB</span><span>*** URGENT ***</span></p>
-      <div class="tx-body">{W.lines.map((x: string, i: number) => <p key={i} class={'tx-l' + (i === 0 ? ' first' : '')} style={{ animationDelay: (0.5 + i * 0.9) + 's' }}><Txt>{x}</Txt></p>)}
-        <p class="tx-l tx-sig" style={{ animationDelay: (0.5 + W.lines.length * 0.9) + 's' }}>{'—'.length ? '' : ''}{W.from}<br /><span class="muted">{W.role}, {W.short}</span></p>
-        <p class="tx-l tx-ps" style={{ animationDelay: (1.1 + W.lines.length * 0.9) + 's' }}>P.S. {W.ps}</p></div>
-      <div class="tx-foot"><Btn kind="go" id="modal-ok" t="welcome-go" onClick={closeModal}>{_p.m.again ? 'Put it away' : 'Get to work'}</Btn><span class="blink" aria-hidden="true">_</span></div>
+    <div class={'letter' + (_p.m.again ? ' again' : '')}>
+      <div class="lt-head"><b>{W.company}</b><span>Office of the owner</span></div>
+      <p class="lt-meta"><span>To: {W.to}</span><span>{W.date}</span></p>
+      <p class="lt-meta"><span>About: the job</span></p>
+      <div class="lt-body">{W.lines.map((x: string, i: number) => <p key={i} class={'lt-l' + (i === 0 ? ' first' : '')} style={{ animationDelay: (0.3 + i * 0.6) + 's' }}><Txt>{x}</Txt></p>)}
+        <p class="lt-l lt-sig" style={{ animationDelay: (0.3 + W.lines.length * 0.6) + 's' }}>{W.from}<br /><span class="lt-role">{W.role}, {W.short}</span></p>
+        <p class="lt-l lt-ps" style={{ animationDelay: (0.7 + W.lines.length * 0.6) + 's' }}>P.S. {W.ps}</p></div>
+      <div class="lt-foot"><Btn kind="go" id="modal-ok" t="welcome-go" onClick={closeModal}>{_p.m.again ? 'Put it away' : 'Get to work'}</Btn></div>
     </div>
   </div>;
 }

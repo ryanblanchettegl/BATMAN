@@ -1,6 +1,6 @@
 /* More calls from the gorilla position, each set up by what causes it and then answered:
    somebody is hurt, the crowd has gone quiet, they are not going home, the network on the line, the sponsor at ringside.
-   Every call has to fit one screen. Run: NODE_PATH=<dir containing playwright> node app/tests/calls.js   (MODES=desk,tablet) */
+   Every call has to fit one screen. Run: NODE_PATH=<dir containing playwright> node app/tests/calls.js   (MODES=desk,big) */
 const { open, go, overflow, shot, state, fits, redraw, toOffice } = require('./helper');
 const MODES = (process.env.MODES || 'desk').split(',');
 const fails = [];

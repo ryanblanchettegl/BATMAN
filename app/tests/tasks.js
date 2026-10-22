@@ -38,9 +38,9 @@ async function run(mode) {
     /* do one: the button goes to the place, and doing it ticks the task */
     await page.click('[data-t="task-go"][data-v="desk-pbp"]');
     await page.waitForSelector('[data-t="desk-hire"]');
-    ok(mode, 'the commentary desk opens as a pop-up, without leaving the Office', await has(page, '.win [data-t="voice-pool"]') && await page.evaluate(() => window.EWF_DEBUG.ui.page) === 'desk' && await page.$eval('.win', e => e.getBoundingClientRect().bottom <= innerHeight + 1) && await page.$eval('[data-t="voice-chair"].on', e => e.getAttribute('data-v')) === 'pbp');
+    ok(mode, 'the commentary desk opens as a pop-up, without leaving the Office', await has(page, '.win [data-t="voice-pool"]') && await page.evaluate(() => window.EWF_DEBUG.ui.page) === 'desk' && await page.$eval('.win', e => e.getBoundingClientRect().bottom <= innerHeight + 1) && await page.$eval('[data-t="voice-screen"]', e => e.getAttribute('data-v')) === 'pbp');
     await page.click('[data-t="desk-hire"]');
-    ok(mode, 'signing says who took the chair and moves on to the empty one', /takes the play-by-play chair/.test(await txt(page, '[data-t="voice-msg"]')) && await page.$eval('[data-t="voice-chair"].on', e => e.getAttribute('data-v')) === 'col' && await has(page, '[data-t="voice-chair"][data-v="pbp"][data-full="1"]'));
+    ok(mode, 'signing says who took the chair, and the play-by-play menu shows them in it', /takes the play-by-play chair/.test(await txt(page, '[data-t="voice-msg"]')) && /In the chair/.test(await txt(page, '[data-t="voice-now"]')) && await page.$eval('[data-t="voice-screen"]', e => e.getAttribute('data-v')) === 'pbp');
     await page.click('[data-t="modal-close"]');
     ok(mode, 'the desk can open it again at any time', await has(page, '[data-t="open-voices"]'));
     await go(page, 'desk');
@@ -82,7 +82,7 @@ async function run(mode) {
     ok(mode, 'and the desk is still the page', await page.evaluate(() => window.EWF_DEBUG.ui.page) === 'desk' && (await rows(page, 'done')).indexOf('con-' + cid) >= 0);
     /* the owner's letter can be read again from the desk */
     await page.click('[data-t="open-letter"]'); await page.waitForSelector('[data-t="welcome"]');
-    ok(mode, 'the owner’s letter opens again from the desk, already written out', /the job/i.test(await txt(page, '[data-t="welcome"]')) && /Put it away/.test(await txt(page, '[data-t="welcome-go"]')) && await page.$eval('[data-t="welcome"] .tx-l', e => getComputedStyle(e).opacity === '1'));
+    ok(mode, 'the owner’s letter opens again from the desk, already written out', /the job/i.test(await txt(page, '[data-t="welcome"]')) && /Put it away/.test(await txt(page, '[data-t="welcome-go"]')) && await page.$eval('[data-t="welcome"] .lt-l', e => getComputedStyle(e).opacity === '1'));
     await page.click('[data-t="welcome-go"]'); await page.waitForTimeout(60);
     await page.click('[data-t^="task-wave"][data-v^="title-"]');
     /* the rule can be turned off in Options */

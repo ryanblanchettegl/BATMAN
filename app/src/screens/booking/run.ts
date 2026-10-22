@@ -135,8 +135,9 @@ export const onAir = (): boolean => !!(G.S && G.S.live);
 export function liveCall(): any | null { const L = G.S && G.S.live; return L && L.ev && !L.ev.done ? L.ev : null; }
 /** Ring introductions come out together: a segment opens on its last entrance line. */
 export function lead(seg: any): number { const bc = seg.bc || []; let i = 0; while (i < bc.length && (bc[i].t === 'ring' || bc[i].t === 'ent')) i++; return Math.max(0, i - 1); }
-/** Where a segment starts on screen: at the call that shaped it if there was one (the introductions were watched while the call came in), else after the introductions. */
-function startBeat(seg: any): number { const bc = seg.bc || [], k = bc.findIndex((x: any) => x.t === 'call'); return k >= 0 ? k : opening(seg); }
+/** Where a segment starts on screen: at the call that shaped it if there was one (the introductions were watched while the call came in), else after the introductions.
+    A match with somebody's debut in it always opens on the entrances: the debut is the moment, and it has its own scene. */
+function startBeat(seg: any): number { const bc = seg.bc || [], k = bc.findIndex((x: any) => x.t === 'call'); return k >= 0 && !(seg.debut && seg.debut.length) ? k : opening(seg); }
 /** Where a segment opens on screen: a match at its first entrance, so every side walks out (Ryan, 20 October: a tag
     team comes out together, a champion with the gold); a battle royal, whose ring fills at once, at its last line. */
 export function opening(seg: any): number { const bc = seg.bc || [], ents = bc.filter((x: any) => x.t === 'ent').length;

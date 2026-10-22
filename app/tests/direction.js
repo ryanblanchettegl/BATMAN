@@ -1,7 +1,7 @@
 /* The direction of the company: the two calls from the gorilla position that decide more than tonight.
    The owner on the headset (the office wants its favourite to win), and who the show is built around (decided on
    the air after a main event). The test sets each one up, answers it, and checks what it leaves behind.
-   Run: NODE_PATH=<dir containing playwright> node app/tests/direction.js   (MODES=desk,tablet) */
+   Run: NODE_PATH=<dir containing playwright> node app/tests/direction.js   (MODES=desk,big) */
 const { open, go, overflow, shot, state, fits, airShow, redraw, toOffice } = require('./helper');
 const MODES = (process.env.MODES || 'desk').split(',');
 const fails = [];

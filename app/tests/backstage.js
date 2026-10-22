@@ -3,7 +3,7 @@
    there; a point is spent from the file.
    Run: NODE_PATH=<dir containing playwright> node app/tests/backstage.js */
 const { open, go, overflow, shot, fits, state, redraw } = require('./helper');
-const SIZES = [['desk', 1280, 720, 'whw'], ['desk', 1280, 860, 'pdw'], ['desk', 1920, 1080, 'kjp'], ['tablet', 1024, 768, 'ocw'], ['tv', 1920, 1080, 'ttt']];
+const SIZES = [['desk', 1280, 720, 'whw'], ['desk', 1280, 860, 'pdw'], ['desk', 1920, 1080, 'kjp'], ['desk', 2560, 1440, 'ocw'], ['desk', 3840, 2160, 'ocw'], ['tv', 1920, 1080, 'ttt']];
 const fails = [];
 const ok = (id, label, pass, detail) => { console.log(id.padEnd(15), pass ? 'ok  ' : 'FAIL', label + (detail ? ': ' + detail : '')); if (!pass) fails.push(id + ' ' + label); };
 const txt = (page, sel) => page.$eval(sel, e => e.innerText).catch(() => '');

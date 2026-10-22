@@ -210,7 +210,7 @@ A world can bring its own scenarios: a company, a deadline, a problem, and one w
 
 | win type | met when | words it fills |
 | --- | --- | --- |
-| `cash` | the money is at least `atLeast` | `{cash}` |
+| `cash` | the money is at least `atLeast`, or at least `incWeeks` weeks of the company's own income | `{cash}`, `{goal}` |
 | `holdsTop` | the project holds the company's top title | `{name}`, `{title}`, `{ovr}`, `{o0}` |
 | `beatRival` | your shows beat expectations by `by` more than the rival's | `{m}`, `{r}`, `{mFig}`, `{rFig}` |
 
