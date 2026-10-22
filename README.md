@@ -31,7 +31,7 @@ There is no clean place to stop. Every show leaves a problem or a chance for nex
 | ![Backstage](docs/screens/backstage.png) | ![Book the show](docs/screens/booking.png) |
 | **Backstage.** Everyone in the building is there for a reason. Spend your points on people. | **Book the show.** The run sheet has to fill the clock, and the road agent says what they can see. |
 | ![After the show](docs/screens/after.png) | ![The Web](docs/screens/web.png) |
-| **After the show.** A grade against your own crowd, and the matter the night left behind. | **The Web.** A 90s newsletter, a chat room, and six make-believe wrestling sites. |
+| **After the show.** A grade against your own crowd, and the matter the night left behind. | **The Web.** A 90s newsletter, a weekly podcast with captions, and six make-believe wrestling sites. |
 | ![Roster](docs/screens/roster.png) | ![Titles](docs/screens/titles.png) |
 | **The roster.** Every wrestler has a file, a mood and a history with you. | **Titles.** Lineages, contenders and tournaments. |
 
@@ -50,7 +50,7 @@ Every wrestler remembers how you treated them: promises kept and broken, pushes,
 Tour a loop of real cities on a dot-matrix map. Sell tickets weeks ahead, build each market, and bring wrestlers home for a hometown pop.
 
 ### ✍️ Words that are never the same twice
-Promos, newsletter headlines, website stories and the chat room are written by a text grammar that only says what is true of your game. Every booked promo has a speaker and a callback to real history.
+Promos, newsletter headlines, website stories and the weekly podcast are written by a text grammar that only says what is true of your game. Every booked promo has a speaker and a callback to real history.
 
 ### 🏢 Nine ways to run a company
 A publicly traded giant, a company for the diehards, a sport-first purist, an underdog, a cash-burning startup, an outlaw, a lucha spectacle, a lucha traditionalist and an all-women company. Each one changes what the crowd rewards, where the money comes from and who gets pushed. Or found your own.

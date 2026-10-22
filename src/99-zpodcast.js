@@ -87,7 +87,7 @@ function podWrite(S){
     ts.forEach(function(t,i){
       if(!t.holders.length){say('a','vacant',{title:t.name});return;}
       var nm=t.holders.map(function(id){return S.w[id]?S.w[id].name:'';}).filter(Boolean).join(' and '),p={k:'champ',w:t.holders[0],t:t.id},two=t.holders.length>1,vb={hv:two?'hold':'holds',hs:two?'have':'has',is:two?'are':'is'};
-      if(t.since===wk)say('a','hold_new',{w:nm,title:t.name,hv:vb.hv,is:vb.is},p);else say('a','hold',{w:nm,title:t.name,n:Math.max(1,wk-t.since),hv:vb.hv,hs:vb.hs},p);
+      if(t.since===wk)say('a','hold_new',{w:nm,title:t.name,hv:vb.hv,is:vb.is},p);else var nw=Math.max(1,wk-t.since);say('a','hold',{w:nm,title:t.name,nw:nw+(nw===1?' week':' weeks'),hv:vb.hv,hs:vb.hs},p);
       var c=t.tag?null:rankFor(S,P,t,1)[0];if(c&&maybe('nx'+i,0.7))say('b','next',{c:c.name},{k:'face',ids:[t.holders[0],c.id]});
     });
   }
@@ -114,13 +114,14 @@ function podWrite(S){
   pod.n++;
   var ep={w:wk,n:pod.n,label:cal(wk).label,title:'Episode '+pod.n+': '+(sheet.lead&&sheet.lead.head?sheet.lead.head:cal(wk).label),mins:Math.max(1,Math.round(words/150)),segs:segs,lines:lines,you:reps.length>0};
   pod.eps.unshift(ep);if(pod.eps.length>POD_EPS)pod.eps.length=POD_EPS;
+  if(reps.length)note(S,'New on '+pod.show,cx.a+' and '+cx.b+' talk about '+reps[0].name+' in episode '+pod.n+'. It is on the Web page.','');
   return ep;
 }
 WEEKX.push(function(S){if(S.cal||S.over||!S.promos[S.player])return;podWrite(S);});
 /** The podcast for the screen: its name, the hosts, the record on picks, and the episodes kept (newest first) without their lines. */
 E.podcast=function(S){
   var pod=podInit(S);
-  return {show:pod.show,hosts:[{k:'a',name:pod.a.name,role:'Writer'},{k:'b',name:pod.b.name,role:pod.b.w!=null?'Retired wrestler':'Co-host'}],rec:{r:pod.rec.r,x:pod.rec.x},
+  return {show:pod.show,hosts:[{k:'a',name:pod.a.name,role:'Writer',w:null},{k:'b',name:pod.b.name,role:pod.b.w!=null?'Retired wrestler':'Co-host',w:pod.b.w}],rec:{r:pod.rec.r,x:pod.rec.x},
     eps:pod.eps.map(function(e){return {w:e.w,n:e.n,label:e.label,title:e.title,mins:e.mins,you:e.you,segs:e.segs.map(function(s){return s.n;}),lines:e.lines.length};})};
 };
 /** One episode in full, by its number (the newest when left out). */
