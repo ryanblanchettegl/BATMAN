@@ -479,4 +479,9 @@ html body .win.ppop .wb{font-family:var(--hand);font-size:1.06em}
 .tvframe .lv-res .result>p:first-child{font-size:1.3em}
 .tvframe .lv-res .result .scores{margin:.35em 0}
 .tvframe .lv-res .result .fx{font-size:.98em;line-height:1.22;margin:.2em 0 0}
-.tvframe .lv-res :is(.beltc,pre.belt){display:none}
+/* a new champion: their real belt (Create a Belt) sits above the result card */
+.tvframe .lv-res{flex-direction:column;align-items:center;justify-content:flex-end;gap:.35em}
+.tvframe .lv-res .beltc{display:block;filter:drop-shadow(.15em .25em .3em rgba(0,0,0,.55));transform:rotate(-1.5deg)}
+.tvframe .lv-res .beltc canvas{display:block;height:clamp(3.2em,9vh,6em);width:auto}
+@media (prefers-reduced-motion:no-preference){.tvframe .lv-res .beltc{animation:respop .4s var(--ease)}}
+.tvframe .lv-res pre.belt{display:none}

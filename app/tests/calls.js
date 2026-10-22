@@ -54,7 +54,7 @@ async function run(mode) {
   try {
     /* ---- show one: somebody is hurt, and the crowd has gone quiet ---- */
     await go(page, 'booking');
-    const hurt = await card(page, (S) => { const m = S.card[0], w = S.w[m.sides[0][0]]; w.rd = 95; m.int = 'brutal'; return { id: w.id, name: w.name }; });
+    const hurt = await card(page, (S) => { const m = S.card.find(x => x && x.sides && x.mt !== 'br' && !x.nc) || S.card[0], w = S.w[m.sides[0][0]];   // a battle royal never has this call w.rd = 95; m.int = 'brutal'; return { id: w.id, name: w.name }; });
     ok(mode, 'the show goes on the air', await toAir(page));
     let quiet = false;
     const one = await walk(page, {
