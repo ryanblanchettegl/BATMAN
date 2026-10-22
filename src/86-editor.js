@@ -270,7 +270,96 @@ E.edQuick=function(kind,name,seed){
     if(MODELS[p.model]&&MODELS[p.model].gender==='F')pkg.titles.forEach(function(t){if(t.promotion_id===p.id)t.gender='F';});
     E.edFill(pkg,p.id,x[4],k+i*7919);});
   E.edFillFree(pkg,kind==='nine'?12:6,k+104729);
+  return E.edComplete(pkg,k);
+};
+/* ---------- a world from a template comes complete (Ryan, 20 October: "new worlds come with templates or start from
+   scratch"; a template has everything filled in). edComplete fills only what is missing, so it never undoes a change. */
+var ED_EVENTS=['First Bell','Cold Steel','Spring Riot','The Grand Stage','Iron Bloom','Long Day Brawl','Scorcher','Dog Days','Harvest Moon Brawl','Fright Night Fight','Last Leaves','Year End Brawl'];
+var ED_COLUMNS=['The Ringside Wire','The Turnbuckle Times','Mat Talk Weekly'];
+var ED_SPONSORS=['Ironclad Tools','Blue Comet Energy','Harbor Lager','Pinnacle Insurance','Redline Auto Parts','Summit Sports Drinks','Big Sky Jerky','Voltage Games'];
+var ED_STAFF={agent:['Hank Doyle','Rita Vance','Moe Kessler','Lou Bramble','Dot Fairweather','Sal Ortega','Gus Whitley','Ida Crane','Vic Lorne'],
+  writer:['Penny Marsh','Theo Grant','Nadia Rook','Cliff Harlan','June Abbott','Rex Mallory','Ana Solis','Kit Darrow','Walt Emery'],
+  pbp:['Jim Calder','Rosa Delgado','Marty Kane','Sam Whitfield','Eve Langston','Tony Brisco','Max Ferrell','Lena Ward','Art Hollis'],
+  col:['Bobby Stroud','Dee Marlow','Chuck Rennick','Gail Torres','Vince Halloway','Frankie Moss','Nell Brody','Duke Carver','Tess Rowan']};
+/** The cities a company of this kind tours, from the places the road knows: Mexico for lucha, Japan for joshi, the USA for the rest. */
+function edCitiesFor(model,k,n){
+  var all=Object.keys(CITY_AT),inMx=function(c){var a=CITY_AT[c];return a[0]>14&&a[0]<29.5&&a[1]>-118&&a[1]<-86;},inJp=function(c){var a=CITY_AT[c];return a[1]>128&&a[1]<146&&a[0]>30;},inUs=function(c){var a=CITY_AT[c];return a[0]>24&&a[0]<50&&a[1]>-125&&a[1]<-66&&!inMx(c);};
+  var L=all.filter(model==='spectacle'||model==='tradition'?inMx:(model==='joshi'?inJp:inUs));if(L.length<4)L=all.filter(inUs);
+  L.sort(function(a,b){return CITY_AT[a][1]-CITY_AT[b][1];});var out=[],st=k%L.length;for(var i=0;i<Math.min(n,L.length);i++)out.push(L[(st+i)%L.length]);return out;
+}
+E.edComplete=function(pkg,seed){
+  edShape(pkg);var k=(seed>>>0)||1,pk=function(L,i){return L[(k+i*7)%L.length];};
+  if(!pkg.events||!pkg.events.length)pkg.events=ED_EVENTS.map(function(n,i){return {month:i+1,name:n};});
+  if(!pkg.networks)pkg.networks={small:AIR_NETS[0].slice(),cable:AIR_NETS[1].slice(),major:AIR_NETS[2].slice()};
+  if(!pkg.sponsors||!pkg.sponsors.length)pkg.sponsors=ED_SPONSORS.slice();
+  if(!pkg.columnists||!pkg.columnists.length)pkg.columnists=ED_COLUMNS.slice();
+  var N=pkg.names||(pkg.names={});if(!N.first_m||N.first_m.length<8)N.first_m=FALLBACK_NAMES.firstM.slice();if(!N.first_f||N.first_f.length<6)N.first_f=FALLBACK_NAMES.firstF.slice();if(!N.last||N.last.length<8)N.last=FALLBACK_NAMES.last.slice();
+  pkg.promotions.forEach(function(p,i){
+    var MD=MODELS[p.model]||MODELS.classic,g=MD.gender,mine=pkg.titles.filter(function(t){return t.promotion_id===p.id;}),has=function(f){return mine.some(f);};
+    if(!has(function(t){return t.level===2;}))E.edAddTitle(pkg,p.id,{name:p.name+(g==='F'?' International Title':' National Title'),level:2,gender:g||'M'});
+    if(!has(function(t){return t.tag;})&&(pkg.workers||[]).filter(function(w){return E.edHome(pkg,w.id)===p.id;}).length>=12)E.edAddTitle(pkg,p.id,{name:p.name+' Tag Team Titles',level:2,tag:true,gender:g||'M'});
+    if(!g&&!has(function(t){return t.gender==='F';}))E.edAddTitle(pkg,p.id,{name:p.name+' Women’s Title',level:3,gender:'F'});
+    if(!p.cities||!p.cities.length)p.cities=edCitiesFor(p.model,hash(p.id+':'+k),8);
+    if(!p.announcers||p.announcers.length<2)p.announcers=[pk(ED_STAFF.pbp,i),pk(ED_STAFF.col,i)];
+    var sf=p.staff||(p.staff={});if(!sf.road_agent)sf.road_agent=pk(ED_STAFF.agent,i);if(!sf.head_writer)sf.head_writer=pk(ED_STAFF.writer,i);
+    // the main show on a network to suit the company's size, with years on the air to match
+    var sh=pkg.shows.filter(function(x){return x.promotion_id===p.id;})[0],pop=p.popularity||50;
+    if(sh&&!sh.network){var t=pop>=68?2:(pop>=46?1:0),nets=pkg.networks[['small','cable','major'][t]]||AIR_NETS[t];sh.network=nets[(hash(p.id)+k)%nets.length];sh.network_size=t;if(sh.years_on_air==null)sh.years_on_air=p.model==='startup'?0:clamp(Math.round((pop-32)/2.2),1,40);}
+  });
   return pkg;
+};
+/** The templates a new world can start from, besides the built-in worlds: what each is, for the New world pop-up. */
+E.ED_TEMPLATES=[['territory','A two-company territory','Two companies sharing one region, one bigger than the other. Small rosters, ready to rename.'],['nine','Nine companies of unknowns','One company of each kind, from a national giant to a small joshi promotion, every roster filled with unknowns.']];
+/* ---------- import wrestlers from another world (Ryan, 20 October: "an import button so people can import their wrestlers
+   from other worlds or Steam"). Each comes in as a free agent with a new id, their look, ratings and biography, and any of
+   the other world's own scenes their entrance, moves and taunts play (moves made in Create a Move come with them). */
+function edLookScenes(lk){var L=[];if(!lk)return L;if(lk.entrance)L.push(lk.entrance);(lk.finishing_moves||[]).forEach(function(f){if(f.preview_pose_id)L.push(f.preview_pose_id);});(lk.moveset||[]).forEach(function(m){if(m.scene)L.push(m.scene);});(lk.taunts||[]).forEach(function(t){L.push(t);});return L;}
+/** The wrestlers in a world, for the Import pop-up: id, name, company and overness. */
+E.edImportList=function(src){var h={};(src.contracts||[]).forEach(function(c){var p=(src.promotions||[]).filter(function(x){return x.id===c.promotion_id;})[0];if(p)h[c.worker_id]=p.name;});
+  return (src.workers||[]).map(function(w){return {id:w.id,name:w.ring_name||w.id,co:h[w.id]||'Free agent',over:(w.ratings&&w.ratings.overness)||0,look:!!w.look,g:w.gender};});};
+/** Bring workers `ids` from world `src` into `pkg` as free agents. Returns the new records. */
+E.edImportWorkers=function(pkg,src,ids){
+  edShape(pkg);var out=[],want={};(ids||[]).forEach(function(i){want[i]=1;});
+  var have={};(pkg.scenes||[]).forEach(function(x){have[x.id]=1;});
+  (src.workers||[]).forEach(function(w0){if(!want[w0.id])return;
+    var w=JSON.parse(JSON.stringify(w0));delete w.manager_id;w.id=edId(pkg,'workers',w.ring_name||w0.id,'work');pkg.workers.push(w);out.push(w);
+    edLookScenes(w.look).forEach(function(sid){if(have[sid])return;var sc=(src.scenes||[]).filter(function(x){return x&&x.id===sid;})[0];if(sc){(pkg.scenes||(pkg.scenes=[])).push(JSON.parse(JSON.stringify(sc)));have[sid]=1;}});});
+  return out;
+};
+/* the rest of a world can be imported the same way: scenes and moves (pkg.scenes), promos and angles (pkg.segkinds),
+   match rules (pkg.stips). Something with an id the world already has comes in under a new one, so nothing is overwritten. */
+var ED_THINGS={scenes:{label:'Scenes and moves',name:function(x){return x.name||x.id;},sub:function(x){return x.when==='move'?'A move':(x.still?'A still picture':'An animation');}},
+  segkinds:{label:'Promos and angles',name:function(x){return x.n||x.id;},sub:function(x){return x.t==='angle'?'An angle':'A promo';}},
+  stips:{label:'Match rules',name:function(x){return x.n||x.id;},sub:function(x){return x.over?'Changes an included rule':'A rule of its own';}}};
+E.ED_THINGS=Object.keys(ED_THINGS).map(function(k){return [k,ED_THINGS[k].label];});
+/** What world `src` has of kind `k` (scenes, segkinds, stips), for the Import pop-up. */
+E.edThingList=function(src,k){var T=ED_THINGS[k];if(!T)return [];return (Array.isArray(src[k])?src[k]:[]).filter(function(x){return x&&x.id;}).map(function(x){return {id:x.id,name:T.name(x),sub:T.sub(x)};});};
+/** Bring things `ids` of kind `k` from `src` into `pkg`. Returns how many came in. */
+E.edImportThings=function(pkg,src,k,ids){
+  if(!ED_THINGS[k])return 0;var want={},have={},n=0,L=pkg[k]||(pkg[k]=[]);(ids||[]).forEach(function(i){want[i]=1;});L.forEach(function(x){if(x&&x.id)have[x.id]=1;});
+  (src[k]||[]).forEach(function(x){if(!x||!want[x.id])return;var c=JSON.parse(JSON.stringify(x));
+    if(have[c.id]){var b=String(c.id).replace(/_\d+$/,''),i=2;while(have[b+'_'+i])i++;c.id=b+'_'+i;if(k==='stips'&&c.over)return;}   // an included rule changed twice keeps the world's own change
+    have[c.id]=1;L.push(c);n++;});
+  if(!L.length)delete pkg[k];return n;
+};
+/** Wrestlers `ids` of world `pkg` as one file (.wrestler.json) to keep, share or put on the Steam Workshop: each whole
+    record (biography, attributes, look, moves) and the world's own scenes their entrance, moves and taunts play. */
+E.edExportWorkers=function(pkg,ids){
+  var want={},out={kind:'wrestlers',v:1,from:(pkg.manifest&&pkg.manifest.name)||'',workers:[],scenes:[]},seen={};(ids||[]).forEach(function(i){want[i]=1;});
+  (pkg.workers||[]).forEach(function(w){if(!want[w.id])return;var c=JSON.parse(JSON.stringify(w));delete c.manager_id;out.workers.push(c);
+    edLookScenes(w.look).forEach(function(sid){if(seen[sid])return;var sc=(pkg.scenes||[]).filter(function(x){return x&&x.id===sid;})[0];if(sc){seen[sid]=1;out.scenes.push(JSON.parse(JSON.stringify(sc)));}});});
+  return out;
+};
+/** Bring in a wrestler file: one written by Export (any number of whole wrestlers) or by Create a Wrestler's Write a file (a look). Returns the new records, or null when it is not one. */
+E.edImportFile=function(pkg,data,o){
+  if(data&&data.kind==='wrestlers'&&Array.isArray(data.workers)){var ok=data.workers.filter(function(w){return w&&typeof w==='object'&&w.ring_name;});
+    return E.edImportWorkers(pkg,{workers:ok,scenes:Array.isArray(data.scenes)?data.scenes:[]},ok.map(function(w){return w.id;}));}
+  var w=E.edImportLook(pkg,data,o);return w?[w]:null;
+};
+/** A wrestler from a .wrestler.json file (Create a Wrestler's Write a file), as a free agent in `pkg`. */
+E.edImportLook=function(pkg,look,o){
+  var c=lookClean(look);if(!c||!E.lookOk(c))return null;o=o||{};var pa=c.physical_attributes||{};
+  var w=E.edAddWorker(pkg,{ring_name:c.name||o.name||'New wrestler',gender:pa.sex==='F'?'F':'M'});w.look=c;if(c.hometown)w.hometown=c.hometown;return w;
 };
 /** How a company stands, in a few plain lines: the top of the card against its popularity, and its men and women
     against its belts. `warn` is set on a line that needs fixing before the world plays well. */

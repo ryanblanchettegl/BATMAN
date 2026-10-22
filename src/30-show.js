@@ -23,15 +23,17 @@ function dirtSheet(S,P,show,rep,pool){
 function showPool(S,P,show){return eligible(S,P,show).filter(function(w){return w.promo===P.id&&!(show.big&&isDev(P,w.brand));});}
 /* the advertised card sells the tickets: star power in the main event, the hottest feud, advertising, anything
    done this week to talk the show up, and the face of the company on the card. The desk's ticket sales use it too. */
+/** How big the main event's names are. A spot still open (a promised match waiting for its opponent) does not count. */
+function mainStar(S,card){var n=card.length,L=n?flat(card[n-1].sides).filter(function(id){return id!=null&&S.w[id];}):[];return L.length?avg(L.map(function(id){return S.w[id].ovr;})):50;}
 function cardHype(S,P,show,card,isPl){
-  var n=card.length,key=show.big?'big':show.id,star=n?avg(flat(card[n-1].sides).map(function(id){return S.w[id].ovr;})):50,heat=0;
-  card.forEach(function(m){var ids=flat(m.sides);for(var x=0;x<ids.length;x++)for(var y=x+1;y<ids.length;y++){var f=feudOf(S,ids[x],ids[y]);if(f&&f.heat>heat)heat=f.heat;}});
+  var n=card.length,key=show.big?'big':show.id,star=mainStar(S,card),heat=0;
+  card.forEach(function(m){var ids=flat(m.sides).filter(function(id){return id!=null;});for(var x=0;x<ids.length;x++)for(var y=x+1;y<ids.length;y++){var f=feudOf(S,ids[x],ids[y]);if(f&&f.heat>heat)heat=f.heat;}});
   return clamp(1+(star-(P.starB[key]||star))/80+heat/500+ADV_H[P.adv]+(isPl&&S.hype?S.hype:0)+(isPl&&show.big&&P.evHype?P.evHype:0)+(isPl?faceHype(S,P,card)+homeHype(S,P,flat(card.map(function(m){return flat(m.sides);}))):0),0.8,1.4)*(isPl&&show.big&&evAfterDark(S,P)?1.08:1);
 }
 /** What moved a big night's hype, in words, for the buy rate report. Reads the same parts as cardHype. */
 function hypeParts(S,P,show,card){
-  var n=card.length,key=show.big?'big':show.id,star=n?avg(flat(card[n-1].sides).map(function(id){return S.w[id].ovr;})):50,heat=0,out=[];
-  card.forEach(function(m){var ids=flat(m.sides);for(var x=0;x<ids.length;x++)for(var y=x+1;y<ids.length;y++){var f=feudOf(S,ids[x],ids[y]);if(f&&f.heat>heat)heat=f.heat;}});
+  var n=card.length,key=show.big?'big':show.id,star=mainStar(S,card),heat=0,out=[];
+  card.forEach(function(m){var ids=flat(m.sides).filter(function(id){return id!=null;});for(var x=0;x<ids.length;x++)for(var y=x+1;y<ids.length;y++){var f=feudOf(S,ids[x],ids[y]);if(f&&f.heat>heat)heat=f.heat;}});
   var sd=(star-(P.starB[key]||star))/80;if(Math.abs(sd)>=0.02)out.push({t:sd>0?'A main event bigger than usual':'A main event smaller than usual',v:sd});
   if(heat>=40)out.push({t:'A hot feud on the card',v:heat/500});
   if(ADV_H[P.adv])out.push({t:'Advertising',v:ADV_H[P.adv]});
@@ -47,7 +49,7 @@ function showStart(S,P,show,card){
   var isPl=P.id===S.player&&!S.cal,big=!!show.big,n=card.length,i,key=big?'big':show.id;
   var rep={promo:P.id,id:show.id,name:show.name,big:big,week:S.week,segs:[],gim:false};
   var pool=showPool(S,P,show);
-  var star=n?avg(flat(card[n-1].sides).map(function(id){return S.w[id].ovr;})):50;
+  var star=mainStar(S,card);
   rep.mainStar=star;
   if(!S.cal){
     var hype=cardHype(S,P,show,card,isPl),dm=TIX_D[P.tix],d0=demand(P,show,1)*(isPl?tourBoost(S,P)*roadMktNow(S,P):1),d=d0*(isPl?tasteDraw(S,P,card,rep)*weatherMult(S,show,roadCity(S,P,S.rdn||0)):1),cap=capFor(d0);if(isPl&&coldNight(S,show,roadCity(S,P,S.rdn||0)))rep.cold=1;   // the building was booked before the card was
@@ -64,7 +66,7 @@ function showStart(S,P,show,card){
     // the player books every promo and angle, and decides how much time the writers get (src/93-segments.js, src/97-time.js)
     var bk=segBooked(S,show,n);rep.open={k:'match'};
     if(S.plan)st.steps.push({t:'plan'});
-    for(i=0;i<n;i++){(bk.at[i]||[]).forEach(function(x){st.steps.push({t:'seg',i:i,slot:x.slot,sg:JSON.parse(JSON.stringify(x.sg))});});st.steps.push({t:'match',i:i});}
+    for(i=0;i<=n;i++){(bk.at[i]||[]).forEach(function(x){st.steps.push({t:'seg',i:i,slot:x.slot,sg:JSON.parse(JSON.stringify(x.sg))});});if(i<n)st.steps.push({t:'match',i:i});}   // at n: after the main event
   }else{for(i=0;i<n;i++)st.steps.push({t:'match',i:i});st.pool=pool;}
   return st;
 }
@@ -143,9 +145,11 @@ function showEnd(S,P,show,card,st){
   if(S.cal)return rep;
   var exp=expected(P,show);
   if(isPl&&rep.venue){var bar=barCity(S,rep.venue);if(bar){exp+=bar.d;rep.barNote=bar.note;}}
-  if(isPl&&firstNight(S)){exp-=FIRST_NIGHT;rep.barNote=(rep.barNote?rep.barNote+' ':'')+'Your first night: the crowd gave a new booker the benefit of the doubt.';}
+  // the first night lowers the bar for the grade only; popularity and what the crowd learns still follow the real bar
+  var fn=isPl&&firstNight(S)?FIRST_NIGHT:0;
+  if(fn){rep.barNote=(rep.barNote?rep.barNote+' ':'')+'Your first night: the crowd gave a new booker the benefit of the doubt.';}
   var qf=clamp(1+(P.trend||0)/60,0.85,1.15)*(SLOT_V[P.slot]/SLOT_V[P.slot0])*(1+0.03*(P.prodLvl-P.prod0))*airPF(P,show);
-  rep.exp=r1(exp);rep.cs=crowdScore(rep.rating,rep.exp);
+  rep.exp=r1(exp-fn);rep.cs=crowdScore(rep.rating,rep.exp);
   var mx=mixOf(P);
   rep.viewers=Math.round(viewersK(P,show,qf)*1000);rep.gate=Math.round(rep.att*ticket(P,show)*TIX_P[P.tix]*mx.gate);rep.tv=Math.round(rep.viewers/1000*P.tvRate*mx.tv*airRate(P,show));
   rep.buys=big?Math.round(buysK(P,show,rep.hype)*1000):0;rep.ppv=Math.round(rep.buys*22*mx.ppv);

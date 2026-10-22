@@ -8,7 +8,7 @@ import { G, act, say, view, slice, openModal, closeModal, Modal } from '../../st
 import { book } from '../../flow';
 import { go } from '../../nav';
 import { Window, Panel, Tabs, Sel, Field, Tag, Name, Meter, CheckLine, Empty, Btn, Txt, Opt, Group, LightPic } from '../../kit';
-import { Match, pickSide, setPlan, sel, pickMatch, pickSeg, moveMatch, removeMatch, run, lockMatch } from './run';
+import { Match, pickSide, setPlan, sel, pickMatch, pickSeg, moveMatch, removeMatch, run, lockMatch, suggest } from './run';
 import { Shape } from './Shape';
 import { Editor } from './Editor';
 import { hm, openSeg, CATN, TopTag } from './Segments';
@@ -85,9 +85,39 @@ export function CouldWindow(_p: { m: Modal }) {
     {C.gut ? <p class="agentsay" data-t="could-gut">{C.gut}</p> : null}
   </Window>;
 }
+/** An arc on the run sheet: the writers put it there, and the booker decides where the story goes (src/99-tale.js).
+    The chapter, the question and its answers, each a card to press; the answer can be changed until the show airs. */
+function ArcPane(p: { slot: number; ck: any }) {
+  const S = G.S, A = E.taleInfo(S), x = E.segInfo(S).list[p.slot], it = p.ck.items.find((q: any) => q.t === 'seg' && q.slot === p.slot);
+  if (!A.on || !x) return <Panel title="Arc" cls="d1"><p class="muted">The arc is over.</p></Panel>;
+  const pick = (i: number) => act(() => { const r = E.taleDecide(S, A.ch === i ? null : i); say(r.msg, { err: !r.ok }); });
+  return <Panel title={'Arc: ' + A.n} cls="d1 arcpane">
+    <p class="meta">{A.cn}{x.post ? DOT + 'after the main event' : (it ? DOT + 'on at ' + hm(it.at) : '')}{DOT}{x.mins} min{DOT}<span class="muted">{A.word}</span></p>
+    <p class="arc-t clamp2" data-t="arc-text">{A.t}</p>
+    <p class="arc-q" data-t="arc-q"><b>{A.q}</b> {A.ch == null ? <span class="bad">Your decision</span> : <span class="good">Decided</span>}</p>
+    <div class="arc-opts" role="group" aria-label={A.q}>{A.o.map((o: any) => <button type="button" key={o.i} class={'arcopt' + (A.ch === o.i ? ' on' : '')} data-t="arc-pick" data-v={o.i} aria-pressed={A.ch === o.i} onClick={() => pick(o.i)}>
+      <b>{o.n}</b><span class="clamp2">{o.d}</span>{o.lock ? <Tag kind="warn">Locks a match</Tag> : null}{o.end ? <Tag kind="gold">Ends the arc</Tag> : null}</button>)}</div>
+    <div class="row d1-btns">
+      <Btn kind="sm" t="arc-story" onClick={() => openModal({ kind: 'arcstory' })}>The story so far</Btn>
+      <Btn kind="sm" t="seg-done" d={{ v: p.slot }} onClick={() => pickSeg(p.slot)}>Done</Btn>
+    </div>
+  </Panel>;
+}
+/** The arc from its first chapter: who is in it, what was decided, and by whom. */
+export function ArcStoryWindow(_p: { m: Modal }) {
+  const S = G.S, A = E.taleInfo(S);
+  if (!A.on) return <Window title="Arc" ok="Close"><p class="muted">No arc is running.</p></Window>;
+  return <Window title={'The story so far: ' + A.n} wide ok="Close" info={[A.word, 'Next: ' + A.cn + ', ' + A.when]}>
+    <p>{A.d}</p>
+    <p class="muted">In it: {A.cast.map((id: number, k: number) => <>{k ? ', ' : null}<Name w={S.w[id]} /></>)}</p>
+    <Group title="Chapters" t="arc-hist">{A.hist.length ? <ol class="rules">{A.hist.map((h: any, k: number) => <li key={k}><b>{h.cn}.</b> {h.n}. <span class="muted">{h.w}{h.pre ? ', before you took the book' : (h.you ? ', your call' : ', the writers decided')}</span></li>)}</ol> : <p class="muted">This is the first chapter.</p>}</Group>
+    <Group title="Now"><p>{A.t}</p><p><b>{A.q}</b></p></Group>
+  </Window>;
+}
 function SegPane(p: { slot: number; ck: any }) {
   const S = G.S, x = E.segInfo(S).list[p.slot], it = p.ck.items.find((q: any) => q.t === 'seg' && q.slot === p.slot);
   if (!x) return null;
+  if (x.k === 'arc') return <ArcPane slot={p.slot} ck={p.ck} />;
   return <Panel title={x.t === 'any' ? E.SEGK[x.k].n : CATN[x.t] + ': ' + E.SEGK[x.k].n} cls="d1">
     <p class="who">{x.why ? <span class="bad">{x.why}</span> : (x.who.length ? x.who.map((id: number, q: number) => <>{q ? ', ' : null}<Name w={S.w[id]} /></>) : 'The writers decide')}</p>
     <p class="meta">{it ? 'On at ' + hm(it.at) + DOT : ''}{E.SEGLENN[x.len]}, {x.mins} minutes{it && it.top ? <>{DOT}<TopTag top={it.top} /></> : null}</p>
@@ -95,8 +125,8 @@ function SegPane(p: { slot: number; ck: any }) {
     {x.look && x.look.read && x.k !== 'writers' ? <div class="agentsay" data-t="seg-read"><p class={x.look.read.k === 'good' ? 'good' : (x.look.read.k === 'bad' ? 'bad' : 'muted')}>{x.look.read.t}</p></div> : null}
     {x.look && x.look.notes && x.look.notes.length && x.k !== 'writers' ? <p class="muted">{x.look.notes.map((y: any, q: number) => <span key={q} class={y[0] > 0 ? 'good' : (y[0] < 0 ? 'bad' : undefined)}>{q ? DOT : ''}{y[0] > 0 ? '▲' : (y[0] < 0 ? '▼' : '')} {y[1]}</span>)}</p> : null}
     <div class="row d1-btns">
-      <Btn kind="sm" t="seg-change" d={{ v: p.slot }} onClick={() => openSeg(p.slot)}>Change</Btn>
-      <Btn kind="sm" t="seg-rm" d={{ v: p.slot }} onClick={() => act(() => { const r = E.setSeg(S, p.slot, null); sel().seg = -1; say(r.msg); })}>Remove</Btn>
+      {x.forced ? <span class="warn">Promised: it stays on the show.</span> : <><Btn kind="sm" t="seg-change" d={{ v: p.slot }} onClick={() => openSeg(p.slot)}>Change</Btn>
+      <Btn kind="sm" t="seg-rm" d={{ v: p.slot }} onClick={() => act(() => { const r = E.setSeg(S, p.slot, null); sel().seg = -1; say(r.msg); })}>Remove</Btn></>}
       <Btn kind="sm" t="seg-done" d={{ v: p.slot }} onClick={() => pickSeg(p.slot)}>Done</Btn>
     </div>
   </Panel>;
@@ -106,6 +136,24 @@ function PreShow(p: { pre: any }) {
   return <Panel title="Before the show" cls="d1">
     <p>{p.pre.text}</p>
     <div class="row mt2">{p.pre.choices.map((c: string, i: number) => <Btn kind="go" t="pre" d={{ c: i, home: i ? null : '' }} onClick={() => run('pre', i)}>{c}</Btn>)}</div>
+  </Panel>;
+}
+
+/* ---------- the first show (the tutorial, src/99-tutorial.js) ---------- */
+const TUT_ACT: Record<string, string> = { titles: 'Title matches', suggest: 'Suggest', arc: 'Open the arc', promise: 'Show me' };
+function Tutorial() {
+  const S = G.S, T = E.tutInfo(S);
+  if (!T.on) return <Notes />;
+  const go1 = (a: string) => {
+    if (a === 'titles') act(() => { const r = E.suggestTitles(S); say(r.msg, { err: !r.ok }); });
+    else if (a === 'suggest') suggest();
+    else if (a === 'arc') { const i = E.segInfo(S).list.findIndex((x: any) => x.k === 'arc'); if (i >= 0) pickSeg(i); }
+    else if (a === 'promise') { const i = S.card.findIndex((m: any) => m.pm != null); if (i >= 0) pickMatch(i); }
+  };
+  return <Panel title={'Your first show: ' + T.show}>
+    <ol class="tutsteps" data-t="tut-steps">{T.steps.map((s: any) => <li key={s.k} class={s.done ? 'done' : (s.need ? 'need' : '')} data-t="tut-step" data-v={s.k} data-done={s.done ? 1 : 0}>
+      <span class="tick" aria-hidden="true">{s.done ? '✔' : '•'}</span><span class="tx clamp2">{s.t}</span>
+      {s.act && !(s.done && s.act === 'titles') ? <Btn kind="sm" t={'tut-' + s.act} onClick={() => go1(s.act)}>{TUT_ACT[s.act]}</Btn> : null}</li>)}</ol>
   </Panel>;
 }
 
@@ -199,8 +247,8 @@ function Targets() {
 export function Side(p: { on: OnCard; ck: any }) {
   const S = G.S, b = book(), s = sel(), show = S.queue[S.qi], T = E.tournActive(S);
   const pre = S.pre && !S.pre.done && S.pre.key === S.week + ':' + show.id ? S.pre : null;
-  const k = b.side || 'advice', picked = b.edit >= 0 && b.edit < S.card.length ? 'm' : (s.seg >= 0 && s.seg < E.segInfo(S).booked ? 's' : '');
-  const tabs = [['advice', 'Notes'], ['order', 'Order'], ['clock', 'Clock'], ['promo', 'Promo'], ['feuds', 'Stories'], ['targets', 'Targets']];
+  const tut = E.tutInfo(S), k = b.side || (tut.on ? 'tut' : 'advice'), picked = b.edit >= 0 && b.edit < S.card.length ? 'm' : (s.seg >= 0 && s.seg < E.segInfo(S).booked ? 's' : '');
+  const tabs = (tut.on ? [['tut', 'First show']] : []).concat([['advice', 'Notes'], ['order', 'Order'], ['clock', 'Clock'], ['promo', 'Promo'], ['feuds', 'Stories'], ['targets', 'Targets']]);
   if (T && T.pend.length) tabs.push(['tourn', 'Cup']);
   return <div class="b1-side">
     <Tabs label="Booking notes" value={pre || picked ? '' : k} onPick={pickSide} items={tabs.map(t => ({ id: t[0], label: t[1], t: 'bk', d: { v: t[0] } }))} />
@@ -214,6 +262,7 @@ export function Side(p: { on: OnCard; ck: any }) {
         : k === 'feuds' ? <Panel title="Storylines in play"><Feuds on={p.on} per={4} /></Panel>
         : k === 'targets' ? <Targets />
         : k === 'tourn' ? <TournOwed on={p.on} />
+        : k === 'tut' ? <Tutorial />
         : <Notes />}
     </div>
   </div>;

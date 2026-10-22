@@ -180,7 +180,7 @@ async function run(mode) {
   const cname = 'Test Dummy ' + mode;
   await page.fill('[data-t="caw-name"]', cname); await page.selectOption('[data-t="caw-draft"][data-v="align"]', 'H'); await page.selectOption('[data-t="caw-draft"][data-v="bg"]', 'rookie');
   must(/ask for about/.test(await page.$eval('[data-t="caw-cost"]', e => e.textContent)), 'no asking wage shown');
-  await pick(page, 'caw-tab', 'fin'); await pick(page, 'caw-fin', '0'); await page.fill('[data-t="caw-finname"]', 'Unit Test');
+  await pick(page, 'caw-tab', 'fin'); await page.fill('[data-t="caw-finname"][data-v="0"]', 'Unit Test');
   await pick(page, 'caw-tab', 'gear'); await page.selectOption('[data-t="caw-part"][data-v="upper_body"]', 'vest_open');
   await ok(t, 'creator choices');
   if (mode === 'desk') await shot(page, 'roster-creator-' + mode);

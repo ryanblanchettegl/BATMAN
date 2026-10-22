@@ -85,7 +85,7 @@ ok(!E.lookOk({ hello: 1 }) && !E.lookOk(null) && !E.lookOk([1, 2]) && !E.lookOk(
 const odd = E.lookClean({ name: '<b>Big</b>' + 'x'.repeat(80), physical_attributes: { height_inches: 400, weight_lbs: -5 }, attires: { primary_ring: { equipped_assets: { upper_body: 'robe; drop', accessories: new Array(30).fill('knee_pads') }, palette_slots: { primary: 'swatch_gold_foil' }, custom_layers: [{ type: 'evil' }, { type: 'text_decal', string: '' }] } } });
 ok(odd.name.length <= 32 && odd.name.indexOf('<') < 0, 'a name is trimmed and has no markup');
 ok(odd.physical_attributes.height_inches === 96 && odd.physical_attributes.weight_lbs === 100, 'numbers are held in range');
-ok(!odd.attires.primary_ring.equipped_assets.upper_body && odd.attires.primary_ring.equipped_assets.accessories.length === 8 && odd.attires.primary_ring.custom_layers.length === 0, 'bad parts and empty lettering are left out');
+ok(!odd.attires.primary_ring.equipped_assets.upper_body && odd.attires.primary_ring.equipped_assets.accessories.length === 10 && odd.attires.primary_ring.custom_layers.length === 0, 'bad parts and empty lettering are left out, and ten extras at most (one for each place on the body)');
 // kept on a worker in a world, carried into a game, written out again
 const pkg = JSON.parse(fs.readFileSync('universes/public_domain.json', 'utf8')), wk = pkg.workers.find(x => (pkg.contracts || []).some(c => c.worker_id === x.id && c.promotion_id === 'pdw'));
 ok(E.edSetLook(pkg, wk.id, RIP) && E.edLook(pkg, wk.id).name === 'Rip Jackson', 'a look is kept on a worker in the world');
@@ -131,5 +131,18 @@ const others = G2.w.filter(x => x && x.look && x.name !== wk.ring_name).length; 
   ok(kickLines.every(t => /KICKS OUT!$/.test(t)), 'a kick-out is called as one');
   ok(finLines.length > 0, 'a clean win with a finisher is called by its name');
 }
+// a wrestler file in a game: Export's whole wrestlers, or a look, come in as free agents with stats made the game's way
+{ const G3 = E.newGame('pdw', 8, { name: 'R' }), n0 = G3.w.length;
+  const f = { kind: 'wrestlers', v: 1, workers: [{ id: 'x1', ring_name: 'Import Person', gender: 'F', disposition: 'heel', style: 'technician', ratings: { overness: 99 }, look: { name: 'Import Person', physical_attributes: { sex: 'F' }, moveset: [{ name: 'Armbar', kind: 'submission', stage: 'late', scene: 'move_armbar' }] } }] };
+  const r = E.importWrestlerFile(G3, f), w = r.ids && G3.w[r.ids[0]];
+  ok(r.ok && w && w.name === 'Import Person' && w.promo === 'FA' && w.g === 'F' && w.align === 'H' && w.style === 'T' && w.look && w.look.moveset.length === 1, 'a wrestler file comes into a game as a free agent, look and moveset kept');
+  ok(w && w.ovr < 95, 'a file does not bring its ratings into a game: they are made the way any new wrestler is');
+  ok(!E.importWrestlerFile(G3, { hello: 1 }).ok && !E.importWrestlerFile(G3, f).ok && G3.w.length === n0 + 1, 'anything else is refused, and the same name twice is refused'); }
+// a parody wrestler's real finisher and signatures reach the game as their moves
+{ E.useUniverse(JSON.parse(fs.readFileSync('universes/parody.json', 'utf8')));
+  const G4 = E.newGame(Object.keys(E.newGame ? {} : {})[0] || 'ewe', 2, { name: 'R' });
+  const w = G4.w.find(x => x && x.name === 'Long Island Lux'), m = w && E.worldMoves(G4, w.id);
+  ok(m && m[0].preview_pose_id === 'move_piledriver' && m.length === 3 && m[1].preview_pose_id === 'move_superkick', 'a parody wrestler\'s finisher plays its real move: ' + JSON.stringify(m && m.map(x => x.preview_pose_id)));
+  E.useUniverse(JSON.parse(fs.readFileSync('universes/public_domain.json', 'utf8'))); }
 console.log(fails.length ? 'FAIL\n' + fails.join('\n') : 'ok: scene hooks, Create a Player files, and finishers in the match');
 process.exit(fails.length ? 1 : 0);

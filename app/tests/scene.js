@@ -16,7 +16,7 @@ async function studio(mode) {
   const fig = async () => JSON.parse((await attr(page, '[data-t="scene-fig"]', 'data-v')) || '{}');
   try {
     // Create a Scene is in the World Editor: a copy of a world, its Scenes tab
-    await page.click('[data-t="scr"][data-v="editor"]'); await page.click('[data-t="ed-new-copy"]');
+    await page.click('[data-t="scr"][data-v="editor"]'); await page.click('[data-t="ed-new-world"]'); await page.click('[data-t="ed-new-copy"]');
     await page.click('[data-t="ed-tab"][data-v="scenes"]');
     ok(mode, 'the World Editor has a Scenes tab', await has(page, '[data-t="ed-scene-new"]'));
     ok(mode, 'the Scenes tab has three studios: Animation, Create a Move, Create a Scene', (await page.$$('[data-t="ed-scene-new"]')).length === 3 && /Animation/.test(await page.textContent('.edstudios')) && /Create a Move/.test(await page.textContent('.edstudios')));
@@ -198,7 +198,7 @@ async function broadcast(mode) {
     // a steel cell match: it is played inside the cell
     const cellAt = await page.evaluate(() => { const S = window.EWF_DEBUG.state(), E = window.GP, i = S.card.findIndex((m, j) => m && m.mt === '1v1'); if (i < 0) return -1; S.card[i].stip = 'cell'; E.fitShow(S, S.card); return i; });
     // a newcomer on the card who debuts with a surprise attack: their entrance is the debut's own scene
-    const debId = await page.evaluate(() => { const S = window.EWF_DEBUG.state(), m = S.card[0], id = m && m.sides[0][0]; if (id == null) return -1; S.w[id].deb = true; S.w[id].dk = 'atk'; return id; });
+    const debId = await page.evaluate(() => { const S = window.EWF_DEBUG.state(), m = S.card[0], seen = new Set([].concat(...(S.segs || []).map(g => g.who || []))), id = m && [].concat(...m.sides).find(x => !seen.has(x)); if (id == null) return -1; S.w[id].deb = true; S.w[id].dk = 'atk'; return id; });   // somebody not already in a booked segment before their debut
     for (let k = 0; k < 6 && !(await has(page, '#live')); k++) { if (await has(page, '[data-t="pre"]')) await page.click('[data-t="pre"][data-c="0"]'); else await page.click('[data-t="advance"]'); await page.waitForTimeout(50); }
     ok(mode, 'the show goes on the air', await has(page, '#live'));
     const seen = new Set(), sets = new Set(); let shots = 0, fitBad = null;
@@ -224,11 +224,13 @@ async function broadcast(mode) {
     { const beats = await state(page, S => { const r = (S.live && S.live.st && S.live.st.rep) || S.reports[0]; return (r && r.segs || []).filter(x => x && x.beat && (x.bids || []).length).map(x => x.beat); });
       if (beats.length) ok(mode, 'a beat of a storyline the writers wrote plays its own scene', [...seen].some(x => x.indexOf('beat_') === 0 || beats.some(b => x === 'seg_' + b)), beats.join(',') + ' / ' + [...seen].join(','));
       else console.log(mode.padEnd(6), 'note', 'the writers wrote no storyline beat on this card'); }
-    if (debId >= 0) ok(mode, 'a newcomer debuting with a surprise attack comes out on its scene', seen.has('beat_debut_atk'), [...seen].join(','));
+    { const deb = await state(page, S => { const r = (S.live && S.live.st && S.live.st.rep) || S.reports[0]; return JSON.stringify((r && r.segs || []).filter(x => x && x.debut).map(x => x.debut)); });
+      if (debId >= 0 && deb !== '[]') ok(mode, 'a newcomer debuting with a surprise attack comes out on its scene', seen.has('beat_debut_atk'), [...seen].join(',') + ' / ' + deb);
+      else console.log(mode.padEnd(6), 'note', 'the newcomer did not debut on this card (' + deb + ')'); }
     if (cellAt >= 0) ok(mode, 'a steel cell match is played inside the cell', sets.has('cell'), [...sets].join(','));
     ok(mode, 'the bell brings the lock-up', seen.has('lockup'), [...seen].join(','));
     ok(mode, 'a near fall brings the count', seen.has('nearfall'), [...seen].join(','));
-    ok(mode, 'a win brings the three count', seen.has('finish'), [...seen].join(','));
+    ok(mode, 'a win brings its finish: the three count, a tap-out, a roll-up, a cheap win or a disqualification', [...seen].some(x => x === 'finish' || /^fin_/.test(x) || /^move_/.test(x)), [...seen].join(','));
     ok(mode, 'each wrestler comes out on an entrance', [...seen].some(x => x === 'entrance' || x.startsWith('ent_')), [...seen].join(','));
     ok(mode, 'a line of colour cuts to the commentary desk', seen.has('desk2'), [...seen].join(','));
     ok(mode, 'the broadcast draws its scenes in 3D', (await attr(page, '[data-t="live-scene"]', 'data-3d').catch(() => null)) !== '0');

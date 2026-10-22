@@ -1,6 +1,7 @@
 /* World Editor building blocks: form fields bound to a record, the pick list and the two-step delete. */
-import { ComponentChildren } from 'preact';
-import { useState } from 'preact/hooks';
+import { ComponentChildren, createContext } from 'preact';
+import { useState, useContext } from 'preact/hooks';
+import { Step } from '../../kit/step';
 import { Btn, Field, Sel, Opt, dataAttrs } from '../../kit';
 import { E } from '../../engine';
 import { es, edit, editDel, look, world, reId } from './state';
@@ -24,9 +25,13 @@ export function NumF(p: { label: string; rec: Rec; k: string; min: number; max: 
   return <Field label={p.label}><input type="number" inputMode="numeric" value={cur == null ? '' : String(cur)} min={p.min} max={p.max} step={p.step || 1} placeholder={p.blank} {...dataAttrs(p.t || 'ed-f', { k: p.k })}
     onInput={e => set((e.currentTarget as HTMLInputElement).value, false)} onBlur={e => set((e.currentTarget as HTMLInputElement).value, true)} /></Field>;
 }
+/** Inside Create a Wrestler the World Editor's forms step like the rest of the suite: ◀ the choice ▶ (Ryan, 20 October). */
+export const InSuite = createContext(false);
+/** A dropdown that is a Step line inside Create a Wrestler and a plain dropdown elsewhere. */
+export function MaybeStep(p: { children: ComponentChildren }) { return useContext(InSuite) ? <Step>{p.children}</Step> : <>{p.children}</>; }
 export function SelF(p: { label: string; rec: Rec; k: string; options: Opt[]; num?: boolean; none?: boolean; t?: string }) {
-  return <Field label={p.label}><Sel t={p.t || 'ed-f'} d={{ k: p.k }} value={p.rec[p.k] == null ? '' : p.rec[p.k]} options={p.options}
-    onChange={v => edit(() => { if (v === '' && p.none) delete p.rec[p.k]; else p.rec[p.k] = p.num ? +v : v; })} /></Field>;
+  return <Field label={p.label}><MaybeStep><Sel t={p.t || 'ed-f'} d={{ k: p.k }} value={p.rec[p.k] == null ? '' : p.rec[p.k]} options={p.options}
+    onChange={v => edit(() => { if (v === '' && p.none) delete p.rec[p.k]; else p.rec[p.k] = p.num ? +v : v; })} /></MaybeStep></Field>;
 }
 /** A 0 to 100 rating: a slider with its number beside it. `opt` ratings can be left for the game to work out. */
 export function Rating(p: { label: string; obj: Rec; k: string; opt?: boolean }) {

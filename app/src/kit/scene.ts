@@ -104,7 +104,7 @@ export function fxClass(sc: Scene): string { const f = sc.fx || {}; return SCENE
 /** When the broadcast plays a scene. A scene made by a player can take any of these. */
 /** What a scene is for. The match moments play on the broadcast now; the rest are where scenes go next
     (Ryan, 18 October: breaking news, talk show highlights, posters, magazine covers, portraits, everything). */
-export const WHEN: [string, string][] = [['start', 'The opening bell'], ['mid', 'Back and forth'], ['nearfall', 'A near fall'], ['finish', 'The finish'], ['champion', 'A new champion'], ['promo', 'A promo'], ['attack', 'An attack'], ['entrance', 'The entrance'], ['taunt', 'A taunt'],
+export const WHEN: [string, string][] = [['start', 'The opening bell'], ['mid', 'Back and forth'], ['nearfall', 'A near fall'], ['finish', 'The finish'], ['champion', 'A new champion'], ['promo', 'A promo'], ['attack', 'An attack'], ['entrance', 'The entrance'], ['taunt', 'A taunt'], ['tag', 'A tag team match'], ['finish_sub', 'The finish: a tap-out'], ['finish_flash', 'The finish: a roll-up'], ['finish_cheap', 'The finish: a cheap win'], ['finish_dq', 'The finish: a disqualification'],
   ['desk1', 'The desk: play-by-play talking'], ['desk2', 'The desk: colour talking'], ['news', 'Breaking news'], ['talk', 'A talk show'], ['poster', 'A poster'], ['cover', 'A magazine cover'], ['portrait', 'A portrait'], ['any', 'Only by hand']];
 /** What a still picture is for: the moments the booker has to answer (Ryan, 18 October: "one static diorama image of
     the wrestler getting hurt, backstage fight"). The desk and the broadcast pick one by what the matter is about. */
@@ -380,12 +380,24 @@ export function at(sc: Scene, time: number): Key {
   for (let i = 0; i < ks.length - 1; i++) {
     const a = ks[i], b = ks[i + 1];
     if (time < b.t) {
-      const t = ease((time - a.t) / Math.max(0.001, b.t - a.t), b.ease), figs: Record<string, Fig> = {};
+      const u = (time - a.t) / Math.max(0.001, b.t - a.t), t = ease(u, b.ease), figs: Record<string, Fig> = {};
+      // fluid motion (Ryan, 20 October): with no ease of its own a move flows through its keyframes on a curve instead of
+      // stopping at each one; a joint that turns back at a keyframe still settles there (its tangent is flat)
+      const k0 = ks[i - 1], k3 = ks[i + 2], flow = !b.ease, dt = b.t - a.t;
+      const herm = (va: number, vb: number, v0: number | undefined, v3: number | undefined) => {
+        if (!flow) return mix(va, vb, t);
+        const tan = (prev: number | undefined, here: number, next: number, span: number) => { if (prev == null) return 0; const d1 = here - prev, d2 = next - here; return d1 * d2 <= 0 ? 0 : (next - prev) / span * dt; };
+        const m1 = k0 ? tan(v0, va, vb, b.t - k0.t) : 0, m2 = k3 ? tan(va, vb, v3 == null ? vb : v3, k3.t - a.t) : 0;
+        const u2 = u * u, u3 = u2 * u;
+        return (2 * u3 - 3 * u2 + 1) * va + (u3 - 2 * u2 + u) * m1 + (-2 * u3 + 3 * u2) * vb + (u3 - u2) * m2;
+      };
       for (const id in a.figs) {
         const fa = a.figs[id], fb = b.figs[id]; if (!fb) { figs[id] = fa; continue; }
-        const p: Record<string, number> = {}; for (const k of new Set([...Object.keys(fa.p), ...Object.keys(fb.p)])) p[k] = mix(fa.p[k] || 0, fb.p[k] || 0, t);
+        const f0 = k0 && k0.figs[id] && (k0.figs[id].on || '') === (fa.on || '') ? k0.figs[id] : undefined, f3 = k3 && k3.figs[id] && (k3.figs[id].on || '') === (fb.on || '') ? k3.figs[id] : undefined;
+        const p: Record<string, number> = {}; for (const k of new Set([...Object.keys(fa.p), ...Object.keys(fb.p)])) p[k] = herm(fa.p[k] || 0, fb.p[k] || 0, f0 ? f0.p[k] || 0 : undefined, f3 ? f3.p[k] || 0 : undefined);
         const h = t < 0.5 ? fa : fb, same = (fa.on || '') === (fb.on || '');   // picked up or put down: the hold changes half way
-        figs[id] = { x: same ? mix(fa.x, fb.x, t) : h.x, y: same ? mix(fa.y, fb.y, t) : h.y, r: mix(fa.r, fb.r, t), f: h.f, z: same ? mix(fa.z, fb.z, t) : h.z, p, e: h.e, s: mix(fa.s || 1, fb.s || 1, t), m: h.m, on: h.on, lz: h.lz, b: h.b, hide: h.hide, lv: same ? mix(fa.lv || 0, fb.lv || 0, t) : h.lv };
+        const ch = (k: 'x' | 'y' | 'z' | 'r') => herm(fa[k], fb[k], f0 ? f0[k] : undefined, f3 ? f3[k] : undefined);
+        figs[id] = { x: same ? ch('x') : h.x, y: same ? ch('y') : h.y, r: ch('r'), f: h.f, z: same ? ch('z') : h.z, p, e: h.e, s: mix(fa.s || 1, fb.s || 1, t), m: h.m, on: h.on, lz: h.lz, b: h.b, hide: h.hide, lv: same ? mix(fa.lv || 0, fb.lv || 0, t) : h.lv };
       }
       const props = a.props.map(pa => { const pb = b.props.find(x => x.id === pa.id); return pb ? { ...pa, x: mix(pa.x, pb.x, t), y: mix(pa.y, pb.y, t), r: mix(pa.r, pb.r, t) } : pa; });
       const ca = a.cam || CAM0, cb = b.cam || CAM0, cam = { x: mix(ca.x, cb.x, t), y: mix(ca.y, cb.y, t), z: mix(ca.z, cb.z, t), r: mix(ca.r || 0, cb.r || 0, t) };
@@ -495,8 +507,8 @@ const COVER_A = { sh_n: -120, el_n: -30, sh_f: -60, el_f: -40, kn_n: -10, kn_f: 
 
 /** A canned entrance on the ramp: who comes out walks toward the camera through a few poses. Wrestlers pick one in
     Create a Player (their `entrance`); the show picks for anybody who has not. */
-function ent(id: string, name: string, ks: [number, Record<string, number>, string, number][]): Scene {
-  return { v: 1, id, name, when: 'entrance', set: 'ramp', slots: [{ id: 'A', n: 'Who comes out', role: 'a' }], keys: ks.map(([t, p, e, x]) => ({ t, figs: { A: STD(x, 1, p, e, 0.6) }, props: [] })) };
+function ent(id: string, name: string, ks: ([number, Record<string, number>, string, number] | [number, Record<string, number>, string, number, number])[]): Scene {
+  return { v: 1, id, name, when: 'entrance', set: 'ramp', slots: [{ id: 'A', n: 'Who comes out', role: 'a' }], keys: ks.map(([t, p, e, x, y]) => ({ t, figs: { A: { ...STD(x, 1, p, e, 0.6), ...(y != null ? { y: WAIST + y } : {}) } }, props: [] })) };
 }
 /** The commentary desk: two in suits and headsets, the one with the line talking (the mouth moving, a hand going),
     the other listening and turning to them, and the third chair open for a guest. It loops while the line is on. */
@@ -506,7 +518,9 @@ function deskScene(id: string, name: string, when: string, talker: string): Scen
   const talk = (t: number, open: boolean, arm: number, head: number): Key => {
     const tk = (who: string) => who === talker, side = (who: string) => who === 'C1' ? 1 : -1, x = (who: string) => who === 'C1' ? DESK_SEATS[0] : DESK_SEATS[1];
     const fig = (who: string): Fig => tk(who) ? seat(x(who), side(who), { sh_n: arm, el_n: 75, wr_n: 10, sh_f: 30, el_f: 75, head }, open ? 'talk' : '') : seat(x(who), side(who), { sh_n: 30, el_n: 80, sh_f: 30, el_f: 75, head: 8 }, '');
-    return { t, figs: { C1: fig('C1'), C2: fig('C2') }, props: [], cam: { x: -0.9, y: 0.7, z: 1.15 } };
+    const figs: Record<string, Fig> = { C1: fig('C1'), C2: fig('C2') };
+    if (talker === 'C3') figs.C3 = seat(DESK_SEATS[2], -1, { sh_n: arm, el_n: 75, wr_n: 10, sh_f: 30, el_f: 75, head }, open ? 'talk' : '');   // a guest in the third chair, talking
+    return { t, figs, props: [], cam: talker === 'C3' ? { x: 0.6, y: 0.7, z: 1.15 } : { x: -0.9, y: 0.7, z: 1.15 } };
   };
   return { v: 1, id, name, when, set: 'desk', loop: true,
     slots: [{ id: 'C1', n: 'Play-by-play', role: 'c', dress: 'suit' }, { id: 'C2', n: 'Colour', role: 'c', dress: 'suit' }, { id: 'C3', n: 'A guest', role: 'c', dress: 'suit', at: { x: DESK_SEATS[2], y: Y, r: 0, f: -1, z: 0, p: { ...SEAT, sh_n: 30, el_n: 80, sh_f: 30, el_f: 75 } } }],
@@ -559,7 +573,7 @@ export const SCENES: Scene[] = flourishAll([
     { t: 0, figs: { B: LAY(-0.8, -1, 90, COVER_B, 'hurt'), A: { x: -0.7, y: -1.75, r: -65, f: 1, z: 1, p: COVER_A }, R: REFKN(4.6, -1, { sh_n: 165, el_n: 5 }) }, props: [burst('b1', 'ONE!', -4.6, 2.9)] },
     { t: 0.7, figs: { B: LAY(-0.8, -1, 90, COVER_B, 'hurt'), A: { x: -0.7, y: -1.75, r: -65, f: 1, z: 1, p: COVER_A }, R: REFKN(4.6, -1, { sh_n: 25, el_n: 5 }) }, props: [burst('b1', 'TWO!', -4.6, 2.9)] },
     { t: 1.4, figs: { B: LAY(-0.8, -1, 90, COVER_B, 'hurt'), A: { x: -0.7, y: -1.75, r: -65, f: 1, z: 1, p: COVER_A }, R: REFKN(4.6, -1, { sh_n: 20, el_n: 0 }) }, props: [burst('b1', 'THREE!', -4.4, 2.9, PAL.red)] },
-    { t: 2.4, figs: { B: LAY(-0.8, -1, 90, { ...COVER_B, sh_n: 170 }, 'hurt'), A: STD(-1.2, 1, { sh_n: 160, el_n: 10, sh_f: -150, el_f: -10, hip_n: 6, hip_f: -6 }, 'shout', 1), R: { ...STD(1.8, -1, { sh_n: 100, el_n: 0, sh_f: 10 }, 'shout', 1.2), x: 0.3 } }, props: [] },
+    { t: 2.4, figs: { B: LAY(-0.8, -1, 90, { ...COVER_B, sh_n: 170 }, 'hurt'), A: STD(-1.2, 1, { sh_n: 160, el_n: 10, sh_f: -150, el_f: -10, hip_n: 6, hip_f: -6 }, 'shout', 1), R: STD(0.6, -1, { sh_n: 150, el_n: 10, sh_f: 10 }, 'shout', 0.3) }, props: [] },
   ] },
   { v: 1, id: 'champion', name: 'New champion', when: 'champion', set: 'ring', slots: AB, keys: [
     { t: 0, figs: { A: STD(0, 1, { sh_n: 60, el_n: 40, sh_f: -60, el_f: -40, hip_n: 4 }, 'shout', 0.6), B: LAY(4.2, -1, 90, { sh_n: 150, sh_f: 130, hip_n: 20, kn_n: -40 }, 'hurt', 0.2), R: STD(-3.4, 1, { sh_n: 110, el_n: 0 }, 'shout', 0.4) }, props: [{ id: 'belt', k: 'belt', x: 0, y: 0, r: 0, z: 2, s: 1, at: 'A:hands' }] },
@@ -611,6 +625,63 @@ export const SCENES: Scene[] = flourishAll([
     [0, { hip_n: 14, kn_n: -10, hip_f: -12, sh_n: 30, el_n: 90, sh_f: 20, el_f: 95 }, 'smirk', 0],
     [0.8, { sh_n: 150, el_n: 120, sh_f: -20, el_f: -30, head: 10 }, 'smirk', 0.3],
     [1.6, { torso: 8, sh_n: 80, el_n: 60, sh_f: -80, el_f: -60, head: 12 }, 'snarl', 0.4]]),
+  ent('ent_run', 'Sprints out', [
+    [0, { torso: 20, sh_n: 60, el_n: 80, sh_f: -40, el_f: 70, hip_n: 45, kn_n: -50, hip_f: -30, kn_f: -60 }, 'roar', -1.5],
+    [0.5, { torso: 20, sh_n: -40, el_n: 70, sh_f: 60, el_f: 80, hip_n: -30, kn_n: -60, hip_f: 45, kn_f: -50 }, 'roar', -0.5],
+    [1.0, { torso: 20, sh_n: 60, el_n: 80, sh_f: -40, el_f: 70, hip_n: 45, kn_n: -50, hip_f: -30, kn_f: -60 }, 'roar', 0.5],
+    [1.6, { sh_n: 165, el_n: 10, sh_f: -165, el_f: -10, head: 10 }, 'shout', 1.0]]),
+  ent('ent_kneel', 'Kneels in the lights', [
+    [0, { head: -20, sh_n: 10, sh_f: -10 }, '', 0],
+    [0.9, { ...KN, head: -25, sh_n: 20, el_n: 90, sh_f: -20, el_f: -90 }, '', 0, -1.33],
+    [1.8, { ...KN, head: 15, sh_n: 160, el_n: 10, sh_f: -160, el_f: -10 }, 'roar', 0, -1.33],
+    [2.6, { sh_n: 160, el_n: 10, sh_f: -160, el_f: -10, head: 12 }, 'shout', 0.2]]),
+  ent('ent_salute', 'Salutes the crowd', [
+    [0, { sh_n: 10, sh_f: -10 }, '', -0.6],
+    [0.8, { sh_n: 150, el_n: 130, head: 4 }, 'smirk', -0.2],
+    [1.5, { sh_n: 150, el_n: 130, head: 4, sh_f: -40 }, 'smirk', 0.2],
+    [2.2, { sh_n: 100, el_n: 10, sh_f: -100, el_f: -10, head: 6 }, 'shout', 0.4]]),
+  ent('ent_highfive', 'Slaps hands with the fans', [
+    [0, { sh_n: 80, el_n: 10, sh_f: -20 }, 'shout', -1.4],
+    [0.6, { sh_n: 20, sh_f: -80, el_f: -10 }, 'shout', -0.6],
+    [1.2, { sh_n: 80, el_n: 10, sh_f: -20 }, 'shout', 0.2],
+    [1.8, { sh_n: 165, el_n: 10, sh_f: -165, el_f: -10, head: 8 }, 'roar', 0.8]]),
+  ent('ent_dance', 'Dances to the music', [
+    [0, { hip_n: 20, kn_n: -30, sh_n: 120, el_n: 60, sh_f: -40, el_f: -60, torso: 8 }, 'smirk', -0.4],
+    [0.5, { hip_f: -20, kn_f: -30, sh_n: 40, el_n: 60, sh_f: -120, el_f: -60, torso: -8 }, 'smirk', 0],
+    [1.0, { hip_n: 20, kn_n: -30, sh_n: 120, el_n: 60, sh_f: -40, el_f: -60, torso: 8 }, 'shout', 0.4],
+    [1.5, { hip_f: -20, kn_f: -30, sh_n: 40, el_n: 60, sh_f: -120, el_f: -60, torso: -8 }, 'smirk', 0.6]]),
+  ent('ent_slow', 'Head down, slow and cold', [
+    [0, { head: -25, sh_n: 5, sh_f: -5, torso: 5 }, '', 0],
+    [1.2, { head: -20, sh_n: 5, sh_f: -5, torso: 5, hip_n: 10, hip_f: -10 }, '', 0.2],
+    [2.4, { head: 10, sh_n: 5, sh_f: -5 }, 'snarl', 0.4],
+    [3.0, { head: 10, sh_n: 90, el_n: 120, sh_f: -5 }, 'snarl', 0.5]]),
+  ent('ent_wings', 'Spreads the arms wide', [
+    [0, { head: -10, sh_n: 10, sh_f: -10 }, '', -0.3],
+    [0.9, { sh_n: 90, el_n: 0, sh_f: -90, el_f: 0, head: 4, torso: -4 }, '', 0],
+    [1.8, { sh_n: 100, el_n: 10, sh_f: -100, el_f: -10, head: 16, torso: -10 }, 'roar', 0.2],
+    [2.6, { sh_n: 95, el_n: 5, sh_f: -95, el_f: -5, head: 8 }, 'smirk', 0.4]]),
+  ent('ent_guns', 'Finger guns at the crowd', [
+    [0, { hip_n: 16, kn_n: -10, hip_f: -14, kn_f: -10, sh_n: -15, sh_f: 15 }, 'smirk', -0.6],
+    [0.7, { sh_n: 95, el_n: 10, sh_f: -95, el_f: -10, head: 4 }, 'smirk', -0.2],
+    [1.2, { sh_n: 110, el_n: 30, sh_f: -110, el_f: -30, head: 6 }, 'shout', 0],
+    [1.9, { sh_n: 95, el_n: 10, sh_f: -95, el_f: -10, head: 4, torso: 6 }, 'smirk', 0.4]]),
+  ent('ent_bow', 'A deep bow', [
+    [0, { sh_n: 10, sh_f: -10 }, '', -0.2],
+    [0.8, { torso: 45, head: 20, sh_n: -10, el_n: 90, sh_f: 40, el_f: 10, hip_n: 10, hip_f: -10 }, '', 0.1],
+    [1.6, { torso: 45, head: 20, sh_n: -10, el_n: 90, sh_f: 40, el_f: 10, hip_n: 10, hip_f: -10 }, 'smirk', 0.1],
+    [2.3, { sh_n: 140, el_n: 20, sh_f: -20, head: 8 }, 'smirk', 0.3]]),
+  ent('ent_wave', 'Waves to the people', [
+    [0, { sh_n: 140, el_n: 30, sh_f: -10 }, 'shout', -0.8],
+    [0.5, { sh_n: 140, el_n: -20, sh_f: -10 }, 'shout', -0.4],
+    [1.0, { sh_n: 140, el_n: 30, sh_f: -10 }, 'shout', 0],
+    [1.5, { sh_n: 10, sh_f: -140, el_f: -30 }, 'shout', 0.4],
+    [2.0, { sh_n: 10, sh_f: -140, el_f: 20 }, 'shout', 0.6]]),
+  ent('ent_beat', 'Beats the chest', [
+    [0, { torso: 6, sh_n: 50, el_n: 120, sh_f: -10 }, 'roar', -0.4],
+    [0.4, { torso: 6, sh_f: -50, el_f: -120, sh_n: 10 }, 'roar', -0.2],
+    [0.8, { torso: 6, sh_n: 50, el_n: 120, sh_f: -10 }, 'roar', 0],
+    [1.2, { torso: 6, sh_f: -50, el_f: -120, sh_n: 10 }, 'roar', 0.2],
+    [1.9, { sh_n: 165, el_n: 10, sh_f: -165, el_f: -10, head: 14, torso: -6 }, 'roar', 0.4]]),
   ...[  // taunts: whoever is on top plays to the building, the other down on the mat. Wrestlers pick up to three in Create a Wrestler.
     ['taunt_crowd', 'Plays to the crowd', [[0, { sh_n: 100, el_n: 20, sh_f: -100, el_f: -20, head: 6 }, 'smirk'], [0.8, { sh_n: 165, el_n: 10, sh_f: -165, el_f: -10, head: 12 }, 'roar']]],
     ['taunt_point', 'Points down at them', [[0, { sh_n: 40, el_n: 30, sh_f: -10, head: -4 }, 'snarl'], [0.7, { torso: 10, sh_n: 75, el_n: 0, sh_f: -20, el_f: -20, head: -10 }, 'shout']]],
@@ -618,13 +689,14 @@ export const SCENES: Scene[] = flourishAll([
     ['taunt_call', 'Calls for the finish', [[0, { sh_n: 160, el_n: 30, sh_f: -10, head: 8 }, 'shout'], [0.5, { sh_n: 150, el_n: -25, sh_f: -10, head: 10 }, 'shout'], [1.0, { sh_n: 165, el_n: 30, sh_f: -10, head: 8 }, 'roar']]],
     ['taunt_mock', 'A foot on their chest', [[0, { sh_n: 40, el_n: 125, wr_n: 10, sh_f: 45, el_f: 120, hip_n: 20, kn_n: -20 }, 'smirk'], [0.8, { sh_n: 40, el_n: 125, wr_n: 10, sh_f: 45, el_f: 120, hip_n: 55, kn_n: -70, an_n: 20, head: -12 }, 'smirk']]],
   ].map(([id, name, ks]) => ({ v: 1 as const, id: id as string, name: name as string, when: 'taunt', set: 'ring', slots: [{ id: 'A', n: 'Who taunts', role: 'a' as const }, { id: 'B', n: 'Who is down', role: 'b' as const }, { id: 'R', n: 'The referee', role: 'ref' as const }],
-    keys: (ks as [number, Record<string, number>, string][]).map(([t, p, e]) => ({ t, figs: { A: STD(id === 'taunt_mock' ? 0.2 : -0.9, 1, p, e, 0.6), B: LAY(id === 'taunt_mock' ? 1.9 : 1.8, -1, 90, { sh_n: 150, sh_f: 130, hip_n: 20, kn_n: -40 }, 'hurt', 0.2), R: STD(-4.6, 1, { sh_n: 20, el_n: 40 }, '', -0.3) }, props: [] })) } as Scene)),
+    keys: (ks as [number, Record<string, number>, string][]).map(([t, p, e]) => ({ t, figs: { A: STD(id === 'taunt_mock' ? 0.2 : -2.2, 1, p, e, 0.6), B: LAY(id === 'taunt_mock' ? 1.9 : 3.2, -1, 90, { sh_n: 150, sh_f: 130, hip_n: 20, kn_n: -40 }, 'hurt', 0.2), R: STD(-4.6, 1, { sh_n: 20, el_n: 40 }, '', -0.3) }, props: [] })) } as Scene)),
   deskScene('desk1', 'At the desk: the call', 'desk1', 'C1'),
   deskScene('desk2', 'At the desk: the colour', 'desk2', 'C2'),
+  deskScene('desk3', 'At the desk: a guest on commentary', 'desk3', 'C3'),
   { v: 1, id: 'promo', name: 'On the microphone', when: 'promo', set: 'ring', slots: [{ id: 'A', n: 'The talker', role: 'a' }], keys: [
-    { t: 0, figs: { A: STD(-0.6, 1, { sh_n: 150, el_n: 120, sh_f: -20, el_f: -30, head: 4 }, '') }, props: [{ id: 'mic', k: 'mic', x: 0.1, y: 0.1, r: -30, z: 1.2, at: 'A:hand_n' }] },
-    { t: 0.8, figs: { A: STD(-0.6, 1, { sh_n: 150, el_n: 120, sh_f: -100, el_f: -20, head: 10 }, 'shout') }, props: [{ id: 'mic', k: 'mic', x: 0.1, y: 0.1, r: -30, z: 1.2, at: 'A:hand_n' }] },
-    { t: 1.6, figs: { A: STD(-0.6, 1, { sh_n: 150, el_n: 120, sh_f: -40, el_f: -70, head: 0 }, '') }, props: [{ id: 'mic', k: 'mic', x: 0.1, y: 0.1, r: -30, z: 1.2, at: 'A:hand_n' }] },
+    { t: 0, figs: { A: STD(-0.6, 1, { sh_n: 150, el_n: 120, sh_f: -20, el_f: -30, head: 4 }, '') }, props: [{ id: 'mic', k: 'mic', x: 0.1, y: 0.35, r: -20, z: 2.2, s: 1.2, at: 'A:hand_n' }] },
+    { t: 0.8, figs: { A: STD(-0.6, 1, { sh_n: 150, el_n: 120, sh_f: -100, el_f: -20, head: 10 }, 'shout') }, props: [{ id: 'mic', k: 'mic', x: 0.1, y: 0.35, r: -20, z: 2.2, s: 1.2, at: 'A:hand_n' }] },
+    { t: 1.6, figs: { A: STD(-0.6, 1, { sh_n: 150, el_n: 120, sh_f: -40, el_f: -70, head: 0 }, '') }, props: [{ id: 'mic', k: 'mic', x: 0.1, y: 0.35, r: -20, z: 2.2, s: 1.2, at: 'A:hand_n' }] },
   ] },
 ]);
 
@@ -726,14 +798,14 @@ const CLASSIC: Record<string, () => Scene> = {
     { t: 1.0, ease: 'in', figs: { A: POSED('back', -1.6, 0, 1), B: { ...POSED('dive', 0.1, 0, -1, 0, 'pain'), y: -1.2, r: -170 }, R: POSED('point', -4, -4, 1) }, props: [burst('b1', 'SPIKED!', 2.6, 2.4)], cam3: C3([4, 1, 10], [0, 0.8, 0], 36) },
     { t: 1.6, figs: { A: POSED('sit', -1.8, 0, 1), B: POSED('front', 0.8, 0, -1, 0, 'pain'), R: POSED('kneel', -3, -3, 1) }, props: [], cam3: C3([-4, 6, 15], [-0.4, 0.8, 0], 32) }]),
   topdive: () => move('A splash off the top', [
-    { t: 0, figs: { A: POSED('crouch', 9.5, 10.6, -1, 4.9), B: POSED('back', 3.2, 5.6, 1), R: POSED('point', -3, 2, 1) }, props: [], cam3: C3([17, 2.5, 19], [9, 6, 9.5], 28) },
-    { t: 1.0, figs: { A: POSED('leap', 9.3, 10.4, -1, 4.9), B: POSED('back', 3.2, 5.6, 1), R: POSED('point', -3, 2, 1) }, props: [], cam3: C3([15, 4, 18], [8, 7, 9], 32) },
-    { t: 1.8, ease: 'even', figs: { A: POSED('splash', 6.2, 8.2, -1, 5.2), B: POSED('back', 3.2, 5.6, 1), R: POSED('point', -3, 2, 1) }, props: [], cam3: C3([12, 6, 18], [5.5, 4.5, 7], 34) },
-    { t: 2.5, ease: 'in', figs: { A: POSED('splash', 3.4, 5.9, -1, 0.75), B: POSED('back', 3.2, 5.6, 1, 0, 'pain'), R: POSED('kneel', -1, 3, 1) }, props: [], cam3: C3([7, 4.5, 16], [3.2, 0.8, 5], 30) }]),
+    { t: 0, figs: { A: POSED('crouch', 9.5, 10.6, -1, 4.9), B: POSED('back', 3.2, 5.6, 1), R: POSED('point', -3, 2, 1) }, props: [], cam3: C3([19, 4, 22], [8.8, 7, 9.4], 40) },
+    { t: 1.0, figs: { A: POSED('leap', 9.3, 10.4, -1, 4.9), B: POSED('back', 3.2, 5.6, 1), R: POSED('point', -3, 2, 1) }, props: [], cam3: C3([17, 5, 21], [8, 7.5, 8.8], 42) },
+    { t: 1.8, ease: 'even', figs: { A: POSED('splash', 6.2, 8.2, -1, 5.2), B: POSED('back', 3.2, 5.6, 1), R: POSED('point', -3, 2, 1) }, props: [], cam3: C3([13, 7, 20], [5.5, 5, 7], 40) },
+    { t: 2.5, ease: 'in', figs: { A: POSED('splash', 3.4, 5.9, -1, 0.75), B: POSED('back', 3.2, 5.6, 1, 0, 'pain'), R: POSED('kneel', -1, 3, 1) }, props: [], cam3: C3([10, 9, 19], [3.2, 0.8, 5.4], 32) }]),
   moonsault: () => move('A moonsault off the top', [
-    { t: 0, figs: { A: { ...POSED('stand', 9.5, -10.6, 1, 4.9), b: true }, B: POSED('back', 4, -6, 1), R: POSED('point', -2, -2, 1) }, props: [], cam3: C3([3, 3, 4], [9, 7, -10], 32) },
-    { t: 1.1, figs: { A: { ...POSED('moonsault', 7.5, -9.2, 1, 6.5), b: true }, B: POSED('back', 4, -6, 1), R: POSED('point', -2, -2, 1) }, props: [], cam3: C3([0, 5, 6], [7, 7, -9], 36) },
-    { t: 2.0, ease: 'in', figs: { A: POSED('splash', 4.2, -6.3, -1, 0.75), B: POSED('back', 4, -6, 1, 0, 'pain'), R: POSED('kneel', -2, -2, 1) }, props: [], cam3: C3([-2, 4, 4], [4, 0.8, -6], 30) }]),
+    { t: 0, figs: { A: { ...POSED('stand', 9.5, -10.6, 1, 4.9), b: true }, B: POSED('back', 4, -6, 1), R: POSED('point', -2, -2, 1) }, props: [], cam3: C3([2, 4, 6], [8.6, 7.5, -9.6], 42) },
+    { t: 1.1, figs: { A: { ...POSED('moonsault', 7.5, -9.2, 1, 6.5), b: true }, B: POSED('back', 4, -6, 1), R: POSED('point', -2, -2, 1) }, props: [], cam3: C3([-1, 6, 8], [7, 8, -9], 44) },
+    { t: 2.0, ease: 'in', figs: { A: POSED('splash', 4.2, -6.3, -1, 0.75), B: POSED('back', 4, -6, 1, 0, 'pain'), R: POSED('kneel', -2, -2, 1) }, props: [], cam3: C3([-7, 7, 5], [4, 0.8, -6], 32) }]),
   tope: () => move('A dive to the outside', [
     { t: 0, figs: { A: POSED('charge', 3, 0, 1), B: POSED('stagger', 12.6, 0.4, -1, -3), R: POSED('point', -4, 3, 1) }, props: [], cam3: C3([18, 3, 16], [8, 2, 0], 38) },
     { t: 0.8, ease: 'even', figs: { A: POSED('dive', 10.4, 0.2, 1, 2.6), B: POSED('stagger', 12.6, 0.4, -1, -3), R: POSED('point', -4, 3, 1) }, props: [], cam3: C3([17, 2, 14], [11, 2, 0], 34) },
@@ -748,8 +820,381 @@ const CLASSIC: Record<string, () => Scene> = {
     { t: 1.0, figs: { A: { ...POSED('lift', 8.3, -9.1, 1, 4.6), r: 25 }, B: { ...POSED('back', 8.6, -9.4, -1, 7.5), r: 160 }, R: POSED('point', 2, -3, 1) }, props: [], cam3: C3([-1, 5, 4], [8, 8, -9], 36) },
     { t: 1.9, ease: 'in', figs: { A: POSED('back', 5.6, -6.6, 1), B: POSED('back', 4.4, -5.8, -1, 0, 'pain'), R: POSED('kneel', 2, -3, 1) }, props: [], cam3: C3([-2, 6, 6], [5, 0.5, -6], 34) }]),
 };
+/* ---------- the rest of the move library (Ryan, 20 October: "there will need to be animations for every move in the game,
+   none are just verbal"). Every move a wrestler can have in their moveset is one of these or a move made in Create a
+   Move. The names are in E.MOVE_LIB (src/86-looks.js); app/tests/scene.js fails when a name has no scene here. ---------- */
+const W_ = WAIST, REF_ = (x = -4.5, z = -4, f = 1) => POSED('point', x, z, f), REFK_ = (x = -4.5, z = -4, f = 1) => POSED('kneel', x, z, f);
+/** A figure from a pose, with angles of its own on top and anything else (y, r, e, b) changed. */
+const FG = (k: string, x: number, f: number, p: Record<string, number> = {}, o: Partial<Fig> = {}): Fig => { const b = POSED(k, x, 0, f); return { ...b, ...o, p: { ...b.p, ...p } }; };
+const CM = { wide: C3([0, 4, 18], [0, 3, 0], 30), close: C3([2, 5.5, 15], [0.2, 3.4, 0], 30), low: C3([1.5, 5.5, 15], [0.8, 3, 0], 32), high: C3([-4, 7, 16], [1, 1.2, 0], 32), side: C3([-5, 3, 14], [0, 3.6, 0], 32) };
+/** A strike: square up, wind up, the hit with its word, and the one hit selling it. */
+function strike(name: string, word: string, o: { wind: Record<string, number>; hit: Record<string, number>; run?: boolean; hy?: number; hr?: number; ax?: number; bEnd?: string; aEnd?: string; e?: string }): Scene {
+  const ax = o.ax ?? -0.3, A0 = o.run ? FG('charge', -5.5, 1) : FG('fists', -1.7, 1);
+  return move(name, [
+    { t: 0, figs: { A: A0, B: FG('fists', 1.4, -1), R: REF_() }, props: [], cam3: CM.wide },
+    { t: 0.5, figs: { A: FG('stand', o.run ? -1.6 : -1.4, 1, o.wind, { e: o.e || 'roar' }), B: FG('fists', 1.4, -1), R: REF_() }, props: [], cam3: CM.close },
+    { t: 0.8, ease: 'in', figs: { A: FG('stand', ax, 1, o.hit, { y: W_ + (o.hy || 0), r: o.hr || 0, e: o.e || 'roar' }), B: FG('stagger', 1.8, -1), R: REF_() }, props: [burst('b1', word, 3.4, 3.2)], cam3: CM.low },
+    { t: 1.5, figs: { A: FG(o.aEnd || 'fists', ax - 0.2, 1), B: FG(o.bEnd || 'back', 2.9, -1, {}, { e: 'pain' }), R: REF_() }, props: [], cam3: CM.high }]);
+}
+/** A hold on the mat or standing: going for it, locking it in, cranking it while the one in it reaches for the ropes. */
+function hold(name: string, word: string, A1: Fig, B1: Fig, A2: Fig, B2: Fig, cam = C3([0, 7.5, 16], [0.4, 1.8, 0], 34)): Scene {
+  return move(name, [
+    { t: 0, figs: { A: FG('stand', -1.4, 1), B: FG('back', 1.2, -1, {}, { e: 'pain' }), R: REF_() }, props: [], cam3: CM.wide },
+    { t: 0.7, figs: { A: A1, B: B1, R: REFK_(-3.5, -3) }, props: [], cam3: cam },
+    { t: 1.4, figs: { A: A2, B: B2, R: REFK_(-3.5, -3) }, props: [burst('b1', word, 2.8, 2.6)], cam3: C3([4.5, 5, 13], [0.3, 1.8, 0], 36) },
+    { t: 2.3, figs: { A: { ...A2, e: 'roar' }, B: { ...B2, p: { ...B2.p, sh_n: 165, el_n: 5 }, e: 'shout' }, R: { ...REFK_(-3.5, -3), e: 'shout' } }, props: [], cam3: C3([-4.5, 6, 14], [0.3, 1.8, 0], 34) }]);
+}
+/** A hold put on standing up (a bear hug, a guillotine): both on their feet from the start, seen from the side so neither hides the other. */
+function standHold(name: string, word: string, A1: Fig, B1: Fig, A2: Fig, B2: Fig): Scene {
+  return move(name, [
+    { t: 0, figs: { A: FG('fists', -1.6, 1), B: FG('stagger', 1.0, -1, {}, { e: 'hurt' }), R: REF_() }, props: [], cam3: CM.wide },
+    { t: 0.7, figs: { A: A1, B: B1, R: REF_() }, props: [], cam3: CM.side },
+    { t: 1.4, figs: { A: A2, B: B2, R: REF_() }, props: [burst('b1', word, 2.8, 4.2)], cam3: C3([5, 4, 14], [0, 3.6, 0], 34) },
+    { t: 2.3, figs: { A: { ...A2, e: 'roar' }, B: { ...B2, p: { ...B2.p, sh_f: 30, el_f: 10 }, e: 'shout' }, R: { ...REF_(), e: 'shout' } }, props: [], cam3: C3([-5, 4, 14], [0, 3.6, 0], 34) }]);
+}
+const LEGSUP = { hip_n: -95, kn_n: 10, hip_f: -90, kn_f: 10 };
+const MORE: Record<string, () => Scene> = {
+  // strikes
+  chop: () => strike('A knife-edge chop', 'CHOP!', { wind: { sh_n: -50, el_n: 10, torso: -10, sh_f: 30 }, hit: { torso: 12, sh_n: 95, el_n: 5, sh_f: -30, hip_n: 20, kn_n: -15 }, bEnd: 'weep' }),
+  forearm: () => strike('A forearm smash', 'SMASH!', { wind: { sh_n: 30, el_n: 125, torso: -12 }, hit: { torso: 16, sh_n: 90, el_n: 70, hip_n: 25, kn_n: -20, hip_f: -15 }, bEnd: 'sit' }),
+  superkick: () => strike('A superkick', 'SUPERKICK!', { wind: { hip_n: -35, torso: 12, sh_n: 30, sh_f: -30 }, hit: { torso: -30, hip_n: 125, kn_n: -5, an_n: 0, sh_n: 45, el_n: 60, sh_f: -55, el_f: -40 }, hy: 0.3, hr: -8 }),
+  bigboot: () => strike('A big boot', 'BOOT!', { run: true, wind: { torso: 10, hip_n: 30, kn_n: -40 }, hit: { torso: -15, hip_n: 95, kn_n: 0, sh_n: 30, sh_f: -40 } }),
+  jumpknee: () => strike('A jumping knee', 'KNEE!', { run: true, wind: { torso: 15, hip_n: 40, kn_n: -60 }, hit: { hip_n: 110, kn_n: -125, hip_f: -15, kn_f: -50, sh_n: 70, el_n: 30, sh_f: -70 }, hy: 1.3 }),
+  headbutt: () => strike('A headbutt', 'THUD!', { wind: { torso: -22, head: -28, sh_n: 40, el_n: 80, sh_f: 40, el_f: 80 }, hit: { torso: 32, head: 26, sh_n: 50, el_n: 90, sh_f: 50, el_f: 90 }, ax: 0.3, bEnd: 'sit' }),
+  enzuigiri: () => strike('An enzuigiri', 'ENZUIGIRI!', { wind: { torso: 10, hip_n: 30, kn_n: -40 }, hit: { hip_n: 105, kn_n: -10, hip_f: 60, kn_f: -35, sh_n: 120, sh_f: -120 }, hy: 1.4, hr: 80, bEnd: 'front', aEnd: 'sit' }),
+  elbowstrike: () => strike('A running elbow', 'WHACK!', { run: true, wind: { torso: 20, sh_n: 60, el_n: 150 }, hit: { torso: 12, sh_n: 85, el_n: 150, sh_f: -30, hip_n: 30, kn_n: -20 } }),
+  discus: () => strike('A discus punch', 'POW!', { wind: { torso: -12, sh_n: -70, el_n: 10, sh_f: 60 }, hit: { torso: 18, sh_n: 95, el_n: 0, sh_f: -40, hip_n: 25, kn_n: -15 }, hr: -14 }),
+  // grapples
+  snapsuplex: () => { const sc = CLASSIC.suplex(); sc.name = 'A snap suplex'; sc.keys = sc.keys.map(k => ({ ...k, t: k.t * 0.65 })); return sc; },
+  german: () => move('A German suplex', [
+    { t: 0, figs: { A: FG('carry', -0.5, 1, { sh_n: 70, el_n: 70, sh_f: 70, el_f: 70 }), B: FG('stagger', 0.5, 1, {}, { e: 'hurt' }), R: REF_(-4.5, -4, 1) }, props: [], cam3: CM.wide },
+    { t: 0.6, figs: { A: FG('stand', -0.5, 1, { torso: -35, head: -20, sh_n: 90, el_n: 60, sh_f: 90, el_f: 60, hip_n: -10, kn_n: -30, hip_f: 10, kn_f: -30 }, { r: 30 }), B: FG('stand', -0.1, 1, { sh_n: 30, sh_f: -30, hip_n: 20, hip_f: -20 }, { y: W_ + 1.6, r: -70, e: 'shout' }), R: REF_() }, props: [], cam3: CM.side },
+    { t: 1.0, ease: 'in', figs: { A: FG('stand', -0.6, 1, { torso: -40, head: -30, sh_n: 160, sh_f: 150, hip_n: -40, kn_n: -80, hip_f: -40, kn_f: -80 }, { y: W_ - 1.4, r: 120 }), B: FG('stand', -1.6, 1, { sh_n: 40, sh_f: -40 }, { y: W_ + 0.3, r: -175, e: 'pain' }), R: REF_() }, props: [burst('b1', 'GERMAN!', -4, 2.6)], cam3: CM.low },
+    { t: 1.7, figs: { A: FG('back', -0.4, 1), B: FG('back', -2.8, -1, {}, { e: 'pain' }), R: REFK_(-4.5, -3, 1) }, props: [], cam3: CM.high }]),
+  northern: () => { const sc = CLASSIC.suplex(); sc.name = 'A northern lights suplex'; const L = sc.keys[sc.keys.length - 1];
+    sc.keys[sc.keys.length - 1] = { ...L, figs: { ...L.figs, A: FG('cover', -2.4, -1, { hip_n: -30, kn_n: -60 }), B: FG('back', -3.2, -1, {}, { e: 'pain' }) }, props: [burst('b1', 'BRIDGE!', -5, 2.4)] }; return sc; },
+  armdrag: () => move('An arm drag', [
+    { t: 0, figs: { A: FG('fists', -0.6, 1), B: FG('charge', 2.4, -1), R: REF_() }, props: [], cam3: CM.wide },
+    { t: 0.45, figs: { A: FG('stand', -0.5, 1, { sh_n: 80, el_n: 30, sh_f: 60, el_f: 40, torso: -10 }, { b: true }), B: FG('stand', 0, -1, { sh_n: 90, sh_f: -60 }, { y: W_ + 1.3, r: -95, e: 'shout' }), R: REF_() }, props: [], cam3: CM.close },
+    { t: 0.8, ease: 'in', figs: { A: FG('kneel', -0.6, 1, { sh_n: 60, el_n: 20 }), B: FG('stand', -1.4, -1, { sh_n: 120, sh_f: -120 }, { y: W_ + 0.4, r: -200 }), R: REF_() }, props: [burst('b1', 'DRAGGED!', -3.4, 2.8)], cam3: CM.low },
+    { t: 1.4, figs: { A: FG('fists', -0.3, -1), B: FG('back', -2.6, 1, {}, { e: 'hurt' }), R: REF_() }, props: [], cam3: CM.high }]),
+  hiptoss: () => move('A hip toss', [
+    { t: 0, figs: { A: FG('stand', -0.5, 1, { sh_n: 60, el_n: 40 }), B: FG('fists', 0.6, -1), R: REF_() }, props: [], cam3: CM.wide },
+    { t: 0.6, figs: { A: FG('stand', -0.1, 1, { torso: 25, sh_n: 90, el_n: 40, sh_f: 40, hip_n: 25, kn_n: -30 }, { b: true }), B: FG('stand', -0.2, -1, { sh_n: 60, sh_f: -60, hip_n: 30, hip_f: -10 }, { y: W_ + 1.9, r: -110, e: 'shout' }), R: REF_() }, props: [], cam3: CM.side },
+    { t: 1.0, ease: 'in', figs: { A: FG('stand', -0.2, 1, { torso: 35, sh_n: 70, el_n: 30, hip_n: 30, kn_n: -40 }), B: FG('back', -1.6, 1, {}, { y: W_ - 1, r: 120, e: 'pain' }), R: REF_() }, props: [burst('b1', 'TOSSED!', -3.6, 2.6)], cam3: CM.low },
+    { t: 1.6, figs: { A: FG('fists', -0.3, -1), B: FG('back', -2.4, 1, {}, { e: 'hurt' }), R: REF_() }, props: [], cam3: CM.high }]),
+  snapmare: () => move('A snapmare', [
+    { t: 0, figs: { A: FG('stand', 0.5, 1, { sh_n: 160, el_n: 110, sh_f: -160, el_f: -110 }, { b: true }), B: FG('doubled', -0.5, 1), R: REF_(4.5, -4, -1) }, props: [], cam3: CM.wide },
+    { t: 0.6, figs: { A: FG('kneel', 0.6, 1, { sh_n: 150, el_n: 120, sh_f: 140, el_f: 120 }), B: FG('stand', 0.2, 1, { sh_n: 160, sh_f: 150, hip_n: 40, kn_n: -60 }, { y: W_ + 1.4, r: 110, e: 'shout' }), R: REF_(4.5, -4, -1) }, props: [], cam3: CM.side },
+    { t: 1.0, ease: 'in', figs: { A: FG('kneel', 0.6, 1), B: FG('sit', 1.9, 1, {}, { e: 'pain' }), R: REF_(4.5, -4, -1) }, props: [burst('b1', 'SNAP!', 3.6, 2.6)], cam3: CM.low },
+    { t: 1.6, figs: { A: FG('fists', 0.4, 1), B: FG('sit', 1.9, 1, { sh_n: 20, el_n: 100 }, { e: 'hurt' }), R: REF_(4.5, -4, -1) }, props: [], cam3: CM.high }]),
+  neckbreaker: () => move('A neckbreaker', [
+    { t: 0, figs: { A: FG('fists', -1, 1), B: FG('stagger', 0.8, -1), R: REF_() }, props: [], cam3: CM.wide },
+    { t: 0.5, figs: { A: FG('stand', 0.2, 1, { sh_n: 100, el_n: 120, torso: 10 }), B: FG('doubled', 0.6, -1, { head: 30 }), R: REF_() }, props: [], cam3: CM.close },
+    { t: 0.9, ease: 'in', figs: { A: FG('sit', 0.2, 1, { sh_n: 100, el_n: 110 }), B: FG('back', 1.1, -1, {}, { y: W_ - 1.5, r: 120, e: 'pain' }), R: REF_() }, props: [burst('b1', 'CRACK!', 3, 2.6)], cam3: CM.low },
+    { t: 1.5, figs: { A: FG('kneel', 0, 1), B: FG('back', 1.4, -1, {}, { e: 'pain' }), R: REFK_() }, props: [], cam3: CM.high }]),
+  backbreaker: () => move('A backbreaker', [
+    { t: 0, figs: { A: FG('carry', -0.4, 1), B: FG('doubled', 0.6, -1), R: REF_() }, props: [], cam3: CM.wide },
+    { t: 0.6, figs: { A: FG('lift', -0.4, 1, { sh_n: 110, el_n: 40, sh_f: 100, el_f: 40 }), B: FG('back', 0, -1, {}, { y: W_ + 1.7, e: 'shout' }), R: REF_() }, props: [], cam3: CM.side },
+    { t: 1.0, ease: 'in', figs: { A: FG('kneel', -0.4, 1, { hip_f: 90, kn_f: -90, sh_n: 90, el_n: 30 }), B: FG('back', 0, -1, { hip_n: 50, kn_n: -40 }, { y: W_ - 0.5, r: 70, e: 'pain' }), R: REF_() }, props: [burst('b1', 'CRUNCH!', 2.6, 2.8)], cam3: CM.low },
+    { t: 1.7, figs: { A: FG('fists', -0.6, 1), B: FG('back', 1.3, -1, {}, { e: 'pain' }), R: REFK_() }, props: [], cam3: CM.high }]),
+  bulldog: () => move('A bulldog', [
+    { t: 0, figs: { A: FG('charge', -4, 1), B: FG('doubled', 1, 1), R: REF_(4.5, -4, -1) }, props: [], cam3: CM.wide },
+    { t: 0.5, figs: { A: FG('leap', 0.4, 1, { sh_n: 100, el_n: 120 }, { y: W_ + 0.9 }), B: FG('doubled', 1, 1, { head: 25 }), R: REF_(4.5, -4, -1) }, props: [], cam3: CM.close },
+    { t: 0.85, ease: 'in', figs: { A: FG('sit', 1, 1, { sh_n: 90, el_n: 120 }), B: FG('front', 2, 1, {}, { e: 'pain' }), R: REF_(4.5, -4, -1) }, props: [burst('b1', 'FACE FIRST!', 3.8, 2.4)], cam3: CM.low },
+    { t: 1.5, figs: { A: FG('fists', 0.6, 1), B: FG('front', 2, 1, {}, { e: 'pain' }), R: REFK_(4.5, -4, -1) }, props: [], cam3: CM.high }]),
+  bodyslam: () => move('A body slam', [
+    { t: 0, figs: { A: FG('carry', -0.4, 1), B: FG('doubled', 0.6, -1), R: REF_() }, props: [], cam3: CM.wide },
+    { t: 0.6, figs: { A: FG('lift', -0.4, 1, { sh_n: 130, sh_f: 120 }), B: FG('stand', 0, -1, { hip_n: 60, kn_n: -40 }, { y: W_ + 1.6, r: 180, e: 'shout' }), R: REF_() }, props: [], cam3: CM.side },
+    { t: 1.0, figs: { A: FG('lift', -0.4, 1), B: FG('back', 0, -1, {}, { y: W_ + 2.3, e: 'shout' }), R: REF_() }, props: [], cam3: CM.close },
+    { t: 1.35, ease: 'in', figs: { A: FG('carry', 0, 1, { torso: 25 }), B: FG('back', 1, -1, {}, { e: 'pain' }), R: REF_() }, props: [burst('b1', 'SLAM!', 3, 2.4)], cam3: CM.low },
+    { t: 2.0, figs: { A: FG('flex', -0.4, 1), B: FG('back', 1, -1, {}, { e: 'pain' }), R: REFK_() }, props: [], cam3: CM.high }]),
+  // power moves
+  chokeslam: () => move('A chokeslam', [
+    { t: 0, figs: { A: FG('stand', -0.9, 1), B: FG('fists', 0.7, -1), R: REF_() }, props: [], cam3: CM.wide },
+    { t: 0.5, figs: { A: FG('stand', -0.7, 1, { sh_n: 100, el_n: 10 }, { e: 'roar' }), B: FG('stand', 0.6, -1, { sh_n: 60, el_n: 100, sh_f: 60, el_f: 100 }, { e: 'hurt' }), R: REF_() }, props: [], cam3: CM.close },
+    { t: 0.8, figs: { A: FG('stand', -0.9, 1, { sh_n: 100, el_n: 5, sh_f: 25 }, { e: 'roar' }), B: FG('stand', 0.55, -1, { sh_n: 70, el_n: 110, sh_f: 70, el_f: 110, head: -10 }, { z: 0.35, e: 'hurt' }), R: REF_() }, props: [], cam3: CM.close },
+    { t: 1.1, figs: { A: FG('stand', -0.9, 1, { sh_n: 150, el_n: 5, sh_f: 30, torso: -6 }, { e: 'roar' }), B: FG('stand', 0.15, -1, { sh_n: 75, el_n: 110, sh_f: 75, el_f: 110, head: -14, hip_n: 18, kn_n: -25, hip_f: 8, kn_f: -35 }, { y: W_ + 2.4, z: 0.35, e: 'shout' }), R: REF_() }, props: [], cam3: C3([3, 7, 18], [-0.2, 5.2, 0], 34) },
+    { t: 1.4, ease: 'in', figs: { A: FG('stand', -0.5, 1, { torso: 35, sh_n: 70, el_n: 10, hip_n: 25, kn_n: -30 }), B: FG('back', 0.9, -1, {}, { y: W_ - 1.6, e: 'pain' }), R: REF_() }, props: [burst('b1', 'CHOKESLAM!', 3.2, 2.6, PAL.red)], cam3: CM.low },
+    { t: 2.0, figs: { A: FG('point', -0.6, 1, { sh_n: 60 }), B: FG('back', 1.3, -1, {}, { e: 'pain' }), R: REFK_() }, props: [], cam3: CM.high }]),
+  spinebuster: () => move('A spinebuster', [
+    { t: 0, figs: { A: FG('carry', -1, 1), B: FG('charge', 2.4, -1), R: REF_() }, props: [], cam3: CM.wide },
+    { t: 0.5, figs: { A: FG('carry', -0.6, 1, {}, { e: 'roar' }), B: FG('doubled', 0.2, -1, {}, { y: W_ + 0.8, r: -40 }), R: REF_() }, props: [], cam3: CM.close },
+    { t: 0.85, figs: { A: FG('carry', -0.4, 1, {}, { r: 25, e: 'roar' }), B: FG('front', 0.3, -1, {}, { y: W_ + 1, r: -60 }), R: REF_() }, props: [], cam3: CM.side },
+    { t: 1.15, ease: 'in', figs: { A: FG('cover', 0.4, 1), B: FG('back', 1.2, -1, {}, { e: 'pain' }), R: REF_() }, props: [burst('b1', 'SPINEBUSTER!', 3, 2.4)], cam3: CM.low },
+    { t: 1.8, figs: { A: FG('kneel', 0.2, 1, { sh_n: 165 }, { e: 'roar' }), B: FG('back', 1.2, -1, {}, { e: 'pain' }), R: REFK_() }, props: [], cam3: CM.high }]),
+  powerslam: () => move('A running powerslam', [
+    { t: 0, figs: { A: FG('carry', -0.8, 1), B: FG('charge', 2.4, -1), R: REF_() }, props: [], cam3: CM.wide },
+    { t: 0.5, figs: { A: FG('carry', -0.5, 1), B: FG('front', 0.1, -1, {}, { y: W_ + 0.7, e: 'shout' }), R: REF_() }, props: [], cam3: CM.close },
+    { t: 0.9, figs: { A: FG('charge', 0.3, 1, { sh_n: 80, el_n: 40, sh_f: 80, el_f: 40 }), B: FG('front', 0.9, -1, {}, { y: W_ + 0.6 }), R: REF_() }, props: [], cam3: CM.side },
+    { t: 1.2, ease: 'in', figs: { A: FG('cover', 1.2, 1), B: FG('back', 1.9, -1, {}, { e: 'pain' }), R: REF_() }, props: [burst('b1', 'POWERSLAM!', 3.8, 2.4)], cam3: CM.low }]),
+  gorillapress: () => move('A gorilla press', [
+    { t: 0, figs: { A: FG('carry', -0.4, 1), B: FG('doubled', 0.6, -1), R: REF_() }, props: [], cam3: CM.wide },
+    { t: 0.7, figs: { A: FG('lift', -0.4, 1), B: FG('front', -0.3, -1, {}, { y: W_ + 3.5, e: 'shout' }), R: REF_() }, props: [], cam3: C3([4, 2.5, 15], [0, 5.5, 0], 36) },
+    { t: 1.4, figs: { A: FG('lift', 0.2, 1, {}, { e: 'roar' }), B: FG('front', 0.3, -1, {}, { y: W_ + 3.5, e: 'shout' }), R: REF_() }, props: [], cam3: C3([-4, 3, 15], [0, 5.5, 0], 36) },
+    { t: 1.8, ease: 'in', figs: { A: FG('lift', 0.2, 1, { sh_n: 120, sh_f: 110 }), B: FG('front', 1.3, -1, {}, { e: 'pain' }), R: REF_() }, props: [burst('b1', 'DROPPED!', 3.4, 2.2)], cam3: CM.low },
+    { t: 2.4, figs: { A: FG('flex', 0, 1), B: FG('front', 1.3, -1, {}, { e: 'pain' }), R: REFK_() }, props: [], cam3: CM.high }]),
+  sidewalk: () => move('A sidewalk slam', [
+    { t: 0, figs: { A: FG('carry', -0.6, 1), B: FG('stagger', 0.7, -1), R: REF_() }, props: [], cam3: CM.wide },
+    { t: 0.6, figs: { A: FG('carry', -0.4, 1, { torso: -10 }), B: FG('back', 0, -1, {}, { y: W_ + 0.9, r: 100, e: 'shout' }), R: REF_() }, props: [], cam3: CM.side },
+    { t: 1.0, ease: 'in', figs: { A: FG('kneel', -0.5, 1, { sh_n: 70, el_n: 40 }), B: FG('back', 0.7, -1, {}, { e: 'pain' }), R: REF_() }, props: [burst('b1', 'SLAM!', 2.8, 2.4)], cam3: CM.low },
+    { t: 1.6, figs: { A: FG('cover', 0.2, 1), B: FG('back', 0.9, -1, {}, { e: 'pain' }), R: REFK_() }, props: [], cam3: CM.high }]),
+  fallaway: () => move('A fallaway slam', [
+    { t: 0, figs: { A: FG('carry', -0.8, 1), B: FG('charge', 2.4, -1), R: REF_(4.5, -4, -1) }, props: [], cam3: CM.wide },
+    { t: 0.5, figs: { A: FG('carry', -0.4, 1, { torso: -15 }), B: FG('front', 0.1, -1, {}, { y: W_ + 0.9, e: 'shout' }), R: REF_(4.5, -4, -1) }, props: [], cam3: CM.close },
+    { t: 0.9, figs: { A: FG('stand', -0.6, 1, { torso: -40, sh_n: 160, sh_f: 150, hip_n: 30, kn_n: -40 }, { y: W_ - 0.7, r: 40 }), B: FG('front', -1.3, -1, {}, { y: W_ + 2.4, r: -150, e: 'shout' }), R: REF_(4.5, -4, -1) }, props: [], cam3: CM.side },
+    { t: 1.3, ease: 'in', figs: { A: FG('back', -0.3, 1), B: FG('back', -3.1, 1, {}, { e: 'pain' }), R: REF_(4.5, -4, -1) }, props: [burst('b1', 'FALLAWAY!', -4.4, 2.4)], cam3: CM.low },
+    { t: 2.0, figs: { A: FG('kneel', -0.4, 1, { sh_n: 165 }), B: FG('back', -3.1, 1, {}, { e: 'pain' }), R: REFK_(4.5, -4, -1) }, props: [], cam3: CM.high }]),
+  // high flying
+  dropkick: () => move('A dropkick', [
+    { t: 0, figs: { A: FG('charge', -4, 1), B: FG('fists', 1.4, -1), R: REF_() }, props: [], cam3: CM.wide },
+    { t: 0.45, figs: { A: FG('leap', -1.4, 1, {}, { y: W_ + 1.1 }), B: FG('fists', 1.4, -1), R: REF_() }, props: [], cam3: CM.side },
+    { t: 0.75, ease: 'in', figs: { A: FG('back', -0.1, 1, { hip_n: 90, kn_n: 0, hip_f: 85, kn_f: 0, sh_n: 120, sh_f: 110 }, { y: W_ + 1.6, r: 70, e: 'shout' }), B: FG('stagger', 1.7, -1), R: REF_() }, props: [burst('b1', 'DROPKICK!', 3.4, 3.4)], cam3: CM.low },
+    { t: 1.3, figs: { A: FG('back', -0.6, 1), B: FG('back', 2.8, -1, {}, { e: 'pain' }), R: REF_() }, props: [], cam3: CM.high },
+    { t: 1.9, figs: { A: FG('fists', -0.4, 1), B: FG('back', 2.8, -1, {}, { e: 'pain' }), R: REFK_() }, props: [], cam3: CM.wide }]),
+  crossbody: () => move('A crossbody from the top', [
+    { t: 0, figs: { A: POSED('crouch', 9.5, 10.6, -1, 4.9), B: POSED('stagger', 4.6, 6.8, 1), R: POSED('point', -3, 2, 1) }, props: [], cam3: C3([19, 4, 22], [8.8, 7, 9.4], 40) },
+    { t: 0.9, figs: { A: POSED('leap', 9.2, 10.3, -1, 5), B: POSED('fists', 4.6, 6.8, 1), R: POSED('point', -3, 2, 1) }, props: [], cam3: C3([17, 5, 21], [8, 7.5, 8.8], 42) },
+    { t: 1.5, ease: 'even', figs: { A: POSED('splash', 5.8, 7.6, -1, 3.2), B: POSED('stagger', 4.6, 6.8, 1), R: POSED('point', -3, 2, 1) }, props: [burst('b1', 'CROSSBODY!', 3.4, 4.6)], cam3: C3([13, 6, 20], [5, 5, 7], 40) },
+    { t: 2.0, ease: 'in', figs: { A: POSED('cover', 3.9, 6.3, -1), B: POSED('back', 3.4, 5.9, 1, 0, 'pain'), R: POSED('kneel', -1, 3, 1) }, props: [], cam3: C3([10, 9, 19], [3.2, 0.8, 5.4], 32) }]),
+  flyingelbow: () => move('A flying elbow', [
+    { t: 0, figs: { A: POSED('stand', 9.5, 10.6, -1, 4.9), B: POSED('back', 3.2, 5.6, 1), R: POSED('point', -3, 2, 1) }, props: [], cam3: C3([19, 4, 22], [8.8, 7, 9.4], 40) },
+    { t: 1.0, figs: { A: { ...POSED('elbow', 8.6, 9.8, -1, 6.2), r: -30 }, B: POSED('back', 3.2, 5.6, 1), R: POSED('point', -3, 2, 1) }, props: [], cam3: C3([17, 5, 21], [8, 7.5, 8.8], 42) },
+    { t: 1.7, ease: 'even', figs: { A: POSED('elbow', 5.6, 7.6, -1, 4.6), B: POSED('back', 3.2, 5.6, 1), R: POSED('point', -3, 2, 1) }, props: [], cam3: C3([13, 7, 20], [5.5, 5, 7], 40) },
+    { t: 2.3, ease: 'in', figs: { A: { ...POSED('elbow', 3.4, 5.9, -1, 0.5) }, B: POSED('back', 3.2, 5.6, 1, 0, 'pain'), R: POSED('kneel', -1, 3, 1) }, props: [burst('b1', 'ELBOW!', 5.8, 2.4)], cam3: C3([10, 9, 19], [3.2, 0.8, 5.4], 32) }]),
+  hurricanrana: () => move('A hurricanrana', [
+    { t: 0, figs: { A: FG('charge', -3, 1), B: FG('fists', 1, -1), R: REF_() }, props: [], cam3: CM.wide },
+    { t: 0.5, figs: { A: FG('sit', 0.7, -1, { hip_n: 70, hip_f: 70, kn_n: -60, kn_f: -60, sh_n: 120, sh_f: 110 }, { y: W_ + 2.3, e: 'shout' }), B: FG('stand', 1, -1, { sh_n: 100, el_n: 90, sh_f: 100, el_f: 90 }, { e: 'hurt' }), R: REF_() }, props: [], cam3: C3([4, 3, 14], [0.8, 5, 0], 34) },
+    { t: 0.9, figs: { A: FG('back', 1.3, -1, { hip_n: 60, kn_n: -60 }, { y: W_ + 0.6, r: 150 }), B: FG('stand', 1.7, -1, { sh_n: 150, sh_f: 150 }, { y: W_ + 1.5, r: 120, e: 'shout' }), R: REF_() }, props: [], cam3: CM.side },
+    { t: 1.3, ease: 'in', figs: { A: FG('kneel', 1.2, 1), B: FG('back', 3.1, 1, {}, { e: 'pain' }), R: REF_() }, props: [burst('b1', 'RANA!', 4.4, 2.6)], cam3: CM.low },
+    { t: 1.9, figs: { A: FG('onearm', 1, 1), B: FG('back', 3.1, 1, {}, { e: 'pain' }), R: REFK_() }, props: [], cam3: CM.high }]),
+  missile: () => move('A missile dropkick', [
+    { t: 0, figs: { A: POSED('crouch', 9.5, 10.6, -1, 4.9), B: POSED('fists', 4.4, 6.6, 1), R: POSED('point', -3, 2, 1) }, props: [], cam3: C3([19, 4, 22], [8.8, 7, 9.4], 40) },
+    { t: 0.9, figs: { A: POSED('leap', 9.1, 10.2, -1, 5.2), B: POSED('fists', 4.4, 6.6, 1), R: POSED('point', -3, 2, 1) }, props: [], cam3: C3([17, 5, 21], [8, 7.5, 8.8], 42) },
+    { t: 1.4, ease: 'in', figs: { A: { ...POSED('back', 5.4, 7.4, -1, 3), p: { hip_n: 90, kn_n: 0, hip_f: 85, kn_f: 0, sh_n: 120, sh_f: 110 }, r: -70, e: 'shout' }, B: POSED('stagger', 4.6, 6.8, 1), R: POSED('point', -3, 2, 1) }, props: [burst('b1', 'MISSILE!', 3, 4.6)], cam3: C3([13, 6, 20], [5, 5, 7], 40) },
+    { t: 2.0, figs: { A: POSED('back', 6.2, 8, -1), B: POSED('back', 2.8, 5.4, 1, 0, 'pain'), R: POSED('kneel', -1, 3, 1) }, props: [], cam3: C3([7, 4.5, 16], [4, 0.8, 6], 30) }]),
+  // holds
+  armbar: () => hold('An armbar', 'ARMBAR!', FG('kneel', 0.4, 1, { sh_n: 70, el_n: 40, sh_f: 70, el_f: 40 }), FG('back', 1.2, -1, { sh_n: 90, el_n: 0 }, { e: 'pain' }),
+    FG('back', -0.2, 1, { hip_n: 80, kn_n: -10, hip_f: 75, kn_f: -10, sh_n: 80, el_n: 60, sh_f: 80, el_f: 60 }, { e: 'roar' }), FG('back', 1.2, -1, { sh_n: 80, el_n: 0, sh_f: 160 }, { e: 'pain' })),
+  figurefour: () => hold('A figure-four', 'FIGURE FOUR!', FG('stand', 0.4, 1, { torso: 20, sh_n: 60, el_n: 40, sh_f: 60, el_f: 40 }), FG('back', 1.4, -1, { hip_n: 30, kn_n: -40 }, { e: 'pain' }),
+    FG('back', -0.3, 1, { hip_n: 50, kn_n: -60, hip_f: 70, kn_f: -20, sh_n: 150, sh_f: 140 }, { e: 'roar' }), FG('back', 1.5, -1, { hip_n: 50, kn_n: -60, hip_f: 70, kn_f: -20, sh_n: 120 }, { e: 'pain' })),
+  bostoncrab: () => hold('A Boston crab', 'CRAB!', FG('stand', 1.6, -1, { torso: 30, sh_n: 70, el_n: 30, sh_f: 70, el_f: 30 }), FG('front', 0.4, -1, LEGSUP, { e: 'pain' }),
+    FG('stand', 1.7, -1, { torso: 40, head: -10, sh_n: 35, el_n: 25, sh_f: 35, el_f: 25, hip_n: 35, kn_n: -55, hip_f: 25, kn_f: -50 }, { y: W_ - 0.5, e: 'roar' }), FG('front', 0.4, -1, { hip_n: -105, kn_n: 15, hip_f: -100, kn_f: 15, torso: -25, head: -25 }, { e: 'pain' })),
+  sleeper: () => move('A sleeper hold', [
+    { t: 0, figs: { A: FG('fists', -1.2, 1), B: FG('stagger', 0.4, 1), R: REF_(4.5, -4, -1) }, props: [], cam3: CM.wide },
+    { t: 0.6, figs: { A: FG('stand', -0.2, 1, { sh_n: 95, el_n: 135, sh_f: 95, el_f: 135, torso: 5 }), B: FG('stand', 0.4, 1, { sh_n: 60, el_n: 120, sh_f: 60, el_f: 120, head: -10 }, { e: 'hurt' }), R: REF_(4.5, -4, -1) }, props: [], cam3: CM.close },
+    { t: 1.3, figs: { A: FG('kneel', -0.1, 1, { sh_n: 95, el_n: 135, sh_f: 95, el_f: 135 }), B: FG('kneel', 0.5, 1, { sh_n: 40, el_n: 90, sh_f: 40, el_f: 90, head: -15 }, { e: 'pain' }), R: REF_(4.5, -4, -1) }, props: [burst('b1', 'SLEEPER!', 2.8, 3.2)], cam3: CM.low },
+    { t: 2.2, figs: { A: FG('kneel', -0.1, 1, { sh_n: 95, el_n: 140, sh_f: 95, el_f: 140 }, { e: 'roar' }), B: FG('sit', 0.6, 1, { sh_n: -10, sh_f: -10, head: -25 }, { e: 'pain' }), R: { ...REFK_(3, -2, -1), e: 'shout' } }, props: [], cam3: CM.high }]),
+  camelclutch: () => hold('A camel clutch', 'CLUTCH!', FG('stand', 0.6, -1, { torso: 25 }), FG('front', 0.2, -1, {}, { e: 'pain' }),
+    FG('sit', 0.6, -1, { sh_n: 80, el_n: 100, sh_f: 80, el_f: 100 }, { y: -1.6, e: 'roar' }), FG('front', 0.2, -1, { torso: -45, head: -35, sh_n: 40, sh_f: 30 }, { e: 'pain' })),
+  crossface: () => hold('A crossface', 'CROSSFACE!', FG('kneel', 0.4, 1, { sh_n: 70, el_n: 60 }), FG('front', 1, -1, {}, { e: 'pain' }),
+    FG('front', 0.6, 1, { sh_n: 130, el_n: 120, sh_f: 120, el_f: 120, hip_n: 10 }, { y: -1.8, e: 'roar' }), FG('front', 1, -1, { torso: -20, head: -35, sh_n: 100 }, { e: 'pain' })),
+  anklelock: () => hold('An ankle lock', 'ANKLE LOCK!', FG('stand', 1.8, -1, { torso: 30, sh_n: 70, el_n: 40 }), FG('front', 0.4, -1, { hip_f: -50, kn_f: 0 }, { e: 'pain' }),
+    FG('kneel', 2.0, -1, { torso: -15, sh_n: 70, el_n: 70, sh_f: 70, el_f: 70 }, { e: 'roar' }), FG('front', 0.4, -1, { hip_f: -60, kn_f: 10, torso: -20, head: -25, sh_n: 30 }, { e: 'pain' })),
+  abdominal: () => move('An abdominal stretch', [
+    { t: 0, figs: { A: FG('fists', -1.3, 1), B: FG('stagger', 0.4, 1), R: REF_(4.5, -4, -1) }, props: [], cam3: CM.wide },
+    { t: 0.6, figs: { A: FG('stand', -0.3, 1, { sh_n: 90, el_n: 60, hip_n: 25, kn_n: -20 }), B: FG('stand', 0.5, 1, { torso: 10, sh_n: 40, sh_f: -30 }, { e: 'hurt' }), R: REF_(4.5, -4, -1) }, props: [], cam3: CM.close },
+    { t: 1.3, figs: { A: FG('stand', -0.2, 1, { sh_n: 150, el_n: 40, sh_f: 60, el_f: 60, hip_n: 35, kn_n: -10, torso: -12 }, { e: 'roar' }), B: FG('stand', 0.5, 1, { torso: -25, head: -20, sh_n: 165, el_n: 10, sh_f: -20, hip_n: -10 }, { r: 12, e: 'pain' }), R: REF_(4.5, -4, -1) }, props: [burst('b1', 'STRETCH!', 2.8, 3.4)], cam3: CM.low },
+    { t: 2.2, figs: { A: FG('stand', -0.2, 1, { sh_n: 160, el_n: 30, sh_f: 70, el_f: 60, hip_n: 35, torso: -16 }, { e: 'roar' }), B: FG('stand', 0.5, 1, { torso: -32, head: -25, sh_n: 170, sh_f: -25 }, { r: 16, e: 'shout' }), R: { ...REF_(3, -2, -1), e: 'shout' } }, props: [], cam3: CM.side }]),
+};
+/* ---------- the moves the parody roster's finishers and signatures are built from (Ryan, 20 October: "building out the
+   real life finishers"). Each is a family a classifier in src/86-looks.js (moveSceneOf) maps move names to: a cradle
+   tombstone and a spike piledriver are both move_piledriver. ---------- */
+const UP = (x: number, f: number, p: Record<string, number> = {}, o: Partial<Fig> = {}) => FG('stand', x, f, { sh_n: 175, sh_f: -175, ...p }, { r: 180, y: W_ - 0.55, ...o });   // upside down, head on the mat
+const TOP = (k: string, f = -1, lv = 4.9) => POSED(k, 9.5, 10.6, f, lv);
+const TOPCAM = [C3([19, 4, 22], [8.8, 7, 9.4], 40), C3([17, 5, 21], [8.8, 7.5, 9], 42), C3([13, 7, 20], [5.5, 5, 7], 40), C3([10, 9, 19], [3.2, 0.8, 5.4], 32)];
+/** Off the top onto somebody flat on the mat: the climb, the leap, the shape in the air, the landing. */
+function offTop(name: string, word: string, air: Fig, land: Fig, air2?: Fig): Scene {
+  return move(name, [
+    { t: 0, figs: { A: TOP('crouch'), B: POSED('back', 3.2, 5.6, 1, 0, 'pain'), R: POSED('point', -3, 2, 1) }, props: [], cam3: TOPCAM[0] },
+    { t: 0.9, figs: { A: TOP('leap', -1, 5.1), B: POSED('back', 3.2, 5.6, 1, 0, 'pain'), R: POSED('point', -3, 2, 1) }, props: [], cam3: TOPCAM[1] },
+    { t: 1.5, ease: 'even', figs: { A: air, B: POSED('back', 3.2, 5.6, 1, 0, 'pain'), R: POSED('point', -3, 2, 1) }, props: [], cam3: TOPCAM[2] },
+    ...(air2 ? [{ t: 1.9, ease: 'even' as const, figs: { A: air2, B: POSED('back', 3.2, 5.6, 1, 0, 'pain'), R: POSED('point', -3, 2, 1) }, props: [], cam3: TOPCAM[2] }] : []),
+    { t: air2 ? 2.4 : 2.1, ease: 'in', figs: { A: land, B: POSED('back', 3.2, 5.6, 1, 0, 'pain'), R: POSED('kneel', -1, 3, 1) }, props: [burst('b1', word, 6, 2.4)], cam3: TOPCAM[3] }]);
+}
+const MORE2: Record<string, () => Scene> = {
+  weapon: () => move('A chair shot', [
+    { t: 0, figs: { A: FG('stand', -1.8, 1, { sh_n: 60, el_n: 60, sh_f: 50, el_f: 60 }), B: FG('stagger', 1.2, -1), R: REF_(-4.5, -4, 1) }, props: [{ id: 'chair', k: 'chair', x: 0.2, y: 0.2, r: 0, z: 1.1, s: 1, at: 'A:hands' }], cam3: CM.wide },
+    { t: 0.6, figs: { A: FG('lift', -1.0, 1, { torso: -10 }, { e: 'roar' }), B: FG('fists', 1.1, -1, { sh_n: 100, el_n: 120, sh_f: 100, el_f: 120 }, { e: 'hurt' }), R: REF_(-4.5, -4, 1) }, props: [{ id: 'chair', k: 'chair', x: 0, y: 0.4, r: 20, z: 1.1, s: 1, at: 'A:hands' }], cam3: CM.close },
+    { t: 0.9, ease: 'in', figs: { A: FG('stand', -0.4, 1, { torso: 30, sh_n: 120, el_n: 10, sh_f: 110, el_f: 10, hip_n: 25, kn_n: -20 }, { e: 'roar' }), B: FG('stagger', 1.4, -1, { head: -30 }, { e: 'pain' }), R: REF_(-4.5, -4, 1) }, props: [{ id: 'chair', k: 'chair', x: 0.3, y: 0.3, r: 100, z: 1.1, s: 1, at: 'A:hands' }, burst('b1', 'CLANG!', 3.4, 3.4, PAL.red)], cam3: CM.low },
+    { t: 1.6, figs: { A: FG('stand', -0.6, 1, { sh_n: 40, el_n: 30, sh_f: 30 }), B: FG('back', 2.6, -1, {}, { e: 'pain' }), R: { ...REF_(-4.5, -4, 1), e: 'shout' } }, props: [{ id: 'chair', k: 'chair', x: 0.3, y: -0.4, r: 160, z: 1.1, s: 1, at: 'A:hands' }], cam3: CM.high }]),
+  cheapshot: () => strike('A cheap shot', 'OW!', { wind: { torso: 20, sh_n: 50, el_n: 120, head: -10 }, hit: { torso: 40, sh_n: 60, el_n: 30, sh_f: -20, hip_n: 30, kn_n: -40 }, ax: 0, bEnd: 'weep', e: 'smirk' }),
+  piledriver: () => move('A piledriver', [
+    { t: 0, figs: { A: FG('carry', -0.5, 1), B: FG('doubled', 0.6, -1), R: REF_() }, props: [], cam3: CM.wide },
+    { t: 0.7, figs: { A: FG('stand', -0.5, 1, { sh_n: 60, el_n: 50, sh_f: 60, el_f: 50, hip_n: 20, kn_n: -30, hip_f: 15, kn_f: -30 }, { e: 'roar' }), B: UP(0.75, -1, { hip_n: 8, hip_f: -8 }, { y: W_ + 1.5, z: 1.3, e: 'shout' }), R: REF_() }, props: [], cam3: CM.close },
+    { t: 1.2, figs: { A: FG('stand', -0.5, 1, { sh_n: 45, el_n: 40, sh_f: 45, el_f: 40 }), B: UP(0.75, -1, { hip_n: 8, hip_f: -8 }, { y: W_ + 1.0, z: 1.3 }), R: REF_() }, props: [], cam3: CM.close },
+    { t: 1.5, ease: 'in', figs: { A: FG('kneel', -0.5, 1, { sh_n: 45, el_n: 40, sh_f: 45, el_f: 40 }, { e: 'roar' }), B: UP(0.75, -1, { hip_n: 8, hip_f: -8 }, { y: W_ - 0.3, z: 1.3, e: 'pain' }), R: REF_() }, props: [burst('b1', 'SPIKED!', 3, 2.6, PAL.red)], cam3: CM.low },
+    { t: 2.2, figs: { A: FG('kneel', -0.8, 1), B: FG('back', 1.2, -1, {}, { e: 'pain' }), R: REFK_() }, props: [], cam3: CM.high }]),
+  sitout: () => move('A sit-out powerbomb', [
+    { t: 0, figs: { A: FG('carry', -0.4, 1), B: FG('doubled', 0.6, -1), R: REF_(4, -4, -1) }, props: [], cam3: CM.wide },
+    { t: 0.8, figs: { A: FG('carry', -0.4, 1, {}, { e: 'roar' }), B: { x: 0, y: 0.3, r: 0, f: -1, z: 0.6, p: { hip_n: 90, kn_n: -20, hip_f: 85, kn_f: -30, sh_n: 60, el_n: 40, sh_f: 50, el_f: 40 }, e: 'hurt', on: 'A:shoulders' }, R: REF_(4, -4, -1) }, props: [], cam3: CM.side },
+    { t: 1.4, figs: { A: FG('lift', -0.4, 1), B: { x: 0, y: 0.6, r: -15, f: -1, z: 0.6, p: { hip_n: 90, kn_n: -20, hip_f: 85, kn_f: -30, sh_n: 120, sh_f: 110 }, e: 'shout', on: 'A:hands' }, R: REF_(4, -4, -1) }, props: [], cam3: C3([-5, 4, 16], [0, 5.5, 0], 36) },
+    { t: 1.8, ease: 'in', figs: { A: FG('sit', -0.4, 1, { sh_n: 60, el_n: 40, sh_f: 60, el_f: 40 }, { e: 'roar' }), B: FG('back', 1.3, -1, { hip_n: 80, kn_n: -30 }, { e: 'pain' }), R: REF_(4, -4, -1) }, props: [burst('b1', 'SIT-OUT!', 3.4, 2.6, PAL.red)], cam3: CM.low },
+    { t: 2.5, figs: { A: FG('cover', 0.5, 1), B: FG('back', 1.3, -1, {}, { e: 'pain' }), R: POSED('kneel', 3.4, -2, -1) }, props: [], cam3: CM.high }]),
+  driver: () => move('A fireman\'s carry driver', [
+    { t: 0, figs: { A: FG('carry', -0.4, 1), B: FG('doubled', 0.6, -1), R: REF_() }, props: [], cam3: CM.wide },
+    { t: 0.8, figs: { A: FG('carry', -0.3, 1, { sh_n: 100, el_n: 60 }, { e: 'roar' }), B: { x: 0, y: 0.3, r: 90, f: -1, z: 0.6, p: { sh_n: 160, sh_f: 140, hip_n: 10 }, e: 'hurt', on: 'A:shoulders' }, R: REF_() }, props: [], cam3: CM.side },
+    { t: 1.3, figs: { A: FG('carry', -0.3, 1, { sh_n: 100, el_n: 60 }), B: { x: 0, y: 0.5, r: 120, f: -1, z: 0.6, p: { sh_n: 160, sh_f: 140, hip_n: 10 }, e: 'shout', on: 'A:shoulders' }, R: REF_() }, props: [], cam3: CM.close },
+    { t: 1.7, ease: 'in', figs: { A: FG('sit', -0.5, 1, { sh_n: 80, el_n: 60 }), B: FG('back', 1.2, -1, {}, { y: W_ - 1.4, r: 150, e: 'pain' }), R: REF_() }, props: [burst('b1', 'DRIVEN!', 3.4, 2.4, PAL.red)], cam3: CM.low },
+    { t: 2.3, figs: { A: FG('cover', 0.4, 1), B: FG('back', 1.2, -1, {}, { e: 'pain' }), R: REFK_() }, props: [], cam3: CM.high }]),
+  brainbuster: () => move('A brainbuster', [
+    { t: 0, figs: { A: FG('carry', -0.6, 1), B: FG('doubled', 0.5, -1), R: REF_() }, props: [], cam3: CM.wide },
+    { t: 0.8, figs: { A: FG('lift', -0.5, 1, { sh_n: 150, sh_f: 140 }, { e: 'roar' }), B: UP(-0.3, -1, { hip_n: 6, hip_f: -6 }, { y: W_ + 3.1, e: 'shout' }), R: REF_() }, props: [], cam3: C3([5, 3, 15], [0, 5.5, 0], 36) },
+    { t: 1.6, figs: { A: FG('lift', -0.5, 1, { sh_n: 160, sh_f: 150 }), B: UP(-0.3, -1, {}, { y: W_ + 3.1 }), R: REF_() }, props: [], cam3: C3([-5, 3, 15], [0, 5.5, 0], 36) },
+    { t: 2.0, ease: 'in', figs: { A: FG('back', -0.8, 1, { sh_n: 160, sh_f: 150 }), B: FG('back', -2.2, 1, {}, { y: W_ - 1.2, r: 150, e: 'pain' }), R: REF_() }, props: [burst('b1', 'BRAINBUSTER!', -4, 2.4, PAL.red)], cam3: CM.low },
+    { t: 2.6, figs: { A: FG('sit', -0.6, 1), B: FG('back', -2.6, 1, {}, { e: 'pain' }), R: REFK_() }, props: [], cam3: CM.high }]),
+  cutter: () => move('A cutter', [
+    { t: 0, figs: { A: FG('fists', -2, 1), B: FG('stagger', 1.2, -1), R: REF_() }, props: [], cam3: CM.wide },
+    { t: 0.45, figs: { A: FG('leap', -0.3, 1, { sh_n: 100, el_n: 130, sh_f: 30 }, { y: W_ + 1.3, r: -30, e: 'shout' }), B: FG('stagger', 1.0, -1, { head: 20 }), R: REF_() }, props: [], cam3: CM.close },
+    { t: 0.75, figs: { A: FG('stand', 0.2, 1, { sh_n: 110, el_n: 140, hip_n: 40, kn_n: -40 }, { y: W_ + 0.2, r: -80 }), B: FG('stand', 0.9, -1, { torso: 40, head: 30 }, { y: W_ - 0.4, r: 40, e: 'hurt' }), R: REF_() }, props: [], cam3: CM.side },
+    { t: 1.0, ease: 'in', figs: { A: FG('back', 0.0, 1, { sh_n: 110, el_n: 140 }), B: FG('front', 1.5, -1, {}, { e: 'pain' }), R: REF_() }, props: [burst('b1', 'CUTTER!', 3.4, 2.4)], cam3: CM.low },
+    { t: 1.7, figs: { A: FG('kneel', 0.2, 1, { sh_n: 165 }, { e: 'roar' }), B: FG('back', 1.7, -1, {}, { e: 'pain' }), R: REFK_() }, props: [], cam3: CM.high }]),
+  stunner: () => move('A stunner', [
+    { t: 0, figs: { A: FG('kick', -1.6, 1), B: FG('doubled', 0.5, -1), R: REF_() }, props: [], cam3: CM.wide },
+    { t: 0.5, figs: { A: FG('stand', 0.2, -1, { sh_n: 140, el_n: 150, sh_f: 30 }, { b: true }), B: FG('stand', 0.6, -1, { head: 40, sh_n: 30 }, { e: 'hurt' }), R: REF_() }, props: [], cam3: CM.close },
+    { t: 0.8, ease: 'in', figs: { A: FG('sit', 0.2, -1, { sh_n: 140, el_n: 150 }), B: FG('stand', 0.6, -1, { head: 50, torso: -20, sh_n: 70, sh_f: -70 }, { y: W_ + 0.7, r: 20, e: 'pain' }), R: REF_() }, props: [burst('b1', 'STUNNED!', 3, 3)], cam3: CM.low },
+    { t: 1.3, figs: { A: FG('sit', 0.1, -1), B: FG('stagger', 1.6, -1, {}, { r: 30, e: 'pain' }), R: REF_() }, props: [], cam3: CM.side },
+    { t: 1.9, figs: { A: FG('fists', -0.4, 1, {}, { e: 'roar' }), B: FG('back', 2.4, -1, {}, { e: 'pain' }), R: REFK_() }, props: [], cam3: CM.high }]),
+  spinkick: () => move('A spinning heel kick', [
+    { t: 0, figs: { A: FG('fists', -1.8, 1), B: FG('fists', 1.4, -1), R: REF_() }, props: [], cam3: CM.wide },
+    { t: 0.4, figs: { A: FG('stand', -1.4, 1, { torso: 15, sh_n: 40, sh_f: -40, hip_n: 20 }, { b: true }), B: FG('fists', 1.4, -1), R: REF_() }, props: [], cam3: CM.close },
+    { t: 0.7, ease: 'in', figs: { A: FG('kick', -0.6, -1, { hip_n: 110, kn_n: -5, torso: -30 }, { b: true, y: W_ + 0.4, r: 15 }), B: FG('stagger', 1.6, -1, { head: -30 }), R: REF_() }, props: [burst('b1', 'THWACK!', 3.4, 3.4)], cam3: CM.low },
+    { t: 1.4, figs: { A: FG('fists', -0.8, 1), B: FG('back', 2.8, -1, {}, { e: 'pain' }), R: REF_() }, props: [], cam3: CM.high }]),
+  punch: () => strike('A superman punch', 'POW!', { run: true, wind: { torso: 10, sh_n: -40, el_n: 30, hip_n: 60, kn_n: -80 }, hit: { torso: 20, sh_n: 95, el_n: 0, sh_f: -60, hip_n: 70, kn_n: -60, hip_f: -40 }, hy: 1.3, hr: -10 }),
+  facebuster: () => move('A facebuster', [
+    { t: 0, figs: { A: FG('fists', -1, 1), B: FG('stagger', 0.8, -1), R: REF_() }, props: [], cam3: CM.wide },
+    { t: 0.5, figs: { A: FG('leap', -0.2, 1, { sh_n: 100, el_n: 100, sh_f: 100, el_f: 100 }, { y: W_ + 0.9 }), B: FG('doubled', 0.6, -1, { head: 30 }), R: REF_() }, props: [], cam3: CM.close },
+    { t: 0.85, ease: 'in', figs: { A: FG('kneel', 0, 1, { sh_n: 90, el_n: 90 }), B: FG('front', 0.8, -1, {}, { e: 'pain' }), R: REF_() }, props: [burst('b1', 'FACE FIRST!', 3.2, 2.4)], cam3: CM.low },
+    { t: 1.5, figs: { A: FG('fists', -0.3, 1, {}, { e: 'roar' }), B: FG('front', 0.8, -1, {}, { e: 'pain' }), R: REFK_() }, props: [], cam3: CM.high }]),
+  bearhug: () => standHold('A bear hug', 'SQUEEZE!', FG('carry', -0.3, 1), FG('stagger', 0.5, -1, {}, { e: 'hurt' }),
+    FG('stand', -0.2, 1, { sh_n: 90, el_n: 120, sh_f: 90, el_f: 120, torso: -15 }, { e: 'roar' }), FG('stand', 0.35, -1, { torso: -30, head: -30, sh_n: 160, sh_f: -40 }, { y: W_ + 0.6, e: 'pain' })),
+  stomp: () => move('A curb stomp', [
+    { t: 0, figs: { A: FG('stand', -1.2, 1), B: FG('kneel', 1, -1, { torso: 60, head: 20, sh_n: -20 }, { e: 'hurt' }), R: REF_() }, props: [], cam3: CM.wide },
+    { t: 0.6, figs: { A: FG('leap', 0.3, 1, { hip_n: 70, kn_n: -100 }, { y: W_ + 1.4 }), B: FG('kneel', 1, -1, { torso: 70, head: 25 }), R: REF_() }, props: [], cam3: CM.side },
+    { t: 0.9, ease: 'in', figs: { A: FG('stand', 0.6, 1, { hip_n: 60, kn_n: -60, sh_n: 60, sh_f: -60 }, { y: W_ + 0.5 }), B: FG('front', 1.2, -1, {}, { e: 'pain' }), R: REF_() }, props: [burst('b1', 'STOMP!', 3.2, 2.2, PAL.red)], cam3: CM.low },
+    { t: 1.6, figs: { A: FG('flex', 0, 1), B: FG('front', 1.2, -1, {}, { e: 'pain' }), R: REFK_() }, props: [], cam3: CM.high }]),
+  hipattack: () => strike('A running hip attack', 'BUMP!', { run: true, wind: { torso: -10, hip_n: 30 }, hit: { torso: -40, hip_n: 70, kn_n: -50, hip_f: 50, kn_f: -60, sh_n: 120, sh_f: -120 }, hy: 0.9, hr: 70, aEnd: 'sit', bEnd: 'sit' }),
+  legdrop: () => move('A leg drop', [
+    { t: 0, figs: { A: FG('point', -1.6, 1, { sh_n: 165 }), B: FG('back', 0.8, -1, {}, { e: 'pain' }), R: REF_() }, props: [], cam3: CM.wide },
+    { t: 0.6, figs: { A: FG('leap', -0.4, 1, { hip_n: 80, kn_n: -10, hip_f: -10 }, { y: W_ + 1.6 }), B: FG('back', 0.8, -1, {}, { e: 'pain' }), R: REF_() }, props: [], cam3: CM.side },
+    { t: 0.95, ease: 'in', figs: { A: FG('sit', 0.1, 1, { hip_n: 90, kn_n: 0, hip_f: 85, kn_f: 0 }), B: FG('back', 0.8, -1, {}, { e: 'pain' }), R: REF_() }, props: [burst('b1', 'LEG DROP!', 3.4, 2.4)], cam3: CM.low },
+    { t: 1.6, figs: { A: FG('cover', 0.4, 1), B: FG('back', 0.8, -1, {}, { e: 'pain' }), R: REFK_() }, props: [], cam3: CM.high }]),
+  splash450: () => offTop('A 450 splash', '450!', { ...POSED('moonsault', 7, 8.6, -1, 6.4), r: 240 }, POSED('splash', 3.6, 5.9, -1, 0.75), { ...POSED('splash', 5, 7.2, -1, 4.2), r: 400 }),
+  frogsplash: () => offTop('A frog splash', 'FROG SPLASH!', { ...POSED('leap', 6.4, 8.2, -1, 5.6), p: { sh_n: 120, el_n: 60, sh_f: -120, el_f: -60, hip_n: 60, kn_n: -120, hip_f: -60, kn_f: -120 } }, POSED('splash', 3.5, 5.9, -1, 0.75)),
+  senton: () => offTop('A senton bomb', 'SENTON!', { ...POSED('back', 6.4, 8.2, -1, 5.6), r: 200, p: { hip_n: 80, kn_n: -100, hip_f: 75, kn_f: -100, sh_n: 160, sh_f: 150 } }, { ...POSED('back', 3.5, 5.9, -1, 0.6), p: { hip_n: 70, kn_n: -60 } }),
+  shootingstar: () => offTop('A shooting star press', 'SHOOTING STAR!', { ...POSED('moonsault', 7.6, 9.2, -1, 6.5), r: 120 }, POSED('splash', 3.5, 5.9, -1, 0.75), { ...POSED('splash', 5.2, 7.4, -1, 4), r: 300 }),
+  samoandrop: () => move('A Samoan drop', [
+    { t: 0, figs: { A: FG('carry', -0.4, 1), B: FG('doubled', 0.6, -1), R: REF_() }, props: [], cam3: CM.wide },
+    { t: 0.8, figs: { A: FG('carry', -0.3, 1, { sh_n: 100, el_n: 60 }, { e: 'roar' }), B: { x: 0, y: 0.3, r: 90, f: -1, z: 0.6, p: { sh_n: 160, sh_f: 140, hip_n: 10 }, e: 'hurt', on: 'A:shoulders' }, R: REF_() }, props: [], cam3: CM.side },
+    { t: 1.3, figs: { A: FG('stand', -0.6, 1, { torso: -25, sh_n: 120, el_n: 60, hip_n: 20, kn_n: -30 }), B: { x: -0.3, y: 0.6, r: 100, f: -1, z: 0.6, p: { sh_n: 160, sh_f: 140, hip_n: 10 }, e: 'shout', on: 'A:shoulders' }, R: REF_() }, props: [], cam3: CM.close },
+    { t: 1.7, ease: 'in', figs: { A: FG('back', -0.8, 1, { sh_n: 120, el_n: 60 }), B: FG('back', -0.2, -1, {}, { y: W_ - 0.9, e: 'pain' }), R: REF_() }, props: [burst('b1', 'SAMOAN DROP!', 3.2, 2.6, PAL.red)], cam3: CM.low },
+    { t: 2.4, figs: { A: FG('kneel', -1.2, 1, { sh_n: 160 }, { e: 'roar' }), B: FG('back', 0.6, -1, {}, { e: 'pain' }), R: REFK_() }, props: [], cam3: CM.high }]),
+  uranage: () => move('An uranage', [
+    { t: 0, figs: { A: FG('fists', -1.2, 1), B: FG('stagger', 0.8, -1), R: REF_() }, props: [], cam3: CM.wide },
+    { t: 0.5, figs: { A: FG('lift', -0.3, 1, { torso: 10, sh_n: 80, el_n: 60, sh_f: 100, el_f: 40 }, { z: 0.5 }), B: FG('stand', 0.4, -1, { torso: 15, sh_n: 40 }, { z: -0.3, e: 'hurt' }), R: REF_() }, props: [], cam3: CM.side },
+    { t: 1.0, figs: { A: FG('stand', -0.3, 1, { torso: -15, sh_n: 150, el_n: 20, sh_f: 140, el_f: 20, hip_n: 15, kn_n: -20 }, { z: 0.5, e: 'roar' }), B: FG('back', 0.3, -1, { hip_n: 30, kn_n: -20 }, { y: W_ + 2.4, r: 200, z: -0.3, e: 'shout' }), R: REF_() }, props: [], cam3: CM.close },
+    { t: 1.35, ease: 'in', figs: { A: FG('kneel', -0.3, 1, { sh_n: 60, el_n: 40, sh_f: 60, el_f: 40 }, { z: 0.5 }), B: FG('back', 1.0, -1, {}, { z: -0.3, e: 'pain' }), R: REF_() }, props: [burst('b1', 'URANAGE!', 3.4, 2.4, PAL.red)], cam3: CM.low },
+    { t: 2.0, figs: { A: FG('cover', 0.4, 1, {}, { z: 0.3 }), B: FG('back', 1.0, -1, {}, { z: -0.3, e: 'pain' }), R: REFK_() }, props: [], cam3: CM.high }]),
+  guillotine: () => standHold('A guillotine choke', 'CHOKED!', FG('fists', -0.8, 1), FG('doubled', 0.5, -1, {}, { e: 'hurt' }),
+    FG('stand', -0.3, 1, { torso: -10, sh_n: 70, el_n: 110, sh_f: 60, el_f: 120, hip_n: 15, kn_n: -20, hip_f: -15, kn_f: -20 }, { e: 'roar' }), FG('doubled', 0.35, -1, { head: 30, sh_n: 120, el_n: 20, sh_f: 100 }, { e: 'pain' })),
+  rollup: () => move('A roll-up', [
+    { t: 0, figs: { A: FG('stagger', -0.8, 1), B: FG('fists', 1.2, -1, {}, { e: 'snarl' }), R: REF_() }, props: [], cam3: CM.wide },
+    { t: 0.4, figs: { A: FG('crouch', 0.2, 1, { sh_n: 100, el_n: 30, sh_f: 100, el_f: 30 }, { e: 'shout' }), B: FG('stand', 1.0, -1, { torso: -20, sh_n: 60, sh_f: -60 }, { e: 'shout' }), R: REF_() }, props: [], cam3: CM.close },
+    { t: 0.8, ease: 'in', figs: { A: FG('cover', 0.4, 1, { sh_f: -150 }, { e: 'shout' }), B: FG('back', 1.0, -1, { hip_n: 120, kn_n: -60, hip_f: 115, kn_f: -60 }, { e: 'shout' }), R: REFK_(-2.8, -1.6, 1) }, props: [burst('b1', 'ROLLED UP!', 3.4, 2.4)], cam3: CM.low },
+    { t: 1.5, figs: { A: FG('cover', 0.4, 1, { sh_f: -150 }, { e: 'shout' }), B: FG('back', 1.0, -1, { hip_n: 120, kn_n: -60, hip_f: 115, kn_f: -60 }, { e: 'pain' }), R: REFK_(-2.8, -1.6, 1) }, props: [], cam3: CM.close }]),
+};
+/* ---------- more of the back and forth: on the floor, the referee down, the comeback ---------- */
+const FL = (k: string, x: number, z: number, f: number, e?: string) => POSED(k, x, z, f, -3, e);   // standing on the floor outside the ring
+const FLCAM = C3([12.6, 4, 21], [12.6, 0, 0], 40), FLCAM2 = C3([16, 3, 18], [12.8, 0, 0], 38);
+export const MID_MORE: Scene[] = flourishAll([
+  { v: 1, id: 'floor_brawl', name: 'A fight on the floor', when: 'mid', set: 'ring', slots: MOVE_SLOTS, keys: [
+    { t: 0, figs: { A: FL('fists', 11.6, 0.6, 1), B: FL('fists', 13.4, 0.2, -1), R: POSED('point', 9, 0, 1) }, props: [], cam3: FLCAM },
+    { t: 0.5, figs: { A: FL('punch', 12.2, 0.6, 1, 'roar'), B: FL('stagger', 13.6, 0.2, -1), R: { ...POSED('point', 9, 0, 1), p: { sh_n: 160, el_n: 10, sh_f: 30 }, e: 'shout' } }, props: [burst('b1', 'POW!', 14, -0.6)], cam3: FLCAM2 },
+    { t: 1.0, figs: { A: FL('fists', 12.0, 0.6, 1), B: FL('punch', 13.0, 0.2, -1, 'roar'), R: { ...POSED('point', 9, 0, 1), p: { sh_n: 160, el_n: 10, sh_f: 30 }, e: 'shout' } }, props: [burst('b2', 'WHACK!', 11.2, -0.6)], cam3: FLCAM },
+    { t: 1.6, figs: { A: FL('charge', 12.8, 0.6, 1, 'roar'), B: { ...FL('stagger', 14.4, 0.2, -1), r: -25 }, R: POSED('point', 9, 0, 1) }, props: [], cam3: FLCAM2 },
+    { t: 2.2, figs: { A: FL('point', 13, 0.6, 1), B: { ...FL('corner', 14.8, 0.2, -1), y: -3 + W_ - 0.8 }, R: POSED('point', 9, 0, 1) }, props: [burst('b3', 'INTO THE BARRIER!', 14, 1.4, PAL.red)], cam3: FLCAM }] },
+  { v: 1, id: 'ref_bump', name: 'The referee goes down', when: 'mid', set: 'ring', slots: MOVE_SLOTS, keys: [
+    { t: 0, figs: { A: FG('charge', -3.4, 1), B: FG('stand', 1.6, -1), R: STD(0.4, -1, { sh_n: 100, el_n: 10 }, 'shout', 0.2) }, props: [], cam3: CM.wide },
+    { t: 0.5, figs: { A: FG('charge', -1.2, 1, {}, { e: 'roar' }), B: FG('doubled', 2.6, -1), R: STD(0.4, -1, { sh_n: 100, el_n: 10 }, 'shout', 0.2) }, props: [], cam3: CM.close },
+    { t: 0.8, ease: 'in', figs: { A: FG('stand', -0.2, 1, { torso: 16, sh_n: 100, el_n: 0, hip_n: 34, kn_n: -24 }), B: FG('doubled', 2.6, -1), R: { ...POSED('back', 1.4, 0.2, -1, 0, 'pain'), y: W_ + 0.4, r: 120 } }, props: [burst('b1', 'NO! THE REFEREE!', 3, 3.4, PAL.red)], cam3: CM.low },
+    { t: 1.5, figs: { A: FG('stand', -0.4, 1, { sh_n: 60, el_n: 100, sh_f: 60, el_f: 100, head: -10 }, { e: 'shout' }), B: FG('stand', 2.6, -1, { sh_n: 100, el_n: 120 }, { e: 'shout' }), R: POSED('back', 1.8, 0.2, -1, 0, 'pain') }, props: [], cam3: CM.high }] },
+  { v: 1, id: 'comeback', name: 'Fired up', when: 'mid', set: 'ring', slots: MOVE_SLOTS, keys: [
+    { t: 0, figs: { A: FG('kneel', -0.4, 1, { head: -20, sh_n: 20, el_n: 90, sh_f: 20, el_f: 90 }, { e: 'pain' }), B: FG('fists', 1.6, -1, {}, { e: 'smirk' }), R: REF_(-4.5, -4, 1) }, props: [], cam3: CM.close },
+    { t: 0.8, figs: { A: FG('stand', -0.4, 1, { sh_n: 80, el_n: 110, sh_f: 80, el_f: 110, head: 10 }, { e: 'roar' }), B: FG('fists', 1.5, -1, { sh_n: 95, el_n: 5 }), R: REF_(-4.5, -4, 1) }, props: [burst('b1', 'FIRED UP!', -3, 4.4)], cam3: CM.low },
+    { t: 1.2, figs: { A: FG('punch', 0.2, 1, {}, { e: 'roar' }), B: FG('stagger', 1.6, -1), R: REF_(-4.5, -4, 1) }, props: [], cam3: CM.close },
+    { t: 1.6, figs: { A: { ...FG('punch', 0.6, 1, {}, { e: 'roar' }), p: { torso: 12, sh_f: 95, el_f: 5, sh_n: 30, el_n: 90, hip_n: 30, kn_n: -20 } }, B: FG('stagger', 2.2, -1), R: REF_(-4.5, -4, 1) }, props: [burst('b2', 'POW! POW!', 3.6, 3.6)], cam3: CM.close },
+    { t: 2.1, figs: { A: FG('flex', 0.6, 1), B: FG('back', 3, -1, {}, { e: 'pain' }), R: REF_(-4.5, -4, 1) }, props: [], cam3: CM.wide }] },
+]);
+/* ---------- how a match ends: a tap-out, a roll-up out of nowhere, a handful of tights, a disqualification ---------- */
+const finScene2 = (id: string, name: string, when: string, keys: Key[]): Scene => ({ v: 1, id, name, when, set: 'ring', slots: MOVE_SLOTS, keys });
+export const FIN_MORE: Scene[] = flourishAll([
+  finScene2('fin_tap', 'Tapping out', 'finish_sub', [
+    { t: 0, figs: { A: FG('kneel', -0.2, 1, { sh_n: 95, el_n: 135, sh_f: 95, el_f: 135 }, { e: 'roar' }), B: FG('sit', 0.4, 1, { head: -20, sh_n: 40, el_n: 90 }, { e: 'pain' }), R: REFK_(3, -2, -1) }, props: [], cam3: CM.close },
+    { t: 0.7, figs: { A: FG('kneel', -0.2, 1, { sh_n: 95, el_n: 140, sh_f: 95, el_f: 140 }, { e: 'roar' }), B: FG('sit', 0.4, 1, { head: -25, sh_n: 90, el_n: 10 }, { e: 'pain' }), R: { ...REFK_(3, -2, -1), e: 'shout' } }, props: [burst('b1', 'TAP!', 2.6, 2.4)], cam3: CM.low },
+    { t: 1.1, figs: { A: FG('kneel', -0.2, 1, { sh_n: 95, el_n: 140, sh_f: 95, el_f: 140 }), B: FG('sit', 0.4, 1, { head: -25, sh_n: 70, el_n: 10 }, { e: 'pain' }), R: { ...REFK_(3, -2, -1), e: 'shout' } }, props: [burst('b1', 'TAP! TAP!', 2.6, 2.4)], cam3: CM.low },
+    { t: 1.8, figs: { A: FG('stand', -0.6, 1, { sh_n: 160, el_n: 10, sh_f: -150 }, { e: 'shout' }), B: FG('back', 1.4, -1, {}, { e: 'pain' }), R: STD(0.6, -1, { sh_n: 150, el_n: 10, sh_f: 10 }, 'shout', 0.3) }, props: [burst('b2', 'IT\'S OVER!', 3.4, 3.4, PAL.red)], cam3: CM.wide }]),
+  finScene2('fin_rollup', 'A roll-up out of nowhere', 'finish_flash', [
+    { t: 0, figs: { A: FG('stagger', -0.8, 1), B: FG('charge', 1.6, -1, {}, { e: 'roar' }), R: REF_(4, -4, -1) }, props: [], cam3: CM.wide },
+    { t: 0.5, figs: { A: FG('kneel', -0.2, 1, { sh_n: 90, el_n: 60, sh_f: 90, el_f: 60, torso: 30 }), B: FG('doubled', 0.5, -1, {}, { e: 'hurt' }), R: REF_(4, -4, -1) }, props: [], cam3: CM.close },
+    { t: 0.9, ease: 'in', figs: { A: FG('cover', 0.1, 1), B: FG('back', 0.6, -1, { hip_n: 70, kn_n: -60, hip_f: 65, kn_f: -60 }, { e: 'shout' }), R: POSED('kneel', 3.2, -1.5, -1) }, props: [burst('b1', 'ONE, TWO...', 3.4, 3)], cam3: CM.low },
+    { t: 1.6, figs: { A: FG('cover', 0.1, 1), B: FG('back', 0.6, -1, { hip_n: 70, kn_n: -60, hip_f: 65, kn_f: -60 }, { e: 'shout' }), R: POSED('kneel', 3.2, -1.5, -1) }, props: [burst('b1', 'THREE!', 3.4, 3, PAL.red)], cam3: CM.low },
+    { t: 2.3, figs: { A: FG('point', -0.6, 1, { sh_n: 160 }, { e: 'smirk' }), B: FG('sit', 1.0, -1, { sh_n: 100, el_n: 120 }, { e: 'shout' }), R: STD(2.6, -1, { sh_n: 100, el_n: 10 }, 'shout', 0.3) }, props: [], cam3: CM.wide }]),
+  finScene2('fin_tights', 'A handful of tights', 'finish_cheap', [
+    { t: 0, figs: { A: FG('kneel', -0.3, 1, { sh_n: 60, el_n: 40 }), B: FG('back', 0.8, -1, {}, { e: 'pain' }), R: REF_(4, -5, -1) }, props: [], cam3: CM.close },
+    { t: 0.6, figs: { A: FG('cover', 0.2, 1, { sh_f: -150 }, { e: 'smirk' }), B: FG('back', 0.8, -1, {}, { e: 'pain' }), R: POSED('kneel', 3, -1.5, -1) }, props: [burst('b1', 'TIGHTS!', -2.4, 3.2)], cam3: CM.low },
+    { t: 1.2, figs: { A: FG('cover', 0.2, 1, { sh_f: -150 }, { e: 'smirk' }), B: FG('back', 0.8, -1, {}, { e: 'shout' }), R: POSED('kneel', 3, -1.5, -1) }, props: [burst('b1', 'THREE!', 3.4, 3, PAL.red)], cam3: CM.low },
+    { t: 1.9, figs: { A: FG('stand', -1.2, 1, { sh_n: 160, el_n: 10 }, { e: 'smirk' }), B: FG('sit', 0.8, -1, { sh_n: 95, el_n: 5 }, { e: 'shout' }), R: STD(2.4, -1, { sh_n: 60, el_n: 100, sh_f: 60, el_f: 100 }, '', 0.3) }, props: [], cam3: CM.wide }]),
+  finScene2('fin_dq', 'Disqualified', 'finish_dq', [
+    { t: 0, figs: { A: FG('lift', -0.6, 1, {}, { e: 'roar' }), B: FG('back', 1.2, -1, {}, { e: 'pain' }), R: REF_(3.6, -4, -1) }, props: [{ id: 'chair', k: 'chair', x: 0, y: 0.4, r: 20, z: 1.1, s: 1, at: 'A:hands' }], cam3: CM.wide },
+    { t: 0.6, ease: 'in', figs: { A: FG('stand', 0, 1, { torso: 40, sh_n: 120, el_n: 10, sh_f: 110, el_f: 10, hip_n: 25, kn_n: -20 }, { e: 'roar' }), B: FG('back', 1.2, -1, {}, { e: 'pain' }), R: REF_(3.6, -4, -1) }, props: [{ id: 'chair', k: 'chair', x: 0.3, y: -0.3, r: 120, z: 1.1, s: 1, at: 'A:hands' }, burst('b1', 'CLANG!', 2.4, 2.2, PAL.red)], cam3: CM.low },
+    { t: 1.2, figs: { A: FG('stand', -0.4, 1, { sh_n: 40, el_n: 30 }), B: FG('back', 1.2, -1, {}, { e: 'pain' }), R: STD(2.2, -1, { sh_n: 165, el_n: 5, sh_f: -165, el_f: -5 }, 'shout', 0.3) }, props: [{ id: 'chair', k: 'chair', x: 0.3, y: -0.6, r: 160, z: 1.1, s: 1, at: 'A:hands' }, burst('b2', 'DISQUALIFIED!', 3.6, 4, PAL.red)], cam3: CM.close },
+    { t: 1.9, figs: { A: FG('point', -1, 1, { sh_n: 100 }, { e: 'snarl' }), B: FG('back', 1.2, -1, {}, { e: 'pain' }), R: STD(2.2, -1, { sh_n: 100, el_n: 10, sh_f: -100, el_f: -10 }, 'shout', 0.3) }, props: [{ id: 'chair', k: 'chair', x: 0.3, y: -0.6, r: 160, z: 1.1, s: 1, at: 'A:hands' }], cam3: CM.wide }]),
+]);
+/* ---------- tag team matches (Ryan, 20 October): the hot tag, a double team, the ring cut in half. Four wrestlers: A and
+   their partner C, B and their partner D (hooks pa and pb, filled from the match's sides). A partner stands on the apron
+   outside the ropes, by their corner, until they are tagged in. ---------- */
+const TAG_SLOTS: Slot[] = [{ id: 'A', n: 'Wrestler A', role: 'a' }, { id: 'B', n: 'Wrestler B', role: 'b' }, { id: 'C', n: 'Partner of A', role: 'c', hook: 'pa' }, { id: 'D', n: 'Partner of B', role: 'c', hook: 'pb' }, { id: 'R', n: 'The referee', role: 'ref' }];
+const APRON = (x: number, f: number, p: Record<string, number> = {}, e?: string): Fig => ({ ...POSED('stand', x, 0.2, f), p: { sh_n: 40, el_n: 20, ...p }, e });
+const TAGCAM = C3([-3, 7, 26], [-3, 3, 0], 40), TAGCAM2 = C3([2, 6, 22], [-1, 3, 0], 38);
+const tagScene = (id: string, name: string, keys: Key[]): Scene => ({ v: 1, id, name, when: 'tag', set: 'ring', slots: TAG_SLOTS, keys });
+export const TAG_SCENES: Scene[] = flourishAll([
+  tagScene('tag_hot', 'The hot tag', [
+    { t: 0, figs: { A: POSED('front', -4.5, 0, 1, 0, 'pain'), B: FG('doubled', -2.2, -1, { sh_n: 80, el_n: 20 }), C: APRON(-10.8, 1, { sh_n: 100, el_n: 0 }, 'shout'), D: APRON(10.8, -1), R: REF_(0, -4, -1) }, props: [], cam3: TAGCAM },
+    { t: 0.8, figs: { A: { ...POSED('dive', -7.4, 0, -1), y: W_ - 1.2, e: 'shout' }, B: FG('stand', -3.4, -1, { sh_n: 90, el_n: 0 }, { e: 'shout' }), C: APRON(-10.8, 1, { sh_n: 110, el_n: 0 }, 'shout'), D: APRON(10.8, -1), R: REF_(0, -4, -1) }, props: [], cam3: TAGCAM },
+    { t: 1.2, figs: { A: POSED('front', -8.6, 0, -1, 0, 'pain'), B: FG('fists', -3, -1), C: { ...POSED('leap', -8.4, 0.6, 1), y: W_ + 1.6, e: 'roar' }, D: APRON(10.8, -1), R: { ...REF_(0, -4, -1), p: { sh_n: 100, el_n: 0 } } }, props: [burst('b1', 'TAG!', -8, 5)], cam3: TAGCAM },
+    { t: 1.7, figs: { A: APRON(-10.8, 1, {}, 'hurt'), B: FG('fists', -1.6, -1), C: POSED('charge', -4.4, 0.4, 1), D: APRON(10.8, -1), R: REF_(0, -4, -1) }, props: [], cam3: TAGCAM2 },
+    { t: 2.1, ease: 'in', figs: { A: APRON(-10.8, 1, { sh_n: 160 }, 'shout'), B: FG('back', 0.2, -1, {}, { e: 'pain' }), C: { ...FG('stand', -1.6, 1, { torso: 16, sh_n: 100, el_n: 0, sh_f: -40, hip_n: 34, kn_n: -24, hip_f: -28 }, { e: 'roar' }), z: 0.4 }, D: APRON(10.8, -1, { sh_n: 60 }, 'shout'), R: REF_(0, -4, -1) }, props: [burst('b2', 'HOT TAG!', 1.6, 3.4, PAL.red)], cam3: TAGCAM2 }]),
+  tagScene('tag_double', 'A double team', [
+    { t: 0, figs: { A: FG('fists', -2.2, 1), C: { ...FG('fists', -3.8, 1), z: -0.8 }, B: FG('stagger', 0.6, -1), D: APRON(10.8, -1), R: REF_(3.5, -4, -1) }, props: [], cam3: CM.wide },
+    { t: 0.6, figs: { A: FG('charge', -1.2, 1), C: { ...FG('charge', -2.8, 1), z: -0.8 }, B: FG('stagger', 0.6, -1), D: APRON(10.8, -1, { sh_n: 100 }, 'shout'), R: { ...REF_(3.5, -4, -1), p: { sh_n: 100, el_n: 0 }, e: 'shout' } }, props: [], cam3: CM.close },
+    { t: 1.0, ease: 'in', figs: { A: FG('stand', 0, 1, { torso: 14, sh_n: 95, el_n: 0, hip_n: 30, kn_n: -20 }, { e: 'roar' }), C: { ...FG('stand', -1.4, 1, { torso: 14, sh_n: 95, el_n: 0, hip_n: 30, kn_n: -20 }, { e: 'roar' }), z: -0.8 }, B: FG('back', 1.0, -1, {}, { y: W_ + 0.6, r: 140, e: 'pain' }), D: APRON(10.8, -1), R: REF_(3.5, -4, -1) }, props: [burst('b1', 'DOUBLE TEAM!', 3.6, 3.4, PAL.red)], cam3: CM.low },
+    { t: 1.7, figs: { A: FG('point', 0.2, 1, { sh_n: 165 }), C: { ...FG('point', -1.6, 1, { sh_n: 165 }), z: -0.8 }, B: FG('back', 2, -1, {}, { e: 'pain' }), D: APRON(10.8, -1), R: REF_(3.5, -4, -1) }, props: [], cam3: CM.high }]),
+  tagScene('tag_cutoff', 'Cutting the ring in half', [
+    { t: 0, figs: { B: FG('stand', 6.2, -1, { sh_n: 60, el_n: 40 }, { e: 'snarl' }), A: POSED('sit', 7.6, 0.2, -1, 0, 'pain'), D: APRON(10.8, -1, { sh_n: 60, el_n: 90 }, 'snarl'), C: APRON(-10.8, 1, { sh_n: 110, el_n: 0 }, 'shout'), R: REF_(0, -4, 1) }, props: [], cam3: C3([3, 7, 26], [3, 3, 0], 40) },
+    { t: 0.6, figs: { B: FG('kick', 6.4, -1, { hip_n: 50, kn_n: -40 }, { e: 'roar' }), A: POSED('sit', 7.8, 0.2, -1, 0, 'pain'), D: APRON(10.8, -1, { sh_n: 160 }, 'roar'), C: APRON(-10.8, 1, { sh_n: 110, el_n: 0 }, 'shout'), R: { ...REF_(0, -4, 1), p: { sh_n: 100, el_n: 0 }, e: 'shout' } }, props: [burst('b1', 'STOMP!', 8.6, 2.6)], cam3: C3([5, 5, 19], [6, 2.6, 0], 36) },
+    { t: 1.2, figs: { B: FG('stand', 6.6, -1, { sh_n: 100, el_n: 0 }, { e: 'shout' }), A: POSED('back', 7.8, 0.2, -1, 0, 'pain'), D: APRON(10.8, -1, { sh_n: 100, el_n: 0 }, 'shout'), C: APRON(-10.8, 1, { sh_n: 165, el_n: 0 }, 'shout'), R: REF_(0, -4, 1) }, props: [], cam3: C3([3, 7, 26], [3, 3, 0], 40) },
+    { t: 1.8, figs: { B: FG('stand', 8.6, 1, { sh_n: 100, el_n: 0 }, { b: true }), A: POSED('back', 7.8, 0.2, -1, 0, 'pain'), D: APRON(10.8, -1, { sh_n: 110, el_n: 0 }, 'smirk'), C: APRON(-10.8, 1, { sh_n: 60 }, 'snarl'), R: REF_(0, -4, 1) }, props: [burst('b2', 'TAG!', 9.6, 5)], cam3: C3([3, 7, 26], [3, 3, 0], 40) }]),
+  // the save: A covers B, the referee counts, and B's partner comes off the apron to break it up
+  tagScene('tag_save', 'The save', [
+    { t: 0, figs: { A: FG('cover', -0.4, 1, { sh_f: -150 }), B: FG('back', 0.4, -1, {}, { e: 'pain' }), R: REFK_(-2.6, -1.6, 1), C: APRON(-10.8, 1, { sh_n: 120, el_n: 10 }, 'shout'), D: APRON(10.8, -1, { sh_n: 60 }, 'shout') }, props: [burst('b1', 'ONE!', -3.4, 3)], cam3: TAGCAM2 },
+    { t: 0.6, figs: { A: FG('cover', -0.4, 1, { sh_f: -150 }), B: FG('back', 0.4, -1, {}, { e: 'pain' }), R: REFK_(-2.6, -1.6, 1), C: APRON(-10.8, 1, { sh_n: 160, el_n: 0 }, 'shout'), D: POSED('charge', 6.4, 0.6, -1, 0, 'roar') }, props: [burst('b1', 'TWO!', -3.4, 3)], cam3: TAGCAM2 },
+    { t: 1.0, ease: 'in', figs: { A: { ...FG('cover', -0.4, 1, { sh_f: -150 }), e: 'pain' }, B: FG('back', 0.4, -1, {}, { e: 'pain' }), R: REFK_(-2.6, -1.6, 1), C: APRON(-10.8, 1, { sh_n: 100 }, 'shout'), D: { ...POSED('elbow', 0, 0.9, -1, 0, 'roar'), y: W_ + 1.4 } }, props: [burst('b2', 'BROKEN UP!', 2.6, 4.2, PAL.red)], cam3: CM.low },
+    { t: 1.7, figs: { A: POSED('back', -1.4, 0, 1, 0, 'pain'), B: POSED('sit', 1, 0, -1, 0, 'pain'), R: { ...STD(-3.4, 1, { sh_n: 100, el_n: 0 }, 'shout', -1.6) }, C: APRON(-10.8, 1, { sh_n: 60, el_n: 90 }, 'snarl'), D: FG('point', 3.4, -1, { sh_n: 140 }, { e: 'roar', z: 1 }) }, props: [], cam3: CM.wide }]),
+  // the double suplex: both partners lift B together and drop them on their back
+  tagScene('tag_dsuplex', 'A double suplex', [
+    { t: 0, figs: { A: FG('lift', -0.9, 1, {}, { z: -0.7 }), C: FG('lift', -0.9, 1, {}, { z: 0.7 }), B: FG('doubled', 0.5, -1, { sh_n: 60 }), D: APRON(10.8, -1, { sh_n: 100 }, 'shout'), R: REF_(4, -4, -1) }, props: [], cam3: CM.side },
+    { t: 0.7, figs: { A: FG('stand', -0.9, 1, { torso: -10, sh_n: 170, el_n: 10, sh_f: 170, el_f: 10 }, { z: -0.7, e: 'roar' }), C: FG('stand', -0.9, 1, { torso: -10, sh_n: 170, el_n: 10, sh_f: 170, el_f: 10 }, { z: 0.7, e: 'roar' }), B: { ...POSED('stand', -0.6, 0, -1), y: W_ + 3.2, r: 180, e: 'shout' }, D: APRON(10.8, -1, { sh_n: 160 }, 'shout'), R: REF_(4, -4, -1) }, props: [], cam3: CM.side },
+    { t: 1.1, ease: 'in', figs: { A: POSED('back', -2, -0.7, 1, 0, 'roar'), C: POSED('back', -2, 0.7, 1, 0, 'roar'), B: { ...POSED('back', -2.6, 0, -1, 0, 'pain'), x: -5 }, D: APRON(10.8, -1, { sh_n: 60, el_n: 90 }, 'snarl'), R: REF_(4, -4, -1) }, props: [burst('b1', 'DOUBLE SUPLEX!', 0.6, 4, PAL.red)], cam3: CM.low },
+    { t: 1.8, figs: { A: FG('point', -2.8, 1, { sh_n: 160 }, { z: -1, e: 'roar' }), C: FG('point', -1.2, -1, { sh_n: 160 }, { z: 1, e: 'roar' }), B: POSED('back', -5, 0, -1, 0, 'pain'), D: APRON(10.8, -1, { sh_n: 60, el_n: 90 }, 'snarl'), R: REF_(4, -4, -1) }, props: [], cam3: CM.wide }]),
+  // all four at once: the referee has lost control, two fights in the ring
+  tagScene('tag_brawl', 'All four in the ring', [
+    { t: 0, figs: { A: FG('fists', -3.6, 1, {}, { z: -1.4 }), B: FG('fists', -1.4, -1, {}, { z: -1.4 }), C: FG('fists', 1.4, 1, {}, { z: 1.2 }), D: FG('fists', 3.6, -1, {}, { z: 1.2 }), R: { ...STD(6.6, -1, { sh_n: 100, el_n: 0, sh_f: 100, el_f: 0 }, 'shout', -3) } }, props: [], cam3: CM.wide },
+    { t: 0.5, figs: { A: FG('punch', -3.2, 1, {}, { z: -1.4, e: 'roar' }), B: FG('stagger', -1.4, -1, {}, { z: -1.4, e: 'pain' }), C: FG('fists', 1.4, 1, {}, { z: 1.2 }), D: FG('punch', 3.2, -1, {}, { z: 1.2, e: 'roar' }), R: { ...STD(6.6, -1, { sh_n: 165, el_n: 0, sh_f: 165, el_f: 0 }, 'shout', -3) } }, props: [burst('b1', 'BRAWL!', 0, 5)], cam3: CM.wide },
+    { t: 1.0, figs: { A: FG('fists', -3.4, 1, {}, { z: -1.4 }), B: FG('punch', -1.8, -1, {}, { z: -1.4, e: 'roar' }), C: FG('punch', 1.8, 1, {}, { z: 1.2, e: 'roar' }), D: FG('stagger', 3.8, -1, {}, { z: 1.2, e: 'pain' }), R: { ...STD(6.6, -1, { sh_n: 100, el_n: 0, sh_f: 100, el_f: 0 }, 'shout', -3) } }, props: [], cam3: CM.close },
+    { t: 1.6, ease: 'in', figs: { A: FG('kick', -3, 1, { hip_n: 70, kn_n: -10 }, { z: -1.4, e: 'roar' }), B: { ...FG('back', -0.8, -1, {}, { z: -1.4, e: 'pain' }) }, C: FG('fists', 1.6, 1, {}, { z: 1.2 }), D: POSED('sit', 4.4, 1.2, -1, 0, 'pain'), R: { ...STD(6.6, -1, { sh_n: 165, el_n: 0, sh_f: 165, el_f: 0 }, 'shout', -3) } }, props: [burst('b2', 'CHAOS!', 0.4, 4.2, PAL.red)], cam3: CM.wide }]),
+]);
 /** The moves as scenes of their own, kind 'move', so a wrestler can take one as a finisher or a signature (Create a Wrestler, Moves). */
-export const MOVES: Scene[] = Object.keys(CLASSIC).map(k => flourish({ ...CLASSIC[k](), id: 'move_' + k, when: 'move' }));
+export const MOVES: Scene[] = Object.keys(CLASSIC).map(k => flourish({ ...CLASSIC[k](), id: 'move_' + k, when: 'move' })).concat(Object.keys(MORE).map(k => flourish({ ...MORE[k](), id: 'move_' + k, when: 'move' })), Object.keys(MORE2).map(k => flourish({ ...MORE2[k](), id: 'move_' + k, when: 'move' })));
 /* ---------- a new scene starts from a setup: the set and the people placed for it ---------- */
 export const SETUPS: [string, string][] = [['ring', 'The ring: two wrestlers and the referee'], ['desk', 'The commentary desk, its chairs and a guest seat'], ['ramp', 'The entrance ramp'],
   ['hall', 'Backstage: two in the hallway'], ['locker', 'The locker room'], ['office', 'The office, across the desk'], ['talk', 'A talk show: a host and a guest'], ['cage', 'A steel cage: two wrestlers inside'], ['lot', 'The parking lot'], ['news', 'A news desk: the anchor'], ['stadium', 'A packed stadium: two wrestlers in the ring'], ['rafters', 'Up in the rafters'], ['royal', 'The ring: ten wrestlers (a battle royal)'], ['topdive', 'Classic: a splash off the top rope'], ['moonsault', 'Classic: a moonsault off the top'], ['tope', 'Classic: a dive to the outside'],
@@ -861,6 +1306,8 @@ export const SEG_SCENES: Scene[] = flourishAll([
     { t: 0, figs: { A: STD(-2.6, -1, CROSS, '', 0.4), B: STD(2.6, 1, CROSS, '', 0.4) }, props: [{ id: 'hd', k: 'headline', x: 0, y: 3.3, r: 0, z: 2, s: 1, txt: 'THE STORY SO FAR' }] },
     { t: 1.6, figs: { A: STD(-1.4, 1, CROSS, 'snarl', 0.4), B: STD(1.4, -1, CROSS, 'snarl', 0.4) }, props: [{ id: 'hd', k: 'headline', x: 0, y: 3.3, r: 0, z: 2, s: 1, txt: 'THE STORY SO FAR' }] }]),
 ]);
+/* an arc's chapter plays its own beat (src/99-tale.js); this is the picture when a beat has none: the two face to face */
+SEG_SCENES.push({ ...JSON.parse(JSON.stringify(SEG_SCENES.find(x => x.id === 'seg_faceoff'))), id: 'seg_arc', when: 'seg_arc', name: 'A chapter of an arc' });
 /* Storyline beats (rule 9c): every beat the story director writes on a show is a scene too, 'beat_<beat>' (BEATS in
    src/20-story.js). A beat that is the same moment as a booked kind (an interview, a call-out ambush, a title
    challenge, a face-off, a save, a turn) plays that kind's scene. */
@@ -947,9 +1394,9 @@ export const BEAT_SCENES: Scene[] = flourishAll([
 export const POSTERS: Scene[] = [{ v: 1, id: 'poster_show', name: 'The poster for the next show', when: 'poster', set: 'stadium', still: true, frame: 'square', slots: SAB, keys: [
   { t: 0, figs: { A: STD(-1.45, 1, { ...CROSS, head: 4 }, 'snarl', 0.4), B: STD(1.45, -1, { ...CROSS, head: 4 }, 'snarl', 0.4) }, props: [burst('vs', 'VS', 0, 0.4, PAL.red), hd('TONIGHT', -2.35)], cam: { x: 0, y: 0.55, z: 1.38 } }] }];
 /** Every scene of the show: the booked kinds and the storyline beats, and the poster. */
-export const SHOW_SCENES: Scene[] = SEG_SCENES.concat(BEAT_SCENES, POSTERS);
+export const SHOW_SCENES: Scene[] = SEG_SCENES.concat(BEAT_SCENES, POSTERS, TAG_SCENES, FIN_MORE, MID_MORE);
 export const SHOW_WHEN: [string, string][] = SEG_WHEN.concat(BEAT_WHEN);
-export function allScenes(world: Scene[]): Scene[] { const ids = new Set(world.map(s => s.id)); return world.concat(SCENES.concat(STILLS, SEG_SCENES, BEAT_SCENES, POSTERS, MOVES).filter(s => !ids.has(s.id))); }
+export function allScenes(world: Scene[]): Scene[] { const ids = new Set(world.map(s => s.id)); return world.concat(SCENES.concat(STILLS, SEG_SCENES, BEAT_SCENES, POSTERS, MOVES, TAG_SCENES, FIN_MORE, MID_MORE).filter(s => !ids.has(s.id))); }
 /** The scenes that can play for a moment of the broadcast. */
 export function scenesFor(when: string, world: Scene[]): Scene[] { return allScenes(world).filter(s => s.when === when); }
 export const copy = <T>(x: T): T => JSON.parse(JSON.stringify(x));

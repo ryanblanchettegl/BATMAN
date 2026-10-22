@@ -229,7 +229,7 @@ html body .win.ppop .wb{font-family:var(--hand);font-size:1.06em}
 .after1 > .row > .muted{background:#fbf8ee;color:var(--ink);font-family:var(--hand);padding:.1em 1.4ch;box-shadow:.1em .16em .2em rgba(0,0,0,.35)}
 /* tips: sticky notes in hand */
 .tipslip{background:#fff1a6;border:0;border-radius:0;font-family:var(--hand);font-size:1.04em;box-shadow:.15em .25em .3em rgba(0,0,0,.35)}
-.status .key .tip{background:#fff1a6;border:0;border-radius:0;font-family:var(--hand);font-size:1.04em;color:var(--ink);box-shadow:.15em .25em .3em rgba(0,0,0,.4);transform:rotate(-1deg)}
+.status .key .tip{background:#fff1a6;border:0;border-radius:0;font-family:var(--hand);font-size:1.04em;color:var(--ink);box-shadow:.15em .25em .3em rgba(0,0,0,.4);transform:rotate(-1deg);right:.5em}   /* set in from the edge: the tilt would push a corner off the window */
 .status .key .tip .th{background:none;color:#c23a30;font-family:var(--marker);font-weight:400}
 .status .key .tip .tl,.status .key .tip *{color:var(--ink)}
 
@@ -402,6 +402,98 @@ html body .win.ppop .wb{font-family:var(--hand);font-size:1.06em}
 .edmenu-h{margin:.5em 0 .2em;font-family:var(--marker);color:#c23a30;font-size:.92em}
 .edmenu-none{margin:.1em 0 .3em 1ch}
 .edrow.mine .st{color:#2f6b2f}.edmenu-list .edrow{width:100%}
+/* Create a Wrestler: the moveset, each move a chip that takes it out */
+.caw-moves{display:flex;flex-wrap:wrap;gap:.25em .35em;margin:0 0 .35em}
+.caw-moves .btn{font-size:.82em;padding:.15em .55em}
+/* a big pop-up: as much of the screen as its choices need, the list inside it never cut */
+.win.big{width:min(1240px,96vw);max-height:92vh;display:flex;flex-direction:column}
+.win.big .wb{overflow-y:auto;flex:1 1 auto;min-height:0}
+/* the move and extras pickers: a column of index cards for each kind */
+.pick-cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:.8em 1em;align-items:start}
+.pick-col h3{font-family:var(--marker);font-size:1.05em;margin:0 0 .35em;color:#b3261e}
+.pick-col .btn{display:block;width:100%;text-align:left;margin:0 0 .3em;font-size:.95em;white-space:normal;line-height:1.15;height:auto}
+.pick-col .btn.on{outline:3px solid #2f7a3a;outline-offset:1px}
+.pick-cols.tmpl{grid-template-columns:2fr 1fr}
+.pick-cols.tmpl .btn b{display:block;font-size:1.05em}
+.pick-cols.tmpl .btn small{display:block;font-family:var(--hand);text-transform:none;font-size:.9em;opacity:.9;margin-top:.15em;letter-spacing:0}
+/* Step: ◀ the choice ▶, as the classic create-a-wrestler screens do it. The arrows are cut card, the count small. */
+.step{display:inline-flex;align-items:center;gap:.25em;max-width:100%}
+.step select{min-width:0;flex:1 1 auto}
+.step-b{font-family:'EWF Blocks',var(--marker);font-size:.9em;line-height:1;min-width:1.8em;height:1.9em;padding:0 .4em;border:0;border-radius:3px;cursor:pointer;color:#fff;background:#18264a;box-shadow:2px 2px 0 rgba(0,0,0,.35);transform:rotate(-1.5deg);transition:transform .12s,background .12s}
+.step-b:nth-of-type(2){transform:rotate(1.5deg)}
+.step-b:hover:not(:disabled),.step-b:focus-visible{background:#1f4fa3;transform:translateY(-1px) rotate(0)}
+.step-b:active:not(:disabled){transform:translateY(1px)}
+.step-b:disabled{opacity:.35;cursor:default}
+.step-n{font-family:var(--gochi);font-size:.75em;color:#5a5048;min-width:2.8em;white-space:nowrap;text-align:right}
+/* in Create a Wrestler a line with a Step is one line: the label, then ◀ the choice ▶ filling the rest; a note goes under it */
+.cawpage .sc-row:has(> .step){flex-wrap:wrap}
+.cawpage .sc-row:has(> .step) > .sc-slot{flex:0 0 30%;min-width:0}
+.cawpage .sc-row > .step{flex:1 1 60%;min-width:0}
+.cawpage .sc-row:has(> .step) > .muted{flex:1 1 100%}
+/* the choices take a little more of the width; the wrestler still has most of it */
+.cawpage{grid-template-columns:minmax(0,1.3fr) minmax(0,1fr)}
+/* the count shows on the line being used (focus or pointer), so the names have the room */
+.cawpage .sc-row .step-n{display:none}
+.cawpage .sc-row .step:focus-within .step-n,.cawpage .sc-row .step:hover .step-n{display:inline}
+.cawpage .sc-row .step:focus-within,.cawpage .sc-row .step:hover{position:relative}
+.cawpage .sc-row .step .step-n{position:absolute;right:2.4em;top:-1.05em;background:var(--lk-paper,#f4ecd8);padding:0 .3em;border-radius:3px}
+/* the middle of a Step: the full name, wrapping onto a second line rather than cut; the dropdown lies over it unseen */
+.step-mid{position:relative;flex:1 1 auto;min-width:0;display:flex;align-items:center;gap:.4em;padding:.25em .5em;background:#fffdf5;border:2px solid #1c1b1f;border-radius:4px;box-shadow:2px 2px 0 rgba(0,0,0,.25);min-height:2em}
+.step-txt{flex:1 1 auto;white-space:normal;overflow-wrap:anywhere;line-height:1.15;color:var(--ink)}
+.step-open{flex:0 0 auto;font-family:'EWF Blocks',var(--hand);font-size:.6em;opacity:.55}
+.step-mid select{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;margin:0}
+.step-mid:focus-within{outline:3px solid #e0b43a;outline-offset:1px}
+.step:has(select:disabled) .step-mid{opacity:.5}
+/* the wrestler's page in the World Editor reads only: label and value, a bar for each attribute */
+.edro-sheet{display:flex;flex-direction:column;gap:.3em}
+.edro-line{display:flex;gap:.6em;align-items:baseline;border-bottom:1px dashed rgba(40,30,20,.22);padding:.12em 0}
+.edro-line small{flex:0 0 40%;color:#5a5048}
+.edro-line span{flex:1 1 auto;font-weight:600;color:var(--ink)}
+.edro-rate{display:grid;grid-template-columns:38% 1fr 2.6em;align-items:center;gap:.5em}
+.edro-rate .bar{height:.7em;background:#e6dcc4;border:1px solid #1c1b1f;border-radius:2px;overflow:hidden}
+.edro-rate .bar i{display:block;height:100%;background:#2f7a3a}
+.edro-rate b{text-align:right}
+.caw-mvstage{margin:.3em 0 .5em}
+.caw-mvstage .eyebrow{margin:.2em 0;font-family:var(--marker);color:#b3261e;font-size:.9em}
+.caw-wpage .editor.plain{display:grid;grid-template-columns:1fr;gap:.35em}
+.edimport{display:grid;grid-template-columns:repeat(auto-fill,minmax(16em,1fr));gap:.3em .6em;margin-top:.4em}
+.edimport .edrow{text-align:left}
+/* names are never cut short (Ryan, 20 October): a long one wraps onto a second line instead */
+.paper .edrow .nm,.edrow:has(.pic)>.nm{white-space:normal;overflow:visible;text-overflow:clip;overflow-wrap:anywhere}
+.paper .edrow{flex-wrap:wrap}
+.paper .edrow .st{white-space:normal;margin-left:auto}
+.pmarquee .ledb.txt.hand{white-space:normal;text-overflow:clip;text-align:center}
+/* the broadcast keeps one shape all show (Ryan, 20 October): the picture and the commentary under it never change size,
+   whatever the scene or however many lines are said; the picture fills its frame */
+.live1 .tvframe{flex:1 1 0;min-height:0}
+.live1 .tvframe .lv-scene{position:absolute;inset:14px}
+.live1 .tvframe~.lv-log{flex:0 0 7.6em;height:7.6em;max-height:none}
+.live1 .lv-log .ln{grid-template-columns:max-content minmax(0,1fr)}
+
+/* a storyline match (two people in a story together) is red on the run sheet (Ryan, 21 October) */
+.book1 .b1-rows .seg.story .r1b{background:linear-gradient(90deg,#c8312a 0 .45em,#f7d9d2 .45em);}
+.book1 .b1-rows .seg.story .r1b .who{color:#8e1610}
+.book1 .b1-rows .seg.story.sel .r1b{background:linear-gradient(90deg,#c8312a 0 .45em,#ffd23f .45em)}
+/* an arc on the run sheet: the writers' chapter, the question, and the answers as index cards (src/99-tale.js) */
+.book1 .b1-rows .seg.arc .no{color:#c8312a}
+.arcpane .arc-t{font-family:var(--hand);font-size:1.05em;margin:.2em 0}
+.arcpane .arc-q{margin:.2em 0 .35em}
+.arc-opts{display:grid;gap:.4em}
+.arcopt{all:unset;box-sizing:border-box;cursor:pointer;display:grid;gap:.1em;padding:.4em 1.4ch .45em;color:var(--ink);border-image:var(--lk-card) 30 fill / 14px / 4px;transition:transform .16s var(--ease),filter .16s;line-height:1.2}
+.arcopt:nth-child(2){border-image-source:var(--lk-note);transform:rotate(.5deg)} .arcopt:nth-child(odd){transform:rotate(-.4deg)}
+.arcopt b{font-family:var(--marker);font-weight:400;color:#1d2a5c;font-size:1.02em}
+.arcopt span{font-family:var(--hand);font-size:.98em}
+.arcopt:hover,.arcopt:focus-visible{transform:translateY(-2px) rotate(0);filter:drop-shadow(0 4px 3px rgba(0,0,0,.35))}
+.arcopt:focus-visible{outline:3px solid #ffd23f;outline-offset:2px}
+.arcopt.on{border-image-source:none;background:#cfe9c8;border:3px solid #2f8a3a;border-radius:4px;padding:calc(.4em - 3px) calc(1.4ch - 3px)}
+.arcopt.on b::before{content:'✔ ';color:#2f8a3a}
+.arcopt .tag{justify-self:start}
+/* the first show's steps (the tutorial) */
+.tutsteps{list-style:none;margin:0;padding:0;display:grid;gap:.3em}
+.tutsteps li{display:grid;grid-template-columns:1.4em 1fr auto;gap:.2em .6ch;align-items:center;font-family:var(--hand);line-height:1.2}
+.tutsteps li .tick{font-family:var(--marker);color:#8a8070;text-align:center}
+.tutsteps li.done .tick{color:#2f8a3a} .tutsteps li.done .tx{color:#5c5850}
+.tutsteps li.need:not(.done) .tick{color:#c8312a}
 /* progression (screens/roster/Attrs.tsx): the level line in the file, and the attributes pop-up */
 .lvl-line{display:flex;align-items:center;gap:.6ch;flex-wrap:nowrap}
 .lvl-line .lvl-n b{font-family:var(--marker);font-weight:400;font-size:1.15em}
@@ -429,6 +521,8 @@ html body .win.ppop .wb{font-family:var(--hand);font-size:1.06em}
 .gim-box{margin-top:.6em;padding:.4em .7em;background:#fff6d6;border:2px solid #1d1a24;border-radius:3px;box-shadow:2px 3px 0 rgba(0,0,0,.25);transform:rotate(-.3deg)}
 .gim-box p{margin:.1em 0}
 .gim-box b{font-family:var(--marker);font-weight:400;color:#c23a30}
+/* on a short window (a 720-line laptop) a call's answers are tighter, so three long ones still fit beside the picture */
+@media (max-height:780px){.live1 .callbox.paper .callopt{padding:.18em 1.3ch .24em;line-height:1.12}.live1 .callbox.paper .callopt .says{font-size:.95em}.live1 .callbox.paper .q{font-size:1.06em;line-height:1.16}}
 /* figures on paper: a label in blue marker over a value in dark ink. The old dark look painted every value white,
    which vanished on the cream paper (the sign-off's attendance, viewers and best match). */
 .kv small,.kv div small{font-family:var(--marker);text-transform:none;color:#2c4f9a;letter-spacing:.02em}

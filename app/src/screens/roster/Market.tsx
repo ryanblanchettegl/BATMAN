@@ -1,4 +1,5 @@
 /* The Free agents page (page id `market`): free agents and rivals' talent near the end of their deals, offers, and the way in to the creator. */
+import { useLayoutEffect, useRef } from 'preact/hooks';
 import { Ovr } from '../../shared/ovr';
 import { E, W } from '../../engine';
 import { G, me, act, view, say, cash, full, openModal, plural, slice } from '../../store';
@@ -8,10 +9,17 @@ import { range, sendScout } from './Profile';
 
 /** The scouts' window: the way in to the creator, and the wage budget. */
 function Scouts() {
-  const S = G.S, P = me();
+  const S = G.S, P = me(), file = useRef<HTMLInputElement>(null);
+  // a wrestler file (the World Editor's Export, or Create a Wrestler's Write a file) brings them in as a free agent
+  const onFile = (e: Event) => { const t = e.currentTarget as HTMLInputElement, fl = t.files && t.files[0]; if (!fl) return; const fr = new FileReader();
+    fr.onload = () => { let x: any = null; try { x = JSON.parse(String(fr.result)); } catch (er) { x = null; } act(() => { const r = E.importWrestlerFile(G.S, x); say(r.ok ? r.msg : fl.name + ': ' + r.msg, { err: !r.ok }); }); };
+    fr.readAsText(fl); t.value = ''; };
   return <Win title="Your scouts" area="scouts" t="mk-scouts">
-    <div class="row"><Btn t="cw-open" onClick={() => openModal({ kind: 'player', id: 'new' })}>Create a wrestler</Btn><Btn t="staff-open" onClick={() => openModal({ kind: 'staff' })}>Create staff</Btn></div>
-    <p class="muted">Create a Wrestler makes a new wrestler. They join the free agents, and you sign them like anybody else. Create staff hires a referee, commentator, interviewer or authority figure straight onto your books.</p>
+    <div class="row"><Btn t="cw-open" onClick={() => openModal({ kind: 'player', id: 'new' })}>Create a wrestler</Btn>
+      <Btn kind="sm" t="cw-import" tip="A wrestler file, from the World Editor's Export or from Create a Wrestler. They join the free agents." onClick={() => file.current && file.current.click()}>Import a wrestler</Btn>
+      <Btn t="staff-open" onClick={() => openModal({ kind: 'staff' })}>Create staff</Btn>
+      <input ref={file} type="file" accept=".json,application/json" hidden data-t="cw-importin" onChange={onFile} /></div>
+    <p class="muted">Create a Wrestler makes a new wrestler, and Import brings one in from a file. They join the free agents, and you sign them like anybody else. Create staff hires a referee, commentator, interviewer or authority figure straight onto your books.</p>
     {!S.owner.me && <p>Wage budget <b>{cash(E.budget(S))}</b> a week, the bill is <b>{cash(E.rosterOf(S, P.id).reduce((a: number, w: W) => a + w.wage, 0))}</b>.</p>}
   </Win>;
 }

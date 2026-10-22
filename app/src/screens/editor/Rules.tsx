@@ -5,6 +5,8 @@ import { E } from '../../engine';
 import { Btn, Panel, Sel, Field, Opt } from '../../kit';
 import { es, world, edit, look, note } from './state';
 import { TwoPane, ScrollMenu } from './parts';
+import { useState } from 'preact/hooks';
+import { ImportThings } from './importer';
 import { SCENES, Scene } from '../../kit/scene';
 import { ScenePlayer } from '../../kit/sceneplayer';
 
@@ -15,13 +17,15 @@ function preview(set: string): Scene | null {
   return { ...sc, id: 'rule-' + (set || 'ring'), name: setName(set), set: set || 'ring' };
 }
 export function RulesTab() {
+  const [imp, setImp] = useState(false);
   const st = es(), pkg = world(), L: any[] = E.edStips(pkg), mine = L.filter(x => !x.over), over: Record<string, any> = {};
   L.filter(x => x.over).forEach(x => { over[x.id] = x; });
   const inc = Object.keys(E.STIP0).filter(id => id !== 'std'), selId: string | null = st.sel.rules || null;
   const k = L.find(x => x.id === selId) || null, base = selId && E.STIP0[selId] && !k ? E.STIP0[selId] : null;
   const add = () => edit(() => { const n = E.edNewStip(pkg, 'cage'); if (n) { st.sel.rules = n.id; note('A new match rule for this world. Name it, pick its base and its set.'); } });
   const list = <>
-    <div class="row mb2"><Btn kind="go" t="ed-rule-new" onClick={add}>New match rule</Btn></div>
+    <div class="row mb2"><Btn kind="go" t="ed-rule-new" onClick={add}>New match rule</Btn><Btn kind="sm" t="ed-imp-open" d={{ v: 'stips' }} onClick={() => setImp(true)}>Import</Btn></div>
+    {imp ? <ImportThings kind="stips" onClose={() => setImp(false)} /> : null}
     <ScrollMenu t="ed-pick" label="Match rules" tall onPick={id => look(() => { st.sel.rules = id; })} items={
       mine.map(x => ({ id: x.id, label: x.n, on: x.id === selId, mine: true, sub: 'This world · like ' + E.STIP0[x.base].n.toLowerCase() }))
         .concat(inc.map(id => ({ id, label: over[id] ? over[id].n : E.STIP0[id].n, on: id === selId, mine: !!over[id], sub: (over[id] ? 'Changed for this world · ' : '') + setName(over[id] ? over[id].set : E.STIP0[id].set) })))} />
