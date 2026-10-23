@@ -121,6 +121,20 @@ Two more lists sit beside this one, both finished:
 
 ## Tasks
 
+### 0ao. The four moves that close the gap (Ryan, 23 October: "add this to the next tasks"; the review in `docs/plans/WrestleCraft-review-and-long-term-roadmap.pdf`, section 2)
+
+The next tasks, before anything else in this list. Each move is a new system, so each goes through rule 9d first: a blueprint in `docs/plans/`, a question vault answered one question at a time, and Ryan's plain go-ahead recorded here with the date. No code until then.
+
+1. **One spine: the Director runs the week.** The planned Director (0aa) becomes the single gate every event, call and matter passes through, in the manner of RimWorld's storyteller. It reads tension, picks a fire, a chance or colour, and caps interruptions. Forty systems stop competing for the desk; the player meets one headline, two supporting threads and quiet everywhere else.
+2. **A promise ledger as the core loop.** Every booking choice opens a visible thread (a challenge issued, a debt owed, a title promised, a story ripening), and every thread has a payoff window. The card becomes the act of paying promises off at the right time: the Civilization Eureka principle applied to stories.
+3. **Three clocks, each with a ceremony.** The week (the card and its stamped grade), the month (the big event and the magazine), the era (a year judged at the flagship). "One more turn" lives in the overlap: one clock is always about to ring.
+4. **Preview before consequence.** Every choice shows its pencil marks before it is made, in words and arrows, never in percentages the player cannot act on. Fog of war stays: the preview says what the road agent can see, and nothing more.
+
+- [ ] Move 1, the Director: the blueprint exists (`docs/plans/director.md`); widen it to the single gate and the interruption cap (A3), write the full question vault (a starter is in the review, section 8), get the go-ahead. Then build by 0aa's steps.
+- [ ] Move 2, the promise ledger: blueprint (`docs/plans/promise-ledger.md`), question vault, go-ahead. It gathers what already makes promises (promised wins, title shots asked for at your door, open threads in `E.openThreads`, ripe feuds) into one ledger.
+- [ ] Move 3, three clocks: blueprint (`docs/plans/three-clocks.md`), question vault, go-ahead. The week's clock and its stamp, the month's (the big event, and the magazine of 0af), the era's verdict at the flagship.
+- [ ] Move 4, preview before consequence: blueprint (`docs/plans/preview.md`), question vault, go-ahead; or Ryan rules it polish (rule 9d), which skips the gates. It builds on the running-order rules (`src/92-shape.js`), the road agent's reads (`src/99-fog.js`) and the run sheet's flags (`E.cardFlags`).
+
 ### 0aa. The Director (Bill, 21 October: "I like this feature add it to the plan")
 
 A pacing layer that decides when trouble reaches the desk: it reads how tense the company already is and chooses which of this week's possible events happen, and how big. The player picks a style (The Promoter, The Carny, The Purist). Plan: `docs/plans/director.md`.
