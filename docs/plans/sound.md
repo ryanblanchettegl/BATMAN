@@ -1,7 +1,7 @@
 # Sound effects, the redo: blueprint
 
-Status: **gate 1 of 3** (CLAUDE.md rule 9d). This is the blueprint. The questions are at the end. No code is written
-until Ryan has read this, answered the questions and said go.
+Status: **gate 3 of 3** (CLAUDE.md rule 9d). The blueprint is written and Ryan has answered every question (section 13,
+23 October). No code is written until he says go.
 
 ## 1. Where we are and why the first try failed
 
@@ -27,14 +27,14 @@ What "feels good" means here, as working principles:
 1. **It belongs with the music.** The music is a concert hall: strings, piano, a symphony orchestra. Sounds on the
    desk and in menus come from that world: plucked strings, a harp, a celesta, soft mallets, a piano note, a page
    turning. Nothing electronic, nothing arcade.
-2. **In tune.** A pitched sound plays in the key of the piece that is on, so a press never clashes with the music.
-   Every piece in the soundtrack has a known key, so this costs one field per piece.
+2. **One instrument, one fixed voice.** The office speaks in harp (Ryan's pick), with fixed notes that do not follow
+   the key of the music.
 3. **Quiet and few.** A sound is a reward, not a reflex. Most presses are silent or nearly so. The sounds people
    remember are the few that mark something that matters.
 4. **The size of the sound matches the size of the moment.** A routine choice gets a whisper; signing a star, a new
    champion or an A-grade show gets a real moment.
 5. **The broadcast is the one loud place.** On the air the world becomes an arena: the bell, the crowd, the ring. It
-   is mixed the way television mixes it: under the commentary, never on top of it.
+   is mixed the way television mixes it: under the commentary, never on top of it. The music keeps playing as normal.
 6. **Approved by ear, one sound at a time.** Nothing goes into the game that Ryan has not heard and picked.
 
 ## 3. The moments (what makes a sound)
@@ -100,10 +100,10 @@ its own place, and the switch between them marks going on the air.
                             │  ▲
               Run show      │  │  Office (SPACE) after the show
                             ▼  │
-                       [On the air]  music steps back (or stops), crowd bed up, arena sounds
+                       [On the air]  music as normal, crowd bed up, arena sounds
                             │
                   sign-off  ▼
-                      [After the show]  crowd fades over a few seconds, grade sting, music returns
+                      [After the show]  crowd fades over a few seconds, harp sting for the grade
                             │
                             └──▶ [Office]
 
@@ -111,8 +111,8 @@ its own place, and the switch between them marks going on the air.
  Any state ── Sound off ──────▶ [Silent]
 ```
 
-- On the air, the music either ducks to a whisper or pauses and picks up again after the show (a question below).
-- A call from the gorilla position holds the crowd at its level while the call waits.
+- On the air the music keeps playing at its own level (Ryan).
+- A call from the gorilla position holds the crowd at its level while the call waits (Ryan).
 
 ## 6. What it keeps (data)
 
@@ -122,8 +122,6 @@ Nothing about sound goes in the save. It lives in preferences and in the page.
   `approved: true` are built into the page. Credits in `tools/sfx/CREDITS.md`.
 - **Moment table:** `{ moment, sound, tier, gainByScale, every }` in `cues.ts`: which sound, how loud for how big a
   moment, and the least time between two of them.
-- **Piece keys:** one field per soundtrack piece, `key: 'D'`, `mode: 'major'`, in `tools/music/build-recordings.py`,
-  so office notes can play in the key of what is on.
 - **Preferences:** Sound effects on or off, effects volume, crowd volume, and (if Ryan wants it) Button sounds on or
   off. Only the music starts Low; everything else starts at Normal (Ryan, 23 October).
 
@@ -176,12 +174,15 @@ All free to use in a commercial Steam game; each file's source and licence goes 
 
 Each step is shown to Ryan before the next (rule 9a).
 
-1. **Candidates and the audition page** for tier-1 office sounds. Ryan picks.
-2. **Office sounds in the game**, in key, with the fatigue limits. Ryan plays it.
-3. **Candidates and audition** for the broadcast: the bell, the crowd bed, pops, near falls, boos. Ryan picks.
-4. **The broadcast in the game**: the arena, the music stepping back, the bell, the crowd following the meter.
-5. **Tier-2 sounds**, if Ryan still wants them after living with steps 2 and 4.
-6. Options, credits, tests (`app/tests/sound.js` back to checking sounds), and the live page.
+1. **Candidates and the audition page** for the broadcast (Ryan: the broadcast first): the bell, the crowd bed in
+   sizes (indie hall to stadium), cheers, boos, a mixed reaction, the crowd counting, pops, gasps, ring impacts.
+   Ryan picks, a few moments at a time.
+2. **The broadcast in the game**: the arena with the music playing as normal, the bell, the crowd following the meter
+   and sized by building and company, entrance reactions, impacts on every move. Ryan plays it.
+3. **Harp candidates and audition** for the office. Ryan picks.
+4. **The office in the game**, fixed harp notes, with the fatigue limits. Ryan plays it.
+5. Options (Sound effects, Effects volume, Crowd volume, Button sounds), credits, tests (`app/tests/sound.js` back
+   to checking sounds), and the live page.
 
 ## 12. Risks
 
@@ -193,8 +194,53 @@ Each step is shown to Ryan before the next (rule 9a).
 - **The desktop build.** The Steam build loads the page from disk; sound files beside the page must load there too.
   Tested in the Electron build before shipping.
 
-## 13. The questions
+## 13. The questions and Ryan's answers (23 October)
 
-Ryan's answers go here once given.
+**Direction**
+1. Which way? **C: both, in their places.** A musical office, a real arena on the broadcast.
+2. Office sounds in the key of the music? **No: one fixed sound.**
+3. Instruments? **Harp.** Every office sound is harp.
 
-(The questions are in the conversation of 23 October; the answers will be copied in.)
+**How much sound**
+4. Ordinary presses (tabs, lists, small buttons)? **Very soft.**
+5. Pointing at a button, moving the highlight? **Silent.**
+6. Pop-ups opening and closing? **A soft harp note.**
+
+**The broadcast**
+7. The music while a show is on the air? **Keeps playing as normal.**
+8. Ring impacts? **On every move** the picture or the call shows, mixed back like television.
+9. Entrance reactions? **Yes: cheers for heroes, boos for villains, and a mixed reaction for tweeners** ("we will
+   need tweeners"; the game already marks them, `w.twn`, `disposition: 'tweener'`). Louder for bigger stars.
+10. The crowd counting along on near falls and finishes? **Yes.**
+11. Big shows sound bigger than a weekly show in a small building? **Yes.**
+12. A small company's crowd sounds thinner? **Yes.**
+
+**Rewards and feel**
+13. A sound for the grade? **A harp sting by grade:** warm and rising for an A, plain for a C, low for a D or F.
+14. The biggest moments: **a new champion, signing a top star, an A-grade show, the end of a feud.** All four.
+15. Bad news? **A soft low harp note.**
+16. Ending the week? **A short harp run.**
+
+**Settings**
+17. A separate switch for button sounds? **Yes.**
+18. Defaults? **Only the music starts at Low**; effects and the crowd start at Normal (already decided).
+
+**Process**
+19. How to pick? **The audition page, a few moments at a time.**
+20. First? **The broadcast.**
+
+**Edge cases**
+21. The crowd during a call from the gorilla position? **Holds its level.**
+22. The fastest auto-play pace (Results)? **Only the results:** bells, the finish and the pop; no per-move sounds.
+23. A hidden or minimised window? **Everything stops, like the music.**
+
+### What the answers change in the plan
+
+- Office: harp only, fixed notes. Big actions get a clear harp pluck; small presses a very soft one; pop-ups a soft
+  harp note; good news two rising notes; bad news one low note; the week a short run; the grade a sting by grade.
+- Broadcast: ring impacts on every move (with the voice limits and the minimum gap keeping it from turning into a
+  racket), entrance reactions in three kinds (cheer, boo, mixed), the crowd counting along, the size of the building
+  and of the company setting how big the crowd sounds. The music is not ducked or paused.
+- Options: Sound effects, Effects volume, Crowd volume, and Button sounds on or off.
+- Step order: broadcast candidates and audition first (bell, crowd bed in sizes, cheers, boos, mixed, the count,
+  pops, gasps, impacts), then the broadcast in the game, then the office.
