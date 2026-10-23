@@ -155,6 +155,14 @@ A system works when it produces correct numbers. It is addictive when it produce
 - [ ] Networks: the renewal countdown shown all season (`src/88-shows.js`, `src/89-networks.js`).
 - [ ] The press: feed or starve a reporter (`src/99-press.js`).
 
+### 0aq. Booking demands: every show is a puzzle (Ryan, 23 October)
+
+"forced finishes, matches, segments, by all the different relationships in the game would be a good hook in the game. everytime you go to book a new show, it's like a puzzle you have to manage because of weekly promises from writers, wrestlers, buisness associates, ect." Picking a winner stays free (21 October); demands from wrestlers, creative control, the writers, the owner, the network, sponsors and business associates pull against each other, and booking power buys a way out. Blueprint: `docs/plans/booking-demands.md`.
+
+- [x] Gate 1: the blueprint.
+- [ ] Gate 2: the questions, one at a time.
+- [ ] Gate 3: Ryan's go-ahead.
+
 ### 0aa. The Director (Bill, 21 October: "I like this feature add it to the plan")
 
 A pacing layer that decides when trouble reaches the desk: it reads how tense the company already is and chooses which of this week's possible events happen, and how big. The player picks a style (The Promoter, The Carny, The Purist). Plan: `docs/plans/director.md`.
