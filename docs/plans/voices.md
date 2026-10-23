@@ -1,6 +1,6 @@
 # The commentators say the real lines: blueprint
 
-Status: **gate 1 of 3** (CLAUDE.md rule 9d). Ryan, 23 October: "wait we could have the commentator say the real
+Status: **gate 3 of 3** (CLAUDE.md rule 9d). Ryan, 23 October: "wait we could have the commentator say the real
 commentary?" Asked how, he picked a neural voice inside the game, with wah-wah kept as a fallback. No code is written
 until he has read this, answered the questions and said go.
 
@@ -69,4 +69,19 @@ segment and thrown away after it.
 
 ## 7. The questions
 
-(Asked one at a time in the conversation; answers recorded here.)
+Ryan's answers (23 October), one at a time:
+
+1. Size: **the best voice, the full model (about 80 MB).**
+2. Who speaks real words: **play-by-play, colour, and wrestlers in promos.** Not the ring announcer.
+3. Wrestlers: **each has their own voice**, picked from the hundreds to suit their gender and size, and kept all game.
+4. **A voice picker**: a Voice choice with a play button in Create a Player (and the World Editor), and a
+   "say it like" spelling for the name.
+5. A slow PC: **switch to wah-wah and say so once**; Options can switch back.
+6. The live test page: **split the model** so the live page talks too.
+7. The fastest pace (Results): **only the big lines are spoken** (near falls, finishes, new champions).
+8. The TV pace: **waits for the voice**, so a line is always said in full, even if a show takes a little longer.
+
+What the answers change: section 2's step 4 gains the wait (auto-play moves on when the line has been said); wrestlers'
+promo quotes are spoken in their own voices (`w.voice`, a LibriTTS-R speaker, chosen by gender and size the first time,
+kept, and changeable in Create a Player); Create a Player gains Voice and a "say it like" field (`look.voice`,
+`look.say`).
