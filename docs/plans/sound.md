@@ -25,10 +25,10 @@ Status: **gate 3 of 3** (CLAUDE.md rule 9d). The blueprint is written and Ryan h
 What "feels good" means here, as working principles:
 
 1. **It belongs with the music.** The music is a concert hall: strings, piano, a symphony orchestra. Sounds on the
-   desk and in menus come from that world: plucked strings, a harp, a celesta, soft mallets, a piano note, a page
+   desk and in menus come from that world: plucked strings, a piano, a celesta, soft mallets, a piano note, a page
    turning. Nothing electronic, nothing arcade.
-2. **One instrument, one fixed voice.** The office speaks in harp (Ryan's pick), with fixed notes that do not follow
-   the key of the music.
+2. **One instrument, one fixed voice.** The office speaks in piano (Ryan's pick, after hearing harp), with fixed
+   notes that do not follow the key of the music.
 3. **Quiet and few.** A sound is a reward, not a reflex. Most presses are silent or nearly so. The sounds people
    remember are the few that mark something that matters.
 4. **The size of the sound matches the size of the moment.** A routine choice gets a whisper; signing a star, a new
@@ -45,9 +45,9 @@ Each moment has a tier: **1** must have, **2** good to have, **3** probably neve
 
 | Moment | Tier | Idea |
 | --- | --- | --- |
-| Pressing a big action (Book the show, Run show, Sign, End week) | 1 | A clear harp pluck |
+| Pressing a big action (Book the show, Run show, Sign, End week) | 1 | A clear piano pluck |
 | Opening and closing a pop-up | 2 | A soft page turn or paper slide, very low |
-| A good result (signed, deal made) | 1 | Two harp notes rising |
+| A good result (signed, deal made) | 1 | Two piano notes rising |
 | A refusal or a problem | 1 | One low, soft note; never a buzzer |
 | Something new needs you (a matter on the desk, a call) | 1 | A single chime, the kind that makes you look up |
 | A week ends | 2 | A short rising figure, the page turns on the week |
@@ -88,7 +88,7 @@ Feels like a film score. Risk: the broadcast loses the feel of a live show.
 **B. All real.** Real arena, real ring, real bell, and real-world desk sounds (paper, a pen, a stapler). Feels like
 a documentary. Risk: real-world sounds clash with a symphony, which is what went wrong last time.
 
-**C. Both, in their places (recommended).** The office and menus are musical, in harp (A). The broadcast is a real
+**C. Both, in their places (recommended).** The office and menus are musical, in piano (A). The broadcast is a real
 arena mixed like television (B), with the music playing as normal (Ryan's pick). Each world sounds right in
 its own place, and the switch between them marks going on the air.
 
@@ -103,7 +103,7 @@ its own place, and the switch between them marks going on the air.
                        [On the air]  music as normal, crowd bed up, arena sounds
                             │
                   sign-off  ▼
-                      [After the show]  crowd fades over a few seconds, harp sting for the grade
+                      [After the show]  crowd fades over a few seconds, piano sting for the grade
                             │
                             └──▶ [Office]
 
@@ -166,7 +166,7 @@ All free to use in a commercial Steam game; each file's source and licence goes 
 | Source | What it is good for | Licence | Reachable from here |
 | --- | --- | --- | --- |
 | Sonniss GDC game audio bundles (mirrored on archive.org) | Professional arena crowds, a boxing bell, ring and body impacts, cloth, paper | Royalty-free, commercial use, no credit required (the Sonniss licence comes inside each bundle) | Yes, through archive.org. The bundles are large (gigabytes), so only the needed folders are taken |
-| VSCO 2 Community Edition | Orchestral samples: harp, plucked strings, celesta and mallets, chimes, timpani | CC0 | Yes, file by file |
+| VSCO 2 Community Edition | Orchestral samples: piano, plucked strings, celesta and mallets, chimes, timpani | CC0 | Yes, file by file |
 | University of Iowa instrument samples | Piano, mallets and bells, recorded note by note | Free to use without restriction | Yes |
 | Freesound, Pixabay, ZapSplat | Huge libraries | Varies (some CC0) | **No: blocked by this environment's network policy.** Ryan can add the domains in the environment settings if needed |
 
@@ -179,8 +179,8 @@ Each step is shown to Ryan before the next (rule 9a).
    Ryan picks, a few moments at a time.
 2. **The broadcast in the game**: the arena with the music playing as normal, the bell, the crowd following the meter
    and sized by building and company, entrance reactions, impacts on every move. Ryan plays it.
-3. **Harp candidates and audition** for the office. Ryan picks.
-4. **The office in the game**, fixed harp notes, with the fatigue limits. Ryan plays it.
+3. **Piano candidates and audition** for the office. Ryan picks.
+4. **The office in the game**, fixed piano notes, with the fatigue limits. Ryan plays it.
 5. Options (Sound effects, Effects volume, Crowd volume, Button sounds), credits, tests (`app/tests/sound.js` back
    to checking sounds), and the live page.
 
@@ -199,12 +199,12 @@ Each step is shown to Ryan before the next (rule 9a).
 **Direction**
 1. Which way? **C: both, in their places.** A musical office, a real arena on the broadcast.
 2. Office sounds in the key of the music? **No: one fixed sound.**
-3. Instruments? **Harp.** Every office sound is harp.
+3. Instruments? **Harp** at first; after hearing it, **piano** (Ryan, 23 October: "harp is wrong piano is right"). Every office sound is piano: the Salamander Grand Piano (CC BY 3.0, credited).
 
 **How much sound**
 4. Ordinary presses (tabs, lists, small buttons)? **Very soft.**
 5. Pointing at a button, moving the highlight? **Silent.**
-6. Pop-ups opening and closing? **A soft harp note.**
+6. Pop-ups opening and closing? **A soft piano note.**
 
 **The broadcast**
 7. The music while a show is on the air? **Keeps playing as normal.**
@@ -216,10 +216,10 @@ Each step is shown to Ryan before the next (rule 9a).
 12. A small company's crowd sounds thinner? **Yes.**
 
 **Rewards and feel**
-13. A sound for the grade? **A harp sting by grade:** warm and rising for an A, plain for a C, low for a D or F.
+13. A sound for the grade? **A piano sting by grade:** warm and rising for an A, plain for a C, low for a D or F.
 14. The biggest moments: **a new champion, signing a top star, an A-grade show, the end of a feud.** All four.
-15. Bad news? **A soft low harp note.**
-16. Ending the week? **A short harp run.**
+15. Bad news? **A soft low piano note.**
+16. Ending the week? **A short piano run.**
 
 **Settings**
 17. A separate switch for button sounds? **Yes.**
@@ -236,11 +236,22 @@ Each step is shown to Ryan before the next (rule 9a).
 
 ### What the answers change in the plan
 
-- Office: harp only, fixed notes. Big actions get a clear harp pluck; small presses a very soft one; pop-ups a soft
-  harp note; good news two rising notes; bad news one low note; the week a short run; the grade a sting by grade.
+- Office: piano only, fixed notes. Big actions get a clear piano pluck; small presses a very soft one; pop-ups a soft
+  piano note; good news two rising notes; bad news one low note; the week a short run; the grade a sting by grade.
 - Broadcast: ring impacts on every move (with the voice limits and the minimum gap keeping it from turning into a
   racket), entrance reactions in three kinds (cheer, boo, mixed), the crowd counting along, the size of the building
   and of the company setting how big the crowd sounds. The music is not ducked or paused.
 - Options: Sound effects, Effects volume, Crowd volume, and Button sounds on or off.
 - Step order: broadcast candidates and audition first (bell, crowd bed in sizes, cheers, boos, mixed, the count,
   pops, gasps, impacts), then the broadcast in the game, then the office.
+
+## 14. Picks so far (the audition page, rounds 1 to 4)
+
+- **Kept:** the tubular bell for the ring bell (VSCO 2), the stadium crowd under the show (Sonic Bat), the Rose Bowl
+  stadium surge for the pop (2496SoundEffects), the stadium chant for the crowd counting along (Sonic Bat), the
+  stadium near miss for the kick-out gasp (Sonic Bat), the body blow for strikes (Gamemaster Audio), the body fall
+  on wood for slams (Red Libraries).
+- **Rejected:** three bells from Sonniss and four from VSCO, two small-hall crowds, four other pops, every boo tried
+  (three), a built count, both built mixed reactions, the other slams and strikes, and the harp.
+- **Open:** boos and the mixed reaction for tweeners (waiting on Freesound.org, blocked from this environment), the
+  piano office sounds (round 4), then the end of the week, the grade sting and the four big moments.
