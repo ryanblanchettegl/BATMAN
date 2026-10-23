@@ -195,6 +195,17 @@ The decisions that wait for the booker backstage (requests at your door, people 
 - [ ] Backstage decisions listed in the desk's scrolling list, worst first, each answered in its pop-up without leaving the desk.
 - [ ] The desk still fits one screen at 1080p (`app/tests/desk.js`), and `app/tests/backstage.js` still passes.
 
+### 0au. The animation blueprint: weight and scale (Ryan, 23 October; the review, section 5)
+
+The diorama renderer (`app/src/kit/paper.ts`, `puppet.ts`, `scene.ts`, `diorama3d.ts`) is the game's graphics engine. Motion is smooth but weightless; five rules fix that. Phase C, Feel. Polish, so rule 9d's gates are not needed, but every motion is picked by Ryan on an audition page.
+
+- [ ] Stop-motion cadence, smooth camera: figures posed on twos (12 a second), camera, lights and particles at 60 frames a second.
+- [ ] Anticipation, impact, hit-stop, recovery: a wind-up, a contact frame held about 2 frames for a jab up to 6 for a powerbomb (scaled by `poundsOf()`), a card flex that springs back; sound and camera land on the held frame.
+- [ ] A television director for the camera: wide on the lock-up, tight on the near fall, a crowd cutaway after the kick-out, a slow push on the finisher, from the beat flags `callMatch()` sets; the referee clipping fixed in the same pass.
+- [ ] Scale is density: a hall show has a few dozen cut-outs and one light; the flagship thousands of instanced cut-outs, a lighting rig, pyro and a crane shot.
+- [ ] Choreography with structure: feeling-out, the heat, the hope spot, the comeback, false finishes, the finish; a kicked-out protected finisher gets a bigger camera move.
+- [ ] Interface motion: windows land with a slight rotation and settle, the grade arrives as a rubber stamp, bad news tears, money counts up like an odometer; every motion 120 to 250 ms and never blocks input.
+
 ### 0aa. The Director (Bill, 21 October: "I like this feature add it to the plan")
 
 A pacing layer that decides when trouble reaches the desk: it reads how tense the company already is and chooses which of this week's possible events happen, and how big. The player picks a style (The Promoter, The Carny, The Purist). Plan: `docs/plans/director.md`.
