@@ -1,31 +1,45 @@
-/* Sound effects are off (Ryan, 23 October: "It sounds terrible", "turn it all off"): the game is quiet except the
-   soundtrack until new sounds are chosen and approved. This checks that nothing plays: no recordings in the page,
-   nothing heard on a press or through a show on the air, no sound settings in Options, and no errors.
-   When sound effects come back, this test goes back to checking them.
+/* Sound effects (docs/plans/sound.md): only sounds Ryan picked by ear. Step 2 is the broadcast: the recordings are in
+   the page, presses stay silent (the office piano is the next step), a show on the air rings the bell and brings up the
+   crowd, the ring is heard, nothing plays with Sound off, and there are no errors.
    Run: NODE_PATH=<dir containing playwright> node app/tests/sound.js */
 const { open, go, redraw } = require('./helper');
 const fails = [];
 const ok = (label, pass, detail) => { console.log(pass ? 'ok  ' : 'FAIL', label + (detail ? ': ' + detail : '')); if (!pass) fails.push(label); };
 const has = async (page, sel) => !!(await page.$(sel));
 const played = page => page.evaluate(() => (window.EWF_SOUND ? window.EWF_SOUND.played.slice() : []));
+async function waitFor(fn, ms) { const t = Date.now(); while (Date.now() - t < ms) { if (await fn()) return true; await new Promise(r => setTimeout(r, 150)); } return false; }
 
 (async () => {
-  const { browser, page, errs } = await open({ promo: 'pdw', auto: false });
+  const { browser, page, errs } = await open({ promo: 'pdw', auto: false, prefs: { snd: true } });
   try {
-    ok('no sound effect recordings in the page', await page.evaluate(() => !window.EWF_SFX_DATA));
+    ok('the picked recordings are in the page', await page.evaluate(() => !!window.EWF_SFX_DATA && ['bell', 'bed', 'pop', 'chant', 'gasp', 'hit', 'slam'].every(k => window.EWF_SFX_DATA[k])));
     await page.mouse.click(5, 5);
+    ok('the first press wakes the sound and decodes the recordings', await waitFor(() => page.evaluate(() => window.EWF_SOUND.ready()), 15000));
     await go(page, 'booking');
     await page.click('[data-t="suggest"]'); await page.waitForTimeout(150);
-    ok('a press plays nothing', !(await played(page)).length, (await played(page)).join(' '));
+    ok('presses are silent until the piano step', !(await played(page)).length, (await played(page)).join(' '));
+    // Sound off: nothing plays, even on the air
+    await page.evaluate(() => { window.EWF_DEBUG.pref.snd = false; });
     await redraw(page);
     for (let k = 0; k < 6 && !(await has(page, '#live')); k++) { if (await has(page, '[data-t="pre"]')) await page.click('[data-t="pre"][data-c="0"]'); else await page.click('[data-t="advance"]'); await page.waitForTimeout(80); }
     ok('the show goes on the air', await has(page, '#live'));
-    for (let i = 0; i < 40; i++) {
+    for (let i = 0; i < 6; i++) { if (await has(page, '[data-t="live-call"]')) break; await page.click('[data-t="advance"]'); await page.waitForTimeout(100); }
+    ok('nothing plays with Sound off', !(await played(page)).length, (await played(page)).join(' '));
+    await page.evaluate(() => { window.EWF_DEBUG.pref.snd = true; });
+    let bell = false, bed = false;
+    for (let i = 0; i < 90; i++) {
       if (await has(page, '[data-t="live-call"]')) { await page.waitForTimeout(450); const safe = await page.evaluate(() => (window.EWF_DEBUG.state().live.ev || {}).safe || 0); await page.click('[data-t="live-pick"][data-c="' + safe + '"]'); }
       else await page.click('[data-t="advance"]');
-      await page.waitForTimeout(100);
+      await page.waitForTimeout(110);
+      const p = await played(page); bell = bell || p.includes('bell'); bed = bed || p.includes('loop:bed');
+      if (!(await has(page, '#live'))) break;
     }
-    ok('a show on the air plays no sound effects', !(await played(page)).length, (await played(page)).join(' '));
+    ok('the bell rings in a match', bell);
+    ok('the crowd plays under the broadcast', bed);
+    const heard = [...new Set((await played(page)).filter(x => /^(hit|slam|pop|chant|gasp)$/.test(x)))];
+    ok('the ring and the crowd are heard', heard.length >= 2, heard.join(' '));
+    ok('every sound played is one Ryan picked', (await played(page)).every(x => /^(loop:)?(bell|bed|pop|chant|gasp|hit|slam)$/.test(x)), [...new Set(await played(page))].join(' '));
+    ok('no group ever holds more voices than its limit', await page.evaluate(() => { const v = window.EWF_SOUND.voices(); return v.ui <= 4 && v.ring <= 6 && v.big <= 3 && v.crowd <= 4; }));
     ok('no errors', !errs.length, errs.join(' | '));
   } catch (e) { ok('ran to the end', false, e.message); }
   await browser.close();

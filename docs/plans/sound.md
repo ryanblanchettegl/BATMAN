@@ -253,5 +253,14 @@ Each step is shown to Ryan before the next (rule 9a).
   on wood for slams (Red Libraries).
 - **Rejected:** three bells from Sonniss and four from VSCO, two small-hall crowds, four other pops, every boo tried
   (three), a built count, both built mixed reactions, the other slams and strikes, and the harp.
-- **Open:** boos and the mixed reaction for tweeners (waiting on Freesound.org, blocked from this environment), the
-  piano office sounds (round 4), then the end of the week, the grade sting and the four big moments.
+- **Piano, kept (rounds 4 to 6):** small presses (a soft high note), pop-ups (a quick flick up), good news (three
+  rising notes), bad news (a deeper low note), the end of the week (a quick run up), the grade (A rising to a high
+  sparkle, B a gentle lift, C two plain notes, D three falling, F a low minor chord), the end of a feud (a chord
+  resolving home), big actions (a soft sparkle up), a new champion (a run up to two high notes ringing), signing a
+  top star (good news with a sparkle).
+- **Open:** boos and the mixed reaction for tweeners (waiting on Freesound.org, blocked from this environment).
+
+## 15. Built
+
+- **Step 2, the broadcast (23 October):** in the game. `app/src/audio/cues.ts`, `tools/sfx/build-sfx.py`.
+- **Step 4, the office piano:** next.

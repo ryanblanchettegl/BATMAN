@@ -6,9 +6,9 @@
    skipped, so fast clicking never stutters. Sound never reads or writes the game: it cannot change how a game plays. */
 import { pref } from '../store';
 
-/** Off (Ryan, 23 October: "It sounds terrible"; "turn it all off"). The game is quiet except the soundtrack until new
-    sounds are chosen and approved. The engine stays, ready for them; nothing here plays while this is false. */
-export const SFX_ON = false;
+/** On (Ryan, 23 October). It was switched off after the first try ("It sounds terrible") and comes back with only the
+    sounds Ryan picked by ear (docs/plans/sound.md). False makes the game silent apart from the soundtrack. */
+export const SFX_ON = true;
 
 export type Group = 'ui' | 'ring' | 'big' | 'crowd';
 const VOICES: Record<Group, number> = { ui: 4, ring: 6, big: 3, crowd: 4 };
