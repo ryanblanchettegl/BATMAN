@@ -160,7 +160,7 @@ A system works when it produces correct numbers. It is addictive when it produce
 "forced finishes, matches, segments, by all the different relationships in the game would be a good hook in the game. everytime you go to book a new show, it's like a puzzle you have to manage because of weekly promises from writers, wrestlers, buisness associates, ect." Picking a winner stays free (21 October); demands from wrestlers, creative control, the writers, the owner, the network, sponsors and business associates pull against each other, and booking power buys a way out. Blueprint: `docs/plans/booking-demands.md`.
 
 - [x] Gate 1: the blueprint.
-- [ ] Gate 2: the questions, one at a time.
+- [x] Gate 2: the questions, answered 23 October (blueprint section 10).
 - [ ] Gate 3: Ryan's go-ahead.
 
 ### 0aa. The Director (Bill, 21 October: "I like this feature add it to the plan")

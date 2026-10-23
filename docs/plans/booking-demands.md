@@ -1,7 +1,7 @@
 # Booking demands: every show is a puzzle
 
-Status: **gate 2 of 3** (CLAUDE.md rule 9d). The blueprint is written; the questions are being asked one at a time. No code
-until Ryan has answered them and said go.
+Status: **gate 3 of 3** (CLAUDE.md rule 9d). The blueprint is written and Ryan has answered the questions (section 10).
+No code until he says go.
 
 Ryan, 23 October: "forced finishes, matches, segments, by all the different relationships in the game would be a good hook
 in the game. everytime you go to book a new show, it's like a puzzle you have to manage because of weekly promises from
@@ -45,7 +45,8 @@ demands pull against each other and against the story the booker wants to tell. 
 3. **Open.** It sits on Book the show as a pinned card. The run sheet flags every line that meets it, breaks it, or
    clashes with another demand.
 4. **Met, broken or bought out.** At the bell. Bought out means booking power spent so the source accepts it, and it is
-   remembered more gently than a plain break.
+   remembered more gently than a plain break. An imposed demand can also be negotiated: an attempt to move it to a later
+   show or shrink it, with odds from your standing with the source (Ryan).
 5. **Remembered.** Through `relBump()` and `youRemember()` (rule 9b), the notification bar, and After the show.
 
 ## 5. Data
@@ -66,7 +67,7 @@ and its state (asked, open, met, broken, bought, refused, expired). Old saves st
 
 ## 7. Balance
 
-- Two to four demands a show, and at most one real clash a week. The Director (TASKS.md 0ao) decides the mix, so the
+- One to three demands a show (Ryan), and at most one real clash a week. The Director (TASKS.md 0ao) decides the mix, so the
   puzzle never becomes a chore.
 - A demand's weight follows the source's power and the relationship: a main-eventer asks harder than a rookie.
 - Meeting imposed demands pays (sponsor money, network patience, owner trust); meeting requests pays in morale and
@@ -83,3 +84,19 @@ raise a bigger one (the owner's favourite won, and now he wants the title).
 Promised wins (`E.cardFlags` "Promised a win"), the owner on the headset (`LIVEK.owner`), the sponsor at ringside,
 creative control (`src/97-clauses.js`), the writers' pitches, and the requests at your door (`src/79-people.js`, kinds
 starting `ask`). They become one list with one screen.
+
+## 10. Ryan's answers (23 October)
+
+1. How many: **one to three demands a show.**
+2. Refusing a wrestler's ask: **yes, up front, and it is remembered.** A refusal costs a little; a broken promise a lot.
+3. An imposed demand that clashes: **meet it, break it, buy it out, or negotiate it.**
+4. Suggest a card: **meets the easy demands and leaves the clash for the player.**
+5. Timing: **mostly known before booking, with a rare late one** on the night (the owner on the headset, a sponsor at
+   ringside).
+6. Escalation: **sometimes** (about one met demand in four grows into a bigger ask a few weeks later).
+7. Rivals: **they face demands too, quietly**; the dirt sheet reports a broken promise, and their unhappy stars become
+   easier to sign.
+8. Company size: **who asks changes, not how many.** A small indie hears from wrestlers and the building's owner; a big
+   company from the network, sponsors and stars with creative control.
+9. A new game: **one demand at a time to teach it.** One simple wrestler request at the first show, explained; the first
+   imposed demand around the first big event; the full load after the first month.
