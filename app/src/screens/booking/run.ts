@@ -5,6 +5,7 @@ import { G, ui, pref, reduceMotion, act, view, say, slice, savePrefs } from '../
 import { book } from '../../flow';
 import { go } from '../../nav';
 import { SFX } from '../../sfx';
+import { beat as cueBeat } from '../../audio/cues';
 
 export type Match = any;
 const top0 = () => { try { window.scrollTo(0, 0); } catch (e) { /* ignore */ } };
@@ -155,7 +156,6 @@ function stepLive() {
     if (x.done) { b.report = 0; L.s = S.reports[0] ? S.reports[0].segs.length : 0; L.b = 0; L.aired = true; SFX.fanfare(); return; }   // the sign-off of the show that just aired, not a replay
   }
 }
-const COUNT = /One, two, three|hree count|tapping|taps!|gets the three|and that is it/;
 export function liveNext() {
   if (typer.active()) { typer.finish(); return; }
   const r = liveReport(); if (!r) return;
@@ -163,11 +163,10 @@ export function liveNext() {
   const L = book().live!, sg = r.segs[L.s], bc = (sg && sg.bc) || [];
   if (sg && L.b < bc.length) {
     look(() => {
-      L.b = pref.pace === 'tv' ? tvNext(sg, L.b) : L.b + 1; const nb = bc[L.b];
-      if (nb && COUNT.test(nb.x)) SFX.count();
-      else if (nb && nb.h) SFX.crowd(nb.h > 1 ? 100 : 80);
-      else if (!nb && sg.k === 'match') { SFX.bellEnd(); SFX.crowd(sg.cr); }
-      else if (nb && nb.t === 'pbp' && sg.k === 'match' && L.b === lead(sg) + 2) SFX.bell();
+      const was = L.b; L.b = pref.pace === 'tv' ? tvNext(sg, L.b) : L.b + 1; const nb = bc[L.b];
+      const bell = sg.k === 'match' ? bc.findIndex((x: any, j: number) => j > lead(sg) && x.t === 'pbp') : -1;   // the line the bell rings on
+      // the sound of the moment (src/audio/cues.ts): the opening bell on the first line of the call, the rest by what the line says
+      cueBeat(sg, nb, bell >= 0 && was < bell && L.b >= bell, !!pref.pics);
     });
     return;
   }

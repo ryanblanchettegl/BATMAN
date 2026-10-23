@@ -209,5 +209,5 @@ export function initInput() {
     const k = e.key.length === 1 ? e.key.toLowerCase() : '';
     if (HOT[k]) { e.preventDefault(); go(HOT[k]); }
   });
-  (window as any).EWF_DEBUG = { state: () => G.S, render: redraw, go, pad: padPress, nav: NAV, ui, lights: lightDraws, maps: roadMapDraws, scenes: scenePlays, allScenes: () => allScenes([]), segScenes: () => SHOW_SCENES.map(s => s.when), beatPick, save };
+  (window as any).EWF_DEBUG = { state: () => G.S, render: redraw, go, pad: padPress, nav: NAV, ui, lights: lightDraws, maps: roadMapDraws, scenes: scenePlays, allScenes: () => allScenes([]), segScenes: () => SHOW_SCENES.map(s => s.when), beatPick, save, pref };
 }
