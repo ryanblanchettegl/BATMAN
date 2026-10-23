@@ -1,6 +1,6 @@
 # The engine in TypeScript modules: blueprint
 
-Status: **gate 3 of 3, waiting** (CLAUDE.md rule 9d). Questions answered (section 7); Ryan said "not yet" to starting. Ryan, 23 October: "so rebuild in typescript modules?" then "do it". The
+Status: **approved** (CLAUDE.md rule 9d), 23 October: "go". Questions answered (section 7). Ryan, 23 October: "so rebuild in typescript modules?" then "do it". The
 blueprint is written; the questions are asked one at a time; no code until he says go. It is phase A, Foundation, of the
 long-term plan (`docs/plans/WrestleCraft-review-and-long-term-roadmap.pdf`, section 8).
 
@@ -68,4 +68,4 @@ build on; a full CI wall that lets approved plans run unattended (the rule chang
 3. The live page: **published at each milestone**, so Ryan can play and check nothing changed.
 4. An old bug found during the move: **kept exactly, logged, and fixed as its own change afterwards**, so the recorded
    games still prove the move changed nothing.
-5. Go-ahead (23 October): **not yet.** The plan waits for Ryan's word.
+5. Go-ahead (23 October): first "not yet", then **"go"**.

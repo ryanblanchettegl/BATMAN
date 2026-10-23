@@ -128,7 +128,7 @@ Phase A, Foundation: rebuild the simulation from one shared ES5 closure into Typ
 
 - [x] Gate 1: the blueprint.
 - [x] Gate 2: the questions, answered 23 October (features pause, unattended with milestone reports, live page at milestones, old bugs logged and fixed after).
-- [ ] Gate 3: Ryan's go-ahead (23 October: "not yet").
+- [x] Gate 3: Ryan's go-ahead, 23 October: "go".
 
 ### 0ao. The four moves that close the gap (Ryan, 23 October: "add this to the next tasks"; the review in `docs/plans/WrestleCraft-review-and-long-term-roadmap.pdf`, section 2)
 
