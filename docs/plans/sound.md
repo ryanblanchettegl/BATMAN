@@ -305,3 +305,19 @@ After the match comes more of the bank: different clicks and moments through the
   are used. The crowd is many different voices layered with small differences in timing and pitch, over the stadium
   crowd, so it sounds like a building and not a robot.
 - Ryan picks by ear on the audition page, as before.
+
+### Ryan's answers (23 October)
+
+1. The ramble style: **let me hear all three** (Animal Crossing chirps, Banjo-Kazooie mumbles, Simlish-like made-up
+   words) on the audition page.
+2. Who talks: **the commentators and wrestlers in promos.** Not the ring announcer, not the agent in your ear.
+3. Fixed voices? **No: vary them** a little each line.
+4. The crowd count: **real words, many voices.**
+5. A count-out: **the crowd counts the last numbers** with the referee, then the bell.
+6. Level: **like TV**, the voices clear on top of the crowd, which dips a little while they talk.
+7. When: **every commentary line**, whatever the picture shows.
+8. Promos: **the crowd reacts to who is talking** (cheers for a hero; boos once a source is found).
+
+The steps: an audition round of the three ramble styles, voices for play-by-play, colour and a wrestler, and the
+crowd's counts ("ONE! TWO!" breaking off, "ONE! TWO! THREE!", "EIGHT! NINE! TEN!"); Ryan picks; then they go into
+the broadcast.
