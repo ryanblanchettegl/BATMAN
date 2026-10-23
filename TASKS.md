@@ -122,6 +122,14 @@ Two more lists sit beside this one, both finished:
 
 ## Tasks
 
+### 0an2. The engine in TypeScript modules (Ryan, 23 October: "do it")
+
+Phase A, Foundation: rebuild the simulation from one shared ES5 closure into TypeScript modules with a typed state and one command layer, kept identical in play by golden masters and every test. Blueprint: `docs/plans/typescript-engine.md`.
+
+- [x] Gate 1: the blueprint.
+- [ ] Gate 2: the questions, one at a time.
+- [ ] Gate 3: Ryan's go-ahead.
+
 ### 0ao. The four moves that close the gap (Ryan, 23 October: "add this to the next tasks"; the review in `docs/plans/WrestleCraft-review-and-long-term-roadmap.pdf`, section 2)
 
 The next tasks, before anything else in this list. Each move is a new system, so each goes through rule 9d first: a blueprint in `docs/plans/`, a question vault answered one question at a time, and Ryan's plain go-ahead recorded here with the date. No code until then.
