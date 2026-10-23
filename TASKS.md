@@ -171,6 +171,14 @@ Scouting the indies turns up small mysteries that unfold over a few weeks, in th
 - [ ] Gate 2: the questions, one at a time.
 - [ ] Gate 3: Ryan's go-ahead.
 
+### 0as. Industry wear (Ryan, 23 October; the review, section 4)
+
+Every company's hardcore matches and overwork feed one shared meter, like Civilization VI's climate change. As it rises, injuries rise everywhere and networks add content rules; the Promoters' Summit, if built, debates protocols. One meter in words on the desk. Best built alongside the body bank (the review, section 6).
+
+- [ ] Gate 1: the blueprint (`docs/plans/industry-wear.md`).
+- [ ] Gate 2: the questions, one at a time.
+- [ ] Gate 3: Ryan's go-ahead.
+
 ### 0aa. The Director (Bill, 21 October: "I like this feature add it to the plan")
 
 A pacing layer that decides when trouble reaches the desk: it reads how tense the company already is and chooses which of this week's possible events happen, and how big. The player picks a style (The Promoter, The Carny, The Purist). Plan: `docs/plans/director.md`.
