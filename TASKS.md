@@ -163,6 +163,14 @@ A system works when it produces correct numbers. It is addictive when it produce
 - [x] Gate 2: the questions, answered 23 October (blueprint section 10).
 - [x] Gate 3: Ryan's go-ahead, 23 October: "Go, after the Director". Build it once the Director (0ao move 1, 0aa) is built; the Director itself still needs its own questions and go-ahead.
 
+### 0ar. Scouting anomalies (Ryan, 23 October; the review, section 4)
+
+Scouting the indies turns up small mysteries that unfold over a few weeks, in the manner of Stellaris's anomalies: a gem with a bad reputation, a masked star nobody can place. Each is a short chain with a payoff and a risk, shown as a scouting report card that opens the next step. A mid-game event, timed by the Director, so it comes after the Director is built.
+
+- [ ] Gate 1: the blueprint (`docs/plans/scouting-anomalies.md`).
+- [ ] Gate 2: the questions, one at a time.
+- [ ] Gate 3: Ryan's go-ahead.
+
 ### 0aa. The Director (Bill, 21 October: "I like this feature add it to the plan")
 
 A pacing layer that decides when trouble reaches the desk: it reads how tense the company already is and chooses which of this week's possible events happen, and how big. The player picks a style (The Promoter, The Carny, The Purist). Plan: `docs/plans/director.md`.
