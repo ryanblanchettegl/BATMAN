@@ -6,6 +6,10 @@
    skipped, so fast clicking never stutters. Sound never reads or writes the game: it cannot change how a game plays. */
 import { pref } from '../store';
 
+/** Off (Ryan, 23 October: "It sounds terrible"; "turn it all off"). The game is quiet except the soundtrack until new
+    sounds are chosen and approved. The engine stays, ready for them; nothing here plays while this is false. */
+export const SFX_ON = false;
+
 export type Group = 'ui' | 'ring' | 'big' | 'crowd';
 const VOICES: Record<Group, number> = { ui: 4, ring: 6, big: 3, crowd: 4 };
 const LEVEL: Record<Group, number> = { ui: 0.55, ring: 0.9, big: 0.8, crowd: 0.75 };
@@ -40,7 +44,7 @@ function b64(s: string): ArrayBuffer { const bin = atob(s), u = new Uint8Array(b
 /** Decode the recordings once. Safe to call often. */
 export function load(): Promise<void> {
   if (loading) return loading;
-  const ac = ctx(), D = (window as any).EWF_SFX_DATA; if (!ac || !D) return (loading = Promise.resolve());
+  const ac = ctx(), D = (window as any).EWF_SFX_DATA; if (!ac || !D) { bank = {}; return (loading = Promise.resolve()); }   // nothing to decode: ready, with no sounds
   const out: typeof bank = {};
   loading = Promise.all(Object.keys(D).map(id => Promise.all(D[id].t.map((t: string) => new Promise<AudioBuffer | null>(res => {
     try { ac.decodeAudioData(b64(t), res, () => res(null)); } catch (e) { res(null); }
@@ -48,14 +52,14 @@ export function load(): Promise<void> {
   return loading;
 }
 /** The first press or key wakes the sound (browsers keep it asleep until then) and decodes the recordings. */
-export function wake() { const ac = ctx(); if (!ac) return; if (ac.state === 'suspended') ac.resume().catch(() => {}); load(); }
+export function wake() { if (!SFX_ON) return; const ac = ctx(); if (!ac) return; if (ac.state === 'suspended') ac.resume().catch(() => {}); load(); }
 export const ready = () => !!bank;
 export const now = () => (AC ? AC.currentTime : 0);
 
 export interface PlayOpt { gain?: number; rate?: number; delay?: number; take?: number; gap?: number; vary?: number; pan?: number }
 /** Play one take of a sound. Rate and gain move a little each time (vary) so a sound heard twice is not a copy. */
 export function play(id: string, o: PlayOpt = {}): AudioBufferSourceNode | null {
-  if (!pref.snd || !bank || !AC || !master) return null;
+  if (!SFX_ON || !pref.snd || !bank || !AC || !master) return null;
   const s = bank[id]; if (!s || !s.b.length) return null;
   const t0 = AC.currentTime, key = id + ':' + (o.delay || 0).toFixed(2);
   if (o.gap !== 0 && lastAt[key] != null && t0 - lastAt[key] < (o.gap || 0.035)) return null;   // asked again too soon
@@ -76,7 +80,7 @@ export function play(id: string, o: PlayOpt = {}): AudioBufferSourceNode | null 
 /** A looping sound with a level that can be glided: the crowd's murmur. */
 export interface Loop { set(v: number, secs?: number): void; stop(secs?: number): void; tone(hz: number): void }
 export function loop(id: string): Loop | null {
-  if (!bank || !AC) return null;
+  if (!SFX_ON || !bank || !AC) return null;
   const s = bank[id]; if (!s || !s.b.length) return null;
   const src = AC.createBufferSource(), gn = AC.createGain(), lp = AC.createBiquadFilter();
   src.buffer = s.b[0]; src.loop = true; lp.type = 'lowpass'; lp.frequency.value = 2400; gn.gain.value = 0;
@@ -95,7 +99,7 @@ export function duck(amount = 0.45, secs = 1.4) {
 }
 /** The tension under a near fall: a rising swell made in code, the one thing no recording here does. */
 export function riser(secs = 1.1) {
-  if (!pref.snd || !AC || !bus.big) return;
+  if (!SFX_ON || !pref.snd || !AC || !bus.big) return;
   try {
     const t = AC.currentTime, o = AC.createOscillator(), o2 = AC.createOscillator(), g = AC.createGain(), f = AC.createBiquadFilter();
     o.type = 'sawtooth'; o2.type = 'sawtooth'; o.frequency.setValueAtTime(110, t); o.frequency.exponentialRampToValueAtTime(440, t + secs);
