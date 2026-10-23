@@ -1,7 +1,7 @@
 # Booking demands: every show is a puzzle
 
-Status: **gate 3 of 3** (CLAUDE.md rule 9d). The blueprint is written and Ryan has answered the questions (section 10).
-No code until he says go.
+Status: **approved** (CLAUDE.md rule 9d), 23 October: "Go, after the Director". Build it once the Director is built. Ryan has answered the questions (section 10).
+The Director (TASKS.md 0aa) comes first because it sets how many demands reach the desk.
 
 Ryan, 23 October: "forced finishes, matches, segments, by all the different relationships in the game would be a good hook
 in the game. everytime you go to book a new show, it's like a puzzle you have to manage because of weekly promises from

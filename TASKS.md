@@ -161,7 +161,7 @@ A system works when it produces correct numbers. It is addictive when it produce
 
 - [x] Gate 1: the blueprint.
 - [x] Gate 2: the questions, answered 23 October (blueprint section 10).
-- [ ] Gate 3: Ryan's go-ahead.
+- [x] Gate 3: Ryan's go-ahead, 23 October: "Go, after the Director". Build it once the Director (0ao move 1, 0aa) is built; the Director itself still needs its own questions and go-ahead.
 
 ### 0aa. The Director (Bill, 21 October: "I like this feature add it to the plan")
 
