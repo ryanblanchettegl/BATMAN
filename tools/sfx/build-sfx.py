@@ -55,6 +55,9 @@ def decode(path, start=None, length=None):
     return np.frombuffer(subprocess.run(cmd, capture_output=True, check=True).stdout, dtype=np.float32).copy()
 
 def loudness(x):
+    # the meter needs 0.4 seconds to read anything (a shorter clip reads as silence and was boosted into noise), so a
+    # short clip is measured repeated end to end, which reads the same loudness as the clip itself
+    if len(x) < 1.2 * SR: x = np.tile(x, int(np.ceil(1.2 * SR / max(1, len(x)))))
     with tempfile.NamedTemporaryFile(suffix='.wav') as f:
         encode_wav(x, f.name)
         err = subprocess.run(['ffmpeg', '-hide_banner', '-i', f.name, '-af', 'ebur128=framelog=quiet', '-f', 'null', '-'], capture_output=True, text=True).stderr
@@ -98,6 +101,7 @@ def main():
                 x = seamless(decode(p)); x *= 10 ** ((-23 - loudness(x)) / 20)
             else:
                 x = trim(decode(p)); x *= 0.89 / max(1e-6, np.abs(x).max())
+            if (np.abs(x) > 0.98).mean() > 0.005: raise SystemExit('%s comes out clipped: check its level' % sid)   # never ship noise
             x = np.clip(x, -0.98, 0.98)
             b = opus(x, {'crowd': '40k', 'voice': '32k'}.get(group, '64k')); total += len(b)
             out.append(base64.b64encode(b).decode())
