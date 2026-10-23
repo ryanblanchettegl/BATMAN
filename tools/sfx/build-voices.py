@@ -3,7 +3,8 @@
 the commentators' wah-wah talk. They are made with Piper, a free offline speech engine, and its LibriTTS-R voices
 (recordings under CC BY 4.0, credited in tools/sfx/CREDITS.md). The game cannot run Piper, and its lines are written
 while the show runs, so this renders banks ahead of time: every count word for a big house and a small hall, and a
-set of wah-wah phrases of different lengths for each commentator. tools/sfx/build-sfx.py puts them in the page.
+set of wah-wah phrases of different lengths for each commentator and, sharper and louder (Ryan's pick), for wrestlers
+on the microphone: a woman, a man and a big man. tools/sfx/build-sfx.py puts them in the page.
 
   python3 -m venv <dir> && <dir>/bin/pip install piper-tts
   (download en_US-libritts_r-medium.onnx and .onnx.json from huggingface.co/rhasspy/piper-voices into PIPER_DIR)
@@ -20,6 +21,7 @@ V = PiperVoice.load(os.path.join(PIPER, 'en_US-libritts_r-medium.onnx'))
 # speakers picked from a pitch survey of the 904: a lively mid voice for play-by-play, a low one for colour,
 # and a crowd pool of men and women
 PBP, COL = 102, 36
+WOMAN, MAN, BIG = 54, 456, 438
 MEN = [36, 438, 600, 132, 426, 564, 456, 816, 102, 270, 510, 390, 6, 12, 24, 42, 66, 78, 84, 96, 108, 114, 120, 126]
 WOMEN = [162, 408, 378, 150, 60, 54, 18, 30, 48, 72, 90, 138, 144, 168, 174, 180]
 
@@ -91,7 +93,8 @@ def babble(n, r, end):
     for i, w in enumerate(words): out += w + (', ' if i % 4 == 3 and i < len(words) - 1 else ' ')
     return out.strip() + end
 
-def wah(x):
+def wah(x, lo=380, hi=900, sharp=1.0):
+    """Ryan kept lo 380, hi 900 for the commentators and 800, 2800, sharpness 2.6 for promos (audition rounds 8 and 9)."""
     fr = int(0.02 * OSR); n = len(x) // fr
     env = np.array([np.sqrt((x[i * fr:(i + 1) * fr] ** 2).mean()) for i in range(n)])
     pitch = np.zeros(n)
@@ -105,8 +108,9 @@ def wah(x):
         if pitch[i] > 0: last = pitch[i]
         elif env[i] > 0.15 * env.max() and last: pitch[i] = last
     fp = np.repeat(pitch, fr); ep = np.convolve(np.repeat(env / env.max(), fr), np.ones(fr * 2) / (fr * 2), 'same')
+    ep = ep ** (1 / sharp)
     saw = (2 * (np.cumsum(fp / OSR) % 1) - 1) * (fp > 0); y = saw * ep
-    y = lowpass(y, 380) * (1 - ep) + lowpass(y, 900) * ep
+    y = lowpass(y, lo) * (1 - ep) + lowpass(y, hi) * ep
     return np.stack([y, y], 1).astype(np.float32)
 
 def main():
@@ -123,6 +127,12 @@ def main():
             x = resample(say(babble(n, r, '!' if role == 'pbp' and k % 3 == 0 else '.'), spk, noise=0.7), rate)
             write(wah(x), 'wah_%s_%02d' % (role, k))
         print('wah', role)
+    for role, spk, rate in (('woman', WOMAN, 1.0), ('man', MAN, 0.97), ('big', BIG, 0.88)):
+        r = random.Random(role)
+        for k, n in enumerate([3, 5, 7, 9, 12, 15, 18, 22, 26, 30]):
+            x = resample(say(babble(n, r, '!' if k % 2 else '.'), spk, noise=0.7), rate)
+            write(wah(x, 800, 2800, 2.6), 'mic_%s_%02d' % (role, k))
+        print('mic', role)
 
 if __name__ == '__main__':
     main()

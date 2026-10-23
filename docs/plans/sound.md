@@ -321,3 +321,13 @@ After the match comes more of the bank: different clicks and moments through the
 The steps: an audition round of the three ramble styles, voices for play-by-play, colour and a wrestler, and the
 crowd's counts ("ONE! TWO!" breaking off, "ONE! TWO! THREE!", "EIGHT! NINE! TEN!"); Ryan picks; then they go into
 the broadcast.
+
+### Picks and build (23 October)
+
+- **Kept:** the crowd shouting the count (round 7); wah-wah for the commentators (round 8: the Charlie Brown adults,
+  but chill); wah-wah for promos, the sharpest of three (round 9: "keep wah wah but it needs to be a slightly more
+  sharp louder direction for promos").
+- **Rejected:** the Animal Crossing, Banjo-Kazooie and Simlish styles, muffled speech through a wall, and the softer,
+  slower muffle.
+- **Built:** all three in the broadcast. Voices fit the length of each line and vary a little; the crowd dips under
+  them; a hero's promo line gets a cheer.

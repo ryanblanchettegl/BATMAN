@@ -268,7 +268,7 @@ export function Setup() {
 /* ---------- windows: help, options, the universe import report ---------- */
 function Help() {
   const [k, setK] = useState('job');
-  const T: [string, string][] = [['job', 'The job'], ['line', 'The bottom line'], ['book', 'Booking and sections'], ['try', 'Attempts and names'], ['world', 'Your world'], ['keys', 'Keys']];
+  const T: [string, string][] = [['job', 'The job'], ['line', 'The bottom line'], ['book', 'Booking and sections'], ['try', 'Attempts and names'], ['world', 'Your world'], ['keys', 'Keys'], ['credits', 'Credits']];
   return <Window title="Help" wide ok="Got it">
     <div class="glossx">
       <div class="gl-list" role="tablist" aria-label="Help topics">{T.map(x => <Btn kind="sm" key={x[0]} on={x[0] === k} t="help-tab" d={{ k: x[0] }} onClick={() => setK(x[0])}>{x[1]}</Btn>)}</div>
@@ -294,6 +294,11 @@ function Help() {
       {k === 'try' ? <>
     <p class="mt1"><b>Attempts.</b> Some actions may fail. Each one shows its chance, what helps and what hurts.</p>
     <p class="mt1"><b>Names.</b> Select any name or title to open a pop-up. Back steps out, Close shuts them all.</p>
+      </> : null}
+      {k === 'credits' ? <>
+    <p><b>Sound.</b> Crowd, bell and ring recordings from the Sonniss game audio bundles (Sonic Bat, 2496SoundEffects, Gamemaster Audio, Red Libraries) and the VSCO 2 Community Edition orchestral library by Versilian Studios.</p>
+    <p class="mt1"><b>Voices.</b> The commentators, the wrestlers on the microphone and the crowd's count are made from the LibriTTS-R voices (Koizumi and others, licensed under Creative Commons Attribution 4.0), rendered with the Piper speech engine.</p>
+    <p class="mt1"><b>Music.</b> Recordings by the Czech National Symphony Orchestra and the Musopen String Quartet for Musopen, Kimiko Ishizaka, Karine Gilanyan, Frank Levy, Shelley Katz, Paul Pitman and the United States Air Force Band. The Jukebox names who played each piece.</p>
       </> : null}
       {k === 'world' ? <>
     <p class="mt1"><b>World Editor.</b> On the title screen. Build your own world of companies, shows, belts and wrestlers, then play it or share it.</p>
