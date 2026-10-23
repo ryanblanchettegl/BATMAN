@@ -1,8 +1,9 @@
 # The commentators say the real lines: blueprint
 
-Status: **gate 3 of 3** (CLAUDE.md rule 9d). Ryan, 23 October: "wait we could have the commentator say the real
-commentary?" Asked how, he picked a neural voice inside the game, with wah-wah kept as a fallback. No code is written
-until he has read this, answered the questions and said go.
+Status: **shelved** (Ryan, 23 October). The audition (round 10: three commentary pairs, two promos and sixty hard
+names, all in real words) was heard, and Ryan's verdict was "I think wah-wah is better". The game keeps wah-wah for
+the commentators and the wrestlers (`docs/plans/sound.md`, section 16). Nothing below was built. The blueprint and the
+answers are kept in case real voices come back.
 
 ## 1. What we have and what changes
 
