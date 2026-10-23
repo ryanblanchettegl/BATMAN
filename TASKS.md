@@ -135,6 +135,26 @@ The next tasks, before anything else in this list. Each move is a new system, so
 - [ ] Move 3, three clocks: blueprint (`docs/plans/three-clocks.md`), question vault, go-ahead. The week's clock and its stamp, the month's (the big event, and the magazine of 0af), the era's verdict at the flagship.
 - [ ] Move 4, preview before consequence: blueprint (`docs/plans/preview.md`), question vault, go-ahead; or Ryan rules it polish (rule 9d), which skips the gates. It builds on the running-order rules (`src/92-shape.js`), the road agent's reads (`src/99-fog.js`) and the run sheet's flags (`E.cardFlags`).
 
+### 0ap. From working systems to addictive loops (Ryan, 23 October; the review, section 2)
+
+A system works when it produces correct numbers. It is addictive when it produces a question the player wants to answer next week. Next after 0ao. Each turns an existing system into a loop, so each gets a short blueprint and questions under rule 9d, unless Ryan rules it polish.
+
+| System | Works today by | Becomes a loop when it |
+| --- | --- | --- |
+| Living storylines | Tracking heat and freshness per feud | Shows the ending window opening and closing, so the player times the payoff like a wonder race. |
+| Relationship memory | Remembering every answer | Brings a remembered slight back at the worst moment: the star refused a title shot walks out during the flagship. |
+| The road and markets | Scaling each city's draw | Makes a cold city a goal: win it back three times and it becomes a home market with its own chant. |
+| Progression | Levels, points and perks | Turns a level-up into a booking problem: the student now outdraws the champion who trained them. |
+| Networks | Patience, taste and targets | Puts a renewal on a countdown the whole season builds toward. |
+| The press | Leaks and columns | Lets the player feed or starve a reporter, so tomorrow's headline is a lever, not weather. |
+
+- [ ] Living storylines: the ending window on the feud (`src/21-living.js`, `E.feudPlan`).
+- [ ] Relationship memory: remembered slights that come due on big nights (`src/66-relations.js`).
+- [ ] The road: a cold city won back three times becomes a home market with its own chant (`src/91-road.js`).
+- [ ] Progression: the student passing the teacher already reaches the desk once (`src/76-student.js`); make it a booking problem every time it matters.
+- [ ] Networks: the renewal countdown shown all season (`src/88-shows.js`, `src/89-networks.js`).
+- [ ] The press: feed or starve a reporter (`src/99-press.js`).
+
 ### 0aa. The Director (Bill, 21 October: "I like this feature add it to the plan")
 
 A pacing layer that decides when trouble reaches the desk: it reads how tense the company already is and chooses which of this week's possible events happen, and how big. The player picks a style (The Promoter, The Carny, The Purist). Plan: `docs/plans/director.md`.

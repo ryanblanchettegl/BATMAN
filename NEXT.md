@@ -2,7 +2,7 @@
 
 Work for Claude Code, in order. `TWEAKS.md` and `WISHLIST.md` are finished; this file is what comes after them. It turns the big tasks in `TASKS.md` into steps small enough to land one at a time. Read `CLAUDE.md` first, then the decisions table in `TASKS.md`.
 
-**23 October: the next thing is `TASKS.md` 0ao, the four moves that close the gap** (the Director runs the week, a promise ledger, three clocks with their ceremonies, preview before consequence). Each starts with rule 9d's blueprint, question vault and Ryan's go-ahead; no code before that.
+**23 October: the next thing is `TASKS.md` 0ao, the four moves that close the gap, then 0ap, working systems into loops** (the Director runs the week, a promise ledger, three clocks with their ceremonies, preview before consequence). Each starts with rule 9d's blueprint, question vault and Ryan's go-ahead; no code before that.
 
 **7 October: this list is not the next thing.** Ryan's main goal for the next session is the new art style. Start from `docs/plans/art-direction.md` (finish and publish version 0.38 first, as its last section says). Come back to this list after that.
 
