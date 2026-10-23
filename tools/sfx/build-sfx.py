@@ -40,10 +40,14 @@ for size in ('big', 'small'):
         BANK['cnt_%s_%s' % (size, w)] = ('crowd', [os.path.join(VOX, 'crowd_%s_%s.wav' % (size, w))], 'shot')
 # the office: piano figures (audition rounds 4 to 6; rendered by tools/sfx/build-piano.py), loudness set per figure
 PNO = os.path.join(SRC, 'keep', 'piano')
-for k, l in (('pn_small', -30), ('pn_big', -24), ('pn_pop', -26), ('pn_good', -22), ('pn_bad', -24), ('pn_week', -22),
+for k, l in (('pn_pop', -26), ('pn_good', -22), ('pn_bad', -24), ('pn_week', -22),
              ('pn_grade_a', -20), ('pn_grade_b', -21), ('pn_grade_c', -22), ('pn_grade_d', -23), ('pn_grade_f', -24),
              ('pn_feud', -20), ('pn_champ', -20), ('pn_star', -21)):
     BANK[k] = ('ui', [os.path.join(PNO, k + '.wav')], ('lufs', l))
+# button presses (Ryan, 23 October, audition round 13: "low and soft", in place of the piano notes): a soft low thump
+# made here in code, no recording. ('thump', pitch in Hz, how long it rings in seconds, peak)
+BANK['ui_tap'] = ('ui', [], ('thump', 120, 0.025, 0.35))
+BANK['ui_tap_big'] = ('ui', [], ('thump', 95, 0.035, 0.42))
 for v in ('wah_pbp', 'wah_col', 'mic_woman', 'mic_man', 'mic_big'):
     BANK[v] = ('voice', sorted(os.path.join(VOX, f) for f in os.listdir(VOX) if f.startswith(v + '_')), 'shot')
 
@@ -79,6 +83,15 @@ def seamless(x, fade=1.5):
     w = np.linspace(0, 1, n); body[:n] = body[:n] * np.sqrt(w) + tail * np.sqrt(1 - w)
     return body
 
+def thump(f0, t):
+    """A soft low thump: a sine that drops a little in pitch as it starts, dies away in `t` seconds, and has its first
+    four milliseconds rounded off so there is no sharp edge."""
+    n = int(0.2 * SR); k = np.arange(n) / SR
+    f = f0 * (1 + 0.3 * np.exp(-k / 0.01)); x = np.sin(2 * np.pi * np.cumsum(f) / SR) * np.exp(-k / t)
+    a = int(0.004 * SR); x[:a] *= np.sin(np.linspace(0, np.pi / 2, a)) ** 2
+    x = x[: int(min(n, 8 * t * SR))]; x[-200:] *= np.linspace(1, 0, 200)
+    return (x / np.abs(x).max()).astype(np.float32)
+
 def opus(x, br):
     with tempfile.NamedTemporaryFile(suffix='.ogg') as f:
         subprocess.run(['ffmpeg', '-v', 'error', '-y', '-f', 'f32le', '-ar', str(SR), '-ac', '1', '-i', '-', '-c:a', 'libopus', '-b:a', br, '-vbr', 'on', f.name],
@@ -89,6 +102,10 @@ def main():
     bank = {}; total = 0
     for sid, (group, takes, kind) in BANK.items():
         out = []
+        if isinstance(kind, tuple) and kind[0] == 'thump':
+            x = thump(kind[1], kind[2]) * kind[3]
+            out.append(base64.b64encode(opus(x, '64k')).decode()); bank[sid] = {'g': group, 'loop': False, 't': out}
+            print('%-10s %-6s made here' % (sid, group)); continue
         for t in takes:
             p = t
             if not os.path.exists(p): raise SystemExit('missing sound: ' + p)

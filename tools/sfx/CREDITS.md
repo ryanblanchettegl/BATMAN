@@ -28,7 +28,10 @@ commercial games without attribution. The game credits the makers anyway.
 
 ## The office
 
-Piano figures (`pn_*`: presses, pop-ups, good and bad news, the end of the week, the grade, a new champion, signing a
+Button presses (`ui_tap`, `ui_tap_big`): a soft low thump made in code by `tools/sfx/build-sfx.py`, no recording
+(Ryan, 23 October: "low and soft", in place of the piano notes).
+
+Piano figures (`pn_*`: pop-ups, good and bad news, the end of the week, the grade, a new champion, signing a
 top star, the end of a feud), rendered by `tools/sfx/build-piano.py` from the Salamander Grand Piano by Alexander
 Holm (CC BY 3.0: credited in Help, Credits), https://github.com/sfzinstruments/SalamanderGrandPiano.
 

@@ -343,7 +343,7 @@ function Options() {
   return <Window title="Options" ok="Done">
     <ul class="list">
       {SFX_ON && toggle('snd', 'Sound', 'Sound effects: the piano in the office, and the ring, the bell, the voices and the crowd on a show.')}
-      {SFX_ON && toggle('btn', 'Button sounds', 'A soft piano note when you press a button.')}
+      {SFX_ON && toggle('btn', 'Button sounds', 'A soft low tap when you press a button.')}
       {toggle('type', 'Typewriter text', 'Commentary types itself out during a show.')}
       {toggle('auto', 'Auto-play the show', 'The broadcast moves on by itself at a reading pace and stops for every call. P turns it on or off during a show.')}
       {toggle('letter', 'The owner’s letter', 'A new game opens on a letter from the owner. It can be read again from the desk.')}

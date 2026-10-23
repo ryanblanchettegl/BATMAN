@@ -332,3 +332,12 @@ the broadcast.
   slower muffle.
 - **Built:** all three in the broadcast. Voices fit the length of each line and vary a little; the crowd dips under
   them; a hero's promo line gets a cheer.
+
+
+## 17. Button presses: low, soft clicks (rounds 12 and 13)
+
+Ryan, 23 October: "i want low clicks for the ui instead of piano notes", then "these clicks have to be low and soft".
+Round 12 (six clicks from Kenney's interface sounds and code) was too sharp. Round 13 kept one: a soft low thump made
+in code (a sine at 120 Hz that drops a little in pitch as it starts, gone in about a fifth of a second, its start rounded
+off). A big action (a green button, the SPACE key) gets the same at 95 Hz. The piano stays for pop-ups, news, the week,
+the grade, champions and signings. Built by `tools/sfx/build-sfx.py` as `ui_tap` and `ui_tap_big`.
