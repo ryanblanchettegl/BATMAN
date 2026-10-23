@@ -23,6 +23,7 @@ Two more lists sit beside this one, both finished:
 | Topic | Decision |
 | --- | --- |
 | The match screen, 22 Oct | Fewer kick-outs. When there is no match picture for the moment, the picture cuts to the commentators. The animation never loops while the commentary catches up; it flows. Build: an instant replay of the finish, a big referee count on near falls, paper-flip cuts between pictures, a finisher close-up with the move's name, cinema mode (the picture fills the screen), the winner celebrating after the bell, big moments for each match rule (ladder, cage, tables), run-ins drawn as their own pictures. The night's highlights go on After the show. The feed is livelier and each poster has a personality of their own; the company's sign-off post comes once, after the main event, not after every match. |
+| External assets, 23 Oct | A new rule: the game can have external assets (recorded sound effects, music, images), shipped with the game and free to use commercially, each credited. It replaces "zero external assets" (CLAUDE.md rule 2). |
 | Cancelling a show, 22 Oct | The network can cancel your weekly show, but you cannot quit one yourself: you play out the network contract. |
 | The assistant, 22 Oct | The assistant leaves Career and gets its own window on the desk: tips, and what it is booking for the house shows. A placeholder for now, built out later. |
 | Loading screen, 22 Oct | No loading screen. The game opens straight on the title screen. |
