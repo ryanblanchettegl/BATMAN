@@ -9,7 +9,7 @@
       runs out), the tension under a near fall, the count, the pop for a new champion.
    4. The crowd: a murmur for the whole broadcast that follows the crowd meter, with pops, an "ooh" and groans. */
 import { G, pref } from '../store';
-import { wake, play, loop, Loop, duck, riser, levels, ready, load } from './engine';
+import { wake, play, loop, Loop, duck, riser, levels, ready, load, SFX_ON } from './engine';
 
 /* ---------- 1. the interface ---------- */
 let lastPress = 0, lastHover: Element | null = null, lastKey = 0;
@@ -108,7 +108,7 @@ export const big = {
 let bed: Loop | null = null, hot: Loop | null = null, heat = 50, wanted = false;
 export const crowd = {
   /** The broadcast is on screen: the murmur starts (or waits for the recordings to be ready). */
-  start() { wanted = true; if (!pref.snd) return; if (!ready()) { load().then(() => { if (wanted && !bed) crowd.start(); }); return; } if (bed) return; bed = loop('crowd_bed'); hot = loop('crowd_hot'); crowd.level(heat); },
+  start() { wanted = true; if (!SFX_ON || !pref.snd) return; if (!ready()) { load().then(() => { if (wanted && !bed) crowd.start(); }); return; } if (bed) return; bed = loop('crowd_bed'); hot = loop('crowd_hot'); crowd.level(heat); },
   stop() { wanted = false; if (bed) bed.stop(1.5); if (hot) hot.stop(1.5); bed = hot = null; },
   /** The crowd meter (0 to 100): a cold building hums, a hot one claps and shouts. */
   level(v: number) {

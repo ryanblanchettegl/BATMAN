@@ -1,7 +1,7 @@
 /* Sound: the front the rest of the interface calls. The sounds are real recordings played by the engine in
    ./audio/engine.ts and chosen by ./audio/cues.ts (Ryan, 23 October). Nothing plays until the first press or key. */
 import { hooks } from './store';
-import { play, wake } from './audio/engine';
+import { play, wake, SFX_ON } from './audio/engine';
 import { big, crowd, ring, uiSetup } from './audio/cues';
 
 export const SFX = {
@@ -21,4 +21,4 @@ export const SFX = {
   fail() { play('ui_err', { gain: 0.6, gap: 0.15 }); }
 };
 hooks.sound = k => { const f = (SFX as any)[k]; if (f) f(); };
-uiSetup();
+if (SFX_ON) uiSetup();   // off for now: no listeners, nothing plays
