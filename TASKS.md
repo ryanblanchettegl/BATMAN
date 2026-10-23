@@ -25,6 +25,7 @@ Two more lists sit beside this one, both finished:
 | The match screen, 22 Oct | Fewer kick-outs. When there is no match picture for the moment, the picture cuts to the commentators. The animation never loops while the commentary catches up; it flows. Build: an instant replay of the finish, a big referee count on near falls, paper-flip cuts between pictures, a finisher close-up with the move's name, cinema mode (the picture fills the screen), the winner celebrating after the bell, big moments for each match rule (ladder, cage, tables), run-ins drawn as their own pictures. The night's highlights go on After the show. The feed is livelier and each poster has a personality of their own; the company's sign-off post comes once, after the main event, not after every match. |
 | Blueprint, questions, approval, 23 Oct | A core rule for any new game mode, system or major feature: first a complete blueprint (states, data, screens, money and balance), then a list of probing questions for Ryan, and no code until he has read both, answered and said go ahead (CLAUDE.md rule 9d). |
 | Sound effects, 23 Oct | "It sounds terrible." All sound effects are off; the game is quiet except the soundtrack. The redo does not need to match the papercraft look: it should sit well with the classical music and feel good. It goes through rule 9d, and every sound is approved by ear. The office sounds are piano, not harp ("harp is wrong piano is right"). The blueprint and every pick so far are in `docs/plans/sound.md`. The broadcast sounds are in the game (step 2); the office piano is next; boos and the tweener reaction wait on a source. |
+| The rule changes, 23 Oct | From the review's table: approved plans run unattended (9a); a nightly and a milestone build on the live page; the desktop build first, the page an export (rule 0); tests are the gate (9f); a system budget (9g); the hour of play (9h); a short CLAUDE.md core with area notes and skills (9i); an original world leads. |
 | The standing checklist, 23 Oct | The engineering plugin (code-review, debug, testing-strategy, tech-debt, architecture), the design plugin (design-critique, accessibility-review, ux-copy, research-synthesis), simplify and security-review are used at fixed moments (CLAUDE.md rule 9e). |
 | Ask, do not show, 23 Oct | "I like how civ 6 does this." The desk raises one decision at a time; the numbers live behind a "why?" that opens them. Every new system and screen follows it. |
 | The lead world, 23 Oct | "orginal world will lead": an original world leads the game, not the parody world, which becomes optional. Whether the parody world ships as an optional pack is still open. The game's default world has not been switched yet. The review that raised it: `docs/plans/WrestleCraft-review-and-long-term-roadmap.pdf`. |
@@ -206,6 +207,11 @@ The diorama renderer (`app/src/kit/paper.ts`, `puppet.ts`, `scene.ts`, `diorama3
 - [ ] Scale is density: a hall show has a few dozen cut-outs and one light; the flagship thousands of instanced cut-outs, a lighting rig, pyro and a crane shot.
 - [ ] Choreography with structure: feeling-out, the heat, the hope spot, the comeback, false finishes, the finish; a kicked-out protected finisher gets a bigger camera move.
 - [ ] Interface motion: windows land with a slight rotation and settle, the grade arrives as a rubber stamp, bad news tears, money counts up like an odometer; every motion 120 to 250 ms and never blocks input.
+
+### 0av. A short CLAUDE.md core (rule 9i)
+
+- [ ] Split `CLAUDE.md` into a short core (rules, commands, where things are) and linked area notes in `docs/notes/`.
+- [ ] Recurring procedures as skills in `.claude/skills/`: `/blueprint`, `/vault`, `/audition`, `/publish-live`, `/balance`.
 
 ### 0aa. The Director (Bill, 21 October: "I like this feature add it to the plan")
 
