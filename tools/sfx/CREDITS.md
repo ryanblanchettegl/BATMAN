@@ -26,10 +26,11 @@ commercial games without attribution. The game credits the makers anyway.
 | The commentators' wah-wah talk (`wah_pbp`, `wah_col`) | Made-up words spoken by two LibriTTS-R voices, turned into a soft muted horn that follows their rhythm and pitch | as above |
 | Wrestlers on the microphone (`mic_woman`, `mic_man`, `mic_big`) | The same, sharper and louder (Ryan's pick) | as above |
 
-## The office (next step)
+## The office
 
-Piano figures played on the Salamander Grand Piano by Alexander Holm (CC BY 3.0: credited in the game's credits),
-https://github.com/sfzinstruments/SalamanderGrandPiano.
+Piano figures (`pn_*`: presses, pop-ups, good and bad news, the end of the week, the grade, a new champion, signing a
+top star, the end of a feud), rendered by `tools/sfx/build-piano.py` from the Salamander Grand Piano by Alexander
+Holm (CC BY 3.0: credited in Help, Credits), https://github.com/sfzinstruments/SalamanderGrandPiano.
 
 ## Still to find
 

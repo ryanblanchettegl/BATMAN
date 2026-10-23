@@ -263,7 +263,8 @@ Each step is shown to Ryan before the next (rule 9a).
 ## 15. Built
 
 - **Step 2, the broadcast (23 October):** in the game. `app/src/audio/cues.ts`, `tools/sfx/build-sfx.py`.
-- **Step 4, the office piano:** next.
+- **Step 4, the office piano (23 October):** in the game. Next (Ryan, 23 October): the commentators saying the real
+  lines, a neural voice in the game, with wah-wah kept as a fallback; it gets its own blueprint and questions.
 
 ## 16. Every moment of a match, and voices (addendum, 23 October)
 

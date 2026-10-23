@@ -297,6 +297,7 @@ function Help() {
       </> : null}
       {k === 'credits' ? <>
     <p><b>Sound.</b> Crowd, bell and ring recordings from the Sonniss game audio bundles (Sonic Bat, 2496SoundEffects, Gamemaster Audio, Red Libraries) and the VSCO 2 Community Edition orchestral library by Versilian Studios.</p>
+    <p class="mt1"><b>Piano.</b> The office's piano is the Salamander Grand Piano by Alexander Holm, licensed under Creative Commons Attribution 3.0.</p>
     <p class="mt1"><b>Voices.</b> The commentators, the wrestlers on the microphone and the crowd's count are made from the LibriTTS-R voices (Koizumi and others, licensed under Creative Commons Attribution 4.0), rendered with the Piper speech engine.</p>
     <p class="mt1"><b>Music.</b> Recordings by the Czech National Symphony Orchestra and the Musopen String Quartet for Musopen, Kimiko Ishizaka, Karine Gilanyan, Frank Levy, Shelley Katz, Paul Pitman and the United States Air Force Band. The Jukebox names who played each piece.</p>
       </> : null}
@@ -334,19 +335,20 @@ function SaveText() {
 }
 function Options() {
   const S = G.S;
-  const toggle = (k: 'snd' | 'type' | 'auto' | 'crt' | 'boot' | 'letter', n: string, d: string) => <li><span><b>{n}</b><br /><span class="muted">{d}</span></span>
+  const toggle = (k: 'snd' | 'type' | 'auto' | 'crt' | 'boot' | 'letter' | 'btn', n: string, d: string) => <li><span><b>{n}</b><br /><span class="muted">{d}</span></span>
     <Btn kind="sm" on={!!pref[k]} t="pref" d={{ k }} onClick={() => { pref[k] = !pref[k]; savePrefs(); if (k === 'snd') prefsChanged(); if (k === 'snd' && pref.snd) SFX.ach(); redraw(); }}>{pref[k] ? 'On' : 'Off'}</Btn></li>;
   const choice = (k: 'screen' | 'zoom' | 'speed' | 'pace' | 'motion' | 'fxvol' | 'crowd', n: string, d: string, opts: [string | number, string][]) => <li class="col"><span><b>{n}</b><br /><span class="muted">{d}</span></span>
     <span class="row">{opts.map(o => <Btn kind="sm" on={String(pref[k]) === String(o[0])} t="prefset" d={{ k, v: o[0] }} onClick={() => { (pref as any)[k] = o[0]; savePrefs(); if (k === 'fxvol' || k === 'crowd') prefsChanged(); redraw(); }}>{o[1]}</Btn>)}</span></li>;
   const fs = () => { try { if (document.fullscreenElement) document.exitFullscreen(); else document.documentElement.requestFullscreen().catch(() => {}); } catch (e) { /* not available here */ } };
   return <Window title="Options" ok="Done">
     <ul class="list">
-      {SFX_ON && toggle('snd', 'Sound', 'Sound effects: the buttons, the ring, the bell and the crowd.')}
+      {SFX_ON && toggle('snd', 'Sound', 'Sound effects: the piano in the office, and the ring, the bell, the voices and the crowd on a show.')}
+      {SFX_ON && toggle('btn', 'Button sounds', 'A soft piano note when you press a button.')}
       {toggle('type', 'Typewriter text', 'Commentary types itself out during a show.')}
       {toggle('auto', 'Auto-play the show', 'The broadcast moves on by itself at a reading pace and stops for every call. P turns it on or off during a show.')}
       {toggle('letter', 'The owner’s letter', 'A new game opens on a letter from the owner. It can be read again from the desk.')}
       {choice('screen', 'Screen', 'Auto picks from the device. TV is for the couch: larger text, edge margins, and a remote or gamepad moves the highlight.', [['auto', 'Auto (' + ({ desk: 'desk', tv: 'TV' } as any)[autoScreen()] + ')'], ['desk', 'Desk'], ['tv', 'TV']])}
-      {SFX_ON && choice('fxvol', 'Effects volume', 'The buttons, the ring and the bell.', [[0.4, 'Low'], [1, 'Normal'], [1.8, 'High']])}
+      {SFX_ON && choice('fxvol', 'Effects volume', 'The piano, the ring, the bell and the voices.', [[0.4, 'Low'], [1, 'Normal'], [1.8, 'High']])}
       {SFX_ON && choice('crowd', 'Crowd volume', 'The crowd during a show: the murmur, the pops and the groans.', [[0, 'Off'], [0.5, 'Low'], [1, 'Normal'], [1.6, 'High']])}
       {(window as any).EWF_MUSIC_VOL ? <li class="col"><span><b>Music volume</b><br /><span class="muted">Quiet background music by default. The Jukebox on the Music button has the rest.</span></span>
         <span class="row">{[[0.15, 'Low'], [0.4, 'Medium'], [1, 'Loud']].map(o => <Btn kind="sm" on={Math.abs((window as any).EWF_MUSIC_VOL.vol() - (o[0] as number)) < 0.01} t="musvol" d={{ v: o[0] }} onClick={() => { (window as any).EWF_MUSIC_VOL.setVol(o[0]); redraw(); }}>{o[1]}</Btn>)}</span></li> : null}
