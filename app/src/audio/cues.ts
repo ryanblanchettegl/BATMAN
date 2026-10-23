@@ -27,12 +27,13 @@ import { play, loop, Loop, levels, ready, load, speak, hush, SFX_ON } from './en
 /* ---------- the office: piano ---------- */
 const PRESSABLE = 'button, select, [role="button"], input[type="checkbox"], input[type="radio"], summary';
 let lastPress = 0, lastKey = 0;
-/** A press: a big action (a green button, the SPACE key) gets the soft sparkle, anything else the soft high note. */
+/** A press: a soft low thump (Ryan, 23 October: "low and soft", in place of the piano notes). A big action (a green
+    button, the SPACE key) gets a slightly deeper one. */
 function pressSound(el: Element) {
   if (pref.btn === false) return;   // Options: Button sounds off
   const c = typeof (el as any).className === 'string' ? (el as any).className : '';
-  if (/\bgo\b/.test(c) || el.getAttribute('data-t') === 'advance') play('pn_big', { gain: 0.9, gap: 0.06, vary: 0.02 });
-  else play('pn_small', { gain: 0.8, gap: 0.05, vary: 0.02 });
+  if (/\bgo\b/.test(c) || el.getAttribute('data-t') === 'advance') play('ui_tap_big', { gain: 1, gap: 0.06, vary: 0.03 });
+  else play('ui_tap', { gain: 1, gap: 0.05, vary: 0.03 });
 }
 function pressable(t: EventTarget | null): Element | null { const e = t as Element; const el = e && e.closest ? e.closest(PRESSABLE) : null; return el && !(el as HTMLButtonElement).disabled ? el : null; }
 export function uiSetup() {

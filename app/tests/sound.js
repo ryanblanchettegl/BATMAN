@@ -1,5 +1,5 @@
 /* Sound effects (docs/plans/sound.md): only sounds Ryan picked by ear. The broadcast and the office piano: the
-   recordings are in the page, a press plays a piano note (not with Button sounds off), a show on the air rings the bell and brings up the
+   recordings are in the page, a press plays a soft low thump (not with Button sounds off), a show on the air rings the bell and brings up the
    crowd, the ring is heard, nothing plays with Sound off, and there are no errors.
    Run: NODE_PATH=<dir containing playwright> node app/tests/sound.js */
 const { open, go, redraw } = require('./helper');
@@ -12,12 +12,12 @@ async function waitFor(fn, ms) { const t = Date.now(); while (Date.now() - t < m
 (async () => {
   const { browser, page, errs } = await open({ promo: 'pdw', auto: false, prefs: { snd: true } });
   try {
-    ok('the picked recordings are in the page', await page.evaluate(() => !!window.EWF_SFX_DATA && ['pn_small', 'pn_big', 'pn_pop', 'pn_good', 'pn_bad', 'pn_week', 'pn_grade_a', 'pn_grade_f', 'pn_feud', 'pn_champ', 'pn_star', 'bell', 'bed', 'pop', 'gasp', 'hit', 'slam', 'cnt_big_one', 'cnt_small_thr', 'wah_pbp', 'wah_col', 'mic_man', 'mic_woman', 'mic_big'].every(k => window.EWF_SFX_DATA[k])));
+    ok('the picked recordings are in the page', await page.evaluate(() => !!window.EWF_SFX_DATA && ['ui_tap', 'ui_tap_big', 'pn_pop', 'pn_good', 'pn_bad', 'pn_week', 'pn_grade_a', 'pn_grade_f', 'pn_feud', 'pn_champ', 'pn_star', 'bell', 'bed', 'pop', 'gasp', 'hit', 'slam', 'cnt_big_one', 'cnt_small_thr', 'wah_pbp', 'wah_col', 'mic_man', 'mic_woman', 'mic_big'].every(k => window.EWF_SFX_DATA[k])));
     await page.mouse.click(5, 5);
     ok('the first press wakes the sound and decodes the recordings', await waitFor(() => page.evaluate(() => window.EWF_SOUND.ready()), 15000));
     await go(page, 'booking');
     await page.click('[data-t="suggest"]'); await page.waitForTimeout(150);
-    ok('a press plays a piano note', (await played(page)).some(x => /^pn_(small|big)$/.test(x)), (await played(page)).join(' '));
+    ok('a press plays the soft low thump', (await played(page)).some(x => /^ui_tap(_big)?$/.test(x)), (await played(page)).join(' '));
     // Button sounds off: presses are silent
     await page.evaluate(() => { window.EWF_DEBUG.pref.btn = false; });
     const n0 = (await played(page)).length; await page.click('[data-t="suggest"]'); await page.waitForTimeout(150);
@@ -46,7 +46,7 @@ async function waitFor(fn, ms) { const t = Date.now(); while (Date.now() - t < m
     const heard = [...new Set((await played(page)).filter(x => /^(hit|slam|pop|gasp|cnt_.*)$/.test(x)))];
     ok('the ring and the crowd are heard', heard.length >= 2, heard.join(' '));
     ok('the commentators talk', (await played(page)).some(x => /^wah_(pbp|col)$/.test(x)));
-    ok('every sound played is one Ryan picked', (await played(page)).every(x => /^(loop:)?(bell|bed|pop|gasp|hit|slam|cnt_(big|small)_(one|two|three|thr|eight|nine|ten)|wah_pbp|wah_col|mic_(man|woman|big)|pn_[a-z_]+)$/.test(x)), [...new Set(await played(page))].join(' '));
+    ok('every sound played is one Ryan picked', (await played(page)).every(x => /^(loop:)?(bell|bed|pop|gasp|hit|slam|cnt_(big|small)_(one|two|three|thr|eight|nine|ten)|wah_pbp|wah_col|mic_(man|woman|big)|ui_tap(_big)?|pn_[a-z_]+)$/.test(x)), [...new Set(await played(page))].join(' '));
     // the show goes off the air: After the show plays the grade's sting
     ok('After the show plays the grade on the piano', (await played(page)).some(x => /^pn_grade_[abcdf]$/.test(x)), [...new Set(await played(page))].filter(x => /^pn_/.test(x)).join(' '));
     ok('no group ever holds more voices than its limit', await page.evaluate(() => { const v = window.EWF_SOUND.voices(); return v.ui <= 4 && v.ring <= 6 && v.big <= 3 && v.crowd <= 8 && v.voice <= 2; }));
