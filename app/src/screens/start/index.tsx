@@ -11,6 +11,7 @@ import { Btn, Panel, Head, Sel, Field, TextBox, Window, Logo, Data, dataAttrs } 
 import { MusicBtn } from '../../shell/Frame';
 import { ModelCard } from '../../shared/model';
 import { SFX } from '../../sfx';
+import { prefsChanged } from '../../audio/cues';
 
 /* ---------- the list menus of the start screens ---------- */
 interface MenuItem { t: string; d?: Data; cls?: string; label: ComponentChildren; pick: () => void }
@@ -328,18 +329,19 @@ function SaveText() {
 function Options() {
   const S = G.S;
   const toggle = (k: 'snd' | 'type' | 'auto' | 'crt' | 'boot' | 'letter', n: string, d: string) => <li><span><b>{n}</b><br /><span class="muted">{d}</span></span>
-    <Btn kind="sm" on={!!pref[k]} t="pref" d={{ k }} onClick={() => { pref[k] = !pref[k]; savePrefs(); if (k === 'snd' && pref.snd) SFX.ach(); redraw(); }}>{pref[k] ? 'On' : 'Off'}</Btn></li>;
-  const choice = (k: 'screen' | 'zoom' | 'speed' | 'pace' | 'motion' | 'fxvol', n: string, d: string, opts: [string | number, string][]) => <li class="col"><span><b>{n}</b><br /><span class="muted">{d}</span></span>
-    <span class="row">{opts.map(o => <Btn kind="sm" on={String(pref[k]) === String(o[0])} t="prefset" d={{ k, v: o[0] }} onClick={() => { (pref as any)[k] = o[0]; savePrefs(); redraw(); }}>{o[1]}</Btn>)}</span></li>;
+    <Btn kind="sm" on={!!pref[k]} t="pref" d={{ k }} onClick={() => { pref[k] = !pref[k]; savePrefs(); if (k === 'snd') prefsChanged(); if (k === 'snd' && pref.snd) SFX.ach(); redraw(); }}>{pref[k] ? 'On' : 'Off'}</Btn></li>;
+  const choice = (k: 'screen' | 'zoom' | 'speed' | 'pace' | 'motion' | 'fxvol' | 'crowd', n: string, d: string, opts: [string | number, string][]) => <li class="col"><span><b>{n}</b><br /><span class="muted">{d}</span></span>
+    <span class="row">{opts.map(o => <Btn kind="sm" on={String(pref[k]) === String(o[0])} t="prefset" d={{ k, v: o[0] }} onClick={() => { (pref as any)[k] = o[0]; savePrefs(); if (k === 'fxvol' || k === 'crowd') prefsChanged(); redraw(); }}>{o[1]}</Btn>)}</span></li>;
   const fs = () => { try { if (document.fullscreenElement) document.exitFullscreen(); else document.documentElement.requestFullscreen().catch(() => {}); } catch (e) { /* not available here */ } };
   return <Window title="Options" ok="Done">
     <ul class="list">
-      {toggle('snd', 'Sound', 'Beeps, bells and fanfares.')}
+      {toggle('snd', 'Sound', 'Sound effects: the buttons, the ring, the bell and the crowd.')}
       {toggle('type', 'Typewriter text', 'Commentary types itself out during a show.')}
       {toggle('auto', 'Auto-play the show', 'The broadcast moves on by itself at a reading pace and stops for every call. P turns it on or off during a show.')}
       {toggle('letter', 'The owner’s letter', 'A new game opens on a letter from the owner. It can be read again from the desk.')}
       {choice('screen', 'Screen', 'Auto picks from the device. TV is for the couch: larger text, edge margins, and a remote or gamepad moves the highlight.', [['auto', 'Auto (' + ({ desk: 'desk', tv: 'TV' } as any)[autoScreen()] + ')'], ['desk', 'Desk'], ['tv', 'TV']])}
-      {choice('fxvol', 'Effects volume', 'Bells, beeps and the crowd.', [[0.4, 'Low'], [1, 'Normal'], [1.8, 'High']])}
+      {choice('fxvol', 'Effects volume', 'The buttons, the ring and the bell.', [[0.4, 'Low'], [1, 'Normal'], [1.8, 'High']])}
+      {choice('crowd', 'Crowd volume', 'The crowd during a show: the murmur, the pops and the groans.', [[0, 'Off'], [0.5, 'Low'], [1, 'Normal'], [1.6, 'High']])}
       {(window as any).EWF_MUSIC_VOL ? <li class="col"><span><b>Music volume</b><br /><span class="muted">Quiet background music by default. The Jukebox on the Music button has the rest.</span></span>
         <span class="row">{[[0.15, 'Low'], [0.4, 'Medium'], [1, 'Loud']].map(o => <Btn kind="sm" on={Math.abs((window as any).EWF_MUSIC_VOL.vol() - (o[0] as number)) < 0.01} t="musvol" d={{ v: o[0] }} onClick={() => { (window as any).EWF_MUSIC_VOL.setVol(o[0]); redraw(); }}>{o[1]}</Btn>)}</span></li> : null}
       {choice('pace', 'Auto-play pace', 'Full shows every line. Quick hurries the routine lines and keeps the big moments. Results goes straight to each result. Every pace stops for your calls.', [['full', 'Full'], ['quick', 'Quick'], ['results', 'Results']])}

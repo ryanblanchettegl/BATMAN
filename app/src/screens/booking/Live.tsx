@@ -11,6 +11,7 @@ import { useEffect, useLayoutEffect, useState } from 'preact/hooks';
 import { E } from '../../engine';
 import { G, ui, me, pref, savePrefs, redraw, reduceMotion } from '../../store';
 import { ScenePlayer } from '../../kit/sceneplayer';
+import { sceneKey, crowd as crowdSound } from '../../audio/cues';
 import { scenesFor, allScenes, copy, Scene, dressEntrance } from '../../kit/scene';
 import { finScene, threeMoves } from '../../kit/caw';
 import { recipeOf, Recipe, commentator } from '../../kit/puppet';
@@ -231,6 +232,9 @@ function Avatar(p: { x: any }) {
 /** The right side of the broadcast: what people are posting as the show goes, and how loud the building is. */
 function LiveFeed(p: { r: any; si: number; b: number; info: any }) {
   const S = G.S, F = E.liveFeed(S, p.r, p.si, p.b), v = F.crowd.v, n = 16, on = Math.round(v / 100 * n);
+  // the crowd you hear follows the crowd meter, for as long as the broadcast is on screen (src/audio/cues.ts)
+  useEffect(() => { crowdSound.start(); return () => crowdSound.stop(); }, []);
+  useEffect(() => { crowdSound.level(v); }, [v]);
   const P = S.promos[S.player], tag = '#' + String(p.r.name || '').replace(/[^A-Za-z0-9]/g, '');
   return <aside class="lv-side">
     <section class="wn fdwin" aria-label="The feed"><header class="ttl"><span aria-hidden="true" /><h2>Ringside</h2><span>{tag}</span></header>
@@ -419,7 +423,7 @@ export function Live(p: { r: any }) {
     <Night rows={rows} at={post ? ev.si : L.s} done={done || !!post} wait={ev && !post ? info.step : -1} call={!!ev} info={info} />
     <div class="lv-body">
       <div class="lv-main">
-        {pk ? <div class="tvframe" data-t="tv"><ScenePlayer key="scene" sc={pk.sc} cast={pk.cast} play={pk.play} label={pk.label} still={reduceMotion()} fill /><div class="chyron">{head}</div><span class="bug" aria-hidden="true"><Logo of={S.promos[S.player]} size="chip" /><i class="dot" />LIVE</span>{done ? <div class="lv-res" data-t="live-res" role="dialog" aria-label="The result"><Result s={s} best={bestSoFar(r, s)} fx={3} /></div> : <Captions key={L.s} r={r} s={s} at={L.b} done={done} />}</div> : head}
+        {pk ? <div class="tvframe" data-t="tv"><ScenePlayer key="scene" sc={pk.sc} cast={pk.cast} play={pk.play} label={pk.label} still={reduceMotion()} fill onKey={sceneKey} /><div class="chyron">{head}</div><span class="bug" aria-hidden="true"><Logo of={S.promos[S.player]} size="chip" /><i class="dot" />LIVE</span>{done ? <div class="lv-res" data-t="live-res" role="dialog" aria-label="The result"><Result s={s} best={bestSoFar(r, s)} fx={3} /></div> : <Captions key={L.s} r={r} s={s} at={L.b} done={done} />}</div> : head}
         {pk ? null
           : <div class={'lv-log' + (state === 'title' || state === 'signoff' ? ' mid' : '')}><div class="lv-lines">{log}</div></div>}
         {box}
