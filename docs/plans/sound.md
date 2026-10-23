@@ -45,9 +45,9 @@ Each moment has a tier: **1** must have, **2** good to have, **3** probably neve
 
 | Moment | Tier | Idea |
 | --- | --- | --- |
-| Pressing a big action (Book the show, Run show, Sign, End week) | 1 | A plucked or struck note in the music's key |
+| Pressing a big action (Book the show, Run show, Sign, End week) | 1 | A clear harp pluck |
 | Opening and closing a pop-up | 2 | A soft page turn or paper slide, very low |
-| A good result (signed, deal made) | 1 | Two notes rising, in key (harp or celesta) |
+| A good result (signed, deal made) | 1 | Two harp notes rising |
 | A refusal or a problem | 1 | One low, soft note; never a buzzer |
 | Something new needs you (a matter on the desk, a call) | 1 | A single chime, the kind that makes you look up |
 | A week ends | 2 | A short rising figure, the page turns on the week |
@@ -88,8 +88,8 @@ Feels like a film score. Risk: the broadcast loses the feel of a live show.
 **B. All real.** Real arena, real ring, real bell, and real-world desk sounds (paper, a pen, a stapler). Feels like
 a documentary. Risk: real-world sounds clash with a symphony, which is what went wrong last time.
 
-**C. Both, in their places (recommended).** The office and menus are musical and in key (A). The broadcast is a real
-arena mixed like television (B), and the music steps back while the show is on the air. Each world sounds right in
+**C. Both, in their places (recommended).** The office and menus are musical, in harp (A). The broadcast is a real
+arena mixed like television (B), with the music playing as normal (Ryan's pick). Each world sounds right in
 its own place, and the switch between them marks going on the air.
 
 ## 5. How it moves (the states)
