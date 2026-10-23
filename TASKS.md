@@ -180,6 +180,13 @@ Every company's hardcore matches and overwork feed one shared meter, like Civili
 - [ ] Gate 2: the questions, one at a time.
 - [ ] Gate 3: Ryan's go-ahead.
 
+### 0at. Backstage decisions on the desk (Ryan, 23 October: "Backstage decisions need to move to the scrolling menu on the main desk screen too. thats a task")
+
+The decisions that wait for the booker backstage (requests at your door, people who need you tonight, matters answered there) also appear in the desk's scrolling list, so they can be answered from the desk, one at a time ("ask, do not show"). Backstage keeps them too.
+
+- [ ] Backstage decisions listed in the desk's scrolling list, worst first, each answered in its pop-up without leaving the desk.
+- [ ] The desk still fits one screen at 1080p (`app/tests/desk.js`), and `app/tests/backstage.js` still passes.
+
 ### 0aa. The Director (Bill, 21 October: "I like this feature add it to the plan")
 
 A pacing layer that decides when trouble reaches the desk: it reads how tense the company already is and chooses which of this week's possible events happen, and how big. The player picks a style (The Promoter, The Carny, The Purist). Plan: `docs/plans/director.md`.
