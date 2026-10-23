@@ -1,26 +1,36 @@
 # Sound effects: sources and credits
 
-The game's sound effects are real recordings (Ryan, 23 October 2026: external assets are allowed). Every one is free to
-use in a commercial game. `tools/sfx/build-sfx.py` trims them, evens their levels and writes them into the page
-(`app/addons/sfx-bank.js`); the code that plays them is `app/src/audio/`.
+Every sound in the game was picked by Ryan, by ear, on the audition page (23 October 2026; `docs/plans/sound.md`,
+section 14). Each is free to use in a commercial game. `tools/sfx/build-sfx.py` trims them, evens their levels and
+writes them into the page (`app/addons/sfx-bank.js`); the code that plays them is `app/src/audio/`.
 
-| Sounds in the game | Recording | Made by | Licence | Source |
+## The broadcast
+
+| In the game | Recording | Made by | Licence | Source |
 | --- | --- | --- | --- | --- |
-| Button presses (`ui_press`), pointing at something (`ui_hover`) | `click1` to `click4`, `rollover1` to `rollover3` from UI Audio | Kenney | CC0 | https://kenney.nl/assets/ui-audio |
-| Card set down for a big button (`ui_go`), paper turned when a pop-up opens (`ui_open`) and closes (`ui_close`), cloth for a grapple (`grab`) | `bookPlace`, `bookFlip`, `bookClose`, `bookOpen`, `cloth` from RPG Audio | Kenney | CC0 | https://kenney.nl/assets/rpg-audio |
-| Switches, a good result, a refused one, the typing tick, a call on the headset, a list choice (`ui_toggle`, `ui_ok`, `ui_err`, `ui_tick`, `ui_call`, `ui_scroll`) | `toggle`, `confirmation`, `error`, `tick`, `question`, `scroll` from Interface Sounds | Kenney | CC0 | https://kenney.nl/assets/interface-sounds |
-| Strikes (`hit`, `hit_heavy`), a body on the mat (`body`), the boards under it (`boards`), the referee's hand (`mat`), the turnbuckle (`steel`), footsteps (`step`), the ring bell (`bell`, raised in pitch) | `impactPunch`, `impactSoft`, `impactWood`, `impactMetal`, `footstep_wood`, `impactBell_heavy` from Impact Sounds | Kenney | CC0 | https://kenney.nl/assets/impact-sounds |
-| The crowd's murmur (`crowd_bed`) | Crowd shouting and speaking ambience | StarNinjas | CC0 | https://opengameart.org/content/crowd-shoutingspeaking-ambience |
-| The hot crowd, clapping (`crowd_hot`) | Applause in a large hall or church | eXpl0it3r | CC0 | https://opengameart.org/content/applause-in-a-large-hall-or-church |
-| The "ooh" (`ooh`, also lowered for a groan) | Oooooooooooooo | Nocturnal_Vanguard | CC0 | https://opengameart.org/content/oooooooooooooo |
-| The "ooh" (`ooh`, second take) | Ohhh ahhh | starlite | Public domain | https://commons.wikimedia.org/wiki/File:Ohhh_ahhh.ogg |
-| A pop (`pop`) | Applause i | thore | Public domain | https://commons.wikimedia.org/wiki/File:Applause_i.ogg |
-| A big pop (`pop_big`) | Slow starting applause | Wikimedia Commons | Public domain | https://commons.wikimedia.org/wiki/File:Slow_starting_applause.ogg |
+| The ring bell (`bell`) | Tubular bell, F5, struck (`Percussion/TB_hit_F5_v3_rr1.wav`) | Versilian Studios, VSCO 2 Community Edition | CC0 | https://github.com/sgossner/VSCO-2-CE |
+| The crowd under the show (`bed`) | SBssa_Crowd Talking 010 (Soccer Stadium Ambience) | Sonic Bat | Sonniss GDC bundle licence: royalty free, commercial use, no credit required | archive.org item `gameaudiogdc-part1through7`, GDC 2020 bundle |
+| The pop (`pop`) | Crowd Cheering Exterior, Big Surge, Rose Bowl Stadium, Applause (Surround At The Show 1) | 2496SoundEffects | Sonniss GDC bundle licence | archive.org item `gameaudiogdc-part1through7`, GDC 2019 bundle |
+| The crowd counting along (`chant`) | SBssa_Crowd Chanting 019 (Soccer Stadium Ambience) | Sonic Bat | Sonniss GDC bundle licence | archive.org item `gameaudiogdc-part1through7`, GDC 2020 bundle |
+| The gasp on a kick-out (`gasp`) | SBssa_Goal Miss 002 (Soccer Stadium Ambience) | Sonic Bat | Sonniss GDC bundle licence | archive.org item `gameaudiogdc-part1through7`, GDC 2020 bundle |
+| Strikes (`hit`) | punch_general_body_impact_03 (Punch Sound Pack) | Gamemaster Audio | Sonniss GDC bundle licence | archive.org item `SonnissGameAudioGDCPart3`, GDC 2017 bundle |
+| Slams (`slam`) | RL_bodyfall_Wood_Rustic_M2_Distant_Mono_Soft_Impact_07 (Bodyfall) | Red Libraries | Sonniss GDC bundle licence | archive.org item `gameaudiogdc-part1through7`, GDC 2019 bundle |
 
-The tension under a near fall is made in code (`riser()` in `app/src/audio/engine.ts`).
+The Sonniss licence (in each bundle as `License.pdf`) grants a worldwide, royalty-free licence to use the sounds in
+commercial games without attribution. The game credits the makers anyway.
+
+## The office (next step)
+
+Piano figures played on the Salamander Grand Piano by Alexander Holm (CC BY 3.0: credited in the game's credits),
+https://github.com/sfzinstruments/SalamanderGrandPiano.
+
+## Still to find
+
+Boos, and a mixed reaction for tweeners. Every booing recording in the libraries reachable from the build machine was
+rejected; Freesound.org has more but is blocked by the cloud environment's network settings.
 
 ## Rebuilding
 
-Download the four Kenney packs and unzip them into `<folder>/src/` (`kenney_impact-sounds`, `kenney_interface-sounds`,
-`kenney_rpg-audio`, `kenney_ui-audio`), put the crowd recordings in `<folder>/crowd/` under the names in `BANK` in the
-script, and run `SFX_DIR=<folder> python3 tools/sfx/build-sfx.py`, then `node build.js`. It needs ffmpeg and numpy.
+Download the originals into `<folder>/keep/` under the names in `BANK` (the archive.org items above hold each file as
+FLAC), check out VSCO 2 (`VSCO_DIR`), and run `SFX_DIR=<folder> python3 tools/sfx/build-sfx.py`, then `node build.js`.
+It needs ffmpeg and numpy.
