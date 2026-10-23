@@ -127,8 +127,8 @@ Two more lists sit beside this one, both finished:
 Phase A, Foundation: rebuild the simulation from one shared ES5 closure into TypeScript modules with a typed state and one command layer, kept identical in play by golden masters and every test. Blueprint: `docs/plans/typescript-engine.md`.
 
 - [x] Gate 1: the blueprint.
-- [ ] Gate 2: the questions, one at a time.
-- [ ] Gate 3: Ryan's go-ahead.
+- [x] Gate 2: the questions, answered 23 October (features pause, unattended with milestone reports, live page at milestones, old bugs logged and fixed after).
+- [ ] Gate 3: Ryan's go-ahead (23 October: "not yet").
 
 ### 0ao. The four moves that close the gap (Ryan, 23 October: "add this to the next tasks"; the review in `docs/plans/WrestleCraft-review-and-long-term-roadmap.pdf`, section 2)
 
