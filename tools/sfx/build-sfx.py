@@ -28,11 +28,18 @@ BANK = {
     'bell':   ('big',   [os.path.join(VSCO, 'Percussion', 'TB_hit_F5_v3_rr1.wav')], ('cut', 0.0, 3.0, -18)),
     'bed':    ('crowd', [os.path.join(SRC, 'keep', 'bed_stadium.flac')], 'loop'),
     'pop':    ('crowd', [os.path.join(SRC, 'keep', 'pop_rosebowl.flac')], ('cut', 0.0, 10.9, -18)),
-    'chant':  ('crowd', [os.path.join(SRC, 'keep', 'chant_soccer.flac')], ('cut', 7.0, 2.6, -20)),
     'gasp':   ('crowd', [os.path.join(SRC, 'keep', 'gasp_goalmiss.flac')], ('cut', 0.0, 9.0, -18)),
     'hit':    ('ring',  [os.path.join(SRC, 'keep', 'hit_body.flac')], 'shot'),
     'slam':   ('ring',  [os.path.join(SRC, 'keep', 'slam_bodyfall.flac')], 'shot'),
 }
+# the voices (audition rounds 7 to 9; rendered by tools/sfx/build-voices.py): the crowd shouting the count, a big house
+# and a small hall, and wah-wah talk, the takes of each voice sorted shortest first so the game can fit one to a line
+VOX = os.path.join(SRC, 'keep', 'voices')
+for size in ('big', 'small'):
+    for w in ('one', 'two', 'three', 'thr', 'eight', 'nine', 'ten'):
+        BANK['cnt_%s_%s' % (size, w)] = ('crowd', [os.path.join(VOX, 'crowd_%s_%s.wav' % (size, w))], 'shot')
+for v in ('wah_pbp', 'wah_col', 'mic_woman', 'mic_man', 'mic_big'):
+    BANK[v] = ('voice', sorted(os.path.join(VOX, f) for f in os.listdir(VOX) if f.startswith(v + '_')), 'shot')
 
 def decode(path, start=None, length=None):
     cmd = ['ffmpeg', '-v', 'error']
@@ -84,7 +91,7 @@ def main():
             else:
                 x = trim(decode(p)); x *= 0.89 / max(1e-6, np.abs(x).max())
             x = np.clip(x, -0.98, 0.98)
-            b = opus(x, '40k' if group == 'crowd' else '64k'); total += len(b)
+            b = opus(x, {'crowd': '40k', 'voice': '32k'}.get(group, '64k')); total += len(b)
             out.append(base64.b64encode(b).decode())
         bank[sid] = {'g': group, 'loop': kind == 'loop', 't': out}
         print('%-10s %-6s %d takes' % (sid, group, len(out)))

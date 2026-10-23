@@ -12,7 +12,7 @@ async function waitFor(fn, ms) { const t = Date.now(); while (Date.now() - t < m
 (async () => {
   const { browser, page, errs } = await open({ promo: 'pdw', auto: false, prefs: { snd: true } });
   try {
-    ok('the picked recordings are in the page', await page.evaluate(() => !!window.EWF_SFX_DATA && ['bell', 'bed', 'pop', 'chant', 'gasp', 'hit', 'slam'].every(k => window.EWF_SFX_DATA[k])));
+    ok('the picked recordings are in the page', await page.evaluate(() => !!window.EWF_SFX_DATA && ['bell', 'bed', 'pop', 'gasp', 'hit', 'slam', 'cnt_big_one', 'cnt_small_thr', 'wah_pbp', 'wah_col', 'mic_man', 'mic_woman', 'mic_big'].every(k => window.EWF_SFX_DATA[k])));
     await page.mouse.click(5, 5);
     ok('the first press wakes the sound and decodes the recordings', await waitFor(() => page.evaluate(() => window.EWF_SOUND.ready()), 15000));
     await go(page, 'booking');
@@ -35,11 +35,13 @@ async function waitFor(fn, ms) { const t = Date.now(); while (Date.now() - t < m
       if (!(await has(page, '#live'))) break;
     }
     ok('the bell rings in a match', bell);
+    ok('the voice group never holds more than two at once', await page.evaluate(() => window.EWF_SOUND.voices().voice <= 2));
     ok('the crowd plays under the broadcast', bed);
-    const heard = [...new Set((await played(page)).filter(x => /^(hit|slam|pop|chant|gasp)$/.test(x)))];
+    const heard = [...new Set((await played(page)).filter(x => /^(hit|slam|pop|gasp|cnt_.*)$/.test(x)))];
     ok('the ring and the crowd are heard', heard.length >= 2, heard.join(' '));
-    ok('every sound played is one Ryan picked', (await played(page)).every(x => /^(loop:)?(bell|bed|pop|chant|gasp|hit|slam)$/.test(x)), [...new Set(await played(page))].join(' '));
-    ok('no group ever holds more voices than its limit', await page.evaluate(() => { const v = window.EWF_SOUND.voices(); return v.ui <= 4 && v.ring <= 6 && v.big <= 3 && v.crowd <= 4; }));
+    ok('the commentators talk', (await played(page)).some(x => /^wah_(pbp|col)$/.test(x)));
+    ok('every sound played is one Ryan picked', (await played(page)).every(x => /^(loop:)?(bell|bed|pop|gasp|hit|slam|cnt_(big|small)_(one|two|three|thr|eight|nine|ten)|wah_pbp|wah_col|mic_(man|woman|big))$/.test(x)), [...new Set(await played(page))].join(' '));
+    ok('no group ever holds more voices than its limit', await page.evaluate(() => { const v = window.EWF_SOUND.voices(); return v.ui <= 4 && v.ring <= 6 && v.big <= 3 && v.crowd <= 8 && v.voice <= 2; }));
     ok('no errors', !errs.length, errs.join(' | '));
   } catch (e) { ok('ran to the end', false, e.message); }
   await browser.close();

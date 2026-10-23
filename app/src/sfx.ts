@@ -10,7 +10,7 @@ const quiet = () => { /* an office sound: the piano comes in the next step */ };
 export const SFX = {
   bell() { big.bell(); },
   bellEnd() { big.bellEnd(); },
-  count() { crowd.count(); },
+  count() { crowd.shout(['one', 'two', 'three']); },
   /** The show goes on the air, and the sign-off. */
   fanfare() { big.onAir(); },
   /** A call on the headset, an achievement. */

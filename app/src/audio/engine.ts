@@ -10,13 +10,13 @@ import { pref } from '../store';
     sounds Ryan picked by ear (docs/plans/sound.md). False makes the game silent apart from the soundtrack. */
 export const SFX_ON = true;
 
-export type Group = 'ui' | 'ring' | 'big' | 'crowd';
-const VOICES: Record<Group, number> = { ui: 4, ring: 6, big: 3, crowd: 4 };
-const LEVEL: Record<Group, number> = { ui: 0.55, ring: 0.9, big: 0.8, crowd: 0.75 };
+export type Group = 'ui' | 'ring' | 'big' | 'crowd' | 'voice';
+const VOICES: Record<Group, number> = { ui: 4, ring: 6, big: 3, crowd: 8, voice: 2 };
+const LEVEL: Record<Group, number> = { ui: 0.55, ring: 0.9, big: 0.8, crowd: 0.75, voice: 0.95 };
 
 let AC: AudioContext | null = null, master: GainNode | null = null;
 const bus: Partial<Record<Group, GainNode>> = {};
-const voices: Record<Group, { src: AudioBufferSourceNode; at: number }[]> = { ui: [], ring: [], big: [], crowd: [] };
+const voices: Record<Group, { src: AudioBufferSourceNode; at: number }[]> = { ui: [], ring: [], big: [], crowd: [], voice: [] };
 const lastAt: Record<string, number> = {};
 let bank: Record<string, { g: Group; loop: boolean; b: AudioBuffer[] }> | null = null, loading: Promise<void> | null = null;
 
@@ -77,6 +77,25 @@ export function play(id: string, o: PlayOpt = {}): AudioBufferSourceNode | null 
   src.start(t0 + (o.delay || 0)); heard(id);
   return src;
 }
+/** Somebody talking (wah-wah): the take of voice `id` that best fits a line of `secs` seconds, a little different each
+    time (Ryan: vary them). The line before is faded out, and the crowd dips under the voice the way television mixes it. */
+let talking: { src: AudioBufferSourceNode; gn: GainNode } | null = null;
+export function speak(id: string, secs: number, gain = 1) {
+  if (!SFX_ON || !pref.snd || !bank || !AC || !bus.voice) return;
+  const s = bank[id]; if (!s || !s.b.length) return;
+  hush(0.08);
+  let best = s.b[0]; for (const b of s.b) if (b.duration <= secs * 1.15 && b.duration > best.duration) best = b;
+  const t0 = AC.currentTime, src = AC.createBufferSource(), gn = AC.createGain();
+  src.buffer = best; src.playbackRate.value = 1 + (Math.random() * 2 - 1) * 0.05; gn.gain.value = gain * (0.92 + Math.random() * 0.12);
+  src.connect(gn); gn.connect(bus.voice); src.start(t0); heard(id);
+  const me = { src, gn }; talking = me; src.onended = () => { if (talking === me) talking = null; };
+  duck(0.7, best.duration / src.playbackRate.value);
+}
+/** Stop whoever is talking, fading over `secs`. */
+export function hush(secs = 0.15) {
+  if (!talking || !AC) return; const { src, gn } = talking; talking = null;
+  gn.gain.setTargetAtTime(0, AC.currentTime, secs / 3); try { src.stop(AC.currentTime + secs * 2); } catch (e) { /* gone */ }
+}
 /** A looping sound with a level that can be glided: the crowd's murmur. */
 export interface Loop { set(v: number, secs?: number): void; stop(secs?: number): void; tone(hz: number): void }
 export function loop(id: string): Loop | null {
@@ -113,7 +132,7 @@ export function riser(secs = 1.1) {
 const played: string[] = [];
 function heard(id: string) { played.push(id); if (played.length > 300) played.shift(); }
 /** How many voices each group holds right now (EWF_DEBUG and the sound test read it). */
-export function voiceCount(): Record<Group, number> { return { ui: voices.ui.length, ring: voices.ring.length, big: voices.big.length, crowd: voices.crowd.length }; }
+export function voiceCount(): Record<Group, number> { return { ui: voices.ui.length, ring: voices.ring.length, big: voices.big.length, crowd: voices.crowd.length, voice: voices.voice.length }; }
 
 document.addEventListener('visibilitychange', () => { if (!AC) return; if (document.hidden) AC.suspend().catch(() => {}); else if (pref.snd) AC.resume().catch(() => {}); });
 (window as any).EWF_SOUND = { played, voices: voiceCount, ready: () => !!bank, state: () => (AC ? AC.state : 'none') };

@@ -264,3 +264,70 @@ Each step is shown to Ryan before the next (rule 9a).
 
 - **Step 2, the broadcast (23 October):** in the game. `app/src/audio/cues.ts`, `tools/sfx/build-sfx.py`.
 - **Step 4, the office piano:** next.
+
+## 16. Every moment of a match, and voices (addendum, 23 October)
+
+Ryan, after hearing step 2: "the sound is a lot better ... first we need to make sure we have sounds for every moment
+of the match. Cuts back to the commentary where they make ramble noises. The crowd going 1... 2... 2! on a kick out and
+1... 2... ...3! then the bell sound. I'm okay with us making video game like synthetic voices to fill these parts out."
+After the match comes more of the bank: different clicks and moments through the rest of the game.
+
+### The moments of a match, in order, and what each should sound like
+
+| Moment (the line or picture that marks it) | Now | Proposed |
+| --- | --- | --- |
+| Ring announcer's introductions (`ring` lines) | silence | The ring announcer's voice: a long, drawn-out ramble with arena echo, the crowd rising under each name |
+| Entrances (`ent`) | pop for a hero | Cheer, boos or a mixed reaction (boos still need a source) |
+| The opening bell | tubular bell | as now |
+| Play-by-play and colour lines (`pbp`, `col`), the cut to the commentators | silence | Each commentator rambles while their line is on screen: play-by-play fast and excited, colour slower and lower |
+| The road agent in your ear (`ear`) | silence | A quiet voice through a headset filter |
+| Moves, signatures, taunts (the picture's keyframes) | body blow, body fall | as now, plus a crowd reaction on a big move |
+| A near fall that is kicked out of | the count chant, then the gasp | The crowd shouting **"ONE! ... TWO! ... T-"** and breaking off into the gasp |
+| A finisher kicked out of | as a near fall | The same, bigger, and the commentator shouting |
+| The pin that wins | the count chant, then the pop | The crowd shouting **"ONE! ... TWO! ... THREE!"**, the bell three times, the pop |
+| A submission | the pop | The crowd rising as it is locked in, the pop and the bell when they tap |
+| A count-out | bell and gasp | The referee's count **"... EIGHT! NINE! TEN!"**, then the bell |
+| A disqualification, a time limit | bell, gasp | as now, plus the ring announcer |
+| "Here is your winner" (`ring` after the bell) | silence | The ring announcer, drawn out, over the pop |
+| A new champion | pop and bell | as now, the commentator shouting over it |
+| A call from the gorilla position | silence | A headset chime (office step) |
+| Promos and angles | silence | The speaker rambles in their own voice (deeper for bigger wrestlers), the crowd cheering a hero and booing a villain |
+| The sign-off | the crowd | The commentators sign off, the crowd fades out |
+
+### How the voices would be made
+
+- **Rambles** (commentators, the ring announcer, wrestlers in promos, the agent): made in code while the line is on
+  screen, one sound per syllable of the caption so the voice starts and stops with the words, in the manner of the
+  talking in Animal Crossing or Banjo-Kazooie. Each person gets a fixed voice (pitch, speed, tone) that stays theirs all
+  game. Nothing has to be recorded; nothing changes the game.
+- **Words the crowd shouts** (the count) and **the referee's count**: real words from Piper, a free, offline speech
+  engine. Its voices come with their own licences; only voices whose recordings are public domain or CC BY (credited)
+  are used. The crowd is many different voices layered with small differences in timing and pitch, over the stadium
+  crowd, so it sounds like a building and not a robot.
+- Ryan picks by ear on the audition page, as before.
+
+### Ryan's answers (23 October)
+
+1. The ramble style: **let me hear all three** (Animal Crossing chirps, Banjo-Kazooie mumbles, Simlish-like made-up
+   words) on the audition page.
+2. Who talks: **the commentators and wrestlers in promos.** Not the ring announcer, not the agent in your ear.
+3. Fixed voices? **No: vary them** a little each line.
+4. The crowd count: **real words, many voices.**
+5. A count-out: **the crowd counts the last numbers** with the referee, then the bell.
+6. Level: **like TV**, the voices clear on top of the crowd, which dips a little while they talk.
+7. When: **every commentary line**, whatever the picture shows.
+8. Promos: **the crowd reacts to who is talking** (cheers for a hero; boos once a source is found).
+
+The steps: an audition round of the three ramble styles, voices for play-by-play, colour and a wrestler, and the
+crowd's counts ("ONE! TWO!" breaking off, "ONE! TWO! THREE!", "EIGHT! NINE! TEN!"); Ryan picks; then they go into
+the broadcast.
+
+### Picks and build (23 October)
+
+- **Kept:** the crowd shouting the count (round 7); wah-wah for the commentators (round 8: the Charlie Brown adults,
+  but chill); wah-wah for promos, the sharpest of three (round 9: "keep wah wah but it needs to be a slightly more
+  sharp louder direction for promos").
+- **Rejected:** the Animal Crossing, Banjo-Kazooie and Simlish styles, muffled speech through a wall, and the softer,
+  slower muffle.
+- **Built:** all three in the broadcast. Voices fit the length of each line and vary a little; the crowd dips under
+  them; a hero's promo line gets a cheer.

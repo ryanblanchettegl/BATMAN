@@ -152,7 +152,7 @@ function stepLive() {
     const x = E.liveNext(S);
     if (x.event) { callAt = Date.now(); SFX.ach(); return; }
     if (x.skip) continue;
-    if (x.seg) { L.s = x.i; L.b = startBeat(x.seg); return; }
+    if (x.seg) { L.s = x.i; L.b = startBeat(x.seg); cueBeat(x.seg, (x.seg.bc || [])[L.b], false, !!pref.pics); return; }   // the first line on screen is heard too
     if (x.done) { b.report = 0; L.s = S.reports[0] ? S.reports[0].segs.length : 0; L.b = 0; L.aired = true; SFX.fanfare(); return; }   // the sign-off of the show that just aired, not a replay
   }
 }
