@@ -1,5 +1,6 @@
 /* The Free agents page (page id `market`): free agents and rivals' talent near the end of their deals, offers, and the way in to the creator. */
 import { Ovr } from '../../shared/ovr';
+import { SFX } from '../../sfx';
 import { E, W } from '../../engine';
 import { G, me, act, view, say, cash, full, openModal, plural, slice } from '../../store';
 import { Btn, Sel, TextBox, Tag, Side, Name, Field, Empty, Desktop, Win, showResult } from '../../kit';
@@ -25,7 +26,7 @@ function Offer(p: { w: W; ask: number }) {
   const T = E.offerTerms(S, w.id), perShow = !!T && T.ct === 'show';
   if (perShow && st.feeFor !== w.id) { st.feeFor = w.id; st.wage = String(T.fee); }
   const toFee = (weekly: number) => perShow ? Math.max(50, Math.round(T.fee * weekly / Math.max(1, p.ask) / 10) * 10) : weekly;
-  const send = () => act(() => { const r = perShow ? E.signFee(S, w.id, +st.wage || 0, st.cl || []) : E.sign(S, w.id, +st.wage || 0, +st.weeks || 48, st.cl || []); say(r.msg, { err: !r.ok }); st.offer = null; });
+  const send = () => act(() => { const r = perShow ? E.signFee(S, w.id, +st.wage || 0, st.cl || []) : E.sign(S, w.id, +st.wage || 0, +st.weeks || 48, st.cl || []); const star = r.ok && E.overallOf(w) >= 80; say(r.msg, star ? undefined : { err: !r.ok }); if (star) SFX.star(); st.offer = null; });
   return <Win title={'Offer to ' + w.name} area="side" t="mk-offer" tone="gold">
     {T ? <p data-t="offer-kind"><b>{T.n}.</b> <span class="muted">{T.why}</span></p> : null}
     <p class="muted">They are asking about {perShow ? full(T.fee) + ' a show' : full(p.ask) + ' a week'}. A lowball ends talks for a month.</p>

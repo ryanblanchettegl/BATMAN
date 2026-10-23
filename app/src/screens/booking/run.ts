@@ -220,7 +220,7 @@ export function liveSkip() { typer.finish(); const r = liveReport(); if (r && !l
 /** In a replay only: skip to the sign-off. A show on the air cannot be skipped. */
 export function liveEnd() { const r = liveReport(); if (r && !onAir()) look(() => { book().live = { s: r.segs.length, b: 0 }; }); }
 /** Leave the sign-off. A show that has just aired ends on After the show, not on the match-by-match report. A replay goes back to its report. */
-export const liveDone = () => look(() => { const b = book(), aired = !!(b.live && b.live.aired) && !!E.afterShow(G.S); b.live = null; if (aired) { b.report = null; b.night = true; } top0(); });
+export const liveDone = () => look(() => { const b = book(), aired = !!(b.live && b.live.aired) && !!E.afterShow(G.S); b.live = null; if (aired) { b.report = null; b.night = true; SFX.after(G.S.reports[0]); } top0(); });
 /** Open After the show for the last show of this week (the Office has a button for it). */
 export function openNight() { if (!E.afterShow(G.S)) return; go('booking'); look(() => { const b = book(); b.night = true; b.report = null; b.live = null; top0(); }); }
 /** Done with After the show: on to the Office, where Before the show is the first thing on the desk. */

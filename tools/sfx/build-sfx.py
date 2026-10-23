@@ -38,6 +38,12 @@ VOX = os.path.join(SRC, 'keep', 'voices')
 for size in ('big', 'small'):
     for w in ('one', 'two', 'three', 'thr', 'eight', 'nine', 'ten'):
         BANK['cnt_%s_%s' % (size, w)] = ('crowd', [os.path.join(VOX, 'crowd_%s_%s.wav' % (size, w))], 'shot')
+# the office: piano figures (audition rounds 4 to 6; rendered by tools/sfx/build-piano.py), loudness set per figure
+PNO = os.path.join(SRC, 'keep', 'piano')
+for k, l in (('pn_small', -30), ('pn_big', -24), ('pn_pop', -26), ('pn_good', -22), ('pn_bad', -24), ('pn_week', -22),
+             ('pn_grade_a', -20), ('pn_grade_b', -21), ('pn_grade_c', -22), ('pn_grade_d', -23), ('pn_grade_f', -24),
+             ('pn_feud', -20), ('pn_champ', -20), ('pn_star', -21)):
+    BANK[k] = ('ui', [os.path.join(PNO, k + '.wav')], ('lufs', l))
 for v in ('wah_pbp', 'wah_col', 'mic_woman', 'mic_man', 'mic_big'):
     BANK[v] = ('voice', sorted(os.path.join(VOX, f) for f in os.listdir(VOX) if f.startswith(v + '_')), 'shot')
 
@@ -83,7 +89,9 @@ def main():
         for t in takes:
             p = t
             if not os.path.exists(p): raise SystemExit('missing sound: ' + p)
-            if isinstance(kind, tuple):
+            if isinstance(kind, tuple) and kind[0] == 'lufs':
+                x = trim(decode(p)); x *= 10 ** ((kind[1] - loudness(x)) / 20)
+            elif isinstance(kind, tuple):
                 x = trim(decode(p, kind[1], kind[2])); n = int(0.02 * SR); x[:n] *= np.linspace(0, 1, n); f = int(min(1.5, kind[2] * 0.4) * SR); x[-f:] *= np.linspace(1, 0, f)
                 x *= 10 ** ((kind[3] - loudness(x)) / 20)
             elif kind == 'loop':

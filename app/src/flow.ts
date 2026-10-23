@@ -1,5 +1,6 @@
 /* Things more than one section needs: starting and ending a game, ending the week, opening a show report. */
 import { E } from './engine';
+import { SFX } from './sfx';
 import { G, ui, pref, save, loadSave, clearSave, resetUi, redraw, setUniverse, DEFAULT_UNI, slice, openModal, closeModal, say } from './store';
 import { go } from './nav';
 
@@ -70,7 +71,7 @@ export function endWeek() {
   // before the week turns: what the booker did with action points, and everyone's overness, to find the movers
   const did = (E.backstage(S).log || []).map((l: any) => ({ place: l.place, act: l.act, ok: l.ok, msg: l.msg })), before: Record<number, number> = {};
   S.w.forEach((w: any) => { if (w.promo === S.player && !w.nw) before[w.id] = w.ovr; });
-  E.endWeek(S);
+  E.endWeek(S); SFX.week();
   const moves = S.w.filter((w: any) => before[w.id] != null && w.promo === S.player).map((w: any) => ({ id: w.id, d: w.ovr - before[w.id] }));
   const up = moves.filter((m: any) => m.d >= 0.3).sort((a: any, b: any) => b.d - a.d)[0] || null, down = moves.filter((m: any) => m.d <= -0.3).sort((a: any, b: any) => a.d - b.d)[0] || null;
   const b = book(); b.report = null; b.live = null; b.edit = -1;

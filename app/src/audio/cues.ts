@@ -1,8 +1,11 @@
 /* What sounds when (docs/plans/sound.md, Ryan's answers and picks of 23 October). The only file that knows the game:
    lines of the broadcast, the moments in a match picture and the crowd meter, each turned into sounds from the engine
    (./engine.ts). It only reads; it never touches the game.
-   Step 2 of the plan is the broadcast, built here: a real arena mixed like television while the music plays on as
-   normal. The office (piano) is the next step; until then presses make no sound.
+   Step 2 of the plan is the broadcast: a real arena mixed like television while the music plays on as normal.
+   Step 4 is the office: piano figures from the Salamander Grand Piano, light, high and quick like everything Ryan
+   kept (a soft sparkle for a big action, a soft high note for a small press, a flick for a pop-up, rising notes for
+   good news, a low note for bad, a run for the end of the week, a sting by the grade, and the big moments: a new
+   champion, signing a top star, the end of a feud). Pointing at things stays silent (Ryan).
    - The bell: a tubular bell, one strike to start a match and three quick ones at the end; it keeps ringing when
      time runs out.
    - The crowd: a stadium crowd for the whole broadcast that follows the crowd meter, sized by the building and the
@@ -20,6 +23,43 @@
    - At the fastest auto-play pace (Results) only the results play: bells, finishes, pops. */
 import { G, pref } from '../store';
 import { play, loop, Loop, levels, ready, load, speak, hush, SFX_ON } from './engine';
+
+/* ---------- the office: piano ---------- */
+const PRESSABLE = 'button, select, [role="button"], input[type="checkbox"], input[type="radio"], summary';
+let lastPress = 0, lastKey = 0;
+/** A press: a big action (a green button, the SPACE key) gets the soft sparkle, anything else the soft high note. */
+function pressSound(el: Element) {
+  if (pref.btn === false) return;   // Options: Button sounds off
+  const c = typeof (el as any).className === 'string' ? (el as any).className : '';
+  if (/\bgo\b/.test(c) || el.getAttribute('data-t') === 'advance') play('pn_big', { gain: 0.9, gap: 0.06, vary: 0.02 });
+  else play('pn_small', { gain: 0.8, gap: 0.05, vary: 0.02 });
+}
+function pressable(t: EventTarget | null): Element | null { const e = t as Element; const el = e && e.closest ? e.closest(PRESSABLE) : null; return el && !(el as HTMLButtonElement).disabled ? el : null; }
+export function uiSetup() {
+  document.addEventListener('pointerdown', e => { const el = pressable(e.target); if (el) { lastPress = Date.now(); pressSound(el); } }, true);
+  document.addEventListener('keydown', e => { if (e.repeat || (e.key !== 'Enter' && e.key !== ' ')) return; const el = pressable(document.activeElement); if (el) { lastKey = Date.now(); pressSound(el); } }, true);
+  // a press from a pad or a remote arrives as a click with no pointer or key before it
+  document.addEventListener('click', e => { if (Date.now() - lastPress < 800 || Date.now() - lastKey < 800) return; const el = pressable(e.target); if (el) pressSound(el); }, true);
+}
+const GRADE: Record<string, string> = { A: 'pn_grade_a', B: 'pn_grade_b', C: 'pn_grade_c', D: 'pn_grade_d', E: 'pn_grade_d', F: 'pn_grade_f' };
+let feudsBefore: Record<string, boolean> = {};
+/** Which of the player's feuds are running when a show goes on the air, to hear one end. */
+function noteFeuds() { const S = G.S; feudsBefore = {}; if (!S) return; (S.feuds || []).forEach((f: any, i: number) => { if (!f.res && f.promo === S.player) feudsBefore[i] = true; }); }
+export const office = {
+  pop() { play('pn_pop', { gain: 0.85, gap: 0.1, vary: 0.02 }); },
+  good() { play('pn_good', { gain: 0.9, gap: 0.2, vary: 0.02 }); },
+  bad() { play('pn_bad', { gain: 0.9, gap: 0.2, vary: 0.02 }); },
+  week() { play('pn_week', { gain: 0.95, gap: 0.5, vary: 0.02 }); },
+  star() { play('pn_star', { gain: 1, gap: 0.5, vary: 0.02 }); },
+  champ(delay = 0) { play('pn_champ', { gain: 1, gap: 0.5, delay, vary: 0.02 }); },
+  /** After the show: the grade's sting, and the end of a feud if one ended tonight. */
+  after(rep: any) {
+    const W = (window as any).GP, g = rep && W && W.repGrade ? String(W.repGrade(rep) || '').charAt(0).toUpperCase() : '';
+    if (GRADE[g]) play(GRADE[g], { gain: 1, gap: 1, vary: 0.01 });
+    const S = G.S; if (S && (S.feuds || []).some((f: any, i: number) => feudsBefore[i] && f.res)) play('pn_feud', { gain: 1, gap: 1, delay: 2.2, vary: 0.01 });
+    feudsBefore = {};
+  }
+};
 
 /* ---------- how big the room is ---------- */
 /** 0 for a couple of hundred people in a hall, 1 for a stadium, a little more on a big night. */
@@ -73,7 +113,7 @@ export const big = {
   finish(cr: number, seg: string) { crowd.shout(['one', 'two', 'three']); big.bellEnd(3, 2.55); crowd.pop(Math.max(cr, 60), 2.6); rung = seg; },
   /** A count-out: "EIGHT! NINE! TEN!", the bell, the gasp. */
   countOut() { crowd.shout(['eight', 'nine', 'ten']); big.bellEnd(3, 2.4); crowd.gasp(2.5); },
-  champion() { crowd.pop(100, 0.1); big.bellEnd(5); },
+  champion() { crowd.pop(100, 0.1); big.bellEnd(5); office.champ(0.4); },
   /** The show goes on the air: the crowd comes up with it. */
   onAir() { crowd.pop(70, 0.3); }
 };
@@ -85,7 +125,7 @@ export const crowd = {
   start() {
     wanted = true; if (!SFX_ON || !pref.snd) return;
     if (!ready()) { load().then(() => { if (wanted && !bed && ready()) crowd.start(); }); return; }
-    if (bed) return; room = roomOf(liveRep()); bed = loop('bed'); crowd.level(heat);
+    if (bed) return; room = roomOf(liveRep()); noteFeuds(); bed = loop('bed'); crowd.level(heat);
   },
   stop() { wanted = false; hush(0.3); if (bed) bed.stop(2.5); bed = null; },
   /** The crowd meter (0 to 100): a cold building murmurs, a hot one roars. A small room stays thinner and closer. */
