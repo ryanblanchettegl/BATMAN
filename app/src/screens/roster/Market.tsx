@@ -1,6 +1,7 @@
 /* The Free agents page (page id `market`): free agents and rivals' talent near the end of their deals, offers, and the way in to the creator. */
 import { useLayoutEffect, useRef } from 'preact/hooks';
 import { Ovr } from '../../shared/ovr';
+import { SFX } from '../../sfx';
 import { E, W } from '../../engine';
 import { G, me, act, view, say, cash, full, openModal, plural, slice } from '../../store';
 import { Btn, Sel, TextBox, Tag, Side, Name, Field, Empty, Desktop, Win, showResult } from '../../kit';
@@ -29,14 +30,20 @@ function Offer(p: { w: W; ask: number }) {
   const S = G.S, st = rs(), w = p.w;
   if (st.clFor !== w.id) { st.clFor = w.id; st.cl = []; }
   const C: any[] = E.clauses(S, w.id), on = (k: string) => (st.cl || []).indexOf(k) >= 0, save = C.filter(c => on(c.k)).reduce((a, c) => a + c.save, 0);
-  const send = () => act(() => { const r = E.sign(S, w.id, +st.wage || 0, +st.weeks || 48, st.cl || []); say(r.msg, { err: !r.ok }); st.offer = null; });
+  // the kind of deal is the company's: a yearly salary at a big company, a fee for each show at a small one
+  const T = E.offerTerms(S, w.id), perShow = !!T && T.ct === 'show';
+  if (perShow && st.feeFor !== w.id) { st.feeFor = w.id; st.wage = String(T.fee); }
+  const toFee = (weekly: number) => perShow ? Math.max(50, Math.round(T.fee * weekly / Math.max(1, p.ask) / 10) * 10) : weekly;
+  const send = () => act(() => { const r = perShow ? E.signFee(S, w.id, +st.wage || 0, st.cl || []) : E.sign(S, w.id, +st.wage || 0, +st.weeks || 48, st.cl || []); const star = r.ok && E.overallOf(w) >= 80; say(r.msg, star ? undefined : { err: !r.ok }); if (star) SFX.star(); st.offer = null; });
   return <Win title={'Offer to ' + w.name} area="side" t="mk-offer" tone="gold">
-    <p class="muted">They are asking about {full(p.ask)} a week. A lowball ends talks for a month.</p>
+    {T ? <p data-t="offer-kind"><b>{T.n}.</b> <span class="muted">{T.why}</span></p> : null}
+    <p class="muted">They are asking about {perShow ? full(T.fee) + ' a show' : full(p.ask) + ' a week'}. A lowball ends talks for a month.</p>
     {/* the kit text box has no min or step, and the wage moves in fifties */}
-    <label class="row mt1">Weekly wage <input type="number" id="offer-wage" class="wage" data-t="offer-wage" min={0} step={50} value={st.wage} onInput={e => { st.wage = (e.currentTarget as HTMLInputElement).value; }} /></label>
-    <label class="row mt1">Length <Sel id="offer-weeks" t="offer-weeks" value={st.weeks} options={[['48', '48 weeks'], ['96', '96 weeks']]} onChange={v => view(() => { st.weeks = v; })} /></label>
+    <label class="row mt1">{perShow ? 'Fee per show' : 'Weekly wage'} <input type="number" id="offer-wage" class="wage" data-t="offer-wage" min={0} step={50} value={st.wage} onInput={e => { st.wage = (e.currentTarget as HTMLInputElement).value; }} /></label>
+    {perShow ? <p class="muted mt1" data-t="offer-weeks">Length: a handshake. It rolls on, and either side can walk away.</p>
+      : <label class="row mt1">Length <Sel id="offer-weeks" t="offer-weeks" value={st.weeks} options={(T && T.lens ? T.lens : [[48, '1 year'], [96, '2 years']]).map((x: any) => [String(x[0]), x[1]] as [string, string])} onChange={v => view(() => { st.weeks = v; })} /></label>}
     {C.length ? <div class="mt1" data-t="offer-clauses"><p class="muted">They would like it in the contract:{save ? ' with these, about ' + full(p.ask - save) + ' a week.' : ''}</p>
-      <div class="row">{C.map(c => <Btn key={c.k} kind="sm" on={on(c.k)} t="offer-clause" d={{ k: c.k }} label={c.n + '. ' + c.d} onClick={() => view(() => { st.cl = on(c.k) ? (st.cl || []).filter(x => x !== c.k) : (st.cl || []).concat([c.k]); st.wage = String(p.ask - C.filter(x => (st.cl || []).indexOf(x.k) >= 0).reduce((a, x) => a + x.save, 0)); })}>{c.n}, saves {cash(c.save)}</Btn>)}</div></div> : null}
+      <div class="row">{C.map(c => <Btn key={c.k} kind="sm" on={on(c.k)} t="offer-clause" d={{ k: c.k }} label={c.n + '. ' + c.d} onClick={() => view(() => { st.cl = on(c.k) ? (st.cl || []).filter(x => x !== c.k) : (st.cl || []).concat([c.k]); st.wage = String(toFee(p.ask - C.filter(x => (st.cl || []).indexOf(x.k) >= 0).reduce((a, x) => a + x.save, 0))); })}>{c.n}, saves {cash(c.save)}</Btn>)}</div></div> : null}
     <div class="row mt1"><Btn kind="go" t="sign" d={{ id: w.id }} onClick={send}>Send offer</Btn><Btn kind="sm" t="offer-cancel" onClick={() => view(() => { st.offer = null; })}>Cancel</Btn></div>
     <div class="row mt1"><Btn kind="sm" t="askroom" d={{ id: w.id }} onClick={() => showResult('Ask the room', E.askRoom(S, w.id).text)}>Ask the room</Btn>
       {!w.sc && <Btn kind="sm" t="scout" d={{ id: w.id }} onClick={() => sendScout(w.id)}>Scout first ({full(E.scoutInfo(S).cost)})</Btn>}</div>
@@ -67,7 +74,7 @@ export function Market() {
   const L: W[] = E.market(S).filter((w: W) => (!q || w.name.toLowerCase().indexOf(q) >= 0) && (!mk.will || (E.canSign(S, w) && !(w.lock > S.week)))).sort((a: W, b: W) => ((key[mk.sort] || key.all)(a) - (key[mk.sort] || key.all)(b)) || b.ovr - a.ovr);
   // the whole list, in a window that scrolls inside itself (Ryan, 20 October: "I want it scrollable")
   const shown = L;
-  const toggle = (w: W, ask: number) => view(() => { if (st.offer === w.id) st.offer = null; else { st.offer = w.id; st.wage = String(ask); st.weeks = '48'; } });
+  const toggle = (w: W, ask: number) => view(() => { if (st.offer === w.id) st.offer = null; else { st.offer = w.id; st.wage = String(ask); st.weeks = '48'; st.feeFor = null; } });
   const ow = st.offer != null ? S.w[st.offer] : null, offerOpen = ow && L.indexOf(ow) >= 0 && !(ow.lock > S.week) && E.canSign(S, ow);
   return <div class="onescreen"><Desktop cls="mkpage" t="market">
     <Win title={'Free agents: ' + L.length + ' available'} area="list" t="mk-list">
@@ -80,14 +87,14 @@ export function Market() {
         <thead><tr><th>Name</th><th>Status</th><th>Side</th><th class="wide">Style</th><th class="r">Age</th><th class="r">Overall</th><th class="r wide">Over</th><th class="r">Potential</th><th>Fit</th><th class="r">Asking</th><th /></tr></thead>
         <tbody>
           {shown.map(w => {
-            const ask = E.ask(S, w), locked = w.lock > S.week, can = E.canSign(S, w);
+            const ask = E.ask(S, w), locked = w.lock > S.week, can = E.canSign(S, w), T = E.offerTerms(S, w.id);   // a company that pays per appearance shows the fee for a show
             return <tr key={w.id} class={st.offer === w.id ? 'on' : undefined}>
-              <td><span class="nm">{w.name}</span></td>
-              <td>{w.promo === 'FA' ? (w.cut && S.promos[w.cut.from] && S.week - (w.cut.w || 0) < 6 ? 'Released by ' + S.promos[w.cut.from].name : (E.indieOf(S, w.id) ? <span title={'Working dates for ' + E.indieOf(S, w.id).n}>{E.indieOf(S, w.id).n.split(' ').slice(0, 2).join(' ')}{E.indieOf(S, w.id).weeks >= 3 ? ', ' + E.indieOf(S, w.id).weeks + ' wk' : ''}</span> : 'Free agent')) : S.promos[w.promo].name + ', ' + Math.max(0, w.con) + ' wk'}</td>
+              <td><span class="nm" title={w.name}>{w.name}</span></td>
+              <td>{w.promo === 'FA' ? (w.cut && S.promos[w.cut.from] && S.week - (w.cut.w || 0) < 6 ? 'Released by ' + S.promos[w.cut.from].name : (E.indieOf(S, w.id) ? <span title={'Working dates for ' + E.indieOf(S, w.id).n}>{E.indieOf(S, w.id).n.split(' ').slice(0, 2).join(' ')}{E.indieOf(S, w.id).weeks >= 3 ? ', ' + E.indieOf(S, w.id).weeks + ' wk' : ''}</span> : 'Free agent')) : S.promos[w.promo].name + (w.dl === 'show' ? ', per show' : ', ' + Math.max(0, w.con) + ' wk')}</td>
               <td><Side w={w} /></td>
               <td class="wide">{E.STYLE_NAME[w.style] || ''}{w.rk ? <> <Tag kind="gold">Rookie</Tag></> : null}</td>
               <td class="r num">{w.age}</td><td class="r"><Ovr w={w} /></td><td class="r num wide">{Math.round(w.ovr)}</td>
-              <td class="r num">{range(E.intel(S, w.id).stats.pot)}</td><td>{(() => { const f = E.fit(S, w.id); return f ? <span class={f.v >= 1 ? 'good' : (f.v <= -2 ? 'bad' : 'muted')}>{f.n}</span> : null; })()}</td><td class="r num">{cash(ask)}</td>
+              <td class="r num">{range(E.intel(S, w.id).stats.pot)}</td><td>{(() => { const f = E.fit(S, w.id); return f ? <span class={f.v >= 1 ? 'good' : (f.v <= -2 ? 'bad' : 'muted')}>{f.n}</span> : null; })()}</td><td class="r num">{T && T.ct === 'show' ? cash(T.fee) + ' a show' : cash(ask)}</td>
               <td>{!can ? <span class="muted">{E.modelOf(S).gender && w.g !== E.modelOf(S).gender ? 'Not for us' : 'Out of reach'}</span> : locked ? <span class="muted">Not talking</span>
                 : <Btn kind="sm" t="offer" d={{ id: w.id }} onClick={() => toggle(w, ask)}>{st.offer === w.id ? 'Cancel' : 'Offer'}</Btn>}</td>
             </tr>;

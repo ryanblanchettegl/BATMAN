@@ -1,62 +1,61 @@
-/* Text-mode charts and block lettering. Everything here is drawn with characters, in keeping with the screen. */
+/* Charts and lettering. The pie, the column chart, the dial and the range bar are cut card in SVG. */
 import { ComponentChildren } from 'preact';
 import { GLYPH } from './glyphs';
 
+/* The pie and the column chart are drawn as cut card (rule 2a: no dot matrix), in SVG drawn by code. */
 const PIEC = ['pc0', 'pc1', 'pc2', 'pc3', 'pc4', 'pc5', 'pc6'];
-/** A pie made of block characters, with a legend. Parts with a zero value are dropped. */
+const CARD = ['#d9a52a', '#2f8c8c', '#3c8a3c', '#8a4a8a', '#c23a30', '#e8dcc0', '#2c4f9a'];
+/** A pie of card wedges, with a legend. Parts with a zero value are dropped. */
 export function Pie(p: { parts: { n: string; v: number }[]; title?: string }) {
   const parts = p.parts.filter(x => x.v > 0), tot = parts.reduce((a, x) => a + x.v, 0);
   if (!tot) return null;
-  const W = 23, H = 11, cuts: number[] = []; let acc = 0; parts.forEach(x => { acc += x.v / tot; cuts.push(acc); });
-  const rows: ComponentChildren[] = [];
-  for (let y = 0; y < H; y++) {
-    const cells: ComponentChildren[] = [];
-    for (let x = 0; x < W; x++) {
-      const dx = (x - (W - 1) / 2) / ((W - 1) / 2), dy = (y - (H - 1) / 2) / ((H - 1) / 2);
-      if (Math.sqrt(dx * dx + dy * dy) > 1.03) { cells.push(' '); continue; }
-      let a = Math.atan2(dx, -dy) / (2 * Math.PI); if (a < 0) a += 1;
-      let k = 0; while (k < cuts.length - 1 && a > cuts[k]) k++;
-      cells.push(<span class={PIEC[k % PIEC.length]}>{'█'}</span>);
-    }
-    rows.push(cells, '\n');
-  }
+  let a0 = -Math.PI / 2;
+  const wedges = parts.map((x, i) => {
+    const f = x.v / tot, a1 = a0 + f * Math.PI * 2, big = f > 0.5 ? 1 : 0, r = 46, c = 50;
+    const d = f >= 0.9999 ? 'M 50 4 A 46 46 0 1 1 49.99 4 Z'
+      : 'M ' + c + ' ' + c + ' L ' + (c + r * Math.cos(a0)).toFixed(2) + ' ' + (c + r * Math.sin(a0)).toFixed(2) + ' A ' + r + ' ' + r + ' 0 ' + big + ' 1 ' + (c + r * Math.cos(a1)).toFixed(2) + ' ' + (c + r * Math.sin(a1)).toFixed(2) + ' Z';
+    a0 = a1;
+    return <path key={i} d={d} fill={CARD[i % CARD.length]} stroke="#f4eedc" stroke-width="1.4" stroke-linejoin="round" />;
+  });
   const label = (p.title || 'Pie chart') + ': ' + parts.map(x => x.n + ' ' + Math.round(x.v / tot * 100) + '%').join(', ');
   return <div class="piebox" role="img" aria-label={label}>
-    <pre class="pie" aria-hidden="true">{rows}</pre>
-    <div class="legend">{parts.map((x, i) => <div><span class={PIEC[i % PIEC.length]}>{'██'}</span> {x.n} <span class="num muted">{Math.round(x.v / tot * 100)}%</span></div>)}</div>
+    <svg class="pie card" viewBox="0 0 100 100" aria-hidden="true">{wedges}</svg>
+    <div class="legend">{parts.map((x, i) => <div key={i}><span class={'sw ' + PIEC[i % PIEC.length]} style={{ background: CARD[i % CARD.length] }} /> {x.n} <span class="num muted">{Math.round(x.v / tot * 100)}%</span></div>)}</div>
   </div>;
 }
-/** A column chart. Negative values hang below the line in red. */
+/** A column chart of card bars: green above the line, red hanging below it; `line` is a plan drawn as a dashed line. */
 export function ColChart(p: { vals: number[]; labels?: (string | number)[]; title?: string; line?: number }) {
-  const vals = p.vals, H = 6, out: ComponentChildren[] = []; let max = 1, neg = false;
-  vals.forEach(v => { if (Math.abs(v) > max) max = Math.abs(v); if (v < 0) neg = true; });
+  const vals = p.vals, n = Math.max(1, vals.length); let max = 1, min = 0;
+  vals.forEach(v => { if (v > max) max = v; if (v < min) min = v; });
   if (p.line != null && p.line > max) max = p.line;
-  const rl = p.line != null && p.line > 0 ? Math.max(1, Math.round(p.line / max * H)) : 0;
-  for (let r = H; r >= 1; r--) { out.push(vals.map(v => { const h = v / max * H; return [h >= r ? <span class="good">{'██'}</span> : (h >= r - 0.5 ? <span class="good">{'▄▄'}</span> : (r === rl ? <span class="plan">{'──'}</span> : '  ')), r === rl ? <span class="plan">{'─'}</span> : ' ']; }), '\n'); }
-  out.push('─'.repeat(Math.max(0, vals.length * 3 - 1)), '\n');
-  if (neg) for (let r = 1; r <= 3; r++) { out.push(vals.map(v => { const h = -v / max * H; return [h >= r ? <span class="bad">{'██'}</span> : (h >= r - 0.5 ? <span class="bad">{'▀▀'}</span> : '  '), ' ']; }), '\n'); }
-  if (p.labels) out.push(p.labels.map(l => (String(l) + '  ').slice(0, 2) + ' ').join(''));
-  return <pre class="ascii bars" role="img" aria-label={p.title || 'Chart'}>{out}</pre>;
+  const span = max - min || 1, H = 100, top = 4, zero = top + (max / span) * (H - top - 4), y = (v: number) => zero - v / span * (H - top - 4), W = n * 10;
+  return <div class="colchart" role="img" aria-label={p.title || 'Chart'}>
+    <svg viewBox={'0 0 ' + W + ' ' + H} preserveAspectRatio="none" aria-hidden="true">
+      {vals.map((v, i) => { const y0 = Math.min(zero, y(v)), h = Math.max(0.6, Math.abs(y(v) - zero)); return <rect key={i} x={i * 10 + 1.6} y={y0} width={6.8} height={h} rx="0.8" fill={v >= 0 ? '#3c8a3c' : '#c23a30'} />; })}
+      <rect x="0" y={zero - 0.35} width={W} height="0.7" fill="#23232a" />
+      {p.line != null && p.line > 0 ? <line x1="0" x2={W} y1={y(p.line)} y2={y(p.line)} stroke="#b8860b" stroke-width="0.9" stroke-dasharray="3 2" vector-effect="non-scaling-stroke" /> : null}
+    </svg>
+    {p.labels ? <div class="cl" aria-hidden="true">{p.labels.map((l, i) => <span key={i}>{l}</span>)}</div> : null}
+  </div>;
 }
-/** A 20-cell bar that shows a range, for scouting reports. */
+/** A bar that shows a range, for scouting reports: a card strip with the likely range cut in gold. */
 export function RangeBar(p: { lo: number; hi: number }) {
-  let s = ''; for (let i = 0; i < 20; i++) { const v = i * 5 + 2.5; s += v >= p.lo - 2.5 && v <= p.hi + 2.5 ? '█' : '░'; }
-  return <span class="meter au" aria-hidden="true">{s}</span>;
+  const lo = Math.max(0, Math.min(100, p.lo)), hi = Math.max(lo + 2, Math.min(100, p.hi));
+  return <svg class="rangebar" viewBox="0 0 100 10" preserveAspectRatio="none" aria-hidden="true">
+    <rect x="0" y="1" width="100" height="8" rx="1.5" fill="#3a3540" />
+    <rect x={lo} y="1" width={hi - lo} height="8" rx="1.5" fill="#d9a52a" />
+  </svg>;
 }
-/** A progress clock: a small pie of `n` segments with `v` filled. Red for trouble, green for a pay-out. */
+/** A progress clock: a card disc of `n` wedges with `v` filled. Red for trouble, green for a pay-out. */
 export function Dial(p: { v: number; n: number; bad?: boolean }) {
-  const W = 11, H = 5, rows: ComponentChildren[] = [];
-  for (let y = 0; y < H; y++) {
-    const cells: ComponentChildren[] = [];
-    for (let x = 0; x < W; x++) {
-      const dx = (x - (W - 1) / 2) / ((W - 1) / 2), dy = (y - (H - 1) / 2) / ((H - 1) / 2);
-      if (dx * dx + dy * dy > 1.12) { cells.push(' '); continue; }
-      let a = Math.atan2(dx, -dy) / (2 * Math.PI); if (a < 0) a += 1;
-      cells.push(Math.min(p.n - 1, Math.floor(a * p.n)) < p.v ? <span class="on">{'█'}</span> : <span class="off">{'░'}</span>);
-    }
-    rows.push(cells, '\n');
+  const n = Math.max(1, p.n), on = p.bad ? '#c23a30' : '#3c8a3c', r = 46, c = 50, out: ComponentChildren[] = [];
+  for (let i = 0; i < n; i++) {
+    const a0 = -Math.PI / 2 + i / n * Math.PI * 2, a1 = -Math.PI / 2 + (i + 1) / n * Math.PI * 2, fill = i < p.v ? on : '#e8dcc0';
+    const d = n === 1 ? 'M 50 4 A 46 46 0 1 1 49.99 4 Z'
+      : 'M 50 50 L ' + (c + r * Math.cos(a0)).toFixed(2) + ' ' + (c + r * Math.sin(a0)).toFixed(2) + ' A 46 46 0 ' + (1 / n > 0.5 ? 1 : 0) + ' 1 ' + (c + r * Math.cos(a1)).toFixed(2) + ' ' + (c + r * Math.sin(a1)).toFixed(2) + ' Z';
+    out.push(<path key={i} d={d} fill={fill} stroke="#23232a" stroke-width="2.5" stroke-linejoin="round" />);
   }
-  return <pre class={'dial ' + (p.bad ? 'bad' : 'good')} aria-hidden="true">{rows}</pre>;
+  return <svg class={'dial ' + (p.bad ? 'bad' : 'good')} viewBox="0 0 100 100" aria-hidden="true">{out}</svg>;
 }
 function blockRows(word: string, zeroAsO?: boolean): string[] {
   const rows = ['', '', '', '', ''];
@@ -75,7 +74,7 @@ export function BigText(p: { text: string; scale?: number; one?: boolean; cls?: 
   return <pre class={'ascii logo' + (p.cls ? ' ' + p.cls : '')} role={p.label ? 'img' : undefined} aria-label={p.label ? p.text : undefined} aria-hidden={p.label ? undefined : true} style={{ fontSize: size }}>{out.join('\n')}</pre>;
 }
 /** The gold banner used for big-event title cards. */
-export function Banner(p: { text: string }) { return <BigText text={p.text} cls="gold" label />; }
+export function Banner(p: { text: string }) { return <div class="evbanner" role="img" aria-label={p.text}><span aria-hidden="true">{p.text}</span></div>; }
 /** The "new champion" belt drawn when a title changes hands. */
 export function BeltArt(p: { name: string; top?: string }) {
   const n = String(p.name).toUpperCase(), top = '★ ' + String(p.top || 'NEW CHAMPION').toUpperCase() + ' ★', w = Math.max(19, n.length + 4, top.length + 2), bar = '═'.repeat(w);

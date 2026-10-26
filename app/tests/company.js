@@ -128,12 +128,12 @@ async function finances(page, mode, weeks) {
   await go(page, 'finances');
   const cols = Math.min(weeks, mode === 'phone' ? 12 : 24);
   check(mode, 'two pies', await count(page, '.piebox') === 2);
-  check(mode, 'weekly net chart', await count(page, 'pre.bars') === 1 && await page.$eval('pre.bars', e => e.getAttribute('aria-label')) === 'Weekly net income for the last ' + cols + ' weeks', await page.$eval('pre.bars', e => e.getAttribute('aria-label')));
-  const pre = await page.$eval('pre.bars', e => ({ s: e.scrollWidth, c: e.clientWidth, px: parseFloat(getComputedStyle(e).fontSize) }));
+  check(mode, 'weekly net chart', await count(page, '.colchart') === 1 && await page.$eval('.colchart', e => e.getAttribute('aria-label')) === 'Weekly net income for the last ' + cols + ' weeks', await page.$eval('.colchart', e => e.getAttribute('aria-label')));
+  const pre = await page.$eval('.colchart', e => ({ s: e.scrollWidth, c: e.clientWidth, px: parseFloat(getComputedStyle(e).fontSize) }));
   check(mode, 'the chart fits its panel without scrolling', pre.s <= pre.c + 1, pre.s + ' of ' + pre.c + 'px at ' + pre.px.toFixed(1) + 'px type');
   check(mode, 'ledger adds up', await page.evaluate(() => { const f = window.EWF_DEBUG.state().fin; return Math.abs(f.inc - f.exp - f.net) < 2; }));
   const net = await page.evaluate(() => { const b = [...document.querySelectorAll('.ledger li')].pop().querySelector('.num b'); return { v: window.EWF_DEBUG.state().fin.net, c: getComputedStyle(b).color }; });
-  check(mode, 'the net figure is green or red by its sign', net.c === (net.v < 0 ? 'rgb(170, 0, 0)' : 'rgb(0, 96, 0)'), net.v + ' in ' + net.c);
+  { const [r, g] = (net.c.match(/\d+/g) || []).map(Number); check(mode, 'the net figure is green or red by its sign', net.v < 0 ? r > g + 40 : g > r + 20, net.v + ' in ' + net.c); }
   check(mode, 'week table', await count(page, '.tw tbody tr') === Math.min(weeks, 12), await count(page, '.tw tbody tr') + ' rows');
   await fits(page, mode, 'finances after ' + weeks + ' weeks');
 }
@@ -304,7 +304,7 @@ async function remote() {
     const { browser, page, errs } = await start(mode, 'pdw', mode === 'desk' ? 0 : 1);
     await tour(page, mode, 'week 1');
     await go(page, 'finances');
-    check(mode, 'books are shut before the first week', /The books open after your first week/.test(await page.$eval('main', e => e.innerText)) && await count(page, 'pre.bars') === 0);
+    check(mode, 'books are shut before the first week', /The books open after your first week/.test(await page.$eval('main', e => e.innerText)) && await count(page, '.colchart') === 0);
     await advance(page, 8);
     check(mode, 'eight weeks played', await state(page, S => S.week) === 9 && !(await state(page, S => S.over)));
     await tour(page, mode, 'week 9');

@@ -57,9 +57,11 @@ use('public_domain');
   const q = S.quests.find(x => x.type === 'shot' && x.w === w.id);
   ok('lock', 'a promised title shot is for the next big event', q && q.at != null && E.cal(q.at).wom === 4, q && q.text);
   let bigCard = null, kept = false, refused = null;
+  // until the big event the promised wrestler stays off the weekly shows, so they cannot win the belt early or get hurt
+  const keepOff = (S, c) => { if (S.queue[S.qi].big) return; for (let i = c.length - 1; i >= 0; i--) if (c[i].sides && c[i].sides.some(sd => sd.indexOf(w.id) >= 0)) c.splice(i, 1); E.fitShow(S, c); };
   for (let k = 0; k < 6 && !bigCard; k++) { house(S); while (S.qi < S.queue.length) { const sh = S.queue[S.qi];
     if (sh.big) { bigCard = S.card.map(m => JSON.parse(JSON.stringify(m))); const i = S.card.findIndex(m => m.pm != null); refused = i >= 0 ? E.cardRemove(S, i) : null; E.cardClear(S); kept = S.card.some(m => m.pm != null); }
-    runShow(S); } E.endWeek(S); }
+    runShow(S, keepOff); } E.endWeek(S); }
   const pm = bigCard && bigCard.find(m => m.pm != null && m.sides[0][0] === w.id);
   ok('lock', 'the big event opens with the promised match on its card', !!pm && pm.sides[0][0] === w.id && pm.title === t.id, JSON.stringify(bigCard));
   ok('lock', 'it cannot be taken off, and Clear keeps it', refused && !refused.ok && kept, refused && refused.msg);

@@ -22,6 +22,19 @@ Two more lists sit beside this one, both finished:
 
 | Topic | Decision |
 | --- | --- |
+| The match screen, 22 Oct | Fewer kick-outs. When there is no match picture for the moment, the picture cuts to the commentators. The animation never loops while the commentary catches up; it flows. Build: an instant replay of the finish, a big referee count on near falls, paper-flip cuts between pictures, a finisher close-up with the move's name, cinema mode (the picture fills the screen), the winner celebrating after the bell, big moments for each match rule (ladder, cage, tables), run-ins drawn as their own pictures. The night's highlights go on After the show. The feed is livelier and each poster has a personality of their own; the company's sign-off post comes once, after the main event, not after every match. |
+| Blueprint, questions, approval, 23 Oct | A core rule for any new game mode, system or major feature: first a complete blueprint (states, data, screens, money and balance), then a list of probing questions for Ryan, and no code until he has read both, answered and said go ahead (CLAUDE.md rule 9d). |
+| Sound effects, 23 Oct | "It sounds terrible." All sound effects are off; the game is quiet except the soundtrack. The redo does not need to match the papercraft look: it should sit well with the classical music and feel good. It goes through rule 9d, and every sound is approved by ear. The office sounds are piano, not harp ("harp is wrong piano is right"). The blueprint and every pick so far are in `docs/plans/sound.md`. The broadcast sounds are in the game (step 2); the office piano is next; boos and the tweener reaction wait on a source. |
+| External assets, 23 Oct | A new rule: the game can have external assets (recorded sound effects, music, images), shipped with the game and free to use commercially, each credited. It replaces "zero external assets" (CLAUDE.md rule 2). |
+| Cancelling a show, 22 Oct | The network can cancel your weekly show, but you cannot quit one yourself: you play out the network contract. |
+| The assistant, 22 Oct | The assistant leaves Career and gets its own window on the desk: tips, and what it is booking for the house shows. A placeholder for now, built out later. |
+| Loading screen, 22 Oct | No loading screen. The game opens straight on the title screen. |
+| Balance, 22 Oct | Keep it: a player who only presses Suggest a card can lose the job or go broke. |
+| WPW's champions, 22 Oct | The Judge (World Heavyweight), "Unstoppable" Mike Adams (Florida State), The Dream and Jokester (World Tag Team), Raelis Shy (Canadian Pure), Dan Murph (Hardcore), The One (PCW World Heavyweight). |
+| Licence, 22 Oct | All rights reserved. No licence file. |
+| Parody notes in git history, 22 Oct | Rewrite the history to remove them, and force-push. Everyone re-clones afterwards. |
+| Map gaps, 22 Oct | Trace the missing states and regions, and when a city still has none, show the whole country (or continent) with the pin on the city. |
+| Platforms, 22 Oct | Windows first, then consoles, then others later. Keep every control working by gamepad. No TV-size test runs for now. |
 | The wrestler always on show, 18 Oct | On the World Editor's Wrestlers page, the Roster page and Free agents the wrestler is always drawn full length beside the list, like the roster screens of SmackDown: Here Comes the Pain. The Wrestlers page as built is the pattern (rule 5c). |
 | The art style, 18 Oct | The desk image is the art style: everything looks made from construction paper. Built in CSS and canvas now; Blender renders of the pieces later to make it more 3D. |
 | The World Editor's foundation, 18 Oct | Create a Wrestler (Create a Player) and Create a Scene are the new foundation for the World Editor. Its other parts are built around them. |
@@ -47,7 +60,7 @@ Two more lists sit beside this one, both finished:
 | Action points | Every action point spent leaves a note of what happened, on the desk and on the next show report. |
 | Booking screen | Replaces the current card editor. Card size is set by show length: 1 hour is 3 matches and 3 promos, 2 hours is 4 and 4, 3 hours or pay-per-view is 5 and 5. |
 | Promos | The player picks who and what kind; the game writes and grades it. |
-| The week | The player can pre-book every show of the week. Each show affects the next one. |
+| The week | Each show is booked on its own, one at a time; there is no booking the whole week ahead (Ryan, 21 October). Each show affects the next one. |
 | The goal | Open-ended, like a tycoon game: a world top 500 of every wrestler (yearly, with a weekly top ten), level-up pop-ups after shows, yearly awards, numbers that visibly climb, more dynamic events. |
 | Events | Backstage incidents, the business calling, wrestler life events, fan and internet moments, and situations modelled on famous moments in wrestling history. |
 | Storylines | Templates modelled on famous and infamous real storylines. The player spends booking power to start the epic ones. |
@@ -507,7 +520,7 @@ Code: `src/87-create.js` (`E.makeShow`, `E.dropShow`, `E.makeTitle`, `E.dropTitl
   - Rivals settle their own deals. Some of their shows change network, and it is news. A rival in the red no longer cancels a show: it moves to a smaller network with a cheaper production.
   - An anniversary and a milestone episode (100, 250, every 500) are occasions: the desk hears as the week begins, the title card says it, the building is up for it. The title card always carries the episode number and the network.
   - The Weekly shows window lists each show's standing, years, episodes, network and when the deal runs out.
-  - [ ] The player can still cancel one of their own shows. Ryan to say whether that goes too.
+  - [x] The player can still cancel one of their own shows. Ryan to say whether that goes too. (22 October: the network can cancel it; the player cannot quit it.)
   - [x] Years on the air are worked out from a company's size. The World Editor should let a world set them, and name its own networks. Done 20 October: the World tab's name lists (small, cable, major) and each show's Network and Years on air on the Shows tab.
   - [x] This is the first part of section 5 (TV deals). Still to come there: money by the hour, tastes, ratings targets, streaming, a rival's night. (16 October: tastes and ratings targets, `src/89-networks.js`; streaming, `src/89-streaming.js`; a rival's night and the network's offer to move, `src/88-nights.js`. Money by the hour was left: the deal's rate already scales with the network and the show's standing.)
 - [x] Measured over 32 weeks on three seeds: an extra show moved weekly profit between -$100K and +$214K and popularity by 0 to +1.6. It is a real choice, not free money.
@@ -636,7 +649,7 @@ Ryan's list of 3 October, after looking at the booking screen. Each step is buil
   - [ ] Every other page (the desk, Roster, Stories, Net, Manage, Company, the title screens), one at a time.
 - [ ] **Step 5. Five goals for every show**, drawn from a first set of ten easy ones (later hundreds, from the stories in play). They move storylines, objectives and rookies along. Rewards differ: money, AP, the owner's mood, the fans' mood.
 - [ ] **Step 6. The page itself.** The opener and the main event look important, and so do big storyline moments. The right-hand side says much more: who won last week, winning runs, who has not been used in more than two weeks, relationship news, what the owner has liked lately.
-- [ ] Open question for Ryan: the Assistant panel on the Career page describes a helper who books and runs the small shows. With its two buttons gone it does nothing on screen. Remove it, or keep it for a later fast mode?
+- [x] Open question for Ryan: the Assistant panel on the Career page describes a helper who books and runs the small shows. With its two buttons gone it does nothing on screen. Remove it, or keep it for a later fast mode?
 
 ### 0h. The first year: things every game makes you do (road map, not started)
 

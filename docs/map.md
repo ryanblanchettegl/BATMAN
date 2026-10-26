@@ -92,7 +92,7 @@ One line per file in `src/`, in build order: what it owns, then the `E.` functio
 - **99-points.js**: wraps: 65-you.js (it must sort after them; test-buildorder.js checks) `E.pointsInfo`
 - **99-postmortem.js**: wraps: 00-core.js, 66-relations.js (it must sort after them; test-buildorder.js checks) `E.monthReview`, `E.readMonth`, `E.seasonReviews`
 - **99-press.js**: wraps: 99-kayfabe.js (it must sort after them; test-buildorder.js checks) `E.press`, `E.pressDo`
-- **99-progress.js**: wraps: 75-people.js, 90-api.js, 34-night.js (it must sort after them; test-buildorder.js checks) `E.__progShow`, `E.ask`, `E.canSign`, `E.afterShow`, `E.progInfo`, `E.spendPoint`, `E.autoSpend`, `E.autoSpendAll`, `E.PROG_ATTR`, `E.DEV`
+- **99-progress.js**: wraps: 75-people.js, 90-api.js, 34-night.js (it must sort after them; test-buildorder.js checks) `E.__progShow`, `E.ask`, `E.canSign`, `E.afterShow`, `E.progInfo`, `E.spendAttr`, `E.autoSpend`, `E.autoSpendAll`, `E.PROG_ATTR`, `E.DEV`
 - **99-reigns.js**: wraps: 10-match.js (it must sort after them; test-buildorder.js checks)
 - **99-ringwork.js**: wraps: 10-match.js (it must sort after them; test-buildorder.js checks) `E.persona`
 - **99-royal.js**: wraps: 31-live.js (it must sort after them; test-buildorder.js checks) `E.brSize`, `E.brShot`, `E.brSurprise`, `E.brSurpriseInfo`, `E.liveBegin`, `E.lockMatch`, `E.moveMatchTo`, `E.suggestKeep`

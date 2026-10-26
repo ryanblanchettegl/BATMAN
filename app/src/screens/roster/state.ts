@@ -22,6 +22,7 @@ export interface RosterState {
   repack: { id: number; g: string } | null;
   mq: string;
   offer: number | null;
+  feeFor?: number | null;
   wage: string;
   cl?: string[];
   clFor?: number | null;

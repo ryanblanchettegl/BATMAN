@@ -1,36 +1,32 @@
-/* Sound: a handful of square-wave beeps and a burst of filtered noise for the crowd. Starts only after a click. */
-import { pref, hooks } from './store';
+/* Sound: the front the rest of the interface calls (docs/plans/sound.md). The sounds are real recordings and piano
+   figures Ryan picked by ear, played by ./audio/engine.ts and chosen by ./audio/cues.ts: the broadcast (step 2) and
+   the office (step 4). Nothing plays until the first press or key wakes the sound. */
+import { hooks } from './store';
+import { wake } from './audio/engine';
+import { big, crowd, ring, office, uiSetup } from './audio/cues';
 
-let AC: AudioContext | null = null;
-function ctx(): AudioContext { if (!AC) AC = new ((window as any).AudioContext || (window as any).webkitAudioContext)(); return AC!; }
-export function tone(f: number, d: number, type?: OscillatorType, vol?: number, when?: number) {
-  if (!pref.snd) return;
-  try {
-    const ac = ctx(), o = ac.createOscillator(), g = ac.createGain(), t = ac.currentTime + (when || 0);
-    o.type = type || 'square'; o.frequency.value = f; o.connect(g); g.connect(ac.destination);
-    g.gain.setValueAtTime((vol || 0.04) * (pref.fxvol || 1), t); g.gain.exponentialRampToValueAtTime(0.0001, t + d); o.start(t); o.stop(t + d + 0.03);
-  } catch (e) { /* no audio is fine */ }
-}
-function crowdNoise(vol: number, d: number) {
-  if (!pref.snd) return;
-  try {
-    const ac = ctx(), n = Math.floor(ac.sampleRate * d), buf = ac.createBuffer(1, n, ac.sampleRate), ch = buf.getChannelData(0);
-    for (let i = 0; i < n; i++) ch[i] = (Math.random() * 2 - 1) * Math.sin(Math.PI * i / n);
-    const src = ac.createBufferSource(), g = ac.createGain(), flt = ac.createBiquadFilter();
-    flt.type = 'bandpass'; flt.frequency.value = 900; g.gain.value = vol * (pref.fxvol || 1); src.buffer = buf; src.connect(flt); flt.connect(g); g.connect(ac.destination); src.start();
-  } catch (e) { /* no audio is fine */ }
-}
+const quiet = () => { /* no sound picked for this yet */ };
 export const SFX = {
-  bell() { tone(1568, 0.5, 'triangle', 0.09, 0); tone(1568, 0.5, 'triangle', 0.09, 0.22); tone(1568, 0.7, 'triangle', 0.09, 0.44); },
-  bellEnd() { tone(1568, 0.35, 'triangle', 0.09, 0); tone(1568, 0.35, 'triangle', 0.09, 0.18); },
-  count() { tone(520, 0.09, 'square', 0.05, 0); tone(520, 0.09, 'square', 0.05, 0.38); tone(780, 0.16, 'square', 0.05, 0.76); },
-  fanfare() { [523, 659, 784, 1047].forEach((f, i) => tone(f, 0.16, 'square', 0.04, i * 0.13)); tone(1047, 0.5, 'square', 0.04, 0.55); },
-  ach() { tone(880, 0.1, 'square', 0.04, 0); tone(1320, 0.22, 'square', 0.04, 0.1); },
-  crowd(cr: number) { crowdNoise(0.02 + Math.max(0, cr - 30) / 70 * 0.1, 0.9 + cr / 100); },
-  tick() { tone(1100, 0.012, 'square', 0.008); },
-  open() { tone(660, 0.05, 'square', 0.025, 0); tone(990, 0.07, 'square', 0.025, 0.05); },
-  close() { tone(990, 0.05, 'square', 0.025, 0); tone(660, 0.07, 'square', 0.025, 0.05); },
-  win() { tone(784, 0.09, 'square', 0.03, 0); tone(1047, 0.16, 'square', 0.03, 0.09); },
-  fail() { tone(220, 0.18, 'sawtooth', 0.035, 0); tone(165, 0.26, 'sawtooth', 0.035, 0.13); }
+  bell() { big.bell(); },
+  bellEnd() { big.bellEnd(); },
+  count() { crowd.shout(['one', 'two', 'three']); },
+  /** The show goes on the air, and the sign-off. */
+  fanfare() { big.onAir(); },
+  /** A call on the headset, an achievement. */
+  ach: quiet,
+  crowd(cr: number) { crowd.pop(cr); },
+  hit() { ring.hit(); },
+  tick: quiet,
+  open() { office.pop(); },
+  close: quiet,
+  win() { office.good(); },
+  fail() { office.bad(); },
+  week() { office.week(); },
+  star() { office.star(); },
+  after(rep: any) { office.after(rep); }
 };
 hooks.sound = k => { const f = (SFX as any)[k]; if (f) f(); };
+// browsers keep sound asleep until the player presses something
+document.addEventListener('pointerdown', wake, true);
+document.addEventListener('keydown', wake, true);
+uiSetup();

@@ -35,7 +35,9 @@ ok(stale >= 1 && ripe >= 1, 'no feud ever went stale or ripe');
     for (let g = 0; g < 400; g++) { const r = E.liveNext(S); if (r.event) E.liveDecide(S, r.event.choices && r.event.choices[1] && /straight to the finish/.test(r.event.choices[1].n || r.event.choices[1]) ? 1 : (r.event.safe || 0)); else if (r.done) return { rep: r.rep }; }
     return { errors: ['The show did not finish.'] }; }; return () => { E.runPlayerShow = run; }; };
   if (f) { const r = E.storyPlanEnd(S, f.id); ok(r.ok && f.endAt != null, 'planning an ending did not take'); const back = hurtGoesOn();
-    for (let t = 0; t < 2 && !f.res; t++) { if (t) E.storyPlanEnd(S, f.id); for (let i = 0; i < 8 && !f.res && S.week <= f.endAt; i++) { noPromises(); week(S); } }
+    // up to fourteen weeks: if one of them is hurt on the planned night, or the match ends on a disqualification or a
+    // count-out, the ending carries to the next big night
+    for (let i = 0; i < 14 && !f.res; i++) { noPromises(); week(S); }
     back();
     ok(f.res && !f.dead, 'the planned ending did not settle the feud with a payoff (res ' + f.res + ', dead ' + f.dead + ')'); }
   // a match marked as the ending ends it on a weekly show

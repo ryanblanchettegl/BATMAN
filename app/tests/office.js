@@ -32,12 +32,12 @@ async function run(mode) {
   /* ---- the desk, week 1 ---- */
   ok(/Office - Week 1/.test(await txt('h1')), 'desk heading');
   ok(await count('.gp') === 0 && await count('.gauge') === 0, 'no gauges on the desk: they are on Company');
-  ok((await page.$$eval('.deskpage > .wn', L => L.map(e => e.getAttribute('data-t')).join())) === 'road,fire,task-win,next' && await count('[data-t="next"] [data-t="book-next"]') === 1, 'the desk is four windows: the road, what needs an answer, the tasks and the next show with its booking button');
+  ok((await page.$$eval('.deskpage > .wn', L => L.map(e => e.getAttribute('data-t')).join())) === 'road,fire,task-win,next,desk-asst' && await count('[data-t="next"] [data-t="book-next"]') === 1, 'the desk is five windows: the road, what needs an answer, the tasks, the next show with its booking button, and your assistant');
   ok(await count('.main .panel') === 0 && await count('[data-t="endweek"]') === 0, 'no old panels on the desk, and no end-week button yet');
   /* everything else the desk keeps is in one pop-up */
   const moreTab = async id => { if (!(await page.$('[data-t="more-tab"]'))) { await page.click('[data-t="desk-more"]'); await page.waitForSelector('[data-t="more-tab"]'); } await page.click('[data-t="more-tab"][data-v="' + id + '"]'); };
   await page.click('[data-t="desk-more"]'); await page.waitForSelector('.win');
-  ok((await page.$$eval('[data-t="more-tab"]', L => L.map(e => e.innerText.trim()).join('|'))) === 'This week|Promises|Worth knowing|Clocks|News|Answered', 'The week in full has six tabs: ' + (await page.$$eval('[data-t="more-tab"]', L => L.map(e => e.innerText.trim()).join('|'))));
+  ok((await page.$$eval('[data-t="more-tab"]', L => L.map(e => e.innerText.trim()).join('|'))) === 'This week|Around the world|Promises|Worth knowing|Clocks|News|Answered', 'The week in full has seven tabs: ' + (await page.$$eval('[data-t="more-tab"]', L => L.map(e => e.innerText.trim()).join('|'))));
   ok(await count('.win [data-t="book-show"]') === 1, 'This week lists the shows, with one to book');
   await moreTab('news'); ok(await count('.win .onews li') >= 1, 'office news has a memo');
   await step('the week in full', 'week');
@@ -146,7 +146,7 @@ async function run(mode) {
   await state(page, S => { S.inbox.filter(e => !e.done).forEach(e => window.GP.resolveEvent(S, e.id, e.choices.length - 1)); });   // a show can leave a matter that holds the week: one for the night, or one of its own (a chant the crowd started)
   await go(page, 'desk');
   await page.click('[data-t="endweek"]'); await page.waitForSelector('.win');
-  ok(/Week closed/.test(await txt('.win .wt')) && /Net for the week/.test(await txt('.win .wb')) && await count('.win pre.bars') === 1 && /It is now/.test(await txt('.win .wb')), 'week-closed window content');
+  ok(/Week closed/.test(await txt('.win .wt')) && /Net for the week/.test(await txt('.win .wb')) && await count('.win .colchart') === 1 && /It is now/.test(await txt('.win .wb')), 'week-closed window content');
   await step('week closed');
   await page.click('#modal-ok');
   ok(await count('.win') === 0 && /Office - Week 2/.test(await txt('h1')) && await ap() === 3, 'on to week 2 with fresh action points');
@@ -176,7 +176,7 @@ async function run(mode) {
   ok(await count('[data-t="ev"]') === 0 && await state(page, S => S.inbox.some(e => e.done && e.result)), 'answered events show a result');
   await step('inbox answered', 'answered');
   await page.click('[data-t="endweek"]'); await page.waitForSelector('.win');
-  ok(await page.$eval('.win pre.bars', e => e.textContent.split('\n').length >= 8), 'chart has rows for several weeks');
+  ok(await page.$eval('.win .colchart', e => e.querySelectorAll('svg rect').length >= 3), 'chart has bars for several weeks');
   await step('week closed again', 'weekclosed');
   await page.click('#modal-ok');
 

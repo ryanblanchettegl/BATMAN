@@ -8,7 +8,11 @@ const md5 = o => crypto.createHash('md5').update(JSON.stringify(o)).digest('hex'
 const REF = JSON.parse(fs.readFileSync('tests/scenario-reference.json', 'utf8')), CHK = JSON.parse(fs.readFileSync('tests/scenario-checks.json', 'utf8'));
 const play = (S, weeks) => { for (let w = 0; w < weeks && !S.over; w++) { S.inbox.filter(e => !e.done).forEach(e => E.resolveEvent(S, e.id, 1)); if (S.owner.pending) E.setCreed(S, { style: 'merit', roots: 'tradition', pledge: 'stable' }); while (S.qi < S.queue.length && !S.over) { const c = E.suggest(S); if (E.validate(S, c).errors.length) { S.qi++; continue; } E.runPlayerShow(S, c); } if (!S.over) E.endWeek(S); } };
 const FORCE = { rescue: S => { S.promos[S.player].cash = 2e6; }, champion: S => { const P = S.promos[S.player], w = S.w[S.scn.target]; const top = P.titles.filter(t => !t.tag && t.g === w.g).sort((a, b) => b.lvl - a.lvl)[0]; top.holders = [w.id]; }, war: S => { S.scn.me = [2, 3]; S.scn.rv = [0]; } };
+// RENEW=1 writes the reference and the words afresh from this build, for when the balance has changed on purpose
+const RENEW = !!process.env.RENEW;
 for (const sc of E.SCENARIOS.filter(s => REF[s.id])) {
+  if (RENEW) { const S = E.scenarioStart(sc.id), st = md5(S); play(S, 60); const res = S.scn.res; delete res.score; REF[sc.id] = { start: st, end: md5(S), week: S.week, res };
+    const T = E.scenarioStart(sc.id); CHK[sc.id] = { lose: E.scnCheck(T) }; FORCE[sc.id](T); CHK[sc.id].win = E.scnCheck(T); }
   const S = E.scenarioStart(sc.id), r = REF[sc.id];
   ok(sc.id, 'starts exactly as before', md5(S) === r.start);
   play(S, 60); const res = S.scn.res, score = res.score; delete res.score;
@@ -29,4 +33,5 @@ const L = E.scenarioStart('longhaul'); play(L, 70);
 const nan = []; const walk = (o, p) => { if (typeof o === 'number' && !isFinite(o)) nan.push(p); else if (o && typeof o === 'object') Object.keys(o).forEach(k => walk(o[k], p + '.' + k)); }; walk(L, 'S');
 ok('pkg', 'it plays its 60 weeks to a result, NaN 0', L.scn.done && L.scn.res && L.week >= 60 && nan.length === 0, L.scn.res && L.scn.res.text);
 E.useUniverse(PD); ok('pkg', 'another world drops it again', !E.SCENARIOS.some(s => s.id === 'longhaul'));
+if (RENEW) { fs.writeFileSync('tests/scenario-reference.json', JSON.stringify(REF, null, 1) + '\n'); fs.writeFileSync('tests/scenario-checks.json', JSON.stringify(CHK, null, 1) + '\n'); console.log('renewed tests/scenario-reference.json and tests/scenario-checks.json'); }
 console.log(fails.length ? fails.length + ' failed' : 'test-scenarios: all passed'); process.exit(fails.length ? 1 : 0);

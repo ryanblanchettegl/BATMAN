@@ -89,16 +89,12 @@ E.makeShow=function(S,o){
   note(S,'A new weekly show',name+' starts next week. Its first night is an occasion.','good');
   return {ok:true,roll:r,msg:rollText(r)+name+' starts next week as a small show, and its first night is an occasion: the building will be up for it. Launching it cost '+money(cost)+'. It brings television and gate money every week, and your roster now works one more night. '+P.name+' will not get another for two years.'};
 };
+/* The booker cannot quit a weekly show: it runs out its network deal, and only the network can cancel it
+   (src/90-cancel.js). Ryan, 22 October. */
 E.dropShow=function(S,id){
   var P=S.promos[S.player],sh=P.shows.filter(function(x){return x.id===id;})[0];
   if(!sh)return {ok:false,msg:'That show is not on your schedule.'};
-  if(P.shows.length<=1)return {ok:false,msg:'A company needs one weekly show.'};
-  // a show still to run this week comes off the schedule too; a card half booked for it is dropped
-  var cur=S.queue[S.qi];if(cur&&cur.id===id)S.card=[];
-  S.queue=S.queue.filter(function(q,i){return i<S.qi||q.id!==id;});
-  removeShow(S,P,sh);P.image=clamp(P.image-0.5,5,100);
-  news(S,'money',P.name+' cancelled '+sh.name+'.');
-  return {ok:true,msg:sh.name+' is off the schedule. The network is not pleased: popularity down half a point.'};
+  return {ok:false,msg:sh.name+' is under contract to its network. You play out the deal; only the network can cancel a show.'};
 };
 E.renameShow=function(S,id,name){
   var P=S.promos[S.player],sh=P.shows.filter(function(x){return x.id===id;})[0];name=makeCleanName(name,32);

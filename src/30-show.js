@@ -174,8 +174,8 @@ function showEnd(S,P,show,card,st){
         else qt='Sponsor target missed: needed '+gradeA(q.target)+' show, got '+gradeA(rep.cs)+'.';
         rep.quest.push(qt);(rep.targets=rep.targets||[]).push({ok:sok,t:qt});dropQuest(S,q,sok,qt);}
       if(q.type==='network'&&q.show===show.id){
-        if(q.hit){P.led.bonus+=q.bonus;qt='Network target hit: a main event of '+starG(q.got||q.target)+', '+starG(q.target)+' was needed. +$'+q.bonus.toLocaleString('en-US')+'.';award(S,'ACH_QUEST');}
-        else qt='Network target missed: needed a main event of '+starG(q.target)+(q.got!=null?', got '+starG(q.got):'')+'.';
+        if(q.hit){P.led.bonus+=q.bonus;qt='Network bonus earned: a main event of '+starG(q.got||q.target)+', '+starG(q.target)+' was needed. +$'+q.bonus.toLocaleString('en-US')+'.';award(S,'ACH_QUEST');}
+        else qt='Network bonus missed: needed a main event of '+starG(q.target)+(q.got!=null?', got '+starG(q.got):'')+'.';
         rep.quest.push(qt);(rep.targets=rep.targets||[]).push({ok:!!q.hit,t:qt});dropQuest(S,q,!!q.hit,qt);}
     });
     rep.sheet=dirtSheet(S,P,show,rep,inP);

@@ -5,26 +5,14 @@ import { useEffect, useRef, useState } from 'preact/hooks';
 import { E } from '../../engine';
 import { G, ui, pref, Modal, VER, UNIS, saveUnis, savePrefs, setUniverse, builtInUniverse, basePackage, isBuiltIn, DEFAULT_UNI, cut, loadSave, cash, view, redraw, openModal, plural, slice, act } from '../../store';
 import { HOT, pageName } from '../../nav';
-import { autoScreen, skipBoot, onKey } from '../../input';
+import { autoScreen, onKey } from '../../input';
 import { startGame, continueGame, loadSaveText, startChallenge, startScenario, isoWeekId } from '../../flow';
 import { Btn, Panel, Head, Sel, Field, TextBox, Window, Logo, Data, dataAttrs } from '../../kit';
 import { MusicBtn } from '../../shell/Frame';
 import { ModelCard } from '../../shared/model';
 import { SFX } from '../../sfx';
-
-/* ---------- boot ---------- */
-function bootLines(): string[] { const info = E.universe(); return ['LOADING ROSTER... ' + info.workers + ' WORKERS', 'INITIALIZING BOOKING SYSTEM...', 'CHECKING MEMORY... 640K OK', 'READING SAVE... ' + (loadSave() ? 'FOUND' : 'NONE')]; }
-export const BOOT_STEPS = 5;
-export function Boot() {
-  const L = bootLines(), n = ui.boot ? ui.boot.step : 0, W = 22, f = Math.min(W, Math.round(W * n / BOOT_STEPS));
-  return <div class="bootscr" data-t="boot-skip" onClick={skipBoot}><div class="bootin">
-    <p class="bt">GORILLA POSITION ENGINE <span>v</span>{VER}</p>
-    <p class="rule" aria-hidden="true">{'─'.repeat(26)}</p>
-    {L.map((l, k) => <p style={{ visibility: k < n ? 'visible' : 'hidden' }}>{l}</p>)}
-    <p class="bar" role="img" aria-label="Loading">[<span>{'█'.repeat(f)}</span><i>{'░'.repeat(W - f)}</i>]</p>
-    <p class="skip">Press any key</p>
-  </div></div>;
-}
+import { prefsChanged } from '../../audio/cues';
+import { SFX_ON } from '../../audio/engine';
 
 /* ---------- the list menus of the start screens ---------- */
 interface MenuItem { t: string; d?: Data; cls?: string; label: ComponentChildren; pick: () => void }
@@ -280,7 +268,7 @@ export function Setup() {
 /* ---------- windows: help, options, the universe import report ---------- */
 function Help() {
   const [k, setK] = useState('job');
-  const T: [string, string][] = [['job', 'The job'], ['line', 'The bottom line'], ['book', 'Booking and sections'], ['try', 'Attempts and names'], ['world', 'Your world'], ['keys', 'Keys']];
+  const T: [string, string][] = [['job', 'The job'], ['line', 'The bottom line'], ['book', 'Booking and sections'], ['try', 'Attempts and names'], ['world', 'Your world'], ['keys', 'Keys'], ['credits', 'Credits']];
   return <Window title="Help" wide ok="Got it">
     <div class="glossx">
       <div class="gl-list" role="tablist" aria-label="Help topics">{T.map(x => <Btn kind="sm" key={x[0]} on={x[0] === k} t="help-tab" d={{ k: x[0] }} onClick={() => setK(x[0])}>{x[1]}</Btn>)}</div>
@@ -306,6 +294,12 @@ function Help() {
       {k === 'try' ? <>
     <p class="mt1"><b>Attempts.</b> Some actions may fail. Each one shows its chance, what helps and what hurts.</p>
     <p class="mt1"><b>Names.</b> Select any name or title to open a pop-up. Back steps out, Close shuts them all.</p>
+      </> : null}
+      {k === 'credits' ? <>
+    <p><b>Sound.</b> Crowd, bell and ring recordings from the Sonniss game audio bundles (Sonic Bat, 2496SoundEffects, Gamemaster Audio, Red Libraries) and the VSCO 2 Community Edition orchestral library by Versilian Studios.</p>
+    <p class="mt1"><b>Piano.</b> The office's piano is the Salamander Grand Piano by Alexander Holm, licensed under Creative Commons Attribution 3.0.</p>
+    <p class="mt1"><b>Voices.</b> The commentators, the wrestlers on the microphone and the crowd's count are made from the LibriTTS-R voices (Koizumi and others, licensed under Creative Commons Attribution 4.0), rendered with the Piper speech engine.</p>
+    <p class="mt1"><b>Music.</b> Recordings by the Czech National Symphony Orchestra and the Musopen String Quartet for Musopen, Kimiko Ishizaka, Karine Gilanyan, Frank Levy, Shelley Katz, Paul Pitman and the United States Air Force Band. The Jukebox names who played each piece.</p>
       </> : null}
       {k === 'world' ? <>
     <p class="mt1"><b>World Editor.</b> On the title screen. Build your own world of companies, shows, belts and wrestlers, then play it or share it.</p>
@@ -341,23 +335,24 @@ function SaveText() {
 }
 function Options() {
   const S = G.S;
-  const toggle = (k: 'snd' | 'type' | 'auto' | 'crt' | 'boot' | 'letter' | 'tut', n: string, d: string) => <li><span><b>{n}</b><br /><span class="muted">{d}</span></span>
-    <Btn kind="sm" on={!!pref[k]} t="pref" d={{ k }} onClick={() => { pref[k] = !pref[k]; savePrefs(); if (k === 'snd' && pref.snd) SFX.ach(); redraw(); }}>{pref[k] ? 'On' : 'Off'}</Btn></li>;
-  const choice = (k: 'screen' | 'zoom' | 'speed' | 'pace' | 'motion' | 'fxvol', n: string, d: string, opts: [string | number, string][]) => <li class="col"><span><b>{n}</b><br /><span class="muted">{d}</span></span>
-    <span class="row">{opts.map(o => <Btn kind="sm" on={String(pref[k]) === String(o[0])} t="prefset" d={{ k, v: o[0] }} onClick={() => { (pref as any)[k] = o[0]; savePrefs(); redraw(); }}>{o[1]}</Btn>)}</span></li>;
+  const toggle = (k: 'snd' | 'type' | 'auto' | 'crt' | 'boot' | 'letter' | 'btn' | 'tut', n: string, d: string) => <li><span><b>{n}</b><br /><span class="muted">{d}</span></span>
+    <Btn kind="sm" on={!!pref[k]} t="pref" d={{ k }} onClick={() => { pref[k] = !pref[k]; savePrefs(); if (k === 'snd') prefsChanged(); if (k === 'snd' && pref.snd) SFX.ach(); redraw(); }}>{pref[k] ? 'On' : 'Off'}</Btn></li>;
+  const choice = (k: 'screen' | 'zoom' | 'speed' | 'pace' | 'motion' | 'fxvol' | 'crowd', n: string, d: string, opts: [string | number, string][]) => <li class="col"><span><b>{n}</b><br /><span class="muted">{d}</span></span>
+    <span class="row">{opts.map(o => <Btn kind="sm" on={String(pref[k]) === String(o[0])} t="prefset" d={{ k, v: o[0] }} onClick={() => { (pref as any)[k] = o[0]; savePrefs(); if (k === 'fxvol' || k === 'crowd') prefsChanged(); redraw(); }}>{o[1]}</Btn>)}</span></li>;
   const fs = () => { try { if (document.fullscreenElement) document.exitFullscreen(); else document.documentElement.requestFullscreen().catch(() => {}); } catch (e) { /* not available here */ } };
   return <Window title="Options" ok="Done">
     <ul class="list">
-      {toggle('snd', 'Sound', 'Beeps, bells and fanfares.')}
+      {SFX_ON && toggle('snd', 'Sound', 'Sound effects: the piano in the office, and the ring, the bell, the voices and the crowd on a show.')}
+      {SFX_ON && toggle('btn', 'Button sounds', 'A soft low tap when you press a button.')}
       {toggle('type', 'Typewriter text', 'Commentary types itself out during a show.')}
       {toggle('auto', 'Auto-play the show', 'The broadcast moves on by itself at a reading pace and stops for every call. P turns it on or off during a show.')}
-      {toggle('boot', 'Boot sequence', 'The loading screen when the game starts.')}
       {toggle('letter', 'The owner’s letter', 'A new game opens on a letter from the owner. It can be read again from the desk.')}
       {toggle('tut', 'Open on the big show', 'A new game opens in the week of the biggest show of the year, and that first show walks you through booking. Off: it opens on an ordinary week.')}
       {choice('screen', 'Screen', 'Auto picks from the device. TV is for the couch: larger text, edge margins, and a remote or gamepad moves the highlight.', [['auto', 'Auto (' + ({ desk: 'desk', tv: 'TV' } as any)[autoScreen()] + ')'], ['desk', 'Desk'], ['tv', 'TV']])}
-      {choice('fxvol', 'Effects volume', 'Bells, beeps and the crowd.', [[0.4, 'Low'], [1, 'Normal'], [1.8, 'High']])}
-      {(window as any).EWF_MUSIC_VOL ? <li class="col"><span><b>Music volume</b><br /><span class="muted">The soundtrack. The Jukebox on the Music button has the rest.</span></span>
-        <span class="row">{[[0.3, 'Low'], [0.6, 'Medium'], [1, 'High']].map(o => <Btn kind="sm" on={Math.abs((window as any).EWF_MUSIC_VOL.vol() - (o[0] as number)) < 0.01} t="musvol" d={{ v: o[0] }} onClick={() => { (window as any).EWF_MUSIC_VOL.setVol(o[0]); redraw(); }}>{o[1]}</Btn>)}</span></li> : null}
+      {SFX_ON && choice('fxvol', 'Effects volume', 'The piano, the ring, the bell and the voices.', [[0.4, 'Low'], [1, 'Normal'], [1.8, 'High']])}
+      {SFX_ON && choice('crowd', 'Crowd volume', 'The crowd during a show: the murmur, the pops and the groans.', [[0, 'Off'], [0.5, 'Low'], [1, 'Normal'], [1.6, 'High']])}
+      {(window as any).EWF_MUSIC_VOL ? <li class="col"><span><b>Music volume</b><br /><span class="muted">Quiet background music by default. The Jukebox on the Music button has the rest.</span></span>
+        <span class="row">{[[0.15, 'Low'], [0.4, 'Medium'], [1, 'Loud']].map(o => <Btn kind="sm" on={Math.abs((window as any).EWF_MUSIC_VOL.vol() - (o[0] as number)) < 0.01} t="musvol" d={{ v: o[0] }} onClick={() => { (window as any).EWF_MUSIC_VOL.setVol(o[0]); redraw(); }}>{o[1]}</Btn>)}</span></li> : null}
       {choice('pace', 'Auto-play pace', 'Full shows every line. Quick hurries the routine lines and keeps the big moments. Results goes straight to each result. Every pace stops for your calls.', [['full', 'Full'], ['quick', 'Quick'], ['results', 'Results']])}
       {choice('speed', 'Broadcast speed', 'How fast the commentary types itself out.', [[0.5, 'Slow'], [1, 'Normal'], [2.5, 'Fast']])}
       {choice('motion', 'Reduce motion', 'Stops the typewriter text and the blinking cursor. Auto follows your device setting.', [['auto', 'Auto'], ['reduce', 'On'], ['full', 'Off']])}

@@ -212,6 +212,16 @@ function NextShow() {
   </Win>;
 }
 
+/* ---------- your assistant: a placeholder (Ryan, 22 October): a tip that is true this week, and the house shows it will book ---------- */
+function Assistant() {
+  const A = E.assistantDesk(G.S);
+  return <Win title="Your assistant" cls="asstwin" area="asst" t="desk-asst">
+    <p class="muted" data-t="asst-word">{A.word}</p>
+    <p data-t="asst-tip"><b>Tip:</b> {A.tip}</p>
+    <p class="muted mt1" data-t="asst-house">{A.house}</p>
+  </Win>;
+}
+
 /* ---------- the week in full: everything else the desk keeps, in one pop-up ---------- */
 function Answered() {
   const done: any[] = G.S.inbox.filter((e: any) => e.done);
@@ -285,6 +295,7 @@ export function Desk() {
       <OnDesk />
       <Win title={'This week’s tasks'} right={(() => { const T = E.tasks(S); return T.todo ? T.todo + ' to do' : 'all done'; })()} cls="taskwin" area="tasks" t="task-win"><Tasks /></Win>
       <NextShow />
+      <Assistant />
     </Desktop>
   </div>;
 }

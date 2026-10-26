@@ -127,7 +127,8 @@ export function Side(p: { w: W }) { return <Tag kind={p.w.align === 'F' ? 'face'
 /** A text meter in blocks for a 0 to 100 value: ten wide, or `n` wide (five or eight) where space is tight. */
 export function Meter(p: { v: number; kind?: 'hot' | 'cool' | 'au'; n?: number }) {
   const w = p.n || 10, n = Math.max(0, Math.min(w, Math.round(p.v / 100 * w)));
-  return <span class={'meter' + (p.kind ? ' ' + p.kind : '')} role="img" aria-label={Math.round(p.v) + ' out of 100'}>{'█'.repeat(n)}<i>{'░'.repeat(w - n)}</i></span>;
+  /* small card blocks, not font characters (rule 2a: no dot matrix); the filled ones take the meter's colour */
+  return <span class={'meter' + (p.kind ? ' ' + p.kind : '')} role="img" aria-label={Math.round(p.v) + ' out of 100'}>{Array.from({ length: n }, (_, k) => <s key={k} />)}<i>{Array.from({ length: w - n }, (_, k) => <s key={k} />)}</i></span>;
 }
 /** A bar that grows smoothly with the value and changes colour by band, with the number beside it, for tables where a
     five-step meter made every row look the same (the roster). */

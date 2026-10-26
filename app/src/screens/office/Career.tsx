@@ -22,7 +22,7 @@ function You() {
     <ul class="list sklist">{Object.keys(E.SKILLS).map(k => {
       const sk = E.SKILLS[k], lv = b.sk[k] || 0;
       return <li>
-        <span title={sk.d}><b>{sk.n}</b> <span class="num gold" role="img" aria-label={lv + ' of ' + sk.max}>{'■'.repeat(lv)}<span class="muted">{'□'.repeat(Math.max(0, sk.max - lv))}</span></span></span>
+        <span title={sk.d}><b>{sk.n}</b> <span class="meter au skp" role="img" aria-label={lv + ' of ' + sk.max}>{Array.from({ length: lv }, (_, k) => <s key={k} />)}<i>{Array.from({ length: Math.max(0, sk.max - lv) }, (_, k) => <s key={k} />)}</i></span></span>
         {b.pts > 0 && lv < sk.max && <Btn kind="sm" t="skill" d={{ k }} label={'Add a point to ' + sk.n} onClick={() => act(() => E.spendPoint(S, k))}>+1</Btn>}
       </li>;
     })}</ul>
@@ -87,16 +87,6 @@ function Achievements() {
   </>;
 }
 
-/** The assistant who learns how you book and can run the small shows. */
-function Assistant() {
-  const S = G.S, A = E.assistant(S);
-  return <Win title="Your assistant" area="asst" t="career-asst">
-    <p><b class={A.lvl >= 2 ? 'gold' : undefined}>{A.word}</b> <span class="muted">{'·'} learned from {A.shows} {plural(A.shows, 'show')}{A.next ? ', ' + A.next + ' more to the next level' : ''}</span></p>
-    <ul class="list mt1">{A.habits.slice(0, 3).map((h: string) => <li><span>{h}</span></li>)}</ul>
-    <p class="muted mt1">It books the small shows the way you do, never a big event.{A.own ? ' It has run ' + A.own + ' ' + plural(A.own, 'show') + '.' : ''}</p>
-  </Win>;
-}
-
 /** What your booking has earned you a name for. */
 function Reputation() {
   const S = G.S, L = E.bookerRep(S);
@@ -109,6 +99,6 @@ function Reputation() {
 export function Career() {
   const S = G.S, P = me();
   return <div class="onescreen"><div class="head sr"><h1>Career</h1><p>{S.booker.name}, {role()} of {P.name}</p></div>
-    <Desktop cls="crpage" t="career"><You /><Reputation /><Saga /><YourWord /><Assistant /><Trophies /></Desktop>
+    <Desktop cls="crpage" t="career"><You /><Reputation /><Saga /><YourWord /><Trophies /></Desktop>
   </div>;
 }

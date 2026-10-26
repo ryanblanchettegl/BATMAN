@@ -1,5 +1,6 @@
 /* This week's tasks, on the desk: everything that should be filled in before a show is booked or the week ends.
    Each one has a button that takes you to it, and where it can wait, a button to leave it for another week. */
+import { useLayoutEffect } from 'preact/hooks';
 import { E } from '../../engine';
 import { G, act, say, view, openModal, closeModal, Modal, full, slice } from '../../store';
 import { go } from '../../nav';
@@ -69,8 +70,14 @@ export function ContractTaskWindow(p: { m: Modal }) {
 
 /** The body of the tasks window on the desk: four to a page, a line each, with the button that deals with it. */
 export function Tasks() {
-  const S = G.S, T = E.tasks(S), st = office() as any, per = (window as any).EWF_FLAT ? 99 : (document.documentElement.getAttribute('data-screen') === 'desk' ? 8 : 3), /* a test that wants every task on the page sets EWF_FLAT */ pages = Math.max(1, Math.ceil(T.list.length / per)), pg = Math.min(st.tpg || 0, pages - 1);
+  const S = G.S, T = E.tasks(S), st = office() as any, per = (window as any).EWF_FLAT ? 99 : (st.tper || 4), /* a test that wants every task on the page sets EWF_FLAT */ pages = Math.max(1, Math.ceil(T.list.length / per)), pg = Math.min(st.tpg || 0, pages - 1);
   const L: any[] = T.list.slice(pg * per, pg * per + per);
+  // as many tasks as the window holds (it shares its column with the assistant): one fewer while the window is overfull,
+  // one more while a whole task would still fit and more are waiting
+  useLayoutEffect(() => { if ((window as any).EWF_FLAT) return; const tk = document.querySelector('[data-t="tasks"]') as HTMLElement | null, b = tk && tk.closest('.bd') as HTMLElement | null, it = tk && tk.querySelector('.task') as HTMLElement | null;
+    if (!tk || !b || !it) return; const cs = getComputedStyle(b), room = b.clientHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom), over = Math.max(b.scrollHeight - b.clientHeight, tk.offsetHeight - room);
+    if (over > 1 && per > 1) { st.tdown = 1; view(() => { st.tper = per - 1; }); }
+    else if (room - tk.offsetHeight >= it.offsetHeight + 4 && T.list.length > per && !st.tdown) view(() => { st.tper = per + 1; }); });
   return <div class="tasks" data-t="tasks">
     {T.list.length ? L.map((t: any) => <div key={t.id} class={'it task ' + t.state + (t.state === 'todo' && T.strict ? ' must' : '')} data-task={t.id}>
       <span class="tx">{t.state === 'todo' && T.strict ? <span class="mark" aria-hidden="true">!</span> : null}<Tag kind={t.req || t.miss ? 'bad' : (TAG[t.state][1] || 'off')}>{t.req ? 'Required' : (t.miss ? (t.id === 'ap' ? 'Unspent' : 'Missed') : (t.hit ? 'Hit' : (t.state === 'todo' && !T.strict ? 'To do' : TAG[t.state][0])))}</Tag><span class={t.state === 'done' || t.state === 'waved' ? 'muted' : undefined} title={t.text}>{t.short && t.state !== 'done' ? t.short : <Txt>{t.text}</Txt>}</span></span>

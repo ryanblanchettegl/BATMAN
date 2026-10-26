@@ -236,7 +236,7 @@
    "finisher_description": "A springboard 630 senton from the top rope.",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 206250,
+    "monthly_salary": 10300,
     "weeks_left": 122,
     "push": "main_eventer"
    },
@@ -288,7 +288,7 @@
    "finisher_description": "A sit-out piledriver from a fireman's carry.",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 165000,
+    "monthly_salary": 8250,
     "weeks_left": 72,
     "push": "main_eventer"
    },
@@ -340,7 +340,7 @@
    "finisher_description": "A sit-out powerbomb through a table.",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 70000,
+    "monthly_salary": 3500,
     "weeks_left": 20,
     "push": "upper_midcarder"
    },
@@ -392,7 +392,7 @@
    "finisher_description": "A running kick to the head of a kneeling man.",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 165000,
+    "monthly_salary": 8250,
     "weeks_left": 32,
     "push": "main_eventer"
    },
@@ -444,7 +444,7 @@
    "finisher_description": "A springboard 450 splash.",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 70000,
+    "monthly_salary": 3500,
     "weeks_left": 124,
     "push": "upper_midcarder"
    },
@@ -496,7 +496,7 @@
    "finisher_description": "A rana that twists twelve times.",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 38000,
+    "monthly_salary": 1900,
     "weeks_left": 40,
     "push": "midcarder"
    },
@@ -548,7 +548,7 @@
    "finisher_description": "A dancing small package.",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 38000,
+    "monthly_salary": 1900,
     "weeks_left": 44,
     "push": "midcarder"
    },
@@ -600,7 +600,7 @@
    "finisher_description": "A charging spear.",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 38000,
+    "monthly_salary": 1900,
     "weeks_left": 52,
     "push": "midcarder"
    },
@@ -652,7 +652,7 @@
    "finisher_description": "A frog splash.",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 22000,
+    "monthly_salary": 1100,
     "weeks_left": 134,
     "push": "lower_midcarder"
    },
@@ -704,7 +704,7 @@
    "finisher_description": "A springboard shooting star press.",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 38000,
+    "monthly_salary": 1900,
     "weeks_left": 58,
     "push": "midcarder"
    },
@@ -756,7 +756,7 @@
    "finisher_description": "A guitar shot into a DDT.",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 38000,
+    "monthly_salary": 1900,
     "weeks_left": 48,
     "push": "midcarder"
    },
@@ -808,7 +808,7 @@
    "finisher_description": "A piledriver.",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 22000,
+    "monthly_salary": 1100,
     "weeks_left": 22,
     "push": "lower_midcarder"
    },
@@ -860,7 +860,7 @@
    "finisher_description": "A sit-out powerbomb.",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 70000,
+    "monthly_salary": 3500,
     "weeks_left": 114,
     "push": "upper_midcarder"
    },
@@ -912,7 +912,7 @@
    "finisher_description": "A spinning neckbreaker.",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 38000,
+    "monthly_salary": 1900,
     "weeks_left": 102,
     "push": "midcarder"
    },
@@ -964,7 +964,7 @@
    "finisher_description": "A bear hug.",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 38000,
+    "monthly_salary": 1900,
     "weeks_left": 42,
     "push": "midcarder"
    },
@@ -1016,7 +1016,7 @@
    "finisher_description": "A tiger driver.",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 165000,
+    "monthly_salary": 8250,
     "weeks_left": 104,
     "push": "main_eventer"
    },
@@ -1068,7 +1068,7 @@
    "finisher_description": "A modified cobra clutch.",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 70000,
+    "monthly_salary": 3500,
     "weeks_left": 44,
     "push": "upper_midcarder"
    },
@@ -1120,7 +1120,7 @@
    "finisher_description": "A spinning neckbreaker.",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 38000,
+    "monthly_salary": 1900,
     "weeks_left": 38,
     "push": "midcarder"
    },

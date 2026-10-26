@@ -55,7 +55,7 @@ function Overview(p: { w: W }) {
   const names = (L: W[]) => L.slice(0, 3).map(x => x.name).join(', ');
   return <>
     <div class="kv mt3 mb2">
-      <Stat label="Overness" v={w.ovr} kind="au" /><Stat label="Brawling" v={w.brawl} /><Stat label="Technical" v={w.tech} /><Stat label="Aerial" v={w.speed} /><Stat label="Hardcore" v={w.hc} />
+      <Stat label="Overness" v={w.ovr} kind="au" /><Stat label="Brawling" v={w.brawl} /><Stat label="Technical" v={w.tech} /><Stat label="Agility" v={w.speed} /><Stat label="Hardcore" v={w.hc} />
       <Stat label="Stamina" v={w.stam} /><Stat label="Charisma" v={w.cha} kind="au" /><Stat label="Promo" v={w.mic} kind="au" /><Stat label="Condition" v={w.cond} kind="cool" /><Stat label="Morale" v={w.morale} kind="cool" />
     </div>
     <p>Finisher: <b>the {w.fin || 'finish'}</b> {'·'} Gimmick: <b>{gimName(w.gim)}</b> <Meter v={fit} kind="au" /> <span class="num">{fit}% fit</span></p>
@@ -76,16 +76,17 @@ function Contract(p: { w: W }) {
   const S = G.S, P = me(), st = rs(), w = p.w, id = w.id, ci = E.campInfo(S);
   const mps: W[] = E.mouthpieces(S, id), rg = st.repack && st.repack.id === id ? st.repack.g : '';
   const talkers: W[] = (w.mgr != null && S.w[w.mgr] && !mps.some(x => x.id === w.mgr) ? [S.w[w.mgr]] : []).concat(mps);
-  const renew = (weeks: number) => <Btn kind="sm" t="renew" d={{ id, w: weeks }} onClick={() => act(() => say(E.renew(S, id, weeks)))}>Renew {weeks} weeks</Btn>;
+  const renew = (weeks: number) => <Btn kind="sm" t="renew" d={{ id, w: weeks }} onClick={() => act(() => say(E.renew(S, id, weeks)))}>Renew {weeks / 48} {weeks === 48 ? 'year' : 'years'}</Btn>;
+  const deal = E.contractOf(S, w);
   return <>
-    <p class="mt3">{full(w.wage)} a week, {Math.max(0, w.con)} weeks left.</p>
+    <p class="mt3"><b>{deal ? deal.n : 'Contract'}.</b> {deal ? deal.line : full(w.wage) + ' a week, ' + Math.max(0, w.con) + ' weeks left.'}</p>
     <div class="row mt2">
-      {renew(48)}{renew(96)}
+      {deal && deal.ct === 'show' ? null : <>{renew(48)}{renew(96)}</>}
       {(mps.length > 0 || w.mgr != null) && <label class="row">Mouthpiece <Sel id={'mgr-' + id} t="mgr" d={{ id }} value={w.mgr == null ? '' : w.mgr}
         options={[['', 'Nobody'] as Opt].concat(talkers.map(x => [x.id, x.name + ' · mic ' + x.mic] as Opt))} onChange={v => act(() => { E.setManager(S, id, v === '' ? null : +v); })} /></label>}
       {P.brands && <label class="row">Brand <Sel id={'brand-' + id} t="brand" d={{ id }} value={w.brand} options={P.brands.map((b: any) => [b.id, b.name] as Opt)} onChange={v => act(() => { E.setBrand(S, id, v); })} /></label>}
       {ui.confirm === 'rel' + id
-        ? <><span>Release and pay {full(w.wage * 4)} severance?</span>
+        ? <><span>{deal && deal.ct === 'show' ? 'Let them go? A handshake costs nothing to end.' : 'Release and pay ' + full(w.wage * 4) + ' severance?'}</span>
           <Btn kind="danger" t="release-yes" d={{ id }} onClick={() => act(() => { const r = E.release(S, id); ui.confirm = null; st.sel = null; st.last = null; say(r); })}>Release</Btn>
           <Btn kind="sm" t="cancel" onClick={() => view(() => { ui.confirm = null; })}>Keep</Btn></>
         : <Btn kind="danger" t="release" d={{ id }} onClick={() => view(() => { ui.confirm = 'rel' + id; })}>Release</Btn>}

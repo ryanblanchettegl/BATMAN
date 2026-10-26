@@ -26,7 +26,7 @@ Ryan, 20 October: every wrestler has attributes from 1 to 100, levels up, and sp
 - **Use it to grow it:**
   - Hardcore, cage, ladder and fire matches teach Hardcore.
   - Submission and iron man matches teach Technical.
-  - Ladder matches, and high flyers in any match, teach Speed.
+  - Ladder matches, and high flyers in any match, teach Agility.
   - Matches of 20 minutes or more teach Stamina.
   - Four-star matches teach Consistency, and main events teach Star quality.
   - Promos teach the Microphone and Charisma.
@@ -51,3 +51,14 @@ Ryan, 20 October: every wrestler has attributes from 1 to 100, levels up, and sp
   - The microphone strength moves every promo.
   - The gimmick decides which attributes a wrestler grows first.
 - **How a gimmick is chosen:** when a game begins, everybody takes the gimmick their character's own words point to, the category first and then the description. If the words point nowhere, they take the one their ratings fit best. A gimmick that comes from the character's own words always counts as a good fit.
+
+## Regression (Ryan, 21 October)
+
+What takes an attribute down, worked out and never drawn at random:
+
+- **Age:** past the peak the body declines every year. In steep decline Consistency and Injury (how safely they work) go too. The microphone never does.
+- **Ring rust:** eight weeks without a match costs a point of Stamina or Consistency every four weeks, up to three a spell. Matches give it back.
+- **A cold streak:** three poor matches in a row cost a point of Consistency and a quarter of a level's experience.
+- **A long injury:** six weeks out or more costs a point of Agility and Stamina on the way back, two after twelve weeks.
+
+Every loss is kept on the wrestler, named on the notification bar for the player's own people, listed after the show, and shown in the Attributes pop-up with the reason.

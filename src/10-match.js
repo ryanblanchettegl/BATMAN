@@ -524,7 +524,7 @@ function afterBell(S,P,show,m,sides,win,winners,losers,fin,runin,feud,t,OV,seg){
   }
   if(m.mt==='1v1'&&!t&&!feud&&fin!=='dq'&&fin!=='co'&&holdLvl(P,l0.id)>0&&holdLvl(P,w0.id)===0){
     var ht=null;P.titles.forEach(function(tt){if(!tt.tag&&tt.holders[0]===l0.id&&(!ht||tt.lvl>ht.lvl))ht=tt;});
-    if(ht&&ht.g===w0.g&&startFeud(S,P,w0,l0,35,w0.name+' beat the champion in a non-title match',{title:ht.id})){
+    if(ht&&divOk(P,ht,w0)&&startFeud(S,P,w0,l0,35,w0.name+' beat the champion in a non-title match',{title:ht.id})){
       seg.notes.push(w0.name+' just beat the champion and wants a shot at the '+ht.name+'.');return;
     }
   }

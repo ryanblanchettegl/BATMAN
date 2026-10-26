@@ -5,6 +5,7 @@ import { G, ui, pref, reduceMotion, act, view, say, slice, savePrefs } from '../
 import { book } from '../../flow';
 import { go } from '../../nav';
 import { SFX } from '../../sfx';
+import { beat as cueBeat } from '../../audio/cues';
 
 export type Match = any;
 const top0 = () => { try { window.scrollTo(0, 0); } catch (e) { /* ignore */ } };
@@ -138,8 +139,9 @@ export const onAir = (): boolean => !!(G.S && G.S.live);
 export function liveCall(): any | null { const L = G.S && G.S.live; return L && L.ev && !L.ev.done ? L.ev : null; }
 /** Ring introductions come out together: a segment opens on its last entrance line. */
 export function lead(seg: any): number { const bc = seg.bc || []; let i = 0; while (i < bc.length && (bc[i].t === 'ring' || bc[i].t === 'ent')) i++; return Math.max(0, i - 1); }
-/** Where a segment starts on screen: at the call that shaped it if there was one (the introductions were watched while the call came in), else after the introductions. */
-function startBeat(seg: any): number { const bc = seg.bc || [], k = bc.findIndex((x: any) => x.t === 'call'); return k >= 0 ? k : opening(seg); }
+/** Where a segment starts on screen: at the call that shaped it if there was one (the introductions were watched while the call came in), else after the introductions.
+    A match with somebody's debut in it always opens on the entrances: the debut is the moment, and it has its own scene. */
+function startBeat(seg: any): number { const bc = seg.bc || [], k = bc.findIndex((x: any) => x.t === 'call'); return k >= 0 && !(seg.debut && seg.debut.length) ? k : opening(seg); }
 /** Where a segment opens on screen: a match at its first entrance, so every side walks out (Ryan, 20 October: a tag
     team comes out together, a champion with the gold); a battle royal, whose ring fills at once, at its last line. */
 export function opening(seg: any): number { const bc = seg.bc || [], ents = bc.filter((x: any) => x.t === 'ent').length;
@@ -153,11 +155,10 @@ function stepLive() {
     const x = E.liveNext(S);
     if (x.event) { callAt = Date.now(); SFX.ach(); return; }
     if (x.skip) continue;
-    if (x.seg) { L.s = x.i; L.b = startBeat(x.seg); return; }
+    if (x.seg) { L.s = x.i; L.b = startBeat(x.seg); cueBeat(x.seg, (x.seg.bc || [])[L.b], false, !!pref.pics); return; }   // the first line on screen is heard too
     if (x.done) { b.report = 0; L.s = S.reports[0] ? S.reports[0].segs.length : 0; L.b = 0; L.aired = true; SFX.fanfare(); return; }   // the sign-off of the show that just aired, not a replay
   }
 }
-const COUNT = /One, two, three|hree count|tapping|taps!|gets the three|and that is it/;
 export function liveNext() {
   if (typer.active()) { typer.finish(); return; }
   const r = liveReport(); if (!r) return;
@@ -165,11 +166,10 @@ export function liveNext() {
   const L = book().live!, sg = r.segs[L.s], bc = (sg && sg.bc) || [];
   if (sg && L.b < bc.length) {
     look(() => {
-      L.b = pref.pace === 'tv' ? tvNext(sg, L.b) : L.b + 1; const nb = bc[L.b];
-      if (nb && COUNT.test(nb.x)) SFX.count();
-      else if (nb && nb.h) SFX.crowd(nb.h > 1 ? 100 : 80);
-      else if (!nb && sg.k === 'match') { SFX.bellEnd(); SFX.crowd(sg.cr); }
-      else if (nb && nb.t === 'pbp' && sg.k === 'match' && L.b === lead(sg) + 2) SFX.bell();
+      const was = L.b; L.b = pref.pace === 'tv' ? tvNext(sg, L.b) : L.b + 1; const nb = bc[L.b];
+      const bell = sg.k === 'match' ? bc.findIndex((x: any, j: number) => j > lead(sg) && x.t === 'pbp') : -1;   // the line the bell rings on
+      // the sound of the moment (src/audio/cues.ts): the opening bell on the first line of the call, the rest by what the line says
+      cueBeat(sg, nb, bell >= 0 && was < bell && L.b >= bell, !!pref.pics);
     });
     return;
   }
@@ -223,7 +223,7 @@ export function liveSkip() { typer.finish(); const r = liveReport(); if (r && !l
 /** In a replay only: skip to the sign-off. A show on the air cannot be skipped. */
 export function liveEnd() { const r = liveReport(); if (r && !onAir()) look(() => { book().live = { s: r.segs.length, b: 0 }; }); }
 /** Leave the sign-off. A show that has just aired ends on After the show, not on the match-by-match report. A replay goes back to its report. */
-export const liveDone = () => look(() => { const b = book(), aired = !!(b.live && b.live.aired) && !!E.afterShow(G.S); b.live = null; if (aired) { b.report = null; b.night = true; } top0(); });
+export const liveDone = () => look(() => { const b = book(), aired = !!(b.live && b.live.aired) && !!E.afterShow(G.S); b.live = null; if (aired) { b.report = null; b.night = true; SFX.after(G.S.reports[0]); } top0(); });
 /** Open After the show for the last show of this week (the Office has a button for it). */
 export function openNight() { if (!E.afterShow(G.S)) return; go('booking'); look(() => { const b = book(); b.night = true; b.report = null; b.live = null; top0(); }); }
 /** Done with After the show: on to the Office, where Before the show is the first thing on the desk. */
@@ -252,10 +252,15 @@ export const PACE_N: Record<string, string> = { tv: 'TV', full: 'Full', quick: '
    fall, the finish, a new champion), the call of the bell, and lines spread evenly between, while the scene plays;
    the rest of the call is passed over, as a highlight package would. The result takes the last part of the time. */
 const TV_LINE = 2400, TV_SEC = 2600;   // each minute on the show's clock is about two and a half seconds on screen
+/* A match runs longer (Ryan, 21 October: "matches to last longer if it supports better animations and a smoother,
+   more entertaining show"): about four seconds a minute, and each line held long enough for its move to play out
+   and settle before the next one, so a twelve-minute match is close to a minute on screen. */
+const TV_LINE_M = 3400, TV_SEC_M = 4200;
+const tvSec = (sg: any) => sg && sg.k === 'match' ? TV_SEC_M : TV_SEC, tvLine = (sg: any) => sg && sg.k === 'match' ? TV_LINE_M : TV_LINE;
 /** Which lines of a segment the TV pace shows, in order. */
 export function tvKeys(sg: any): number[] {
   const bc = (sg && sg.bc) || [], n = bc.length; if (!n) return [];
-  const T = (sg.mins || 5) * TV_SEC * 0.85, K = Math.max(2, Math.min(n, Math.round(T / TV_LINE))), keep = new Set<number>([0, n - 1]);
+  const T = (sg.mins || 5) * tvSec(sg) * 0.85, K = Math.max(2, Math.min(n, Math.round(T / tvLine(sg)))), keep = new Set<number>([0, n - 1]);
   if (sg.k === 'match') { keep.add(lead(sg) + 1); const o = opening(sg); bc.forEach((b: any, i: number) => { if (b.t === 'ent' && i >= o) keep.add(i); }); }
   bc.forEach((b: any, i: number) => { if (b.h || b.t === 'call' || b.t === 'ear') keep.add(i); });
   for (let j = 1; keep.size < K && j <= K; j++) keep.add(Math.round(j * (n - 1) / (K + 1)));
@@ -272,10 +277,10 @@ export function autoWait(): number {
   const L = livePos(r), s = r.segs[L.s], bc = (s && s.bc) || [], sp = Math.sqrt(pref.speed || 1);
   if (!s) return 0;
   if (pref.pace === 'tv') {   // the segment's seconds, shared between the lines shown, and the last part for its result
-    const T = (s.mins || 5) * TV_SEC, keys = tvKeys(s);
+    const T = (s.mins || 5) * tvSec(s), keys = tvKeys(s);
     if (L.b >= bc.length) return Math.round(Math.max(1600, T * 0.15) / sp);
     const b = bc[L.b], hot = b && b.h ? (b.h > 1 ? 900 : 400) : 0;
-    return Math.round(Math.max(900, T * 0.85 / Math.max(1, keys.length)) / sp + hot);
+    return Math.round(Math.max(s.k === 'match' ? 2600 : 900, T * 0.85 / Math.max(1, keys.length)) / sp + hot);
   }
   const quick = pref.pace === 'quick' || pref.pace === 'results';
   if (L.b >= bc.length) return Math.round((quick ? 2400 : 3400) / sp);   // the result: stars, the scores, the belt
@@ -286,9 +291,11 @@ export function autoWait(): number {
 }
 /** Arm auto-play for what is on screen now. `key` names that moment; a new moment re-arms it. */
 export function autoArm(key: string) {
-  autoStop(); if (!pref.auto) return;
+  autoStop();
   autoKey = key;
-  const still = () => pref.auto && autoKey === key && !ui.modal && !!liveReport() && !liveCall();
+  // a promo or an angle plays through on one press, auto-play or not (Ryan, 21 October); it stops on its result like everything else
+  const segOn = () => { const r = liveReport(); if (!r) return false; const L = livePos(r), s = r.segs[L.s]; return !!s && s.k !== 'match' && L.b < (s.bc || []).length; };
+  const still = () => (pref.auto || segOn()) && autoKey === key && !ui.modal && !!liveReport() && !liveCall();
   const wait = () => {
     autoT = null; if (!still()) return;
     if (typer.active() || (typeof document !== 'undefined' && document.hidden)) { autoT = setTimeout(wait, 150); return; }

@@ -129,7 +129,7 @@ function promoParts(S,P,w,topic,kind){
   else if(topic==='title'){
     var lv=holdLvl(P,w.id),rk=-1,tn=null;
     if(lv>0){P.titles.forEach(function(t){if(t.holders.indexOf(w.id)>=0&&(!tn||t.lvl>tn.lvl))tn=t;});C=tn&&tn.defs>=3?9:8;why='Speaks as '+tn.name+' champion';}
-    else{P.titles.forEach(function(t){if(t.tag||t.g!==w.g)return;var ix=rankFor(S,P,t,5).map(function(x){return x.id;}).indexOf(w.id);if(ix>=0&&(rk<0||ix<rk)){rk=ix;tn=t;}});
+    else{P.titles.forEach(function(t){if(t.tag||!divOk(P,t,w))return;var ix=rankFor(S,P,t,5).map(function(x){return x.id;}).indexOf(w.id);if(ix>=0&&(rk<0||ix<rk)){rk=ix;tn=t;}});
       C=w.shot?9:(rk<0?3:(rk<=2?8:6));why=w.shot?'Has a title shot in hand':(rk<0?'Has not earned the right to talk about a title':'Ranked number '+(rk+1)+' for the '+tn.name);}
     fit=7;
   }else if(topic==='crowd'){C=6;why='Always something to say about the town';fit=8;}
