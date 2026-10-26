@@ -8502,6 +8502,12 @@ var MOVE_LIB={
     Read in order, the most particular first: "cradle tombstone piledriver" is a piledriver, "springboard cutter" a cutter,
     "sit-out powerbomb" its own move before "powerbomb". Anything it cannot place plays as a slam (or a hold for a submission). */
 var MOVE_RULES=[
+  // the parody roster's moves from main (22-23 October): the closest animation each already has
+  [/coconut/,'weapon'],[/rope shaking/,'=taunt_crowd'],[/airplane spin/,'fallaway'],[/russian leg sweep|leg sweep/,'neckbreaker'],[/tied in the ropes/,'cornerhit'],
+  [/ladder swing|beer can/,'weapon'],[/toothpick|salt throw/,'cheapshot'],[/snake out|push-?ups/,'=taunt_crowd'],[/football tackle/,'spear'],[/gourdbuster/,'suplex'],
+  [/magistral|rolling cradle/,'rollup'],[/palm strike/,'forearm'],[/stretch plum/,'sleeper'],[/manji/,'armbar'],[/dragon screw/,'armdrag'],[/sling blade|doomsday device/,'clothesline'],
+  [/surfboard/,'camelclutch'],[/atomic drop/,'backbreaker'],[/frankensteiner/,'hurricanrana'],[/bronco buster/,'cornerhit'],[/double underhook/,'ddt'],
+  [/axe handle.*(top|rope)/,'flyingelbow'],[/axe handle/,'forearm'],[/body press/,'crossbody'],[/\bjab\b/,'punch'],
   [/chair|pipe|guitar|kendo|stick|tube|bulb|jar|mic stand|shot$/,'weapon'],[/low blow|rake|bite|slap|hair|eye|mist|spit/,'cheapshot'],
   [/taunt|strut|hulking|air guitar|kip-up|flop|bridge dodge|back spin/,'=taunt_crowd'],[/falcon arrow|muscle buster|spanish fly/,'brainbuster'],[/giant swing/,'fallaway'],[/lungblower/,'jumpknee'],[/fist drop|knee drop/,'legdrop'],
   [/full nelson|grounded|leg tangle|leg-lift|leg-trap|submission hold/,'=sleeper'],
