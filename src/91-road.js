@@ -188,6 +188,18 @@ function roadShape(S,M,ai,stops){
     if(pins.some(function(q){return q.city===s.city;}))return;pins.push({city:s.city,k:s.k,x:Math.round(x*10)/10,y:Math.round(y*10)/10});});
   return {n:n,w:Z.w,h:Z.h,p:Z.p,pins:pins};
 }
+/* A place that falls in no area on any map (an island of a world's own, a town out at sea): the nearest of the world's
+   continents, cut from card, with this week's pin pulled to its edge (Ryan, 22 October: the country or continent when
+   a city has no area of its own). */
+var CONT_AT={'North America':[45,-100],'South America':[-15,-60],'Europe':[50,15],'Africa':[5,20],'Asia':[40,95],'Oceania':[-25,135]};
+function roadNearest(S,here,city){
+  if(!here||typeof SHAPES==='undefined')return null;var best=null,bd=1e9,r=Math.PI/180;
+  Object.keys(CONT_AT).forEach(function(n){var Z=SHAPES['world:'+n],c=CONT_AT[n];if(!Z)return;
+    var d=Math.acos(Math.max(-1,Math.min(1,Math.sin(here.lat*r)*Math.sin(c[0]*r)+Math.cos(here.lat*r)*Math.cos(c[0]*r)*Math.cos((here.lon-c[1])*r))));
+    if(d<bd){bd=d;best={n:n,Z:Z};}});
+  if(!best)return null;var Z=best.Z,mid=Z.f[0]+Z.w*Z.f[1]/2,dl=((here.lon-mid+540)%360)-180,x=Math.max(0,Math.min(Z.w,(mid+dl-Z.f[0])/Z.f[1])),y=Math.max(0,Math.min(Z.h,(Z.f[2]-here.lat)/Z.f[3]));
+  return {n:best.n,w:Z.w,h:Z.h,p:Z.p,far:1,pins:[{city:city,k:'now',x:Math.round(x*10)/10,y:Math.round(y*10)/10}]};
+}
 /** Everything the road window on the desk shows. It only reads the game.
     `map` is the board to draw (see E.MAPS), `lit` the areas that light, `stops` the road so far and the road ahead
     with each stop's dot, `now` this stop in full. */
@@ -207,7 +219,7 @@ E.road=function(S){
   }
   var cap=roadCap(S,P,A.show,city),mk=mktKnow(S,P,city),sale=stopSales(S,P,A.w,A.show,A.k,true),last=S.rdv&&S.rdv[city],bar=S.bar&&S.bar[city],reg=P.tour?REGIONS[P.tour.reg]:REGIONS[homeReg(P)];
   var home=rosterOf(S,P.id).filter(function(w){return !w.nw&&homeNear(S,w,city);}).sort(function(a,b){return (a.town===city?0:1)-(b.town===city?0:1)||b.ovr-a.ovr;}).slice(0,3).map(function(w){return {id:w.id,name:w.name,hurt:w.inj>0,town:w.town,near:w.town!==city,km:homeKm(S,w,city)};});
-  var sh=roadShape(S,M,lit.now,stops);
+  var sh=roadShape(S,M,lit.now,stops)||roadNearest(S,here,city);
   return {map:M?M.id:null,mapName:M?M.n:null,lit:lit,stops:stops,off:off,shape:sh,
     now:{city:city,land:M&&lit.now>=0?M.a[lit.now]:null,show:A.show.name,big:!!A.show.big,kind:A.show.big?(A.show.flag?'Flagship':evTy(A.show).n):'',w:A.w,later:A.w>S.week,left:Math.max(0,(S.queue?S.queue.length:0)-(S.qi||0)),
       venue:venueName(city,cap),cap:cap,seat:Math.round(ticket(P,A.show)*TIX_P[P.tix]),tix:TIXN[P.tix],

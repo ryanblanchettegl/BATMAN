@@ -211,7 +211,7 @@
    "finisher_description": "A spinning heel kick into a sit-out.",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 165000,
+    "monthly_salary": 2500,
     "weeks_left": 82,
     "push": "main_eventer"
    },
@@ -263,7 +263,7 @@
    "finisher_description": "A running lariat, after a hundred chops.",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 165000,
+    "monthly_salary": 2500,
     "weeks_left": 38,
     "push": "main_eventer"
    },
@@ -315,7 +315,7 @@
    "finisher_description": "A springboard reverse DDT.",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 70000,
+    "monthly_salary": 1050,
     "weeks_left": 132,
     "push": "upper_midcarder"
    },
@@ -367,7 +367,7 @@
    "finisher_description": "A shining wizard.",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 165000,
+    "monthly_salary": 2500,
     "weeks_left": 140,
     "push": "main_eventer"
    },
@@ -419,7 +419,7 @@
    "finisher_description": "A running knee to the jaw.",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 70000,
+    "monthly_salary": 1050,
     "weeks_left": 22,
     "push": "upper_midcarder"
    },
@@ -471,7 +471,7 @@
    "finisher_description": "A jackknife powerbomb.",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 38000,
+    "monthly_salary": 600,
     "weeks_left": 120,
     "push": "midcarder"
    },
@@ -523,7 +523,7 @@
    "finisher_description": "A Michinoku driver.",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 38000,
+    "monthly_salary": 600,
     "weeks_left": 88,
     "push": "midcarder"
    },
@@ -575,7 +575,7 @@
    "finisher_description": "A top-rope senton.",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 38000,
+    "monthly_salary": 600,
     "weeks_left": 76,
     "push": "midcarder"
    },
@@ -627,7 +627,7 @@
    "finisher_description": "A fallaway slam.",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 38000,
+    "monthly_salary": 600,
     "weeks_left": 80,
     "push": "midcarder"
    },
@@ -679,7 +679,7 @@
    "finisher_description": "A springboard cutter.",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 70000,
+    "monthly_salary": 1050,
     "weeks_left": 24,
     "push": "upper_midcarder"
    },
@@ -731,7 +731,7 @@
    "finisher_description": "A 450 splash.",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 38000,
+    "monthly_salary": 600,
     "weeks_left": 42,
     "push": "midcarder"
    },
@@ -783,7 +783,7 @@
    "finisher_description": "A frog splash.",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 38000,
+    "monthly_salary": 600,
     "weeks_left": 112,
     "push": "midcarder"
    },
@@ -835,7 +835,7 @@
    "finisher_description": "A spinning back kick.",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 38000,
+    "monthly_salary": 600,
     "weeks_left": 48,
     "push": "midcarder"
    },
@@ -887,7 +887,7 @@
    "finisher_description": "A lariat.",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 22000,
+    "monthly_salary": 450,
     "weeks_left": 36,
     "push": "lower_midcarder"
    },
@@ -939,7 +939,7 @@
    "finisher_description": "A double-arm suplex into a pin.",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 38000,
+    "monthly_salary": 600,
     "weeks_left": 96,
     "push": "midcarder"
    },
@@ -991,7 +991,7 @@
    "finisher_description": "A sit-out powerbomb.",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 38000,
+    "monthly_salary": 600,
     "weeks_left": 134,
     "push": "midcarder"
    },

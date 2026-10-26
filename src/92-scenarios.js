@@ -7,11 +7,11 @@
    runs out before the deadline. */
 var SCN_BUILT=[
   {id:'rescue',name:'Save the company',promotion:'ttt',weeks:26,
-   description:'A small company with the wage bill too high and almost no cash. Keep it open for 26 weeks and end with $1.5M in the bank.',
+   description:'A small company with the wage bill too high and almost no cash. Keep it open for 26 weeks and end with about three weeks of income in the bank.',
    setup:[{op:'cash',inc0:0.8},{op:'wages',mult:1.25,round:50}],
-   win:{type:'cash',atLeast:1500000},
-   text:{win:'The company is safe: {cash} in the bank after 26 weeks.',lose:'The company is still open, but only {cash} is in the bank. The target was $1.5M.'},
-   figures:['Cash {cash} (target $1.5M)']},
+   win:{type:'cash',incWeeks:2.9},   // the target follows the company's own income (a realistic economy, 21 October): $1.5M on the old money
+   text:{win:'The company is safe: {cash} in the bank after 26 weeks.',lose:'The company is still open, but only {cash} is in the bank. The target was {goal}.'},
+   figures:['Cash {cash} (target {goal})']},
   {id:'champion',name:'A champion from the bottom',promotion:'ocw',weeks:39,
    description:'One of the least known men on the roster has been picked as your project. Have them hold the top title when 39 weeks are up.',
    setup:[{op:'target',g:'M',maxAge:30,nth:2}],
@@ -37,7 +37,8 @@ var SCN_OPS={
 function scnSign(x){return (x>=0?'+':'')+x.toFixed(1);}
 /** Win conditions: whether it is met, the words that fill the texts, and a score from 0 to 100. */
 var SCN_WIN={
-  cash:{vars:function(S,c){var P=S.promos[S.player];return {ok:P.cash>=c.atLeast,cash:money(P.cash),score:clamp(Math.round(P.cash/c.atLeast*100),0,100)};}},
+  // a set amount (atLeast), or a number of weeks of the company's own income (incWeeks), so a target fits a company of any size
+  cash:{vars:function(S,c){var P=S.promos[S.player],g=c.atLeast!=null?c.atLeast:Math.max(1000,Math.round((P.inc0||0)*(c.incWeeks||1)/1000)*1000);return {ok:P.cash>=g,cash:money(P.cash),goal:money(g),score:clamp(Math.round(P.cash/g*100),0,100)};}},
   holdsTop:{vars:function(S,c){var P=S.promos[S.player],w=S.w[S.scn[c.who||'target']],top=P.titles.filter(function(t){return !t.tag&&t.g===w.g;}).sort(function(a,b){return b.lvl-a.lvl;})[0],ok=!!(top&&top.holders.indexOf(w.id)>=0&&w.promo===P.id);
     return {ok:ok,name:w.name,title:top?top.name:'top title',ovr:Math.round(w.ovr),o0:Math.round(S.scn.o0),score:ok?100:clamp(Math.round(w.ovr-(S.scn.o0||0)+50),0,99)};}},
   beatRival:{vars:function(S,c){var C=S.scn,m=avg(C.me||[0]),r=avg(C.rv||[0]);return {ok:m>r+c.by,m:scnSign(m),r:scnSign(r),mFig:(C.me&&C.me.length)?scnSign(avg(C.me)):'0',rFig:(C.rv&&C.rv.length)?scnSign(avg(C.rv)):'0',score:clamp(Math.round(50+(m-r)*20),0,100)};}}

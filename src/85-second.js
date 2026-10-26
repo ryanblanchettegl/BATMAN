@@ -23,7 +23,9 @@ EVR.secondcareer=function(S,ev,choice,P,w){
   news(S,'contract',w.name+' stays on as '+SROLES[k].n.toLowerCase()+'.');return w.name+' takes the job of '+SROLES[k].n.toLowerCase()+'. '+SROLES[k].d;
 };
 function staffOf(S,k){return rosterOf(S,S.player).filter(function(w){return w.nw&&w.srole===k&&!w.rt0;});}
-E.staff=function(S){return rosterOf(S,S.player).filter(function(w){return w.srole;}).map(function(w){return {id:w.id,role:SROLES[w.srole].n,d:SROLES[w.srole].d};});};
+// a job not in SROLES (the writers' room keeps its writers as 'writer') is named, never a crash
+var SROLE_OTHER={writer:{n:'Writer',d:'Pitches storylines in the writers\u2019 room.'}};
+E.staff=function(S){return rosterOf(S,S.player).filter(function(w){return w.srole;}).map(function(w){var R=SROLES[w.srole]||SROLE_OTHER[w.srole]||{n:String(w.srole).replace(/^./,function(c){return c.toUpperCase();}),d:''};return {id:w.id,role:R.n,d:R.d};});};
 /* the effects */
 CRX.push(function(ctx){
   if(!ctx.isPl)return null;var S=ctx.S,d=0,x=null;

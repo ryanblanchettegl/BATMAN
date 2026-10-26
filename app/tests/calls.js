@@ -54,7 +54,8 @@ async function run(mode) {
   try {
     /* ---- show one: somebody is hurt, and the crowd has gone quiet ---- */
     await go(page, 'booking');
-    const hurt = await card(page, (S) => { const m = S.card[0], w = S.w[m.sides[0][0]]; w.rd = 95; m.int = 'brutal'; return { id: w.id, name: w.name }; });
+    // the first ordinary match: a battle royal never has the hurt call
+    const hurt = await card(page, (S) => { const m = S.card.find(x => x && x.sides && x.mt !== 'br' && !x.nc) || S.card[0], w = S.w[m.sides[0][0]]; w.rd = 95; m.int = 'brutal'; return { id: w.id, name: w.name }; });
     ok(mode, 'the show goes on the air', await toAir(page));
     let quiet = false;
     const one = await walk(page, {
@@ -106,7 +107,8 @@ async function run(mode) {
 
     /* ---- next week: the sponsor at ringside ---- */
     await nextWeek(page);
-    await card(page, (S) => { S.sponsors.push({ name: 'Harbor Lager', weeks: 3, type: 'image', val: 0, text: 'Popularity stays at 0 or better', pay: 20000 }); return true; });
+    // the sponsor asks before the main event; a title on it would put the title call first, so this main event is for no title
+    await card(page, (S) => { S.sponsors.push({ name: 'Harbor Lager', weeks: 3, type: 'image', val: 0, text: 'Popularity stays at 0 or better', pay: 20000 }); const me = S.card[S.card.length - 1]; if (me && me.title != null) delete me.title; return true; });
     ok(mode, 'the third show goes on the air', await toAir(page));
     const three = await walk(page, {
       sponsor: async () => {

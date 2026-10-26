@@ -32,10 +32,10 @@ function Filters(p: { shown: number; of: number }) {
 }
 
 /** A column heading that sorts the table. Text columns start ascending, numbers start with the biggest. */
-function Th(p: { k: string; label: string; r?: boolean }) {
+function Th(p: { k: string; label: string; r?: boolean; c?: string }) {
   const st = rs(), on = st.rs.k === p.k, up = st.rs.d > 0;
   const sort = () => view(() => { if (on) st.rs.d = -st.rs.d; else st.rs = { k: p.k, d: p.k === 'name' || p.k === 'brand' || p.k === 'align' ? 1 : -1 }; });
-  return <th class={p.r ? 'r' : undefined} aria-sort={on ? (up ? 'ascending' : 'descending') : undefined}>
+  return <th class={[p.r ? 'r' : '', p.c || ''].join(' ').trim() || undefined} aria-sort={on ? (up ? 'ascending' : 'descending') : undefined}>
     <button type="button" onClick={sort} {...dataAttrs('sort', { v: p.k })}>{p.label}{on ? (up ? ' ▲' : ' ▼') : ''}</button>
   </th>;
 }
@@ -62,12 +62,12 @@ function Line_(p: { w: W; on: boolean; spot: string; champ: boolean; brand?: str
   return <tr class={'pick' + (p.on ? ' on' : '')} data-home={st.sel == null && (st.last ?? st.peek) === w.id ? '' : undefined} onClick={() => view(() => { if (p.on) st.sel = w.id; st.peek = w.id; })} {...dataAttrs('sel', { id: w.id })}>
     <td class="pf"><Portrait w={w} /></td>
     <td><span class="nm">{w.name}</span></td>
-    {p.brand != null && <td>{p.brand}</td>}
+    {p.brand != null && <td class="bcol">{p.brand}</td>}
     <td><Side w={w} /></td><td>{p.spot}</td>
     <td class="r num">{w.age}</td>
     <td class="r"><Ovr w={w} /></td>
     <td><Bar v={w.ovr} t="Crowd" /></td><td><Bar v={w.morale} t="Mood" /></td><td><Bar v={w.cond} t="Body" /></td>
-    <td class={'r num' + (w.con <= 4 ? ' bad' : '')}>{Math.max(0, w.con)}</td>
+    <td class={'r num' + (w.dl !== 'show' && w.con <= 4 ? ' bad' : '')}>{w.dl === 'show' ? <span title="Per appearance: paid for each show they are on">Per show</span> : Math.max(0, w.con)}</td>
     <td class="stt"><div><Status w={w} champ={p.champ} /></div></td>
   </tr>;
 }
@@ -86,7 +86,7 @@ function File(p: { w: W | null; spot: string }) {
   const feuds = E.feudsFor(S, w.id), titles = champOf(P, w.id);
   return <Win title={w.name} area="file" t="roster-file" right={titles.length ? '★' : undefined}>
     {/* rule 5c: the wrestler is always on show, full length, drawn by the diorama engine */}
-    <div class="sc-stage rs-stage"><ScenePlayer key="rsw" sc={STAND} cast={{ A: { ...recipeOf(w), belts: Math.min(3, titles.length), beltL: titles.slice().sort((a: any, b: any) => b.lvl - a.lvl).slice(0, 3).map((t: any) => E.beltOf(t, P)) } }} play={'rs' + w.id + ':' + titles.length + JSON.stringify((w as any).look || null)} still orbit fill t="roster-stage" label={w.name + ' in ring gear. Drag to walk round them.'} /></div>
+    <div class="sc-stage rs-stage"><ScenePlayer key="rsw" sc={STAND} cast={{ A: recipeOf(w) }} play={'rs' + w.id + ':' + titles.length + JSON.stringify((w as any).look || null)} still orbit fill t="roster-stage" label={w.name + ' in ring gear. Drag to walk round them.'} /></div>
     <p class="big"><Ovr w={w} big /> <b>{w.name}</b> <Side w={w} /></p>
     <p>{p.spot} {'·'} age {w.age}</p>
     {!w.nw ? <LevelLine w={w} /> : null}
@@ -102,8 +102,7 @@ function File(p: { w: W | null; spot: string }) {
       <Line label="Story">{feuds.length ? feuds.map((f: any) => S.w[f.a === w.id ? f.b : f.a].name).join(', ') : <span class="muted">None</span>}</Line>
     </Group>
     <Group title="The deal">
-      <Line label="Pay">{cash(w.wage)} a week</Line>
-      <Line label="Contract"><span class={w.con <= 4 ? 'bad' : undefined}>{Math.max(0, w.con)} weeks left</span></Line>
+      {(() => { const c = E.contractOf(S, w); return c ? <><Line label="Contract">{c.n}</Line><Line label="Pay"><span class={c.ct === 'year' && w.con <= 4 ? 'bad' : undefined} title={c.line}>{c.ct === 'show' ? cash(c.pay) + ' a show' : cash(c.pay) + ' a week, ' + Math.max(0, w.con) + ' weeks left'}</span></Line></> : null; })()}
     </Group>
     <div class="row mt1">{!w.nw ? <Btn kind="go" t="roster-attrs" d={{ id: w.id }} onClick={() => openModal({ kind: 'attrs', id: w.id })}>Attributes</Btn> : null}
       <Btn t="roster-full" d={{ id: w.id }} onClick={() => view(() => { const st = rs(); st.peek = w.id; st.sel = w.id; })}>Full profile</Btn>
@@ -118,12 +117,13 @@ function Sums(p: { R: W[] }) {
   const S = G.S, R = p.R, n = R.length || 1, wages = R.reduce((a, w) => a + (w.wage || 0), 0), bud = E.budget(S);
   const mood = Math.round(R.reduce((a, w) => a + w.morale, 0) / n), low = R.filter(w => w.morale < 35).length, high = R.filter(w => w.morale >= 70).length;
   const hurt = R.filter(w => w.inj > 0).length, worn = R.filter(w => !(w.inj > 0) && w.cond < 50).length;
-  const soon = R.filter(w => w.con <= 4).length, year = R.filter(w => w.con <= 48).length;
+  // a per-appearance handshake rolls on by itself, so only yearly deals can end
+  const yr = R.filter(w => w.dl !== 'show'), hs = R.length - yr.length, soon = yr.filter(w => w.con <= 4).length, year = yr.filter(w => w.con <= 48).length;
   return <>
     <Win title="Wages" area="wages" t="roster-wages"><p class="big"><b>{cash(wages)}</b></p><p class="muted">a week{isFinite(bud) ? ', ' + Math.round(wages / bud * 100) + '% of the budget' : ''}</p></Win>
     <Win title="Mood" area="mood" t="roster-mood"><p><Meter v={mood} n={8} /></p><p class="muted">{low} unhappy, {high} happy</p></Win>
     <Win title="Bodies" area="bodies" t="roster-bodies" tone={hurt ? 'hot' : undefined}><p><b>{hurt}</b> hurt</p><p class="muted">{worn} worn down</p></Win>
-    <Win title="Deals" area="deals" t="roster-deals" tone={soon ? 'hot' : undefined}><p><b>{soon}</b> end this month</p><p class="muted">{year} this year</p></Win>
+    <Win title="Deals" area="deals" t="roster-deals" tone={soon ? 'hot' : undefined}><p><b>{soon}</b> end this month</p><p class="muted">{year} this year{hs ? ', ' + hs + ' on a handshake' : ''}</p></Win>
   </>;
 }
 
@@ -142,7 +142,7 @@ export function Roster() {
       <Filters shown={L.length} of={R.length} />
       <div class="lb rsl scroll"><table>
         <thead><tr>
-          <th aria-label="Face" /><Th k="name" label="Name" />{P.brands && <Th k="brand" label="Brand" />}<Th k="align" label="Side" /><th>Spot</th>
+          <th aria-label="Face" /><Th k="name" label="Name" />{P.brands && <Th k="brand" label="Brand" c="bcol" />}<Th k="align" label="Side" /><th>Spot</th>
           <Th k="age" label="Age" r /><Th k="all" label="Overall" r /><Th k="ovr" label="Crowd" /><Th k="morale" label="Mood" /><Th k="cond" label="Body" /><Th k="con" label="Deal" r /><th>Holds</th>
         </tr></thead>
         <tbody>

@@ -1,4 +1,6 @@
-"""Free agents and legends: universes/parody/free_agents.json. Run: python3 tools/parody/free_agents.py
+"""Note (21 October): the legends in this list now live in HFW (universes/parody/companies/hfw.json), at their prime.
+Running this again would put them back in free agency as well; take them out of free_agents.json by hand if you do.
+Free agents and legends: universes/parody/free_agents.json. Run: python3 tools/parody/free_agents.py
 Legends (legend: true) are part-timers: authority figures, managers, a surprise in a battle royal, one last match.
 The TARGET column is the design team's reference only."""
 import json, os

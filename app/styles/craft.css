@@ -319,11 +319,13 @@ html body .win.ppop .wb{font-family:var(--hand);font-size:1.06em}
 .ovrb.o-low{background:#8a8579}.ovrb.o-mid{background:#4d6b8f}.ovrb.o-good{background:#2f7d4a}.ovrb.o-top{background:#c2402f}.ovrb.o-gold{background:#e2b23a;color:#1d1a24}
 .ovrb,.rspage .rsl tr.pick.on td .ovrb{color:#fff}.ovrb.o-gold,.rspage .rsl tr.pick.on td .ovrb.o-gold{color:#1d1a24}
 @media (max-width:1500px){.mkl .wide{display:none}}
+/* the list narrows when an offer is open beside it: the two optional columns go, so the names never scroll out of sight */
+@container (max-width:1400px){.mkl .wide{display:none}}
 .ovrb.big{font-size:1.5em;min-width:2.3em}
 /* lists that scroll inside their window, headings kept in view (Ryan, 20 October: "I want it scrollable") */
 .lb.scroll{overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin}
 .lb.scroll thead th{position:sticky;top:0;z-index:2;background:#efe6cf}
-.lkpage .win > .bd{overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin}
+.lkpage .wn > .bd{overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin}
 /* staff (screens/roster/Staff.tsx): the people on your books beside Create staff */
 .stf{display:grid;grid-template-columns:1fr 1.15fr;gap:1.2em;min-height:0}
 .stf h3{font-family:var(--marker);font-weight:400;color:#c23a30;margin:0 0 .3em}
@@ -414,6 +416,8 @@ html body .win.ppop .wb{font-family:var(--hand);font-size:1.06em}
 .attr-cols h3{font-family:var(--marker);font-weight:400;color:#c23a30;margin:0 0 .3em}
 .attr-row{display:grid;grid-template-columns:7.5em 1fr 2.2em auto;align-items:center;gap:.4em;padding:.15em 0;border-bottom:1px dashed rgba(0,0,0,.15)}
 .attr-row .acap{grid-column:1/-1;font-size:.78em;margin-top:-.2em}
+.attr-row .afall{color:#c23a30;font-weight:700}
+.reg-box{background:#fde4df;transform:rotate(.3deg)}
 .attr-row .av{font-family:var(--marker);font-weight:400;text-align:right}
 .abar{position:relative;height:.65em;background:#e8dfc8;border:1.5px solid #1d1a24;border-radius:3px;overflow:hidden}
 .abar .cap{position:absolute;left:0;top:0;bottom:0;background:repeating-linear-gradient(45deg,#d8cba8 0 4px,#cdbf98 4px 8px)}
@@ -457,3 +461,76 @@ html body .win.ppop .wb{font-family:var(--hand);font-size:1.06em}
 .live1 .moments .muted{color:#55555e}
 /* below the 1080p base the window is too short for the building's own line; its words are in What could happen tonight */
 @media (max-height:760px){.deskpage .road .kvl:has([data-t="road-quirk"]){display:none}}
+/* the broadcast with the scenes on: the commentary is closed captions over the picture (Ryan, 21 October), marker on a
+   strip of black card at the foot of the scene, the newest line bright and the one before it fading above. The name
+   strip moves to the top left, out of their way. The result comes up on a card under the picture when the segment ends. */
+.tvframe .chyron{top:.7em;bottom:auto;left:1.2ch;font-size:.78em}
+.tvframe .cc{position:absolute;left:50%;bottom:.9em;transform:translateX(-50%) rotate(-.3deg);width:min(88%,72ch);display:flex;flex-direction:column;align-items:center;gap:.15em;pointer-events:none;text-align:center;z-index:2}
+.tvframe .cc .ln{margin:0;padding:.18em 1.4ch .24em;background:rgba(14,12,18,.86);border-radius:3px;box-shadow:.1em .16em .25em rgba(0,0,0,.45);font-family:var(--hand);font-size:clamp(1em,1.5vw,1.45em);line-height:1.22;color:#f4eedc;max-width:100%}
+.tvframe .cc .ln .sp{font-family:var(--marker);font-weight:400;color:#ffd23f;margin-right:.7ch;font-size:.84em}
+.tvframe .cc .ln .tx{color:#f4eedc}
+.tvframe .cc .ln:not(.last){opacity:.55;font-size:clamp(.85em,1.2vw,1.15em)}
+.tvframe .cc .ln.hot .tx{color:#ffe48a} .tvframe .cc .ln.hot2 .tx{color:#ffd23f}
+.tvframe .cc .ln.note,.tvframe .cc .ln.ent{color:#bfe8c6}
+.tvframe .cc .untyped{visibility:hidden}
+.tvframe .lv-res{position:absolute;inset:0;z-index:3;display:flex;align-items:flex-end;justify-content:center;padding-bottom:1.1em;background:linear-gradient(to bottom,rgba(10,8,14,0) 25%,rgba(10,8,14,.5))}
+.tvframe .lv-res .result{margin:0;width:min(86%,64ch);border:0;border-radius:0;background:none;box-shadow:none;filter:drop-shadow(.2em .3em .35em rgba(0,0,0,.5));border-image:var(--lk-win) 30 fill / 14px / 5px stretch;padding:.7em 2.4ch .8em;transform:rotate(-.6deg);color:var(--ink)}
+@media (prefers-reduced-motion:no-preference){.tvframe .lv-res .result{animation:respop .32s var(--ease)}}
+@keyframes respop{from{opacity:0;transform:scale(.92) rotate(-.6deg)}to{opacity:1;transform:scale(1) rotate(-.6deg)}}
+.tvframe .lv-res .result>p{margin:.1em 0;font-size:1.1em;line-height:1.22}
+.tvframe .lv-res .result>p:first-child{font-size:1.3em}
+.tvframe .lv-res .result .scores{margin:.35em 0}
+.tvframe .lv-res .result .fx{font-size:.98em;line-height:1.22;margin:.2em 0 0}
+/* a new champion: their real belt (Create a Belt) sits above the result card */
+.tvframe .lv-res{flex-direction:column;align-items:center;justify-content:flex-end;gap:.35em}
+.tvframe .lv-res .beltc{display:block;filter:drop-shadow(.15em .25em .3em rgba(0,0,0,.55));transform:rotate(-1.5deg)}
+.tvframe .lv-res .beltc canvas{display:block;height:clamp(3.2em,9vh,6em);width:auto}
+@media (prefers-reduced-motion:no-preference){.tvframe .lv-res .beltc{animation:respop .4s var(--ease)}}
+.tvframe .lv-res pre.belt{display:none}
+/* the Attributes pop-up: a raise you cannot pay for is a pale chip with its cost in dark ink, not faded blue on blue */
+.attr-row .btn[disabled],.attr-row button[disabled]{background:#ddd5c2;border-image:none;border:1px dashed rgba(35,35,42,.4);box-shadow:none;color:#55555e;opacity:1;filter:none;transform:none}
+/* the roster list: when it is too narrow for every column, the brand column goes (the Brand filter still picks a brand),
+   so Deal and Holds stay on screen */
+.rsl{container-type:inline-size}
+@container (max-width:1900px){.rsl .bcol{display:none}}
+/* Free agents: a long name ends in an ellipsis (the whole name in its tip), so the Asking column and the Offer buttons stay in the window */
+.mkl td .nm{display:inline-block;max-width:10em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;vertical-align:bottom}
+/* Status and Fit take a second line when they need it */
+.mkl td:nth-child(2),.mkl td:nth-child(9){white-space:normal;max-width:7.5em;line-height:1.1}
+/* charts as cut card: the pie's wedges throw one short shadow; the column chart fills the width of its window */
+.piebox svg.pie{width:clamp(7em,22vh,13em);height:auto;filter:drop-shadow(.12em .18em .12em rgba(0,0,0,.35));flex:none}
+.piebox .legend .sw{display:inline-block;width:1.1em;height:.8em;border-radius:2px;box-shadow:1px 1px 0 rgba(0,0,0,.3);vertical-align:-.05em}
+.colchart{width:100%}
+.colchart svg{display:block;width:100%;height:clamp(6em,24vh,16em);filter:drop-shadow(.08em .12em .08em rgba(0,0,0,.3))}
+.colchart .cl{display:flex;justify-content:space-around;font-family:var(--hand);font-size:.85em;color:#55555e}
+.lkpage .piebox svg.pie{width:clamp(3.5em,13vh,8em)}
+
+/* The clock dial, the scouting range and the big-event banner are cut card and marker (rule 2a: no dot matrix). */
+svg.dial{width:2.6em;height:2.6em;flex:none;filter:drop-shadow(.08em .1em 0 rgba(0,0,0,.35))}
+svg.rangebar{width:9em;height:.8em;vertical-align:middle;margin:0 .4em}
+.evbanner{display:block;text-align:center;margin:.1em 0 .2em}
+.evbanner span{display:inline-block;font-family:var(--marker);font-size:clamp(1.6em,4.2vh,2.8em);line-height:1.1;color:#ffd84a;background:#151318;padding:.1em .6em;transform:rotate(-1.2deg);text-shadow:.06em .07em 0 #8a1f18;box-shadow:.12em .14em 0 rgba(0,0,0,.4)}
+/* the notification bar: a coloured note with dark ink. Trouble is a pink note, good news a green one;
+   the old dark theme's red and green backgrounds hid the red heading, and the list arrows of .note leaked in. */
+.toast span::before{content:none}
+.toast.note.bad{background:#f7cfc4} .toast.note.good{background:#cfe6b4}
+.toast.note .tn b{font-family:var(--marker);font-weight:400;text-transform:none;letter-spacing:.02em}
+.toast.note.good .tn b{color:#1d6b2a}
+.toast{padding-inline:6ch}
+/* a long window title ends in "…" inside its own column instead of running under the label at the right */
+.wn>.ttl h2{justify-self:stretch;min-width:0;max-width:100%;overflow:hidden;text-overflow:ellipsis}
+/* a meter is a row of small card blocks: filled ones in the meter's colour, the rest pale */
+.meter{display:inline-flex;align-items:center;gap:.09em;vertical-align:-.05em;letter-spacing:0}
+.meter i{display:inline-flex;gap:.09em}
+.meter s{display:inline-block;width:.4em;height:.72em;background:currentColor;border-radius:1px;text-decoration:none;box-shadow:.04em .05em 0 rgba(0,0,0,.18)}
+.meter i s{opacity:.35;box-shadow:none}
+.meter.skp{color:#b8860b;margin-left:.3ch} .meter.skp s{width:.6em;height:.6em}
+/* on paper a plain meter fills in green ink and its empty blocks are always pale card, whatever colour the row is */
+.meter{color:#2f7a3a}
+.meter i s,.win .meter i s,.wn .meter i s,.lb .meter i s{background:#bfb49a;opacity:.7}
+/* the note's torn ends grow with the screen: keep the words clear of them */
+.toast{padding-inline:max(6ch,4.6vw)}
+/* the desk: the assistant sits under this week's tasks (Ryan, 22 October); Career gives its spot to Your word */
+.deskpage{grid-template-rows:minmax(0,1.27fr) minmax(0,1fr);grid-template-areas:"road road tasks" "fire next asst"}
+.deskpage .asstwin .bd p{margin:0;line-height:1.18}
+.crpage{grid-template-areas:"you rep saga" "word word troph"}

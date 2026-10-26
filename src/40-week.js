@@ -21,7 +21,7 @@ function joinCompany(S,w,P,wage,weeks){
 function settle(S,P){
   var mine=P.id===S.player,sp=0;if(mine)S.sponsors.forEach(function(x){sp+=x.pay;});
   var adv=Math.round(ADV_C[P.adv]*P.inc0)+(mine?evSpendCost(P):0),camp=campCost(P),med=medCost(P),trv=travelCost(P);
-  var L=P.led,merch=merchWeek(S,P),wages=wagesWeek(S,P),inc=L.tv+L.gate+L.ppv+L.bonus+merch+sp,over=P.fixed+P.varRate*0.96*(inc-sp),exp=wages+L.prod+over+adv+camp+med+trv;var fnc=mine?financeCost(S,P,inc-exp):0;exp+=fnc;
+  var L=P.led,merch=merchWeek(S,P),wages=payWeek(S,P),inc=L.tv+L.gate+L.ppv+L.bonus+merch+sp,over=P.fixed+P.varRate*0.96*(inc-sp),exp=wages+L.prod+over+adv+camp+med+trv;var fnc=mine?financeCost(S,P,inc-exp):0;exp+=fnc;
   // a publicly traded company pays its shareholders out of a week well above the board's target (NEXT.md 12.2)
   var dv=0;if(P.model==='corporate'&&P.net>0&&inc-exp>P.net*1.2){dv=Math.round((inc-exp-P.net*1.2)*0.6);exp+=dv;}
   var row={w:S.week,div:dv,spons:sp,adv:adv,camp:camp,med:med,trv:trv,fin:fnc,tv:Math.round(L.tv),gate:Math.round(L.gate),ppv:Math.round(L.ppv),bonus:Math.round(L.bonus),merch:Math.round(merch),wages:Math.round(wages),prod:Math.round(L.prod),over:Math.round(over),inc:Math.round(inc),exp:Math.round(exp),net:Math.round(inc-exp),image:r1(P.image)};
@@ -139,7 +139,8 @@ var EV={
   },
   network:function(S,P){
     if(S.quests.some(function(q){return q.type==='network';}))return null;
-    var sh=pick(S,P.shows),target=Math.round((P.mainB[sh.id]||75)+4),bonus=Math.round(P.inc0*0.04/1000)*1000;
+    var sh=pick(S,P.shows),target=Math.min(92,Math.round((P.mainB[sh.id]||75)+4)),   // a stretch, never more than four and a half stars: five is all but out of reach
+      bonus=Math.round(P.inc0*0.04/1000)*1000;
     S.quests.push({id:S.nid++,type:'network',show:sh.id,target:target,bonus:bonus,due:S.week,text:'Network: a main event of '+starG(target)+' or better on '+sh.name+' this week ('+money(bonus)+')'});
     return {type:'network',text:'The network wants a big main event on '+sh.name+' this week. '+starG(target)+' or better pays a '+money(bonus)+' bonus.'};
   },

@@ -2,8 +2,8 @@
    size of the whole screen: the picture on the left with the line being said under it as a caption, the chapters and
    the transcript down the right, and the controls under the picture. The hosts sit at the commentary desk for now
    (the studio set comes later): the one talking moves, and some lines cut to a picture of who they are talking about,
-   the champion with the belt on the shoulder or two people face to face. Each host has a voice of soft tones, one per
-   syllable. Only the view changes here; the episode itself is written by the engine (src/99-zpodcast.js). */
+   the champion with the belt on the shoulder or two people face to face. Each host talks in the commentators'
+   wah-wah voices. Only the view changes here; the episode itself is written by the engine (src/99-zpodcast.js). */
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'preact/hooks';
 import { E } from '../../engine';
 import { G, Modal, slice, reduceMotion } from '../../store';
@@ -13,20 +13,18 @@ import { ScenePlayer } from '../../kit/sceneplayer';
 import { Scene, scenesFor, copy, templateScene } from '../../kit/scene';
 import { recipeOf, commentator, dress, Recipe } from '../../kit/puppet';
 import { momentPick } from '../../shared/moment';
-import { tone } from '../../sfx';
+import { speak } from '../../audio/engine';
 
 /** What the viewer has chosen for the player, kept while the game is open. */
 const look = () => slice('podplayer', () => ({ cap: true, box: false, speed: 1 }));
 const SPEEDS: [number, string][] = [[0.75, 'Slow'], [1, 'Normal'], [1.5, 'Fast'], [2, 'Fastest']];
 /** How long a line stays up, in milliseconds at normal speed: a little over a third of a second a word. */
 export function lineMs(L: any): number { return L.s === 'x' ? 2200 : Math.max(1800, 900 + L.t.split(/\s+/).length * 330); }
-const h = (s: string) => { let x = 2166136261; for (let i = 0; i < s.length; i++) { x ^= s.charCodeAt(i); x = Math.imul(x, 16777619); } return (x >>> 0) / 4294967296; };
-/** The hosts' voices: a soft tone for each syllable, A higher than B. The theme is four notes. */
+/** The hosts' voices: the commentators' wah-wah talk Ryan picked (src/audio), A in the play-by-play voice and B in the colour.
+    A stage direction in brackets, such as the theme, has no sound yet: nothing is played that Ryan has not picked. */
 function voice(L: any, speed: number) {
-  if (L.s === 'x') { [392, 494, 587, 784].forEach((f, i) => tone(f, 0.22, 'triangle', 0.03, i * 0.16)); return; }
-  const base = L.s === 'a' ? 240 : 170, gap = 0.13 / speed, room = lineMs(L) / speed / 1000 - 0.4;
-  const n = Math.min(Math.round(L.t.split(/\s+/).length * 1.4), Math.floor(room / gap));
-  for (let k = 0; k < n; k++) tone(base * (0.86 + 0.3 * h(L.t + k)), 0.07, 'triangle', 0.016, k * gap);
+  if (L.s === 'x') return;
+  speak(L.s === 'a' ? 'wah_pbp' : 'wah_col', lineMs(L) / speed / 1000 - 0.4);
 }
 
 let ctl: { tog: () => void; step: (d: number) => void } | null = null;

@@ -231,7 +231,7 @@
    "finisher_description": "A 450 splash with a flame-coloured robe flourish.",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 206250,
+    "monthly_salary": 10300,
     "weeks_left": 38,
     "push": "main_eventer"
    },
@@ -283,7 +283,7 @@
    "finisher_description": "A top-rope moonsault into a cradle.",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 165000,
+    "monthly_salary": 8250,
     "weeks_left": 94,
     "push": "main_eventer"
    },
@@ -335,7 +335,7 @@
    "finisher_description": "A death valley driver.",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 165000,
+    "monthly_salary": 8250,
     "weeks_left": 112,
     "push": "main_eventer"
    },
@@ -387,7 +387,7 @@
    "finisher_description": "A spinning back kick to the jaw.",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 70000,
+    "monthly_salary": 3500,
     "weeks_left": 62,
     "push": "upper_midcarder"
    },
@@ -439,7 +439,7 @@
    "finisher_description": "A rolling cradle into a quick pin.",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 70000,
+    "monthly_salary": 3500,
     "weeks_left": 124,
     "push": "upper_midcarder"
    },
@@ -491,7 +491,7 @@
    "finisher_description": "A diving splash.",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 70000,
+    "monthly_salary": 3500,
     "weeks_left": 28,
     "push": "upper_midcarder"
    },
@@ -543,7 +543,7 @@
    "finisher_description": "A figure-four leg lock, with a pose.",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 70000,
+    "monthly_salary": 3500,
     "weeks_left": 120,
     "push": "upper_midcarder"
    },
@@ -595,7 +595,7 @@
    "finisher_description": "A sit-out powerbomb.",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 70000,
+    "monthly_salary": 3500,
     "weeks_left": 54,
     "push": "upper_midcarder"
    },
@@ -647,7 +647,7 @@
    "finisher_description": "A running knee strike.",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 38000,
+    "monthly_salary": 1900,
     "weeks_left": 40,
     "push": "midcarder"
    },
@@ -699,7 +699,7 @@
    "finisher_description": "A swinging side slam.",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 38000,
+    "monthly_salary": 1900,
     "weeks_left": 36,
     "push": "midcarder"
    },
@@ -751,7 +751,7 @@
    "finisher_description": "A crossface.",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 38000,
+    "monthly_salary": 1900,
     "weeks_left": 80,
     "push": "midcarder"
    },
@@ -803,7 +803,7 @@
    "finisher_description": "A lifting sit-out powerbomb.",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 70000,
+    "monthly_salary": 3500,
     "weeks_left": 114,
     "push": "upper_midcarder"
    },
@@ -855,7 +855,7 @@
    "finisher_description": "A moonsault.",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 38000,
+    "monthly_salary": 1900,
     "weeks_left": 106,
     "push": "midcarder"
    },
@@ -907,7 +907,7 @@
    "finisher_description": "A spinning sit-down powerbomb.",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 38000,
+    "monthly_salary": 1900,
     "weeks_left": 138,
     "push": "midcarder"
    },
@@ -959,7 +959,7 @@
    "finisher_description": "A bridging German suplex.",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 22000,
+    "monthly_salary": 1100,
     "weeks_left": 122,
     "push": "lower_midcarder"
    },
@@ -1011,7 +1011,7 @@
    "finisher_description": "A lariat.",
    "contract": {
     "type": "exclusive",
-    "monthly_salary": 22000,
+    "monthly_salary": 1100,
     "weeks_left": 128,
     "push": "lower_midcarder"
    },

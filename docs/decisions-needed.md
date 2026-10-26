@@ -8,3 +8,5 @@ One line each: what was chosen during an unattended run, and the alternative. Th
 - Eras (item 1): cut by the owner during the run (16 October). Nothing of it was committed; the world format stays at schema 1.
 - WPW's belts (universes/parody/companies/wpw.json) start vacant, so every WPW title is decided in the first week of a game and floods the week around the world. Chosen: leave the data alone (Ryan's own company). Alternative: give each WPW belt its current holder in the world file.
 - The desk test fails at 1280x720 about two runs in three: some cities have no state outline (E.road(S).shape is null), and the map check reads its name. Seen with a city in Chiapas. Not changed: the paper map is Ryan's work in progress.
+
+Answered by Ryan on 22 October (now in the decisions table in TASKS.md): the balance stays, WPW's champions are named, the licence is all rights reserved, the parody notes come out of git history, the map gaps get outlines and a country fallback.

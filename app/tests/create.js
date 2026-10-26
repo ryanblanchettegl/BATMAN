@@ -76,9 +76,7 @@ async function run(mode) {
     await go(page, 'manage');
     await ensure(page, '[data-t="make-shows"]'); await page.click('[data-t="make-shows"]');
     await page.waitForSelector('.win');
-    await page.click('[data-t="make-del"][data-id="' + sid + '"]');
-    await page.click('[data-t="make-del-yes"]');
-    ok(mode, 'the show can be cancelled, and it leaves this week’s schedule', /off the schedule/.test(await txt(page, '[data-t="make-msg"]')) && await state(page, (S, n) => S.promos[S.player].shows.length === n && !S.queue.some(q => q.name === 'Lantern Night'), s0));
+    ok(mode, 'a weekly show has no cancel button: the booker plays out the network deal (Ryan, 22 October)', await page.locator('.win [data-t="make-del"][data-id="' + sid + '"]').count() === 0 && await state(page, S => S.queue.some(q => q.name === 'Lantern Night')));
     await page.keyboard.press('Escape');
     ok(mode, 'no errors', errs.length === 0, errs.slice(0, 3).join(' | '));
   } catch (e) { ok(mode, 'the run finished', false, String(e.message).split('\n')[0]); await shot(page, 'create-' + mode + '-fail', true).catch(() => { }); }

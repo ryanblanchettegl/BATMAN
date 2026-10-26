@@ -12,7 +12,9 @@ let plays = 0;
 /** How many scenes have started on the broadcast since the page loaded (EWF_DEBUG.scenes). */
 export function scenePlays() { return plays; }
 
-export function ScenePlayer(p: { sc: Scene; cast: Record<string, Recipe>; play: string; still?: boolean; t?: string; label: string; orbit?: boolean; fill?: boolean }) {
+export function ScenePlayer(p: { sc: Scene; cast: Record<string, Recipe>; play: string; still?: boolean; t?: string; label: string; orbit?: boolean; fill?: boolean;
+  /** Called as the picture reaches each keyframe after the first (the broadcast plays its ring sounds from it, src/audio/cues.ts). */
+  onKey?: (sc: Scene, key: any) => void }) {
   const box = useRef<HTMLDivElement>(null), cv = useRef<HTMLCanvasElement>(null), c3 = useRef<HTMLCanvasElement>(null), eng = useRef<Diorama3D | null>(null);
   const [size, setSize] = useState([0, 0]), [flat, setFlat] = useState(false), [cap, setCap] = useState<Caption | null>(null);
   const props = useRef(p); props.current = p;
@@ -27,12 +29,14 @@ export function ScenePlayer(p: { sc: Scene; cast: Record<string, Recipe>; play: 
   useEffect(() => {
     if (!size[0]) return;
     const sc = props.current.sc, end = lastT(sc), E3 = eng.current; plays++;
+    let heard = 0;   // the keyframes already reached, for onKey
+    const keyed = (t: number) => { const f = props.current.onKey; if (!f) return; while (heard < sc.keys.length && sc.keys[heard].t <= t) { if (heard > 0 || sc.keys[0].t > 0) f(sc, sc.keys[heard]); heard++; } };
     if (E3) {   // 3D: build the moment, a little over twelve times a second while it moves
       E3.size(size[0], size[1]);
       const show = (t: number) => { const k = at(sc, t); E3.show(sc, k, props.current.cast, t); const c = captionAt(sc, t); setCap(x => (x && c && x.t === c.t && x.s === c.s) || x === c ? x : c); };
       if (props.current.still || end <= 0) { show(end); return; }
       let raf = 0, last = -1; const t0 = performance.now(), keepFor = end + 0.2;
-      const step = (now: number) => { let t = (now - t0) / 1000; if (sc.loop) t = t % (end + 0.3); if (now - last > 80) { last = now; try { show(t); } catch (e) { return; } } if (sc.loop || t < keepFor) raf = requestAnimationFrame(step); };
+      const step = (now: number) => { let t = (now - t0) / 1000; if (sc.loop) t = t % (end + 0.3); else keyed(t); if (now - last > 80) { last = now; try { show(t); } catch (e) { return; } } if (sc.loop || t < keepFor) raf = requestAnimationFrame(step); };
       raf = requestAnimationFrame(step); return () => cancelAnimationFrame(raf);
     }
     const c = cv.current; if (!c) return;
@@ -40,7 +44,7 @@ export function ScenePlayer(p: { sc: Scene; cast: Record<string, Recipe>; play: 
     const ctx = c.getContext('2d'); if (!ctx) return;
     if (props.current.still || end <= 0) { paint(ctx, sc, end, props.current.cast); return; }
     let raf = 0; const t0 = performance.now(), keepFor = end + 4;   // confetti keeps falling a while after the last keyframe
-    const step = (now: number) => { let t = (now - t0) / 1000; if (sc.loop) t = t % (end + 0.32); try { paint(ctx, sc, t, props.current.cast); } catch (e) { return; } if (sc.loop || t < keepFor) raf = requestAnimationFrame(step); };
+    const step = (now: number) => { let t = (now - t0) / 1000; if (sc.loop) t = t % (end + 0.32); else keyed(t); try { paint(ctx, sc, t, props.current.cast); } catch (e) { return; } if (sc.loop || t < keepFor) raf = requestAnimationFrame(step); };
     raf = requestAnimationFrame(step); return () => cancelAnimationFrame(raf);
   }, [p.play, size[0], size[1], flat]);
   const fx = fxClass(p.sc);

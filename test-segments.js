@@ -104,7 +104,8 @@ const fx = (r, re) => r.segs.filter(s => s.k === 'match' && (s.fx || []).some(f 
   /* a brawl needs a feud; with one it heats it */
   adv(S);
   const f = S.feuds.find(x => !x.res && x.promo === 'pdw'), before = f.heat;
-  r = show(S, S => { clear(S); const z = E.setSeg(S, -1, { k: 'brawl', who: [f.a[0], f.b[0]], pos: 1 }); if (!z.ok) throw new Error(z.msg); E.fitShow(S, S.card); });
+  // the brawl is what is tested, not who happens to be hurt this week
+  r = show(S, S => { clear(S); S.w[f.a[0]].inj = 0; S.w[f.b[0]].inj = 0; const z = E.setSeg(S, -1, { k: 'brawl', who: [f.a[0], f.b[0]], pos: 1 }); if (!z.ok) throw new Error(z.msg); E.fitShow(S, S.card); });
   adv(S);
   ok('pdw', 'a brawl between rivals heats their feud', r && angles(r).some(a => a.booked === 'brawl') && (f.heat > before || f.res), before.toFixed(0) + ' to ' + f.heat.toFixed(0));
   /* refusals, in plain words */
