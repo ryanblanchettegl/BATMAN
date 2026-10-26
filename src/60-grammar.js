@@ -299,7 +299,7 @@ var GR_POD={
   fix_no_b:['There it is.','I am writing this down.','The great one gets one wrong.','Your sources need sources.'],
   // the title picture
   title_in:['The title picture in {co}.','Let us go through the champions in {co}.','Who holds the gold in {co} right now.'],
-  hold:['{w} {hv} the {title}, {n} weeks now.','{w} {hs} held the {title} for {n} weeks.','{w} still {hv} the {title}. {n} weeks.'],
+  hold:['{w} {hv} the {title}, {nw} now.','{w} {hs} held the {title} for {nw}.','{w} still {hv} the {title}. {nw} and counting.'],
   hold_new:['{w} {is} the new holder of the {title}.','{w} {hv} the {title}, and it is brand new.'],
   vacant:['The {title} is vacant right now.','Nobody holds the {title} at the moment.'],
   next:['I think {c} is next in line.','{c} is the one I would book against them.','If it is not {c} next, I do not know who it is.','{c} has earned a shot.'],

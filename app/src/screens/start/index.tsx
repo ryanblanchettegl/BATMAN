@@ -286,7 +286,7 @@ function Help() {
       <li><span><b>Office.</b> The desk, Backstage, Storylines and your career. It opens on what needs doing before the show.</span></li>
       <li><span><b>Booking.</b> Build the card and pick your winners.</span></li>
       <li><span><b>Roster.</b> Wrestlers, the locker room, titles and free agents.</span></li>
-      <li><span><b>Web.</b> The dirt sheet, the chat room and the wrestling sites.</span></li>
+      <li><span><b>Web.</b> The dirt sheet, the weekly podcast and the wrestling sites.</span></li>
       <li><span><b>Manage.</b> Every choice: operations, house rules, deals.</span></li>
       <li><span><b>Company.</b> Information only: overview, finances, the world, history.</span></li>
     </ul>
