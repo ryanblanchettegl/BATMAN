@@ -270,6 +270,7 @@ Bill's decisions of 21 October: picking the winner is free and booking power buy
 - [x] EWE's money: checked. With a thinking booker EWE grows its cash over two years; it loses money only on weak shows, which is the point.
 - [x] A balance test with targets for every company model (`node test-balance.js`).
 - [x] The licence: all rights reserved (`LICENSE`).
+- [x] Stars are earned (Bill, 22 October: "too easy to have a 4 or 5 star match and segments all show, and then get a C grade"). `STAR_AT` in `src/00-core.js` draws the stars from the score on a curve: about three stars is a solid match, four is one of the best few on a good booker's shows, and five needs a score past the top of the scale (100, set in `src/10-match.js`). With a thinking booker, matches of four stars or more fell from 74% to 18%, the median is ★★★¼, and five stars is about one match in 300. The crowd's bar is shown on the same scale, so a C show is now one whose matches sit under it. The screens use the engine's stars (`stars()` in `app/src/kit/index.tsx`).
 
 ### A2. The road to A+, phase 2: the first hour (Bill, 21 and 22 October)
 

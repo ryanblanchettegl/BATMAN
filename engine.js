@@ -27,8 +27,12 @@ var FIN = {clean:{r:0,wg:1,lg:1},flash:{r:-1,wg:0.7,lg:0.5},cheap:{r:-1,wg:0.6,l
 var LEN = {S:6,M:12,L:20};
 /* How good a match or a segment was is shown to the player as stars, in quarter steps, never as a percentage.
    starQ is the score in quarter stars (20 = five stars). Anything the player is told to reach is checked in quarter
-   stars too, so what they see and what counts always agree. */
-function starQ(ov){return Math.round(ov/5);}
+   stars too, so what they see and what counts always agree.
+   The stars are earned (Bill, 22 October: "too easy to have a 4 or 5 star match and segments all show, and then get a C
+   grade"): about three stars is a solid match, four is one of the best few on a good booker's shows, and five is the
+   match of the year (a score of 100, src/10-match.js). STAR_AT is [score, quarter stars], drawn straight between. */
+var STAR_AT=[[0,0],[40,4],[60,7],[75,10],[85,12],[90,14],[94,15],[96,16],[97,17],[98,18],[99,19],[100,20]];
+function starQ(ov){var T=STAR_AT,i;if(!(ov>0))return 0;if(ov>=100)return 20;for(i=1;i<T.length;i++)if(ov<T[i][0])return Math.floor(T[i-1][1]+(ov-T[i-1][0])/(T[i][0]-T[i-1][0])*(T[i][1]-T[i-1][1])+1e-9);return 20;}
 function starG(ov){var q=Math.max(1,starQ(ov)),s='',k;for(k=0;k<Math.floor(q/4);k++)s+='★';return s+['','¼','½','¾'][q%4];}
 function starMeets(ov,target){return starQ(ov)>=starQ(target);}
 var PRODF=[0.4,0.7,1,1.45,2.1],PRODN=['Bare bones','Basic','Standard','Slick','State of the art'];
@@ -877,6 +881,7 @@ function doMatch(S,P,show,m,i,n,rep,used){
   if(bad)FX(false,'Somebody had an off night');
   var ea=avg(effs);if(ea>=92)FX(true,'Everybody worked hard');else if(ea<70)FX(false,'Low effort: morale or fatigue');
   var OV=clamp(Math.round(P.wq*MQ+(1-P.wq)*CR+fr+(rnd(S)*4-2)-(bad?6:0)),5,99);
+  if(OV===99&&P.wq*MQ+(1-P.wq)*CR+fr-(bad?6:0)>=103)OV=100;   // the match of the year: past the top of the scale, the only way to five stars (STAR_AT)
   var seg={k:'match',label:br?all.map(function(w){return w.name;}).join(', '):vsLabel(sides),mt:MT[m.mt].n,stip:stip==='std'?null:STIP[stip].n,sk:stip==='std'?undefined:stip,title:t?t.name:null,mins:mins,mq:Math.round(MQ),cr:Math.round(CR),eff:Math.round(ea),ov:OV,lines:[],finish:'',notes:[],win:win>=0?names(winners):null,fin:fin,fx:fx,ids:all.map(function(w){return w.id;}),odds:od.p.map(function(p){return Math.round(p*100);}),called:called,sidesN:sides.map(names)};
   // bookkeeping
   all.forEach(function(w){w.lu=S.week;used[w.id]=(used[w.id]||0)+1;w.cond=clamp(w.cond-mins*0.45*(STIP[stip].inj>1.5?1.35:1),5,100);});
@@ -2828,7 +2833,7 @@ var EV={
   },
   network:function(S,P){
     if(S.quests.some(function(q){return q.type==='network';}))return null;
-    var sh=pick(S,P.shows),target=Math.min(92,Math.round((P.mainB[sh.id]||75)+4)),   // a stretch, never more than four and a half stars: five is all but out of reach
+    var sh=pick(S,P.shows),target=Math.min(92,Math.round((P.mainB[sh.id]||75)+4)),   // a stretch, never more than 92 (three and a half stars): four and up is for the best few
       bonus=Math.round(P.inc0*0.04/1000)*1000;
     S.quests.push({id:S.nid++,type:'network',show:sh.id,target:target,bonus:bonus,due:S.week,text:'Network: a main event of '+starG(target)+' or better on '+sh.name+' this week ('+money(bonus)+')'});
     return {type:'network',text:'The network wants a big main event on '+sh.name+' this week. '+starG(target)+' or better pays a '+money(bonus)+' bonus.'};
