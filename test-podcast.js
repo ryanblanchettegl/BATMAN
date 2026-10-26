@@ -38,7 +38,9 @@ ok('weekly', 'an episode every week', eps >= weeks - 2, eps + ' episodes in ' + 
 ok('lines', 'every line filled, plain and said by a host', bad.length === 0, bad.slice(0, 5).join(' | '));
 ok('size', 'episodes are a few minutes long', Math.min(...lens) >= 12 && Math.max(...lens) <= 72, Math.min(...lens) + ' to ' + Math.max(...lens) + ' lines');
 ok('segs', 'every kind of segment turns up', ['open', 'yours', 'world', 'feuds', 'money', 'rumours', 'titles', 'mail', 'picks'].every(k => segKinds[k] > 0), JSON.stringify(segKinds));
-ok('vary', 'the lines vary', new Set(allLines).size >= allLines.length * 0.35, new Set(allLines).size + ' different in ' + allLines.length);
+// the stage directions in brackets ([Theme music plays]) are meant to be the same every week; the spoken lines are what must vary
+const spoken = allLines.filter(t => !/^\[.*\]$/.test(t));
+ok('vary', 'the lines vary', new Set(spoken).size >= spoken.length * 0.35, new Set(spoken).size + ' different in ' + spoken.length);
 ok('picks', 'picks are made and scored', picks > 0, picks + ' scored');
 ok('kayfabe', 'no secret is said before it leaks', leaked.length === 0, kept + ' secrets checked' + (leaked.length ? '; said: ' + leaked[0] : ''));
 // words never change a game: nothing in the file draws on the game's random stream, and the same seed says the same words

@@ -33,7 +33,7 @@ export const addAngle = () => openSeg(-1, 'angle');
 
 export function SegWindow(_p: { m: Modal }) {
   const S = G.S, d = draft(), I = E.segInfo(S), K = E.SEGK[d.k], n = S.card.length, had = d.slot >= 0 && !!I.list[d.slot];
-  const kinds: Opt[] = Object.keys(E.SEGK).filter(k => E.SEGK[k].t === d.cat || E.SEGK[k].t === 'any').map(k => [k, E.SEGK[k].n] as Opt);
+  const kinds: Opt[] = Object.keys(E.SEGK).filter(k => !E.SEGK[k].arc && (E.SEGK[k].t === d.cat || E.SEGK[k].t === 'any')).map(k => [k, E.SEGK[k].n] as Opt);
   const full = K.roles.every((_: string, i: number) => d.who[i] != null), sg = { k: d.k, who: d.who.slice(0, K.roles.length), pos: d.pos, len: d.len };
   const look = full ? E.segLook(S, sg, d.slot) : null, word = d.cat === 'promo' ? 'promo' : 'angle', cl = E.clock(S);
   const setWho = (i: number, v: string) => view(() => { d.who = d.who.slice(0, i); if (v !== '') d.who[i] = +v; });

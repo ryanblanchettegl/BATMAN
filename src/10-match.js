@@ -1,7 +1,7 @@
 /* ---------- extension hooks: later systems plug into the match engine here ---------- */
 // EFX(ctx,w) -> effort delta; MQX/CRX(ctx) -> {d,x} quality / crowd delta with an optional dirt-sheet label;
-// POST(ctx) after a match is settled; SHOWX(S,P,show,rep) after a show; WEEKX(S) at week end; NEWX(S) on a new game.
-var MODEL_CROWD={},ANGDONE=[],EFX=[],MQX=[],CRX=[],FINX=[],POST=[],SHOWX=[],WEEKX=[],NEWX=[],ANGX=[],EVMAKE=[],EVR={},QEND={},PREX=[],TASKX=[];
+// SHOWON(S) when a show of the player's becomes the one being booked; POST(ctx) after a match is settled; SHOWX(S,P,show,rep) after a show; WEEKX(S) at week end; NEWX(S) on a new game.
+var MODEL_CROWD={},ANGDONE=[],EFX=[],MQX=[],CRX=[],FINX=[],POST=[],SHOWX=[],WEEKX=[],NEWX=[],ANGX=[],EVMAKE=[],EVR={},QEND={},PREX=[],TASKX=[],SHOWON=[];
 
 /* ---------- match engine ---------- */
 function workOf(w,stip,mins){
@@ -14,7 +14,9 @@ function workOf(w,stip,mins){
 }
 function chem(S,a,b){var k0=rkey(a,b),x=S.chemX&&S.chemX[k0],bd=relChem(S,a,b);if(x!=null)return x+bd;var k=S.seed+':'+k0;return (h01('c'+k)+h01('d'+k)-1)*6+bd+styleBlend(S.w[a],S.w[b]);}
 function addOvr(P,w,d){var cap=ovrCap(P,w);if(d>0&&w.ovr>=cap)d*=0.2;w.ovr=clamp(w.ovr+d,1,100);}
-function fill(t,o){return t.replace(/\{(\w+)\}/g,function(_,k){return o[k]!=null?o[k]:'';});}
+/** A name that already starts with The (a finisher called The Mum's Orders) does not get another: "the The" reads "The". */
+function theOnce(t){return t.replace(/\b([Tt])he (The|the) /g,'$2 ');}
+function fill(t,o){return theOnce(t.replace(/\{(\w+)\}/g,function(_,k){return o[k]!=null?o[k]:'';}));}
 
 /* ---------- commentary grammar: lines are assembled from parts so calls rarely repeat ---------- */
 var GR={
@@ -321,9 +323,9 @@ function doMatch(S,P,show,m,i,n,rep,used){
     winners=sides[win];losers=flat(sides.filter(function(s,k){return k!==win;}));
     var heelWin=winners[0].align==='H';
     // a run-in the booker called from the headset (src/31-live.js)
-    if(isPl&&m.runin&&S.w[m.runin.r]&&S.w[m.runin.p]){var rf=feudOf(S,m.runin.r,m.runin.p);if(rf)runin={r:S.w[m.runin.r],p:S.w[m.runin.p],f:rf};}
+    if(isPl&&m.runin&&!m.runin.after&&S.w[m.runin.r]&&S.w[m.runin.p]){var rf=feudOf(S,m.runin.r,m.runin.p);if(rf)runin={r:S.w[m.runin.r],p:S.w[m.runin.p],f:rf};}
     if(isPl&&!br)all.forEach(function(p){feudsFor(S,p.id).forEach(function(f){
-      if(runin||m.norun||f.kind==='dream')return;
+      if(runin||m.norun||m.runin||f.kind==='dream')return;   // m.runin.after: a booked run-in after the bell (src/99-ringside.js)
       var rs=(f.a.indexOf(p.id)>=0?f.b:f.a).map(function(id){return S.w[id];}).filter(function(r){return all.indexOf(r)<0&&r.inj<=0&&r.promo===P.id&&!(r.away>=S.week);});
       rs=rs.concat(stableMates(S,rs,all));
       if(rs.length&&chance(S,0.10+f.heat/400+(rs.length>1?0.06:0)))runin={r:pick(S,rs),p:p,f:f};
@@ -433,6 +435,7 @@ function doMatch(S,P,show,m,i,n,rep,used){
     fin==='dq'?'{l} is disqualified for ignoring the referee; {w} wins by DQ.':
     fin==='co'?'{l} is counted out on the floor; {w} wins by count-out.':
     (mins>=20?'The time limit expires with neither able to put the other away.':'Both are counted out brawling on the floor.'),o);
+  seg.fk=fin;if(fin==='clean'&&(lead.style==='T'||stip==='sub'))seg.sub=1;   // how it ended, for the broadcast's last picture
   if(isPl){
     var srt=all.slice().sort(function(p,q){return p.ovr-q.ovr;});
     seg.bc=callMatch(S,P,{fx:fx,o:o,m:m,all:all,pre:pre,champ:champ,mt:MT[m.mt].n,stip:stip,stipName:stip==='std'?null:STIP[stip].n,t:t,sides:sides,feud:feud,feudHeat:heatWas,flog:flogWas,gap:srt[srt.length-1].ovr-srt[0].ovr,under:srt[0].name,CR:CR,MQ:MQ,mins:mins,ca:ca,bad:bad,fin:fin,sub:lookFin(lead)?lookFin(lead).category==='Submission':(lead.style==='T'||stip==='sub'),fko:ctx.fko||null,fm:ctx.fm||null,lfin:other.fin||null,lname:other.name,wname:lead.name,win:win,plural:winners.length>1,change:!!seg.change,retain:win>=0&&win===champSide,entrance:ctx.entrance,main:isMain&&n>2,big:big,show:show.name,upset:upset,streak:endedStreak});

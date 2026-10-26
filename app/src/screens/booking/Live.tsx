@@ -30,7 +30,7 @@ function Typed(p: { text: string }) {
   useEffect(() => n < 0 ? undefined : typer.start(p.text.length, setN, () => setN(-1)), []);
   return <>{n < 0 ? p.text : p.text.slice(0, n)}{n < 0 ? null : <span class="untyped">{p.text.slice(n)}</span>}</>;
 }
-interface Beat { t: string; x: string; h?: number; w?: string }
+interface Beat { t: string; x: string; h?: number; w?: string; g?: number }
 /** One line of the broadcast. `tk` marks the newest line: it is drawn brighter and typed out. */
 function Line(p: { r: any; b: Beat; tk?: string }) {
   const b = p.b, cls = 'ln ' + b.t + (p.tk ? ' last' : '') + (b.h ? ' hot' + (b.h > 1 ? ' hot2' : '') : ''), text = p.tk && pref.pace !== 'tv' ? <Typed key={p.tk} text={b.x} /> : b.x;
@@ -324,9 +324,22 @@ function scenePick(r: any, s: any, at: number, done: boolean): { sc: Scene; cast
       return { sc, cast, play: i + ':e' + k + (held ? 'b' + held : '') + (mates.length ? 'm' + mates.length : ''), label: names + (mates.length ? ' come out' : ' comes out') + (held ? ' with ' + (held === 1 ? 'the gold' : held + ' belts') : '') };
     }
   }
+  // a newcomer's debut is also the picture at the bell (the broadcast may join a match past its entrances, as a tag match does);
+  // the same play key as the entrance's, so one already showing carries on rather than starting again
+  if (!done && (s.debut || []).length && bc.slice(0, now + 1).filter(b => b.t === 'pbp' || b.t === 'col').length <= 2) {
+    const dbt = s.debut[0], pk = beatPick('debut_' + dbt.k, [dbt.id].concat(ids.filter(id => sideOf(id) !== sideOf(dbt.id)).slice(0, 1)));
+    if (pk) { Object.assign(cast, pk.cast); return { sc: pk.sc, cast, play: i + ':db' + dbt.id, label: pk.label }; }
+  }
   let when = 'mid', key = 'm', a = ids[0];
   // a line of colour from the desk, between the moves: cut to the two of them, the colour voice talking
   const line = bc[now];
+  // a guest on commentary (src/99-ringside.js): the guest in the third chair, saying their piece
+  if (!done && line && line.t === 'col' && line.g != null && S.w[line.g]) {
+    const sc = choose('desk3', now); if (sc) { const ann: string[] = r.ann || [];
+      cast.C1 = { ...commentator(0), name: ann[0] || 'Play-by-play' }; cast.C2 = { ...commentator(1), name: ann[1] || 'Colour' }; cast.C3 = recipeOf(S.w[line.g]);
+      return { sc, cast, play: i + ':g' + now, label: 'At the desk: ' + S.w[line.g].name + ', a guest on commentary' };
+    }
+  }
   if (!done && line && line.t === 'col' && !line.h && now !== lastH) {
     const sc = choose('desk2', now); if (sc) { const ann: string[] = r.ann || [];
       cast.C1 = { ...commentator(0), name: ann[0] || 'Play-by-play' }; cast.C2 = { ...commentator(1), name: ann[1] || 'Colour' };
@@ -338,7 +351,7 @@ function scenePick(r: any, s: any, at: number, done: boolean): { sc: Scene; cast
     const pk = beatPick(s.story.k, [s.story.w[0]].concat((s.story.l || []).slice(0, 1))); if (pk) { Object.assign(cast, pk.cast); return { sc: pk.sc, cast, play: i + ':st', label: pk.label }; }
   }
   if (done && s.change && winner >= 0) { when = 'champion'; key = 'c'; a = winner; }
-  else if (winner >= 0 && lastH >= 0 && now >= lastH) { when = 'finish'; key = 'f'; a = winner; }
+  else if (winner >= 0 && lastH >= 0 && now >= lastH) { when = s.sub ? 'finish_sub' : s.fk === 'flash' ? 'finish_flash' : s.fk === 'cheap' || s.fk === 'interf' ? 'finish_cheap' : s.fk === 'dq' ? 'finish_dq' : 'finish'; key = 'f'; a = winner; }
   else {
     let h = -1; for (let j = now; j >= Math.max(0, now - 1); j--) if (bc[j] && bc[j].h) { h = j; break; }
     if (h >= 0) { when = 'nearfall'; key = 'n' + h; const f = first(bc[h].x); if (f >= 0) a = f; }
@@ -348,17 +361,27 @@ function scenePick(r: any, s: any, at: number, done: boolean): { sc: Scene; cast
   let sc0 = choose(when, key.length); if (!sc0) return null;
   // the one in control in the middle of a match: a signature move for this part of it (early, the middle, late), or now and then a taunt
   const lkA = when === 'mid' && S.w[a] ? (S.w[a].look || {}) : null, part = now < bc.length * 0.35 ? 'early' : now < bc.length * 0.7 ? 'mid' : 'late', hsh = Math.abs((r.week || 0) + i * 3 + key.length * 7 + now);
-  const all = lkA ? threeMoves(S.w[a], lkA.finishing_moves).slice(1) : [], here = all.filter((m: any) => (m.stage || 'mid') === part), sigs = here.length ? here : all;
+  const all = lkA ? threeMoves(S.w[a], (lkA.finishing_moves && lkA.finishing_moves.length ? lkA.finishing_moves : E.worldMoves(S, a)) || undefined).slice(1) : [], here = all.filter((m: any) => (m.stage || 'mid') === part), sig0 = here.length ? here : all;
+  // their moveset joins the signatures for this part of the match (each move plays its own animation); a signature still comes up twice as often
+  const msHere = lkA ? (lkA.moveset || []).filter((m: any) => (m.stage || 'mid') === part && m.scene).map((m: any) => ({ name: m.name, preview_pose_id: m.scene })) : [];
+  const sigs = sig0.concat(sig0, msHere);
   const tn = lkA ? (lkA.taunts || []).map((id: string) => allScenes(world).find(x => x.id === id && x.when === 'taunt')).filter(Boolean) as Scene[] : [];
   if (tn.length && (!sigs.length || hsh % 3 === 0)) sc0 = tn[hsh % tn.length];
   else if (sigs.length) { const sm = sigs[hsh % sigs.length], fs = allScenes(world).find(x => x.id === finScene(sm));
     if (fs) { sc0 = copy(fs); const lk0 = sc0.keys[sc0.keys.length - 1]; let named = false; lk0.props.forEach(q => { if (q.k === 'burst') { q.txt = sm.name.toUpperCase().slice(0, 16); named = true; } }); if (!named) lk0.props.push({ id: 'sig', k: 'burst', x: 3.6, y: 2.8, r: 0, z: 3, s: 1, txt: sm.name.toUpperCase().slice(0, 16) }); sc0.name = sm.name; } }
   // a winner made in Create a Player finishes with their own move: its picture, with its name in the burst
-  const fm = when === 'finish' && S.w[a] && S.w[a].look && (S.w[a].look.finishing_moves || [])[0];
+  // the winner's finisher: from their own file, or the real move the world gives them (a parody wrestler's own finisher)
+  const fm0 = (when === 'finish' || when === 'finish_sub') && S.w[a] ? ((S.w[a].look && (S.w[a].look.finishing_moves || [])[0]) || (E.worldMoves(S, a) || [])[0]) : null;
+  const fm = fm0 && (when === 'finish' || fm0.category === 'Submission') ? fm0 : null;   // a tap-out plays their finisher only when it is a hold
   if (fm) { const fs = allScenes(world).find(x => x.id === finScene(fm)); if (fs) { sc0 = copy(fs); sc0.keys.forEach(k => k.props.forEach(q => { if (q.k === 'burst' && k === sc0!.keys[sc0!.keys.length - 1]) q.txt = fm.name.toUpperCase().slice(0, 16); })); sc0.name = fm.name; } }
   // a match under rules with a set of its own is played there: the cage, the cell with its roof, the ring of fire, the belt hung for the ladder
   const sk = s.sk || Object.keys(E.STIP).find(k => E.STIP[k].n === s.stip) || '', rig = E.STIP[sk] && E.STIP[sk].set;
   if (rig && IN_RING.includes(sc0.set)) sc0 = { ...sc0, set: rig };
+  // a tag match: now and then the middle plays a tag team moment (the hot tag, a double team, the ring cut in half), with both partners in it
+  const tagged = when === 'mid' && ns === 2 && per >= 2 && hsh % 3 === 1 ? choose('tag', now) : null;
+  if (tagged) { const sa = sideOf(a), pa = ids.find(id => sideOf(id) === sa && id !== a), bb = ids.find(id => sideOf(id) !== sa)!, pb = ids.find(id => sideOf(id) !== sa && id !== bb);
+    const scT = fillScene(tagged, { ...E.sceneHooks(S, { ids, a, b: bb }), pa: pa as number, pb: pb as number }, cast);
+    if (scT) return { sc: scT, cast, play: i + ':tag' + key, label: scT.name + ': ' + Object.values(cast).map(nm).join(', ') }; }
   const b = ids.find(id => sideOf(id) !== sideOf(a)), wins = winSide >= 0 ? ids.filter(id => sideOf(id) === winSide) : [];
   const sc = fillScene(sc0, E.sceneHooks(S, { ids, a, b, win: wins, title: s.title || null }), cast); if (!sc) return null;
   return { sc, cast, play: i + ':' + key, label: sc.name + ': ' + Object.values(cast).map(nm).join(' and ') };

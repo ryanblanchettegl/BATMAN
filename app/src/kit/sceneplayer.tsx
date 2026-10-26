@@ -8,21 +8,35 @@ import { Scene, Caption, paint, lastT, at, fxClass, aspectOf, fitIn, captionAt }
 import { Recipe } from './puppet';
 import { Diorama3D } from './diorama3d';
 
+/* Still pictures (a matter on the desk, a call on the air, a line on the run sheet, a poster) share one 3D renderer: each
+   is drawn there and copied onto its own canvas, so a page full of pictures never runs out of WebGL and falls back to
+   the old flat drawing (Ryan, 20 October: every scene in 3D). A picture you can turn, or one that moves, keeps its own. */
+let SHARED: { eng: Diorama3D; cv: HTMLCanvasElement } | null | false = null;
+function shared(): { eng: Diorama3D; cv: HTMLCanvasElement } | null {
+  if (SHARED === null) { try { const cv = document.createElement('canvas'); SHARED = { eng: new Diorama3D(cv, false), cv }; } catch (e) { SHARED = false; } }
+  return SHARED || null;
+}
 let plays = 0;
+/** A scene at time t drawn by the shared 3D renderer, as a PNG data URL (EWF_DEBUG.sheet3d, for checking moves and scenes). */
+export function snap3d(sc: Scene, t: number, cast: Record<string, Recipe>, w: number, h: number): string | null {
+  const SH = shared(); if (!SH) return null; SH.eng.size(w, h); SH.eng.show(sc, at(sc, t), cast, t); SH.eng.now(); return SH.cv.toDataURL('image/png');
+}
 /** How many scenes have started on the broadcast since the page loaded (EWF_DEBUG.scenes). */
 export function scenePlays() { return plays; }
 
 export function ScenePlayer(p: { sc: Scene; cast: Record<string, Recipe>; play: string; still?: boolean; t?: string; label: string; orbit?: boolean; fill?: boolean;
+  /** Change it to draw the picture again (after a pop-up over it closes). */ redraw?: number;
   /** Called as the picture reaches each keyframe after the first (the broadcast plays its ring sounds from it, src/audio/cues.ts). */
   onKey?: (sc: Scene, key: any) => void }) {
   const box = useRef<HTMLDivElement>(null), cv = useRef<HTMLCanvasElement>(null), c3 = useRef<HTMLCanvasElement>(null), eng = useRef<Diorama3D | null>(null);
   const [size, setSize] = useState([0, 0]), [flat, setFlat] = useState(false), [cap, setCap] = useState<Caption | null>(null);
-  const props = useRef(p); props.current = p;
+  const props = useRef(p); props.current = p; const solo = !!p.still && !p.orbit;
   useEffect(() => {
     const b = box.current; if (!b) return;
     const fit = () => { const r = b.getBoundingClientRect(); if (props.current.fill) { setSize([Math.floor(r.width), Math.floor(r.height)]); return; } setSize(fitIn(r.width, r.height, aspectOf(props.current.sc))); };
     fit(); const ro = new ResizeObserver(fit); ro.observe(b);
-    if (c3.current) { try { eng.current = new Diorama3D(c3.current, !!p.orbit); } catch (e) { eng.current = null; setFlat(true); } }
+    if (solo) { if (!shared()) setFlat(true); }
+    else if (c3.current) { try { eng.current = new Diorama3D(c3.current, !!p.orbit); } catch (e) { eng.current = null; setFlat(true); } }
     return () => { ro.disconnect(); if (eng.current) eng.current.dispose(); eng.current = null; };
   }, []);
   useEffect(() => { const b = box.current; if (b && !p.fill) { const r = b.getBoundingClientRect(); setSize(fitIn(r.width, r.height, aspectOf(p.sc))); } }, [p.sc.frame]);
@@ -31,6 +45,13 @@ export function ScenePlayer(p: { sc: Scene; cast: Record<string, Recipe>; play: 
     const sc = props.current.sc, end = lastT(sc), E3 = eng.current; plays++;
     let heard = 0;   // the keyframes already reached, for onKey
     const keyed = (t: number) => { const f = props.current.onKey; if (!f) return; while (heard < sc.keys.length && sc.keys[heard].t <= t) { if (heard > 0 || sc.keys[0].t > 0) f(sc, sc.keys[heard]); heard++; } };
+    const SH = solo && !flat ? shared() : null;
+    if (SH) {   // a still: drawn by the shared renderer and copied here
+      const c = cv.current; if (!c) return; const dpr = Math.min(2, window.devicePixelRatio || 1); c.width = Math.round(size[0] * dpr); c.height = Math.round(size[1] * dpr);
+      const ctx = c.getContext('2d'); if (!ctx) return;
+      try { SH.eng.size(size[0], size[1]); SH.eng.show(sc, at(sc, end), props.current.cast, end); SH.eng.now(); ctx.drawImage(SH.cv, 0, 0, c.width, c.height); } catch (e) { paint(ctx, sc, end, props.current.cast); }
+      const c0 = captionAt(sc, end); setCap(c0); return;
+    }
     if (E3) {   // 3D: build the moment, a little over twelve times a second while it moves
       E3.size(size[0], size[1]);
       const show = (t: number) => { const k = at(sc, t); E3.show(sc, k, props.current.cast, t); const c = captionAt(sc, t); setCap(x => (x && c && x.t === c.t && x.s === c.s) || x === c ? x : c); };
@@ -46,13 +67,13 @@ export function ScenePlayer(p: { sc: Scene; cast: Record<string, Recipe>; play: 
     let raf = 0; const t0 = performance.now(), keepFor = end + 4;   // confetti keeps falling a while after the last keyframe
     const step = (now: number) => { let t = (now - t0) / 1000; if (sc.loop) t = t % (end + 0.32); else keyed(t); try { paint(ctx, sc, t, props.current.cast); } catch (e) { return; } if (sc.loop || t < keepFor) raf = requestAnimationFrame(step); };
     raf = requestAnimationFrame(step); return () => cancelAnimationFrame(raf);
-  }, [p.play, size[0], size[1], flat]);
+  }, [p.play, size[0], size[1], flat, p.redraw]);
   const fx = fxClass(p.sc);
-  return <div ref={box} class={'lv-scene' + fx} data-t={p.t || 'live-scene'} data-v={p.sc.id} data-set={p.sc.set} data-3d={eng.current ? 1 : 0} role="img" aria-label={p.label}>
-    <canvas ref={c3} style={{ width: size[0] + 'px', height: size[1] + 'px', display: flat ? 'none' : 'block' }} />
-    {flat && <canvas ref={cv} style={{ width: size[0] + 'px', height: size[1] + 'px' }} />}
+  return <div ref={box} class={'lv-scene' + fx} data-t={p.t || 'live-scene'} data-v={p.sc.id} data-set={p.sc.set} data-3d={eng.current || (solo && !flat && SHARED) ? 1 : 0} role="img" aria-label={p.label}>
+    {solo ? null : <canvas ref={c3} style={{ width: size[0] + 'px', height: size[1] + 'px', display: flat ? 'none' : 'block' }} />}
+    {(flat || solo) && <canvas ref={cv} style={{ width: size[0] + 'px', height: size[1] + 'px' }} />}
     {fx && <FxVeil w={size[0]} h={size[1]} />}
-    {cap && !flat && <CaptionBox cap={cap} w={size[0]} h={size[1]} who={capName(p.sc, p.cast, cap)} />}
+    {cap && (!flat || solo) && <CaptionBox cap={cap} w={size[0]} h={size[1]} who={capName(p.sc, p.cast, cap)} />}
   </div>;
 }
 /** Who a caption names: the person playing that part, or the part's own name. */

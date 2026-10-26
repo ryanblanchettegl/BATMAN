@@ -6,7 +6,7 @@ import { Btn } from './index';
 /** The grey DOS pop-up. One is open at a time (ui.modal). Esc and the Back button close it. `paper` dresses it in the
     new look (rule 2a): cream card, a navy title bar in pinstripes with a close box and a zoom box, and an info strip
     under it (`info`: what it is on the left, where it stands on the right). */
-export function Window(p: { title: string; wide?: boolean; children: ComponentChildren; ok?: string; noOk?: boolean; hint?: string; footer?: ComponentChildren; onClose?: () => void; paper?: boolean; info?: [ComponentChildren, ComponentChildren] }) {
+export function Window(p: { title: string; wide?: boolean; children: ComponentChildren; ok?: string; noOk?: boolean; hint?: string; footer?: ComponentChildren; onClose?: () => void; paper?: boolean; info?: [ComponentChildren, ComponentChildren]; /** As big as the screen allows, to show a long list of choices at once. */ big?: boolean; /** Esc calls onClose itself (a page's own pop-up, not one in ui.modal). */ esc?: boolean }) {
   const close = p.onClose || closeModal;
   const box = useRef<HTMLDivElement>(null);
   // focus moves into the window when it opens and returns to where it was when it closes. It lands on the button that
@@ -15,6 +15,13 @@ export function Window(p: { title: string; wide?: boolean; children: ComponentCh
     const prev = document.activeElement as HTMLElement | null, el = box.current;
     if (el) { const first = (el.querySelector('.wb [data-first]') || el.querySelector('#modal-ok') || el.querySelector('.wb button, .wb select, .wb input') || el.querySelector('button')) as HTMLElement | null; if (first) first.focus(); }
     return () => { if (prev && prev !== document.body && document.contains(prev)) { try { prev.focus({ preventScroll: true }); } catch (e) { /* ignore */ } } };
+  }, []);
+  // a pop-up of a page's own (onClose given) closes on Esc itself, wherever the focus is, so Esc does not also leave the page behind it
+  const onClose = useRef(p.onClose); onClose.current = p.onClose;
+  useEffect(() => {
+    if (!p.esc || !p.onClose) return;
+    const esc = (e: KeyboardEvent) => { if (e.key === 'Escape' && onClose.current) { e.preventDefault(); e.stopPropagation(); onClose.current(); } };
+    window.addEventListener('keydown', esc, true); return () => window.removeEventListener('keydown', esc, true);
   }, []);
   // Tab and Shift+Tab go round inside the window and never reach the page behind it
   const trap = (e: KeyboardEvent) => {
@@ -26,7 +33,7 @@ export function Window(p: { title: string; wide?: boolean; children: ComponentCh
     else if (!e.shiftKey && (ae === last || !box.current.contains(ae))) { e.preventDefault(); first.focus(); }
   };
   return <div class="scrim">
-    <div ref={box} onKeyDown={trap} class={'win' + (p.wide ? ' wide' : '') + (p.paper ? ' paper ppop' : '')} role="dialog" aria-modal="true" aria-label={p.title}>
+    <div ref={box} onKeyDown={trap} class={'win' + (p.wide ? ' wide' : '') + (p.big ? ' big' : '') + (p.paper ? ' paper ppop' : '')} role="dialog" aria-modal="true" aria-label={p.title}>
       {p.paper ? <div class="wt"><button type="button" class="pbox" data-t="modal-close" aria-label="Close" onClick={close} /><h2>{p.title}</h2><span class="pbox zoom" aria-hidden="true" /></div>
         : <div class="wt"><span>{p.title}</span><button type="button" data-t="modal-close" aria-label="Close" onClick={close}>[{'■'}]</button></div>}
       {p.paper && p.info ? <div class="wnfo"><span>{p.info[0]}</span><span>{p.info[1]}</span></div> : null}

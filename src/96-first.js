@@ -51,7 +51,8 @@ E.welcome=function(S){
   // the stories already running when you arrive (src/99-midstory.js): the owner names the one that matters most
   var mid=(S.feuds||[]).filter(function(f){return f.mid&&!f.res&&f.promo===P.id;});
   if(mid.length){var f0=mid[0],A=S.w[f0.a[0]],B=S.w[f0.b[0]];if(A&&B)L.push(A.name+' and '+B.name+' have been at it for weeks'+(f0.title?', with the belt on the line':'')+'. '+(mid.length>1?(mid.length-1)+' more '+(mid.length===2?'story is':'stories are')+' already running. ':'')+'Do not let them go cold.');}
-  L.push('Your first show is '+sh.name+'. The card is empty and the building is sold.');
+  if(S.flagStart&&sh.big)L.push('Your first show is '+sh.name+', the biggest night of our year, and it is this week. The building has been sold out for months. A match on it was promised before you got here, and the writers have the ending of a story ready for after the main event.');
+  else L.push('Your first show is '+sh.name+'. The card is empty and the building is sold.');
   // the owner's goals for the year (src/66-owner-year.js), in the owner's words
   var Y=!me&&typeof E.ownerYear==='function'?E.ownerYear(S):null;
   if(Y)L.push('By '+(Y.end?'the flagship, '+Y.end:'the end of the year')+', I want three things: popularity up to '+Y.asks[0].n.replace(/^Popularity | or more$/g,'')+', at least half our shows giving the crowd what it came for, and no losses I have to cover. Do that two years running and we can talk about who owns this place.');

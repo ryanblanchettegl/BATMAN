@@ -335,7 +335,7 @@ function SaveText() {
 }
 function Options() {
   const S = G.S;
-  const toggle = (k: 'snd' | 'type' | 'auto' | 'crt' | 'boot' | 'letter' | 'btn', n: string, d: string) => <li><span><b>{n}</b><br /><span class="muted">{d}</span></span>
+  const toggle = (k: 'snd' | 'type' | 'auto' | 'crt' | 'boot' | 'letter' | 'btn' | 'tut', n: string, d: string) => <li><span><b>{n}</b><br /><span class="muted">{d}</span></span>
     <Btn kind="sm" on={!!pref[k]} t="pref" d={{ k }} onClick={() => { pref[k] = !pref[k]; savePrefs(); if (k === 'snd') prefsChanged(); if (k === 'snd' && pref.snd) SFX.ach(); redraw(); }}>{pref[k] ? 'On' : 'Off'}</Btn></li>;
   const choice = (k: 'screen' | 'zoom' | 'speed' | 'pace' | 'motion' | 'fxvol' | 'crowd', n: string, d: string, opts: [string | number, string][]) => <li class="col"><span><b>{n}</b><br /><span class="muted">{d}</span></span>
     <span class="row">{opts.map(o => <Btn kind="sm" on={String(pref[k]) === String(o[0])} t="prefset" d={{ k, v: o[0] }} onClick={() => { (pref as any)[k] = o[0]; savePrefs(); if (k === 'fxvol' || k === 'crowd') prefsChanged(); redraw(); }}>{o[1]}</Btn>)}</span></li>;
@@ -347,6 +347,7 @@ function Options() {
       {toggle('type', 'Typewriter text', 'Commentary types itself out during a show.')}
       {toggle('auto', 'Auto-play the show', 'The broadcast moves on by itself at a reading pace and stops for every call. P turns it on or off during a show.')}
       {toggle('letter', 'The owner’s letter', 'A new game opens on a letter from the owner. It can be read again from the desk.')}
+      {toggle('tut', 'Open on the big show', 'A new game opens in the week of the biggest show of the year, and that first show walks you through booking. Off: it opens on an ordinary week.')}
       {choice('screen', 'Screen', 'Auto picks from the device. TV is for the couch: larger text, edge margins, and a remote or gamepad moves the highlight.', [['auto', 'Auto (' + ({ desk: 'desk', tv: 'TV' } as any)[autoScreen()] + ')'], ['desk', 'Desk'], ['tv', 'TV']])}
       {SFX_ON && choice('fxvol', 'Effects volume', 'The piano, the ring, the bell and the voices.', [[0.4, 'Low'], [1, 'Normal'], [1.8, 'High']])}
       {SFX_ON && choice('crowd', 'Crowd volume', 'The crowd during a show: the murmur, the pops and the groans.', [[0, 'Off'], [0.5, 'Low'], [1, 'Normal'], [1.6, 'High']])}

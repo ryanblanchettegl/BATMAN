@@ -15,7 +15,7 @@ delete P.events; const nb = E.nextBig(S); ok(P.events && P.events.length === 12 
 // the show on the night uses the company's own name for it
 for (let w = 0; w < 50 && !S.over; w++) {
   S.inbox.filter(e => !e.done).forEach(e => E.resolveEvent(S, e.id, 0));
-  while (S.qi < S.queue.length) { const sh = S.queue[S.qi];
+  while (S.qi < S.queue.length && !S.over) { const sh = S.queue[S.qi];
     if (sh.big && sh.flag) ok(sh.name === P.name + ' ' + P.events[fm].n, 'the flagship night is called ' + sh.name);
     const c = E.suggest(S), pr = E.preShow(S, c); if (pr) { E.resolvePre(S, c, 0); E.fitShow(S, c); } if (E.validate(S, c).errors.length) { S.qi++; continue; } E.runPlayerShow(S, c); }
   E.endWeek(S);

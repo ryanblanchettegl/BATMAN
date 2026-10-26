@@ -245,7 +245,7 @@ function liveFinish(S){
   if(L.log.length)rep.calls=L.log.slice();
   // what the booker did with their action points since the last show goes on the report too
   rep.prep=(S.apLog||[]).filter(function(l){return !l.sh;}).map(function(l){l.sh=1;return {place:l.place,act:l.act,ok:l.ok,msg:l.msg};});
-  S.qi++;S.card=[];S.live=null;S.segs=[];S.segKey=null;scnCut(S);
+  S.qi++;S.card=[];S.live=null;S.segs=[];S.segKey=null;scnCut(S);if(S.qi<S.queue.length)SHOWON.forEach(function(fn){fn(S);});
   return rep;
 }
 /** Put the show on the air. After this the card cannot be changed, only answered for. */

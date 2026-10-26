@@ -161,7 +161,7 @@ E.useUniverse=function(pkg,fileList){
   DB=buildDB(pkg);CAL0={y:DB.startYear,m:DB.startMonth};v.info=E.universe();return v;
 };
 E.universe=function(){var n=0,count={},cur=null;if(DB.rows){n=DB.rows.length;DB.rows.forEach(function(d){if(d.promo)count[d.promo]=(count[d.promo]||0)+1;});}else DB.roster.split('\n').forEach(function(l){l=l.trim();if(!l)return;if(l[0]==='#'){cur=l.slice(1).trim().split(/\s+/)[0];return;}n++;count[cur]=(count[cur]||0)+1;});return {count:count,start:MONTHS[DB.startMonth]+' '+DB.startYear,id:DB.uni?DB.uni.id:'legacy',name:DB.uni?DB.uni.name:'Built-in roster',version:DB.uni?DB.uni.version:'1',author:DB.uni?DB.uni.author:'',desc:DB.uni?DB.uni.desc:'',workers:n,promotions:DB.promotions};};
-E.attach=function(S){var d=S&&S.db;CAL0=d?{y:d.startYear,m:d.startMonth}:{y:DB.startYear,m:DB.startMonth};};
+E.attach=function(S){var d=S&&S.db;CAL0=d?{y:d.startYear,m:d.startMonth,o:d.startOff||0}:{y:DB.startYear,m:DB.startMonth};};
 /* what a package told us that the world builder cannot express row by row */
 NEWX.push(function(S){
   var by={};S.w.forEach(function(w){if(w.uid)by[w.uid]=w;});

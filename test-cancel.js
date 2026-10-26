@@ -14,7 +14,8 @@ ok('cancel', 'and the people at the top remember it', S.rmY && Object.values(S.r
 let rep = null; for (let w = 0; w < 4 && !rep; w++) { answer(S); while (S.qi < S.queue.length) { const c = E.suggest(S); const r = E.runPlayerShow(S, c).rep; if (r && r.id === off[0].id) rep = r; } answer(S); E.endWeek(S); }
 ok('house', 'the house show earns no television money', rep && rep.tv === 0 && rep.hs === 1, rep && ('tv ' + rep.tv + ', crowd ' + rep.att));
 off[0].offRun = 5; answer(S);
-let back = null; for (let w = 0; w < 4 && !back; w++) { while (S.qi < S.queue.length) { const c = E.suggest(S); const r = E.runPlayerShow(S, c).rep; if (r && r.id === off[0].id && E.crowdScore) {} } back = S.inbox.find(e => !e.done && e.type === 'netback'); if (!back) { off[0].offRun = Math.max(off[0].offRun, 5); answer(S); E.endWeek(S); } }
+// a strong run takes a booker who thinks (E.suggestSmart); flat Suggest a card lands around a C, under the bar
+let back = null; for (let w = 0; w < 4 && !back; w++) { while (S.qi < S.queue.length) { const c = E.suggestSmart(S); const r = E.runPlayerShow(S, c).rep; if (r && r.id === off[0].id && E.crowdScore) {} } back = S.inbox.find(e => !e.done && e.type === 'netback'); if (!back) { off[0].offRun = Math.max(off[0].offRun, 5); answer(S); E.endWeek(S); } }
 ok('back', 'a strong run of house shows brings an offer', !!back);
 if (back) { E.resolveEvent(S, back.id, 0); ok('back', 'taking it puts the show back on television', !off[0].off && off[0].net === back.net, off[0].net); }
 console.log(fails.length ? fails.length + ' failed' : 'test-cancel: all passed'); process.exit(fails.length ? 1 : 0);

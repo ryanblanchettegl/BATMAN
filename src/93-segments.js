@@ -25,12 +25,16 @@ function segSlots(P,show){return show&&show.big?2:clamp(P.angles==null?2:P.angle
 /** The segments booked for the show on the desk. Starts a fresh list when the show changes. */
 function segList(S){
   var show=S.queue&&S.queue[S.qi];if(!show)return [];
-  if(S.segKey!==showKey(S)){S.segs=[];S.segKey=showKey(S);}
-  var L=S.segs||(S.segs=[]);for(var i=L.length-1;i>=0;i--)if(!L[i]||!SEGK[L[i].k])L.splice(i,1);
+  if(S.segKey!==showKey(S)){S.segs=[];S.segKey=showKey(S);SEGNEW.forEach(function(fn){fn(S,S.segs);});}
+  var L=S.segs||(S.segs=[]);for(var i=L.length-1;i>=0;i--)if(!L[i]||!SEGK[L[i].k]||segStale(S,L[i]))L.splice(i,1);
   return L;
 }
+/** A segment the writers or a promise put there, whose reason has gone: an arc that has moved on, a promise no longer owed. */
+function segStale(S,sg){if(sg.k==='arc')return !(S.sa&&!S.sa.done&&S.sa.node===sg.node);if(sg.pm!=null)return !(S.locks||[]).some(function(l){return l.id===sg.pm;});return false;}
 /** The same list, read only (for anything that must not change the game, like the ADVANCE button). */
-function segRead(S){return S.segKey===showKey(S)?(S.segs||[]).filter(function(sg){return sg&&SEGK[sg.k];}):[];}
+function segRead(S){if(S.segKey!==showKey(S)){var L=[];SEGNEW.forEach(function(fn){fn(S,L,1);});return L;}return (S.segs||[]).filter(function(sg){return sg&&SEGK[sg.k]&&!segStale(S,sg);});}
+/** What the writers put on a show before the booker does (the arc, a promised promo): fn(S, list, readOnly) adds to the list. */
+var SEGNEW=[];
 function segPool(S){var P=S.promos[S.player],show=S.queue[S.qi];return show?eligible(S,P,show).filter(function(w){return w.promo===P.id&&!(show.big&&isDev(P,w.brand));}):[];}
 function segTitleOf(S,P,show,w){return showTitles(P,show).filter(function(t){return !t.tag&&t.holders.length&&t.holders[0]===w.id;}).sort(function(a,b){return b.lvl-a.lvl;})[0]||null;}
 /** Who may fill each role of a kind, given the roles already picked. Returns one list of wrestlers per role. */
@@ -183,10 +187,10 @@ function runSeg(S,P,show,ctx,sg,slot,opens){
 /** Tonight's booked segments, grouped by the match they come before. Called by runShow for the player's shows. */
 function segBooked(S,show,n){
   var out={count:0,at:{}};if(S.cal||!n)return out;
-  if(S.segKey!==showKey(S))return out;
+  segList(S);
   (S.segs||[]).forEach(function(sg,i){
     if(!sg||!SEGK[sg.k]||segWhy(S,sg,i))return;
-    var p=clamp(sg.pos|0,0,n-1);(out.at[p]||(out.at[p]=[])).push({sg:sg,slot:i});out.count++;
+    var p=sg.post?n:clamp(sg.pos|0,0,n-1);(out.at[p]||(out.at[p]=[])).push({sg:sg,slot:i});out.count++;   // sg.post: after the main event
   });
   return out;
 }
@@ -200,7 +204,7 @@ E.segInfo=function(S){
   var L=segList(S),mins=0;
   var list=L.map(function(sg,i){
     var why=segWhy(S,sg,i),look=why?null:segLook(S,sg,i),K=SEGK[sg.k];mins+=segMins(sg);
-    return {slot:i,k:sg.k,t:K.t,who:sg.who.slice(),pos:sg.pos|0,len:segLen(sg),mins:segMins(sg),label:why?K.n:segLabel(S,sg),why:why,look:look};
+    return {slot:i,k:sg.k,t:K.t,who:sg.who.slice(),pos:sg.pos|0,post:!!sg.post,forced:!!sg.forced,pm:sg.pm==null?null:sg.pm,len:segLen(sg),mins:segMins(sg),label:why?K.n:segLabel(S,sg),why:why,look:look};
   });
   return {booked:L.length,list:list,mins:mins};
 };
@@ -209,6 +213,7 @@ E.segLook=function(S,sg,slot){return segLook(S,sg,slot==null?-1:slot);};
 /** Book, change or remove a segment. A slot past the end of the list (or -1) adds a new one. sg null removes it. */
 E.setSeg=function(S,slot,sg){
   var L=segList(S),isNew=slot==null||slot<0||slot>=L.length;
+  if(!isNew&&L[slot]&&L[slot].forced)return {ok:false,msg:L[slot].k==='arc'?'The writers put this arc on the show. It stays: decide where it goes instead.':'You promised this. It stays on the show.'};
   if(!sg){if(isNew)return {ok:true,msg:'Nothing was booked there.'};L.splice(slot,1);return {ok:true,msg:'That segment is off the show.'};}
   var K=SEGK[sg.k];if(!K)return {ok:false,msg:'Pick what kind of segment it is.'};
   var clean={k:sg.k,who:(sg.who||[]).slice(0,K.roles.length).map(function(x){return +x;}),pos:Math.max(0,sg.pos|0),len:K.fix?K.len:(SEGLEN[sg.len]?sg.len:K.len)},why=segWhy(S,clean,isNew?-1:slot);
@@ -218,7 +223,7 @@ E.setSeg=function(S,slot,sg){
   return {ok:true,slot:isNew?L.length-1:slot,msg:clean.k==='writers'?'Booked: '+mins+' minutes for the writers.':'Booked: '+segLabel(S,clean)+', '+mins+' minutes. It should be about '+starG(lk.mid)+'.'};
 };
 /** Take every promo and angle off the show on the desk. */
-E.segClear=function(S){var L=segList(S);L.length=0;return {ok:true,msg:'The run sheet is clear.'};};
+E.segClear=function(S){var L=segList(S),keep=L.filter(function(sg){return sg&&sg.forced;});L.length=0;keep.forEach(function(sg){L.push(sg);});return {ok:true,msg:keep.length?'The run sheet is clear, but for what the writers put on it.':'The run sheet is clear.'};};
 /** Add sensible segments: the hottest feud first, then a champion who needs a challenger, then the best talker.
     `max` is how many to add (one unless told). `card` is the card they sit on (the draft card unless told). */
 E.segSuggest=function(S,max,card){

@@ -22,7 +22,7 @@ const angles = r => r.segs.filter(s => s.k === 'angle');
 const pickFor = (S, kind, slot) => { const who = []; for (let i = 0; i < E.SEGK[kind].roles.length; i++) { const c = E.segChoices(S, kind, who, slot)[i]; if (!c || !c.length) return null; who.push(c[0]); } return who; };
 
 const mins = (S, card) => E.clock(S, card);
-const clear = S => { while (E.segInfo(S).booked) E.setSeg(S, 0, null); };
+const clear = S => { S.sa = null; S.saNext = 1e9; while (E.segInfo(S).booked) E.setSeg(S, 0, null); };   // no arc on these shows: this tests what the booker books by hand (test-tale.js tests the arcs)
 const fx = (r, re) => r.segs.filter(s => s.k === 'match' && (s.fx || []).some(f => re.test(f.x)));
 
 { const S = E.newGame('pdw', 3, { name: 'R', mid: false }), P = S.promos.pdw;

@@ -1,16 +1,17 @@
 /* The World Editor: build a world from scratch, or change a copy of one, and share it. Reached from the title screen. */
-import { useRef } from 'preact/hooks';
+import { useRef, useState } from 'preact/hooks';
+import { Window } from '../../kit/window';
 import { E } from '../../engine';
-import { UNIS, ui, redraw, builtInUniverse, isBuiltIn, pref, plural } from '../../store';
+import { UNIS, ui, redraw, builtInUniverse, isBuiltIn, pref, plural, BUILT_IN } from '../../store';
 import { onBack } from '../../input';
 import { Btn, Panel, Field } from '../../kit';
 import { es, world, keep, edit, look, note, report, freeId, openWorld, EdTab, TABS } from './state';
 import { WrestlersPage } from './Wrestlers';
-import { DelBtn } from './parts';
+import { DelBtn, InSuite } from './parts';
 import { EdShell } from './shell';
 import { WorldTab, ShareTab } from './World';
 import { CompaniesTab, ShowsTab } from './Companies';
-import { WrestlersTab } from './People';
+import { WrestlersTab, Sheet } from './People';
 import { BeltsTab, TeamsTab } from './Belts';
 import { ScenesTab, keepScene, forgetScene } from './Scenes';
 import { RulesTab } from './Rules';
@@ -36,6 +37,7 @@ let ws: any[] = [];
 function summary(pkg: any): string { const n = (pkg.promotions || []).length, w = (pkg.workers || []).length; return n + ' ' + plural(n, 'company', 'companies') + ', ' + w + ' ' + plural(w, 'wrestler'); }
 
 function Home() {
+  const [pick, setPick] = useState(false);
   const st = es(), ids = Object.keys(UNIS), file = useRef<HTMLInputElement>(null), steam = (window as any).gpSteam;
   const onFile = (e: Event) => {
     const t = e.currentTarget as HTMLInputElement, fl = t.files && t.files[0]; if (!fl) return;
@@ -58,17 +60,24 @@ function Home() {
         : <p class="empty">No worlds yet. Start one below.</p>}
     </Panel>
     <Panel cls="mb4" title="Start a new world">
-      <div class="row"><Field label="Name"><input type="text" id="ed-newname" data-t="ed-newname" value={st.newName} maxLength={40} placeholder="My world" onInput={e => { st.newName = (e.currentTarget as HTMLInputElement).value; }} /></Field></div>
-      <div class="row mt2">
-        <Btn kind="go" t="ed-new" onClick={() => look(() => { addWorld(E.edNew(st.newName)); st.newName = ''; })}>Start from scratch</Btn>
-        <Btn t="ed-new-copy" onClick={() => look(() => { addWorld(E.edCopy(builtInUniverse(isBuiltIn(pref.uni) ? pref.uni : undefined), st.newName || undefined)); st.newName = ''; })}>Start from a copy of {builtInUniverse(isBuiltIn(pref.uni) ? pref.uni : undefined).manifest.name}</Btn>
-        <Btn t="ed-new-territory" onClick={() => look(() => { addWorld(E.edQuick('territory', st.newName || undefined, Date.now() & 0xffff)); st.newName = ''; })}>A two-company territory</Btn>
-        <Btn t="ed-new-nine" onClick={() => look(() => { addWorld(E.edQuick('nine', st.newName || undefined, Date.now() & 0xffff)); st.newName = ''; })}>A nine-company world of unknowns</Btn>
+      <div class="row"><Btn kind="go" t="ed-new-world" tip="From a template, filled in and ready to play, or from scratch" onClick={() => setPick(true)}>New world</Btn>
         <Btn t="ed-import" onClick={() => file.current && file.current.click()}>Open a world file</Btn>
-        <input type="file" id="ed-file" ref={file} accept=".json,application/json" hidden onChange={onFile} />
-      </div>
-      <p class="muted mt2">From scratch gives you an empty world. A world needs at least two companies, each with a weekly show and six wrestlers, before it can be played.</p>
+        <input type="file" id="ed-file" ref={file} accept=".json,application/json" hidden onChange={onFile} /></div>
+      <p class="muted mt2">A template comes complete: companies, shows, belts, wrestlers, networks, big events and the rest, ready to play or change. From scratch is an empty world to build yourself.</p>
     </Panel>
+    {pick ? (() => { const uni = isBuiltIn(pref.uni) ? pref.uni : undefined, ids0 = Object.keys(BUILT_IN), bi = (uni ? [uni] : []).concat(ids0.filter(x => x !== uni)), made = (pkg: any) => look(() => { addWorld(pkg); st.newName = ''; setPick(false); });
+      return <Window paper big esc title="New world" info={['Pick where it starts', 'Everything can be changed after']} onClose={() => setPick(false)} ok="Cancel" hint="Esc closes">
+        <div class="row mb2"><Field label="Name"><input type="text" id="ed-newname" data-t="ed-newname" value={st.newName} maxLength={40} placeholder="My world" onInput={e => { st.newName = (e.currentTarget as HTMLInputElement).value; }} /></Field></div>
+        <div class="pick-cols tmpl">
+          <div class="pick-col"><h3>Templates</h3>
+            {bi.map(id => { const u = builtInUniverse(id); return <Btn key={id} kind="less" t="ed-new-copy" d={{ v: id }} onClick={() => made(E.edCopy(u, st.newName || undefined))}><b>A copy of {u.manifest.name}</b><small>{(u.promotions || []).length} companies, {(u.workers || []).length} wrestlers, with their history</small></Btn>; })}
+            {(E.ED_TEMPLATES as [string, string, string][]).map(([k, n, d]) => <Btn key={k} kind="less" t={'ed-new-' + k} onClick={() => made(E.edQuick(k, st.newName || undefined, Date.now() & 0xffff))}><b>{n}</b><small>{d}</small></Btn>)}
+          </div>
+          <div class="pick-col"><h3>From scratch</h3>
+            <Btn kind="less" t="ed-new" onClick={() => made(E.edNew(st.newName))}><b>An empty world</b><small>No companies and no wrestlers. A world needs at least two companies, each with a weekly show and six wrestlers, before it can be played.</small></Btn>
+          </div>
+        </div>
+      </Window>; })() : null}
     {steam && steam.workshopWorlds ? <Panel cls="mb4" title="From the Workshop">
       <div class="row"><Btn t="ed-ws-load" onClick={() => Promise.resolve(steam.workshopWorlds()).then((list: any[]) => look(() => { st.sel.ws = 'y'; ws = (list || []).filter(x => x && x.manifest); }), () => look(() => note('The Workshop could not be read.', true)))}>Look for worlds I have subscribed to</Btn></div>
       {st.sel.ws ? (ws.length ? <ul class="list mt2">{ws.map((pkg, i) => <li key={i}><span><b>{pkg.manifest.name}</b> <span class="muted">{'·'} {summary(pkg)}{pkg.manifest.author ? ' · by ' + pkg.manifest.author : ''}</span></span>
@@ -110,9 +119,11 @@ export function Editor() {
     if (wk) { const nm = pkg.manifest.name || 'this world';
       const con = E.edContract(pkg, wk.id), pr = con && pkg.promotions.find((x: any) => x.id === con.promotion_id), bi = pr && pr.brands && con.brand ? pr.brands.findIndex((b: any) => b.id === con.brand) : -1;
       const card = pr ? companyCard(E.logoOf({ logo: pr.logo, model: pr.model, name: pr.name, full: pr.full_name }), bi) : companyCard(null);
-      return <CreatePlayer key={st.player + (st.attire ? ':a' : '')} world={nm} w={workerW(wk)} had={wk.look || null} attire={!!st.attire} card={card}
+      const WPAGES: [string, string][] = [['w_who', 'Biography'], ['w_work', 'Company'], ['w_rates', 'Attributes'], ['w_more', 'More']];
+      return <CreatePlayer key={'caw' + (st.attire ? ':a' : '')} world={nm} w={workerW(wk)} had={wk.look || null} attire={!!st.attire} card={card} autosave note={st.msg || undefined}
+        pages={st.attire ? undefined : WPAGES} page={id => <InSuite.Provider value={true}><Sheet w={wk} part={id === 'w_who' ? 'who' : id === 'w_work' ? 'work' : id === 'w_rates' ? 'rates' : 'more'} /></InSuite.Provider>}
         onSave={lk => { let ok = false; edit(() => { ok = E.edSetLook(world(), wk.id, lk); const sx = lk.physical_attributes && lk.physical_attributes.sex; if (ok && sx && wk.gender !== sx) wk.gender = sx; }); return { ok, msg: ok ? (lk.name || wk.ring_name) + ' is kept in ' + nm + '. Every scene in the game now draws them like this.' : 'That could not be kept.' }; }}
-        onForget={() => { edit(() => { E.edRemoveLook(world(), wk.id); }); return { ok: true, msg: wk.ring_name + ' is drawn by the game again.' }; }} onDone={() => look(() => { st.player = null; st.attire = false; })}
+        onForget={() => { edit(() => { E.edRemoveLook(world(), wk.id); }); return { ok: true, msg: wk.ring_name + ' is drawn by the game again.' }; }} onDone={() => look(() => { st.player = null; st.attire = false; st.msg = ''; })}
         scenes={E.edScenes(pkg)} onNewEntrance={lk => {   // keep the wrestler, then Create a Scene on a copy of their entrance, with them in it
           edit(() => { E.edSetLook(world(), wk.id, lk); });
           const all = E.edScenes(pkg).concat(SCENES), src = all.find((x: any) => x.id === lk.entrance && x.when === 'entrance') || SCENES.find(x => x.when === 'entrance')!, sc = copy(src);

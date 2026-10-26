@@ -37,7 +37,8 @@ async function run(mode) {
     /* before the show nothing is forecast in stars: the agent and the writers give a read in words */
     await page.click('[data-t="bk"][data-v="clock"]');
     await page.click('[data-t="seg-suggest"]');
-    await page.click('[data-t="seg-edit"]');
+    { const last = await page.evaluate(() => window.GP.segInfo(window.EWF_DEBUG.state()).list.length - 1);   // the one just suggested (a writers' pick or an arc has no read)
+      await page.click('[data-t="seg-edit"][data-v="' + last + '"]'); }
     ok(mode, 'a booked promo or angle gets a read in words, and the run sheet shows no stars before the show', (await page.$$('[data-t="seg-read"]')).length >= 1 && !/[★¼½¾]/.test(await txt(page, '.sheet')) && !/should (score|be) about/.test(await txt(page, '.sheet')));
     let said = 0; for (let i = 0; i < n; i++) { await page.click('[data-t="edit"][data-v="' + i + '"]'); if (/: “.+”/.test(await txt(page, '[data-t="agent-say"][data-v="' + i + '"]'))) said++; }
     ok(mode, 'the road agent comments on every match on the sheet, shown when the match is selected', said === n, said + ' of ' + n);

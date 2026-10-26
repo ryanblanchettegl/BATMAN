@@ -6,7 +6,7 @@ import { go } from './nav';
 
 /** View state of the Booking section. Office reads it to link to a report. */
 export interface BookState { edit: number; tried: boolean; report: number | null; live: { s: number; b: number; aired?: boolean } | null; side: string; night?: boolean }
-export function book(): BookState { return slice<BookState>('booking', () => ({ edit: -1, tried: false, report: null, live: null, side: 'advice' })); }
+export function book(): BookState { return slice<BookState>('booking', () => ({ edit: -1, tried: false, report: null, live: null, side: '' })); }   // side '': the default tab (the first show's steps while the tutorial is on, else Notes)
 /** Index into S.reports of this week's report for a show, or -1. */
 export function repFor(sh: any): number { const S = G.S; for (let i = 0; i < S.reports.length; i++) if (S.reports[i].week === S.week && S.reports[i].id === sh.id) return i; return -1; }
 export function openReport(i: number) { go('booking'); const b = book(); b.report = i; b.live = null; redraw(); }
@@ -21,7 +21,7 @@ export function startGame(pid: string | null, opts: { name: string; diff: string
   requestAnimationFrame(() => setTimeout(() => {
     try {
       setUniverse(pref.uni || DEFAULT_UNI, true);   // keeps any companies the player left out
-      G.S = E.newGame(pid, seed(), opts);
+      G.S = E.newGame(pid, seed(), pref.tut ? { ...opts, start: 'flag' } : opts);   // the first show is the biggest of the year, and the tutorial (src/99-tutorial.js)
       resetUi(); save(); redraw(); window.scrollTo(0, 0);
       if (pref.letter && G.S) openModal({ kind: 'welcome' });   // the owner's letter. It has its own switch in Options, and can be read again from the desk.
     } finally { card.remove(); }

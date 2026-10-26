@@ -4,6 +4,8 @@
 import { E } from '../../engine';
 import { Btn, Panel } from '../../kit';
 import { ScrollMenu } from './parts';
+import { useState } from 'preact/hooks';
+import { ImportThings } from './importer';
 import { es, world, look, edit, editDel, note } from './state';
 import { SCENES, STILLS, SHOW_SCENES, WHEN, STILL_WHEN, SHOW_WHEN, Scene, STUDIOS, Studio, studioOf, MOVES } from '../../kit/scene';
 
@@ -11,9 +13,11 @@ const use = (sc: Scene) => ((sc.still ? STILL_WHEN : WHEN.concat(SHOW_WHEN)).fin
 export function ScenesTab() {
   const st = es(), pkg = world(), mine: Scene[] = E.edScenes(pkg);
   const openIt = (id: string, mode: Studio) => look(() => { st.scene = id; st.sceneMode = mode; });
-  const game = SCENES.concat(STILLS, SHOW_SCENES, MOVES);
+  const game = SCENES.concat(STILLS, SHOW_SCENES, MOVES), [imp, setImp] = useState(false);
   /* three studios (Ryan, 20 October): Animation, Create a Move, Create a Scene; each opens new, or opens a scene of its kind from a dropdown */
   return <>
+    <div class="row mb2"><Btn kind="sm" t="ed-imp-open" d={{ v: 'scenes' }} tip="Scenes and moves from another world or the Steam Workshop" onClick={() => setImp(true)}>Import</Btn></div>
+    {imp ? <ImportThings kind="scenes" onClose={() => setImp(false)} /> : null}
     <div class="edstudios">{STUDIOS.map(([mode, name, what]) => { const own = mine.filter(x => studioOf(x) === mode), theirs = game.filter(x => studioOf(x) === mode && !mine.some(m => m.id === x.id));
       return <Panel cls="mb4 edstudio" title={name} key={mode}>
         <p>{what}</p>

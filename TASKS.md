@@ -120,6 +120,17 @@ Two more lists sit beside this one, both finished:
 
 ## Tasks
 
+### 0aa. Storylines on the card (Ryan, 21 October: "this is a new core feature"; `docs/plans/arcs-on-the-card.md`)
+
+- [x] Arcs: segments the writers put on the show; the booker decides where each chapter goes, and each answer branches the story.
+- [x] The first arc: The betrayal (seven chapters, five endings).
+- [x] A new game opens in the week of the biggest show of the year, and that show is the tutorial: book the champions (Title matches), the promise on the card, the arc's ending after the main event.
+- [x] A match with two people in a storyline together is red on the run sheet.
+- [x] Guest commentary on every match.
+- [x] Run-ins on every match; the finish stays with the writers or a call on the air.
+- [x] A rematch or title match promised at the next big event is locked on that card; promised promos are locked on the next show.
+- [ ] More arcs.
+- [ ] An arc builder in the World Editor.
 ### 0aa. The Director (Bill, 21 October: "I like this feature add it to the plan")
 
 A pacing layer that decides when trouble reaches the desk: it reads how tense the company already is and chooses which of this week's possible events happen, and how big. The player picks a style (The Promoter, The Carny, The Purist). Plan: `docs/plans/director.md`.
@@ -479,6 +490,9 @@ Code: `src/86-editor.js` (the `E.ed*` functions; no screen code), `app/src/scree
 - [ ] Pictures: a world cannot carry portrait or belt images yet. Portraits are drawn from the face settings. The folder form with `graphics/` is the Workshop build's job.
 - [x] Not in the editor yet: brands, sponsors, columnists, announcers and staff names, the name lists for rookies, managers tied to wrestlers. (In the editor by 20 October.)
 - [x] Bulk tools: duplicate a wrestler, move several at once, sort the list by name or company. (In the editor by 20 October.)
+- [x] Import wrestlers from another world, the Steam Workshop or a wrestler file, and Export them to a `.wrestler.json` (Ryan, 20 October). Done on the Wrestlers page.
+- [ ] Import the rest the same way: teams, belts, scenes, moves, promos and rules from another world.
+- [ ] A wrestler file on the Steam Workshop on its own (today a world goes up; a `.wrestler.json` is ready to).
 - [ ] A creator for each thing on its own from the title screen, if Ryan wants shortcuts (show creator, belt creator) beyond the tabs.
 - [ ] Try the remote and gamepad on real hardware.
 
