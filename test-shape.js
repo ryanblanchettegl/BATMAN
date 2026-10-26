@@ -20,7 +20,8 @@ function run(S, card) { S.card = card; S.segs = []; const P = S.promos[S.player]
   const v = E.validate(S, card); if (v.errors.length) throw new Error(v.errors.join(' | ')); const r = E.runPlayerShow(S, card).rep; P.angles = was; return r; }
 
 /* ---- stars ---- */
-ok('stars', 'quarter steps, five stars at the top, never a percentage', E.stars(90) === '★★★★½' && E.stars(98) === '★★★★★' && E.stars(97) === '★★★★¾' && E.stars(70) === '★★★½' && E.stars(5) === '¼' && E.stars(61) === '★★★', [90, 98, 97, 70, 5, 61].map(v => E.stars(v)).join(' '));
+// earned stars (Bill, 22 October): three is solid, four is one of the best, five only past the top of the scale (100)
+ok('stars', 'quarter steps, five stars at the top, never a percentage', E.stars(100) === '★★★★★' && E.stars(99) === '★★★★¾' && E.stars(96) === '★★★★' && E.stars(90) === '★★★½' && E.stars(85) === '★★★' && E.stars(70) === '★★¼' && E.stars(5) === '¼', [100, 99, 96, 90, 85, 70, 5].map(v => E.stars(v)).join(' '));
 
 /* ---- words and letter grades for a show ---- */
 { const L = E.SHOW_LADDER, w = v => E.showWord(v).a;

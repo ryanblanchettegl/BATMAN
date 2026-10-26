@@ -347,6 +347,7 @@ function doMatch(S,P,show,m,i,n,rep,used){
   if(bad)FX(false,'Somebody had an off night');
   var ea=avg(effs);if(ea>=92)FX(true,'Everybody worked hard');else if(ea<70)FX(false,'Low effort: morale or fatigue');
   var OV=clamp(Math.round(P.wq*MQ+(1-P.wq)*CR+fr+(rnd(S)*4-2)-(bad?6:0)),5,99);
+  if(OV===99&&P.wq*MQ+(1-P.wq)*CR+fr-(bad?6:0)>=103)OV=100;   // the match of the year: past the top of the scale, the only way to five stars (STAR_AT)
   var seg={k:'match',label:br?all.map(function(w){return w.name;}).join(', '):vsLabel(sides),mt:MT[m.mt].n,stip:stip==='std'?null:STIP[stip].n,sk:stip==='std'?undefined:stip,title:t?t.name:null,mins:mins,mq:Math.round(MQ),cr:Math.round(CR),eff:Math.round(ea),ov:OV,lines:[],finish:'',notes:[],win:win>=0?names(winners):null,fin:fin,fx:fx,ids:all.map(function(w){return w.id;}),odds:od.p.map(function(p){return Math.round(p*100);}),called:called,sidesN:sides.map(names)};
   // bookkeeping
   all.forEach(function(w){w.lu=S.week;used[w.id]=(used[w.id]||0)+1;w.cond=clamp(w.cond-mins*0.45*(STIP[stip].inj>1.5?1.35:1),5,100);});
