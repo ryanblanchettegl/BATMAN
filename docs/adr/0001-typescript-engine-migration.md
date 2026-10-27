@@ -84,8 +84,8 @@ step to blame would be expensive.
 
 ## Action items
 
-1. [ ] Step 2a: `build.js` bundles with esbuild: the legacy concatenation, the generated `L`, and an empty `engine/`.
+1. [x] Step 2a: `build.js` bundles with esbuild: the legacy concatenation, the generated `L`, and an empty `engine/`.
        Golden masters, every headless test and the type-check pass with nothing moved.
-2. [ ] Step 2b: move the last file in build order (`src/99-zpodcast.js`) to `engine/` as TypeScript through `L`.
-3. [ ] Continue file by file; a milestone report to Ryan at about a third, two thirds and the end.
-4. [ ] Final: replace `L` with imports, delete the bridge and `test-buildorder.js`, update `CLAUDE.md`.
+2. [x] Step 2b: move the last file in build order (`src/99-zpodcast.js`) to `engine/` as TypeScript through `L`.
+3. [x] Continue file by file; a milestone report to Ryan at about a third, two thirds and the end.
+4. [x] Final: imports where safe (ADR-0002); `L` stays as the registry of forward references and wraps; `test-buildorder.js` kept and pointed at `engine/` (load order still matters for wraps); `CLAUDE.md` updated.

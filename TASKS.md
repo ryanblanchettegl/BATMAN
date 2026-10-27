@@ -131,6 +131,14 @@ Phase A, Foundation: rebuild the simulation from one shared ES5 closure into Typ
 - [x] Gate 1: the blueprint.
 - [x] Gate 2: the questions, answered 23 October (features pause, unattended with milestone reports, live page at milestones, old bugs logged and fixed after).
 - [x] Gate 3: Ryan's go-ahead, 23 October: "go".
+- [x] Step 1: golden masters (`test-golden.js`, 60 games).
+- [x] Step 2: esbuild bundles `engine/` beside the old files.
+- [x] Step 4: all 105 files moved to `engine/*.ts` (27 October); plain imports where safe, `$L` for forward references and wraps (ADR-0002).
+- [x] Step 3: state types, `engine/types.ts`, generated from real games; `npm run check` type-checks the engine.
+- [x] Step 5 (first part): `test-lint.js` bans the clock in the engine and screen writes to `S` (one found and fixed: `E.annualSeen`).
+- [x] Step 6: CI runs every headless test (four shards), the golden games and the lint on every push, the browser suites nightly.
+- [x] Step 7 (first part): `CLAUDE.md` points at `engine/`; `test-buildorder.js` reads the modules.
+- [ ] Next: type the modules one at a time (drop `@ts-nocheck`), turn wraps into named hook lists, fix the logged bugs (`docs/rebuild-bugs.md`).
 
 ### 0ao. The four moves that close the gap (Ryan, 23 October: "add this to the next tasks"; the review in `docs/plans/WrestleCraft-review-and-long-term-roadmap.pdf`, section 2)
 
