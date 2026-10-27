@@ -13,7 +13,7 @@ const topNames = text => { const sf = ts.createSourceFile('x.js', text, ts.Scrip
 const others = new Set();
 for (const f of fs.readdirSync(path.join(root, 'src')).filter(f => f.endsWith('.js'))) if ('src/' + f !== file) topNames(fs.readFileSync(path.join(root, 'src', f), 'utf8')).forEach(n => others.add(n));
 const engDir = path.join(root, 'engine');
-for (const f of fs.existsSync(engDir) ? fs.readdirSync(engDir).filter(f => /^\d.*\.ts$/.test(f)) : []) for (const m of fs.readFileSync(path.join(engDir, f), 'utf8').matchAll(/^export (?:function|var|let|const)\s+([A-Za-z_$][\w$]*)/gm)) others.add(m[1]);
+for (const f of fs.existsSync(engDir) ? fs.readdirSync(engDir).filter(f => /^\d.*\.ts$/.test(f)) : []) topNames(fs.readFileSync(path.join(engDir, f), 'utf8')).forEach(n => others.add(n));
 const own = topNames(src);
 // resolve every identifier with the checker: a free one (no symbol in this file) that another file declares goes to L
 const host = ts.createCompilerHost({ allowJs: true, noLib: true });
