@@ -1,6 +1,7 @@
 // @ts-nocheck
 /* Moved from src/99-kayfabe.js (ADR-0001). Names from the rest of the engine come through the bridge, $L. Types come in step 3. */
 import { L as $L } from './_gen/legacy.js';
+$L.kfWord = kfWord; $L.kfInit = kfInit; $L.kfFind = kfFind; $L.kfLeakP = kfLeakP;
 /* The kayfabe layer (the add-ons run, item 3). The public believes one thing; insiders know another. The game keeps
    the secrets that are true of your company (S.kf.sec): two people the crowd thinks are friends who really cannot stand
    each other, somebody whose contract runs out and who is leaving, and the ending planned for a big night. Each week a
@@ -10,7 +11,8 @@ import { L as $L } from './_gen/legacy.js';
    falls with every leak and mends slowly: a crowd that knows too much is harder to fool on the night, and the owner
    notices. Nothing here calls rnd(S): a leak is decided by a hash of the week and the secret. */
 export var KF_WORDS=[[80,'Airtight: the public believes what it sees'],[60,'Mostly kept: a rumour here and there'],[40,'Leaking: the smart fans know more than they should'],[20,'Wide open: half the crowd reads the dirt sheet first'],[0,'Exposed: nothing on the show is a surprise any more']];
-export function kfWord(p){for(var i=0;i<KF_WORDS.length;i++)if(p>=KF_WORDS[i][0])return KF_WORDS[i][1];return KF_WORDS[KF_WORDS.length-1][1];}
+$L.KF_WORDS = KF_WORDS;
+export function kfWord(p){for(var i=0;i<$L.KF_WORDS.length;i++)if(p>=$L.KF_WORDS[i][0])return $L.KF_WORDS[i][1];return $L.KF_WORDS[$L.KF_WORDS.length-1][1];}
 export function kfInit(S){if(!S.kf)S.kf={sec:{},prot:75,leaks:[]};return S.kf;}
 /** The secrets that are true this week, by key: {k, ids, t (what the public believes), real (what is true), since}. */
 export function kfFind(S){
@@ -30,17 +32,17 @@ export function kfFind(S){
 }
 /** The chance this week that a secret gets out: what helps and what hurts, as an attempt (rule 4). */
 export function kfLeakP(S,s){
-  var K=kfInit(S),age=S.week-(s.since||S.week),p=0.03+Math.min(0.08,age*0.006);
+  var K=$L.kfInit(S),age=S.week-(s.since||S.week),p=0.03+Math.min(0.08,age*0.006);
   s.ids.forEach(function(id){var w=S.w[id];if(w&&w.morale<35)p+=0.05;});
   if((S.trust||50)<40)p+=0.04;if($L.hasRule(S,'kayfabe'))p-=0.03;
   return $L.clamp(p,0.01,0.3);
 }
 /* each week: keep the list of secrets, and see whether one gets out */
 $L.WEEKX.push(function(S){
-  if(S.cal||S.over)return;var K=kfInit(S),now=kfFind(S),leaked=null;
+  if(S.cal||S.over)return;var K=$L.kfInit(S),now=$L.kfFind(S),leaked=null;
   Object.keys(K.sec).forEach(function(k){if(!now[k])delete K.sec[k];});
   Object.keys(now).forEach(function(k){if(!K.sec[k]){now[k].since=S.week;K.sec[k]=now[k];}else{K.sec[k].real=now[k].real;}});
-  Object.keys(K.sec).sort().forEach(function(k){var s=K.sec[k];if(leaked||s.out)return;if($L.h01(S.seed+':kf:'+S.week+':'+k)<kfLeakP(S,s))leaked=s;});
+  Object.keys(K.sec).sort().forEach(function(k){var s=K.sec[k];if(leaked||s.out)return;if($L.h01(S.seed+':kf:'+S.week+':'+k)<$L.kfLeakP(S,s))leaked=s;});
   K.prot=$L.clamp(K.prot+(leaked?-12:1),0,100);
   if(!leaked)return;
   leaked.out=S.week;var who=leaked.ids.map(function(id){return S.w[id];}).filter(Boolean);
@@ -53,7 +55,7 @@ $L.WEEKX.push(function(S){
   $L.note(S,'A secret got out',leaked.real+'.','bad');
 });
 $L.EVR.leak=function(S,ev,choice,P){
-  var K=kfInit(S),who=(ev.ids||[]).map(function(id){return S.w[id];}).filter(Boolean),n=who.map(function(w){return w.name;}).join(' and ');
+  var K=$L.kfInit(S),who=(ev.ids||[]).map(function(id){return S.w[id];}).filter(Boolean),n=who.map(function(w){return w.name;}).join(' and ');
   if(choice===0){var ok=$L.h01(S.seed+':kfd:'+ev.id)<0.5;if(ok){K.prot=$L.clamp(K.prot+8,0,100);return 'You deny it on every channel. Most people believe you. The secret is safer than it was.';}
     K.prot=$L.clamp(K.prot-5,0,100);if(!S.owner.me)S.owner.trust=$L.clamp(S.owner.trust-2,0,100);return 'You deny it, and then it turns out to be true in front of everybody. That costs more than the leak did.';}
   if(choice===1){who.forEach(function(w){$L.youRemember(S,w,'leakstory','You turned the rumour about them into a story.',ev.key==='heat'?1:0);});
@@ -65,12 +67,12 @@ $L.EVR.leak=function(S,ev,choice,P){
 $L.CRX.push(function(ctx){if(!ctx.isPl||!ctx.S.kf)return null;var p=ctx.S.kf.prot;return p<40?{d:-1,x:'A crowd that reads the dirt sheet saw it coming'}:null;});
 /** For the screens: how well the business keeps its secrets, what is being kept, and what got out. */
 $L.E.kayfabe=function(S){
-  var K=kfInit(S),sec=Object.keys(K.sec).map(function(k){return K.sec[k];}).filter(function(s){return !s.out;});
-  return {prot:K.prot,word:kfWord(K.prot),kept:sec.map(function(s){return {k:s.k,t:s.t,real:s.real,since:s.since,risk:Math.round(kfLeakP(S,s)*100)};}),leaks:K.leaks.slice(0,6).map(function(l){return {w:l.w,when:$L.cal(l.w).label,t:l.t};}),
-    line:sec.length?sec.length+' '+(sec.length===1?'secret':'secrets')+' kept. '+kfWord(K.prot)+'.':kfWord(K.prot)+'.'};
+  var K=$L.kfInit(S),sec=Object.keys(K.sec).map(function(k){return K.sec[k];}).filter(function(s){return !s.out;});
+  return {prot:K.prot,word:$L.kfWord(K.prot),kept:sec.map(function(s){return {k:s.k,t:s.t,real:s.real,since:s.since,risk:Math.round($L.kfLeakP(S,s)*100)};}),leaks:K.leaks.slice(0,6).map(function(l){return {w:l.w,when:$L.cal(l.w).label,t:l.t};}),
+    line:sec.length?sec.length+' '+(sec.length===1?'secret':'secrets')+' kept. '+$L.kfWord(K.prot)+'.':$L.kfWord(K.prot)+'.'};
 };
 
-// hand this module's names back to the bridge, so legacy code that calls them finds them
+// hand this module's names back to the bridge once more, in case top-level code reassigned one
 $L.KF_WORDS = KF_WORDS;
 $L.kfWord = kfWord;
 $L.kfInit = kfInit;

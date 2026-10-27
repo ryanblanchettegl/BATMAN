@@ -35280,7 +35280,18 @@ window.GP_UNIVERSE_PARODY={"manifest":{"id":"parody","name":"The Parody World","
   }(typeof window !== "undefined" ? window : globalThis);
 
   // engine/99-fog.ts
+  L.knowMake = knowMake;
+  L.gasLimit = gasLimit;
+  L.fogSkill = fogSkill;
+  L.readP = readP;
+  L.reads = reads;
+  L.agentName = agentName;
+  L.matchRead = matchRead;
+  L.fogLook = fogLook;
+  L.earLine = earLine;
+  L.cardFlags = cardFlags;
   var KNOW0 = { p: {}, w: {} };
+  L.KNOW0 = KNOW0;
   function knowMake(S) {
     if (S.know) return S.know;
     var K = S.know = { p: {}, w: {} }, pre = S.player + ":";
@@ -35301,10 +35312,10 @@ window.GP_UNIVERSE_PARODY={"manifest":{"id":"parody","name":"The Parody World","
   }
   function readP(S, m) {
     var a = L.agentOf(S, m);
-    return L.clamp((a ? 0.4 + 0.45 * L.agentQ(a) : 0.25) + fogSkill(S), 0.05, 0.95);
+    return L.clamp((a ? 0.4 + 0.45 * L.agentQ(a) : 0.25) + L.fogSkill(S), 0.05, 0.95);
   }
   function reads(S, m, key) {
-    return L.h01(S.seed + ":rd:" + S.week + ":" + key + ":" + (L.agentOf(S, m) ? m.agent : "h")) < readP(S, m);
+    return L.h01(S.seed + ":rd:" + S.week + ":" + key + ":" + (L.agentOf(S, m) ? m.agent : "h")) < L.readP(S, m);
   }
   function agentName(S, m) {
     var a = L.agentOf(S, m);
@@ -35313,7 +35324,7 @@ window.GP_UNIVERSE_PARODY={"manifest":{"id":"parody","name":"The Parody World","
   function matchRead(S, card, i) {
     var m = card[i], c = L.matchSetup(S, m);
     if (!c) return null;
-    var show = S.queue[S.qi], n = card.length, all = L.flat(c.sides), mins = L.bellMins(show, m, i === n - 1), K = S.know || KNOW0, out = [], blind = false;
+    var show = S.queue[S.qi], n = card.length, all = L.flat(c.sides), mins = L.bellMins(show, m, i === n - 1), K = S.know || L.KNOW0, out = [], blind = false;
     var add = function(s, t, src) {
       out.push({ s, t, src });
     };
@@ -35325,15 +35336,15 @@ window.GP_UNIVERSE_PARODY={"manifest":{"id":"parody","name":"The Parody World","
       if (w.cond < 50) add(-1, w.name + " is running on fumes. This match will suffer for it.", "see");
     });
     all.forEach(function(w) {
-      if (mins <= gasLimit(w)) return;
-      if (K.w[w.id] && K.w[w.id].gas) add(-1, w.name + " is good for about " + gasLimit(w) + " minutes. We have seen it. " + mins + " is too many.", "seen");
-      else if (reads(S, m, "g" + w.id)) add(-1, "My read: " + w.name + " does not have " + mins + " minutes in the tank. I would shorten it.", "read");
+      if (mins <= L.gasLimit(w)) return;
+      if (K.w[w.id] && K.w[w.id].gas) add(-1, w.name + " is good for about " + L.gasLimit(w) + " minutes. We have seen it. " + mins + " is too many.", "seen");
+      else if (L.reads(S, m, "g" + w.id)) add(-1, "My read: " + w.name + " does not have " + mins + " minutes in the tank. I would shorten it.", "read");
       else blind = true;
     });
     if (m.mt === "1v1") {
       var a = all[0], b = all[1], ch = L.chem(S, a.id, b.id), key = L.rkey(a.id, b.id);
       if (K.p[key]) add(ch >= 2.2 ? 1 : ch <= -2.2 ? -1 : 0, ch >= 2.2 ? "They have real chemistry. We have seen it. Give them time." : ch <= -2.2 ? "They do not click. We have seen it. Keep it short, or change the match." : "They have worked each other before. Nothing special between them, and nothing wrong.", "seen");
-      else if (reads(S, m, "c" + key)) add(ch >= 2.2 ? 1 : ch <= -2.2 ? -1 : 0, ch >= 2.2 ? "My read: these two will click. I would give them time." : ch <= -2.2 ? "My read: these two will not click. I would keep it short." : "My read: no sparks between these two, and no trouble either.", "read");
+      else if (L.reads(S, m, "c" + key)) add(ch >= 2.2 ? 1 : ch <= -2.2 ? -1 : 0, ch >= 2.2 ? "My read: these two will click. I would give them time." : ch <= -2.2 ? "My read: these two will not click. I would keep it short." : "My read: no sparks between these two, and no trouble either.", "read");
       else blind = true;
       if (Math.abs(a.ovr - b.ovr) > 25 && mins > 7) add(-1, "This is a squash. Keep it short.", "see");
     } else blind = blind || m.mt !== "tag";
@@ -35342,24 +35353,24 @@ window.GP_UNIVERSE_PARODY={"manifest":{"id":"parody","name":"The Parody World","
       else if (L.relOf(S, s[0].id, s[1].id) < 0) add(-1, L.names(s) + " do not get on. It shows when they tag.", "see");
     });
     var ag = L.agentOf(S, m), q = ag ? L.agentQ(ag) : 0;
-    if (m.mt === "1v1" && q >= 0.6 && reads(S, m, "cr" + L.rkey(all[0].id, all[1].id))) {
+    if (m.mt === "1v1" && q >= 0.6 && L.reads(S, m, "cr" + L.rkey(all[0].id, all[1].id))) {
       var A1 = all[0], B1 = all[1], fav = A1.ovr + (A1.align === "F" ? 6 : 0) >= B1.ovr + (B1.align === "F" ? 6 : 0) ? A1 : B1;
       if (Math.abs(A1.ovr - B1.ovr) <= 12) add(fav.align === "F" ? 1 : 0, "My read: the crowd will be behind " + fav.name + ". Make them wait for it.", "read");
     }
-    if (m.mt === "1v1" && q >= 0.8 && all[0].style && all[0].style === all[1].style && reads(S, m, "st" + L.rkey(all[0].id, all[1].id))) add(0, "My read: they wrestle the same way. Somebody has to bend, or it goes nowhere.", "read");
+    if (m.mt === "1v1" && q >= 0.8 && all[0].style && all[0].style === all[1].style && L.reads(S, m, "st" + L.rkey(all[0].id, all[1].id))) add(0, "My read: they wrestle the same way. Somebody has to bend, or it goes nowhere.", "read");
     var NEW = ["First time for these two on our shows. I have no read. We find out at the bell.", "I have not seen these two work each other. I cannot tell you how it goes.", "A new pairing for us. No read yet. Run it and we will know."];
     if (!out.length) add(0, m.mt === "1v1" ? blind ? NEW[Math.floor(L.h01(S.seed + ":nw:" + L.rkey(all[0].id, all[1].id)) * NEW.length) % NEW.length] : "Nothing to flag." : m.mt === "tag" ? "Two regular teams. Nothing to flag." : "A lot of bodies in there. Hard to read until the bell.", "none");
     var max = 1 + (ag ? 1 : 0) + (q >= 0.8 ? 1 : 0) + (S.booker && S.booker.sk.eye >= 3 ? 1 : 0);
-    return { i, who: agentName(S, m), lines: out.slice(0, max), more: out.length > max, own: !!L.agentOf(S, m) };
+    return { i, who: L.agentName(S, m), lines: out.slice(0, max), more: out.length > max, own: !!L.agentOf(S, m) };
   }
   L.E.agentReads = function(S, card) {
     card = card || S.card || [];
     return card.map(function(m, i) {
-      return matchRead(S, card, i);
+      return L.matchRead(S, card, i);
     });
   };
   L.E.fogInfo = function(S) {
-    var P = S.promos[S.player], ag = L.E.agents(S), K = S.know || KNOW0;
+    var P = S.promos[S.player], ag = L.E.agents(S), K = S.know || L.KNOW0;
     return {
       head: P.staff.agent,
       agents: ag.length,
@@ -35376,14 +35387,14 @@ window.GP_UNIVERSE_PARODY={"manifest":{"id":"parody","name":"The Parody World","
       L2.read = { k: "none", t: "The writers decide on the night." };
       return L2;
     }
-    var K = S.know || KNOW0, P = S.promos[S.player], show = S.queue[S.qi], ex = L.expected(P, show), KD = L.SEGK[sg.k];
+    var K = S.know || L.KNOW0, P = S.promos[S.player], show = S.queue[S.qi], ex = L.expected(P, show), KD = L.SEGK[sg.k];
     var talk = KD.t === "promo" && !KD.fix && sg.k !== "faceoff", who = (sg.who || []).map(function(id) {
       return S.w[id];
     }).filter(Boolean);
     var heard = !talk || who.every(function(w) {
       return K.w[w.id] && K.w[w.id].mic;
     });
-    var rd = heard || L.h01(S.seed + ":rs:" + S.week + ":" + sg.k + ":" + sg.who.join("-")) < L.clamp(0.25 + fogSkill(S), 0.05, 0.9);
+    var rd = heard || L.h01(S.seed + ":rs:" + S.week + ":" + sg.k + ":" + sg.who.join("-")) < L.clamp(0.25 + L.fogSkill(S), 0.05, 0.9);
     if (!rd) {
       var fresh = who.filter(function(w) {
         return !(K.w[w.id] && K.w[w.id].mic);
@@ -35401,7 +35412,7 @@ window.GP_UNIVERSE_PARODY={"manifest":{"id":"parody","name":"The Parody World","
   L.POST.push(function(ctx) {
     var S = ctx.S;
     if (!ctx.isPl || S.cal || !ctx.rep) return;
-    var K = knowMake(S), L2 = ctx.rep.learned || (ctx.rep.learned = []);
+    var K = L.knowMake(S), L2 = ctx.rep.learned || (ctx.rep.learned = []);
     if (ctx.m.mt === "1v1" && ctx.all.length === 2) {
       var a = ctx.all[0], b = ctx.all[1], key = L.rkey(a.id, b.id);
       if (!K.p[key]) {
@@ -35411,17 +35422,17 @@ window.GP_UNIVERSE_PARODY={"manifest":{"id":"parody","name":"The Parody World","
       }
     }
     ctx.all.forEach(function(w) {
-      if (ctx.mins <= gasLimit(w)) return;
+      if (ctx.mins <= L.gasLimit(w)) return;
       var kw = K.w[w.id] || (K.w[w.id] = {});
       if (!kw.gas) {
         kw.gas = 1;
-        L2.push(w.name + " blew up. Good for about " + gasLimit(w) + " minutes, no more.");
+        L2.push(w.name + " blew up. Good for about " + L.gasLimit(w) + " minutes, no more.");
       }
     });
   });
   L.SHOWX.push(function(S, P, show, rep) {
     if (S.cal || P.id !== S.player) return;
-    var K = knowMake(S), L2 = rep.learned || (rep.learned = []), hear = function(id) {
+    var K = L.knowMake(S), L2 = rep.learned || (rep.learned = []), hear = function(id) {
       var w = S.w[id];
       if (!w) return;
       var kw = K.w[id] || (K.w[id] = {});
@@ -35459,6 +35470,7 @@ window.GP_UNIVERSE_PARODY={"manifest":{"id":"parody","name":"The Parody World","
       return "The crowd is tired. They just sat through a long one.";
     }]
   ];
+  L.EAR_BAD = EAR_BAD;
   var EAR_GOOD = [
     [/^Great chemistry between them$/, function() {
       return "These two are clicking. Look at them go.";
@@ -35473,6 +35485,7 @@ window.GP_UNIVERSE_PARODY={"manifest":{"id":"parody","name":"The Parody World","
       return "That woke them up. The building is ready for a show.";
     }]
   ];
+  L.EAR_GOOD = EAR_GOOD;
   function earLine(fx, table, s) {
     for (var k = 0; k < table.length; k++) for (var j = 0; j < fx.length; j++) {
       if (fx[j].s * s <= 0) continue;
@@ -35484,7 +35497,7 @@ window.GP_UNIVERSE_PARODY={"manifest":{"id":"parody","name":"The Parody World","
   L.POST.push(function(ctx) {
     var S = ctx.S, seg = ctx.res && ctx.res.seg;
     if (!ctx.isPl || S.cal || !seg || !seg.bc || !seg.bc.length) return;
-    var fx = seg.fx || [], who = agentName(S, ctx.m), lines = [], bad = earLine(fx, EAR_BAD, -1), good = earLine(fx, EAR_GOOD, 1);
+    var fx = seg.fx || [], who = L.agentName(S, ctx.m), lines = [], bad = L.earLine(fx, L.EAR_BAD, -1), good = L.earLine(fx, L.EAR_GOOD, 1);
     if (good) lines.push(good);
     if (bad) lines.push(bad);
     if (!lines.length) lines.push(seg.cr >= 80 ? "The crowd is with them." : seg.cr <= 50 ? "Listen to that. Nothing. The crowd is not with this one." : "It is fine. Nothing more than fine.");
@@ -35509,25 +35522,25 @@ window.GP_UNIVERSE_PARODY={"manifest":{"id":"parody","name":"The Parody World","
   (function() {
     var l0 = L.E.segLook, i0 = L.E.segInfo, s0 = L.E.setSeg;
     L.E.segLook = function(S, sg, slot) {
-      return fogLook(S, sg, l0(S, sg, slot));
+      return L.fogLook(S, sg, l0(S, sg, slot));
     };
     L.E.segInfo = function(S) {
       var I = i0(S), L2 = L.segRead(S);
       I.list.forEach(function(x) {
-        if (x.look) fogLook(S, L2[x.slot], x.look);
+        if (x.look) L.fogLook(S, L2[x.slot], x.look);
       });
       return I;
     };
     L.E.setSeg = function(S, slot, sg) {
       var r = s0(S, slot, sg);
       if (!r || !r.ok || !sg || r.slot == null) return r;
-      var cur = L.segRead(S)[r.slot], lk = cur ? fogLook(S, cur, l0(S, cur, r.slot)) : null;
+      var cur = L.segRead(S)[r.slot], lk = cur ? L.fogLook(S, cur, l0(S, cur, r.slot)) : null;
       if (lk && lk.read) r.msg = r.msg.replace(/ It should be about [^.]*\.$/, " " + lk.read.t);
       return r;
     };
   })();
   function cardFlags(S, card, i) {
-    var m = card[i], out = [], rd = matchRead(S, card, i), P = S.promos[S.player], seen = {};
+    var m = card[i], out = [], rd = L.matchRead(S, card, i), P = S.promos[S.player], seen = {};
     var add = function(k, t, x) {
       if (seen[t]) return;
       seen[t] = 1;
@@ -35595,7 +35608,7 @@ window.GP_UNIVERSE_PARODY={"manifest":{"id":"parody","name":"The Parody World","
   L.E.cardFlags = function(S, card) {
     card = card || S.card || [];
     return card.map(function(m, i) {
-      return matchRead(S, card, i) ? cardFlags(S, card, i) : [];
+      return L.matchRead(S, card, i) ? L.cardFlags(S, card, i) : [];
     });
   };
   (function() {
@@ -35712,6 +35725,12 @@ window.GP_UNIVERSE_PARODY={"manifest":{"id":"parody","name":"The Parody World","
   L.cardFlags = cardFlags;
 
   // engine/99-gimmicks.ts
+  L.gimFromWords = gimFromWords;
+  L.gimBestFit = gimBestFit;
+  L.gimSmart = gimSmart;
+  L.gfx = gfx;
+  L.gimStip = gimStip;
+  L.gimPair = gimPair;
   var GFX = {
     brute: { d: "A brawler who hurts people.", best: ["hardcore", "street", "tables", "nodq", "cage", "lumber"], mt: ["1v1"], hot: ["hero", "underdog", "technician"], flat: ["comedy"], promo: -1, main: 0 },
     cocky: { d: "A loudmouth who thinks they are better than you.", best: ["std"], mt: ["1v1"], hot: ["hero", "underdog", "oldhand", "rebel"], flat: ["comedy", "cocky"], promo: 4, main: 1 },
@@ -35728,6 +35747,7 @@ window.GP_UNIVERSE_PARODY={"manifest":{"id":"parody","name":"The Parody World","
     outlaw: { d: "A lawless brawler with a gang behind them.", best: ["hardcore", "street", "tables", "nodq"], mt: ["tag", "6man", "1v1"], hot: ["hero", "technician", "oldhand"], flat: ["outlaw"], promo: 2, main: 0 },
     comedy: { d: "Here to make the crowd laugh, and sometimes win.", best: ["lumber"], mt: ["6man", "tag", "br"], hot: ["cocky"], flat: ["comedy", "monster", "technician", "mystic"], promo: 3, main: -1 }
   };
+  L.GFX = GFX;
   var GIM_WORDS = [
     [/skate|daredevil|stunt|flyer|high-fly|highlight|jet|lightning|luchador|rope|sky|air|flash|speed|kick|bounce/i, "daredevil"],
     [/showman|flamboyant|starlet|glamour|peacock|rapper|glitter|singing|sequin|timeless|hollywood|pinup|goddess|pop star/i, "showman"],
@@ -35744,13 +35764,14 @@ window.GP_UNIVERSE_PARODY={"manifest":{"id":"parody","name":"The Parody World","
     [/underdog|organic|rising|prodigy|teen|prospect|kid/i, "underdog"],
     [/hero|clean-cut|patriot|babe with the power|power|cowboy|sorry/i, "hero"]
   ];
+  L.GIM_WORDS = GIM_WORDS;
   function gimFromWords(S, w) {
     var ps = typeof L.E.persona === "function" ? L.E.persona(S, w.id) : null;
     if (!ps) return null;
     var tries = [ps.cat || "", ps.d || ""];
     for (var t = 0; t < tries.length; t++) {
       if (!tries[t]) continue;
-      for (var i = 0; i < GIM_WORDS.length; i++) if (GIM_WORDS[i][0].test(tries[t])) return GIM_WORDS[i][1];
+      for (var i = 0; i < L.GIM_WORDS.length; i++) if (L.GIM_WORDS[i][0].test(tries[t])) return L.GIM_WORDS[i][1];
     }
     return null;
   }
@@ -35768,7 +35789,7 @@ window.GP_UNIVERSE_PARODY={"manifest":{"id":"parody","name":"The Parody World","
   function gimSmart(S) {
     S.w.forEach(function(w) {
       if (w.nw) return;
-      var gw = gimFromWords(S, w), g = gw || gimBestFit(w);
+      var gw = L.gimFromWords(S, w), g = gw || L.gimBestFit(w);
       if (g && L.GIMBY[g]) {
         w.gim = g;
         w.gw = 0;
@@ -35784,17 +35805,17 @@ window.GP_UNIVERSE_PARODY={"manifest":{"id":"parody","name":"The Parody World","
     };
   })();
   L.NEWX.push(function(S) {
-    if (!S.custom) gimSmart(S);
+    if (!S.custom) L.gimSmart(S);
   });
   function gfx(w) {
-    return w && w.gim ? GFX[w.gim] : null;
+    return w && w.gim ? L.GFX[w.gim] : null;
   }
   function gimStip(stip) {
     var s = String(stip || "std").toLowerCase().replace(/[^a-z]/g, "");
     return s === "standard" ? "std" : s === "steelcage" ? "cage" : s === "steelcell" ? "cell" : s === "ringoffire" ? "fire" : s === "ironman" ? "iron" : s === "submission" ? "sub" : s === "lumberjack" ? "lumber" : s;
   }
   function gimPair(a, b) {
-    var A = gfx(a), B = gfx(b);
+    var A = L.gfx(a), B = L.gfx(b);
     if (!A || !B) return 0;
     if (A.hot.indexOf(b.gim) >= 0 || B.hot.indexOf(a.gim) >= 0) return 1;
     if (A.flat.indexOf(b.gim) >= 0 || B.flat.indexOf(a.gim) >= 0) return -1;
@@ -35802,9 +35823,9 @@ window.GP_UNIVERSE_PARODY={"manifest":{"id":"parody","name":"The Parody World","
   }
   L.CRX.push(function(ctx) {
     if (!ctx || !ctx.all || !ctx.all.length) return null;
-    var st = gimStip(ctx.stip), mt = ctx.m && ctx.m.mt || "1v1", d = 0, fit = null, pair = 0;
+    var st = L.gimStip(ctx.stip), mt = ctx.m && ctx.m.mt || "1v1", d = 0, fit = null, pair = 0;
     ctx.all.forEach(function(w) {
-      var G = gfx(w);
+      var G = L.gfx(w);
       if (!G) return;
       if (st !== "std" && G.best.indexOf(st) >= 0) {
         d += 0.9;
@@ -35817,7 +35838,7 @@ window.GP_UNIVERSE_PARODY={"manifest":{"id":"parody","name":"The Parody World","
     d /= Math.max(1, ctx.all.length) / 2;
     if (ctx.sides && ctx.sides.length >= 2) {
       var a = ctx.sides[0][0], b = ctx.sides[1][0];
-      pair = gimPair(a, b);
+      pair = L.gimPair(a, b);
       d += pair * 0.8;
     }
     d = L.clamp(d, -1.5, 2);
@@ -35829,7 +35850,7 @@ window.GP_UNIVERSE_PARODY={"manifest":{"id":"parody","name":"The Parody World","
     var hu = L.heatUp;
     L.heatUp = function(S, f, amt, txt) {
       if (amt > 0 && f && f.a && f.b && S.w[f.a[0]] && S.w[f.b[0]]) {
-        var p = gimPair(S.w[f.a[0]], S.w[f.b[0]]);
+        var p = L.gimPair(S.w[f.a[0]], S.w[f.b[0]]);
         if (p) amt *= p > 0 ? 1.2 : 0.8;
       }
       return hu.call(this, S, f, amt, txt);
@@ -35838,14 +35859,14 @@ window.GP_UNIVERSE_PARODY={"manifest":{"id":"parody","name":"The Parody World","
   (function() {
     var sm = L.segMean;
     L.segMean = function(S, w, bonus) {
-      var v = sm.apply(this, arguments), G = gfx(w);
+      var v = sm.apply(this, arguments), G = L.gfx(w);
       return G ? v + G.promo * 0.9 : v;
     };
   })();
   L.E.gimInfo = function(S, id) {
     var w = S.w[id];
-    if (!w || !w.gim || !GFX[w.gim]) return null;
-    var G = GFX[w.gim], nm = function(k) {
+    if (!w || !w.gim || !L.GFX[w.gim]) return null;
+    var G = L.GFX[w.gim], nm = function(k) {
       return L.GIMBY[k] ? L.GIMBY[k].n.toLowerCase() : k;
     };
     var SN = { std: "standard matches", hardcore: "hardcore matches", street: "street fights", tables: "tables matches", nodq: "no disqualification", cage: "cage matches", cell: "the steel cell", fire: "the ring of fire", ladder: "ladder matches", sub: "submission matches", iron: "iron man matches", lumber: "lumberjack matches" };
@@ -35878,10 +35899,15 @@ window.GP_UNIVERSE_PARODY={"manifest":{"id":"parody","name":"The Parody World","
   L.gimPair = gimPair;
 
   // engine/99-kayfabe.ts
+  L.kfWord = kfWord;
+  L.kfInit = kfInit;
+  L.kfFind = kfFind;
+  L.kfLeakP = kfLeakP;
   var KF_WORDS = [[80, "Airtight: the public believes what it sees"], [60, "Mostly kept: a rumour here and there"], [40, "Leaking: the smart fans know more than they should"], [20, "Wide open: half the crowd reads the dirt sheet first"], [0, "Exposed: nothing on the show is a surprise any more"]];
+  L.KF_WORDS = KF_WORDS;
   function kfWord(p) {
-    for (var i = 0; i < KF_WORDS.length; i++) if (p >= KF_WORDS[i][0]) return KF_WORDS[i][1];
-    return KF_WORDS[KF_WORDS.length - 1][1];
+    for (var i = 0; i < L.KF_WORDS.length; i++) if (p >= L.KF_WORDS[i][0]) return L.KF_WORDS[i][1];
+    return L.KF_WORDS[L.KF_WORDS.length - 1][1];
   }
   function kfInit(S) {
     if (!S.kf) S.kf = { sec: {}, prot: 75, leaks: [] };
@@ -35919,7 +35945,7 @@ window.GP_UNIVERSE_PARODY={"manifest":{"id":"parody","name":"The Parody World","
     return out;
   }
   function kfLeakP(S, s) {
-    var K = kfInit(S), age = S.week - (s.since || S.week), p = 0.03 + Math.min(0.08, age * 6e-3);
+    var K = L.kfInit(S), age = S.week - (s.since || S.week), p = 0.03 + Math.min(0.08, age * 6e-3);
     s.ids.forEach(function(id) {
       var w = S.w[id];
       if (w && w.morale < 35) p += 0.05;
@@ -35930,7 +35956,7 @@ window.GP_UNIVERSE_PARODY={"manifest":{"id":"parody","name":"The Parody World","
   }
   L.WEEKX.push(function(S) {
     if (S.cal || S.over) return;
-    var K = kfInit(S), now = kfFind(S), leaked = null;
+    var K = L.kfInit(S), now = L.kfFind(S), leaked = null;
     Object.keys(K.sec).forEach(function(k) {
       if (!now[k]) delete K.sec[k];
     });
@@ -35945,7 +35971,7 @@ window.GP_UNIVERSE_PARODY={"manifest":{"id":"parody","name":"The Parody World","
     Object.keys(K.sec).sort().forEach(function(k) {
       var s = K.sec[k];
       if (leaked || s.out) return;
-      if (L.h01(S.seed + ":kf:" + S.week + ":" + k) < kfLeakP(S, s)) leaked = s;
+      if (L.h01(S.seed + ":kf:" + S.week + ":" + k) < L.kfLeakP(S, s)) leaked = s;
     });
     K.prot = L.clamp(K.prot + (leaked ? -12 : 1), 0, 100);
     if (!leaked) return;
@@ -35970,7 +35996,7 @@ window.GP_UNIVERSE_PARODY={"manifest":{"id":"parody","name":"The Parody World","
     L.note(S, "A secret got out", leaked.real + ".", "bad");
   });
   L.EVR.leak = function(S, ev, choice, P) {
-    var K = kfInit(S), who = (ev.ids || []).map(function(id) {
+    var K = L.kfInit(S), who = (ev.ids || []).map(function(id) {
       return S.w[id];
     }).filter(Boolean), n = who.map(function(w) {
       return w.name;
@@ -36003,21 +36029,21 @@ window.GP_UNIVERSE_PARODY={"manifest":{"id":"parody","name":"The Parody World","
     return p < 40 ? { d: -1, x: "A crowd that reads the dirt sheet saw it coming" } : null;
   });
   L.E.kayfabe = function(S) {
-    var K = kfInit(S), sec = Object.keys(K.sec).map(function(k) {
+    var K = L.kfInit(S), sec = Object.keys(K.sec).map(function(k) {
       return K.sec[k];
     }).filter(function(s) {
       return !s.out;
     });
     return {
       prot: K.prot,
-      word: kfWord(K.prot),
+      word: L.kfWord(K.prot),
       kept: sec.map(function(s) {
-        return { k: s.k, t: s.t, real: s.real, since: s.since, risk: Math.round(kfLeakP(S, s) * 100) };
+        return { k: s.k, t: s.t, real: s.real, since: s.since, risk: Math.round(L.kfLeakP(S, s) * 100) };
       }),
       leaks: K.leaks.slice(0, 6).map(function(l) {
         return { w: l.w, when: L.cal(l.w).label, t: l.t };
       }),
-      line: sec.length ? sec.length + " " + (sec.length === 1 ? "secret" : "secrets") + " kept. " + kfWord(K.prot) + "." : kfWord(K.prot) + "."
+      line: sec.length ? sec.length + " " + (sec.length === 1 ? "secret" : "secrets") + " kept. " + L.kfWord(K.prot) + "." : L.kfWord(K.prot) + "."
     };
   };
   L.KF_WORDS = KF_WORDS;
@@ -36027,7 +36053,9 @@ window.GP_UNIVERSE_PARODY={"manifest":{"id":"parody","name":"The Parody World","
   L.kfLeakP = kfLeakP;
 
   // engine/99-midstory.ts
+  L.midStory = midStory;
   var MID_MAX = 4;
+  L.MID_MAX = MID_MAX;
   function midStory(S) {
     var P = S.promos[S.player];
     if (!P || S.mid || S.custom) return;
@@ -36055,7 +36083,7 @@ window.GP_UNIVERSE_PARODY={"manifest":{"id":"parody","name":"The Parody World","
     }).sort(function(a, b) {
       return b.lvl - a.lvl;
     }).forEach(function(t) {
-      if (made >= MID_MAX - 1) return;
+      if (made >= L.MID_MAX - 1) return;
       var ch = S.w[t.holders[0]];
       if (!ch || busy[ch.id]) return;
       var pool = R.filter(function(w) {
@@ -36083,7 +36111,7 @@ window.GP_UNIVERSE_PARODY={"manifest":{"id":"parody","name":"The Parody World","
       return x.v - y.v || L.hash(key + x.a.id + "-" + x.b.id) - L.hash(key + y.a.id + "-" + y.b.id);
     });
     pairs.forEach(function(p) {
-      if (made >= MID_MAX || busy[p.a.id] || busy[p.b.id]) return;
+      if (made >= L.MID_MAX || busy[p.a.id] || busy[p.b.id]) return;
       var wk = age(p.a.id + "-" + p.b.id);
       open(L.startFeud(S, P, p.a, p.b, 35 + Math.min(25, -p.v / 4), "Real heat between " + p.a.name + " and " + p.b.name + " spilled onto the show", { force: true }), wk, p.a.name + " and " + p.b.name + " cannot stand each other, and it is on the show now");
     });
@@ -36092,7 +36120,7 @@ window.GP_UNIVERSE_PARODY={"manifest":{"id":"parody","name":"The Parody World","
     var ng = L.E.newGame;
     L.E.newGame = function() {
       var S = ng.apply(this, arguments), o = arguments[2];
-      if (S && S.w && !S.cal && !(o && o.mid === false)) midStory(S);
+      if (S && S.w && !S.cal && !(o && o.mid === false)) L.midStory(S);
       return S;
     };
   })();
@@ -36100,6 +36128,8 @@ window.GP_UNIVERSE_PARODY={"manifest":{"id":"parody","name":"The Parody World","
   L.midStory = midStory;
 
   // engine/99-overall.ts
+  L.overallRaw = overallRaw;
+  L.overallOf = overallOf;
   function overallRaw(w) {
     if (!w) return 0;
     var ring = L.workRate(w), mic = ((w.mic || 50) + (w.cha || w.mic || 50)) / 2;
@@ -36108,20 +36138,23 @@ window.GP_UNIVERSE_PARODY={"manifest":{"id":"parody","name":"The Parody World","
   }
   function overallOf(w) {
     if (!w) return 0;
-    var v = 70 + (overallRaw(w) - 70) / 1.1, d = v - 48;
+    var v = 70 + (L.overallRaw(w) - 70) / 1.1, d = v - 48;
     return L.clamp(Math.round(d > 0 ? 48 + d * 0.6056 + d * d * 971e-5 : v), 1, 99);
   }
   L.E.overall = function(S, w) {
     if (typeof w === "number") w = S.w[w];
-    return overallOf(w);
+    return L.overallOf(w);
   };
   L.E.overallOf = overallOf;
   L.overallRaw = overallRaw;
   L.overallOf = overallOf;
 
   // engine/99-points.ts
+  L.bpPerShow = bpPerShow;
   var BP_CARRY = 2;
   var AP_CARRY = 1;
+  L.BP_CARRY = BP_CARRY;
+  L.AP_CARRY = AP_CARRY;
   function bpPerShow(S) {
     var P = S.promos[S.player], n = Math.max(1, (S.queue || []).length || P.shows.length);
     return Math.max(2, Math.round(L.bpGrant(S) / n) + 1);
@@ -36135,13 +36168,13 @@ window.GP_UNIVERSE_PARODY={"manifest":{"id":"parody","name":"The Parody World","
   })();
   L.SHOWX.push(function(S, P) {
     if (S.cal || P.id !== S.player || S.noRefill) return;
-    var add = bpPerShow(S), keep = Math.min(BP_CARRY, Math.max(0, S.bp || 0));
+    var add = L.bpPerShow(S), keep = Math.min(L.BP_CARRY, Math.max(0, S.bp || 0));
     S.bp = keep + add;
     S.bpGrant = add;
     S.bpPS = 1;
     var ak = 0;
     if (S.ap != null) {
-      ak = Math.min(AP_CARRY, Math.max(0, S.ap));
+      ak = Math.min(L.AP_CARRY, Math.max(0, S.ap));
       S.ap = L.apMax(S) + ak;
       S.apUsed = {};
       S.apWho = {};
@@ -36149,38 +36182,44 @@ window.GP_UNIVERSE_PARODY={"manifest":{"id":"parody","name":"The Parody World","
     L.note(S, "Refilled", S.bp + " booking power and " + (S.ap || 0) + " action points for the next show" + (keep || ak ? " (some carried over)." : "."), "good");
   });
   L.E.pointsInfo = function(S) {
-    return { bp: S.bp || 0, perShow: bpPerShow(S), bpCarry: BP_CARRY, ap: S.ap || 0, apMax: L.apMax(S), apCarry: AP_CARRY };
+    return { bp: S.bp || 0, perShow: L.bpPerShow(S), bpCarry: L.BP_CARRY, ap: S.ap || 0, apMax: L.apMax(S), apCarry: L.AP_CARRY };
   };
   L.BP_CARRY = BP_CARRY;
   L.AP_CARRY = AP_CARRY;
   L.bpPerShow = bpPerShow;
 
   // engine/99-postmortem.ts
+  L.clog = clog;
+  L.pmMoney = pmMoney;
+  L.pmReview = pmReview;
+  L.P0month = P0month;
   var CLOG_MAX = 200;
   var CLOG_SKIP = { "Refilled": 1, "The month in review": 1 };
+  L.CLOG_MAX = CLOG_MAX;
+  L.CLOG_SKIP = CLOG_SKIP;
   function clog(S, k, t, why, ids, v) {
     if (S.cal || !S.w) return;
     var L2 = S.clog || (S.clog = []);
     L2.unshift({ w: S.week, k, t, why: why || "", ids: ids || [], v: v || 0 });
-    if (L2.length > CLOG_MAX) L2.length = CLOG_MAX;
+    if (L2.length > L.CLOG_MAX) L2.length = L.CLOG_MAX;
   }
   (function() {
     var nt = L.note;
     L.note = function(S, head, text, kind) {
       nt.apply(this, arguments);
-      if (S && !S.cal && S.w && !CLOG_SKIP[head]) clog(S, "note", head, text || "", [], kind === "good" ? 1 : kind === "bad" ? -1 : 0);
+      if (S && !S.cal && S.w && !L.CLOG_SKIP[head]) L.clog(S, "note", head, text || "", [], kind === "good" ? 1 : kind === "bad" ? -1 : 0);
     };
     var nw = L.news;
     L.news = function(S, kind, text) {
       nw.apply(this, arguments);
       var P = S && S.promos && S.promos[S.player];
-      if (S && !S.cal && S.w && P && ((kind === "title" || kind === "contract") && text.indexOf(P.name) >= 0 || kind === "injury" || /^RUMOUR/.test(text))) clog(S, kind, text, "", [], kind === "injury" || /^RUMOUR/.test(text) ? -1 : 0);
+      if (S && !S.cal && S.w && P && ((kind === "title" || kind === "contract") && text.indexOf(P.name) >= 0 || kind === "injury" || /^RUMOUR/.test(text))) L.clog(S, kind, text, "", [], kind === "injury" || /^RUMOUR/.test(text) ? -1 : 0);
     };
   })();
   L.SHOWX.push(function(S, P, show, rep) {
     if (S.cal || P.id !== S.player) return;
     var o = rep.owner, cs = L.repCS(rep), g = L.gradeG(cs);
-    clog(S, "show", show.name + " was graded " + g, o && o.why ? o.why.join(" ") : "", [], cs >= 75 ? 1 : cs < 60 ? -1 : 0);
+    L.clog(S, "show", show.name + " was graded " + g, o && o.why ? o.why.join(" ") : "", [], cs >= 75 ? 1 : cs < 60 ? -1 : 0);
   });
   L.WEEKX.push(function(S) {
     if (S.cal || S.over) return;
@@ -36189,7 +36228,7 @@ window.GP_UNIVERSE_PARODY={"manifest":{"id":"parody","name":"The Parody World","
     var parts = [["tv", "television"], ["gate", "the gate"], ["ppv", "big-event buys"], ["merch", "merchandise"]], big = parts.slice().sort(function(a, b) {
       return (r[b[0]] || 0) - (r[a[0]] || 0);
     })[0];
-    clog(S, "money", r.net >= 0 ? "The week made " + L.money(r.net) : "The week lost " + L.money(-r.net), "Most of the money came from " + big[1] + "; wages were " + L.money(r.wages) + ".", [], r.net >= 0 ? 0 : -1);
+    L.clog(S, "money", r.net >= 0 ? "The week made " + L.money(r.net) : "The week lost " + L.money(-r.net), "Most of the money came from " + big[1] + "; wages were " + L.money(r.wages) + ".", [], r.net >= 0 ? 0 : -1);
   });
   function pmMoney(S, from, to) {
     var P = S.promos[S.player], H = (P.hist || []).filter(function(r) {
@@ -36215,7 +36254,7 @@ window.GP_UNIVERSE_PARODY={"manifest":{"id":"parody","name":"The Parody World","
     var L2 = (S.clog || []).filter(function(x) {
       return x.w > from && x.w <= to;
     }), P = S.promos[S.player], out = { label, from, to, well: [], badly: [], money: null, owner: null };
-    out.money = pmMoney(S, from, to);
+    out.money = L.pmMoney(S, from, to);
     var shows = L2.filter(function(x) {
       return x.k === "show";
     }), good = shows.filter(function(x) {
@@ -36262,14 +36301,14 @@ window.GP_UNIVERSE_PARODY={"manifest":{"id":"parody","name":"The Parody World","
       if (S.week - k > 60) delete OW[k];
     });
     if (c.wom === 4) {
-      var m = pmReview(S, S.week - 4, S.week, L.MONTHS[c.month] + " " + c.year);
+      var m = L.pmReview(S, S.week - 4, S.week, L.MONTHS[c.month] + " " + c.year);
       pm.month.unshift(m);
       if (pm.month.length > 3) pm.month.length = 3;
       pm.unread = S.week;
       L.note(S, "The month in review", "How " + L.MONTHS[c.month] + " went, and why. It is on your desk.", "");
     }
-    if (c.wom === 4 && c.month === (P0month(S) + 11) % 12) {
-      var y = pmReview(S, S.week - 48, S.week, "The season to " + L.MONTHS[c.month] + " " + c.year);
+    if (c.wom === 4 && c.month === (L.P0month(S) + 11) % 12) {
+      var y = L.pmReview(S, S.week - 48, S.week, "The season to " + L.MONTHS[c.month] + " " + c.year);
       pm.season.unshift(y);
       if (pm.season.length > 4) pm.season.length = 4;
     }
@@ -36296,9 +36335,16 @@ window.GP_UNIVERSE_PARODY={"manifest":{"id":"parody","name":"The Parody World","
   L.P0month = P0month;
 
   // engine/99-press.ts
+  L.pressInit = pressInit;
+  L.pressWord = pressWord;
+  L.pressSources = pressSources;
+  L.pressWho = pressWho;
   var PRESS_FIRST = ["Mona", "Lewis", "Dot", "Hank", "Rosa", "Vern", "Ida", "Clem", "Nell", "Otis", "Fay", "Gus"];
+  L.PRESS_FIRST = PRESS_FIRST;
   var PRESS_LAST = ["Pickering", "Crane", "Haddow", "Vance", "Mulgrew", "Talbot", "Okafor", "Lindqvist", "Barrow", "Esposito", "Quill", "Ferris"];
+  L.PRESS_LAST = PRESS_LAST;
   var PRESS_BEAT = { ring: { n: "in the ring", d: "Match quality and who is getting better." }, money: { n: "the money", d: "Ratings, gates, contracts and deals." }, back: { n: "backstage", d: "Who is unhappy, who is feuding for real, who is leaving." } };
+  L.PRESS_BEAT = PRESS_BEAT;
   var PRESS_ACT = {
     court: { n: "Take them to dinner", d: "On the company. They warm to you, and a grudge softens.", cost: function(S) {
       var P = S.promos[S.player];
@@ -36307,11 +36353,12 @@ window.GP_UNIVERSE_PARODY={"manifest":{"id":"parody","name":"The Parody World","
     freeze: { n: "Freeze them out", d: "No access, no comment. Their sources talk more, and the columns turn." },
     feed: { n: "Feed them a story", d: "Give them something good about your next show. A lift in the build, once a month at most." }
   };
+  L.PRESS_ACT = PRESS_ACT;
   function pressInit(S) {
     if (S.press) return S.press;
     var cols = (L.dbOf(S).columnists || []).slice(0, 2), L2 = [], beats = ["back", "ring", "money", "back"];
     for (var i = 0; i < 4; i++) {
-      var nm = cols[i] || PRESS_FIRST[L.hash(S.seed + "pf" + i) % PRESS_FIRST.length] + " " + PRESS_LAST[L.hash(S.seed + "pl" + i) % PRESS_LAST.length];
+      var nm = cols[i] || L.PRESS_FIRST[L.hash(S.seed + "pf" + i) % L.PRESS_FIRST.length] + " " + L.PRESS_LAST[L.hash(S.seed + "pl" + i) % L.PRESS_LAST.length];
       L2.push({ id: i, name: nm, beat: beats[i], bias: Math.round((L.h01(S.seed + ":pb" + i) * 2 - 1) * 60), warm: 0, grudge: 0, src: [], frozen: 0, fed: -99 });
     }
     S.press = { rep: L2, last: -1 };
@@ -36352,7 +36399,7 @@ window.GP_UNIVERSE_PARODY={"manifest":{"id":"parody","name":"The Parody World","
     };
   })();
   function pressWho(S, s) {
-    var X = pressInit(S), beat = s.k === "leave" ? "money" : s.k === "hurt" ? "ring" : "back";
+    var X = L.pressInit(S), beat = s.k === "leave" ? "money" : s.k === "hurt" ? "ring" : "back";
     return X.rep.filter(function(r) {
       return s.ids.some(function(id) {
         return r.src.indexOf(id) >= 0;
@@ -36376,16 +36423,16 @@ window.GP_UNIVERSE_PARODY={"manifest":{"id":"parody","name":"The Parody World","
   })();
   L.WEEKX.push(function(S) {
     if (S.cal || S.over) return;
-    var X = pressInit(S);
-    pressSources(S, X);
+    var X = L.pressInit(S);
+    L.pressSources(S, X);
     var e = S.inbox.filter(function(x) {
       return x.type === "leak" && !x.done && x.week === void 0;
     })[0];
     if (e) {
       e.week = S.week;
-      var s = { k: e.key, ids: e.ids }, r = pressWho(S, s);
+      var s = { k: e.key, ids: e.ids }, r = L.pressWho(S, s);
       e.by = r.id;
-      e.text = r.name + " (" + PRESS_BEAT[r.beat].n + ") has it. " + e.text;
+      e.text = r.name + " (" + L.PRESS_BEAT[r.beat].n + ") has it. " + e.text;
       var n0 = S.news.filter(function(x) {
         return x.w === S.week && /^RUMOUR:/.test(x.t);
       })[0];
@@ -36416,36 +36463,36 @@ window.GP_UNIVERSE_PARODY={"manifest":{"id":"parody","name":"The Parody World","
     X.last = S.week;
   });
   L.E.press = function(S) {
-    var X = pressInit(S);
-    pressSources(S, X);
+    var X = L.pressInit(S);
+    L.pressSources(S, X);
     return X.rep.map(function(r) {
       return {
         id: r.id,
         name: r.name,
-        beat: PRESS_BEAT[r.beat].n,
-        beatD: PRESS_BEAT[r.beat].d,
-        word: pressWord(r),
+        beat: L.PRESS_BEAT[r.beat].n,
+        beatD: L.PRESS_BEAT[r.beat].d,
+        word: L.pressWord(r),
         grudge: r.grudge >= 60 ? "holds a grudge" : r.grudge >= 30 ? "remembers being snubbed" : "",
         frozen: r.frozen > S.week,
         sources: r.src.length,
-        acts: Object.keys(PRESS_ACT).map(function(k) {
-          var A = PRESS_ACT[k];
+        acts: Object.keys(L.PRESS_ACT).map(function(k) {
+          var A = L.PRESS_ACT[k];
           return { k, n: A.n, d: A.d, cost: A.cost ? A.cost(S) : 0, can: k !== "feed" || S.week - r.fed >= 4, why: k === "feed" && S.week - r.fed < 4 ? "You fed them a story " + (S.week - r.fed) + " weeks ago." : "" };
         })
       };
     });
   };
   L.E.pressDo = function(S, id, k) {
-    var X = pressInit(S), r = X.rep[id], P = S.promos[S.player];
-    if (!r || !PRESS_ACT[k]) return { ok: false, msg: "Nobody to talk to." };
+    var X = L.pressInit(S), r = X.rep[id], P = S.promos[S.player];
+    if (!r || !L.PRESS_ACT[k]) return { ok: false, msg: "Nobody to talk to." };
     if (k === "court") {
-      var c = PRESS_ACT.court.cost(S);
+      var c = L.PRESS_ACT.court.cost(S);
       if (P.cash < c) return { ok: false, msg: "The company cannot cover dinner." };
       P.cash -= c;
       r.warm = L.clamp(r.warm + 20, -100, 100);
       r.grudge = L.clamp(r.grudge - 15, 0, 100);
       r.frozen = 0;
-      return { ok: true, msg: "Dinner with " + r.name + ". They are " + pressWord(r) + " now." };
+      return { ok: true, msg: "Dinner with " + r.name + ". They are " + L.pressWord(r) + " now." };
     }
     if (k === "freeze") {
       r.warm = L.clamp(r.warm - 30, -100, 100);
@@ -36470,6 +36517,21 @@ window.GP_UNIVERSE_PARODY={"manifest":{"id":"parody","name":"The Parody World","
   L.pressWho = pressWho;
 
   // engine/99-progress.ts
+  L.progNeed = progNeed;
+  L.progAgeX = progAgeX;
+  L.progInit = progInit;
+  L.progAll = progAll;
+  L.progCap = progCap;
+  L.progCost = progCost;
+  L.progGain = progGain;
+  L.progUse = progUse;
+  L.progSpend = progSpend;
+  L.progAuto = progAuto;
+  L.progShow = progShow;
+  L.rgWhy = rgWhy;
+  L.rgRow = rgRow;
+  L.progLose = progLose;
+  L.regWeek = regWeek;
   var PROG_ATTR = [
     { k: "brawl", n: "Brawling", g: "ring" },
     { k: "tech", n: "Technical", g: "ring" },
@@ -36483,9 +36545,11 @@ window.GP_UNIVERSE_PARODY={"manifest":{"id":"parody","name":"The Parody World","
     { k: "cha", n: "Charisma", g: "mic" },
     { k: "sq", n: "Star quality", g: "mic" }
   ];
+  L.PROG_ATTR = PROG_ATTR;
   var PROG_BY = {};
+  L.PROG_BY = PROG_BY;
   PROG_ATTR.forEach(function(a) {
-    PROG_BY[a.k] = a;
+    L.PROG_BY[a.k] = a;
   });
   var DEV = [
     { n: "Normal", x: 1, d: "Learns at the usual rate." },
@@ -36493,8 +36557,11 @@ window.GP_UNIVERSE_PARODY={"manifest":{"id":"parody","name":"The Parody World","
     { n: "Blue-chip", x: 1.45, d: "Learns fast, and earns an extra point every fourth level." },
     { n: "Generational", x: 1.75, d: "Learns fastest of all, and earns an extra point every other level." }
   ];
+  L.DEV = DEV;
   var STYLE_PRI = { B: ["brawl", "hc", "dur"], T: ["tech", "cons", "safe"], H: ["speed", "stam", "tech"], P: ["brawl", "dur", "stam"], A: ["tech", "brawl", "speed"], S: ["brawl", "tech", "speed"], E: ["cha", "mic", "sq"] };
+  L.STYLE_PRI = STYLE_PRI;
   var GIM_PRI = { brute: ["brawl", "hc"], cocky: ["mic", "cha"], underdog: ["speed", "stam"], daredevil: ["speed", "hc"], technician: ["tech", "cons"], monster: ["brawl", "dur"], oldhand: ["tech", "mic"], rebel: ["mic", "brawl"], hero: ["cha", "stam"], showman: ["cha", "mic"], mystic: ["cha", "sq"], workhorse: ["stam", "cons"], outlaw: ["hc", "brawl"], comedy: ["mic", "cha"] };
+  L.GIM_PRI = GIM_PRI;
   function progNeed(lv) {
     return 300 + 60 * lv;
   }
@@ -36506,7 +36573,7 @@ window.GP_UNIVERSE_PARODY={"manifest":{"id":"parody","name":"The Parody World","
     if (!w || w.lv != null) return;
     var ov = L.overallRaw(w), a = w.age || 28, sq = w.sq == null ? 50 : w.sq, pot = w.pot || L.workRate(w);
     w.lv = L.clamp(Math.round(1 + Math.max(0, a - 19) * 0.9 + (ov - 55) / 5), 1, 45);
-    w.pxp = Math.floor(L.h01(w.name + "pxp") * progNeed(w.lv) * 0.8);
+    w.pxp = Math.floor(L.h01(w.name + "pxp") * L.progNeed(w.lv) * 0.8);
     w.ap = 0;
     w.gx = {};
     var sc = (pot - 60) * 0.6 + (sq - 50) * 0.4 - Math.max(0, a - 27) * 3;
@@ -36514,13 +36581,13 @@ window.GP_UNIVERSE_PARODY={"manifest":{"id":"parody","name":"The Parody World","
   }
   function progAll(S) {
     S.w.forEach(function(w) {
-      progInit(S, w);
+      L.progInit(S, w);
     });
   }
   function progCap(w, k) {
-    var A = PROG_BY[k];
+    var A = L.PROG_BY[k];
     if (!A) return 99;
-    var cur = w[k] || 1, pri = (STYLE_PRI[w.style] || []).indexOf(k) >= 0 ? 4 : 0;
+    var cur = w[k] || 1, pri = (L.STYLE_PRI[w.style] || []).indexOf(k) >= 0 ? 4 : 0;
     if (A.g === "mic") return 99;
     var cap = L.clamp((w.pot || L.workRate(w)) + 6 + pri, cur, 99);
     if (A.g === "body" && w.pk && w.age > w.pk[1]) cap = cur;
@@ -36531,21 +36598,21 @@ window.GP_UNIVERSE_PARODY={"manifest":{"id":"parody","name":"The Parody World","
     return v < 80 ? 1 : v < 90 ? 2 : 3;
   }
   function progGain(S, w, n, out) {
-    progInit(S, w);
-    n = Math.round(n * (DEV[w.dev] || DEV[0]).x * progAgeX(w));
+    L.progInit(S, w);
+    n = Math.round(n * (L.DEV[w.dev] || L.DEV[0]).x * L.progAgeX(w));
     if (n <= 0) return;
     w.pxp += n;
     w.yxp = (w.yxp || 0) + n;
     var lv0 = w.lv, pts = 0;
-    while (w.pxp >= progNeed(w.lv) && w.lv < 99) {
-      w.pxp -= progNeed(w.lv);
+    while (w.pxp >= L.progNeed(w.lv) && w.lv < 99) {
+      w.pxp -= L.progNeed(w.lv);
       w.lv++;
       var p = 2 + (w.lv % 5 === 0 ? 1 : 0) + (w.dev === 2 && w.lv % 4 === 0 ? 1 : 0) + (w.dev === 3 && w.lv % 2 === 0 ? 1 : 0);
       pts += p;
     }
     if (pts) {
       w.ap = (w.ap || 0) + pts;
-      if (w.promo !== S.player) progAuto(S, w);
+      if (w.promo !== S.player) L.progAuto(S, w);
       else if (w.lv > lv0) L.youRemember(S, w, "levelup", "They reached level " + w.lv + " on your shows", 1);
     }
     if (out) {
@@ -36558,45 +36625,46 @@ window.GP_UNIVERSE_PARODY={"manifest":{"id":"parody","name":"The Parody World","
     }
   }
   function progUse(w, k, amt, out) {
-    if (!PROG_BY[k] || amt <= 0) return;
+    if (!L.PROG_BY[k] || amt <= 0) return;
     var gx = w.gx || (w.gx = {});
     gx[k] = Math.round(((gx[k] || 0) + amt) * 100) / 100;
     if (gx[k] >= 1) {
       gx[k] = Math.round((gx[k] - 1) * 100) / 100;
       if (!gx[k]) delete gx[k];
-      if ((w[k] || 1) < progCap(w, k)) {
+      if ((w[k] || 1) < L.progCap(w, k)) {
         w[k] = L.clamp((w[k] || 1) + 1, 1, 99);
-        if (out) (out.learned = out.learned || []).push(PROG_BY[k].n);
+        if (out) (out.learned = out.learned || []).push(L.PROG_BY[k].n);
       }
     }
   }
   function progSpend(w, k) {
-    var A = PROG_BY[k];
+    var A = L.PROG_BY[k];
     if (!A) return "That is not an attribute.";
-    var v = w[k] || 1, c = progCost(v);
+    var v = w[k] || 1, c = L.progCost(v);
     if ((w.ap || 0) < c) return "Not enough points: that takes " + c + ".";
-    if (v >= progCap(w, k)) return A.n + " is as high as it can go for them right now.";
+    if (v >= L.progCap(w, k)) return A.n + " is as high as it can go for them right now.";
     w.ap -= c;
     w[k] = v + 1;
     return null;
   }
   function progAuto(S, w) {
-    var pri = (STYLE_PRI[w.style] || []).concat(GIM_PRI[w.gim] || []), guard = 0;
+    var pri = (L.STYLE_PRI[w.style] || []).concat(L.GIM_PRI[w.gim] || []), guard = 0;
     if (w.age >= 34) pri = ["mic", "cha"].concat(pri);
     while ((w.ap || 0) > 0 && guard++ < 40) {
-      var opts = PROG_ATTR.map(function(a) {
+      var opts = L.PROG_ATTR.map(function(a) {
         var v = w[a.k] || 1, i = pri.indexOf(a.k);
-        return { k: a.k, v, c: progCost(v), s: (i >= 0 ? 30 - i * 4 : 0) - (v - 50) * 0.3 };
+        return { k: a.k, v, c: L.progCost(v), s: (i >= 0 ? 30 - i * 4 : 0) - (v - 50) * 0.3 };
       }).filter(function(o) {
-        return o.v < progCap(w, o.k) && o.c <= w.ap;
+        return o.v < L.progCap(w, o.k) && o.c <= w.ap;
       }).sort(function(a, b) {
         return b.s - a.s;
       });
       if (!opts.length) break;
-      progSpend(w, opts[0].k);
+      L.progSpend(w, opts[0].k);
     }
   }
   var PROG_HC = /hardcore|tables|street|nodq|no_dq|barbed|weapons|cell|lumber|fire|cage|ladder/;
+  L.PROG_HC = PROG_HC;
   function progShow(S, P, show, rep, card) {
     if (S.cal || !rep || !rep.segs) return;
     var isPl = P && P.id === S.player, big = !!(show && show.big), acc = {};
@@ -36619,30 +36687,30 @@ window.GP_UNIVERSE_PARODY={"manifest":{"id":"parody","name":"The Parody World","
         var base = (6 + 5 * st * st) * (s === last ? 1.3 : 1) * (big ? 1.3 : 1), stip = String(s.stip || "").toLowerCase().replace(/[^a-z]/g, "");
         ids.forEach(function(id) {
           var w = S.w[id], o = row(w), won = s.win && String(s.win).indexOf(w.name) >= 0;
-          progGain(S, w, base * (won ? 1.2 : 1) + (s.title && won ? 30 : 0) + (five ? 150 : 0), o);
+          L.progGain(S, w, base * (won ? 1.2 : 1) + (s.title && won ? 30 : 0) + (five ? 150 : 0), o);
           if (five) o.why.push("a five-star match");
-          if (PROG_HC.test(stip)) progUse(w, "hc", 0.45, o);
-          if (/submission|iron/.test(stip)) progUse(w, "tech", 0.35, o);
-          if (/ladder/.test(stip) || w.style === "H") progUse(w, "speed", 0.2, o);
-          if ((s.mins || 0) >= 20) progUse(w, "stam", 0.35, o);
-          if (st >= 4) progUse(w, "cons", 0.2, o);
-          if (s === last) progUse(w, "sq", 0.15, o);
+          if (L.PROG_HC.test(stip)) L.progUse(w, "hc", 0.45, o);
+          if (/submission|iron/.test(stip)) L.progUse(w, "tech", 0.35, o);
+          if (/ladder/.test(stip) || w.style === "H") L.progUse(w, "speed", 0.2, o);
+          if ((s.mins || 0) >= 20) L.progUse(w, "stam", 0.35, o);
+          if (st >= 4) L.progUse(w, "cons", 0.2, o);
+          if (s === last) L.progUse(w, "sq", 0.15, o);
           if (st <= 1.5) {
             w.cold = (w.cold || 0) + 1;
             if (w.cold >= 3) {
               delete w.cold;
-              w.pxp = Math.max(0, (w.pxp || 0) - Math.round(progNeed(w.lv) * 0.25));
-              progLose(S, w, "cons", 1, "c", o);
+              w.pxp = Math.max(0, (w.pxp || 0) - Math.round(L.progNeed(w.lv) * 0.25));
+              L.progLose(S, w, "cons", 1, "c", o);
             }
           } else delete w.cold;
         });
       } else if (s.k === "angle" || s.k === "promo") {
         ids.forEach(function(id) {
           var w = S.w[id], o = row(w);
-          progGain(S, w, (5 + 4 * st * st) * (big ? 1.2 : 1) + (five ? 120 : 0), o);
+          L.progGain(S, w, (5 + 4 * st * st) * (big ? 1.2 : 1) + (five ? 120 : 0), o);
           if (five) o.why.push("a five-star promo");
-          progUse(w, "mic", five ? 1 : 0.35, o);
-          progUse(w, "cha", 0.25, o);
+          L.progUse(w, "mic", five ? 1 : 0.35, o);
+          L.progUse(w, "cha", 0.25, o);
         });
       }
     });
@@ -36662,21 +36730,21 @@ window.GP_UNIVERSE_PARODY={"manifest":{"id":"parody","name":"The Parody World","
     return c[0] === "a" ? "age" : c[0] === "c" ? "a cold streak" : c[0] === "r" ? "ring rust: " + n + " weeks without a match" : c[0] === "i" ? n + " weeks out injured" : c;
   }
   function rgRow(r) {
-    return Array.isArray(r) ? { w: r[0], k: r[1], n: r[2], why: rgWhy(r[3]) } : r;
+    return Array.isArray(r) ? { w: r[0], k: r[1], n: r[2], why: L.rgWhy(r[3]) } : r;
   }
   function progLose(S, w, k, n, code, out) {
-    if (!w || !PROG_BY[k] || n <= 0) return 0;
+    if (!w || !L.PROG_BY[k] || n <= 0) return 0;
     var v0 = w[k] || 1, v1 = L.clamp(v0 - n, 15, 99), d = v0 - v1;
     if (!d) return 0;
     w[k] = v1;
-    var why = rgWhy(code);
+    var why = L.rgWhy(code);
     var R = w.rgx || (w.rgx = []);
     R.unshift([S.week, k, d, code]);
     if (R.length > 4) R.length = 4;
-    if (out) (out.lost = out.lost || []).push(PROG_BY[k].n + " -" + d + " (" + why + ")");
+    if (out) (out.lost = out.lost || []).push(L.PROG_BY[k].n + " -" + d + " (" + why + ")");
     else if (w.promo === S.player && !w.nw) {
       var q = S.regQ || (S.regQ = {});
-      (q[w.id] = q[w.id] || []).push(PROG_BY[k].n + " -" + d + " (" + why + ")");
+      (q[w.id] = q[w.id] || []).push(L.PROG_BY[k].n + " -" + d + " (" + why + ")");
     }
     return d;
   }
@@ -36684,13 +36752,13 @@ window.GP_UNIVERSE_PARODY={"manifest":{"id":"parody","name":"The Parody World","
     var bd = L.birthday;
     L.birthday = function(S, w) {
       var before = {};
-      PROG_ATTR.forEach(function(a) {
+      L.PROG_ATTR.forEach(function(a) {
         before[a.k] = w[a.k];
       });
       bd.apply(this, arguments);
       if (w.rt || w.nw) return;
       var R = w.rgx || (w.rgx = []), lost = [];
-      PROG_ATTR.forEach(function(a) {
+      L.PROG_ATTR.forEach(function(a) {
         var d = (before[a.k] || 0) - (w[a.k] || 0);
         if (d > 0) {
           R.unshift([S.week, a.k, d, "a"]);
@@ -36699,8 +36767,8 @@ window.GP_UNIVERSE_PARODY={"manifest":{"id":"parody","name":"The Parody World","
       });
       if (R.length > 4) R.length = 4;
       if (w.cl && w.age >= w.cl) {
-        progLose(S, w, "cons", 1, "a", { lost });
-        progLose(S, w, "safe", 1, "a", { lost });
+        L.progLose(S, w, "cons", 1, "a", { lost });
+        L.progLose(S, w, "safe", 1, "a", { lost });
       }
       if (lost.length && w.promo === S.player) L.note(S, "Regression", w.name + " turned " + w.age + ": " + lost.join(", ") + ".", "bad");
     };
@@ -36713,8 +36781,8 @@ window.GP_UNIVERSE_PARODY={"manifest":{"id":"parody","name":"The Parody World","
       if (w.rwl >= 6 && w.rgI !== w.rw) {
         w.rgI = w.rw;
         var big = w.rwl >= 12 ? 2 : 1;
-        progLose(S, w, "speed", big, "i" + w.rwl);
-        progLose(S, w, "stam", big, "i" + w.rwl);
+        L.progLose(S, w, "speed", big, "i" + w.rwl);
+        L.progLose(S, w, "stam", big, "i" + w.rwl);
       }
       if (w.inj > 0) return;
       var idle = S.week - w.wk;
@@ -36724,7 +36792,7 @@ window.GP_UNIVERSE_PARODY={"manifest":{"id":"parody","name":"The Parody World","
       }
       if (idle % 4 === 0 && (w.rustN || 0) < 3) {
         w.rustN = (w.rustN || 0) + 1;
-        progLose(S, w, w.rustN % 2 ? "stam" : "cons", 1, "r" + idle);
+        L.progLose(S, w, w.rustN % 2 ? "stam" : "cons", 1, "r" + idle);
       }
     });
     var q = S.regQ;
@@ -36742,7 +36810,7 @@ window.GP_UNIVERSE_PARODY={"manifest":{"id":"parody","name":"The Parody World","
   L.WEEKX.push(function(S) {
     if (S.cal) return;
     S.w.forEach(function(w) {
-      if (w && (w.ap || 0) > 0 && !w.nw && w.promo !== S.player && w.promo !== "FA") progAuto(S, w);
+      if (w && (w.ap || 0) > 0 && !w.nw && w.promo !== S.player && w.promo !== "FA") L.progAuto(S, w);
     });
   });
   L.WEEKX.push(function(S) {
@@ -36758,7 +36826,7 @@ window.GP_UNIVERSE_PARODY={"manifest":{"id":"parody","name":"The Parody World","
         return;
       }
       if (S.week - w.apw >= 8) {
-        progAuto(S, w);
+        L.progAuto(S, w);
         w.apw = null;
         n++;
       }
@@ -36774,10 +36842,10 @@ window.GP_UNIVERSE_PARODY={"manifest":{"id":"parody","name":"The Parody World","
       var up = y >= 6500 && w.age <= 30 && w.dev < 3, down = y < 1200 && w.dev > 0 && (w.age >= 30 || w.promo !== "FA");
       if (up) {
         w.dev++;
-        if (w.promo === S.player) L.note(S, "Progress", w.name + " is now " + DEV[w.dev].n.toLowerCase() + ": a big year.", "good");
+        if (w.promo === S.player) L.note(S, "Progress", w.name + " is now " + L.DEV[w.dev].n.toLowerCase() + ": a big year.", "good");
       } else if (down) {
         w.dev--;
-        if (w.promo === S.player) L.note(S, "Progress", w.name + " has slowed to " + DEV[w.dev].n.toLowerCase() + ": a quiet year.", "bad");
+        if (w.promo === S.player) L.note(S, "Progress", w.name + " has slowed to " + L.DEV[w.dev].n.toLowerCase() + ": a quiet year.", "bad");
       }
     });
   });
@@ -36791,7 +36859,7 @@ window.GP_UNIVERSE_PARODY={"manifest":{"id":"parody","name":"The Parody World","
     };
   })();
   L.NEWX.push(function(S) {
-    progAll(S);
+    L.progAll(S);
   });
   (function() {
     var a0 = L.E.ask, c0 = L.E.canSign;
@@ -36861,41 +36929,41 @@ window.GP_UNIVERSE_PARODY={"manifest":{"id":"parody","name":"The Parody World","
   L.E.progInfo = function(S, id) {
     var w = S.w[id];
     if (!w) return null;
-    progInit(S, w);
+    L.progInit(S, w);
     return {
       lv: w.lv,
       xp: w.pxp,
-      need: progNeed(w.lv),
+      need: L.progNeed(w.lv),
       ap: w.ap || 0,
       dev: w.dev,
-      devN: DEV[w.dev].n,
-      devD: DEV[w.dev].d,
+      devN: L.DEV[w.dev].n,
+      devD: L.DEV[w.dev].d,
       overall: L.overallOf(w),
-      reg: (w.rgx || []).map(rgRow).map(function(r) {
-        return { k: r.k, n: PROG_BY[r.k] ? PROG_BY[r.k].n : r.k, by: r.n, why: r.why, when: L.cal(r.w).label };
+      reg: (w.rgx || []).map(L.rgRow).map(function(r) {
+        return { k: r.k, n: L.PROG_BY[r.k] ? L.PROG_BY[r.k].n : r.k, by: r.n, why: r.why, when: L.cal(r.w).label };
       }),
-      attrs: PROG_ATTR.map(function(a) {
-        var v = w[a.k] || 1, cap = progCap(w, a.k), fall = (w.rgx || []).map(rgRow).filter(function(r) {
+      attrs: L.PROG_ATTR.map(function(a) {
+        var v = w[a.k] || 1, cap = L.progCap(w, a.k), fall = (w.rgx || []).map(L.rgRow).filter(function(r) {
           return r.k === a.k && S.week - r.w < 48;
         }).reduce(function(t, r) {
           return t + r.n;
         }, 0);
-        return { k: a.k, n: a.n, d: a.d || "", g: a.g, fall, v, cap, cost: progCost(v), can: v < cap && (w.ap || 0) >= progCost(v), grow: +((w.gx || {})[a.k] || 0).toFixed(2) };
+        return { k: a.k, n: a.n, d: a.d || "", g: a.g, fall, v, cap, cost: L.progCost(v), can: v < cap && (w.ap || 0) >= L.progCost(v), grow: +((w.gx || {})[a.k] || 0).toFixed(2) };
       })
     };
   };
   L.E.spendAttr = function(S, id, k) {
     var w = S.w[id];
     if (!w || w.promo !== S.player) return { ok: false, msg: "Not one of yours." };
-    progInit(S, w);
-    var why = progSpend(w, k);
-    return why ? { ok: false, msg: why } : { ok: true, msg: w.name + ": " + PROG_BY[k].n + " " + w[k] + "." };
+    L.progInit(S, w);
+    var why = L.progSpend(w, k);
+    return why ? { ok: false, msg: why } : { ok: true, msg: w.name + ": " + L.PROG_BY[k].n + " " + w[k] + "." };
   };
   L.E.autoSpend = function(S, id) {
     var w = S.w[id];
     if (!w || w.promo !== S.player) return { ok: false, msg: "Not one of yours." };
     var a = w.ap || 0;
-    progAuto(S, w);
+    L.progAuto(S, w);
     return { ok: true, msg: w.name + " spent " + (a - (w.ap || 0)) + " point" + (a - (w.ap || 0) === 1 ? "" : "s") + " on what suits them." };
   };
   L.E.autoSpendAll = function(S) {
@@ -36903,7 +36971,7 @@ window.GP_UNIVERSE_PARODY={"manifest":{"id":"parody","name":"The Parody World","
     L.rosterOf(S, S.player).forEach(function(w) {
       if ((w.ap || 0) > 0) {
         var a = w.ap;
-        progAuto(S, w);
+        L.progAuto(S, w);
         n += a - (w.ap || 0);
       }
     });
@@ -36951,6 +37019,7 @@ window.GP_UNIVERSE_PARODY={"manifest":{"id":"parody","name":"The Parody World","
   })();
 
   // engine/99-ringwork.ts
+  L.rwMoves = rwMoves;
   var RW_MOVES = {
     B: ["a running clothesline", "a flurry of right hands", "a headbutt", "a back body drop", "a stiff elbow", "a sit-out slam", "a spinebuster", "a chop that echoes round the building"],
     T: ["a snap suplex", "a hammerlock", "a German suplex", "a short-arm clothesline", "a single-leg crab", "a fisherman suplex", "a drop toehold", "a cross armbar", "a belly-to-back suplex"],
@@ -36960,6 +37029,7 @@ window.GP_UNIVERSE_PARODY={"manifest":{"id":"parody","name":"The Parody World","
     E: ["a swinging neckbreaker", "a showboating elbow drop", "a Russian leg sweep", "a running bulldog", "a sunset flip", "a rope-assisted leg drop"],
     A: ["a dropkick", "a DDT", "a backbreaker", "an inverted atomic drop", "a neckbreaker", "a suplex", "a bulldog", "a clothesline off the top"]
   };
+  L.RW_MOVES = RW_MOVES;
   var RW_LINES = {
     open: ["{a} takes control with {m}.", "{a} gets the upper hand early with {m}.", "{a} sets the pace: {m}."],
     press: ["{a} keeps the pressure on with {m}.", "{a} stays on top of it: {m}.", "{a} follows up with {m}.", "{a} grinds {b} down with {m}."],
@@ -36969,6 +37039,7 @@ window.GP_UNIVERSE_PARODY={"manifest":{"id":"parody","name":"The Parody World","
     near: ["Cover! One, two... {b} kicks out!", "{a} hooks the leg! One, two... no! {b} gets a shoulder up!", "One, two... so close! {b} is still in this!"],
     col: ["{p}, {b} is fighting from underneath, but you can never count them out.", "These two know each other, {p}. Every move is answered.", "The crowd is right in this one, {p}.", "{a} is controlling the tempo, {p}. Smart wrestling.", "Listen to this place, {p}! They are hanging on every move.", "You can feel the momentum going back and forth, {p}."]
   };
+  L.RW_LINES = RW_LINES;
   function rwMoves(S, w) {
     var L2 = [], ps = typeof L.E.persona === "function" ? L.E.persona(S, w.id) : null;
     if (w.look && Array.isArray(w.look.finishing_moves)) w.look.finishing_moves.slice(1).forEach(function(m) {
@@ -36977,7 +37048,7 @@ window.GP_UNIVERSE_PARODY={"manifest":{"id":"parody","name":"The Parody World","
     if (ps && ps.sigs) ps.sigs.forEach(function(m) {
       if (m && m.name) L2.push({ n: m.name, sig: 1 });
     });
-    (RW_MOVES[w.style] || RW_MOVES.A).forEach(function(n) {
+    (L.RW_MOVES[w.style] || L.RW_MOVES.A).forEach(function(n) {
       L2.push({ n });
     });
     return L2;
@@ -37020,7 +37091,7 @@ window.GP_UNIVERSE_PARODY={"manifest":{"id":"parody","name":"The Parody World","
         };
         var swap = j === 0 ? false : late ? side !== ws ? h() < 0.55 : h() < 0.3 : h() < 0.4;
         if (swap) side = other(side);
-        var A = lead(x.sides[side]), B = lead(x.sides[other(side)]), M = rwMoves(S, A), sigs = M.filter(function(m) {
+        var A = lead(x.sides[side]), B = lead(x.sides[other(side)]), M = L.rwMoves(S, A), sigs = M.filter(function(m) {
           return m.sig && !sigUsed[A.id + m.n];
         });
         var ctx = { a: A.name, b: B.name, p }, kind;
@@ -37028,17 +37099,17 @@ window.GP_UNIVERSE_PARODY={"manifest":{"id":"parody","name":"The Parody World","
           var s = pick(sigs);
           sigUsed[A.id + s.n] = 1;
           ctx.s = s.n;
-          out.push({ t: "pbp", x: L.fill(pick(RW_LINES.sig), ctx), h: 1 });
-          if (h() < 0.6) out.push({ t: "pbp", x: L.fill(pick(RW_LINES.near), ctx), h: 1 });
+          out.push({ t: "pbp", x: L.fill(pick(L.RW_LINES.sig), ctx), h: 1 });
+          if (h() < 0.6) out.push({ t: "pbp", x: L.fill(pick(L.RW_LINES.near), ctx), h: 1 });
           continue;
         }
         ctx.m = pick(M.filter(function(m) {
           return !m.sig;
         })).n;
         kind = j === 0 ? "open" : swap ? "swing" : h() < 0.35 ? "cut" : "press";
-        out.push({ t: "pbp", x: cap(L.fill(pick(RW_LINES[kind]), ctx)) });
-        if (late && h() < 0.25) out.push({ t: "pbp", x: L.fill(pick(RW_LINES.near), ctx), h: 1 });
-        else if (h() < 0.22) out.push({ t: "col", x: cap(L.fill(pick(RW_LINES.col), ctx)) });
+        out.push({ t: "pbp", x: cap(L.fill(pick(L.RW_LINES[kind]), ctx)) });
+        if (late && h() < 0.25) out.push({ t: "pbp", x: L.fill(pick(L.RW_LINES.near), ctx), h: 1 });
+        else if (h() < 0.22) out.push({ t: "col", x: cap(L.fill(pick(L.RW_LINES.col), ctx)) });
       }
       bc.splice.apply(bc, [at + 1, 0].concat(out));
       return bc;
@@ -37049,6 +37120,8 @@ window.GP_UNIVERSE_PARODY={"manifest":{"id":"parody","name":"The Parody World","
   L.rwMoves = rwMoves;
 
   // engine/99-royal.ts
+  L.brSurprisePool = brSurprisePool;
+  L.brFee = brFee;
   L.E.brSize = function(S, i, n) {
     var m = S.card && S.card[i];
     if (!m || m.mt !== "br") return { ok: false };
@@ -37098,9 +37171,9 @@ window.GP_UNIVERSE_PARODY={"manifest":{"id":"parody","name":"The Parody World","
     return { ok: true };
   };
   L.E.brSurpriseInfo = function(S, m) {
-    var L2 = brSurprisePool(S, m).slice(0, 5);
+    var L2 = L.brSurprisePool(S, m).slice(0, 5);
     if (!L2.length) return { n: 0, fee: 0, d: "Nobody free to come in. The spot would go empty." };
-    var fee = Math.round(L.avg(L2.map(brFee)) / 500) * 500;
+    var fee = Math.round(L.avg(L2.map(L.brFee)) / 500) * 500;
     return { n: L2.length, fee, d: "A name from outside the company walks out when the bell has rung. About " + L.money(fee) + " for the night. The crowd only finds out when the music hits." };
   };
   (function() {
@@ -37109,12 +37182,12 @@ window.GP_UNIVERSE_PARODY={"manifest":{"id":"parody","name":"The Parody World","
       var P = S.promos[S.player], adds = [];
       (card || S.card || []).forEach(function(m, i) {
         if (m.mt !== "br" || !m.surp || m.surpId != null) return;
-        var L2 = brSurprisePool(S, m).slice(0, 5);
+        var L2 = L.brSurprisePool(S, m).slice(0, 5);
         if (!L2.length) {
           delete m.surp;
           return;
         }
-        var w = L2[Math.floor(L.h01("brs" + S.week + ":" + i + ":" + S.seed) * L2.length)], fee = brFee(w);
+        var w = L2[Math.floor(L.h01("brs" + S.week + ":" + i + ":" + S.seed) * L2.length)], fee = L.brFee(w);
         if (P.cash < fee) {
           delete m.surp;
           return;
@@ -37185,6 +37258,10 @@ window.GP_UNIVERSE_PARODY={"manifest":{"id":"parody","name":"The Parody World","
   L.brFee = brFee;
 
   // engine/99-staff.ts
+  L.staffTag = staffTag;
+  L.staffVoice = staffVoice;
+  L.staffUnvoice = staffUnvoice;
+  L.toStaffOk = toStaffOk;
   L.SROLES.referee = { n: "Referee", skill: function(w) {
     return ((w.cons || 60) + (w.safe || 55)) / 2;
   }, d: "Keeps the matches safe and on time: the action lands a little cleaner, and they work the scenes as the official." };
@@ -37195,12 +37272,14 @@ window.GP_UNIVERSE_PARODY={"manifest":{"id":"parody","name":"The Parody World","
     return { id: k, n: L.SROLES[k].n, d: L.SROLES[k].d };
   });
   var STAFF_TAG = { agent: "road_agent", trainer: "trainer", commentator: "announcer", manager: "manager", boss: "booker", referee: "referee", interviewer: "interviewer" };
+  L.STAFF_TAG = STAFF_TAG;
   var STAFF_LVL = { rookie: { n: "Green", s: 52, wage: 400 }, solid: { n: "Solid", s: 66, wage: 900 }, veteran: { n: "Veteran", s: 80, wage: 1800 } };
+  L.STAFF_LVL = STAFF_LVL;
   L.E.STAFF_LVL = Object.keys(STAFF_LVL).map(function(k) {
-    return { id: k, n: STAFF_LVL[k].n, wage: STAFF_LVL[k].wage };
+    return { id: k, n: L.STAFF_LVL[k].n, wage: L.STAFF_LVL[k].wage };
   });
   function staffTag(w, k) {
-    w.roles = [STAFF_TAG[k] || k];
+    w.roles = [L.STAFF_TAG[k] || k];
   }
   function staffVoice(S, w) {
     if (w.srole !== "commentator") return;
@@ -37231,15 +37310,15 @@ window.GP_UNIVERSE_PARODY={"manifest":{"id":"parody","name":"The Parody World","
     L.EVR.secondcareer = function(S, ev, choice, P, w) {
       var r = sc.apply(this, arguments);
       if (w && w.srole) {
-        staffTag(w, w.srole);
-        staffVoice(S, w);
+        L.staffTag(w, w.srole);
+        L.staffVoice(S, w);
       }
       return r;
     };
   })();
   L.E.createStaff = function(S, o) {
     o = o || {};
-    var P = S.promos[S.player], k = o.role, L2 = STAFF_LVL[o.lvl] || STAFF_LVL.solid;
+    var P = S.promos[S.player], k = o.role, L2 = L.STAFF_LVL[o.lvl] || L.STAFF_LVL.solid;
     if (!L.SROLES[k]) return { ok: false, msg: "Pick a job for them." };
     var name = L.clean(o.name, 28);
     if (name.length < 2) return { ok: false, msg: "Give them a name first." };
@@ -37250,7 +37329,7 @@ window.GP_UNIVERSE_PARODY={"manifest":{"id":"parody","name":"The Parody World","
     var w = L.addWrestler(S, { name, g: o.g === "F" ? "F" : "M", ovr, style: "A", work: L.clamp(s - 25, 20, 70), mic: k === "referee" ? L.clamp(s - 20, 20, 70) : s, align: o.align === "H" ? "H" : "F", cons: k === "referee" ? s + 6 : s, safe: k === "referee" ? s + 6 : s, cha: s }, P.id, null);
     w.nw = true;
     w.srole = k;
-    staffTag(w, k);
+    L.staffTag(w, k);
     w.wage = L2.wage;
     w.con = 48;
     w.morale = 80;
@@ -37263,7 +37342,7 @@ window.GP_UNIVERSE_PARODY={"manifest":{"id":"parody","name":"The Parody World","
         w.look = lc;
       }
     }
-    staffVoice(S, w);
+    L.staffVoice(S, w);
     L.news(S, "contract", P.name + " hires " + name + " as " + L.SROLES[k].n.toLowerCase() + ".");
     return { ok: true, id: w.id, msg: name + " joins the staff as " + L.SROLES[k].n.toLowerCase() + " at " + L.money(L2.wage) + " a week. " + L.SROLES[k].d };
   };
@@ -37286,17 +37365,17 @@ window.GP_UNIVERSE_PARODY={"manifest":{"id":"parody","name":"The Parody World","
     return { ok: true };
   }
   L.E.toStaffOk = function(S, id) {
-    return toStaffOk(S, S.w[id]);
+    return L.toStaffOk(S, S.w[id]);
   };
   L.E.toStaff = function(S, id, k) {
-    var w = S.w[id], ok = toStaffOk(S, w);
+    var w = S.w[id], ok = L.toStaffOk(S, w);
     if (!ok.ok) return { ok: false, msg: ok.why };
     if (!L.SROLES[k]) return { ok: false, msg: "Pick a job for them." };
     w.nw = true;
     w.srole = k;
     w.wasW = 1;
-    staffTag(w, k);
-    staffVoice(S, w);
+    L.staffTag(w, k);
+    L.staffVoice(S, w);
     var keen = L.SROLES[k].skill(w) >= 60 || w.age >= 36;
     L.youRemember(S, w, "staff", keen ? "You found them a job when the ring was getting harder" : "You took them off the card and gave them a desk job", keen ? 4 : -6);
     w.morale = L.clamp(w.morale + (keen ? 4 : -8), 0, 100);
@@ -37308,7 +37387,7 @@ window.GP_UNIVERSE_PARODY={"manifest":{"id":"parody","name":"The Parody World","
     var w = S.w[id], P = S.promos[S.player];
     if (!w || w.promo !== P.id || !w.nw) return { ok: false, msg: "They are not on the staff." };
     if (!w.wasW) return { ok: false, msg: w.name + " has never wrestled." };
-    staffUnvoice(S, w);
+    L.staffUnvoice(S, w);
     w.nw = false;
     delete w.srole;
     delete w.wasW;
@@ -37376,6 +37455,7 @@ window.GP_UNIVERSE_PARODY={"manifest":{"id":"parody","name":"The Parody World","
 
   // engine/99-suggest-flat.ts
   var SUG_FLAT = 10;
+  L.SUG_FLAT = SUG_FLAT;
   (function() {
     var smart = L.E.suggest;
     L.E.suggest = function(S) {
@@ -37449,7 +37529,7 @@ window.GP_UNIVERSE_PARODY={"manifest":{"id":"parody","name":"The Parody World","
     L.CRX.push(function(ctx) {
       var S = ctx.S, G = S.sug;
       if (!ctx.isPl || !G || G.w !== S.week || G.qi !== S.qi || G.k.indexOf(sugKey(ctx.m)) < 0) return null;
-      return { d: -SUG_FLAT, x: "Booked by the numbers: the crowd has seen this one before" };
+      return { d: -L.SUG_FLAT, x: "Booked by the numbers: the crowd has seen this one before" };
     });
     L.E.suggestSmart = function(S) {
       return smart(S);
@@ -37646,18 +37726,22 @@ window.GP_UNIVERSE_PARODY={"manifest":{"id":"parody","name":"The Parody World","
   };
 
   // engine/99-venues.ts
+  L.venueQuirks = venueQuirks;
   var VQ_FEEL = { intimate: "intimate: every seat is close", cavernous: "cavernous: hard to fill, hard to warm up", right: "" };
   var VQ_SOUND = { loud: "the roof keeps the noise in", dead: "the sound dies in the rafters", plain: "" };
+  L.VQ_FEEL = VQ_FEEL;
+  L.VQ_SOUND = VQ_SOUND;
   var VQ_CROWD = { rowdy: "a rowdy local crowd", smart: "a crowd that knows its wrestling", polite: "a polite crowd that needs warming up", plain: "" };
+  L.VQ_CROWD = VQ_CROWD;
   function venueQuirks(vname) {
     var v = String(vname || ""), h = function(k) {
       return L.h01("vq:" + k + ":" + v);
     }, open = / (Stadium|Bowl|Field)\b/.test(v), small = / (Armory|Union Hall|Legion Hall|Rec Center|Ballroom|Music Hall)\b/.test(v);
     var q = { feel: small || h("f") < 0.25 ? "intimate" : h("f") > 0.8 && !small ? "cavernous" : "right", sound: h("s") < 0.3 ? "loud" : h("s") > 0.82 ? "dead" : "plain", crowd: h("c") < 0.25 ? "rowdy" : h("c") < 0.45 ? "smart" : h("c") > 0.85 ? "polite" : "plain", sight: h("g") > 0.85 ? "poor" : "fine", open };
     var w = [];
-    if (VQ_FEEL[q.feel]) w.push(VQ_FEEL[q.feel]);
-    if (VQ_SOUND[q.sound]) w.push(VQ_SOUND[q.sound]);
-    if (VQ_CROWD[q.crowd]) w.push(VQ_CROWD[q.crowd]);
+    if (L.VQ_FEEL[q.feel]) w.push(L.VQ_FEEL[q.feel]);
+    if (L.VQ_SOUND[q.sound]) w.push(L.VQ_SOUND[q.sound]);
+    if (L.VQ_CROWD[q.crowd]) w.push(L.VQ_CROWD[q.crowd]);
     if (q.sight === "poor") w.push("poor sightlines from the cheap seats");
     if (q.open) w.push("open to the sky");
     q.words = w;
@@ -37665,11 +37749,11 @@ window.GP_UNIVERSE_PARODY={"manifest":{"id":"parody","name":"The Parody World","
     return q;
   }
   L.E.venueQuirks = function(v) {
-    return venueQuirks(v);
+    return L.venueQuirks(v);
   };
   L.CRX.push(function(ctx) {
     if (!ctx.isPl || !ctx.rep || !ctx.rep.venue) return null;
-    var q = venueQuirks(ctx.rep.venue), d = 0, x = [];
+    var q = L.venueQuirks(ctx.rep.venue), d = 0, x = [];
     if (q.feel === "intimate") {
       d += 1;
       x.push("an intimate building");
@@ -37722,16 +37806,17 @@ window.GP_UNIVERSE_PARODY={"manifest":{"id":"parody","name":"The Parody World","
       { n: "Send a hero out to calm them down", says: "They walk to the barricade and the fight stops. The crowd chants their name.", cr: 2, star: 1, face: 1 }
     ] }
   };
+  L.DISASTER = DISASTER;
   L.LIVEK.disaster = {
     n: "Trouble in the building",
     pre: function(S, L2, step) {
       if (step.t !== "match" || L2.had.disaster) return null;
       var rep = L2.st && L2.st.rep;
       if (!rep || !rep.venue) return null;
-      var q = venueQuirks(rep.venue);
+      var q = L.venueQuirks(rep.venue);
       var p = 0.025 + (q.open ? 0.04 : 0) + (q.crowd === "rowdy" ? 0.02 : 0) + (q.feel === "cavernous" ? 0.01 : 0);
       if (L.h01(S.seed + ":dis:" + S.week + ":" + S.qi) >= p) return null;
-      var kinds = ["power", "ring"].concat(q.open ? ["weather"] : []).concat(q.crowd === "rowdy" ? ["crowd", "crowd"] : ["crowd"]), k = kinds[Math.floor(L.h01(S.seed + ":disk:" + S.week + ":" + S.qi) * kinds.length)], D = DISASTER[k];
+      var kinds = ["power", "ring"].concat(q.open ? ["weather"] : []).concat(q.crowd === "rowdy" ? ["crowd", "crowd"] : ["crowd"]), k = kinds[Math.floor(L.h01(S.seed + ":disk:" + S.week + ":" + S.qi) * kinds.length)], D = L.DISASTER[k];
       var M = L.liveMatch(S, L2, step.i), R = L.rosterOf(S, S.player).filter(function(w) {
         return !w.nw && !(w.inj > 0);
       }).sort(function(a, b) {
@@ -37755,7 +37840,7 @@ window.GP_UNIVERSE_PARODY={"manifest":{"id":"parody","name":"The Parody World","
       };
     },
     run: function(S, L2, ev, c) {
-      var D = DISASTER[ev.dk], o = D.choices[c], M = L.liveMatch(S, L2, ev.mi), P = S.promos[S.player], rep = L2.st.rep, city = L.cityOfVenue(rep.venue);
+      var D = L.DISASTER[ev.dk], o = D.choices[c], M = L.liveMatch(S, L2, ev.mi), P = S.promos[S.player], rep = L2.st.rep, city = L.cityOfVenue(rep.venue);
       if (!o) return "";
       if (M && o.cr) L.livePut(M.m, { cr: o.cr, x: D.n.toLowerCase() + ": " + o.n.toLowerCase() });
       if (o.cut) rep.short = 1;
@@ -37786,7 +37871,7 @@ window.GP_UNIVERSE_PARODY={"manifest":{"id":"parody","name":"The Parody World","
   L.E.buildingWords = function(S) {
     var R = L.E.road(S);
     if (!R || !R.now || !R.now.venue) return null;
-    var q = venueQuirks(R.now.venue);
+    var q = L.venueQuirks(R.now.venue);
     return { words: q.words, short: q.short };
   };
   L.VQ_FEEL = VQ_FEEL;
@@ -37796,7 +37881,11 @@ window.GP_UNIVERSE_PARODY={"manifest":{"id":"parody","name":"The Parody World","
   L.DISASTER = DISASTER;
 
   // engine/99-worldweek.ts
+  L.wwCompany = wwCompany;
+  L.wwFile = wwFile;
+  L.verdictWord = verdictWord;
   var WW_KEEP = 12;
+  L.WW_KEEP = WW_KEEP;
   function wwCompany(S, P, wk) {
     var out = { id: P.id, name: P.name, shows: [], titles: [], begun: [], ended: [], lead: null };
     (S.wwShows || []).forEach(function(r) {
@@ -37838,7 +37927,7 @@ window.GP_UNIVERSE_PARODY={"manifest":{"id":"parody","name":"The Parody World","
       if (pid === S.player) return;
       var P = S.promos[pid];
       if (!P || P.dead) return;
-      var c = wwCompany(S, P, wk);
+      var c = L.wwCompany(S, P, wk);
       if (c.lead || c.begun.length) L2.push(c);
     });
     L2.sort(function(a, b) {
@@ -37846,23 +37935,23 @@ window.GP_UNIVERSE_PARODY={"manifest":{"id":"parody","name":"The Parody World","
     });
     var ww = S.ww || (S.ww = []);
     ww.unshift({ w: wk, label: L.cal(wk).label, cos: L2 });
-    if (ww.length > WW_KEEP) ww.length = WW_KEEP;
+    if (ww.length > L.WW_KEEP) ww.length = L.WW_KEEP;
   }
   L.SHOWX.push(function(S, P, show, rep) {
     if (S.cal || !P || P.id === S.player || !rep) return;
     var L2 = S.wwShows || (S.wwShows = []), cs = L.repCS(rep), me = rep.lineup && rep.lineup.length ? rep.lineup[rep.lineup.length - 1] : null;
-    L2.push({ p: P.id, w: S.week, name: show.name, big: !!show.big, grade: L.gradeG(cs), word: verdictWord(rep), main: typeof me === "string" ? me : null });
+    L2.push({ p: P.id, w: S.week, name: show.name, big: !!show.big, grade: L.gradeG(cs), word: L.verdictWord(rep), main: typeof me === "string" ? me : null });
   });
   function verdictWord(rep) {
     var v = rep.rating != null && rep.exp != null ? L.E.showVerdict(rep.rating, rep.exp) : null;
     return v ? v.head.toLowerCase() : "";
   }
   L.WEEKX.push(function(S) {
-    wwFile(S);
+    L.wwFile(S);
     S.wwShows = [];
   });
   L.E.worldWeek = function(S, n) {
-    return (S.ww || []).slice(0, n || WW_KEEP);
+    return (S.ww || []).slice(0, n || L.WW_KEEP);
   };
   L.WW_KEEP = WW_KEEP;
   L.wwCompany = wwCompany;
@@ -37870,27 +37959,34 @@ window.GP_UNIVERSE_PARODY={"manifest":{"id":"parody","name":"The Parody World","
   L.verdictWord = verdictWord;
 
   // engine/99-writers.ts
+  L.wrInit = wrInit;
+  L.wrName = wrName;
+  L.wrPitch = wrPitch;
   var WR_STYLE = {
     comedy: { n: "comedy", slur: "a joke that writes itself", likes: "a laugh" },
     drama: { n: "drama", slur: "a soap opera", likes: "a story with tears in it" },
     grit: { n: "grit", slur: "too dark for television", likes: "something that feels real" },
     spectacle: { n: "spectacle", slur: "all fireworks, no story", likes: "a big moment" }
   };
+  L.WR_STYLE = WR_STYLE;
   var GR_WROOM = {
     comedy: ["The crowd laughs in all the right places: #hw# wrote this one.", "A line lands so well the announcers lose it. #hw#\u2019s room, no doubt.", "It is silly, and the building loves it."],
     drama: ["Somebody in the front row is crying. #hw# got what #hw# wanted.", "It plays like the last scene of a long film.", "Quiet, then loud, then quiet again. A drama writer\u2019s segment."],
     grit: ["No music, no smiles. It feels like it really happened.", "#hw# wrote it rough, and the crowd believes every word.", "It is uncomfortable to watch, which is the point."],
     spectacle: ["Pyro, lights, a lot of noise. #hw# never wrote a small thing.", "Everything is bigger than it needs to be, and nobody minds.", "The kind of moment that ends up in the opening video."]
   };
+  L.GR_WROOM = GR_WROOM;
   var WR_FIRST = ["Abel", "Bette", "Cyril", "Delia", "Ezra", "Flo", "Gideon", "Hester", "Ivo", "June", "Kit", "Lorna"];
   var WR_LAST = ["Ashdown", "Bramble", "Corrie", "Dunmore", "Elwood", "Fenn", "Garnet", "Holloway", "Inchley", "Jessop", "Kell", "Larkin"];
+  L.WR_FIRST = WR_FIRST;
+  L.WR_LAST = WR_LAST;
   function wrInit(S) {
     if (S.wr && S.wr.ids.every(function(id) {
       return S.w[id];
     })) return S.wr;
-    var P = S.promos[S.player], styles = Object.keys(WR_STYLE), ids = [];
+    var P = S.promos[S.player], styles = Object.keys(L.WR_STYLE), ids = [];
     for (var i = 0; i < 3; i++) {
-      var nm = i === 0 && P.staff && P.staff.writer && P.staff.writer !== "The head writer" ? P.staff.writer : WR_FIRST[L.hash(S.seed + "wf" + i) % WR_FIRST.length] + " " + WR_LAST[L.hash(S.seed + "wl" + i) % WR_LAST.length];
+      var nm = i === 0 && P.staff && P.staff.writer && P.staff.writer !== "The head writer" ? P.staff.writer : L.WR_FIRST[L.hash(S.seed + "wf" + i) % L.WR_FIRST.length] + " " + L.WR_LAST[L.hash(S.seed + "wl" + i) % L.WR_LAST.length];
       var w = L.addWrestler(S, { name: nm, g: L.hash(nm) % 2 ? "F" : "M", style: "E", ovr: 40, mic: 55, align: "F", roles: ["writer"], age: 30 + L.hash(nm) % 25 }, P.id);
       w.srole = "writer";
       w.wst = styles[L.hash(S.seed + "ws" + i) % styles.length];
@@ -37906,7 +38002,7 @@ window.GP_UNIVERSE_PARODY={"manifest":{"id":"parody","name":"The Parody World","
     return S.w[id] ? S.w[id].name : "A writer";
   }
   function wrPitch(S, id, k) {
-    var P = S.promos[S.player], w = S.w[id], st = WR_STYLE[w.wst], F = L.E.sift(S) || [], off = L.hash(S.seed + ":wp:" + S.week + ":" + id) + k, f = null;
+    var P = S.promos[S.player], w = S.w[id], st = L.WR_STYLE[w.wst], F = L.E.sift(S) || [], off = L.hash(S.seed + ":wp:" + S.week + ":" + id) + k, f = null;
     var many = L.activeFeuds(S).filter(function(x) {
       return x.promo === P.id;
     }).length >= 8;
@@ -37924,11 +38020,11 @@ window.GP_UNIVERSE_PARODY={"manifest":{"id":"parody","name":"The Parody World","
   }
   L.WEEKX.push(function(S) {
     if (S.cal || S.over || S.week % 2) return;
-    var X = wrInit(S);
+    var X = L.wrInit(S);
     if (S.inbox.some(function(e) {
       return !e.done && e.type === "wroom";
     })) return;
-    var n = Math.floor(S.week / 2) % 3, a = X.ids[n], b = X.ids[(n + 1) % 3], pa = wrPitch(S, a, 0), pb = wrPitch(S, b, 1);
+    var n = Math.floor(S.week / 2) % 3, a = X.ids[n], b = X.ids[(n + 1) % 3], pa = L.wrPitch(S, a, 0), pb = L.wrPitch(S, b, 1);
     if (!pa || !pb) return;
     var A = S.w[a], B = S.w[b], P = S.promos[S.player], ag = P.staff && P.staff.agent ? P.staff.agent : "The road agent", side = A.wsk + (a === X.head ? 10 : 0) >= B.wsk + (b === X.head ? 10 : 0) ? A : B;
     L.pushEv(S, {
@@ -37937,12 +38033,12 @@ window.GP_UNIVERSE_PARODY={"manifest":{"id":"parody","name":"The Parody World","
       b,
       pa,
       pb,
-      text: "The writers\u2019 room. " + A.name + " (" + WR_STYLE[A.wst].n + (a === X.head ? ", head writer" : "") + ") pitches " + pa.t + ". " + B.name + " calls it " + WR_STYLE[A.wst].slur + " and pitches " + pb.t + ". " + ag + " sides with " + side.name + ".",
+      text: "The writers\u2019 room. " + A.name + " (" + L.WR_STYLE[A.wst].n + (a === X.head ? ", head writer" : "") + ") pitches " + pa.t + ". " + B.name + " calls it " + L.WR_STYLE[A.wst].slur + " and pitches " + pb.t + ". " + ag + " sides with " + side.name + ".",
       choices: ["Run " + A.name + "\u2019s pitch", "Run " + B.name + "\u2019s pitch", "Neither: the room can try again"]
     });
   });
   L.EVR.wroom = function(S, ev, choice, P) {
-    var X = wrInit(S), A = S.w[ev.a], B = S.w[ev.b];
+    var X = L.wrInit(S), A = S.w[ev.a], B = S.w[ev.b];
     if (!A || !B) return "The room has moved on.";
     if (choice === 2) {
       L.youRemember(S, A, "pitchno", "You turned their pitch down.", -1);
@@ -37980,16 +38076,16 @@ window.GP_UNIVERSE_PARODY={"manifest":{"id":"parody","name":"The Parody World","
     var X = S.wr;
     if (!X || P.id !== S.player || !ba.wr) return;
     var id = X.until >= S.week && X.by != null ? X.by : X.head, w = S.w[id];
-    if (!w || !WR_STYLE[w.wst]) return;
-    var L2 = GR_WROOM[w.wst], line = L2[Math.floor(L.h01(S.seed + ":wl:" + S.week + ":" + (ba.text || "").length) * L2.length)].replace(/#hw#/g, w.name);
+    if (!w || !L.WR_STYLE[w.wst]) return;
+    var L2 = L.GR_WROOM[w.wst], line = L2[Math.floor(L.h01(S.seed + ":wl:" + S.week + ":" + (ba.text || "").length) * L2.length)].replace(/#hw#/g, w.name);
     ba.text = (ba.text || "") + " " + line;
     if (w.wsk >= 80) ba.ov = Math.min(100, (ba.ov || 0) + 1);
   });
   L.E.writers = function(S) {
-    var X = wrInit(S);
+    var X = L.wrInit(S);
     return X.ids.map(function(id) {
       var w = S.w[id];
-      return { id, name: w.name, style: WR_STYLE[w.wst].n, likes: WR_STYLE[w.wst].likes, strong: w.wsk >= 80 ? "a strong writer" : w.wsk >= 65 ? "a good writer" : "still learning", head: id === X.head, pen: X.by === id && X.until >= S.week, mood: w.morale < 40 ? "unhappy" : "content", you: S.rmY && S.rmY[id] ? S.rmY[id].v : 0 };
+      return { id, name: w.name, style: L.WR_STYLE[w.wst].n, likes: L.WR_STYLE[w.wst].likes, strong: w.wsk >= 80 ? "a strong writer" : w.wsk >= 65 ? "a good writer" : "still learning", head: id === X.head, pen: X.by === id && X.until >= S.week, mood: w.morale < 40 ? "unhappy" : "content", you: S.rmY && S.rmY[id] ? S.rmY[id].v : 0 };
     });
   };
   L.WR_STYLE = WR_STYLE;
@@ -38001,9 +38097,19 @@ window.GP_UNIVERSE_PARODY={"manifest":{"id":"parody","name":"The Parody World","
   L.wrPitch = wrPitch;
 
   // engine/99-zpodcast.ts
+  L.podFirst = podFirst;
+  L.podPlain = podPlain;
+  L.podShowName = podShowName;
+  L.podInit = podInit;
+  L.podTone = podTone;
+  L.podPickSide = podPickSide;
+  L.podWrite = podWrite;
   var POD_EPS = 4;
   var POD_MAX = 72;
+  L.POD_EPS = POD_EPS;
+  L.POD_MAX = POD_MAX;
   var POD_SEGS = { open: "Cold open", yours: "This week in {co}", world: "Around the business", feuds: "Feud watch", money: "Business", rumours: "The rumour mill", titles: "The title picture", mail: "The mailbag", picks: "Picks and goodbye" };
+  L.POD_SEGS = POD_SEGS;
   function podFirst(n) {
     return String(n || "").split(" of ")[0].split(" ")[0];
   }
@@ -38032,10 +38138,10 @@ window.GP_UNIVERSE_PARODY={"manifest":{"id":"parody","name":"The Parody World","
         nb = L.PRESS_FIRST[L.hash(S.seed + "podb" + tries) % L.PRESS_FIRST.length] + " " + L.PRESS_LAST[L.hash(S.seed + "podl" + tries) % L.PRESS_LAST.length];
         tries++;
       } while (tries < 20 && X.rep.some(function(r) {
-        return podPlain(r.name) === nb || podFirst(r.name) === podFirst(nb);
+        return L.podPlain(r.name) === nb || L.podFirst(r.name) === L.podFirst(nb);
       }));
     }
-    S.pod = { show: podShowName(S), a: { rep: ra.id, name: podPlain(ra.name) }, b: { w: rt ? rt.id : null, name: nb }, eps: [], picks: [], rec: { r: 0, x: 0 }, n: 0 };
+    S.pod = { show: L.podShowName(S), a: { rep: ra.id, name: L.podPlain(ra.name) }, b: { w: rt ? rt.id : null, name: nb }, eps: [], picks: [], rec: { r: 0, x: 0 }, n: 0 };
     return S.pod;
   }
   function podTone(S, pod) {
@@ -38054,12 +38160,12 @@ window.GP_UNIVERSE_PARODY={"manifest":{"id":"parody","name":"The Parody World","
     return d > 3 ? "a" : d < -3 ? "b" : L.h01(key) < 0.5 ? "a" : "b";
   }
   function podWrite(S) {
-    var pod = podInit(S), P = S.promos[S.player], wk = S.week, key = S.seed + ":pod:" + wk, used = {}, lines = [], segs = [], n = 0;
+    var pod = L.podInit(S), P = S.promos[S.player], wk = S.week, key = S.seed + ":pod:" + wk, used = {}, lines = [], segs = [], n = 0;
     var sheet = (S.sheets || [])[0];
     if (!sheet || sheet.week !== wk) sheet = L.netSheet(S, wk);
-    var cx = { a: podFirst(pod.a.name), b: podFirst(pod.b.name), show: pod.show, co: P.name, wk: L.cal(wk).label.replace(/^Week/, "week"), tone: podTone(S, pod) };
+    var cx = { a: L.podFirst(pod.a.name), b: L.podFirst(pod.b.name), show: pod.show, co: P.name, wk: L.cal(wk).label.replace(/^Week/, "week"), tone: L.podTone(S, pod) };
     var say = function(s, rule, c2, p) {
-      if (lines.length >= POD_MAX) return;
+      if (lines.length >= L.POD_MAX) return;
       var o = {};
       for (var k in cx) o[k] = cx[k];
       if (c2) for (var j in c2) o[j] = c2[j];
@@ -38075,13 +38181,13 @@ window.GP_UNIVERSE_PARODY={"manifest":{"id":"parody","name":"The Parody World","
       lines.push(L2);
     };
     var raw = function(s, t, p) {
-      if (lines.length >= POD_MAX) return;
+      if (lines.length >= L.POD_MAX) return;
       var L2 = { s, t, g: segs.length - 1 };
       if (p) L2.p = p;
       lines.push(L2);
     };
     var seg = function(k) {
-      segs.push({ k, n: L.fill(POD_SEGS[k], { co: P.name }), i: lines.length });
+      segs.push({ k, n: L.fill(L.POD_SEGS[k], { co: P.name }), i: lines.length });
     };
     var maybe = function(tag, p) {
       return L.h01(key + ":c:" + tag) < p;
@@ -38266,7 +38372,7 @@ window.GP_UNIVERSE_PARODY={"manifest":{"id":"parody","name":"The Parody World","
       return b.heat - a.heat || a.id - b.id;
     })[0];
     if (hot) {
-      var side = podPickSide(S, hot, key + "pk"), nameOf = function(ids) {
+      var side = L.podPickSide(S, hot, key + "pk"), nameOf = function(ids) {
         return ids.map(function(id) {
           return S.w[id] ? S.w[id].name : "";
         }).join(" and ");
@@ -38284,15 +38390,15 @@ window.GP_UNIVERSE_PARODY={"manifest":{"id":"parody","name":"The Parody World","
     pod.n++;
     var ep = { w: wk, n: pod.n, label: L.cal(wk).label, title: "Episode " + pod.n + ": " + (sheet.lead && sheet.lead.head ? sheet.lead.head : L.cal(wk).label), mins: Math.max(1, Math.round(words / 150)), segs, lines, you: reps.length > 0 };
     pod.eps.unshift(ep);
-    if (pod.eps.length > POD_EPS) pod.eps.length = POD_EPS;
+    if (pod.eps.length > L.POD_EPS) pod.eps.length = L.POD_EPS;
     return ep;
   }
   L.WEEKX.push(function(S) {
     if (S.cal || S.over || !S.promos[S.player]) return;
-    podWrite(S);
+    L.podWrite(S);
   });
   L.E.podcast = function(S) {
-    var pod = podInit(S);
+    var pod = L.podInit(S);
     return {
       show: pod.show,
       hosts: [{ k: "a", name: pod.a.name, role: "Writer" }, { k: "b", name: pod.b.name, role: pod.b.w != null ? "Retired wrestler" : "Co-host" }],
@@ -38305,7 +38411,7 @@ window.GP_UNIVERSE_PARODY={"manifest":{"id":"parody","name":"The Parody World","
     };
   };
   L.E.podEp = function(S, n) {
-    var pod = podInit(S);
+    var pod = L.podInit(S);
     for (var i = 0; i < pod.eps.length; i++) if (n == null || pod.eps[i].n === n) return JSON.parse(JSON.stringify(pod.eps[i]));
     return null;
   };

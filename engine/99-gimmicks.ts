@@ -1,6 +1,7 @@
 // @ts-nocheck
 /* Moved from src/99-gimmicks.js (ADR-0001). Names from the rest of the engine come through the bridge, $L. Types come in step 3. */
 import { L as $L } from './_gen/legacy.js';
+$L.gimFromWords = gimFromWords; $L.gimBestFit = gimBestFit; $L.gimSmart = gimSmart; $L.gfx = gfx; $L.gimStip = gimStip; $L.gimPair = gimPair;
 /* wraps: 00-core.js, 60-rpg.js, 93-segments.js (it must sort after them; test-buildorder.js checks) */
 /* A smart gimmick system (Ryan, 20 October: "make sure each wrestler has a gimmick that has benefits for certain
    matches, pairings, feuds, promos, storylines"). The fourteen gimmicks of src/60-rpg.js each say what they are good
@@ -32,6 +33,7 @@ export var GFX={
   outlaw:{d:'A lawless brawler with a gang behind them.',best:['hardcore','street','tables','nodq'],mt:['tag','6man','1v1'],hot:['hero','technician','oldhand'],flat:['outlaw'],promo:2,main:0},
   comedy:{d:'Here to make the crowd laugh, and sometimes win.',best:['lumber'],mt:['6man','tag','br'],hot:['cocky'],flat:['comedy','monster','technician','mystic'],promo:3,main:-1}
 };
+$L.GFX = GFX;
 export var GIM_WORDS=[
   [/skate|daredevil|stunt|flyer|high-fly|highlight|jet|lightning|luchador|rope|sky|air|flash|speed|kick|bounce/i,'daredevil'],
   [/showman|flamboyant|starlet|glamour|peacock|rapper|glitter|singing|sequin|timeless|hollywood|pinup|goddess|pop star/i,'showman'],
@@ -48,35 +50,36 @@ export var GIM_WORDS=[
   [/underdog|organic|rising|prodigy|teen|prospect|kid/i,'underdog'],
   [/hero|clean-cut|patriot|babe with the power|power|cowboy|sorry/i,'hero']
 ];
+$L.GIM_WORDS = GIM_WORDS;
 /* the gimmick a character's own words point to, or null */
 export function gimFromWords(S,w){
   var ps=typeof $L.E.persona==='function'?$L.E.persona(S,w.id):null;if(!ps)return null;
   // the character's category says it best; the longer description only when the category says nothing
   var tries=[ps.cat||'',ps.d||''];
-  for(var t=0;t<tries.length;t++){if(!tries[t])continue;for(var i=0;i<GIM_WORDS.length;i++)if(GIM_WORDS[i][0].test(tries[t]))return GIM_WORDS[i][1];}
+  for(var t=0;t<tries.length;t++){if(!tries[t])continue;for(var i=0;i<$L.GIM_WORDS.length;i++)if($L.GIM_WORDS[i][0].test(tries[t]))return $L.GIM_WORDS[i][1];}
   return null;
 }
 /* the gimmick the ratings fit best of all fourteen */
 export function gimBestFit(w){var best=null,bs=-1;$L.GIMS.forEach(function(g){var s=g.f(w);if(s>bs){bs=s;best=g.id;}});return best;}
-export function gimSmart(S){S.w.forEach(function(w){if(w.nw)return;var gw=gimFromWords(S,w),g=gw||gimBestFit(w);if(g&&$L.GIMBY[g]){w.gim=g;w.gw=0;if(gw)w.gwd=g;}});}
+export function gimSmart(S){S.w.forEach(function(w){if(w.nw)return;var gw=$L.gimFromWords(S,w),g=gw||$L.gimBestFit(w);if(g&&$L.GIMBY[g]){w.gim=g;w.gw=0;if(gw)w.gwd=g;}});}
 /* a gimmick that is who the character is fits them, whatever the numbers say */
 (function(){var gf=$L.gimFit;$L.gimFit=function(w){var v=gf.apply(this,arguments);return w&&w.gwd&&w.gwd===w.gim?Math.max(v,72):v;};})();
-$L.NEWX.push(function(S){if(!S.custom)gimSmart(S);});
-export function gfx(w){return w&&w.gim?GFX[w.gim]:null;}
+$L.NEWX.push(function(S){if(!S.custom)$L.gimSmart(S);});
+export function gfx(w){return w&&w.gim?$L.GFX[w.gim]:null;}
 export function gimStip(stip){var s=String(stip||'std').toLowerCase().replace(/[^a-z]/g,'');return s==='standard'?'std':(s==='steelcage'?'cage':(s==='steelcell'?'cell':(s==='ringoffire'?'fire':(s==='ironman'?'iron':(s==='submission'?'sub':(s==='lumberjack'?'lumber':s))))));}
 /** How a pairing of two gimmicks reads: 1 hot, -1 flat, 0 neither. */
-export function gimPair(a,b){var A=gfx(a),B=gfx(b);if(!A||!B)return 0;if(A.hot.indexOf(b.gim)>=0||B.hot.indexOf(a.gim)>=0)return 1;if(A.flat.indexOf(b.gim)>=0||B.flat.indexOf(a.gim)>=0)return -1;return 0;}
+export function gimPair(a,b){var A=$L.gfx(a),B=$L.gfx(b);if(!A||!B)return 0;if(A.hot.indexOf(b.gim)>=0||B.hot.indexOf(a.gim)>=0)return 1;if(A.flat.indexOf(b.gim)>=0||B.flat.indexOf(a.gim)>=0)return -1;return 0;}
 /* the match: gimmicks that fit the rules, the kind of match and the spot on the card, and a hot or flat pairing */
 $L.CRX.push(function(ctx){
-  if(!ctx||!ctx.all||!ctx.all.length)return null;var st=gimStip(ctx.stip),mt=ctx.m&&ctx.m.mt||'1v1',d=0,fit=null,pair=0;
-  ctx.all.forEach(function(w){var G=gfx(w);if(!G)return;
+  if(!ctx||!ctx.all||!ctx.all.length)return null;var st=$L.gimStip(ctx.stip),mt=ctx.m&&ctx.m.mt||'1v1',d=0,fit=null,pair=0;
+  ctx.all.forEach(function(w){var G=$L.gfx(w);if(!G)return;
     if(st!=='std'&&G.best.indexOf(st)>=0){d+=0.9;fit=fit||w;}
     if(G.mt.indexOf(mt)>=0)d+=0.25;
     if(G.long&&ctx.mins>=20)d+=0.6;
     if(ctx.isMain)d+=0.35*G.main;
   });
   d/=Math.max(1,ctx.all.length)/2;
-  if(ctx.sides&&ctx.sides.length>=2){var a=ctx.sides[0][0],b=ctx.sides[1][0];pair=gimPair(a,b);d+=pair*0.8;}
+  if(ctx.sides&&ctx.sides.length>=2){var a=ctx.sides[0][0],b=ctx.sides[1][0];pair=$L.gimPair(a,b);d+=pair*0.8;}
   d=$L.clamp(d,-1.5,2);if(Math.abs(d)<0.3)return null;
   var x=pair>0&&ctx.sides?$L.GIMBY[ctx.sides[0][0].gim].n+' against '+$L.GIMBY[ctx.sides[1][0].gim].n.toLowerCase()+': a pairing the crowd wants':(fit?fit.name+' is in their element':(pair<0?'The characters did not mesh':null));
   return {d:d,x:x};
@@ -85,17 +88,17 @@ $L.CRX.push(function(ctx){
 (function(){
   var hu=$L.heatUp;
   $L.heatUp=function(S,f,amt,txt){
-    if(amt>0&&f&&f.a&&f.b&&S.w[f.a[0]]&&S.w[f.b[0]]){var p=gimPair(S.w[f.a[0]],S.w[f.b[0]]);if(p)amt*=p>0?1.2:0.8;}
+    if(amt>0&&f&&f.a&&f.b&&S.w[f.a[0]]&&S.w[f.b[0]]){var p=$L.gimPair(S.w[f.a[0]],S.w[f.b[0]]);if(p)amt*=p>0?1.2:0.8;}
     return hu.call(this,S,f,amt,txt);
   };
 })();
 /* a promo: the gimmick decides how much the microphone matters */
 (function(){
   var sm=$L.segMean;
-  $L.segMean=function(S,w,bonus){var v=sm.apply(this,arguments),G=gfx(w);return G?v+G.promo*0.9:v;};
+  $L.segMean=function(S,w,bonus){var v=sm.apply(this,arguments),G=$L.gfx(w);return G?v+G.promo*0.9:v;};
 })();
 /** What a wrestler's gimmick is good for, for the screens. */
-$L.E.gimInfo=function(S,id){var w=S.w[id];if(!w||!w.gim||!GFX[w.gim])return null;var G=GFX[w.gim],nm=function(k){return $L.GIMBY[k]?$L.GIMBY[k].n.toLowerCase():k;};
+$L.E.gimInfo=function(S,id){var w=S.w[id];if(!w||!w.gim||!$L.GFX[w.gim])return null;var G=$L.GFX[w.gim],nm=function(k){return $L.GIMBY[k]?$L.GIMBY[k].n.toLowerCase():k;};
   var SN={std:'standard matches',hardcore:'hardcore matches',street:'street fights',tables:'tables matches',nodq:'no disqualification',cage:'cage matches',cell:'the steel cell',fire:'the ring of fire',ladder:'ladder matches',sub:'submission matches',iron:'iron man matches',lumber:'lumberjack matches'};
   var MN={'1v1':'one on one','tag':'tag matches','3way':'triple threats','4way':'four-ways','6man':'six-man tags','br':'battle royals'};
   return {id:w.gim,n:$L.GIMBY[w.gim].n,d:G.d,fit:$L.gimFit(w),best:G.best.map(function(k){return SN[k]||k;}),mt:G.mt.map(function(k){return MN[k]||k;}),hot:G.hot.map(nm),flat:G.flat.map(nm),
@@ -103,7 +106,7 @@ $L.E.gimInfo=function(S,id){var w=S.w[id];if(!w||!w.gim||!GFX[w.gim])return null
     main:G.main>0?'The crowd buys them at the top of the card.':G.main<0?'Hard to take seriously in a main event.':''};};
 $L.E.GFX=GFX;
 
-// hand this module's names back to the bridge, so legacy code that calls them finds them
+// hand this module's names back to the bridge once more, in case top-level code reassigned one
 $L.GFX = GFX;
 $L.GIM_WORDS = GIM_WORDS;
 $L.gimFromWords = gimFromWords;

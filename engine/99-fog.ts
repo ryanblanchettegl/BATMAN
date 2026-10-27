@@ -1,6 +1,7 @@
 // @ts-nocheck
 /* Moved from src/99-fog.js (ADR-0001). Names from the rest of the engine come through the bridge, $L. Types come in step 3. */
 import { L as $L } from './_gen/legacy.js';
+$L.knowMake = knowMake; $L.gasLimit = gasLimit; $L.fogSkill = fogSkill; $L.readP = readP; $L.reads = reads; $L.agentName = agentName; $L.matchRead = matchRead; $L.fogLook = fogLook; $L.earLine = earLine; $L.cardFlags = cardFlags;
 /* wraps: 90-api.js (it must sort after them; test-buildorder.js checks) */
 /* ---------- Fog of war ----------
    The game does not tell the booker how a match or a promo will go. The road agent comments on every match on the
@@ -17,6 +18,7 @@ import { L as $L } from './_gen/legacy.js';
    Nothing here uses random numbers: a read is settled by a hash of the week, the people and the agent, so it is the
    same every time the page is drawn and cannot change how a game plays out. */
 export var KNOW0={p:{},w:{}};
+$L.KNOW0 = KNOW0;
 /** What the office knows, made on first need. An older save starts with the pairs it has run lately. */
 export function knowMake(S){
   if(S.know)return S.know;
@@ -28,14 +30,14 @@ $L.NEWX.push(function(S){S.know={p:{},w:{}};});
 export function gasLimit(w){return Math.floor(9+w.stam*0.25);}
 export function fogSkill(S){var b=S.booker;return b?0.12*b.sk.eye+0.01*(b.lvl-1):0;}
 /** The chance the agent on this match reads something nobody has seen yet. */
-export function readP(S,m){var a=$L.agentOf(S,m);return $L.clamp((a?0.4+0.45*$L.agentQ(a):0.25)+fogSkill(S),0.05,0.95);}
-export function reads(S,m,key){return $L.h01(S.seed+':rd:'+S.week+':'+key+':'+($L.agentOf(S,m)?m.agent:'h'))<readP(S,m);}
+export function readP(S,m){var a=$L.agentOf(S,m);return $L.clamp((a?0.4+0.45*$L.agentQ(a):0.25)+$L.fogSkill(S),0.05,0.95);}
+export function reads(S,m,key){return $L.h01(S.seed+':rd:'+S.week+':'+key+':'+($L.agentOf(S,m)?m.agent:'h'))<$L.readP(S,m);}
 export function agentName(S,m){var a=$L.agentOf(S,m);return a?a.name:S.promos[S.player].staff.agent;}
 /** The agent's comment on one match of a card: {who, lines:[{s, t, src}], more}. src is 'see', 'seen', 'read' or 'none'.
     Null while the match is not filled in. */
 export function matchRead(S,card,i){
   var m=card[i],c=$L.matchSetup(S,m);if(!c)return null;
-  var show=S.queue[S.qi],n=card.length,all=$L.flat(c.sides),mins=$L.bellMins(show,m,i===n-1),K=S.know||KNOW0,out=[],blind=false;
+  var show=S.queue[S.qi],n=card.length,all=$L.flat(c.sides),mins=$L.bellMins(show,m,i===n-1),K=S.know||$L.KNOW0,out=[],blind=false;
   var add=function(s,t,src){out.push({s:s,t:t,src:src});};
   // what anyone can see
   all.forEach(function(w){
@@ -45,15 +47,15 @@ export function matchRead(S,card,i){
   });
   // who can go how long: known once they have blown up on your show, read by a good agent before that
   all.forEach(function(w){
-    if(mins<=gasLimit(w))return;
-    if(K.w[w.id]&&K.w[w.id].gas)add(-1,w.name+' is good for about '+gasLimit(w)+' minutes. We have seen it. '+mins+' is too many.','seen');
-    else if(reads(S,m,'g'+w.id))add(-1,'My read: '+w.name+' does not have '+mins+' minutes in the tank. I would shorten it.','read');
+    if(mins<=$L.gasLimit(w))return;
+    if(K.w[w.id]&&K.w[w.id].gas)add(-1,w.name+' is good for about '+$L.gasLimit(w)+' minutes. We have seen it. '+mins+' is too many.','seen');
+    else if($L.reads(S,m,'g'+w.id))add(-1,'My read: '+w.name+' does not have '+mins+' minutes in the tank. I would shorten it.','read');
     else blind=true;
   });
   if(m.mt==='1v1'){
     var a=all[0],b=all[1],ch=$L.chem(S,a.id,b.id),key=$L.rkey(a.id,b.id);
     if(K.p[key])add(ch>=2.2?1:(ch<=-2.2?-1:0),ch>=2.2?'They have real chemistry. We have seen it. Give them time.':(ch<=-2.2?'They do not click. We have seen it. Keep it short, or change the match.':'They have worked each other before. Nothing special between them, and nothing wrong.'),'seen');
-    else if(reads(S,m,'c'+key))add(ch>=2.2?1:(ch<=-2.2?-1:0),ch>=2.2?'My read: these two will click. I would give them time.':(ch<=-2.2?'My read: these two will not click. I would keep it short.':'My read: no sparks between these two, and no trouble either.'),'read');
+    else if($L.reads(S,m,'c'+key))add(ch>=2.2?1:(ch<=-2.2?-1:0),ch>=2.2?'My read: these two will click. I would give them time.':(ch<=-2.2?'My read: these two will not click. I would keep it short.':'My read: no sparks between these two, and no trouble either.'),'read');
     else blind=true;
     if(Math.abs(a.ovr-b.ovr)>25&&mins>7)add(-1,'This is a squash. Keep it short.','see');
   }else blind=blind||m.mt!=='tag';
@@ -63,19 +65,19 @@ export function matchRead(S,card,i){
   });
   // a sharp agent sees more (roadmap 8): who the crowd will be behind, and two styles that fight each other. Only what can be read off the people.
   var ag=$L.agentOf(S,m),q=ag?$L.agentQ(ag):0;
-  if(m.mt==='1v1'&&q>=0.6&&reads(S,m,'cr'+$L.rkey(all[0].id,all[1].id))){var A1=all[0],B1=all[1],fav=A1.ovr+(A1.align==='F'?6:0)>=B1.ovr+(B1.align==='F'?6:0)?A1:B1;
+  if(m.mt==='1v1'&&q>=0.6&&$L.reads(S,m,'cr'+$L.rkey(all[0].id,all[1].id))){var A1=all[0],B1=all[1],fav=A1.ovr+(A1.align==='F'?6:0)>=B1.ovr+(B1.align==='F'?6:0)?A1:B1;
     if(Math.abs(A1.ovr-B1.ovr)<=12)add(fav.align==='F'?1:0,'My read: the crowd will be behind '+fav.name+'. Make them wait for it.','read');}
-  if(m.mt==='1v1'&&q>=0.8&&all[0].style&&all[0].style===all[1].style&&reads(S,m,'st'+$L.rkey(all[0].id,all[1].id)))add(0,'My read: they wrestle the same way. Somebody has to bend, or it goes nowhere.','read');
+  if(m.mt==='1v1'&&q>=0.8&&all[0].style&&all[0].style===all[1].style&&$L.reads(S,m,'st'+$L.rkey(all[0].id,all[1].id)))add(0,'My read: they wrestle the same way. Somebody has to bend, or it goes nowhere.','read');
   var NEW=['First time for these two on our shows. I have no read. We find out at the bell.','I have not seen these two work each other. I cannot tell you how it goes.','A new pairing for us. No read yet. Run it and we will know.'];
   if(!out.length)add(0,m.mt==='1v1'?(blind?NEW[Math.floor($L.h01(S.seed+':nw:'+$L.rkey(all[0].id,all[1].id))*NEW.length)%NEW.length]:'Nothing to flag.'):(m.mt==='tag'?'Two regular teams. Nothing to flag.':'A lot of bodies in there. Hard to read until the bell.'),'none');
   var max=1+(ag?1:0)+(q>=0.8?1:0)+(S.booker&&S.booker.sk.eye>=3?1:0);
-  return {i:i,who:agentName(S,m),lines:out.slice(0,max),more:out.length>max,own:!!$L.agentOf(S,m)};
+  return {i:i,who:$L.agentName(S,m),lines:out.slice(0,max),more:out.length>max,own:!!$L.agentOf(S,m)};
 }
 /** The agent's comment on every match of the card on the desk, in card order. */
-$L.E.agentReads=function(S,card){card=card||S.card||[];return card.map(function(m,i){return matchRead(S,card,i);});};
+$L.E.agentReads=function(S,card){card=card||S.card||[];return card.map(function(m,i){return $L.matchRead(S,card,i);});};
 /** How the reads work, for the panel beside the card. */
 $L.E.fogInfo=function(S){
-  var P=S.promos[S.player],ag=$L.E.agents(S),K=S.know||KNOW0;
+  var P=S.promos[S.player],ag=$L.E.agents(S),K=S.know||$L.KNOW0;
   return {head:P.staff.agent,agents:ag.length,eye:S.booker?S.booker.sk.eye:0,pairs:Object.keys(K.p).length,
     people:Object.keys(K.w).filter(function(id){return K.w[id].gas||K.w[id].mic;}).length};
 };
@@ -84,10 +86,10 @@ $L.E.fogInfo=function(S){
 export function fogLook(S,sg,L){
   if(!sg||!L||!L.ok)return L;
   if(sg.k==='writers'){L.read={k:'none',t:'The writers decide on the night.'};return L;}
-  var K=S.know||KNOW0,P=S.promos[S.player],show=S.queue[S.qi],ex=$L.expected(P,show),KD=$L.SEGK[sg.k];
+  var K=S.know||$L.KNOW0,P=S.promos[S.player],show=S.queue[S.qi],ex=$L.expected(P,show),KD=$L.SEGK[sg.k];
   var talk=KD.t==='promo'&&!KD.fix&&sg.k!=='faceoff',who=(sg.who||[]).map(function(id){return S.w[id];}).filter(Boolean);
   var heard=!talk||who.every(function(w){return K.w[w.id]&&K.w[w.id].mic;});
-  var rd=heard||$L.h01(S.seed+':rs:'+S.week+':'+sg.k+':'+sg.who.join('-'))<$L.clamp(0.25+fogSkill(S),0.05,0.9);
+  var rd=heard||$L.h01(S.seed+':rs:'+S.week+':'+sg.k+':'+sg.who.join('-'))<$L.clamp(0.25+$L.fogSkill(S),0.05,0.9);
   if(!rd){
     var fresh=who.filter(function(w){return !(K.w[w.id]&&K.w[w.id].mic);});
     L.read={k:'none',t:'Nobody here has heard '+$L.names(fresh)+' on the microphone on your shows. No read. You find out on the night.'};
@@ -102,19 +104,19 @@ export function fogLook(S,sg,L){
 /* ---------- what the night teaches ---------- */
 $L.POST.push(function(ctx){
   var S=ctx.S;if(!ctx.isPl||S.cal||!ctx.rep)return;
-  var K=knowMake(S),L=ctx.rep.learned||(ctx.rep.learned=[]);
+  var K=$L.knowMake(S),L=ctx.rep.learned||(ctx.rep.learned=[]);
   if(ctx.m.mt==='1v1'&&ctx.all.length===2){
     var a=ctx.all[0],b=ctx.all[1],key=$L.rkey(a.id,b.id);
     if(!K.p[key]){K.p[key]=1;var ch=$L.chem(S,a.id,b.id);L.push(ch>=2.2?a.name+' and '+b.name+' have real chemistry.':(ch<=-2.2?a.name+' and '+b.name+' do not click in the ring.':a.name+' and '+b.name+' work together without trouble, and without sparks.'));}
   }
   ctx.all.forEach(function(w){
-    if(ctx.mins<=gasLimit(w))return;var kw=K.w[w.id]||(K.w[w.id]={});
-    if(!kw.gas){kw.gas=1;L.push(w.name+' blew up. Good for about '+gasLimit(w)+' minutes, no more.');}
+    if(ctx.mins<=$L.gasLimit(w))return;var kw=K.w[w.id]||(K.w[w.id]={});
+    if(!kw.gas){kw.gas=1;L.push(w.name+' blew up. Good for about '+$L.gasLimit(w)+' minutes, no more.');}
   });
 });
 $L.SHOWX.push(function(S,P,show,rep){
   if(S.cal||P.id!==S.player)return;
-  var K=knowMake(S),L=rep.learned||(rep.learned=[]),hear=function(id){var w=S.w[id];if(!w)return;var kw=K.w[id]||(K.w[id]={});if(kw.mic)return;kw.mic=1;var mc=$L.micOf(S,w);L.push('You have heard '+w.name+' on the microphone now: '+(mc>=75?'a real talker.':(mc>=55?'they can hold a crowd.':'not a talker.')));};
+  var K=$L.knowMake(S),L=rep.learned||(rep.learned=[]),hear=function(id){var w=S.w[id];if(!w)return;var kw=K.w[id]||(K.w[id]={});if(kw.mic)return;kw.mic=1;var mc=$L.micOf(S,w);L.push('You have heard '+w.name+' on the microphone now: '+(mc>=75?'a real talker.':(mc>=55?'they can hold a crowd.':'not a talker.')));};
   rep.segs.forEach(function(s){if(s.k==='angle'&&s.booked&&$L.SEGK[s.booked]&&$L.SEGK[s.booked].t==='promo'&&!$L.SEGK[s.booked].fix&&s.booked!=='faceoff')(s.ids||[]).forEach(hear);else if(s.k==='angle'&&s.rub&&rep.open&&rep.open.k==='promo'&&rep.open.ids&&rep.open.ids.length)hear(rep.open.ids[0]);});
   if(!L.length)delete rep.learned;
 });
@@ -129,19 +131,21 @@ export var EAR_BAD=[
   [/^Nobody to/,function(){return 'Listen to them. They do not know who to cheer.';}],
   [/^Two long matches back to back$/,function(){return 'The crowd is tired. They just sat through a long one.';}]
 ];
+$L.EAR_BAD = EAR_BAD;
 export var EAR_GOOD=[
   [/^Great chemistry between them$/,function(){return 'These two are clicking. Look at them go.';}],
   [/^Given time to tell a story$/,function(){return 'They are using every minute. The story is landing.';}],
   [/^Clear face against heel$/,function(){return 'The crowd knows exactly who to boo. That is half the job done.';}],
   [/^A fast opener woke the building up$/,function(){return 'That woke them up. The building is ready for a show.';}]
 ];
+$L.EAR_GOOD = EAR_GOOD;
 export function earLine(fx,table,s){
   for(var k=0;k<table.length;k++)for(var j=0;j<fx.length;j++){if(fx[j].s*s<=0)continue;var mm=table[k][0].exec(fx[j].x);if(mm)return table[k][1](mm);}
   return null;
 }
 $L.POST.push(function(ctx){
   var S=ctx.S,seg=ctx.res&&ctx.res.seg;if(!ctx.isPl||S.cal||!seg||!seg.bc||!seg.bc.length)return;
-  var fx=seg.fx||[],who=agentName(S,ctx.m),lines=[],bad=earLine(fx,EAR_BAD,-1),good=earLine(fx,EAR_GOOD,1);
+  var fx=seg.fx||[],who=$L.agentName(S,ctx.m),lines=[],bad=$L.earLine(fx,$L.EAR_BAD,-1),good=$L.earLine(fx,$L.EAR_GOOD,1);
   if(good)lines.push(good);if(bad)lines.push(bad);
   if(!lines.length)lines.push(seg.cr>=80?'The crowd is with them.':(seg.cr<=50?'Listen to that. Nothing. The crowd is not with this one.':'It is fine. Nothing more than fine.'));
   // just before the announcers sum the match up: after the bell and the body of the match
@@ -155,11 +159,11 @@ $L.POST.push(function(ctx){
 /* ---------- what the booking screen calls ---------- */
 (function(){
   var l0=$L.E.segLook,i0=$L.E.segInfo,s0=$L.E.setSeg;
-  $L.E.segLook=function(S,sg,slot){return fogLook(S,sg,l0(S,sg,slot));};
-  $L.E.segInfo=function(S){var I=i0(S),L=$L.segRead(S);I.list.forEach(function(x){if(x.look)fogLook(S,L[x.slot],x.look);});return I;};
+  $L.E.segLook=function(S,sg,slot){return $L.fogLook(S,sg,l0(S,sg,slot));};
+  $L.E.segInfo=function(S){var I=i0(S),L=$L.segRead(S);I.list.forEach(function(x){if(x.look)$L.fogLook(S,L[x.slot],x.look);});return I;};
   $L.E.setSeg=function(S,slot,sg){
     var r=s0(S,slot,sg);if(!r||!r.ok||!sg||r.slot==null)return r;
-    var cur=$L.segRead(S)[r.slot],lk=cur?fogLook(S,cur,l0(S,cur,r.slot)):null;
+    var cur=$L.segRead(S)[r.slot],lk=cur?$L.fogLook(S,cur,l0(S,cur,r.slot)):null;
     if(lk&&lk.read)r.msg=r.msg.replace(/ It should be about [^.]*\.$/,' '+lk.read.t);
     return r;
   };
@@ -170,7 +174,7 @@ $L.POST.push(function(ctx){
    of the sheet, not only in the notes beside it. A flag is short. It says only what the agent's read already says
    (so the fog holds), plus two things anybody can see: who is unhappy, and who you gave your word to. */
 export function cardFlags(S,card,i){
-  var m=card[i],out=[],rd=matchRead(S,card,i),P=S.promos[S.player],seen={};
+  var m=card[i],out=[],rd=$L.matchRead(S,card,i),P=S.promos[S.player],seen={};
   var add=function(k,t,x){if(seen[t])return;seen[t]=1;out.push({k:k,t:t,x:x||t});};
   // a stipulation in a feud: earned when the story is hot enough to carry it, too soon when it is not (src/21-living.js)
   if(m&&m.stip&&m.stip!=='std'&&m.sides&&m.sides.length===2&&m.sides[0][0]!=null&&m.sides[1][0]!=null){var ff=$L.feudOf(S,m.sides[0][0],m.sides[1][0]);
@@ -201,7 +205,7 @@ export function cardFlags(S,card,i){
   });
   return out;
 }
-$L.E.cardFlags=function(S,card){card=card||S.card||[];return card.map(function(m,i){return matchRead(S,card,i)?cardFlags(S,card,i):[];});};
+$L.E.cardFlags=function(S,card){card=card||S.card||[];return card.map(function(m,i){return $L.matchRead(S,card,i)?$L.cardFlags(S,card,i):[];});};
 /* a promise that is about to fall due is a warning before the bell, and the suggested card honours what it can */
 (function(){
   var val=$L.E.validate;
@@ -239,7 +243,7 @@ $L.E.cardFlags=function(S,card){card=card||S.card||[];return card.map(function(m
   };
 })();
 
-// hand this module's names back to the bridge, so legacy code that calls them finds them
+// hand this module's names back to the bridge once more, in case top-level code reassigned one
 $L.KNOW0 = KNOW0;
 $L.knowMake = knowMake;
 $L.gasLimit = gasLimit;

@@ -1,6 +1,7 @@
 // @ts-nocheck
 /* Moved from src/99-ringwork.js (ADR-0001). Names from the rest of the engine come through the bridge, $L. Types come in step 3. */
 import { L as $L } from './_gen/legacy.js';
+$L.rwMoves = rwMoves;
 /* wraps: 10-match.js (it must sort after them; test-buildorder.js checks) */
 /* Ring work: a match on the broadcast is a match, not a summary (Ryan, 20 October: "each match and segment needs to
    last longer with more back and forth and use of moves"). After the bell, callMatch() used to say a handful of
@@ -18,6 +19,7 @@ export var RW_MOVES={
   E:['a swinging neckbreaker','a showboating elbow drop','a Russian leg sweep','a running bulldog','a sunset flip','a rope-assisted leg drop'],
   A:['a dropkick','a DDT','a backbreaker','an inverted atomic drop','a neckbreaker','a suplex','a bulldog','a clothesline off the top']
 };
+$L.RW_MOVES = RW_MOVES;
 export var RW_LINES={
   open:['{a} takes control with {m}.','{a} gets the upper hand early with {m}.','{a} sets the pace: {m}.'],
   press:['{a} keeps the pressure on with {m}.','{a} stays on top of it: {m}.','{a} follows up with {m}.','{a} grinds {b} down with {m}.'],
@@ -27,11 +29,12 @@ export var RW_LINES={
   near:['Cover! One, two... {b} kicks out!','{a} hooks the leg! One, two... no! {b} gets a shoulder up!','One, two... so close! {b} is still in this!'],
   col:['{p}, {b} is fighting from underneath, but you can never count them out.','These two know each other, {p}. Every move is answered.','The crowd is right in this one, {p}.','{a} is controlling the tempo, {p}. Smart wrestling.','Listen to this place, {p}! They are hanging on every move.','You can feel the momentum going back and forth, {p}.']
 };
+$L.RW_LINES = RW_LINES;
 export function rwMoves(S,w){
   var L=[],ps=typeof $L.E.persona==='function'?$L.E.persona(S,w.id):null;
   if(w.look&&Array.isArray(w.look.finishing_moves))w.look.finishing_moves.slice(1).forEach(function(m){if(m&&m.name)L.push({n:m.name,sig:1});});
   if(ps&&ps.sigs)ps.sigs.forEach(function(m){if(m&&m.name)L.push({n:m.name,sig:1});});
-  (RW_MOVES[w.style]||RW_MOVES.A).forEach(function(n){L.push({n:n});});
+  ($L.RW_MOVES[w.style]||$L.RW_MOVES.A).forEach(function(n){L.push({n:n});});
   return L;
 }
 (function(){
@@ -54,22 +57,22 @@ export function rwMoves(S,w){
       // the closing stretch leans to the side that wins; early on it swings either way
       var swap=j===0?false:(late?(side!==ws?h()<0.55:h()<0.3):h()<0.4);
       if(swap)side=other(side);
-      var A=lead(x.sides[side]),B=lead(x.sides[other(side)]),M=rwMoves(S,A),sigs=M.filter(function(m){return m.sig&&!sigUsed[A.id+m.n];});
+      var A=lead(x.sides[side]),B=lead(x.sides[other(side)]),M=$L.rwMoves(S,A),sigs=M.filter(function(m){return m.sig&&!sigUsed[A.id+m.n];});
       var ctx={a:A.name,b:B.name,p:p},kind;
-      if(late&&sigs.length&&h()<0.45){var s=pick(sigs);sigUsed[A.id+s.n]=1;ctx.s=s.n;out.push({t:'pbp',x:$L.fill(pick(RW_LINES.sig),ctx),h:1});
-        if(h()<0.6)out.push({t:'pbp',x:$L.fill(pick(RW_LINES.near),ctx),h:1});continue;}
+      if(late&&sigs.length&&h()<0.45){var s=pick(sigs);sigUsed[A.id+s.n]=1;ctx.s=s.n;out.push({t:'pbp',x:$L.fill(pick($L.RW_LINES.sig),ctx),h:1});
+        if(h()<0.6)out.push({t:'pbp',x:$L.fill(pick($L.RW_LINES.near),ctx),h:1});continue;}
       ctx.m=pick(M.filter(function(m){return !m.sig;})).n;
       kind=j===0?'open':(swap?'swing':(h()<0.35?'cut':'press'));
-      out.push({t:'pbp',x:cap($L.fill(pick(RW_LINES[kind]),ctx))});
-      if(late&&h()<0.25)out.push({t:'pbp',x:$L.fill(pick(RW_LINES.near),ctx),h:1});
-      else if(h()<0.22)out.push({t:'col',x:cap($L.fill(pick(RW_LINES.col),ctx))});
+      out.push({t:'pbp',x:cap($L.fill(pick($L.RW_LINES[kind]),ctx))});
+      if(late&&h()<0.25)out.push({t:'pbp',x:$L.fill(pick($L.RW_LINES.near),ctx),h:1});
+      else if(h()<0.22)out.push({t:'col',x:cap($L.fill(pick($L.RW_LINES.col),ctx))});
     }
     bc.splice.apply(bc,[at+1,0].concat(out));
     return bc;
   };
 })();
 
-// hand this module's names back to the bridge, so legacy code that calls them finds them
+// hand this module's names back to the bridge once more, in case top-level code reassigned one
 $L.RW_MOVES = RW_MOVES;
 $L.RW_LINES = RW_LINES;
 $L.rwMoves = rwMoves;

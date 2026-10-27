@@ -1,6 +1,7 @@
 // @ts-nocheck
 /* Moved from src/99-press.js (ADR-0001). Names from the rest of the engine come through the bridge, $L. Types come in step 3. */
 import { L as $L } from './_gen/legacy.js';
+$L.pressInit = pressInit; $L.pressWord = pressWord; $L.pressSources = pressSources; $L.pressWho = pressWho;
 /* wraps: 99-kayfabe.js (it must sort after them; test-buildorder.js checks) */
 /* Journalists as characters (the add-ons run, item 15). Four reporters, each with a name, a beat (the ring, the money,
    backstage), a lean for or against your company (bias), how they feel about you (warm, -100 to 100), a grudge (0 to
@@ -10,16 +11,20 @@ import { L as $L } from './_gen/legacy.js';
    court one (dinner on the company), freeze one out, or feed one a story. The world's dirt sheet writers
    (DB.columnists) are the first reporters; the rest are made from original names. No rnd(S): everything is hashed. */
 export var PRESS_FIRST=['Mona','Lewis','Dot','Hank','Rosa','Vern','Ida','Clem','Nell','Otis','Fay','Gus'];
+$L.PRESS_FIRST = PRESS_FIRST;
 export var PRESS_LAST=['Pickering','Crane','Haddow','Vance','Mulgrew','Talbot','Okafor','Lindqvist','Barrow','Esposito','Quill','Ferris'];
+$L.PRESS_LAST = PRESS_LAST;
 export var PRESS_BEAT={ring:{n:'in the ring',d:'Match quality and who is getting better.'},money:{n:'the money',d:'Ratings, gates, contracts and deals.'},back:{n:'backstage',d:'Who is unhappy, who is feuding for real, who is leaving.'}};
+$L.PRESS_BEAT = PRESS_BEAT;
 export var PRESS_ACT={
   court:{n:'Take them to dinner',d:'On the company. They warm to you, and a grudge softens.',cost:function(S){var P=S.promos[S.player];return Math.max(2000,Math.round(P.inc0*0.004/500)*500);}},
   freeze:{n:'Freeze them out',d:'No access, no comment. Their sources talk more, and the columns turn.'},
   feed:{n:'Feed them a story',d:'Give them something good about your next show. A lift in the build, once a month at most.'}
 };
+$L.PRESS_ACT = PRESS_ACT;
 export function pressInit(S){
   if(S.press)return S.press;var cols=($L.dbOf(S).columnists||[]).slice(0,2),L=[],beats=['back','ring','money','back'];
-  for(var i=0;i<4;i++){var nm=cols[i]||(PRESS_FIRST[$L.hash(S.seed+'pf'+i)%PRESS_FIRST.length]+' '+PRESS_LAST[$L.hash(S.seed+'pl'+i)%PRESS_LAST.length]);
+  for(var i=0;i<4;i++){var nm=cols[i]||($L.PRESS_FIRST[$L.hash(S.seed+'pf'+i)%$L.PRESS_FIRST.length]+' '+$L.PRESS_LAST[$L.hash(S.seed+'pl'+i)%$L.PRESS_LAST.length]);
     L.push({id:i,name:nm,beat:beats[i],bias:Math.round(($L.h01(S.seed+':pb'+i)*2-1)*60),warm:0,grudge:0,src:[],frozen:0,fed:-99});}
   S.press={rep:L,last:-1};return S.press;
 }
@@ -32,7 +37,7 @@ export function pressSources(S,X){
 /* a source near a secret makes it likelier to get out; a frozen-out reporter's sources talk more */
 (function(){var lp=$L.kfLeakP;$L.kfLeakP=function(S,s){var p=lp(S,s);if(!S.press)return p;S.press.rep.forEach(function(r){if(s.ids.some(function(id){return r.src.indexOf(id)>=0;}))p+=r.frozen>S.week?0.05:0.03;});return $L.clamp(p,0.01,0.35);};})();
 /* who broke it: the reporter with a source in it, else the one whose beat it is */
-export function pressWho(S,s){var X=pressInit(S),beat=s.k==='leave'?'money':(s.k==='hurt'?'ring':'back');
+export function pressWho(S,s){var X=$L.pressInit(S),beat=s.k==='leave'?'money':(s.k==='hurt'?'ring':'back');
   return X.rep.filter(function(r){return s.ids.some(function(id){return r.src.indexOf(id)>=0;});})[0]||X.rep.filter(function(r){return r.beat===beat;})[0]||X.rep[0];}
 /* the leak names its reporter; a reporter who likes you calls before printing */
 (function(){var ev=$L.EVR.leak;$L.EVR.leak=function(S,e,choice,P){
@@ -40,10 +45,10 @@ export function pressWho(S,s){var X=pressInit(S),beat=s.k==='leave'?'money':(s.k
     return r.name+' sits on it, as a favour. It costs you some of their goodwill, and the secret is safe for now.';}
   return ev(S,e,choice,P);};})();
 $L.WEEKX.push(function(S){
-  if(S.cal||S.over)return;var X=pressInit(S);pressSources(S,X);
+  if(S.cal||S.over)return;var X=$L.pressInit(S);$L.pressSources(S,X);
   // credit the leak this week to a reporter, and let a friendly one call first
   var e=S.inbox.filter(function(x){return x.type==='leak'&&!x.done&&x.week===undefined;})[0];
-  if(e){e.week=S.week;var s={k:e.key,ids:e.ids},r=pressWho(S,s);e.by=r.id;e.text=r.name+' ('+PRESS_BEAT[r.beat].n+') has it. '+e.text;
+  if(e){e.week=S.week;var s={k:e.key,ids:e.ids},r=$L.pressWho(S,s);e.by=r.id;e.text=r.name+' ('+$L.PRESS_BEAT[r.beat].n+') has it. '+e.text;
     var n0=S.news.filter(function(x){return x.w===S.week&&/^RUMOUR:/.test(x.t);})[0];if(n0)n0.t=n0.t.replace(/^RUMOUR:/,'RUMOUR ('+r.name+'):');
     if(r.warm+r.bias*0.5>=40){e.calls=r.id;e.choices=e.choices.concat(['Ask '+r.name+' to sit on it']);e.text+=' '+r.name+' called you before printing.';}}
   // the weekly column on your last show, coloured by how its writer feels about you
@@ -56,18 +61,18 @@ $L.WEEKX.push(function(S){
   $L.news(S,'world','COLUMN: '+line);X.last=S.week;
 });
 /** For the screens: the reporters, how each feels about you, and what each answer costs. */
-$L.E.press=function(S){var X=pressInit(S);pressSources(S,X);return X.rep.map(function(r){return {id:r.id,name:r.name,beat:PRESS_BEAT[r.beat].n,beatD:PRESS_BEAT[r.beat].d,word:pressWord(r),grudge:r.grudge>=60?'holds a grudge':(r.grudge>=30?'remembers being snubbed':''),
-  frozen:r.frozen>S.week,sources:r.src.length,acts:Object.keys(PRESS_ACT).map(function(k){var A=PRESS_ACT[k];return {k:k,n:A.n,d:A.d,cost:A.cost?A.cost(S):0,can:k!=='feed'||S.week-r.fed>=4,why:k==='feed'&&S.week-r.fed<4?'You fed them a story '+(S.week-r.fed)+' weeks ago.':''};})};});};
+$L.E.press=function(S){var X=$L.pressInit(S);$L.pressSources(S,X);return X.rep.map(function(r){return {id:r.id,name:r.name,beat:$L.PRESS_BEAT[r.beat].n,beatD:$L.PRESS_BEAT[r.beat].d,word:$L.pressWord(r),grudge:r.grudge>=60?'holds a grudge':(r.grudge>=30?'remembers being snubbed':''),
+  frozen:r.frozen>S.week,sources:r.src.length,acts:Object.keys($L.PRESS_ACT).map(function(k){var A=$L.PRESS_ACT[k];return {k:k,n:A.n,d:A.d,cost:A.cost?A.cost(S):0,can:k!=='feed'||S.week-r.fed>=4,why:k==='feed'&&S.week-r.fed<4?'You fed them a story '+(S.week-r.fed)+' weeks ago.':''};})};});};
 $L.E.pressDo=function(S,id,k){
-  var X=pressInit(S),r=X.rep[id],P=S.promos[S.player];if(!r||!PRESS_ACT[k])return {ok:false,msg:'Nobody to talk to.'};
-  if(k==='court'){var c=PRESS_ACT.court.cost(S);if(P.cash<c)return {ok:false,msg:'The company cannot cover dinner.'};P.cash-=c;r.warm=$L.clamp(r.warm+20,-100,100);r.grudge=$L.clamp(r.grudge-15,0,100);r.frozen=0;return {ok:true,msg:'Dinner with '+r.name+'. They are '+pressWord(r)+' now.'};}
+  var X=$L.pressInit(S),r=X.rep[id],P=S.promos[S.player];if(!r||!$L.PRESS_ACT[k])return {ok:false,msg:'Nobody to talk to.'};
+  if(k==='court'){var c=$L.PRESS_ACT.court.cost(S);if(P.cash<c)return {ok:false,msg:'The company cannot cover dinner.'};P.cash-=c;r.warm=$L.clamp(r.warm+20,-100,100);r.grudge=$L.clamp(r.grudge-15,0,100);r.frozen=0;return {ok:true,msg:'Dinner with '+r.name+'. They are '+$L.pressWord(r)+' now.'};}
   if(k==='freeze'){r.warm=$L.clamp(r.warm-30,-100,100);r.grudge=$L.clamp(r.grudge+25,0,100);r.frozen=S.week+8;return {ok:true,msg:r.name+' is frozen out for eight weeks. Their sources will talk more, and they will remember it.'};}
   if(S.week-r.fed<4)return {ok:false,msg:'You fed them a story a few weeks ago. Too often and it stops being news.'};
   r.fed=S.week;r.warm=$L.clamp(r.warm+8,-100,100);S.hype=(S.hype||0)+0.05;$L.news(S,'world','SCOOP ('+r.name+'): big plans for '+P.name+'’s next show, sources say.');
   return {ok:true,msg:r.name+' runs it. A little more buzz for your next show.'};
 };
 
-// hand this module's names back to the bridge, so legacy code that calls them finds them
+// hand this module's names back to the bridge once more, in case top-level code reassigned one
 $L.PRESS_FIRST = PRESS_FIRST;
 $L.PRESS_LAST = PRESS_LAST;
 $L.PRESS_BEAT = PRESS_BEAT;

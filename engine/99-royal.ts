@@ -1,6 +1,7 @@
 // @ts-nocheck
 /* Moved from src/99-royal.js (ADR-0001). Names from the rest of the engine come through the bridge, $L. Types come in step 3. */
 import { L as $L } from './_gen/legacy.js';
+$L.brSurprisePool = brSurprisePool; $L.brFee = brFee;
 /* wraps: 31-live.js (it must sort after them; test-buildorder.js checks) */
 /* Battle royals (roadmap 2, Ryan 16 October). A battle royal takes 6 to 30 entrants and runs 30 minutes for every 15
    in it (brMins() in src/97-time.js). The booker can hold one spot for a surprise: somebody nobody on the roster, a free
@@ -40,8 +41,8 @@ $L.E.brSurprise=function(S,i,on){
 };
 /** For the editor: what the surprise spot would cost, and how many could fill it. Never names them. */
 $L.E.brSurpriseInfo=function(S,m){
-  var L=brSurprisePool(S,m).slice(0,5);if(!L.length)return {n:0,fee:0,d:'Nobody free to come in. The spot would go empty.'};
-  var fee=Math.round($L.avg(L.map(brFee))/500)*500;
+  var L=$L.brSurprisePool(S,m).slice(0,5);if(!L.length)return {n:0,fee:0,d:'Nobody free to come in. The spot would go empty.'};
+  var fee=Math.round($L.avg(L.map($L.brFee))/500)*500;
   return {n:L.length,fee:fee,d:'A name from outside the company walks out when the bell has rung. About '+$L.money(fee)+' for the night. The crowd only finds out when the music hits.'};
 };
 (function(){
@@ -50,8 +51,8 @@ $L.E.brSurpriseInfo=function(S,m){
     var P=S.promos[S.player],adds=[];
     (card||S.card||[]).forEach(function(m,i){
       if(m.mt!=='br'||!m.surp||m.surpId!=null)return;
-      var L=brSurprisePool(S,m).slice(0,5);if(!L.length){delete m.surp;return;}
-      var w=L[Math.floor($L.h01('brs'+S.week+':'+i+':'+S.seed)*L.length)],fee=brFee(w);
+      var L=$L.brSurprisePool(S,m).slice(0,5);if(!L.length){delete m.surp;return;}
+      var w=L[Math.floor($L.h01('brs'+S.week+':'+i+':'+S.seed)*L.length)],fee=$L.brFee(w);
       if(P.cash<fee){delete m.surp;return;}
       adds.push({i:i,m:m,w:w,fee:fee});
     });
@@ -88,6 +89,6 @@ $L.E.suggestKeep=function(S){
   $L.fitShow(S,c);return c;
 };
 
-// hand this module's names back to the bridge, so legacy code that calls them finds them
+// hand this module's names back to the bridge once more, in case top-level code reassigned one
 $L.brSurprisePool = brSurprisePool;
 $L.brFee = brFee;

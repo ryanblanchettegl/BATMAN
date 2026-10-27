@@ -22,21 +22,33 @@ host.getSourceFile = (n, v) => n === 'mod.js' ? ts.createSourceFile('mod.js', sr
 host.fileExists = n => n === 'mod.js'; host.readFile = () => src;
 const prog = ts.createProgram(['mod.js'], { allowJs: true, noLib: true, noResolve: true }, host), chk = prog.getTypeChecker(), sf = prog.getSourceFile('mod.js');
 const edits = [];
+// the file's own top-level declarations; inside functions, a reference to one goes through the bridge too, so a later
+// file that wraps it (L.name = wrapper) is seen here exactly as in the old shared closure
+const topDecl = new Set(); sf.statements.forEach(st => { if (ts.isFunctionDeclaration(st) && st.name) topDecl.add(st); else if (ts.isVariableStatement(st)) st.declarationList.declarations.forEach(d => topDecl.add(d)); });
+const inFunction = n => { for (let p = n.parent; p && p !== sf; p = p.parent) if (ts.isFunctionLike(p)) return true; return false; };
 (function walk(node) {
-  if (ts.isIdentifier(node) && others.has(node.text) && !own.has(node.text)) {
+  if (ts.isIdentifier(node)) {
     const p = node.parent;
     const isProp = (ts.isPropertyAccessExpression(p) && p.name === node) || (ts.isPropertyAssignment(p) && p.name === node) || (ts.isMethodDeclaration(p) && p.name === node);
-    const isShort = ts.isShorthandPropertyAssignment(p);
-    const sym = chk.getSymbolAtLocation(node), real = sym && (sym.declarations || []).some(d => ts.isVariableDeclaration(d) || ts.isParameter(d) || ts.isFunctionDeclaration(d) || ts.isFunctionExpression(d) || ts.isBindingElement(d) || ts.isCatchClause(d.parent));
-    if (!isProp && !real) edits.push({ s: node.getStart(sf), e: node.end, t: isShort ? node.text + ': $L.' + node.text : '$L.' + node.text });
+    const isShort = ts.isShorthandPropertyAssignment(p), isDeclName = (ts.isFunctionDeclaration(p) || ts.isVariableDeclaration(p) || ts.isParameter(p) || ts.isFunctionExpression(p)) && p.name === node;
+    const sym = chk.getSymbolAtLocation(node), decls = (sym && sym.declarations) || [];
+    const t = isShort ? node.text + ': $L.' + node.text : '$L.' + node.text;
+    if (!isProp && !isDeclName) {
+      if (own.has(node.text)) { if (decls.some(d => topDecl.has(d)) && inFunction(node)) edits.push({ s: node.getStart(sf), e: node.end, t }); }
+      else if (others.has(node.text)) { const real = decls.some(d => ts.isVariableDeclaration(d) || ts.isParameter(d) || ts.isFunctionDeclaration(d) || ts.isFunctionExpression(d) || ts.isBindingElement(d) || ts.isCatchClause(d.parent)); if (!real) edits.push({ s: node.getStart(sf), e: node.end, t }); }
+    }
   }
   ts.forEachChild(node, walk);
 })(sf);
-let out = src; edits.sort((a, b) => b.s - a.s).forEach(x => { out = out.slice(0, x.s) + x.t + out.slice(x.e); });
+// hand each top-level var back to the bridge straight after its statement (functions are handed back at the top, since
+// they are hoisted), and everything once more at the end in case top-level code reassigned one
+sf.statements.forEach(st => { if (ts.isVariableStatement(st)) edits.push({ s: st.end, e: st.end, t: '\n' + st.declarationList.declarations.filter(d => ts.isIdentifier(d.name)).map(d => '$L.' + d.name.text + ' = ' + d.name.text + ';').join(' ') }); });
+const fnNames = sf.statements.filter(st => ts.isFunctionDeclaration(st) && st.name).map(st => st.name.text);
+let out = src; edits.sort((a, b) => b.s - a.s || b.e - a.e).forEach(x => { out = out.slice(0, x.s) + x.t + out.slice(x.e); });
 // export the file's own top-level declarations
 out = out.replace(/^function\s+([A-Za-z_$][\w$]*)/gm, 'export function $1').replace(/^var\s+/gm, 'export var ');
-const head = '// @ts-nocheck\n/* Moved from ' + file + ' (ADR-0001). Names from the rest of the engine come through the bridge, $L. Types come in step 3. */\nimport { L as $L } from \'./_gen/legacy.js\';\n';
-const tail = own.size ? '\n// hand this module\'s names back to the bridge, so legacy code that calls them finds them\n' + [...own].map(n => '$L.' + n + ' = ' + n + ';').join('\n') + '\n' : '';
+const head = '// @ts-nocheck\n/* Moved from ' + file + ' (ADR-0001). Names from the rest of the engine come through the bridge, $L. Types come in step 3. */\nimport { L as $L } from \'./_gen/legacy.js\';\n' + (fnNames.length ? fnNames.map(n => '$L.' + n + ' = ' + n + ';').join(' ') + '\n' : '');
+const tail = own.size ? '\n// hand this module\'s names back to the bridge once more, in case top-level code reassigned one\n' + [...own].map(n => '$L.' + n + ' = ' + n + ';').join('\n') + '\n' : '';
 const dest = path.join(engDir, path.basename(file).replace(/\.js$/, '.ts'));
 fs.mkdirSync(engDir, { recursive: true }); fs.writeFileSync(dest, head + out + tail); fs.unlinkSync(path.join(root, file));
 console.log('moved', file, '->', path.relative(root, dest), '|', edits.length, 'names through L,', own.size, 'own names');

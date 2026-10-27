@@ -9,7 +9,8 @@ import { L as $L } from './_gen/legacy.js';
    handed to the writers. The people and the running order are sensible, so it helps. It lands around a C. Every choice here comes from a hash,
    never rnd(S), so asking for a suggestion cannot change how the game plays out. Rival companies book themselves
    and are not touched. */
-export var SUG_FLAT=10;   // how much flatter the crowd is for a match left as suggested
+export var SUG_FLAT=10;
+$L.SUG_FLAT = SUG_FLAT;   // how much flatter the crowd is for a match left as suggested
 (function(){
   var smart=$L.E.suggest;
   $L.E.suggest=function(S){
@@ -37,11 +38,11 @@ export var SUG_FLAT=10;   // how much flatter the crowd is for a match left as s
   function sugKey(m){return m.mt+'|'+(m.title||'')+'|'+m.sides.map(function(sd){return sd.slice().sort(function(a,b){return a-b;}).join(',');}).sort().join('/');}
   $L.CRX.push(function(ctx){
     var S=ctx.S,G=S.sug;if(!ctx.isPl||!G||G.w!==S.week||G.qi!==S.qi||G.k.indexOf(sugKey(ctx.m))<0)return null;
-    return {d:-SUG_FLAT,x:'Booked by the numbers: the crowd has seen this one before'};
+    return {d:-$L.SUG_FLAT,x:'Booked by the numbers: the crowd has seen this one before'};
   });
   /** The thinking suggest did before it was made flat, for rival-free tools and tests that want a good card. */
   $L.E.suggestSmart=function(S){return smart(S);};
 })();
 
-// hand this module's names back to the bridge, so legacy code that calls them finds them
+// hand this module's names back to the bridge once more, in case top-level code reassigned one
 $L.SUG_FLAT = SUG_FLAT;

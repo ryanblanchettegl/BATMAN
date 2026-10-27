@@ -1,6 +1,7 @@
 // @ts-nocheck
 /* Moved from src/99-zpodcast.js (ADR-0001). Names from the rest of the engine come through the bridge, $L. Types come in step 3. */
 import { L as $L } from './_gen/legacy.js';
+$L.podFirst = podFirst; $L.podPlain = podPlain; $L.podShowName = podShowName; $L.podInit = podInit; $L.podTone = podTone; $L.podPickSide = podPickSide; $L.podWrite = podWrite;
 /* The podcast (Bill, 21 October: "get rid of the chat room and make it a weekly podcast"). Once a week two hosts talk
    through the week in wrestling: a writer from the press (the reporter on the ring beat, S.press) and a retired
    wrestler with a good mic, or an original name when the world has none. An episode is a script, plain data in S.pod:
@@ -10,7 +11,9 @@ import { L as $L } from './_gen/legacy.js';
    end-of-week hook runs after theirs and reads the sheet, the month in review and the column they file. Every pick is
    hashed; nothing here calls rnd(S), so an episode can never change how a game plays out. */
 export var POD_EPS=4,POD_MAX=72;
+$L.POD_EPS = POD_EPS; $L.POD_MAX = POD_MAX;
 export var POD_SEGS={open:'Cold open',yours:'This week in {co}',world:'Around the business',feuds:'Feud watch',money:'Business',rumours:'The rumour mill',titles:'The title picture',mail:'The mailbag',picks:'Picks and goodbye'};
+$L.POD_SEGS = POD_SEGS;
 export function podFirst(n){return String(n||'').split(' of ')[0].split(' ')[0];}
 export function podPlain(n){return String(n||'').split(' of ')[0];}
 /* the show's name comes from the dirt sheet: "Wade Kessler of the Ringside Wire" makes The Ringside Wire Radio */
@@ -25,8 +28,8 @@ export function podInit(S){
   var rt=S.w.filter(function(w){return w&&w.rt!=null&&w.promo==='FA'&&!w.nw&&(w.mic||0)>=60;}).sort(function(a,b){return (b.mic||0)-(a.mic||0)||a.id-b.id;})[0],nb;
   if(rt)nb=rt.name;
   else{var tries=0;do{nb=$L.PRESS_FIRST[$L.hash(S.seed+'podb'+tries)%$L.PRESS_FIRST.length]+' '+$L.PRESS_LAST[$L.hash(S.seed+'podl'+tries)%$L.PRESS_LAST.length];tries++;}
-    while(tries<20&&X.rep.some(function(r){return podPlain(r.name)===nb||podFirst(r.name)===podFirst(nb);}));}
-  S.pod={show:podShowName(S),a:{rep:ra.id,name:podPlain(ra.name)},b:{w:rt?rt.id:null,name:nb},eps:[],picks:[],rec:{r:0,x:0},n:0};
+    while(tries<20&&X.rep.some(function(r){return $L.podPlain(r.name)===nb||$L.podFirst(r.name)===$L.podFirst(nb);}));}
+  S.pod={show:$L.podShowName(S),a:{rep:ra.id,name:$L.podPlain(ra.name)},b:{w:rt?rt.id:null,name:nb},eps:[],picks:[],rec:{r:0,x:0},n:0};
   return S.pod;
 }
 /* how warm the writer is to your company: 1 friendly, 0 fair, -1 cool (src/99-press.js) */
@@ -36,13 +39,13 @@ export function podPickSide(S,f,key){
   return d>3?'a':(d<-3?'b':($L.h01(key)<0.5?'a':'b'));
 }
 export function podWrite(S){
-  var pod=podInit(S),P=S.promos[S.player],wk=S.week,key=S.seed+':pod:'+wk,used={},lines=[],segs=[],n=0;
+  var pod=$L.podInit(S),P=S.promos[S.player],wk=S.week,key=S.seed+':pod:'+wk,used={},lines=[],segs=[],n=0;
   var sheet=(S.sheets||[])[0];if(!sheet||sheet.week!==wk)sheet=$L.netSheet(S,wk);
-  var cx={a:podFirst(pod.a.name),b:podFirst(pod.b.name),show:pod.show,co:P.name,wk:$L.cal(wk).label.replace(/^Week/,'week'),tone:podTone(S,pod)};
-  var say=function(s,rule,c,p){if(lines.length>=POD_MAX)return;var o={};for(var k in cx)o[k]=cx[k];if(c)for(var j in c)o[j]=c[j];
+  var cx={a:$L.podFirst(pod.a.name),b:$L.podFirst(pod.b.name),show:pod.show,co:P.name,wk:$L.cal(wk).label.replace(/^Week/,'week'),tone:$L.podTone(S,pod)};
+  var say=function(s,rule,c,p){if(lines.length>=$L.POD_MAX)return;var o={};for(var k in cx)o[k]=cx[k];if(c)for(var j in c)o[j]=c[j];
     var t='';for(var tr=0;tr<5;tr++){t=$L.gram($L.GR_POD,rule,o,key+':'+(n++));if(!used[t])break;}if(!t)return;used[t]=1;var L={s:s,t:t,g:segs.length-1};if(p)L.p=p;lines.push(L);};
-  var raw=function(s,t,p){if(lines.length>=POD_MAX)return;var L={s:s,t:t,g:segs.length-1};if(p)L.p=p;lines.push(L);};
-  var seg=function(k){segs.push({k:k,n:$L.fill(POD_SEGS[k],{co:P.name}),i:lines.length});};
+  var raw=function(s,t,p){if(lines.length>=$L.POD_MAX)return;var L={s:s,t:t,g:segs.length-1};if(p)L.p=p;lines.push(L);};
+  var seg=function(k){segs.push({k:k,n:$L.fill($L.POD_SEGS[k],{co:P.name}),i:lines.length});};
   var maybe=function(tag,p){return $L.h01(key+':c:'+tag)<p;};
   var reps=S.reports.filter(function(r){return r.week===wk&&r.promo===P.id;}).sort(function(a,b){return (b.big?1:0)-(a.big?1:0)||b.rating-a.rating;}).slice(0,2);
   var newChamps=[];P.titles.forEach(function(t){if(t.since===wk&&t.holders.length)newChamps.push({t:t,w:t.holders[0]});});
@@ -108,7 +111,7 @@ export function podWrite(S){
     if(mg||mb)say('a','month',{good:mg?mg.t:'not much',bad:mb?mb.t:null});}
   var hot=$L.activeFeuds(S).filter(function(f){return f.promo===P.id&&f.heat>=60&&!(pod.picks||[]).some(function(pk){return pk.f===f.id;});}).sort(function(a,b){return b.heat-a.heat||a.id-b.id;})[0];
   if(hot){
-    var side=podPickSide(S,hot,key+'pk'),nameOf=function(ids){return ids.map(function(id){return S.w[id]?S.w[id].name:'';}).join(' and ');},pn=nameOf(hot[side]),on=nameOf(hot[side==='a'?'b':'a']);
+    var side=$L.podPickSide(S,hot,key+'pk'),nameOf=function(ids){return ids.map(function(id){return S.w[id]?S.w[id].name:'';}).join(' and ');},pn=nameOf(hot[side]),on=nameOf(hot[side==='a'?'b':'a']);
     say('a','pick',{big:c.wom===4?P.name+' '+$L.evName(S,P,$L.cal(wk+4).month):$L.nextBigName(S,P),p:pn,o:on},{k:'face',ids:[hot[side][0],hot[side==='a'?'b':'a'][0]]});say('b',maybe('pd',0.4)?'pick_diff':'pick_same',{p:pn,o:on});
     pod.picks.push({f:hot.id,s:side,w:wk});
   }
@@ -116,20 +119,20 @@ export function podWrite(S){
   var words=lines.reduce(function(t,L){return t+L.t.split(/\s+/).length;},0);
   pod.n++;
   var ep={w:wk,n:pod.n,label:$L.cal(wk).label,title:'Episode '+pod.n+': '+(sheet.lead&&sheet.lead.head?sheet.lead.head:$L.cal(wk).label),mins:Math.max(1,Math.round(words/150)),segs:segs,lines:lines,you:reps.length>0};
-  pod.eps.unshift(ep);if(pod.eps.length>POD_EPS)pod.eps.length=POD_EPS;
+  pod.eps.unshift(ep);if(pod.eps.length>$L.POD_EPS)pod.eps.length=$L.POD_EPS;
   return ep;
 }
-$L.WEEKX.push(function(S){if(S.cal||S.over||!S.promos[S.player])return;podWrite(S);});
+$L.WEEKX.push(function(S){if(S.cal||S.over||!S.promos[S.player])return;$L.podWrite(S);});
 /** The podcast for the screen: its name, the hosts, the record on picks, and the episodes kept (newest first) without their lines. */
 $L.E.podcast=function(S){
-  var pod=podInit(S);
+  var pod=$L.podInit(S);
   return {show:pod.show,hosts:[{k:'a',name:pod.a.name,role:'Writer'},{k:'b',name:pod.b.name,role:pod.b.w!=null?'Retired wrestler':'Co-host'}],rec:{r:pod.rec.r,x:pod.rec.x},
     eps:pod.eps.map(function(e){return {w:e.w,n:e.n,label:e.label,title:e.title,mins:e.mins,you:e.you,segs:e.segs.map(function(s){return s.n;}),lines:e.lines.length};})};
 };
 /** One episode in full, by its number (the newest when left out). */
-$L.E.podEp=function(S,n){var pod=podInit(S);for(var i=0;i<pod.eps.length;i++)if(n==null||pod.eps[i].n===n)return JSON.parse(JSON.stringify(pod.eps[i]));return null;};
+$L.E.podEp=function(S,n){var pod=$L.podInit(S);for(var i=0;i<pod.eps.length;i++)if(n==null||pod.eps[i].n===n)return JSON.parse(JSON.stringify(pod.eps[i]));return null;};
 
-// hand this module's names back to the bridge, so legacy code that calls them finds them
+// hand this module's names back to the bridge once more, in case top-level code reassigned one
 $L.POD_EPS = POD_EPS;
 $L.POD_MAX = POD_MAX;
 $L.POD_SEGS = POD_SEGS;

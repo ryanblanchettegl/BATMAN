@@ -1,6 +1,7 @@
 // @ts-nocheck
 /* Moved from src/99-worldweek.js (ADR-0001). Names from the rest of the engine come through the bridge, $L. Types come in step 3. */
 import { L as $L } from './_gen/legacy.js';
+$L.wwCompany = wwCompany; $L.wwFile = wwFile; $L.verdictWord = verdictWord;
 /* The week around the world (the week of 20 October, step 4). Rival companies already book shows, change titles and
    keep feuds, but the player only saw it as loose lines in the news. Now, at the end of every week, the game files a
    short digest of what every other company did: their shows and how each went against its own crowd, new champions
@@ -9,6 +10,7 @@ import { L as $L } from './_gen/legacy.js';
    What it hands on (rule 7a): a rival who is hot right now, a champion crowned elsewhere, a star whose story just
    ended and who may be looking for work. */
 export var WW_KEEP=12;
+$L.WW_KEEP = WW_KEEP;
 export function wwCompany(S,P,wk){
   var out={id:P.id,name:P.name,shows:[],titles:[],begun:[],ended:[],lead:null};
   (S.wwShows||[]).forEach(function(r){if(r.p===P.id&&r.w===wk)out.shows.push(r);});
@@ -29,22 +31,22 @@ export function wwCompany(S,P,wk){
 }
 export function wwFile(S){
   if(S.cal)return;var wk=S.week,L=[];
-  S.order.forEach(function(pid){if(pid===S.player)return;var P=S.promos[pid];if(!P||P.dead)return;var c=wwCompany(S,P,wk);if(c.lead||c.begun.length)L.push(c);});
+  S.order.forEach(function(pid){if(pid===S.player)return;var P=S.promos[pid];if(!P||P.dead)return;var c=$L.wwCompany(S,P,wk);if(c.lead||c.begun.length)L.push(c);});
   L.sort(function(a,b){return (b.titles.length*3+b.ended.length*2+b.shows.length)-(a.titles.length*3+a.ended.length*2+a.shows.length);});
-  var ww=S.ww||(S.ww=[]);ww.unshift({w:wk,label:$L.cal(wk).label,cos:L});if(ww.length>WW_KEEP)ww.length=WW_KEEP;
+  var ww=S.ww||(S.ww=[]);ww.unshift({w:wk,label:$L.cal(wk).label,cos:L});if(ww.length>$L.WW_KEEP)ww.length=$L.WW_KEEP;
 }
 // rival shows are not kept as reports, so each one is noted as it airs: its grade against its own crowd, and its main event
 $L.SHOWX.push(function(S,P,show,rep){
   if(S.cal||!P||P.id===S.player||!rep)return;var L=S.wwShows||(S.wwShows=[]),cs=$L.repCS(rep),me=rep.lineup&&rep.lineup.length?rep.lineup[rep.lineup.length-1]:null;
-  L.push({p:P.id,w:S.week,name:show.name,big:!!show.big,grade:$L.gradeG(cs),word:verdictWord(rep),main:typeof me==='string'?me:null});
+  L.push({p:P.id,w:S.week,name:show.name,big:!!show.big,grade:$L.gradeG(cs),word:$L.verdictWord(rep),main:typeof me==='string'?me:null});
 });
 // the verdict in the game's own words (rule 8c): the same ladder the letter and the dirt sheet use
 export function verdictWord(rep){var v=rep.rating!=null&&rep.exp!=null?$L.E.showVerdict(rep.rating,rep.exp):null;return v?v.head.toLowerCase():'';}
-$L.WEEKX.push(function(S){wwFile(S);S.wwShows=[];});
+$L.WEEKX.push(function(S){$L.wwFile(S);S.wwShows=[];});
 /** The week around the world: the latest filed weeks, newest first ({w, label, cos:[{name, lead, shows, titles, begun, ended}]}). */
-$L.E.worldWeek=function(S,n){return (S.ww||[]).slice(0,n||WW_KEEP);};
+$L.E.worldWeek=function(S,n){return (S.ww||[]).slice(0,n||$L.WW_KEEP);};
 
-// hand this module's names back to the bridge, so legacy code that calls them finds them
+// hand this module's names back to the bridge once more, in case top-level code reassigned one
 $L.WW_KEEP = WW_KEEP;
 $L.wwCompany = wwCompany;
 $L.wwFile = wwFile;

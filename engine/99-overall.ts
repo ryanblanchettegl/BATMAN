@@ -1,6 +1,7 @@
 // @ts-nocheck
 /* Moved from src/99-overall.js (ADR-0001). Names from the rest of the engine come through the bridge, $L. Types come in step 3. */
 import { L as $L } from './_gen/legacy.js';
+$L.overallRaw = overallRaw; $L.overallOf = overallOf;
 /* The overall rating (Ryan, 20 October: "add overall rating to wrestlers for easy sorting"). One number from 1 to 99
    that says how good a wrestler is all round, for sorting a list at a glance: their work in the ring weighs most,
    then how over they are with the crowd, then the microphone and their presence, then stamina, how steady they are
@@ -16,13 +17,13 @@ export function overallRaw(w){
    games spread it. A handful in the world reach 90, a main-eventer is in the low to high 80s, the middle of a card sits
    in the 60s and low 70s, a rookie in the 50s. The curve bends the old scale down in the middle and keeps its top. */
 export function overallOf(w){
-  if(!w)return 0;var v=70+(overallRaw(w)-70)/1.1,d=v-48;
+  if(!w)return 0;var v=70+($L.overallRaw(w)-70)/1.1,d=v-48;
   return $L.clamp(Math.round(d>0?48+d*0.6056+d*d*0.00971:v),1,99);
 }
 /** The overall rating of a wrestler, 1 to 99 (a wrestler, or an id). */
-$L.E.overall=function(S,w){if(typeof w==='number')w=S.w[w];return overallOf(w);};
+$L.E.overall=function(S,w){if(typeof w==='number')w=S.w[w];return $L.overallOf(w);};
 $L.E.overallOf=overallOf;
 
-// hand this module's names back to the bridge, so legacy code that calls them finds them
+// hand this module's names back to the bridge once more, in case top-level code reassigned one
 $L.overallRaw = overallRaw;
 $L.overallOf = overallOf;
