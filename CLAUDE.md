@@ -62,6 +62,7 @@ node test-staff.js                                  # staff made and moved, a ti
 node test-progress.js                               # progression: levels, points, what doing it teaches, age, and what talent costs
 node test-gimmicks.js                               # gimmicks: chosen from the character's words, what they shine in, hot and flat pairings
 node test-scenes.js                                 # scene hooks, and Create a Player files: checked, kept in a world, carried into a game, written out
+node tools/state-types.js                           # rewrite engine/types.ts, the types of the game state, from six real games (build first)
 node tools/build-public-domain.js                   # rebuild universes/public_domain.json after editing rosters
 python3 tools/build-font.py                         # rebuild app/fonts/ewf-blocks.woff2 (needs fonttools, brotli)
 python3 tools/build-ui-font.py                      # rebuild app/fonts/inter-*.woff2, the interface face (needs fonttools, brotli, fonts-inter)

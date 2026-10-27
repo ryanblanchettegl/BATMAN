@@ -1,4 +1,5 @@
 /* Gorilla Position, the simulation engine (built from src/ and engine/). No DOM. State is plain JSON so it can be saved as-is. */
+"use strict";
 (() => {
   // engine/_gen/legacy.js
   var L = function(root) {
