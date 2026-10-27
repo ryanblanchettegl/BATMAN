@@ -3,7 +3,7 @@
   // engine/_gen/legacy.js
   var L = function(root) {
     "use strict";
-    var KNOW02, knowMake2, gasLimit2, fogSkill2, readP2, reads2, agentName2, matchRead2, fogLook2, EAR_BAD2, EAR_GOOD2, earLine2, cardFlags2, GFX2, GIM_WORDS2, gimFromWords2, gimBestFit2, gimSmart2, gfx2, gimStip2, gimPair2, KF_WORDS2, kfWord2, kfInit2, kfFind2, kfLeakP2, MID_MAX2, midStory2, overallRaw2, overallOf2, BP_CARRY2, bpPerShow2, CLOG_MAX2, clog2, pmMoney2, pmReview2, P0month2, PRESS_FIRST2, PRESS_LAST2, PRESS_BEAT2, PRESS_ACT2, pressInit2, pressWord2, pressSources2, pressWho2, PROG_ATTR2, PROG_BY2, DEV2, STYLE_PRI2, GIM_PRI2, progNeed2, progAgeX2, progInit2, progAll2, progCap2, progCost2, progGain2, progUse2, progSpend2, progAuto2, PROG_HC2, progShow2, rgWhy2, rgRow2, progLose2, regWeek2, RW_MOVES2, RW_LINES2, rwMoves2, brSurprisePool2, brFee2, STAFF_TAG2, STAFF_LVL2, staffTag2, staffVoice2, staffUnvoice2, toStaffOk2, SUG_FLAT2, VQ_FEEL2, VQ_CROWD2, venueQuirks2, DISASTER2, WW_KEEP2, wwCompany2, wwFile2, verdictWord2, WR_STYLE2, GR_WROOM2, WR_FIRST2, wrInit2, wrName2, wrPitch2, POD_EPS2, POD_SEGS2, podFirst2, podPlain2, podShowName2, podInit2, podTone2, podPickSide2, podWrite2;
+    var LF2, LF_PRESS2, crowdWord2, liveFeed2, NET_FEED_MAX2, netPickH2, netHandle2, netLikes2, netPost2, netStarPost2, NET_WIN_F2, NET_WIN_H2, NET_NEW2, NET_LOSE2, NET_RIVAL2, NET_TURN2, netTurn2, netMentions2, netRumours2, netBackstage2, netThrowback2, netMoment2, netSheet2, taskOpen2, ADV_DAYS2, showDay2, wasNow2, reqOf2, faceCandidates2, CLAUSE2, clausesWanted2, datesFull2, SHOW_LEN2, MT_OVER2, showMins2, bellMins2, brMins2, matchSlot2, hasPlan2, showClock2, OPENS2, openKind2, showTimes2, fitShow2, showFill2, PLOT_PUSH_CD2, PLOT2, plotTeams2, plotPushable2, plotTapeOn2, SHOW_WORDS2, GRADES2, gradeIdx2, gradeG2, gradeA2, gradeMeets2, CROWD_PTS2, crowdScoreD2, crowdScore2, repCS2, verdictBand2, cgFix2, showWord2, capW2, showVerdict2, ARCH_KEEP2, archYear2, arcHeels2, arcFaces2, ARCS2, arcFill2, arcEnd2, arcWord2, arcSplit2, AUD2, AUD_MODEL2, AUD_DRIFT2, audInit2, audReach2, audLean2, audTarget2, audBase2, audTotal2, audOffer2, CT_BIG2, ctWeekly2, ctPolicy2, ctFee2, ctAssign2, ctWeek2, payWeek2, DEBUT2, KNOW02, knowMake2, gasLimit2, fogSkill2, readP2, reads2, agentName2, matchRead2, fogLook2, EAR_BAD2, EAR_GOOD2, earLine2, cardFlags2, GFX2, GIM_WORDS2, gimFromWords2, gimBestFit2, gimSmart2, gfx2, gimStip2, gimPair2, KF_WORDS2, kfWord2, kfInit2, kfFind2, kfLeakP2, MID_MAX2, midStory2, overallRaw2, overallOf2, BP_CARRY2, bpPerShow2, CLOG_MAX2, clog2, pmMoney2, pmReview2, P0month2, PRESS_FIRST2, PRESS_LAST2, PRESS_BEAT2, PRESS_ACT2, pressInit2, pressWord2, pressSources2, pressWho2, PROG_ATTR2, PROG_BY2, DEV2, STYLE_PRI2, GIM_PRI2, progNeed2, progAgeX2, progInit2, progAll2, progCap2, progCost2, progGain2, progUse2, progSpend2, progAuto2, PROG_HC2, progShow2, rgWhy2, rgRow2, progLose2, regWeek2, RW_MOVES2, RW_LINES2, rwMoves2, brSurprisePool2, brFee2, STAFF_TAG2, STAFF_LVL2, staffTag2, staffVoice2, staffUnvoice2, toStaffOk2, SUG_FLAT2, VQ_FEEL2, VQ_CROWD2, venueQuirks2, DISASTER2, WW_KEEP2, wwCompany2, wwFile2, verdictWord2, WR_STYLE2, GR_WROOM2, WR_FIRST2, wrInit2, wrName2, wrPitch2, POD_EPS2, POD_SEGS2, podFirst2, podPlain2, podShowName2, podInit2, podTone2, podPickSide2, podWrite2;
     var DB = root.GP_DB, E = {};
     var CAL0 = DB ? { y: DB.startYear, m: DB.startMonth } : { y: 2026, m: 9 };
     function dbOf(S) {
@@ -3264,7 +3264,7 @@
       var ms = rep.segs.filter(function(s) {
         return s.k === "match";
       }), L2 = [], d = rep.rating - rep.exp, i;
-      var vb = verdictBand(d);
+      var vb = verdictBand2(d);
       L2.push(vb > 1 ? show.name + " beat every expectation. This is a company on a roll." : vb > 0 ? "A good night. " + show.name + " gave the crowd a little more than they came for." : vb === 0 ? show.name + " was exactly the show people expected. No more, no less." : vb === -1 ? "A flat night. " + show.name + " came up short of what this audience expects." : show.name + " was a miss. People were leaving before the main event ended.");
       var best = ms.slice().sort(function(a, b) {
         return b.ov - a.ov;
@@ -3569,7 +3569,7 @@
           den += aw;
         }
       });
-      var tm = isPl ? showTimes(S, P, show, rep, card) : 0;
+      var tm = isPl ? showTimes2(S, P, show, rep, card) : 0;
       rep.rating = clamp(r1((den ? num / den : 30) + tm + (P.prodLvl - P.prod0) * 0.6 * (modelOf(P).prodX == null ? 1 : modelOf(P).prodX) + (isPl && S.rateMod ? S.rateMod : 0)), 5, 99);
       rep.mainOv = ms.length ? ms[ms.length - 1].ov : 0;
       if (isPl) S.rateMod = 0;
@@ -3588,7 +3588,7 @@
       }
       var qf = clamp(1 + (P.trend || 0) / 60, 0.85, 1.15) * (SLOT_V[P.slot] / SLOT_V[P.slot0]) * (1 + 0.03 * (P.prodLvl - P.prod0)) * airPF(P, show);
       rep.exp = r1(exp);
-      rep.cs = crowdScore(rep.rating, rep.exp);
+      rep.cs = crowdScore2(rep.rating, rep.exp);
       var mx = mixOf(P);
       rep.viewers = Math.round(viewersK(P, show, qf) * 1e3);
       rep.gate = Math.round(rep.att * ticket(P, show) * TIX_P[P.tix] * mx.gate);
@@ -3624,13 +3624,13 @@
         S.quests.slice().forEach(function(q) {
           var qt;
           if (q.type === "sponsor" && big) {
-            cgFix(S);
-            var sok = gradeMeets(rep.cs, q.target);
+            cgFix2(S);
+            var sok = gradeMeets2(rep.cs, q.target);
             if (sok) {
               P.led.bonus += q.bonus;
-              qt = "Sponsor target hit: " + gradeA(rep.cs) + " show, " + gradeA(q.target) + " was needed. +$" + q.bonus.toLocaleString("en-US") + ".";
+              qt = "Sponsor target hit: " + gradeA2(rep.cs) + " show, " + gradeA2(q.target) + " was needed. +$" + q.bonus.toLocaleString("en-US") + ".";
               award(S, "ACH_QUEST");
-            } else qt = "Sponsor target missed: needed " + gradeA(q.target) + " show, got " + gradeA(rep.cs) + ".";
+            } else qt = "Sponsor target missed: needed " + gradeA2(q.target) + " show, got " + gradeA2(rep.cs) + ".";
             rep.quest.push(qt);
             (rep.targets = rep.targets || []).push({ ok: sok, t: qt });
             dropQuest(S, q, sok, qt);
@@ -3651,7 +3651,7 @@
         if (S.reports.length > 6) S.reports.length = 6;
       } else if (big) {
         var mm = ms[ms.length - 1];
-        news(S, "world", show.name + " was graded " + gradeG(repCS(rep)) + ". Main event: " + mm.label + (mm.win ? " (" + mm.win + " won)." : " (draw)."));
+        news(S, "world", show.name + " was graded " + gradeG2(repCS2(rep)) + ". Main event: " + mm.label + (mm.win ? " (" + mm.win + " won)." : " (draw)."));
       }
       if (isPl) Object.keys(ctx.angled).forEach(function(id) {
         if (S.w[id]) S.w[id].la = S.week;
@@ -3795,8 +3795,8 @@
         }), checks: ch.checks || null, safe: CHAOS_SAFE[ch.type] || 0 };
       },
       run: function(S, L2, ev, c) {
-        var b0 = showClock(S, L2.card).total, r = E.resolveChaos(S, L2.card, c);
-        L2.st.rep.slack = (L2.st.rep.slack || 0) + Math.max(0, b0 - showClock(S, L2.card).total);
+        var b0 = showClock2(S, L2.card).total, r = E.resolveChaos(S, L2.card, c);
+        L2.st.rep.slack = (L2.st.rep.slack || 0) + Math.max(0, b0 - showClock2(S, L2.card).total);
         return r || "The moment passes.";
       }
     };
@@ -4587,7 +4587,7 @@
       (S.lcd = S.lcd || {})[k] = S.week;
     }
     function botchRead(S, M) {
-      var show = S.queue[S.qi], mins = bellMins(show, M.m, M.main), stip = M.m.stip || "std", best = null;
+      var show = S.queue[S.qi], mins = bellMins2(show, M.m, M.main), stip = M.m.stip || "std", best = null;
       flat(M.c.sides).forEach(function(w) {
         if (!lcdOk(S, "bt" + w.id, BOTCH_CD)) return;
         var body = [], load = [], z = zonesOf(w), hz = "b", hv = 0;
@@ -4747,9 +4747,9 @@
       run: function(S, L2, ev, c) {
         var M = liveMatch(S, L2, ev.mi), pick2 = ev.choices[c], st = L2.st, show = S.queue[S.qi];
         if (!M || !pick2 || !pick2.k) return "The referee gets the word, and they go home on time.";
-        var before = matchSlot(show, M.m, M.main);
+        var before = matchSlot2(show, M.m, M.main);
         lenUp(M.m);
-        var more = matchSlot(show, M.m, M.main) - before;
+        var more = matchSlot2(show, M.m, M.main) - before;
         livePut(M.m, { cr: 2, x: "They were given time and used it" });
         flat(M.c.sides).forEach(function(w) {
           youRemember(S, w, "time", "You gave them more time when the match was working.", 5);
@@ -5054,7 +5054,7 @@
       if (nx.length) add("next", "Next week", nx[0].t + (nx[0].when ? " (" + nx[0].when + ")" : ""), nx.map(function(x) {
         return x.t + (x.when ? " (" + x.when + ")." : "");
       }), nx[0].soon ? "warn" : "");
-      return { key: L2.key, name: rep.name, grade: gradeG(repCS(rep)), head: v.head, line: v.line, matter: mt, next: nx, items, unseen: items.filter(function(x) {
+      return { key: L2.key, name: rep.name, grade: gradeG2(repCS2(rep)), head: v.head, line: v.line, matter: mt, next: nx, items, unseen: items.filter(function(x) {
         return !x.seen;
       }).length, left: S.queue.length - S.qi };
     };
@@ -5431,7 +5431,7 @@
         sp += x.pay;
       });
       var adv = Math.round(ADV_C[P.adv] * P.inc0) + (mine ? evSpendCost(P) : 0), camp = campCost(P), med = medCost(P), trv = travelCost(P);
-      var L2 = P.led, merch = merchWeek(S, P), wages = payWeek(S, P), inc = L2.tv + L2.gate + L2.ppv + L2.bonus + merch + sp, over = P.fixed + P.varRate * 0.96 * (inc - sp), exp = wages + L2.prod + over + adv + camp + med + trv;
+      var L2 = P.led, merch = merchWeek(S, P), wages = payWeek2(S, P), inc = L2.tv + L2.gate + L2.ppv + L2.bonus + merch + sp, over = P.fixed + P.varRate * 0.96 * (inc - sp), exp = wages + L2.prod + over + adv + camp + med + trv;
       var fnc = mine ? financeCost(S, P, inc - exp) : 0;
       exp += fnc;
       var dv = 0;
@@ -5730,9 +5730,9 @@
         if (cal(S.week).wom !== 4 || S.quests.some(function(q) {
           return q.type === "sponsor";
         })) return null;
-        var target = Math.round(crowdScoreD(3)), bonus = Math.round(P.inc0 * 0.08 / 1e3) * 1e3;
-        S.quests.push({ id: S.nid++, type: "sponsor", cg: 1, target, bonus, due: S.week, text: "Sponsor: big event graded " + gradeG(target) + " or better (" + money(bonus) + ")" });
-        return { type: "sponsor", text: "A sponsor will pay " + money(bonus) + " if this month\u2019s big event is graded " + gradeG(target) + " or better." };
+        var target = Math.round(crowdScoreD2(3)), bonus = Math.round(P.inc0 * 0.08 / 1e3) * 1e3;
+        S.quests.push({ id: S.nid++, type: "sponsor", cg: 1, target, bonus, due: S.week, text: "Sponsor: big event graded " + gradeG2(target) + " or better (" + money(bonus) + ")" });
+        return { type: "sponsor", text: "A sponsor will pay " + money(bonus) + " if this month\u2019s big event is graded " + gradeG2(target) + " or better." };
       }
     };
     function genEvents(S) {
@@ -6056,7 +6056,7 @@
         return m.wi.indexOf(id) < 0;
       })[0];
       if (o == null || !S.w[w] || !S.w[o]) return;
-      var nn = P.name + " " + evName(S, P, (cal(S.week).month + 1) % 12), cs = repCS(rep), good = cs >= 0;
+      var nn = P.name + " " + evName(S, P, (cal(S.week).month + 1) % 12), cs = repCS2(rep), good = cs >= 0;
       pushEv(S, {
         type: "scrum",
         w,
@@ -6158,9 +6158,9 @@
         Object.keys(P.base).forEach(function(k) {
           if (P.base[k] < lo) lo = P.base[k];
         });
-        o.val = Math.round(crowdScoreD(-ri(S, 5, 10)));
+        o.val = Math.round(crowdScoreD2(-ri(S, 5, 10)));
         o.cg = 1;
-        o.text = "No show graded under " + gradeG(o.val);
+        o.text = "No show graded under " + gradeG2(o.val);
       }
       var hv = h01("sp" + S.seed + o.name + S.week), tr = P.image >= 65 && hv < 0.3 ? 2 : P.image >= 45 && hv < 0.65 ? 1 : 0;
       o.tier = tr;
@@ -6182,9 +6182,9 @@
     function sponsorBroken(S, P, x) {
       if (x.type === "risk") return P.risk > x.val;
       if (x.type === "image") return P.image < x.val;
-      cgFix(S);
+      cgFix2(S);
       return S.reports.some(function(r) {
-        return r.week === S.week && !gradeMeets(repCS(r), x.val);
+        return r.week === S.week && !gradeMeets2(repCS2(r), x.val);
       });
     }
     NEWX.push(function(S) {
@@ -7783,12 +7783,12 @@
         return;
       }
       var MD = modelOf(P), mv = MD.show ? MD.show(S, P, show, rep) : null;
-      var vb0 = verdictBand(d), dd = vb0 === -1 ? -0.25 : vb0 <= -2 ? clamp(d * 0.35, -2, 0) : clamp(d * 0.5, -3, 3);
+      var vb0 = verdictBand2(d), dd = vb0 === -1 ? -0.25 : vb0 <= -2 ? clamp(d * 0.35, -2, 0) : clamp(d * 0.5, -3, 3);
       var dt = (dd * (MD.ownShow || 1) + (like ? 0.5 : show.big ? -0.5 : 0)) * 2 / (P.shows.length + 1) + (mv ? mv.d : 0);
       var t0 = o.trust, why = [];
       o.trust = clamp(o.trust + dt, 0, 100);
       if (d >= 3) S.bp += 1;
-      var vb = verdictBand(d);
+      var vb = verdictBand2(d);
       why.push(vb > 0 ? "The show beat what the crowd expected." : vb < 0 ? "The show fell short of what the crowd expected." : "The show was what the crowd expected.");
       if (like) why.push("You gave them " + STYLES[o.style].likes + (dt < -0.5 ? ", but it was not enough." : "."));
       else if (show.big) why.push("A big event without " + STYLES[o.style].likes + ".");
@@ -8214,7 +8214,7 @@
       if (P.id !== S.player || !o || o.me || S.cal) return;
       var Y = o.yr || yearNew(S);
       Y.shows++;
-      if (gradeMeets(repCS(rep), "B-")) Y.good++;
+      if (gradeMeets2(repCS2(rep), "B-")) Y.good++;
       if (!show.big || !show.flag) return;
       if (Y.shows < YEAR_MIN_SHOWS) {
         yearNew(S);
@@ -8351,7 +8351,7 @@
       }
       var now = relState(e);
       e.st = now;
-      if (now !== was && now !== 0) netTurn(S, a, b, now);
+      if (now !== was && now !== 0) netTurn2(S, a, b, now);
       if (now !== was && relMine(S, a, b)) {
         var A = S.w[a].name, B = S.w[b].name;
         if (now < 0) note(S, A + " and " + B + " have real heat now", mem && mem.t ? mem.t : "It will show when they share a ring or a locker room.", "bad");
@@ -8792,12 +8792,12 @@
         return b.ov - a.ov;
       });
       R.matches.length = Math.min(10, R.matches.length);
-      R.shows.push({ n: rep.name, r: rep.rating, c: repCS(rep), w: S.week });
+      R.shows.push({ n: rep.name, r: rep.rating, c: repCS2(rep), w: S.week });
       R.shows.sort(function(a, b) {
         return b.r - a.r;
       });
       R.shows.length = Math.min(5, R.shows.length);
-      if (!Y.show || rep.rating > Y.show.r) Y.show = { n: rep.name, r: rep.rating, c: repCS(rep), w: S.week };
+      if (!Y.show || rep.rating > Y.show.r) Y.show = { n: rep.name, r: rep.rating, c: repCS2(rep), w: S.week };
       if (!R.gate || rep.att > R.gate.v) R.gate = { v: rep.att, n: rep.name, w: S.week };
       if (rep.buys && (!R.buys || rep.buys > R.buys.v)) R.buys = { v: rep.buys, n: rep.name, w: S.week };
       rosterOf(S, P.id).forEach(function(w) {
@@ -8834,7 +8834,7 @@
       }
       if (Y.match) L2.push({ k: "Match of the year", v: Y.match.l + ", " + starG(Y.match.ov) + " at " + Y.match.show });
       if (Y.feud) L2.push({ k: "Feud of the year", v: Y.feud.l });
-      if (Y.show) L2.push({ k: "Show of the year", v: Y.show.n + ", graded " + gradeG(Y.show.c != null ? Y.show.c : Y.show.r) });
+      if (Y.show) L2.push({ k: "Show of the year", v: Y.show.n + ", graded " + gradeG2(Y.show.c != null ? Y.show.c : Y.show.r) });
       if (imp && imp.ovr - imp.oy >= 2) L2.push({ k: "Most improved", v: imp.name + " (+" + Math.round(imp.ovr - imp.oy) + " overness)", w: imp.id });
       var tm = by(S.teams.filter(function(t) {
         return t.promo === P.id;
@@ -13296,7 +13296,7 @@
       if (nonf >= 2) add("old", -1, nonf + " matches without a winner. I counted. Finish your matches.");
       if (clean2 >= ms.length - 1 && ms.length >= 4) add("old", 1, "Clean finishes up and down the card. That is how you build a division.");
       if (rep.gim && !show.big) add("old", -1, "Giving away gimmick matches on free TV now. Save something for the big show.");
-      add("stats", d >= 0 ? 1 : -1, rep.name + ": " + showVerdict(rep.rating, rep.exp).line.replace(/^./, function(c) {
+      add("stats", d >= 0 ? 1 : -1, rep.name + ": " + showVerdict2(rep.rating, rep.exp).line.replace(/^./, function(c) {
         return c.toLowerCase();
       }) + " " + (d >= 0.5 ? "That is over par." : d > -0.5 ? "That is par." : "That is under par.") + " Paid attendance " + rep.att.toLocaleString("en-US") + (rep.sellout ? ", a sell-out." : "."));
       var pr = rep.segs.filter(function(s) {
@@ -13330,7 +13330,7 @@
         sum += p.s;
       });
       S.net.mood = clamp(S.net.mood + (clamp(55 + (rep.rating - rep.exp) * 5 + sum * 3, 0, 100) - S.net.mood) * 0.25, 0, 100);
-      S.net.threads.unshift({ w: S.week, sub: rep.name + " (" + gradeG(repCS(rep)) + ")", posts });
+      S.net.threads.unshift({ w: S.week, sub: rep.name + " (" + gradeG2(repCS2(rep)) + ")", posts });
       if (S.net.threads.length > 10) S.net.threads.length = 10;
       if (S.net.mood >= 90) award(S, "ACH_BOARD");
     });
@@ -14018,7 +14018,7 @@
       var city = theirs[hash("bar" + S.seed + P.id + S.week) % theirs.length];
       if (mine.indexOf(city) < 0) return;
       (S.bar || (S.bar = {}))[city] = { w: S.week, d: Math.min(3, (rep.rating - rep.exp) / 3), by: P.name, r: rep.rating };
-      news(S, "world", P.name + " had a great night in " + city + " (graded " + gradeG(repCS(rep)) + "). Anyone who follows them there has more to live up to.");
+      news(S, "world", P.name + " had a great night in " + city + " (graded " + gradeG2(repCS2(rep)) + "). Anyone who follows them there has more to live up to.");
     });
     function barCity(S, venue) {
       var B = S.bar;
@@ -14181,7 +14181,7 @@
         return s.k === "match";
       });
       if (rep.sellout) msAward(S, "MS_SELLOUT");
-      if (repCS(rep) >= 80) msAward(S, "MS_SHOW80");
+      if (repCS2(rep) >= 80) msAward(S, "MS_SHOW80");
       if (ms.some(function(s) {
         return starQ(s.ov) >= 18;
       })) msAward(S, "MS_TOPMATCH");
@@ -16944,7 +16944,7 @@
       return card;
     }
     E.assistantBook = function(S) {
-      S.card = showFill(S, asstBook(S));
+      S.card = showFill2(S, asstBook(S));
       return S.card;
     };
     CRX.push(function(ctx) {
@@ -16975,12 +16975,12 @@
       var out = [], A = asstInit(S);
       if (S.over) return out;
       while (S.qi < S.queue.length && !S.queue[S.qi].big && !S.over) {
-        var show = S.queue[S.qi], card = showFill(S, asstBook(S));
+        var show = S.queue[S.qi], card = showFill2(S, asstBook(S));
         S.card = card;
         var pr = E.preShow(S, card);
         if (pr) {
           E.resolvePre(S, card, 0);
-          fitShow(S, card);
+          fitShow2(S, card);
         }
         var v = E.validate(S, card);
         if (v.errors.length) {
@@ -18372,7 +18372,7 @@
         score += p.v;
       });
       var tl = [{ w: 1, label: "Took over " + P.name + "." }];
-      if (R.shows[0]) tl.push({ w: R.shows[0].w, label: "Best show: " + R.shows[0].n + ", graded " + gradeG(R.shows[0].c != null ? R.shows[0].c : R.shows[0].r) + "." });
+      if (R.shows[0]) tl.push({ w: R.shows[0].w, label: "Best show: " + R.shows[0].n + ", graded " + gradeG2(R.shows[0].c != null ? R.shows[0].c : R.shows[0].r) + "." });
       if (R.matches[0]) tl.push({ w: R.matches[0].w, label: "Best match: " + R.matches[0].l + ", " + starG(R.matches[0].ov) + "." });
       if (R.gate) tl.push({ w: R.gate.w, label: "Biggest crowd: " + R.gate.v.toLocaleString("en-US") + " at " + R.gate.n + "." });
       A.slice(0, 4).forEach(function(a) {
@@ -20763,7 +20763,7 @@
     function nightOf(sh) {
       if (!sh || sh.big) return "";
       if (sh.day) return sh.day;
-      var d = showDay(sh);
+      var d = showDay2(sh);
       if (d) return d;
       for (var k in NIGHT_ALT) if (sh.name.indexOf(k) >= 0) return NIGHT_ALT[k];
       return "";
@@ -22398,7 +22398,7 @@
       var P = S.promos[S.player];
       if (!P || !P.strm || !P.strm.on) return;
       var st = P.strm, cap = streamCap(S, P), r = S.reports[0];
-      var q = r && r.week >= S.week - 1 ? (repCS(r) - 55) / 100 : 0;
+      var q = r && r.week >= S.week - 1 ? (repCS2(r) - 55) / 100 : 0;
       var was = st.subs;
       st.subs = Math.max(0, Math.round(st.subs + (cap - st.subs) * 0.06 + cap * 0.02 * q));
       st.mx = Math.max(st.mx || 0, st.subs);
@@ -22654,7 +22654,7 @@
       if (S.cal || P.id !== S.player || !showOff(P, show)) return;
       var sh = airRec(P, show.id);
       rep.hs = 1;
-      sh.offRun = repCS(rep) >= BACK_CS ? (sh.offRun || 0) + 1 : 0;
+      sh.offRun = repCS2(rep) >= BACK_CS ? (sh.offRun || 0) + 1 : 0;
       if (sh.offRun >= BACK_RUN && !S.inbox.some(function(e) {
         return !e.done && e.type === "netback";
       })) {
@@ -23390,9 +23390,9 @@
       if (S.cal || P.id !== S.player || !rep.venue) return;
       var c = cityOfVenue(rep.venue);
       rep.city = c;
-      (S.rdv || (S.rdv = {}))[c] = { w: S.week, cs: Math.round(repCS(rep)), att: rep.att, cap: rep.cap, so: rep.sellout ? 1 : 0 };
+      (S.rdv || (S.rdv = {}))[c] = { w: S.week, cs: Math.round(repCS2(rep)), att: rep.att, cap: rep.cap, so: rep.sellout ? 1 : 0 };
       var m = (S.mkt || (S.mkt = {}))[c] || { k: mktBase(S, P, c) }, was = m.k;
-      m.k = clamp(Math.round((m.k + clamp((repCS(rep) - 65) / 4, -4, 8) + (rep.sellout ? 2 : 0)) * 10) / 10, 0, 100);
+      m.k = clamp(Math.round((m.k + clamp((repCS2(rep) - 65) / 4, -4, 8) + (rep.sellout ? 2 : 0)) * 10) / 10, 0, 100);
       m.w = S.week;
       S.mkt[c] = m;
       rep.mkt = { was: Math.round(was), now: Math.round(m.k) };
@@ -23465,7 +23465,7 @@
       if (!ahead.length) return null;
       for (i = 0; i < S.reports.length && past.length < 3; i++) {
         var r = S.reports[i];
-        if (r && r.venue) past.unshift({ k: "past", city: r.city || cityOfVenue(r.venue), show: r.name, w: r.week, grade: gradeG(repCS(r)), att: r.att, cap: r.cap, so: !!r.sellout });
+        if (r && r.venue) past.unshift({ k: "past", city: r.city || cityOfVenue(r.venue), show: r.name, w: r.week, grade: gradeG2(repCS2(r)), att: r.att, cap: r.cap, so: !!r.sellout });
       }
       var stops = past.concat(ahead.map(function(a, j) {
         var x = stopSales(S, P, a.w, a.show, a.k, j === 0);
@@ -23532,7 +23532,7 @@
           on: sale.on,
           opens: sale.opens,
           gate: Math.round(sale.sold * ticket(P, A.show) * TIX_P[P.tix]),
-          last: last ? { ago: S.week - last.w, grade: gradeG(last.cs), att: last.att, cap: last.cap, so: !!last.so } : null,
+          last: last ? { ago: S.week - last.w, grade: gradeG2(last.cs), att: last.att, cap: last.cap, so: !!last.so } : null,
           rival: bar && S.week - bar.w <= 4 ? { by: bar.by, ago: S.week - bar.w } : null,
           mkt: mktWord(mk),
           mktK: Math.round(mk),
@@ -23565,7 +23565,7 @@
       var P = S.promos[S.player];
       return roadRoute(S, P).map(function(c) {
         var city = c.city || c.n || c, k = mktKnow(S, P, city), v = S.rdv && S.rdv[city], m = S.mkt && S.mkt[city];
-        return { city, k: Math.round(k), word: mktWord(k).w, last: v ? v.w : null, ago: v ? S.week - v.w : null, grade: v && v.cs != null ? gradeG(v.cs) : null, att: v ? v.att : null, cap: v ? v.cap : null, so: !!(v && v.so) };
+        return { city, k: Math.round(k), word: mktWord(k).w, last: v ? v.w : null, ago: v ? S.week - v.w : null, grade: v && v.cs != null ? gradeG2(v.cs) : null, att: v ? v.att : null, cap: v ? v.cap : null, so: !!(v && v.so) };
       });
     };
     SHOWX.push(function(S, P, show, rep) {
@@ -25222,2614 +25222,6 @@
       if (!pkg.stips.length) delete pkg.stips;
       return n !== (pkg.stips || []).length;
     };
-    var LF = {
-      start: ["{a} vs {b}. Here we go!!", "{a} and {b} right now. Locked in.", "been waiting all week for {a} vs {b}", "{a} vs {b} on {show}. lets go", "ok {a} vs {b}, I am watching"],
-      feud: ["{a} and {b} cannot stand each other and it SHOWS", "this {a}/{b} thing is personal now", "{a} vs {b}. finish it tonight please", "the {a} {b} feud is the best thing going"],
-      title: ["the {t} is on the line!!!", "{t} match. this is the big one", "title match time. {a} or {b}?"],
-      near: ["HOW DID {x} KICK OUT", "{x} WAS DONE. THAT WAS THREE", "2.9!!! I am out of my chair", "nearly!!! the whole place jumped", "i thought that was it. {x} is unreal", "NO NO NO. still going"],
-      win: ["{w} wins it!", "{w} gets the win. deserved", "{w}!!!! yes!!!", "{l} could not hang with {w} tonight", "called it. {w}.", "clean win for {w}. respect"],
-      upset: ["WHAT. {w} BEAT {l}???", "UPSET!!! nobody had {w} winning that", "{l} lost to {w}?? i need a minute", "biggest upset of the year. {w}!!"],
-      champ: ["NEW CHAMPION!!! {w}!!!!", "{w} with the {t}. I am crying", "AND NEW. {w}. history.", "{w} is the champ!!! what a night"],
-      retain: ["{w} keeps the {t}. still the champ", "and still... {w}", "{w} survives. {t} stays put"],
-      promo: ["{a} on the mic is must see", "{a} cooked. no notes", "that promo from {a} gave me chills", "{a} talking. everybody shut up", "{a} said what everybody was thinking"],
-      angle: ["WHAT did {a} just do to {b}", "{a} is out of control", "oh {a} is EVIL for that", "{b} did not see that coming. neither did i", "this is going to be ugly. {a} vs {b} has to happen"],
-      dead: ["this crowd is asleep", "awful quiet in there tonight", "can we get a reaction please", "the building is dead. not their fault"],
-      hot: ["listen to this crowd!!!", "the building is SHAKING", "best crowd of the year easily", "you can hear them from outside"],
-      winF: ["Thank you, {city}. That one was for you.", "Told you I would do it. Done.", "Listen to that crowd. I will never get used to it."],
-      winH: ["Nobody in that building is on my level.", "Boo all you like. Same result.", "That was a lesson, not a fight."],
-      lose: ["Not my night. It will not happen twice.", "I heard the count. I will be back.", "No excuses. Run it back."],
-      taunt: ["{b}, that was only the start.", "I warned you, {b}.", "Look at my face, {b}. Does it look sorry?"],
-      hurt: ["You will pay for that, {a}.", "Cheap. Even for you, {a}.", "I am not done with you, {a}."]
-    };
-    var LF_PRESS = "The Ringside Wire";
-    function crowdWord(v) {
-      return v < 20 ? "Dead" : v < 38 ? "Quiet" : v < 55 ? "Warm" : v < 70 ? "Loud" : v < 85 ? "Electric" : "Unglued";
-    }
-    function liveFeed(S, rep, si, b) {
-      var out = [], P = S.promos[rep.promo || S.player] || S.promos[S.player], key0 = (rep.week || S.week) + ":" + (rep.id || rep.name) + ":", city = rep.venue ? String(rep.venue).split(",").pop().trim().replace(/ (Armory|Civic Auditorium|Fieldhouse|Coliseum|Arena|Stadium)$/, "") : "everybody";
-      var at = 0, show = rep.name;
-      function nm(id) {
-        var w = S.w[id];
-        return w ? w.name : "";
-      }
-      function fan(k2, i2) {
-        var f2 = FANS[Math.floor(h01(k2 + "f" + i2) * FANS.length) % FANS.length];
-        return f2[0];
-      }
-      function post(k2, kind, u, n, txt, base, wid, mins2) {
-        out.push({ id: k2, k: kind, u, n, t: txt, l: netLikes(base, k2), r: Math.round(netLikes(base, k2 + "r") / 6), w: wid == null ? null : wid, at: mins2 });
-      }
-      function fanPost(k2, list, o, base, mins2) {
-        var u = fan(k2, 0);
-        post(k2, "f", "@" + u, u, fill(netPickH(list, k2 + "t"), o), base || 90, null, mins2);
-      }
-      for (var i = 0; i <= si && i < rep.segs.length; i++) {
-        var s = rep.segs[i], bc = s.bc || [], upto = i < si ? bc.length : Math.min(b, bc.length), done = i < si || b >= bc.length, k = key0 + i, mins = Math.round(at);
-        if (s.k === "match") {
-          var ids = s.ids || [], nsd = (s.sidesN || []).length || 2, per = Math.max(1, Math.floor(ids.length / nsd)), A = s.sidesN && s.sidesN[0] || nm(ids[0]), B = s.sidesN && s.sidesN[1] || nm(ids[per]);
-          var f = ids.length >= 2 ? feudOf(S, ids[0], ids[per]) : null;
-          fanPost(k + "s", s.title ? LF.title : f && f.heat >= 50 ? LF.feud : LF.start, { a: A, b: B, t: s.title, show }, s.title ? 260 : 120, mins);
-          for (var j = 0; j < upto; j++) if (bc[j].h === 1 && h01(k + "n" + j) < 0.75) {
-            var x = "";
-            ids.forEach(function(id) {
-              var w = S.w[id];
-              if (w && !x && bc[j].x && bc[j].x.indexOf(w.name) >= 0) x = w.name;
-            });
-            fanPost(k + "n" + j, LF.near, { x: x || "they" }, 220, mins + Math.round((s.mins || 10) * j / Math.max(1, bc.length)));
-          }
-          if (done && s.win) {
-            var wi = s.wi && s.wi.length ? s.wi : [], lid = ids.filter(function(id) {
-              return wi.indexOf(id) < 0;
-            })[0], W = S.w[wi[0]], Lw = S.w[lid], L2 = lid != null ? nm(lid) : B, end = mins + (s.mins || 10);
-            var up = W && Lw && Lw.ovr - W.ovr >= 12;
-            fanPost(k + "w", s.change ? LF.champ : up ? LF.upset : s.title ? LF.retain : LF.win, { w: s.win, l: L2, t: s.title }, s.change ? 900 : up ? 520 : 160, end);
-            if (W && (s.change || i === rep.segs.length - 1 || h01(k + "ww") < 0.35)) post(k + "wp", "w", netHandle(W.name), W.name, fill(netPickH(W.align === "H" ? LF.winH : LF.winF, k + "wpt"), { city }), W.ovr * W.ovr * 0.9, W.id, end);
-            if (Lw && h01(k + "lp") < 0.3) post(k + "lp", "w", netHandle(Lw.name), Lw.name, netPickH(LF.lose, k + "lpt"), Lw.ovr * Lw.ovr * 0.5, Lw.id, end);
-            if (s.ov != null && (i === rep.segs.length - 1 || s.ov >= 70 || h01(k + "pr") < 0.4)) post(k + "pr", "p", netHandle(LF_PRESS), LF_PRESS, (s.label || A + " vs " + B) + ": " + starG(s.ov) + ".", 600, null, end);
-            if (s.cr != null && h01(k + "cr") < 0.5) fanPost(k + "cr", s.cr >= 75 ? LF.hot : s.cr < 35 ? LF.dead : LF.start, { a: A, b: B, show }, 110, end);
-          }
-        } else {
-          var who = s.ids && s.ids.length ? s.ids : s.bids || [], a = nm(who[0]), bb = nm(who[1]);
-          if (done && a) {
-            var isA = s.booked ? SEGK[s.booked] && SEGK[s.booked].t === "angle" : /Ambush|Brawl|Attack|Betrayal|Turn|Save|Reveal/.test(s.head || "");
-            fanPost(k + "g", isA && bb ? LF.angle : LF.promo, { a, b: bb }, isA ? 300 : 150, mins + (s.mins || 5));
-            var Aw = S.w[who[0]], Bw = S.w[who[1]];
-            if (isA && Aw && Bw && h01(k + "gt") < 0.6) post(k + "gt", "w", netHandle(Aw.name), Aw.name, fill(netPickH(LF.taunt, k + "gtt"), { b: Bw.name }), Aw.ovr * Aw.ovr * 0.7, Aw.id, mins + (s.mins || 5));
-            if (isA && Aw && Bw && h01(k + "gh") < 0.4) post(k + "gh", "w", netHandle(Bw.name), Bw.name, fill(netPickH(LF.hurt, k + "ght"), { a: Aw.name }), Bw.ovr * Bw.ovr * 0.6, Bw.id, mins + (s.mins || 5));
-          }
-        }
-        at += s.mins || (s.k === "match" ? 12 : 6);
-      }
-      if (P && si >= rep.segs.length - 1 && b >= ((rep.segs[rep.segs.length - 1] || {}).bc || []).length && rep.segs.length) post(key0 + "co", "c", netHandle(P.name), P.full || P.name, "Thank you, " + city + ". See you next week.", P.image * P.image * 1.5, null, Math.round(at));
-      return out.reverse();
-    }
-    E.liveFeed = function(S, rep, si, b) {
-      if (!rep || !rep.segs) return { posts: [], crowd: { v: 50, word: crowdWord(50) } };
-      var s = rep.segs[Math.max(0, Math.min(si, rep.segs.length - 1))], bc = s && s.bc || [], done = s && b >= bc.length;
-      var v = rep.en == null ? 60 : rep.en;
-      if (s && s.k === "match" && done && s.cr != null) v = 0.5 * v + 0.5 * s.cr;
-      var hb = s && bc[Math.min(b, bc.length - 1)];
-      if (hb && hb.h) v = Math.min(100, v + (hb.h > 1 ? 25 : 12));
-      v = clamp(Math.round(v), 0, 100);
-      return { posts: si < 0 ? [] : liveFeed(S, rep, si, b), crowd: { v, word: crowdWord(v) } };
-    };
-    E.posterPair = function(S) {
-      var P = S.promos[S.player], sh = S.queue && S.queue[S.qi];
-      if (!P || !sh) return null;
-      var card = S.card || [], m = card.length ? card[card.length - 1] : null;
-      if (m && m.sides && m.sides.length >= 2 && m.sides[0].length && m.sides[1].length) return { a: m.sides[0][0], b: m.sides[1][0], why: "main", title: m.title ? (titleById(P, m.title) || {}).name || null : null };
-      var fs = activeFeuds(S).filter(function(f) {
-        return f.promo === P.id && !f.res && S.w[f.a[0]] && S.w[f.b[0]];
-      }).sort(function(x, y) {
-        return y.heat - x.heat;
-      });
-      if (fs.length) return { a: fs[0].a[0], b: fs[0].b[0], why: "feud", title: fs[0].title ? (titleById(P, fs[0].title) || {}).name || null : null };
-      var t = P.titles.filter(function(t2) {
-        return !t2.tag && t2.holders.length && S.w[t2.holders[0]];
-      }).sort(function(x, y) {
-        return (y.lvl || 0) - (x.lvl || 0);
-      })[0];
-      if (t) {
-        var c = S.w[t.holders[0]], ch = rosterOf(S, P.id).filter(function(w) {
-          return w.id !== c.id && w.g === c.g && w.inj <= 0;
-        }).sort(function(x, y) {
-          return y.ovr - x.ovr;
-        })[0];
-        if (ch) return { a: c.id, b: ch.id, why: "title", title: t.name };
-      }
-      var top = rosterOf(S, P.id).filter(function(w) {
-        return w.inj <= 0;
-      }).sort(function(x, y) {
-        return y.ovr - x.ovr;
-      });
-      return top.length >= 2 ? { a: top[0].id, b: top[1].id, why: "top", title: null } : null;
-    };
-    var NET_FEED_MAX = 60, NET_SHEETS = 4;
-    function netPickH(arr, key) {
-      return arr[Math.floor(h01(String(key)) * arr.length) % arr.length];
-    }
-    function netHandle(name) {
-      return "@" + String(name).split(" of ")[0].replace(/[^A-Za-z0-9]/g, "").slice(0, 16);
-    }
-    function netLikes(base, key) {
-      return Math.max(3, Math.round(base * (0.6 + 0.8 * h01("l" + key))));
-    }
-    function netPost(S, k, u, n, t, likes) {
-      var F = S.feed || (S.feed = []);
-      F.unshift({ w: S.week, k, u, n, t, l: likes });
-      if (F.length > NET_FEED_MAX) F.length = NET_FEED_MAX;
-    }
-    function netStarPost(S, w, t, key) {
-      netPost(S, "w", netHandle(w.name), w.name, t, netLikes(w.ovr * w.ovr * 1.6, key));
-    }
-    var NET_WIN_F = ["Thank you, {city}. That one was for you.", "Every mile on the road was worth it tonight.", "I said I would do it. Done.", "Listen to that crowd. I will never get used to it."];
-    var NET_WIN_H = ["Told you. Nobody in that building is on my level.", "Boo all you like. The result is the same.", "That was not a fight. That was a lesson.", "You paid to see me win. You are welcome."];
-    var NET_NEW = ["AND NEW. Read it again.", "It is mine now. Come and try to take it.", "Years of work for one night like this."];
-    var NET_LOSE = ["Not my night. It will not happen twice.", "I heard the count. I will hear it in my sleep. I will be back.", "No excuses. Run it back."];
-    var NET_RIVAL = ["{show} is in the books. Ask anybody who was there.", "Another night, another building on its feet.", "They say the competition is catching up. I have not noticed."];
-    var NET_TURN = {
-      heat: { smark: ["{a} and {b} have real heat now. This is the story I wanted.", "{a} versus {b} for real? Book it."], casual: ["wait, did {a} and {b} fall out?", "{a} and {b} not getting on. That will be good TV."], old: ["{a} and {b} at odds backstage. It used to get settled in the ring."], heel: ["{a} and {b} fighting. Good. Let them."], stats: ["{a} and {b} have clashed. Watch their next match."], under: ["{a} and {b} at war and nobody asks us."] },
-      friends: { smark: ["{a} and {b} are tight now. Tag team when?", "Anyone else see {a} and {b} getting along?"], casual: ["{a} and {b} are friends? That is nice."], old: ["Good to see {a} and {b} looking out for each other."], heel: ["{a} and {b} are a team now. Fine. They still lose."], stats: ["{a} and {b} have become friends. Their matches together will be better."], under: ["{a} and {b} share a locker room and a laugh. Good for them."] }
-    };
-    function netTurn(S, a, b, now) {
-      if (S.cal || !now) return;
-      var x = S.w[a], y = S.w[b];
-      if (!x || !y) return;
-      if (!(relMine(S, a, b) || x.ovr + y.ovr >= 130)) return;
-      var key = S.week + ":t:" + a + "-" + b, f = FANS[Math.floor(h01(key) * FANS.length) % FANS.length], L2 = NET_TURN[now < 0 ? "heat" : "friends"][f[1]] || NET_TURN[now < 0 ? "heat" : "friends"].casual;
-      netPost(S, "f", "@" + f[0], f[0], fill(netPickH(L2, key + "t"), { a: x.name, b: y.name }), netLikes(150, key));
-    }
-    SHOWX.push(function(S, P, show, rep) {
-      if (S.cal) return;
-      var ms = rep.segs.filter(function(s) {
-        return s.k === "match";
-      });
-      if (!ms.length) return;
-      var main = ms[ms.length - 1], best = ms.slice().sort(function(a, b) {
-        return b.ov - a.ov;
-      })[0], key = S.week + ":" + P.id + ":" + show.id;
-      if (P.id !== S.player) {
-        if (!show.big || !main.wi || !main.wi.length) return;
-        var rw = S.w[main.wi[0]];
-        if (rw) netStarPost(S, rw, fill(netPickH(NET_RIVAL, key), { show: rep.name }), key);
-        return;
-      }
-      var city = rep.venue ? String(rep.venue).replace(/ (Armory|Civic Auditorium|Fieldhouse|Coliseum|Arena|Stadium)$/, "") : "everybody", d = rep.rating - (rep.exp || rep.rating);
-      var mw = main.wi && main.wi.length ? S.w[main.wi[0]] : null;
-      if (mw) netStarPost(S, mw, fill(netPickH(main.change ? NET_NEW : mw.align === "H" ? NET_WIN_H : NET_WIN_F, key + "w"), { city }), key + "w");
-      var loserId = main.ids.filter(function(id) {
-        return !main.wi || main.wi.indexOf(id) < 0;
-      })[0], ml = loserId != null ? S.w[loserId] : null;
-      if (ml && h01(key + "L") < 0.6) netStarPost(S, ml, netPickH(NET_LOSE, key + "l"), key + "l");
-      ms.forEach(function(s, i) {
-        if (s !== main && s.change && s.wi && s.wi.length) {
-          var cw = S.w[s.wi[0]];
-          if (cw) netStarPost(S, cw, netPickH(NET_NEW, key + "c" + i), key + "c" + i);
-        }
-      });
-      netPost(S, "c", netHandle(P.name), P.full || P.name, (rep.att ? rep.att.toLocaleString("en-US") + " of you in the building" : "A full night") + " for " + rep.name + ". " + (rep.sellout ? "A sell-out. " : "") + "Thank you.", netLikes(P.image * P.image * 2, key + "co"));
-      netPost(S, "p", netHandle(S.columnist || "The Ringside Wire"), S.columnist || "The Ringside Wire", best.label + " at " + rep.name + ": " + starG(best.ov) + ". The show was graded " + gradeG(repCS(rep)) + (verdictBand(d) > 0 ? ", better than this crowd expected." : verdictBand(d) < 0 ? ", short of what this crowd expected." : ", what this crowd came for."), netLikes(900, key + "pr"));
-      var mf = main.ids && main.ids.length >= 2 ? S.feuds.filter(function(f) {
-        return f.promo === P.id && (f.a.indexOf(main.ids[0]) >= 0 && f.b.indexOf(main.ids[1]) >= 0 || f.b.indexOf(main.ids[0]) >= 0 && f.a.indexOf(main.ids[1]) >= 0);
-      }).slice(-1)[0] : null;
-      var cc = { show: rep.name, co: P.name, band: verdictBand(d), best: best.label, win: mw ? mw.name : null, lose: ml ? ml.name : null, champ: main.change && mw ? mw.name : null, feud: mf ? feudLabel(S, mf) : null, fheat: mf ? mf.heat : 0, fstale: !!(mf && !mf.res && mf.fresh != null && mf.fresh < 30), fend: !!(mf && mf.res && mf.end === S.week), turn: null }, nf = 2 + Math.floor(h01(key + "nf") * 3), said = {};
-      var tw = rosterOf(S, P.id).filter(function(w) {
-        return w.tw === S.week;
-      })[0];
-      if (tw) {
-        cc.turn = tw.name;
-        cc.heel = tw.align === "H";
-      }
-      for (var fi = 0; fi < nf; fi++) {
-        var fan = FANS[Math.floor(h01(key + "f" + fi) * FANS.length) % FANS.length][0], ln = gram(GR_CHAT, "line", cc, key + "ft" + fi);
-        if (said[ln]) continue;
-        said[ln] = 1;
-        netPost(S, "f", "@" + fan, fan, ln, netLikes(120, key + "fl" + fi));
-      }
-    });
-    WEEKX.push(function(S) {
-      if (S.cal || S.over) return;
-      var by = S.columnist || "The Ringside Wire", n = 0;
-      S.news.filter(function(x) {
-        return x.w === S.week && (x.k === "title" || x.k === "contract" || x.k === "world" || x.k === "injury");
-      }).slice(0, 12).reverse().forEach(function(x, i) {
-        if (n >= 3 || h01(S.week + "n" + i + x.t.length) > 0.7) return;
-        n++;
-        netPost(S, "p", netHandle(by), by, (x.k === "title" ? "TITLE NEWS: " : x.k === "contract" ? "CONTRACTS: " : x.k === "injury" ? "INJURY: " : "NEWS: ") + x.t, netLikes(x.k === "title" ? 2400 : 1100, S.week + "n" + i));
-      });
-      var RF = S.rumF || (S.rumF = []), RR = S.rumR || (S.rumR = []);
-      S.rumF = RF.filter(function(r) {
-        if (r.due > S.week) return true;
-        var w = S.w[r.w], P = S.promos[r.pid];
-        if (!w || !P) return false;
-        var yes = r.k === "exp" || r.k === "unh" ? w.promo !== r.pid : w.promo === r.pid, txt;
-        if (r.k === "unh") txt = yes ? w.name + " has left " + P.name + ". The talk was true." : w.name + " stayed with " + P.name + " after all.";
-        else if (r.k === "exp") txt = yes ? w.name + " has left " + P.name + ", as the paper said." : w.name + " has re-signed with " + P.name + ". The deal did run out, and talks ended well.";
-        else txt = yes ? w.name + " has signed with " + P.name + ". The earlier report was right." : "Nothing came of " + w.name + " at " + P.name + ". We got that one wrong.";
-        RR.unshift({ w: S.week, ok: yes, lvl: r.lvl, t: (yes ? "CONFIRMED: " : r.k === "exp" || r.k === "unh" ? "UPDATE: " : "CORRECTION: ") + txt });
-        if (yes) netPost(S, "p", netHandle(by), by, txt, netLikes(1500, S.week + "rr" + r.w));
-        return false;
-      });
-      if (RR.length > 12) RR.length = 12;
-      netRumours(S, S.week).forEach(function(r) {
-        if (!r.k || S.rumF.length >= 20 || S.rumF.some(function(x) {
-          return x.w === r.w;
-        })) return;
-        S.rumF.push({ w: r.w, k: r.k, pid: r.pid, due: r.due, lvl: r.lvl });
-      });
-      var L2 = S.sheets || (S.sheets = []);
-      L2.unshift(netSheet(S, S.week));
-      if (L2.length > NET_SHEETS) L2.length = NET_SHEETS;
-    });
-    function netMentions(text, name) {
-      return new RegExp("(^|[^A-Za-z0-9])" + String(name).replace(/[.*+?^${}()|[\]\\]/g, "\\$&") + "([^A-Za-z0-9]|$)").test(text);
-    }
-    function netRumours(S, wk) {
-      var out = [], me = S.promos[S.player];
-      S.order.forEach(function(pid) {
-        if (pid === S.player) return;
-        var P = S.promos[pid], R = rosterOf(S, pid).filter(function(w) {
-          return !w.nw;
-        });
-        var up = R.filter(function(w) {
-          return w.con != null && w.con <= 6;
-        }).sort(function(a, b) {
-          return b.ovr - a.ovr;
-        })[0];
-        if (up && up.ovr >= P.image - 12) out.push({ lvl: "sure", t: up.name + "\u2019s deal with " + P.name + " runs out in " + up.con + " " + (up.con === 1 ? "week" : "weeks") + ". Nothing new has been signed.", w: up.id, k: "exp", pid, due: wk + up.con + 1 });
-        var sour = R.filter(function(w) {
-          return w.con != null && w.con > 6 && w.con <= 14 && w.ovr >= P.image - 5 && holdLvl(P, w.id) === 0;
-        }).sort(function(a, b) {
-          return a.morale - b.morale || b.ovr - a.ovr;
-        })[0];
-        if (sour) out.push({ lvl: sour.morale < 50 ? "likely" : "thin", t: sour.name + " is said to be unhappy with their spot at " + P.name + ", and their deal is up in a few months. Other companies will be listening.", w: sour.id, k: "unh", pid, due: wk + sour.con + 1 });
-        if (P.cash < 0) out.push({ lvl: "likely", t: P.name + " are behind on their bills. Expect cuts." });
-        if (P.shows.length < 3 && P.cash > 0 && P.image >= 45 + 15 * P.shows.length && R.length >= 14 * (P.shows.length + 1)) out.push({ lvl: "likely", t: P.name + " have been talking to a network about another weekly show." });
-      });
-      if (h01(wk + "lie" + S.seed) < 0.5) {
-        var cand = [];
-        S.order.forEach(function(pid) {
-          if (pid === S.player) return;
-          rosterOf(S, pid).forEach(function(w) {
-            if (!w.nw && w.con != null && w.con > 20 && w.morale >= 65 && w.ovr >= S.promos[pid].image - 5) cand.push(w);
-          });
-        });
-        if (cand.length) {
-          var lw = cand[Math.floor(h01(wk + "liew" + S.seed) * cand.length) % cand.length], lp = S.promos[lw.promo];
-          out.push({ lvl: "thin", t: lw.name + " is said to be unhappy with their spot at " + lp.name + ". Other companies will be listening.", w: lw.id, k: "unh", pid: lw.promo, due: wk + 6, lie: 1 });
-        }
-      }
-      var fa = S.w.filter(function(w) {
-        return w.promo === "FA" && !w.rt && !w.nw;
-      }).sort(function(a, b) {
-        return b.ovr - a.ovr;
-      })[0], rv = S.order.filter(function(p) {
-        var g = modelOf(S.promos[p]).gender;
-        return p !== S.player && (!g || !fa || g === fa.g);
-      });
-      if (fa && rv.length) {
-        var fp = netPickH(rv, wk + "thin");
-        out.push({ lvl: "thin", t: fa.name + " was seen at a " + S.promos[fp].name + " show this week. It could mean anything.", w: fa.id, k: "fa", pid: fp, due: wk + 4 });
-      }
-      (S.teams || []).forEach(function(tm) {
-        if (!tm.m || tm.m.length !== 2) return;
-        var a = S.w[tm.m[0]], b = S.w[tm.m[1]];
-        if (!a || !b || a.promo !== me.id || b.promo !== me.id) return;
-        var ja = jealOf(S, a.id, b.id), jb = jealOf(S, b.id, a.id);
-        if (Math.max(ja, jb) < 45) return;
-        var x = ja >= jb ? a : b, y = x === a ? b : a;
-        out.push({ lvl: Math.max(ja, jb) >= 60 ? "likely" : "thin", t: "People backstage say " + x.name + " is tired of standing in " + y.name + "\u2019s shadow. Watch that team.", w: x.id });
-      });
-      var hot = activeFeuds(S).filter(function(f) {
-        return f.promo === me.id && f.heat >= 70;
-      })[0];
-      if (hot) out.push({ lvl: "likely", t: "Everybody expects " + feudLabel(S, hot) + " to be settled at " + nextBigName(S, me) + "." });
-      var rank = { sure: 0, likely: 1, thin: 2 };
-      return out.sort(function(a, b) {
-        return rank[a.lvl] - rank[b.lvl] || h01(wk + a.t) - h01(wk + b.t);
-      }).slice(0, 4);
-    }
-    function netBackstage(S, wk) {
-      var out = [], M = rmAll(S);
-      Object.keys(M).forEach(function(k) {
-        var e = M[k];
-        if (e.last !== wk || !e.mem.length || e.mem[0].w !== wk) return;
-        var ids = k.split("-").map(Number), x = S.w[ids[0]], y = S.w[ids[1]];
-        if (!x || !y) return;
-        var mine = (x.promo === S.player ? 1 : 0) + (y.promo === S.player ? 1 : 0), m = e.mem[0];
-        if (!mine && h01("bk" + wk + k) > 0.4) return;
-        out.push({ lvl: mine === 2 ? "sure" : mine ? "likely" : "thin", t: m.t, w: ids[0], v: ids[1], mood: e.bond <= -REL_ON ? "heat" : e.bond >= REL_ON ? "close" : "" });
-      });
-      var rank = { sure: 0, likely: 1, thin: 2 };
-      return out.sort(function(a, b) {
-        return rank[a.lvl] - rank[b.lvl] || h01(wk + a.t) - h01(wk + b.t);
-      }).slice(0, 3);
-    }
-    function netThrowback(S, wk) {
-      var out = [];
-      S.order.forEach(function(pid) {
-        S.promos[pid].titles.forEach(function(t) {
-          (t.hist || []).forEach(function(h) {
-            var d = wk - h.from;
-            if (d <= 0 || d % 48 || h.show === "Before your time" || !h.h || !h.h.length || h.to != null && h.to - h.from < 4) return;
-            var y = d / 48, span = h.to != null ? h.to - h.from : null;
-            out.push({ t: y + " " + (y === 1 ? "year" : "years") + " ago this week, " + h.h.join(" and ") + " won the " + S.promos[pid].name + " " + t.name + (h.show ? " at " + h.show : "") + "." + (span != null && span >= 24 ? " The reign lasted " + span + " weeks." : "") });
-          });
-        });
-      });
-      (S.feudBook || []).forEach(function(e) {
-        var d = wk - e.e;
-        if (d <= 0 || d % 48) return;
-        var y = d / 48;
-        out.push({ t: y + " " + (y === 1 ? "year" : "years") + " ago this week, " + e.l + " came to an end after " + (e.e - e.s) + " weeks." });
-      });
-      (S.rec && S.rec.matches || []).forEach(function(m) {
-        var d = wk - m.w;
-        if (m.w == null || d <= 0 || d % 48) return;
-        var y = d / 48;
-        out.push({ t: y + " " + (y === 1 ? "year" : "years") + " ago this week: " + m.l + (m.show ? " at " + m.show : "") + ", " + starG(m.ov) + "." });
-      });
-      return out.sort(function(a, b) {
-        return h01(wk + a.t) - h01(wk + b.t);
-      }).slice(0, 1);
-    }
-    function netMoment(reps) {
-      var best = null;
-      reps.forEach(function(r) {
-        (r.segs || []).forEach(function(sg) {
-          if (sg.k !== "match") return;
-          (sg.bc || []).forEach(function(b) {
-            if (b.h && (!best || b.h > best.h || b.h === best.h && sg.ov > best.ov)) best = { h: b.h, ov: sg.ov, x: b.x, label: sg.label, show: r.name };
-          });
-        });
-      });
-      return best ? { t: best.x, label: best.label, show: best.show, stars: starG(best.ov) } : null;
-    }
-    function netSheet(S, wk) {
-      var P = S.promos[S.player], news2 = S.news.filter(function(x) {
-        return x.w === wk;
-      }), reps = S.reports.filter(function(r) {
-        return r.week === wk && r.promo === P.id;
-      }).reverse();
-      var yours = reps.map(function(r) {
-        return { show: r.name, rating: r.rating, exp: r.exp == null ? null : Math.round(r.exp * 10) / 10, big: !!r.big, lines: r.sheet && r.sheet.lines ? r.sheet.lines.slice(0, 5) : [], head: gram(GR_WEB, "results", { show: r.name, band: verdictBand(r.rating - (r.exp == null ? r.rating : r.exp)) }, "res" + r.week + r.name) };
-      });
-      var best = null;
-      reps.forEach(function(r) {
-        r.segs.forEach(function(s) {
-          if (s.k === "match" && (!best || s.ov > best.ov)) best = { label: s.label, ov: s.ov, show: r.name, stars: starG(s.ov) };
-        });
-      });
-      var lead = null, d = reps.length ? avg(reps.map(function(r) {
-        return r.rating - (r.exp == null ? r.rating : r.exp);
-      })) : 0, tn = news2.filter(function(x) {
-        return x.k === "title";
-      })[0];
-      var gk = "sheet" + wk + P.id, gc = { co: P.name, d, who: null, rival: S.order.length > 1 ? S.promos[netPickH(S.order.filter(function(p) {
-        return p !== P.id;
-      }), gk + "rv")].name : P.name };
-      if (tn) {
-        gc.k = "title";
-        gc.who = / won the /.test(tn.t) ? tn.t.split(" won the ")[0] : null;
-        lead = { head: "", text: tn.t };
-      } else if (reps.length && d >= 5) {
-        gc.k = "hot";
-        lead = { head: "", text: "The shows beat what the crowd expected by " + d.toFixed(1) + " points. People are talking." };
-      } else if (reps.length && d <= -5) {
-        gc.k = "cold";
-        lead = { head: "", text: "The shows fell " + (-d).toFixed(1) + " points short of what the crowd expected. The mood in the building was flat." };
-      } else {
-        var wn = news2.filter(function(x) {
-          return x.k === "world";
-        })[0] || news2.filter(function(x) {
-          return x.k === "story";
-        })[0] || news2[0];
-        gc.k = wn ? "world" : "quiet";
-        lead = wn ? { head: "", text: wn.t } : { head: "", text: "Nothing broke this week that anybody will remember." };
-      }
-      lead.head = gram(GR_SHEET, "head", gc, gk + "h");
-      lead.open = gram(GR_SHEET, "open", gc, gk + "o");
-      var used = {};
-      if (lead) used[lead.text] = 1;
-      var world = [];
-      S.order.forEach(function(pid) {
-        if (pid === P.id) return;
-        var RV = S.promos[pid], lines = news2.filter(function(x) {
-          return x.k !== "you" && !used[x.t] && netMentions(x.t, RV.name);
-        }).slice(0, 2).map(function(x) {
-          used[x.t] = 1;
-          return x.t;
-        });
-        if (RV.last && RV.last.week === wk) lines.unshift(RV.last.name + " was graded " + gradeG(repCS(RV.last)) + ".");
-        if (lines.length) world.push({ id: pid, name: RV.name, lines: lines.slice(0, 3) });
-      });
-      var business = news2.filter(function(x) {
-        return (x.k === "money" || x.k === "contract" || x.k === "injury") && !used[x.t];
-      }).slice(0, 4).map(function(x) {
-        used[x.t] = 1;
-        return x.t;
-      });
-      var c = cal(wk + 1), next = [];
-      if (c.wom === 4) next.push(P.name + " " + evName(S, P, c.month) + " is next week.");
-      var soon = rosterOf(S, P.id).filter(function(w) {
-        return !w.nw && w.con != null && w.con <= 2;
-      }).sort(function(a, b) {
-        return b.ovr - a.ovr;
-      })[0];
-      if (soon) next.push(soon.name + "\u2019s contract with " + P.name + " is nearly up.");
-      var fw = [];
-      S.feuds.forEach(function(f) {
-        var co = S.promos[f.promo] ? S.promos[f.promo].name : "";
-        if (!co) return;
-        var c2 = { f: feudLabel(S, f), co, w: wk - f.start, k: null };
-        if (f.res) {
-          if (f.end === wk) c2.k = f.dead ? f.fizzle === "cold" ? "fizz" : null : "done";
-        } else if (wk - f.start >= 24 && f.heat >= 60) c2.k = "long";
-        else if (f.heat >= 75) c2.k = f.fresh != null && f.fresh < 35 ? "stale" : "hot";
-        else if (wk - f.start <= 1) c2.k = "new";
-        if (c2.k) fw.push({ k: c2.k, h: f.heat, t: gram(GR_FEUD, "line", c2, "fw" + wk + f.id) });
-      });
-      var FWO = { done: 0, hot: 1, long: 2, stale: 3, fizz: 4, new: 5 };
-      fw.sort(function(a, b) {
-        return FWO[a.k] - FWO[b.k] || b.h - a.h;
-      });
-      var review = reps.length ? gram(GR_SHEET, "verdict", gc, gk + "v") : "No shows from " + P.name + " yet this week.";
-      return { week: wk, label: cal(wk).label, by: S.columnist || "The Ringside Wire", lead, yours, best, world, business, backstage: netBackstage(S, wk), moment: netMoment(reps), throwback: netThrowback(S, wk), feuds: function() {
-        var n = {};
-        return fw.filter(function(x) {
-          n[x.k] = (n[x.k] || 0) + 1;
-          return n[x.k] <= 2;
-        }).slice(0, 5).map(function(x) {
-          return x.t;
-        });
-      }(), followups: (S.rumR || []).filter(function(x) {
-        return x.w === wk;
-      }), rumours: netRumours(S, wk), next, review };
-    }
-    E.sheetInfo = function(S) {
-      return { now: netSheet(S, S.week), past: (S.sheets || []).slice() };
-    };
-    E.feed = function(S) {
-      return (S.feed || []).slice();
-    };
-    E.webHeads = function(S) {
-      var wk = S.week, P = S.promos[S.player], rum = netRumours(S, wk).filter(function(r) {
-        return r.w != null;
-      })[0], C = E.criticList(S), key = "web" + wk;
-      var nb = 0;
-      S.order.forEach(function(pid) {
-        nb += S.promos[pid].titles.length;
-      });
-      var hurt = (S.news || []).filter(function(x) {
-        return x.w >= wk - 1 && x.k === "injury";
-      })[0], N = S.net || { mood: 60, threads: [] };
-      var star = rosterOf(S, P.id).filter(function(w) {
-        return !w.nw;
-      }).sort(function(a, b) {
-        return a.morale - b.morale;
-      })[0];
-      return {
-        rumor: gram(GR_WEB, "rumor", { who: rum ? S.w[rum.w].name : null, co: rum && rum.pid ? S.promos[rum.pid].name : null }, key + "r"),
-        results: gram(GR_WEB, "results", { show: P.last ? P.last.name : P.name, band: P.last ? verdictBand(P.last.rating - (P.last.exp == null ? P.last.rating : P.last.exp)) : 0 }, key + "s"),
-        rank: gram(GR_WEB, "rank", { who: C.rows.length ? C.rows[0].w.name : null }, key + "k"),
-        belts: gram(GR_WEB, "belts", { n: nb }, key + "b"),
-        whisper: gram(GR_WEB, "whisper", { who: star && star.morale < 50 ? star.name : hurt ? null : null }, key + "w"),
-        board: gram(GR_WEB, "board", { mood: N.mood, topic: N.threads.length ? N.threads[0].sub : "the last show" }, key + "o")
-      };
-    };
-    E.NET_LVL = { sure: "Sure", likely: "Likely", thin: "Thin" };
-    function taskOpen(S) {
-      var P = S.promos[S.player], L2 = [], R = rosterOf(S, P.id).filter(function(w) {
-        return !w.nw;
-      });
-      var add = function(id, text, to, label, o) {
-        o = o || {};
-        L2.push({ id, text, short: o.short || text, done: o.done || text, to, label, gate: o.gate || "show", card: !!o.card, need: o.need !== false, waive: o.waive !== false && o.need !== false, req: !!o.req });
-      };
-      if (S.owner && S.owner.pending) add("house", "The company is yours. Set your house style.", "house", "Set it", { waive: false, done: "House style set.", short: "Set your house style" });
-      var n = S.inbox.filter(function(e) {
-        return !e.done;
-      }).length;
-      if (n) add("inbox", n + " " + (n === 1 ? "matter" : "matters") + " in your inbox " + (n === 1 ? "needs" : "need") + " an answer.", "desk", "Answer", { gate: "week", waive: false, done: "Inbox answered.", short: "Answer the inbox (" + n + ")" });
-      var D = P.desk || {}, spare = (S.voices || []).filter(function(v) {
-        return !v.hired;
-      }).length;
-      if (spare) {
-        if (D.pbp == null) add("desk-pbp", "You have not picked a play-by-play voice for the commentary desk.", "manage", "Assign", { done: "A play-by-play voice is in the chair.", short: "Pick a play-by-play voice" });
-        if (D.col == null) add("desk-col", "You have not picked a colour voice for the commentary desk.", "manage", "Assign", { done: "A colour voice is in the chair.", short: "Pick a colour voice" });
-      }
-      var slots = spMax(P) - S.sponsors.length, can = S.spOffers.filter(function(o) {
-        return E.sponsorOk(S, o);
-      }).length;
-      var needSp = !(S.req && S.req.sponsor) && !S.sponsors.length && S.stats && S.stats.shows >= 1;
-      if (slots > 0 && can > 0) add("sponsors", (needSp ? "Your first show is done. Sign your first sponsor: money every week, for a condition you have to keep. " : "") + can + " sponsor " + (can === 1 ? "offer" : "offers") + " you could sign, and " + slots + " free " + (slots === 1 ? "slot" : "slots") + ".", "deals", "See offers", { done: "Sponsor offers dealt with.", short: needSp ? "Sign your first sponsor" : "Sponsor offers (" + can + ")", waive: !needSp, req: needSp });
-      var T = tournActive(S);
-      P.titles.forEach(function(t) {
-        if (t.holders.length) return;
-        if (T && T.title === t.id) return;
-        if ((S.card || []).some(function(m) {
-          return m && m.title === t.id;
-        })) return;
-        add("title-" + t.id, "The " + t.name + " " + (t.tag ? "are" : "is") + " vacant. Book a match for " + (t.tag ? "them" : "it") + " or start a tournament.", "titles", "Decide", { card: true, done: "The " + t.name + " " + (t.tag ? "are" : "is") + " taken care of.", short: "The " + t.name + ": vacant" });
-      });
-      R.filter(function(w) {
-        return w.con != null && w.con <= 1;
-      }).sort(function(a, b) {
-        return b.ovr - a.ovr;
-      }).slice(0, 4).forEach(function(w) {
-        add("con-" + w.id, w.name + "\u2019s contract ends " + (w.con <= 0 ? "this week" : "next week") + ". Renew it or let them go.", "roster", "Decide", { done: w.name + "\u2019s contract is dealt with.", short: w.name + "\u2019s contract ends" });
-      });
-      TASKX.forEach(function(fn) {
-        fn(S, P, add);
-      });
-      var left = S.queue.length - S.qi, ap = E.backstage(S).ap;
-      if (ap > 0 && left > 0) add("ap", ap + " action " + (ap === 1 ? "point" : "points") + " to spend backstage before the week is out.", "backstage", "Go backstage", { need: false, done: "Action points spent.", short: "Action points to spend (" + ap + ")" });
-      S.quests.filter(function(q) {
-        return q.due != null && q.due <= S.week;
-      }).slice(0, 3).forEach(function(q) {
-        add("q-" + q.id, "Due this week: " + q.text, "booking", "Booking", { need: false, done: "No longer due: " + q.text, short: "A promise is due this week" });
-      });
-      return L2;
-    }
-    E.tasks = function(S) {
-      var open = taskOpen(S), seen = S.taskSeen && S.taskSeen.w === S.week ? S.taskSeen : S.taskSeen = { w: S.week, t: {} }, wave = S.taskWave && S.taskWave.w === S.week ? S.taskWave.ids : {}, now = {}, L2 = [];
-      open.forEach(function(t) {
-        now[t.id] = 1;
-        seen.t[t.id] = { text: t.done, need: t.need };
-        var waved = !!wave[t.id] && t.waive;
-        L2.push({ id: t.id, text: t.text, short: t.short, to: t.to, label: t.label, gate: t.gate, card: t.card, need: t.need, waive: t.waive, req: !!t.req, state: waved ? "waved" : t.need ? "todo" : "optional" });
-      });
-      var qr = S.qres && S.qres.w === S.week ? S.qres.r : {};
-      Object.keys(seen.t).forEach(function(id) {
-        if (now[id]) return;
-        var o = { id, text: seen.t[id].text, need: seen.t[id].need, state: "done" }, r = /^q-/.test(id) ? qr[id.slice(2)] : null;
-        if (r) {
-          o.text = r.t;
-          o.miss = !r.ok;
-          o.hit = r.ok;
-        } else if (id === "ap") {
-          var ap = E.backstage(S).ap;
-          if (ap > 0) {
-            o.text = ap + " action " + (ap === 1 ? "point" : "points") + " went unspent. The shows are over for the week.";
-            o.miss = true;
-          }
-        }
-        L2.push(o);
-      });
-      var rank = { todo: 0, optional: 1, waved: 2, done: 3 };
-      L2.sort(function(a, b) {
-        return rank[a.state] - rank[b.state];
-      });
-      var todo = L2.filter(function(t) {
-        return t.state === "todo";
-      });
-      return { list: L2, todo: todo.length, show: todo.filter(function(t) {
-        return t.gate === "show";
-      }).length, strict: !S.gateOff };
-    };
-    E.taskGate = function(S, gate) {
-      if (S.gateOff || S.over) return { ok: true, left: [] };
-      var left = E.tasks(S).list.filter(function(t) {
-        return t.state === "todo" && (gate === "week" || t.gate === "show") && !(gate === "book" && t.card);
-      });
-      return { ok: !left.length, left: left.map(function(t) {
-        return t.text;
-      }) };
-    };
-    E.taskWave = function(S, id) {
-      var t = taskOpen(S).filter(function(x) {
-        return x.id === id;
-      })[0];
-      if (!t) return { ok: false, msg: "That is already done." };
-      if (!t.waive) return { ok: false, msg: "That one cannot wait." };
-      if (!S.taskWave || S.taskWave.w !== S.week) S.taskWave = { w: S.week, ids: {} };
-      S.taskWave.ids[id] = 1;
-      return { ok: true, msg: "Left for another week. It will be back on the list next week if it is still open." };
-    };
-    E.taskUnwave = function(S, id) {
-      if (S.taskWave && S.taskWave.w === S.week) delete S.taskWave.ids[id];
-      return { ok: true, msg: "Back on the list." };
-    };
-    E.setGate = function(S, strict) {
-      S.gateOff = !strict;
-      return { ok: true, msg: strict ? "This week\u2019s tasks must be done or waved off before a show runs." : "This week\u2019s tasks are reminders only." };
-    };
-    var ADV_DAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
-    function showDay(sh) {
-      if (!sh) return "";
-      if (sh.day) return sh.day;
-      for (var i = 0; i < ADV_DAYS.length; i++) if (sh.name.indexOf(ADV_DAYS[i]) >= 0) return ADV_DAYS[i];
-      return sh.big ? "Sunday" : "";
-    }
-    E.advance = function(S) {
-      if (S.over) return { k: "over", tone: "", short: "", label: "The game is over", to: "desk", act: null, why: [], day: "", step: 0, steps: 0 };
-      if (S.live) return { k: "live", tone: "go", short: "Continue", label: "The show is on the air", to: "booking", act: null, why: [], day: "On the air", step: 0, steps: 0 };
-      var T = E.tasks(S), todo = T.list.filter(function(t) {
-        return t.state === "todo";
-      }), strict = T.strict, sh = S.queue[S.qi], n = S.queue.length;
-      var steps = n + 1, step = Math.min(S.qi, n) + 1, out = function(o) {
-        o.why = o.why || [];
-        o.act = o.act || null;
-        o.step = step;
-        o.steps = steps;
-        return o;
-      };
-      if (sh) {
-        var day = showDay(sh);
-        var hold = strict ? todo.filter(function(t) {
-          return t.gate === "show" && !t.card;
-        }) : [];
-        if (hold.length) return out({ k: "task", tone: "stop", short: "Attention", id: hold[0].id, label: hold[0].short, to: "desk", day: "Before " + sh.name, why: hold.map(function(t) {
-          return t.text;
-        }) });
-        if (S.pre && S.pre.key === showKey(S) && !S.pre.done) return out({ k: "pre", tone: "stop", short: "Attention", label: "Answer the problem before the show", to: "booking", day, why: ["Something has come up before " + sh.name + ". It is at the top of the card."] });
-        var card = S.card || [];
-        if (!card.length) return out({ k: "book", tone: "go", short: "Book show", label: "Book " + sh.name, to: "booking", day });
-        var v = E.validate(S, card);
-        if (v.errors.length) return out({ k: "book", tone: "go", short: "Fix card", label: "Finish the card for " + sh.name, to: "booking", day, why: v.errors.slice(0, 3) });
-        var onCard2 = strict ? todo.filter(function(t) {
-          return t.gate === "show" && t.card;
-        }) : [];
-        if (onCard2.length) return out({ k: "task", tone: "stop", short: "Attention", id: onCard2[0].id, label: onCard2[0].short, to: "desk", day, why: onCard2.map(function(t) {
-          return t.text;
-        }) });
-        return out({ k: "run", tone: "air", short: "Run show", label: "Run " + sh.name, to: "booking", act: "run", day });
-      }
-      var open = S.inbox.some(function(e) {
-        return !e.done;
-      });
-      if (open) {
-        var ib = todo.filter(function(t) {
-          return t.id === "inbox";
-        })[0];
-        return out({ k: "task", tone: "stop", short: "Attention", id: "inbox", label: ib ? ib.short : "Answer the inbox", to: "desk", day: "The week is nearly over", why: [ib ? ib.text : "The inbox needs an answer."] });
-      }
-      if (strict && todo.length) return out({ k: "task", tone: "stop", short: "Attention", id: todo[0].id, label: todo[0].short, to: "desk", day: "The week is nearly over", why: todo.map(function(t) {
-        return t.text;
-      }) });
-      return out({ k: "week", tone: "end", short: "End week", label: "End the week", to: "desk", act: "week", day: "Sunday night" });
-    };
-    E.comingUp = function(S) {
-      if (S.over) return [];
-      var P = S.promos[S.player], L2 = [], wk = function(n) {
-        return n <= 0 ? "this week" : n === 1 ? "next week" : "in " + n + " weeks";
-      };
-      var nb = E.nextBig(S), nk = evList(S, P)[cal(nb.week).month].t, nkw = nk === "flag" ? " (your flagship)" : nk === "tent" ? " (a tentpole)" : nk === "taped" ? " (a taped special)" : nk === "tourn" ? " (the tournament)" : "";
-      L2.push({ n: nb.week - S.week, t: nb.name + nkw + " " + wk(nb.week - S.week), to: "booking", k: "big" });
-      var fs = activeFeuds(S).filter(function(f) {
-        return f.promo === P.id;
-      }).sort(function(a, b) {
-        return b.heat - a.heat;
-      });
-      fs.slice(0, 6).forEach(function(f) {
-        var act = feudAct(f, S), big = nb.week - S.week;
-        var pl = E.feudPlan(S, f);
-        if (pl.end && pl.end.in >= 0 && pl.end.in <= 2) L2.push({ n: pl.end.in, t: feudLabel(S, f) + " ends at " + pl.end.at + " " + wk(pl.end.in), to: "storylines", k: "feud" });
-        else if (pl.ripe) L2.push({ n: big, t: feudLabel(S, f) + " is ripe: end it at " + pl.next.at + "?", to: "storylines", k: "feud" });
-      });
-      var c = rosterOf(S, P.id).filter(function(w) {
-        return !w.nw && w.con != null && w.con >= 2 && w.con <= 6;
-      }).sort(function(a, b) {
-        return b.ovr - a.ovr;
-      })[0];
-      if (c) L2.push({ n: c.con, t: c.name + "\u2019s contract ends " + wk(c.con), to: "roster", k: "con" });
-      S.quests.filter(function(q) {
-        return q.due != null && q.due > S.week && q.due - S.week <= 4;
-      }).sort(function(a, b) {
-        return a.due - b.due;
-      }).slice(0, 1).forEach(function(q) {
-        L2.push({ n: q.due - S.week, t: "A promise is due " + wk(q.due - S.week), to: "desk", k: "q" });
-      });
-      var ye = 48 - (S.week - 1) % 48 - 1;
-      if (ye <= 4) L2.push({ n: ye, t: "The year-end awards are " + wk(ye), to: "history", k: "year" });
-      L2.forEach(function(u) {
-        var w = wk(u.n), k = u.t.length - w.length - 1;
-        if (k > 0 && u.t.slice(k) === " " + w) {
-          u.when = w.charAt(0).toUpperCase() + w.slice(1);
-          u.what = u.t.slice(0, k).replace(/ (is|are)$/, "");
-        }
-      });
-      if (S.scn && !S.scn.done) L2.push({ n: S.scn.weeks - S.week, t: "The scenario ends " + wk(S.scn.weeks - S.week), to: "desk", k: "scn" });
-      if (S.chal && !S.chal.done) L2.push({ n: S.chal.weeks - S.week, t: "The challenge ends " + wk(S.chal.weeks - S.week), to: "desk", k: "chal" });
-      var seen = {};
-      return L2.filter(function(x) {
-        if (x.n < 0 || seen[x.t]) return false;
-        seen[x.t] = 1;
-        return true;
-      }).sort(function(a, b) {
-        return a.n - b.n || (a.k === "big" ? -1 : 1);
-      }).slice(0, 3);
-    };
-    function wasNow(S) {
-      var P = S.promos[S.player];
-      return P ? { cash: P.cash, image: P.image, trust: S.owner ? S.owner.trust : null, w: S.week } : null;
-    }
-    (function() {
-      var ew = E.endWeek, ng = E.newGame;
-      E.newGame = function() {
-        var S = ng.apply(this, arguments);
-        if (S && S.promos) S.was = wasNow(S);
-        return S;
-      };
-      E.endWeek = function(S) {
-        var w0 = S.week, r = ew.apply(this, arguments);
-        if (S.week !== w0 && !S.over) {
-          if (S.was) S.wasPrev = S.was;
-          else delete S.wasPrev;
-          S.was = wasNow(S);
-        }
-        return r;
-      };
-    })();
-    E.moved = function(S) {
-      var P = S.promos[S.player];
-      if (!P || S.over) return null;
-      var ran = S.qi > 0, w = ran ? S.was : S.wasPrev;
-      if (!w) return null;
-      var one = function(d, min) {
-        return { d, dir: d >= min ? 1 : d <= -min ? -1 : 0 };
-      };
-      var dc = Math.round(P.cash - w.cash), di = Math.round((P.image - w.image) * 10) / 10, dt = S.owner && w.trust != null ? Math.round((S.owner.trust - w.trust) * 10) / 10 : 0;
-      return { since: ran ? "this week so far" : "over last week", week: w.w, now: ran, cash: one(dc, 1e3), image: one(di, 0.1), trust: one(dt, 0.1) };
-    };
-    function reqOf(S) {
-      return S.req || (S.req = {});
-    }
-    function faceCandidates(S) {
-      var P = S.promos[S.player], R = rosterOf(S, P.id).filter(function(w) {
-        return !w.nw && !w.rt && !(w.inj > 8);
-      });
-      var sc = function(w) {
-        return w.ovr + (w.cha || 50) * 0.25 + (w.sq || 50) * 0.2 + holdLvl(P, w.id) * 4 + (w.mom || 0);
-      };
-      return R.sort(function(a, b) {
-        return sc(b) - sc(a);
-      }).slice(0, 6).map(function(w) {
-        var t = P.titles.filter(function(x) {
-          return x.holders.indexOf(w.id) >= 0;
-        })[0], why = [];
-        if (t) why.push("Holds the " + t.name);
-        if (S.owner && S.owner.fav === w.id && !S.owner.me) why.push(S.owner.name + "\u2019s favourite");
-        if (w.mom >= 3) why.push("On a roll");
-        if (w.age <= 27) why.push("Young: " + w.age);
-        else if (w.age >= 38) why.push("Getting on: " + w.age);
-        if (youLean(S, w) > 0) why.push("Thinks well of you");
-        else if (youLean(S, w) < 0) why.push("Does not trust you");
-        return { id: w.id, name: w.name, align: w.align, why: why.length ? why.join(". ") + "." : "One of the biggest names you have." };
-      });
-    }
-    E.faceCandidates = function(S) {
-      return faceCandidates(S);
-    };
-    E.nameFace = function(S, id) {
-      var P = S.promos[S.player], w = S.w[+id], old = faceOf(S);
-      if (!w || w.promo !== P.id || w.nw) return { ok: false, msg: "Pick somebody on your roster." };
-      if (old && old.id === w.id) return { ok: false, msg: "The shows are already built around " + w.name + "." };
-      S.fc = { id: w.id, w: S.week };
-      w.morale = clamp(w.morale + 6, 0, 100);
-      reqOf(S).face = 1;
-      youRemember(S, w, "theone", "You built the company around them.", 18);
-      if (old) {
-        youRemember(S, old, "replaced", "You took the company off their shoulders and gave it to " + w.name + ".", -15);
-        relBump(S, old.id, w.id, { bond: -10, ja: 25 }, { k: "passed", keep: true, t: old.name + " watched the company get built around " + w.name + "." });
-      }
-      rosterOf(S, P.id).filter(function(x) {
-        return !x.nw && x.id !== w.id && (!old || x.id !== old.id) && x.ovr >= w.ovr - 6;
-      }).sort(function(a, b) {
-        return b.ovr - a.ovr;
-      }).slice(0, 3).forEach(function(x) {
-        relBump(S, x.id, w.id, { ja: 10 }, { k: "passed", t: x.name + " thinks the company should have been built around someone else." });
-      });
-      news(S, "story", P.name + " is building its shows around " + w.name + ".");
-      return { ok: true, msg: "The shows are built around " + w.name + " now. The crowd comes to see them: a lift when they are in the main event, a letdown when they could be on the card and are not. The ones who thought it should be them will remember." };
-    };
-    TASKX.push(function(S, P, add) {
-      var R = reqOf(S);
-      if (!R.sponsor && S.sponsors && S.sponsors.length) R.sponsor = 1;
-      if (!R.face) {
-        if (S.fc && faceOf(S)) R.face = 1;
-        else if ((S.queue || []).slice(S.qi).some(function(q) {
-          return q.big;
-        })) add("face", "Your first big event is this week. Before it, name the face of your company: the one the shows are built around.", "desk", "Name them", { gate: "book", waive: false, req: true, done: "The face of the company is named.", short: "Name the face of the company" });
-      }
-    });
-    E.welcome = function(S) {
-      if (S.letter) return S.letter;
-      var P = S.promos[S.player], o = S.owner, me = !!o.me, rank = typeof E.audience === "function" ? E.audience(S).rank : S.order.slice().sort(function(a, b) {
-        return S.promos[b].image - S.promos[a].image;
-      }).indexOf(P.id) + 1, n = S.order.length, sh = S.queue[S.qi] || P.shows[0];
-      var top = P.titles.filter(function(t) {
-        return !t.tag && t.holders.length;
-      }).sort(function(a, b) {
-        return b.lvl - a.lvl;
-      })[0], ch = top ? S.w[top.holders[0]] : null, fav = !me && o.fav != null ? S.w[o.fav] : null;
-      var place = rank === 1 ? "We are the biggest company in the world, and everybody else gets up in the morning to change that." : rank <= 3 ? "We are number " + rank + " of " + n + ". I did not hire you to stay there." : rank >= n - 1 ? "We are near the bottom of " + n + " companies. Nobody expects anything from us. Good." : "We are number " + rank + " of " + n + ". There is room above us and people below who want our spot.";
-      var L2 = me ? [
-        "It is yours. Your name is on the lease, the ring is paid for, and nobody upstairs can tell you no.",
-        "Nobody upstairs can save you either.",
-        place.replace(/^We are/, "You are").replace(/I did not hire you to stay there\./, "That is not why you did this.")
-      ] : ["Congratulations. The job is yours.", "You are the booker of " + (P.full || P.name) + ", " + modelOf(P).ph + ". From tonight every match, every promo and every finish goes out with your name on it.", place];
-      if (ch) L2.push(ch.name + " holds the " + top.name + "." + (fav && fav.id !== ch.id ? " My money is on " + fav.name + ". You will hear from me about that." : fav ? " I like it that way." : ""));
-      var mid = (S.feuds || []).filter(function(f) {
-        return f.mid && !f.res && f.promo === P.id;
-      });
-      if (mid.length) {
-        var f0 = mid[0], A = S.w[f0.a[0]], B = S.w[f0.b[0]];
-        if (A && B) L2.push(A.name + " and " + B.name + " have been at it for weeks" + (f0.title ? ", with the belt on the line" : "") + ". " + (mid.length > 1 ? mid.length - 1 + " more " + (mid.length === 2 ? "story is" : "stories are") + " already running. " : "") + "Do not let them go cold.");
-      }
-      L2.push("Your first show is " + sh.name + ". The card is empty and the building is sold.");
-      var Y = !me && typeof E.ownerYear === "function" ? E.ownerYear(S) : null;
-      if (Y) L2.push("By " + (Y.end ? "the flagship, " + Y.end : "the end of the year") + ", I want three things: popularity up to " + Y.asks[0].n.replace(/^Popularity | or more$/g, "") + ", at least half our shows giving the crowd what it came for, and no losses I have to cover. Do that two years running and we can talk about who owns this place.");
-      L2.push(me ? "Go and book it." : "Do not make me regret this.");
-      return S.letter = {
-        from: me ? S.booker.name : o.name,
-        role: me ? "Owner and booker" : "Owner",
-        company: P.full || P.name,
-        short: P.name,
-        to: S.booker.name,
-        date: cal(S.week).label,
-        lines: L2,
-        show: sh.name,
-        ps: "Before the show, the Office is where the week starts. The key at the bottom right always says what is next."
-      };
-    };
-    var CLAUSE = {
-      travel: {
-        n: "Paid travel",
-        d: "You pay their travel. Their body recovers faster between shows. It costs a tenth of their wage again each week.",
-        save: 0.06,
-        wants: function(S, w) {
-          return w.age >= 33 || w.cond < 70;
-        }
-      },
-      nocut: {
-        n: "A no-cut promise",
-        d: "You will not let them go. If you do, it costs six months of their wage and the locker room hears about it.",
-        save: 0.08,
-        wants: function(S, w) {
-          return w.morale < 55 || !!w.cut;
-        }
-      },
-      dates: {
-        n: "Two dates a week",
-        d: "They work at most two of your shows a week. Older bodies last longer that way.",
-        save: 0.06,
-        wants: function(S, w) {
-          return w.age >= 36;
-        }
-      },
-      outside: {
-        n: "Outside dates",
-        d: "They can work indie dates on nights you have no show. They stay sharp and happy, and their body wears a little faster.",
-        save: 0.05,
-        wants: function(S, w) {
-          return w.age <= 30 && (w.mom || 0) >= 0;
-        }
-      },
-      merch: {
-        n: "A merchandise share",
-        d: "A quarter of what their own merchandise lines make goes to them. Every line with their face on it keeps them happy.",
-        save: 0.07,
-        wants: function(S, w) {
-          return w.mic >= 72;
-        }
-      },
-      title: {
-        n: "A title match",
-        d: "A match for a belt within twelve weeks of signing. Break it and they will remember.",
-        save: 0.1,
-        wants: function(S, w) {
-          var P = S.promos[S.player];
-          return w.ovr >= P.image - 6;
-        }
-      }
-    };
-    function clausesWanted(S, w) {
-      var P = S.promos[S.player], corp = P && P.model === "corporate";
-      return Object.keys(CLAUSE).filter(function(k) {
-        return !(corp && k === "outside") && CLAUSE[k].wants(S, w);
-      }).slice(0, 3);
-    }
-    E.clauses = function(S, id) {
-      var w = S.w[id];
-      if (!w) return [];
-      var ask = E.ask(S, w);
-      return clausesWanted(S, w).map(function(k) {
-        var c = CLAUSE[k];
-        return { k, n: c.n, d: c.d, save: function(v) {
-          return v < 1e3 ? Math.max(10, Math.round(v / 10) * 10) : Math.round(v / 50) * 50;
-        }(ask * c.save) };
-      });
-    };
-    (function() {
-      var sign0 = E.sign, rel0 = E.release;
-      E.sign = function(S, id, wage, weeks, cl) {
-        var w = S.w[id];
-        cl = (cl || []).filter(function(k) {
-          return CLAUSE[k] && w && clausesWanted(S, w).indexOf(k) >= 0;
-        });
-        if (!cl.length) return sign0(S, id, wage, weeks);
-        var save = cl.reduce(function(a, k) {
-          return a + CLAUSE[k].save;
-        }, 0), ask0 = E.ask;
-        E.ask = function(S2, w2) {
-          var a = ask0(S2, w2);
-          return w2 === w ? Math.round(a * (1 - save) / 50) * 50 : a;
-        };
-        var r;
-        try {
-          r = sign0(S, id, wage, weeks);
-        } finally {
-          E.ask = ask0;
-        }
-        if (r && r.ok) {
-          var P = S.promos[S.player];
-          w.cl = {};
-          cl.forEach(function(k) {
-            w.cl[k] = S.week;
-          });
-          if (w.cl.title) {
-            var t = P.titles.filter(function(x) {
-              return !x.tag && x.g === w.g && x.holders.length && x.holders[0] !== w.id;
-            }).sort(function(a, b) {
-              return b.lvl - a.lvl;
-            })[0];
-            if (t) S.quests.push({ id: S.nid++, type: "shot", w: w.id, title: t.id, due: S.week + 12, text: "Promise: give " + w.name + " a match for the " + t.name + " by " + cal(S.week + 12).label + " (it is in their contract)" });
-          }
-          youRemember(S, w, "clauses", "You signed me with " + cl.map(function(k) {
-            return CLAUSE[k].n.toLowerCase();
-          }).join(" and ") + " in the contract.", 3);
-          r.msg += " The contract has " + cl.map(function(k) {
-            return CLAUSE[k].n.toLowerCase();
-          }).join(" and ") + ".";
-        }
-        return r;
-      };
-      E.release = function(S, id) {
-        var w = S.w[id], P = S.promos[S.player];
-        if (!w || w.promo !== P.id || !w.cl || !w.cl.nocut) return rel0(S, id);
-        var pay = w.wage * 24;
-        P.cash -= pay;
-        rosterOf(S, P.id).forEach(function(x) {
-          if (x !== w) x.morale = clamp(x.morale - 2, 0, 100);
-        });
-        S.trust = clamp((S.trust == null ? 60 : S.trust) - 5, 0, 100);
-        news(S, "contract", P.name + " broke a no-cut promise to " + w.name + ".");
-        delete w.cl;
-        var msg = rel0(S, id);
-        return (msg || "") + " It was a no-cut deal: another " + money(pay) + " paid, and the locker room heard about it.";
-      };
-    })();
-    WEEKX.push(function(S) {
-      if (S.cal) return;
-      var P = S.promos[S.player];
-      rosterOf(S, P.id).forEach(function(w) {
-        if (!w.cl || !w.cl.travel) return;
-        w.cond = Math.min(100, w.cond + 2);
-        P.cash -= Math.round(w.wage * 0.1);
-      });
-    });
-    WEEKX.push(function(S) {
-      if (S.cal) return;
-      var P = S.promos[S.player];
-      (P.lines || []).forEach(function(L2) {
-        var w = S.w[L2.w];
-        if (w && w.cl && w.cl.merch) w.morale = clamp(w.morale + 1, 0, 100);
-      });
-    });
-    WEEKX.push(function(S) {
-      if (S.cal) return;
-      var P = S.promos[S.player];
-      rosterOf(S, P.id).forEach(function(w) {
-        if (!w.cl || !w.cl.outside || w.inj > 0) return;
-        w.cond = Math.max(0, w.cond - 2);
-        w.morale = clamp(w.morale + 1, 0, 100);
-        if (w.age <= 27 && w.pot != null && w.ovr < w.pot - 5) w.ovr = Math.min(w.pot, w.ovr + 0.08);
-        var ind = indieOf(S, w);
-        w.ind = { n: ind.n, w: S.week, k: (w.ind && w.ind.n === ind.n ? w.ind.k || 0 : 0) + 1 };
-      });
-    });
-    WEEKX.push(function(S) {
-      S.w.forEach(function(w) {
-        if (w.cl && (w.promo !== S.player || w.rt)) delete w.cl;
-      });
-    });
-    (function() {
-      var ren0 = E.renew, ra0 = E.renewAsk, pick2 = function(S, w, cl) {
-        return (cl || []).filter(function(k) {
-          return CLAUSE[k] && clausesWanted(S, w).indexOf(k) >= 0;
-        });
-      };
-      E.renewAsk = function(S, id, weeks, cl) {
-        var a = ra0(S, id, weeks), w = S.w[id];
-        if (!w) return a;
-        var sv = pick2(S, w, cl).reduce(function(x, k) {
-          return x + CLAUSE[k].save;
-        }, 0);
-        return Math.round(a * (1 - sv) / 50) * 50;
-      };
-      E.renew = function(S, id, weeks, cl) {
-        var w = S.w[id];
-        if (!w) return ren0(S, id, weeks);
-        cl = pick2(S, w, cl);
-        var ask = E.renewAsk(S, id, weeks, cl), r = ren0(S, id, weeks);
-        if (!cl.length || w.promo !== S.player) return r;
-        w.wage = ask;
-        w.cl = {};
-        cl.forEach(function(k) {
-          w.cl[k] = S.week;
-        });
-        if (w.cl.title) {
-          var P = S.promos[S.player], t = P.titles.filter(function(x) {
-            return !x.tag && x.g === w.g && x.holders.length && x.holders[0] !== w.id;
-          }).sort(function(a, b) {
-            return b.lvl - a.lvl;
-          })[0];
-          if (t) S.quests.push({ id: S.nid++, type: "shot", w: w.id, title: t.id, due: S.week + 12, text: "Promise: give " + w.name + " a match for the " + t.name + " by " + cal(S.week + 12).label + " (it is in their contract)" });
-        }
-        return w.name + " re-signs for " + money(w.wage) + " a week, with " + cl.map(function(k) {
-          return CLAUSE[k].n.toLowerCase();
-        }).join(" and ") + " in the contract.";
-      };
-    })();
-    function datesFull(S, w) {
-      return !!(w && w.cl && w.cl.dates && w.dwk === S.week && (w.dn || 0) >= 2);
-    }
-    SHOWX.push(function(S, P, show, rep, card) {
-      if (S.cal || P.id !== S.player || !card) return;
-      var seen = {};
-      card.forEach(function(m) {
-        flat(m.sides || []).forEach(function(id) {
-          if (id == null || seen[id]) return;
-          seen[id] = 1;
-          var w = S.w[id];
-          if (!w || !w.cl || !w.cl.dates) return;
-          if (w.dwk !== S.week) {
-            w.dwk = S.week;
-            w.dn = 0;
-          }
-          w.dn++;
-        });
-      });
-    });
-    (function() {
-      var v0 = E.validate;
-      E.validate = function(S, card) {
-        var v = v0(S, card);
-        (card || []).forEach(function(m) {
-          flat(m.sides || []).forEach(function(id) {
-            var w = S.w[id];
-            if (datesFull(S, w) && v.errors.indexOf(w.name + "\u2019s contract says two dates a week, and they have worked two.") < 0) v.errors.push(w.name + "\u2019s contract says two dates a week, and they have worked two.");
-          });
-        });
-        return v;
-      };
-    })();
-    E.CLAUSE = CLAUSE;
-    var SHOW_LEN = { tv: 120, big: 180 }, TIME_OVER = 5, TIME_FREE = 5, TIME_LIGHT = 10, PLAN_MINS = 10, TOP_GOOD = 6, TOP_BAD = 6;
-    var MT_OVER = { "1v1": 5, tag: 6, "3way": 6, "4way": 7, "6man": 7, br: 9 }, STIP_SET = { cage: 3, ladder: 2 };
-    REACT["Video recap"] = ["Now you know why these two cannot be in the same building.", "That is the story so far. Tonight it gets another chapter."];
-    function showMins(show) {
-      return show ? show.mins || (show.big ? SHOW_LEN.big : SHOW_LEN.tv) : 0;
-    }
-    function bellMins(show, m, isMain) {
-      if (m.mt === "br") return brMins(m);
-      return Math.max(4, (m.stip === "iron" ? 30 : LEN[m.len] || 12) + (show && show.big ? 4 : 0) + (isMain ? 3 : 0) + noteMins(m));
-    }
-    function brMins(m) {
-      return Math.max(10, Math.round(2 * ((m.sides ? m.sides.length : 8) + (m.surp ? 1 : 0))));
-    }
-    function matchSlot(show, m, isMain) {
-      return bellMins(show, m, isMain) + (MT_OVER[m.mt] || 5) + (STIP_SET[m.stip] || 0);
-    }
-    function hasPlan(S) {
-      return !!(S.plan && S.w[S.plan.sp]);
-    }
-    function showClock(S, card) {
-      var show = S.queue && S.queue[S.qi], n = card.length, items = [], t = 0, L2 = segRead(S), B = showMins(show), i;
-      var put = function(o) {
-        o.at = t;
-        t += o.mins;
-        items.push(o);
-      };
-      if (hasPlan(S)) put({ t: "plan", mins: PLAN_MINS });
-      for (i = 0; i < Math.max(n, 1); i++) {
-        L2.forEach(function(sg, slot) {
-          if (clamp(sg.pos | 0, 0, Math.max(0, n - 1)) === i) put({ t: "seg", slot, k: sg.k, mins: segMins(sg) });
-        });
-        if (i < n) put({ t: "match", i, mins: matchSlot(show, card[i], i === n - 1) });
-      }
-      var tops = [], h;
-      for (h = 0; h * 60 < B; h++) {
-        for (i = 0; i < items.length; i++) if (items[i].at <= h * 60 && h * 60 < items[i].at + items[i].mins) {
-          items[i].top = h + 1;
-          tops.push({ hour: h + 1, at: h * 60, k: i });
-          break;
-        }
-      }
-      return { budget: B, total: t, left: B - t, items, tops, over: t - B > TIME_OVER, short: B - t > TIME_LIGHT, light: B - t > TIME_FREE && B - t <= TIME_LIGHT };
-    }
-    var OPENS = {
-      none: { n: "Nothing is booked yet", d: "The first thing on the run sheet opens the show." },
-      match: { n: "Straight to the ring", d: "No time is spent talking. The first match carries the top of the hour, so make it a hot one." },
-      promo: { n: "A promo opens the show", d: "If the one talking wrestles later tonight, the crowd is ready for that match. A weak promo leaves the first match in a quiet building." },
-      angle: { n: "An angle opens the show", d: "The feud heats faster from the top of the show, and a good angle has the building buzzing for the first match." },
-      recap: { n: "A video recap opens the show", d: "Five minutes, and tonight\u2019s match between the two of them means more. More still at a big event." },
-      writers: { n: "The writers open the show", d: "You find out what they wrote on the night. If it is good the first match gains from it." }
-    };
-    function openKind(S, card) {
-      var c = showClock(S, card), f = c.items[0];
-      if (!f) return "none";
-      if (f.t === "plan") return "promo";
-      if (f.t === "match") return "match";
-      return f.k === "writers" ? "writers" : f.k === "recap" ? "recap" : SEGK[f.k].t;
-    }
-    CRX.push(function(ctx) {
-      var o = ctx.rep && ctx.rep.open;
-      if (!o || !ctx.isPl || o.k === "match") return null;
-      var ids = flat(ctx.m.sides), inIt = !!o.ids && o.ids.some(function(id) {
-        return ids.indexOf(id) >= 0;
-      }), flatOpen = ctx.i === 0 && o.ov < 45 ? { d: -1, x: "The show opened flat, and the first match walked into a quiet building" } : null;
-      if (o.k === "recap") return ctx.feud && ctx.feud.id === o.feud ? { d: ctx.big ? 2.5 : 1.5, x: "The video package that opened the show told their story before the bell" } : null;
-      if (o.k === "promo") {
-        if (inIt && o.ov >= 50) return { d: o.ov >= 70 ? 1.5 : 0.8, x: "The promo that opened the show set this match up" };
-        return flatOpen;
-      }
-      if (inIt && o.ov >= 50) return { d: 1.5, x: "The crowd had wanted this since the angle that opened the show" };
-      if (ctx.i === 0 && o.ov >= 65) return { d: 1, x: "The building was buzzing after the angle that opened the show" };
-      return flatOpen;
-    });
-    function showTimes(S, P, show, rep, card) {
-      var B = showMins(show), t = 0, mi = 0, n = card.length, d = 0, h, i, s, ex = expected(P, show);
-      rep.segs.forEach(function(x) {
-        if (x.k === "match") {
-          x.slot = matchSlot(show, card[mi], mi === n - 1);
-          mi++;
-        } else x.slot = x.mins || SEGLEN.M;
-        x.at = t;
-        t += x.slot;
-      });
-      rep.clock = { budget: B, total: t };
-      rep.tops = [];
-      for (h = 0; h * 60 < B; h++) for (i = 0; i < rep.segs.length; i++) {
-        s = rep.segs[i];
-        if (!(s.at <= h * 60 && h * 60 < s.at + s.slot)) continue;
-        var td = s.ov >= ex + TOP_GOOD ? 0.5 : s.ov <= ex - TOP_BAD ? -0.5 : 0, what = s.k === "match" ? s.label : s.head || "A segment";
-        s.top = h + 1;
-        rep.tops.push({ hour: h + 1, label: what, ov: s.ov, d: td, x: td > 0 ? h ? "Hour " + (h + 1) + " opened strong. The people who tuned in stayed" : "A strong start. The people who tuned in stayed" : td < 0 ? h ? "Hour " + (h + 1) + " opened weak. Sets were turned off" : "A weak start. Sets were turned off" : h ? "Hour " + (h + 1) + " opened on about what this crowd expects" : "A start at about what this crowd expects" });
-        d += td;
-        break;
-      }
-      var empty = B - t - (rep.slack || 0);
-      if (empty > TIME_FREE) {
-        rep.light = empty;
-        d -= (empty - TIME_FREE) * 0.3;
-      } else if (t > B) rep.overrun = t - B;
-      return d;
-    }
-    function fitShow(S, card, keep) {
-      var show = S.queue && S.queue[S.qi];
-      if (!show || !card.length) return 0;
-      var P = S.promos[S.player], B = showMins(show), L2 = segList(S), changed = 0, it, t, n;
-      var total = function() {
-        var s = hasPlan(S) ? PLAN_MINS : 0;
-        card.forEach(function(m, i) {
-          s += matchSlot(show, m, i === card.length - 1);
-        });
-        L2.forEach(function(sg) {
-          s += segMins(sg);
-        });
-        return s;
-      };
-      var size = function(i) {
-        var f = shFacts(S, P, card[i]);
-        return f ? f.size : 0;
-      };
-      var lenOf = function(m) {
-        return m.len || "M";
-      };
-      var segStep = function(from, to, writersFirst) {
-        for (var pass = 0; pass < 2; pass++) for (var k = L2.length - 1; k >= 0; k--) {
-          var sg = L2[k];
-          if (pass === 0 === writersFirst !== (sg.k === "writers") || SEGK[sg.k].fix || segLen(sg) !== from) continue;
-          sg.len = to;
-          return true;
-        }
-        return false;
-      };
-      var choose = function(ok, low) {
-        var best = -1, bs = low ? 1e9 : -1e9, i, v;
-        for (i = 0; i < n; i++) {
-          if (!ok(i)) continue;
-          v = size(i);
-          if (low ? v < bs : v > bs) {
-            bs = v;
-            best = i;
-          }
-        }
-        return best;
-      };
-      var shrink = function() {
-        var i;
-        if (segStep("L", "M", true) || segStep("M", "S", true)) return true;
-        i = choose(function(k) {
-          return k < n - 1 && lenOf(card[k]) === "L" && card[k].stip !== "iron";
-        }, true);
-        if (i >= 0) {
-          card[i].len = "M";
-          return true;
-        }
-        if (n > 1 && lenOf(card[0]) === "M" && !card[0].title && card[0].stip !== "iron") {
-          card[0].len = "S";
-          return true;
-        }
-        i = choose(function(k) {
-          return k < n - 1 && lenOf(card[k]) === "M" && !card[k].title && card[k].stip !== "iron";
-        }, true);
-        if (i >= 0) {
-          card[i].len = "S";
-          return true;
-        }
-        if (L2.length) {
-          for (i = L2.length - 1; i >= 0; i--) if (L2[i].k === "writers") {
-            L2.splice(i, 1);
-            return true;
-          }
-          L2.pop();
-          return true;
-        }
-        if (lenOf(card[n - 1]) === "L" && card[n - 1].stip !== "iron") {
-          card[n - 1].len = "M";
-          return true;
-        }
-        if (n > 3) {
-          i = choose(function(k) {
-            return k < n - 1 && !card[k].title;
-          }, true);
-          if (i >= 0) {
-            card.splice(i, 1);
-            L2.forEach(function(sg) {
-              if (sg.pos > i) sg.pos--;
-            });
-            return true;
-          }
-        }
-        return false;
-      };
-      var grow = function() {
-        var i, m = card[n - 1];
-        if (n - 1 !== keep && lenOf(m) !== "L" && m.stip !== "iron") {
-          m.len = lenOf(m) === "S" ? "M" : "L";
-          return true;
-        }
-        if (segStep("S", "M", false)) return true;
-        i = choose(function(k) {
-          return k !== keep && k > 0 && k < n - 1 && lenOf(card[k]) === "M" && card[k].stip !== "iron" && lenOf(card[k - 1]) !== "L" && (k + 1 >= n - 1 || lenOf(card[k + 1]) !== "L");
-        }, false);
-        if (i >= 0) {
-          card[i].len = "L";
-          return true;
-        }
-        for (i = 0; i < n; i++) if (i !== keep && lenOf(card[i]) === "S" && card[i].stip !== "iron") {
-          card[i].len = "M";
-          return true;
-        }
-        if (L2.length < 4) {
-          var taken = {};
-          L2.forEach(function(sg) {
-            taken[clamp(sg.pos | 0, 0, n - 1)] = 1;
-          });
-          var at = [n - 1, Math.min(1, n - 1), Math.min(2, n - 1), Math.min(3, n - 1)].filter(function(p) {
-            return !taken[p];
-          })[0];
-          L2.push({ k: "writers", who: [], pos: at == null ? n - 1 : at, len: "M" });
-          return true;
-        }
-        if (segStep("M", "L", false)) return true;
-        i = choose(function(k) {
-          return k !== keep && k > 0 && k < n - 1 && lenOf(card[k]) === "M" && card[k].stip !== "iron";
-        }, false);
-        if (i >= 0) {
-          card[i].len = "L";
-          return true;
-        }
-        return false;
-      };
-      for (it = 0; it < 40; it++) {
-        t = total();
-        n = card.length;
-        if (t > B + TIME_OVER) {
-          if (!shrink()) break;
-          changed++;
-          continue;
-        }
-        if (t < B - TIME_FREE) {
-          if (!grow()) break;
-          changed++;
-          continue;
-        }
-        break;
-      }
-      return changed;
-    }
-    E.SHOW_OPENS = OPENS;
-    E.showMins = function(S) {
-      return showMins(S.queue && S.queue[S.qi]);
-    };
-    E.clock = function(S, card) {
-      card = card || S.card || [];
-      var c = showClock(S, card), k = openKind(S, card);
-      c.open = { k, n: OPENS[k].n, d: OPENS[k].d };
-      c.cats = { match: { n: 0, mins: 0 }, promo: { n: 0, mins: 0 }, angle: { n: 0, mins: 0 } };
-      var L2 = segRead(S), nm = function(ids) {
-        return ids.map(function(id) {
-          return id == null || !S.w[id] ? "open spot" : S.w[id].name;
-        }).join(" & ");
-      };
-      c.items.forEach(function(x) {
-        var cat = x.t === "match" ? "match" : x.t === "plan" ? "promo" : SEGK[x.k].t === "promo" ? "promo" : "angle";
-        c.cats[cat].n++;
-        c.cats[cat].mins += x.mins;
-        x.cat = cat;
-        x.label = x.t === "match" ? card[x.i].sides.map(nm).join(" vs ") : x.t === "plan" ? S.w[S.plan.sp].name + " opens with a promo" : segWhy(S, L2[x.slot], x.slot) ? SEGK[x.k].n : segLabel(S, L2[x.slot]);
-      });
-      c.words = c.over ? "The show runs " + (c.total - c.budget) + " minutes over." : c.short || c.light ? c.budget - c.total + " minutes still to fill." : c.left > 0 ? c.left + " minutes spare. Close enough: the announcers will cover it." : c.left < 0 ? -c.left + " minutes over. The network allows five." : "Timed to the minute.";
-      return c;
-    };
-    E.matchMins = function(S, m, i, n) {
-      var show = S.queue && S.queue[S.qi], main = i === n - 1, o = {};
-      ["S", "M", "L"].forEach(function(l) {
-        var c = { mt: m.mt, stip: m.stip, len: l, note: m.note, sides: m.sides, surp: m.surp };
-        o[l] = matchSlot(show, c, main);
-      });
-      o.now = matchSlot(show, m, main);
-      o.bell = bellMins(show, m, main);
-      return o;
-    };
-    E.fitShow = function(S, card) {
-      return fitShow(S, card || S.card || []);
-    };
-    E.OPEN_GUIDE = ["match", "promo", "angle", "recap", "writers"].map(function(k) {
-      return { k, n: OPENS[k].n, d: OPENS[k].d };
-    });
-    function showFill(S, card) {
-      var show = S.queue && S.queue[S.qi];
-      if (!show || !card.length) return card;
-      var P = S.promos[S.player], n = card.length, want = segSlots(P, show), L2, k, spots = [Math.min(1, n - 1), n - 1, Math.min(2, n - 1)];
-      S.segs = [];
-      S.segKey = showKey(S);
-      L2 = S.segs;
-      if (want > 0) E.segSuggest(S, 1, card);
-      for (k = L2.length; k < want; k++) L2.push({ k: "writers", who: [], pos: spots[k % spots.length], len: "M" });
-      fitShow(S, card);
-      return card;
-    }
-    (function() {
-      var v0 = E.validate, s0 = E.suggest, c0 = E.resolveChaos;
-      E.resolveChaos = function(S, card, c) {
-        var mi = S.chs && !S.chs.done ? S.chs.mi : null, r = c0(S, card, c);
-        if (card && card.length && !S.live) {
-          var k = showClock(S, card);
-          if (k.over || k.short) fitShow(S, card, mi);
-        }
-        return r;
-      };
-      E.validate = function(S, card) {
-        var v = v0(S, card), show = S.queue && S.queue[S.qi];
-        if (!show || !card.length) return v;
-        var c = showClock(S, card), hrs = c.budget / 60, hw = hrs === 1 ? "one hour" : hrs === 2 ? "two hours" : hrs === 3 ? "three hours" : hrs + " hours";
-        if (c.over) v.errors.push("The show runs " + (c.total - c.budget) + " minutes over its " + hw + ". Take something off, or give a match, a promo or an angle less time.");
-        else if (c.short) v.errors.push(c.budget - c.total + " minutes of the " + hw + " are still empty. Add a match, a promo or an angle, or give something more time.");
-        else if (c.light) v.warnings.push("The show is " + (c.budget - c.total) + " minutes light. The announcers will have to fill, and the crowd will notice.");
-        var fw = faceWarn(S, card);
-        if (fw) v.warnings.push(fw);
-        var my = S.mystery && S.mystery.promo === S.player ? S.mystery : null;
-        if (my && S.w[my.v] && !segRead(S).some(function(sg) {
-          return sg.k === "writers";
-        })) v.warnings.push("Nobody knows yet who attacked " + S.w[my.v].name + ". That story moves only when the writers have time on the show (a Writers\u2019 pick).");
-        return v;
-      };
-      E.suggest = function(S) {
-        return showFill(S, s0(S));
-      };
-    })();
-    var PLOT_PUSH_CD = 8, PLOT_TAPE = { interview: "A pre-taped interview", callout: "A pre-taped call-out", ambush: "A pre-taped attack" }, PLOT_POS = { start: ["Start of the show", 0], mid: ["Middle of the show", 2], end: ["End of the show", 99] };
-    var PLOT = {
-      split: { n: "Break up a tag team", cost: 2, d: "One of them turns on the other. The team is gone and the two of them are a rivalry that starts hot." },
-      push: { n: "Push a wrestler", cost: 2, d: "The office gets behind them: wins come easier and the crowd is told they matter. The ones next to them on the card will notice." },
-      tape: { n: "Buy a budget pre-tape", cost: 1, d: "A cheap promo or angle shot in advance. It adds itself to your next show where you say. Five minutes, and it never looks as good as live." }
-    };
-    function plotTeams(S, P) {
-      return S.teams.filter(function(t) {
-        if (t.promo !== P.id || t.m.length !== 2) return false;
-        var a = S.w[t.m[0]], b = S.w[t.m[1]];
-        return a && b && a.promo === P.id && b.promo === P.id && !a.nw && !b.nw && !feudOf(S, a.id, b.id);
-      });
-    }
-    function plotPushable(S, P) {
-      return rosterOf(S, P.id).filter(function(w) {
-        return !w.nw && !w.rt && !(w.inj > 0) && !(S.lcd && S.lcd["pu" + w.id] != null && S.week - S.lcd["pu" + w.id] < PLOT_PUSH_CD);
-      }).sort(function(a, b) {
-        return b.ovr - a.ovr;
-      });
-    }
-    function plotTapeOn(S) {
-      return segRead(S).filter(function(sg) {
-        return sg.tape;
-      });
-    }
-    E.plotInfo = function(S) {
-      var P = S.promos[S.player], show = S.queue[S.qi] || null, tp = plotTapeOn(S)[0] || null;
-      return {
-        bp: S.bp,
-        acts: Object.keys(PLOT).map(function(k) {
-          var A = PLOT[k];
-          return { id: k, n: A.n, cost: A.cost, d: A.d, can: S.bp >= A.cost };
-        }),
-        teams: plotTeams(S, P).map(function(t) {
-          var a = S.w[t.m[0]], b = S.w[t.m[1]];
-          return { id: t.id, a: a.id, b: b.id, n: a.name + " & " + b.name };
-        }),
-        push: plotPushable(S, P).slice(0, 40).map(function(w) {
-          return { id: w.id, n: w.name + " \xB7 " + Math.round(w.ovr) };
-        }),
-        show: show ? show.name : null,
-        kinds: Object.keys(PLOT_TAPE).map(function(k) {
-          return { id: k, n: PLOT_TAPE[k], two: k !== "interview" };
-        }),
-        pos: Object.keys(PLOT_POS).map(function(k) {
-          return { id: k, n: PLOT_POS[k][0] };
-        }),
-        taped: tp ? { label: segLabel(S, tp), at: tp.at || "start", where: PLOT_POS[tp.at || "start"][0] } : null
-      };
-    };
-    E.plotTapeWho = function(S, kind, who) {
-      return E.segChoices(S, kind, who || [], -1);
-    };
-    E.plotDo = function(S, id, o) {
-      var A = PLOT[id], P = S.promos[S.player];
-      o = o || {};
-      if (!A) return { ok: false, msg: "That is not something booking power buys." };
-      if (S.bp < A.cost) return { ok: false, msg: A.n + " takes " + A.cost + " booking power. You have " + S.bp + "." };
-      var msg = "";
-      if (id === "split") {
-        var t = plotTeams(S, P).filter(function(x) {
-          return x.id === +o.team;
-        })[0];
-        if (!t) return { ok: false, msg: "Pick a regular team first." };
-        var a = S.w[t.m[0]], b = S.w[t.m[1]], who = o.who != null && +o.who === b.id ? b : o.who != null && +o.who === a.id ? a : a.morale <= b.morale ? a : b, other = who === a ? b : a;
-        dissolveTeam(S, t);
-        var f = startFeud(S, P, who, other, 48, who.name + " turned on " + other.name, { force: true });
-        if (who.align !== "H") {
-          who.align = "H";
-        }
-        if (other.align === "H" && who.align === "H") other.align = "F";
-        relBump(S, who.id, other.id, { bond: -30 }, { k: "split", keep: true, t: who.name + " turned on " + other.name + " and ended the team.", by: "you" });
-        youRemember(S, other, "split", "You broke up their team and had " + who.name + " turn on them.", -4);
-        youRemember(S, who, "splitup", "You broke up the team and gave them the turn.", 4);
-        news(S, "story", who.name + " has turned on " + other.name + ". The team is finished, and the rivalry starts now.");
-        msg = who.name + " turns on " + other.name + ". The team is gone, and " + who.name + " against " + other.name + " is a rivalry that starts hot.";
-      } else if (id === "push") {
-        var w = plotPushable(S, P).filter(function(x) {
-          return x.id === +o.w;
-        })[0];
-        if (!w) return { ok: false, msg: "Pick somebody who can be pushed right now. One push in eight weeks for each wrestler." };
-        (S.lcd = S.lcd || {})["pu" + w.id] = S.week;
-        w.mom = clamp((w.mom || 0) + 3, -10, 10);
-        w.morale = clamp(w.morale + 6, 0, 100);
-        addOvr(P, w, 0.6);
-        youRemember(S, w, "pushed", "You put the office behind them.", 8);
-        rosterOf(S, P.id).filter(function(x) {
-          return !x.nw && x.id !== w.id && x.g === w.g && Math.abs(x.ovr - w.ovr) <= 6;
-        }).sort(function(x, y) {
-          return y.ovr - x.ovr;
-        }).slice(0, 2).forEach(function(x) {
-          relBump(S, x.id, w.id, { ja: 8 }, { k: "pushed", t: x.name + " watched the office get behind " + w.name + "." });
-        });
-        news(S, "story", P.name + " is getting behind " + w.name + ".");
-        msg = "The office is behind " + w.name + ": momentum now, and the crowd is told they matter. Book them to win, or it is wasted.";
-      } else if (id === "tape") {
-        var show = S.queue[S.qi];
-        if (!show) return { ok: false, msg: "Every show this week has run. Buy it when there is a show to put it on." };
-        if (plotTapeOn(S).length) return { ok: false, msg: "There is already a pre-tape on " + show.name + ". One a show." };
-        if (!PLOT_TAPE[o.k] || !PLOT_POS[o.at]) return { ok: false, msg: "Pick what it is and where it goes." };
-        var r = E.setSeg(S, -1, { k: o.k, who: (o.who || []).map(function(x) {
-          return +x;
-        }), pos: PLOT_POS[o.at][1], len: "S" });
-        if (!r.ok) return { ok: false, msg: r.msg };
-        var sg = segList(S)[r.slot];
-        sg.tape = 1;
-        sg.at = o.at;
-        sg.mod = -4;
-        msg = PLOT_TAPE[o.k] + " is on the run sheet for " + show.name + ", at the " + PLOT_POS[o.at][0].toLowerCase().replace(" of the show", "") + " of the show: " + segLabel(S, sg) + ". Five minutes of the show\u2019s time.";
-      }
-      S.bp -= A.cost;
-      return { ok: true, msg: msg + " (" + A.cost + " booking power.)" };
-    };
-    (function() {
-      var sug = E.suggest;
-      E.suggest = function(S) {
-        var keep = plotTapeOn(S).map(function(sg) {
-          return JSON.parse(JSON.stringify(sg));
-        }), card = sug(S);
-        if (keep.length && !plotTapeOn(S).length) {
-          var L2 = segList(S), busy = {};
-          keep.forEach(function(sg) {
-            sg.who.forEach(function(id) {
-              busy[id] = 1;
-            });
-          });
-          for (var i = L2.length - 1; i >= 0; i--) if (L2[i].who && L2[i].who.some(function(id) {
-            return busy[id];
-          })) L2.splice(i, 1);
-          keep.forEach(function(sg) {
-            L2.push(sg);
-          });
-          E.fitShow(S, card);
-        }
-        return card;
-      };
-    })();
-    var SHOW_WORDS = [
-      { v: 95, g: "A+", w: "All-time classic", a: "an all-time classic", one: "an all-time classic", d: "They will talk about it for years." },
-      { v: 90, g: "A+", w: "Blow-away", a: "a blow-away show", one: "a blow-away one", d: "Nothing missed. The building never sat down." },
-      { v: 85, g: "A", w: "Red hot", a: "a red-hot show", one: "a red-hot one", d: "The crowd was loud from the first bell to the last." },
-      { v: 80, g: "A-", w: "Hot", a: "a hot show", one: "a hot one", d: "Good wrestling, stories that mattered, a crowd that cared." },
-      { v: 75, g: "B+", w: "Strong", a: "a strong show", one: "a strong one", d: "More good than bad, and a main event that delivered." },
-      { v: 70, g: "B", w: "Solid", a: "a solid show", one: "a solid one", d: "It did its job. Nobody asked for their money back." },
-      { v: 65, g: "B-", w: "Decent", a: "a decent show", one: "a decent one", d: "Watchable. A match or two worth the ticket." },
-      { v: 55, g: "C+ or C", w: "Flat", a: "a flat show", one: "a flat one", d: "The crowd sat on its hands for most of it." },
-      { v: 40, g: "C- or D", w: "A dud", a: "a dud", one: "a dud", d: "Little worked, and the building knew it." },
-      { v: 0, g: "F", w: "A bomb", a: "a bomb", one: "a bomb", d: "It died in front of a live audience." }
-    ];
-    var GRADES = [[90, "A+"], [85, "A"], [80, "A-"], [75, "B+"], [70, "B"], [65, "B-"], [60, "C+"], [55, "C"], [50, "C-"], [40, "D"]];
-    function gradeIdx(v) {
-      for (var i = 0; i < GRADES.length; i++) if (v >= GRADES[i][0]) return GRADES.length - i;
-      return 0;
-    }
-    function gradeG(v) {
-      for (var i = 0; i < GRADES.length; i++) if (v >= GRADES[i][0]) return GRADES[i][1];
-      return "F";
-    }
-    function gradeA(v) {
-      var g = gradeG(v);
-      return (/^[AF]/.test(g) ? "an " : "a ") + g;
-    }
-    function gradeMeets(v, target) {
-      return gradeIdx(v) >= gradeIdx(target);
-    }
-    var CROWD_PTS = [[-12, 40], [-8, 50], [-6, 55], [-4, 60], [-2, 65], [-0.5, 70], [0.5, 75], [2, 80], [4, 85], [7, 90]];
-    function crowdScoreD(d) {
-      var p = CROWD_PTS, i;
-      if (d <= p[0][0]) return Math.max(5, p[0][1] + (d - p[0][0]) * 2.5);
-      if (d >= p[p.length - 1][0]) return Math.min(99, 90 + (d - 7));
-      for (i = 1; i < p.length; i++) if (d < p[i][0]) return p[i - 1][1] + (d - p[i - 1][0]) / (p[i][0] - p[i - 1][0]) * (p[i][1] - p[i - 1][1]);
-      return 90;
-    }
-    function crowdScore(rating, exp) {
-      return Math.round(crowdScoreD(rating - exp) * 10) / 10;
-    }
-    function repCS(r) {
-      return !r ? 0 : r.cs != null ? r.cs : r.exp != null ? crowdScore(r.rating, r.exp) : r.rating;
-    }
-    function verdictBand(d) {
-      var c = Math.round(crowdScoreD(d) * 10) / 10;
-      return c >= 85 ? 2 : c >= 75 ? 1 : c >= 70 ? 0 : c >= 60 ? -1 : -2;
-    }
-    function cgFix(S) {
-      var P = S.promos[S.player];
-      if (!P) return;
-      (S.sponsors || []).concat(S.spOffers || []).forEach(function(o) {
-        if (o && o.type === "rating" && !o.cg) {
-          var lo = 99;
-          Object.keys(P.base).forEach(function(k) {
-            if (P.base[k] < lo) lo = P.base[k];
-          });
-          o.val = Math.round(crowdScoreD(o.val - (lo + 0.6 * (P.image - P.image0))));
-          o.cg = 1;
-          o.text = "No show graded under " + gradeG(o.val);
-        }
-      });
-      (S.quests || []).forEach(function(q) {
-        if (q.type === "sponsor" && !q.cg) {
-          q.target = Math.round(crowdScoreD(q.target - expected(P, { big: true })));
-          q.cg = 1;
-          q.text = "Sponsor: big event graded " + gradeG(q.target) + " or better (" + money(q.bonus) + ")";
-        }
-      });
-    }
-    function showWord(v) {
-      for (var i = 0; i < SHOW_WORDS.length; i++) if (v >= SHOW_WORDS[i].v) return { i, w: SHOW_WORDS[i].w, a: SHOW_WORDS[i].a, one: SHOW_WORDS[i].one };
-      return { i: SHOW_WORDS.length - 1, w: "A bomb", a: "a bomb", one: "a bomb" };
-    }
-    function capW(t) {
-      return t.charAt(0).toUpperCase() + t.slice(1);
-    }
-    function showVerdict(rating, exp) {
-      var d = rating - exp, w = showWord(rating), e = showWord(exp), same = w.i === e.i;
-      var band = verdictBand(d), cs = crowdScore(rating, exp), head = [cs >= 50 ? "Lost the crowd" : "Died in front of them", "Came up short", "Gave them what they came for", "Sent them home happy", "Blew the roof off"][band + 2];
-      var line = band === 0 ? capW(w.a) + ", which is what this crowd expects." : same ? capW(w.a) + (band > 0 ? ", and a little more than this crowd expects." : ", but this crowd wanted a little more.") : capW(w.a) + " for a crowd that expects " + e.one + ".";
-      return { head, line, s: band > 0 ? 1 : band < 0 ? -1 : 0, band, grade: gradeG(cs), word: w, exp: e };
-    }
-    E.showWord = function(v) {
-      return showWord(v);
-    };
-    E.showVerdict = function(rating, exp) {
-      return showVerdict(rating, exp);
-    };
-    E.expectWords = function(S, show) {
-      show = show || S.queue && S.queue[S.qi];
-      if (!show) return null;
-      var fn = firstNight(S), e = expected(S.promos[S.player], show) - (fn ? FIRST_NIGHT : 0), w = showWord(e);
-      return { i: w.i, w: w.w, a: w.a, bar: starG(e), text: "This crowd expects " + w.a + ".", first: fn ? "It is your first night, so they will give you the benefit of the doubt." : null };
-    };
-    E.SHOW_LADDER = SHOW_WORDS.map(function(x) {
-      return { w: x.w, a: x.a, d: x.d };
-    });
-    E.grade = function(v) {
-      return gradeG(v);
-    };
-    E.repGrade = function(r) {
-      return gradeG(repCS(r));
-    };
-    E.repCS = function(r) {
-      return repCS(r);
-    };
-    E.crowdScore = function(a, b) {
-      return crowdScore(a, b);
-    };
-    E.gradeMeets = function(v, t) {
-      return gradeMeets(v, t);
-    };
-    WEEKX.push(function(S) {
-      cgFix(S);
-      (S.sponsors || []).concat(S.spOffers || []).forEach(function(o) {
-        if (o && o.type === "rating" && /%/.test(o.text || "")) o.text = "No show graded under " + gradeG(o.val);
-      });
-      (S.quests || []).forEach(function(q) {
-        if (q.type === "sponsor" && /%/.test(q.text || "")) q.text = "Sponsor: big event graded " + gradeG(q.target) + " or better (" + money(q.bonus) + ")";
-      });
-    });
-    var ARCH_KEEP = ["id", "name", "g", "promo", "ovr", "align", "age", "uid", "town", "face", "log", "rt", "rtp", "ysOld", "ysTo", "ys", "wins", "losses", "nw", "inj", "arch", "hof", "con", "morale", "cond"], ARCH_YEARS = 2, ARCH_LOG = 10, FA_CAP = 350, ROSTER_CAP = 60, TITLE_KEEP = 40;
-    function archYear(S) {
-      var y = cal(S.week).year, keep = y - ARCH_YEARS + 1;
-      S.w.forEach(function(w) {
-        for (var k in w) {
-          var v = w[k];
-          if (typeof v === "number" && v !== Math.round(v)) w[k] = Math.round(v * 100) / 100;
-        }
-        if (w.ys) {
-          var old = w.ysOld || [0, 0, 0, 0, 0, 0, 0], moved = 0;
-          Object.keys(w.ys).forEach(function(k2) {
-            if (+k2 < keep) {
-              var a = w.ys[k2];
-              for (var i2 = 0; i2 < 7; i2++) old[i2] = i2 === 4 ? Math.max(old[i2], a[i2] || 0) : old[i2] + (a[i2] || 0);
-              delete w.ys[k2];
-              moved = 1;
-            }
-          });
-          if (moved) {
-            w.ysOld = old;
-            w.ysTo = keep - 1;
-          }
-        }
-        if (w.log && w.log.length > ARCH_LOG) w.log = w.log.slice(0, 1).concat(w.log.slice(-(ARCH_LOG - 1)));
-        if (w.promo === "FA" && w.rt == null && !w.nw && w.age >= 36 && S.week - (w.lu || 0) > 96) retire(S, w, "never signed again");
-      });
-      S.order.forEach(function(pid) {
-        if (pid === S.player) return;
-        var P = S.promos[pid], R = rosterOf(S, pid).filter(function(w) {
-          return !w.nw;
-        });
-        if (R.length <= ROSTER_CAP) return;
-        R.filter(function(w) {
-          return holdLvl(P, w.id) === 0 && !inFeud(S, w.id);
-        }).sort(function(a, b) {
-          return (a.lu || 0) - (b.lu || 0) || a.ovr - b.ovr || a.id - b.id;
-        }).slice(0, R.length - ROSTER_CAP).forEach(function(w) {
-          leaveCompany(S, w, "released");
-          w.promo = "FA";
-          w.brand = null;
-          w.cut = { w: S.week, from: pid, img: P.image };
-        });
-      });
-      var fa = S.w.filter(function(w) {
-        return w.promo === "FA" && w.rt == null && !w.nw && S.week - (w.lu || 0) > 96;
-      }).sort(function(a, b) {
-        return a.ovr - b.ovr || a.id - b.id;
-      }), n = S.w.filter(function(w) {
-        return w.promo === "FA" && w.rt == null && !w.nw;
-      }).length;
-      var gone = 0;
-      for (var i = 0; i < fa.length && n > FA_CAP; i++, n--) {
-        retire(S, fa[i], "left the business");
-        gone++;
-      }
-      S.w.forEach(function(w) {
-        if (w.rt != null && S.week - w.rt > 96 && !w.arch && w.promo === "FA" && !w.srole) {
-          Object.keys(w).forEach(function(k) {
-            if (ARCH_KEEP.indexOf(k) < 0) delete w[k];
-          });
-          if (w.log && w.log.length > 3) w.log = w.log.slice(0, 1).concat(w.log.slice(-2));
-          w.arch = 1;
-        }
-      });
-      S.order.forEach(function(pid) {
-        S.promos[pid].titles.forEach(function(t) {
-          var H = t.hist;
-          if (!H) return;
-          H.forEach(function(h) {
-            if (h.to != null && S.week - h.to > 96) delete h.show;
-          });
-          if (H.length > TITLE_KEEP) {
-            t.histCut = (t.histCut || 0) + H.length - TITLE_KEEP;
-            t.hist = H.slice(0, 1).concat(H.slice(-(TITLE_KEEP - 1)));
-          }
-        });
-      });
-      news(S, "world", "The office files away the year. Records from before " + keep + " are kept as one line per career" + (gone ? ", and " + gone + " free agents nobody had used in two years have left the business" : "") + ".");
-      S.archived = S.week;
-    }
-    WEEKX.push(function(S) {
-      if (S.week > 0 && S.week % 48 === 0) archYear(S);
-    });
-    (function() {
-      var was = E.career;
-      E.career = function(S, id) {
-        var c = was(S, id), w = S.w[id];
-        if (c && w && w.ysOld) {
-          var a = w.ysOld;
-          c.years.push({ y: "Up to " + w.ysTo, m: a[0], w: a[1], l: a[2], d: a[3], best: a[4], main: a[5], titles: a[6], old: 1 });
-        }
-        return c;
-      };
-    })();
-    function arcHeels(S) {
-      return rosterOf(S, S.player).filter(function(w) {
-        return !w.nw && w.align === "H" && !(w.inj > 0);
-      }).sort(function(a, b) {
-        return b.ovr - a.ovr;
-      });
-    }
-    function arcFaces(S) {
-      return rosterOf(S, S.player).filter(function(w) {
-        return !w.nw && w.align !== "H" && !(w.inj > 0);
-      }).sort(function(a, b) {
-        return b.ovr - a.ovr;
-      });
-    }
-    var ARCS = {
-      faction: {
-        n: "The faction takeover",
-        d: "A group forms and runs roughshod over the company until somebody stops them.",
-        pick: "lead",
-        pickFrom: function(S) {
-          return arcHeels(S).slice(0, 6);
-        },
-        cast: function(S, o) {
-          var H = arcHeels(S), F = arcFaces(S), L2 = o && o.lead != null ? S.w[o.lead] : H[0];
-          if (!L2 || H.length < 3 || F.length < 2) return null;
-          H = H.filter(function(w) {
-            return w !== L2;
-          });
-          var young = F.slice(1).filter(function(w) {
-            return w.age <= 27 || w.deb;
-          }).sort(function(a, b) {
-            return a.ovr - b.ovr;
-          })[0] || F[F.length - 1];
-          return { lead: L2.id, a: H[0].id, b: H[1].id, hero: F[0].id, j1: F[1].id, j2: young.id };
-        },
-        ch: [
-          { t: "{lead} has gathered {a} and {b}. They want to run the place. How do they arrive?", o: [
-            { n: "They attack the main event", d: "Loud and fast. The crowd hates them at once.", s: 8, who: ["lead", "hero"], bond: -20 },
-            { n: "They cut a promo and wait", d: "Slower, and it gives them time to talk.", s: 3 },
-            { n: "They hide in plain sight", d: "Nobody knows they are together yet. A gamble.", s: -8 }
-          ] },
-          { t: "The group needs a fourth. Who joins {lead}?", o: [
-            { n: "{j1} turns on the fans", d: "A face the crowd loved walks over to them. It hurts, and it works.", s: 10, join: "j1" },
-            { n: "Nobody: they stay three", d: "Tight, and easier to book.", s: -5 },
-            { n: "{j2}, a young one, signs up", d: "A fresh face with nothing to lose.", s: 4, join: "j2" }
-          ] },
-          { t: "{hero} has had enough of {lead} and the rest. What now?", o: [
-            { n: "{hero} fights them alone", d: "The lone hero. The crowd backs the underdog.", s: 7, who: ["hero", "lead"], bond: -15 },
-            { n: "{hero} gathers a team", d: "Five against four at the flagship.", s: 5 },
-            { n: "Let the group win for now", d: "They grow stronger. The payoff has to be big.", s: -7 }
-          ] },
-          { t: "Cracks inside the group. Somebody is ready to turn on {lead}. Who?", o: [
-            { n: "{a} betrays {lead}", d: "The right-hand man walks out. The crowd cheers a villain for once.", s: 9, betray: "a" },
-            { n: "{b} betrays {lead}", d: "The quiet one snaps. Nobody saw it coming.", s: 7, betray: "b" },
-            { n: "Nobody: they hold together", d: "Strong to the end. The hero needs a bigger night.", s: -4 }
-          ] }
-        ],
-        last: "The flagship is near. The takeover ends there, one way or the other."
-      },
-      authority: {
-        n: "The hostile authority",
-        d: "Somebody with power on screen makes life hard for the top good guy all year.",
-        cast: function(S) {
-          var F = arcFaces(S), H = arcHeels(S);
-          if (F.length < 3 || !H.length) return null;
-          var boss = rosterOf(S, S.player).filter(function(w) {
-            return w.nw;
-          }).sort(function(a, b) {
-            return (b.mic || 0) - (a.mic || 0);
-          })[0] || H[0];
-          return { lead: boss.id, hero: F[0].id, a: H[0].id === boss.id ? (H[1] || H[0]).id : H[0].id, c: F[Math.min(F.length - 1, 3)].id };
-        },
-        ch: [
-          { t: "{lead} takes charge on screen and picks a target: {hero}. How is it done?", o: [
-            { n: "Impossible matches, every week", d: "{hero} has to fight through whatever {lead} puts in front of them.", s: 7, who: ["lead", "hero"], bond: -10 },
-            { n: "Strip them of something", d: "A title shot taken away, a spot on the card.", s: 5 },
-            { n: "Quiet favours for {a}", d: "{lead} makes {a} the chosen one. Slower to land.", s: -5 }
-          ] },
-          { t: "{hero} fights back against {lead}. How far does it go?", o: [
-            { n: "{hero} lays hands on the boss", d: "The crowd has waited for this. Big pop, real consequences.", s: 9, who: ["hero", "lead"], bond: -15 },
-            { n: "A petition from the locker room", d: "The room stands up. Good for morale, quieter on TV.", s: 3, room: 1 },
-            { n: "{hero} keeps their head down", d: "It saves the moment for later. Or wastes it.", s: -8 }
-          ] },
-          { t: "{lead} wants to make an example of somebody. On live television.", o: [
-            { n: "{lead} fires {c} on screen", d: "{c} is gone for four weeks. The crowd is furious, in the good way.", s: 7, fire: "c" },
-            { n: "{lead} threatens the whole locker room", d: "Everybody is on notice. The room does not like it.", s: 4, room: -1 },
-            { n: "No firings", d: "The boss looks all talk.", s: -6 }
-          ] },
-          { t: "{lead} puts everything on one night. What is on the line?", o: [
-            { n: "{lead}'s job", d: "If {hero} wins at the flagship, {lead} is gone.", s: 8 },
-            { n: "{hero}'s career", d: "Lose and leave. The highest stakes.", s: 6 },
-            { n: "Nothing said out loud", d: "The crowd is left to guess.", s: -7 }
-          ] }
-        ],
-        last: "The flagship is near. {hero} has to win there to overthrow {lead}.",
-        over: "hero"
-      },
-      split: {
-        n: "The brand split",
-        d: "The roster is divided in two, and each side has to prove it is the real company.",
-        cast: function(S) {
-          var R = rosterOf(S, S.player).filter(function(w) {
-            return !w.nw && !(w.inj > 0);
-          }).sort(function(a, b) {
-            return b.ovr - a.ovr;
-          });
-          if (R.length < 6) return null;
-          return { lead: R[0].id, hero: R[1].id, a: R[2].id, b: R[3].id };
-        },
-        ch: [
-          { t: "The roster is split. {lead} leads one side, {hero} the other. How is the split made?", o: [
-            { n: "A draft on live television", d: "Everybody watches who goes first and who goes last. Feelings get hurt.", s: 8, room: -1, split: "draft" },
-            { n: "The office decides quietly", d: "Calmer backstage, flatter on screen.", s: -5, split: "office" },
-            { n: "The wrestlers choose", d: "Friends stay together. Some sides look thin.", s: 4, split: "friends" }
-          ] },
-          { t: "{a} wants to cross over from one side to the other. Do you let them?", o: [
-            { n: "Yes, and make it a story", d: "A defection. The other side calls it betrayal.", s: 7, who: ["a", "lead"], bond: -10 },
-            { n: "No: the lines are the lines", d: "It keeps the sides clean.", s: -5 },
-            { n: "A trade for {b}", d: "Both sides get something. Neither is happy.", s: 4 }
-          ] },
-          { t: "The two sides meet at last. How?", o: [
-            { n: "An invasion of the other side's show", d: "Chaos, and the crowd loves chaos.", s: 8, who: ["lead", "hero"], bond: -10 },
-            { n: "A series of matches, side against side", d: "The score is kept every week.", s: 6 },
-            { n: "Nothing until the flagship", d: "All the meeting is saved for one night.", s: -7 }
-          ] }
-        ],
-        last: "The flagship is near. One side proves it is the real company there."
-      }
-    };
-    E.ARCS = ARCS;
-    function arcFill(S, A, t) {
-      return String(t).replace(/\{(\w+)\}/g, function(_, k) {
-        var id = A.cast[k];
-        return id != null && S.w[id] ? S.w[id].name : k;
-      });
-    }
-    function arcEnd(S) {
-      var P = S.promos[S.player], w = flagWeekFrom(S, P);
-      if (w != null && w - S.week < 12) w = flagWeekFrom({ week: w }, P);
-      return w;
-    }
-    function arcWord(s) {
-      return s >= 75 ? "The crowd is hooked" : s >= 60 ? "It is landing" : s >= 45 ? "It is slow to land" : s >= 35 ? "It is losing them" : "It is flopping";
-    }
-    function arcSplit(S, P, A, mode) {
-      var tv = P.shows.filter(function(sh) {
-        return !sh.big && !sh.off;
-      });
-      if (P.brands || tv.length < 2) {
-        A.split = "story";
-        note(S, "The split", "Two sides on one show: the split lives in the story.", "");
-        return;
-      }
-      P.brands = [{ id: "arcA", name: S.w[A.cast.lead].name + "'s side" }, { id: "arcB", name: S.w[A.cast.hero].name + "'s side" }];
-      tv[0].brand = "arcA";
-      tv[1].brand = "arcB";
-      var R = rosterOf(S, P.id).sort(function(a, b) {
-        return b.ovr - a.ovr;
-      }), k = 0;
-      R.forEach(function(w) {
-        if (w.id === A.cast.lead || mode === "friends" && A.cast.lead != null && bondOf(S, w.id, A.cast.lead) > 40) w.brand = "arcA";
-        else if (w.id === A.cast.hero) w.brand = "arcB";
-        else {
-          w.brand = k % 2 ? "arcB" : "arcA";
-          k++;
-        }
-      });
-      A.split = "real";
-      news(S, "story", P.name + " splits its roster in two: " + P.brands[0].name + " on " + tv[0].name + ", " + P.brands[1].name + " on " + tv[1].name + ".");
-      note(S, "The split", "The roster is split. Each show books only its own side.", "good");
-    }
-    E.arcInfo = function(S) {
-      var A = S.arc;
-      if (A && !A.done) {
-        var K = ARCS[A.k];
-        return { on: true, k: A.k, n: K.n, d: K.d, word: arcWord(A.s), ch: A.ch, of: K.ch.length + 1, end: A.end, endLabel: cal(A.end).label, cast: Object.keys(A.cast).map(function(r) {
-          return S.w[A.cast[r]] ? S.w[A.cast[r]].name : "";
-        }).filter(Boolean), flop: A.s < 35 };
-      }
-      var c = cal(S.week), P = S.promos[S.player], past = (S.arcs || []).length, ok = !past || c.month === (P.flagship + 1) % 12 || c.month === (P.flagship + 2) % 12;
-      return {
-        on: false,
-        can: ok,
-        why: ok ? "" : "A new arc is picked in the month after the flagship.",
-        last: past ? S.arcs[past - 1] : null,
-        list: Object.keys(ARCS).map(function(k) {
-          var K2 = ARCS[k], cs = K2.cast(S);
-          return {
-            k,
-            n: K2.n,
-            d: K2.d,
-            can: !!cs,
-            who: cs ? ["lead", "hero", "a"].filter(function(r) {
-              return cs[r] != null;
-            }).map(function(r) {
-              return S.w[cs[r]].name;
-            }) : [],
-            why: cs ? "" : "The roster does not have the people for it.",
-            pick: K2.pick ? { role: K2.pick, from: K2.pickFrom(S).map(function(w) {
-              return { id: w.id, n: w.name };
-            }) } : null
-          };
-        })
-      };
-    };
-    E.arcStart = function(S, k, o) {
-      var I = E.arcInfo(S);
-      if (I.on) return { ok: false, msg: "An arc is already running." };
-      if (!I.can) return { ok: false, msg: I.why };
-      var K = ARCS[k], cs = K && K.cast(S, o);
-      if (!cs) return { ok: false, msg: "The roster does not have the people for it." };
-      var end = arcEnd(S);
-      if (end == null) return { ok: false, msg: "There is no flagship to build to." };
-      var len = end - S.week, nc = K.ch.length, due = K.ch.map(function(_, i) {
-        return S.week + Math.max(1, Math.round(len * (0.12 + 0.68 * i / Math.max(1, nc - 1))));
-      });
-      due.push(end - 2);
-      S.arc = { k, cast: cs, s: 50, ch: 0, due, start: S.week, end };
-      Object.keys(cs).forEach(function(r) {
-        youRemember(S, S.w[cs[r]], "arc", "Put at the centre of " + K.n.toLowerCase() + ".", 2);
-      });
-      news(S, "story", S.promos[S.player].name + " begins a year-long story: " + K.n.toLowerCase() + ".");
-      return { ok: true, msg: K.n + " begins. It builds to the flagship, " + cal(end).label + "." };
-    };
-    WEEKX.push(function(S) {
-      var A = S.arc;
-      if (!A || A.done || A.ch >= A.due.length || S.week < A.due[A.ch]) return;
-      if (S.inbox.some(function(e) {
-        return !e.done && e.type === "arcch";
-      })) return;
-      var K = ARCS[A.k], i = A.ch;
-      if (i < K.ch.length) {
-        var C = K.ch[i];
-        pushEv(S, { type: "arcch", n: i, text: K.n + ", chapter " + (i + 1) + ". " + arcFill(S, A, C.t), choices: C.o.map(function(o) {
-          return arcFill(S, A, o.n) + ": " + arcFill(S, A, o.d);
-        }) });
-      } else {
-        var flop = A.s < 35;
-        pushEv(S, {
-          type: "arcch",
-          n: i,
-          last: 1,
-          text: K.n + ". " + arcFill(S, A, K.last) + " " + arcWord(A.s) + "." + (flop ? " It is flopping. It can still be turned around: a swerve nobody sees coming, for 3 booking power." : ""),
-          choices: flop ? ["Turn it around (3 booking power)", "Let it play out"] : ["Go all in at the flagship", "Keep it simple"]
-        });
-      }
-      A.ch++;
-    });
-    EVR.arcch = function(S, ev, choice, P) {
-      var A = S.arc;
-      if (!A || A.done) return "The arc is over.";
-      var K = ARCS[A.k];
-      if (ev.last) {
-        if (A.s < 35) {
-          if (choice === 0) {
-            if (S.bp < 3) return "You do not have 3 booking power to spend. It plays out as it is.";
-            S.bp -= 3;
-            A.saved = 1;
-            A.s = Math.max(A.s, 40);
-            return "The swerve is set. Nobody will see it coming. Something can still be saved at the flagship.";
-          }
-          return "You let it play out. The flagship will tell.";
-        }
-        if (choice === 0) {
-          A.s = clamp(A.s + 4, 0, 100);
-          A.allin = 1;
-          return "Everything goes on the flagship. The bigger the night, the bigger the payoff, or the fall.";
-        }
-        return "You keep it simple. A safe ending.";
-      }
-      var o = K.ch[ev.n].o[choice];
-      if (!o) return "";
-      A.s = clamp(A.s + o.s, 0, 100);
-      if (o.who) {
-        var x = S.w[A.cast[o.who[0]]], y = S.w[A.cast[o.who[1]]];
-        if (x && y) relBump(S, x.id, y.id, { bond: o.bond || 0 }, { k: "arc", t: arcFill(S, A, o.n) });
-      }
-      if (o.join) {
-        var j = S.w[A.cast[o.join]];
-        if (j) {
-          A.cast.join = j.id;
-          if (j.align !== "H") {
-            j.align = "H";
-            j.tw = S.week;
-          }
-          relBump(S, j.id, A.cast.lead, { bond: 20 }, { k: "arc", t: "Joined " + S.w[A.cast.lead].name + "." });
-          note(S, "The group grows", j.name + " joins " + S.w[A.cast.lead].name + ".", "good");
-        }
-      }
-      if (o.betray) {
-        var bt = S.w[A.cast[o.betray]];
-        if (bt) {
-          bt.align = "F";
-          bt.tw = S.week;
-          A.cast.traitor = bt.id;
-          relBump(S, bt.id, A.cast.lead, { bond: -40 }, { k: "betray", keep: true, t: bt.name + " turned on " + S.w[A.cast.lead].name + "." });
-          note(S, "A betrayal", bt.name + " turns on " + S.w[A.cast.lead].name + ".", "good");
-        }
-      }
-      if (o.fire) {
-        var fw = S.w[A.cast[o.fire]];
-        if (fw) {
-          fw.away = S.week + 4;
-          youRemember(S, fw, "fired", "Fired on screen for the story, off TV for four weeks.", -1);
-          note(S, "Fired on screen", fw.name + " is off television for four weeks.", "bad");
-        }
-      }
-      if (o.split) arcSplit(S, P, A, o.split);
-      if (o.turn) {
-        var t = arcFaces(S).filter(function(w) {
-          return Object.keys(A.cast).every(function(r) {
-            return A.cast[r] !== w.id;
-          });
-        })[0];
-        if (t) {
-          t.align = "H";
-          t.tw = S.week;
-          A.cast.turn = t.id;
-          youRemember(S, t, "arcturn", "You turned them for " + K.n.toLowerCase() + ".", -1);
-          note(S, "A turn", t.name + " joins " + S.w[A.cast.lead].name + ".", "good");
-        }
-      }
-      if (o.room) rosterOf(S, P.id).forEach(function(w) {
-        if (!w.nw) w.morale = clamp(w.morale + (o.room > 0 ? 3 : -3), 0, 100);
-      });
-      Object.keys(A.cast).forEach(function(r) {
-        var w = S.w[A.cast[r]];
-        if (w) youRemember(S, w, "arcch", arcFill(S, A, o.n) + ".", o.s >= 6 ? 1 : o.s < 0 ? -1 : 0);
-      });
-      return arcFill(S, A, o.n) + ". " + arcWord(A.s) + ".";
-    };
-    SHOWX.push(function(S, P, show, rep, card) {
-      var A = S.arc;
-      if (S.cal || P.id !== S.player || !A || A.done) return;
-      var last = card && card[card.length - 1], ids = last ? flat(last.sides) : [], on = Object.keys(A.cast).some(function(r) {
-        return ids.indexOf(A.cast[r]) >= 0;
-      });
-      if (A.wk !== S.week) {
-        A.wk = S.week;
-        if (on) {
-          if (A.s < 50) A.s = clamp(A.s + 0.5, 0, 50);
-        } else A.s = clamp(A.s - 1, 0, 100);
-      }
-      if (!show.flag || S.week < A.end) return;
-      var K = ARCS[A.k], sc = A.s + (A.allin ? repCS(rep) >= 70 ? 8 : -8 : 0), res, img = 0, tr = 0, bp = 0;
-      if (K.over) {
-        var hw = S.w[A.cast[K.over]], won = hw && (rep.segs || []).some(function(g) {
-          return g.k === "match" && g.win && g.win.indexOf(hw.name) >= 0;
-        });
-        sc += won ? 10 : -10;
-        rep.over = won;
-      }
-      if (sc < 35 && A.saved) sc = 35;
-      if (sc >= 60) {
-        res = "paid off";
-        img = 3;
-        tr = 4;
-        bp = 3;
-      } else if (sc >= 35) {
-        res = A.saved ? "was saved" : "landed";
-        img = A.saved ? 1 : 1;
-        tr = A.saved ? 1 : 2;
-        bp = 1;
-      } else {
-        res = "flopped";
-        img = -2;
-        tr = -3;
-      }
-      P.image = clamp(P.image + img, 1, 100);
-      if (!S.owner.me) S.owner.trust = clamp(S.owner.trust + tr, 0, 100);
-      S.bp = (S.bp || 0) + bp;
-      Object.keys(A.cast).forEach(function(r) {
-        var w = S.w[A.cast[r]];
-        if (w) youRemember(S, w, "arcend", K.n + " " + res + " at the flagship.", img > 0 ? 2 : img < 0 ? -2 : 0);
-      });
-      A.done = 1;
-      A.res = res;
-      (S.arcs || (S.arcs = [])).push({ k: A.k, n: K.n, res, y: cal(S.week).label });
-      S.arc = null;
-      rep.arc = K.n + " " + res + ".";
-      news(S, "story", K.n + " " + res + " at " + show.name + ".");
-      note(S, "The arc", K.n + " " + res + ".", img > 0 ? "good" : img < 0 ? "bad" : "");
-    });
-    var AUD = [
-      { k: "casual", n: "Casual fans", size: 4.2, want: "stars, hot stories and big nights" },
-      { k: "diehard", n: "Diehards", size: 1.6, want: "great matches, given time" },
-      { k: "family", n: "Families", size: 2.4, want: "heroes who win, and nothing too rough" },
-      { k: "young", n: "Young adults", size: 2.6, want: "villains, edge, hardcore and the women\u2019s division" },
-      { k: "lucha", n: "Lucha and high-flyer fans", size: 1, want: "high flyers, masks and spectacle" },
-      { k: "oldschool", n: "Old-school fans", size: 1.2, want: "veterans, title matches and tradition" }
-    ];
-    var AUD_MODEL = {
-      corporate: { casual: 1.25, family: 1.3, young: 0.9, diehard: 0.75, lucha: 0.85, oldschool: 0.95 },
-      workrate: { diehard: 1.4, casual: 0.9, family: 0.85, young: 1.05, oldschool: 1.05 },
-      purist: { diehard: 1.35, oldschool: 1.25, family: 0.9, casual: 0.85, lucha: 0.85 },
-      underdog: { young: 1.15, diehard: 1.1, casual: 0.95 },
-      startup: { casual: 1.1, young: 1.15, oldschool: 0.8 },
-      outlaw: { young: 1.45, family: 0.55, diehard: 1.05, oldschool: 0.8 },
-      spectacle: { lucha: 1.6, family: 1.15, casual: 1, oldschool: 0.85 },
-      tradition: { lucha: 1.45, oldschool: 1.25, family: 1.05 },
-      joshi: { diehard: 1.25, young: 1.2, casual: 0.9 },
-      classic: {}
-    };
-    var AUD_DRIFT = 0.06;
-    function audInit(S) {
-      if (S.aud && S.aud.sh) return S.aud;
-      var A = S.aud = { sh: {}, wk: {}, hist: {} };
-      AUD.forEach(function(g) {
-        var t = audTarget(S, g.k, null);
-        A.sh[g.k] = t;
-      });
-      S.order.forEach(function(pid) {
-        var P = S.promos[pid];
-        if (P) {
-          P.aud0 = audTotal(S, pid);
-          P.audM = 1;
-        }
-      });
-      return A;
-    }
-    function audReach(P) {
-      return Math.pow(Math.max(5, P.image || 50) / 100, 2.2) * (P.dead ? 0 : 1);
-    }
-    function audLean(P, k) {
-      var m = AUD_MODEL[P.model || "classic"] || {};
-      return m[k] || 1;
-    }
-    function audTarget(S, k, offer) {
-      var t = {}, sum = 0;
-      S.order.forEach(function(pid) {
-        var P = S.promos[pid];
-        if (!P || P.dead) return;
-        var o = offer && offer[pid] && offer[pid][k] != null ? offer[pid][k] : 1;
-        var v = audReach(P) * audLean(P, k) * Math.pow(Math.max(0.2, o), 2.4);
-        t[pid] = v;
-        sum += v;
-      });
-      Object.keys(t).forEach(function(pid) {
-        t[pid] = sum ? t[pid] / sum : 0;
-      });
-      return t;
-    }
-    function audBase(S, pid) {
-      var tot = 0, all = 0;
-      AUD.forEach(function(g) {
-        all += g.size;
-        tot += g.size * (audTarget(S, g.k, null)[pid] || 0);
-      });
-      return all ? tot / all : 0;
-    }
-    function audTotal(S, pid) {
-      var A = S.aud, tot = 0, all = 0;
-      if (!A || !A.sh) return 0;
-      AUD.forEach(function(g) {
-        all += g.size;
-        tot += g.size * ((A.sh[g.k] || {})[pid] || 0);
-      });
-      return all ? tot / all : 0;
-    }
-    function audOffer(S, P, show, rep, card) {
-      if (!rep) return null;
-      var cs = repCS(rep), grade = 0.55 + 0.9 * clamp((cs - 45) / 45, 0, 1.3);
-      var ms = (card || []).filter(function(m) {
-        return m && m.sides;
-      }), n = Math.max(1, ms.length), ids = [];
-      ms.forEach(function(m) {
-        flat(m.sides).forEach(function(id) {
-          if (ids.indexOf(id) < 0) ids.push(id);
-        });
-      });
-      var ws = ids.map(function(id) {
-        return S.w[id];
-      }).filter(Boolean), top = ws.map(function(w) {
-        return w.ovr;
-      }).sort(function(a, b) {
-        return b - a;
-      }).slice(0, 3);
-      var star = clamp((avg(top.length ? top : [50]) - 55) / 35, 0, 1.2);
-      var heat = 0, fs = (S.feuds || []).filter(function(f) {
-        return !f.res && f.promo === P.id && f.a.concat(f.b).some(function(id) {
-          return ids.indexOf(id) >= 0;
-        });
-      });
-      fs.forEach(function(f) {
-        heat = Math.max(heat, f.heat || 0);
-      });
-      heat = heat / 100;
-      var share = function(fn) {
-        return ms.filter(fn).length / n;
-      };
-      var hard = share(function(m) {
-        return /hardcore|tables|cage|ladder|street|barbed|weapons|no_dq|nodq|lumber/i.test(m.stip || "");
-      });
-      var multi = share(function(m) {
-        return m.mt === "3way" || m.mt === "4way" || m.mt === "6man" || m.mt === "br";
-      });
-      var women = share(function(m) {
-        var w = S.w[flat(m.sides)[0]];
-        return w && w.g === "F";
-      });
-      var titles = share(function(m) {
-        return !!m.title;
-      });
-      var fly = ws.length ? ws.filter(function(w) {
-        return w.style === "H";
-      }).length / ws.length : 0;
-      var mask = ws.length ? ws.filter(function(w) {
-        return typeof masked === "function" && masked(w) === 1;
-      }).length / ws.length : 0;
-      var vets = ws.length ? ws.filter(function(w) {
-        return (w.age || 30) >= 38;
-      }).length / ws.length : 0;
-      var segs = (rep.segs || []).filter(function(s) {
-        return s.k === "match";
-      }), mq = segs.length ? avg(segs.map(function(s) {
-        return s.ov || 0;
-      })) / 5 : 0.5;
-      var main = segs[segs.length - 1], heroWon = 0, heelWon = 0;
-      if (main && main.wi && main.wi.length) {
-        var w0 = S.w[main.wi[0]];
-        if (w0) {
-          if (w0.align === "F") heroWon = 1;
-          else heelWon = 1;
-        }
-      }
-      var big = show && show.big ? 1 : 0;
-      var o = {
-        casual: grade * (0.75 + 0.45 * star + 0.3 * heat + 0.15 * big),
-        diehard: grade * (0.6 + 0.75 * mq - 0.25 * multi - 0.15 * hard * (hard > 0.4 ? 1 : 0)),
-        family: grade * (0.8 + 0.35 * heroWon - 0.2 * heelWon - 0.7 * hard + 0.2 * star),
-        young: grade * (0.7 + 0.5 * hard + 0.3 * heat + 0.2 * heelWon + 0.3 * women),
-        lucha: grade * (0.65 + 0.8 * fly + 0.4 * mask + 0.25 * multi),
-        oldschool: grade * (0.7 + 0.6 * vets + 0.35 * titles - 0.35 * hard + 0.15 * mq)
-      };
-      Object.keys(o).forEach(function(k) {
-        o[k] = clamp(o[k], 0.2, 2.2);
-      });
-      return o;
-    }
-    SHOWX.push(function(S, P, show, rep, card) {
-      if (S.cal || !P || !rep) return;
-      var A = audInit(S), o = audOffer(S, P, show, rep, card || rep.card);
-      if (!o) return;
-      var w = A.wk[P.id] || (A.wk[P.id] = { n: 0 });
-      w.n++;
-      Object.keys(o).forEach(function(k) {
-        w[k] = (w[k] || 0) + o[k] * (show && show.big ? 1.6 : 1);
-      });
-      if (P.id === S.player) rep.aud = o;
-    });
-    WEEKX.push(function(S) {
-      if (S.cal || S.over) return;
-      var A = audInit(S), offer = {};
-      S.order.forEach(function(pid) {
-        var w = A.wk[pid], P2 = S.promos[pid];
-        if (!P2) return;
-        offer[pid] = {};
-        AUD.forEach(function(g) {
-          offer[pid][g.k] = w && w.n ? w[g.k] / w.n : 0.85;
-        });
-      });
-      var was = {};
-      S.order.forEach(function(pid) {
-        was[pid] = audTotal(S, pid);
-      });
-      AUD.forEach(function(g) {
-        var t = audTarget(S, g.k, offer), cur = A.sh[g.k] || (A.sh[g.k] = {}), sum = 0;
-        S.order.forEach(function(pid) {
-          var v = (cur[pid] || 0) + AUD_DRIFT * ((t[pid] || 0) - (cur[pid] || 0));
-          cur[pid] = Math.max(0, v);
-          sum += cur[pid];
-        });
-        if (sum > 0) S.order.forEach(function(pid) {
-          cur[pid] /= sum;
-        });
-      });
-      S.order.forEach(function(pid) {
-        var P2 = S.promos[pid];
-        if (!P2) return;
-        var now = audTotal(S, pid), h = A.hist[pid] || (A.hist[pid] = []);
-        h.push(Math.round(now * 1e4) / 1e4);
-        if (h.length > 24) h.shift();
-        var base = audBase(S, pid), lo = pid === S.player ? 0.8 : 0.9;
-        P2.audM = base > 0 ? clamp(Math.pow(now / base, 0.6), lo, 1.6) : 1;
-      });
-      A.wk = {};
-      var P = S.promos[S.player], me = audTotal(S, S.player), d = me - (was[S.player] || me), rk = E.audience(S).rank;
-      if (P && Math.abs(d) >= 2e-3) news(S, "world", "AUDIENCE: " + P.name + " " + (d > 0 ? "gained" : "lost") + " " + (Math.abs(d) * 100).toFixed(1) + " points of audience share, now " + (me * 100).toFixed(1) + "% (number " + rk + " in the world).");
-    });
-    (function() {
-      var vk = viewersK;
-      viewersK = function(P, show, qf) {
-        return vk.apply(this, arguments) * (P && P.audM ? P.audM : 1);
-      };
-    })();
-    E.audience = function(S) {
-      var A = audInit(S), L2 = S.order.filter(function(pid) {
-        return S.promos[pid] && !S.promos[pid].dead;
-      }).map(function(pid) {
-        var P = S.promos[pid], h = A.hist[pid] || [], now = audTotal(S, pid), then = h.length > 4 ? h[h.length - 5] : P.aud0 || now;
-        return { id: pid, name: P.name, share: Math.round(now * 1e3) / 10, move: Math.round((now - then) * 1e3) / 10, mine: pid === S.player, homes: Math.round(now * AUD.reduce(function(a, g) {
-          return a + g.size;
-        }, 0) * 100) / 100 };
-      }).sort(function(a, b) {
-        return b.share - a.share;
-      });
-      var rank = L2.findIndex(function(x) {
-        return x.mine;
-      }) + 1;
-      var groups = AUD.map(function(g) {
-        var s = (A.sh[g.k] || {})[S.player] || 0, lead = Object.keys(A.sh[g.k] || {}).sort(function(a, b) {
-          return A.sh[g.k][b] - A.sh[g.k][a];
-        })[0];
-        return { k: g.k, n: g.n, size: g.size, share: Math.round(s * 1e3) / 10, want: g.want, leader: lead && S.promos[lead] ? S.promos[lead].name : "", lead: lead === S.player };
-      });
-      return { rank, of: L2.length, table: L2, groups };
-    };
-    E.shareOf = function(S, pid) {
-      audInit(S);
-      return Math.round(audTotal(S, pid) * 1e3) / 10;
-    };
-    (function() {
-      var af = E.afterShow;
-      E.afterShow = function(S) {
-        var r = af.apply(this, arguments);
-        if (!r || !r.items) return r;
-        var rep = null;
-        for (var i = 0; i < S.reports.length; i++) {
-          if (S.reports[i].week === S.week && S.reports[i].left && S.reports[i].left.key === r.key) {
-            rep = S.reports[i];
-            break;
-          }
-        }
-        if (!rep || !rep.aud) return r;
-        var L2 = AUD.map(function(g) {
-          return { g, v: rep.aud[g.k] || 1 };
-        }).sort(function(a, b) {
-          return b.v - a.v;
-        }), best = L2[0], worst = L2[L2.length - 1], A = E.audience(S);
-        var line = best.g.n + " loved it" + (worst.v < 0.85 ? "; " + worst.g.n.toLowerCase() + " were put off" : "") + ". You are number " + A.rank + " in audience share.";
-        var detail = L2.map(function(x) {
-          return x.g.n + ": " + (x.v >= 1.25 ? "loved it" : x.v >= 1 ? "liked it" : x.v >= 0.8 ? "so-so" : "put off") + ". They want " + x.g.want + ".";
-        }).concat(["Groups drift a little every week toward whoever gives them what they want. Television money follows your share."]);
-        var seen = !!(S.nightSeen && S.nightSeen.key === r.key && S.nightSeen.k && S.nightSeen.k.aud), it = { k: "aud", n: "The audience", line, detail, tone: worst.v < 0.8 ? "warn" : "good", seen };
-        var at = r.items.findIndex(function(x) {
-          return x.k === "next";
-        });
-        if (at < 0) r.items.push(it);
-        else r.items.splice(at, 0, it);
-        if (!seen) r.unseen = (r.unseen || 0) + 1;
-        return r;
-      };
-    })();
-    var CT_BIG = 65, CT_INDIE = 50, CT_ROLL = 12;
-    function ctWeekly(P) {
-      return Math.max(1, (P.shows || []).length);
-    }
-    function ctPolicy(S, P, w) {
-      if (!P) return "year";
-      if (w.pwa) return "show";
-      if (w.nw) return P.image < CT_INDIE ? "show" : "year";
-      if (P.image >= CT_BIG) return "year";
-      if (P.image < CT_INDIE) return "show";
-      var R = rosterOf(S, P.id).filter(function(x) {
-        return !x.nw && x.id !== w.id;
-      }), above = R.filter(function(x) {
-        return (x.ovr || 0) > (w.ovr || 0);
-      }).length;
-      return above < Math.ceil((R.length + 1) / 3) ? "year" : "show";
-    }
-    function ctFee(P, wage) {
-      var v = wage * 1.25 / ctWeekly(P);
-      return Math.max(25, v < 1e3 ? Math.round(v / 10) * 10 : Math.round(v / 50) * 50);
-    }
-    function ctAssign(S, w, fee) {
-      var P = S.promos[w.promo];
-      if (!P) return;
-      w.dl = ctPolicy(S, P, w);
-      w.dlP = w.promo;
-      if (w.dl === "show") {
-        w.fee = fee || ctFee(P, w.wage || wageFor(w.ovr, P));
-        w.con = CT_ROLL;
-      } else w.fee = null;
-      w.dlc = w.con;
-    }
-    function ctWeek(S) {
-      S.w.forEach(function(w) {
-        if (!w || w.rt || w.promo === "FA" || !S.promos[w.promo]) {
-          if (w && w.promo === "FA") {
-            w.dl = null;
-            w.dlP = null;
-          }
-          return;
-        }
-        if (w.dlP !== w.promo || w.dl == null || w.dl === "year" && w.con > (w.dlc || 0) + 1) {
-          ctAssign(S, w, w.dlP === w.promo ? w.fee : null);
-          return;
-        }
-        if (w.dl === "show") w.con = CT_ROLL;
-        w.dlc = w.con;
-      });
-    }
-    NEWX.push(ctWeek);
-    WEEKX.push(ctWeek);
-    SHOWX.push(function(S, P, show, rep) {
-      if (S.cal || !rep || !rep.segs || !P) return;
-      var seen = {};
-      rep.segs.forEach(function(s) {
-        (s.ids || s.bids || []).forEach(function(id) {
-          var w = S.w[id];
-          if (!w || w.promo !== P.id || seen[id]) return;
-          seen[id] = 1;
-          if (w.shw !== S.week) {
-            w.shw = S.week;
-            delete w.shn;
-          } else w.shn = (w.shn || 1) + 1;
-        });
-      });
-    });
-    function payWeek(S, P) {
-      var s = 0;
-      S.w.forEach(function(w) {
-        if (w.promo !== P.id) return;
-        s += w.dl === "show" && w.fee != null ? w.shw === S.week ? w.fee * (w.shn || 1) : 0 : w.wage;
-      });
-      return s + deskWage(S, P);
-    }
-    E.contractOf = function(S, w) {
-      if (typeof w === "number") w = S.w[w];
-      if (!w || w.promo === "FA") return null;
-      if (w.dl === "show") return { ct: "show", n: "Per appearance", pay: w.fee, short: "Per show", line: money(w.fee || 0) + " a show, paid only when they are booked. A handshake: other companies can make them an offer." };
-      var y = Math.floor(Math.max(0, w.con) / 48), r = Math.max(0, w.con) % 48, left = (y ? y + (y === 1 ? " year" : " years") : "") + (y && r ? " and " : "") + (r || !y ? r + (r === 1 ? " week" : " weeks") : "");
-      return { ct: "year", n: "Yearly deal", pay: w.wage, short: Math.max(0, w.con) + "w", line: money(w.wage) + " a week, " + left + " left." };
-    };
-    E.offerTerms = function(S, id) {
-      var w = S.w[id], P = S.promos[S.player];
-      if (!w || !P) return null;
-      var ct = ctPolicy(S, P, w), ask = E.ask(S, w);
-      return ct === "show" ? { ct: "show", n: "Per appearance", ask, fee: ctFee(P, ask), lens: null, why: P.name + " pays per appearance: a fee for each show they are on, nothing promised beyond that." } : { ct: "year", n: "Yearly deal", ask, fee: null, lens: [[48, "1 year"], [96, "2 years"], [144, "3 years"]], why: P.name + " signs people to yearly deals: a salary every week, booked or not." };
-    };
-    (function() {
-      var s0 = E.sign;
-      E.sign = function(S, id, wage, weeks, cl) {
-        var r = s0.apply(this, arguments);
-        var w = S.w[id];
-        if (r && r.ok && w && w.promo === S.player) ctAssign(S, w);
-        return r;
-      };
-      E.signFee = function(S, id, fee, cl) {
-        var P = S.promos[S.player], w = S.w[id];
-        if (!w || !P) return { ok: false, msg: "Not available." };
-        var wage = Math.round(fee * ctWeekly(P) / 1.25 / 50) * 50, r = E.sign(S, id, wage, CT_ROLL, cl);
-        if (r && r.ok && w.promo === S.player) {
-          w.fee = fee;
-          r.msg = w.name + " will work for " + money(fee) + " a show.";
-        }
-        return r;
-      };
-    })();
-    (function() {
-      var r0 = E.release, n0 = E.renew;
-      E.release = function(S, id) {
-        var w = S.w[id], P = S.promos[S.player];
-        if (w && P && w.promo === P.id && w.dl === "show") {
-          var keep = w.wage;
-          w.wage = 0;
-          var r = r0.apply(this, arguments);
-          w.wage = keep;
-          return r;
-        }
-        return r0.apply(this, arguments);
-      };
-      E.renew = function(S, id, weeks) {
-        var w = S.w[id];
-        if (w && w.dl === "show") return w.name + " works per appearance: there is nothing to renew.";
-        var r = n0.apply(this, arguments);
-        if (w) w.dlc = w.con;
-        return r;
-      };
-    })();
-    (function() {
-      var a0 = E.ask;
-      E.ask = function(S, w) {
-        var a = a0.apply(this, arguments);
-        if (!w || w.nw || w.promo === S.player || w.promo === "FA" || !(w.wage > 0)) return a;
-        return Math.max(a, Math.round(w.wage * 0.5 / 50) * 50);
-      };
-    })();
-    E.__payWeek = payWeek;
-    E.__ctWeek = ctWeek;
-    var DEBUT = {
-      vig: { n: "Vignettes", d: "A teaser airs every week until they first appear. The crowd knows the name before the bell." },
-      atk: { n: "A surprise attack", d: "They come out of nowhere on the night. A louder crowd, and momentum from the shock." },
-      match: { n: "A straight match", d: "Book them in a match and let the result speak. A win makes them; a loss sets them back." }
-    };
-    E.DEBUT = DEBUT;
-    E.debuts = function(S) {
-      return rosterOf(S, S.player).filter(function(w) {
-        return w.deb && !w.nw && !w.camp;
-      }).map(function(w) {
-        return { id: w.id, name: w.name, k: w.dk || null, hy: w.hy || 0 };
-      });
-    };
-    E.debutPlan = function(S, id, k) {
-      var w = S.w[id];
-      if (!w || !w.deb || w.promo !== S.player || !DEBUT[k]) return { ok: false, msg: "There is no debut to plan for them." };
-      w.dk = k;
-      youRemember(S, w, "debut", "You planned their debut: " + DEBUT[k].n.toLowerCase() + ".", 1);
-      return { ok: true, msg: w.name + " will debut with " + DEBUT[k].n.toLowerCase() + "." };
-    };
-    WEEKX.push(function(S) {
-      rosterOf(S, S.player).forEach(function(w) {
-        if (w.deb && w.dk === "vig" && (w.hy || 0) < 3) w.hy = (w.hy || 0) + 1;
-      });
-    });
-    CRX.push(function(ctx) {
-      if (!ctx.isPl) return null;
-      var w = ctx.all.filter(function(x) {
-        return x.deb && x.dk === "atk";
-      })[0];
-      return w ? { d: 3, x: w.name + " came out of nowhere" } : null;
-    });
-    POST.push(function(ctx) {
-      if (!ctx.isPl || !ctx.res) return;
-      var S = ctx.S, r = ctx.res, won = r.winners || [];
-      ctx.all.forEach(function(w) {
-        if (!w.dk) return;
-        var win = won.indexOf(w) >= 0;
-        if (w.dk === "atk") {
-          w.mom = clamp((w.mom || 0) + 2, -10, 10);
-          note(S, "A debut", w.name + " arrived with a surprise attack. People are talking.", "good");
-        } else if (w.dk === "match") {
-          w.ovr = clamp(w.ovr + (win ? 2 : -2), 1, 100);
-          youRemember(S, w, win ? "debutwin" : "debutloss", win ? "Won on their debut." : "Lost on their debut.", win ? 2 : -2);
-          note(S, "A debut", w.name + (win ? " won on their debut." : " lost on their debut. It is a slow start."), win ? "good" : "bad");
-        } else note(S, "A debut", w.name + " finally appears, after weeks of teasers.", "good");
-        delete w.dk;
-      });
-    });
-    TASKX.push(function(S, P, add) {
-      E.debuts(S).filter(function(d) {
-        return !d.k;
-      }).slice(0, 2).forEach(function(d) {
-        add("deb-" + d.id, d.name + " has not appeared yet. Plan how they are introduced.", "booking", "Plan it", { need: false, short: "Plan a debut: " + d.name, done: "Debut planned." });
-      });
-    });
     root.GP = E;
     return { get DB() {
       return DB;
@@ -31544,441 +28936,373 @@
     }, set edStipPut(v) {
       edStipPut = v;
     }, get LF() {
-      return LF;
+      return LF2;
     }, set LF(v) {
-      LF = v;
+      LF2 = v;
     }, get LF_PRESS() {
-      return LF_PRESS;
+      return LF_PRESS2;
     }, set LF_PRESS(v) {
-      LF_PRESS = v;
+      LF_PRESS2 = v;
     }, get crowdWord() {
-      return crowdWord;
+      return crowdWord2;
     }, set crowdWord(v) {
-      crowdWord = v;
+      crowdWord2 = v;
     }, get liveFeed() {
-      return liveFeed;
+      return liveFeed2;
     }, set liveFeed(v) {
-      liveFeed = v;
+      liveFeed2 = v;
     }, get NET_FEED_MAX() {
-      return NET_FEED_MAX;
+      return NET_FEED_MAX2;
     }, set NET_FEED_MAX(v) {
-      NET_FEED_MAX = v;
-    }, get NET_SHEETS() {
-      return NET_SHEETS;
-    }, set NET_SHEETS(v) {
-      NET_SHEETS = v;
+      NET_FEED_MAX2 = v;
     }, get netPickH() {
-      return netPickH;
+      return netPickH2;
     }, set netPickH(v) {
-      netPickH = v;
+      netPickH2 = v;
     }, get netHandle() {
-      return netHandle;
+      return netHandle2;
     }, set netHandle(v) {
-      netHandle = v;
+      netHandle2 = v;
     }, get netLikes() {
-      return netLikes;
+      return netLikes2;
     }, set netLikes(v) {
-      netLikes = v;
+      netLikes2 = v;
     }, get netPost() {
-      return netPost;
+      return netPost2;
     }, set netPost(v) {
-      netPost = v;
+      netPost2 = v;
     }, get netStarPost() {
-      return netStarPost;
+      return netStarPost2;
     }, set netStarPost(v) {
-      netStarPost = v;
+      netStarPost2 = v;
     }, get NET_WIN_F() {
-      return NET_WIN_F;
+      return NET_WIN_F2;
     }, set NET_WIN_F(v) {
-      NET_WIN_F = v;
+      NET_WIN_F2 = v;
     }, get NET_WIN_H() {
-      return NET_WIN_H;
+      return NET_WIN_H2;
     }, set NET_WIN_H(v) {
-      NET_WIN_H = v;
+      NET_WIN_H2 = v;
     }, get NET_NEW() {
-      return NET_NEW;
+      return NET_NEW2;
     }, set NET_NEW(v) {
-      NET_NEW = v;
+      NET_NEW2 = v;
     }, get NET_LOSE() {
-      return NET_LOSE;
+      return NET_LOSE2;
     }, set NET_LOSE(v) {
-      NET_LOSE = v;
+      NET_LOSE2 = v;
     }, get NET_RIVAL() {
-      return NET_RIVAL;
+      return NET_RIVAL2;
     }, set NET_RIVAL(v) {
-      NET_RIVAL = v;
+      NET_RIVAL2 = v;
     }, get NET_TURN() {
-      return NET_TURN;
+      return NET_TURN2;
     }, set NET_TURN(v) {
-      NET_TURN = v;
+      NET_TURN2 = v;
     }, get netTurn() {
-      return netTurn;
+      return netTurn2;
     }, set netTurn(v) {
-      netTurn = v;
+      netTurn2 = v;
     }, get netMentions() {
-      return netMentions;
+      return netMentions2;
     }, set netMentions(v) {
-      netMentions = v;
+      netMentions2 = v;
     }, get netRumours() {
-      return netRumours;
+      return netRumours2;
     }, set netRumours(v) {
-      netRumours = v;
+      netRumours2 = v;
     }, get netBackstage() {
-      return netBackstage;
+      return netBackstage2;
     }, set netBackstage(v) {
-      netBackstage = v;
+      netBackstage2 = v;
     }, get netThrowback() {
-      return netThrowback;
+      return netThrowback2;
     }, set netThrowback(v) {
-      netThrowback = v;
+      netThrowback2 = v;
     }, get netMoment() {
-      return netMoment;
+      return netMoment2;
     }, set netMoment(v) {
-      netMoment = v;
+      netMoment2 = v;
     }, get netSheet() {
-      return netSheet;
+      return netSheet2;
     }, set netSheet(v) {
-      netSheet = v;
+      netSheet2 = v;
     }, get taskOpen() {
-      return taskOpen;
+      return taskOpen2;
     }, set taskOpen(v) {
-      taskOpen = v;
+      taskOpen2 = v;
     }, get ADV_DAYS() {
-      return ADV_DAYS;
+      return ADV_DAYS2;
     }, set ADV_DAYS(v) {
-      ADV_DAYS = v;
+      ADV_DAYS2 = v;
     }, get showDay() {
-      return showDay;
+      return showDay2;
     }, set showDay(v) {
-      showDay = v;
+      showDay2 = v;
     }, get wasNow() {
-      return wasNow;
+      return wasNow2;
     }, set wasNow(v) {
-      wasNow = v;
+      wasNow2 = v;
     }, get reqOf() {
-      return reqOf;
+      return reqOf2;
     }, set reqOf(v) {
-      reqOf = v;
+      reqOf2 = v;
     }, get faceCandidates() {
-      return faceCandidates;
+      return faceCandidates2;
     }, set faceCandidates(v) {
-      faceCandidates = v;
+      faceCandidates2 = v;
     }, get CLAUSE() {
-      return CLAUSE;
+      return CLAUSE2;
     }, set CLAUSE(v) {
-      CLAUSE = v;
+      CLAUSE2 = v;
     }, get clausesWanted() {
-      return clausesWanted;
+      return clausesWanted2;
     }, set clausesWanted(v) {
-      clausesWanted = v;
+      clausesWanted2 = v;
     }, get datesFull() {
-      return datesFull;
+      return datesFull2;
     }, set datesFull(v) {
-      datesFull = v;
+      datesFull2 = v;
     }, get SHOW_LEN() {
-      return SHOW_LEN;
+      return SHOW_LEN2;
     }, set SHOW_LEN(v) {
-      SHOW_LEN = v;
-    }, get TIME_OVER() {
-      return TIME_OVER;
-    }, set TIME_OVER(v) {
-      TIME_OVER = v;
-    }, get TIME_FREE() {
-      return TIME_FREE;
-    }, set TIME_FREE(v) {
-      TIME_FREE = v;
-    }, get TIME_LIGHT() {
-      return TIME_LIGHT;
-    }, set TIME_LIGHT(v) {
-      TIME_LIGHT = v;
-    }, get PLAN_MINS() {
-      return PLAN_MINS;
-    }, set PLAN_MINS(v) {
-      PLAN_MINS = v;
-    }, get TOP_GOOD() {
-      return TOP_GOOD;
-    }, set TOP_GOOD(v) {
-      TOP_GOOD = v;
-    }, get TOP_BAD() {
-      return TOP_BAD;
-    }, set TOP_BAD(v) {
-      TOP_BAD = v;
+      SHOW_LEN2 = v;
     }, get MT_OVER() {
-      return MT_OVER;
+      return MT_OVER2;
     }, set MT_OVER(v) {
-      MT_OVER = v;
-    }, get STIP_SET() {
-      return STIP_SET;
-    }, set STIP_SET(v) {
-      STIP_SET = v;
+      MT_OVER2 = v;
     }, get showMins() {
-      return showMins;
+      return showMins2;
     }, set showMins(v) {
-      showMins = v;
+      showMins2 = v;
     }, get bellMins() {
-      return bellMins;
+      return bellMins2;
     }, set bellMins(v) {
-      bellMins = v;
+      bellMins2 = v;
     }, get brMins() {
-      return brMins;
+      return brMins2;
     }, set brMins(v) {
-      brMins = v;
+      brMins2 = v;
     }, get matchSlot() {
-      return matchSlot;
+      return matchSlot2;
     }, set matchSlot(v) {
-      matchSlot = v;
+      matchSlot2 = v;
     }, get hasPlan() {
-      return hasPlan;
+      return hasPlan2;
     }, set hasPlan(v) {
-      hasPlan = v;
+      hasPlan2 = v;
     }, get showClock() {
-      return showClock;
+      return showClock2;
     }, set showClock(v) {
-      showClock = v;
+      showClock2 = v;
     }, get OPENS() {
-      return OPENS;
+      return OPENS2;
     }, set OPENS(v) {
-      OPENS = v;
+      OPENS2 = v;
     }, get openKind() {
-      return openKind;
+      return openKind2;
     }, set openKind(v) {
-      openKind = v;
+      openKind2 = v;
     }, get showTimes() {
-      return showTimes;
+      return showTimes2;
     }, set showTimes(v) {
-      showTimes = v;
+      showTimes2 = v;
     }, get fitShow() {
-      return fitShow;
+      return fitShow2;
     }, set fitShow(v) {
-      fitShow = v;
+      fitShow2 = v;
     }, get showFill() {
-      return showFill;
+      return showFill2;
     }, set showFill(v) {
-      showFill = v;
+      showFill2 = v;
     }, get PLOT_PUSH_CD() {
-      return PLOT_PUSH_CD;
+      return PLOT_PUSH_CD2;
     }, set PLOT_PUSH_CD(v) {
-      PLOT_PUSH_CD = v;
-    }, get PLOT_TAPE() {
-      return PLOT_TAPE;
-    }, set PLOT_TAPE(v) {
-      PLOT_TAPE = v;
-    }, get PLOT_POS() {
-      return PLOT_POS;
-    }, set PLOT_POS(v) {
-      PLOT_POS = v;
+      PLOT_PUSH_CD2 = v;
     }, get PLOT() {
-      return PLOT;
+      return PLOT2;
     }, set PLOT(v) {
-      PLOT = v;
+      PLOT2 = v;
     }, get plotTeams() {
-      return plotTeams;
+      return plotTeams2;
     }, set plotTeams(v) {
-      plotTeams = v;
+      plotTeams2 = v;
     }, get plotPushable() {
-      return plotPushable;
+      return plotPushable2;
     }, set plotPushable(v) {
-      plotPushable = v;
+      plotPushable2 = v;
     }, get plotTapeOn() {
-      return plotTapeOn;
+      return plotTapeOn2;
     }, set plotTapeOn(v) {
-      plotTapeOn = v;
+      plotTapeOn2 = v;
     }, get SHOW_WORDS() {
-      return SHOW_WORDS;
+      return SHOW_WORDS2;
     }, set SHOW_WORDS(v) {
-      SHOW_WORDS = v;
+      SHOW_WORDS2 = v;
     }, get GRADES() {
-      return GRADES;
+      return GRADES2;
     }, set GRADES(v) {
-      GRADES = v;
+      GRADES2 = v;
     }, get gradeIdx() {
-      return gradeIdx;
+      return gradeIdx2;
     }, set gradeIdx(v) {
-      gradeIdx = v;
+      gradeIdx2 = v;
     }, get gradeG() {
-      return gradeG;
+      return gradeG2;
     }, set gradeG(v) {
-      gradeG = v;
+      gradeG2 = v;
     }, get gradeA() {
-      return gradeA;
+      return gradeA2;
     }, set gradeA(v) {
-      gradeA = v;
+      gradeA2 = v;
     }, get gradeMeets() {
-      return gradeMeets;
+      return gradeMeets2;
     }, set gradeMeets(v) {
-      gradeMeets = v;
+      gradeMeets2 = v;
     }, get CROWD_PTS() {
-      return CROWD_PTS;
+      return CROWD_PTS2;
     }, set CROWD_PTS(v) {
-      CROWD_PTS = v;
+      CROWD_PTS2 = v;
     }, get crowdScoreD() {
-      return crowdScoreD;
+      return crowdScoreD2;
     }, set crowdScoreD(v) {
-      crowdScoreD = v;
+      crowdScoreD2 = v;
     }, get crowdScore() {
-      return crowdScore;
+      return crowdScore2;
     }, set crowdScore(v) {
-      crowdScore = v;
+      crowdScore2 = v;
     }, get repCS() {
-      return repCS;
+      return repCS2;
     }, set repCS(v) {
-      repCS = v;
+      repCS2 = v;
     }, get verdictBand() {
-      return verdictBand;
+      return verdictBand2;
     }, set verdictBand(v) {
-      verdictBand = v;
+      verdictBand2 = v;
     }, get cgFix() {
-      return cgFix;
+      return cgFix2;
     }, set cgFix(v) {
-      cgFix = v;
+      cgFix2 = v;
     }, get showWord() {
-      return showWord;
+      return showWord2;
     }, set showWord(v) {
-      showWord = v;
+      showWord2 = v;
     }, get capW() {
-      return capW;
+      return capW2;
     }, set capW(v) {
-      capW = v;
+      capW2 = v;
     }, get showVerdict() {
-      return showVerdict;
+      return showVerdict2;
     }, set showVerdict(v) {
-      showVerdict = v;
+      showVerdict2 = v;
     }, get ARCH_KEEP() {
-      return ARCH_KEEP;
+      return ARCH_KEEP2;
     }, set ARCH_KEEP(v) {
-      ARCH_KEEP = v;
-    }, get ARCH_YEARS() {
-      return ARCH_YEARS;
-    }, set ARCH_YEARS(v) {
-      ARCH_YEARS = v;
-    }, get ARCH_LOG() {
-      return ARCH_LOG;
-    }, set ARCH_LOG(v) {
-      ARCH_LOG = v;
-    }, get FA_CAP() {
-      return FA_CAP;
-    }, set FA_CAP(v) {
-      FA_CAP = v;
-    }, get ROSTER_CAP() {
-      return ROSTER_CAP;
-    }, set ROSTER_CAP(v) {
-      ROSTER_CAP = v;
-    }, get TITLE_KEEP() {
-      return TITLE_KEEP;
-    }, set TITLE_KEEP(v) {
-      TITLE_KEEP = v;
+      ARCH_KEEP2 = v;
     }, get archYear() {
-      return archYear;
+      return archYear2;
     }, set archYear(v) {
-      archYear = v;
+      archYear2 = v;
     }, get arcHeels() {
-      return arcHeels;
+      return arcHeels2;
     }, set arcHeels(v) {
-      arcHeels = v;
+      arcHeels2 = v;
     }, get arcFaces() {
-      return arcFaces;
+      return arcFaces2;
     }, set arcFaces(v) {
-      arcFaces = v;
+      arcFaces2 = v;
     }, get ARCS() {
-      return ARCS;
+      return ARCS2;
     }, set ARCS(v) {
-      ARCS = v;
+      ARCS2 = v;
     }, get arcFill() {
-      return arcFill;
+      return arcFill2;
     }, set arcFill(v) {
-      arcFill = v;
+      arcFill2 = v;
     }, get arcEnd() {
-      return arcEnd;
+      return arcEnd2;
     }, set arcEnd(v) {
-      arcEnd = v;
+      arcEnd2 = v;
     }, get arcWord() {
-      return arcWord;
+      return arcWord2;
     }, set arcWord(v) {
-      arcWord = v;
+      arcWord2 = v;
     }, get arcSplit() {
-      return arcSplit;
+      return arcSplit2;
     }, set arcSplit(v) {
-      arcSplit = v;
+      arcSplit2 = v;
     }, get AUD() {
-      return AUD;
+      return AUD2;
     }, set AUD(v) {
-      AUD = v;
+      AUD2 = v;
     }, get AUD_MODEL() {
-      return AUD_MODEL;
+      return AUD_MODEL2;
     }, set AUD_MODEL(v) {
-      AUD_MODEL = v;
+      AUD_MODEL2 = v;
     }, get AUD_DRIFT() {
-      return AUD_DRIFT;
+      return AUD_DRIFT2;
     }, set AUD_DRIFT(v) {
-      AUD_DRIFT = v;
+      AUD_DRIFT2 = v;
     }, get audInit() {
-      return audInit;
+      return audInit2;
     }, set audInit(v) {
-      audInit = v;
+      audInit2 = v;
     }, get audReach() {
-      return audReach;
+      return audReach2;
     }, set audReach(v) {
-      audReach = v;
+      audReach2 = v;
     }, get audLean() {
-      return audLean;
+      return audLean2;
     }, set audLean(v) {
-      audLean = v;
+      audLean2 = v;
     }, get audTarget() {
-      return audTarget;
+      return audTarget2;
     }, set audTarget(v) {
-      audTarget = v;
+      audTarget2 = v;
     }, get audBase() {
-      return audBase;
+      return audBase2;
     }, set audBase(v) {
-      audBase = v;
+      audBase2 = v;
     }, get audTotal() {
-      return audTotal;
+      return audTotal2;
     }, set audTotal(v) {
-      audTotal = v;
+      audTotal2 = v;
     }, get audOffer() {
-      return audOffer;
+      return audOffer2;
     }, set audOffer(v) {
-      audOffer = v;
+      audOffer2 = v;
     }, get CT_BIG() {
-      return CT_BIG;
+      return CT_BIG2;
     }, set CT_BIG(v) {
-      CT_BIG = v;
-    }, get CT_INDIE() {
-      return CT_INDIE;
-    }, set CT_INDIE(v) {
-      CT_INDIE = v;
-    }, get CT_ROLL() {
-      return CT_ROLL;
-    }, set CT_ROLL(v) {
-      CT_ROLL = v;
+      CT_BIG2 = v;
     }, get ctWeekly() {
-      return ctWeekly;
+      return ctWeekly2;
     }, set ctWeekly(v) {
-      ctWeekly = v;
+      ctWeekly2 = v;
     }, get ctPolicy() {
-      return ctPolicy;
+      return ctPolicy2;
     }, set ctPolicy(v) {
-      ctPolicy = v;
+      ctPolicy2 = v;
     }, get ctFee() {
-      return ctFee;
+      return ctFee2;
     }, set ctFee(v) {
-      ctFee = v;
+      ctFee2 = v;
     }, get ctAssign() {
-      return ctAssign;
+      return ctAssign2;
     }, set ctAssign(v) {
-      ctAssign = v;
+      ctAssign2 = v;
     }, get ctWeek() {
-      return ctWeek;
+      return ctWeek2;
     }, set ctWeek(v) {
-      ctWeek = v;
+      ctWeek2 = v;
     }, get payWeek() {
-      return payWeek;
+      return payWeek2;
     }, set payWeek(v) {
-      payWeek = v;
+      payWeek2 = v;
     }, get DEBUT() {
-      return DEBUT;
+      return DEBUT2;
     }, set DEBUT(v) {
-      DEBUT = v;
+      DEBUT2 = v;
     }, get KNOW0() {
       return KNOW02;
     }, set KNOW0(v) {
@@ -32385,6 +29709,2877 @@
       podWrite2 = v;
     } };
   }(typeof window !== "undefined" ? window : globalThis);
+
+  // engine/94-livefeed.ts
+  L.crowdWord = crowdWord;
+  L.liveFeed = liveFeed;
+  var LF = {
+    start: ["{a} vs {b}. Here we go!!", "{a} and {b} right now. Locked in.", "been waiting all week for {a} vs {b}", "{a} vs {b} on {show}. lets go", "ok {a} vs {b}, I am watching"],
+    feud: ["{a} and {b} cannot stand each other and it SHOWS", "this {a}/{b} thing is personal now", "{a} vs {b}. finish it tonight please", "the {a} {b} feud is the best thing going"],
+    title: ["the {t} is on the line!!!", "{t} match. this is the big one", "title match time. {a} or {b}?"],
+    near: ["HOW DID {x} KICK OUT", "{x} WAS DONE. THAT WAS THREE", "2.9!!! I am out of my chair", "nearly!!! the whole place jumped", "i thought that was it. {x} is unreal", "NO NO NO. still going"],
+    win: ["{w} wins it!", "{w} gets the win. deserved", "{w}!!!! yes!!!", "{l} could not hang with {w} tonight", "called it. {w}.", "clean win for {w}. respect"],
+    upset: ["WHAT. {w} BEAT {l}???", "UPSET!!! nobody had {w} winning that", "{l} lost to {w}?? i need a minute", "biggest upset of the year. {w}!!"],
+    champ: ["NEW CHAMPION!!! {w}!!!!", "{w} with the {t}. I am crying", "AND NEW. {w}. history.", "{w} is the champ!!! what a night"],
+    retain: ["{w} keeps the {t}. still the champ", "and still... {w}", "{w} survives. {t} stays put"],
+    promo: ["{a} on the mic is must see", "{a} cooked. no notes", "that promo from {a} gave me chills", "{a} talking. everybody shut up", "{a} said what everybody was thinking"],
+    angle: ["WHAT did {a} just do to {b}", "{a} is out of control", "oh {a} is EVIL for that", "{b} did not see that coming. neither did i", "this is going to be ugly. {a} vs {b} has to happen"],
+    dead: ["this crowd is asleep", "awful quiet in there tonight", "can we get a reaction please", "the building is dead. not their fault"],
+    hot: ["listen to this crowd!!!", "the building is SHAKING", "best crowd of the year easily", "you can hear them from outside"],
+    winF: ["Thank you, {city}. That one was for you.", "Told you I would do it. Done.", "Listen to that crowd. I will never get used to it."],
+    winH: ["Nobody in that building is on my level.", "Boo all you like. Same result.", "That was a lesson, not a fight."],
+    lose: ["Not my night. It will not happen twice.", "I heard the count. I will be back.", "No excuses. Run it back."],
+    taunt: ["{b}, that was only the start.", "I warned you, {b}.", "Look at my face, {b}. Does it look sorry?"],
+    hurt: ["You will pay for that, {a}.", "Cheap. Even for you, {a}.", "I am not done with you, {a}."]
+  };
+  L.LF = LF;
+  var LF_PRESS = "The Ringside Wire";
+  L.LF_PRESS = LF_PRESS;
+  function crowdWord(v) {
+    return v < 20 ? "Dead" : v < 38 ? "Quiet" : v < 55 ? "Warm" : v < 70 ? "Loud" : v < 85 ? "Electric" : "Unglued";
+  }
+  function liveFeed(S, rep, si, b) {
+    var out = [], P = S.promos[rep.promo || S.player] || S.promos[S.player], key0 = (rep.week || S.week) + ":" + (rep.id || rep.name) + ":", city = rep.venue ? String(rep.venue).split(",").pop().trim().replace(/ (Armory|Civic Auditorium|Fieldhouse|Coliseum|Arena|Stadium)$/, "") : "everybody";
+    var at = 0, show = rep.name;
+    function nm(id) {
+      var w = S.w[id];
+      return w ? w.name : "";
+    }
+    function fan(k2, i2) {
+      var f2 = L.FANS[Math.floor(L.h01(k2 + "f" + i2) * L.FANS.length) % L.FANS.length];
+      return f2[0];
+    }
+    function post(k2, kind, u, n, txt, base, wid, mins2) {
+      out.push({ id: k2, k: kind, u, n, t: txt, l: L.netLikes(base, k2), r: Math.round(L.netLikes(base, k2 + "r") / 6), w: wid == null ? null : wid, at: mins2 });
+    }
+    function fanPost(k2, list, o, base, mins2) {
+      var u = fan(k2, 0);
+      post(k2, "f", "@" + u, u, L.fill(L.netPickH(list, k2 + "t"), o), base || 90, null, mins2);
+    }
+    for (var i = 0; i <= si && i < rep.segs.length; i++) {
+      var s = rep.segs[i], bc = s.bc || [], upto = i < si ? bc.length : Math.min(b, bc.length), done = i < si || b >= bc.length, k = key0 + i, mins = Math.round(at);
+      if (s.k === "match") {
+        var ids = s.ids || [], nsd = (s.sidesN || []).length || 2, per = Math.max(1, Math.floor(ids.length / nsd)), A = s.sidesN && s.sidesN[0] || nm(ids[0]), B = s.sidesN && s.sidesN[1] || nm(ids[per]);
+        var f = ids.length >= 2 ? L.feudOf(S, ids[0], ids[per]) : null;
+        fanPost(k + "s", s.title ? L.LF.title : f && f.heat >= 50 ? L.LF.feud : L.LF.start, { a: A, b: B, t: s.title, show }, s.title ? 260 : 120, mins);
+        for (var j = 0; j < upto; j++) if (bc[j].h === 1 && L.h01(k + "n" + j) < 0.75) {
+          var x = "";
+          ids.forEach(function(id) {
+            var w = S.w[id];
+            if (w && !x && bc[j].x && bc[j].x.indexOf(w.name) >= 0) x = w.name;
+          });
+          fanPost(k + "n" + j, L.LF.near, { x: x || "they" }, 220, mins + Math.round((s.mins || 10) * j / Math.max(1, bc.length)));
+        }
+        if (done && s.win) {
+          var wi = s.wi && s.wi.length ? s.wi : [], lid = ids.filter(function(id) {
+            return wi.indexOf(id) < 0;
+          })[0], W = S.w[wi[0]], Lw = S.w[lid], L2 = lid != null ? nm(lid) : B, end = mins + (s.mins || 10);
+          var up = W && Lw && Lw.ovr - W.ovr >= 12;
+          fanPost(k + "w", s.change ? L.LF.champ : up ? L.LF.upset : s.title ? L.LF.retain : L.LF.win, { w: s.win, l: L2, t: s.title }, s.change ? 900 : up ? 520 : 160, end);
+          if (W && (s.change || i === rep.segs.length - 1 || L.h01(k + "ww") < 0.35)) post(k + "wp", "w", L.netHandle(W.name), W.name, L.fill(L.netPickH(W.align === "H" ? L.LF.winH : L.LF.winF, k + "wpt"), { city }), W.ovr * W.ovr * 0.9, W.id, end);
+          if (Lw && L.h01(k + "lp") < 0.3) post(k + "lp", "w", L.netHandle(Lw.name), Lw.name, L.netPickH(L.LF.lose, k + "lpt"), Lw.ovr * Lw.ovr * 0.5, Lw.id, end);
+          if (s.ov != null && (i === rep.segs.length - 1 || s.ov >= 70 || L.h01(k + "pr") < 0.4)) post(k + "pr", "p", L.netHandle(L.LF_PRESS), L.LF_PRESS, (s.label || A + " vs " + B) + ": " + L.starG(s.ov) + ".", 600, null, end);
+          if (s.cr != null && L.h01(k + "cr") < 0.5) fanPost(k + "cr", s.cr >= 75 ? L.LF.hot : s.cr < 35 ? L.LF.dead : L.LF.start, { a: A, b: B, show }, 110, end);
+        }
+      } else {
+        var who = s.ids && s.ids.length ? s.ids : s.bids || [], a = nm(who[0]), bb = nm(who[1]);
+        if (done && a) {
+          var isA = s.booked ? L.SEGK[s.booked] && L.SEGK[s.booked].t === "angle" : /Ambush|Brawl|Attack|Betrayal|Turn|Save|Reveal/.test(s.head || "");
+          fanPost(k + "g", isA && bb ? L.LF.angle : L.LF.promo, { a, b: bb }, isA ? 300 : 150, mins + (s.mins || 5));
+          var Aw = S.w[who[0]], Bw = S.w[who[1]];
+          if (isA && Aw && Bw && L.h01(k + "gt") < 0.6) post(k + "gt", "w", L.netHandle(Aw.name), Aw.name, L.fill(L.netPickH(L.LF.taunt, k + "gtt"), { b: Bw.name }), Aw.ovr * Aw.ovr * 0.7, Aw.id, mins + (s.mins || 5));
+          if (isA && Aw && Bw && L.h01(k + "gh") < 0.4) post(k + "gh", "w", L.netHandle(Bw.name), Bw.name, L.fill(L.netPickH(L.LF.hurt, k + "ght"), { a: Aw.name }), Bw.ovr * Bw.ovr * 0.6, Bw.id, mins + (s.mins || 5));
+        }
+      }
+      at += s.mins || (s.k === "match" ? 12 : 6);
+    }
+    if (P && si >= rep.segs.length - 1 && b >= ((rep.segs[rep.segs.length - 1] || {}).bc || []).length && rep.segs.length) post(key0 + "co", "c", L.netHandle(P.name), P.full || P.name, "Thank you, " + city + ". See you next week.", P.image * P.image * 1.5, null, Math.round(at));
+    return out.reverse();
+  }
+  L.E.liveFeed = function(S, rep, si, b) {
+    if (!rep || !rep.segs) return { posts: [], crowd: { v: 50, word: L.crowdWord(50) } };
+    var s = rep.segs[Math.max(0, Math.min(si, rep.segs.length - 1))], bc = s && s.bc || [], done = s && b >= bc.length;
+    var v = rep.en == null ? 60 : rep.en;
+    if (s && s.k === "match" && done && s.cr != null) v = 0.5 * v + 0.5 * s.cr;
+    var hb = s && bc[Math.min(b, bc.length - 1)];
+    if (hb && hb.h) v = Math.min(100, v + (hb.h > 1 ? 25 : 12));
+    v = L.clamp(Math.round(v), 0, 100);
+    return { posts: si < 0 ? [] : L.liveFeed(S, rep, si, b), crowd: { v, word: L.crowdWord(v) } };
+  };
+  L.E.posterPair = function(S) {
+    var P = S.promos[S.player], sh = S.queue && S.queue[S.qi];
+    if (!P || !sh) return null;
+    var card = S.card || [], m = card.length ? card[card.length - 1] : null;
+    if (m && m.sides && m.sides.length >= 2 && m.sides[0].length && m.sides[1].length) return { a: m.sides[0][0], b: m.sides[1][0], why: "main", title: m.title ? (L.titleById(P, m.title) || {}).name || null : null };
+    var fs = L.activeFeuds(S).filter(function(f) {
+      return f.promo === P.id && !f.res && S.w[f.a[0]] && S.w[f.b[0]];
+    }).sort(function(x, y) {
+      return y.heat - x.heat;
+    });
+    if (fs.length) return { a: fs[0].a[0], b: fs[0].b[0], why: "feud", title: fs[0].title ? (L.titleById(P, fs[0].title) || {}).name || null : null };
+    var t = P.titles.filter(function(t2) {
+      return !t2.tag && t2.holders.length && S.w[t2.holders[0]];
+    }).sort(function(x, y) {
+      return (y.lvl || 0) - (x.lvl || 0);
+    })[0];
+    if (t) {
+      var c = S.w[t.holders[0]], ch = L.rosterOf(S, P.id).filter(function(w) {
+        return w.id !== c.id && w.g === c.g && w.inj <= 0;
+      }).sort(function(x, y) {
+        return y.ovr - x.ovr;
+      })[0];
+      if (ch) return { a: c.id, b: ch.id, why: "title", title: t.name };
+    }
+    var top = L.rosterOf(S, P.id).filter(function(w) {
+      return w.inj <= 0;
+    }).sort(function(x, y) {
+      return y.ovr - x.ovr;
+    });
+    return top.length >= 2 ? { a: top[0].id, b: top[1].id, why: "top", title: null } : null;
+  };
+  L.LF = LF;
+  L.LF_PRESS = LF_PRESS;
+  L.crowdWord = crowdWord;
+  L.liveFeed = liveFeed;
+
+  // engine/94-net.ts
+  L.netPickH = netPickH;
+  L.netHandle = netHandle;
+  L.netLikes = netLikes;
+  L.netPost = netPost;
+  L.netStarPost = netStarPost;
+  L.netTurn = netTurn;
+  L.netMentions = netMentions;
+  L.netRumours = netRumours;
+  L.netBackstage = netBackstage;
+  L.netThrowback = netThrowback;
+  L.netMoment = netMoment;
+  L.netSheet = netSheet;
+  var NET_FEED_MAX = 60;
+  var NET_SHEETS = 4;
+  L.NET_FEED_MAX = NET_FEED_MAX;
+  L.NET_SHEETS = NET_SHEETS;
+  function netPickH(arr, key) {
+    return arr[Math.floor(L.h01(String(key)) * arr.length) % arr.length];
+  }
+  function netHandle(name) {
+    return "@" + String(name).split(" of ")[0].replace(/[^A-Za-z0-9]/g, "").slice(0, 16);
+  }
+  function netLikes(base, key) {
+    return Math.max(3, Math.round(base * (0.6 + 0.8 * L.h01("l" + key))));
+  }
+  function netPost(S, k, u, n, t, likes) {
+    var F = S.feed || (S.feed = []);
+    F.unshift({ w: S.week, k, u, n, t, l: likes });
+    if (F.length > L.NET_FEED_MAX) F.length = L.NET_FEED_MAX;
+  }
+  function netStarPost(S, w, t, key) {
+    L.netPost(S, "w", L.netHandle(w.name), w.name, t, L.netLikes(w.ovr * w.ovr * 1.6, key));
+  }
+  var NET_WIN_F = ["Thank you, {city}. That one was for you.", "Every mile on the road was worth it tonight.", "I said I would do it. Done.", "Listen to that crowd. I will never get used to it."];
+  L.NET_WIN_F = NET_WIN_F;
+  var NET_WIN_H = ["Told you. Nobody in that building is on my level.", "Boo all you like. The result is the same.", "That was not a fight. That was a lesson.", "You paid to see me win. You are welcome."];
+  L.NET_WIN_H = NET_WIN_H;
+  var NET_NEW = ["AND NEW. Read it again.", "It is mine now. Come and try to take it.", "Years of work for one night like this."];
+  L.NET_NEW = NET_NEW;
+  var NET_LOSE = ["Not my night. It will not happen twice.", "I heard the count. I will hear it in my sleep. I will be back.", "No excuses. Run it back."];
+  L.NET_LOSE = NET_LOSE;
+  var NET_RIVAL = ["{show} is in the books. Ask anybody who was there.", "Another night, another building on its feet.", "They say the competition is catching up. I have not noticed."];
+  L.NET_RIVAL = NET_RIVAL;
+  var NET_TURN = {
+    heat: { smark: ["{a} and {b} have real heat now. This is the story I wanted.", "{a} versus {b} for real? Book it."], casual: ["wait, did {a} and {b} fall out?", "{a} and {b} not getting on. That will be good TV."], old: ["{a} and {b} at odds backstage. It used to get settled in the ring."], heel: ["{a} and {b} fighting. Good. Let them."], stats: ["{a} and {b} have clashed. Watch their next match."], under: ["{a} and {b} at war and nobody asks us."] },
+    friends: { smark: ["{a} and {b} are tight now. Tag team when?", "Anyone else see {a} and {b} getting along?"], casual: ["{a} and {b} are friends? That is nice."], old: ["Good to see {a} and {b} looking out for each other."], heel: ["{a} and {b} are a team now. Fine. They still lose."], stats: ["{a} and {b} have become friends. Their matches together will be better."], under: ["{a} and {b} share a locker room and a laugh. Good for them."] }
+  };
+  L.NET_TURN = NET_TURN;
+  function netTurn(S, a, b, now) {
+    if (S.cal || !now) return;
+    var x = S.w[a], y = S.w[b];
+    if (!x || !y) return;
+    if (!(L.relMine(S, a, b) || x.ovr + y.ovr >= 130)) return;
+    var key = S.week + ":t:" + a + "-" + b, f = L.FANS[Math.floor(L.h01(key) * L.FANS.length) % L.FANS.length], L2 = L.NET_TURN[now < 0 ? "heat" : "friends"][f[1]] || L.NET_TURN[now < 0 ? "heat" : "friends"].casual;
+    L.netPost(S, "f", "@" + f[0], f[0], L.fill(L.netPickH(L2, key + "t"), { a: x.name, b: y.name }), L.netLikes(150, key));
+  }
+  L.SHOWX.push(function(S, P, show, rep) {
+    if (S.cal) return;
+    var ms = rep.segs.filter(function(s) {
+      return s.k === "match";
+    });
+    if (!ms.length) return;
+    var main = ms[ms.length - 1], best = ms.slice().sort(function(a, b) {
+      return b.ov - a.ov;
+    })[0], key = S.week + ":" + P.id + ":" + show.id;
+    if (P.id !== S.player) {
+      if (!show.big || !main.wi || !main.wi.length) return;
+      var rw = S.w[main.wi[0]];
+      if (rw) L.netStarPost(S, rw, L.fill(L.netPickH(L.NET_RIVAL, key), { show: rep.name }), key);
+      return;
+    }
+    var city = rep.venue ? String(rep.venue).replace(/ (Armory|Civic Auditorium|Fieldhouse|Coliseum|Arena|Stadium)$/, "") : "everybody", d = rep.rating - (rep.exp || rep.rating);
+    var mw = main.wi && main.wi.length ? S.w[main.wi[0]] : null;
+    if (mw) L.netStarPost(S, mw, L.fill(L.netPickH(main.change ? L.NET_NEW : mw.align === "H" ? L.NET_WIN_H : L.NET_WIN_F, key + "w"), { city }), key + "w");
+    var loserId = main.ids.filter(function(id) {
+      return !main.wi || main.wi.indexOf(id) < 0;
+    })[0], ml = loserId != null ? S.w[loserId] : null;
+    if (ml && L.h01(key + "L") < 0.6) L.netStarPost(S, ml, L.netPickH(L.NET_LOSE, key + "l"), key + "l");
+    ms.forEach(function(s, i) {
+      if (s !== main && s.change && s.wi && s.wi.length) {
+        var cw = S.w[s.wi[0]];
+        if (cw) L.netStarPost(S, cw, L.netPickH(L.NET_NEW, key + "c" + i), key + "c" + i);
+      }
+    });
+    L.netPost(S, "c", L.netHandle(P.name), P.full || P.name, (rep.att ? rep.att.toLocaleString("en-US") + " of you in the building" : "A full night") + " for " + rep.name + ". " + (rep.sellout ? "A sell-out. " : "") + "Thank you.", L.netLikes(P.image * P.image * 2, key + "co"));
+    L.netPost(S, "p", L.netHandle(S.columnist || "The Ringside Wire"), S.columnist || "The Ringside Wire", best.label + " at " + rep.name + ": " + L.starG(best.ov) + ". The show was graded " + L.gradeG(L.repCS(rep)) + (L.verdictBand(d) > 0 ? ", better than this crowd expected." : L.verdictBand(d) < 0 ? ", short of what this crowd expected." : ", what this crowd came for."), L.netLikes(900, key + "pr"));
+    var mf = main.ids && main.ids.length >= 2 ? S.feuds.filter(function(f) {
+      return f.promo === P.id && (f.a.indexOf(main.ids[0]) >= 0 && f.b.indexOf(main.ids[1]) >= 0 || f.b.indexOf(main.ids[0]) >= 0 && f.a.indexOf(main.ids[1]) >= 0);
+    }).slice(-1)[0] : null;
+    var cc = { show: rep.name, co: P.name, band: L.verdictBand(d), best: best.label, win: mw ? mw.name : null, lose: ml ? ml.name : null, champ: main.change && mw ? mw.name : null, feud: mf ? L.feudLabel(S, mf) : null, fheat: mf ? mf.heat : 0, fstale: !!(mf && !mf.res && mf.fresh != null && mf.fresh < 30), fend: !!(mf && mf.res && mf.end === S.week), turn: null }, nf = 2 + Math.floor(L.h01(key + "nf") * 3), said = {};
+    var tw = L.rosterOf(S, P.id).filter(function(w) {
+      return w.tw === S.week;
+    })[0];
+    if (tw) {
+      cc.turn = tw.name;
+      cc.heel = tw.align === "H";
+    }
+    for (var fi = 0; fi < nf; fi++) {
+      var fan = L.FANS[Math.floor(L.h01(key + "f" + fi) * L.FANS.length) % L.FANS.length][0], ln = L.gram(L.GR_CHAT, "line", cc, key + "ft" + fi);
+      if (said[ln]) continue;
+      said[ln] = 1;
+      L.netPost(S, "f", "@" + fan, fan, ln, L.netLikes(120, key + "fl" + fi));
+    }
+  });
+  L.WEEKX.push(function(S) {
+    if (S.cal || S.over) return;
+    var by = S.columnist || "The Ringside Wire", n = 0;
+    S.news.filter(function(x) {
+      return x.w === S.week && (x.k === "title" || x.k === "contract" || x.k === "world" || x.k === "injury");
+    }).slice(0, 12).reverse().forEach(function(x, i) {
+      if (n >= 3 || L.h01(S.week + "n" + i + x.t.length) > 0.7) return;
+      n++;
+      L.netPost(S, "p", L.netHandle(by), by, (x.k === "title" ? "TITLE NEWS: " : x.k === "contract" ? "CONTRACTS: " : x.k === "injury" ? "INJURY: " : "NEWS: ") + x.t, L.netLikes(x.k === "title" ? 2400 : 1100, S.week + "n" + i));
+    });
+    var RF = S.rumF || (S.rumF = []), RR = S.rumR || (S.rumR = []);
+    S.rumF = RF.filter(function(r) {
+      if (r.due > S.week) return true;
+      var w = S.w[r.w], P = S.promos[r.pid];
+      if (!w || !P) return false;
+      var yes = r.k === "exp" || r.k === "unh" ? w.promo !== r.pid : w.promo === r.pid, txt;
+      if (r.k === "unh") txt = yes ? w.name + " has left " + P.name + ". The talk was true." : w.name + " stayed with " + P.name + " after all.";
+      else if (r.k === "exp") txt = yes ? w.name + " has left " + P.name + ", as the paper said." : w.name + " has re-signed with " + P.name + ". The deal did run out, and talks ended well.";
+      else txt = yes ? w.name + " has signed with " + P.name + ". The earlier report was right." : "Nothing came of " + w.name + " at " + P.name + ". We got that one wrong.";
+      RR.unshift({ w: S.week, ok: yes, lvl: r.lvl, t: (yes ? "CONFIRMED: " : r.k === "exp" || r.k === "unh" ? "UPDATE: " : "CORRECTION: ") + txt });
+      if (yes) L.netPost(S, "p", L.netHandle(by), by, txt, L.netLikes(1500, S.week + "rr" + r.w));
+      return false;
+    });
+    if (RR.length > 12) RR.length = 12;
+    L.netRumours(S, S.week).forEach(function(r) {
+      if (!r.k || S.rumF.length >= 20 || S.rumF.some(function(x) {
+        return x.w === r.w;
+      })) return;
+      S.rumF.push({ w: r.w, k: r.k, pid: r.pid, due: r.due, lvl: r.lvl });
+    });
+    var L2 = S.sheets || (S.sheets = []);
+    L2.unshift(L.netSheet(S, S.week));
+    if (L2.length > L.NET_SHEETS) L2.length = L.NET_SHEETS;
+  });
+  function netMentions(text, name) {
+    return new RegExp("(^|[^A-Za-z0-9])" + String(name).replace(/[.*+?^${}()|[\]\\]/g, "\\$&") + "([^A-Za-z0-9]|$)").test(text);
+  }
+  function netRumours(S, wk) {
+    var out = [], me = S.promos[S.player];
+    S.order.forEach(function(pid) {
+      if (pid === S.player) return;
+      var P = S.promos[pid], R = L.rosterOf(S, pid).filter(function(w) {
+        return !w.nw;
+      });
+      var up = R.filter(function(w) {
+        return w.con != null && w.con <= 6;
+      }).sort(function(a, b) {
+        return b.ovr - a.ovr;
+      })[0];
+      if (up && up.ovr >= P.image - 12) out.push({ lvl: "sure", t: up.name + "\u2019s deal with " + P.name + " runs out in " + up.con + " " + (up.con === 1 ? "week" : "weeks") + ". Nothing new has been signed.", w: up.id, k: "exp", pid, due: wk + up.con + 1 });
+      var sour = R.filter(function(w) {
+        return w.con != null && w.con > 6 && w.con <= 14 && w.ovr >= P.image - 5 && L.holdLvl(P, w.id) === 0;
+      }).sort(function(a, b) {
+        return a.morale - b.morale || b.ovr - a.ovr;
+      })[0];
+      if (sour) out.push({ lvl: sour.morale < 50 ? "likely" : "thin", t: sour.name + " is said to be unhappy with their spot at " + P.name + ", and their deal is up in a few months. Other companies will be listening.", w: sour.id, k: "unh", pid, due: wk + sour.con + 1 });
+      if (P.cash < 0) out.push({ lvl: "likely", t: P.name + " are behind on their bills. Expect cuts." });
+      if (P.shows.length < 3 && P.cash > 0 && P.image >= 45 + 15 * P.shows.length && R.length >= 14 * (P.shows.length + 1)) out.push({ lvl: "likely", t: P.name + " have been talking to a network about another weekly show." });
+    });
+    if (L.h01(wk + "lie" + S.seed) < 0.5) {
+      var cand = [];
+      S.order.forEach(function(pid) {
+        if (pid === S.player) return;
+        L.rosterOf(S, pid).forEach(function(w) {
+          if (!w.nw && w.con != null && w.con > 20 && w.morale >= 65 && w.ovr >= S.promos[pid].image - 5) cand.push(w);
+        });
+      });
+      if (cand.length) {
+        var lw = cand[Math.floor(L.h01(wk + "liew" + S.seed) * cand.length) % cand.length], lp = S.promos[lw.promo];
+        out.push({ lvl: "thin", t: lw.name + " is said to be unhappy with their spot at " + lp.name + ". Other companies will be listening.", w: lw.id, k: "unh", pid: lw.promo, due: wk + 6, lie: 1 });
+      }
+    }
+    var fa = S.w.filter(function(w) {
+      return w.promo === "FA" && !w.rt && !w.nw;
+    }).sort(function(a, b) {
+      return b.ovr - a.ovr;
+    })[0], rv = S.order.filter(function(p) {
+      var g = L.modelOf(S.promos[p]).gender;
+      return p !== S.player && (!g || !fa || g === fa.g);
+    });
+    if (fa && rv.length) {
+      var fp = L.netPickH(rv, wk + "thin");
+      out.push({ lvl: "thin", t: fa.name + " was seen at a " + S.promos[fp].name + " show this week. It could mean anything.", w: fa.id, k: "fa", pid: fp, due: wk + 4 });
+    }
+    (S.teams || []).forEach(function(tm) {
+      if (!tm.m || tm.m.length !== 2) return;
+      var a = S.w[tm.m[0]], b = S.w[tm.m[1]];
+      if (!a || !b || a.promo !== me.id || b.promo !== me.id) return;
+      var ja = L.jealOf(S, a.id, b.id), jb = L.jealOf(S, b.id, a.id);
+      if (Math.max(ja, jb) < 45) return;
+      var x = ja >= jb ? a : b, y = x === a ? b : a;
+      out.push({ lvl: Math.max(ja, jb) >= 60 ? "likely" : "thin", t: "People backstage say " + x.name + " is tired of standing in " + y.name + "\u2019s shadow. Watch that team.", w: x.id });
+    });
+    var hot = L.activeFeuds(S).filter(function(f) {
+      return f.promo === me.id && f.heat >= 70;
+    })[0];
+    if (hot) out.push({ lvl: "likely", t: "Everybody expects " + L.feudLabel(S, hot) + " to be settled at " + L.nextBigName(S, me) + "." });
+    var rank = { sure: 0, likely: 1, thin: 2 };
+    return out.sort(function(a, b) {
+      return rank[a.lvl] - rank[b.lvl] || L.h01(wk + a.t) - L.h01(wk + b.t);
+    }).slice(0, 4);
+  }
+  function netBackstage(S, wk) {
+    var out = [], M = L.rmAll(S);
+    Object.keys(M).forEach(function(k) {
+      var e = M[k];
+      if (e.last !== wk || !e.mem.length || e.mem[0].w !== wk) return;
+      var ids = k.split("-").map(Number), x = S.w[ids[0]], y = S.w[ids[1]];
+      if (!x || !y) return;
+      var mine = (x.promo === S.player ? 1 : 0) + (y.promo === S.player ? 1 : 0), m = e.mem[0];
+      if (!mine && L.h01("bk" + wk + k) > 0.4) return;
+      out.push({ lvl: mine === 2 ? "sure" : mine ? "likely" : "thin", t: m.t, w: ids[0], v: ids[1], mood: e.bond <= -L.REL_ON ? "heat" : e.bond >= L.REL_ON ? "close" : "" });
+    });
+    var rank = { sure: 0, likely: 1, thin: 2 };
+    return out.sort(function(a, b) {
+      return rank[a.lvl] - rank[b.lvl] || L.h01(wk + a.t) - L.h01(wk + b.t);
+    }).slice(0, 3);
+  }
+  function netThrowback(S, wk) {
+    var out = [];
+    S.order.forEach(function(pid) {
+      S.promos[pid].titles.forEach(function(t) {
+        (t.hist || []).forEach(function(h) {
+          var d = wk - h.from;
+          if (d <= 0 || d % 48 || h.show === "Before your time" || !h.h || !h.h.length || h.to != null && h.to - h.from < 4) return;
+          var y = d / 48, span = h.to != null ? h.to - h.from : null;
+          out.push({ t: y + " " + (y === 1 ? "year" : "years") + " ago this week, " + h.h.join(" and ") + " won the " + S.promos[pid].name + " " + t.name + (h.show ? " at " + h.show : "") + "." + (span != null && span >= 24 ? " The reign lasted " + span + " weeks." : "") });
+        });
+      });
+    });
+    (S.feudBook || []).forEach(function(e) {
+      var d = wk - e.e;
+      if (d <= 0 || d % 48) return;
+      var y = d / 48;
+      out.push({ t: y + " " + (y === 1 ? "year" : "years") + " ago this week, " + e.l + " came to an end after " + (e.e - e.s) + " weeks." });
+    });
+    (S.rec && S.rec.matches || []).forEach(function(m) {
+      var d = wk - m.w;
+      if (m.w == null || d <= 0 || d % 48) return;
+      var y = d / 48;
+      out.push({ t: y + " " + (y === 1 ? "year" : "years") + " ago this week: " + m.l + (m.show ? " at " + m.show : "") + ", " + L.starG(m.ov) + "." });
+    });
+    return out.sort(function(a, b) {
+      return L.h01(wk + a.t) - L.h01(wk + b.t);
+    }).slice(0, 1);
+  }
+  function netMoment(reps) {
+    var best = null;
+    reps.forEach(function(r) {
+      (r.segs || []).forEach(function(sg) {
+        if (sg.k !== "match") return;
+        (sg.bc || []).forEach(function(b) {
+          if (b.h && (!best || b.h > best.h || b.h === best.h && sg.ov > best.ov)) best = { h: b.h, ov: sg.ov, x: b.x, label: sg.label, show: r.name };
+        });
+      });
+    });
+    return best ? { t: best.x, label: best.label, show: best.show, stars: L.starG(best.ov) } : null;
+  }
+  function netSheet(S, wk) {
+    var P = S.promos[S.player], news = S.news.filter(function(x) {
+      return x.w === wk;
+    }), reps = S.reports.filter(function(r) {
+      return r.week === wk && r.promo === P.id;
+    }).reverse();
+    var yours = reps.map(function(r) {
+      return { show: r.name, rating: r.rating, exp: r.exp == null ? null : Math.round(r.exp * 10) / 10, big: !!r.big, lines: r.sheet && r.sheet.lines ? r.sheet.lines.slice(0, 5) : [], head: L.gram(L.GR_WEB, "results", { show: r.name, band: L.verdictBand(r.rating - (r.exp == null ? r.rating : r.exp)) }, "res" + r.week + r.name) };
+    });
+    var best = null;
+    reps.forEach(function(r) {
+      r.segs.forEach(function(s) {
+        if (s.k === "match" && (!best || s.ov > best.ov)) best = { label: s.label, ov: s.ov, show: r.name, stars: L.starG(s.ov) };
+      });
+    });
+    var lead = null, d = reps.length ? L.avg(reps.map(function(r) {
+      return r.rating - (r.exp == null ? r.rating : r.exp);
+    })) : 0, tn = news.filter(function(x) {
+      return x.k === "title";
+    })[0];
+    var gk = "sheet" + wk + P.id, gc = { co: P.name, d, who: null, rival: S.order.length > 1 ? S.promos[L.netPickH(S.order.filter(function(p) {
+      return p !== P.id;
+    }), gk + "rv")].name : P.name };
+    if (tn) {
+      gc.k = "title";
+      gc.who = / won the /.test(tn.t) ? tn.t.split(" won the ")[0] : null;
+      lead = { head: "", text: tn.t };
+    } else if (reps.length && d >= 5) {
+      gc.k = "hot";
+      lead = { head: "", text: "The shows beat what the crowd expected by " + d.toFixed(1) + " points. People are talking." };
+    } else if (reps.length && d <= -5) {
+      gc.k = "cold";
+      lead = { head: "", text: "The shows fell " + (-d).toFixed(1) + " points short of what the crowd expected. The mood in the building was flat." };
+    } else {
+      var wn = news.filter(function(x) {
+        return x.k === "world";
+      })[0] || news.filter(function(x) {
+        return x.k === "story";
+      })[0] || news[0];
+      gc.k = wn ? "world" : "quiet";
+      lead = wn ? { head: "", text: wn.t } : { head: "", text: "Nothing broke this week that anybody will remember." };
+    }
+    lead.head = L.gram(L.GR_SHEET, "head", gc, gk + "h");
+    lead.open = L.gram(L.GR_SHEET, "open", gc, gk + "o");
+    var used = {};
+    if (lead) used[lead.text] = 1;
+    var world = [];
+    S.order.forEach(function(pid) {
+      if (pid === P.id) return;
+      var RV = S.promos[pid], lines = news.filter(function(x) {
+        return x.k !== "you" && !used[x.t] && L.netMentions(x.t, RV.name);
+      }).slice(0, 2).map(function(x) {
+        used[x.t] = 1;
+        return x.t;
+      });
+      if (RV.last && RV.last.week === wk) lines.unshift(RV.last.name + " was graded " + L.gradeG(L.repCS(RV.last)) + ".");
+      if (lines.length) world.push({ id: pid, name: RV.name, lines: lines.slice(0, 3) });
+    });
+    var business = news.filter(function(x) {
+      return (x.k === "money" || x.k === "contract" || x.k === "injury") && !used[x.t];
+    }).slice(0, 4).map(function(x) {
+      used[x.t] = 1;
+      return x.t;
+    });
+    var c = L.cal(wk + 1), next = [];
+    if (c.wom === 4) next.push(P.name + " " + L.evName(S, P, c.month) + " is next week.");
+    var soon = L.rosterOf(S, P.id).filter(function(w) {
+      return !w.nw && w.con != null && w.con <= 2;
+    }).sort(function(a, b) {
+      return b.ovr - a.ovr;
+    })[0];
+    if (soon) next.push(soon.name + "\u2019s contract with " + P.name + " is nearly up.");
+    var fw = [];
+    S.feuds.forEach(function(f) {
+      var co = S.promos[f.promo] ? S.promos[f.promo].name : "";
+      if (!co) return;
+      var c2 = { f: L.feudLabel(S, f), co, w: wk - f.start, k: null };
+      if (f.res) {
+        if (f.end === wk) c2.k = f.dead ? f.fizzle === "cold" ? "fizz" : null : "done";
+      } else if (wk - f.start >= 24 && f.heat >= 60) c2.k = "long";
+      else if (f.heat >= 75) c2.k = f.fresh != null && f.fresh < 35 ? "stale" : "hot";
+      else if (wk - f.start <= 1) c2.k = "new";
+      if (c2.k) fw.push({ k: c2.k, h: f.heat, t: L.gram(L.GR_FEUD, "line", c2, "fw" + wk + f.id) });
+    });
+    var FWO = { done: 0, hot: 1, long: 2, stale: 3, fizz: 4, new: 5 };
+    fw.sort(function(a, b) {
+      return FWO[a.k] - FWO[b.k] || b.h - a.h;
+    });
+    var review = reps.length ? L.gram(L.GR_SHEET, "verdict", gc, gk + "v") : "No shows from " + P.name + " yet this week.";
+    return { week: wk, label: L.cal(wk).label, by: S.columnist || "The Ringside Wire", lead, yours, best, world, business, backstage: L.netBackstage(S, wk), moment: L.netMoment(reps), throwback: L.netThrowback(S, wk), feuds: function() {
+      var n = {};
+      return fw.filter(function(x) {
+        n[x.k] = (n[x.k] || 0) + 1;
+        return n[x.k] <= 2;
+      }).slice(0, 5).map(function(x) {
+        return x.t;
+      });
+    }(), followups: (S.rumR || []).filter(function(x) {
+      return x.w === wk;
+    }), rumours: L.netRumours(S, wk), next, review };
+  }
+  L.E.sheetInfo = function(S) {
+    return { now: L.netSheet(S, S.week), past: (S.sheets || []).slice() };
+  };
+  L.E.feed = function(S) {
+    return (S.feed || []).slice();
+  };
+  L.E.webHeads = function(S) {
+    var wk = S.week, P = S.promos[S.player], rum = L.netRumours(S, wk).filter(function(r) {
+      return r.w != null;
+    })[0], C = L.E.criticList(S), key = "web" + wk;
+    var nb = 0;
+    S.order.forEach(function(pid) {
+      nb += S.promos[pid].titles.length;
+    });
+    var hurt = (S.news || []).filter(function(x) {
+      return x.w >= wk - 1 && x.k === "injury";
+    })[0], N = S.net || { mood: 60, threads: [] };
+    var star = L.rosterOf(S, P.id).filter(function(w) {
+      return !w.nw;
+    }).sort(function(a, b) {
+      return a.morale - b.morale;
+    })[0];
+    return {
+      rumor: L.gram(L.GR_WEB, "rumor", { who: rum ? S.w[rum.w].name : null, co: rum && rum.pid ? S.promos[rum.pid].name : null }, key + "r"),
+      results: L.gram(L.GR_WEB, "results", { show: P.last ? P.last.name : P.name, band: P.last ? L.verdictBand(P.last.rating - (P.last.exp == null ? P.last.rating : P.last.exp)) : 0 }, key + "s"),
+      rank: L.gram(L.GR_WEB, "rank", { who: C.rows.length ? C.rows[0].w.name : null }, key + "k"),
+      belts: L.gram(L.GR_WEB, "belts", { n: nb }, key + "b"),
+      whisper: L.gram(L.GR_WEB, "whisper", { who: star && star.morale < 50 ? star.name : hurt ? null : null }, key + "w"),
+      board: L.gram(L.GR_WEB, "board", { mood: N.mood, topic: N.threads.length ? N.threads[0].sub : "the last show" }, key + "o")
+    };
+  };
+  L.E.NET_LVL = { sure: "Sure", likely: "Likely", thin: "Thin" };
+  L.NET_FEED_MAX = NET_FEED_MAX;
+  L.NET_SHEETS = NET_SHEETS;
+  L.netPickH = netPickH;
+  L.netHandle = netHandle;
+  L.netLikes = netLikes;
+  L.netPost = netPost;
+  L.netStarPost = netStarPost;
+  L.NET_WIN_F = NET_WIN_F;
+  L.NET_WIN_H = NET_WIN_H;
+  L.NET_NEW = NET_NEW;
+  L.NET_LOSE = NET_LOSE;
+  L.NET_RIVAL = NET_RIVAL;
+  L.NET_TURN = NET_TURN;
+  L.netTurn = netTurn;
+  L.netMentions = netMentions;
+  L.netRumours = netRumours;
+  L.netBackstage = netBackstage;
+  L.netThrowback = netThrowback;
+  L.netMoment = netMoment;
+  L.netSheet = netSheet;
+
+  // engine/95-tasks.ts
+  L.taskOpen = taskOpen;
+  function taskOpen(S) {
+    var P = S.promos[S.player], L2 = [], R = L.rosterOf(S, P.id).filter(function(w) {
+      return !w.nw;
+    });
+    var add = function(id, text, to, label, o) {
+      o = o || {};
+      L2.push({ id, text, short: o.short || text, done: o.done || text, to, label, gate: o.gate || "show", card: !!o.card, need: o.need !== false, waive: o.waive !== false && o.need !== false, req: !!o.req });
+    };
+    if (S.owner && S.owner.pending) add("house", "The company is yours. Set your house style.", "house", "Set it", { waive: false, done: "House style set.", short: "Set your house style" });
+    var n = S.inbox.filter(function(e) {
+      return !e.done;
+    }).length;
+    if (n) add("inbox", n + " " + (n === 1 ? "matter" : "matters") + " in your inbox " + (n === 1 ? "needs" : "need") + " an answer.", "desk", "Answer", { gate: "week", waive: false, done: "Inbox answered.", short: "Answer the inbox (" + n + ")" });
+    var D = P.desk || {}, spare = (S.voices || []).filter(function(v) {
+      return !v.hired;
+    }).length;
+    if (spare) {
+      if (D.pbp == null) add("desk-pbp", "You have not picked a play-by-play voice for the commentary desk.", "manage", "Assign", { done: "A play-by-play voice is in the chair.", short: "Pick a play-by-play voice" });
+      if (D.col == null) add("desk-col", "You have not picked a colour voice for the commentary desk.", "manage", "Assign", { done: "A colour voice is in the chair.", short: "Pick a colour voice" });
+    }
+    var slots = L.spMax(P) - S.sponsors.length, can = S.spOffers.filter(function(o) {
+      return L.E.sponsorOk(S, o);
+    }).length;
+    var needSp = !(S.req && S.req.sponsor) && !S.sponsors.length && S.stats && S.stats.shows >= 1;
+    if (slots > 0 && can > 0) add("sponsors", (needSp ? "Your first show is done. Sign your first sponsor: money every week, for a condition you have to keep. " : "") + can + " sponsor " + (can === 1 ? "offer" : "offers") + " you could sign, and " + slots + " free " + (slots === 1 ? "slot" : "slots") + ".", "deals", "See offers", { done: "Sponsor offers dealt with.", short: needSp ? "Sign your first sponsor" : "Sponsor offers (" + can + ")", waive: !needSp, req: needSp });
+    var T = L.tournActive(S);
+    P.titles.forEach(function(t) {
+      if (t.holders.length) return;
+      if (T && T.title === t.id) return;
+      if ((S.card || []).some(function(m) {
+        return m && m.title === t.id;
+      })) return;
+      add("title-" + t.id, "The " + t.name + " " + (t.tag ? "are" : "is") + " vacant. Book a match for " + (t.tag ? "them" : "it") + " or start a tournament.", "titles", "Decide", { card: true, done: "The " + t.name + " " + (t.tag ? "are" : "is") + " taken care of.", short: "The " + t.name + ": vacant" });
+    });
+    R.filter(function(w) {
+      return w.con != null && w.con <= 1;
+    }).sort(function(a, b) {
+      return b.ovr - a.ovr;
+    }).slice(0, 4).forEach(function(w) {
+      add("con-" + w.id, w.name + "\u2019s contract ends " + (w.con <= 0 ? "this week" : "next week") + ". Renew it or let them go.", "roster", "Decide", { done: w.name + "\u2019s contract is dealt with.", short: w.name + "\u2019s contract ends" });
+    });
+    L.TASKX.forEach(function(fn) {
+      fn(S, P, add);
+    });
+    var left = S.queue.length - S.qi, ap = L.E.backstage(S).ap;
+    if (ap > 0 && left > 0) add("ap", ap + " action " + (ap === 1 ? "point" : "points") + " to spend backstage before the week is out.", "backstage", "Go backstage", { need: false, done: "Action points spent.", short: "Action points to spend (" + ap + ")" });
+    S.quests.filter(function(q) {
+      return q.due != null && q.due <= S.week;
+    }).slice(0, 3).forEach(function(q) {
+      add("q-" + q.id, "Due this week: " + q.text, "booking", "Booking", { need: false, done: "No longer due: " + q.text, short: "A promise is due this week" });
+    });
+    return L2;
+  }
+  L.E.tasks = function(S) {
+    var open = L.taskOpen(S), seen = S.taskSeen && S.taskSeen.w === S.week ? S.taskSeen : S.taskSeen = { w: S.week, t: {} }, wave = S.taskWave && S.taskWave.w === S.week ? S.taskWave.ids : {}, now = {}, L2 = [];
+    open.forEach(function(t) {
+      now[t.id] = 1;
+      seen.t[t.id] = { text: t.done, need: t.need };
+      var waved = !!wave[t.id] && t.waive;
+      L2.push({ id: t.id, text: t.text, short: t.short, to: t.to, label: t.label, gate: t.gate, card: t.card, need: t.need, waive: t.waive, req: !!t.req, state: waved ? "waved" : t.need ? "todo" : "optional" });
+    });
+    var qr = S.qres && S.qres.w === S.week ? S.qres.r : {};
+    Object.keys(seen.t).forEach(function(id) {
+      if (now[id]) return;
+      var o = { id, text: seen.t[id].text, need: seen.t[id].need, state: "done" }, r = /^q-/.test(id) ? qr[id.slice(2)] : null;
+      if (r) {
+        o.text = r.t;
+        o.miss = !r.ok;
+        o.hit = r.ok;
+      } else if (id === "ap") {
+        var ap = L.E.backstage(S).ap;
+        if (ap > 0) {
+          o.text = ap + " action " + (ap === 1 ? "point" : "points") + " went unspent. The shows are over for the week.";
+          o.miss = true;
+        }
+      }
+      L2.push(o);
+    });
+    var rank = { todo: 0, optional: 1, waved: 2, done: 3 };
+    L2.sort(function(a, b) {
+      return rank[a.state] - rank[b.state];
+    });
+    var todo = L2.filter(function(t) {
+      return t.state === "todo";
+    });
+    return { list: L2, todo: todo.length, show: todo.filter(function(t) {
+      return t.gate === "show";
+    }).length, strict: !S.gateOff };
+  };
+  L.E.taskGate = function(S, gate) {
+    if (S.gateOff || S.over) return { ok: true, left: [] };
+    var left = L.E.tasks(S).list.filter(function(t) {
+      return t.state === "todo" && (gate === "week" || t.gate === "show") && !(gate === "book" && t.card);
+    });
+    return { ok: !left.length, left: left.map(function(t) {
+      return t.text;
+    }) };
+  };
+  L.E.taskWave = function(S, id) {
+    var t = L.taskOpen(S).filter(function(x) {
+      return x.id === id;
+    })[0];
+    if (!t) return { ok: false, msg: "That is already done." };
+    if (!t.waive) return { ok: false, msg: "That one cannot wait." };
+    if (!S.taskWave || S.taskWave.w !== S.week) S.taskWave = { w: S.week, ids: {} };
+    S.taskWave.ids[id] = 1;
+    return { ok: true, msg: "Left for another week. It will be back on the list next week if it is still open." };
+  };
+  L.E.taskUnwave = function(S, id) {
+    if (S.taskWave && S.taskWave.w === S.week) delete S.taskWave.ids[id];
+    return { ok: true, msg: "Back on the list." };
+  };
+  L.E.setGate = function(S, strict) {
+    S.gateOff = !strict;
+    return { ok: true, msg: strict ? "This week\u2019s tasks must be done or waved off before a show runs." : "This week\u2019s tasks are reminders only." };
+  };
+  L.taskOpen = taskOpen;
+
+  // engine/96-advance.ts
+  L.showDay = showDay;
+  L.wasNow = wasNow;
+  var ADV_DAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+  L.ADV_DAYS = ADV_DAYS;
+  function showDay(sh) {
+    if (!sh) return "";
+    if (sh.day) return sh.day;
+    for (var i = 0; i < L.ADV_DAYS.length; i++) if (sh.name.indexOf(L.ADV_DAYS[i]) >= 0) return L.ADV_DAYS[i];
+    return sh.big ? "Sunday" : "";
+  }
+  L.E.advance = function(S) {
+    if (S.over) return { k: "over", tone: "", short: "", label: "The game is over", to: "desk", act: null, why: [], day: "", step: 0, steps: 0 };
+    if (S.live) return { k: "live", tone: "go", short: "Continue", label: "The show is on the air", to: "booking", act: null, why: [], day: "On the air", step: 0, steps: 0 };
+    var T = L.E.tasks(S), todo = T.list.filter(function(t) {
+      return t.state === "todo";
+    }), strict = T.strict, sh = S.queue[S.qi], n = S.queue.length;
+    var steps = n + 1, step = Math.min(S.qi, n) + 1, out = function(o) {
+      o.why = o.why || [];
+      o.act = o.act || null;
+      o.step = step;
+      o.steps = steps;
+      return o;
+    };
+    if (sh) {
+      var day = L.showDay(sh);
+      var hold = strict ? todo.filter(function(t) {
+        return t.gate === "show" && !t.card;
+      }) : [];
+      if (hold.length) return out({ k: "task", tone: "stop", short: "Attention", id: hold[0].id, label: hold[0].short, to: "desk", day: "Before " + sh.name, why: hold.map(function(t) {
+        return t.text;
+      }) });
+      if (S.pre && S.pre.key === L.showKey(S) && !S.pre.done) return out({ k: "pre", tone: "stop", short: "Attention", label: "Answer the problem before the show", to: "booking", day, why: ["Something has come up before " + sh.name + ". It is at the top of the card."] });
+      var card = S.card || [];
+      if (!card.length) return out({ k: "book", tone: "go", short: "Book show", label: "Book " + sh.name, to: "booking", day });
+      var v = L.E.validate(S, card);
+      if (v.errors.length) return out({ k: "book", tone: "go", short: "Fix card", label: "Finish the card for " + sh.name, to: "booking", day, why: v.errors.slice(0, 3) });
+      var onCard = strict ? todo.filter(function(t) {
+        return t.gate === "show" && t.card;
+      }) : [];
+      if (onCard.length) return out({ k: "task", tone: "stop", short: "Attention", id: onCard[0].id, label: onCard[0].short, to: "desk", day, why: onCard.map(function(t) {
+        return t.text;
+      }) });
+      return out({ k: "run", tone: "air", short: "Run show", label: "Run " + sh.name, to: "booking", act: "run", day });
+    }
+    var open = S.inbox.some(function(e) {
+      return !e.done;
+    });
+    if (open) {
+      var ib = todo.filter(function(t) {
+        return t.id === "inbox";
+      })[0];
+      return out({ k: "task", tone: "stop", short: "Attention", id: "inbox", label: ib ? ib.short : "Answer the inbox", to: "desk", day: "The week is nearly over", why: [ib ? ib.text : "The inbox needs an answer."] });
+    }
+    if (strict && todo.length) return out({ k: "task", tone: "stop", short: "Attention", id: todo[0].id, label: todo[0].short, to: "desk", day: "The week is nearly over", why: todo.map(function(t) {
+      return t.text;
+    }) });
+    return out({ k: "week", tone: "end", short: "End week", label: "End the week", to: "desk", act: "week", day: "Sunday night" });
+  };
+  L.E.comingUp = function(S) {
+    if (S.over) return [];
+    var P = S.promos[S.player], L2 = [], wk = function(n) {
+      return n <= 0 ? "this week" : n === 1 ? "next week" : "in " + n + " weeks";
+    };
+    var nb = L.E.nextBig(S), nk = L.evList(S, P)[L.cal(nb.week).month].t, nkw = nk === "flag" ? " (your flagship)" : nk === "tent" ? " (a tentpole)" : nk === "taped" ? " (a taped special)" : nk === "tourn" ? " (the tournament)" : "";
+    L2.push({ n: nb.week - S.week, t: nb.name + nkw + " " + wk(nb.week - S.week), to: "booking", k: "big" });
+    var fs = L.activeFeuds(S).filter(function(f) {
+      return f.promo === P.id;
+    }).sort(function(a, b) {
+      return b.heat - a.heat;
+    });
+    fs.slice(0, 6).forEach(function(f) {
+      var act = L.feudAct(f, S), big = nb.week - S.week;
+      var pl = L.E.feudPlan(S, f);
+      if (pl.end && pl.end.in >= 0 && pl.end.in <= 2) L2.push({ n: pl.end.in, t: L.feudLabel(S, f) + " ends at " + pl.end.at + " " + wk(pl.end.in), to: "storylines", k: "feud" });
+      else if (pl.ripe) L2.push({ n: big, t: L.feudLabel(S, f) + " is ripe: end it at " + pl.next.at + "?", to: "storylines", k: "feud" });
+    });
+    var c = L.rosterOf(S, P.id).filter(function(w) {
+      return !w.nw && w.con != null && w.con >= 2 && w.con <= 6;
+    }).sort(function(a, b) {
+      return b.ovr - a.ovr;
+    })[0];
+    if (c) L2.push({ n: c.con, t: c.name + "\u2019s contract ends " + wk(c.con), to: "roster", k: "con" });
+    S.quests.filter(function(q) {
+      return q.due != null && q.due > S.week && q.due - S.week <= 4;
+    }).sort(function(a, b) {
+      return a.due - b.due;
+    }).slice(0, 1).forEach(function(q) {
+      L2.push({ n: q.due - S.week, t: "A promise is due " + wk(q.due - S.week), to: "desk", k: "q" });
+    });
+    var ye = 48 - (S.week - 1) % 48 - 1;
+    if (ye <= 4) L2.push({ n: ye, t: "The year-end awards are " + wk(ye), to: "history", k: "year" });
+    L2.forEach(function(u) {
+      var w = wk(u.n), k = u.t.length - w.length - 1;
+      if (k > 0 && u.t.slice(k) === " " + w) {
+        u.when = w.charAt(0).toUpperCase() + w.slice(1);
+        u.what = u.t.slice(0, k).replace(/ (is|are)$/, "");
+      }
+    });
+    if (S.scn && !S.scn.done) L2.push({ n: S.scn.weeks - S.week, t: "The scenario ends " + wk(S.scn.weeks - S.week), to: "desk", k: "scn" });
+    if (S.chal && !S.chal.done) L2.push({ n: S.chal.weeks - S.week, t: "The challenge ends " + wk(S.chal.weeks - S.week), to: "desk", k: "chal" });
+    var seen = {};
+    return L2.filter(function(x) {
+      if (x.n < 0 || seen[x.t]) return false;
+      seen[x.t] = 1;
+      return true;
+    }).sort(function(a, b) {
+      return a.n - b.n || (a.k === "big" ? -1 : 1);
+    }).slice(0, 3);
+  };
+  function wasNow(S) {
+    var P = S.promos[S.player];
+    return P ? { cash: P.cash, image: P.image, trust: S.owner ? S.owner.trust : null, w: S.week } : null;
+  }
+  (function() {
+    var ew = L.E.endWeek, ng = L.E.newGame;
+    L.E.newGame = function() {
+      var S = ng.apply(this, arguments);
+      if (S && S.promos) S.was = L.wasNow(S);
+      return S;
+    };
+    L.E.endWeek = function(S) {
+      var w0 = S.week, r = ew.apply(this, arguments);
+      if (S.week !== w0 && !S.over) {
+        if (S.was) S.wasPrev = S.was;
+        else delete S.wasPrev;
+        S.was = L.wasNow(S);
+      }
+      return r;
+    };
+  })();
+  L.E.moved = function(S) {
+    var P = S.promos[S.player];
+    if (!P || S.over) return null;
+    var ran = S.qi > 0, w = ran ? S.was : S.wasPrev;
+    if (!w) return null;
+    var one = function(d, min) {
+      return { d, dir: d >= min ? 1 : d <= -min ? -1 : 0 };
+    };
+    var dc = Math.round(P.cash - w.cash), di = Math.round((P.image - w.image) * 10) / 10, dt = S.owner && w.trust != null ? Math.round((S.owner.trust - w.trust) * 10) / 10 : 0;
+    return { since: ran ? "this week so far" : "over last week", week: w.w, now: ran, cash: one(dc, 1e3), image: one(di, 0.1), trust: one(dt, 0.1) };
+  };
+  L.ADV_DAYS = ADV_DAYS;
+  L.showDay = showDay;
+  L.wasNow = wasNow;
+
+  // engine/96-first.ts
+  L.reqOf = reqOf;
+  L.faceCandidates = faceCandidates;
+  function reqOf(S) {
+    return S.req || (S.req = {});
+  }
+  function faceCandidates(S) {
+    var P = S.promos[S.player], R = L.rosterOf(S, P.id).filter(function(w) {
+      return !w.nw && !w.rt && !(w.inj > 8);
+    });
+    var sc = function(w) {
+      return w.ovr + (w.cha || 50) * 0.25 + (w.sq || 50) * 0.2 + L.holdLvl(P, w.id) * 4 + (w.mom || 0);
+    };
+    return R.sort(function(a, b) {
+      return sc(b) - sc(a);
+    }).slice(0, 6).map(function(w) {
+      var t = P.titles.filter(function(x) {
+        return x.holders.indexOf(w.id) >= 0;
+      })[0], why = [];
+      if (t) why.push("Holds the " + t.name);
+      if (S.owner && S.owner.fav === w.id && !S.owner.me) why.push(S.owner.name + "\u2019s favourite");
+      if (w.mom >= 3) why.push("On a roll");
+      if (w.age <= 27) why.push("Young: " + w.age);
+      else if (w.age >= 38) why.push("Getting on: " + w.age);
+      if (L.youLean(S, w) > 0) why.push("Thinks well of you");
+      else if (L.youLean(S, w) < 0) why.push("Does not trust you");
+      return { id: w.id, name: w.name, align: w.align, why: why.length ? why.join(". ") + "." : "One of the biggest names you have." };
+    });
+  }
+  L.E.faceCandidates = function(S) {
+    return L.faceCandidates(S);
+  };
+  L.E.nameFace = function(S, id) {
+    var P = S.promos[S.player], w = S.w[+id], old = L.faceOf(S);
+    if (!w || w.promo !== P.id || w.nw) return { ok: false, msg: "Pick somebody on your roster." };
+    if (old && old.id === w.id) return { ok: false, msg: "The shows are already built around " + w.name + "." };
+    S.fc = { id: w.id, w: S.week };
+    w.morale = L.clamp(w.morale + 6, 0, 100);
+    L.reqOf(S).face = 1;
+    L.youRemember(S, w, "theone", "You built the company around them.", 18);
+    if (old) {
+      L.youRemember(S, old, "replaced", "You took the company off their shoulders and gave it to " + w.name + ".", -15);
+      L.relBump(S, old.id, w.id, { bond: -10, ja: 25 }, { k: "passed", keep: true, t: old.name + " watched the company get built around " + w.name + "." });
+    }
+    L.rosterOf(S, P.id).filter(function(x) {
+      return !x.nw && x.id !== w.id && (!old || x.id !== old.id) && x.ovr >= w.ovr - 6;
+    }).sort(function(a, b) {
+      return b.ovr - a.ovr;
+    }).slice(0, 3).forEach(function(x) {
+      L.relBump(S, x.id, w.id, { ja: 10 }, { k: "passed", t: x.name + " thinks the company should have been built around someone else." });
+    });
+    L.news(S, "story", P.name + " is building its shows around " + w.name + ".");
+    return { ok: true, msg: "The shows are built around " + w.name + " now. The crowd comes to see them: a lift when they are in the main event, a letdown when they could be on the card and are not. The ones who thought it should be them will remember." };
+  };
+  L.TASKX.push(function(S, P, add) {
+    var R = L.reqOf(S);
+    if (!R.sponsor && S.sponsors && S.sponsors.length) R.sponsor = 1;
+    if (!R.face) {
+      if (S.fc && L.faceOf(S)) R.face = 1;
+      else if ((S.queue || []).slice(S.qi).some(function(q) {
+        return q.big;
+      })) add("face", "Your first big event is this week. Before it, name the face of your company: the one the shows are built around.", "desk", "Name them", { gate: "book", waive: false, req: true, done: "The face of the company is named.", short: "Name the face of the company" });
+    }
+  });
+  L.E.welcome = function(S) {
+    if (S.letter) return S.letter;
+    var P = S.promos[S.player], o = S.owner, me = !!o.me, rank = typeof L.E.audience === "function" ? L.E.audience(S).rank : S.order.slice().sort(function(a, b) {
+      return S.promos[b].image - S.promos[a].image;
+    }).indexOf(P.id) + 1, n = S.order.length, sh = S.queue[S.qi] || P.shows[0];
+    var top = P.titles.filter(function(t) {
+      return !t.tag && t.holders.length;
+    }).sort(function(a, b) {
+      return b.lvl - a.lvl;
+    })[0], ch = top ? S.w[top.holders[0]] : null, fav = !me && o.fav != null ? S.w[o.fav] : null;
+    var place = rank === 1 ? "We are the biggest company in the world, and everybody else gets up in the morning to change that." : rank <= 3 ? "We are number " + rank + " of " + n + ". I did not hire you to stay there." : rank >= n - 1 ? "We are near the bottom of " + n + " companies. Nobody expects anything from us. Good." : "We are number " + rank + " of " + n + ". There is room above us and people below who want our spot.";
+    var L2 = me ? [
+      "It is yours. Your name is on the lease, the ring is paid for, and nobody upstairs can tell you no.",
+      "Nobody upstairs can save you either.",
+      place.replace(/^We are/, "You are").replace(/I did not hire you to stay there\./, "That is not why you did this.")
+    ] : ["Congratulations. The job is yours.", "You are the booker of " + (P.full || P.name) + ", " + L.modelOf(P).ph + ". From tonight every match, every promo and every finish goes out with your name on it.", place];
+    if (ch) L2.push(ch.name + " holds the " + top.name + "." + (fav && fav.id !== ch.id ? " My money is on " + fav.name + ". You will hear from me about that." : fav ? " I like it that way." : ""));
+    var mid = (S.feuds || []).filter(function(f) {
+      return f.mid && !f.res && f.promo === P.id;
+    });
+    if (mid.length) {
+      var f0 = mid[0], A = S.w[f0.a[0]], B = S.w[f0.b[0]];
+      if (A && B) L2.push(A.name + " and " + B.name + " have been at it for weeks" + (f0.title ? ", with the belt on the line" : "") + ". " + (mid.length > 1 ? mid.length - 1 + " more " + (mid.length === 2 ? "story is" : "stories are") + " already running. " : "") + "Do not let them go cold.");
+    }
+    L2.push("Your first show is " + sh.name + ". The card is empty and the building is sold.");
+    var Y = !me && typeof L.E.ownerYear === "function" ? L.E.ownerYear(S) : null;
+    if (Y) L2.push("By " + (Y.end ? "the flagship, " + Y.end : "the end of the year") + ", I want three things: popularity up to " + Y.asks[0].n.replace(/^Popularity | or more$/g, "") + ", at least half our shows giving the crowd what it came for, and no losses I have to cover. Do that two years running and we can talk about who owns this place.");
+    L2.push(me ? "Go and book it." : "Do not make me regret this.");
+    return S.letter = {
+      from: me ? S.booker.name : o.name,
+      role: me ? "Owner and booker" : "Owner",
+      company: P.full || P.name,
+      short: P.name,
+      to: S.booker.name,
+      date: L.cal(S.week).label,
+      lines: L2,
+      show: sh.name,
+      ps: "Before the show, the Office is where the week starts. The key at the bottom right always says what is next."
+    };
+  };
+  L.reqOf = reqOf;
+  L.faceCandidates = faceCandidates;
+
+  // engine/97-clauses.ts
+  L.clausesWanted = clausesWanted;
+  L.datesFull = datesFull;
+  var CLAUSE = {
+    travel: {
+      n: "Paid travel",
+      d: "You pay their travel. Their body recovers faster between shows. It costs a tenth of their wage again each week.",
+      save: 0.06,
+      wants: function(S, w) {
+        return w.age >= 33 || w.cond < 70;
+      }
+    },
+    nocut: {
+      n: "A no-cut promise",
+      d: "You will not let them go. If you do, it costs six months of their wage and the locker room hears about it.",
+      save: 0.08,
+      wants: function(S, w) {
+        return w.morale < 55 || !!w.cut;
+      }
+    },
+    dates: {
+      n: "Two dates a week",
+      d: "They work at most two of your shows a week. Older bodies last longer that way.",
+      save: 0.06,
+      wants: function(S, w) {
+        return w.age >= 36;
+      }
+    },
+    outside: {
+      n: "Outside dates",
+      d: "They can work indie dates on nights you have no show. They stay sharp and happy, and their body wears a little faster.",
+      save: 0.05,
+      wants: function(S, w) {
+        return w.age <= 30 && (w.mom || 0) >= 0;
+      }
+    },
+    merch: {
+      n: "A merchandise share",
+      d: "A quarter of what their own merchandise lines make goes to them. Every line with their face on it keeps them happy.",
+      save: 0.07,
+      wants: function(S, w) {
+        return w.mic >= 72;
+      }
+    },
+    title: {
+      n: "A title match",
+      d: "A match for a belt within twelve weeks of signing. Break it and they will remember.",
+      save: 0.1,
+      wants: function(S, w) {
+        var P = S.promos[S.player];
+        return w.ovr >= P.image - 6;
+      }
+    }
+  };
+  L.CLAUSE = CLAUSE;
+  function clausesWanted(S, w) {
+    var P = S.promos[S.player], corp = P && P.model === "corporate";
+    return Object.keys(L.CLAUSE).filter(function(k) {
+      return !(corp && k === "outside") && L.CLAUSE[k].wants(S, w);
+    }).slice(0, 3);
+  }
+  L.E.clauses = function(S, id) {
+    var w = S.w[id];
+    if (!w) return [];
+    var ask = L.E.ask(S, w);
+    return L.clausesWanted(S, w).map(function(k) {
+      var c = L.CLAUSE[k];
+      return { k, n: c.n, d: c.d, save: function(v) {
+        return v < 1e3 ? Math.max(10, Math.round(v / 10) * 10) : Math.round(v / 50) * 50;
+      }(ask * c.save) };
+    });
+  };
+  (function() {
+    var sign0 = L.E.sign, rel0 = L.E.release;
+    L.E.sign = function(S, id, wage, weeks, cl) {
+      var w = S.w[id];
+      cl = (cl || []).filter(function(k) {
+        return L.CLAUSE[k] && w && L.clausesWanted(S, w).indexOf(k) >= 0;
+      });
+      if (!cl.length) return sign0(S, id, wage, weeks);
+      var save = cl.reduce(function(a, k) {
+        return a + L.CLAUSE[k].save;
+      }, 0), ask0 = L.E.ask;
+      L.E.ask = function(S2, w2) {
+        var a = ask0(S2, w2);
+        return w2 === w ? Math.round(a * (1 - save) / 50) * 50 : a;
+      };
+      var r;
+      try {
+        r = sign0(S, id, wage, weeks);
+      } finally {
+        L.E.ask = ask0;
+      }
+      if (r && r.ok) {
+        var P = S.promos[S.player];
+        w.cl = {};
+        cl.forEach(function(k) {
+          w.cl[k] = S.week;
+        });
+        if (w.cl.title) {
+          var t = P.titles.filter(function(x) {
+            return !x.tag && x.g === w.g && x.holders.length && x.holders[0] !== w.id;
+          }).sort(function(a, b) {
+            return b.lvl - a.lvl;
+          })[0];
+          if (t) S.quests.push({ id: S.nid++, type: "shot", w: w.id, title: t.id, due: S.week + 12, text: "Promise: give " + w.name + " a match for the " + t.name + " by " + L.cal(S.week + 12).label + " (it is in their contract)" });
+        }
+        L.youRemember(S, w, "clauses", "You signed me with " + cl.map(function(k) {
+          return L.CLAUSE[k].n.toLowerCase();
+        }).join(" and ") + " in the contract.", 3);
+        r.msg += " The contract has " + cl.map(function(k) {
+          return L.CLAUSE[k].n.toLowerCase();
+        }).join(" and ") + ".";
+      }
+      return r;
+    };
+    L.E.release = function(S, id) {
+      var w = S.w[id], P = S.promos[S.player];
+      if (!w || w.promo !== P.id || !w.cl || !w.cl.nocut) return rel0(S, id);
+      var pay = w.wage * 24;
+      P.cash -= pay;
+      L.rosterOf(S, P.id).forEach(function(x) {
+        if (x !== w) x.morale = L.clamp(x.morale - 2, 0, 100);
+      });
+      S.trust = L.clamp((S.trust == null ? 60 : S.trust) - 5, 0, 100);
+      L.news(S, "contract", P.name + " broke a no-cut promise to " + w.name + ".");
+      delete w.cl;
+      var msg = rel0(S, id);
+      return (msg || "") + " It was a no-cut deal: another " + L.money(pay) + " paid, and the locker room heard about it.";
+    };
+  })();
+  L.WEEKX.push(function(S) {
+    if (S.cal) return;
+    var P = S.promos[S.player];
+    L.rosterOf(S, P.id).forEach(function(w) {
+      if (!w.cl || !w.cl.travel) return;
+      w.cond = Math.min(100, w.cond + 2);
+      P.cash -= Math.round(w.wage * 0.1);
+    });
+  });
+  L.WEEKX.push(function(S) {
+    if (S.cal) return;
+    var P = S.promos[S.player];
+    (P.lines || []).forEach(function(L2) {
+      var w = S.w[L2.w];
+      if (w && w.cl && w.cl.merch) w.morale = L.clamp(w.morale + 1, 0, 100);
+    });
+  });
+  L.WEEKX.push(function(S) {
+    if (S.cal) return;
+    var P = S.promos[S.player];
+    L.rosterOf(S, P.id).forEach(function(w) {
+      if (!w.cl || !w.cl.outside || w.inj > 0) return;
+      w.cond = Math.max(0, w.cond - 2);
+      w.morale = L.clamp(w.morale + 1, 0, 100);
+      if (w.age <= 27 && w.pot != null && w.ovr < w.pot - 5) w.ovr = Math.min(w.pot, w.ovr + 0.08);
+      var ind = L.indieOf(S, w);
+      w.ind = { n: ind.n, w: S.week, k: (w.ind && w.ind.n === ind.n ? w.ind.k || 0 : 0) + 1 };
+    });
+  });
+  L.WEEKX.push(function(S) {
+    S.w.forEach(function(w) {
+      if (w.cl && (w.promo !== S.player || w.rt)) delete w.cl;
+    });
+  });
+  (function() {
+    var ren0 = L.E.renew, ra0 = L.E.renewAsk, pick = function(S, w, cl) {
+      return (cl || []).filter(function(k) {
+        return L.CLAUSE[k] && L.clausesWanted(S, w).indexOf(k) >= 0;
+      });
+    };
+    L.E.renewAsk = function(S, id, weeks, cl) {
+      var a = ra0(S, id, weeks), w = S.w[id];
+      if (!w) return a;
+      var sv = pick(S, w, cl).reduce(function(x, k) {
+        return x + L.CLAUSE[k].save;
+      }, 0);
+      return Math.round(a * (1 - sv) / 50) * 50;
+    };
+    L.E.renew = function(S, id, weeks, cl) {
+      var w = S.w[id];
+      if (!w) return ren0(S, id, weeks);
+      cl = pick(S, w, cl);
+      var ask = L.E.renewAsk(S, id, weeks, cl), r = ren0(S, id, weeks);
+      if (!cl.length || w.promo !== S.player) return r;
+      w.wage = ask;
+      w.cl = {};
+      cl.forEach(function(k) {
+        w.cl[k] = S.week;
+      });
+      if (w.cl.title) {
+        var P = S.promos[S.player], t = P.titles.filter(function(x) {
+          return !x.tag && x.g === w.g && x.holders.length && x.holders[0] !== w.id;
+        }).sort(function(a, b) {
+          return b.lvl - a.lvl;
+        })[0];
+        if (t) S.quests.push({ id: S.nid++, type: "shot", w: w.id, title: t.id, due: S.week + 12, text: "Promise: give " + w.name + " a match for the " + t.name + " by " + L.cal(S.week + 12).label + " (it is in their contract)" });
+      }
+      return w.name + " re-signs for " + L.money(w.wage) + " a week, with " + cl.map(function(k) {
+        return L.CLAUSE[k].n.toLowerCase();
+      }).join(" and ") + " in the contract.";
+    };
+  })();
+  function datesFull(S, w) {
+    return !!(w && w.cl && w.cl.dates && w.dwk === S.week && (w.dn || 0) >= 2);
+  }
+  L.SHOWX.push(function(S, P, show, rep, card) {
+    if (S.cal || P.id !== S.player || !card) return;
+    var seen = {};
+    card.forEach(function(m) {
+      L.flat(m.sides || []).forEach(function(id) {
+        if (id == null || seen[id]) return;
+        seen[id] = 1;
+        var w = S.w[id];
+        if (!w || !w.cl || !w.cl.dates) return;
+        if (w.dwk !== S.week) {
+          w.dwk = S.week;
+          w.dn = 0;
+        }
+        w.dn++;
+      });
+    });
+  });
+  (function() {
+    var v0 = L.E.validate;
+    L.E.validate = function(S, card) {
+      var v = v0(S, card);
+      (card || []).forEach(function(m) {
+        L.flat(m.sides || []).forEach(function(id) {
+          var w = S.w[id];
+          if (L.datesFull(S, w) && v.errors.indexOf(w.name + "\u2019s contract says two dates a week, and they have worked two.") < 0) v.errors.push(w.name + "\u2019s contract says two dates a week, and they have worked two.");
+        });
+      });
+      return v;
+    };
+  })();
+  L.E.CLAUSE = CLAUSE;
+  L.CLAUSE = CLAUSE;
+  L.clausesWanted = clausesWanted;
+  L.datesFull = datesFull;
+
+  // engine/97-time.ts
+  L.showMins = showMins;
+  L.bellMins = bellMins;
+  L.brMins = brMins;
+  L.matchSlot = matchSlot;
+  L.hasPlan = hasPlan;
+  L.showClock = showClock;
+  L.openKind = openKind;
+  L.showTimes = showTimes;
+  L.fitShow = fitShow;
+  L.showFill = showFill;
+  var SHOW_LEN = { tv: 120, big: 180 };
+  var TIME_OVER = 5;
+  var TIME_FREE = 5;
+  var TIME_LIGHT = 10;
+  var PLAN_MINS2 = 10;
+  var TOP_GOOD = 6;
+  var TOP_BAD = 6;
+  L.SHOW_LEN = SHOW_LEN;
+  L.TIME_OVER = TIME_OVER;
+  L.TIME_FREE = TIME_FREE;
+  L.TIME_LIGHT = TIME_LIGHT;
+  L.PLAN_MINS = PLAN_MINS2;
+  L.TOP_GOOD = TOP_GOOD;
+  L.TOP_BAD = TOP_BAD;
+  var MT_OVER = { "1v1": 5, tag: 6, "3way": 6, "4way": 7, "6man": 7, br: 9 };
+  var STIP_SET = { cage: 3, ladder: 2 };
+  L.MT_OVER = MT_OVER;
+  L.STIP_SET = STIP_SET;
+  L.REACT["Video recap"] = ["Now you know why these two cannot be in the same building.", "That is the story so far. Tonight it gets another chapter."];
+  function showMins(show) {
+    return show ? show.mins || (show.big ? L.SHOW_LEN.big : L.SHOW_LEN.tv) : 0;
+  }
+  function bellMins(show, m, isMain) {
+    if (m.mt === "br") return L.brMins(m);
+    return Math.max(4, (m.stip === "iron" ? 30 : L.LEN[m.len] || 12) + (show && show.big ? 4 : 0) + (isMain ? 3 : 0) + L.noteMins(m));
+  }
+  function brMins(m) {
+    return Math.max(10, Math.round(2 * ((m.sides ? m.sides.length : 8) + (m.surp ? 1 : 0))));
+  }
+  function matchSlot(show, m, isMain) {
+    return L.bellMins(show, m, isMain) + (L.MT_OVER[m.mt] || 5) + (L.STIP_SET[m.stip] || 0);
+  }
+  function hasPlan(S) {
+    return !!(S.plan && S.w[S.plan.sp]);
+  }
+  function showClock(S, card) {
+    var show = S.queue && S.queue[S.qi], n = card.length, items = [], t = 0, L2 = L.segRead(S), B = L.showMins(show), i;
+    var put = function(o) {
+      o.at = t;
+      t += o.mins;
+      items.push(o);
+    };
+    if (L.hasPlan(S)) put({ t: "plan", mins: L.PLAN_MINS });
+    for (i = 0; i < Math.max(n, 1); i++) {
+      L2.forEach(function(sg, slot) {
+        if (L.clamp(sg.pos | 0, 0, Math.max(0, n - 1)) === i) put({ t: "seg", slot, k: sg.k, mins: L.segMins(sg) });
+      });
+      if (i < n) put({ t: "match", i, mins: L.matchSlot(show, card[i], i === n - 1) });
+    }
+    var tops = [], h;
+    for (h = 0; h * 60 < B; h++) {
+      for (i = 0; i < items.length; i++) if (items[i].at <= h * 60 && h * 60 < items[i].at + items[i].mins) {
+        items[i].top = h + 1;
+        tops.push({ hour: h + 1, at: h * 60, k: i });
+        break;
+      }
+    }
+    return { budget: B, total: t, left: B - t, items, tops, over: t - B > L.TIME_OVER, short: B - t > L.TIME_LIGHT, light: B - t > L.TIME_FREE && B - t <= L.TIME_LIGHT };
+  }
+  var OPENS = {
+    none: { n: "Nothing is booked yet", d: "The first thing on the run sheet opens the show." },
+    match: { n: "Straight to the ring", d: "No time is spent talking. The first match carries the top of the hour, so make it a hot one." },
+    promo: { n: "A promo opens the show", d: "If the one talking wrestles later tonight, the crowd is ready for that match. A weak promo leaves the first match in a quiet building." },
+    angle: { n: "An angle opens the show", d: "The feud heats faster from the top of the show, and a good angle has the building buzzing for the first match." },
+    recap: { n: "A video recap opens the show", d: "Five minutes, and tonight\u2019s match between the two of them means more. More still at a big event." },
+    writers: { n: "The writers open the show", d: "You find out what they wrote on the night. If it is good the first match gains from it." }
+  };
+  L.OPENS = OPENS;
+  function openKind(S, card) {
+    var c = L.showClock(S, card), f = c.items[0];
+    if (!f) return "none";
+    if (f.t === "plan") return "promo";
+    if (f.t === "match") return "match";
+    return f.k === "writers" ? "writers" : f.k === "recap" ? "recap" : L.SEGK[f.k].t;
+  }
+  L.CRX.push(function(ctx) {
+    var o = ctx.rep && ctx.rep.open;
+    if (!o || !ctx.isPl || o.k === "match") return null;
+    var ids = L.flat(ctx.m.sides), inIt = !!o.ids && o.ids.some(function(id) {
+      return ids.indexOf(id) >= 0;
+    }), flatOpen = ctx.i === 0 && o.ov < 45 ? { d: -1, x: "The show opened flat, and the first match walked into a quiet building" } : null;
+    if (o.k === "recap") return ctx.feud && ctx.feud.id === o.feud ? { d: ctx.big ? 2.5 : 1.5, x: "The video package that opened the show told their story before the bell" } : null;
+    if (o.k === "promo") {
+      if (inIt && o.ov >= 50) return { d: o.ov >= 70 ? 1.5 : 0.8, x: "The promo that opened the show set this match up" };
+      return flatOpen;
+    }
+    if (inIt && o.ov >= 50) return { d: 1.5, x: "The crowd had wanted this since the angle that opened the show" };
+    if (ctx.i === 0 && o.ov >= 65) return { d: 1, x: "The building was buzzing after the angle that opened the show" };
+    return flatOpen;
+  });
+  function showTimes(S, P, show, rep, card) {
+    var B = L.showMins(show), t = 0, mi = 0, n = card.length, d = 0, h, i, s, ex = L.expected(P, show);
+    rep.segs.forEach(function(x) {
+      if (x.k === "match") {
+        x.slot = L.matchSlot(show, card[mi], mi === n - 1);
+        mi++;
+      } else x.slot = x.mins || L.SEGLEN.M;
+      x.at = t;
+      t += x.slot;
+    });
+    rep.clock = { budget: B, total: t };
+    rep.tops = [];
+    for (h = 0; h * 60 < B; h++) for (i = 0; i < rep.segs.length; i++) {
+      s = rep.segs[i];
+      if (!(s.at <= h * 60 && h * 60 < s.at + s.slot)) continue;
+      var td = s.ov >= ex + L.TOP_GOOD ? 0.5 : s.ov <= ex - L.TOP_BAD ? -0.5 : 0, what = s.k === "match" ? s.label : s.head || "A segment";
+      s.top = h + 1;
+      rep.tops.push({ hour: h + 1, label: what, ov: s.ov, d: td, x: td > 0 ? h ? "Hour " + (h + 1) + " opened strong. The people who tuned in stayed" : "A strong start. The people who tuned in stayed" : td < 0 ? h ? "Hour " + (h + 1) + " opened weak. Sets were turned off" : "A weak start. Sets were turned off" : h ? "Hour " + (h + 1) + " opened on about what this crowd expects" : "A start at about what this crowd expects" });
+      d += td;
+      break;
+    }
+    var empty = B - t - (rep.slack || 0);
+    if (empty > L.TIME_FREE) {
+      rep.light = empty;
+      d -= (empty - L.TIME_FREE) * 0.3;
+    } else if (t > B) rep.overrun = t - B;
+    return d;
+  }
+  function fitShow(S, card, keep) {
+    var show = S.queue && S.queue[S.qi];
+    if (!show || !card.length) return 0;
+    var P = S.promos[S.player], B = L.showMins(show), L2 = L.segList(S), changed = 0, it, t, n;
+    var total = function() {
+      var s = L.hasPlan(S) ? L.PLAN_MINS : 0;
+      card.forEach(function(m, i) {
+        s += L.matchSlot(show, m, i === card.length - 1);
+      });
+      L2.forEach(function(sg) {
+        s += L.segMins(sg);
+      });
+      return s;
+    };
+    var size = function(i) {
+      var f = L.shFacts(S, P, card[i]);
+      return f ? f.size : 0;
+    };
+    var lenOf = function(m) {
+      return m.len || "M";
+    };
+    var segStep = function(from, to, writersFirst) {
+      for (var pass = 0; pass < 2; pass++) for (var k = L2.length - 1; k >= 0; k--) {
+        var sg = L2[k];
+        if (pass === 0 === writersFirst !== (sg.k === "writers") || L.SEGK[sg.k].fix || L.segLen(sg) !== from) continue;
+        sg.len = to;
+        return true;
+      }
+      return false;
+    };
+    var choose = function(ok, low) {
+      var best = -1, bs = low ? 1e9 : -1e9, i, v;
+      for (i = 0; i < n; i++) {
+        if (!ok(i)) continue;
+        v = size(i);
+        if (low ? v < bs : v > bs) {
+          bs = v;
+          best = i;
+        }
+      }
+      return best;
+    };
+    var shrink = function() {
+      var i;
+      if (segStep("L", "M", true) || segStep("M", "S", true)) return true;
+      i = choose(function(k) {
+        return k < n - 1 && lenOf(card[k]) === "L" && card[k].stip !== "iron";
+      }, true);
+      if (i >= 0) {
+        card[i].len = "M";
+        return true;
+      }
+      if (n > 1 && lenOf(card[0]) === "M" && !card[0].title && card[0].stip !== "iron") {
+        card[0].len = "S";
+        return true;
+      }
+      i = choose(function(k) {
+        return k < n - 1 && lenOf(card[k]) === "M" && !card[k].title && card[k].stip !== "iron";
+      }, true);
+      if (i >= 0) {
+        card[i].len = "S";
+        return true;
+      }
+      if (L2.length) {
+        for (i = L2.length - 1; i >= 0; i--) if (L2[i].k === "writers") {
+          L2.splice(i, 1);
+          return true;
+        }
+        L2.pop();
+        return true;
+      }
+      if (lenOf(card[n - 1]) === "L" && card[n - 1].stip !== "iron") {
+        card[n - 1].len = "M";
+        return true;
+      }
+      if (n > 3) {
+        i = choose(function(k) {
+          return k < n - 1 && !card[k].title;
+        }, true);
+        if (i >= 0) {
+          card.splice(i, 1);
+          L2.forEach(function(sg) {
+            if (sg.pos > i) sg.pos--;
+          });
+          return true;
+        }
+      }
+      return false;
+    };
+    var grow = function() {
+      var i, m = card[n - 1];
+      if (n - 1 !== keep && lenOf(m) !== "L" && m.stip !== "iron") {
+        m.len = lenOf(m) === "S" ? "M" : "L";
+        return true;
+      }
+      if (segStep("S", "M", false)) return true;
+      i = choose(function(k) {
+        return k !== keep && k > 0 && k < n - 1 && lenOf(card[k]) === "M" && card[k].stip !== "iron" && lenOf(card[k - 1]) !== "L" && (k + 1 >= n - 1 || lenOf(card[k + 1]) !== "L");
+      }, false);
+      if (i >= 0) {
+        card[i].len = "L";
+        return true;
+      }
+      for (i = 0; i < n; i++) if (i !== keep && lenOf(card[i]) === "S" && card[i].stip !== "iron") {
+        card[i].len = "M";
+        return true;
+      }
+      if (L2.length < 4) {
+        var taken = {};
+        L2.forEach(function(sg) {
+          taken[L.clamp(sg.pos | 0, 0, n - 1)] = 1;
+        });
+        var at = [n - 1, Math.min(1, n - 1), Math.min(2, n - 1), Math.min(3, n - 1)].filter(function(p) {
+          return !taken[p];
+        })[0];
+        L2.push({ k: "writers", who: [], pos: at == null ? n - 1 : at, len: "M" });
+        return true;
+      }
+      if (segStep("M", "L", false)) return true;
+      i = choose(function(k) {
+        return k !== keep && k > 0 && k < n - 1 && lenOf(card[k]) === "M" && card[k].stip !== "iron";
+      }, false);
+      if (i >= 0) {
+        card[i].len = "L";
+        return true;
+      }
+      return false;
+    };
+    for (it = 0; it < 40; it++) {
+      t = total();
+      n = card.length;
+      if (t > B + L.TIME_OVER) {
+        if (!shrink()) break;
+        changed++;
+        continue;
+      }
+      if (t < B - L.TIME_FREE) {
+        if (!grow()) break;
+        changed++;
+        continue;
+      }
+      break;
+    }
+    return changed;
+  }
+  L.E.SHOW_OPENS = OPENS;
+  L.E.showMins = function(S) {
+    return L.showMins(S.queue && S.queue[S.qi]);
+  };
+  L.E.clock = function(S, card) {
+    card = card || S.card || [];
+    var c = L.showClock(S, card), k = L.openKind(S, card);
+    c.open = { k, n: L.OPENS[k].n, d: L.OPENS[k].d };
+    c.cats = { match: { n: 0, mins: 0 }, promo: { n: 0, mins: 0 }, angle: { n: 0, mins: 0 } };
+    var L2 = L.segRead(S), nm = function(ids) {
+      return ids.map(function(id) {
+        return id == null || !S.w[id] ? "open spot" : S.w[id].name;
+      }).join(" & ");
+    };
+    c.items.forEach(function(x) {
+      var cat = x.t === "match" ? "match" : x.t === "plan" ? "promo" : L.SEGK[x.k].t === "promo" ? "promo" : "angle";
+      c.cats[cat].n++;
+      c.cats[cat].mins += x.mins;
+      x.cat = cat;
+      x.label = x.t === "match" ? card[x.i].sides.map(nm).join(" vs ") : x.t === "plan" ? S.w[S.plan.sp].name + " opens with a promo" : L.segWhy(S, L2[x.slot], x.slot) ? L.SEGK[x.k].n : L.segLabel(S, L2[x.slot]);
+    });
+    c.words = c.over ? "The show runs " + (c.total - c.budget) + " minutes over." : c.short || c.light ? c.budget - c.total + " minutes still to fill." : c.left > 0 ? c.left + " minutes spare. Close enough: the announcers will cover it." : c.left < 0 ? -c.left + " minutes over. The network allows five." : "Timed to the minute.";
+    return c;
+  };
+  L.E.matchMins = function(S, m, i, n) {
+    var show = S.queue && S.queue[S.qi], main = i === n - 1, o = {};
+    ["S", "M", "L"].forEach(function(l) {
+      var c = { mt: m.mt, stip: m.stip, len: l, note: m.note, sides: m.sides, surp: m.surp };
+      o[l] = L.matchSlot(show, c, main);
+    });
+    o.now = L.matchSlot(show, m, main);
+    o.bell = L.bellMins(show, m, main);
+    return o;
+  };
+  L.E.fitShow = function(S, card) {
+    return L.fitShow(S, card || S.card || []);
+  };
+  L.E.OPEN_GUIDE = ["match", "promo", "angle", "recap", "writers"].map(function(k) {
+    return { k, n: L.OPENS[k].n, d: L.OPENS[k].d };
+  });
+  function showFill(S, card) {
+    var show = S.queue && S.queue[S.qi];
+    if (!show || !card.length) return card;
+    var P = S.promos[S.player], n = card.length, want = L.segSlots(P, show), L2, k, spots = [Math.min(1, n - 1), n - 1, Math.min(2, n - 1)];
+    S.segs = [];
+    S.segKey = L.showKey(S);
+    L2 = S.segs;
+    if (want > 0) L.E.segSuggest(S, 1, card);
+    for (k = L2.length; k < want; k++) L2.push({ k: "writers", who: [], pos: spots[k % spots.length], len: "M" });
+    L.fitShow(S, card);
+    return card;
+  }
+  (function() {
+    var v0 = L.E.validate, s0 = L.E.suggest, c0 = L.E.resolveChaos;
+    L.E.resolveChaos = function(S, card, c) {
+      var mi = S.chs && !S.chs.done ? S.chs.mi : null, r = c0(S, card, c);
+      if (card && card.length && !S.live) {
+        var k = L.showClock(S, card);
+        if (k.over || k.short) L.fitShow(S, card, mi);
+      }
+      return r;
+    };
+    L.E.validate = function(S, card) {
+      var v = v0(S, card), show = S.queue && S.queue[S.qi];
+      if (!show || !card.length) return v;
+      var c = L.showClock(S, card), hrs = c.budget / 60, hw = hrs === 1 ? "one hour" : hrs === 2 ? "two hours" : hrs === 3 ? "three hours" : hrs + " hours";
+      if (c.over) v.errors.push("The show runs " + (c.total - c.budget) + " minutes over its " + hw + ". Take something off, or give a match, a promo or an angle less time.");
+      else if (c.short) v.errors.push(c.budget - c.total + " minutes of the " + hw + " are still empty. Add a match, a promo or an angle, or give something more time.");
+      else if (c.light) v.warnings.push("The show is " + (c.budget - c.total) + " minutes light. The announcers will have to fill, and the crowd will notice.");
+      var fw = L.faceWarn(S, card);
+      if (fw) v.warnings.push(fw);
+      var my = S.mystery && S.mystery.promo === S.player ? S.mystery : null;
+      if (my && S.w[my.v] && !L.segRead(S).some(function(sg) {
+        return sg.k === "writers";
+      })) v.warnings.push("Nobody knows yet who attacked " + S.w[my.v].name + ". That story moves only when the writers have time on the show (a Writers\u2019 pick).");
+      return v;
+    };
+    L.E.suggest = function(S) {
+      return L.showFill(S, s0(S));
+    };
+  })();
+  L.SHOW_LEN = SHOW_LEN;
+  L.TIME_OVER = TIME_OVER;
+  L.TIME_FREE = TIME_FREE;
+  L.TIME_LIGHT = TIME_LIGHT;
+  L.PLAN_MINS = PLAN_MINS2;
+  L.TOP_GOOD = TOP_GOOD;
+  L.TOP_BAD = TOP_BAD;
+  L.MT_OVER = MT_OVER;
+  L.STIP_SET = STIP_SET;
+  L.showMins = showMins;
+  L.bellMins = bellMins;
+  L.brMins = brMins;
+  L.matchSlot = matchSlot;
+  L.hasPlan = hasPlan;
+  L.showClock = showClock;
+  L.OPENS = OPENS;
+  L.openKind = openKind;
+  L.showTimes = showTimes;
+  L.fitShow = fitShow;
+  L.showFill = showFill;
+
+  // engine/98-plot.ts
+  L.plotTeams = plotTeams;
+  L.plotPushable = plotPushable;
+  L.plotTapeOn = plotTapeOn;
+  var PLOT_PUSH_CD = 8;
+  var PLOT_TAPE = { interview: "A pre-taped interview", callout: "A pre-taped call-out", ambush: "A pre-taped attack" };
+  var PLOT_POS = { start: ["Start of the show", 0], mid: ["Middle of the show", 2], end: ["End of the show", 99] };
+  L.PLOT_PUSH_CD = PLOT_PUSH_CD;
+  L.PLOT_TAPE = PLOT_TAPE;
+  L.PLOT_POS = PLOT_POS;
+  var PLOT = {
+    split: { n: "Break up a tag team", cost: 2, d: "One of them turns on the other. The team is gone and the two of them are a rivalry that starts hot." },
+    push: { n: "Push a wrestler", cost: 2, d: "The office gets behind them: wins come easier and the crowd is told they matter. The ones next to them on the card will notice." },
+    tape: { n: "Buy a budget pre-tape", cost: 1, d: "A cheap promo or angle shot in advance. It adds itself to your next show where you say. Five minutes, and it never looks as good as live." }
+  };
+  L.PLOT = PLOT;
+  function plotTeams(S, P) {
+    return S.teams.filter(function(t) {
+      if (t.promo !== P.id || t.m.length !== 2) return false;
+      var a = S.w[t.m[0]], b = S.w[t.m[1]];
+      return a && b && a.promo === P.id && b.promo === P.id && !a.nw && !b.nw && !L.feudOf(S, a.id, b.id);
+    });
+  }
+  function plotPushable(S, P) {
+    return L.rosterOf(S, P.id).filter(function(w) {
+      return !w.nw && !w.rt && !(w.inj > 0) && !(S.lcd && S.lcd["pu" + w.id] != null && S.week - S.lcd["pu" + w.id] < L.PLOT_PUSH_CD);
+    }).sort(function(a, b) {
+      return b.ovr - a.ovr;
+    });
+  }
+  function plotTapeOn(S) {
+    return L.segRead(S).filter(function(sg) {
+      return sg.tape;
+    });
+  }
+  L.E.plotInfo = function(S) {
+    var P = S.promos[S.player], show = S.queue[S.qi] || null, tp = L.plotTapeOn(S)[0] || null;
+    return {
+      bp: S.bp,
+      acts: Object.keys(L.PLOT).map(function(k) {
+        var A = L.PLOT[k];
+        return { id: k, n: A.n, cost: A.cost, d: A.d, can: S.bp >= A.cost };
+      }),
+      teams: L.plotTeams(S, P).map(function(t) {
+        var a = S.w[t.m[0]], b = S.w[t.m[1]];
+        return { id: t.id, a: a.id, b: b.id, n: a.name + " & " + b.name };
+      }),
+      push: L.plotPushable(S, P).slice(0, 40).map(function(w) {
+        return { id: w.id, n: w.name + " \xB7 " + Math.round(w.ovr) };
+      }),
+      show: show ? show.name : null,
+      kinds: Object.keys(L.PLOT_TAPE).map(function(k) {
+        return { id: k, n: L.PLOT_TAPE[k], two: k !== "interview" };
+      }),
+      pos: Object.keys(L.PLOT_POS).map(function(k) {
+        return { id: k, n: L.PLOT_POS[k][0] };
+      }),
+      taped: tp ? { label: L.segLabel(S, tp), at: tp.at || "start", where: L.PLOT_POS[tp.at || "start"][0] } : null
+    };
+  };
+  L.E.plotTapeWho = function(S, kind, who) {
+    return L.E.segChoices(S, kind, who || [], -1);
+  };
+  L.E.plotDo = function(S, id, o) {
+    var A = L.PLOT[id], P = S.promos[S.player];
+    o = o || {};
+    if (!A) return { ok: false, msg: "That is not something booking power buys." };
+    if (S.bp < A.cost) return { ok: false, msg: A.n + " takes " + A.cost + " booking power. You have " + S.bp + "." };
+    var msg = "";
+    if (id === "split") {
+      var t = L.plotTeams(S, P).filter(function(x) {
+        return x.id === +o.team;
+      })[0];
+      if (!t) return { ok: false, msg: "Pick a regular team first." };
+      var a = S.w[t.m[0]], b = S.w[t.m[1]], who = o.who != null && +o.who === b.id ? b : o.who != null && +o.who === a.id ? a : a.morale <= b.morale ? a : b, other = who === a ? b : a;
+      L.dissolveTeam(S, t);
+      var f = L.startFeud(S, P, who, other, 48, who.name + " turned on " + other.name, { force: true });
+      if (who.align !== "H") {
+        who.align = "H";
+      }
+      if (other.align === "H" && who.align === "H") other.align = "F";
+      L.relBump(S, who.id, other.id, { bond: -30 }, { k: "split", keep: true, t: who.name + " turned on " + other.name + " and ended the team.", by: "you" });
+      L.youRemember(S, other, "split", "You broke up their team and had " + who.name + " turn on them.", -4);
+      L.youRemember(S, who, "splitup", "You broke up the team and gave them the turn.", 4);
+      L.news(S, "story", who.name + " has turned on " + other.name + ". The team is finished, and the rivalry starts now.");
+      msg = who.name + " turns on " + other.name + ". The team is gone, and " + who.name + " against " + other.name + " is a rivalry that starts hot.";
+    } else if (id === "push") {
+      var w = L.plotPushable(S, P).filter(function(x) {
+        return x.id === +o.w;
+      })[0];
+      if (!w) return { ok: false, msg: "Pick somebody who can be pushed right now. One push in eight weeks for each wrestler." };
+      (S.lcd = S.lcd || {})["pu" + w.id] = S.week;
+      w.mom = L.clamp((w.mom || 0) + 3, -10, 10);
+      w.morale = L.clamp(w.morale + 6, 0, 100);
+      L.addOvr(P, w, 0.6);
+      L.youRemember(S, w, "pushed", "You put the office behind them.", 8);
+      L.rosterOf(S, P.id).filter(function(x) {
+        return !x.nw && x.id !== w.id && x.g === w.g && Math.abs(x.ovr - w.ovr) <= 6;
+      }).sort(function(x, y) {
+        return y.ovr - x.ovr;
+      }).slice(0, 2).forEach(function(x) {
+        L.relBump(S, x.id, w.id, { ja: 8 }, { k: "pushed", t: x.name + " watched the office get behind " + w.name + "." });
+      });
+      L.news(S, "story", P.name + " is getting behind " + w.name + ".");
+      msg = "The office is behind " + w.name + ": momentum now, and the crowd is told they matter. Book them to win, or it is wasted.";
+    } else if (id === "tape") {
+      var show = S.queue[S.qi];
+      if (!show) return { ok: false, msg: "Every show this week has run. Buy it when there is a show to put it on." };
+      if (L.plotTapeOn(S).length) return { ok: false, msg: "There is already a pre-tape on " + show.name + ". One a show." };
+      if (!L.PLOT_TAPE[o.k] || !L.PLOT_POS[o.at]) return { ok: false, msg: "Pick what it is and where it goes." };
+      var r = L.E.setSeg(S, -1, { k: o.k, who: (o.who || []).map(function(x) {
+        return +x;
+      }), pos: L.PLOT_POS[o.at][1], len: "S" });
+      if (!r.ok) return { ok: false, msg: r.msg };
+      var sg = L.segList(S)[r.slot];
+      sg.tape = 1;
+      sg.at = o.at;
+      sg.mod = -4;
+      msg = L.PLOT_TAPE[o.k] + " is on the run sheet for " + show.name + ", at the " + L.PLOT_POS[o.at][0].toLowerCase().replace(" of the show", "") + " of the show: " + L.segLabel(S, sg) + ". Five minutes of the show\u2019s time.";
+    }
+    S.bp -= A.cost;
+    return { ok: true, msg: msg + " (" + A.cost + " booking power.)" };
+  };
+  (function() {
+    var sug = L.E.suggest;
+    L.E.suggest = function(S) {
+      var keep = L.plotTapeOn(S).map(function(sg) {
+        return JSON.parse(JSON.stringify(sg));
+      }), card = sug(S);
+      if (keep.length && !L.plotTapeOn(S).length) {
+        var L2 = L.segList(S), busy = {};
+        keep.forEach(function(sg) {
+          sg.who.forEach(function(id) {
+            busy[id] = 1;
+          });
+        });
+        for (var i = L2.length - 1; i >= 0; i--) if (L2[i].who && L2[i].who.some(function(id) {
+          return busy[id];
+        })) L2.splice(i, 1);
+        keep.forEach(function(sg) {
+          L2.push(sg);
+        });
+        L.E.fitShow(S, card);
+      }
+      return card;
+    };
+  })();
+  L.PLOT_PUSH_CD = PLOT_PUSH_CD;
+  L.PLOT_TAPE = PLOT_TAPE;
+  L.PLOT_POS = PLOT_POS;
+  L.PLOT = PLOT;
+  L.plotTeams = plotTeams;
+  L.plotPushable = plotPushable;
+  L.plotTapeOn = plotTapeOn;
+
+  // engine/98-words.ts
+  L.gradeIdx = gradeIdx;
+  L.gradeG = gradeG;
+  L.gradeA = gradeA;
+  L.gradeMeets = gradeMeets;
+  L.crowdScoreD = crowdScoreD;
+  L.crowdScore = crowdScore;
+  L.repCS = repCS;
+  L.verdictBand = verdictBand;
+  L.cgFix = cgFix;
+  L.showWord = showWord;
+  L.capW = capW;
+  L.showVerdict = showVerdict;
+  var SHOW_WORDS = [
+    { v: 95, g: "A+", w: "All-time classic", a: "an all-time classic", one: "an all-time classic", d: "They will talk about it for years." },
+    { v: 90, g: "A+", w: "Blow-away", a: "a blow-away show", one: "a blow-away one", d: "Nothing missed. The building never sat down." },
+    { v: 85, g: "A", w: "Red hot", a: "a red-hot show", one: "a red-hot one", d: "The crowd was loud from the first bell to the last." },
+    { v: 80, g: "A-", w: "Hot", a: "a hot show", one: "a hot one", d: "Good wrestling, stories that mattered, a crowd that cared." },
+    { v: 75, g: "B+", w: "Strong", a: "a strong show", one: "a strong one", d: "More good than bad, and a main event that delivered." },
+    { v: 70, g: "B", w: "Solid", a: "a solid show", one: "a solid one", d: "It did its job. Nobody asked for their money back." },
+    { v: 65, g: "B-", w: "Decent", a: "a decent show", one: "a decent one", d: "Watchable. A match or two worth the ticket." },
+    { v: 55, g: "C+ or C", w: "Flat", a: "a flat show", one: "a flat one", d: "The crowd sat on its hands for most of it." },
+    { v: 40, g: "C- or D", w: "A dud", a: "a dud", one: "a dud", d: "Little worked, and the building knew it." },
+    { v: 0, g: "F", w: "A bomb", a: "a bomb", one: "a bomb", d: "It died in front of a live audience." }
+  ];
+  L.SHOW_WORDS = SHOW_WORDS;
+  var GRADES = [[90, "A+"], [85, "A"], [80, "A-"], [75, "B+"], [70, "B"], [65, "B-"], [60, "C+"], [55, "C"], [50, "C-"], [40, "D"]];
+  L.GRADES = GRADES;
+  function gradeIdx(v) {
+    for (var i = 0; i < L.GRADES.length; i++) if (v >= L.GRADES[i][0]) return L.GRADES.length - i;
+    return 0;
+  }
+  function gradeG(v) {
+    for (var i = 0; i < L.GRADES.length; i++) if (v >= L.GRADES[i][0]) return L.GRADES[i][1];
+    return "F";
+  }
+  function gradeA(v) {
+    var g = L.gradeG(v);
+    return (/^[AF]/.test(g) ? "an " : "a ") + g;
+  }
+  function gradeMeets(v, target) {
+    return L.gradeIdx(v) >= L.gradeIdx(target);
+  }
+  var CROWD_PTS = [[-12, 40], [-8, 50], [-6, 55], [-4, 60], [-2, 65], [-0.5, 70], [0.5, 75], [2, 80], [4, 85], [7, 90]];
+  L.CROWD_PTS = CROWD_PTS;
+  function crowdScoreD(d) {
+    var p = L.CROWD_PTS, i;
+    if (d <= p[0][0]) return Math.max(5, p[0][1] + (d - p[0][0]) * 2.5);
+    if (d >= p[p.length - 1][0]) return Math.min(99, 90 + (d - 7));
+    for (i = 1; i < p.length; i++) if (d < p[i][0]) return p[i - 1][1] + (d - p[i - 1][0]) / (p[i][0] - p[i - 1][0]) * (p[i][1] - p[i - 1][1]);
+    return 90;
+  }
+  function crowdScore(rating, exp) {
+    return Math.round(L.crowdScoreD(rating - exp) * 10) / 10;
+  }
+  function repCS(r) {
+    return !r ? 0 : r.cs != null ? r.cs : r.exp != null ? L.crowdScore(r.rating, r.exp) : r.rating;
+  }
+  function verdictBand(d) {
+    var c = Math.round(L.crowdScoreD(d) * 10) / 10;
+    return c >= 85 ? 2 : c >= 75 ? 1 : c >= 70 ? 0 : c >= 60 ? -1 : -2;
+  }
+  function cgFix(S) {
+    var P = S.promos[S.player];
+    if (!P) return;
+    (S.sponsors || []).concat(S.spOffers || []).forEach(function(o) {
+      if (o && o.type === "rating" && !o.cg) {
+        var lo = 99;
+        Object.keys(P.base).forEach(function(k) {
+          if (P.base[k] < lo) lo = P.base[k];
+        });
+        o.val = Math.round(L.crowdScoreD(o.val - (lo + 0.6 * (P.image - P.image0))));
+        o.cg = 1;
+        o.text = "No show graded under " + L.gradeG(o.val);
+      }
+    });
+    (S.quests || []).forEach(function(q) {
+      if (q.type === "sponsor" && !q.cg) {
+        q.target = Math.round(L.crowdScoreD(q.target - L.expected(P, { big: true })));
+        q.cg = 1;
+        q.text = "Sponsor: big event graded " + L.gradeG(q.target) + " or better (" + L.money(q.bonus) + ")";
+      }
+    });
+  }
+  function showWord(v) {
+    for (var i = 0; i < L.SHOW_WORDS.length; i++) if (v >= L.SHOW_WORDS[i].v) return { i, w: L.SHOW_WORDS[i].w, a: L.SHOW_WORDS[i].a, one: L.SHOW_WORDS[i].one };
+    return { i: L.SHOW_WORDS.length - 1, w: "A bomb", a: "a bomb", one: "a bomb" };
+  }
+  function capW(t) {
+    return t.charAt(0).toUpperCase() + t.slice(1);
+  }
+  function showVerdict(rating, exp) {
+    var d = rating - exp, w = L.showWord(rating), e = L.showWord(exp), same = w.i === e.i;
+    var band = L.verdictBand(d), cs = L.crowdScore(rating, exp), head = [cs >= 50 ? "Lost the crowd" : "Died in front of them", "Came up short", "Gave them what they came for", "Sent them home happy", "Blew the roof off"][band + 2];
+    var line = band === 0 ? L.capW(w.a) + ", which is what this crowd expects." : same ? L.capW(w.a) + (band > 0 ? ", and a little more than this crowd expects." : ", but this crowd wanted a little more.") : L.capW(w.a) + " for a crowd that expects " + e.one + ".";
+    return { head, line, s: band > 0 ? 1 : band < 0 ? -1 : 0, band, grade: L.gradeG(cs), word: w, exp: e };
+  }
+  L.E.showWord = function(v) {
+    return L.showWord(v);
+  };
+  L.E.showVerdict = function(rating, exp) {
+    return L.showVerdict(rating, exp);
+  };
+  L.E.expectWords = function(S, show) {
+    show = show || S.queue && S.queue[S.qi];
+    if (!show) return null;
+    var fn = L.firstNight(S), e = L.expected(S.promos[S.player], show) - (fn ? L.FIRST_NIGHT : 0), w = L.showWord(e);
+    return { i: w.i, w: w.w, a: w.a, bar: L.starG(e), text: "This crowd expects " + w.a + ".", first: fn ? "It is your first night, so they will give you the benefit of the doubt." : null };
+  };
+  L.E.SHOW_LADDER = SHOW_WORDS.map(function(x) {
+    return { w: x.w, a: x.a, d: x.d };
+  });
+  L.E.grade = function(v) {
+    return L.gradeG(v);
+  };
+  L.E.repGrade = function(r) {
+    return L.gradeG(L.repCS(r));
+  };
+  L.E.repCS = function(r) {
+    return L.repCS(r);
+  };
+  L.E.crowdScore = function(a, b) {
+    return L.crowdScore(a, b);
+  };
+  L.E.gradeMeets = function(v, t) {
+    return L.gradeMeets(v, t);
+  };
+  L.WEEKX.push(function(S) {
+    L.cgFix(S);
+    (S.sponsors || []).concat(S.spOffers || []).forEach(function(o) {
+      if (o && o.type === "rating" && /%/.test(o.text || "")) o.text = "No show graded under " + L.gradeG(o.val);
+    });
+    (S.quests || []).forEach(function(q) {
+      if (q.type === "sponsor" && /%/.test(q.text || "")) q.text = "Sponsor: big event graded " + L.gradeG(q.target) + " or better (" + L.money(q.bonus) + ")";
+    });
+  });
+  L.SHOW_WORDS = SHOW_WORDS;
+  L.GRADES = GRADES;
+  L.gradeIdx = gradeIdx;
+  L.gradeG = gradeG;
+  L.gradeA = gradeA;
+  L.gradeMeets = gradeMeets;
+  L.CROWD_PTS = CROWD_PTS;
+  L.crowdScoreD = crowdScoreD;
+  L.crowdScore = crowdScore;
+  L.repCS = repCS;
+  L.verdictBand = verdictBand;
+  L.cgFix = cgFix;
+  L.showWord = showWord;
+  L.capW = capW;
+  L.showVerdict = showVerdict;
+
+  // engine/99-archive.ts
+  L.archYear = archYear;
+  var ARCH_KEEP = ["id", "name", "g", "promo", "ovr", "align", "age", "uid", "town", "face", "log", "rt", "rtp", "ysOld", "ysTo", "ys", "wins", "losses", "nw", "inj", "arch", "hof", "con", "morale", "cond"];
+  var ARCH_YEARS = 2;
+  var ARCH_LOG = 10;
+  var FA_CAP = 350;
+  var ROSTER_CAP = 60;
+  var TITLE_KEEP = 40;
+  L.ARCH_KEEP = ARCH_KEEP;
+  L.ARCH_YEARS = ARCH_YEARS;
+  L.ARCH_LOG = ARCH_LOG;
+  L.FA_CAP = FA_CAP;
+  L.ROSTER_CAP = ROSTER_CAP;
+  L.TITLE_KEEP = TITLE_KEEP;
+  function archYear(S) {
+    var y = L.cal(S.week).year, keep = y - L.ARCH_YEARS + 1;
+    S.w.forEach(function(w) {
+      for (var k in w) {
+        var v = w[k];
+        if (typeof v === "number" && v !== Math.round(v)) w[k] = Math.round(v * 100) / 100;
+      }
+      if (w.ys) {
+        var old = w.ysOld || [0, 0, 0, 0, 0, 0, 0], moved = 0;
+        Object.keys(w.ys).forEach(function(k2) {
+          if (+k2 < keep) {
+            var a = w.ys[k2];
+            for (var i2 = 0; i2 < 7; i2++) old[i2] = i2 === 4 ? Math.max(old[i2], a[i2] || 0) : old[i2] + (a[i2] || 0);
+            delete w.ys[k2];
+            moved = 1;
+          }
+        });
+        if (moved) {
+          w.ysOld = old;
+          w.ysTo = keep - 1;
+        }
+      }
+      if (w.log && w.log.length > L.ARCH_LOG) w.log = w.log.slice(0, 1).concat(w.log.slice(-(L.ARCH_LOG - 1)));
+      if (w.promo === "FA" && w.rt == null && !w.nw && w.age >= 36 && S.week - (w.lu || 0) > 96) L.retire(S, w, "never signed again");
+    });
+    S.order.forEach(function(pid) {
+      if (pid === S.player) return;
+      var P = S.promos[pid], R = L.rosterOf(S, pid).filter(function(w) {
+        return !w.nw;
+      });
+      if (R.length <= L.ROSTER_CAP) return;
+      R.filter(function(w) {
+        return L.holdLvl(P, w.id) === 0 && !L.inFeud(S, w.id);
+      }).sort(function(a, b) {
+        return (a.lu || 0) - (b.lu || 0) || a.ovr - b.ovr || a.id - b.id;
+      }).slice(0, R.length - L.ROSTER_CAP).forEach(function(w) {
+        L.leaveCompany(S, w, "released");
+        w.promo = "FA";
+        w.brand = null;
+        w.cut = { w: S.week, from: pid, img: P.image };
+      });
+    });
+    var fa = S.w.filter(function(w) {
+      return w.promo === "FA" && w.rt == null && !w.nw && S.week - (w.lu || 0) > 96;
+    }).sort(function(a, b) {
+      return a.ovr - b.ovr || a.id - b.id;
+    }), n = S.w.filter(function(w) {
+      return w.promo === "FA" && w.rt == null && !w.nw;
+    }).length;
+    var gone = 0;
+    for (var i = 0; i < fa.length && n > L.FA_CAP; i++, n--) {
+      L.retire(S, fa[i], "left the business");
+      gone++;
+    }
+    S.w.forEach(function(w) {
+      if (w.rt != null && S.week - w.rt > 96 && !w.arch && w.promo === "FA" && !w.srole) {
+        Object.keys(w).forEach(function(k) {
+          if (L.ARCH_KEEP.indexOf(k) < 0) delete w[k];
+        });
+        if (w.log && w.log.length > 3) w.log = w.log.slice(0, 1).concat(w.log.slice(-2));
+        w.arch = 1;
+      }
+    });
+    S.order.forEach(function(pid) {
+      S.promos[pid].titles.forEach(function(t) {
+        var H = t.hist;
+        if (!H) return;
+        H.forEach(function(h) {
+          if (h.to != null && S.week - h.to > 96) delete h.show;
+        });
+        if (H.length > L.TITLE_KEEP) {
+          t.histCut = (t.histCut || 0) + H.length - L.TITLE_KEEP;
+          t.hist = H.slice(0, 1).concat(H.slice(-(L.TITLE_KEEP - 1)));
+        }
+      });
+    });
+    L.news(S, "world", "The office files away the year. Records from before " + keep + " are kept as one line per career" + (gone ? ", and " + gone + " free agents nobody had used in two years have left the business" : "") + ".");
+    S.archived = S.week;
+  }
+  L.WEEKX.push(function(S) {
+    if (S.week > 0 && S.week % 48 === 0) L.archYear(S);
+  });
+  (function() {
+    var was = L.E.career;
+    L.E.career = function(S, id) {
+      var c = was(S, id), w = S.w[id];
+      if (c && w && w.ysOld) {
+        var a = w.ysOld;
+        c.years.push({ y: "Up to " + w.ysTo, m: a[0], w: a[1], l: a[2], d: a[3], best: a[4], main: a[5], titles: a[6], old: 1 });
+      }
+      return c;
+    };
+  })();
+  L.ARCH_KEEP = ARCH_KEEP;
+  L.ARCH_YEARS = ARCH_YEARS;
+  L.ARCH_LOG = ARCH_LOG;
+  L.FA_CAP = FA_CAP;
+  L.ROSTER_CAP = ROSTER_CAP;
+  L.TITLE_KEEP = TITLE_KEEP;
+  L.archYear = archYear;
+
+  // engine/99-arcs.ts
+  L.arcHeels = arcHeels;
+  L.arcFaces = arcFaces;
+  L.arcFill = arcFill;
+  L.arcEnd = arcEnd;
+  L.arcWord = arcWord;
+  L.arcSplit = arcSplit;
+  function arcHeels(S) {
+    return L.rosterOf(S, S.player).filter(function(w) {
+      return !w.nw && w.align === "H" && !(w.inj > 0);
+    }).sort(function(a, b) {
+      return b.ovr - a.ovr;
+    });
+  }
+  function arcFaces(S) {
+    return L.rosterOf(S, S.player).filter(function(w) {
+      return !w.nw && w.align !== "H" && !(w.inj > 0);
+    }).sort(function(a, b) {
+      return b.ovr - a.ovr;
+    });
+  }
+  var ARCS = {
+    faction: {
+      n: "The faction takeover",
+      d: "A group forms and runs roughshod over the company until somebody stops them.",
+      pick: "lead",
+      pickFrom: function(S) {
+        return L.arcHeels(S).slice(0, 6);
+      },
+      cast: function(S, o) {
+        var H = L.arcHeels(S), F = L.arcFaces(S), L2 = o && o.lead != null ? S.w[o.lead] : H[0];
+        if (!L2 || H.length < 3 || F.length < 2) return null;
+        H = H.filter(function(w) {
+          return w !== L2;
+        });
+        var young = F.slice(1).filter(function(w) {
+          return w.age <= 27 || w.deb;
+        }).sort(function(a, b) {
+          return a.ovr - b.ovr;
+        })[0] || F[F.length - 1];
+        return { lead: L2.id, a: H[0].id, b: H[1].id, hero: F[0].id, j1: F[1].id, j2: young.id };
+      },
+      ch: [
+        { t: "{lead} has gathered {a} and {b}. They want to run the place. How do they arrive?", o: [
+          { n: "They attack the main event", d: "Loud and fast. The crowd hates them at once.", s: 8, who: ["lead", "hero"], bond: -20 },
+          { n: "They cut a promo and wait", d: "Slower, and it gives them time to talk.", s: 3 },
+          { n: "They hide in plain sight", d: "Nobody knows they are together yet. A gamble.", s: -8 }
+        ] },
+        { t: "The group needs a fourth. Who joins {lead}?", o: [
+          { n: "{j1} turns on the fans", d: "A face the crowd loved walks over to them. It hurts, and it works.", s: 10, join: "j1" },
+          { n: "Nobody: they stay three", d: "Tight, and easier to book.", s: -5 },
+          { n: "{j2}, a young one, signs up", d: "A fresh face with nothing to lose.", s: 4, join: "j2" }
+        ] },
+        { t: "{hero} has had enough of {lead} and the rest. What now?", o: [
+          { n: "{hero} fights them alone", d: "The lone hero. The crowd backs the underdog.", s: 7, who: ["hero", "lead"], bond: -15 },
+          { n: "{hero} gathers a team", d: "Five against four at the flagship.", s: 5 },
+          { n: "Let the group win for now", d: "They grow stronger. The payoff has to be big.", s: -7 }
+        ] },
+        { t: "Cracks inside the group. Somebody is ready to turn on {lead}. Who?", o: [
+          { n: "{a} betrays {lead}", d: "The right-hand man walks out. The crowd cheers a villain for once.", s: 9, betray: "a" },
+          { n: "{b} betrays {lead}", d: "The quiet one snaps. Nobody saw it coming.", s: 7, betray: "b" },
+          { n: "Nobody: they hold together", d: "Strong to the end. The hero needs a bigger night.", s: -4 }
+        ] }
+      ],
+      last: "The flagship is near. The takeover ends there, one way or the other."
+    },
+    authority: {
+      n: "The hostile authority",
+      d: "Somebody with power on screen makes life hard for the top good guy all year.",
+      cast: function(S) {
+        var F = L.arcFaces(S), H = L.arcHeels(S);
+        if (F.length < 3 || !H.length) return null;
+        var boss = L.rosterOf(S, S.player).filter(function(w) {
+          return w.nw;
+        }).sort(function(a, b) {
+          return (b.mic || 0) - (a.mic || 0);
+        })[0] || H[0];
+        return { lead: boss.id, hero: F[0].id, a: H[0].id === boss.id ? (H[1] || H[0]).id : H[0].id, c: F[Math.min(F.length - 1, 3)].id };
+      },
+      ch: [
+        { t: "{lead} takes charge on screen and picks a target: {hero}. How is it done?", o: [
+          { n: "Impossible matches, every week", d: "{hero} has to fight through whatever {lead} puts in front of them.", s: 7, who: ["lead", "hero"], bond: -10 },
+          { n: "Strip them of something", d: "A title shot taken away, a spot on the card.", s: 5 },
+          { n: "Quiet favours for {a}", d: "{lead} makes {a} the chosen one. Slower to land.", s: -5 }
+        ] },
+        { t: "{hero} fights back against {lead}. How far does it go?", o: [
+          { n: "{hero} lays hands on the boss", d: "The crowd has waited for this. Big pop, real consequences.", s: 9, who: ["hero", "lead"], bond: -15 },
+          { n: "A petition from the locker room", d: "The room stands up. Good for morale, quieter on TV.", s: 3, room: 1 },
+          { n: "{hero} keeps their head down", d: "It saves the moment for later. Or wastes it.", s: -8 }
+        ] },
+        { t: "{lead} wants to make an example of somebody. On live television.", o: [
+          { n: "{lead} fires {c} on screen", d: "{c} is gone for four weeks. The crowd is furious, in the good way.", s: 7, fire: "c" },
+          { n: "{lead} threatens the whole locker room", d: "Everybody is on notice. The room does not like it.", s: 4, room: -1 },
+          { n: "No firings", d: "The boss looks all talk.", s: -6 }
+        ] },
+        { t: "{lead} puts everything on one night. What is on the line?", o: [
+          { n: "{lead}'s job", d: "If {hero} wins at the flagship, {lead} is gone.", s: 8 },
+          { n: "{hero}'s career", d: "Lose and leave. The highest stakes.", s: 6 },
+          { n: "Nothing said out loud", d: "The crowd is left to guess.", s: -7 }
+        ] }
+      ],
+      last: "The flagship is near. {hero} has to win there to overthrow {lead}.",
+      over: "hero"
+    },
+    split: {
+      n: "The brand split",
+      d: "The roster is divided in two, and each side has to prove it is the real company.",
+      cast: function(S) {
+        var R = L.rosterOf(S, S.player).filter(function(w) {
+          return !w.nw && !(w.inj > 0);
+        }).sort(function(a, b) {
+          return b.ovr - a.ovr;
+        });
+        if (R.length < 6) return null;
+        return { lead: R[0].id, hero: R[1].id, a: R[2].id, b: R[3].id };
+      },
+      ch: [
+        { t: "The roster is split. {lead} leads one side, {hero} the other. How is the split made?", o: [
+          { n: "A draft on live television", d: "Everybody watches who goes first and who goes last. Feelings get hurt.", s: 8, room: -1, split: "draft" },
+          { n: "The office decides quietly", d: "Calmer backstage, flatter on screen.", s: -5, split: "office" },
+          { n: "The wrestlers choose", d: "Friends stay together. Some sides look thin.", s: 4, split: "friends" }
+        ] },
+        { t: "{a} wants to cross over from one side to the other. Do you let them?", o: [
+          { n: "Yes, and make it a story", d: "A defection. The other side calls it betrayal.", s: 7, who: ["a", "lead"], bond: -10 },
+          { n: "No: the lines are the lines", d: "It keeps the sides clean.", s: -5 },
+          { n: "A trade for {b}", d: "Both sides get something. Neither is happy.", s: 4 }
+        ] },
+        { t: "The two sides meet at last. How?", o: [
+          { n: "An invasion of the other side's show", d: "Chaos, and the crowd loves chaos.", s: 8, who: ["lead", "hero"], bond: -10 },
+          { n: "A series of matches, side against side", d: "The score is kept every week.", s: 6 },
+          { n: "Nothing until the flagship", d: "All the meeting is saved for one night.", s: -7 }
+        ] }
+      ],
+      last: "The flagship is near. One side proves it is the real company there."
+    }
+  };
+  L.ARCS = ARCS;
+  L.E.ARCS = ARCS;
+  function arcFill(S, A, t) {
+    return String(t).replace(/\{(\w+)\}/g, function(_, k) {
+      var id = A.cast[k];
+      return id != null && S.w[id] ? S.w[id].name : k;
+    });
+  }
+  function arcEnd(S) {
+    var P = S.promos[S.player], w = L.flagWeekFrom(S, P);
+    if (w != null && w - S.week < 12) w = L.flagWeekFrom({ week: w }, P);
+    return w;
+  }
+  function arcWord(s) {
+    return s >= 75 ? "The crowd is hooked" : s >= 60 ? "It is landing" : s >= 45 ? "It is slow to land" : s >= 35 ? "It is losing them" : "It is flopping";
+  }
+  function arcSplit(S, P, A, mode) {
+    var tv = P.shows.filter(function(sh) {
+      return !sh.big && !sh.off;
+    });
+    if (P.brands || tv.length < 2) {
+      A.split = "story";
+      L.note(S, "The split", "Two sides on one show: the split lives in the story.", "");
+      return;
+    }
+    P.brands = [{ id: "arcA", name: S.w[A.cast.lead].name + "'s side" }, { id: "arcB", name: S.w[A.cast.hero].name + "'s side" }];
+    tv[0].brand = "arcA";
+    tv[1].brand = "arcB";
+    var R = L.rosterOf(S, P.id).sort(function(a, b) {
+      return b.ovr - a.ovr;
+    }), k = 0;
+    R.forEach(function(w) {
+      if (w.id === A.cast.lead || mode === "friends" && A.cast.lead != null && L.bondOf(S, w.id, A.cast.lead) > 40) w.brand = "arcA";
+      else if (w.id === A.cast.hero) w.brand = "arcB";
+      else {
+        w.brand = k % 2 ? "arcB" : "arcA";
+        k++;
+      }
+    });
+    A.split = "real";
+    L.news(S, "story", P.name + " splits its roster in two: " + P.brands[0].name + " on " + tv[0].name + ", " + P.brands[1].name + " on " + tv[1].name + ".");
+    L.note(S, "The split", "The roster is split. Each show books only its own side.", "good");
+  }
+  L.E.arcInfo = function(S) {
+    var A = S.arc;
+    if (A && !A.done) {
+      var K = L.ARCS[A.k];
+      return { on: true, k: A.k, n: K.n, d: K.d, word: L.arcWord(A.s), ch: A.ch, of: K.ch.length + 1, end: A.end, endLabel: L.cal(A.end).label, cast: Object.keys(A.cast).map(function(r) {
+        return S.w[A.cast[r]] ? S.w[A.cast[r]].name : "";
+      }).filter(Boolean), flop: A.s < 35 };
+    }
+    var c = L.cal(S.week), P = S.promos[S.player], past = (S.arcs || []).length, ok = !past || c.month === (P.flagship + 1) % 12 || c.month === (P.flagship + 2) % 12;
+    return {
+      on: false,
+      can: ok,
+      why: ok ? "" : "A new arc is picked in the month after the flagship.",
+      last: past ? S.arcs[past - 1] : null,
+      list: Object.keys(L.ARCS).map(function(k) {
+        var K2 = L.ARCS[k], cs = K2.cast(S);
+        return {
+          k,
+          n: K2.n,
+          d: K2.d,
+          can: !!cs,
+          who: cs ? ["lead", "hero", "a"].filter(function(r) {
+            return cs[r] != null;
+          }).map(function(r) {
+            return S.w[cs[r]].name;
+          }) : [],
+          why: cs ? "" : "The roster does not have the people for it.",
+          pick: K2.pick ? { role: K2.pick, from: K2.pickFrom(S).map(function(w) {
+            return { id: w.id, n: w.name };
+          }) } : null
+        };
+      })
+    };
+  };
+  L.E.arcStart = function(S, k, o) {
+    var I = L.E.arcInfo(S);
+    if (I.on) return { ok: false, msg: "An arc is already running." };
+    if (!I.can) return { ok: false, msg: I.why };
+    var K = L.ARCS[k], cs = K && K.cast(S, o);
+    if (!cs) return { ok: false, msg: "The roster does not have the people for it." };
+    var end = L.arcEnd(S);
+    if (end == null) return { ok: false, msg: "There is no flagship to build to." };
+    var len = end - S.week, nc = K.ch.length, due = K.ch.map(function(_, i) {
+      return S.week + Math.max(1, Math.round(len * (0.12 + 0.68 * i / Math.max(1, nc - 1))));
+    });
+    due.push(end - 2);
+    S.arc = { k, cast: cs, s: 50, ch: 0, due, start: S.week, end };
+    Object.keys(cs).forEach(function(r) {
+      L.youRemember(S, S.w[cs[r]], "arc", "Put at the centre of " + K.n.toLowerCase() + ".", 2);
+    });
+    L.news(S, "story", S.promos[S.player].name + " begins a year-long story: " + K.n.toLowerCase() + ".");
+    return { ok: true, msg: K.n + " begins. It builds to the flagship, " + L.cal(end).label + "." };
+  };
+  L.WEEKX.push(function(S) {
+    var A = S.arc;
+    if (!A || A.done || A.ch >= A.due.length || S.week < A.due[A.ch]) return;
+    if (S.inbox.some(function(e) {
+      return !e.done && e.type === "arcch";
+    })) return;
+    var K = L.ARCS[A.k], i = A.ch;
+    if (i < K.ch.length) {
+      var C = K.ch[i];
+      L.pushEv(S, { type: "arcch", n: i, text: K.n + ", chapter " + (i + 1) + ". " + L.arcFill(S, A, C.t), choices: C.o.map(function(o) {
+        return L.arcFill(S, A, o.n) + ": " + L.arcFill(S, A, o.d);
+      }) });
+    } else {
+      var flop = A.s < 35;
+      L.pushEv(S, {
+        type: "arcch",
+        n: i,
+        last: 1,
+        text: K.n + ". " + L.arcFill(S, A, K.last) + " " + L.arcWord(A.s) + "." + (flop ? " It is flopping. It can still be turned around: a swerve nobody sees coming, for 3 booking power." : ""),
+        choices: flop ? ["Turn it around (3 booking power)", "Let it play out"] : ["Go all in at the flagship", "Keep it simple"]
+      });
+    }
+    A.ch++;
+  });
+  L.EVR.arcch = function(S, ev, choice, P) {
+    var A = S.arc;
+    if (!A || A.done) return "The arc is over.";
+    var K = L.ARCS[A.k];
+    if (ev.last) {
+      if (A.s < 35) {
+        if (choice === 0) {
+          if (S.bp < 3) return "You do not have 3 booking power to spend. It plays out as it is.";
+          S.bp -= 3;
+          A.saved = 1;
+          A.s = Math.max(A.s, 40);
+          return "The swerve is set. Nobody will see it coming. Something can still be saved at the flagship.";
+        }
+        return "You let it play out. The flagship will tell.";
+      }
+      if (choice === 0) {
+        A.s = L.clamp(A.s + 4, 0, 100);
+        A.allin = 1;
+        return "Everything goes on the flagship. The bigger the night, the bigger the payoff, or the fall.";
+      }
+      return "You keep it simple. A safe ending.";
+    }
+    var o = K.ch[ev.n].o[choice];
+    if (!o) return "";
+    A.s = L.clamp(A.s + o.s, 0, 100);
+    if (o.who) {
+      var x = S.w[A.cast[o.who[0]]], y = S.w[A.cast[o.who[1]]];
+      if (x && y) L.relBump(S, x.id, y.id, { bond: o.bond || 0 }, { k: "arc", t: L.arcFill(S, A, o.n) });
+    }
+    if (o.join) {
+      var j = S.w[A.cast[o.join]];
+      if (j) {
+        A.cast.join = j.id;
+        if (j.align !== "H") {
+          j.align = "H";
+          j.tw = S.week;
+        }
+        L.relBump(S, j.id, A.cast.lead, { bond: 20 }, { k: "arc", t: "Joined " + S.w[A.cast.lead].name + "." });
+        L.note(S, "The group grows", j.name + " joins " + S.w[A.cast.lead].name + ".", "good");
+      }
+    }
+    if (o.betray) {
+      var bt = S.w[A.cast[o.betray]];
+      if (bt) {
+        bt.align = "F";
+        bt.tw = S.week;
+        A.cast.traitor = bt.id;
+        L.relBump(S, bt.id, A.cast.lead, { bond: -40 }, { k: "betray", keep: true, t: bt.name + " turned on " + S.w[A.cast.lead].name + "." });
+        L.note(S, "A betrayal", bt.name + " turns on " + S.w[A.cast.lead].name + ".", "good");
+      }
+    }
+    if (o.fire) {
+      var fw = S.w[A.cast[o.fire]];
+      if (fw) {
+        fw.away = S.week + 4;
+        L.youRemember(S, fw, "fired", "Fired on screen for the story, off TV for four weeks.", -1);
+        L.note(S, "Fired on screen", fw.name + " is off television for four weeks.", "bad");
+      }
+    }
+    if (o.split) L.arcSplit(S, P, A, o.split);
+    if (o.turn) {
+      var t = L.arcFaces(S).filter(function(w) {
+        return Object.keys(A.cast).every(function(r) {
+          return A.cast[r] !== w.id;
+        });
+      })[0];
+      if (t) {
+        t.align = "H";
+        t.tw = S.week;
+        A.cast.turn = t.id;
+        L.youRemember(S, t, "arcturn", "You turned them for " + K.n.toLowerCase() + ".", -1);
+        L.note(S, "A turn", t.name + " joins " + S.w[A.cast.lead].name + ".", "good");
+      }
+    }
+    if (o.room) L.rosterOf(S, P.id).forEach(function(w) {
+      if (!w.nw) w.morale = L.clamp(w.morale + (o.room > 0 ? 3 : -3), 0, 100);
+    });
+    Object.keys(A.cast).forEach(function(r) {
+      var w = S.w[A.cast[r]];
+      if (w) L.youRemember(S, w, "arcch", L.arcFill(S, A, o.n) + ".", o.s >= 6 ? 1 : o.s < 0 ? -1 : 0);
+    });
+    return L.arcFill(S, A, o.n) + ". " + L.arcWord(A.s) + ".";
+  };
+  L.SHOWX.push(function(S, P, show, rep, card) {
+    var A = S.arc;
+    if (S.cal || P.id !== S.player || !A || A.done) return;
+    var last = card && card[card.length - 1], ids = last ? L.flat(last.sides) : [], on = Object.keys(A.cast).some(function(r) {
+      return ids.indexOf(A.cast[r]) >= 0;
+    });
+    if (A.wk !== S.week) {
+      A.wk = S.week;
+      if (on) {
+        if (A.s < 50) A.s = L.clamp(A.s + 0.5, 0, 50);
+      } else A.s = L.clamp(A.s - 1, 0, 100);
+    }
+    if (!show.flag || S.week < A.end) return;
+    var K = L.ARCS[A.k], sc = A.s + (A.allin ? L.repCS(rep) >= 70 ? 8 : -8 : 0), res, img = 0, tr = 0, bp = 0;
+    if (K.over) {
+      var hw = S.w[A.cast[K.over]], won = hw && (rep.segs || []).some(function(g) {
+        return g.k === "match" && g.win && g.win.indexOf(hw.name) >= 0;
+      });
+      sc += won ? 10 : -10;
+      rep.over = won;
+    }
+    if (sc < 35 && A.saved) sc = 35;
+    if (sc >= 60) {
+      res = "paid off";
+      img = 3;
+      tr = 4;
+      bp = 3;
+    } else if (sc >= 35) {
+      res = A.saved ? "was saved" : "landed";
+      img = A.saved ? 1 : 1;
+      tr = A.saved ? 1 : 2;
+      bp = 1;
+    } else {
+      res = "flopped";
+      img = -2;
+      tr = -3;
+    }
+    P.image = L.clamp(P.image + img, 1, 100);
+    if (!S.owner.me) S.owner.trust = L.clamp(S.owner.trust + tr, 0, 100);
+    S.bp = (S.bp || 0) + bp;
+    Object.keys(A.cast).forEach(function(r) {
+      var w = S.w[A.cast[r]];
+      if (w) L.youRemember(S, w, "arcend", K.n + " " + res + " at the flagship.", img > 0 ? 2 : img < 0 ? -2 : 0);
+    });
+    A.done = 1;
+    A.res = res;
+    (S.arcs || (S.arcs = [])).push({ k: A.k, n: K.n, res, y: L.cal(S.week).label });
+    S.arc = null;
+    rep.arc = K.n + " " + res + ".";
+    L.news(S, "story", K.n + " " + res + " at " + show.name + ".");
+    L.note(S, "The arc", K.n + " " + res + ".", img > 0 ? "good" : img < 0 ? "bad" : "");
+  });
+  L.arcHeels = arcHeels;
+  L.arcFaces = arcFaces;
+  L.ARCS = ARCS;
+  L.arcFill = arcFill;
+  L.arcEnd = arcEnd;
+  L.arcWord = arcWord;
+  L.arcSplit = arcSplit;
+
+  // engine/99-audience.ts
+  L.audInit = audInit;
+  L.audReach = audReach;
+  L.audLean = audLean;
+  L.audTarget = audTarget;
+  L.audBase = audBase;
+  L.audTotal = audTotal;
+  L.audOffer = audOffer;
+  var AUD = [
+    { k: "casual", n: "Casual fans", size: 4.2, want: "stars, hot stories and big nights" },
+    { k: "diehard", n: "Diehards", size: 1.6, want: "great matches, given time" },
+    { k: "family", n: "Families", size: 2.4, want: "heroes who win, and nothing too rough" },
+    { k: "young", n: "Young adults", size: 2.6, want: "villains, edge, hardcore and the women\u2019s division" },
+    { k: "lucha", n: "Lucha and high-flyer fans", size: 1, want: "high flyers, masks and spectacle" },
+    { k: "oldschool", n: "Old-school fans", size: 1.2, want: "veterans, title matches and tradition" }
+  ];
+  L.AUD = AUD;
+  var AUD_MODEL = {
+    corporate: { casual: 1.25, family: 1.3, young: 0.9, diehard: 0.75, lucha: 0.85, oldschool: 0.95 },
+    workrate: { diehard: 1.4, casual: 0.9, family: 0.85, young: 1.05, oldschool: 1.05 },
+    purist: { diehard: 1.35, oldschool: 1.25, family: 0.9, casual: 0.85, lucha: 0.85 },
+    underdog: { young: 1.15, diehard: 1.1, casual: 0.95 },
+    startup: { casual: 1.1, young: 1.15, oldschool: 0.8 },
+    outlaw: { young: 1.45, family: 0.55, diehard: 1.05, oldschool: 0.8 },
+    spectacle: { lucha: 1.6, family: 1.15, casual: 1, oldschool: 0.85 },
+    tradition: { lucha: 1.45, oldschool: 1.25, family: 1.05 },
+    joshi: { diehard: 1.25, young: 1.2, casual: 0.9 },
+    classic: {}
+  };
+  L.AUD_MODEL = AUD_MODEL;
+  var AUD_DRIFT = 0.06;
+  L.AUD_DRIFT = AUD_DRIFT;
+  function audInit(S) {
+    if (S.aud && S.aud.sh) return S.aud;
+    var A = S.aud = { sh: {}, wk: {}, hist: {} };
+    L.AUD.forEach(function(g) {
+      var t = L.audTarget(S, g.k, null);
+      A.sh[g.k] = t;
+    });
+    S.order.forEach(function(pid) {
+      var P = S.promos[pid];
+      if (P) {
+        P.aud0 = L.audTotal(S, pid);
+        P.audM = 1;
+      }
+    });
+    return A;
+  }
+  function audReach(P) {
+    return Math.pow(Math.max(5, P.image || 50) / 100, 2.2) * (P.dead ? 0 : 1);
+  }
+  function audLean(P, k) {
+    var m = L.AUD_MODEL[P.model || "classic"] || {};
+    return m[k] || 1;
+  }
+  function audTarget(S, k, offer) {
+    var t = {}, sum = 0;
+    S.order.forEach(function(pid) {
+      var P = S.promos[pid];
+      if (!P || P.dead) return;
+      var o = offer && offer[pid] && offer[pid][k] != null ? offer[pid][k] : 1;
+      var v = L.audReach(P) * L.audLean(P, k) * Math.pow(Math.max(0.2, o), 2.4);
+      t[pid] = v;
+      sum += v;
+    });
+    Object.keys(t).forEach(function(pid) {
+      t[pid] = sum ? t[pid] / sum : 0;
+    });
+    return t;
+  }
+  function audBase(S, pid) {
+    var tot = 0, all = 0;
+    L.AUD.forEach(function(g) {
+      all += g.size;
+      tot += g.size * (L.audTarget(S, g.k, null)[pid] || 0);
+    });
+    return all ? tot / all : 0;
+  }
+  function audTotal(S, pid) {
+    var A = S.aud, tot = 0, all = 0;
+    if (!A || !A.sh) return 0;
+    L.AUD.forEach(function(g) {
+      all += g.size;
+      tot += g.size * ((A.sh[g.k] || {})[pid] || 0);
+    });
+    return all ? tot / all : 0;
+  }
+  function audOffer(S, P, show, rep, card) {
+    if (!rep) return null;
+    var cs = L.repCS(rep), grade = 0.55 + 0.9 * L.clamp((cs - 45) / 45, 0, 1.3);
+    var ms = (card || []).filter(function(m) {
+      return m && m.sides;
+    }), n = Math.max(1, ms.length), ids = [];
+    ms.forEach(function(m) {
+      L.flat(m.sides).forEach(function(id) {
+        if (ids.indexOf(id) < 0) ids.push(id);
+      });
+    });
+    var ws = ids.map(function(id) {
+      return S.w[id];
+    }).filter(Boolean), top = ws.map(function(w) {
+      return w.ovr;
+    }).sort(function(a, b) {
+      return b - a;
+    }).slice(0, 3);
+    var star = L.clamp((L.avg(top.length ? top : [50]) - 55) / 35, 0, 1.2);
+    var heat = 0, fs = (S.feuds || []).filter(function(f) {
+      return !f.res && f.promo === P.id && f.a.concat(f.b).some(function(id) {
+        return ids.indexOf(id) >= 0;
+      });
+    });
+    fs.forEach(function(f) {
+      heat = Math.max(heat, f.heat || 0);
+    });
+    heat = heat / 100;
+    var share = function(fn) {
+      return ms.filter(fn).length / n;
+    };
+    var hard = share(function(m) {
+      return /hardcore|tables|cage|ladder|street|barbed|weapons|no_dq|nodq|lumber/i.test(m.stip || "");
+    });
+    var multi = share(function(m) {
+      return m.mt === "3way" || m.mt === "4way" || m.mt === "6man" || m.mt === "br";
+    });
+    var women = share(function(m) {
+      var w = S.w[L.flat(m.sides)[0]];
+      return w && w.g === "F";
+    });
+    var titles = share(function(m) {
+      return !!m.title;
+    });
+    var fly = ws.length ? ws.filter(function(w) {
+      return w.style === "H";
+    }).length / ws.length : 0;
+    var mask = ws.length ? ws.filter(function(w) {
+      return typeof L.masked === "function" && L.masked(w) === 1;
+    }).length / ws.length : 0;
+    var vets = ws.length ? ws.filter(function(w) {
+      return (w.age || 30) >= 38;
+    }).length / ws.length : 0;
+    var segs = (rep.segs || []).filter(function(s) {
+      return s.k === "match";
+    }), mq = segs.length ? L.avg(segs.map(function(s) {
+      return s.ov || 0;
+    })) / 5 : 0.5;
+    var main = segs[segs.length - 1], heroWon = 0, heelWon = 0;
+    if (main && main.wi && main.wi.length) {
+      var w0 = S.w[main.wi[0]];
+      if (w0) {
+        if (w0.align === "F") heroWon = 1;
+        else heelWon = 1;
+      }
+    }
+    var big = show && show.big ? 1 : 0;
+    var o = {
+      casual: grade * (0.75 + 0.45 * star + 0.3 * heat + 0.15 * big),
+      diehard: grade * (0.6 + 0.75 * mq - 0.25 * multi - 0.15 * hard * (hard > 0.4 ? 1 : 0)),
+      family: grade * (0.8 + 0.35 * heroWon - 0.2 * heelWon - 0.7 * hard + 0.2 * star),
+      young: grade * (0.7 + 0.5 * hard + 0.3 * heat + 0.2 * heelWon + 0.3 * women),
+      lucha: grade * (0.65 + 0.8 * fly + 0.4 * mask + 0.25 * multi),
+      oldschool: grade * (0.7 + 0.6 * vets + 0.35 * titles - 0.35 * hard + 0.15 * mq)
+    };
+    Object.keys(o).forEach(function(k) {
+      o[k] = L.clamp(o[k], 0.2, 2.2);
+    });
+    return o;
+  }
+  L.SHOWX.push(function(S, P, show, rep, card) {
+    if (S.cal || !P || !rep) return;
+    var A = L.audInit(S), o = L.audOffer(S, P, show, rep, card || rep.card);
+    if (!o) return;
+    var w = A.wk[P.id] || (A.wk[P.id] = { n: 0 });
+    w.n++;
+    Object.keys(o).forEach(function(k) {
+      w[k] = (w[k] || 0) + o[k] * (show && show.big ? 1.6 : 1);
+    });
+    if (P.id === S.player) rep.aud = o;
+  });
+  L.WEEKX.push(function(S) {
+    if (S.cal || S.over) return;
+    var A = L.audInit(S), offer = {};
+    S.order.forEach(function(pid) {
+      var w = A.wk[pid], P2 = S.promos[pid];
+      if (!P2) return;
+      offer[pid] = {};
+      L.AUD.forEach(function(g) {
+        offer[pid][g.k] = w && w.n ? w[g.k] / w.n : 0.85;
+      });
+    });
+    var was = {};
+    S.order.forEach(function(pid) {
+      was[pid] = L.audTotal(S, pid);
+    });
+    L.AUD.forEach(function(g) {
+      var t = L.audTarget(S, g.k, offer), cur = A.sh[g.k] || (A.sh[g.k] = {}), sum = 0;
+      S.order.forEach(function(pid) {
+        var v = (cur[pid] || 0) + L.AUD_DRIFT * ((t[pid] || 0) - (cur[pid] || 0));
+        cur[pid] = Math.max(0, v);
+        sum += cur[pid];
+      });
+      if (sum > 0) S.order.forEach(function(pid) {
+        cur[pid] /= sum;
+      });
+    });
+    S.order.forEach(function(pid) {
+      var P2 = S.promos[pid];
+      if (!P2) return;
+      var now = L.audTotal(S, pid), h = A.hist[pid] || (A.hist[pid] = []);
+      h.push(Math.round(now * 1e4) / 1e4);
+      if (h.length > 24) h.shift();
+      var base = L.audBase(S, pid), lo = pid === S.player ? 0.8 : 0.9;
+      P2.audM = base > 0 ? L.clamp(Math.pow(now / base, 0.6), lo, 1.6) : 1;
+    });
+    A.wk = {};
+    var P = S.promos[S.player], me = L.audTotal(S, S.player), d = me - (was[S.player] || me), rk = L.E.audience(S).rank;
+    if (P && Math.abs(d) >= 2e-3) L.news(S, "world", "AUDIENCE: " + P.name + " " + (d > 0 ? "gained" : "lost") + " " + (Math.abs(d) * 100).toFixed(1) + " points of audience share, now " + (me * 100).toFixed(1) + "% (number " + rk + " in the world).");
+  });
+  (function() {
+    var vk = L.viewersK;
+    L.viewersK = function(P, show, qf) {
+      return vk.apply(this, arguments) * (P && P.audM ? P.audM : 1);
+    };
+  })();
+  L.E.audience = function(S) {
+    var A = L.audInit(S), L2 = S.order.filter(function(pid) {
+      return S.promos[pid] && !S.promos[pid].dead;
+    }).map(function(pid) {
+      var P = S.promos[pid], h = A.hist[pid] || [], now = L.audTotal(S, pid), then = h.length > 4 ? h[h.length - 5] : P.aud0 || now;
+      return { id: pid, name: P.name, share: Math.round(now * 1e3) / 10, move: Math.round((now - then) * 1e3) / 10, mine: pid === S.player, homes: Math.round(now * L.AUD.reduce(function(a, g) {
+        return a + g.size;
+      }, 0) * 100) / 100 };
+    }).sort(function(a, b) {
+      return b.share - a.share;
+    });
+    var rank = L2.findIndex(function(x) {
+      return x.mine;
+    }) + 1;
+    var groups = L.AUD.map(function(g) {
+      var s = (A.sh[g.k] || {})[S.player] || 0, lead = Object.keys(A.sh[g.k] || {}).sort(function(a, b) {
+        return A.sh[g.k][b] - A.sh[g.k][a];
+      })[0];
+      return { k: g.k, n: g.n, size: g.size, share: Math.round(s * 1e3) / 10, want: g.want, leader: lead && S.promos[lead] ? S.promos[lead].name : "", lead: lead === S.player };
+    });
+    return { rank, of: L2.length, table: L2, groups };
+  };
+  L.E.shareOf = function(S, pid) {
+    L.audInit(S);
+    return Math.round(L.audTotal(S, pid) * 1e3) / 10;
+  };
+  (function() {
+    var af = L.E.afterShow;
+    L.E.afterShow = function(S) {
+      var r = af.apply(this, arguments);
+      if (!r || !r.items) return r;
+      var rep = null;
+      for (var i = 0; i < S.reports.length; i++) {
+        if (S.reports[i].week === S.week && S.reports[i].left && S.reports[i].left.key === r.key) {
+          rep = S.reports[i];
+          break;
+        }
+      }
+      if (!rep || !rep.aud) return r;
+      var L2 = L.AUD.map(function(g) {
+        return { g, v: rep.aud[g.k] || 1 };
+      }).sort(function(a, b) {
+        return b.v - a.v;
+      }), best = L2[0], worst = L2[L2.length - 1], A = L.E.audience(S);
+      var line = best.g.n + " loved it" + (worst.v < 0.85 ? "; " + worst.g.n.toLowerCase() + " were put off" : "") + ". You are number " + A.rank + " in audience share.";
+      var detail = L2.map(function(x) {
+        return x.g.n + ": " + (x.v >= 1.25 ? "loved it" : x.v >= 1 ? "liked it" : x.v >= 0.8 ? "so-so" : "put off") + ". They want " + x.g.want + ".";
+      }).concat(["Groups drift a little every week toward whoever gives them what they want. Television money follows your share."]);
+      var seen = !!(S.nightSeen && S.nightSeen.key === r.key && S.nightSeen.k && S.nightSeen.k.aud), it = { k: "aud", n: "The audience", line, detail, tone: worst.v < 0.8 ? "warn" : "good", seen };
+      var at = r.items.findIndex(function(x) {
+        return x.k === "next";
+      });
+      if (at < 0) r.items.push(it);
+      else r.items.splice(at, 0, it);
+      if (!seen) r.unseen = (r.unseen || 0) + 1;
+      return r;
+    };
+  })();
+  L.AUD = AUD;
+  L.AUD_MODEL = AUD_MODEL;
+  L.AUD_DRIFT = AUD_DRIFT;
+  L.audInit = audInit;
+  L.audReach = audReach;
+  L.audLean = audLean;
+  L.audTarget = audTarget;
+  L.audBase = audBase;
+  L.audTotal = audTotal;
+  L.audOffer = audOffer;
+
+  // engine/99-contracts.ts
+  L.ctWeekly = ctWeekly;
+  L.ctPolicy = ctPolicy;
+  L.ctFee = ctFee;
+  L.ctAssign = ctAssign;
+  L.ctWeek = ctWeek;
+  L.payWeek = payWeek;
+  var CT_BIG = 65;
+  var CT_INDIE = 50;
+  var CT_ROLL = 12;
+  L.CT_BIG = CT_BIG;
+  L.CT_INDIE = CT_INDIE;
+  L.CT_ROLL = CT_ROLL;
+  function ctWeekly(P) {
+    return Math.max(1, (P.shows || []).length);
+  }
+  function ctPolicy(S, P, w) {
+    if (!P) return "year";
+    if (w.pwa) return "show";
+    if (w.nw) return P.image < L.CT_INDIE ? "show" : "year";
+    if (P.image >= L.CT_BIG) return "year";
+    if (P.image < L.CT_INDIE) return "show";
+    var R = L.rosterOf(S, P.id).filter(function(x) {
+      return !x.nw && x.id !== w.id;
+    }), above = R.filter(function(x) {
+      return (x.ovr || 0) > (w.ovr || 0);
+    }).length;
+    return above < Math.ceil((R.length + 1) / 3) ? "year" : "show";
+  }
+  function ctFee(P, wage) {
+    var v = wage * 1.25 / L.ctWeekly(P);
+    return Math.max(25, v < 1e3 ? Math.round(v / 10) * 10 : Math.round(v / 50) * 50);
+  }
+  function ctAssign(S, w, fee) {
+    var P = S.promos[w.promo];
+    if (!P) return;
+    w.dl = L.ctPolicy(S, P, w);
+    w.dlP = w.promo;
+    if (w.dl === "show") {
+      w.fee = fee || L.ctFee(P, w.wage || L.wageFor(w.ovr, P));
+      w.con = L.CT_ROLL;
+    } else w.fee = null;
+    w.dlc = w.con;
+  }
+  function ctWeek(S) {
+    S.w.forEach(function(w) {
+      if (!w || w.rt || w.promo === "FA" || !S.promos[w.promo]) {
+        if (w && w.promo === "FA") {
+          w.dl = null;
+          w.dlP = null;
+        }
+        return;
+      }
+      if (w.dlP !== w.promo || w.dl == null || w.dl === "year" && w.con > (w.dlc || 0) + 1) {
+        L.ctAssign(S, w, w.dlP === w.promo ? w.fee : null);
+        return;
+      }
+      if (w.dl === "show") w.con = L.CT_ROLL;
+      w.dlc = w.con;
+    });
+  }
+  L.NEWX.push(ctWeek);
+  L.WEEKX.push(ctWeek);
+  L.SHOWX.push(function(S, P, show, rep) {
+    if (S.cal || !rep || !rep.segs || !P) return;
+    var seen = {};
+    rep.segs.forEach(function(s) {
+      (s.ids || s.bids || []).forEach(function(id) {
+        var w = S.w[id];
+        if (!w || w.promo !== P.id || seen[id]) return;
+        seen[id] = 1;
+        if (w.shw !== S.week) {
+          w.shw = S.week;
+          delete w.shn;
+        } else w.shn = (w.shn || 1) + 1;
+      });
+    });
+  });
+  function payWeek(S, P) {
+    var s = 0;
+    S.w.forEach(function(w) {
+      if (w.promo !== P.id) return;
+      s += w.dl === "show" && w.fee != null ? w.shw === S.week ? w.fee * (w.shn || 1) : 0 : w.wage;
+    });
+    return s + L.deskWage(S, P);
+  }
+  L.E.contractOf = function(S, w) {
+    if (typeof w === "number") w = S.w[w];
+    if (!w || w.promo === "FA") return null;
+    if (w.dl === "show") return { ct: "show", n: "Per appearance", pay: w.fee, short: "Per show", line: L.money(w.fee || 0) + " a show, paid only when they are booked. A handshake: other companies can make them an offer." };
+    var y = Math.floor(Math.max(0, w.con) / 48), r = Math.max(0, w.con) % 48, left = (y ? y + (y === 1 ? " year" : " years") : "") + (y && r ? " and " : "") + (r || !y ? r + (r === 1 ? " week" : " weeks") : "");
+    return { ct: "year", n: "Yearly deal", pay: w.wage, short: Math.max(0, w.con) + "w", line: L.money(w.wage) + " a week, " + left + " left." };
+  };
+  L.E.offerTerms = function(S, id) {
+    var w = S.w[id], P = S.promos[S.player];
+    if (!w || !P) return null;
+    var ct = L.ctPolicy(S, P, w), ask = L.E.ask(S, w);
+    return ct === "show" ? { ct: "show", n: "Per appearance", ask, fee: L.ctFee(P, ask), lens: null, why: P.name + " pays per appearance: a fee for each show they are on, nothing promised beyond that." } : { ct: "year", n: "Yearly deal", ask, fee: null, lens: [[48, "1 year"], [96, "2 years"], [144, "3 years"]], why: P.name + " signs people to yearly deals: a salary every week, booked or not." };
+  };
+  (function() {
+    var s0 = L.E.sign;
+    L.E.sign = function(S, id, wage, weeks, cl) {
+      var r = s0.apply(this, arguments);
+      var w = S.w[id];
+      if (r && r.ok && w && w.promo === S.player) L.ctAssign(S, w);
+      return r;
+    };
+    L.E.signFee = function(S, id, fee, cl) {
+      var P = S.promos[S.player], w = S.w[id];
+      if (!w || !P) return { ok: false, msg: "Not available." };
+      var wage = Math.round(fee * L.ctWeekly(P) / 1.25 / 50) * 50, r = L.E.sign(S, id, wage, L.CT_ROLL, cl);
+      if (r && r.ok && w.promo === S.player) {
+        w.fee = fee;
+        r.msg = w.name + " will work for " + L.money(fee) + " a show.";
+      }
+      return r;
+    };
+  })();
+  (function() {
+    var r0 = L.E.release, n0 = L.E.renew;
+    L.E.release = function(S, id) {
+      var w = S.w[id], P = S.promos[S.player];
+      if (w && P && w.promo === P.id && w.dl === "show") {
+        var keep = w.wage;
+        w.wage = 0;
+        var r = r0.apply(this, arguments);
+        w.wage = keep;
+        return r;
+      }
+      return r0.apply(this, arguments);
+    };
+    L.E.renew = function(S, id, weeks) {
+      var w = S.w[id];
+      if (w && w.dl === "show") return w.name + " works per appearance: there is nothing to renew.";
+      var r = n0.apply(this, arguments);
+      if (w) w.dlc = w.con;
+      return r;
+    };
+  })();
+  (function() {
+    var a0 = L.E.ask;
+    L.E.ask = function(S, w) {
+      var a = a0.apply(this, arguments);
+      if (!w || w.nw || w.promo === S.player || w.promo === "FA" || !(w.wage > 0)) return a;
+      return Math.max(a, Math.round(w.wage * 0.5 / 50) * 50);
+    };
+  })();
+  L.E.__payWeek = payWeek;
+  L.E.__ctWeek = ctWeek;
+  L.CT_BIG = CT_BIG;
+  L.CT_INDIE = CT_INDIE;
+  L.CT_ROLL = CT_ROLL;
+  L.ctWeekly = ctWeekly;
+  L.ctPolicy = ctPolicy;
+  L.ctFee = ctFee;
+  L.ctAssign = ctAssign;
+  L.ctWeek = ctWeek;
+  L.payWeek = payWeek;
+
+  // engine/99-debut.ts
+  var DEBUT = {
+    vig: { n: "Vignettes", d: "A teaser airs every week until they first appear. The crowd knows the name before the bell." },
+    atk: { n: "A surprise attack", d: "They come out of nowhere on the night. A louder crowd, and momentum from the shock." },
+    match: { n: "A straight match", d: "Book them in a match and let the result speak. A win makes them; a loss sets them back." }
+  };
+  L.DEBUT = DEBUT;
+  L.E.DEBUT = DEBUT;
+  L.E.debuts = function(S) {
+    return L.rosterOf(S, S.player).filter(function(w) {
+      return w.deb && !w.nw && !w.camp;
+    }).map(function(w) {
+      return { id: w.id, name: w.name, k: w.dk || null, hy: w.hy || 0 };
+    });
+  };
+  L.E.debutPlan = function(S, id, k) {
+    var w = S.w[id];
+    if (!w || !w.deb || w.promo !== S.player || !L.DEBUT[k]) return { ok: false, msg: "There is no debut to plan for them." };
+    w.dk = k;
+    L.youRemember(S, w, "debut", "You planned their debut: " + L.DEBUT[k].n.toLowerCase() + ".", 1);
+    return { ok: true, msg: w.name + " will debut with " + L.DEBUT[k].n.toLowerCase() + "." };
+  };
+  L.WEEKX.push(function(S) {
+    L.rosterOf(S, S.player).forEach(function(w) {
+      if (w.deb && w.dk === "vig" && (w.hy || 0) < 3) w.hy = (w.hy || 0) + 1;
+    });
+  });
+  L.CRX.push(function(ctx) {
+    if (!ctx.isPl) return null;
+    var w = ctx.all.filter(function(x) {
+      return x.deb && x.dk === "atk";
+    })[0];
+    return w ? { d: 3, x: w.name + " came out of nowhere" } : null;
+  });
+  L.POST.push(function(ctx) {
+    if (!ctx.isPl || !ctx.res) return;
+    var S = ctx.S, r = ctx.res, won = r.winners || [];
+    ctx.all.forEach(function(w) {
+      if (!w.dk) return;
+      var win = won.indexOf(w) >= 0;
+      if (w.dk === "atk") {
+        w.mom = L.clamp((w.mom || 0) + 2, -10, 10);
+        L.note(S, "A debut", w.name + " arrived with a surprise attack. People are talking.", "good");
+      } else if (w.dk === "match") {
+        w.ovr = L.clamp(w.ovr + (win ? 2 : -2), 1, 100);
+        L.youRemember(S, w, win ? "debutwin" : "debutloss", win ? "Won on their debut." : "Lost on their debut.", win ? 2 : -2);
+        L.note(S, "A debut", w.name + (win ? " won on their debut." : " lost on their debut. It is a slow start."), win ? "good" : "bad");
+      } else L.note(S, "A debut", w.name + " finally appears, after weeks of teasers.", "good");
+      delete w.dk;
+    });
+  });
+  L.TASKX.push(function(S, P, add) {
+    L.E.debuts(S).filter(function(d) {
+      return !d.k;
+    }).slice(0, 2).forEach(function(d) {
+      add("deb-" + d.id, d.name + " has not appeared yet. Plan how they are introduced.", "booking", "Plan it", { need: false, short: "Plan a debut: " + d.name, done: "Debut planned." });
+    });
+  });
+  L.DEBUT = DEBUT;
 
   // engine/99-fog.ts
   L.knowMake = knowMake;
