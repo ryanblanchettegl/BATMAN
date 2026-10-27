@@ -1,6 +1,10 @@
 // @ts-nocheck
 /* Moved from src/99-archive.js (ADR-0001). Names from the rest of the engine come through the bridge, $L. Types come in step 3. */
 import { L as $L } from './_gen/legacy.js';
+import { E, cal, holdLvl, inFeud, rosterOf } from './00-core';
+import { WEEKX } from './10-match';
+import { leaveCompany } from './40-week';
+import { retire } from './75-people';
 $L.archYear = archYear;
 /* wraps: 80-world.js (it must sort after them; test-buildorder.js checks) */
 /* Career-scale saves (the add-ons run, item 9). Once a game year the state is compacted so a thirty-year career stays
@@ -12,21 +16,21 @@ $L.archYear = archYear;
 export var ARCH_KEEP=['id','name','g','promo','ovr','align','age','uid','town','face','log','rt','rtp','ysOld','ysTo','ys','wins','losses','nw','inj','arch','hof','con','morale','cond'],ARCH_YEARS=2,ARCH_LOG=10,FA_CAP=350,ROSTER_CAP=60,TITLE_KEEP=40;
 $L.ARCH_KEEP = ARCH_KEEP; $L.ARCH_YEARS = ARCH_YEARS; $L.ARCH_LOG = ARCH_LOG; $L.FA_CAP = FA_CAP; $L.ROSTER_CAP = ROSTER_CAP; $L.TITLE_KEEP = TITLE_KEEP;
 export function archYear(S){
-  var y=$L.cal(S.week).year,keep=y-$L.ARCH_YEARS+1;
+  var y=cal(S.week).year,keep=y-$L.ARCH_YEARS+1;
   S.w.forEach(function(w){
     for(var k in w){var v=w[k];if(typeof v==='number'&&v!==Math.round(v))w[k]=Math.round(v*100)/100;}   // two places is plenty for a number nobody reads to the third
     if(w.ys){var old=w.ysOld||[0,0,0,0,0,0,0],moved=0;Object.keys(w.ys).forEach(function(k){if(+k<keep){var a=w.ys[k];for(var i=0;i<7;i++)old[i]=i===4?Math.max(old[i],a[i]||0):old[i]+(a[i]||0);delete w.ys[k];moved=1;}});
       if(moved){w.ysOld=old;w.ysTo=keep-1;}}
     if(w.log&&w.log.length>$L.ARCH_LOG)w.log=w.log.slice(0,1).concat(w.log.slice(-($L.ARCH_LOG-1)));
-    if(w.promo==='FA'&&w.rt==null&&!w.nw&&w.age>=36&&S.week-(w.lu||0)>96)$L.retire(S,w,'never signed again');
+    if(w.promo==='FA'&&w.rt==null&&!w.nw&&w.age>=36&&S.week-(w.lu||0)>96)retire(S,w,'never signed again');
   });
   // a rival roster that only grows lets its least-used people go (never a champion, never somebody in a feud)
-  S.order.forEach(function(pid){if(pid===S.player)return;var P=S.promos[pid],R=$L.rosterOf(S,pid).filter(function(w){return !w.nw;});if(R.length<=$L.ROSTER_CAP)return;
-    R.filter(function(w){return $L.holdLvl(P,w.id)===0&&!$L.inFeud(S,w.id);}).sort(function(a,b){return (a.lu||0)-(b.lu||0)||a.ovr-b.ovr||a.id-b.id;}).slice(0,R.length-$L.ROSTER_CAP)
-      .forEach(function(w){$L.leaveCompany(S,w,'released');w.promo='FA';w.brand=null;w.cut={w:S.week,from:pid,img:P.image};});});
+  S.order.forEach(function(pid){if(pid===S.player)return;var P=S.promos[pid],R=rosterOf(S,pid).filter(function(w){return !w.nw;});if(R.length<=$L.ROSTER_CAP)return;
+    R.filter(function(w){return holdLvl(P,w.id)===0&&!inFeud(S,w.id);}).sort(function(a,b){return (a.lu||0)-(b.lu||0)||a.ovr-b.ovr||a.id-b.id;}).slice(0,R.length-$L.ROSTER_CAP)
+      .forEach(function(w){leaveCompany(S,w,'released');w.promo='FA';w.brand=null;w.cut={w:S.week,from:pid,img:P.image};});});
   // a pool that only grows: past the cap, the weakest free agents unused for two years leave the business
   var fa=S.w.filter(function(w){return w.promo==='FA'&&w.rt==null&&!w.nw&&S.week-(w.lu||0)>96;}).sort(function(a,b){return a.ovr-b.ovr||a.id-b.id;}),n=S.w.filter(function(w){return w.promo==='FA'&&w.rt==null&&!w.nw;}).length;
-  var gone=0;for(var i=0;i<fa.length&&n>$L.FA_CAP;i++,n--){$L.retire(S,fa[i],'left the business');gone++;}
+  var gone=0;for(var i=0;i<fa.length&&n>$L.FA_CAP;i++,n--){retire(S,fa[i],'left the business');gone++;}
   // and somebody who left the business long ago and was never a champion keeps only a name and a line
   S.w.forEach(function(w){if(w.rt!=null&&S.week-w.rt>96&&!w.arch&&w.promo==='FA'&&!w.srole){
     Object.keys(w).forEach(function(k){if($L.ARCH_KEEP.indexOf(k)<0)delete w[k];});if(w.log&&w.log.length>3)w.log=w.log.slice(0,1).concat(w.log.slice(-2));w.arch=1;}});
@@ -37,9 +41,9 @@ export function archYear(S){
   $L.news(S,'world','The office files away the year. Records from before '+keep+' are kept as one line per career'+(gone?', and '+gone+' free agents nobody had used in two years have left the business':'')+'.');
   S.archived=S.week;
 }
-$L.WEEKX.push(function(S){if(S.week>0&&S.week%48===0)$L.archYear(S);});
+WEEKX.push(function(S){if(S.week>0&&S.week%48===0)archYear(S);});
 /* the career page shows the folded years as one row */
-(function(){var was=$L.E.career;$L.E.career=function(S,id){var c=was(S,id),w=S.w[id];if(c&&w&&w.ysOld){var a=w.ysOld;c.years.push({y:'Up to '+w.ysTo,m:a[0],w:a[1],l:a[2],d:a[3],best:a[4],main:a[5],titles:a[6],old:1});}return c;};})();
+(function(){var was=E.career;E.career=function(S,id){var c=was(S,id),w=S.w[id];if(c&&w&&w.ysOld){var a=w.ysOld;c.years.push({y:'Up to '+w.ysTo,m:a[0],w:a[1],l:a[2],d:a[3],best:a[4],main:a[5],titles:a[6],old:1});}return c;};})();
 
 // hand this module's names back to the bridge once more, in case top-level code reassigned one
 $L.ARCH_KEEP = ARCH_KEEP;

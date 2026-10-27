@@ -1,6 +1,10 @@
 // @ts-nocheck
 /* Moved from src/94-livefeed.js (ADR-0001). Names from the rest of the engine come through the bridge, $L. Types come in step 3. */
 import { L as $L } from './_gen/legacy.js';
+import { E, activeFeuds, clamp, feudOf, h01, rosterOf, starG, titleById } from './00-core';
+import { fill } from './10-match';
+import { FANS } from './80-world';
+import { SEGK } from './93-segments';
 $L.crowdWord = crowdWord; $L.liveFeed = liveFeed;
 /* The live feed: what people post while your show is on the air (Ryan, 19 October: the broadcast's right side is "a
    twitter like feed, and below the crowd meter"). Fans, the wrestlers in the show, the company's own account and the
@@ -37,33 +41,33 @@ export function liveFeed(S,rep,si,b){
   var out=[],P=S.promos[rep.promo||S.player]||S.promos[S.player],key0=(rep.week||S.week)+':'+(rep.id||rep.name)+':',city=rep.venue?String(rep.venue).split(',').pop().trim().replace(/ (Armory|Civic Auditorium|Fieldhouse|Coliseum|Arena|Stadium)$/,''):'everybody';
   var at=0,show=rep.name;
   function nm(id){var w=S.w[id];return w?w.name:'';}
-  function fan(k,i){var f=$L.FANS[Math.floor($L.h01(k+'f'+i)*$L.FANS.length)%$L.FANS.length];return f[0];}
+  function fan(k,i){var f=FANS[Math.floor(h01(k+'f'+i)*FANS.length)%FANS.length];return f[0];}
   function post(k,kind,u,n,txt,base,wid,mins){out.push({id:k,k:kind,u:u,n:n,t:txt,l:$L.netLikes(base,k),r:Math.round($L.netLikes(base,k+'r')/6),w:wid==null?null:wid,at:mins});}
-  function fanPost(k,list,o,base,mins){var u=fan(k,0);post(k,'f','@'+u,u,$L.fill($L.netPickH(list,k+'t'),o),base||90,null,mins);}
+  function fanPost(k,list,o,base,mins){var u=fan(k,0);post(k,'f','@'+u,u,fill($L.netPickH(list,k+'t'),o),base||90,null,mins);}
   for(var i=0;i<=si&&i<rep.segs.length;i++){
     var s=rep.segs[i],bc=s.bc||[],upto=i<si?bc.length:Math.min(b,bc.length),done=i<si||b>=bc.length,k=key0+i,mins=Math.round(at);
     if(s.k==='match'){
       var ids=s.ids||[],nsd=(s.sidesN||[]).length||2,per=Math.max(1,Math.floor(ids.length/nsd)),A=s.sidesN&&s.sidesN[0]||nm(ids[0]),B=s.sidesN&&s.sidesN[1]||nm(ids[per]);
-      var f=ids.length>=2?$L.feudOf(S,ids[0],ids[per]):null;
+      var f=ids.length>=2?feudOf(S,ids[0],ids[per]):null;
       fanPost(k+'s',s.title?$L.LF.title:(f&&f.heat>=50?$L.LF.feud:$L.LF.start),{a:A,b:B,t:s.title,show:show},s.title?260:120,mins);
-      for(var j=0;j<upto;j++)if(bc[j].h===1&&$L.h01(k+'n'+j)<0.75){var x='';ids.forEach(function(id){var w=S.w[id];if(w&&!x&&bc[j].x&&bc[j].x.indexOf(w.name)>=0)x=w.name;});fanPost(k+'n'+j,$L.LF.near,{x:x||'they'},220,mins+Math.round((s.mins||10)*j/Math.max(1,bc.length)));}
+      for(var j=0;j<upto;j++)if(bc[j].h===1&&h01(k+'n'+j)<0.75){var x='';ids.forEach(function(id){var w=S.w[id];if(w&&!x&&bc[j].x&&bc[j].x.indexOf(w.name)>=0)x=w.name;});fanPost(k+'n'+j,$L.LF.near,{x:x||'they'},220,mins+Math.round((s.mins||10)*j/Math.max(1,bc.length)));}
       if(done&&s.win){
         var wi=(s.wi&&s.wi.length?s.wi:[]),lid=ids.filter(function(id){return wi.indexOf(id)<0;})[0],W=S.w[wi[0]],Lw=S.w[lid],L=lid!=null?nm(lid):B,end=mins+(s.mins||10);
         var up=W&&Lw&&Lw.ovr-W.ovr>=12;
         fanPost(k+'w',s.change?$L.LF.champ:(up?$L.LF.upset:(s.title?$L.LF.retain:$L.LF.win)),{w:s.win,l:L,t:s.title},s.change?900:(up?520:160),end);
-        if(W&&(s.change||i===rep.segs.length-1||$L.h01(k+'ww')<0.35))post(k+'wp','w',$L.netHandle(W.name),W.name,$L.fill($L.netPickH(W.align==='H'?$L.LF.winH:$L.LF.winF,k+'wpt'),{city:city}),W.ovr*W.ovr*0.9,W.id,end);
-        if(Lw&&$L.h01(k+'lp')<0.3)post(k+'lp','w',$L.netHandle(Lw.name),Lw.name,$L.netPickH($L.LF.lose,k+'lpt'),Lw.ovr*Lw.ovr*0.5,Lw.id,end);
-        if(s.ov!=null&&(i===rep.segs.length-1||s.ov>=70||$L.h01(k+'pr')<0.4))post(k+'pr','p',$L.netHandle($L.LF_PRESS),$L.LF_PRESS,(s.label||A+' vs '+B)+': '+$L.starG(s.ov)+'.',600,null,end);
-        if(s.cr!=null&&$L.h01(k+'cr')<0.5)fanPost(k+'cr',s.cr>=75?$L.LF.hot:(s.cr<35?$L.LF.dead:$L.LF.start),{a:A,b:B,show:show},110,end);
+        if(W&&(s.change||i===rep.segs.length-1||h01(k+'ww')<0.35))post(k+'wp','w',$L.netHandle(W.name),W.name,fill($L.netPickH(W.align==='H'?$L.LF.winH:$L.LF.winF,k+'wpt'),{city:city}),W.ovr*W.ovr*0.9,W.id,end);
+        if(Lw&&h01(k+'lp')<0.3)post(k+'lp','w',$L.netHandle(Lw.name),Lw.name,$L.netPickH($L.LF.lose,k+'lpt'),Lw.ovr*Lw.ovr*0.5,Lw.id,end);
+        if(s.ov!=null&&(i===rep.segs.length-1||s.ov>=70||h01(k+'pr')<0.4))post(k+'pr','p',$L.netHandle($L.LF_PRESS),$L.LF_PRESS,(s.label||A+' vs '+B)+': '+starG(s.ov)+'.',600,null,end);
+        if(s.cr!=null&&h01(k+'cr')<0.5)fanPost(k+'cr',s.cr>=75?$L.LF.hot:(s.cr<35?$L.LF.dead:$L.LF.start),{a:A,b:B,show:show},110,end);
       }
     }else{
       var who=(s.ids&&s.ids.length?s.ids:(s.bids||[])),a=nm(who[0]),bb=nm(who[1]);
       if(done&&a){
-        var isA=s.booked?($L.SEGK[s.booked]&&$L.SEGK[s.booked].t==='angle'):/Ambush|Brawl|Attack|Betrayal|Turn|Save|Reveal/.test(s.head||'');
+        var isA=s.booked?(SEGK[s.booked]&&SEGK[s.booked].t==='angle'):/Ambush|Brawl|Attack|Betrayal|Turn|Save|Reveal/.test(s.head||'');
         fanPost(k+'g',isA&&bb?$L.LF.angle:$L.LF.promo,{a:a,b:bb},isA?300:150,mins+(s.mins||5));
         var Aw=S.w[who[0]],Bw=S.w[who[1]];
-        if(isA&&Aw&&Bw&&$L.h01(k+'gt')<0.6)post(k+'gt','w',$L.netHandle(Aw.name),Aw.name,$L.fill($L.netPickH($L.LF.taunt,k+'gtt'),{b:Bw.name}),Aw.ovr*Aw.ovr*0.7,Aw.id,mins+(s.mins||5));
-        if(isA&&Aw&&Bw&&$L.h01(k+'gh')<0.4)post(k+'gh','w',$L.netHandle(Bw.name),Bw.name,$L.fill($L.netPickH($L.LF.hurt,k+'ght'),{a:Aw.name}),Bw.ovr*Bw.ovr*0.6,Bw.id,mins+(s.mins||5));
+        if(isA&&Aw&&Bw&&h01(k+'gt')<0.6)post(k+'gt','w',$L.netHandle(Aw.name),Aw.name,fill($L.netPickH($L.LF.taunt,k+'gtt'),{b:Bw.name}),Aw.ovr*Aw.ovr*0.7,Aw.id,mins+(s.mins||5));
+        if(isA&&Aw&&Bw&&h01(k+'gh')<0.4)post(k+'gh','w',$L.netHandle(Bw.name),Bw.name,fill($L.netPickH($L.LF.hurt,k+'ght'),{a:Aw.name}),Bw.ovr*Bw.ovr*0.6,Bw.id,mins+(s.mins||5));
       }
     }
     at+=s.mins||(s.k==='match'?12:6);
@@ -72,28 +76,28 @@ export function liveFeed(S,rep,si,b){
   return out.reverse();   // the newest first
 }
 /** The feed and the crowd for the broadcast at segment `si`, beat `b`: {posts, crowd: {v, word}}. */
-$L.E.liveFeed=function(S,rep,si,b){
-  if(!rep||!rep.segs)return {posts:[],crowd:{v:50,word:$L.crowdWord(50)}};
+E.liveFeed=function(S,rep,si,b){
+  if(!rep||!rep.segs)return {posts:[],crowd:{v:50,word:crowdWord(50)}};
   var s=rep.segs[Math.max(0,Math.min(si,rep.segs.length-1))],bc=(s&&s.bc)||[],done=s&&b>=bc.length;
   // how loud the building is: the night's energy, lifted by a big moment on screen, and the match's own crowd once it is over
   var v=rep.en==null?60:rep.en;if(s&&s.k==='match'&&done&&s.cr!=null)v=0.5*v+0.5*s.cr;
   var hb=s&&bc[Math.min(b,bc.length-1)];if(hb&&hb.h)v=Math.min(100,v+(hb.h>1?25:12));
-  v=$L.clamp(Math.round(v),0,100);
-  return {posts:si<0?[]:$L.liveFeed(S,rep,si,b),crowd:{v:v,word:$L.crowdWord(v)}};
+  v=clamp(Math.round(v),0,100);
+  return {posts:si<0?[]:liveFeed(S,rep,si,b),crowd:{v:v,word:crowdWord(v)}};
 };
 
 /* ---------- the poster for the next show (the desk) ----------
    Who headlines it, so the desk can show them face to face: the main event once the card is booked, else the hottest
    story on the roster, else the champion and the closest challenger. Only reads the game. */
-$L.E.posterPair=function(S){
+E.posterPair=function(S){
   var P=S.promos[S.player],sh=S.queue&&S.queue[S.qi];if(!P||!sh)return null;
   var card=S.card||[],m=card.length?card[card.length-1]:null;
-  if(m&&m.sides&&m.sides.length>=2&&m.sides[0].length&&m.sides[1].length)return {a:m.sides[0][0],b:m.sides[1][0],why:'main',title:m.title?($L.titleById(P,m.title)||{}).name||null:null};
-  var fs=$L.activeFeuds(S).filter(function(f){return f.promo===P.id&&!f.res&&S.w[f.a[0]]&&S.w[f.b[0]];}).sort(function(x,y){return y.heat-x.heat;});
-  if(fs.length)return {a:fs[0].a[0],b:fs[0].b[0],why:'feud',title:fs[0].title?($L.titleById(P,fs[0].title)||{}).name||null:null};
+  if(m&&m.sides&&m.sides.length>=2&&m.sides[0].length&&m.sides[1].length)return {a:m.sides[0][0],b:m.sides[1][0],why:'main',title:m.title?(titleById(P,m.title)||{}).name||null:null};
+  var fs=activeFeuds(S).filter(function(f){return f.promo===P.id&&!f.res&&S.w[f.a[0]]&&S.w[f.b[0]];}).sort(function(x,y){return y.heat-x.heat;});
+  if(fs.length)return {a:fs[0].a[0],b:fs[0].b[0],why:'feud',title:fs[0].title?(titleById(P,fs[0].title)||{}).name||null:null};
   var t=P.titles.filter(function(t){return !t.tag&&t.holders.length&&S.w[t.holders[0]];}).sort(function(x,y){return (y.lvl||0)-(x.lvl||0);})[0];
-  if(t){var c=S.w[t.holders[0]],ch=$L.rosterOf(S,P.id).filter(function(w){return w.id!==c.id&&w.g===c.g&&w.inj<=0;}).sort(function(x,y){return y.ovr-x.ovr;})[0];if(ch)return {a:c.id,b:ch.id,why:'title',title:t.name};}
-  var top=$L.rosterOf(S,P.id).filter(function(w){return w.inj<=0;}).sort(function(x,y){return y.ovr-x.ovr;});
+  if(t){var c=S.w[t.holders[0]],ch=rosterOf(S,P.id).filter(function(w){return w.id!==c.id&&w.g===c.g&&w.inj<=0;}).sort(function(x,y){return y.ovr-x.ovr;})[0];if(ch)return {a:c.id,b:ch.id,why:'title',title:t.name};}
+  var top=rosterOf(S,P.id).filter(function(w){return w.inj<=0;}).sort(function(x,y){return y.ovr-x.ovr;});
   return top.length>=2?{a:top[0].id,b:top[1].id,why:'top',title:null}:null;
 };
 

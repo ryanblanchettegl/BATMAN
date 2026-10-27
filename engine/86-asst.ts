@@ -1,6 +1,9 @@
 // @ts-nocheck
 /* Moved from src/86-asst.js (ADR-0001). Names from the rest of the engine come through the bridge, $L. Types come in step 3. */
 import { L as $L } from './_gen/legacy.js';
+import { E, autoBook, chance, clamp, rnd, rosterOf } from './00-core';
+import { CRX, SHOWX } from './10-match';
+import { cardCost } from './65-you';
 $L.asstInit = asstInit; $L.asstLvl = asstLvl; $L.asstPickLen = asstPickLen; $L.asstBook = asstBook;
 /* ---------- 94. The assistant: learns how you book, and books the small shows your way (S.asst; engine and one button, fast mode uses it) ---------- */
 export function asstInit(S){return S.asst||(S.asst={n:0,own:0,h:{S:0.2,M:0.6,L:0.2,stip:0.15,call:0.2,title:0.15,young:0.3},fav:{}});}
@@ -8,9 +11,9 @@ export function asstLvl(A){return A.n>=140?3:(A.n>=60?2:(A.n>=20?1:0));}
 export var ASTN=['Learning the ropes','Getting the idea','Knows your style','Books like you'];
 $L.ASTN = ASTN;
 /* every show the player books teaches the assistant a little; the assistant's own shows teach it nothing */
-$L.SHOWX.push(function(S,P,show,rep,card){
+SHOWX.push(function(S,P,show,rep,card){
   if(S.cal||P.id!==S.player||S.asstRun||!card||!card.length)return;
-  var A=$L.asstInit(S),H=A.h,k=0.12,n=card.length;A.n++;
+  var A=asstInit(S),H=A.h,k=0.12,n=card.length;A.n++;
   var ls={S:0,M:0,L:0},stip=0,call=0,ttl=0;
   card.forEach(function(m){ls[m.len||'M']++;if(m.stip&&m.stip!=='std')stip++;if(m.call!=null)call++;if(m.title)ttl++;});
   ['S','M','L'].forEach(function(l){H[l]+=(ls[l]/n-H[l])*k;});H.stip+=(stip/n-H.stip)*k;H.call+=(call/n-H.call)*k;H.title+=(ttl/n-H.title)*k;
@@ -19,14 +22,14 @@ $L.SHOWX.push(function(S,P,show,rep,card){
   var fav=A.fav;Object.keys(fav).forEach(function(id){fav[id]*=0.97;if(fav[id]<0.05)delete fav[id];});
   card.forEach(function(m){[].concat.apply([],m.sides).forEach(function(id){if(id!=null)fav[id]=(fav[id]||0)+1;});});
 });
-export function asstPickLen(S,H){var r=$L.rnd(S),t=H.S+H.M+H.L;r*=t||1;return r<H.S?'S':(r<H.S+H.M?'M':'L');}
+export function asstPickLen(S,H){var r=rnd(S),t=H.S+H.M+H.L;r*=t||1;return r<H.S?'S':(r<H.S+H.M?'M':'L');}
 export function asstBook(S){
   var P=S.promos[S.player],show=S.queue[S.qi];if(!show)return [];
-  var A=$L.asstInit(S),H=A.h,lv=$L.asstLvl(A),card=$L.autoBook(S,P,show);
+  var A=asstInit(S),H=A.h,lv=asstLvl(A),card=autoBook(S,P,show);
   card.forEach(function(m,i){
     var main=i===card.length-1;
-    if(!main&&m.mt!=='br'){m.len=$L.asstPickLen(S,H);}
-    if(m.stip&&m.stip!=='std'&&!m.title&&$L.chance(S,$L.clamp(0.7-H.stip*2,0.1,0.8)))m.stip='std';   // you rarely book gimmick matches, so neither does it
+    if(!main&&m.mt!=='br'){m.len=asstPickLen(S,H);}
+    if(m.stip&&m.stip!=='std'&&!m.title&&chance(S,clamp(0.7-H.stip*2,0.1,0.8)))m.stip='std';   // you rarely book gimmick matches, so neither does it
     m.asst=lv;
   });
   // the people you use most get the spots they usually get
@@ -39,31 +42,31 @@ export function asstBook(S){
     for(var c=0;c<cand.length;c++){var m=cand[c],ix=m.sides.findIndex(function(s){var w=S.w[s[0]];return w&&w.g===f.g&&w.ovr<=f.ovr+6;});if(ix>=0&&!(show.brand&&f.brand!==show.brand&&!show.big)){on[m.sides[ix][0]]=0;m.sides[ix]=[id];on[id]=1;done++;break;}}
   });
   // the same share of calls as you make, on the likelier winner, within the booking power in hand
-  card.forEach(function(m){if(m.call==null&&$L.chance(S,H.call*(0.4+lv*0.2))){var o=$L.E.matchOdds(S,m,0,card.length);if(o&&o.fav!=null&&o.p[o.fav]>=0.5)m.call=o.fav;}});
-  var g=0;while(g++<10&&$L.cardCost(S,card)>S.bp){var last=card.slice().reverse().filter(function(m){return m.call!=null;})[0];if(!last)break;delete last.call;}
+  card.forEach(function(m){if(m.call==null&&chance(S,H.call*(0.4+lv*0.2))){var o=E.matchOdds(S,m,0,card.length);if(o&&o.fav!=null&&o.p[o.fav]>=0.5)m.call=o.fav;}});
+  var g=0;while(g++<10&&cardCost(S,card)>S.bp){var last=card.slice().reverse().filter(function(m){return m.call!=null;})[0];if(!last)break;delete last.call;}
   return card;
 }
-$L.E.assistantBook=function(S){S.card=$L.showFill(S,$L.asstBook(S));return S.card;};
+E.assistantBook=function(S){S.card=$L.showFill(S,asstBook(S));return S.card;};
 /* a small show the assistant runs: never a big event, and a worse card while it is still learning */
-$L.CRX.push(function(ctx){
+CRX.push(function(ctx){
   if(!ctx.isPl||ctx.S.cal||ctx.m.asst==null)return null;
   var lv=ctx.m.asst,d=-(3-lv)*0.5;
   return d?{d:d,x:'The assistant is still learning your way'}:(lv>=3?{d:0.3,x:'Booked the way the boss would'}:null);
 });
-$L.E.assistant=function(S){
-  var A=$L.asstInit(S),lv=$L.asstLvl(A),H=A.h;
+E.assistant=function(S){
+  var A=asstInit(S),lv=asstLvl(A),H=A.h;
   var fav=Object.keys(A.fav).map(Number).filter(function(id){return S.w[id];}).sort(function(a,b){return A.fav[b]-A.fav[a];}).slice(0,4).map(function(id){return S.w[id];});
   return {lvl:lv,word:$L.ASTN[lv],shows:A.n,next:lv<3?[20,60,140][lv]-A.n:0,own:A.own,
     habits:['You like '+(H.L>=H.M&&H.L>=H.S?'long':(H.S>=H.M?'short':'medium'))+' matches.',H.stip>=0.25?'You book a lot of gimmick matches.':'You rarely book gimmick matches.',H.call>=0.4?'You call a lot of finishes.':(H.call>=0.15?'You call a few finishes.':'You mostly let matches play out.'),H.young>=0.5?'You like a young name in the main event.':'You like a veteran in the main event.'],fav:fav};
 };
 /* fast mode: the assistant books and runs every small show left this week, and stops at the first big event */
-$L.E.assistantRun=function(S){
-  var out=[],A=$L.asstInit(S);if(S.over)return out;
+E.assistantRun=function(S){
+  var out=[],A=asstInit(S);if(S.over)return out;
   while(S.qi<S.queue.length&&!S.queue[S.qi].big&&!S.over){
-    var show=S.queue[S.qi],card=$L.showFill(S,$L.asstBook(S));S.card=card;
-    var pr=$L.E.preShow(S,card);if(pr){$L.E.resolvePre(S,card,0);$L.fitShow(S,card);}
-    var v=$L.E.validate(S,card);if(v.errors.length){out.push({show:show.name,err:v.errors[0]});break;}
-    S.asstRun=true;var r=$L.E.runPlayerShow(S,card);S.asstRun=false;
+    var show=S.queue[S.qi],card=$L.showFill(S,asstBook(S));S.card=card;
+    var pr=E.preShow(S,card);if(pr){E.resolvePre(S,card,0);$L.fitShow(S,card);}
+    var v=E.validate(S,card);if(v.errors.length){out.push({show:show.name,err:v.errors[0]});break;}
+    S.asstRun=true;var r=E.runPlayerShow(S,card);S.asstRun=false;
     if(r.errors){out.push({show:show.name,err:r.errors[0]});break;}
     A.own++;out.push({show:show.name,rating:r.rep.rating,exp:r.rep.exp});
   }
@@ -71,13 +74,13 @@ $L.E.assistantRun=function(S){
 };
 /* The assistant's window on the desk (Ryan, 22 October): who it is, one tip that is true of the game this week, and
    the house shows it will book. A placeholder for now; it only reads the game and never calls rnd(S). */
-$L.E.assistantDesk=function(S){
-  var A=$L.E.assistant(S),P=S.promos[S.player],tips=[];
-  var worn=$L.rosterOf(S,P.id).filter(function(w){return !w.nw&&w.inj<=0&&w.cond<50;}).sort(function(a,b){return a.cond-b.cond;})[0];
+E.assistantDesk=function(S){
+  var A=E.assistant(S),P=S.promos[S.player],tips=[];
+  var worn=rosterOf(S,P.id).filter(function(w){return !w.nw&&w.inj<=0&&w.cond<50;}).sort(function(a,b){return a.cond-b.cond;})[0];
   if(worn)tips.push(worn.name+' is worn down. A week off now saves a bad night later.');
-  var low=$L.rosterOf(S,P.id).filter(function(w){return !w.nw&&w.morale!=null&&w.morale<35;}).sort(function(a,b){return a.morale-b.morale;})[0];
+  var low=rosterOf(S,P.id).filter(function(w){return !w.nw&&w.morale!=null&&w.morale<35;}).sort(function(a,b){return a.morale-b.morale;})[0];
   if(low)tips.push(low.name+' is unhappy. Sitting down with them backstage costs one point.');
-  try{($L.E.season(S).says||[]).slice(0,2).forEach(function(x){if(x&&x.t)tips.push(x.t);});}catch(e){}
+  try{(E.season(S).says||[]).slice(0,2).forEach(function(x){if(x&&x.t)tips.push(x.t);});}catch(e){}
   if(S.bp>=6)tips.push('You have '+S.bp+' booking power. It stops growing at the cap, so spend some.');
   if(!tips.length)tips.push('Nothing is on fire. A good week to start a story or push somebody new.');
   return {word:A.word,lvl:A.lvl,shows:A.shows,next:A.next,tip:tips[S.week%tips.length],tips:tips.length,

@@ -1,6 +1,14 @@
 // @ts-nocheck
 /* Moved from src/91-road.js (ADR-0001). Names from the rest of the engine come through the bridge, $L. Types come in step 3. */
 import { L as $L } from './_gen/legacy.js';
+import { ADV_H, E, TIXN, TIX_D, TIX_P, activeFeuds, cal, capFor, clamp, h01, hash, rosterOf, ticket } from './00-core';
+import { SHOWX, WEEKX } from './10-match';
+import { cardHype } from './30-show';
+import { weekShows } from './40-week';
+import { evTy } from './42-events';
+import { REGIONS, TASTEN, homeReg, tourBoost } from './89-regions';
+import { streamOn } from './89-streaming';
+import { MAPS, MAP_ABC, MAP_H, MAP_W } from './91-maps';
 $L.cityBuildings = cityBuildings; $L.venueName = venueName; $L.cityOfVenue = cityOfVenue; $L.placeOf = placeOf; $L.mapById = mapById; $L.mapXY = mapXY; $L.mapHas = mapHas; $L.mapArea = mapArea; $L.homeKm = homeKm; $L.homeNear = homeNear; $L.homeWeight = homeWeight; $L.homeHype = homeHype; $L.homeHypeAt = homeHypeAt; $L.geoDist = geoDist; $L.roadRoute = roadRoute; $L.roadCity = roadCity; $L.soldOutLast = soldOutLast; $L.roadCap = roadCap; $L.mktBase = mktBase; $L.mktKnow = mktKnow; $L.coldNight = coldNight; $L.weatherMult = weatherMult; $L.mktMult = mktMult; $L.mktWord = mktWord; $L.roadMktNow = roadMktNow; $L.saleSpan = saleSpan; $L.saleFrac = saleFrac; $L.stopDraw = stopDraw; $L.stopSales = stopSales; $L.roadSoldNow = roadSoldNow; $L.roadAhead = roadAhead; $L.roadMap = roadMap; $L.roadShape = roadShape; $L.roadNearest = roadNearest;
 /* wraps: 00-core.js, 40-week.js (it must sort after them; test-buildorder.js checks) */
 /* ---------- the road: where every city is, the map it is on, and where the next shows are ----------
@@ -42,61 +50,61 @@ export var BLD_WORDS=['Riverside','Harbor Street','Union','Memorial','Lakeside',
 $L.BLD_WORDS = BLD_WORDS;
 /** The buildings of a city, smallest first: {n: name, cap: seats, k: kind}. */
 export function cityBuildings(city){
-  var c=String(city||'the city'),n=3+Math.floor($L.h01('bn:'+c)*3),tiers=[0,2,4],out=[],used={};
-  var spare=[1,3,5];while(tiers.length<n)tiers.push(spare.splice(Math.floor($L.h01('bt:'+c+':'+tiers.length)*spare.length),1)[0]);
+  var c=String(city||'the city'),n=3+Math.floor(h01('bn:'+c)*3),tiers=[0,2,4],out=[],used={};
+  var spare=[1,3,5];while(tiers.length<n)tiers.push(spare.splice(Math.floor(h01('bt:'+c+':'+tiers.length)*spare.length),1)[0]);
   tiers.sort(function(a,b){return a-b;});
-  tiers.forEach(function(t,i){var T=$L.BLD_TIER[t],lo=t?$L.BLD_TIER[t-1].to:400,k=T.k[Math.floor($L.h01('bk:'+c+':'+i)*T.k.length)];
-    var w=$L.BLD_WORDS[Math.floor($L.h01('bw:'+c+':'+i)*$L.BLD_WORDS.length)];while(used[w])w=$L.BLD_WORDS[($L.BLD_WORDS.indexOf(w)+1)%$L.BLD_WORDS.length];used[w]=1;
-    out.push({n:w+' '+k,cap:Math.round((lo+(T.to-lo)*(0.55+0.45*$L.h01('bc:'+c+':'+i)))/100)*100,k:k});});
+  tiers.forEach(function(t,i){var T=$L.BLD_TIER[t],lo=t?$L.BLD_TIER[t-1].to:400,k=T.k[Math.floor(h01('bk:'+c+':'+i)*T.k.length)];
+    var w=$L.BLD_WORDS[Math.floor(h01('bw:'+c+':'+i)*$L.BLD_WORDS.length)];while(used[w])w=$L.BLD_WORDS[($L.BLD_WORDS.indexOf(w)+1)%$L.BLD_WORDS.length];used[w]=1;
+    out.push({n:w+' '+k,cap:Math.round((lo+(T.to-lo)*(0.55+0.45*h01('bc:'+c+':'+i)))/100)*100,k:k});});
   return out;
 }
 /** The building for a night of this size in this city: the smallest that holds the crowd, or the biggest there is. */
-export function venueName(city,cap){var B=$L.cityBuildings(city),b=B.filter(function(x){return x.cap>=cap;})[0]||B[B.length-1];return b.n+', '+city;}
-$L.E.cityBuildings=function(S,city){return $L.cityBuildings(city);};
+export function venueName(city,cap){var B=cityBuildings(city),b=B.filter(function(x){return x.cap>=cap;})[0]||B[B.length-1];return b.n+', '+city;}
+E.cityBuildings=function(S,city){return cityBuildings(city);};
 export function cityOfVenue(v){if(!v)return '';v=String(v);var k=v.lastIndexOf(', ');return k>=0?v.slice(k+2):v.replace($L.VENUE_RE,'');}
 export function placeOf(S,city){var p=(S&&S.places&&S.places[city])||$L.CITY_AT[city]||$L.TOWN_AT[city];return p?{n:city,lat:p[0],lon:p[1],a:p[2]||null}:null;}
-export function mapById(id){for(var i=0;i<$L.MAPS.length;i++)if($L.MAPS[i].id===id)return $L.MAPS[i];return null;}
+export function mapById(id){for(var i=0;i<MAPS.length;i++)if(MAPS[i].id===id)return MAPS[i];return null;}
 /* where a place falls on a map's board, in dots (it may be off the board) */
 export function mapXY(M,pl){var x=pl.lon-M.f[0];if(x<0)x+=360;if(x>=360)x-=360;return [x/M.f[1],(M.f[2]-pl.lat)/M.f[3]];}
-export function mapHas(M,pl){var p=$L.mapXY(M,pl);return p[0]>=0.5&&p[0]<$L.MAP_W-0.5&&p[1]>=0.5&&p[1]<$L.MAP_H-0.5;}
+export function mapHas(M,pl){var p=mapXY(M,pl);return p[0]>=0.5&&p[0]<MAP_W-0.5&&p[1]>=0.5&&p[1]<MAP_H-0.5;}
 /* the area a place lights on a map: its own dot, or the nearest lit dot within two (a city on the coast) */
 export function mapArea(M,pl){
-  var i,p=$L.mapXY(M,pl),cx=Math.floor(p[0]),cy=Math.floor(p[1]),best=-1,bd=9;
+  var i,p=mapXY(M,pl),cx=Math.floor(p[0]),cy=Math.floor(p[1]),best=-1,bd=9;
   if(pl.a)for(i=0;i<pl.a.length;i++)if(M.a.indexOf(pl.a[i])>=0)return M.a.indexOf(pl.a[i]);   // a city on a border says which side it is on
-  if(cy>=0&&cy<$L.MAP_H&&cx>=0&&cx<$L.MAP_W&&M.g[cy].charAt(cx)==='-')return -1;                      // it stands in a land this map does not light
+  if(cy>=0&&cy<MAP_H&&cx>=0&&cx<MAP_W&&M.g[cy].charAt(cx)==='-')return -1;                      // it stands in a land this map does not light
   for(var y=cy-2;y<=cy+2;y++)for(var x=cx-2;x<=cx+2;x++){
-    if(y<0||y>=$L.MAP_H||x<0||x>=$L.MAP_W)continue;var ch=M.g[y].charAt(x);if(ch===' '||ch==='-')continue;
-    var d=(x+0.5-p[0])*(x+0.5-p[0])+(y+0.5-p[1])*(y+0.5-p[1]);if(d<bd){bd=d;best=$L.MAP_ABC.indexOf(ch);}
+    if(y<0||y>=MAP_H||x<0||x>=MAP_W)continue;var ch=M.g[y].charAt(x);if(ch===' '||ch==='-')continue;
+    var d=(x+0.5-p[0])*(x+0.5-p[0])+(y+0.5-p[1])*(y+0.5-p[1]);if(d<bd){bd=d;best=MAP_ABC.indexOf(ch);}
   }
   return best;
 }
 /* how far a wrestler is from home tonight, in kilometres: 0 in the town itself, null when either place is unknown */
 export var HOME_KM=100;
 $L.HOME_KM = HOME_KM;
-export function homeKm(S,w,city){if(!w||!w.town||!city)return null;if(w.town===city)return 0;var a=$L.placeOf(S,w.town),b=$L.placeOf(S,city);return a&&b?Math.round($L.geoDist(a,b)*111):null;}
-export function homeNear(S,w,city){var k=$L.homeKm(S,w,city);return k!=null&&k<=$L.HOME_KM;}
+export function homeKm(S,w,city){if(!w||!w.town||!city)return null;if(w.town===city)return 0;var a=placeOf(S,w.town),b=placeOf(S,city);return a&&b?Math.round(geoDist(a,b)*111):null;}
+export function homeNear(S,w,city){var k=homeKm(S,w,city);return k!=null&&k<=$L.HOME_KM;}
 /* the town itself counts in full, up the road counts half */
-export function homeWeight(S,w,city){var k=$L.homeKm(S,w,city);return k==null||k>$L.HOME_KM?0:(k===0?1:0.5);}
+export function homeWeight(S,w,city){var k=homeKm(S,w,city);return k==null||k>$L.HOME_KM?0:(k===0?1:0.5);}
 /* a home-town name on the bill sells tickets: on the card once it is booked, or on the roster before it is */
-export function homeHype(S,P,ids){var city=$L.roadCity(S,P,S.rdn||0),n=0;ids.forEach(function(id){var w=S.w[id];if(w&&w.inj<=0)n+=$L.homeWeight(S,w,city);});return Math.min(2,n)*0.04;}
-export function homeHypeAt(S,P,city){var n=0;$L.rosterOf(S,P.id).forEach(function(w){if(!w.nw&&w.inj<=0)n+=$L.homeWeight(S,w,city);});return Math.min(2,n)*0.03;}
+export function homeHype(S,P,ids){var city=roadCity(S,P,S.rdn||0),n=0;ids.forEach(function(id){var w=S.w[id];if(w&&w.inj<=0)n+=homeWeight(S,w,city);});return Math.min(2,n)*0.04;}
+export function homeHypeAt(S,P,city){var n=0;rosterOf(S,P.id).forEach(function(w){if(!w.nw&&w.inj<=0)n+=homeWeight(S,w,city);});return Math.min(2,n)*0.03;}
 export function geoDist(a,b){var k=Math.cos((a.lat+b.lat)/2*Math.PI/180),dx=Math.abs(a.lon-b.lon);if(dx>180)dx=360-dx;dx*=k;var dy=a.lat-b.lat;return Math.sqrt(dx*dx+dy*dy);}
 /* the loop a company tours: start somewhere the seed picks, then always the nearest city not yet visited */
 export function roadRoute(S,P){
   var C=(P.cities&&P.cities.length?P.cities:['the city']).slice(),known=[],lost=[];
-  C.forEach(function(c){var p=$L.placeOf(S,c);if(p)known.push(p);else lost.push(c);});
+  C.forEach(function(c){var p=placeOf(S,c);if(p)known.push(p);else lost.push(c);});
   var out=[];
   if(known.length){
-    var cur=known.splice($L.hash('road'+S.seed+P.id)%known.length,1)[0];out.push(cur.n);
-    while(known.length){var bi=0,bd=1e9;for(var i=0;i<known.length;i++){var d=$L.geoDist(cur,known[i]);if(d<bd){bd=d;bi=i;}}cur=known.splice(bi,1)[0];out.push(cur.n);}
+    var cur=known.splice(hash('road'+S.seed+P.id)%known.length,1)[0];out.push(cur.n);
+    while(known.length){var bi=0,bd=1e9;for(var i=0;i<known.length;i++){var d=geoDist(cur,known[i]);if(d<bd){bd=d;bi=i;}}cur=known.splice(bi,1)[0];out.push(cur.n);}
   }
   return out.concat(lost);
 }
-export function roadCity(S,P,n){var R=$L.roadRoute(S,P);return R[((n%R.length)+R.length)%R.length];}
+export function roadCity(S,P,n){var R=roadRoute(S,P);return R[((n%R.length)+R.length)%R.length];}
 /* the building is booked before the card is: its size comes from what this company draws, not from tonight's matches */
 /* a city that sold out last time gets a bigger building next time (NEXT.md 6.4) */
 export function soldOutLast(S,P,city){var v=P.id===S.player&&S.rdv&&S.rdv[city];return !!(v&&v.so);}
-export function roadCap(S,P,show,city){return $L.capFor($L.demand(P,show,1)*$L.tourBoost(S,P)*$L.mktMult(S,P,city)*($L.soldOutLast(S,P,city)?1.12:1));}
+export function roadCap(S,P,show,city){return capFor($L.demand(P,show,1)*tourBoost(S,P)*mktMult(S,P,city)*(soldOutLast(S,P,city)?1.12:1));}
 /* ---------- markets: how well a place knows you (docs/plans/art-direction.md, 6.7) ----------
    Every city on the road has a market, 0 to 100, only ever said in words. It starts near the middle (a little higher
    in the city the loop starts from), rises with a good night there and falls with a bad one, and fades when you stay
@@ -105,23 +113,23 @@ export function roadCap(S,P,show,city){return $L.capFor($L.demand(P,show,1)*$L.t
    the last night there. Rival companies have no markets. */
 export var MKT_WORDS=[[70,'Your territory','They are yours here.'],[50,'A strong market','They know you here.'],[30,'They know you','You are a name here, not a habit.'],[0,'They hardly know you','You are a stranger here.']];
 $L.MKT_WORDS = MKT_WORDS;
-export function mktBase(S,P,city){var R=$L.roadRoute(S,P);return $L.clamp(Math.round(50+$L.h01('mkt'+S.seed+P.id+city)*24-12+(R[0]===city?12:0)),10,90);}
-export function mktKnow(S,P,city){if(!city||P.id!==S.player)return 50;var m=S.mkt&&S.mkt[city];return m?m.k:$L.mktBase(S,P,city);}
+export function mktBase(S,P,city){var R=roadRoute(S,P);return clamp(Math.round(50+h01('mkt'+S.seed+P.id+city)*24-12+(R[0]===city?12:0)),10,90);}
+export function mktKnow(S,P,city){if(!city||P.id!==S.player)return 50;var m=S.mkt&&S.mkt[city];return m?m.k:mktBase(S,P,city);}
 /* the weather (NEXT.md 6.4): in the cold months a weekly television show in a city far from the equator draws a
    little less walk-up trade. A big event is planned for, and people come whatever the weather. */
-export function coldNight(S,show,city,week){if(show&&show.big)return false;var p=$L.placeOf(S,city);if(!p)return false;var m=$L.cal(week||S.week).month;
+export function coldNight(S,show,city,week){if(show&&show.big)return false;var p=placeOf(S,city);if(!p)return false;var m=cal(week||S.week).month;
   return p.lat>=38?(m===11||m===0||m===1):(p.lat<=-38?(m>=5&&m<=7):false);}
-export function weatherMult(S,show,city,week){return $L.coldNight(S,show,city,week)?0.94:1;}
-export function mktMult(S,P,city){return 0.85+0.3*$L.mktKnow(S,P,city)/100;}
+export function weatherMult(S,show,city,week){return coldNight(S,show,city,week)?0.94:1;}
+export function mktMult(S,P,city){return 0.85+0.3*mktKnow(S,P,city)/100;}
 export function mktWord(k){for(var i=0;i<$L.MKT_WORDS.length;i++)if(k>=$L.MKT_WORDS[i][0])return {w:$L.MKT_WORDS[i][1],d:$L.MKT_WORDS[i][2]};return {w:$L.MKT_WORDS[3][1],d:$L.MKT_WORDS[3][2]};}
 /* the market of the stop that is on the air now, for the night's own sums */
-export function roadMktNow(S,P){return $L.mktMult(S,P,$L.roadCity(S,P,S.rdn||0));}
+export function roadMktNow(S,P){return mktMult(S,P,roadCity(S,P,S.rdn||0));}
 /* away too long and a market cools, down to where it would be if you had never come */
-$L.WEEKX.push(function(S){
+WEEKX.push(function(S){
   if(S.cal||!S.mkt)return;var P=S.promos[S.player];
-  Object.keys(S.mkt).forEach(function(c){var m=S.mkt[c],floor=Math.min(m.k,$L.mktBase(S,P,c)-10);if(S.week-m.w>6&&m.k>floor&&!$L.streamOn(S))m.k=Math.max(floor,Math.round((m.k-0.5)*10)/10);});
+  Object.keys(S.mkt).forEach(function(c){var m=S.mkt[c],floor=Math.min(m.k,mktBase(S,P,c)-10);if(S.week-m.w>6&&m.k>floor&&!streamOn(S))m.k=Math.max(floor,Math.round((m.k-0.5)*10)/10);});
 });
-$L.E.mktWords=MKT_WORDS.map(function(x){return {w:x[1],d:x[2],from:x[0]};});
+E.mktWords=MKT_WORDS.map(function(x){return {w:x[1],d:x[2],from:x[0]};});
 /* ---------- tickets sold before the night (docs/plans/art-direction.md, 6.6) ----------
    A television show goes on sale four weeks out, a big event eight. Each week more of the house is sold, up to about
    nine in ten by the week of the show; the rest walk up on the night. What a stop will draw is worked out the way the
@@ -129,73 +137,73 @@ $L.E.mktWords=MKT_WORDS.map(function(x){return {w:x[1],d:x[2],from:x[0]};});
    week to talk the next show up, the hottest story, and once the card is booked, the card itself. S.tix[stop] is what
    had been sold when the last week ended, so a ticket once sold stays sold. Nothing here uses rnd(S). */
 export function saleSpan(show){return show.big?8:4;}
-export function saleFrac(wo,show){var span=$L.saleSpan(show);if(wo>span)return 0;if(wo<0)wo=0;return 0.88*Math.pow(1-wo/(span+1),0.7);}
+export function saleFrac(wo,show){var span=saleSpan(show);if(wo>span)return 0;if(wo<0)wo=0;return 0.88*Math.pow(1-wo/(span+1),0.7);}
 export function stopDraw(S,P,show,next,city){
-  var d0=$L.demand(P,show,1)*$L.tourBoost(S,P)*$L.mktMult(S,P,city)*$L.weatherMult(S,show,city),hype;
-  if(next&&S.card&&S.card.length)hype=$L.cardHype(S,P,show,S.card,true);
-  else{var heat=0;$L.activeFeuds(S).forEach(function(f){if(f.heat>heat&&f.a.concat(f.b).some(function(id){return S.w[id]&&S.w[id].promo===P.id;}))heat=f.heat;});
-    hype=$L.clamp(1+$L.ADV_H[P.adv]+(next&&S.hype?S.hype:0)+heat/1000+$L.homeHypeAt(S,P,city),0.8,1.4);}
-  return Math.min($L.roadCap(S,P,show,city),d0*hype*$L.TIX_D[P.tix]);
+  var d0=$L.demand(P,show,1)*tourBoost(S,P)*mktMult(S,P,city)*weatherMult(S,show,city),hype;
+  if(next&&S.card&&S.card.length)hype=cardHype(S,P,show,S.card,true);
+  else{var heat=0;activeFeuds(S).forEach(function(f){if(f.heat>heat&&f.a.concat(f.b).some(function(id){return S.w[id]&&S.w[id].promo===P.id;}))heat=f.heat;});
+    hype=clamp(1+ADV_H[P.adv]+(next&&S.hype?S.hype:0)+heat/1000+homeHypeAt(S,P,city),0.8,1.4);}
+  return Math.min(roadCap(S,P,show,city),d0*hype*TIX_D[P.tix]);
 }
 /* what a stop has sold, what it had sold when this week began, and whether it is on sale yet */
 export function stopSales(S,P,w,show,k,next){
-  var city=$L.roadCity(S,P,k),cap=$L.roadCap(S,P,show,city),was=Math.min(cap,(S.tix&&S.tix[k])||0),wo=w-S.week,live=Math.round($L.stopDraw(S,P,show,next,city)*$L.saleFrac(wo,show)),sold=Math.max(was,live);
-  return {sold:sold,wk:sold-was,cap:cap,on:wo<=$L.saleSpan(show),opens:Math.max(0,wo-$L.saleSpan(show))};
+  var city=roadCity(S,P,k),cap=roadCap(S,P,show,city),was=Math.min(cap,(S.tix&&S.tix[k])||0),wo=w-S.week,live=Math.round(stopDraw(S,P,show,next,city)*saleFrac(wo,show)),sold=Math.max(was,live);
+  return {sold:sold,wk:sold-was,cap:cap,on:wo<=saleSpan(show),opens:Math.max(0,wo-saleSpan(show))};
 }
 /* on the night: whatever was sold is paid for, whoever turns up */
 export function roadSoldNow(S,P){var k=S.rdn||0;return Math.round((S.tix&&S.tix[k])||0);}
 /* when a week ends, what each stop has sold is written down, so the next week's sales start from there */
-(function(){var ew=$L.E.endWeek;$L.E.endWeek=function(S){
+(function(){var ew=E.endWeek;E.endWeek=function(S){
   var P=S.promos[S.player],w0=S.week,keep={};
-  if(P&&!S.over)$L.roadAhead(S,P,8).forEach(function(a,i){var x=$L.stopSales(S,P,a.w,a.show,a.k,i===0);if(x.sold>0)keep[a.k]=x.sold;});
+  if(P&&!S.over)roadAhead(S,P,8).forEach(function(a,i){var x=stopSales(S,P,a.w,a.show,a.k,i===0);if(x.sold>0)keep[a.k]=x.sold;});
   var r=ew.apply(this,arguments);
   if(S.week!==w0){S.tix=keep;Object.keys(S.tix).forEach(function(k){if(+k<(S.rdn||0))delete S.tix[k];});}
   return r;
 };})();
 /* a new game starts with the shows ahead already selling: what they had sold by the end of last week */
-(function(){var ng=$L.E.newGame;$L.E.newGame=function(){
+(function(){var ng=E.newGame;E.newGame=function(){
   var S=ng.apply(this,arguments),P=S&&S.promos&&S.promos[S.player];
-  if(P&&S.queue){S.tix={};$L.roadAhead(S,P,8).forEach(function(a,i){var n=Math.round($L.stopDraw(S,P,a.show,i===0,a.city)*$L.saleFrac(a.w-S.week+1,a.show));if(n>0)S.tix[a.k]=n;});}
+  if(P&&S.queue){S.tix={};roadAhead(S,P,8).forEach(function(a,i){var n=Math.round(stopDraw(S,P,a.show,i===0,a.city)*saleFrac(a.w-S.week+1,a.show));if(n>0)S.tix[a.k]=n;});}
   return S;
 };})();
 /* the stops still to come: what is left of this week, then the weeks after it */
 export function roadAhead(S,P,n){
   var out=[],k=S.rdn||0,w=S.week,i;
-  for(i=S.qi||0;S.queue&&i<S.queue.length;i++){out.push({w:w,show:S.queue[i],city:$L.roadCity(S,P,k),k:k});k++;}
-  while(out.length<n&&w<S.week+12){w++;$L.weekShows(S,P,w).forEach(function(sh){out.push({w:w,show:sh,city:$L.roadCity(S,P,k),k:k});k++;});}
+  for(i=S.qi||0;S.queue&&i<S.queue.length;i++){out.push({w:w,show:S.queue[i],city:roadCity(S,P,k),k:k});k++;}
+  while(out.length<n&&w<S.week+12){w++;weekShows(S,P,w).forEach(function(sh){out.push({w:w,show:sh,city:roadCity(S,P,k),k:k});k++;});}
   return out.slice(0,n);
 }
 /* a night in a city is remembered: when, how it went and how full it was */
-$L.SHOWX.push(function(S,P,show,rep){
+SHOWX.push(function(S,P,show,rep){
   if(S.cal||P.id!==S.player||!rep.venue)return;
-  var c=$L.cityOfVenue(rep.venue);rep.city=c;
+  var c=cityOfVenue(rep.venue);rep.city=c;
   (S.rdv||(S.rdv={}))[c]={w:S.week,cs:Math.round($L.repCS(rep)),att:rep.att,cap:rep.cap,so:rep.sellout?1:0};
   // a good night makes a market, a bad one costs it, and a sell-out is talked about
-  var m=(S.mkt||(S.mkt={}))[c]||{k:$L.mktBase(S,P,c)},was=m.k;m.k=$L.clamp(Math.round((m.k+$L.clamp(($L.repCS(rep)-65)/4,-4,8)+(rep.sellout?2:0))*10)/10,0,100);m.w=S.week;S.mkt[c]=m;
+  var m=(S.mkt||(S.mkt={}))[c]||{k:mktBase(S,P,c)},was=m.k;m.k=clamp(Math.round((m.k+clamp(($L.repCS(rep)-65)/4,-4,8)+(rep.sellout?2:0))*10)/10,0,100);m.w=S.week;S.mkt[c]=m;
   rep.mkt={was:Math.round(was),now:Math.round(m.k)};
 });
-$L.E.MAPS=$L.MAPS;$L.E.MAP_W=$L.MAP_W;$L.E.MAP_H=$L.MAP_H;$L.E.MAP_ABC=$L.MAP_ABC;
-$L.E.placeOf=function(S,city){return $L.placeOf(S,city);};
+E.MAPS=MAPS;E.MAP_W=MAP_W;E.MAP_H=MAP_H;E.MAP_ABC=MAP_ABC;
+E.placeOf=function(S,city){return placeOf(S,city);};
 /** The map a city is shown on: the smallest map that holds it and as many of the stops around it as any other. */
 export var MAP_FIRST=['brit','jap','mex','med','usa','sam','eur'];
 $L.MAP_FIRST = MAP_FIRST;   // closest in first: of two maps that show as much, the closer one wins
 export function roadMap(S,cities){
-  var here=$L.placeOf(S,cities[0]),best=null,bs=-1;
+  var here=placeOf(S,cities[0]),best=null,bs=-1;
   if(!here)return null;
   $L.MAP_FIRST.forEach(function(id){
-    var M=$L.mapById(id);if(!M||!$L.mapHas(M,here)||$L.mapArea(M,here)<0)return;
-    var s=0;cities.forEach(function(c){var p=$L.placeOf(S,c);if(p&&$L.mapHas(M,p)&&$L.mapArea(M,p)>=0)s++;});
+    var M=mapById(id);if(!M||!mapHas(M,here)||mapArea(M,here)<0)return;
+    var s=0;cities.forEach(function(c){var p=placeOf(S,c);if(p&&mapHas(M,p)&&mapArea(M,p)>=0)s++;});
     if(s>bs){bs=s;best=M;}
   });
-  var Wd=$L.mapById('world');                                      // the world map only when nothing closer will do
-  return best||(Wd&&$L.mapHas(Wd,here)&&$L.mapArea(Wd,here)>=0?Wd:null);
+  var Wd=mapById('world');                                      // the world map only when nothing closer will do
+  return best||(Wd&&mapHas(Wd,here)&&mapArea(Wd,here)>=0?Wd:null);
 }
 /* The area this week's city is in, as a piece of cut paper (src/91-shapes.js), with a pin for every stop on the road
    that falls inside it: the city this week always, the stops before and after when they are in the same state. */
 export function roadShape(S,M,ai,stops){
   if(!M||ai<0||typeof $L.SHAPES==='undefined')return null;
   var n=M.a[ai],Z=$L.SHAPES[M.id+':'+n];if(!Z)return null;
-  var pins=[];stops.forEach(function(s){var p=$L.placeOf(S,s.city);if(!p)return;if(s.k!=='now'&&$L.mapArea(M,p)!==ai)return;
+  var pins=[];stops.forEach(function(s){var p=placeOf(S,s.city);if(!p)return;if(s.k!=='now'&&mapArea(M,p)!==ai)return;
     var x=p.lon-Z.f[0],y=(Z.f[2]-p.lat)/Z.f[3];x=x/Z.f[1];if(x<-1||y<-1||x>Z.w+1||y>Z.h+1)return;
     if(pins.some(function(q){return q.city===s.city;}))return;pins.push({city:s.city,k:s.k,x:Math.round(x*10)/10,y:Math.round(y*10)/10});});
   return {n:n,w:Z.w,h:Z.h,p:Z.p,pins:pins};
@@ -216,50 +224,50 @@ export function roadNearest(S,here,city){
 /** Everything the road window on the desk shows. It only reads the game.
     `map` is the board to draw (see E.MAPS), `lit` the areas that light, `stops` the road so far and the road ahead
     with each stop's dot, `now` this stop in full. */
-$L.E.road=function(S){
-  var P=S.promos[S.player],ahead=$L.roadAhead(S,P,6),past=[],i;
+E.road=function(S){
+  var P=S.promos[S.player],ahead=roadAhead(S,P,6),past=[],i;
   if(!ahead.length)return null;
-  for(i=0;i<S.reports.length&&past.length<3;i++){var r=S.reports[i];if(r&&r.venue)past.unshift({k:'past',city:r.city||$L.cityOfVenue(r.venue),show:r.name,w:r.week,grade:$L.gradeG($L.repCS(r)),att:r.att,cap:r.cap,so:!!r.sellout});}
-  var stops=past.concat(ahead.map(function(a,j){var x=$L.stopSales(S,P,a.w,a.show,a.k,j===0);return {k:j===0?'now':(j===1?'next':'far'),city:a.city,show:a.show.name,big:!!a.show.big,w:a.w,sold:x.sold,cap:x.cap,on:x.on,opens:x.opens};}));
+  for(i=0;i<S.reports.length&&past.length<3;i++){var r=S.reports[i];if(r&&r.venue)past.unshift({k:'past',city:r.city||cityOfVenue(r.venue),show:r.name,w:r.week,grade:$L.gradeG($L.repCS(r)),att:r.att,cap:r.cap,so:!!r.sellout});}
+  var stops=past.concat(ahead.map(function(a,j){var x=stopSales(S,P,a.w,a.show,a.k,j===0);return {k:j===0?'now':(j===1?'next':'far'),city:a.city,show:a.show.name,big:!!a.show.big,w:a.w,sold:x.sold,cap:x.cap,on:x.on,opens:x.opens};}));
   var A=ahead[0],city=A.city,near=[city];
   if(ahead[1])near.push(ahead[1].city);past.slice().reverse().forEach(function(p){near.push(p.city);});if(ahead[2])near.push(ahead[2].city);
-  var M=$L.roadMap(S,near),here=$L.placeOf(S,city),lit={now:-1,next:-1,mine:[]},off=[];
+  var M=roadMap(S,near),here=placeOf(S,city),lit={now:-1,next:-1,mine:[]},off=[];
   if(M){
-    lit.now=$L.mapArea(M,here);
-    stops.forEach(function(s){var p=$L.placeOf(S,s.city);if(p&&$L.mapHas(M,p)&&$L.mapArea(M,p)>=0){var q=$L.mapXY(M,p);s.x=Math.round(q[0]*100)/100;s.y=Math.round(q[1]*100)/100;if(s.k==='next')lit.next=$L.mapArea(M,p);}else if(s.k!=='past'&&off.indexOf(s.city)<0)off.push(s.city);});
+    lit.now=mapArea(M,here);
+    stops.forEach(function(s){var p=placeOf(S,s.city);if(p&&mapHas(M,p)&&mapArea(M,p)>=0){var q=mapXY(M,p);s.x=Math.round(q[0]*100)/100;s.y=Math.round(q[1]*100)/100;if(s.k==='next')lit.next=mapArea(M,p);}else if(s.k!=='past'&&off.indexOf(s.city)<0)off.push(s.city);});
     if(lit.next===lit.now)lit.next=-1;
-    (P.cities||[]).forEach(function(c){var p=$L.placeOf(S,c);if(p&&$L.mapHas(M,p)){var a=$L.mapArea(M,p);if(a>=0&&lit.mine.indexOf(a)<0)lit.mine.push(a);}});
+    (P.cities||[]).forEach(function(c){var p=placeOf(S,c);if(p&&mapHas(M,p)){var a=mapArea(M,p);if(a>=0&&lit.mine.indexOf(a)<0)lit.mine.push(a);}});
   }
-  var cap=$L.roadCap(S,P,A.show,city),mk=$L.mktKnow(S,P,city),sale=$L.stopSales(S,P,A.w,A.show,A.k,true),last=S.rdv&&S.rdv[city],bar=S.bar&&S.bar[city],reg=P.tour?$L.REGIONS[P.tour.reg]:$L.REGIONS[$L.homeReg(P)];
-  var home=$L.rosterOf(S,P.id).filter(function(w){return !w.nw&&$L.homeNear(S,w,city);}).sort(function(a,b){return (a.town===city?0:1)-(b.town===city?0:1)||b.ovr-a.ovr;}).slice(0,3).map(function(w){return {id:w.id,name:w.name,hurt:w.inj>0,town:w.town,near:w.town!==city,km:$L.homeKm(S,w,city)};});
-  var sh=$L.roadShape(S,M,lit.now,stops)||$L.roadNearest(S,here,city);
+  var cap=roadCap(S,P,A.show,city),mk=mktKnow(S,P,city),sale=stopSales(S,P,A.w,A.show,A.k,true),last=S.rdv&&S.rdv[city],bar=S.bar&&S.bar[city],reg=P.tour?REGIONS[P.tour.reg]:REGIONS[homeReg(P)];
+  var home=rosterOf(S,P.id).filter(function(w){return !w.nw&&homeNear(S,w,city);}).sort(function(a,b){return (a.town===city?0:1)-(b.town===city?0:1)||b.ovr-a.ovr;}).slice(0,3).map(function(w){return {id:w.id,name:w.name,hurt:w.inj>0,town:w.town,near:w.town!==city,km:homeKm(S,w,city)};});
+  var sh=roadShape(S,M,lit.now,stops)||roadNearest(S,here,city);
   return {map:M?M.id:null,mapName:M?M.n:null,lit:lit,stops:stops,off:off,shape:sh,
-    now:{city:city,land:M&&lit.now>=0?M.a[lit.now]:null,show:A.show.name,big:!!A.show.big,kind:A.show.big?(A.show.flag?'Flagship':$L.evTy(A.show).n):'',w:A.w,later:A.w>S.week,left:Math.max(0,(S.queue?S.queue.length:0)-(S.qi||0)),
-      venue:$L.venueName(city,cap),cap:cap,seat:Math.round($L.ticket(P,A.show)*$L.TIX_P[P.tix]),tix:$L.TIXN[P.tix],
-      sold:sale.sold,wk:sale.wk,on:sale.on,opens:sale.opens,gate:Math.round(sale.sold*$L.ticket(P,A.show)*$L.TIX_P[P.tix]),
+    now:{city:city,land:M&&lit.now>=0?M.a[lit.now]:null,show:A.show.name,big:!!A.show.big,kind:A.show.big?(A.show.flag?'Flagship':evTy(A.show).n):'',w:A.w,later:A.w>S.week,left:Math.max(0,(S.queue?S.queue.length:0)-(S.qi||0)),
+      venue:venueName(city,cap),cap:cap,seat:Math.round(ticket(P,A.show)*TIX_P[P.tix]),tix:TIXN[P.tix],
+      sold:sale.sold,wk:sale.wk,on:sale.on,opens:sale.opens,gate:Math.round(sale.sold*ticket(P,A.show)*TIX_P[P.tix]),
       last:last?{ago:S.week-last.w,grade:$L.gradeG(last.cs),att:last.att,cap:last.cap,so:!!last.so}:null,
       rival:bar&&S.week-bar.w<=4?{by:bar.by,ago:S.week-bar.w}:null,
-      mkt:$L.mktWord(mk),mktK:Math.round(mk),taste:$L.TASTEN[reg.taste],tour:P.tour?reg.n:null,home:home}};
+      mkt:mktWord(mk),mktK:Math.round(mk),taste:TASTEN[reg.taste],tour:P.tour?reg.n:null,home:home}};
 };
 /** The year ahead on the road: every stop for the next `n` shows, for the schedule pop-up. */
-$L.E.roadAhead=function(S,n){var P=S.promos[S.player];return $L.roadAhead(S,P,n||16).map(function(a,i){var c=$L.cal(a.w);var x=$L.stopSales(S,P,a.w,a.show,a.k,i===0);return {w:a.w,when:a.w===S.week?'This week':(a.w===S.week+1?'Next week':c.label),show:a.show.name,big:!!a.show.big,kind:a.show.big?(a.show.flag?'Flagship':$L.evTy(a.show).n):'',city:a.city,cold:$L.coldNight(S,a.show,a.city,a.w),cap:x.cap,mkt:$L.mktWord($L.mktKnow(S,P,a.city)).w,sold:x.sold,on:x.on,opens:x.opens};});};
-$L.E.roadRoute=function(S,pid){return $L.roadRoute(S,S.promos[pid==null?S.player:pid]);};
-$L.E.mapArea=function(S,mapId,city){var M=$L.mapById(mapId),p=$L.placeOf(S,city);return M&&p&&$L.mapHas(M,p)?$L.mapArea(M,p):-1;};
-$L.E.mapXY=function(S,mapId,city){var M=$L.mapById(mapId),p=$L.placeOf(S,city);return M&&p&&$L.mapHas(M,p)?$L.mapXY(M,p):null;};
+E.roadAhead=function(S,n){var P=S.promos[S.player];return roadAhead(S,P,n||16).map(function(a,i){var c=cal(a.w);var x=stopSales(S,P,a.w,a.show,a.k,i===0);return {w:a.w,when:a.w===S.week?'This week':(a.w===S.week+1?'Next week':c.label),show:a.show.name,big:!!a.show.big,kind:a.show.big?(a.show.flag?'Flagship':evTy(a.show).n):'',city:a.city,cold:coldNight(S,a.show,a.city,a.w),cap:x.cap,mkt:mktWord(mktKnow(S,P,a.city)).w,sold:x.sold,on:x.on,opens:x.opens};});};
+E.roadRoute=function(S,pid){return roadRoute(S,S.promos[pid==null?S.player:pid]);};
+E.mapArea=function(S,mapId,city){var M=mapById(mapId),p=placeOf(S,city);return M&&p&&mapHas(M,p)?mapArea(M,p):-1;};
+E.mapXY=function(S,mapId,city){var M=mapById(mapId),p=placeOf(S,city);return M&&p&&mapHas(M,p)?mapXY(M,p):null;};
 /** Every city on your road (NEXT.md 6.5): the market in words, which way it moved, and the last night there. Only reads. */
-$L.E.cities=function(S){
-  var P=S.promos[S.player];return $L.roadRoute(S,P).map(function(c){var city=c.city||c.n||c,k=$L.mktKnow(S,P,city),v=S.rdv&&S.rdv[city],m=S.mkt&&S.mkt[city];
-    return {city:city,k:Math.round(k),word:$L.mktWord(k).w,last:v?v.w:null,ago:v?S.week-v.w:null,grade:v&&v.cs!=null?$L.gradeG(v.cs):null,att:v?v.att:null,cap:v?v.cap:null,so:!!(v&&v.so)};});
+E.cities=function(S){
+  var P=S.promos[S.player];return roadRoute(S,P).map(function(c){var city=c.city||c.n||c,k=mktKnow(S,P,city),v=S.rdv&&S.rdv[city],m=S.mkt&&S.mkt[city];
+    return {city:city,k:Math.round(k),word:mktWord(k).w,last:v?v.w:null,ago:v?S.week-v.w:null,grade:v&&v.cs!=null?$L.gradeG(v.cs):null,att:v?v.att:null,cap:v?v.cap:null,so:!!(v&&v.so)};});
 };
 /* a sell-out streak (NEXT.md 6.4): every show of yours that sells out in a row adds to it. From the third, word gets
    round that tickets are hard to get, and the next show draws a little more. A show that does not sell out ends it. */
-$L.SHOWX.push(function(S,P,show,rep){
+SHOWX.push(function(S,P,show,rep){
   if(S.cal||P.id!==S.player)return;
   if(rep.sellout){S.soRun=(S.soRun||0)+1;rep.soRun=S.soRun;if(S.soRun>=3)S.hype=(S.hype||0)+0.02;if(S.soRun===5||S.soRun===10||S.soRun===20)$L.news(S,'world',P.name+' has sold out '+S.soRun+' shows in a row.');}
   else{if((S.soRun||0)>=3)rep.soEnd=S.soRun;S.soRun=0;}
 });
 /** Every city the road can place, for the World Editor's city list. */
-$L.E.knownCities=function(){return Object.keys($L.CITY_AT).sort();};
+E.knownCities=function(){return Object.keys($L.CITY_AT).sort();};
 
 // hand this module's names back to the bridge once more, in case top-level code reassigned one
 $L.CITY_AT = CITY_AT;

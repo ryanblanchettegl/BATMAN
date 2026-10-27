@@ -1,6 +1,11 @@
 // @ts-nocheck
 /* Moved from src/97-clauses.js (ADR-0001). Names from the rest of the engine come through the bridge, $L. Types come in step 3. */
 import { L as $L } from './_gen/legacy.js';
+import { E, cal, clamp, flat, rosterOf } from './00-core';
+import { SHOWX, WEEKX } from './10-match';
+import { money } from './40-week';
+import { youRemember } from './66-relations';
+import { indieOf } from './88-indies';
 $L.clausesWanted = clausesWanted; $L.datesFull = datesFull;
 /* wraps: 90-api.js (it must sort after them; test-buildorder.js checks) */
 /* ===== Contract clauses (docs/plans/contract-clauses.md, NEXT.md 11.1) =====
@@ -26,55 +31,55 @@ $L.CLAUSE = CLAUSE;
 /** The clauses this wrestler wants, best first, at most three. */
 /* a corporate company does not let its people work outside dates (NEXT.md 10.2) */
 export function clausesWanted(S,w){var P=S.promos[S.player],corp=P&&P.model==='corporate';return Object.keys($L.CLAUSE).filter(function(k){return !(corp&&k==='outside')&&$L.CLAUSE[k].wants(S,w);}).slice(0,3);}
-$L.E.clauses=function(S,id){var w=S.w[id];if(!w)return [];var ask=$L.E.ask(S,w);return $L.clausesWanted(S,w).map(function(k){var c=$L.CLAUSE[k];return {k:k,n:c.n,d:c.d,save:(function(v){return v<1000?Math.max(10,Math.round(v/10)*10):Math.round(v/50)*50;})(ask*c.save)};});};
+E.clauses=function(S,id){var w=S.w[id];if(!w)return [];var ask=E.ask(S,w);return clausesWanted(S,w).map(function(k){var c=$L.CLAUSE[k];return {k:k,n:c.n,d:c.d,save:(function(v){return v<1000?Math.max(10,Math.round(v/10)*10):Math.round(v/50)*50;})(ask*c.save)};});};
 /* signing with clauses: the asking price comes down by what each clause is worth to them */
 (function(){
-  var sign0=$L.E.sign,rel0=$L.E.release;
-  $L.E.sign=function(S,id,wage,weeks,cl){
-    var w=S.w[id];cl=(cl||[]).filter(function(k){return $L.CLAUSE[k]&&w&&$L.clausesWanted(S,w).indexOf(k)>=0;});
+  var sign0=E.sign,rel0=E.release;
+  E.sign=function(S,id,wage,weeks,cl){
+    var w=S.w[id];cl=(cl||[]).filter(function(k){return $L.CLAUSE[k]&&w&&clausesWanted(S,w).indexOf(k)>=0;});
     if(!cl.length)return sign0(S,id,wage,weeks);
-    var save=cl.reduce(function(a,k){return a+$L.CLAUSE[k].save;},0),ask0=$L.E.ask;
-    $L.E.ask=function(S2,w2){var a=ask0(S2,w2);return w2===w?Math.round(a*(1-save)/50)*50:a;};
-    var r;try{r=sign0(S,id,wage,weeks);}finally{$L.E.ask=ask0;}
+    var save=cl.reduce(function(a,k){return a+$L.CLAUSE[k].save;},0),ask0=E.ask;
+    E.ask=function(S2,w2){var a=ask0(S2,w2);return w2===w?Math.round(a*(1-save)/50)*50:a;};
+    var r;try{r=sign0(S,id,wage,weeks);}finally{E.ask=ask0;}
     if(r&&r.ok){var P=S.promos[S.player];w.cl={};cl.forEach(function(k){w.cl[k]=S.week;});
       if(w.cl.title){var t=P.titles.filter(function(x){return !x.tag&&x.g===w.g&&x.holders.length&&x.holders[0]!==w.id;}).sort(function(a,b){return b.lvl-a.lvl;})[0];
-        if(t)S.quests.push({id:S.nid++,type:'shot',w:w.id,title:t.id,due:S.week+12,text:'Promise: give '+w.name+' a match for the '+t.name+' by '+$L.cal(S.week+12).label+' (it is in their contract)'});}
-      $L.youRemember(S,w,'clauses','You signed me with '+cl.map(function(k){return $L.CLAUSE[k].n.toLowerCase();}).join(' and ')+' in the contract.',3);
+        if(t)S.quests.push({id:S.nid++,type:'shot',w:w.id,title:t.id,due:S.week+12,text:'Promise: give '+w.name+' a match for the '+t.name+' by '+cal(S.week+12).label+' (it is in their contract)'});}
+      youRemember(S,w,'clauses','You signed me with '+cl.map(function(k){return $L.CLAUSE[k].n.toLowerCase();}).join(' and ')+' in the contract.',3);
       r.msg+=' The contract has '+cl.map(function(k){return $L.CLAUSE[k].n.toLowerCase();}).join(' and ')+'.';}
     return r;
   };
-  $L.E.release=function(S,id){
+  E.release=function(S,id){
     var w=S.w[id],P=S.promos[S.player];if(!w||w.promo!==P.id||!w.cl||!w.cl.nocut)return rel0(S,id);
-    var pay=w.wage*24;P.cash-=pay;$L.rosterOf(S,P.id).forEach(function(x){if(x!==w)x.morale=$L.clamp(x.morale-2,0,100);});S.trust=$L.clamp((S.trust==null?60:S.trust)-5,0,100);
+    var pay=w.wage*24;P.cash-=pay;rosterOf(S,P.id).forEach(function(x){if(x!==w)x.morale=clamp(x.morale-2,0,100);});S.trust=clamp((S.trust==null?60:S.trust)-5,0,100);
     $L.news(S,'contract',P.name+' broke a no-cut promise to '+w.name+'.');delete w.cl;var msg=rel0(S,id);
-    return (msg||'')+' It was a no-cut deal: another '+$L.money(pay)+' paid, and the locker room heard about it.';
+    return (msg||'')+' It was a no-cut deal: another '+money(pay)+' paid, and the locker room heard about it.';
   };
 })();
 /* paid travel: the body recovers faster, and the company pays a tenth of the wage again each week */
-$L.WEEKX.push(function(S){if(S.cal)return;var P=S.promos[S.player];$L.rosterOf(S,P.id).forEach(function(w){if(!w.cl||!w.cl.travel)return;w.cond=Math.min(100,w.cond+2);P.cash-=Math.round(w.wage*0.1);});});
+WEEKX.push(function(S){if(S.cal)return;var P=S.promos[S.player];rosterOf(S,P.id).forEach(function(w){if(!w.cl||!w.cl.travel)return;w.cond=Math.min(100,w.cond+2);P.cash-=Math.round(w.wage*0.1);});});
 /* a merchandise share: somebody with a line out and a share of it is happier for it each week */
-$L.WEEKX.push(function(S){if(S.cal)return;var P=S.promos[S.player];(P.lines||[]).forEach(function(L){var w=S.w[L.w];if(w&&w.cl&&w.cl.merch)w.morale=$L.clamp(w.morale+1,0,100);});});
+WEEKX.push(function(S){if(S.cal)return;var P=S.promos[S.player];(P.lines||[]).forEach(function(L){var w=S.w[L.w];if(w&&w.cl&&w.cl.merch)w.morale=clamp(w.morale+1,0,100);});});
 /* outside dates: a weekly indie date on an off night (src/88-indies.js names the place) */
-$L.WEEKX.push(function(S){if(S.cal)return;var P=S.promos[S.player];$L.rosterOf(S,P.id).forEach(function(w){if(!w.cl||!w.cl.outside||w.inj>0)return;
-  w.cond=Math.max(0,w.cond-2);w.morale=$L.clamp(w.morale+1,0,100);if(w.age<=27&&w.pot!=null&&w.ovr<w.pot-5)w.ovr=Math.min(w.pot,w.ovr+0.08);
-  var ind=$L.indieOf(S,w);w.ind={n:ind.n,w:S.week,k:(w.ind&&w.ind.n===ind.n?(w.ind.k||0):0)+1};});});
+WEEKX.push(function(S){if(S.cal)return;var P=S.promos[S.player];rosterOf(S,P.id).forEach(function(w){if(!w.cl||!w.cl.outside||w.inj>0)return;
+  w.cond=Math.max(0,w.cond-2);w.morale=clamp(w.morale+1,0,100);if(w.age<=27&&w.pot!=null&&w.ovr<w.pot-5)w.ovr=Math.min(w.pot,w.ovr+0.08);
+  var ind=indieOf(S,w);w.ind={n:ind.n,w:S.week,k:(w.ind&&w.ind.n===ind.n?(w.ind.k||0):0)+1};});});
 /* a clause lasts as long as the deal it was signed with */
-$L.WEEKX.push(function(S){S.w.forEach(function(w){if(w.cl&&(w.promo!==S.player||w.rt))delete w.cl;});});
+WEEKX.push(function(S){S.w.forEach(function(w){if(w.cl&&(w.promo!==S.player||w.rt))delete w.cl;});});
 /* renewing with clauses: the same saving on the new price, and the clauses start again with the new deal */
 (function(){
-  var ren0=$L.E.renew,ra0=$L.E.renewAsk,pick=function(S,w,cl){return (cl||[]).filter(function(k){return $L.CLAUSE[k]&&$L.clausesWanted(S,w).indexOf(k)>=0;});};
-  $L.E.renewAsk=function(S,id,weeks,cl){var a=ra0(S,id,weeks),w=S.w[id];if(!w)return a;var sv=pick(S,w,cl).reduce(function(x,k){return x+$L.CLAUSE[k].save;},0);return Math.round(a*(1-sv)/50)*50;};
-  $L.E.renew=function(S,id,weeks,cl){var w=S.w[id];if(!w)return ren0(S,id,weeks);cl=pick(S,w,cl);var ask=$L.E.renewAsk(S,id,weeks,cl),r=ren0(S,id,weeks);if(!cl.length||w.promo!==S.player)return r;
+  var ren0=E.renew,ra0=E.renewAsk,pick=function(S,w,cl){return (cl||[]).filter(function(k){return $L.CLAUSE[k]&&clausesWanted(S,w).indexOf(k)>=0;});};
+  E.renewAsk=function(S,id,weeks,cl){var a=ra0(S,id,weeks),w=S.w[id];if(!w)return a;var sv=pick(S,w,cl).reduce(function(x,k){return x+$L.CLAUSE[k].save;},0);return Math.round(a*(1-sv)/50)*50;};
+  E.renew=function(S,id,weeks,cl){var w=S.w[id];if(!w)return ren0(S,id,weeks);cl=pick(S,w,cl);var ask=E.renewAsk(S,id,weeks,cl),r=ren0(S,id,weeks);if(!cl.length||w.promo!==S.player)return r;
     w.wage=ask;w.cl={};cl.forEach(function(k){w.cl[k]=S.week;});
     if(w.cl.title){var P=S.promos[S.player],t=P.titles.filter(function(x){return !x.tag&&x.g===w.g&&x.holders.length&&x.holders[0]!==w.id;}).sort(function(a,b){return b.lvl-a.lvl;})[0];
-      if(t)S.quests.push({id:S.nid++,type:'shot',w:w.id,title:t.id,due:S.week+12,text:'Promise: give '+w.name+' a match for the '+t.name+' by '+$L.cal(S.week+12).label+' (it is in their contract)'});}
-    return w.name+' re-signs for '+$L.money(w.wage)+' a week, with '+cl.map(function(k){return $L.CLAUSE[k].n.toLowerCase();}).join(' and ')+' in the contract.';};
+      if(t)S.quests.push({id:S.nid++,type:'shot',w:w.id,title:t.id,due:S.week+12,text:'Promise: give '+w.name+' a match for the '+t.name+' by '+cal(S.week+12).label+' (it is in their contract)'});}
+    return w.name+' re-signs for '+money(w.wage)+' a week, with '+cl.map(function(k){return $L.CLAUSE[k].n.toLowerCase();}).join(' and ')+' in the contract.';};
 })();
 /* two dates a week: count each show they appear on, refuse a third, and keep the suggested card from booking one */
 export function datesFull(S,w){return !!(w&&w.cl&&w.cl.dates&&w.dwk===S.week&&(w.dn||0)>=2);}
-$L.SHOWX.push(function(S,P,show,rep,card){if(S.cal||P.id!==S.player||!card)return;var seen={};card.forEach(function(m){$L.flat(m.sides||[]).forEach(function(id){if(id==null||seen[id])return;seen[id]=1;var w=S.w[id];if(!w||!w.cl||!w.cl.dates)return;if(w.dwk!==S.week){w.dwk=S.week;w.dn=0;}w.dn++;});});});
-(function(){var v0=$L.E.validate;$L.E.validate=function(S,card){var v=v0(S,card);(card||[]).forEach(function(m){$L.flat(m.sides||[]).forEach(function(id){var w=S.w[id];if($L.datesFull(S,w)&&v.errors.indexOf(w.name+'\u2019s contract says two dates a week, and they have worked two.')<0)v.errors.push(w.name+'\u2019s contract says two dates a week, and they have worked two.');});});return v;};})();
-$L.E.CLAUSE=CLAUSE;
+SHOWX.push(function(S,P,show,rep,card){if(S.cal||P.id!==S.player||!card)return;var seen={};card.forEach(function(m){flat(m.sides||[]).forEach(function(id){if(id==null||seen[id])return;seen[id]=1;var w=S.w[id];if(!w||!w.cl||!w.cl.dates)return;if(w.dwk!==S.week){w.dwk=S.week;w.dn=0;}w.dn++;});});});
+(function(){var v0=E.validate;E.validate=function(S,card){var v=v0(S,card);(card||[]).forEach(function(m){flat(m.sides||[]).forEach(function(id){var w=S.w[id];if(datesFull(S,w)&&v.errors.indexOf(w.name+'\u2019s contract says two dates a week, and they have worked two.')<0)v.errors.push(w.name+'\u2019s contract says two dates a week, and they have worked two.');});});return v;};})();
+E.CLAUSE=CLAUSE;
 
 // hand this module's names back to the bridge once more, in case top-level code reassigned one
 $L.CLAUSE = CLAUSE;

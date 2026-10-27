@@ -1,6 +1,10 @@
 // @ts-nocheck
 /* Moved from src/99-progress.js (ADR-0001). Names from the rest of the engine come through the bridge, $L. Types come in step 3. */
 import { L as $L } from './_gen/legacy.js';
+import { E, cal, clamp, h01, rosterOf, starQ, workRate } from './00-core';
+import { NEWX, SHOWX, TASKX, WEEKX } from './10-match';
+import { youRemember } from './66-relations';
+import { overallOf, overallRaw } from './99-overall';
 $L.progNeed = progNeed; $L.progAgeX = progAgeX; $L.progInit = progInit; $L.progAll = progAll; $L.progCap = progCap; $L.progCost = progCost; $L.progGain = progGain; $L.progUse = progUse; $L.progSpend = progSpend; $L.progAuto = progAuto; $L.progShow = progShow; $L.rgWhy = rgWhy; $L.rgRow = rgRow; $L.progLose = progLose; $L.regWeek = regWeek;
 /* wraps: 75-people.js, 90-api.js, 34-night.js (it must sort after them; test-buildorder.js checks) */
 /* Progression (Ryan, 20 October: "each wrestler levels up and each level they are able to add 1 or 2 attribute points,
@@ -43,18 +47,18 @@ export function progNeed(lv){return 300+60*lv;}   // a young prospect levels eve
 export function progAgeX(w){var a=w.age||28;return a<=23?1.35:a<=27?1.15:a<=31?1:a<=35?0.85:0.7;}
 export function progInit(S,w){
   if(!w||w.lv!=null)return;
-  var ov=$L.overallRaw(w),a=w.age||28,sq=w.sq==null?50:w.sq,pot=w.pot||$L.workRate(w);
-  w.lv=$L.clamp(Math.round(1+Math.max(0,a-19)*0.9+(ov-55)/5),1,45);
-  w.pxp=Math.floor($L.h01(w.name+'pxp')*$L.progNeed(w.lv)*0.8);w.ap=0;w.gx={};
+  var ov=overallRaw(w),a=w.age||28,sq=w.sq==null?50:w.sq,pot=w.pot||workRate(w);
+  w.lv=clamp(Math.round(1+Math.max(0,a-19)*0.9+(ov-55)/5),1,45);
+  w.pxp=Math.floor(h01(w.name+'pxp')*progNeed(w.lv)*0.8);w.ap=0;w.gx={};
   var sc=(pot-60)*0.6+(sq-50)*0.4-Math.max(0,a-27)*3;
   w.dev=sc>=28&&a<=26?3:sc>=20?2:sc>=9?1:0;
 }
-export function progAll(S){S.w.forEach(function(w){$L.progInit(S,w);});}
+export function progAll(S){S.w.forEach(function(w){progInit(S,w);});}
 /** How far an attribute can go for this wrestler now. */
 export function progCap(w,k){
   var A=$L.PROG_BY[k];if(!A)return 99;var cur=w[k]||1,pri=($L.STYLE_PRI[w.style]||[]).indexOf(k)>=0?4:0;
   if(A.g==='mic')return 99;
-  var cap=$L.clamp((w.pot||$L.workRate(w))+6+pri,cur,99);
+  var cap=clamp((w.pot||workRate(w))+6+pri,cur,99);
   if(A.g==='body'&&w.pk&&w.age>w.pk[1])cap=cur;   // past the peak the body does not come back
   if(A.g==='ring'&&w.cl&&w.age>=w.cl)cap=cur;     // in steep decline nothing new is learned in the ring
   return cap;
@@ -63,21 +67,21 @@ export function progCap(w,k){
 export function progCost(v){return v<80?1:v<90?2:3;}
 /* add experience; levels go up; points are earned (and spent at once for anybody but the player) */
 export function progGain(S,w,n,out){
-  $L.progInit(S,w);n=Math.round(n*($L.DEV[w.dev]||$L.DEV[0]).x*$L.progAgeX(w));if(n<=0)return;
+  progInit(S,w);n=Math.round(n*($L.DEV[w.dev]||$L.DEV[0]).x*progAgeX(w));if(n<=0)return;
   w.pxp+=n;w.yxp=(w.yxp||0)+n;var lv0=w.lv,pts=0;
-  while(w.pxp>=$L.progNeed(w.lv)&&w.lv<99){w.pxp-=$L.progNeed(w.lv);w.lv++;var p=2+(w.lv%5===0?1:0)+(w.dev===2&&w.lv%4===0?1:0)+(w.dev===3&&w.lv%2===0?1:0);pts+=p;}
-  if(pts){w.ap=(w.ap||0)+pts;if(w.promo!==S.player)$L.progAuto(S,w);else if(w.lv>lv0)$L.youRemember(S,w,'levelup','They reached level '+w.lv+' on your shows',1);}
+  while(w.pxp>=progNeed(w.lv)&&w.lv<99){w.pxp-=progNeed(w.lv);w.lv++;var p=2+(w.lv%5===0?1:0)+(w.dev===2&&w.lv%4===0?1:0)+(w.dev===3&&w.lv%2===0?1:0);pts+=p;}
+  if(pts){w.ap=(w.ap||0)+pts;if(w.promo!==S.player)progAuto(S,w);else if(w.lv>lv0)youRemember(S,w,'levelup','They reached level '+w.lv+' on your shows',1);}
   if(out){out.xp+=n;if(w.lv>lv0){out.lv0=out.lv0||lv0;out.lv1=w.lv;out.pts=(out.pts||0)+pts;}}
 }
 /* use it to grow it: a little of one attribute, kept until it adds up to a whole point */
 export function progUse(w,k,amt,out){
   if(!$L.PROG_BY[k]||amt<=0)return;var gx=w.gx||(w.gx={});gx[k]=Math.round(((gx[k]||0)+amt)*100)/100;
-  if(gx[k]>=1){gx[k]=Math.round((gx[k]-1)*100)/100;if(!gx[k])delete gx[k];if((w[k]||1)<$L.progCap(w,k)){w[k]=$L.clamp((w[k]||1)+1,1,99);if(out)(out.learned=out.learned||[]).push($L.PROG_BY[k].n);}}
+  if(gx[k]>=1){gx[k]=Math.round((gx[k]-1)*100)/100;if(!gx[k])delete gx[k];if((w[k]||1)<progCap(w,k)){w[k]=clamp((w[k]||1)+1,1,99);if(out)(out.learned=out.learned||[]).push($L.PROG_BY[k].n);}}
 }
 /** Spend one point on an attribute. Returns null on success, or why not. */
 export function progSpend(w,k){
-  var A=$L.PROG_BY[k];if(!A)return 'That is not an attribute.';var v=w[k]||1,c=$L.progCost(v);
-  if((w.ap||0)<c)return 'Not enough points: that takes '+c+'.';if(v>=$L.progCap(w,k))return A.n+' is as high as it can go for them right now.';
+  var A=$L.PROG_BY[k];if(!A)return 'That is not an attribute.';var v=w[k]||1,c=progCost(v);
+  if((w.ap||0)<c)return 'Not enough points: that takes '+c+'.';if(v>=progCap(w,k))return A.n+' is as high as it can go for them right now.';
   w.ap-=c;w[k]=v+1;return null;
 }
 /** Let them choose: points go to their style's and gimmick's strengths first, then wherever is cheapest to grow. */
@@ -85,9 +89,9 @@ export function progAuto(S,w){
   var pri=($L.STYLE_PRI[w.style]||[]).concat($L.GIM_PRI[w.gim]||[]),guard=0;
   if(w.age>=34)pri=['mic','cha'].concat(pri);   // a veteran puts it into the microphone
   while((w.ap||0)>0&&guard++<40){
-    var opts=$L.PROG_ATTR.map(function(a){var v=w[a.k]||1,i=pri.indexOf(a.k);return {k:a.k,v:v,c:$L.progCost(v),s:(i>=0?30-i*4:0)-(v-50)*0.3};})
-      .filter(function(o){return o.v<$L.progCap(w,o.k)&&o.c<=w.ap;}).sort(function(a,b){return b.s-a.s;});
-    if(!opts.length)break;$L.progSpend(w,opts[0].k);
+    var opts=$L.PROG_ATTR.map(function(a){var v=w[a.k]||1,i=pri.indexOf(a.k);return {k:a.k,v:v,c:progCost(v),s:(i>=0?30-i*4:0)-(v-50)*0.3};})
+      .filter(function(o){return o.v<progCap(w,o.k)&&o.c<=w.ap;}).sort(function(a,b){return b.s-a.s;});
+    if(!opts.length)break;progSpend(w,opts[0].k);
   }
 }
 export var PROG_HC=/hardcore|tables|street|nodq|no_dq|barbed|weapons|cell|lumber|fire|cage|ladder/;
@@ -99,29 +103,29 @@ export function progShow(S,P,show,rep,card){
   var row=function(w){var o=acc[w.id];if(!o)o=acc[w.id]={id:w.id,xp:0,why:[]};return o;};
   rep.segs.forEach(function(s){
     var ids=(s.ids||s.bids||[]).filter(function(id){var w=S.w[id];return w&&!w.nw&&w.promo===P.id;});if(!ids.length)return;
-    var q=$L.starQ(s.ov||0),st=q/4,five=q>=20;
+    var q=starQ(s.ov||0),st=q/4,five=q>=20;
     if(s.k==='match'){
       var base=(6+5*st*st)*(s===last?1.3:1)*(big?1.3:1),stip=String(s.stip||'').toLowerCase().replace(/[^a-z]/g,'');
       ids.forEach(function(id){var w=S.w[id],o=row(w),won=s.win&&String(s.win).indexOf(w.name)>=0;
-        $L.progGain(S,w,base*(won?1.2:1)+(s.title&&won?30:0)+(five?150:0),o);if(five)o.why.push('a five-star match');
-        if($L.PROG_HC.test(stip))$L.progUse(w,'hc',0.45,o);
-        if(/submission|iron/.test(stip))$L.progUse(w,'tech',0.35,o);
-        if(/ladder/.test(stip)||w.style==='H')$L.progUse(w,'speed',0.2,o);
-        if((s.mins||0)>=20)$L.progUse(w,'stam',0.35,o);
-        if(st>=4)$L.progUse(w,'cons',0.2,o);
-        if(s===last)$L.progUse(w,'sq',0.15,o);
+        progGain(S,w,base*(won?1.2:1)+(s.title&&won?30:0)+(five?150:0),o);if(five)o.why.push('a five-star match');
+        if($L.PROG_HC.test(stip))progUse(w,'hc',0.45,o);
+        if(/submission|iron/.test(stip))progUse(w,'tech',0.35,o);
+        if(/ladder/.test(stip)||w.style==='H')progUse(w,'speed',0.2,o);
+        if((s.mins||0)>=20)progUse(w,'stam',0.35,o);
+        if(st>=4)progUse(w,'cons',0.2,o);
+        if(s===last)progUse(w,'sq',0.15,o);
         // regression: three poor matches in a row and they lose their touch a little
-        if(st<=1.5){w.cold=(w.cold||0)+1;if(w.cold>=3){delete w.cold;w.pxp=Math.max(0,(w.pxp||0)-Math.round($L.progNeed(w.lv)*0.25));$L.progLose(S,w,'cons',1,'c',o);}}else delete w.cold;
+        if(st<=1.5){w.cold=(w.cold||0)+1;if(w.cold>=3){delete w.cold;w.pxp=Math.max(0,(w.pxp||0)-Math.round(progNeed(w.lv)*0.25));progLose(S,w,'cons',1,'c',o);}}else delete w.cold;
       });
     }else if(s.k==='angle'||s.k==='promo'){
-      ids.forEach(function(id){var w=S.w[id],o=row(w);$L.progGain(S,w,(5+4*st*st)*(big?1.2:1)+(five?120:0),o);if(five)o.why.push('a five-star promo');
-        $L.progUse(w,'mic',five?1:0.35,o);$L.progUse(w,'cha',0.25,o);});
+      ids.forEach(function(id){var w=S.w[id],o=row(w);progGain(S,w,(5+4*st*st)*(big?1.2:1)+(five?120:0),o);if(five)o.why.push('a five-star promo');
+        progUse(w,'mic',five?1:0.35,o);progUse(w,'cha',0.25,o);});
     }
   });
   if(isPl)rep.prog=Object.keys(acc).map(function(k){return acc[k];}).filter(function(o){return o.xp>0||(o.lost&&o.lost.length);}).sort(function(a,b){return (b.lv1?1:0)-(a.lv1?1:0)||b.xp-a.xp;});
 }
-$L.SHOWX.push(progShow);
-$L.E.__progShow=progShow;   // for test-progress.js
+SHOWX.push(progShow);
+E.__progShow=progShow;   // for test-progress.js
 /* ---------- regression (Ryan, 21 October: "they should be a system for regression as well") ----------
    What can take an attribute down, the way the sports games do it, worked out and never drawn at random:
      - age: past the peak the body goes first (the yearly decline in src/75-people.js), and in steep decline
@@ -134,9 +138,9 @@ $L.E.__progShow=progShow;   // for test-progress.js
    people, listed after the show and shown in the Attributes pop-up. */
 /** A reason code in words: a age, c a cold streak, rN ring rust after N weeks, iN back from N weeks injured. */
 export function rgWhy(c){c=String(c||'');var n=c.slice(1);return c[0]==='a'?'age':c[0]==='c'?'a cold streak':c[0]==='r'?'ring rust: '+n+' weeks without a match':c[0]==='i'?n+' weeks out injured':c;}
-export function rgRow(r){return Array.isArray(r)?{w:r[0],k:r[1],n:r[2],why:$L.rgWhy(r[3])}:r;}   // an older save kept them as objects
+export function rgRow(r){return Array.isArray(r)?{w:r[0],k:r[1],n:r[2],why:rgWhy(r[3])}:r;}   // an older save kept them as objects
 export function progLose(S,w,k,n,code,out){
-  if(!w||!$L.PROG_BY[k]||n<=0)return 0;var v0=w[k]||1,v1=$L.clamp(v0-n,15,99),d=v0-v1;if(!d)return 0;w[k]=v1;var why=$L.rgWhy(code);
+  if(!w||!$L.PROG_BY[k]||n<=0)return 0;var v0=w[k]||1,v1=clamp(v0-n,15,99),d=v0-v1;if(!d)return 0;w[k]=v1;var why=rgWhy(code);
   var R=w.rgx||(w.rgx=[]);R.unshift([S.week,k,d,code]);if(R.length>4)R.length=4;
   if(out)(out.lost=out.lost||[]).push($L.PROG_BY[k].n+' -'+d+' ('+why+')');
   else if(w.promo===S.player&&!w.nw){var q=S.regQ||(S.regQ={});(q[w.id]=q[w.id]||[]).push($L.PROG_BY[k].n+' -'+d+' ('+why+')');}
@@ -150,7 +154,7 @@ export function progLose(S,w,k,n,code,out){
     var R=w.rgx||(w.rgx=[]),lost=[];
     $L.PROG_ATTR.forEach(function(a){var d=(before[a.k]||0)-(w[a.k]||0);if(d>0){R.unshift([S.week,a.k,d,'a']);lost.push(a.n+' -'+d);}});
     if(R.length>4)R.length=4;
-    if(w.cl&&w.age>=w.cl){$L.progLose(S,w,'cons',1,'a',{lost:lost});$L.progLose(S,w,'safe',1,'a',{lost:lost});}
+    if(w.cl&&w.age>=w.cl){progLose(S,w,'cons',1,'a',{lost:lost});progLose(S,w,'safe',1,'a',{lost:lost});}
     if(lost.length&&w.promo===S.player)$L.note(S,'Regression',w.name+' turned '+w.age+': '+lost.join(', ')+'.','bad');
   };
 })();
@@ -160,27 +164,27 @@ export function regWeek(S){
     if(!w||w.nw||w.rt||w.promo==='FA')return;
     if(w.wk==null)w.wk=S.week;   // nobody starts a game rusty
     // a long injury: back in the ring a step slower
-    if(w.rwl>=6&&w.rgI!==w.rw){w.rgI=w.rw;var big=w.rwl>=12?2:1;$L.progLose(S,w,'speed',big,'i'+w.rwl);$L.progLose(S,w,'stam',big,'i'+w.rwl);}
+    if(w.rwl>=6&&w.rgI!==w.rw){w.rgI=w.rw;var big=w.rwl>=12?2:1;progLose(S,w,'speed',big,'i'+w.rwl);progLose(S,w,'stam',big,'i'+w.rwl);}
     // ring rust: weeks without a match, not counting time out hurt
     if(w.inj>0)return;var idle=S.week-w.wk;
     if(idle<8){delete w.rustN;return;}
-    if(idle%4===0&&(w.rustN||0)<3){w.rustN=(w.rustN||0)+1;$L.progLose(S,w,w.rustN%2?'stam':'cons',1,'r'+idle);}
+    if(idle%4===0&&(w.rustN||0)<3){w.rustN=(w.rustN||0)+1;progLose(S,w,w.rustN%2?'stam':'cons',1,'r'+idle);}
   });
   var q=S.regQ;S.regQ=null;
   if(q)Object.keys(q).forEach(function(id){var w=S.w[id];if(w)$L.note(S,'Regression',w.name+': '+q[id].join(', ')+'.','bad');});
 }
-$L.WEEKX.push(regWeek);
-$L.E.__regWeek=regWeek;$L.E.__birthday=function(S,w){$L.birthday(S,w);};   // for test-progress.js
+WEEKX.push(regWeek);
+E.__regWeek=regWeek;E.__birthday=function(S,w){$L.birthday(S,w);};   // for test-progress.js
 /* somebody who leaves you for a rival with points still to spend spends them at once, as the rival's people do */
-$L.WEEKX.push(function(S){if(S.cal)return;S.w.forEach(function(w){if(w&&(w.ap||0)>0&&!w.nw&&w.promo!==S.player&&w.promo!=='FA')$L.progAuto(S,w);});});
+WEEKX.push(function(S){if(S.cal)return;S.w.forEach(function(w){if(w&&(w.ap||0)>0&&!w.nw&&w.promo!==S.player&&w.promo!=='FA')progAuto(S,w);});});
 /* points left unspent for eight weeks: the wrestler trains on their own and spends them (they do not wait forever) */
-$L.WEEKX.push(function(S){
+WEEKX.push(function(S){
   if(S.cal)return;var n=0;
-  $L.rosterOf(S,S.player).forEach(function(w){if(!(w.ap>0)||w.nw){w.apw=null;return;}if(w.apw==null){w.apw=S.week;return;}if(S.week-w.apw>=8){$L.progAuto(S,w);w.apw=null;n++;}});
+  rosterOf(S,S.player).forEach(function(w){if(!(w.ap>0)||w.nw){w.apw=null;return;}if(w.apw==null){w.apw=S.week;return;}if(S.week-w.apw>=8){progAuto(S,w);w.apw=null;n++;}});
   if(n)$L.note(S,'Progress',n+(n===1?' wrestler':' wrestlers')+' spent points you left waiting on what suits them.','');
 });
 /* a year ends: the development trait moves with the year they had (Madden's dev trait changes) */
-$L.WEEKX.push(function(S){
+WEEKX.push(function(S){
   if(S.cal||S.week%48!==0)return;
   S.w.forEach(function(w){if(w.lv==null||w.nw||w.rt)return;var y=w.yxp||0;w.yxp=0;
     var up=y>=6500&&w.age<=30&&w.dev<3,down=y<1200&&w.dev>0&&(w.age>=30||w.promo!=='FA');
@@ -197,21 +201,21 @@ $L.WEEKX.push(function(S){
   };
 })();
 /* the first time a game is opened, everybody gets a level and a trait */
-$L.NEWX.push(function(S){$L.progAll(S);});
+NEWX.push(function(S){progAll(S);});
 /* money: what a wrestler asks counts how good they are as well as how popular, so the best cost the most */
 (function(){
-  var a0=$L.E.ask,c0=$L.E.canSign;
-  $L.E.ask=function(S,w){var a=a0.apply(this,arguments);if(!w||w.nw)return a;var ov=$L.overallRaw(w),m=$L.clamp(Math.pow(1.045,ov-(w.ovr||50)),0.7,1.6);return Math.round(a*m/50)*50;};
-  $L.E.canSign=function(S,w){if(!c0.apply(this,arguments))return false;var P=S.promos[S.player];return !w||$L.overallRaw(w)<=P.image+45;};
+  var a0=E.ask,c0=E.canSign;
+  E.ask=function(S,w){var a=a0.apply(this,arguments);if(!w||w.nw)return a;var ov=overallRaw(w),m=clamp(Math.pow(1.045,ov-(w.ovr||50)),0.7,1.6);return Math.round(a*m/50)*50;};
+  E.canSign=function(S,w){if(!c0.apply(this,arguments))return false;var P=S.promos[S.player];return !w||overallRaw(w)<=P.image+45;};
 })();
 /* the player's wrestlers with points waiting: a reminder on the desk, never a stop */
-$L.TASKX.push(function(S,P,add){
-  var n=$L.rosterOf(S,S.player).filter(function(w){return (w.ap||0)>0&&!w.nw;});if(!n.length)return;
+TASKX.push(function(S,P,add){
+  var n=rosterOf(S,S.player).filter(function(w){return (w.ap||0)>0&&!w.nw;});if(!n.length)return;
   var t=n.reduce(function(a,w){return a+w.ap;},0);
   add('points',t+' attribute point'+(t===1?'':'s')+' to spend across '+n.length+(n.length===1?' wrestler':' wrestlers')+'. Spend them on the Roster, or let them choose.','roster','Spend points',{need:false,done:'Points spent.',short:'Points to spend ('+t+')'});
 });
 /* After the show: who gained, who levelled up, who earned a bonus, what they learned */
-(function(){var af=$L.E.afterShow;$L.E.afterShow=function(S){var r=af.apply(this,arguments);if(!r||!r.items)return r;
+(function(){var af=E.afterShow;E.afterShow=function(S){var r=af.apply(this,arguments);if(!r||!r.items)return r;
   var rep=null;for(var i=0;i<S.reports.length;i++){if(S.reports[i].week===S.week&&S.reports[i].left&&S.reports[i].left.key===r.key){rep=S.reports[i];break;}}
   if(!rep||!rep.prog||!rep.prog.length)return r;
   var P=rep.prog,lostP=P.filter(function(o){return o.lost&&o.lost.length;}),ups=P.filter(function(o){return o.lv1;}),five=P.filter(function(o){return o.why.length;}),learned=P.filter(function(o){return o.learned&&o.learned.length;});
@@ -223,17 +227,17 @@ $L.TASKX.push(function(S,P,add){
   var at=r.items.findIndex(function(x){return x.k==='next';});if(at<0)r.items.push(it);else r.items.splice(at,0,it);if(!seen)r.unseen=(r.unseen||0)+1;
   return r;};})();
 /** A wrestler's progression for the screens: level, experience, trait, points, and every attribute with its cap and cost. */
-$L.E.progInfo=function(S,id){var w=S.w[id];if(!w)return null;$L.progInit(S,w);
-  return {lv:w.lv,xp:w.pxp,need:$L.progNeed(w.lv),ap:w.ap||0,dev:w.dev,devN:$L.DEV[w.dev].n,devD:$L.DEV[w.dev].d,overall:$L.overallOf(w),
-    reg:(w.rgx||[]).map($L.rgRow).map(function(r){return {k:r.k,n:$L.PROG_BY[r.k]?$L.PROG_BY[r.k].n:r.k,by:r.n,why:r.why,when:$L.cal(r.w).label};}),
-    attrs:$L.PROG_ATTR.map(function(a){var v=w[a.k]||1,cap=$L.progCap(w,a.k),fall=(w.rgx||[]).map($L.rgRow).filter(function(r){return r.k===a.k&&S.week-r.w<48;}).reduce(function(t,r){return t+r.n;},0);return {k:a.k,n:a.n,d:a.d||'',g:a.g,fall:fall,v:v,cap:cap,cost:$L.progCost(v),can:v<cap&&(w.ap||0)>=$L.progCost(v),grow:+((w.gx||{})[a.k]||0).toFixed(2)};})};};
+E.progInfo=function(S,id){var w=S.w[id];if(!w)return null;progInit(S,w);
+  return {lv:w.lv,xp:w.pxp,need:progNeed(w.lv),ap:w.ap||0,dev:w.dev,devN:$L.DEV[w.dev].n,devD:$L.DEV[w.dev].d,overall:overallOf(w),
+    reg:(w.rgx||[]).map(rgRow).map(function(r){return {k:r.k,n:$L.PROG_BY[r.k]?$L.PROG_BY[r.k].n:r.k,by:r.n,why:r.why,when:cal(r.w).label};}),
+    attrs:$L.PROG_ATTR.map(function(a){var v=w[a.k]||1,cap=progCap(w,a.k),fall=(w.rgx||[]).map(rgRow).filter(function(r){return r.k===a.k&&S.week-r.w<48;}).reduce(function(t,r){return t+r.n;},0);return {k:a.k,n:a.n,d:a.d||'',g:a.g,fall:fall,v:v,cap:cap,cost:progCost(v),can:v<cap&&(w.ap||0)>=progCost(v),grow:+((w.gx||{})[a.k]||0).toFixed(2)};})};};
 /** Spend a point (the player's own wrestlers). */
-$L.E.spendAttr=function(S,id,k){var w=S.w[id];if(!w||w.promo!==S.player)return {ok:false,msg:'Not one of yours.'};$L.progInit(S,w);var why=$L.progSpend(w,k);return why?{ok:false,msg:why}:{ok:true,msg:w.name+': '+$L.PROG_BY[k].n+' '+w[k]+'.'};};
+E.spendAttr=function(S,id,k){var w=S.w[id];if(!w||w.promo!==S.player)return {ok:false,msg:'Not one of yours.'};progInit(S,w);var why=progSpend(w,k);return why?{ok:false,msg:why}:{ok:true,msg:w.name+': '+$L.PROG_BY[k].n+' '+w[k]+'.'};};
 /** Let them choose where their points go. */
-$L.E.autoSpend=function(S,id){var w=S.w[id];if(!w||w.promo!==S.player)return {ok:false,msg:'Not one of yours.'};var a=w.ap||0;$L.progAuto(S,w);return {ok:true,msg:w.name+' spent '+(a-(w.ap||0))+' point'+(a-(w.ap||0)===1?'':'s')+' on what suits them.'};};
+E.autoSpend=function(S,id){var w=S.w[id];if(!w||w.promo!==S.player)return {ok:false,msg:'Not one of yours.'};var a=w.ap||0;progAuto(S,w);return {ok:true,msg:w.name+' spent '+(a-(w.ap||0))+' point'+(a-(w.ap||0)===1?'':'s')+' on what suits them.'};};
 /** Let every wrestler of yours with points choose. */
-$L.E.autoSpendAll=function(S){var n=0;$L.rosterOf(S,S.player).forEach(function(w){if((w.ap||0)>0){var a=w.ap;$L.progAuto(S,w);n+=a-(w.ap||0);}});return {ok:true,msg:n+' point'+(n===1?'':'s')+' spent across the roster.'};};
-$L.E.PROG_ATTR=PROG_ATTR;$L.E.DEV=DEV;
+E.autoSpendAll=function(S){var n=0;rosterOf(S,S.player).forEach(function(w){if((w.ap||0)>0){var a=w.ap;progAuto(S,w);n+=a-(w.ap||0);}});return {ok:true,msg:n+' point'+(n===1?'':'s')+' spent across the roster.'};};
+E.PROG_ATTR=PROG_ATTR;E.DEV=DEV;
 
 // hand this module's names back to the bridge once more, in case top-level code reassigned one
 $L.PROG_ATTR = PROG_ATTR;

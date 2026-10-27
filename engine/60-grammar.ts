@@ -1,6 +1,7 @@
 // @ts-nocheck
 /* Moved from src/60-grammar.js (ADR-0001). Names from the rest of the engine come through the bridge, $L. Types come in step 3. */
 import { L as $L } from './_gen/legacy.js';
+import { feudOf, h01, rkey } from './00-core';
 $L.gramPick = gramPick; $L.gramCase = gramCase; $L.gram = gram; $L.promoSpeech = promoSpeech; $L.matchShape = matchShape;
 /* ===== The text grammar: procedurally written lines for the newsletter, the websites and the chat room =====
    A small grammar engine in the manner of Tracery, with Improv's idea that a line may only be used when it is true
@@ -12,16 +13,16 @@ export function gramPick(L,ctx,key){
   var ok=[],tot=0;
   for(var i=0;i<L.length;i++){var c=L[i];if(typeof c==='string'){ok.push({t:c,w:1});tot+=1;}else if(!c.if||c.if(ctx)){var w=c.w==null?1:c.w;ok.push({t:c.t,w:w});tot+=w;}}
   if(!ok.length)return '';
-  var r=$L.h01(key)*tot;for(var j=0;j<ok.length;j++){r-=ok[j].w;if(r<0)return ok[j].t;}
+  var r=h01(key)*tot;for(var j=0;j<ok.length;j++){r-=ok[j].w;if(r<0)return ok[j].t;}
   return ok[ok.length-1].t;
 }
 export function gramCase(s,m){if(m==='cap')return s.charAt(0).toUpperCase()+s.slice(1);if(m==='up')return s.toUpperCase();if(m==='low')return s.toLowerCase();return s;}
 /** Expand `start` in rule set R with context ctx. key makes the picks repeatable; depth stops runaway rules. */
 export function gram(R,start,ctx,key,depth){
   depth=depth||0;var n=0;
-  var src=R[start]?$L.gramPick(R[start],ctx,key+'|'+start):start;
+  var src=R[start]?gramPick(R[start],ctx,key+'|'+start):start;
   if(depth>8)return src;
-  return src.replace(/#(\w+)(?:\.(\w+))?#/g,function(_,sym,mod){n++;return $L.gramCase($L.gram(R,sym,ctx,key+'|'+n+sym,depth+1),mod);})
+  return src.replace(/#(\w+)(?:\.(\w+))?#/g,function(_,sym,mod){n++;return gramCase(gram(R,sym,ctx,key+'|'+n+sym,depth+1),mod);})
     .replace(/\{(\w+)\}/g,function(_,k){return ctx[k]!=null?String(ctx[k]):'';});
 }
 
@@ -174,13 +175,13 @@ export var GR_PROMO={
 $L.GR_PROMO = GR_PROMO;
 /** The words one wrestler says in a promo, in quotes after their name. Reads only; picks from h01. */
 export function promoSpeech(S,a,b,kind,ov,city,key){
-  var P=S.promos[a.promo]||S.promos[S.player],h=b&&S.h2h?S.h2h[$L.rkey(a.id,b.id)]:null,f=b?$L.feudOf(S,a.id,b.id):null,t=null,held=null;
+  var P=S.promos[a.promo]||S.promos[S.player],h=b&&S.h2h?S.h2h[rkey(a.id,b.id)]:null,f=b?feudOf(S,a.id,b.id):null,t=null,held=null;
   if(P)P.titles.forEach(function(x){if(!t&&kind==='challenge'&&b&&x.holders.indexOf(b.id)>=0)t=x;if(!held&&x.holders.indexOf(a.id)>=0)held=x;});
   var lo=b?Math.min(a.id,b.id):0,aw=h?(a.id===lo?h.a:h.b):0,bw=h?(a.id===lo?h.b:h.a):0;
   var c={k:kind,heel:a.align==='H',tier:ov>=72?2:(ov>=52?1:0),them:b?b.name:null,title:t?t.name:null,held:held?held.name:null,
     lostTo:h&&h.lw===(b&&b.id)&&bw>0?b.name:null,beat:h&&h.lw===a.id&&aw>0&&b?b.name:null,streak:a.ws||0,
     home:!!(city&&a.town&&$L.homeKm(S,a,city)!=null&&$L.homeKm(S,a,city)<=100),city:city||'everybody',weeks:f?Math.max(0,S.week-(f.start||S.week)):0,fin:a.fin?String(a.fin).replace(/^the /i,''):null};
-  return a.name+': “'+$L.gram($L.GR_PROMO,'speech',c,key).replace(/\s+/g,' ').trim()+'”';
+  return a.name+': “'+gram($L.GR_PROMO,'speech',c,key).replace(/\s+/g,' ').trim()+'”';
 }
 
 /* ---------- match shapes: how a match is told ----------
@@ -232,11 +233,11 @@ export function matchShape(x,o,hk){
   else if(/[HS]/.test(A.style)&&/[HS]/.test(B.style))k='sprint';
   else if(A.style==='T'&&B.style==='T')k='chess';
   else if(x.upset||(x.under&&x.under===o.w&&x.gap>=6))k='comeback';
-  var pk=function(L,s){return L[Math.floor($L.h01(hk+s)*L.length)%L.length];};
+  var pk=function(L,s){return L[Math.floor(h01(hk+s)*L.length)%L.length];};
   var srt=[A,B].sort(function(p,q){return q.ovr-p.ovr;});
   var c={k:k,p:o.p,a:A.name,b:B.name,w:o.w||A.name,big:srt[0].name,small:srt[1].name,am:pk($L.MOVES[A.style]||$L.MOVES.A,'am'),bm:pk($L.MOVES[B.style]||$L.MOVES.A,'bm'),
     fa:A.fin||null,fb:B.fin||null,hot:x.MQ>=72&&x.mins>=12};
-  return {k:k,intro:$L.gram($L.GR_SHAPE,'intro',c,hk+'i'),spot:x.mins>8&&k!=='squash'?$L.gram($L.GR_SHAPE,'spot',c,hk+'s'):null,late:x.mins>=12&&k!=='squash'?$L.gram($L.GR_SHAPE,'late',c,hk+'l'):null};
+  return {k:k,intro:gram($L.GR_SHAPE,'intro',c,hk+'i'),spot:x.mins>8&&k!=='squash'?gram($L.GR_SHAPE,'spot',c,hk+'s'):null,late:x.mins>=12&&k!=='squash'?gram($L.GR_SHAPE,'late',c,hk+'l'):null};
 }
 
 /* ---------- the newsletter's feud watch: how the stories around the business stand ---------- */

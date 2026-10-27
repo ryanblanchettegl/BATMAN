@@ -1,6 +1,12 @@
 // @ts-nocheck
 /* Moved from src/99-venues.js (ADR-0001). Names from the rest of the engine come through the bridge, $L. Types come in step 3. */
 import { L as $L } from './_gen/legacy.js';
+import { E, clamp, flat, h01, rosterOf } from './00-core';
+import { CRX } from './10-match';
+import { LIVEK, liveMatch, livePut } from './31-live';
+import { money } from './40-week';
+import { youRemember } from './66-relations';
+import { cityOfVenue } from './91-road';
 $L.venueQuirks = venueQuirks;
 /* wraps: 91-road.js (it must sort after them; test-buildorder.js checks) */
 /* Venue personality and disasters (the add-ons run, item 12). Every building (cityBuildings() in src/91-road.js) has
@@ -15,15 +21,15 @@ $L.VQ_FEEL = VQ_FEEL; $L.VQ_SOUND = VQ_SOUND;
 export var VQ_CROWD={rowdy:'a rowdy local crowd',smart:'a crowd that knows its wrestling',polite:'a polite crowd that needs warming up',plain:''};
 $L.VQ_CROWD = VQ_CROWD;
 export function venueQuirks(vname){
-  var v=String(vname||''),h=function(k){return $L.h01('vq:'+k+':'+v);},open=/ (Stadium|Bowl|Field)\b/.test(v),small=/ (Armory|Union Hall|Legion Hall|Rec Center|Ballroom|Music Hall)\b/.test(v);
+  var v=String(vname||''),h=function(k){return h01('vq:'+k+':'+v);},open=/ (Stadium|Bowl|Field)\b/.test(v),small=/ (Armory|Union Hall|Legion Hall|Rec Center|Ballroom|Music Hall)\b/.test(v);
   var q={feel:small||h('f')<0.25?'intimate':(h('f')>0.8&&!small?'cavernous':'right'),sound:h('s')<0.3?'loud':(h('s')>0.82?'dead':'plain'),crowd:h('c')<0.25?'rowdy':(h('c')<0.45?'smart':(h('c')>0.85?'polite':'plain')),sight:h('g')>0.85?'poor':'fine',open:open};
   var w=[];if($L.VQ_FEEL[q.feel])w.push($L.VQ_FEEL[q.feel]);if($L.VQ_SOUND[q.sound])w.push($L.VQ_SOUND[q.sound]);if($L.VQ_CROWD[q.crowd])w.push($L.VQ_CROWD[q.crowd]);if(q.sight==='poor')w.push('poor sightlines from the cheap seats');if(q.open)w.push('open to the sky');
   q.words=w;q.short=w.length?w[0].split(':')[0]:'nothing special';return q;
 }
-$L.E.venueQuirks=function(v){return $L.venueQuirks(v);};
+E.venueQuirks=function(v){return venueQuirks(v);};
 /* the building on the night */
-$L.CRX.push(function(ctx){
-  if(!ctx.isPl||!ctx.rep||!ctx.rep.venue)return null;var q=$L.venueQuirks(ctx.rep.venue),d=0,x=[];
+CRX.push(function(ctx){
+  if(!ctx.isPl||!ctx.rep||!ctx.rep.venue)return null;var q=venueQuirks(ctx.rep.venue),d=0,x=[];
   if(q.feel==='intimate'){d+=1;x.push('an intimate building');}
   if(q.feel==='cavernous'&&ctx.rep.att&&ctx.rep.cap&&ctx.rep.att<ctx.rep.cap*0.7){d-=1;x.push('a cavernous building half full');}
   if(q.sound==='loud'){d+=1;x.push('a loud building');}else if(q.sound==='dead'){d-=1;x.push('a building where the sound dies');}
@@ -52,31 +58,31 @@ export var DISASTER={
     {n:'Send a hero out to calm them down',says:'They walk to the barricade and the fight stops. The crowd chants their name.',cr:2,star:1,face:1}]}
 };
 $L.DISASTER = DISASTER;
-$L.LIVEK.disaster={n:'Trouble in the building',
+LIVEK.disaster={n:'Trouble in the building',
   pre:function(S,L,step){
-    if(step.t!=='match'||L.had.disaster)return null;var rep=L.st&&L.st.rep;if(!rep||!rep.venue)return null;var q=$L.venueQuirks(rep.venue);
+    if(step.t!=='match'||L.had.disaster)return null;var rep=L.st&&L.st.rep;if(!rep||!rep.venue)return null;var q=venueQuirks(rep.venue);
     var p=0.025+(q.open?0.04:0)+(q.crowd==='rowdy'?0.02:0)+(q.feel==='cavernous'?0.01:0);
-    if($L.h01(S.seed+':dis:'+S.week+':'+S.qi)>=p)return null;
-    var kinds=['power','ring'].concat(q.open?['weather']:[]).concat(q.crowd==='rowdy'?['crowd','crowd']:['crowd']),k=kinds[Math.floor($L.h01(S.seed+':disk:'+S.week+':'+S.qi)*kinds.length)],D=$L.DISASTER[k];
-    var M=$L.liveMatch(S,L,step.i),R=$L.rosterOf(S,S.player).filter(function(w){return !w.nw&&!(w.inj>0);}).sort(function(a,b){return b.ovr-a.ovr;}),star=(D.choices.some(function(c){return c.face;})?R.filter(function(w){return w.align!=='H';})[0]:R[0])||R[0];
+    if(h01(S.seed+':dis:'+S.week+':'+S.qi)>=p)return null;
+    var kinds=['power','ring'].concat(q.open?['weather']:[]).concat(q.crowd==='rowdy'?['crowd','crowd']:['crowd']),k=kinds[Math.floor(h01(S.seed+':disk:'+S.week+':'+S.qi)*kinds.length)],D=$L.DISASTER[k];
+    var M=liveMatch(S,L,step.i),R=rosterOf(S,S.player).filter(function(w){return !w.nw&&!(w.inj>0);}).sort(function(a,b){return b.ovr-a.ovr;}),star=(D.choices.some(function(c){return c.face;})?R.filter(function(w){return w.align!=='H';})[0]:R[0])||R[0];
     return {phase:'mid',mi:step.i,dk:k,who:star?star.id:null,text:D.text+' ('+rep.venue+')',why:q.words.length?['The building: '+q.words.join('; ')]:[],safe:1,
       choices:D.choices.map(function(c){return {n:c.star&&star?c.n.replace(/your biggest name|a hero/,star.name):c.n,says:c.says,who:c.star&&star?star.id:null};})};
   },
   run:function(S,L,ev,c){
-    var D=$L.DISASTER[ev.dk],o=D.choices[c],M=$L.liveMatch(S,L,ev.mi),P=S.promos[S.player],rep=L.st.rep,city=$L.cityOfVenue(rep.venue);if(!o)return '';
-    if(M&&o.cr)$L.livePut(M.m,{cr:o.cr,x:D.n.toLowerCase()+': '+o.n.toLowerCase()});
+    var D=$L.DISASTER[ev.dk],o=D.choices[c],M=liveMatch(S,L,ev.mi),P=S.promos[S.player],rep=L.st.rep,city=cityOfVenue(rep.venue);if(!o)return '';
+    if(M&&o.cr)livePut(M.m,{cr:o.cr,x:D.n.toLowerCase()+': '+o.n.toLowerCase()});
     if(o.cut)rep.short=1;
-    if(o.hurt&&M){var w=$L.flat(M.c.sides)[0];if(w&&$L.h01(S.seed+':dish:'+S.week)<0.35){w.inj=Math.max(w.inj||0,2);$L.news(S,'injury',w.name+' was hurt when '+D.n.toLowerCase()+' at '+rep.venue+'.');$L.youRemember(S,w,'venuehurt','Got hurt in a broken building because the show went on.',-3);}}
-    if(o.refund){var cost=Math.round((rep.gate||0)*0.25);P.cash-=cost;o.says+=' It costs '+$L.money(cost)+'.';}
-    if(o.mkt&&S.mkt&&S.mkt[city])S.mkt[city].k=$L.clamp((S.mkt[city].k||50)+o.mkt*3,0,100);
-    if(o.star&&ev.who!=null&&S.w[ev.who]){var s=S.w[ev.who];$L.youRemember(S,s,'venuesave','You sent them out to save the night when '+D.n.toLowerCase()+'.',o.face?3:1);s.mom=$L.clamp((s.mom||0)+1,-10,10);}
+    if(o.hurt&&M){var w=flat(M.c.sides)[0];if(w&&h01(S.seed+':dish:'+S.week)<0.35){w.inj=Math.max(w.inj||0,2);$L.news(S,'injury',w.name+' was hurt when '+D.n.toLowerCase()+' at '+rep.venue+'.');youRemember(S,w,'venuehurt','Got hurt in a broken building because the show went on.',-3);}}
+    if(o.refund){var cost=Math.round((rep.gate||0)*0.25);P.cash-=cost;o.says+=' It costs '+money(cost)+'.';}
+    if(o.mkt&&S.mkt&&S.mkt[city])S.mkt[city].k=clamp((S.mkt[city].k||50)+o.mkt*3,0,100);
+    if(o.star&&ev.who!=null&&S.w[ev.who]){var s=S.w[ev.who];youRemember(S,s,'venuesave','You sent them out to save the night when '+D.n.toLowerCase()+'.',o.face?3:1);s.mom=clamp((s.mom||0)+1,-10,10);}
     $L.note(S,D.n,o.says,o.cr>0?'good':(o.cr<0?'bad':''));
     return o.says;
   }
 };
 $L.LIVE_ORDER.push('disaster');   // tried last: trouble in the building never takes the place of another call
 /** For the desk: the quirks of tonight's building, in words. */
-$L.E.buildingWords=function(S){var R=$L.E.road(S);if(!R||!R.now||!R.now.venue)return null;var q=$L.venueQuirks(R.now.venue);return {words:q.words,short:q.short};};
+E.buildingWords=function(S){var R=E.road(S);if(!R||!R.now||!R.now.venue)return null;var q=venueQuirks(R.now.venue);return {words:q.words,short:q.short};};
 
 // hand this module's names back to the bridge once more, in case top-level code reassigned one
 $L.VQ_FEEL = VQ_FEEL;

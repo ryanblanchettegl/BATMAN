@@ -1,6 +1,11 @@
 // @ts-nocheck
 /* Moved from src/85-universe.js (ADR-0001). Names from the rest of the engine come through the bridge, $L. Types come in step 3. */
 import { L as $L } from './_gen/legacy.js';
+import { E, MONTHS, cal, clamp, r1, rkey } from './00-core';
+import { NEWX, chem } from './10-match';
+import { PLEDGE, ROOTS, STYLES } from './65-you';
+import { REL_ON, REL_STRONG, relSet, rmAll } from './66-relations';
+import { MODELS } from './78-models';
 $L.lev = lev; $L.nearest = nearest; $L.safeRel = safeRel; $L.econ = econ; $L.buildDB = buildDB; $L.netsOf = netsOf; $L.slug = slug;
 /* ---------- universe packages: every roster, built-in or community-made, loads through this ----------
    A package is a manifest plus eight tables joined by string ids. The folder form (one JSON file per table)
@@ -33,9 +38,9 @@ export var SCHEMAS={
 };
 $L.SCHEMAS = SCHEMAS;
 export function lev(a,b){var m=[],i,j;for(i=0;i<=a.length;i++){m[i]=[i];}for(j=1;j<=b.length;j++)m[0][j]=j;for(i=1;i<=a.length;i++)for(j=1;j<=b.length;j++)m[i][j]=Math.min(m[i-1][j]+1,m[i][j-1]+1,m[i-1][j-1]+(a[i-1]===b[j-1]?0:1));return m[a.length][b.length];}
-export function nearest(f,names){var best=null,bd=3;names.forEach(function(n){var d=$L.lev(f,n);if(d<bd){bd=d;best=n;}});return best?' (did you mean '+best+'?)':'';}
+export function nearest(f,names){var best=null,bd=3;names.forEach(function(n){var d=lev(f,n);if(d<bd){bd=d;best=n;}});return best?' (did you mean '+best+'?)':'';}
 export function safeRel(p){return typeof p==='string'&&p.length<200&&!/^([a-zA-Z]:|[\\/])/.test(p)&&p.split(/[\\/]/).indexOf('..')<0;}
-$L.E.validateUniverse=function(pkg,fileList){
+E.validateUniverse=function(pkg,fileList){
   var errors=[],warnings=[],err=function(at,msg){errors.push({at:at,msg:msg});},warn=function(at,msg){warnings.push({at:at,msg:msg});};
   var out=function(){return {ok:!errors.length,errors:errors,warnings:warnings};};
   if(!pkg||typeof pkg!=='object'){err('package','not a JSON object');return out();}
@@ -56,7 +61,7 @@ $L.E.validateUniverse=function(pkg,fileList){
       sc.required.forEach(function(f){if(rec[f]==null||rec[f]==='')err(at,'missing '+f);});
       Object.keys(rec).forEach(function(f){
         var t=sc.fields[f],v=rec[f];
-        if(t===undefined){warn(at,'unknown field '+f+$L.nearest(f,names)+', ignored');return;}
+        if(t===undefined){warn(at,'unknown field '+f+nearest(f,names)+', ignored');return;}
         if(v==null)return;
         if(Array.isArray(t)){if(t.indexOf(v)<0)err(at,f+' must be one of: '+t.join(', '));return;}
         t=t.replace('?','');
@@ -70,11 +75,11 @@ $L.E.validateUniverse=function(pkg,fileList){
       if(rec.id!=null){if(seen[rec.id])err(at,'duplicate id');seen[rec.id]=1;ids[table][rec.id]=rec;}
       if(table==='workers'&&rec.ratings&&typeof rec.ratings==='object'){
         Object.keys(rec.ratings).forEach(function(k){
-          if(!$L.RMAP[k]){warn(at,'unknown rating '+k+$L.nearest(k,Object.keys($L.RMAP))+', ignored');return;}
+          if(!$L.RMAP[k]){warn(at,'unknown rating '+k+nearest(k,Object.keys($L.RMAP))+', ignored');return;}
           var v=rec.ratings[k];if(typeof v!=='number'||!isFinite(v))err(at,'rating '+k+' must be a number');else if(v<0||v>100)warn(at,'rating '+k+' is '+v+', clamped to 0–100');
         });
         ['brawling','technical','aerial','stamina','promo_skill','overness'].forEach(function(k){if(rec.ratings[k]==null)err(at,'missing rating '+k);});
-        (rec.roles||[]).forEach(function(r){if($L.ROLES.indexOf(r)<0)warn(at,'unknown role '+r+$L.nearest(r,$L.ROLES)+', ignored');});
+        (rec.roles||[]).forEach(function(r){if($L.ROLES.indexOf(r)<0)warn(at,'unknown role '+r+nearest(r,$L.ROLES)+', ignored');});
       }
     });
   });
@@ -87,9 +92,9 @@ $L.E.validateUniverse=function(pkg,fileList){
     var w=W[c.worker_id];if(w&&(!w.roles||w.roles.indexOf('wrestler')>=0))byPromo[c.promotion_id]=(byPromo[c.promotion_id]||0)+1;});
   var PRO={};(pkg.promotions||[]).forEach(function(p){PRO[p.id]=p;});
   // a gender-locked model (joshi) cannot sign or crown the other gender; say so where the data says otherwise
-  (pkg.contracts||[]).forEach(function(c,i){var pr=PRO[c.promotion_id],w=W[c.worker_id],MD=pr&&$L.MODELS[pr.model];
+  (pkg.contracts||[]).forEach(function(c,i){var pr=PRO[c.promotion_id],w=W[c.worker_id],MD=pr&&MODELS[pr.model];
     if(MD&&MD.gender&&w&&(!w.roles||w.roles.indexOf('wrestler')>=0)&&w.gender!==MD.gender)warn('contracts['+i+']',w.ring_name+' is under contract to '+pr.name+', which runs as '+MD.n+' and signs only '+(MD.gender==='F'?'women':'men')+'; the game will not sign others like them');});
-  (pkg.titles||[]).forEach(function(t,i){var pr=PRO[t.promotion_id],MD=pr&&$L.MODELS[pr.model];
+  (pkg.titles||[]).forEach(function(t,i){var pr=PRO[t.promotion_id],MD=pr&&MODELS[pr.model];
     if(MD&&MD.gender&&t.gender!==MD.gender)warn('titles['+i+'] '+t.id,t.name+' is a '+(t.gender==='F'?"women's":"men's")+' title in a '+MD.n+' promotion');});
   (pkg.shows||[]).forEach(function(s,i){ref(PR,s.promotion_id,'shows['+i+'] '+s.id,'promotion_id');});
   (pkg.titles||[]).forEach(function(t,i){var at='titles['+i+'] '+t.id;ref(PR,t.promotion_id,at,'promotion_id');
@@ -107,7 +112,7 @@ $L.E.validateUniverse=function(pkg,fileList){
     if(!(pkg.shows||[]).some(function(s){return s.promotion_id===p.id;}))err(at,'has no weekly show');
     if(!(pkg.titles||[]).some(function(t){return t.promotion_id===p.id;}))warn(at,'has no titles');
     if(p.popularity<5||p.popularity>100)warn(at,'popularity '+p.popularity+' clamped to 5–100');
-    if(p.model!=null&&!$L.MODELS[p.model])warn(at,'unknown model '+JSON.stringify(p.model)+$L.nearest(String(p.model),Object.keys($L.MODELS))+'; the promotion runs as an independent');
+    if(p.model!=null&&!MODELS[p.model])warn(at,'unknown model '+JSON.stringify(p.model)+nearest(String(p.model),Object.keys(MODELS))+'; the promotion runs as an independent');
   });
   if((pkg.promotions||[]).length<2)err('promotions','a universe needs at least two promotions');
   if(pkg.networks&&typeof pkg.networks==='object')['small','cable','major'].forEach(function(k){var L=pkg.networks[k];if(L!=null&&(!Array.isArray(L)||L.length<2))warn('networks',k+' needs two names or more; the game uses its own');});
@@ -117,31 +122,31 @@ $L.E.validateUniverse=function(pkg,fileList){
   var miss=0;
   ['workers','promotions','titles'].forEach(function(table){(pkg[table]||[]).forEach(function(rec){
     var m=rec.media||{};Object.keys(m).forEach(function(k){var p=m[k];
-      if(!$L.safeRel(p)||!/\.(png|jpe?g|webp)$/i.test(p))err(table+' '+rec.id,'media.'+k+' is not a safe relative image path');
+      if(!safeRel(p)||!/\.(png|jpe?g|webp)$/i.test(p))err(table+' '+rec.id,'media.'+k+' is not a safe relative image path');
       else if(fileList&&!fileList[p])miss++;});
   });});
   if(miss)warn('media',miss+' image'+(miss===1?'':'s')+' not found; placeholders will be used');
   return out();
 };
 /* turn a validated package into the shape the engine starts a world from */
-export function econ(pop){var x=$L.clamp(pop,5,100)/100;return {wageMult:Math.max(0.15,$L.r1(2.6*Math.pow(x,2.6)*10)/10||0.2),tvRate:Math.round(5200*Math.pow(x,1.9)/50)*50||200,prod:Math.round(900000*Math.pow(x,3.4)/1000)*1000||3000,net:Math.round(2400000*Math.pow(x,6)/100)*100||200,cash:Math.round(190e6*Math.pow(x,4.6)/1000)*1000||100000};}
+export function econ(pop){var x=clamp(pop,5,100)/100;return {wageMult:Math.max(0.15,r1(2.6*Math.pow(x,2.6)*10)/10||0.2),tvRate:Math.round(5200*Math.pow(x,1.9)/50)*50||200,prod:Math.round(900000*Math.pow(x,3.4)/1000)*1000||3000,net:Math.round(2400000*Math.pow(x,6)/100)*100||200,cash:Math.round(190e6*Math.pow(x,4.6)/1000)*1000||100000};}
 export function buildDB(pkg){
   var man=pkg.manifest,W={},rows=[],promos=[],PR={};(pkg.workers||[]).forEach(function(w){W[w.id]=w;});
   (pkg.promotions||[]).forEach(function(p){
-    var e=$L.econ(p.popularity),own=p.owner||{},MD=$L.MODELS[p.model]||$L.MODELS.classic,d={id:p.id,ig:!!p.intergender,logo:p.logo||null,events:Array.isArray(p.events)?p.events:null,model:$L.MODELS[p.model]?p.model:null,name:p.name,full:p.full_name||null,blurb:p.blurb||'',cash:p.cash!=null?p.cash:e.cash,image:$L.clamp(p.popularity,5,100),wq:p.work_rate_weight!=null?$L.clamp(p.work_rate_weight,0.2,0.8):(MD.wq||0.5),
-      angles:p.angles_per_show!=null?$L.clamp(p.angles_per_show,0,3):2,wageMult:p.wage_scale!=null?p.wage_scale:e.wageMult,tvRate:p.tv_rate!=null?p.tv_rate:e.tvRate,prod:p.production_cost!=null?p.production_cost:e.prod,net:p.target_weekly_net!=null?p.target_weekly_net:e.net,
-      flagship:p.flagship_month!=null?$L.clamp(p.flagship_month-1,0,11):3,prodLvl:p.production_level!=null?$L.clamp(p.production_level,0,4):2,risk:p.risk_level!=null?$L.clamp(p.risk_level,0,3):1,slot:p.tv_slot!=null?$L.clamp(p.tv_slot,0,2):1,
-      owner:{name:own.name||'The owner',style:$L.STYLES[own.style]?own.style:'stars',roots:$L.ROOTS[own.roots]?own.roots:'tradition',pledge:$L.PLEDGE[own.pledge]?own.pledge:'pay'},
+    var e=econ(p.popularity),own=p.owner||{},MD=MODELS[p.model]||MODELS.classic,d={id:p.id,ig:!!p.intergender,logo:p.logo||null,events:Array.isArray(p.events)?p.events:null,model:MODELS[p.model]?p.model:null,name:p.name,full:p.full_name||null,blurb:p.blurb||'',cash:p.cash!=null?p.cash:e.cash,image:clamp(p.popularity,5,100),wq:p.work_rate_weight!=null?clamp(p.work_rate_weight,0.2,0.8):(MD.wq||0.5),
+      angles:p.angles_per_show!=null?clamp(p.angles_per_show,0,3):2,wageMult:p.wage_scale!=null?p.wage_scale:e.wageMult,tvRate:p.tv_rate!=null?p.tv_rate:e.tvRate,prod:p.production_cost!=null?p.production_cost:e.prod,net:p.target_weekly_net!=null?p.target_weekly_net:e.net,
+      flagship:p.flagship_month!=null?clamp(p.flagship_month-1,0,11):3,prodLvl:p.production_level!=null?clamp(p.production_level,0,4):2,risk:p.risk_level!=null?clamp(p.risk_level,0,3):1,slot:p.tv_slot!=null?clamp(p.tv_slot,0,2):1,
+      owner:{name:own.name||'The owner',style:STYLES[own.style]?own.style:'stars',roots:ROOTS[own.roots]?own.roots:'tradition',pledge:PLEDGE[own.pledge]?own.pledge:'pay'},
       staff:{agent:(p.staff&&p.staff.road_agent)||'The road agent',writer:(p.staff&&p.staff.head_writer)||'The head writer'},announcers:p.announcers&&p.announcers.length>=2?p.announcers.slice(0,2):['The play-by-play man','The colour man'],
       cities:p.cities&&p.cities.length?p.cities.slice():['the city'],brands:p.brands&&p.brands.length?p.brands.map(function(b){return {id:b.id,name:b.name,dev:!!b.dev};}):null,shows:[],titles:[],teams:[],media:p.media||null};
     promos.push(d);PR[p.id]=d;
   });
-  (pkg.shows||[]).forEach(function(s){var x={id:s.id,name:s.name,brand:s.brand||undefined,mult:s.weight!=null?$L.clamp(s.weight,0.2,1):1};
+  (pkg.shows||[]).forEach(function(s){var x={id:s.id,name:s.name,brand:s.brand||undefined,mult:s.weight!=null?clamp(s.weight,0.2,1):1};
     // what the world says about its time on the air: the network, how big it is, how many years it has run (src/88-shows.js reads them once)
-    if(s.network)x.wn=String(s.network).slice(0,40);if(s.network_size!=null)x.wt=$L.clamp(s.network_size|0,0,2);if(s.years_on_air!=null)x.wy=$L.clamp(s.years_on_air|0,0,60);
+    if(s.network)x.wn=String(s.network).slice(0,40);if(s.network_size!=null)x.wt=clamp(s.network_size|0,0,2);if(s.years_on_air!=null)x.wy=clamp(s.years_on_air|0,0,60);
     PR[s.promotion_id].shows.push(x);});
   var home={},con={};(pkg.contracts||[]).forEach(function(c){if((c.contract_type||'exclusive')==='exclusive'||!home[c.worker_id]){home[c.worker_id]=c.promotion_id;con[c.worker_id]=c;}});
-  (pkg.titles||[]).forEach(function(t){PR[t.promotion_id].titles.push({id:t.id,name:t.name,g:t.gender,lvl:$L.clamp(t.level,1,3),tag:!!t.tag,brand:t.brand||undefined,belt:t.belt&&typeof t.belt==='object'?JSON.parse(JSON.stringify(t.belt)):undefined,holders:(t.holder_ids||[]).every(function(h){return home[h]===t.promotion_id;})?(t.holder_ids||[]).map(function(h){return '#'+h;}):[]});});
+  (pkg.titles||[]).forEach(function(t){PR[t.promotion_id].titles.push({id:t.id,name:t.name,g:t.gender,lvl:clamp(t.level,1,3),tag:!!t.tag,brand:t.brand||undefined,belt:t.belt&&typeof t.belt==='object'?JSON.parse(JSON.stringify(t.belt)):undefined,holders:(t.holder_ids||[]).every(function(h){return home[h]===t.promotion_id;})?(t.holder_ids||[]).map(function(h){return '#'+h;}):[]});});
   var stables=[];
   (pkg.teams||[]).forEach(function(t){
     if((t.kind||'tag')==='stable')stables.push({name:t.name,promo:t.promotion_id,leader:t.leader_id||t.member_ids[0],m:t.member_ids.slice()});
@@ -151,17 +156,17 @@ export function buildDB(pkg){
     var r=w.ratings,c=con[w.id],d={uid:w.id,name:w.ring_name,g:w.gender,style:$L.STYLE_KEY[w.style]||'A',align:w.disposition==='heel'?'H':'F',tweener:w.disposition==='tweener',fin:w.finisher||null,promo:c?c.promotion_id:'FA',brand:c&&c.brand?c.brand:null,
       roles:(w.roles&&w.roles.length?w.roles:['wrestler']).filter(function(x){return $L.ROLES.indexOf(x)>=0;}),age:w.age!=null?w.age:(w.birth_date?Math.max(16,(man.start_year||2026)-(+String(w.birth_date).slice(0,4)||1990)):null),peak:w.peak_years&&w.peak_years.length===2?w.peak_years:null,cliff:w.age_cliff!=null?w.age_cliff:null,mgr:w.manager_id||null,
       real:w.real_name||null,town:w.hometown||null,wc:w.weight_class||null,media:w.media||null,face:w.face||null,look:w.look?$L.lookClean(w.look):null};
-    Object.keys($L.RMAP).forEach(function(k){if(r[k]!=null)d[$L.RMAP[k]]=$L.clamp(Math.round(r[k]),0,100);});
+    Object.keys($L.RMAP).forEach(function(k){if(r[k]!=null)d[$L.RMAP[k]]=clamp(Math.round(r[k]),0,100);});
     if(w.locker_role)d.lrole=w.locker_role==='gatekeeper'?'gate':w.locker_role;
     if(c){d.con=c.weeks_left!=null?Math.max(1,c.weeks_left):null;d.tw=c.tenure_weeks!=null?Math.max(0,c.tenure_weeks):null;d.push=c.push_level||null;d.wage=c.monthly_salary?Math.round(c.monthly_salary*12/52/10)*10:(c.per_show_fee?Math.round(c.per_show_fee/10)*10:null);d.pwa=c.contract_type==='pwa';}
     rows.push(d);
   });
-  var ev=[];for(var m=0;m<12;m++)ev.push($L.MONTHS[m]+' Showcase');(pkg.events||[]).forEach(function(e){if(e.month>=1&&e.month<=12)ev[e.month-1]=e.name;});
+  var ev=[];for(var m=0;m<12;m++)ev.push(MONTHS[m]+' Showcase');(pkg.events||[]).forEach(function(e){if(e.month>=1&&e.month<=12)ev[e.month-1]=e.name;});
   var nm=pkg.names||{};
-  return {fictional:!!man.fictional,uni:{id:man.id,name:man.name,version:String(man.version||'1'),author:man.author||'',desc:man.description||''},startYear:man.start_year||2026,startMonth:$L.clamp((man.start_month||10)-1,0,11),
-    events:ev,rules:(pkg.events||[]).reduce(function(o,e){if(e.rule)o[e.month-1]=e.rule;return o;},{}),sponsors:pkg.sponsors&&pkg.sponsors.length?pkg.sponsors:null,columnists:pkg.columnists&&pkg.columnists.length?pkg.columnists:null,scenes:Array.isArray(pkg.scenes)&&pkg.scenes.length?pkg.scenes:null,backdrops:Array.isArray(pkg.backdrops)&&pkg.backdrops.length?pkg.backdrops:null,networks:$L.netsOf(pkg.networks),stips:Array.isArray(pkg.stips)&&pkg.stips.length?pkg.stips:null,segkinds:Array.isArray(pkg.segkinds)&&pkg.segkinds.length?pkg.segkinds:null,
+  return {fictional:!!man.fictional,uni:{id:man.id,name:man.name,version:String(man.version||'1'),author:man.author||'',desc:man.description||''},startYear:man.start_year||2026,startMonth:clamp((man.start_month||10)-1,0,11),
+    events:ev,rules:(pkg.events||[]).reduce(function(o,e){if(e.rule)o[e.month-1]=e.rule;return o;},{}),sponsors:pkg.sponsors&&pkg.sponsors.length?pkg.sponsors:null,columnists:pkg.columnists&&pkg.columnists.length?pkg.columnists:null,scenes:Array.isArray(pkg.scenes)&&pkg.scenes.length?pkg.scenes:null,backdrops:Array.isArray(pkg.backdrops)&&pkg.backdrops.length?pkg.backdrops:null,networks:netsOf(pkg.networks),stips:Array.isArray(pkg.stips)&&pkg.stips.length?pkg.stips:null,segkinds:Array.isArray(pkg.segkinds)&&pkg.segkinds.length?pkg.segkinds:null,
     indie:{firstM:nm.first_m&&nm.first_m.length>=8?nm.first_m:$L.FALLBACK_NAMES.firstM,firstF:nm.first_f&&nm.first_f.length>=6?nm.first_f:$L.FALLBACK_NAMES.firstF,last:nm.last&&nm.last.length>=8?nm.last:$L.FALLBACK_NAMES.last},
-    freeAgents:man.free_agents!=null?$L.clamp(man.free_agents,0,120):36,promotions:promos,rows:rows,stables:stables,rels:(pkg.relationships||[]).filter(function(r){return W[r.a]&&W[r.b];})};
+    freeAgents:man.free_agents!=null?clamp(man.free_agents,0,120):36,promotions:promos,rows:rows,stables:stables,rels:(pkg.relationships||[]).filter(function(r){return W[r.a]&&W[r.b];})};
 }
 /** A world's own network names, by size (small, cable, major): a list of two or more is used, anything else keeps the game's own. */
 export function netsOf(n){if(!n||typeof n!=='object')return null;var out=[null,null,null],any=false;['small','cable','major'].forEach(function(k,t){var L=Array.isArray(n[k])?n[k].map(function(x){return String(x).trim().slice(0,40);}).filter(Boolean):[];if(L.length>1){out[t]=L;any=true;}});return any?out:null;}
@@ -169,45 +174,45 @@ export var FALLBACK_NAMES={firstM:['Cass','Dex','Rowan','Milo','Jett','Bram','Ni
   firstF:['Mara','Juno','Petra','Sable','Liv','Odessa','Rue','Tamsin','Noor','Vesper','Indra','Calla','Wren','Zora','Astrid','Bex','Cleo','Dahlia','Esme','Faye','Greta','Harlow','Ione','Kit','Lux','Nell','Opal','Quinn','Romy','Sloane','Thea','Willa'],
   last:['Harrow','Vale','Quist','Marlowe','Stroud','Bellamy','Thorne','Castellan','Rusk','Devane','Halloran','Maddox','Sorrell','Lindqvist','Rourke','Kessler','Brannigan','Whitlock','Drummond','Ferro','Pruitt','Ashdown','Barrowe','Calloway','Easton','Fairbanks','Galloway','Hathaway','Jessup','Mercer','Northcott','Pemberton','Radcliffe','Tillman','Underhill','Wexler','Zeller','Blackwood','Crane','Granger','Kincaid','Novak']};
 $L.FALLBACK_NAMES = FALLBACK_NAMES;
-$L.E.useUniverse=function(pkg,fileList){
-  var v=$L.E.validateUniverse(pkg,fileList);if(!v.ok)return v;
-  $L.DB=$L.buildDB(pkg);$L.CAL0={y:$L.DB.startYear,m:$L.DB.startMonth};v.info=$L.E.universe();return v;
+E.useUniverse=function(pkg,fileList){
+  var v=E.validateUniverse(pkg,fileList);if(!v.ok)return v;
+  $L.DB=$L.buildDB(pkg);$L.CAL0={y:$L.DB.startYear,m:$L.DB.startMonth};v.info=E.universe();return v;
 };
-$L.E.universe=function(){var n=0,count={},cur=null;if($L.DB.rows){n=$L.DB.rows.length;$L.DB.rows.forEach(function(d){if(d.promo)count[d.promo]=(count[d.promo]||0)+1;});}else $L.DB.roster.split('\n').forEach(function(l){l=l.trim();if(!l)return;if(l[0]==='#'){cur=l.slice(1).trim().split(/\s+/)[0];return;}n++;count[cur]=(count[cur]||0)+1;});return {count:count,start:$L.MONTHS[$L.DB.startMonth]+' '+$L.DB.startYear,id:$L.DB.uni?$L.DB.uni.id:'legacy',name:$L.DB.uni?$L.DB.uni.name:'Built-in roster',version:$L.DB.uni?$L.DB.uni.version:'1',author:$L.DB.uni?$L.DB.uni.author:'',desc:$L.DB.uni?$L.DB.uni.desc:'',workers:n,promotions:$L.DB.promotions};};
-$L.E.attach=function(S){var d=S&&S.db;$L.CAL0=d?{y:d.startYear,m:d.startMonth}:{y:$L.DB.startYear,m:$L.DB.startMonth};};
+E.universe=function(){var n=0,count={},cur=null;if($L.DB.rows){n=$L.DB.rows.length;$L.DB.rows.forEach(function(d){if(d.promo)count[d.promo]=(count[d.promo]||0)+1;});}else $L.DB.roster.split('\n').forEach(function(l){l=l.trim();if(!l)return;if(l[0]==='#'){cur=l.slice(1).trim().split(/\s+/)[0];return;}n++;count[cur]=(count[cur]||0)+1;});return {count:count,start:MONTHS[$L.DB.startMonth]+' '+$L.DB.startYear,id:$L.DB.uni?$L.DB.uni.id:'legacy',name:$L.DB.uni?$L.DB.uni.name:'Built-in roster',version:$L.DB.uni?$L.DB.uni.version:'1',author:$L.DB.uni?$L.DB.uni.author:'',desc:$L.DB.uni?$L.DB.uni.desc:'',workers:n,promotions:$L.DB.promotions};};
+E.attach=function(S){var d=S&&S.db;$L.CAL0=d?{y:d.startYear,m:d.startMonth}:{y:$L.DB.startYear,m:$L.DB.startMonth};};
 /* what a package told us that the world builder cannot express row by row */
-$L.NEWX.push(function(S){
+NEWX.push(function(S){
   var by={};S.w.forEach(function(w){if(w.uid)by[w.uid]=w;});
   ($L.DB.rows||[]).forEach(function(d){var w=by[d.uid];if(!w)return;if(d.mgr&&by[d.mgr]&&by[d.mgr].promo===w.promo)w.mgr=by[d.mgr].id;if(d.push)w.push=d.push;if(d.pwa)w.pwa=true;});
   ($L.DB.stables||[]).forEach(function(s){var ms=s.m.map(function(u){return by[u];}).filter(function(w){return w&&w.promo===s.promo&&w.stable==null;});if(ms.length<3)return;
     var lead=by[s.leader]&&ms.indexOf(by[s.leader])>=0?by[s.leader]:ms[0],st={id:S.nid++,promo:s.promo,name:s.name,leader:lead.id,m:ms.map(function(w){return w.id;}),formed:1,tension:0};S.stables.push(st);ms.forEach(function(w){w.stable=st.id;});});
-  ($L.DB.rels||[]).forEach(function(r){var a=by[r.a],b=by[r.b];if(!a||!b)return;var k=$L.rkey(a.id,b.id);
-    if(r.ring_chemistry!=null)(S.chemX||(S.chemX={}))[k]=$L.clamp(r.ring_chemistry,-10,10)*0.6;
-    var s=r.strength!=null?r.strength:(r.type==='dislike'||r.type==='rivalry'?-50:50);if(Math.abs(s)>=25)$L.relSet(S,a.id,b.id,s>0?Math.max($L.REL_STRONG,s):Math.min(-$L.REL_STRONG,s),r.type==='mentor'?{ra:40,rb:40}:null);
+  ($L.DB.rels||[]).forEach(function(r){var a=by[r.a],b=by[r.b];if(!a||!b)return;var k=rkey(a.id,b.id);
+    if(r.ring_chemistry!=null)(S.chemX||(S.chemX={}))[k]=clamp(r.ring_chemistry,-10,10)*0.6;
+    var s=r.strength!=null?r.strength:(r.type==='dislike'||r.type==='rivalry'?-50:50);if(Math.abs(s)>=25)relSet(S,a.id,b.id,s>0?Math.max(REL_STRONG,s):Math.min(-REL_STRONG,s),r.type==='mentor'?{ra:40,rb:40}:null);
     (S.relT||(S.relT={}))[k]=r.type;});
 });
 /* write the world as it stands back out as a package */
 export function slug(s){return String(s).toLowerCase().normalize?String(s).toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^a-z0-9]+/g,'_').replace(/^_+|_+$/g,'').slice(0,40):String(s).toLowerCase().replace(/[^a-z0-9]+/g,'_');}
-$L.E.exportUniverse=function(S,meta){
-  meta=meta||{};var d=S.db||$L.DB,uid={},used={},P0=S.promos,pid=function(id){return $L.slug(id)||'promo';};
-  S.w.forEach(function(w){if(w.rt)return;var u=w.uid&&$L.ID_RE.test(w.uid)&&!used[w.uid]?w.uid:$L.slug(w.name)||'worker';if(u.length<2)u='w_'+u;var b=u,n=2;while(used[u])u=(b.slice(0,36)+'_'+(n++));used[u]=1;uid[w.id]=u;});
-  var c0=$L.cal(S.week),pkg={manifest:{id:$L.slug(meta.id||meta.name||'my_universe')||'my_universe',name:meta.name||'My universe',author:meta.author||(S.booker?S.booker.name:''),version:meta.version||'1.0',schema_version:$L.SCHEMA_VERSION,fictional:!!d.fictional,start_year:c0.year,start_month:c0.month+1,free_agents:0,description:meta.description||'Exported from Elite Wrestling Federation 9000, '+c0.label+'.'},
+E.exportUniverse=function(S,meta){
+  meta=meta||{};var d=S.db||$L.DB,uid={},used={},P0=S.promos,pid=function(id){return slug(id)||'promo';};
+  S.w.forEach(function(w){if(w.rt)return;var u=w.uid&&$L.ID_RE.test(w.uid)&&!used[w.uid]?w.uid:slug(w.name)||'worker';if(u.length<2)u='w_'+u;var b=u,n=2;while(used[u])u=(b.slice(0,36)+'_'+(n++));used[u]=1;uid[w.id]=u;});
+  var c0=cal(S.week),pkg={manifest:{id:slug(meta.id||meta.name||'my_universe')||'my_universe',name:meta.name||'My universe',author:meta.author||(S.booker?S.booker.name:''),version:meta.version||'1.0',schema_version:$L.SCHEMA_VERSION,fictional:!!d.fictional,start_year:c0.year,start_month:c0.month+1,free_agents:0,description:meta.description||'Exported from Elite Wrestling Federation 9000, '+c0.label+'.'},
     promotions:[],shows:[],titles:[],workers:[],contracts:[],teams:[],relationships:[],events:d.events.map(function(n,i){var o={month:i+1,name:n};if(d.rules&&d.rules[i])o.rule=d.rules[i];return o;}),names:{first_m:d.indie.firstM,first_f:d.indie.firstF,last:d.indie.last}};
   if(d.sponsors)pkg.sponsors=d.sponsors;if(d.columnists)pkg.columnists=d.columnists;if(d.scenes)pkg.scenes=d.scenes;if(d.backdrops)pkg.backdrops=d.backdrops;if(d.segkinds)pkg.segkinds=d.segkinds;if(d.stips)pkg.stips=d.stips;if(d.networks){pkg.networks={};['small','cable','major'].forEach(function(k,t){if(d.networks[t])pkg.networks[k]=d.networks[t].slice();});}
   S.order.forEach(function(id){
     var P=P0[id],own=id===S.player?{name:S.owner.name,style:S.owner.style,roots:S.owner.roots,pledge:S.owner.pledge}:(P.owner||{name:'The owner',style:P.style||'stars',roots:'tradition',pledge:'pay'});
-    var o={id:pid(id),name:P.name,blurb:P.blurb||'',owner:own,staff:{road_agent:P.staff.agent,head_writer:P.staff.writer},announcers:P.ann.slice(),cities:P.cities.slice(),cash:Math.round(P.cash),popularity:$L.r1(P.image),work_rate_weight:P.wq,angles_per_show:P.angles,wage_scale:P.wageMult,tv_rate:P.tvRate,production_cost:P.prod,target_weekly_net:P.net,flagship_month:P.flagship+1,production_level:P.prodLvl,risk_level:P.risk,tv_slot:P.slot};
+    var o={id:pid(id),name:P.name,blurb:P.blurb||'',owner:own,staff:{road_agent:P.staff.agent,head_writer:P.staff.writer},announcers:P.ann.slice(),cities:P.cities.slice(),cash:Math.round(P.cash),popularity:r1(P.image),work_rate_weight:P.wq,angles_per_show:P.angles,wage_scale:P.wageMult,tv_rate:P.tvRate,production_cost:P.prod,target_weekly_net:P.net,flagship_month:P.flagship+1,production_level:P.prodLvl,risk_level:P.risk,tv_slot:P.slot};
     if(P.full)o.full_name=P.full;if(P.ig)o.intergender=true;if(P.brands)o.brands=P.brands.map(function(b){var x={id:b.id,name:b.name};if(b.dev)x.dev=true;return x;});
     if(P.model)o.model=P.model;if(P.logo)o.logo=JSON.parse(JSON.stringify(P.logo));
     if(P.events)o.events=P.events.map(function(e,i){var x={month:i+1,name:e.n,type:e.t};if(e.rule)x.rule=e.rule;return x;});
     pkg.promotions.push(o);
-    P.shows.forEach(function(s){var x={id:$L.slug(id+'_'+s.id),promotion_id:pid(id),name:s.name,weight:s.mult==null?1:s.mult};if(s.brand)x.brand=s.brand;if(s.net){x.network=s.net;x.network_size=s.tier;x.years_on_air=$L.airYears(S,s);}pkg.shows.push(x);});
-    P.titles.forEach(function(t){var x={id:$L.slug(t.id),promotion_id:pid(id),name:t.name,gender:t.g,level:t.lvl,tag:!!t.tag,holder_ids:t.holders.map(function(h){return uid[h];}).filter(Boolean)};if(t.brand)x.brand=t.brand;if(t.belt)x.belt=JSON.parse(JSON.stringify(t.belt));pkg.titles.push(x);});
+    P.shows.forEach(function(s){var x={id:slug(id+'_'+s.id),promotion_id:pid(id),name:s.name,weight:s.mult==null?1:s.mult};if(s.brand)x.brand=s.brand;if(s.net){x.network=s.net;x.network_size=s.tier;x.years_on_air=$L.airYears(S,s);}pkg.shows.push(x);});
+    P.titles.forEach(function(t){var x={id:slug(t.id),promotion_id:pid(id),name:t.name,gender:t.g,level:t.lvl,tag:!!t.tag,holder_ids:t.holders.map(function(h){return uid[h];}).filter(Boolean)};if(t.brand)x.brand=t.brand;if(t.belt)x.belt=JSON.parse(JSON.stringify(t.belt));pkg.titles.push(x);});
   });
-  var push=S.order.reduce(function(o,id){var m=$L.E.pushMap(S,id);Object.keys(m).forEach(function(k){o[k]=m[k];});return o;},{});
+  var push=S.order.reduce(function(o,id){var m=E.pushMap(S,id);Object.keys(m).forEach(function(k){o[k]=m[k];});return o;},{});
   var PL={'Main event':'main_eventer','Upper midcard':'upper_midcarder','Midcard':'midcarder','Lower midcard':'lower_midcarder','Opener':'jobber'};
   S.w.forEach(function(w){
-    if(w.rt)return;var r={};Object.keys($L.RMAP).forEach(function(k){var v=w[$L.RMAP[k]];if(k==='gimmick_rating')v=w.gim?$L.gimFit(w):null;if(v!=null)r[k]=$L.clamp(Math.round(v),0,100);});
+    if(w.rt)return;var r={};Object.keys($L.RMAP).forEach(function(k){var v=w[$L.RMAP[k]];if(k==='gimmick_rating')v=w.gim?$L.gimFit(w):null;if(v!=null)r[k]=clamp(Math.round(v),0,100);});
     var o={id:uid[w.id],ring_name:w.name,age:w.age,gender:w.g,disposition:w.twn?'tweener':(w.align==='H'?'heel':'face'),roles:w.roles?w.roles.slice():['wrestler'],style:$L.STYLE_OUT[w.style]||'all_rounder',finisher:w.fin||undefined,ratings:r,peak_years:w.pk.slice(),age_cliff:w.cl};
     if(w.role)o.locker_role=w.role==='gate'?'gatekeeper':w.role;
     if(w.real)o.real_name=w.real;if(w.town)o.hometown=w.town;if(w.wc)o.weight_class=w.wc;if(w.media)o.media=w.media;if(w.face)o.face=w.face;if(w.look)o.look=JSON.parse(JSON.stringify(w.look));if(w.mgr!=null&&uid[w.mgr])o.manager_id=uid[w.mgr];
@@ -216,11 +221,11 @@ $L.E.exportUniverse=function(S,meta){
   });
   S.teams.forEach(function(t,i){if(!uid[t.m[0]]||!uid[t.m[1]]||!P0[t.promo])return;pkg.teams.push({id:'team_'+(i+1),name:t.name||S.w[t.m[0]].name+' & '+S.w[t.m[1]].name,kind:'tag',member_ids:[uid[t.m[0]],uid[t.m[1]]],experience:Math.round(t.exp),chemistry:t.chem||0,promotion_id:pid(t.promo)});});
   (S.stables||[]).forEach(function(s,i){var ms=s.m.map(function(m){return uid[m];}).filter(Boolean);if(ms.length>=3)pkg.teams.push({id:'stable_'+(i+1),name:s.name,kind:'stable',member_ids:ms,leader_id:uid[s.leader],promotion_id:pid(s.promo)});});
-  Object.keys($L.rmAll(S)).forEach(function(k){var p=k.split('-'),a=uid[+p[0]],b=uid[+p[1]],e=S.rm[k];if(!a||!b||Math.abs(e.base)<$L.REL_ON)return;pkg.relationships.push({a:a,b:b,type:(S.relT&&S.relT[k])||(e.base>0?'friendship':'dislike'),strength:Math.round($L.clamp(e.base,-100,100)),ring_chemistry:Math.round($L.chem(S,+p[0],+p[1])/0.6)});});
+  Object.keys(rmAll(S)).forEach(function(k){var p=k.split('-'),a=uid[+p[0]],b=uid[+p[1]],e=S.rm[k];if(!a||!b||Math.abs(e.base)<REL_ON)return;pkg.relationships.push({a:a,b:b,type:(S.relT&&S.relT[k])||(e.base>0?'friendship':'dislike'),strength:Math.round(clamp(e.base,-100,100)),ring_chemistry:Math.round(chem(S,+p[0],+p[1])/0.6)});});
   return pkg;
 };
-$L.E.SCHEMA_VERSION=SCHEMA_VERSION;
-$L.E.RULES={no_turning_back:'No turning back: a feud can be settled tonight at 45 heat instead of 60.',betrayal:'The betrayal show: a losing team is twice as likely to split.',gimmick_free:'Anything goes: a second gimmick match carries no penalty.',all_titles:'Every title on the line: title matches get a bigger reaction.'};
+E.SCHEMA_VERSION=SCHEMA_VERSION;
+E.RULES={no_turning_back:'No turning back: a feud can be settled tonight at 45 heat instead of 60.',betrayal:'The betrayal show: a losing team is twice as likely to split.',gimmick_free:'Anything goes: a second gimmick match carries no penalty.',all_titles:'Every title on the line: title matches get a bigger reaction.'};
 
 // hand this module's names back to the bridge once more, in case top-level code reassigned one
 $L.SCHEMA_VERSION = SCHEMA_VERSION;

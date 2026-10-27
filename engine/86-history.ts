@@ -1,6 +1,7 @@
 // @ts-nocheck
 /* Moved from src/86-history.js (ADR-0001). Names from the rest of the engine come through the bridge, $L. Types come in step 3. */
 import { L as $L } from './_gen/legacy.js';
+import { E, rkey } from './00-core';
 $L.histWeek = histWeek; $L.histApply = histApply;
 /* wraps: 00-core.js, 85-universe.js (it must sort after them; test-buildorder.js checks) */
 /* ===== A world's history: what happened before the game begins (Ryan, 16 October: the parody world's 2020 to 2025) =====
@@ -33,7 +34,7 @@ export function histWeek(date,y0,m0){var p=String(date||'').split('-'),y=+p[0],m
 /** Lay a world's history into a new game. */
 export function histApply(S){
   var H=$L.DB&&$L.DB.history;if(!H)return;var y0=$L.DB.startYear,m0=$L.DB.startMonth,id={};S.w.forEach(function(w){if(w.uid)id[w.uid]=w.id;});
-  var wk=function(d){return $L.histWeek(d,y0,m0);},nm=function(u){var w=S.w[id[u]];return w?w.name:u;};
+  var wk=function(d){return histWeek(d,y0,m0);},nm=function(u){var w=S.w[id[u]];return w?w.name:u;};
   var tby={};S.order.forEach(function(pid){(S.promos[pid].titles||[]).forEach(function(t){tby[t.id]=t;});});
   // the line of champions, oldest first; the reign still running joins the one the title already has
   (H.reigns||[]).slice().sort(function(a,b){return (wk(a.from)||0)-(wk(b.from)||0);}).forEach(function(r){var t=tby[r.title];if(!t)return;
@@ -48,22 +49,22 @@ export function histApply(S){
   });
   Object.keys(tby).forEach(function(k){var t=tby[k];if(t.hist)t.hist.sort(function(a,b){return (a.from||0)-(b.from||0);});});
   // head to head, and the famous nights in both careers
-  (H.matches||[]).forEach(function(m){var a=id[m.a],b=id[m.b];if(a==null||b==null)return;var k=$L.rkey(a,b),h=S.h2h[k]||(S.h2h[k]={n:0,a:0,b:0,lw:-1,w:0});
+  (H.matches||[]).forEach(function(m){var a=id[m.a],b=id[m.b];if(a==null||b==null)return;var k=rkey(a,b),h=S.h2h[k]||(S.h2h[k]={n:0,a:0,b:0,lw:-1,w:0});
     var win=m.winner!=null?id[m.winner]:null;h.n++;h.w=Math.min(0,wk(m.date)||0);if(win!=null){h.lw=win;if(win===Math.min(a,b))h.a++;else h.b++;}
     if((m.stars||0)>=4.5||m.note){var t=(m.event?m.event+', ':'')+String(m.date||'').slice(0,4)+': '+(win!=null?nm(m.winner)+' beat '+(win===a?nm(m.b):nm(m.a)):nm(m.a)+' and '+nm(m.b)+' fought to a draw')+(m.note?'. '+m.note:'');
       [a,b].forEach(function(i){var w=S.w[i];(w.log||(w.log=[])).push({w:Math.min(0,wk(m.date)||0),k:'classic',t:t});});}
   });
   // old feuds that ended in the last year leave an ember: the same two start again with a head start
   (H.feuds||[]).forEach(function(f){var a=id[(f.a||[])[0]],b=id[(f.b||[])[0]],end=wk(f.to);if(a==null||b==null||end==null||end<-47)return;
-    (S.embers||(S.embers={}))[$L.rkey(a,b)]={w:end,h:Math.round(f.heat||60),n:1};});
+    (S.embers||(S.embers={}))[rkey(a,b)]={w:end,h:Math.round(f.heat||60),n:1};});
   // moments in a career
   (H.moments||[]).forEach(function(x){var w=S.w[id[x.who]];if(w)(w.log||(w.log=[])).push({w:Math.min(0,wk(x.date)||0),k:x.k||'moment',t:x.text});});
   S.w.forEach(function(w){if(w.log&&w.log.length){w.log.sort(function(p,q){return p.w-q.w;});if(w.log.length>16)w.log=w.log.slice(-16);}});
   S.histFrom=H.from||null;
 }
-(function(){var ng=$L.E.newGame;$L.E.newGame=function(){var S=ng.apply(this,arguments);if(S&&S.w)$L.histApply(S);return S;};})();
+(function(){var ng=E.newGame;E.newGame=function(){var S=ng.apply(this,arguments);if(S&&S.w)histApply(S);return S;};})();
 /** A wrestler's persona from the world file: gimmick, catchphrase, finisher, debut year and whether they are a legend. */
-$L.E.persona=function(S,id){var w=S.w[id];return w&&w.uid&&$L.DB&&$L.DB.persona?$L.DB.persona[w.uid]||null:null;};
+E.persona=function(S,id){var w=S.w[id];return w&&w.uid&&$L.DB&&$L.DB.persona?$L.DB.persona[w.uid]||null:null;};
 
 // hand this module's names back to the bridge once more, in case top-level code reassigned one
 $L.histWeek = histWeek;

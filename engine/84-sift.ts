@@ -1,6 +1,9 @@
 // @ts-nocheck
 /* Moved from src/84-sift.js (ADR-0001). Names from the rest of the engine come through the bridge, $L. Types come in step 3. */
 import { L as $L } from './_gen/legacy.js';
+import { E, activeFeuds, rkey, rosterOf } from './00-core';
+import { gram } from './60-grammar';
+import { REL_ON, bondOf, jealOf } from './66-relations';
 /* ===== Story sifting: storylines the game finds in what has already happened =====
    In the manner of Felt (story sifting over an event log): each pattern looks through your roster's history (head
    to head records, title changes, the relationship matrix, who trained whom) for a pair of people who already have
@@ -35,14 +38,14 @@ export var SIFT_N={rubber:'The decider',rematch:'The rematch never given',heat:'
 $L.SIFT_N = SIFT_N;
 
 /** Every storyline the game can find on your roster right now, best first. */
-$L.E.sift=function(S){
-  var P=S.promos[S.player],R=$L.rosterOf(S,P.id).filter(function(w){return !w.nw&&!w.rt;}),on={},out=[],seen={};
+E.sift=function(S){
+  var P=S.promos[S.player],R=rosterOf(S,P.id).filter(function(w){return !w.nw&&!w.rt;}),on={},out=[],seen={};
   R.forEach(function(w){on[w.id]=w;});
-  var feuding=function(a,b){return $L.activeFeuds(S).some(function(f){return (f.a.indexOf(a)>=0&&f.b.indexOf(b)>=0)||(f.a.indexOf(b)>=0&&f.b.indexOf(a)>=0);});};
+  var feuding=function(a,b){return activeFeuds(S).some(function(f){return (f.a.indexOf(a)>=0&&f.b.indexOf(b)>=0)||(f.a.indexOf(b)>=0&&f.b.indexOf(a)>=0);});};
   var add=function(k,a,b,score,facts){
-    if(!on[a]||!on[b]||a===b||feuding(a,b))return;var key=$L.rkey(a,b);if(seen[key]&&seen[key].score>=score)return;
+    if(!on[a]||!on[b]||a===b||feuding(a,b))return;var key=rkey(a,b);if(seen[key]&&seen[key].score>=score)return;
     var A=S.w[a],B=S.w[b],c={k:k,a:A.name,b:B.name,n:facts.n||3,g:facts.g||''};
-    var x={k:k,n:$L.SIFT_N[k],a:a,b:b,score:score,facts:facts.lines,pitch:$L.gram($L.GR_SIFT,'pitch',c,'sift'+key+k+Math.floor(S.week/4))};
+    var x={k:k,n:$L.SIFT_N[k],a:a,b:b,score:score,facts:facts.lines,pitch:gram($L.GR_SIFT,'pitch',c,'sift'+key+k+Math.floor(S.week/4))};
     if(seen[key])out.splice(out.indexOf(seen[key]),1);seen[key]=x;out.push(x);
   };
   // a close series: three or more meetings, no more than one win between them
@@ -65,15 +68,15 @@ $L.E.sift=function(S){
   });
   // real heat: two people who do not get on, from the relationship matrix
   R.forEach(function(A){R.forEach(function(B){
-    if(A.id>=B.id)return;var b=$L.bondOf(S,A.id,B.id);if(b>-$L.REL_ON)return;
-    add('heat',A.id,B.id,30+Math.min(25,(-b-$L.REL_ON)/3),{lines:[A.name+' and '+B.name+' do not get on.',(b<=-60?'It is bad enough that people backstage have noticed.':'It has been building for a while.')]});
+    if(A.id>=B.id)return;var b=bondOf(S,A.id,B.id);if(b>-REL_ON)return;
+    add('heat',A.id,B.id,30+Math.min(25,(-b-REL_ON)/3),{lines:[A.name+' and '+B.name+' do not get on.',(b<=-60?'It is bad enough that people backstage have noticed.':'It has been building for a while.')]});
   });});
   // teacher and student, when the student is near the teacher on the card
   R.forEach(function(st){var t=st.coach!=null?on[st.coach]:null;if(!t||st.ovr<t.ovr-8)return;
     add('teach',st.id,t.id,45+(st.ovr-t.ovr),{lines:[t.name+' trained '+st.name+'.',st.ovr>=t.ovr?'The student is now the bigger name.':'The student is closing in.']});});
   // partners apart: one tag partner jealous of the other
   (S.teams||[]).forEach(function(tm){if(!tm.m||tm.m.length!==2||!on[tm.m[0]]||!on[tm.m[1]])return;
-    var ja=$L.jealOf(S,tm.m[0],tm.m[1]),jb=$L.jealOf(S,tm.m[1],tm.m[0]),j=Math.max(ja,jb);if(j<35)return;var x=ja>=jb?tm.m[0]:tm.m[1],y=x===tm.m[0]?tm.m[1]:tm.m[0];
+    var ja=jealOf(S,tm.m[0],tm.m[1]),jb=jealOf(S,tm.m[1],tm.m[0]),j=Math.max(ja,jb);if(j<35)return;var x=ja>=jb?tm.m[0]:tm.m[1],y=x===tm.m[0]?tm.m[1]:tm.m[0];
     add('shadow',x,y,30+j/2,{lines:[S.w[x].name+' and '+S.w[y].name+(tm.name?' team as '+tm.name+'.':' are a team.'),S.w[x].name+' has grown jealous of '+S.w[y].name+'.']});});
   // the long chase: somebody your champion has beaten again and again, still close behind
   P.titles.forEach(function(t){if(t.tag||!t.holders.length)return;var ch=t.holders[0];if(!on[ch])return;
@@ -82,11 +85,11 @@ $L.E.sift=function(S){
       add('chase',o,ch,40+cw*7,{lines:[S.w[ch].name+' holds the '+t.name+' and has beaten '+S.w[o].name+' '+(cw===2?'twice':cw+' times')+'.',S.w[o].name+' has never won one. The crowd is starting to want it.']});});});
   // a mutiny: a member of your stable who has grown jealous of its leader, or cannot stand them
   (S.stables||[]).forEach(function(st){if(st.promo!==P.id||!on[st.leader])return;st.m.forEach(function(id){if(id===st.leader||!on[id])return;
-    var j=$L.jealOf(S,id,st.leader),b=$L.bondOf(S,id,st.leader);if(j<35&&b>-$L.REL_ON&&(st.tension||0)<40)return;
-    add('mutiny',id,st.leader,35+Math.max(j,-b,st.tension||0)/2,{g:st.name,lines:[S.w[id].name+' is in '+st.name+', and '+S.w[st.leader].name+' leads it.',(j>=35?S.w[id].name+' wants that spot.':(b<=-$L.REL_ON?'The two of them do not get on.':'The group has been on edge for weeks.'))]});});});
+    var j=jealOf(S,id,st.leader),b=bondOf(S,id,st.leader);if(j<35&&b>-REL_ON&&(st.tension||0)<40)return;
+    add('mutiny',id,st.leader,35+Math.max(j,-b,st.tension||0)/2,{g:st.name,lines:[S.w[id].name+' is in '+st.name+', and '+S.w[st.leader].name+' leads it.',(j>=35?S.w[id].name+' wants that spot.':(b<=-REL_ON?'The two of them do not get on.':'The group has been on edge for weeks.'))]});});});
   // the belt between them: two of yours who have taken the same title from each other in the last year
   P.titles.forEach(function(t){if(t.tag)return;var H=(t.hist||[]).filter(function(h){return h.from>=S.week-48;}),seen2={};
-    for(var i=1;i<H.length;i++){var a=+String(H[i-1].ids).split(',')[0],b=+String(H[i].ids).split(',')[0];if(a===b||!on[a]||!on[b])continue;var k=$L.rkey(a,b);seen2[k]=(seen2[k]||0)+1;}
+    for(var i=1;i<H.length;i++){var a=+String(H[i-1].ids).split(',')[0],b=+String(H[i].ids).split(',')[0];if(a===b||!on[a]||!on[b])continue;var k=rkey(a,b);seen2[k]=(seen2[k]||0)+1;}
     Object.keys(seen2).forEach(function(k){if(seen2[k]<2)return;var ids=k.split('-').map(Number);
       add('trade',ids[0],ids[1],50+seen2[k]*6,{lines:['The '+t.name+' has changed hands between '+S.w[ids[0]].name+' and '+S.w[ids[1]].name+' '+(seen2[k]===2?'twice':seen2[k]+' times')+' this year.','Neither has kept it from the other for long.']});});});
   // unfinished business: a story that ended hot at least twelve weeks ago, and both still here

@@ -1,6 +1,8 @@
 // @ts-nocheck
 /* Moved from src/99-ringwork.js (ADR-0001). Names from the rest of the engine come through the bridge, $L. Types come in step 3. */
 import { L as $L } from './_gen/legacy.js';
+import { E, hash } from './00-core';
+import { fill } from './10-match';
 $L.rwMoves = rwMoves;
 /* wraps: 10-match.js (it must sort after them; test-buildorder.js checks) */
 /* Ring work: a match on the broadcast is a match, not a summary (Ryan, 20 October: "each match and segment needs to
@@ -31,7 +33,7 @@ export var RW_LINES={
 };
 $L.RW_LINES = RW_LINES;
 export function rwMoves(S,w){
-  var L=[],ps=typeof $L.E.persona==='function'?$L.E.persona(S,w.id):null;
+  var L=[],ps=typeof E.persona==='function'?E.persona(S,w.id):null;
   if(w.look&&Array.isArray(w.look.finishing_moves))w.look.finishing_moves.slice(1).forEach(function(m){if(m&&m.name)L.push({n:m.name,sig:1});});
   if(ps&&ps.sigs)ps.sigs.forEach(function(m){if(m&&m.name)L.push({n:m.name,sig:1});});
   ($L.RW_MOVES[w.style]||$L.RW_MOVES.A).forEach(function(n){L.push({n:n});});
@@ -44,7 +46,7 @@ export function rwMoves(S,w){
     if(!bc||!x||!x.sides||x.m.mt==='br'||x.sides.length<2)return bc;
     var at=-1;for(var i=0;i<bc.length;i++){if(bc[i].t==='pbp'){at=i;break;}}   // the bell
     if(at<0)return bc;
-    var hk='rw|'+(x.o&&x.o.a||'')+'|'+(x.o&&x.o.b||'')+'|'+x.mins+'|'+S.week+'|'+(x.show||''),k=0,h=function(){return ($L.hash((k++)+'#'+hk)>>>0)%100003/100003;};
+    var hk='rw|'+(x.o&&x.o.a||'')+'|'+(x.o&&x.o.b||'')+'|'+x.mins+'|'+S.week+'|'+(x.show||''),k=0,h=function(){return (hash((k++)+'#'+hk)>>>0)%100003/100003;};
     // nothing said twice in one match while there is something else to say
     var said={},pick=function(L){var f=L.filter(function(v){return !said[v.n||v];}),Q=f.length?f:L,v=Q[Math.floor(h()*Q.length)%Q.length];said[v.n||v]=1;return v;};
     var cap=function(t){return t.charAt(0).toUpperCase()+t.slice(1);};
@@ -57,15 +59,15 @@ export function rwMoves(S,w){
       // the closing stretch leans to the side that wins; early on it swings either way
       var swap=j===0?false:(late?(side!==ws?h()<0.55:h()<0.3):h()<0.4);
       if(swap)side=other(side);
-      var A=lead(x.sides[side]),B=lead(x.sides[other(side)]),M=$L.rwMoves(S,A),sigs=M.filter(function(m){return m.sig&&!sigUsed[A.id+m.n];});
+      var A=lead(x.sides[side]),B=lead(x.sides[other(side)]),M=rwMoves(S,A),sigs=M.filter(function(m){return m.sig&&!sigUsed[A.id+m.n];});
       var ctx={a:A.name,b:B.name,p:p},kind;
-      if(late&&sigs.length&&h()<0.45){var s=pick(sigs);sigUsed[A.id+s.n]=1;ctx.s=s.n;out.push({t:'pbp',x:$L.fill(pick($L.RW_LINES.sig),ctx),h:1});
-        if(h()<0.6)out.push({t:'pbp',x:$L.fill(pick($L.RW_LINES.near),ctx),h:1});continue;}
+      if(late&&sigs.length&&h()<0.45){var s=pick(sigs);sigUsed[A.id+s.n]=1;ctx.s=s.n;out.push({t:'pbp',x:fill(pick($L.RW_LINES.sig),ctx),h:1});
+        if(h()<0.6)out.push({t:'pbp',x:fill(pick($L.RW_LINES.near),ctx),h:1});continue;}
       ctx.m=pick(M.filter(function(m){return !m.sig;})).n;
       kind=j===0?'open':(swap?'swing':(h()<0.35?'cut':'press'));
-      out.push({t:'pbp',x:cap($L.fill(pick($L.RW_LINES[kind]),ctx))});
-      if(late&&h()<0.25)out.push({t:'pbp',x:$L.fill(pick($L.RW_LINES.near),ctx),h:1});
-      else if(h()<0.22)out.push({t:'col',x:cap($L.fill(pick($L.RW_LINES.col),ctx))});
+      out.push({t:'pbp',x:cap(fill(pick($L.RW_LINES[kind]),ctx))});
+      if(late&&h()<0.25)out.push({t:'pbp',x:fill(pick($L.RW_LINES.near),ctx),h:1});
+      else if(h()<0.22)out.push({t:'col',x:cap(fill(pick($L.RW_LINES.col),ctx))});
     }
     bc.splice.apply(bc,[at+1,0].concat(out));
     return bc;

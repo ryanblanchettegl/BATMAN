@@ -1,6 +1,10 @@
 // @ts-nocheck
 /* Moved from src/84-life.js (ADR-0001). Names from the rest of the engine come through the bridge, $L. Types come in step 3. */
 import { L as $L } from './_gen/legacy.js';
+import { chance, clamp, pick } from './00-core';
+import { EVMAKE, EVR, WEEKX, addOvr } from './10-match';
+import { mkCheck, rollCheck, rollText, skillMods } from './60-rpg';
+import { stressAdd } from './76-locker';
 /* ---------- life outside the ring ----------
    A wedding, a new baby, a move across the country, a film part, a book. Each is an inbox event with a real choice: time off, a lighter
    schedule, or work it into a story. About every six weeks, for someone who matters to the show. */
@@ -12,21 +16,21 @@ export var LIFE=[
   {id:'book',t:function(w){return w.name+' has written a book and wants time for a tour of bookshops.';},story:'The book is launched on air, and a rival tears out the first page.'}
 ];
 $L.LIFE = LIFE;
-$L.EVMAKE.push(function(S,P,R){
-  if(S.cal||S.week<5||(S.lifeWeek!=null&&S.week-S.lifeWeek<6)||!$L.chance(S,0.18))return null;
-  var c=R.filter(function(w){return w.ovr>=P.image-10&&!w.retiring&&!w.lgt;});if(!c.length)return null;var w=$L.pick(S,c),L=$L.pick(S,$L.LIFE);S.lifeWeek=S.week;
-  return {type:'life',w:w.id,lid:L.id,text:L.t(w),choices:['Give them time off','A lighter schedule for a while','Work it into a story'],checks:{2:$L.mkCheck(7,[{n:'Charisma '+w.mic,v:w.mic>=75?1:(w.mic<55?-1:0)}].concat($L.skillMods(S,'creative')))}};
+EVMAKE.push(function(S,P,R){
+  if(S.cal||S.week<5||(S.lifeWeek!=null&&S.week-S.lifeWeek<6)||!chance(S,0.18))return null;
+  var c=R.filter(function(w){return w.ovr>=P.image-10&&!w.retiring&&!w.lgt;});if(!c.length)return null;var w=pick(S,c),L=pick(S,$L.LIFE);S.lifeWeek=S.week;
+  return {type:'life',w:w.id,lid:L.id,text:L.t(w),choices:['Give them time off','A lighter schedule for a while','Work it into a story'],checks:{2:mkCheck(7,[{n:'Charisma '+w.mic,v:w.mic>=75?1:(w.mic<55?-1:0)}].concat(skillMods(S,'creative')))}};
 });
-$L.EVR.life=function(S,ev,choice,P,w){
+EVR.life=function(S,ev,choice,P,w){
   var L=$L.LIFE.filter(function(x){return x.id===ev.lid;})[0];
-  if(choice===0){w.away=S.week+3;w.morale=$L.clamp(w.morale+8,0,100);$L.stressAdd(S,w,-12);w.hy=0;return w.name+' is away for three weeks and comes back a different person. The card will have a hole in it.';}
-  if(choice===1){w.lgt=S.week+8;w.morale=$L.clamp(w.morale+4,0,100);$L.stressAdd(S,w,-6);return w.name+' works every other week for the next eight. It keeps them on the shows and happy at home.';}
-  var r=$L.rollCheck(S,ev.checks[2]);ev.roll=r;
-  if(r.ok){S.hype=(S.hype||0)+0.04;w.mom=$L.clamp(w.mom+2,-10,10);$L.addOvr(P,w,0.5);w.morale=$L.clamp(w.morale+6,0,100);$L.news(S,'story',w.name+': '+L.story);return $L.rollText(r)+L.story+' The crowd loves it and it costs you nothing.';}
-  w.morale=$L.clamp(w.morale-3,0,100);return $L.rollText(r)+'You try to work it into a story and the crowd shrugs. '+w.name+' feels like a prop.';
+  if(choice===0){w.away=S.week+3;w.morale=clamp(w.morale+8,0,100);stressAdd(S,w,-12);w.hy=0;return w.name+' is away for three weeks and comes back a different person. The card will have a hole in it.';}
+  if(choice===1){w.lgt=S.week+8;w.morale=clamp(w.morale+4,0,100);stressAdd(S,w,-6);return w.name+' works every other week for the next eight. It keeps them on the shows and happy at home.';}
+  var r=rollCheck(S,ev.checks[2]);ev.roll=r;
+  if(r.ok){S.hype=(S.hype||0)+0.04;w.mom=clamp(w.mom+2,-10,10);addOvr(P,w,0.5);w.morale=clamp(w.morale+6,0,100);$L.news(S,'story',w.name+': '+L.story);return rollText(r)+L.story+' The crowd loves it and it costs you nothing.';}
+  w.morale=clamp(w.morale-3,0,100);return rollText(r)+'You try to work it into a story and the crowd shrugs. '+w.name+' feels like a prop.';
 };
 /* a lighter schedule: every other week off */
-$L.WEEKX.push(function(S){S.w.forEach(function(w){if(w.lgt&&w.promo===S.player){if(S.week+1<w.lgt&&(S.week+1)%2===0)w.rest=S.week+1;if(S.week+1>=w.lgt)w.lgt=null;}});});
+WEEKX.push(function(S){S.w.forEach(function(w){if(w.lgt&&w.promo===S.player){if(S.week+1<w.lgt&&(S.week+1)%2===0)w.rest=S.week+1;if(S.week+1>=w.lgt)w.lgt=null;}});});
 
 // hand this module's names back to the bridge once more, in case top-level code reassigned one
 $L.LIFE = LIFE;

@@ -1,6 +1,10 @@
 // @ts-nocheck
 /* Moved from src/89-streaming.js (ADR-0001). Names from the rest of the engine come through the bridge, $L. Types come in step 3. */
 import { L as $L } from './_gen/legacy.js';
+import { E, cal } from './00-core';
+import { WEEKX } from './10-match';
+import { money } from './40-week';
+import { airRec } from './88-shows';
 $L.streamOn = streamOn; $L.streamCap = streamCap; $L.streamOpenCost = streamOpenCost; $L.streamRunCost = streamRunCost;
 /* wraps: 88-shows.js (it must sort after them; test-buildorder.js checks) */
 /* ===== Streaming (NEXT.md 7.4) =====
@@ -17,25 +21,25 @@ export function streamCap(S,P){var n=(P.tape||[]).length;return Math.round(P.inc
 export function streamOpenCost(P){return Math.round(P.inc0*$L.STRM_OPEN/1000)*1000;}
 export function streamRunCost(P){return Math.round(P.inc0*$L.STRM_RUN/100)*100;}
 /** Open the service. */
-$L.E.streamStart=function(S){var P=S.promos[S.player];if(P.strm&&P.strm.on)return {ok:false,msg:'Your service is already running.'};
-  var c=$L.streamOpenCost(P);if(P.cash<c)return {ok:false,msg:'Opening a service costs '+$L.money(c)+'. You do not have it.'};
+E.streamStart=function(S){var P=S.promos[S.player];if(P.strm&&P.strm.on)return {ok:false,msg:'Your service is already running.'};
+  var c=streamOpenCost(P);if(P.cash<c)return {ok:false,msg:'Opening a service costs '+money(c)+'. You do not have it.'};
   P.cash-=c;P.strm={on:S.week,subs:0,mx:0};$L.news(S,'money',P.name+' has opened its own streaming service.');$L.note(S,'Streaming','Your service is open. Subscribers will come as the library grows.','good');
-  return {ok:true,msg:'The service is open. It cost '+$L.money(c)+', and runs at about '+$L.money($L.streamRunCost(P))+' a week.'};};
+  return {ok:true,msg:'The service is open. It cost '+money(c)+', and runs at about '+money(streamRunCost(P))+' a week.'};};
 /** Close it. The subscribers go. */
-$L.E.streamStop=function(S){var P=S.promos[S.player];if(!P.strm||!P.strm.on)return {ok:false,msg:'There is no service to close.'};
+E.streamStop=function(S){var P=S.promos[S.player];if(!P.strm||!P.strm.on)return {ok:false,msg:'There is no service to close.'};
   var n=P.strm.subs;P.strm.on=0;P.strm.subs=0;$L.news(S,'money',P.name+' has closed its streaming service.');return {ok:true,msg:'The service is closed. '+n.toLocaleString('en-US')+' subscribers have gone.'};};
 /* every week: subscribers move toward what the company can hold, and pay; running it costs a little */
-$L.WEEKX.push(function(S){
-  if(S.cal)return;var P=S.promos[S.player];if(!P||!P.strm||!P.strm.on)return;var st=P.strm,cap=$L.streamCap(S,P),r=S.reports[0];
+WEEKX.push(function(S){
+  if(S.cal)return;var P=S.promos[S.player];if(!P||!P.strm||!P.strm.on)return;var st=P.strm,cap=streamCap(S,P),r=S.reports[0];
   var q=r&&r.week>=S.week-1?($L.repCS(r)-55)/100:0;   // how the last show went: good brings people in, bad loses some
   var was=st.subs;st.subs=Math.max(0,Math.round(st.subs+(cap-st.subs)*0.06+cap*0.02*q));st.mx=Math.max(st.mx||0,st.subs);st.wk=st.subs-was;
-  st.pay=st.subs*$L.STRM_PRICE-$L.streamRunCost(P);P.led.bonus+=st.pay;
+  st.pay=st.subs*$L.STRM_PRICE-streamRunCost(P);P.led.bonus+=st.pay;
 });
 /* a major network wants the show to itself: a little less while you stream */
-(function(){var was=$L.airRate;$L.airRate=function(P,show){var r=was(P,show),sh=show&&!show.big?$L.airRec(P,show.id):null;return r*(sh&&sh.tier===2&&P.strm&&P.strm.on?0.95:1);};})();
+(function(){var was=$L.airRate;$L.airRate=function(P,show){var r=was(P,show),sh=show&&!show.big?airRec(P,show.id):null;return r*(sh&&sh.tier===2&&P.strm&&P.strm.on?0.95:1);};})();
 /** Everything the Streaming pop-up shows. */
-$L.E.streamInfo=function(S){var P=S.promos[S.player],st=P.strm||{},on=!!st.on,maj=P.shows.filter(function(sh){return !sh.big&&sh.tier===2;}).map(function(sh){return sh.name;});
-  return {on:on,since:on?$L.cal(st.on).label:null,subs:st.subs||0,wk:st.wk||0,cap:$L.streamCap(S,P),pay:on?st.pay||0:0,open:$L.streamOpenCost(P),run:$L.streamRunCost(P),price:$L.STRM_PRICE,
+E.streamInfo=function(S){var P=S.promos[S.player],st=P.strm||{},on=!!st.on,maj=P.shows.filter(function(sh){return !sh.big&&sh.tier===2;}).map(function(sh){return sh.name;});
+  return {on:on,since:on?cal(st.on).label:null,subs:st.subs||0,wk:st.wk||0,cap:streamCap(S,P),pay:on?st.pay||0:0,open:streamOpenCost(P),run:streamRunCost(P),price:$L.STRM_PRICE,
     lib:(P.tape||[]).length,major:maj};};
 
 // hand this module's names back to the bridge once more, in case top-level code reassigned one

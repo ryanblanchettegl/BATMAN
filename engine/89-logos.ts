@@ -1,6 +1,8 @@
 // @ts-nocheck
 /* Moved from src/89-logos.js (ADR-0001). Names from the rest of the engine come through the bridge, $L. Types come in step 3. */
 import { L as $L } from './_gen/legacy.js';
+import { E, clamp, h01 } from './00-core';
+import { edShape } from './86-editor';
 $L.logoHas = logoHas; $L.logoLetters = logoLetters; $L.logoTag = logoTag; $L.logoLum = logoLum; $L.logoDist = logoDist; $L.logoBehind = logoBehind; $L.logoReads = logoReads; $L.logoFix = logoFix; $L.logoFill = logoFill; $L.logoKey = logoKey;
 /* ---------- Company logos: every company has its own icon, built from its initials ----------
    Ryan, 6 October: "I want every company to have their own icons based on their 3 initials", and a logo creator with
@@ -44,62 +46,62 @@ export function logoLum(h){var n=parseInt(String(h).slice(1),16);return (0.3*(n>
 export function logoDist(a,b){var x=parseInt(a.slice(1),16),y=parseInt(b.slice(1),16),d=function(s){return ((x>>s)&255)-((y>>s)&255);};return Math.sqrt(d(16)*d(16)+d(8)*d(8)+d(0)*d(0))/441.7;}
 /* what the letters sit on: the shape's colour, or the black board when there is no shape */
 export function logoBehind(m){return m.sh==='none'?'#000000':m.c1;}
-export function logoReads(m){return $L.logoDist(m.c3,$L.logoBehind(m))>=0.38&&Math.abs($L.logoLum(m.c3)-$L.logoLum($L.logoBehind(m)))>=0.18;}
+export function logoReads(m){return logoDist(m.c3,logoBehind(m))>=0.38&&Math.abs(logoLum(m.c3)-logoLum(logoBehind(m)))>=0.18;}
 /* the nearest colour to the one asked for that can be read on what is behind it */
 export function logoFix(m){
-  if($L.logoReads(m))return m.c3;
-  var best=null,bd=9;$L.LOGO_COLS.forEach(function(c){var t={sh:m.sh,c1:m.c1,c3:c[0]};if(!$L.logoReads(t))return;var d=$L.logoDist(c[0],m.c3);if(d<bd){bd=d;best=c[0];}});
+  if(logoReads(m))return m.c3;
+  var best=null,bd=9;$L.LOGO_COLS.forEach(function(c){var t={sh:m.sh,c1:m.c1,c3:c[0]};if(!logoReads(t))return;var d=logoDist(c[0],m.c3);if(d<bd){bd=d;best=c[0];}});
   return best||'#ffffff';
 }
 /** A whole logo from whatever is given: every field filled in and valid. model is the company's model id. */
 export function logoFill(m,model,name,full){
-  m=m&&typeof m==='object'?m:{};var D=$L.LOGO_MODEL[model]||$L.LOGO_MODEL.classic,col=function(v,d){return $L.logoHas($L.LOGO_COLS,String(v).toLowerCase())?String(v).toLowerCase():d;};
-  var o={l:m.l?$L.logoLetters(m.l,''):$L.logoLetters(name,full),st:$L.logoHas($L.LOGO_STYLES,m.st)?m.st:'block',lay:$L.logoHas($L.LOGO_LAYS,m.lay)?m.lay:'row',sh:$L.logoHas($L.LOGO_SHAPES,m.sh)?m.sh:D[0],
-    fin:$L.logoHas($L.LOGO_FINS,m.fin)?m.fin:'flat',c1:col(m.c1,D[1]),c2:col(m.c2,D[2]),c3:col(m.c3,D[3]),ex:$L.logoHas($L.LOGO_EXTRAS,m.ex)?m.ex:'none',tag:$L.logoTag(m.tag),fo:$L.logoHas($L.LOGO_FONTS,m.fo)?m.fo:'marker'};
+  m=m&&typeof m==='object'?m:{};var D=$L.LOGO_MODEL[model]||$L.LOGO_MODEL.classic,col=function(v,d){return logoHas($L.LOGO_COLS,String(v).toLowerCase())?String(v).toLowerCase():d;};
+  var o={l:m.l?logoLetters(m.l,''):logoLetters(name,full),st:logoHas($L.LOGO_STYLES,m.st)?m.st:'block',lay:logoHas($L.LOGO_LAYS,m.lay)?m.lay:'row',sh:logoHas($L.LOGO_SHAPES,m.sh)?m.sh:D[0],
+    fin:logoHas($L.LOGO_FINS,m.fin)?m.fin:'flat',c1:col(m.c1,D[1]),c2:col(m.c2,D[2]),c3:col(m.c3,D[3]),ex:logoHas($L.LOGO_EXTRAS,m.ex)?m.ex:'none',tag:logoTag(m.tag),fo:logoHas($L.LOGO_FONTS,m.fo)?m.fo:'marker'};
   if(o.ex==='tag'&&!o.tag)o.ex='none';
   return o;
 }
 export function logoKey(m){return [m.l,m.st,m.lay,m.sh,m.fin,m.c1,m.c2,m.c3,m.ex,m.ex==='tag'?m.tag:'',m.fo&&m.fo!=='marker'?m.fo:''].join('|');}
 /** A company's logo, in full. Works on a company in a game (P.name, P.full, P.model) and on one in a world package
     (name, full_name, model). */
-$L.E.logoOf=function(P){return P?$L.logoFill(P.logo,P.model||'classic',P.name,P.full||P.full_name):$L.logoFill(null,'classic','EWF','');};
+E.logoOf=function(P){return P?logoFill(P.logo,P.model||'classic',P.name,P.full||P.full_name):logoFill(null,'classic','EWF','');};
 /** The parts a logo can be made of, for the creator: each list is [id, name] pairs. */
-$L.E.LOGO={shapes:LOGO_SHAPES,styles:LOGO_STYLES,lays:LOGO_LAYS,fins:LOGO_FINS,fonts:LOGO_FONTS,extras:LOGO_EXTRAS,cols:LOGO_COLS};
+E.LOGO={shapes:LOGO_SHAPES,styles:LOGO_STYLES,lays:LOGO_LAYS,fins:LOGO_FINS,fonts:LOGO_FONTS,extras:LOGO_EXTRAS,cols:LOGO_COLS};
 /** Fill in and tidy a logo that is being worked on. */
-$L.E.logoFill=function(m,model,name,full){return $L.logoFill(m,model,name,full);};
+E.logoFill=function(m,model,name,full){return logoFill(m,model,name,full);};
 /** Finished logos to choose from, made from the same letters: n of them, the same every time for the same letters and seed. */
-$L.E.logoIdeas=function(letters,n,seed){
-  var l=$L.logoLetters(letters,''),out=[],seen={},k=0;n=$L.clamp(n|0||6,1,24);seed=seed|0;
-  var pickOf=function(L,salt){return L[Math.floor($L.h01(l+':'+seed+':'+k+':'+salt)*L.length)%L.length][0];};
+E.logoIdeas=function(letters,n,seed){
+  var l=logoLetters(letters,''),out=[],seen={},k=0;n=clamp(n|0||6,1,24);seed=seed|0;
+  var pickOf=function(L,salt){return L[Math.floor(h01(l+':'+seed+':'+k+':'+salt)*L.length)%L.length][0];};
   while(out.length<n&&k<400){
-    var m={l:l,st:pickOf($L.LOGO_STYLES,'st'),lay:l.length===3||$L.h01(l+seed+k+'lay2')<0.6?pickOf($L.LOGO_LAYS,'lay'):'row',sh:pickOf($L.LOGO_SHAPES,'sh'),fin:pickOf($L.LOGO_FINS,'fin'),c1:pickOf($L.LOGO_COLS,'c1'),c2:pickOf($L.LOGO_COLS,'c2'),c3:pickOf($L.LOGO_COLS,'c3'),ex:pickOf($L.LOGO_EXTRAS.filter(function(x){return x[0]!=='tag';}),'ex'),tag:'',fo:$L.h01(l+seed+k+'fo')<0.5?'marker':pickOf($L.LOGO_FONTS,'fo')};
+    var m={l:l,st:pickOf($L.LOGO_STYLES,'st'),lay:l.length===3||h01(l+seed+k+'lay2')<0.6?pickOf($L.LOGO_LAYS,'lay'):'row',sh:pickOf($L.LOGO_SHAPES,'sh'),fin:pickOf($L.LOGO_FINS,'fin'),c1:pickOf($L.LOGO_COLS,'c1'),c2:pickOf($L.LOGO_COLS,'c2'),c3:pickOf($L.LOGO_COLS,'c3'),ex:pickOf($L.LOGO_EXTRAS.filter(function(x){return x[0]!=='tag';}),'ex'),tag:'',fo:h01(l+seed+k+'fo')<0.5?'marker':pickOf($L.LOGO_FONTS,'fo')};
     k++;
     if(m.c1==='#000000'||m.c2===m.c1)continue;
-    m.c3=$L.logoFix(m);var key=$L.logoKey(m);if(seen[key])continue;seen[key]=1;out.push(m);
+    m.c3=logoFix(m);var key=logoKey(m);if(seen[key])continue;seen[key]=1;out.push(m);
   }
   return out;
 };
 /** Can this logo be used? list is the other companies (each with id, name, model and maybe logo); self is the id of the
     company the logo is for. Answers {ok, errors, c3}: c3 is the nearest letter colour that can be read, when the one asked for cannot. */
-$L.E.logoOk=function(list,logo,self){
-  var m=$L.logoFill(logo,'classic',logo&&logo.l,''),errs=[],fix=null;
+E.logoOk=function(list,logo,self){
+  var m=logoFill(logo,'classic',logo&&logo.l,''),errs=[],fix=null;
   if(!logo||String(logo.l||'').replace(/[^A-Za-z0-9]/g,'').length<2)errs.push('A logo needs two or three letters.');
-  if(!$L.logoReads(m)){fix=$L.logoFix(m);errs.push('Those letters cannot be read on that colour. '+(($L.LOGO_COLS.filter(function(c){return c[0]===fix;})[0]||[])[1]||'White')+' would show.');}
-  (list||[]).forEach(function(p){if(!p||p.id===self)return;if($L.logoKey($L.E.logoOf(p))===$L.logoKey(m))errs.push((p.name||'Another company')+' already has that logo.');});
+  if(!logoReads(m)){fix=logoFix(m);errs.push('Those letters cannot be read on that colour. '+(($L.LOGO_COLS.filter(function(c){return c[0]===fix;})[0]||[])[1]||'White')+' would show.');}
+  (list||[]).forEach(function(p){if(!p||p.id===self)return;if(logoKey(E.logoOf(p))===logoKey(m))errs.push((p.name||'Another company')+' already has that logo.');});
   return {ok:!errs.length,errors:errs,c3:fix};
 };
 /** World Editor: set a company's logo. Pass null to go back to the logo its model gives it. */
-$L.E.edSetLogo=function(pkg,pid,logo){
-  $L.edShape(pkg);var p=(pkg.promotions||[]).filter(function(x){return x.id===pid;})[0];if(!p)return {ok:false,msg:'There is no such company.'};
-  if(logo==null){delete p.logo;return {ok:true,logo:$L.E.logoOf(p),msg:p.name+' is back to the logo its model gives it.'};}
-  var m=$L.logoFill(logo,p.model||'classic',p.name,p.full_name),v=$L.E.logoOk(pkg.promotions,m,pid);
+E.edSetLogo=function(pkg,pid,logo){
+  edShape(pkg);var p=(pkg.promotions||[]).filter(function(x){return x.id===pid;})[0];if(!p)return {ok:false,msg:'There is no such company.'};
+  if(logo==null){delete p.logo;return {ok:true,logo:E.logoOf(p),msg:p.name+' is back to the logo its model gives it.'};}
+  var m=logoFill(logo,p.model||'classic',p.name,p.full_name),v=E.logoOk(pkg.promotions,m,pid);
   if(!v.ok)return {ok:false,msg:v.errors[0],errors:v.errors,c3:v.c3};
   p.logo=m;return {ok:true,logo:m,msg:p.name+' has a new logo.'};
 };
 /** In a game: the player's company takes a new logo. Only an owner may change it. */
-$L.E.setLogo=function(S,logo){
+E.setLogo=function(S,logo){
   var P=S.promos[S.player];if(!S.owner||!S.owner.me)return {ok:false,msg:'The logo is the owner’s to change, and '+(S.owner?S.owner.name:'the owner')+' has not asked for a new one.'};
-  var m=$L.logoFill(logo,P.model||'classic',P.name,P.full),v=$L.E.logoOk(S.order.map(function(id){return S.promos[id];}),m,P.id);
+  var m=logoFill(logo,P.model||'classic',P.name,P.full),v=E.logoOk(S.order.map(function(id){return S.promos[id];}),m,P.id);
   if(!v.ok)return {ok:false,msg:v.errors[0],errors:v.errors,c3:v.c3};
   P.logo=m;$L.news(S,'you',P.name+' has a new logo.');return {ok:true,logo:m,msg:P.name+' has a new logo.'};
 };
