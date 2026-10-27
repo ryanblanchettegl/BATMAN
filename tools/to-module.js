@@ -43,10 +43,11 @@ const inFunction = n => { for (let p = n.parent; p && p !== sf; p = p.parent) if
 // hand each top-level var back to the bridge straight after its statement (functions are handed back at the top, since
 // they are hoisted), and everything once more at the end in case top-level code reassigned one
 sf.statements.forEach(st => { if (ts.isVariableStatement(st)) edits.push({ s: st.end, e: st.end, t: '\n' + st.declarationList.declarations.filter(d => ts.isIdentifier(d.name)).map(d => '$L.' + d.name.text + ' = ' + d.name.text + ';').join(' ') }); });
+sf.statements.forEach(st => { if ((ts.isFunctionDeclaration(st) && st.name) || ts.isVariableStatement(st)) edits.push({ s: st.getStart(sf), e: st.getStart(sf), t: 'export ' }); });
 const fnNames = sf.statements.filter(st => ts.isFunctionDeclaration(st) && st.name).map(st => st.name.text);
 let out = src; edits.sort((a, b) => b.s - a.s || b.e - a.e).forEach(x => { out = out.slice(0, x.s) + x.t + out.slice(x.e); });
 // export the file's own top-level declarations
-out = out.replace(/^function\s+([A-Za-z_$][\w$]*)/gm, 'export function $1').replace(/^var\s+/gm, 'export var ');
+// (exports are added from the parse above, statement by statement)
 const head = '// @ts-nocheck\n/* Moved from ' + file + ' (ADR-0001). Names from the rest of the engine come through the bridge, $L. Types come in step 3. */\nimport { L as $L } from \'./_gen/legacy.js\';\n' + (fnNames.length ? fnNames.map(n => '$L.' + n + ' = ' + n + ';').join(' ') + '\n' : '');
 const tail = own.size ? '\n// hand this module\'s names back to the bridge once more, in case top-level code reassigned one\n' + [...own].map(n => '$L.' + n + ' = ' + n + ';').join('\n') + '\n' : '';
 const dest = path.join(engDir, path.basename(file).replace(/\.js$/, '.ts'));
