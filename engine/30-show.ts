@@ -1,0 +1,233 @@
+/* Moved from src/30-show.js (ADR-0001). Names from the rest of the engine come through the bridge, $L. Types come in step 3. */
+import { L as $L } from './_gen/legacy.js';
+import { ADV_H, PRODF, SLOT_V, TIX_D, TIX_P, activeFeuds, avg, award, buysK, capFor, clamp, eligible, expected, feudLabel, feudOf, h01, isDev, r1, rnd, rosterOf, showMult, starG, starMeets, ticket, titleById, vsLabel } from './00-core';
+import { ANGDONE, REACT, SHOWX, doMatch, fill, sayPick, venueFor } from './10-match';
+import { genAngle } from './20-story';
+$L.dirtSheet = dirtSheet; $L.showPool = showPool; $L.cardHype = cardHype; $L.hypeParts = hypeParts; $L.showStart = showStart; $L.showStep = showStep; $L.firstNight = firstNight; $L.segSentences = segSentences; $L.segPeople = segPeople; $L.stageSeg = stageSeg; $L.runShow = runShow; $L.showEnd = showEnd; $L.dropQuest = dropQuest; $L.matchQuests = matchQuests; $L.keptPromise = keptPromise;
+/* ---------- running a show ---------- */
+export function dirtSheet(S,P,show,rep,pool){
+  var ms=rep.segs.filter(function(s){return s.k==='match';}),L=[],d=rep.rating-rep.exp,i;
+  var vb=$L.verdictBand(d);L.push(vb>1?show.name+' beat every expectation. This is a company on a roll.':(vb>0?'A good night. '+show.name+' gave the crowd a little more than they came for.':(vb===0?show.name+' was exactly the show people expected. No more, no less.':(vb===-1?'A flat night. '+show.name+' came up short of what this audience expects.':show.name+' was a miss. People were leaving before the main event ended.'))));
+  var best=ms.slice().sort(function(a,b){return b.ov-a.ov;})[0],worst=ms.slice().sort(function(a,b){return a.ov-b.ov;})[0],main=ms[ms.length-1];
+  if(best)L.push('Match of the night: '+best.label+', '+starG(best.ov)+(best.fx.filter(function(f){return f.s>0;})[0]?'. '+best.fx.filter(function(f){return f.s>0;})[0].x+'.':'.'));
+  if(worst&&worst!==best&&worst.ov<rep.rating-10){var why=worst.fx.filter(function(f){return f.s<0;})[0];L.push((worst.ov>=60?'Below this crowd’s bar: ':'Low point: ')+worst.label+', '+starG(worst.ov)+(why?'. '+why.x+'.':'.'));}
+  if(main&&main!==best)L.push(main.ov>=rep.rating+4?'The main event delivered: '+starG(main.ov)+'.':(main.ov<rep.rating-3?'The main event ('+starG(main.ov)+') did not close the show the way it needed to.':'The main event did its job.'));
+  var nf=ms.filter(function(s){return s.fin==='dq'||s.fin==='co'||s.fin==='draw';}).length;if(nf>=2)L.push(nf+' matches without a real finish is too many for one night.');
+  var flat=ms.filter(function(s){return s.fx.some(function(f){return /^Nobody to/.test(f.x);});}).length;if(flat>=2)L.push(flat+' matches had nobody to cheer against. Mix your faces and heels.');
+  var seen={};rep.segs.forEach(function(s){(s.ids||[]).forEach(function(id){seen[id]=1;});if(s.feud)seen['f'+s.feud]=1;});
+  var cold=activeFeuds(S).filter(function(f){return f.promo===P.id&&!seen['f'+f.id]&&!(seen[f.a[0]]&&seen[f.b[0]])&&pool[f.a[0]]&&pool[f.b[0]];}).sort(function(a,b){return b.heat-a.heat;})[0];
+  if(cold)L.push('Nothing tonight from '+feudLabel(S,cold)+'. That feud cools a little every week it is left alone.');
+  var top=Object.keys(pool).map(function(id){return S.w[id];}).sort(function(a,b){return b.ovr-a.ovr;}).slice(0,8).filter(function(w){return S.week-w.lu>=3;})[0];
+  if(top)L.push(top.name+' has not wrestled in '+(S.week-top.lu)+' weeks. Stars fade when they are off the card.');
+  L.push(rep.sellout?'The building was sold out, '+rep.att.toLocaleString('en-US')+' strong.':(rep.att<rep.cap*0.75?'Only '+rep.att.toLocaleString('en-US')+' in a building that holds '+rep.cap.toLocaleString('en-US')+'. The card did not sell tickets.':rep.att.toLocaleString('en-US')+' paid to get in.'));
+  return {by:S.columnist||'The Ringside Wire',lines:L.slice(0,7)};
+}
+/* A show runs in steps, so that the player's show can stop between any two of them for a call from the headset
+   (src/31-live.js). showStart sells the tickets and lays out the steps; showStep runs the next one; showEnd scores
+   the night and books the money. Everything a show needs between steps is in `st`, which is plain data, so a show
+   that is on the air can be saved and loaded. Rival shows and the sample shows run the three straight through. */
+export function showPool(S,P,show){return eligible(S,P,show).filter(function(w){return w.promo===P.id&&!(show.big&&isDev(P,w.brand));});}
+/* the advertised card sells the tickets: star power in the main event, the hottest feud, advertising, anything
+   done this week to talk the show up, and the face of the company on the card. The desk's ticket sales use it too. */
+export function cardHype(S,P,show,card,isPl){
+  var n=card.length,key=show.big?'big':show.id,star=n?avg($L.flat(card[n-1].sides).map(function(id){return S.w[id].ovr;})):50,heat=0;
+  card.forEach(function(m){var ids=$L.flat(m.sides);for(var x=0;x<ids.length;x++)for(var y=x+1;y<ids.length;y++){var f=feudOf(S,ids[x],ids[y]);if(f&&f.heat>heat)heat=f.heat;}});
+  return clamp(1+(star-(P.starB[key]||star))/80+heat/500+ADV_H[P.adv]+(isPl&&S.hype?S.hype:0)+(isPl&&show.big&&P.evHype?P.evHype:0)+(isPl?$L.faceHype(S,P,card)+$L.homeHype(S,P,$L.flat(card.map(function(m){return $L.flat(m.sides);}))):0),0.8,1.4)*(isPl&&show.big&&$L.evAfterDark(S,P)?1.08:1);
+}
+/** What moved a big night's hype, in words, for the buy rate report. Reads the same parts as cardHype. */
+export function hypeParts(S,P,show,card){
+  var n=card.length,key=show.big?'big':show.id,star=n?avg($L.flat(card[n-1].sides).map(function(id){return S.w[id].ovr;})):50,heat=0,out=[];
+  card.forEach(function(m){var ids=$L.flat(m.sides);for(var x=0;x<ids.length;x++)for(var y=x+1;y<ids.length;y++){var f=feudOf(S,ids[x],ids[y]);if(f&&f.heat>heat)heat=f.heat;}});
+  var sd=(star-(P.starB[key]||star))/80;if(Math.abs(sd)>=0.02)out.push({t:sd>0?'A main event bigger than usual':'A main event smaller than usual',v:sd});
+  if(heat>=40)out.push({t:'A hot feud on the card',v:heat/500});
+  if(ADV_H[P.adv])out.push({t:'Advertising',v:ADV_H[P.adv]});
+  if(show.big&&$L.evAfterDark(S,P))out.push({t:'A month off before it: the crowd is hungry',v:0.08});
+  if(show.big&&P.evHype)out.push({t:'Money spent promoting the night',v:P.evHype});
+  if(S.hype)out.push({t:S.hype>0?'Work done to build the night':'Bad word of mouth before the night',v:S.hype});
+  var fh=$L.faceHype(S,P,card);if(fh)out.push({t:fh>0?'The face of the company on top':'The face of the company left off',v:fh});
+  var hh=$L.homeHype(S,P,$L.flat(card.map(function(m){return $L.flat(m.sides);})));if(hh)out.push({t:'A home town name on the bill',v:hh});
+  var et=$L.evTy(show);if(show.big&&et.buys!==1)out.push({t:'The kind of night: '+et.n.toLowerCase(),v:et.buys-1});
+  return out;
+}
+export function showStart(S,P,show,card){
+  var isPl=P.id===S.player&&!S.cal,big=!!show.big,n=card.length,i,key=big?'big':show.id;
+  var rep: any={promo:P.id,id:show.id,name:show.name,big:big,week:S.week,segs:[],gim:false};
+  var pool=showPool(S,P,show);
+  var star=n?avg($L.flat(card[n-1].sides).map(function(id){return S.w[id].ovr;})):50;
+  rep.mainStar=star;
+  if(!S.cal){
+    var hype=cardHype(S,P,show,card,isPl),dm=TIX_D[P.tix],d0=$L.demand(P,show,1)*(isPl?$L.tourBoost(S,P)*$L.roadMktNow(S,P):1),d=d0*(isPl?$L.tasteDraw(S,P,card,rep)*$L.weatherMult(S,show,$L.roadCity(S,P,S.rdn||0)):1),cap=capFor(d0);if(isPl&&$L.coldNight(S,show,$L.roadCity(S,P,S.rdn||0)))rep.cold=1;   // the building was booked before the card was
+    rep.hype=hype;rep.cap=cap;rep.att=Math.round(Math.min(cap,d*hype*dm));
+    if(isPl&&big){var bh=P.bh||[],h0=bh.length?bh.reduce(function(a,b){return a+b;},0)/bh.length:1.15;rep.bf=Math.round(buysK(P,show,h0)*1000);rep.hp=hypeParts(S,P,show,card);P.bh=bh.concat([hype]).slice(-3);}   // the forecast is what the last few big nights drew   // the buy rate report (src/34-night.js): the forecast, and what moved it
+    if(isPl){var sold=$L.roadSoldNow(S,P);if(sold>rep.att){rep.noshow=sold-rep.att;rep.att=sold;}}   // a ticket sold is a ticket paid for, whoever turns up
+    rep.sellout=rep.att>=cap;
+    rep.energy=isPl?clamp((hype*dm-1)*9,-2,2):0;
+    if(isPl){rep.venue=venueFor(S,P,cap);rep.ann=($L.deskNames(S,P)||P.ann).slice();var air=$L.airStart(S,P,show);if(air){rep.ep=air.ep;rep.net=air.net;if(air.occ)rep.occ=air.occ;}S.hype=0;
+      rep.lineup=card.map(function(m){var t=m.title?titleById(P,m.title):null;return vsLabel(m.sides.map(function(ids){return ids.map(function(id){return S.w[id];});}))+(t?' — '+t.name:'');});}
+  }
+  var st: any={rep:rep,used:{},angled:{},k:0,steps:[]};
+  if(isPl){
+    // the player books every promo and angle, and decides how much time the writers get (src/93-segments.js, src/97-time.js)
+    var bk=$L.segBooked(S,show,n);rep.open={k:'match'};
+    if(S.plan)st.steps.push({t:'plan'});
+    for(i=0;i<n;i++){(bk.at[i]||[]).forEach(function(x){st.steps.push({t:'seg',i:i,slot:x.slot,sg:JSON.parse(JSON.stringify(x.sg))});});st.steps.push({t:'match',i:i});}
+  }else{for(i=0;i<n;i++)st.steps.push({t:'match',i:i});st.pool=pool;}
+  return st;
+}
+/** Run the next step of a show. Returns the segment it made (a match, a promo or an angle), or null if it made none. */
+export function showStep(S,P,show,card,st){
+  var step=st.steps[st.k++],rep=st.rep,n=card.length,seg;if(!step||step.cut)return null;   // a segment cut for time on the night does not air
+  if(step.t==='match'){seg=doMatch(S,P,show,card[step.i],step.i,n,rep,st.used);rep.segs.push(seg);return seg;}
+  var pool=showPool(S,P,show),inP={};pool.forEach(function(w){inP[w.id]=1;});
+  var ctx={pool:pool,inP:inP,angled:st.angled,left:{},extra:[],city:st.rep&&st.rep.venue?$L.cityOfVenue(st.rep.venue):null};
+  if(step.t==='plan'){var pp=$L.planPromo(S,P,show,ctx);if(pp){pp.mins=$L.PLAN_MINS;rep.open={k:'promo',ids:Object.keys(ctx.angled).map(Number),ov:pp.ov,feud:pp.feud};rep.segs.push(pp);}return pp;}
+  for(var q=step.i;q<n;q++)$L.flat(card[q].sides).forEach(function(id){ctx.left[id]=1;});
+  var had=Object.assign({},ctx.angled),fresh=function(){return Object.keys(ctx.angled).filter(function(k){return !had[k];});},first=!rep.segs.length,wr=step.sg.k==='writers',ba=wr?genAngle(S,P,show,ctx):$L.runSeg(S,P,show,ctx,step.sg,step.slot,first);
+  if(!ba)return null;
+  ba.mins=$L.segMins(step.sg);if(wr)ba.wr=1;
+  if(first)rep.open={k:wr?'angle':(step.sg.k==='recap'?'recap':$L.SEGK[step.sg.k].t),ids:fresh().map(Number),ov:ba.ov,feud:ba.feud};
+  rep.en=Math.min(100,(rep.en==null?100:rep.en)+14);ANGDONE.forEach(function(fn){fn(S,P,ba,fresh());});   // the people this segment brought in (keys come back in number order, so not by position)
+  var o={p:P.ann[0].split(' ')[0],c:P.ann[1].split(' ')[0]},react=fill(sayPick(S,REACT[ba.head]||['Well, how about that.']),o);
+  ba.bc=stageSeg(S,ba,segPeople(S,P,ba.text),react);rep.segs.push(ba);
+  return ba;
+}
+export var POP_EDGE=1;
+$L.POP_EDGE = POP_EDGE;
+/* a new booker's first show plays to a crowd that gives them a chance (Bill, 21 October: the first hour should be won).
+   A scenario or a challenge keeps its own bar. */
+export var FIRST_NIGHT=4;
+$L.FIRST_NIGHT = FIRST_NIGHT;
+export function firstNight(S){return !(S.stats&&S.stats.shows>0)&&!S.scn&&!S.chal;}   // rating points over the crowd's bar that a show on expectation counts for, for your popularity
+/* ---------- a promo or an angle on the air, as a scene ----------
+   The segment's text is the record of what happened. On the air it is told in pieces: who comes out, what happens a
+   sentence at a time, a quoted line said by the person who says it, how the building takes it, and the desk's word.
+   Lines here are picked by a hash of the segment, never the game's random stream. */
+export var SEG_OUT=['The music hits, and out comes {n}.','Here comes {n}, and {n} has a microphone.','{n} is on the way to the ring, and {n} does not look happy.','The lights go down. When they come back up, {n} is standing at the top of the ramp.'];
+$L.SEG_OUT = SEG_OUT;
+export var SEG_CROWD=[[80,['The place is on its feet.','You can hear every word, because nobody is making a sound. Then the roof comes off.','They will be talking about that on the way home.']],[60,['A big reaction for that.','The crowd is right there with it.','They are buzzing in the stands.']],[40,['A mixed reaction from the crowd.','Some cheers, some boos, plenty of people checking their phones.','The crowd takes a while to warm to it.']],[0,['Crickets.','Not much of a reaction for that.','The crowd sat on their hands for that one.']]];
+$L.SEG_CROWD = SEG_CROWD;
+export function segSentences(t){
+  var out=[],cur='',i,ch,quote=0;t=String(t||'');
+  for(i=0;i<t.length;i++){ch=t.charAt(i);cur+=ch;if(ch==='“')quote++;if(ch==='”')quote=Math.max(0,quote-1);
+    if(!quote&&(ch==='.'||ch==='!'||ch==='?'||ch==='”')&&t.charAt(i+1)===' '&&/[A-Z“]/.test(t.charAt(i+2))&&!/(^|\s)(Dr|Mr|Mrs|Ms|St|Sr|Jr)\.$/.test(cur)){out.push(cur.trim());cur='';}}
+  if(cur.trim())out.push(cur.trim());return out;
+}
+/** The people a segment's text names, in the order it first names them. */
+export function segPeople(S,P,text){
+  text=String(text||'');
+  return rosterOf(S,P.id).filter(function(w){return text.indexOf(w.name)>=0;}).sort(function(a,b){return text.indexOf(a.name)-text.indexOf(b.name);});
+}
+export function stageSeg(S,ba,ppl,react){
+  var key=S.week+':'+ba.head+':'+String(ba.text||'').length,bc=[],pk=function(L,k){return L[Math.floor(h01(key+k)*L.length)%L.length];};
+  // who walks out first: the one being interrupted, else the first one named. An attack has no walk to the ring.
+  var t0=String(ba.text||''),iv=t0.indexOf('interrupts '),out=null;
+  if(iv>=0)ppl.forEach(function(w){if(!out&&t0.indexOf(w.name,iv)===iv+11)out=w;});
+  else if(!/Ambush|Attack|Brawl|Video|Backstage/i.test(ba.head)&&!/attacks|from behind|jumps/.test(t0))out=ppl[0];
+  if(out)bc.push({t:'pbp',x:fill(pk($L.SEG_OUT,'o'),{n:out.name})});
+  segSentences(ba.text).forEach(function(x,k){
+    var m=/^(.*?)[:,]?\s*“([^”]+)”[.!]?$/.exec(x),who=null;
+    if(m){ppl.forEach(function(w){if(!who&&m[1].indexOf(w.name)>=0)who=w.name;});if(!who&&ppl.length===1)who=ppl[0].name;}
+    if(m&&who){if(m[1].trim())bc.push({t:'note',x:m[1].trim().replace(/[:,]$/,'')+'.'});bc.push({t:'mic',w:who,x:'“'+m[2]+'”'});}
+    else bc.push({t:'note',x:x});
+  });
+  if(!bc.length)bc.push({t:'note',x:ba.text});
+  var band=$L.SEG_CROWD.filter(function(b){return ba.ov>=b[0];})[0]||$L.SEG_CROWD[3];
+  bc.push({t:'col',x:pk(band[1],'c')});
+  bc.push({t:'col',x:react});
+  return bc;
+}
+export function runShow(S,P,show,card){var st=showStart(S,P,show,card);while(st.k<st.steps.length)showStep(S,P,show,card,st);return showEnd(S,P,show,card,st);}
+/** Score the night, sell it, and file the report. */
+export function showEnd(S,P,show,card,st){
+  var isPl=P.id===S.player&&!S.cal,big=!!show.big,rep=st.rep,key=big?'big':show.id,k,pool=st.pool||showPool(S,P,show),inP={},ctx={angled:st.angled};pool.forEach(function(w){inP[w.id]=1;});
+  if(!isPl){var top=pool.slice().sort(function(a,b){return (b.mic+b.ovr)-(a.mic+a.ovr);});
+    for(k=0;k<(big?2:P.angles)&&k<top.length;k++)rep.segs.push({k:'angle',ai:true,ov:clamp(Math.round(0.62*top[k].mic+0.38*top[k].ovr+rnd(S)*8-4),5,99)});}
+  // rating: the main event counts triple; production values lift the whole show
+  var ms=rep.segs.filter(function(s){return s.k==='match';}),num=0,den=0;
+  ms.forEach(function(s,ix){var w=ix===ms.length-1?3:(ix===ms.length-2?2:(ix===0?1.5:1));num+=s.ov*w;den+=w;});
+  // a promo or an angle counts by how long it ran
+  rep.segs.forEach(function(s){if(s.k==='angle'){var aw=s.mins?(s.mins<=5?0.45:(s.mins>=15?0.95:0.7)):0.7;num+=s.ov*aw;den+=aw;}});
+  var tm=isPl?$L.showTimes(S,P,show,rep,card):0;
+  rep.rating=clamp(r1((den?num/den:30)+tm+(P.prodLvl-P.prod0)*0.6*($L.modelOf(P).prodX==null?1:$L.modelOf(P).prodX)+(isPl&&S.rateMod?S.rateMod:0)),5,99);rep.mainOv=ms.length?ms[ms.length-1].ov:0;
+  if(isPl)S.rateMod=0;
+  if(S.cal)return rep;
+  var exp=expected(P,show);
+  if(isPl&&rep.venue){var bar=$L.barCity(S,rep.venue);if(bar){exp+=bar.d;rep.barNote=bar.note;}}
+  if(isPl&&firstNight(S)){exp-=$L.FIRST_NIGHT;rep.barNote=(rep.barNote?rep.barNote+' ':'')+'Your first night: the crowd gave a new booker the benefit of the doubt.';}
+  var qf=clamp(1+(P.trend||0)/60,0.85,1.15)*(SLOT_V[P.slot]/SLOT_V[P.slot0])*(1+0.03*(P.prodLvl-P.prod0))*$L.airPF(P,show);
+  rep.exp=r1(exp);rep.cs=$L.crowdScore(rep.rating,rep.exp);
+  var mx=$L.mixOf(P);
+  rep.viewers=Math.round($L.viewersK(P,show,qf)*1000);rep.gate=Math.round(rep.att*ticket(P,show)*TIX_P[P.tix]*mx.gate);rep.tv=Math.round(rep.viewers/1000*P.tvRate*mx.tv*$L.airRate(P,show));
+  rep.buys=big?Math.round(buysK(P,show,rep.hype)*1000):0;rep.ppv=Math.round(rep.buys*22*mx.ppv);
+  P.led.tv+=rep.tv;P.led.gate+=rep.gate;P.led.ppv+=rep.ppv;P.led.prod+=P.prod*(big?4*$L.evTy(show).prod:1)*PRODF[P.prodLvl]/PRODF[P.prod0]*$L.airProd(P,show);
+  var before=P.image;
+  // a show that gives the crowd what it came for (a B) grows the company a little; it has to fall short to shrink it (Bill, 21 October)
+  P.image=clamp(P.image+(rep.rating-exp+(isPl?$L.POP_EDGE:0))*(big?0.08:0.03*showMult(show)*$L.airReach(P,show)),5,$L.modelOf(P).cap||100);rep.dImage=r1(P.image-before);
+  P.trend=(P.trend||0)*0.6+(rep.rating-exp)*0.4;P.mainB[key]=(P.mainB[key]||rep.mainOv)*0.9+rep.mainOv*0.1;
+  P.last={name:show.name,rating:rep.rating,cs:rep.cs,week:S.week};
+  // the crowd gets used to about half of whatever you keep giving it; it lowers its sights only a little after poor shows
+  if(isPl){var raw=rep.rating-(exp-(P.expA||0)-(P.expB||0));P.expA=clamp((P.expA||0)+(0.5*raw-(P.expA||0))*0.16/(P.shows.length+1),-1.5,8);}
+  if(isPl){
+    S.stats.shows++;if(rep.rating>S.stats.bestShow)S.stats.bestShow=rep.rating;if(rep.cs>(S.stats.bestCS||0))S.stats.bestCS=rep.cs;
+    S.stats.run=rep.rating>exp?S.stats.run+1:0;
+    award(S,'ACH_FIRST_BELL');if(rep.cs>=80)award(S,'ACH_SHOW_80');if(rep.cs>=90)award(S,'ACH_SHOW_90');if(rep.rating<40)award(S,'ACH_BOMB');
+    if(rep.sellout)award(S,'ACH_SELLOUT');if(S.stats.run>=5)award(S,'ACH_RUN_5');
+    rep.quest=rep.quest||[];
+    S.quests.slice().forEach(function(q){
+      var qt;
+      if(q.type==='sponsor'&&big){$L.cgFix(S);var sok=$L.gradeMeets(rep.cs,q.target);
+        if(sok){P.led.bonus+=q.bonus;qt='Sponsor target hit: '+$L.gradeA(rep.cs)+' show, '+$L.gradeA(q.target)+' was needed. +$'+q.bonus.toLocaleString('en-US')+'.';award(S,'ACH_QUEST');}
+        else qt='Sponsor target missed: needed '+$L.gradeA(q.target)+' show, got '+$L.gradeA(rep.cs)+'.';
+        rep.quest.push(qt);(rep.targets=rep.targets||[]).push({ok:sok,t:qt});dropQuest(S,q,sok,qt);}
+      if(q.type==='network'&&q.show===show.id){
+        if(q.hit){P.led.bonus+=q.bonus;qt='Network bonus earned: a main event of '+starG(q.got||q.target)+', '+starG(q.target)+' was needed. +$'+q.bonus.toLocaleString('en-US')+'.';award(S,'ACH_QUEST');}
+        else qt='Network bonus missed: needed a main event of '+starG(q.target)+(q.got!=null?', got '+starG(q.got):'')+'.';
+        rep.quest.push(qt);(rep.targets=rep.targets||[]).push({ok:!!q.hit,t:qt});dropQuest(S,q,!!q.hit,qt);}
+    });
+    rep.sheet=dirtSheet(S,P,show,rep,inP);
+    S.reports.unshift(rep);if(S.reports.length>6)S.reports.length=6;
+  }else if(big){var mm=ms[ms.length-1];$L.news(S,'world',show.name+' was graded '+$L.gradeG($L.repCS(rep))+'. Main event: '+mm.label+(mm.win?' ('+mm.win+' won).':' (draw).'));}
+  if(isPl)Object.keys(ctx.angled).forEach(function(id){if(S.w[id])S.w[id].la=S.week;});
+  SHOWX.forEach(function(fn){fn(S,P,show,rep,card);});
+  return rep;
+}
+/* A target or a promise that is settled leaves how it went, so the desk can say Hit or Missed and not just that it is gone. */
+export function dropQuest(S,q,ok?,text?){
+  S.quests=S.quests.filter(function(x){return x!==q;});
+  if(ok!=null){if(!S.qres||S.qres.w!==S.week)S.qres={w:S.week,r:{}};S.qres.r[q.id]={ok:!!ok,t:text||q.text};}
+}
+export function matchQuests(S,P,show,m,sides,win,t,OV,isMain,seg){
+  var ids=$L.flat(m.sides);
+  S.quests.slice().forEach(function(q){
+    if(q.type==='shot'&&t&&t.id===q.title&&ids.indexOf(q.w)>=0){S.w[q.w].morale=clamp(S.w[q.w].morale+6,0,100);seg.notes.push('Promise kept: '+S.w[q.w].name+' got the title shot.');award(S,'ACH_PROMISE');keptPromise(S,q,true);dropQuest(S,q,true,'Promise kept: '+q.text.replace(/^Promise: /,''));}
+    else if(q.type==='win'&&win>=0&&m.sides[win].indexOf(q.w)>=0){S.w[q.w].morale=clamp(S.w[q.w].morale+6,0,100);seg.notes.push('Promise kept: '+S.w[q.w].name+' got the win.');award(S,'ACH_PROMISE');keptPromise(S,q,true);dropQuest(S,q,true,'Promise kept: '+q.text.replace(/^Promise: /,''));}
+    else if(q.type==='network'&&isMain&&q.show===show.id){q.hit=starMeets(OV,q.target);q.got=OV;}
+    else if(q.type==='dream'&&show.big&&ids.indexOf(q.a)>=0&&ids.indexOf(q.b)>=0){P.led.bonus+=q.bonus;P.image=clamp(P.image+0.6,5,100);seg.notes.push('The dream match delivered: +$'+q.bonus.toLocaleString('en-US')+' in extra buys.');award(S,'ACH_QUEST');dropQuest(S,q);}
+  });
+}
+export function keptPromise(S,q,kept){
+  S.ledger=S.ledger||[];S.ledger.unshift({w:S.week,k:kept,t:q.text.replace(/^Promise: /,'')});if(S.ledger.length>16)S.ledger.length=16;
+  S.trust=clamp((S.trust==null?60:S.trust)+(kept?3:-8),0,100);
+  var pw=q.w!=null?S.w[q.w]:null;if(pw){if(kept){pw.pk2=(pw.pk2||0)+1;$L.stressAdd(S,pw,-10);}else{pw.pb2=(pw.pb2||0)+1;$L.stressAdd(S,pw,15);}}
+}
+
+// hand this module's names back to the bridge once more, in case top-level code reassigned one
+$L.dirtSheet = dirtSheet;
+$L.showPool = showPool;
+$L.cardHype = cardHype;
+$L.hypeParts = hypeParts;
+$L.showStart = showStart;
+$L.showStep = showStep;
+$L.POP_EDGE = POP_EDGE;
+$L.FIRST_NIGHT = FIRST_NIGHT;
+$L.firstNight = firstNight;
+$L.SEG_OUT = SEG_OUT;
+$L.SEG_CROWD = SEG_CROWD;
+$L.segSentences = segSentences;
+$L.segPeople = segPeople;
+$L.stageSeg = stageSeg;
+$L.runShow = runShow;
+$L.showEnd = showEnd;
+$L.dropQuest = dropQuest;
+$L.matchQuests = matchQuests;
+$L.keptPromise = keptPromise;

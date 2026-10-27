@@ -42,7 +42,7 @@ ok('vary', 'the lines vary', new Set(allLines).size >= allLines.length * 0.35, n
 ok('picks', 'picks are made and scored', picks > 0, picks + ' scored');
 ok('kayfabe', 'no secret is said before it leaks', leaked.length === 0, kept + ' secrets checked' + (leaked.length ? '; said: ' + leaked[0] : ''));
 // words never change a game: nothing in the file draws on the game's random stream, and the same seed says the same words
-const src = fs.readFileSync('src/99-zpodcast.js', 'utf8').replace(/\/\*[\s\S]*?\*\//g, '').replace(/\/\/.*$/gm, '');
+const src = require('./test-src.js')('99-zpodcast').replace(/\/\*[\s\S]*?\*\//g, '').replace(/\/\/.*$/gm, '');
 ok('rnd', 'the podcast never uses the random stream', !/\b(rnd|chance|ri|pick|pickW)\(S\b/.test(src));
 const A = E.newGame('pdw', 7, { name: 'R' }), B = E.newGame('pdw', 7, { name: 'R' }); play(A, 20); play(B, 20);
 ok('same', 'the same seed gives the same episodes', JSON.stringify(A.pod) === JSON.stringify(B.pod));

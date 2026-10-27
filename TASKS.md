@@ -25,6 +25,10 @@ Two more lists sit beside this one, both finished:
 | The match screen, 22 Oct | Fewer kick-outs. When there is no match picture for the moment, the picture cuts to the commentators. The animation never loops while the commentary catches up; it flows. Build: an instant replay of the finish, a big referee count on near falls, paper-flip cuts between pictures, a finisher close-up with the move's name, cinema mode (the picture fills the screen), the winner celebrating after the bell, big moments for each match rule (ladder, cage, tables), run-ins drawn as their own pictures. The night's highlights go on After the show. The feed is livelier and each poster has a personality of their own; the company's sign-off post comes once, after the main event, not after every match. |
 | Blueprint, questions, approval, 23 Oct | A core rule for any new game mode, system or major feature: first a complete blueprint (states, data, screens, money and balance), then a list of probing questions for Ryan, and no code until he has read both, answered and said go ahead (CLAUDE.md rule 9d). |
 | Sound effects, 23 Oct | "It sounds terrible." All sound effects are off; the game is quiet except the soundtrack. The redo does not need to match the papercraft look: it should sit well with the classical music and feel good. It goes through rule 9d, and every sound is approved by ear. The office sounds are piano, not harp ("harp is wrong piano is right"). The blueprint and every pick so far are in `docs/plans/sound.md`. The broadcast sounds are in the game (step 2); the office piano is next; boos and the tweener reaction wait on a source. |
+| The rule changes, 23 Oct | From the review's table: approved plans run unattended (9a); a nightly and a milestone build on the live page; the desktop build first, the page an export (rule 0); tests are the gate (9f); a system budget (9g); the hour of play (9h); a short CLAUDE.md core with area notes and skills (9i); an original world leads. |
+| The standing checklist, 23 Oct | The engineering plugin (code-review, debug, testing-strategy, tech-debt, architecture), the design plugin (design-critique, accessibility-review, ux-copy, research-synthesis), simplify and security-review are used at fixed moments (CLAUDE.md rule 9e). |
+| Ask, do not show, 23 Oct | "I like how civ 6 does this." The desk raises one decision at a time; the numbers live behind a "why?" that opens them. Every new system and screen follows it. |
+| The lead world, 23 Oct | "orginal world will lead": an original world leads the game, not the parody world, which becomes optional. Whether the parody world ships as an optional pack is still open. The game's default world has not been switched yet. The review that raised it: `docs/plans/WrestleCraft-review-and-long-term-roadmap.pdf`. |
 | External assets, 23 Oct | A new rule: the game can have external assets (recorded sound effects, music, images), shipped with the game and free to use commercially, each credited. It replaces "zero external assets" (CLAUDE.md rule 2). |
 | Cancelling a show, 22 Oct | The network can cancel your weekly show, but you cannot quit one yourself: you play out the network contract. |
 | The assistant, 22 Oct | The assistant leaves Career and gets its own window on the desk: tips, and what it is booking for the house shows. A placeholder for now, built out later. |
@@ -119,6 +123,105 @@ Two more lists sit beside this one, both finished:
 | World Editor | The creation suite is its own page called **World Editor** on the title screen. A player builds a world from scratch (companies, shows, belts, wrestlers) and uploads it to the Workshop. This is the main next item. |
 
 ## Tasks
+
+### 0an2. The engine in TypeScript modules (Ryan, 23 October: "do it")
+
+Phase A, Foundation: rebuild the simulation from one shared ES5 closure into TypeScript modules with a typed state and one command layer, kept identical in play by golden masters and every test. Blueprint: `docs/plans/typescript-engine.md`.
+
+- [x] Gate 1: the blueprint.
+- [x] Gate 2: the questions, answered 23 October (features pause, unattended with milestone reports, live page at milestones, old bugs logged and fixed after).
+- [x] Gate 3: Ryan's go-ahead, 23 October: "go".
+- [x] Step 1: golden masters (`test-golden.js`, 60 games).
+- [x] Step 2: esbuild bundles `engine/` beside the old files.
+- [x] Step 4: all 105 files moved to `engine/*.ts` (27 October); plain imports where safe, `$L` for forward references and wraps (ADR-0002).
+- [x] Step 3: state types, `engine/types.ts`, generated from real games; `npm run check` type-checks the engine.
+- [x] Step 5 (first part): `test-lint.js` bans the clock in the engine and screen writes to `S` (one found and fixed: `E.annualSeen`).
+- [x] Step 6: CI runs every headless test (four shards), the golden games and the lint on every push, the browser suites nightly.
+- [x] Step 7 (first part): `CLAUDE.md` points at `engine/`; `test-buildorder.js` reads the modules.
+- [x] The checker is on for every module (28 October): no `@ts-nocheck` left, non-strict (`tools/ts-check-pass.js`).
+- [x] The logged bug fixed: the match context set `rep` twice.
+- [ ] Next: strict types module by module (replace `any` with the state types), turn wraps into named hook lists.
+
+### 0ao. The four moves that close the gap (Ryan, 23 October: "add this to the next tasks"; the review in `docs/plans/WrestleCraft-review-and-long-term-roadmap.pdf`, section 2)
+
+The next tasks, before anything else in this list. Each move is a new system, so each goes through rule 9d first: a blueprint in `docs/plans/`, a question vault answered one question at a time, and Ryan's plain go-ahead recorded here with the date. No code until then.
+
+1. **One spine: the Director runs the week.** The planned Director (0aa) becomes the single gate every event, call and matter passes through, in the manner of RimWorld's storyteller. It reads tension, picks a fire, a chance or colour, and caps interruptions. Forty systems stop competing for the desk; the player meets one headline, two supporting threads and quiet everywhere else.
+2. **A promise ledger as the core loop.** Every booking choice opens a visible thread (a challenge issued, a debt owed, a title promised, a story ripening), and every thread has a payoff window. The card becomes the act of paying promises off at the right time: the Civilization Eureka principle applied to stories.
+3. **Three clocks, each with a ceremony.** The week (the card and its stamped grade), the month (the big event and the magazine), the era (a year judged at the flagship). "One more turn" lives in the overlap: one clock is always about to ring.
+4. **Preview before consequence.** Every choice shows its pencil marks before it is made, in words and arrows, never in percentages the player cannot act on. Fog of war stays: the preview says what the road agent can see, and nothing more.
+
+- [ ] Move 1, the Director: the blueprint exists (`docs/plans/director.md`); widen it to the single gate and the interruption cap (A3), write the full question vault (a starter is in the review, section 8), get the go-ahead. Then build by 0aa's steps.
+- [ ] Move 2, the promise ledger: blueprint (`docs/plans/promise-ledger.md`), question vault, go-ahead. It gathers what already makes promises (promised wins, title shots asked for at your door, open threads in `E.openThreads`, ripe feuds) into one ledger.
+- [ ] Move 3, three clocks: blueprint (`docs/plans/three-clocks.md`), question vault, go-ahead. The week's clock and its stamp, the month's (the big event, and the magazine of 0af), the era's verdict at the flagship.
+- [ ] Move 4, preview before consequence: blueprint (`docs/plans/preview.md`), question vault, go-ahead; or Ryan rules it polish (rule 9d), which skips the gates. It builds on the running-order rules (`src/92-shape.js`), the road agent's reads (`src/99-fog.js`) and the run sheet's flags (`E.cardFlags`).
+
+### 0ap. From working systems to addictive loops (Ryan, 23 October; the review, section 2)
+
+A system works when it produces correct numbers. It is addictive when it produces a question the player wants to answer next week. Next after 0ao. Each turns an existing system into a loop, so each gets a short blueprint and questions under rule 9d, unless Ryan rules it polish.
+
+| System | Works today by | Becomes a loop when it |
+| --- | --- | --- |
+| Living storylines | Tracking heat and freshness per feud | Shows the ending window opening and closing, so the player times the payoff like a wonder race. |
+| Relationship memory | Remembering every answer | Brings a remembered slight back at the worst moment: the star refused a title shot walks out during the flagship. |
+| The road and markets | Scaling each city's draw | Makes a cold city a goal: win it back three times and it becomes a home market with its own chant. |
+| Progression | Levels, points and perks | Turns a level-up into a booking problem: the student now outdraws the champion who trained them. |
+| Networks | Patience, taste and targets | Puts a renewal on a countdown the whole season builds toward. |
+| The press | Leaks and columns | Lets the player feed or starve a reporter, so tomorrow's headline is a lever, not weather. |
+
+- [ ] Living storylines: the ending window on the feud (`src/21-living.js`, `E.feudPlan`).
+- [ ] Relationship memory: remembered slights that come due on big nights (`src/66-relations.js`).
+- [ ] The road: a cold city won back three times becomes a home market with its own chant (`src/91-road.js`).
+- [ ] Progression: the student passing the teacher already reaches the desk once (`src/76-student.js`); make it a booking problem every time it matters.
+- [ ] Networks: the renewal countdown shown all season (`src/88-shows.js`, `src/89-networks.js`).
+- [ ] The press: feed or starve a reporter (`src/99-press.js`).
+
+### 0aq. Booking demands: every show is a puzzle (Ryan, 23 October)
+
+"forced finishes, matches, segments, by all the different relationships in the game would be a good hook in the game. everytime you go to book a new show, it's like a puzzle you have to manage because of weekly promises from writers, wrestlers, buisness associates, ect." Picking a winner stays free (21 October); demands from wrestlers, creative control, the writers, the owner, the network, sponsors and business associates pull against each other, and booking power buys a way out. Blueprint: `docs/plans/booking-demands.md`.
+
+- [x] Gate 1: the blueprint.
+- [x] Gate 2: the questions, answered 23 October (blueprint section 10).
+- [x] Gate 3: Ryan's go-ahead, 23 October: "Go, after the Director". Build it once the Director (0ao move 1, 0aa) is built; the Director itself still needs its own questions and go-ahead.
+
+### 0ar. Scouting anomalies (Ryan, 23 October; the review, section 4)
+
+Scouting the indies turns up small mysteries that unfold over a few weeks, in the manner of Stellaris's anomalies: a gem with a bad reputation, a masked star nobody can place. Each is a short chain with a payoff and a risk, shown as a scouting report card that opens the next step. A mid-game event, timed by the Director, so it comes after the Director is built.
+
+- [ ] Gate 1: the blueprint (`docs/plans/scouting-anomalies.md`).
+- [ ] Gate 2: the questions, one at a time.
+- [ ] Gate 3: Ryan's go-ahead.
+
+### 0as. Industry wear (Ryan, 23 October; the review, section 4)
+
+Every company's hardcore matches and overwork feed one shared meter, like Civilization VI's climate change. As it rises, injuries rise everywhere and networks add content rules; the Promoters' Summit, if built, debates protocols. One meter in words on the desk. Best built alongside the body bank (the review, section 6).
+
+- [ ] Gate 1: the blueprint (`docs/plans/industry-wear.md`).
+- [ ] Gate 2: the questions, one at a time.
+- [ ] Gate 3: Ryan's go-ahead.
+
+### 0at. Backstage decisions on the desk (Ryan, 23 October: "Backstage decisions need to move to the scrolling menu on the main desk screen too. thats a task")
+
+The decisions that wait for the booker backstage (requests at your door, people who need you tonight, matters answered there) also appear in the desk's scrolling list, so they can be answered from the desk, one at a time ("ask, do not show"). Backstage keeps them too.
+
+- [ ] Backstage decisions listed in the desk's scrolling list, worst first, each answered in its pop-up without leaving the desk.
+- [ ] The desk still fits one screen at 1080p (`app/tests/desk.js`), and `app/tests/backstage.js` still passes.
+
+### 0au. The animation blueprint: weight and scale (Ryan, 23 October; the review, section 5)
+
+The diorama renderer (`app/src/kit/paper.ts`, `puppet.ts`, `scene.ts`, `diorama3d.ts`) is the game's graphics engine. Motion is smooth but weightless; five rules fix that. Phase C, Feel. Polish, so rule 9d's gates are not needed, but every motion is picked by Ryan on an audition page.
+
+- [ ] Stop-motion cadence, smooth camera: figures posed on twos (12 a second), camera, lights and particles at 60 frames a second.
+- [ ] Anticipation, impact, hit-stop, recovery: a wind-up, a contact frame held about 2 frames for a jab up to 6 for a powerbomb (scaled by `poundsOf()`), a card flex that springs back; sound and camera land on the held frame.
+- [ ] A television director for the camera: wide on the lock-up, tight on the near fall, a crowd cutaway after the kick-out, a slow push on the finisher, from the beat flags `callMatch()` sets; the referee clipping fixed in the same pass.
+- [ ] Scale is density: a hall show has a few dozen cut-outs and one light; the flagship thousands of instanced cut-outs, a lighting rig, pyro and a crane shot.
+- [ ] Choreography with structure: feeling-out, the heat, the hope spot, the comeback, false finishes, the finish; a kicked-out protected finisher gets a bigger camera move.
+- [ ] Interface motion: windows land with a slight rotation and settle, the grade arrives as a rubber stamp, bad news tears, money counts up like an odometer; every motion 120 to 250 ms and never blocks input.
+
+### 0av. A short CLAUDE.md core (rule 9i)
+
+- [ ] Split `CLAUDE.md` into a short core (rules, commands, where things are) and linked area notes in `docs/notes/`.
+- [ ] Recurring procedures as skills in `.claude/skills/`: `/blueprint`, `/vault`, `/audition`, `/publish-live`, `/balance`.
 
 ### 0aa. The Director (Bill, 21 October: "I like this feature add it to the plan")
 
