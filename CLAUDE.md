@@ -11,6 +11,7 @@ cd app && node_modules/.bin/tsc --noEmit -p .       # type-check the interface
 node test-uni.js universes/public_domain.json 60    # headless: 60 weeks of every promotion. Want errs 0 and NaN 0.
 npm run check                                       # build, type-check and a 20-week sim in one go
 npm run test:browser                                # every file in app/tests, one after another (needs NODE_PATH as below)
+node tools/headless-tests.js                        # every headless test with a summary (SHARD=1/4 runs a quarter); test-golden.js runs on its own
 node test-models.js                                 # 60 weeks as each company model; checks what makes it that model
 node test-wording.js                                # no dice wording anywhere in 60 weeks of text
 node test-determinism.js                            # same seed twice gives identical state

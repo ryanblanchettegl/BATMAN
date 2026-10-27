@@ -1,5 +1,11 @@
+# Rule 9f: nothing merges unless every headless test and the golden games pass. The browser suites run nightly.
 name: ci
-on: push
+on:
+  push:
+  pull_request:
+  schedule:
+    - cron: '17 9 * * *'   # nightly browser suites (about 2am Pacific)
+  workflow_dispatch:
 jobs:
   check:
     runs-on: ubuntu-latest
@@ -12,7 +18,54 @@ jobs:
         run: cd app && npm ci
       - name: Build
         run: node build.js
-      - name: Type-check
-        run: cd app && node_modules/.bin/tsc --noEmit -p .
+      - name: Type-check the interface and the engine
+        run: cd app && node_modules/.bin/tsc --noEmit -p . && node_modules/.bin/tsc -p ../engine
+      - name: Lint (no clock in the engine, no screen writes to the state)
+        run: node test-lint.js
       - name: Simulate 20 weeks of every promotion
         run: node test-uni.js universes/public_domain.json 20
+  golden:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: cd app && npm ci
+      - run: node build.js
+      - name: The 60 recorded games play out the same
+        run: node test-golden.js
+  headless:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: ['1/4', '2/4', '3/4', '4/4']
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: cd app && npm ci
+      - run: node build.js
+      - name: Headless tests ${{ matrix.shard }}
+        run: node tools/headless-tests.js
+        env:
+          SHARD: ${{ matrix.shard }}
+  browser:
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    timeout-minutes: 240
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: cd app && npm ci
+      - run: node build.js
+      - name: Install Playwright and Chromium
+        run: mkdir -p /tmp/pw && cd /tmp/pw && npm init -y >/dev/null && npm i playwright@1.56.1 && npx playwright install --with-deps chromium
+      - name: Every browser suite
+        run: node tools/browser-tests.js
+        env:
+          NODE_PATH: /tmp/pw/node_modules
