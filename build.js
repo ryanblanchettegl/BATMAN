@@ -8,7 +8,10 @@ const parts=fs.readdirSync(path.join(__dirname,'src')).filter(f=>f.endsWith('.js
 // bundles the legacy block and the modules, in the old file order, into the same engine.js with the same GP surface.
 const legacyBody=parts.map(f=>'/* ===== '+f+' ===== */\n'+rd('src/'+f)).join('\n');
 const modFiles=fs.existsSync(path.join(__dirname,'engine'))?fs.readdirSync(path.join(__dirname,'engine')).filter(f=>/^\d.*\.ts$/.test(f)).sort():[];
-const legacyNames=[...new Set([...legacyBody.matchAll(/^(?:function\s+([A-Za-z_$][\w$]*)|var\s+([A-Za-z_$][\w$]*))/gm)].map(m=>m[1]||m[2]))];
+const tsc=require(path.join(__dirname,'app','node_modules','typescript'));
+// every top-level name in the legacy block, from a real parse (a var line can declare several)
+const legacyNames=(()=>{const sf=tsc.createSourceFile('legacy.js',legacyBody,tsc.ScriptTarget.ES2017,false,tsc.ScriptKind.JS),n=new Set();
+  sf.statements.forEach(st=>{if(tsc.isFunctionDeclaration(st)&&st.name)n.add(st.name.text);else if(tsc.isVariableStatement(st))st.declarationList.declarations.forEach(d=>{if(tsc.isIdentifier(d.name))n.add(d.name.text);});});return [...n];})();
 // names that live in a moved module keep an empty binding here, which the module fills when it loads (see the ADR)
 const movedNames=modFiles.flatMap(f=>[...rd('engine/'+f).matchAll(/^export (?:function|const|let|var)\s+([A-Za-z_$][\w$]*)/gm)].map(m=>m[1])).filter(n=>!legacyNames.includes(n));
 const allNames=legacyNames.concat(movedNames);

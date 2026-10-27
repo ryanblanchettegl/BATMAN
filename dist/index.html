@@ -2896,6 +2896,7 @@ window.GP_UNIVERSE_PARODY={"manifest":{"id":"parody","name":"The Parody World","
   // engine/_gen/legacy.js
   var L = function(root) {
     "use strict";
+    var POD_EPS2, POD_SEGS2, podFirst2, podPlain2, podShowName2, podInit2, podTone2, podPickSide2, podWrite2;
     var DB = root.GP_DB, E = {};
     var CAL0 = DB ? { y: DB.startYear, m: DB.startMonth } : { y: 2026, m: 9 };
     function dbOf(S) {
@@ -20886,17 +20887,17 @@ window.GP_UNIVERSE_PARODY={"manifest":{"id":"parody","name":"The Parody World","
           });
           if (!Object.keys(shp).length) shp = null;
         }
-        var ft2 = null;
+        var ft = null;
         if (ap.features && typeof ap.features === "object") {
-          ft2 = {};
+          ft = {};
           ["eyes", "nose", "mouth", "ears"].forEach(function(k) {
             var v = lkId(ap.features[k]);
-            if (v) ft2[k] = v;
+            if (v) ft[k] = v;
           });
-          if (!Object.keys(ft2).length) ft2 = null;
+          if (!Object.keys(ft).length) ft = null;
         }
         o.appearance = lkPrune({
-          features: ft2 || void 0,
+          features: ft || void 0,
           shape: shp || void 0,
           face: f && Object.keys(f).length ? f : void 0,
           skin_tone: lkNum(ap.skin_tone, 0, 100),
@@ -33303,318 +33304,15 @@ window.GP_UNIVERSE_PARODY={"manifest":{"id":"parody","name":"The Parody World","
         return { id, name: w.name, style: WR_STYLE[w.wst].n, likes: WR_STYLE[w.wst].likes, strong: w.wsk >= 80 ? "a strong writer" : w.wsk >= 65 ? "a good writer" : "still learning", head: id === X.head, pen: X.by === id && X.until >= S.week, mood: w.morale < 40 ? "unhappy" : "content", you: S.rmY && S.rmY[id] ? S.rmY[id].v : 0 };
       });
     };
-    var POD_EPS = 4, POD_MAX = 72;
-    var POD_SEGS = { open: "Cold open", yours: "This week in {co}", world: "Around the business", feuds: "Feud watch", money: "Business", rumours: "The rumour mill", titles: "The title picture", mail: "The mailbag", picks: "Picks and goodbye" };
-    function podFirst(n) {
-      return String(n || "").split(" of ")[0].split(" ")[0];
-    }
-    function podPlain(n) {
-      return String(n || "").split(" of ")[0];
-    }
-    function podShowName(S) {
-      var c = S.columnist || "The Ringside Wire", o = c.indexOf(" of ") >= 0 ? c.slice(c.indexOf(" of ") + 4) : c;
-      o = o.replace(/^the /i, "");
-      return "The " + o + " Radio";
-    }
-    function podInit(S) {
-      if (S.pod) return S.pod;
-      var X = pressInit(S), ra = X.rep.filter(function(r) {
-        return r.beat === "ring";
-      })[0] || X.rep[0];
-      var rt = S.w.filter(function(w) {
-        return w && w.rt != null && w.promo === "FA" && !w.nw && (w.mic || 0) >= 60;
-      }).sort(function(a, b) {
-        return (b.mic || 0) - (a.mic || 0) || a.id - b.id;
-      })[0], nb;
-      if (rt) nb = rt.name;
-      else {
-        var tries = 0;
-        do {
-          nb = PRESS_FIRST[hash(S.seed + "podb" + tries) % PRESS_FIRST.length] + " " + PRESS_LAST[hash(S.seed + "podl" + tries) % PRESS_LAST.length];
-          tries++;
-        } while (tries < 20 && X.rep.some(function(r) {
-          return podPlain(r.name) === nb || podFirst(r.name) === podFirst(nb);
-        }));
-      }
-      S.pod = { show: podShowName(S), a: { rep: ra.id, name: podPlain(ra.name) }, b: { w: rt ? rt.id : null, name: nb }, eps: [], picks: [], rec: { r: 0, x: 0 }, n: 0 };
-      return S.pod;
-    }
-    function podTone(S, pod) {
-      var r = S.press && S.press.rep[pod.a.rep];
-      if (!r) return 0;
-      var v = r.warm + r.bias * 0.5;
-      return v >= 25 ? 1 : v <= -25 ? -1 : 0;
-    }
-    function podPickSide(S, f, key) {
-      var sum = function(ids) {
-        return ids.reduce(function(t, id) {
-          var w = S.w[id];
-          return t + (w ? w.ovr + w.mom * 2 : 0);
-        }, 0);
-      }, d = sum(f.a) - sum(f.b);
-      return d > 3 ? "a" : d < -3 ? "b" : h01(key) < 0.5 ? "a" : "b";
-    }
-    function podWrite(S) {
-      var pod = podInit(S), P = S.promos[S.player], wk = S.week, key = S.seed + ":pod:" + wk, used = {}, lines = [], segs = [], n = 0;
-      var sheet = (S.sheets || [])[0];
-      if (!sheet || sheet.week !== wk) sheet = netSheet(S, wk);
-      var cx = { a: podFirst(pod.a.name), b: podFirst(pod.b.name), show: pod.show, co: P.name, wk: cal(wk).label.replace(/^Week/, "week"), tone: podTone(S, pod) };
-      var say2 = function(s, rule, c2, p) {
-        if (lines.length >= POD_MAX) return;
-        var o = {};
-        for (var k in cx) o[k] = cx[k];
-        if (c2) for (var j in c2) o[j] = c2[j];
-        var t = "";
-        for (var tr = 0; tr < 5; tr++) {
-          t = gram(GR_POD, rule, o, key + ":" + n++);
-          if (!used[t]) break;
-        }
-        if (!t) return;
-        used[t] = 1;
-        var L2 = { s, t, g: segs.length - 1 };
-        if (p) L2.p = p;
-        lines.push(L2);
-      };
-      var raw = function(s, t, p) {
-        if (lines.length >= POD_MAX) return;
-        var L2 = { s, t, g: segs.length - 1 };
-        if (p) L2.p = p;
-        lines.push(L2);
-      };
-      var seg = function(k) {
-        segs.push({ k, n: fill(POD_SEGS[k], { co: P.name }), i: lines.length });
-      };
-      var maybe = function(tag, p) {
-        return h01(key + ":c:" + tag) < p;
-      };
-      var reps = S.reports.filter(function(r) {
-        return r.week === wk && r.promo === P.id;
-      }).sort(function(a, b) {
-        return (b.big ? 1 : 0) - (a.big ? 1 : 0) || b.rating - a.rating;
-      }).slice(0, 2);
-      var newChamps = [];
-      P.titles.forEach(function(t) {
-        if (t.since === wk && t.holders.length) newChamps.push({ t, w: t.holders[0] });
-      });
-      seg("open");
-      raw("x", "[Theme music plays]");
-      say2("a", "hello");
-      say2("b", "hi_b");
-      if (sheet.lead && sheet.lead.text && !/^Nothing broke/.test(sheet.lead.text)) {
-        var lp = newChamps.length ? { k: "champ", w: newChamps[0].w, t: newChamps[0].t.id } : null;
-        say2("a", "lead", { lead: sheet.lead.text }, lp);
-        say2("b", "lead_b");
-      }
-      if (reps.length) {
-        seg("yours");
-        reps.forEach(function(r, ri2) {
-          var g, band = verdictBand(r.rating - (r.exp == null ? r.rating : r.exp)), g = gradeG(repCS(r)), c2 = { sh: r.name, g, ag: (/^[AEF]/.test(g) ? "an " : "a ") + g, band };
-          say2("a", "grade", c2);
-          say2("b", "grade_b", c2);
-          if (r.att) {
-            raw("a", fill(gram(GR_POD, "crowd", { att: r.att.toLocaleString("en-US") }, key + ":att" + ri2), {}) + (r.sellout ? " " + gram(GR_POD, "sellout", {}, key + ":so" + ri2) : ""));
-          }
-          var ms = r.segs.filter(function(s) {
-            return s.k === "match";
-          });
-          if (!ms.length) return;
-          var best = ms.slice().sort(function(a, b) {
-            return b.ov - a.ov;
-          })[0], main = ms[ms.length - 1];
-          say2("a", "best", { best: best.label, stars: starG(best.ov) }, { k: "match", l: best.label });
-          if (maybe("bb" + ri2, 0.75)) say2("b", "best_b");
-          if (main !== best && main.win) {
-            var lose = main.label.split(" vs ").filter(function(x) {
-              return x.indexOf(main.win) < 0;
-            })[0];
-            if (lose) {
-              say2("a", "main", { win: main.win, lose });
-              say2("b", "main_b", { win: main.win, lose });
-            }
-          }
-        });
-        newChamps.forEach(function(nc, ci) {
-          var w = S.w[nc.w];
-          if (!w) return;
-          say2("a", "champ", { win: w.name, title: nc.t.name }, { k: "champ", w: w.id, t: nc.t.id });
-          say2("b", "champ_b", { win: w.name }, { k: "champ", w: w.id, t: nc.t.id });
-        });
-        var mine = {};
-        rosterOf(S, P.id).forEach(function(w) {
-          mine[w.name] = 1;
-        });
-        (S.feed || []).filter(function(f) {
-          return f.w === wk && f.k === "w" && mine[f.n];
-        }).slice(0, 2).forEach(function(f, fi) {
-          say2("a", "post", { n: f.n, t: f.t });
-          if (maybe("pb" + fi, 0.6)) say2("b", "post_b");
-        });
-      }
-      var wl = (sheet.world || []).filter(function(x) {
-        return x.lines && x.lines.length;
-      }).sort(function(a, b) {
-        return h01(key + "w" + a.id) - h01(key + "w" + b.id);
-      }).slice(0, 3);
-      if (wl.length) {
-        seg("world");
-        say2("a", "world_in");
-        wl.forEach(function(x, i) {
-          var t = x.lines.filter(function(l) {
-            return !/ was graded [A-F][+-]?\.$/.test(l);
-          })[0] || x.lines[0];
-          say2("a", "world", { co: x.name, t });
-          if (maybe("wb" + i, 0.5)) say2("b", "world_b");
-        });
-      }
-      if ((sheet.feuds || []).length) {
-        seg("feuds");
-        say2("a", "feud_in");
-        sheet.feuds.slice(0, 3).forEach(function(t, i) {
-          raw("a", t);
-          var fk = /came to an end|a wrap|never caught on|let .* die/.test(t) ? "end" : /run out of road|take the hint|starting to drag/.test(t) ? "stale" : /only just starting|started something|Early days/.test(t) ? "new" : "hot";
-          if (maybe("fb" + i, 0.6)) say2("b", "feud_b", { fk });
-        });
-      }
-      var biz = (sheet.business || []).slice(0, 2);
-      S.news.filter(function(x) {
-        return x.w === wk && /^(AUDIENCE|COLUMN): /.test(x.t);
-      }).slice(0, 2).forEach(function(x) {
-        biz.push(x.t.replace(/^(AUDIENCE|COLUMN): /, ""));
-      });
-      if (biz.length) {
-        seg("money");
-        say2("a", "money_in");
-        biz.forEach(function(t) {
-          raw("a", t);
-        });
-        say2("b", "money_b");
-      }
-      var fu = (sheet.followups || []).slice(0, 2), ru = (sheet.rumours || []).slice(0, 3);
-      if (fu.length || ru.length) {
-        seg("rumours");
-        say2("a", "rum_in");
-        fu.forEach(function(x) {
-          var t = x.t.replace(/^(CONFIRMED|UPDATE|CORRECTION): /, "");
-          say2("a", x.ok ? "fix_ok" : "fix_no", { t });
-          say2("b", x.ok ? "fix_ok_b" : "fix_no_b");
-        });
-        ru.forEach(function(x, i) {
-          say2("a", "rum_" + (x.lvl || "thin"), { t: x.t });
-          if (x.lvl === "thin" || maybe("rb" + i, 0.4)) say2("b", "rum_b");
-        });
-      }
-      var ts = P.titles.slice().sort(function(a, b) {
-        return b.lvl - a.lvl || (b.prestige || 0) - (a.prestige || 0);
-      }).slice(0, 3);
-      if (ts.length && (wk % 2 === 0 || newChamps.length)) {
-        seg("titles");
-        say2("a", "title_in");
-        ts.forEach(function(t, i) {
-          if (!t.holders.length) {
-            say2("a", "vacant", { title: t.name });
-            return;
-          }
-          var nm = t.holders.map(function(id) {
-            return S.w[id] ? S.w[id].name : "";
-          }).filter(Boolean).join(" and "), p = { k: "champ", w: t.holders[0], t: t.id }, two = t.holders.length > 1, vb = { hv: two ? "hold" : "holds", hs: two ? "have" : "has", is: two ? "are" : "is" };
-          if (t.since === wk) say2("a", "hold_new", { w: nm, title: t.name, hv: vb.hv, is: vb.is }, p);
-          else say2("a", "hold", { w: nm, title: t.name, n: Math.max(1, wk - t.since), hv: vb.hv, hs: vb.hs }, p);
-          var c2 = t.tag ? null : rankFor(S, P, t, 1)[0];
-          if (c2 && maybe("nx" + i, 0.7)) say2("b", "next", { c: c2.name }, { k: "face", ids: [t.holders[0], c2.id] });
-        });
-      }
-      var who = {}, ml = (S.feed || []).filter(function(f) {
-        if (f.w !== wk || f.k !== "f" || who[f.u]) return false;
-        who[f.u] = 1;
-        return true;
-      }).slice(0, 3);
-      if (ml.length) {
-        seg("mail");
-        say2("a", "mail_in");
-        ml.forEach(function(f, i) {
-          say2("b", "mail", { u: String(f.u || f.n).replace(/^@/, ""), t: f.t });
-          say2("a", "mail_re");
-        });
-      }
-      seg("picks");
-      pod.picks = (pod.picks || []).filter(function(pk) {
-        var f = S.feuds.filter(function(x) {
-          return x.id === pk.f;
-        })[0];
-        if (!f) return false;
-        if (!f.res) return wk - pk.w < 26;
-        var win = f.aw > f.bw ? "a" : f.bw > f.aw ? "b" : null;
-        if (!win) return false;
-        var right = win === pk.s;
-        pod.rec[right ? "r" : "x"]++;
-        say2("a", right ? "score_ok" : "score_no", { f: feudLabel(S, f), r: pod.rec.r, x: pod.rec.x });
-        return false;
-      });
-      var c = cal(wk);
-      if (c.wom === 4 && S.pm && S.pm.month[0] && S.pm.unread === wk) {
-        var m = S.pm.month[0], sh = function(L2) {
-          return L2.filter(function(x) {
-            return / shows /.test(x.t);
-          })[0];
-        }, mg = sh(m.well), mb = sh(m.badly);
-        if (mg || mb) say2("a", "month", { good: mg ? mg.t : "not much", bad: mb ? mb.t : null });
-      }
-      var hot = activeFeuds(S).filter(function(f) {
-        return f.promo === P.id && f.heat >= 60 && !(pod.picks || []).some(function(pk) {
-          return pk.f === f.id;
-        });
-      }).sort(function(a, b) {
-        return b.heat - a.heat || a.id - b.id;
-      })[0];
-      if (hot) {
-        var side = podPickSide(S, hot, key + "pk"), nameOf = function(ids) {
-          return ids.map(function(id) {
-            return S.w[id] ? S.w[id].name : "";
-          }).join(" and ");
-        }, pn = nameOf(hot[side]), on = nameOf(hot[side === "a" ? "b" : "a"]);
-        say2("a", "pick", { big: c.wom === 4 ? P.name + " " + evName(S, P, cal(wk + 4).month) : nextBigName(S, P), p: pn, o: on }, { k: "face", ids: [hot[side][0], hot[side === "a" ? "b" : "a"][0]] });
-        say2("b", maybe("pd", 0.4) ? "pick_diff" : "pick_same", { p: pn, o: on });
-        pod.picks.push({ f: hot.id, s: side, w: wk });
-      }
-      say2("a", "bye");
-      say2("b", "bye_b");
-      raw("x", "[Theme music plays]");
-      var words = lines.reduce(function(t, L2) {
-        return t + L2.t.split(/\s+/).length;
-      }, 0);
-      pod.n++;
-      var ep = { w: wk, n: pod.n, label: cal(wk).label, title: "Episode " + pod.n + ": " + (sheet.lead && sheet.lead.head ? sheet.lead.head : cal(wk).label), mins: Math.max(1, Math.round(words / 150)), segs, lines, you: reps.length > 0 };
-      pod.eps.unshift(ep);
-      if (pod.eps.length > POD_EPS) pod.eps.length = POD_EPS;
-      return ep;
-    }
-    WEEKX.push(function(S) {
-      if (S.cal || S.over || !S.promos[S.player]) return;
-      podWrite(S);
-    });
-    E.podcast = function(S) {
-      var pod = podInit(S);
-      return {
-        show: pod.show,
-        hosts: [{ k: "a", name: pod.a.name, role: "Writer" }, { k: "b", name: pod.b.name, role: pod.b.w != null ? "Retired wrestler" : "Co-host" }],
-        rec: { r: pod.rec.r, x: pod.rec.x },
-        eps: pod.eps.map(function(e) {
-          return { w: e.w, n: e.n, label: e.label, title: e.title, mins: e.mins, you: e.you, segs: e.segs.map(function(s) {
-            return s.n;
-          }), lines: e.lines.length };
-        })
-      };
-    };
-    E.podEp = function(S, n) {
-      var pod = podInit(S);
-      for (var i = 0; i < pod.eps.length; i++) if (n == null || pod.eps[i].n === n) return JSON.parse(JSON.stringify(pod.eps[i]));
-      return null;
-    };
     root.GP = E;
     return { get DB() {
       return DB;
     }, set DB(v) {
       DB = v;
+    }, get E() {
+      return E;
+    }, set E(v) {
+      E = v;
     }, get CAL0() {
       return CAL0;
     }, set CAL0(v) {
@@ -33667,22 +33365,66 @@ window.GP_UNIVERSE_PARODY={"manifest":{"id":"parody","name":"The Parody World","
       return PRODF;
     }, set PRODF(v) {
       PRODF = v;
+    }, get PRODN() {
+      return PRODN;
+    }, set PRODN(v) {
+      PRODN = v;
     }, get RISKN() {
       return RISKN;
     }, set RISKN(v) {
       RISKN = v;
+    }, get RISK_STIP() {
+      return RISK_STIP;
+    }, set RISK_STIP(v) {
+      RISK_STIP = v;
+    }, get RISK_INJ() {
+      return RISK_INJ;
+    }, set RISK_INJ(v) {
+      RISK_INJ = v;
     }, get TIXN() {
       return TIXN;
     }, set TIXN(v) {
       TIXN = v;
+    }, get TIX_P() {
+      return TIX_P;
+    }, set TIX_P(v) {
+      TIX_P = v;
+    }, get TIX_D() {
+      return TIX_D;
+    }, set TIX_D(v) {
+      TIX_D = v;
     }, get ADVN() {
       return ADVN;
     }, set ADVN(v) {
       ADVN = v;
+    }, get ADV_H() {
+      return ADV_H;
+    }, set ADV_H(v) {
+      ADV_H = v;
+    }, get ADV_C() {
+      return ADV_C;
+    }, set ADV_C(v) {
+      ADV_C = v;
     }, get SLOTN() {
       return SLOTN;
     }, set SLOTN(v) {
       SLOTN = v;
+    }, get SLOT_V() {
+      return SLOT_V;
+    }, set SLOT_V(v) {
+      SLOT_V = v;
+    }, get SLOT_MAX() {
+      return SLOT_MAX;
+    }, set SLOT_MAX(v) {
+      SLOT_MAX = v;
+    }, get SLOT_REQ() {
+      return SLOT_REQ;
+    }, set SLOT_REQ(v) {
+      SLOT_REQ = v;
+    }, get SLOT_RISK() {
+      return SLOT_RISK;
+    }, set SLOT_RISK(v) {
+      SLOT_RISK = v;
     }, get CAPS() {
       return CAPS;
     }, set CAPS(v) {
@@ -33955,6 +33697,66 @@ window.GP_UNIVERSE_PARODY={"manifest":{"id":"parody","name":"The Parody World","
       return MODEL_CROWD;
     }, set MODEL_CROWD(v) {
       MODEL_CROWD = v;
+    }, get ANGDONE() {
+      return ANGDONE;
+    }, set ANGDONE(v) {
+      ANGDONE = v;
+    }, get EFX() {
+      return EFX;
+    }, set EFX(v) {
+      EFX = v;
+    }, get MQX() {
+      return MQX;
+    }, set MQX(v) {
+      MQX = v;
+    }, get CRX() {
+      return CRX;
+    }, set CRX(v) {
+      CRX = v;
+    }, get FINX() {
+      return FINX;
+    }, set FINX(v) {
+      FINX = v;
+    }, get POST() {
+      return POST;
+    }, set POST(v) {
+      POST = v;
+    }, get SHOWX() {
+      return SHOWX;
+    }, set SHOWX(v) {
+      SHOWX = v;
+    }, get WEEKX() {
+      return WEEKX;
+    }, set WEEKX(v) {
+      WEEKX = v;
+    }, get NEWX() {
+      return NEWX;
+    }, set NEWX(v) {
+      NEWX = v;
+    }, get ANGX() {
+      return ANGX;
+    }, set ANGX(v) {
+      ANGX = v;
+    }, get EVMAKE() {
+      return EVMAKE;
+    }, set EVMAKE(v) {
+      EVMAKE = v;
+    }, get EVR() {
+      return EVR;
+    }, set EVR(v) {
+      EVR = v;
+    }, get QEND() {
+      return QEND;
+    }, set QEND(v) {
+      QEND = v;
+    }, get PREX() {
+      return PREX;
+    }, set PREX(v) {
+      PREX = v;
+    }, get TASKX() {
+      return TASKX;
+    }, set TASKX(v) {
+      TASKX = v;
     }, get workOf() {
       return workOf;
     }, set workOf(v) {
@@ -34087,6 +33889,18 @@ window.GP_UNIVERSE_PARODY={"manifest":{"id":"parody","name":"The Parody World","
       return LIVE_FIZZ;
     }, set LIVE_FIZZ(v) {
       LIVE_FIZZ = v;
+    }, get LIVE_FIZZW() {
+      return LIVE_FIZZW;
+    }, set LIVE_FIZZW(v) {
+      LIVE_FIZZW = v;
+    }, get LIVE_SHELF() {
+      return LIVE_SHELF;
+    }, set LIVE_SHELF(v) {
+      LIVE_SHELF = v;
+    }, get LIVE_FLAT() {
+      return LIVE_FLAT;
+    }, set LIVE_FLAT(v) {
+      LIVE_FLAT = v;
     }, get isBigWeek() {
       return isBigWeek;
     }, set isBigWeek(v) {
@@ -34275,6 +34089,26 @@ window.GP_UNIVERSE_PARODY={"manifest":{"id":"parody","name":"The Parody World","
       return LIVE_MAX_TV;
     }, set LIVE_MAX_TV(v) {
       LIVE_MAX_TV = v;
+    }, get LIVE_MAX_BIG() {
+      return LIVE_MAX_BIG;
+    }, set LIVE_MAX_BIG(v) {
+      LIVE_MAX_BIG = v;
+    }, get LIVE_HM_CD() {
+      return LIVE_HM_CD;
+    }, set LIVE_HM_CD(v) {
+      LIVE_HM_CD = v;
+    }, get LIVEK() {
+      return LIVEK;
+    }, set LIVEK(v) {
+      LIVEK = v;
+    }, get LIVE_ORDER() {
+      return LIVE_ORDER;
+    }, set LIVE_ORDER(v) {
+      LIVE_ORDER = v;
+    }, get LIVE_POST() {
+      return LIVE_POST;
+    }, set LIVE_POST(v) {
+      LIVE_POST = v;
     }, get liveMatch() {
       return liveMatch;
     }, set liveMatch(v) {
@@ -34327,6 +34161,18 @@ window.GP_UNIVERSE_PARODY={"manifest":{"id":"parody","name":"The Parody World","
       return FACE_CD;
     }, set FACE_CD(v) {
       FACE_CD = v;
+    }, get OWNER_CD() {
+      return OWNER_CD;
+    }, set OWNER_CD(v) {
+      OWNER_CD = v;
+    }, get FACE_UP() {
+      return FACE_UP;
+    }, set FACE_UP(v) {
+      FACE_UP = v;
+    }, get FACE_DOWN() {
+      return FACE_DOWN;
+    }, set FACE_DOWN(v) {
+      FACE_DOWN = v;
     }, get faceOf() {
       return faceOf;
     }, set faceOf(v) {
@@ -34363,6 +34209,22 @@ window.GP_UNIVERSE_PARODY={"manifest":{"id":"parody","name":"The Parody World","
       return BOTCH_CD;
     }, set BOTCH_CD(v) {
       BOTCH_CD = v;
+    }, get AUD_CD() {
+      return AUD_CD;
+    }, set AUD_CD(v) {
+      AUD_CD = v;
+    }, get OT_CD() {
+      return OT_CD;
+    }, set OT_CD(v) {
+      OT_CD = v;
+    }, get AUD_CR() {
+      return AUD_CR;
+    }, set AUD_CR(v) {
+      AUD_CR = v;
+    }, get ZONE_WORD() {
+      return ZONE_WORD;
+    }, set ZONE_WORD(v) {
+      ZONE_WORD = v;
     }, get ringOk() {
       return ringOk;
     }, set ringOk(v) {
@@ -34399,6 +34261,14 @@ window.GP_UNIVERSE_PARODY={"manifest":{"id":"parody","name":"The Parody World","
       return NIGHT_CD;
     }, set NIGHT_CD(v) {
       NIGHT_CD = v;
+    }, get NIGHT_OUT() {
+      return NIGHT_OUT;
+    }, set NIGHT_OUT(v) {
+      NIGHT_OUT = v;
+    }, get NIGHT_FURY() {
+      return NIGHT_FURY;
+    }, set NIGHT_FURY(v) {
+      NIGHT_FURY = v;
     }, get nightFree() {
       return nightFree;
     }, set nightFree(v) {
@@ -34491,6 +34361,18 @@ window.GP_UNIVERSE_PARODY={"manifest":{"id":"parody","name":"The Parody World","
       return EV_SPN;
     }, set EV_SPN(v) {
       EV_SPN = v;
+    }, get EV_SPC() {
+      return EV_SPC;
+    }, set EV_SPC(v) {
+      EV_SPC = v;
+    }, get EV_SPH() {
+      return EV_SPH;
+    }, set EV_SPH(v) {
+      EV_SPH = v;
+    }, get EV_HMAX() {
+      return EV_HMAX;
+    }, set EV_HMAX(v) {
+      EV_HMAX = v;
     }, get evSpendCost() {
       return evSpendCost;
     }, set evSpendCost(v) {
@@ -34767,6 +34649,10 @@ window.GP_UNIVERSE_PARODY={"manifest":{"id":"parody","name":"The Parody World","
       return YEAR_GROW;
     }, set YEAR_GROW(v) {
       YEAR_GROW = v;
+    }, get YEAR_MIN_SHOWS() {
+      return YEAR_MIN_SHOWS;
+    }, set YEAR_MIN_SHOWS(v) {
+      YEAR_MIN_SHOWS = v;
     }, get yearNew() {
       return yearNew;
     }, set yearNew(v) {
@@ -34779,6 +34665,14 @@ window.GP_UNIVERSE_PARODY={"manifest":{"id":"parody","name":"The Parody World","
       return REL_MEM;
     }, set REL_MEM(v) {
       REL_MEM = v;
+    }, get REL_ON() {
+      return REL_ON;
+    }, set REL_ON(v) {
+      REL_ON = v;
+    }, get REL_STRONG() {
+      return REL_STRONG;
+    }, set REL_STRONG(v) {
+      REL_STRONG = v;
     }, get relBlank() {
       return relBlank;
     }, set relBlank(v) {
@@ -34899,6 +34793,14 @@ window.GP_UNIVERSE_PARODY={"manifest":{"id":"parody","name":"The Parody World","
       return CAMP_CAP;
     }, set CAMP_CAP(v) {
       CAMP_CAP = v;
+    }, get CAMP_C() {
+      return CAMP_C;
+    }, set CAMP_C(v) {
+      CAMP_C = v;
+    }, get CAMPN() {
+      return CAMPN;
+    }, set CAMPN(v) {
+      CAMPN = v;
     }, get FOCUS() {
       return FOCUS;
     }, set FOCUS(v) {
@@ -34963,10 +34865,30 @@ window.GP_UNIVERSE_PARODY={"manifest":{"id":"parody","name":"The Parody World","
       return MEDN;
     }, set MEDN(v) {
       MEDN = v;
+    }, get MED_C() {
+      return MED_C;
+    }, set MED_C(v) {
+      MED_C = v;
+    }, get MED_R() {
+      return MED_R;
+    }, set MED_R(v) {
+      MED_R = v;
+    }, get MED_L() {
+      return MED_L;
+    }, set MED_L(v) {
+      MED_L = v;
+    }, get MED_I() {
+      return MED_I;
+    }, set MED_I(v) {
+      MED_I = v;
     }, get EXN() {
       return EXN;
     }, set EXN(v) {
       EXN = v;
+    }, get PUSHN() {
+      return PUSHN;
+    }, set PUSHN(v) {
+      PUSHN = v;
     }, get medCost() {
       return medCost;
     }, set medCost(v) {
@@ -35031,6 +34953,10 @@ window.GP_UNIVERSE_PARODY={"manifest":{"id":"parody","name":"The Parody World","
       return OWNZ;
     }, set OWNZ(v) {
       OWNZ = v;
+    }, get OPPZ() {
+      return OPPZ;
+    }, set OPPZ(v) {
+      OPPZ = v;
     }, get bsInit() {
       return bsInit;
     }, set bsInit(v) {
@@ -35195,6 +35121,10 @@ window.GP_UNIVERSE_PARODY={"manifest":{"id":"parody","name":"The Parody World","
       return PPL_ROOMS;
     }, set PPL_ROOMS(v) {
       PPL_ROOMS = v;
+    }, get PPL_MAX() {
+      return PPL_MAX;
+    }, set PPL_MAX(v) {
+      PPL_MAX = v;
     }, get pplMatter() {
       return pplMatter;
     }, set pplMatter(v) {
@@ -35559,6 +35489,10 @@ window.GP_UNIVERSE_PARODY={"manifest":{"id":"parody","name":"The Parody World","
       return MOM;
     }, set MOM(v) {
       MOM = v;
+    }, get AFTER() {
+      return AFTER;
+    }, set AFTER(v) {
+      AFTER = v;
     }, get momTop() {
       return momTop;
     }, set momTop(v) {
@@ -35623,6 +35557,10 @@ window.GP_UNIVERSE_PARODY={"manifest":{"id":"parody","name":"The Parody World","
       return STYLE_KEY;
     }, set STYLE_KEY(v) {
       STYLE_KEY = v;
+    }, get STYLE_OUT() {
+      return STYLE_OUT;
+    }, set STYLE_OUT(v) {
+      STYLE_OUT = v;
     }, get RMAP() {
       return RMAP;
     }, set RMAP(v) {
@@ -35791,10 +35729,22 @@ window.GP_UNIVERSE_PARODY={"manifest":{"id":"parody","name":"The Parody World","
       return LOOK_ATTIRES;
     }, set LOOK_ATTIRES(v) {
       LOOK_ATTIRES = v;
+    }, get LOOK_SLOTS() {
+      return LOOK_SLOTS;
+    }, set LOOK_SLOTS(v) {
+      LOOK_SLOTS = v;
+    }, get LOOK_PARTS() {
+      return LOOK_PARTS;
+    }, set LOOK_PARTS(v) {
+      LOOK_PARTS = v;
     }, get LOOK_KICK() {
       return LOOK_KICK;
     }, set LOOK_KICK(v) {
       LOOK_KICK = v;
+    }, get LOOK_POS() {
+      return LOOK_POS;
+    }, set LOOK_POS(v) {
+      LOOK_POS = v;
     }, get lkStr() {
       return lkStr;
     }, set lkStr(v) {
@@ -35815,10 +35765,6 @@ window.GP_UNIVERSE_PARODY={"manifest":{"id":"parody","name":"The Parody World","
       return lookClean;
     }, set lookClean(v) {
       lookClean = v;
-    }, get ft() {
-      return ft;
-    }, set ft(v) {
-      ft = v;
     }, get lkWorker() {
       return lkWorker;
     }, set lkWorker(v) {
@@ -35831,6 +35777,10 @@ window.GP_UNIVERSE_PARODY={"manifest":{"id":"parody","name":"The Parody World","
       return FIN_KO;
     }, set FIN_KO(v) {
       FIN_KO = v;
+    }, get FIN_PAY() {
+      return FIN_PAY;
+    }, set FIN_PAY(v) {
+      FIN_PAY = v;
     }, get finProt() {
       return finProt;
     }, set finProt(v) {
@@ -35863,6 +35813,14 @@ window.GP_UNIVERSE_PARODY={"manifest":{"id":"parody","name":"The Parody World","
       return TRVN;
     }, set TRVN(v) {
       TRVN = v;
+    }, get TRV_C() {
+      return TRV_C;
+    }, set TRV_C(v) {
+      TRV_C = v;
+    }, get TRV_R() {
+      return TRV_R;
+    }, set TRV_R(v) {
+      TRV_R = v;
     }, get travelCost() {
       return travelCost;
     }, set travelCost(v) {
@@ -35919,6 +35877,38 @@ window.GP_UNIVERSE_PARODY={"manifest":{"id":"parody","name":"The Parody World","
       return MAKE_SHOWS;
     }, set MAKE_SHOWS(v) {
       MAKE_SHOWS = v;
+    }, get MAKE_PER_SHOW() {
+      return MAKE_PER_SHOW;
+    }, set MAKE_PER_SHOW(v) {
+      MAKE_PER_SHOW = v;
+    }, get MAKE_WAIT() {
+      return MAKE_WAIT;
+    }, set MAKE_WAIT(v) {
+      MAKE_WAIT = v;
+    }, get MAKE_BELT_GAP() {
+      return MAKE_BELT_GAP;
+    }, set MAKE_BELT_GAP(v) {
+      MAKE_BELT_GAP = v;
+    }, get MAKE_SHOW_GAP() {
+      return MAKE_SHOW_GAP;
+    }, set MAKE_SHOW_GAP(v) {
+      MAKE_SHOW_GAP = v;
+    }, get MAKE_BOOM() {
+      return MAKE_BOOM;
+    }, set MAKE_BOOM(v) {
+      MAKE_BOOM = v;
+    }, get MAKE_CROWD() {
+      return MAKE_CROWD;
+    }, set MAKE_CROWD(v) {
+      MAKE_CROWD = v;
+    }, get WORLD_BELT_GAP() {
+      return WORLD_BELT_GAP;
+    }, set WORLD_BELT_GAP(v) {
+      WORLD_BELT_GAP = v;
+    }, get WORLD_SHOW_GAP() {
+      return WORLD_SHOW_GAP;
+    }, set WORLD_SHOW_GAP(v) {
+      WORLD_SHOW_GAP = v;
     }, get BELT_NEED() {
       return BELT_NEED;
     }, set BELT_NEED(v) {
@@ -36159,6 +36149,10 @@ window.GP_UNIVERSE_PARODY={"manifest":{"id":"parody","name":"The Parody World","
       return INDIE_SIZE;
     }, set INDIE_SIZE(v) {
       INDIE_SIZE = v;
+    }, get INDIE_NIGHT() {
+      return INDIE_NIGHT;
+    }, set INDIE_NIGHT(v) {
+      INDIE_NIGHT = v;
     }, get indieMeta() {
       return indieMeta;
     }, set indieMeta(v) {
@@ -36227,6 +36221,26 @@ window.GP_UNIVERSE_PARODY={"manifest":{"id":"parody","name":"The Parody World","
       return AIR_YEAR;
     }, set AIR_YEAR(v) {
       AIR_YEAR = v;
+    }, get AIR_DEAL_MIN() {
+      return AIR_DEAL_MIN;
+    }, set AIR_DEAL_MIN(v) {
+      AIR_DEAL_MIN = v;
+    }, get AIR_DEAL_SPAN() {
+      return AIR_DEAL_SPAN;
+    }, set AIR_DEAL_SPAN(v) {
+      AIR_DEAL_SPAN = v;
+    }, get AIR_GAP() {
+      return AIR_GAP;
+    }, set AIR_GAP(v) {
+      AIR_GAP = v;
+    }, get AIR_TIER_V() {
+      return AIR_TIER_V;
+    }, set AIR_TIER_V(v) {
+      AIR_TIER_V = v;
+    }, get AIR_TIER_REACH() {
+      return AIR_TIER_REACH;
+    }, set AIR_TIER_REACH(v) {
+      AIR_TIER_REACH = v;
     }, get airLevelOf() {
       return airLevelOf;
     }, set airLevelOf(v) {
@@ -36539,6 +36553,14 @@ window.GP_UNIVERSE_PARODY={"manifest":{"id":"parody","name":"The Parody World","
       return STRM_PRICE;
     }, set STRM_PRICE(v) {
       STRM_PRICE = v;
+    }, get STRM_OPEN() {
+      return STRM_OPEN;
+    }, set STRM_OPEN(v) {
+      STRM_OPEN = v;
+    }, get STRM_RUN() {
+      return STRM_RUN;
+    }, set STRM_RUN(v) {
+      STRM_RUN = v;
     }, get streamOn() {
       return streamOn;
     }, set streamOn(v) {
@@ -36559,6 +36581,18 @@ window.GP_UNIVERSE_PARODY={"manifest":{"id":"parody","name":"The Parody World","
       return CANCEL_WARN;
     }, set CANCEL_WARN(v) {
       CANCEL_WARN = v;
+    }, get HOUSE_DRAW() {
+      return HOUSE_DRAW;
+    }, set HOUSE_DRAW(v) {
+      HOUSE_DRAW = v;
+    }, get BACK_RUN() {
+      return BACK_RUN;
+    }, set BACK_RUN(v) {
+      BACK_RUN = v;
+    }, get BACK_CS() {
+      return BACK_CS;
+    }, set BACK_CS(v) {
+      BACK_CS = v;
     }, get showOff() {
       return showOff;
     }, set showOff(v) {
@@ -36567,6 +36601,14 @@ window.GP_UNIVERSE_PARODY={"manifest":{"id":"parody","name":"The Parody World","
       return MAP_W;
     }, set MAP_W(v) {
       MAP_W = v;
+    }, get MAP_H() {
+      return MAP_H;
+    }, set MAP_H(v) {
+      MAP_H = v;
+    }, get MAP_ABC() {
+      return MAP_ABC;
+    }, set MAP_ABC(v) {
+      MAP_ABC = v;
     }, get MAPS() {
       return MAPS;
     }, set MAPS(v) {
@@ -36803,6 +36845,10 @@ window.GP_UNIVERSE_PARODY={"manifest":{"id":"parody","name":"The Parody World","
       return SH_HOT;
     }, set SH_HOT(v) {
       SH_HOT = v;
+    }, get SH_SLOW() {
+      return SH_SLOW;
+    }, set SH_SLOW(v) {
+      SH_SLOW = v;
     }, get shIds() {
       return shIds;
     }, set shIds(v) {
@@ -36839,6 +36885,10 @@ window.GP_UNIVERSE_PARODY={"manifest":{"id":"parody","name":"The Parody World","
       return SEGLEN;
     }, set SEGLEN(v) {
       SEGLEN = v;
+    }, get SEGLENN() {
+      return SEGLENN;
+    }, set SEGLENN(v) {
+      SEGLENN = v;
     }, get SEGK() {
       return SEGK;
     }, set SEGK(v) {
@@ -36939,6 +36989,18 @@ window.GP_UNIVERSE_PARODY={"manifest":{"id":"parody","name":"The Parody World","
       return STIP0;
     }, set STIP0(v) {
       STIP0 = v;
+    }, get STIPNOTE0() {
+      return STIPNOTE0;
+    }, set STIPNOTE0(v) {
+      STIPNOTE0 = v;
+    }, get STIPLINE0() {
+      return STIPLINE0;
+    }, set STIPLINE0(v) {
+      STIPLINE0 = v;
+    }, get STIPNEED0() {
+      return STIPNEED0;
+    }, set STIPNEED0(v) {
+      STIPNEED0 = v;
     }, get stipBase() {
       return stipBase;
     }, set stipBase(v) {
@@ -36975,6 +37037,10 @@ window.GP_UNIVERSE_PARODY={"manifest":{"id":"parody","name":"The Parody World","
       return NET_FEED_MAX;
     }, set NET_FEED_MAX(v) {
       NET_FEED_MAX = v;
+    }, get NET_SHEETS() {
+      return NET_SHEETS;
+    }, set NET_SHEETS(v) {
+      NET_SHEETS = v;
     }, get netPickH() {
       return netPickH;
     }, set netPickH(v) {
@@ -37087,10 +37153,38 @@ window.GP_UNIVERSE_PARODY={"manifest":{"id":"parody","name":"The Parody World","
       return SHOW_LEN;
     }, set SHOW_LEN(v) {
       SHOW_LEN = v;
+    }, get TIME_OVER() {
+      return TIME_OVER;
+    }, set TIME_OVER(v) {
+      TIME_OVER = v;
+    }, get TIME_FREE() {
+      return TIME_FREE;
+    }, set TIME_FREE(v) {
+      TIME_FREE = v;
+    }, get TIME_LIGHT() {
+      return TIME_LIGHT;
+    }, set TIME_LIGHT(v) {
+      TIME_LIGHT = v;
+    }, get PLAN_MINS() {
+      return PLAN_MINS;
+    }, set PLAN_MINS(v) {
+      PLAN_MINS = v;
+    }, get TOP_GOOD() {
+      return TOP_GOOD;
+    }, set TOP_GOOD(v) {
+      TOP_GOOD = v;
+    }, get TOP_BAD() {
+      return TOP_BAD;
+    }, set TOP_BAD(v) {
+      TOP_BAD = v;
     }, get MT_OVER() {
       return MT_OVER;
     }, set MT_OVER(v) {
       MT_OVER = v;
+    }, get STIP_SET() {
+      return STIP_SET;
+    }, set STIP_SET(v) {
+      STIP_SET = v;
     }, get showMins() {
       return showMins;
     }, set showMins(v) {
@@ -37139,6 +37233,14 @@ window.GP_UNIVERSE_PARODY={"manifest":{"id":"parody","name":"The Parody World","
       return PLOT_PUSH_CD;
     }, set PLOT_PUSH_CD(v) {
       PLOT_PUSH_CD = v;
+    }, get PLOT_TAPE() {
+      return PLOT_TAPE;
+    }, set PLOT_TAPE(v) {
+      PLOT_TAPE = v;
+    }, get PLOT_POS() {
+      return PLOT_POS;
+    }, set PLOT_POS(v) {
+      PLOT_POS = v;
     }, get PLOT() {
       return PLOT;
     }, set PLOT(v) {
@@ -37219,6 +37321,26 @@ window.GP_UNIVERSE_PARODY={"manifest":{"id":"parody","name":"The Parody World","
       return ARCH_KEEP;
     }, set ARCH_KEEP(v) {
       ARCH_KEEP = v;
+    }, get ARCH_YEARS() {
+      return ARCH_YEARS;
+    }, set ARCH_YEARS(v) {
+      ARCH_YEARS = v;
+    }, get ARCH_LOG() {
+      return ARCH_LOG;
+    }, set ARCH_LOG(v) {
+      ARCH_LOG = v;
+    }, get FA_CAP() {
+      return FA_CAP;
+    }, set FA_CAP(v) {
+      FA_CAP = v;
+    }, get ROSTER_CAP() {
+      return ROSTER_CAP;
+    }, set ROSTER_CAP(v) {
+      ROSTER_CAP = v;
+    }, get TITLE_KEEP() {
+      return TITLE_KEEP;
+    }, set TITLE_KEEP(v) {
+      TITLE_KEEP = v;
     }, get archYear() {
       return archYear;
     }, set archYear(v) {
@@ -37295,6 +37417,14 @@ window.GP_UNIVERSE_PARODY={"manifest":{"id":"parody","name":"The Parody World","
       return CT_BIG;
     }, set CT_BIG(v) {
       CT_BIG = v;
+    }, get CT_INDIE() {
+      return CT_INDIE;
+    }, set CT_INDIE(v) {
+      CT_INDIE = v;
+    }, get CT_ROLL() {
+      return CT_ROLL;
+    }, set CT_ROLL(v) {
+      CT_ROLL = v;
     }, get ctWeekly() {
       return ctWeekly;
     }, set ctWeekly(v) {
@@ -37447,6 +37577,10 @@ window.GP_UNIVERSE_PARODY={"manifest":{"id":"parody","name":"The Parody World","
       return BP_CARRY;
     }, set BP_CARRY(v) {
       BP_CARRY = v;
+    }, get AP_CARRY() {
+      return AP_CARRY;
+    }, set AP_CARRY(v) {
+      AP_CARRY = v;
     }, get bpPerShow() {
       return bpPerShow;
     }, set bpPerShow(v) {
@@ -37455,6 +37589,10 @@ window.GP_UNIVERSE_PARODY={"manifest":{"id":"parody","name":"The Parody World","
       return CLOG_MAX;
     }, set CLOG_MAX(v) {
       CLOG_MAX = v;
+    }, get CLOG_SKIP() {
+      return CLOG_SKIP;
+    }, set CLOG_SKIP(v) {
+      CLOG_SKIP = v;
     }, get clog() {
       return clog;
     }, set clog(v) {
@@ -37639,6 +37777,10 @@ window.GP_UNIVERSE_PARODY={"manifest":{"id":"parody","name":"The Parody World","
       return VQ_FEEL;
     }, set VQ_FEEL(v) {
       VQ_FEEL = v;
+    }, get VQ_SOUND() {
+      return VQ_SOUND;
+    }, set VQ_SOUND(v) {
+      VQ_SOUND = v;
     }, get VQ_CROWD() {
       return VQ_CROWD;
     }, set VQ_CROWD(v) {
@@ -37679,6 +37821,10 @@ window.GP_UNIVERSE_PARODY={"manifest":{"id":"parody","name":"The Parody World","
       return WR_FIRST;
     }, set WR_FIRST(v) {
       WR_FIRST = v;
+    }, get WR_LAST() {
+      return WR_LAST;
+    }, set WR_LAST(v) {
+      WR_LAST = v;
     }, get wrInit() {
       return wrInit;
     }, set wrInit(v) {
@@ -37692,43 +37838,363 @@ window.GP_UNIVERSE_PARODY={"manifest":{"id":"parody","name":"The Parody World","
     }, set wrPitch(v) {
       wrPitch = v;
     }, get POD_EPS() {
-      return POD_EPS;
+      return POD_EPS2;
     }, set POD_EPS(v) {
-      POD_EPS = v;
+      POD_EPS2 = v;
     }, get POD_SEGS() {
-      return POD_SEGS;
+      return POD_SEGS2;
     }, set POD_SEGS(v) {
-      POD_SEGS = v;
+      POD_SEGS2 = v;
     }, get podFirst() {
-      return podFirst;
+      return podFirst2;
     }, set podFirst(v) {
-      podFirst = v;
+      podFirst2 = v;
     }, get podPlain() {
-      return podPlain;
+      return podPlain2;
     }, set podPlain(v) {
-      podPlain = v;
+      podPlain2 = v;
     }, get podShowName() {
-      return podShowName;
+      return podShowName2;
     }, set podShowName(v) {
-      podShowName = v;
+      podShowName2 = v;
     }, get podInit() {
-      return podInit;
+      return podInit2;
     }, set podInit(v) {
-      podInit = v;
+      podInit2 = v;
     }, get podTone() {
-      return podTone;
+      return podTone2;
     }, set podTone(v) {
-      podTone = v;
+      podTone2 = v;
     }, get podPickSide() {
-      return podPickSide;
+      return podPickSide2;
     }, set podPickSide(v) {
-      podPickSide = v;
+      podPickSide2 = v;
     }, get podWrite() {
-      return podWrite;
+      return podWrite2;
     }, set podWrite(v) {
-      podWrite = v;
+      podWrite2 = v;
     } };
   }(typeof window !== "undefined" ? window : globalThis);
+
+  // engine/99-zpodcast.ts
+  var POD_EPS = 4;
+  var POD_MAX = 72;
+  var POD_SEGS = { open: "Cold open", yours: "This week in {co}", world: "Around the business", feuds: "Feud watch", money: "Business", rumours: "The rumour mill", titles: "The title picture", mail: "The mailbag", picks: "Picks and goodbye" };
+  function podFirst(n) {
+    return String(n || "").split(" of ")[0].split(" ")[0];
+  }
+  function podPlain(n) {
+    return String(n || "").split(" of ")[0];
+  }
+  function podShowName(S) {
+    var c = S.columnist || "The Ringside Wire", o = c.indexOf(" of ") >= 0 ? c.slice(c.indexOf(" of ") + 4) : c;
+    o = o.replace(/^the /i, "");
+    return "The " + o + " Radio";
+  }
+  function podInit(S) {
+    if (S.pod) return S.pod;
+    var X = L.pressInit(S), ra = X.rep.filter(function(r) {
+      return r.beat === "ring";
+    })[0] || X.rep[0];
+    var rt = S.w.filter(function(w) {
+      return w && w.rt != null && w.promo === "FA" && !w.nw && (w.mic || 0) >= 60;
+    }).sort(function(a, b) {
+      return (b.mic || 0) - (a.mic || 0) || a.id - b.id;
+    })[0], nb;
+    if (rt) nb = rt.name;
+    else {
+      var tries = 0;
+      do {
+        nb = L.PRESS_FIRST[L.hash(S.seed + "podb" + tries) % L.PRESS_FIRST.length] + " " + L.PRESS_LAST[L.hash(S.seed + "podl" + tries) % L.PRESS_LAST.length];
+        tries++;
+      } while (tries < 20 && X.rep.some(function(r) {
+        return podPlain(r.name) === nb || podFirst(r.name) === podFirst(nb);
+      }));
+    }
+    S.pod = { show: podShowName(S), a: { rep: ra.id, name: podPlain(ra.name) }, b: { w: rt ? rt.id : null, name: nb }, eps: [], picks: [], rec: { r: 0, x: 0 }, n: 0 };
+    return S.pod;
+  }
+  function podTone(S, pod) {
+    var r = S.press && S.press.rep[pod.a.rep];
+    if (!r) return 0;
+    var v = r.warm + r.bias * 0.5;
+    return v >= 25 ? 1 : v <= -25 ? -1 : 0;
+  }
+  function podPickSide(S, f, key) {
+    var sum = function(ids) {
+      return ids.reduce(function(t, id) {
+        var w = S.w[id];
+        return t + (w ? w.ovr + w.mom * 2 : 0);
+      }, 0);
+    }, d = sum(f.a) - sum(f.b);
+    return d > 3 ? "a" : d < -3 ? "b" : L.h01(key) < 0.5 ? "a" : "b";
+  }
+  function podWrite(S) {
+    var pod = podInit(S), P = S.promos[S.player], wk = S.week, key = S.seed + ":pod:" + wk, used = {}, lines = [], segs = [], n = 0;
+    var sheet = (S.sheets || [])[0];
+    if (!sheet || sheet.week !== wk) sheet = L.netSheet(S, wk);
+    var cx = { a: podFirst(pod.a.name), b: podFirst(pod.b.name), show: pod.show, co: P.name, wk: L.cal(wk).label.replace(/^Week/, "week"), tone: podTone(S, pod) };
+    var say = function(s, rule, c2, p) {
+      if (lines.length >= POD_MAX) return;
+      var o = {};
+      for (var k in cx) o[k] = cx[k];
+      if (c2) for (var j in c2) o[j] = c2[j];
+      var t = "";
+      for (var tr = 0; tr < 5; tr++) {
+        t = L.gram(L.GR_POD, rule, o, key + ":" + n++);
+        if (!used[t]) break;
+      }
+      if (!t) return;
+      used[t] = 1;
+      var L2 = { s, t, g: segs.length - 1 };
+      if (p) L2.p = p;
+      lines.push(L2);
+    };
+    var raw = function(s, t, p) {
+      if (lines.length >= POD_MAX) return;
+      var L2 = { s, t, g: segs.length - 1 };
+      if (p) L2.p = p;
+      lines.push(L2);
+    };
+    var seg = function(k) {
+      segs.push({ k, n: L.fill(POD_SEGS[k], { co: P.name }), i: lines.length });
+    };
+    var maybe = function(tag, p) {
+      return L.h01(key + ":c:" + tag) < p;
+    };
+    var reps = S.reports.filter(function(r) {
+      return r.week === wk && r.promo === P.id;
+    }).sort(function(a, b) {
+      return (b.big ? 1 : 0) - (a.big ? 1 : 0) || b.rating - a.rating;
+    }).slice(0, 2);
+    var newChamps = [];
+    P.titles.forEach(function(t) {
+      if (t.since === wk && t.holders.length) newChamps.push({ t, w: t.holders[0] });
+    });
+    seg("open");
+    raw("x", "[Theme music plays]");
+    say("a", "hello");
+    say("b", "hi_b");
+    if (sheet.lead && sheet.lead.text && !/^Nothing broke/.test(sheet.lead.text)) {
+      var lp = newChamps.length ? { k: "champ", w: newChamps[0].w, t: newChamps[0].t.id } : null;
+      say("a", "lead", { lead: sheet.lead.text }, lp);
+      say("b", "lead_b");
+    }
+    if (reps.length) {
+      seg("yours");
+      reps.forEach(function(r, ri) {
+        var g, band = L.verdictBand(r.rating - (r.exp == null ? r.rating : r.exp)), g = L.gradeG(L.repCS(r)), c2 = { sh: r.name, g, ag: (/^[AEF]/.test(g) ? "an " : "a ") + g, band };
+        say("a", "grade", c2);
+        say("b", "grade_b", c2);
+        if (r.att) {
+          raw("a", L.fill(L.gram(L.GR_POD, "crowd", { att: r.att.toLocaleString("en-US") }, key + ":att" + ri), {}) + (r.sellout ? " " + L.gram(L.GR_POD, "sellout", {}, key + ":so" + ri) : ""));
+        }
+        var ms = r.segs.filter(function(s) {
+          return s.k === "match";
+        });
+        if (!ms.length) return;
+        var best = ms.slice().sort(function(a, b) {
+          return b.ov - a.ov;
+        })[0], main = ms[ms.length - 1];
+        say("a", "best", { best: best.label, stars: L.starG(best.ov) }, { k: "match", l: best.label });
+        if (maybe("bb" + ri, 0.75)) say("b", "best_b");
+        if (main !== best && main.win) {
+          var lose = main.label.split(" vs ").filter(function(x) {
+            return x.indexOf(main.win) < 0;
+          })[0];
+          if (lose) {
+            say("a", "main", { win: main.win, lose });
+            say("b", "main_b", { win: main.win, lose });
+          }
+        }
+      });
+      newChamps.forEach(function(nc, ci) {
+        var w = S.w[nc.w];
+        if (!w) return;
+        say("a", "champ", { win: w.name, title: nc.t.name }, { k: "champ", w: w.id, t: nc.t.id });
+        say("b", "champ_b", { win: w.name }, { k: "champ", w: w.id, t: nc.t.id });
+      });
+      var mine = {};
+      L.rosterOf(S, P.id).forEach(function(w) {
+        mine[w.name] = 1;
+      });
+      (S.feed || []).filter(function(f) {
+        return f.w === wk && f.k === "w" && mine[f.n];
+      }).slice(0, 2).forEach(function(f, fi) {
+        say("a", "post", { n: f.n, t: f.t });
+        if (maybe("pb" + fi, 0.6)) say("b", "post_b");
+      });
+    }
+    var wl = (sheet.world || []).filter(function(x) {
+      return x.lines && x.lines.length;
+    }).sort(function(a, b) {
+      return L.h01(key + "w" + a.id) - L.h01(key + "w" + b.id);
+    }).slice(0, 3);
+    if (wl.length) {
+      seg("world");
+      say("a", "world_in");
+      wl.forEach(function(x, i) {
+        var t = x.lines.filter(function(l) {
+          return !/ was graded [A-F][+-]?\.$/.test(l);
+        })[0] || x.lines[0];
+        say("a", "world", { co: x.name, t });
+        if (maybe("wb" + i, 0.5)) say("b", "world_b");
+      });
+    }
+    if ((sheet.feuds || []).length) {
+      seg("feuds");
+      say("a", "feud_in");
+      sheet.feuds.slice(0, 3).forEach(function(t, i) {
+        raw("a", t);
+        var fk = /came to an end|a wrap|never caught on|let .* die/.test(t) ? "end" : /run out of road|take the hint|starting to drag/.test(t) ? "stale" : /only just starting|started something|Early days/.test(t) ? "new" : "hot";
+        if (maybe("fb" + i, 0.6)) say("b", "feud_b", { fk });
+      });
+    }
+    var biz = (sheet.business || []).slice(0, 2);
+    S.news.filter(function(x) {
+      return x.w === wk && /^(AUDIENCE|COLUMN): /.test(x.t);
+    }).slice(0, 2).forEach(function(x) {
+      biz.push(x.t.replace(/^(AUDIENCE|COLUMN): /, ""));
+    });
+    if (biz.length) {
+      seg("money");
+      say("a", "money_in");
+      biz.forEach(function(t) {
+        raw("a", t);
+      });
+      say("b", "money_b");
+    }
+    var fu = (sheet.followups || []).slice(0, 2), ru = (sheet.rumours || []).slice(0, 3);
+    if (fu.length || ru.length) {
+      seg("rumours");
+      say("a", "rum_in");
+      fu.forEach(function(x) {
+        var t = x.t.replace(/^(CONFIRMED|UPDATE|CORRECTION): /, "");
+        say("a", x.ok ? "fix_ok" : "fix_no", { t });
+        say("b", x.ok ? "fix_ok_b" : "fix_no_b");
+      });
+      ru.forEach(function(x, i) {
+        say("a", "rum_" + (x.lvl || "thin"), { t: x.t });
+        if (x.lvl === "thin" || maybe("rb" + i, 0.4)) say("b", "rum_b");
+      });
+    }
+    var ts = P.titles.slice().sort(function(a, b) {
+      return b.lvl - a.lvl || (b.prestige || 0) - (a.prestige || 0);
+    }).slice(0, 3);
+    if (ts.length && (wk % 2 === 0 || newChamps.length)) {
+      seg("titles");
+      say("a", "title_in");
+      ts.forEach(function(t, i) {
+        if (!t.holders.length) {
+          say("a", "vacant", { title: t.name });
+          return;
+        }
+        var nm = t.holders.map(function(id) {
+          return S.w[id] ? S.w[id].name : "";
+        }).filter(Boolean).join(" and "), p = { k: "champ", w: t.holders[0], t: t.id }, two = t.holders.length > 1, vb = { hv: two ? "hold" : "holds", hs: two ? "have" : "has", is: two ? "are" : "is" };
+        if (t.since === wk) say("a", "hold_new", { w: nm, title: t.name, hv: vb.hv, is: vb.is }, p);
+        else say("a", "hold", { w: nm, title: t.name, n: Math.max(1, wk - t.since), hv: vb.hv, hs: vb.hs }, p);
+        var c2 = t.tag ? null : L.rankFor(S, P, t, 1)[0];
+        if (c2 && maybe("nx" + i, 0.7)) say("b", "next", { c: c2.name }, { k: "face", ids: [t.holders[0], c2.id] });
+      });
+    }
+    var who = {}, ml = (S.feed || []).filter(function(f) {
+      if (f.w !== wk || f.k !== "f" || who[f.u]) return false;
+      who[f.u] = 1;
+      return true;
+    }).slice(0, 3);
+    if (ml.length) {
+      seg("mail");
+      say("a", "mail_in");
+      ml.forEach(function(f, i) {
+        say("b", "mail", { u: String(f.u || f.n).replace(/^@/, ""), t: f.t });
+        say("a", "mail_re");
+      });
+    }
+    seg("picks");
+    pod.picks = (pod.picks || []).filter(function(pk) {
+      var f = S.feuds.filter(function(x) {
+        return x.id === pk.f;
+      })[0];
+      if (!f) return false;
+      if (!f.res) return wk - pk.w < 26;
+      var win = f.aw > f.bw ? "a" : f.bw > f.aw ? "b" : null;
+      if (!win) return false;
+      var right = win === pk.s;
+      pod.rec[right ? "r" : "x"]++;
+      say("a", right ? "score_ok" : "score_no", { f: L.feudLabel(S, f), r: pod.rec.r, x: pod.rec.x });
+      return false;
+    });
+    var c = L.cal(wk);
+    if (c.wom === 4 && S.pm && S.pm.month[0] && S.pm.unread === wk) {
+      var m = S.pm.month[0], sh = function(L2) {
+        return L2.filter(function(x) {
+          return / shows /.test(x.t);
+        })[0];
+      }, mg = sh(m.well), mb = sh(m.badly);
+      if (mg || mb) say("a", "month", { good: mg ? mg.t : "not much", bad: mb ? mb.t : null });
+    }
+    var hot = L.activeFeuds(S).filter(function(f) {
+      return f.promo === P.id && f.heat >= 60 && !(pod.picks || []).some(function(pk) {
+        return pk.f === f.id;
+      });
+    }).sort(function(a, b) {
+      return b.heat - a.heat || a.id - b.id;
+    })[0];
+    if (hot) {
+      var side = podPickSide(S, hot, key + "pk"), nameOf = function(ids) {
+        return ids.map(function(id) {
+          return S.w[id] ? S.w[id].name : "";
+        }).join(" and ");
+      }, pn = nameOf(hot[side]), on = nameOf(hot[side === "a" ? "b" : "a"]);
+      say("a", "pick", { big: c.wom === 4 ? P.name + " " + L.evName(S, P, L.cal(wk + 4).month) : L.nextBigName(S, P), p: pn, o: on }, { k: "face", ids: [hot[side][0], hot[side === "a" ? "b" : "a"][0]] });
+      say("b", maybe("pd", 0.4) ? "pick_diff" : "pick_same", { p: pn, o: on });
+      pod.picks.push({ f: hot.id, s: side, w: wk });
+    }
+    say("a", "bye");
+    say("b", "bye_b");
+    raw("x", "[Theme music plays]");
+    var words = lines.reduce(function(t, L2) {
+      return t + L2.t.split(/\s+/).length;
+    }, 0);
+    pod.n++;
+    var ep = { w: wk, n: pod.n, label: L.cal(wk).label, title: "Episode " + pod.n + ": " + (sheet.lead && sheet.lead.head ? sheet.lead.head : L.cal(wk).label), mins: Math.max(1, Math.round(words / 150)), segs, lines, you: reps.length > 0 };
+    pod.eps.unshift(ep);
+    if (pod.eps.length > POD_EPS) pod.eps.length = POD_EPS;
+    return ep;
+  }
+  L.WEEKX.push(function(S) {
+    if (S.cal || S.over || !S.promos[S.player]) return;
+    podWrite(S);
+  });
+  L.E.podcast = function(S) {
+    var pod = podInit(S);
+    return {
+      show: pod.show,
+      hosts: [{ k: "a", name: pod.a.name, role: "Writer" }, { k: "b", name: pod.b.name, role: pod.b.w != null ? "Retired wrestler" : "Co-host" }],
+      rec: { r: pod.rec.r, x: pod.rec.x },
+      eps: pod.eps.map(function(e) {
+        return { w: e.w, n: e.n, label: e.label, title: e.title, mins: e.mins, you: e.you, segs: e.segs.map(function(s) {
+          return s.n;
+        }), lines: e.lines.length };
+      })
+    };
+  };
+  L.E.podEp = function(S, n) {
+    var pod = podInit(S);
+    for (var i = 0; i < pod.eps.length; i++) if (n == null || pod.eps[i].n === n) return JSON.parse(JSON.stringify(pod.eps[i]));
+    return null;
+  };
+  L.POD_EPS = POD_EPS;
+  L.POD_MAX = POD_MAX;
+  L.POD_SEGS = POD_SEGS;
+  L.podFirst = podFirst;
+  L.podPlain = podPlain;
+  L.podShowName = podShowName;
+  L.podInit = podInit;
+  L.podTone = podTone;
+  L.podPickSide = podPickSide;
+  L.podWrite = podWrite;
 })();
 </script>
 <script>
