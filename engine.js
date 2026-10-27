@@ -3,7 +3,7 @@
   // engine/_gen/legacy.js
   var L = function(root) {
     "use strict";
-    var POD_EPS2, POD_SEGS2, podFirst2, podPlain2, podShowName2, podInit2, podTone2, podPickSide2, podWrite2;
+    var RW_MOVES2, RW_LINES2, rwMoves2, brSurprisePool2, brFee2, STAFF_TAG2, STAFF_LVL2, staffTag2, staffVoice2, staffUnvoice2, toStaffOk2, SUG_FLAT2, VQ_FEEL2, VQ_CROWD2, venueQuirks2, DISASTER2, WW_KEEP2, wwCompany2, wwFile2, verdictWord2, WR_STYLE2, GR_WROOM2, WR_FIRST2, wrInit2, wrName2, wrPitch2, POD_EPS2, POD_SEGS2, podFirst2, podPlain2, podShowName2, podInit2, podTone2, podPickSide2, podWrite2;
     var DB = root.GP_DB, E = {};
     var CAL0 = DB ? { y: DB.startYear, m: DB.startMonth } : { y: 2026, m: 9 };
     function dbOf(S) {
@@ -29411,1006 +29411,6 @@
         return od;
       };
     })();
-    var RW_MOVES = {
-      B: ["a running clothesline", "a flurry of right hands", "a headbutt", "a back body drop", "a stiff elbow", "a sit-out slam", "a spinebuster", "a chop that echoes round the building"],
-      T: ["a snap suplex", "a hammerlock", "a German suplex", "a short-arm clothesline", "a single-leg crab", "a fisherman suplex", "a drop toehold", "a cross armbar", "a belly-to-back suplex"],
-      H: ["a springboard dropkick", "a hurricanrana", "a tope through the ropes", "a missile dropkick", "a moonsault press", "a handspring elbow", "a diving crossbody", "a corkscrew plancha"],
-      P: ["a scoop slam", "a shoulder tackle that flattens", "a delayed vertical suplex", "a bearhug", "a big boot", "a gorilla press", "a powerslam", "a running splash in the corner"],
-      S: ["a spinning back kick", "a knee to the jaw", "a superkick", "a rolling elbow", "a flurry of kicks", "a jumping knee", "a discus lariat"],
-      E: ["a swinging neckbreaker", "a showboating elbow drop", "a Russian leg sweep", "a running bulldog", "a sunset flip", "a rope-assisted leg drop"],
-      A: ["a dropkick", "a DDT", "a backbreaker", "an inverted atomic drop", "a neckbreaker", "a suplex", "a bulldog", "a clothesline off the top"]
-    };
-    var RW_LINES = {
-      open: ["{a} takes control with {m}.", "{a} gets the upper hand early with {m}.", "{a} sets the pace: {m}."],
-      press: ["{a} keeps the pressure on with {m}.", "{a} stays on top of it: {m}.", "{a} follows up with {m}.", "{a} grinds {b} down with {m}."],
-      cut: ["{b} tries to fight back, but {a} cuts it off with {m}.", "{b} goes for a comeback and runs straight into {m}.", "Not so fast: {a} stops {b} cold with {m}."],
-      swing: ["{a} reverses it and hits {m}!", "Out of nowhere, {a} turns it round with {m}!", "{a} counters and lands {m}!", "{a} fights out of it and connects with {m}!"],
-      sig: ["{a} hits {s}! The crowd knows what that is!", "{a} goes to the well: {s}!", "That is {s}, {a}\u2019s signature, and it lands clean!"],
-      near: ["Cover! One, two... {b} kicks out!", "{a} hooks the leg! One, two... no! {b} gets a shoulder up!", "One, two... so close! {b} is still in this!"],
-      col: ["{p}, {b} is fighting from underneath, but you can never count them out.", "These two know each other, {p}. Every move is answered.", "The crowd is right in this one, {p}.", "{a} is controlling the tempo, {p}. Smart wrestling.", "Listen to this place, {p}! They are hanging on every move.", "You can feel the momentum going back and forth, {p}."]
-    };
-    function rwMoves(S, w) {
-      var L2 = [], ps = typeof E.persona === "function" ? E.persona(S, w.id) : null;
-      if (w.look && Array.isArray(w.look.finishing_moves)) w.look.finishing_moves.slice(1).forEach(function(m) {
-        if (m && m.name) L2.push({ n: m.name, sig: 1 });
-      });
-      if (ps && ps.sigs) ps.sigs.forEach(function(m) {
-        if (m && m.name) L2.push({ n: m.name, sig: 1 });
-      });
-      (RW_MOVES[w.style] || RW_MOVES.A).forEach(function(n) {
-        L2.push({ n });
-      });
-      return L2;
-    }
-    (function() {
-      var cm = callMatch;
-      callMatch = function(S, P, x) {
-        var bc = cm.apply(this, arguments);
-        if (!bc || !x || !x.sides || x.m.mt === "br" || x.sides.length < 2) return bc;
-        var at = -1;
-        for (var i = 0; i < bc.length; i++) {
-          if (bc[i].t === "pbp") {
-            at = i;
-            break;
-          }
-        }
-        if (at < 0) return bc;
-        var hk = "rw|" + (x.o && x.o.a || "") + "|" + (x.o && x.o.b || "") + "|" + x.mins + "|" + S.week + "|" + (x.show || ""), k = 0, h = function() {
-          return (hash(k++ + "#" + hk) >>> 0) % 100003 / 100003;
-        };
-        var said = {}, pick2 = function(L2) {
-          var f = L2.filter(function(v2) {
-            return !said[v2.n || v2];
-          }), Q = f.length ? f : L2, v = Q[Math.floor(h() * Q.length) % Q.length];
-          said[v.n || v] = 1;
-          return v;
-        };
-        var cap = function(t) {
-          return t.charAt(0).toUpperCase() + t.slice(1);
-        };
-        var lead = function(s2) {
-          return s2[Math.floor(h() * s2.length) % s2.length];
-        };
-        var ws = x.win >= 0 && x.win < x.sides.length ? x.win : 0;
-        var n = Math.max(3, Math.min(16, Math.round((x.mins || 10) / 1.4))), out = [], side = h() < 0.5 ? 0 : 1, sigUsed = {};
-        var p = x.o && x.o.p || "partner";
-        for (var j = 0; j < n; j++) {
-          var late = j >= n * 0.6, other = function(s2) {
-            return (s2 + 1 + Math.floor(h() * (x.sides.length - 1))) % x.sides.length;
-          };
-          var swap = j === 0 ? false : late ? side !== ws ? h() < 0.55 : h() < 0.3 : h() < 0.4;
-          if (swap) side = other(side);
-          var A = lead(x.sides[side]), B = lead(x.sides[other(side)]), M = rwMoves(S, A), sigs = M.filter(function(m) {
-            return m.sig && !sigUsed[A.id + m.n];
-          });
-          var ctx = { a: A.name, b: B.name, p }, kind;
-          if (late && sigs.length && h() < 0.45) {
-            var s = pick2(sigs);
-            sigUsed[A.id + s.n] = 1;
-            ctx.s = s.n;
-            out.push({ t: "pbp", x: fill(pick2(RW_LINES.sig), ctx), h: 1 });
-            if (h() < 0.6) out.push({ t: "pbp", x: fill(pick2(RW_LINES.near), ctx), h: 1 });
-            continue;
-          }
-          ctx.m = pick2(M.filter(function(m) {
-            return !m.sig;
-          })).n;
-          kind = j === 0 ? "open" : swap ? "swing" : h() < 0.35 ? "cut" : "press";
-          out.push({ t: "pbp", x: cap(fill(pick2(RW_LINES[kind]), ctx)) });
-          if (late && h() < 0.25) out.push({ t: "pbp", x: fill(pick2(RW_LINES.near), ctx), h: 1 });
-          else if (h() < 0.22) out.push({ t: "col", x: cap(fill(pick2(RW_LINES.col), ctx)) });
-        }
-        bc.splice.apply(bc, [at + 1, 0].concat(out));
-        return bc;
-      };
-    })();
-    E.brSize = function(S, i, n) {
-      var m = S.card && S.card[i];
-      if (!m || m.mt !== "br") return { ok: false };
-      n = clamp(n | 0, MT.br.min, MT.br.max);
-      while (m.sides.length < n) m.sides.push([null]);
-      if (m.sides.length > n) m.sides = m.sides.slice(0, n);
-      if (m.call != null && m.call >= n) m.call = null;
-      return { ok: true, n };
-    };
-    function brSurprisePool(S, m) {
-      var g = { M: 0, F: 0 };
-      flat(m.sides).forEach(function(id) {
-        var w = id != null && S.w[id];
-        if (w) g[w.g] = (g[w.g] || 0) + 1;
-      });
-      var G = g.F > g.M ? "F" : "M", on = {};
-      flat(m.sides).forEach(function(id) {
-        on[id] = 1;
-      });
-      var leg = function(w) {
-        var p = E.persona(S, w.id);
-        return p && p.legend ? 1 : 0;
-      };
-      return Object.keys(S.w).map(function(k) {
-        return S.w[k];
-      }).filter(function(w) {
-        return w && w.promo === "FA" && w.rt == null && !w.nw && !(w.inj > 0) && w.g === G && !on[w.id];
-      }).sort(function(a, b) {
-        return leg(b) - leg(a) || b.ovr - a.ovr;
-      });
-    }
-    E.brShot = function(S, i, on) {
-      var m = S.card && S.card[i];
-      if (!m || m.mt !== "br") return { ok: false };
-      if (on) m.shot = 1;
-      else delete m.shot;
-      return { ok: true };
-    };
-    function brFee(w) {
-      return Math.round((2e3 + w.ovr * w.ovr * 3) / 500) * 500;
-    }
-    E.brSurprise = function(S, i, on) {
-      var m = S.card && S.card[i];
-      if (!m || m.mt !== "br") return { ok: false };
-      if (on) m.surp = 1;
-      else delete m.surp;
-      return { ok: true };
-    };
-    E.brSurpriseInfo = function(S, m) {
-      var L2 = brSurprisePool(S, m).slice(0, 5);
-      if (!L2.length) return { n: 0, fee: 0, d: "Nobody free to come in. The spot would go empty." };
-      var fee = Math.round(avg(L2.map(brFee)) / 500) * 500;
-      return { n: L2.length, fee, d: "A name from outside the company walks out when the bell has rung. About " + money(fee) + " for the night. The crowd only finds out when the music hits." };
-    };
-    (function() {
-      var begin = E.liveBegin;
-      E.liveBegin = function(S, card) {
-        var P = S.promos[S.player], adds = [];
-        (card || S.card || []).forEach(function(m, i) {
-          if (m.mt !== "br" || !m.surp || m.surpId != null) return;
-          var L2 = brSurprisePool(S, m).slice(0, 5);
-          if (!L2.length) {
-            delete m.surp;
-            return;
-          }
-          var w = L2[Math.floor(h01("brs" + S.week + ":" + i + ":" + S.seed) * L2.length)], fee = brFee(w);
-          if (P.cash < fee) {
-            delete m.surp;
-            return;
-          }
-          adds.push({ i, m, w, fee });
-        });
-        var r = begin(S, card);
-        if (r && r.ok && S.live) adds.forEach(function(a) {
-          var lm = S.live.card[a.i];
-          if (!lm) return;
-          lm.sides.push([a.w.id]);
-          lm.surpId = a.w.id;
-          P.cash -= a.fee;
-          youRemember(S, a.w, "surprise", "Brought in as the surprise entrant in a battle royal.", 3);
-          note(S, "A surprise entrant", a.w.name + " walks out during the battle royal. Paid " + money(a.fee) + " for the night.", "good");
-        });
-        return r;
-      };
-    })();
-    E.lockMatch = function(S, i, on) {
-      var m = S.card && S.card[i];
-      if (!m) return { ok: false };
-      if (on) m.lock = 1;
-      else delete m.lock;
-      return { ok: true };
-    };
-    E.moveMatchTo = function(S, from, to) {
-      var c = S.card || [];
-      if (from === to || from < 0 || to < 0 || from >= c.length || to >= c.length) return { ok: false, msg: "" };
-      if (c[from].lock) return { ok: false, msg: "That match is locked in its place. Unlock it first." };
-      if (c[to].lock) return { ok: false, msg: "Match " + (to + 1) + " is locked in its place." };
-      var free = [], k;
-      for (k = 0; k < c.length; k++) if (!c[k].lock) free.push(k);
-      var order = free.map(function(x) {
-        return c[x];
-      }), a = free.indexOf(from), b = free.indexOf(to), m = order.splice(a, 1)[0];
-      order.splice(b, 0, m);
-      var out = c.slice();
-      free.forEach(function(x, q) {
-        out[x] = order[q];
-      });
-      for (k = 0; k < c.length; k++) c[k] = out[k];
-      return { ok: true, i: to };
-    };
-    E.suggestKeep = function(S) {
-      var keep = (S.card || []).map(function(m, i) {
-        return m.lock ? { m, i } : null;
-      }).filter(Boolean), c = E.suggest(S);
-      if (!keep.length) return c;
-      var used = {};
-      keep.forEach(function(k) {
-        flat(k.m.sides).forEach(function(id) {
-          used[id] = 1;
-        });
-      });
-      c = c.filter(function(m) {
-        return !flat(m.sides).some(function(id) {
-          return used[id];
-        });
-      });
-      keep.forEach(function(k) {
-        c.splice(Math.min(k.i, c.length), 0, k.m);
-      });
-      fitShow(S, c);
-      return c;
-    };
-    SROLES.referee = { n: "Referee", skill: function(w) {
-      return ((w.cons || 60) + (w.safe || 55)) / 2;
-    }, d: "Keeps the matches safe and on time: the action lands a little cleaner, and they work the scenes as the official." };
-    SROLES.interviewer = { n: "Interviewer", skill: function(w) {
-      return ((w.mic || 50) + (w.cha || 50)) / 2;
-    }, d: "Holds the microphone backstage: promos read a little better, and they are the face of the interviews." };
-    E.SROLES = Object.keys(SROLES).map(function(k) {
-      return { id: k, n: SROLES[k].n, d: SROLES[k].d };
-    });
-    var STAFF_TAG = { agent: "road_agent", trainer: "trainer", commentator: "announcer", manager: "manager", boss: "booker", referee: "referee", interviewer: "interviewer" };
-    var STAFF_LVL = { rookie: { n: "Green", s: 52, wage: 400 }, solid: { n: "Solid", s: 66, wage: 900 }, veteran: { n: "Veteran", s: 80, wage: 1800 } };
-    E.STAFF_LVL = Object.keys(STAFF_LVL).map(function(k) {
-      return { id: k, n: STAFF_LVL[k].n, wage: STAFF_LVL[k].wage };
-    });
-    function staffTag(w, k) {
-      w.roles = [STAFF_TAG[k] || k];
-    }
-    function staffVoice(S, w) {
-      if (w.srole !== "commentator") return;
-      S.voices = S.voices || [];
-      if (S.voices.some(function(v) {
-        return v.wid === w.id;
-      })) return;
-      var st = ["hot", "dry", "warm"][hash(w.name + "vs") % 3];
-      S.voices.push({ id: S.nid++, name: w.name, g: w.g, pbp: clamp(Math.round(w.mic || 50), 30, 95), col: clamp(Math.round(w.cha || w.mic || 50), 30, 95), style: st, wage: 0, hired: null, added: S.week, wid: w.id });
-    }
-    function staffUnvoice(S, w) {
-      var P = S.promos[S.player], L2 = S.voices || [];
-      L2.filter(function(v) {
-        return v.wid === w.id;
-      }).forEach(function(v) {
-        if (P && P.desk) {
-          ["pbp", "col"].forEach(function(k) {
-            if (P.desk[k] === v.id) P.desk[k] = null;
-          });
-        }
-      });
-      S.voices = L2.filter(function(v) {
-        return v.wid !== w.id;
-      });
-    }
-    (function() {
-      var sc = EVR.secondcareer;
-      EVR.secondcareer = function(S, ev, choice, P, w) {
-        var r = sc.apply(this, arguments);
-        if (w && w.srole) {
-          staffTag(w, w.srole);
-          staffVoice(S, w);
-        }
-        return r;
-      };
-    })();
-    E.createStaff = function(S, o) {
-      o = o || {};
-      var P = S.promos[S.player], k = o.role, L2 = STAFF_LVL[o.lvl] || STAFF_LVL.solid;
-      if (!SROLES[k]) return { ok: false, msg: "Pick a job for them." };
-      var name = clean(o.name, 28);
-      if (name.length < 2) return { ok: false, msg: "Give them a name first." };
-      if (S.w.some(function(w2) {
-        return w2.name.toLowerCase() === name.toLowerCase();
-      })) return { ok: false, msg: "There is already a " + name + " in the business." };
-      var s = L2.s, ovr = k === "boss" ? clamp(s - 10, 20, 80) : k === "referee" ? 20 : clamp(s - 30, 15, 60);
-      var w = addWrestler(S, { name, g: o.g === "F" ? "F" : "M", ovr, style: "A", work: clamp(s - 25, 20, 70), mic: k === "referee" ? clamp(s - 20, 20, 70) : s, align: o.align === "H" ? "H" : "F", cons: k === "referee" ? s + 6 : s, safe: k === "referee" ? s + 6 : s, cha: s }, P.id, null);
-      w.nw = true;
-      w.srole = k;
-      staffTag(w, k);
-      w.wage = L2.wage;
-      w.con = 48;
-      w.morale = 80;
-      w.cr = true;
-      w.age = clamp(+o.age || (k === "referee" ? 34 : 40), 18, 75);
-      if (o.look) {
-        var lc = lookClean(o.look);
-        if (lc && E.lookOk(lc)) {
-          lc.name = w.name;
-          w.look = lc;
-        }
-      }
-      staffVoice(S, w);
-      news(S, "contract", P.name + " hires " + name + " as " + SROLES[k].n.toLowerCase() + ".");
-      return { ok: true, id: w.id, msg: name + " joins the staff as " + SROLES[k].n.toLowerCase() + " at " + money(L2.wage) + " a week. " + SROLES[k].d };
-    };
-    function toStaffOk(S, w) {
-      var P = S.promos[S.player];
-      if (!w || w.promo !== P.id) return { ok: false, why: "They are not on your books." };
-      if (w.nw) return { ok: false, why: "They are on the staff already." };
-      if (P.titles.some(function(t) {
-        return t.holders.indexOf(w.id) >= 0;
-      })) return { ok: false, why: "They hold a title. Get the belt off them first." };
-      if ((S.feuds || []).some(function(f) {
-        return !f.res && f.promo === P.id && f.a.concat(f.b).indexOf(w.id) >= 0;
-      })) return { ok: false, why: "They are in a story. End it first." };
-      if (w.team != null || (S.teams || []).some(function(t) {
-        return t.promo === P.id && !t.dead && t.m && t.m.indexOf(w.id) >= 0;
-      })) return { ok: false, why: "They are in a tag team. Break it up first." };
-      if (S.card && S.card.some(function(m) {
-        return m && m.sides && flat(m.sides).indexOf(w.id) >= 0;
-      })) return { ok: false, why: "They are on this week\u2019s card. Take them off it first." };
-      return { ok: true };
-    }
-    E.toStaffOk = function(S, id) {
-      return toStaffOk(S, S.w[id]);
-    };
-    E.toStaff = function(S, id, k) {
-      var w = S.w[id], ok = toStaffOk(S, w);
-      if (!ok.ok) return { ok: false, msg: ok.why };
-      if (!SROLES[k]) return { ok: false, msg: "Pick a job for them." };
-      w.nw = true;
-      w.srole = k;
-      w.wasW = 1;
-      staffTag(w, k);
-      staffVoice(S, w);
-      var keen = SROLES[k].skill(w) >= 60 || w.age >= 36;
-      youRemember(S, w, "staff", keen ? "You found them a job when the ring was getting harder" : "You took them off the card and gave them a desk job", keen ? 4 : -6);
-      w.morale = clamp(w.morale + (keen ? 4 : -8), 0, 100);
-      note(S, "Staff", w.name + " moves to " + SROLES[k].n.toLowerCase() + (keen ? ". They are glad of it." : ". They wanted to wrestle."), keen ? "good" : "bad");
-      news(S, "contract", w.name + " steps away from the ring to become " + S.promos[S.player].name + "\u2019s " + SROLES[k].n.toLowerCase() + ".");
-      return { ok: true, msg: w.name + " is your " + SROLES[k].n.toLowerCase() + " now. " + SROLES[k].d + (keen ? "" : " They are not happy about leaving the ring.") };
-    };
-    E.fromStaff = function(S, id) {
-      var w = S.w[id], P = S.promos[S.player];
-      if (!w || w.promo !== P.id || !w.nw) return { ok: false, msg: "They are not on the staff." };
-      if (!w.wasW) return { ok: false, msg: w.name + " has never wrestled." };
-      staffUnvoice(S, w);
-      w.nw = false;
-      delete w.srole;
-      delete w.wasW;
-      w.roles = null;
-      delete w.roles;
-      youRemember(S, w, "staff", "You gave them their spot in the ring back", 5);
-      w.morale = clamp(w.morale + 6, 0, 100);
-      note(S, "Staff", w.name + " is back on the active roster.", "good");
-      return { ok: true, msg: w.name + " is back on the active roster." };
-    };
-    E.staffList = function(S) {
-      var TAGN = { announcer: "Commentator", referee: "Referee", owner: "Owner", booker: "Booker", manager: "Manager", road_agent: "Road agent", interviewer: "Interviewer", trainer: "Trainer" };
-      return rosterOf(S, S.player).filter(function(w) {
-        return w.nw && !w.rt;
-      }).map(function(w) {
-        var k = w.srole, R = SROLES[k], tg = w.roles && w.roles[0];
-        return {
-          id: w.id,
-          name: w.name,
-          role: R ? R.n : TAGN[tg] || "Staff",
-          k: k || null,
-          d: R ? R.d : "",
-          skill: R ? Math.round(R.skill(w)) : null,
-          wage: w.wage,
-          back: !!w.wasW,
-          desk: (S.voices || []).some(function(v) {
-            return v.wid === w.id && v.hired;
-          })
-        };
-      });
-    };
-    CRX.push(function(ctx) {
-      if (!ctx.isPl || ctx.S.cal) return null;
-      var S = ctx.S, r = staffOf(S, "referee").sort(function(a, b) {
-        return SROLES.referee.skill(b) - SROLES.referee.skill(a);
-      })[0];
-      if (!r) return null;
-      var sk = SROLES.referee.skill(r);
-      if (sk < 60) return null;
-      return { d: clamp((sk - 60) / 40, 0, 0.5), x: r.name + " kept the match clean" };
-    });
-    (function() {
-      var sm = segMean;
-      segMean = function(S, w, bonus) {
-        var v = sm.apply(this, arguments);
-        if (!w || w.promo !== S.player || S.cal) return v;
-        var iv = staffOf(S, "interviewer").map(function(x) {
-          return SROLES.interviewer.skill(x);
-        }).sort(function(a, b) {
-          return b - a;
-        })[0];
-        return iv >= 60 ? v + clamp((iv - 60) / 8, 0, 2.5) : v;
-      };
-    })();
-    E.staffSkill = function(S, id, k) {
-      var w = S.w[id];
-      return w && SROLES[k] ? SROLES[k].skill(w) : 0;
-    };
-    var SUG_FLAT = 10;
-    (function() {
-      var smart = E.suggest;
-      E.suggest = function(S) {
-        var card = smart(S);
-        if (!card || card.length < 2) return card;
-        var key = "flat" + S.seed + ":" + S.week + ":" + S.qi, show = S.queue && S.queue[S.qi];
-        card.forEach(function(m) {
-          m.call = null;
-          delete m.end;
-        });
-        var P = S.promos[S.player], held = {};
-        (P.titles || []).forEach(function(t) {
-          (t.holders || []).forEach(function(id) {
-            held[id] = 1;
-          });
-        });
-        var pool = {};
-        card.forEach(function(m) {
-          if (m.mt === "br") return;
-          m.sides.forEach(function(sd) {
-            sd.forEach(function(id) {
-              var w = S.w[id];
-              if (!w || m.title && held[id]) return;
-              (pool[w.g] || (pool[w.g] = [])).push(id);
-            });
-          });
-        });
-        Object.keys(pool).forEach(function(g) {
-          pool[g].sort(function(a, b) {
-            return hash(key + "p" + a) - hash(key + "p" + b);
-          });
-        });
-        var was = JSON.stringify(card.map(function(m) {
-          return m.sides;
-        }));
-        card.forEach(function(m) {
-          if (m.mt === "br") return;
-          m.sides = m.sides.map(function(sd) {
-            return sd.map(function(id) {
-              var w = S.w[id];
-              if (!w || m.title && held[id]) return id;
-              var L2 = pool[w.g];
-              return L2 && L2.length ? L2.shift() : id;
-            });
-          });
-        });
-        if (E.validate(S, card).errors.length) {
-          var back = JSON.parse(was);
-          card.forEach(function(m, i) {
-            m.sides = back[i];
-          });
-        }
-        segRead(S).forEach(function(sg) {
-          if (!sg.tape) {
-            sg.k = "writers";
-            sg.who = [];
-            sg.ids = [];
-          }
-        });
-        E.fitShow(S, card);
-        S.sug = { w: S.week, qi: S.qi, k: card.map(sugKey) };
-        return card;
-      };
-      function sugKey(m) {
-        return m.mt + "|" + (m.title || "") + "|" + m.sides.map(function(sd) {
-          return sd.slice().sort(function(a, b) {
-            return a - b;
-          }).join(",");
-        }).sort().join("/");
-      }
-      CRX.push(function(ctx) {
-        var S = ctx.S, G = S.sug;
-        if (!ctx.isPl || !G || G.w !== S.week || G.qi !== S.qi || G.k.indexOf(sugKey(ctx.m)) < 0) return null;
-        return { d: -SUG_FLAT, x: "Booked by the numbers: the crowd has seen this one before" };
-      });
-      E.suggestSmart = function(S) {
-        return smart(S);
-      };
-    })();
-    (function() {
-      function short(S, card) {
-        var v = E.validate(S, card).errors;
-        return v.some(function(e) {
-          return /at least 3 matches|still empty/.test(e);
-        });
-      }
-      function topUp(S, card) {
-        var show = S.queue && S.queue[S.qi], P = S.promos[S.player];
-        if (!show || !card || !P || !short(S, card)) return card;
-        var key = "fill" + S.seed + ":" + S.week + ":" + S.qi, used = {};
-        card.forEach(function(m) {
-          flat(m.sides).forEach(function(id) {
-            used[id] = (used[id] || 0) + 1;
-          });
-        });
-        var able = S.w.filter(function(w) {
-          return w.promo === P.id && !w.nw && w.inj <= 0 && !w.camp && w.rest !== S.week && !(w.away >= S.week) && (show.big || !show.brand || w.brand === show.brand);
-        });
-        function order(a, b) {
-          return (used[a.id] || 0) - (used[b.id] || 0) || b.cond - a.cond || hash(key + a.id) - hash(key + b.id);
-        }
-        var max = show.big ? 10 : SLOT_MAX[P.slot], tries = 0;
-        while (short(S, card) && card.length < max && tries++ < 8) {
-          var added = false;
-          [true, false].forEach(function(fresh) {
-            if (added || !fresh && card.length >= 3) return;
-            ["M", "F"].forEach(function(g) {
-              if (added || card.length >= max) return;
-              var L3 = able.filter(function(w) {
-                return w.g === g && (!fresh || !used[w.id]);
-              }).sort(order);
-              if (L3.length < 2) return;
-              var a = L3[0], b = null;
-              for (var i = 1; i < L3.length; i++) {
-                if (L3[i].team == null || L3[i].team !== a.team) {
-                  b = L3[i];
-                  break;
-                }
-              }
-              if (!b) return;
-              card.push({ mt: "1v1", sides: [[a.id], [b.id]], win: -2, title: null, stip: "std", len: "M", fill: 1 });
-              used[a.id] = (used[a.id] || 0) + 1;
-              used[b.id] = (used[b.id] || 0) + 1;
-              added = true;
-            });
-          });
-          if (!added) break;
-          E.fitShow(S, card);
-        }
-        var L2 = segList(S), k = 0;
-        while (short(S, card) && card.length >= 3 && k++ < 6) {
-          L2.push({ k: "writers", who: [], pos: k % card.length, len: "L" });
-          E.fitShow(S, card);
-        }
-        return card;
-      }
-      var flatS = E.suggest, smartS = E.suggestSmart, pre = E.resolvePre;
-      E.resolvePre = function(S, card) {
-        var r = pre.apply(this, arguments);
-        if (card && S.queue && S.queue[S.qi]) topUp(S, card);
-        return r;
-      };
-      E.suggest = function(S) {
-        return topUp(S, flatS(S));
-      };
-      E.suggestSmart = function(S) {
-        return topUp(S, smartS(S));
-      };
-    })();
-    (function() {
-      var st = showTitles;
-      showTitles = function(P, show) {
-        var L2 = st.apply(this, arguments);
-        if (!show || show.big) return L2;
-        return L2.filter(function(t) {
-          return !t.show || !show.id || t.show === show.id;
-        });
-      };
-    })();
-    E.titleShows = function(S, tid) {
-      var P = S.promos[S.player], t = titleById(P, tid);
-      return { now: t && t.show || null, shows: (P.shows || []).filter(function(sh) {
-        return !sh.dead;
-      }).map(function(sh) {
-        return { id: sh.id, name: sh.name };
-      }) };
-    };
-    E.setTitleShow = function(S, tid, show) {
-      var P = S.promos[S.player], t = titleById(P, tid);
-      if (!t) return { ok: false, msg: "That title is not yours." };
-      if (show == null || show === "") {
-        delete t.show;
-        return { ok: true, msg: "The " + t.name + " can be defended on any of your shows." };
-      }
-      var sh = (P.shows || []).filter(function(x) {
-        return x.id === show && !x.dead;
-      })[0];
-      if (!sh) return { ok: false, msg: "That show is not on the air." };
-      t.show = sh.id;
-      news(S, "title", "The " + titleFull(P, t) + " is now defended on " + sh.name + ".");
-      return { ok: true, msg: "The " + t.name + " belongs to " + sh.name + " now. It is defended there, and on your big events." };
-    };
-    E.titlesOnShow = function(S, show) {
-      return showTitles(S.promos[S.player], show).map(function(t) {
-        return t.id;
-      });
-    };
-    E.couldHappen = function(S) {
-      var P = S.promos[S.player], show = S.queue && S.queue[S.qi], card = (S.card || []).filter(function(m) {
-        return m && m.sides && flat(m.sides).every(function(id) {
-          return id != null && S.w[id];
-        });
-      });
-      var out = { moments: [], risk: [], sets: [], cold: [], gut: "" };
-      if (!show) return out;
-      var nm = function(id) {
-        return S.w[id].name;
-      }, on = {}, seen = {};
-      card.forEach(function(m) {
-        flat(m.sides).forEach(function(id) {
-          on[id] = 1;
-        });
-      });
-      card.forEach(function(m, i) {
-        var t = m.title ? P.titles.filter(function(x) {
-          return x.id === m.title;
-        })[0] : null, f = E.matchFeud(S, m);
-        if (t) out.moments.push(t.holders.length ? "The " + t.name + " could change hands." : "Somebody walks out with the vacant " + t.name + ".");
-        if (f && f.heat >= 60) out.moments.push(feudLabel(S, f) + " could boil over.");
-        if (m.mt === "br" && m.shot) out.moments.push("Somebody leaves the battle royal with a title shot.");
-        if (m.mt === "br" && m.surp) out.moments.push("A face from outside could walk through the curtain.");
-        if (m.int === "brutal" || m.stip === "ladder" || m.stip === "cage" || m.stip === "cell") flat(m.sides).forEach(function(id) {
-          var w = S.w[id];
-          if (w.cond < 65 && !seen[id]) {
-            seen[id] = 1;
-            out.risk.push(w.name + " is worn, in a match that hurts.");
-          }
-        });
-        if (f) out.sets.push(m.end ? feudLabel(S, f) + " ends here: the next story starts from what happens." : feudLabel(S, f) + " moves on.");
-        if (m.title && i < card.length - 1) out.sets.push("A title match below the main event: a new champion would need a story.");
-      });
-      Object.keys(on).forEach(function(id) {
-        var w = S.w[id];
-        if (seen[id]) return;
-        if (w.cond < 50) {
-          seen[id] = 1;
-          out.risk.push(w.name + " is running on fumes.");
-        } else if (w.morale < 38) {
-          seen[id] = 1;
-          out.risk.push(w.name + " is unhappy and could make a scene.");
-        }
-      });
-      if (card.length >= 3) {
-        var lows = card.filter(function(m) {
-          return flat(m.sides).every(function(id) {
-            return S.w[id].ovr < 55;
-          });
-        }).length;
-        if (lows >= Math.ceil(card.length / 2)) out.moments.push("The crowd could turn on a card without names on it.");
-      }
-      activeFeuds(S).filter(function(f) {
-        return f.promo === P.id && f.heat >= 50 && !f.a.concat(f.b).some(function(id) {
-          return on[id];
-        });
-      }).slice(0, 2).forEach(function(f) {
-        out.cold.push(feudLabel(S, f) + " is hot and not on the show.");
-      });
-      var fw = faceOf(S);
-      if (fw && card.length && !on[fw.id]) out.cold.push(fw.name + ", the face of the company, sits this one out.");
-      var A = E.fogInfo ? E.fogInfo(S) : null, who = A && A.head ? A.head : "Your road agent", sharp = h01(S.seed + ":gut:" + S.week + ":" + card.length) < clamp(0.4 + fogSkill(S), 0.1, 0.95);
-      var good = out.sets.length + out.moments.length, bad = out.risk.length + out.cold.length;
-      if (!card.length) out.gut = "";
-      else if (!sharp) out.gut = who + ': "Hard to say. We will know when the bell rings."';
-      else if (bad > good + 1) out.gut = who + ': "I do not like the feel of this one. Too much could go wrong."';
-      else if (good >= bad + 3) out.gut = who + ': "This one has a chance to be special."';
-      else out.gut = who + ': "Solid on paper. It comes down to the people in the ring."';
-      ["moments", "risk", "sets", "cold"].forEach(function(k) {
-        out[k] = out[k].slice(0, 4);
-      });
-      return out;
-    };
-    var VQ_FEEL = { intimate: "intimate: every seat is close", cavernous: "cavernous: hard to fill, hard to warm up", right: "" }, VQ_SOUND = { loud: "the roof keeps the noise in", dead: "the sound dies in the rafters", plain: "" };
-    var VQ_CROWD = { rowdy: "a rowdy local crowd", smart: "a crowd that knows its wrestling", polite: "a polite crowd that needs warming up", plain: "" };
-    function venueQuirks(vname) {
-      var v = String(vname || ""), h = function(k) {
-        return h01("vq:" + k + ":" + v);
-      }, open = / (Stadium|Bowl|Field)\b/.test(v), small = / (Armory|Union Hall|Legion Hall|Rec Center|Ballroom|Music Hall)\b/.test(v);
-      var q = { feel: small || h("f") < 0.25 ? "intimate" : h("f") > 0.8 && !small ? "cavernous" : "right", sound: h("s") < 0.3 ? "loud" : h("s") > 0.82 ? "dead" : "plain", crowd: h("c") < 0.25 ? "rowdy" : h("c") < 0.45 ? "smart" : h("c") > 0.85 ? "polite" : "plain", sight: h("g") > 0.85 ? "poor" : "fine", open };
-      var w = [];
-      if (VQ_FEEL[q.feel]) w.push(VQ_FEEL[q.feel]);
-      if (VQ_SOUND[q.sound]) w.push(VQ_SOUND[q.sound]);
-      if (VQ_CROWD[q.crowd]) w.push(VQ_CROWD[q.crowd]);
-      if (q.sight === "poor") w.push("poor sightlines from the cheap seats");
-      if (q.open) w.push("open to the sky");
-      q.words = w;
-      q.short = w.length ? w[0].split(":")[0] : "nothing special";
-      return q;
-    }
-    E.venueQuirks = function(v) {
-      return venueQuirks(v);
-    };
-    CRX.push(function(ctx) {
-      if (!ctx.isPl || !ctx.rep || !ctx.rep.venue) return null;
-      var q = venueQuirks(ctx.rep.venue), d = 0, x = [];
-      if (q.feel === "intimate") {
-        d += 1;
-        x.push("an intimate building");
-      }
-      if (q.feel === "cavernous" && ctx.rep.att && ctx.rep.cap && ctx.rep.att < ctx.rep.cap * 0.7) {
-        d -= 1;
-        x.push("a cavernous building half full");
-      }
-      if (q.sound === "loud") {
-        d += 1;
-        x.push("a loud building");
-      } else if (q.sound === "dead") {
-        d -= 1;
-        x.push("a building where the sound dies");
-      }
-      if (q.crowd === "rowdy" && ctx.all.some(function(w) {
-        return w.align === "H";
-      })) {
-        d += 1;
-        x.push("a rowdy crowd that loves to boo");
-      }
-      if (q.crowd === "smart" && ctx.isMain) {
-        d += 1;
-        x.push("a crowd that knows good wrestling");
-      }
-      if (q.crowd === "polite" && ctx.isMain === false && d >= 0) {
-        d -= 0.5;
-      }
-      return d ? { d, x: x.join(", ") } : null;
-    });
-    var DISASTER = {
-      power: { n: "The power goes out", text: "The lights die halfway through the entrances. The building is black and the crowd is getting restless.", choices: [
-        { n: "Keep going under the emergency lights", says: "It is grim to look at, and the crowd sings to keep itself warm.", cr: -2 },
-        { n: "Stop the show until the power is back", says: "Twenty minutes of nothing. The show runs short, and the crowd is cold when it comes back.", cr: -3, cut: 1 },
-        { n: "Send your biggest name out with a microphone", says: "One voice in the dark, and the crowd hangs on every word.", cr: 1, star: 1, cost: "They will remember you threw them out there." }
-      ] },
-      ring: { n: "The ring is broken", text: "A turnbuckle has snapped in warm-ups and the bottom rope is loose. The crew say ten minutes, maybe more.", choices: [
-        { n: "Work around it", says: "They wrestle away from the bad corner. It shows, and somebody could get hurt.", cr: -1, hurt: 1 },
-        { n: "Fix it properly", says: "The crew fix it right. The show runs late and loses a segment.", cr: -1, cut: 1 },
-        { n: "Make it part of the show: a no-ropes match", says: "The announcers sell it as a special attraction. It is a risk, and it might be remembered.", cr: 2, hurt: 1 }
-      ] },
-      weather: { n: "The weather turns", text: "Rain is coming in sideways over the open end of the building. Half the floor seats are getting wet.", choices: [
-        { n: "Carry on in the rain", says: "They wrestle in the rain. Some love it. Some go home.", cr: 1, hurt: 1, mkt: -1 },
-        { n: "Wait it out", says: "An hour under ponchos. The show is cut short, and the people who stayed are cold.", cr: -2, cut: 1 },
-        { n: "Refund the floor seats", says: "Every wet seat gets its money back. It costs, and the city will remember the gesture.", cr: 0, refund: 1, mkt: 2 }
-      ] },
-      crowd: { n: "Trouble in the crowd", text: "A fight has broken out in the cheap seats and it is spreading. Security is stretched thin.", choices: [
-        { n: "Stop the show until it is cleared", says: "Security clears it. The show runs short, and the city talks about it for a week.", cr: -1, cut: 1, mkt: -1 },
-        { n: "Keep the show going and let security handle it", says: "The show goes on over the noise. A few people get hurt in the stands.", cr: -2, mkt: -2 },
-        { n: "Send a hero out to calm them down", says: "They walk to the barricade and the fight stops. The crowd chants their name.", cr: 2, star: 1, face: 1 }
-      ] }
-    };
-    LIVEK.disaster = {
-      n: "Trouble in the building",
-      pre: function(S, L2, step) {
-        if (step.t !== "match" || L2.had.disaster) return null;
-        var rep = L2.st && L2.st.rep;
-        if (!rep || !rep.venue) return null;
-        var q = venueQuirks(rep.venue);
-        var p = 0.025 + (q.open ? 0.04 : 0) + (q.crowd === "rowdy" ? 0.02 : 0) + (q.feel === "cavernous" ? 0.01 : 0);
-        if (h01(S.seed + ":dis:" + S.week + ":" + S.qi) >= p) return null;
-        var kinds = ["power", "ring"].concat(q.open ? ["weather"] : []).concat(q.crowd === "rowdy" ? ["crowd", "crowd"] : ["crowd"]), k = kinds[Math.floor(h01(S.seed + ":disk:" + S.week + ":" + S.qi) * kinds.length)], D = DISASTER[k];
-        var M = liveMatch(S, L2, step.i), R = rosterOf(S, S.player).filter(function(w) {
-          return !w.nw && !(w.inj > 0);
-        }).sort(function(a, b) {
-          return b.ovr - a.ovr;
-        }), star = (D.choices.some(function(c) {
-          return c.face;
-        }) ? R.filter(function(w) {
-          return w.align !== "H";
-        })[0] : R[0]) || R[0];
-        return {
-          phase: "mid",
-          mi: step.i,
-          dk: k,
-          who: star ? star.id : null,
-          text: D.text + " (" + rep.venue + ")",
-          why: q.words.length ? ["The building: " + q.words.join("; ")] : [],
-          safe: 1,
-          choices: D.choices.map(function(c) {
-            return { n: c.star && star ? c.n.replace(/your biggest name|a hero/, star.name) : c.n, says: c.says, who: c.star && star ? star.id : null };
-          })
-        };
-      },
-      run: function(S, L2, ev, c) {
-        var D = DISASTER[ev.dk], o = D.choices[c], M = liveMatch(S, L2, ev.mi), P = S.promos[S.player], rep = L2.st.rep, city = cityOfVenue(rep.venue);
-        if (!o) return "";
-        if (M && o.cr) livePut(M.m, { cr: o.cr, x: D.n.toLowerCase() + ": " + o.n.toLowerCase() });
-        if (o.cut) rep.short = 1;
-        if (o.hurt && M) {
-          var w = flat(M.c.sides)[0];
-          if (w && h01(S.seed + ":dish:" + S.week) < 0.35) {
-            w.inj = Math.max(w.inj || 0, 2);
-            news(S, "injury", w.name + " was hurt when " + D.n.toLowerCase() + " at " + rep.venue + ".");
-            youRemember(S, w, "venuehurt", "Got hurt in a broken building because the show went on.", -3);
-          }
-        }
-        if (o.refund) {
-          var cost = Math.round((rep.gate || 0) * 0.25);
-          P.cash -= cost;
-          o.says += " It costs " + money(cost) + ".";
-        }
-        if (o.mkt && S.mkt && S.mkt[city]) S.mkt[city].k = clamp((S.mkt[city].k || 50) + o.mkt * 3, 0, 100);
-        if (o.star && ev.who != null && S.w[ev.who]) {
-          var s = S.w[ev.who];
-          youRemember(S, s, "venuesave", "You sent them out to save the night when " + D.n.toLowerCase() + ".", o.face ? 3 : 1);
-          s.mom = clamp((s.mom || 0) + 1, -10, 10);
-        }
-        note(S, D.n, o.says, o.cr > 0 ? "good" : o.cr < 0 ? "bad" : "");
-        return o.says;
-      }
-    };
-    LIVE_ORDER.push("disaster");
-    E.buildingWords = function(S) {
-      var R = E.road(S);
-      if (!R || !R.now || !R.now.venue) return null;
-      var q = venueQuirks(R.now.venue);
-      return { words: q.words, short: q.short };
-    };
-    var WW_KEEP = 12;
-    function wwCompany(S, P, wk) {
-      var out = { id: P.id, name: P.name, shows: [], titles: [], begun: [], ended: [], lead: null };
-      (S.wwShows || []).forEach(function(r) {
-        if (r.p === P.id && r.w === wk) out.shows.push(r);
-      });
-      (P.titles || []).forEach(function(t) {
-        (t.hist || []).forEach(function(h, i) {
-          if (h.from !== wk || !h.h || !h.h.length) return;
-          var prev = t.hist[i - 1], old = prev && prev.to === wk ? prev : null, how = "";
-          if (old) {
-            var f = (S.feuds || []).filter(function(x) {
-              return x.promo === P.id && x.title === t.id;
-            })[0];
-            how = f ? "after weeks of chasing" : h.show ? "at " + h.show : "";
-          } else how = "for the vacant title";
-          out.titles.push({ title: titleFull(P, t), now: h.h.join(" & "), old: old && old.h ? old.h.join(" & ") : null, weeks: old && old.from != null ? wk - old.from : null, how });
-        });
-      });
-      (S.feuds || []).forEach(function(f) {
-        if (f.promo !== P.id) return;
-        var nm = function(L2) {
-          return L2.map(function(id) {
-            return S.w[id] ? S.w[id].name : "?";
-          }).join(" & ");
-        };
-        if (f.start === wk) out.begun.push(nm(f.a) + " and " + nm(f.b));
-        if (f.res && f.end === wk && !f.dead) out.ended.push(nm(f.a) + " and " + nm(f.b));
-      });
-      var t0 = out.titles[0], best = out.shows.slice().sort(function(a, b) {
-        return (b.big ? 1 : 0) - (a.big ? 1 : 0);
-      })[0];
-      out.lead = t0 ? t0.now + " won the " + t0.title + (t0.how ? " " + t0.how : "") + (t0.weeks && t0.weeks >= 12 ? ", ending a reign of " + t0.weeks + " weeks" : "") + "." : out.ended[0] ? "The story of " + out.ended[0] + " ended." : best && best.big ? best.name + ": " + best.word + ", " + best.grade + "." : out.begun[0] ? "A new story: " + out.begun[0] + "." : best ? best.name + ": " + best.word + ", " + best.grade + "." : null;
-      return out;
-    }
-    function wwFile(S) {
-      if (S.cal) return;
-      var wk = S.week, L2 = [];
-      S.order.forEach(function(pid) {
-        if (pid === S.player) return;
-        var P = S.promos[pid];
-        if (!P || P.dead) return;
-        var c = wwCompany(S, P, wk);
-        if (c.lead || c.begun.length) L2.push(c);
-      });
-      L2.sort(function(a, b) {
-        return b.titles.length * 3 + b.ended.length * 2 + b.shows.length - (a.titles.length * 3 + a.ended.length * 2 + a.shows.length);
-      });
-      var ww = S.ww || (S.ww = []);
-      ww.unshift({ w: wk, label: cal(wk).label, cos: L2 });
-      if (ww.length > WW_KEEP) ww.length = WW_KEEP;
-    }
-    SHOWX.push(function(S, P, show, rep) {
-      if (S.cal || !P || P.id === S.player || !rep) return;
-      var L2 = S.wwShows || (S.wwShows = []), cs = repCS(rep), me = rep.lineup && rep.lineup.length ? rep.lineup[rep.lineup.length - 1] : null;
-      L2.push({ p: P.id, w: S.week, name: show.name, big: !!show.big, grade: gradeG(cs), word: verdictWord(rep), main: typeof me === "string" ? me : null });
-    });
-    function verdictWord(rep) {
-      var v = rep.rating != null && rep.exp != null ? E.showVerdict(rep.rating, rep.exp) : null;
-      return v ? v.head.toLowerCase() : "";
-    }
-    WEEKX.push(function(S) {
-      wwFile(S);
-      S.wwShows = [];
-    });
-    E.worldWeek = function(S, n) {
-      return (S.ww || []).slice(0, n || WW_KEEP);
-    };
-    var WR_STYLE = {
-      comedy: { n: "comedy", slur: "a joke that writes itself", likes: "a laugh" },
-      drama: { n: "drama", slur: "a soap opera", likes: "a story with tears in it" },
-      grit: { n: "grit", slur: "too dark for television", likes: "something that feels real" },
-      spectacle: { n: "spectacle", slur: "all fireworks, no story", likes: "a big moment" }
-    };
-    var GR_WROOM = {
-      comedy: ["The crowd laughs in all the right places: #hw# wrote this one.", "A line lands so well the announcers lose it. #hw#\u2019s room, no doubt.", "It is silly, and the building loves it."],
-      drama: ["Somebody in the front row is crying. #hw# got what #hw# wanted.", "It plays like the last scene of a long film.", "Quiet, then loud, then quiet again. A drama writer\u2019s segment."],
-      grit: ["No music, no smiles. It feels like it really happened.", "#hw# wrote it rough, and the crowd believes every word.", "It is uncomfortable to watch, which is the point."],
-      spectacle: ["Pyro, lights, a lot of noise. #hw# never wrote a small thing.", "Everything is bigger than it needs to be, and nobody minds.", "The kind of moment that ends up in the opening video."]
-    };
-    var WR_FIRST = ["Abel", "Bette", "Cyril", "Delia", "Ezra", "Flo", "Gideon", "Hester", "Ivo", "June", "Kit", "Lorna"], WR_LAST = ["Ashdown", "Bramble", "Corrie", "Dunmore", "Elwood", "Fenn", "Garnet", "Holloway", "Inchley", "Jessop", "Kell", "Larkin"];
-    function wrInit(S) {
-      if (S.wr && S.wr.ids.every(function(id) {
-        return S.w[id];
-      })) return S.wr;
-      var P = S.promos[S.player], styles = Object.keys(WR_STYLE), ids = [];
-      for (var i = 0; i < 3; i++) {
-        var nm = i === 0 && P.staff && P.staff.writer && P.staff.writer !== "The head writer" ? P.staff.writer : WR_FIRST[hash(S.seed + "wf" + i) % WR_FIRST.length] + " " + WR_LAST[hash(S.seed + "wl" + i) % WR_LAST.length];
-        var w = addWrestler(S, { name: nm, g: hash(nm) % 2 ? "F" : "M", style: "E", ovr: 40, mic: 55, align: "F", roles: ["writer"], age: 30 + hash(nm) % 25 }, P.id);
-        w.srole = "writer";
-        w.wst = styles[hash(S.seed + "ws" + i) % styles.length];
-        w.wsk = 55 + hash(S.seed + "wk" + i) % 40;
-        w.wage = 0;
-        w.con = 999;
-        ids.push(w.id);
-      }
-      S.wr = { ids, head: ids[0], passed: 0, last: -1 };
-      return S.wr;
-    }
-    function wrName(S, id) {
-      return S.w[id] ? S.w[id].name : "A writer";
-    }
-    function wrPitch(S, id, k) {
-      var P = S.promos[S.player], w = S.w[id], st = WR_STYLE[w.wst], F = E.sift(S) || [], off = hash(S.seed + ":wp:" + S.week + ":" + id) + k, f = null;
-      var many = activeFeuds(S).filter(function(x) {
-        return x.promo === P.id;
-      }).length >= 8;
-      for (var i = 0; i < F.length && !many && !f; i++) {
-        var c = F[(off + i) % F.length];
-        if (c && S.w[c.a] && S.w[c.b] && !inFeud(S, c.a) && !inFeud(S, c.b)) f = c;
-      }
-      if (f) return { k: "feud", a: f.a, b: f.b, t: S.w[f.a].name + " against " + S.w[f.b].name + ", played as " + st.likes };
-      var R = rosterOf(S, P.id).filter(function(x) {
-        return !x.nw && !(x.inj > 0);
-      }).sort(function(a, b) {
-        return b.ovr - a.ovr;
-      }), star = R[(k * 2 + hash(S.seed + ":wq:" + S.week)) % Math.max(1, Math.min(R.length, 6))];
-      return star ? { k: "spot", a: star.id, t: "a spotlight on " + star.name + ": " + st.likes } : null;
-    }
-    WEEKX.push(function(S) {
-      if (S.cal || S.over || S.week % 2) return;
-      var X = wrInit(S);
-      if (S.inbox.some(function(e) {
-        return !e.done && e.type === "wroom";
-      })) return;
-      var n = Math.floor(S.week / 2) % 3, a = X.ids[n], b = X.ids[(n + 1) % 3], pa = wrPitch(S, a, 0), pb = wrPitch(S, b, 1);
-      if (!pa || !pb) return;
-      var A = S.w[a], B = S.w[b], P = S.promos[S.player], ag = P.staff && P.staff.agent ? P.staff.agent : "The road agent", side = A.wsk + (a === X.head ? 10 : 0) >= B.wsk + (b === X.head ? 10 : 0) ? A : B;
-      pushEv(S, {
-        type: "wroom",
-        a,
-        b,
-        pa,
-        pb,
-        text: "The writers\u2019 room. " + A.name + " (" + WR_STYLE[A.wst].n + (a === X.head ? ", head writer" : "") + ") pitches " + pa.t + ". " + B.name + " calls it " + WR_STYLE[A.wst].slur + " and pitches " + pb.t + ". " + ag + " sides with " + side.name + ".",
-        choices: ["Run " + A.name + "\u2019s pitch", "Run " + B.name + "\u2019s pitch", "Neither: the room can try again"]
-      });
-    });
-    EVR.wroom = function(S, ev, choice, P) {
-      var X = wrInit(S), A = S.w[ev.a], B = S.w[ev.b];
-      if (!A || !B) return "The room has moved on.";
-      if (choice === 2) {
-        youRemember(S, A, "pitchno", "You turned their pitch down.", -1);
-        youRemember(S, B, "pitchno", "You turned their pitch down.", -1);
-        return "Neither. The room goes quiet, and both of them go back to their desks a little smaller.";
-      }
-      var W = choice === 0 ? A : B, L2 = choice === 0 ? B : A, pt = choice === 0 ? ev.pa : ev.pb, msg;
-      relBump(S, W.id, L2.id, { bond: -8 }, { k: "room", t: W.name + " won the argument in the writers\u2019 room." });
-      youRemember(S, W, "pitchyes", "You ran their pitch.", 2);
-      youRemember(S, L2, "pitchno", "You ran the other pitch.", -1);
-      if (L2.id === X.head) {
-        X.passed++;
-        if (X.passed >= 2) {
-          L2.morale = clamp(L2.morale - 12, 0, 100);
-          note(S, "The head writer is sulking", L2.name + " has been passed over twice running.", "bad");
-        }
-      } else if (W.id === X.head) X.passed = 0;
-      X.style = W.wst;
-      X.by = W.id;
-      X.until = S.week + 4;
-      if (pt.k === "feud" && S.w[pt.a] && S.w[pt.b] && !feudOf(S, pt.a, pt.b)) {
-        var f = startFeud(S, P, S.w[pt.a], S.w[pt.b], 24, W.name + " wrote " + S.w[pt.a].name + " and " + S.w[pt.b].name + " into a story", { force: true });
-        msg = f ? "The story starts: " + pt.t + "." : "The story would not take.";
-      } else {
-        var s = S.w[pt.a];
-        if (s) {
-          s.mom = clamp((s.mom || 0) + 2, -10, 10);
-          youRemember(S, s, "spot", "The writers built a week around them.", 1);
-        }
-        msg = "Next week belongs to " + (s ? s.name : "them") + ".";
-      }
-      return W.name + "\u2019s pitch it is. " + msg + " For a month the writers\u2019 segments carry " + W.name + "\u2019s touch.";
-    };
-    ANGDONE.push(function(S, P, ba) {
-      var X = S.wr;
-      if (!X || P.id !== S.player || !ba.wr) return;
-      var id = X.until >= S.week && X.by != null ? X.by : X.head, w = S.w[id];
-      if (!w || !WR_STYLE[w.wst]) return;
-      var L2 = GR_WROOM[w.wst], line = L2[Math.floor(h01(S.seed + ":wl:" + S.week + ":" + (ba.text || "").length) * L2.length)].replace(/#hw#/g, w.name);
-      ba.text = (ba.text || "") + " " + line;
-      if (w.wsk >= 80) ba.ov = Math.min(100, (ba.ov || 0) + 1);
-    });
-    E.writers = function(S) {
-      var X = wrInit(S);
-      return X.ids.map(function(id) {
-        var w = S.w[id];
-        return { id, name: w.name, style: WR_STYLE[w.wst].n, likes: WR_STYLE[w.wst].likes, strong: w.wsk >= 80 ? "a strong writer" : w.wsk >= 65 ? "a good writer" : "still learning", head: id === X.head, pen: X.by === id && X.until >= S.week, mood: w.morale < 40 ? "unhappy" : "content", you: S.rmY && S.rmY[id] ? S.rmY[id].v : 0 };
-      });
-    };
     root.GP = E;
     return { get DB() {
       return DB;
@@ -34833,117 +33833,109 @@
     }, set regWeek(v) {
       regWeek = v;
     }, get RW_MOVES() {
-      return RW_MOVES;
+      return RW_MOVES2;
     }, set RW_MOVES(v) {
-      RW_MOVES = v;
+      RW_MOVES2 = v;
     }, get RW_LINES() {
-      return RW_LINES;
+      return RW_LINES2;
     }, set RW_LINES(v) {
-      RW_LINES = v;
+      RW_LINES2 = v;
     }, get rwMoves() {
-      return rwMoves;
+      return rwMoves2;
     }, set rwMoves(v) {
-      rwMoves = v;
+      rwMoves2 = v;
     }, get brSurprisePool() {
-      return brSurprisePool;
+      return brSurprisePool2;
     }, set brSurprisePool(v) {
-      brSurprisePool = v;
+      brSurprisePool2 = v;
     }, get brFee() {
-      return brFee;
+      return brFee2;
     }, set brFee(v) {
-      brFee = v;
+      brFee2 = v;
     }, get STAFF_TAG() {
-      return STAFF_TAG;
+      return STAFF_TAG2;
     }, set STAFF_TAG(v) {
-      STAFF_TAG = v;
+      STAFF_TAG2 = v;
     }, get STAFF_LVL() {
-      return STAFF_LVL;
+      return STAFF_LVL2;
     }, set STAFF_LVL(v) {
-      STAFF_LVL = v;
+      STAFF_LVL2 = v;
     }, get staffTag() {
-      return staffTag;
+      return staffTag2;
     }, set staffTag(v) {
-      staffTag = v;
+      staffTag2 = v;
     }, get staffVoice() {
-      return staffVoice;
+      return staffVoice2;
     }, set staffVoice(v) {
-      staffVoice = v;
+      staffVoice2 = v;
     }, get staffUnvoice() {
-      return staffUnvoice;
+      return staffUnvoice2;
     }, set staffUnvoice(v) {
-      staffUnvoice = v;
+      staffUnvoice2 = v;
     }, get toStaffOk() {
-      return toStaffOk;
+      return toStaffOk2;
     }, set toStaffOk(v) {
-      toStaffOk = v;
+      toStaffOk2 = v;
     }, get SUG_FLAT() {
-      return SUG_FLAT;
+      return SUG_FLAT2;
     }, set SUG_FLAT(v) {
-      SUG_FLAT = v;
+      SUG_FLAT2 = v;
     }, get VQ_FEEL() {
-      return VQ_FEEL;
+      return VQ_FEEL2;
     }, set VQ_FEEL(v) {
-      VQ_FEEL = v;
-    }, get VQ_SOUND() {
-      return VQ_SOUND;
-    }, set VQ_SOUND(v) {
-      VQ_SOUND = v;
+      VQ_FEEL2 = v;
     }, get VQ_CROWD() {
-      return VQ_CROWD;
+      return VQ_CROWD2;
     }, set VQ_CROWD(v) {
-      VQ_CROWD = v;
+      VQ_CROWD2 = v;
     }, get venueQuirks() {
-      return venueQuirks;
+      return venueQuirks2;
     }, set venueQuirks(v) {
-      venueQuirks = v;
+      venueQuirks2 = v;
     }, get DISASTER() {
-      return DISASTER;
+      return DISASTER2;
     }, set DISASTER(v) {
-      DISASTER = v;
+      DISASTER2 = v;
     }, get WW_KEEP() {
-      return WW_KEEP;
+      return WW_KEEP2;
     }, set WW_KEEP(v) {
-      WW_KEEP = v;
+      WW_KEEP2 = v;
     }, get wwCompany() {
-      return wwCompany;
+      return wwCompany2;
     }, set wwCompany(v) {
-      wwCompany = v;
+      wwCompany2 = v;
     }, get wwFile() {
-      return wwFile;
+      return wwFile2;
     }, set wwFile(v) {
-      wwFile = v;
+      wwFile2 = v;
     }, get verdictWord() {
-      return verdictWord;
+      return verdictWord2;
     }, set verdictWord(v) {
-      verdictWord = v;
+      verdictWord2 = v;
     }, get WR_STYLE() {
-      return WR_STYLE;
+      return WR_STYLE2;
     }, set WR_STYLE(v) {
-      WR_STYLE = v;
+      WR_STYLE2 = v;
     }, get GR_WROOM() {
-      return GR_WROOM;
+      return GR_WROOM2;
     }, set GR_WROOM(v) {
-      GR_WROOM = v;
+      GR_WROOM2 = v;
     }, get WR_FIRST() {
-      return WR_FIRST;
+      return WR_FIRST2;
     }, set WR_FIRST(v) {
-      WR_FIRST = v;
-    }, get WR_LAST() {
-      return WR_LAST;
-    }, set WR_LAST(v) {
-      WR_LAST = v;
+      WR_FIRST2 = v;
     }, get wrInit() {
-      return wrInit;
+      return wrInit2;
     }, set wrInit(v) {
-      wrInit = v;
+      wrInit2 = v;
     }, get wrName() {
-      return wrName;
+      return wrName2;
     }, set wrName(v) {
-      wrName = v;
+      wrName2 = v;
     }, get wrPitch() {
-      return wrPitch;
+      return wrPitch2;
     }, set wrPitch(v) {
-      wrPitch = v;
+      wrPitch2 = v;
     }, get POD_EPS() {
       return POD_EPS2;
     }, set POD_EPS(v) {
@@ -34982,6 +33974,1056 @@
       podWrite2 = v;
     } };
   }(typeof window !== "undefined" ? window : globalThis);
+
+  // engine/99-ringwork.ts
+  var RW_MOVES = {
+    B: ["a running clothesline", "a flurry of right hands", "a headbutt", "a back body drop", "a stiff elbow", "a sit-out slam", "a spinebuster", "a chop that echoes round the building"],
+    T: ["a snap suplex", "a hammerlock", "a German suplex", "a short-arm clothesline", "a single-leg crab", "a fisherman suplex", "a drop toehold", "a cross armbar", "a belly-to-back suplex"],
+    H: ["a springboard dropkick", "a hurricanrana", "a tope through the ropes", "a missile dropkick", "a moonsault press", "a handspring elbow", "a diving crossbody", "a corkscrew plancha"],
+    P: ["a scoop slam", "a shoulder tackle that flattens", "a delayed vertical suplex", "a bearhug", "a big boot", "a gorilla press", "a powerslam", "a running splash in the corner"],
+    S: ["a spinning back kick", "a knee to the jaw", "a superkick", "a rolling elbow", "a flurry of kicks", "a jumping knee", "a discus lariat"],
+    E: ["a swinging neckbreaker", "a showboating elbow drop", "a Russian leg sweep", "a running bulldog", "a sunset flip", "a rope-assisted leg drop"],
+    A: ["a dropkick", "a DDT", "a backbreaker", "an inverted atomic drop", "a neckbreaker", "a suplex", "a bulldog", "a clothesline off the top"]
+  };
+  var RW_LINES = {
+    open: ["{a} takes control with {m}.", "{a} gets the upper hand early with {m}.", "{a} sets the pace: {m}."],
+    press: ["{a} keeps the pressure on with {m}.", "{a} stays on top of it: {m}.", "{a} follows up with {m}.", "{a} grinds {b} down with {m}."],
+    cut: ["{b} tries to fight back, but {a} cuts it off with {m}.", "{b} goes for a comeback and runs straight into {m}.", "Not so fast: {a} stops {b} cold with {m}."],
+    swing: ["{a} reverses it and hits {m}!", "Out of nowhere, {a} turns it round with {m}!", "{a} counters and lands {m}!", "{a} fights out of it and connects with {m}!"],
+    sig: ["{a} hits {s}! The crowd knows what that is!", "{a} goes to the well: {s}!", "That is {s}, {a}\u2019s signature, and it lands clean!"],
+    near: ["Cover! One, two... {b} kicks out!", "{a} hooks the leg! One, two... no! {b} gets a shoulder up!", "One, two... so close! {b} is still in this!"],
+    col: ["{p}, {b} is fighting from underneath, but you can never count them out.", "These two know each other, {p}. Every move is answered.", "The crowd is right in this one, {p}.", "{a} is controlling the tempo, {p}. Smart wrestling.", "Listen to this place, {p}! They are hanging on every move.", "You can feel the momentum going back and forth, {p}."]
+  };
+  function rwMoves(S, w) {
+    var L2 = [], ps = typeof L.E.persona === "function" ? L.E.persona(S, w.id) : null;
+    if (w.look && Array.isArray(w.look.finishing_moves)) w.look.finishing_moves.slice(1).forEach(function(m) {
+      if (m && m.name) L2.push({ n: m.name, sig: 1 });
+    });
+    if (ps && ps.sigs) ps.sigs.forEach(function(m) {
+      if (m && m.name) L2.push({ n: m.name, sig: 1 });
+    });
+    (RW_MOVES[w.style] || RW_MOVES.A).forEach(function(n) {
+      L2.push({ n });
+    });
+    return L2;
+  }
+  (function() {
+    var cm = L.callMatch;
+    L.callMatch = function(S, P, x) {
+      var bc = cm.apply(this, arguments);
+      if (!bc || !x || !x.sides || x.m.mt === "br" || x.sides.length < 2) return bc;
+      var at = -1;
+      for (var i = 0; i < bc.length; i++) {
+        if (bc[i].t === "pbp") {
+          at = i;
+          break;
+        }
+      }
+      if (at < 0) return bc;
+      var hk = "rw|" + (x.o && x.o.a || "") + "|" + (x.o && x.o.b || "") + "|" + x.mins + "|" + S.week + "|" + (x.show || ""), k = 0, h = function() {
+        return (L.hash(k++ + "#" + hk) >>> 0) % 100003 / 100003;
+      };
+      var said = {}, pick = function(L2) {
+        var f = L2.filter(function(v2) {
+          return !said[v2.n || v2];
+        }), Q = f.length ? f : L2, v = Q[Math.floor(h() * Q.length) % Q.length];
+        said[v.n || v] = 1;
+        return v;
+      };
+      var cap = function(t) {
+        return t.charAt(0).toUpperCase() + t.slice(1);
+      };
+      var lead = function(s2) {
+        return s2[Math.floor(h() * s2.length) % s2.length];
+      };
+      var ws = x.win >= 0 && x.win < x.sides.length ? x.win : 0;
+      var n = Math.max(3, Math.min(16, Math.round((x.mins || 10) / 1.4))), out = [], side = h() < 0.5 ? 0 : 1, sigUsed = {};
+      var p = x.o && x.o.p || "partner";
+      for (var j = 0; j < n; j++) {
+        var late = j >= n * 0.6, other = function(s2) {
+          return (s2 + 1 + Math.floor(h() * (x.sides.length - 1))) % x.sides.length;
+        };
+        var swap = j === 0 ? false : late ? side !== ws ? h() < 0.55 : h() < 0.3 : h() < 0.4;
+        if (swap) side = other(side);
+        var A = lead(x.sides[side]), B = lead(x.sides[other(side)]), M = rwMoves(S, A), sigs = M.filter(function(m) {
+          return m.sig && !sigUsed[A.id + m.n];
+        });
+        var ctx = { a: A.name, b: B.name, p }, kind;
+        if (late && sigs.length && h() < 0.45) {
+          var s = pick(sigs);
+          sigUsed[A.id + s.n] = 1;
+          ctx.s = s.n;
+          out.push({ t: "pbp", x: L.fill(pick(RW_LINES.sig), ctx), h: 1 });
+          if (h() < 0.6) out.push({ t: "pbp", x: L.fill(pick(RW_LINES.near), ctx), h: 1 });
+          continue;
+        }
+        ctx.m = pick(M.filter(function(m) {
+          return !m.sig;
+        })).n;
+        kind = j === 0 ? "open" : swap ? "swing" : h() < 0.35 ? "cut" : "press";
+        out.push({ t: "pbp", x: cap(L.fill(pick(RW_LINES[kind]), ctx)) });
+        if (late && h() < 0.25) out.push({ t: "pbp", x: L.fill(pick(RW_LINES.near), ctx), h: 1 });
+        else if (h() < 0.22) out.push({ t: "col", x: cap(L.fill(pick(RW_LINES.col), ctx)) });
+      }
+      bc.splice.apply(bc, [at + 1, 0].concat(out));
+      return bc;
+    };
+  })();
+  L.RW_MOVES = RW_MOVES;
+  L.RW_LINES = RW_LINES;
+  L.rwMoves = rwMoves;
+
+  // engine/99-royal.ts
+  L.E.brSize = function(S, i, n) {
+    var m = S.card && S.card[i];
+    if (!m || m.mt !== "br") return { ok: false };
+    n = L.clamp(n | 0, L.MT.br.min, L.MT.br.max);
+    while (m.sides.length < n) m.sides.push([null]);
+    if (m.sides.length > n) m.sides = m.sides.slice(0, n);
+    if (m.call != null && m.call >= n) m.call = null;
+    return { ok: true, n };
+  };
+  function brSurprisePool(S, m) {
+    var g = { M: 0, F: 0 };
+    L.flat(m.sides).forEach(function(id) {
+      var w = id != null && S.w[id];
+      if (w) g[w.g] = (g[w.g] || 0) + 1;
+    });
+    var G = g.F > g.M ? "F" : "M", on = {};
+    L.flat(m.sides).forEach(function(id) {
+      on[id] = 1;
+    });
+    var leg = function(w) {
+      var p = L.E.persona(S, w.id);
+      return p && p.legend ? 1 : 0;
+    };
+    return Object.keys(S.w).map(function(k) {
+      return S.w[k];
+    }).filter(function(w) {
+      return w && w.promo === "FA" && w.rt == null && !w.nw && !(w.inj > 0) && w.g === G && !on[w.id];
+    }).sort(function(a, b) {
+      return leg(b) - leg(a) || b.ovr - a.ovr;
+    });
+  }
+  L.E.brShot = function(S, i, on) {
+    var m = S.card && S.card[i];
+    if (!m || m.mt !== "br") return { ok: false };
+    if (on) m.shot = 1;
+    else delete m.shot;
+    return { ok: true };
+  };
+  function brFee(w) {
+    return Math.round((2e3 + w.ovr * w.ovr * 3) / 500) * 500;
+  }
+  L.E.brSurprise = function(S, i, on) {
+    var m = S.card && S.card[i];
+    if (!m || m.mt !== "br") return { ok: false };
+    if (on) m.surp = 1;
+    else delete m.surp;
+    return { ok: true };
+  };
+  L.E.brSurpriseInfo = function(S, m) {
+    var L2 = brSurprisePool(S, m).slice(0, 5);
+    if (!L2.length) return { n: 0, fee: 0, d: "Nobody free to come in. The spot would go empty." };
+    var fee = Math.round(L.avg(L2.map(brFee)) / 500) * 500;
+    return { n: L2.length, fee, d: "A name from outside the company walks out when the bell has rung. About " + L.money(fee) + " for the night. The crowd only finds out when the music hits." };
+  };
+  (function() {
+    var begin = L.E.liveBegin;
+    L.E.liveBegin = function(S, card) {
+      var P = S.promos[S.player], adds = [];
+      (card || S.card || []).forEach(function(m, i) {
+        if (m.mt !== "br" || !m.surp || m.surpId != null) return;
+        var L2 = brSurprisePool(S, m).slice(0, 5);
+        if (!L2.length) {
+          delete m.surp;
+          return;
+        }
+        var w = L2[Math.floor(L.h01("brs" + S.week + ":" + i + ":" + S.seed) * L2.length)], fee = brFee(w);
+        if (P.cash < fee) {
+          delete m.surp;
+          return;
+        }
+        adds.push({ i, m, w, fee });
+      });
+      var r = begin(S, card);
+      if (r && r.ok && S.live) adds.forEach(function(a) {
+        var lm = S.live.card[a.i];
+        if (!lm) return;
+        lm.sides.push([a.w.id]);
+        lm.surpId = a.w.id;
+        P.cash -= a.fee;
+        L.youRemember(S, a.w, "surprise", "Brought in as the surprise entrant in a battle royal.", 3);
+        L.note(S, "A surprise entrant", a.w.name + " walks out during the battle royal. Paid " + L.money(a.fee) + " for the night.", "good");
+      });
+      return r;
+    };
+  })();
+  L.E.lockMatch = function(S, i, on) {
+    var m = S.card && S.card[i];
+    if (!m) return { ok: false };
+    if (on) m.lock = 1;
+    else delete m.lock;
+    return { ok: true };
+  };
+  L.E.moveMatchTo = function(S, from, to) {
+    var c = S.card || [];
+    if (from === to || from < 0 || to < 0 || from >= c.length || to >= c.length) return { ok: false, msg: "" };
+    if (c[from].lock) return { ok: false, msg: "That match is locked in its place. Unlock it first." };
+    if (c[to].lock) return { ok: false, msg: "Match " + (to + 1) + " is locked in its place." };
+    var free = [], k;
+    for (k = 0; k < c.length; k++) if (!c[k].lock) free.push(k);
+    var order = free.map(function(x) {
+      return c[x];
+    }), a = free.indexOf(from), b = free.indexOf(to), m = order.splice(a, 1)[0];
+    order.splice(b, 0, m);
+    var out = c.slice();
+    free.forEach(function(x, q) {
+      out[x] = order[q];
+    });
+    for (k = 0; k < c.length; k++) c[k] = out[k];
+    return { ok: true, i: to };
+  };
+  L.E.suggestKeep = function(S) {
+    var keep = (S.card || []).map(function(m, i) {
+      return m.lock ? { m, i } : null;
+    }).filter(Boolean), c = L.E.suggest(S);
+    if (!keep.length) return c;
+    var used = {};
+    keep.forEach(function(k) {
+      L.flat(k.m.sides).forEach(function(id) {
+        used[id] = 1;
+      });
+    });
+    c = c.filter(function(m) {
+      return !L.flat(m.sides).some(function(id) {
+        return used[id];
+      });
+    });
+    keep.forEach(function(k) {
+      c.splice(Math.min(k.i, c.length), 0, k.m);
+    });
+    L.fitShow(S, c);
+    return c;
+  };
+  L.brSurprisePool = brSurprisePool;
+  L.brFee = brFee;
+
+  // engine/99-staff.ts
+  L.SROLES.referee = { n: "Referee", skill: function(w) {
+    return ((w.cons || 60) + (w.safe || 55)) / 2;
+  }, d: "Keeps the matches safe and on time: the action lands a little cleaner, and they work the scenes as the official." };
+  L.SROLES.interviewer = { n: "Interviewer", skill: function(w) {
+    return ((w.mic || 50) + (w.cha || 50)) / 2;
+  }, d: "Holds the microphone backstage: promos read a little better, and they are the face of the interviews." };
+  L.E.SROLES = Object.keys(L.SROLES).map(function(k) {
+    return { id: k, n: L.SROLES[k].n, d: L.SROLES[k].d };
+  });
+  var STAFF_TAG = { agent: "road_agent", trainer: "trainer", commentator: "announcer", manager: "manager", boss: "booker", referee: "referee", interviewer: "interviewer" };
+  var STAFF_LVL = { rookie: { n: "Green", s: 52, wage: 400 }, solid: { n: "Solid", s: 66, wage: 900 }, veteran: { n: "Veteran", s: 80, wage: 1800 } };
+  L.E.STAFF_LVL = Object.keys(STAFF_LVL).map(function(k) {
+    return { id: k, n: STAFF_LVL[k].n, wage: STAFF_LVL[k].wage };
+  });
+  function staffTag(w, k) {
+    w.roles = [STAFF_TAG[k] || k];
+  }
+  function staffVoice(S, w) {
+    if (w.srole !== "commentator") return;
+    S.voices = S.voices || [];
+    if (S.voices.some(function(v) {
+      return v.wid === w.id;
+    })) return;
+    var st = ["hot", "dry", "warm"][L.hash(w.name + "vs") % 3];
+    S.voices.push({ id: S.nid++, name: w.name, g: w.g, pbp: L.clamp(Math.round(w.mic || 50), 30, 95), col: L.clamp(Math.round(w.cha || w.mic || 50), 30, 95), style: st, wage: 0, hired: null, added: S.week, wid: w.id });
+  }
+  function staffUnvoice(S, w) {
+    var P = S.promos[S.player], L2 = S.voices || [];
+    L2.filter(function(v) {
+      return v.wid === w.id;
+    }).forEach(function(v) {
+      if (P && P.desk) {
+        ["pbp", "col"].forEach(function(k) {
+          if (P.desk[k] === v.id) P.desk[k] = null;
+        });
+      }
+    });
+    S.voices = L2.filter(function(v) {
+      return v.wid !== w.id;
+    });
+  }
+  (function() {
+    var sc = L.EVR.secondcareer;
+    L.EVR.secondcareer = function(S, ev, choice, P, w) {
+      var r = sc.apply(this, arguments);
+      if (w && w.srole) {
+        staffTag(w, w.srole);
+        staffVoice(S, w);
+      }
+      return r;
+    };
+  })();
+  L.E.createStaff = function(S, o) {
+    o = o || {};
+    var P = S.promos[S.player], k = o.role, L2 = STAFF_LVL[o.lvl] || STAFF_LVL.solid;
+    if (!L.SROLES[k]) return { ok: false, msg: "Pick a job for them." };
+    var name = L.clean(o.name, 28);
+    if (name.length < 2) return { ok: false, msg: "Give them a name first." };
+    if (S.w.some(function(w2) {
+      return w2.name.toLowerCase() === name.toLowerCase();
+    })) return { ok: false, msg: "There is already a " + name + " in the business." };
+    var s = L2.s, ovr = k === "boss" ? L.clamp(s - 10, 20, 80) : k === "referee" ? 20 : L.clamp(s - 30, 15, 60);
+    var w = L.addWrestler(S, { name, g: o.g === "F" ? "F" : "M", ovr, style: "A", work: L.clamp(s - 25, 20, 70), mic: k === "referee" ? L.clamp(s - 20, 20, 70) : s, align: o.align === "H" ? "H" : "F", cons: k === "referee" ? s + 6 : s, safe: k === "referee" ? s + 6 : s, cha: s }, P.id, null);
+    w.nw = true;
+    w.srole = k;
+    staffTag(w, k);
+    w.wage = L2.wage;
+    w.con = 48;
+    w.morale = 80;
+    w.cr = true;
+    w.age = L.clamp(+o.age || (k === "referee" ? 34 : 40), 18, 75);
+    if (o.look) {
+      var lc = L.lookClean(o.look);
+      if (lc && L.E.lookOk(lc)) {
+        lc.name = w.name;
+        w.look = lc;
+      }
+    }
+    staffVoice(S, w);
+    L.news(S, "contract", P.name + " hires " + name + " as " + L.SROLES[k].n.toLowerCase() + ".");
+    return { ok: true, id: w.id, msg: name + " joins the staff as " + L.SROLES[k].n.toLowerCase() + " at " + L.money(L2.wage) + " a week. " + L.SROLES[k].d };
+  };
+  function toStaffOk(S, w) {
+    var P = S.promos[S.player];
+    if (!w || w.promo !== P.id) return { ok: false, why: "They are not on your books." };
+    if (w.nw) return { ok: false, why: "They are on the staff already." };
+    if (P.titles.some(function(t) {
+      return t.holders.indexOf(w.id) >= 0;
+    })) return { ok: false, why: "They hold a title. Get the belt off them first." };
+    if ((S.feuds || []).some(function(f) {
+      return !f.res && f.promo === P.id && f.a.concat(f.b).indexOf(w.id) >= 0;
+    })) return { ok: false, why: "They are in a story. End it first." };
+    if (w.team != null || (S.teams || []).some(function(t) {
+      return t.promo === P.id && !t.dead && t.m && t.m.indexOf(w.id) >= 0;
+    })) return { ok: false, why: "They are in a tag team. Break it up first." };
+    if (S.card && S.card.some(function(m) {
+      return m && m.sides && L.flat(m.sides).indexOf(w.id) >= 0;
+    })) return { ok: false, why: "They are on this week\u2019s card. Take them off it first." };
+    return { ok: true };
+  }
+  L.E.toStaffOk = function(S, id) {
+    return toStaffOk(S, S.w[id]);
+  };
+  L.E.toStaff = function(S, id, k) {
+    var w = S.w[id], ok = toStaffOk(S, w);
+    if (!ok.ok) return { ok: false, msg: ok.why };
+    if (!L.SROLES[k]) return { ok: false, msg: "Pick a job for them." };
+    w.nw = true;
+    w.srole = k;
+    w.wasW = 1;
+    staffTag(w, k);
+    staffVoice(S, w);
+    var keen = L.SROLES[k].skill(w) >= 60 || w.age >= 36;
+    L.youRemember(S, w, "staff", keen ? "You found them a job when the ring was getting harder" : "You took them off the card and gave them a desk job", keen ? 4 : -6);
+    w.morale = L.clamp(w.morale + (keen ? 4 : -8), 0, 100);
+    L.note(S, "Staff", w.name + " moves to " + L.SROLES[k].n.toLowerCase() + (keen ? ". They are glad of it." : ". They wanted to wrestle."), keen ? "good" : "bad");
+    L.news(S, "contract", w.name + " steps away from the ring to become " + S.promos[S.player].name + "\u2019s " + L.SROLES[k].n.toLowerCase() + ".");
+    return { ok: true, msg: w.name + " is your " + L.SROLES[k].n.toLowerCase() + " now. " + L.SROLES[k].d + (keen ? "" : " They are not happy about leaving the ring.") };
+  };
+  L.E.fromStaff = function(S, id) {
+    var w = S.w[id], P = S.promos[S.player];
+    if (!w || w.promo !== P.id || !w.nw) return { ok: false, msg: "They are not on the staff." };
+    if (!w.wasW) return { ok: false, msg: w.name + " has never wrestled." };
+    staffUnvoice(S, w);
+    w.nw = false;
+    delete w.srole;
+    delete w.wasW;
+    w.roles = null;
+    delete w.roles;
+    L.youRemember(S, w, "staff", "You gave them their spot in the ring back", 5);
+    w.morale = L.clamp(w.morale + 6, 0, 100);
+    L.note(S, "Staff", w.name + " is back on the active roster.", "good");
+    return { ok: true, msg: w.name + " is back on the active roster." };
+  };
+  L.E.staffList = function(S) {
+    var TAGN = { announcer: "Commentator", referee: "Referee", owner: "Owner", booker: "Booker", manager: "Manager", road_agent: "Road agent", interviewer: "Interviewer", trainer: "Trainer" };
+    return L.rosterOf(S, S.player).filter(function(w) {
+      return w.nw && !w.rt;
+    }).map(function(w) {
+      var k = w.srole, R = L.SROLES[k], tg = w.roles && w.roles[0];
+      return {
+        id: w.id,
+        name: w.name,
+        role: R ? R.n : TAGN[tg] || "Staff",
+        k: k || null,
+        d: R ? R.d : "",
+        skill: R ? Math.round(R.skill(w)) : null,
+        wage: w.wage,
+        back: !!w.wasW,
+        desk: (S.voices || []).some(function(v) {
+          return v.wid === w.id && v.hired;
+        })
+      };
+    });
+  };
+  L.CRX.push(function(ctx) {
+    if (!ctx.isPl || ctx.S.cal) return null;
+    var S = ctx.S, r = L.staffOf(S, "referee").sort(function(a, b) {
+      return L.SROLES.referee.skill(b) - L.SROLES.referee.skill(a);
+    })[0];
+    if (!r) return null;
+    var sk = L.SROLES.referee.skill(r);
+    if (sk < 60) return null;
+    return { d: L.clamp((sk - 60) / 40, 0, 0.5), x: r.name + " kept the match clean" };
+  });
+  (function() {
+    var sm = L.segMean;
+    L.segMean = function(S, w, bonus) {
+      var v = sm.apply(this, arguments);
+      if (!w || w.promo !== S.player || S.cal) return v;
+      var iv = L.staffOf(S, "interviewer").map(function(x) {
+        return L.SROLES.interviewer.skill(x);
+      }).sort(function(a, b) {
+        return b - a;
+      })[0];
+      return iv >= 60 ? v + L.clamp((iv - 60) / 8, 0, 2.5) : v;
+    };
+  })();
+  L.E.staffSkill = function(S, id, k) {
+    var w = S.w[id];
+    return w && L.SROLES[k] ? L.SROLES[k].skill(w) : 0;
+  };
+  L.STAFF_TAG = STAFF_TAG;
+  L.STAFF_LVL = STAFF_LVL;
+  L.staffTag = staffTag;
+  L.staffVoice = staffVoice;
+  L.staffUnvoice = staffUnvoice;
+  L.toStaffOk = toStaffOk;
+
+  // engine/99-suggest-flat.ts
+  var SUG_FLAT = 10;
+  (function() {
+    var smart = L.E.suggest;
+    L.E.suggest = function(S) {
+      var card = smart(S);
+      if (!card || card.length < 2) return card;
+      var key = "flat" + S.seed + ":" + S.week + ":" + S.qi, show = S.queue && S.queue[S.qi];
+      card.forEach(function(m) {
+        m.call = null;
+        delete m.end;
+      });
+      var P = S.promos[S.player], held = {};
+      (P.titles || []).forEach(function(t) {
+        (t.holders || []).forEach(function(id) {
+          held[id] = 1;
+        });
+      });
+      var pool = {};
+      card.forEach(function(m) {
+        if (m.mt === "br") return;
+        m.sides.forEach(function(sd) {
+          sd.forEach(function(id) {
+            var w = S.w[id];
+            if (!w || m.title && held[id]) return;
+            (pool[w.g] || (pool[w.g] = [])).push(id);
+          });
+        });
+      });
+      Object.keys(pool).forEach(function(g) {
+        pool[g].sort(function(a, b) {
+          return L.hash(key + "p" + a) - L.hash(key + "p" + b);
+        });
+      });
+      var was = JSON.stringify(card.map(function(m) {
+        return m.sides;
+      }));
+      card.forEach(function(m) {
+        if (m.mt === "br") return;
+        m.sides = m.sides.map(function(sd) {
+          return sd.map(function(id) {
+            var w = S.w[id];
+            if (!w || m.title && held[id]) return id;
+            var L2 = pool[w.g];
+            return L2 && L2.length ? L2.shift() : id;
+          });
+        });
+      });
+      if (L.E.validate(S, card).errors.length) {
+        var back = JSON.parse(was);
+        card.forEach(function(m, i) {
+          m.sides = back[i];
+        });
+      }
+      L.segRead(S).forEach(function(sg) {
+        if (!sg.tape) {
+          sg.k = "writers";
+          sg.who = [];
+          sg.ids = [];
+        }
+      });
+      L.E.fitShow(S, card);
+      S.sug = { w: S.week, qi: S.qi, k: card.map(sugKey) };
+      return card;
+    };
+    function sugKey(m) {
+      return m.mt + "|" + (m.title || "") + "|" + m.sides.map(function(sd) {
+        return sd.slice().sort(function(a, b) {
+          return a - b;
+        }).join(",");
+      }).sort().join("/");
+    }
+    L.CRX.push(function(ctx) {
+      var S = ctx.S, G = S.sug;
+      if (!ctx.isPl || !G || G.w !== S.week || G.qi !== S.qi || G.k.indexOf(sugKey(ctx.m)) < 0) return null;
+      return { d: -SUG_FLAT, x: "Booked by the numbers: the crowd has seen this one before" };
+    });
+    L.E.suggestSmart = function(S) {
+      return smart(S);
+    };
+  })();
+  L.SUG_FLAT = SUG_FLAT;
+
+  // engine/99-suggest-short.ts
+  (function() {
+    function short(S, card) {
+      var v = L.E.validate(S, card).errors;
+      return v.some(function(e) {
+        return /at least 3 matches|still empty/.test(e);
+      });
+    }
+    function topUp(S, card) {
+      var show = S.queue && S.queue[S.qi], P = S.promos[S.player];
+      if (!show || !card || !P || !short(S, card)) return card;
+      var key = "fill" + S.seed + ":" + S.week + ":" + S.qi, used = {};
+      card.forEach(function(m) {
+        L.flat(m.sides).forEach(function(id) {
+          used[id] = (used[id] || 0) + 1;
+        });
+      });
+      var able = S.w.filter(function(w) {
+        return w.promo === P.id && !w.nw && w.inj <= 0 && !w.camp && w.rest !== S.week && !(w.away >= S.week) && (show.big || !show.brand || w.brand === show.brand);
+      });
+      function order(a, b) {
+        return (used[a.id] || 0) - (used[b.id] || 0) || b.cond - a.cond || L.hash(key + a.id) - L.hash(key + b.id);
+      }
+      var max = show.big ? 10 : L.SLOT_MAX[P.slot], tries = 0;
+      while (short(S, card) && card.length < max && tries++ < 8) {
+        var added = false;
+        [true, false].forEach(function(fresh) {
+          if (added || !fresh && card.length >= 3) return;
+          ["M", "F"].forEach(function(g) {
+            if (added || card.length >= max) return;
+            var L3 = able.filter(function(w) {
+              return w.g === g && (!fresh || !used[w.id]);
+            }).sort(order);
+            if (L3.length < 2) return;
+            var a = L3[0], b = null;
+            for (var i = 1; i < L3.length; i++) {
+              if (L3[i].team == null || L3[i].team !== a.team) {
+                b = L3[i];
+                break;
+              }
+            }
+            if (!b) return;
+            card.push({ mt: "1v1", sides: [[a.id], [b.id]], win: -2, title: null, stip: "std", len: "M", fill: 1 });
+            used[a.id] = (used[a.id] || 0) + 1;
+            used[b.id] = (used[b.id] || 0) + 1;
+            added = true;
+          });
+        });
+        if (!added) break;
+        L.E.fitShow(S, card);
+      }
+      var L2 = L.segList(S), k = 0;
+      while (short(S, card) && card.length >= 3 && k++ < 6) {
+        L2.push({ k: "writers", who: [], pos: k % card.length, len: "L" });
+        L.E.fitShow(S, card);
+      }
+      return card;
+    }
+    var flatS = L.E.suggest, smartS = L.E.suggestSmart, pre = L.E.resolvePre;
+    L.E.resolvePre = function(S, card) {
+      var r = pre.apply(this, arguments);
+      if (card && S.queue && S.queue[S.qi]) topUp(S, card);
+      return r;
+    };
+    L.E.suggest = function(S) {
+      return topUp(S, flatS(S));
+    };
+    L.E.suggestSmart = function(S) {
+      return topUp(S, smartS(S));
+    };
+  })();
+
+  // engine/99-titleshow.ts
+  (function() {
+    var st = L.showTitles;
+    L.showTitles = function(P, show) {
+      var L2 = st.apply(this, arguments);
+      if (!show || show.big) return L2;
+      return L2.filter(function(t) {
+        return !t.show || !show.id || t.show === show.id;
+      });
+    };
+  })();
+  L.E.titleShows = function(S, tid) {
+    var P = S.promos[S.player], t = L.titleById(P, tid);
+    return { now: t && t.show || null, shows: (P.shows || []).filter(function(sh) {
+      return !sh.dead;
+    }).map(function(sh) {
+      return { id: sh.id, name: sh.name };
+    }) };
+  };
+  L.E.setTitleShow = function(S, tid, show) {
+    var P = S.promos[S.player], t = L.titleById(P, tid);
+    if (!t) return { ok: false, msg: "That title is not yours." };
+    if (show == null || show === "") {
+      delete t.show;
+      return { ok: true, msg: "The " + t.name + " can be defended on any of your shows." };
+    }
+    var sh = (P.shows || []).filter(function(x) {
+      return x.id === show && !x.dead;
+    })[0];
+    if (!sh) return { ok: false, msg: "That show is not on the air." };
+    t.show = sh.id;
+    L.news(S, "title", "The " + L.titleFull(P, t) + " is now defended on " + sh.name + ".");
+    return { ok: true, msg: "The " + t.name + " belongs to " + sh.name + " now. It is defended there, and on your big events." };
+  };
+  L.E.titlesOnShow = function(S, show) {
+    return L.showTitles(S.promos[S.player], show).map(function(t) {
+      return t.id;
+    });
+  };
+
+  // engine/99-tonight.ts
+  L.E.couldHappen = function(S) {
+    var P = S.promos[S.player], show = S.queue && S.queue[S.qi], card = (S.card || []).filter(function(m) {
+      return m && m.sides && L.flat(m.sides).every(function(id) {
+        return id != null && S.w[id];
+      });
+    });
+    var out = { moments: [], risk: [], sets: [], cold: [], gut: "" };
+    if (!show) return out;
+    var nm = function(id) {
+      return S.w[id].name;
+    }, on = {}, seen = {};
+    card.forEach(function(m) {
+      L.flat(m.sides).forEach(function(id) {
+        on[id] = 1;
+      });
+    });
+    card.forEach(function(m, i) {
+      var t = m.title ? P.titles.filter(function(x) {
+        return x.id === m.title;
+      })[0] : null, f = L.E.matchFeud(S, m);
+      if (t) out.moments.push(t.holders.length ? "The " + t.name + " could change hands." : "Somebody walks out with the vacant " + t.name + ".");
+      if (f && f.heat >= 60) out.moments.push(L.feudLabel(S, f) + " could boil over.");
+      if (m.mt === "br" && m.shot) out.moments.push("Somebody leaves the battle royal with a title shot.");
+      if (m.mt === "br" && m.surp) out.moments.push("A face from outside could walk through the curtain.");
+      if (m.int === "brutal" || m.stip === "ladder" || m.stip === "cage" || m.stip === "cell") L.flat(m.sides).forEach(function(id) {
+        var w = S.w[id];
+        if (w.cond < 65 && !seen[id]) {
+          seen[id] = 1;
+          out.risk.push(w.name + " is worn, in a match that hurts.");
+        }
+      });
+      if (f) out.sets.push(m.end ? L.feudLabel(S, f) + " ends here: the next story starts from what happens." : L.feudLabel(S, f) + " moves on.");
+      if (m.title && i < card.length - 1) out.sets.push("A title match below the main event: a new champion would need a story.");
+    });
+    Object.keys(on).forEach(function(id) {
+      var w = S.w[id];
+      if (seen[id]) return;
+      if (w.cond < 50) {
+        seen[id] = 1;
+        out.risk.push(w.name + " is running on fumes.");
+      } else if (w.morale < 38) {
+        seen[id] = 1;
+        out.risk.push(w.name + " is unhappy and could make a scene.");
+      }
+    });
+    if (card.length >= 3) {
+      var lows = card.filter(function(m) {
+        return L.flat(m.sides).every(function(id) {
+          return S.w[id].ovr < 55;
+        });
+      }).length;
+      if (lows >= Math.ceil(card.length / 2)) out.moments.push("The crowd could turn on a card without names on it.");
+    }
+    L.activeFeuds(S).filter(function(f) {
+      return f.promo === P.id && f.heat >= 50 && !f.a.concat(f.b).some(function(id) {
+        return on[id];
+      });
+    }).slice(0, 2).forEach(function(f) {
+      out.cold.push(L.feudLabel(S, f) + " is hot and not on the show.");
+    });
+    var fw = L.faceOf(S);
+    if (fw && card.length && !on[fw.id]) out.cold.push(fw.name + ", the face of the company, sits this one out.");
+    var A = L.E.fogInfo ? L.E.fogInfo(S) : null, who = A && A.head ? A.head : "Your road agent", sharp = L.h01(S.seed + ":gut:" + S.week + ":" + card.length) < L.clamp(0.4 + L.fogSkill(S), 0.1, 0.95);
+    var good = out.sets.length + out.moments.length, bad = out.risk.length + out.cold.length;
+    if (!card.length) out.gut = "";
+    else if (!sharp) out.gut = who + ': "Hard to say. We will know when the bell rings."';
+    else if (bad > good + 1) out.gut = who + ': "I do not like the feel of this one. Too much could go wrong."';
+    else if (good >= bad + 3) out.gut = who + ': "This one has a chance to be special."';
+    else out.gut = who + ': "Solid on paper. It comes down to the people in the ring."';
+    ["moments", "risk", "sets", "cold"].forEach(function(k) {
+      out[k] = out[k].slice(0, 4);
+    });
+    return out;
+  };
+
+  // engine/99-venues.ts
+  var VQ_FEEL = { intimate: "intimate: every seat is close", cavernous: "cavernous: hard to fill, hard to warm up", right: "" };
+  var VQ_SOUND = { loud: "the roof keeps the noise in", dead: "the sound dies in the rafters", plain: "" };
+  var VQ_CROWD = { rowdy: "a rowdy local crowd", smart: "a crowd that knows its wrestling", polite: "a polite crowd that needs warming up", plain: "" };
+  function venueQuirks(vname) {
+    var v = String(vname || ""), h = function(k) {
+      return L.h01("vq:" + k + ":" + v);
+    }, open = / (Stadium|Bowl|Field)\b/.test(v), small = / (Armory|Union Hall|Legion Hall|Rec Center|Ballroom|Music Hall)\b/.test(v);
+    var q = { feel: small || h("f") < 0.25 ? "intimate" : h("f") > 0.8 && !small ? "cavernous" : "right", sound: h("s") < 0.3 ? "loud" : h("s") > 0.82 ? "dead" : "plain", crowd: h("c") < 0.25 ? "rowdy" : h("c") < 0.45 ? "smart" : h("c") > 0.85 ? "polite" : "plain", sight: h("g") > 0.85 ? "poor" : "fine", open };
+    var w = [];
+    if (VQ_FEEL[q.feel]) w.push(VQ_FEEL[q.feel]);
+    if (VQ_SOUND[q.sound]) w.push(VQ_SOUND[q.sound]);
+    if (VQ_CROWD[q.crowd]) w.push(VQ_CROWD[q.crowd]);
+    if (q.sight === "poor") w.push("poor sightlines from the cheap seats");
+    if (q.open) w.push("open to the sky");
+    q.words = w;
+    q.short = w.length ? w[0].split(":")[0] : "nothing special";
+    return q;
+  }
+  L.E.venueQuirks = function(v) {
+    return venueQuirks(v);
+  };
+  L.CRX.push(function(ctx) {
+    if (!ctx.isPl || !ctx.rep || !ctx.rep.venue) return null;
+    var q = venueQuirks(ctx.rep.venue), d = 0, x = [];
+    if (q.feel === "intimate") {
+      d += 1;
+      x.push("an intimate building");
+    }
+    if (q.feel === "cavernous" && ctx.rep.att && ctx.rep.cap && ctx.rep.att < ctx.rep.cap * 0.7) {
+      d -= 1;
+      x.push("a cavernous building half full");
+    }
+    if (q.sound === "loud") {
+      d += 1;
+      x.push("a loud building");
+    } else if (q.sound === "dead") {
+      d -= 1;
+      x.push("a building where the sound dies");
+    }
+    if (q.crowd === "rowdy" && ctx.all.some(function(w) {
+      return w.align === "H";
+    })) {
+      d += 1;
+      x.push("a rowdy crowd that loves to boo");
+    }
+    if (q.crowd === "smart" && ctx.isMain) {
+      d += 1;
+      x.push("a crowd that knows good wrestling");
+    }
+    if (q.crowd === "polite" && ctx.isMain === false && d >= 0) {
+      d -= 0.5;
+    }
+    return d ? { d, x: x.join(", ") } : null;
+  });
+  var DISASTER = {
+    power: { n: "The power goes out", text: "The lights die halfway through the entrances. The building is black and the crowd is getting restless.", choices: [
+      { n: "Keep going under the emergency lights", says: "It is grim to look at, and the crowd sings to keep itself warm.", cr: -2 },
+      { n: "Stop the show until the power is back", says: "Twenty minutes of nothing. The show runs short, and the crowd is cold when it comes back.", cr: -3, cut: 1 },
+      { n: "Send your biggest name out with a microphone", says: "One voice in the dark, and the crowd hangs on every word.", cr: 1, star: 1, cost: "They will remember you threw them out there." }
+    ] },
+    ring: { n: "The ring is broken", text: "A turnbuckle has snapped in warm-ups and the bottom rope is loose. The crew say ten minutes, maybe more.", choices: [
+      { n: "Work around it", says: "They wrestle away from the bad corner. It shows, and somebody could get hurt.", cr: -1, hurt: 1 },
+      { n: "Fix it properly", says: "The crew fix it right. The show runs late and loses a segment.", cr: -1, cut: 1 },
+      { n: "Make it part of the show: a no-ropes match", says: "The announcers sell it as a special attraction. It is a risk, and it might be remembered.", cr: 2, hurt: 1 }
+    ] },
+    weather: { n: "The weather turns", text: "Rain is coming in sideways over the open end of the building. Half the floor seats are getting wet.", choices: [
+      { n: "Carry on in the rain", says: "They wrestle in the rain. Some love it. Some go home.", cr: 1, hurt: 1, mkt: -1 },
+      { n: "Wait it out", says: "An hour under ponchos. The show is cut short, and the people who stayed are cold.", cr: -2, cut: 1 },
+      { n: "Refund the floor seats", says: "Every wet seat gets its money back. It costs, and the city will remember the gesture.", cr: 0, refund: 1, mkt: 2 }
+    ] },
+    crowd: { n: "Trouble in the crowd", text: "A fight has broken out in the cheap seats and it is spreading. Security is stretched thin.", choices: [
+      { n: "Stop the show until it is cleared", says: "Security clears it. The show runs short, and the city talks about it for a week.", cr: -1, cut: 1, mkt: -1 },
+      { n: "Keep the show going and let security handle it", says: "The show goes on over the noise. A few people get hurt in the stands.", cr: -2, mkt: -2 },
+      { n: "Send a hero out to calm them down", says: "They walk to the barricade and the fight stops. The crowd chants their name.", cr: 2, star: 1, face: 1 }
+    ] }
+  };
+  L.LIVEK.disaster = {
+    n: "Trouble in the building",
+    pre: function(S, L2, step) {
+      if (step.t !== "match" || L2.had.disaster) return null;
+      var rep = L2.st && L2.st.rep;
+      if (!rep || !rep.venue) return null;
+      var q = venueQuirks(rep.venue);
+      var p = 0.025 + (q.open ? 0.04 : 0) + (q.crowd === "rowdy" ? 0.02 : 0) + (q.feel === "cavernous" ? 0.01 : 0);
+      if (L.h01(S.seed + ":dis:" + S.week + ":" + S.qi) >= p) return null;
+      var kinds = ["power", "ring"].concat(q.open ? ["weather"] : []).concat(q.crowd === "rowdy" ? ["crowd", "crowd"] : ["crowd"]), k = kinds[Math.floor(L.h01(S.seed + ":disk:" + S.week + ":" + S.qi) * kinds.length)], D = DISASTER[k];
+      var M = L.liveMatch(S, L2, step.i), R = L.rosterOf(S, S.player).filter(function(w) {
+        return !w.nw && !(w.inj > 0);
+      }).sort(function(a, b) {
+        return b.ovr - a.ovr;
+      }), star = (D.choices.some(function(c) {
+        return c.face;
+      }) ? R.filter(function(w) {
+        return w.align !== "H";
+      })[0] : R[0]) || R[0];
+      return {
+        phase: "mid",
+        mi: step.i,
+        dk: k,
+        who: star ? star.id : null,
+        text: D.text + " (" + rep.venue + ")",
+        why: q.words.length ? ["The building: " + q.words.join("; ")] : [],
+        safe: 1,
+        choices: D.choices.map(function(c) {
+          return { n: c.star && star ? c.n.replace(/your biggest name|a hero/, star.name) : c.n, says: c.says, who: c.star && star ? star.id : null };
+        })
+      };
+    },
+    run: function(S, L2, ev, c) {
+      var D = DISASTER[ev.dk], o = D.choices[c], M = L.liveMatch(S, L2, ev.mi), P = S.promos[S.player], rep = L2.st.rep, city = L.cityOfVenue(rep.venue);
+      if (!o) return "";
+      if (M && o.cr) L.livePut(M.m, { cr: o.cr, x: D.n.toLowerCase() + ": " + o.n.toLowerCase() });
+      if (o.cut) rep.short = 1;
+      if (o.hurt && M) {
+        var w = L.flat(M.c.sides)[0];
+        if (w && L.h01(S.seed + ":dish:" + S.week) < 0.35) {
+          w.inj = Math.max(w.inj || 0, 2);
+          L.news(S, "injury", w.name + " was hurt when " + D.n.toLowerCase() + " at " + rep.venue + ".");
+          L.youRemember(S, w, "venuehurt", "Got hurt in a broken building because the show went on.", -3);
+        }
+      }
+      if (o.refund) {
+        var cost = Math.round((rep.gate || 0) * 0.25);
+        P.cash -= cost;
+        o.says += " It costs " + L.money(cost) + ".";
+      }
+      if (o.mkt && S.mkt && S.mkt[city]) S.mkt[city].k = L.clamp((S.mkt[city].k || 50) + o.mkt * 3, 0, 100);
+      if (o.star && ev.who != null && S.w[ev.who]) {
+        var s = S.w[ev.who];
+        L.youRemember(S, s, "venuesave", "You sent them out to save the night when " + D.n.toLowerCase() + ".", o.face ? 3 : 1);
+        s.mom = L.clamp((s.mom || 0) + 1, -10, 10);
+      }
+      L.note(S, D.n, o.says, o.cr > 0 ? "good" : o.cr < 0 ? "bad" : "");
+      return o.says;
+    }
+  };
+  L.LIVE_ORDER.push("disaster");
+  L.E.buildingWords = function(S) {
+    var R = L.E.road(S);
+    if (!R || !R.now || !R.now.venue) return null;
+    var q = venueQuirks(R.now.venue);
+    return { words: q.words, short: q.short };
+  };
+  L.VQ_FEEL = VQ_FEEL;
+  L.VQ_SOUND = VQ_SOUND;
+  L.VQ_CROWD = VQ_CROWD;
+  L.venueQuirks = venueQuirks;
+  L.DISASTER = DISASTER;
+
+  // engine/99-worldweek.ts
+  var WW_KEEP = 12;
+  function wwCompany(S, P, wk) {
+    var out = { id: P.id, name: P.name, shows: [], titles: [], begun: [], ended: [], lead: null };
+    (S.wwShows || []).forEach(function(r) {
+      if (r.p === P.id && r.w === wk) out.shows.push(r);
+    });
+    (P.titles || []).forEach(function(t) {
+      (t.hist || []).forEach(function(h, i) {
+        if (h.from !== wk || !h.h || !h.h.length) return;
+        var prev = t.hist[i - 1], old = prev && prev.to === wk ? prev : null, how = "";
+        if (old) {
+          var f = (S.feuds || []).filter(function(x) {
+            return x.promo === P.id && x.title === t.id;
+          })[0];
+          how = f ? "after weeks of chasing" : h.show ? "at " + h.show : "";
+        } else how = "for the vacant title";
+        out.titles.push({ title: L.titleFull(P, t), now: h.h.join(" & "), old: old && old.h ? old.h.join(" & ") : null, weeks: old && old.from != null ? wk - old.from : null, how });
+      });
+    });
+    (S.feuds || []).forEach(function(f) {
+      if (f.promo !== P.id) return;
+      var nm = function(L2) {
+        return L2.map(function(id) {
+          return S.w[id] ? S.w[id].name : "?";
+        }).join(" & ");
+      };
+      if (f.start === wk) out.begun.push(nm(f.a) + " and " + nm(f.b));
+      if (f.res && f.end === wk && !f.dead) out.ended.push(nm(f.a) + " and " + nm(f.b));
+    });
+    var t0 = out.titles[0], best = out.shows.slice().sort(function(a, b) {
+      return (b.big ? 1 : 0) - (a.big ? 1 : 0);
+    })[0];
+    out.lead = t0 ? t0.now + " won the " + t0.title + (t0.how ? " " + t0.how : "") + (t0.weeks && t0.weeks >= 12 ? ", ending a reign of " + t0.weeks + " weeks" : "") + "." : out.ended[0] ? "The story of " + out.ended[0] + " ended." : best && best.big ? best.name + ": " + best.word + ", " + best.grade + "." : out.begun[0] ? "A new story: " + out.begun[0] + "." : best ? best.name + ": " + best.word + ", " + best.grade + "." : null;
+    return out;
+  }
+  function wwFile(S) {
+    if (S.cal) return;
+    var wk = S.week, L2 = [];
+    S.order.forEach(function(pid) {
+      if (pid === S.player) return;
+      var P = S.promos[pid];
+      if (!P || P.dead) return;
+      var c = wwCompany(S, P, wk);
+      if (c.lead || c.begun.length) L2.push(c);
+    });
+    L2.sort(function(a, b) {
+      return b.titles.length * 3 + b.ended.length * 2 + b.shows.length - (a.titles.length * 3 + a.ended.length * 2 + a.shows.length);
+    });
+    var ww = S.ww || (S.ww = []);
+    ww.unshift({ w: wk, label: L.cal(wk).label, cos: L2 });
+    if (ww.length > WW_KEEP) ww.length = WW_KEEP;
+  }
+  L.SHOWX.push(function(S, P, show, rep) {
+    if (S.cal || !P || P.id === S.player || !rep) return;
+    var L2 = S.wwShows || (S.wwShows = []), cs = L.repCS(rep), me = rep.lineup && rep.lineup.length ? rep.lineup[rep.lineup.length - 1] : null;
+    L2.push({ p: P.id, w: S.week, name: show.name, big: !!show.big, grade: L.gradeG(cs), word: verdictWord(rep), main: typeof me === "string" ? me : null });
+  });
+  function verdictWord(rep) {
+    var v = rep.rating != null && rep.exp != null ? L.E.showVerdict(rep.rating, rep.exp) : null;
+    return v ? v.head.toLowerCase() : "";
+  }
+  L.WEEKX.push(function(S) {
+    wwFile(S);
+    S.wwShows = [];
+  });
+  L.E.worldWeek = function(S, n) {
+    return (S.ww || []).slice(0, n || WW_KEEP);
+  };
+  L.WW_KEEP = WW_KEEP;
+  L.wwCompany = wwCompany;
+  L.wwFile = wwFile;
+  L.verdictWord = verdictWord;
+
+  // engine/99-writers.ts
+  var WR_STYLE = {
+    comedy: { n: "comedy", slur: "a joke that writes itself", likes: "a laugh" },
+    drama: { n: "drama", slur: "a soap opera", likes: "a story with tears in it" },
+    grit: { n: "grit", slur: "too dark for television", likes: "something that feels real" },
+    spectacle: { n: "spectacle", slur: "all fireworks, no story", likes: "a big moment" }
+  };
+  var GR_WROOM = {
+    comedy: ["The crowd laughs in all the right places: #hw# wrote this one.", "A line lands so well the announcers lose it. #hw#\u2019s room, no doubt.", "It is silly, and the building loves it."],
+    drama: ["Somebody in the front row is crying. #hw# got what #hw# wanted.", "It plays like the last scene of a long film.", "Quiet, then loud, then quiet again. A drama writer\u2019s segment."],
+    grit: ["No music, no smiles. It feels like it really happened.", "#hw# wrote it rough, and the crowd believes every word.", "It is uncomfortable to watch, which is the point."],
+    spectacle: ["Pyro, lights, a lot of noise. #hw# never wrote a small thing.", "Everything is bigger than it needs to be, and nobody minds.", "The kind of moment that ends up in the opening video."]
+  };
+  var WR_FIRST = ["Abel", "Bette", "Cyril", "Delia", "Ezra", "Flo", "Gideon", "Hester", "Ivo", "June", "Kit", "Lorna"];
+  var WR_LAST = ["Ashdown", "Bramble", "Corrie", "Dunmore", "Elwood", "Fenn", "Garnet", "Holloway", "Inchley", "Jessop", "Kell", "Larkin"];
+  function wrInit(S) {
+    if (S.wr && S.wr.ids.every(function(id) {
+      return S.w[id];
+    })) return S.wr;
+    var P = S.promos[S.player], styles = Object.keys(WR_STYLE), ids = [];
+    for (var i = 0; i < 3; i++) {
+      var nm = i === 0 && P.staff && P.staff.writer && P.staff.writer !== "The head writer" ? P.staff.writer : WR_FIRST[L.hash(S.seed + "wf" + i) % WR_FIRST.length] + " " + WR_LAST[L.hash(S.seed + "wl" + i) % WR_LAST.length];
+      var w = L.addWrestler(S, { name: nm, g: L.hash(nm) % 2 ? "F" : "M", style: "E", ovr: 40, mic: 55, align: "F", roles: ["writer"], age: 30 + L.hash(nm) % 25 }, P.id);
+      w.srole = "writer";
+      w.wst = styles[L.hash(S.seed + "ws" + i) % styles.length];
+      w.wsk = 55 + L.hash(S.seed + "wk" + i) % 40;
+      w.wage = 0;
+      w.con = 999;
+      ids.push(w.id);
+    }
+    S.wr = { ids, head: ids[0], passed: 0, last: -1 };
+    return S.wr;
+  }
+  function wrName(S, id) {
+    return S.w[id] ? S.w[id].name : "A writer";
+  }
+  function wrPitch(S, id, k) {
+    var P = S.promos[S.player], w = S.w[id], st = WR_STYLE[w.wst], F = L.E.sift(S) || [], off = L.hash(S.seed + ":wp:" + S.week + ":" + id) + k, f = null;
+    var many = L.activeFeuds(S).filter(function(x) {
+      return x.promo === P.id;
+    }).length >= 8;
+    for (var i = 0; i < F.length && !many && !f; i++) {
+      var c = F[(off + i) % F.length];
+      if (c && S.w[c.a] && S.w[c.b] && !L.inFeud(S, c.a) && !L.inFeud(S, c.b)) f = c;
+    }
+    if (f) return { k: "feud", a: f.a, b: f.b, t: S.w[f.a].name + " against " + S.w[f.b].name + ", played as " + st.likes };
+    var R = L.rosterOf(S, P.id).filter(function(x) {
+      return !x.nw && !(x.inj > 0);
+    }).sort(function(a, b) {
+      return b.ovr - a.ovr;
+    }), star = R[(k * 2 + L.hash(S.seed + ":wq:" + S.week)) % Math.max(1, Math.min(R.length, 6))];
+    return star ? { k: "spot", a: star.id, t: "a spotlight on " + star.name + ": " + st.likes } : null;
+  }
+  L.WEEKX.push(function(S) {
+    if (S.cal || S.over || S.week % 2) return;
+    var X = wrInit(S);
+    if (S.inbox.some(function(e) {
+      return !e.done && e.type === "wroom";
+    })) return;
+    var n = Math.floor(S.week / 2) % 3, a = X.ids[n], b = X.ids[(n + 1) % 3], pa = wrPitch(S, a, 0), pb = wrPitch(S, b, 1);
+    if (!pa || !pb) return;
+    var A = S.w[a], B = S.w[b], P = S.promos[S.player], ag = P.staff && P.staff.agent ? P.staff.agent : "The road agent", side = A.wsk + (a === X.head ? 10 : 0) >= B.wsk + (b === X.head ? 10 : 0) ? A : B;
+    L.pushEv(S, {
+      type: "wroom",
+      a,
+      b,
+      pa,
+      pb,
+      text: "The writers\u2019 room. " + A.name + " (" + WR_STYLE[A.wst].n + (a === X.head ? ", head writer" : "") + ") pitches " + pa.t + ". " + B.name + " calls it " + WR_STYLE[A.wst].slur + " and pitches " + pb.t + ". " + ag + " sides with " + side.name + ".",
+      choices: ["Run " + A.name + "\u2019s pitch", "Run " + B.name + "\u2019s pitch", "Neither: the room can try again"]
+    });
+  });
+  L.EVR.wroom = function(S, ev, choice, P) {
+    var X = wrInit(S), A = S.w[ev.a], B = S.w[ev.b];
+    if (!A || !B) return "The room has moved on.";
+    if (choice === 2) {
+      L.youRemember(S, A, "pitchno", "You turned their pitch down.", -1);
+      L.youRemember(S, B, "pitchno", "You turned their pitch down.", -1);
+      return "Neither. The room goes quiet, and both of them go back to their desks a little smaller.";
+    }
+    var W = choice === 0 ? A : B, L2 = choice === 0 ? B : A, pt = choice === 0 ? ev.pa : ev.pb, msg;
+    L.relBump(S, W.id, L2.id, { bond: -8 }, { k: "room", t: W.name + " won the argument in the writers\u2019 room." });
+    L.youRemember(S, W, "pitchyes", "You ran their pitch.", 2);
+    L.youRemember(S, L2, "pitchno", "You ran the other pitch.", -1);
+    if (L2.id === X.head) {
+      X.passed++;
+      if (X.passed >= 2) {
+        L2.morale = L.clamp(L2.morale - 12, 0, 100);
+        L.note(S, "The head writer is sulking", L2.name + " has been passed over twice running.", "bad");
+      }
+    } else if (W.id === X.head) X.passed = 0;
+    X.style = W.wst;
+    X.by = W.id;
+    X.until = S.week + 4;
+    if (pt.k === "feud" && S.w[pt.a] && S.w[pt.b] && !L.feudOf(S, pt.a, pt.b)) {
+      var f = L.startFeud(S, P, S.w[pt.a], S.w[pt.b], 24, W.name + " wrote " + S.w[pt.a].name + " and " + S.w[pt.b].name + " into a story", { force: true });
+      msg = f ? "The story starts: " + pt.t + "." : "The story would not take.";
+    } else {
+      var s = S.w[pt.a];
+      if (s) {
+        s.mom = L.clamp((s.mom || 0) + 2, -10, 10);
+        L.youRemember(S, s, "spot", "The writers built a week around them.", 1);
+      }
+      msg = "Next week belongs to " + (s ? s.name : "them") + ".";
+    }
+    return W.name + "\u2019s pitch it is. " + msg + " For a month the writers\u2019 segments carry " + W.name + "\u2019s touch.";
+  };
+  L.ANGDONE.push(function(S, P, ba) {
+    var X = S.wr;
+    if (!X || P.id !== S.player || !ba.wr) return;
+    var id = X.until >= S.week && X.by != null ? X.by : X.head, w = S.w[id];
+    if (!w || !WR_STYLE[w.wst]) return;
+    var L2 = GR_WROOM[w.wst], line = L2[Math.floor(L.h01(S.seed + ":wl:" + S.week + ":" + (ba.text || "").length) * L2.length)].replace(/#hw#/g, w.name);
+    ba.text = (ba.text || "") + " " + line;
+    if (w.wsk >= 80) ba.ov = Math.min(100, (ba.ov || 0) + 1);
+  });
+  L.E.writers = function(S) {
+    var X = wrInit(S);
+    return X.ids.map(function(id) {
+      var w = S.w[id];
+      return { id, name: w.name, style: WR_STYLE[w.wst].n, likes: WR_STYLE[w.wst].likes, strong: w.wsk >= 80 ? "a strong writer" : w.wsk >= 65 ? "a good writer" : "still learning", head: id === X.head, pen: X.by === id && X.until >= S.week, mood: w.morale < 40 ? "unhappy" : "content", you: S.rmY && S.rmY[id] ? S.rmY[id].v : 0 };
+    });
+  };
+  L.WR_STYLE = WR_STYLE;
+  L.GR_WROOM = GR_WROOM;
+  L.WR_FIRST = WR_FIRST;
+  L.WR_LAST = WR_LAST;
+  L.wrInit = wrInit;
+  L.wrName = wrName;
+  L.wrPitch = wrPitch;
 
   // engine/99-zpodcast.ts
   var POD_EPS = 4;
