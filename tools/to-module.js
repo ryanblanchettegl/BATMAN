@@ -11,7 +11,7 @@ const topNames = text => { const sf = ts.createSourceFile('x.js', text, ts.Scrip
   sf.statements.forEach(st => { if (ts.isFunctionDeclaration(st) && st.name) n.add(st.name.text); else if (ts.isVariableStatement(st)) st.declarationList.declarations.forEach(d => { if (ts.isIdentifier(d.name)) n.add(d.name.text); }); }); return n; };
 // the names every other file declares, and modules already moved
 const others = new Set();
-for (const f of fs.readdirSync(path.join(root, 'src')).filter(f => f.endsWith('.js'))) if ('src/' + f !== file) topNames(fs.readFileSync(path.join(root, 'src', f), 'utf8')).forEach(n => others.add(n));
+for (const f of (fs.existsSync(path.join(root, 'src')) ? fs.readdirSync(path.join(root, 'src')) : []).filter(f => f.endsWith('.js'))) if ('src/' + f !== file) topNames(fs.readFileSync(path.join(root, 'src', f), 'utf8')).forEach(n => others.add(n));
 const engDir = path.join(root, 'engine');
 for (const f of fs.existsSync(engDir) ? fs.readdirSync(engDir).filter(f => /^\d.*\.ts$/.test(f)) : []) topNames(fs.readFileSync(path.join(engDir, f), 'utf8')).forEach(n => others.add(n));
 const own = topNames(src);

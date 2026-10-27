@@ -1,7 +1,7 @@
 // Builds engine.js from src/*.js, then bundles the default universe, the engine and the interface (app/) into one page in dist/.
 const fs=require('fs'),path=require('path');
 const rd=f=>fs.readFileSync(path.join(__dirname,f),'utf8');
-const parts=fs.readdirSync(path.join(__dirname,'src')).filter(f=>f.endsWith('.js')).sort();
+const parts=(fs.existsSync(path.join(__dirname,'src'))?fs.readdirSync(path.join(__dirname,'src')):[]).filter(f=>f.endsWith('.js')).sort();
 // The engine (docs/adr/0001-typescript-engine-migration.md). The ES5 files still in src/ are joined into one closure, the
 // legacy block, which hands back L: a getter and a setter for each of its top-level names, so the TypeScript modules in
 // engine/ (moved from src/, last file first) can call, read and wrap them, and legacy code sees what modules set. esbuild
