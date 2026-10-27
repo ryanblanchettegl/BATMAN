@@ -6460,7 +6460,7 @@
     var fx = [], FX = function(good, text) {
       fx.push({ s: good ? 1 : -1, x: text });
     };
-    var ctx = { rep, S, P, show, m, sides, all, stip, mins, t, feud, isMain, big, isPl, i, n, rep, fx, champSide };
+    var ctx = { rep, S, P, show, m, sides, all, stip, mins, t, feud, isMain, big, isPl, i, n, fx, champSide };
     var pre = {};
     all.forEach(function(w) {
       pre[w.id] = w.ws;
