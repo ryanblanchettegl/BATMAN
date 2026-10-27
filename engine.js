@@ -3,7 +3,7 @@
   // engine/_gen/legacy.js
   var L = function(root) {
     "use strict";
-    var LF2, LF_PRESS2, crowdWord2, liveFeed2, NET_FEED_MAX2, netPickH2, netHandle2, netLikes2, netPost2, netStarPost2, NET_WIN_F2, NET_WIN_H2, NET_NEW2, NET_LOSE2, NET_RIVAL2, NET_TURN2, netTurn2, netMentions2, netRumours2, netBackstage2, netThrowback2, netMoment2, netSheet2, taskOpen2, ADV_DAYS2, showDay2, wasNow2, reqOf2, faceCandidates2, CLAUSE2, clausesWanted2, datesFull2, SHOW_LEN2, MT_OVER2, showMins2, bellMins2, brMins2, matchSlot2, hasPlan2, showClock2, OPENS2, openKind2, showTimes2, fitShow2, showFill2, PLOT_PUSH_CD2, PLOT2, plotTeams2, plotPushable2, plotTapeOn2, SHOW_WORDS2, GRADES2, gradeIdx2, gradeG2, gradeA2, gradeMeets2, CROWD_PTS2, crowdScoreD2, crowdScore2, repCS2, verdictBand2, cgFix2, showWord2, capW2, showVerdict2, ARCH_KEEP2, archYear2, arcHeels2, arcFaces2, ARCS2, arcFill2, arcEnd2, arcWord2, arcSplit2, AUD2, AUD_MODEL2, AUD_DRIFT2, audInit2, audReach2, audLean2, audTarget2, audBase2, audTotal2, audOffer2, CT_BIG2, ctWeekly2, ctPolicy2, ctFee2, ctAssign2, ctWeek2, payWeek2, DEBUT2, KNOW02, knowMake2, gasLimit2, fogSkill2, readP2, reads2, agentName2, matchRead2, fogLook2, EAR_BAD2, EAR_GOOD2, earLine2, cardFlags2, GFX2, GIM_WORDS2, gimFromWords2, gimBestFit2, gimSmart2, gfx2, gimStip2, gimPair2, KF_WORDS2, kfWord2, kfInit2, kfFind2, kfLeakP2, MID_MAX2, midStory2, overallRaw2, overallOf2, BP_CARRY2, bpPerShow2, CLOG_MAX2, clog2, pmMoney2, pmReview2, P0month2, PRESS_FIRST2, PRESS_LAST2, PRESS_BEAT2, PRESS_ACT2, pressInit2, pressWord2, pressSources2, pressWho2, PROG_ATTR2, PROG_BY2, DEV2, STYLE_PRI2, GIM_PRI2, progNeed2, progAgeX2, progInit2, progAll2, progCap2, progCost2, progGain2, progUse2, progSpend2, progAuto2, PROG_HC2, progShow2, rgWhy2, rgRow2, progLose2, regWeek2, RW_MOVES2, RW_LINES2, rwMoves2, brSurprisePool2, brFee2, STAFF_TAG2, STAFF_LVL2, staffTag2, staffVoice2, staffUnvoice2, toStaffOk2, SUG_FLAT2, VQ_FEEL2, VQ_CROWD2, venueQuirks2, DISASTER2, WW_KEEP2, wwCompany2, wwFile2, verdictWord2, WR_STYLE2, GR_WROOM2, WR_FIRST2, wrInit2, wrName2, wrPitch2, POD_EPS2, POD_SEGS2, podFirst2, podPlain2, podShowName2, podInit2, podTone2, podPickSide2, podWrite2;
+    var NET_TASTE2, NET_KEYS2, netTaste2, netTarget2, netClash2, netPleased2, netCardClash2, REGIONS2, TASTEN2, homeReg2, tourCost2, tourBoost2, tasteVal2, tasteFit2, tasteDraw2, retireCompany2, topTitle2, STRM_PRICE2, streamOn2, streamCap2, streamOpenCost2, streamRunCost2, CANCEL_WARN2, showOff2, MAP_W2, MAPS2, CITY_AT2, TOWN_AT2, VENUE_RE2, BLD_TIER2, BLD_WORDS2, cityBuildings2, venueName2, cityOfVenue2, placeOf2, mapById2, mapXY2, mapHas2, mapArea2, HOME_KM2, homeKm2, homeNear2, homeWeight2, homeHype2, homeHypeAt2, geoDist2, roadRoute2, roadCity2, soldOutLast2, roadCap2, MKT_WORDS2, mktBase2, mktKnow2, coldNight2, weatherMult2, mktMult2, mktWord2, roadMktNow2, saleSpan2, saleFrac2, stopDraw2, stopSales2, roadSoldNow2, roadAhead2, MAP_FIRST2, roadMap2, roadShape2, CONT_AT2, roadNearest2, SHAPES2, JOB_TERMS2, jobCheck2, isoParts2, chalCheck2, SCN_BUILT2, SCN_OPS2, scnSign2, SCN_WIN2, SCN2, scnFill2, scnLoad2, scnJudge2, scnCut2, SH_HOT2, shIds2, shFacts2, shOpener2, shTopLvl2, SH_MT2, shPrev2, shBreak2, shapeAuto2, SEGLEN2, SEGK2, segLen2, segMins2, segSlots2, segList2, segRead2, segPool2, segTitleOf2, segChoices2, segWhy2, segMean2, segLook2, segLabel2, runSeg2, segBooked2, SEGFX2, SEGHEAT2, SEGBOND2, SEGK02, segoClean2, segkClean2, segkSync2, STIP_SETS2, STIP_BASES2, STIP02, stipBase2, stipClean2, stipSync2, edStipPut2, LF2, LF_PRESS2, crowdWord2, liveFeed2, NET_FEED_MAX2, netPickH2, netHandle2, netLikes2, netPost2, netStarPost2, NET_WIN_F2, NET_WIN_H2, NET_NEW2, NET_LOSE2, NET_RIVAL2, NET_TURN2, netTurn2, netMentions2, netRumours2, netBackstage2, netThrowback2, netMoment2, netSheet2, taskOpen2, ADV_DAYS2, showDay2, wasNow2, reqOf2, faceCandidates2, CLAUSE2, clausesWanted2, datesFull2, SHOW_LEN2, MT_OVER2, showMins2, bellMins2, brMins2, matchSlot2, hasPlan2, showClock2, OPENS2, openKind2, showTimes2, fitShow2, showFill2, PLOT_PUSH_CD2, PLOT2, plotTeams2, plotPushable2, plotTapeOn2, SHOW_WORDS2, GRADES2, gradeIdx2, gradeG2, gradeA2, gradeMeets2, CROWD_PTS2, crowdScoreD2, crowdScore2, repCS2, verdictBand2, cgFix2, showWord2, capW2, showVerdict2, ARCH_KEEP2, archYear2, arcHeels2, arcFaces2, ARCS2, arcFill2, arcEnd2, arcWord2, arcSplit2, AUD2, AUD_MODEL2, AUD_DRIFT2, audInit2, audReach2, audLean2, audTarget2, audBase2, audTotal2, audOffer2, CT_BIG2, ctWeekly2, ctPolicy2, ctFee2, ctAssign2, ctWeek2, payWeek2, DEBUT2, KNOW02, knowMake2, gasLimit2, fogSkill2, readP2, reads2, agentName2, matchRead2, fogLook2, EAR_BAD2, EAR_GOOD2, earLine2, cardFlags2, GFX2, GIM_WORDS2, gimFromWords2, gimBestFit2, gimSmart2, gfx2, gimStip2, gimPair2, KF_WORDS2, kfWord2, kfInit2, kfFind2, kfLeakP2, MID_MAX2, midStory2, overallRaw2, overallOf2, BP_CARRY2, bpPerShow2, CLOG_MAX2, clog2, pmMoney2, pmReview2, P0month2, PRESS_FIRST2, PRESS_LAST2, PRESS_BEAT2, PRESS_ACT2, pressInit2, pressWord2, pressSources2, pressWho2, PROG_ATTR2, PROG_BY2, DEV2, STYLE_PRI2, GIM_PRI2, progNeed2, progAgeX2, progInit2, progAll2, progCap2, progCost2, progGain2, progUse2, progSpend2, progAuto2, PROG_HC2, progShow2, rgWhy2, rgRow2, progLose2, regWeek2, RW_MOVES2, RW_LINES2, rwMoves2, brSurprisePool2, brFee2, STAFF_TAG2, STAFF_LVL2, staffTag2, staffVoice2, staffUnvoice2, toStaffOk2, SUG_FLAT2, VQ_FEEL2, VQ_CROWD2, venueQuirks2, DISASTER2, WW_KEEP2, wwCompany2, wwFile2, verdictWord2, WR_STYLE2, GR_WROOM2, WR_FIRST2, wrInit2, wrName2, wrPitch2, POD_EPS2, POD_SEGS2, podFirst2, podPlain2, podShowName2, podInit2, podTone2, podPickSide2, podWrite2;
     var DB = root.GP_DB, E = {};
     var CAL0 = DB ? { y: DB.startYear, m: DB.startMonth } : { y: 2026, m: 9 };
     function dbOf(S) {
@@ -1135,7 +1135,7 @@
       card.sort(function(a, b) {
         return a._p - b._p;
       });
-      shapeAuto(S, P, card);
+      shapeAuto2(S, P, card);
       if (isPl) {
         var g2 = 0;
         while (g2++ < 8 && cardCost(S, card) > S.bp) {
@@ -1342,7 +1342,7 @@
       pick(S, P.cities || ["the city"]);
       var n = S.rdn || 0;
       S.rdn = n + 1;
-      return venueName(roadCity(S, P, n), cap);
+      return venueName2(roadCity2(S, P, n), cap);
     }
     function nth(n) {
       return ["zero", "first", "second", "third", "fourth", "fifth", "sixth", "seventh", "eighth", "ninth", "tenth"][n] || n + "th";
@@ -2057,9 +2057,9 @@
       feud.end = S.week;
       feudEmber(S, feud);
       feudFile(S, feud, "end");
-      var hc = isPl ? roadCity(S, P, Math.max(0, (S.rdn || 1) - 1)) : null, hw = null, hk = 0;
+      var hc = isPl ? roadCity2(S, P, Math.max(0, (S.rdn || 1) - 1)) : null, hw = null, hk = 0;
       if (hc) winners.concat(losers).forEach(function(w) {
-        var k = homeWeight(S, w, hc);
+        var k = homeWeight2(S, w, hc);
         if (k > hk) {
           hk = k;
           hw = w;
@@ -2842,13 +2842,13 @@
     }
     function feudHomeAt(S, P, f, w) {
       if (f.promo !== S.player) return null;
-      var st = roadAhead(S, P, 12).filter(function(a) {
+      var st = roadAhead2(S, P, 12).filter(function(a) {
         return a.w === w && a.show.big;
       })[0];
       if (!st) return null;
       var best = null, bk = 0;
       [f.a[0], f.b[0]].forEach(function(id) {
-        var x = S.w[id], k = homeWeight(S, x, st.city);
+        var x = S.w[id], k = homeWeight2(S, x, st.city);
         if (k > bk) {
           bk = k;
           best = x;
@@ -3106,8 +3106,8 @@
         stakes.push({ k: "due", t: qt });
       });
       if (show.big && P.weak && P.weak > S.week) stakes.push({ k: "weak", t: "You lost the war badly: big nights draw a little less until " + cal(P.weak).label + "." });
-      if (typeof netCardClash === "function") {
-        var nc = netCardClash(S, show, card);
+      if (typeof netCardClash2 === "function") {
+        var nc = netCardClash2(S, show, card);
         if (nc) stakes.push({ k: "net", t: nc });
       }
       if (!show.big && typeof nightRivals === "function") {
@@ -3333,7 +3333,7 @@
           if (f && f.heat > heat) heat = f.heat;
         }
       });
-      return clamp(1 + (star - (P.starB[key] || star)) / 80 + heat / 500 + ADV_H[P.adv] + (isPl && S.hype ? S.hype : 0) + (isPl && show.big && P.evHype ? P.evHype : 0) + (isPl ? faceHype(S, P, card) + homeHype(S, P, flat(card.map(function(m) {
+      return clamp(1 + (star - (P.starB[key] || star)) / 80 + heat / 500 + ADV_H[P.adv] + (isPl && S.hype ? S.hype : 0) + (isPl && show.big && P.evHype ? P.evHype : 0) + (isPl ? faceHype(S, P, card) + homeHype2(S, P, flat(card.map(function(m) {
         return flat(m.sides);
       }))) : 0), 0.8, 1.4) * (isPl && show.big && evAfterDark(S, P) ? 1.08 : 1);
     }
@@ -3357,7 +3357,7 @@
       if (S.hype) out.push({ t: S.hype > 0 ? "Work done to build the night" : "Bad word of mouth before the night", v: S.hype });
       var fh = faceHype(S, P, card);
       if (fh) out.push({ t: fh > 0 ? "The face of the company on top" : "The face of the company left off", v: fh });
-      var hh = homeHype(S, P, flat(card.map(function(m) {
+      var hh = homeHype2(S, P, flat(card.map(function(m) {
         return flat(m.sides);
       })));
       if (hh) out.push({ t: "A home town name on the bill", v: hh });
@@ -3374,8 +3374,8 @@
       })) : 50;
       rep.mainStar = star;
       if (!S.cal) {
-        var hype = cardHype(S, P, show, card, isPl), dm = TIX_D[P.tix], d0 = demand(P, show, 1) * (isPl ? tourBoost(S, P) * roadMktNow(S, P) : 1), d = d0 * (isPl ? tasteDraw(S, P, card, rep) * weatherMult(S, show, roadCity(S, P, S.rdn || 0)) : 1), cap = capFor(d0);
-        if (isPl && coldNight(S, show, roadCity(S, P, S.rdn || 0))) rep.cold = 1;
+        var hype = cardHype(S, P, show, card, isPl), dm = TIX_D[P.tix], d0 = demand(P, show, 1) * (isPl ? tourBoost2(S, P) * roadMktNow2(S, P) : 1), d = d0 * (isPl ? tasteDraw2(S, P, card, rep) * weatherMult2(S, show, roadCity2(S, P, S.rdn || 0)) : 1), cap = capFor(d0);
+        if (isPl && coldNight2(S, show, roadCity2(S, P, S.rdn || 0))) rep.cold = 1;
         rep.hype = hype;
         rep.cap = cap;
         rep.att = Math.round(Math.min(cap, d * hype * dm));
@@ -3388,7 +3388,7 @@
           P.bh = bh.concat([hype]).slice(-3);
         }
         if (isPl) {
-          var sold = roadSoldNow(S, P);
+          var sold = roadSoldNow2(S, P);
           if (sold > rep.att) {
             rep.noshow = sold - rep.att;
             rep.att = sold;
@@ -3418,7 +3418,7 @@
       }
       var st = { rep, used: {}, angled: {}, k: 0, steps: [] };
       if (isPl) {
-        var bk = segBooked(S, show, n);
+        var bk = segBooked2(S, show, n);
         rep.open = { k: "match" };
         if (S.plan) st.steps.push({ t: "plan" });
         for (i = 0; i < n; i++) {
@@ -3445,7 +3445,7 @@
       pool.forEach(function(w) {
         inP[w.id] = 1;
       });
-      var ctx = { pool, inP, angled: st.angled, left: {}, extra: [], city: st.rep && st.rep.venue ? cityOfVenue(st.rep.venue) : null };
+      var ctx = { pool, inP, angled: st.angled, left: {}, extra: [], city: st.rep && st.rep.venue ? cityOfVenue2(st.rep.venue) : null };
       if (step.t === "plan") {
         var pp = planPromo(S, P, show, ctx);
         if (pp) {
@@ -3462,11 +3462,11 @@
         return Object.keys(ctx.angled).filter(function(k) {
           return !had[k];
         });
-      }, first = !rep.segs.length, wr = step.sg.k === "writers", ba = wr ? genAngle(S, P, show, ctx) : runSeg(S, P, show, ctx, step.sg, step.slot, first);
+      }, first = !rep.segs.length, wr = step.sg.k === "writers", ba = wr ? genAngle(S, P, show, ctx) : runSeg2(S, P, show, ctx, step.sg, step.slot, first);
       if (!ba) return null;
-      ba.mins = segMins(step.sg);
+      ba.mins = segMins2(step.sg);
       if (wr) ba.wr = 1;
-      if (first) rep.open = { k: wr ? "angle" : step.sg.k === "recap" ? "recap" : SEGK[step.sg.k].t, ids: fresh().map(Number), ov: ba.ov, feud: ba.feud };
+      if (first) rep.open = { k: wr ? "angle" : step.sg.k === "recap" ? "recap" : SEGK2[step.sg.k].t, ids: fresh().map(Number), ov: ba.ov, feud: ba.feud };
       rep.en = Math.min(100, (rep.en == null ? 100 : rep.en) + 14);
       ANGDONE.forEach(function(fn) {
         fn(S, P, ba, fresh());
@@ -3929,7 +3929,7 @@
       n: "Off the script",
       pre: function(S, L2, step) {
         if (step.t !== "seg" || !step.sg || !step.sg.who || !step.sg.who.length) return null;
-        var K = SEGK[step.sg.k];
+        var K = SEGK2[step.sg.k];
         if (!K || K.t !== "promo" || K.fix || step.sg.k === "faceoff") return null;
         var w = S.w[step.sg.who[0]], P = S.promos[S.player];
         if (!w) return null;
@@ -4137,7 +4137,7 @@
       S.live = null;
       S.segs = [];
       S.segKey = null;
-      scnCut(S);
+      scnCut2(S);
       return rep;
     }
     E.liveBegin = function(S, card) {
@@ -4732,7 +4732,7 @@
         for (q = st.k + 1; q < st.steps.length; q++) if (st.steps[q].t === "seg" && !st.steps[q].cut) {
           var sg = st.steps[q].sg, who = (sg.who || []).map(function(id) {
             return S.w[id];
-          }).filter(Boolean), lab = who.length ? segLabel(S, sg) : "the writers\u2019 segment";
+          }).filter(Boolean), lab = who.length ? segLabel2(S, sg) : "the writers\u2019 segment";
           ch.push({ n: "Give them five more minutes. Cut " + lab, k: "seg", q, says: "The match gets longer, and a good one gets better. " + (who.length ? names(who) + " will not thank you for losing their time on the show." : "The writers lose their time on the show.") });
           break;
         }
@@ -4761,7 +4761,7 @@
             (sp.sg.who || []).forEach(function(id) {
               if (S.w[id]) youRemember(S, S.w[id], "bumped", "You cut their segment from the show for time.", -6);
             });
-            var back = segMins(sp.sg) - more;
+            var back = segMins2(sp.sg) - more;
             if (back > 0) st.rep.slack = (st.rep.slack || 0) + back;
           }
           return "They get their time. The segment that was coming up will not air tonight.";
@@ -5007,7 +5007,7 @@
         );
       }
       if (rep.mkt && rep.city && rep.mkt.now !== rep.mkt.was) {
-        var mw = mktWord(rep.mkt.now), mo = mktWord(rep.mkt.was), mu = rep.mkt.now > rep.mkt.was;
+        var mw = mktWord2(rep.mkt.now), mo = mktWord2(rep.mkt.was), mu = rep.mkt.now > rep.mkt.was;
         add(
           "market",
           "The market",
@@ -6732,7 +6732,7 @@
         lostTo: h && h.lw === (b && b.id) && bw > 0 ? b.name : null,
         beat: h && h.lw === a.id && aw > 0 && b ? b.name : null,
         streak: a.ws || 0,
-        home: !!(city && a.town && homeKm(S, a, city) != null && homeKm(S, a, city) <= 100),
+        home: !!(city && a.town && homeKm2(S, a, city) != null && homeKm2(S, a, city) <= 100),
         city: city || "everybody",
         weeks: f ? Math.max(0, S.week - (f.start || S.week)) : 0,
         fin: a.fin ? String(a.fin).replace(/^the /i, "") : null
@@ -9255,7 +9255,7 @@
         } while (have[nm] && tries++ < 40);
         if (have[nm]) continue;
         have[nm] = 1;
-        var rg = ri(S, 0, REGIONS.length - 1), rst = { brawl: ["B", "P", "S", "A"], work: ["T", "A", "S", "H"], spectacle: ["H", "E", "A", "P"] }[REGIONS[rg].taste], work = ri(S, 38, 60), blue = chance(S, 0.15), w = addWrestler(S, { name: nm, g, ovr: ri(S, 6, 20) + (blue ? 6 : 0), style: chance(S, 0.6) ? pick(S, rst) : pick(S, styles), work, mic: ri(S, 30, 75), align: chance(S, 0.5) ? "F" : "H", age: ri(S, 19, 23) }, "FA", null);
+        var rg = ri(S, 0, REGIONS2.length - 1), rst = { brawl: ["B", "P", "S", "A"], work: ["T", "A", "S", "H"], spectacle: ["H", "E", "A", "P"] }[REGIONS2[rg].taste], work = ri(S, 38, 60), blue = chance(S, 0.15), w = addWrestler(S, { name: nm, g, ovr: ri(S, 6, 20) + (blue ? 6 : 0), style: chance(S, 0.6) ? pick(S, rst) : pick(S, styles), work, mic: ri(S, 30, 75), align: chance(S, 0.5) ? "F" : "H", age: ri(S, 19, 23) }, "FA", null);
         w.pot = clamp(work + ri(S, 10, 24) + (blue ? 12 : 0), work, 97);
         w.sq = clamp(ri(S, 30, 72) + (blue ? 16 : 0), 20, 97);
         w.blue = blue;
@@ -14122,20 +14122,20 @@
     });
     function atHome(ctx, w) {
       if (!w.town || !ctx.rep || !ctx.rep.venue) return false;
-      var k = homeKm(ctx.S, w, cityOfVenue(ctx.rep.venue));
-      return k != null && k <= HOME_KM;
+      var k = homeKm2(ctx.S, w, cityOfVenue2(ctx.rep.venue));
+      return k != null && k <= HOME_KM2;
     }
     function homeWord(ctx, w) {
-      var c = cityOfVenue(ctx.rep.venue);
+      var c = cityOfVenue2(ctx.rep.venue);
       return w.town === c ? "here in " + c : "in " + c + ", up the road from " + w.town;
     }
     CRX.push(function(ctx) {
       var h = ctx.all.filter(function(w) {
         return atHome(ctx, w);
       });
-      var c = cityOfVenue(ctx.rep.venue), n = 0;
+      var c = cityOfVenue2(ctx.rep.venue), n = 0;
       h.forEach(function(w) {
-        n += homeWeight(ctx.S, w, c);
+        n += homeWeight2(ctx.S, w, c);
       });
       return h.length ? { d: 1.6 * Math.min(2, n), x: h[0].name + " is a hometown hero " + homeWord(ctx, h[0]) } : null;
     });
@@ -20770,8 +20770,8 @@
     }
     function regionOf(S, P) {
       try {
-        var c = roadRoute(S, P);
-        var M = c && c.length ? roadMap(S, c) : null;
+        var c = roadRoute2(S, P);
+        var M = c && c.length ? roadMap2(S, c) : null;
         return M ? M.id : null;
       } catch (e) {
         return null;
@@ -21699,3528 +21699,6 @@
       P.logo = m;
       news(S, "you", P.name + " has a new logo.");
       return { ok: true, logo: m, msg: P.name + " has a new logo." };
-    };
-    var NET_TASTE = {
-      family: { n: "Family", d: "wants a clean show. Hardcore, tables and ladder matches go down badly." },
-      sport: { n: "Sport", d: "wants wrestling: more matches than talking, and good ones." },
-      late: { n: "Late night", d: "wants a show people talk about: promos, angles and stipulations." },
-      niche: { n: "Niche", d: "cares less about the numbers, and likes long, serious matches." }
-    };
-    var NET_KEYS = ["family", "sport", "late", "niche"];
-    function netTaste(name) {
-      if (/Sport/.test(name)) return "sport";
-      if (/Family|Kids/.test(name)) return "family";
-      if (/Indie|Underground|Cult/.test(name)) return "niche";
-      if (/Gaslight|Midnight|Late/.test(name)) return "late";
-      return NET_KEYS[hash("taste:" + name) % NET_KEYS.length];
-    }
-    function netTarget(sh) {
-      if (!sh.tgt && sh.va) sh.tgt = Math.round(sh.va * (netTaste(sh.net) === "niche" ? 0.85 : 0.97));
-      return sh.tgt || 0;
-    }
-    function netClash(S, sh, rep) {
-      var t = netTaste(sh.net), ms = (rep.segs || []).filter(function(g) {
-        return g.k === "match";
-      }), talk = (rep.segs || []).filter(function(g) {
-        return g.k === "promo" || g.k === "angle";
-      }).length;
-      if (t === "family") {
-        var hc = ms.filter(function(g) {
-          return g.stip === "Hardcore" || g.stip === "Tables" || g.stip === "Ladder";
-        }).length;
-        if (hc) return "a " + ms.filter(function(g) {
-          return g.stip === "Hardcore" || g.stip === "Tables" || g.stip === "Ladder";
-        })[0].stip.toLowerCase() + " match on a family network";
-      }
-      if (t === "sport" && talk > ms.length) return "more talking than wrestling";
-      if (t === "late" && !talk && !ms.some(function(g) {
-        return g.stip;
-      })) return "nothing to talk about: no promo, no angle, no stipulation";
-      return "";
-    }
-    function netPleased(S, sh, rep) {
-      var t = netTaste(sh.net), ms = (rep.segs || []).filter(function(g) {
-        return g.k === "match";
-      });
-      if (t === "sport") return ms.some(function(g) {
-        return g.ov >= rep.exp + 8;
-      });
-      if (t === "late") return (rep.segs || []).some(function(g) {
-        return (g.k === "angle" || g.k === "promo") && g.ov >= rep.exp + 5;
-      });
-      if (t === "niche") return ms.some(function(g) {
-        return g.mins >= 20 && g.ov >= rep.exp + 4;
-      });
-      if (t === "family") return !netClash(S, sh, rep) && rep.rating >= rep.exp;
-      return false;
-    }
-    SHOWX.push(function(S, P, show, rep) {
-      if (S.cal || show.big || P.id !== S.player) return;
-      var sh = airRec(P, show.id);
-      if (!sh || !sh.net) return;
-      var tgt = netTarget(sh);
-      if (!tgt) return;
-      var hit = rep.viewers >= tgt, clash = netClash(S, sh, rep), pleased = !clash && netPleased(S, sh, rep);
-      sh.miss = hit ? 0 : (sh.miss || 0) + 1;
-      sh.hits = hit ? (sh.hits || 0) + 1 : 0;
-      rep.net = { n: sh.net, taste: netTaste(sh.net), tgt, hit: hit ? 1 : 0, clash, pleased: pleased ? 1 : 0, miss: sh.miss };
-      E.clocks(S);
-      var c = S.clocks.net;
-      if (clash) {
-        sh.cl = (sh.cl || 0) + 1;
-        if (sh.cl % 2 === 0) {
-          c.v = clamp(c.v + 1, 0, CLOCKS.net.segs);
-          c.why = sh.net + " did not like " + clash + ".";
-        }
-      }
-      if (pleased || sh.hits >= 4) {
-        if (c.v > 0) c.v--;
-        if (sh.hits >= 4) sh.hits = 0;
-      }
-      if (sh.miss >= 3 && !(S.lcd && S.lcd["nx" + sh.id] > S.week) && !S.inbox.some(function(e) {
-        return !e.done && e.type === "netexec";
-      })) {
-        (S.lcd || (S.lcd = {}))["nx" + sh.id] = S.week + 8;
-        pushEv(S, {
-          type: "netexec",
-          sid: sh.id,
-          text: "An executive from " + sh.net + " is on the phone. " + sh.name + " has come in under its target three weeks running: they want about " + tgt.toLocaleString("en-US") + " watching, and last week it was " + rep.viewers.toLocaleString("en-US") + ". They are a " + NET_TASTE[netTaste(sh.net)].n.toLowerCase() + " network: it " + NET_TASTE[netTaste(sh.net)].d,
-          choices: ["Promise them a big main event next week", "Lower the target: give up a little of the fee", "Tell them the numbers will come"],
-          checks: { 2: mkCheck(9, [{ n: "The show is " + airWord(sh).toLowerCase(), v: sh.lv >= 3 ? 1 : sh.lv <= 1 ? -1 : 0 }].concat(skillMods(S, "talk"))) }
-        });
-      }
-    });
-    EVR.netexec = function(S, ev, choice, P) {
-      var sh = airRec(P, ev.sid);
-      if (!sh) return "That show is no longer on your schedule.";
-      E.clocks(S);
-      var c = S.clocks.net;
-      if (choice === 0) {
-        var tg = Math.round(clamp(expected(P, sh) + 4, 40, 95)), bonus = Math.round(P.inc0 * 0.03 / 1e3) * 1e3;
-        c.v = Math.max(0, c.v - 1);
-        S.quests.push({ id: S.nid++, type: "netvow", due: S.week + 2, target: tg, bonus, text: "Promise to " + sh.net + ": a main event of " + starG(tg) + " or better by " + cal(S.week + 2).label });
-        return "They will hold you to it: a main event of " + starG(tg) + " or better within two weeks.";
-      }
-      if (choice === 1) {
-        sh.tgt = Math.round(netTarget(sh) * 0.9);
-        sh.rate = clamp((sh.rate || 1) * 0.95, 0.6, 1.8);
-        sh.miss = 0;
-        c.v = Math.max(0, c.v - 2);
-        return sh.net + " takes a smaller target, about " + sh.tgt.toLocaleString("en-US") + " watching, and pays a little less for it.";
-      }
-      var r = rollCheck(S, ev.checks[2]);
-      ev.roll = r;
-      sh.miss = 0;
-      if (r.ok) return rollText(r) + "They believe you, for now.";
-      c.v = clamp(c.v + 2, 0, CLOCKS.net.segs);
-      c.why = "You told " + sh.net + " the numbers would come";
-      return rollText(r) + "They have heard that before. The network\u2019s patience is thinner.";
-    };
-    (function() {
-      var was = airSign;
-      airSign = function(S, P, sh, net, tier, rate) {
-        was(S, P, sh, net, tier, rate);
-        sh.tgt = sh.va ? Math.round(sh.va * (netTaste(sh.net) === "niche" ? 0.85 : 0.97)) : 0;
-        sh.miss = 0;
-      };
-    })();
-    (function() {
-      var was = airAsk;
-      airAsk = function(S, P, sh) {
-        was(S, P, sh);
-        if ((sh.lv || 0) < 2 || hash("bid" + P.id + sh.id + ":" + (sh.deals || 0)) % 3 === 0) return;
-        var ev = S.inbox.filter(function(e) {
-          return !e.done && e.type === "rights" && e.sid === sh.id;
-        })[0];
-        if (!ev) return;
-        var t3 = Math.min(2, sh.tier + (sh.lv >= 4 ? 1 : 0)), third = airNets(S, t3).filter(function(n) {
-          return n !== sh.net && n !== ev.other;
-        })[0];
-        if (!third) return;
-        ev.third = third;
-        ev.t3 = t3;
-        ev.text += " And " + third + ", " + AIR_TIERN[t3] + ", has heard. You could let them bid against each other.";
-        ev.choices.push("Let " + ev.other + " and " + third + " bid for it");
-        ev.checks[3] = mkCheck(8, [{ n: "The show is " + airWord(sh).toLowerCase(), v: sh.lv >= 4 ? 2 : 1 }].concat(skillMods(S, "talk")));
-      };
-    })();
-    (function() {
-      var was = EVR.rights;
-      EVR.rights = function(S, ev, choice, P) {
-        if (choice !== 3) return was(S, ev, choice, P);
-        var sh = airRec(P, ev.sid);
-        if (!sh) return "That show is no longer on your schedule.";
-        var o = airOffer(S, P, sh), old = sh.net, r = rollCheck(S, ev.checks[3]);
-        ev.roll = r;
-        if (r.ok) {
-          airSign(S, P, sh, ev.third, ev.t3, o.move + sh.rate * 0.12);
-          sh.pr = clamp(sh.pr - 2, 0, 100);
-          sh.prd = sh.pr;
-          airStep(sh);
-          E.clocks(S);
-          S.clocks.net.v = 0;
-          S.clocks.net.why = "A new network, and a clean slate";
-          news(S, "money", ev.third + " won a bidding war for " + sh.name + ".");
-          note(S, "A bidding war won", sh.name + " goes to " + sh.net + ".", "good");
-          return rollText(r) + ev.third + " wins the bidding. " + sh.name + " moves from " + old + " at about " + money(airPay(P, sh, sh.rate, sh.tier)) + " a week.";
-        }
-        airSign(S, P, sh, ev.other, ev.t2, o.move - sh.rate * 0.04);
-        sh.pr = clamp(sh.pr - 3, 0, 100);
-        sh.prd = sh.pr;
-        airStep(sh);
-        return rollText(r) + ev.third + " drops out early, and " + ev.other + " knows it. " + sh.name + " moves there for less than they first offered, about " + money(airPay(P, sh, sh.rate, sh.tier)) + " a week.";
-      };
-    })();
-    function netCardClash(S, show, card) {
-      var P = S.promos[S.player], sh = show && !show.big ? airRec(P, show.id) : null;
-      if (!sh || !sh.net || !card.length) return "";
-      var t = netTaste(sh.net), talk = segRead(S).length, hc = card.filter(function(m) {
-        return m && /^(hardcore|tables|ladder|fire|cell)$/.test(stipBase(m.stip));
-      }).length, st = card.some(function(m) {
-        return m && m.stip && m.stip !== "std";
-      });
-      if (t === "family" && hc) return sh.net + " is a family network, and a " + STIP[card.filter(function(m) {
-        return m && /^(hardcore|tables|ladder|fire|cell)$/.test(stipBase(m.stip));
-      })[0].stip].n.toLowerCase() + " match will not go down well.";
-      if (t === "sport" && talk > card.length) return sh.net + " is a sport network, and tonight has more talking than wrestling.";
-      if (t === "late" && !talk && !st) return sh.net + " is a late night network, and tonight has nothing to talk about: no promo, no angle, no stipulation.";
-      return "";
-    }
-    E.netInfo = function(S) {
-      var P = S.promos[S.player];
-      return P.shows.filter(function(sh) {
-        return !sh.big && sh.net;
-      }).map(function(sh) {
-        var t = netTaste(sh.net);
-        return { id: sh.id, name: sh.name, net: sh.net, taste: NET_TASTE[t].n, want: NET_TASTE[t].d, tgt: netTarget(sh), miss: sh.miss || 0 };
-      });
-    };
-    E.NET_TASTE = NET_TASTE;
-    var REGIONS = [
-      { id: "iron", n: "the Iron Coast", taste: "brawl", d: "Dockworkers and mill towns. They come for a fight." },
-      { id: "garden", n: "the Garden Cities", taste: "spectacle", d: "Big halls and bigger entrances." },
-      { id: "reach", n: "the Eastern Reach", taste: "work", d: "Students of the sport. They count the holds." },
-      { id: "high", n: "the Highlands", taste: "brawl", d: "Hard people who like it hard." },
-      { id: "isles", n: "the Sunlit Isles", taste: "spectacle", d: "Colour, noise and flyers." }
-    ];
-    var TASTEN = { brawl: "brawling", work: "work rate", spectacle: "spectacle" };
-    function homeReg(P) {
-      return hash("reg" + P.id) % REGIONS.length;
-    }
-    E.REGIONS = REGIONS;
-    E.TASTEN = TASTEN;
-    E.homeRegion = function(S) {
-      var P = S.promos[S.player];
-      return REGIONS[homeReg(P)];
-    };
-    function tourCost(P, weeks) {
-      return Math.round(P.inc0 * (0.02 + 0.025 * weeks) * (1 - TRV_R[P.trv || 0] * 0.5));
-    }
-    function tourBoost(S, P) {
-      if (!P.tour) return 1;
-      var f = P.fol && P.fol[P.tour.reg] || 0;
-      return 1.3 + f / 250;
-    }
-    E.tourInfo = function(S) {
-      var P = S.promos[S.player], home = homeReg(P);
-      return {
-        tour: P.tour ? { reg: REGIONS[P.tour.reg], left: P.tour.left, weeks: P.tour.weeks, earned: Math.round(P.tour.earned || 0) } : null,
-        options: REGIONS.map(function(r, i) {
-          return { id: i, reg: r, home: i === home, fol: Math.round(P.fol && P.fol[i] || 0), cost2: tourCost(P, 2), cost3: tourCost(P, 3) };
-        }).filter(function(o) {
-          return !o.home;
-        }),
-        follow: REGIONS.map(function(r, i) {
-          return { reg: r, fol: Math.round(P.fol && P.fol[i] || 0) };
-        }).filter(function(o) {
-          return o.fol >= 1;
-        })
-      };
-    };
-    E.startTour = function(S, reg, weeks) {
-      var P = S.promos[S.player], r = REGIONS[reg];
-      if (!r || reg === homeReg(P)) return { ok: false, text: "Pick a region away from home." };
-      if (P.tour) return { ok: false, text: "You are already on tour." };
-      if (weeks !== 2 && weeks !== 3) return { ok: false, text: "A tour is two or three weeks." };
-      if (S.week - (P.tourEnd || -99) < 8) return { ok: false, text: "The roster needs eight weeks at home first." };
-      var c = tourCost(P, weeks);
-      if (P.cash < c) return { ok: false, text: "A " + weeks + "-week tour costs " + money(c) + " up front." };
-      P.cash -= c;
-      P.tour = { reg, left: weeks, weeks, earned: 0, start: S.week };
-      news(S, "story", P.name + " set out on a " + weeks + "-week tour of " + r.n + ".");
-      return { ok: true, text: "The tour of " + r.n + " starts now and lasts " + weeks + " weeks. It cost " + money(c) + ". Crowds will be bigger. The roster will be worn out by the end." };
-    };
-    WEEKX.push(function(S) {
-      if (S.cal) return;
-      var P = S.promos[S.player];
-      P.fol = P.fol || {};
-      Object.keys(P.fol).forEach(function(k) {
-        P.fol[k] = Math.max(0, P.fol[k] - 0.4);
-      });
-      if (!P.tour) return;
-      var T = P.tour, last = P.hist[P.hist.length - 1];
-      if (last) T.earned += last.gate * 0.3;
-      rosterOf(S, P.id).forEach(function(w) {
-        if (!w.nw) w.rd = clamp((w.rd || 0) + 10, 0, 100);
-      });
-      var good = P.last && P.last.rating >= 70;
-      P.fol[T.reg] = clamp((P.fol[T.reg] || 0) + (good ? 6 : 2), 0, 100);
-      T.left--;
-      if (T.left <= 0) {
-        news(S, "story", P.name + " came home from " + REGIONS[T.reg].n + " with a following of " + Math.round(P.fol[T.reg]) + ".");
-        P.tour = null;
-        P.tourEnd = S.week;
-      }
-    });
-    function tasteVal(taste, ws, stips) {
-      if (!ws.length) return 0;
-      if (taste === "brawl") return (avg(ws.map(function(w) {
-        return w.brawl;
-      })) - 74) / 10 + (stips.filter(function(s) {
-        return /^(hardcore|cage|cell|fire|tables)$/.test(stipBase(s));
-      }).length ? 0.3 : 0);
-      if (taste === "work") return (avg(ws.map(workRate)) - 74) / 10;
-      return (avg(ws.map(function(w) {
-        return w.sq;
-      })) - 76) / 10 + (stips.filter(function(s) {
-        return s === "ladder" || s === "mask" || s === "hair";
-      }).length ? 0.3 : 0);
-    }
-    function tasteFit(S, P, card) {
-      var reg = P.tour ? REGIONS[P.tour.reg] : REGIONS[homeReg(P)], ids = {}, ws = [], stips = [];
-      card.forEach(function(m) {
-        stips.push(m.stip || "std");
-        m.sides.forEach(function(s) {
-          s.forEach(function(id) {
-            if (id != null && S.w[id] && !ids[id]) {
-              ids[id] = 1;
-              ws.push(S.w[id]);
-            }
-          });
-        });
-      });
-      return { reg, fit: clamp(tasteVal(reg.taste, ws, stips), -1, 1) };
-    }
-    function tasteDraw(S, P, card, rep) {
-      var f = tasteFit(S, P, card);
-      if (Math.abs(f.fit) >= 0.5) (rep.quest = rep.quest || []).push((P.tour ? "On tour, " : "At home, ") + f.reg.n + " " + (f.fit > 0 ? "got the " + TASTEN[f.reg.taste] + " it likes, and the house was a little bigger." : "wanted " + TASTEN[f.reg.taste] + " and did not get enough of it, and the house was a little smaller."));
-      return 1 + 0.06 * f.fit;
-    }
-    E.tasteForecast = function(S, card) {
-      var P = S.promos[S.player], f = tasteFit(S, P, card);
-      return { region: f.reg, fit: f.fit, text: (P.tour ? "On tour in " : "At home in ") + f.reg.n + ", where they like " + TASTEN[f.reg.taste] + ": " + (f.fit >= 0.5 ? "this card suits them. Expect a bigger house." : f.fit <= -0.5 ? "this card is short of it. Expect a smaller house." : "this card is about right.") };
-    };
-    CRX.push(function(ctx) {
-      var P = ctx.P;
-      if (!ctx.isPl || ctx.S.cal) return null;
-      var home = !P.tour, k = home ? 0.7 : 1, t = (home ? REGIONS[homeReg(P)] : REGIONS[P.tour.reg]).taste, all = ctx.all, d = 0, x = null;
-      if (t === "brawl") {
-        var b = avg(all.map(function(w) {
-          return w.brawl;
-        }));
-        if (b >= 62 || /^(hardcore|cage|cell|fire)$/.test(stipBase(ctx.stip))) {
-          d = 1.5;
-          x = "A brawl, and this region likes a brawl";
-        } else if (b <= 48) {
-          d = -1.5;
-          x = "Too gentle for a region that likes a fight";
-        }
-      } else if (t === "work") {
-        var wk = avg(all.map(workRate));
-        if (wk >= 65) {
-          d = 1.5;
-          x = "Fine wrestling for a region that counts the holds";
-        } else if (wk < 50) {
-          d = -1.5;
-          x = "Sloppy work in front of a region that notices";
-        }
-      } else {
-        var sq = avg(all.map(function(w) {
-          return w.sq;
-        }));
-        if (sq >= 65 || ctx.stip === "ladder") {
-          d = 1.5;
-          x = "Spectacle, and this region came for spectacle";
-        } else if (sq <= 45) {
-          d = -1.5;
-          x = "Plain stuff for a region that wants spectacle";
-        }
-      }
-      return d ? { d: d * k, x } : null;
-    });
-    WEEKX.push(function(S) {
-      if (S.cal || !chance(S, 0.35)) return;
-      var P = S.promos[S.player], pid = pick(S, S.order.filter(function(id) {
-        return id !== P.id;
-      })), RV = S.promos[pid];
-      if (!RV || !RV.owner) return;
-      var t = E.temperOf(S, pid), nm = RV.owner.name, up = P.image > RV.image, last = P.last && P.last.rating >= 75, L2 = null;
-      if (t.key === "raider") L2 = up ? nm + " of " + RV.name + " said " + P.name + ' has the best roster in the business and is "ripe for the picking".' : chance(S, 0.5) ? nm + " of " + RV.name + " told a reporter that " + P.name + ' is "a company that has had its day".' : null;
-      else if (t.key === "gentleman") L2 = last || (RV.rel || 0) >= 20 ? nm + " of " + RV.name + " tipped a hat to " + P.name + ': "Good wrestling is good for all of us."' : null;
-      else if (t.key === "showman") L2 = nm + " of " + RV.name + " dared " + P.name + " to put its best against " + RV.name + '\u2019s on one stage, "and let the people decide".';
-      else L2 = chance(S, 0.15) ? nm + " of " + RV.name + " has still not said a word in public about anyone." : null;
-      if (L2 && S.week - (S.talkAt || -99) >= 3) {
-        S.talkAt = S.week;
-        news(S, "world", L2);
-      }
-    });
-    E.agreeOdds = function(S, pid) {
-      var P = S.promos[S.player], RV = S.promos[pid];
-      if (!RV || pid === P.id) return null;
-      return mkCheck(9, [relMod(RV), gapMod(P, RV), temperMod(RV, "show")].concat(skillMods(S, "talk")));
-    };
-    E.agreeCan = function(S, pid) {
-      var P = S.promos[S.player], RV = S.promos[pid];
-      if (S.agree) return "You already have a working agreement with " + S.promos[S.agree.with].name + ".";
-      if ((RV.rel || 0) < 30) return RV.name + " does not know you well enough yet. Relations must reach 30.";
-      if (RV.image - P.image > 25) return RV.name + " is too big to sit down with you yet.";
-      if (RV.agAsk && S.week - RV.agAsk < 8) return RV.name + " will not take another meeting until " + cal(RV.agAsk + 8).label + ".";
-      return null;
-    };
-    E.agreePropose = function(S, pid) {
-      var why = E.agreeCan(S, pid);
-      if (why) return { ok: false, text: why };
-      var RV = S.promos[pid], r = rollCheck(S, E.agreeOdds(S, pid));
-      RV.agAsk = S.week;
-      if (!r.ok) {
-        RV.rel = clamp((RV.rel || 0) - 3, -100, 100);
-        return { ok: false, text: rollText(r) + RV.name + " wants to think about it." };
-      }
-      S.agree = { with: pid, since: S.week, next: S.week + 12, trouble: 0 };
-      news(S, "world", S.promos[S.player].name + " and " + RV.name + " signed a working agreement.");
-      return { ok: true, text: rollText(r) + "You and " + RV.name + " are partners. Trades are easier, your top titles are recognised by both, and a joint supershow runs every twelve weeks." };
-    };
-    E.agreeEnd = function(S) {
-      var A = S.agree;
-      if (!A) return { ok: false, text: "There is no agreement." };
-      var RV = S.promos[A.with];
-      RV.rel = clamp((RV.rel || 0) - 10, -100, 100);
-      S.agree = null;
-      news(S, "world", S.promos[S.player].name + " ended the working agreement with " + RV.name + ".");
-      return { ok: true, text: "The agreement is over. " + RV.name + " is not pleased." };
-    };
-    E.agreement = function(S) {
-      var A = S.agree;
-      if (!A) return null;
-      var RV = S.promos[A.with];
-      return { with: RV, rel: Math.round(RV.rel || 0), since: A.since, next: Math.max(0, A.next - S.week), trouble: A.trouble };
-    };
-    WEEKX.push(function(S) {
-      var A = S.agree;
-      if (S.cal || !A) return;
-      var P = S.promos[S.player], RV = S.promos[A.with];
-      [P, RV].forEach(function(Q) {
-        var t = Q.titles.filter(function(x) {
-          return !x.tag && x.lvl >= 3;
-        })[0];
-        if (t && t.prestige < 90) t.prestige = Math.min(90, t.prestige + 0.15);
-      });
-      if (S.week >= A.next && !E.xfState(S) && !E.xfCan(S, A.with)) {
-        A.next = S.week + 12;
-        startXf(S, A.with, "super");
-        news(S, "world", "The joint supershow with " + RV.name + " is on, as agreed.");
-      }
-      var p = { raider: 0.05, gentleman: 0.01, hermit: 0.02, showman: 0.03 }[E.temperOf(S, A.with).key] || 0.02;
-      if (chance(S, p) && !S.inbox.some(function(e) {
-        return e.type === "agreetrouble" && !e.done;
-      })) {
-        var o = RV.owner && RV.owner.name ? RV.owner.name : "Their owner", cost = Math.round(P.inc0 * 0.3);
-        A.trouble++;
-        pushEv(S, {
-          type: "agreetrouble",
-          text: o + " of " + RV.name + " is angry: one of their stars was sent home early from your show and no one told them. The agreement is at risk.",
-          choices: ["Send a gift and an apology: " + money(cost), "Say it was a mistake (an attempt)", "End the agreement"],
-          cost,
-          checks: { 1: mkCheck(7, [relMod(RV), trustMod(S)].concat(skillMods(S, "talk"))) }
-        });
-      }
-      if ((RV.rel || 0) < 0 && A.trouble >= 2) {
-        S.agree = null;
-        news(S, "world", "The working agreement with " + RV.name + " collapsed.");
-      }
-    });
-    EVR.agreetrouble = function(S, ev, choice, P) {
-      var A = S.agree;
-      if (!A) return "The agreement is already over.";
-      var RV = S.promos[A.with];
-      if (choice === 0) {
-        if (P.cash < ev.cost) {
-          RV.rel = clamp((RV.rel || 0) - 6, -100, 100);
-          return "You cannot afford the gift. " + RV.name + " takes that badly.";
-        }
-        P.cash -= ev.cost;
-        RV.rel = clamp((RV.rel || 0) + 12, -100, 100);
-        A.trouble = Math.max(0, A.trouble - 1);
-        return "The gift and the apology work. " + RV.name + " is back on side.";
-      }
-      if (choice === 1) {
-        var r = rollCheck(S, ev.checks[1]);
-        ev.roll = r;
-        if (r.ok) {
-          RV.rel = clamp((RV.rel || 0) + 4, -100, 100);
-          return rollText(r) + RV.name + " accepts the explanation.";
-        }
-        RV.rel = clamp((RV.rel || 0) - 12, -100, 100);
-        return rollText(r) + RV.name + " does not believe it. Relations take a hit.";
-      }
-      return E.agreeEnd(S).text;
-    };
-    CRX.push(function(ctx) {
-      var A = ctx.S.agree;
-      if (!A || !ctx.isPl || !ctx.t || ctx.t.lvl < 3 || ctx.S.cal) return null;
-      return { d: 1, x: "The title is recognised by both companies" };
-    });
-    function retireCompany(S, pid, buyerId) {
-      var P = S.promos[pid], buyer = buyerId ? S.promos[buyerId] : null, R = rosterOf(S, pid).filter(function(w) {
-        return !w.nw;
-      }).sort(function(a, b) {
-        return b.ovr - a.ovr;
-      });
-      var keep = buyer ? Math.ceil(R.length * 0.4) : 0;
-      R.forEach(function(w, i) {
-        leaveCompany(S, w, buyer && i < keep ? "moved to " + buyer.name : "company folded", true);
-        if (buyer && i < keep) joinCompany(S, w, buyer);
-        else {
-          w.promo = "FA";
-          w.brand = null;
-          w.cut = { w: S.week, from: pid, img: P.image };
-        }
-      });
-      rosterOf(S, pid).forEach(function(w) {
-        w.promo = "FA";
-        w.brand = null;
-      });
-      var tit = P.titles.filter(function(t) {
-        return !t.tag;
-      }).sort(function(a, b) {
-        return b.prestige - a.prestige;
-      });
-      if (buyer && tit[0]) {
-        var c = JSON.parse(JSON.stringify(tit[0]));
-        c.holders = [];
-        c.since = S.week;
-        c.id = "x" + S.nid++;
-        c.name = tit[0].name;
-        buyer.titles.push(c);
-      } else tit.slice(0, 2).forEach(function(t) {
-        (S.sale = S.sale || []).push({ id: S.nid++, kind: "title", from: pid, fromName: P.name, name: t.name, g: t.g, lvl: t.lvl, tag: !!t.tag, prestige: Math.round(t.prestige), price: Math.round(S.promos[S.player].inc0 * 0.6 * Math.max(0.3, t.prestige / 50)), until: S.week + 12 });
-      });
-      var tv = Math.round(P.inc0 * 0.05 * 18);
-      if (!buyer) (S.sale = S.sale || []).push({ id: S.nid++, kind: "tape", from: pid, fromName: P.name, name: "The " + P.name + " library", value: tv, price: Math.round(tv * 0.4), until: S.week + 12 });
-      S.feuds.forEach(function(f) {
-        if (!f.res && f.promo === pid) {
-          f.res = true;
-          f.dead = true;
-          f.end = S.week;
-        }
-      });
-      S.order = S.order.filter(function(id) {
-        return id !== pid;
-      });
-      P.dead = S.week;
-      if (S.agree && S.agree.with === pid) S.agree = null;
-      if (S.xf && S.xf.with === pid) S.xf = null;
-      news(S, "world", buyer ? buyer.name + " bought " + P.name + ". Its best names move over, and the rest are on the market." : P.name + " has folded. Its roster is on the market, and its titles and tapes are up for sale.");
-    }
-    WEEKX.push(function(S) {
-      if (S.cal || S.week % 4 || S.order.length <= 4) return;
-      S.order.forEach(function(pid) {
-        var P = S.promos[pid];
-        if (pid === S.player || P.dead || P.cash >= 0 || (P.neg || 0) < 20 || P.image >= 45 || !chance(S, 0.1)) return;
-        var rich = S.order.filter(function(id) {
-          return id !== pid && id !== S.player && S.promos[id].cash > S.promos[id].inc0 * 10 && S.promos[id].image > P.image;
-        }).sort(function(a, b) {
-          return S.promos[b].cash - S.promos[a].cash;
-        })[0];
-        retireCompany(S, pid, rich && chance(S, 0.55) ? rich : null);
-      });
-      S.sale = (S.sale || []).filter(function(l) {
-        return S.week <= l.until;
-      });
-    });
-    E.forSale = function(S) {
-      return (S.sale || []).filter(function(l) {
-        return S.week <= l.until;
-      }).map(function(l) {
-        return { id: l.id, kind: l.kind, name: l.name, from: l.fromName, price: l.price, left: l.until - S.week, note: l.kind === "title" ? "A " + (l.g === "F" ? "women\u2019s " : "") + "title with prestige " + l.prestige + " and no champion." : "About " + money(l.value) + " of back catalogue." };
-      });
-    };
-    E.buyLot = function(S, id) {
-      var P = S.promos[S.player], i = (S.sale || []).findIndex(function(l2) {
-        return l2.id === id;
-      }), l = S.sale[i];
-      if (!l || S.week > l.until) return { ok: false, text: "That lot is gone." };
-      if (!S.owner.me) return { ok: false, text: "Only an owner can buy a company\u2019s belongings." };
-      if (P.cash < l.price) return { ok: false, text: "It costs " + money(l.price) + "." };
-      P.cash -= l.price;
-      S.sale.splice(i, 1);
-      if (l.kind === "title") {
-        P.titles.push({ id: "x" + S.nid++, name: l.name, brand: null, g: l.g, lvl: Math.min(l.lvl, 2), tag: l.tag, holders: [], prestige: Math.round(l.prestige * 0.7), defs: 0, since: S.week, last: S.week, hist: [] });
-        news(S, "title", "You bought the " + l.name + " from the ruins of " + l.fromName + ". It is vacant.");
-        return { ok: true, text: "The " + l.name + " is yours, and vacant. Crown a champion on your next show." };
-      }
-      (P.tape || (P.tape = [])).push({ w: Math.max(1, S.week - 30), n: l.name, r: 70, v: l.value });
-      news(S, "money", "You bought " + l.name + ".");
-      return { ok: true, text: "The library is yours. It is worth about " + money(l.value) + " and earns every week." };
-    };
-    function topTitle(P, g) {
-      return P.titles.filter(function(t) {
-        return !t.tag && t.g === g && t.lvl >= 3;
-      }).sort(function(a, b) {
-        return b.prestige - a.prestige;
-      })[0] || null;
-    }
-    E.unifyOptions = function(S) {
-      var A = S.agree;
-      if (!A) return [];
-      var P = S.promos[S.player], RV = S.promos[A.with], out = [];
-      ["M", "F"].forEach(function(g) {
-        var m = topTitle(P, g), t = topTitle(RV, g);
-        if (!m || !t || !m.holders.length) return;
-        var ck = mkCheck(9, [relMod(RV), temperMod(RV, "show"), { n: "A working agreement", v: 1 }, { n: "Their belt against yours", v: t.prestige > m.prestige + 10 ? -1 : m.prestige > t.prestige + 10 ? 1 : 0 }].concat(skillMods(S, "talk")));
-        out.push({ g, mine: m, theirs: t, odds: Math.round(ck.p * 100), ck });
-      });
-      return out;
-    };
-    E.unify = function(S, g) {
-      var o = E.unifyOptions(S).filter(function(x) {
-        return x.g === g;
-      })[0];
-      if (!o) return { ok: false, text: "There is nothing to unify." };
-      var P = S.promos[S.player], RV = S.promos[S.agree.with], r = rollCheck(S, o.ck);
-      if (!r.ok) {
-        RV.rel = clamp((RV.rel || 0) - 6, -100, 100);
-        return { ok: false, text: rollText(r) + RV.name + " will not give up its belt." };
-      }
-      var m = o.mine, t = o.theirs;
-      var merged = (t.hist || []).map(function(h) {
-        var c = JSON.parse(JSON.stringify(h));
-        c.show = (c.show ? c.show + " \xB7 " : "") + RV.name;
-        return c;
-      }).concat(m.hist || []).sort(function(a, b) {
-        return a.from - b.from;
-      });
-      m.hist = merged.slice(-60);
-      m.prestige = clamp(Math.max(m.prestige, t.prestige) + 5, 10, 100);
-      m.uni = (m.uni || []).concat([RV.name]);
-      t.holders.forEach(function(id) {
-        if (S.w[id]) S.w[id].lt = { n: t.name, id: t.id, w: S.week };
-      });
-      RV.titles = RV.titles.filter(function(x) {
-        return x !== t;
-      });
-      RV.rel = clamp((RV.rel || 0) + 5, -100, 100);
-      news(S, "title", "The " + m.name + " and the " + RV.name + " " + t.name + " are unified. " + names(m.holders.map(function(id) {
-        return S.w[id];
-      })) + " is the champion of both.");
-      return { ok: true, text: rollText(r) + "The belts are unified. The " + m.name + " now carries both lines of champions, and its prestige is up. " + RV.name + " retires its title." };
-    };
-    E.classYears = function(S) {
-      return Object.keys(S.classes || {}).map(Number).sort(function(a, b) {
-        return b - a;
-      });
-    };
-    E.classReport = function(S, year) {
-      var ids = (S.classes || {})[year];
-      if (!ids) return null;
-      var P = S.promos[S.player], rows = ids.map(function(id) {
-        var w = S.w[id], n = E.intel(S, id), pr = n.stats.pot, st;
-        if (w.promo === "FA") st = w.rt ? "Retired" : "Still a free agent";
-        else if (w.promo === P.id) st = "Signed by you";
-        else st = "Signed by " + (S.promos[w.promo] ? S.promos[w.promo].name : "another company");
-        var champ = false;
-        S.order.forEach(function(pid) {
-          S.promos[pid].titles.forEach(function(t) {
-            if (t.holders.indexOf(id) >= 0) champ = true;
-          });
-        });
-        return { w, region: REGIONS[w.reg == null ? 0 : w.reg].n, potential: pr.lo === pr.hi ? String(pr.lo) : pr.lo + "\u2013" + pr.hi, now: Math.round(w.ovr), status: st, champ, sc: !!w.sc };
-      }).sort(function(a, b) {
-        return b.w.pot - a.w.pot;
-      });
-      var mine = rows.filter(function(r) {
-        return r.w.promo === P.id;
-      }).length, fa = rows.filter(function(r) {
-        return r.w.promo === "FA" && !r.w.rt;
-      }).length;
-      return {
-        year,
-        n: rows.length,
-        rows,
-        mine,
-        fa,
-        champs: rows.filter(function(r) {
-          return r.champ;
-        }).length,
-        best: rows[0] ? rows[0].w : null,
-        text: "The class of " + year + ": " + rows.length + " rookies, " + fa + " still free agents, " + mine + " with you, " + rows.filter(function(r) {
-          return r.champ;
-        }).length + " champions so far."
-      };
-    };
-    var STRM_PRICE = 2, STRM_OPEN = 1.5, STRM_RUN = 0.01;
-    function streamOn(S) {
-      var P = S.promos[S.player];
-      return !!(P && P.strm && P.strm.on);
-    }
-    function streamCap(S, P) {
-      var n = (P.tape || []).length;
-      return Math.round(P.inc0 * 0.06 * (0.5 + P.image / 120) * (1 + Math.min(1, n / 100)) / STRM_PRICE);
-    }
-    function streamOpenCost(P) {
-      return Math.round(P.inc0 * STRM_OPEN / 1e3) * 1e3;
-    }
-    function streamRunCost(P) {
-      return Math.round(P.inc0 * STRM_RUN / 100) * 100;
-    }
-    E.streamStart = function(S) {
-      var P = S.promos[S.player];
-      if (P.strm && P.strm.on) return { ok: false, msg: "Your service is already running." };
-      var c = streamOpenCost(P);
-      if (P.cash < c) return { ok: false, msg: "Opening a service costs " + money(c) + ". You do not have it." };
-      P.cash -= c;
-      P.strm = { on: S.week, subs: 0, mx: 0 };
-      news(S, "money", P.name + " has opened its own streaming service.");
-      note(S, "Streaming", "Your service is open. Subscribers will come as the library grows.", "good");
-      return { ok: true, msg: "The service is open. It cost " + money(c) + ", and runs at about " + money(streamRunCost(P)) + " a week." };
-    };
-    E.streamStop = function(S) {
-      var P = S.promos[S.player];
-      if (!P.strm || !P.strm.on) return { ok: false, msg: "There is no service to close." };
-      var n = P.strm.subs;
-      P.strm.on = 0;
-      P.strm.subs = 0;
-      news(S, "money", P.name + " has closed its streaming service.");
-      return { ok: true, msg: "The service is closed. " + n.toLocaleString("en-US") + " subscribers have gone." };
-    };
-    WEEKX.push(function(S) {
-      if (S.cal) return;
-      var P = S.promos[S.player];
-      if (!P || !P.strm || !P.strm.on) return;
-      var st = P.strm, cap = streamCap(S, P), r = S.reports[0];
-      var q = r && r.week >= S.week - 1 ? (repCS2(r) - 55) / 100 : 0;
-      var was = st.subs;
-      st.subs = Math.max(0, Math.round(st.subs + (cap - st.subs) * 0.06 + cap * 0.02 * q));
-      st.mx = Math.max(st.mx || 0, st.subs);
-      st.wk = st.subs - was;
-      st.pay = st.subs * STRM_PRICE - streamRunCost(P);
-      P.led.bonus += st.pay;
-    });
-    (function() {
-      var was = airRate;
-      airRate = function(P, show) {
-        var r = was(P, show), sh = show && !show.big ? airRec(P, show.id) : null;
-        return r * (sh && sh.tier === 2 && P.strm && P.strm.on ? 0.95 : 1);
-      };
-    })();
-    E.streamInfo = function(S) {
-      var P = S.promos[S.player], st = P.strm || {}, on = !!st.on, maj = P.shows.filter(function(sh) {
-        return !sh.big && sh.tier === 2;
-      }).map(function(sh) {
-        return sh.name;
-      });
-      return {
-        on,
-        since: on ? cal(st.on).label : null,
-        subs: st.subs || 0,
-        wk: st.wk || 0,
-        cap: streamCap(S, P),
-        pay: on ? st.pay || 0 : 0,
-        open: streamOpenCost(P),
-        run: streamRunCost(P),
-        price: STRM_PRICE,
-        lib: (P.tape || []).length,
-        major: maj
-      };
-    };
-    E.ask = function(S, w) {
-      var P = S.promos[S.player], MD = modelOf(P), m = (w.promo === "FA" ? 1 : 1.3) * talkDiscount(S);
-      if (w.promo !== "FA" && S.promos[w.promo].image > P.image + 10) m += 0.25;
-      if (S.pw10 && S.pw10.indexOf(w.id) >= 0) m += 0.1;
-      if (MD.premium && w.ovr > P.image + 8) m *= MD.premium;
-      if (MD.chip && w.cut && S.week - w.cut.w < 52 && w.promo === "FA") m *= 0.85;
-      return Math.round(wageFor(w.ovr, P) * m / 50) * 50;
-    };
-    E.canSign = function(S, w) {
-      var P = S.promos[S.player], MD = modelOf(P);
-      return !(MD.gender && w.g !== MD.gender) && w.ovr <= P.image + (MD.reach || 25);
-    };
-    E.signWhy = function(S, w) {
-      var P = S.promos[S.player], MD = modelOf(P);
-      return MD.gender && w.g !== MD.gender ? P.name + " is an all-women company." : E.canSign(S, w) ? null : w.name + " is not interested in a promotion your size yet. Raise your popularity first.";
-    };
-    E.market = function(S) {
-      return S.w.filter(function(w) {
-        return !w.rt && (w.promo === "FA" || w.promo !== S.player && w.con <= 12);
-      });
-    };
-    E.sign = function(S, id, wage, weeks) {
-      var w = S.w[id], P = S.promos[S.player];
-      if (!w || w.promo === P.id) return { ok: false, msg: "Not available." };
-      if (w.rt) return { ok: false, msg: w.name + " has retired." };
-      if (w.lock > S.week) return { ok: false, msg: w.name + " will not talk again until " + cal(w.lock).label + "." };
-      if (w.promo !== "FA" && w.con > 12) return { ok: false, msg: w.name + " is under contract." };
-      if (!E.canSign(S, w)) return { ok: false, msg: E.signWhy(S, w) };
-      if (wagesWeek(S, P) + wage > E.budget(S)) return { ok: false, msg: S.owner.name + " will not sign off on that. It would take the wage bill past the " + money(E.budget(S)) + " a week budget." };
-      var ask = E.ask(S, w);
-      if (wage < ask * 0.97) {
-        if (!w.ctr) {
-          w.ctr = true;
-          var ca = Math.round(ask * 1.08 / 50) * 50;
-          var half = Math.round((wage + ca) / 2 / 50) * 50;
-          pushEv(S, { type: "counter", w: w.id, ask: ca, offer: wage, half, weeks: weeks || 48, text: w.name + "\u2019s side did not like your offer of " + money(wage) + ", but they have come back with a number: " + money(ca) + " a week.", choices: ["Accept at " + money(ca) + " a week", "Meet them halfway: " + money(half) + " a week", "Walk away"], checks: { 1: mkCheck(7, [{ n: w.promo === "FA" ? "They need the work" : "They have a job already", v: w.promo === "FA" ? 1 : -1 }, { n: "They are unhappy where they are", v: w.promo !== "FA" && w.morale < 45 ? 1 : 0 }].concat(skillMods(S, "talk"))) } });
-          return { ok: false, msg: w.name + " turned that down and sent a counter-offer. It is in your inbox." };
-        }
-        w.lock = S.week + 4;
-        return { ok: false, msg: "Talks broke down. " + w.name + " wanted about " + money(ask) + " a week." };
-      }
-      var from = w.promo;
-      if (from !== "FA") {
-        S.promos[from].rel = clamp((S.promos[from].rel || 0) - 12, -100, 100);
-        leaveCompany(S, w, "left for " + P.name);
-      }
-      joinCompany(S, w, P, wage, weeks || 48);
-      news(S, "contract", P.name + " signed " + w.name + (from !== "FA" ? " away from " + S.promos[from].name : "") + ".");
-      award(S, from === "FA" ? "ACH_SIGN" : "ACH_POACH");
-      if (w.cr) award(S, "ACH_CREATE");
-      return { ok: true, msg: w.name + " signs for " + money(wage) + " a week." };
-    };
-    E.release = function(S, id) {
-      var w = S.w[id], P = S.promos[S.player];
-      if (!w || w.promo !== P.id) return null;
-      var pay = w.wage * 4;
-      P.cash -= pay;
-      if (S.owner.pledge === "stable") {
-        rosterOf(S, P.id).forEach(function(x) {
-          x.morale = clamp(x.morale - 3, 0, 100);
-        });
-        S.trust = clamp(S.trust - 4, 0, 100);
-      }
-      leaveCompany(S, w, "released");
-      w.promo = "FA";
-      w.brand = null;
-      news(S, "contract", P.name + " released " + w.name + ".");
-      return w.name + " is released. Severance: " + money(pay) + ".";
-    };
-    E.renewAsk = function(S, id, weeks) {
-      var w = S.w[id];
-      if (!w || w.promo !== S.player) return 0;
-      return Math.round(renewAsk(S, w) * (weeks > 60 ? 1.1 : 1) / 50) * 50;
-    };
-    E.renew = function(S, id, weeks) {
-      var w = S.w[id];
-      if (!w || w.promo !== S.player) return null;
-      var ask = Math.round(renewAsk(S, w) * (weeks > 60 ? 1.1 : 1) / 50) * 50;
-      w.wage = ask;
-      w.con = weeks;
-      w.cn = false;
-      w.morale = clamp(w.morale + 3, 0, 100);
-      return w.name + " re-signs for " + money(ask) + " a week.";
-    };
-    E.setBrand = function(S, id, b) {
-      var w = S.w[id];
-      if (w && w.promo === S.player) {
-        w.brand = b;
-        var tm = teamOf(S, w);
-        if (tm && S.w[tm.m[0]].brand !== S.w[tm.m[1]].brand) dissolveTeam(S, tm);
-      }
-    };
-    E.pushMap = function(S, pid) {
-      var out = {}, P = S.promos[pid], groups = {};
-      rosterOf(S, pid).forEach(function(w) {
-        var k = (w.brand || "") + w.g;
-        (groups[k] = groups[k] || []).push(w);
-      });
-      Object.keys(groups).forEach(function(k) {
-        var L2 = groups[k].sort(function(a, b) {
-          return b.ovr - a.ovr;
-        }), n = L2.length;
-        L2.forEach(function(w, i) {
-          var f = i / n;
-          out[w.id] = f < 0.1 ? "Main event" : f < 0.3 ? "Upper midcard" : f < 0.6 ? "Midcard" : f < 0.85 ? "Lower midcard" : "Opener";
-        });
-      });
-      return out;
-    };
-    E.runPlayerShow = function(S, card) {
-      return livePlay(S, card);
-    };
-    E.suggest = function(S) {
-      var P = S.promos[S.player], show = S.queue[S.qi];
-      return show ? autoBook(S, P, show) : [];
-    };
-    E.validate = function(S, card) {
-      var P = S.promos[S.player], show = S.queue[S.qi];
-      if (!show) return { errors: [], warnings: [] };
-      var v = validate(S, P, show, card), c = cardCost(S, card);
-      if (c > S.bp) {
-        if (S.owner.me) v.warnings.push("You are " + (c - S.bp) + " booking power over. As the owner you can overrule, but each extra point costs locker-room trust.");
-        else v.errors.push("These calls need " + c + " booking power and you have " + S.bp + ". Let some matches play out.");
-      }
-      return v;
-    };
-    E.eligible = function(S) {
-      var P = S.promos[S.player], show = S.queue[S.qi];
-      return show ? eligible(S, P, show) : [];
-    };
-    E.showTitles = function(S) {
-      var P = S.promos[S.player], show = S.queue[S.qi];
-      return show ? show.big ? P.titles : showTitles(P, show) : [];
-    };
-    E.nextBig = function(S) {
-      var w = nextBigFrom(S.week, S), c = cal(w);
-      return { week: w, name: evName(S, S.promos[S.player], c.month) || "the next big show", label: c.label };
-    };
-    E.expected = function(S, show) {
-      return r1(expected(S.promos[S.player], show) - (firstNight(S) ? FIRST_NIGHT : 0));
-    };
-    E.cal = cal;
-    E.workRate = workRate;
-    E.rosterOf = rosterOf;
-    E.teamOf = teamOf;
-    E.partnerOf = partnerOf;
-    E.feudOf = feudOf;
-    E.feudsFor = feudsFor;
-    E.activeFeuds = activeFeuds;
-    E.feudLabel = feudLabel;
-    E.feudStage = feudStage;
-    E.holdLvl = holdLvl;
-    E.isDev = isDev;
-    E.wageFor = wageFor;
-    E.money = money;
-    E.autoBook = autoBook;
-    E.runShow = runShow;
-    E.weekShows = weekShows;
-    E.feudAct = function(f, S) {
-      return feudAct(f, S);
-    };
-    E.ACTN = ACTN;
-    E.RISKN = RISKN;
-    E.TIXN = TIXN;
-    E.ADVN = ADVN;
-    E.SLOTN = SLOTN;
-    E.PRODN = PRODN;
-    E.SLOT_MAX = SLOT_MAX;
-    E.MT = MT;
-    E.STIP = STIP;
-    E.ACH = ACH;
-    E.STYLE_NAME = STYLE_NAME;
-    E.MONTHS = MONTHS;
-    var CANCEL_WARN = 3, HOUSE_DRAW = 0.75, BACK_RUN = 6, BACK_CS = 65;
-    function showOff(P, show) {
-      var sh = show && !show.big ? airRec(P, show.id) : null;
-      return !!(sh && sh.off);
-    }
-    (function() {
-      var rate = airRate;
-      airRate = function(P, show) {
-        return showOff(P, show) ? 0 : rate(P, show);
-      };
-      var dem = demand;
-      demand = function(P, show, hype) {
-        return dem(P, show, hype) * (showOff(P, show) ? HOUSE_DRAW : 1);
-      };
-      var meet = EVR.netmeet;
-      EVR.netmeet = function(S, ev, choice, P) {
-        var out = meet(S, ev, choice, P);
-        P.nmw = (P.nmw || []).filter(function(w) {
-          return S.week - w < 48;
-        });
-        P.nmw.push(S.week);
-        var left = CANCEL_WARN - P.nmw.length;
-        if (left > 0) return out + " The network says this is warning " + P.nmw.length + " of " + CANCEL_WARN + ".";
-        var live = P.shows.filter(function(sh) {
-          return !sh.off;
-        }).sort(function(a, b) {
-          return (a.pr || 0) - (b.pr || 0);
-        })[0];
-        P.nmw = [];
-        if (!live) return out;
-        live.off = S.week;
-        live.offRun = 0;
-        rosterOf(S, P.id).filter(function(w) {
-          return !w.nw;
-        }).sort(function(a, b) {
-          return b.ovr - a.ovr;
-        }).slice(0, 4).forEach(function(w) {
-          youRemember(S, w, "cancel", "Lost the television show under this booker.", -3);
-        });
-        news(S, "money", live.name + " has been cancelled. It runs on as a house show, with no television money.");
-        note(S, "Cancelled", live.name + " is off television. Six strong house shows in a row could win a deal back.", "bad");
-        return out + " It was the third warning. " + live.name + " is cancelled. It will run on as a house show: no television money, and a smaller crowd.";
-      };
-    })();
-    SHOWX.push(function(S, P, show, rep) {
-      if (S.cal || P.id !== S.player || !showOff(P, show)) return;
-      var sh = airRec(P, show.id);
-      rep.hs = 1;
-      sh.offRun = repCS2(rep) >= BACK_CS ? (sh.offRun || 0) + 1 : 0;
-      if (sh.offRun >= BACK_RUN && !S.inbox.some(function(e) {
-        return !e.done && e.type === "netback";
-      })) {
-        sh.offRun = 0;
-        var net = airPickNet(S, P, sh, 0, null);
-        pushEv(S, { type: "netback", sid: sh.id, net, text: net + " has seen the crowds at " + sh.name + ". Six strong house shows in a row. They offer it a slot on television again: a small network, a small fee, a fresh start.", choices: ["Take the deal", "Not yet"] });
-      }
-    });
-    EVR.netback = function(S, ev, choice, P) {
-      var sh = airRec(P, ev.sid);
-      if (!sh || !sh.off) return "That show is already on television.";
-      if (choice === 1) return "You say not yet. They will be watching.";
-      delete sh.off;
-      delete sh.offRun;
-      sh.tier = 0;
-      airSign(S, P, sh, ev.net, 0, 0.8);
-      E.clocks(S);
-      S.clocks.net.v = 0;
-      S.clocks.net.why = "A new network, and a clean slate";
-      rosterOf(S, P.id).filter(function(w) {
-        return !w.nw;
-      }).sort(function(a, b) {
-        return b.ovr - a.ovr;
-      }).slice(0, 4).forEach(function(w) {
-        youRemember(S, w, "tvback", "Got the show back on television.", 3);
-      });
-      note(S, "Back on television", sh.name + " is back on the air, on " + ev.net + ".", "good");
-      return sh.name + " is back on television, on " + ev.net + ". Small money, a clean slate, and a crowd that never left.";
-    };
-    E.cancelInfo = function(S) {
-      var P = S.promos[S.player];
-      return { warn: (P.nmw || []).filter(function(w) {
-        return S.week - w < 48;
-      }).length, of: CANCEL_WARN, off: P.shows.filter(function(sh) {
-        return sh.off;
-      }).map(function(sh) {
-        return { id: sh.id, n: sh.name, run: sh.offRun || 0, need: BACK_RUN };
-      }) };
-    };
-    var MAP_W = 59, MAP_H = 32, MAP_ABC = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!#$%&()*+,/:;<=>?@[]^_{|}~";
-    var MAPS = [
-      {
-        id: "usa",
-        n: "The United States",
-        f: [-126.023, 1.0279, 49.9, 0.8094],
-        a: ["Washington", "Idaho", "Montana", "North Dakota", "Minnesota", "Michigan", "Maine", "Wisconsin", "Oregon", "South Dakota", "Wyoming", "New York", "Vermont", "New Hampshire", "Iowa", "Nebraska", "Illinois", "Massachusetts", "California", "Nevada", "Utah", "Indiana", "Ohio", "Pennsylvania", "Connecticut", "Colorado", "New Jersey", "Kansas", "Missouri", "Kentucky", "Maryland", "Delaware", "Arizona", "New Mexico", "Oklahoma", "Tennessee", "North Carolina", "Texas", "Arkansas", "Mississippi", "Alabama", "Georgia", "South Carolina", "Louisiana", "Florida"],
-        g: [
-          "                                                           ",
-          "   0000001222222222223333333444                            ",
-          " 0000000012222222222233333334444444                        ",
-          "  00000001122222222223333333444444  5                  66  ",
-          "  000000011222222222233333333444477555555             666  ",
-          "  888888811122222222299999999444777775  5             666  ",
-          "  8888888111122aaaaaa9999999944447777  555       bbccd666  ",
-          "  8888888111111aaaaaa9999999944444777 5555      bbbcdd6    ",
-          " 88888888111111aaaaaa99999999eeeee777  555    bbbbbcdd     ",
-          "  8888888111111aaaaaaffffffffeeeeeegg 5555   bbbbbbhhh     ",
-          "  iiiijjjjjjkkkaaaaaaffffffffeeeeeggglllmmmmnnnnnnboo      ",
-          "  iiiijjjjjjkkkkkppppppfffffffeeeeggglllmmmmnnnnnnq        ",
-          "  iiiijjjjjjkkkkkpppppprrrrrrrssssggglllmmmmnnnnnqq        ",
-          "  iiiijjjjjjkkkkkpppppprrrrrrrrssssggllltmm    uuv         ",
-          "   iiiijjjjjkkkkkpppppprrrrrrrrssssggllttt      u          ",
-          "   iiiiijjjjkkkkkpppppprrrrrrrrsssssgtttttt                ",
-          "    iiiiijjjwwwwwxxxxxyyyyyyyyyssssstzzzzzzAA  AA          ",
-          "     iiiiijwwwwwwxxxxxBBByyyyyyCCCCzzzzzzzAAAAAAA          ",
-          "     iiiiiiwwwwwwxxxxxBBByyyyyyCCCCDDEEFFFGGAAAA           ",
-          "       iiiiwwwwwwxxxxxBBBBByyyyCCCDDDEEFFFGGGGA            ",
-          "        iiiwwwwwwxxxxxBBBBBBBBBCCCDDDEEEFFFGGG             ",
-          "           wwwwwwxxxxxBBBBBBBBBHHHDDDEEEFFFFG              ",
-          "             wwwwx BBBBBBBBBBBBHHHDDDEEEFFFF               ",
-          "                    BBBBBBBBBBBBHHHDDEIIFFF                ",
-          "                     BBBBBBBBBBHHHHH   IIIII               ",
-          "                     BB BBBBBB    H       II               ",
-          "                         BBBB             II               ",
-          "                         BBB              III              ",
-          "                          BB              III              ",
-          "                           B               II              ",
-          "                                                           ",
-          "                                                           "
-        ]
-      },
-      {
-        id: "brit",
-        n: "Britain and Ireland",
-        f: [-20.114, 0.5395, 59.6, 0.3125],
-        a: ["Scotland", "the North of England", "Ireland", "Northern Ireland", "Wales", "the Midlands", "the West Country", "the South East"],
-        g: [
-          "                                               ------------",
-          "                                                --------- -",
-          "                                                -------   -",
-          "                            0000                ------    -",
-          "                        00 0000                  ----     -",
-          "                           000                             ",
-          "                         0 0000000                      -  ",
-          "                         000000000                     --  ",
-          "                          0000000                    ---   ",
-          "                          0000000                    ----  ",
-          "                           00000                    -----  ",
-          "                           000000                   -----  ",
-          "                           0000001                  ----  -",
-          "                            000001                   ---- -",
-          "                      2233  0000111                  ----  ",
-          "                     223333 0  0111                  ---  -",
-          "                      33333    11111                  --   ",
-          "                   2222223     111111                 ---- ",
-          "                   2222222      11111                ------",
-          "                   2222222     111111            ----------",
-          "                    222222   444555555         ------------",
-          "                    222222   44455555555      -------------",
-          "                   2222222    44555555555     -------------",
-          "                  2222222    44455555555     --------------",
-          "                  22222     444466777777     --------------",
-          "                   22         446677777     ---------------",
-          "                                66777777   ----------------",
-          "                             6666677777  ------------------",
-          "                            6666667     -------------------",
-          "                            666         -------------------",
-          "                           6            -------------------",
-          "                                      ---------------------"
-        ]
-      },
-      {
-        id: "eur",
-        n: "Europe",
-        f: [-24.564, 1.2734, 62, 0.8438],
-        a: ["Norway", "Sweden", "Finland", "Russia", "Estonia", "Britain", "Denmark", "Latvia", "Lithuania", "Belarus", "Germany", "Poland", "Ireland", "Netherlands", "Ukraine", "France", "Belgium", "Bohemia", "Slovakia", "Austria", "Hungary", "Moldova", "Switzerland", "Romania", "Italy", "Slovenia", "Croatia", "Serbia", "Bosnia", "Bulgaria", "Spain", "Montenegro", "Kosovo", "Albania", "North Macedonia", "Portugal", "Greece", "Turkey"],
-        g: [
-          "                       0000001111   22222223333333333333333",
-          "                       0000001111   22222333333333333333333",
-          "                       00000011111   2    33333333333333333",
-          "                        000 11111     444333333333333333333",
-          "               55       00  11111     444333333333333333333",
-          "               555         6 111    7 777333333333333333333",
-          "               55         66 111    77777333333333333333333",
-          "               555        6 61      88889993333333333333333",
-          "             55 55        a      b 338889999333333333333333",
-          "           ccc5  55       aaaabbbbbbbb899999333333333333333",
-          "            ccc 5555   ddaaaaaabbbbbbb999999333333333333333",
-          "            cc  55555  ddaaaaaabbbbbbb9999993e3333333333333",
-          "                5555  ddaaaaaaabbbbbbbeeeeeeee3333333333333",
-          "                5    fggaaaaaahhbbbbbbeeeeeeeee33333333333-",
-          "                    fffgaaaaahhhhhbbbeeeeeeeeeeeee333333---",
-          "                  fffffffaaaaahhhiiiieeeeeeeeeeeeee33333---",
-          "                fffffffffaaaajjjjikkkeeelleeeeeeee333333---",
-          "                 ffffffffmmjjjjjkkkknnnnnleeeeeee333333333-",
-          "                  ffffffmmmoooppkkkknnnnnleeeee  333333333 ",
-          "                  fffffffooooopqqqrrnnnnnne  33  33333333  ",
-          "                  fffffffoooo  qssrrnnnnnn    3  3333333   ",
-          "                  ffffffff ooo qssrrrtnntn        3333333  ",
-          "            uuuuuuffff      oo   svwrtttt          --3333  ",
-          "            uuuuuuuuuu    f ooo   xwytttt           ---33  ",
-          "            zzuuuuuuu        ooo   yyAAABB  BBBBB  BB---3- ",
-          "            zzuuuuuu      o    oo  xAA  BBBBBBBBBBBBBB---- ",
-          "            zzuuuuu       o     o  AA   BBBBBBBBBBBBBB---- ",
-          "            zzuuuuu             o  AAA  BBBBBBBBBBBBBB---- ",
-          "            zzuuuuu          ooo    AA  BBBBBBBBBBBBBB---- ",
-          "            zzuuuu        -   o     AA   BBBBBBBBBBB-------",
-          "              u     --------              B  B B-----------",
-          "              --  ----------                   ------------"
-        ]
-      },
-      {
-        id: "med",
-        n: "The Mediterranean and the Near East",
-        f: [4.088, 0.8445, 46.5, 0.6875],
-        a: ["Gaul", "Italy", "Illyria", "Pannonia", "Dacia", "Scythia", "Thrace", "the Caucasus", "Macedon", "Anatolia", "Greece", "Persia", "Carthage", "Mesopotamia", "Numidia", "the Levant", "Cyprus", "Libya", "Arabia", "Egypt"],
-        g: [
-          "0000001111122223333344444444455  5555   5555555555555     5",
-          "0000111111 2222222224444444445    555  5555555555555     55",
-          "0001111111  222222222444444444     55  555555555555    5555",
-          "00001 1111   2222222224444444            5555555555    5555",
-          "000    1111   222222226666666             575555555     555",
-          "        1111    222222666666                77755555     55",
-          "     0   1111     2288666669                777777555    5 ",
-          "          11111   2888aaa6a99   999999      997777757      ",
-          "     11     1111  22aaaa  9   999999999999999997777777    b",
-          "     11      11   2aaa    9999999999999999999999777777    b",
-          "     11       1    aaa    a99999999999999999999bb77b7     b",
-          "              1     aaa    999999999999999999999bbbb7      ",
-          "          1111      aaaa   999999999999999999999bbbbb      ",
-          "      c    11        aa    9999999999999999999ddbbbbbbb    ",
-          "eeeeeccc                    999  999  9fffffddddbbbbbbbbbbb",
-          "eeeeeccc                              ffffffdddddbbbbbbbbbb",
-          "eeeeeccc                a         g   ffffffddddddbbbbbbbbb",
-          "eeeeeccc                             fffffffdddddbbbbbbbbbb",
-          "eeeecccc                             fffffdddddddbbbbbbbbbb",
-          "eeeeecccc                            ffffdddddddddbbbbbbbbb",
-          "eeeeecccchhhh      hhhh             fffffddddddddddbbbbbbbb",
-          "eeeeeechhhhhhh     hhhhhh           ffffiiiiddddddddbbbbbbb",
-          "eeeeeechhhhhhhhh   hhhhhhjjjj jjjjjjffffiiiiidddddddbbbbbbb",
-          "eeeeeeehhhhhhhhhhhhhhhhhhjjjjjjjjjjjffffiiiiiiddddddbbbbbbb",
-          "eeeeeeehhhhhhhhhhhhhhhhhhjjjjjjjjjjjffiiiiiiiiiddddi   bbbb",
-          "eeeeeeehhhhhhhhhhhhhhhhhhjjjjjjjjjjjiiiiiiiiiiiiiiii   bbbb",
-          "eeeeeeehhhhhhhhhhhhhhhhhhjjjjjjjjjjjiiiiiiiiiiiiiiiii   bbb",
-          "eeeeeeehhhhhhhhhhhhhhhhhhjjjjjjjjjj  iiiiiiiiiiiiiiii    bb",
-          "eeeeeeehhhhhhhhhhhhhhhhhhjjjjjjjjjj   iiiiiiiiiiiiiiii    b",
-          "eeeeeehhhhhhhhhhhhhhhhhhhjjjjjjjjjjj  iiiiiiiiiiiiiiiii    ",
-          "eeeeeeehhhhhhhhhhhhhhhhhhjjjjjjjjjjj   iiiiiiiiiiiiiiii-   ",
-          "eeeeeeehhhhhhhhhhhhhhhhhhjjjjjjjjjjjj  iiiiiiiiiiiiiiii-   "
-        ]
-      },
-      {
-        id: "mex",
-        n: "Mexico and Central America",
-        f: [-120.507, 0.8646, 33, 0.8125],
-        a: ["Baja California", "Sonora", "Chihuahua", "Coahuila", "Baja California Sur", "Sinaloa", "Durango", "Nuevo Le\xF3n", "Tamaulipas", "Zacatecas", "San Luis Potos\xED", "Nayarit", "Cuba", "Aguascalientes", "Veracruz", "Jalisco", "Guanajuato", "Quer\xE9taro", "Yucat\xE1n", "Hidalgo", "Quintana Roo", "Colima", "Michoac\xE1n", "the Valley of Mexico", "Tlaxcala", "Campeche", "Hispaniola", "Morelos", "Puebla", "Guerrero", "Oaxaca", "Tabasco", "Jamaica", "Chiapas", "Guatemala", "Belize", "Honduras", "Nicaragua", "El Salvador", "Costa Rica", "Panama"],
-        g: [
-          "    -00----------------------------------------            ",
-          "    000001------------------------------------             ",
-          "     00 0111111222---------------------------              ",
-          "     00  111112222------------------    -----              ",
-          "      00 1111122222-333-------    --       ---             ",
-          "       00 1111222223333------               --             ",
-          "       04  1122222233333---                 --             ",
-          "       444  4552226333377--                 ---            ",
-          "         44  5555666337777-                  --            ",
-          "          4   5556666777788                                ",
-          "          44   556669977888                                ",
-          "            4   666999aa88                                 ",
-          "                 bb999aaa8                ccccc            ",
-          "                 bbdddaaae                c   cccc         ",
-          "                  bfdgghhee        iiii         cccc       ",
-          "                 ffffgghjje        iikk           ccc      ",
-          "                  llmmmnnooe      ppkk                 qqqq",
-          "                   lmmmnrrsee     ppkk                 qqqq",
-          "                     mtttrsueeevvvppp            ww     q  ",
-          "                       tttuuueexxxyyz                      ",
-          "                         tuuuuxxxxxyz                      ",
-          "                               xxyyyyAAAAA                 ",
-          "                                xyyyAAAAAAB                ",
-          "                                  yCCAAABBB                ",
-          "                                      ABBBB                ",
-          "                                       BBBB             -  ",
-          "                                        BBB            -  -",
-          "                                        DDD         -------",
-          "                                         DDD        ---- --",
-          "                                          DEE EEE  --------",
-          "                                            EEE  E---------",
-          "                                                 E---------"
-        ]
-      },
-      {
-        id: "sam",
-        n: "South America",
-        f: [-129.122, 2.3431, 14, 2.1875],
-        a: ["Colombia", "Venezuela", "Guyana", "Suriname", "Brazil", "Ecuador", "Peru", "Bolivia", "Chile", "Paraguay", "Argentina", "Uruguay"],
-        g: [
-          "                 --                             -----------",
-          "                   -   011                       ----------",
-          "                   ---00111112                   ----------",
-          "                      000111122                   ------ --",
-          "                      0000111233-                         -",
-          "                      000011442444                         ",
-          "                     55004444444444                        ",
-          "                     566644444444444                       ",
-          "                    6666444444444444444                    ",
-          "                     6664444444444444444                   ",
-          "                     6664444444444444444                   ",
-          "                      66647444444444444                    ",
-          "                      66667774444444444                    ",
-          "                       666777444444444                     ",
-          "                         7777744444444                     ",
-          "                         8777944444444                     ",
-          "                         8779994444444                     ",
-          "                         8aaaa99444                        ",
-          "                         8aaaa9944                         ",
-          "                         aaaaaa444                         ",
-          "                         aaaaab444                         ",
-          "                        8aaaaabbb                          ",
-          "                        8aaaaaa                            ",
-          "                        8aaaaaa                            ",
-          "                        8aaaa                              ",
-          "                        aaaa                               ",
-          "                        8aa                                ",
-          "                       8aaa                                ",
-          "                       8aaa                                ",
-          "                       8aa                                 ",
-          "                        8a                                 ",
-          "                          a                                "
-        ]
-      },
-      {
-        id: "jap",
-        n: "Japan",
-        f: [118.282, 0.6345, 46, 0.5],
-        a: ["Hokkaido", "Tohoku", "Chubu", "Kanto", "Chugoku", "Kansai", "Kyushu", "Shikoku"],
-        g: [
-          "------------------------------                             ",
-          "-----------------------------        0                     ",
-          "-----------------------------        00                    ",
-          "----------------------------         000                   ",
-          "---------------------------         0000000                ",
-          "--------------------------         00000000                ",
-          "--------------------   -          000000                   ",
-          "-------------------               1   00                   ",
-          "------------------                1                        ",
-          "------------------                 1                       ",
-          "----- ------------                111                      ",
-          "---   ----------                  111                      ",
-          "--   ---  -----                   111                      ",
-          "-    -     ----                   111                      ",
-          "           -----                  111                      ",
-          "          ------                 111                       ",
-          "-  --       -----               2111                       ",
-          "-------      -----           2 22211                       ",
-          "-----        -----           2223331                       ",
-          "----         -----          2222333                        ",
-          "---          -----          2222233                        ",
-          "--           ----     44455552222 3                        ",
-          "--           --      44445555 2                            ",
-          "---                 44 44  55                              ",
-          "----               6  7777 5                               ",
-          "----              666 77                                   ",
-          "----               666                                     ",
-          "-----              66                                      ",
-          "------             66                                      ",
-          "-----              6                                       ",
-          "-----                                                      ",
-          "-----                                                      "
-        ]
-      },
-      {
-        id: "world",
-        n: "The world",
-        f: [-168, 6.1017, 78, 4.25],
-        a: ["North America", "Asia", "Europe", "Africa", "South America", "Oceania"],
-        g: [
-          "             0   0000000                  1111             ",
-          "       000000000  000000               1111111111 111      ",
-          "00000000000000100111111111112222  22                     11",
-          "0000000000000  00  00        2222222211111111111111111111  ",
-          " 00 00000000   00           22222222211111111111111 1 1    ",
-          "      00000000 000        2  222222221111111111111   1     ",
-          "       000000000000        222222222111111111111111        ",
-          "       0000000000          222222222111111111111111        ",
-          "       000000000          22  22 1121111111111111          ",
-          "       00000000           22    111111111111111   1        ",
-          "        0000000           3333   11111111111111  1         ",
-          "         000              3333333111111111111111           ",
-          "         000             33333333111 1111111111            ",
-          "          00             333333333111  111 111             ",
-          "           00            33333333311    1  11              ",
-          "             0           33333333333    1   1              ",
-          "               444       33333333333    1                  ",
-          "               4444          333333        1  1            ",
-          "              444444         333333         1111           ",
-          "              4444444        33333                1        ",
-          "              44444444        3333                1        ",
-          "               444444         3333               5         ",
-          "                44444        33333 3           55555       ",
-          "                44444         333             555555       ",
-          "                4444          333             5555555      ",
-          "                444           333             5555555      ",
-          "                444                               55       ",
-          "               444                                 5       ",
-          "               44                                      5   ",
-          "               44                                          ",
-          "               4                                           ",
-          "                                                           "
-        ]
-      }
-    ];
-    var CITY_AT = {
-      "Kingsport": [36.55, -82.56],
-      "Knoxville": [35.96, -83.92],
-      "Nashville": [36.16, -86.78],
-      "Atlanta": [33.75, -84.39],
-      "Jacksonville": [30.33, -81.66],
-      "Orlando": [28.54, -81.38],
-      "Tampa": [27.95, -82.46],
-      "Miami": [25.76, -80.19],
-      "Rome": [41.9, 12.5],
-      "Athens": [37.98, 23.73],
-      "Alexandria": [31.2, 29.92],
-      "Constantinople": [41.01, 28.98],
-      "London": [51.51, -0.13],
-      "Paris": [48.86, 2.35],
-      "Vienna": [48.21, 16.37],
-      "Kyoto": [35.01, 135.77],
-      "Philadelphia": [39.95, -75.17, ["Pennsylvania"]],
-      "Boston": [42.36, -71.06],
-      "Chicago": [41.88, -87.63, ["Illinois"]],
-      "St. Louis": [38.63, -90.2],
-      "Edinburgh": [55.95, -3.19],
-      "Dublin": [53.35, -6.26],
-      "Verona": [45.44, 10.99],
-      "Nottingham": [52.95, -1.15],
-      "Camelot": [51.02, -2.53],
-      "Springfield": [39.8, -89.65],
-      "New York": [40.71, -74, ["New York"]],
-      "Baltimore": [39.29, -76.61],
-      "New Orleans": [29.95, -90.07],
-      "Sparta": [37.07, 22.43],
-      "Thebes": [38.32, 23.32],
-      "Corinth": [37.94, 22.93],
-      "Delphi": [38.48, 22.5],
-      "Troy": [39.96, 26.24],
-      "Memphis": [29.85, 31.25],
-      "Uppsala": [59.86, 17.64],
-      "Uruk": [31.32, 45.64],
-      "Tara": [53.58, -6.61, ["Ireland"]],
-      "Whitby": [54.49, -0.61],
-      "Sleepy Hollow": [41.09, -73.86],
-      "Prague": [50.08, 14.44],
-      "Styria": [47.07, 15.44],
-      "Ingolstadt": [48.77, 11.42],
-      "Salem": [42.52, -70.9],
-      "Hannibal": [39.71, -91.36],
-      "Deadwood": [44.38, -103.73],
-      "Dodge City": [37.75, -100.02],
-      "Tombstone": [31.71, -110.07],
-      "Abilene": [38.92, -97.21],
-      "Natchez": [31.56, -91.4, ["Mississippi"]],
-      "Bangor": [44.8, -68.77],
-      "Baghdad": [33.31, 44.36],
-      "Hamelin": [52.1, 9.36],
-      "West Egg": [40.8, -73.7, ["New York"]],
-      "Louisville": [38.25, -85.76],
-      "Saint Paul": [44.95, -93.09],
-      "San Francisco": [37.77, -122.42],
-      "Dawson City": [64.06, -139.43],
-      "Atlantic City": [39.36, -74.42],
-      "Monte Carlo": [43.74, 7.43],
-      "Melbourne": [-37.81, 144.96],
-      "Tenochtitlan": [19.43, -99.13],
-      "Teotihuacan": [19.69, -98.84, ["the Valley of Mexico"]],
-      "Tula": [20.06, -99.34],
-      "Cholula": [19.06, -98.3, ["Puebla"]],
-      "Chichen Itza": [20.68, -88.57],
-      "Tikal": [17.22, -89.62],
-      "Palenque": [17.48, -92.05],
-      "Copan": [14.84, -89.14],
-      "Cusco": [-13.53, -71.97],
-      "Tiwanaku": [-16.55, -68.67, ["Bolivia"]],
-      "Guatavita": [4.98, -73.78],
-      "Chiloe": [-42.6, -73.9, ["Chile"]],
-      "Mexico City": [19.43, -99.13],
-      "Puebla": [19.04, -98.2, ["Puebla"]],
-      "Guadalajara": [20.67, -103.35],
-      "Veracruz": [19.17, -96.13],
-      "Havana": [23.11, -82.37],
-      "Caracas": [10.48, -66.9],
-      "Bogota": [4.71, -74.07],
-      "Quito": [-0.18, -78.47],
-      "Lima": [-12.05, -77.04],
-      "Santiago": [-33.45, -70.67],
-      "Buenos Aires": [-34.6, -58.38],
-      "Madrid": [40.42, -3.7],
-      "Nara": [34.69, 135.8],
-      "Edo": [35.68, 139.69],
-      "Osaka": [34.69, 135.5],
-      "Kamakura": [35.32, 139.55],
-      "Izumo": [35.37, 132.75],
-      "Ise": [34.49, 136.71],
-      "Aizu": [37.49, 139.93],
-      "Sendai": [38.27, 140.87],
-      "Hakata": [33.59, 130.4],
-      "Nikko": [36.75, 139.6],
-      "Kanazawa": [36.56, 136.65]
-    };
-    var TOWN_AT = { "Aachen": [50.78, 6.08], "Abancay": [-13.64, -72.88], "Akita": [39.72, 140.1], "Altdorf": [46.88, 8.64], "Amarna": [27.65, 30.9], "Amsterdam": [52.37, 4.9], "Anenecuilco": [18.78, -98.98], "Anzio": [41.45, 12.62], "Arauco": [-37.25, -73.32], "Arcadia": [37.6, 22.3], "Argos": [37.63, 22.73], "Arras": [50.29, 2.78], "Ashigara": [35.3, 139.03], "Auburn": [42.93, -76.57], "Babylon": [32.54, 44.42], "Badajoz": [38.88, -6.97], "Barcelona": [41.39, 2.17], "Barinas": [8.62, -70.21], "Bergen": [60.39, 5.32], "Berlin": [52.52, 13.4], "Bodenwerder": [51.97, 9.52], "Bonn": [50.73, 7.1], "Bowling Green": [39.34, -91.19], "Brasov": [45.65, 25.6], "Braunschweig": [52.27, 10.52], "Bremen": [53.08, 8.8], "Breslau": [51.1, 17.03], "Bristol": [51.45, -2.59], "Bubastis": [30.57, 31.51], "Bundelkhand": [25, 79.5], "Burgos": [42.34, -3.7], "Burnham Thorpe": [52.94, 0.75], "Canterbury": [51.28, 1.08], "Cap-Haitien": [19.76, -72.2], "Carlisle": [54.89, -2.93], "Carmarthen": [51.86, -4.31], "Carthage": [36.85, 10.32], "Carthage, Missouri": [37.18, -94.31], "Catskill": [42.22, -73.86], "Cayce": [36.57, -89.06], "Chelmsford": [51.74, 0.47], "Chillan": [-36.61, -72.1], "Chuquisaca": [-19.04, -65.26], "Circeo": [41.23, 13.05], "Clew Bay": [53.8, -9.7], "Coatzacoalcos": [18.15, -94.43], "Cologne": [50.94, 6.96], "Colotlan": [22.11, -103.27], "Concord": [42.46, -71.35], "Copenhagen": [55.68, 12.57], "Coventry": [52.41, -1.51], "Croton": [39.08, 17.13], "Cumana": [10.46, -64.17], "Cyrene": [32.82, 21.86], "Delos": [37.4, 25.27], "Derbyshire": [53.1, -1.6], "Dundalk": [54, -6.4], "Durban": [-29.86, 31.02], "Edfu": [24.98, 32.87], "Elderslie": [55.83, -4.48], "Eleusis": [38.04, 23.54], "Etna": [37.75, 15], "Exeter": [50.72, -3.53], "Faiyum": [29.31, 30.84], "Falaise": [48.9, -0.2], "Florence": [43.77, 11.25], "Freiburg": [47.99, 7.85], "Galway": [53.27, -9.05], "Gascony": [43.69, 0.18], "Gateshead": [54.96, -1.6], "Geneva": [46.2, 6.14], "Ghent": [51.05, 3.72], "Glastonbury": [51.15, -2.71], "Goliad": [28.67, -97.39], "Gordion": [39.65, 31.98], "Gotaland": [57.7, 12], "Greeneville": [36.16, -82.83], "Greenwich": [51.48, 0], "Griffin": [33.25, -84.26], "Guaduas": [5.07, -74.6], "Guangyuan": [32.43, 105.84], "Guatemala City": [14.63, -90.51], "Gyoda": [36.14, 139.46], "Halicarnassus": [37.03, 27.43], "Hamamatsu": [34.71, 137.73], "Harz": [51.8, 10.6], "Haworth": [53.83, -1.95], "Hekla": [63.99, -19.67], "Hempstead": [52, 0.38], "Henryville": [45.13, -73.18], "Hertford": [51.8, -0.08], "Himeji": [34.82, 134.69], "Ibague": [4.44, -75.23], "Inverness": [57.48, -4.22], "Iolcus": [39.36, 22.94], "Iping": [51, -0.78], "Ithaca": [38.4, 20.7], "Izu": [34.97, 138.95], "Kameoka": [35.01, 135.57], "Karatsu": [33.45, 129.97], "Kassel": [51.31, 9.48], "Kazbek": [42.7, 44.5], "Kearney": [39.37, -94.36], "Keswick": [54.6, -3.13], "Khentii": [47.5, 110], "Kiev": [50.45, 30.52], "Kilkea": [52.95, -6.9], "Kingston": [41.99, -70.72], "Kinsale": [51.7, -8.52], "Kiso": [35.84, 137.69], "Knossos": [35.3, 25.16], "Konigsberg": [54.71, 20.51], "La Mancha": [39.4, -3], "Lahore": [31.55, 74.34], "Lambayeque": [-6.7, -79.9], "Lancaster": [37.62, -84.58], "Langtry": [29.81, -101.56], "Le Claire": [41.6, -90.34], "Lejre": [55.6, 11.97], "Lemnos": [39.9, 25.25], "Leominster": [42.53, -71.76], "Lille": [50.63, 3.06], "Linlithgow": [55.98, -3.6], "Linzi": [36.8, 118.3], "Lohr am Main": [50, 9.58], "Luoyang": [34.62, 112.45], "Luxor": [25.69, 32.64], "Manaus": [-3.12, -60.02], "Marrakesh": [31.63, -8], "Marseille": [43.3, 5.37], "Morelia": [19.7, -101.19], "Moscow": [55.75, 37.62], "Mount Olympus": [40.09, 22.36], "Nantucket": [41.28, -70.1], "Naqada": [25.9, 32.72], "Nasu": [37.03, 139.97], "Newark": [40.74, -74.17], "Noble's Isle": [-13.83, -171.76], "Norwich": [52.63, 1.3], "Numata": [36.64, 139.04], "Oaxaca": [17.06, -96.72], "Okayama": [34.66, 133.93], "Ollantaytambo": [-13.26, -72.26], "Olympia": [37.64, 21.63], "Onate": [43.03, -2.41], "Otranto": [40.15, 18.49], "Oxford": [51.75, -1.26], "Padua": [45.41, 11.88], "Palmyra": [34.55, 38.27], "Pannonia": [47.5, 19], "Paphos": [34.77, 32.42], "Pecos": [31.42, -103.49], "Pella": [40.76, 22.52], "Penzance": [50.12, -5.54], "Pisa": [43.72, 10.4], "Pittsburgh": [40.44, -80], "Plasencia": [40.03, -6.09], "Point Pleasant": [38.9, -84.23], "Poitiers": [46.58, 0.34], "Pokrovskoye": [57.4, 66.6], "Princeton": [40.4, -93.58], "Q'umarkaj": [14.99, -91.17], "Quebec": [46.81, -71.21], "Rennes": [48.11, -1.68], "Reykjavik": [64.15, -21.94], "Rhamnous": [38.22, 24.03], "Richmond": [51.46, -0.3], "Ringerike": [60.15, 10.2], "Rochester": [51.39, 0.5], "Rovaniemi": [66.5, 25.7], "Russellville": [36.85, -86.89], "Sado": [38.02, 138.37], "Saint-Germain": [48.9, 2.09], "Salamis": [37.96, 23.48], "Salzburg": [47.8, 13.04], "San Antonio": [29.42, -98.49], "San Juan": [18.47, -66.1], "San Salvador": [13.69, -89.19], "Santiago de Cuba": [20.02, -75.82], "Seonee": [22.08, 79.55], "Shrewsbury": [52.71, -2.75], "Sighisoara": [46.22, 24.79], "Soma": [37.8, 140.92], "Spanish Town": [17.99, -76.96], "Stagira": [40.53, 23.75], "Stettin": [53.43, 14.55], "Subiaco": [41.92, 13.09], "Suwa": [36.04, 138.11], "Syracuse": [37.07, 15.29], "Taenarum": [36.39, 22.48], "Takamatsu": [34.34, 134.05], "Talcott": [37.65, -80.73], "Tanabe": [33.73, 135.38], "Tavistock": [50.55, -4.14], "Themiscyra": [41.2, 36.7], "Thrace": [41.5, 26], "Tikrit": [34.6, 43.68], "Tixtla": [17.57, -99.4], "Togakushi": [36.75, 138.08], "Trenton": [40.22, -74.76], "Trondheim": [63.43, 10.39], "Troy Grove": [41.47, -89.08], "Trujillo": [39.46, -5.88], "Van Buren": [35.44, -94.35], "Venice": [45.44, 12.33], "Villanueva de la Serena": [38.98, -5.8], "Vinci": [43.79, 10.93], "Westmoreland": [38.19, -76.92], "Woolsthorpe": [52.81, -0.63], "Worms": [49.63, 8.36], "Xalapa": [19.54, -96.91], "Yanagawa": [33.16, 130.4], "Yapeyu": [-29.47, -56.82], "York": [53.96, -1.08], "Yoshinogari": [33.33, 130.39], "Zululand": [-28.4, 31.4] };
-    var VENUE_RE = / (Armory|Civic Auditorium|Fieldhouse|Coliseum|Arena|Stadium)$/;
-    var BLD_TIER = [
-      { to: 1e3, k: ["Armory", "Union Hall", "Legion Hall", "Rec Center"] },
-      { to: 2500, k: ["Civic Auditorium", "Ballroom", "Exhibition Hall", "Music Hall"] },
-      { to: 6e3, k: ["Fieldhouse", "Expo Center", "Sports Barn", "Event Center"] },
-      { to: 13e3, k: ["Coliseum", "Gardens", "Pavilion", "Civic Center"] },
-      { to: 3e4, k: ["Arena", "Dome", "Center", "Forum"] },
-      { to: 9e4, k: ["Stadium", "Bowl", "Field"] }
-    ];
-    var BLD_WORDS = ["Riverside", "Harbor Street", "Union", "Memorial", "Lakeside", "Eastside", "Old Mill", "Market Street", "Liberty", "Veterans", "Grand", "Pioneer", "Crossroads", "Foundry", "Railyard", "Northgate", "Westgate", "Ironworks", "Lincoln Park", "Cedar Hill", "Founders", "Bayfront", "Stockyard", "Canal Street", "Hilltop", "Southside", "Central", "Midtown"];
-    function cityBuildings(city) {
-      var c = String(city || "the city"), n = 3 + Math.floor(h01("bn:" + c) * 3), tiers = [0, 2, 4], out = [], used = {};
-      var spare = [1, 3, 5];
-      while (tiers.length < n) tiers.push(spare.splice(Math.floor(h01("bt:" + c + ":" + tiers.length) * spare.length), 1)[0]);
-      tiers.sort(function(a, b) {
-        return a - b;
-      });
-      tiers.forEach(function(t, i) {
-        var T = BLD_TIER[t], lo = t ? BLD_TIER[t - 1].to : 400, k = T.k[Math.floor(h01("bk:" + c + ":" + i) * T.k.length)];
-        var w = BLD_WORDS[Math.floor(h01("bw:" + c + ":" + i) * BLD_WORDS.length)];
-        while (used[w]) w = BLD_WORDS[(BLD_WORDS.indexOf(w) + 1) % BLD_WORDS.length];
-        used[w] = 1;
-        out.push({ n: w + " " + k, cap: Math.round((lo + (T.to - lo) * (0.55 + 0.45 * h01("bc:" + c + ":" + i))) / 100) * 100, k });
-      });
-      return out;
-    }
-    function venueName(city, cap) {
-      var B = cityBuildings(city), b = B.filter(function(x) {
-        return x.cap >= cap;
-      })[0] || B[B.length - 1];
-      return b.n + ", " + city;
-    }
-    E.cityBuildings = function(S, city) {
-      return cityBuildings(city);
-    };
-    function cityOfVenue(v) {
-      if (!v) return "";
-      v = String(v);
-      var k = v.lastIndexOf(", ");
-      return k >= 0 ? v.slice(k + 2) : v.replace(VENUE_RE, "");
-    }
-    function placeOf(S, city) {
-      var p = S && S.places && S.places[city] || CITY_AT[city] || TOWN_AT[city];
-      return p ? { n: city, lat: p[0], lon: p[1], a: p[2] || null } : null;
-    }
-    function mapById(id) {
-      for (var i = 0; i < MAPS.length; i++) if (MAPS[i].id === id) return MAPS[i];
-      return null;
-    }
-    function mapXY(M, pl) {
-      var x = pl.lon - M.f[0];
-      if (x < 0) x += 360;
-      if (x >= 360) x -= 360;
-      return [x / M.f[1], (M.f[2] - pl.lat) / M.f[3]];
-    }
-    function mapHas(M, pl) {
-      var p = mapXY(M, pl);
-      return p[0] >= 0.5 && p[0] < MAP_W - 0.5 && p[1] >= 0.5 && p[1] < MAP_H - 0.5;
-    }
-    function mapArea(M, pl) {
-      var i, p = mapXY(M, pl), cx = Math.floor(p[0]), cy = Math.floor(p[1]), best = -1, bd = 9;
-      if (pl.a) {
-        for (i = 0; i < pl.a.length; i++) if (M.a.indexOf(pl.a[i]) >= 0) return M.a.indexOf(pl.a[i]);
-      }
-      if (cy >= 0 && cy < MAP_H && cx >= 0 && cx < MAP_W && M.g[cy].charAt(cx) === "-") return -1;
-      for (var y = cy - 2; y <= cy + 2; y++) for (var x = cx - 2; x <= cx + 2; x++) {
-        if (y < 0 || y >= MAP_H || x < 0 || x >= MAP_W) continue;
-        var ch = M.g[y].charAt(x);
-        if (ch === " " || ch === "-") continue;
-        var d = (x + 0.5 - p[0]) * (x + 0.5 - p[0]) + (y + 0.5 - p[1]) * (y + 0.5 - p[1]);
-        if (d < bd) {
-          bd = d;
-          best = MAP_ABC.indexOf(ch);
-        }
-      }
-      return best;
-    }
-    var HOME_KM = 100;
-    function homeKm(S, w, city) {
-      if (!w || !w.town || !city) return null;
-      if (w.town === city) return 0;
-      var a = placeOf(S, w.town), b = placeOf(S, city);
-      return a && b ? Math.round(geoDist(a, b) * 111) : null;
-    }
-    function homeNear(S, w, city) {
-      var k = homeKm(S, w, city);
-      return k != null && k <= HOME_KM;
-    }
-    function homeWeight(S, w, city) {
-      var k = homeKm(S, w, city);
-      return k == null || k > HOME_KM ? 0 : k === 0 ? 1 : 0.5;
-    }
-    function homeHype(S, P, ids) {
-      var city = roadCity(S, P, S.rdn || 0), n = 0;
-      ids.forEach(function(id) {
-        var w = S.w[id];
-        if (w && w.inj <= 0) n += homeWeight(S, w, city);
-      });
-      return Math.min(2, n) * 0.04;
-    }
-    function homeHypeAt(S, P, city) {
-      var n = 0;
-      rosterOf(S, P.id).forEach(function(w) {
-        if (!w.nw && w.inj <= 0) n += homeWeight(S, w, city);
-      });
-      return Math.min(2, n) * 0.03;
-    }
-    function geoDist(a, b) {
-      var k = Math.cos((a.lat + b.lat) / 2 * Math.PI / 180), dx = Math.abs(a.lon - b.lon);
-      if (dx > 180) dx = 360 - dx;
-      dx *= k;
-      var dy = a.lat - b.lat;
-      return Math.sqrt(dx * dx + dy * dy);
-    }
-    function roadRoute(S, P) {
-      var C = (P.cities && P.cities.length ? P.cities : ["the city"]).slice(), known = [], lost = [];
-      C.forEach(function(c) {
-        var p = placeOf(S, c);
-        if (p) known.push(p);
-        else lost.push(c);
-      });
-      var out = [];
-      if (known.length) {
-        var cur = known.splice(hash("road" + S.seed + P.id) % known.length, 1)[0];
-        out.push(cur.n);
-        while (known.length) {
-          var bi = 0, bd = 1e9;
-          for (var i = 0; i < known.length; i++) {
-            var d = geoDist(cur, known[i]);
-            if (d < bd) {
-              bd = d;
-              bi = i;
-            }
-          }
-          cur = known.splice(bi, 1)[0];
-          out.push(cur.n);
-        }
-      }
-      return out.concat(lost);
-    }
-    function roadCity(S, P, n) {
-      var R = roadRoute(S, P);
-      return R[(n % R.length + R.length) % R.length];
-    }
-    function soldOutLast(S, P, city) {
-      var v = P.id === S.player && S.rdv && S.rdv[city];
-      return !!(v && v.so);
-    }
-    function roadCap(S, P, show, city) {
-      return capFor(demand(P, show, 1) * tourBoost(S, P) * mktMult(S, P, city) * (soldOutLast(S, P, city) ? 1.12 : 1));
-    }
-    var MKT_WORDS = [[70, "Your territory", "They are yours here."], [50, "A strong market", "They know you here."], [30, "They know you", "You are a name here, not a habit."], [0, "They hardly know you", "You are a stranger here."]];
-    function mktBase(S, P, city) {
-      var R = roadRoute(S, P);
-      return clamp(Math.round(50 + h01("mkt" + S.seed + P.id + city) * 24 - 12 + (R[0] === city ? 12 : 0)), 10, 90);
-    }
-    function mktKnow(S, P, city) {
-      if (!city || P.id !== S.player) return 50;
-      var m = S.mkt && S.mkt[city];
-      return m ? m.k : mktBase(S, P, city);
-    }
-    function coldNight(S, show, city, week) {
-      if (show && show.big) return false;
-      var p = placeOf(S, city);
-      if (!p) return false;
-      var m = cal(week || S.week).month;
-      return p.lat >= 38 ? m === 11 || m === 0 || m === 1 : p.lat <= -38 ? m >= 5 && m <= 7 : false;
-    }
-    function weatherMult(S, show, city, week) {
-      return coldNight(S, show, city, week) ? 0.94 : 1;
-    }
-    function mktMult(S, P, city) {
-      return 0.85 + 0.3 * mktKnow(S, P, city) / 100;
-    }
-    function mktWord(k) {
-      for (var i = 0; i < MKT_WORDS.length; i++) if (k >= MKT_WORDS[i][0]) return { w: MKT_WORDS[i][1], d: MKT_WORDS[i][2] };
-      return { w: MKT_WORDS[3][1], d: MKT_WORDS[3][2] };
-    }
-    function roadMktNow(S, P) {
-      return mktMult(S, P, roadCity(S, P, S.rdn || 0));
-    }
-    WEEKX.push(function(S) {
-      if (S.cal || !S.mkt) return;
-      var P = S.promos[S.player];
-      Object.keys(S.mkt).forEach(function(c) {
-        var m = S.mkt[c], floor = Math.min(m.k, mktBase(S, P, c) - 10);
-        if (S.week - m.w > 6 && m.k > floor && !streamOn(S)) m.k = Math.max(floor, Math.round((m.k - 0.5) * 10) / 10);
-      });
-    });
-    E.mktWords = MKT_WORDS.map(function(x) {
-      return { w: x[1], d: x[2], from: x[0] };
-    });
-    function saleSpan(show) {
-      return show.big ? 8 : 4;
-    }
-    function saleFrac(wo, show) {
-      var span = saleSpan(show);
-      if (wo > span) return 0;
-      if (wo < 0) wo = 0;
-      return 0.88 * Math.pow(1 - wo / (span + 1), 0.7);
-    }
-    function stopDraw(S, P, show, next, city) {
-      var d0 = demand(P, show, 1) * tourBoost(S, P) * mktMult(S, P, city) * weatherMult(S, show, city), hype;
-      if (next && S.card && S.card.length) hype = cardHype(S, P, show, S.card, true);
-      else {
-        var heat = 0;
-        activeFeuds(S).forEach(function(f) {
-          if (f.heat > heat && f.a.concat(f.b).some(function(id) {
-            return S.w[id] && S.w[id].promo === P.id;
-          })) heat = f.heat;
-        });
-        hype = clamp(1 + ADV_H[P.adv] + (next && S.hype ? S.hype : 0) + heat / 1e3 + homeHypeAt(S, P, city), 0.8, 1.4);
-      }
-      return Math.min(roadCap(S, P, show, city), d0 * hype * TIX_D[P.tix]);
-    }
-    function stopSales(S, P, w, show, k, next) {
-      var city = roadCity(S, P, k), cap = roadCap(S, P, show, city), was = Math.min(cap, S.tix && S.tix[k] || 0), wo = w - S.week, live = Math.round(stopDraw(S, P, show, next, city) * saleFrac(wo, show)), sold = Math.max(was, live);
-      return { sold, wk: sold - was, cap, on: wo <= saleSpan(show), opens: Math.max(0, wo - saleSpan(show)) };
-    }
-    function roadSoldNow(S, P) {
-      var k = S.rdn || 0;
-      return Math.round(S.tix && S.tix[k] || 0);
-    }
-    (function() {
-      var ew = E.endWeek;
-      E.endWeek = function(S) {
-        var P = S.promos[S.player], w0 = S.week, keep = {};
-        if (P && !S.over) roadAhead(S, P, 8).forEach(function(a, i) {
-          var x = stopSales(S, P, a.w, a.show, a.k, i === 0);
-          if (x.sold > 0) keep[a.k] = x.sold;
-        });
-        var r = ew.apply(this, arguments);
-        if (S.week !== w0) {
-          S.tix = keep;
-          Object.keys(S.tix).forEach(function(k) {
-            if (+k < (S.rdn || 0)) delete S.tix[k];
-          });
-        }
-        return r;
-      };
-    })();
-    (function() {
-      var ng = E.newGame;
-      E.newGame = function() {
-        var S = ng.apply(this, arguments), P = S && S.promos && S.promos[S.player];
-        if (P && S.queue) {
-          S.tix = {};
-          roadAhead(S, P, 8).forEach(function(a, i) {
-            var n = Math.round(stopDraw(S, P, a.show, i === 0, a.city) * saleFrac(a.w - S.week + 1, a.show));
-            if (n > 0) S.tix[a.k] = n;
-          });
-        }
-        return S;
-      };
-    })();
-    function roadAhead(S, P, n) {
-      var out = [], k = S.rdn || 0, w = S.week, i;
-      for (i = S.qi || 0; S.queue && i < S.queue.length; i++) {
-        out.push({ w, show: S.queue[i], city: roadCity(S, P, k), k });
-        k++;
-      }
-      while (out.length < n && w < S.week + 12) {
-        w++;
-        weekShows(S, P, w).forEach(function(sh) {
-          out.push({ w, show: sh, city: roadCity(S, P, k), k });
-          k++;
-        });
-      }
-      return out.slice(0, n);
-    }
-    SHOWX.push(function(S, P, show, rep) {
-      if (S.cal || P.id !== S.player || !rep.venue) return;
-      var c = cityOfVenue(rep.venue);
-      rep.city = c;
-      (S.rdv || (S.rdv = {}))[c] = { w: S.week, cs: Math.round(repCS2(rep)), att: rep.att, cap: rep.cap, so: rep.sellout ? 1 : 0 };
-      var m = (S.mkt || (S.mkt = {}))[c] || { k: mktBase(S, P, c) }, was = m.k;
-      m.k = clamp(Math.round((m.k + clamp((repCS2(rep) - 65) / 4, -4, 8) + (rep.sellout ? 2 : 0)) * 10) / 10, 0, 100);
-      m.w = S.week;
-      S.mkt[c] = m;
-      rep.mkt = { was: Math.round(was), now: Math.round(m.k) };
-    });
-    E.MAPS = MAPS;
-    E.MAP_W = MAP_W;
-    E.MAP_H = MAP_H;
-    E.MAP_ABC = MAP_ABC;
-    E.placeOf = function(S, city) {
-      return placeOf(S, city);
-    };
-    var MAP_FIRST = ["brit", "jap", "mex", "med", "usa", "sam", "eur"];
-    function roadMap(S, cities) {
-      var here = placeOf(S, cities[0]), best = null, bs = -1;
-      if (!here) return null;
-      MAP_FIRST.forEach(function(id) {
-        var M = mapById(id);
-        if (!M || !mapHas(M, here) || mapArea(M, here) < 0) return;
-        var s = 0;
-        cities.forEach(function(c) {
-          var p = placeOf(S, c);
-          if (p && mapHas(M, p) && mapArea(M, p) >= 0) s++;
-        });
-        if (s > bs) {
-          bs = s;
-          best = M;
-        }
-      });
-      var Wd = mapById("world");
-      return best || (Wd && mapHas(Wd, here) && mapArea(Wd, here) >= 0 ? Wd : null);
-    }
-    function roadShape(S, M, ai, stops) {
-      if (!M || ai < 0 || typeof SHAPES === "undefined") return null;
-      var n = M.a[ai], Z = SHAPES[M.id + ":" + n];
-      if (!Z) return null;
-      var pins = [];
-      stops.forEach(function(s) {
-        var p = placeOf(S, s.city);
-        if (!p) return;
-        if (s.k !== "now" && mapArea(M, p) !== ai) return;
-        var x = p.lon - Z.f[0], y = (Z.f[2] - p.lat) / Z.f[3];
-        x = x / Z.f[1];
-        if (x < -1 || y < -1 || x > Z.w + 1 || y > Z.h + 1) return;
-        if (pins.some(function(q) {
-          return q.city === s.city;
-        })) return;
-        pins.push({ city: s.city, k: s.k, x: Math.round(x * 10) / 10, y: Math.round(y * 10) / 10 });
-      });
-      return { n, w: Z.w, h: Z.h, p: Z.p, pins };
-    }
-    var CONT_AT = { "North America": [45, -100], "South America": [-15, -60], "Europe": [50, 15], "Africa": [5, 20], "Asia": [40, 95], "Oceania": [-25, 135] };
-    function roadNearest(S, here, city) {
-      if (!here || typeof SHAPES === "undefined") return null;
-      var best = null, bd = 1e9, r = Math.PI / 180;
-      Object.keys(CONT_AT).forEach(function(n) {
-        var Z2 = SHAPES["world:" + n], c = CONT_AT[n];
-        if (!Z2) return;
-        var d = Math.acos(Math.max(-1, Math.min(1, Math.sin(here.lat * r) * Math.sin(c[0] * r) + Math.cos(here.lat * r) * Math.cos(c[0] * r) * Math.cos((here.lon - c[1]) * r))));
-        if (d < bd) {
-          bd = d;
-          best = { n, Z: Z2 };
-        }
-      });
-      if (!best) return null;
-      var Z = best.Z, mid = Z.f[0] + Z.w * Z.f[1] / 2, dl = (here.lon - mid + 540) % 360 - 180, x = Math.max(0, Math.min(Z.w, (mid + dl - Z.f[0]) / Z.f[1])), y = Math.max(0, Math.min(Z.h, (Z.f[2] - here.lat) / Z.f[3]));
-      return { n: best.n, w: Z.w, h: Z.h, p: Z.p, far: 1, pins: [{ city, k: "now", x: Math.round(x * 10) / 10, y: Math.round(y * 10) / 10 }] };
-    }
-    E.road = function(S) {
-      var P = S.promos[S.player], ahead = roadAhead(S, P, 6), past = [], i;
-      if (!ahead.length) return null;
-      for (i = 0; i < S.reports.length && past.length < 3; i++) {
-        var r = S.reports[i];
-        if (r && r.venue) past.unshift({ k: "past", city: r.city || cityOfVenue(r.venue), show: r.name, w: r.week, grade: gradeG2(repCS2(r)), att: r.att, cap: r.cap, so: !!r.sellout });
-      }
-      var stops = past.concat(ahead.map(function(a, j) {
-        var x = stopSales(S, P, a.w, a.show, a.k, j === 0);
-        return { k: j === 0 ? "now" : j === 1 ? "next" : "far", city: a.city, show: a.show.name, big: !!a.show.big, w: a.w, sold: x.sold, cap: x.cap, on: x.on, opens: x.opens };
-      }));
-      var A = ahead[0], city = A.city, near = [city];
-      if (ahead[1]) near.push(ahead[1].city);
-      past.slice().reverse().forEach(function(p) {
-        near.push(p.city);
-      });
-      if (ahead[2]) near.push(ahead[2].city);
-      var M = roadMap(S, near), here = placeOf(S, city), lit = { now: -1, next: -1, mine: [] }, off = [];
-      if (M) {
-        lit.now = mapArea(M, here);
-        stops.forEach(function(s) {
-          var p = placeOf(S, s.city);
-          if (p && mapHas(M, p) && mapArea(M, p) >= 0) {
-            var q = mapXY(M, p);
-            s.x = Math.round(q[0] * 100) / 100;
-            s.y = Math.round(q[1] * 100) / 100;
-            if (s.k === "next") lit.next = mapArea(M, p);
-          } else if (s.k !== "past" && off.indexOf(s.city) < 0) off.push(s.city);
-        });
-        if (lit.next === lit.now) lit.next = -1;
-        (P.cities || []).forEach(function(c) {
-          var p = placeOf(S, c);
-          if (p && mapHas(M, p)) {
-            var a = mapArea(M, p);
-            if (a >= 0 && lit.mine.indexOf(a) < 0) lit.mine.push(a);
-          }
-        });
-      }
-      var cap = roadCap(S, P, A.show, city), mk = mktKnow(S, P, city), sale = stopSales(S, P, A.w, A.show, A.k, true), last = S.rdv && S.rdv[city], bar = S.bar && S.bar[city], reg = P.tour ? REGIONS[P.tour.reg] : REGIONS[homeReg(P)];
-      var home = rosterOf(S, P.id).filter(function(w) {
-        return !w.nw && homeNear(S, w, city);
-      }).sort(function(a, b) {
-        return (a.town === city ? 0 : 1) - (b.town === city ? 0 : 1) || b.ovr - a.ovr;
-      }).slice(0, 3).map(function(w) {
-        return { id: w.id, name: w.name, hurt: w.inj > 0, town: w.town, near: w.town !== city, km: homeKm(S, w, city) };
-      });
-      var sh = roadShape(S, M, lit.now, stops) || roadNearest(S, here, city);
-      return {
-        map: M ? M.id : null,
-        mapName: M ? M.n : null,
-        lit,
-        stops,
-        off,
-        shape: sh,
-        now: {
-          city,
-          land: M && lit.now >= 0 ? M.a[lit.now] : null,
-          show: A.show.name,
-          big: !!A.show.big,
-          kind: A.show.big ? A.show.flag ? "Flagship" : evTy(A.show).n : "",
-          w: A.w,
-          later: A.w > S.week,
-          left: Math.max(0, (S.queue ? S.queue.length : 0) - (S.qi || 0)),
-          venue: venueName(city, cap),
-          cap,
-          seat: Math.round(ticket(P, A.show) * TIX_P[P.tix]),
-          tix: TIXN[P.tix],
-          sold: sale.sold,
-          wk: sale.wk,
-          on: sale.on,
-          opens: sale.opens,
-          gate: Math.round(sale.sold * ticket(P, A.show) * TIX_P[P.tix]),
-          last: last ? { ago: S.week - last.w, grade: gradeG2(last.cs), att: last.att, cap: last.cap, so: !!last.so } : null,
-          rival: bar && S.week - bar.w <= 4 ? { by: bar.by, ago: S.week - bar.w } : null,
-          mkt: mktWord(mk),
-          mktK: Math.round(mk),
-          taste: TASTEN[reg.taste],
-          tour: P.tour ? reg.n : null,
-          home
-        }
-      };
-    };
-    E.roadAhead = function(S, n) {
-      var P = S.promos[S.player];
-      return roadAhead(S, P, n || 16).map(function(a, i) {
-        var c = cal(a.w);
-        var x = stopSales(S, P, a.w, a.show, a.k, i === 0);
-        return { w: a.w, when: a.w === S.week ? "This week" : a.w === S.week + 1 ? "Next week" : c.label, show: a.show.name, big: !!a.show.big, kind: a.show.big ? a.show.flag ? "Flagship" : evTy(a.show).n : "", city: a.city, cold: coldNight(S, a.show, a.city, a.w), cap: x.cap, mkt: mktWord(mktKnow(S, P, a.city)).w, sold: x.sold, on: x.on, opens: x.opens };
-      });
-    };
-    E.roadRoute = function(S, pid) {
-      return roadRoute(S, S.promos[pid == null ? S.player : pid]);
-    };
-    E.mapArea = function(S, mapId, city) {
-      var M = mapById(mapId), p = placeOf(S, city);
-      return M && p && mapHas(M, p) ? mapArea(M, p) : -1;
-    };
-    E.mapXY = function(S, mapId, city) {
-      var M = mapById(mapId), p = placeOf(S, city);
-      return M && p && mapHas(M, p) ? mapXY(M, p) : null;
-    };
-    E.cities = function(S) {
-      var P = S.promos[S.player];
-      return roadRoute(S, P).map(function(c) {
-        var city = c.city || c.n || c, k = mktKnow(S, P, city), v = S.rdv && S.rdv[city], m = S.mkt && S.mkt[city];
-        return { city, k: Math.round(k), word: mktWord(k).w, last: v ? v.w : null, ago: v ? S.week - v.w : null, grade: v && v.cs != null ? gradeG2(v.cs) : null, att: v ? v.att : null, cap: v ? v.cap : null, so: !!(v && v.so) };
-      });
-    };
-    SHOWX.push(function(S, P, show, rep) {
-      if (S.cal || P.id !== S.player) return;
-      if (rep.sellout) {
-        S.soRun = (S.soRun || 0) + 1;
-        rep.soRun = S.soRun;
-        if (S.soRun >= 3) S.hype = (S.hype || 0) + 0.02;
-        if (S.soRun === 5 || S.soRun === 10 || S.soRun === 20) news(S, "world", P.name + " has sold out " + S.soRun + " shows in a row.");
-      } else {
-        if ((S.soRun || 0) >= 3) rep.soEnd = S.soRun;
-        S.soRun = 0;
-      }
-    });
-    E.knownCities = function() {
-      return Object.keys(CITY_AT).sort();
-    };
-    var SHAPES = {
-      "usa:Washington": { "f": [-124.803, 0.08908, 49.08, 0.07015], "w": 89, "h": 51, "p": ["?)\x7F)\x80TiTiU^V\\XUXUYIXGZ@Z=R;Q8R7P0P0K2M3I0J0G2F/E/B-A-<)8)204057576;5=7?5@:B9A<DAC:E7C6B2@3B5?5?3B1B,@-"] },
-      "usa:Idaho": { "f": [-117.322, 0.09765, 49.062, 0.07689], "w": 65, "h": 93, "p": ["+)5)57899><?BGCFGGFLELFRDRESDVGWKTMZP\\O^TaUeWcXddcdahch\x84+\x84,g)f)c-_.Y1U/R,Q,L+L"] },
-      "usa:Montana": { "f": [-116.174, 0.11478, 49.068, 0.09038], "w": 107, "h": 53, "p": ["))\x92)\x92UUUU[SZSXQXQZIZI[D\\CX@W@T=R<M9P6O7N6H7H8C5C3?0<.<,:,7)5"] },
-      "usa:North Dakota": { "f": [-104.156, 0.08908, 49.08, 0.07015], "w": 86, "h": 46, "p": ["))v)w7z<zF{F{N}O}U)U"] },
-      "usa:Minnesota": { "f": [-97.348, 0.08052, 49.428, 0.0634], "w": 97, "h": 95, "p": ["C)G)H.I.I3K4N3T6X6[4`5`6c6b8e8f;g9j9k;n;n=p>u=v;y;y=\x83=\x84?\x88>\x85AxEqMiQiSgTg]b_ab_c_ebf`rbrdugugwjwl{q}t\x80s\x82t\x85^\x85^\x863\x853h1h.e2a2\\/V.C+>+6*6+3)/C/"] },
-      "usa:Michigan": { "f": [-90.475, 0.08052, 47.555, 0.0634], "w": 101, "h": 93, "p": ["qCtDrFvFxI{I\x80L\x81P\x7FQ\x81R\x81[~\\~_z`ye}f\x7Fe\x80a\x87_\x8Ac\x8Ai\x8Bi\x8Bo\x8Co\x8Bv\x89w\x89u\x87u\x88w\x86w\x86z\x83{\x82\x81\x7F\x82\x80\x84W\x83]x]oYgZeY_[^\\Y]Y\\U^U_RbQcOeOeQgRgLjJlKkIlDrE", "E)J)J*D-D/B/A4E1E2K3O9T8T:V:W8Y9]6l5k9s:w8w=u>x>x@~?\x7FBp@oApCnCl@e?dAaAaB\\A[DXEXHWHWEYDYBVCUESERCRFPGPIKOJNKJHKIEEDFCEAAAA@>A6=.<,;+8)8+6.61334337381;1;/=/>-@-B*E*"] },
-      "usa:Maine": { "f": [-71.116, 0.06339, 47.495, 0.04991], "w": 66, "h": 90, "p": ["E)I)J.W+\\0\\;];\\L_NbNaUcWdVgWi[i_g_ebc`cbab`e^c\\d\\f[eYgVfViQhQjSkQjNkNhLhMdIeKiIhHoFoEqDo>r=t;r:t6u6w4w4z1{0\x80.\x81-}*{)T+S+U-U-Q0R.O1L3L3J6H5A7>9>:7@1@/D,"] },
-      "usa:Wisconsin": { "f": [-92.969, 0.06339, 46.985, 0.04991], "w": 95, "h": 91, "p": ["G)L*J+K-I,H0L.M0S1T4W6c8c9f9l<m;q=s<u=t@yAzCyI|H{J|PyQySvVvYxY|S\x80R\x80P\x82O\x82L\x86J\x85O\x83P\x83S\x81S\x81V\x7FW~a|a{c{kxpxxz|y\x82M\x82L\x7FI\x7FF}FzDxDuFtFrCoBe:a8\\3[3Y0Y+U+J-F*E)B+A-=3:3/5-7.?-"] },
-      "usa:Oregon": { "f": [-124.625, 0.08908, 46.333, 0.07015], "w": 93, "h": 63, "p": ["3)5)6+:*=.=2?3E3G1N1N2R2U0Z1\\/f.f-\x7F-\x810\x830\x843\x824\x819\x7F:\x7F>}>{B{E\x7FG}K}f,f*b+])[)X*X*U-O-I.I.=/=/404/*3*"] },
-      "usa:South Dakota": { "f": [-104.156, 0.08908, 45.983, 0.07015], "w": 87, "h": 51, "p": ["))})}+z.{0~1~K}K~T|V~W~Z|Y|WwVwUlVkThThS)S"] },
-      "usa:Wyoming": { "f": [-111.118, 0.07195, 45.052, 0.05666], "w": 99, "h": 73, "p": ["))\x8A)\x8Ao\x87o\x87pjpjo)p"] },
-      "usa:New York": { "f": [-79.85, 0.07195, 45.052, 0.05666], "w": 105, "h": 81, "p": ["k)\x82)\x836\x819\x82:\x81B\x82A\x84B\x84K\x83K\x83T\x82T\x82X\x80[\x80l~m~q\x8Dp\x90n\x90r\x88t\x86vvxvvyv{omhkfkbg^)^)Y.W0T2T6P3K3G7G7FFFGHSGUD[B[?Y=\\=\\<X:X8[7]4_4f,j+"] },
-      "usa:Vermont": { "f": [-73.492, 0.04626, 45.068, 0.03642], "w": 44, "h": 65, "p": [".)R*S+R0Q0R6L<G=HCFEFHDIDLBM@Q@V?V@Y?Y?_>_?a<d>h-h,g-f-Q,P)Q+M)C*C*@,?,<+<,7*5+*.*"] },
-      "usa:New Hampshire": { "f": [-72.603, 0.04626, 45.323, 0.03642], "w": 42, "h": 73, "p": ["C)E*I)KXLXK^OaNdQgOkKkJmGmGoEp+o)k,f+e,\\-\\,Y.X/S1S2L4K4C9C9A<A?==7@4?1B,A*"] },
-      "usa:Iowa": { "f": [-96.728, 0.07195, 43.546, 0.05666], "w": 92, "h": 57, "p": ["*)t)u,w-u/v5w7|8|:\x80=\x80@\x83A\x83G\x81H\x81K}MwMvQxRxWvXv[r\\r`p`n\\H\\H]5\\4[5V3R4O1L0C.C-A-=,=-;)7,1,.*.+,"] },
-      "usa:Nebraska": { "f": [-104.108, 0.09765, 43.048, 0.07689], "w": 91, "h": 41, "p": ["))b)f,h*i+n*o,s,u/w/w2x2w4z6z<|=|C}C|G\x82P=P=C)C"] },
-      "usa:Illinois": { "f": [-91.583, 0.08052, 42.572, 0.0634], "w": 52, "h": 89, "p": ["4)W)W/Y0Y4Z4Z[Y[Z]Y_Z_[eYfXjUlSyNzO\x7FK~J|H|F\x80C\x7FBu?r<r7m:b8a3b3\\0[+V*Q)Q)K+J+G-G.C0B.;69:3:/7."] },
-      "usa:Massachusetts": { "f": [-73.538, 0.04626, 42.931, 0.03642], "w": 79, "h": 40, "p": ["`)c*c.e0f/h0f2b2b5_6`7_:b9c;e;e>g?eBiCiGkItHtDsDsAtAvEvKkLjNfOgIeIcL`M`O\\O\\KWGXEWA9A8B4@)@)<*<.-Y.[-[+^+"] },
-      "usa:California": { "f": [-124.512, 0.11478, 42.054, 0.09038], "w": 91, "h": 106, "p": ["+)O)OJRMTM\\V^Vngpg~u~x\x80y\x80|\x82}\x82\x7F\x7F\x81\x7F\x87}\x88~\x8C\x80\x8D\x7F\x8Fh\x91f\x89`\x84]\x84]\x81X\x81V\x80U}J{JtHtHqFqDmAkAi?h>d@b?`<`:^:Z9Z:X9V5U6S4O2O2M/K.@)<)8+6+1,1,-*+"] },
-      "usa:Nevada": { "f": [-120.109, 0.08908, 42.076, 0.07015], "w": 69, "h": 102, "p": ["))l)l}k~g|d}f\x8DElCl9a7a/X-X)T"] },
-      "usa:Utah": { "f": [-114.13, 0.07195, 42.041, 0.05666], "w": 72, "h": 90, "p": ["))S)S:o:obnbo\x81)\x81"] },
-      "usa:Indiana": { "f": [-88.147, 0.06339, 41.829, 0.04991], "w": 54, "h": 82, "p": ["=)])]Y\\Y\\_[_]dYeXgSfSjOmOoLoKuGuFrDqDsBt@x>w>u:v9y6x5v0u1x+w,y)y+o-o.k0k0h2g2d1d2a0_1Z2Z2+9,"] },
-      "usa:Ohio": { "f": [-84.88, 0.05482, 42, 0.04317], "w": 81, "h": 84, "p": ["u)x)xHuHvPtRtWrXr]ldjefddgbg`kao^p]mZoYwWwWzR{PxMwLsItHvDvAt?v<v;s4r3n0k.l,l+j)k)/B.B/I1J3N2R6V6\\3b4h.n+u*"] },
-      "usa:Pennsylvania": { "f": [-80.59, 0.07195, 42.324, 0.05666], "w": 82, "h": 47, "p": ["2)3)3.q.r0t0u6y8x<t?uBsCsGuGuJyMyOtQtSlTkV)V).--.+"] },
-      "usa:Connecticut": { "f": [-73.778, 0.03769, 42.095, 0.02968], "w": 54, "h": 38, "p": ["0)B*B+C*\\*]+]?[?\\ATBTCRBPDKCKD@D?E>C=F;F:H6H6I3I3K/K.M-L+M)I0F.D"] },
-      "usa:Colorado": { "f": [-109.135, 0.07195, 41.061, 0.05666], "w": 100, "h": 73, "p": ["))\x8A)\x8Bp)p"] },
-      "usa:New Jersey": { "f": [-75.608, 0.03769, 41.374, 0.02968], "w": 46, "h": 83, "p": [">)B)H.U4U8T8T;R<R?MAMDLDLGSHSPQTP_MeKfJjAqAs?t?w<z9z;r8r8q4r2n-l-j*i)b,`.\\5Z5W?R<L8H6H6C3C3<6;547490;0<+"] },
-      "usa:Kansas": { "f": [-102.1, 0.08908, 40.106, 0.07015], "w": 85, "h": 45, "p": ["))`)`*x+y-w.w1|6|T)T"] },
-      "usa:Missouri": { "f": [-95.844, 0.07195, 40.649, 0.05666], "w": 95, "h": 83, "p": ["))b)e-d/e6i:i<o@pGvFxHvJwLtPtSxWzWzY|X\x80\\\x80`\x81`\x80d\x82h\x84g\x86i\x84m\x85o\x84p\x82o\x82q\x7Ft\x80v~v\x7Fw~ztzxvwq9q9B7B5>2<3968552614/4"] },
-      "usa:Kentucky": { "f": [-89.608, 0.08052, 39.208, 0.0634], "w": 96, "h": 44, "p": ["d)i*k/p/p1r0y1|/|2\x7F3\x7F:\x81;\x81>\x87C\x84D\x82G~H|MyMxOsPsQRQRP>Q>P;P;S)S+Q-R-O.O-J/G5J7I6D;C:@;>=?=<@>A<H>H<J;N<P8R;V;V8Y7Y5\\3\\/^0d/c-"] },
-      "usa:Maryland": { "f": [-78.945, 0.03769, 39.756, 0.02968], "w": 104, "h": 63, "p": ["()|)~T\x8FT\x8FX\x8DZ\x8Bb\x80c\x80e{dyfz^y_w^z[vZwWuXu[q[qYoXnOoNpOrNtPuOrNrLpKmLnGqHqDmFlDnArBpAo;p;p8w3v2w/t/s0t3q5o2o7m4m7l7m9k;h:h<k=kBgJiNhQlVlXjYlYl]n^m_nbmbk^i`g\\a[aY^Z^X\\X\\UUWTRVOXOXL[J[H^E[BXDUBU@O?N>O9M9M7H7H3D0F-@->*<*:-7,5010,-(1"] },
-      "usa:Delaware": { "f": [-75.812, 0.02912, 39.867, 0.02293], "w": 27, "h": 63, "p": ["/)5*4//2/4150;6B6K9N9R>WAVBf,e*>)>)-"] },
-      "usa:Arizona": { "f": [-114.903, 0.08052, 37.097, 0.0634], "w": 74, "h": 92, "p": ["T)q*q\x83V\x83R\x80O\x80H|B{@y=y;w8w6u)q)n-m-h+h*b-`.W2U0R.R.N+K,C+C*8/7/9293*T*"] },
-      "usa:New Mexico": { "f": [-109.138, 0.08052, 37.033, 0.0634], "w": 77, "h": 91, "p": ["))t)swGwH{4{4\x82)\x82"] },
-      "usa:Oklahoma": { "f": [-103.08, 0.09765, 37.075, 0.07689], "w": 90, "h": 46, "p": ["))\x7F)\x7F6\x806\x80=\x81=\x80U{SzQxRsQoSfQdS_P^R\\R[NVOVNPMPKJKHIH/)/"] },
-      "usa:Tennessee": { "f": [-90.389, 0.08908, 36.728, 0.07015], "w": 99, "h": 26, "p": ["B)\x8A*\x8A,\x86/\x861\x830\x811\x813\x7F2|3|5x6v9q9o=l=lA)A+?+:.8-6/604/2110/2/3+B+"] },
-      "usa:North Carolina": { "f": [-84.085, 0.08052, 36.653, 0.0634], "w": 105, "h": 45, "p": ["F)\x8C*\x8D-\x8F,\x8F.\x8A1\x880\x872\x842\x843\x8C2\x8C6\x8D6\x8D3\x8F3\x909\x8D9\x8B=\x88=\x86;\x84<\x84=\x87=\x84B\x87A\x8AC\x8AD\x87D\x88F\x86F\x86H\x7FGvNtTsSlTiQiO_EQEQBK?<?6B(B(>*:09366682<3=0A1B.E-"] },
-      "usa:Texas": { "f": [-106.803, 0.13191, 36.592, 0.10387], "w": 102, "h": 104, "p": ["E)\\)\\<]=a=b?e?e@j@kBmAoCqBqDrBwCwDzB\x82B\x83D\x89E\x89U\x8AU\x8AY\x8D\\\x8Ak\x85l\x82p\x80o\x80q}tyuwxtwtzqyr}o|q~o\x80p\x81o\x8Aq\x8Dp\x8Fl\x8Dh\x8De\x8Ab\x8Ab\x87_\x82_~\\}\\zYxWpQjNjNiGjFoDqAq?n<n<l9k7b3`,Y,W)V)TDT"] },
-      "usa:Arkansas": { "f": [-94.679, 0.05482, 36.55, 0.04317], "w": 93, "h": 83, "p": [")){)|/w3w5\x825\x847\x827\x839~;\x7F@}?}B|AzB|CzE|F{G|IxKyNuOuRsQsSuSsTsZqZm^n`l_mcldjcjgkgihjkgjilgnjpiqjwhwiz4z4m.m.n,m,;+;"] },
-      "usa:Mississippi": { "f": [-91.732, 0.07195, 35.056, 0.05666], "w": 51, "h": 87, "p": ["<)Y)Z*Z5Y5WTVTV^U^V{NzK|I{I}F~BvDp*p)k+k,i*h+f-f-a/a2\\2[0\\0Z3Z2X3V1V2S0T1M/N2H2G0H1E/C0B/@2?1;4:3858366654848/:/:-9.8-9+:,=+"] },
-      "usa:Alabama": { "f": [-88.577, 0.07195, 35.056, 0.05666], "w": 52, "h": 86, "p": ["-)Q)WPXPXS[YX_XdYdXmZnZp6p5s8u8y9y6}3}3{1z1u/v/{.{/},z*z)_*_+J,J,@-@-6.6.,/,"] },
-      "usa:Georgia": { "f": [-85.657, 0.07195, 35.056, 0.05666], "w": 68, "h": 84, "p": ["))K)H/K0L2O2S<X?XB\\D]IbLcTfUg\\k]k_h`gfehelbocu[sZt[yZ{X{Xw3u2t1m0m0c/c0[2[2X1X2V.N"] },
-      "usa:South Carolina": { "f": [-83.427, 0.05482, 35.223, 0.04317], "w": 90, "h": 75, "p": ["9)Q)W,X1m2y>y@\x81GyMuUvWr[n[n^kaiagedeah^g_i^l[mYkZoWpVrRpRkPgMeM_K[EWEUCTCP>M>J7E6A4@3:.9.7)4*1./.-9*"] },
-      "usa:Louisiana": { "f": [-94.124, 0.06339, 33.075, 0.04991], "w": 81, "h": 83, "p": ["))W)X*W2X2X5Z6Z9W9W;Y:Y<W<X>T@UCQERJQLOLPMORmRl[n\\pcnckfmhphperdrftgtjrjrmnmnoqrtrwtwwxwwzmsksfxexeubs]w_y]x[yZvWvTtTsWsVqTrToRpQmOmOkKkLiGjGmInFnFo?n8j0j,l+i/e.d/c.Z1V1N-G-B)>"] },
-      "usa:Florida": { "f": [-87.713, 0.08052, 31.05, 0.0634], "w": 96, "h": 95, "p": ["))J)J,N.k/m3o2o/n/o,v-x=\x81O\x80U\x81U\x81Y\x83[\x83^\x84^\x84a\x87g\x87v\x86v\x86|\x84}\x83\x86\x82\x84z\x86y\x85z\x81y\x81x|ryppoqmqoolpnmnilligidfah]j\\jZh[hXfXg]dZeYdUfTfQgQfHeFbFbD`D[:V7S7R:O:O<N;L=J<I?E>F=E9@7>47372+4,.),"] },
-      "brit:Scotland": { "f": [-7.19, 0.06924, 58.677, 0.0401], "w": 79, "h": 103, "p": ["^)d)c/a2_2[7Y7V:V=X>U@TCYC^@b@bAqAr@vDvGtHrLpUlYk]h_b`baibiedfaj]j]kbkblelfjkjsoqsnunwkyk{h}f\x82c\x84c\x8E\\\x8E]\x8Ab\x85\\\x85[\x87X\x87X\x89Q\x88N\x8AJ\x88I\x8BF\x89E\x84G\x84H\x7FLyLuIsInJlLlJhHkElEnDnEhBjBsErFxCxBsAs@z={=u>u>r@q?p@bEX@];]=^=a;c7c7d5c7b7^5]5[9[9];]:Z8Z8X=V<S?P?J<I<F>E=?>?><C<C;E<D9B8B5C3G3G0F0G+J*K,M+R,R+X+X*^*", "5,6,62361637390:,?*?*=-:*9)4*3/4.14.", "4A6A7C7J>K>M:Q9Q9M4M2I.H.F1F1C4C"] },
-      "brit:the North of England": { "f": [-3.616, 0.04676, 55.819, 0.02708], "w": 84, "h": 94, "p": ["I)K)M-S3VDWDXKYK[RfWiZi\\l^l`sfshqiqlrlrowyqwpululvpwt|v|y\x7F{\x85:\x857\x837\x7F4\x7F4y6w6t4t4o8l8e1f.c.a)[)U3U3G9A9?>:>8A6A4D2D0I+"] },
-      "brit:Ireland": { "f": [-10.468, 0.06474, 55.413, 0.0375], "w": 70, "h": 106, "p": ["X)Z)^-W3U:P;R>M@LCPFPHTJYJ[H[D^C`E`HcIcLjKjNhMhQiQiUkXkblbmjjojufyh}f~a}`\x7F^}^\x7FU\x80U\x82S\x84P\x84P\x86M\x88H\x86I\x8A@\x8F2\x913\x8E7\x8B-\x8E1\x893\x893\x870\x89*\x88)\x86-\x82/\x820\x7F*\x80)~+|1}2|1w3w5t>sAp>o=r9r9s5r1t8m8h:g:e?d?b6b5_2`2^.^.Y2Y1U3S6S6Q1Q2L0L0I.I.G/F2G5E;F<H>FFGECGAJAL=E=B;H7H2L.R.R,T,U.T3U3V2U-V+Y+"] },
-      "brit:Northern Ireland": { "f": [-8.194, 0.03327, 55.253, 0.01927], "w": 83, "h": 63, "p": ["Y)g*g,i-j4l5m9s?sBoDnGvFzMzRwPvMtMtPuPtUwVv[o]lejfefdd`d^fVfV_R_R]P\\PXLTJTFXG]BaBc:b8_2^2[)R,N/N5K5I1G1D7D<A>:?:?6B2F1I3L0N+S,"] },
-      "brit:Wales": { "f": [-5.278, 0.03776, 53.462, 0.02187], "w": 64, "h": 96, "p": ["d)g)g-e,e.g/g\x7Fd\x80b\x83`\x83]\x87[\x87[\x86U\x86R\x83R\x81O\x80M}D\x7FD}GzCz=v9w7z3|,y+r)q*m@bA`C`E\\G[HUJSHQIJGGGABA8F8C:B:@@<A8F3N/W/Y-\\-_0a0`+c*e,", "=*B*E/H/H1D3A7=5;2;+"] },
-      "brit:the Midlands": { "f": [-2.934, 0.05125, 53.339, 0.02969], "w": 92, "h": 39, "p": ["*)g)h0d3b7e8f:h:m4x5x6}7\x83>\x83H\x82H\x81N)N)*"] },
-      "brit:the West Country": { "f": [-5.688, 0.04226, 52.23, 0.02448], "w": 88, "h": 91, "p": ["j)\x7F)\x7Fjyjyirjqhmffffgcg]j[tYxVzKsKt>w<z:z7}5\x822\x820\x7F,\x7F)\x81*{1y3u7r7p;m;k@g@eCbC\\JXJULRPRPQeRhOkHpDpBu=t<nCjD"] },
-      "brit:the South East": { "f": [-2.041, 0.03776, 52.212, 0.02188], "w": 98, "h": 69, "p": ["))\x89)\x87/\x833\x7F3\x809~;v;s=s?v@vEtGlHpNtNtO\x83N\x84O\x83X{\\x`xcrbpekffj`j`i[i[hPhLjFjCg9e;h9h7k)l"] },
-      "eur:Norway": { "f": [4.801, 0.08914, 63.013, 0.05907], "w": 92, "h": 85, "p": ["B(O(R+S*Q({(z)z0|3{?\x7F@\x83E\x81I|J}O\x7FQ\x7FW~W~Z{]x]waubvltnrmrjlihbghdlam_kRxJ|@|@z>z=|<{=x8x0r0l3l5n9m9l6m4k5f8e9c7c5f0g/i,i,d-d-a/`3a4_7_7^2^2]7Y7W:T8T4X4Z1[1]-a+a,\\-\\,Z1Z2X-X,S.Q+P*I@HAJAHEHGFEFDDDG;F;H8H8G-H*F*C-A)>);1;1<9=9<2;2:,:+8,6/613=2=1728/@.@/H0G/H-D-D,>->+"] },
-      "eur:Sweden": { "f": [10.998, 0.11036, 63.013, 0.07313], "w": 73, "h": 106, "p": ["3(l(l*j+f*h.d0b/d3b5b:`:`EaEaHdHdJgIiLkLlOoPpUmVnWm[k[l^j]\\d]f\\fZ{Y{Y~U\x86R\x86R\x85J\x86J\x88H\x87E\x8AF\x8CE\x90>\x90>\x919\x90:\x8A6\x866\x848\x857\x829\x829\x7F7\x7F7}4{2w2t0t/n,l,h*g*`)`)^,^,`/_.V0U0S6P6I5I4C8C9A9>3:3545412/"] },
-      "eur:Finland": { "f": [21.047, 0.09975, 63.013, 0.0661], "w": 106, "h": 49, "p": [",(\x91(\x91+\x8F/\x895\x875zCxCsHqHmMkNeMcO^N^OZOYQTQTRMSKUFUFV?V>X<X>U<U;R9U6U7P5P5S4S3R4O0M*N,M+E-C->.>,9*8+2)1)+,*"] },
-      "eur:Russia": { "f": [27.2, 0.29076, 63.013, 0.19267], "w": 87, "h": 114, "p": ["7(~(~c|dxcxerhrlmjknlvpws|r~t~r\x81n\x82m\x86k\x87k\x89m\x89n\x8Bn\x91q\x94q\x97o\x99m\x99l\x96h\x95h\x92f\x91a\x92^\x8FS\x8DP\x89N\x89J\x85D\x85@\x89>\x89>\x85:\x84;\x82>\x81>\x7FB\x80D\x84E\x83L\x84L\x81O\x80L}O}P{R{RzNzNxSwTnQlMlLjDiDf@eAb?a?_8a6[:[;Y8X8V6V6S4S5N3M/N/L.M+L*E)E*C)=,8.927.7-4,5*4016+"] },
-      "eur:Estonia": { "f": [22.297, 0.0573, 59.684, 0.03797], "w": 103, "h": 58, "p": ["`)t+w.\x83.\x83/\x8D.\x8E/\x8E1\x893\x87:\x82>\x83P\x85R\x86W\x88X\x83Z\x80a}a{_v_v`qam_m]hXeX]S\\TWSUUQUKXNROKKJJMFMDKAK@F>F=B@A@@=@<>>4E3G2G0J0K.Q.T,`,", "6C:C:F6E:I6I0N(O(E+E+D6E", ",8/8/:4;4>2@0?.B+B*=(=(;+;"] },
-      "eur:Britain": { "f": [-8.222, 0.13158, 58.765, 0.08719], "w": 77, "h": 101, "p": ["M)O)O-M-K0H1I4G4G6K4O4O5X4Y7U?S@SBPBREPEOGKGKHSGWIZL]WaXf]e^gbfdifiigjgljlkjqksltqsqstpvpxmxm{k{l}q}q\x7Fn\x80n\x82k\x82i\x84\\\x83^\x84^\x86\\\x86[\x84W\x84W\x86V\x85S\x86R\x84O\x84O\x85L\x85K\x8AE\x88E\x89B\x89@\x8C>\x8B<\x8C<\x8A>\x8AD\x84D\x81F\x81F\x7FI\x7FI~O\x7FR{QzM}IzF{GyByBz?y@uCuHqGkClFiDhDeFeGhLgLfQgOePcO`Q_Q]N]KZKWMTJTIV?U?SCOCLAKBG=H>I=N;O<E??;B;D7D8C7@;B8?:?:=<<<8:7;7;3?2>.@.@*F+F*M*", "5P9Q9T;U:W=X<\\:\\9^4^2Z0Z/],]+[)[)Y+X+V.U/R1S1Q5Q"] },
-      "eur:Denmark": { "f": [8.048, 0.0573, 57.768, 0.03797], "w": 81, "h": 84, "p": ["R)T)R+S7Q8O<OGRIYIZNWQSQQOOQNYIZJ^H^CcDlAnApEqFvEu<v:t3s2n1n3m2f*b*X+X)T*F4I4F6C8B<C=<9;5A5D.E,C,@29B7C4F2F0I-O,", "qSwUvZwZxbvbv`qbqftgtjnlnvjwglekal_j_d[^b]dXgXhYg\\h^j^l[kW", "MaQaQbVaVdXfXnVnUpQpIlHcKc", "]r`rcuivizc{]x\\w"] },
-      "eur:Latvia": { "f": [20.928, 0.07853, 58.117, 0.05203], "w": 94, "h": 48, "p": ["\\)^*`)f-i-i/m3r3r2{3~7\x807~@\x81A\x85L\x84N\x80O}R}UuTsWnWdN]M[IXIWKRKRLMKMJ5I)O)C*C*@.=.822=0E8F<M>T9S-V+\\*"] },
-      "eur:Lithuania": { "f": [20.973, 0.06791, 56.431, 0.045], "w": 86, "h": 57, "p": ["5)S*V,]+^)b)d-o0w8{9yA}A}C{C{EvEtIoJnRkVkWnWoYn[k[kXgXe[a[`_M`M[JXFWEUBVAPCNCJ@I?F5F+A,<)6)0"] },
-      "eur:Belarus": { "f": [23.099, 0.08914, 56.22, 0.05907], "w": 109, "h": 85, "p": ["_)a)b+f*g-l+o-n.o1s0t.x.\x803\x806\x7F6\x80=~@\x82B\x82F\x84G\x84I\x8AM\x89Q\x8FQ\x91U\x94W\x94Y\x92Y\x8E]\x8A]\x89[\x85[\x84]\x85a\x87b\x87k\x89l\x89n\x81n}r{v||z|xxnzlvhwgyfwbwbv`w]v]x[x[vVvUsRtRsNsJq7q3v-w.n)k)i,f1d1]0]0Y-T-O3O3N8O8N;N;K?K@ICICKFKFIDHDEFDECF?H=K=K:Q9P7N7O1R1S/[/[-"] },
-      "eur:Germany": { "f": [5.8, 0.12097, 54.98, 0.08016], "w": 77, "h": 97, "p": ["@)J*K+J.S0R4U4U5W5Y2]2`.d/f2j2m4m6k6k7n7n;o;o@mAmCqFpHrJqQtTtYr\\pYnYo[h]ca_a]d]f_f`mcnhtjtjxgxg{b}d\x86b\x85b\x83`\x84]\x83]\x84X\x84T\x87R\x85N\x85N\x87L\x88K\x85F\x85@\x82>\x82?\x84:\x84:\x856\x848x;u;s/p-m.i+g+c-a+`*Z)Z+X*W+R)Q)O/O0L2K2H0H/F2E3C4=2;48;8;;<;<:?:>9?6C6B1?0?/B/"] },
-      "eur:Poland": { "f": [13.986, 0.11036, 54.946, 0.07313], "w": 93, "h": 82, "p": ["N)Q*Q-S0Y0Y/z0~3~8\x7F8\x7F;\x82A\x82G}I{M}M\x80P\x7FX\x80X\x80[\x82\\\x84d\x83f\x80fwpxysxotktksishuat_w^v\\w]uZsZqWtUtUrRpRmOmMkJlIjJhFhEfBfCi?j?h<f>e>c4a3^1^0`1X.U.Q/Q.O/M-L.I,F)E)C,A+9-9-7*7*6<1?-C-E+N*"] },
-      "eur:Ireland": { "f": [-10.455, 0.06791, 55.418, 0.045], "w": 66, "h": 89, "p": ["V)Y*[-U1S7N8P;M;J>NANCQCSETDVEXCX@[>]B`C`FeFeEgFdIhQgViZiagcggekcleocp[oZqTqQuNuLxIxHvFvGzEzD|A|;\x7F6~2\x802}5{2{/}-|3w/y)x)v/s0q)q)o+n1o1j3h?f@d=c;f1g7b8\\>Y=X6Y4V1W1U-U.T-Q1Q0M5L5J0J1F0D-D-B.A/B:A;C=ADBC?H=J9D:D9A9A7F5F1H0H.R,S.R1S1T0S,V+"] },
-      "eur:Netherlands": { "f": [3.298, 0.0573, 53.473, 0.03797], "w": 69, "h": 73, "p": ["])f)h,l-l6j8i>d>c@dCiDiIfLdLeQaSYRVTWWYXY[[\\ZaXcYfUhUjXkWpSpQnQlSkTePdObIbG`G]E^B^B\\@^;];`8_8a3d1d0b*c)_0_0`6_7`7^,]+Z0Y6]9]6Z4Z4Y7Y7W4U4Q5O9M9K<I>EA6E7H4J4O-U*]*"] },
-      "eur:Ukraine": { "f": [21.894, 0.17403, 52.462, 0.11532], "w": 106, "h": 64, "p": ["d)e*m)p.n/o3t3v6v:z:z;\x82:\x84>\x87=\x91B\x91D\x8EF\x90G\x8EH\x90L\x8FP\x89P\x88R\x86R\x86W\x81W~Z}YxZv]t\\u_r^sbr`m_m^l_b_a]e[aZ`\\`Y_Y_[[[Z_WbTbUfReOgMfMdO`Q`P\\W]VYTXTURTROJKFKFLDKCMAMAO<O;Q9Q8O0O0N.O)K+F-F,A2:592/5/6-B-B.I/I1J0P1R/R1Z2Z.\\+c,"] },
-      "eur:France": { "f": [-4.865, 0.1422, 51.195, 0.09422], "w": 92, "h": 95, "p": ["[)]-a-a/c/d1g1h3g5k5l3l7t;w:{>\x83?\x83B\x81C\x7FP|OzTwUwXuYu]v[z[z^{^zc}fyhyj|l{r\x80s\x7Fw}ww~p}p{nzj{jzey`~a\x85X\x86V\x83R\x81I\x82D\x7F@\x7F@|>|>z@y@uAuBeEfBcC`AaB\\<X;R=Q9R8Q9O7N,L+J)J,G,F)F)D-B2B2A5A7D@C=8A8B;K<M;K:L7Q6U3U,"] },
-      "eur:Belgium": { "f": [2.483, 0.04669, 51.517, 0.03094], "w": 84, "h": 66, "p": ["X)Z*Z,],_*b0i0j2o3p6n8n;l<l?nAtAxEwI{J{OwQvUrToXo[m^qdohhidcac_`[`[\\Z\\[TWVVZSZS[KZMWKULPJPINAOAJ:I8F8B6@/B*=)5-4.28-;-<1@/@0C0D2H2M.M,Q-Q*W+"] },
-      "eur:Bohemia": { "f": [12.014, 0.07853, 51.107, 0.05203], "w": 88, "h": 50, "p": ["E)H*J.M-N*P*R.X/Z1_1`3^4^6b9b;g9f5l8q7q:o;r>v=w?{?\x7FG{GxKvKuPsPqSoTiSgXfVbT^V^UZUYSUSTQNQMUKUJXCY<Q9Q9O6N4J0I-C.>+=)7,:.6557472F,"] },
-      "eur:Slovakia": { "f": [16.813, 0.06791, 49.636, 0.045], "w": 85, "h": 43, "p": ["N)P*Q-T.S2U1X2X0]-b.b/f/f-p-p.s.u2|4z;x?v@vDpEm@j@jA_@[GWITIQGMKFKDNEODQ=Q=R4Q/L,L)F+;-9/:6986;5;1?/B+G+H-K-K+M+"] },
-      "eur:Austria": { "f": [9.449, 0.08914, 49.039, 0.05907], "w": 87, "h": 45, "p": ["f)h*k)r-x,|.{4~8}?w>w@y@yCvDwJuJqNqPnOlQeQcT\\T\\SIPHMFLGICK;K:N3M3K1K1M.M,J*J)H*A/B0F3D3A6A9D;D;C>C?AM?MAPBO:M9M7T4U0X1Y-\\0c/f,"] },
-      "eur:Hungary": { "f": [16.07, 0.07853, 48.627, 0.05203], "w": 87, "h": 56, "p": ["b)c*m)p.w,w.{2~2}8w9v<s>sAqBqEoFmNkNhVcVcXTWQ[NZM\\I\\G_>_<^<\\8[2U1R/R,O+J)I-G-@0=-:.95:495484:7?8?9J8K3Q3T0[1\\/_.`*"] },
-      "eur:Moldova": { "f": [26.563, 0.0573, 48.525, 0.03797], "w": 63, "h": 81, "p": ["9)?+D0G0G2I3N2Q7V8UDYFYH\\I\\M[M\\QbTc]f_eaaa`_^`W_VaV]S]Q_QcSeRiNlNoJrIxCwCtDtCeEbEXCUCQ>M9C5?370402-/)/,,4,5*7+"] },
-      "eur:Switzerland": { "f": [5.902, 0.0573, 47.795, 0.03797], "w": 80, "h": 53, "p": ["T)X)Y+[*\\,b+c-h/i3g5f;l<m?qAsAu=w>wEvEwIsGqGpIrQpQoNgOfKcJbR^V^Y_Y^\\ZX[UXUTQTLRLNPOSMWJYCXAZ<Z;W7S8R7L0L.N.R)S)Q+Q,O+M,G1D1?5=6:;6;493;0>0?2A2C1D.V-T,"] },
-      "eur:Romania": { "f": [20.196, 0.08914, 48.314, 0.05907], "w": 108, "h": 80, "p": ["n)s)u+x4z5}<\x81?\x81B\x82B\x81X\x86\\\x8B[\x8DY\x92Z\x93[\x92b\x8Cd\x8Bb\x8C`\x8A`\x86u\x81u~q}ryqvnooirdw\\v\\uQuMsFtFqHoFoBkBhDhDf@e?h=h<f9f8d6d5c7b5a6]/Y/V.V/T)O)M+L-M.K3J4E6D8=:<<8<5>5?2D1H,T.T/Y.\\2_2b/k.l*"] },
-      "eur:Italy": { "f": [6.507, 0.15281, 47.115, 0.10126], "w": 79, "h": 104, "p": ["G)M)N,W.U/U1W1V6N8M;O<NDPGVJZV`[g[f`mcofqfvkvptpsloknikkjrmsnyjzj~g\x80g\x83d\x83d\x80a\x83`\x89b\x8C`\x8D`\x8F\\\x8E[\x8BX\x8BT\x87P\x86O\x82S\x80U\x80V\x82]\x82^\x80e\x7Fe|g{eoan_l_h\\h[fYfXbSbM]M[HVFWGUDSDQBQAH?F9C5C1I.I0E,E*B+>)>);,;,8*6+4.4.31432213/5/74:1:.;0@1?-B.A,F+", "9b<c<f>i=s<s<w9v8y6y4x5w4v5k3i3e6f"] },
-      "eur:Slovenia": { "f": [13.324, 0.04669, 46.896, 0.03094], "w": 69, "h": 48, "p": ["b)h)h.j/j2l4g4f5g9b9a<^<Y?ZJRMSORWNWLUGVCRCP?V8V8U6U5W.V0R4R4Q/K-K.F,F+D/?*>);-7/704C8D6H4I1N1N0V1Y.a/"] },
-      "eur:Croatia": { "f": [13.441, 0.0573, 46.563, 0.03797], "w": 105, "h": 96, "p": ["Y)])a+e/e1k5l8p8q;u=\x80=\x82<\x839\x879\x86<\x88>\x88C\x8AC\x89G\x90K\x90M\x8CM\x8CL\x8AM\x8BS\x89S\x89U\x85T\x84O\x7FO\x7FNwMvOtOsMpMpNhMfJdJcL]L\\OYQULQLPXSYS[W^Xf_marhykyk~q\x84q\x87o\x87k\x82j\x83]\x82\\\x80`\x80c\x82j\x82j\x81d{_z]xUyTtPrKlImJkFgFdKdKcIcHaGcEcC_A^@[B[B]FaG`B[BY@YASBSAO>L=N?O@R=R<P9O;N;L=L;I7H6N4O1V.T-P+O)D0F1D3E9D<@=C@EADIEH>J<O;N1T0V-Y-"] },
-      "eur:Serbia": { "f": [18.766, 0.06791, 46.215, 0.045], "w": 63, "h": 89, "p": ["3)7)7*<)?+A/C/D3F2F5E5F9J=P?NDPDQFNFNGRHRJVJYM[M]JbKbM_N_QbT`X]Z]`_b_edhfmbr^s_}]\x7FZ~Z\x7FQ\x80Q}TwPvOsLqLoHmFjCkDnApAs?s?q=q9m4l3i.e/b1c3b/Z4Z4X2W0S-R-N1F0E+F+E-E,@1?1=,;,7*6+4)0,-0-"] },
-      "eur:Bosnia": { "f": [15.688, 0.0573, 45.301, 0.03797], "w": 69, "h": 73, "p": ["=)?)A,C+G-L,M.O.P,R-V,X.].^3e3e2h3g9d<dBgClIkKfKjQjViUfUeWaVb]_[[`[dXeXjZmYpVpUnSnOiMiMgIgJcE_DY@W:Q8L2G0=,:,8)7).+*-*306*<+"] },
-      "eur:Bulgaria": { "f": [22.314, 0.06791, 44.258, 0.045], "w": 93, "h": 68, "p": ["-)2+2.0.01<1@3H2H3M3Q5Y5`.g,g+k+k*o*p,v-w/z.|2~3\x843\x84:};zAzJxJwMtOuQwQ|[t\\qXk[g[f^_a`faf_iYiUkSkPhKhIdAe<h1i2_0]0Z-Y)U+Q*G.G.E2A0=-:+:+7)5).,-"] },
-      "eur:Spain": { "f": [-9.364, 0.13158, 43.839, 0.08719], "w": 97, "h": 91, "p": ["4)7)8+B+C*C+G+K-P-P,U,U-Z,].b-d.d1i2j4t5u3w5z5z8|7~9\x888\x87:\x88>\x85A\x80C\x80E~FvHuJvLsMqSoTmXm^qckgipdp_y^xZzYyVyVzOyL|I|G\x80D\x82C\x80A\x80@{>z@w>x;t7t6n8m8k:k7e8e8b:a:^8^8[6X9X;U:S;G@C@A=A=>1?1<.<,>-8+4)3)0+./.0+"] },
-      "eur:Montenegro": { "f": [18.394, 0.03608, 43.564, 0.02391], "w": 55, "h": 71, "p": ["8):*>)>,F3F5J9U=W@Y@ZB^D^GZHZJUJWMVSRUNUMOIQGWEXA`AcCfBn>l9b.Y/W+W)T)R,P)A*?.?.9417184:3:07,"] },
-      "eur:Kosovo": { "f": [19.971, 0.04669, 43.304, 0.03094], "w": 39, "h": 48, "p": ["9):):,@/C5G7F:N<N?M?KFIGJIIKFKDOBM>M:O8W5W4L2I-G-D*A):-:-8083633706+8+"] },
-      "eur:Albania": { "f": [19.209, 0.0573, 42.694, 0.03797], "w": 33, "h": 81, "p": ["0)1)2.5,8,:2<2?5@>?>>NBTBWGXF[H]GbCdAm=m=o;o<t:x6w4n.k*f*d,e*\\,Y,P-P,H.E.?*>+8)5"] },
-      "eur:North Macedonia": { "f": [20.391, 0.04669, 42.399, 0.03094], "w": 57, "h": 51, "p": ["O)T-T/X3\\4^<`=_H^J[JZPIQGVDWCY=X;Z4Z4X/X.S,R+M*M)D+C+?*?+9/:026/8/;2;0>-D-H*M+"] },
-      "eur:Portugal": { "f": [-9.563, 0.08914, 42.171, 0.05907], "w": 39, "h": 88, "p": ["4)8*7.9-A.C+J,J1N2H8H:F:F?G?GEFEGGEHFODR?R?TAUB[E\\AdAhCkEkEnCn?t@}>}=\x7F8\x7F8~/\x7F0t1t0r0l1l0g1f,g,c.c.`,c)b*W-U.O0M0D2A0,"] },
-      "eur:Greece": { "f": [20.081, 0.08914, 41.816, 0.05907], "w": 74, "h": 92, "p": ["l)q,q0n1m9j:i8d8d7_6^8X7V:Q:Q<S=R@U@XCWDVBQATGRGQCNCNBMDPHMGLCG@H=E>DGFHHNLRLVJVKSIRGSHWIXMWN[U]We[f[hZiWhUbPaPcTdUnSnSlPiNjOhIjJnMoNqMsJtJrFpFtHvI}J}I~J\x82G\x80F}D}D\x80B\x83B~?{?y=y=~:|9z:r6n4i6h7e:f;cEgFiHiHgKgKfGeCaAc@b7c7a4c3^0[0Y4Y4W/W*R*O)O+F/E/A3=28787798>3D4F3F0R/T-Y-Y,\\0_/b2g1g0j1l0l+k+"] },
-      "eur:Turkey": { "f": [25.888, 0.17403, 42.185, 0.11532], "w": 110, "h": 56, "p": [".)4*5.7.:1=0=1D1D2H1H/J/L,Q+S)T*])]+_-b,d0g/h1l1n3r3u1x3{3\x81.\x84/\x84.\x89-\x8B1\x8E2\x8E:\x94<\x93?\x90A\x91A\x91E\x93I\x91M\x93N\x93Q\x95S\x91U\x91R\x90S\x88R\x88T\x87S|T{VvWvXrXqVmVkXfWeXf\\d\\c_a\\aZcYcVaV_Y\\WYWXZS]N]LYJYIWCVB[<\\:X8W4X5U0U1T1R/Q0L*J+G,I/I-H.?)@)>+;*8+9-7:897:5?5?4;4:21214+8,6)6)4+3+/,/++"] },
-      "med:Gaul": { "f": [3.075, 0.06615, 47.325, 0.05385], "w": 109, "h": 111, "p": ["((\x8A(\x89-\x8D-\x8F.\x8F0\x920\x921\x940\x945\x925\x917\x93<\x91<\x90:\x89;\x899\x867\x85=\x82?\x82D\x81D~A\x7F?|?y<y8x8v;t;t?rApBjAgCcBbD`D`FeKeO^Q_UdWdYa[b]a_gcmcmfkgkjdmaq^r]uZuWwPvPuKtJrFrFp>q6m2q+t*w(x", "\x87x\x89y\x88\x7F\x8A\x81\x8A\x89\x88\x8B\x88\x90\x86\x92\x86\x95\x83\x96\x7F\x93\x80\x90}\x8F~\x8C|\x8C}\x89{\x88{\x86}\x86|\x85}\x80\x82\x7F\x83}\x85~\x87}\x86|"] },
-      "med:Italy": { "f": [6.531, 0.11542, 47.137, 0.09396], "w": 105, "h": 112, "p": ["S)T*Y)[-f.c2f2d4g7g9f7a7]:Z9Y;Z>\\?ZA[H`JbMfOhWo^t_t`{_|aycze\x85i\x86k\x8Eo\x90r\x8Fv\x8Dv\x8Aq\x87q\x85o\x82o\x80q\x7Fx\x84z\x84\x7F\x81\x7F\x7F\x81\x7F\x85{\x88{\x8Aw\x8Aw\x87v\x87v\x89s\x8Bs\x8Er\x8Et\x92r\x97n\x97k\x93g\x93f\x91`\x8E]\x8E[\x8A\\\x88`\x89a\x87e\x89n\x89o\x87s\x88u\x86y\x86y\x82|\x81|\x7Fxwxtqrqnlmlkikggdgdf`gW^U^T[PZPXKTGIDI>E:E5K0L2H,G+F,@)?)=-<*60504456351718/9/92<3<5>6=4@1@/B1F0G2G.J.J+O,P*S*", "?gAgDlC|B}>|>~;\x80:~8\x7F9~8}9p6m6k;k"] },
-      "med:Illyria": { "f": [13.307, 0.0943, 46.941, 0.07677], "w": 103, "h": 96, "p": ["E)H)J.L.O2Q2S5V5W7`7b5i4j2q2w8w;y=\x7F?}A\x7FC}D\x80D\x85G\x87G\x88E\x8CF\x89H\x8BJ\x8BM\x88N\x88R\x89R\x89U\x8EX\x8E[\x8C]\x89]\x89b\x8Ab\x89d\x82d\x82e~e}gyfwgwjtktsvtwwywz{w}v\x81r\x83s\x84r\x87o\x86m\x81h\x7Fjjgjde]bY^T_V^V\\U]S]T[Q\\S[RYKZKYPYOWIYJXIVLVLWNVIUITDUDRBRAP>P<K?K?J=I;J<H:I;H;G9H:F8G9@7@8B4A4E3E3A5@5=2=3@1@0C-C-A+@*;.:.8+7*5+2)0+.6/9,@,@+D+"] },
-      "med:Pannonia": { "f": [15.742, 0.05208, 47.325, 0.0424], "w": 119, "h": 38, "p": ["((\x9E(\x9E)\x9C-\x99/\x992\x973\x967\x92:\x92>\x90>\x8EB\x88A\x87D\x83C\x7FEyDyCxDqCoFkHhGfI_J\\MRMRLNLLIFHFF@C=>7<3633-3,4-7)7(6"] },
-      "med:Dacia": { "f": [20.139, 0.08727, 47.325, 0.07104], "w": 115, "h": 52, "p": ["<(\x93(\x94-\x98/\x983\x9A5\x976\x964\x955\x934\x905\x903\x8D4\x8D:\x8A<\x8A>\x88>\x88B\x85B\x85D\x8DE\x8FC\x94C\x96E\x95J\x91L\x8EL\x8EI\x8CJ\x8DL\x8BN\x8CP\x89S\x8AT\x89Z\x83Z\x81W{WxTnVh[GYIUCRCOFOFNAM@O>O<M7L7I6I7F1D/B/>):+8.9/737"] },
-      "med:Scythia": { "f": [28.021, 0.22801, 47.325, 0.18563], "w": 120, "h": 34, "p": ["Y(\x9F(\x9FF\x9CC\x97C\x93F\x94@\x90@\x90>\x8E>\x8D:\x8A8\x8A7\x8E7\x8D4\x902\x963\x952\x96*\x91+\x8D)\x83.\x830\x800\x802\x7F1}2z8}9~;}?\x82E\x82G}I{FuDvBtAmBm@j@i>b>`<\\=W8T8S6N4N2R3S/V/S,T+V,V*Y*", "/(V(V)R)R*G-F.G2H3M2M4H4G6D6C8A8@4<3>0A0A/?.;/9-7.8,4,4.00/2)3*0,/,,1-"] },
-      "med:Thrace": { "f": [22.315, 0.06615, 44.306, 0.05385], "w": 96, "h": 58, "p": ["-)3,0/11;0;1@1@2N2N3S3S4Y4Y3\\3^0`0c-j,j+r+t-}.}0\x802\x872\x868\x859\x828}<|EyFyHwIwKzLzN|O~SvTsQnRnSiShVeVeXaXb^_`\\_\\`TaS_K^I[>]>^1_2W0S-R)N+K*C/B/@1@2>2<0</9+8*3)3).,-"] },
-      "med:the Caucasus": { "f": [39.954, 0.0943, 43.654, 0.07677], "w": 111, "h": 69, "p": ["))1*9.F.I1P3Q4P6T6V4Z4Z5^4a7e7e:d:e<l>n@q@uDuFxH|H~D\x82C\x82A\x85@\x8BL\x8FP\x95Q\x96T\x92S\x8DV\x8DY\x8B\\\x8C`\x8Ad\x88c\x86f\x87l\x83l\x82j\x80j\x80h}g~e\x80e~a\x81`~\\z\\y^t`rcpcnfceab_b_`\\^\\\\WWPWORNRPPPMMJMHJHJFHFFCDCCE9D;A;<:<844341211/-/+,),"] },
-      "med:Macedon": { "f": [20.412, 0.038, 42.396, 0.03094], "w": 69, "h": 51, "p": ["W)\\+\\-a2h5j<l<jJfJeObQZQZPPQNUHYAX=Z6Z6X0X/S-S*M)C+C+?*?+:09138/</?2?0C-J-O*U+"] },
-      "med:Anatolia": { "f": [25.89, 0.17172, 42.221, 0.13979], "w": 111, "h": 47, "p": [".)4*5-9.:0;/H0H.L-M+Q+S)T*^)_,c,e/h.i0n0n1t1t0}1\x83-\x84.\x8B-\x902\x8F6\x918\x969\x94:\x94<\x92<\x92@\x94D\x93G\x95H\x96L\x93M\x93K\x91L\x8AK\x8AL\x84L\x84M|MwPsPqNlOlPfOgSeSdVbTbQdPdNbNaPZOWSSSSTNTKPDNCSBR<S;P9O5P4O5M0M1L/I0F+E+B,D.C-B.;)<):+8*5,43634:5:3?3?2404111/4-3)4,.++"] },
-      "med:Greece": { "f": [19.993, 0.08727, 41.802, 0.07104], "w": 77, "h": 98, "p": ["n)r)t+t.q/q4n7k5c4c3`5Z4X7S7T9S>V@VBR>O>O@RARBOBN>I<I9F:FBIDJHLHLJNKNNLNLKIKJPOOQSWTY[\\[]]\\^Y]WXRXVZWbUbR^O_Q]L^K`McPdPfLgLeGdJiLsHoFoEsCsCo@k>l>o;m:k;e7b7`5`5^7^8[<[<YD[H^J^J\\L[I[HYEYEX9Y7W5Y4T1R1P5Q5O0O-K+K+H)F+F-@0@1;4:35;5?1E2H/S.S-[,[+\\-b.d0m/o.", "W\x7FY\x83\\\x83\\\x82j\x83j\x86p\x84p\x87_\x89^\x86Q\x84Q\x80W\x80"] },
-      "med:Persia": { "f": [43.919, 0.16468, 41.825, 0.13406], "w": 68, "h": 115, "p": ["e(k(k\x9Ac\x99[\x91V\x90N\x7FJ\x80G~H}G|F\x80C\x80C~A}Ay?y@r9k5j5f1c2b1_3^3[6Z5Y6U3U0R-L,F*E+B*B*<)<+8.8.:1=8>=9A8B9A<C<A=A?D@DBFAFEHHLHQMVNVOeMd<`;`9c9c8b6^6^/`0c/d1g/j/i,g,"] },
-      "med:Carthage": { "f": [7.413, 0.08727, 37.393, 0.07104], "w": 48, "h": 102, "p": ["@)H*I1L1L/R-R0O3O5K7L=Q@RHPIOMJRGSFXI\\N\\N_Q]TcWcWfVfWnQqOtLuKxGzI\x84G\x88E\x89E\x8BA\x8D?\x8A;s2l1f.c,c+^)\\)V2N2H3H283614605.8.9,@*"] },
-      "med:Mesopotamia": { "f": [38.712, 0.10134, 37.48, 0.0825], "w": 97, "h": 103, "p": ["S)W+^*^.`.a,d,d/f1f4i6i9l:m<r<p>qEnFmKkKjSqZq_t_yd~e~h\x82l\x80w\x84w\x84}\x88\x80\x88\x83\x86\x82\x83\x83\x80\x81{\x82z\x87u\x8Eb\x8CX\x82V\x82OzMzIuGuFs?p9k0j0i-i.h-f+g)Y0V1T8Q9O?MAIA@B@A5C3G3K/L,N,O*S*"] },
-      "med:Numidia": { "f": [3.075, 0.14357, 37.233, 0.11688], "w": 57, "h": 117, "p": ["?)B+D+E)H+N+L-M:L:L>I@IBGBGGHGHJLLMQRTRYSYTbUbTgWkWxXxWyW\x84T\x86T\x88V\x89X\x8DZ\x95`\x95`\x9C(\x9C(,5+6-9-;+>+"] },
-      "med:the Levant": { "f": [34.137, 0.0943, 37.393, 0.07677], "w": 88, "h": 108, "p": ["})\x7F*\x7F-y3u3s7u?sAsKqOlPhTdUcWY\\[e\\e\\j^j^l[oWoWpFuQ\x82M\x84K\x89C\x8AB\x8E=\x931\x91*z)z)v,t.p3]8T8P<M;L;A9?:?:;><>:@:@7B7B0F0G2L2T.T/W/X1c1l,y,y+|+"] },
-      "med:Cyprus": { "f": [32.29, 0.02393, 35.195, 0.01948], "w": 75, "h": 33, "p": ["5):):+A-A.F+L*L)W*Y,Y2[0^0^1g0h.k-m/p/r3m3m4d3Y>R@RAIBGDGGCHBD@C8D8C.@*8)../"] },
-      "med:Libya": { "f": [9.196, 0.1506, 33.33, 0.1226], "w": 107, "h": 80, "p": ["7)<,C+C,J-K/O/Q1Q5S8_:c<d>f>hAlAp=q;o7p1s.x-z+\x7F+\x81-\x84-\x851\x891\x8B3\x913\x925\x907\x91>\x8F@\x90I\x91I\x91w:w7q/p-h*e*a-_,]-T,T,H)B,A/=.670"] },
-      "med:Arabia": { "f": [34.531, 0.1506, 32.274, 0.1226], "w": 114, "h": 72, "p": ["F)N*R,S.W/kAxB|:\x81:\x81<\x83;\x84=\x80>\x80@\x82@\x85J\x87K\x87N\x89N\x89P\x8DT\x8FT\x90_\x92`\x92c\x94d\x94f\x98g\x97i\x99i\x99oBoBm;h9_7`8^6Z4Y.L,J)J)G*G+@3A7;<;<8?78.E+"] },
-      "med:Egypt": { "f": [24.592, 0.10134, 31.705, 0.0825], "w": 111, "h": 99, "p": ["-).*7);+@+@,C,D.P0T3X2]-`-a+e,h)k+q*r,p+o-r/u.w0x/\x83/\x87-\x8C>\x8D>\x8DB\x8EB\x8CE\x88W\x86X}N}JxCw=u?uCwDwIzO\x80U\x80Z\x84_\x84e\x87i\x88n\x8Bq\x8E{\x91\x81\x93\x82\x93\x84\x96\x85\x94\x86\x94\x8A,\x8A,E+E)9+8+5,5++"] },
-      "mex:Baja California": { "f": [-117.206, 0.06773, 32.766, 0.06365], "w": 68, "h": 88, "p": ["D)L)K+L-O-O.R.R/U/U0X0X1[1[2^2d5h5k7iNeJe@]?]<Z:X:W<Q:P8M8K:JBLCLFMFNR\\^\\`^a^dadafcfejes_v^xZyS\x7FP\x7FP|M{KxIxHuJvSuSwVxTtVmWmVjI]F]E[C[BY>W=O:M9G5D5@0<16-4,0)-++8+8*D*"] },
-      "mex:Sonora": { "f": [-112.916, 0.06052, 31.854, 0.05688], "w": 89, "h": 84, "p": [",)/)/*2*2+5+5,8,>/B/E1v1v)\x80)~1}1}5|5|8y>yBvHvLsRsVqYq]o`odndnhlkixeyd{`{`zPwNtOnFm?d<d<b9`9^5Z3[3^0^.\\/W3V3Y4Y4V1T1Q.O-K+J+F)C"] },
-      "mex:Chihuahua": { "f": [-109.034, 0.06052, 31.838, 0.05688], "w": 90, "h": 93, "p": ["@)S)W/[0e:l=pEpJtPxQ|U\x81Vs|p|p}m}m~j~j\x7Fg\x7Fg\x80d\x80^\x83V\x84V\x83N\x82K\x80G\x80D~@~=|9|6z)w,j.g.c0`0\\2Y2U4R4N6K6G7G"] },
-      "mex:Coahuila": { "f": [-104.531, 0.05332, 29.923, 0.0501], "w": 92, "h": 95, "p": ["Q)W*W+`*`+c+d.f.h1j1j3q9r>wDwH~N\x7FR\x83TvavccucwW\x82U\x86L\x85;t;r)a+Y/Q/N1L2F4D5>7<86>:C:G6I.L+P+"] },
-      "mex:Baja California Sur": { "f": [-114.463, 0.06052, 28.019, 0.05688], "w": 85, "h": 91, "p": ["=)B)I0K0M7Q8P:S=TAUAT<X?XB\\I\\O^SaTaWg`fghkkklmmllioiuor\x82p\x80ozmyluhtepcp`lXhVeTeSbO`PSOSOOLIJGEFCCAC>?>;<>6?2:/:-7)7*5405.7.", "i3{7|8{?u?s<s8l7"] },
-      "mex:Sinaloa": { "f": [-109.982, 0.04611, 27.378, 0.04333], "w": 85, "h": 100, "p": ["=)A)D+H+K-S.V0Z0]2a2d4h4k6o6o7|:x\x86t\x87s\x83n\x7Fkygueucr]o^n]j\\kWjSgSdN_R]K[GWCVBR<T<R?Q@N<Q7Q5O4F6E8A;B8?8<495.", "+w.z.}4\x814\x871\x8B)\x8B"] },
-      "mex:Durango": { "f": [-106.325, 0.05332, 27.135, 0.0501], "w": 70, "h": 77, "p": ["I)K)dBdDmLmNVeVgMoMqJt)t,3<.<-I*"] },
-      "mex:Nuevo Le\xF3n": { "f": [-102.215, 0.05332, 27.736, 0.0501], "w": 81, "h": 73, "p": ["W)[+\\7_9bBhCkFoFrIwIxKuNsNnTlTgZeZ_a]aNp;n)Z"] },
-      "mex:Tamaulipas": { "f": [-100.287, 0.04611, 26.099, 0.04333], "w": 69, "h": 78, "p": ["\\)b*e-l+l1d@aR`R_oIu;f9f+W)W)U,R.R5J7J=C?CE<G<L6N6S0U0"] },
-      "mex:Zacatecas": { "f": [-104.572, 0.03891, 25.302, 0.03656], "w": 88, "h": 83, "p": ["Y)f*l0l2\x7FE|P{P{TyWvfskimcp_pYsUsOvKvKwHwBz>z=w8r8p5n5l2j2h/f/d,b,`)]/X/V9M9KCBC@Q3Q1"] },
-      "mex:San Luis Potos\xED": { "f": [-101.628, 0.03891, 24.27, 0.03656], "w": 75, "h": 73, "p": ["3)L,nNrPqUjahhFpBm?m7h0f0c/c/`.`.]-]-Z,Z,W)Q)K*K*G,D-</9/505"] },
-      "mex:Nayarit": { "f": [-106.457, 0.03891, 23.384, 0.03656], "w": 73, "h": 90, "p": [",)Z)\\-_/_1b3b5e7e9h;h=k?pIpUkZiZ^f\\fOtMtA\x81?\x81=xDwEuGuGr@nBnBlGgH[BX@R=O=D9<)-)+++"] },
-      "mex:Cuba": { "f": [-84.942, 0.09655, 23.318, 0.09073], "w": 113, "h": 39, "p": ["E)O*O+U*V,[,_._0b2k3s9v8|>\x88@\x89B\x87E\x90E\x94I\x98I\x98K\x8DM\x8DN\x89N\x89MsNvJyIxEoEmBkBi;`;`:X8W6G4F2J1I/>/942527.9-7)8+6.6.21/8-8,E*", "<7>7A;<=;<"] },
-      "mex:Aguascalientes": { "f": [-103.716, 0.03891, 22.901, 0.03656], "w": 63, "h": 58, "p": ["[)_)fA_G_IURUTHaF^D^?X=X8R6R1L/L*G)8-8357574D1J.N.T+X+"] },
-      "mex:Veracruz": { "f": [-99.185, 0.06773, 23.031, 0.06365], "w": 81, "h": 109, "p": ["9)=)<3>7=9?9>:?@A@ACEIFNOWQ^S`ScXgYkdlenioltstssxrx\x84u\x87r\x8Ep\x8Fp\x91n\x92n\x94k\x93l\x91i\x92i\x90e\x8Fe\x8Dc\x8Cc\x8Aa\x89a\x87_\x86_\x84]\x83]\x81Z\x7FZ}X|XzStKtFcDaDR=Q)<)7,3.,9*"] },
-      "mex:Jalisco": { "f": [-105.601, 0.04611, 21.82, 0.04333], "w": 71, "h": 49, "p": ["R)U,W,\\2^2c8e8m@nJjMjOeSeUbXGUGT?T?S7S7R/R/Q)P<=>=I1K1"] },
-      "mex:Guanajuato": { "f": [-102.469, 0.0317, 22.034, 0.02979], "w": 66, "h": 75, "p": ["L)O)W.Z.b3i5h<g<gBfBfHeHeNdNdTcTcZbZb`a`_r\\rRm>g<e3c1a+`+]*])P4E4C=;=9G0G."] },
-      "mex:Quer\xE9taro": { "f": [-100.771, 0.0317, 21.974, 0.02979], "w": 55, "h": 75, "p": ["Z)]-^5]5]8\\8\\;[;[>Z>ZAYAYDXDXGUMUQTQNf*r)n*n*g+g+a,a,[-[3373:1>1>0B0B/F/F.J.J-N-N,R,R+V+"] },
-      "mex:Yucat\xE1n": { "f": [-90.546, 0.04611, 21.647, 0.04333], "w": 80, "h": 50, "p": ["[)a)a*f*f+o,o-q,q*p+n*t)w,w.s0o5m5i:g:c?a?]D[DVJTJOPMPDYBY@V>V<S7Q5N3N1K/K)F*<+<,6.6/4518180K.S*[*"] },
-      "mex:Hidalgo": { "f": [-99.621, 0.0317, 21.668, 0.02979], "w": 60, "h": 63, "p": [":)cQbTWYV[R\\Q^M_LaHbGdCf=e9b6b2_/_)\\"] },
-      "mex:Quintana Roo": { "f": [-89.33, 0.03891, 21.458, 0.03656], "w": 67, "h": 95, "p": ["f)h)h,i,i0j0i5f;ZGXKYTUUTXRYS\\Y[Y^SaSdWcWeTjToQtO~M\x7FL{IzJqHpEsCzAy=z7\x865\x864\x7F1y1u0u)].X0X5R7R<L>LBGDGIAKAO<Q<U7W7[2]2a-c-"] },
-      "mex:Colima": { "f": [-105.538, 0.0317, 20.081, 0.02979], "w": 86, "h": 67, "p": ["))z3}jjcf_f]c[cY\\ROLLIFH<C8?6949/4/2,0"] },
-      "mex:Michoac\xE1n": { "f": [-102.969, 0.03891, 20.427, 0.03656], "w": 62, "h": 76, "p": ["7)>+@-I/K1Q2S4\\6c:eV^\\^^WdWfPlPnKsCk;l8j.i+g):03015-"] },
-      "mex:the Valley of Mexico": { "f": [-100.739, 0.0317, 20.141, 0.02979], "w": 62, "h": 51, "p": ["J)O)S,V,Z/]/e3eF^HXLULOPLPHSES8Z,V+@*@*5)4,4,3/3/222215150808/;/;.>.>-A-A,D,"] },
-      "mex:Tlaxcala": { "f": [-98.82, 0.0317, 20.439, 0.02979], "w": 49, "h": 52, "p": ["J)X+XFJMIOCQBS<U;W5Y4[1[/W,U,S)Q)="] },
-      "mex:Campeche": { "f": [-91.565, 0.03891, 20.353, 0.03656], "w": 72, "h": 83, "p": ["D)G*I-K-M0R2T5V5X8Z8[:]:_=c?eIfIfLiRiVl\\l`ofojlkkihhfifm7m7z6z)[/X/S-S.P-Q+P4L6I8I=D>9D3"] },
-      "mex:Hispaniola": { "f": [-73.992, 0.04611, 19.978, 0.04333], "w": 122, "h": 55, "p": ["=)G*I,P-P.Y.[*a*a+m*n,v-y0\x80/\x814\x848\x867\x8F8\x8E:\x87:\x87<\x98?\x9CA\x9FE\xA1E\xA1L\x9EM\x9CQ\x9AQ\x99N\x96L\x85L\x85K}M{PuPuQrPqNhOgTcXa^[[ZVUQRQRPLPLQFQFR/P*U(S(H-H0JAKALCLEILHLFIEB>D4<04/6+=*"] },
-      "mex:Morelos": { "f": [-100.255, 0.0317, 19.299, 0.02979], "w": 63, "h": 69, "p": ["U)X+X-[/[1_5flbh`h^e\\eZbXbV_T_R\\P\\MXKXIUGUERCRAO?O=L;L9I7I5F3F1C/C-@)>,;68<4?4E0O-"] },
-      "mex:Puebla": { "f": [-98.526, 0.0317, 19.567, 0.02979], "w": 55, "h": 79, "p": ["M)O)P+P.S3^V[WV\\T\\S^Q^LcJcHfChAk<m6s0v+N*N)>3947:5;3A1B/H-I+"] },
-      "mex:Guerrero": { "f": [-101.647, 0.04611, 18.787, 0.04333], "w": 74, "h": 59, "p": [">)B)B*I,K/M/O2Q2S5U5W8Y8[;];_>a>cAeAhEjElHnHqKnbkag\\c\\c[WYWXRXLSISBO9M6J4J2G.F,C)B*?0:087270"] },
-      "mex:Oaxaca": { "f": [-98.465, 0.04611, 18.267, 0.04333], "w": 79, "h": 61, "p": ["L)X*Z,Z.]0]2_3c;f=f?h@hBjCjElFlHnInKtRsVvVvWpXj]a_[cOdD^7]1X)V,@"] },
-      "mex:Tabasco": { "f": [-93.847, 0.03891, 18.765, 0.03656], "w": 74, "h": 44, "p": ["V)[+[-Y-Z/e1f6i:i=k?kBnFnIqO)S)3,3/1?1?0D/E,L+L*V*"] },
-      "mex:Jamaica": { "f": [-78.355, 0.0317, 18.546, 0.02979], "w": 68, "h": 28, "p": ["5)V-X0\\2g5k;k>a?a>[=[;W;U?O>M@MCKCJAF?;?8<8:4924)2).,+4+"] },
-      "mex:Chiapas": { "f": [-94.434, 0.05332, 17.385, 0.0501], "w": 76, "h": 57, "p": ["^)i)i+b+b,i3n5o:s;sBZBXHVIRQRTTUSZRZR]S]R`P`K[KY@N>N9H7H2B.C0A.B)A)@.A*?)=+<,8.7/3124,^*"] },
-      "mex:Guatemala": { "f": [-92.266, 0.05332, 17.886, 0.0501], "w": 76, "h": 84, "p": ["@)b)aPiPkRpPqRsRsToXmXi]b`bcacbj_m[mZn[qUtQxQ{Iw8v4t3r1r/o-o)k*a+a)[,X2LJLKFGDD>?<<9<79695@5"] },
-      "mex:Belize": { "f": [-89.278, 0.0317, 18.508, 0.02979], "w": 39, "h": 89, "p": ["A)G)E-L-N1L:J<IDHDHGJJGOGWHWGfDl@o@q>s;s8v8x5z4\x80)\x80,:093<5<:6:4<3<1>0>-"] },
-      "mex:Honduras": { "f": [-89.39, 0.06052, 16.059, 0.05688], "w": 104, "h": 55, "p": ["a)e)h+n+r)r*w+x-y+},\x842\x843\x7F2\x7F4\x834\x857\x866\x897\x8A5\x8C6\x8C9\x8F;\x88;\x85>\x82>\x82?\x80>\x7F@}?zAvAt>p?pBnBmGkGgLeLdOaN`L]L[PTPSQTYQYQ\\O^J^GWBWCPDPCN>N<L7O7M/I.F)E)C,B+:08:.>.@+F+G-H,[-\\+_+"] },
-      "mex:Nicaragua": { "f": [-87.718, 0.05332, 15.048, 0.0501], "w": 86, "h": 87, "p": ["v)})|,y+y.{.|0}8{9wAwGvGwWuWuYwYw]u]uYsZtdrdrgqgtitmqoptqtrytzt}m~m}j}hy_x\\z\\yVxQuMwEnCn>i:a6_-U)S)Q*P,P,R5Q7O7L;K:B<ABBF<H<H>M@N=P=U7W7W4\\-_-a0f0l-q-s+v+"] },
-      "mex:El Salvador": { "f": [-90.142, 0.0317, 14.453, 0.02979], "w": 78, "h": 44, "p": [";)B)B*K,K.N1P1R4T4V7\\8\\<_<`:e9e8i8k;s;u=tBsBtJqKqPnSbSbRYP\\R[SXQQPEI2F-A*A)</64561;/:."] },
-      "mex:Costa Rica": { "f": [-85.946, 0.04611, 11.214, 0.04333], "w": 74, "h": 72, "p": [".)2)2*5*=.@.B,F,I.K-N0N2R2R3W3[0\\6^:`;`=c?cAjGjImLqMqOkNkPiPiZn\\j`khgjjmjoejeecc^b_ebgbi[hXeXc[`[\\YXUVTTPSOQENCF@E>B7?7B?G?I;M9M6H3H-E*?*;.7.2,2)/,.,+.+"] },
-      "mex:Panama": { "f": [-83.08, 0.06773, 9.649, 0.06365], "w": 88, "h": 39, "p": ["+)-*0)3,3/5/42;3:1<1=4A6H5L1R0U-Y,[)j+o.r.s0v1x5|7{;\x7FC}C|E}G{GzIvGwJuKuNtNrJpIoEmDmAoAp<r<r>v@r<r:m<n:l;l8j6f5c2]2X7Y8X:O>OBUGUJPKPMNNHNFDDDDHBH>E;?8?8>5?5=3>,=+?)>)<+;+5-4-2*1"] },
-      "sam:Colombia": { "f": [-79.237, 0.16402, 12.6, 0.15313], "w": 76, "h": 109, "p": ["U)X)Y,W.T.T0O4N;L=RCQJSJTMVL`McRmRmQpRm]qeoemhqjssrsqmnmnololmkoaoasesev`v`|c~c\x81d\x81a\x94\\\x93`\x8D^\x8A\\\x89X\x8AV\x88T\x8AN\x8AM\x86K\x86K\x83F\x81F~D|?{<x9x9y3x2u,s)p*n,o,j.i0j2h1f3f5b3`4S0K1H3I4G3B7E6B8B;?;=>=>7B2G2G0L1M/S-"] },
-      "sam:Venezuela": { "f": [-73.532, 0.14449, 12.279, 0.1349], "w": 96, "h": 87, "p": ["?)B*C.I.J0L0M5[4_8e8g6k6h4t3v5r5r6s8u8u:w9|:|<\x80=~?\x80A{C|E\x80C\x81D\x85C\x87E\x84I\x81J\x81N\x83N\x83P}R~U|V|X\x81\\\x81`\x7F`\x7Fb{bzdwdwetdshphofifidedfghgjqnqnsjtixfx`~_|Y}VzTqPnSkRgPfPbObRUOTOUDVDT@Q@O<O<N2O2M/L0E.D-?,>)?,;-33-305156372;4?7@9>996662=0?.B.B-?-"] },
-      "sam:Guyana": { "f": [-61.485, 0.12497, 8.633, 0.11667], "w": 41, "h": 65, "p": ["4):,@2@7E8G<I<K?JDIDJFEHELCOGUJUJZL[L^PbIaHcEcDeAd@g>h8e8c6b6^4]5S7R6L3K4F-E+A)@)>+=*917.1//5,"] },
-      "sam:Suriname": { "f": [-58.118, 0.08591, 6.11, 0.08021], "w": 49, "h": 54, "p": ["5)=*@,B,B*J*J)W+W1S4R9S9TCWEXJVKVQRWNVMTJTHVAU?XAYB]:\\8[2O2J-J-G+G+D)C)?+<*8,6162411"] },
-      "sam:Brazil": { "f": [-74.262, 0.35928, 5.688, 0.33542], "w": 111, "h": 118, "p": ["N)P*O,Q,P3R5[3]1_3d2f-h,i2j4l4k6l:n9p;u;x>{>z@|A}@\x83A\x83B\x87A\x8BC\x8FH\x94H\x95M\x96M\x94V\x8E[\x8D_\x8A`\x8An\x88o\x88t\x85w\x85{\x83{\x82}~}~~|}t\x81s\x83q\x83o\x86p\x87o\x8El\x90k\x94h\x93c\x9Db\x9Dc\x9Aa\x9Aa\x98W\x93Z\x90Z\x8E\\\x8E^\x8Ba\x8Aa\x85_\x85`\x81\\\x80[{U{VmTmTjOiOdNdObJaF^C^A\\AV=V9Z2Z2V.W-U+U+R)Q)M+M,H2E4F5=6=4:47664644<3>7?6A7B5D5D3F3D2C-H.J,M,"] },
-      "sam:Ecuador": { "f": [-81.01, 0.08591, 1.495, 0.08021], "w": 68, "h": 82, "p": ["A)E+G.K0O0R6]8]6`5c7c9h:i;h?kAkGiFgOcRcT`W^W[[X[X\\U\\S^L`IfGeFkCpCtAt@x=y:w:t8r4r3p1p1r.r/q.l/m1l1d4c7Y5U5Z3[4Z3X3Z/\\,X)W)U+U)H.E.B/B.?3:30607.:.:-A,"] },
-      "sam:Peru": { "f": [-81.584, 0.18354, 0.113, 0.17135], "w": 71, "h": 109, "p": ["H)I*L)M+O+P/R/T3V3W7\\7^5^6c6g8c>c?f?gBbA`C\\C[EWFVORQSYW]V`[`[cacd`digighjijkllnpmxlxm|k~l\x82j\x83m\x89i\x8Dj\x8Fh\x90h\x93f\x94c\x93_\x8DP\x86O\x84K\x83I\x7FG\x7FG}DzEvBp@o@l=j=g:d:a9a9^6X4W2Q*L,K,I)C,@,>/=.A3C4F6F6D8C9=;=<:C8I2J+"] },
-      "sam:Bolivia": { "f": [-69.748, 0.16402, -9.581, 0.15313], "w": 76, "h": 88, "p": [">)C)C-B-C5E6E8H9H;Q<S?W?XB_BaDbL`MbNbTmTmZq\\saoipligcgchXjXmVnTzKyJ}H}Gz@z?x=x=z;z7\x7F3\x7F3y.o0h-f,_)\\)Y-U-S+S*Q*N+N*J-G,B-B-=.=.9+6)1022/5/6-"] },
-      "sam:Chile": { "f": [-75.887, 0.35928, -17.194, 0.33542], "w": 26, "h": 114, "p": ["9);*;.=.<3>5>9A9A:?=<>=E9I9L8L9O7Q9[7]7a5b6h4i3t2t4w3y5y3z4\x801\x832\x841\x87,\x88,\x8A/\x89/\x8C2\x8C3\x90:\x90:\x92<\x92<\x984\x993\x984\x96:\x978\x969\x947\x949\x916\x927\x966\x951\x962\x940\x96.\x95.\x930\x94/\x930\x91-\x92.\x8F*\x90*\x8F-\x8F.\x8C,\x8E+\x8E+\x8B-\x8C,\x8A)\x8C)\x8A+\x8A*\x89+\x86)\x87)\x84,\x85,\x82.\x7F-\x80)\x80)\x7F*}-|,y.z.|0{/x2s1q.q/u.v,u-u-q.q-o/l.d0c1^4Y4O5O4K5K5G7C6A7A79897+9+"] },
-      "sam:Paraguay": { "f": [-62.703, 0.12497, -19.221, 0.11667], "w": 69, "h": 72, "p": [":)F)J+M.L1N2N6O6NA_BaE`HaHbQfQhOlQj\\i\\hgejcjan\\m[oWoWnSoPmImIkLiLdQ_Q\\MYGXFVBU>Q6P)C)>+;+3///,:*"] },
-      "sam:Argentina": { "f": [-74.001, 0.33975, -21.514, 0.31719], "w": 61, "h": 98, "p": ["?)D*D,E*J*K-N.O0R0S2X3X6V7V:X;\\;\\:^;a8a5d6d9`;XCXFWFVRXRYV[WZ[V^J_KeIfBeBiDiCjDlBmAr>r;t;w@y@|;~:\x826\x848\x895\x895\x88.\x88-\x84*\x84)\x80+\x80+~-}-y/x.q0p.p/l-l-j/i.d1^0X3V2S4Q2F4D4?6;8:81<0<+"] },
-      "sam:Uruguay": { "f": [-58.583, 0.10544, -29.98, 0.09844], "w": 53, "h": 51, "p": ["6)9)<->-@/@3C3E1G5N7R<V=XB\\CXGYOVUTURXOXMZGZGY=Z;X8X5U/V*Q)O*H-G,;.9-6/4/-1,1*5+"] },
-      "jap:Hokkaido": { "f": [139.998, 0.06028, 45.53, 0.0475], "w": 95, "h": 75, "p": ["G)I)R2R4U6U8Y<[<aBeCgFmFsJwJ\x81A\x81D}J}P\x7FQ\x81W\x84W\x84V\x86W\x83Z\x81Y}[|]j_`j^r[rQmPkLjKhGf>g=i8k3f/g)d0^0[.Y/V5Y?X?OAKCJCDDDE;F;E4B.C.C+"] },
-      "jap:Tohoku": { "f": [139.297, 0.07614, 42.74, 0.06], "w": 36, "h": 100, "p": ["==D?DLIPISKVKbJbJeGfGiEkEp@q>s=x>x>}?}?\x84>\x84>\x88<\x89<\x8B9\x8B9\x8A,\x87)t*t+m/i/e2`2Y.X.V0V1T0K5H6A:B;H=FAGBA<B", "0)6*7+5.61;2@8?9986=2>1:2:35/0"] },
-      "jap:Chubu": { "f": [135.883, 0.0497, 38.13, 0.03917], "w": 76, "h": 91, "p": ["m)o,sDTITKVLWP[T^[f_i_jnknkriti|f\x7Ff\x81c\x82b}c}dv_u]yX}W\x82T\x82T\x81D\x81C\x82B\x80D\x80D~?~>|<}<v9w8z5y5j)h,e+\\4S4Q9K9?;;E8D<@>?@=@=C?E?JFKHFY@`9d/h."] },
-      "jap:Kanto": { "f": [138.028, 0.03384, 37.067, 0.02667], "w": 85, "h": 82, "p": ["R)W)W*[*[+_+_,y2v8v;u;uBtBsI|[v\\q`qbocnnfr`y]x]u^u]t]q^q]j`i`febe_b\\_\\\\^\\bXfXj[lYpWpWnSjOjKlHQ:M)2+0<.<-G,G+R*"] },
-      "jap:Chugoku": { "f": [130.837, 0.03913, 35.576, 0.03083], "w": 97, "h": 57, "p": ["`)g)i,l*v+v0y3|:~;~=\x80>\x80@\x82A\x82D~DwKpKdQ]QZSUSRPNPKVJ`F_AZ8Z6\\1]0[,[*Y)R,N7M;GAEJ;L;P7P5R5V1X,\\*`*", "vP~P\x84T\x88T\x87Z\x85[\x85ZpWoSsS"] },
-      "jap:Kansai": { "f": [133.857, 0.03384, 35.78, 0.02667], "w": 90, "h": 87, "p": ["N)R*Q0S2`2d.x0xGzG{IxMwRySyU{U\x81Z\x81_tbpehwfxd|`~W|WzUyUvSuSsPqNmM_S\\SZVWVSURISCN7O5J3I3G1F.?)9*241;-E-E,I,"] },
-      "jap:Kyushu": { "f": [129.563, 0.04442, 33.97, 0.035], "w": 54, "h": 85, "p": ["A)G*I-I0L3S3U1X4X7V8U<Z=ZC]G]KYNU\\T\\SjRjQpPqJpIsKvHwC|A|DvCpBpBlDkCh@h>l>s@t@w6u6r5r9p9j6g7e6]:\\:Z<Y@Q@O=N>H;D;A9?6?5@6H9H:L7M6K3J/M/O-O.K*F*B-D/H1H1E/B-B)>*9/:.9/6:2</<,"] },
-      "jap:Shikoku": { "f": [131.716, 0.03384, 34.173, 0.02667], "w": 87, "h": 54, "p": ["a){.~8|8y<v=v?t@rDqJoJoHkEkCgA_A^CVFVIUIULRRNTM[K]E]E\\C]EZEW?W?S=R@I<H<D8D4G2F9CA;D:G/K+N+Q1U1X/[/[0^/a,", ",J-J,P/R.V1W/[*R)K,K"] },
-      "world:North America": { "f": [-168.61, 1.34237, 83.1, 0.935], "w": 116, "h": 82, "p": ["I1M1O3X2W4Z7W7W8_8_6\\7^6^4\\5Z4Z2]2]3a2`5d7d9f8f6c6b4c2e3l2n5p4s6s8w9w;s:u>t=q>p<k<o:o8l9n7h6i9e;h;j=b<b>`>_@aDhFiJkJjFmEkBl?j>o>r@rBuBv@xE|G|L~L~O|OzN{JtKuOwOxQtRvQtPsRqRqUnUm\\i^jfhehaeae`c`cb_a]c^mbmbjejdphqgvjwjygxesar`pZoWlWhTfScReThRgRePdRcRaPbQ_OaN]K[IWIMJLIMHMIKGLFHCFBC?C>A:A:@5A6@5?3A4D1C0E-F.D0D0B-B+@)A+=.=.<)<):-:*7.5>6>7A7A6B7C6O7Q5M5M4I5H4", "h(x(x)\x96(\x95*\x98*\x98)\x9B)\x9B*\x97,\x98/\x960\x962\x942\x955\x925\x947\x807\x806}7~4z0o.o-u,t*w*w)t)q,m,j/c/c.f.e,d-^,^*h)"] },
-      "world:Asia": { "f": [-70.617, 2.41017, 83.1, 1.67875], "w": 104, "h": 47, "p": ["^3\x8F3\x8F4\x8C6\x896\x87;\x86;\x867\x895\x806~9\x819\x81>\x7F<\x7F>{@{E\x7FC\x7F@\x80@\x80E}E{GzCwAvCxCwDxLvKtMqMsSrTpRnSnPlPlMjLgOgRfRgVfVdRdMbMaJ]J^K]OWRVLTJTDPCS@TAX@ZAZD\\D[B\\@Z@[=Y>Y;^;", "l)q*q,u,t.{.{/\x83.\x83/\x88/\x880d0d.p,p+m+", ")0E0E3+3+1"] },
-      "world:Europe": { "f": [-10.546, 0.68136, 74.6, 0.47458], "w": 105, "h": 82, "p": ["\x88(\x8E(\x89,\x89/\x90/\x900e0d2h2h3a4c6b8d:c<k<k>n?n=k<k:i9r:t9t7l3\x903\x905\x8D4\x8D5\x885\x886\x866\x874\x854\x855\x7F6}9z8|7{5x5x8y8x:u9r<p<p=s=s<\x90<\x90Z\x87Z\x85X\x82X\x7FZ\x7F\\~[|\\|`\x7Fa\x80c\x7Fe|f~n|nzkvkvjohnepbkckemfkfjhifgfiddc^oZo[qYq[vYuYxWxWuTqTmQjOjLeJeJiLjLlSpSqPpQrPtLnHmFhChBj<j<m7q8t7v5v5x.y.w+w+u)t+p*j+i5j6h6d4a1`1^5_5]8];Y=Y>UDTDPCPDMGLGOFOGSMTORWQVMWL[MZHbGbF\\F\\GWFVAZ=\\=\\<W<W>QAQESFSHPIOOHQHOJOHIFHEJAK?H?BD@H<7<73S3S2Z1Z0707/\x83/\x83-\x87+", "0J4L3O7R8V:V9Z/\\1Z0Y1U3U3S0R.N"] },
-      "world:Africa": { "f": [-18.102, 0.93559, 37.993, 0.65167], "w": 75, "h": 113, "p": ["B)C*F)G*F.H0K0O4Q3Q0T0Y3[2`3a5_9`9a?c@cFeGeJjOiQnRrPrTqTo\\hceiepgrgz`\x81a\x88^\x89^\x8F\\\x90Z\x95S\x96Q\x98O\x97O\x92K\x8BK\x84H\x7FHxJvJrIrHiEfE`F`E[A\\AY<Y:[6Z3\\1[0X.X-S)O)J*J)@-815105-5+:,<*B*"] },
-      "world:South America": { "f": [-81.936, 0.88475, 13.251, 0.61625], "w": 54, "h": 113, "p": ["3)4+6*7,:,:->,D4J5L>Q?RBSAXB[F]F]M[NYRX^VbNfNlLmHvDvD{A}>}>\x80;\x80;\x82=\x83;\x83;\x878\x88:\x8C8\x8D7\x926\x92;\x978\x978\x982\x963\x941\x952\x930\x940\x90/\x900\x862\x851\x832{1z4t5[.U.Q,O+I)H)C*C)?-9-////,2+"] },
-      "world:Oceania": { "f": [112.922, 0.63051, -6.15, 0.43917], "w": 98, "h": 93, "p": ["F3K6N5L=O>RBUAU=V=U8V8V3W3Y7Y;[;]EaHbMdMdPhTgdeeco_p]s[r[pYrTqRkNjPeMgMiKiJdFb=c9g3g0j+h-c,c+[)X)U*U)M-I5G7D7@9A<:@:@<B<B:D9D6G6", "U(_(^+d2_1]/],[+X-X/U/", "\x86w\x87x\x89w\x89z\x87~\x85~\x84\x83\x82\x84}\x83}\x81\x84|"] }
-    };
-    (function() {
-      var rel = E.release;
-      E.release = function(S, id) {
-        var w = S.w[id], mine = w && w.promo === S.player && !w.nw, msg = rel(S, id);
-        if (!msg || !mine) return msg;
-        var good = w.ovr >= P_img(S) - 15 && chance(S, 0.6);
-        if (!good) return msg;
-        var kind = pick(S, ["bitter", "rival", "score"]), P = S.promos[S.player], R = rosterOf(S, P.id).filter(function(x) {
-          return !x.nw;
-        }), line = "";
-        if (kind === "bitter") {
-          R.forEach(function(x) {
-            x.morale = clamp(x.morale - 2, 0, 100);
-          });
-          line = w.name + " gave an interview calling the way they were let go \u201Ca disgrace\u201D. The room does not enjoy reading it.";
-        } else if (kind === "rival") {
-          var rv = S.order.filter(function(o) {
-            return o !== S.player;
-          }), rp = S.promos[pick(S, rv)];
-          line = w.name + " told a reporter what they heard on the road: " + rp.name + " is building toward " + E.nextBig(S).name + " and has its eye on your contracts.";
-          rp.rel = clamp((rp.rel || 0) - 4, -100, 100);
-        } else {
-          var foe = R.filter(function(x) {
-            return chem(S, x.id, w.id) <= -1.5;
-          }).sort(function(a, b) {
-            return chem(S, a.id, w.id) - chem(S, b.id, w.id);
-          })[0];
-          if (foe) {
-            foe.morale = clamp(foe.morale - 4, 0, 100);
-            line = w.name + " used the interview to settle a score with " + foe.name + ", and " + foe.name + " is not pleased.";
-          } else line = w.name + " thanked the fans and said there were no hard feelings. That is that.";
-        }
-        news(S, "story", line);
-        return msg + " " + line;
-      };
-      function P_img(S) {
-        return S.promos[S.player].image;
-      }
-    })();
-    var JOB_TERMS = { budget: { n: "A bigger wage budget", d: "Twelve per cent more to spend on contracts." }, freedom: { n: "Creative freedom", d: "Four extra points of booking power to start with." }, signing: { n: "One signing of your choice", d: "The first free agent you sign needs no approval and ignores how big the company is." } };
-    E.JOB_TERMS = JOB_TERMS;
-    function jobCheck(S, terms) {
-      var n = terms.length;
-      return mkCheck(4 + 2 * n, [{ n: "Booker level " + S.booker.lvl, v: S.booker.lvl >= 8 ? 2 : S.booker.lvl >= 4 ? 1 : 0 }].concat(skillMods(S, "talk")));
-    }
-    E.jobTermsCheck = function(S, terms) {
-      return terms && terms.length ? jobCheck(S, terms) : null;
-    };
-    E.applyJobTerms = function(S, terms) {
-      terms = (terms || []).filter(function(t) {
-        return JOB_TERMS[t];
-      });
-      if (!terms.length) return null;
-      var ck = jobCheck(S, terms), r = rollCheck(S, ck);
-      if (!r.ok) {
-        S.owner.trust = clamp(S.owner.trust - 8, 0, 100);
-        return S.owner.name + " did not like being asked for " + terms.map(function(t) {
-          return JOB_TERMS[t].n.toLowerCase();
-        }).join(" and ") + " before you had done a day\u2019s work. You start on the wrong foot.";
-      }
-      var out = [];
-      terms.forEach(function(t) {
-        if (t === "budget") {
-          S.owner.wage0 = Math.round(S.owner.wage0 * 1.12);
-          out.push("a wage budget of " + money(E.budget(S)) + " a week");
-        } else if (t === "freedom") {
-          S.bp += 4;
-          out.push("four extra points of booking power");
-        } else if (t === "signing") {
-          S.freeSign = true;
-          out.push("one signing of your choice (see Free agents)");
-        }
-      });
-      return S.owner.name + " agrees to " + out.join(", ") + ".";
-    };
-    (function() {
-      var cs = E.canSign, sg = E.sign;
-      E.canSign = function(S, w) {
-        if (S.freeSign && w.promo === "FA" && !w.rt) {
-          var MD = modelOf(S.promos[S.player]);
-          return !(MD.gender && w.g !== MD.gender);
-        }
-        return cs(S, w);
-      };
-      E.sign = function(S, id, wage, weeks) {
-        var was = S.freeSign, r = sg(S, id, wage, weeks);
-        if (was && r && r.ok) S.freeSign = false;
-        return r;
-      };
-    })();
-    (function() {
-      var was = E.validate;
-      E.validate = function(S, card) {
-        var v = was(S, card), cover = {};
-        card.forEach(function(m, i) {
-          if (m.agent != null) {
-            cover[m.agent] = (cover[m.agent] || 0) + 1;
-            if (cover[m.agent] === 3) v.errors.push((S.w[m.agent] ? S.w[m.agent].name : "The agent") + " can only cover two matches a night.");
-          }
-          if (m.stip !== "mask" && m.stip !== "hair") return;
-          var ws = [].concat.apply([], m.sides).filter(function(id) {
-            return id != null && S.w[id];
-          }).map(function(id) {
-            return S.w[id];
-          });
-          if (m.stip === "mask" && ws.some(function(w) {
-            return masked(w) !== 1;
-          })) v.errors.push("Match " + (i + 1) + ": a mask match needs everyone in it to wear a mask.");
-          if (m.stip === "hair") {
-            var bald = ws.filter(function(w) {
-              return w.sh != null && S.week - w.sh < 20;
-            })[0];
-            if (bald) v.errors.push("Match " + (i + 1) + ": " + bald.name + " has not grown the hair back yet.");
-          }
-        });
-        return v;
-      };
-    })();
-    (function() {
-      var was = E.suggest;
-      function agents(S, card) {
-        var ag = E.agents(S).sort(function(x, y) {
-          return y.skill - x.skill;
-        });
-        if (!ag.length) return card;
-        var score = card.map(function(m, i) {
-          var ws = [].concat.apply([], m.sides).map(function(id) {
-            return S.w[id];
-          }).filter(Boolean);
-          return { i, v: (i === card.length - 1 ? 3 : 0) + ws.filter(function(w) {
-            return w.age <= 26;
-          }).length };
-        }).sort(function(x, y) {
-          return y.v - x.v;
-        });
-        var k = 0;
-        ag.forEach(function(a) {
-          for (var n = 0; n < 2 && k < score.length && score[k].v > 0; n++, k++) card[score[k].i].agent = a.id;
-        });
-        return card;
-      }
-      E.suggest = function(S) {
-        return agents(S, suggestPlan(S));
-      };
-      function suggestPlan(S) {
-        var card = was(S), lp = S.lp, show = S.queue && S.queue[S.qi];
-        if (!lp || !show || !show.big || !show.flag || S.cal || !card.length) return card;
-        var a = S.w[lp.a], b = S.w[lp.b];
-        if (!a || !b || a.inj > 0 || b.inj > 0 || a.away >= S.week || b.away >= S.week || a.rest === S.week || b.rest === S.week) return card;
-        var rest = card.filter(function(m) {
-          var ids = [].concat.apply([], m.sides);
-          return ids.indexOf(lp.a) < 0 && ids.indexOf(lp.b) < 0;
-        });
-        var tt = lp.title && titleById(S.promos[S.player], lp.title);
-        var mm = { mt: "1v1", sides: [[lp.a], [lp.b]], stip: "std", len: "L", title: tt && tt.holders.length && (tt.holders.indexOf(lp.a) >= 0 || tt.holders.indexOf(lp.b) >= 0) ? lp.title : null };
-        while (rest.length >= SLOT_MAX[S.promos[S.player].slot] + (show.big ? 3 : 0) && rest.length > 3) rest.shift();
-        rest.push(mm);
-        return rest;
-      }
-    })();
-    function isoParts(id) {
-      var m = /^(\d{4})-?W(\d{1,2})$/.exec(String(id || ""));
-      return m ? { y: +m[1], w: +m[2] } : null;
-    }
-    E.challengeInfo = function(id) {
-      var p = isoParts(id);
-      if (!p) return null;
-      var U = E.universe(), L2 = U.promotions, seed = ((p.y * 100 + p.w) * 7919 + 104729) % 2e9;
-      var pr = L2[hash("chal" + p.y + "W" + p.w) % L2.length];
-      return { id: p.y + "-W" + (p.w < 10 ? "0" : "") + p.w, seed, promo: pr.id, name: pr.name, weeks: 12 };
-    };
-    E.challengeStart = function(id) {
-      var I = E.challengeInfo(id);
-      if (!I) return null;
-      return E.newGame(I.promo, I.seed, { name: "Challenger", diff: "normal", fed: null, chal: I.id });
-    };
-    (function() {
-      var ng = E.newGame;
-      E.newGame = function(pid, seed, opts) {
-        var S = ng(pid, seed, opts);
-        if (opts && opts.chal) {
-          var P = S.promos[S.player];
-          S.chal = { id: opts.chal, weeks: 12, sum: 0, done: false, image0: P.image, cash0: P.cash, promo: pid };
-        }
-        return S;
-      };
-    })();
-    SHOWX.push(function(S, P, show, rep) {
-      if (S.cal || !S.chal || P.id !== S.player || S.chal.done) return;
-      S.chal.sum += rep.rating - rep.exp;
-    });
-    E.challengeScore = function(S) {
-      var C = S.chal;
-      if (!C) return 0;
-      var P = S.promos[S.player];
-      var s = 400 + C.sum * 4 + (P.image - C.image0) * 15 + clamp((P.cash - C.cash0) / P.inc0, -10, 30) * 5 + S.stats.feudsDone * 10 + Math.max(0, S.stats.bestShow - 70) * 2;
-      return Math.max(0, Math.round(s));
-    };
-    function chalCheck(id, score) {
-      return (hash(id + ":" + score) % 1296).toString(36).toUpperCase().replace(/^(.)$/, "0$1");
-    }
-    E.challengeCode = function(S) {
-      var C = S.chal;
-      if (!C) return null;
-      var sc = E.challengeScore(S);
-      return "EWF-" + C.id.replace("-", "") + "-" + sc.toString(36).toUpperCase() + "-" + chalCheck(C.id, sc);
-    };
-    E.challengeRead = function(code) {
-      var m = /^EWF-(\d{4})(W\d{2})-([0-9A-Z]+)-([0-9A-Z]{2})$/.exec(String(code || "").trim().toUpperCase());
-      if (!m) return { ok: false, text: "That is not a challenge code." };
-      var id = m[1] + "-" + m[2], sc = parseInt(m[3], 36);
-      if (chalCheck(id, sc) !== m[4]) return { ok: false, text: "That code does not check out. One letter may be wrong." };
-      var I = E.challengeInfo(id);
-      return { ok: true, id, score: sc, name: I ? I.name : "", text: "A score of " + sc + " in the challenge of " + id + (I ? " with " + I.name : "") + "." };
-    };
-    WEEKX.push(function(S) {
-      var C = S.chal;
-      if (S.cal || !C || C.done || S.over) return;
-      if (S.week >= C.weeks) {
-        C.done = true;
-        C.score = E.challengeScore(S);
-        C.code = E.challengeCode(S);
-        S.over = { why: "challenge", week: S.week };
-      }
-    });
-    var SCN_BUILT = [
-      {
-        id: "rescue",
-        name: "Save the company",
-        promotion: "ttt",
-        weeks: 26,
-        description: "A small company with the wage bill too high and almost no cash. Keep it open for 26 weeks and end with about three weeks of income in the bank.",
-        setup: [{ op: "cash", inc0: 0.8 }, { op: "wages", mult: 1.25, round: 50 }],
-        win: { type: "cash", incWeeks: 2.9 },
-        // the target follows the company's own income (a realistic economy, 21 October): $1.5M on the old money
-        text: { win: "The company is safe: {cash} in the bank after 26 weeks.", lose: "The company is still open, but only {cash} is in the bank. The target was {goal}." },
-        figures: ["Cash {cash} (target {goal})"]
-      },
-      {
-        id: "champion",
-        name: "A champion from the bottom",
-        promotion: "ocw",
-        weeks: 39,
-        description: "One of the least known men on the roster has been picked as your project. Have them hold the top title when 39 weeks are up.",
-        setup: [{ op: "target", g: "M", maxAge: 30, nth: 2 }],
-        win: { type: "holdsTop", who: "target" },
-        text: { win: "{name} holds the {title}. From the bottom of the roster to the top of the company.", lose: "{name} does not hold the {title} after 39 weeks. They are now rated {ovr}." },
-        figures: ["{name} rated {ovr} (started at {o0})"]
-      },
-      {
-        id: "war",
-        name: "Win the ratings war",
-        promotion: "ocw",
-        weeks: 26,
-        description: "PDW has come after your audience, and a war is on. For 26 weeks, your shows must beat what the audience expects by more than theirs do.",
-        setup: [{ op: "rival", id: "pdw" }, { op: "image", who: "player", v: 60 }, { op: "image", who: "pdw", v: 66 }, { op: "war", with: "pdw" }],
-        win: { type: "beatRival", by: 0.3 },
-        text: { win: "You won the ratings war: your shows averaged {m} against expectations, theirs {r}.", lose: "You lost the ratings war: your shows averaged {m} against expectations, theirs {r}." },
-        figures: ["Your shows: {mFig} against expectations", "Theirs: {rFig}"]
-      }
-    ];
-    var SCN_OPS = {
-      cash: function(S, o) {
-        var P = S.promos[S.player];
-        P.cash = Math.round(P.inc0 * o.inc0);
-      },
-      wages: function(S, o) {
-        var P = S.promos[S.player], r = o.round || 50;
-        rosterOf(S, P.id).forEach(function(w) {
-          w.wage = Math.round(w.wage * o.mult / r) * r;
-        });
-      },
-      target: function(S, o) {
-        var P = S.promos[S.player], R = rosterOf(S, P.id).filter(function(w) {
-          return !w.nw && (!o.g || w.g === o.g) && (!o.maxAge || w.age <= o.maxAge);
-        }).sort(function(a, b) {
-          return a.ovr - b.ovr;
-        });
-        var tg = R[Math.min(o.nth || 0, R.length - 1)];
-        S.scn.target = tg.id;
-        tg.mom = 0;
-      },
-      image: function(S, o) {
-        var P = o.who === "player" ? S.promos[S.player] : S.promos[o.who];
-        if (P) P.image = o.v;
-      },
-      rival: function(S, o) {
-        S.scn.rival = o.id;
-        S.scn.me = [];
-        S.scn.rv = [];
-      },
-      war: function(S, o) {
-        if (!S.xf) startXf(S, o["with"], "war");
-      }
-    };
-    function scnSign(x) {
-      return (x >= 0 ? "+" : "") + x.toFixed(1);
-    }
-    var SCN_WIN = {
-      // a set amount (atLeast), or a number of weeks of the company's own income (incWeeks), so a target fits a company of any size
-      cash: { vars: function(S, c) {
-        var P = S.promos[S.player], g = c.atLeast != null ? c.atLeast : Math.max(1e3, Math.round((P.inc0 || 0) * (c.incWeeks || 1) / 1e3) * 1e3);
-        return { ok: P.cash >= g, cash: money(P.cash), goal: money(g), score: clamp(Math.round(P.cash / g * 100), 0, 100) };
-      } },
-      holdsTop: { vars: function(S, c) {
-        var P = S.promos[S.player], w = S.w[S.scn[c.who || "target"]], top = P.titles.filter(function(t) {
-          return !t.tag && t.g === w.g;
-        }).sort(function(a, b) {
-          return b.lvl - a.lvl;
-        })[0], ok = !!(top && top.holders.indexOf(w.id) >= 0 && w.promo === P.id);
-        return { ok, name: w.name, title: top ? top.name : "top title", ovr: Math.round(w.ovr), o0: Math.round(S.scn.o0), score: ok ? 100 : clamp(Math.round(w.ovr - (S.scn.o0 || 0) + 50), 0, 99) };
-      } },
-      beatRival: { vars: function(S, c) {
-        var C = S.scn, m = avg(C.me || [0]), r = avg(C.rv || [0]);
-        return { ok: m > r + c.by, m: scnSign(m), r: scnSign(r), mFig: C.me && C.me.length ? scnSign(avg(C.me)) : "0", rFig: C.rv && C.rv.length ? scnSign(avg(C.rv)) : "0", score: clamp(Math.round(50 + (m - r) * 20), 0, 100) };
-      } }
-    };
-    var SCN = {};
-    function scnFill(t, v) {
-      return String(t).replace(/\{(\w+)\}/g, function(_, k) {
-        return v[k] != null ? String(v[k]) : "{" + k + "}";
-      });
-    }
-    function scnLoad(list) {
-      SCN = {};
-      (list || []).forEach(function(d) {
-        if (d && d.id && SCN_WIN[d.win && d.win.type]) SCN[d.id] = d;
-      });
-      E.SCENARIOS = Object.keys(SCN).map(function(k) {
-        var d = SCN[k];
-        return { id: k, n: d.name, d: d.description, weeks: d.weeks, promo: d.promotion };
-      });
-    }
-    function scnJudge(S) {
-      var C = S.scn, D = SCN[C.id];
-      if (!D) return null;
-      var v = SCN_WIN[D.win.type].vars(S, D.win);
-      return { ok: !!v.ok, text: scnFill(v.ok ? D.text.win : D.text.lose, v), figures: (D.figures || []).map(function(f) {
-        return scnFill(f, v);
-      }), score: v.score };
-    }
-    E.scenarioProblems = function(list, promoIds) {
-      var out = [];
-      (list || []).forEach(function(d, i) {
-        var at = "scenarios[" + i + "]";
-        if (!d || !d.id) out.push(at + ": no id");
-        else {
-          if (!SCN_WIN[d.win && d.win.type]) out.push(at + " " + d.id + ": unknown win type");
-          if (!(d.weeks > 0)) out.push(at + " " + d.id + ": weeks must be more than 0");
-          if (promoIds && promoIds.indexOf(d.promotion) < 0) out.push(at + " " + d.id + ": unknown promotion " + d.promotion);
-          (d.setup || []).forEach(function(o) {
-            if (!SCN_OPS[o.op]) out.push(at + " " + d.id + ": unknown setup step " + o.op);
-          });
-          if (!d.text || !d.text.win || !d.text.lose) out.push(at + " " + d.id + ": needs text.win and text.lose");
-        }
-      });
-      return out;
-    };
-    E.SCENARIO_FORMAT = { ops: Object.keys(SCN_OPS), win: Object.keys(SCN_WIN) };
-    scnLoad(SCN_BUILT);
-    (function() {
-      var val = E.validateUniverse;
-      E.validateUniverse = function(pkg) {
-        var v = val.apply(this, arguments);
-        if (pkg && pkg.scenarios) {
-          var ids = (pkg.promotions || []).map(function(p) {
-            return p.id;
-          });
-          E.scenarioProblems(pkg.scenarios, ids).forEach(function(m) {
-            v.errors.push({ at: "scenarios", msg: m });
-          });
-          v.ok = v.ok && !v.errors.length;
-        }
-        return v;
-      };
-    })();
-    (function() {
-      var use = E.useUniverse;
-      E.useUniverse = function(pkg) {
-        var r = use.apply(this, arguments);
-        var own = pkg && Array.isArray(pkg.scenarios) ? pkg.scenarios : [];
-        scnLoad(SCN_BUILT.concat(own));
-        return r;
-      };
-    })();
-    E.scenarioStart = function(id) {
-      var D = SCN[id];
-      if (!D) return null;
-      var U = E.universe();
-      if (!U.promotions.some(function(p) {
-        return p.id === D.promotion;
-      })) return null;
-      return E.newGame(D.promotion, 5e3 + hash("scn" + id) % 1e6, { name: "Booker", diff: "normal", fed: null, scn: id });
-    };
-    (function() {
-      var ng = E.newGame;
-      E.newGame = function(pid, seed, opts) {
-        var S = ng(pid, seed, opts);
-        if (opts && opts.scn && SCN[opts.scn]) {
-          var D = SCN[opts.scn];
-          S.scn = { id: opts.scn, weeks: D.weeks, done: false };
-          S.scn.o0 = 0;
-          (D.setup || []).forEach(function(o) {
-            SCN_OPS[o.op](S, o);
-          });
-          if (S.scn.target != null) S.scn.o0 = S.w[S.scn.target].ovr;
-        }
-        return S;
-      };
-    })();
-    SHOWX.push(function(S, P, show, rep) {
-      var C = S.scn;
-      if (S.cal || !C || C.done || !C.rival) return;
-      if (P.id === S.player) C.me.push(rep.rating - rep.exp);
-      else if (P.id === C.rival) C.rv.push(rep.rating - rep.exp);
-    });
-    WEEKX.push(function(S) {
-      var C = S.scn;
-      if (S.cal || !C || C.done || S.over) return;
-      if (S.week >= C.weeks) {
-        C.done = true;
-        C.res = scnJudge(S);
-        S.over = { why: "scenario", week: S.week };
-      }
-    });
-    function scnCut(S) {
-      var C = S.scn;
-      if (!C || C.done || !S.over || S.over.why === "scenario") return;
-      var why = S.over.why, J = scnJudge(S);
-      C.done = true;
-      C.res = { ok: false, text: why === "fired" ? "You were let go before the " + C.weeks + " weeks were up." : "The company ran out of money before the " + C.weeks + " weeks were up.", figures: J ? J.figures : [], score: 0 };
-      S.over = { why: "scenario", week: S.over.week, cut: why };
-    }
-    (function() {
-      var ew = E.endWeek, rs = E.runPlayerShow;
-      E.endWeek = function(S) {
-        var r = ew.apply(this, arguments);
-        scnCut(S);
-        return r;
-      };
-      E.runPlayerShow = function(S) {
-        var r = rs.apply(this, arguments);
-        scnCut(S);
-        return r;
-      };
-    })();
-    E.scnCheck = function(S) {
-      var C = S.scn;
-      if (!C || !SCN[C.id]) return null;
-      var r = scnJudge(S);
-      delete r.score;
-      return r;
-    };
-    var SH_HOT = 70, SH_SLOW = 58;
-    function shIds(m) {
-      return flat(m.sides).filter(function(id) {
-        return id != null;
-      });
-    }
-    function shFacts(S, P, m) {
-      var ids = shIds(m), ws = ids.map(function(id) {
-        return S.w[id];
-      }).filter(function(w) {
-        return !!w;
-      });
-      if (ws.length < 2 || ws.length !== flat(m.sides).length) return null;
-      var t = m.title ? titleById(P, m.title) : null, heat = 0, x, y, f;
-      for (x = 0; x < ws.length; x++) for (y = x + 1; y < ws.length; y++) {
-        f = feudOf(S, ws[x].id, ws[y].id);
-        if (f && f.heat > heat) heat = f.heat;
-      }
-      var star = avg(ws.map(function(w) {
-        return w.ovr;
-      })), top = shTopLvl(P);
-      return {
-        pace: avg(ws.map(function(w) {
-          return (w.speed + w.stam) / 2;
-        })),
-        star,
-        len: m.len || "M",
-        mt: m.mt,
-        stip: m.stip && m.stip !== "std" ? m.stip : null,
-        lvl: t ? t.lvl : 0,
-        heat,
-        size: star + (t ? t.lvl >= top && !t.tag ? 5 : 1.5 : 0) + Math.min(5, heat / 15)
-      };
-    }
-    function shOpener(f) {
-      return f.len === "L" ? -1 : f.pace >= SH_HOT ? 1 : f.pace < SH_SLOW ? -2 : 0;
-    }
-    function shTopLvl(P) {
-      var l = 0;
-      P.titles.forEach(function(t) {
-        if (!t.tag && t.lvl > l) l = t.lvl;
-      });
-      return l;
-    }
-    var SH_MT = { tag: "tag matches", "6man": "six-man tags", "4way": "four-way matches", br: "battle royals" };
-    function shPrev(rep) {
-      for (var k = rep.segs.length - 1; k >= 0; k--) if (rep.segs[k].k === "match") return rep.segs[k];
-      return null;
-    }
-    function shBreak(rep) {
-      var l = rep.segs[rep.segs.length - 1];
-      return !!l && l.k !== "match";
-    }
-    POST.push(function(ctx) {
-      var f = shFacts(ctx.S, ctx.P, ctx.m);
-      if (f) ctx.res.seg.sh = { pace: Math.round(f.pace), size: Math.round(f.size * 10) / 10, len: f.len, mt: f.mt, i: ctx.i };
-    });
-    CRX.push(function(ctx) {
-      if (ctx.n < 3) return null;
-      var f = shFacts(ctx.S, ctx.P, ctx.m);
-      if (!f) return null;
-      if (ctx.i === 0) {
-        var o = shOpener(f);
-        return o > 0 ? { d: 1.5, x: "A fast opener woke the building up" } : o === -1 ? { d: -2, x: "A long opener: the crowd was not ready to sit through it" } : o === -2 ? { d: -1.5, x: "A slow opener: the building took a while to wake up" } : null;
-      }
-      if (ctx.i > 2 || ctx.isMain || !ctx.rep) return null;
-      var op = ctx.rep.segs.filter(function(s) {
-        return s.k === "match";
-      })[0];
-      if (!op || !op.sh) return null;
-      var tone = shOpener({ len: op.sh.len, pace: op.sh.pace }) + (op.fin === "dq" || op.fin === "co" || op.fin === "draw" ? -1 : 0) + (op.wi && op.wi.length && ctx.S.w[op.wi[0]] && ctx.S.w[op.wi[0]].align === "F" && op.fin !== "dq" && op.fin !== "co" ? 0.5 : 0);
-      return tone >= 1 ? { d: 1, x: "The opener had them up" } : tone <= -1 ? { d: -1, x: "Still flat after the opener" } : null;
-    });
-    CRX.push(function(ctx) {
-      if (ctx.i === 0 || !ctx.rep || shBreak(ctx.rep)) return null;
-      var p = shPrev(ctx.rep);
-      if (!p || !p.sh) return null;
-      if ((ctx.m.len || "M") === "L" && p.sh.len === "L" && !ctx.isMain) return { d: -2, x: "Two long matches back to back" };
-      if (ctx.m.mt !== "1v1" && ctx.m.mt === p.sh.mt) return { d: -1.5, x: "Two " + (SH_MT[ctx.m.mt] || "matches of the same kind") + " in a row" };
-      return null;
-    });
-    CRX.push(function(ctx) {
-      if (!ctx.isMain || ctx.n < 3 || !ctx.rep) return null;
-      var f = shFacts(ctx.S, ctx.P, ctx.m);
-      if (!f) return null;
-      var ms = ctx.rep.segs.filter(function(s) {
-        return s.k === "match" && s.sh;
-      }), big = 0;
-      ms.forEach(function(s) {
-        if (s.sh.size > big) big = s.sh.size;
-      });
-      if (big > f.size + 3) return { d: -2.5, x: "The biggest match of the night was not on last" };
-      if (f.len === "S") return { d: -2, x: "Too short to feel like a main event" };
-      var p = shPrev(ctx.rep);
-      if (p && !shBreak(ctx.rep) && p.ov >= 85 && p.mins >= 12) return { d: -1.5, x: "It had to follow a great match with no break" };
-      if (shBreak(ctx.rep) && ms.some(function(s) {
-        return s.ov >= 80;
-      })) return { d: 0.8, x: "The crowd caught its breath before the main event" };
-      return null;
-    });
-    FINX.push(function(ctx, fin, winners, losers, win) {
-      var rep = ctx.rep;
-      if (!rep || ctx.n < 3) return null;
-      var sh = rep.shf || (rep.shf = { dirty: 0, f: 0, h: 0 });
-      var dirty = fin === "cheap" || fin === "interf" || fin === "dq" || fin === "co", heel = win >= 0 && winners.length && winners[0].align === "H", face = win >= 0 && winners.length && winners[0].align === "F", out = null;
-      if (dirty) sh.dirty++;
-      if (dirty && sh.dirty >= 3) out = { d: -2, x: "Another dirty finish: by now it meant nothing" };
-      else if (ctx.isMain) {
-        if (heel && sh.h >= 3 && !sh.f) out = { d: -2, x: "The heels won all night. Nobody had anything to cheer" };
-        else if (face && sh.f >= 4 && !sh.h) out = { d: -1, x: "The faces won everything. Nobody was ever in danger" };
-        else if (ctx.big && face && !dirty) out = { d: 1, x: "The crowd went home happy" };
-        else if (!ctx.big && ctx.feud && (heel || fin === "interf") && fin !== "dq" && fin !== "co") {
-          if (ctx.isPl) ctx.S.hype = (ctx.S.hype || 0) + 0.03;
-          out = { d: 0.5, x: "A cliffhanger: they will be back next week to see it answered" };
-        }
-      }
-      if (heel) sh.h++;
-      else if (face) sh.f++;
-      return out;
-    });
-    function shapeAuto(S, P, card) {
-      var n = card.length;
-      if (n < 4) return;
-      var best = -1, bs = -99, i, F = card.map(function(m2) {
-        return shFacts(S, P, m2);
-      }), bg = n - 1;
-      if (F[n - 1]) {
-        for (i = 0; i < n - 1; i++) if (F[i] && F[i].size > F[bg].size) bg = i;
-        if (bg !== n - 1 && F[bg].size > F[n - 1].size + 3 && F[bg].star >= F[n - 1].star - 3) {
-          var mv = card.splice(bg, 1)[0], was = card[card.length - 1];
-          card.push(mv);
-          if (was.len === "L" && !was.title) was.len = "M";
-          mv.len = "L";
-        }
-      }
-      best = -1;
-      for (i = 0; i < n - 2; i++) {
-        var m = card[i], f = shFacts(S, P, m);
-        if (!f || m.title || m._q || m.stip && m.stip !== "std") continue;
-        var sc = (f.len === "L" ? -20 : 0) + f.pace + (m.mt === "1v1" ? 2 : 0);
-        if (sc > bs) {
-          bs = sc;
-          best = i;
-        }
-      }
-      if (best > 0) {
-        var op = card.splice(best, 1)[0];
-        card.unshift(op);
-      }
-      if (card[0].len === "L" && !card[0].title) card[0].len = "M";
-      var k, t;
-      for (i = 1; i < n - 2; i++) if (card[i].mt !== "1v1" && card[i].mt === card[i - 1].mt) {
-        for (k = i + 1; k < n - 2; k++) if (card[k].mt !== card[i].mt) {
-          t = card[i];
-          card[i] = card[k];
-          card[k] = t;
-          break;
-        }
-      }
-      for (i = n - 2; i >= 2; i--) if (card[i].len === "L" && card[i - 1].len === "L") {
-        for (k = i - 2; k >= 1; k--) if (card[k].len !== "L") {
-          t = card.splice(k, 1)[0];
-          card.splice(i - 1, 0, t);
-          break;
-        }
-      }
-    }
-    E.shape = function(S, card) {
-      var P = S.promos[S.player], show = S.queue[S.qi], n = card.length, F = card.map(function(m) {
-        return shFacts(S, P, m);
-      }), notes = [], roles = [];
-      var add = function(s, t) {
-        notes.push({ s, t });
-      };
-      for (var i = 0; i < n; i++) roles.push(n < 3 ? "" : i === n - 1 ? "Main event" : i === 0 ? "Opener" : i === n - 2 && n >= 4 ? "Semi-main" : "");
-      if (!show || n < 3) return { roles, notes, ready: false };
-      var seg = {};
-      (S.segs || []).forEach(function(x) {
-        if (x) seg[Math.max(0, Math.min(x.pos, n - 1))] = 1;
-      });
-      if (F[0]) {
-        var o = shOpener(F[0]);
-        add(o > 0 ? 1 : o < 0 ? -1 : 0, o > 0 ? "A fast opener. It will wake the building up, and the next two matches gain from it." : o === -1 ? "The opener is a long match. Open with something short and quick, and save the long ones for later." : o === -2 ? "The opener is slow. Put your quickest workers on first." : "The opener is fine. A quicker pair would start the show hotter.");
-      }
-      for (i = 1; i < n; i++) {
-        if (!F[i] || !F[i - 1] || seg[i]) continue;
-        if (F[i].len === "L" && F[i - 1].len === "L" && i !== n - 1) add(-1, "Matches " + i + " and " + (i + 1) + " are both long. Put a short match, a promo or an angle between them.");
-        else if (F[i].mt !== "1v1" && F[i].mt === F[i - 1].mt) add(-1, "Matches " + i + " and " + (i + 1) + " are the same kind. Split them up.");
-      }
-      if (card.filter(function(m) {
-        return m.stip && m.stip !== "std";
-      }).length >= 2 && show.rule !== "gimmick_free" && !modelOf(P).gimFree) add(-1, "More than one gimmick match. The second one loses its punch.");
-      var M = F[n - 1];
-      if (M) {
-        var big = 0, bi = -1;
-        F.forEach(function(f, k) {
-          if (f && k < n - 1 && f.size > big) {
-            big = f.size;
-            bi = k;
-          }
-        });
-        if (big > M.size + 3) add(-1, "Match " + (bi + 1) + " is a bigger match than the main event. The biggest match goes on last: the biggest names, the top title, the hottest feud.");
-        else add(1, "The biggest match is on last.");
-        if (M.len === "S") add(-1, "The main event is short. Give it time.");
-        if (seg[n - 1]) add(1, "A promo or an angle sits before the main event. The crowd gets a breather.");
-        else if (F[n - 2] && F[n - 2].len === "L") add(0, "A long match runs straight into the main event. If it is a great one, the main event has to follow it with no break.");
-      }
-      return { roles, notes, ready: F.every(function(f) {
-        return !!f;
-      }) };
-    };
-    E.SHAPE_GUIDE = [
-      { n: "Open hot", d: "The first match sets the mood for the night. Put quick workers on first and keep it short. A fast opener lifts itself and the next two matches. A long or slow one drags them down." },
-      { n: "Peaks and valleys", d: "A crowd cannot shout all night. Do not put two long matches, or two matches of the same kind, back to back. A promo or an angle between two big matches gives everybody a breather." },
-      { n: "The biggest match goes on last", d: "The main event is what they paid for: the biggest names, the top title, or the hottest feud. It counts three times in the show\u2019s rating, the match before it counts twice, and the opener one and a half times. If a bigger match runs earlier, the main event suffers." },
-      { n: "Give the main event time", d: "A short main event does not feel like one. And do not make it follow a war: if the match before it is a great one, put a promo or an angle in between." },
-      { n: "One gimmick match a night", d: "A cage or a ladder is special once. The second gimmick match of the night falls flat." },
-      { n: "Mix the finishes", d: "A clean win means something. The third dirty finish in one night means nothing. If the heels win everything, or the faces do, the room goes quiet." },
-      { n: "Send them home happy, or wanting more", d: "A big event should end with the crowd on its feet: a face winning clean. Weekly television can end on a cliffhanger. A heel getting the better of a feud in the last match brings more people back next week." }
-    ];
-    var SEGLEN = { S: 5, M: 10, L: 15 }, SEGLENN = { S: "Short", M: "Medium", L: "Long" };
-    var SEGK = {
-      interview: { len: "M", n: "Interview", t: "promo", roles: ["Who talks"], d: "One wrestler and a microphone. Graded on how well they talk and how much the crowd cares." },
-      callout: { len: "S", n: "Call-out", t: "promo", roles: ["Who speaks", "Who they call out"], d: "One calls the other out. It starts a rivalry, or heats one that is already going." },
-      words: { len: "M", n: "War of words", t: "promo", roles: ["One rival", "The other"], d: "Two rivals trade words in the ring. It heats their feud without anyone throwing a punch." },
-      challenge: { len: "S", n: "Title challenge", t: "promo", roles: ["The challenger", "The champion"], d: "A challenger lays claim to the champion\u2019s title. The feud that follows is for the belt." },
-      faceoff: { len: "S", n: "Face-off", t: "promo", roles: ["One star", "The other"], d: "Two stars cross paths and neither backs down. The crowd is told a big match is coming." },
-      ambush: { len: "S", n: "Ambush", t: "angle", roles: ["The attacker", "Who gets attacked"], d: "An attack from behind. A villain doing it starts a hot feud. A hero doing it confuses the crowd unless the feud has earned it." },
-      brawl: { len: "M", n: "Brawl", t: "angle", roles: ["One rival", "The other"], d: "Two rivals fight all over the building. It heats a feud fast, and now and then somebody gets a knock." },
-      save: { len: "M", n: "Save", t: "angle", roles: ["Who gets attacked", "Who makes the save", "The attacker"], d: "One is attacked, another runs out to help, and the two shake hands. A new team is born, with an enemy." },
-      turn: { len: "M", n: "Turn", t: "angle", roles: ["Who changes sides"], d: "A hero turns villain or a villain turns hero. It lands when the crowd was already leaning that way, and falls flat from nowhere." },
-      signing: { len: "M", n: "Contract signing", t: "promo", roles: ["One rival", "The other"], d: "The two sign for their match at the next big event, on a table in the ring. It makes the match official and plans the ending for that night. It rarely ends with the table standing." },
-      recap: { len: "S", fix: 1, n: "Video recap", t: "promo", roles: ["One rival", "The other"], d: "A video package on a feud: how it started and where it stands. Always five minutes. It keeps the feud warm, and when it opens the show their match that night means more." },
-      writers: { len: "M", n: "Writers\u2019 pick", t: "any", roles: [], d: "Hand the time to the writers. They write whatever tonight\u2019s stories need: the next beat of a feud, a mystery, a surprise. You find out on the night." }
-    };
-    function segLen(sg) {
-      var K = SEGK[sg.k];
-      return K && K.fix ? K.len : SEGLEN[sg.len] ? sg.len : K ? K.len : "M";
-    }
-    function segMins(sg) {
-      return SEGLEN[segLen(sg)];
-    }
-    function segSlots(P, show) {
-      return show && show.big ? 2 : clamp(P.angles == null ? 2 : P.angles, 0, 3);
-    }
-    function segList(S) {
-      var show = S.queue && S.queue[S.qi];
-      if (!show) return [];
-      if (S.segKey !== showKey(S)) {
-        S.segs = [];
-        S.segKey = showKey(S);
-      }
-      var L2 = S.segs || (S.segs = []);
-      for (var i = L2.length - 1; i >= 0; i--) if (!L2[i] || !SEGK[L2[i].k]) L2.splice(i, 1);
-      return L2;
-    }
-    function segRead(S) {
-      return S.segKey === showKey(S) ? (S.segs || []).filter(function(sg) {
-        return sg && SEGK[sg.k];
-      }) : [];
-    }
-    function segPool(S) {
-      var P = S.promos[S.player], show = S.queue[S.qi];
-      return show ? eligible(S, P, show).filter(function(w) {
-        return w.promo === P.id && !(show.big && isDev(P, w.brand));
-      }) : [];
-    }
-    function segTitleOf(S, P, show, w) {
-      return showTitles(P, show).filter(function(t) {
-        return !t.tag && t.holders.length && t.holders[0] === w.id;
-      }).sort(function(a, b) {
-        return b.lvl - a.lvl;
-      })[0] || null;
-    }
-    function segChoices(S, kind, who, slot) {
-      var K = SEGK[kind];
-      if (!K) return [];
-      var P = S.promos[S.player], show = S.queue[S.qi], pool = segPool(S), busy = {};
-      segList(S).forEach(function(sg, i) {
-        if (sg && i !== slot) sg.who.forEach(function(id) {
-          busy[id] = 1;
-        });
-      });
-      var free = pool.filter(function(w) {
-        return !busy[w.id];
-      }).sort(function(a2, b2) {
-        return b2.ovr - a2.ovr;
-      }), a = who && who[0] != null ? S.w[who[0]] : null, b = who && who[1] != null ? S.w[who[1]] : null;
-      var others = function(x) {
-        return free.filter(function(w) {
-          return !x || w.id !== x.id && w.g === x.g;
-        });
-      };
-      if (!K.roles.length) return [];
-      if (kind === "interview" || kind === "turn") return [free];
-      if (kind === "words" || kind === "brawl" || kind === "recap" || kind === "signing") {
-        var inF = free.filter(function(w) {
-          return feudsFor(S, w.id).some(function(f) {
-            return f.promo === P.id;
-          });
-        });
-        return [inF, a ? free.filter(function(w) {
-          return w.id !== a.id && !!feudOf(S, a.id, w.id);
-        }) : []];
-      }
-      if (kind === "challenge") return [free.filter(function(w) {
-        return true;
-      }), free.filter(function(w) {
-        return (!a || w.id !== a.id && w.g === a.g) && !!segTitleOf(S, P, show, w);
-      })];
-      if (kind === "callout" || kind === "faceoff") return [free, a ? others(a) : []];
-      if (kind === "ambush") return [free, a ? others(a).filter(function(w) {
-        return a.team == null || w.team !== a.team;
-      }) : []];
-      if (kind === "save") return [free, a ? others(a).filter(function(w) {
-        return w.team == null && a.team == null && w.align === a.align;
-      }) : [], a ? others(a).filter(function(w) {
-        return !b || w.id !== b.id;
-      }) : []];
-      return [free];
-    }
-    function segWhy(S, sg, slot) {
-      var K = sg && SEGK[sg.k];
-      if (!K) return "Pick what kind of segment it is.";
-      var who = sg.who || [], i, C;
-      for (i = 0; i < K.roles.length; i++) {
-        if (who[i] == null || !S.w[who[i]]) return "Pick " + K.roles[i].toLowerCase() + ".";
-        C = segChoices(S, sg.k, who.slice(0, i), slot)[i] || [];
-        if (!C.some(function(w2) {
-          return w2.id === who[i];
-        })) {
-          var w = S.w[who[i]];
-          if (who.slice(0, i).indexOf(who[i]) >= 0) return w.name + " is picked twice.";
-          if (!segPool(S).some(function(x) {
-            return x.id === w.id;
-          })) return w.name + " is not available for this show.";
-          if (sg.k === "words" || sg.k === "brawl" || sg.k === "recap") return i ? w.name + " is not in a feud with " + S.w[who[0]].name + ". Use a call-out or an ambush to start one." : w.name + " is not in a feud.";
-          if (sg.k === "challenge" && i === 1) return w.name + " does not hold a singles title that is on this show.";
-          if (sg.k === "save" && i === 1) return "The one making the save must be free of a team, like the one they save, and on the same side.";
-          return w.name + " cannot fill that part of this segment. They may already be booked in another one.";
-        }
-      }
-      return "";
-    }
-    function segMean(S, w, bonus) {
-      return 0.62 * micOf(S, w) + 0.38 * w.ovr + (bonus || 0) + (S.booker && w.promo === S.player ? S.booker.sk.creative : 0);
-    }
-    function segLook(S, sg, slot) {
-      var why = segWhy(S, sg, slot);
-      if (why) return { ok: false, why };
-      if (sg.k === "writers") return { ok: true, mid: null, lo: null, hi: null, notes: [[0, "The writers decide on the night"]], mins: segMins(sg) };
-      var P = S.promos[S.player], a = S.w[sg.who[0]], b = sg.who[1] != null ? S.w[sg.who[1]] : null, c = sg.who[2] != null ? S.w[sg.who[2]] : null, f = b ? feudOf(S, a.id, b.id) : null, mid = 50, notes = [];
-      if (sg.k === "interview") {
-        mid = segMean(S, a, 0);
-        if (hasMouthpiece(S, a)) notes.push([1, S.w[a.mgr].name + " does the talking"]);
-      } else if (sg.k === "callout") {
-        mid = segMean(S, a, 3);
-        notes.push([1, f ? "It heats the feud they already have" : "It starts a rivalry"]);
-        if (!f && activeFeuds(S).length >= 8) notes.push([-1, "Eight feuds are running already, so no new one will start"]);
-      } else if (sg.k === "words") {
-        mid = segMean(S, micOf(S, a) >= micOf(S, b) ? a : b, 2) + f.heat / 25;
-        notes.push([1, "A feud at " + Math.round(f.heat) + " heat"]);
-      } else if (sg.k === "challenge") {
-        mid = segMean(S, micOf(S, a) >= micOf(S, b) ? a : b, 4);
-        var t = segTitleOf(S, P, S.queue[S.qi], b);
-        notes.push([1, "For the " + t.name]);
-        if (Math.abs(a.ovr - b.ovr) > 16) {
-          mid -= 6;
-          notes.push([-1, a.name + " is far from the champion\u2019s level"]);
-        }
-      } else if (sg.k === "faceoff") {
-        mid = 0.8 * (a.ovr + b.ovr) / 2 + 8;
-        if (a.align === b.align) notes.push([1, "Two on the same side: the crowd calls it a dream match"]);
-      } else if (sg.k === "ambush") {
-        mid = 0.8 * (a.ovr + b.ovr) / 2 + 6;
-        if (a.align === "F" && !(f && f.heat >= 50)) {
-          mid -= 8;
-          notes.push([-1, "A hero attacking from behind, with no feud to earn it"]);
-        } else notes.push([1, a.align === "H" ? "A villain doing what villains do" : "The feud has earned it"]);
-      } else if (sg.k === "brawl") {
-        mid = 0.8 * (a.ovr + b.ovr) / 2 + 8 + f.heat / 10;
-        notes.push([1, "A feud at " + Math.round(f.heat) + " heat"]);
-        notes.push([-1, "A small chance of a knock"]);
-      } else if (sg.k === "save") {
-        mid = 0.75 * (a.ovr + b.ovr + c.ovr) / 3 + 6;
-        notes.push([1, "A new team: " + a.name + " and " + b.name]);
-      } else if (sg.k === "turn") {
-        var lean = a.align === "H" && a.mom >= 4 || a.align === "F" && a.mom <= -4, tired = a.tw != null && S.week - a.tw < 48;
-        mid = segMean(S, a, lean ? 6 : -14);
-        notes.push(lean ? [1, a.align === "H" ? "The crowd is already cheering them" : "A losing run gives them a reason"] : [-1, "Nothing has set it up: it comes from nowhere"]);
-        if (tired) notes.push([-1, "They changed sides less than a year ago"]);
-      } else if (sg.k === "recap") {
-        mid = 42 + f.heat * 0.4;
-        notes.push([1, "A feud at " + Math.round(f.heat) + " heat"]);
-        var onCard2 = (S.card || []).some(function(m) {
-          var ids = flat(m.sides);
-          return ids.indexOf(a.id) >= 0 && ids.indexOf(b.id) >= 0;
-        });
-        notes.push(onCard2 ? [1, "They have a match tonight: open the show with this and that match gains"] : [-1, "They have no match tonight, so it only keeps the feud warm"]);
-      }
-      var K = SEGK[sg.k], len = segLen(sg), best = b && K.t === "promo" ? Math.max(micOf(S, a), micOf(S, b)) : micOf(S, a);
-      if (K.t === "promo" && !K.fix) {
-        if (len === "L") {
-          if (best >= 75) {
-            mid += 3;
-            notes.push([1, "A talker who can fill fifteen minutes", 1]);
-          } else {
-            mid -= 5;
-            notes.push([-1, "Fifteen minutes is a long time on the microphone for them", 1]);
-          }
-        } else if (len === "S") {
-          if (best >= 75) {
-            mid -= 2;
-            notes.push([-1, "Cut short: they could have done more with the time", 1]);
-          } else {
-            mid += 1;
-            notes.push([1, "Short and to the point", 1]);
-          }
-        }
-      } else if (K.t === "angle") {
-        if (len === "L") {
-          mid += 2;
-          notes.push([1, "Given time to become a scene. The feud heats faster"]);
-        } else if (len === "S") mid -= 1;
-      }
-      mid = clamp(Math.round(mid), 5, 99);
-      return { ok: true, mid, lo: clamp(mid - 4, 5, 99), hi: clamp(mid + 4, 5, 99), notes, mins: segMins(sg) };
-    }
-    function segLabel(S, sg) {
-      var K = SEGK[sg.k], n = sg.who.map(function(id) {
-        return S.w[id] ? S.w[id].name : "?";
-      });
-      if (sg.k === "interview") return n[0] + " talks";
-      if (sg.k === "writers") return "The writers\u2019 pick";
-      if (sg.k === "recap") return "Video recap: " + n[0] + " and " + n[1];
-      if (sg.k === "turn") return n[0] + " changes sides";
-      if (sg.k === "callout") return n[0] + " calls out " + n[1];
-      if (sg.k === "challenge") return n[0] + " challenges " + n[1];
-      if (sg.k === "ambush") return n[0] + " attacks " + n[1];
-      if (sg.k === "save") return n[2] + " attacks " + n[0] + ", " + n[1] + " makes the save";
-      return n[0] + " and " + n[1];
-    }
-    function runSeg(S, P, show, ctx, sg, slot, opens) {
-      if (segWhy(S, sg, slot) || sg.k === "writers") return null;
-      var ln = segLen(sg), hm = (SEGK[sg.k].t === "angle" ? ln === "L" ? 1.25 : ln === "S" ? 0.8 : 1 : ln === "S" ? 0.85 : 1) * (opens && SEGK[sg.k].t === "angle" ? 1.3 : 1);
-      var a = S.w[sg.who[0]], b = sg.who[1] != null ? S.w[sg.who[1]] : null, c = sg.who[2] != null ? S.w[sg.who[2]] : null, luck = rnd(S) * 8 - 4, L2 = segLook(S, sg, slot), f = b ? feudOf(S, a.id, b.id) : null, r = null, nf;
-      if (!L2.ok) return null;
-      sg.who.forEach(function(id) {
-        ctx.angled[id] = 1;
-      });
-      var ov = L2.mid + luck + (sg.mod || 0);
-      if (sg.k === "interview") {
-        if (ov > a.ovr) addOvr(P, a, 0.25);
-        r = angle("Interview", (hasMouthpiece(S, a) ? S.w[a.mgr].name + " does the talking for " + a.name + ", and " : a.name + " takes the microphone and ") + (ov >= 75 ? "has the crowd in the palm of a hand." : ov >= 55 ? "says what needed saying." : "loses the room."), ov);
-      } else if (sg.k === "callout") {
-        nf = !f;
-        f = startFeud(S, P, b, a, 24 + ri(S, 0, 10), a.name + " called out " + b.name, { force: true });
-        if (f && !nf) heatUp(S, f, clamp((ov - 50) / 5, 2, 9) * hm, a.name + " called out " + b.name, { force: true });
-        r = angle("Promo", a.name + " calls out " + b.name + " by name" + (f ? nf ? ". " + b.name + " answers from the stage. A new rivalry begins." : ". The feud gets hotter." : ". The words hang in the air, and nothing more comes of it tonight."), ov);
-      } else if (sg.k === "words") {
-        heatUp(S, f, clamp((ov - 50) / 4, 2, 10) * hm, a.name + " and " + b.name + " traded words");
-        r = angle("Promo", a.name + " and " + b.name + " stand face to face with a microphone each. " + (ov >= 72 ? "Every line draws blood." : "It gets personal."), ov);
-      } else if (sg.k === "challenge") {
-        var t = segTitleOf(S, P, show, b);
-        nf = !f;
-        f = startFeud(S, P, a, b, 30, a.name + " challenged for the " + t.name, { title: t.id, force: true });
-        if (f && !nf) {
-          if (!f.title) f.title = t.id;
-          heatUp(S, f, 6 * hm, a.name + " challenged for the " + t.name);
-        }
-        r = angle("Challenge", a.name + " interrupts " + b.name + " and lays claim to the " + t.name + "." + (f ? "" : " The champion laughs it off."), ov);
-      } else if (sg.k === "faceoff") {
-        nf = !f;
-        f = startFeud(S, P, a, b, 30, a.name + " and " + b.name + " faced off", a.align === b.align ? { kind: "dream", force: true } : { force: true });
-        if (f && !nf) heatUp(S, f, 6 * hm, a.name + " and " + b.name + " faced off");
-        r = angle("Face-off", a.name + " and " + b.name + " cross paths on the stage. Neither backs down, and the crowd wants the match.", ov);
-      } else if (sg.k === "ambush") {
-        nf = !f;
-        f = startFeud(S, P, b, a, 32 + ri(S, 0, 8), a.name + " attacked " + b.name + " from behind", { force: true });
-        if (f && !nf) heatUp(S, f, 12 * hm, a.name + " attacked " + b.name + " from behind", { force: true });
-        r = angle("Ambush", a.name + " attacks " + b.name + " from behind" + (a.align === "F" && L2.notes.some(function(x) {
-          return x[0] < 0;
-        }) ? ". The crowd does not know what to make of a hero doing that." : nf && f ? ". A new rivalry begins." : ". This one is getting ugly."), ov);
-      } else if (sg.k === "brawl") {
-        heatUp(S, f, clamp(10 + (ov - 60) / 5, 6, 16) * hm, a.name + " and " + b.name + " brawled through the building");
-        var hurt = chance(S, ln === "L" ? 0.06 : 0.04) ? chance(S, 0.5) ? a : b : null;
-        if (hurt) hurt.cond = clamp(hurt.cond - 15, 5, 100);
-        r = angle("Brawl", a.name + " and " + b.name + " fight through the crowd and out to the loading dock. Security pulls them apart." + (hurt ? " " + hurt.name + " comes out of it with a knock." : ""), ov);
-      } else if (sg.k === "save") {
-        formTeam(S, P, a, b, 8);
-        f = startFeud(S, P, a, c, 20, c.name + " attacked " + a.name + "; " + b.name + " made the save", { force: true });
-        if (f && f.a.indexOf(a.id) >= 0 && f.a.length < 2) f.a.push(b.id);
-        news(S, "story", "New team: " + a.name + " & " + b.name + ".");
-        r = angle("Save", c.name + " attacks " + a.name + " after an interview. " + b.name + " runs out to make the save, and the two shake hands. A new team is born.", ov);
-      } else if (sg.k === "signing") {
-        heatUp(S, f, clamp(6 + (ov - 55) / 6, 3, 12) * hm, a.name + " and " + b.name + " signed for their match");
-        f.finale = true;
-        var nb = nextBigFrom(S.week + (show.big ? 1 : 0), S);
-        if (f.endAt == null) f.endAt = nb;
-        var tbl = ov >= 62;
-        r = angle("Contract signing", a.name + " and " + b.name + " sit across a table in the ring and sign for " + S.promos[f.promo].name + " " + evName(S, S.promos[f.promo], cal(nb).month) + ". " + (tbl ? "The ink is barely dry when the table goes over." : "They sign, stare, and leave it there."), ov);
-      } else if (sg.k === "recap") {
-        heatUp(S, f, 3, "A video package told the story of " + a.name + " and " + b.name);
-        r = angle("Video recap", "A video package tells the story of " + a.name + " and " + b.name + ": how it started, and what is at stake.", ov);
-      } else if (sg.k === "turn") {
-        var was = a.align;
-        turn(S, a, was === "H" ? "the crowd got behind them" : "turned on the fans");
-        if (L2.notes[0][0] > 0) {
-          if (was === "H") addOvr(P, a, 2);
-          else a.mom = clamp(a.mom + 3, -10, 10);
-        } else a.mom = clamp(a.mom - 2, -10, 10);
-        r = angle("Turn", was === "H" ? a.name + " turns away from the villains" + (L2.notes[0][0] > 0 ? ", and the crowd that has been cheering for weeks roars." : ". The crowd is not sure what to make of it.") : a.name + " turns on the fans" + (L2.notes[0][0] > 0 ? " after weeks of losses, and walks out to boos." : ". Nobody saw a reason for it."), ov);
-      }
-      if (r && SEGK[sg.k].t === "promo" && sg.k !== "recap") {
-        var city = ctx.city || null, pkey = "pr" + S.week + ":" + sg.k + ":" + sg.who.join(","), said = hasMouthpiece(S, a) ? S.w[a.mgr] : a;
-        r.text += " " + promoSpeech(S, said, b, sg.k, said === a ? ov : Math.max(ov, said.mic), city, pkey);
-        if (b && (sg.k === "words" || sg.k === "faceoff" || sg.k === "challenge" || sg.k === "signing")) r.text += " " + promoSpeech(S, b, a, sg.k === "challenge" ? "words" : sg.k, clamp(ov + (b.mic - a.mic) / 2, 5, 99), city, pkey + "b");
-      }
-      if (r) {
-        r.booked = sg.k;
-        r.ids = sg.who.slice();
-        if (f && f.id != null) r.feud = f.id;
-      }
-      return r;
-    }
-    function segBooked(S, show, n) {
-      var out = { count: 0, at: {} };
-      if (S.cal || !n) return out;
-      if (S.segKey !== showKey(S)) return out;
-      (S.segs || []).forEach(function(sg, i) {
-        if (!sg || !SEGK[sg.k] || segWhy(S, sg, i)) return;
-        var p = clamp(sg.pos | 0, 0, n - 1);
-        (out.at[p] || (out.at[p] = [])).push({ sg, slot: i });
-        out.count++;
-      });
-      return out;
-    }
-    E.SEGK = SEGK;
-    E.BEATS = BEATS;
-    E.SEGLEN = SEGLEN;
-    E.SEGLENN = SEGLENN;
-    E.segInfo = function(S) {
-      var show = S.queue[S.qi];
-      if (!show) return { list: [], booked: 0, mins: 0 };
-      var L2 = segList(S), mins = 0;
-      var list = L2.map(function(sg, i) {
-        var why = segWhy(S, sg, i), look = why ? null : segLook(S, sg, i), K = SEGK[sg.k];
-        mins += segMins(sg);
-        return { slot: i, k: sg.k, t: K.t, who: sg.who.slice(), pos: sg.pos | 0, len: segLen(sg), mins: segMins(sg), label: why ? K.n : segLabel(S, sg), why, look };
-      });
-      return { booked: L2.length, list, mins };
-    };
-    E.segChoices = function(S, kind, who, slot) {
-      return segChoices(S, kind, who || [], slot == null ? -1 : slot).map(function(L2) {
-        return L2.map(function(w) {
-          return w.id;
-        });
-      });
-    };
-    E.segLook = function(S, sg, slot) {
-      return segLook(S, sg, slot == null ? -1 : slot);
-    };
-    E.setSeg = function(S, slot, sg) {
-      var L2 = segList(S), isNew = slot == null || slot < 0 || slot >= L2.length;
-      if (!sg) {
-        if (isNew) return { ok: true, msg: "Nothing was booked there." };
-        L2.splice(slot, 1);
-        return { ok: true, msg: "That segment is off the show." };
-      }
-      var K = SEGK[sg.k];
-      if (!K) return { ok: false, msg: "Pick what kind of segment it is." };
-      var clean2 = { k: sg.k, who: (sg.who || []).slice(0, K.roles.length).map(function(x) {
-        return +x;
-      }), pos: Math.max(0, sg.pos | 0), len: K.fix ? K.len : SEGLEN[sg.len] ? sg.len : K.len }, why = segWhy(S, clean2, isNew ? -1 : slot);
-      if (why) return { ok: false, msg: why };
-      if (isNew) L2.push(clean2);
-      else L2[slot] = clean2;
-      var lk = segLook(S, clean2, isNew ? L2.length - 1 : slot), mins = segMins(clean2);
-      return { ok: true, slot: isNew ? L2.length - 1 : slot, msg: clean2.k === "writers" ? "Booked: " + mins + " minutes for the writers." : "Booked: " + segLabel(S, clean2) + ", " + mins + " minutes. It should be about " + starG(lk.mid) + "." };
-    };
-    E.segClear = function(S) {
-      var L2 = segList(S);
-      L2.length = 0;
-      return { ok: true, msg: "The run sheet is clear." };
-    };
-    E.segSuggest = function(S, max, card) {
-      var P = S.promos[S.player], show = S.queue[S.qi];
-      if (!show) return { ok: false, msg: "No show to book." };
-      var L2 = segList(S), n = Math.max(1, (card || S.card || []).length), made = 0, i;
-      if (max == null) max = 1;
-      var used = function() {
-        var u2 = {};
-        L2.forEach(function(sg) {
-          sg.who.forEach(function(id) {
-            u2[id] = 1;
-          });
-        });
-        return u2;
-      };
-      var tryPut = function(sg) {
-        if (!segWhy(S, sg, -1)) {
-          L2.push(sg);
-          made++;
-          return true;
-        }
-        return false;
-      };
-      for (i = 0; i < max; i++) {
-        var u = used(), pool = segPool(S).filter(function(w) {
-          return !u[w.id];
-        }), inPool = {};
-        pool.forEach(function(w) {
-          inPool[w.id] = 1;
-        });
-        var pos = L2.length % 2 === 0 ? Math.min(1, n - 1) : n - 1, done = false;
-        var fs = activeFeuds(S).filter(function(f) {
-          return f.promo === P.id && inPool[f.a[0]] && inPool[f.b[0]];
-        }).sort(function(x, y) {
-          return y.heat - x.heat;
-        });
-        if (fs.length) done = tryPut({ k: fs[0].heat >= 45 ? "brawl" : "words", who: [fs[0].a[0], fs[0].b[0]], pos, len: "M" });
-        if (!done) {
-          var champs = pool.filter(function(w) {
-            return segTitleOf(S, P, show, w) && !inFeud(S, w.id);
-          }).sort(function(x, y) {
-            return y.ovr - x.ovr;
-          });
-          for (var c = 0; c < champs.length && !done; c++) {
-            var ch = champs[c], cs = pool.filter(function(w) {
-              return w.id !== ch.id && w.g === ch.g && holdLvl(P, w.id) === 0 && !inFeud(S, w.id) && Math.abs(w.ovr - ch.ovr) <= 16;
-            }).sort(function(x, y) {
-              return y.ovr + y.mom * 2 - (x.ovr + x.mom * 2);
-            });
-            if (cs.length) done = tryPut({ k: "challenge", who: [cs[0].id, ch.id], pos, len: "S" });
-          }
-        }
-        if (!done) {
-          var tk = pool.slice().sort(function(x, y) {
-            return segMean(S, y, 0) - segMean(S, x, 0);
-          })[0];
-          if (tk) done = tryPut({ k: "interview", who: [tk.id], pos, len: "M" });
-        }
-        if (!done) break;
-      }
-      return { ok: made > 0, msg: made ? (made === 1 ? "One segment pencilled in: " + segLabel(S, L2[L2.length - 1]) + "." : made + " segments pencilled in.") + " Change it, or take it off." : "Nobody is free for another segment." };
-    };
-    (function() {
-      var v0 = E.validate, r0 = E.runPlayerShow;
-      E.validate = function(S, card) {
-        var v = v0(S, card);
-        if (S.segKey === showKey(S)) (S.segs || []).forEach(function(sg, i) {
-          if (!sg || !SEGK[sg.k]) return;
-          var why = segWhy(S, sg, i);
-          if (why) v.errors.push("Booked " + SEGK[sg.k].n.toLowerCase() + ": " + why + " Change it or take it off the show.");
-        });
-        return v;
-      };
-      E.runPlayerShow = function(S, card) {
-        var r = r0(S, card);
-        if (!r.errors) {
-          S.segs = [];
-          S.segKey = null;
-        }
-        return r;
-      };
-    })();
-    var SEGFX = [["none", "Nothing beyond the segment"], ["heat", "Heats the feud they have"], ["start", "Starts a feud, or heats theirs"]];
-    var SEGHEAT = [[4, "A little"], [8, "Some"], [12, "A lot"]];
-    var SEGBOND = [[8, "Closer friends"], [0, "No change"], [-8, "Worse enemies"]];
-    var SEGK0 = {};
-    Object.keys(SEGK).forEach(function(k) {
-      SEGK0[k] = SEGK[k];
-    });
-    function segoClean(k) {
-      var txt = function(v, n) {
-        return String(v == null ? "" : v).replace(/\s+/g, " ").trim().slice(0, n);
-      }, B = SEGK0[k.id];
-      var roles = B.roles.map(function(r, i) {
-        return txt(Array.isArray(k.roles) ? k.roles[i] : "", 24) || r;
-      });
-      return { id: k.id, over: 1, n: txt(k.n, 28) || B.n, t: B.t, roles, d: txt(k.d, 160), scene: txt(k.scene, 60), line: txt(k.line, 160) };
-    }
-    function segkClean(k) {
-      if (!k || typeof k !== "object") return null;
-      var txt = function(v, n) {
-        return String(v == null ? "" : v).replace(/\s+/g, " ").trim().slice(0, n);
-      }, pick2 = function(L2, v, d) {
-        for (var i = 0; i < L2.length; i++) if (String(L2[i][0]) === String(v)) return L2[i][0];
-        return d;
-      };
-      var id = String(k.id || "");
-      if (SEGK0[id] && id !== "writers") return segoClean(k);
-      if (!/^c_[a-z0-9_]{1,40}$/.test(id)) id = "c_" + (txt(k.n, 28).toLowerCase().replace(/[^a-z0-9]+/g, "_").replace(/^_|_$/g, "") || "story");
-      var roles = (Array.isArray(k.roles) ? k.roles : []).map(function(r) {
-        return txt(r, 24);
-      }).filter(Boolean).slice(0, 2);
-      if (!roles.length) roles = ["Who it is about"];
-      return {
-        id,
-        n: txt(k.n, 28) || "My segment",
-        t: k.t === "angle" ? "angle" : "promo",
-        roles,
-        d: txt(k.d, 160),
-        fx: pick2(SEGFX, k.fx, "none"),
-        heat: pick2(SEGHEAT, k.heat, 8),
-        bond: pick2(SEGBOND, k.bond, 0),
-        lift: k.lift ? 1 : 0,
-        scene: txt(k.scene, 60),
-        line: txt(k.line, 160)
-      };
-    }
-    function segkSync(S) {
-      var L2 = S && S.db && Array.isArray(S.db.segkinds) ? S.db.segkinds : [], key = L2.map(function(k) {
-        return k && k.id;
-      }).join(",");
-      if (SEGK.__key === key) return;
-      Object.keys(SEGK).forEach(function(k) {
-        if (SEGK[k] && SEGK[k].custom) delete SEGK[k];
-      });
-      Object.keys(SEGK0).forEach(function(k) {
-        SEGK[k] = SEGK0[k];
-      });
-      L2.forEach(function(k0) {
-        var k = segkClean(k0);
-        if (!k) return;
-        if (k.over) {
-          var B = SEGK0[k.id], o = {};
-          Object.keys(B).forEach(function(x) {
-            o[x] = B[x];
-          });
-          o.n = k.n;
-          o.roles = k.roles;
-          if (k.d) o.d = k.d;
-          o.over = k;
-          SEGK[k.id] = o;
-          return;
-        }
-        if (SEGK[k.id]) return;
-        SEGK[k.id] = { len: "M", n: k.n, t: k.t, roles: k.roles, d: k.d || (k.t === "promo" ? "A promo made for this world." : "An angle made for this world."), custom: k };
-      });
-      Object.defineProperty(SEGK, "__key", { value: key, writable: true, configurable: true, enumerable: false });
-    }
-    (function() {
-      var list0 = segList, read0 = segRead, booked0 = segBooked, choices0 = segChoices, look0 = segLook, label0 = segLabel, run0 = runSeg;
-      segList = function(S) {
-        segkSync(S);
-        return list0(S);
-      };
-      segRead = function(S) {
-        segkSync(S);
-        return read0(S);
-      };
-      segBooked = function(S, show, n) {
-        segkSync(S);
-        return booked0(S, show, n);
-      };
-      segChoices = function(S, kind, who, slot) {
-        var K = SEGK[kind];
-        if (K && K.custom) return choices0(S, K.roles.length > 1 ? "callout" : "interview", who, slot);
-        return choices0(S, kind, who, slot);
-      };
-      segLook = function(S, sg, slot) {
-        var K = sg && SEGK[sg.k];
-        if (!K || !K.custom) return look0(S, sg, slot);
-        var why = segWhy(S, sg, slot);
-        if (why) return { ok: false, why };
-        var c = K.custom, a = S.w[sg.who[0]], b = sg.who[1] != null ? S.w[sg.who[1]] : null, f = b ? feudOf(S, a.id, b.id) : null, notes = [], mid;
-        if (c.t === "promo") mid = segMean(S, b && micOf(S, b) > micOf(S, a) ? b : a, 2);
-        else mid = 0.8 * (a.ovr + (b ? b.ovr : a.ovr)) / 2 + 6;
-        if (c.fx === "heat") notes.push(f ? [1, "It heats the feud they have"] : [-1, "They have no feud for it to heat"]);
-        if (c.fx === "start") notes.push([1, f ? "It heats the feud they have" : "It starts a rivalry"]);
-        if (c.bond > 0 && b) notes.push([1, "They come out of it closer"]);
-        if (c.bond < 0 && b) notes.push([-1, "They come out of it worse enemies"]);
-        if (c.lift) notes.push([1, a.name + " looks good if it goes well"]);
-        mid = clamp(Math.round(mid), 5, 99);
-        return { ok: true, mid, lo: clamp(mid - 4, 5, 99), hi: clamp(mid + 4, 5, 99), notes, mins: segMins(sg) };
-      };
-      segLabel = function(S, sg) {
-        var K = SEGK[sg.k];
-        if (!K || !K.custom) return label0(S, sg);
-        var n = sg.who.map(function(id) {
-          return S.w[id] ? S.w[id].name : "?";
-        });
-        return K.n + ": " + n.join(" and ");
-      };
-      runSeg = function(S, P, show, ctx, sg, slot, opens) {
-        var K = sg && SEGK[sg.k];
-        if (K && K.over) {
-          var r0 = run0(S, P, show, ctx, sg, slot, opens);
-          if (r0 && K.over.line) {
-            var n0 = sg.who.map(function(id) {
-              return S.w[id] ? S.w[id].name : "";
-            });
-            r0.text = K.over.line.replace(/\{a\}/g, n0[0] || "").replace(/\{b\}/g, n0[1] || "").replace(/\{c\}/g, n0[2] || "") + (r0.ov >= 72 ? " The crowd loves it." : r0.ov < 45 ? " It falls flat." : "");
-          }
-          return r0;
-        }
-        if (!K || !K.custom) return run0(S, P, show, ctx, sg, slot, opens);
-        if (segWhy(S, sg, slot)) return null;
-        var c = K.custom, L2 = segLook(S, sg, slot);
-        if (!L2.ok) return null;
-        var ln = segLen(sg), hm = c.t === "angle" ? ln === "L" ? 1.25 : ln === "S" ? 0.8 : 1 : ln === "S" ? 0.85 : 1, a = S.w[sg.who[0]], b = sg.who[1] != null ? S.w[sg.who[1]] : null, f = b ? feudOf(S, a.id, b.id) : null;
-        sg.who.forEach(function(id) {
-          ctx.angled[id] = 1;
-        });
-        var ov = L2.mid + rnd(S) * 8 - 4 + (sg.mod || 0), why = c.n + ": " + a.name + (b ? " and " + b.name : "");
-        if (b && c.fx === "start" && !f) f = startFeud(S, P, b, a, 20 + c.heat, why, { force: true });
-        else if (b && f && c.fx !== "none") heatUp(S, f, c.heat * hm * clamp(0.6 + (ov - 50) / 50, 0.4, 1.4), why);
-        if (b && c.bond) relBump(S, a.id, b.id, { bond: c.bond }, { t: why, k: "segment" });
-        if (c.lift && ov >= 60) addOvr(P, a, 0.5);
-        var line = c.line ? c.line.replace(/\{a\}/g, a.name).replace(/\{b\}/g, b ? b.name : "") : b ? a.name + " and " + b.name + ": " + c.n.toLowerCase() + "." : a.name + ": " + c.n.toLowerCase() + ".";
-        var r = angle(c.t === "promo" ? "Promo" : "Angle", line + (ov >= 72 ? " The crowd loves it." : ov < 45 ? " It falls flat." : ""), ov);
-        r.booked = c.id;
-        r.ids = sg.who.slice();
-        if (f && f.id != null) r.feud = f.id;
-        return r;
-      };
-    })();
-    E.SEGK0 = SEGK0;
-    E.SEGFX = SEGFX;
-    E.SEGHEAT = SEGHEAT;
-    E.SEGBOND = SEGBOND;
-    E.segkClean = segkClean;
-    E.edSegKinds = function(pkg) {
-      return (pkg && Array.isArray(pkg.segkinds) ? pkg.segkinds : []).map(segkClean).filter(Boolean);
-    };
-    E.edSetSegKind = function(pkg, k) {
-      var c = segkClean(k);
-      if (!pkg || !c) return null;
-      var L2 = E.edSegKinds(pkg).filter(function(x) {
-        return x.id !== c.id;
-      });
-      L2.push(c);
-      pkg.segkinds = L2;
-      return c;
-    };
-    E.edNewSegKind = function(pkg, t) {
-      var L2 = E.edSegKinds(pkg), n = 1;
-      while (L2.some(function(x) {
-        return x.id === "c_story_" + n;
-      })) n++;
-      return E.edSetSegKind(pkg, { id: "c_story_" + n, n: (t === "angle" ? "My angle " : "My promo ") + n, t: t === "angle" ? "angle" : "promo", roles: t === "angle" ? ["The attacker", "Who gets attacked"] : ["Who talks", "Who they talk to"], fx: "start", heat: 8, bond: 0 });
-    };
-    E.edOverSegKind = function(pkg, id) {
-      if (!SEGK0[id] || id === "writers") return null;
-      var have = E.edSegKinds(pkg).find(function(x) {
-        return x.id === id;
-      });
-      return have || E.edSetSegKind(pkg, { id, n: SEGK0[id].n, roles: SEGK0[id].roles });
-    };
-    E.edRemoveSegKind = function(pkg, id) {
-      if (pkg && Array.isArray(pkg.segkinds)) {
-        pkg.segkinds = pkg.segkinds.filter(function(x) {
-          return x && x.id !== id;
-        });
-        if (!pkg.segkinds.length) delete pkg.segkinds;
-      }
-    };
-    var STIP_SETS = [["", "The ring"], ["cage", "A steel cage"], ["cell", "The cell, with its roof"], ["inferno", "A ring of fire"], ["ladder", "A belt hung over the ring"], ["ballroom", "A ballroom"], ["gym", "A gym"], ["bigstadium", "A stadium"]];
-    var STIP_BASES = ["std", "hardcore", "tables", "ladder", "cage", "cell", "fire", "sub"];
-    STIP.cage.set = "cage";
-    STIP.cell.set = "cell";
-    STIP.fire.set = "inferno";
-    STIP.ladder.set = "ladder";
-    var STIP0 = {}, STIPNOTE0 = {}, STIPLINE0 = {}, STIPNEED0 = {};
-    Object.keys(STIP).forEach(function(k) {
-      STIP0[k] = STIP[k];
-      STIPNOTE0[k] = E.STIPNOTE[k];
-      STIPLINE0[k] = STIPLINE[k];
-      STIPNEED0[k] = STIP_NEED[k];
-    });
-    function stipBase(k) {
-      var s = STIP[k];
-      return s && s.base || k;
-    }
-    function stipClean(k) {
-      if (!k || typeof k !== "object") return null;
-      var txt = function(v, n) {
-        return String(v == null ? "" : v).replace(/\s+/g, " ").trim().slice(0, n);
-      };
-      var set = STIP_SETS.some(function(x) {
-        return x[0] === k.set;
-      }) ? k.set : "", lines = (Array.isArray(k.lines) ? k.lines : []).map(function(x) {
-        return txt(x, 120);
-      }).filter(Boolean).slice(0, 3);
-      var id = String(k.id || "");
-      if (STIP0[id] && id !== "std") return { id, over: 1, n: txt(k.n, 24) || STIP0[id].n, set: k.set == null ? STIP0[id].set || "" : set, d: txt(k.d, 160), lines };
-      if (!/^c_[a-z0-9_]{1,40}$/.test(id)) id = "c_" + (txt(k.n, 24).toLowerCase().replace(/[^a-z0-9]+/g, "_").replace(/^_|_$/g, "") || "rule");
-      return { id, n: txt(k.n, 24) || "My match", base: STIP_BASES.indexOf(k.base) >= 0 ? k.base : "std", set, d: txt(k.d, 160), lines };
-    }
-    function stipSync(S) {
-      var L2 = S && S.db && Array.isArray(S.db.stips) ? S.db.stips : [], key = JSON.stringify(L2);
-      if (stipSync.key === key) return;
-      stipSync.key = key;
-      Object.keys(STIP).forEach(function(k) {
-        if (!STIP0[k]) {
-          delete STIP[k];
-          delete E.STIPNOTE[k];
-          delete STIPLINE[k];
-          delete STIP_NEED[k];
-        }
-      });
-      Object.keys(STIP0).forEach(function(k) {
-        STIP[k] = STIP0[k];
-        E.STIPNOTE[k] = STIPNOTE0[k];
-        if (STIPLINE0[k]) STIPLINE[k] = STIPLINE0[k];
-        else delete STIPLINE[k];
-        if (STIPNEED0[k] != null) STIP_NEED[k] = STIPNEED0[k];
-      });
-      L2.forEach(function(k0) {
-        var k = stipClean(k0);
-        if (!k) return;
-        var B = STIP0[k.over ? k.id : k.base], o = {};
-        Object.keys(B).forEach(function(x) {
-          o[x] = B[x];
-        });
-        o.n = k.n;
-        o.set = k.set || void 0;
-        if (k.over) {
-          o.over = 1;
-          STIP[k.id] = o;
-        } else {
-          if (STIP0[k.id]) return;
-          o.base = k.base;
-          o.custom = 1;
-          STIP[k.id] = o;
-          if (STIPNEED0[k.base] != null) STIP_NEED[k.id] = STIPNEED0[k.base];
-        }
-        E.STIPNOTE[k.id] = k.d || STIPNOTE0[k.over ? k.id : k.base] || (k.over ? "" : "A match made for this world.");
-        var ln = k.lines.length ? k.lines : STIPLINE0[k.over ? k.id : k.base];
-        if (ln) STIPLINE[k.id] = ln;
-        else delete STIPLINE[k.id];
-      });
-    }
-    (function() {
-      var attach0 = E.attach, new0 = E.newGame;
-      E.attach = function(S) {
-        var r = attach0.apply(this, arguments);
-        stipSync(S);
-        return r;
-      };
-      E.newGame = function() {
-        var S = new0.apply(this, arguments);
-        stipSync(S);
-        return S;
-      };
-      var gim0 = isGim;
-      isGim = function(k) {
-        return gim0(stipBase(k));
-      };
-    })();
-    WEEKX.push(function(S) {
-      stipSync(S);
-    });
-    E.STIP0 = STIP0;
-    E.STIP_SETS = STIP_SETS;
-    E.STIP_BASES = STIP_BASES;
-    E.stipClean = stipClean;
-    E.stipNote0 = function(k) {
-      return STIPNOTE0[k] || "";
-    };
-    E.stipLines0 = function(k) {
-      return (STIPLINE0[k] || []).slice();
-    };
-    E.edStips = function(pkg) {
-      return (Array.isArray(pkg.stips) ? pkg.stips : []).map(stipClean).filter(Boolean);
-    };
-    function edStipPut(pkg, k) {
-      var L2 = Array.isArray(pkg.stips) ? pkg.stips : pkg.stips = [], i = L2.findIndex(function(x) {
-        return x && x.id === k.id;
-      });
-      if (i >= 0) L2[i] = k;
-      else L2.push(k);
-    }
-    E.edSetStip = function(pkg, k) {
-      var c = stipClean(k);
-      if (!c) return null;
-      edStipPut(pkg, c);
-      return c;
-    };
-    E.edNewStip = function(pkg, base) {
-      var L2 = E.edStips(pkg), n = 1, id;
-      do {
-        id = "c_rule_" + n++;
-      } while (L2.some(function(x) {
-        return x.id === id;
-      }));
-      var b = STIP_BASES.indexOf(base) >= 0 ? base : "cage", k = stipClean({ id, n: "New match", base: b, set: STIP0[b].set || "" });
-      edStipPut(pkg, k);
-      return k;
-    };
-    E.edOverStip = function(pkg, id) {
-      if (!STIP0[id] || id === "std") return null;
-      var k = stipClean({ id, n: STIP0[id].n, set: STIP0[id].set || "", d: "", lines: [] });
-      edStipPut(pkg, k);
-      return k;
-    };
-    E.edRemoveStip = function(pkg, id) {
-      if (!Array.isArray(pkg.stips)) return false;
-      var n = pkg.stips.length;
-      pkg.stips = pkg.stips.filter(function(x) {
-        return !x || x.id !== id;
-      });
-      if (!pkg.stips.length) delete pkg.stips;
-      return n !== (pkg.stips || []).length;
     };
     root.GP = E;
     return { get DB() {
@@ -28400,541 +24878,493 @@
     }, set logoKey(v) {
       logoKey = v;
     }, get NET_TASTE() {
-      return NET_TASTE;
+      return NET_TASTE2;
     }, set NET_TASTE(v) {
-      NET_TASTE = v;
+      NET_TASTE2 = v;
     }, get NET_KEYS() {
-      return NET_KEYS;
+      return NET_KEYS2;
     }, set NET_KEYS(v) {
-      NET_KEYS = v;
+      NET_KEYS2 = v;
     }, get netTaste() {
-      return netTaste;
+      return netTaste2;
     }, set netTaste(v) {
-      netTaste = v;
+      netTaste2 = v;
     }, get netTarget() {
-      return netTarget;
+      return netTarget2;
     }, set netTarget(v) {
-      netTarget = v;
+      netTarget2 = v;
     }, get netClash() {
-      return netClash;
+      return netClash2;
     }, set netClash(v) {
-      netClash = v;
+      netClash2 = v;
     }, get netPleased() {
-      return netPleased;
+      return netPleased2;
     }, set netPleased(v) {
-      netPleased = v;
+      netPleased2 = v;
     }, get netCardClash() {
-      return netCardClash;
+      return netCardClash2;
     }, set netCardClash(v) {
-      netCardClash = v;
+      netCardClash2 = v;
     }, get REGIONS() {
-      return REGIONS;
+      return REGIONS2;
     }, set REGIONS(v) {
-      REGIONS = v;
+      REGIONS2 = v;
     }, get TASTEN() {
-      return TASTEN;
+      return TASTEN2;
     }, set TASTEN(v) {
-      TASTEN = v;
+      TASTEN2 = v;
     }, get homeReg() {
-      return homeReg;
+      return homeReg2;
     }, set homeReg(v) {
-      homeReg = v;
+      homeReg2 = v;
     }, get tourCost() {
-      return tourCost;
+      return tourCost2;
     }, set tourCost(v) {
-      tourCost = v;
+      tourCost2 = v;
     }, get tourBoost() {
-      return tourBoost;
+      return tourBoost2;
     }, set tourBoost(v) {
-      tourBoost = v;
+      tourBoost2 = v;
     }, get tasteVal() {
-      return tasteVal;
+      return tasteVal2;
     }, set tasteVal(v) {
-      tasteVal = v;
+      tasteVal2 = v;
     }, get tasteFit() {
-      return tasteFit;
+      return tasteFit2;
     }, set tasteFit(v) {
-      tasteFit = v;
+      tasteFit2 = v;
     }, get tasteDraw() {
-      return tasteDraw;
+      return tasteDraw2;
     }, set tasteDraw(v) {
-      tasteDraw = v;
+      tasteDraw2 = v;
     }, get retireCompany() {
-      return retireCompany;
+      return retireCompany2;
     }, set retireCompany(v) {
-      retireCompany = v;
+      retireCompany2 = v;
     }, get topTitle() {
-      return topTitle;
+      return topTitle2;
     }, set topTitle(v) {
-      topTitle = v;
+      topTitle2 = v;
     }, get STRM_PRICE() {
-      return STRM_PRICE;
+      return STRM_PRICE2;
     }, set STRM_PRICE(v) {
-      STRM_PRICE = v;
-    }, get STRM_OPEN() {
-      return STRM_OPEN;
-    }, set STRM_OPEN(v) {
-      STRM_OPEN = v;
-    }, get STRM_RUN() {
-      return STRM_RUN;
-    }, set STRM_RUN(v) {
-      STRM_RUN = v;
+      STRM_PRICE2 = v;
     }, get streamOn() {
-      return streamOn;
+      return streamOn2;
     }, set streamOn(v) {
-      streamOn = v;
+      streamOn2 = v;
     }, get streamCap() {
-      return streamCap;
+      return streamCap2;
     }, set streamCap(v) {
-      streamCap = v;
+      streamCap2 = v;
     }, get streamOpenCost() {
-      return streamOpenCost;
+      return streamOpenCost2;
     }, set streamOpenCost(v) {
-      streamOpenCost = v;
+      streamOpenCost2 = v;
     }, get streamRunCost() {
-      return streamRunCost;
+      return streamRunCost2;
     }, set streamRunCost(v) {
-      streamRunCost = v;
+      streamRunCost2 = v;
     }, get CANCEL_WARN() {
-      return CANCEL_WARN;
+      return CANCEL_WARN2;
     }, set CANCEL_WARN(v) {
-      CANCEL_WARN = v;
-    }, get HOUSE_DRAW() {
-      return HOUSE_DRAW;
-    }, set HOUSE_DRAW(v) {
-      HOUSE_DRAW = v;
-    }, get BACK_RUN() {
-      return BACK_RUN;
-    }, set BACK_RUN(v) {
-      BACK_RUN = v;
-    }, get BACK_CS() {
-      return BACK_CS;
-    }, set BACK_CS(v) {
-      BACK_CS = v;
+      CANCEL_WARN2 = v;
     }, get showOff() {
-      return showOff;
+      return showOff2;
     }, set showOff(v) {
-      showOff = v;
+      showOff2 = v;
     }, get MAP_W() {
-      return MAP_W;
+      return MAP_W2;
     }, set MAP_W(v) {
-      MAP_W = v;
-    }, get MAP_H() {
-      return MAP_H;
-    }, set MAP_H(v) {
-      MAP_H = v;
-    }, get MAP_ABC() {
-      return MAP_ABC;
-    }, set MAP_ABC(v) {
-      MAP_ABC = v;
+      MAP_W2 = v;
     }, get MAPS() {
-      return MAPS;
+      return MAPS2;
     }, set MAPS(v) {
-      MAPS = v;
+      MAPS2 = v;
     }, get CITY_AT() {
-      return CITY_AT;
+      return CITY_AT2;
     }, set CITY_AT(v) {
-      CITY_AT = v;
+      CITY_AT2 = v;
     }, get TOWN_AT() {
-      return TOWN_AT;
+      return TOWN_AT2;
     }, set TOWN_AT(v) {
-      TOWN_AT = v;
+      TOWN_AT2 = v;
     }, get VENUE_RE() {
-      return VENUE_RE;
+      return VENUE_RE2;
     }, set VENUE_RE(v) {
-      VENUE_RE = v;
+      VENUE_RE2 = v;
     }, get BLD_TIER() {
-      return BLD_TIER;
+      return BLD_TIER2;
     }, set BLD_TIER(v) {
-      BLD_TIER = v;
+      BLD_TIER2 = v;
     }, get BLD_WORDS() {
-      return BLD_WORDS;
+      return BLD_WORDS2;
     }, set BLD_WORDS(v) {
-      BLD_WORDS = v;
+      BLD_WORDS2 = v;
     }, get cityBuildings() {
-      return cityBuildings;
+      return cityBuildings2;
     }, set cityBuildings(v) {
-      cityBuildings = v;
+      cityBuildings2 = v;
     }, get venueName() {
-      return venueName;
+      return venueName2;
     }, set venueName(v) {
-      venueName = v;
+      venueName2 = v;
     }, get cityOfVenue() {
-      return cityOfVenue;
+      return cityOfVenue2;
     }, set cityOfVenue(v) {
-      cityOfVenue = v;
+      cityOfVenue2 = v;
     }, get placeOf() {
-      return placeOf;
+      return placeOf2;
     }, set placeOf(v) {
-      placeOf = v;
+      placeOf2 = v;
     }, get mapById() {
-      return mapById;
+      return mapById2;
     }, set mapById(v) {
-      mapById = v;
+      mapById2 = v;
     }, get mapXY() {
-      return mapXY;
+      return mapXY2;
     }, set mapXY(v) {
-      mapXY = v;
+      mapXY2 = v;
     }, get mapHas() {
-      return mapHas;
+      return mapHas2;
     }, set mapHas(v) {
-      mapHas = v;
+      mapHas2 = v;
     }, get mapArea() {
-      return mapArea;
+      return mapArea2;
     }, set mapArea(v) {
-      mapArea = v;
+      mapArea2 = v;
     }, get HOME_KM() {
-      return HOME_KM;
+      return HOME_KM2;
     }, set HOME_KM(v) {
-      HOME_KM = v;
+      HOME_KM2 = v;
     }, get homeKm() {
-      return homeKm;
+      return homeKm2;
     }, set homeKm(v) {
-      homeKm = v;
+      homeKm2 = v;
     }, get homeNear() {
-      return homeNear;
+      return homeNear2;
     }, set homeNear(v) {
-      homeNear = v;
+      homeNear2 = v;
     }, get homeWeight() {
-      return homeWeight;
+      return homeWeight2;
     }, set homeWeight(v) {
-      homeWeight = v;
+      homeWeight2 = v;
     }, get homeHype() {
-      return homeHype;
+      return homeHype2;
     }, set homeHype(v) {
-      homeHype = v;
+      homeHype2 = v;
     }, get homeHypeAt() {
-      return homeHypeAt;
+      return homeHypeAt2;
     }, set homeHypeAt(v) {
-      homeHypeAt = v;
+      homeHypeAt2 = v;
     }, get geoDist() {
-      return geoDist;
+      return geoDist2;
     }, set geoDist(v) {
-      geoDist = v;
+      geoDist2 = v;
     }, get roadRoute() {
-      return roadRoute;
+      return roadRoute2;
     }, set roadRoute(v) {
-      roadRoute = v;
+      roadRoute2 = v;
     }, get roadCity() {
-      return roadCity;
+      return roadCity2;
     }, set roadCity(v) {
-      roadCity = v;
+      roadCity2 = v;
     }, get soldOutLast() {
-      return soldOutLast;
+      return soldOutLast2;
     }, set soldOutLast(v) {
-      soldOutLast = v;
+      soldOutLast2 = v;
     }, get roadCap() {
-      return roadCap;
+      return roadCap2;
     }, set roadCap(v) {
-      roadCap = v;
+      roadCap2 = v;
     }, get MKT_WORDS() {
-      return MKT_WORDS;
+      return MKT_WORDS2;
     }, set MKT_WORDS(v) {
-      MKT_WORDS = v;
+      MKT_WORDS2 = v;
     }, get mktBase() {
-      return mktBase;
+      return mktBase2;
     }, set mktBase(v) {
-      mktBase = v;
+      mktBase2 = v;
     }, get mktKnow() {
-      return mktKnow;
+      return mktKnow2;
     }, set mktKnow(v) {
-      mktKnow = v;
+      mktKnow2 = v;
     }, get coldNight() {
-      return coldNight;
+      return coldNight2;
     }, set coldNight(v) {
-      coldNight = v;
+      coldNight2 = v;
     }, get weatherMult() {
-      return weatherMult;
+      return weatherMult2;
     }, set weatherMult(v) {
-      weatherMult = v;
+      weatherMult2 = v;
     }, get mktMult() {
-      return mktMult;
+      return mktMult2;
     }, set mktMult(v) {
-      mktMult = v;
+      mktMult2 = v;
     }, get mktWord() {
-      return mktWord;
+      return mktWord2;
     }, set mktWord(v) {
-      mktWord = v;
+      mktWord2 = v;
     }, get roadMktNow() {
-      return roadMktNow;
+      return roadMktNow2;
     }, set roadMktNow(v) {
-      roadMktNow = v;
+      roadMktNow2 = v;
     }, get saleSpan() {
-      return saleSpan;
+      return saleSpan2;
     }, set saleSpan(v) {
-      saleSpan = v;
+      saleSpan2 = v;
     }, get saleFrac() {
-      return saleFrac;
+      return saleFrac2;
     }, set saleFrac(v) {
-      saleFrac = v;
+      saleFrac2 = v;
     }, get stopDraw() {
-      return stopDraw;
+      return stopDraw2;
     }, set stopDraw(v) {
-      stopDraw = v;
+      stopDraw2 = v;
     }, get stopSales() {
-      return stopSales;
+      return stopSales2;
     }, set stopSales(v) {
-      stopSales = v;
+      stopSales2 = v;
     }, get roadSoldNow() {
-      return roadSoldNow;
+      return roadSoldNow2;
     }, set roadSoldNow(v) {
-      roadSoldNow = v;
+      roadSoldNow2 = v;
     }, get roadAhead() {
-      return roadAhead;
+      return roadAhead2;
     }, set roadAhead(v) {
-      roadAhead = v;
+      roadAhead2 = v;
     }, get MAP_FIRST() {
-      return MAP_FIRST;
+      return MAP_FIRST2;
     }, set MAP_FIRST(v) {
-      MAP_FIRST = v;
+      MAP_FIRST2 = v;
     }, get roadMap() {
-      return roadMap;
+      return roadMap2;
     }, set roadMap(v) {
-      roadMap = v;
+      roadMap2 = v;
     }, get roadShape() {
-      return roadShape;
+      return roadShape2;
     }, set roadShape(v) {
-      roadShape = v;
+      roadShape2 = v;
     }, get CONT_AT() {
-      return CONT_AT;
+      return CONT_AT2;
     }, set CONT_AT(v) {
-      CONT_AT = v;
+      CONT_AT2 = v;
     }, get roadNearest() {
-      return roadNearest;
+      return roadNearest2;
     }, set roadNearest(v) {
-      roadNearest = v;
+      roadNearest2 = v;
     }, get SHAPES() {
-      return SHAPES;
+      return SHAPES2;
     }, set SHAPES(v) {
-      SHAPES = v;
+      SHAPES2 = v;
     }, get JOB_TERMS() {
-      return JOB_TERMS;
+      return JOB_TERMS2;
     }, set JOB_TERMS(v) {
-      JOB_TERMS = v;
+      JOB_TERMS2 = v;
     }, get jobCheck() {
-      return jobCheck;
+      return jobCheck2;
     }, set jobCheck(v) {
-      jobCheck = v;
+      jobCheck2 = v;
     }, get isoParts() {
-      return isoParts;
+      return isoParts2;
     }, set isoParts(v) {
-      isoParts = v;
+      isoParts2 = v;
     }, get chalCheck() {
-      return chalCheck;
+      return chalCheck2;
     }, set chalCheck(v) {
-      chalCheck = v;
+      chalCheck2 = v;
     }, get SCN_BUILT() {
-      return SCN_BUILT;
+      return SCN_BUILT2;
     }, set SCN_BUILT(v) {
-      SCN_BUILT = v;
+      SCN_BUILT2 = v;
     }, get SCN_OPS() {
-      return SCN_OPS;
+      return SCN_OPS2;
     }, set SCN_OPS(v) {
-      SCN_OPS = v;
+      SCN_OPS2 = v;
     }, get scnSign() {
-      return scnSign;
+      return scnSign2;
     }, set scnSign(v) {
-      scnSign = v;
+      scnSign2 = v;
     }, get SCN_WIN() {
-      return SCN_WIN;
+      return SCN_WIN2;
     }, set SCN_WIN(v) {
-      SCN_WIN = v;
+      SCN_WIN2 = v;
     }, get SCN() {
-      return SCN;
+      return SCN2;
     }, set SCN(v) {
-      SCN = v;
+      SCN2 = v;
     }, get scnFill() {
-      return scnFill;
+      return scnFill2;
     }, set scnFill(v) {
-      scnFill = v;
+      scnFill2 = v;
     }, get scnLoad() {
-      return scnLoad;
+      return scnLoad2;
     }, set scnLoad(v) {
-      scnLoad = v;
+      scnLoad2 = v;
     }, get scnJudge() {
-      return scnJudge;
+      return scnJudge2;
     }, set scnJudge(v) {
-      scnJudge = v;
+      scnJudge2 = v;
     }, get scnCut() {
-      return scnCut;
+      return scnCut2;
     }, set scnCut(v) {
-      scnCut = v;
+      scnCut2 = v;
     }, get SH_HOT() {
-      return SH_HOT;
+      return SH_HOT2;
     }, set SH_HOT(v) {
-      SH_HOT = v;
-    }, get SH_SLOW() {
-      return SH_SLOW;
-    }, set SH_SLOW(v) {
-      SH_SLOW = v;
+      SH_HOT2 = v;
     }, get shIds() {
-      return shIds;
+      return shIds2;
     }, set shIds(v) {
-      shIds = v;
+      shIds2 = v;
     }, get shFacts() {
-      return shFacts;
+      return shFacts2;
     }, set shFacts(v) {
-      shFacts = v;
+      shFacts2 = v;
     }, get shOpener() {
-      return shOpener;
+      return shOpener2;
     }, set shOpener(v) {
-      shOpener = v;
+      shOpener2 = v;
     }, get shTopLvl() {
-      return shTopLvl;
+      return shTopLvl2;
     }, set shTopLvl(v) {
-      shTopLvl = v;
+      shTopLvl2 = v;
     }, get SH_MT() {
-      return SH_MT;
+      return SH_MT2;
     }, set SH_MT(v) {
-      SH_MT = v;
+      SH_MT2 = v;
     }, get shPrev() {
-      return shPrev;
+      return shPrev2;
     }, set shPrev(v) {
-      shPrev = v;
+      shPrev2 = v;
     }, get shBreak() {
-      return shBreak;
+      return shBreak2;
     }, set shBreak(v) {
-      shBreak = v;
+      shBreak2 = v;
     }, get shapeAuto() {
-      return shapeAuto;
+      return shapeAuto2;
     }, set shapeAuto(v) {
-      shapeAuto = v;
+      shapeAuto2 = v;
     }, get SEGLEN() {
-      return SEGLEN;
+      return SEGLEN2;
     }, set SEGLEN(v) {
-      SEGLEN = v;
-    }, get SEGLENN() {
-      return SEGLENN;
-    }, set SEGLENN(v) {
-      SEGLENN = v;
+      SEGLEN2 = v;
     }, get SEGK() {
-      return SEGK;
+      return SEGK2;
     }, set SEGK(v) {
-      SEGK = v;
+      SEGK2 = v;
     }, get segLen() {
-      return segLen;
+      return segLen2;
     }, set segLen(v) {
-      segLen = v;
+      segLen2 = v;
     }, get segMins() {
-      return segMins;
+      return segMins2;
     }, set segMins(v) {
-      segMins = v;
+      segMins2 = v;
     }, get segSlots() {
-      return segSlots;
+      return segSlots2;
     }, set segSlots(v) {
-      segSlots = v;
+      segSlots2 = v;
     }, get segList() {
-      return segList;
+      return segList2;
     }, set segList(v) {
-      segList = v;
+      segList2 = v;
     }, get segRead() {
-      return segRead;
+      return segRead2;
     }, set segRead(v) {
-      segRead = v;
+      segRead2 = v;
     }, get segPool() {
-      return segPool;
+      return segPool2;
     }, set segPool(v) {
-      segPool = v;
+      segPool2 = v;
     }, get segTitleOf() {
-      return segTitleOf;
+      return segTitleOf2;
     }, set segTitleOf(v) {
-      segTitleOf = v;
+      segTitleOf2 = v;
     }, get segChoices() {
-      return segChoices;
+      return segChoices2;
     }, set segChoices(v) {
-      segChoices = v;
+      segChoices2 = v;
     }, get segWhy() {
-      return segWhy;
+      return segWhy2;
     }, set segWhy(v) {
-      segWhy = v;
+      segWhy2 = v;
     }, get segMean() {
-      return segMean;
+      return segMean2;
     }, set segMean(v) {
-      segMean = v;
+      segMean2 = v;
     }, get segLook() {
-      return segLook;
+      return segLook2;
     }, set segLook(v) {
-      segLook = v;
+      segLook2 = v;
     }, get segLabel() {
-      return segLabel;
+      return segLabel2;
     }, set segLabel(v) {
-      segLabel = v;
+      segLabel2 = v;
     }, get runSeg() {
-      return runSeg;
+      return runSeg2;
     }, set runSeg(v) {
-      runSeg = v;
+      runSeg2 = v;
     }, get segBooked() {
-      return segBooked;
+      return segBooked2;
     }, set segBooked(v) {
-      segBooked = v;
+      segBooked2 = v;
     }, get SEGFX() {
-      return SEGFX;
+      return SEGFX2;
     }, set SEGFX(v) {
-      SEGFX = v;
+      SEGFX2 = v;
     }, get SEGHEAT() {
-      return SEGHEAT;
+      return SEGHEAT2;
     }, set SEGHEAT(v) {
-      SEGHEAT = v;
+      SEGHEAT2 = v;
     }, get SEGBOND() {
-      return SEGBOND;
+      return SEGBOND2;
     }, set SEGBOND(v) {
-      SEGBOND = v;
+      SEGBOND2 = v;
     }, get SEGK0() {
-      return SEGK0;
+      return SEGK02;
     }, set SEGK0(v) {
-      SEGK0 = v;
+      SEGK02 = v;
     }, get segoClean() {
-      return segoClean;
+      return segoClean2;
     }, set segoClean(v) {
-      segoClean = v;
+      segoClean2 = v;
     }, get segkClean() {
-      return segkClean;
+      return segkClean2;
     }, set segkClean(v) {
-      segkClean = v;
+      segkClean2 = v;
     }, get segkSync() {
-      return segkSync;
+      return segkSync2;
     }, set segkSync(v) {
-      segkSync = v;
+      segkSync2 = v;
     }, get STIP_SETS() {
-      return STIP_SETS;
+      return STIP_SETS2;
     }, set STIP_SETS(v) {
-      STIP_SETS = v;
+      STIP_SETS2 = v;
     }, get STIP_BASES() {
-      return STIP_BASES;
+      return STIP_BASES2;
     }, set STIP_BASES(v) {
-      STIP_BASES = v;
+      STIP_BASES2 = v;
     }, get STIP0() {
-      return STIP0;
+      return STIP02;
     }, set STIP0(v) {
-      STIP0 = v;
-    }, get STIPNOTE0() {
-      return STIPNOTE0;
-    }, set STIPNOTE0(v) {
-      STIPNOTE0 = v;
-    }, get STIPLINE0() {
-      return STIPLINE0;
-    }, set STIPLINE0(v) {
-      STIPLINE0 = v;
-    }, get STIPNEED0() {
-      return STIPNEED0;
-    }, set STIPNEED0(v) {
-      STIPNEED0 = v;
+      STIP02 = v;
     }, get stipBase() {
-      return stipBase;
+      return stipBase2;
     }, set stipBase(v) {
-      stipBase = v;
+      stipBase2 = v;
     }, get stipClean() {
-      return stipClean;
+      return stipClean2;
     }, set stipClean(v) {
-      stipClean = v;
+      stipClean2 = v;
     }, get stipSync() {
-      return stipSync;
+      return stipSync2;
     }, set stipSync(v) {
-      stipSync = v;
+      stipSync2 = v;
     }, get edStipPut() {
-      return edStipPut;
+      return edStipPut2;
     }, set edStipPut(v) {
-      edStipPut = v;
+      edStipPut2 = v;
     }, get LF() {
       return LF2;
     }, set LF(v) {
@@ -29709,6 +26139,3838 @@
       podWrite2 = v;
     } };
   }(typeof window !== "undefined" ? window : globalThis);
+
+  // engine/89-networks.ts
+  L.netTaste = netTaste;
+  L.netTarget = netTarget;
+  L.netClash = netClash;
+  L.netPleased = netPleased;
+  L.netCardClash = netCardClash;
+  var NET_TASTE = {
+    family: { n: "Family", d: "wants a clean show. Hardcore, tables and ladder matches go down badly." },
+    sport: { n: "Sport", d: "wants wrestling: more matches than talking, and good ones." },
+    late: { n: "Late night", d: "wants a show people talk about: promos, angles and stipulations." },
+    niche: { n: "Niche", d: "cares less about the numbers, and likes long, serious matches." }
+  };
+  L.NET_TASTE = NET_TASTE;
+  var NET_KEYS = ["family", "sport", "late", "niche"];
+  L.NET_KEYS = NET_KEYS;
+  function netTaste(name) {
+    if (/Sport/.test(name)) return "sport";
+    if (/Family|Kids/.test(name)) return "family";
+    if (/Indie|Underground|Cult/.test(name)) return "niche";
+    if (/Gaslight|Midnight|Late/.test(name)) return "late";
+    return L.NET_KEYS[L.hash("taste:" + name) % L.NET_KEYS.length];
+  }
+  function netTarget(sh) {
+    if (!sh.tgt && sh.va) sh.tgt = Math.round(sh.va * (L.netTaste(sh.net) === "niche" ? 0.85 : 0.97));
+    return sh.tgt || 0;
+  }
+  function netClash(S, sh, rep) {
+    var t = L.netTaste(sh.net), ms = (rep.segs || []).filter(function(g) {
+      return g.k === "match";
+    }), talk = (rep.segs || []).filter(function(g) {
+      return g.k === "promo" || g.k === "angle";
+    }).length;
+    if (t === "family") {
+      var hc = ms.filter(function(g) {
+        return g.stip === "Hardcore" || g.stip === "Tables" || g.stip === "Ladder";
+      }).length;
+      if (hc) return "a " + ms.filter(function(g) {
+        return g.stip === "Hardcore" || g.stip === "Tables" || g.stip === "Ladder";
+      })[0].stip.toLowerCase() + " match on a family network";
+    }
+    if (t === "sport" && talk > ms.length) return "more talking than wrestling";
+    if (t === "late" && !talk && !ms.some(function(g) {
+      return g.stip;
+    })) return "nothing to talk about: no promo, no angle, no stipulation";
+    return "";
+  }
+  function netPleased(S, sh, rep) {
+    var t = L.netTaste(sh.net), ms = (rep.segs || []).filter(function(g) {
+      return g.k === "match";
+    });
+    if (t === "sport") return ms.some(function(g) {
+      return g.ov >= rep.exp + 8;
+    });
+    if (t === "late") return (rep.segs || []).some(function(g) {
+      return (g.k === "angle" || g.k === "promo") && g.ov >= rep.exp + 5;
+    });
+    if (t === "niche") return ms.some(function(g) {
+      return g.mins >= 20 && g.ov >= rep.exp + 4;
+    });
+    if (t === "family") return !L.netClash(S, sh, rep) && rep.rating >= rep.exp;
+    return false;
+  }
+  L.SHOWX.push(function(S, P, show, rep) {
+    if (S.cal || show.big || P.id !== S.player) return;
+    var sh = L.airRec(P, show.id);
+    if (!sh || !sh.net) return;
+    var tgt = L.netTarget(sh);
+    if (!tgt) return;
+    var hit = rep.viewers >= tgt, clash = L.netClash(S, sh, rep), pleased = !clash && L.netPleased(S, sh, rep);
+    sh.miss = hit ? 0 : (sh.miss || 0) + 1;
+    sh.hits = hit ? (sh.hits || 0) + 1 : 0;
+    rep.net = { n: sh.net, taste: L.netTaste(sh.net), tgt, hit: hit ? 1 : 0, clash, pleased: pleased ? 1 : 0, miss: sh.miss };
+    L.E.clocks(S);
+    var c = S.clocks.net;
+    if (clash) {
+      sh.cl = (sh.cl || 0) + 1;
+      if (sh.cl % 2 === 0) {
+        c.v = L.clamp(c.v + 1, 0, L.CLOCKS.net.segs);
+        c.why = sh.net + " did not like " + clash + ".";
+      }
+    }
+    if (pleased || sh.hits >= 4) {
+      if (c.v > 0) c.v--;
+      if (sh.hits >= 4) sh.hits = 0;
+    }
+    if (sh.miss >= 3 && !(S.lcd && S.lcd["nx" + sh.id] > S.week) && !S.inbox.some(function(e) {
+      return !e.done && e.type === "netexec";
+    })) {
+      (S.lcd || (S.lcd = {}))["nx" + sh.id] = S.week + 8;
+      L.pushEv(S, {
+        type: "netexec",
+        sid: sh.id,
+        text: "An executive from " + sh.net + " is on the phone. " + sh.name + " has come in under its target three weeks running: they want about " + tgt.toLocaleString("en-US") + " watching, and last week it was " + rep.viewers.toLocaleString("en-US") + ". They are a " + L.NET_TASTE[L.netTaste(sh.net)].n.toLowerCase() + " network: it " + L.NET_TASTE[L.netTaste(sh.net)].d,
+        choices: ["Promise them a big main event next week", "Lower the target: give up a little of the fee", "Tell them the numbers will come"],
+        checks: { 2: L.mkCheck(9, [{ n: "The show is " + L.airWord(sh).toLowerCase(), v: sh.lv >= 3 ? 1 : sh.lv <= 1 ? -1 : 0 }].concat(L.skillMods(S, "talk"))) }
+      });
+    }
+  });
+  L.EVR.netexec = function(S, ev, choice, P) {
+    var sh = L.airRec(P, ev.sid);
+    if (!sh) return "That show is no longer on your schedule.";
+    L.E.clocks(S);
+    var c = S.clocks.net;
+    if (choice === 0) {
+      var tg = Math.round(L.clamp(L.expected(P, sh) + 4, 40, 95)), bonus = Math.round(P.inc0 * 0.03 / 1e3) * 1e3;
+      c.v = Math.max(0, c.v - 1);
+      S.quests.push({ id: S.nid++, type: "netvow", due: S.week + 2, target: tg, bonus, text: "Promise to " + sh.net + ": a main event of " + L.starG(tg) + " or better by " + L.cal(S.week + 2).label });
+      return "They will hold you to it: a main event of " + L.starG(tg) + " or better within two weeks.";
+    }
+    if (choice === 1) {
+      sh.tgt = Math.round(L.netTarget(sh) * 0.9);
+      sh.rate = L.clamp((sh.rate || 1) * 0.95, 0.6, 1.8);
+      sh.miss = 0;
+      c.v = Math.max(0, c.v - 2);
+      return sh.net + " takes a smaller target, about " + sh.tgt.toLocaleString("en-US") + " watching, and pays a little less for it.";
+    }
+    var r = L.rollCheck(S, ev.checks[2]);
+    ev.roll = r;
+    sh.miss = 0;
+    if (r.ok) return L.rollText(r) + "They believe you, for now.";
+    c.v = L.clamp(c.v + 2, 0, L.CLOCKS.net.segs);
+    c.why = "You told " + sh.net + " the numbers would come";
+    return L.rollText(r) + "They have heard that before. The network\u2019s patience is thinner.";
+  };
+  (function() {
+    var was = L.airSign;
+    L.airSign = function(S, P, sh, net, tier, rate) {
+      was(S, P, sh, net, tier, rate);
+      sh.tgt = sh.va ? Math.round(sh.va * (L.netTaste(sh.net) === "niche" ? 0.85 : 0.97)) : 0;
+      sh.miss = 0;
+    };
+  })();
+  (function() {
+    var was = L.airAsk;
+    L.airAsk = function(S, P, sh) {
+      was(S, P, sh);
+      if ((sh.lv || 0) < 2 || L.hash("bid" + P.id + sh.id + ":" + (sh.deals || 0)) % 3 === 0) return;
+      var ev = S.inbox.filter(function(e) {
+        return !e.done && e.type === "rights" && e.sid === sh.id;
+      })[0];
+      if (!ev) return;
+      var t3 = Math.min(2, sh.tier + (sh.lv >= 4 ? 1 : 0)), third = L.airNets(S, t3).filter(function(n) {
+        return n !== sh.net && n !== ev.other;
+      })[0];
+      if (!third) return;
+      ev.third = third;
+      ev.t3 = t3;
+      ev.text += " And " + third + ", " + L.AIR_TIERN[t3] + ", has heard. You could let them bid against each other.";
+      ev.choices.push("Let " + ev.other + " and " + third + " bid for it");
+      ev.checks[3] = L.mkCheck(8, [{ n: "The show is " + L.airWord(sh).toLowerCase(), v: sh.lv >= 4 ? 2 : 1 }].concat(L.skillMods(S, "talk")));
+    };
+  })();
+  (function() {
+    var was = L.EVR.rights;
+    L.EVR.rights = function(S, ev, choice, P) {
+      if (choice !== 3) return was(S, ev, choice, P);
+      var sh = L.airRec(P, ev.sid);
+      if (!sh) return "That show is no longer on your schedule.";
+      var o = L.airOffer(S, P, sh), old = sh.net, r = L.rollCheck(S, ev.checks[3]);
+      ev.roll = r;
+      if (r.ok) {
+        L.airSign(S, P, sh, ev.third, ev.t3, o.move + sh.rate * 0.12);
+        sh.pr = L.clamp(sh.pr - 2, 0, 100);
+        sh.prd = sh.pr;
+        L.airStep(sh);
+        L.E.clocks(S);
+        S.clocks.net.v = 0;
+        S.clocks.net.why = "A new network, and a clean slate";
+        L.news(S, "money", ev.third + " won a bidding war for " + sh.name + ".");
+        L.note(S, "A bidding war won", sh.name + " goes to " + sh.net + ".", "good");
+        return L.rollText(r) + ev.third + " wins the bidding. " + sh.name + " moves from " + old + " at about " + L.money(L.airPay(P, sh, sh.rate, sh.tier)) + " a week.";
+      }
+      L.airSign(S, P, sh, ev.other, ev.t2, o.move - sh.rate * 0.04);
+      sh.pr = L.clamp(sh.pr - 3, 0, 100);
+      sh.prd = sh.pr;
+      L.airStep(sh);
+      return L.rollText(r) + ev.third + " drops out early, and " + ev.other + " knows it. " + sh.name + " moves there for less than they first offered, about " + L.money(L.airPay(P, sh, sh.rate, sh.tier)) + " a week.";
+    };
+  })();
+  function netCardClash(S, show, card) {
+    var P = S.promos[S.player], sh = show && !show.big ? L.airRec(P, show.id) : null;
+    if (!sh || !sh.net || !card.length) return "";
+    var t = L.netTaste(sh.net), talk = L.segRead(S).length, hc = card.filter(function(m) {
+      return m && /^(hardcore|tables|ladder|fire|cell)$/.test(L.stipBase(m.stip));
+    }).length, st = card.some(function(m) {
+      return m && m.stip && m.stip !== "std";
+    });
+    if (t === "family" && hc) return sh.net + " is a family network, and a " + L.STIP[card.filter(function(m) {
+      return m && /^(hardcore|tables|ladder|fire|cell)$/.test(L.stipBase(m.stip));
+    })[0].stip].n.toLowerCase() + " match will not go down well.";
+    if (t === "sport" && talk > card.length) return sh.net + " is a sport network, and tonight has more talking than wrestling.";
+    if (t === "late" && !talk && !st) return sh.net + " is a late night network, and tonight has nothing to talk about: no promo, no angle, no stipulation.";
+    return "";
+  }
+  L.E.netInfo = function(S) {
+    var P = S.promos[S.player];
+    return P.shows.filter(function(sh) {
+      return !sh.big && sh.net;
+    }).map(function(sh) {
+      var t = L.netTaste(sh.net);
+      return { id: sh.id, name: sh.name, net: sh.net, taste: L.NET_TASTE[t].n, want: L.NET_TASTE[t].d, tgt: L.netTarget(sh), miss: sh.miss || 0 };
+    });
+  };
+  L.E.NET_TASTE = NET_TASTE;
+  L.NET_TASTE = NET_TASTE;
+  L.NET_KEYS = NET_KEYS;
+  L.netTaste = netTaste;
+  L.netTarget = netTarget;
+  L.netClash = netClash;
+  L.netPleased = netPleased;
+  L.netCardClash = netCardClash;
+
+  // engine/89-regions.ts
+  L.homeReg = homeReg;
+  L.tourCost = tourCost;
+  L.tourBoost = tourBoost;
+  L.tasteVal = tasteVal;
+  L.tasteFit = tasteFit;
+  L.tasteDraw = tasteDraw;
+  L.retireCompany = retireCompany;
+  L.topTitle = topTitle;
+  var REGIONS = [
+    { id: "iron", n: "the Iron Coast", taste: "brawl", d: "Dockworkers and mill towns. They come for a fight." },
+    { id: "garden", n: "the Garden Cities", taste: "spectacle", d: "Big halls and bigger entrances." },
+    { id: "reach", n: "the Eastern Reach", taste: "work", d: "Students of the sport. They count the holds." },
+    { id: "high", n: "the Highlands", taste: "brawl", d: "Hard people who like it hard." },
+    { id: "isles", n: "the Sunlit Isles", taste: "spectacle", d: "Colour, noise and flyers." }
+  ];
+  L.REGIONS = REGIONS;
+  var TASTEN = { brawl: "brawling", work: "work rate", spectacle: "spectacle" };
+  L.TASTEN = TASTEN;
+  function homeReg(P) {
+    return L.hash("reg" + P.id) % L.REGIONS.length;
+  }
+  L.E.REGIONS = REGIONS;
+  L.E.TASTEN = TASTEN;
+  L.E.homeRegion = function(S) {
+    var P = S.promos[S.player];
+    return L.REGIONS[L.homeReg(P)];
+  };
+  function tourCost(P, weeks) {
+    return Math.round(P.inc0 * (0.02 + 0.025 * weeks) * (1 - L.TRV_R[P.trv || 0] * 0.5));
+  }
+  function tourBoost(S, P) {
+    if (!P.tour) return 1;
+    var f = P.fol && P.fol[P.tour.reg] || 0;
+    return 1.3 + f / 250;
+  }
+  L.E.tourInfo = function(S) {
+    var P = S.promos[S.player], home = L.homeReg(P);
+    return {
+      tour: P.tour ? { reg: L.REGIONS[P.tour.reg], left: P.tour.left, weeks: P.tour.weeks, earned: Math.round(P.tour.earned || 0) } : null,
+      options: L.REGIONS.map(function(r, i) {
+        return { id: i, reg: r, home: i === home, fol: Math.round(P.fol && P.fol[i] || 0), cost2: L.tourCost(P, 2), cost3: L.tourCost(P, 3) };
+      }).filter(function(o) {
+        return !o.home;
+      }),
+      follow: L.REGIONS.map(function(r, i) {
+        return { reg: r, fol: Math.round(P.fol && P.fol[i] || 0) };
+      }).filter(function(o) {
+        return o.fol >= 1;
+      })
+    };
+  };
+  L.E.startTour = function(S, reg, weeks) {
+    var P = S.promos[S.player], r = L.REGIONS[reg];
+    if (!r || reg === L.homeReg(P)) return { ok: false, text: "Pick a region away from home." };
+    if (P.tour) return { ok: false, text: "You are already on tour." };
+    if (weeks !== 2 && weeks !== 3) return { ok: false, text: "A tour is two or three weeks." };
+    if (S.week - (P.tourEnd || -99) < 8) return { ok: false, text: "The roster needs eight weeks at home first." };
+    var c = L.tourCost(P, weeks);
+    if (P.cash < c) return { ok: false, text: "A " + weeks + "-week tour costs " + L.money(c) + " up front." };
+    P.cash -= c;
+    P.tour = { reg, left: weeks, weeks, earned: 0, start: S.week };
+    L.news(S, "story", P.name + " set out on a " + weeks + "-week tour of " + r.n + ".");
+    return { ok: true, text: "The tour of " + r.n + " starts now and lasts " + weeks + " weeks. It cost " + L.money(c) + ". Crowds will be bigger. The roster will be worn out by the end." };
+  };
+  L.WEEKX.push(function(S) {
+    if (S.cal) return;
+    var P = S.promos[S.player];
+    P.fol = P.fol || {};
+    Object.keys(P.fol).forEach(function(k) {
+      P.fol[k] = Math.max(0, P.fol[k] - 0.4);
+    });
+    if (!P.tour) return;
+    var T = P.tour, last = P.hist[P.hist.length - 1];
+    if (last) T.earned += last.gate * 0.3;
+    L.rosterOf(S, P.id).forEach(function(w) {
+      if (!w.nw) w.rd = L.clamp((w.rd || 0) + 10, 0, 100);
+    });
+    var good = P.last && P.last.rating >= 70;
+    P.fol[T.reg] = L.clamp((P.fol[T.reg] || 0) + (good ? 6 : 2), 0, 100);
+    T.left--;
+    if (T.left <= 0) {
+      L.news(S, "story", P.name + " came home from " + L.REGIONS[T.reg].n + " with a following of " + Math.round(P.fol[T.reg]) + ".");
+      P.tour = null;
+      P.tourEnd = S.week;
+    }
+  });
+  function tasteVal(taste, ws, stips) {
+    if (!ws.length) return 0;
+    if (taste === "brawl") return (L.avg(ws.map(function(w) {
+      return w.brawl;
+    })) - 74) / 10 + (stips.filter(function(s) {
+      return /^(hardcore|cage|cell|fire|tables)$/.test(L.stipBase(s));
+    }).length ? 0.3 : 0);
+    if (taste === "work") return (L.avg(ws.map(L.workRate)) - 74) / 10;
+    return (L.avg(ws.map(function(w) {
+      return w.sq;
+    })) - 76) / 10 + (stips.filter(function(s) {
+      return s === "ladder" || s === "mask" || s === "hair";
+    }).length ? 0.3 : 0);
+  }
+  function tasteFit(S, P, card) {
+    var reg = P.tour ? L.REGIONS[P.tour.reg] : L.REGIONS[L.homeReg(P)], ids = {}, ws = [], stips = [];
+    card.forEach(function(m) {
+      stips.push(m.stip || "std");
+      m.sides.forEach(function(s) {
+        s.forEach(function(id) {
+          if (id != null && S.w[id] && !ids[id]) {
+            ids[id] = 1;
+            ws.push(S.w[id]);
+          }
+        });
+      });
+    });
+    return { reg, fit: L.clamp(L.tasteVal(reg.taste, ws, stips), -1, 1) };
+  }
+  function tasteDraw(S, P, card, rep) {
+    var f = L.tasteFit(S, P, card);
+    if (Math.abs(f.fit) >= 0.5) (rep.quest = rep.quest || []).push((P.tour ? "On tour, " : "At home, ") + f.reg.n + " " + (f.fit > 0 ? "got the " + L.TASTEN[f.reg.taste] + " it likes, and the house was a little bigger." : "wanted " + L.TASTEN[f.reg.taste] + " and did not get enough of it, and the house was a little smaller."));
+    return 1 + 0.06 * f.fit;
+  }
+  L.E.tasteForecast = function(S, card) {
+    var P = S.promos[S.player], f = L.tasteFit(S, P, card);
+    return { region: f.reg, fit: f.fit, text: (P.tour ? "On tour in " : "At home in ") + f.reg.n + ", where they like " + L.TASTEN[f.reg.taste] + ": " + (f.fit >= 0.5 ? "this card suits them. Expect a bigger house." : f.fit <= -0.5 ? "this card is short of it. Expect a smaller house." : "this card is about right.") };
+  };
+  L.CRX.push(function(ctx) {
+    var P = ctx.P;
+    if (!ctx.isPl || ctx.S.cal) return null;
+    var home = !P.tour, k = home ? 0.7 : 1, t = (home ? L.REGIONS[L.homeReg(P)] : L.REGIONS[P.tour.reg]).taste, all = ctx.all, d = 0, x = null;
+    if (t === "brawl") {
+      var b = L.avg(all.map(function(w) {
+        return w.brawl;
+      }));
+      if (b >= 62 || /^(hardcore|cage|cell|fire)$/.test(L.stipBase(ctx.stip))) {
+        d = 1.5;
+        x = "A brawl, and this region likes a brawl";
+      } else if (b <= 48) {
+        d = -1.5;
+        x = "Too gentle for a region that likes a fight";
+      }
+    } else if (t === "work") {
+      var wk = L.avg(all.map(L.workRate));
+      if (wk >= 65) {
+        d = 1.5;
+        x = "Fine wrestling for a region that counts the holds";
+      } else if (wk < 50) {
+        d = -1.5;
+        x = "Sloppy work in front of a region that notices";
+      }
+    } else {
+      var sq = L.avg(all.map(function(w) {
+        return w.sq;
+      }));
+      if (sq >= 65 || ctx.stip === "ladder") {
+        d = 1.5;
+        x = "Spectacle, and this region came for spectacle";
+      } else if (sq <= 45) {
+        d = -1.5;
+        x = "Plain stuff for a region that wants spectacle";
+      }
+    }
+    return d ? { d: d * k, x } : null;
+  });
+  L.WEEKX.push(function(S) {
+    if (S.cal || !L.chance(S, 0.35)) return;
+    var P = S.promos[S.player], pid = L.pick(S, S.order.filter(function(id) {
+      return id !== P.id;
+    })), RV = S.promos[pid];
+    if (!RV || !RV.owner) return;
+    var t = L.E.temperOf(S, pid), nm = RV.owner.name, up = P.image > RV.image, last = P.last && P.last.rating >= 75, L2 = null;
+    if (t.key === "raider") L2 = up ? nm + " of " + RV.name + " said " + P.name + ' has the best roster in the business and is "ripe for the picking".' : L.chance(S, 0.5) ? nm + " of " + RV.name + " told a reporter that " + P.name + ' is "a company that has had its day".' : null;
+    else if (t.key === "gentleman") L2 = last || (RV.rel || 0) >= 20 ? nm + " of " + RV.name + " tipped a hat to " + P.name + ': "Good wrestling is good for all of us."' : null;
+    else if (t.key === "showman") L2 = nm + " of " + RV.name + " dared " + P.name + " to put its best against " + RV.name + '\u2019s on one stage, "and let the people decide".';
+    else L2 = L.chance(S, 0.15) ? nm + " of " + RV.name + " has still not said a word in public about anyone." : null;
+    if (L2 && S.week - (S.talkAt || -99) >= 3) {
+      S.talkAt = S.week;
+      L.news(S, "world", L2);
+    }
+  });
+  L.E.agreeOdds = function(S, pid) {
+    var P = S.promos[S.player], RV = S.promos[pid];
+    if (!RV || pid === P.id) return null;
+    return L.mkCheck(9, [L.relMod(RV), L.gapMod(P, RV), L.temperMod(RV, "show")].concat(L.skillMods(S, "talk")));
+  };
+  L.E.agreeCan = function(S, pid) {
+    var P = S.promos[S.player], RV = S.promos[pid];
+    if (S.agree) return "You already have a working agreement with " + S.promos[S.agree.with].name + ".";
+    if ((RV.rel || 0) < 30) return RV.name + " does not know you well enough yet. Relations must reach 30.";
+    if (RV.image - P.image > 25) return RV.name + " is too big to sit down with you yet.";
+    if (RV.agAsk && S.week - RV.agAsk < 8) return RV.name + " will not take another meeting until " + L.cal(RV.agAsk + 8).label + ".";
+    return null;
+  };
+  L.E.agreePropose = function(S, pid) {
+    var why = L.E.agreeCan(S, pid);
+    if (why) return { ok: false, text: why };
+    var RV = S.promos[pid], r = L.rollCheck(S, L.E.agreeOdds(S, pid));
+    RV.agAsk = S.week;
+    if (!r.ok) {
+      RV.rel = L.clamp((RV.rel || 0) - 3, -100, 100);
+      return { ok: false, text: L.rollText(r) + RV.name + " wants to think about it." };
+    }
+    S.agree = { with: pid, since: S.week, next: S.week + 12, trouble: 0 };
+    L.news(S, "world", S.promos[S.player].name + " and " + RV.name + " signed a working agreement.");
+    return { ok: true, text: L.rollText(r) + "You and " + RV.name + " are partners. Trades are easier, your top titles are recognised by both, and a joint supershow runs every twelve weeks." };
+  };
+  L.E.agreeEnd = function(S) {
+    var A = S.agree;
+    if (!A) return { ok: false, text: "There is no agreement." };
+    var RV = S.promos[A.with];
+    RV.rel = L.clamp((RV.rel || 0) - 10, -100, 100);
+    S.agree = null;
+    L.news(S, "world", S.promos[S.player].name + " ended the working agreement with " + RV.name + ".");
+    return { ok: true, text: "The agreement is over. " + RV.name + " is not pleased." };
+  };
+  L.E.agreement = function(S) {
+    var A = S.agree;
+    if (!A) return null;
+    var RV = S.promos[A.with];
+    return { with: RV, rel: Math.round(RV.rel || 0), since: A.since, next: Math.max(0, A.next - S.week), trouble: A.trouble };
+  };
+  L.WEEKX.push(function(S) {
+    var A = S.agree;
+    if (S.cal || !A) return;
+    var P = S.promos[S.player], RV = S.promos[A.with];
+    [P, RV].forEach(function(Q) {
+      var t = Q.titles.filter(function(x) {
+        return !x.tag && x.lvl >= 3;
+      })[0];
+      if (t && t.prestige < 90) t.prestige = Math.min(90, t.prestige + 0.15);
+    });
+    if (S.week >= A.next && !L.E.xfState(S) && !L.E.xfCan(S, A.with)) {
+      A.next = S.week + 12;
+      L.startXf(S, A.with, "super");
+      L.news(S, "world", "The joint supershow with " + RV.name + " is on, as agreed.");
+    }
+    var p = { raider: 0.05, gentleman: 0.01, hermit: 0.02, showman: 0.03 }[L.E.temperOf(S, A.with).key] || 0.02;
+    if (L.chance(S, p) && !S.inbox.some(function(e) {
+      return e.type === "agreetrouble" && !e.done;
+    })) {
+      var o = RV.owner && RV.owner.name ? RV.owner.name : "Their owner", cost = Math.round(P.inc0 * 0.3);
+      A.trouble++;
+      L.pushEv(S, {
+        type: "agreetrouble",
+        text: o + " of " + RV.name + " is angry: one of their stars was sent home early from your show and no one told them. The agreement is at risk.",
+        choices: ["Send a gift and an apology: " + L.money(cost), "Say it was a mistake (an attempt)", "End the agreement"],
+        cost,
+        checks: { 1: L.mkCheck(7, [L.relMod(RV), L.trustMod(S)].concat(L.skillMods(S, "talk"))) }
+      });
+    }
+    if ((RV.rel || 0) < 0 && A.trouble >= 2) {
+      S.agree = null;
+      L.news(S, "world", "The working agreement with " + RV.name + " collapsed.");
+    }
+  });
+  L.EVR.agreetrouble = function(S, ev, choice, P) {
+    var A = S.agree;
+    if (!A) return "The agreement is already over.";
+    var RV = S.promos[A.with];
+    if (choice === 0) {
+      if (P.cash < ev.cost) {
+        RV.rel = L.clamp((RV.rel || 0) - 6, -100, 100);
+        return "You cannot afford the gift. " + RV.name + " takes that badly.";
+      }
+      P.cash -= ev.cost;
+      RV.rel = L.clamp((RV.rel || 0) + 12, -100, 100);
+      A.trouble = Math.max(0, A.trouble - 1);
+      return "The gift and the apology work. " + RV.name + " is back on side.";
+    }
+    if (choice === 1) {
+      var r = L.rollCheck(S, ev.checks[1]);
+      ev.roll = r;
+      if (r.ok) {
+        RV.rel = L.clamp((RV.rel || 0) + 4, -100, 100);
+        return L.rollText(r) + RV.name + " accepts the explanation.";
+      }
+      RV.rel = L.clamp((RV.rel || 0) - 12, -100, 100);
+      return L.rollText(r) + RV.name + " does not believe it. Relations take a hit.";
+    }
+    return L.E.agreeEnd(S).text;
+  };
+  L.CRX.push(function(ctx) {
+    var A = ctx.S.agree;
+    if (!A || !ctx.isPl || !ctx.t || ctx.t.lvl < 3 || ctx.S.cal) return null;
+    return { d: 1, x: "The title is recognised by both companies" };
+  });
+  function retireCompany(S, pid, buyerId) {
+    var P = S.promos[pid], buyer = buyerId ? S.promos[buyerId] : null, R = L.rosterOf(S, pid).filter(function(w) {
+      return !w.nw;
+    }).sort(function(a, b) {
+      return b.ovr - a.ovr;
+    });
+    var keep = buyer ? Math.ceil(R.length * 0.4) : 0;
+    R.forEach(function(w, i) {
+      L.leaveCompany(S, w, buyer && i < keep ? "moved to " + buyer.name : "company folded", true);
+      if (buyer && i < keep) L.joinCompany(S, w, buyer);
+      else {
+        w.promo = "FA";
+        w.brand = null;
+        w.cut = { w: S.week, from: pid, img: P.image };
+      }
+    });
+    L.rosterOf(S, pid).forEach(function(w) {
+      w.promo = "FA";
+      w.brand = null;
+    });
+    var tit = P.titles.filter(function(t) {
+      return !t.tag;
+    }).sort(function(a, b) {
+      return b.prestige - a.prestige;
+    });
+    if (buyer && tit[0]) {
+      var c = JSON.parse(JSON.stringify(tit[0]));
+      c.holders = [];
+      c.since = S.week;
+      c.id = "x" + S.nid++;
+      c.name = tit[0].name;
+      buyer.titles.push(c);
+    } else tit.slice(0, 2).forEach(function(t) {
+      (S.sale = S.sale || []).push({ id: S.nid++, kind: "title", from: pid, fromName: P.name, name: t.name, g: t.g, lvl: t.lvl, tag: !!t.tag, prestige: Math.round(t.prestige), price: Math.round(S.promos[S.player].inc0 * 0.6 * Math.max(0.3, t.prestige / 50)), until: S.week + 12 });
+    });
+    var tv = Math.round(P.inc0 * 0.05 * 18);
+    if (!buyer) (S.sale = S.sale || []).push({ id: S.nid++, kind: "tape", from: pid, fromName: P.name, name: "The " + P.name + " library", value: tv, price: Math.round(tv * 0.4), until: S.week + 12 });
+    S.feuds.forEach(function(f) {
+      if (!f.res && f.promo === pid) {
+        f.res = true;
+        f.dead = true;
+        f.end = S.week;
+      }
+    });
+    S.order = S.order.filter(function(id) {
+      return id !== pid;
+    });
+    P.dead = S.week;
+    if (S.agree && S.agree.with === pid) S.agree = null;
+    if (S.xf && S.xf.with === pid) S.xf = null;
+    L.news(S, "world", buyer ? buyer.name + " bought " + P.name + ". Its best names move over, and the rest are on the market." : P.name + " has folded. Its roster is on the market, and its titles and tapes are up for sale.");
+  }
+  L.WEEKX.push(function(S) {
+    if (S.cal || S.week % 4 || S.order.length <= 4) return;
+    S.order.forEach(function(pid) {
+      var P = S.promos[pid];
+      if (pid === S.player || P.dead || P.cash >= 0 || (P.neg || 0) < 20 || P.image >= 45 || !L.chance(S, 0.1)) return;
+      var rich = S.order.filter(function(id) {
+        return id !== pid && id !== S.player && S.promos[id].cash > S.promos[id].inc0 * 10 && S.promos[id].image > P.image;
+      }).sort(function(a, b) {
+        return S.promos[b].cash - S.promos[a].cash;
+      })[0];
+      L.retireCompany(S, pid, rich && L.chance(S, 0.55) ? rich : null);
+    });
+    S.sale = (S.sale || []).filter(function(l) {
+      return S.week <= l.until;
+    });
+  });
+  L.E.forSale = function(S) {
+    return (S.sale || []).filter(function(l) {
+      return S.week <= l.until;
+    }).map(function(l) {
+      return { id: l.id, kind: l.kind, name: l.name, from: l.fromName, price: l.price, left: l.until - S.week, note: l.kind === "title" ? "A " + (l.g === "F" ? "women\u2019s " : "") + "title with prestige " + l.prestige + " and no champion." : "About " + L.money(l.value) + " of back catalogue." };
+    });
+  };
+  L.E.buyLot = function(S, id) {
+    var P = S.promos[S.player], i = (S.sale || []).findIndex(function(l2) {
+      return l2.id === id;
+    }), l = S.sale[i];
+    if (!l || S.week > l.until) return { ok: false, text: "That lot is gone." };
+    if (!S.owner.me) return { ok: false, text: "Only an owner can buy a company\u2019s belongings." };
+    if (P.cash < l.price) return { ok: false, text: "It costs " + L.money(l.price) + "." };
+    P.cash -= l.price;
+    S.sale.splice(i, 1);
+    if (l.kind === "title") {
+      P.titles.push({ id: "x" + S.nid++, name: l.name, brand: null, g: l.g, lvl: Math.min(l.lvl, 2), tag: l.tag, holders: [], prestige: Math.round(l.prestige * 0.7), defs: 0, since: S.week, last: S.week, hist: [] });
+      L.news(S, "title", "You bought the " + l.name + " from the ruins of " + l.fromName + ". It is vacant.");
+      return { ok: true, text: "The " + l.name + " is yours, and vacant. Crown a champion on your next show." };
+    }
+    (P.tape || (P.tape = [])).push({ w: Math.max(1, S.week - 30), n: l.name, r: 70, v: l.value });
+    L.news(S, "money", "You bought " + l.name + ".");
+    return { ok: true, text: "The library is yours. It is worth about " + L.money(l.value) + " and earns every week." };
+  };
+  function topTitle(P, g) {
+    return P.titles.filter(function(t) {
+      return !t.tag && t.g === g && t.lvl >= 3;
+    }).sort(function(a, b) {
+      return b.prestige - a.prestige;
+    })[0] || null;
+  }
+  L.E.unifyOptions = function(S) {
+    var A = S.agree;
+    if (!A) return [];
+    var P = S.promos[S.player], RV = S.promos[A.with], out = [];
+    ["M", "F"].forEach(function(g) {
+      var m = L.topTitle(P, g), t = L.topTitle(RV, g);
+      if (!m || !t || !m.holders.length) return;
+      var ck = L.mkCheck(9, [L.relMod(RV), L.temperMod(RV, "show"), { n: "A working agreement", v: 1 }, { n: "Their belt against yours", v: t.prestige > m.prestige + 10 ? -1 : m.prestige > t.prestige + 10 ? 1 : 0 }].concat(L.skillMods(S, "talk")));
+      out.push({ g, mine: m, theirs: t, odds: Math.round(ck.p * 100), ck });
+    });
+    return out;
+  };
+  L.E.unify = function(S, g) {
+    var o = L.E.unifyOptions(S).filter(function(x) {
+      return x.g === g;
+    })[0];
+    if (!o) return { ok: false, text: "There is nothing to unify." };
+    var P = S.promos[S.player], RV = S.promos[S.agree.with], r = L.rollCheck(S, o.ck);
+    if (!r.ok) {
+      RV.rel = L.clamp((RV.rel || 0) - 6, -100, 100);
+      return { ok: false, text: L.rollText(r) + RV.name + " will not give up its belt." };
+    }
+    var m = o.mine, t = o.theirs;
+    var merged = (t.hist || []).map(function(h) {
+      var c = JSON.parse(JSON.stringify(h));
+      c.show = (c.show ? c.show + " \xB7 " : "") + RV.name;
+      return c;
+    }).concat(m.hist || []).sort(function(a, b) {
+      return a.from - b.from;
+    });
+    m.hist = merged.slice(-60);
+    m.prestige = L.clamp(Math.max(m.prestige, t.prestige) + 5, 10, 100);
+    m.uni = (m.uni || []).concat([RV.name]);
+    t.holders.forEach(function(id) {
+      if (S.w[id]) S.w[id].lt = { n: t.name, id: t.id, w: S.week };
+    });
+    RV.titles = RV.titles.filter(function(x) {
+      return x !== t;
+    });
+    RV.rel = L.clamp((RV.rel || 0) + 5, -100, 100);
+    L.news(S, "title", "The " + m.name + " and the " + RV.name + " " + t.name + " are unified. " + L.names(m.holders.map(function(id) {
+      return S.w[id];
+    })) + " is the champion of both.");
+    return { ok: true, text: L.rollText(r) + "The belts are unified. The " + m.name + " now carries both lines of champions, and its prestige is up. " + RV.name + " retires its title." };
+  };
+  L.E.classYears = function(S) {
+    return Object.keys(S.classes || {}).map(Number).sort(function(a, b) {
+      return b - a;
+    });
+  };
+  L.E.classReport = function(S, year) {
+    var ids = (S.classes || {})[year];
+    if (!ids) return null;
+    var P = S.promos[S.player], rows = ids.map(function(id) {
+      var w = S.w[id], n = L.E.intel(S, id), pr = n.stats.pot, st;
+      if (w.promo === "FA") st = w.rt ? "Retired" : "Still a free agent";
+      else if (w.promo === P.id) st = "Signed by you";
+      else st = "Signed by " + (S.promos[w.promo] ? S.promos[w.promo].name : "another company");
+      var champ = false;
+      S.order.forEach(function(pid) {
+        S.promos[pid].titles.forEach(function(t) {
+          if (t.holders.indexOf(id) >= 0) champ = true;
+        });
+      });
+      return { w, region: L.REGIONS[w.reg == null ? 0 : w.reg].n, potential: pr.lo === pr.hi ? String(pr.lo) : pr.lo + "\u2013" + pr.hi, now: Math.round(w.ovr), status: st, champ, sc: !!w.sc };
+    }).sort(function(a, b) {
+      return b.w.pot - a.w.pot;
+    });
+    var mine = rows.filter(function(r) {
+      return r.w.promo === P.id;
+    }).length, fa = rows.filter(function(r) {
+      return r.w.promo === "FA" && !r.w.rt;
+    }).length;
+    return {
+      year,
+      n: rows.length,
+      rows,
+      mine,
+      fa,
+      champs: rows.filter(function(r) {
+        return r.champ;
+      }).length,
+      best: rows[0] ? rows[0].w : null,
+      text: "The class of " + year + ": " + rows.length + " rookies, " + fa + " still free agents, " + mine + " with you, " + rows.filter(function(r) {
+        return r.champ;
+      }).length + " champions so far."
+    };
+  };
+  L.REGIONS = REGIONS;
+  L.TASTEN = TASTEN;
+  L.homeReg = homeReg;
+  L.tourCost = tourCost;
+  L.tourBoost = tourBoost;
+  L.tasteVal = tasteVal;
+  L.tasteFit = tasteFit;
+  L.tasteDraw = tasteDraw;
+  L.retireCompany = retireCompany;
+  L.topTitle = topTitle;
+
+  // engine/89-streaming.ts
+  L.streamOn = streamOn;
+  L.streamCap = streamCap;
+  L.streamOpenCost = streamOpenCost;
+  L.streamRunCost = streamRunCost;
+  var STRM_PRICE = 2;
+  var STRM_OPEN = 1.5;
+  var STRM_RUN = 0.01;
+  L.STRM_PRICE = STRM_PRICE;
+  L.STRM_OPEN = STRM_OPEN;
+  L.STRM_RUN = STRM_RUN;
+  function streamOn(S) {
+    var P = S.promos[S.player];
+    return !!(P && P.strm && P.strm.on);
+  }
+  function streamCap(S, P) {
+    var n = (P.tape || []).length;
+    return Math.round(P.inc0 * 0.06 * (0.5 + P.image / 120) * (1 + Math.min(1, n / 100)) / L.STRM_PRICE);
+  }
+  function streamOpenCost(P) {
+    return Math.round(P.inc0 * L.STRM_OPEN / 1e3) * 1e3;
+  }
+  function streamRunCost(P) {
+    return Math.round(P.inc0 * L.STRM_RUN / 100) * 100;
+  }
+  L.E.streamStart = function(S) {
+    var P = S.promos[S.player];
+    if (P.strm && P.strm.on) return { ok: false, msg: "Your service is already running." };
+    var c = L.streamOpenCost(P);
+    if (P.cash < c) return { ok: false, msg: "Opening a service costs " + L.money(c) + ". You do not have it." };
+    P.cash -= c;
+    P.strm = { on: S.week, subs: 0, mx: 0 };
+    L.news(S, "money", P.name + " has opened its own streaming service.");
+    L.note(S, "Streaming", "Your service is open. Subscribers will come as the library grows.", "good");
+    return { ok: true, msg: "The service is open. It cost " + L.money(c) + ", and runs at about " + L.money(L.streamRunCost(P)) + " a week." };
+  };
+  L.E.streamStop = function(S) {
+    var P = S.promos[S.player];
+    if (!P.strm || !P.strm.on) return { ok: false, msg: "There is no service to close." };
+    var n = P.strm.subs;
+    P.strm.on = 0;
+    P.strm.subs = 0;
+    L.news(S, "money", P.name + " has closed its streaming service.");
+    return { ok: true, msg: "The service is closed. " + n.toLocaleString("en-US") + " subscribers have gone." };
+  };
+  L.WEEKX.push(function(S) {
+    if (S.cal) return;
+    var P = S.promos[S.player];
+    if (!P || !P.strm || !P.strm.on) return;
+    var st = P.strm, cap = L.streamCap(S, P), r = S.reports[0];
+    var q = r && r.week >= S.week - 1 ? (L.repCS(r) - 55) / 100 : 0;
+    var was = st.subs;
+    st.subs = Math.max(0, Math.round(st.subs + (cap - st.subs) * 0.06 + cap * 0.02 * q));
+    st.mx = Math.max(st.mx || 0, st.subs);
+    st.wk = st.subs - was;
+    st.pay = st.subs * L.STRM_PRICE - L.streamRunCost(P);
+    P.led.bonus += st.pay;
+  });
+  (function() {
+    var was = L.airRate;
+    L.airRate = function(P, show) {
+      var r = was(P, show), sh = show && !show.big ? L.airRec(P, show.id) : null;
+      return r * (sh && sh.tier === 2 && P.strm && P.strm.on ? 0.95 : 1);
+    };
+  })();
+  L.E.streamInfo = function(S) {
+    var P = S.promos[S.player], st = P.strm || {}, on = !!st.on, maj = P.shows.filter(function(sh) {
+      return !sh.big && sh.tier === 2;
+    }).map(function(sh) {
+      return sh.name;
+    });
+    return {
+      on,
+      since: on ? L.cal(st.on).label : null,
+      subs: st.subs || 0,
+      wk: st.wk || 0,
+      cap: L.streamCap(S, P),
+      pay: on ? st.pay || 0 : 0,
+      open: L.streamOpenCost(P),
+      run: L.streamRunCost(P),
+      price: L.STRM_PRICE,
+      lib: (P.tape || []).length,
+      major: maj
+    };
+  };
+  L.STRM_PRICE = STRM_PRICE;
+  L.STRM_OPEN = STRM_OPEN;
+  L.STRM_RUN = STRM_RUN;
+  L.streamOn = streamOn;
+  L.streamCap = streamCap;
+  L.streamOpenCost = streamOpenCost;
+  L.streamRunCost = streamRunCost;
+
+  // engine/90-api.ts
+  L.E.ask = function(S, w) {
+    var P = S.promos[S.player], MD = L.modelOf(P), m = (w.promo === "FA" ? 1 : 1.3) * L.talkDiscount(S);
+    if (w.promo !== "FA" && S.promos[w.promo].image > P.image + 10) m += 0.25;
+    if (S.pw10 && S.pw10.indexOf(w.id) >= 0) m += 0.1;
+    if (MD.premium && w.ovr > P.image + 8) m *= MD.premium;
+    if (MD.chip && w.cut && S.week - w.cut.w < 52 && w.promo === "FA") m *= 0.85;
+    return Math.round(L.wageFor(w.ovr, P) * m / 50) * 50;
+  };
+  L.E.canSign = function(S, w) {
+    var P = S.promos[S.player], MD = L.modelOf(P);
+    return !(MD.gender && w.g !== MD.gender) && w.ovr <= P.image + (MD.reach || 25);
+  };
+  L.E.signWhy = function(S, w) {
+    var P = S.promos[S.player], MD = L.modelOf(P);
+    return MD.gender && w.g !== MD.gender ? P.name + " is an all-women company." : L.E.canSign(S, w) ? null : w.name + " is not interested in a promotion your size yet. Raise your popularity first.";
+  };
+  L.E.market = function(S) {
+    return S.w.filter(function(w) {
+      return !w.rt && (w.promo === "FA" || w.promo !== S.player && w.con <= 12);
+    });
+  };
+  L.E.sign = function(S, id, wage, weeks) {
+    var w = S.w[id], P = S.promos[S.player];
+    if (!w || w.promo === P.id) return { ok: false, msg: "Not available." };
+    if (w.rt) return { ok: false, msg: w.name + " has retired." };
+    if (w.lock > S.week) return { ok: false, msg: w.name + " will not talk again until " + L.cal(w.lock).label + "." };
+    if (w.promo !== "FA" && w.con > 12) return { ok: false, msg: w.name + " is under contract." };
+    if (!L.E.canSign(S, w)) return { ok: false, msg: L.E.signWhy(S, w) };
+    if (L.wagesWeek(S, P) + wage > L.E.budget(S)) return { ok: false, msg: S.owner.name + " will not sign off on that. It would take the wage bill past the " + L.money(L.E.budget(S)) + " a week budget." };
+    var ask = L.E.ask(S, w);
+    if (wage < ask * 0.97) {
+      if (!w.ctr) {
+        w.ctr = true;
+        var ca = Math.round(ask * 1.08 / 50) * 50;
+        var half = Math.round((wage + ca) / 2 / 50) * 50;
+        L.pushEv(S, { type: "counter", w: w.id, ask: ca, offer: wage, half, weeks: weeks || 48, text: w.name + "\u2019s side did not like your offer of " + L.money(wage) + ", but they have come back with a number: " + L.money(ca) + " a week.", choices: ["Accept at " + L.money(ca) + " a week", "Meet them halfway: " + L.money(half) + " a week", "Walk away"], checks: { 1: L.mkCheck(7, [{ n: w.promo === "FA" ? "They need the work" : "They have a job already", v: w.promo === "FA" ? 1 : -1 }, { n: "They are unhappy where they are", v: w.promo !== "FA" && w.morale < 45 ? 1 : 0 }].concat(L.skillMods(S, "talk"))) } });
+        return { ok: false, msg: w.name + " turned that down and sent a counter-offer. It is in your inbox." };
+      }
+      w.lock = S.week + 4;
+      return { ok: false, msg: "Talks broke down. " + w.name + " wanted about " + L.money(ask) + " a week." };
+    }
+    var from = w.promo;
+    if (from !== "FA") {
+      S.promos[from].rel = L.clamp((S.promos[from].rel || 0) - 12, -100, 100);
+      L.leaveCompany(S, w, "left for " + P.name);
+    }
+    L.joinCompany(S, w, P, wage, weeks || 48);
+    L.news(S, "contract", P.name + " signed " + w.name + (from !== "FA" ? " away from " + S.promos[from].name : "") + ".");
+    L.award(S, from === "FA" ? "ACH_SIGN" : "ACH_POACH");
+    if (w.cr) L.award(S, "ACH_CREATE");
+    return { ok: true, msg: w.name + " signs for " + L.money(wage) + " a week." };
+  };
+  L.E.release = function(S, id) {
+    var w = S.w[id], P = S.promos[S.player];
+    if (!w || w.promo !== P.id) return null;
+    var pay = w.wage * 4;
+    P.cash -= pay;
+    if (S.owner.pledge === "stable") {
+      L.rosterOf(S, P.id).forEach(function(x) {
+        x.morale = L.clamp(x.morale - 3, 0, 100);
+      });
+      S.trust = L.clamp(S.trust - 4, 0, 100);
+    }
+    L.leaveCompany(S, w, "released");
+    w.promo = "FA";
+    w.brand = null;
+    L.news(S, "contract", P.name + " released " + w.name + ".");
+    return w.name + " is released. Severance: " + L.money(pay) + ".";
+  };
+  L.E.renewAsk = function(S, id, weeks) {
+    var w = S.w[id];
+    if (!w || w.promo !== S.player) return 0;
+    return Math.round(L.renewAsk(S, w) * (weeks > 60 ? 1.1 : 1) / 50) * 50;
+  };
+  L.E.renew = function(S, id, weeks) {
+    var w = S.w[id];
+    if (!w || w.promo !== S.player) return null;
+    var ask = Math.round(L.renewAsk(S, w) * (weeks > 60 ? 1.1 : 1) / 50) * 50;
+    w.wage = ask;
+    w.con = weeks;
+    w.cn = false;
+    w.morale = L.clamp(w.morale + 3, 0, 100);
+    return w.name + " re-signs for " + L.money(ask) + " a week.";
+  };
+  L.E.setBrand = function(S, id, b) {
+    var w = S.w[id];
+    if (w && w.promo === S.player) {
+      w.brand = b;
+      var tm = L.teamOf(S, w);
+      if (tm && S.w[tm.m[0]].brand !== S.w[tm.m[1]].brand) L.dissolveTeam(S, tm);
+    }
+  };
+  L.E.pushMap = function(S, pid) {
+    var out = {}, P = S.promos[pid], groups = {};
+    L.rosterOf(S, pid).forEach(function(w) {
+      var k = (w.brand || "") + w.g;
+      (groups[k] = groups[k] || []).push(w);
+    });
+    Object.keys(groups).forEach(function(k) {
+      var L2 = groups[k].sort(function(a, b) {
+        return b.ovr - a.ovr;
+      }), n = L2.length;
+      L2.forEach(function(w, i) {
+        var f = i / n;
+        out[w.id] = f < 0.1 ? "Main event" : f < 0.3 ? "Upper midcard" : f < 0.6 ? "Midcard" : f < 0.85 ? "Lower midcard" : "Opener";
+      });
+    });
+    return out;
+  };
+  L.E.runPlayerShow = function(S, card) {
+    return L.livePlay(S, card);
+  };
+  L.E.suggest = function(S) {
+    var P = S.promos[S.player], show = S.queue[S.qi];
+    return show ? L.autoBook(S, P, show) : [];
+  };
+  L.E.validate = function(S, card) {
+    var P = S.promos[S.player], show = S.queue[S.qi];
+    if (!show) return { errors: [], warnings: [] };
+    var v = L.validate(S, P, show, card), c = L.cardCost(S, card);
+    if (c > S.bp) {
+      if (S.owner.me) v.warnings.push("You are " + (c - S.bp) + " booking power over. As the owner you can overrule, but each extra point costs locker-room trust.");
+      else v.errors.push("These calls need " + c + " booking power and you have " + S.bp + ". Let some matches play out.");
+    }
+    return v;
+  };
+  L.E.eligible = function(S) {
+    var P = S.promos[S.player], show = S.queue[S.qi];
+    return show ? L.eligible(S, P, show) : [];
+  };
+  L.E.showTitles = function(S) {
+    var P = S.promos[S.player], show = S.queue[S.qi];
+    return show ? show.big ? P.titles : L.showTitles(P, show) : [];
+  };
+  L.E.nextBig = function(S) {
+    var w = L.nextBigFrom(S.week, S), c = L.cal(w);
+    return { week: w, name: L.evName(S, S.promos[S.player], c.month) || "the next big show", label: c.label };
+  };
+  L.E.expected = function(S, show) {
+    return L.r1(L.expected(S.promos[S.player], show) - (L.firstNight(S) ? L.FIRST_NIGHT : 0));
+  };
+  L.E.cal = L.cal;
+  L.E.workRate = L.workRate;
+  L.E.rosterOf = L.rosterOf;
+  L.E.teamOf = L.teamOf;
+  L.E.partnerOf = L.partnerOf;
+  L.E.feudOf = L.feudOf;
+  L.E.feudsFor = L.feudsFor;
+  L.E.activeFeuds = L.activeFeuds;
+  L.E.feudLabel = L.feudLabel;
+  L.E.feudStage = L.feudStage;
+  L.E.holdLvl = L.holdLvl;
+  L.E.isDev = L.isDev;
+  L.E.wageFor = L.wageFor;
+  L.E.money = L.money;
+  L.E.autoBook = L.autoBook;
+  L.E.runShow = L.runShow;
+  L.E.weekShows = L.weekShows;
+  L.E.feudAct = function(f, S) {
+    return L.feudAct(f, S);
+  };
+  L.E.ACTN = L.ACTN;
+  L.E.RISKN = L.RISKN;
+  L.E.TIXN = L.TIXN;
+  L.E.ADVN = L.ADVN;
+  L.E.SLOTN = L.SLOTN;
+  L.E.PRODN = L.PRODN;
+  L.E.SLOT_MAX = L.SLOT_MAX;
+  L.E.MT = L.MT;
+  L.E.STIP = L.STIP;
+  L.E.ACH = L.ACH;
+  L.E.STYLE_NAME = L.STYLE_NAME;
+  L.E.MONTHS = L.MONTHS;
+
+  // engine/90-cancel.ts
+  L.showOff = showOff;
+  var CANCEL_WARN = 3;
+  var HOUSE_DRAW = 0.75;
+  var BACK_RUN = 6;
+  var BACK_CS = 65;
+  L.CANCEL_WARN = CANCEL_WARN;
+  L.HOUSE_DRAW = HOUSE_DRAW;
+  L.BACK_RUN = BACK_RUN;
+  L.BACK_CS = BACK_CS;
+  function showOff(P, show) {
+    var sh = show && !show.big ? L.airRec(P, show.id) : null;
+    return !!(sh && sh.off);
+  }
+  (function() {
+    var rate = L.airRate;
+    L.airRate = function(P, show) {
+      return L.showOff(P, show) ? 0 : rate(P, show);
+    };
+    var dem = L.demand;
+    L.demand = function(P, show, hype) {
+      return dem(P, show, hype) * (L.showOff(P, show) ? L.HOUSE_DRAW : 1);
+    };
+    var meet = L.EVR.netmeet;
+    L.EVR.netmeet = function(S, ev, choice, P) {
+      var out = meet(S, ev, choice, P);
+      P.nmw = (P.nmw || []).filter(function(w) {
+        return S.week - w < 48;
+      });
+      P.nmw.push(S.week);
+      var left = L.CANCEL_WARN - P.nmw.length;
+      if (left > 0) return out + " The network says this is warning " + P.nmw.length + " of " + L.CANCEL_WARN + ".";
+      var live = P.shows.filter(function(sh) {
+        return !sh.off;
+      }).sort(function(a, b) {
+        return (a.pr || 0) - (b.pr || 0);
+      })[0];
+      P.nmw = [];
+      if (!live) return out;
+      live.off = S.week;
+      live.offRun = 0;
+      L.rosterOf(S, P.id).filter(function(w) {
+        return !w.nw;
+      }).sort(function(a, b) {
+        return b.ovr - a.ovr;
+      }).slice(0, 4).forEach(function(w) {
+        L.youRemember(S, w, "cancel", "Lost the television show under this booker.", -3);
+      });
+      L.news(S, "money", live.name + " has been cancelled. It runs on as a house show, with no television money.");
+      L.note(S, "Cancelled", live.name + " is off television. Six strong house shows in a row could win a deal back.", "bad");
+      return out + " It was the third warning. " + live.name + " is cancelled. It will run on as a house show: no television money, and a smaller crowd.";
+    };
+  })();
+  L.SHOWX.push(function(S, P, show, rep) {
+    if (S.cal || P.id !== S.player || !L.showOff(P, show)) return;
+    var sh = L.airRec(P, show.id);
+    rep.hs = 1;
+    sh.offRun = L.repCS(rep) >= L.BACK_CS ? (sh.offRun || 0) + 1 : 0;
+    if (sh.offRun >= L.BACK_RUN && !S.inbox.some(function(e) {
+      return !e.done && e.type === "netback";
+    })) {
+      sh.offRun = 0;
+      var net = L.airPickNet(S, P, sh, 0, null);
+      L.pushEv(S, { type: "netback", sid: sh.id, net, text: net + " has seen the crowds at " + sh.name + ". Six strong house shows in a row. They offer it a slot on television again: a small network, a small fee, a fresh start.", choices: ["Take the deal", "Not yet"] });
+    }
+  });
+  L.EVR.netback = function(S, ev, choice, P) {
+    var sh = L.airRec(P, ev.sid);
+    if (!sh || !sh.off) return "That show is already on television.";
+    if (choice === 1) return "You say not yet. They will be watching.";
+    delete sh.off;
+    delete sh.offRun;
+    sh.tier = 0;
+    L.airSign(S, P, sh, ev.net, 0, 0.8);
+    L.E.clocks(S);
+    S.clocks.net.v = 0;
+    S.clocks.net.why = "A new network, and a clean slate";
+    L.rosterOf(S, P.id).filter(function(w) {
+      return !w.nw;
+    }).sort(function(a, b) {
+      return b.ovr - a.ovr;
+    }).slice(0, 4).forEach(function(w) {
+      L.youRemember(S, w, "tvback", "Got the show back on television.", 3);
+    });
+    L.note(S, "Back on television", sh.name + " is back on the air, on " + ev.net + ".", "good");
+    return sh.name + " is back on television, on " + ev.net + ". Small money, a clean slate, and a crowd that never left.";
+  };
+  L.E.cancelInfo = function(S) {
+    var P = S.promos[S.player];
+    return { warn: (P.nmw || []).filter(function(w) {
+      return S.week - w < 48;
+    }).length, of: L.CANCEL_WARN, off: P.shows.filter(function(sh) {
+      return sh.off;
+    }).map(function(sh) {
+      return { id: sh.id, n: sh.name, run: sh.offRun || 0, need: L.BACK_RUN };
+    }) };
+  };
+  L.CANCEL_WARN = CANCEL_WARN;
+  L.HOUSE_DRAW = HOUSE_DRAW;
+  L.BACK_RUN = BACK_RUN;
+  L.BACK_CS = BACK_CS;
+  L.showOff = showOff;
+
+  // engine/91-maps.ts
+  var MAP_W = 59;
+  var MAP_H = 32;
+  var MAP_ABC = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!#$%&()*+,/:;<=>?@[]^_{|}~";
+  L.MAP_W = MAP_W;
+  L.MAP_H = MAP_H;
+  L.MAP_ABC = MAP_ABC;
+  var MAPS = [
+    {
+      id: "usa",
+      n: "The United States",
+      f: [-126.023, 1.0279, 49.9, 0.8094],
+      a: ["Washington", "Idaho", "Montana", "North Dakota", "Minnesota", "Michigan", "Maine", "Wisconsin", "Oregon", "South Dakota", "Wyoming", "New York", "Vermont", "New Hampshire", "Iowa", "Nebraska", "Illinois", "Massachusetts", "California", "Nevada", "Utah", "Indiana", "Ohio", "Pennsylvania", "Connecticut", "Colorado", "New Jersey", "Kansas", "Missouri", "Kentucky", "Maryland", "Delaware", "Arizona", "New Mexico", "Oklahoma", "Tennessee", "North Carolina", "Texas", "Arkansas", "Mississippi", "Alabama", "Georgia", "South Carolina", "Louisiana", "Florida"],
+      g: [
+        "                                                           ",
+        "   0000001222222222223333333444                            ",
+        " 0000000012222222222233333334444444                        ",
+        "  00000001122222222223333333444444  5                  66  ",
+        "  000000011222222222233333333444477555555             666  ",
+        "  888888811122222222299999999444777775  5             666  ",
+        "  8888888111122aaaaaa9999999944447777  555       bbccd666  ",
+        "  8888888111111aaaaaa9999999944444777 5555      bbbcdd6    ",
+        " 88888888111111aaaaaa99999999eeeee777  555    bbbbbcdd     ",
+        "  8888888111111aaaaaaffffffffeeeeeegg 5555   bbbbbbhhh     ",
+        "  iiiijjjjjjkkkaaaaaaffffffffeeeeeggglllmmmmnnnnnnboo      ",
+        "  iiiijjjjjjkkkkkppppppfffffffeeeeggglllmmmmnnnnnnq        ",
+        "  iiiijjjjjjkkkkkpppppprrrrrrrssssggglllmmmmnnnnnqq        ",
+        "  iiiijjjjjjkkkkkpppppprrrrrrrrssssggllltmm    uuv         ",
+        "   iiiijjjjjkkkkkpppppprrrrrrrrssssggllttt      u          ",
+        "   iiiiijjjjkkkkkpppppprrrrrrrrsssssgtttttt                ",
+        "    iiiiijjjwwwwwxxxxxyyyyyyyyyssssstzzzzzzAA  AA          ",
+        "     iiiiijwwwwwwxxxxxBBByyyyyyCCCCzzzzzzzAAAAAAA          ",
+        "     iiiiiiwwwwwwxxxxxBBByyyyyyCCCCDDEEFFFGGAAAA           ",
+        "       iiiiwwwwwwxxxxxBBBBByyyyCCCDDDEEFFFGGGGA            ",
+        "        iiiwwwwwwxxxxxBBBBBBBBBCCCDDDEEEFFFGGG             ",
+        "           wwwwwwxxxxxBBBBBBBBBHHHDDDEEEFFFFG              ",
+        "             wwwwx BBBBBBBBBBBBHHHDDDEEEFFFF               ",
+        "                    BBBBBBBBBBBBHHHDDEIIFFF                ",
+        "                     BBBBBBBBBBHHHHH   IIIII               ",
+        "                     BB BBBBBB    H       II               ",
+        "                         BBBB             II               ",
+        "                         BBB              III              ",
+        "                          BB              III              ",
+        "                           B               II              ",
+        "                                                           ",
+        "                                                           "
+      ]
+    },
+    {
+      id: "brit",
+      n: "Britain and Ireland",
+      f: [-20.114, 0.5395, 59.6, 0.3125],
+      a: ["Scotland", "the North of England", "Ireland", "Northern Ireland", "Wales", "the Midlands", "the West Country", "the South East"],
+      g: [
+        "                                               ------------",
+        "                                                --------- -",
+        "                                                -------   -",
+        "                            0000                ------    -",
+        "                        00 0000                  ----     -",
+        "                           000                             ",
+        "                         0 0000000                      -  ",
+        "                         000000000                     --  ",
+        "                          0000000                    ---   ",
+        "                          0000000                    ----  ",
+        "                           00000                    -----  ",
+        "                           000000                   -----  ",
+        "                           0000001                  ----  -",
+        "                            000001                   ---- -",
+        "                      2233  0000111                  ----  ",
+        "                     223333 0  0111                  ---  -",
+        "                      33333    11111                  --   ",
+        "                   2222223     111111                 ---- ",
+        "                   2222222      11111                ------",
+        "                   2222222     111111            ----------",
+        "                    222222   444555555         ------------",
+        "                    222222   44455555555      -------------",
+        "                   2222222    44555555555     -------------",
+        "                  2222222    44455555555     --------------",
+        "                  22222     444466777777     --------------",
+        "                   22         446677777     ---------------",
+        "                                66777777   ----------------",
+        "                             6666677777  ------------------",
+        "                            6666667     -------------------",
+        "                            666         -------------------",
+        "                           6            -------------------",
+        "                                      ---------------------"
+      ]
+    },
+    {
+      id: "eur",
+      n: "Europe",
+      f: [-24.564, 1.2734, 62, 0.8438],
+      a: ["Norway", "Sweden", "Finland", "Russia", "Estonia", "Britain", "Denmark", "Latvia", "Lithuania", "Belarus", "Germany", "Poland", "Ireland", "Netherlands", "Ukraine", "France", "Belgium", "Bohemia", "Slovakia", "Austria", "Hungary", "Moldova", "Switzerland", "Romania", "Italy", "Slovenia", "Croatia", "Serbia", "Bosnia", "Bulgaria", "Spain", "Montenegro", "Kosovo", "Albania", "North Macedonia", "Portugal", "Greece", "Turkey"],
+      g: [
+        "                       0000001111   22222223333333333333333",
+        "                       0000001111   22222333333333333333333",
+        "                       00000011111   2    33333333333333333",
+        "                        000 11111     444333333333333333333",
+        "               55       00  11111     444333333333333333333",
+        "               555         6 111    7 777333333333333333333",
+        "               55         66 111    77777333333333333333333",
+        "               555        6 61      88889993333333333333333",
+        "             55 55        a      b 338889999333333333333333",
+        "           ccc5  55       aaaabbbbbbbb899999333333333333333",
+        "            ccc 5555   ddaaaaaabbbbbbb999999333333333333333",
+        "            cc  55555  ddaaaaaabbbbbbb9999993e3333333333333",
+        "                5555  ddaaaaaaabbbbbbbeeeeeeee3333333333333",
+        "                5    fggaaaaaahhbbbbbbeeeeeeeee33333333333-",
+        "                    fffgaaaaahhhhhbbbeeeeeeeeeeeee333333---",
+        "                  fffffffaaaaahhhiiiieeeeeeeeeeeeee33333---",
+        "                fffffffffaaaajjjjikkkeeelleeeeeeee333333---",
+        "                 ffffffffmmjjjjjkkkknnnnnleeeeeee333333333-",
+        "                  ffffffmmmoooppkkkknnnnnleeeee  333333333 ",
+        "                  fffffffooooopqqqrrnnnnnne  33  33333333  ",
+        "                  fffffffoooo  qssrrnnnnnn    3  3333333   ",
+        "                  ffffffff ooo qssrrrtnntn        3333333  ",
+        "            uuuuuuffff      oo   svwrtttt          --3333  ",
+        "            uuuuuuuuuu    f ooo   xwytttt           ---33  ",
+        "            zzuuuuuuu        ooo   yyAAABB  BBBBB  BB---3- ",
+        "            zzuuuuuu      o    oo  xAA  BBBBBBBBBBBBBB---- ",
+        "            zzuuuuu       o     o  AA   BBBBBBBBBBBBBB---- ",
+        "            zzuuuuu             o  AAA  BBBBBBBBBBBBBB---- ",
+        "            zzuuuuu          ooo    AA  BBBBBBBBBBBBBB---- ",
+        "            zzuuuu        -   o     AA   BBBBBBBBBBB-------",
+        "              u     --------              B  B B-----------",
+        "              --  ----------                   ------------"
+      ]
+    },
+    {
+      id: "med",
+      n: "The Mediterranean and the Near East",
+      f: [4.088, 0.8445, 46.5, 0.6875],
+      a: ["Gaul", "Italy", "Illyria", "Pannonia", "Dacia", "Scythia", "Thrace", "the Caucasus", "Macedon", "Anatolia", "Greece", "Persia", "Carthage", "Mesopotamia", "Numidia", "the Levant", "Cyprus", "Libya", "Arabia", "Egypt"],
+      g: [
+        "0000001111122223333344444444455  5555   5555555555555     5",
+        "0000111111 2222222224444444445    555  5555555555555     55",
+        "0001111111  222222222444444444     55  555555555555    5555",
+        "00001 1111   2222222224444444            5555555555    5555",
+        "000    1111   222222226666666             575555555     555",
+        "        1111    222222666666                77755555     55",
+        "     0   1111     2288666669                777777555    5 ",
+        "          11111   2888aaa6a99   999999      997777757      ",
+        "     11     1111  22aaaa  9   999999999999999997777777    b",
+        "     11      11   2aaa    9999999999999999999999777777    b",
+        "     11       1    aaa    a99999999999999999999bb77b7     b",
+        "              1     aaa    999999999999999999999bbbb7      ",
+        "          1111      aaaa   999999999999999999999bbbbb      ",
+        "      c    11        aa    9999999999999999999ddbbbbbbb    ",
+        "eeeeeccc                    999  999  9fffffddddbbbbbbbbbbb",
+        "eeeeeccc                              ffffffdddddbbbbbbbbbb",
+        "eeeeeccc                a         g   ffffffddddddbbbbbbbbb",
+        "eeeeeccc                             fffffffdddddbbbbbbbbbb",
+        "eeeecccc                             fffffdddddddbbbbbbbbbb",
+        "eeeeecccc                            ffffdddddddddbbbbbbbbb",
+        "eeeeecccchhhh      hhhh             fffffddddddddddbbbbbbbb",
+        "eeeeeechhhhhhh     hhhhhh           ffffiiiiddddddddbbbbbbb",
+        "eeeeeechhhhhhhhh   hhhhhhjjjj jjjjjjffffiiiiidddddddbbbbbbb",
+        "eeeeeeehhhhhhhhhhhhhhhhhhjjjjjjjjjjjffffiiiiiiddddddbbbbbbb",
+        "eeeeeeehhhhhhhhhhhhhhhhhhjjjjjjjjjjjffiiiiiiiiiddddi   bbbb",
+        "eeeeeeehhhhhhhhhhhhhhhhhhjjjjjjjjjjjiiiiiiiiiiiiiiii   bbbb",
+        "eeeeeeehhhhhhhhhhhhhhhhhhjjjjjjjjjjjiiiiiiiiiiiiiiiii   bbb",
+        "eeeeeeehhhhhhhhhhhhhhhhhhjjjjjjjjjj  iiiiiiiiiiiiiiii    bb",
+        "eeeeeeehhhhhhhhhhhhhhhhhhjjjjjjjjjj   iiiiiiiiiiiiiiii    b",
+        "eeeeeehhhhhhhhhhhhhhhhhhhjjjjjjjjjjj  iiiiiiiiiiiiiiiii    ",
+        "eeeeeeehhhhhhhhhhhhhhhhhhjjjjjjjjjjj   iiiiiiiiiiiiiiii-   ",
+        "eeeeeeehhhhhhhhhhhhhhhhhhjjjjjjjjjjjj  iiiiiiiiiiiiiiii-   "
+      ]
+    },
+    {
+      id: "mex",
+      n: "Mexico and Central America",
+      f: [-120.507, 0.8646, 33, 0.8125],
+      a: ["Baja California", "Sonora", "Chihuahua", "Coahuila", "Baja California Sur", "Sinaloa", "Durango", "Nuevo Le\xF3n", "Tamaulipas", "Zacatecas", "San Luis Potos\xED", "Nayarit", "Cuba", "Aguascalientes", "Veracruz", "Jalisco", "Guanajuato", "Quer\xE9taro", "Yucat\xE1n", "Hidalgo", "Quintana Roo", "Colima", "Michoac\xE1n", "the Valley of Mexico", "Tlaxcala", "Campeche", "Hispaniola", "Morelos", "Puebla", "Guerrero", "Oaxaca", "Tabasco", "Jamaica", "Chiapas", "Guatemala", "Belize", "Honduras", "Nicaragua", "El Salvador", "Costa Rica", "Panama"],
+      g: [
+        "    -00----------------------------------------            ",
+        "    000001------------------------------------             ",
+        "     00 0111111222---------------------------              ",
+        "     00  111112222------------------    -----              ",
+        "      00 1111122222-333-------    --       ---             ",
+        "       00 1111222223333------               --             ",
+        "       04  1122222233333---                 --             ",
+        "       444  4552226333377--                 ---            ",
+        "         44  5555666337777-                  --            ",
+        "          4   5556666777788                                ",
+        "          44   556669977888                                ",
+        "            4   666999aa88                                 ",
+        "                 bb999aaa8                ccccc            ",
+        "                 bbdddaaae                c   cccc         ",
+        "                  bfdgghhee        iiii         cccc       ",
+        "                 ffffgghjje        iikk           ccc      ",
+        "                  llmmmnnooe      ppkk                 qqqq",
+        "                   lmmmnrrsee     ppkk                 qqqq",
+        "                     mtttrsueeevvvppp            ww     q  ",
+        "                       tttuuueexxxyyz                      ",
+        "                         tuuuuxxxxxyz                      ",
+        "                               xxyyyyAAAAA                 ",
+        "                                xyyyAAAAAAB                ",
+        "                                  yCCAAABBB                ",
+        "                                      ABBBB                ",
+        "                                       BBBB             -  ",
+        "                                        BBB            -  -",
+        "                                        DDD         -------",
+        "                                         DDD        ---- --",
+        "                                          DEE EEE  --------",
+        "                                            EEE  E---------",
+        "                                                 E---------"
+      ]
+    },
+    {
+      id: "sam",
+      n: "South America",
+      f: [-129.122, 2.3431, 14, 2.1875],
+      a: ["Colombia", "Venezuela", "Guyana", "Suriname", "Brazil", "Ecuador", "Peru", "Bolivia", "Chile", "Paraguay", "Argentina", "Uruguay"],
+      g: [
+        "                 --                             -----------",
+        "                   -   011                       ----------",
+        "                   ---00111112                   ----------",
+        "                      000111122                   ------ --",
+        "                      0000111233-                         -",
+        "                      000011442444                         ",
+        "                     55004444444444                        ",
+        "                     566644444444444                       ",
+        "                    6666444444444444444                    ",
+        "                     6664444444444444444                   ",
+        "                     6664444444444444444                   ",
+        "                      66647444444444444                    ",
+        "                      66667774444444444                    ",
+        "                       666777444444444                     ",
+        "                         7777744444444                     ",
+        "                         8777944444444                     ",
+        "                         8779994444444                     ",
+        "                         8aaaa99444                        ",
+        "                         8aaaa9944                         ",
+        "                         aaaaaa444                         ",
+        "                         aaaaab444                         ",
+        "                        8aaaaabbb                          ",
+        "                        8aaaaaa                            ",
+        "                        8aaaaaa                            ",
+        "                        8aaaa                              ",
+        "                        aaaa                               ",
+        "                        8aa                                ",
+        "                       8aaa                                ",
+        "                       8aaa                                ",
+        "                       8aa                                 ",
+        "                        8a                                 ",
+        "                          a                                "
+      ]
+    },
+    {
+      id: "jap",
+      n: "Japan",
+      f: [118.282, 0.6345, 46, 0.5],
+      a: ["Hokkaido", "Tohoku", "Chubu", "Kanto", "Chugoku", "Kansai", "Kyushu", "Shikoku"],
+      g: [
+        "------------------------------                             ",
+        "-----------------------------        0                     ",
+        "-----------------------------        00                    ",
+        "----------------------------         000                   ",
+        "---------------------------         0000000                ",
+        "--------------------------         00000000                ",
+        "--------------------   -          000000                   ",
+        "-------------------               1   00                   ",
+        "------------------                1                        ",
+        "------------------                 1                       ",
+        "----- ------------                111                      ",
+        "---   ----------                  111                      ",
+        "--   ---  -----                   111                      ",
+        "-    -     ----                   111                      ",
+        "           -----                  111                      ",
+        "          ------                 111                       ",
+        "-  --       -----               2111                       ",
+        "-------      -----           2 22211                       ",
+        "-----        -----           2223331                       ",
+        "----         -----          2222333                        ",
+        "---          -----          2222233                        ",
+        "--           ----     44455552222 3                        ",
+        "--           --      44445555 2                            ",
+        "---                 44 44  55                              ",
+        "----               6  7777 5                               ",
+        "----              666 77                                   ",
+        "----               666                                     ",
+        "-----              66                                      ",
+        "------             66                                      ",
+        "-----              6                                       ",
+        "-----                                                      ",
+        "-----                                                      "
+      ]
+    },
+    {
+      id: "world",
+      n: "The world",
+      f: [-168, 6.1017, 78, 4.25],
+      a: ["North America", "Asia", "Europe", "Africa", "South America", "Oceania"],
+      g: [
+        "             0   0000000                  1111             ",
+        "       000000000  000000               1111111111 111      ",
+        "00000000000000100111111111112222  22                     11",
+        "0000000000000  00  00        2222222211111111111111111111  ",
+        " 00 00000000   00           22222222211111111111111 1 1    ",
+        "      00000000 000        2  222222221111111111111   1     ",
+        "       000000000000        222222222111111111111111        ",
+        "       0000000000          222222222111111111111111        ",
+        "       000000000          22  22 1121111111111111          ",
+        "       00000000           22    111111111111111   1        ",
+        "        0000000           3333   11111111111111  1         ",
+        "         000              3333333111111111111111           ",
+        "         000             33333333111 1111111111            ",
+        "          00             333333333111  111 111             ",
+        "           00            33333333311    1  11              ",
+        "             0           33333333333    1   1              ",
+        "               444       33333333333    1                  ",
+        "               4444          333333        1  1            ",
+        "              444444         333333         1111           ",
+        "              4444444        33333                1        ",
+        "              44444444        3333                1        ",
+        "               444444         3333               5         ",
+        "                44444        33333 3           55555       ",
+        "                44444         333             555555       ",
+        "                4444          333             5555555      ",
+        "                444           333             5555555      ",
+        "                444                               55       ",
+        "               444                                 5       ",
+        "               44                                      5   ",
+        "               44                                          ",
+        "               4                                           ",
+        "                                                           "
+      ]
+    }
+  ];
+  L.MAPS = MAPS;
+  L.MAP_W = MAP_W;
+  L.MAP_H = MAP_H;
+  L.MAP_ABC = MAP_ABC;
+  L.MAPS = MAPS;
+
+  // engine/91-road.ts
+  L.cityBuildings = cityBuildings;
+  L.venueName = venueName;
+  L.cityOfVenue = cityOfVenue;
+  L.placeOf = placeOf;
+  L.mapById = mapById;
+  L.mapXY = mapXY;
+  L.mapHas = mapHas;
+  L.mapArea = mapArea;
+  L.homeKm = homeKm;
+  L.homeNear = homeNear;
+  L.homeWeight = homeWeight;
+  L.homeHype = homeHype;
+  L.homeHypeAt = homeHypeAt;
+  L.geoDist = geoDist;
+  L.roadRoute = roadRoute;
+  L.roadCity = roadCity;
+  L.soldOutLast = soldOutLast;
+  L.roadCap = roadCap;
+  L.mktBase = mktBase;
+  L.mktKnow = mktKnow;
+  L.coldNight = coldNight;
+  L.weatherMult = weatherMult;
+  L.mktMult = mktMult;
+  L.mktWord = mktWord;
+  L.roadMktNow = roadMktNow;
+  L.saleSpan = saleSpan;
+  L.saleFrac = saleFrac;
+  L.stopDraw = stopDraw;
+  L.stopSales = stopSales;
+  L.roadSoldNow = roadSoldNow;
+  L.roadAhead = roadAhead;
+  L.roadMap = roadMap;
+  L.roadShape = roadShape;
+  L.roadNearest = roadNearest;
+  var CITY_AT = {
+    "Kingsport": [36.55, -82.56],
+    "Knoxville": [35.96, -83.92],
+    "Nashville": [36.16, -86.78],
+    "Atlanta": [33.75, -84.39],
+    "Jacksonville": [30.33, -81.66],
+    "Orlando": [28.54, -81.38],
+    "Tampa": [27.95, -82.46],
+    "Miami": [25.76, -80.19],
+    "Rome": [41.9, 12.5],
+    "Athens": [37.98, 23.73],
+    "Alexandria": [31.2, 29.92],
+    "Constantinople": [41.01, 28.98],
+    "London": [51.51, -0.13],
+    "Paris": [48.86, 2.35],
+    "Vienna": [48.21, 16.37],
+    "Kyoto": [35.01, 135.77],
+    "Philadelphia": [39.95, -75.17, ["Pennsylvania"]],
+    "Boston": [42.36, -71.06],
+    "Chicago": [41.88, -87.63, ["Illinois"]],
+    "St. Louis": [38.63, -90.2],
+    "Edinburgh": [55.95, -3.19],
+    "Dublin": [53.35, -6.26],
+    "Verona": [45.44, 10.99],
+    "Nottingham": [52.95, -1.15],
+    "Camelot": [51.02, -2.53],
+    "Springfield": [39.8, -89.65],
+    "New York": [40.71, -74, ["New York"]],
+    "Baltimore": [39.29, -76.61],
+    "New Orleans": [29.95, -90.07],
+    "Sparta": [37.07, 22.43],
+    "Thebes": [38.32, 23.32],
+    "Corinth": [37.94, 22.93],
+    "Delphi": [38.48, 22.5],
+    "Troy": [39.96, 26.24],
+    "Memphis": [29.85, 31.25],
+    "Uppsala": [59.86, 17.64],
+    "Uruk": [31.32, 45.64],
+    "Tara": [53.58, -6.61, ["Ireland"]],
+    "Whitby": [54.49, -0.61],
+    "Sleepy Hollow": [41.09, -73.86],
+    "Prague": [50.08, 14.44],
+    "Styria": [47.07, 15.44],
+    "Ingolstadt": [48.77, 11.42],
+    "Salem": [42.52, -70.9],
+    "Hannibal": [39.71, -91.36],
+    "Deadwood": [44.38, -103.73],
+    "Dodge City": [37.75, -100.02],
+    "Tombstone": [31.71, -110.07],
+    "Abilene": [38.92, -97.21],
+    "Natchez": [31.56, -91.4, ["Mississippi"]],
+    "Bangor": [44.8, -68.77],
+    "Baghdad": [33.31, 44.36],
+    "Hamelin": [52.1, 9.36],
+    "West Egg": [40.8, -73.7, ["New York"]],
+    "Louisville": [38.25, -85.76],
+    "Saint Paul": [44.95, -93.09],
+    "San Francisco": [37.77, -122.42],
+    "Dawson City": [64.06, -139.43],
+    "Atlantic City": [39.36, -74.42],
+    "Monte Carlo": [43.74, 7.43],
+    "Melbourne": [-37.81, 144.96],
+    "Tenochtitlan": [19.43, -99.13],
+    "Teotihuacan": [19.69, -98.84, ["the Valley of Mexico"]],
+    "Tula": [20.06, -99.34],
+    "Cholula": [19.06, -98.3, ["Puebla"]],
+    "Chichen Itza": [20.68, -88.57],
+    "Tikal": [17.22, -89.62],
+    "Palenque": [17.48, -92.05],
+    "Copan": [14.84, -89.14],
+    "Cusco": [-13.53, -71.97],
+    "Tiwanaku": [-16.55, -68.67, ["Bolivia"]],
+    "Guatavita": [4.98, -73.78],
+    "Chiloe": [-42.6, -73.9, ["Chile"]],
+    "Mexico City": [19.43, -99.13],
+    "Puebla": [19.04, -98.2, ["Puebla"]],
+    "Guadalajara": [20.67, -103.35],
+    "Veracruz": [19.17, -96.13],
+    "Havana": [23.11, -82.37],
+    "Caracas": [10.48, -66.9],
+    "Bogota": [4.71, -74.07],
+    "Quito": [-0.18, -78.47],
+    "Lima": [-12.05, -77.04],
+    "Santiago": [-33.45, -70.67],
+    "Buenos Aires": [-34.6, -58.38],
+    "Madrid": [40.42, -3.7],
+    "Nara": [34.69, 135.8],
+    "Edo": [35.68, 139.69],
+    "Osaka": [34.69, 135.5],
+    "Kamakura": [35.32, 139.55],
+    "Izumo": [35.37, 132.75],
+    "Ise": [34.49, 136.71],
+    "Aizu": [37.49, 139.93],
+    "Sendai": [38.27, 140.87],
+    "Hakata": [33.59, 130.4],
+    "Nikko": [36.75, 139.6],
+    "Kanazawa": [36.56, 136.65]
+  };
+  L.CITY_AT = CITY_AT;
+  var TOWN_AT = { "Aachen": [50.78, 6.08], "Abancay": [-13.64, -72.88], "Akita": [39.72, 140.1], "Altdorf": [46.88, 8.64], "Amarna": [27.65, 30.9], "Amsterdam": [52.37, 4.9], "Anenecuilco": [18.78, -98.98], "Anzio": [41.45, 12.62], "Arauco": [-37.25, -73.32], "Arcadia": [37.6, 22.3], "Argos": [37.63, 22.73], "Arras": [50.29, 2.78], "Ashigara": [35.3, 139.03], "Auburn": [42.93, -76.57], "Babylon": [32.54, 44.42], "Badajoz": [38.88, -6.97], "Barcelona": [41.39, 2.17], "Barinas": [8.62, -70.21], "Bergen": [60.39, 5.32], "Berlin": [52.52, 13.4], "Bodenwerder": [51.97, 9.52], "Bonn": [50.73, 7.1], "Bowling Green": [39.34, -91.19], "Brasov": [45.65, 25.6], "Braunschweig": [52.27, 10.52], "Bremen": [53.08, 8.8], "Breslau": [51.1, 17.03], "Bristol": [51.45, -2.59], "Bubastis": [30.57, 31.51], "Bundelkhand": [25, 79.5], "Burgos": [42.34, -3.7], "Burnham Thorpe": [52.94, 0.75], "Canterbury": [51.28, 1.08], "Cap-Haitien": [19.76, -72.2], "Carlisle": [54.89, -2.93], "Carmarthen": [51.86, -4.31], "Carthage": [36.85, 10.32], "Carthage, Missouri": [37.18, -94.31], "Catskill": [42.22, -73.86], "Cayce": [36.57, -89.06], "Chelmsford": [51.74, 0.47], "Chillan": [-36.61, -72.1], "Chuquisaca": [-19.04, -65.26], "Circeo": [41.23, 13.05], "Clew Bay": [53.8, -9.7], "Coatzacoalcos": [18.15, -94.43], "Cologne": [50.94, 6.96], "Colotlan": [22.11, -103.27], "Concord": [42.46, -71.35], "Copenhagen": [55.68, 12.57], "Coventry": [52.41, -1.51], "Croton": [39.08, 17.13], "Cumana": [10.46, -64.17], "Cyrene": [32.82, 21.86], "Delos": [37.4, 25.27], "Derbyshire": [53.1, -1.6], "Dundalk": [54, -6.4], "Durban": [-29.86, 31.02], "Edfu": [24.98, 32.87], "Elderslie": [55.83, -4.48], "Eleusis": [38.04, 23.54], "Etna": [37.75, 15], "Exeter": [50.72, -3.53], "Faiyum": [29.31, 30.84], "Falaise": [48.9, -0.2], "Florence": [43.77, 11.25], "Freiburg": [47.99, 7.85], "Galway": [53.27, -9.05], "Gascony": [43.69, 0.18], "Gateshead": [54.96, -1.6], "Geneva": [46.2, 6.14], "Ghent": [51.05, 3.72], "Glastonbury": [51.15, -2.71], "Goliad": [28.67, -97.39], "Gordion": [39.65, 31.98], "Gotaland": [57.7, 12], "Greeneville": [36.16, -82.83], "Greenwich": [51.48, 0], "Griffin": [33.25, -84.26], "Guaduas": [5.07, -74.6], "Guangyuan": [32.43, 105.84], "Guatemala City": [14.63, -90.51], "Gyoda": [36.14, 139.46], "Halicarnassus": [37.03, 27.43], "Hamamatsu": [34.71, 137.73], "Harz": [51.8, 10.6], "Haworth": [53.83, -1.95], "Hekla": [63.99, -19.67], "Hempstead": [52, 0.38], "Henryville": [45.13, -73.18], "Hertford": [51.8, -0.08], "Himeji": [34.82, 134.69], "Ibague": [4.44, -75.23], "Inverness": [57.48, -4.22], "Iolcus": [39.36, 22.94], "Iping": [51, -0.78], "Ithaca": [38.4, 20.7], "Izu": [34.97, 138.95], "Kameoka": [35.01, 135.57], "Karatsu": [33.45, 129.97], "Kassel": [51.31, 9.48], "Kazbek": [42.7, 44.5], "Kearney": [39.37, -94.36], "Keswick": [54.6, -3.13], "Khentii": [47.5, 110], "Kiev": [50.45, 30.52], "Kilkea": [52.95, -6.9], "Kingston": [41.99, -70.72], "Kinsale": [51.7, -8.52], "Kiso": [35.84, 137.69], "Knossos": [35.3, 25.16], "Konigsberg": [54.71, 20.51], "La Mancha": [39.4, -3], "Lahore": [31.55, 74.34], "Lambayeque": [-6.7, -79.9], "Lancaster": [37.62, -84.58], "Langtry": [29.81, -101.56], "Le Claire": [41.6, -90.34], "Lejre": [55.6, 11.97], "Lemnos": [39.9, 25.25], "Leominster": [42.53, -71.76], "Lille": [50.63, 3.06], "Linlithgow": [55.98, -3.6], "Linzi": [36.8, 118.3], "Lohr am Main": [50, 9.58], "Luoyang": [34.62, 112.45], "Luxor": [25.69, 32.64], "Manaus": [-3.12, -60.02], "Marrakesh": [31.63, -8], "Marseille": [43.3, 5.37], "Morelia": [19.7, -101.19], "Moscow": [55.75, 37.62], "Mount Olympus": [40.09, 22.36], "Nantucket": [41.28, -70.1], "Naqada": [25.9, 32.72], "Nasu": [37.03, 139.97], "Newark": [40.74, -74.17], "Noble's Isle": [-13.83, -171.76], "Norwich": [52.63, 1.3], "Numata": [36.64, 139.04], "Oaxaca": [17.06, -96.72], "Okayama": [34.66, 133.93], "Ollantaytambo": [-13.26, -72.26], "Olympia": [37.64, 21.63], "Onate": [43.03, -2.41], "Otranto": [40.15, 18.49], "Oxford": [51.75, -1.26], "Padua": [45.41, 11.88], "Palmyra": [34.55, 38.27], "Pannonia": [47.5, 19], "Paphos": [34.77, 32.42], "Pecos": [31.42, -103.49], "Pella": [40.76, 22.52], "Penzance": [50.12, -5.54], "Pisa": [43.72, 10.4], "Pittsburgh": [40.44, -80], "Plasencia": [40.03, -6.09], "Point Pleasant": [38.9, -84.23], "Poitiers": [46.58, 0.34], "Pokrovskoye": [57.4, 66.6], "Princeton": [40.4, -93.58], "Q'umarkaj": [14.99, -91.17], "Quebec": [46.81, -71.21], "Rennes": [48.11, -1.68], "Reykjavik": [64.15, -21.94], "Rhamnous": [38.22, 24.03], "Richmond": [51.46, -0.3], "Ringerike": [60.15, 10.2], "Rochester": [51.39, 0.5], "Rovaniemi": [66.5, 25.7], "Russellville": [36.85, -86.89], "Sado": [38.02, 138.37], "Saint-Germain": [48.9, 2.09], "Salamis": [37.96, 23.48], "Salzburg": [47.8, 13.04], "San Antonio": [29.42, -98.49], "San Juan": [18.47, -66.1], "San Salvador": [13.69, -89.19], "Santiago de Cuba": [20.02, -75.82], "Seonee": [22.08, 79.55], "Shrewsbury": [52.71, -2.75], "Sighisoara": [46.22, 24.79], "Soma": [37.8, 140.92], "Spanish Town": [17.99, -76.96], "Stagira": [40.53, 23.75], "Stettin": [53.43, 14.55], "Subiaco": [41.92, 13.09], "Suwa": [36.04, 138.11], "Syracuse": [37.07, 15.29], "Taenarum": [36.39, 22.48], "Takamatsu": [34.34, 134.05], "Talcott": [37.65, -80.73], "Tanabe": [33.73, 135.38], "Tavistock": [50.55, -4.14], "Themiscyra": [41.2, 36.7], "Thrace": [41.5, 26], "Tikrit": [34.6, 43.68], "Tixtla": [17.57, -99.4], "Togakushi": [36.75, 138.08], "Trenton": [40.22, -74.76], "Trondheim": [63.43, 10.39], "Troy Grove": [41.47, -89.08], "Trujillo": [39.46, -5.88], "Van Buren": [35.44, -94.35], "Venice": [45.44, 12.33], "Villanueva de la Serena": [38.98, -5.8], "Vinci": [43.79, 10.93], "Westmoreland": [38.19, -76.92], "Woolsthorpe": [52.81, -0.63], "Worms": [49.63, 8.36], "Xalapa": [19.54, -96.91], "Yanagawa": [33.16, 130.4], "Yapeyu": [-29.47, -56.82], "York": [53.96, -1.08], "Yoshinogari": [33.33, 130.39], "Zululand": [-28.4, 31.4] };
+  L.TOWN_AT = TOWN_AT;
+  var VENUE_RE = / (Armory|Civic Auditorium|Fieldhouse|Coliseum|Arena|Stadium)$/;
+  L.VENUE_RE = VENUE_RE;
+  var BLD_TIER = [
+    { to: 1e3, k: ["Armory", "Union Hall", "Legion Hall", "Rec Center"] },
+    { to: 2500, k: ["Civic Auditorium", "Ballroom", "Exhibition Hall", "Music Hall"] },
+    { to: 6e3, k: ["Fieldhouse", "Expo Center", "Sports Barn", "Event Center"] },
+    { to: 13e3, k: ["Coliseum", "Gardens", "Pavilion", "Civic Center"] },
+    { to: 3e4, k: ["Arena", "Dome", "Center", "Forum"] },
+    { to: 9e4, k: ["Stadium", "Bowl", "Field"] }
+  ];
+  L.BLD_TIER = BLD_TIER;
+  var BLD_WORDS = ["Riverside", "Harbor Street", "Union", "Memorial", "Lakeside", "Eastside", "Old Mill", "Market Street", "Liberty", "Veterans", "Grand", "Pioneer", "Crossroads", "Foundry", "Railyard", "Northgate", "Westgate", "Ironworks", "Lincoln Park", "Cedar Hill", "Founders", "Bayfront", "Stockyard", "Canal Street", "Hilltop", "Southside", "Central", "Midtown"];
+  L.BLD_WORDS = BLD_WORDS;
+  function cityBuildings(city) {
+    var c = String(city || "the city"), n = 3 + Math.floor(L.h01("bn:" + c) * 3), tiers = [0, 2, 4], out = [], used = {};
+    var spare = [1, 3, 5];
+    while (tiers.length < n) tiers.push(spare.splice(Math.floor(L.h01("bt:" + c + ":" + tiers.length) * spare.length), 1)[0]);
+    tiers.sort(function(a, b) {
+      return a - b;
+    });
+    tiers.forEach(function(t, i) {
+      var T = L.BLD_TIER[t], lo = t ? L.BLD_TIER[t - 1].to : 400, k = T.k[Math.floor(L.h01("bk:" + c + ":" + i) * T.k.length)];
+      var w = L.BLD_WORDS[Math.floor(L.h01("bw:" + c + ":" + i) * L.BLD_WORDS.length)];
+      while (used[w]) w = L.BLD_WORDS[(L.BLD_WORDS.indexOf(w) + 1) % L.BLD_WORDS.length];
+      used[w] = 1;
+      out.push({ n: w + " " + k, cap: Math.round((lo + (T.to - lo) * (0.55 + 0.45 * L.h01("bc:" + c + ":" + i))) / 100) * 100, k });
+    });
+    return out;
+  }
+  function venueName(city, cap) {
+    var B = L.cityBuildings(city), b = B.filter(function(x) {
+      return x.cap >= cap;
+    })[0] || B[B.length - 1];
+    return b.n + ", " + city;
+  }
+  L.E.cityBuildings = function(S, city) {
+    return L.cityBuildings(city);
+  };
+  function cityOfVenue(v) {
+    if (!v) return "";
+    v = String(v);
+    var k = v.lastIndexOf(", ");
+    return k >= 0 ? v.slice(k + 2) : v.replace(L.VENUE_RE, "");
+  }
+  function placeOf(S, city) {
+    var p = S && S.places && S.places[city] || L.CITY_AT[city] || L.TOWN_AT[city];
+    return p ? { n: city, lat: p[0], lon: p[1], a: p[2] || null } : null;
+  }
+  function mapById(id) {
+    for (var i = 0; i < L.MAPS.length; i++) if (L.MAPS[i].id === id) return L.MAPS[i];
+    return null;
+  }
+  function mapXY(M, pl) {
+    var x = pl.lon - M.f[0];
+    if (x < 0) x += 360;
+    if (x >= 360) x -= 360;
+    return [x / M.f[1], (M.f[2] - pl.lat) / M.f[3]];
+  }
+  function mapHas(M, pl) {
+    var p = L.mapXY(M, pl);
+    return p[0] >= 0.5 && p[0] < L.MAP_W - 0.5 && p[1] >= 0.5 && p[1] < L.MAP_H - 0.5;
+  }
+  function mapArea(M, pl) {
+    var i, p = L.mapXY(M, pl), cx = Math.floor(p[0]), cy = Math.floor(p[1]), best = -1, bd = 9;
+    if (pl.a) {
+      for (i = 0; i < pl.a.length; i++) if (M.a.indexOf(pl.a[i]) >= 0) return M.a.indexOf(pl.a[i]);
+    }
+    if (cy >= 0 && cy < L.MAP_H && cx >= 0 && cx < L.MAP_W && M.g[cy].charAt(cx) === "-") return -1;
+    for (var y = cy - 2; y <= cy + 2; y++) for (var x = cx - 2; x <= cx + 2; x++) {
+      if (y < 0 || y >= L.MAP_H || x < 0 || x >= L.MAP_W) continue;
+      var ch = M.g[y].charAt(x);
+      if (ch === " " || ch === "-") continue;
+      var d = (x + 0.5 - p[0]) * (x + 0.5 - p[0]) + (y + 0.5 - p[1]) * (y + 0.5 - p[1]);
+      if (d < bd) {
+        bd = d;
+        best = L.MAP_ABC.indexOf(ch);
+      }
+    }
+    return best;
+  }
+  var HOME_KM = 100;
+  L.HOME_KM = HOME_KM;
+  function homeKm(S, w, city) {
+    if (!w || !w.town || !city) return null;
+    if (w.town === city) return 0;
+    var a = L.placeOf(S, w.town), b = L.placeOf(S, city);
+    return a && b ? Math.round(L.geoDist(a, b) * 111) : null;
+  }
+  function homeNear(S, w, city) {
+    var k = L.homeKm(S, w, city);
+    return k != null && k <= L.HOME_KM;
+  }
+  function homeWeight(S, w, city) {
+    var k = L.homeKm(S, w, city);
+    return k == null || k > L.HOME_KM ? 0 : k === 0 ? 1 : 0.5;
+  }
+  function homeHype(S, P, ids) {
+    var city = L.roadCity(S, P, S.rdn || 0), n = 0;
+    ids.forEach(function(id) {
+      var w = S.w[id];
+      if (w && w.inj <= 0) n += L.homeWeight(S, w, city);
+    });
+    return Math.min(2, n) * 0.04;
+  }
+  function homeHypeAt(S, P, city) {
+    var n = 0;
+    L.rosterOf(S, P.id).forEach(function(w) {
+      if (!w.nw && w.inj <= 0) n += L.homeWeight(S, w, city);
+    });
+    return Math.min(2, n) * 0.03;
+  }
+  function geoDist(a, b) {
+    var k = Math.cos((a.lat + b.lat) / 2 * Math.PI / 180), dx = Math.abs(a.lon - b.lon);
+    if (dx > 180) dx = 360 - dx;
+    dx *= k;
+    var dy = a.lat - b.lat;
+    return Math.sqrt(dx * dx + dy * dy);
+  }
+  function roadRoute(S, P) {
+    var C = (P.cities && P.cities.length ? P.cities : ["the city"]).slice(), known = [], lost = [];
+    C.forEach(function(c) {
+      var p = L.placeOf(S, c);
+      if (p) known.push(p);
+      else lost.push(c);
+    });
+    var out = [];
+    if (known.length) {
+      var cur = known.splice(L.hash("road" + S.seed + P.id) % known.length, 1)[0];
+      out.push(cur.n);
+      while (known.length) {
+        var bi = 0, bd = 1e9;
+        for (var i = 0; i < known.length; i++) {
+          var d = L.geoDist(cur, known[i]);
+          if (d < bd) {
+            bd = d;
+            bi = i;
+          }
+        }
+        cur = known.splice(bi, 1)[0];
+        out.push(cur.n);
+      }
+    }
+    return out.concat(lost);
+  }
+  function roadCity(S, P, n) {
+    var R = L.roadRoute(S, P);
+    return R[(n % R.length + R.length) % R.length];
+  }
+  function soldOutLast(S, P, city) {
+    var v = P.id === S.player && S.rdv && S.rdv[city];
+    return !!(v && v.so);
+  }
+  function roadCap(S, P, show, city) {
+    return L.capFor(L.demand(P, show, 1) * L.tourBoost(S, P) * L.mktMult(S, P, city) * (L.soldOutLast(S, P, city) ? 1.12 : 1));
+  }
+  var MKT_WORDS = [[70, "Your territory", "They are yours here."], [50, "A strong market", "They know you here."], [30, "They know you", "You are a name here, not a habit."], [0, "They hardly know you", "You are a stranger here."]];
+  L.MKT_WORDS = MKT_WORDS;
+  function mktBase(S, P, city) {
+    var R = L.roadRoute(S, P);
+    return L.clamp(Math.round(50 + L.h01("mkt" + S.seed + P.id + city) * 24 - 12 + (R[0] === city ? 12 : 0)), 10, 90);
+  }
+  function mktKnow(S, P, city) {
+    if (!city || P.id !== S.player) return 50;
+    var m = S.mkt && S.mkt[city];
+    return m ? m.k : L.mktBase(S, P, city);
+  }
+  function coldNight(S, show, city, week) {
+    if (show && show.big) return false;
+    var p = L.placeOf(S, city);
+    if (!p) return false;
+    var m = L.cal(week || S.week).month;
+    return p.lat >= 38 ? m === 11 || m === 0 || m === 1 : p.lat <= -38 ? m >= 5 && m <= 7 : false;
+  }
+  function weatherMult(S, show, city, week) {
+    return L.coldNight(S, show, city, week) ? 0.94 : 1;
+  }
+  function mktMult(S, P, city) {
+    return 0.85 + 0.3 * L.mktKnow(S, P, city) / 100;
+  }
+  function mktWord(k) {
+    for (var i = 0; i < L.MKT_WORDS.length; i++) if (k >= L.MKT_WORDS[i][0]) return { w: L.MKT_WORDS[i][1], d: L.MKT_WORDS[i][2] };
+    return { w: L.MKT_WORDS[3][1], d: L.MKT_WORDS[3][2] };
+  }
+  function roadMktNow(S, P) {
+    return L.mktMult(S, P, L.roadCity(S, P, S.rdn || 0));
+  }
+  L.WEEKX.push(function(S) {
+    if (S.cal || !S.mkt) return;
+    var P = S.promos[S.player];
+    Object.keys(S.mkt).forEach(function(c) {
+      var m = S.mkt[c], floor = Math.min(m.k, L.mktBase(S, P, c) - 10);
+      if (S.week - m.w > 6 && m.k > floor && !L.streamOn(S)) m.k = Math.max(floor, Math.round((m.k - 0.5) * 10) / 10);
+    });
+  });
+  L.E.mktWords = MKT_WORDS.map(function(x) {
+    return { w: x[1], d: x[2], from: x[0] };
+  });
+  function saleSpan(show) {
+    return show.big ? 8 : 4;
+  }
+  function saleFrac(wo, show) {
+    var span = L.saleSpan(show);
+    if (wo > span) return 0;
+    if (wo < 0) wo = 0;
+    return 0.88 * Math.pow(1 - wo / (span + 1), 0.7);
+  }
+  function stopDraw(S, P, show, next, city) {
+    var d0 = L.demand(P, show, 1) * L.tourBoost(S, P) * L.mktMult(S, P, city) * L.weatherMult(S, show, city), hype;
+    if (next && S.card && S.card.length) hype = L.cardHype(S, P, show, S.card, true);
+    else {
+      var heat = 0;
+      L.activeFeuds(S).forEach(function(f) {
+        if (f.heat > heat && f.a.concat(f.b).some(function(id) {
+          return S.w[id] && S.w[id].promo === P.id;
+        })) heat = f.heat;
+      });
+      hype = L.clamp(1 + L.ADV_H[P.adv] + (next && S.hype ? S.hype : 0) + heat / 1e3 + L.homeHypeAt(S, P, city), 0.8, 1.4);
+    }
+    return Math.min(L.roadCap(S, P, show, city), d0 * hype * L.TIX_D[P.tix]);
+  }
+  function stopSales(S, P, w, show, k, next) {
+    var city = L.roadCity(S, P, k), cap = L.roadCap(S, P, show, city), was = Math.min(cap, S.tix && S.tix[k] || 0), wo = w - S.week, live = Math.round(L.stopDraw(S, P, show, next, city) * L.saleFrac(wo, show)), sold = Math.max(was, live);
+    return { sold, wk: sold - was, cap, on: wo <= L.saleSpan(show), opens: Math.max(0, wo - L.saleSpan(show)) };
+  }
+  function roadSoldNow(S, P) {
+    var k = S.rdn || 0;
+    return Math.round(S.tix && S.tix[k] || 0);
+  }
+  (function() {
+    var ew = L.E.endWeek;
+    L.E.endWeek = function(S) {
+      var P = S.promos[S.player], w0 = S.week, keep = {};
+      if (P && !S.over) L.roadAhead(S, P, 8).forEach(function(a, i) {
+        var x = L.stopSales(S, P, a.w, a.show, a.k, i === 0);
+        if (x.sold > 0) keep[a.k] = x.sold;
+      });
+      var r = ew.apply(this, arguments);
+      if (S.week !== w0) {
+        S.tix = keep;
+        Object.keys(S.tix).forEach(function(k) {
+          if (+k < (S.rdn || 0)) delete S.tix[k];
+        });
+      }
+      return r;
+    };
+  })();
+  (function() {
+    var ng = L.E.newGame;
+    L.E.newGame = function() {
+      var S = ng.apply(this, arguments), P = S && S.promos && S.promos[S.player];
+      if (P && S.queue) {
+        S.tix = {};
+        L.roadAhead(S, P, 8).forEach(function(a, i) {
+          var n = Math.round(L.stopDraw(S, P, a.show, i === 0, a.city) * L.saleFrac(a.w - S.week + 1, a.show));
+          if (n > 0) S.tix[a.k] = n;
+        });
+      }
+      return S;
+    };
+  })();
+  function roadAhead(S, P, n) {
+    var out = [], k = S.rdn || 0, w = S.week, i;
+    for (i = S.qi || 0; S.queue && i < S.queue.length; i++) {
+      out.push({ w, show: S.queue[i], city: L.roadCity(S, P, k), k });
+      k++;
+    }
+    while (out.length < n && w < S.week + 12) {
+      w++;
+      L.weekShows(S, P, w).forEach(function(sh) {
+        out.push({ w, show: sh, city: L.roadCity(S, P, k), k });
+        k++;
+      });
+    }
+    return out.slice(0, n);
+  }
+  L.SHOWX.push(function(S, P, show, rep) {
+    if (S.cal || P.id !== S.player || !rep.venue) return;
+    var c = L.cityOfVenue(rep.venue);
+    rep.city = c;
+    (S.rdv || (S.rdv = {}))[c] = { w: S.week, cs: Math.round(L.repCS(rep)), att: rep.att, cap: rep.cap, so: rep.sellout ? 1 : 0 };
+    var m = (S.mkt || (S.mkt = {}))[c] || { k: L.mktBase(S, P, c) }, was = m.k;
+    m.k = L.clamp(Math.round((m.k + L.clamp((L.repCS(rep) - 65) / 4, -4, 8) + (rep.sellout ? 2 : 0)) * 10) / 10, 0, 100);
+    m.w = S.week;
+    S.mkt[c] = m;
+    rep.mkt = { was: Math.round(was), now: Math.round(m.k) };
+  });
+  L.E.MAPS = L.MAPS;
+  L.E.MAP_W = L.MAP_W;
+  L.E.MAP_H = L.MAP_H;
+  L.E.MAP_ABC = L.MAP_ABC;
+  L.E.placeOf = function(S, city) {
+    return L.placeOf(S, city);
+  };
+  var MAP_FIRST = ["brit", "jap", "mex", "med", "usa", "sam", "eur"];
+  L.MAP_FIRST = MAP_FIRST;
+  function roadMap(S, cities) {
+    var here = L.placeOf(S, cities[0]), best = null, bs = -1;
+    if (!here) return null;
+    L.MAP_FIRST.forEach(function(id) {
+      var M = L.mapById(id);
+      if (!M || !L.mapHas(M, here) || L.mapArea(M, here) < 0) return;
+      var s = 0;
+      cities.forEach(function(c) {
+        var p = L.placeOf(S, c);
+        if (p && L.mapHas(M, p) && L.mapArea(M, p) >= 0) s++;
+      });
+      if (s > bs) {
+        bs = s;
+        best = M;
+      }
+    });
+    var Wd = L.mapById("world");
+    return best || (Wd && L.mapHas(Wd, here) && L.mapArea(Wd, here) >= 0 ? Wd : null);
+  }
+  function roadShape(S, M, ai, stops) {
+    if (!M || ai < 0 || typeof L.SHAPES === "undefined") return null;
+    var n = M.a[ai], Z = L.SHAPES[M.id + ":" + n];
+    if (!Z) return null;
+    var pins = [];
+    stops.forEach(function(s) {
+      var p = L.placeOf(S, s.city);
+      if (!p) return;
+      if (s.k !== "now" && L.mapArea(M, p) !== ai) return;
+      var x = p.lon - Z.f[0], y = (Z.f[2] - p.lat) / Z.f[3];
+      x = x / Z.f[1];
+      if (x < -1 || y < -1 || x > Z.w + 1 || y > Z.h + 1) return;
+      if (pins.some(function(q) {
+        return q.city === s.city;
+      })) return;
+      pins.push({ city: s.city, k: s.k, x: Math.round(x * 10) / 10, y: Math.round(y * 10) / 10 });
+    });
+    return { n, w: Z.w, h: Z.h, p: Z.p, pins };
+  }
+  var CONT_AT = { "North America": [45, -100], "South America": [-15, -60], "Europe": [50, 15], "Africa": [5, 20], "Asia": [40, 95], "Oceania": [-25, 135] };
+  L.CONT_AT = CONT_AT;
+  function roadNearest(S, here, city) {
+    if (!here || typeof L.SHAPES === "undefined") return null;
+    var best = null, bd = 1e9, r = Math.PI / 180;
+    Object.keys(L.CONT_AT).forEach(function(n) {
+      var Z2 = L.SHAPES["world:" + n], c = L.CONT_AT[n];
+      if (!Z2) return;
+      var d = Math.acos(Math.max(-1, Math.min(1, Math.sin(here.lat * r) * Math.sin(c[0] * r) + Math.cos(here.lat * r) * Math.cos(c[0] * r) * Math.cos((here.lon - c[1]) * r))));
+      if (d < bd) {
+        bd = d;
+        best = { n, Z: Z2 };
+      }
+    });
+    if (!best) return null;
+    var Z = best.Z, mid = Z.f[0] + Z.w * Z.f[1] / 2, dl = (here.lon - mid + 540) % 360 - 180, x = Math.max(0, Math.min(Z.w, (mid + dl - Z.f[0]) / Z.f[1])), y = Math.max(0, Math.min(Z.h, (Z.f[2] - here.lat) / Z.f[3]));
+    return { n: best.n, w: Z.w, h: Z.h, p: Z.p, far: 1, pins: [{ city, k: "now", x: Math.round(x * 10) / 10, y: Math.round(y * 10) / 10 }] };
+  }
+  L.E.road = function(S) {
+    var P = S.promos[S.player], ahead = L.roadAhead(S, P, 6), past = [], i;
+    if (!ahead.length) return null;
+    for (i = 0; i < S.reports.length && past.length < 3; i++) {
+      var r = S.reports[i];
+      if (r && r.venue) past.unshift({ k: "past", city: r.city || L.cityOfVenue(r.venue), show: r.name, w: r.week, grade: L.gradeG(L.repCS(r)), att: r.att, cap: r.cap, so: !!r.sellout });
+    }
+    var stops = past.concat(ahead.map(function(a, j) {
+      var x = L.stopSales(S, P, a.w, a.show, a.k, j === 0);
+      return { k: j === 0 ? "now" : j === 1 ? "next" : "far", city: a.city, show: a.show.name, big: !!a.show.big, w: a.w, sold: x.sold, cap: x.cap, on: x.on, opens: x.opens };
+    }));
+    var A = ahead[0], city = A.city, near = [city];
+    if (ahead[1]) near.push(ahead[1].city);
+    past.slice().reverse().forEach(function(p) {
+      near.push(p.city);
+    });
+    if (ahead[2]) near.push(ahead[2].city);
+    var M = L.roadMap(S, near), here = L.placeOf(S, city), lit = { now: -1, next: -1, mine: [] }, off = [];
+    if (M) {
+      lit.now = L.mapArea(M, here);
+      stops.forEach(function(s) {
+        var p = L.placeOf(S, s.city);
+        if (p && L.mapHas(M, p) && L.mapArea(M, p) >= 0) {
+          var q = L.mapXY(M, p);
+          s.x = Math.round(q[0] * 100) / 100;
+          s.y = Math.round(q[1] * 100) / 100;
+          if (s.k === "next") lit.next = L.mapArea(M, p);
+        } else if (s.k !== "past" && off.indexOf(s.city) < 0) off.push(s.city);
+      });
+      if (lit.next === lit.now) lit.next = -1;
+      (P.cities || []).forEach(function(c) {
+        var p = L.placeOf(S, c);
+        if (p && L.mapHas(M, p)) {
+          var a = L.mapArea(M, p);
+          if (a >= 0 && lit.mine.indexOf(a) < 0) lit.mine.push(a);
+        }
+      });
+    }
+    var cap = L.roadCap(S, P, A.show, city), mk = L.mktKnow(S, P, city), sale = L.stopSales(S, P, A.w, A.show, A.k, true), last = S.rdv && S.rdv[city], bar = S.bar && S.bar[city], reg = P.tour ? L.REGIONS[P.tour.reg] : L.REGIONS[L.homeReg(P)];
+    var home = L.rosterOf(S, P.id).filter(function(w) {
+      return !w.nw && L.homeNear(S, w, city);
+    }).sort(function(a, b) {
+      return (a.town === city ? 0 : 1) - (b.town === city ? 0 : 1) || b.ovr - a.ovr;
+    }).slice(0, 3).map(function(w) {
+      return { id: w.id, name: w.name, hurt: w.inj > 0, town: w.town, near: w.town !== city, km: L.homeKm(S, w, city) };
+    });
+    var sh = L.roadShape(S, M, lit.now, stops) || L.roadNearest(S, here, city);
+    return {
+      map: M ? M.id : null,
+      mapName: M ? M.n : null,
+      lit,
+      stops,
+      off,
+      shape: sh,
+      now: {
+        city,
+        land: M && lit.now >= 0 ? M.a[lit.now] : null,
+        show: A.show.name,
+        big: !!A.show.big,
+        kind: A.show.big ? A.show.flag ? "Flagship" : L.evTy(A.show).n : "",
+        w: A.w,
+        later: A.w > S.week,
+        left: Math.max(0, (S.queue ? S.queue.length : 0) - (S.qi || 0)),
+        venue: L.venueName(city, cap),
+        cap,
+        seat: Math.round(L.ticket(P, A.show) * L.TIX_P[P.tix]),
+        tix: L.TIXN[P.tix],
+        sold: sale.sold,
+        wk: sale.wk,
+        on: sale.on,
+        opens: sale.opens,
+        gate: Math.round(sale.sold * L.ticket(P, A.show) * L.TIX_P[P.tix]),
+        last: last ? { ago: S.week - last.w, grade: L.gradeG(last.cs), att: last.att, cap: last.cap, so: !!last.so } : null,
+        rival: bar && S.week - bar.w <= 4 ? { by: bar.by, ago: S.week - bar.w } : null,
+        mkt: L.mktWord(mk),
+        mktK: Math.round(mk),
+        taste: L.TASTEN[reg.taste],
+        tour: P.tour ? reg.n : null,
+        home
+      }
+    };
+  };
+  L.E.roadAhead = function(S, n) {
+    var P = S.promos[S.player];
+    return L.roadAhead(S, P, n || 16).map(function(a, i) {
+      var c = L.cal(a.w);
+      var x = L.stopSales(S, P, a.w, a.show, a.k, i === 0);
+      return { w: a.w, when: a.w === S.week ? "This week" : a.w === S.week + 1 ? "Next week" : c.label, show: a.show.name, big: !!a.show.big, kind: a.show.big ? a.show.flag ? "Flagship" : L.evTy(a.show).n : "", city: a.city, cold: L.coldNight(S, a.show, a.city, a.w), cap: x.cap, mkt: L.mktWord(L.mktKnow(S, P, a.city)).w, sold: x.sold, on: x.on, opens: x.opens };
+    });
+  };
+  L.E.roadRoute = function(S, pid) {
+    return L.roadRoute(S, S.promos[pid == null ? S.player : pid]);
+  };
+  L.E.mapArea = function(S, mapId, city) {
+    var M = L.mapById(mapId), p = L.placeOf(S, city);
+    return M && p && L.mapHas(M, p) ? L.mapArea(M, p) : -1;
+  };
+  L.E.mapXY = function(S, mapId, city) {
+    var M = L.mapById(mapId), p = L.placeOf(S, city);
+    return M && p && L.mapHas(M, p) ? L.mapXY(M, p) : null;
+  };
+  L.E.cities = function(S) {
+    var P = S.promos[S.player];
+    return L.roadRoute(S, P).map(function(c) {
+      var city = c.city || c.n || c, k = L.mktKnow(S, P, city), v = S.rdv && S.rdv[city], m = S.mkt && S.mkt[city];
+      return { city, k: Math.round(k), word: L.mktWord(k).w, last: v ? v.w : null, ago: v ? S.week - v.w : null, grade: v && v.cs != null ? L.gradeG(v.cs) : null, att: v ? v.att : null, cap: v ? v.cap : null, so: !!(v && v.so) };
+    });
+  };
+  L.SHOWX.push(function(S, P, show, rep) {
+    if (S.cal || P.id !== S.player) return;
+    if (rep.sellout) {
+      S.soRun = (S.soRun || 0) + 1;
+      rep.soRun = S.soRun;
+      if (S.soRun >= 3) S.hype = (S.hype || 0) + 0.02;
+      if (S.soRun === 5 || S.soRun === 10 || S.soRun === 20) L.news(S, "world", P.name + " has sold out " + S.soRun + " shows in a row.");
+    } else {
+      if ((S.soRun || 0) >= 3) rep.soEnd = S.soRun;
+      S.soRun = 0;
+    }
+  });
+  L.E.knownCities = function() {
+    return Object.keys(L.CITY_AT).sort();
+  };
+  L.CITY_AT = CITY_AT;
+  L.TOWN_AT = TOWN_AT;
+  L.VENUE_RE = VENUE_RE;
+  L.BLD_TIER = BLD_TIER;
+  L.BLD_WORDS = BLD_WORDS;
+  L.cityBuildings = cityBuildings;
+  L.venueName = venueName;
+  L.cityOfVenue = cityOfVenue;
+  L.placeOf = placeOf;
+  L.mapById = mapById;
+  L.mapXY = mapXY;
+  L.mapHas = mapHas;
+  L.mapArea = mapArea;
+  L.HOME_KM = HOME_KM;
+  L.homeKm = homeKm;
+  L.homeNear = homeNear;
+  L.homeWeight = homeWeight;
+  L.homeHype = homeHype;
+  L.homeHypeAt = homeHypeAt;
+  L.geoDist = geoDist;
+  L.roadRoute = roadRoute;
+  L.roadCity = roadCity;
+  L.soldOutLast = soldOutLast;
+  L.roadCap = roadCap;
+  L.MKT_WORDS = MKT_WORDS;
+  L.mktBase = mktBase;
+  L.mktKnow = mktKnow;
+  L.coldNight = coldNight;
+  L.weatherMult = weatherMult;
+  L.mktMult = mktMult;
+  L.mktWord = mktWord;
+  L.roadMktNow = roadMktNow;
+  L.saleSpan = saleSpan;
+  L.saleFrac = saleFrac;
+  L.stopDraw = stopDraw;
+  L.stopSales = stopSales;
+  L.roadSoldNow = roadSoldNow;
+  L.roadAhead = roadAhead;
+  L.MAP_FIRST = MAP_FIRST;
+  L.roadMap = roadMap;
+  L.roadShape = roadShape;
+  L.CONT_AT = CONT_AT;
+  L.roadNearest = roadNearest;
+
+  // engine/91-shapes.ts
+  var SHAPES = {
+    "usa:Washington": { "f": [-124.803, 0.08908, 49.08, 0.07015], "w": 89, "h": 51, "p": ["?)\x7F)\x80TiTiU^V\\XUXUYIXGZ@Z=R;Q8R7P0P0K2M3I0J0G2F/E/B-A-<)8)204057576;5=7?5@:B9A<DAC:E7C6B2@3B5?5?3B1B,@-"] },
+    "usa:Idaho": { "f": [-117.322, 0.09765, 49.062, 0.07689], "w": 65, "h": 93, "p": ["+)5)57899><?BGCFGGFLELFRDRESDVGWKTMZP\\O^TaUeWcXddcdahch\x84+\x84,g)f)c-_.Y1U/R,Q,L+L"] },
+    "usa:Montana": { "f": [-116.174, 0.11478, 49.068, 0.09038], "w": 107, "h": 53, "p": ["))\x92)\x92UUUU[SZSXQXQZIZI[D\\CX@W@T=R<M9P6O7N6H7H8C5C3?0<.<,:,7)5"] },
+    "usa:North Dakota": { "f": [-104.156, 0.08908, 49.08, 0.07015], "w": 86, "h": 46, "p": ["))v)w7z<zF{F{N}O}U)U"] },
+    "usa:Minnesota": { "f": [-97.348, 0.08052, 49.428, 0.0634], "w": 97, "h": 95, "p": ["C)G)H.I.I3K4N3T6X6[4`5`6c6b8e8f;g9j9k;n;n=p>u=v;y;y=\x83=\x84?\x88>\x85AxEqMiQiSgTg]b_ab_c_ebf`rbrdugugwjwl{q}t\x80s\x82t\x85^\x85^\x863\x853h1h.e2a2\\/V.C+>+6*6+3)/C/"] },
+    "usa:Michigan": { "f": [-90.475, 0.08052, 47.555, 0.0634], "w": 101, "h": 93, "p": ["qCtDrFvFxI{I\x80L\x81P\x7FQ\x81R\x81[~\\~_z`ye}f\x7Fe\x80a\x87_\x8Ac\x8Ai\x8Bi\x8Bo\x8Co\x8Bv\x89w\x89u\x87u\x88w\x86w\x86z\x83{\x82\x81\x7F\x82\x80\x84W\x83]x]oYgZeY_[^\\Y]Y\\U^U_RbQcOeOeQgRgLjJlKkIlDrE", "E)J)J*D-D/B/A4E1E2K3O9T8T:V:W8Y9]6l5k9s:w8w=u>x>x@~?\x7FBp@oApCnCl@e?dAaAaB\\A[DXEXHWHWEYDYBVCUESERCRFPGPIKOJNKJHKIEEDFCEAAAA@>A6=.<,;+8)8+6.61334337381;1;/=/>-@-B*E*"] },
+    "usa:Maine": { "f": [-71.116, 0.06339, 47.495, 0.04991], "w": 66, "h": 90, "p": ["E)I)J.W+\\0\\;];\\L_NbNaUcWdVgWi[i_g_ebc`cbab`e^c\\d\\f[eYgVfViQhQjSkQjNkNhLhMdIeKiIhHoFoEqDo>r=t;r:t6u6w4w4z1{0\x80.\x81-}*{)T+S+U-U-Q0R.O1L3L3J6H5A7>9>:7@1@/D,"] },
+    "usa:Wisconsin": { "f": [-92.969, 0.06339, 46.985, 0.04991], "w": 95, "h": 91, "p": ["G)L*J+K-I,H0L.M0S1T4W6c8c9f9l<m;q=s<u=t@yAzCyI|H{J|PyQySvVvYxY|S\x80R\x80P\x82O\x82L\x86J\x85O\x83P\x83S\x81S\x81V\x7FW~a|a{c{kxpxxz|y\x82M\x82L\x7FI\x7FF}FzDxDuFtFrCoBe:a8\\3[3Y0Y+U+J-F*E)B+A-=3:3/5-7.?-"] },
+    "usa:Oregon": { "f": [-124.625, 0.08908, 46.333, 0.07015], "w": 93, "h": 63, "p": ["3)5)6+:*=.=2?3E3G1N1N2R2U0Z1\\/f.f-\x7F-\x810\x830\x843\x824\x819\x7F:\x7F>}>{B{E\x7FG}K}f,f*b+])[)X*X*U-O-I.I.=/=/404/*3*"] },
+    "usa:South Dakota": { "f": [-104.156, 0.08908, 45.983, 0.07015], "w": 87, "h": 51, "p": ["))})}+z.{0~1~K}K~T|V~W~Z|Y|WwVwUlVkThThS)S"] },
+    "usa:Wyoming": { "f": [-111.118, 0.07195, 45.052, 0.05666], "w": 99, "h": 73, "p": ["))\x8A)\x8Ao\x87o\x87pjpjo)p"] },
+    "usa:New York": { "f": [-79.85, 0.07195, 45.052, 0.05666], "w": 105, "h": 81, "p": ["k)\x82)\x836\x819\x82:\x81B\x82A\x84B\x84K\x83K\x83T\x82T\x82X\x80[\x80l~m~q\x8Dp\x90n\x90r\x88t\x86vvxvvyv{omhkfkbg^)^)Y.W0T2T6P3K3G7G7FFFGHSGUD[B[?Y=\\=\\<X:X8[7]4_4f,j+"] },
+    "usa:Vermont": { "f": [-73.492, 0.04626, 45.068, 0.03642], "w": 44, "h": 65, "p": [".)R*S+R0Q0R6L<G=HCFEFHDIDLBM@Q@V?V@Y?Y?_>_?a<d>h-h,g-f-Q,P)Q+M)C*C*@,?,<+<,7*5+*.*"] },
+    "usa:New Hampshire": { "f": [-72.603, 0.04626, 45.323, 0.03642], "w": 42, "h": 73, "p": ["C)E*I)KXLXK^OaNdQgOkKkJmGmGoEp+o)k,f+e,\\-\\,Y.X/S1S2L4K4C9C9A<A?==7@4?1B,A*"] },
+    "usa:Iowa": { "f": [-96.728, 0.07195, 43.546, 0.05666], "w": 92, "h": 57, "p": ["*)t)u,w-u/v5w7|8|:\x80=\x80@\x83A\x83G\x81H\x81K}MwMvQxRxWvXv[r\\r`p`n\\H\\H]5\\4[5V3R4O1L0C.C-A-=,=-;)7,1,.*.+,"] },
+    "usa:Nebraska": { "f": [-104.108, 0.09765, 43.048, 0.07689], "w": 91, "h": 41, "p": ["))b)f,h*i+n*o,s,u/w/w2x2w4z6z<|=|C}C|G\x82P=P=C)C"] },
+    "usa:Illinois": { "f": [-91.583, 0.08052, 42.572, 0.0634], "w": 52, "h": 89, "p": ["4)W)W/Y0Y4Z4Z[Y[Z]Y_Z_[eYfXjUlSyNzO\x7FK~J|H|F\x80C\x7FBu?r<r7m:b8a3b3\\0[+V*Q)Q)K+J+G-G.C0B.;69:3:/7."] },
+    "usa:Massachusetts": { "f": [-73.538, 0.04626, 42.931, 0.03642], "w": 79, "h": 40, "p": ["`)c*c.e0f/h0f2b2b5_6`7_:b9c;e;e>g?eBiCiGkItHtDsDsAtAvEvKkLjNfOgIeIcL`M`O\\O\\KWGXEWA9A8B4@)@)<*<.-Y.[-[+^+"] },
+    "usa:California": { "f": [-124.512, 0.11478, 42.054, 0.09038], "w": 91, "h": 106, "p": ["+)O)OJRMTM\\V^Vngpg~u~x\x80y\x80|\x82}\x82\x7F\x7F\x81\x7F\x87}\x88~\x8C\x80\x8D\x7F\x8Fh\x91f\x89`\x84]\x84]\x81X\x81V\x80U}J{JtHtHqFqDmAkAi?h>d@b?`<`:^:Z9Z:X9V5U6S4O2O2M/K.@)<)8+6+1,1,-*+"] },
+    "usa:Nevada": { "f": [-120.109, 0.08908, 42.076, 0.07015], "w": 69, "h": 102, "p": ["))l)l}k~g|d}f\x8DElCl9a7a/X-X)T"] },
+    "usa:Utah": { "f": [-114.13, 0.07195, 42.041, 0.05666], "w": 72, "h": 90, "p": ["))S)S:o:obnbo\x81)\x81"] },
+    "usa:Indiana": { "f": [-88.147, 0.06339, 41.829, 0.04991], "w": 54, "h": 82, "p": ["=)])]Y\\Y\\_[_]dYeXgSfSjOmOoLoKuGuFrDqDsBt@x>w>u:v9y6x5v0u1x+w,y)y+o-o.k0k0h2g2d1d2a0_1Z2Z2+9,"] },
+    "usa:Ohio": { "f": [-84.88, 0.05482, 42, 0.04317], "w": 81, "h": 84, "p": ["u)x)xHuHvPtRtWrXr]ldjefddgbg`kao^p]mZoYwWwWzR{PxMwLsItHvDvAt?v<v;s4r3n0k.l,l+j)k)/B.B/I1J3N2R6V6\\3b4h.n+u*"] },
+    "usa:Pennsylvania": { "f": [-80.59, 0.07195, 42.324, 0.05666], "w": 82, "h": 47, "p": ["2)3)3.q.r0t0u6y8x<t?uBsCsGuGuJyMyOtQtSlTkV)V).--.+"] },
+    "usa:Connecticut": { "f": [-73.778, 0.03769, 42.095, 0.02968], "w": 54, "h": 38, "p": ["0)B*B+C*\\*]+]?[?\\ATBTCRBPDKCKD@D?E>C=F;F:H6H6I3I3K/K.M-L+M)I0F.D"] },
+    "usa:Colorado": { "f": [-109.135, 0.07195, 41.061, 0.05666], "w": 100, "h": 73, "p": ["))\x8A)\x8Bp)p"] },
+    "usa:New Jersey": { "f": [-75.608, 0.03769, 41.374, 0.02968], "w": 46, "h": 83, "p": [">)B)H.U4U8T8T;R<R?MAMDLDLGSHSPQTP_MeKfJjAqAs?t?w<z9z;r8r8q4r2n-l-j*i)b,`.\\5Z5W?R<L8H6H6C3C3<6;547490;0<+"] },
+    "usa:Kansas": { "f": [-102.1, 0.08908, 40.106, 0.07015], "w": 85, "h": 45, "p": ["))`)`*x+y-w.w1|6|T)T"] },
+    "usa:Missouri": { "f": [-95.844, 0.07195, 40.649, 0.05666], "w": 95, "h": 83, "p": ["))b)e-d/e6i:i<o@pGvFxHvJwLtPtSxWzWzY|X\x80\\\x80`\x81`\x80d\x82h\x84g\x86i\x84m\x85o\x84p\x82o\x82q\x7Ft\x80v~v\x7Fw~ztzxvwq9q9B7B5>2<3968552614/4"] },
+    "usa:Kentucky": { "f": [-89.608, 0.08052, 39.208, 0.0634], "w": 96, "h": 44, "p": ["d)i*k/p/p1r0y1|/|2\x7F3\x7F:\x81;\x81>\x87C\x84D\x82G~H|MyMxOsPsQRQRP>Q>P;P;S)S+Q-R-O.O-J/G5J7I6D;C:@;>=?=<@>A<H>H<J;N<P8R;V;V8Y7Y5\\3\\/^0d/c-"] },
+    "usa:Maryland": { "f": [-78.945, 0.03769, 39.756, 0.02968], "w": 104, "h": 63, "p": ["()|)~T\x8FT\x8FX\x8DZ\x8Bb\x80c\x80e{dyfz^y_w^z[vZwWuXu[q[qYoXnOoNpOrNtPuOrNrLpKmLnGqHqDmFlDnArBpAo;p;p8w3v2w/t/s0t3q5o2o7m4m7l7m9k;h:h<k=kBgJiNhQlVlXjYlYl]n^m_nbmbk^i`g\\a[aY^Z^X\\X\\UUWTRVOXOXL[J[H^E[BXDUBU@O?N>O9M9M7H7H3D0F-@->*<*:-7,5010,-(1"] },
+    "usa:Delaware": { "f": [-75.812, 0.02912, 39.867, 0.02293], "w": 27, "h": 63, "p": ["/)5*4//2/4150;6B6K9N9R>WAVBf,e*>)>)-"] },
+    "usa:Arizona": { "f": [-114.903, 0.08052, 37.097, 0.0634], "w": 74, "h": 92, "p": ["T)q*q\x83V\x83R\x80O\x80H|B{@y=y;w8w6u)q)n-m-h+h*b-`.W2U0R.R.N+K,C+C*8/7/9293*T*"] },
+    "usa:New Mexico": { "f": [-109.138, 0.08052, 37.033, 0.0634], "w": 77, "h": 91, "p": ["))t)swGwH{4{4\x82)\x82"] },
+    "usa:Oklahoma": { "f": [-103.08, 0.09765, 37.075, 0.07689], "w": 90, "h": 46, "p": ["))\x7F)\x7F6\x806\x80=\x81=\x80U{SzQxRsQoSfQdS_P^R\\R[NVOVNPMPKJKHIH/)/"] },
+    "usa:Tennessee": { "f": [-90.389, 0.08908, 36.728, 0.07015], "w": 99, "h": 26, "p": ["B)\x8A*\x8A,\x86/\x861\x830\x811\x813\x7F2|3|5x6v9q9o=l=lA)A+?+:.8-6/604/2110/2/3+B+"] },
+    "usa:North Carolina": { "f": [-84.085, 0.08052, 36.653, 0.0634], "w": 105, "h": 45, "p": ["F)\x8C*\x8D-\x8F,\x8F.\x8A1\x880\x872\x842\x843\x8C2\x8C6\x8D6\x8D3\x8F3\x909\x8D9\x8B=\x88=\x86;\x84<\x84=\x87=\x84B\x87A\x8AC\x8AD\x87D\x88F\x86F\x86H\x7FGvNtTsSlTiQiO_EQEQBK?<?6B(B(>*:09366682<3=0A1B.E-"] },
+    "usa:Texas": { "f": [-106.803, 0.13191, 36.592, 0.10387], "w": 102, "h": 104, "p": ["E)\\)\\<]=a=b?e?e@j@kBmAoCqBqDrBwCwDzB\x82B\x83D\x89E\x89U\x8AU\x8AY\x8D\\\x8Ak\x85l\x82p\x80o\x80q}tyuwxtwtzqyr}o|q~o\x80p\x81o\x8Aq\x8Dp\x8Fl\x8Dh\x8De\x8Ab\x8Ab\x87_\x82_~\\}\\zYxWpQjNjNiGjFoDqAq?n<n<l9k7b3`,Y,W)V)TDT"] },
+    "usa:Arkansas": { "f": [-94.679, 0.05482, 36.55, 0.04317], "w": 93, "h": 83, "p": [")){)|/w3w5\x825\x847\x827\x839~;\x7F@}?}B|AzB|CzE|F{G|IxKyNuOuRsQsSuSsTsZqZm^n`l_mcldjcjgkgihjkgjilgnjpiqjwhwiz4z4m.m.n,m,;+;"] },
+    "usa:Mississippi": { "f": [-91.732, 0.07195, 35.056, 0.05666], "w": 51, "h": 87, "p": ["<)Y)Z*Z5Y5WTVTV^U^V{NzK|I{I}F~BvDp*p)k+k,i*h+f-f-a/a2\\2[0\\0Z3Z2X3V1V2S0T1M/N2H2G0H1E/C0B/@2?1;4:3858366654848/:/:-9.8-9+:,=+"] },
+    "usa:Alabama": { "f": [-88.577, 0.07195, 35.056, 0.05666], "w": 52, "h": 86, "p": ["-)Q)WPXPXS[YX_XdYdXmZnZp6p5s8u8y9y6}3}3{1z1u/v/{.{/},z*z)_*_+J,J,@-@-6.6.,/,"] },
+    "usa:Georgia": { "f": [-85.657, 0.07195, 35.056, 0.05666], "w": 68, "h": 84, "p": ["))K)H/K0L2O2S<X?XB\\D]IbLcTfUg\\k]k_h`gfehelbocu[sZt[yZ{X{Xw3u2t1m0m0c/c0[2[2X1X2V.N"] },
+    "usa:South Carolina": { "f": [-83.427, 0.05482, 35.223, 0.04317], "w": 90, "h": 75, "p": ["9)Q)W,X1m2y>y@\x81GyMuUvWr[n[n^kaiagedeah^g_i^l[mYkZoWpVrRpRkPgMeM_K[EWEUCTCP>M>J7E6A4@3:.9.7)4*1./.-9*"] },
+    "usa:Louisiana": { "f": [-94.124, 0.06339, 33.075, 0.04991], "w": 81, "h": 83, "p": ["))W)X*W2X2X5Z6Z9W9W;Y:Y<W<X>T@UCQERJQLOLPMORmRl[n\\pcnckfmhphperdrftgtjrjrmnmnoqrtrwtwwxwwzmsksfxexeubs]w_y]x[yZvWvTtTsWsVqTrToRpQmOmOkKkLiGjGmInFnFo?n8j0j,l+i/e.d/c.Z1V1N-G-B)>"] },
+    "usa:Florida": { "f": [-87.713, 0.08052, 31.05, 0.0634], "w": 96, "h": 95, "p": ["))J)J,N.k/m3o2o/n/o,v-x=\x81O\x80U\x81U\x81Y\x83[\x83^\x84^\x84a\x87g\x87v\x86v\x86|\x84}\x83\x86\x82\x84z\x86y\x85z\x81y\x81x|ryppoqmqoolpnmnilligidfah]j\\jZh[hXfXg]dZeYdUfTfQgQfHeFbFbD`D[:V7S7R:O:O<N;L=J<I?E>F=E9@7>47372+4,.),"] },
+    "brit:Scotland": { "f": [-7.19, 0.06924, 58.677, 0.0401], "w": 79, "h": 103, "p": ["^)d)c/a2_2[7Y7V:V=X>U@TCYC^@b@bAqAr@vDvGtHrLpUlYk]h_b`baibiedfaj]j]kbkblelfjkjsoqsnunwkyk{h}f\x82c\x84c\x8E\\\x8E]\x8Ab\x85\\\x85[\x87X\x87X\x89Q\x88N\x8AJ\x88I\x8BF\x89E\x84G\x84H\x7FLyLuIsInJlLlJhHkElEnDnEhBjBsErFxCxBsAs@z={=u>u>r@q?p@bEX@];]=^=a;c7c7d5c7b7^5]5[9[9];]:Z8Z8X=V<S?P?J<I<F>E=?>?><C<C;E<D9B8B5C3G3G0F0G+J*K,M+R,R+X+X*^*", "5,6,62361637390:,?*?*=-:*9)4*3/4.14.", "4A6A7C7J>K>M:Q9Q9M4M2I.H.F1F1C4C"] },
+    "brit:the North of England": { "f": [-3.616, 0.04676, 55.819, 0.02708], "w": 84, "h": 94, "p": ["I)K)M-S3VDWDXKYK[RfWiZi\\l^l`sfshqiqlrlrowyqwpululvpwt|v|y\x7F{\x85:\x857\x837\x7F4\x7F4y6w6t4t4o8l8e1f.c.a)[)U3U3G9A9?>:>8A6A4D2D0I+"] },
+    "brit:Ireland": { "f": [-10.468, 0.06474, 55.413, 0.0375], "w": 70, "h": 106, "p": ["X)Z)^-W3U:P;R>M@LCPFPHTJYJ[H[D^C`E`HcIcLjKjNhMhQiQiUkXkblbmjjojufyh}f~a}`\x7F^}^\x7FU\x80U\x82S\x84P\x84P\x86M\x88H\x86I\x8A@\x8F2\x913\x8E7\x8B-\x8E1\x893\x893\x870\x89*\x88)\x86-\x82/\x820\x7F*\x80)~+|1}2|1w3w5t>sAp>o=r9r9s5r1t8m8h:g:e?d?b6b5_2`2^.^.Y2Y1U3S6S6Q1Q2L0L0I.I.G/F2G5E;F<H>FFGECGAJAL=E=B;H7H2L.R.R,T,U.T3U3V2U-V+Y+"] },
+    "brit:Northern Ireland": { "f": [-8.194, 0.03327, 55.253, 0.01927], "w": 83, "h": 63, "p": ["Y)g*g,i-j4l5m9s?sBoDnGvFzMzRwPvMtMtPuPtUwVv[o]lejfefdd`d^fVfV_R_R]P\\PXLTJTFXG]BaBc:b8_2^2[)R,N/N5K5I1G1D7D<A>:?:?6B2F1I3L0N+S,"] },
+    "brit:Wales": { "f": [-5.278, 0.03776, 53.462, 0.02187], "w": 64, "h": 96, "p": ["d)g)g-e,e.g/g\x7Fd\x80b\x83`\x83]\x87[\x87[\x86U\x86R\x83R\x81O\x80M}D\x7FD}GzCz=v9w7z3|,y+r)q*m@bA`C`E\\G[HUJSHQIJGGGABA8F8C:B:@@<A8F3N/W/Y-\\-_0a0`+c*e,", "=*B*E/H/H1D3A7=5;2;+"] },
+    "brit:the Midlands": { "f": [-2.934, 0.05125, 53.339, 0.02969], "w": 92, "h": 39, "p": ["*)g)h0d3b7e8f:h:m4x5x6}7\x83>\x83H\x82H\x81N)N)*"] },
+    "brit:the West Country": { "f": [-5.688, 0.04226, 52.23, 0.02448], "w": 88, "h": 91, "p": ["j)\x7F)\x7Fjyjyirjqhmffffgcg]j[tYxVzKsKt>w<z:z7}5\x822\x820\x7F,\x7F)\x81*{1y3u7r7p;m;k@g@eCbC\\JXJULRPRPQeRhOkHpDpBu=t<nCjD"] },
+    "brit:the South East": { "f": [-2.041, 0.03776, 52.212, 0.02188], "w": 98, "h": 69, "p": ["))\x89)\x87/\x833\x7F3\x809~;v;s=s?v@vEtGlHpNtNtO\x83N\x84O\x83X{\\x`xcrbpekffj`j`i[i[hPhLjFjCg9e;h9h7k)l"] },
+    "eur:Norway": { "f": [4.801, 0.08914, 63.013, 0.05907], "w": 92, "h": 85, "p": ["B(O(R+S*Q({(z)z0|3{?\x7F@\x83E\x81I|J}O\x7FQ\x7FW~W~Z{]x]waubvltnrmrjlihbghdlam_kRxJ|@|@z>z=|<{=x8x0r0l3l5n9m9l6m4k5f8e9c7c5f0g/i,i,d-d-a/`3a4_7_7^2^2]7Y7W:T8T4X4Z1[1]-a+a,\\-\\,Z1Z2X-X,S.Q+P*I@HAJAHEHGFEFDDDG;F;H8H8G-H*F*C-A)>);1;1<9=9<2;2:,:+8,6/613=2=1728/@.@/H0G/H-D-D,>->+"] },
+    "eur:Sweden": { "f": [10.998, 0.11036, 63.013, 0.07313], "w": 73, "h": 106, "p": ["3(l(l*j+f*h.d0b/d3b5b:`:`EaEaHdHdJgIiLkLlOoPpUmVnWm[k[l^j]\\d]f\\fZ{Y{Y~U\x86R\x86R\x85J\x86J\x88H\x87E\x8AF\x8CE\x90>\x90>\x919\x90:\x8A6\x866\x848\x857\x829\x829\x7F7\x7F7}4{2w2t0t/n,l,h*g*`)`)^,^,`/_.V0U0S6P6I5I4C8C9A9>3:3545412/"] },
+    "eur:Finland": { "f": [21.047, 0.09975, 63.013, 0.0661], "w": 106, "h": 49, "p": [",(\x91(\x91+\x8F/\x895\x875zCxCsHqHmMkNeMcO^N^OZOYQTQTRMSKUFUFV?V>X<X>U<U;R9U6U7P5P5S4S3R4O0M*N,M+E-C->.>,9*8+2)1)+,*"] },
+    "eur:Russia": { "f": [27.2, 0.29076, 63.013, 0.19267], "w": 87, "h": 114, "p": ["7(~(~c|dxcxerhrlmjknlvpws|r~t~r\x81n\x82m\x86k\x87k\x89m\x89n\x8Bn\x91q\x94q\x97o\x99m\x99l\x96h\x95h\x92f\x91a\x92^\x8FS\x8DP\x89N\x89J\x85D\x85@\x89>\x89>\x85:\x84;\x82>\x81>\x7FB\x80D\x84E\x83L\x84L\x81O\x80L}O}P{R{RzNzNxSwTnQlMlLjDiDf@eAb?a?_8a6[:[;Y8X8V6V6S4S5N3M/N/L.M+L*E)E*C)=,8.927.7-4,5*4016+"] },
+    "eur:Estonia": { "f": [22.297, 0.0573, 59.684, 0.03797], "w": 103, "h": 58, "p": ["`)t+w.\x83.\x83/\x8D.\x8E/\x8E1\x893\x87:\x82>\x83P\x85R\x86W\x88X\x83Z\x80a}a{_v_v`qam_m]hXeX]S\\TWSUUQUKXNROKKJJMFMDKAK@F>F=B@A@@=@<>>4E3G2G0J0K.Q.T,`,", "6C:C:F6E:I6I0N(O(E+E+D6E", ",8/8/:4;4>2@0?.B+B*=(=(;+;"] },
+    "eur:Britain": { "f": [-8.222, 0.13158, 58.765, 0.08719], "w": 77, "h": 101, "p": ["M)O)O-M-K0H1I4G4G6K4O4O5X4Y7U?S@SBPBREPEOGKGKHSGWIZL]WaXf]e^gbfdifiigjgljlkjqksltqsqstpvpxmxm{k{l}q}q\x7Fn\x80n\x82k\x82i\x84\\\x83^\x84^\x86\\\x86[\x84W\x84W\x86V\x85S\x86R\x84O\x84O\x85L\x85K\x8AE\x88E\x89B\x89@\x8C>\x8B<\x8C<\x8A>\x8AD\x84D\x81F\x81F\x7FI\x7FI~O\x7FR{QzM}IzF{GyByBz?y@uCuHqGkClFiDhDeFeGhLgLfQgOePcO`Q_Q]N]KZKWMTJTIV?U?SCOCLAKBG=H>I=N;O<E??;B;D7D8C7@;B8?:?:=<<<8:7;7;3?2>.@.@*F+F*M*", "5P9Q9T;U:W=X<\\:\\9^4^2Z0Z/],]+[)[)Y+X+V.U/R1S1Q5Q"] },
+    "eur:Denmark": { "f": [8.048, 0.0573, 57.768, 0.03797], "w": 81, "h": 84, "p": ["R)T)R+S7Q8O<OGRIYIZNWQSQQOOQNYIZJ^H^CcDlAnApEqFvEu<v:t3s2n1n3m2f*b*X+X)T*F4I4F6C8B<C=<9;5A5D.E,C,@29B7C4F2F0I-O,", "qSwUvZwZxbvbv`qbqftgtjnlnvjwglekal_j_d[^b]dXgXhYg\\h^j^l[kW", "MaQaQbVaVdXfXnVnUpQpIlHcKc", "]r`rcuivizc{]x\\w"] },
+    "eur:Latvia": { "f": [20.928, 0.07853, 58.117, 0.05203], "w": 94, "h": 48, "p": ["\\)^*`)f-i-i/m3r3r2{3~7\x807~@\x81A\x85L\x84N\x80O}R}UuTsWnWdN]M[IXIWKRKRLMKMJ5I)O)C*C*@.=.822=0E8F<M>T9S-V+\\*"] },
+    "eur:Lithuania": { "f": [20.973, 0.06791, 56.431, 0.045], "w": 86, "h": 57, "p": ["5)S*V,]+^)b)d-o0w8{9yA}A}C{C{EvEtIoJnRkVkWnWoYn[k[kXgXe[a[`_M`M[JXFWEUBVAPCNCJ@I?F5F+A,<)6)0"] },
+    "eur:Belarus": { "f": [23.099, 0.08914, 56.22, 0.05907], "w": 109, "h": 85, "p": ["_)a)b+f*g-l+o-n.o1s0t.x.\x803\x806\x7F6\x80=~@\x82B\x82F\x84G\x84I\x8AM\x89Q\x8FQ\x91U\x94W\x94Y\x92Y\x8E]\x8A]\x89[\x85[\x84]\x85a\x87b\x87k\x89l\x89n\x81n}r{v||z|xxnzlvhwgyfwbwbv`w]v]x[x[vVvUsRtRsNsJq7q3v-w.n)k)i,f1d1]0]0Y-T-O3O3N8O8N;N;K?K@ICICKFKFIDHDEFDECF?H=K=K:Q9P7N7O1R1S/[/[-"] },
+    "eur:Germany": { "f": [5.8, 0.12097, 54.98, 0.08016], "w": 77, "h": 97, "p": ["@)J*K+J.S0R4U4U5W5Y2]2`.d/f2j2m4m6k6k7n7n;o;o@mAmCqFpHrJqQtTtYr\\pYnYo[h]ca_a]d]f_f`mcnhtjtjxgxg{b}d\x86b\x85b\x83`\x84]\x83]\x84X\x84T\x87R\x85N\x85N\x87L\x88K\x85F\x85@\x82>\x82?\x84:\x84:\x856\x848x;u;s/p-m.i+g+c-a+`*Z)Z+X*W+R)Q)O/O0L2K2H0H/F2E3C4=2;48;8;;<;<:?:>9?6C6B1?0?/B/"] },
+    "eur:Poland": { "f": [13.986, 0.11036, 54.946, 0.07313], "w": 93, "h": 82, "p": ["N)Q*Q-S0Y0Y/z0~3~8\x7F8\x7F;\x82A\x82G}I{M}M\x80P\x7FX\x80X\x80[\x82\\\x84d\x83f\x80fwpxysxotktksishuat_w^v\\w]uZsZqWtUtUrRpRmOmMkJlIjJhFhEfBfCi?j?h<f>e>c4a3^1^0`1X.U.Q/Q.O/M-L.I,F)E)C,A+9-9-7*7*6<1?-C-E+N*"] },
+    "eur:Ireland": { "f": [-10.455, 0.06791, 55.418, 0.045], "w": 66, "h": 89, "p": ["V)Y*[-U1S7N8P;M;J>NANCQCSETDVEXCX@[>]B`C`FeFeEgFdIhQgViZiagcggekcleocp[oZqTqQuNuLxIxHvFvGzEzD|A|;\x7F6~2\x802}5{2{/}-|3w/y)x)v/s0q)q)o+n1o1j3h?f@d=c;f1g7b8\\>Y=X6Y4V1W1U-U.T-Q1Q0M5L5J0J1F0D-D-B.A/B:A;C=ADBC?H=J9D:D9A9A7F5F1H0H.R,S.R1S1T0S,V+"] },
+    "eur:Netherlands": { "f": [3.298, 0.0573, 53.473, 0.03797], "w": 69, "h": 73, "p": ["])f)h,l-l6j8i>d>c@dCiDiIfLdLeQaSYRVTWWYXY[[\\ZaXcYfUhUjXkWpSpQnQlSkTePdObIbG`G]E^B^B\\@^;];`8_8a3d1d0b*c)_0_0`6_7`7^,]+Z0Y6]9]6Z4Z4Y7Y7W4U4Q5O9M9K<I>EA6E7H4J4O-U*]*"] },
+    "eur:Ukraine": { "f": [21.894, 0.17403, 52.462, 0.11532], "w": 106, "h": 64, "p": ["d)e*m)p.n/o3t3v6v:z:z;\x82:\x84>\x87=\x91B\x91D\x8EF\x90G\x8EH\x90L\x8FP\x89P\x88R\x86R\x86W\x81W~Z}YxZv]t\\u_r^sbr`m_m^l_b_a]e[aZ`\\`Y_Y_[[[Z_WbTbUfReOgMfMdO`Q`P\\W]VYTXTURTROJKFKFLDKCMAMAO<O;Q9Q8O0O0N.O)K+F-F,A2:592/5/6-B-B.I/I1J0P1R/R1Z2Z.\\+c,"] },
+    "eur:France": { "f": [-4.865, 0.1422, 51.195, 0.09422], "w": 92, "h": 95, "p": ["[)]-a-a/c/d1g1h3g5k5l3l7t;w:{>\x83?\x83B\x81C\x7FP|OzTwUwXuYu]v[z[z^{^zc}fyhyj|l{r\x80s\x7Fw}ww~p}p{nzj{jzey`~a\x85X\x86V\x83R\x81I\x82D\x7F@\x7F@|>|>z@y@uAuBeEfBcC`AaB\\<X;R=Q9R8Q9O7N,L+J)J,G,F)F)D-B2B2A5A7D@C=8A8B;K<M;K:L7Q6U3U,"] },
+    "eur:Belgium": { "f": [2.483, 0.04669, 51.517, 0.03094], "w": 84, "h": 66, "p": ["X)Z*Z,],_*b0i0j2o3p6n8n;l<l?nAtAxEwI{J{OwQvUrToXo[m^qdohhidcac_`[`[\\Z\\[TWVVZSZS[KZMWKULPJPINAOAJ:I8F8B6@/B*=)5-4.28-;-<1@/@0C0D2H2M.M,Q-Q*W+"] },
+    "eur:Bohemia": { "f": [12.014, 0.07853, 51.107, 0.05203], "w": 88, "h": 50, "p": ["E)H*J.M-N*P*R.X/Z1_1`3^4^6b9b;g9f5l8q7q:o;r>v=w?{?\x7FG{GxKvKuPsPqSoTiSgXfVbT^V^UZUYSUSTQNQMUKUJXCY<Q9Q9O6N4J0I-C.>+=)7,:.6557472F,"] },
+    "eur:Slovakia": { "f": [16.813, 0.06791, 49.636, 0.045], "w": 85, "h": 43, "p": ["N)P*Q-T.S2U1X2X0]-b.b/f/f-p-p.s.u2|4z;x?v@vDpEm@j@jA_@[GWITIQGMKFKDNEODQ=Q=R4Q/L,L)F+;-9/:6986;5;1?/B+G+H-K-K+M+"] },
+    "eur:Austria": { "f": [9.449, 0.08914, 49.039, 0.05907], "w": 87, "h": 45, "p": ["f)h*k)r-x,|.{4~8}?w>w@y@yCvDwJuJqNqPnOlQeQcT\\T\\SIPHMFLGICK;K:N3M3K1K1M.M,J*J)H*A/B0F3D3A6A9D;D;C>C?AM?MAPBO:M9M7T4U0X1Y-\\0c/f,"] },
+    "eur:Hungary": { "f": [16.07, 0.07853, 48.627, 0.05203], "w": 87, "h": 56, "p": ["b)c*m)p.w,w.{2~2}8w9v<s>sAqBqEoFmNkNhVcVcXTWQ[NZM\\I\\G_>_<^<\\8[2U1R/R,O+J)I-G-@0=-:.95:495484:7?8?9J8K3Q3T0[1\\/_.`*"] },
+    "eur:Moldova": { "f": [26.563, 0.0573, 48.525, 0.03797], "w": 63, "h": 81, "p": ["9)?+D0G0G2I3N2Q7V8UDYFYH\\I\\M[M\\QbTc]f_eaaa`_^`W_VaV]S]Q_QcSeRiNlNoJrIxCwCtDtCeEbEXCUCQ>M9C5?370402-/)/,,4,5*7+"] },
+    "eur:Switzerland": { "f": [5.902, 0.0573, 47.795, 0.03797], "w": 80, "h": 53, "p": ["T)X)Y+[*\\,b+c-h/i3g5f;l<m?qAsAu=w>wEvEwIsGqGpIrQpQoNgOfKcJbR^V^Y_Y^\\ZX[UXUTQTLRLNPOSMWJYCXAZ<Z;W7S8R7L0L.N.R)S)Q+Q,O+M,G1D1?5=6:;6;493;0>0?2A2C1D.V-T,"] },
+    "eur:Romania": { "f": [20.196, 0.08914, 48.314, 0.05907], "w": 108, "h": 80, "p": ["n)s)u+x4z5}<\x81?\x81B\x82B\x81X\x86\\\x8B[\x8DY\x92Z\x93[\x92b\x8Cd\x8Bb\x8C`\x8A`\x86u\x81u~q}ryqvnooirdw\\v\\uQuMsFtFqHoFoBkBhDhDf@e?h=h<f9f8d6d5c7b5a6]/Y/V.V/T)O)M+L-M.K3J4E6D8=:<<8<5>5?2D1H,T.T/Y.\\2_2b/k.l*"] },
+    "eur:Italy": { "f": [6.507, 0.15281, 47.115, 0.10126], "w": 79, "h": 104, "p": ["G)M)N,W.U/U1W1V6N8M;O<NDPGVJZV`[g[f`mcofqfvkvptpsloknikkjrmsnyjzj~g\x80g\x83d\x83d\x80a\x83`\x89b\x8C`\x8D`\x8F\\\x8E[\x8BX\x8BT\x87P\x86O\x82S\x80U\x80V\x82]\x82^\x80e\x7Fe|g{eoan_l_h\\h[fYfXbSbM]M[HVFWGUDSDQBQAH?F9C5C1I.I0E,E*B+>)>);,;,8*6+4.4.31432213/5/74:1:.;0@1?-B.A,F+", "9b<c<f>i=s<s<w9v8y6y4x5w4v5k3i3e6f"] },
+    "eur:Slovenia": { "f": [13.324, 0.04669, 46.896, 0.03094], "w": 69, "h": 48, "p": ["b)h)h.j/j2l4g4f5g9b9a<^<Y?ZJRMSORWNWLUGVCRCP?V8V8U6U5W.V0R4R4Q/K-K.F,F+D/?*>);-7/704C8D6H4I1N1N0V1Y.a/"] },
+    "eur:Croatia": { "f": [13.441, 0.0573, 46.563, 0.03797], "w": 105, "h": 96, "p": ["Y)])a+e/e1k5l8p8q;u=\x80=\x82<\x839\x879\x86<\x88>\x88C\x8AC\x89G\x90K\x90M\x8CM\x8CL\x8AM\x8BS\x89S\x89U\x85T\x84O\x7FO\x7FNwMvOtOsMpMpNhMfJdJcL]L\\OYQULQLPXSYS[W^Xf_marhykyk~q\x84q\x87o\x87k\x82j\x83]\x82\\\x80`\x80c\x82j\x82j\x81d{_z]xUyTtPrKlImJkFgFdKdKcIcHaGcEcC_A^@[B[B]FaG`B[BY@YASBSAO>L=N?O@R=R<P9O;N;L=L;I7H6N4O1V.T-P+O)D0F1D3E9D<@=C@EADIEH>J<O;N1T0V-Y-"] },
+    "eur:Serbia": { "f": [18.766, 0.06791, 46.215, 0.045], "w": 63, "h": 89, "p": ["3)7)7*<)?+A/C/D3F2F5E5F9J=P?NDPDQFNFNGRHRJVJYM[M]JbKbM_N_QbT`X]Z]`_b_edhfmbr^s_}]\x7FZ~Z\x7FQ\x80Q}TwPvOsLqLoHmFjCkDnApAs?s?q=q9m4l3i.e/b1c3b/Z4Z4X2W0S-R-N1F0E+F+E-E,@1?1=,;,7*6+4)0,-0-"] },
+    "eur:Bosnia": { "f": [15.688, 0.0573, 45.301, 0.03797], "w": 69, "h": 73, "p": ["=)?)A,C+G-L,M.O.P,R-V,X.].^3e3e2h3g9d<dBgClIkKfKjQjViUfUeWaVb]_[[`[dXeXjZmYpVpUnSnOiMiMgIgJcE_DY@W:Q8L2G0=,:,8)7).+*-*306*<+"] },
+    "eur:Bulgaria": { "f": [22.314, 0.06791, 44.258, 0.045], "w": 93, "h": 68, "p": ["-)2+2.0.01<1@3H2H3M3Q5Y5`.g,g+k+k*o*p,v-w/z.|2~3\x843\x84:};zAzJxJwMtOuQwQ|[t\\qXk[g[f^_a`faf_iYiUkSkPhKhIdAe<h1i2_0]0Z-Y)U+Q*G.G.E2A0=-:+:+7)5).,-"] },
+    "eur:Spain": { "f": [-9.364, 0.13158, 43.839, 0.08719], "w": 97, "h": 91, "p": ["4)7)8+B+C*C+G+K-P-P,U,U-Z,].b-d.d1i2j4t5u3w5z5z8|7~9\x888\x87:\x88>\x85A\x80C\x80E~FvHuJvLsMqSoTmXm^qckgipdp_y^xZzYyVyVzOyL|I|G\x80D\x82C\x80A\x80@{>z@w>x;t7t6n8m8k:k7e8e8b:a:^8^8[6X9X;U:S;G@C@A=A=>1?1<.<,>-8+4)3)0+./.0+"] },
+    "eur:Montenegro": { "f": [18.394, 0.03608, 43.564, 0.02391], "w": 55, "h": 71, "p": ["8):*>)>,F3F5J9U=W@Y@ZB^D^GZHZJUJWMVSRUNUMOIQGWEXA`AcCfBn>l9b.Y/W+W)T)R,P)A*?.?.9417184:3:07,"] },
+    "eur:Kosovo": { "f": [19.971, 0.04669, 43.304, 0.03094], "w": 39, "h": 48, "p": ["9):):,@/C5G7F:N<N?M?KFIGJIIKFKDOBM>M:O8W5W4L2I-G-D*A):-:-8083633706+8+"] },
+    "eur:Albania": { "f": [19.209, 0.0573, 42.694, 0.03797], "w": 33, "h": 81, "p": ["0)1)2.5,8,:2<2?5@>?>>NBTBWGXF[H]GbCdAm=m=o;o<t:x6w4n.k*f*d,e*\\,Y,P-P,H.E.?*>+8)5"] },
+    "eur:North Macedonia": { "f": [20.391, 0.04669, 42.399, 0.03094], "w": 57, "h": 51, "p": ["O)T-T/X3\\4^<`=_H^J[JZPIQGVDWCY=X;Z4Z4X/X.S,R+M*M)D+C+?*?+9/:026/8/;2;0>-D-H*M+"] },
+    "eur:Portugal": { "f": [-9.563, 0.08914, 42.171, 0.05907], "w": 39, "h": 88, "p": ["4)8*7.9-A.C+J,J1N2H8H:F:F?G?GEFEGGEHFODR?R?TAUB[E\\AdAhCkEkEnCn?t@}>}=\x7F8\x7F8~/\x7F0t1t0r0l1l0g1f,g,c.c.`,c)b*W-U.O0M0D2A0,"] },
+    "eur:Greece": { "f": [20.081, 0.08914, 41.816, 0.05907], "w": 74, "h": 92, "p": ["l)q,q0n1m9j:i8d8d7_6^8X7V:Q:Q<S=R@U@XCWDVBQATGRGQCNCNBMDPHMGLCG@H=E>DGFHHNLRLVJVKSIRGSHWIXMWN[U]We[f[hZiWhUbPaPcTdUnSnSlPiNjOhIjJnMoNqMsJtJrFpFtHvI}J}I~J\x82G\x80F}D}D\x80B\x83B~?{?y=y=~:|9z:r6n4i6h7e:f;cEgFiHiHgKgKfGeCaAc@b7c7a4c3^0[0Y4Y4W/W*R*O)O+F/E/A3=28787798>3D4F3F0R/T-Y-Y,\\0_/b2g1g0j1l0l+k+"] },
+    "eur:Turkey": { "f": [25.888, 0.17403, 42.185, 0.11532], "w": 110, "h": 56, "p": [".)4*5.7.:1=0=1D1D2H1H/J/L,Q+S)T*])]+_-b,d0g/h1l1n3r3u1x3{3\x81.\x84/\x84.\x89-\x8B1\x8E2\x8E:\x94<\x93?\x90A\x91A\x91E\x93I\x91M\x93N\x93Q\x95S\x91U\x91R\x90S\x88R\x88T\x87S|T{VvWvXrXqVmVkXfWeXf\\d\\c_a\\aZcYcVaV_Y\\WYWXZS]N]LYJYIWCVB[<\\:X8W4X5U0U1T1R/Q0L*J+G,I/I-H.?)@)>+;*8+9-7:897:5?5?4;4:21214+8,6)6)4+3+/,/++"] },
+    "med:Gaul": { "f": [3.075, 0.06615, 47.325, 0.05385], "w": 109, "h": 111, "p": ["((\x8A(\x89-\x8D-\x8F.\x8F0\x920\x921\x940\x945\x925\x917\x93<\x91<\x90:\x89;\x899\x867\x85=\x82?\x82D\x81D~A\x7F?|?y<y8x8v;t;t?rApBjAgCcBbD`D`FeKeO^Q_UdWdYa[b]a_gcmcmfkgkjdmaq^r]uZuWwPvPuKtJrFrFp>q6m2q+t*w(x", "\x87x\x89y\x88\x7F\x8A\x81\x8A\x89\x88\x8B\x88\x90\x86\x92\x86\x95\x83\x96\x7F\x93\x80\x90}\x8F~\x8C|\x8C}\x89{\x88{\x86}\x86|\x85}\x80\x82\x7F\x83}\x85~\x87}\x86|"] },
+    "med:Italy": { "f": [6.531, 0.11542, 47.137, 0.09396], "w": 105, "h": 112, "p": ["S)T*Y)[-f.c2f2d4g7g9f7a7]:Z9Y;Z>\\?ZA[H`JbMfOhWo^t_t`{_|aycze\x85i\x86k\x8Eo\x90r\x8Fv\x8Dv\x8Aq\x87q\x85o\x82o\x80q\x7Fx\x84z\x84\x7F\x81\x7F\x7F\x81\x7F\x85{\x88{\x8Aw\x8Aw\x87v\x87v\x89s\x8Bs\x8Er\x8Et\x92r\x97n\x97k\x93g\x93f\x91`\x8E]\x8E[\x8A\\\x88`\x89a\x87e\x89n\x89o\x87s\x88u\x86y\x86y\x82|\x81|\x7Fxwxtqrqnlmlkikggdgdf`gW^U^T[PZPXKTGIDI>E:E5K0L2H,G+F,@)?)=-<*60504456351718/9/92<3<5>6=4@1@/B1F0G2G.J.J+O,P*S*", "?gAgDlC|B}>|>~;\x80:~8\x7F9~8}9p6m6k;k"] },
+    "med:Illyria": { "f": [13.307, 0.0943, 46.941, 0.07677], "w": 103, "h": 96, "p": ["E)H)J.L.O2Q2S5V5W7`7b5i4j2q2w8w;y=\x7F?}A\x7FC}D\x80D\x85G\x87G\x88E\x8CF\x89H\x8BJ\x8BM\x88N\x88R\x89R\x89U\x8EX\x8E[\x8C]\x89]\x89b\x8Ab\x89d\x82d\x82e~e}gyfwgwjtktsvtwwywz{w}v\x81r\x83s\x84r\x87o\x86m\x81h\x7Fjjgjde]bY^T_V^V\\U]S]T[Q\\S[RYKZKYPYOWIYJXIVLVLWNVIUITDUDRBRAP>P<K?K?J=I;J<H:I;H;G9H:F8G9@7@8B4A4E3E3A5@5=2=3@1@0C-C-A+@*;.:.8+7*5+2)0+.6/9,@,@+D+"] },
+    "med:Pannonia": { "f": [15.742, 0.05208, 47.325, 0.0424], "w": 119, "h": 38, "p": ["((\x9E(\x9E)\x9C-\x99/\x992\x973\x967\x92:\x92>\x90>\x8EB\x88A\x87D\x83C\x7FEyDyCxDqCoFkHhGfI_J\\MRMRLNLLIFHFF@C=>7<3633-3,4-7)7(6"] },
+    "med:Dacia": { "f": [20.139, 0.08727, 47.325, 0.07104], "w": 115, "h": 52, "p": ["<(\x93(\x94-\x98/\x983\x9A5\x976\x964\x955\x934\x905\x903\x8D4\x8D:\x8A<\x8A>\x88>\x88B\x85B\x85D\x8DE\x8FC\x94C\x96E\x95J\x91L\x8EL\x8EI\x8CJ\x8DL\x8BN\x8CP\x89S\x8AT\x89Z\x83Z\x81W{WxTnVh[GYIUCRCOFOFNAM@O>O<M7L7I6I7F1D/B/>):+8.9/737"] },
+    "med:Scythia": { "f": [28.021, 0.22801, 47.325, 0.18563], "w": 120, "h": 34, "p": ["Y(\x9F(\x9FF\x9CC\x97C\x93F\x94@\x90@\x90>\x8E>\x8D:\x8A8\x8A7\x8E7\x8D4\x902\x963\x952\x96*\x91+\x8D)\x83.\x830\x800\x802\x7F1}2z8}9~;}?\x82E\x82G}I{FuDvBtAmBm@j@i>b>`<\\=W8T8S6N4N2R3S/V/S,T+V,V*Y*", "/(V(V)R)R*G-F.G2H3M2M4H4G6D6C8A8@4<3>0A0A/?.;/9-7.8,4,4.00/2)3*0,/,,1-"] },
+    "med:Thrace": { "f": [22.315, 0.06615, 44.306, 0.05385], "w": 96, "h": 58, "p": ["-)3,0/11;0;1@1@2N2N3S3S4Y4Y3\\3^0`0c-j,j+r+t-}.}0\x802\x872\x868\x859\x828}<|EyFyHwIwKzLzN|O~SvTsQnRnSiShVeVeXaXb^_`\\_\\`TaS_K^I[>]>^1_2W0S-R)N+K*C/B/@1@2>2<0</9+8*3)3).,-"] },
+    "med:the Caucasus": { "f": [39.954, 0.0943, 43.654, 0.07677], "w": 111, "h": 69, "p": ["))1*9.F.I1P3Q4P6T6V4Z4Z5^4a7e7e:d:e<l>n@q@uDuFxH|H~D\x82C\x82A\x85@\x8BL\x8FP\x95Q\x96T\x92S\x8DV\x8DY\x8B\\\x8C`\x8Ad\x88c\x86f\x87l\x83l\x82j\x80j\x80h}g~e\x80e~a\x81`~\\z\\y^t`rcpcnfceab_b_`\\^\\\\WWPWORNRPPPMMJMHJHJFHFFCDCCE9D;A;<:<844341211/-/+,),"] },
+    "med:Macedon": { "f": [20.412, 0.038, 42.396, 0.03094], "w": 69, "h": 51, "p": ["W)\\+\\-a2h5j<l<jJfJeObQZQZPPQNUHYAX=Z6Z6X0X/S-S*M)C+C+?*?+:09138/</?2?0C-J-O*U+"] },
+    "med:Anatolia": { "f": [25.89, 0.17172, 42.221, 0.13979], "w": 111, "h": 47, "p": [".)4*5-9.:0;/H0H.L-M+Q+S)T*^)_,c,e/h.i0n0n1t1t0}1\x83-\x84.\x8B-\x902\x8F6\x918\x969\x94:\x94<\x92<\x92@\x94D\x93G\x95H\x96L\x93M\x93K\x91L\x8AK\x8AL\x84L\x84M|MwPsPqNlOlPfOgSeSdVbTbQdPdNbNaPZOWSSSSTNTKPDNCSBR<S;P9O5P4O5M0M1L/I0F+E+B,D.C-B.;)<):+8*5,43634:5:3?3?2404111/4-3)4,.++"] },
+    "med:Greece": { "f": [19.993, 0.08727, 41.802, 0.07104], "w": 77, "h": 98, "p": ["n)r)t+t.q/q4n7k5c4c3`5Z4X7S7T9S>V@VBR>O>O@RARBOBN>I<I9F:FBIDJHLHLJNKNNLNLKIKJPOOQSWTY[\\[]]\\^Y]WXRXVZWbUbR^O_Q]L^K`McPdPfLgLeGdJiLsHoFoEsCsCo@k>l>o;m:k;e7b7`5`5^7^8[<[<YD[H^J^J\\L[I[HYEYEX9Y7W5Y4T1R1P5Q5O0O-K+K+H)F+F-@0@1;4:35;5?1E2H/S.S-[,[+\\-b.d0m/o.", "W\x7FY\x83\\\x83\\\x82j\x83j\x86p\x84p\x87_\x89^\x86Q\x84Q\x80W\x80"] },
+    "med:Persia": { "f": [43.919, 0.16468, 41.825, 0.13406], "w": 68, "h": 115, "p": ["e(k(k\x9Ac\x99[\x91V\x90N\x7FJ\x80G~H}G|F\x80C\x80C~A}Ay?y@r9k5j5f1c2b1_3^3[6Z5Y6U3U0R-L,F*E+B*B*<)<+8.8.:1=8>=9A8B9A<C<A=A?D@DBFAFEHHLHQMVNVOeMd<`;`9c9c8b6^6^/`0c/d1g/j/i,g,"] },
+    "med:Carthage": { "f": [7.413, 0.08727, 37.393, 0.07104], "w": 48, "h": 102, "p": ["@)H*I1L1L/R-R0O3O5K7L=Q@RHPIOMJRGSFXI\\N\\N_Q]TcWcWfVfWnQqOtLuKxGzI\x84G\x88E\x89E\x8BA\x8D?\x8A;s2l1f.c,c+^)\\)V2N2H3H283614605.8.9,@*"] },
+    "med:Mesopotamia": { "f": [38.712, 0.10134, 37.48, 0.0825], "w": 97, "h": 103, "p": ["S)W+^*^.`.a,d,d/f1f4i6i9l:m<r<p>qEnFmKkKjSqZq_t_yd~e~h\x82l\x80w\x84w\x84}\x88\x80\x88\x83\x86\x82\x83\x83\x80\x81{\x82z\x87u\x8Eb\x8CX\x82V\x82OzMzIuGuFs?p9k0j0i-i.h-f+g)Y0V1T8Q9O?MAIA@B@A5C3G3K/L,N,O*S*"] },
+    "med:Numidia": { "f": [3.075, 0.14357, 37.233, 0.11688], "w": 57, "h": 117, "p": ["?)B+D+E)H+N+L-M:L:L>I@IBGBGGHGHJLLMQRTRYSYTbUbTgWkWxXxWyW\x84T\x86T\x88V\x89X\x8DZ\x95`\x95`\x9C(\x9C(,5+6-9-;+>+"] },
+    "med:the Levant": { "f": [34.137, 0.0943, 37.393, 0.07677], "w": 88, "h": 108, "p": ["})\x7F*\x7F-y3u3s7u?sAsKqOlPhTdUcWY\\[e\\e\\j^j^l[oWoWpFuQ\x82M\x84K\x89C\x8AB\x8E=\x931\x91*z)z)v,t.p3]8T8P<M;L;A9?:?:;><>:@:@7B7B0F0G2L2T.T/W/X1c1l,y,y+|+"] },
+    "med:Cyprus": { "f": [32.29, 0.02393, 35.195, 0.01948], "w": 75, "h": 33, "p": ["5):):+A-A.F+L*L)W*Y,Y2[0^0^1g0h.k-m/p/r3m3m4d3Y>R@RAIBGDGGCHBD@C8D8C.@*8)../"] },
+    "med:Libya": { "f": [9.196, 0.1506, 33.33, 0.1226], "w": 107, "h": 80, "p": ["7)<,C+C,J-K/O/Q1Q5S8_:c<d>f>hAlAp=q;o7p1s.x-z+\x7F+\x81-\x84-\x851\x891\x8B3\x913\x925\x907\x91>\x8F@\x90I\x91I\x91w:w7q/p-h*e*a-_,]-T,T,H)B,A/=.670"] },
+    "med:Arabia": { "f": [34.531, 0.1506, 32.274, 0.1226], "w": 114, "h": 72, "p": ["F)N*R,S.W/kAxB|:\x81:\x81<\x83;\x84=\x80>\x80@\x82@\x85J\x87K\x87N\x89N\x89P\x8DT\x8FT\x90_\x92`\x92c\x94d\x94f\x98g\x97i\x99i\x99oBoBm;h9_7`8^6Z4Y.L,J)J)G*G+@3A7;<;<8?78.E+"] },
+    "med:Egypt": { "f": [24.592, 0.10134, 31.705, 0.0825], "w": 111, "h": 99, "p": ["-).*7);+@+@,C,D.P0T3X2]-`-a+e,h)k+q*r,p+o-r/u.w0x/\x83/\x87-\x8C>\x8D>\x8DB\x8EB\x8CE\x88W\x86X}N}JxCw=u?uCwDwIzO\x80U\x80Z\x84_\x84e\x87i\x88n\x8Bq\x8E{\x91\x81\x93\x82\x93\x84\x96\x85\x94\x86\x94\x8A,\x8A,E+E)9+8+5,5++"] },
+    "mex:Baja California": { "f": [-117.206, 0.06773, 32.766, 0.06365], "w": 68, "h": 88, "p": ["D)L)K+L-O-O.R.R/U/U0X0X1[1[2^2d5h5k7iNeJe@]?]<Z:X:W<Q:P8M8K:JBLCLFMFNR\\^\\`^a^dadafcfejes_v^xZyS\x7FP\x7FP|M{KxIxHuJvSuSwVxTtVmWmVjI]F]E[C[BY>W=O:M9G5D5@0<16-4,0)-++8+8*D*"] },
+    "mex:Sonora": { "f": [-112.916, 0.06052, 31.854, 0.05688], "w": 89, "h": 84, "p": [",)/)/*2*2+5+5,8,>/B/E1v1v)\x80)~1}1}5|5|8y>yBvHvLsRsVqYq]o`odndnhlkixeyd{`{`zPwNtOnFm?d<d<b9`9^5Z3[3^0^.\\/W3V3Y4Y4V1T1Q.O-K+J+F)C"] },
+    "mex:Chihuahua": { "f": [-109.034, 0.06052, 31.838, 0.05688], "w": 90, "h": 93, "p": ["@)S)W/[0e:l=pEpJtPxQ|U\x81Vs|p|p}m}m~j~j\x7Fg\x7Fg\x80d\x80^\x83V\x84V\x83N\x82K\x80G\x80D~@~=|9|6z)w,j.g.c0`0\\2Y2U4R4N6K6G7G"] },
+    "mex:Coahuila": { "f": [-104.531, 0.05332, 29.923, 0.0501], "w": 92, "h": 95, "p": ["Q)W*W+`*`+c+d.f.h1j1j3q9r>wDwH~N\x7FR\x83TvavccucwW\x82U\x86L\x85;t;r)a+Y/Q/N1L2F4D5>7<86>:C:G6I.L+P+"] },
+    "mex:Baja California Sur": { "f": [-114.463, 0.06052, 28.019, 0.05688], "w": 85, "h": 91, "p": ["=)B)I0K0M7Q8P:S=TAUAT<X?XB\\I\\O^SaTaWg`fghkkklmmllioiuor\x82p\x80ozmyluhtepcp`lXhVeTeSbO`PSOSOOLIJGEFCCAC>?>;<>6?2:/:-7)7*5405.7.", "i3{7|8{?u?s<s8l7"] },
+    "mex:Sinaloa": { "f": [-109.982, 0.04611, 27.378, 0.04333], "w": 85, "h": 100, "p": ["=)A)D+H+K-S.V0Z0]2a2d4h4k6o6o7|:x\x86t\x87s\x83n\x7Fkygueucr]o^n]j\\kWjSgSdN_R]K[GWCVBR<T<R?Q@N<Q7Q5O4F6E8A;B8?8<495.", "+w.z.}4\x814\x871\x8B)\x8B"] },
+    "mex:Durango": { "f": [-106.325, 0.05332, 27.135, 0.0501], "w": 70, "h": 77, "p": ["I)K)dBdDmLmNVeVgMoMqJt)t,3<.<-I*"] },
+    "mex:Nuevo Le\xF3n": { "f": [-102.215, 0.05332, 27.736, 0.0501], "w": 81, "h": 73, "p": ["W)[+\\7_9bBhCkFoFrIwIxKuNsNnTlTgZeZ_a]aNp;n)Z"] },
+    "mex:Tamaulipas": { "f": [-100.287, 0.04611, 26.099, 0.04333], "w": 69, "h": 78, "p": ["\\)b*e-l+l1d@aR`R_oIu;f9f+W)W)U,R.R5J7J=C?CE<G<L6N6S0U0"] },
+    "mex:Zacatecas": { "f": [-104.572, 0.03891, 25.302, 0.03656], "w": 88, "h": 83, "p": ["Y)f*l0l2\x7FE|P{P{TyWvfskimcp_pYsUsOvKvKwHwBz>z=w8r8p5n5l2j2h/f/d,b,`)]/X/V9M9KCBC@Q3Q1"] },
+    "mex:San Luis Potos\xED": { "f": [-101.628, 0.03891, 24.27, 0.03656], "w": 75, "h": 73, "p": ["3)L,nNrPqUjahhFpBm?m7h0f0c/c/`.`.]-]-Z,Z,W)Q)K*K*G,D-</9/505"] },
+    "mex:Nayarit": { "f": [-106.457, 0.03891, 23.384, 0.03656], "w": 73, "h": 90, "p": [",)Z)\\-_/_1b3b5e7e9h;h=k?pIpUkZiZ^f\\fOtMtA\x81?\x81=xDwEuGuGr@nBnBlGgH[BX@R=O=D9<)-)+++"] },
+    "mex:Cuba": { "f": [-84.942, 0.09655, 23.318, 0.09073], "w": 113, "h": 39, "p": ["E)O*O+U*V,[,_._0b2k3s9v8|>\x88@\x89B\x87E\x90E\x94I\x98I\x98K\x8DM\x8DN\x89N\x89MsNvJyIxEoEmBkBi;`;`:X8W6G4F2J1I/>/942527.9-7)8+6.6.21/8-8,E*", "<7>7A;<=;<"] },
+    "mex:Aguascalientes": { "f": [-103.716, 0.03891, 22.901, 0.03656], "w": 63, "h": 58, "p": ["[)_)fA_G_IURUTHaF^D^?X=X8R6R1L/L*G)8-8357574D1J.N.T+X+"] },
+    "mex:Veracruz": { "f": [-99.185, 0.06773, 23.031, 0.06365], "w": 81, "h": 109, "p": ["9)=)<3>7=9?9>:?@A@ACEIFNOWQ^S`ScXgYkdlenioltstssxrx\x84u\x87r\x8Ep\x8Fp\x91n\x92n\x94k\x93l\x91i\x92i\x90e\x8Fe\x8Dc\x8Cc\x8Aa\x89a\x87_\x86_\x84]\x83]\x81Z\x7FZ}X|XzStKtFcDaDR=Q)<)7,3.,9*"] },
+    "mex:Jalisco": { "f": [-105.601, 0.04611, 21.82, 0.04333], "w": 71, "h": 49, "p": ["R)U,W,\\2^2c8e8m@nJjMjOeSeUbXGUGT?T?S7S7R/R/Q)P<=>=I1K1"] },
+    "mex:Guanajuato": { "f": [-102.469, 0.0317, 22.034, 0.02979], "w": 66, "h": 75, "p": ["L)O)W.Z.b3i5h<g<gBfBfHeHeNdNdTcTcZbZb`a`_r\\rRm>g<e3c1a+`+]*])P4E4C=;=9G0G."] },
+    "mex:Quer\xE9taro": { "f": [-100.771, 0.0317, 21.974, 0.02979], "w": 55, "h": 75, "p": ["Z)]-^5]5]8\\8\\;[;[>Z>ZAYAYDXDXGUMUQTQNf*r)n*n*g+g+a,a,[-[3373:1>1>0B0B/F/F.J.J-N-N,R,R+V+"] },
+    "mex:Yucat\xE1n": { "f": [-90.546, 0.04611, 21.647, 0.04333], "w": 80, "h": 50, "p": ["[)a)a*f*f+o,o-q,q*p+n*t)w,w.s0o5m5i:g:c?a?]D[DVJTJOPMPDYBY@V>V<S7Q5N3N1K/K)F*<+<,6.6/4518180K.S*[*"] },
+    "mex:Hidalgo": { "f": [-99.621, 0.0317, 21.668, 0.02979], "w": 60, "h": 63, "p": [":)cQbTWYV[R\\Q^M_LaHbGdCf=e9b6b2_/_)\\"] },
+    "mex:Quintana Roo": { "f": [-89.33, 0.03891, 21.458, 0.03656], "w": 67, "h": 95, "p": ["f)h)h,i,i0j0i5f;ZGXKYTUUTXRYS\\Y[Y^SaSdWcWeTjToQtO~M\x7FL{IzJqHpEsCzAy=z7\x865\x864\x7F1y1u0u)].X0X5R7R<L>LBGDGIAKAO<Q<U7W7[2]2a-c-"] },
+    "mex:Colima": { "f": [-105.538, 0.0317, 20.081, 0.02979], "w": 86, "h": 67, "p": ["))z3}jjcf_f]c[cY\\ROLLIFH<C8?6949/4/2,0"] },
+    "mex:Michoac\xE1n": { "f": [-102.969, 0.03891, 20.427, 0.03656], "w": 62, "h": 76, "p": ["7)>+@-I/K1Q2S4\\6c:eV^\\^^WdWfPlPnKsCk;l8j.i+g):03015-"] },
+    "mex:the Valley of Mexico": { "f": [-100.739, 0.0317, 20.141, 0.02979], "w": 62, "h": 51, "p": ["J)O)S,V,Z/]/e3eF^HXLULOPLPHSES8Z,V+@*@*5)4,4,3/3/222215150808/;/;.>.>-A-A,D,"] },
+    "mex:Tlaxcala": { "f": [-98.82, 0.0317, 20.439, 0.02979], "w": 49, "h": 52, "p": ["J)X+XFJMIOCQBS<U;W5Y4[1[/W,U,S)Q)="] },
+    "mex:Campeche": { "f": [-91.565, 0.03891, 20.353, 0.03656], "w": 72, "h": 83, "p": ["D)G*I-K-M0R2T5V5X8Z8[:]:_=c?eIfIfLiRiVl\\l`ofojlkkihhfifm7m7z6z)[/X/S-S.P-Q+P4L6I8I=D>9D3"] },
+    "mex:Hispaniola": { "f": [-73.992, 0.04611, 19.978, 0.04333], "w": 122, "h": 55, "p": ["=)G*I,P-P.Y.[*a*a+m*n,v-y0\x80/\x814\x848\x867\x8F8\x8E:\x87:\x87<\x98?\x9CA\x9FE\xA1E\xA1L\x9EM\x9CQ\x9AQ\x99N\x96L\x85L\x85K}M{PuPuQrPqNhOgTcXa^[[ZVUQRQRPLPLQFQFR/P*U(S(H-H0JAKALCLEILHLFIEB>D4<04/6+=*"] },
+    "mex:Morelos": { "f": [-100.255, 0.0317, 19.299, 0.02979], "w": 63, "h": 69, "p": ["U)X+X-[/[1_5flbh`h^e\\eZbXbV_T_R\\P\\MXKXIUGUERCRAO?O=L;L9I7I5F3F1C/C-@)>,;68<4?4E0O-"] },
+    "mex:Puebla": { "f": [-98.526, 0.0317, 19.567, 0.02979], "w": 55, "h": 79, "p": ["M)O)P+P.S3^V[WV\\T\\S^Q^LcJcHfChAk<m6s0v+N*N)>3947:5;3A1B/H-I+"] },
+    "mex:Guerrero": { "f": [-101.647, 0.04611, 18.787, 0.04333], "w": 74, "h": 59, "p": [">)B)B*I,K/M/O2Q2S5U5W8Y8[;];_>a>cAeAhEjElHnHqKnbkag\\c\\c[WYWXRXLSISBO9M6J4J2G.F,C)B*?0:087270"] },
+    "mex:Oaxaca": { "f": [-98.465, 0.04611, 18.267, 0.04333], "w": 79, "h": 61, "p": ["L)X*Z,Z.]0]2_3c;f=f?h@hBjCjElFlHnInKtRsVvVvWpXj]a_[cOdD^7]1X)V,@"] },
+    "mex:Tabasco": { "f": [-93.847, 0.03891, 18.765, 0.03656], "w": 74, "h": 44, "p": ["V)[+[-Y-Z/e1f6i:i=k?kBnFnIqO)S)3,3/1?1?0D/E,L+L*V*"] },
+    "mex:Jamaica": { "f": [-78.355, 0.0317, 18.546, 0.02979], "w": 68, "h": 28, "p": ["5)V-X0\\2g5k;k>a?a>[=[;W;U?O>M@MCKCJAF?;?8<8:4924)2).,+4+"] },
+    "mex:Chiapas": { "f": [-94.434, 0.05332, 17.385, 0.0501], "w": 76, "h": 57, "p": ["^)i)i+b+b,i3n5o:s;sBZBXHVIRQRTTUSZRZR]S]R`P`K[KY@N>N9H7H2B.C0A.B)A)@.A*?)=+<,8.7/3124,^*"] },
+    "mex:Guatemala": { "f": [-92.266, 0.05332, 17.886, 0.0501], "w": 76, "h": 84, "p": ["@)b)aPiPkRpPqRsRsToXmXi]b`bcacbj_m[mZn[qUtQxQ{Iw8v4t3r1r/o-o)k*a+a)[,X2LJLKFGDD>?<<9<79695@5"] },
+    "mex:Belize": { "f": [-89.278, 0.0317, 18.508, 0.02979], "w": 39, "h": 89, "p": ["A)G)E-L-N1L:J<IDHDHGJJGOGWHWGfDl@o@q>s;s8v8x5z4\x80)\x80,:093<5<:6:4<3<1>0>-"] },
+    "mex:Honduras": { "f": [-89.39, 0.06052, 16.059, 0.05688], "w": 104, "h": 55, "p": ["a)e)h+n+r)r*w+x-y+},\x842\x843\x7F2\x7F4\x834\x857\x866\x897\x8A5\x8C6\x8C9\x8F;\x88;\x85>\x82>\x82?\x80>\x7F@}?zAvAt>p?pBnBmGkGgLeLdOaN`L]L[PTPSQTYQYQ\\O^J^GWBWCPDPCN>N<L7O7M/I.F)E)C,B+:08:.>.@+F+G-H,[-\\+_+"] },
+    "mex:Nicaragua": { "f": [-87.718, 0.05332, 15.048, 0.0501], "w": 86, "h": 87, "p": ["v)})|,y+y.{.|0}8{9wAwGvGwWuWuYwYw]u]uYsZtdrdrgqgtitmqoptqtrytzt}m~m}j}hy_x\\z\\yVxQuMwEnCn>i:a6_-U)S)Q*P,P,R5Q7O7L;K:B<ABBF<H<H>M@N=P=U7W7W4\\-_-a0f0l-q-s+v+"] },
+    "mex:El Salvador": { "f": [-90.142, 0.0317, 14.453, 0.02979], "w": 78, "h": 44, "p": [";)B)B*K,K.N1P1R4T4V7\\8\\<_<`:e9e8i8k;s;u=tBsBtJqKqPnSbSbRYP\\R[SXQQPEI2F-A*A)</64561;/:."] },
+    "mex:Costa Rica": { "f": [-85.946, 0.04611, 11.214, 0.04333], "w": 74, "h": 72, "p": [".)2)2*5*=.@.B,F,I.K-N0N2R2R3W3[0\\6^:`;`=c?cAjGjImLqMqOkNkPiPiZn\\j`khgjjmjoejeecc^b_ebgbi[hXeXc[`[\\YXUVTTPSOQENCF@E>B7?7B?G?I;M9M6H3H-E*?*;.7.2,2)/,.,+.+"] },
+    "mex:Panama": { "f": [-83.08, 0.06773, 9.649, 0.06365], "w": 88, "h": 39, "p": ["+)-*0)3,3/5/42;3:1<1=4A6H5L1R0U-Y,[)j+o.r.s0v1x5|7{;\x7FC}C|E}G{GzIvGwJuKuNtNrJpIoEmDmAoAp<r<r>v@r<r:m<n:l;l8j6f5c2]2X7Y8X:O>OBUGUJPKPMNNHNFDDDDHBH>E;?8?8>5?5=3>,=+?)>)<+;+5-4-2*1"] },
+    "sam:Colombia": { "f": [-79.237, 0.16402, 12.6, 0.15313], "w": 76, "h": 109, "p": ["U)X)Y,W.T.T0O4N;L=RCQJSJTMVL`McRmRmQpRm]qeoemhqjssrsqmnmnololmkoaoasesev`v`|c~c\x81d\x81a\x94\\\x93`\x8D^\x8A\\\x89X\x8AV\x88T\x8AN\x8AM\x86K\x86K\x83F\x81F~D|?{<x9x9y3x2u,s)p*n,o,j.i0j2h1f3f5b3`4S0K1H3I4G3B7E6B8B;?;=>=>7B2G2G0L1M/S-"] },
+    "sam:Venezuela": { "f": [-73.532, 0.14449, 12.279, 0.1349], "w": 96, "h": 87, "p": ["?)B*C.I.J0L0M5[4_8e8g6k6h4t3v5r5r6s8u8u:w9|:|<\x80=~?\x80A{C|E\x80C\x81D\x85C\x87E\x84I\x81J\x81N\x83N\x83P}R~U|V|X\x81\\\x81`\x7F`\x7Fb{bzdwdwetdshphofifidedfghgjqnqnsjtixfx`~_|Y}VzTqPnSkRgPfPbObRUOTOUDVDT@Q@O<O<N2O2M/L0E.D-?,>)?,;-33-305156372;4?7@9>996662=0?.B.B-?-"] },
+    "sam:Guyana": { "f": [-61.485, 0.12497, 8.633, 0.11667], "w": 41, "h": 65, "p": ["4):,@2@7E8G<I<K?JDIDJFEHELCOGUJUJZL[L^PbIaHcEcDeAd@g>h8e8c6b6^4]5S7R6L3K4F-E+A)@)>+=*917.1//5,"] },
+    "sam:Suriname": { "f": [-58.118, 0.08591, 6.11, 0.08021], "w": 49, "h": 54, "p": ["5)=*@,B,B*J*J)W+W1S4R9S9TCWEXJVKVQRWNVMTJTHVAU?XAYB]:\\8[2O2J-J-G+G+D)C)?+<*8,6162411"] },
+    "sam:Brazil": { "f": [-74.262, 0.35928, 5.688, 0.33542], "w": 111, "h": 118, "p": ["N)P*O,Q,P3R5[3]1_3d2f-h,i2j4l4k6l:n9p;u;x>{>z@|A}@\x83A\x83B\x87A\x8BC\x8FH\x94H\x95M\x96M\x94V\x8E[\x8D_\x8A`\x8An\x88o\x88t\x85w\x85{\x83{\x82}~}~~|}t\x81s\x83q\x83o\x86p\x87o\x8El\x90k\x94h\x93c\x9Db\x9Dc\x9Aa\x9Aa\x98W\x93Z\x90Z\x8E\\\x8E^\x8Ba\x8Aa\x85_\x85`\x81\\\x80[{U{VmTmTjOiOdNdObJaF^C^A\\AV=V9Z2Z2V.W-U+U+R)Q)M+M,H2E4F5=6=4:47664644<3>7?6A7B5D5D3F3D2C-H.J,M,"] },
+    "sam:Ecuador": { "f": [-81.01, 0.08591, 1.495, 0.08021], "w": 68, "h": 82, "p": ["A)E+G.K0O0R6]8]6`5c7c9h:i;h?kAkGiFgOcRcT`W^W[[X[X\\U\\S^L`IfGeFkCpCtAt@x=y:w:t8r4r3p1p1r.r/q.l/m1l1d4c7Y5U5Z3[4Z3X3Z/\\,X)W)U+U)H.E.B/B.?3:30607.:.:-A,"] },
+    "sam:Peru": { "f": [-81.584, 0.18354, 0.113, 0.17135], "w": 71, "h": 109, "p": ["H)I*L)M+O+P/R/T3V3W7\\7^5^6c6g8c>c?f?gBbA`C\\C[EWFVORQSYW]V`[`[cacd`digighjijkllnpmxlxm|k~l\x82j\x83m\x89i\x8Dj\x8Fh\x90h\x93f\x94c\x93_\x8DP\x86O\x84K\x83I\x7FG\x7FG}DzEvBp@o@l=j=g:d:a9a9^6X4W2Q*L,K,I)C,@,>/=.A3C4F6F6D8C9=;=<:C8I2J+"] },
+    "sam:Bolivia": { "f": [-69.748, 0.16402, -9.581, 0.15313], "w": 76, "h": 88, "p": [">)C)C-B-C5E6E8H9H;Q<S?W?XB_BaDbL`MbNbTmTmZq\\saoipligcgchXjXmVnTzKyJ}H}Gz@z?x=x=z;z7\x7F3\x7F3y.o0h-f,_)\\)Y-U-S+S*Q*N+N*J-G,B-B-=.=.9+6)1022/5/6-"] },
+    "sam:Chile": { "f": [-75.887, 0.35928, -17.194, 0.33542], "w": 26, "h": 114, "p": ["9);*;.=.<3>5>9A9A:?=<>=E9I9L8L9O7Q9[7]7a5b6h4i3t2t4w3y5y3z4\x801\x832\x841\x87,\x88,\x8A/\x89/\x8C2\x8C3\x90:\x90:\x92<\x92<\x984\x993\x984\x96:\x978\x969\x947\x949\x916\x927\x966\x951\x962\x940\x96.\x95.\x930\x94/\x930\x91-\x92.\x8F*\x90*\x8F-\x8F.\x8C,\x8E+\x8E+\x8B-\x8C,\x8A)\x8C)\x8A+\x8A*\x89+\x86)\x87)\x84,\x85,\x82.\x7F-\x80)\x80)\x7F*}-|,y.z.|0{/x2s1q.q/u.v,u-u-q.q-o/l.d0c1^4Y4O5O4K5K5G7C6A7A79897+9+"] },
+    "sam:Paraguay": { "f": [-62.703, 0.12497, -19.221, 0.11667], "w": 69, "h": 72, "p": [":)F)J+M.L1N2N6O6NA_BaE`HaHbQfQhOlQj\\i\\hgejcjan\\m[oWoWnSoPmImIkLiLdQ_Q\\MYGXFVBU>Q6P)C)>+;+3///,:*"] },
+    "sam:Argentina": { "f": [-74.001, 0.33975, -21.514, 0.31719], "w": 61, "h": 98, "p": ["?)D*D,E*J*K-N.O0R0S2X3X6V7V:X;\\;\\:^;a8a5d6d9`;XCXFWFVRXRYV[WZ[V^J_KeIfBeBiDiCjDlBmAr>r;t;w@y@|;~:\x826\x848\x895\x895\x88.\x88-\x84*\x84)\x80+\x80+~-}-y/x.q0p.p/l-l-j/i.d1^0X3V2S4Q2F4D4?6;8:81<0<+"] },
+    "sam:Uruguay": { "f": [-58.583, 0.10544, -29.98, 0.09844], "w": 53, "h": 51, "p": ["6)9)<->-@/@3C3E1G5N7R<V=XB\\CXGYOVUTURXOXMZGZGY=Z;X8X5U/V*Q)O*H-G,;.9-6/4/-1,1*5+"] },
+    "jap:Hokkaido": { "f": [139.998, 0.06028, 45.53, 0.0475], "w": 95, "h": 75, "p": ["G)I)R2R4U6U8Y<[<aBeCgFmFsJwJ\x81A\x81D}J}P\x7FQ\x81W\x84W\x84V\x86W\x83Z\x81Y}[|]j_`j^r[rQmPkLjKhGf>g=i8k3f/g)d0^0[.Y/V5Y?X?OAKCJCDDDE;F;E4B.C.C+"] },
+    "jap:Tohoku": { "f": [139.297, 0.07614, 42.74, 0.06], "w": 36, "h": 100, "p": ["==D?DLIPISKVKbJbJeGfGiEkEp@q>s=x>x>}?}?\x84>\x84>\x88<\x89<\x8B9\x8B9\x8A,\x87)t*t+m/i/e2`2Y.X.V0V1T0K5H6A:B;H=FAGBA<B", "0)6*7+5.61;2@8?9986=2>1:2:35/0"] },
+    "jap:Chubu": { "f": [135.883, 0.0497, 38.13, 0.03917], "w": 76, "h": 91, "p": ["m)o,sDTITKVLWP[T^[f_i_jnknkriti|f\x7Ff\x81c\x82b}c}dv_u]yX}W\x82T\x82T\x81D\x81C\x82B\x80D\x80D~?~>|<}<v9w8z5y5j)h,e+\\4S4Q9K9?;;E8D<@>?@=@=C?E?JFKHFY@`9d/h."] },
+    "jap:Kanto": { "f": [138.028, 0.03384, 37.067, 0.02667], "w": 85, "h": 82, "p": ["R)W)W*[*[+_+_,y2v8v;u;uBtBsI|[v\\q`qbocnnfr`y]x]u^u]t]q^q]j`i`febe_b\\_\\\\^\\bXfXj[lYpWpWnSjOjKlHQ:M)2+0<.<-G,G+R*"] },
+    "jap:Chugoku": { "f": [130.837, 0.03913, 35.576, 0.03083], "w": 97, "h": 57, "p": ["`)g)i,l*v+v0y3|:~;~=\x80>\x80@\x82A\x82D~DwKpKdQ]QZSUSRPNPKVJ`F_AZ8Z6\\1]0[,[*Y)R,N7M;GAEJ;L;P7P5R5V1X,\\*`*", "vP~P\x84T\x88T\x87Z\x85[\x85ZpWoSsS"] },
+    "jap:Kansai": { "f": [133.857, 0.03384, 35.78, 0.02667], "w": 90, "h": 87, "p": ["N)R*Q0S2`2d.x0xGzG{IxMwRySyU{U\x81Z\x81_tbpehwfxd|`~W|WzUyUvSuSsPqNmM_S\\SZVWVSURISCN7O5J3I3G1F.?)9*241;-E-E,I,"] },
+    "jap:Kyushu": { "f": [129.563, 0.04442, 33.97, 0.035], "w": 54, "h": 85, "p": ["A)G*I-I0L3S3U1X4X7V8U<Z=ZC]G]KYNU\\T\\SjRjQpPqJpIsKvHwC|A|DvCpBpBlDkCh@h>l>s@t@w6u6r5r9p9j6g7e6]:\\:Z<Y@Q@O=N>H;D;A9?6?5@6H9H:L7M6K3J/M/O-O.K*F*B-D/H1H1E/B-B)>*9/:.9/6:2</<,"] },
+    "jap:Shikoku": { "f": [131.716, 0.03384, 34.173, 0.02667], "w": 87, "h": 54, "p": ["a){.~8|8y<v=v?t@rDqJoJoHkEkCgA_A^CVFVIUIULRRNTM[K]E]E\\C]EZEW?W?S=R@I<H<D8D4G2F9CA;D:G/K+N+Q1U1X/[/[0^/a,", ",J-J,P/R.V1W/[*R)K,K"] },
+    "world:North America": { "f": [-168.61, 1.34237, 83.1, 0.935], "w": 116, "h": 82, "p": ["I1M1O3X2W4Z7W7W8_8_6\\7^6^4\\5Z4Z2]2]3a2`5d7d9f8f6c6b4c2e3l2n5p4s6s8w9w;s:u>t=q>p<k<o:o8l9n7h6i9e;h;j=b<b>`>_@aDhFiJkJjFmEkBl?j>o>r@rBuBv@xE|G|L~L~O|OzN{JtKuOwOxQtRvQtPsRqRqUnUm\\i^jfhehaeae`c`cb_a]c^mbmbjejdphqgvjwjygxesar`pZoWlWhTfScReThRgRePdRcRaPbQ_OaN]K[IWIMJLIMHMIKGLFHCFBC?C>A:A:@5A6@5?3A4D1C0E-F.D0D0B-B+@)A+=.=.<)<):-:*7.5>6>7A7A6B7C6O7Q5M5M4I5H4", "h(x(x)\x96(\x95*\x98*\x98)\x9B)\x9B*\x97,\x98/\x960\x962\x942\x955\x925\x947\x807\x806}7~4z0o.o-u,t*w*w)t)q,m,j/c/c.f.e,d-^,^*h)"] },
+    "world:Asia": { "f": [-70.617, 2.41017, 83.1, 1.67875], "w": 104, "h": 47, "p": ["^3\x8F3\x8F4\x8C6\x896\x87;\x86;\x867\x895\x806~9\x819\x81>\x7F<\x7F>{@{E\x7FC\x7F@\x80@\x80E}E{GzCwAvCxCwDxLvKtMqMsSrTpRnSnPlPlMjLgOgRfRgVfVdRdMbMaJ]J^K]OWRVLTJTDPCS@TAX@ZAZD\\D[B\\@Z@[=Y>Y;^;", "l)q*q,u,t.{.{/\x83.\x83/\x88/\x880d0d.p,p+m+", ")0E0E3+3+1"] },
+    "world:Europe": { "f": [-10.546, 0.68136, 74.6, 0.47458], "w": 105, "h": 82, "p": ["\x88(\x8E(\x89,\x89/\x90/\x900e0d2h2h3a4c6b8d:c<k<k>n?n=k<k:i9r:t9t7l3\x903\x905\x8D4\x8D5\x885\x886\x866\x874\x854\x855\x7F6}9z8|7{5x5x8y8x:u9r<p<p=s=s<\x90<\x90Z\x87Z\x85X\x82X\x7FZ\x7F\\~[|\\|`\x7Fa\x80c\x7Fe|f~n|nzkvkvjohnepbkckemfkfjhifgfiddc^oZo[qYq[vYuYxWxWuTqTmQjOjLeJeJiLjLlSpSqPpQrPtLnHmFhChBj<j<m7q8t7v5v5x.y.w+w+u)t+p*j+i5j6h6d4a1`1^5_5]8];Y=Y>UDTDPCPDMGLGOFOGSMTORWQVMWL[MZHbGbF\\F\\GWFVAZ=\\=\\<W<W>QAQESFSHPIOOHQHOJOHIFHEJAK?H?BD@H<7<73S3S2Z1Z0707/\x83/\x83-\x87+", "0J4L3O7R8V:V9Z/\\1Z0Y1U3U3S0R.N"] },
+    "world:Africa": { "f": [-18.102, 0.93559, 37.993, 0.65167], "w": 75, "h": 113, "p": ["B)C*F)G*F.H0K0O4Q3Q0T0Y3[2`3a5_9`9a?c@cFeGeJjOiQnRrPrTqTo\\hceiepgrgz`\x81a\x88^\x89^\x8F\\\x90Z\x95S\x96Q\x98O\x97O\x92K\x8BK\x84H\x7FHxJvJrIrHiEfE`F`E[A\\AY<Y:[6Z3\\1[0X.X-S)O)J*J)@-815105-5+:,<*B*"] },
+    "world:South America": { "f": [-81.936, 0.88475, 13.251, 0.61625], "w": 54, "h": 113, "p": ["3)4+6*7,:,:->,D4J5L>Q?RBSAXB[F]F]M[NYRX^VbNfNlLmHvDvD{A}>}>\x80;\x80;\x82=\x83;\x83;\x878\x88:\x8C8\x8D7\x926\x92;\x978\x978\x982\x963\x941\x952\x930\x940\x90/\x900\x862\x851\x832{1z4t5[.U.Q,O+I)H)C*C)?-9-////,2+"] },
+    "world:Oceania": { "f": [112.922, 0.63051, -6.15, 0.43917], "w": 98, "h": 93, "p": ["F3K6N5L=O>RBUAU=V=U8V8V3W3Y7Y;[;]EaHbMdMdPhTgdeeco_p]s[r[pYrTqRkNjPeMgMiKiJdFb=c9g3g0j+h-c,c+[)X)U*U)M-I5G7D7@9A<:@:@<B<B:D9D6G6", "U(_(^+d2_1]/],[+X-X/U/", "\x86w\x87x\x89w\x89z\x87~\x85~\x84\x83\x82\x84}\x83}\x81\x84|"] }
+  };
+  L.SHAPES = SHAPES;
+  L.SHAPES = SHAPES;
+
+  // engine/91-wishes-late.ts
+  L.jobCheck = jobCheck;
+  (function() {
+    var rel = L.E.release;
+    L.E.release = function(S, id) {
+      var w = S.w[id], mine = w && w.promo === S.player && !w.nw, msg = rel(S, id);
+      if (!msg || !mine) return msg;
+      var good = w.ovr >= P_img(S) - 15 && L.chance(S, 0.6);
+      if (!good) return msg;
+      var kind = L.pick(S, ["bitter", "rival", "score"]), P = S.promos[S.player], R = L.rosterOf(S, P.id).filter(function(x) {
+        return !x.nw;
+      }), line = "";
+      if (kind === "bitter") {
+        R.forEach(function(x) {
+          x.morale = L.clamp(x.morale - 2, 0, 100);
+        });
+        line = w.name + " gave an interview calling the way they were let go \u201Ca disgrace\u201D. The room does not enjoy reading it.";
+      } else if (kind === "rival") {
+        var rv = S.order.filter(function(o) {
+          return o !== S.player;
+        }), rp = S.promos[L.pick(S, rv)];
+        line = w.name + " told a reporter what they heard on the road: " + rp.name + " is building toward " + L.E.nextBig(S).name + " and has its eye on your contracts.";
+        rp.rel = L.clamp((rp.rel || 0) - 4, -100, 100);
+      } else {
+        var foe = R.filter(function(x) {
+          return L.chem(S, x.id, w.id) <= -1.5;
+        }).sort(function(a, b) {
+          return L.chem(S, a.id, w.id) - L.chem(S, b.id, w.id);
+        })[0];
+        if (foe) {
+          foe.morale = L.clamp(foe.morale - 4, 0, 100);
+          line = w.name + " used the interview to settle a score with " + foe.name + ", and " + foe.name + " is not pleased.";
+        } else line = w.name + " thanked the fans and said there were no hard feelings. That is that.";
+      }
+      L.news(S, "story", line);
+      return msg + " " + line;
+    };
+    function P_img(S) {
+      return S.promos[S.player].image;
+    }
+  })();
+  var JOB_TERMS = { budget: { n: "A bigger wage budget", d: "Twelve per cent more to spend on contracts." }, freedom: { n: "Creative freedom", d: "Four extra points of booking power to start with." }, signing: { n: "One signing of your choice", d: "The first free agent you sign needs no approval and ignores how big the company is." } };
+  L.JOB_TERMS = JOB_TERMS;
+  L.E.JOB_TERMS = JOB_TERMS;
+  function jobCheck(S, terms) {
+    var n = terms.length;
+    return L.mkCheck(4 + 2 * n, [{ n: "Booker level " + S.booker.lvl, v: S.booker.lvl >= 8 ? 2 : S.booker.lvl >= 4 ? 1 : 0 }].concat(L.skillMods(S, "talk")));
+  }
+  L.E.jobTermsCheck = function(S, terms) {
+    return terms && terms.length ? L.jobCheck(S, terms) : null;
+  };
+  L.E.applyJobTerms = function(S, terms) {
+    terms = (terms || []).filter(function(t) {
+      return L.JOB_TERMS[t];
+    });
+    if (!terms.length) return null;
+    var ck = L.jobCheck(S, terms), r = L.rollCheck(S, ck);
+    if (!r.ok) {
+      S.owner.trust = L.clamp(S.owner.trust - 8, 0, 100);
+      return S.owner.name + " did not like being asked for " + terms.map(function(t) {
+        return L.JOB_TERMS[t].n.toLowerCase();
+      }).join(" and ") + " before you had done a day\u2019s work. You start on the wrong foot.";
+    }
+    var out = [];
+    terms.forEach(function(t) {
+      if (t === "budget") {
+        S.owner.wage0 = Math.round(S.owner.wage0 * 1.12);
+        out.push("a wage budget of " + L.money(L.E.budget(S)) + " a week");
+      } else if (t === "freedom") {
+        S.bp += 4;
+        out.push("four extra points of booking power");
+      } else if (t === "signing") {
+        S.freeSign = true;
+        out.push("one signing of your choice (see Free agents)");
+      }
+    });
+    return S.owner.name + " agrees to " + out.join(", ") + ".";
+  };
+  (function() {
+    var cs = L.E.canSign, sg = L.E.sign;
+    L.E.canSign = function(S, w) {
+      if (S.freeSign && w.promo === "FA" && !w.rt) {
+        var MD = L.modelOf(S.promos[S.player]);
+        return !(MD.gender && w.g !== MD.gender);
+      }
+      return cs(S, w);
+    };
+    L.E.sign = function(S, id, wage, weeks) {
+      var was = S.freeSign, r = sg(S, id, wage, weeks);
+      if (was && r && r.ok) S.freeSign = false;
+      return r;
+    };
+  })();
+  (function() {
+    var was = L.E.validate;
+    L.E.validate = function(S, card) {
+      var v = was(S, card), cover = {};
+      card.forEach(function(m, i) {
+        if (m.agent != null) {
+          cover[m.agent] = (cover[m.agent] || 0) + 1;
+          if (cover[m.agent] === 3) v.errors.push((S.w[m.agent] ? S.w[m.agent].name : "The agent") + " can only cover two matches a night.");
+        }
+        if (m.stip !== "mask" && m.stip !== "hair") return;
+        var ws = [].concat.apply([], m.sides).filter(function(id) {
+          return id != null && S.w[id];
+        }).map(function(id) {
+          return S.w[id];
+        });
+        if (m.stip === "mask" && ws.some(function(w) {
+          return L.masked(w) !== 1;
+        })) v.errors.push("Match " + (i + 1) + ": a mask match needs everyone in it to wear a mask.");
+        if (m.stip === "hair") {
+          var bald = ws.filter(function(w) {
+            return w.sh != null && S.week - w.sh < 20;
+          })[0];
+          if (bald) v.errors.push("Match " + (i + 1) + ": " + bald.name + " has not grown the hair back yet.");
+        }
+      });
+      return v;
+    };
+  })();
+  (function() {
+    var was = L.E.suggest;
+    function agents(S, card) {
+      var ag = L.E.agents(S).sort(function(x, y) {
+        return y.skill - x.skill;
+      });
+      if (!ag.length) return card;
+      var score = card.map(function(m, i) {
+        var ws = [].concat.apply([], m.sides).map(function(id) {
+          return S.w[id];
+        }).filter(Boolean);
+        return { i, v: (i === card.length - 1 ? 3 : 0) + ws.filter(function(w) {
+          return w.age <= 26;
+        }).length };
+      }).sort(function(x, y) {
+        return y.v - x.v;
+      });
+      var k = 0;
+      ag.forEach(function(a) {
+        for (var n = 0; n < 2 && k < score.length && score[k].v > 0; n++, k++) card[score[k].i].agent = a.id;
+      });
+      return card;
+    }
+    L.E.suggest = function(S) {
+      return agents(S, suggestPlan(S));
+    };
+    function suggestPlan(S) {
+      var card = was(S), lp = S.lp, show = S.queue && S.queue[S.qi];
+      if (!lp || !show || !show.big || !show.flag || S.cal || !card.length) return card;
+      var a = S.w[lp.a], b = S.w[lp.b];
+      if (!a || !b || a.inj > 0 || b.inj > 0 || a.away >= S.week || b.away >= S.week || a.rest === S.week || b.rest === S.week) return card;
+      var rest = card.filter(function(m) {
+        var ids = [].concat.apply([], m.sides);
+        return ids.indexOf(lp.a) < 0 && ids.indexOf(lp.b) < 0;
+      });
+      var tt = lp.title && L.titleById(S.promos[S.player], lp.title);
+      var mm = { mt: "1v1", sides: [[lp.a], [lp.b]], stip: "std", len: "L", title: tt && tt.holders.length && (tt.holders.indexOf(lp.a) >= 0 || tt.holders.indexOf(lp.b) >= 0) ? lp.title : null };
+      while (rest.length >= L.SLOT_MAX[S.promos[S.player].slot] + (show.big ? 3 : 0) && rest.length > 3) rest.shift();
+      rest.push(mm);
+      return rest;
+    }
+  })();
+  L.JOB_TERMS = JOB_TERMS;
+  L.jobCheck = jobCheck;
+
+  // engine/92-challenge.ts
+  L.isoParts = isoParts;
+  L.chalCheck = chalCheck;
+  function isoParts(id) {
+    var m = /^(\d{4})-?W(\d{1,2})$/.exec(String(id || ""));
+    return m ? { y: +m[1], w: +m[2] } : null;
+  }
+  L.E.challengeInfo = function(id) {
+    var p = L.isoParts(id);
+    if (!p) return null;
+    var U = L.E.universe(), L2 = U.promotions, seed = ((p.y * 100 + p.w) * 7919 + 104729) % 2e9;
+    var pr = L2[L.hash("chal" + p.y + "W" + p.w) % L2.length];
+    return { id: p.y + "-W" + (p.w < 10 ? "0" : "") + p.w, seed, promo: pr.id, name: pr.name, weeks: 12 };
+  };
+  L.E.challengeStart = function(id) {
+    var I = L.E.challengeInfo(id);
+    if (!I) return null;
+    return L.E.newGame(I.promo, I.seed, { name: "Challenger", diff: "normal", fed: null, chal: I.id });
+  };
+  (function() {
+    var ng = L.E.newGame;
+    L.E.newGame = function(pid, seed, opts) {
+      var S = ng(pid, seed, opts);
+      if (opts && opts.chal) {
+        var P = S.promos[S.player];
+        S.chal = { id: opts.chal, weeks: 12, sum: 0, done: false, image0: P.image, cash0: P.cash, promo: pid };
+      }
+      return S;
+    };
+  })();
+  L.SHOWX.push(function(S, P, show, rep) {
+    if (S.cal || !S.chal || P.id !== S.player || S.chal.done) return;
+    S.chal.sum += rep.rating - rep.exp;
+  });
+  L.E.challengeScore = function(S) {
+    var C = S.chal;
+    if (!C) return 0;
+    var P = S.promos[S.player];
+    var s = 400 + C.sum * 4 + (P.image - C.image0) * 15 + L.clamp((P.cash - C.cash0) / P.inc0, -10, 30) * 5 + S.stats.feudsDone * 10 + Math.max(0, S.stats.bestShow - 70) * 2;
+    return Math.max(0, Math.round(s));
+  };
+  function chalCheck(id, score) {
+    return (L.hash(id + ":" + score) % 1296).toString(36).toUpperCase().replace(/^(.)$/, "0$1");
+  }
+  L.E.challengeCode = function(S) {
+    var C = S.chal;
+    if (!C) return null;
+    var sc = L.E.challengeScore(S);
+    return "EWF-" + C.id.replace("-", "") + "-" + sc.toString(36).toUpperCase() + "-" + L.chalCheck(C.id, sc);
+  };
+  L.E.challengeRead = function(code) {
+    var m = /^EWF-(\d{4})(W\d{2})-([0-9A-Z]+)-([0-9A-Z]{2})$/.exec(String(code || "").trim().toUpperCase());
+    if (!m) return { ok: false, text: "That is not a challenge code." };
+    var id = m[1] + "-" + m[2], sc = parseInt(m[3], 36);
+    if (L.chalCheck(id, sc) !== m[4]) return { ok: false, text: "That code does not check out. One letter may be wrong." };
+    var I = L.E.challengeInfo(id);
+    return { ok: true, id, score: sc, name: I ? I.name : "", text: "A score of " + sc + " in the challenge of " + id + (I ? " with " + I.name : "") + "." };
+  };
+  L.WEEKX.push(function(S) {
+    var C = S.chal;
+    if (S.cal || !C || C.done || S.over) return;
+    if (S.week >= C.weeks) {
+      C.done = true;
+      C.score = L.E.challengeScore(S);
+      C.code = L.E.challengeCode(S);
+      S.over = { why: "challenge", week: S.week };
+    }
+  });
+  L.isoParts = isoParts;
+  L.chalCheck = chalCheck;
+
+  // engine/92-scenarios.ts
+  L.scnSign = scnSign;
+  L.scnFill = scnFill;
+  L.scnLoad = scnLoad;
+  L.scnJudge = scnJudge;
+  L.scnCut = scnCut;
+  var SCN_BUILT = [
+    {
+      id: "rescue",
+      name: "Save the company",
+      promotion: "ttt",
+      weeks: 26,
+      description: "A small company with the wage bill too high and almost no cash. Keep it open for 26 weeks and end with about three weeks of income in the bank.",
+      setup: [{ op: "cash", inc0: 0.8 }, { op: "wages", mult: 1.25, round: 50 }],
+      win: { type: "cash", incWeeks: 2.9 },
+      // the target follows the company's own income (a realistic economy, 21 October): $1.5M on the old money
+      text: { win: "The company is safe: {cash} in the bank after 26 weeks.", lose: "The company is still open, but only {cash} is in the bank. The target was {goal}." },
+      figures: ["Cash {cash} (target {goal})"]
+    },
+    {
+      id: "champion",
+      name: "A champion from the bottom",
+      promotion: "ocw",
+      weeks: 39,
+      description: "One of the least known men on the roster has been picked as your project. Have them hold the top title when 39 weeks are up.",
+      setup: [{ op: "target", g: "M", maxAge: 30, nth: 2 }],
+      win: { type: "holdsTop", who: "target" },
+      text: { win: "{name} holds the {title}. From the bottom of the roster to the top of the company.", lose: "{name} does not hold the {title} after 39 weeks. They are now rated {ovr}." },
+      figures: ["{name} rated {ovr} (started at {o0})"]
+    },
+    {
+      id: "war",
+      name: "Win the ratings war",
+      promotion: "ocw",
+      weeks: 26,
+      description: "PDW has come after your audience, and a war is on. For 26 weeks, your shows must beat what the audience expects by more than theirs do.",
+      setup: [{ op: "rival", id: "pdw" }, { op: "image", who: "player", v: 60 }, { op: "image", who: "pdw", v: 66 }, { op: "war", with: "pdw" }],
+      win: { type: "beatRival", by: 0.3 },
+      text: { win: "You won the ratings war: your shows averaged {m} against expectations, theirs {r}.", lose: "You lost the ratings war: your shows averaged {m} against expectations, theirs {r}." },
+      figures: ["Your shows: {mFig} against expectations", "Theirs: {rFig}"]
+    }
+  ];
+  L.SCN_BUILT = SCN_BUILT;
+  var SCN_OPS = {
+    cash: function(S, o) {
+      var P = S.promos[S.player];
+      P.cash = Math.round(P.inc0 * o.inc0);
+    },
+    wages: function(S, o) {
+      var P = S.promos[S.player], r = o.round || 50;
+      L.rosterOf(S, P.id).forEach(function(w) {
+        w.wage = Math.round(w.wage * o.mult / r) * r;
+      });
+    },
+    target: function(S, o) {
+      var P = S.promos[S.player], R = L.rosterOf(S, P.id).filter(function(w) {
+        return !w.nw && (!o.g || w.g === o.g) && (!o.maxAge || w.age <= o.maxAge);
+      }).sort(function(a, b) {
+        return a.ovr - b.ovr;
+      });
+      var tg = R[Math.min(o.nth || 0, R.length - 1)];
+      S.scn.target = tg.id;
+      tg.mom = 0;
+    },
+    image: function(S, o) {
+      var P = o.who === "player" ? S.promos[S.player] : S.promos[o.who];
+      if (P) P.image = o.v;
+    },
+    rival: function(S, o) {
+      S.scn.rival = o.id;
+      S.scn.me = [];
+      S.scn.rv = [];
+    },
+    war: function(S, o) {
+      if (!S.xf) L.startXf(S, o["with"], "war");
+    }
+  };
+  L.SCN_OPS = SCN_OPS;
+  function scnSign(x) {
+    return (x >= 0 ? "+" : "") + x.toFixed(1);
+  }
+  var SCN_WIN = {
+    // a set amount (atLeast), or a number of weeks of the company's own income (incWeeks), so a target fits a company of any size
+    cash: { vars: function(S, c) {
+      var P = S.promos[S.player], g = c.atLeast != null ? c.atLeast : Math.max(1e3, Math.round((P.inc0 || 0) * (c.incWeeks || 1) / 1e3) * 1e3);
+      return { ok: P.cash >= g, cash: L.money(P.cash), goal: L.money(g), score: L.clamp(Math.round(P.cash / g * 100), 0, 100) };
+    } },
+    holdsTop: { vars: function(S, c) {
+      var P = S.promos[S.player], w = S.w[S.scn[c.who || "target"]], top = P.titles.filter(function(t) {
+        return !t.tag && t.g === w.g;
+      }).sort(function(a, b) {
+        return b.lvl - a.lvl;
+      })[0], ok = !!(top && top.holders.indexOf(w.id) >= 0 && w.promo === P.id);
+      return { ok, name: w.name, title: top ? top.name : "top title", ovr: Math.round(w.ovr), o0: Math.round(S.scn.o0), score: ok ? 100 : L.clamp(Math.round(w.ovr - (S.scn.o0 || 0) + 50), 0, 99) };
+    } },
+    beatRival: { vars: function(S, c) {
+      var C = S.scn, m = L.avg(C.me || [0]), r = L.avg(C.rv || [0]);
+      return { ok: m > r + c.by, m: L.scnSign(m), r: L.scnSign(r), mFig: C.me && C.me.length ? L.scnSign(L.avg(C.me)) : "0", rFig: C.rv && C.rv.length ? L.scnSign(L.avg(C.rv)) : "0", score: L.clamp(Math.round(50 + (m - r) * 20), 0, 100) };
+    } }
+  };
+  L.SCN_WIN = SCN_WIN;
+  var SCN = {};
+  L.SCN = SCN;
+  function scnFill(t, v) {
+    return String(t).replace(/\{(\w+)\}/g, function(_, k) {
+      return v[k] != null ? String(v[k]) : "{" + k + "}";
+    });
+  }
+  function scnLoad(list) {
+    L.SCN = {};
+    (list || []).forEach(function(d) {
+      if (d && d.id && L.SCN_WIN[d.win && d.win.type]) L.SCN[d.id] = d;
+    });
+    L.E.SCENARIOS = Object.keys(L.SCN).map(function(k) {
+      var d = L.SCN[k];
+      return { id: k, n: d.name, d: d.description, weeks: d.weeks, promo: d.promotion };
+    });
+  }
+  function scnJudge(S) {
+    var C = S.scn, D = L.SCN[C.id];
+    if (!D) return null;
+    var v = L.SCN_WIN[D.win.type].vars(S, D.win);
+    return { ok: !!v.ok, text: L.scnFill(v.ok ? D.text.win : D.text.lose, v), figures: (D.figures || []).map(function(f) {
+      return L.scnFill(f, v);
+    }), score: v.score };
+  }
+  L.E.scenarioProblems = function(list, promoIds) {
+    var out = [];
+    (list || []).forEach(function(d, i) {
+      var at = "scenarios[" + i + "]";
+      if (!d || !d.id) out.push(at + ": no id");
+      else {
+        if (!L.SCN_WIN[d.win && d.win.type]) out.push(at + " " + d.id + ": unknown win type");
+        if (!(d.weeks > 0)) out.push(at + " " + d.id + ": weeks must be more than 0");
+        if (promoIds && promoIds.indexOf(d.promotion) < 0) out.push(at + " " + d.id + ": unknown promotion " + d.promotion);
+        (d.setup || []).forEach(function(o) {
+          if (!L.SCN_OPS[o.op]) out.push(at + " " + d.id + ": unknown setup step " + o.op);
+        });
+        if (!d.text || !d.text.win || !d.text.lose) out.push(at + " " + d.id + ": needs text.win and text.lose");
+      }
+    });
+    return out;
+  };
+  L.E.SCENARIO_FORMAT = { ops: Object.keys(SCN_OPS), win: Object.keys(SCN_WIN) };
+  scnLoad(SCN_BUILT);
+  (function() {
+    var val = L.E.validateUniverse;
+    L.E.validateUniverse = function(pkg) {
+      var v = val.apply(this, arguments);
+      if (pkg && pkg.scenarios) {
+        var ids = (pkg.promotions || []).map(function(p) {
+          return p.id;
+        });
+        L.E.scenarioProblems(pkg.scenarios, ids).forEach(function(m) {
+          v.errors.push({ at: "scenarios", msg: m });
+        });
+        v.ok = v.ok && !v.errors.length;
+      }
+      return v;
+    };
+  })();
+  (function() {
+    var use = L.E.useUniverse;
+    L.E.useUniverse = function(pkg) {
+      var r = use.apply(this, arguments);
+      var own = pkg && Array.isArray(pkg.scenarios) ? pkg.scenarios : [];
+      L.scnLoad(L.SCN_BUILT.concat(own));
+      return r;
+    };
+  })();
+  L.E.scenarioStart = function(id) {
+    var D = L.SCN[id];
+    if (!D) return null;
+    var U = L.E.universe();
+    if (!U.promotions.some(function(p) {
+      return p.id === D.promotion;
+    })) return null;
+    return L.E.newGame(D.promotion, 5e3 + L.hash("scn" + id) % 1e6, { name: "Booker", diff: "normal", fed: null, scn: id });
+  };
+  (function() {
+    var ng = L.E.newGame;
+    L.E.newGame = function(pid, seed, opts) {
+      var S = ng(pid, seed, opts);
+      if (opts && opts.scn && L.SCN[opts.scn]) {
+        var D = L.SCN[opts.scn];
+        S.scn = { id: opts.scn, weeks: D.weeks, done: false };
+        S.scn.o0 = 0;
+        (D.setup || []).forEach(function(o) {
+          L.SCN_OPS[o.op](S, o);
+        });
+        if (S.scn.target != null) S.scn.o0 = S.w[S.scn.target].ovr;
+      }
+      return S;
+    };
+  })();
+  L.SHOWX.push(function(S, P, show, rep) {
+    var C = S.scn;
+    if (S.cal || !C || C.done || !C.rival) return;
+    if (P.id === S.player) C.me.push(rep.rating - rep.exp);
+    else if (P.id === C.rival) C.rv.push(rep.rating - rep.exp);
+  });
+  L.WEEKX.push(function(S) {
+    var C = S.scn;
+    if (S.cal || !C || C.done || S.over) return;
+    if (S.week >= C.weeks) {
+      C.done = true;
+      C.res = L.scnJudge(S);
+      S.over = { why: "scenario", week: S.week };
+    }
+  });
+  function scnCut(S) {
+    var C = S.scn;
+    if (!C || C.done || !S.over || S.over.why === "scenario") return;
+    var why = S.over.why, J = L.scnJudge(S);
+    C.done = true;
+    C.res = { ok: false, text: why === "fired" ? "You were let go before the " + C.weeks + " weeks were up." : "The company ran out of money before the " + C.weeks + " weeks were up.", figures: J ? J.figures : [], score: 0 };
+    S.over = { why: "scenario", week: S.over.week, cut: why };
+  }
+  (function() {
+    var ew = L.E.endWeek, rs = L.E.runPlayerShow;
+    L.E.endWeek = function(S) {
+      var r = ew.apply(this, arguments);
+      L.scnCut(S);
+      return r;
+    };
+    L.E.runPlayerShow = function(S) {
+      var r = rs.apply(this, arguments);
+      L.scnCut(S);
+      return r;
+    };
+  })();
+  L.E.scnCheck = function(S) {
+    var C = S.scn;
+    if (!C || !L.SCN[C.id]) return null;
+    var r = L.scnJudge(S);
+    delete r.score;
+    return r;
+  };
+  L.SCN_BUILT = SCN_BUILT;
+  L.SCN_OPS = SCN_OPS;
+  L.scnSign = scnSign;
+  L.SCN_WIN = SCN_WIN;
+  L.SCN = SCN;
+  L.scnFill = scnFill;
+  L.scnLoad = scnLoad;
+  L.scnJudge = scnJudge;
+  L.scnCut = scnCut;
+
+  // engine/92-shape.ts
+  L.shIds = shIds;
+  L.shFacts = shFacts;
+  L.shOpener = shOpener;
+  L.shTopLvl = shTopLvl;
+  L.shPrev = shPrev;
+  L.shBreak = shBreak;
+  L.shapeAuto = shapeAuto;
+  var SH_HOT = 70;
+  var SH_SLOW = 58;
+  L.SH_HOT = SH_HOT;
+  L.SH_SLOW = SH_SLOW;
+  function shIds(m) {
+    return L.flat(m.sides).filter(function(id) {
+      return id != null;
+    });
+  }
+  function shFacts(S, P, m) {
+    var ids = L.shIds(m), ws = ids.map(function(id) {
+      return S.w[id];
+    }).filter(function(w) {
+      return !!w;
+    });
+    if (ws.length < 2 || ws.length !== L.flat(m.sides).length) return null;
+    var t = m.title ? L.titleById(P, m.title) : null, heat = 0, x, y, f;
+    for (x = 0; x < ws.length; x++) for (y = x + 1; y < ws.length; y++) {
+      f = L.feudOf(S, ws[x].id, ws[y].id);
+      if (f && f.heat > heat) heat = f.heat;
+    }
+    var star = L.avg(ws.map(function(w) {
+      return w.ovr;
+    })), top = L.shTopLvl(P);
+    return {
+      pace: L.avg(ws.map(function(w) {
+        return (w.speed + w.stam) / 2;
+      })),
+      star,
+      len: m.len || "M",
+      mt: m.mt,
+      stip: m.stip && m.stip !== "std" ? m.stip : null,
+      lvl: t ? t.lvl : 0,
+      heat,
+      size: star + (t ? t.lvl >= top && !t.tag ? 5 : 1.5 : 0) + Math.min(5, heat / 15)
+    };
+  }
+  function shOpener(f) {
+    return f.len === "L" ? -1 : f.pace >= L.SH_HOT ? 1 : f.pace < L.SH_SLOW ? -2 : 0;
+  }
+  function shTopLvl(P) {
+    var l = 0;
+    P.titles.forEach(function(t) {
+      if (!t.tag && t.lvl > l) l = t.lvl;
+    });
+    return l;
+  }
+  var SH_MT = { tag: "tag matches", "6man": "six-man tags", "4way": "four-way matches", br: "battle royals" };
+  L.SH_MT = SH_MT;
+  function shPrev(rep) {
+    for (var k = rep.segs.length - 1; k >= 0; k--) if (rep.segs[k].k === "match") return rep.segs[k];
+    return null;
+  }
+  function shBreak(rep) {
+    var l = rep.segs[rep.segs.length - 1];
+    return !!l && l.k !== "match";
+  }
+  L.POST.push(function(ctx) {
+    var f = L.shFacts(ctx.S, ctx.P, ctx.m);
+    if (f) ctx.res.seg.sh = { pace: Math.round(f.pace), size: Math.round(f.size * 10) / 10, len: f.len, mt: f.mt, i: ctx.i };
+  });
+  L.CRX.push(function(ctx) {
+    if (ctx.n < 3) return null;
+    var f = L.shFacts(ctx.S, ctx.P, ctx.m);
+    if (!f) return null;
+    if (ctx.i === 0) {
+      var o = L.shOpener(f);
+      return o > 0 ? { d: 1.5, x: "A fast opener woke the building up" } : o === -1 ? { d: -2, x: "A long opener: the crowd was not ready to sit through it" } : o === -2 ? { d: -1.5, x: "A slow opener: the building took a while to wake up" } : null;
+    }
+    if (ctx.i > 2 || ctx.isMain || !ctx.rep) return null;
+    var op = ctx.rep.segs.filter(function(s) {
+      return s.k === "match";
+    })[0];
+    if (!op || !op.sh) return null;
+    var tone = L.shOpener({ len: op.sh.len, pace: op.sh.pace }) + (op.fin === "dq" || op.fin === "co" || op.fin === "draw" ? -1 : 0) + (op.wi && op.wi.length && ctx.S.w[op.wi[0]] && ctx.S.w[op.wi[0]].align === "F" && op.fin !== "dq" && op.fin !== "co" ? 0.5 : 0);
+    return tone >= 1 ? { d: 1, x: "The opener had them up" } : tone <= -1 ? { d: -1, x: "Still flat after the opener" } : null;
+  });
+  L.CRX.push(function(ctx) {
+    if (ctx.i === 0 || !ctx.rep || L.shBreak(ctx.rep)) return null;
+    var p = L.shPrev(ctx.rep);
+    if (!p || !p.sh) return null;
+    if ((ctx.m.len || "M") === "L" && p.sh.len === "L" && !ctx.isMain) return { d: -2, x: "Two long matches back to back" };
+    if (ctx.m.mt !== "1v1" && ctx.m.mt === p.sh.mt) return { d: -1.5, x: "Two " + (L.SH_MT[ctx.m.mt] || "matches of the same kind") + " in a row" };
+    return null;
+  });
+  L.CRX.push(function(ctx) {
+    if (!ctx.isMain || ctx.n < 3 || !ctx.rep) return null;
+    var f = L.shFacts(ctx.S, ctx.P, ctx.m);
+    if (!f) return null;
+    var ms = ctx.rep.segs.filter(function(s) {
+      return s.k === "match" && s.sh;
+    }), big = 0;
+    ms.forEach(function(s) {
+      if (s.sh.size > big) big = s.sh.size;
+    });
+    if (big > f.size + 3) return { d: -2.5, x: "The biggest match of the night was not on last" };
+    if (f.len === "S") return { d: -2, x: "Too short to feel like a main event" };
+    var p = L.shPrev(ctx.rep);
+    if (p && !L.shBreak(ctx.rep) && p.ov >= 85 && p.mins >= 12) return { d: -1.5, x: "It had to follow a great match with no break" };
+    if (L.shBreak(ctx.rep) && ms.some(function(s) {
+      return s.ov >= 80;
+    })) return { d: 0.8, x: "The crowd caught its breath before the main event" };
+    return null;
+  });
+  L.FINX.push(function(ctx, fin, winners, losers, win) {
+    var rep = ctx.rep;
+    if (!rep || ctx.n < 3) return null;
+    var sh = rep.shf || (rep.shf = { dirty: 0, f: 0, h: 0 });
+    var dirty = fin === "cheap" || fin === "interf" || fin === "dq" || fin === "co", heel = win >= 0 && winners.length && winners[0].align === "H", face = win >= 0 && winners.length && winners[0].align === "F", out = null;
+    if (dirty) sh.dirty++;
+    if (dirty && sh.dirty >= 3) out = { d: -2, x: "Another dirty finish: by now it meant nothing" };
+    else if (ctx.isMain) {
+      if (heel && sh.h >= 3 && !sh.f) out = { d: -2, x: "The heels won all night. Nobody had anything to cheer" };
+      else if (face && sh.f >= 4 && !sh.h) out = { d: -1, x: "The faces won everything. Nobody was ever in danger" };
+      else if (ctx.big && face && !dirty) out = { d: 1, x: "The crowd went home happy" };
+      else if (!ctx.big && ctx.feud && (heel || fin === "interf") && fin !== "dq" && fin !== "co") {
+        if (ctx.isPl) ctx.S.hype = (ctx.S.hype || 0) + 0.03;
+        out = { d: 0.5, x: "A cliffhanger: they will be back next week to see it answered" };
+      }
+    }
+    if (heel) sh.h++;
+    else if (face) sh.f++;
+    return out;
+  });
+  function shapeAuto(S, P, card) {
+    var n = card.length;
+    if (n < 4) return;
+    var best = -1, bs = -99, i, F = card.map(function(m2) {
+      return L.shFacts(S, P, m2);
+    }), bg = n - 1;
+    if (F[n - 1]) {
+      for (i = 0; i < n - 1; i++) if (F[i] && F[i].size > F[bg].size) bg = i;
+      if (bg !== n - 1 && F[bg].size > F[n - 1].size + 3 && F[bg].star >= F[n - 1].star - 3) {
+        var mv = card.splice(bg, 1)[0], was = card[card.length - 1];
+        card.push(mv);
+        if (was.len === "L" && !was.title) was.len = "M";
+        mv.len = "L";
+      }
+    }
+    best = -1;
+    for (i = 0; i < n - 2; i++) {
+      var m = card[i], f = L.shFacts(S, P, m);
+      if (!f || m.title || m._q || m.stip && m.stip !== "std") continue;
+      var sc = (f.len === "L" ? -20 : 0) + f.pace + (m.mt === "1v1" ? 2 : 0);
+      if (sc > bs) {
+        bs = sc;
+        best = i;
+      }
+    }
+    if (best > 0) {
+      var op = card.splice(best, 1)[0];
+      card.unshift(op);
+    }
+    if (card[0].len === "L" && !card[0].title) card[0].len = "M";
+    var k, t;
+    for (i = 1; i < n - 2; i++) if (card[i].mt !== "1v1" && card[i].mt === card[i - 1].mt) {
+      for (k = i + 1; k < n - 2; k++) if (card[k].mt !== card[i].mt) {
+        t = card[i];
+        card[i] = card[k];
+        card[k] = t;
+        break;
+      }
+    }
+    for (i = n - 2; i >= 2; i--) if (card[i].len === "L" && card[i - 1].len === "L") {
+      for (k = i - 2; k >= 1; k--) if (card[k].len !== "L") {
+        t = card.splice(k, 1)[0];
+        card.splice(i - 1, 0, t);
+        break;
+      }
+    }
+  }
+  L.E.shape = function(S, card) {
+    var P = S.promos[S.player], show = S.queue[S.qi], n = card.length, F = card.map(function(m) {
+      return L.shFacts(S, P, m);
+    }), notes = [], roles = [];
+    var add = function(s, t) {
+      notes.push({ s, t });
+    };
+    for (var i = 0; i < n; i++) roles.push(n < 3 ? "" : i === n - 1 ? "Main event" : i === 0 ? "Opener" : i === n - 2 && n >= 4 ? "Semi-main" : "");
+    if (!show || n < 3) return { roles, notes, ready: false };
+    var seg = {};
+    (S.segs || []).forEach(function(x) {
+      if (x) seg[Math.max(0, Math.min(x.pos, n - 1))] = 1;
+    });
+    if (F[0]) {
+      var o = L.shOpener(F[0]);
+      add(o > 0 ? 1 : o < 0 ? -1 : 0, o > 0 ? "A fast opener. It will wake the building up, and the next two matches gain from it." : o === -1 ? "The opener is a long match. Open with something short and quick, and save the long ones for later." : o === -2 ? "The opener is slow. Put your quickest workers on first." : "The opener is fine. A quicker pair would start the show hotter.");
+    }
+    for (i = 1; i < n; i++) {
+      if (!F[i] || !F[i - 1] || seg[i]) continue;
+      if (F[i].len === "L" && F[i - 1].len === "L" && i !== n - 1) add(-1, "Matches " + i + " and " + (i + 1) + " are both long. Put a short match, a promo or an angle between them.");
+      else if (F[i].mt !== "1v1" && F[i].mt === F[i - 1].mt) add(-1, "Matches " + i + " and " + (i + 1) + " are the same kind. Split them up.");
+    }
+    if (card.filter(function(m) {
+      return m.stip && m.stip !== "std";
+    }).length >= 2 && show.rule !== "gimmick_free" && !L.modelOf(P).gimFree) add(-1, "More than one gimmick match. The second one loses its punch.");
+    var M = F[n - 1];
+    if (M) {
+      var big = 0, bi = -1;
+      F.forEach(function(f, k) {
+        if (f && k < n - 1 && f.size > big) {
+          big = f.size;
+          bi = k;
+        }
+      });
+      if (big > M.size + 3) add(-1, "Match " + (bi + 1) + " is a bigger match than the main event. The biggest match goes on last: the biggest names, the top title, the hottest feud.");
+      else add(1, "The biggest match is on last.");
+      if (M.len === "S") add(-1, "The main event is short. Give it time.");
+      if (seg[n - 1]) add(1, "A promo or an angle sits before the main event. The crowd gets a breather.");
+      else if (F[n - 2] && F[n - 2].len === "L") add(0, "A long match runs straight into the main event. If it is a great one, the main event has to follow it with no break.");
+    }
+    return { roles, notes, ready: F.every(function(f) {
+      return !!f;
+    }) };
+  };
+  L.E.SHAPE_GUIDE = [
+    { n: "Open hot", d: "The first match sets the mood for the night. Put quick workers on first and keep it short. A fast opener lifts itself and the next two matches. A long or slow one drags them down." },
+    { n: "Peaks and valleys", d: "A crowd cannot shout all night. Do not put two long matches, or two matches of the same kind, back to back. A promo or an angle between two big matches gives everybody a breather." },
+    { n: "The biggest match goes on last", d: "The main event is what they paid for: the biggest names, the top title, or the hottest feud. It counts three times in the show\u2019s rating, the match before it counts twice, and the opener one and a half times. If a bigger match runs earlier, the main event suffers." },
+    { n: "Give the main event time", d: "A short main event does not feel like one. And do not make it follow a war: if the match before it is a great one, put a promo or an angle in between." },
+    { n: "One gimmick match a night", d: "A cage or a ladder is special once. The second gimmick match of the night falls flat." },
+    { n: "Mix the finishes", d: "A clean win means something. The third dirty finish in one night means nothing. If the heels win everything, or the faces do, the room goes quiet." },
+    { n: "Send them home happy, or wanting more", d: "A big event should end with the crowd on its feet: a face winning clean. Weekly television can end on a cliffhanger. A heel getting the better of a feud in the last match brings more people back next week." }
+  ];
+  L.SH_HOT = SH_HOT;
+  L.SH_SLOW = SH_SLOW;
+  L.shIds = shIds;
+  L.shFacts = shFacts;
+  L.shOpener = shOpener;
+  L.shTopLvl = shTopLvl;
+  L.SH_MT = SH_MT;
+  L.shPrev = shPrev;
+  L.shBreak = shBreak;
+  L.shapeAuto = shapeAuto;
+
+  // engine/93-segments.ts
+  L.segLen = segLen;
+  L.segMins = segMins;
+  L.segSlots = segSlots;
+  L.segList = segList;
+  L.segRead = segRead;
+  L.segPool = segPool;
+  L.segTitleOf = segTitleOf;
+  L.segChoices = segChoices;
+  L.segWhy = segWhy;
+  L.segMean = segMean;
+  L.segLook = segLook;
+  L.segLabel = segLabel;
+  L.runSeg = runSeg;
+  L.segBooked = segBooked;
+  var SEGLEN = { S: 5, M: 10, L: 15 };
+  var SEGLENN = { S: "Short", M: "Medium", L: "Long" };
+  L.SEGLEN = SEGLEN;
+  L.SEGLENN = SEGLENN;
+  var SEGK = {
+    interview: { len: "M", n: "Interview", t: "promo", roles: ["Who talks"], d: "One wrestler and a microphone. Graded on how well they talk and how much the crowd cares." },
+    callout: { len: "S", n: "Call-out", t: "promo", roles: ["Who speaks", "Who they call out"], d: "One calls the other out. It starts a rivalry, or heats one that is already going." },
+    words: { len: "M", n: "War of words", t: "promo", roles: ["One rival", "The other"], d: "Two rivals trade words in the ring. It heats their feud without anyone throwing a punch." },
+    challenge: { len: "S", n: "Title challenge", t: "promo", roles: ["The challenger", "The champion"], d: "A challenger lays claim to the champion\u2019s title. The feud that follows is for the belt." },
+    faceoff: { len: "S", n: "Face-off", t: "promo", roles: ["One star", "The other"], d: "Two stars cross paths and neither backs down. The crowd is told a big match is coming." },
+    ambush: { len: "S", n: "Ambush", t: "angle", roles: ["The attacker", "Who gets attacked"], d: "An attack from behind. A villain doing it starts a hot feud. A hero doing it confuses the crowd unless the feud has earned it." },
+    brawl: { len: "M", n: "Brawl", t: "angle", roles: ["One rival", "The other"], d: "Two rivals fight all over the building. It heats a feud fast, and now and then somebody gets a knock." },
+    save: { len: "M", n: "Save", t: "angle", roles: ["Who gets attacked", "Who makes the save", "The attacker"], d: "One is attacked, another runs out to help, and the two shake hands. A new team is born, with an enemy." },
+    turn: { len: "M", n: "Turn", t: "angle", roles: ["Who changes sides"], d: "A hero turns villain or a villain turns hero. It lands when the crowd was already leaning that way, and falls flat from nowhere." },
+    signing: { len: "M", n: "Contract signing", t: "promo", roles: ["One rival", "The other"], d: "The two sign for their match at the next big event, on a table in the ring. It makes the match official and plans the ending for that night. It rarely ends with the table standing." },
+    recap: { len: "S", fix: 1, n: "Video recap", t: "promo", roles: ["One rival", "The other"], d: "A video package on a feud: how it started and where it stands. Always five minutes. It keeps the feud warm, and when it opens the show their match that night means more." },
+    writers: { len: "M", n: "Writers\u2019 pick", t: "any", roles: [], d: "Hand the time to the writers. They write whatever tonight\u2019s stories need: the next beat of a feud, a mystery, a surprise. You find out on the night." }
+  };
+  L.SEGK = SEGK;
+  function segLen(sg) {
+    var K = L.SEGK[sg.k];
+    return K && K.fix ? K.len : L.SEGLEN[sg.len] ? sg.len : K ? K.len : "M";
+  }
+  function segMins(sg) {
+    return L.SEGLEN[L.segLen(sg)];
+  }
+  function segSlots(P, show) {
+    return show && show.big ? 2 : L.clamp(P.angles == null ? 2 : P.angles, 0, 3);
+  }
+  function segList(S) {
+    var show = S.queue && S.queue[S.qi];
+    if (!show) return [];
+    if (S.segKey !== L.showKey(S)) {
+      S.segs = [];
+      S.segKey = L.showKey(S);
+    }
+    var L2 = S.segs || (S.segs = []);
+    for (var i = L2.length - 1; i >= 0; i--) if (!L2[i] || !L.SEGK[L2[i].k]) L2.splice(i, 1);
+    return L2;
+  }
+  function segRead(S) {
+    return S.segKey === L.showKey(S) ? (S.segs || []).filter(function(sg) {
+      return sg && L.SEGK[sg.k];
+    }) : [];
+  }
+  function segPool(S) {
+    var P = S.promos[S.player], show = S.queue[S.qi];
+    return show ? L.eligible(S, P, show).filter(function(w) {
+      return w.promo === P.id && !(show.big && L.isDev(P, w.brand));
+    }) : [];
+  }
+  function segTitleOf(S, P, show, w) {
+    return L.showTitles(P, show).filter(function(t) {
+      return !t.tag && t.holders.length && t.holders[0] === w.id;
+    }).sort(function(a, b) {
+      return b.lvl - a.lvl;
+    })[0] || null;
+  }
+  function segChoices(S, kind, who, slot) {
+    var K = L.SEGK[kind];
+    if (!K) return [];
+    var P = S.promos[S.player], show = S.queue[S.qi], pool = L.segPool(S), busy = {};
+    L.segList(S).forEach(function(sg, i) {
+      if (sg && i !== slot) sg.who.forEach(function(id) {
+        busy[id] = 1;
+      });
+    });
+    var free = pool.filter(function(w) {
+      return !busy[w.id];
+    }).sort(function(a2, b2) {
+      return b2.ovr - a2.ovr;
+    }), a = who && who[0] != null ? S.w[who[0]] : null, b = who && who[1] != null ? S.w[who[1]] : null;
+    var others = function(x) {
+      return free.filter(function(w) {
+        return !x || w.id !== x.id && w.g === x.g;
+      });
+    };
+    if (!K.roles.length) return [];
+    if (kind === "interview" || kind === "turn") return [free];
+    if (kind === "words" || kind === "brawl" || kind === "recap" || kind === "signing") {
+      var inF = free.filter(function(w) {
+        return L.feudsFor(S, w.id).some(function(f) {
+          return f.promo === P.id;
+        });
+      });
+      return [inF, a ? free.filter(function(w) {
+        return w.id !== a.id && !!L.feudOf(S, a.id, w.id);
+      }) : []];
+    }
+    if (kind === "challenge") return [free.filter(function(w) {
+      return true;
+    }), free.filter(function(w) {
+      return (!a || w.id !== a.id && w.g === a.g) && !!L.segTitleOf(S, P, show, w);
+    })];
+    if (kind === "callout" || kind === "faceoff") return [free, a ? others(a) : []];
+    if (kind === "ambush") return [free, a ? others(a).filter(function(w) {
+      return a.team == null || w.team !== a.team;
+    }) : []];
+    if (kind === "save") return [free, a ? others(a).filter(function(w) {
+      return w.team == null && a.team == null && w.align === a.align;
+    }) : [], a ? others(a).filter(function(w) {
+      return !b || w.id !== b.id;
+    }) : []];
+    return [free];
+  }
+  function segWhy(S, sg, slot) {
+    var K = sg && L.SEGK[sg.k];
+    if (!K) return "Pick what kind of segment it is.";
+    var who = sg.who || [], i, C;
+    for (i = 0; i < K.roles.length; i++) {
+      if (who[i] == null || !S.w[who[i]]) return "Pick " + K.roles[i].toLowerCase() + ".";
+      C = L.segChoices(S, sg.k, who.slice(0, i), slot)[i] || [];
+      if (!C.some(function(w2) {
+        return w2.id === who[i];
+      })) {
+        var w = S.w[who[i]];
+        if (who.slice(0, i).indexOf(who[i]) >= 0) return w.name + " is picked twice.";
+        if (!L.segPool(S).some(function(x) {
+          return x.id === w.id;
+        })) return w.name + " is not available for this show.";
+        if (sg.k === "words" || sg.k === "brawl" || sg.k === "recap") return i ? w.name + " is not in a feud with " + S.w[who[0]].name + ". Use a call-out or an ambush to start one." : w.name + " is not in a feud.";
+        if (sg.k === "challenge" && i === 1) return w.name + " does not hold a singles title that is on this show.";
+        if (sg.k === "save" && i === 1) return "The one making the save must be free of a team, like the one they save, and on the same side.";
+        return w.name + " cannot fill that part of this segment. They may already be booked in another one.";
+      }
+    }
+    return "";
+  }
+  function segMean(S, w, bonus) {
+    return 0.62 * L.micOf(S, w) + 0.38 * w.ovr + (bonus || 0) + (S.booker && w.promo === S.player ? S.booker.sk.creative : 0);
+  }
+  function segLook(S, sg, slot) {
+    var why = L.segWhy(S, sg, slot);
+    if (why) return { ok: false, why };
+    if (sg.k === "writers") return { ok: true, mid: null, lo: null, hi: null, notes: [[0, "The writers decide on the night"]], mins: L.segMins(sg) };
+    var P = S.promos[S.player], a = S.w[sg.who[0]], b = sg.who[1] != null ? S.w[sg.who[1]] : null, c = sg.who[2] != null ? S.w[sg.who[2]] : null, f = b ? L.feudOf(S, a.id, b.id) : null, mid = 50, notes = [];
+    if (sg.k === "interview") {
+      mid = L.segMean(S, a, 0);
+      if (L.hasMouthpiece(S, a)) notes.push([1, S.w[a.mgr].name + " does the talking"]);
+    } else if (sg.k === "callout") {
+      mid = L.segMean(S, a, 3);
+      notes.push([1, f ? "It heats the feud they already have" : "It starts a rivalry"]);
+      if (!f && L.activeFeuds(S).length >= 8) notes.push([-1, "Eight feuds are running already, so no new one will start"]);
+    } else if (sg.k === "words") {
+      mid = L.segMean(S, L.micOf(S, a) >= L.micOf(S, b) ? a : b, 2) + f.heat / 25;
+      notes.push([1, "A feud at " + Math.round(f.heat) + " heat"]);
+    } else if (sg.k === "challenge") {
+      mid = L.segMean(S, L.micOf(S, a) >= L.micOf(S, b) ? a : b, 4);
+      var t = L.segTitleOf(S, P, S.queue[S.qi], b);
+      notes.push([1, "For the " + t.name]);
+      if (Math.abs(a.ovr - b.ovr) > 16) {
+        mid -= 6;
+        notes.push([-1, a.name + " is far from the champion\u2019s level"]);
+      }
+    } else if (sg.k === "faceoff") {
+      mid = 0.8 * (a.ovr + b.ovr) / 2 + 8;
+      if (a.align === b.align) notes.push([1, "Two on the same side: the crowd calls it a dream match"]);
+    } else if (sg.k === "ambush") {
+      mid = 0.8 * (a.ovr + b.ovr) / 2 + 6;
+      if (a.align === "F" && !(f && f.heat >= 50)) {
+        mid -= 8;
+        notes.push([-1, "A hero attacking from behind, with no feud to earn it"]);
+      } else notes.push([1, a.align === "H" ? "A villain doing what villains do" : "The feud has earned it"]);
+    } else if (sg.k === "brawl") {
+      mid = 0.8 * (a.ovr + b.ovr) / 2 + 8 + f.heat / 10;
+      notes.push([1, "A feud at " + Math.round(f.heat) + " heat"]);
+      notes.push([-1, "A small chance of a knock"]);
+    } else if (sg.k === "save") {
+      mid = 0.75 * (a.ovr + b.ovr + c.ovr) / 3 + 6;
+      notes.push([1, "A new team: " + a.name + " and " + b.name]);
+    } else if (sg.k === "turn") {
+      var lean = a.align === "H" && a.mom >= 4 || a.align === "F" && a.mom <= -4, tired = a.tw != null && S.week - a.tw < 48;
+      mid = L.segMean(S, a, lean ? 6 : -14);
+      notes.push(lean ? [1, a.align === "H" ? "The crowd is already cheering them" : "A losing run gives them a reason"] : [-1, "Nothing has set it up: it comes from nowhere"]);
+      if (tired) notes.push([-1, "They changed sides less than a year ago"]);
+    } else if (sg.k === "recap") {
+      mid = 42 + f.heat * 0.4;
+      notes.push([1, "A feud at " + Math.round(f.heat) + " heat"]);
+      var onCard = (S.card || []).some(function(m) {
+        var ids = L.flat(m.sides);
+        return ids.indexOf(a.id) >= 0 && ids.indexOf(b.id) >= 0;
+      });
+      notes.push(onCard ? [1, "They have a match tonight: open the show with this and that match gains"] : [-1, "They have no match tonight, so it only keeps the feud warm"]);
+    }
+    var K = L.SEGK[sg.k], len = L.segLen(sg), best = b && K.t === "promo" ? Math.max(L.micOf(S, a), L.micOf(S, b)) : L.micOf(S, a);
+    if (K.t === "promo" && !K.fix) {
+      if (len === "L") {
+        if (best >= 75) {
+          mid += 3;
+          notes.push([1, "A talker who can fill fifteen minutes", 1]);
+        } else {
+          mid -= 5;
+          notes.push([-1, "Fifteen minutes is a long time on the microphone for them", 1]);
+        }
+      } else if (len === "S") {
+        if (best >= 75) {
+          mid -= 2;
+          notes.push([-1, "Cut short: they could have done more with the time", 1]);
+        } else {
+          mid += 1;
+          notes.push([1, "Short and to the point", 1]);
+        }
+      }
+    } else if (K.t === "angle") {
+      if (len === "L") {
+        mid += 2;
+        notes.push([1, "Given time to become a scene. The feud heats faster"]);
+      } else if (len === "S") mid -= 1;
+    }
+    mid = L.clamp(Math.round(mid), 5, 99);
+    return { ok: true, mid, lo: L.clamp(mid - 4, 5, 99), hi: L.clamp(mid + 4, 5, 99), notes, mins: L.segMins(sg) };
+  }
+  function segLabel(S, sg) {
+    var K = L.SEGK[sg.k], n = sg.who.map(function(id) {
+      return S.w[id] ? S.w[id].name : "?";
+    });
+    if (sg.k === "interview") return n[0] + " talks";
+    if (sg.k === "writers") return "The writers\u2019 pick";
+    if (sg.k === "recap") return "Video recap: " + n[0] + " and " + n[1];
+    if (sg.k === "turn") return n[0] + " changes sides";
+    if (sg.k === "callout") return n[0] + " calls out " + n[1];
+    if (sg.k === "challenge") return n[0] + " challenges " + n[1];
+    if (sg.k === "ambush") return n[0] + " attacks " + n[1];
+    if (sg.k === "save") return n[2] + " attacks " + n[0] + ", " + n[1] + " makes the save";
+    return n[0] + " and " + n[1];
+  }
+  function runSeg(S, P, show, ctx, sg, slot, opens) {
+    if (L.segWhy(S, sg, slot) || sg.k === "writers") return null;
+    var ln = L.segLen(sg), hm = (L.SEGK[sg.k].t === "angle" ? ln === "L" ? 1.25 : ln === "S" ? 0.8 : 1 : ln === "S" ? 0.85 : 1) * (opens && L.SEGK[sg.k].t === "angle" ? 1.3 : 1);
+    var a = S.w[sg.who[0]], b = sg.who[1] != null ? S.w[sg.who[1]] : null, c = sg.who[2] != null ? S.w[sg.who[2]] : null, luck = L.rnd(S) * 8 - 4, L2 = L.segLook(S, sg, slot), f = b ? L.feudOf(S, a.id, b.id) : null, r = null, nf;
+    if (!L2.ok) return null;
+    sg.who.forEach(function(id) {
+      ctx.angled[id] = 1;
+    });
+    var ov = L2.mid + luck + (sg.mod || 0);
+    if (sg.k === "interview") {
+      if (ov > a.ovr) L.addOvr(P, a, 0.25);
+      r = L.angle("Interview", (L.hasMouthpiece(S, a) ? S.w[a.mgr].name + " does the talking for " + a.name + ", and " : a.name + " takes the microphone and ") + (ov >= 75 ? "has the crowd in the palm of a hand." : ov >= 55 ? "says what needed saying." : "loses the room."), ov);
+    } else if (sg.k === "callout") {
+      nf = !f;
+      f = L.startFeud(S, P, b, a, 24 + L.ri(S, 0, 10), a.name + " called out " + b.name, { force: true });
+      if (f && !nf) L.heatUp(S, f, L.clamp((ov - 50) / 5, 2, 9) * hm, a.name + " called out " + b.name, { force: true });
+      r = L.angle("Promo", a.name + " calls out " + b.name + " by name" + (f ? nf ? ". " + b.name + " answers from the stage. A new rivalry begins." : ". The feud gets hotter." : ". The words hang in the air, and nothing more comes of it tonight."), ov);
+    } else if (sg.k === "words") {
+      L.heatUp(S, f, L.clamp((ov - 50) / 4, 2, 10) * hm, a.name + " and " + b.name + " traded words");
+      r = L.angle("Promo", a.name + " and " + b.name + " stand face to face with a microphone each. " + (ov >= 72 ? "Every line draws blood." : "It gets personal."), ov);
+    } else if (sg.k === "challenge") {
+      var t = L.segTitleOf(S, P, show, b);
+      nf = !f;
+      f = L.startFeud(S, P, a, b, 30, a.name + " challenged for the " + t.name, { title: t.id, force: true });
+      if (f && !nf) {
+        if (!f.title) f.title = t.id;
+        L.heatUp(S, f, 6 * hm, a.name + " challenged for the " + t.name);
+      }
+      r = L.angle("Challenge", a.name + " interrupts " + b.name + " and lays claim to the " + t.name + "." + (f ? "" : " The champion laughs it off."), ov);
+    } else if (sg.k === "faceoff") {
+      nf = !f;
+      f = L.startFeud(S, P, a, b, 30, a.name + " and " + b.name + " faced off", a.align === b.align ? { kind: "dream", force: true } : { force: true });
+      if (f && !nf) L.heatUp(S, f, 6 * hm, a.name + " and " + b.name + " faced off");
+      r = L.angle("Face-off", a.name + " and " + b.name + " cross paths on the stage. Neither backs down, and the crowd wants the match.", ov);
+    } else if (sg.k === "ambush") {
+      nf = !f;
+      f = L.startFeud(S, P, b, a, 32 + L.ri(S, 0, 8), a.name + " attacked " + b.name + " from behind", { force: true });
+      if (f && !nf) L.heatUp(S, f, 12 * hm, a.name + " attacked " + b.name + " from behind", { force: true });
+      r = L.angle("Ambush", a.name + " attacks " + b.name + " from behind" + (a.align === "F" && L2.notes.some(function(x) {
+        return x[0] < 0;
+      }) ? ". The crowd does not know what to make of a hero doing that." : nf && f ? ". A new rivalry begins." : ". This one is getting ugly."), ov);
+    } else if (sg.k === "brawl") {
+      L.heatUp(S, f, L.clamp(10 + (ov - 60) / 5, 6, 16) * hm, a.name + " and " + b.name + " brawled through the building");
+      var hurt = L.chance(S, ln === "L" ? 0.06 : 0.04) ? L.chance(S, 0.5) ? a : b : null;
+      if (hurt) hurt.cond = L.clamp(hurt.cond - 15, 5, 100);
+      r = L.angle("Brawl", a.name + " and " + b.name + " fight through the crowd and out to the loading dock. Security pulls them apart." + (hurt ? " " + hurt.name + " comes out of it with a knock." : ""), ov);
+    } else if (sg.k === "save") {
+      L.formTeam(S, P, a, b, 8);
+      f = L.startFeud(S, P, a, c, 20, c.name + " attacked " + a.name + "; " + b.name + " made the save", { force: true });
+      if (f && f.a.indexOf(a.id) >= 0 && f.a.length < 2) f.a.push(b.id);
+      L.news(S, "story", "New team: " + a.name + " & " + b.name + ".");
+      r = L.angle("Save", c.name + " attacks " + a.name + " after an interview. " + b.name + " runs out to make the save, and the two shake hands. A new team is born.", ov);
+    } else if (sg.k === "signing") {
+      L.heatUp(S, f, L.clamp(6 + (ov - 55) / 6, 3, 12) * hm, a.name + " and " + b.name + " signed for their match");
+      f.finale = true;
+      var nb = L.nextBigFrom(S.week + (show.big ? 1 : 0), S);
+      if (f.endAt == null) f.endAt = nb;
+      var tbl = ov >= 62;
+      r = L.angle("Contract signing", a.name + " and " + b.name + " sit across a table in the ring and sign for " + S.promos[f.promo].name + " " + L.evName(S, S.promos[f.promo], L.cal(nb).month) + ". " + (tbl ? "The ink is barely dry when the table goes over." : "They sign, stare, and leave it there."), ov);
+    } else if (sg.k === "recap") {
+      L.heatUp(S, f, 3, "A video package told the story of " + a.name + " and " + b.name);
+      r = L.angle("Video recap", "A video package tells the story of " + a.name + " and " + b.name + ": how it started, and what is at stake.", ov);
+    } else if (sg.k === "turn") {
+      var was = a.align;
+      L.turn(S, a, was === "H" ? "the crowd got behind them" : "turned on the fans");
+      if (L2.notes[0][0] > 0) {
+        if (was === "H") L.addOvr(P, a, 2);
+        else a.mom = L.clamp(a.mom + 3, -10, 10);
+      } else a.mom = L.clamp(a.mom - 2, -10, 10);
+      r = L.angle("Turn", was === "H" ? a.name + " turns away from the villains" + (L2.notes[0][0] > 0 ? ", and the crowd that has been cheering for weeks roars." : ". The crowd is not sure what to make of it.") : a.name + " turns on the fans" + (L2.notes[0][0] > 0 ? " after weeks of losses, and walks out to boos." : ". Nobody saw a reason for it."), ov);
+    }
+    if (r && L.SEGK[sg.k].t === "promo" && sg.k !== "recap") {
+      var city = ctx.city || null, pkey = "pr" + S.week + ":" + sg.k + ":" + sg.who.join(","), said = L.hasMouthpiece(S, a) ? S.w[a.mgr] : a;
+      r.text += " " + L.promoSpeech(S, said, b, sg.k, said === a ? ov : Math.max(ov, said.mic), city, pkey);
+      if (b && (sg.k === "words" || sg.k === "faceoff" || sg.k === "challenge" || sg.k === "signing")) r.text += " " + L.promoSpeech(S, b, a, sg.k === "challenge" ? "words" : sg.k, L.clamp(ov + (b.mic - a.mic) / 2, 5, 99), city, pkey + "b");
+    }
+    if (r) {
+      r.booked = sg.k;
+      r.ids = sg.who.slice();
+      if (f && f.id != null) r.feud = f.id;
+    }
+    return r;
+  }
+  function segBooked(S, show, n) {
+    var out = { count: 0, at: {} };
+    if (S.cal || !n) return out;
+    if (S.segKey !== L.showKey(S)) return out;
+    (S.segs || []).forEach(function(sg, i) {
+      if (!sg || !L.SEGK[sg.k] || L.segWhy(S, sg, i)) return;
+      var p = L.clamp(sg.pos | 0, 0, n - 1);
+      (out.at[p] || (out.at[p] = [])).push({ sg, slot: i });
+      out.count++;
+    });
+    return out;
+  }
+  L.E.SEGK = SEGK;
+  L.E.BEATS = L.BEATS;
+  L.E.SEGLEN = SEGLEN;
+  L.E.SEGLENN = SEGLENN;
+  L.E.segInfo = function(S) {
+    var show = S.queue[S.qi];
+    if (!show) return { list: [], booked: 0, mins: 0 };
+    var L2 = L.segList(S), mins = 0;
+    var list = L2.map(function(sg, i) {
+      var why = L.segWhy(S, sg, i), look = why ? null : L.segLook(S, sg, i), K = L.SEGK[sg.k];
+      mins += L.segMins(sg);
+      return { slot: i, k: sg.k, t: K.t, who: sg.who.slice(), pos: sg.pos | 0, len: L.segLen(sg), mins: L.segMins(sg), label: why ? K.n : L.segLabel(S, sg), why, look };
+    });
+    return { booked: L2.length, list, mins };
+  };
+  L.E.segChoices = function(S, kind, who, slot) {
+    return L.segChoices(S, kind, who || [], slot == null ? -1 : slot).map(function(L2) {
+      return L2.map(function(w) {
+        return w.id;
+      });
+    });
+  };
+  L.E.segLook = function(S, sg, slot) {
+    return L.segLook(S, sg, slot == null ? -1 : slot);
+  };
+  L.E.setSeg = function(S, slot, sg) {
+    var L2 = L.segList(S), isNew = slot == null || slot < 0 || slot >= L2.length;
+    if (!sg) {
+      if (isNew) return { ok: true, msg: "Nothing was booked there." };
+      L2.splice(slot, 1);
+      return { ok: true, msg: "That segment is off the show." };
+    }
+    var K = L.SEGK[sg.k];
+    if (!K) return { ok: false, msg: "Pick what kind of segment it is." };
+    var clean = { k: sg.k, who: (sg.who || []).slice(0, K.roles.length).map(function(x) {
+      return +x;
+    }), pos: Math.max(0, sg.pos | 0), len: K.fix ? K.len : L.SEGLEN[sg.len] ? sg.len : K.len }, why = L.segWhy(S, clean, isNew ? -1 : slot);
+    if (why) return { ok: false, msg: why };
+    if (isNew) L2.push(clean);
+    else L2[slot] = clean;
+    var lk = L.segLook(S, clean, isNew ? L2.length - 1 : slot), mins = L.segMins(clean);
+    return { ok: true, slot: isNew ? L2.length - 1 : slot, msg: clean.k === "writers" ? "Booked: " + mins + " minutes for the writers." : "Booked: " + L.segLabel(S, clean) + ", " + mins + " minutes. It should be about " + L.starG(lk.mid) + "." };
+  };
+  L.E.segClear = function(S) {
+    var L2 = L.segList(S);
+    L2.length = 0;
+    return { ok: true, msg: "The run sheet is clear." };
+  };
+  L.E.segSuggest = function(S, max, card) {
+    var P = S.promos[S.player], show = S.queue[S.qi];
+    if (!show) return { ok: false, msg: "No show to book." };
+    var L2 = L.segList(S), n = Math.max(1, (card || S.card || []).length), made = 0, i;
+    if (max == null) max = 1;
+    var used = function() {
+      var u2 = {};
+      L2.forEach(function(sg) {
+        sg.who.forEach(function(id) {
+          u2[id] = 1;
+        });
+      });
+      return u2;
+    };
+    var tryPut = function(sg) {
+      if (!L.segWhy(S, sg, -1)) {
+        L2.push(sg);
+        made++;
+        return true;
+      }
+      return false;
+    };
+    for (i = 0; i < max; i++) {
+      var u = used(), pool = L.segPool(S).filter(function(w) {
+        return !u[w.id];
+      }), inPool = {};
+      pool.forEach(function(w) {
+        inPool[w.id] = 1;
+      });
+      var pos = L2.length % 2 === 0 ? Math.min(1, n - 1) : n - 1, done = false;
+      var fs = L.activeFeuds(S).filter(function(f) {
+        return f.promo === P.id && inPool[f.a[0]] && inPool[f.b[0]];
+      }).sort(function(x, y) {
+        return y.heat - x.heat;
+      });
+      if (fs.length) done = tryPut({ k: fs[0].heat >= 45 ? "brawl" : "words", who: [fs[0].a[0], fs[0].b[0]], pos, len: "M" });
+      if (!done) {
+        var champs = pool.filter(function(w) {
+          return L.segTitleOf(S, P, show, w) && !L.inFeud(S, w.id);
+        }).sort(function(x, y) {
+          return y.ovr - x.ovr;
+        });
+        for (var c = 0; c < champs.length && !done; c++) {
+          var ch = champs[c], cs = pool.filter(function(w) {
+            return w.id !== ch.id && w.g === ch.g && L.holdLvl(P, w.id) === 0 && !L.inFeud(S, w.id) && Math.abs(w.ovr - ch.ovr) <= 16;
+          }).sort(function(x, y) {
+            return y.ovr + y.mom * 2 - (x.ovr + x.mom * 2);
+          });
+          if (cs.length) done = tryPut({ k: "challenge", who: [cs[0].id, ch.id], pos, len: "S" });
+        }
+      }
+      if (!done) {
+        var tk = pool.slice().sort(function(x, y) {
+          return L.segMean(S, y, 0) - L.segMean(S, x, 0);
+        })[0];
+        if (tk) done = tryPut({ k: "interview", who: [tk.id], pos, len: "M" });
+      }
+      if (!done) break;
+    }
+    return { ok: made > 0, msg: made ? (made === 1 ? "One segment pencilled in: " + L.segLabel(S, L2[L2.length - 1]) + "." : made + " segments pencilled in.") + " Change it, or take it off." : "Nobody is free for another segment." };
+  };
+  (function() {
+    var v0 = L.E.validate, r0 = L.E.runPlayerShow;
+    L.E.validate = function(S, card) {
+      var v = v0(S, card);
+      if (S.segKey === L.showKey(S)) (S.segs || []).forEach(function(sg, i) {
+        if (!sg || !L.SEGK[sg.k]) return;
+        var why = L.segWhy(S, sg, i);
+        if (why) v.errors.push("Booked " + L.SEGK[sg.k].n.toLowerCase() + ": " + why + " Change it or take it off the show.");
+      });
+      return v;
+    };
+    L.E.runPlayerShow = function(S, card) {
+      var r = r0(S, card);
+      if (!r.errors) {
+        S.segs = [];
+        S.segKey = null;
+      }
+      return r;
+    };
+  })();
+  L.SEGLEN = SEGLEN;
+  L.SEGLENN = SEGLENN;
+  L.SEGK = SEGK;
+  L.segLen = segLen;
+  L.segMins = segMins;
+  L.segSlots = segSlots;
+  L.segList = segList;
+  L.segRead = segRead;
+  L.segPool = segPool;
+  L.segTitleOf = segTitleOf;
+  L.segChoices = segChoices;
+  L.segWhy = segWhy;
+  L.segMean = segMean;
+  L.segLook = segLook;
+  L.segLabel = segLabel;
+  L.runSeg = runSeg;
+  L.segBooked = segBooked;
+
+  // engine/93-segworld.ts
+  L.segoClean = segoClean;
+  L.segkClean = segkClean;
+  L.segkSync = segkSync;
+  var SEGFX = [["none", "Nothing beyond the segment"], ["heat", "Heats the feud they have"], ["start", "Starts a feud, or heats theirs"]];
+  L.SEGFX = SEGFX;
+  var SEGHEAT = [[4, "A little"], [8, "Some"], [12, "A lot"]];
+  L.SEGHEAT = SEGHEAT;
+  var SEGBOND = [[8, "Closer friends"], [0, "No change"], [-8, "Worse enemies"]];
+  L.SEGBOND = SEGBOND;
+  var SEGK0 = {};
+  L.SEGK0 = SEGK0;
+  Object.keys(L.SEGK).forEach(function(k) {
+    L.SEGK0[k] = L.SEGK[k];
+  });
+  function segoClean(k) {
+    var txt = function(v, n) {
+      return String(v == null ? "" : v).replace(/\s+/g, " ").trim().slice(0, n);
+    }, B = L.SEGK0[k.id];
+    var roles = B.roles.map(function(r, i) {
+      return txt(Array.isArray(k.roles) ? k.roles[i] : "", 24) || r;
+    });
+    return { id: k.id, over: 1, n: txt(k.n, 28) || B.n, t: B.t, roles, d: txt(k.d, 160), scene: txt(k.scene, 60), line: txt(k.line, 160) };
+  }
+  function segkClean(k) {
+    if (!k || typeof k !== "object") return null;
+    var txt = function(v, n) {
+      return String(v == null ? "" : v).replace(/\s+/g, " ").trim().slice(0, n);
+    }, pick = function(L2, v, d) {
+      for (var i = 0; i < L2.length; i++) if (String(L2[i][0]) === String(v)) return L2[i][0];
+      return d;
+    };
+    var id = String(k.id || "");
+    if (L.SEGK0[id] && id !== "writers") return L.segoClean(k);
+    if (!/^c_[a-z0-9_]{1,40}$/.test(id)) id = "c_" + (txt(k.n, 28).toLowerCase().replace(/[^a-z0-9]+/g, "_").replace(/^_|_$/g, "") || "story");
+    var roles = (Array.isArray(k.roles) ? k.roles : []).map(function(r) {
+      return txt(r, 24);
+    }).filter(Boolean).slice(0, 2);
+    if (!roles.length) roles = ["Who it is about"];
+    return {
+      id,
+      n: txt(k.n, 28) || "My segment",
+      t: k.t === "angle" ? "angle" : "promo",
+      roles,
+      d: txt(k.d, 160),
+      fx: pick(L.SEGFX, k.fx, "none"),
+      heat: pick(L.SEGHEAT, k.heat, 8),
+      bond: pick(L.SEGBOND, k.bond, 0),
+      lift: k.lift ? 1 : 0,
+      scene: txt(k.scene, 60),
+      line: txt(k.line, 160)
+    };
+  }
+  function segkSync(S) {
+    var L2 = S && S.db && Array.isArray(S.db.segkinds) ? S.db.segkinds : [], key = L2.map(function(k) {
+      return k && k.id;
+    }).join(",");
+    if (L.SEGK.__key === key) return;
+    Object.keys(L.SEGK).forEach(function(k) {
+      if (L.SEGK[k] && L.SEGK[k].custom) delete L.SEGK[k];
+    });
+    Object.keys(L.SEGK0).forEach(function(k) {
+      L.SEGK[k] = L.SEGK0[k];
+    });
+    L2.forEach(function(k0) {
+      var k = L.segkClean(k0);
+      if (!k) return;
+      if (k.over) {
+        var B = L.SEGK0[k.id], o = {};
+        Object.keys(B).forEach(function(x) {
+          o[x] = B[x];
+        });
+        o.n = k.n;
+        o.roles = k.roles;
+        if (k.d) o.d = k.d;
+        o.over = k;
+        L.SEGK[k.id] = o;
+        return;
+      }
+      if (L.SEGK[k.id]) return;
+      L.SEGK[k.id] = { len: "M", n: k.n, t: k.t, roles: k.roles, d: k.d || (k.t === "promo" ? "A promo made for this world." : "An angle made for this world."), custom: k };
+    });
+    Object.defineProperty(L.SEGK, "__key", { value: key, writable: true, configurable: true, enumerable: false });
+  }
+  (function() {
+    var list0 = L.segList, read0 = L.segRead, booked0 = L.segBooked, choices0 = L.segChoices, look0 = L.segLook, label0 = L.segLabel, run0 = L.runSeg;
+    L.segList = function(S) {
+      L.segkSync(S);
+      return list0(S);
+    };
+    L.segRead = function(S) {
+      L.segkSync(S);
+      return read0(S);
+    };
+    L.segBooked = function(S, show, n) {
+      L.segkSync(S);
+      return booked0(S, show, n);
+    };
+    L.segChoices = function(S, kind, who, slot) {
+      var K = L.SEGK[kind];
+      if (K && K.custom) return choices0(S, K.roles.length > 1 ? "callout" : "interview", who, slot);
+      return choices0(S, kind, who, slot);
+    };
+    L.segLook = function(S, sg, slot) {
+      var K = sg && L.SEGK[sg.k];
+      if (!K || !K.custom) return look0(S, sg, slot);
+      var why = L.segWhy(S, sg, slot);
+      if (why) return { ok: false, why };
+      var c = K.custom, a = S.w[sg.who[0]], b = sg.who[1] != null ? S.w[sg.who[1]] : null, f = b ? L.feudOf(S, a.id, b.id) : null, notes = [], mid;
+      if (c.t === "promo") mid = L.segMean(S, b && L.micOf(S, b) > L.micOf(S, a) ? b : a, 2);
+      else mid = 0.8 * (a.ovr + (b ? b.ovr : a.ovr)) / 2 + 6;
+      if (c.fx === "heat") notes.push(f ? [1, "It heats the feud they have"] : [-1, "They have no feud for it to heat"]);
+      if (c.fx === "start") notes.push([1, f ? "It heats the feud they have" : "It starts a rivalry"]);
+      if (c.bond > 0 && b) notes.push([1, "They come out of it closer"]);
+      if (c.bond < 0 && b) notes.push([-1, "They come out of it worse enemies"]);
+      if (c.lift) notes.push([1, a.name + " looks good if it goes well"]);
+      mid = L.clamp(Math.round(mid), 5, 99);
+      return { ok: true, mid, lo: L.clamp(mid - 4, 5, 99), hi: L.clamp(mid + 4, 5, 99), notes, mins: L.segMins(sg) };
+    };
+    L.segLabel = function(S, sg) {
+      var K = L.SEGK[sg.k];
+      if (!K || !K.custom) return label0(S, sg);
+      var n = sg.who.map(function(id) {
+        return S.w[id] ? S.w[id].name : "?";
+      });
+      return K.n + ": " + n.join(" and ");
+    };
+    L.runSeg = function(S, P, show, ctx, sg, slot, opens) {
+      var K = sg && L.SEGK[sg.k];
+      if (K && K.over) {
+        var r0 = run0(S, P, show, ctx, sg, slot, opens);
+        if (r0 && K.over.line) {
+          var n0 = sg.who.map(function(id) {
+            return S.w[id] ? S.w[id].name : "";
+          });
+          r0.text = K.over.line.replace(/\{a\}/g, n0[0] || "").replace(/\{b\}/g, n0[1] || "").replace(/\{c\}/g, n0[2] || "") + (r0.ov >= 72 ? " The crowd loves it." : r0.ov < 45 ? " It falls flat." : "");
+        }
+        return r0;
+      }
+      if (!K || !K.custom) return run0(S, P, show, ctx, sg, slot, opens);
+      if (L.segWhy(S, sg, slot)) return null;
+      var c = K.custom, L2 = L.segLook(S, sg, slot);
+      if (!L2.ok) return null;
+      var ln = L.segLen(sg), hm = c.t === "angle" ? ln === "L" ? 1.25 : ln === "S" ? 0.8 : 1 : ln === "S" ? 0.85 : 1, a = S.w[sg.who[0]], b = sg.who[1] != null ? S.w[sg.who[1]] : null, f = b ? L.feudOf(S, a.id, b.id) : null;
+      sg.who.forEach(function(id) {
+        ctx.angled[id] = 1;
+      });
+      var ov = L2.mid + L.rnd(S) * 8 - 4 + (sg.mod || 0), why = c.n + ": " + a.name + (b ? " and " + b.name : "");
+      if (b && c.fx === "start" && !f) f = L.startFeud(S, P, b, a, 20 + c.heat, why, { force: true });
+      else if (b && f && c.fx !== "none") L.heatUp(S, f, c.heat * hm * L.clamp(0.6 + (ov - 50) / 50, 0.4, 1.4), why);
+      if (b && c.bond) L.relBump(S, a.id, b.id, { bond: c.bond }, { t: why, k: "segment" });
+      if (c.lift && ov >= 60) L.addOvr(P, a, 0.5);
+      var line = c.line ? c.line.replace(/\{a\}/g, a.name).replace(/\{b\}/g, b ? b.name : "") : b ? a.name + " and " + b.name + ": " + c.n.toLowerCase() + "." : a.name + ": " + c.n.toLowerCase() + ".";
+      var r = L.angle(c.t === "promo" ? "Promo" : "Angle", line + (ov >= 72 ? " The crowd loves it." : ov < 45 ? " It falls flat." : ""), ov);
+      r.booked = c.id;
+      r.ids = sg.who.slice();
+      if (f && f.id != null) r.feud = f.id;
+      return r;
+    };
+  })();
+  L.E.SEGK0 = SEGK0;
+  L.E.SEGFX = SEGFX;
+  L.E.SEGHEAT = SEGHEAT;
+  L.E.SEGBOND = SEGBOND;
+  L.E.segkClean = segkClean;
+  L.E.edSegKinds = function(pkg) {
+    return (pkg && Array.isArray(pkg.segkinds) ? pkg.segkinds : []).map(L.segkClean).filter(Boolean);
+  };
+  L.E.edSetSegKind = function(pkg, k) {
+    var c = L.segkClean(k);
+    if (!pkg || !c) return null;
+    var L2 = L.E.edSegKinds(pkg).filter(function(x) {
+      return x.id !== c.id;
+    });
+    L2.push(c);
+    pkg.segkinds = L2;
+    return c;
+  };
+  L.E.edNewSegKind = function(pkg, t) {
+    var L2 = L.E.edSegKinds(pkg), n = 1;
+    while (L2.some(function(x) {
+      return x.id === "c_story_" + n;
+    })) n++;
+    return L.E.edSetSegKind(pkg, { id: "c_story_" + n, n: (t === "angle" ? "My angle " : "My promo ") + n, t: t === "angle" ? "angle" : "promo", roles: t === "angle" ? ["The attacker", "Who gets attacked"] : ["Who talks", "Who they talk to"], fx: "start", heat: 8, bond: 0 });
+  };
+  L.E.edOverSegKind = function(pkg, id) {
+    if (!L.SEGK0[id] || id === "writers") return null;
+    var have = L.E.edSegKinds(pkg).find(function(x) {
+      return x.id === id;
+    });
+    return have || L.E.edSetSegKind(pkg, { id, n: L.SEGK0[id].n, roles: L.SEGK0[id].roles });
+  };
+  L.E.edRemoveSegKind = function(pkg, id) {
+    if (pkg && Array.isArray(pkg.segkinds)) {
+      pkg.segkinds = pkg.segkinds.filter(function(x) {
+        return x && x.id !== id;
+      });
+      if (!pkg.segkinds.length) delete pkg.segkinds;
+    }
+  };
+  L.SEGFX = SEGFX;
+  L.SEGHEAT = SEGHEAT;
+  L.SEGBOND = SEGBOND;
+  L.SEGK0 = SEGK0;
+  L.segoClean = segoClean;
+  L.segkClean = segkClean;
+  L.segkSync = segkSync;
+
+  // engine/93-stipworld.ts
+  L.stipBase = stipBase;
+  L.stipClean = stipClean;
+  L.stipSync = stipSync;
+  L.edStipPut = edStipPut;
+  var STIP_SETS = [["", "The ring"], ["cage", "A steel cage"], ["cell", "The cell, with its roof"], ["inferno", "A ring of fire"], ["ladder", "A belt hung over the ring"], ["ballroom", "A ballroom"], ["gym", "A gym"], ["bigstadium", "A stadium"]];
+  L.STIP_SETS = STIP_SETS;
+  var STIP_BASES = ["std", "hardcore", "tables", "ladder", "cage", "cell", "fire", "sub"];
+  L.STIP_BASES = STIP_BASES;
+  L.STIP.cage.set = "cage";
+  L.STIP.cell.set = "cell";
+  L.STIP.fire.set = "inferno";
+  L.STIP.ladder.set = "ladder";
+  var STIP0 = {};
+  var STIPNOTE0 = {};
+  var STIPLINE0 = {};
+  var STIPNEED0 = {};
+  L.STIP0 = STIP0;
+  L.STIPNOTE0 = STIPNOTE0;
+  L.STIPLINE0 = STIPLINE0;
+  L.STIPNEED0 = STIPNEED0;
+  Object.keys(L.STIP).forEach(function(k) {
+    L.STIP0[k] = L.STIP[k];
+    L.STIPNOTE0[k] = L.E.STIPNOTE[k];
+    L.STIPLINE0[k] = L.STIPLINE[k];
+    L.STIPNEED0[k] = L.STIP_NEED[k];
+  });
+  function stipBase(k) {
+    var s = L.STIP[k];
+    return s && s.base || k;
+  }
+  function stipClean(k) {
+    if (!k || typeof k !== "object") return null;
+    var txt = function(v, n) {
+      return String(v == null ? "" : v).replace(/\s+/g, " ").trim().slice(0, n);
+    };
+    var set = L.STIP_SETS.some(function(x) {
+      return x[0] === k.set;
+    }) ? k.set : "", lines = (Array.isArray(k.lines) ? k.lines : []).map(function(x) {
+      return txt(x, 120);
+    }).filter(Boolean).slice(0, 3);
+    var id = String(k.id || "");
+    if (L.STIP0[id] && id !== "std") return { id, over: 1, n: txt(k.n, 24) || L.STIP0[id].n, set: k.set == null ? L.STIP0[id].set || "" : set, d: txt(k.d, 160), lines };
+    if (!/^c_[a-z0-9_]{1,40}$/.test(id)) id = "c_" + (txt(k.n, 24).toLowerCase().replace(/[^a-z0-9]+/g, "_").replace(/^_|_$/g, "") || "rule");
+    return { id, n: txt(k.n, 24) || "My match", base: L.STIP_BASES.indexOf(k.base) >= 0 ? k.base : "std", set, d: txt(k.d, 160), lines };
+  }
+  function stipSync(S) {
+    var L2 = S && S.db && Array.isArray(S.db.stips) ? S.db.stips : [], key = JSON.stringify(L2);
+    if (L.stipSync.key === key) return;
+    L.stipSync.key = key;
+    Object.keys(L.STIP).forEach(function(k) {
+      if (!L.STIP0[k]) {
+        delete L.STIP[k];
+        delete L.E.STIPNOTE[k];
+        delete L.STIPLINE[k];
+        delete L.STIP_NEED[k];
+      }
+    });
+    Object.keys(L.STIP0).forEach(function(k) {
+      L.STIP[k] = L.STIP0[k];
+      L.E.STIPNOTE[k] = L.STIPNOTE0[k];
+      if (L.STIPLINE0[k]) L.STIPLINE[k] = L.STIPLINE0[k];
+      else delete L.STIPLINE[k];
+      if (L.STIPNEED0[k] != null) L.STIP_NEED[k] = L.STIPNEED0[k];
+    });
+    L2.forEach(function(k0) {
+      var k = L.stipClean(k0);
+      if (!k) return;
+      var B = L.STIP0[k.over ? k.id : k.base], o = {};
+      Object.keys(B).forEach(function(x) {
+        o[x] = B[x];
+      });
+      o.n = k.n;
+      o.set = k.set || void 0;
+      if (k.over) {
+        o.over = 1;
+        L.STIP[k.id] = o;
+      } else {
+        if (L.STIP0[k.id]) return;
+        o.base = k.base;
+        o.custom = 1;
+        L.STIP[k.id] = o;
+        if (L.STIPNEED0[k.base] != null) L.STIP_NEED[k.id] = L.STIPNEED0[k.base];
+      }
+      L.E.STIPNOTE[k.id] = k.d || L.STIPNOTE0[k.over ? k.id : k.base] || (k.over ? "" : "A match made for this world.");
+      var ln = k.lines.length ? k.lines : L.STIPLINE0[k.over ? k.id : k.base];
+      if (ln) L.STIPLINE[k.id] = ln;
+      else delete L.STIPLINE[k.id];
+    });
+  }
+  (function() {
+    var attach0 = L.E.attach, new0 = L.E.newGame;
+    L.E.attach = function(S) {
+      var r = attach0.apply(this, arguments);
+      L.stipSync(S);
+      return r;
+    };
+    L.E.newGame = function() {
+      var S = new0.apply(this, arguments);
+      L.stipSync(S);
+      return S;
+    };
+    var gim0 = L.isGim;
+    L.isGim = function(k) {
+      return gim0(L.stipBase(k));
+    };
+  })();
+  L.WEEKX.push(function(S) {
+    L.stipSync(S);
+  });
+  L.E.STIP0 = STIP0;
+  L.E.STIP_SETS = STIP_SETS;
+  L.E.STIP_BASES = STIP_BASES;
+  L.E.stipClean = stipClean;
+  L.E.stipNote0 = function(k) {
+    return L.STIPNOTE0[k] || "";
+  };
+  L.E.stipLines0 = function(k) {
+    return (L.STIPLINE0[k] || []).slice();
+  };
+  L.E.edStips = function(pkg) {
+    return (Array.isArray(pkg.stips) ? pkg.stips : []).map(L.stipClean).filter(Boolean);
+  };
+  function edStipPut(pkg, k) {
+    var L2 = Array.isArray(pkg.stips) ? pkg.stips : pkg.stips = [], i = L2.findIndex(function(x) {
+      return x && x.id === k.id;
+    });
+    if (i >= 0) L2[i] = k;
+    else L2.push(k);
+  }
+  L.E.edSetStip = function(pkg, k) {
+    var c = L.stipClean(k);
+    if (!c) return null;
+    L.edStipPut(pkg, c);
+    return c;
+  };
+  L.E.edNewStip = function(pkg, base) {
+    var L2 = L.E.edStips(pkg), n = 1, id;
+    do {
+      id = "c_rule_" + n++;
+    } while (L2.some(function(x) {
+      return x.id === id;
+    }));
+    var b = L.STIP_BASES.indexOf(base) >= 0 ? base : "cage", k = L.stipClean({ id, n: "New match", base: b, set: L.STIP0[b].set || "" });
+    L.edStipPut(pkg, k);
+    return k;
+  };
+  L.E.edOverStip = function(pkg, id) {
+    if (!L.STIP0[id] || id === "std") return null;
+    var k = L.stipClean({ id, n: L.STIP0[id].n, set: L.STIP0[id].set || "", d: "", lines: [] });
+    L.edStipPut(pkg, k);
+    return k;
+  };
+  L.E.edRemoveStip = function(pkg, id) {
+    if (!Array.isArray(pkg.stips)) return false;
+    var n = pkg.stips.length;
+    pkg.stips = pkg.stips.filter(function(x) {
+      return !x || x.id !== id;
+    });
+    if (!pkg.stips.length) delete pkg.stips;
+    return n !== (pkg.stips || []).length;
+  };
+  L.STIP_SETS = STIP_SETS;
+  L.STIP_BASES = STIP_BASES;
+  L.STIP0 = STIP0;
+  L.STIPNOTE0 = STIPNOTE0;
+  L.STIPLINE0 = STIPLINE0;
+  L.STIPNEED0 = STIPNEED0;
+  L.stipBase = stipBase;
+  L.stipClean = stipClean;
+  L.stipSync = stipSync;
+  L.edStipPut = edStipPut;
 
   // engine/94-livefeed.ts
   L.crowdWord = crowdWord;
