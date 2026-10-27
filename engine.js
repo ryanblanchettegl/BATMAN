@@ -19746,6 +19746,9 @@
   E.annualReport = function(S) {
     return S.annual || null;
   };
+  E.annualSeen = function(S) {
+    S.annualNew = false;
+  };
   SHOWX.push(function(S, P, show, rep) {
     if (S.cal || P.id === S.player || rep.exp == null || rep.rating < rep.exp + 4) return;
     var mine = S.promos[S.player].cities || [], theirs = P.cities || [];

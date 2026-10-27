@@ -190,6 +190,8 @@ WEEKX.push(function(S){
   S.annual={year:c.year,src:src,net:net,plan:plan,draw:S.ybest&&S.ybest.draw||null,match:mt?mt.v:null,sign:sign?{name:sign.name,wage:sign.wage,id:sign.id}:null,letter:letter};S.annualNew=true;S.ybest={};
 });
 E.annualReport=function(S){return S.annual||null;};
+// the year-end report has been opened: the screen asks the engine to mark it read (rule 1)
+E.annualSeen=function(S){S.annualNew=false;};
 
 /* the bar moves: when a rival has a great night in a city you share, your next show there has more to live up to */
 SHOWX.push(function(S,P,show,rep){

@@ -79,6 +79,6 @@ export function endWeek() {
   if (S.fin && !S.over) {
     const wc = { kind: 'weekclosed', did, up, down };
     // the year-end report comes first and hands over to the week-closed window when it is closed
-    if (S.annualNew) { S.annualNew = false; openModal({ kind: 'annual', next: wc }); } else openModal(wc);
+    if (S.annualNew) { E.annualSeen(S); openModal({ kind: 'annual', next: wc }); } else openModal(wc);
   }
 }
