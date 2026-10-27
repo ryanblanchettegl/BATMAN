@@ -103,17 +103,19 @@ Fewer matters means fewer chances to earn and fewer to lose. Held chances still 
 4. **The styles.** The choice at the start of a game, the line on Career; old saves get The Promoter.
 5. **The rhythm.** Sizes and the build and rest around big nights, after the first four feel right in play.
 
-## 12. Questions for Ryan
+## 12. Ryan's answers (28 October 2026)
 
-Asked one at a time; the answers are written here.
+| Topic | Question | Answer |
+| --- | --- | --- |
+| Edge cases | A week with nothing urgent: a fire or quiet? | **Quiet, then a fire.** One quiet week is a breather, never two in a row: after one, the biggest problem whose cause is true gets through. |
+| Edge cases | Two hard matters due the same week? | **The bigger first, and waiting costs.** The other waits a week and grows a little (the person's mood drops, the clock ticks). |
+| Player psychology | Should the player see the Director? | **A word on the desk.** One short line in words ("A storm is building", "A quiet week"), never a number. |
+| Player psychology | Can the player see what was held? | **Yes, and pull one forward.** The week in full lists "Also this week"; a button brings one held matter to the desk now for one action point. |
+| One more turn | Must every show end on a hook? | **Clean after a great night.** A show graded A or better may leave nothing on the desk as a reward; every other show leaves one matter. The next week still opens on something. |
+| One more turn | How often a chance instead of a problem? | **By tension, about one headline in three.** More when tense (a lifeline), fewer when calm (a test). |
+| The cap | Matters a week and calls a show? | **One headline and two threads a week**, plus anything forced; **two calls on a weekly show, three on a big night.** |
+| Balance | Difficulty, and can it change? | **A taste, not difficulty.** Changed between shows on Career at a small cost to the owner's trust; locked in iron man. |
+| Scope | Three styles or one first? | **All three at once** (step 4 builds The Promoter, The Carny and The Purist together). |
+| Odd situations | Old saves and multiplayer? | **The Promoter and one per booker.** An old save loads with The Promoter and an empty history, its waiting matters stay; in multiplayer each booker's company gets its own Director and style. |
 
-- Edge cases: in a week with nothing urgent, does the Director let a fire through or let the week be quiet?
-- Edge cases: when two hard matters fall due the same week, which waits, and does waiting cost anything?
-- Player psychology: should the player see the Director at all (a word on the desk), or only feel it?
-- Player psychology: will a player who loves to manage everything feel robbed when the cap holds matters back? Should there be a way to see what was held?
-- One more turn: must every show end on a hook, or can a great night end clean as a reward?
-- One more turn: how often should a chance come instead of a problem?
-- The cap: how many matters a week (headline plus threads), and how many calls a show?
-- Balance: is the style a difficulty setting, and can it change mid-game?
-- Scope: three styles to start, or The Promoter first and the others after it plays well?
-- Odd situations: a save from before it existed, and does each booker in multiplayer get their own?
+What changes in the blueprint from these answers: section 5 gains the quiet-week rule, the cost of waiting, the hook rule after an A, and the one-in-three mix; section 8 gains the word on the desk and the Pull forward button (one action point); section 6 and step 4 build all three styles together.
