@@ -1,4 +1,3 @@
-// @ts-nocheck
 /* Moved from src/99-fog.js (ADR-0001). Names from the rest of the engine come through the bridge, $L. Types come in step 3. */
 import { L as $L } from './_gen/legacy.js';
 import { E, STIP, cal, clamp, divOk, eligible, expected, feudOf, flat, h01, names, rkey, titleById } from './00-core';
@@ -190,7 +189,7 @@ export function cardFlags(S,card,i){
   if(m&&m.stip&&m.stip!=='std'&&m.sides&&m.sides.length===2&&m.sides[0][0]!=null&&m.sides[1][0]!=null){var ff=feudOf(S,m.sides[0][0],m.sides[1][0]);
     var sf=stipFitOf(ff,m.stip),sn=(STIP[m.stip]||{}).n||'This stipulation';if(sf>=4)add('good','Earned','The feud is hot enough to carry a '+sn.toLowerCase()+' match. It will add to the story.');else if(sf<0)add('bad','Too soon',sn+' needs a hotter feud than this. It will feel like too much, too soon.');}
   // momentum anybody can see: a winning run or a cold one (NEXT.md 8.4)
-  if(m&&m.sides){var ids=flat(m.sides).filter(function(id){return id!=null;}),hot=ids.filter(function(id){return S.w[id]&&S.w[id].mom>=5;}),cold=ids.filter(function(id){return S.w[id]&&S.w[id].mom<=-5;});
+  if(m&&m.sides){var ids: any=flat(m.sides).filter(function(id){return id!=null;}),hot=ids.filter(function(id){return S.w[id]&&S.w[id].mom>=5;}),cold=ids.filter(function(id){return S.w[id]&&S.w[id].mom<=-5;});
     if(hot.length)add('good','On a roll',hot.map(function(id){return S.w[id].name;}).join(' and ')+(hot.length>1?' are':' is')+' on a roll. The crowd is with a winner.');
     if(cold.length)add('warn','Cold streak',cold.map(function(id){return S.w[id].name;}).join(' and ')+(cold.length>1?' have':' has')+' been losing. The crowd has stopped believing.');}
   // where the feud stands, when it matters: boiling, going stale, or this is its last night
@@ -208,7 +207,7 @@ export function cardFlags(S,card,i){
     else if(/not a regular team|do not get on/.test(t))add('warn','Rough team',t);
     else if(l.s<0)add('bad','A risk',t);
   });
-  var ids=[];(m.sides||[]).forEach(function(s,si){s.forEach(function(id){if(id!=null)ids.push({id:id,si:si});});});
+  var ids: any=[];(m.sides||[]).forEach(function(s,si){s.forEach(function(id){if(id!=null)ids.push({id:id,si:si});});});
   ids.forEach(function(q){var w=S.w[q.id];if(!w)return;
     if(w.morale<38)add('warn','Unhappy',w.name+' is unhappy, and it will show in the effort.');
     S.quests.forEach(function(qq){if(qq.type==='win'&&qq.w===w.id){var won=m.call===q.si;add(won?'good':'warn',won?'Promise kept':'Promised a win',won?'You promised '+w.name+' a win, and you have called it.':'You promised '+w.name+' a win by '+cal(qq.due).label+'. Call the finish, or hope.');}});

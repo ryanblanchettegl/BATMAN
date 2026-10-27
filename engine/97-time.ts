@@ -1,4 +1,3 @@
-// @ts-nocheck
 /* Moved from src/97-time.js (ADR-0001). Names from the rest of the engine come through the bridge, $L. Types come in step 3. */
 import { L as $L } from './_gen/legacy.js';
 import { E, LEN, clamp, expected, flat } from './00-core';
@@ -105,7 +104,7 @@ export function showTimes(S,P,show,rep,card){
 /** Change lengths, and add or drop a segment if it must, until the show fits its time (within five minutes either
     way). The suggested card uses it, and so does anything that books without a person. Returns how many changes.
     `keep` is the index of a match that must not be given more time (one a call on the night has just cut short). */
-export function fitShow(S,card,keep){
+export function fitShow(S,card,keep?){
   var show=S.queue&&S.queue[S.qi];if(!show||!card.length)return 0;
   var P=S.promos[S.player],B=showMins(show),L=$L.segList(S),changed=0,it,t,n;
   var total=function(){var s=hasPlan(S)?$L.PLAN_MINS:0;card.forEach(function(m,i){s+=matchSlot(show,m,i===card.length-1);});L.forEach(function(sg){s+=segMins(sg);});return s;};
@@ -157,7 +156,7 @@ E.showMins=function(S){return showMins(S.queue&&S.queue[S.qi]);};
 /** The clock for the card on the desk: the budget, what is booked, every item with its start time, the top of each
     hour, and how the show opens. */
 E.clock=function(S,card){
-  card=card||S.card||[];var c=showClock(S,card),k=openKind(S,card);
+  card=card||S.card||[];var c: any=showClock(S,card),k=openKind(S,card);
   c.open={k:k,n:$L.OPENS[k].n,d:$L.OPENS[k].d};
   c.cats={match:{n:0,mins:0},promo:{n:0,mins:0},angle:{n:0,mins:0}};
   var L=$L.segRead(S),nm=function(ids){return ids.map(function(id){return id==null||!S.w[id]?'open spot':S.w[id].name;}).join(' & ');};
@@ -170,7 +169,7 @@ E.clock=function(S,card){
 };
 /** How long this match would take off the clock at each length, where it sits now. */
 E.matchMins=function(S,m,i,n){
-  var show=S.queue&&S.queue[S.qi],main=i===n-1,o={};
+  var show=S.queue&&S.queue[S.qi],main=i===n-1,o: any={};
   ['S','M','L'].forEach(function(l){var c={mt:m.mt,stip:m.stip,len:l,note:m.note,sides:m.sides,surp:m.surp};o[l]=matchSlot(show,c,main);});
   o.now=matchSlot(show,m,main);o.bell=bellMins(show,m,main);return o;
 };

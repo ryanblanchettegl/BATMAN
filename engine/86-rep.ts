@@ -1,4 +1,3 @@
-// @ts-nocheck
 /* Moved from src/86-rep.js (ADR-0001). Names from the rest of the engine come through the bridge, $L. Types come in step 3. */
 import { L as $L } from './_gen/legacy.js';
 import { ACH, E, avg, holdLvl, pick, rosterOf, starG, workRate } from './00-core';
@@ -80,7 +79,7 @@ E.legacy=function(S){
   ];
   if(S.over&&S.over.why==='fired')parts.push({n:'Fired',v:-10});
   var score=0;parts.forEach(function(p){score+=p.v;});
-  var tl=[{w:1,label:'Took over '+P.name+'.'}];
+  var tl: any=[{w:1,label:'Took over '+P.name+'.'}];
   if(R.shows[0])tl.push({w:R.shows[0].w,label:'Best show: '+R.shows[0].n+', graded '+$L.gradeG(R.shows[0].c!=null?R.shows[0].c:R.shows[0].r)+'.'});
   if(R.matches[0])tl.push({w:R.matches[0].w,label:'Best match: '+R.matches[0].l+', '+starG(R.matches[0].ov)+'.'});
   if(R.gate)tl.push({w:R.gate.w,label:'Biggest crowd: '+R.gate.v.toLocaleString('en-US')+' at '+R.gate.n+'.'});

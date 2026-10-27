@@ -1,4 +1,3 @@
-// @ts-nocheck
 /* Moved from src/86-editor.js (ADR-0001). Names from the rest of the engine come through the bridge, $L. Types come in step 3. */
 import { L as $L } from './_gen/legacy.js';
 import { E, MONTHS, clamp } from './00-core';
@@ -30,7 +29,7 @@ export function edRnd(st){st.s=(st.s*1664525+1013904223)%4294967296;return st.s/
 export function edPick(st,a){return a[Math.floor(edRnd(st)*a.length)];}
 export function edShape(pkg){$L.ED_TABLES.forEach(function(t){if(!Array.isArray(pkg[t]))pkg[t]=[];});if(!pkg.manifest||typeof pkg.manifest!=='object')pkg.manifest={};return pkg;}
 /** An id nobody sees: a slug of the name, made unique inside its table. */
-export function edId(pkg,table,name,fallback){
+export function edId(pkg,table,name,fallback?){
   var base=slug(name||'')||fallback||table.slice(0,4),used={},n=2,id;
   if(base.length<2)base=base+'_x';base=base.slice(0,36);
   (pkg[table]||[]).forEach(function(r){if(r&&r.id)used[r.id]=1;});
@@ -80,7 +79,7 @@ E.edAddWorker=function(pkg,o){
 };
 E.edAddTeam=function(pkg,pid,kind){
   edShape(pkg);kind=kind==='stable'?'stable':'tag';
-  var t={id:edId(pkg,'teams',pid+'_'+kind),name:kind==='stable'?'New stable':'New team',kind:kind,member_ids:[],promotion_id:pid};
+  var t: any={id:edId(pkg,'teams',pid+'_'+kind),name:kind==='stable'?'New stable':'New team',kind:kind,member_ids:[],promotion_id:pid};
   if(kind==='tag'){t.experience=50;t.chemistry=3;}
   pkg.teams.push(t);return t;
 };
@@ -220,7 +219,7 @@ E.edSetTier=function(pkg,wid,push,seed){
 E.edManagers=function(pkg,wid){
   edShape(pkg);var home=E.edHome(pkg,wid);
   return pkg.workers.filter(function(m){return m.id!==wid&&m.roles&&m.roles.indexOf('manager')>=0;})
-    .sort(function(a,b){return ((E.edHome(pkg,b.id)===home)-(E.edHome(pkg,a.id)===home))||String(a.ring_name).localeCompare(String(b.ring_name));})
+    .sort(function(a,b){return (+(E.edHome(pkg,b.id)===home)-+(E.edHome(pkg,a.id)===home))||String(a.ring_name).localeCompare(String(b.ring_name));})
     .map(function(m){return {id:m.id,name:m.ring_name,same:E.edHome(pkg,m.id)===home};});
 };
 /** Tie a wrestler to a manager, or untie them with null. */

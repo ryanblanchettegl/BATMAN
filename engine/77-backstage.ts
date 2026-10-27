@@ -1,4 +1,3 @@
-// @ts-nocheck
 /* Moved from src/77-backstage.js (ADR-0001). Names from the rest of the engine come through the bridge, $L. Types come in step 3. */
 import { L as $L } from './_gen/legacy.js';
 import { E, SLOTN, award, cal, chance, clamp, eligible, expected, feudOf, flat, h01, names, pick, ri, rkey, rosterOf, starG, starMeets, starQ, startFeud, teamOf, workRate } from './00-core';
@@ -266,7 +265,7 @@ E.chaos=function(S,card){
 };
 E.resolveChaos=function(S,card,c){
   var ch=S.chs;if(!ch||ch.done)return null;
-  var P=S.promos[S.player],m=card[ch.mi],w=ch.w!=null?S.w[ch.w]:null,o=ch.o!=null?S.w[ch.o]:null,X={k:ch.type,c:c,cr:0,mq:0,x:null,note:''},res='',r=null;
+  var P=S.promos[S.player],m=card[ch.mi],w=ch.w!=null?S.w[ch.w]:null,o=ch.o!=null?S.w[ch.o]:null,X: any={k:ch.type,c:c,cr:0,mq:0,x:null,note:''},res='',r=null;
   if(ch.checks&&ch.checks[c]){r=rollCheck(S,ch.checks[c]);ch.roll=r;}
   if(!m){ch.done=true;return '';}
   if(ch.type==='lights'){

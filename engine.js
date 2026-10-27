@@ -1,5 +1,4 @@
 /* Gorilla Position, the simulation engine (built from src/ and engine/). No DOM. State is plain JSON so it can be saved as-is. */
-"use strict";
 (() => {
   // engine/_gen/legacy.js
   var L = function(root) {
@@ -7268,8 +7267,8 @@
     function ok(id) {
       return inP[id] && !ang[id] && !(S.w[id].away >= S.week);
     }
-    function mark() {
-      for (var i2 = 0; i2 < arguments.length; i2++) ang[arguments[i2].id] = 1;
+    function mark(...xs) {
+      for (var i2 = 0; i2 < xs.length; i2++) ang[xs[i2].id] = 1;
     }
     var my = S.mystery && S.mystery.promo === P.id ? S.mystery : null;
     activeFeuds(S).forEach(function(f) {
@@ -23354,7 +23353,7 @@
     return pkg.workers.filter(function(m) {
       return m.id !== wid && m.roles && m.roles.indexOf("manager") >= 0;
     }).sort(function(a, b) {
-      return (E.edHome(pkg, b.id) === home) - (E.edHome(pkg, a.id) === home) || String(a.ring_name).localeCompare(String(b.ring_name));
+      return +(E.edHome(pkg, b.id) === home) - +(E.edHome(pkg, a.id) === home) || String(a.ring_name).localeCompare(String(b.ring_name));
     }).map(function(m) {
       return { id: m.id, name: m.ring_name, same: E.edHome(pkg, m.id) === home };
     });
@@ -35781,7 +35780,7 @@
     var OW = S.ownWas || (S.ownWas = {});
     if (c.wom === 1) OW[S.week - 1] = S.owner.trust;
     Object.keys(OW).forEach(function(k) {
-      if (S.week - k > 60) delete OW[k];
+      if (S.week - +k > 60) delete OW[k];
     });
     if (c.wom === 4) {
       var m = pmReview(S, S.week - 4, S.week, MONTHS[c.month] + " " + c.year);

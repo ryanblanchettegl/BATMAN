@@ -1,4 +1,3 @@
-// @ts-nocheck
 /* Moved from src/89-regions.js (ADR-0001). Names from the rest of the engine come through the bridge, $L. Types come in step 3. */
 import { L as $L } from './_gen/legacy.js';
 import { E, avg, cal, chance, clamp, hash, names, pick, rosterOf, workRate } from './00-core';

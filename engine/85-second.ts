@@ -1,4 +1,3 @@
-// @ts-nocheck
 /* Moved from src/85-second.js (ADR-0001). Names from the rest of the engine come through the bridge, $L. Types come in step 3. */
 import { L as $L } from './_gen/legacy.js';
 import { E, chance, clamp, rosterOf, workRate } from './00-core';
@@ -8,7 +7,7 @@ $L.staffOf = staffOf; $L.agentOf = agentOf; $L.agentQ = agentQ; $L.agentRisk = a
 /* ---------- second careers ----------
    A retired wrestler of yours can stay: road agent, trainer, commentator, manager or on-screen boss. Each role uses one of their old skills.
    Staff stay on the roster as non-wrestlers (nw) with a role in w.srole. */
-export var SROLES={
+export var SROLES: any={
   agent:{n:'Road agent',skill:function(w){return (w.cons||60)*0.5+workRate(w)*0.5;},d:'Keeps the matches tight: young wrestlers on the card work a little better and get hurt a little less.'},
   trainer:{n:'Trainer',skill:function(w){return workRate(w);},d:'Teaches the young: every wrestler of 26 and under learns a little faster.'},
   commentator:{n:'Commentator',skill:function(w){return w.mic;},d:'Sells the stories on air: the show reads a little better.'},

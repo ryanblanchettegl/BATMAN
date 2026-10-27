@@ -1,4 +1,3 @@
-// @ts-nocheck
 /* Moved from src/95-tasks.js (ADR-0001). Names from the rest of the engine come through the bridge, $L. Types come in step 3. */
 import { L as $L } from './_gen/legacy.js';
 import { E, rosterOf } from './00-core';
@@ -52,7 +51,7 @@ E.tasks=function(S){
   var qr=S.qres&&S.qres.w===S.week?S.qres.r:{};
   Object.keys(seen.t).forEach(function(id){
     if(now[id])return;
-    var o={id:id,text:seen.t[id].text,need:seen.t[id].need,state:'done'},r=/^q-/.test(id)?qr[id.slice(2)]:null;
+    var o: any={id:id,text:seen.t[id].text,need:seen.t[id].need,state:'done'},r=/^q-/.test(id)?qr[id.slice(2)]:null;
     // a target or a promise says how it went; action points only read as spent when none are left
     if(r){o.text=r.t;o.miss=!r.ok;o.hit=r.ok;}
     else if(id==='ap'){var ap=E.backstage(S).ap;if(ap>0){o.text=ap+' action '+(ap===1?'point':'points')+' went unspent. The shows are over for the week.';o.miss=true;}}

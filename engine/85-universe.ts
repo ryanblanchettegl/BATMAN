@@ -1,4 +1,3 @@
-// @ts-nocheck
 /* Moved from src/85-universe.js (ADR-0001). Names from the rest of the engine come through the bridge, $L. Types come in step 3. */
 import { L as $L } from './_gen/legacy.js';
 import { E, MONTHS, cal, clamp, r1, rkey } from './00-core';
@@ -50,7 +49,7 @@ E.validateUniverse=function(pkg,fileList){
   if(!man.name)err('manifest','name is missing');
   if(typeof man.schema_version!=='number')err('manifest','schema_version is missing');
   else if(man.schema_version>$L.SCHEMA_VERSION){err('manifest','this package needs a newer version of the game (schema '+man.schema_version+', this game reads '+$L.SCHEMA_VERSION+')');return out();}
-  var ids={};
+  var ids: any={};
   Object.keys($L.SCHEMAS).forEach(function(table){
     var sc=$L.SCHEMAS[table],rows=pkg[table],seen={},names=Object.keys(sc.fields);ids[table]={};
     if(rows==null){if(table==='promotions'||table==='workers'||table==='contracts'||table==='shows')err(table,'table is missing');return;}
@@ -85,7 +84,7 @@ E.validateUniverse=function(pkg,fileList){
   });
   if(errors.length)return out();
   // references between tables
-  var W=ids.workers,PR=ids.promotions,ref=function(tbl,id,at,what,optional){if(tbl[id])return true;(optional?warn:err)(at,what+' points at '+JSON.stringify(id)+', which does not exist'+(optional?'; link dropped':''));return false;};
+  var W=ids.workers,PR=ids.promotions,ref=function(tbl,id,at,what,optional?){if(tbl[id])return true;(optional?warn:err)(at,what+' points at '+JSON.stringify(id)+', which does not exist'+(optional?'; link dropped':''));return false;};
   var excl={},byPromo={};
   (pkg.contracts||[]).forEach(function(c,i){var at='contracts['+i+']';ref(W,c.worker_id,at,'worker_id');ref(PR,c.promotion_id,at,'promotion_id');
     if((c.contract_type||'exclusive')==='exclusive'){if(excl[c.worker_id])err(at,c.worker_id+' has two exclusive contracts');excl[c.worker_id]=c.promotion_id;}
@@ -141,7 +140,7 @@ export function buildDB(pkg){
       cities:p.cities&&p.cities.length?p.cities.slice():['the city'],brands:p.brands&&p.brands.length?p.brands.map(function(b){return {id:b.id,name:b.name,dev:!!b.dev};}):null,shows:[],titles:[],teams:[],media:p.media||null};
     promos.push(d);PR[p.id]=d;
   });
-  (pkg.shows||[]).forEach(function(s){var x={id:s.id,name:s.name,brand:s.brand||undefined,mult:s.weight!=null?clamp(s.weight,0.2,1):1};
+  (pkg.shows||[]).forEach(function(s){var x: any={id:s.id,name:s.name,brand:s.brand||undefined,mult:s.weight!=null?clamp(s.weight,0.2,1):1};
     // what the world says about its time on the air: the network, how big it is, how many years it has run (src/88-shows.js reads them once)
     if(s.network)x.wn=String(s.network).slice(0,40);if(s.network_size!=null)x.wt=clamp(s.network_size|0,0,2);if(s.years_on_air!=null)x.wy=clamp(s.years_on_air|0,0,60);
     PR[s.promotion_id].shows.push(x);});
@@ -153,7 +152,7 @@ export function buildDB(pkg){
     else if(t.member_ids.length===2)PR[t.promotion_id].teams.push(['#'+t.member_ids[0],'#'+t.member_ids[1],t.experience,t.chemistry,t.name]);
   });
   (pkg.workers||[]).forEach(function(w){
-    var r=w.ratings,c=con[w.id],d={uid:w.id,name:w.ring_name,g:w.gender,style:$L.STYLE_KEY[w.style]||'A',align:w.disposition==='heel'?'H':'F',tweener:w.disposition==='tweener',fin:w.finisher||null,promo:c?c.promotion_id:'FA',brand:c&&c.brand?c.brand:null,
+    var r=w.ratings,c=con[w.id],d: any={uid:w.id,name:w.ring_name,g:w.gender,style:$L.STYLE_KEY[w.style]||'A',align:w.disposition==='heel'?'H':'F',tweener:w.disposition==='tweener',fin:w.finisher||null,promo:c?c.promotion_id:'FA',brand:c&&c.brand?c.brand:null,
       roles:(w.roles&&w.roles.length?w.roles:['wrestler']).filter(function(x){return $L.ROLES.indexOf(x)>=0;}),age:w.age!=null?w.age:(w.birth_date?Math.max(16,(man.start_year||2026)-(+String(w.birth_date).slice(0,4)||1990)):null),peak:w.peak_years&&w.peak_years.length===2?w.peak_years:null,cliff:w.age_cliff!=null?w.age_cliff:null,mgr:w.manager_id||null,
       real:w.real_name||null,town:w.hometown||null,wc:w.weight_class||null,media:w.media||null,face:w.face||null,look:w.look?$L.lookClean(w.look):null};
     Object.keys($L.RMAP).forEach(function(k){if(r[k]!=null)d[$L.RMAP[k]]=clamp(Math.round(r[k]),0,100);});
@@ -196,28 +195,28 @@ export function slug(s){return String(s).toLowerCase().normalize?String(s).toLow
 E.exportUniverse=function(S,meta){
   meta=meta||{};var d=S.db||$L.DB,uid={},used={},P0=S.promos,pid=function(id){return slug(id)||'promo';};
   S.w.forEach(function(w){if(w.rt)return;var u=w.uid&&$L.ID_RE.test(w.uid)&&!used[w.uid]?w.uid:slug(w.name)||'worker';if(u.length<2)u='w_'+u;var b=u,n=2;while(used[u])u=(b.slice(0,36)+'_'+(n++));used[u]=1;uid[w.id]=u;});
-  var c0=cal(S.week),pkg={manifest:{id:slug(meta.id||meta.name||'my_universe')||'my_universe',name:meta.name||'My universe',author:meta.author||(S.booker?S.booker.name:''),version:meta.version||'1.0',schema_version:$L.SCHEMA_VERSION,fictional:!!d.fictional,start_year:c0.year,start_month:c0.month+1,free_agents:0,description:meta.description||'Exported from Elite Wrestling Federation 9000, '+c0.label+'.'},
-    promotions:[],shows:[],titles:[],workers:[],contracts:[],teams:[],relationships:[],events:d.events.map(function(n,i){var o={month:i+1,name:n};if(d.rules&&d.rules[i])o.rule=d.rules[i];return o;}),names:{first_m:d.indie.firstM,first_f:d.indie.firstF,last:d.indie.last}};
+  var c0=cal(S.week),pkg: any={manifest:{id:slug(meta.id||meta.name||'my_universe')||'my_universe',name:meta.name||'My universe',author:meta.author||(S.booker?S.booker.name:''),version:meta.version||'1.0',schema_version:$L.SCHEMA_VERSION,fictional:!!d.fictional,start_year:c0.year,start_month:c0.month+1,free_agents:0,description:meta.description||'Exported from Elite Wrestling Federation 9000, '+c0.label+'.'},
+    promotions:[],shows:[],titles:[],workers:[],contracts:[],teams:[],relationships:[],events:d.events.map(function(n,i){var o: any={month:i+1,name:n};if(d.rules&&d.rules[i])o.rule=d.rules[i];return o;}),names:{first_m:d.indie.firstM,first_f:d.indie.firstF,last:d.indie.last}};
   if(d.sponsors)pkg.sponsors=d.sponsors;if(d.columnists)pkg.columnists=d.columnists;if(d.scenes)pkg.scenes=d.scenes;if(d.backdrops)pkg.backdrops=d.backdrops;if(d.segkinds)pkg.segkinds=d.segkinds;if(d.stips)pkg.stips=d.stips;if(d.networks){pkg.networks={};['small','cable','major'].forEach(function(k,t){if(d.networks[t])pkg.networks[k]=d.networks[t].slice();});}
   S.order.forEach(function(id){
     var P=P0[id],own=id===S.player?{name:S.owner.name,style:S.owner.style,roots:S.owner.roots,pledge:S.owner.pledge}:(P.owner||{name:'The owner',style:P.style||'stars',roots:'tradition',pledge:'pay'});
-    var o={id:pid(id),name:P.name,blurb:P.blurb||'',owner:own,staff:{road_agent:P.staff.agent,head_writer:P.staff.writer},announcers:P.ann.slice(),cities:P.cities.slice(),cash:Math.round(P.cash),popularity:r1(P.image),work_rate_weight:P.wq,angles_per_show:P.angles,wage_scale:P.wageMult,tv_rate:P.tvRate,production_cost:P.prod,target_weekly_net:P.net,flagship_month:P.flagship+1,production_level:P.prodLvl,risk_level:P.risk,tv_slot:P.slot};
-    if(P.full)o.full_name=P.full;if(P.ig)o.intergender=true;if(P.brands)o.brands=P.brands.map(function(b){var x={id:b.id,name:b.name};if(b.dev)x.dev=true;return x;});
+    var o: any={id:pid(id),name:P.name,blurb:P.blurb||'',owner:own,staff:{road_agent:P.staff.agent,head_writer:P.staff.writer},announcers:P.ann.slice(),cities:P.cities.slice(),cash:Math.round(P.cash),popularity:r1(P.image),work_rate_weight:P.wq,angles_per_show:P.angles,wage_scale:P.wageMult,tv_rate:P.tvRate,production_cost:P.prod,target_weekly_net:P.net,flagship_month:P.flagship+1,production_level:P.prodLvl,risk_level:P.risk,tv_slot:P.slot};
+    if(P.full)o.full_name=P.full;if(P.ig)o.intergender=true;if(P.brands)o.brands=P.brands.map(function(b){var x: any={id:b.id,name:b.name};if(b.dev)x.dev=true;return x;});
     if(P.model)o.model=P.model;if(P.logo)o.logo=JSON.parse(JSON.stringify(P.logo));
-    if(P.events)o.events=P.events.map(function(e,i){var x={month:i+1,name:e.n,type:e.t};if(e.rule)x.rule=e.rule;return x;});
+    if(P.events)o.events=P.events.map(function(e,i){var x: any={month:i+1,name:e.n,type:e.t};if(e.rule)x.rule=e.rule;return x;});
     pkg.promotions.push(o);
-    P.shows.forEach(function(s){var x={id:slug(id+'_'+s.id),promotion_id:pid(id),name:s.name,weight:s.mult==null?1:s.mult};if(s.brand)x.brand=s.brand;if(s.net){x.network=s.net;x.network_size=s.tier;x.years_on_air=$L.airYears(S,s);}pkg.shows.push(x);});
-    P.titles.forEach(function(t){var x={id:slug(t.id),promotion_id:pid(id),name:t.name,gender:t.g,level:t.lvl,tag:!!t.tag,holder_ids:t.holders.map(function(h){return uid[h];}).filter(Boolean)};if(t.brand)x.brand=t.brand;if(t.belt)x.belt=JSON.parse(JSON.stringify(t.belt));pkg.titles.push(x);});
+    P.shows.forEach(function(s){var x: any={id:slug(id+'_'+s.id),promotion_id:pid(id),name:s.name,weight:s.mult==null?1:s.mult};if(s.brand)x.brand=s.brand;if(s.net){x.network=s.net;x.network_size=s.tier;x.years_on_air=$L.airYears(S,s);}pkg.shows.push(x);});
+    P.titles.forEach(function(t){var x: any={id:slug(t.id),promotion_id:pid(id),name:t.name,gender:t.g,level:t.lvl,tag:!!t.tag,holder_ids:t.holders.map(function(h){return uid[h];}).filter(Boolean)};if(t.brand)x.brand=t.brand;if(t.belt)x.belt=JSON.parse(JSON.stringify(t.belt));pkg.titles.push(x);});
   });
   var push=S.order.reduce(function(o,id){var m=E.pushMap(S,id);Object.keys(m).forEach(function(k){o[k]=m[k];});return o;},{});
   var PL={'Main event':'main_eventer','Upper midcard':'upper_midcarder','Midcard':'midcarder','Lower midcard':'lower_midcarder','Opener':'jobber'};
   S.w.forEach(function(w){
     if(w.rt)return;var r={};Object.keys($L.RMAP).forEach(function(k){var v=w[$L.RMAP[k]];if(k==='gimmick_rating')v=w.gim?$L.gimFit(w):null;if(v!=null)r[k]=clamp(Math.round(v),0,100);});
-    var o={id:uid[w.id],ring_name:w.name,age:w.age,gender:w.g,disposition:w.twn?'tweener':(w.align==='H'?'heel':'face'),roles:w.roles?w.roles.slice():['wrestler'],style:$L.STYLE_OUT[w.style]||'all_rounder',finisher:w.fin||undefined,ratings:r,peak_years:w.pk.slice(),age_cliff:w.cl};
+    var o: any={id:uid[w.id],ring_name:w.name,age:w.age,gender:w.g,disposition:w.twn?'tweener':(w.align==='H'?'heel':'face'),roles:w.roles?w.roles.slice():['wrestler'],style:$L.STYLE_OUT[w.style]||'all_rounder',finisher:w.fin||undefined,ratings:r,peak_years:w.pk.slice(),age_cliff:w.cl};
     if(w.role)o.locker_role=w.role==='gate'?'gatekeeper':w.role;
     if(w.real)o.real_name=w.real;if(w.town)o.hometown=w.town;if(w.wc)o.weight_class=w.wc;if(w.media)o.media=w.media;if(w.face)o.face=w.face;if(w.look)o.look=JSON.parse(JSON.stringify(w.look));if(w.mgr!=null&&uid[w.mgr])o.manager_id=uid[w.mgr];
     pkg.workers.push(o);
-    if(w.promo!=='FA'&&P0[w.promo]){var c={worker_id:uid[w.id],promotion_id:pid(w.promo),contract_type:w.pwa?'pwa':'exclusive',monthly_salary:Math.round(w.wage*52/12),per_show_fee:0,weeks_left:Math.max(1,w.con),tenure_weeks:w.jw!=null?Math.max(0,S.week-w.jw):undefined,push_level:w.nw?'non_wrestler':(PL[push[w.id]]||'midcarder')};if(w.brand)c.brand=w.brand;pkg.contracts.push(c);}
+    if(w.promo!=='FA'&&P0[w.promo]){var c: any={worker_id:uid[w.id],promotion_id:pid(w.promo),contract_type:w.pwa?'pwa':'exclusive',monthly_salary:Math.round(w.wage*52/12),per_show_fee:0,weeks_left:Math.max(1,w.con),tenure_weeks:w.jw!=null?Math.max(0,S.week-w.jw):undefined,push_level:w.nw?'non_wrestler':(PL[push[w.id]]||'midcarder')};if(w.brand)c.brand=w.brand;pkg.contracts.push(c);}
   });
   S.teams.forEach(function(t,i){if(!uid[t.m[0]]||!uid[t.m[1]]||!P0[t.promo])return;pkg.teams.push({id:'team_'+(i+1),name:t.name||S.w[t.m[0]].name+' & '+S.w[t.m[1]].name,kind:'tag',member_ids:[uid[t.m[0]],uid[t.m[1]]],experience:Math.round(t.exp),chemistry:t.chem||0,promotion_id:pid(t.promo)});});
   (S.stables||[]).forEach(function(s,i){var ms=s.m.map(function(m){return uid[m];}).filter(Boolean);if(ms.length>=3)pkg.teams.push({id:'stable_'+(i+1),name:s.name,kind:'stable',member_ids:ms,leader_id:uid[s.leader],promotion_id:pid(s.promo)});});

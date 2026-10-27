@@ -1,4 +1,3 @@
-// @ts-nocheck
 /* Moved from src/42-events.js (ADR-0001). Names from the rest of the engine come through the bridge, $L. Types come in step 3. */
 import { L as $L } from './_gen/legacy.js';
 import { E, MONTHS, cal, clamp, dbOf, feudOf, hash, rosterOf, startFeud } from './00-core';

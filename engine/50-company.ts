@@ -1,4 +1,3 @@
-// @ts-nocheck
 /* Moved from src/50-company.js (ADR-0001). Names from the rest of the engine come through the bridge, $L. Types come in step 3. */
 import { L as $L } from './_gen/legacy.js';
 import { ADV_C, E, PRODF, RISKN, SLOTN, SLOT_MAX, SLOT_REQ, SLOT_RISK, SLOT_V, TIX_D, TIX_P, clamp, dbOf, h01, pick, ri, rnd } from './00-core';
@@ -11,7 +10,7 @@ $L.SP_TIER = SP_TIER;
 export function mkOffer(S,P){
   var used={};S.sponsors.concat(S.spOffers).forEach(function(x){used[x.name]=1;});
   var names=(dbOf(S).sponsors||['Ironclad Tools','Blue Comet Energy','Harbor Lager','Pinnacle Insurance','Redline Auto Parts','Summit Sports Drinks','Big Sky Jerky','Voltage Games']).filter(function(n){return !used[n];});if(!names.length)return null;
-  var MD=$L.modelOf(P),type=pick(S,MD.riskFree?['image','rating']:['risk','image','rating']),o={name:pick(S,names),weeks:ri(S,12,36),type:type},mult=1;
+  var MD=$L.modelOf(P),type=pick(S,MD.riskFree?['image','rating']:['risk','image','rating']),o: any={name:pick(S,names),weeks:ri(S,12,36),type:type},mult=1;
   if(type==='risk'){o.val=ri(S,0,2);mult=[1.5,1.2,1][o.val];o.text='Keep the product '+RISKN[o.val]+(o.val?' or tamer':'');}
   else if(type==='image'){o.val=Math.round(P.image-ri(S,0,3));o.text='Popularity stays at '+o.val+' or better';}
   else{var lo=99;Object.keys(P.base).forEach(function(k){if(P.base[k]<lo)lo=P.base[k];});o.val=Math.round($L.crowdScoreD(-ri(S,5,10)));o.cg=1;o.text='No show graded under '+$L.gradeG(o.val);}

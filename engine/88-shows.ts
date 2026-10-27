@@ -1,4 +1,3 @@
-// @ts-nocheck
 /* Moved from src/88-shows.js (ADR-0001). Names from the rest of the engine come through the bridge, $L. Types come in step 3. */
 import { L as $L } from './_gen/legacy.js';
 import { E, cal, chance, clamp, dbOf, hash } from './00-core';
@@ -83,7 +82,7 @@ export function airProd(P,show){var sh=show&&!show.big?airRec(P,show.id):null;re
 /** A bigger network puts the show in front of more people: what it does to the company's popularity counts for more. */
 export function airReach(P,show){var sh=show&&!show.big?airRec(P,show.id):null;if(!sh||sh.pr==null)return 1;return 1+$L.AIR_TIER_REACH*(sh.tier-sh.tier0);}
 /** Is the episode about to air an occasion? A milestone episode, or the show's anniversary. */
-export function airNight(S,sh,week){
+export function airNight(S,sh,week?){
   var wk=week==null?S.week:week,n=(sh.ep||0)+1,y=(wk-sh.on)/$L.AIR_YEAR;
   if(n===100||n===250||(n>=500&&n%500===0))return {k:'ep',n:n,h:n>=500?0.08:0.05,x:'Episode '+n.toLocaleString('en-US')};
   if(wk>sh.on&&(wk-sh.on)%$L.AIR_YEAR===0)return {k:'yr',n:y,h:y%5===0?0.06:0.03,x:y===1?'One year on the air':y+' years on the air'};
@@ -120,7 +119,7 @@ WEEKX.push(function(S){
 });
 
 /* ---------- the rights: a show changes network, it does not end ---------- */
-export function airPay(P,sh,rate,tier,pr){
+export function airPay(P,sh,rate,tier,pr?){
   var pf=clamp(1+((pr==null?sh.pr:pr)-sh.pr0)/250,0.85,1.3)*Math.pow($L.AIR_TIER_V,tier-sh.tier0);
   return Math.round($L.viewersK(P,sh,pf)*P.tvRate*mixOf(P).tv*rate/100)*100;
 }

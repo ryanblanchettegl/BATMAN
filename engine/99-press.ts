@@ -1,4 +1,3 @@
-// @ts-nocheck
 /* Moved from src/99-press.js (ADR-0001). Names from the rest of the engine come through the bridge, $L. Types come in step 3. */
 import { L as $L } from './_gen/legacy.js';
 import { E, clamp, dbOf, h01, hash, rosterOf } from './00-core';

@@ -1,4 +1,3 @@
-// @ts-nocheck
 /* Moved from src/99-progress.js (ADR-0001). Names from the rest of the engine come through the bridge, $L. Types come in step 3. */
 import { L as $L } from './_gen/legacy.js';
 import { E, cal, clamp, h01, rosterOf, starQ, workRate } from './00-core';
@@ -139,7 +138,7 @@ E.__progShow=progShow;   // for test-progress.js
 /** A reason code in words: a age, c a cold streak, rN ring rust after N weeks, iN back from N weeks injured. */
 export function rgWhy(c){c=String(c||'');var n=c.slice(1);return c[0]==='a'?'age':c[0]==='c'?'a cold streak':c[0]==='r'?'ring rust: '+n+' weeks without a match':c[0]==='i'?n+' weeks out injured':c;}
 export function rgRow(r){return Array.isArray(r)?{w:r[0],k:r[1],n:r[2],why:rgWhy(r[3])}:r;}   // an older save kept them as objects
-export function progLose(S,w,k,n,code,out){
+export function progLose(S,w,k,n,code,out?){
   if(!w||!$L.PROG_BY[k]||n<=0)return 0;var v0=w[k]||1,v1=clamp(v0-n,15,99),d=v0-v1;if(!d)return 0;w[k]=v1;var why=rgWhy(code);
   var R=w.rgx||(w.rgx=[]);R.unshift([S.week,k,d,code]);if(R.length>4)R.length=4;
   if(out)(out.lost=out.lost||[]).push($L.PROG_BY[k].n+' -'+d+' ('+why+')');

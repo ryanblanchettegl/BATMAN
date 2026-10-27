@@ -1,4 +1,3 @@
-// @ts-nocheck
 /* Moved from src/99-zpodcast.js (ADR-0001). Names from the rest of the engine come through the bridge, $L. Types come in step 3. */
 import { L as $L } from './_gen/legacy.js';
 import { E, activeFeuds, cal, feudLabel, h01, hash, rosterOf, starG } from './00-core';
@@ -51,9 +50,9 @@ export function podWrite(S){
   var pod=podInit(S),P=S.promos[S.player],wk=S.week,key=S.seed+':pod:'+wk,used={},lines=[],segs=[],n=0;
   var sheet=(S.sheets||[])[0];if(!sheet||sheet.week!==wk)sheet=netSheet(S,wk);
   var cx={a:podFirst(pod.a.name),b:podFirst(pod.b.name),show:pod.show,co:P.name,wk:cal(wk).label.replace(/^Week/,'week'),tone:podTone(S,pod)};
-  var say=function(s,rule,c,p){if(lines.length>=$L.POD_MAX)return;var o={};for(var k in cx)o[k]=cx[k];if(c)for(var j in c)o[j]=c[j];
-    var t='';for(var tr=0;tr<5;tr++){t=gram(GR_POD,rule,o,key+':'+(n++));if(!used[t])break;}if(!t)return;used[t]=1;var L={s:s,t:t,g:segs.length-1};if(p)L.p=p;lines.push(L);};
-  var raw=function(s,t,p){if(lines.length>=$L.POD_MAX)return;var L={s:s,t:t,g:segs.length-1};if(p)L.p=p;lines.push(L);};
+  var say=function(s,rule,c?,p?){if(lines.length>=$L.POD_MAX)return;var o={};for(var k in cx)o[k]=cx[k];if(c)for(var j in c)o[j]=c[j];
+    var t='';for(var tr=0;tr<5;tr++){t=gram(GR_POD,rule,o,key+':'+(n++));if(!used[t])break;}if(!t)return;used[t]=1;var L: any={s:s,t:t,g:segs.length-1};if(p)L.p=p;lines.push(L);};
+  var raw=function(s,t,p?){if(lines.length>=$L.POD_MAX)return;var L: any={s:s,t:t,g:segs.length-1};if(p)L.p=p;lines.push(L);};
   var seg=function(k){segs.push({k:k,n:fill($L.POD_SEGS[k],{co:P.name}),i:lines.length});};
   var maybe=function(tag,p){return h01(key+':c:'+tag)<p;};
   var reps=S.reports.filter(function(r){return r.week===wk&&r.promo===P.id;}).sort(function(a,b){return (b.big?1:0)-(a.big?1:0)||b.rating-a.rating;}).slice(0,2);

@@ -1,4 +1,3 @@
-// @ts-nocheck
 /* Moved from src/31-live.js (ADR-0001). Names from the rest of the engine come through the bridge, $L. Types come in step 3. */
 import { L as $L } from './_gen/legacy.js';
 import { E, ENTR, MT, STIP, avg, clamp, feudOf, feudsFor, flat, h01, names, rosterOf, starG, startFeud, titleById, turn, vsLabel } from './00-core';
@@ -23,7 +22,7 @@ $L.liveMatch = liveMatch; $L.liveLater = liveLater; $L.livePut = livePut; $L.liv
      pend  an answered call that the next segment should carry in its commentary
    A new kind of call is one entry in LIVEK: pre(S, L, step) or post(S, L, step, seg) returns the call or null,
    run(S, L, ev, choice) applies the answer and returns one line saying what happened. */
-export var LIVE_MAX_TV=3,LIVE_MAX_BIG=4,LIVE_HM_CD=8,LIVEK={},LIVE_ORDER=['chaos','titlecall','runin','hotmic'],LIVE_POST=['face','afterbell'];
+export var LIVE_MAX_TV=3,LIVE_MAX_BIG=4,LIVE_HM_CD=8,LIVEK: any={},LIVE_ORDER=['chaos','titlecall','runin','hotmic'],LIVE_POST=['face','afterbell'];
 $L.LIVE_MAX_TV = LIVE_MAX_TV; $L.LIVE_MAX_BIG = LIVE_MAX_BIG; $L.LIVE_HM_CD = LIVE_HM_CD; $L.LIVEK = LIVEK; $L.LIVE_ORDER = LIVE_ORDER; $L.LIVE_POST = LIVE_POST;
 /* calls change a match through fields on it (m.call, m.ff, m.runin, m.nc) and through m.lx: [{cr, mq, x, note}] */
 CRX.push(function(ctx){var L=ctx.m.lx,d=0,x=null;if(!L)return null;L.forEach(function(e){if(e.cr){d+=e.cr;x=x||e.x;}});return d?{d:d,x:x}:null;});
@@ -191,7 +190,7 @@ LIVEK.afterbell={n:'After the bell',
     var t=P.titles.filter(function(x){return !x.tag&&x.holders.length&&x.holders[0]===w.id;}).sort(function(a,b){return b.lvl-a.lvl;})[0];
     var busy=liveLater(L,step.i),c=t?$L.rankFor(S,P,t,6).filter(function(x){return x.id!==l.id&&!busy[x.id]&&!feudOf(S,x.id,w.id)&&!(x.away>=S.week);})[0]:null;
     var why=[];if(M.main)why.push('It is the last thing people will see tonight');if(seg.ov>=85)why.push('The crowd is on its feet after '+starG(seg.ov));if(f&&!f.res)why.push('The feud is at '+Math.round(f.heat)+' heat');
-    var ch=[{n:M.main?'Fade out on '+w.name+' celebrating':'Go to the next thing',says:'Nothing more. The result speaks for itself.'},
+    var ch: any=[{n:M.main?'Fade out on '+w.name+' celebrating':'Go to the next thing',says:'Nothing more. The result speaks for itself.'},
       {n:'They shake hands',says:'Respect between them, and the crowd likes it. Any feud between them cools.'},
       {n:l.name+' attacks '+w.name,says:(f&&!f.res?'The feud gets hotter. ':'A feud starts tonight. ')+(l.align==='F'?l.name+' turns on the crowd to do it.':'It is what the crowd expects of '+l.name+'.')}];
     if(c)ch.push({n:c.name+' walks out and points at the title',who:c.id,title:t.id,says:'A new feud for the title starts tonight: '+c.name+' against '+w.name+'.'});

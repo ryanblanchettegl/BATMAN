@@ -1,4 +1,3 @@
-// @ts-nocheck
 /* Moved from src/30-show.js (ADR-0001). Names from the rest of the engine come through the bridge, $L. Types come in step 3. */
 import { L as $L } from './_gen/legacy.js';
 import { ADV_H, PRODF, SLOT_V, TIX_D, TIX_P, activeFeuds, avg, award, buysK, capFor, clamp, eligible, expected, feudLabel, feudOf, h01, isDev, r1, rnd, rosterOf, showMult, starG, starMeets, ticket, titleById, vsLabel } from './00-core';
@@ -52,7 +51,7 @@ export function hypeParts(S,P,show,card){
 }
 export function showStart(S,P,show,card){
   var isPl=P.id===S.player&&!S.cal,big=!!show.big,n=card.length,i,key=big?'big':show.id;
-  var rep={promo:P.id,id:show.id,name:show.name,big:big,week:S.week,segs:[],gim:false};
+  var rep: any={promo:P.id,id:show.id,name:show.name,big:big,week:S.week,segs:[],gim:false};
   var pool=showPool(S,P,show);
   var star=n?avg($L.flat(card[n-1].sides).map(function(id){return S.w[id].ovr;})):50;
   rep.mainStar=star;
@@ -66,7 +65,7 @@ export function showStart(S,P,show,card){
     if(isPl){rep.venue=venueFor(S,P,cap);rep.ann=($L.deskNames(S,P)||P.ann).slice();var air=$L.airStart(S,P,show);if(air){rep.ep=air.ep;rep.net=air.net;if(air.occ)rep.occ=air.occ;}S.hype=0;
       rep.lineup=card.map(function(m){var t=m.title?titleById(P,m.title):null;return vsLabel(m.sides.map(function(ids){return ids.map(function(id){return S.w[id];});}))+(t?' — '+t.name:'');});}
   }
-  var st={rep:rep,used:{},angled:{},k:0,steps:[]};
+  var st: any={rep:rep,used:{},angled:{},k:0,steps:[]};
   if(isPl){
     // the player books every promo and angle, and decides how much time the writers get (src/93-segments.js, src/97-time.js)
     var bk=$L.segBooked(S,show,n);rep.open={k:'match'};
@@ -193,7 +192,7 @@ export function showEnd(S,P,show,card,st){
   return rep;
 }
 /* A target or a promise that is settled leaves how it went, so the desk can say Hit or Missed and not just that it is gone. */
-export function dropQuest(S,q,ok,text){
+export function dropQuest(S,q,ok?,text?){
   S.quests=S.quests.filter(function(x){return x!==q;});
   if(ok!=null){if(!S.qres||S.qres.w!==S.week)S.qres={w:S.week,r:{}};S.qres.r[q.id]={ok:!!ok,t:text||q.text};}
 }

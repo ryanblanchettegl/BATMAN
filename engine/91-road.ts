@@ -1,4 +1,3 @@
-// @ts-nocheck
 /* Moved from src/91-road.js (ADR-0001). Names from the rest of the engine come through the bridge, $L. Types come in step 3. */
 import { L as $L } from './_gen/legacy.js';
 import { ADV_H, E, TIXN, TIX_D, TIX_P, activeFeuds, cal, capFor, clamp, h01, hash, rosterOf, ticket } from './00-core';
@@ -119,7 +118,7 @@ export function mktKnow(S,P,city){if(!city||P.id!==S.player)return 50;var m=S.mk
    little less walk-up trade. A big event is planned for, and people come whatever the weather. */
 export function coldNight(S,show,city,week){if(show&&show.big)return false;var p=placeOf(S,city);if(!p)return false;var m=cal(week||S.week).month;
   return p.lat>=38?(m===11||m===0||m===1):(p.lat<=-38?(m>=5&&m<=7):false);}
-export function weatherMult(S,show,city,week){return coldNight(S,show,city,week)?0.94:1;}
+export function weatherMult(S,show,city,week?){return coldNight(S,show,city,week)?0.94:1;}
 export function mktMult(S,P,city){return 0.85+0.3*mktKnow(S,P,city)/100;}
 export function mktWord(k){for(var i=0;i<$L.MKT_WORDS.length;i++)if(k>=$L.MKT_WORDS[i][0])return {w:$L.MKT_WORDS[i][1],d:$L.MKT_WORDS[i][2]};return {w:$L.MKT_WORDS[3][1],d:$L.MKT_WORDS[3][2]};}
 /* the market of the stop that is on the air now, for the night's own sums */

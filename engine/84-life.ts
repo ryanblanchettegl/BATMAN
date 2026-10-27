@@ -1,4 +1,3 @@
-// @ts-nocheck
 /* Moved from src/84-life.js (ADR-0001). Names from the rest of the engine come through the bridge, $L. Types come in step 3. */
 import { L as $L } from './_gen/legacy.js';
 import { chance, clamp, pick } from './00-core';

@@ -1,4 +1,3 @@
-// @ts-nocheck
 /* Moved from src/99-ringwork.js (ADR-0001). Names from the rest of the engine come through the bridge, $L. Types come in step 3. */
 import { L as $L } from './_gen/legacy.js';
 import { E, hash } from './00-core';
@@ -60,7 +59,7 @@ export function rwMoves(S,w){
       var swap=j===0?false:(late?(side!==ws?h()<0.55:h()<0.3):h()<0.4);
       if(swap)side=other(side);
       var A=lead(x.sides[side]),B=lead(x.sides[other(side)]),M=rwMoves(S,A),sigs=M.filter(function(m){return m.sig&&!sigUsed[A.id+m.n];});
-      var ctx={a:A.name,b:B.name,p:p},kind;
+      var ctx: any={a:A.name,b:B.name,p:p},kind;
       if(late&&sigs.length&&h()<0.45){var s=pick(sigs);sigUsed[A.id+s.n]=1;ctx.s=s.n;out.push({t:'pbp',x:fill(pick($L.RW_LINES.sig),ctx),h:1});
         if(h()<0.6)out.push({t:'pbp',x:fill(pick($L.RW_LINES.near),ctx),h:1});continue;}
       ctx.m=pick(M.filter(function(m){return !m.sig;})).n;

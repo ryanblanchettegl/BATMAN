@@ -1,4 +1,3 @@
-// @ts-nocheck
 /* Moved from src/10-match.js (ADR-0001). Names from the rest of the engine come through the bridge, $L. Types come in step 3. */
 import { L as $L } from './_gen/legacy.js';
 import { ENTR, FIN, LEN, MT, RISK_INJ, RISK_STIP, STIP, avg, award, chance, clamp, dissolveTeam, divOk, feudLabel, feudOf, feudsFor, flat, h01, hash, holdLvl, names, partnerOf, pick, ri, rkey, rnd, starQ, startFeud, teamOf, titleById, titleFits, titleFull, turn, vsLabel, workRate } from './00-core';
@@ -6,7 +5,7 @@ $L.workOf = workOf; $L.chem = chem; $L.addOvr = addOvr; $L.fill = fill; $L.sayPi
 /* ---------- extension hooks: later systems plug into the match engine here ---------- */
 // EFX(ctx,w) -> effort delta; MQX/CRX(ctx) -> {d,x} quality / crowd delta with an optional dirt-sheet label;
 // POST(ctx) after a match is settled; SHOWX(S,P,show,rep) after a show; WEEKX(S) at week end; NEWX(S) on a new game.
-export var MODEL_CROWD={},ANGDONE=[],EFX=[],MQX=[],CRX=[],FINX=[],POST=[],SHOWX=[],WEEKX=[],NEWX=[],ANGX=[],EVMAKE=[],EVR={},QEND={},PREX=[],TASKX=[];
+export var MODEL_CROWD: any={},ANGDONE=[],EFX=[],MQX=[],CRX=[],FINX=[],POST=[],SHOWX=[],WEEKX=[],NEWX=[],ANGX=[],EVMAKE=[],EVR: any={},QEND: any={},PREX=[],TASKX=[];
 $L.MODEL_CROWD = MODEL_CROWD; $L.ANGDONE = ANGDONE; $L.EFX = EFX; $L.MQX = MQX; $L.CRX = CRX; $L.FINX = FINX; $L.POST = POST; $L.SHOWX = SHOWX; $L.WEEKX = WEEKX; $L.NEWX = NEWX; $L.ANGX = ANGX; $L.EVMAKE = EVMAKE; $L.EVR = EVR; $L.QEND = QEND; $L.PREX = PREX; $L.TASKX = TASKX;
 
 /* ---------- match engine ---------- */
@@ -90,7 +89,7 @@ export function sayPick(S,arr){
   for(i=0;i<5;i++){c=arr[Math.floor(rnd(S)*arr.length)];if(said.indexOf(hash(c))<0)break;}
   said.push(hash(c));if(said.length>90)said.shift();return c;
 }
-export function expand(S,str,o,depth){
+export function expand(S,str,o,depth?){
   if((depth||0)>4)return str;
   return fill(str.replace(/#(\w+)#/g,function(_,k){return $L.GR[k]?expand(S,sayPick(S,$L.GR[k]),o,(depth||0)+1):'';}),o);
 }
@@ -153,12 +152,12 @@ export function callMatch(S,P,x){
   var bc=[],o=x.o,first=function(n){return String(n).split(' ')[0];};
   var dv=$L.deskNames(S,P);o.p=first(dv?dv[0]:P.ann[0]);o.c=first(dv?dv[1]:P.ann[1]);o.mark=x.mins>=27?'twenty-five':'fifteen';
   function ring(t){bc.push({t:'ring',x:fill(t,o)});}
-  function pbp(sym,h){var q={t:'pbp',x:say(S,sym,o)};if(h)q.h=h;bc.push(q);}
+  function pbp(sym,h?){var q: any={t:'pbp',x:say(S,sym,o)};if(h)q.h=h;bc.push(q);}
   function col(sym){bc.push({t:'col',x:say(S,sym,o)});}
   function raw(who,t){bc.push({t:who,x:fill(t,o)});}
   // extra beats are picked by a hash of the match, not the game's random stream, so they can never change how a game plays out
   var hk=(o.a||'')+'|'+(o.b||'')+'|'+x.mins+'|'+S.week;
-  function hp(who,sym,h){var L=$L.GR[sym],t=fill(L[Math.floor(h01(hk+sym+(o.n||'')+(x.show||''))*L.length)%L.length],o);var q={t:who,x:t.charAt(0).toUpperCase()+t.slice(1)};if(h)q.h=h;bc.push(q);}
+  function hp(who,sym,h?){var L=$L.GR[sym],t=fill(L[Math.floor(h01(hk+sym+(o.n||'')+(x.show||''))*L.length)%L.length],o);var q: any={t:who,x:t.charAt(0).toUpperCase()+t.slice(1)};if(h)q.h=h;bc.push(q);}
   if(x.m.mt==='br'){
     var outs=x.all.filter(function(w){return w.name!==o.w&&w.name!==o.l;}).sort(function(p,q){return p.ovr-q.ovr;});
     ring('This is an over-the-top-rope battle royal'+(x.t?' for the vacant '+x.t.name:'')+'! The last one left in the ring wins.');
@@ -273,7 +272,7 @@ export function doMatch(S,P,show,m,i,n,rep,used){
   var feud=null,x,y,a,b,br=m.mt==='br';
   for(x=0;x<sides.length&&!feud;x++)for(y=x+1;y<sides.length&&!feud;y++)for(a=0;a<sides[x].length&&!feud;a++)for(b=0;b<sides[y].length&&!feud;b++)feud=feudOf(S,sides[x][a].id,sides[y][b].id);
   var fx=[],FX=function(good,text){fx.push({s:good?1:-1,x:text});};
-  var ctx={rep:rep,S:S,P:P,show:show,m:m,sides:sides,all:all,stip:stip,mins:mins,t:t,feud:feud,isMain:isMain,big:big,isPl:isPl,i:i,n:n,fx:fx,champSide:champSide};
+  var ctx: any={rep:rep,S:S,P:P,show:show,m:m,sides:sides,all:all,stip:stip,mins:mins,t:t,feud:feud,isMain:isMain,big:big,isPl:isPl,i:i,n:n,fx:fx,champSide:champSide};
   var pre={};all.forEach(function(w){pre[w.id]=w.ws;});
   // effort and performance
   var effs=[],perfs=[],bad=false;
@@ -357,7 +356,7 @@ export function doMatch(S,P,show,m,i,n,rep,used){
   if(bad)FX(false,'Somebody had an off night');
   var ea=avg(effs);if(ea>=92)FX(true,'Everybody worked hard');else if(ea<70)FX(false,'Low effort: morale or fatigue');
   var OV=clamp(Math.round(P.wq*MQ+(1-P.wq)*CR+fr+(rnd(S)*4-2)-(bad?6:0)),5,99);
-  var seg={k:'match',label:br?all.map(function(w){return w.name;}).join(', '):vsLabel(sides),mt:MT[m.mt].n,stip:stip==='std'?null:STIP[stip].n,sk:stip==='std'?undefined:stip,title:t?t.name:null,mins:mins,mq:Math.round(MQ),cr:Math.round(CR),eff:Math.round(ea),ov:OV,lines:[],finish:'',notes:[],win:win>=0?names(winners):null,fin:fin,fx:fx,ids:all.map(function(w){return w.id;}),odds:od.p.map(function(p){return Math.round(p*100);}),called:called,sidesN:sides.map(names)};
+  var seg: any={k:'match',label:br?all.map(function(w){return w.name;}).join(', '):vsLabel(sides),mt:MT[m.mt].n,stip:stip==='std'?null:STIP[stip].n,sk:stip==='std'?undefined:stip,title:t?t.name:null,mins:mins,mq:Math.round(MQ),cr:Math.round(CR),eff:Math.round(ea),ov:OV,lines:[],finish:'',notes:[],win:win>=0?names(winners):null,fin:fin,fx:fx,ids:all.map(function(w){return w.id;}),odds:od.p.map(function(p){return Math.round(p*100);}),called:called,sidesN:sides.map(names)};
   // bookkeeping
   all.forEach(function(w){w.lu=S.week;used[w.id]=(used[w.id]||0)+1;w.cond=clamp(w.cond-mins*0.45*(STIP[stip].inj>1.5?1.35:1),5,100);});
   if(m.mt==='1v1')S.recent[P.id+':'+rkey(all[0].id,all[1].id)]=S.week;
@@ -491,7 +490,7 @@ export function settleFeud(S,P,show,feud,winners,losers,isPl){
   if(isPl){S.stats.feudsDone++;award(S,'ACH_BLOWOFF');if(S.stats.feudsDone>=5)award(S,'ACH_FEUDS_5');}
   return msg;
 }
-export function vacateFor(S,P,w,why,quiet){P.titles.forEach(function(t){if(t.holders.indexOf(w.id)>=0){t.holders=[];t.since=S.week;if(!quiet)$L.news(S,'title','The '+titleFull(P,t)+' '+(t.tag?'are':'is')+' vacated ('+w.name+': '+why+').');}});}
+export function vacateFor(S,P,w,why,quiet?){P.titles.forEach(function(t){if(t.holders.indexOf(w.id)>=0){t.holders=[];t.since=S.week;if(!quiet)$L.news(S,'title','The '+titleFull(P,t)+' '+(t.tag?'are':'is')+' vacated ('+w.name+': '+why+').');}});}
 
 export function afterBell(S,P,show,m,sides,win,winners,losers,fin,runin,feud,t,OV,seg){
   if(runin){

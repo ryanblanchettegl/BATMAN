@@ -1,4 +1,3 @@
-// @ts-nocheck
 /* Moved from src/87-goals.js (ADR-0001). Names from the rest of the engine come through the bridge, $L. Types come in step 3. */
 import { L as $L } from './_gen/legacy.js';
 import { E, cal, clamp, divOk, holdLvl, pick, rosterOf, teamOf } from './00-core';
@@ -24,7 +23,7 @@ export function newGoal(S,P,w,have){
   if(goalTier(S,P,w)==='star'){if(topTitleFor(P,w))kinds.push('title');kinds.push('flagship');}else kinds.push('midtitle');
   kinds.push('tourn');if(w.team==null)kinds.push('team');kinds.push('wage');
   kinds=kinds.filter(function(k){return !have.some(function(g){return g.k===k;});});if(!kinds.length)return null;
-  var k=pick(S,kinds.slice(0,3)),g={k:k,since:S.week,mf0:w.mf|0,t0:w.tourns|0};
+  var k=pick(S,kinds.slice(0,3)),g: any={k:k,since:S.week,mf0:w.mf|0,t0:w.tourns|0};
   if(k==='wage')g.v=Math.ceil(w.wage*1.4/50)*50;
   return g;
 }

@@ -1,4 +1,3 @@
-// @ts-nocheck
 /* Moved from src/99-writers.js (ADR-0001). Names from the rest of the engine come through the bridge, $L. Types come in step 3. */
 import { L as $L } from './_gen/legacy.js';
 import { E, activeFeuds, addWrestler, clamp, feudOf, h01, hash, inFeud, rosterOf, startFeud } from './00-core';
@@ -34,7 +33,7 @@ export function wrInit(S){
   var P=S.promos[S.player],styles=Object.keys($L.WR_STYLE),ids=[];
   for(var i=0;i<3;i++){
     var nm=i===0&&P.staff&&P.staff.writer&&P.staff.writer!=='The head writer'?P.staff.writer:$L.WR_FIRST[hash(S.seed+'wf'+i)%$L.WR_FIRST.length]+' '+$L.WR_LAST[hash(S.seed+'wl'+i)%$L.WR_LAST.length];
-    var w=addWrestler(S,{name:nm,g:hash(nm)%2?'F':'M',style:'E',ovr:40,mic:55,align:'F',roles:['writer'],age:30+hash(nm)%25},P.id);
+    var w: any=addWrestler(S,{name:nm,g:hash(nm)%2?'F':'M',style:'E',ovr:40,mic:55,align:'F',roles:['writer'],age:30+hash(nm)%25},P.id);
     w.srole='writer';w.wst=styles[hash(S.seed+'ws'+i)%styles.length];w.wsk=55+hash(S.seed+'wk'+i)%40;w.wage=0;w.con=999;ids.push(w.id);
   }
   S.wr={ids:ids,head:ids[0],passed:0,last:-1};return S.wr;

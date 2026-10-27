@@ -1,4 +1,3 @@
-// @ts-nocheck
 /* Moved from src/99-venues.js (ADR-0001). Names from the rest of the engine come through the bridge, $L. Types come in step 3. */
 import { L as $L } from './_gen/legacy.js';
 import { E, clamp, flat, h01, rosterOf } from './00-core';
@@ -22,7 +21,7 @@ export var VQ_CROWD={rowdy:'a rowdy local crowd',smart:'a crowd that knows its w
 $L.VQ_CROWD = VQ_CROWD;
 export function venueQuirks(vname){
   var v=String(vname||''),h=function(k){return h01('vq:'+k+':'+v);},open=/ (Stadium|Bowl|Field)\b/.test(v),small=/ (Armory|Union Hall|Legion Hall|Rec Center|Ballroom|Music Hall)\b/.test(v);
-  var q={feel:small||h('f')<0.25?'intimate':(h('f')>0.8&&!small?'cavernous':'right'),sound:h('s')<0.3?'loud':(h('s')>0.82?'dead':'plain'),crowd:h('c')<0.25?'rowdy':(h('c')<0.45?'smart':(h('c')>0.85?'polite':'plain')),sight:h('g')>0.85?'poor':'fine',open:open};
+  var q: any={feel:small||h('f')<0.25?'intimate':(h('f')>0.8&&!small?'cavernous':'right'),sound:h('s')<0.3?'loud':(h('s')>0.82?'dead':'plain'),crowd:h('c')<0.25?'rowdy':(h('c')<0.45?'smart':(h('c')>0.85?'polite':'plain')),sight:h('g')>0.85?'poor':'fine',open:open};
   var w=[];if($L.VQ_FEEL[q.feel])w.push($L.VQ_FEEL[q.feel]);if($L.VQ_SOUND[q.sound])w.push($L.VQ_SOUND[q.sound]);if($L.VQ_CROWD[q.crowd])w.push($L.VQ_CROWD[q.crowd]);if(q.sight==='poor')w.push('poor sightlines from the cheap seats');if(q.open)w.push('open to the sky');
   q.words=w;q.short=w.length?w[0].split(':')[0]:'nothing special';return q;
 }
@@ -60,7 +59,7 @@ export var DISASTER={
 $L.DISASTER = DISASTER;
 LIVEK.disaster={n:'Trouble in the building',
   pre:function(S,L,step){
-    if(step.t!=='match'||L.had.disaster)return null;var rep=L.st&&L.st.rep;if(!rep||!rep.venue)return null;var q=venueQuirks(rep.venue);
+    if(step.t!=='match'||L.had.disaster)return null;var rep=L.st&&L.st.rep;if(!rep||!rep.venue)return null;var q: any=venueQuirks(rep.venue);
     var p=0.025+(q.open?0.04:0)+(q.crowd==='rowdy'?0.02:0)+(q.feel==='cavernous'?0.01:0);
     if(h01(S.seed+':dis:'+S.week+':'+S.qi)>=p)return null;
     var kinds=['power','ring'].concat(q.open?['weather']:[]).concat(q.crowd==='rowdy'?['crowd','crowd']:['crowd']),k=kinds[Math.floor(h01(S.seed+':disk:'+S.week+':'+S.qi)*kinds.length)],D=$L.DISASTER[k];
@@ -82,7 +81,7 @@ LIVEK.disaster={n:'Trouble in the building',
 };
 $L.LIVE_ORDER.push('disaster');   // tried last: trouble in the building never takes the place of another call
 /** For the desk: the quirks of tonight's building, in words. */
-E.buildingWords=function(S){var R=E.road(S);if(!R||!R.now||!R.now.venue)return null;var q=venueQuirks(R.now.venue);return {words:q.words,short:q.short};};
+E.buildingWords=function(S){var R=E.road(S);if(!R||!R.now||!R.now.venue)return null;var q: any=venueQuirks(R.now.venue);return {words:q.words,short:q.short};};
 
 // hand this module's names back to the bridge once more, in case top-level code reassigned one
 $L.VQ_FEEL = VQ_FEEL;

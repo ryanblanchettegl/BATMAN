@@ -1,4 +1,3 @@
-// @ts-nocheck
 /* Moved from src/94-net.js (ADR-0001). Names from the rest of the engine come through the bridge, $L. Types come in step 3. */
 import { L as $L } from './_gen/legacy.js';
 import { E, activeFeuds, avg, cal, feudLabel, h01, holdLvl, rosterOf, starG } from './00-core';
@@ -66,7 +65,7 @@ SHOWX.push(function(S,P,show,rep){
   netPost(S,'p',netHandle(S.columnist||'The Ringside Wire'),S.columnist||'The Ringside Wire',best.label+' at '+rep.name+': '+starG(best.ov)+'. The show was graded '+$L.gradeG($L.repCS(rep))+($L.verdictBand(d)>0?', better than this crowd expected.':($L.verdictBand(d)<0?', short of what this crowd expected.':', what this crowd came for.')),netLikes(900,key+'pr'));
   // the chat room after the show: two to four fans, each line written by the grammar from what happened (src/60-grammar.js)
   var mf=main.ids&&main.ids.length>=2?S.feuds.filter(function(f){return f.promo===P.id&&(f.a.indexOf(main.ids[0])>=0&&f.b.indexOf(main.ids[1])>=0||f.b.indexOf(main.ids[0])>=0&&f.a.indexOf(main.ids[1])>=0);}).slice(-1)[0]:null;
-  var cc={show:rep.name,co:P.name,band:$L.verdictBand(d),best:best.label,win:mw?mw.name:null,lose:ml?ml.name:null,champ:main.change&&mw?mw.name:null,feud:mf?feudLabel(S,mf):null,fheat:mf?mf.heat:0,fstale:!!(mf&&!mf.res&&mf.fresh!=null&&mf.fresh<30),fend:!!(mf&&mf.res&&mf.end===S.week),turn:null},nf=2+Math.floor(h01(key+'nf')*3),said={};
+  var cc: any={show:rep.name,co:P.name,band:$L.verdictBand(d),best:best.label,win:mw?mw.name:null,lose:ml?ml.name:null,champ:main.change&&mw?mw.name:null,feud:mf?feudLabel(S,mf):null,fheat:mf?mf.heat:0,fstale:!!(mf&&!mf.res&&mf.fresh!=null&&mf.fresh<30),fend:!!(mf&&mf.res&&mf.end===S.week),turn:null},nf=2+Math.floor(h01(key+'nf')*3),said={};
   var tw=rosterOf(S,P.id).filter(function(w){return w.tw===S.week;})[0];if(tw){cc.turn=tw.name;cc.heel=tw.align==='H';}
   for(var fi=0;fi<nf;fi++){var fan=FANS[Math.floor(h01(key+'f'+fi)*FANS.length)%FANS.length][0],ln=gram(GR_CHAT,'line',cc,key+'ft'+fi);if(said[ln])continue;said[ln]=1;netPost(S,'f','@'+fan,fan,ln,netLikes(120,key+'fl'+fi));}
 });
@@ -174,7 +173,7 @@ export function netSheet(S,wk){
   var best=null;reps.forEach(function(r){r.segs.forEach(function(s){if(s.k==='match'&&(!best||s.ov>best.ov))best={label:s.label,ov:s.ov,show:r.name,stars:starG(s.ov)};});});
   var lead=null,d=reps.length?avg(reps.map(function(r){return r.rating-(r.exp==null?r.rating:r.exp);})):0,tn=news.filter(function(x){return x.k==='title';})[0];
   // the headline and the editor's opening come from the grammar (src/60-grammar.js), so no two weeks read the same
-  var gk='sheet'+wk+P.id,gc={co:P.name,d:d,who:null,rival:S.order.length>1?S.promos[netPickH(S.order.filter(function(p){return p!==P.id;}),gk+'rv')].name:P.name};
+  var gk='sheet'+wk+P.id,gc: any={co:P.name,d:d,who:null,rival:S.order.length>1?S.promos[netPickH(S.order.filter(function(p){return p!==P.id;}),gk+'rv')].name:P.name};
   if(tn){gc.k='title';gc.who=/ won the /.test(tn.t)?tn.t.split(' won the ')[0]:null;lead={head:'',text:tn.t};}
   else if(reps.length&&d>=5){gc.k='hot';lead={head:'',text:'The shows beat what the crowd expected by '+d.toFixed(1)+' points. People are talking.'};}
   else if(reps.length&&d<=-5){gc.k='cold';lead={head:'',text:'The shows fell '+(-d).toFixed(1)+' points short of what the crowd expected. The mood in the building was flat.'};}

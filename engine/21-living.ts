@@ -1,4 +1,3 @@
-// @ts-nocheck
 /* Moved from src/21-living.js (ADR-0001). Names from the rest of the engine come through the bridge, $L. Types come in step 3. */
 import { L as $L } from './_gen/legacy.js';
 import { E, MONTHS, STIP, activeFeuds, cal, chance, clamp, feudLabel, feudOf, feudStage, feudsFor, h01, inFeud, names, pick, ri, rkey, rosterOf, startFeud, turn } from './00-core';

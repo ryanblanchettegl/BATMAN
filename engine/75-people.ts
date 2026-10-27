@@ -1,4 +1,3 @@
-// @ts-nocheck
 /* Moved from src/75-people.js (ADR-0001). Names from the rest of the engine come through the bridge, $L. Types come in step 3. */
 import { L as $L } from './_gen/legacy.js';
 import { E, addWrestler, cal, chance, clamp, dbOf, h01, pick, ri, rosterOf, workRate } from './00-core';
@@ -19,7 +18,7 @@ export function careerLine(w){
   if(h)bits.push('a place in the honours');
   return bits.length?' Career: '+bits.join(', ')+'.':'';
 }
-export function retire(S,w,why){
+export function retire(S,w,why?){
   if(w.promo!=='FA'){var P=S.promos[w.promo];leaveCompany(S,w,'retired');if(w.ovr>=50||w.promo===S.player)$L.news(S,'contract',w.name+' ('+P.name+') has retired at '+w.age+(why?': '+why:'')+'.'+careerLine(w));}
   $L.mile(S,w,'retire','Retired at '+w.age);w.rtp=w.promo!=='FA'?w.promo:null;w.promo='FA';w.brand=null;w.rt=S.week;w.camp=false;w.retiring=null;
 }
@@ -68,7 +67,7 @@ export function rookieClass(S,year){
     do{nm=pick(S,g==='F'?I.firstF:I.firstM)+' '+pick(S,I.last);}while(have[nm]&&tries++<40);
     if(have[nm])continue;have[nm]=1;
     var rg=ri(S,0,$L.REGIONS.length-1),rst={brawl:['B','P','S','A'],work:['T','A','S','H'],spectacle:['H','E','A','P']}[$L.REGIONS[rg].taste],
-      work=ri(S,38,60),blue=chance(S,0.15),w=addWrestler(S,{name:nm,g:g,ovr:ri(S,6,20)+(blue?6:0),style:chance(S,0.6)?pick(S,rst):pick(S,styles),work:work,mic:ri(S,30,75),align:chance(S,0.5)?'F':'H',age:ri(S,19,23)},'FA',null);
+      work=ri(S,38,60),blue=chance(S,0.15),w: any=addWrestler(S,{name:nm,g:g,ovr:ri(S,6,20)+(blue?6:0),style:chance(S,0.6)?pick(S,rst):pick(S,styles),work:work,mic:ri(S,30,75),align:chance(S,0.5)?'F':'H',age:ri(S,19,23)},'FA',null);
     w.pot=clamp(work+ri(S,10,24)+(blue?12:0),work,97);w.sq=clamp(ri(S,30,72)+(blue?16:0),20,97);w.blue=blue;w.rk=year;w.reg=rg;assignGim(w);$L.mile(S,w,'debut','Turned professional, class of '+year);made.push(w);
   }
   made.sort(function(a,b){return b.pot-a.pot;});
@@ -80,7 +79,7 @@ export var HIDDEN={pot:'Potential',sq:'Star quality',dur:'Durability',safe:'Inju
 $L.HIDDEN = HIDDEN;
 export function margin(S,w){var eye=S.booker?S.booker.sk.eye:0,m=(w.promo===S.player?10:18)-3*eye;if(w.sc)m-=8;return Math.max(0,m);}
 E.intel=function(S,id){
-  var w=S.w[id];if(!w)return null;var m=margin(S,w),out={m:m,exact:m<=1,stats:{}};
+  var w=S.w[id];if(!w)return null;var m=margin(S,w),out: any={m:m,exact:m<=1,stats:{}};
   Object.keys($L.HIDDEN).forEach(function(k){
     var v=w[k];if(m<=1){out.stats[k]={lo:v,hi:v};return;}
     var c=v+Math.round((h01(S.seed+':'+w.id+k)-0.5)*m*1.2);out.stats[k]={lo:clamp(c-m,1,99),hi:clamp(c+m,1,99)};

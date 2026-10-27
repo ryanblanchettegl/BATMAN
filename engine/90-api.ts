@@ -1,4 +1,3 @@
-// @ts-nocheck
 /* Moved from src/90-api.js (ADR-0001). Names from the rest of the engine come through the bridge, $L. Types come in step 3. */
 import { L as $L } from './_gen/legacy.js';
 import { ACH, ADVN, E, MONTHS, MT, PRODN, RISKN, SLOTN, SLOT_MAX, STIP, STYLE_NAME, TIXN, activeFeuds, autoBook, award, cal, clamp, dissolveTeam, eligible, expected, feudLabel, feudOf, feudStage, feudsFor, holdLvl, isDev, partnerOf, r1, rosterOf, teamOf, validate, wageFor, wagesWeek, workRate } from './00-core';

@@ -1,4 +1,3 @@
-// @ts-nocheck
 /* Moved from src/83-moments.js (ADR-0001). Names from the rest of the engine come through the bridge, $L. Types come in step 3. */
 import { L as $L } from './_gen/legacy.js';
 import { E, activeFeuds, cal, chance, clamp, holdLvl, msc, pick, rnd, rosterOf, titleById, titleFull, turn } from './00-core';
@@ -12,7 +11,7 @@ $L.momTop = momTop; $L.momMine = momMine; $L.momLater = momLater; $L.momLose = m
    Situations modelled on famous nights, under invented names. Each is an inbox event with three or four choices, an attempt where luck
    matters, and results that last for weeks. A moment can turn up about once every ten weeks, when the story is in place for it.
    MOM[id] = {make(S,P,R) -> event or null, res(S,ev,choice,P,w,o) -> text}. Follow-ups are kept in S.after and run when due. */
-export var MOM={},AFTER={};
+export var MOM: any={},AFTER: any={};
 $L.MOM = MOM; $L.AFTER = AFTER;
 export function momTop(P){var best=null;P.titles.forEach(function(t){if(!t.tag&&t.holders.length&&(!best||t.lvl>best.lvl))best=t;});return best;}
 export function momMine(S){return rosterOf(S,S.player).filter(function(w){return !w.nw&&w.inj<=0;});}

@@ -1,4 +1,3 @@
-// @ts-nocheck
 /* Moved from src/60-rpg.js (ADR-0001). Names from the rest of the engine come through the bridge, $L. Types come in step 3. */
 import { L as $L } from './_gen/legacy.js';
 import { E, SLOTN, award, cal, clamp, hash, holdLvl, names, pick, ri, rosterOf, startFeud, turn, wagesWeek, workRate } from './00-core';
@@ -163,7 +162,7 @@ E.repackage=function(S,id,gim){
 };
 
 /* ---------- earned traits ---------- */
-export var TRAITS={
+export var TRAITS: any={
   bigmatch:{n:'Big-match performer',d:'Raises their game at big events.'},
   giant:{n:'Giant killer',d:'The crowd believes in them as an underdog.'},
   iron:{n:'Iron lungs',d:'Stamina to go long.'},

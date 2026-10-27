@@ -1,4 +1,3 @@
-// @ts-nocheck
 /* Moved from src/32-direction.js (ADR-0001). Names from the rest of the engine come through the bridge, $L. Types come in step 3. */
 import { L as $L } from './_gen/legacy.js';
 import { E, RISKN, SLOTN, STIP, clamp, flat, isDev, names, rosterOf, starG } from './00-core';
@@ -194,7 +193,7 @@ LIVEK.sponsor={n:'The sponsor at ringside',
     var sp=S.sponsors.filter(function(x){return x.weeks<=4&&x.asked==null;})[0];if(!sp)return null;
     sp.asked=S.week;
     var w=flat(M.c.sides).filter(function(x){return x.align==='F';}).sort(function(a,b){return b.ovr-a.ovr;})[0];
-    var ch=[{n:'Not tonight',says:'The main event stays clear of it. The deal runs out when it runs out.'},
+    var ch: any=[{n:'Not tonight',says:'The main event stays clear of it. The deal runs out when it runs out.'},
       {n:'The announcers read the plug',says:'A word from the sponsor in the middle of the main event. The crowd groans. '+sp.name+' sign for another 12 weeks.'}];
     if(w)ch.push({n:w.name+' holds up the product after the bell',who:w.id,says:'The crowd groans louder, and '+w.name+' will not enjoy it. '+sp.name+' sign for another 24 weeks and pay a bonus tonight.'});
     return {phase:'mid',mi:step.i,who:M.ids[0],other:M.ids[1],sp:sp.name,

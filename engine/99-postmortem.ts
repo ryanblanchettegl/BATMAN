@@ -1,4 +1,3 @@
-// @ts-nocheck
 /* Moved from src/99-postmortem.js (ADR-0001). Names from the rest of the engine come through the bridge, $L. Types come in step 3. */
 import { L as $L } from './_gen/legacy.js';
 import { E, MONTHS, cal } from './00-core';
@@ -58,7 +57,7 @@ export function pmReview(S,from,to,label){
 WEEKX.push(function(S){
   if(S.cal||S.over)return;var c=cal(S.week),pm=S.pm||(S.pm={month:[],season:[]});
   var OW=S.ownWas||(S.ownWas={});if(c.wom===1)OW[S.week-1]=S.owner.trust;
-  Object.keys(OW).forEach(function(k){if(S.week-k>60)delete OW[k];});
+  Object.keys(OW).forEach(function(k){if(S.week-+k>60)delete OW[k];});
   if(c.wom===4){var m=pmReview(S,S.week-4,S.week,MONTHS[c.month]+' '+c.year);pm.month.unshift(m);if(pm.month.length>3)pm.month.length=3;pm.unread=S.week;
     $L.note(S,'The month in review','How '+MONTHS[c.month]+' went, and why. It is on your desk.','');}
   if(c.wom===4&&c.month===(P0month(S)+11)%12){var y=pmReview(S,S.week-48,S.week,'The season to '+MONTHS[c.month]+' '+c.year);pm.season.unshift(y);if(pm.season.length>4)pm.season.length=4;}

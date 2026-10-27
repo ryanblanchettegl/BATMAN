@@ -1,4 +1,3 @@
-// @ts-nocheck
 /* Moved from src/40-week.js (ADR-0001). Names from the rest of the engine come through the bridge, $L. Types come in step 3. */
 import { L as $L } from './_gen/legacy.js';
 import { ADV_C, E, activeFeuds, autoBook, award, cal, chance, clamp, dissolveTeam, formTeam, holdLvl, inFeud, isDev, merchWeek, pick, r1, ri, rkey, rnd, rosterOf, starG, startFeud, teamOf, titleById, turn, wageFor, workRate } from './00-core';
@@ -7,13 +6,13 @@ import { feudFizzle } from './21-living';
 import { dropQuest, keptPromise, runShow } from './30-show';
 $L.weekShows = weekShows; $L.startWeek = startWeek; $L.leaveCompany = leaveCompany; $L.joinCompany = joinCompany; $L.settle = settle; $L.hasQuest = hasQuest; $L.money = money; $L.pushEv = pushEv; $L.genEvents = genEvents; $L.renewAsk = renewAsk;
 /* ---------- the week ---------- */
-export function weekShows(S,P,w){
+export function weekShows(S,P,w?){
   var c=cal(w==null?S.week:w),out=P.shows.map(function(sh){return {id:sh.id,name:sh.name,brand:sh.brand||null,mult:sh.mult};});
   if(c.wom===4&&$L.evList(S,P)[c.month].t!=='dark')out.push({id:'big',big:true,flag:c.month===P.flagship,brand:null,name:P.name+' '+$L.evName(S,P,c.month),rule:$L.evRule(S,P,c.month),ty:$L.evList(S,P)[c.month].t});
   return out;
 }
 export function startWeek(S){var P=S.promos[S.player];S.queue=weekShows(S,P);S.qi=0;S.card=[];$L.grantBP(S);S.inbox=S.inbox.filter(function(e){return !e.done;});genEvents(S);}
-export function leaveCompany(S,w,why,quiet){
+export function leaveCompany(S,w,why,quiet?){
   var P=S.promos[w.promo];if(!P)return;
   vacateFor(S,P,w,why,quiet);var tm=teamOf(S,w);if(tm)dissolveTeam(S,tm);$L.leaveStable(S,w);w.mgr=null;S.w.forEach(function(x){if(x.mgr===w.id)x.mgr=null;});
   S.feuds.forEach(function(f){if(!f.res&&(f.a.indexOf(w.id)>=0||f.b.indexOf(w.id)>=0)){f.res=true;f.dead=true;f.end=S.week;}});
@@ -21,7 +20,7 @@ export function leaveCompany(S,w,why,quiet){
   S.quests=S.quests.filter(function(q){return q.w!==w.id&&q.a!==w.id&&q.b!==w.id;});
   S.inbox=S.inbox.filter(function(e){return e.done||e.w!==w.id;});
 }
-export function joinCompany(S,w,P,wage,weeks){
+export function joinCompany(S,w,P,wage?,weeks?){
   w.promo=P.id;w.brand=null;
   if(P.brands){var main=P.brands.filter(function(b){return !b.dev;}),dev=P.brands.filter(function(b){return b.dev;});w.brand=(w.ovr<55&&dev.length?dev[0]:main[Math.floor(rnd(S)*main.length)]).id;}
   w.wage=wage||wageFor(w.ovr,P);w.con=weeks||ri(S,48,96);w.o0=w.ovr;w.morale=75;$L.modelJoin(S,w,P);w.cn=false;w.lu=S.week;w.deb=true;w.away=0;w.camp=false;w.ex=w.nw?1.1:(w.ovr>=P.image+8?4.4:(w.ovr>=P.image-2?3.5:(w.ovr>=P.image-12?2.6:(w.ovr>=P.image-22?1.8:1.1))));w.pos=w.ex;w.stress=0;w.ment=null;w.pk2=0;w.pb2=0;w.you=0;if(S.week>1)$L.mile(S,w,'sign','Joined '+P.name);
@@ -32,7 +31,7 @@ export function settle(S,P){
   var L=P.led,merch=merchWeek(S,P),wages=$L.payWeek(S,P),inc=L.tv+L.gate+L.ppv+L.bonus+merch+sp,over=P.fixed+P.varRate*0.96*(inc-sp),exp=wages+L.prod+over+adv+camp+med+trv;var fnc=mine?$L.financeCost(S,P,inc-exp):0;exp+=fnc;
   // a publicly traded company pays its shareholders out of a week well above the board's target (NEXT.md 12.2)
   var dv=0;if(P.model==='corporate'&&P.net>0&&inc-exp>P.net*1.2){dv=Math.round((inc-exp-P.net*1.2)*0.6);exp+=dv;}
-  var row={w:S.week,div:dv,spons:sp,adv:adv,camp:camp,med:med,trv:trv,fin:fnc,tv:Math.round(L.tv),gate:Math.round(L.gate),ppv:Math.round(L.ppv),bonus:Math.round(L.bonus),merch:Math.round(merch),wages:Math.round(wages),prod:Math.round(L.prod),over:Math.round(over),inc:Math.round(inc),exp:Math.round(exp),net:Math.round(inc-exp),image:r1(P.image)};
+  var row: any={w:S.week,div:dv,spons:sp,adv:adv,camp:camp,med:med,trv:trv,fin:fnc,tv:Math.round(L.tv),gate:Math.round(L.gate),ppv:Math.round(L.ppv),bonus:Math.round(L.bonus),merch:Math.round(merch),wages:Math.round(wages),prod:Math.round(L.prod),over:Math.round(over),inc:Math.round(inc),exp:Math.round(exp),net:Math.round(inc-exp),image:r1(P.image)};
   P.cash+=row.net;row.cash=Math.round(P.cash);P.hist.push(row);var hcap=mine?60:12;while(P.hist.length>hcap)P.hist.shift();
   P.led={tv:0,gate:0,ppv:0,bonus:0,prod:0};
   return row;

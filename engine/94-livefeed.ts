@@ -1,4 +1,3 @@
-// @ts-nocheck
 /* Moved from src/94-livefeed.js (ADR-0001). Names from the rest of the engine come through the bridge, $L. Types come in step 3. */
 import { L as $L } from './_gen/legacy.js';
 import { E, activeFeuds, clamp, feudOf, h01, rosterOf, starG, titleById } from './00-core';

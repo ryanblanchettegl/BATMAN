@@ -1,4 +1,3 @@
-// @ts-nocheck
 /* Moved from src/93-stipworld.js (ADR-0001). Names from the rest of the engine come through the bridge, $L. Types come in step 3. */
 import { L as $L } from './_gen/legacy.js';
 import { E, STIP } from './00-core';
@@ -35,11 +34,11 @@ export function stipClean(k){
 /** The world's rules into STIP for this game, and out again when another game or world is loaded. */
 export function stipSync(S){
   var L=S&&S.db&&Array.isArray(S.db.stips)?S.db.stips:[],key=JSON.stringify(L);
-  if(stipSync.key===key)return;stipSync.key=key;
+  if((stipSync as any).key===key)return;(stipSync as any).key=key;
   Object.keys(STIP).forEach(function(k){if(!$L.STIP0[k]){delete STIP[k];delete E.STIPNOTE[k];delete STIPLINE[k];delete STIP_NEED[k];}});
   Object.keys($L.STIP0).forEach(function(k){STIP[k]=$L.STIP0[k];E.STIPNOTE[k]=$L.STIPNOTE0[k];if($L.STIPLINE0[k])STIPLINE[k]=$L.STIPLINE0[k];else delete STIPLINE[k];if($L.STIPNEED0[k]!=null)STIP_NEED[k]=$L.STIPNEED0[k];});
   L.forEach(function(k0){var k=stipClean(k0);if(!k)return;
-    var B=$L.STIP0[k.over?k.id:k.base],o={};Object.keys(B).forEach(function(x){o[x]=B[x];});o.n=k.n;o.set=k.set||undefined;
+    var B=$L.STIP0[k.over?k.id:k.base],o: any={};Object.keys(B).forEach(function(x){o[x]=B[x];});o.n=k.n;o.set=k.set||undefined;
     if(k.over){o.over=1;STIP[k.id]=o;}else{if($L.STIP0[k.id])return;o.base=k.base;o.custom=1;STIP[k.id]=o;if($L.STIPNEED0[k.base]!=null)STIP_NEED[k.id]=$L.STIPNEED0[k.base];}
     E.STIPNOTE[k.id]=k.d||$L.STIPNOTE0[k.over?k.id:k.base]||(k.over?'':'A match made for this world.');
     var ln=k.lines.length?k.lines:$L.STIPLINE0[k.over?k.id:k.base];if(ln)STIPLINE[k.id]=ln;else delete STIPLINE[k.id];});

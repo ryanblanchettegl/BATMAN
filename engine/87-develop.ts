@@ -1,4 +1,3 @@
-// @ts-nocheck
 /* Moved from src/87-develop.js (ADR-0001). Names from the rest of the engine come through the bridge, $L. Types come in step 3. */
 import { L as $L } from './_gen/legacy.js';
 import { E, addWrestler, cal, chance, clamp, dbOf, hash, pick, ri, rnd, rosterOf, starG, workRate } from './00-core';
@@ -88,7 +87,7 @@ WEEKX.push(function(S){
     var g=chance(S,0.3)?'F':'M',nm,tries=0;
     do{nm=pick(S,g==='F'?I.firstF:I.firstM)+' '+pick(S,I.last);}while(have[nm]&&tries++<40);
     if(have[nm])continue;have[nm]=1;
-    var work=ri(S,40,58)+Math.round(tq.q*8),w=addWrestler(S,{name:nm,g:g,ovr:ri(S,8,22)+Math.round(tq.q*4),style:pick(S,styles),work:work,mic:ri(S,35,75),align:chance(S,0.5)?'F':'H',age:ri(S,19,25)},'FA',null);
+    var work=ri(S,40,58)+Math.round(tq.q*8),w: any=addWrestler(S,{name:nm,g:g,ovr:ri(S,8,22)+Math.round(tq.q*4),style:pick(S,styles),work:work,mic:ri(S,35,75),align:chance(S,0.5)?'F':'H',age:ri(S,19,25)},'FA',null);
     w.pot=clamp(work+ri(S,10,22)+Math.round(tq.q*10),work,97);w.sq=clamp(ri(S,35,75),20,97);w.rk=cal(S.week).year;assignGim(w);mile(S,w,'debut','Graduated from the '+P.name+' school');
     joinCompany(S,w,P,150,52);w.sch=P.id;
     if(E.campInfo(S).n<E.campInfo(S).cap)E.sendCamp(S,w.id,'ring');

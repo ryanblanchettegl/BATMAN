@@ -1,4 +1,3 @@
-// @ts-nocheck
 /* Moved from src/66-relations.js (ADR-0001). Names from the rest of the engine come through the bridge, $L. Types come in step 3. */
 import { L as $L } from './_gen/legacy.js';
 import { E, clamp, holdLvl, partnerOf, rkey, rosterOf, starG, starQ } from './00-core';
@@ -81,7 +80,7 @@ export function relSet(S,a,b,bond,o){
 /** Change how two people feel about each other.
     d: {bond, ra, rb, ja, jb}: bond is shared; ra is a's respect for b, rb is b's for a; ja is a's jealousy of b, jb b's of a.
     mem: {k, t, by, keep}: a line both will remember. keep marks the things nobody gets over: most of the change is permanent. */
-export function relBump(S,a,b,d,mem){
+export function relBump(S,a,b,d,mem?){
   if(a===b||a==null||b==null||!S.w[a]||!S.w[b])return null;
   var e=relEntry(S,a,b),was=e.st||0,i=relIdx(a,b),j=1-i,stick=mem&&mem.keep?0.7:0.35;
   if(d.bond){e.bond=clamp(e.bond+d.bond,-100,100);e.base=clamp(e.base+d.bond*stick,-100,100);}

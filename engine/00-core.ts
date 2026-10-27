@@ -1,8 +1,7 @@
-// @ts-nocheck
 /* Moved from src/00-core.js (ADR-0001). Names from the rest of the engine come through the bridge, $L. Types come in step 3. */
 import { L as $L } from './_gen/legacy.js';
 $L.dbOf = dbOf; $L.starQ = starQ; $L.starG = starG; $L.starMeets = starMeets; $L.clamp = clamp; $L.hash = hash; $L.h01 = h01; $L.rnd = rnd; $L.ri = ri; $L.pick = pick; $L.chance = chance; $L.avg = avg; $L.flat = flat; $L.r1 = r1; $L.names = names; $L.vsLabel = vsLabel; $L.cal = cal; $L.payTop = payTop; $L.payRatio = payRatio; $L.wageFor = wageFor; $L.workRate = workRate; $L.isDev = isDev; $L.rosterOf = rosterOf; $L.news = news; $L.award = award; $L.addWrestler = addWrestler; $L.buildPromo = buildPromo; $L.formTeam = formTeam; $L.teamOf = teamOf; $L.dissolveTeam = dissolveTeam; $L.partnerOf = partnerOf; $L.showMult = showMult; $L.msc = msc; $L.viewersK = viewersK; $L.demand = demand; $L.ticket = ticket; $L.buysK = buysK; $L.capFor = capFor; $L.merchWeek = merchWeek; $L.wagesWeek = wagesWeek; $L.baselineIncome = baselineIncome; $L.calibrate = calibrate; $L.calibrateShows = calibrateShows; $L.calibrateCosts = calibrateCosts; $L.restAll = restAll; $L.expected = expected; $L.activeFeuds = activeFeuds; $L.feudOf = feudOf; $L.feudsFor = feudsFor; $L.inFeud = inFeud; $L.feudLabel = feudLabel; $L.feudStage = feudStage; $L.startFeud = startFeud; $L.heatUp = heatUp; $L.turn = turn; $L.divOk = divOk; $L.holdLvl = holdLvl; $L.titleById = titleById; $L.titleFull = titleFull; $L.rkey = rkey; $L.titleFits = titleFits; $L.eligible = eligible; $L.showTitles = showTitles; $L.gimmickFor = gimmickFor; $L.autoBook = autoBook; $L.validate = validate;
-export var DB = (typeof window!=='undefined'?window:globalThis).GP_DB, E = {};
+export var DB = (typeof window!=='undefined'?window:globalThis).GP_DB, E: any = {};
 $L.DB = DB; $L.E = E;
 export var CAL0=DB?{y:DB.startYear,m:DB.startMonth}:{y:2026,m:9};
 $L.CAL0 = CAL0;
@@ -15,7 +14,7 @@ export var STYLE_NAME = {B:'Brawler',T:'Technician',H:'High flyer',P:'Powerhouse
 $L.STYLE_NAME = STYLE_NAME;
 export var MT = {'1v1':{n:'Singles',sides:2,per:1},tag:{n:'Tag team',sides:2,per:2},'3way':{n:'Triple threat',sides:3,per:1},'4way':{n:'Four-way',sides:4,per:1},'6man':{n:'Six-man tag',sides:2,per:3},br:{n:'Battle royal',sides:8,per:1,min:6,max:30}};
 $L.MT = MT;
-export var STIP = {
+export var STIP: any = {
   std:{n:'Standard',w:null,heat:0,inj:1},
   hardcore:{n:'Hardcore',w:[0.7,0.1,0.2],heat:4,inj:2.2,hc:0.45},
   ladder:{n:'Ladder',w:[0.25,0.15,0.6],heat:4,inj:2.6,hc:0.15},
@@ -176,15 +175,15 @@ export function news(S,kind,text){S.news.unshift({w:S.week,k:kind,t:text});if(S.
 export function award(S,id){if(S.cal||S.ach[id])return;S.ach[id]=S.week;S.toasts.push(id);}
 
 /* ---------- world setup ---------- */
-export function addWrestler(S,d,promo,brand){
+export function addWrestler(S,d,promo,brand?){
   var j=function(k){return Math.round((h01(d.name+k)-0.5)*6);};
   var st=$L.STYLE[d.style]||$L.STYLE.A,num=function(v){return v!=null&&isFinite(+v);};
   var wk=num(d.work)?+d.work:(function(){var a=[num(d.brawl)?+d.brawl:50,num(d.tech)?+d.tech:50,num(d.speed)?+d.speed:50].sort(function(x,y){return y-x;});return Math.round(a[0]*0.5+a[1]*0.35+a[2]*0.15);})();
-  var w={id:S.w.length,name:d.name,g:d.g,promo:promo,brand:brand||null,style:d.style,ovr:d.ovr,o0:d.ovr,
+  var w: any={id:S.w.length,name:d.name,g:d.g,promo:promo,brand:brand||null,style:d.style,ovr:d.ovr,o0:d.ovr,
     brawl:num(d.brawl)?clamp(+d.brawl,1,99):clamp(wk+st[0]+j('b'),15,99),tech:num(d.tech)?clamp(+d.tech,1,99):clamp(wk+st[1]+j('t'),15,99),speed:num(d.speed)?clamp(+d.speed,1,99):clamp(wk+st[2]+j('s'),15,99),
     stam:num(d.stam)?clamp(+d.stam,1,99):clamp(wk+st[3]+j('m'),20,99),mic:d.mic,align:d.align,morale:num(d.morale)?clamp(+d.morale,0,100):clamp(70+j('o')*2,40,95),cond:100,mom:0,inj:0,
     wage:0,con:0,ws:0,wins:0,losses:0,lu:0,team:null,xp:0,ret:false,cn:false};
-  var sv=function(v,def,lo){return clamp(Math.round(num(v)?+v:def),lo||10,99);},hs=hash(d.name+'age');
+  var sv=function(v,def,lo?){return clamp(Math.round(num(v)?+v:def),lo||10,99);},hs=hash(d.name+'age');
   w.cha=sv(d.cha,d.mic+j('c')*2+(d.style==='E'?4:0),15);
   w.hc=sv(d.hc,w.brawl*0.7+({B:16,P:8,S:4,H:-4,T:-8}[d.style]||0)+j('h')*3);
   w.dur=sv(d.dur,62+j('d')*5+({P:8,B:4,H:-8}[d.style]||0),25);
@@ -201,17 +200,17 @@ export function addWrestler(S,d,promo,brand){
   S.w.push(w);return w;
 }
 export function buildPromo(S,d,byName){
-    var P={id:d.id,name:d.name,blurb:d.blurb,cash:d.cash,cash0:d.cash,image:d.image,image0:d.image,wq:d.wq,angles:d.angles,style:(d.owner&&d.owner.style)||'stars',staff:d.staff||{agent:'The road agent',writer:'The head writer'},wageMult:d.wageMult,tvRate:d.tvRate,prod:d.prod,net:d.net,flagship:d.flagship,
+    var P: any={id:d.id,name:d.name,blurb:d.blurb,cash:d.cash,cash0:d.cash,image:d.image,image0:d.image,wq:d.wq,angles:d.angles,style:(d.owner&&d.owner.style)||'stars',staff:d.staff||{agent:'The road agent',writer:'The head writer'},wageMult:d.wageMult,tvRate:d.tvRate,prod:d.prod,net:d.net,flagship:d.flagship,
       prodLvl:d.prodLvl==null?2:d.prodLvl,prod0:d.prodLvl==null?2:d.prodLvl,risk:d.risk==null?1:d.risk,risk0:d.risk==null?1:d.risk,tix:1,adv:0,slot:d.slot==null?1:d.slot,slot0:d.slot==null?1:d.slot,camp:d.image>=60?2:1,med:d.image>=80?3:(d.image>=60?2:(d.image>=45?1:0)),starB:{},ann:(d.announcers||['The play-by-play man','The colour man']).slice(),cities:(d.cities||['the city']).slice(),brands:d.brands?JSON.parse(JSON.stringify(d.brands)):null,shows:JSON.parse(JSON.stringify(d.shows)),titles:[],hist:[],led:{tv:0,gate:0,ppv:0,bonus:0,prod:0},base:{},mainB:{},trend:0,neg:0,fixed:0,varRate:0,last:null};
     P.ms=1;var m0=msc(P),mi=Math.pow(m0,0.75);P.cash=Math.round(P.cash*mi);P.cash0=P.cash;P.prod=Math.round(P.prod*mi);P.net=Math.round(P.net*mi);P.tvRate=Math.round(P.tvRate*Math.sqrt(m0)*100)/100;   // money on the company's own scale: cash, production and profit go down as its income does (about m^0.75)
     d.titles.forEach(function(t){P.titles.push({id:t.id,name:t.name,brand:t.brand||null,g:t.g,lvl:t.lvl,tag:!!t.tag,holders:t.holders.map(function(n){return byName[n];}).filter(function(x){return x!==undefined;}),prestige:t.lvl===3?85:(t.lvl===2?68:52),since:1,last:1,defs:0});if(t.belt)P.titles[P.titles.length-1].belt=JSON.parse(JSON.stringify(t.belt));});
     if(d.full)P.full=d.full;if(d.ig)P.ig=1;if(d.owner)P.owner=d.owner;if(d.media)P.media=d.media;if(d.model&&$L.MODELS[d.model]&&d.model!=='classic')P.model=d.model;if(d.events)P.evIn=d.events;if(d.logo&&typeof d.logo==='object')P.logo=JSON.parse(JSON.stringify(d.logo));S.promos[P.id]=P;S.order.push(P.id);if(d.draft)$L.draftRoster(S,P,d);
-    (d.teams||[]).forEach(function(tm){var a=byName[tm[0]],b=byName[tm[1]];if(a===undefined||b===undefined||S.w[a].promo!==P.id||S.w[b].promo!==P.id)return;var t=formTeam(S,P,S.w[a],S.w[b],tm[2]!=null?clamp(tm[2],0,100):35+Math.round(h01(tm[0]+tm[1])*50));if(tm[3])t.chem=clamp(tm[3],-10,10);if(tm[4])t.name=tm[4];});
+    (d.teams||[]).forEach(function(tm){var a=byName[tm[0]],b=byName[tm[1]];if(a===undefined||b===undefined||S.w[a].promo!==P.id||S.w[b].promo!==P.id)return;var t: any=formTeam(S,P,S.w[a],S.w[b],tm[2]!=null?clamp(tm[2],0,100):35+Math.round(h01(tm[0]+tm[1])*50));if(tm[3])t.chem=clamp(tm[3],-10,10);if(tm[4])t.name=tm[4];});
   return P;
 }
 E.newGame=function(playerId,seed,opts){
   opts=opts||{};
-  var S={v:4,rs:(seed|0)||7,seed:seed,week:1,player:playerId,diff:$L.DIFF[opts.diff]?opts.diff:'normal',iron:!!opts.iron,dpart:opts.dpart&&typeof opts.dpart==='object'?{money:clamp(+opts.dpart.money|0,0,2),inj:clamp(+opts.dpart.inj|0,0,2),ego:clamp(+opts.dpart.ego|0,0,2),rival:clamp(+opts.dpart.rival|0,0,2)}:null,mode:'booker',w:[],promos:{},order:[],teams:[],feuds:[],mystery:null,news:[],inbox:[],quests:[],ach:{},toasts:[],
+  var S: any={v:4,rs:(seed|0)||7,seed:seed,week:1,player:playerId,diff:$L.DIFF[opts.diff]?opts.diff:'normal',iron:!!opts.iron,dpart:opts.dpart&&typeof opts.dpart==='object'?{money:clamp(+opts.dpart.money|0,0,2),inj:clamp(+opts.dpart.inj|0,0,2),ego:clamp(+opts.dpart.ego|0,0,2),rival:clamp(+opts.dpart.rival|0,0,2)}:null,mode:'booker',w:[],promos:{},order:[],teams:[],feuds:[],mystery:null,news:[],inbox:[],quests:[],ach:{},toasts:[],
     stats:{shows:0,matches:0,run:0,feudsDone:0,bestMatch:0,bestShow:0},said:[],h2h:{},trust:60,ledger:[],sponsors:[],spOffers:[],slotAsk:-99,hype:0,rateMod:0,reports:[],queue:[],qi:0,card:[],over:null,nid:1,recent:{},fin:null};
   var cur={promo:'FA',brand:null},byName={};
   $L.CAL0={y:$L.DB.startYear,m:$L.DB.startMonth};
@@ -310,7 +309,7 @@ export function feudsFor(S,id){return S.feuds.filter(function(f){return !f.res&&
 export function inFeud(S,id){return feudsFor(S,id).length>0;}
 export function feudLabel(S,f){return f.a.map(function(i){return S.w[i].name;}).join(' & ')+' vs '+f.b.map(function(i){return S.w[i].name;}).join(' & ');}
 export function feudStage(f){return f.res?'Finished':(f.heat>=85?'White hot':(f.heat>=60?'Hot':(f.heat>=30?'Heating up':'Simmering')));}
-export function startFeud(S,P,a,b,heat,why,opts){
+export function startFeud(S,P,a,b,heat,why,opts?){
   opts=opts||{};
   if(a.id===b.id)return null;
   var f=feudOf(S,a.id,b.id);
@@ -377,7 +376,7 @@ export function autoBook(S,P,show){
   var men=pool.filter(function(w){return w.g==='M';}).sort(byOvr),women=pool.filter(function(w){return w.g==='F';}).sort(byOvr);
   // the bigger division carries the card; in an all-women company that is the women
   var G1=women.length>men.length?'F':'M',G2=G1==='M'?'F':'M',L2=G1==='M'?women:men;
-  function opp(w,range,filter){
+  function opp(w,range,filter?){
     var best=null,bs=-1e9;
     pool.forEach(function(o){
       if(o.id===w.id||!free(o)||o.g!==w.g)return;

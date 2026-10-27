@@ -1,4 +1,3 @@
-// @ts-nocheck
 /* Moved from src/65-you.js (ADR-0001). Names from the rest of the engine come through the bridge, $L. Types come in step 3. */
 import { L as $L } from './_gen/legacy.js';
 import { E, LEN, MT, RISKN, activeFeuds, autoBook, avg, award, cal, chance, clamp, eligible, feudLabel, feudOf, flat, holdLvl, isDev, pick, r1, restAll, rkey, rnd, rosterOf, titleById, titleFits, wagesWeek } from './00-core';
@@ -289,7 +288,7 @@ E.advice=function(S,card){
   var pool=eligible(S,P,show).sort(function(a,b){return b.ovr-a.ovr;}).slice(0,8).filter(function(w){return !on[w.id]&&S.week-w.lu>=3;});
   if(pool.length)ann.push(pool[0].name+' has been off the shows for '+(S.week-pool[0].lu)+' weeks. People are asking.');
   var out=[],cap=2+extra;
-  [[P.staff.agent+', road agent',agent],[P.staff.writer+', head writer',writer],[P.ann[0]+', lead announcer',ann]].forEach(function(x){out.push({who:x[0],tips:x[1].filter(function(t,i,a){return a.indexOf(t)===i;}).slice(0,cap)});});
+  [[P.staff.agent+', road agent',agent],[P.staff.writer+', head writer',writer],[P.ann[0]+', lead announcer',ann]].forEach(function(x){out.push({who:x[0],tips:(x[1] as any[]).filter(function(t,i,a){return a.indexOf(t)===i;}).slice(0,cap)});});
   return out;
 };
 E.STYLES=STYLES;E.ROOTS=ROOTS;E.PLEDGE=PLEDGE;E.SKILLS=SKILLS;E.xpNeed=xpNeed;E.bpGrant=bpGrant;

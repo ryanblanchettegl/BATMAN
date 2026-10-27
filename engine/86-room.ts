@@ -1,4 +1,3 @@
-// @ts-nocheck
 /* Moved from src/86-room.js (ADR-0001). Names from the rest of the engine come through the bridge, $L. Types come in step 3. */
 import { L as $L } from './_gen/legacy.js';
 import { E, TIXN, TIX_D, TIX_P, avg, cal, capFor, chance, clamp, h01, hash, holdLvl, msc, pick, rosterOf, startFeud, ticket } from './00-core';

@@ -1,4 +1,3 @@
-// @ts-nocheck
 /* Moved from src/76-locker.js (ADR-0001). Names from the rest of the engine come through the bridge, $L. Types come in step 3. */
 import { L as $L } from './_gen/legacy.js';
 import { E, STIP, avg, award, cal, chance, clamp, flat, h01, holdLvl, names, pick, rnd, rosterOf, starQ, wageFor, workRate } from './00-core';
@@ -184,7 +183,7 @@ WEEKX.push(function(S){
     if(w.ment!=null){var mt=S.w[w.ment];if(!mt||mt.promo!==w.promo||mt.rt||mt.role!=='mentor'||w.age>28)w.ment=null;else{if(workRate(w)<w.pot)w.xp+=0.12*(w.promo===S.player&&$L.hasRule(S,'senior')?1.4:1);if(w.mic<Math.min(88,mt.mic-5)){w.mx=(w.mx||0)+0.2;if(w.mx>=1){w.mx-=1;w.mic++;}}mt.morale=clamp(mt.morale+0.4,0,100);}}
     if(w.promo!==S.player)return;
     // stress: what eases it and what feeds it
-    var L=egoLines(S,w),g={};L.forEach(function(l){g[l.k]=l.v;});
+    var L=egoLines(S,w),g: any={};L.forEach(function(l){g[l.k]=l.v;});
     var ds=-3-(lead?2:0)-(worked?0:2)+(maxZone(w)>=70?2:0)+(g.pay<=-1?1:0)+(g.push<=-2?3:(g.push<=-1?1.5:0))+(g.promise<0?1.5:0);
     stressAdd(S,w,ds);
     if((w.stress||0)>=75&&w.inj<=0&&!w.camp&&!(w.away>=S.week)&&S.week-(w.brk||-99)>=8&&chance(S,0.35)){breakdown(S,w);if(chance(S,0.3)&&!has(w,'grudge')){(w.tr=w.tr||[]).push('grudge');$L.news(S,'story',w.name+' earned a trait: '+TRAITS.grudge.n+'.');}}

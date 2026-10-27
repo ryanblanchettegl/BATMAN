@@ -1,4 +1,3 @@
-// @ts-nocheck
 /* Moved from src/34-night.js (ADR-0001). Names from the rest of the engine come through the bridge, $L. Types come in step 3. */
 import { L as $L } from './_gen/legacy.js';
 import { E, activeFeuds, cal, clamp, feudLabel, feudOf, holdLvl, names, rosterOf, starG, startFeud, titleById } from './00-core';
@@ -75,7 +74,7 @@ E.afterShow=function(S){
     var d=[];down.forEach(function(m){d.push(nm(m.id)+' went home unhappy.');});up.forEach(function(m){d.push(nm(m.id)+' went home in a better mood.');});rel.forEach(function(n){d.push(n.h+(n.t?': '+n.t:'')+(/[.!?]$/.test(n.t||n.h)?'':'.'));});
     add('room','The locker room',(down.length?down.length+' went home unhappy':'Nobody went home unhappy')+(up.length?', '+up.length+' in a better mood':'')+(rel.length?'. '+rel.length+' '+(rel.length===1?'thing':'things')+' people will remember':'')+'.',d,down.length?'bad':(up.length?'good':''));
   // level-ups: who grew tonight, and the match that did it (NEXT.md 8.3)
-  if((L.grew||[]).length){var mw=function(id){var g=(rep.segs||[]).filter(function(x){return x.k==='match'&&x.ids&&x.ids.indexOf(id)>=0;})[0];return g?(g.wi&&g.wi.indexOf(id)>=0?'won ':'')+(g.label||'their match')+', '+starG(g.ov):'their night';};
+  if((L.grew||[]).length){var mw: any=function(id){var g=(rep.segs||[]).filter(function(x){return x.k==='match'&&x.ids&&x.ids.indexOf(id)>=0;})[0];return g?(g.wi&&g.wi.indexOf(id)>=0?'won ':'')+(g.label||'their match')+', '+starG(g.ov):'their night';};
     add('grew','Who grew',L.grew.length===1?nm(L.grew[0].id)+' came out of it a bigger name.':L.grew.length+' came out of it bigger names.',L.grew.map(function(g){return nm(g.id)+' is more over now ('+mw(g.id)+').';}),'good');}
   }
   if(L.feuds&&L.feuds.length){var fl=function(x){return x.l+(x.end?': ended tonight':(x.now>x.was?': hotter, '+x.was+' to '+x.now:': cooler, '+x.was+' to '+x.now)+(x.ph?' ('+x.ph.toLowerCase()+')':''));};
@@ -94,7 +93,7 @@ E.afterShow=function(S){
   if(rep.big&&rep.bf){var bd=rep.buys-rep.bf,bp=rep.bf?bd/rep.bf:0,H=(rep.hp||[]).slice().sort(function(a,b){return b.v-a.v;});
     add('buys','The buys',rep.buys.toLocaleString('en-US')+' bought it at home, '+(Math.abs(bp)<0.03?'right on':(bd>0?Math.round(bp*100)+'% over':Math.round(-bp*100)+'% under'))+' the forecast of '+rep.bf.toLocaleString('en-US')+'.',
       ['Forecast: '+rep.bf.toLocaleString('en-US')+'. Bought: '+rep.buys.toLocaleString('en-US')+'. The money: '+$L.money(rep.ppv)+'.'].concat(H.filter(function(h){return h.v>0;}).map(function(h){return 'Helped: '+h.t+'.';})).concat(H.filter(function(h){return h.v<0;}).map(function(h){return 'Hurt: '+h.t+'.';})),bd>=0?'good':'bad');}
-  if(rep.mkt&&rep.city&&rep.mkt.now!==rep.mkt.was){var mw=$L.mktWord(rep.mkt.now),mo=$L.mktWord(rep.mkt.was),mu=rep.mkt.now>rep.mkt.was;
+  if(rep.mkt&&rep.city&&rep.mkt.now!==rep.mkt.was){var mw: any=$L.mktWord(rep.mkt.now),mo=$L.mktWord(rep.mkt.was),mu=rep.mkt.now>rep.mkt.was;
     add('market','The market',rep.city+(mw.w!==mo.w?': now '+mw.w.toLowerCase()+' (was '+mo.w.toLowerCase()+').':(mu?' knows you a little better.':' thinks a little less of you.')),
       [rep.city+(mu?' liked what it saw.':' did not like what it saw.')+' '+mw.d,'A strong market fills a bigger building and buys its tickets earlier. Stay away too long and it cools.'],mu?'good':'bad');}
   var t=L.tv,tl=(t.v/1e6).toFixed(2)+'M watched'+(t.was?(t.v>t.was*1.01?', up on the show’s recent run':(t.v<t.was*0.99?', down on the show’s recent run':', level with the show’s recent run')):'')+'.';
@@ -201,7 +200,7 @@ EVR.rematch=function(S,ev,choice,P,w,o){
 };
 SHOWX.push(function(S,P,show,rep){
   if(P.id!==S.player||!rep.left||S.cal)return;
-  var ev=nightMatter(S,P,rep);if(!ev)return;
+  var ev: any=nightMatter(S,P,rep);if(!ev)return;
   ev.night=rep.left.key;$L.pushEv(S,ev);rep.left.matter=ev.id;
   $L.note(S,'On your desk',ev.text.split('. ')[0]+'.','bad');
 });

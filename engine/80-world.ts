@@ -1,4 +1,3 @@
-// @ts-nocheck
 /* Moved from src/80-world.js (ADR-0001). Names from the rest of the engine come through the bridge, $L. Types come in step 3. */
 import { L as $L } from './_gen/legacy.js';
 import { E, STYLE, activeFeuds, addWrestler, award, cal, chance, clamp, divOk, eligible, feudLabel, feudOf, feudsFor, formTeam, hash, holdLvl, inFeud, isDev, pick, r1, ri, rnd, rosterOf, starG, starMeets, starQ, startFeud, wageFor, wagesWeek, workRate } from './00-core';
@@ -49,7 +48,7 @@ $L.FED_REGION = FED_REGION;
 export function clean(s,n){return String(s==null?'':s).replace(/[<>&"|\n\r]/g,'').replace(/\s+/g,' ').trim().slice(0,n);}
 export function mkFedDef(f,bookerName){
   var z=$L.FED_SIZE[f.size]||$L.FED_SIZE.regional,rg=$L.FED_REGION[f.region]||$L.FED_REGION.midwest,MF=MODELS[f.model]||MODELS.classic,only=MF.gender||null,women=only==='F'||f.women!==false,g1=only||'M';
-  var short=$L.clean(f.short,6).toUpperCase()||'EWF',titles=[{id:'own_w',name:$L.clean(f.title,28)||'World Title',g:g1,lvl:3,holders:[]},{id:'own_m',name:'Television Title',g:g1,lvl:2,holders:[]}];
+  var short=$L.clean(f.short,6).toUpperCase()||'EWF',titles: any=[{id:'own_w',name:$L.clean(f.title,28)||'World Title',g:g1,lvl:3,holders:[]},{id:'own_m',name:'Television Title',g:g1,lvl:2,holders:[]}];
   if(women&&!only)titles.push({id:'own_f',name:'Women’s Title',g:'F',lvl:3,holders:[]});
   titles.push({id:'own_t',name:'Tag Team Titles',g:g1,lvl:2,tag:true,holders:[]});
   return {id:'OWN',mine:true,name:short,full:$L.clean(f.name,40)||'Elite Wrestling Federation',blurb:'Your own promotion.',cash:z.cash,image:z.image,wq:MF.wq||0.5,angles:z.angles,wageMult:z.wageMult,tvRate:z.tvRate,prod:z.prod,net:z.net,flagship:3,
@@ -109,7 +108,7 @@ E.createWrestler=function(S,o){
   var name=$L.clean(o.name,28);if(name.length<2)return {ok:false,msg:'Give them a name first.'};
   if(S.w.some(function(w){return w.name.toLowerCase()===name.toLowerCase();}))return {ok:false,msg:'There is already a '+name+' in the business.'};
   var st=createStats(S,o);
-  var w=addWrestler(S,{name:name,g:o.g==='F'?'F':'M',ovr:st.ovr,style:STYLE[o.style]?o.style:'A',work:st.work,mic:st.mic,align:o.align==='H'?'H':'F',fin:$L.clean(o.fin,24)||null},'FA',null);
+  var w: any=addWrestler(S,{name:name,g:o.g==='F'?'F':'M',ovr:st.ovr,style:STYLE[o.style]?o.style:'A',work:st.work,mic:st.mic,align:o.align==='H'?'H':'F',fin:$L.clean(o.fin,24)||null},'FA',null);
   w.pot=clamp(st.pot,workRate(w),99);w.cr=true;assignGim(w);if(GIMBY[o.gim])w.gim=o.gim;
   if(o.face&&typeof o.face==='object'){w.face={};['h','hr','fh','ms','ey','ns'].forEach(function(k){w.face[k]=clamp(Math.round(+o.face[k]||0),0,9);});w.face.sk=clamp(Math.round(+o.face.sk||0),0,100);w.face.hc=clamp(Math.round(+o.face.hc||0),0,100);}
   if(o.look){var lc=$L.lookClean(o.look);if(lc&&E.lookOk(lc)){lc.name=w.name;w.look=lc;var lf=$L.lookFin(w);if(lf)w.fin=lf.name;}}   // made in Create a Player (src/86-looks.js)
@@ -212,7 +211,7 @@ export function planPromo(S,P,show,ctx){
     if(cs.length){var tg=pick(S,cs);if(startFeud(S,P,tg,w,30,w.name+' took an unscripted shot at '+tg.name))extra=' An unscripted remark about '+tg.name+' has started something.';}
   }
   if(ov>=80)gainXp(S,3);if(starQ(ov)>=17)award(S,'ACH_PROMO');
-  var seg=angle(kind==='interview'?'Opening promo':'Opening '+$L.PKIND[kind].n.toLowerCase(),text+extra,ov);
+  var seg: any=angle(kind==='interview'?'Opening promo':'Opening '+$L.PKIND[kind].n.toLowerCase(),text+extra,ov);
   seg.rub={d:D,c:pp.C,ch:pp.Ch,cr:pp.Cr};seg.roll=r;seg.who=w.name;if(pp.f&&pl.topic==='rival')seg.feud=pp.f.id;
   seg.bc=[{t:'note',x:text+extra},{t:'note',x:rollText(r).trim()},{t:'col',x:promoWords(D,pp.C,pp.Ch,pp.Cr)},{t:'col',x:ov>=80?'That is how you open a show.':(ov>=60?'A solid start to the night.':'Well. We have a long show ahead of us to make up for that.')}];
   return seg;

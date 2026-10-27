@@ -1,4 +1,3 @@
-// @ts-nocheck
 /* Moved from src/88-newco.js (ADR-0001). Names from the rest of the engine come through the bridge, $L. Types come in step 3. */
 import { L as $L } from './_gen/legacy.js';
 import { E, buildPromo, calibrateCosts, calibrateShows, chance, hash, pick, ri, rosterOf } from './00-core';
@@ -33,7 +32,7 @@ export function newCompany(S){
   d.id=id;d.mine=false;d.owner={name:backer,style:pick(S,Object.keys(STYLES)),roots:'tradition',pledge:'chance'};
   d.shows=[{id:id+'_1',name:f.show,mult:1}];d.titles.forEach(function(x,i){x.id=id+'_t'+i;});
   d.draft.n=indie?16:12;
-  var P=buildPromo(S,d,{});
+  var P: any=buildPromo(S,d,{});
   var C=JSON.parse(JSON.stringify(S));C.cal=true;C.player=null;calibrateShows(S,C,id);calibrateCosts(S,id);
   P.size0=rosterOf(S,id).length;P.rel=0;P.born=S.week;
   $L.news(S,'world',(indie?'A well-known indie circuit has grown up: ':'A new company is on the air: ')+full+' ('+short+'), backed by '+backer+', has signed '+P.size0+' free agents.');

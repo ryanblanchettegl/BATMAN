@@ -138,7 +138,9 @@ Phase A, Foundation: rebuild the simulation from one shared ES5 closure into Typ
 - [x] Step 5 (first part): `test-lint.js` bans the clock in the engine and screen writes to `S` (one found and fixed: `E.annualSeen`).
 - [x] Step 6: CI runs every headless test (four shards), the golden games and the lint on every push, the browser suites nightly.
 - [x] Step 7 (first part): `CLAUDE.md` points at `engine/`; `test-buildorder.js` reads the modules.
-- [ ] Next: type the modules one at a time (drop `@ts-nocheck`), turn wraps into named hook lists, fix the logged bugs (`docs/rebuild-bugs.md`).
+- [x] The checker is on for every module (28 October): no `@ts-nocheck` left, non-strict (`tools/ts-check-pass.js`).
+- [x] The logged bug fixed: the match context set `rep` twice.
+- [ ] Next: strict types module by module (replace `any` with the state types), turn wraps into named hook lists.
 
 ### 0ao. The four moves that close the gap (Ryan, 23 October: "add this to the next tasks"; the review in `docs/plans/WrestleCraft-review-and-long-term-roadmap.pdf`, section 2)
 

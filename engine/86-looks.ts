@@ -1,4 +1,3 @@
-// @ts-nocheck
 /* Moved from src/86-looks.js (ADR-0001). Names from the rest of the engine come through the bridge, $L. Types come in step 3. */
 import { L as $L } from './_gen/legacy.js';
 import { E, clamp, h01 } from './00-core';
@@ -40,7 +39,7 @@ var ft=null;if(ap.features&&typeof ap.features==='object'){ft={};['eyes','nose',
       cheeks:lkId(ap.cheeks),eye_colour:lkId(ap.eye_colour),mood:lkId(ap.mood),hair_shine:ap.hair_shine===false?false:undefined,
       scars:Array.isArray(ap.scars)?ap.scars.map(lkId).filter(function(v){return !!v;}).slice(0,6):undefined});}
   if(x.attires&&typeof x.attires==='object'){var at={};$L.LOOK_ATTIRES.forEach(function(k){var a=x.attires[k];if(!a||typeof a!=='object')return;
-    var eq=a.equipped_assets||{},e={};$L.LOOK_PARTS.forEach(function(p){var v=lkId(eq[p]);if(v)e[p]=v;});
+    var eq=a.equipped_assets||{},e: any={};$L.LOOK_PARTS.forEach(function(p){var v=lkId(eq[p]);if(v)e[p]=v;});
     if(Array.isArray(eq.accessories))e.accessories=eq.accessories.map(lkId).filter(function(v){return !!v;}).slice(0,8);
     var pal={};$L.LOOK_SLOTS.forEach(function(s){var v=lkId((a.palette_slots||{})[s]);if(v)pal[s]=v;});
     var lay=(Array.isArray(a.custom_layers)?a.custom_layers:[]).slice(0,16).map(function(l){

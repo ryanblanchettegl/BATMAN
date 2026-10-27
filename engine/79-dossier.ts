@@ -1,4 +1,3 @@
-// @ts-nocheck
 /* Moved from src/79-dossier.js (ADR-0001). Names from the rest of the engine come through the bridge, $L. Types come in step 3. */
 import { L as $L } from './_gen/legacy.js';
 import { E, cal, feudLabel, feudStage, feudsFor, rosterOf } from './00-core';

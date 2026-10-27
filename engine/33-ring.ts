@@ -1,4 +1,3 @@
-// @ts-nocheck
 /* Moved from src/33-ring.js (ADR-0001). Names from the rest of the engine come through the bridge, $L. Types come in step 3. */
 import { L as $L } from './_gen/legacy.js';
 import { E, STIP, avg, clamp, expected, flat, names, starG, startFeud, workRate } from './00-core';
@@ -69,7 +68,7 @@ LIVEK.audible={n:'The crowd has gone quiet',
     if(a[0].align===b[0].align&&!f)why.push('It is '+(a[0].align==='F'?'hero against hero':'villain against villain')+', and nobody knows who to cheer');
     if(f&&f.matches>=3&&f.heat<30)why.push('They have seen this match before and the feud has gone cold');
     var od=E.matchOdds(S,M.m,step.i,M.n);if(!od)return null;
-    var ch=[{n:'Stay with the plan',says:'The match plays out as it was laid out. A quiet crowd stays quiet.'}];
+    var ch: any=[{n:'Stay with the plan',says:'The match plays out as it was laid out. A quiet crowd stays quiet.'}];
     if(M.m.int!=='brutal')ch.push({n:'Take it to the floor',k:'floor',says:'A fight through the seats wakes the building up. It is rougher to watch and harder on their bodies.'});
     if(a[0].align!==b[0].align){var hs=a[0].align==='H'?0:1;ch.push({n:names(M.c.sides[hs])+' cheat'+(M.c.sides[hs].length>1?'':'s')+' to win',k:'cheat',side:hs,bp:1,says:'The crowd comes alive to boo it. '+names(M.c.sides[1-hs])+' '+(M.c.sides[1-hs].length>1?'are':'is')+' protected, and '+(f?'the feud gets hotter.':'a feud starts tonight.')});}
     var us=od.p[0]<od.p[1]?0:1;
@@ -111,7 +110,7 @@ LIVEK.overtime={n:'They are not going home',
     var cc=ws.filter(function(w){return w.cc;})[0];if(cc)why.push(cc.name+' has creative control and is using it');
     if(f&&f.heat>=60&&wr>=72)why.push('The feud is hot and the crowd is with them');
     if(!why.length)return null;
-    var ch=[{n:'Tell the referee to take it home',says:'The match ends in its time. Nothing is lost, and nothing is gained.'}],q,mi=L.card.length-1;
+    var ch: any=[{n:'Tell the referee to take it home',says:'The match ends in its time. Nothing is lost, and nothing is gained.'}],q,mi=L.card.length-1;
     for(q=st.k+1;q<st.steps.length;q++)if(st.steps[q].t==='seg'&&!st.steps[q].cut){
       var sg=st.steps[q].sg,who=(sg.who||[]).map(function(id){return S.w[id];}).filter(Boolean),lab=who.length?$L.segLabel(S,sg):'the writers’ segment';
       ch.push({n:'Give them five more minutes. Cut '+lab,k:'seg',q:q,says:'The match gets longer, and a good one gets better. '+(who.length?names(who)+' will not thank you for losing their time on the show.':'The writers lose their time on the show.')});break;

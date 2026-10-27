@@ -1,4 +1,3 @@
-// @ts-nocheck
 /* Moved from src/93-segments.js (ADR-0001). Names from the rest of the engine come through the bridge, $L. Types come in step 3. */
 import { L as $L } from './_gen/legacy.js';
 import { E, activeFeuds, cal, chance, clamp, eligible, feudOf, feudsFor, flat, formTeam, holdLvl, inFeud, isDev, ri, rnd, starG, startFeud, turn } from './00-core';
@@ -17,7 +16,7 @@ $L.segLen = segLen; $L.segMins = segMins; $L.segSlots = segSlots; $L.segList = s
    They live in S.segs for the show being booked (S.segKey says which show) and are cleared when it runs. */
 export var SEGLEN={S:5,M:10,L:15},SEGLENN={S:'Short',M:'Medium',L:'Long'};
 $L.SEGLEN = SEGLEN; $L.SEGLENN = SEGLENN;
-export var SEGK={
+export var SEGK: any={
   interview:{len:'M',n:'Interview',t:'promo',roles:['Who talks'],d:'One wrestler and a microphone. Graded on how well they talk and how much the crowd cares.'},
   callout:{len:'S',n:'Call-out',t:'promo',roles:['Who speaks','Who they call out'],d:'One calls the other out. It starts a rivalry, or heats one that is already going.'},
   words:{len:'M',n:'War of words',t:'promo',roles:['One rival','The other'],d:'Two rivals trade words in the ring. It heats their feud without anyone throwing a punch.'},

@@ -1,4 +1,3 @@
-// @ts-nocheck
 /* Moved from src/79-people.js (ADR-0001). Names from the rest of the engine come through the bridge, $L. Types come in step 3. */
 import { L as $L } from './_gen/legacy.js';
 import { E, cal, clamp, feudOf, formTeam, hash, holdLvl, rkey, rosterOf, startFeud, titleById, wageFor } from './00-core';
@@ -34,7 +33,7 @@ export function pplWorst(w){var z=zonesOf(w),k='b';['n','s','b','k'].forEach(fun
 export function peopleNow(S){
   bsInit(S);var P=S.promos[S.player],R=rosterOf(S,P.id).filter(function(w){return !w.nw;}),out={},seen={},used=S.apWho||{};
   $L.PPL_ROOMS.forEach(function(k){out[k]=[];});
-  var put=function(room,w,k,why,tone,acts,o){
+  var put=function(room,w,k,why,tone,acts,o?){
     if(!w||seen[w.id]||out[room].length>=(room==='truck'?$L.PPL_MAX+1:$L.PPL_MAX))return false;seen[w.id]=1;
     out[room].push({id:w.id,k:k,why:why,tone:tone||'',acts:acts,with:o&&o.with!=null?o.with:null,story:o&&o.story||null,tid:o&&o.tid||null,duo:!!(o&&o.duo),team:o&&o.team!=null?o.team:null,used:!!used[w.id]});return true;
   };
@@ -230,7 +229,7 @@ E.peopleDo=function(S,wid,act){
 };
 WEEKX.push(function(S){
   // somebody who came to your office to ask for something and was never seen takes it as an answer
-  var N=peopleNow(S);N.truck.forEach(function(p){if(p.k==='argue'&&!p.used){var a=S.w[p.id],b=S.w[p.with];(S.lcd=S.lcd||{})['tm'+p.team]=S.week;relBump(S,a.id,b.id,{bond:-6},{k:'leftit',t:'They went to the booker about it and were never seen.'});}
+  var N: any=peopleNow(S);N.truck.forEach(function(p){if(p.k==='argue'&&!p.used){var a=S.w[p.id],b=S.w[p.with];(S.lcd=S.lcd||{})['tm'+p.team]=S.week;relBump(S,a.id,b.id,{bond:-6},{k:'leftit',t:'They went to the booker about it and were never seen.'});}
     if(/^ask/.test(p.k)&&!p.used){var w=S.w[p.id];(S.lcd=S.lcd||{})['ak'+w.id]=S.week;w.morale=clamp(w.morale-2,0,100);youRemember(S,w,'waited','They came to your office with a request and you never saw them.',-2);}});
   S.apWho={};
 });

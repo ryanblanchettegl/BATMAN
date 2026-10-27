@@ -1,4 +1,3 @@
-// @ts-nocheck
 /* Moved from src/99-staff.js (ADR-0001). Names from the rest of the engine come through the bridge, $L. Types come in step 3. */
 import { L as $L } from './_gen/legacy.js';
 import { E, addWrestler, clamp, flat, hash, rosterOf } from './00-core';
@@ -57,7 +56,7 @@ E.createStaff=function(S,o){
   var name=clean(o.name,28);if(name.length<2)return {ok:false,msg:'Give them a name first.'};
   if(S.w.some(function(w){return w.name.toLowerCase()===name.toLowerCase();}))return {ok:false,msg:'There is already a '+name+' in the business.'};
   var s=L.s,ovr=k==='boss'?clamp(s-10,20,80):(k==='referee'?20:clamp(s-30,15,60));
-  var w=addWrestler(S,{name:name,g:o.g==='F'?'F':'M',ovr:ovr,style:'A',work:clamp(s-25,20,70),mic:k==='referee'?clamp(s-20,20,70):s,align:o.align==='H'?'H':'F',cons:k==='referee'?s+6:s,safe:k==='referee'?s+6:s,cha:s},P.id,null);
+  var w: any=addWrestler(S,{name:name,g:o.g==='F'?'F':'M',ovr:ovr,style:'A',work:clamp(s-25,20,70),mic:k==='referee'?clamp(s-20,20,70):s,align:o.align==='H'?'H':'F',cons:k==='referee'?s+6:s,safe:k==='referee'?s+6:s,cha:s},P.id,null);
   w.nw=true;w.srole=k;staffTag(w,k);w.wage=L.wage;w.con=48;w.morale=80;w.cr=true;w.age=clamp(+o.age||(k==='referee'?34:40),18,75);
   if(o.look){var lc=lookClean(o.look);if(lc&&E.lookOk(lc)){lc.name=w.name;w.look=lc;}}
   staffVoice(S,w);

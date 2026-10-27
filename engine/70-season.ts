@@ -1,4 +1,3 @@
-// @ts-nocheck
 /* Moved from src/70-season.js (ADR-0001). Names from the rest of the engine come through the bridge, $L. Types come in step 3. */
 import { L as $L } from './_gen/legacy.js';
 import { E, avg, award, cal, chance, clamp, dissolveTeam, divOk, feudLabel, holdLvl, isDev, rosterOf, starG, startFeud, teamOf, titleById, titleFull, workRate } from './00-core';

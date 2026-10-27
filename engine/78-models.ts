@@ -1,4 +1,3 @@
-// @ts-nocheck
 /* Moved from src/78-models.js (ADR-0001). Names from the rest of the engine come through the bridge, $L. Types come in step 3. */
 import { L as $L } from './_gen/legacy.js';
 import { E, PRODN, SLOTN, SLOT_REQ, avg, award, cal, chance, clamp, h01, holdLvl, inFeud, pick, r1, rosterOf, workRate } from './00-core';

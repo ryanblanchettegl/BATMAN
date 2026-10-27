@@ -1,4 +1,3 @@
-// @ts-nocheck
 /* Moved from src/99-contracts.js (ADR-0001). Names from the rest of the engine come through the bridge, $L. Types come in step 3. */
 import { L as $L } from './_gen/legacy.js';
 import { E, rosterOf, wageFor } from './00-core';
@@ -30,7 +29,7 @@ export function ctPolicy(S,P,w){
 }
 /** Fee a show: a quarter more than a salaried week spread over the shows, since nothing is promised. */
 export function ctFee(P,wage){var v=wage*1.25/ctWeekly(P);return Math.max(25,v<1000?Math.round(v/10)*10:Math.round(v/50)*50);}
-export function ctAssign(S,w,fee){
+export function ctAssign(S,w,fee?){
   var P=S.promos[w.promo];if(!P)return;w.dl=ctPolicy(S,P,w);w.dlP=w.promo;
   if(w.dl==='show'){w.fee=fee||ctFee(P,w.wage||wageFor(w.ovr,P));w.con=$L.CT_ROLL;}else w.fee=null;
   w.dlc=w.con;

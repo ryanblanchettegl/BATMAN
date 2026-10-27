@@ -1,4 +1,3 @@
-// @ts-nocheck
 /* Moved from src/60-grammar.js (ADR-0001). Names from the rest of the engine come through the bridge, $L. Types come in step 3. */
 import { L as $L } from './_gen/legacy.js';
 import { feudOf, h01, rkey } from './00-core';
@@ -18,7 +17,7 @@ export function gramPick(L,ctx,key){
 }
 export function gramCase(s,m){if(m==='cap')return s.charAt(0).toUpperCase()+s.slice(1);if(m==='up')return s.toUpperCase();if(m==='low')return s.toLowerCase();return s;}
 /** Expand `start` in rule set R with context ctx. key makes the picks repeatable; depth stops runaway rules. */
-export function gram(R,start,ctx,key,depth){
+export function gram(R,start,ctx,key,depth?){
   depth=depth||0;var n=0;
   var src=R[start]?gramPick(R[start],ctx,key+'|'+start):start;
   if(depth>8)return src;

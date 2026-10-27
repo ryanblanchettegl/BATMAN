@@ -1,4 +1,3 @@
-// @ts-nocheck
 /* Moved from src/93-segworld.js (ADR-0001). Names from the rest of the engine come through the bridge, $L. Types come in step 3. */
 import { L as $L } from './_gen/legacy.js';
 import { E, clamp, feudOf, rnd, startFeud } from './00-core';
@@ -42,8 +41,8 @@ export function segkSync(S){
   if(SEGK.__key===key)return;
   Object.keys(SEGK).forEach(function(k){if(SEGK[k]&&SEGK[k].custom)delete SEGK[k];});
   Object.keys($L.SEGK0).forEach(function(k){SEGK[k]=$L.SEGK0[k];});
-  L.forEach(function(k0){var k=segkClean(k0);if(!k)return;
-    if(k.over){var B=$L.SEGK0[k.id],o={};Object.keys(B).forEach(function(x){o[x]=B[x];});o.n=k.n;o.roles=k.roles;if(k.d)o.d=k.d;o.over=k;SEGK[k.id]=o;return;}
+  L.forEach(function(k0){var k: any=segkClean(k0);if(!k)return;
+    if(k.over){var B=$L.SEGK0[k.id],o: any={};Object.keys(B).forEach(function(x){o[x]=B[x];});o.n=k.n;o.roles=k.roles;if(k.d)o.d=k.d;o.over=k;SEGK[k.id]=o;return;}
     if(SEGK[k.id])return;SEGK[k.id]={len:'M',n:k.n,t:k.t,roles:k.roles,d:k.d||(k.t==='promo'?'A promo made for this world.':'An angle made for this world.'),custom:k};});
   Object.defineProperty(SEGK,'__key',{value:key,writable:true,configurable:true,enumerable:false});
 }
@@ -79,7 +78,7 @@ export function segkSync(S){
     if(b&&c.bond)relBump(S,a.id,b.id,{bond:c.bond},{t:why,k:'segment'});
     if(c.lift&&ov>=60)addOvr(P,a,0.5);
     var line=c.line?c.line.replace(/\{a\}/g,a.name).replace(/\{b\}/g,b?b.name:''):(b?a.name+' and '+b.name+': '+c.n.toLowerCase()+'.':a.name+': '+c.n.toLowerCase()+'.');
-    var r=angle(c.t==='promo'?'Promo':'Angle',line+(ov>=72?' The crowd loves it.':(ov<45?' It falls flat.':'')),ov);
+    var r: any=angle(c.t==='promo'?'Promo':'Angle',line+(ov>=72?' The crowd loves it.':(ov<45?' It falls flat.':'')),ov);
     r.booked=c.id;r.ids=sg.who.slice();if(f&&f.id!=null)r.feud=f.id;return r;
   };
 })();

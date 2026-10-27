@@ -1,4 +1,3 @@
-// @ts-nocheck
 /* Moved from src/87-create.js (ADR-0001). Names from the rest of the engine come through the bridge, $L. Types come in step 3. */
 import { L as $L } from './_gen/legacy.js';
 import { E, cal, capFor, clamp, hash, names, rnd, rosterOf, ticket, titleById } from './00-core';
@@ -36,7 +35,7 @@ $L.MAKE_TITLE_WORDS = MAKE_TITLE_WORDS;
 export var MAKE_SIZE=[[0.75,'A second show'],[0.55,'A mid-size show'],[0,'A small show']];
 $L.MAKE_SIZE = MAKE_SIZE;
 
-export function makeWrestlers(S,P,g){return rosterOf(S,P.id).filter(function(w){return !w.nw&&!w.rt&&(!g||w.g===g);});}
+export function makeWrestlers(S,P,g?){return rosterOf(S,P.id).filter(function(w){return !w.nw&&!w.rt&&(!g||w.g===g);});}
 export function makeSizeWord(m){for(var i=0;i<$L.MAKE_SIZE.length;i++)if(m>=$L.MAKE_SIZE[i][0])return m>=0.95?'The main show':$L.MAKE_SIZE[i][1];return 'A small show';}
 export function makeShowIncome(P,sh){var mx=mixOf(P),d=$L.demand(P,sh,1);return $L.viewersK(P,sh,1)*P.tvRate*mx.tv+Math.min(capFor(d),d*1.04)*ticket(P,sh)*mx.gate;}
 export function makeCleanName(s,max){return String(s==null?'':s).replace(/\s+/g,' ').trim().slice(0,max||40);}
@@ -82,7 +81,7 @@ export function makeShowCheck(S,P){
 }
 /** Put a new weekly show on a company's schedule. The overheads grow with it, as they did for the shows it started with. */
 export function addShow(S,P,name){
-  var sh={id:'s'+S.nid++,name:name,brand:null,mult:0.4,since:S.week},first=P.shows[0];
+  var sh: any={id:'s'+S.nid++,name:name,brand:null,mult:0.4,since:S.week},first=P.shows[0];
   var inc=makeShowIncome(P,sh);sh.inc=Math.round(inc);
   if(P.inc0>0){P.fixed=Math.round((P.fixed||0)*(P.inc0+inc)/P.inc0);P.inc0+=inc;}
   if(first){P.base[sh.id]=P.base[first.id];P.mainB[sh.id]=P.mainB[first.id];P.starB[sh.id]=P.starB[first.id];}
@@ -100,7 +99,7 @@ E.makeShow=function(S,o){
   if(P.shows.some(function(x){return x.name.toLowerCase()===name.toLowerCase();}))return {ok:false,msg:'You already have a show called '+name+'.'};
   var r=rollCheck(S,makeShowCheck(S,P));S.showAsk=S.week;
   if(!r.ok)return {ok:false,roll:r,msg:rollText(r)+'The network is not ready to give '+P.name+' another show. Ask again in '+$L.MAKE_WAIT+' weeks.'};
-  var cost=makeShowCost(P),occ=showOccasions(S,P).filter(function(x){return x.open;})[0],mk=mkOf(S,P);P.cash-=cost;var sh=addShow(S,P,name);
+  var cost=makeShowCost(P),occ=showOccasions(S,P).filter(function(x){return x.open;})[0],mk=mkOf(S,P);P.cash-=cost;var sh: any=addShow(S,P,name);
   mk.show=S.week;mk.img=P.image;sh.why=occ.n;mkLog(P,'show',name,occ.n).w=S.week;
   $L.news(S,'world',P.name+' is launching a new weekly show, '+name+'. '+occ.n+': the network has given it another night.');
   $L.note(S,'A new weekly show',name+' starts next week. Its first night is an occasion.','good');
@@ -131,7 +130,7 @@ export function makeTitleLevels(P,g,tag){
 /** Every occasion on which a company adds a belt, and whether it is open for this one now. Each says what the belt would be. */
 export function beltOccasions(S,P){
   var MD=modelOf(P),c=mkCount(S,P),out=[],gs=MD.gender?[MD.gender]:['M','F'],two=gs.length>1;
-  var has=function(g,tag,lvl){return P.titles.some(function(t){return t.g===g&&!!t.tag===!!tag&&(lvl==null||t.lvl===lvl);});};
+  var has=function(g,tag,lvl?){return P.titles.some(function(t){return t.g===g&&!!t.tag===!!tag&&(lvl==null||t.lvl===lvl);});};
   var gw=function(g){return g==='F'?'women':'men';},pre=function(g){return two?(g==='F'?'women’s ':'men’s '):'';};
   gs.forEach(function(g){
     var n=c[g]||0,teams=c['t'+g]||0,ok;
@@ -185,7 +184,7 @@ E.makeTitle=function(S,o){
   if(name.length<3)return {ok:false,msg:'Give the belt a name first.'};
   if(P.titles.some(function(t){return t.name.toLowerCase()===name.toLowerCase();}))return {ok:false,msg:'You already have a belt called '+name+'.'};
   var x=beltOccasion(S,P,o),cost=makeTitleCost(P),mk=mkOf(S,P);
-  P.cash-=cost;var t=addTitle(S,P,{name:name,g:x.g,lvl:x.lvl,tag:x.tag});
+  P.cash-=cost;var t: any=addTitle(S,P,{name:name,g:x.g,lvl:x.lvl,tag:x.tag});
   mk.belt=S.week;t.why=x.n;mkLog(P,'belt',name,x.n).w=S.week;
   if(x.show){var sh=P.shows.filter(function(q){return q.id===x.show;})[0];if(sh)sh.belt=t.id;}
   $L.news(S,'title',P.name+' unveiled a new belt: the '+name+'. '+x.n+'.');
@@ -281,7 +280,7 @@ export function rivalGrow(S,P){
     else if(kind==='second'||kind==='third'){var free=$L.MAKE_TITLE_WORDS.filter(function(w){return w!=='Television'&&!P.titles.some(function(t){return t.name.indexOf(w)>=0;});});if(!free.length)return;word=makePick(S,free);}
     var nm=P.name+' '+(x.g==='F'&&two?'Women’s ':'')+(word?word+' ':(kind==='div'?'World ':''))+(x.tag?'Tag Team Titles':'Title');
     if(P.titles.some(function(t){return t.name===nm;}))return;
-    var t=addTitle(S,P,{name:nm,g:x.g,lvl:x.lvl,tag:x.tag});t.why=x.n;mk.belt=S.week;W.belt=S.week;mkLog(P,'belt',nm,x.n).w=S.week;
+    var t: any=addTitle(S,P,{name:nm,g:x.g,lvl:x.lvl,tag:x.tag});t.why=x.n;mk.belt=S.week;W.belt=S.week;mkLog(P,'belt',nm,x.n).w=S.week;
     if(x.show){var s2=P.shows.filter(function(q){return q.id===x.show;})[0];if(s2)s2.belt=t.id;}
     $L.news(S,'title',P.name+' introduced the '+nm+'. '+x.n+'.');
     $L.note(S,'Big news',P.name+' has a new belt: the '+nm+'.','');

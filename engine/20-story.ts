@@ -1,4 +1,3 @@
-// @ts-nocheck
 /* Moved from src/20-story.js (ADR-0001). Names from the rest of the engine come through the bridge, $L. Types come in step 3. */
 import { L as $L } from './_gen/legacy.js';
 import { activeFeuds, award, cal, chance, clamp, dissolveTeam, feudsFor, formTeam, holdLvl, inFeud, partnerOf, pick, ri, rkey, rnd, rosterOf, startFeud, teamOf, titleById, turn } from './00-core';
@@ -90,7 +89,7 @@ $L.FEUDLETS = FEUDLETS;
 export function genAngle(S,P,show,ctx){
   var pool=ctx.pool,inP=ctx.inP,ang=ctx.angled,opts=[];
   function ok(id){return inP[id]&&!ang[id]&&!(S.w[id].away>=S.week);}
-  function mark(){for(var i=0;i<arguments.length;i++)ang[arguments[i].id]=1;}
+  function mark(...xs){for(var i=0;i<xs.length;i++)ang[xs[i].id]=1;}
   var my=S.mystery&&S.mystery.promo===P.id?S.mystery:null;
   // feud storylets
   activeFeuds(S).forEach(function(f){
