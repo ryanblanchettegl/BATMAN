@@ -33,4 +33,4 @@ node team/decide.js <Bill|Ryan> <area> "<the decision in one plain sentence>" [-
 - Every few sessions, trim: fold old DECISIONS lines that were replaced, clear stale NOW lines, close answered OPEN lines.
 
 ## 5. Where things are
-- Rules for the game: `CLAUDE.md` (Ryan). Plans: `docs/plans/`, `Research/docs/plans/`. Ryan's architecture: `Research/docs/ARCHITECTURE.md`. Ryan's own skills: `Research/.claude/skills/` (design-decision, free-tools-first, ts-engine-port, wrestlecraft-architecture, efficiency-review).
+- Rules for the game: `CLAUDE.md` (Ryan). Plans: `docs/plans/`, `Research/docs/plans/`. Ryan's architecture: `Research/docs/ARCHITECTURE.md`. Project skills: `.claude/skills/` (wrestlecraft-team, a copy of this file; Ryan's design-decision, free-tools-first, ts-engine-port, wrestlecraft-architecture, efficiency-review, moved from `Research/.claude/skills/` on 28 October). `.claude/` is not in git, so this file stays the source: edit it here, then copy it over.
