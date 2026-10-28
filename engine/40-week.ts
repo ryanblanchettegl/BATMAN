@@ -11,7 +11,7 @@ export function weekShows(S,P,w?){
   if(c.wom===4&&$L.evList(S,P)[c.month].t!=='dark')out.push({id:'big',big:true,flag:c.month===P.flagship,brand:null,name:P.name+' '+$L.evName(S,P,c.month),rule:$L.evRule(S,P,c.month),ty:$L.evList(S,P)[c.month].t});
   return out;
 }
-export function startWeek(S){var P=S.promos[S.player];S.queue=weekShows(S,P);S.qi=0;S.card=[];$L.grantBP(S);S.inbox=S.inbox.filter(function(e){return !e.done;});genEvents(S);}
+export function startWeek(S){var P=S.promos[S.player];S.queue=weekShows(S,P);S.qi=0;S.card=[];$L.grantBP(S);S.inbox=S.inbox.filter(function(e){return !e.done;});$L.dirRead(S);genEvents(S);}
 export function leaveCompany(S,w,why,quiet?){
   var P=S.promos[w.promo];if(!P)return;
   vacateFor(S,P,w,why,quiet);var tm=teamOf(S,w);if(tm)dissolveTeam(S,tm);$L.leaveStable(S,w);w.mgr=null;S.w.forEach(function(x){if(x.mgr===w.id)x.mgr=null;});

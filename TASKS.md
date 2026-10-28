@@ -229,9 +229,9 @@ A pacing layer that decides when trouble reaches the desk: it reads how tense th
 
 - [x] Gate 1: the blueprint, widened 28 October to one gate for desk matters, calls on the air and knocks at the door, with today's numbers (about 5 matters a week, up to 14, never a quiet week; 2.6 calls a show).
 - [x] Gate 2: the questions, answered 28 October (written into the blueprint, section 12): quiet then a fire; the bigger matter first and waiting costs; a word on the desk; held matters listed with Pull forward for one action point; clean after an A; about one chance in three; one headline and two threads, two calls a weekly show and three on a big night; a taste changeable at a cost; all three styles at once; old saves get The Promoter, one Director per booker.
-- [ ] Gate 3: Ryan's go-ahead.
+- [x] Gate 3: Ryan's go-ahead, 28 October: "sure".
 
-- [ ] Step 1: the tension reading and its eight-week history, headless only (`test-director.js`). Nothing in play changes.
+- [x] Step 1: the tension reading and its eight-week history, headless only (`engine/99-director.ts`, `test-director.js`; 28 October). Nothing in play changes: the golden games leave `S.dir` out.
 - [ ] Step 2: `genEvents()` asks the Director how many events this week; compare 60 weeks before and after.
 - [ ] Step 3: tag every event maker as a problem, a chance or colour, and let tension pick between them.
 - [ ] Step 4: the three styles, chosen at the start of a game and shown on Career; old saves get The Promoter.
