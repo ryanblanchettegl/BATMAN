@@ -155,6 +155,11 @@ export function dirClose(S: any) {
     const w = e.w != null ? S.w[e.w] : null;
     if (w && w.promo === S.player) { w.morale = clamp(w.morale - 6, 0, 100); $L.youRemember(S, w, 'ignored', 'They came to you and you never got to it.', -5); }
   });
+  // a chance that lapsed was somebody's moment missed: they are a little less happy (Ryan, 28 October)
+  d.held.filter((e: any) => back.indexOf(e) < 0 && dirTag(e) === 'chance').forEach((e: any) => {
+    const w = e.w != null ? S.w[e.w] : null;
+    if (w && w.promo === S.player) w.morale = clamp(w.morale - 4, 0, 100);
+  });
   // and the owner notices what was let slide: a lapsed problem costs trust, a missed chance a little (Ryan, 28 October)
   const lapsed = d.held.filter((e: any) => back.indexOf(e) < 0 && dirTag(e) !== 'colour');
   if (lapsed.length && !S.owner.me) {

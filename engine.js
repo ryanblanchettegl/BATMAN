@@ -35042,6 +35042,10 @@
         L.youRemember(S, w, "ignored", "They came to you and you never got to it.", -5);
       }
     });
+    d.held.filter((e) => back.indexOf(e) < 0 && dirTag(e) === "chance").forEach((e) => {
+      const w = e.w != null ? S.w[e.w] : null;
+      if (w && w.promo === S.player) w.morale = clamp(w.morale - 4, 0, 100);
+    });
     const lapsed = d.held.filter((e) => back.indexOf(e) < 0 && dirTag(e) !== "colour");
     if (lapsed.length && !S.owner.me) {
       const cost = lapsed.reduce((a, e) => a + (dirTag(e) === "problem" ? 2 : 0.75), 0);

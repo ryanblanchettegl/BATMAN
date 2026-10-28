@@ -232,7 +232,7 @@ A pacing layer that decides when trouble reaches the desk: it reads how tense th
 - [x] Gate 3: Ryan's go-ahead, 28 October: "sure".
 
 - [x] Step 1: the tension reading and its eight-week history, headless only (`engine/99-director.ts`, `test-director.js`; 28 October). Nothing in play changes: the golden games leave `S.dir` out.
-- [ ] Step 2: `genEvents()` asks the Director how many events this week; compare 60 weeks before and after.
+- [x] Step 2: the gate for the desk (28 October). Every matter that needs an answer goes through `dirGate()` in `pushEv()`: one headline and two threads a week plus anything forced, the rest held ("Also this week", Pull forward for one action point), a show at A or better may end clean. Calm weeks bring problems first; a lapsed problem costs the person's mood and the owner's trust, a lapsed chance a little of both. Before and after (48 weeks, three games): about 4.5 matters a week and up to 12, now about 3.5 and up to 7. The golden games and scenario references were re-recorded; `test-balance.js` b2 now averages three seeds (one seed swings by several points on main too), `test-writers.js` expects a pitch one week in four, `test-archive.js` allows 3.5 KB a week by year four.
 - [ ] Step 3: tag every event maker as a problem, a chance or colour, and let tension pick between them.
 - [ ] Step 4: the three styles, chosen at the start of a game and shown on Career; old saves get The Promoter.
 - [ ] Step 5: event sizes and the rhythm around big nights.
