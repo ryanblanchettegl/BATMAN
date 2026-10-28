@@ -35042,6 +35042,12 @@
         L.youRemember(S, w, "ignored", "They came to you and you never got to it.", -5);
       }
     });
+    const lapsed = d.held.filter((e) => back.indexOf(e) < 0 && dirTag(e) !== "colour");
+    if (lapsed.length && !S.owner.me) {
+      const cost = lapsed.reduce((a, e) => a + (dirTag(e) === "problem" ? 2 : 0.75), 0);
+      S.owner.trust = clamp(S.owner.trust - cost, 0, 100);
+      L.note(S, "The owner", lapsed.length === 1 ? "Something on your desk was let slide, and the owner noticed." : lapsed.length + " things were let slide, and the owner noticed.", "bad");
+    }
     d.held = [];
     back.forEach((e) => {
       if (dirTag(e) === "problem" && e.w != null && S.w[e.w]) S.w[e.w].morale = clamp(S.w[e.w].morale - 2, 0, 100);
@@ -35049,7 +35055,7 @@
     const all = back.concat(offers);
     if (!all.length) return;
     const t = d.t.length ? d.t[d.t.length - 1] : 40;
-    const wantChance = L.h01("dh" + S.seed + ":" + S.week) < 0.15 + 0.4 * t / 100;
+    const wantChance = L.h01("dh" + S.seed + ":" + S.week) < 0.05 + 0.6 * t / 100;
     const byW = (a, b) => dirWeight(S, b) - dirWeight(S, a) || a.id - b.id;
     const pool = all.slice().sort(byW);
     const pref = pool.filter((e) => dirTag(e) === (wantChance ? "chance" : "problem"));
@@ -35058,6 +35064,8 @@
     dirAdmit(S, head, true);
     head.head = 1;
     const open = DIR_BUDGET - 1;
+    const calm = t < 55;
+    if (calm) rest.sort((a, b) => (dirTag(b) === "problem" ? 1 : 0) - (dirTag(a) === "problem" ? 1 : 0) || byW(a, b));
     rest.forEach((e) => {
       if (d.n < open && dirTag(e) !== "colour") dirAdmit(S, e, true);
       else dirHold(S, e);

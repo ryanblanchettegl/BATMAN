@@ -155,6 +155,13 @@ export function dirClose(S: any) {
     const w = e.w != null ? S.w[e.w] : null;
     if (w && w.promo === S.player) { w.morale = clamp(w.morale - 6, 0, 100); $L.youRemember(S, w, 'ignored', 'They came to you and you never got to it.', -5); }
   });
+  // and the owner notices what was let slide: a lapsed problem costs trust, a missed chance a little (Ryan, 28 October)
+  const lapsed = d.held.filter((e: any) => back.indexOf(e) < 0 && dirTag(e) !== 'colour');
+  if (lapsed.length && !S.owner.me) {
+    const cost = lapsed.reduce((a: number, e: any) => a + (dirTag(e) === 'problem' ? 2 : 0.75), 0);
+    S.owner.trust = clamp(S.owner.trust - cost, 0, 100);
+    $L.note(S, 'The owner', lapsed.length === 1 ? 'Something on your desk was let slide, and the owner noticed.' : lapsed.length + ' things were let slide, and the owner noticed.', 'bad');
+  }
   d.held = [];
   // waiting costs: somebody in a held problem loses a little mood each week it waits
   back.forEach((e: any) => { if (dirTag(e) === 'problem' && e.w != null && S.w[e.w]) S.w[e.w].morale = clamp(S.w[e.w].morale - 2, 0, 100); });
@@ -162,7 +169,7 @@ export function dirClose(S: any) {
   if (!all.length) return;
   const t = d.t.length ? d.t[d.t.length - 1] : 40;
   // the headline: a chance about one week in three on average, more often when tense (a lifeline), less when calm
-  const wantChance = $L.h01('dh' + S.seed + ':' + S.week) < 0.15 + 0.4 * t / 100;
+  const wantChance = $L.h01('dh' + S.seed + ':' + S.week) < 0.05 + 0.6 * t / 100;   // about one in three on average: 0.17 when calm (20), 0.47 when tense (70)
   const byW = (a: any, b: any) => dirWeight(S, b) - dirWeight(S, a) || a.id - b.id;
   const pool = all.slice().sort(byW);
   const pref = pool.filter((e: any) => dirTag(e) === (wantChance ? 'chance' : 'problem'));
@@ -171,6 +178,9 @@ export function dirClose(S: any) {
   dirAdmit(S, head, true); head.head = 1;
   // the opening pick leaves the last slot for what the week's shows leave behind (the hook)
   const open = DIR_BUDGET - 1;
+  // a calm company meets trouble (Ryan, 28 October): when tension is low the threads take problems first
+  const calm = t < 55;
+  if (calm) rest.sort((a: any, b: any) => (dirTag(b) === 'problem' ? 1 : 0) - (dirTag(a) === 'problem' ? 1 : 0) || byW(a, b));
   rest.forEach((e: any) => { if (d.n < open && dirTag(e) !== 'colour') dirAdmit(S, e, true); else dirHold(S, e); });
   // if a slot is still free, a bit of colour may take it
   d.held.slice().forEach((e: any) => { if (d.n < open && dirTag(e) === 'colour') { d.held.splice(d.held.indexOf(e), 1); dirAdmit(S, e, true); } });
