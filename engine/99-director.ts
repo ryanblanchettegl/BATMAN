@@ -102,7 +102,13 @@ export const DIR_STYLES: any = {
   purist: { n: 'The Purist', d: 'Slow burns. Fewer matters, more about people than money; shocks are rare.', budget: () => 2, tv: 2, big: 2, lean: -0.05 }
 };
 export function dirStyle(S: any) { const st = dirInit(S).st; return DIR_STYLES[st] || DIR_STYLES.promoter; }
-export function dirBudget(S: any) { return dirStyle(S).budget(S); }
+// step 5, the rhythm around big nights: the big event's month builds (its week and the one before carry one more),
+// and the week after a big night is calm (one fewer), unless the night itself left a problem (its hook still comes)
+export function dirRhythm(S: any, wk?: number) {
+  const w = wk || S.week, wom = $L.cal(w).wom;
+  return wom === 3 || wom === 4 ? 1 : wom === 1 && w > 1 ? -1 : 0;
+}
+export function dirBudget(S: any, wk?: number) { const w0 = S.week; if (wk) S.week = wk; const b = Math.max(1, dirStyle(S).budget(S) + dirRhythm(S, wk)); S.week = w0; return b; }
 export function dirCalls(S: any, big: boolean) { const y = dirStyle(S); return big ? y.big : y.tv; }
 const DIR_HOLD_WEEKS = 3;        // a held matter whose time has passed is let go
 const DIR_A = 85;                // a show at A or better may end clean (GRADES in 98-words.ts)
@@ -147,7 +153,7 @@ export function dirGate(S: any, ev: any) {
   }
   if (d.batch) { d.batch.push(ev); return true; }             // the week's opening matters are picked together
   // after the week's last show a matter waits for next week's desk, so it is counted there
-  if (S.qi >= S.queue.length) { if ((d.late || 0) < dirBudget(S) - 1) { ev.dir = 1; d.late = (d.late || 0) + 1; return false; } dirHold(S, ev); return true; }
+  if (S.qi >= S.queue.length) { if ((d.late || 0) < dirBudget(S, S.week + 1) - 1) { ev.dir = 1; d.late = (d.late || 0) + 1; return false; } dirHold(S, ev); return true; }
   if (d.n < dirBudget(S) - (d.hook ? 0 : 1)) { ev.dir = 1; d.n++; return false; }   // a slot stays free for the show's hook
   dirHold(S, ev); return true;
 }
@@ -232,5 +238,6 @@ E.dirSetStyle = function (S: any, st: string) {
   if (cost) S.owner.trust = clamp(S.owner.trust - cost, 0, 100);
   d.st = st; return { ok: true, msg: DIR_STYLES[st].n + ' it is.' + (cost ? ' The owner wonders why the office keeps changing its mind.' : ''), cost };
 };
+E.dirBudget = dirBudget;
 $L.dirCalls = dirCalls;
 $L.dirGate = dirGate; $L.dirOpen = dirOpen; $L.dirClose = dirClose;

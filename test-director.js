@@ -57,7 +57,7 @@ E.useUniverse(JSON.parse(fs.readFileSync('universes/parody.json', 'utf8')));
 // step 2, the gate: one headline and two threads a week (plus what is forced), the rest held, and Pull forward
 { const S = E.newGame('ewe', 3, { name: 'R' }); let over = 0, heads = 0, forcedHeld = 0, pulled = 0, weeks = 0; const seen = new Set();
   for (let wk = 1; wk <= 48 && !S.over; wk++) {
-    let counted = 0;
+    let counted = 0; const cap = E.dirBudget(S);
     const tally = () => S.inbox.filter(e => !seen.has(e.id) && e.choices).forEach(e => { seen.add(e.id); if (E.dirTag(e) !== 'forced' && e.dir) counted++; if (e.head) heads++; });
     tally();
     (S.dir.held || []).forEach(e => { if (E.dirTag(e) === 'forced') forcedHeld++; });
@@ -66,10 +66,10 @@ E.useUniverse(JSON.parse(fs.readFileSync('universes/parody.json', 'utf8')));
     S.inbox.filter(e => !e.done).forEach(e => E.resolveEvent(S, e.id, e.type === 'handover' ? 0 : 1));
     if (S.owner.pending) E.setCreed(S, { style: 'merit', roots: 'tradition', pledge: 'stable' });
     while (S.qi < S.queue.length) { const c = E.suggest(S), pr = E.preShow(S, c); if (pr) { E.resolvePre(S, c, 0); E.fitShow(S, c); } if (E.validate(S, c).errors.length) { S.qi++; continue; } E.runPlayerShow(S, c); tally(); S.inbox.filter(e => !e.done).forEach(e => E.resolveEvent(S, e.id, 1)); }
-    if (counted > 3) over++; weeks++;
+    if (counted > cap) over++; weeks++;
     E.endWeek(S);
   }
-  ok(over === 0, 'no week brings more than one headline and two threads, besides what is forced (' + over + ' weeks over)');
+  ok(over === 0, 'no week brings more than its cap (one headline and two threads, one more as a big night nears, one fewer after), besides what is forced (' + over + ' weeks over)');
   ok(heads >= weeks / 2, 'most weeks open on a headline (' + heads + ' in ' + weeks + ')');
   ok(forcedHeld === 0, 'a forced matter (a date, a deal, an order) is never held');
   ok(pulled === 1, 'something was held at least once, so Pull forward could be tried');
@@ -98,6 +98,10 @@ E.useUniverse(JSON.parse(fs.readFileSync('universes/parody.json', 'utf8')));
   for (let wk = 0; wk < 2; wk++) E.endWeek(S); const t0 = S.owner.trust, r = E.dirSetStyle(S, 'purist');
   ok(r.ok && S.dir.st === 'purist' && (S.owner.me || S.owner.trust < t0), 'later it costs a little of the owner\'s trust');
   const I = E.newGame('ewe', 4, { name: 'R', iron: true }); E.endWeek(I); E.dirInfo(I); ok(!E.dirSetStyle(I, 'carny').ok, 'iron man keeps the style for the whole game'); }
+// step 5, the rhythm: the big night's month builds, the week after is calm
+{ const S = E.newGame('ewe', 3, { name: 'R' }); const at = wk => { S.week = wk; return E.dirBudget(S); }, w0 = S.week;
+  ok(at(3) > at(2) && at(4) > at(2), 'the weeks before a big night carry more (' + at(2) + ', ' + at(3) + ', ' + at(4) + ')');
+  ok(at(5) < at(2), 'the week after a big night is calm (' + at(5) + ')'); S.week = w0; }
 fails.forEach(f => console.log('FAIL', f));
 console.log(fails.length ? 'test-director: ' + fails.length + ' failures' : 'test-director: all passed');
 process.exit(fails.length ? 1 : 0);
