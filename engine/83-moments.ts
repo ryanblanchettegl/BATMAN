@@ -211,7 +211,7 @@ MOM.wrongHero={
   }
 };
 /* for tests: build a moment now, if the story for it is in place, and put it in the inbox */
-E.momentForce=function(S,id){var P=S.promos[S.player],ev=$L.MOM[id]&&$L.MOM[id].make(S,P,rosterOf(S,P.id));if(!ev)return null;ev.type='mom';ev.mid=id;return pushEv(S,ev);};
+E.momentForce=function(S,id){var P=S.promos[S.player],ev=$L.MOM[id]&&$L.MOM[id].make(S,P,rosterOf(S,P.id));if(!ev)return null;ev.type='mom';ev.mid=id;ev.dir=1;return pushEv(S,ev);};   // forced for a test: the Director lets it through
 
 // hand this module's names back to the bridge once more, in case top-level code reassigned one
 $L.MOM = MOM;

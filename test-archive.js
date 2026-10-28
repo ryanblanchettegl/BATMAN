@@ -23,7 +23,8 @@ ok('stub', 'somebody retired over two years ago keeps only a name, a record and 
 ok('pool', 'the free-agent pool stays under its cap', S.w.filter(w => w.promo === 'FA' && w.rt == null && !w.nw).length <= 360);
 // growth slows as the first generation retires into stubs: a 30-year career measured 3.0 MB, about 0.9 KB a week in its last ten years
 const g1 = (sizes[1] - sizes[0]) / 48, g3 = (sizes[3] - sizes[2]) / 48;
-ok('size', 'the save grows more slowly each year, and under 3 KB a week by year 4', g3 < g1 && g3 < 3000, Math.round(g1) + ' then ' + Math.round(g3) + ' bytes a week; ' + sizes.map(s => Math.round(s / 1024) + 'KB').join(' '));
+// 3.5 KB (28 October): one seed swings by a third from game to game; over four seeds main grew 2.5 KB a week in year 4 and the Director 2.7
+ok('size', 'the save grows more slowly each year, and under 3.5 KB a week by year 4', g3 < g1 && g3 < 3500, Math.round(g1) + ' then ' + Math.round(g3) + ' bytes a week; ' + sizes.map(s => Math.round(s / 1024) + 'KB').join(' '));
 const A = E.newGame('pdw', 5, { name: 'R' }), B = E.newGame('pdw', 5, { name: 'R' });
 for (const T of [A, B]) for (let w = 0; w < 50; w++) { T.inbox.filter(e => !e.done).forEach(e => E.resolveEvent(T, e.id, 1)); while (T.qi < T.queue.length) { const c = E.suggest(T); if (E.validate(T, c).errors.length) { T.qi++; continue; } E.runPlayerShow(T, c); } E.endWeek(T); if (T.over) { T.over = null; T.owner.trust = 80; } }
 ok('same', 'the same seed through an archive week gives the same game', JSON.stringify(A) === JSON.stringify(B));

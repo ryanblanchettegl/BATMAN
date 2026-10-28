@@ -54,6 +54,35 @@ E.useUniverse(JSON.parse(fs.readFileSync('universes/parody.json', 'utf8')));
   for (let wk = 1; wk <= 20; wk++) { E.dirInfo(a); E.dirInfo(a); play(a, wk, true); play(b, wk, true); }
   const strip = S => JSON.stringify(S, (k, v) => k === 'dir' ? undefined : v);
   ok(strip(a) === strip(b), 'reading the Director does not change the game'); }
+// step 2, the gate: one headline and two threads a week (plus what is forced), the rest held, and Pull forward
+{ const S = E.newGame('ewe', 3, { name: 'R' }); let over = 0, heads = 0, forcedHeld = 0, pulled = 0, weeks = 0; const seen = new Set();
+  for (let wk = 1; wk <= 48 && !S.over; wk++) {
+    let counted = 0;
+    const tally = () => S.inbox.filter(e => !seen.has(e.id) && e.choices).forEach(e => { seen.add(e.id); if (E.dirTag(e) !== 'forced' && e.dir) counted++; if (e.head) heads++; });
+    tally();
+    (S.dir.held || []).forEach(e => { if (E.dirTag(e) === 'forced') forcedHeld++; });
+    if (!pulled && S.dir.held.length && S.ap > 0) { const ap = S.ap, id = S.dir.held[0].id, r = E.dirPull(S, id);
+      ok(r.ok && S.ap === ap - 1 && S.inbox.some(e => e.id === id) && !S.dir.held.some(e => e.id === id), 'Pull forward brings a held matter to the desk for one action point'); pulled = 1; seen.add(id); }
+    S.inbox.filter(e => !e.done).forEach(e => E.resolveEvent(S, e.id, e.type === 'handover' ? 0 : 1));
+    if (S.owner.pending) E.setCreed(S, { style: 'merit', roots: 'tradition', pledge: 'stable' });
+    while (S.qi < S.queue.length) { const c = E.suggest(S), pr = E.preShow(S, c); if (pr) { E.resolvePre(S, c, 0); E.fitShow(S, c); } if (E.validate(S, c).errors.length) { S.qi++; continue; } E.runPlayerShow(S, c); tally(); S.inbox.filter(e => !e.done).forEach(e => E.resolveEvent(S, e.id, 1)); }
+    if (counted > 3) over++; weeks++;
+    E.endWeek(S);
+  }
+  ok(over === 0, 'no week brings more than one headline and two threads, besides what is forced (' + over + ' weeks over)');
+  ok(heads >= weeks / 2, 'most weeks open on a headline (' + heads + ' in ' + weeks + ')');
+  ok(forcedHeld === 0, 'a forced matter (a date, a deal, an order) is never held');
+  ok(pulled === 1, 'something was held at least once, so Pull forward could be tried');
+  const D = E.dirDesk(S); ok(typeof D.word === 'string' && D.word.length > 3 && !/\d/.test(D.word), 'the desk has a word for the week, never a number: ' + D.word);
+  const P = E.dirPull(S, -1); ok(!P.ok && P.msg, 'pulling something that is not waiting says so'); }
+// a problem held until it lapses is remembered as ignored
+{ const S = E.newGame('ewe', 5, { name: 'R' }); const w = S.w.find(x => x.promo === S.player && !x.nw);
+  const ev = { type: 'losing', w: w.id, text: 'test', choices: ['a', 'b'] }; E.dirInfo(S);
+  S.dir.n = 3; S.dir.hook = 1; const m0 = w.morale;
+  // hold it, then let three weeks pass it by
+  const held = Object.assign({}, ev, { id: 999999, held: S.week - 4 }); S.dir.held.push(held);
+  play(S, 1, true);
+  ok(w.morale < m0 || (S.rmY && JSON.stringify(S.rmY).indexOf('never got to it') >= 0), 'a lapsed problem costs the person in it, and they remember it'); }
 fails.forEach(f => console.log('FAIL', f));
 console.log(fails.length ? 'test-director: ' + fails.length + ' failures' : 'test-director: all passed');
 process.exit(fails.length ? 1 : 0);
