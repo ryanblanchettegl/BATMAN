@@ -229,7 +229,7 @@ Levels with no cap, a four-branch tree (Creative, Office, Locker room, Eye) of b
 
 - [x] Gate 1: the blueprint (28 October).
 - [x] Gate 2: the questions, answered 28 October (section 8): both kinds of points kept separate; 6, 4, then 3 levels a year with no cap; the whole tree can be filled in a long career; rival bookers level up too, named with a style; perks are signature moves; respec any time at a cost; experience the same whatever the company; old saves map the five skills across.
-- [ ] Gate 3: Ryan's go-ahead.
+- [x] Gate 3: Ryan's go-ahead, 28 October: "you pick" (on the order: the Director's last steps first, then this).
 
 ### 0aa. The Director (Bill, 21 October: "I like this feature add it to the plan")
 
@@ -241,8 +241,8 @@ A pacing layer that decides when trouble reaches the desk: it reads how tense th
 
 - [x] Step 1: the tension reading and its eight-week history, headless only (`engine/99-director.ts`, `test-director.js`; 28 October). Nothing in play changes: the golden games leave `S.dir` out.
 - [x] Step 2: the gate for the desk (28 October). Every matter that needs an answer goes through `dirGate()` in `pushEv()`: one headline and two threads a week plus anything forced, the rest held ("Also this week", Pull forward for one action point), a show at A or better may end clean. Calm weeks bring problems first; a lapsed problem costs the person's mood and the owner's trust, a lapsed chance a little of both. Before and after (48 weeks, three games): about 4.5 matters a week and up to 12, now about 3.5 and up to 7. The golden games and scenario references were re-recorded; `test-balance.js` b2 now averages three seeds (one seed swings by several points on main too), `test-writers.js` expects a pitch one week in four, `test-archive.js` allows 3.5 KB a week by year four.
-- [ ] Step 3: tag every event maker as a problem, a chance or colour, and let tension pick between them.
-- [ ] Step 4: the three styles, chosen at the start of a game and shown on Career; old saves get The Promoter.
+- [x] Step 3: the cap on the air (28 October): two calls on a weekly show, three on a big night, the last kept for the main event; calls after the bell count; trouble on the air stays free. 2.6 calls a show became 2.1. (Tagging every matter was done in step 2, `DIR_TAG`.)
+- [x] Step 4: the three styles (28 October): The Promoter, The Carny, The Purist (`DIR_STYLES`), picked on the start screen beside the difficulty, changed on Career (free in week one, then a little of the owner's trust; locked in iron man); old saves get The Promoter.
 - [ ] Step 5: event sizes and the rhythm around big nights.
 
 ### 0ad. Company arcs that start from what happens (Bill, 21 October: "This is a key feature, Company Arcs need to start from beats that happen from specific events happening")

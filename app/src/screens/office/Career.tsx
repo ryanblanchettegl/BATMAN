@@ -13,6 +13,7 @@ function You() {
     <p>{role().charAt(0).toUpperCase() + role().slice(1)} of {P.name}</p>
     <p class="muted">Difficulty: {(E.DIFF[S.diff] || E.DIFF.normal).n}{E.diffSummary(S) ? ' (' + E.diffSummary(S) + ')' : ''}</p>
     {S.iron ? <p class="gold">Iron man: one save, no going back.</p> : null}
+    <p data-t="career-dir">The Director: <b>{(E as any).dirDesk(S).style}</b> <Btn kind="sm" t="dir-style" onClick={() => openModal({ kind: 'dirstyle' })}>Change</Btn></p>
     <p>Level <b>{b.lvl}</b> <Meter v={b.xp / need * 100} kind="au" /> <span class="num muted">{b.xp}/{need} XP</span>{b.pts ? <> {'·'} <span class="mark">{b.pts} {plural(b.pts, 'skill point')}</span></> : null}</p>
     <p>Booking power <b class="gold">{S.bp}</b> <span class="muted">(+{S.bpGrant} a week, holds up to {S.bpGrant * 2})</span></p>
     {o.me ? <p class="good">The company is yours. House style: {style.n}.</p>
@@ -101,4 +102,14 @@ export function Career() {
   return <div class="onescreen"><div class="head sr"><h1>Career</h1><p>{S.booker.name}, {role()} of {P.name}</p></div>
     <Desktop cls="crpage" t="career"><You /><Reputation /><Saga /><YourWord /><Trophies /></Desktop>
   </div>;
+}
+
+/** The Director's style: how trouble reaches your desk (src: engine/99-director.ts). Free in the first week, then a small cost to the owner's trust; locked in iron man. */
+export function DirStyleWindow(p: { m: any }) {
+  const S = G.S, T = (E as any).DIR_STYLES, cur = (E as any).dirDesk(S).st, cost = S.week > 1 && !S.owner.me;
+  return <Window title="The Director" ok="Back">
+    <p class="muted">How trouble reaches your desk. It is a taste, not difficulty.{S.iron && S.week > 1 ? ' In iron man it is set for the whole game.' : cost ? ' Changing it now costs a little of the owner\u2019s trust.' : ''}</p>
+    <ul class="list">{Object.keys(T).map(id => <li key={id} data-t="dir-opt" data-v={id}><span><b>{T[id].n}</b><br /><span class="muted">{T[id].d}</span></span>
+      {id === cur ? <span class="good">Now</span> : <Btn kind="sm" t="dir-pick" d={{ v: id }} disabled={!!(S.iron && S.week > 1)} onClick={() => act(() => { (E as any).dirSetStyle(S, id); })}>Pick</Btn>}</li>)}</ul>
+  </Window>;
 }

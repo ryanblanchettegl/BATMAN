@@ -9,7 +9,7 @@ import { E, clamp, rosterOf, wagesWeek } from './00-core';
 const DIR_PARTS = { open: 25, clocks: 20, room: 20, money: 15, stories: 10, wait: 10 };
 
 export function dirInit(S: any) {
-  if (!S.dir) S.dir = { st: 'promoter', t: [], seen: 0, fire: S.week, log: [] };
+  if (!S.dir) S.dir = { st: S.dst || 'promoter', t: [], seen: 0, fire: S.week, log: [] };   // S.dst: the style picked when the game began
   return S.dir;
 }
 
@@ -91,7 +91,19 @@ export const DIR_TAG: any = {
 };
 export function dirTag(ev: any) { return DIR_TAG[ev.type] || 'problem'; }
 
-const DIR_BUDGET = 3;            // one headline and two threads a week
+const DIR_BUDGET = 3;            // one headline and two threads a week (The Promoter; the styles below change it)
+
+/* ---------- step 4: the styles (Ryan, 28 October: all three at once; a taste, not difficulty) ----------
+   Each is a small table: the week's budget, calls on the air (weekly, big night), and a lean towards good news.
+   The Carny swings: a quiet week, an ordinary one or a pile-up, picked by a hash of the week. */
+export const DIR_STYLES: any = {
+  promoter: { n: 'The Promoter', d: 'Steady pressure. One headline most weeks, rarely more than two problems open at once.', budget: () => 3, tv: 2, big: 3, lean: 0 },
+  carny: { n: 'The Carny', d: 'Wild swings. Quiet spells, then several things at once, with bigger chances and bigger trouble.', budget: (S: any) => { const h = $L.h01('dc' + S.seed + ':' + S.week); return h < 0.35 ? 1 : h < 0.7 ? 3 : 5; }, tv: 3, big: 4, lean: 0.1 },
+  purist: { n: 'The Purist', d: 'Slow burns. Fewer matters, more about people than money; shocks are rare.', budget: () => 2, tv: 2, big: 2, lean: -0.05 }
+};
+export function dirStyle(S: any) { const st = dirInit(S).st; return DIR_STYLES[st] || DIR_STYLES.promoter; }
+export function dirBudget(S: any) { return dirStyle(S).budget(S); }
+export function dirCalls(S: any, big: boolean) { const y = dirStyle(S); return big ? y.big : y.tv; }
 const DIR_HOLD_WEEKS = 3;        // a held matter whose time has passed is let go
 const DIR_A = 85;                // a show at A or better may end clean (GRADES in 98-words.ts)
 
@@ -130,13 +142,13 @@ export function dirGate(S: any, ev: any) {
   if (dirTag(ev) === 'forced') return false;
   if (ev.night != null) {                                     // the show's hook: the week's first always comes, the rest count
     if (ev.cs != null && ev.cs >= DIR_A) { dirHold(S, ev); return true; }
-    if (d.n >= DIR_BUDGET) { dirHold(S, ev); return true; }
+    if (d.n >= dirBudget(S)) { dirHold(S, ev); return true; }
     ev.dir = 1; d.hook = 1; d.n++; return false;
   }
   if (d.batch) { d.batch.push(ev); return true; }             // the week's opening matters are picked together
   // after the week's last show a matter waits for next week's desk, so it is counted there
-  if (S.qi >= S.queue.length) { if ((d.late || 0) < DIR_BUDGET - 1) { ev.dir = 1; d.late = (d.late || 0) + 1; return false; } dirHold(S, ev); return true; }
-  if (d.n < DIR_BUDGET - (d.hook ? 0 : 1)) { ev.dir = 1; d.n++; return false; }   // a slot stays free for the show's hook
+  if (S.qi >= S.queue.length) { if ((d.late || 0) < dirBudget(S) - 1) { ev.dir = 1; d.late = (d.late || 0) + 1; return false; } dirHold(S, ev); return true; }
+  if (d.n < dirBudget(S) - (d.hook ? 0 : 1)) { ev.dir = 1; d.n++; return false; }   // a slot stays free for the show's hook
   dirHold(S, ev); return true;
 }
 
@@ -174,7 +186,7 @@ export function dirClose(S: any) {
   if (!all.length) return;
   const t = d.t.length ? d.t[d.t.length - 1] : 40;
   // the headline: a chance about one week in three on average, more often when tense (a lifeline), less when calm
-  const wantChance = $L.h01('dh' + S.seed + ':' + S.week) < 0.05 + 0.6 * t / 100;   // about one in three on average: 0.17 when calm (20), 0.47 when tense (70)
+  const wantChance = $L.h01('dh' + S.seed + ':' + S.week) < 0.05 + 0.6 * t / 100 + dirStyle(S).lean;   // about one in three on average: 0.17 when calm (20), 0.47 when tense (70)
   const byW = (a: any, b: any) => dirWeight(S, b) - dirWeight(S, a) || a.id - b.id;
   const pool = all.slice().sort(byW);
   const pref = pool.filter((e: any) => dirTag(e) === (wantChance ? 'chance' : 'problem'));
@@ -182,7 +194,7 @@ export function dirClose(S: any) {
   const rest = pool.filter((e: any) => e !== head);
   dirAdmit(S, head, true); head.head = 1;
   // the opening pick leaves the last slot for what the week's shows leave behind (the hook)
-  const open = DIR_BUDGET - 1;
+  const open = Math.max(1, dirBudget(S) - 1);
   // a calm company meets trouble (Ryan, 28 October): when tension is low the threads take problems first
   const calm = t < 55;
   if (calm) rest.sort((a: any, b: any) => (dirTag(b) === 'problem' ? 1 : 0) - (dirTag(a) === 'problem' ? 1 : 0) || byW(a, b));
@@ -196,7 +208,7 @@ const DIR_WORDS: any = { peak: 'A storm is breaking', building: 'A storm is buil
 E.dirDesk = function (S: any) {
   const d = dirInit(S), tr = dirTrend(S), t = d.t.length ? d.t[d.t.length - 1] : 0;
   const word = d.n === 0 && !(d.held || []).length ? 'A quiet week' : DIR_WORDS[tr] || 'A steady week';
-  return { word, t: tr, held: (d.held || []).map((e: any) => ({ id: e.id, type: e.type, tag: dirTag(e), text: e.text, since: e.held })), cost: 1, ap: S.ap, calm: t < 35 };
+  return { word, st: d.st, style: (DIR_STYLES[d.st] || DIR_STYLES.promoter).n, t: tr, held: (d.held || []).map((e: any) => ({ id: e.id, type: e.type, tag: dirTag(e), text: e.text, since: e.held })), cost: 1, ap: S.ap, calm: t < 35 };
 };
 
 /* Pull one held matter forward to the desk now, for one action point. */
@@ -209,4 +221,16 @@ E.dirPull = function (S: any, id: number) {
 };
 
 E.dirTag = dirTag;
+/* Change the style between shows: free in the first week, then a small cost to the owner's trust; never in iron man. */
+E.DIR_STYLES = DIR_STYLES;
+E.dirSetStyle = function (S: any, st: string) {
+  const d = dirInit(S); if (!DIR_STYLES[st]) return { ok: false, msg: 'There is no such style.' };
+  if (st === d.st) return { ok: true, msg: 'That is already how the week runs.' };
+  if (S.iron && S.week > 1) return { ok: false, msg: 'In iron man the style is set for the whole game.' };
+  if (S.live) return { ok: false, msg: 'Not while a show is on the air.' };
+  const cost = S.week > 1 && !S.owner.me ? 4 : 0;
+  if (cost) S.owner.trust = clamp(S.owner.trust - cost, 0, 100);
+  d.st = st; return { ok: true, msg: DIR_STYLES[st].n + ' it is.' + (cost ? ' The owner wonders why the office keeps changing its mind.' : ''), cost };
+};
+$L.dirCalls = dirCalls;
 $L.dirGate = dirGate; $L.dirOpen = dirOpen; $L.dirClose = dirClose;

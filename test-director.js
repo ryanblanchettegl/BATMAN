@@ -83,6 +83,21 @@ E.useUniverse(JSON.parse(fs.readFileSync('universes/parody.json', 'utf8')));
   const held = Object.assign({}, ev, { id: 999999, held: S.week - 4 }); S.dir.held.push(held);
   play(S, 1, true);
   ok(w.morale < m0 || (S.rmY && JSON.stringify(S.rmY).indexOf('never got to it') >= 0), 'a lapsed problem costs the person in it, and they remember it'); }
+// step 4, the styles: picked at the start, each with its own rhythm; changing costs trust after week one; locked in iron man
+{ const per = {};
+  for (const st of ['promoter', 'carny', 'purist']) { const S = E.newGame('ewe', 3, { name: 'R', dir: st }); let mx = 0, tot = 0, wks = 0; const seen = new Set();
+    ok(S.dir == null || S.dir.st === st, st + ': the game starts with the style picked');
+    for (let wk = 1; wk <= 30 && !S.over; wk++) { let n = 0; const t = () => S.inbox.filter(e => !seen.has(e.id) && e.choices && e.dir && E.dirTag(e) !== 'forced').forEach(e => { seen.add(e.id); n++; });
+      t(); S.inbox.filter(e => !e.done).forEach(e => E.resolveEvent(S, e.id, 1)); if (S.owner.pending) E.setCreed(S, { style: 'merit', roots: 'tradition', pledge: 'stable' });
+      while (S.qi < S.queue.length) { const c = E.suggest(S), pr = E.preShow(S, c); if (pr) { E.resolvePre(S, c, 0); E.fitShow(S, c); } if (E.validate(S, c).errors.length) { S.qi++; continue; } E.runPlayerShow(S, c); t(); S.inbox.filter(e => !e.done).forEach(e => E.resolveEvent(S, e.id, 1)); }
+      E.endWeek(S); mx = Math.max(mx, n); tot += n; wks++; }
+    per[st] = { avg: tot / wks, max: mx }; ok(S.dir.st === st, st + ': the style holds through the game'); }
+  ok(per.carny.max > per.promoter.max, 'The Carny piles things up more than The Promoter (' + per.carny.max + ' against ' + per.promoter.max + ')');
+  ok(per.purist.avg < per.promoter.avg, 'The Purist brings fewer matters than The Promoter (' + per.purist.avg.toFixed(2) + ' against ' + per.promoter.avg.toFixed(2) + ')');
+  const S = E.newGame('ewe', 4, { name: 'R' }); E.dirInfo(S); const free = E.dirSetStyle(S, 'carny'); ok(free.ok && !free.cost && S.dir.st === 'carny', 'changing in the first week is free');
+  for (let wk = 0; wk < 2; wk++) E.endWeek(S); const t0 = S.owner.trust, r = E.dirSetStyle(S, 'purist');
+  ok(r.ok && S.dir.st === 'purist' && (S.owner.me || S.owner.trust < t0), 'later it costs a little of the owner\'s trust');
+  const I = E.newGame('ewe', 4, { name: 'R', iron: true }); E.endWeek(I); E.dirInfo(I); ok(!E.dirSetStyle(I, 'carny').ok, 'iron man keeps the style for the whole game'); }
 fails.forEach(f => console.log('FAIL', f));
 console.log(fails.length ? 'test-director: ' + fails.length + ' failures' : 'test-director: all passed');
 process.exit(fails.length ? 1 : 0);
