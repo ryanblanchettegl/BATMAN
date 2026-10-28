@@ -223,6 +223,14 @@ The diorama renderer (`app/src/kit/paper.ts`, `puppet.ts`, `scene.ts`, `diorama3
 - [ ] Split `CLAUDE.md` into a short core (rules, commands, where things are) and linked area notes in `docs/notes/`.
 - [ ] Recurring procedures as skills in `.claude/skills/`: `/blueprint`, `/vault`, `/audition`, `/publish-live`, `/balance`.
 
+### 0aw. You as the booker: levels and a skill tree (Ryan, 28 October: "We need to build a level up system that works with the booker points you use throughout the game. We also have to build the skill tree without breaking the game.")
+
+Levels with no cap, a four-branch tree (Creative, Office, Locker room, Eye) of bonuses, new actions and trade-offs, a signature move every fifth level, and rival bookers who level up with you. Plan: `docs/plans/booker-progression.md`.
+
+- [x] Gate 1: the blueprint (28 October).
+- [x] Gate 2: the questions, answered 28 October (section 8): both kinds of points kept separate; 6, 4, then 3 levels a year with no cap; the whole tree can be filled in a long career; rival bookers level up too, named with a style; perks are signature moves; respec any time at a cost; experience the same whatever the company; old saves map the five skills across.
+- [ ] Gate 3: Ryan's go-ahead.
+
 ### 0aa. The Director (Bill, 21 October: "I like this feature add it to the plan")
 
 A pacing layer that decides when trouble reaches the desk: it reads how tense the company already is and chooses which of this week's possible events happen, and how big. The player picks a style (The Promoter, The Carny, The Purist). Plan: `docs/plans/director.md`.

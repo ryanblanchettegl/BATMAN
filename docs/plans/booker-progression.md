@@ -78,3 +78,19 @@ Career gets the tree: four branches side by side, nodes as cut-card tiles, the n
 ## 7. Questions for Ryan
 
 Asked one at a time; answers written here.
+
+## 8. Ryan's answers (28 October 2026)
+
+| Topic | Question | Answer |
+| --- | --- | --- |
+| Points | Skill points or booking power? | **Both, kept separate.** Levels give skill points for the tree; booking power stays the weekly budget for stories, and the tree adds ways to spend it rather than more of it. |
+| Pace | How fast, and a cap? | **About 6 levels the first year, 4 the second, then 3 a year, no cap.** Late levels give perks and small things, so there is always a next level. |
+| Builds | A forced build, or can you have it all? | **Fill it all.** Everything can be had in a long enough career; the order you take it in is the choice. |
+| Endgame | How does a full tree not make the game easy? | **Rival bookers level up too, so every inch matters more.** The world keeps pace with you. |
+| Rivals | Can you see them? | **Named, with a style.** Each rival company has a named booker with a level and a build that fits its model (the corporate one leans Office, the outlaw one Creative). Their level shows on the World page; their nodes change how their company plays. |
+| Perks | What is a perk? | **Signature moves:** big, named, once-in-a-while powers that define your booker ("The Swerve": one shocking finish a year the crowd never sees coming; "Old School": veterans work for less; "The Machine": one extra show a month without burnout). One of two every fifth level, for good. |
+| Respec | Can you move points? | **Any time, at a cost** (the owner's trust or money). Perks stay as picked. |
+| Company | Does the company's size matter? | **Same everywhere.** Experience is the same whatever the size of the company. |
+| Old saves | What happens on load? | **Mapped across.** Each old skill becomes its matching node automatically (Creative to Creative, Negotiation to Office, Motivator to Locker room, Eye for talent to Eye, Clout to booking power in Creative); the level stays. |
+
+What changes in the blueprint from these answers: section 3's "a cap on any one number" stays as a safety net, but the main answer to the endgame is rival bookers who grow with you (a new part: each rival company gets a named booker with a level and a build, levelling at the same pace and spending by its model, shown on the World page). The tree is sized so a long career can fill it. Respec is any time at a cost, not once a year. Old saves map the five skills to their nodes.
