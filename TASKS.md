@@ -223,6 +223,20 @@ The diorama renderer (`app/src/kit/paper.ts`, `puppet.ts`, `scene.ts`, `diorama3
 - [ ] Split `CLAUDE.md` into a short core (rules, commands, where things are) and linked area notes in `docs/notes/`.
 - [ ] Recurring procedures as skills in `.claude/skills/`: `/blueprint`, `/vault`, `/audition`, `/publish-live`, `/balance`.
 
+### 0aw. A lighter repository (Ryan, 28 October, D-027: moved here from the retired `Research/docs/MASTER.md`)
+
+Tools and housekeeping, no change in play. Each one is its own commit, with every headless test passing. The old ranking was O1, then 0av, then archiving, then the rest.
+
+- [ ] Stop committing build outputs: `dist/`, `engine.js` and `universes/parody.json` are built, so leave them out of git (the live page and the desktop build still get them from `node build.js`). `dist/music/` copies `app/music/` byte for byte.
+- [ ] Archive finished work: move ticked items out of `TASKS.md`, `NEXT.md`, `TWEAKS.md` and `WISHLIST.md` into `docs/archive/`.
+- [ ] One queue: fold the open items of `NEXT.md`, `TASKS.md` and `docs/roadmap.md` into one list.
+- [ ] Move the root `test-*.js` files into `tests/engine/`, with one runner that runs them in parallel.
+- [ ] Park `docs/mockups/` (dead prototypes, copied libraries); keep only the chosen pictures.
+- [ ] Remove `legacy/` and any test nothing runs (grep first).
+- [ ] Ship the sound effects as files beside the page instead of base64 inside `app/addons/sfx-bank.js` (rule 2 now allows it).
+- [ ] Split the biggest interface files (`kit/puppet.ts`, `kit/scene.ts`, `kit/diorama3d.ts`) by concern.
+- [ ] Compress the PNGs (`oxipng` or ImageMagick) and put audio and images in Git LFS.
+
 ### 0aa. The Director (Bill, 21 October: "I like this feature add it to the plan")
 
 A pacing layer that decides when trouble reaches the desk: it reads how tense the company already is and chooses which of this week's possible events happen, and how big. The player picks a style (The Promoter, The Carny, The Purist). Plan: `docs/plans/director.md`.
