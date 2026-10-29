@@ -115,7 +115,7 @@ export function lookOf(r: Recipe, expr: string): Look {
   const L: any = { skin: tone(r.skin), hc: r.hairCol, fem, key: r.key,
     sw: base.sw * up * tw, cw: base.cw * up * tw, ww: base.ww * Math.pow(m, 1.6) + fat * 0.2, hw: base.hw * Math.pow(m, 1.1), bel: fat > 0.04 ? fat * 0.6 : 0,
     au: base.au * up, af: base.af * up, th: base.th * Math.pow(m, 1.35), sh: base.sh * Math.pow(m, 1.3), traps: fem ? 0.1 : Math.max(0, (m - 1) * 3 + 0.2),
-    build: fat > 0.05 ? 'belly' : m > 1.2 ? 'heavy' : m < 0.98 ? 'skinny' : 'lean', hs: fem ? 1 : Math.max(0.9, Math.min(1.12, 0.94 + (m - 0.95) * 0.35 + fat * 0.4)),
+    build: fat > 0.05 ? 'belly' : m > 1.2 ? 'heavy' : m < 0.98 ? 'skinny' : 'lean', hs: fem ? 1 : Math.max(0.9, Math.min(1.22, 0.93 + (m - 0.95) * 0.55 + fat * 0.6)),
     abs: fem || fat > 0.05 ? 0 : m < 1.05 ? 4 : m > 1.2 ? 6 : 4, neck: fem ? 0.14 : m < 1.05 ? 0.14 : m > 1.25 ? 0.08 : 0.11, tape: !!r.tape || (!!K && K.acc.indexOf('wrist_tape_white') >= 0), chestHair: (r.bodyHair || 0) > 0, veins: m > 1.2, quad: fem };
   // the face
   const hd = r.head, wide = (hd.rx - 1.04) / 0.28, sq = hd.sq >= 4, pointy = hd.chin >= 0.35;
@@ -136,7 +136,7 @@ export function lookOf(r: Recipe, expr: string): Look {
   L.mus = r.mask ? 0 : r.mus || 0; L.braid = !!r.braid;
   if (L.build === 'belly') { L.bel = Math.max(L.bel, 0.03 + fat * 0.5); L.ww = Math.max(L.ww, L.cw * 1.05); L.abs = 0; }
   if (L.build === 'heavy' || L.build === 'belly') { L.ww = Math.max(L.ww, L.cw * 1.02); L.sh *= 1.25; L.abs = 0; L.bel = Math.max(L.bel, 0.02); }
-  if (L.build === 'lean') L.abs = 4;
+  if (L.build === 'lean') L.abs = m < 1.05 ? 4 : 2;
   if (fem) { L.hw *= 1.3; L.ww *= 0.92; L.th *= 1.15; }
   if (L.build === 'skinny') { L.abs = 2; L.sw *= 0.86; L.cw *= 0.86; L.au *= 0.85; L.af *= 0.88; L.th *= 0.9; L.traps = 0; }
   if (r.mask) L.mask = [r.mask.base, r.mask.trim, r.mask.trim];
@@ -170,7 +170,7 @@ function headC(P: Pen, a: Look, hu: number, r: R, back: boolean, mk: Marks) {
   const piece = (pts: Pt[], col: string, edge?: number) => P.poly(cut(pts, r, false), col, edge === 1 ? shade(col, 0.8) : undefined);
   const nar = 0.9, len = h.len * hu * 0.97, jw = h.jw * hu * nar, crw = h.crw * hu * nar;
   const top = -len * 0.55, bot = len * 0.45, face = Math.max(crw, jw);
-  const ey = h.ey * len, eg = face * 0.45 * (h.eg || 1), es = face * 0.2 * Math.pow(h.es || 1, 0.3) * (h.es2 || 1), browY = ey - face * 0.33 - (h.bu || 0) * hu, jt = browY + es * 0.2 + (h.bu || 0) * hu;
+  const ey = h.ey * len, eg = face * 0.45 * (h.eg || 1), es = face * 0.23 * Math.pow(h.es || 1, 0.3) * (h.es2 || 1), browY = ey - face * 0.33 - (h.bu || 0) * hu, jt = browY + es * 0.2 + (h.bu || 0) * hu;
   // hair behind the head (and, seen from behind, over it)
   const behind = () => {
     const hr = a.hair;
@@ -245,7 +245,7 @@ function headC(P: Pen, a: Look, hu: number, r: R, back: boolean, mk: Marks) {
     button: [[-nz * 0.12, ny - nz * 0.9 * NL], [nz * 0.18, ny - nz * 0.9 * NL], [nz * 0.45 * NW, ny + nz * 0.12], [0, ny + nz * 0.24], [-nz * 0.4 * NW, ny + nz * 0.12]],
     small: [[-nz * 0.08, ny - nz * 1.1 * NL], [nz * 0.15, ny - nz * 1.1 * NL], [nz * 0.38 * NW, ny + nz * 0.1], [-nz * 0.28 * NW, ny + nz * 0.14]] };
   const nk = NOSE[h.nose || 'straight'] || NOSE.straight, nb = nk.reduce((m2, p) => Math.max(m2, p[1]), -1e9);
-  P.poly(nk.map(([x, y]) => [x + nz * 0.25, y + nz * 0.12] as Pt), shade(sk, 0.78)); piece(nk, nc);   // the nose's cast shadow, then the nose
+  piece(nk, nc);   // the nose's cast shadow, then the nose
   const nx = (h.nose === 'broad' ? 0.45 : h.nose === 'button' || h.nose === 'small' ? 0.28 : 0.35) * nz * NW;
   P.ell(-nx, nb - nz * 0.04, nz * 0.17 * NW, nz * 0.09, nh); P.ell(nx + nz * 0.08, nb - nz * 0.04, nz * 0.17 * NW, nz * 0.09, nh);
   if (!a.fem && (h.nose === 'hook' || h.nose === 'long')) mkS(`M${nz * 0.2} ${ny - nz * 1.2 * NL} L${nz * 0.42} ${ny - nz * 0.2}`, 1.1, shade(sk, 0.75));   // the line of the bridge
@@ -265,6 +265,7 @@ function headC(P: Pen, a: Look, hu: number, r: R, back: boolean, mk: Marks) {
   // the beard and the moustache
   const BC = a.hc < '#333333' ? a.hc : shade(a.hc, a.hc > '#999999' ? 0.55 : 0.66), lng = a.beard === 'full' ? len * 0.22 : 0, shortB = a.beard === 'short';
   if (shortB) piece([[-jw * 0.92, jt + len * 0.22], [-jw * 0.95, bot - len * 0.12], [-jw * 0.6, bot + len * 0.06], [0, bot + len * 0.1], [jw * 0.6, bot + len * 0.06], [jw * 0.95, bot - len * 0.12], [jw * 0.92, jt + len * 0.22], [jw * 0.55, my + hu * 0.03], [0, my - hu * 0.07], [-jw * 0.55, my + hu * 0.03]], BC);   // a short beard: round, cut along the jaw
+  if (shortB || a.beard === 'full') P.poly([[-jw * 0.5, bot - len * 0.05], [-jw * 0.1, bot + len * 0.02], [-jw * 0.15, bot + len * 0.06], [-jw * 0.55, bot - len * 0.01]], shade(BC, 1.35));   // a lighter strip catching the light
   if (a.beard === 'full') piece([[-jw * 0.9, jt + len * 0.2], [-jw * 0.88, bot - len * 0.02], [-jw * 0.35, bot + len * (shortB ? 0.12 : 0.24) + lng], [jw * 0.4, bot + len * (shortB ? 0.1 : 0.2) + lng], [jw * 0.88, bot - len * 0.04], [jw * 0.9, jt + len * 0.2], [jw * 0.55, my + hu * 0.03], [0, my - hu * 0.07], [-jw * 0.55, my + hu * 0.03]], BC);
   if (a.beard === 'full' && a.braid) for (let q = 0; q < 4; q++) P.poly(ell((q % 2 ? 0.03 : -0.03) * hu, bot + lng + len * 0.2 + q * hu * 0.12, hu * 0.08, hu * 0.08, 10), q % 2 ? shade(BC, 0.8) : BC);
   if (a.beard === 'goatee' || a.beard === 'vandyke') piece([[-mw * 0.7, my + hu * 0.06], [-mw * 0.28, bot + len * 0.18], [mw * 0.32, bot + len * 0.17], [mw * 0.7, my + hu * 0.06], [0, my + hu * 0.1]], BC);
@@ -327,7 +328,7 @@ function tattoo(P: Pen, st: string, L: number, w: number, sk: string, r: R) {
 /** Cut and pin a doll in style C. The same arguments and rig as `puppet()`. */
 export function puppetC(r: Recipe, pl: Place, pose: Record<string, number>, expr: string, own: string, out: Piece[], mk: Marks = {}): Rig {
   const big0 = r.w > 1.15 || (r.belly || 0) > 0.05 ? 8 : 0, jit = (k2: string, d: number) => ((hashS(r.key + '|st' + k2) % 1000) / 1000 - 0.5) * d;
-  const arch = hashS(r.key + '|arch') % 4, ARMS = [{}, { sh_n: 28, el_n: 95, sh_f: -26, el_f: -95 }, { sh_n: 4, el_n: 8, sh_f: -30, el_f: -60 }, { sh_n: 22, el_n: 40, sh_f: -6, el_f: -10 }][arch];   // easy, hands on hips, one fist up, one arm off the body
+  const arch = hashS(r.key + '|arch') % 4, ARMS = [{}, { sh_n: 16, el_n: 70, sh_f: -14, el_f: -70 }, { sh_n: 4, el_n: 8, sh_f: -30, el_f: -60 }, { sh_n: 12, el_n: 30, sh_f: -6, el_f: -10 }][arch];   // easy, hands on hips, one fist up, one arm off the body
   const STC: Record<string, number> = { ...STAND, sh_n: 9 + big0 + jit('sn', 16), el_n: 18 + jit('en', 24), sh_f: -8 - big0 + jit('sf', 16), el_f: -18 + jit('ef', 8), hip_n: 6 + jit('hn', 4), hip_f: -6 + jit('hf', 4), kn_n: -3, kn_f: 3, an_n: -4, an_f: 4, head: jit('hd', 6), torso: jit('to', 7), ...ARMS };   // style C stands easy (critic, 29 October)
   const a = lookOf(r, expr), out0 = out.length;
   const n0 = out0, bk = !!pl.b, P0 = { ...STC, ...pose }, h = r.h * a.hs, ll = r.ll || 1, H = h * (r.th || 1), K = r.kit;
