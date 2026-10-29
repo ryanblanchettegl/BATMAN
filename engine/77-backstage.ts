@@ -96,7 +96,7 @@ SHOWX.push(function(S,P,show,rep){
 });
 
 /* --- action points and the backstage map --- */
-export function apMax(S){return 3+(S.booker&&S.booker.lvl>=5?1:0)+(S.owner&&S.owner.me?1:0);}
+export function apMax(S){return 3+(($L.treeHas&&$L.treeHas(S,'lr_extra'))?1:0)+(S.booker&&S.booker.lvl>=5?1:0)+(S.owner&&S.owner.me?1:0);}
 export var PLACES={
   office:{n:'The owner’s office',d:'Where the money and the booking power come from.'},
   court:{n:'Wrestlers’ court',d:'The locker room settles its own disputes. You wear the robe.'},
@@ -119,6 +119,9 @@ export function apActs(S,pl){
   }else if(pl==='court'){
     S.court.forEach(function(c){L.push({id:'case',n:'Hear the case: '+S.w[c.a].name+' against '+S.w[c.b].name,d:c.text,cid:c.id});});
     if(!L.length)L.push({id:'none',n:'No cases on the docket',d:'Nobody has brought a dispute this week.',off:true});
+    // Closed-door meeting (the booker's tree): once a month, sit two people with real heat down together
+    if($L.treeHas&&$L.treeHas(S,'lr_meet')){var mcd=S.lcd&&S.lcd.meet,mon=mcd!=null&&S.week-mcd<4;
+      L.push({id:'meet',n:'Closed-door meeting',d:mon?'You held one this month. The next can wait until week '+(mcd+4)+'.':'Two people with real heat, in your office, door shut. Most of the heat goes.',need:'pair',off:mon});}
   }else if(pl==='trainer'){
     L.push({id:'treat',n:'Stand over the trainer while they work',d:'One wrestler: eight points off every worn body zone, and a week off an injury of two weeks or more.',need:'w'});
   }else if(pl==='gym'){
@@ -152,6 +155,10 @@ E.apDo=function(S,pl,act,o){
   else if(act==='budget'){if(ok){S.owner.wage0=Math.round(S.owner.wage0*1.05);msg=S.owner.name+' signs off on a bigger wage budget: '+money(E.budget(S))+' a week.';}else{S.owner.trust=clamp(S.owner.trust-2,0,100);msg=S.owner.name+' wants to see the books improve first.';}}
   else if(act==='network'){S.hype=(S.hype||0)+(ok?0.07:0.02);msg=ok?'The network gives your next show a push in the listings.':'They take the call. That is about all they do.';}
   else if(act==='sponsors'){refreshOffers(S);msg='Three new sponsor offers are on the Manage screen, under Deals.';}
+  else if(act==='meet'){if($L.bondOf(S,a.id,b.id)>-$L.REL_ON)return {ok:false,msg:a.name+' and '+b.name+' have no real heat to settle.'};
+    (S.lcd||(S.lcd={})).meet=S.week;$L.relBump(S,a.id,b.id,{bond:Math.round(-$L.bondOf(S,a.id,b.id)*0.6)},{k:'meet',keep:true,t:'You sat '+a.name+' and '+b.name+' down behind a closed door.'});
+    $L.youRemember(S,a,'meet','You sat them down with '+b.name+' and made them talk it out.',2);$L.youRemember(S,b,'meet','You sat them down with '+a.name+' and made them talk it out.',2);
+    msg=a.name+' and '+b.name+' come out of your office without shaking hands, but the worst of it is gone.';}
   else if(act==='case'){var res=E.courtRule(S,+o.cid,+o.v);if(!res.ok)return res;msg=res.msg;fair=res.fair;ok=res.fair!==false;}
   else if(act==='treat'){var z=zonesOf(a),eased=0;['n','s','b','k'].forEach(function(k){var f=zoneFloor(a,k),nv=Math.max(f,z[k]-8);eased+=z[k]-nv;z[k]=nv;});if(a.inj>=2)a.inj--;stressAdd(S,a,-4);
     msg=a.name+' gets the full treatment'+(a.inj>0?' and should be back a week sooner.':(eased>=4?' and walks out moving more freely.':'. There was not much to fix.'));}
@@ -206,6 +213,7 @@ export function courtApply(S,c,side,byYou){
   // the court remembers: a wrestler found against again and again is dealt with harder, and every verdict is kept
   lose.cl=(lose.cl||0)+1;var rep=lose.cl>=2;if(rep){lose.morale=clamp(lose.morale-Math.min(9,3*(lose.cl-1)),0,100);stressAdd(S,lose,Math.min(10,4*(lose.cl-1)));}
   (S.verdicts||(S.verdicts=[])).unshift({w:S.week,win:win.id,lose:lose.id,fair:fair,judge:byYou?null:(S.lastJudge||null),rep:rep,n:lose.cl});if(S.verdicts.length>20)S.verdicts.length=20;S.lastJudge=null;
+  if(byYou&&($L.treeHas&&$L.treeHas(S,'lr_hard'))){lose.morale=clamp(lose.morale-3,0,100);win.morale=clamp(win.morale+2,0,100);}
   if(byYou){win.you=clamp((win.you||0)+1,-1,1);
     if(fair){S.trust=clamp(S.trust+2,0,100);S.courtFair=(S.courtFair||0)+1;if(S.courtFair>=5)award(S,'ACH_COURT');}
     else{S.trust=clamp(S.trust-3,0,100);stressAdd(S,lose,8);lose.you=clamp((lose.you||0)-1,-1,1);relBump(S,lose.id,win.id,{bond:-45,ra:-15},{k:'court',keep:true,t:'Wrestlers’ court found for '+win.name+' against '+lose.name+', and '+lose.name+' thinks it was fixed.'});}

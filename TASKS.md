@@ -20,6 +20,20 @@ Two more lists sit beside this one, both finished:
 
 ## Ryan's decisions (do not reopen these)
 
+### From the master document (Ryan's other workspace, decided 26 and 27 October; saved as `docs/MASTER.md`, merged 29 October)
+
+- D1, popularity: per region (the road's areas). Not built yet.
+- D2, relationship types: now, with full screens (family, personal, romantic on top of the matrix); to confirm with Bill against the feature pause. Not built yet.
+- D3, schema library for content: zod. Not used yet.
+- D4, engine build: esbuild. Done (the engine is bundled by esbuild).
+- D5, the Steam default world: public domain, the parody world opt-in; to confirm with Bill and the lawyer. Today the parody world is the default (16 October); this reverses it when confirmed.
+- D6, morale and backstage: two modules.
+- D7, health: four pools (head, body, arms, legs); any at zero ends a career. Not built yet.
+- The booking screen: the Clock Wall (critic 8.6; `docs/plans/booking-clock-wall.md` in the other workspace, summarised in `docs/MASTER.md` section 9). Not built yet.
+- The wrestler look: G, the paper doll, after Ryan's reference picture (critic 9.3; plan summarised in `docs/MASTER.md` section 9). Not built yet.
+- Layout, game-wide: every main page is three windows, 22 / 56 / 22 (list, centre wall, picked pane). See rule 5f.
+- Gimmicks drive acting, dialogue and relationships only, never looks or match ratings (27 October). Today `GFX` in `engine/99-gimmicks.ts` changes match crowd reactions; its fate needs a rule 9d decision.
+
 | Topic | Decision |
 | --- | --- |
 | The match screen, 22 Oct | Fewer kick-outs. When there is no match picture for the moment, the picture cuts to the commentators. The animation never loops while the commentary catches up; it flows. Build: an instant replay of the finish, a big referee count on near falls, paper-flip cuts between pictures, a finisher close-up with the move's name, cinema mode (the picture fills the screen), the winner celebrating after the bell, big moments for each match rule (ladder, cage, tables), run-ins drawn as their own pictures. The night's highlights go on After the show. The feed is livelier and each poster has a personality of their own; the company's sign-off post comes once, after the main event, not after every match. |
@@ -228,8 +242,10 @@ The diorama renderer (`app/src/kit/paper.ts`, `puppet.ts`, `scene.ts`, `diorama3
 Levels with no cap, a four-branch tree (Creative, Office, Locker room, Eye) of bonuses, new actions and trade-offs, a signature move every fifth level, and rival bookers who level up with you. Plan: `docs/plans/booker-progression.md`.
 
 - [x] Gate 1: the blueprint (28 October).
-- [x] Gate 2: the questions, answered 28 October (section 8): both kinds of points kept separate; 6, 4, then 3 levels a year with no cap; the whole tree can be filled in a long career; rival bookers level up too, named with a style; perks are signature moves; respec any time at a cost; experience the same whatever the company; old saves map the five skills across.
+- [x] Gate 2: the questions, answered 28 October (section 8): both kinds of points kept separate; 6, 4, then 3 levels a year with no cap; the whole tree can be filled in a long career; rival bookers level up too, named with a style; perks are signature moves; respec any time at a cost; experience the same whatever the company; old saves are not a concern (Ryan, 29 October: "I don't care about old saves"), so nothing is built for them.
 - [x] Gate 3: Ryan's go-ahead, 28 October: "you pick" (on the order: the Director's last steps first, then this).
+- [x] Step 1 (29 October): levels come at about 6 the first year, 4 the second, then 3 a year (`xpNeed` 100 + 60 a level), with no cap; booking power no longer grows with level. Balance passes; recordings redone.
+- [x] Steps 2 and 3 (29 October): the tree as data (`engine/65-youtree.ts`, `TREE`): four branches, four tiers each, 43 points in all (a node costs 1, the top tier 2), a tier opens at about three fifths of the branch's lower tiers; bonus nodes add to the old five numbers capped where they were, so every system that reads them is unchanged; actions and trade-offs are owned flags (`treeHas`) whose effects come in step 4. Career has a Skill tree button that opens the tree in a pop-up. `test-tree.js`.
 
 ### 0aa. The Director (Bill, 21 October: "I like this feature add it to the plan")
 

@@ -35,15 +35,15 @@ export var SKILLS={
 };
 $L.SKILLS = SKILLS;
 export function cap1(t){return t.charAt(0).toUpperCase()+t.slice(1);}
-export function xpNeed(l){return 80+50*l;}
+export function xpNeed(l){return 100+60*l;}   // about 6 levels the first year, 4 the second, then 3 a year; no cap (Ryan, 28 October)
 export function gainXp(S,n){
   var b=S.booker;if(!b||S.cal)return;b.xp+=Math.round(n);
-  while(b.xp>=xpNeed(b.lvl)&&b.lvl<22){b.xp-=xpNeed(b.lvl);b.lvl++;b.pts++;$L.news(S,'you','You reached booker level '+b.lvl+'. You have a skill point to spend.');if(b.lvl>=5)award(S,'ACH_LEVEL5');}
+  while(b.xp>=xpNeed(b.lvl)){b.xp-=xpNeed(b.lvl);b.lvl++;b.pts++;$L.news(S,'you','You reached booker level '+b.lvl+'. You have a skill point to spend.');if(b.lvl>=5)award(S,'ACH_LEVEL5');}
 }
 export function initYou(S,opts){
   var d=S.custom&&S.custom.id===S.player?S.custom:$L.DB.promotions.filter(function(p){return p.id===S.player;})[0],o=d.owner||{name:'The owner',style:'stars',roots:'tradition',pledge:'pay'};
-  S.booker={name:String(opts.name||'').trim().slice(0,24)||'The Booker',xp:0,lvl:1,pts:0,sk:{creative:0,talk:0,eye:0,motivator:0,clout:0}};
-  if(opts.booker){S.booker.xp=opts.booker.xp;S.booker.lvl=opts.booker.lvl;S.booker.pts=opts.booker.pts;Object.keys(S.booker.sk).forEach(function(k){S.booker.sk[k]=opts.booker.sk[k]||0;});}
+  S.booker={name:String(opts.name||'').trim().slice(0,24)||'The Booker',xp:0,lvl:1,pts:0,sk:{creative:0,talk:0,eye:0,motivator:0,clout:0},tree:{}};
+  if(opts.booker){S.booker.xp=opts.booker.xp;S.booker.lvl=opts.booker.lvl;S.booker.pts=opts.booker.pts;Object.keys(S.booker.sk).forEach(function(k){S.booker.sk[k]=opts.booker.sk[k]||0;});S.booker.tree=JSON.parse(JSON.stringify(opts.booker.tree||{}));}
   S.owner={name:o.name,trust:55,me:false,style:o.style,roots:o.roots,pledge:o.pledge,lobby:{},asked:0,creedWeek:-99,wage0:wagesWeek(S,S.promos[S.player])};
   S.creedScore=60;S.bp=0;S.stats.calls=0;
   if(d.mine){S.owner.me=true;S.owner.name=S.booker.name;S.owner.creedWeek=1;S.mode='owner';}
@@ -51,13 +51,14 @@ export function initYou(S,opts){
 SKILLMOD.push(function(S,kind){var b=S.booker;if(!b)return null;var l=kind==='creative'?b.sk.creative:b.sk.talk;return {n:(kind==='creative'?'Your creative skill':'Your negotiation skill'),v:l>=4?2:(l>=2?1:0)};});
 export function talkDiscount(S){return S.booker?1-0.03*S.booker.sk.talk:1;}
 export function pledgeRenew(S){return S.owner?(S.owner.pledge==='pay'?1.05:(S.owner.pledge==='stable'?0.9:1)):1;}
-export function moraleTarget(S){var o=S.owner,b=S.booker;return 65+$L.dif(S).mor+((S.trust==null?60:S.trust)-60)/5+(b?1.5*b.sk.motivator:0)+(o?(o.pledge==='pay'?5:(o.pledge==='stable'?3:0)):0);}
+export function moraleTarget(S){var o=S.owner,b=S.booker;return 65+$L.dif(S).mor+((S.trust==null?60:S.trust)-60)/5+(b?1.5*b.sk.motivator:0)+(o?(o.pledge==='pay'?5:(o.pledge==='stable'?3:0)):0)-(($L.treeHas&&$L.treeHas(S,'of_lean'))?4:0);}
 E.spendPoint=function(S,k){var b=S.booker,sk=$L.SKILLS[k];if(!sk||b.pts<=0||b.sk[k]>=sk.max)return false;b.sk[k]++;b.pts--;return true;};
 
 /* booking power */
+// booking power no longer grows with your level: the tree adds ways to spend it (0aw)
 export function bpGrant(S){
   var P=S.promos[S.player],n=P.shows.length,b=S.booker,o=S.owner,big=cal(S.week).wom===4?3:0;
-  return Math.max(1,(o.me?n*3+2+Math.floor(b.lvl/2):Math.round(n*1.5)+Math.floor(o.trust/25)+Math.floor(b.lvl/3))+b.sk.clout+big+$L.dif(S).bp);
+  return Math.max(1,(o.me?n*3+2:Math.round(n*1.5)+Math.floor(o.trust/25))+b.sk.clout+big+$L.dif(S).bp);
 }
 export function grantBP(S){var g=bpGrant(S);S.bpGrant=g;S.bp=Math.min(g*2,(S.bp||0)+g);}
 export function matchSetup(S,m){

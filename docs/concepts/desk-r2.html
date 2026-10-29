@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Desk Concepts</title>
+<link href="https://fonts.googleapis.com/css2?family=Permanent+Marker&family=Patrick+Hand&family=Gochi+Hand&display=swap" rel="stylesheet">
+<style>
+/* Desk concepts, round 2. Clock Wall language (concepts/booker.html?v=wall) and Ryan's rule: the three window sizes are uniform across the game
+   (left list 22%, centre wall 56%, right picked pane 22%). Base: the real v0.88 desk (current/desk.jpg, app/src/screens/office/Desk.tsx).
+   ?v=road   A · The Road Wall   · the tour is the wall; THIS WEEK holds the work, the show, the bell and the end of the week
+   ?v=week   B · The Week Wall   · the road on the left; the week's work down the wall to the bell
+   ?v=people C · The People Wall · who needs you on the left; the night down the wall; the road and the picked person right
+   &pick=m1|m2|t1|show|stop  which piece is picked (right pane) */
+:root{--board:#16181c;--paper:#f1ead6;--paper2:#e6dabd;--ink:#1b1b1d;--mut:#5f584b;--navy:#1f2a55;--marker:#ffd43b;
+ --green:#2f8f45;--red:#c23b2a;--blue:#2c62ad;--yellow:#f2c230;--sticky:#fff27a;--sel:#ffe27a;--purple:#7a3fa0;--fs:clamp(12px,0.84vw,27px)}
+*{box-sizing:border-box}html,body{margin:0;height:100%}
+body{background:var(--board);color:var(--ink);font:var(--fs)/1.28 'Patrick Hand',system-ui,sans-serif;overflow:hidden;user-select:none;
+ background-image:radial-gradient(#ffffff09 1px,transparent 1px),radial-gradient(#00000030 1px,transparent 1px);background-size:5px 5px,7px 7px;background-position:0 0,2px 3px}
+button{font:inherit;color:inherit}
+.m{font-family:'Permanent Marker',cursive}
+.app{display:grid;grid-template-rows:2.2em 2em minmax(0,1fr) 2.5em;height:100vh}
+.menu{display:flex;align-items:center;gap:1.4em;padding:0 1em;background:var(--paper);border-bottom:2px solid #000}
+.menu span{font-family:'Permanent Marker';font-size:1.05em}.menu .on{background:var(--navy);color:var(--marker);padding:.05em .5em;transform:rotate(-.6deg)}
+.menu .r{margin-left:auto;font-family:'Patrick Hand'}.menu .co{background:var(--red);color:#fff;font-family:'Permanent Marker';padding:0 .35em;margin-right:.5em}
+.tabs{display:flex;gap:.6em;padding:.25em 1em 0;align-items:center}
+.tabs b{font-family:'Permanent Marker';font-weight:400;background:var(--blue);color:#fff;padding:0 .8em;box-shadow:2px 2px 0 #000;transform:rotate(-.5deg)}.tabs b.on{background:var(--marker);color:#111}
+.notif{margin-left:auto;color:#e8e2cf;font-size:.95em}.notif i{font-style:normal;background:var(--red);color:#fff;padding:0 .4em;margin-right:.4em;font-family:'Permanent Marker';font-size:.85em}
+.ww{filter:drop-shadow(0 3px 0 #000) drop-shadow(0 9px 12px #000a);min-height:0;display:flex}
+.win{flex:1;background:var(--paper);background-image:radial-gradient(#00000008 1px,transparent 1.5px),linear-gradient(170deg,#ffffff40,transparent 40%);background-size:4px 4px,100% 100%;
+ display:flex;flex-direction:column;min-height:0;min-width:0;clip-path:polygon(0 .5%,6% 0,20% .6%,38% .1%,55% .7%,72% 0,90% .5%,100% .2%,99.6% 40%,100% 99.5%,82% 100%,60% 99.4%,40% 100%,18% 99.5%,0 100%,.4% 50%)}
+.wt{background:var(--navy);color:var(--marker);font-family:'Permanent Marker';padding:.15em .7em;margin:.45em .6em .3em;display:flex;gap:.8em;align-items:center;transform:rotate(-.25deg)}
+.wt .t{flex:1;text-align:center;font-size:1.05em}.wt small{font-family:'Patrick Hand';color:#fff;font-size:.85em}.wt.hot{background:var(--red);color:#fff}
+.wb{padding:.1em .8em .6em;min-height:0;display:flex;flex-direction:column;flex:1;gap:.45em}
+.body{display:grid;grid-template-columns:minmax(0,22fr) minmax(0,56fr) minmax(0,22fr);gap:1em;padding:.6em 1em .6em;min-height:0}
+.bad{color:var(--red)}.good{color:var(--green)}.mut{color:var(--mut)}.gold{color:#8a5f00;font-weight:700}
+.row{display:flex;gap:.45em;align-items:center;flex-wrap:wrap}.nw{flex-wrap:nowrap}
+.btn{font-family:'Permanent Marker';border:0;padding:.12em .75em;cursor:pointer;color:#fff;background:var(--blue);box-shadow:2px 2px 0 #000;transform:rotate(-.7deg);transition:transform .3s,box-shadow .3s;white-space:nowrap}
+.btn:nth-child(2n){transform:rotate(.6deg)}.btn.gr{background:var(--green)}.btn.r{background:var(--red)}.btn.n{background:var(--navy);color:var(--marker)}.btn.k{background:#2b2b2b}.btn.sm{font-size:.82em;padding:.02em .55em}
+.btn.lock{background:#9a9a9a;color:#eee}
+.btn:hover,.btn:focus-visible{transform:translateY(-2px) rotate(0);box-shadow:3px 5px 0 #000;outline:none}
+.btn:focus-visible,.card:focus-visible,.piece:focus-visible,.tile:focus-visible,.stop:focus-visible{box-shadow:0 0 0 3px var(--marker),3px 4px 0 #000!important;outline:none}
+.sec{font-family:'Permanent Marker';font-size:.78em;color:var(--red);letter-spacing:.05em;margin:.15em 0 0}
+/* left cards */
+.list{overflow-y:auto;min-height:0;flex:1;display:flex;flex-direction:column;gap:.42em;padding:.15em .3em .3em .1em;scrollbar-width:thin}
+.card{display:grid;grid-template-columns:2.6em 1fr;gap:.5em;align-items:center;background:#fffdf5;padding:.3em .45em .3em .3em;box-shadow:2px 2px 0 #000;border-left:.4em solid var(--blue);cursor:pointer;transition:transform .3s,box-shadow .3s}
+.card:hover{transform:translateX(5px) rotate(-.4deg);box-shadow:4px 4px 0 #000}.card.sel{background:var(--sel);transform:translateX(8px) rotate(-.5deg);box-shadow:5px 5px 0 #000}
+.card.must{border-left-color:var(--red)}.card.mat{border-left-color:var(--yellow)}.card.ppl{border-left-color:var(--purple)}.card.H{border-left-color:var(--red)}
+.card b{display:block;line-height:1.1}.card small{display:block;color:var(--mut);line-height:1.15}
+.face{width:2.6em;height:2.6em;background:#2a2a2a;position:relative;overflow:hidden;box-shadow:inset 0 0 0 2px #000}
+.face::before{content:'';position:absolute;left:28%;top:16%;width:44%;height:46%;border-radius:45% 45% 40% 40%;background:var(--sk,#d9a07a)}
+.face::after{content:'';position:absolute;left:14%;bottom:-8%;width:72%;height:34%;border-radius:40% 40% 0 0;background:var(--sk,#d9a07a)}
+.face .ovr{position:absolute;right:0;top:0;background:var(--marker);color:#111;font-family:'Permanent Marker';font-size:.62em;padding:0 .2em;z-index:2}
+.ico{width:2.6em;height:2.6em;display:grid;place-items:center;font-family:'Permanent Marker';color:#fff;background:#2a2a2a;font-size:1.05em}
+.ico.r{background:var(--red)}.ico.b{background:var(--blue)}.ico.p{background:var(--purple)}
+/* the wall */
+.wall{display:grid;grid-template-columns:3.4em minmax(0,1fr) 2em;flex:1;min-height:0;gap:.4em}
+.ruler{background:repeating-linear-gradient(45deg,#e9dcc0 0 6px,#e2d3b2 6px 12px);box-shadow:inset -2px 0 0 #0003;display:flex;flex-direction:column}
+.ruler span{font-family:'Permanent Marker';font-size:.8em;padding:.2em .25em;border-top:2px solid #0002;line-height:1}
+.pieces{display:flex;flex-direction:column;gap:.4em;min-height:0}
+.piece{position:relative;background:#fffdf5;box-shadow:2px 3px 0 #000;padding:.28em .55em .3em .6em;cursor:pointer;border:2px solid transparent;border-left:.45em solid var(--blue);transition:transform .3s,box-shadow .3s,background .3s}
+.piece:hover{transform:translateX(4px) rotate(-.25deg);box-shadow:4px 4px 0 #000}
+.piece.sel{border-color:var(--ink);background:var(--sel);box-shadow:5px 5px 0 #000;z-index:2}
+.piece.must{border-left-color:var(--red)}.piece.mat{border-left-color:var(--yellow);background:#fff9db}.piece.ppl{border-left-color:var(--purple);background:#f3ebf8}
+.piece.show{border-left-color:var(--navy);background:var(--sticky)}
+.role{font-family:'Permanent Marker';font-size:.76em;color:var(--red);letter-spacing:.04em}.piece.ppl .role{color:var(--purple)}.piece.mat .role{color:#8a5f00}.piece.show .role{color:var(--navy)}
+.pg{display:grid;grid-template-columns:5.4em minmax(0,1fr) auto;gap:.5em;align-items:center}
+.thumb{height:4.6em;background:linear-gradient(#cfc2a0 62%,#8a7a5a 62%);box-shadow:inset 0 0 0 2px #000;position:relative;overflow:hidden}
+.thumb i{position:absolute;bottom:8%;width:30%;height:66%;border-radius:40% 40% 8% 8%;background:#d9a07a;box-shadow:0 0 0 2px #f4efe0}
+.hands{font-family:'Gochi Hand';color:var(--navy);font-size:1.05em;line-height:1.15}
+.bell{border-top:4px dashed var(--red);position:relative;margin:.35em 0 .15em;height:0}
+.bell span{position:absolute;right:0;top:-.85em;background:var(--red);color:#fff;font-family:'Permanent Marker';font-size:.82em;padding:0 .6em;box-shadow:2px 2px 0 #000}
+.pieces>.piece,.now>.piece,.now>.two{flex:1 1 auto}.pieces>.piece.show,.now>.piece.show{flex:1.6 1 auto}
+.piece{display:flex;flex-direction:column;justify-content:center}
+.open{border:3px dashed var(--red);background:repeating-linear-gradient(45deg,#fbeee8 0 8px,#f6e3dc 8px 16px);padding:.3em .6em}
+.open h3{margin:0;font-family:'Permanent Marker';font-weight:400;color:var(--red);font-size:1.15em;line-height:1.05;display:flex;justify-content:space-between;align-items:center}
+.notes{display:flex;gap:.7em;margin-top:.3em}
+.sticky{background:var(--sticky);padding:.3em .55em;box-shadow:2px 4px 6px #0007;transform:rotate(-.8deg);font-family:'Gochi Hand';font-size:1.02em;line-height:1.15;flex:1}
+.sticky:nth-child(2n){transform:rotate(.9deg)}.sticky b{font-family:'Permanent Marker';font-size:.75em;display:block;color:#5a4a00}
+.gut{display:flex;flex-direction:column;align-items:center;background:var(--navy);padding:.4em 0;gap:.2em;position:relative}
+.gut::before{content:'';position:absolute;top:.5em;bottom:.5em;left:50%;width:3px;background:#55ff55;transform:translateX(-50%)}
+.gut button{position:relative;border:0;width:1.35em;height:1.35em;border-radius:50%;background:#888;box-shadow:0 0 0 2px #fff;font-family:'Permanent Marker';font-size:.72em;color:#fff;cursor:pointer;display:grid;place-items:center;padding:0}
+.gut button.now{background:var(--red);width:1.7em;height:1.7em}.gut button.nx{background:var(--blue)}.gut button.big{background:#c9a24a}.gut .fill{flex:1}
+/* right pane */
+.rp{display:flex;flex-direction:column;gap:.45em;flex:1;min-height:0}
+.big{font-family:'Permanent Marker';font-size:1.2em;line-height:1.05}
+.mast{display:grid;grid-template-columns:minmax(0,1fr);gap:.4em}
+.pic{height:8.5em;background:linear-gradient(#cfc2a0 62%,#8a7a5a 62%);box-shadow:inset 0 0 0 3px #000,2px 2px 0 #000;position:relative;overflow:hidden}
+.pic i{position:absolute;bottom:8%;width:30%;height:66%;border-radius:40% 40% 8% 8%;background:#d9a07a;box-shadow:0 0 0 3px #f4efe0}
+.poster{height:7em;background:linear-gradient(160deg,#2a2d36,#151821);box-shadow:inset 0 0 0 3px #000,2px 2px 0 #000;display:grid;place-items:center;color:var(--marker);font-family:'Permanent Marker';text-align:center;font-size:.72em;padding:.2em;position:relative;overflow:hidden;line-height:1.05}
+.poster::after{content:'';position:absolute;inset:auto 0 0;height:26%;background:#e9e1c9;clip-path:polygon(10% 0,90% 0,100% 100%,0 100%)}
+.ans{display:flex;flex-direction:column;gap:.38em}
+.opt{background:#fffdf5;box-shadow:2px 2px 0 #000;padding:.25em .45em;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:.15em .6em;align-items:center}
+.opt .btn{transform:none;white-space:normal;text-align:left}.opt small{grid-column:1/-1}.opt .p{font-family:'Permanent Marker';font-size:.92em}.opt small{color:var(--mut);display:block;line-height:1.15}
+.slip{background:#fff;border-left:.4em solid var(--red);padding:.3em .55em;box-shadow:2px 2px 0 #000;min-height:0}
+.slip h4{margin:0 0 .2em;font-family:'Permanent Marker';font-weight:400;font-size:.88em;display:flex;justify-content:space-between}
+.slip ul{margin:0;padding:0}.slip li{list-style:none;margin:.08em 0;padding:.05em .25em}
+.map{background:#2c62ad;box-shadow:inset 0 0 0 3px #0004,2px 2px 0 #000;position:relative;overflow:hidden}
+.map svg{position:absolute;inset:0;width:100%;height:100%}
+.lbl{display:grid;grid-template-columns:5.6em minmax(0,1fr);gap:.05em .6em}.lbl s{text-decoration:none;color:var(--mut)}
+.meter{display:inline-block;width:5.5em;height:.6em;background:#0002;vertical-align:middle;margin-left:.3em}.meter i{display:block;height:100%;background:var(--blue)}
+.ticker{background:#151515;color:#55ffff;font-family:'Permanent Marker';padding:.1em .6em;font-size:.88em;white-space:nowrap;overflow:hidden;min-width:0;flex:1}
+.ticker em{font-style:normal;color:#ffff55}.ticker u{text-decoration:none;color:#55ff55}
+.asst{background:var(--sticky);padding:.4em .65em;box-shadow:2px 4px 6px #0007;transform:rotate(-.6deg);font-family:'Gochi Hand';font-size:1.03em;line-height:1.18}
+.asst b{font-family:'Permanent Marker';font-size:.8em;color:#5a4a00;display:block}
+.stop{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:.5em;align-items:center;background:#fffdf5;box-shadow:2px 3px 0 #000;padding:.2em .55em;cursor:pointer;border-left:.45em solid #9a9a9a;transition:transform .3s,box-shadow .3s}
+.stop:hover{transform:translateX(4px)}.stop.past{background:#ece4d0}.stop.nx{border-left-color:var(--blue)}.stop.bigev{border-left-color:#c9a24a;background:#fff3cf}.stop.sel{background:var(--sel);border:2px solid var(--ink)}
+.grade{font-family:'Permanent Marker';font-size:1.05em}
+.now{background:#fffbe8;box-shadow:3px 4px 0 #000;border:3px solid var(--navy);padding:.35em .55em .45em;display:flex;flex-direction:column;gap:.35em;flex:1;min-height:0}
+.nowhead{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:end;gap:.6em}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:.4em}
+.bottom{display:flex;align-items:center;gap:.6em;padding:0 1em;background:var(--paper);border-top:2px solid #000;white-space:nowrap}
+.stat{background:#fffdf5;box-shadow:1px 1px 0 #0006;padding:0 .5em}
+.keys{margin-left:auto;display:flex;gap:.4em}.key{background:var(--blue);color:#fff;font-family:'Permanent Marker';font-size:.85em;padding:0 .5em}
+.space{background:var(--red);color:#fff;font-family:'Permanent Marker';font-size:1.05em;padding:.05em 1em;box-shadow:2px 2px 0 #000;border:0;cursor:pointer}.space.y{background:var(--marker);color:#111}
+.cap{position:fixed;right:.6em;top:2.4em;z-index:30;background:#000c;color:var(--marker);font:600 11px system-ui;padding:.2em .6em}.cap a{color:#ddd;margin-left:.6em}
+.modal{position:fixed;inset:0;background:#000a;display:none;place-items:center;z-index:40}.modal.on{display:grid}
+.pop{background:var(--paper);padding:1em 1.2em;box-shadow:0 4px 0 #000,0 14px 30px #000;width:46em;transform:rotate(-.4deg)}
+.pop h3{margin:0 0 .6em;font-family:'Permanent Marker';font-weight:400;background:var(--navy);color:var(--marker);padding:.1em .6em;display:inline-block}
+.ptabs{display:flex;gap:.3em;flex-wrap:wrap;margin-bottom:.5em}.ptabs b{font-weight:400;background:var(--paper2);padding:0 .6em;box-shadow:1px 1px 0 #0006}.ptabs b.on{background:var(--navy);color:var(--marker)}
+</style></head><body>
+<div class="app" id="app"></div>
+<div class="modal" id="modal"><div class="pop"><h3>The week in full</h3><div class="ptabs"><b class="on">This week</b><b>Around the world</b><b>Promises</b><b>Worth knowing</b><b>Clocks</b><b>News</b><b>Answered</b></div>
+ <p>Wednesday Night Detonation, Melbourne (this week). Friday house show, Adelaide. Promises: Billy Kestrel a win this month. Clocks: the network's patience 2/8, the owner's favourite 1/6.</p><button class="btn n" onclick="modal.classList.remove('on')">Back to the desk</button></div></div>
+<script>
+const Q=new URLSearchParams(location.search),V=Q.get('v')||'road';
+/* sample data in the engine's shape (E.road, S.inbox, E.tasks, E.expectWords, E.backstage, E.people, E.assistantDesk) */
+const D={week:'Week 1, October 2026',co:'EWE',
+ road:{city:'Melbourne',land:'Oceania',venue:'Veterans Forum',show:'Wednesday Night Detonation',sold:6112,cap:8000,wk:1152,gate:362288,seat:59,mkt:'A strong market',taste:'high flyers',last:'No night here on record',rival:'Nobody else lately',home:'Nobody on the roster is from here',quirk:'The roof keeps the noise in',
+  past:[['Brisbane','B','5,880 in'],['Sydney','A','sold out']],ahead:[['Atlanta','nx','4,065 of 7,500 sold','+1 wk'],['Jacksonville','','2,051 of 6,000 sold','+2 wk'],['Pittsburgh','','5,409 of 9,000 sold','+3 wk'],['Chicago','bigev','WrestleDaydream · on sale in 2 weeks','+4 wk']]},
+ matters:[{id:'m1',n:'Hollywood Hazel is at your door',s:'#f3cfb3',t:'She lost on her debut and wants it back on the next show.',ch:[['Give her the rematch','Sure','Hazel grateful. Kay Starchart loses the spot.'],['Ask her to wait a month','42%','Helps: she trusts you. Hurts: she lost twice.'],['Tell her to earn it','70%','Hurts: she remembers "earn it" for 12 weeks.']],
+   on:['✓ Rematch: Booking marks it on the card; Hazel mood up.','✗ Earn it: Hazel at your door again in 2 weeks if she wins.','· The week cannot end until this has an answer.']},
+  {id:'m2',night:1,n:'Last night: Kid Comet is hurt',s:'#c98c64',t:'A bad landing in the main event. The trainer says two weeks.',ch:[['Rest him two weeks','Sure','Kid off the card; his feud cools.'],['Wrap it and book him','61%','Helps: he is tough. Hurts: a worn body.'],['Let him decide','80% he plays','He remembers you asked.']],
+   on:['✓ Rest: he comes back fresh; the Cable TV title is defended by a stand-in.','✗ Wrap it: 39% two more weeks out.']}],
+ tasks:[{id:'t1',must:1,n:'Pick a play-by-play voice',why:'The show cannot run without a commentary desk.',a:'Assign'},{id:'t2',must:1,n:'Pick a colour voice',why:'A colour voice lifts promos and big moments.',a:'Assign'},{id:'t3',must:1,n:'Sponsor offers (3)',why:'Three companies want a deal before your first show.',a:'See offers'},{id:'t4',n:'Action points to spend (3)',why:'Spend a point on a person before the show.',a:'Go backstage'}],
+ people:[{n:'Rodeo Regret',s:'#e7b896',why:'Champion. In the building, wants to talk about his next challenger.',H:0},{n:'Long Island Lux',s:'#f0c8a8',why:'Unhappy: off the last two cards.',H:1},{n:'Kay Starchart',s:'#c98c64',why:'A rival offer in the parking lot.',H:1},{n:'Billy Kestrel',s:'#e8c09a',why:'Promised a win this month.',H:0},{n:'Coco Capital',s:'#6e4630',why:'The crowd is with her.',H:1},{n:'Reiji Ameda',s:'#d9a07a',why:'A newcomer, first week.',H:1}],
+ next:{name:'Wednesday Night Detonation',expect:'a red-hot show',bar:'★★★½',first:'Your first night: they will give you the benefit of the doubt.',coming:'In 3 weeks: WrestleDaydream',left:'show 1 of 3 this week'},
+ asst:{word:'Learning the ropes',tip:'7 of your top 12 have had no feud in four weeks.',house:'House shows are coming. I will book them the way you book television, and tell you who I used.'}};
+const PICK=Q.get('pick')||({road:'stop',week:'m1',people:'m1'})[V];
+const menu=`<div class="menu"><span class="on">Office</span><span>Booking (3)</span><span>Roster</span><span>Web</span><span>Manage (3)</span><span>Company</span><span class="r"><span class="co">${D.co}</span>${D.week}</span></div>
+<div class="tabs"><b class="on">The desk</b><b>Backstage</b><b>Storylines</b><b>Career</b><span class="notif"><i>NEW</i>Kid Comet is hurt · Sponsor offers waiting</span></div>`;
+const bottom=sp=>`<div class="bottom"><span class="stat">BP 7</span><span class="stat">AP 3</span><span class="stat">Cash $35.4M</span><span class="stat">Pop 74.0</span><span class="stat">Owner 55</span>
+ <span class="keys"><span class="key">F1 Help</span><span class="key">F2 Options</span><span class="key">F3 Music on</span></span><button class="space ${sp[1]||''}">SPACE ▸ ${sp[0]}</button></div>`;
+const win=(t,body,o={})=>`<div class="ww"><div class="win"><div class="wt ${o.hot?'hot':''}"><span class="t">${t}</span>${o.r?`<small>${o.r}</small>`:''}</div><div class="wb">${body}</div></div></div>`;
+const R=D.road,n=x=>x.toLocaleString();
+const mapSvg=`<svg viewBox="0 0 200 130" preserveAspectRatio="xMidYMid meet"><path d="M40 46 L62 24 L84 28 L96 12 L112 24 L120 16 L134 34 L150 40 L166 64 L164 90 L150 110 L128 116 L112 106 L92 112 L70 104 L54 108 L36 92 L30 68Z" fill="#3f9a4a" stroke="#1d5a24" stroke-width="2"/>
+ <circle cx="142" cy="106" r="5" fill="#c23b2a" stroke="#fff" stroke-width="2"/><rect x="98" y="88" width="42" height="11" fill="#fffdf5" stroke="#000"/><text x="119" y="96.5" font-size="8" text-anchor="middle" font-family="Permanent Marker">Melbourne</text>
+ <circle cx="162" cy="72" r="3.4" fill="#888" stroke="#fff"/><text x="150" y="70" font-size="7" text-anchor="end" fill="#fff" font-family="Patrick Hand">Brisbane B</text><circle cx="156" cy="88" r="3.4" fill="#888" stroke="#fff"/><text x="168" y="92" font-size="7" fill="#fff" font-family="Patrick Hand">Sydney A</text></svg>`;
+const ticker=`<div class="ticker">${R.city} · <em>${R.show}</em> · <u>${n(R.sold)} sold</u> · ${R.venue} · <span style="color:#ff5555">${n(R.cap-R.sold)} to a sell-out</span></div>`;
+const table=`<div class="lbl"><s>Inside</s><span>${R.quirk}.</span><s>Sold</s><span><b>${n(R.sold)}</b> of ${n(R.cap)}<span class="meter"><i style="width:${R.sold/R.cap*100}%"></i></span></span><s>This week</s><span class="good">▲ ${n(R.wk)} sold</span><s>Gate so far</s><span>$${n(R.gate)} <span class="mut">at $${R.seat} a seat</span></span>
+ <s>Market</s><span><b class="good">${R.mkt}.</b> <span class="mut">They like ${R.taste}.</span></span><s>Last here</s><span class="mut">${R.last}</span><s>In town</s><span class="mut">${R.rival}</span><s>Hometown</s><span class="mut">${R.home}</span></div>`;
+const roadList=`<div class="sec">THE ROAD</div>${R.past.map(p=>`<div class="stop past"><span>${p[0]}</span><span><span class="grade ${p[1]==='A'?'good':''}">${p[1]}</span> <span class="mut">${p[2]}</span></span></div>`).join('')}
+ <div class="stop sel" data-p="stop"><span><b>► ${R.city}, this week</b></span><span class="mut">${n(R.sold)} sold</span></div>
+ ${R.ahead.map(a=>`<div class="stop ${a[1]}"><span><b>${a[0]}</b>${a[1]==='bigev'?' <span class="gold">· the big event</span>':''}</span><span class="mut">${a[2].split(' · ').pop()}</span></div>`).join('')}`;
+const thumb=m=>`<div class="thumb"><i style="left:12%;background:${m.s}"></i><i style="left:56%;background:#e7b896"></i></div>`;
+const matterPiece=m=>`<div class="piece mat ${PICK===m.id?'sel':''}" data-p="${m.id}" tabindex="0"><div class="pg">${thumb(m)}<div><div class="role">${m.night?'FROM LAST NIGHT':'ON YOUR DESK'}</div><b>${m.n}</b><div class="mut" style="font-size:.92em;line-height:1.15">${m.t}</div></div><button class="btn gr sm">Answer</button></div></div>`;
+const taskPiece=t=>`<div class="piece must" data-p="${t.id}" tabindex="0"><div class="pg" style="grid-template-columns:minmax(0,1fr) auto"><div><div class="role">MUST DO</div><b>${t.n}</b> <span class="mut" style="font-size:.9em">${t.why}</span></div><span class="row nw"><button class="btn gr sm">${t.a}</button><button class="btn n sm">Later</button></span></div></div>`;
+const faces=D.people.slice(0,6).map(p=>`<div class="face" style="--sk:${p.s};width:1.9em;height:1.9em"></div>`).join('');
+const pplPiece=`<div class="piece ppl" data-p="ppl" tabindex="0"><div class="pg" style="grid-template-columns:auto minmax(0,1fr) auto"><span class="row nw" style="gap:.15em">${faces}</span><div><div class="role">BACKSTAGE · 3 OF 3 POINTS</div><b>Six people want you</b></div><button class="btn sm" style="background:var(--purple)">Backstage</button></div></div>`;
+const showPiece=`<div class="piece show ${PICK==='show'?'sel':''}" data-p="show" tabindex="0"><div class="pg" style="grid-template-columns:7em minmax(0,1fr) auto"><div class="poster">WEDNESDAY NIGHT DETONATION</div>
+ <div><div class="role">WEDNESDAY · THE SHOW · ${D.next.left}</div><b class="m">${D.next.name}</b><div>The crowd expects <b>${D.next.expect}</b>: matches of <b>${D.next.bar}</b> or better.</div><div class="hands">${D.next.first} The card is not booked.</div></div>
+ <div style="display:flex;flex-direction:column;gap:.3em;align-items:stretch"><button class="btn lock sm">Book show</button><span class="bad" style="font-size:.85em;text-align:center">3 tasks first</span></div></div></div>`;
+const bell=t=>`<div class="bell"><span>${t}</span></div>`;
+const endWeek=`<div class="open"><h3>END OF THE WEEK <button class="btn n sm" onclick="modal.classList.add('on')">The week in full</button></h3><div class="notes"><div class="sticky"><b>Promise</b>Billy Kestrel was promised a win this month.</div><div class="sticky"><b>Coming up</b>${D.next.coming}. Tickets go on sale next week.</div><div class="sticky"><b>Loose end</b>Kid Comet's feud cools if he sits out.</div><div class="sticky"><b>After the show</b>The grade, what it left, and one matter for Thursday.</div></div></div>`;
+const matterPane=m=>`<div class="mast"><div class="pic"><i style="left:12%;background:${m.s}"></i><i style="left:56%;background:#e7b896"></i></div><div><div class="role">${m.night?'FROM LAST NIGHT':'ON YOUR DESK'}</div><div class="big">${m.n}</div><div>${m.t}</div></div></div>
+ <div class="ans">${m.ch.map((c,i)=>`<div class="opt"><button class="btn ${i===0?'gr':i===m.ch.length-1?'n':''}">${c[0]}</button><span class="p">${c[1]}</span><small>${c[2]}</small></div>`).join('')}</div>
+ <div class="slip"><h4>What each answer hands on <span class="mut" style="font-family:'Patrick Hand'">people remember</span></h4><ul>${m.on.map(x=>`<li class="${x[0]==='✓'?'good':x[0]==='✗'?'bad':'mut'}">${x}</li>`).join('')}</ul></div>`;
+const stopPane=`<div class="map" style="height:12.5em">${mapSvg}</div><div class="row nw"><div class="big" style="flex:1">${R.city.toUpperCase()}, ${R.land.toUpperCase()}</div><button class="btn sm">Schedule</button><button class="btn k sm">Tickets</button></div><div><b>${R.venue}</b> <span class="mut">· the first of 3 shows this week</span></div>${table}`;
+const asst=`<div class="asst"><b>Your assistant · ${D.asst.word}</b>Tip: ${D.asst.tip}<br><span style="font-size:.92em">${D.asst.house}</span></div>`;
+const deskBtns=`<div class="row nw"><button class="btn sm k">Recap</button><button class="btn n sm" onclick="modal.classList.add('on')">The week in full</button><span class="mut" style="font-size:.9em">news, clocks, promises</span></div>`;
+const gutter=`<div class="gut">${R.past.map(p=>`<button title="${p[0]}">${p[1]}</button>`).join('')}<button class="now" title="${R.city}">▼</button><span class="fill"></span>${R.ahead.map(a=>`<button class="${a[1]==='nx'?'nx':a[1]==='bigev'?'big':''}" title="${a[0]}">${a[1]==='bigev'?'★':''}</button>`).join('')}</div>`;
+
+/* ---------- A · The Road Wall: the tour is the wall; THIS WEEK holds the week's work ---------- */
+function roadWall(){
+ const left=win('Around you',`<div class="sec">WORTH DOING</div><div class="card" style="border-left-color:var(--blue)"><span class="ico b">3</span><span><b>Action points to spend</b><small>Spend a point on a person before the show.</small></span></div>
+  <div class="sec">BACKSTAGE · 6 WANT YOU</div><div class="list">${D.people.map(p=>`<div class="card ppl"><div class="face" style="--sk:${p.s}"></div><span><b>${p.n}</b><small>${p.why}</small></span></div>`).join('')}</div>${asst}`,{r:'6 waiting'});
+ const centre=win('The road: Oceania › North America',`<div class="wall"><div class="ruler"><span>-2 wk</span><span>-1 wk</span><span style="flex:1;color:var(--red)">THIS<br>WEEK</span><span>+1</span><span>+2</span><span>+3</span><span>+4</span></div>
+  <div class="pieces">${R.past.map(p=>`<div class="stop past"><span>${p[0]}</span><span><span class="grade ${p[1]==='A'?'good':''}">${p[1]}</span> <span class="mut">${p[2]}</span></span></div>`).join('')}
+   <div class="now"><div class="nowhead"><div><div class="role" style="color:var(--red)">THIS WEEK · MELBOURNE, OCEANIA</div><b class="m" style="font-size:1.1em">${R.venue}</b> <span class="mut">· ${n(R.sold)} of ${n(R.cap)} sold <span class="meter"><i style="width:${R.sold/R.cap*100}%"></i></span> <span class="good">▲ ${n(R.wk)}</span></span></div><span class="bad m">5 before the bell</span></div>
+    <div class="two">${D.matters.map(matterPiece).join('')}</div>${D.tasks.filter(t=>t.must).map(taskPiece).join('')}${pplPiece}${showPiece}
+    ${bell('WEDNESDAY · THE BELL: everything above it first')}${endWeek}</div>
+   ${R.ahead.map(a=>`<div class="stop ${a[1]}"><span><b>${a[0]}</b>${a[1]==='bigev'?' <span class="gold">· the big event</span>':''}</span><span class="mut">${a[2]}</span></div>`).join('')}</div>${gutter}</div>
+  <div class="row nw">${ticker}</div>`,{r:D.week});
+ const right=win('Melbourne: this week',`<div class="rp">${stopPane}${deskBtns}</div>`,{r:'the picked stop'});
+ return `<div class="body">${left}${centre}${right}</div>`;
+}
+/* ---------- B · The Week Wall: the road on the left, the week's work down the wall to the bell ---------- */
+function weekWall(){
+ const left=win('The road: Oceania',`<div class="map" style="height:10em;flex:none">${mapSvg}</div><div class="big" style="font-size:1.05em">${R.city.toUpperCase()} · ${R.venue}</div>
+  <div class="lbl" style="font-size:.95em"><s>Sold</s><span><b>${n(R.sold)}</b> of ${n(R.cap)} <span class="good">▲ ${n(R.wk)}</span></span><s>Gate</s><span>$${n(R.gate)} at $${R.seat}</span><s>Market</s><span class="good">${R.mkt}</span><s>Last here</s><span class="mut">None on record</span></div>
+  <div class="list" style="gap:.3em">${roadList}</div><div class="row nw"><button class="btn sm">Schedule</button><button class="btn k sm">Tickets</button></div>`,{r:D.week});
+ const centre=win('This week: before the bell',`<div class="wall"><div class="ruler"><span>NOW</span><span style="flex:3.2">ON YOUR DESK</span><span style="flex:3">MUST DO</span><span style="flex:1">BACK­STAGE</span><span style="flex:1.6;color:var(--navy)">WED</span><span style="flex:1.7;color:var(--red)">AFTER</span></div>
+  <div class="pieces"><div class="row nw" style="justify-content:space-between"><span>Answer, assign, then book. Nothing above the bell can wait.</span><span class="m bad">2 of 9 done</span></div>
+   ${D.matters.map(matterPiece).join('')}${D.tasks.filter(t=>t.must).map(taskPiece).join('')}${pplPiece}${showPiece}${bell('WEDNESDAY · THE BELL')}${endWeek}</div>${gutter}</div>
+  <div class="row nw">${ticker}</div>`,{r:'show 1 of 3',hot:0});
+ const m=D.matters[0];
+ const right=win(m.n,`<div class="rp">${matterPane(m)}${asst}${deskBtns}</div>`,{r:'needs an answer'});
+ return `<div class="body">${left}${centre}${right}</div>`;
+}
+/* ---------- C · The People Wall: who needs you on the left, the night down the wall, the road and the picked person right ---------- */
+function peopleWall(){
+ const left=win('Who needs you',`<div class="list">${D.matters.map(m=>`<div class="card mat ${PICK===m.id?'sel':''}"><div class="face" style="--sk:${m.s}"><span class="ovr">!</span></div><span><b>${m.n.replace('Last night: ','')}</b><small>${m.t}</small></span></div>`).join('')}
+  ${D.people.map(p=>`<div class="card ppl"><div class="face" style="--sk:${p.s}"></div><span><b>${p.n}</b><small>${p.why}</small></span></div>`).join('')}
+  <div class="sec">THE OFFICE</div>${D.tasks.map(t=>`<div class="card ${t.must?'must':''}"><span class="ico ${t.must?'r':'b'}">${t.must?'✱':'3'}</span><span><b>${t.n}</b><small class="row nw" style="margin-top:.1em"><button class="btn sm gr">${t.a}</button>${t.must?'<button class="btn sm n">Later</button>':''}</small></span></div>`).join('')}</div>`,{r:'2 answers · 3 must-dos',hot:1});
+ const centre=win('Wednesday: the night',`<div class="wall"><div class="ruler"><span style="flex:2">THE ROOM</span><span style="flex:2.6">BEFORE</span><span style="flex:1.8;color:var(--navy)">THE NIGHT</span><span style="flex:1.6;color:var(--red)">AFTER</span></div>
+  <div class="pieces"><div class="piece" style="border-left-color:var(--green);display:grid;grid-template-columns:8em minmax(0,1fr);gap:.6em"><div class="map" style="height:5.4em">${mapSvg}</div><div><div class="role" style="color:var(--green)">THE ROOM · MELBOURNE</div><b class="m">${R.venue}</b><div>${n(R.sold)} of ${n(R.cap)} sold <span class="meter"><i style="width:${R.sold/R.cap*100}%"></i></span> <span class="good">▲ ${n(R.wk)}</span></div><div class="mut">${R.mkt}: they like ${R.taste}. ${R.quirk}.</div></div></div>
+   <div class="two">${D.matters.map(matterPiece).join('')}</div>${D.tasks.filter(t=>t.must).slice(0,1).map(taskPiece).join('')}<div class="piece must" data-p="t3"><div class="pg" style="grid-template-columns:minmax(0,1fr) auto"><div><div class="role">MUST DO · 2 MORE</div><b>Colour voice · Sponsor offers (3)</b></div><button class="btn sm gr">Open</button></div></div>${pplPiece}${showPiece}${bell('WEDNESDAY · THE BELL')}${endWeek}</div>${gutter}</div><div class="row nw">${ticker}<button class="btn sm">Schedule</button><button class="btn k sm">Tickets</button></div>`,{r:'show 1 of 3'});
+ const m=D.matters[0];
+ const right=win('Hollywood Hazel',`<div class="rp">${matterPane(m)}<div class="slip" style="border-left-color:var(--purple)"><h4>Where she stands with you <span class="mut" style="font-family:'Patrick Hand'">her file</span></h4><ul><li>Mood: <b>low</b>, down since last night's loss.</li><li>Remembers: you put her on the debut card (good).</li><li class="mut">Friends: Coco Capital · Rival: Kay Starchart.</li></ul></div>${deskBtns}</div>`,{r:'at your door'});
+ return `<div class="body">${left}${centre}${right}</div>`;
+}
+const RUN={road:[roadWall,['Answer Hazel','y']],week:[weekWall,['Answer Hazel','y']],people:[peopleWall,['Answer Hazel','y']]};
+const [fn,sp]=RUN[V]||RUN.road;
+document.getElementById('app').innerHTML=menu+fn()+bottom(sp);
+document.body.insertAdjacentHTML('beforeend',`<div class="cap">Desk concepts · sample data <a href="?v=road">road</a><a href="?v=week">week</a><a href="?v=people">people</a></div>`);
+</script></body></html>

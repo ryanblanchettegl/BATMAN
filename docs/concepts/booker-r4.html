@@ -1,0 +1,524 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Booker Concepts</title>
+<link href="https://fonts.googleapis.com/css2?family=Permanent+Marker&family=Patrick+Hand&family=Gochi+Hand&display=swap" rel="stylesheet">
+<style>
+/* Booker concepts, round 3 (after two critic rounds). Base: the real v0.88 booking screen (tools/concepts/current/).
+   ?v=wall  The Clock Wall   · time is the card, feud strings in the gutter, tension slip
+   ?v=cork  The Corkboard    · the locker room's strings, loose threads you can drop on
+   ?v=truck The Production Truck · storyboard, scene-first (rule 9c), three-frame plan of the picked segment
+   Shared: roster left (drag rectangles: mouse, touch, pen, keys), card centre (move up/down), options right (tiles open pop-ups). */
+:root{--board:#16181c;--paper:#f1ead6;--paper2:#e6dabd;--ink:#1b1b1d;--mut:#5f584b;--navy:#1f2a55;--marker:#ffd43b;
+ --green:#2f8f45;--red:#c23b2a;--blue:#2c62ad;--yellow:#f2c230;--sticky:#fff27a;--sel:#ffe27a;--purple:#7a3fa0;
+ --face:#2c62ad;--heel:#c23b2a;--fs:clamp(12px,0.84vw,27px)}
+*{box-sizing:border-box}html,body{margin:0;height:100%}
+body{background:var(--board);color:var(--ink);font:var(--fs)/1.3 'Patrick Hand',system-ui,sans-serif;overflow:hidden;user-select:none;
+ background-image:radial-gradient(#ffffff09 1px,transparent 1px),radial-gradient(#00000030 1px,transparent 1px);background-size:5px 5px,7px 7px;background-position:0 0,2px 3px}
+button,input{font:inherit;color:inherit}
+.m{font-family:'Permanent Marker',cursive;font-weight:400;letter-spacing:.02em}.gh{font-family:'Gochi Hand',cursive}
+.app{display:grid;grid-template-rows:2.2em minmax(0,1fr) 2.5em;height:100vh}
+.menu{display:flex;align-items:center;gap:1.4em;padding:0 1em;background:var(--paper);border-bottom:2px solid #000}
+.menu span{font-family:'Permanent Marker';font-size:1.05em}.menu .on{background:var(--navy);color:var(--marker);padding:.05em .5em;transform:rotate(-.6deg)}
+.menu .r{margin-left:auto;font-family:'Patrick Hand'}.menu .co{background:var(--red);color:#fff;font-family:'Permanent Marker';padding:0 .35em;margin-right:.5em}
+.ww{filter:drop-shadow(0 3px 0 #000) drop-shadow(0 9px 12px #000a);min-height:0;display:flex}
+.win{flex:1;background:var(--paper);background-image:radial-gradient(#00000008 1px,transparent 1.5px),linear-gradient(170deg,#ffffff40,transparent 40%);background-size:4px 4px,100% 100%;
+ display:flex;flex-direction:column;min-height:0;clip-path:polygon(0 .5%,6% 0,20% .6%,38% .1%,55% .7%,72% 0,90% .5%,100% .2%,99.6% 40%,100% 99.5%,82% 100%,60% 99.4%,40% 100%,18% 99.5%,0 100%,.4% 50%)}
+.wt{background:var(--navy);color:var(--marker);font-family:'Permanent Marker';padding:.15em .7em;margin:.45em .6em .3em;display:flex;gap:.8em;align-items:center;transform:rotate(-.25deg)}
+.wt .t{flex:1;text-align:center;font-size:1.05em}.wt small{font-family:'Patrick Hand';color:#fff;font-size:.85em}
+.wb{padding:.1em .8em .6em;min-height:0;display:flex;flex-direction:column;flex:1;gap:.4em}
+.body{display:grid;grid-template-columns:minmax(0,22fr) minmax(0,45fr) minmax(0,33fr);gap:1em;padding:.7em 1em .6em;min-height:0}
+.gold{color:#8a5f00;font-weight:700}.blue{color:var(--blue)}.bad{color:var(--red)}.good{color:var(--green)}.mut{color:var(--mut)}
+.row{display:flex;gap:.5em;align-items:center;flex-wrap:wrap}
+.btn{font-family:'Permanent Marker';border:0;padding:.2em .8em;cursor:pointer;color:#fff;background:var(--blue);box-shadow:2px 2px 0 #000;transform:rotate(-.7deg);transition:transform .3s,box-shadow .3s}
+.btn:nth-child(2n){transform:rotate(.6deg)}.btn.gr{background:var(--green)}.btn.r{background:var(--red)}.btn.n{background:var(--navy);color:var(--marker)}.btn.k{background:#2b2b2b}
+.btn:hover,.btn:focus-visible{transform:translateY(-2px) rotate(0);box-shadow:3px 5px 0 #000;outline:none}
+.btn:focus-visible,.tile:focus-visible,.slot:focus-visible,.w:focus-visible,.piece:focus-visible,.loosenote:focus-visible{box-shadow:0 0 0 3px var(--marker),3px 4px 0 #000!important;outline:none}
+.btn[disabled]{opacity:.4;pointer-events:none}
+.strip{display:flex;align-items:center;gap:.5em;flex-wrap:wrap}
+/* roster */
+.search{width:100%;border:2px solid #0003;background:#fffdf5;padding:.15em .5em}
+.chips{display:flex;gap:.25em;flex-wrap:wrap}.chip{border:0;background:var(--paper2);padding:0 .55em;cursor:pointer;box-shadow:1px 1px 0 #0005}.chip.on{background:var(--navy);color:var(--marker)}
+.list{overflow-y:auto;min-height:0;flex:1;padding:.15em .35em .3em .1em;scrollbar-width:thin;scrollbar-color:#9a8f72 transparent}
+.w{display:grid;grid-template-columns:2.7em 1fr 4.6em;gap:.5em;align-items:center;background:#fffdf5;margin-bottom:.4em;padding:.25em .45em .25em .3em;
+ box-shadow:2px 2px 0 #000;cursor:grab;border-left:.35em solid var(--face);transition:transform .3s,box-shadow .3s,opacity .3s;touch-action:none;position:relative}
+.w.H{border-left-color:var(--heel)}
+.w:hover{transform:translateX(5px) rotate(-.4deg);box-shadow:4px 4px 0 #000}
+.w.held{outline:3px solid var(--marker);transform:translateX(8px) rotate(-.6deg)}
+.w.on{opacity:.55}.w.on::after{content:'booked';position:absolute;right:.4em;top:-.3em;font-family:'Gochi Hand';color:var(--green);transform:rotate(-6deg)}
+.w b{display:block;line-height:1.05}.w small{color:var(--mut);display:block;line-height:1.1}
+.head{position:relative;width:2.7em;height:2.7em;background:#2a2a2a;display:grid;place-items:end center;overflow:hidden}
+.head .ovr{position:absolute;right:0;top:0;background:var(--marker);color:#111;font-family:'Permanent Marker';font-size:.7em;padding:0 .25em}
+.bars{display:grid;gap:.12em;font-size:.72em;line-height:1}
+.bar{display:grid;grid-template-columns:2.6em 1fr;align-items:center;gap:.2em}.bar s{text-decoration:none;color:var(--mut)}.bar b{height:.55em;background:#0002;display:block;font-weight:400}.bar b i{display:block;height:100%}
+.dots{display:flex;gap:.15em}.dots i{width:.55em;height:.55em;border-radius:50%;display:block}
+/* match pieces */
+.piece{position:relative;background:#fffdf5;box-shadow:2px 3px 0 #000;display:grid;grid-template-columns:2.4em 1fr 3em;gap:.5em;align-items:center;padding:.3em .5em .3em .2em;
+ cursor:pointer;border:2px solid transparent;transition:transform .3s,box-shadow .3s,background .3s;touch-action:none}
+.piece:hover{transform:translateX(5px) rotate(-.3deg);box-shadow:4px 4px 0 #000}
+.piece.sel{border-color:var(--ink);background:var(--sel);transform:translateX(8px) rotate(-.4deg);box-shadow:5px 5px 0 #000;z-index:2}
+.piece.seg{background:#efe6f6}.piece.seg.sel{background:var(--sel)}
+.piece.ghosted{opacity:.3}
+.piece.ins-top::before,.piece.ins-bot::after{content:'';position:absolute;left:0;right:0;height:5px;background:var(--marker);box-shadow:0 0 0 2px #000}
+.piece.ins-top::before{top:-6px}.piece.ins-bot::after{bottom:-6px}
+.grip{display:flex;flex-direction:column;align-items:center;justify-content:center;align-self:stretch;cursor:grab;color:var(--mut);background:repeating-linear-gradient(0deg,transparent 0 3px,#0001 3px 5px);touch-action:none}
+.when{font-family:'Permanent Marker';color:var(--blue);font-size:.82em}
+.role{font-family:'Permanent Marker';font-size:.78em;color:var(--red);letter-spacing:.04em}.seg .role{color:var(--purple)}
+.sides{display:flex;align-items:center;gap:.3em;flex-wrap:wrap}
+.slot{min-width:7em;min-height:1.75em;border:2px dashed #0005;display:flex;align-items:center;gap:.3em;padding:0 .4em;color:var(--mut);background:#fff;cursor:pointer;transition:background .3s,border-color .3s}
+.slot.fill{border:2px solid #0002;color:var(--ink);border-left:.3em solid var(--face)}.slot.fill.H{border-left-color:var(--heel)}
+.slot.hot{background:#fff6c6;border-color:var(--yellow)}.slot.want{background:#fffbe0;border-color:var(--yellow);animation:pulse 1s infinite alternate}
+@keyframes pulse{to{background:#fff1a8}}
+.slot .mini{width:1.3em;height:1.5em;background:#2a2a2a;display:grid;place-items:end center;overflow:hidden;flex:none}
+.slot .x{margin-left:auto;border:0;background:none;color:var(--mut);cursor:pointer;padding:0 .1em}
+.vs{font-family:'Permanent Marker';color:var(--red)}
+.meta{font-size:.82em;color:var(--mut)}
+.flag{font-size:.78em;padding:0 .3em;margin-left:.2em;color:#fff;background:#555;white-space:nowrap}.flag.r{background:var(--red)}.flag.gr{background:var(--green)}.flag.y{background:var(--yellow);color:#111}.flag.b{background:var(--blue)}
+.mins{font-family:'Permanent Marker';text-align:right;line-height:1}.mins small{display:block;font-family:'Patrick Hand';color:var(--mut);font-size:.8em}
+.dropnew{border:2px dashed #0005;padding:.35em;text-align:center;color:var(--ink);cursor:pointer;background:#fbfbf5;font-family:'Permanent Marker'}
+.dropnew.hot{background:#fff6c6;border-color:var(--yellow)}
+@keyframes settle{from{opacity:0;transform:translateY(-10px) rotate(-1.4deg)}to{opacity:1}}
+.new{animation:settle .45s ease-out both}
+.ghost{position:fixed;z-index:50;pointer-events:none;transform:rotate(3deg);box-shadow:6px 8px 0 #0008;opacity:.95;background:#fffdf5;padding:.3em .7em;font-family:'Permanent Marker';border-left:.35em solid var(--face)}
+/* right pane */
+.rp{display:flex;flex-direction:column;gap:.45em;flex:1;min-height:0}
+.mast{display:grid;grid-template-columns:4.4em 1fr auto 1fr 4.4em;align-items:center;gap:.4em}
+.bust{height:4.4em;background:linear-gradient(#2a2d36 72%,#3a3a2a 72%);box-shadow:inset 0 0 0 3px #000,2px 2px 0 #000;display:grid;place-items:end center;overflow:hidden}
+.who{font-family:'Permanent Marker';line-height:1.05}
+.tiles{display:grid;grid-template-columns:1fr 1fr 1fr;gap:.4em}
+.tile{border:0;text-align:left;background:#fbfbf5;padding:.2em .5em;box-shadow:2px 2px 0 #000;cursor:pointer;border-top:.55em solid #c9d7ef;transition:transform .3s,box-shadow .3s;line-height:1.15}
+.tile:nth-child(3n){transform:rotate(-.5deg)}.tile:nth-child(3n+1){transform:rotate(.4deg)}
+.tile:hover{transform:translateY(-2px) rotate(0);box-shadow:3px 4px 0 #000}
+.tile small{display:block;font-family:'Permanent Marker';font-size:.72em;color:var(--red);letter-spacing:.05em}
+.tile span{display:block;font-size:.8em;color:var(--mut)}
+.tile.set{border-top-color:var(--yellow)}.tile.cost{border-top-color:var(--red)}
+.sticky{background:var(--sticky);padding:.35em .6em;box-shadow:2px 4px 6px #0007;transform:rotate(-.8deg);font-family:'Gochi Hand';font-size:1.05em;line-height:1.2}
+.sticky b{font-family:'Permanent Marker';font-size:.75em;display:block;color:#5a4a00}
+.knock{background:#fff;border-left:.4em solid var(--red);padding:.35em .6em;box-shadow:2px 2px 0 #000;overflow:auto;min-height:0;flex:1}
+.knock h4{margin:0 0 .25em;font-family:'Permanent Marker';font-weight:400;font-size:.9em;display:flex;justify-content:space-between}
+.knock ul{margin:0;padding:0}.knock li{list-style:none;margin:.12em 0;padding:.12em .35em;font-size:1.02em;transition:opacity .3s}
+.knock li.dim{opacity:.5}.knock li.mine{background:linear-gradient(transparent 15%,#fff27a 15%,#fff27a 85%,transparent 85%)}
+.knock .sec{font-family:'Permanent Marker';font-size:.72em;color:var(--mut);margin:.35em 0 .1em}
+.odds{display:flex;height:1.25em;box-shadow:inset 0 0 0 2px #0003}.odds i{display:grid;place-items:center;color:#fff;font-style:normal;font-size:.8em;white-space:nowrap;overflow:hidden}
+.ruleline{font-size:.78em;color:var(--mut);margin-top:-.25em}
+/* modal */
+.modal{position:fixed;inset:0;background:#000a;display:grid;place-items:center;z-index:40}
+.pop{background:var(--paper);padding:1em 1.2em;box-shadow:0 4px 0 #000,0 14px 30px #000;min-width:28em;max-width:46em;transform:rotate(-.4deg);animation:settle .3s ease-out both}
+.pop h3{margin:0 0 .6em;font-family:'Permanent Marker';font-weight:400;background:var(--navy);color:var(--marker);padding:.1em .6em;display:inline-block}
+.pick{display:grid;grid-template-columns:repeat(3,1fr);gap:.55em}
+.note{border:0;background:var(--sticky);padding:.5em .6em;text-align:left;cursor:pointer;box-shadow:2px 3px 4px #0006;font-family:'Gochi Hand';font-size:1.1em;line-height:1.15;transition:transform .3s}
+.note:nth-child(odd){transform:rotate(-1deg)}.note:nth-child(even){transform:rotate(1deg)}.note:hover,.note:focus-visible{transform:translateY(-3px) rotate(0);outline:3px solid var(--navy)}
+.note.on{background:#c8f0c0}.note small{display:block;font-family:'Patrick Hand';font-size:.8em;color:#5a5030}
+/* bottom */
+.bottom{display:flex;align-items:center;gap:.6em;padding:0 1em;background:var(--paper);border-top:2px solid #000;white-space:nowrap}
+.stat{background:#fffdf5;box-shadow:1px 1px 0 #0006;padding:0 .5em}.stat b{color:var(--red)}
+.keys{margin-left:auto;display:flex;gap:.4em}.key{background:var(--blue);color:#fff;font-family:'Permanent Marker';font-size:.85em;padding:0 .5em}
+.space{background:var(--red);color:#fff;font-family:'Permanent Marker';font-size:1.05em;padding:.05em 1em;box-shadow:2px 2px 0 #000;border:0;cursor:pointer}.space.go{background:var(--green)}
+.toast{position:fixed;left:50%;bottom:3.4em;transform:translateX(-50%);background:var(--sticky);padding:.3em .9em;font-family:'Gochi Hand';font-size:1.15em;box-shadow:2px 3px 0 #000;opacity:0;transition:opacity .3s;pointer-events:none;z-index:60}
+.toast.on{opacity:1}
+.cap{position:fixed;right:.6em;top:2.4em;z-index:30;background:#000c;color:var(--marker);font:600 11px system-ui;padding:.2em .6em}.cap a{color:#ddd;margin-left:.6em}
+/* gutter strings (wall + cork) */
+.gutter{position:relative}.gutter svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible;pointer-events:none}
+/* ---------- WALL ---------- */
+.wallwrap{display:grid;grid-template-columns:3.6em 1fr 3.2em;gap:.4em;flex:1;min-height:0;position:relative}
+.ruler{position:relative;background:#fbfbf5;box-shadow:2px 2px 0 #000}
+.ruler span{position:absolute;left:0;right:0;border-top:1px solid #0003}
+.ruler span.q{border-top:2px solid #000a}.ruler span.h{border-top:3px solid #000}
+.ruler span em{font-style:normal;font-family:'Permanent Marker';font-size:.9em;padding-left:.2em;position:relative;top:-.15em}
+.crowdtag{position:absolute;left:-.3em;right:-1.6em;background:var(--sticky);font-family:'Gochi Hand';font-size:.95em;padding:.05em .3em;box-shadow:1px 2px 3px #0007;transform:rotate(-3deg);z-index:4;line-height:1.1}
+.wall{display:flex;flex-direction:column;position:relative;min-height:0}
+.wall .piece{margin:0 0 3px;min-height:2.2em;overflow:hidden;align-items:start;padding-top:.2em}
+.wall .piece .mins{align-self:center}
+.wall .piece.short{align-items:center;padding-top:0}
+.short .meta,.short .role{display:none}.short .slot{min-height:1.4em}.short .when{display:none}
+.more{font-size:.75em;background:#555;color:#fff;padding:0 .3em;margin-left:.3em}
+.wall .empty{background:#fbfbf5;background-image:repeating-linear-gradient(45deg,#c23b2a14 0 10px,transparent 10px 20px);border:3px dashed var(--red);display:grid;place-items:center;min-height:2.6em;cursor:pointer;text-align:center;line-height:1.1}
+.wall .empty b{font-family:'Permanent Marker';font-size:1.45em;color:var(--red);display:block}
+.wall .empty.hot{background-color:#fff6c6}
+.cut{position:absolute;left:-4.2em;right:-3.6em;height:0;border-top:4px dashed var(--red);z-index:3;pointer-events:none}
+.cut span{position:absolute;right:3.6em;top:-1.45em;background:var(--red);color:#fff;font-family:'Permanent Marker';font-size:.8em;padding:0 .4em}
+.cut.end{border-top-style:dashed}.cut.over{border-top-style:solid}
+/* ---------- CORK ---------- */
+.vcork .w{grid-template-columns:3em 1fr 4.6em;border-left:0;background:#fff;padding:.3em .4em .45em .3em;margin:0;gap:.45em;align-items:center;box-shadow:2px 3px 0 #000,inset 0 0 0 1px #0001}
+.vcork .list{display:grid;grid-template-columns:1fr;gap:.45em;align-content:start}
+.vcork .w b{font-size:.9em!important}.vcork .w small{font-size:.8em!important}
+.opencard{display:block;width:100%;border:3px dashed var(--red);background:#fbfbf5;background-image:repeating-linear-gradient(45deg,#c23b2a14 0 10px,transparent 10px 20px);padding:.5em;text-align:center;cursor:pointer;transform:rotate(-.6deg);box-shadow:2px 3px 0 #000;margin:.2em 0 .6em;font-family:'Gochi Hand';font-size:1.05em}
+.opencard b{display:block;font-family:'Permanent Marker';font-size:1.4em;color:var(--red)}.opencard.hot{background-color:#fff6c6}
+.yarnline{position:relative;height:0;border-top:5px solid var(--red);margin:.6em -.3em .4em;box-shadow:0 2px 0 #0006}.yarnline span{position:absolute;right:.3em;top:-1.6em;background:var(--red);color:#fff;font-family:'Permanent Marker';font-size:.8em;padding:0 .4em}
+.filerow{display:block;width:100%;text-align:left;border:0;background:#fbfbf5;box-shadow:2px 2px 0 #000;padding:.2em .5em;border-left:.35em solid var(--face);cursor:pointer;margin-bottom:.3em;transition:transform .3s}
+.filerow.H{border-left-color:var(--heel)}.filerow:hover,.filerow:focus-visible{transform:translateX(4px)}
+.vcork .w:nth-child(4n+1){transform:rotate(-1deg)}.vcork .w:nth-child(4n+2){transform:rotate(.8deg)}.vcork .w:nth-child(4n+3){transform:rotate(.5deg)}.vcork .w:nth-child(4n){transform:rotate(-.6deg)}
+.vcork .w:hover{transform:translateY(-3px) rotate(0)}
+.vcork .w .head{width:3em;height:3em;border-bottom:.3em solid var(--face)}.vcork .w.H .head{border-bottom-color:var(--heel)}
+.vcork .w b{font-family:'Permanent Marker';line-height:1.05}
+.vcork .knock .w{grid-template-columns:2.7em 1fr 4.6em;transform:none;border-left:.35em solid var(--face);align-items:center}.vcork .knock .w.H{border-left-color:var(--heel)}
+.vcork .knock .w .head{width:2.7em;height:2.7em;border-bottom:0}
+.corkwrap{display:grid;grid-template-columns:1fr 3.4em;gap:.3em;flex:1;min-height:0;background:#a87b4f;
+ background-image:radial-gradient(#5a3d1f55 1px,transparent 1.6px),radial-gradient(#d9b28a55 1px,transparent 1.4px),radial-gradient(#3d2a1533 2px,transparent 2.5px);background-size:6px 6px,9px 9px,14px 14px;background-position:0 0,3px 4px,7px 2px;
+ box-shadow:inset 0 0 0 4px #5a3d1f,inset 0 0 18px #0006;padding:.6em .4em .3em .6em}
+.corkcol{overflow:auto;min-height:0;padding:.3em .3em .3em .1em}
+.vcork .piece{background:#fbfbf5;background-image:linear-gradient(transparent 1.45em,#cfe0f5 1.45em,#cfe0f5 calc(1.45em + 1px),transparent calc(1.45em + 1px));margin-bottom:.45em}
+.vcork .piece::before{content:'';position:absolute;top:-.35em;left:50%;width:.8em;height:.8em;border-radius:50%;background:radial-gradient(circle at 35% 35%,#ff8a7a,#a5221a);box-shadow:1px 2px 2px #0008}
+.vcork .piece:nth-child(odd){transform:rotate(-.5deg)}.vcork .piece:nth-child(even){transform:rotate(.4deg)}
+.vcork .piece.sel{transform:translateX(8px) rotate(-.3deg)}
+.loosebar{height:18%;min-height:5.5em;display:flex;gap:.7em;align-items:stretch;padding:.3em .2em 0}
+.loosenote{flex:1;border:0;background:var(--sticky);font-family:'Gochi Hand';font-size:1.08em;text-align:left;padding:.35em .55em;box-shadow:2px 4px 6px #0008;cursor:pointer;line-height:1.15;border-top:.5em solid var(--c);transition:transform .3s}
+.loosenote:nth-child(odd){transform:rotate(-2deg)}.loosenote:nth-child(even){transform:rotate(1.6deg)}
+.loosenote:hover,.loosenote.hot{transform:translateY(-4px) rotate(0);background:#fff7b0}
+.loosenote b{display:block;font-family:'Permanent Marker';font-size:.72em;color:#5a4a00}
+.filecard{background:#fbfbf5;box-shadow:2px 2px 0 #000;padding:.25em .5em;border-left:.35em solid var(--face);font-size:.95em}
+.filecard.H{border-left-color:var(--heel)}.filecard b{font-family:'Permanent Marker';font-size:.85em}
+.files{display:grid;grid-template-columns:1fr 1fr;gap:.4em}
+/* ---------- TRUCK ---------- */
+.vtruck .piece{grid-template-columns:2.4em 8.4em 1fr 3em;margin-bottom:.45em}
+.thumb{height:4.4em;background:#20232b;box-shadow:inset 0 0 0 3px #000,2px 2px 0 #000;position:relative;overflow:hidden}
+.thumb svg{position:absolute;inset:0;width:100%;height:100%}
+.thumb .lab{position:absolute;left:.25em;bottom:.1em;font-family:'Gochi Hand';color:#fff;font-size:.8em;text-shadow:0 1px 2px #000}
+.hands{font-family:'Gochi Hand';color:#3d1a5c;font-size:1.02em}
+.agentline{font-family:'Gochi Hand';color:#1f3f75;font-size:1em}
+.vwall .frames{grid-column:2/3}.vwall .frame .thumb{height:4.6em}
+.stamp{display:inline-block;border:3px solid var(--red);color:var(--red);font-family:'Permanent Marker';padding:0 .5em;transform:rotate(-4deg);background:#fff8}
+.stamp.wig{animation:wig .5s}@keyframes wig{0%,100%{transform:rotate(-4deg)}30%{transform:rotate(4deg) scale(1.1)}60%{transform:rotate(-7deg)}}
+.glabel{position:absolute;top:-1.5em;left:0;right:0;text-align:center;font-family:'Permanent Marker';font-size:.75em;color:var(--marker);background:var(--navy);transform:rotate(-2deg)}
+.lane{position:absolute;top:0;bottom:0;width:14px;margin-left:-7px;border:0;background:transparent;cursor:pointer;z-index:5}
+.lane:hover,.lane:focus-visible{background:#fff4;outline:2px solid var(--marker)}
+.wall .empty .loose{display:flex;gap:.5em;justify-content:center;margin-top:.4em;flex-wrap:wrap}
+.wall .empty .loosenote{flex:0 1 15em;font-size:.95em}
+.wall .empty .loosenote b{font-size:.75em;color:#5a4a00;display:block;line-height:1.1}
+.vwall .w:nth-child(odd){transform:rotate(-.3deg)}.vwall .w:nth-child(even){transform:rotate(.25deg)}
+.mast .who{font-size:1.05em}.odds{height:1.6em}.odds i{font-size:.9em}
+.frames{grid-column:2/4;display:grid;grid-template-columns:repeat(3,1fr);gap:.4em;margin-top:.2em}
+.frame .thumb{height:5.2em}.frame p{margin:.15em 0 0;font-family:'Gochi Hand';font-size:.95em;line-height:1.1}
+.frame p b{font-family:'Permanent Marker';font-size:.75em;color:var(--red);display:block}
+.reel{display:flex;height:1.7em;background:#111;box-shadow:inset 0 0 0 2px #000;padding:.2em;gap:.2em}
+.reel i{display:grid;place-items:center;height:100%;cursor:pointer;font-style:normal;font-family:'Permanent Marker';font-size:.75em;color:#fff;overflow:hidden}.reel i.on{outline:3px solid var(--marker);outline-offset:-3px}
+.board{flex:1;min-height:0;overflow:auto;padding:.2em .4em .3em .1em}
+.meter{display:grid;grid-template-columns:auto 1fr;gap:.2em .6em;align-items:center}
+.meter .lv{display:flex;gap:.2em}.meter .lv i{flex:1;height:.8em;background:#0002}.meter .lv i.on{background:var(--red)}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style></head>
+<body>
+<div class="app" id="app"></div><div class="toast" id="toast"></div><div id="modal"></div>
+<script>
+const V=(new URLSearchParams(location.search).get('v')||'wall');
+const NAMES={wall:'The Clock Wall',cork:'The Corkboard',truck:'The Production Truck'};
+document.body.classList.add('v'+V);
+/* ---------- data: real EWE names and option lists from v0.88 ---------- */
+const RAW=[['Zed Zenith',94,'F','Technician'],['Barbwire Burke',93,'H','Brawler'],['Detour Dante',93,'F','High flyer'],['Long Island Lux',93,'H','Showman'],['Reiji Ameda',92,'H','Strong style'],
+['Rodeo Regret',88,'F','Brawler',1],['Billy Kestrel',87,'F','Technician'],['Kid Comet',84,'H','High flyer',2],['Spike Sharpe',83,'F','Striker'],['Dex Diesel',83,'H','Powerhouse'],['Geordie Gremlin',82,'H','Brawler'],
+['Brutus Biceps',82,'H','Powerhouse'],['El Forajido',82,'F','Luchador'],['Klaus Cuckoo',81,'H','Technician'],['The Face-Paint Phantom',81,'F','Showman'],['Captain Thesaurus',80,'H','Talker'],
+['Bounce Rebound',80,'F','High flyer'],['Butterfly Knife Bentley',80,'H','Striker'],['Fastball Finnegan',80,'F','Athlete'],['Clementine Casual',79,'F','Technician',0,'W'],['Nicky Fawn',79,'H','Brawler'],
+['Shinji Skyscraper',78,'H','Giant'],['Tavita Tusi',78,'H','Powerhouse'],['Mitch Fawn',78,'H','Brawler'],['Coffin Kid Corwin',76,'F','Hardcore'],['Crispin Crate',76,'H','Hardcore'],['Kale Kenway',76,'F','Athlete'],
+['Hollywood Hazel',86,'F','Showman',0,'W'],['Kay Starchart',84,'H','High flyer',0,'W'],['Wilma Warbler',82,'F','Technician',0,'W'],['Coco Capital',85,'H','Talker',3,'W'],['Jetstream Jace',72,'F','High flyer'],['Leg Lock Lee',72,'H','Technician']];
+const BELT=['','EWE World Champion','Cable TV Champion',"Basic Cable Women's Champion"];
+const R=RAW.map(([n,o,s,st,ch,g],i)=>({id:i,n,o,s,st,ch:ch||0,g:g||'M',mood:[3,2,3,1,2,3,2,3,1,2,3,2][i%12],cond:[95,80,62,90,88,74,97,55,91,83,77,92][i%12],hue:(i*47)%360}));
+const id=n=>R.find(w=>w.n===n).id;
+const FEUDS=[{a:id('Long Island Lux'),b:id('Rodeo Regret'),heat:'hot',c:'#c23b2a',belt:'EWE World Championship'},{a:id('Barbwire Burke'),b:id('Billy Kestrel'),heat:'cooling',c:'#e08a1e'},{a:id('Kid Comet'),b:id('Detour Dante'),heat:'building',c:'#2c62ad',belt:'Cable Television Championship'},{a:id('Coco Capital'),b:id('Hollywood Hazel'),heat:'building',c:'#7a3fa0'}];
+const FRIENDS={[id('Spike Sharpe')]:'Fastball Finnegan',[id('Zed Zenith')]:'Reiji Ameda',[id('Kid Comet')]:'Kay Starchart',[id('Billy Kestrel')]:'Klaus Cuckoo',[id('Hollywood Hazel')]:'Wilma Warbler'};
+const PROMISE={w:id('Billy Kestrel'),t:'was promised a win'};
+const OPT={mt:['Singles','Tag team','Triple threat','Four-way','Six-man tag','Battle royal'],len:['Short','Medium','Long'],
+ stip:['Standard','Hardcore','Ladder','Steel cage','Steel cell','Ring of fire','Submission','Iron man','Tables','Lumberjack','Mask against mask','Hair against hair'],
+ title:['No title','EWE World Championship',"EWE Women's World Championship",'EWE International-ish Championship','Continental Drift Crown','Cable Television Championship',"Basic Cable Women's Championship"],
+ how:['Let the story decide','Clean win','Roll-up','Cheap win','Disqualification','Count-out'],int:['Safe','Normal','Brutal'],
+ segk:['Promo: Call-out','Promo: Interview','Angle: Brawl','Angle: Attack','Angle: Contract signing','The writers decide']};
+const NOTE={len:['14 min','20 min','28 min'],int:['less wear, flatter crowd','as it comes','louder crowd, heavy wear'],how:['the writers pick what fits','both look strong','the loser is not hurt by it','heat for the heel','keeps both strong, crowd may boo','a cheap way out'],
+ stip:{Standard:'no extra rules',Hardcore:'brawlers shine',Ladder:'high flyers shine, heavy wear','Steel cage':'a big-night set','Steel cell':'the biggest set','Ring of fire':'spectacle, risk',Submission:'technicians shine','Iron man':'needs stamina',Tables:'brawlers shine',Lumberjack:'the roster at ringside','Mask against mask':'once in a career','Hair against hair':'once in a career'}};
+const SIZE={Singles:[1,1],'Tag team':[2,2],'Triple threat':[1,1,1],'Four-way':[1,1,1,1],'Six-man tag':[3,3],'Battle royal':[6]};
+const MIN=[14,20,28];
+let uid=1;
+const M=(mt,sides,o={})=>({uid:uid++,k:'m',mt,sides,len:1,stip:'Standard',title:'No title',how:'Let the story decide',call:-1,int:'Normal',...o});
+const SG=(segk,who,mins=10)=>({uid:uid++,k:'s',segk,who,mins});
+let card=[M('Singles',[[id('Long Island Lux')],[id('Rodeo Regret')]],{len:0}),SG('Promo: Call-out',[id('Kid Comet')],5),
+ M('Singles',[[id('Hollywood Hazel')],[id('Kay Starchart')]]),M('Singles',[[id('Kid Comet')],[id('Detour Dante')]],{title:'Cable Television Championship'}),
+ SG('Angle: Brawl',[id('Coco Capital'),id('Wilma Warbler')],10),M('Singles',[[id('Spike Sharpe')],[null]],{len:2})];
+let sel=card[5].uid,held=null,filt='All',q='',fresh=null;
+const BUDGET=120;
+/* ---------- helpers ---------- */
+const W=i=>i==null?null:R[i];
+const people=c=>c.k==='m'?c.sides.flat().filter(x=>x!=null):c.who;
+const booked=()=>new Set(card.flatMap(people));
+const mins=c=>c.k==='m'?MIN[c.len]:c.mins;
+const total=()=>card.reduce((a,c)=>a+mins(c),0);
+const hm=m=>Math.floor(m/60)+':'+String(m%60).padStart(2,'0');
+const done=c=>c.k!=='m'||c.sides.every(s=>s.every(x=>x!=null));
+const matches=()=>card.filter(c=>c.k==='m');
+const role=c=>{if(c.k!=='m')return c.segk.startsWith('Angle')?'Angle':c.segk.startsWith('Promo')?'Promo':'Writers';const ms=matches(),k=ms.indexOf(c);return k===ms.length-1?'Main event':k===0?'Opener':k===ms.length-2?'Semi-main':'Match '+(k+1)};
+const startOf=c=>{let a=0;for(const x of card){if(x===c)return a;a+=mins(x)}return a};
+const sideName=s=>s.map(x=>x==null?'?':W(x).n).join(' & ');
+function flags(c){if(c.k!=='m'||!done(c))return[];const ws=c.sides.flat().map(W),f=[];
+ if(ws.some(w=>w.cond<65))f.push(['Worn down','r']);
+ if(c.sides.length===2&&c.sides[0].length===1){const [a,b]=[ws[0].id,ws[1].id];if((a+b)%3===0)f.push(['Chemistry','gr']);else if((a*b)%5===1)f.push(['No chemistry','r'])}
+ if(FEUDS.some(x=>ws.some(w=>w.id===x.a)&&ws.some(w=>w.id===x.b)))f.push(['Feud','y']);
+ if(ws.some(w=>w.id===PROMISE.w)){const k=c.call>=0&&c.sides[c.call].includes(PROMISE.w);f.push([k?'Promise kept':'Promised a win',k?'gr':'y'])}
+ if(c.title!=='No title')f.push(['Title','b']);if(ws.some(w=>w.mood===1))f.push(['Unhappy','r']);return f}
+function odds(c){if(c.k!=='m'||!done(c))return null;const sc=c.sides.map(s=>s.reduce((a,i)=>a+W(i).o**4,0)),t=sc.reduce((a,b)=>a+b,0);return sc.map(v=>v/t)}
+function agent(c){if(c.k!=='m')return c.who.length?'The words are ready. Mic skill decides how it lands.':'Put someone in it, or let the writers pick.';if(!done(c))return'Pick who is in it and I will tell you what I see.';
+ const f=flags(c).map(x=>x[0]);if(f.includes('Feud'))return'The crowd has waited for this one. Do not waste it on a cheap finish.';if(f.includes('Chemistry'))return'These two have worked before. It clicked.';if(f.includes('No chemistry'))return'They do not click. Keep it short.';
+ if(f.includes('Worn down'))return'Somebody here is running on fumes. Go safe or go short.';return'First time for these two on our shows. I have no read. We find out at the bell.'}
+/* what the road agent can see going in: facts about the inputs, never a forecast of the result (rule 8a) */
+function reads(c){const L=[];if(c.k!=='m'){people(c).map(W).forEach(w=>L.push([w.st==='Talker'||w.st==='Showman'?'good':'',`${w.n} is a ${w.st.toLowerCase()}${w.st==='Talker'||w.st==='Showman'?': at home on the mic':''}.`]));if(!L.length)L.push(['','The writers will cast it.']);return L}
+ const ws=people(c).map(W);if(!ws.length)return[['','Nobody booked yet.']];
+ ws.forEach(w=>{if(w.cond<65)L.push(['bad',`${w.n} is running on fumes.`]);else if(w.cond>90)L.push(['good',`${w.n} is fresh.`]);if(w.mood===1)L.push(['bad',`${w.n} is low. He wants a win.`]);if(w.ch)L.push(['gold',`${w.n} is a champion: ${BELT[w.ch]}.`])});
+ if(done(c)&&c.sides.length===2){const a=c.sides[0][0],b=c.sides[1][0];if((a+b)%3===0)L.push(['good','They have clicked before.']);else if((a*b)%5===1)L.push(['bad','They have not clicked before.']);else L.push(['','First time for these two on our shows.']);
+  const sa=W(a).st,sb=W(b).st;if(sa===sb)L.push(['',`Two ${sa.toLowerCase()}s: a familiar style clash.`]);else L.push(['',`${sa} against ${sb.toLowerCase()}.`]);
+  if(c.stip!=='Standard'&&NOTE.stip[c.stip])L.push(['',`${c.stip}: ${NOTE.stip[c.stip]}.`])}
+ return L}
+/* knock-on lines: [kind, text, [wrestler ids]] */
+function knock(c){const L=[],b=booked();
+ if(c&&c.k==='m'&&done(c)){const ws=c.sides.flat().map(W);
+  ws.filter(w=>w.cond<65).forEach(w=>L.push(['bad',`${w.n} is worn down: a ${OPT.len[c.len].toLowerCase()}${c.int==='Brutal'?', brutal':''} match costs body${c.len===2||c.int==='Brutal'?' heavily':''}.`,[w.id]]));
+  if(c.call>=0)L.push(['gold',`Calling ${sideName(c.sides[c.call])} costs ${c.call===0?1:2} booking power.`,c.sides[c.call]]);
+  if(c.title!=='No title')L.push(['good',`The ${c.title} is on the line.`,people(c)]);
+  ws.filter(w=>w.mood===1).forEach(w=>L.push(['bad',`${w.n} is unhappy. A loss here will be remembered.`,[w.id]]))}
+ FEUDS.forEach(f=>{const A=b.has(f.a),B=b.has(f.b);const same=card.some(x=>x.k==='m'&&people(x).includes(f.a)&&people(x).includes(f.b));
+  if(same)L.push(['good',`${W(f.a).n} vs ${W(f.b).n} moves on (${f.heat}).`,[f.a,f.b]]);else if(!A&&!B)L.push(['bad',`${W(f.a).n} vs ${W(f.b).n} is off the card: it cools.`,[f.a,f.b]]);else L.push(['warn',`Only half of ${W(f.a).n} vs ${W(f.b).n} is on: they never meet tonight.`,[f.a,f.b]])});
+ if(!b.has(PROMISE.w))L.push(['bad',`${W(PROMISE.w).n} ${PROMISE.t}. He is not on the card.`,[PROMISE.w]]);
+ return L}
+function crowdWord(){const ms=matches().filter(done);if(!ms.length)return'cold';const me=ms[ms.length-1],v=me.sides.flat().reduce((a,i)=>a+W(i).o,0)/me.sides.flat().length;const fe=knock(null).filter(x=>x[0]==='good').length;const s=v+fe*2;return s>95?'red hot':s>90?'hot':s>85?'warm':'flat'}
+function dollG(w){if(!w)return'<path d="M14 4h12l2 10 10 4-3 14-6-3-1 31H12l-1-31-6 3-3-14 10-4z" fill="#555"/>';const c=w.s==='F'?'#2c62ad':'#c23b2a',sk=`hsl(${25+w.hue%20},45%,${55+w.hue%25}%)`;
+ return`<rect x="14" y="3" width="12" height="13" rx="5" fill="${sk}"/><rect x="13" y="2" width="14" height="5" fill="hsl(${w.hue},35%,22%)"/><path d="M10 17h20l6 4-3 13-4-2v8H11v-8l-4 2-3-13z" fill="${sk}"/><path d="M11 38h18l1 20h-8l-2-12-2 12h-8z" fill="${c}"/>${w.ch?'<rect x="9" y="34" width="22" height="5" fill="#d9a520" stroke="#000" stroke-width=".6"/>':''}`}
+const doll=(w,h='100%',vb='0 0 40 60')=>`<svg viewBox="${vb}" style="height:${h}">${dollG(w)}</svg>`;
+const bustSVG=w=>doll(w,'100%','4 0 32 40');
+function toast(t){const e=document.getElementById('toast');e.textContent=t;e.classList.add('on');clearTimeout(toast.t);toast.t=setTimeout(()=>e.classList.remove('on'),1700)}
+/* ---------- truck: scene pictures (stand-ins for cached scene.ts renders) ---------- */
+function thumb(c,kind){const ws=people(c).map(W),cw=crowdWord(),crowdN={'cold':4,'flat':8,'warm':16,'hot':26,'red hot':34}[cw];
+ let crowd='';for(let k=0;k<crowdN;k++)crowd+=`<circle cx="${4+(k*37)%114}" cy="${6+((k*13)%12)}" r="2.2" fill="hsl(${(k*53)%360},30%,${45+(k*7)%25}%)"/>`;
+ const r=role(c),tight=r==='Main event'||kind==='finish',wide=r==='Opener'&&kind!=='finish';
+ const g=(w,x,y,s)=>`<g transform="translate(${x},${y}) scale(${s})">${dollG(w)}</g>`;
+ if(c.k==='m'){const s=tight?.85:wide?.42:.55,y=tight?6:wide?24:18;
+  let set=`<rect width="120" height="70" fill="#1b1d24"/>${crowd}`;
+  set+=tight?'<polygon points="0,62 120,62 120,70 0,70" fill="#e9e1c9"/>':`<polygon points="${wide?'8,52 112,52 100,32 20,32':'14,50 106,50 96,30 24,30'}" fill="#e9e1c9"/><polygon points="${wide?'8,52 112,52 112,57 8,57':'14,50 106,50 106,55 14,55'}" fill="#2c62ad"/>`;
+  if(c.stip==='Steel cage'||c.stip==='Steel cell')set+='<rect x="6" y="2" width="108" height="64" fill="none" stroke="#bbb" stroke-width="1.2" stroke-dasharray="2 2"/>'+(c.stip==='Steel cell'?'<rect x="6" y="2" width="108" height="5" fill="#888"/>':'');
+  if(c.stip==='Ladder')set+='<g stroke="#c9a15a" stroke-width="2"><line x1="56" y1="8" x2="50" y2="56"/><line x1="66" y1="8" x2="72" y2="56"/>'+[16,26,36,46].map(y=>`<line x1="${53-(y-8)/8}" y1="${y}" x2="${67+(y-8)/8}" y2="${y}"/>`).join('')+'</g>';
+  if(c.stip==='Ring of fire')set+='<path d="M0 62 Q10 50 20 62 Q30 48 40 62 Q50 50 60 62 Q70 46 80 62 Q90 52 100 62 Q110 48 120 62" fill="#f08a24" opacity=".85"/>';
+  if(c.title!=='No title')set+='<rect x="100" y="26" width="16" height="6" fill="#d9a520" stroke="#000" stroke-width=".6"/><circle cx="108" cy="29" r="2.2" fill="#fff3a0"/>';
+  if(kind==='entrance')set=`<rect width="120" height="70" fill="#141620"/>${crowd}<polygon points="40,70 80,70 70,20 50,20" fill="#3a3550"/><rect x="45" y="8" width="30" height="12" fill="#2c2840"/><text x="60" y="17" font-family="Permanent Marker" font-size="6" fill="#ffd43b" text-anchor="middle">EWE</text>`+g(ws[0],46,22,.7);
+  else set+=ws.length<=2?g(ws[0],tight?14:wide?34:38,y,s)+g(ws[1],tight?70:wide?62:64,y,s):ws.map((w,k)=>g(w,14+k*22,y+6,s*.8)).join('');
+  if(kind==='turn')set+='<text x="60" y="12" font-family="Gochi Hand" font-size="9" fill="#fff" text-anchor="middle">near fall!</text>';
+  if(kind==='finish')set+=`<text x="60" y="12" font-family="Permanent Marker" font-size="8" fill="#ffd43b" text-anchor="middle">1 · 2 · 3</text>`;
+  return`<svg viewBox="0 0 120 70" preserveAspectRatio="xMidYMid slice">${set}</svg>`}
+ const brawl=c.segk.includes('Brawl')||c.segk.includes('Attack');
+ return`<svg viewBox="0 0 120 70" preserveAspectRatio="xMidYMid slice"><rect width="120" height="70" fill="${brawl?'#2f343a':'#2b2240'}"/>${brawl?'<rect x="4" y="40" width="34" height="16" rx="3" fill="#596273"/><rect x="82" y="36" width="34" height="18" rx="3" fill="#6d5a4a"/><rect x="0" y="56" width="120" height="14" fill="#3d3d3d"/>':crowd+'<rect x="0" y="52" width="120" height="18" fill="#3a3550"/><rect x="56" y="34" width="8" height="20" fill="#6b5a3a"/><circle cx="60" cy="33" r="2" fill="#ddd"/>'}
+  ${ws.length?ws.map((w,k)=>g(w,30+k*34,14,.65)).join(''):'<text x="60" y="38" font-family="Gochi Hand" font-size="9" fill="#fff" text-anchor="middle">nobody yet</text>'}</svg>`}
+function scene(c){if(c.k==='s')return c.segk.includes('Brawl')||c.segk.includes('Attack')?'Scene: the parking lot':c.segk.includes('signing')?'Scene: the contract table':'Scene: the ramp, mic in hand';const r=role(c);return(r==='Main event'?'Close two-shot':r==='Opener'?'Wide, crowd in':'The ring')+(c.stip!=='Standard'?' · '+c.stip.toLowerCase():'')}
+function hands(c){if(c.k==='s'){if(!c.who.length)return'Hands the show: whatever the writers pick.';const w=W(c.who[0]);const f=FEUDS.find(x=>x.a===w.id||x.b===w.id);return f?`Hands the show: ${w.n} calls out ${W(f.a===w.id?f.b:f.a).n} for later tonight.`:`Hands the show: ${w.n} wants a match next week.`}
+ if(!done(c))return'Hands the show: nothing yet. It needs names.';const o=odds(c),fav=o[0]>=o[1]?0:1,und=1-fav,ws=c.sides.map(s=>W(s[0]));
+ const f=FEUDS.find(x=>people(c).includes(x.a)&&people(c).includes(x.b));if(f)return`Hands the show: the loser of ${W(f.a).n} vs ${W(f.b).n} wants a rematch, and the crowd will too.`;
+ if(c.title!=='No title')return`Hands the show: a champion, and ${ws[und].n} with a reason to come back for the belt.`;
+ if(ws.some(w=>w.mood===1)){const u=ws.find(w=>w.mood===1);return`Hands the show: if ${u.n} loses, he is at your door on Monday.`}
+ if(people(c).includes(PROMISE.w))return c.call>=0&&c.sides[c.call].includes(PROMISE.w)?`Hands the show: ${W(PROMISE.w).n} gets his win. He will remember you kept it.`:`Hands the show: ${W(PROMISE.w).n} could lose a match he was promised.`;
+ return`Hands the show: if ${ws[und].n} pulls the upset, a new story starts.`}
+/* ---------- piece ---------- */
+function slotHTML(c,si,xi,x){const k=`${c.uid}:${si}:${xi}`;if(x==null)return`<button class="slot ${held!=null?'want':''}" data-drop="${k}" aria-label="Empty spot">drop a name</button>`;
+ const w=W(x);return`<span class="slot fill ${w.s}" data-drag="chip" data-chip="${k}" data-drop="${k}" data-wid="${w.id}"><span class="mini">${doll(w)}</span>${w.n}<button class="x" data-rm="${k}" aria-label="Take ${w.n} off">✕</button></span>`}
+function sidesHTML(c){if(c.k!=='m')return c.who.map(i=>`<span class="slot fill ${W(i).s}" data-wid="${i}"><span class="mini">${doll(W(i))}</span>${W(i).n}<button class="x" data-rmseg="${c.uid}:${i}" aria-label="Take off">✕</button></span>`).join('')+`<button class="slot ${held!=null?'want':''}" data-dropseg="${c.uid}">+ someone</button>`;
+ return c.sides.map((s,si)=>s.map((x,xi)=>slotHTML(c,si,xi,x)).join('<span class="mut">&amp;</span>')).join('<span class="vs">vs</span>')}
+function metaHTML(c,short){if(c.k!=='m')return`<span class="meta">${c.segk.replace(/^(Promo|Angle): /,'')}</span>`;const f=flags(c);
+ return`<div class="meta">${c.mt}${c.stip!=='Standard'?' · '+c.stip:''}${c.title!=='No title'?' · <span class="gold">'+c.title+'</span>':''}${!done(c)?' · <span class="bad">Unfinished</span>':''}${c.call>=0?' · <span class="gold">Your call</span>':''}${f.map(x=>`<span class="flag ${x[1]}">${x[0]}</span>`).join('')}</div>`}
+function pieceHTML(c,o={}){const st=startOf(c),m=mins(c),s=sel===c.uid,short=o.short;const f=flags(c);
+ const showFrames=c.k==='m'&&done(c)&&(V==='truck'?s:(V==='wall'&&(m>=28||s)));
+ const handsLine=(V==='truck'&&(s||role(c)==='Main event'))||(V==='wall'&&m>=20);
+ const tagWord=V==='truck'&&!handsLine?(()=>{const h=hands(c);return /rematch/.test(h)?'Rematch':/belt/.test(h)?'Belt':/calls out|challenge/.test(h)?'Challenge':/door/.test(h)?'Trouble':/upset/.test(h)?'Upset':/match next week/.test(h)?'Next week':'Open'})():'';
+ const extra=showFrames?`<div class="frames">${[['entrance','Entrance',`${sideName(c.sides[0])} comes out first.`],['turn','The turn',c.how==='Let the story decide'?'The writers pick the swing.':c.how+' sets up the finish.'],['finish','The finish',c.call<0?'Let it play out: the ring decides.':sideName(c.sides[c.call])+' wins. '+c.how+'.']].map(([k,t,cap])=>`<div class="frame"><div class="thumb">${thumb(c,k)}</div><p><b>${t}</b>${cap}</p></div>`).join('')}</div>`:'';
+ return`<div class="piece ${c.k==='s'?'seg':''} ${s?'sel':''} ${c.uid===fresh?'new':''} ${short?'short':''}" data-uid="${c.uid}" tabindex="0" style="${o.style||''}" role="button" aria-label="${role(c)}">
+  <span class="grip" data-drag="piece" data-grip="${c.uid}" title="Drag to move up or down">⠿<span class="when">${hm(st)}</span></span>
+  ${V==='truck'?`<div class="thumb" style="${s?'height:6.6em':''}">${thumb(c)}<span class="lab">${scene(c)}</span></div>`:''}
+  <div><div class="role">${role(c).toUpperCase()}</div><div class="sides">${sidesHTML(c)}${short&&f.length?`<span class="more">+${f.length}</span>`:''}</div>${short?'':metaHTML(c)}${handsLine?`<div class="hands">${hands(c)}</div>`:''}${tagWord?`<span class="flag" style="background:#4a2070">${tagWord}</span>`:''}${V==='wall'&&m>=20&&c.k==='m'&&!showFrames?`<div class="agentline">Agent: "${agent(c)}"</div>`:''}</div>
+  <span class="mins">${m}<small>min</small></span>${extra}</div>`}
+/* ---------- centre ---------- */
+let lastCrowd=null;
+function toolbar(){const t=total(),left=BUDGET-t,cw=crowdWord(),wig=lastCrowd!==null&&lastCrowd!==cw;lastCrowd=cw;return`<div class="strip"><button class="btn gr" data-act="suggest">Suggest</button><button class="btn gr" data-act="addm">+ Match</button><button class="btn" data-act="addp">+ Promo</button><button class="btn" data-act="adda">+ Angle</button><button class="btn k" data-act="clear">Clear</button>
+  <span class="stamp ${wig?'wig':''}" title="How the crowd will feel going into the main event, in words">CROWD: ${cw.toUpperCase()}</span>
+  ${V==='truck'?'':`<span style="margin-left:auto" class="${Math.abs(left)<=5?'good':'bad'} m">${hm(t)} of 2:00 · ${left>5?left+' min to fill':left<-5?(-left)+' min over':'fits'}</span>`}</div>`}
+const looseFeuds=()=>FEUDS.map((f,k)=>[f,k]).filter(([f])=>!card.some(x=>x.k==='m'&&people(x).includes(f.a)&&people(x).includes(f.b)));
+const stakes=f=>`<b>${W(f.a).n} vs ${W(f.b).n}: ${f.heat.toUpperCase()}</b>Book it: the story moves on${f.belt?', belt on the line':''}. Skip it: ${f.heat==='cooling'?'it dies next week':'it cools'}.`;
+function centre(){const t=total(),span=Math.max(BUDGET,t),left=BUDGET-t;
+ if(V==='wall'){const ticks=[];for(let m=0;m<=span;m+=5)ticks.push(`<span class="${m%60===0?'h':m%15===0?'q':''}" style="top:${m/span*100}%">${m%15===0?`<em>${hm(m)}</em>`:''}</span>`);
+  const meStart=matches().length?startOf(matches()[matches().length-1]):0;
+  const pieces=card.map(c=>pieceHTML(c,{short:mins(c)<10,style:`flex:${mins(c)} 1 0`})).join('');
+  const lf=looseFeuds();
+  const empty=left>0?`<div class="empty" data-dropnew="1" style="flex:${left} 1 0"><span><b>${left} MIN OPEN</b>drop a wrestler here for a new match${lf.length&&left>=14?`<span class="loose">${lf.slice(0,2).map(([f,k])=>`<button class="loosenote" data-dropfeud="${k}" style="--c:${f.c}">${stakes(f)}</button>`).join('')}</span>`:''}</span></div>`:'';
+  return`${toolbar()}<div class="wallwrap"><div class="ruler">${ticks.join('')}<div class="crowdtag" style="top:calc(${meStart/span*100}% - .2em)">Crowd: ${crowdWord()}</div></div>
+   <div class="wall" id="sheet">${pieces}${empty}<div class="cut ${t>BUDGET?'over':'end'}" style="top:${BUDGET/span*100}%"><span>${t>BUDGET?'2:00 · cut '+(t-BUDGET)+' min':'2:00 · off the air'}</span></div></div>
+   <div class="gutter" id="gutter"><span class="glabel">FEUDS</span><svg id="strings"></svg></div></div>`}
+ if(V==='cork'){const loose=looseFeuds();
+  const open=left>0?`<button class="opencard" data-dropnew="1"><b>${left} MIN OPEN</b>pinned until you fill it · drop a wrestler here</button>`:'';
+  return`${toolbar()}<div class="corkwrap"><div class="corkcol" id="sheet">${card.map(c=>pieceHTML(c)).join('')}${open}<div class="yarnline ${t>BUDGET?'over':''}"><span>${t>BUDGET?'2:00 · cut '+(t-BUDGET)+' min':'2:00 · off the air'}</span></div></div><div class="gutter" id="gutter"><span class="glabel">FEUDS</span><svg id="strings"></svg></div></div>
+   <div class="loosebar">${loose.length?loose.map(([f,k])=>`<button class="loosenote" data-dropfeud="${k}" style="--c:${f.c}">${stakes(f)}</button>`).join(''):'<div class="sticky" style="flex:1">Every running story is on the card. Nothing hangs loose tonight.</div>'}</div>`}
+ // truck
+ const ini=c=>({Opener:'OP','Main event':'ME','Semi-main':'SM',Promo:'P',Angle:'A',Writers:'W'}[role(c)]||role(c).replace('Match ','M'));
+ return`${toolbar()}<div class="reel" aria-label="The show in running order">${card.map(c=>`<i data-pick="${c.uid}" class="${c.uid===sel?'on':''}" style="flex:${mins(c)};background:${c.k==='s'?'#7a3fa0':role(c)==='Main event'?'#c23b2a':'#2c62ad'}" title="${role(c)}">${mins(c)>=10?role(c).replace('Match ','M').replace('Main event','Main')+' ':''}${hm(startOf(c))}–${hm(startOf(c)+mins(c))}</i>`).join('')}${left>0?`<i data-dropnew="1" style="flex:${left};background:#fbfbf5;color:#c23b2a;outline:2px dashed #c23b2a;outline-offset:-3px">${left} MIN OPEN</i>`:t>BUDGET?`<i style="flex:0 0 7em;background:#c23b2a">cut ${t-BUDGET} min</i>`:''}</div>
+  <div class="board" id="sheet">${card.map(c=>pieceHTML(c)).join('')}<button class="dropnew" data-dropnew="1" style="width:100%">+ drop a wrestler here for a new scene card</button></div>`}
+/* ---------- right pane ---------- */
+function rightPane(){const c=card.find(x=>x.uid===sel);
+ if(!c)return`<div class="ww"><div class="win"><div class="wt"><span class="t">Booking notes</span></div><div class="wb"><div class="sticky">Pick a match on the card, or drop a wrestler on it.</div></div></div></div>`;
+ const i=card.indexOf(c),ms=matches(),mine=new Set(people(c));
+ let mast,tiles;
+ const tile=(k,lab,val,note,cls='')=>`<button class="tile ${cls}" data-tile="${k}"><small>${lab}</small>${val}${note?`<span>${note}</span>`:''}</button>`;
+ if(c.k==='m'){const a=c.sides[0],b=c.sides[1]||[],o=odds(c);
+  mast=`<div class="mast"><div class="bust">${bustSVG(W(a[0]))}</div><span class="who">${sideName(a)}</span><span class="vs m" style="font-size:1.5em">VS</span><span class="who" style="text-align:right">${sideName(b)}</span><div class="bust">${bustSVG(W(b[0]))}</div></div>
+   ${o?`<div class="odds">${o.map((p,k)=>`<i style="flex:${p};background:${k?'#c23b2a':'#2c62ad'}">${p>.12?Math.round(p*100)+'%':''}</i>`).join('')}</div><div class="ruleline">Who the crowd expects to win if you let it play out</div>`:''}`;
+  tiles=`<div class="tiles">${tile('mt','Type',c.mt)}${tile('len','Length',OPT.len[c.len],NOTE.len[c.len])}${tile('stip','Rules',c.stip,NOTE.stip[c.stip],c.stip!=='Standard'?'set':'')}
+   ${tile('title','Title',c.title==='No title'?'No title':c.title.replace(' Championship',''),c.title==='No title'?'nothing on the line':'on the line',c.title!=='No title'?'set':'')}${tile('how','Ending',c.how,'')}${tile('call','Finish',c.call<0?'Let it play out':sideName(c.sides[c.call])+' wins',c.call<0?'free':(c.call===0?1:2)+' booking power',c.call>=0?'cost':'')}</div>`}
+ else{mast=`<div class="mast"><div class="bust" style="background:#2b2240">${bustSVG(W(c.who[0]))}</div><span class="who">${c.who.map(x=>W(x).n).join(', ')||'Nobody yet'}</span><span></span><span class="who" style="text-align:right">${c.segk}</span><div class="bust" style="background:#2b2240">${bustSVG(W(c.who[1]))}</div></div>`;
+  tiles=`<div class="tiles"><button class="tile" data-tile="segk"><small>Kind</small>${c.segk}</button><button class="tile" data-tile="smins"><small>Length</small>${c.mins} min</button></div>`}
+ // variant block
+ let block='';
+ if(V==='wall')block=`<div class="sticky"><b>Uncle Puppetstrings, road agent</b>"${agent(c)}"</div>`;
+ if(V==='cork'){block=`<div>${people(c).slice(0,4).map(x=>{const w=W(x),f=FEUDS.find(q=>q.a===x||q.b===x);return`<button class="filerow ${w.s}" data-file="${x}"><b class="m" style="font-size:.85em">${w.n}</b> · ${f?`<span style="color:${f.c}">●</span> Feud: ${W(f.a===x?f.b:f.a).n.split(' ').slice(-1)[0]}`:'No feud'} · Friend: ${(FRIENDS[x]||'none').split(' ').slice(-1)[0]} · Mood ${['','low','fine','high'][w.mood]} <span class="mut">› file</span></button>`}).join('')||'<div class="mut">Nobody in it yet.</div>'}</div>`}
+ if(V==='truck')block=`<div class="sticky"><b>Director's note · what this segment hands the show</b>${hands(c).replace('Hands the show: ','')}</div>`;
+ // who fits an empty spot: the one thing the player needs when a match is unfinished
+ let fits='';const empty=c.k==='m'?c.sides.flatMap((s,si)=>s.map((x,xi)=>x==null?`${c.uid}:${si}:${xi}`:null)).filter(Boolean):[];
+ if(empty.length){const b=booked(),si0=+empty[0].split(':')[1];
+  const opp=c.sides.filter((s,k)=>k!==si0).flat().filter(x=>x!=null).map(W),mates=c.sides[si0].filter(x=>x!=null).map(W),inn=[...opp,...mates];
+  const cand=R.filter(w=>!b.has(w.id)&&(!inn.length||inn.every(p=>p.g===w.g))).map(w=>{let s=w.o,why=[];
+   const f=FEUDS.find(x=>opp.some(p=>(x.a===p.id&&x.b===w.id)||(x.b===p.id&&x.a===w.id)));if(f){s+=40;why.push(['Feud, '+f.heat,'y'])}
+   const other=FEUDS.find(x=>(x.a===w.id||x.b===w.id)&&x!==f);if(other){const pt=other.a===w.id?other.b:other.a;s-=20;why.push([b.has(pt)?`Leaves ${W(pt).n} hanging`:`Splits feud with ${W(pt).n}`,'r'])}
+   const chem=opp.some(p=>(p.id+w.id)%3===0),cold=opp.some(p=>(p.id*w.id)%5===1);if(chem){s+=12;why.push(['Chemistry','gr'])}else if(cold){s-=15;why.push(['No chemistry','r'])}
+   if(opp.some(p=>p.s===w.s)){s-=10;why.push([w.s==='F'?'Face vs face':'Heel vs heel','r'])}
+   if(mates.some(p=>p.s!==w.s)){s-=8;why.push(['Mixed team','r'])}
+   if(w.cond<65){s-=12;why.push(['Worn down','r'])}if(w.id===PROMISE.w){s+=15;why.push(['Owed a win','y'])}if(w.mood===1)why.push(['Unhappy','r']);
+   return{w,s,why}}).sort((a,b)=>b.s-a.s).slice(0,6);
+  fits=`<div class="knock" style="border-left-color:var(--green);flex:1"><h4><span>Who fits this spot</span><span class="mut gh">press one, or drag it in</span></h4>${cand.map(({w,why})=>`<div class="w ${w.s}" data-drag="w" data-w="${w.id}" data-fit="${empty[0]}" tabindex="0" style="margin-bottom:.3em"><div class="head">${bustSVG(w)}<span class="ovr">${w.o}</span></div><span><b>${w.n}</b><small>${why.map(x=>`<span class="flag ${x[1]}">${x[0]}</span>`).join('')||w.st}</small></span><span class="mut" style="font-size:.8em">${w.s==='F'?'Face':'Heel'}</span></div>`).join('')}</div>`}
+ const K=knock(c).map(([k,t,ids])=>[k,t,ids.some(x=>mine.has(x))]).sort((x,y)=>y[2]-x[2]);
+ const tonight=K.filter(x=>x[2]),rest=K.filter(x=>!x[2]);
+ const li=([k,t,m])=>`<li class="${k} ${m?'mine':'dim'}">${k==='good'?'✓':k==='bad'?'✗':'•'} ${t}</li>`;
+ return`<div class="ww"><div class="win"><div class="wt"><span class="t">${role(c)}${c.k==='m'?' · '+(ms.indexOf(c)+1)+' of '+ms.length:''}</span><small>${hm(startOf(c))} · ${mins(c)} min</small></div><div class="wb"><div class="rp">
+  ${mast}${tiles}${block}${fits||`<div class="knock" style="border-left-color:var(--blue);flex:1"><h4><span>What the agent can see going in</span><span class="mut gh">facts, not a forecast</span></h4><ul>${reads(c).map(([k,t])=>`<li class="${k}">${k==='good'?'▲':k==='bad'?'▼':'•'} ${t}</li>`).join('')}</ul></div>`}
+  <div class="knock new" style="flex:0 1 auto;max-height:34%"><h4><span>What this card changes</span><span class="mut gh">${tonight.length} about this ${c.k==='m'?'match':'segment'}</span></h4>
+   ${tonight.length?`<ul>${tonight.map(li).join('')}</ul>`:''}<div class="sec">THE REST OF THE CARD</div><ul>${rest.map(li).join('')}</ul></div>
+  <div class="row"><button class="btn" data-act="up" ${i===0?'disabled':''}>↑ Earlier</button><button class="btn" data-act="down" ${i===card.length-1?'disabled':''}>↓ Later</button><button class="btn r" data-act="remove">Remove</button><button class="btn n" data-act="next">Next ›</button></div></div></div></div></div>`}
+/* ---------- roster ---------- */
+function roster(){const b=booked();const fl=['All','Men','Women','Faces','Heels','Free'];
+ const list=R.filter(w=>(filt==='All'||(filt==='Men'&&w.g==='M')||(filt==='Women'&&w.g==='W')||(filt==='Faces'&&w.s==='F')||(filt==='Heels'&&w.s==='H')||(filt==='Free'&&!b.has(w.id)))&&w.n.toLowerCase().includes(q.toLowerCase())).sort((x,y)=>y.o-x.o);
+ const moodW=['','low','fine','high'],moodC=['','#c23b2a','#e0b030','#2f8f45'];
+ const dots=w=>`<span class="dots">${FEUDS.filter(f=>f.a===w.id||f.b===w.id).map(f=>`<i style="background:${f.c}" title="Feud with ${W(f.a===w.id?f.b:f.a).n}"></i>`).join('')}</span>`;
+ const bars=w=>`<span class="bars"><span class="bar"><s>Body</s><b title="${w.cond<65?'worn':'fresh'}"><i style="width:${w.cond}%;background:${w.cond<65?'#c23b2a':'#2f8f45'}"></i></b></span><span class="bar"><s>Mood</s><b title="${moodW[w.mood]}"><i style="width:${w.mood*33}%;background:${moodC[w.mood]}"></i></b></span></span>`;
+ const one=w=>V==='cork'?`<div class="w ${w.s} ${b.has(w.id)?'on':''} ${held===w.id?'held':''}" tabindex="0" data-drag="w" data-w="${w.id}"><div class="head">${bustSVG(w)}<span class="ovr">${w.o}</span></div><span><b>${w.n}</b><small>${w.ch?'<span class="gold">'+BELT[w.ch]+'</span>':w.st}</small>${dots(w)}</span>${bars(w)}</div>`
+  :`<div class="w ${w.s} ${b.has(w.id)?'on':''} ${held===w.id?'held':''}" tabindex="0" data-drag="w" data-w="${w.id}"><div class="head">${bustSVG(w)}<span class="ovr">${w.o}</span></div>
+   <span><b>${w.n}</b><small>${w.s==='F'?'Face':'Heel'} · ${w.ch?'<span class="gold">'+BELT[w.ch]+'</span>':w.st}</small>${dots(w)}</span>${bars(w)}</div>`;
+ return`<div class="ww"><div class="win"><div class="wt"><span class="t">Your roster</span><small>${R.length-b.size} free</small></div><div class="wb">
+  <input class="search" id="q" placeholder="search the roster…" value="${q}"><div class="chips">${fl.map(f=>`<button class="chip ${f===filt?'on':''}" data-filt="${f}">${f}</button>`).join('')}</div>
+  <div class="list" id="list">${list.map(one).join('')}</div>
+  <div class="mut" style="font-size:.8em">Drag a card onto a spot. Or press it, then press a spot.</div></div></div></div>`}
+/* ---------- strings in the gutter ---------- */
+function strings(){const svg=document.getElementById('strings'),gut=document.getElementById('gutter'),sh=document.getElementById('sheet');if(!svg||!gut)return;
+ const G=gut.getBoundingClientRect(),S=sh.getBoundingClientRect();let out='';
+ const yOf=uid=>{const p=sh.querySelector(`.piece[data-uid="${uid}"]`);if(!p)return null;const r=p.getBoundingClientRect();const y=r.top+r.height/2-G.top;return(r.bottom<S.top||r.top>S.bottom)?null:y};
+ const ln=(x1,y1,x2,y2,c)=>`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#f6eed8" stroke-width="7" stroke-linecap="round"/><line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${c}" stroke-width="4" stroke-linecap="round"/>`;
+ gut.querySelectorAll('.lane').forEach(n=>n.remove());
+ FEUDS.forEach((f,k)=>{const x=6+k*(G.width-12)/Math.max(1,FEUDS.length-1);
+  const ps=card.filter(c=>people(c).includes(f.a)||people(c).includes(f.b)).map(c=>({c,y:yOf(c.uid),both:people(c).includes(f.a)&&people(c).includes(f.b)})).filter(p=>p.y!=null);
+  const meet=ps.some(p=>p.both&&p.c.k==='m');
+  if(ps.length>1){const ys=ps.map(p=>p.y);out+=ln(x,Math.min(...ys),x,Math.max(...ys),f.c)}
+  ps.forEach(p=>{out+=ln(-6,p.y,x,p.y,f.c)+`<circle cx="-6" cy="${p.y}" r="4" fill="${f.c}" stroke="#000" stroke-width="1"/>`;if(p.both)out+=`<circle cx="${x}" cy="${p.y}" r="6" fill="${f.c}" stroke="#fff" stroke-width="2"/>`});
+  if(ps.length&&!meet){const y=Math.max(...ps.map(p=>p.y));out+=`<path d="M${x} ${y} q5 18 -2 34 q-4 9 2 18" stroke="#f6eed8" stroke-width="7" fill="none"/><path d="M${x} ${y} q5 18 -2 34 q-4 9 2 18" stroke="${f.c}" stroke-width="4" fill="none" stroke-dasharray="5 3"/>`}
+  const b=document.createElement('button');b.className='lane';b.style.left=x+'px';b.title=`${W(f.a).n} vs ${W(f.b).n} (${f.heat})`;b.setAttribute('aria-label',b.title);
+  b.onclick=()=>{const first=card.find(c=>people(c).includes(f.a)||people(c).includes(f.b));toast(`Feud: ${W(f.a).n} vs ${W(f.b).n}, ${f.heat}${meet?'. They meet tonight.':first?'. They never meet tonight.':'. Not on the card.'}`);if(first){sel=first.uid;render.scroll=true;render()}};gut.appendChild(b)});
+ svg.innerHTML=out}
+/* ---------- render ---------- */
+function render(){const app=document.getElementById('app'),t=total(),ok=Math.abs(BUDGET-t)<=5&&card.every(done)&&card.length;const keep=[...document.querySelectorAll('#list,#sheet')].map(e=>e.scrollTop);
+ const anchor=document.querySelector(`.piece[data-uid="${sel}"]`),aTop=anchor?anchor.getBoundingClientRect().top:null;
+ app.innerHTML=`<div class="menu"><span>Office</span><span class="on">Booking (3)</span><span>Roster</span><span>Web</span><span>Manage (3)</span><span>Company</span><span class="r"><span class="co">EWE</span>Week 1, October 2026</span></div>
+ <div class="body">${roster()}
+  <div class="ww"><div class="win"><div class="wt"><span class="t">Book the show: Wednesday Night Detonation</span><small>show 1 of 3</small></div><div class="wb">
+   <div class="mut">Weekly TV. This crowd expects <b class="blue">a red-hot show</b>, matches of <b class="blue">★★★★¼</b> or better. Booking power <b class="gold">7</b>.</div>${centre()}</div></div></div>
+  ${rightPane()}</div>
+ <div class="bottom"><span class="stat"><b>BP</b> 7</span><span class="stat"><b>AP</b> 3</span><span class="stat"><b>Cash</b> $35.4M</span><span class="stat"><b>Pop</b> 74.0</span><span class="stat"><b>Owner</b> 55</span>
+  <span class="keys"><span class="key">F1 Help</span><span class="key">F2 Options</span><span class="key">F3 Music on</span></span><button class="space ${ok?'go':''}" data-act="space">SPACE ▸ ${ok?'Ring the bell':!card.every(done)?'Finish the card':t>BUDGET+5?'Cut '+(t-BUDGET)+' min':'Fill '+(BUDGET-t)+' min'}</button></div>
+ <div class="cap">${NAMES[V]} · concept, sample data${V==='truck'?' · pictures are stand-ins for cached scene.ts renders':''} ${Object.keys(NAMES).map(k=>`<a href="?v=${k}">${k}</a>`).join('')}</div>`;
+ [...document.querySelectorAll('#list,#sheet')].forEach((e,k)=>e.scrollTop=keep[k]||0);
+ if(aTop!=null&&!render.scroll){const n=document.querySelector(`.piece[data-uid="${sel}"]`),sh=document.getElementById('sheet');if(n&&sh)sh.scrollTop+=n.getBoundingClientRect().top-aTop}
+ const qe=document.getElementById('q');qe.oninput=e=>{q=e.target.value;const p=qe.selectionStart;render();const n=document.getElementById('q');n.focus();n.setSelectionRange(p,p)};
+ const sh=document.getElementById('sheet');if(sh)sh.onscroll=()=>strings();
+ requestAnimationFrame(strings);setTimeout(strings,500);
+ if(render.focus){const n=document.querySelector(render.focus);if(n)n.focus();render.focus=null}
+ if(render.scroll){const s=document.querySelector('.piece.sel');if(s)s.scrollIntoView({block:'nearest'});render.scroll=false}
+ fresh=null}
+window.addEventListener('resize',()=>strings());
+/* ---------- actions ---------- */
+function unbook(wid){for(const m of card){if(m.k==='m')m.sides.forEach(s=>s.forEach((x,k)=>{if(x===wid)s[k]=null}));else m.who=m.who.filter(x=>x!==wid)}}
+function put(wid,key){const [u,si,xi]=key.split(':').map(Number);const c=card.find(x=>x.uid===u);const prev=c.sides[si][xi];unbook(wid);c.sides[si][xi]=wid;sel=u;held=null;fresh=u;toast(W(wid).n+(prev!=null?' replaces '+W(prev).n:' is booked'));render()}
+function newMatch(wid){unbook(wid);const m=M('Singles',[[wid],[null]]);card.push(m);sel=m.uid;fresh=m.uid;held=null;render.scroll=true;render();toast('New match. Now pick an opponent.')}
+function bookFeud(k){const f=FEUDS[k];unbook(f.a);unbook(f.b);const m=M('Singles',[[f.a],[f.b]],f.belt?{title:f.belt}:{});const me=card.findIndex(c=>role(c)==='Main event');card.splice(me<0?card.length:me,0,m);sel=m.uid;fresh=m.uid;held=null;render.scroll=true;render();toast(`${W(f.a).n} vs ${W(f.b).n} is on the card`)}
+function move(u,to){const f=card.findIndex(c=>c.uid===u);if(f<0||to<0||to>=card.length||f===to)return;const [c]=card.splice(f,1);card.splice(to,0,c);fresh=u;render()}
+function reshape(c,mt){const old=c.sides.flat().filter(x=>x!=null);c.mt=mt;c.sides=SIZE[mt].map(n=>Array(n).fill(null));let k=0;c.sides.forEach(s=>s.forEach((_,j)=>{s[j]=old[k++]??null}));c.call=-1}
+function openTile(k){const c=card.find(x=>x.uid===sel);let ch=[];
+ if(k==='mt')ch=OPT.mt.map(x=>[x,SIZE[x].join(' vs ')+' wrestlers',x===c.mt]);if(k==='len')ch=OPT.len.map((x,i)=>[x,NOTE.len[i],i===c.len]);
+ if(k==='stip')ch=OPT.stip.map(x=>[x,NOTE.stip[x],x===c.stip]);if(k==='title')ch=OPT.title.map(x=>[x,x==='No title'?'nothing on the line':'on the line tonight',x===c.title]);
+ if(k==='how')ch=OPT.how.map((x,i)=>[x,NOTE.how[i],x===c.how]);
+ if(k==='call')ch=[['Let it play out','free · the ring decides',c.call<0]].concat(done(c)?c.sides.map((s,i)=>[sideName(s)+' wins',(i===0?1:2)+' booking power',c.call===i]):[]);
+ if(k==='segk')ch=OPT.segk.map(x=>[x,'plays its own scene',x===c.segk]);if(k==='smins')ch=[5,10,15].map(x=>[x+' min','',x===c.mins]);
+ const L={mt:'Type',len:'Length',stip:'Rules',title:'Title',how:'Ending',call:'Finish',segk:'Kind',smins:'Length'}[k];
+ document.getElementById('modal').innerHTML=`<div class="modal" data-bg="1"><div class="pop" role="dialog" aria-label="${L}"><h3>${L}</h3><div class="pick">${ch.map((x,i)=>`<button class="note ${x[2]?'on':''}" data-choose="${k}:${i}">${x[0]}<small>${x[1]}</small></button>`).join('')}</div><div class="row" style="margin-top:.8em;justify-content:flex-end"><button class="btn k" data-closepop="1">Close</button></div></div></div>`;
+ (document.querySelector('.note.on')||document.querySelector('.note')).focus()}
+function choose(k,i){const c=card.find(x=>x.uid===sel);
+ if(k==='mt')reshape(c,OPT.mt[i]);else if(k==='len')c.len=i;else if(k==='stip')c.stip=OPT.stip[i];else if(k==='title')c.title=OPT.title[i];else if(k==='how')c.how=OPT.how[i];
+ else if(k==='call')c.call=i-1;else if(k==='segk')c.segk=OPT.segk[i];else if(k==='smins')c.mins=[5,10,15][i];
+ document.getElementById('modal').innerHTML='';fresh=c.uid;render.focus=`[data-tile="${k}"]`;render()}
+document.addEventListener('click',e=>{const t=e.target;if(dragging)return;
+ if(t.dataset.bg||t.closest('[data-closepop]')){document.getElementById('modal').innerHTML='';return}
+ const ch=t.closest('[data-choose]');if(ch){const [k,i]=ch.dataset.choose.split(':');choose(k,+i);return}
+ const rm=t.closest('[data-rm]');if(rm){const [u,si,xi]=rm.dataset.rm.split(':').map(Number);card.find(c=>c.uid===u).sides[si][xi]=null;fresh=u;render();return}
+ const rs=t.closest('[data-rmseg]');if(rs){const [u,w]=rs.dataset.rmseg.split(':').map(Number);const c=card.find(x=>x.uid===u);c.who=c.who.filter(x=>x!==w);render();return}
+ const f=t.closest('[data-filt]');if(f){filt=f.dataset.filt;render();return}
+ const tl=t.closest('[data-tile]');if(tl){openTile(tl.dataset.tile);return}
+ const lf=t.closest('[data-dropfeud]');if(lf){bookFeud(+lf.dataset.dropfeud);return}
+ const fl=t.closest('[data-file]');if(fl){const x=+fl.dataset.file,w=W(x),f=FEUDS.find(q=>q.a===x||q.b===x);
+  document.getElementById('modal').innerHTML=`<div class="modal" data-bg="1"><div class="pop" role="dialog" aria-label="${w.n}"><h3>${w.n}</h3><div style="display:grid;grid-template-columns:7em 1fr;gap:1em"><div class="bust" style="height:9em">${bustSVG(w)}</div><div>
+   <div><b>${w.s==='F'?'Face':'Heel'} · ${w.st} · ${w.o}</b>${w.ch?' · <span class="gold">'+BELT[w.ch]+'</span>':''}</div>
+   <div>${f?`<span style="color:${f.c}">●</span> Feud with <b>${W(f.a===x?f.b:f.a).n}</b>, ${f.heat}.`:'No feud running.'}</div><div>Friend: <b>${FRIENDS[x]||'nobody close'}</b>.</div>
+   <div>Body ${w.cond<65?'<b class="bad">worn down</b>':'fresh'} · Mood <b>${['','low','fine','high'][w.mood]}</b></div>
+   <div class="sticky" style="margin-top:.5em"><b>What he remembers about you</b>${w.mood===1?'Being left off last week\'s show.':x===PROMISE.w?'You promised him a win.':'Your last call went his way.'}</div></div></div>
+   <div class="row" style="margin-top:.8em;justify-content:flex-end"><button class="btn k" data-closepop="1">Close</button></div></div></div>`;document.querySelector('[data-closepop]').focus();return}
+ const pk=t.closest('[data-pick]');if(pk){sel=+pk.dataset.pick;render.scroll=true;render();return}
+ const fw=t.closest('[data-fit]');if(fw){put(+fw.dataset.w,fw.dataset.fit);return}
+ const w=t.closest('[data-w]');if(w){held=held===+w.dataset.w?null:+w.dataset.w;render();if(held!=null)toast('Now press a spot on the card');return}
+ const d=t.closest('[data-drop]');if(d&&held!=null){put(held,d.dataset.drop);return}
+ const dn=t.closest('[data-dropnew]');if(dn){if(held!=null)newMatch(held);else{const m=M('Singles',[[null],[null]]);card.push(m);sel=m.uid;fresh=m.uid;render.scroll=true;render()}return}
+ const ds=t.closest('[data-dropseg]');if(ds&&held!=null){const c=card.find(x=>x.uid===+ds.dataset.dropseg);unbook(held);c.who.push(held);held=null;fresh=c.uid;render();return}
+ const p=t.closest('.piece');if(p&&!t.closest('button')){if(sel!==+p.dataset.uid){sel=+p.dataset.uid;render()}return}
+ const a=t.closest('[data-act]');if(!a)return;const c=card.find(x=>x.uid===sel),i=card.indexOf(c);
+ switch(a.dataset.act){case'up':move(sel,i-1);break;case'down':move(sel,i+1);break;
+  case'remove':card.splice(i,1);sel=card[Math.min(i,card.length-1)]?.uid;render();break;
+  case'next':sel=card[(i+1)%card.length].uid;render.scroll=true;render();break;
+  case'addm':{const m=M('Singles',[[null],[null]]);card.push(m);sel=m.uid;fresh=m.uid;render.scroll=true;render();break}
+  case'addp':{const s=SG('Promo: Call-out',[],5);card.splice(Math.max(0,card.length-1),0,s);sel=s.uid;fresh=s.uid;render();break}
+  case'adda':{const s=SG('Angle: Brawl',[],10);card.splice(Math.max(0,card.length-1),0,s);sel=s.uid;fresh=s.uid;render();break}
+  case'clear':card=[];sel=null;render();break;
+  case'suggest':card.forEach(c=>{if(c.k==='m')c.sides.forEach(s=>s.forEach((x,k)=>{if(x==null){const fr=R.filter(w=>!booked().has(w.id)).sort((p,q)=>q.o-p.o)[0];if(fr)s[k]=fr.id}}))});render();toast('Filled the empty spots');break;
+  case'space':toast(a.textContent.includes('bell')?'The show goes on the air':a.textContent.replace('SPACE ▸ ',''));break}});
+/* ---------- pointer drag (mouse, touch, pen) ---------- */
+let dragging=null,start=null;
+document.addEventListener('pointerdown',e=>{const h=e.target.closest('[data-drag]');if(!h||e.target.closest('.x'))return;start={x:e.clientX,y:e.clientY,h}});
+document.addEventListener('pointermove',e=>{if(!start)return;if(!dragging){if(Math.hypot(e.clientX-start.x,e.clientY-start.y)<7)return;
+  const h=start.h,kind=h.dataset.drag;let label='',info={};
+  if(kind==='w'){info={k:'w',wid:+h.dataset.w};label=W(info.wid).n}
+  else if(kind==='chip'){const [u,si,xi]=h.dataset.chip.split(':').map(Number);info={k:'w',wid:card.find(c=>c.uid===u).sides[si][xi],from:h.dataset.chip};label=W(info.wid).n}
+  else{info={k:'piece',uid:+h.dataset.grip};const c=card.find(x=>x.uid===info.uid);label=role(c)+' · '+(c.k==='m'?c.sides.map(sideName).join(' vs '):c.segk);h.closest('.piece').classList.add('ghosted')}
+  const g=document.createElement('div');g.className='ghost';g.textContent=label;if(info.k==='w')g.style.borderLeftColor=W(info.wid).s==='F'?'#2c62ad':'#c23b2a';document.body.appendChild(g);dragging={...info,g}}
+ dragging.g.style.left=e.clientX+12+'px';dragging.g.style.top=e.clientY+8+'px';
+ document.querySelectorAll('.hot,.ins-top,.ins-bot').forEach(n=>n.classList.remove('hot','ins-top','ins-bot'));
+ const el=document.elementFromPoint(e.clientX,e.clientY);if(!el)return;
+ if(dragging.k==='w'){const d=el.closest('[data-drop],[data-dropnew],[data-dropseg],[data-dropfeud]');if(d)d.classList.add('hot')}
+ else{const p=el.closest('.piece');if(p){const r=p.getBoundingClientRect();p.classList.add(e.clientY<r.top+r.height/2?'ins-top':'ins-bot')}}
+ const sh=document.getElementById('sheet');if(sh){const r=sh.getBoundingClientRect();if(e.clientY<r.top+30)sh.scrollTop-=12;else if(e.clientY>r.bottom-30)sh.scrollTop+=12}});
+document.addEventListener('pointerup',e=>{const d=dragging;start=null;if(!d)return;d.g.remove();dragging='done';setTimeout(()=>{if(dragging==='done')dragging=null},0);
+ const el=document.elementFromPoint(e.clientX,e.clientY);document.querySelectorAll('.ghosted').forEach(n=>n.classList.remove('ghosted'));if(!el){render();return}
+ if(d.k==='w'){const slot=el.closest('[data-drop]'),dn=el.closest('[data-dropnew]'),ds=el.closest('[data-dropseg]'),lf=el.closest('[data-dropfeud]'),li=el.closest('#list');
+  if(slot){if(d.from){const [u,si,xi]=slot.dataset.drop.split(':').map(Number),[fu,fs,fx]=d.from.split(':').map(Number);const c=card.find(x=>x.uid===u),fc=card.find(x=>x.uid===fu);const prev=c.sides[si][xi];c.sides[si][xi]=d.wid;fc.sides[fs][fx]=prev;sel=u;fresh=u;render();toast(prev!=null?'Swapped':'Moved')}else put(d.wid,slot.dataset.drop)}
+  else if(lf)bookFeud(+lf.dataset.dropfeud);else if(dn)newMatch(d.wid);else if(ds){const c=card.find(x=>x.uid===+ds.dataset.dropseg);unbook(d.wid);c.who.push(d.wid);sel=c.uid;fresh=c.uid;render()}
+  else if(li&&d.from){unbook(d.wid);toast(W(d.wid).n+' is off the card');render()}else render()}
+ else{const p=el.closest('.piece');if(p&&+p.dataset.uid!==d.uid){const r=p.getBoundingClientRect();let to=card.findIndex(c=>c.uid===+p.dataset.uid)+(e.clientY>r.top+r.height/2?1:0);const f=card.findIndex(c=>c.uid===d.uid);if(f<to)to--;sel=d.uid;move(d.uid,to);toast('Moved')}else render()}});
+/* ---------- keys and pad (rule 5) ---------- */
+document.addEventListener('keydown',e=>{const md=document.querySelector('.modal');if(md){if(e.key==='Escape')document.getElementById('modal').innerHTML='';
+  if(['ArrowRight','ArrowDown','ArrowLeft','ArrowUp'].includes(e.key)){const ns=[...md.querySelectorAll('.note')],k=ns.indexOf(document.activeElement);const d=e.key==='ArrowRight'||e.key==='ArrowDown'?1:-1;ns[(k+d+ns.length)%ns.length].focus();e.preventDefault()}return}
+ if(e.target.tagName==='INPUT')return;const i=card.findIndex(c=>c.uid===sel);
+ if(e.altKey&&e.key==='ArrowDown'){render.focus='.piece.sel';move(sel,i+1);e.preventDefault()}
+ else if(e.altKey&&e.key==='ArrowUp'){render.focus='.piece.sel';move(sel,i-1);e.preventDefault()}
+ else if(e.key===']'&&card[i+1]){sel=card[i+1].uid;render.scroll=true;render()}else if(e.key==='['&&card[i-1]){sel=card[i-1].uid;render.scroll=true;render()}
+ else if(e.key==='Enter'||e.key===' '){const fr=document.activeElement&&document.activeElement.closest('[data-fit]');if(fr){render.focus='.piece.sel button.slot, [data-tile="call"]';put(+fr.dataset.w,fr.dataset.fit);e.preventDefault();return}
+  const w=document.activeElement&&document.activeElement.closest('[data-w]');if(w){held=+w.dataset.w;render();const s=document.querySelector('.slot.want');if(s)s.focus();toast('Now press a spot on the card');e.preventDefault();return}
+  const p=document.activeElement&&document.activeElement.classList.contains('piece')?document.activeElement:null;if(p){sel=+p.dataset.uid;render.focus='.piece.sel';render();e.preventDefault()}}
+ else if(e.key==='Escape'){held=null;render()}});
+render();
+</script></body></html>

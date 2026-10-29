@@ -24,7 +24,7 @@ function serve() {
 }
 
 const SHOTS = process.env.SHOTS || require('os').tmpdir();   // where screenshots go
-const VIEWPORTS = { desk: { viewport: { width: 1280, height: 860 } }, big: { viewport: { width: 2560, height: 1440 } }, uhd: { viewport: { width: 3840, height: 2160 } }, tv: { viewport: { width: 1920, height: 1080 } } };
+const VIEWPORTS = { desk: { viewport: { width: 1920, height: 1080 } }, big: { viewport: { width: 2560, height: 1440 } }, uhd: { viewport: { width: 3840, height: 2160 } }, tv: { viewport: { width: 1920, height: 1080 } } };
 
 /** Open the game. opts: { mode: 'desk'|'big'|'uhd'|'tv', file: 'index', promo: 'pdw' or null to stay on the title screen, name, pics: true for the scenes on the broadcast (off in other tests, so their pages are laid out as before) } */
 async function open(opts) {

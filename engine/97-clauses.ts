@@ -29,7 +29,7 @@ export var CLAUSE={
 $L.CLAUSE = CLAUSE;
 /** The clauses this wrestler wants, best first, at most three. */
 /* a corporate company does not let its people work outside dates (NEXT.md 10.2) */
-export function clausesWanted(S,w){var P=S.promos[S.player],corp=P&&P.model==='corporate';return Object.keys($L.CLAUSE).filter(function(k){return !(corp&&k==='outside')&&$L.CLAUSE[k].wants(S,w);}).slice(0,3);}
+export function clausesWanted(S,w){var P=S.promos[S.player],corp=P&&P.model==='corporate';return Object.keys($L.CLAUSE).filter(function(k){return !(corp&&k==='outside')&&$L.CLAUSE[k].wants(S,w);}).slice(0,($L.treeHas&&$L.treeHas(S,'of_clause'))?4:3);}
 E.clauses=function(S,id){var w=S.w[id];if(!w)return [];var ask=E.ask(S,w);return clausesWanted(S,w).map(function(k){var c=$L.CLAUSE[k];return {k:k,n:c.n,d:c.d,save:(function(v){return v<1000?Math.max(10,Math.round(v/10)*10):Math.round(v/50)*50;})(ask*c.save)};});};
 /* signing with clauses: the asking price comes down by what each clause is worth to them */
 (function(){

@@ -1,0 +1,69 @@
+// Decision set: ARCHITECTURE.md §15 open decisions. Loaded by decision-picker.html (works from file://).
+// Same data as 2026-10-26-architecture.json. Option 1 in each = recommended.
+window.DECISIONS = {
+  title: "TypeScript engine — open architecture decisions",
+  decisions: [
+    { question: "1. Popularity: how is a wrestler's and company's popularity stored?",
+      options: [
+        { title: "Per region (recommended)", pitch: "Popularity per wrestler and per company for each road area (USA regions, Japan, UK...). A star can be huge in Japan and unknown in Texas.",
+          pros: ["Best single model in the genre (TEW)", "Makes touring, territory map and wars meaningful", "Markets already exist to build on"], cons: ["Bigger save", "Balance retune of crowds/TV", "Needs a migration from w.ovr"] },
+        { title: "Global + city markets (today)", pitch: "Keep one popularity number per person; cities keep their own market heat (S.mkt).",
+          pros: ["No migration", "Already balanced", "Simple to explain"], cons: ["No 'big in one place' stories", "Territory map/war ideas get weaker"] },
+        { title: "Hybrid: global + a few home-region boosts", pitch: "One number, plus a bonus in up to 3 home areas.",
+          pros: ["Cheap", "Hometown pops already partly do this"], cons: ["Half-measure; hard to extend later"] } ] },
+
+    { question: "2. Relationship types (family / personal / romantic): when?",
+      options: [
+        { title: "After launch (recommended)", pitch: "Keep strength + memory now. Add the three optional fields post-launch with UI to show them.",
+          pros: ["No launch risk", "Matrix already works", "Research says add axes only with UI"], cons: ["Siblings-who-hate-each-other can't be expressed yet"] },
+        { title: "During the TS port", pitch: "Add optional family/personal/romantic fields in the new types now, unused until later.",
+          pros: ["Shape fixed once, no later migration"], cons: ["Unused fields in saves", "Temptation to build UI early"] },
+        { title: "Now, with full UI", pitch: "Build the 3-axis model, editor support and dossier display before launch.",
+          pros: ["Deepest backstage drama at launch"], cons: ["Scope creep against Bill's pause", "Large balance surface"] } ] },
+
+    { question: "3. Data-checking (schema) library for world packages and saves",
+      options: [
+        { title: "Zod (recommended)", pitch: "Most-used TS schema library; types are inferred from schemas.",
+          pros: ["Huge community, great errors", "Easy for modders' error messages"], cons: ["Heavier bundle (~60 KB)", "Slower on huge saves"] },
+        { title: "Valibot", pitch: "Zod-like API, tree-shakes to a few KB.",
+          pros: ["Tiny and fast", "Similar learning curve"], cons: ["Smaller community", "API still moving"] },
+        { title: "Typia", pitch: "Generates validators from plain TS types at build time.",
+          pros: ["Fastest at runtime", "Types are the schema"], cons: ["Needs a compiler plugin", "Harder build setup"] } ] },
+
+    { question: "4. Build tool for the engine package",
+      options: [
+        { title: "esbuild (recommended)", pitch: "One fast bundler for engine; app keeps its current setup.",
+          pros: ["Very fast", "Simple config", "Already common in the repo's tooling"], cons: ["No dev server features (not needed for engine)"] },
+        { title: "Vite for everything", pitch: "Move engine and app onto Vite (uses esbuild/rollup inside).",
+          pros: ["One tool, hot reload", "Vitest fits naturally"], cons: ["Migration of app build", "Single-file dist page needs a plugin"] },
+        { title: "tsc only", pitch: "Plain TypeScript compiler, keep a tiny concat step.",
+          pros: ["Zero new deps"], cons: ["Slow", "No bundling, weak for the single-page dist"] } ] },
+
+    { question: "5. Default world on Steam",
+      options: [
+        { title: "Public domain default, parody opt-in (recommended)", pitch: "Ship the original/public-domain world as default; parody world as a choice after a lawyer's read.",
+          pros: ["Lowest takedown risk at launch", "Review in game review PDF agrees"], cons: ["Parody is the more fun, more viral world", "Overrides Bill's earlier call — needs Bill"] },
+        { title: "Parody default (Bill's current call)", pitch: "Keep parody as default, get a written legal opinion first.",
+          pros: ["Strongest hook for fans and streamers"], cons: ["Likeness risk (real colours/gear since 20 Oct)", "Launch depends on the lawyer"] },
+        { title: "Both on equal footing", pitch: "Title screen asks which world; no default.",
+          pros: ["Player chooses, both showcased"], cons: ["Still ships parody, same legal exposure", "Extra choice in first minute"] } ] },
+
+    { question: "6. Morale and backstage: one module or two?",
+      options: [
+        { title: "Two modules (recommended)", pitch: "morale/ = incident ledger + stress (pure numbers). backstage/ = rooms, people, asks, scenes (reads morale).",
+          pros: ["Ledger testable alone", "Backstage UI logic stays separate"], cons: ["One more boundary to maintain"] },
+        { title: "One backstage module", pitch: "Morale lives inside backstage.",
+          pros: ["Matches today's files (76-locker, 77-backstage)"], cons: ["Big module", "Other systems import backstage just for morale"] },
+        { title: "Morale inside people/", pitch: "Treat morale as a wrestler attribute area.",
+          pros: ["Fewer modules"], cons: ["People module gets huge", "Ledger has cross-person incidents"] } ] },
+
+    { question: "7. Health: one condition value or four body pools?",
+      options: [
+        { title: "Keep one value, add injury location tag (recommended)", pitch: "Keep w.cond; injuries carry a body part (head/body/arms/legs) for text, scenes and risk.",
+          pros: ["Small change", "Gives specific injury stories", "No balance reset"], cons: ["Less simulation depth than TEW"] },
+        { title: "Four pools (TEW style)", pitch: "Head, body, arms, legs each wear down and stack penalties.",
+          pros: ["Deep, realistic", "Ring-work styles stress different pools"], cons: ["Rebalance injuries and fatigue", "More UI to explain"] },
+        { title: "Keep as is", pitch: "Single condition, no location.",
+          pros: ["Zero work"], cons: ["Injuries stay generic"] } ] }
+  ]
+};

@@ -72,12 +72,16 @@ Career gets the tree: four branches side by side, nodes as cut-card tiles, the n
 1. The new curve and no cap; booking power no longer grows with level; balance test for a year-three booker.
 2. The tree as data (branches, tiers, nodes, kinds), the old five skills moved into it, old saves converted.
 3. The Career page tree and the perk pop-up.
-4. The new actions, one at a time, each in its own place.
+4. The new actions, one at a time, each in its own place. Built 29 October: every action and trade-off works (`engine/99-youacts.ts` and a guarded line where each system lives). Call an audible is a call on the main event; Sweeten the deal is on Storylines; Closed-door meeting is in wrestlers' court; Smell trouble and Read the weather add to Also this week.
 5. Respec, and the cap on any one number checked by a test.
 
 ## 7. Questions for Ryan
 
 Asked one at a time; answers written here.
+
+## Pace of the tree (29 October)
+
+The tree holds 43 points (a skill costs 1, the top tier 2). At about 6 levels the first year, 4 the second and 3 a year after, a career fills it in about thirteen years. Every skill can be taken (step 4 gave the actions and trade-offs their effects); a tier opens at about three fifths of what can be taken below it.
 
 ## 8. Ryan's answers (28 October 2026)
 
@@ -91,6 +95,10 @@ Asked one at a time; answers written here.
 | Perks | What is a perk? | **Signature moves:** big, named, once-in-a-while powers that define your booker ("The Swerve": one shocking finish a year the crowd never sees coming; "Old School": veterans work for less; "The Machine": one extra show a month without burnout). One of two every fifth level, for good. |
 | Respec | Can you move points? | **Any time, at a cost** (the owner's trust or money). Perks stay as picked. |
 | Company | Does the company's size matter? | **Same everywhere.** Experience is the same whatever the size of the company. |
-| Old saves | What happens on load? | **Mapped across.** Each old skill becomes its matching node automatically (Creative to Creative, Negotiation to Office, Motivator to Locker room, Eye for talent to Eye, Clout to booking power in Creative); the level stays. |
+| Old saves | What happens on load? | **Not a concern** (Ryan, 29 October: "I don't care about old saves"). An old save simply starts the new tree empty with its level kept; no mapping or refund is built. |
 
-What changes in the blueprint from these answers: section 3's "a cap on any one number" stays as a safety net, but the main answer to the endgame is rival bookers who grow with you (a new part: each rival company gets a named booker with a level and a build, levelling at the same pace and spending by its model, shown on the World page). The tree is sized so a long career can fill it. Respec is any time at a cost, not once a year. Old saves map the five skills to their nodes.
+What changes in the blueprint from these answers: section 3's "a cap on any one number" stays as a safety net, but the main answer to the endgame is rival bookers who grow with you (a new part: each rival company gets a named booker with a level and a build, levelling at the same pace and spending by its model, shown on the World page). The tree is sized so a long career can fill it. Respec is any time at a cost, not once a year. Old saves get no special handling (29 October).
+
+## Rival bookers (built 29 October)
+
+Every rival company has a named booker (`P.bk`, `engine/99-rivalbook.ts`), made when the game starts: an original name, a starting level from the company's size (1 plus a level for every 15 points of popularity), and a lean from its model (corporate Office first, outlaw Creative first; `BK_LEAN`). The style is the lean said in words (The storyteller, The suit, The players' booker, The scout). They gain experience every week at the player's pace whatever level they start at (6 levels the first year, 4 the second, then 3), and spend each point on the cheapest open skill in the first branch of their lean that has one. What they hold plays: Creative lifts their matches (0.3 a point), Locker room lifts their wrestlers' effort (0.6 a point). The World page shows each booker, their level and style; the news says when one reaches every fifth level. Rival companies now play a little differently from before, so the recorded games were recorded again.

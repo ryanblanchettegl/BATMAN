@@ -1,0 +1,21 @@
+﻿BlenderFoundation.Blender exit=-2145844845
+GodotEngine.GodotEngine exit=0
+KDE.Krita exit=0
+GIMP.GIMP.3 exit=0
+Inkscape.Inkscape exit=0
+Orama-Interactive.Pixelorama exit=-1978335212
+LibreSprite.LibreSprite exit=-1978335212
+JannisX11.Blockbench exit=0
+Synfig.SynfigStudio exit=0
+OpenToonz.OpenToonz exit=-1978335212
+mapeditor.Tiled exit=-1978335212
+Audacity.Audacity exit=0
+LMMS.LMMS exit=0
+MuseScore.MuseScore exit=-1978335212
+KDE.Kdenlive exit=0
+OBSProject.OBSStudio exit=0
+Gyan.FFmpeg exit=0
+ImageMagick.ImageMagick exit=0
+GitHub.GitLFS exit=0
+GitHub.cli exit=0
+DONE
