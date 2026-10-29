@@ -8,7 +8,8 @@ const S = E.newGame('pdw', 3, { name: 'R', mid: false }); let errs = 0, credited
 const L0 = E.press(S);
 ok('cast', 'four reporters, each with a name, a beat and a word for how they feel', L0.length === 4 && L0.every(r => r.name && r.beat && r.word && !/\d/.test(r.word)), L0.map(r => r.name + ' (' + r.beat + ')').join(', '));
 for (let w = 0; w < 60; w++) {
-  S.inbox.filter(e => !e.done).forEach(e => { if (e.type === 'leak') { if (e.by != null) credited++; if (e.calls != null) calls++; } E.resolveEvent(S, e.id, 1); });
+  ((S.dir && S.dir.held) || []).forEach(e => { if (e.type === 'leak' && !e._seen) { e._seen = 1; if (e.by != null) credited++; } });   // a leak the Director is holding still counts
+  S.inbox.filter(e => !e.done).forEach(e => { if (e.type === 'leak' && !e._seen) { e._seen = 1; if (e.by != null) credited++; if (e.calls != null) calls++; } E.resolveEvent(S, e.id, 1); });
   if (S.owner.pending) E.setCreed(S, { style: 'merit', roots: 'tradition', pledge: 'stable' });
   while (S.qi < S.queue.length) { const c = E.suggest(S); if (E.validate(S, c).errors.length) { S.qi++; errs++; continue; } E.runPlayerShow(S, c); }
   E.endWeek(S); if (S.over) { S.over = null; S.owner.trust = 80; }

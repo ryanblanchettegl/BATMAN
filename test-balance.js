@@ -9,8 +9,8 @@ const WEEKS = +process.argv[2] || 48, fails = [];
 const ok = (id, label, pass, detail) => { console.log(id.padEnd(5), pass ? 'ok  ' : 'FAIL', label + (detail ? ': ' + detail : '')); if (!pass) fails.push(id + ' ' + label); };
 const OF = { corporate: 'whw', outlaw: 'pdp', spectacle: 'ldd', tradition: 'lta', joshi: 'kjp', underdog: 'ttt' };
 const med = L => { const s = L.slice().sort((a, b) => a - b); return s.length ? s[s.length >> 1] : 0; };
-function play(id, smart) {
-  const S = E.newGame(id, 3, { name: 'R' }), P = S.promos[id], cs = [];
+function play(id, smart, seed) {
+  const S = E.newGame(id, seed || 3, { name: 'R' }), P = S.promos[id], cs = [];
   let lowTrust = 100, handed = null;
   for (let wk = 0; wk < WEEKS && !S.over; wk++) {
     S.inbox.filter(e => !e.done).forEach(e => { if (e.type === 'handover' && handed == null) handed = S.week; E.resolveEvent(S, e.id, e.type === 'handover' ? 0 : 1); });
@@ -30,7 +30,9 @@ Object.keys(R).forEach(m => { const f = R[m].flat, s = R[m].smart; console.log(m
 const all = k => Object.keys(R).map(m => R[m][k]);
 const flat = all('flat'), smart = all('smart');
 ok('b1', 'Suggest a card: the median show is a C band grade (C- to C+) for most models', flat.filter(r => r.cs >= 50 && r.cs < 65).length >= 4, flat.map(r => r.grade).join(' '));
-ok('b2', 'Suggest a card never earns better than a B- median', flat.every(r => r.cs < 70), flat.map(r => r.cs).join(' '));
+// one seed swings a median by several points (28 October: the corporate model ran 59 to 72 over eight seeds, on main and with the Director alike), so b2 averages three
+const flat3 = Object.keys(OF).map(m => (R[m].flat.cs + play(OF[m], false, 4).cs + play(OF[m], false, 5).cs) / 3);
+ok('b2', 'Suggest a card never earns better than a B- median (three seeds)', flat3.every(v => v < 70), flat3.map(v => v.toFixed(1)).join(' '));
 ok('b3', 'the thinking booker is a B or better on most models', smart.filter(r => r.cs >= 70).length >= 4, smart.map(r => r.grade).join(' '));
 ok('b4', 'the thinking booker beats Suggest a card on every model', Object.keys(R).every(m => R[m].smart.cs > R[m].flat.cs));
 ok('b5', 'the thinking booker is never fired or broke in a year', smart.every(r => !r.over), smart.map(r => r.over || '-').join(' '));

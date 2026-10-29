@@ -1,7 +1,8 @@
 node_modules/
 *.log
 .DS_Store
-.claude/
+.claude/*
+!.claude/skills/
 release/
 __pycache__/
 

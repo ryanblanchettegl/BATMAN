@@ -89,7 +89,7 @@ export interface Ui {
   boot: { step: number } | null;
   /** start screens: 'title' or 'select'. `setup` is set while the First day or Create a federation screen is open. */
   scr: 'title' | 'select' | 'editor';
-  setup: null | { pid: string; name: string; diff: string; fed: any; dpart?: any; iron?: boolean };
+  setup: null | { pid: string; name: string; diff: string; fed: any; dpart?: any; iron?: boolean; dir?: string };
   /** highlighted row of the start menus */
   mi: number;
   /** the page showing inside the game. See nav.ts for the list. */

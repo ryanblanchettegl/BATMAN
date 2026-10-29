@@ -223,15 +223,27 @@ The diorama renderer (`app/src/kit/paper.ts`, `puppet.ts`, `scene.ts`, `diorama3
 - [ ] Split `CLAUDE.md` into a short core (rules, commands, where things are) and linked area notes in `docs/notes/`.
 - [ ] Recurring procedures as skills in `.claude/skills/`: `/blueprint`, `/vault`, `/audition`, `/publish-live`, `/balance`.
 
+### 0aw. You as the booker: levels and a skill tree (Ryan, 28 October: "We need to build a level up system that works with the booker points you use throughout the game. We also have to build the skill tree without breaking the game.")
+
+Levels with no cap, a four-branch tree (Creative, Office, Locker room, Eye) of bonuses, new actions and trade-offs, a signature move every fifth level, and rival bookers who level up with you. Plan: `docs/plans/booker-progression.md`.
+
+- [x] Gate 1: the blueprint (28 October).
+- [x] Gate 2: the questions, answered 28 October (section 8): both kinds of points kept separate; 6, 4, then 3 levels a year with no cap; the whole tree can be filled in a long career; rival bookers level up too, named with a style; perks are signature moves; respec any time at a cost; experience the same whatever the company; old saves map the five skills across.
+- [x] Gate 3: Ryan's go-ahead, 28 October: "you pick" (on the order: the Director's last steps first, then this).
+
 ### 0aa. The Director (Bill, 21 October: "I like this feature add it to the plan")
 
 A pacing layer that decides when trouble reaches the desk: it reads how tense the company already is and chooses which of this week's possible events happen, and how big. The player picks a style (The Promoter, The Carny, The Purist). Plan: `docs/plans/director.md`.
 
-- [ ] Step 1: the tension reading and its eight-week history, headless only (`test-director.js`). Nothing in play changes.
-- [ ] Step 2: `genEvents()` asks the Director how many events this week; compare 60 weeks before and after.
-- [ ] Step 3: tag every event maker as a problem, a chance or colour, and let tension pick between them.
-- [ ] Step 4: the three styles, chosen at the start of a game and shown on Career; old saves get The Promoter.
-- [ ] Step 5: event sizes and the rhythm around big nights.
+- [x] Gate 1: the blueprint, widened 28 October to one gate for desk matters, calls on the air and knocks at the door, with today's numbers (about 5 matters a week, up to 14, never a quiet week; 2.6 calls a show).
+- [x] Gate 2: the questions, answered 28 October (written into the blueprint, section 12): quiet then a fire; the bigger matter first and waiting costs; a word on the desk; held matters listed with Pull forward for one action point; clean after an A; about one chance in three; one headline and two threads, two calls a weekly show and three on a big night; a taste changeable at a cost; all three styles at once; old saves get The Promoter, one Director per booker.
+- [x] Gate 3: Ryan's go-ahead, 28 October: "sure".
+
+- [x] Step 1: the tension reading and its eight-week history, headless only (`engine/99-director.ts`, `test-director.js`; 28 October). Nothing in play changes: the golden games leave `S.dir` out.
+- [x] Step 2: the gate for the desk (28 October). Every matter that needs an answer goes through `dirGate()` in `pushEv()`: one headline and two threads a week plus anything forced, the rest held ("Also this week", Pull forward for one action point), a show at A or better may end clean. Calm weeks bring problems first; a lapsed problem costs the person's mood and the owner's trust, a lapsed chance a little of both. Before and after (48 weeks, three games): about 4.5 matters a week and up to 12, now about 3.5 and up to 7. The golden games and scenario references were re-recorded; `test-balance.js` b2 now averages three seeds (one seed swings by several points on main too), `test-writers.js` expects a pitch one week in four, `test-archive.js` allows 3.5 KB a week by year four.
+- [x] Step 3: the cap on the air (28 October): two calls on a weekly show, three on a big night, the last kept for the main event; calls after the bell count; trouble on the air stays free. 2.6 calls a show became 2.1. (Tagging every matter was done in step 2, `DIR_TAG`.)
+- [x] Step 4: the three styles (28 October): The Promoter, The Carny, The Purist (`DIR_STYLES`), picked on the start screen beside the difficulty, changed on Career (free in week one, then a little of the owner's trust; locked in iron man); old saves get The Promoter.
+- [x] Step 5: the rhythm around big nights (28 October): the big event's week and the week before carry one more matter, the week after one fewer (`dirRhythm()`); a show's hook still comes. Event sizes are left for later: few makers have sizes yet.
 
 ### 0ad. Company arcs that start from what happens (Bill, 21 October: "This is a key feature, Company Arcs need to start from beats that happen from specific events happening")
 
