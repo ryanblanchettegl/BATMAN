@@ -10,6 +10,7 @@ import { faceOf } from './portrait';
 import { skinOf, hairOf } from '../lib/portrait';
 import { Pt, Piece, PAL, shade, ell, star, almond, strip, headPoly, Head, snip } from './paper';
 import { Kit, Swatch, AttireKey, layerSwatch, letters, shape, fromLook, Look } from './caw';
+import { puppetC } from './stylec';
 
 export interface Recipe {
   key: string; name: string; skin: string; h: number; w: number; belly: number; fem: boolean;
@@ -147,7 +148,10 @@ const BLOOD = '#9e1414', BLOOD2 = '#c42a22', WET = '#bfe6ff';
 export interface Rig { joints: Record<string, { x: number; y: number; pa: number; up: boolean }>; anchors: Record<string, Pt>; rootx: number; f: number }
 
 /** Cut and pin a doll. `pl` places its waist and turns it; `pose` is angles in degrees; `expr` is calm, shout or hurt. */
-export function puppet(r: Recipe, pl: Place, pose: Record<string, number>, expr: string, own: string, out: Piece[], mk: Marks = {}): Rig {
+/** Cut and pin a doll: style C, the human paper doll (kit/stylec.ts). */
+export function puppet(r: Recipe, pl: Place, pose: Record<string, number>, expr: string, own: string, out: Piece[], mk: Marks = {}): Rig { return puppetC(r, pl, pose, expr, own, out, mk); }
+/** The doll before style C (round 3), kept until Bill has signed off the new one. */
+export function puppetOld(r: Recipe, pl: Place, pose: Record<string, number>, expr: string, own: string, out: Piece[], mk: Marks = {}): Rig {
   const n0 = out.length, bk = !!pl.b;
   const P = { ...STAND, ...pose }, h = r.h, w = r.w, sk = warmSkin(r.skin), dk = shade(sk, 0.74), seed = hash(r.key);
   const ll = r.ll || 1, H = h * (r.th || 1), mm = r.mm || 1, K = r.kit;
@@ -546,7 +550,7 @@ const HEADK_ = 0.53;   // heads a touch bigger, so the face reads at body size
     is shrunk by `HEAD_SCALE` toward a point `HEAD_PIVOT` up the neck, which leaves a neck showing under the chin. */
 export const HEAD_SCALE = 0.6, HEAD_PIVOT = 0.36;
 /** Where the middle of the head sits above the top of the trunk, after the shrink (the portrait camera aims here). */
-export const HEAD_MID = HEAD_PIVOT + (0.98 - HEAD_PIVOT) * HEAD_SCALE;
+export const HEAD_MID = 0.47;   // style C: the middle of a human-sized head
 /** The head's outline: narrower than it was, with a chin, cut in straight snips. */
 const humanHead = (r: Recipe, s: number): Head => ({ cx: 0, cy: 0.98, rx: r.head.rx * s * 0.9 * (1 + 0.14 * Math.min(1, (r.belly || 0) / 0.32)), ryt: r.head.ryt * s, ryb: r.head.ryb * s, sq: r.head.sq, chin: Math.min(0.5, r.head.chin + 0.12), facet: 13 });
 const mix = (a: string, b: string, t: number) => { const A = parseInt(a.slice(1), 16), B = parseInt(b.slice(1), 16); return '#' + [16, 8, 0].map(sh => Math.round(((A >> sh) & 255) * (1 - t) + ((B >> sh) & 255) * t).toString(16).padStart(2, '0')).join(''); };
