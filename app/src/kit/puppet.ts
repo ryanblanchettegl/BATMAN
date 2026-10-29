@@ -119,6 +119,14 @@ export const LEGS0 = 1.3 + 1.22;
 type F = { x: number; y: number; a: number };
 const rot = (p: Pt, a: number): Pt => [p[0] * Math.cos(a) - p[1] * Math.sin(a), p[0] * Math.sin(a) + p[1] * Math.cos(a)];
 const child = (f: F, off: Pt, ang: number): F => { const d = rot(off, f.a); return { x: f.x + d[0], y: f.y + d[1], a: f.a + ang * Math.PI / 180 }; };
+/** Style C limbs (Bill, 29 October): a width profile down the bone, [t, outer, inner], with straight cut ends
+    (shoulder and biceps, forearm taper, quads, calf). w0 and w1 are full widths, as for taper(). */
+const UA: number[][] = [[0, 1, 1], [0.28, 1.1, 1.04], [0.5, 1.14, 1.0], [0.78, 0.98, 0.93], [1, 0.86, 0.84]], FA: number[][] = [[0, 1, 1], [0.22, 1.12, 1.04], [0.5, 0.97, 0.92], [0.82, 0.78, 0.8], [1, 0.7, 0.72]];
+const TH: number[][] = [[0, 1, 1], [0.2, 1.12, 1.0], [0.4, 1.07, 1.02], [0.62, 0.96, 0.97], [0.9, 0.86, 0.88], [1, 0.82, 0.84]], SH: number[][] = [[0, 1, 0.95], [0.12, 1.0, 0.92], [0.35, 1.12, 1.05], [0.7, 0.86, 0.84], [1, 0.72, 0.72]];
+function limbP(w0: number, w1: number, L: number, f: number[][]): Pt[] {
+  const W = (t: number) => (w0 + (w1 - w0) * t) / 2;
+  return ([[0, w0 * 0.22]] as Pt[]).concat(f.map(([t, k]) => [W(t) * k, -L * t] as Pt), [[0, -L - w1 * 0.2]] as Pt[], f.slice().reverse().map(([t, , k]) => [-W(t) * k, -L * t] as Pt));
+}
 function taper(w0: number, w1: number, L: number): Pt[] {
   const o: Pt[] = [];
   for (let i = 0; i <= 8; i++) { const a = -Math.PI * i / 8; o.push([w1 / 2 * Math.cos(a), -L + w1 / 2 * Math.sin(a)]); }
@@ -141,9 +149,9 @@ export interface Rig { joints: Record<string, { x: number; y: number; pa: number
 /** Cut and pin a doll. `pl` places its waist and turns it; `pose` is angles in degrees; `expr` is calm, shout or hurt. */
 export function puppet(r: Recipe, pl: Place, pose: Record<string, number>, expr: string, own: string, out: Piece[], mk: Marks = {}): Rig {
   const n0 = out.length, bk = !!pl.b;
-  const P = { ...STAND, ...pose }, h = r.h, w = r.w, sk = r.skin, dk = shade(sk, 0.74), seed = hash(r.key);
+  const P = { ...STAND, ...pose }, h = r.h, w = r.w, sk = warmSkin(r.skin), dk = shade(sk, 0.74), seed = hash(r.key);
   const ll = r.ll || 1, H = h * (r.th || 1), mm = r.mm || 1, K = r.kit;
-  const fat = Math.min(1, (r.belly || 0) / 0.32), aw = w * (0.8 + 0.2 * mm) * (1 + 0.28 * fat), bw = w * (r.tw || 1) * (1 + (mm - 1) * 0.3);   // limbs thicken with muscle; the chest with the torso and muscle sliders
+  const fat = Math.min(1, (r.belly || 0) / 0.32), aw = 0.88 * w * (0.8 + 0.2 * mm) * (1 + 0.28 * fat), bw = w * (r.tw || 1) * (1 + (mm - 1) * 0.3);   // limbs thicken with muscle; the chest with the torso and muscle sliders
   const y = pl.y + (legs(r) - LEGS0) * Math.cos(pl.r * Math.PI / 180);   // a taller doll's waist sits higher, so its feet stay on the mat
   const root: F = { x: pl.x, y, a: pl.r * Math.PI / 180 }, fx = pl.f < 0 ? (px: number) => 2 * pl.x - px : (px: number) => px;
   const W_ = (f: F, poly: Pt[]): Pt[] => poly.map(p => { const d = rot(p, f.a); return [fx(f.x + d[0]), f.y + d[1]] as Pt; });
@@ -171,7 +179,7 @@ export function puppet(r: Recipe, pl: Place, pose: Record<string, number>, expr:
     let up: string | Swatch = r.suit ? r.suit.jacket : r.shirt && r.stripes ? r.shirt : sk, fore: string | Swatch = r.suit ? r.suit.jacket : sk;
     if (K) { up = sk; fore = sk; if (OVER.indexOf(K.top) >= 0) { up = K.col.top; if (K.top !== 'shirt_tshirt_base') fore = K.col.top; } }
     const robe = !!K && K.top === 'robe_long', rw = robe ? 1.25 : 1;
-    cut(sh, taper(0.46 * aw * rw, 0.36 * aw * rw, L.up), up, z, 'sh_' + s); cut(sh, ell(0, -0.08, 0.27 * aw * rw, 0.32 * aw * rw, 14), up, z + 0.02, 'sh_' + s); pins.push([sh, z + 0.03]);
+    cut(sh, limbP(0.42 * aw * rw, 0.32 * aw * rw, L.up, UA), up, z, 'sh_' + s); cut(sh, ell(0, -0.06, 0.24 * aw * rw, 0.28 * aw * rw, 9), up, z + 0.02, 'sh_' + s);   // the shoulder cap, cut in snips pins.push([sh, z + 0.03]);
     if (K && K.top === 'shirt_tshirt_base') {   // a short sleeve with its hem
       cut(sh, ell(0, -0.08, 0.3 * aw, 0.35 * aw, 14).concat([[0.26 * aw, -0.5 * L.up], [-0.26 * aw, -0.5 * L.up]]), K.col.top, z + 0.021, 'sh_' + s);
       cut(sh, [[-0.26 * aw, -0.44 * L.up], [0.26 * aw, -0.44 * L.up], [0.26 * aw, -0.52 * L.up], [-0.26 * aw, -0.52 * L.up]], K.pal.t, z + 0.022, 'sh_' + s, 0.02, 0.004);
@@ -182,7 +190,7 @@ export function puppet(r: Recipe, pl: Place, pose: Record<string, number>, expr:
     if (mm > 1.05 && up === sk) cut(sh, ell(0.05 * aw, -0.42 * L.up, 0.25 * aw * Math.min(1.25, mm), 0.26 * L.up, 14), sk, z + 0.015, 'sh_' + s);   // a biceps that swells with the muscle slider
     if (has('armband')) cut(sh, [[-0.25 * aw, -0.45 * L.up], [0.25 * aw, -0.45 * L.up], [0.24 * aw, -0.58 * L.up], [-0.24 * aw, -0.58 * L.up]], K!.pal.t, z + 0.025, 'sh_' + s, 0.02, 0.004);
     const el = child(sh, [0, -L.up], P['el_' + s]); note('el_' + s, el, sh);
-    cut(el, taper(0.36 * aw * rw, 0.29 * aw * rw * (robe ? 1.3 : 1), L.fore), fore, z + 0.04, 'el_' + s); pins.push([el, z + 0.07]);
+    cut(el, limbP(0.34 * aw * rw, 0.25 * aw * rw * (robe ? 1.3 : 1), L.fore, FA), fore, z + 0.04, 'el_' + s); pins.push([el, z + 0.07]);
     if (fore === sk && sleeve) for (const t of [0.25, 0.55]) cut(el, [[-0.17 * aw, -t * L.fore], [0.17 * aw, -t * L.fore + 0.03], [0.16 * aw, -t * L.fore - 0.05], [-0.16 * aw, -t * L.fore - 0.08]], ink, z + 0.045, 'el_' + s, 0.005, 0.004);
     if (K && K.top === 'jacket_fringe') for (let q = 0; q < 6; q++) { const t = 0.15 + q * 0.14; cut(sh, strip([-0.3 * aw, -t * L.up], [-0.42 * aw, -t * L.up - 0.22], 0.03, 0.02), K.pal.t, z + 0.023, 'sh_' + s, 0.005, 0.004); cut(el, strip([-0.26 * aw, -t * L.fore], [-0.38 * aw, -t * L.fore - 0.2], 0.03, 0.02), K.pal.t, z + 0.046, 'el_' + s, 0.005, 0.004); }   // fringe hanging under each sleeve
     if (has('arm_tassels')) { cut(sh, [[-0.27 * aw, -0.42 * L.up], [0.27 * aw, -0.42 * L.up], [0.26 * aw, -0.55 * L.up], [-0.26 * aw, -0.55 * L.up]], K!.pal.t, z + 0.026, 'sh_' + s, 0.02, 0.004); for (let q = -2; q <= 2; q++) cut(sh, strip([q * 0.09 * aw, -0.52 * L.up], [q * 0.12 * aw - 0.04, -0.52 * L.up - 0.42], 0.035, 0.02), q % 2 ? K!.pal.s : K!.pal.t, z + 0.027 + q * 0.0001, 'sh_' + s, 0.01, 0.008); }   // tassels tied round the biceps
@@ -221,7 +229,7 @@ export function puppet(r: Recipe, pl: Place, pose: Record<string, number>, expr:
     const hp = child(root, [(s === 'n' ? 0.32 : -0.32) * w, -0.42], P['hip_' + s]); note('hip_' + s, hp, root);
     const thighC: string | Swatch = K ? (LONG.indexOf(K.bottom) >= 0 || K.bottom === 'shorts_fight' || K.bottom === 'shorts_jean' ? K.col.bottom : sk) : r.pants || sk;
     const shinC: string | Swatch = K ? (LONG.indexOf(K.bottom) >= 0 ? K.col.bottom : sk) : r.pants || sk;
-    cut(hp, taper(0.66 * aw, 0.46 * aw, L.thigh), thighC, z, 'hip_' + s); pins.push([hp, z + 0.03]);
+    cut(hp, limbP(0.62 * aw, 0.44 * aw, L.thigh, TH), thighC, z, 'hip_' + s); pins.push([hp, z + 0.03]);
     if (K) {
       if (K.bottom === 'trunks_long' || K.top === 'singlet_full') { cut(hp, [[-0.34 * aw, 0.1], [0.34 * aw, 0.1], [0.3 * aw, -0.45 * L.thigh], [-0.3 * aw, -0.45 * L.thigh]], K.top === 'singlet_full' ? K.col.top : K.col.bottom, z + 0.015, 'hip_' + s); cut(hp, [[-0.3 * aw, -0.4 * L.thigh], [0.3 * aw, -0.4 * L.thigh], [0.3 * aw, -0.47 * L.thigh], [-0.3 * aw, -0.47 * L.thigh]], K.pal.t, z + 0.017, 'hip_' + s, 0.02, 0.004); }
       if (K.bottom === 'shorts_fight') { cut(hp, [[0.05, 0], [0.22 * aw, 0], [0.18 * aw, -0.9 * L.thigh], [0.02, -0.9 * L.thigh]], K.pal.s, z + 0.015, 'hip_' + s, 0.02); cut(hp, [[-0.25 * aw, -0.86 * L.thigh], [0.25 * aw, -0.86 * L.thigh], [0.24 * aw, -0.95 * L.thigh], [-0.24 * aw, -0.95 * L.thigh]], K.pal.t, z + 0.017, 'hip_' + s, 0.02, 0.004); }
@@ -233,7 +241,7 @@ export function puppet(r: Recipe, pl: Place, pose: Record<string, number>, expr:
     const net = (f: F, len: number, wd: number, z1: number, J: string) => { for (let i = -1; i < 7; i++) { const t0 = (i / 7) * len, t1 = t0 + len * 0.18; cut(f, strip([-wd, -t0], [wd, -t1], 0.012, 0.012), '#17161b', z1, J, 0.003, 0.002); cut(f, strip([wd, -t0], [-wd, -t1], 0.012, 0.012), '#17161b', z1 + 0.0005, J, 0.003, 0.002); } };   // fishnet tights: a diamond mesh over bare skin
     if (has('fishnets') && thighC === sk) net(hp, L.thigh, 0.3 * aw, z + 0.012, 'hip_' + s);
     const kn = child(hp, [0, -L.thigh], P['kn_' + s]); note('kn_' + s, kn, hp);
-    cut(kn, taper(0.47 * aw, 0.36 * aw, L.shin), shinC, z + 0.03, 'kn_' + s); pins.push([kn, z + 0.06]);
+    cut(kn, limbP(0.44 * aw, 0.3 * aw, L.shin, SH), shinC, z + 0.03, 'kn_' + s); pins.push([kn, z + 0.06]);
     if (K && (K.bottom === 'tights_long_01' || K.bottom === 'pants_flared')) cut(kn, strip([0, 0.02], [0, -L.shin + 0.1], 0.06, 0.05), K.pal.t, z + 0.035, 'kn_' + s, 0.02, 0.004);
     if (has('fishnets') && shinC === sk) net(kn, L.shin * 0.9, 0.22 * aw, z + 0.032, 'kn_' + s);
     if (K && K.bottom === 'pants_flared') { cut(kn, [[-0.24 * aw, -L.shin * 0.45], [0.24 * aw, -L.shin * 0.45], [0.42 * aw, -L.shin - 0.08], [-0.4 * aw, -L.shin - 0.08]], K.col.bottom, z + 0.075, 'kn_' + s, 0.04); cut(kn, [[-0.41 * aw, -L.shin], [0.42 * aw, -L.shin], [0.42 * aw, -L.shin - 0.08], [-0.4 * aw, -L.shin - 0.08]], K.pal.t, z + 0.077, 'kn_' + s, 0.01, 0.003); }
@@ -292,7 +300,7 @@ export function puppet(r: Recipe, pl: Place, pose: Record<string, number>, expr:
     if (K.top === 'robe_long') { cut(root, [[-0.72 * bw, 0.1], [0.72 * bw, 0.1], [1.05 * bw, -2.0 * h * ll], [-1.0 * bw, -2.0 * h * ll]], K.col.top, 0.385, 'body', 0.06); cut(root, [[-1.0 * bw, -1.86 * h * ll], [1.04 * bw, -1.86 * h * ll], [1.05 * bw, -2.0 * h * ll], [-1.0 * bw, -2.0 * h * ll]], K.pal.t, 0.39, 'body', 0.02, 0.005); }
   }
   const b = r.belly, sb = r.fem ? 1 : 1 + 0.12 * CARI();   // B: a V from the shoulders down
-  const torsoPoly: Pt[] = [[-0.58 * bw - b, 0], [0.58 * bw + b, 0], [0.68 * bw + b * 0.8, 0.55], [0.86 * bw * sb, 1.45 * H], [0.74 * bw * sb, 1.86 * H], [0.28, 1.98 * H], [-0.28, 1.98 * H], [-0.74 * bw * sb, 1.86 * H], [-0.86 * bw * sb, 1.45 * H], [-0.68 * bw - b * 0.8, 0.55]];
+  const vw = r.fem ? 1 : 0.88, torsoPoly: Pt[] = [[-0.55 * bw * vw - b, 0], [0.55 * bw * vw + b, 0], [0.6 * bw * vw + b * 0.8, 0.55], [0.84 * bw * sb, 1.4 * H], [0.86 * bw * sb, 1.66 * H], [0.7 * bw * sb, 1.9 * H], [0.26, 1.98 * H], [-0.26, 1.98 * H], [-0.7 * bw * sb, 1.9 * H], [-0.86 * bw * sb, 1.66 * H], [-0.84 * bw * sb, 1.4 * H], [-0.6 * bw * vw - b * 0.8, 0.55]];   // style C: a V from the chest to a narrower waist
   const covered = K ? ['shirt_tshirt_base', 'shirt_tank', 'jacket_leather_biker', 'jacket_satin', 'coat_long', 'top_bodysuit', 'robe_long', 'hoodie_01', 'suit_jacket', 'jacket_denim', 'vest_tactical', 'coat_fur', 'jacket_fringe'].indexOf(K.top) >= 0 : !!r.shirt;
   cut(to, torsoPoly, K ? (covered ? K.col.top : sk) : r.shirt || sk, 0.42, 'torso');
   pins.push([to, 0.55]);
@@ -529,6 +537,8 @@ export function puppet(r: Recipe, pl: Place, pose: Record<string, number>, expr:
   return rig;
 }
 
+/** Style C skin: the same tone a little richer, since flat colour shows a grey tone at once. */
+const warmSkin = (c: string) => { const n = parseInt(c.slice(1), 16), v = [(n >> 16) & 255, (n >> 8) & 255, n & 255], m = (v[0] + v[1] + v[2]) / 3; return '#' + v.map((x, i) => Math.max(0, Math.min(255, Math.round(m + (x - m) * 1.28 + (i === 0 ? 4 : i === 2 ? -4 : 0)))).toString(16).padStart(2, '0')).join(''); };
 const CARI = () => 0;   // how far toward the bold caricature the proportions go: bigger head, hands and feet, broader men (style C is human: none)
 const HEADK_ = 0.53;   // heads a touch bigger, so the face reads at body size
 /** Style C (Bill, 29 October; Research/tools/concepts/characters.html?v=human): a human figure about 6.8 heads tall.
@@ -545,7 +555,7 @@ function inkOf(sk: string) { const a = parseInt(sk.slice(1), 16), b = 0x16203a, 
 /** The face at body size, cut from the same recipe as the portrait, turned three quarters toward the way the doll faces. */
 /** The back of the head: the hair, the back of a mask, the ears at the sides, a hat; no face. */
 function headBack(fr: F, r: Recipe, z: number, cut: (f: F, poly: Pt[], col: string | Swatch, z: number, joint?: string, lift?: number, rough?: number) => void) {
-  const s = HEADK_ + (0.6 - HEADK_) * CARI(), hd: Head = humanHead(r, s), J = 'head', sk = r.skin;
+  const s = HEADK_ + (0.6 - HEADK_) * CARI(), hd: Head = humanHead(r, s), J = 'head', sk = warmSkin(r.skin);
   const put = (poly: Pt[], col: string | Swatch, dz: number, rough = 0.008) => cut(fr, poly, col, z + dz, J, 0.03, rough);
   const K = r.kit, acc = (a: string) => !!K && K.acc.indexOf(a) >= 0, HC = r.hairCol, HB = r.hairMix === 'under' && r.hairCol2 ? r.hairCol2 : HC;
   put(headPoly(hd), sk, 0.02);
@@ -603,7 +613,7 @@ function headBack(fr: F, r: Recipe, z: number, cut: (f: F, poly: Pt[], col: stri
 }
 function head(fr: F, r: Recipe, z: number, expr: string, cut: (f: F, poly: Pt[], col: string | Swatch, z: number, joint?: string, lift?: number, rough?: number) => void, mk: Marks = {}) {
   const s = HEADK_ + (0.6 - HEADK_) * CARI(), hd: Head = humanHead(r, s), tq = 0.09;
-  const sk = r.skin, dk = shade(sk, 0.74), deep = shade(sk, 0.5), J = 'head';
+  const sk = warmSkin(r.skin), dk = shade(sk, 0.74), deep = shade(sk, 0.5), J = 'head';
   const FK = 1 + (s / 0.47 - 1) * 0.85, fy = hd.cy - 0.02;   // the eyes, nose, mouth and brows grow with the head
   const feat = (dz: number) => FK !== 1 && ((dz >= 0.07 && dz < 0.0955) || (dz >= 0.097 && dz < 0.15) || (dz >= 0.165 && dz < 0.19));
   const put = (poly: Pt[], col: string | Swatch, dz: number, rough = 0.008) => cut(fr, feat(dz) ? poly.map(([x, y]) => [tq + (x - tq) * FK, fy + (y - fy) * FK] as Pt) : poly, col, z + dz, J, 0.03, rough);
