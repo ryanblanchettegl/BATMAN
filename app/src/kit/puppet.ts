@@ -137,8 +137,6 @@ export interface Rig { joints: Record<string, { x: number; y: number; pa: number
 /** Cut and pin a doll: style C, the human paper doll (kit/stylec.ts). */
 export function puppet(r: Recipe, pl: Place, pose: Record<string, number>, expr: string, own: string, out: Piece[], mk: Marks = {}): Rig { return puppetC(r, pl, pose, expr, own, out, mk); }
 
-/** Where the middle of the head sits above the top of the trunk, and how close the portrait camera comes (style C, kit/stylec.ts). */
-export const HEAD_MID = 0.6, HEAD_SCALE = 0.6;
 
 /* ---------- a title belt, the way Create a Belt paints it ---------- */
 /** The belt a scene's belt prop shows when nobody in it holds a title: set by the game to the company's top title. */
