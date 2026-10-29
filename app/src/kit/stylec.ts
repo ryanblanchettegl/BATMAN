@@ -138,7 +138,7 @@ export function lookOf(r: Recipe, expr: string): Look {
   if (L.build === 'heavy' || L.build === 'belly') { L.ww = Math.max(L.ww, L.cw * 1.02); L.sh *= 1.25; L.abs = 0; L.bel = Math.max(L.bel, 0.02); }
   L.cw *= 0.92 + h('cw', 5) * 0.04; L.ww *= 0.9 + h('ww', 5) * 0.05;
   if (L.build === 'lean') L.abs = m < 1.05 ? 4 : 2; L.abs = m > 1.1 ? 0 : Math.min(L.abs, 4); L.sw *= 0.9 + h('sw', 5) * 0.05;
-  if (fem) { L.hw *= 1.3; L.ww *= 0.92; L.th *= 1.15; }
+  if (fem) { L.hw *= 1.15; L.ww *= 0.92; L.th *= 1.15; }
   if (L.build === 'skinny') { L.abs = 2; L.sw *= 0.86; L.cw *= 0.86; L.au *= 0.85; L.af *= 0.88; L.th *= 0.9; L.traps = 0; }
   if (r.mask) L.mask = [r.mask.base, r.mask.trim, r.mask.trim === r.mask.base ? '#ffd43b' : r.mask.trim];
   // the gear: trunks, a top, boots and pads, in the colours of what they wear
@@ -335,7 +335,7 @@ function tattoo(P: Pen, st: string, L: number, w: number, sk: string, r: R) {
 /** Cut and pin a doll in style C. The same arguments and rig as `puppet()`. */
 export function puppetC(r: Recipe, pl: Place, pose: Record<string, number>, expr: string, own: string, out: Piece[], mk: Marks = {}): Rig {
   const big0 = r.w > 1.15 || (r.belly || 0) > 0.05 ? 8 : 0, jit = (k2: string, d: number) => ((hashS(r.key + '|st' + k2) % 1000) / 1000 - 0.5) * d;
-  const arch = hashS(r.key + '|arch') % 4, ARMS = [{}, { sh_n: 16, el_n: 70, sh_f: -14, el_f: -70 }, { sh_n: 6, el_n: 12, sh_f: -10, el_f: -40 }, { sh_n: 12, el_n: 30, sh_f: -6, el_f: -10 }][arch];   // easy, hands on hips, one fist up, one arm off the body
+  const arch = r.fem ? [0, 3][hashS(r.key + '|arch') % 2] : hashS(r.key + '|arch') % 4, ARMS = [{}, { sh_n: 16, el_n: 70, sh_f: -14, el_f: -70 }, { sh_n: 6, el_n: 12, sh_f: -10, el_f: -40 }, { sh_n: 12, el_n: 30, sh_f: -6, el_f: -10 }][arch];   // easy, hands on hips, one fist up, one arm off the body
   const STC: Record<string, number> = { ...STAND, sh_n: 9 + big0 + jit('sn', 16), el_n: 18 + jit('en', 24), sh_f: -8 - big0 + jit('sf', 16), el_f: -18 + jit('ef', 8), hip_n: 6 + jit('hn', 4), hip_f: -6 + jit('hf', 4), kn_n: -3, kn_f: 3, an_n: -4, an_f: 4, head: jit('hd', 6), torso: jit('to', 7), ...ARMS };   // style C stands easy (critic, 29 October)
   const a = lookOf(r, expr), out0 = out.length;
   const n0 = out0, bk = !!pl.b, P0 = { ...STC, ...pose }, h = r.h * a.hs, ll = r.ll || 1, H = h * (r.th || 1), K = r.kit;
@@ -422,8 +422,10 @@ export function puppetC(r: Recipe, pl: Place, pose: Record<string, number>, expr
   // the trunks (or the top of the trousers), then a top
   const G = pen(to, 0.47, 'torso');
   if (a.jeans) { piece(G, [[-hw * 1.04, yW + hu * 0.35], [hw * 1.05, yW + hu * 0.34], [hw * 1.08, yC + hu * 0.3], [-hw * 1.07, yC + hu * 0.3]], legC); piece(G, [[-hw * 1.06, yW + hu * 0.3], [hw * 1.06, yW + hu * 0.28], [hw * 1.06, yW + hu * 0.46], [-hw * 1.06, yW + hu * 0.48]], '#2a1a10'); G.poly([[-hu * 0.15, yW + hu * 0.29], [hu * 0.15, yW + hu * 0.29], [hu * 0.15, yW + hu * 0.49], [-hu * 0.15, yW + hu * 0.49]], '#c9a24a'); }
+  else if (a.fem) { piece(G, [[-ww * 1.04, yW + hu * 0.3], [ww * 1.04, yW + hu * 0.28], [hw * 0.86, yC - hu * 0.1], [hw * 0.3, yC + hu * 0.28], [-hw * 0.3, yC + hu * 0.3], [-hw * 0.86, yC - hu * 0.08]], a.gear); piece(G, [[-ww * 1.05, yW + hu * 0.27], [ww * 1.05, yW + hu * 0.25], [ww * 1.05, yW + hu * 0.37], [-ww * 1.05, yW + hu * 0.39]], a.g2); }   // briefs cut to the hips, the legs cut high
   else { const tw = Math.max(ww + bel * 0.6, hw) * 1.05, bw2 = Math.max(hw, ww) * 1.08, LK = 1; piece(G, [[-tw, yW + hu * 0.3], [tw, yW + hu * 0.28], [bw2, yC + hu * 0.05], [bw2 * 0.35, yC + hu * 0.42 * LK], [-bw2 * 0.35, yC + hu * 0.44 * LK], [-bw2, yC + hu * 0.06]], a.gear); piece(G, [[-tw * 1.01, yW + hu * 0.27], [tw * 1.01, yW + hu * 0.25], [tw * 1.01, yW + hu * 0.4], [-tw * 1.01, yW + hu * 0.42]], a.g2); }
   if (a.top === 'halter' || (a.top === 'crop' && a.fem && !K)) { piece(G, [[-cw * 0.98, ySh + hu * 0.42], [0, ySh + hu * 0.2], [cw * 0.98, ySh + hu * 0.42], [cw * 0.9, yCh - hu * 0.05], [0, yCh + hu * 0.05], [-cw * 0.9, yCh - hu * 0.05]], a.topC!); G.stroke(`M${-cw * 0.3} ${ySh + hu * 0.3} L0 ${yN + hu * 0.15} L${cw * 0.3} ${ySh + hu * 0.3}`, 2.6, a.topC!); }
+  else if (a.top === 'singlet' && a.fem) piece(G, [[-shn * 1.3, yN + hu * 0.12], [-sw * 0.52, ySh + hu * 0.05], [-cw * 0.95, ySh + hu * 0.5], [-cw * 0.9, yCh], [-ww * 1.02, yW + hu * 0.32], [ww * 1.02, yW + hu * 0.32], [cw * 0.9, yCh], [cw * 0.95, ySh + hu * 0.5], [sw * 0.52, ySh + hu * 0.05], [shn * 1.3, yN + hu * 0.12], [0, ySh + hu * 0.42]], a.topC!);   // a singlet cut to her body, a V at the neck
   else if (a.top === 'singlet') piece(G, [[-sw * 0.55, ySh], [-cw * 0.3, ySh + hu * 0.22], [cw * 0.3, ySh + hu * 0.22], [sw * 0.55, ySh], [cw * 0.98, ySh + hu * 0.5], [ww * 1.02, yW + hu * 0.3], [-ww * 1.02, yW + hu * 0.3], [-cw * 0.98, ySh + hu * 0.5]], a.topC!);
   else if (a.top === 'crop') piece(G, [[-cw * 0.97, ySh + hu * 0.35], [-cw * 0.3, ySh + hu * 0.15], [cw * 0.3, ySh + hu * 0.15], [cw * 0.97, ySh + hu * 0.35], [cw * 0.92, yCh - hu * 0.1], [cw * 0.2, yCh - hu * 0.15], [0, yCh - hu * 0.05], [-cw * 0.92, yCh - hu * 0.1]], a.topC!);
   if (a.coat) for (const sd of [-1, 1]) { piece(G, [[sd * sw * 1.0, ySh - hu * 0.02], [sd * cw * 0.42, ySh + hu * 0.1], [sd * cw * 0.5, yCh], [sd * hw * 0.75, yC + hu * 0.1], [sd * hw * 0.9, yC + px(1.6 * h)], [sd * sw * 1.32, yC + px(1.6 * h)], [sd * sw * 1.1, yW]], a.coat, true); G.stroke(`M${sd * cw * 0.42} ${ySh + hu * 0.1} L${sd * cw * 0.75} ${ySh + hu * 0.7} L${sd * cw * 0.5} ${yCh}`, 1.4, shade(a.coat, 1.8)); }
