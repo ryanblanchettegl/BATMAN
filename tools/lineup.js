@@ -18,7 +18,7 @@ fs.writeFileSync(html, '<!doctype html><meta charset="utf-8"><body><script>windo
   const save = (f, d) => fs.writeFileSync(path.join(out, f), Buffer.from(d.split(',')[1], 'base64'));
   for (const pid of pids) {
     const ids = await page.evaluate(([u, p]) => { window.lineupStart(u, p); return window.lineupRoster(p); }, [uni, pid]);
-    for (let i = 0; i < ids.length; i += 6) save(pid + '-row' + (i / 6 + 1) + '.png', await page.evaluate(x => window.lineupRow(x), ids.slice(i, i + 6)));
+    for (let i = 0; i < ids.length; i += 5) save(pid + '-row' + (i / 5 + 1) + '.png', await page.evaluate(x => window.lineupRow(x), ids.slice(i, i + 5)));
     for (let i = 0; i < ids.length; i += 24) save(pid + '-heads' + (i / 24 + 1) + '.png', await page.evaluate(x => window.lineupHeads(x), ids.slice(i, i + 24)));
     console.log(pid + ': ' + ids.length + ' wrestlers');
   }

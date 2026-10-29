@@ -13,8 +13,8 @@ W.lineupStart = (uni: string, pid: string) => { setUniverse(uni); G.S = E.newGam
 W.lineupRoster = (pid: string) => G.S.w.filter((w: any) => w.promo === pid && !w.nw && !w.ret)
   .sort((a: any, b: any) => (b.look ? 1 : 0) - (a.look ? 1 : 0) || (b.ovr || 0) - (a.ovr || 0)).map((w: any) => w.id);
 /** A row of wrestlers standing, on navy card, as a PNG data URL. */
-W.lineupRow = (ids: number[], wpx = 1920, hpx = 760) => {
-  const S = G.S, ws = ids.map(id => S.w.find((x: any) => x.id === id)), n = ws.length, gap = 15.0 / n;
+W.lineupRow = (ids: number[], wpx = 2200, hpx = 760) => {
+  const S = G.S, ws = ids.map(id => S.w.find((x: any) => x.id === id)), n = ws.length, gap = 15.0 / n; // wide apart, so nobody holds hands
   const sc: Scene = { v: 1, id: 'lineup', name: 'Lineup', when: 'portrait', set: 'none', attire: 'primary_ring', slots: ws.map((w, i) => ({ id: 'S' + i, n: w.name, role: 'a' as const })),
     keys: [{ t: 0, figs: Object.fromEntries(ws.map((w, i) => ['S' + i, { x: -7.5 + gap * (i + 0.5), y: WAIST, r: 0, f: 1, z: 0.6, p: {}, e: '' }])), props: [], cam: { x: 0, y: 0.4, z: 1 } }] };
   const c = document.createElement('canvas'); c.width = wpx; c.height = hpx; const ctx = c.getContext('2d')!;
