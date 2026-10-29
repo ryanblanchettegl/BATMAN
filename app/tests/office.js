@@ -138,8 +138,9 @@ async function run(mode) {
   await state(page, S => { S.booker.pts = 1; }); await redraw(page);
   await page.click('[data-t="tree-open"]'); await page.waitForSelector('[data-t="tree"]');
   ok(await count('[data-t="tree-branch"]') === 4, 'the skill tree opens with four branches');
-  await page.click('[data-t="tree-buy"][data-id="cr_pen"]'); await page.waitForTimeout(150);
-  ok(await state(page, S => S.booker.sk.creative) === 1 && await state(page, S => S.booker.pts) === 0 && await count('[data-t="tree-node"][data-v="cr_pen"] .good') === 1, 'one point takes one skill from the tree, and it shows as yours');
+  await page.click('[data-t="tree-node"][data-v="cr_pen"]'); await page.click('[data-t="tree-buy"][data-id="cr_pen"]'); await page.waitForTimeout(150);
+  ok(await state(page, S => S.booker.sk.creative) === 1 && await state(page, S => S.booker.pts) === 0 && await count('[data-t="tree-node"][data-v="cr_pen"].has') === 1, 'pick a skill, take it for one point, and it shows as yours');
+  ok(await page.evaluate(() => { const b = document.querySelector('[data-t="tree-pick"]').getBoundingClientRect(); return b.bottom <= window.innerHeight; }), 'the whole tree and the picked skill fit the window');
   await page.keyboard.press('Escape'); await page.waitForTimeout(100);
   await step('skill spent');
 

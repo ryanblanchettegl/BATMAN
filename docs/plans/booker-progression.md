@@ -79,6 +79,10 @@ Career gets the tree: four branches side by side, nodes as cut-card tiles, the n
 
 Asked one at a time; answers written here.
 
+## Pace of the tree (29 October)
+
+The tree holds 43 points (a skill costs 1, the top tier 2). At about 6 levels the first year, 4 the second and 3 a year after, a career fills it in about thirteen years. Actions and trade-offs show as Soon and cannot be taken until step 4 gives them their effects; a tier opens at about three fifths of what can be taken below it.
+
 ## 8. Ryan's answers (28 October 2026)
 
 | Topic | Question | Answer |

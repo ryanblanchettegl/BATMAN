@@ -535,11 +535,20 @@ svg.rangebar{width:9em;height:.8em;vertical-align:middle;margin:0 .4em}
 .deskpage .asstwin .bd p{margin:0;line-height:1.18}
 .crpage{grid-template-areas:"you rep saga" "word word troph"}
 
-/* the booker's skill tree (Career, Skill tree): four branches side by side, tiers as index cards */
-.treecols{display:grid;grid-template-columns:repeat(4,1fr);gap:.8em;max-height:70vh;overflow-y:auto}
-.treecol h3{margin:.1em 0}
-.treetier{border-top:1px dashed rgba(0,0,0,.25);padding:.3em 0}
-.treetier.locked{opacity:.55}
-.treenode{display:flex;justify-content:space-between;align-items:flex-start;gap:.4em;padding:.25em .3em;margin:.2em 0;background:rgba(255,255,255,.55);border-radius:3px}
-.treenode.has{background:rgba(120,190,120,.35)}
-.treenode .small{font-size:.85em}
+/* the booker's skill tree (Career, Skill tree): four branches of index cards set a touch off straight; the picked one in full at the foot */
+.treecols{display:grid;grid-template-columns:repeat(4,1fr);gap:.9em}
+.treehd{font-family:var(--marker);font-weight:400;margin:.1em 0 0;color:var(--ink)}
+.treetier{border-top:2px dashed rgba(35,35,42,.25);padding:.05em 0 .15em}
+.treetl{font-family:var(--gochi);font-size:.82em;margin:0;color:#5a5a66;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.treecard{display:flex;justify-content:space-between;align-items:baseline;gap:.4em;width:100%;margin:.12em 0;padding:.1em .45em;font-size:.92em;line-height:1.25;font:inherit;text-align:left;color:var(--ink);
+  background:#fffdf3;border:1px solid rgba(35,35,42,.18);border-top:3px solid #c9d6ef;box-shadow:1px 2px 0 rgba(0,0,0,.18);cursor:pointer;transition:transform .12s,box-shadow .12s}
+.treecard b{font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.treecard .tk{font-family:var(--gochi);font-size:.8em;color:#6a6a76;white-space:nowrap}
+.treecard:hover,.treecard:focus-visible{transform:rotate(0) translateY(-1px)!important;box-shadow:2px 4px 0 rgba(0,0,0,.2)}
+.treecard:focus-visible{outline:3px solid #2d6cdf;outline-offset:1px}
+.treecard.can{border-top-color:#6cbf5a}
+.treecard.has{background:#e3f3d9;border-top-color:#3f9a3a}
+.treecard.soon{opacity:.6;border-top-style:dashed}
+.treecard.on{box-shadow:0 0 0 3px #ffcc33,2px 4px 0 rgba(0,0,0,.2)}
+.treetier.locked .treecard{opacity:.55}
+.treepick{display:flex;justify-content:space-between;align-items:center;gap:1em;margin-top:.6em;padding:.45em .7em;background:var(--lk-note,#fff7b8) 0 0/100% 100%;min-height:3.2em}
