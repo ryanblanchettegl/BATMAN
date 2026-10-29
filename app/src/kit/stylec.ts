@@ -100,9 +100,7 @@ class Pen {
 interface Hd { cr: string; crw: number; jaw: string; jw: number; len: number; eye: string; ey: number; et: number; brow: string; mouth: string; ear: number; es?: number; bu?: number; cheek?: number; lip?: string; shadow?: string; freck?: number; bags?: number; scar?: number; jowl?: number; adam?: number }
 export interface Look { skin: string; hc: string; hair: string; beard: string; gear: string; g2: string; boots: string; pad: string; iris: string; fem: boolean; mask?: string[]; band?: string;
   sw: number; cw: number; ww: number; hw: number; bel: number; au: number; af: number; th: number; sh: number; traps: number; abs: number; neck: number; tape: boolean; chestHair: boolean; veins: boolean; quad: boolean;
-  legC?: string; jeans?: boolean; top?: string; topC?: string; sleeve?: string; coat?: string; cape?: string; stripes?: boolean; tie?: string; tat?: { st: string; arm: number[]; chest: number }; hd: Hd; key: string }
-const HAIR_OF: Record<string, string> = { bald: 'bald', buzz: 'buzz', crew: 'peak', cap: 'crop', flat: 'buzz', slick: 'peak', undercut: 'peak', mohawk: 'spiky', spiky: 'spiky', curls: 'puff', afro: 'puff', tower: 'puff', dreads: 'puff', braids: 'buzz',
-  long: 'waves', wild: 'waves', bob: 'waves', mullet: 'mullet', ponytail: 'crop', pigtails: 'crop', bun: 'crop', braid: 'crop' };
+  mus?: number; braid?: boolean; legC?: string; jeans?: boolean; top?: string; topC?: string; sleeve?: string; coat?: string; cape?: string; stripes?: boolean; tie?: string; tat?: { st: string; arm: number[]; chest: number }; hd: Hd; key: string }
 /** A Create a Player swatch's colour. */
 const C = (s: Swatch | string | undefined, d: string) => !s ? d : typeof s === 'string' ? s : s.c;
 /** The concept's numbers for a wrestler: their build from the doll's width, belly and style; their face from the
@@ -112,10 +110,11 @@ export function lookOf(r: Recipe, expr: string): Look {
   const m = Math.max(0.75, Math.min(1.5, r.w / (fem ? 0.84 : 1))), mm = r.mm || 1, up = Math.pow(m, 1.7) * (1 + (mm - 1) * 0.5), fat = r.belly || 0;
   const base = fem ? { sw: 0.13, cw: 0.115, ww: 0.088, hw: 0.115, au: 0.03, af: 0.026, th: 0.046, sh: 0.035 } : { sw: 0.15, cw: 0.132, ww: 0.11, hw: 0.112, au: 0.038, af: 0.033, th: 0.046, sh: 0.037 };
   const tw = r.tw || 1;
+  // a neck shows on everybody (Bill, 29 October)
   const L: any = { skin: r.skin, hc: r.hairCol, fem, key: r.key,
     sw: base.sw * up * tw, cw: base.cw * up * tw, ww: base.ww * Math.pow(m, 1.2) + fat * 0.12, hw: base.hw * Math.pow(m, 1.1), bel: fat > 0.05 ? fat * 0.42 : 0,
     au: base.au * up, af: base.af * up, th: base.th * Math.pow(m, 1.35), sh: base.sh * Math.pow(m, 1.3), traps: fem ? 0.1 : Math.max(0, (m - 1) * 3 + 0.2),
-    abs: fem || fat > 0.05 ? 0 : m < 1.05 ? 4 : m > 1.2 ? 6 : 4, neck: fem || m < 1.05 ? 0.08 : 0, tape: !!r.tape || (!!K && K.acc.indexOf('wrist_tape_white') >= 0), chestHair: (r.bodyHair || 0) > 0, veins: m > 1.2, quad: fem };
+    abs: fem || fat > 0.05 ? 0 : m < 1.05 ? 4 : m > 1.2 ? 6 : 4, neck: fem ? 0.14 : m < 1.05 ? 0.14 : m > 1.25 ? 0.08 : 0.11, tape: !!r.tape || (!!K && K.acc.indexOf('wrist_tape_white') >= 0), chestHair: (r.bodyHair || 0) > 0, veins: m > 1.2, quad: fem };
   // the face
   const hd = r.head, wide = (hd.rx - 1.04) / 0.28, sq = hd.sq >= 4, pointy = hd.chin >= 0.35;
   const crw = 0.42 + 0.12 * Math.max(0, Math.min(1, wide));
@@ -127,8 +126,9 @@ export function lookOf(r: Recipe, expr: string): Look {
     mouth: sh ? 'grit' : expr === 'talk' ? 'grin' : hurt ? 'grim' : expr === 'smirk' ? 'smirk' : md === 'happy' ? 'grin' : md === 'cocky' || md === 'heel' ? 'smirk' : md === 'fierce' ? 'grim' : md === 'sad' ? 'flat' : 'smile',
     ear: m > 1.2 ? 1.1 : 1, cheek: fem ? 1 : 0, lip: fem ? ['#b8285a', '#b84a4a', '#8a2a3a', '#a03a50'][h('lip', 4)] : undefined, freck: r.freckles ? 1 : 0, scar: (r.scars || []).length ? 1 : 0, jowl: fat > 0.1 ? 1 : 0, adam: !fem && m < 1.05 ? 1 : 0 } as Hd;
   L.iris = r.eyeCol || ['#5a3a22', '#3d2a1c', '#4f6a3a', '#3f6c94', '#6b5530'][h('eye', 5)];
-  L.hair = r.mask ? 'bald' : HAIR_OF[r.hair] || 'crop';
-  L.beard = r.mask ? 'none' : r.beard === 4 || r.beard === 5 ? 'full' : r.beard === 2 || r.beard === 7 ? 'goatee' : r.beard === 8 || r.mus === 4 ? 'horseshoe' : r.beard === 1 || r.beard === 9 || r.beard === 10 ? 'short' : 'none';
+  L.hair = r.mask ? 'bald' : r.hair || 'cap';   // every hair style of the game, each cut in the concept's manner (headC)
+  L.beard = r.mask ? 'none' : r.beard === 1 || r.beard === 9 ? 'stubble' : r.beard === 2 || r.beard === 7 ? 'goatee' : r.beard === 8 ? 'chin' : r.beard === 3 ? 'vandyke' : r.beard === 4 ? 'short' : r.beard === 5 ? 'full' : r.beard === 6 ? 'sideburns' : r.beard === 10 ? 'chinstrap' : 'none';
+  L.mus = r.mask ? 0 : r.mus || 0; L.braid = !!r.braid;
   if (r.mask) L.mask = [r.mask.base, r.mask.trim, r.mask.trim];
   // the gear: trunks, a top, boots and pads, in the colours of what they wear
   if (K) {
@@ -161,11 +161,21 @@ function headC(P: Pen, a: Look, hu: number, r: R, back: boolean, mk: Marks) {
   const nar = 0.86, len = h.len * hu * 1.04, jw = h.jw * hu * nar, crw = h.crw * hu * nar;
   const top = -len * 0.55, bot = len * 0.45, face = Math.max(crw, jw);
   const ey = h.ey * len, eg = face * 0.45, es = face * 0.165 * Math.pow(h.es || 1, 0.3), browY = ey - face * 0.33 - (h.bu || 0) * hu, jt = browY + es * 0.2 + (h.bu || 0) * hu;
-  // hair behind
-  if (a.hair === 'waves') piece([[-crw * 1.5, -len * 0.05], [-crw * 1.25, top - hu * 0.1], [0, top - hu * 0.22], [crw * 1.3, top - hu * 0.08], [crw * 1.55, 0], [crw * 1.75, bot + hu * 0.55], [crw * 1.35, bot + hu * 0.45], [crw * 1.5, bot + hu * 0.8], [crw * 0.9, bot + hu * 0.55], [-crw * 0.9, bot + hu * 0.6], [-crw * 1.55, bot + hu * 0.85], [-crw * 1.4, bot + hu * 0.5], [-crw * 1.75, bot + hu * 0.6]], a.hc);
-  if (a.hair === 'mullet') piece([[-crw * 0.95, 0], [-crw * 1.15, bot + hu * 0.5], [-crw * 0.4, bot + hu * 0.35], [crw * 0.2, bot + hu * 0.55], [crw * 1.1, bot + hu * 0.45], [crw * 0.95, 0]], a.hc);
-  if (a.hair === 'puff') { const af0: Pt[] = [], cy0 = top - hu * 0.25, n = 17; for (let k = 0; k <= n; k++) { const t = Math.PI * (1.08 - 1.16 * k / n), rr = (k % 2 ? 0.9 : 1.05) + r() * 0.08; af0.push([Math.cos(t) * crw * 1.42 * rr, cy0 - Math.sin(t) * hu * 0.66 * rr]); }
-    P.poly(([[-crw * 1.05, top + len * 0.15]] as Pt[]).concat(af0, [[crw * 1.05, top + len * 0.15]] as Pt[]), a.hc); }
+  // hair behind the head (and, seen from behind, over it)
+  const behind = () => {
+    const hr = a.hair;
+    if (hr === 'long' && !a.fem) piece([[-crw * 1.12, top + len * 0.2], [-crw * 0.9, top - hu * 0.05], [crw * 0.9, top - hu * 0.05], [crw * 1.12, top + len * 0.2], [crw * 1.25, bot + hu * 0.75], [crw * 0.7, bot + hu * 0.66], [-crw * 0.7, bot + hu * 0.66], [-crw * 1.25, bot + hu * 0.75]], a.hc);
+    if ((hr === 'long' && a.fem) || hr === 'wild') { const wl = hr === 'wild' ? 1.18 : 1; piece([[-crw * 1.5 * wl, -len * 0.05], [-crw * 1.25 * wl, top - hu * 0.1], [0, top - hu * 0.22], [crw * 1.3 * wl, top - hu * 0.08], [crw * 1.55 * wl, 0], [crw * 1.75 * wl, bot + hu * 0.55], [crw * 1.35, bot + hu * 0.45], [crw * 1.5 * wl, bot + hu * 0.8], [crw * 0.9, bot + hu * 0.55], [-crw * 0.9, bot + hu * 0.6], [-crw * 1.55 * wl, bot + hu * 0.85], [-crw * 1.4, bot + hu * 0.5], [-crw * 1.75 * wl, bot + hu * 0.6]], a.hc); }
+    if (hr === 'bob') piece([[-crw * 1.18, top + len * 0.15], [-crw * 0.95, top - hu * 0.08], [crw * 0.95, top - hu * 0.08], [crw * 1.18, top + len * 0.15], [crw * 1.22, bot - len * 0.02], [crw * 0.75, bot + len * 0.02], [-crw * 0.75, bot + len * 0.02], [-crw * 1.22, bot - len * 0.02]], a.hc);
+    if (hr === 'mullet') piece([[-crw * 0.95, 0], [-crw * 1.15, bot + hu * 0.5], [-crw * 0.4, bot + hu * 0.35], [crw * 0.2, bot + hu * 0.55], [crw * 1.1, bot + hu * 0.45], [crw * 0.95, 0]], a.hc);
+    if (hr === 'afro' || hr === 'tower' || hr === 'curls') { const af0: Pt[] = [], big = hr === 'curls' ? 0.78 : 1, cy0 = top - hu * (hr === 'tower' ? 0.45 : 0.25) * big, n = hr === 'curls' ? 13 : 17; for (let q = 0; q <= n; q++) { const t = Math.PI * (1.08 - 1.16 * q / n), fq = (q % 2 ? 0.9 : 1.05) + r() * 0.08; af0.push([Math.cos(t) * crw * 1.42 * big * fq, cy0 - Math.sin(t) * hu * (hr === 'tower' ? 0.95 : 0.66) * big * fq]); }
+      P.poly(([[-crw * 1.05, top + len * 0.15]] as Pt[]).concat(af0, [[crw * 1.05, top + len * 0.15]] as Pt[]), a.hc); }
+    if (hr === 'dreads') for (let q = 0; q < 8; q++) { const sx = q < 4 ? -1 : 1, x0 = sx * crw * (0.7 + (q % 4) * 0.13), len2 = hu * (0.9 + (q % 3) * 0.18); piece([[x0 - hu * 0.05, top + len * 0.2], [x0 + hu * 0.05, top + len * 0.2], [x0 + sx * hu * 0.12 + hu * 0.04, bot + len2 * 0.5], [x0 + sx * hu * 0.12 - hu * 0.04, bot + len2 * 0.5]], q % 2 ? shade(a.hc, 0.85) : a.hc); }
+    if (hr === 'ponytail') piece([[crw * 0.3, top + len * 0.05], [crw * 0.75, top + len * 0.1], [crw * 1.2, bot + hu * 0.3], [crw * 0.95, bot + hu * 0.55], [crw * 0.7, bot + hu * 0.2]], a.hc);
+    if (hr === 'pigtails') for (const sd of [-1, 1]) piece([[sd * crw * 0.85, jt - es], [sd * crw * 1.15, jt - es * 1.2], [sd * crw * 1.5, bot + hu * 0.25], [sd * crw * 1.25, bot + hu * 0.4], [sd * crw * 1.05, jt + es]], a.hc);
+    if (hr === 'braid') for (let q = 0; q < 9; q++) P.poly(ell((q % 2 ? 0.04 : -0.04) * hu, jt + q * hu * 0.16, hu * (0.16 - q * 0.008), hu * 0.11, 10), q % 2 ? shade(a.hc, 0.82) : a.hc);
+  };
+  behind();
   // ears
   const ed = r() * 0.05 * len, ek = h.ear * 0.75;
   for (const sd of [-1, 1]) { const ex0 = sd * face * 0.93, ey0 = ey + (sd > 0 ? ed : 0); piece([[ex0, ey0 - len * 0.1], [ex0 + sd * ek * hu * 0.15, ey0 - len * 0.06], [ex0 + sd * ek * hu * 0.13, ey0 + len * 0.1], [ex0, ey0 + len * 0.12]], shade(sk, 0.93)); if (!back) mkS(`M${ex0 + sd * ek * hu * 0.05} ${ey0 - len * 0.03} q${sd * hu * 0.04} ${len * 0.05} 0 ${len * 0.1}`, 1.2, dk); }
@@ -184,9 +194,11 @@ function headC(P: Pen, a: Look, hu: number, r: R, back: boolean, mk: Marks) {
   } else { piece(more(jaw), sk); piece(cr, sk); if (h.jowl && !back) for (const sd of [-1, 1]) mkS(`M${sd * jw * 0.85} ${bot - len * 0.2} q${-sd * hu * 0.05} ${len * 0.12} ${-sd * hu * 0.2} ${len * 0.16}`, 1.5, dk); }
   // stubble: the concept lays it at half strength, so it goes on the skin under the nose and the mouth
   const my = ey + (bot - ey) * 0.68;
-  if (a.beard === 'short') P.path(`M${-jw * 1.02} ${jt + len * 0.2} L${-jw * 0.92} ${bot - len * 0.06} Q0 ${bot + len * 0.12} ${jw * 0.92} ${bot - len * 0.06} L${jw * 1.02} ${jt + len * 0.2} L${jw * 0.75} ${my - hu * 0.04} Q0 ${my - hu * 0.13} ${-jw * 0.75} ${my - hu * 0.04}Z`, mixC(a.hc, sk, 0.55));
+  if (a.beard === 'stubble') P.path(`M${-jw * 1.02} ${jt + len * 0.2} L${-jw * 0.92} ${bot - len * 0.06} Q0 ${bot + len * 0.12} ${jw * 0.92} ${bot - len * 0.06} L${jw * 1.02} ${jt + len * 0.2} L${jw * 0.75} ${my - hu * 0.04} Q0 ${my - hu * 0.13} ${-jw * 0.75} ${my - hu * 0.04}Z`, mixC(a.hc, sk, 0.55));
   if (back) {   // from behind: the back of the hair over the skull, no face
-    if (a.hair !== 'bald') piece([[-crw * 1.02, jt + len * 0.15], [-crw * 0.95, top - hu * 0.04], [crw * 0.95, top - hu * 0.04], [crw * 1.02, jt + len * 0.15], [crw * 0.6, bot - len * 0.15], [-crw * 0.6, bot - len * 0.15]], a.hc);
+    if (a.hair !== 'bald' && a.hair !== 'mohawk') piece([[-crw * 1.02, jt + len * 0.15], [-crw * 0.95, top - hu * 0.04], [crw * 0.95, top - hu * 0.04], [crw * 1.02, jt + len * 0.15], [crw * 0.6, bot - len * 0.15], [-crw * 0.6, bot - len * 0.15]], a.hc);
+    if (a.hair === 'mohawk') piece([[-crw * 0.2, top + len * 0.05], [-crw * 0.15, top - hu * 0.32], [crw * 0.15, top - hu * 0.32], [crw * 0.2, top + len * 0.05], [crw * 0.15, bot - len * 0.2], [-crw * 0.15, bot - len * 0.2]], a.hc);
+    behind();
     return;
   }
   // eyes and brows
@@ -228,22 +240,46 @@ function headC(P: Pen, a: Look, hu: number, r: R, back: boolean, mk: Marks) {
   if (filled) { P.path(MO[h.mouth], '#fffdf0'); mkS(MO[h.mouth], 2.4, shade(lipc, 0.8)); }
   else if (!a.fem) { P.path(`M${-mw * 0.8} ${my + hu * 0.01} Q0 ${my + hu * 0.08} ${mw * 0.8} ${my + hu * 0.01}Z`, shade(sk, 0.75)); mkS(MO[h.mouth], 2.2, shade(sk, 0.4)); }
   else { P.path(`M${-mw} ${my} Q${-mw * 0.4} ${my - hu * 0.07} 0 ${my - hu * 0.03} Q${mw * 0.4} ${my - hu * 0.07} ${mw} ${my} Q${mw * 0.4} ${my + hu * 0.03} ${-mw} ${my}Z`, shade(lipc, 0.85)); P.path(`M${-mw * 0.85} ${my + hu * 0.01} Q0 ${my + hu * 0.1} ${mw * 0.85} ${my + hu * 0.01}Z`, lipc); mkS(`M${-mw} ${my} Q0 ${my + hu * 0.02} ${mw} ${my}`, 1.4, shade(lipc, 0.5)); }
-  // the beard
-  if (a.beard === 'full') piece([[-jw * 1.06, jt + len * 0.12], [-jw, bot - len * 0.02], [-jw * 0.35, bot + len * 0.24], [jw * 0.4, bot + len * 0.2], [jw * 1.02, bot - len * 0.04], [jw * 1.06, jt + len * 0.12], [jw * 0.55, my + hu * 0.03], [0, my - hu * 0.07], [-jw * 0.55, my + hu * 0.03]], a.hc);
-  if (a.beard === 'goatee') piece([[-mw * 0.7, my + hu * 0.06], [-mw * 0.28, bot + len * 0.18], [mw * 0.32, bot + len * 0.17], [mw * 0.7, my + hu * 0.06], [0, my + hu * 0.1]], a.hc);
-  if (a.beard === 'horseshoe') piece([[-mw * 1.15, my - hu * 0.075], [0, my - hu * 0.11], [mw * 1.15, my - hu * 0.075], [mw * 1.25, bot + len * 0.04], [mw * 0.92, bot + len * 0.03], [mw * 0.84, my + hu * 0.025], [-mw * 0.84, my + hu * 0.025], [-mw * 0.92, bot + len * 0.03], [-mw * 1.25, bot + len * 0.04]], a.hc);
-  // the hair on top
-  const HT: Record<string, Pt[]> = { buzz: [[-crw * 0.98, jt - es * 0.2], [-crw * 0.8, top + len * 0.06], [-crw * 0.45, top - hu * 0.03], [crw * 0.45, top - hu * 0.03], [crw * 0.8, top + len * 0.06], [crw * 0.98, jt - es * 0.2], [crw * 0.7, top + len * 0.15], [-crw * 0.7, top + len * 0.15]],
-    peak: [[-crw * 1.0, jt - es * 0.6], [-crw * 0.9, top - hu * 0.03], [0, top - hu * 0.12], [crw * 0.92, top - hu * 0.03], [crw * 1.0, jt - es * 0.6], [crw * 0.75, top + len * 0.17], [crw * 0.2, top + len * 0.14], [0, top + len * 0.28], [-crw * 0.2, top + len * 0.14], [-crw * 0.75, top + len * 0.17]],
+  // the beard and the moustache
+  const BC = a.hc < '#333333' ? a.hc : shade(a.hc, 0.88), lng = a.beard === 'full' ? len * 0.22 : 0, shortB = a.beard === 'short';
+  if (a.beard === 'full' || shortB) piece([[-jw * 1.06, jt + len * 0.12], [-jw, bot - len * 0.02], [-jw * 0.35, bot + len * (shortB ? 0.12 : 0.24) + lng], [jw * 0.4, bot + len * (shortB ? 0.1 : 0.2) + lng], [jw * 1.02, bot - len * 0.04], [jw * 1.06, jt + len * 0.12], [jw * 0.55, my + hu * 0.03], [0, my - hu * 0.07], [-jw * 0.55, my + hu * 0.03]], BC);
+  if (a.beard === 'full' && a.braid) for (let q = 0; q < 4; q++) P.poly(ell((q % 2 ? 0.03 : -0.03) * hu, bot + lng + len * 0.2 + q * hu * 0.12, hu * 0.08, hu * 0.08, 10), q % 2 ? shade(BC, 0.8) : BC);
+  if (a.beard === 'goatee' || a.beard === 'vandyke') piece([[-mw * 0.7, my + hu * 0.06], [-mw * 0.28, bot + len * 0.18], [mw * 0.32, bot + len * 0.17], [mw * 0.7, my + hu * 0.06], [0, my + hu * 0.1]], BC);
+  if (a.beard === 'chin') piece([[-jw * 0.75, bot - len * 0.12], [-jw * 0.55, bot + len * 0.12], [jw * 0.55, bot + len * 0.12], [jw * 0.75, bot - len * 0.12], [0, my + hu * 0.1]], BC);
+  if (a.beard === 'chinstrap') mkS(`M${-jw * 1.02} ${jt + len * 0.1} L${-jw * 0.88} ${bot - len * 0.06} Q0 ${bot + len * 0.1} ${jw * 0.88} ${bot - len * 0.06} L${jw * 1.02} ${jt + len * 0.1}`, hu * 0.06, BC);
+  if (a.beard === 'sideburns') for (const sd of [-1, 1]) piece([[sd * crw * 0.98, jt], [sd * crw * 0.8, jt], [sd * jw * 0.85, jt + len * 0.3], [sd * jw * 1.02, jt + len * 0.32]], BC);
+  const mus = a.beard === 'vandyke' ? 2 : a.mus || 0;
+  if (mus) piece([[-mw * 0.95, my - hu * 0.035], [-mw * 0.4, my - hu * 0.1], [0, my - hu * 0.085], [mw * 0.4, my - hu * 0.1], [mw * 0.95, my - hu * 0.035], [mw * 0.85, my - hu * 0.005], [0, my - hu * 0.045], [-mw * 0.85, my - hu * 0.005]], BC);
+  if (mus === 3) for (const sd of [-1, 1]) piece([[sd * mw * 0.85, my - hu * 0.03], [sd * mw * 1.2, my - hu * 0.07], [sd * mw * 1.35, my - hu * 0.16], [sd * mw * 1.12, my - hu * 0.06]], BC);
+  if (a.beard === 'horseshoe' || mus === 4) piece([[-mw * 1.15, my - hu * 0.075], [0, my - hu * 0.11], [mw * 1.15, my - hu * 0.075], [mw * 1.25, bot + len * 0.04], [mw * 0.92, bot + len * 0.03], [mw * 0.84, my + hu * 0.025], [-mw * 0.84, my + hu * 0.025], [-mw * 0.92, bot + len * 0.03], [-mw * 1.25, bot + len * 0.04]], BC);
+  // the hair on top: every style of the game, cut as the concept cuts hair
+  const pulled = (k2: number): Pt[] => [[-crw * 1.0, jt - es * k2], [-crw * 0.9, top - hu * 0.04], [crw * 0.9, top - hu * 0.04], [crw * 1.0, jt - es * k2], [crw * 0.7, top + len * 0.12], [-crw * 0.7, top + len * 0.12]];   // pulled back off the face
+  const HT: Record<string, Pt[]> = {
+    buzz: [[-crw * 0.98, jt - es * 0.2], [-crw * 0.8, top + len * 0.06], [-crw * 0.45, top - hu * 0.03], [crw * 0.45, top - hu * 0.03], [crw * 0.8, top + len * 0.06], [crw * 0.98, jt - es * 0.2], [crw * 0.7, top + len * 0.15], [-crw * 0.7, top + len * 0.15]],
+    crew: [[-crw * 1.0, jt - es * 0.4], [-crw * 0.86, top - hu * 0.06], [crw * 0.86, top - hu * 0.06], [crw * 1.0, jt - es * 0.4], [crw * 0.78, top + len * 0.13], [-crw * 0.78, top + len * 0.13]],
+    cap: [[-crw * 1.03, jt - es * 0.8], [-crw * 0.95, top - hu * 0.05], [crw * 0.9, top - hu * 0.09], [crw * 1.04, jt - es * 0.4], [crw * 0.8, top + len * 0.14], [crw * 0.05, top + len * 0.2], [-crw * 0.3, top + len * 0.12], [-crw * 0.85, top + len * 0.16]],
+    flat: [[-crw * 1.0, jt - es * 0.4], [-crw * 0.96, top - hu * 0.24], [crw * 0.96, top - hu * 0.24], [crw * 1.0, jt - es * 0.4], [crw * 0.76, top + len * 0.13], [-crw * 0.76, top + len * 0.13]],
+    slick: [[-crw * 1.02, jt - es * 0.5], [-crw * 0.9, top - hu * 0.06], [crw * 0.1, top - hu * 0.12], [crw * 0.95, top - hu * 0.02], [crw * 1.03, jt - es * 0.5], [crw * 0.75, top + len * 0.1], [-crw * 0.2, top + len * 0.08], [-crw * 0.8, top + len * 0.14]],
     mullet: [[-crw * 1.05, jt - es * 0.5], [-crw * 0.95, top - hu * 0.05], [crw * 0.95, top - hu * 0.08], [crw * 1.06, jt - es * 0.5], [crw * 0.55, top + len * 0.16], [-crw * 0.45, top + len * 0.22]],
-    crop: [[-crw * 1.03, jt - es * 0.8], [-crw * 0.95, top - hu * 0.05], [crw * 0.9, top - hu * 0.09], [crw * 1.04, jt - es * 0.4], [crw * 0.8, top + len * 0.14], [crw * 0.05, top + len * 0.2], [-crw * 0.3, top + len * 0.12], [-crw * 0.85, top + len * 0.16]],
-    puff: [[-crw * 1.04, jt - es * 0.3], [-crw * 0.9, top - hu * 0.03], [crw * 0.9, top - hu * 0.03], [crw * 1.04, jt - es * 0.3], [crw * 0.85, top + len * 0.2], [-crw * 0.85, top + len * 0.2]] };
-  if (HT[a.hair]) piece(HT[a.hair], a.hc);
-  if (a.hair === 'spiky') { const sp: Pt[] = [[-crw * 1.0, jt - es * 0.3], [-crw * 0.95, top + len * 0.1]], L5 = [0.55, 0.85, 0.65, 1.0, 0.7]; L5.forEach((l, i) => { const x0 = -crw * 0.85 + i * crw * 0.42; sp.push([x0 + crw * 0.05, top + len * 0.05], [x0 + crw * 0.3 + l * hu * 0.25, top - l * hu * 0.36], [x0 + crw * 0.38, top + len * 0.08]); }); sp.push([crw * 1.0, top + len * 0.1], [crw * 1.0, jt - es * 0.3], [0, top + len * 0.22]); piece(sp, a.hc); }
-  if (a.hair === 'waves') {
+    puff: [[-crw * 1.04, jt - es * 0.3], [-crw * 0.9, top - hu * 0.03], [crw * 0.9, top - hu * 0.03], [crw * 1.04, jt - es * 0.3], [crw * 0.85, top + len * 0.2], [-crw * 0.85, top + len * 0.2]],
+    long: [[-crw * 1.06, jt], [-crw * 1.0, top - hu * 0.06], [0, top - hu * 0.12], [crw * 1.0, top - hu * 0.06], [crw * 1.06, jt], [crw * 0.72, top + len * 0.16], [0, top + len * 0.04], [-crw * 0.72, top + len * 0.16]],
+    bob: [[-crw * 1.06, jt + es * 0.4], [-crw * 1.0, top - hu * 0.06], [crw * 1.0, top - hu * 0.06], [crw * 1.06, jt + es * 0.4], [crw * 0.82, top + len * 0.26], [-crw * 0.82, top + len * 0.26]] };
+  const TOP: Record<string, string> = { crew: 'crew', cap: 'cap', flat: 'flat', slick: 'slick', undercut: 'slick', mullet: 'mullet', afro: 'puff', tower: 'puff', curls: 'puff', buzz: 'buzz', braids: 'buzz', dreads: 'buzz', long: a.fem ? '' : 'long', bob: 'bob' };
+  const hr = a.hair;
+  if (hr === 'undercut') piece(HT.buzz, shade(a.hc, 0.72));
+  if (hr === 'mohawk') { piece(HT.buzz, mixC(a.hc, sk, 0.62)); const fin: Pt[] = [[-crw * 0.22, top + len * 0.22]]; for (let q = 0; q <= 4; q++) { const yq = top + len * (0.18 - q * 0.05); fin.push([-crw * 0.22 + q * crw * 0.09, yq], [-crw * 0.15 + q * crw * 0.09, yq - hu * (0.2 + 0.05 * (q % 2))]); } fin.push([crw * 0.22, top - hu * 0.05], [crw * 0.22, top + len * 0.22]); piece(fin, a.hc); }
+  if (TOP[hr] && HT[TOP[hr]]) piece(HT[TOP[hr]], a.hc);
+  if (hr === 'ponytail' || hr === 'pigtails' || hr === 'bun' || hr === 'braid') piece(pulled(0.5), a.hc);
+  if (hr === 'bun') P.poly(ell(0, top - hu * 0.14, hu * 0.2, hu * 0.15, 12), a.hc);
+  if (hr === 'tower') piece([[-crw * 0.75, top - hu * 0.02], [crw * 0.75, top - hu * 0.04], [crw * 0.7, top + hu * 0.07], [-crw * 0.72, top + hu * 0.08]], a.g2);
+  if (hr === 'braids') for (let q = 0; q < 4; q++) { const x = crw * (-0.6 + q * 0.4); mkS(`M${x} ${top + len * 0.13} L${x * 0.8} ${top - hu * 0.02}`, 1.6, shade(a.hc, 0.55)); }
+  if (hr === 'slick' || hr === 'undercut') mkS(`M${-crw * 0.5} ${top + len * 0.02} Q${crw * 0.1} ${top - hu * 0.08} ${crw * 0.6} ${top + len * 0.02}`, 1.6, shade(a.hc, 1.4));
+  if (hr === 'long' && !a.fem) for (const sd of [-1, 1]) piece([[sd * crw * 1.06, jt - es], [sd * crw * 0.84, top + len * 0.22], [sd * crw * 0.86, bot - len * 0.12], [sd * crw * 1.12, bot + hu * 0.25]], shade(a.hc, 0.94));
+  if (hr === 'spiky') { const sp: Pt[] = [[-crw * 1.0, jt - es * 0.3], [-crw * 0.95, top + len * 0.1]], L5 = [0.55, 0.85, 0.65, 1.0, 0.7]; L5.forEach((l, q) => { const x0 = -crw * 0.85 + q * crw * 0.42; sp.push([x0 + crw * 0.05, top + len * 0.05], [x0 + crw * 0.3 + l * hu * 0.25, top - l * hu * 0.36], [x0 + crw * 0.38, top + len * 0.08]); }); sp.push([crw * 1.0, top + len * 0.1], [crw * 1.0, jt - es * 0.3], [0, top + len * 0.22]); piece(sp, a.hc); }
+  if ((hr === 'long' && a.fem) || hr === 'wild') {
     piece([[-crw * 1.15, jt], [-crw * 1.1, top - hu * 0.07], [-crw * 0.15, top - hu * 0.2], [-crw * 0.05, top + len * 0.1], [-crw * 0.6, top + len * 0.3], [-crw * 0.95, jt + es]], a.hc);
     piece([[crw * 0.05, top + len * 0.05], [crw * 0.2, top - hu * 0.19], [crw * 1.12, top - hu * 0.06], [crw * 1.2, jt], [crw * 1.0, jt + es * 1.5], [crw * 0.75, top + len * 0.25]], shade(a.hc, 1.08));
-    for (const sd of [-1, 1]) for (let k = 0; k < 3; k++) piece(([[-crw * (1.6 - k * 0.1), bot + hu * (0.3 + k * 0.15)], [-crw * (1.3 - k * 0.05), jt + es * (1.4 + k * 0.4)], [-crw * 1.12, jt + es * (1.8 + k * 0.5)], [-crw * (1.4 - k * 0.08), bot + hu * (0.45 + k * 0.15)]] as Pt[]).map(([px, py]) => [px * sd, py + (sd > 0 ? hu * 0.08 : 0)] as Pt), k % 2 ? shade(a.hc, 0.85) : shade(a.hc, 1.1));
+    for (const sd of [-1, 1]) for (let q = 0; q < 3; q++) piece(([[-crw * (1.6 - q * 0.1), bot + hu * (0.3 + q * 0.15)], [-crw * (1.3 - q * 0.05), jt + es * (1.4 + q * 0.4)], [-crw * 1.12, jt + es * (1.8 + q * 0.5)], [-crw * (1.4 - q * 0.08), bot + hu * (0.45 + q * 0.15)]] as Pt[]).map(([px, py]) => [px * sd, py + (sd > 0 ? hu * 0.08 : 0)] as Pt), q % 2 ? shade(a.hc, 0.85) : shade(a.hc, 1.1));
   }
 }
 const mixC = (a: string, b: string, t: number) => { const A = parseInt(a.slice(1), 16), B = parseInt(b.slice(1), 16); return '#' + [16, 8, 0].map(s => Math.round(((A >> s) & 255) * (1 - t) + ((B >> s) & 255) * t).toString(16).padStart(2, '0')).join(''); };
