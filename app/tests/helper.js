@@ -29,7 +29,7 @@ const VIEWPORTS = { desk: { viewport: { width: 1920, height: 1080 } }, big: { vi
 /** Open the game. opts: { mode: 'desk'|'big'|'uhd'|'tv', file: 'index', promo: 'pdw' or null to stay on the title screen, name, pics: true for the scenes on the broadcast (off in other tests, so their pages are laid out as before) } */
 async function open(opts) {
   opts = opts || {};
-  const mode = opts.mode || 'desk', browser = await chromium.launch(), ctx = await browser.newContext(VIEWPORTS[mode]), page = await ctx.newPage(), errs = [];
+  const mode = opts.mode || 'desk', browser = await chromium.launch(process.env.PW_CHANNEL ? { channel: process.env.PW_CHANNEL } : {}), ctx = await browser.newContext(VIEWPORTS[mode]), page = await ctx.newPage(), errs = [];
   page.on('console', m => { if (m.type() === 'error' && !/ERR_TUNNEL|Failed to load resource/.test(m.text())) errs.push('console: ' + m.text().slice(0, 300)); });
   page.on('pageerror', e => errs.push('pageerror: ' + e.message));
   await page.addInitScript(p => { try { if (!localStorage.getItem('gorilla-position-prefs')) localStorage.setItem('gorilla-position-prefs', JSON.stringify(p)); } catch (e) {} }, Object.assign({ boot: false, letter: false, auto: !!opts.auto, pics: !!opts.pics, uni: opts.uni || 'public_domain', u2: true, pace: opts.pace || 'full', pv: 2 }, opts.prefs || {}, mode === 'tv' ? { screen: 'tv' } : {}));
