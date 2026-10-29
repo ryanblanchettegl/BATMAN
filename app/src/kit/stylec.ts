@@ -166,14 +166,15 @@ export function lookOf(r: Recipe, expr: string): Look {
 }
 
 /* ---------- the head (the concept's headIn, style C) ---------- */
-function headC(P: Pen, a: Look, hu: number, r: R, back: boolean, mk: Marks) {
+function headC(P0: Pen, a: Look, hu: number, r: R, back: boolean, mk: Marks, Pb?: Pen) {
+  let P = P0;
   const h = a.hd, sk = a.skin, dk = shade(sk, 0.72), mkS = (d: string, w = 2.4, col = '#1b1b1d') => P.stroke(d, w, col);
   const piece = (pts: Pt[], col: string, edge?: number) => P.poly(cut(pts, r, false), col, edge === 1 ? shade(col, 0.8) : undefined);
   const nar = 0.9, len = h.len * hu * 0.97, jw = h.jw * hu * nar, crw = h.crw * hu * nar;
   const top = -len * 0.55, bot = len * 0.45, face = Math.max(crw, jw);
   const ey = h.ey * len, eg = face * 0.45 * (h.eg || 1), es = face * 0.2 * Math.pow(h.es || 1, 0.3) * (h.es2 || 1), browY = ey - face * 0.28 - (h.bu || 0) * hu, jt = browY + es * 0.2 + (h.bu || 0) * hu;
   // hair behind the head (and, seen from behind, over it)
-  const behind = () => {
+  const behind = () => { const keep = P; if (Pb && !back) P = Pb;   // hair behind the head goes behind the neck too
     const hr = a.hair;
     if (hr === 'long' && !a.fem && a.beard !== 'none') piece([[crw * 0.55, top + len * 0.1], [crw * 0.95, top + len * 0.25], [crw * 1.15, bot + hu * 0.45], [crw * 0.9, bot + hu * 0.6], [crw * 0.75, bot + hu * 0.1]], shade(a.hc, 0.9));   // with a beard: tied back in a tail, so the face and the beard have skin round them
     else if (hr === 'long' && !a.fem) piece([[-crw * 1.1, top + len * 0.2], [-crw * 0.9, top - hu * 0.05], [crw * 0.9, top - hu * 0.05], [crw * 1.1, top + len * 0.2], [crw * 1.18, bot + hu * 0.55], [crw * 0.95, bot + hu * 0.68], [crw * 0.6, bot + hu * 0.5], [-crw * 0.6, bot + hu * 0.5], [-crw * 0.95, bot + hu * 0.68], [-crw * 1.18, bot + hu * 0.55]], shade(a.hc, 0.9));   // tucked behind the shoulders, so the face and the beard stand out
@@ -186,6 +187,7 @@ function headC(P: Pen, a: Look, hu: number, r: R, back: boolean, mk: Marks) {
     if (hr === 'ponytail') piece([[crw * 0.3, top + len * 0.05], [crw * 0.75, top + len * 0.1], [crw * 1.2, bot + hu * 0.3], [crw * 0.95, bot + hu * 0.55], [crw * 0.7, bot + hu * 0.2]], a.hc);
     if (hr === 'pigtails') for (const sd of [-1, 1]) piece([[sd * crw * 0.85, jt - es], [sd * crw * 1.15, jt - es * 1.2], [sd * crw * 1.5, bot + hu * 0.25], [sd * crw * 1.25, bot + hu * 0.4], [sd * crw * 1.05, jt + es]], a.hc);
     if (hr === 'braid') for (let q = 0; q < 9; q++) P.poly(ell((q % 2 ? 0.04 : -0.04) * hu, jt + q * hu * 0.16, hu * (0.16 - q * 0.008), hu * 0.11, 10), q % 2 ? shade(a.hc, 0.82) : a.hc);
+    P = keep;
   };
   behind();
   // ears
@@ -449,7 +451,8 @@ export function puppetC(r: Recipe, pl: Place, pose: Record<string, number>, expr
   if (a.hd.adam && !bk) Nk.stroke(`M${-hu * 0.035} ${-hu * 0.05} l${hu * 0.035} ${hu * 0.06} l${hu * 0.035} ${-hu * 0.06}`, 1.4, dk);
   const Hd = pen(nk, 0.56, 'head');
   const HK = 1.16, hh = hu * HK;   // the head a touch bigger than the concept's unit, so the figure stands about 6.8 heads (critic, 29 October)
-  Hd.group(0, -hh * 0.5 - neckL, (rr() - 0.5) * 4, () => headC(Hd, a, hh, rngOf(r.key + '|Ch'), bk, mk));
+  const Hb = pen(nk, 0.48, 'head'), tl0 = (rr() - 0.5) * 4;
+  Hd.group(0, -hh * 0.5 - neckL, tl0, () => Hb.group(0, -hh * 0.5 - neckL, tl0, () => headC(Hd, a, hh, rngOf(r.key + '|Ch'), bk, mk, Hb)));
   rig.anchors.head = W_(nk, [0, (hh * 0.5 + neckL) * k]);
   rig.anchors.shoulders = W_(to, [0, -(ySh + hu * 0.1) * k]);
   arm('n', 0.95);
